@@ -1,0 +1,10 @@
+lightweight tag 696e91d8af5ad51f9d0d42edceef9a58010c0077 v4.1.2
+Author:	Dan Dumont <ddumont@gmail.com>
+Date:	Sat Aug 29 17:30:24 2020 -0400
+
+commit 696e91d8af5ad51f9d0d42edceef9a58010c0077
+Author: Dan Dumont <ddumont@gmail.com>
+Date:   Sat Aug 29 17:30:24 2020 -0400
+
+    add license
+

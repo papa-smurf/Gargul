@@ -1,0 +1,40 @@
+## Interface: 11306
+## Title: Give it a Lick
+## Title: |cff8aecffGive it a Lick|r
+## Author: <Give it a Lick> Zhorax
+## Notes: Guild addon for <Give it a Lick> including DKP bidding / syncing, loot priorities and much more
+## Version: 1.0.1
+## DefaultState: enabled
+## SavedVariables: GiveitalickDB
+
+## Libraries
+libraries.xml
+
+## Bootstrapper
+bootstrap.lua
+
+## Data objects
+Data/Constants.lua
+Data/LootPriority.lua
+
+## Class objects
+Classes/Helpers.lua
+Classes/JSON.lua
+Classes/UI.lua
+Classes/DB.lua
+Classes/Settings.lua
+Classes/Importer.lua
+Classes/Exporter.lua
+Classes/Auction.lua
+Classes/Bidder.lua
+Classes/AuctioneerUI.lua
+Classes/BidderUI.lua
+Classes/Commands.lua
+Classes/LootPriority.lua
+Classes/Version.lua
+Classes/User.lua
+Classes/Player.lua
+Classes/Comm.lua
+Classes/CommMessage.lua
+Classes/Sync.lua
+Classes/Dashboard.lua

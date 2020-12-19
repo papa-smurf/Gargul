@@ -1,0 +1,86 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ..\FrameXML\UI.xsd"
+>
+    <!--
+    LibStub is a minimalistic versioning library that allows other libraries to easily register themselves and upgrade.
+    It is meant to be a cross-community library sharing system.
+    -->
+    <Script file="Libs\LibStub\LibStub.lua"/>
+
+    <!--
+    CallbackHandler-1.0 is a back-end utility library that makes it easy for a library to fire its
+    events to interested parties. It removes the need for addons to be aware of e.g. AceEvent.
+    -->
+    <Include file="Libs\CallbackHandler-1.0\CallbackHandler-1.0.xml"/>
+
+    <!--
+    AddOn development framework
+
+    A basic introduction to usage can be found here:
+    http://www.wowace.com/addons/ace3/pages/getting-started/
+    -->
+    <Include file="Libs\AceAddon-3.0\AceAddon-3.0.xml"/>
+
+    <!--
+    AceEvent-3.0 provides event registration and secure dispatching.
+    All dispatching is done using CallbackHandler-1.0. AceEvent is a simple wrapper around CallbackHandler,
+    and dispatches all game events or addon message to the registrees.
+    -->
+    <Include file="Libs\AceEvent-3.0\AceEvent-3.0.xml"/>
+
+    <!--
+    AceConsole-3.0 provides registration facilities for slash commands.
+    You can register slash commands to your custom functions and use the `GetArgs` function
+    to parse them to your addons individual needs.
+    -->
+    <Include file="Libs\AceConsole-3.0\AceConsole-3.0.xml"/>
+
+    <!--
+    AceGUI-3.0 provides access to numerous widgets which can be used to create GUIs.
+    -->
+    <Include file="Libs\AceGUI-3.0\AceGUI-3.0.xml"/>
+
+    <!--
+    AceComm-3.0 allows you to send messages of unlimited length over the addon comm channels.
+    It'll automatically split the messages into multiple parts and rebuild them on the receiving end.
+    -->
+    <Include file="Libs\AceComm-3.0\AceComm-3.0.xml"/>
+
+    <!--
+    AceSerializer-3.0 can serialize any variable (except functions or userdata)
+    into a string format, that can be send over the addon comm channel.
+    -->
+    <Include file="Libs\AceSerializer-3.0\AceSerializer-3.0.xml"/>
+
+    <!--
+    AceTimer-3.0 provides a central facility for registering timers.
+    AceTimer supports one-shot timers and repeating timers. All timers are stored in an efficient data structure
+    that allows easy dispatching and fast rescheduling. Timers can be registered or canceled at any time,
+    even from within a running timer, without conflict or large overhead.
+    -->
+    <Include file="Libs\AceTimer-3.0\AceTimer-3.0.xml"/>
+
+    <!--
+    lib-st provides a convenient way to create and display a scrolling table of data.
+    Supply column info and your table data, and you're off!
+
+    https://www.wowace.com/projects/lib-st
+    -->
+    <Include file="Libs\lib-st\lib-st.xml"/>
+
+    <!--
+    Timer bars with that extra sweetness
+
+    https://www.wowace.com/projects/libcandybar-3-0
+    -->
+    <Include file="Libs\LibCandyBar-3.0\lib.xml"/>
+
+    <!--
+    LibCompress is a compression and decompression library implemented entirely in WoW-friendly Lua.
+    It supports the LZW and Huffman algorithms, and can automatically choose the most efficient algorithm for your data.
+    One popular usage for this library is to send a compressed table to another player or add-on.
+    Doing this requires additional encoding to remove the \000 characters from the data stream.
+    -->
+    <Include file="Libs\LibCompress\lib.xml"/>
+</Ui>
