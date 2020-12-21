@@ -40,6 +40,7 @@ App.Data.Constants = {
     Settings = {
         UI = {
             Dashboard = {
+                showInRaidOnly = false,
                 Position = {
                     point = "Center",
                     relativePoint = "Center",

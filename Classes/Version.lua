@@ -121,6 +121,7 @@ function Version:inspectGroup()
     self.GroupMembers = {}; -- Reset the self.GroupMembers object
     local numberOfGroupMembers = 0;
 
+    -- Loop through all members of the group (party or raid)
     for index = 1, MAX_RAID_MEMBERS do
         local name, _, _, _, _, _,
         _, online = GetRaidRosterInfo(index);

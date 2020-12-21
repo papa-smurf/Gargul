@@ -140,65 +140,17 @@ function Dashboard:draw()
     ButtonPadder:SetWidth(16);
     FooterFrame:AddChild(ButtonPadder);
 
-    -- Reset table button
-    local ResetTablesButton = AceGUI:Create("Button");
-    ResetTablesButton:SetText("Reset");
-    ResetTablesButton:SetWidth(85);
-    ResetTablesButton:SetCallback("OnClick", function()
-        StaticPopup_Show("RESET_TABLES_CONFIRMATION");
+    -- In raid checkbox
+    local InRaidCheckbox = AceGUI:Create("CheckBox");
+    InRaidCheckbox:SetType("checkbox");
+    InRaidCheckbox:SetLabel("In raid only");
+    InRaidCheckbox:SetValue(Settings:get("UI.Dashboard.showInRaidOnly", false));
+    InRaidCheckbox:SetCallback("OnValueChanged", function (widget)
+        local checked = widget:GetValue();
+        Settings:set("UI.Dashboard.showInRaidOnly", checked);
+        Dashboard:refresh();
     end);
-    FooterFrame:AddChild(ResetTablesButton);
-
-    -- Only officers are allowed to broadcast
-    if (App.User and App.User.isOfficer) then
-        -- Auction button
-        local AuctionButton = AceGUI:Create("Button");
-        AuctionButton:SetText("Auction");
-        AuctionButton:SetWidth(86);
-        AuctionButton:SetCallback("OnClick", function()
-            self:close();
-            App.AuctioneerUI:draw();
-        end);
-        FooterFrame:AddChild(AuctionButton);
-
-        -- Import button
-        local ImportButton = AceGUI:Create("Button");
-        ImportButton:SetText("Import");
-        ImportButton:SetWidth(86);
-        ImportButton:SetCallback("OnClick", function()
-            self:close();
-            App.Importer:draw();
-        end);
-        FooterFrame:AddChild(ImportButton);
-
-        -- Export button
-        local ExportButton = AceGUI:Create("Button");
-        ExportButton:SetText("Export");
-        ExportButton:SetWidth(86);
-        ExportButton:SetCallback("OnClick", function()
-            self:close();
-            App.Exporter:draw();
-        end);
-        FooterFrame:AddChild(ExportButton);
-
-        -- Broadcast button
-        local BroadCastButton = AceGUI:Create("Button");
-        BroadCastButton:SetText("Broadcast");
-        BroadCastButton:SetWidth(105);
-        BroadCastButton:SetCallback("OnClick", function()
-            StaticPopup_Show("BROADCAST_TABLES_CONFIRMATION");
-        end);
-        FooterFrame:AddChild(BroadCastButton);
-
-        -- Version check button
-        local VersionCheckButton = AceGUI:Create("Button");
-        VersionCheckButton:SetText("Version");
-        VersionCheckButton:SetWidth(85);
-        VersionCheckButton:SetCallback("OnClick", function()
-            App.Version:inspectGroup();
-        end);
-        FooterFrame:AddChild(VersionCheckButton);
-    end
+    FooterFrame:AddChild(InRaidCheckbox);
 
     self.Widgets.Tables.Characters:SortData();
 end
@@ -267,6 +219,19 @@ function Dashboard:drawCharactersTable(parent)
         warrior = {r = .77647, g = .607843, b = .42745, a = 1},
     };
 
+    local GroupMembers = {};
+    if (App.User.isInGroup and Settings:get("UI.Dashboard.showInRaidOnly")) then
+        -- Loop through all members of the group (party or raid)
+        for index = 1, MAX_RAID_MEMBERS do
+            local name, _, _, _, _, _,
+            _, online = GetRaidRosterInfo(index);
+
+            if (name) then
+                GroupMembers[name] = true;
+            end
+        end
+    end
+
     local hasData = false;
     for name, character in pairs(App.DB.Characters) do
         local row = {
@@ -287,9 +252,14 @@ function Dashboard:drawCharactersTable(parent)
 
         };
 
-        tinsert(CharacterData, row);
-
-        hasData = true;
+        -- Check if in raid only is disabled or if not make sure
+        -- the player is in the raid, if not don't show it
+        if (not Settings:get("UI.Dashboard.showInRaidOnly")
+            or App:tableGet(GroupMembers, name, false)
+        ) then
+            tinsert(CharacterData, row);
+            hasData = true;
+        end
     end
 
     if (not hasData) then
@@ -329,7 +299,7 @@ end
     - Date (d-m-Y)
     - etc
 ]]
-function Dashboard:lootHistoryToTreeData ()
+function Dashboard:lootHistoryToTreeData()
     local lootHistory = App.DB.LootHistory or {};
     local TreeData = {};
 
