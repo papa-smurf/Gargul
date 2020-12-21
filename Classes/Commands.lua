@@ -8,6 +8,7 @@ function Commands:help ()
     App:message("---------------------");
     App:message("List commands:")
     App:message("/gl - Shows the dashboard");
+    App:message("/gl bid - Reopens the bid window if you closed it");
 
     if (App.User.isOfficer) then
         App:message("/gl broadcast - Broadcasts the DKP tables and loot history to the entire guild");
@@ -21,10 +22,21 @@ function Commands:help ()
     App:message("---------------------");
 end
 
-Commands.auction = function() App.AuctioneerUI:draw(); end
-
+-- Open the dashboard or main hub if you will
 Commands.dashboard = function() App.Dashboard:draw(); end
 
+-- Open the auctioneer window (requires group and officer privileges)
+Commands.auction = function()
+    if (not App.User.isOfficer) then
+        return App:warning("This feature requires officer privileges");
+    end
+
+    App.AuctioneerUI:draw();
+end
+
+Commands.bid = function() App.BidderUI:reopen(); end
+
+-- Output all debug lines in a readable manner
 Commands.stacktrace = function() App:stacktrace(); end
 
 -- Import data from our website into the addon
@@ -34,7 +46,13 @@ Commands.import = function() App.Importer:draw(); end
 Commands.export = function() App.Exporter:draw(); end
 
 -- Broadcast our current dkp / loot tables to everyone
-Commands.broadcast = function() App.Sync:broadcast(); end
+Commands.broadcast = function()
+    if (not App.User.isOfficer) then
+        return App:warning("This feature requires officer privileges");
+    end
+
+    App.Sync:broadcast();
+end
 
 -- Check if everyone is running the most up-to-date version
 Commands.version = function() App.Version:inspectGroup(); end

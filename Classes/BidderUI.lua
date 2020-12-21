@@ -28,6 +28,20 @@ function BidderUI:show(...)
     self:draw(...);
 end
 
+-- Reopen the bidding window (after closing it by right clicking)
+function BidderUI:reopen()
+    if (not App.Auction.inProgress) then
+        return App:warning("There is no auction in progress");
+    end
+
+    -- Should not be possible, but you never know
+    if (not App:tableGet(self.Widgets, "BidderFrame")) then
+        return;
+    end
+
+    self.Widgets.BidderFrame:Show();
+end
+
 -- Note: we're not using Ace Gui here since we don't want any fancy frames
 function BidderUI:draw(time, minimumBid, itemId, itemName, itemLink, itemIcon)
     App:debug("BidderUI:draw");
@@ -35,7 +49,7 @@ function BidderUI:draw(time, minimumBid, itemId, itemName, itemLink, itemIcon)
     self.Widgets.BidderFrame = self.Widgets.BidderFrame or UI:createFrame("Frame", "BidderFrame", UIParent);
     local BidderFrame = self.Widgets.BidderFrame;
     BidderFrame:Show();
-    BidderFrame:SetSize(350, 60);
+    BidderFrame:SetSize(350, 48);
     BidderFrame:SetPoint(
         Settings:get("UI.Bidder.Position.point"),
         UIParent,
@@ -61,13 +75,12 @@ function BidderUI:draw(time, minimumBid, itemId, itemName, itemLink, itemIcon)
         Settings:set("UI.Bidder.Position.offsetY", offsetY);
     end);
 
-    -- Allow the auctioneer to open the auction window by
-    -- right-clicking the bid window (specifically the DKP bar)
-    BidderFrame:SetScript("OnMouseDown", function(widget, button)
-        if (button == "RightButton"
-            and App:tableGet(App.Auction, "CurrentAuction.auctioneer", "") == App.User.name
-        ) then
-            App.AuctioneerUI:draw();
+    -- Allow the player to close the bid window by
+    -- right-clicking the window (they can reopen using /gl bid)
+    BidderFrame:SetScript("OnMouseDown", function(_, button)
+        if (button == "RightButton") then
+            self:hide();
+            App:message("You can reopen the bidding window by typing /gl bid");
         end
     end)
 
@@ -82,12 +95,12 @@ function BidderUI:draw(time, minimumBid, itemId, itemName, itemLink, itemIcon)
     self.Widgets.DkpInfoLabel = self.Widgets.DkpInfoLabel or UI:createFrame("Frame", "GialUI_Label_MinimumBid", BidderFrame);
     local DkpInfoLabel = self.Widgets.DkpInfoLabel;
     DkpInfoLabel:SetSize(1, 1);
-    DkpInfoLabel:SetPoint("TOPLEFT", BidderFrame, "TOPLEFT", 5, -5);
+    DkpInfoLabel:SetPoint("TOPLEFT", BidderFrame, "TOPLEFT", 5, -2);
     DkpInfoLabel:SetPoint("BOTTOMRIGHT", BidderFrame, "BOTTOMRIGHT", -7);
 
     self.Widgets.DkpInfoLabelText = self.Widgets.DkpInfoLabelText or DkpInfoLabel:CreateFontString(nil, "ARTWORK");
     DkpInfoLabel.text = self.Widgets.DkpInfoLabelText;
-    DkpInfoLabel.text:SetFont("Fonts\\ARIALN.ttf", 13, "OUTLINE");
+    DkpInfoLabel.text:SetFont("Fonts\\ARIALN.ttf", 11, "OUTLINE");
     DkpInfoLabel.text:SetPoint("TOPLEFT", DkpInfoLabel, "TOPLEFT", 0, -4);
     DkpInfoLabel.text:SetText(
         string.format("MIN DKP: |c00efb8cd%s|r     YOUR DKP: |c00efb8cd%s|r     DKP:", minimumBid, App.User.Dkp.amount)
@@ -102,7 +115,7 @@ function BidderUI:draw(time, minimumBid, itemId, itemName, itemLink, itemIcon)
         ButtonText = "Roll";
     end
 
-    BidRollCancel:SetPoint("TOPRIGHT", BidderFrame, "TOPRIGHT", -4, -5);
+    BidRollCancel:SetPoint("TOPRIGHT", BidderFrame, "TOPRIGHT", -4, -2);
     BidRollCancel:SetSize(60, 20);
     BidRollCancel:SetText(ButtonText);
     BidRollCancel:SetNormalFontObject("GameFontNormal");
@@ -140,7 +153,7 @@ function BidderUI:draw(time, minimumBid, itemId, itemName, itemLink, itemIcon)
     -- Only add the DKP input field if the user actually has enough DKP to bid
     self.Widgets.BidEditBox = self.Widgets.BidEditBox or UI:createFrame("EditBox", "GialUI_Input_MinimumBid", BidderFrame, "InputBoxTemplate");
     local BidEditBox = self.Widgets.BidEditBox;
-    BidEditBox:SetPoint("TOPRIGHT", BidderFrame, "TOPRIGHT", -70, -5);
+    BidEditBox:SetPoint("TOPRIGHT", BidderFrame, "TOPRIGHT", -70, -2);
     BidEditBox:SetSize(40, 20);
     BidEditBox:SetMaxLetters(7);
     BidEditBox:SetAutoFocus(false);
@@ -158,7 +171,7 @@ function BidderUI:draw(time, minimumBid, itemId, itemName, itemLink, itemIcon)
 
     self.Widgets.TimerBarTexture = self.Widgets.TimerBarTexture or "Interface\\AddOns\\Giveitalick\\Assets\\Textures\\timer-bar";
     local texture = self.Widgets.TimerBarTexture;
-    self.Widgets.TimerBar = self.Widgets.TimerBar or LibStub("LibCandyBar-3.0"):New(texture, 350, 30);
+    self.Widgets.TimerBar = self.Widgets.TimerBar or LibStub("LibCandyBar-3.0"):New(texture, 350, 24);
     local bar = self.Widgets.TimerBar;
     local itemPriority = App.LootPriority:getPriorityByItemId(itemId);
 
@@ -168,7 +181,7 @@ function BidderUI:draw(time, minimumBid, itemId, itemName, itemLink, itemIcon)
         itemPriority = "Off spec";
     end
 
-    local priorityStringLengthAllowed = 51 - string.len(itemName);
+    local priorityStringLengthAllowed = 53 - string.len(itemName);
 
     -- Make sure the item priority does not go out of bounds
     if (priorityStringLengthAllowed < 0) then
@@ -178,7 +191,10 @@ function BidderUI:draw(time, minimumBid, itemId, itemName, itemLink, itemIcon)
     bar:SetParent(BidderFrame);
     bar:SetPoint("BOTTOM", BidderFrame, "BOTTOM");
     bar:SetDuration(time);
+
     bar:SetLabel("  " .. itemLink .. " " .. string.sub(itemPriority, 0, priorityStringLengthAllowed));
+    bar.candyBarLabel:SetFont("Fonts\\ARIALN.ttf", 13, "OUTLINE");
+
     bar:SetIcon(itemIcon);
     bar:SetColor(0, 1, 0, .5);
     bar:Start();
@@ -195,6 +211,14 @@ function BidderUI:draw(time, minimumBid, itemId, itemName, itemLink, itemIcon)
             bar:SetColor(1, 0, 0, .3);
         end
     end);
+
+    -- Call the bid window close function on rightclick
+    bar:SetScript("OnMouseDown", function(widget, button)
+        if (button == "RightButton") then
+            self:hide();
+            App:message("You can reopen the bidding window by typing /gl bid");
+        end
+    end)
 
     -- Show a gametooltip for the item up for auction
     -- when hovering over the progress bar
