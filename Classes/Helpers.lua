@@ -279,6 +279,16 @@ function App:tableMerge(left, right)
     return left;
 end
 
+-- Simple table flip
+function App:flipTable(Table)
+    local Flipped = {};
+    for key, value in pairs(Table) do
+        Flipped[value] = key;
+    end
+
+    return Flipped;
+end
+
 -- Get a table value by a given key. Use dot notation to traverse multiple levels e.g:
 -- Settings.UI.Auctioneer.offsetX can be fetched using App:tableGet(myTable, "Settings.UI.Auctioneer.offsetX", 0)
 -- without having to worry about tables or keys existing yes or no.
