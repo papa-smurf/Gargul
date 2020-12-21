@@ -45,14 +45,11 @@ Commands.import = function() App.Importer:draw(); end
 -- Export data from the addon to use on our website
 Commands.export = function() App.Exporter:draw(); end
 
--- Broadcast our current dkp / loot tables to everyone
-Commands.broadcast = function()
-    if (not App.User.isOfficer) then
-        return App:warning("This feature requires officer privileges");
-    end
+-- Reset the dkp and loot history tables
+Commands.reset = function() StaticPopup_Show("RESET_TABLES_CONFIRMATION"); end
 
-    App.Sync:broadcast();
-end
+-- Broadcast our current dkp / loot tables to everyone
+Commands.broadcast = function() StaticPopup_Show("BROADCAST_TABLES_CONFIRMATION"); end
 
 -- Check if everyone is running the most up-to-date version
 Commands.version = function() App.Version:inspectGroup(); end
