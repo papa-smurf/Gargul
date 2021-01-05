@@ -3,7 +3,7 @@
 ## Title: |cff8aecffGargul|r
 ## Author: <Give it a Lick> Zhorax
 ## Notes: Guild addon for <Give it a Lick> including DKP bidding / syncing, loot priorities and much more
-## Version: 1.0.3
+## Version: 2.0.0
 ## DefaultState: enabled
 ## SavedVariables: GargulDB
 
