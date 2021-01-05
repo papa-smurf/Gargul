@@ -5,7 +5,7 @@ local AceGUI = App.Ace.GUI;
 
 -- Print a normal message (white)
 function App:message(...)
-    print("|cff8aecffGive it a Lick: |r" .. string.join(" ", ...));
+    print("|cff8aecffGargul: |r" .. string.join(" ", ...));
 end
 
 -- Print a colored message
@@ -116,7 +116,7 @@ function App:frameMessage(message)
     -- Create a container/parent frame
     local StacktraceFrame = AceGUI:Create("Frame");
     StacktraceFrame:SetCallback("OnClose", function(widget) AceGUI:Release(widget); end);
-    StacktraceFrame:SetTitle("Give it a Lick v" .. App.version);
+    StacktraceFrame:SetTitle("Gargul v" .. App.version);
     StacktraceFrame:SetStatusText("");
     StacktraceFrame:SetLayout("Flow");
     StacktraceFrame:SetWidth(600);

@@ -1,7 +1,7 @@
 --[[
     This class handles the addon's SavedVariables tables
-    self.Characters is a shortcut for GiveitalickDB.Characters *
-    self.LootHistory is a shortcut for GiveitalickDB.LootHistory *
+    self.Characters is a shortcut for GargulDB.Characters *
+    self.LootHistory is a shortcut for GargulDB.LootHistory *
 
     This class also provides functionality for
     compressing/decompressing our tables and checking their integrity

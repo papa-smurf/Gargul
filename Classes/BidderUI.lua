@@ -169,7 +169,7 @@ function BidderUI:draw(time, minimumBid, itemId, itemName, itemLink, itemIcon)
         BidEditBox:Show();
     end
 
-    self.Widgets.TimerBarTexture = self.Widgets.TimerBarTexture or "Interface\\AddOns\\Giveitalick\\Assets\\Textures\\timer-bar";
+    self.Widgets.TimerBarTexture = self.Widgets.TimerBarTexture or "Interface\\AddOns\\Gargul\\Assets\\Textures\\timer-bar";
     local texture = self.Widgets.TimerBarTexture;
     self.Widgets.TimerBar = self.Widgets.TimerBar or LibStub("LibCandyBar-3.0"):New(texture, 350, 24);
     local bar = self.Widgets.TimerBar;

@@ -12,7 +12,7 @@ function Importer:draw()
     -- Create a container/parent frame
     local ImportFrame = AceGUI:Create("Frame");
     ImportFrame:SetCallback("OnClose", function(widget) AceGUI:Release(widget) end);
-    ImportFrame:SetTitle("Give it a Lick v" .. App.version);
+    ImportFrame:SetTitle("Gargul v" .. App.version);
     ImportFrame:SetStatusText("Addon v" .. App.version);
     ImportFrame:SetLayout("Flow");
     ImportFrame:SetWidth(600);
@@ -25,7 +25,7 @@ function Importer:draw()
     ImportBox:SetFullWidth(true);
     ImportBox:DisableButton(true);
     ImportBox:SetFocus();
-    ImportBox:SetLabel("On our website go to Utilities -> Export for Giveitalick -> [CLICK TO COPY] -> Paste in here");
+    ImportBox:SetLabel("On our website go to Utilities -> Export for Gargul -> [CLICK TO COPY] -> Paste in here");
     ImportBox:SetNumLines(22);
     ImportBox:SetMaxLetters(999999999);
     ImportFrame:AddChild(ImportBox);

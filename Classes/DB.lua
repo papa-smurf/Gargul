@@ -1,7 +1,7 @@
 --[[
     This class handles the addon's SavedVariables tables
-    self.Characters is a shortcut for GiveitalickDB.Characters *
-    self.LootHistory is a shortcut for GiveitalickDB.LootHistory *
+    self.Characters is a shortcut for GargulDB.Characters *
+    self.LootHistory is a shortcut for GargulDB.LootHistory *
 
     This class also provides functionality for
     compressing/decompressing our tables and checking their integrity
@@ -28,20 +28,20 @@ function DB:_init()
         return;
     end
 
-    if (not GiveitalickDB or not type(GiveitalickDB) == "table") then
+    if (not GargulDB or not type(GargulDB) == "table") then
         -- Global SavedVariables database variable
-        GiveitalickDB = {};
+        GargulDB = {};
     end
 
     -- Prepare our database tables
-    GiveitalickDB.Characters = GiveitalickDB.Characters or {};
-    GiveitalickDB.LootHistory = GiveitalickDB.LootHistory or {};
-    GiveitalickDB.Settings = GiveitalickDB.Settings or {};
+    GargulDB.Characters = GargulDB.Characters or {};
+    GargulDB.LootHistory = GargulDB.LootHistory or {};
+    GargulDB.Settings = GargulDB.Settings or {};
 
     -- Provide a shortcut for each table
-    self.Characters = GiveitalickDB.Characters;
-    self.LootHistory = GiveitalickDB.LootHistory;
-    self.Settings = GiveitalickDB.Settings;
+    self.Characters = GargulDB.Characters;
+    self.LootHistory = GargulDB.LootHistory;
+    self.Settings = GargulDB.Settings;
 
     -- Fire DB:store before every logout/reload/exit
     DB.logoutEvent = CreateFrame("FRAME");
@@ -57,9 +57,9 @@ end
 function DB:store()
     App:debug("DB:store");
 
-    GiveitalickDB.Characters = App.DB.Characters;
-    GiveitalickDB.LootHistory = App.DB.LootHistory;
-    GiveitalickDB.Settings = App.Settings.Active;
+    GargulDB.Characters = App.DB.Characters;
+    GargulDB.LootHistory = App.DB.LootHistory;
+    GargulDB.Settings = App.Settings.Active;
 end
 
 -- Checks if all of our tables are valid

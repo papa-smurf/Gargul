@@ -1,4 +1,4 @@
---[[--
+--[[
     This class holds all static values the addon needs
 ]]
 
@@ -70,7 +70,7 @@ App.Data.Constants = {
     --[[
         COMM
     ]]
-    commChannel = "GiveitalickComm",
+    commChannel = "GargulComm",
     CommActions = {
         response = "Comm.Response",
         broadcastCharacters = "Sync.Characters",

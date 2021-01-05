@@ -2,7 +2,7 @@
 local appName, App = ...;
 
 -- Register our addon with the Ace framework
-App.Ace = LibStub("AceAddon-3.0"):NewAddon("Giveitalick", "AceConsole-3.0", "AceComm-3.0", "AceSerializer-3.0", "AceTimer-3.0");
+App.Ace = LibStub("AceAddon-3.0"):NewAddon("Gargul", "AceConsole-3.0", "AceComm-3.0", "AceSerializer-3.0", "AceTimer-3.0");
 
 App.name = appName;
 App.version = "1.0.2";
