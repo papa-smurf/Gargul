@@ -57,6 +57,24 @@ App.Data.Constants = {
                 }
             },
             Bidder = {
+                timer = 25,
+                Position = {
+                    point = "CENTER",
+                    relativePoint = "CENTER",
+                    offsetX = 0,
+                    offsetY = 0,
+                }
+            },
+            RollOff = {
+                timer = 15,
+                Position = {
+                    point = "CENTER",
+                    relativePoint = "CENTER",
+                    offsetX = 0,
+                    offsetY = 0,
+                }
+            },
+            Roller = {
                 Position = {
                     point = "CENTER",
                     relativePoint = "CENTER",
@@ -81,6 +99,8 @@ App.Data.Constants = {
         bid = "Bidder.Bid",
         retractBid = "Bidder.RetractBid",
         requestAppVersion = "Version.requestAppVersion",
+        startRollOff = "RollOff.Start",
+        stopRollOff = "RollOff.Stop",
     },
 
     --[[

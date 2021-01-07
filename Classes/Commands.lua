@@ -6,17 +6,18 @@ local Commands = App.Commands;
 -- Display the command help
 function Commands:help ()
     App:message("---------------------");
-    App:message("List commands:")
+    App:message("Commands:")
     App:message("/gl - Shows the dashboard");
-    App:message("/gl bid - Reopens the bid window if you closed it");
+    App:message("/gl bid or /gl bi - Reopens the bid window if you closed it");
+    App:message("/gl version or /gl ve - Checks the addon version of everyone in the raid");
+    App:message("/gl stacktrace or /gl st - Displays a list of this session's debug lines");
+    App:message("/gl rolloff or /gl ro - Displays the master looter window for rolling off items");
 
     if (App.User.isOfficer) then
-        App:message("/gl broadcast - Broadcasts the DKP tables and loot history to the entire guild");
-        App:message("/gl auction - Opens the auctioneer window for master looting purposes");
-        App:message("/gl import - Opens the DKP / loot history import window");
-        App:message("/gl export - Opens the DKP / loot history export window");
-        App:message("/gl version - Checks the addon version of everyone in the raid");
-        App:message("/gl stacktrace - Displays a list of this session's debug lines");
+        App:message("/gl broadcast or /gl br - Broadcasts the DKP tables and loot history to the entire guild");
+        App:message("/gl auction  or /gl au - Opens the auctioneer window for master looting purposes");
+        App:message("/gl import or /gl im - Opens the DKP / loot history import window");
+        App:message("/gl export or /gl ex - Opens the DKP / loot history export window");
     end
 
     App:message("---------------------");
@@ -33,26 +34,38 @@ Commands.auction = function()
 
     App.AuctioneerUI:draw();
 end
+Commands.au = Commands.auction;
+
+-- Open the window for rolling off items
+Commands.rolloff = function() App.MasterLooterUI:draw(); end
+Commands.ro = Commands.rolloff;
 
 Commands.bid = function() App.BidderUI:reopen(); end
+Commands.bi = Commands.bid;
 
 -- Output all debug lines in a readable manner
 Commands.stacktrace = function() App:stacktrace(); end
+Commands.st = Commands.stacktrace;
 
 -- Import data from our website into the addon
 Commands.import = function() App.Importer:draw(); end
+Commands.im = Commands.import;
 
 -- Export data from the addon to use on our website
 Commands.export = function() App.Exporter:draw(); end
+Commands.ex = Commands.export;
 
 -- Reset the dkp and loot history tables
 Commands.reset = function() StaticPopup_Show("RESET_TABLES_CONFIRMATION"); end
+Commands.re = Commands.reset;
 
 -- Broadcast our current dkp / loot tables to everyone
 Commands.broadcast = function() StaticPopup_Show("BROADCAST_TABLES_CONFIRMATION"); end
+Commands.br = Commands.broadcast;
 
 -- Check if everyone is running the most up-to-date version
 Commands.version = function() App.Version:inspectGroup(); end
+Commands.ve = Commands.version;
 
 -- This method dispatches all slash commands to their final destination
 function Commands:_dispatch (str)

@@ -124,6 +124,10 @@ function Comm:dispatch(CommMessage)
         return App.Auction:processRetractBid(CommMessage);
     elseif (action == CommActions.auctionResult) then
         return App.Auction:processResult(CommMessage);
+    elseif (action == CommActions.startRollOff) then
+        return App.RollOff:start(CommMessage);
+    elseif (action == CommActions.stopRollOff) then
+        return App.RollOff:stop(CommMessage);
     elseif (action == CommActions.requestAppVersion) then
         if (App.User.name ~= CommMessage.Sender.name) then
             App:debug("Respond to CommActions.requestAppVersion");

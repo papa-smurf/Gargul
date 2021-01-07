@@ -29,6 +29,9 @@ Classes/Auction.lua
 Classes/Bidder.lua
 Classes/AuctioneerUI.lua
 Classes/BidderUI.lua
+Classes/RollerUI.lua
+Classes/RollOff.lua
+Classes/MasterLooterUI.lua
 Classes/Commands.lua
 Classes/LootPriority.lua
 Classes/Version.lua
