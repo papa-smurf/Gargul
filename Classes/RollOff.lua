@@ -55,6 +55,43 @@ function RollOff:announceStart(item, time)
         },
         "RAID"
     ):send();
+
+    local announceMessage = string.format("You have %s seconds to roll on %s", time, item);
+    local reserveMessage = "";
+    local reserves = App.SoftReserves:getSoftReservesByItemLink(item);
+
+    if (reserves) then
+        reserves = App:strConcat(reserves, ", ");
+        reserveMessage = "This item has been reserved by: " .. reserves;
+    end
+
+    if (App.User.isInRaid) then
+        SendChatMessage(
+            announceMessage,
+            "RAID",
+            "COMMON"
+        );
+
+        SendChatMessage(
+            announceMessage,
+            "RAID_WARNING",
+            "COMMON"
+        );
+
+        if (reserveMessage) then
+            SendChatMessage(
+                reserveMessage,
+                "RAID",
+                "COMMON"
+            );
+        end
+    else
+        SendChatMessage(
+            announceMessage,
+            "PARTY",
+            "COMMON"
+        );
+    end
 end
 
 -- Anounce to everyone in the raid that a roll off has ended
