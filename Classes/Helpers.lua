@@ -309,7 +309,7 @@ function App:tableGet(table, keyString, default)
     end
 
     if (not table[firstKey]) then
-        return nil;
+        return default;
     end
 
     table = table[firstKey];
