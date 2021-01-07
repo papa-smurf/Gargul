@@ -231,6 +231,38 @@ function App:strSplit(s, delimiter)
     return result;
 end
 
+-- Concatenate all strings of an ojbect to one string
+function App:strConcat(o, delimiter)
+    local result = "";
+
+    local first = true;
+    for _, value in pairs(o) do
+        if (first) then
+            result = value;
+            first = false;
+        else
+            result = result .. delimiter .. value;
+        end
+    end
+
+    return result;
+end
+
+-- Check if a given array contains a given value
+function App:inArray(array, value)
+    local lowerValue = string.lower(value);
+
+    for index, val in ipairs(array) do
+        local lowerVal = string.lower(val);
+
+        if lowerValue == lowerVal then
+            return true
+        end
+    end
+
+    return false
+end
+
 -- Generate a random (enough) uuid
 local random = math.random
 function App:uuid()
