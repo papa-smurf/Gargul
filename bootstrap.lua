@@ -51,6 +51,7 @@ function App:_init()
     App.Comm:_init();
     App.User:_init();
     App.LootPriority:_init();
+    App.SoftReserves:_init();
 end
 
 function App.Ace:OnInitialize()

@@ -24,6 +24,7 @@ Classes/UI.lua
 Classes/DB.lua
 Classes/Settings.lua
 Classes/Importer.lua
+Classes/SoftReserves.lua
 Classes/Exporter.lua
 Classes/Auction.lua
 Classes/Bidder.lua

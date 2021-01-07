@@ -36,11 +36,13 @@ function DB:_init()
     -- Prepare our database tables
     GargulDB.Characters = GargulDB.Characters or {};
     GargulDB.LootHistory = GargulDB.LootHistory or {};
+    GargulDB.SoftReserves = GargulDB.SoftReserves or {};
     GargulDB.Settings = GargulDB.Settings or {};
 
     -- Provide a shortcut for each table
     self.Characters = GargulDB.Characters;
     self.LootHistory = GargulDB.LootHistory;
+    self.SoftReserves = GargulDB.SoftReserves;
     self.Settings = GargulDB.Settings;
 
     -- Fire DB:store before every logout/reload/exit
@@ -59,6 +61,7 @@ function DB:store()
 
     GargulDB.Characters = App.DB.Characters;
     GargulDB.LootHistory = App.DB.LootHistory;
+    GargulDB.SoftReserves = App.DB.SoftReserves;
     GargulDB.Settings = App.Settings.Active;
 end
 
