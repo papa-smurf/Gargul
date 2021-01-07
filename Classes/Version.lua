@@ -116,7 +116,7 @@ function Version:inspectGroup()
         return App:error("You're not in a group");
     end
 
-    App:message("Checking raid member addon versions...");
+    App:message("Checking group member addon versions...");
 
     self.GroupMembers = {}; -- Reset the self.GroupMembers object
     local numberOfGroupMembers = 0;

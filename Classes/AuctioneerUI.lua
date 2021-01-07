@@ -151,7 +151,7 @@ function AuctioneerUI:draw(itemLink)
                     FirstRow:AddChild(ButtonPadder);
 
                     --[[
-                        START/PAUSE BUTTON
+                        START/STOP BUTTON
                     ]]
 
                     local StartButton = AceGUI:Create("Button");
