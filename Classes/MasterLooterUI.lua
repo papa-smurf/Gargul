@@ -34,11 +34,22 @@ MasterLooterUI.PlayersTable = {};
 function MasterLooterUI:draw(itemLink)
     App:debug("MasterLooterUI:draw");
 
-    local isValidItem, itemId, itemName, itemLink = App:getItemInfoFromLink(itemLink);
+    local updateItemInfo = function()
+        local isValidItem, itemId, itemName, itemLink = App:getItemInfoFromLink(itemLink);
+
+        if (isValidItem) then
+            self.Widgets.EditBoxes.Item:SetText(itemLink);
+        end
+
+        MasterLooterUI:updateItemIcon();
+        MasterLooterUI:updateItemPriority();
+        MasterLooterUI:updateWidgets();
+    end;
 
     if (self.Widgets.Frame
         and self.Widgets.Frame.rendered
     ) then
+        updateItemInfo();
         return self.Widgets.Frame:Show();
     end
 
@@ -97,19 +108,10 @@ function MasterLooterUI:draw(itemLink)
                     ]]
                     local ItemBox = AceGUI:Create("EditBox");
 
-                    local updateItemInfo = function()
-                        MasterLooterUI:updateItemIcon();
-                        MasterLooterUI:updateItemPriority();
-                        MasterLooterUI:updateWidgets();
-
-                        if (isValidItem) then
-                            ItemBox:SetText(itemLink);
-                        end
-                    end;
-
                     ItemBox:DisableButton(true);
                     ItemBox:SetHeight(20);
                     ItemBox:SetWidth(170);
+                    ItemBox:SetText(itemLink);
                     ItemBox:SetCallback("OnTextChanged", updateItemInfo); -- Update item info when input value changes
                     ItemBox:SetCallback("OnEnterPressed", updateItemInfo); -- Update item info when item is dragged on top (makes no sense to use OnEnterPressed I know)
 
@@ -315,11 +317,7 @@ function MasterLooterUI:draw(itemLink)
 
             self:drawPlayersTable(RollOffFrame.frame);
 
-    if (isValidItem) then
-        MasterLooterUI:updateItemIcon();
-        MasterLooterUI:updateItemPriority();
-        MasterLooterUI:updateWidgets();
-    end;
+    updateItemInfo();
 end
 
 function MasterLooterUI:drawPlayersTable(parent)
