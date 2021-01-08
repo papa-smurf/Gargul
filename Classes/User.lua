@@ -12,6 +12,18 @@ function User:_init()
     self.name, self.realm = UnitName("player");
     self.id = UnitGUID("player");
     User:refresh();
+
+    -- Fire App.bootstrap every time an addon is loaded
+    self.eventFrame = CreateFrame("FRAME");
+    self.eventFrame:RegisterEvent("PARTY_LOOT_METHOD_CHANGED");
+    self.eventFrame:RegisterEvent("GROUP_ROSTER_UPDATE");
+    self.eventFrame:SetScript("OnEvent", self.lootMethodChanged);
+end
+
+-- Refresh the User's details after the group
+-- composition or loot method changes
+function User:lootMethodChanged(_, event)
+    User:refresh();
 end
 
 -- Initialize the user's details, keep in
@@ -25,8 +37,23 @@ function User:refresh()
     self.Guild = {};
     self.Guild.name, self.Guild.rank, self.Guild.index = GetGuildInfo("player");
     self.isOfficer = CanEditOfficerNote();
-    self.isMasterLooter = self.id == select(2, GetLootMethod());
+    self.isMasterLooter = 0 == select(2, GetLootMethod());
     self.isInRaid = IsInRaid();
+    self.raidIndex = nil;
+
+    if (self.isInRaid) then
+        for index = 1, MAX_RAID_MEMBERS do
+            local name = GetRaidRosterInfo(index);
+
+            if (name == self.name) then
+                self.raidIndex = index;
+                break;
+            end
+        end
+
+        self.isMasterLooter = self.raidIndex == select(3, GetLootMethod());
+    end
+
     self.isInParty = IsInGroup() and not self.isInRaid;
     self.isInGroup = self.isInRaid or self.isInParty;
 
