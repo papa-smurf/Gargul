@@ -61,7 +61,7 @@ function RollOff:announceStart(item, time)
     local reserves = App.SoftReserves:getSoftReservesByItemLink(item);
 
     if (reserves) then
-        reserves = App:strConcat(reserves, ", ");
+        reserves = table.concat(reserves, ", ");
         reserveMessage = "This item has been reserved by: " .. reserves;
     end
 
