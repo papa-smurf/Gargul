@@ -35,6 +35,7 @@ Classes/RollOff.lua
 Classes/MasterLooterUI.lua
 Classes/Commands.lua
 Classes/LootPriority.lua
+Classes/DroppedLoot.lua
 Classes/Version.lua
 Classes/User.lua
 Classes/Player.lua

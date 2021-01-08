@@ -6,23 +6,24 @@ App.Ace = LibStub("AceAddon-3.0"):NewAddon("Gargul", "AceConsole-3.0", "AceComm-
 
 App.name = appName;
 App.version = "2.0.0";
-App.debugEnabled = false;
+App.debugEnabled = true;
 
 App._initialized = false;
+App.clientUIinterface = 0;
+App.clientVersion = 0;
+App.isClassic = false;
 App.DebugLines = {};
 
 -- Bootstrap the addon
-App.bootstrap = function(...)
-    -- The addon was already bootstrapped
+App.bootstrap = function(self, event, addonName)
+
+    -- The addon was already bootstrapped or this is not the correct event
     if (App._initialized) then
         return;
     end
 
-    -- The loaded addon name is in the third position
-    local addonName = select(3, ...);
-
     -- We only want to continue bootstrapping
-    -- when this addon is succesfully loaded
+    -- when it's this addon that's succesfully loaded
     if (addonName ~= App.name) then
         return;
     end
@@ -30,8 +31,8 @@ App.bootstrap = function(...)
     App:debug("App:bootstrap");
 
     -- The addon was loaded, we no longer need the event listener now
-    App.bootstrapEvents:UnregisterEvent("ADDON_LOADED");
-    App.bootstrapEvents = nil;
+    App.eventFrame:UnregisterEvent("ADDON_LOADED");
+    App.eventFrame = nil;
 
     -- Show a welcome message
     local successfullyLoadedMessage = "Sucessfully loaded (v" .. App.version .. ")";
@@ -46,12 +47,25 @@ end
 function App:_init()
     App:debug("App:_init");
 
+    do
+        local version, _, _, uiVersion = GetBuildInfo()
+
+        App.clientUIinterface = uiVersion
+        local expansion,majorPatch,minorPatch = (version or "3.0.0"):match("^(%d+)%.(%d+)%.(%d+)")
+        App.clientVersion = (expansion or 0) * 10000 + (majorPatch or 0) * 100 + (minorPatch or 0)
+    end
+
+    if App.clientVersion < 30000 then
+        App.isClassic = true
+    end
+
     App.DB:_init();
     App.Settings:_init()
     App.Comm:_init();
     App.User:_init();
     App.LootPriority:_init();
     App.SoftReserves:_init();
+    App.DroppedLoot:_init();
 end
 
 function App.Ace:OnInitialize()
@@ -66,6 +80,6 @@ App.Ace:RegisterChatCommand("gl", function (...)
 end)
 
 -- Fire App.bootstrap every time an addon is loaded
-App.bootstrapEvents = CreateFrame("FRAME");
-App.bootstrapEvents:RegisterEvent("ADDON_LOADED");
-App.bootstrapEvents:SetScript("OnEvent", App.bootstrap);
+App.eventFrame = CreateFrame("FRAME");
+App.eventFrame:RegisterEvent("ADDON_LOADED");
+App.eventFrame:SetScript("OnEvent", App.bootstrap);
