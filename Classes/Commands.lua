@@ -10,7 +10,7 @@ function Commands:help ()
     App:message("/gl - Shows the dashboard");
     App:message("/gl version or /gl ve - Checks the addon version of everyone in the raid");
     App:message("/gl stacktrace or /gl st - Displays a list of this session's debug lines");
-    App:message("/gl rolloff or /gl ro - Displays the master looter window for rolling off items");
+    App:message("/gl rolloff or /gl roll or /gl ro - Displays the master looter window for rolling off items");
     App:message("/gl softreserves or /gl so - Opens the soft reserves window (master looter only)");
     App:message("/gl auction  or /gl au - Opens the auctioneer window for master looting purposes (officer only)");
     App:message("/gl bid or /gl bi - Reopens the bid window if you closed it");
@@ -38,8 +38,9 @@ Commands.softreserves = function() App.SoftReserves:draw(); end
 Commands.so = Commands.softreserves;
 
 -- Open the window for rolling off items
-Commands.rolloff = function() App.MasterLooterUI:draw(); end
-Commands.ro = Commands.rolloff;
+Commands.rolloff = function(...) App.MasterLooterUI:draw(...); end
+Commands.roll = Commands.rolloff;
+Commands.ro = Commands.roll;
 
 Commands.bid = function() App.BidderUI:reopen(); end
 Commands.bi = Commands.bid;
@@ -89,8 +90,7 @@ function Commands:_dispatch (str)
     -- link as an argument a little differently, since
     -- item links may include spaces and shoult NOT be split
     if (command and itemLink) then
-        path[command](itemLink);
-        return;
+         return pcall(function () return path[command](itemLink); end);
     end
 
     if (str == "_dispatch") then
