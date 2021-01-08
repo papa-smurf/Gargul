@@ -6,6 +6,18 @@ App.SoftReserves = {};
 local SoftReserves = App.SoftReserves;
 local AceGUI = App.Ace.GUI;
 
+-- Add a award confirmation dialog to Blizzard's global StaticPopupDialogs object
+StaticPopupDialogs["CLEAR_SOFTRESERVES_CONFIRMATION"] = {
+    text = "Are you sure you want to clear everything?",
+    button1 = "Yes",
+    button2 = "No",
+    OnAccept = {},
+    timeout = 0,
+    whileDead = true,
+    hideOnEscape = true,
+    preferredIndex = 3,
+}
+
 function SoftReserves:_init()
     if (self._initialized) then
         return;
@@ -31,6 +43,10 @@ end
 
 -- Fetch an item's soft reserves based on its item link
 function SoftReserves:getSoftReservesByItemLink(itemLink)
+    if (not itemLink) then
+        return;
+    end
+
     return self:getSoftReservesByItemId(App:getItemIdFromLink(itemLink));
 end
 
@@ -66,7 +82,7 @@ function SoftReserves:appendSoftReserveInfoToTooltip(tooltip)
         return;
     end
 
-    reserves = App:strConcat(reserves, ", ");
+    reserves = table.concat(reserves, ", ");
 
     -- Add the header
     tooltip:AddLine(string.format("\n|c00efb8cd%s", "Soft Reserves"));
@@ -80,7 +96,7 @@ function SoftReserves:draw()
 
     -- Create a container/parent frame
     local SoftReservesFrame = AceGUI:Create("Frame");
-    SoftReservesFrame:SetCallback("OnClose", function(widget) AceGUI:Release(widget) end);
+--    SoftReservesFrame:SetCallback("OnClose", function(widget) AceGUI:Release(widget) end);
     SoftReservesFrame:SetTitle("Gargul v" .. App.version);
     SoftReservesFrame:SetStatusText("Addon v" .. App.version);
     SoftReservesFrame:SetLayout("Flow");
@@ -94,7 +110,7 @@ function SoftReserves:draw()
     SoftReservesBox:SetFullWidth(true);
     SoftReservesBox:DisableButton(true);
     SoftReservesBox:SetFocus();
-    SoftReservesBox:SetLabel([[Paste the softres.it CSV here, then click the 'Import' button. Use 'Broadcast' to share with your group]]);
+    SoftReservesBox:SetLabel("Paste the softres.it CSV here, then click the 'Import' button. Use 'Broadcast' to share with your group");
     SoftReservesBox:SetNumLines(22);
     SoftReservesBox:SetMaxLetters(999999999);
     SoftReservesFrame:AddChild(SoftReservesBox);
@@ -134,9 +150,15 @@ function SoftReserves:draw()
     ClearButton:SetText("Clear");
     ClearButton:SetWidth(140);
     ClearButton:SetCallback("OnClick", function()
-        SoftReservesBox:SetText("");
+        StaticPopupDialogs["CLEAR_SOFTRESERVES_CONFIRMATION"].OnAccept = function ()
+            SoftReservesBox:SetText("");
+        end
+
+        StaticPopup_Show("CLEAR_SOFTRESERVES_CONFIRMATION");
     end);
     FooterFrame:AddChild(ClearButton);
+
+    SoftReserves:updateBroadCastButton(BroadCastButton);
 end
 
 function SoftReserves:import(data, sender)
@@ -181,6 +203,15 @@ function SoftReserves:import(data, sender)
 
     App:success("Import successful");
     return true;
+end
+
+-- Check if the broadcast button should be available
+function SoftReserves:updateBroadCastButton(BroadCastButton)
+    if (not App.User.isMasterLooter) then
+        return BroadCastButton:SetDisabled(true);
+    end
+
+    return BroadCastButton:SetDisabled(false);
 end
 
 App:debug("SoftReserves.lua");
