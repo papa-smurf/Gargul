@@ -18,14 +18,12 @@ function Sync:broadcast()
     App:debug("Sync:broadcast");
 
     if (self.broadcastInProgress) then
-        App:error("Broadcast still in progress");
-        return;
+        return App:error("Broadcast still in progress");
     end
 
     -- Only officers are allowed to broadcast!
     if (not App.User.isOfficer) then
-        App:warning("Only officers are allowed to use this feature");
-        return;
+        return App:warning("Only officers are allowed to use this feature");
     end
 
     App:success("Broadcast started");
