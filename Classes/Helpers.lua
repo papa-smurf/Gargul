@@ -256,28 +256,6 @@ function App:uuid()
     end)
 end
 
--- Pattern generator
--- Useful for transforming wow api constants
--- to patterns suitable for string matching etc
-function App:createPattern(pattern, maximize)
-    pattern = string.gsub(pattern, "[%(%)%-%+%[%]]", "%%%1");
-
-    if not maximize then
-        pattern = string.gsub(pattern, "%%s", "(.-)");
-    else
-        pattern = string.gsub(pattern, "%%s", "(.+)");
-    end
-
-    pattern = string.gsub(pattern, "%%d", "%(%%d-%)");
-    if not maximize then
-        pattern = string.gsub(pattern, "%%%d%$s", "(.-)")
-    else
-        pattern = string.gsub(pattern, "%%%d%$s", "(.+)")
-    end
-
-    return string.gsub(pattern, "%%%d$d", "%(%%d-%)");
-end
-
 function App:tableMerge(left, right)
     for key,value in pairs(right) do
         if (type(value) == "table") then
