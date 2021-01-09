@@ -88,20 +88,21 @@ App.Data.Constants = {
     --[[
         COMM
     ]]
-    commChannel = "GargulComm",
+    commChannel = "GargulComm2",
     CommActions = {
-        response = "Comm.Response",
-        broadcastCharacters = "Sync.Characters",
-        broadcastLootHistory = "Sync.LootHistory",
-        startAuction = "Auction.Start",
-        stopAuction = "Auction.Stop",
         auctionResult = "Auction.Result",
         bid = "Bidder.Bid",
+        broadcastCharacters = "Sync.Characters",
+        broadcastLootHistory = "Sync.LootHistory",
+        broadcastSoftReserves = "SoftReservers.Broadcast",
+        inspectBags = "BagInspector.inspect",
+        response = "Comm.Response",
         retractBid = "Bidder.RetractBid",
         requestAppVersion = "Version.requestAppVersion",
+        startAuction = "Auction.Start",
         startRollOff = "RollOff.Start",
+        stopAuction = "Auction.Stop",
         stopRollOff = "RollOff.Stop",
-        broadcastSoftReserves = "SoftReservers.Broadcast",
     },
 
     --[[
