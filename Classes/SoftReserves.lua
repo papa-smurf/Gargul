@@ -1,10 +1,13 @@
 local _, App = ...;
 
 App.Ace.GUI = App.Ace.GUI or LibStub("AceGUI-3.0");
-App.SoftReserves = {};
+App.SoftReserves = {
+    broadcastInProgress = false,
+};
 
 local SoftReserves = App.SoftReserves;
 local AceGUI = App.Ace.GUI;
+local CommActions = App.Data.Constants.CommActions;
 
 -- Add a award confirmation dialog to Blizzard's global StaticPopupDialogs object
 StaticPopupDialogs["CLEAR_SOFTRESERVES_CONFIRMATION"] = {
@@ -140,9 +143,7 @@ function SoftReserves:draw()
     BroadCastButton:SetText("Broadcast");
     BroadCastButton:SetWidth(140);
     BroadCastButton:SetCallback("OnClick", function()
-        if (self:import(softReservesBoxContent)) then
-
-        end
+        SoftReserves:broadcast();
     end);
     FooterFrame:AddChild(BroadCastButton);
 
@@ -212,6 +213,52 @@ function SoftReserves:updateBroadCastButton(BroadCastButton)
     end
 
     return BroadCastButton:SetDisabled(false);
+end
+
+-- Broadcast our soft reserves table to the raid or group
+function SoftReserves:broadcast()
+    App:debug("SoftReserves:broadcast");
+
+    if (SoftReserves.broadcastInProgress) then
+        App:error("Broadcast still in progress");
+        return;
+    end
+
+    SoftReserves.broadcastInProgress = true;
+
+    if (App.User.isInRaid) then
+        App.CommMessage.new(
+            CommActions.broadcastSoftReserves,
+            App.DB.SoftReserves,
+            "RAID"
+        ):send();
+    elseif (App.User.isInParty) then
+        App.CommMessage.new(
+            CommActions.broadcastSoftReserves,
+            App.DB.SoftReserves,
+            "PARTY"
+        ):send();
+    end
+
+    App.Ace:ScheduleTimer(function ()
+        App:success("Broadcast finished");
+        SoftReserves.broadcastInProgress = false;
+    end, 10);
+end
+
+-- Process an incoming soft reserve broadcast
+function SoftReserves:receiveSoftReserves(CommMessage)
+    App:debug("SoftReserves:receiveSoftReserves");
+
+    -- No need to update our tables if we broadcasted them ourselves
+    if (CommMessage.Sender.name == App.User.name) then
+        App:debug("Sync:receiveSoftReserves received by self, skip");
+        return;
+    end
+
+    App.DB.SoftReserves = CommMessage.content;
+
+    App:success("Your Soft Reserves just got updated by " .. CommMessage.Sender.name);
 end
 
 App:debug("SoftReserves.lua");

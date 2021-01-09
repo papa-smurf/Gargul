@@ -101,6 +101,7 @@ App.Data.Constants = {
         requestAppVersion = "Version.requestAppVersion",
         startRollOff = "RollOff.Start",
         stopRollOff = "RollOff.Stop",
+        broadcastSoftReserves = "SoftReservers.Broadcast",
     },
 
     --[[

@@ -128,6 +128,8 @@ function Comm:dispatch(CommMessage)
         return App.RollOff:start(CommMessage);
     elseif (action == CommActions.stopRollOff) then
         return App.RollOff:stop(CommMessage);
+    elseif (action == CommActions.broadcastSoftReserves) then
+        return App.SoftReserves:receiveSoftReserves(CommMessage);
     elseif (action == CommActions.requestAppVersion) then
         if (App.User.name ~= CommMessage.Sender.name) then
             App:debug("Respond to CommActions.requestAppVersion");
