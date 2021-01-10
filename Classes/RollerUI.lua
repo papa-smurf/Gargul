@@ -90,15 +90,6 @@ function RollerUI:draw(time, itemId, itemName, itemLink, itemIcon)
         Settings:set("UI.Roller.Position.offsetY", offsetY);
     end);
 
-    -- Allow the player to close the bid window by
-    -- right-clicking the window (they can reopen using /gl bid)
-    RollerFrame:SetScript("OnMouseDown", function(_, button)
-        if (button == "RightButton") then
-            self:hide();
-            App:message("You can reopen the roll window by typing /gl bid");
-        end
-    end)
-
     self.Widgets.RollerFrameTexture = self.Widgets.RollerFrameTexture or RollerFrame:CreateTexture(nil,"BACKGROUND");
     local Texture = self.Widgets.RollerFrameTexture;
     Texture:SetColorTexture(0, 0, 0, .6);
