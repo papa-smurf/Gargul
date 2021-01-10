@@ -6,7 +6,7 @@ App.Ace = LibStub("AceAddon-3.0"):NewAddon("Gargul", "AceConsole-3.0", "AceComm-
 
 App.name = appName;
 App.version = "2.0.0";
-App.debugEnabled = true;
+App.debugEnabled = false;
 
 App._initialized = false;
 App.clientUIinterface = 0;
