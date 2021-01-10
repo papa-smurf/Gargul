@@ -160,8 +160,6 @@ function AuctioneerUI:draw(itemLink)
                     StartButton:SetHeight(20);
                     StartButton:SetDisabled(true);
                     StartButton:SetCallback("OnClick", function()
-
-
                         App.Auction.inProgress = true;
 
                         App.Auction:announceStart(
