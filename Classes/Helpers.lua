@@ -21,7 +21,7 @@ end
 -- Print a debug message (orange)
 function App:debug(...)
     local message = string.join(" ", ...);
-    App.DebugLines[#App.DebugLines + 1] = message;
+    tinsert(App.DebugLines, message);
 
     if (App.debugEnabled) then
         App:coloredMessage("f7922e", ...);
@@ -225,7 +225,7 @@ function App:strSplit(s, delimiter)
     local result = {};
 
     for match in (s..delimiter):gmatch("(.-)%" .. delimiter) do
-        result[#result + 1] = match;
+        tinsert(result, strtrim(match));
     end
 
     return result;
@@ -290,7 +290,8 @@ function App:tableGet(table, keyString, default)
             or type(keyString) ~= "string"
             or keyString == ""
     ) then
-        return App:warning("Invalid key provided in App:tableGet");
+        App:warning("Invalid key provided in App:tableGet");
+        return default;
     end
 
     local keys = App:strSplit(keyString, ".");
@@ -298,7 +299,8 @@ function App:tableGet(table, keyString, default)
     local firstKey = keys[1];
 
     if (not numberOfKeys or not firstKey) then
-        return App:warning("Invalid key provided in App:tableGet");
+        App:warning("Invalid key provided in App:tableGet");
+        return default;
     end
 
     if (not table[firstKey]) then
