@@ -206,8 +206,8 @@ function BagInspector:displayGroupInspectionResults()
     -- Create a container/parent frame
     local ResultFrame = AceGUI:Create("Frame");
     ResultFrame:SetCallback("OnClose", function(widget)
-        self.Widgets.Tables.InspectionReport:SetData({}, true);
-        self.Widgets.Tables.InspectionReport = nil;
+        BagInspector.Widgets.Tables.InspectionReport:SetData({}, true);
+        BagInspector.Widgets.Tables.InspectionReport = nil;
 
         App.BagInspector.InspectionReport = {
             Items = {},
@@ -356,7 +356,7 @@ function BagInspector:displayGroupInspectionResults()
 
     table.frame:SetPoint("BOTTOM", ResultFrame.frame, "BOTTOM", 0, 50);
 
-    self.Widgets.Tables.InspectionReport = table;
+    BagInspector.Widgets.Tables.InspectionReport = table;
 end
 
 App:debug("BagInspector.lua");
