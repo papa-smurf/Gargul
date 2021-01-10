@@ -5,7 +5,7 @@ local appName, App = ...;
 App.Ace = LibStub("AceAddon-3.0"):NewAddon("Gargul", "AceConsole-3.0", "AceComm-3.0", "AceSerializer-3.0", "AceTimer-3.0");
 
 App.name = appName;
-App.version = "2.0.0";
+App.version = "2.0.1";
 App.debugEnabled = false;
 
 App._initialized = false;
