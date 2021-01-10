@@ -4,7 +4,11 @@ App.Ace.GUI = App.Ace.GUI or LibStub("AceGUI-3.0");
 App.Ace.ScrollingTable = App.Ace.ScrollingTable or LibStub("ScrollingTable");
 
 App.BagInspector = {
-    InspectionReport = {},
+    InspectionReport = {
+        Items = {},
+        Reports = {},
+        NumberOfItemsInspected = 0,
+    },
     inspectionInProgress = false,
 };
 
@@ -55,6 +59,7 @@ function BagInspector:inspect(items, player)
 
     -- Send the inspection request to the correct channel
     local CommMessage = {};
+    App:success("Starting inspection...");
     if (player) then
         CommMessage = App.CommMessage.new(
             CommActions.inspectBags,
@@ -129,7 +134,7 @@ function BagInspector:processInspectionResults(CommMessage)
             ) then
                 responseWasValid = true;
                 ItemIds[itemId] = true;
-                App:tableSet(BagInspector.InspectionReport, senderName .. "." .. itemId, amount);
+                App:tableSet(BagInspector.InspectionReport.Reports, senderName .. "." .. itemId, amount);
             end
         end
 
@@ -164,9 +169,15 @@ function BagInspector:processInspectionResults(CommMessage)
 
         item:ContinueOnItemLoad(function()
             itemsLoaded = itemsLoaded + 1;
-            ItemLinksById[itemId] = item:GetItemLink();
+            tinsert(BagInspector.InspectionReport.Items, {
+                id = itemId,
+                name = item:GetItemName(),
+                link = item:GetItemLink(),
+                icon = item:GetItemIcon(),
+            });
 
             if (itemsLoaded >= numberOfItems) then
+                BagInspector.InspectionReport.NumberOfItemsInspected = itemsLoaded;
                 displayInspectionReport();
             end
         end)
@@ -175,7 +186,7 @@ end
 
 -- Display the report results from a personal bag inspection
 function BagInspector:displayPlayerInspectionResults(playerName, ItemLinksById)
-    for itemId, amount in pairs(BagInspector.InspectionReport[playerName]) do
+    for itemId, amount in pairs(BagInspector.InspectionReport.Report[playerName]) do
         itemId = tonumber(itemId);
 
         local message = string.format("%s has %sx %s",
@@ -189,41 +200,22 @@ function BagInspector:displayPlayerInspectionResults(playerName, ItemLinksById)
 end
 
 -- Display the report results from a group-wide bag inspection
-function BagInspector:displayGroupInspectionResults(ItemIds, ItemLinksById)
+function BagInspector:displayGroupInspectionResults()
     local Report = {};
-
-    for player, report in pairs(BagInspector.InspectionReport) do
-        local amountString = "";
-        local firstItem = true;
-
-        for itemId in pairs(ItemIds) do
-            itemId = tostring(itemId);
-            local amount = report[itemId];
-
-            if (not amount
-                    or amount < 0
-            ) then
-                amount = "0";
-            end
-
-            amount = tostring(amount);
-
-            if (firstItem) then
-                firstItem = false;
-                amountString = amount;
-            else
-                amountString = amountString .. ", " .. amount;
-            end
-        end
-
-        tinsert(Report, {player, amountString});
-    end
 
     -- Create a container/parent frame
     local ResultFrame = AceGUI:Create("Frame");
     ResultFrame:SetCallback("OnClose", function(widget)
         self.Widgets.Tables.InspectionReport:SetData({}, true);
         self.Widgets.Tables.InspectionReport = nil;
+
+        App.BagInspector.InspectionReport = {
+            Items = {},
+            Reports = {},
+            NumberOfItemsInspected = 0,
+        };
+        App.BagInspector.inspectionInProgress = false;
+
         AceGUI:Release(widget);
     end);
     ResultFrame:SetTitle("Gargul v" .. App.version);
@@ -233,29 +225,63 @@ function BagInspector:displayGroupInspectionResults(ItemIds, ItemLinksById)
     ResultFrame:SetHeight(450);
     ResultFrame.statustext:GetParent():Hide(); -- Hide the statustext bar
 
-    local firstItemLink = true;
-    local itemLinkString = "      ";
-    for _, itemLink in pairs(ItemLinksById) do
-        if (firstItemLink) then
-            itemLinkString = itemLinkString .. itemLink;
-            firstItemLink = false;
+    local FirstRow = AceGUI:Create("SimpleGroup");
+    FirstRow:SetLayout("Flow");
+    FirstRow:SetFullWidth(true);
+    FirstRow:SetHeight(30);
+    ResultFrame:AddChild(FirstRow);
+
+    local ItemIcons = {};
+    local ItemSpacers = {};
+    for index = 1, 8 do
+        ItemSpacers[index] = AceGUI:Create("SimpleGroup");
+        local ItemSpacer = ItemSpacers[index];
+        ItemSpacer:SetHeight(30);
+        ItemSpacer:SetLayout("Fill");
+
+        if (index == 1) then
+            ItemSpacer:SetWidth(130);
         else
-            itemLinkString = itemLinkString .. ", " .. itemLink;
+            ItemSpacer:SetWidth(20);
         end
+
+        FirstRow:AddChild(ItemSpacer);
+
+        local Item = BagInspector.InspectionReport.Items[index];
+
+        local ItemIconHolder = AceGUI:Create("SimpleGroup");
+        ItemIconHolder:SetHeight(30);
+        ItemIconHolder:SetWidth(30);
+        FirstRow:AddChild(ItemIconHolder);
+
+        ItemIcons[index] = AceGUI:Create("Icon");
+        local ItemIcon = ItemIcons[index];
+        ItemIcon:SetWidth(30);
+        ItemIcon:SetHeight(30);
+
+        if (Item and Item.id > 0) then
+            ItemIcon:SetImage(Item.icon);
+            ItemIcon:SetImageSize(30, 30);
+
+            -- Show a gametooltip if the icon shown belongs to an item
+            ItemIcon:SetCallback("OnEnter", function()
+                GameTooltip:SetOwner(ItemIcon.frame, "ANCHOR_TOP");
+                GameTooltip:SetHyperlink(Item.link);
+                GameTooltip:Show();
+            end)
+
+            ItemIcon:SetCallback("OnLeave", function()
+                GameTooltip:Hide();
+            end)
+        end
+
+        ItemIconHolder:AddChild(ItemIcon);
     end
 
-    local ItemsLabel = AceGUI:Create("Label");
-    ItemsLabel:SetText(itemLinkString);
-    ItemsLabel:SetColor(.94, .72, .8);
-    ItemsLabel:SetHeight(20);
-    ItemsLabel:SetWidth(600);
-    ResultFrame:AddChild(ItemsLabel);
-    self.Widgets.Labels.Items = ItemsLabel;
-
-    local columns = {
+    local Columns = {
         {
             name = "Player",
-            width = 170,
+            width = 100,
             align = "LEFT",
             color = {
                 r = 0.5,
@@ -266,10 +292,19 @@ function BagInspector:displayGroupInspectionResults(ItemIds, ItemLinksById)
             colorargs = nil,
             sort = App.Data.Constants.ScrollingTable.ascending,
         },
-        {
-            name = "Item count",
-            width = 330,
-            align = "LEFT",
+    };
+
+    for index = 1, 8 do
+        local name = "Amount";
+
+        if (index > BagInspector.InspectionReport.NumberOfItemsInspected) then
+            name = "";
+        end
+
+        tinsert(Columns, {
+            name = name,
+            width = 50,
+            align = "CENTER",
             color = {
                 r = 0.5,
                 g = 0.5,
@@ -277,12 +312,48 @@ function BagInspector:displayGroupInspectionResults(ItemIds, ItemLinksById)
                 a = 1.0
             },
             colorargs = nil,
-        },
-    };
+        });
+    end
 
-    local table = ScrollingTable:CreateST(columns, 20, 15, nil, ResultFrame.frame);
+    -- Loop through all members of the group (party or raid)
+    local PlayerData = {};
+    local ClassColors = App.Data.Constants.ClassRgbColors;
+    for index = 1, MAX_RAID_MEMBERS do
+        local name, _, _, _, class = GetRaidRosterInfo(index);
+        local Row = {};
+
+        if (name and BagInspector.InspectionReport.Reports[name]) then
+            Row = {
+                cols = {
+                    {
+                        value = name,
+                        color = ClassColors[string.lower(class)],
+                    },
+                },
+            };
+
+            for index = 1, 8 do
+                local Item = BagInspector.InspectionReport.Items[index];
+
+                if (Item and Item.id) then
+                    local itemIdString = tostring(Item.id);
+                    local amount = BagInspector.InspectionReport.Reports[name][itemIdString];
+
+                    tinsert(Row.cols, {
+                        value = amount,
+                        color = ClassColors[string.lower(class)],
+                    });
+                end
+            end
+
+            tinsert(PlayerData, Row);
+        end
+    end
+
+    local table = ScrollingTable:CreateST(Columns, 20, 15, nil, ResultFrame.frame);
     table:EnableSelection(true);
-    table:SetData(Report, true);
+    table:SetData(PlayerData);
+
     table.frame:SetPoint("BOTTOM", ResultFrame.frame, "BOTTOM", 0, 50);
 
     self.Widgets.Tables.InspectionReport = table;
