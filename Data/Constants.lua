@@ -34,6 +34,18 @@ App.Data.Constants = {
         warrior = 9,
     },
 
+    ClassRgbColors = {
+        druid = {r = 1, g = .48627, b = .0392, a = 1},
+        hunter = {r = .6666, g = .827450, b = .44705, a = 1},
+        mage = {r = .4078, g = .8, b = .93725, a = 1},
+        paladin = {r = .95686, g = .5490, b = .72941, a = 1},
+        priest = {r = 1, g = 1, b = 1, a = 1},
+        rogue = {r = 1, g = .95686, b = .40784, a = 1},
+        shaman = {r = .95686, g = .5490, b = .72941, a = 1},
+        warlock = {r = .57647, g = .5098, b = .788235, a = 1},
+        warrior = {r = .77647, g = .607843, b = .42745, a = 1},
+    },
+
     --[[
         DEFAULT SETTINGS
     ]]
