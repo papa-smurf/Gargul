@@ -106,6 +106,32 @@ function App:stacktrace()
     return self:frameMessage(debugLines);
 end
 
+-- Check if a player with a given player name is
+-- in the same group as the current App.User
+function App:playerIsInSameGroup(playerName)
+    if (not playerName
+        or not App.User.isInGroup
+        or type(playerName) ~= "string"
+        or playerName == ""
+    ) then
+        return false
+    end
+
+    -- Loop through all members of the group (party or raid)
+    for index = 1, MAX_RAID_MEMBERS do
+        local name, _, _, _, _, _,
+        _, online = GetRaidRosterInfo(index);
+
+        if (name and online) then
+            if (name == playerName) then
+                return true;
+            end
+        end
+    end
+
+    return false;
+end
+
 -- Print large quantities of text to a multiline editbox
 -- Very useful for debugging purposes, should not be used for anything else
 function App:frameMessage(message)
