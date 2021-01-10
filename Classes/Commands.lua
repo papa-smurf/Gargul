@@ -9,6 +9,7 @@ function Commands:help ()
     App:message("Commands:")
     App:message("/gl - Shows the dashboard");
     App:message("/gl version or /gl ve - Checks the addon version of everyone in the raid");
+    App:message("/gl inspect or /gl ins - Check the groups bags for passed item ids");
     App:message("/gl stacktrace or /gl st - Displays a list of this session's debug lines");
     App:message("/gl rolloff or /gl roll or /gl ro - Displays the master looter window for rolling off items");
     App:message("/gl softreserves or /gl so - Opens the soft reserves window (master looter only)");
@@ -68,6 +69,10 @@ Commands.br = Commands.broadcast;
 -- Check if everyone is running the most up-to-date version
 Commands.version = function() App.Version:inspectGroup(); end
 Commands.ve = Commands.version;
+
+-- Check if everyone is running the most up-to-date version
+Commands.inspect = function(...) App.BagInspector:inspect(...); end
+Commands.ins = Commands.inspect;
 
 -- This method dispatches all slash commands to their final destination
 function Commands:_dispatch (str)

@@ -37,6 +37,7 @@ Classes/Commands.lua
 Classes/LootPriority.lua
 Classes/DroppedLoot.lua
 Classes/Version.lua
+Classes/BagInspector.lua
 Classes/User.lua
 Classes/Player.lua
 Classes/Comm.lua

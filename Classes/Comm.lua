@@ -130,6 +130,8 @@ function Comm:dispatch(CommMessage)
         return App.RollOff:stop(CommMessage);
     elseif (action == CommActions.broadcastSoftReserves) then
         return App.SoftReserves:receiveSoftReserves(CommMessage);
+    elseif (action == CommActions.inspectBags) then
+        return App.BagInspector:report(CommMessage);
     elseif (action == CommActions.requestAppVersion) then
         if (App.User.name ~= CommMessage.Sender.name) then
             App:debug("Respond to CommActions.requestAppVersion");
