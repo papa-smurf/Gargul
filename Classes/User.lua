@@ -15,6 +15,7 @@ App.User = {
     isInParty = false,
     isInGroup = false,
     Dkp = {},
+    GroupMembers = {},
     raidsAttended = 0,
 };
 
@@ -57,7 +58,7 @@ function User:refresh()
 
     if (self.isInRaid) then
         for index = 1, MAX_RAID_MEMBERS do
-            local name, _, _, _, _, _, _, _, _, _, isMasterLooter = GetRaidRosterInfo(raidIndex);
+            local name, _, _, _, _, _, _, _, _, _, isMasterLooter = GetRaidRosterInfo(index);
 
             if (name == self.name) then
                 self.raidIndex = index;
@@ -71,9 +72,9 @@ function User:refresh()
     self.isInGroup = self.isInRaid or self.isInParty;
 
     if (self.isInGroup) then
-        self.GroupMembers = User:groupMembers();
+        self.GroupMembers = User:listGroupMembers();
     else
-        self.groupMembers = {};
+        self.GroupMembers = {};
     end
 
     self.Dkp = {
@@ -86,7 +87,7 @@ end
 
 -- Get all of the people who are
 -- in the same party/raid as the current user
-function User:groupMembers()
+function User:listGroupMembers()
     local Roster = {};
     for index = 1, MAX_RAID_MEMBERS do
         local name, rank, subgroup, level, class, fileName, _, _, _, role, isML = GetRaidRosterInfo(index);
