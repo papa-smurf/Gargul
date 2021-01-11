@@ -49,18 +49,6 @@ function RollerUI:draw(time, itemId, itemName, itemLink, itemIcon)
     local itemIsReserved = App.SoftReserves:getSoftReservesByItemId(itemId);
     local itemIsReservedByUser = itemIsReserved and App.SoftReserves:itemIdIsReservedByPlayer(itemId, App.User.name);
 
-    if (itemIsReserved) then
-        itemIsReserved = "YES";
-    else
-        itemIsReserved = "NO";
-    end
-
-    if (itemIsReservedByUser) then
-        itemIsReservedByUser = "YES";
-    else
-        itemIsReservedByUser = "NO";
-    end
-
     self.Widgets.RollerFrame = self.Widgets.RollerFrame or UI:createFrame("Frame", "RollerFrame", UIParent);
     local RollerFrame = self.Widgets.RollerFrame;
     RollerFrame:Show();
@@ -104,13 +92,24 @@ function RollerUI:draw(time, itemId, itemName, itemLink, itemIcon)
     RollLabel:SetPoint("TOPLEFT", RollerFrame, "TOPLEFT", 5, -2);
     RollLabel:SetPoint("BOTTOMRIGHT", RollerFrame, "BOTTOMRIGHT", -7);
 
+    local labelText = "";
+    if (itemIsReserved) then
+        local reservedByUserString = "NO";
+
+        if (itemIsReservedByUser) then
+            reservedByUserString = "YES";
+        end
+
+        labelText = string.format("SOFT RESERVED: |c00efb8cdYES|r     BY YOU: |c00efb8cd%s|r", reservedByUserString)
+    else
+        labelText = "SOFT RESERVED BY ANYONE: |c00efb8cdNO|r";
+    end
+
     self.Widgets.RollLabelText = self.Widgets.RollLabelText or RollLabel:CreateFontString(nil, "ARTWORK");
     RollLabel.text = self.Widgets.RollLabelText;
     RollLabel.text:SetFont("Fonts\\ARIALN.ttf", 11, "OUTLINE");
     RollLabel.text:SetPoint("TOPLEFT", RollLabel, "TOPLEFT", 0, -4);
-    RollLabel.text:SetText(
-        string.format("SOFT RESERVED: |c00efb8cd%s|r     BY YOU: |c00efb8cd%s|r", itemIsReserved, itemIsReservedByUser)
-    );
+    RollLabel.text:SetText(labelText);
 
     -- Bid/Roll/Cancel button
     self.Widgets.RollButton = self.Widgets.RollButton or UI:createFrame("Button", "GialUI_Buttons_StartBidding", RollerFrame, "GameMenuButtonTemplate");
