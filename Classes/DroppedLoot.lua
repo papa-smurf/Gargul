@@ -26,18 +26,26 @@ end
 function DroppedLoot:announce()
     App:debug("DroppedLoot:announce");
 
-    -- Only announce loot if the current
-    -- user is the master looter
-    if (not (App.User.isMasterLooter)
+    -- Only announce loot if the current user
+    -- is in a group and is the master looter
+    if (not App.User.isInGroup
+        or not (App.User.isMasterLooter)
     ) then
         return;
+    end
+
+    local playersInRaids = {};
+    -- Fetch the name of everyone currently in the raid/party
+    for _, player in pairs(App.User.GroupMembers) do
+        tinsert(playersInRaids, player.name);
     end
 
     -- Get the total number of item that dropped
     local itemCount = GetNumLootItems();
     for lootIndex = 1, itemCount do
         local itemLink = GetLootSlotLink(lootIndex);
-        local SoftReserves = App.SoftReserves:getSoftReservesByItemLink(itemLink);
+        local softReserves = App.SoftReserves:getSoftReservesByItemLink(itemLink);
+
         local quality = select(5, GetLootSlotInfo(lootIndex));
         local sourceGUID = GetLootSourceInfo(lootIndex);
 
@@ -45,9 +53,19 @@ function DroppedLoot:announce()
             and not DroppedLoot.Announced[sourceGUID]
             and (
                 (quality and quality >= 4)
-                or SoftReserves
+                or softReserves
             )
         ) then
+            local activeReserves = {};
+
+            -- Make sure we only show shoft reserves of people
+            -- Who are actually in the raid
+            for _, player in pairs(softReserves) do
+                if (App:inArray(playersInRaids, player)) then
+                    tinsert(activeReserves, player);
+                end
+            end
+
             if (App.User.isInRaid) then
                 SendChatMessage(
                     itemLink,
@@ -55,9 +73,9 @@ function DroppedLoot:announce()
                     "COMMON"
                 );
 
-                if (SoftReserves) then
+                if (activeReserves) then
                     SendChatMessage(
-                        "Reserved by: " .. table.concat(SoftReserves, ", "),
+                        "Reserved by: " .. table.concat(activeReserves, ", "),
                         "RAID",
                         "COMMON"
                     );
@@ -69,9 +87,9 @@ function DroppedLoot:announce()
                     "COMMON"
                 );
 
-                if (SoftReserves) then
+                if (activeReserves) then
                     SendChatMessage(
-                        "Reserved by: " .. table.concat(SoftReserves, ", "),
+                        "Reserved by: " .. table.concat(activeReserves, ", "),
                         "PARTY",
                         "COMMON"
                     );
