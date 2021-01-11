@@ -71,6 +71,12 @@ function SoftReserves:appendSoftReserveInfoToTooltip(tooltip)
         return;
     end
 
+    -- If we're not in a group there's no
+    -- point in showing softreserves!
+    if (not App.User.isInGroup) then
+        return;
+    end
+
     local itemName, itemLink = tooltip:GetItem();
 
     -- We couldn't find an itemName or link (this can actually happen!)
@@ -85,7 +91,22 @@ function SoftReserves:appendSoftReserveInfoToTooltip(tooltip)
         return;
     end
 
-    reserves = table.concat(reserves, ", ");
+    local activeReserves = {};
+    local playersInRaids = {};
+    -- Fetch the name of everyone currently in the raid/party
+    for _, player in pairs(App.User.GroupMembers) do
+        tinsert(playersInRaids, player.name);
+    end
+
+    -- Make sure we only show shoft reserves of people
+    -- Who are actually in the raid
+    for _, player in pairs(reserves) do
+        if (App:inArray(playersInRaids, player)) then
+            tinsert(activeReserves, player);
+        end
+    end
+
+    reserves = table.concat(activeReserves, ", ");
 
     -- Add the header
     tooltip:AddLine(string.format("\n|c00efb8cd%s", "Soft Reserves"));
