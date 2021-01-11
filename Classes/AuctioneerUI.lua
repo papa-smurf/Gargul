@@ -432,8 +432,7 @@ function AuctioneerUI:updateItemIcon()
         if (App.Auction.CurrentAuction.itemLink
                 and itemLink ~= App.Auction.CurrentAuction.itemLink
         ) then
-            App.AuctioneerUI.Widgets.Tables.Bids:SetData({}, true);
-            App.AuctioneerUI.Widgets.Tables.Bids:ClearSelection();
+            App:clearScrollTable(AuctioneerUI.Widgets.Tables.Bids);
         end
 
         IconWidget:SetImage(icon);
@@ -475,8 +474,7 @@ function AuctioneerUI:reset()
     self.Widgets.Labels.ItemPriority:SetText("");
     self.ItemBoxHoldsValidItem = false;
 
-    App.AuctioneerUI.Widgets.Tables.Bids:SetData({}, true);
-    App.AuctioneerUI.Widgets.Tables.Bids:ClearSelection();
+    App:clearScrollTable(AuctioneerUI.Widgets.Tables.Bids);
 
     self:updateWidgets();
 end

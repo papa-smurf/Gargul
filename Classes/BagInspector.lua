@@ -163,13 +163,10 @@ end
 
 -- Display the report results from a group-wide bag inspection
 function BagInspector:displayInspectionResults()
-    local Report = {};
-
     -- Create a container/parent frame
     local ResultFrame = AceGUI:Create("Frame");
     ResultFrame:SetCallback("OnClose", function(widget)
-        BagInspector.Widgets.Tables.InspectionReport:SetData({}, true);
-        BagInspector.Widgets.Tables.InspectionReport = nil;
+        App:clearScrollTable(BagInspector.Widgets.Tables.InspectionReport);
 
         App.BagInspector.InspectionReport = {
             Items = {},
