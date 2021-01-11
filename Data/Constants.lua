@@ -78,7 +78,7 @@ App.Data.Constants = {
                 }
             },
             RollOff = {
-                timer = 15,
+                timer = 25,
                 Position = {
                     point = "CENTER",
                     relativePoint = "CENTER",
