@@ -2,6 +2,20 @@ local _, App = ...;
 
 App.User = {
     initialized = false,
+
+    id = 0,
+    name = "",
+    level = 1,
+    zone = "",
+    Guild = {},
+    isOfficer = false,
+    isMasterLooter = false,
+    isInRaid = false,
+    raidIndex = nil,
+    isInParty = false,
+    isInGroup = false,
+    Dkp = {},
+    raidsAttended = 0,
 };
 
 local User = App.User;
@@ -43,19 +57,24 @@ function User:refresh()
 
     if (self.isInRaid) then
         for index = 1, MAX_RAID_MEMBERS do
-            local name = GetRaidRosterInfo(index);
+            local name, _, _, _, _, _, _, _, _, _, isMasterLooter = GetRaidRosterInfo(raidIndex);
 
             if (name == self.name) then
                 self.raidIndex = index;
+                self.isMasterLooter = isMasterLooter;
                 break;
             end
         end
-
-        self.isMasterLooter = self.raidIndex == select(3, GetLootMethod());
     end
 
     self.isInParty = IsInGroup() and not self.isInRaid;
     self.isInGroup = self.isInRaid or self.isInParty;
+
+    if (self.isInGroup) then
+        self.GroupMembers = User:groupMembers();
+    else
+        self.groupMembers = {};
+    end
 
     self.Dkp = {
         amount = charactersTableEntry.dkp or 0,
@@ -63,6 +82,34 @@ function User:refresh()
         spent = charactersTableEntry.spent or 0,
     };
     self.raidsAttended = charactersTableEntry.raids or 0;
+end
+
+-- Get all of the people who are
+-- in the same party/raid as the current user
+function User:groupMembers()
+    local Roster = {};
+    for index = 1, MAX_RAID_MEMBERS do
+        local name, rank, subgroup, level, class, fileName, _, _, _, role, isML = GetRaidRosterInfo(index);
+
+        if (name) then
+            tinsert(Roster, {
+                name = name,
+                rank = rank,
+                subgroup = subgroup,
+                level = level,
+                class = class,
+                fileName = fileName,
+                zone = zone,
+                online = online,
+                isDead = isDead,
+                role = role,
+                isML = isML,
+                index = index,
+            });
+        end
+    end
+
+    return Roster;
 end
 
 App:debug("User.lua");
