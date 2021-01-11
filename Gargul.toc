@@ -3,7 +3,7 @@
 ## Title: |cff8aecffGargul|r
 ## Author: <Give it a Lick> Zhorax
 ## Notes: Guild addon for <Give it a Lick> including soft reserves, rolling, DKP bidding / syncing, loot priorities and much more
-## Version: 2.0.1
+## Version: 2.0.2
 ## DefaultState: enabled
 ## SavedVariables: GargulDB
 
