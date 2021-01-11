@@ -106,6 +106,15 @@ function App:stacktrace()
     return self:frameMessage(debugLines);
 end
 
+-- Clears the provided scrolling table (lib-ScrollingTable)
+function App:clearScrollTable(ScrollingTable)
+    ScrollingTable:SetData({}, true);
+    ScrollingTable.frame:Hide();
+    ScrollingTable:Hide();
+    ScrollingTable.frame = nil;
+    ScrollingTable = nil;
+end
+
 -- Check if a player with a given player name is
 -- in the same group as the current App.User
 function App:playerIsInSameGroup(playerName)
