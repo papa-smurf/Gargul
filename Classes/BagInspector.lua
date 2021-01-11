@@ -26,8 +26,9 @@ BagInspector.Widgets = {
     Icons = {},
 };
 
--- Inspect either the entire group or a single player
-function BagInspector:inspect(items, player)
+-- Inspect the raid group's bag contents for the
+-- availability of specific items (max 8)
+function BagInspector:inspect(items)
     App:debug("BagInspector:inspect");
 
     if (not App.User.isInGroup) then
@@ -43,31 +44,16 @@ function BagInspector:inspect(items, player)
         return App:error("You need lead, assist or master looter privileges to use this functionality");
     end
 
-    -- If a player name is provided we need to make
-    -- sure that the player is in our group, otherwise
-    -- we can't interact with them
-    if (player
-        and not App:playerIsInSameGroup(player)
-    ) then
-        return App:error("Due to certain API limitations you can only inspect people who are in your group");
-    end
-
     -- This ensures that the item exists and that
     -- all of its info is available
     items = App:strSplit(items, ",");
+    items = App:tableSlice(items, 8); -- inspect supports up to 8 items
     BagInspector.inspectionInProgress = true;
 
     -- Send the inspection request to the correct channel
     local CommMessage = {};
     App:success("Starting inspection...");
-    if (player) then
-        CommMessage = App.CommMessage.new(
-            CommActions.inspectBags,
-            items,
-            "WHISPER",
-            player
-        ):send();
-    elseif (App.User.isInRaid) then
+    if (App.User.isInRaid) then
         CommMessage = App.CommMessage.new(
             CommActions.inspectBags,
             items,
@@ -93,11 +79,6 @@ end
 -- Someone requested an item count, report back!
 function BagInspector:report(CommMessage)
     App:debug("BagInspector:report");
-
-    -- No need to report back to ourselves
-    if (CommMessage.Sender.name == App.User.name) then
-        return;
-    end
 
     local Items = CommMessage.content;
     local Report = {};
@@ -151,11 +132,7 @@ function BagInspector:processInspectionResults(CommMessage)
             return App:error("Bag inspection failed: no reports received");
         end
 
-        if (numberOfResponses == 1) then
-            BagInspector:displayPlayerInspectionResults(senderName, ItemLinksById);
-        else
-            BagInspector:displayGroupInspectionResults(ItemIds, ItemLinksById);
-        end
+        BagInspector:displayInspectionResults(ItemIds, ItemLinksById);
     end
 
     local numberOfItems = 0;
@@ -184,23 +161,8 @@ function BagInspector:processInspectionResults(CommMessage)
     end
 end
 
--- Display the report results from a personal bag inspection
-function BagInspector:displayPlayerInspectionResults(playerName, ItemLinksById)
-    for itemId, amount in pairs(BagInspector.InspectionReport.Report[playerName]) do
-        itemId = tonumber(itemId);
-
-        local message = string.format("%s has %sx %s",
-            playerName,
-            amount,
-            ItemLinksById[itemId]
-        );
-
-        App:message(message);
-    end
-end
-
 -- Display the report results from a group-wide bag inspection
-function BagInspector:displayGroupInspectionResults()
+function BagInspector:displayInspectionResults()
     local Report = {};
 
     -- Create a container/parent frame
