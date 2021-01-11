@@ -299,7 +299,7 @@ function App:tableMerge(left, right)
 end
 
 -- Simple table flip
-function App:flipTable(Table)
+function App:tableFlip(Table)
     local Flipped = {};
     for key, value in pairs(Table) do
         Flipped[value] = key;
@@ -307,6 +307,52 @@ function App:flipTable(Table)
 
     return Flipped;
 end
+
+-- Table slice method
+function App:tableSlice(tbl, offset, length, preserveKeys)
+    if (not length) then
+        length = offset;
+        offset = 0;
+    end
+
+    if (not offset
+        or type(offset) ~= "number"
+        or offset < 1
+    ) then
+        offset = 1;
+    end
+
+    local Slice = {};
+    local last = offset + length;
+
+    if (preserveKeys) then
+        local index = 1;
+        for key, value in pairs(tbl) do
+            if (index > last) then
+                return Slice;
+            end
+
+            if (index >= offset) then
+                Slice[key] = value;
+            end
+
+            index = index + 1;
+        end
+
+        return Slice;
+    end
+
+    for index = offset, last do
+        if (type(tbl[index]) == "nil") then
+            return Slice;
+        end
+
+        tinsert(Slice, tbl[index]);
+    end
+
+    return Slice;
+end
+
 
 -- Get a table value by a given key. Use dot notation to traverse multiple levels e.g:
 -- Settings.UI.Auctioneer.offsetX can be fetched using App:tableGet(myTable, "Settings.UI.Auctioneer.offsetX", 0)
