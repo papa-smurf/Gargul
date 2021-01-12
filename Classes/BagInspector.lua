@@ -73,7 +73,7 @@ function BagInspector:inspect(items)
         BagInspector.inspectionInProgress = false;
 
         BagInspector:processInspectionResults(CommMessage);
-    end, 8);
+    end, 5);
 end
 
 -- Someone requested an item count, report back!
@@ -281,7 +281,9 @@ function BagInspector:displayInspectionResults()
         local name, _, _, _, class = GetRaidRosterInfo(index);
         local Row = {};
 
-        if (name and BagInspector.InspectionReport.Reports[name]) then
+        if (name
+            and BagInspector.InspectionReport.Reports[name]
+        ) then
             Row = {
                 cols = {
                     {

@@ -50,8 +50,10 @@ function DroppedLoot:announce()
         local sourceGUID = GetLootSourceInfo(lootIndex);
 
         if (itemLink
-            and not DroppedLoot.Announced[sourceGUID]
             and (
+                sourceGUID
+                and not DroppedLoot.Announced[sourceGUID]
+            ) and (
                 (quality and quality >= 4)
                 or softReserves
             )
@@ -98,7 +100,10 @@ function DroppedLoot:announce()
         end
 
         -- This ensures that we don't announced the same loot multiple times!
-        DroppedLoot.Announced[sourceGUID] = true;
+        -- Keep in mind that sourceGUID can be empty for some items!
+        if (sourceGUID) then
+            DroppedLoot.Announced[sourceGUID] = true;
+        end
     end
 end
 
