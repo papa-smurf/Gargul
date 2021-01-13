@@ -58,44 +58,40 @@ function DroppedLoot:announce()
                 or softReserves
             )
         ) then
-            local activeReserves = {};
+            local activeSoftReserves = {};
+            local hasSoftReserves = false;
 
-            -- Make sure we only show shoft reserves of people
-            -- Who are actually in the raid
-            for _, player in pairs(softReserves) do
-                if (App:inArray(playersInRaids, player)) then
-                    tinsert(activeReserves, player);
+            if (softReserves) then
+                -- Make sure we only show shoft reserves of people
+                -- Who are actually in the raid
+                for _, player in pairs(softReserves) do
+                    if (App:inArray(playersInRaids, player)) then
+                        tinsert(activeSoftReserves, player);
+                        hasSoftReserves = true;
+                    end
                 end
             end
 
+            local chatChannel = "PARTY";
             if (App.User.isInRaid) then
+                chatChannel = "RAID";
+            end
+
+            -- Link the item in the chat for
+            -- all group members to see
+            SendChatMessage(
+                itemLink,
+                chatChannel,
+                "COMMON"
+            );
+
+            -- Show who softreserved this item
+            if (hasSoftReserves) then
                 SendChatMessage(
-                    itemLink,
-                    "RAID",
+                    "Reserved by: " .. table.concat(activeSoftReserves, ", "),
+                    chatChannel,
                     "COMMON"
                 );
-
-                if (activeReserves) then
-                    SendChatMessage(
-                        "Reserved by: " .. table.concat(activeReserves, ", "),
-                        "RAID",
-                        "COMMON"
-                    );
-                end
-            else
-                SendChatMessage(
-                    itemLink,
-                    "PARTY",
-                    "COMMON"
-                );
-
-                if (activeReserves) then
-                    SendChatMessage(
-                        "Reserved by: " .. table.concat(activeReserves, ", "),
-                        "PARTY",
-                        "COMMON"
-                    );
-                end
             end
         end
 
