@@ -36,7 +36,8 @@ App.bootstrap = function(self, event, addonName)
 
     -- Show a welcome message
     local successfullyLoadedMessage = "Sucessfully loaded (v" .. App.version .. ")";
-    App:debug(successfullyLoadedMessage);
+    App:debug(string.format("Successfully loaded v%s", App.version));
+    App:success("v" .. App:capitalize(App.version));
 
     -- Initialize our classes / services
     App:_init();
