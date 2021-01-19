@@ -22,6 +22,7 @@ MasterLooterUI.Widgets = {
     Tables = {},
     Icons = {},
 };
+
 MasterLooterUI.ItemPriorityBox = {};
 MasterLooterUI.ItemBoxHoldsValidItem = false;
 
@@ -34,23 +35,22 @@ MasterLooterUI.PlayersTable = {};
 function MasterLooterUI:draw(itemLink)
     App:debug("MasterLooterUI:draw");
 
-    local updateItemInfo = function()
-        local isValidItem, itemId, itemName, itemLink = App:getItemInfoFromLink(itemLink);
-
-        if (isValidItem) then
-            self.Widgets.EditBoxes.Item:SetText(itemLink);
+    -- First we need to check if the frame hasn't been
+    -- rendered already. If so then show it (if it's hidden)
+    -- and pass the itemLink along in case one was provided
+    if (MasterLooterUI.Widgets.Frame
+        and MasterLooterUI.Widgets.Frame.rendered
+    ) then
+        if (itemLink) then
+            MasterLooterUI:passItemLink(itemLink);
         end
 
-        MasterLooterUI:updateItemIcon();
-        MasterLooterUI:updateItemPriority();
-        MasterLooterUI:updateWidgets();
-    end;
+        -- If the frame is hidden we need to show it again
+        if (not MasterLooterUI.Widgets.Frame:IsShown()) then
+            MasterLooterUI.Widgets.Frame:Show();
+        end
 
-    if (self.Widgets.Frame
-        and self.Widgets.Frame.rendered
-    ) then
-        updateItemInfo();
-        return self.Widgets.Frame:Show();
+        return;
     end
 
     -- Create a container/parent frame
@@ -80,7 +80,7 @@ function MasterLooterUI:draw(itemLink)
         Settings:get("UI.RollOff.Position.offsetY")
     );
 
-    self.Widgets.Frame = RollOffFrame;
+    MasterLooterUI.Widgets.Frame = RollOffFrame;
 
             --[[
                 FIRST ROW (ITEM ICON AND LINK BOX)
@@ -97,11 +97,11 @@ function MasterLooterUI:draw(itemLink)
                     ]]
 
                     local ItemIcon = AceGUI:Create("Icon");
-                    ItemIcon:SetImage("Interface\\Icons\\INV_Misc_QuestionMark");
+                    ItemIcon:SetImage(MasterLooterUI.Defaults.itemIcon);
                     ItemIcon:SetImageSize(30, 30);
                     ItemIcon:SetWidth(40);
                     FirstRow:AddChild(ItemIcon);
-                    self.Widgets.Icons.Item = ItemIcon;
+                    MasterLooterUI.Widgets.Icons.Item = ItemIcon;
 
                     --[[
                         ITEM TEXTBOX
@@ -111,17 +111,16 @@ function MasterLooterUI:draw(itemLink)
                     ItemBox:DisableButton(true);
                     ItemBox:SetHeight(20);
                     ItemBox:SetWidth(170);
-                    ItemBox:SetText(itemLink);
-                    ItemBox:SetCallback("OnTextChanged", updateItemInfo); -- Update item info when input value changes
-                    ItemBox:SetCallback("OnEnterPressed", updateItemInfo); -- Update item info when item is dragged on top (makes no sense to use OnEnterPressed I know)
+                    ItemBox:SetCallback("OnTextChanged", MasterLooterUI.ItemBoxChanged); -- Update item info when input value changes
+                    ItemBox:SetCallback("OnEnterPressed", MasterLooterUI.ItemBoxChanged); -- Update item info when item is dragged on top (makes no sense to use OnEnterPressed I know)
 
-                    self.Widgets.EditBoxes.Item = ItemBox;
+                    MasterLooterUI.Widgets.EditBoxes.Item = ItemBox;
 
                     FirstRow:AddChild(ItemBox);
 
                     -- Show a gametooltip if the icon shown belongs to an item
                     ItemIcon:SetCallback("OnEnter", function()
-                        if (not self.ItemBoxHoldsValidItem) then
+                        if (not MasterLooterUI.ItemBoxHoldsValidItem) then
                             return;
                         end
 
@@ -159,14 +158,14 @@ function MasterLooterUI:draw(itemLink)
                         App.RollOff.inProgress = true;
 
                         App.RollOff:announceStart(
-                            self.Widgets.EditBoxes.Item:GetText(),
-                            self.Widgets.EditBoxes.Timer:GetText()
+                            MasterLooterUI.Widgets.EditBoxes.Item:GetText(),
+                            MasterLooterUI.Widgets.EditBoxes.Timer:GetText()
                         );
 
-                        self:updateWidgets();
+                        MasterLooterUI:updateWidgets();
                     end);
                     FirstRow:AddChild(StartButton);
-                    self.Widgets.Buttons.StartButton = StartButton;
+                    MasterLooterUI.Widgets.Buttons.StartButton = StartButton;
 
                     --[[
                         STOP BUTTON
@@ -181,7 +180,7 @@ function MasterLooterUI:draw(itemLink)
                         App.RollOff:announceStop();
                     end);
                     FirstRow:AddChild(StopButton);
-                    self.Widgets.Buttons.StopButton = StopButton;
+                    MasterLooterUI.Widgets.Buttons.StopButton = StopButton;
 
             --[[
                 SECOND ROW
@@ -212,7 +211,7 @@ function MasterLooterUI:draw(itemLink)
                     ItemPrio:SetHeight(20);
                     ItemPrio:SetWidth(150);
                     SecondRow:AddChild(ItemPrio);
-                    self.Widgets.Labels.ItemPriority = ItemPrio;
+                    MasterLooterUI.Widgets.Labels.ItemPriority = ItemPrio;
 
             --[[
                 THID ROW (ROLL TIMER)
@@ -243,7 +242,7 @@ function MasterLooterUI:draw(itemLink)
                     TimerLabel:SetHeight(20);
                     TimerLabel:SetWidth(55);
                     ThirdRow:AddChild(TimerLabel);
-                    self.Widgets.Labels.TimerLabel = TimerLabel;
+                    MasterLooterUI.Widgets.Labels.TimerLabel = TimerLabel;
 
                     --[[
                         TIMER TEXTBOX
@@ -255,7 +254,7 @@ function MasterLooterUI:draw(itemLink)
                     TimerBox:SetWidth(40);
                     TimerBox:SetText(Settings:get("UI.RollOff.timer"));
                     ThirdRow:AddChild(TimerBox);
-                    self.Widgets.EditBoxes.Timer = TimerBox;
+                    MasterLooterUI.Widgets.EditBoxes.Timer = TimerBox;
 
                     --[[
                         SPACER
@@ -279,7 +278,7 @@ function MasterLooterUI:draw(itemLink)
                         MasterLooterUI:reset();
                     end);
                     ThirdRow:AddChild(ClearButton);
-                    self.Widgets.Buttons.ClearButton = ClearButton;
+                    MasterLooterUI.Widgets.Buttons.ClearButton = ClearButton;
 
                     --[[
                         AWARD BUTTON
@@ -291,7 +290,7 @@ function MasterLooterUI:draw(itemLink)
                     AwardButton:SetHeight(20);
                     AwardButton:SetDisabled(true);
                     AwardButton:SetCallback("OnClick", function()
-                        local PlayersTable = self.Widgets.Tables.Players;
+                        local PlayersTable = MasterLooterUI.Widgets.Tables.Players;
                         local selected = PlayersTable:GetRow(PlayersTable:GetSelection());
 
                         if (not selected
@@ -300,10 +299,10 @@ function MasterLooterUI:draw(itemLink)
                             return App:warning("You need to select a player first");
                         end
 
-                        return App.RollOff:award(unpack(selected), self.Widgets.EditBoxes.Item:GetText());
+                        return App.RollOff:award(unpack(selected), MasterLooterUI.Widgets.EditBoxes.Item:GetText());
                     end);
                     ThirdRow:AddChild(AwardButton);
-                    self.Widgets.Buttons.AwardButton = AwardButton;
+                    MasterLooterUI.Widgets.Buttons.AwardButton = AwardButton;
 
             --[[
                 FOURTH ROW (GROUP MEMBERS)
@@ -315,9 +314,13 @@ function MasterLooterUI:draw(itemLink)
             FourthRow:SetHeight(50);
             RollOffFrame:AddChild(FourthRow);
 
-            self:drawPlayersTable(RollOffFrame.frame);
+            MasterLooterUI:drawPlayersTable(RollOffFrame.frame);
 
-    updateItemInfo();
+    if (itemLink
+        and type(itemLink) == "string"
+    ) then
+        MasterLooterUI:passItemLink(itemLink);
+    end
 end
 
 function MasterLooterUI:drawPlayersTable(parent)
@@ -342,7 +345,7 @@ function MasterLooterUI:drawPlayersTable(parent)
     local table = ScrollingTable:CreateST(columns, 8, 15, nil, parent);
     table:EnableSelection(true);
     table.frame:SetPoint("BOTTOM", parent, "BOTTOM", 0, 50);
-    self.Widgets.Tables.Players = table;
+    MasterLooterUI.Widgets.Tables.Players = table;
 
     local GroupMembers = {};
     local PlayersTableData = {};
@@ -364,16 +367,51 @@ function MasterLooterUI:drawPlayersTable(parent)
     table:SortData();
 end
 
--- Update the icon box based on the value of the ItemBox input
-function MasterLooterUI:updateItemIcon()
-    App:debug("MasterLooterUI:updateItemIcon");
+-- The item box contents changed
+function MasterLooterUI:ItemBoxChanged()
+    App:debug("MasterLooterUI:ItemBoxChanged");
 
-    local IconWidget = self.Widgets.Icons.Item;
-    local itemLink = self.Widgets.EditBoxes.Item:GetText();
+    local itemLink = MasterLooterUI.Widgets.EditBoxes.Item:GetText();
 
+    MasterLooterUI:passItemLink(itemLink);
+end
+
+-- Pass an item link to the master looter UI
+-- This method is used when alt clicking an item
+-- in a loot window or when executing /gl roll [itemlink]
+function MasterLooterUI:passItemLink(itemLink)
+    App:debug("MasterLooterUI:passItemLink");
+
+    if (not MasterLooterUI.Widgets.Frame.rendered) then
+        return;
+    end
+
+    if (App.RollOff.inProgress) then
+        return App:warning("A roll is currently in progress");
+    end
+
+    MasterLooterUI.Widgets.EditBoxes.Item:SetText(itemLink);
+    return MasterLooterUI:update();
+end
+
+-- Update the master looter UI based on the value of the ItemBox input
+function MasterLooterUI:update()
+    App:debug("MasterLooterUI:update");
+
+    local IconWidget = MasterLooterUI.Widgets.Icons.Item;
+    local itemLink = MasterLooterUI.Widgets.EditBoxes.Item:GetText();
+
+    -- If the item link is not valid then
+    --   Show the default question mark icon
+    --   Remove the item priority string
     if (not itemLink or itemLink == "") then
-        self.ItemBoxHoldsValidItem = false;
-        IconWidget:SetImage("Interface\\Icons\\INV_Misc_QuestionMark");
+        App:debug("MasterLooterUI:update. Item link is invalid");
+
+        MasterLooterUI.ItemBoxHoldsValidItem = false;
+        IconWidget:SetImage(MasterLooterUI.Defaults.itemIcon);
+
+        MasterLooterUI:updateItemPriorityLabel();
+        MasterLooterUI:updateWidgets();
         return;
     end
 
@@ -381,68 +419,71 @@ function MasterLooterUI:updateItemIcon()
     local icon = select(10, GetItemInfo(itemLink));
 
     if (icon) then
-        if (App.RollOff.CurrentRollOff.itemLink
-                and itemLink ~= App.RollOff.CurrentRollOff.itemLink
-        ) then
-            MasterLooterUI.Widgets.Tables.Players:ClearSelection();
-        end
+        -- TODO: Reset players / roll table
+        MasterLooterUI.Widgets.Tables.Players:ClearSelection();
 
         IconWidget:SetImage(icon);
-        self.ItemBoxHoldsValidItem = true;
+        MasterLooterUI.ItemBoxHoldsValidItem = true;
     else
-        self.ItemBoxHoldsValidItem = false;
-        IconWidget:SetImage("Interface\\Icons\\INV_Misc_QuestionMark");
+        MasterLooterUI.ItemBoxHoldsValidItem = false;
+        IconWidget:SetImage(MasterLooterUI.Defaults.itemIcon);
     end
+
+    MasterLooterUI:updateItemPriorityLabel();
+    MasterLooterUI:updateWidgets();
 end
 
 -- Update the item priority string
-function MasterLooterUI:updateItemPriority(ItemPriorityBox, itemLink)
-    local ItemPriorityBox = self.Widgets.Labels.ItemPriority;
-    local itemLink = self.Widgets.EditBoxes.Item:GetText();
+function MasterLooterUI:updateItemPriorityLabel()
+    App:debug("MasterLooterUI:updateItemPriorityLabel");
 
-    App:debug("MasterLooterUI:updateItemPriority");
+    local ItemPriorityBox = MasterLooterUI.Widgets.Labels.ItemPriority;
+    local itemLink = MasterLooterUI.Widgets.EditBoxes.Item:GetText();
 
-    if (not self.ItemBoxHoldsValidItem) then
-        ItemPriorityBox:SetText("");
-        return;
+    -- We don't have a valid itemlink at hand, clear the priority label
+    if (not MasterLooterUI.ItemBoxHoldsValidItem) then
+        return ItemPriorityBox:SetText("");
     end
 
     local itemPriority = App.LootPriority:getPriorityByItemLink(itemLink);
 
+    -- If there is no item priority then label the item with "Off spec"
     if (not itemPriority) then
-        ItemPriorityBox:SetText("Off spec");
-    else
-        itemPriority = table.concat(itemPriority, " > ");
-        ItemPriorityBox:SetText(itemPriority);
+        return ItemPriorityBox:SetText("Off spec");
     end
+
+    -- There is a priority for this item
+    itemPriority = table.concat(itemPriority, " > ");
+    ItemPriorityBox:SetText(itemPriority);
 end
 
 -- Reset the roll off UI to its defaults
 function MasterLooterUI:reset()
-    self.Widgets.Icons.Item:SetImage(self.Defaults.itemIcon);
-    self.Widgets.EditBoxes.Item:SetText(self.Defaults.itemText);
-    self.Widgets.EditBoxes.Timer:SetText(Settings:get("UI.RollOff.timer"));
-    self.Widgets.Labels.ItemPriority:SetText("");
-    self.ItemBoxHoldsValidItem = false;
+    MasterLooterUI.Widgets.Icons.Item:SetImage(MasterLooterUI.Defaults.itemIcon);
+    MasterLooterUI.Widgets.EditBoxes.Item:SetText(MasterLooterUI.Defaults.itemText);
+    MasterLooterUI.Widgets.EditBoxes.Timer:SetText(Settings:get("UI.RollOff.timer"));
+    MasterLooterUI.Widgets.Labels.ItemPriority:SetText("");
+    MasterLooterUI.ItemBoxHoldsValidItem = false;
 
     MasterLooterUI.Widgets.Tables.Players:ClearSelection();
 
-    self:updateWidgets();
+    MasterLooterUI:updateWidgets();
 end
 
 -- Update the widgets based on the current state of the roll off
 function MasterLooterUI:updateWidgets()
     App:debug("MasterLooterUI:updateWidgets");
 
-    -- If the itembox doesn't hold a valid item link then
-    -- The start button should not be available
-    -- The stop button should be available
-    -- The item box should be available
-    if (not self.ItemBoxHoldsValidItem or not App.User.isInGroup) then
-        self.Widgets.Buttons.StartButton:SetDisabled(true);
-        self.Widgets.Buttons.StartButton:SetDisabled(true);
-        self.Widgets.Buttons.StopButton:SetDisabled(true);
-        self.Widgets.EditBoxes.Item:SetDisabled(false);
+    -- If the itembox doesn't hold a valid item link then:
+    --   The start button should not be available
+    --   The stop button should be available
+    --   The item box should be available
+    if (not MasterLooterUI.ItemBoxHoldsValidItem
+        or not App.User.isInGroup
+    ) then
+        MasterLooterUI.Widgets.Buttons.StartButton:SetDisabled(true);
+        MasterLooterUI.Widgets.Buttons.StopButton:SetDisabled(true);
+        MasterLooterUI.Widgets.EditBoxes.Item:SetDisabled(false);
 
         return;
     end
@@ -450,26 +491,30 @@ function MasterLooterUI:updateWidgets()
     -- The value in the itembox is valid (e.g. contains a valid item link)
 
     -- If no roll off is currently in progress then:
-    -- The start button should be available
-    -- The stop button should not be available
-    -- The item box should be available so we can enter an item link
+    --   The start button should be available
+    --   The stop button should not be available
+    --   The award button should not be available
+    --   The clear button should not be available
+    --   The item box should be available so we can enter an item link
     if (not App.RollOff.inProgress) then
-        self.Widgets.Buttons.StartButton:SetDisabled(false);
-        self.Widgets.Buttons.AwardButton:SetDisabled(false);
-        self.Widgets.Buttons.StopButton:SetDisabled(true);
-        self.Widgets.Buttons.ClearButton:SetDisabled(false);
-        self.Widgets.EditBoxes.Item:SetDisabled(false);
+        MasterLooterUI.Widgets.Buttons.StartButton:SetDisabled(false);
+        MasterLooterUI.Widgets.Buttons.StopButton:SetDisabled(true);
+        MasterLooterUI.Widgets.Buttons.AwardButton:SetDisabled(false);
+        MasterLooterUI.Widgets.Buttons.ClearButton:SetDisabled(false);
+        MasterLooterUI.Widgets.EditBoxes.Item:SetDisabled(false);
 
-    -- If an roll off is currently in progress then:
-        -- The start button should not be available
-        -- The stop button should be available
-        -- The item box should not be available
+    -- If a roll off is currently in progress then:
+    --   The start button should not be available
+    --   The stop button should be available
+    --   The award button should not be available
+    --   The clear button should not be available
+    --   The item box should not be available
     else
-        self.Widgets.Buttons.StartButton:SetDisabled(true);
-        self.Widgets.Buttons.AwardButton:SetDisabled(true);
-        self.Widgets.Buttons.StopButton:SetDisabled(false);
-        self.Widgets.Buttons.ClearButton:SetDisabled(true);
-        self.Widgets.EditBoxes.Item:SetDisabled(true);
+        MasterLooterUI.Widgets.Buttons.StartButton:SetDisabled(true);
+        MasterLooterUI.Widgets.Buttons.StopButton:SetDisabled(false);
+        MasterLooterUI.Widgets.Buttons.AwardButton:SetDisabled(true);
+        MasterLooterUI.Widgets.Buttons.ClearButton:SetDisabled(true);
+        MasterLooterUI.Widgets.EditBoxes.Item:SetDisabled(true);
     end
 end
 
