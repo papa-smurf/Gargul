@@ -13,6 +13,37 @@ function App:coloredMessage (color, ...)
     App:message(string.format("|c00%s%s", color, string.join(" ", ...)));
 end
 
+-- Print a multicolored message
+-- ColoredMessages is an array of arrays, with the message
+-- being in the first and the color being in the second position
+-- e.g. App:multiColoredMessage({{"message", "color"},{"message2", "color2"}});
+function App:multiColoredMessage (ColoredMessages, delimiter)
+    local multiColoredMessage = "";
+    delimiter = delimiter or " ";
+
+    local firstMessage = true;
+    for _, envelope in pairs(ColoredMessages) do
+        local message = envelope[1];
+        local color = envelope[2];
+
+        if (message and type(message) == "string"
+            and color and type(color) == "string"
+        ) then
+            local coloredMessage = string.format("|c00%s%s|r", color, message);
+
+            if (firstMessage) then
+                multiColoredMessage = coloredMessage;
+            else
+                multiColoredMessage = string.format("%s%s%s", multiColoredMessage, delimiter, coloredMessage);
+            end
+
+            firstMessage = false;
+        end
+    end
+
+    App:message(multiColoredMessage);
+end
+
 -- Print a success message (green)
 function App:success(...)
     App:coloredMessage("92FF00", ...);
