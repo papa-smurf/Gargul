@@ -46,9 +46,7 @@ function MasterLooterUI:draw(itemLink)
         MasterLooterUI:updateWidgets();
     end;
 
-    if (self.Widgets.Frame
-        and self.Widgets.Frame.rendered
-    ) then
+    if (self.Widgets.Frame) then
         updateItemInfo();
         return self.Widgets.Frame:Show();
     end
@@ -60,7 +58,6 @@ function MasterLooterUI:draw(itemLink)
     RollOffFrame:SetWidth(430);
     RollOffFrame:SetHeight(350);
     RollOffFrame:EnableResize(false);
-    RollOffFrame.rendered = true;
     RollOffFrame.frame:SetFrameStrata("HIGH");
     RollOffFrame.statustext:GetParent():Hide(); -- Hide the statustext bar
     RollOffFrame:SetCallback("OnClose", function(widget)
