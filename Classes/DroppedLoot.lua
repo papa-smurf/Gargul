@@ -18,9 +18,38 @@ function DroppedLoot:_init()
     -- Fire DroppedLoot:announce every time a loot window is opened
     DroppedLoot.eventFrame = CreateFrame("FRAME");
     DroppedLoot.eventFrame:RegisterEvent("LOOT_OPENED");
-    DroppedLoot.eventFrame:SetScript("OnEvent", DroppedLoot.announce);
+    DroppedLoot.eventFrame:SetScript("OnEvent", DroppedLoot.lootWindowOpened);
+
+    DroppedLoot:hookClickEvents();
 
     self._initialized = true;
+end
+
+function DroppedLoot:lootWindowOpened()
+    App:debug("DroppedLoot:lootWindowOpened");
+
+    DroppedLoot:announce();
+end
+
+function DroppedLoot:hookClickEvents()
+    App:debug("DroppedLoot:hookClickEvents");
+
+    -- 4 is the max since buttons seem to be reused
+    -- throughout loot pages... thanks Blizzard
+    for buttonIndex = 1, 4 do
+        getglobal("LootButton" .. buttonIndex):HookScript("OnClick", function()
+            if (IsAltKeyDown()) then
+                App:debug("DroppedLoot:hookClickEvents. Alt click LootButton");
+
+                local itemLink = GetLootSlotLink(buttonIndex);
+
+                -- TODO: Differentiate between roll / dkp runs to determine which window we need to open
+                if (itemLink and type(itemLink) == "string") then
+                    App.MasterLooterUI:draw(itemLink);
+                end
+            end
+        end);
+    end
 end
 
 function DroppedLoot:announce()
@@ -41,13 +70,14 @@ function DroppedLoot:announce()
     end
 
     -- Get the total number of item that dropped
+    local sourceGUID;
     local itemCount = GetNumLootItems();
     for lootIndex = 1, itemCount do
         local itemLink = GetLootSlotLink(lootIndex);
         local softReserves = App.SoftReserves:getSoftReservesByItemLink(itemLink);
 
         local quality = select(5, GetLootSlotInfo(lootIndex));
-        local sourceGUID = GetLootSourceInfo(lootIndex);
+        sourceGUID = GetLootSourceInfo(lootIndex);
 
         if (itemLink
             and (
@@ -94,12 +124,12 @@ function DroppedLoot:announce()
                 );
             end
         end
+    end
 
-        -- This ensures that we don't announced the same loot multiple times!
-        -- Keep in mind that sourceGUID can be empty for some items!
-        if (sourceGUID) then
-            DroppedLoot.Announced[sourceGUID] = true;
-        end
+    -- This ensures that we don't announced the same loot multiple times!
+    -- Keep in mind that sourceGUID can be empty for some items!
+    if (sourceGUID) then
+        DroppedLoot.Announced[sourceGUID] = true;
     end
 end
 
