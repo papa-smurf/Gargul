@@ -2,6 +2,7 @@ local _, App = ...;
 
 App.DroppedLoot = {
     initialized = false,
+    eventsHooked = false,
     Announced = {},
 }
 
@@ -20,28 +21,37 @@ function DroppedLoot:_init()
     DroppedLoot.eventFrame:RegisterEvent("LOOT_OPENED");
     DroppedLoot.eventFrame:SetScript("OnEvent", DroppedLoot.lootWindowOpened);
 
-    DroppedLoot:hookClickEvents();
-
     self._initialized = true;
 end
 
+-- Fired when a loot window is opened
 function DroppedLoot:lootWindowOpened()
     App:debug("DroppedLoot:lootWindowOpened");
 
+    DroppedLoot:hookClickEvents();
     DroppedLoot:announce();
 end
 
+-- Hook click events to the item buttons in the
+-- loot window (name LootButton1 through LoootButton4)
+-- Only 4 buttons will be used regardless of number of drops
 function DroppedLoot:hookClickEvents()
     App:debug("DroppedLoot:hookClickEvents");
 
+    if (DroppedLoot.eventsHooked) then
+        return;
+    end
+
     -- 4 is the max since buttons seem to be reused
     -- throughout loot pages... thanks Blizzard
-    for buttonIndex = 1, 4 do
-        getglobal("LootButton" .. buttonIndex):HookScript("OnClick", function()
+    for buttonIndex = 1, LOOTFRAME_NUMBUTTONS do
+        local Button = getglobal("LootButton" .. buttonIndex);
+
+        Button:HookScript("OnClick", function()
             if (IsAltKeyDown()) then
                 App:debug("DroppedLoot:hookClickEvents. Alt click LootButton");
 
-                local itemLink = GetLootSlotLink(buttonIndex);
+                local itemLink = GetLootSlotLink(Button.slot);
 
                 -- TODO: Differentiate between roll / dkp runs to determine which window we need to open
                 if (itemLink and type(itemLink) == "string") then
@@ -50,6 +60,8 @@ function DroppedLoot:hookClickEvents()
             end
         end);
     end
+
+    DroppedLoot.eventsHooked = true;
 end
 
 function DroppedLoot:announce()
