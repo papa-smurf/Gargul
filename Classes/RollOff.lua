@@ -68,12 +68,6 @@ function RollOff:announceStart(item, time)
     if (App.User.isInRaid) then
         SendChatMessage(
             announceMessage,
-            "RAID",
-            "COMMON"
-        );
-
-        SendChatMessage(
-            announceMessage,
             "RAID_WARNING",
             "COMMON"
         );
