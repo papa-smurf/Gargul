@@ -7,6 +7,8 @@ local CommMessage = App.CommMessage;
 
 CommMessage.Box = {};
 
+local LibDeflate = LibStub:GetLibrary("LibDeflate");
+
 -- This metatable allows us to have multiple instances of this object
 setmetatable(CommMessage, {
     __call = function (cls, ...)
@@ -16,7 +18,7 @@ setmetatable(CommMessage, {
 
 -- Create a fresh new CommMessage
 function CommMessage.new(action, content, channel, recipient)
-    App:debug("CommMessage.new");
+    App:debug("CommMessage:new");
 
     local self = setmetatable({}, CommMessage);
 
@@ -45,7 +47,7 @@ end
 -- Create a CommMessage from a received message's payload
 -- The channel and recipient always point to the sender of the original message using "WHISPER"
 function CommMessage.newFromReceived(Message)
-    App:debug("CommMessage.newFromReceived");
+    App:debug("CommMessage:newFromReceived");
 
     local self = setmetatable({}, CommMessage);
 
@@ -63,7 +65,7 @@ end
 
 -- Send the CommMessage as-is
 function CommMessage:send()
-    App:debug("CommMessage.send");
+    App:debug("CommMessage:send");
 
     App.Comm:send(self);
 
@@ -72,7 +74,7 @@ end
 
 -- Reply to a CommMessage
 function CommMessage:respond(message)
-    App:debug("CommMessage.respond");
+    App:debug("CommMessage:respond");
 
     local Response = {
         action = App.Data.Constants.CommActions.response,
@@ -81,7 +83,6 @@ function CommMessage:respond(message)
         senderName = App.User.name,
         recipient = self.Sender.name,
         correspondenceId = self.correspondenceId or self.id,
-        compress = self.compress,
     };
 
     App.Comm:send(Response);
@@ -91,7 +92,7 @@ end
 
 -- A response to one of our messages came in, sort it
 function CommMessage:processResponse()
-    App:debug("CommMessage.processResponse");
+    App:debug("CommMessage:processResponse");
 
     if (not self.correspondenceId) then
         App:warning("The message has no correspondence ID so we don't know what it responds to");
@@ -109,61 +110,71 @@ end
 
 -- Compress a CommMessage so we can safely send it
 function CommMessage:compress(message)
+    App:debug("CommMessage:compress");
+
     message = message or self;
 
-    local compressed = {
+    local Payload = {
         action = message.action,
-        content = App.JSON:encode(message.content); -- This seems to significantly decrease size!
+        content = message.content;
         channel = message.channel,
         senderName = message.senderName,
         recipient = message.recipient,
         correspondenceId = message.correspondenceId or message.id,
     }
 
-    local success, encoded = pcall(function ()
-        local serialized = App.Ace:Serialize(compressed);
-        local compressed = App.Compressor:CompressHuffman(serialized);
+    local success, payload = pcall(function ()
+        local compressed = App.JSON:encode(Payload);
+        compressed = LibDeflate:CompressDeflate(compressed, {level = 8});
+        compressed = LibDeflate:EncodeForWoWAddonChannel(compressed);
 
-        return App.Compressor.EncodeTable:Encode(compressed);
+        return compressed;
     end);
 
-    if (not success or not encoded) then
+    if (not success or not payload) then
         App:error("Something went wrong trying to compress a CommMessage in CommMessage:compress");
         return false;
     end
 
-    return encoded;
+    return payload;
 end
 
 -- Decompress and deserialize a CommMessage
 function CommMessage:decompress(encoded)
-    local compressed = App.Compressor.EncodeTable:Decode(encoded);
+    App:debug("CommMessage:compress");
+
+--    local compressed = App.Compressor.EncodeTable:Decode(encoded);
+
+    local compressed = LibDeflate:DecodeForWoWAddonChannel(encoded);
+    compressed = LibDeflate:DecompressDeflate(compressed);
 
     if (not compressed) then
         App:warning("Something went wrong while decoding the COMM payload");
         return;
     end
 
-    local serialized = App.Compressor:DecompressHuffman(compressed);
+--    local serialized = App.Compressor:DecompressHuffman(compressed);
+--
+--    if (not serialized) then
+--        App:warning("Something went wrong while decompressing the COMM payload");
+--        return;
+--    end
 
-    if (not serialized) then
-        App:warning("Something went wrong while decompressing the COMM payload");
-        return;
-    end
+--    local success, payload = App.Ace:Deserialize(serialized);
+--
+--    if (not success) then
+--        App:warning("Something went wrong while deserializing the COMM payload");
+--        return;
+--    elseif (not payload) then
+--        App:warning("The COMM payload appears to be empty");
+--        return;
+--    end
+--
+--    payload.content = App.JSON:decode(payload.content);
+--
+--    return payload;
 
-    local success, payload = App.Ace:Deserialize(serialized);
-
-    if (not success) then
-        App:warning("Something went wrong while deserializing the COMM payload");
-        return;
-    elseif (not payload) then
-        App:warning("The COMM payload appears to be empty");
-        return;
-    end
-
-    payload.content = App.JSON:decode(payload.content);
-
-    return payload;
+    return App.JSON:decode(compressed);
 end
 
 App:debug("CommMessage.lua");

@@ -31,7 +31,15 @@ function Comm:send(CommMessage)
     local distribution = CommMessage.channel;
     local recipient = CommMessage.recipient;
 
-    local compressedMessage = CommMessage:compress();
+    local compressedMessage = "";
+
+    -- If this is a fresh message, not a response, then CommMessage will
+    -- be an instance of App.CommMessage and as such will have its own compression method
+    if (CommMessage.compress) then
+        compressedMessage = CommMessage:compress();
+    else
+        compressedMessage = App.CommMessage:compress(CommMessage);
+    end
 
     if (not compressedMessage) then
         App:error("Something went wrong trying to compress the payload for 'Sync.Characters'");
@@ -40,12 +48,14 @@ function Comm:send(CommMessage)
 
     App:debug("Payload size: " .. string.len(compressedMessage));
 
-    App.Ace:SendCommMessage(self.channel, compressedMessage, distribution, recipient, "BULK");
+    App.Ace:SendCommMessage(self.channel, compressedMessage, distribution, recipient, "NORMAL", function (_, sent, textlen)
+        App:debug(string.format("Sent %s from %s characters", sent, textlen));
+    end);
 end
 
 -- Listen to any and all messages on the self.channel channel
 function Comm:listen(payload, distribution, senderName)
-    App:debug("Received message on channel '" .. App.Comm.channel .. "'");
+    App:debug(string.format("Received message on %s", App.Comm.channel));
 
     payload = App.CommMessage:decompress(payload);
 

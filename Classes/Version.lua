@@ -36,6 +36,8 @@ end
 
 -- Check if the given versionString is newer than our current "latest" version
 function Version:checkIfNewerRelease(versionString)
+    App:debug("Version:checkIfNewerRelease");
+
     if (not self:leftIsOlderThanRight(self.latest, versionString)) then
         return;
     end
@@ -47,6 +49,7 @@ function Version:checkIfNewerRelease(versionString)
     end
 end
 
+-- Validate the version string and return all parts (major/minor/trivial) individually
 function Version:validateAndSplit(versionString)
     App:debug("Version:validateAndSplit");
 
@@ -150,6 +153,8 @@ end
 
 -- Inspect the raid group to see who has the addon and who doesn't and who needs to update it
 function Version:finishInspectGroup(CommMessage)
+    App:debug("Version:finishInspectGroup");
+
     for _, response in pairs(CommMessage.Responses) do
         local senderName = response.Sender.name;
         local versionString = response.content;

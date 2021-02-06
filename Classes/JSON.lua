@@ -1,6 +1,7 @@
 local _, App = ...;
 
-App.JSON = App.JSON or {};
+App.JSON = {};
+
 local JSON = App.JSON;
 
 local default_pretty_indent  = "  "

@@ -1,21 +1,24 @@
 -- arg1 is the name off the addon, arg2 is the addon namespace
 local appName, App = ...;
 
--- Register our addon with the Ace framework
-App.Ace = LibStub("AceAddon-3.0"):NewAddon("Gargul", "AceConsole-3.0", "AceComm-3.0", "AceSerializer-3.0", "AceTimer-3.0");
-
-App.name = appName;
+--[[ APP VERSION ]]
 App.version = "2.0.5";
+
+--[[ DEBUG MODE ]]
 App.debugEnabled = false;
 
+App.name = appName;
 App._initialized = false;
 App.clientUIinterface = 0;
 App.clientVersion = 0;
 App.isClassic = false;
 App.DebugLines = {};
 
+-- Register our addon with the Ace framework
+App.Ace = LibStub("AceAddon-3.0"):NewAddon(App.name, "AceConsole-3.0", "AceComm-3.0", "AceSerializer-3.0", "AceTimer-3.0");
+
 -- Bootstrap the addon
-App.bootstrap = function(self, event, addonName)
+App.bootstrap = function(_, _, addonName)
 
     -- The addon was already bootstrapped or this is not the correct event
     if (App._initialized) then
