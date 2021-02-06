@@ -1,13 +1,8 @@
 --[[
     This class handles the addon's SavedVariables tables
-    self.Characters is a shortcut for GargulDB.Characters *
-    self.LootHistory is a shortcut for GargulDB.LootHistory *
 
     This class also provides functionality for
     compressing/decompressing our tables and checking their integrity
-
-    *   Using these shortcuts makes persistency between game sessions
-        buggy which is why we call DB:store before every logout
 ]]
 
 local _, App = ...;
@@ -16,9 +11,13 @@ App.DB = {
     initialized = false,
     Characters = {},
     LootHistory = {},
+    LootPriority = {},
+    Settings = {},
+    SoftReserves = {},
 };
 
 local DB = App.DB;
+local Constants = App.Data.Constants;
 
 function DB:_init()
     App:debug("DB:_init");
@@ -36,19 +35,21 @@ function DB:_init()
     -- Prepare our database tables
     GargulDB.Characters = GargulDB.Characters or {};
     GargulDB.LootHistory = GargulDB.LootHistory or {};
-    GargulDB.SoftReserves = GargulDB.SoftReserves or {};
+    GargulDB.LootPriority = GargulDB.LootPriority or {};
     GargulDB.Settings = GargulDB.Settings or {};
+    GargulDB.SoftReserves = GargulDB.SoftReserves or {};
 
     -- Provide a shortcut for each table
     self.Characters = GargulDB.Characters;
     self.LootHistory = GargulDB.LootHistory;
-    self.SoftReserves = GargulDB.SoftReserves;
+    self.LootPriority = GargulDB.LootPriority;
     self.Settings = GargulDB.Settings;
+    self.SoftReserves = GargulDB.SoftReserves;
 
     -- Fire DB:store before every logout/reload/exit
-    DB.logoutEvent = CreateFrame("FRAME");
-    DB.logoutEvent:RegisterEvent("PLAYER_LOGOUT");
-    DB.logoutEvent:SetScript("OnEvent", self.store);
+    self.logoutEvent = CreateFrame("FRAME");
+    self.logoutEvent:RegisterEvent("PLAYER_LOGOUT");
+    self.logoutEvent:SetScript("OnEvent", self.store);
 
     self._initialized = true;
 end
@@ -61,8 +62,9 @@ function DB:store()
 
     GargulDB.Characters = App.DB.Characters;
     GargulDB.LootHistory = App.DB.LootHistory;
-    GargulDB.SoftReserves = App.DB.SoftReserves;
+    GargulDB.LootPriority = App.DB.LootPriority;
     GargulDB.Settings = App.Settings.Active;
+    GargulDB.SoftReserves = App.DB.SoftReserves;
 end
 
 -- Checks if all of our tables are valid

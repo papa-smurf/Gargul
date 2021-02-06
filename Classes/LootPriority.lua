@@ -13,13 +13,17 @@ function LootPriority:getPriorityByItemId(itemId)
         return;
     end
 
-    return App.Data.LootPriority[itemId];
+    itemId = tonumber(itemId);
+
+    return App.DB.LootPriority[itemId];
 end
 
 function LootPriority:_init()
     if (self._initialized) then
         return;
     end
+
+    App:debug("LootPriority:_init");
 
     -- Bind the appendLootPrioToTooltip method to the OnTooltipSetItem event
     GameTooltip:HookScript("OnTooltipSetItem", function(tooltip)
@@ -31,11 +35,15 @@ end
 
 -- Fetch an item's prio based on its item link
 function LootPriority:getPriorityByItemLink(itemLink)
+    App:debug("LootPriority:getPriorityByItemLink");
+
     return self:getPriorityByItemId(App:getItemIdFromLink(itemLink));
 end
 
--- Append the loot prio as defined in App.Data.LootPriority to an item's tooltip
+-- Append the loot prio as defined in App.DB.LootPriority to an item's tooltip
 function LootPriority:appendLootPrioToTooltip(tooltip)
+    App:debug("LootPriority:appendLootPrioToTooltip");
+
     -- No tooltip was provided
     if (not tooltip) then
         return;
@@ -49,6 +57,7 @@ function LootPriority:appendLootPrioToTooltip(tooltip)
     end
 
     local itemPriority = self:getPriorityByItemLink(itemLink);
+
     -- No prio defined for this item
     if (not itemPriority) then
         return;
