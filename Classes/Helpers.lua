@@ -247,43 +247,9 @@ function App:getItemIdFromLink(itemLink)
     return itemId;
 end
 
--- Serialize and compress a payload
-function App:compress(payload)
---    local serialized = App.JSON:encode(payload);
-    local serialized = App.Ace:Serialize(payload);
-    local compressed = App.Compressor:CompressHuffman(serialized);
-    local encoded = App.Compressor.EncodeTable:Encode(compressed);
-
-    return encoded;
-end
-
--- Decompress and deserialize a payload
-function App:decompress(encoded)
-    local compressed = App.Compressor.EncodeTable:Decode(encoded);
-
-    if (not compressed) then
-        App:warning("Something went wrong while decoding the COMM payload");
-        return;
-    end
-
-    local serialized = App.Compressor:DecompressHuffman(compressed);
-
-    if (not serialized) then
-        App:warning("Something went wrong while decompressing the COMM payload");
-        return;
-    end
-
-    local success, payload = App.Ace:Deserialize(serialized);
-
-    if (not success) then
-        App:warning("Something went wrong while deserializing the COMM payload");
-        return;
-    elseif (not payload) then
-        App:warning("The COMM payload appears to be empty");
-        return;
-    end
-
-    return payload;
+-- Check whether a given string
+function App:strIsItemLink(s)
+    return not App:getItemIdFromLink(s) == false;
 end
 
 -- Split a string by a given delimiter
