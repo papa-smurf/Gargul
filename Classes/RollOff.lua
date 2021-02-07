@@ -11,6 +11,7 @@ RollOff.CurrentRollOff = {
     itemName = nil, -- The name of the item we're rolling for
     itemLink = nil, -- The item link of the item we're rolling for
     itemIcon = nil, -- The icon of the item we're rolling for
+    note = nil, -- The note displayed on the progress bar
     Rolls = {}, -- Player rolls
 };
 
@@ -44,7 +45,7 @@ RollOff.inProgress = false;
 RollOff.timerId = 0; -- ID of the timer event
 
 -- Anounce to everyone in the raid that a roll off is starting
-function RollOff:announceStart(item, time)
+function RollOff:announceStart(item, time, note)
     App:debug("RollOff:announceStart");
 
     App.CommMessage.new(
@@ -52,6 +53,7 @@ function RollOff:announceStart(item, time)
         {
             item = item,
             time = time,
+            note = note,
         },
         "RAID"
     ):send();
@@ -94,7 +96,7 @@ function RollOff:announceStop()
 
     App.CommMessage.new(
         CommActions.stopRollOff,
-        {},
+        nill,
         "RAID"
     ):send();
 end
@@ -104,13 +106,14 @@ function RollOff:start(CommMessage)
     App:debug("RollOff:start");
 
     local content = CommMessage.content;
-    local time, isValidItem, itemId, itemName, itemLink, itemIcon;
+    local time, isValidItem, itemId, itemName, itemLink, itemIcon, note;
 
     -- We have to wait with starting the actual roll off process until
     -- the item that's up for rolling has been sucessfully loaded by the Item API
     local startRollOffSequence = function()
         isValidItem, itemId, itemName, itemLink, _, _, _, _, _, _, _, itemIcon = App:getItemInfoFromLink(content.item);
         time = tonumber(content.time);
+        note = content.note;
 
         if (not isValidItem) then
             return App:error("Invalid item provided in RollOff:start");
@@ -130,6 +133,7 @@ function RollOff:start(CommMessage)
                 itemName = itemName,
                 itemLink = itemLink,
                 itemIcon = itemIcon,
+                note = note,
                 Rolls = {},
             };
         else
@@ -138,7 +142,7 @@ function RollOff:start(CommMessage)
             self.CurrentRollOff.time = time;
         end
 
-        App.RollerUI:show(time, itemId, itemName, itemLink, itemIcon);
+        App.RollerUI:show(time, itemId, itemName, itemLink, itemIcon, note);
 
         self.timerId = App.Ace:ScheduleTimer(function ()
             self:stop();

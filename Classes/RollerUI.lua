@@ -43,7 +43,7 @@ function RollerUI:reopen()
 end
 
 -- Note: we're not using Ace Gui here since we don't want any fancy frames
-function RollerUI:draw(time, itemId, itemName, itemLink, itemIcon)
+function RollerUI:draw(time, itemId, itemName, itemLink, itemIcon, note)
     App:debug("RollerUI:draw");
 
     local itemIsReserved = App.SoftReserves:getSoftReservesByItemId(itemId);
@@ -173,26 +173,20 @@ function RollerUI:draw(time, itemId, itemName, itemLink, itemIcon)
     local texture = self.Widgets.TimerBarTexture;
     self.Widgets.TimerBar = self.Widgets.TimerBar or LibStub("LibCandyBar-3.0"):New(texture, 350, 24);
     local bar = self.Widgets.TimerBar;
-    local itemPriority = App.LootPriority:getPriorityByItemId(itemId);
 
-    if (itemPriority) then
-        itemPriority = table.concat(App.LootPriority:getPriorityByItemId(itemId), " > ");
-    else
-        itemPriority = "Off spec";
-    end
+    note = note or "";
+    local noteStringLengthAllowed = 53 - string.len(note);
 
-    local priorityStringLengthAllowed = 53 - string.len(itemName);
-
-    -- Make sure the item priority does not go out of bounds
-    if (priorityStringLengthAllowed < 0) then
-        priorityStringLengthAllowed = 0;
+    -- Make sure the item note does not go out of bounds
+    if (noteStringLengthAllowed < 0) then
+        noteStringLengthAllowed = 0;
     end
 
     bar:SetParent(RollerFrame);
     bar:SetPoint("BOTTOM", RollerFrame, "BOTTOM");
     bar:SetDuration(time);
 
-    bar:SetLabel("  " .. itemLink .. " " .. string.sub(itemPriority, 0, priorityStringLengthAllowed));
+    bar:SetLabel("  " .. itemLink .. " " .. string.sub(note, 0, noteStringLengthAllowed));
     bar.candyBarLabel:SetFont("Fonts\\ARIALN.ttf", 13, "OUTLINE");
 
     bar:SetIcon(itemIcon);

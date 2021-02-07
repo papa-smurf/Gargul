@@ -23,7 +23,6 @@ MasterLooterUI.Widgets = {
     Icons = {},
 };
 
-MasterLooterUI.ItemPriorityBox = {};
 MasterLooterUI.ItemBoxHoldsValidItem = false;
 
 MasterLooterUI.PlayersTable = {};
@@ -141,7 +140,7 @@ function MasterLooterUI:draw(itemLink)
 
                     local ButtonPadder = AceGUI:Create("SimpleGroup");
                     ButtonPadder:SetLayout("Flow");
-                    ButtonPadder:SetWidth(20);
+                    ButtonPadder:SetWidth(14);
                     ButtonPadder:SetHeight(30);
                     FirstRow:AddChild(ButtonPadder);
 
@@ -159,7 +158,8 @@ function MasterLooterUI:draw(itemLink)
 
                         App.RollOff:announceStart(
                             MasterLooterUI.Widgets.EditBoxes.Item:GetText(),
-                            MasterLooterUI.Widgets.EditBoxes.Timer:GetText()
+                            MasterLooterUI.Widgets.EditBoxes.Timer:GetText(),
+                            MasterLooterUI.Widgets.EditBoxes.ItemNote:GetText()
                         );
 
                         MasterLooterUI:updateWidgets();
@@ -196,22 +196,33 @@ function MasterLooterUI:draw(itemLink)
                         SPACER
                     ]]
 
-                    local PreItemPrioSpacer = AceGUI:Create("SimpleGroup");
-                    PreItemPrioSpacer:SetLayout("Flow");
-                    PreItemPrioSpacer:SetWidth(8);
-                    PreItemPrioSpacer:SetHeight(20);
-                    SecondRow:AddChild(PreItemPrioSpacer);
+                    local PreItemNoteLabelSpacer = AceGUI:Create("SimpleGroup");
+                    PreItemNoteLabelSpacer:SetLayout("Flow");
+                    PreItemNoteLabelSpacer:SetWidth(8);
+                    PreItemNoteLabelSpacer:SetHeight(20);
+                    SecondRow:AddChild(PreItemNoteLabelSpacer);
 
                     --[[
-                        ITEM PRIO
+                        ITEM NOTE LABEL
                     ]]
 
-                    local ItemPrio = AceGUI:Create("Label");
-                    ItemPrio:SetColor(.94, .72, .8);
-                    ItemPrio:SetHeight(20);
-                    ItemPrio:SetWidth(150);
-                    SecondRow:AddChild(ItemPrio);
-                    MasterLooterUI.Widgets.Labels.ItemPriority = ItemPrio;
+                    local ItemNoteLabel = AceGUI:Create("Label");
+                    ItemNoteLabel:SetText("NOTE");
+                    ItemNoteLabel:SetHeight(20);
+                    ItemNoteLabel:SetWidth(35);
+                    SecondRow:AddChild(ItemNoteLabel);
+                    MasterLooterUI.Widgets.EditBoxes.ItemNoteLabel = ItemNoteLabel;
+
+                    --[[
+                        ITEM NOTE
+                    ]]
+
+                    local ItemNote = AceGUI:Create("EditBox");
+                    ItemNote:DisableButton(true);
+                    ItemNote:SetHeight(20);
+                    ItemNote:SetWidth(340);
+                    SecondRow:AddChild(ItemNote);
+                    MasterLooterUI.Widgets.EditBoxes.ItemNote = ItemNote;
 
             --[[
                 THID ROW (ROLL TIMER)
@@ -410,7 +421,7 @@ function MasterLooterUI:update()
         MasterLooterUI.ItemBoxHoldsValidItem = false;
         IconWidget:SetImage(MasterLooterUI.Defaults.itemIcon);
 
-        MasterLooterUI:updateItemPriorityLabel();
+        MasterLooterUI:updateItemNote();
         MasterLooterUI:updateWidgets();
         return;
     end
@@ -429,32 +440,32 @@ function MasterLooterUI:update()
         IconWidget:SetImage(MasterLooterUI.Defaults.itemIcon);
     end
 
-    MasterLooterUI:updateItemPriorityLabel();
+    MasterLooterUI:updateItemNote();
     MasterLooterUI:updateWidgets();
 end
 
 -- Update the item priority string
-function MasterLooterUI:updateItemPriorityLabel()
-    App:debug("MasterLooterUI:updateItemPriorityLabel");
+function MasterLooterUI:updateItemNote()
+    App:debug("MasterLooterUI:updateItemNote");
 
-    local ItemPriorityBox = MasterLooterUI.Widgets.Labels.ItemPriority;
+    local ItemNote = MasterLooterUI.Widgets.EditBoxes.ItemNote;
     local itemLink = MasterLooterUI.Widgets.EditBoxes.Item:GetText();
 
-    -- We don't have a valid itemlink at hand, clear the priority label
+    -- We don't have a valid itemlink at hand, clear the note
     if (not MasterLooterUI.ItemBoxHoldsValidItem) then
-        return ItemPriorityBox:SetText("");
+        return ItemNote:SetText("");
     end
 
     local itemPriority = App.LootPriority:getPriorityByItemLink(itemLink);
 
     -- If there is no item priority then label the item with "Off spec"
     if (not itemPriority) then
-        return ItemPriorityBox:SetText("Off spec");
+        return ItemNote:SetText("Off spec");
     end
 
     -- There is a priority for this item
     itemPriority = table.concat(itemPriority, " > ");
-    ItemPriorityBox:SetText(itemPriority);
+    ItemNote:SetText(itemPriority);
 end
 
 -- Reset the roll off UI to its defaults
@@ -462,7 +473,7 @@ function MasterLooterUI:reset()
     MasterLooterUI.Widgets.Icons.Item:SetImage(MasterLooterUI.Defaults.itemIcon);
     MasterLooterUI.Widgets.EditBoxes.Item:SetText(MasterLooterUI.Defaults.itemText);
     MasterLooterUI.Widgets.EditBoxes.Timer:SetText(Settings:get("UI.RollOff.timer"));
-    MasterLooterUI.Widgets.Labels.ItemPriority:SetText("");
+    MasterLooterUI.Widgets.EditBoxes.ItemNote:SetText("");
     MasterLooterUI.ItemBoxHoldsValidItem = false;
 
     MasterLooterUI.Widgets.Tables.Players:ClearSelection();
