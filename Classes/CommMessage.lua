@@ -124,7 +124,7 @@ function CommMessage:compress(message)
         a = message.action, -- Action
         c = message.content, -- Content
         v = message.version, -- Version of sender
-        mv = App.Data.Constants.Comm.minimumAppVersion, -- Minimum version recipient should have
+        mv = message.minimumVersion, -- Minimum version recipient should have
         s = message.senderName, -- Name of the sender
         r = message.correspondenceId or message.id, -- Response ID
     }
@@ -165,7 +165,7 @@ function CommMessage:decompress(encoded)
         action = payload.a or nil, -- Action
         content = payload.c or nil, -- Content
         version = payload.v or nil, -- Version of sender
-        minimumVersion = payload.v or nil, -- Minimum version recipient should have
+        minimumVersion = payload.mv or nil, -- Minimum version recipient should have
         senderName = payload.s or nil, -- Name of the sender
         correspondenceId = payload.r or payload.id, -- Response ID
     };
