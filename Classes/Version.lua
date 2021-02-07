@@ -53,21 +53,19 @@ end
 function Version:validateAndSplit(versionString)
     App:debug("Version:validateAndSplit");
 
-    if (not type(versionString) == "string"
-        or not string.match(versionString, "%d+%.%d+%.%d+")
-    ) then
+    if (not type(versionString) == "string") then
         App:warning("Invalid version string provided in Version:validateAndSplit");
         return false;
     end
 
     local versionParts = App:strSplit(versionString, ".");
 
-    if (not #versionParts == 3) then
+    if (not versionParts[1]) then
         App:warning("Version string split failed");
         return false;
     end
 
-    return true, versionParts[1], versionParts[2], versionParts[3];
+    return true, versionParts[1], versionParts[2] or "0", versionParts[3] or "0";
 end
 
 -- Check if the versionstring passed first is older than the one passed second
