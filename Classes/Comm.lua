@@ -84,6 +84,20 @@ function Comm:listen(payload, distribution, senderName)
         end
     end
 
+    if (payload.version
+        and type(payload.version) == "string"
+        and not App.Version:leftIsNewerThanOrEqualToRight(App.version, payload.version)
+    ) then
+        App:warning("There's an update available. Go to https://www.curseforge.com/wow/addons/gargul to update.");
+    end
+
+    if (payload.minimumVersion
+        and type(payload.minimumVersion) == "string"
+        and not App.Version:leftIsNewerThanOrEqualToRight(App.version, payload.minimumVersion)
+    ) then
+        return App:error("I'm out of date and won't work properly until you update me!");
+    end
+
     if (not payload.action) then
         return App:warning("Payload is missing required property 'action'");
     end
