@@ -129,7 +129,7 @@ function CommMessage:compress(message)
         r = message.correspondenceId or message.id, -- Response ID
     }
 
-    local success, payload = pcall(function ()
+    local success, compressed = pcall(function ()
         local compressed = App.JSON:encode(Payload);
         compressed = LibDeflate:CompressDeflate(compressed, {level = 8});
         compressed = LibDeflate:EncodeForWoWAddonChannel(compressed);
@@ -137,12 +137,12 @@ function CommMessage:compress(message)
         return compressed;
     end);
 
-    if (not success or not payload) then
+    if (not success or not compressed) then
         App:error("Something went wrong trying to compress a CommMessage in CommMessage:compress");
         return false;
     end
 
-    return payload;
+    return compressed;
 end
 
 -- Decompress and deserialize a CommMessage
