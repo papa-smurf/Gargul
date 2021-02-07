@@ -7,7 +7,7 @@ App.SoftReserves = {
 
 local SoftReserves = App.SoftReserves;
 local AceGUI = App.Ace.GUI;
-local CommActions = App.Data.Constants.CommActions;
+local CommActions = App.Data.Constants.Comm.Actions;
 
 -- Add a award confirmation dialog to Blizzard's global StaticPopupDialogs object
 StaticPopupDialogs["CLEAR_SOFTRESERVES_CONFIRMATION"] = {

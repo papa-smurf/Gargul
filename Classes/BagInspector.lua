@@ -13,7 +13,7 @@ App.BagInspector = {
 };
 
 local BagInspector = App.BagInspector;
-local CommActions = App.Data.Constants.CommActions;
+local CommActions = App.Data.Constants.Comm.Actions;
 local ScrollingTable = App.Ace.ScrollingTable;
 local AceGUI = App.Ace.GUI;
 

@@ -3,7 +3,7 @@ local _, App = ...;
 App.Bidder = App.Bidder or {};
 
 local Bidder = App.Bidder;
-local CommActions = App.Data.Constants.CommActions;
+local CommActions = App.Data.Constants.Comm.Actions;
 
 Bidder.hasEnoughDkpToBid = false;
 

@@ -2,7 +2,7 @@ local _, App = ...;
 
 App.Auction = {};
 local Auction = App.Auction;
-local CommActions = App.Data.Constants.CommActions;
+local CommActions = App.Data.Constants.Comm.Actions;
 
 Auction.CurrentAuction = {
     auctioneer = nil, -- The player who started the auction

@@ -2,7 +2,7 @@ local _, App = ...;
 
 App.RollOff = {};
 local RollOff = App.RollOff;
-local CommActions = App.Data.Constants.CommActions;
+local CommActions = App.Data.Constants.Comm.Actions;
 
 RollOff.CurrentRollOff = {
     initiator = nil, -- The player who started the roll off

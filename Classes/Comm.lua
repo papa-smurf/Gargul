@@ -6,7 +6,7 @@ App.Comm = {
 };
 
 local Comm = App.Comm;
-local CommActions = App.Data.Constants.CommActions or {};
+local CommActions = App.Data.Constants.Comm.Actions or {};
 
 function Comm:_init()
     App:debug("Comm:_init");
@@ -16,7 +16,7 @@ function Comm:_init()
         return;
     end
 
-    self.channel = App.Data.Constants.commChannel;
+    self.channel = App.Data.Constants.Comm.channel;
 
     -- Register the Ace Comm channel listener
     App.Ace:RegisterComm(self.channel, Comm.listen);

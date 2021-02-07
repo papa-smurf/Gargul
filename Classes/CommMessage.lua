@@ -35,6 +35,8 @@ function CommMessage.new(action, content, channel, recipient)
     self.action = action;
     self.content = content;
     self.channel = channel;
+    self.version = App.version;
+    self.minimumVersion = App.Data.Constants.Comm.minimumAppVersion;
     self.senderName = App.User.name;
     self.recipient = recipient;
     self.Responses = {};
@@ -54,6 +56,8 @@ function CommMessage.newFromReceived(Message)
     self.action = Message.action;
     self.content = Message.content;
     self.channel = Message.channel;
+    self.version = Message.version;
+    self.minimumVersion = App.Data.Constants.Comm.minimumAppVersion;
     self.Sender = Message.Sender;
     self.senderName = Message.Sender.name;
     self.recipient = Message.recipient;
@@ -77,9 +81,11 @@ function CommMessage:respond(message)
     App:debug("CommMessage:respond");
 
     local Response = {
-        action = App.Data.Constants.CommActions.response,
+        action = App.Data.Constants.Comm.Actions.response,
         content = message,
         channel = "WHISPER",
+        version = App.version;
+        minimumVersion = App.Data.Constants.Comm.minimumAppVersion;
         senderName = App.User.name,
         recipient = self.Sender.name,
         correspondenceId = self.correspondenceId or self.id,
@@ -115,12 +121,12 @@ function CommMessage:compress(message)
     message = message or self;
 
     local Payload = {
-        action = message.action,
-        content = message.content;
-        channel = message.channel,
-        senderName = message.senderName,
-        recipient = message.recipient,
-        correspondenceId = message.correspondenceId or message.id,
+        a = message.action, -- Action
+        c = message.content, -- Content
+        v = message.version, -- Version of sender
+        mv = App.Data.Constants.Comm.minimumAppVersion, -- Minimum version recipient should have
+        s = message.senderName, -- Name of the sender
+        r = message.correspondenceId or message.id, -- Response ID
     }
 
     local success, payload = pcall(function ()
@@ -153,28 +159,16 @@ function CommMessage:decompress(encoded)
         return;
     end
 
---    local serialized = App.Compressor:DecompressHuffman(compressed);
---
---    if (not serialized) then
---        App:warning("Something went wrong while decompressing the COMM payload");
---        return;
---    end
+    local payload = App.JSON:decode(compressed);
 
---    local success, payload = App.Ace:Deserialize(serialized);
---
---    if (not success) then
---        App:warning("Something went wrong while deserializing the COMM payload");
---        return;
---    elseif (not payload) then
---        App:warning("The COMM payload appears to be empty");
---        return;
---    end
---
---    payload.content = App.JSON:decode(payload.content);
---
---    return payload;
-
-    return App.JSON:decode(compressed);
+    return {
+        action = payload.a or nil, -- Action
+        content = payload.c or nil, -- Content
+        version = payload.v or nil, -- Version of sender
+        minimumVersion = payload.v or nil, -- Minimum version recipient should have
+        senderName = payload.s or nil, -- Name of the sender
+        correspondenceId = payload.r or payload.id, -- Response ID
+    };
 end
 
 App:debug("CommMessage.lua");

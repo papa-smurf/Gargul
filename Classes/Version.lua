@@ -3,7 +3,7 @@ local _, App = ...;
 App.Version = App.Version or {};
 
 local Version = App.Version;
-local CommActions = App.Data.Constants.CommActions;
+local CommActions = App.Data.Constants.Comm.Actions;
 
 Version.current = App.version;
 Version.latest = App.version;
@@ -140,7 +140,7 @@ function Version:inspectGroup()
 
     local CommMessage = App.CommMessage.new(
         CommActions.requestAppVersion,
-        {},
+        nill,
         "RAID"
     ):send();
 

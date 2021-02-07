@@ -12,7 +12,7 @@ App.Sync = {
 };
 
 local Sync = App.Sync;
-local CommActions = App.Data.Constants.CommActions;
+local CommActions = App.Data.Constants.Comm.Actions;
 
 function Sync:broadcast()
     App:debug("Sync:broadcast");
