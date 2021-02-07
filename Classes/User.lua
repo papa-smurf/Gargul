@@ -89,7 +89,17 @@ end
 -- in the same party/raid as the current user
 function User:listGroupMembers()
     local Roster = {};
-    for index = 1, MAX_RAID_MEMBERS do
+
+    if (not App.User.isInGroup) then
+        return Roster;
+    end
+
+    local maximumNumberOfGroupMembers = MEMBERS_PER_RAID_GROUP;
+    if (App.User.isInRaid) then
+        maximumNumberOfGroupMembers = MAX_RAID_MEMBERS;
+    end
+
+    for index = 1, maximumNumberOfGroupMembers do
         local name, rank, subgroup, level, class, fileName, _, _, _, role, isML = GetRaidRosterInfo(index);
 
         if (name) then

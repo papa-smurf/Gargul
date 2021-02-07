@@ -158,9 +158,8 @@ function CommMessage:decompress(encoded)
         return deserialized;
     end);
 
-    if (not Payload) then
-        App:warning("Something went wrong while decoding the COMM payload");
-        return;
+    if not (success or Payload) then
+        return App:warning("Something went wrong while decoding the COMM payload");
     end
 
     return {
