@@ -8,6 +8,7 @@ local CommMessage = App.CommMessage;
 CommMessage.Box = {};
 
 local LibDeflate = LibStub:GetLibrary("LibDeflate");
+local LibSerialize = LibStub:GetLibrary("LibSerialize");
 
 -- This metatable allows us to have multiple instances of this object
 setmetatable(CommMessage, {
@@ -129,45 +130,46 @@ function CommMessage:compress(message)
         r = message.correspondenceId or message.id, -- Response ID
     }
 
-    local success, compressed = pcall(function ()
-        local compressed = App.JSON:encode(Payload);
-        compressed = LibDeflate:CompressDeflate(compressed, {level = 8});
-        compressed = LibDeflate:EncodeForWoWAddonChannel(compressed);
+    local success, encoded = pcall(function ()
+        local serialized = LibSerialize:Serialize(Payload);
+        local compressed = LibDeflate:CompressDeflate(serialized, {level = 8});
+        local encoded = LibDeflate:EncodeForWoWAddonChannel(compressed);
 
-        return compressed;
+        return encoded;
     end);
 
-    if (not success or not compressed) then
+    if (not success or not encoded) then
         App:error("Something went wrong trying to compress a CommMessage in CommMessage:compress");
         return false;
     end
 
-    return compressed;
+    return encoded;
 end
 
 -- Decompress and deserialize a CommMessage
 function CommMessage:decompress(encoded)
     App:debug("CommMessage:compress");
 
---    local compressed = App.Compressor.EncodeTable:Decode(encoded);
+    local success, Payload = pcall(function ()
+        local compressed = LibDeflate:DecodeForWoWAddonChannel(encoded);
+        local decompressed = LibDeflate:DecompressDeflate(compressed);
+        local _, deserialized = LibSerialize:Deserialize(decompressed);
 
-    local compressed = LibDeflate:DecodeForWoWAddonChannel(encoded);
-    compressed = LibDeflate:DecompressDeflate(compressed);
+        return deserialized;
+    end);
 
-    if (not compressed) then
+    if (not Payload) then
         App:warning("Something went wrong while decoding the COMM payload");
         return;
     end
 
-    local payload = App.JSON:decode(compressed);
-
     return {
-        action = payload.a or nil, -- Action
-        content = payload.c or nil, -- Content
-        version = payload.v or nil, -- Version of sender
-        minimumVersion = payload.mv or nil, -- Minimum version recipient should have
-        senderName = payload.s or nil, -- Name of the sender
-        correspondenceId = payload.r or payload.id, -- Response ID
+        action = Payload.a or nil, -- Action
+        content = Payload.c or nil, -- Content
+        version = Payload.v or nil, -- Version of sender
+        minimumVersion = Payload.mv or nil, -- Minimum version recipient should have
+        senderName = Payload.s or nil, -- Name of the sender
+        correspondenceId = Payload.r or Payload.id, -- Response ID
     };
 end
 
