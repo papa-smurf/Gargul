@@ -2,7 +2,7 @@
 local appName, App = ...;
 
 --[[ APP VERSION ]]
-App.version = "2.0.5";
+App.version = "2.1.0";
 
 --[[ DEBUG MODE ]]
 App.debugEnabled = false;
