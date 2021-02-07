@@ -102,7 +102,7 @@ App.Data.Constants = {
     ]]
     Comm = {
         channel = "GargulComm2",
-        minimumAppVersion = "2.0.0",
+        minimumAppVersion = "2",
         Actions = {
             auctionResult = 1,
             bid = 2,
