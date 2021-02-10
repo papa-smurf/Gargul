@@ -150,7 +150,7 @@ function Sync:processBroadcastLootHistoryResponses()
     App:debug("Sync:processBroadcastLootHistoryResponses");
 
     local message = self.characterBroadCastMessage;
-App:frameMessage(message.Responses);
+
     -- TODO: Cross reference against raid members (see below)
 
     -- We no longer need the message or its responses

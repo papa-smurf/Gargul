@@ -289,6 +289,7 @@ function App:uuid()
     end)
 end
 
+-- Overwrite/compliment the original table (left) with the values from the right table
 function App:tableMerge(left, right)
     for key,value in pairs(right) do
         if (type(value) == "table") then

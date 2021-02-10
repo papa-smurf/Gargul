@@ -74,6 +74,10 @@ Commands.ve = Commands.version;
 Commands.inspect = function(...) App.BagInspector:inspect(...); end
 Commands.ins = Commands.inspect;
 
+-- Check if everyone is running the most up-to-date version
+Commands.buffs = function(...) App.BuffInspector:inspect(...); end
+Commands.bu = Commands.buffs;
+
 -- This method dispatches all slash commands to their final destination
 function Commands:_dispatch (str)
     App.User:refresh();
