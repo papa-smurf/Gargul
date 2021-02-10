@@ -115,12 +115,11 @@ function SoftReserves:appendSoftReserveInfoToTooltip(tooltip)
     tooltip:AddLine(string.format("|c008aecff %s", reserves));
 end
 
-function SoftReserves:draw()
-    App:debug("SoftReserves:draw");
+function SoftReserves:drawImporter()
+    App:debug("SoftReserves:drawImporter");
 
     -- Create a container/parent frame
     local SoftReservesFrame = AceGUI:Create("Frame");
---    SoftReservesFrame:SetCallback("OnClose", function(widget) AceGUI:Release(widget) end);
     SoftReservesFrame:SetTitle("Gargul v" .. App.version);
     SoftReservesFrame:SetStatusText("Addon v" .. App.version);
     SoftReservesFrame:SetLayout("Flow");
@@ -245,7 +244,7 @@ function SoftReserves:broadcast()
         return;
     end
 
-    SoftReserves.broadcastInProgress = true;
+    self.broadcastInProgress = true;
 
     if (App.User.isInRaid) then
         App.CommMessage.new(
@@ -263,7 +262,7 @@ function SoftReserves:broadcast()
 
     App.Ace:ScheduleTimer(function ()
         App:success("Broadcast finished");
-        SoftReserves.broadcastInProgress = false;
+        self.broadcastInProgress = false;
     end, 10);
 end
 
