@@ -35,8 +35,12 @@ end
 Commands.au = Commands.auction;
 
 -- Open the soft reserves window
-Commands.softreserves = function() App.SoftReserves:draw(); end
+Commands.softreserves = function() App.SoftReserves:drawImporter(); end
 Commands.so = Commands.softreserves;
+
+-- Open the loot priority window
+Commands.lootpriority = function() App.LootPriority:drawImporter(); end
+Commands.lo = Commands.lootpriority;
 
 -- Open the window for rolling off items
 Commands.rolloff = function(...) App.MasterLooterUI:draw(...); end
