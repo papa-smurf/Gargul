@@ -58,7 +58,7 @@ function RollOff:announceStart(item, time, note)
         "RAID"
     ):send();
 
-    local announceMessage = string.format("You have %s seconds to roll on %s", time, item);
+    local announceMessage = string.format("You have %s seconds to roll on %s (%s)", time, item, note);
     local reserveMessage = "";
     local reserves = App.SoftReserves:getSoftReservesByItemLink(item);
 
