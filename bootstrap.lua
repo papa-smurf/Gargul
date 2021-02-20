@@ -15,7 +15,7 @@ App.isClassic = false;
 App.DebugLines = {};
 
 -- Register our addon with the Ace framework
-App.Ace = LibStub("AceAddon-3.0"):NewAddon(App.name, "AceConsole-3.0", "AceComm-3.0", "AceSerializer-3.0", "AceTimer-3.0");
+App.Ace = LibStub("AceAddon-3.0"):NewAddon(App.name, "AceConsole-3.0", "AceComm-3.0", "AceTimer-3.0");
 
 -- Bootstrap the addon
 App.bootstrap = function(_, _, addonName)

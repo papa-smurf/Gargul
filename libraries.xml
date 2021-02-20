@@ -48,12 +48,6 @@
     <Include file="Libs\AceComm-3.0\AceComm-3.0.xml" />
 
     <!--
-    AceSerializer-3.0 can serialize any variable (except functions or userdata)
-    into a string format, that can be send over the addon comm channel.
-    -->
-    <Include file="Libs\AceSerializer-3.0\AceSerializer-3.0.xml" />
-
-    <!--
     AceTimer-3.0 provides a central facility for registering timers.
     AceTimer supports one-shot timers and repeating timers. All timers are stored in an efficient data structure
     that allows easy dispatching and fast rescheduling. Timers can be registered or canceled at any time,
