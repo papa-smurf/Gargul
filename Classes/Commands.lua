@@ -25,14 +25,19 @@ end
 Commands.dashboard = function() App.Dashboard:draw(); end
 
 -- Open the auctioneer window (requires group and officer privileges)
-Commands.auction = function()
+Commands.auction = function(...)
     if (not App.User.isOfficer) then
         return App:warning("This feature requires officer privileges");
     end
 
-    App.AuctioneerUI:draw();
+    App.AuctioneerUI:draw(...);
 end
 Commands.au = Commands.auction;
+
+-- Open the window for rolling off items
+Commands.rolloff = function(...) App.MasterLooterUI:draw(...); end
+Commands.roll = Commands.rolloff;
+Commands.ro = Commands.roll;
 
 -- Open the soft reserves window
 Commands.softreserves = function() App.SoftReserves:drawImporter(); end
@@ -41,11 +46,6 @@ Commands.so = Commands.softreserves;
 -- Open the loot priority window
 Commands.lootpriority = function() App.LootPriority:drawImporter(); end
 Commands.lo = Commands.lootpriority;
-
--- Open the window for rolling off items
-Commands.rolloff = function(...) App.MasterLooterUI:draw(...); end
-Commands.roll = Commands.rolloff;
-Commands.ro = Commands.roll;
 
 Commands.bid = function() App.BidderUI:reopen(); end
 Commands.bi = Commands.bid;

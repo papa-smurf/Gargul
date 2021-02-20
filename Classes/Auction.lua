@@ -16,7 +16,7 @@ Auction.CurrentAuction = {
 };
 
 -- Add a award confirmation dialog to Blizzard's global StaticPopupDialogs object
-StaticPopupDialogs["AWARD_CONFIRMATION"] = {
+StaticPopupDialogs["AUCTION_AWARD_CONFIRMATION"] = {
     text = "",
     button1 = "Yes",
     button2 = "No",
@@ -28,7 +28,7 @@ StaticPopupDialogs["AWARD_CONFIRMATION"] = {
 }
 
 -- Add a award confirmation dialog to Blizzard's global StaticPopupDialogs object
-StaticPopupDialogs["CLEAR_CONFIRMATION"] = {
+StaticPopupDialogs["CLEAR_AUCTION_CONFIRMATION"] = {
     text = "Are you sure you want to clear everything?",
     button1 = "Yes",
     button2 = "No",
@@ -350,13 +350,13 @@ function Auction:award(bidder)
     end
 
     -- Make sure the auctioneer has to confirm his choices
-    StaticPopupDialogs["AWARD_CONFIRMATION"].OnAccept = award;
-    StaticPopupDialogs["AWARD_CONFIRMATION"].text = string.format("Award %s to %s for %s DKP?",
+    StaticPopupDialogs["AUCTION_AWARD_CONFIRMATION"].OnAccept = award;
+    StaticPopupDialogs["AUCTION_AWARD_CONFIRMATION"].text = string.format("Award %s to %s for %s DKP?",
         Auction.itemLink,
         bidder,
         bid
     );
-    StaticPopup_Show("AWARD_CONFIRMATION");
+    StaticPopup_Show("AUCTION_AWARD_CONFIRMATION");
 end
 
 function Auction:reset()

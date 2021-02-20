@@ -38,14 +38,22 @@ AuctioneerUI.BidTable = {};
 function AuctioneerUI:draw(itemLink)
     App:debug("AuctioneerUI:draw");
 
-    local isValidItem, itemId, itemName, itemLink = App:getItemInfoFromLink(itemLink);
-
-    if (self.Widgets.Frame
-        and self.Widgets.Frame.rendered
+    -- First we need to check if the frame hasn't been
+    -- rendered already. If so then show it (if it's hidden)
+    -- and pass the itemLink along in case one was provided
+    if (AuctioneerUI.Widgets.Frame
+            and AuctioneerUI.Widgets.Frame.rendered
     ) then
---        self:refreshFrameContents(itemId, itemName, itemLink);
+        if (itemLink) then
+            self:passItemLink(itemLink);
+        end
 
-        return self.Widgets.Frame:Show();
+        -- If the frame is hidden we need to show it again
+        if (not self.Widgets.Frame:IsShown()) then
+            self.Widgets.Frame:Show();
+        end
+
+        return;
     end
 
     -- Create a container/parent frame
@@ -103,21 +111,11 @@ function AuctioneerUI:draw(itemLink)
                     ]]
                     local ItemBox = AceGUI:Create("EditBox");
 
-                    local updateItemInfo = function()
-                        AuctioneerUI:updateItemIcon();
-                        AuctioneerUI:updateItemPriority();
-                        AuctioneerUI:updateWidgets();
-
-                        if (isValidItem) then
-                            ItemBox:SetText(itemLink);
-                        end
-                    end;
-
                     ItemBox:DisableButton(true);
                     ItemBox:SetHeight(20);
                     ItemBox:SetWidth(170);
-                    ItemBox:SetCallback("OnTextChanged", updateItemInfo); -- Update item info when input value changes
-                    ItemBox:SetCallback("OnEnterPressed", updateItemInfo); -- Update item info when item is dragged on top (makes no sense to use OnEnterPressed I know)
+                    ItemBox:SetCallback("OnTextChanged", self.ItemBoxChanged); -- Update item info when input value changes
+                    ItemBox:SetCallback("OnEnterPressed", self.ItemBoxChanged); -- Update item info when item is dragged on top (makes no sense to use OnEnterPressed I know)
 
                     self.Widgets.EditBoxes.Item = ItemBox;
 
@@ -314,7 +312,7 @@ function AuctioneerUI:draw(itemLink)
                     ClearButton:SetHeight(20);
                     ClearButton:SetDisabled(false);
                     ClearButton:SetCallback("OnClick", function()
-                        StaticPopup_Show("CLEAR_CONFIRMATION");
+                        StaticPopup_Show("CLEAR_AUCTION_CONFIRMATION");
                     end);
                     ThirdRow:AddChild(ClearButton);
                     self.Widgets.Buttons.ClearButton = ClearButton;
@@ -355,11 +353,74 @@ function AuctioneerUI:draw(itemLink)
 
             self:drawBidsTable(AuctioneerFrame.frame);
 
-    if (isValidItem) then
-        AuctioneerUI:updateItemIcon();
-        AuctioneerUI:updateItemPriority();
-        AuctioneerUI:updateWidgets();
-    end;
+    if (itemLink
+            and type(itemLink) == "string"
+    ) then
+        self:passItemLink(itemLink);
+    end
+end
+
+function AuctioneerUI:ItemBoxChanged()
+    App:debug("AuctioneerUI:ItemBoxChanged");
+
+    local itemLink = AuctioneerUI.Widgets.EditBoxes.Item:GetText();
+
+    AuctioneerUI:passItemLink(itemLink);
+end
+
+-- Pass an item link to the master looter UI
+-- This method is used when alt clicking an item
+-- in a loot window or when executing /gl roll [itemlink]
+function AuctioneerUI:passItemLink(itemLink)
+    App:debug("AuctioneerUI:passItemLink");
+
+    if (not self.Widgets.Frame.rendered) then
+
+        return;
+    end
+
+    if (App.Auction.inProgress) then
+        return App:warning("An auction currently in progress");
+    end
+
+    self.Widgets.EditBoxes.Item:SetText(itemLink);
+    return self:update();
+end
+
+-- Update the master looter UI based on the value of the ItemBox input
+function AuctioneerUI:update()
+    App:debug("AuctioneerUI:update");
+
+    local IconWidget = self.Widgets.Icons.Item;
+    local itemLink = self.Widgets.EditBoxes.Item:GetText();
+
+    -- If the item link is not valid then
+    --   Show the default question mark icon
+    --   Remove the item priority string
+    if (not itemLink or itemLink == "") then
+        App:debug("AuctioneerUI:update. Item link is invalid");
+
+        self.ItemBoxHoldsValidItem = false;
+        IconWidget:SetImage(self.Defaults.itemIcon);
+
+        return self:updateWidgets();
+    end
+
+    -- The item's icon is in the 10th position
+    local icon = select(10, GetItemInfo(itemLink));
+
+    if (icon) then
+        self.Widgets.Tables.Bids:ClearSelection();
+        self.Widgets.Tables.Bids:SetData({}, true);
+
+        IconWidget:SetImage(icon);
+        self.ItemBoxHoldsValidItem = true;
+    else
+        self.ItemBoxHoldsValidItem = false;
+        IconWidget:SetImage(self.Defaults.itemIcon);
+    end
+
+    self:updateWidgets();
 end
 
 function AuctioneerUI:drawBidsTable(parent)
@@ -475,8 +536,8 @@ function AuctioneerUI:reset()
     self.Widgets.Labels.ItemPriority:SetText("");
     self.ItemBoxHoldsValidItem = false;
 
-    AuctioneerUI.Widgets.Tables.Bids:ClearSelection();
-    AuctioneerUI.Widgets.Tables.Bids:SetData({}, true);
+    self.Widgets.Tables.Bids:ClearSelection();
+    self.Widgets.Tables.Bids:SetData({}, true);
 
     self:updateWidgets();
 end
