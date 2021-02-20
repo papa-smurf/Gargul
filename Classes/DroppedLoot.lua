@@ -35,6 +35,7 @@ end
 -- Hook click events to the item buttons in the
 -- loot window (name LootButton1 through LoootButton4)
 -- Only 4 buttons will be used regardless of number of drops
+-- Alt click opens the roll window, alt + shift opens the auctioneer window
 function DroppedLoot:hookClickEvents()
     App:debug("DroppedLoot:hookClickEvents");
 
@@ -53,8 +54,14 @@ function DroppedLoot:hookClickEvents()
 
                 local itemLink = GetLootSlotLink(Button.slot);
 
-                -- TODO: Differentiate between roll / dkp runs to determine which window we need to open
-                if (itemLink and type(itemLink) == "string") then
+                if (not itemLink or type(itemLink) ~= "string") then
+                    return;
+                end
+
+                -- Open the auctioneer window if both alt and shift are pressed
+                if (IsShiftKeyDown()) then
+                    App.AuctioneerUI:draw(itemLink);
+                else
                     App.MasterLooterUI:draw(itemLink);
                 end
             end
