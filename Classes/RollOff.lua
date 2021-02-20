@@ -16,7 +16,7 @@ RollOff.CurrentRollOff = {
 };
 
 -- Add a award confirmation dialog to Blizzard's global StaticPopupDialogs object
-StaticPopupDialogs["AWARD_CONFIRMATION"] = {
+StaticPopupDialogs["ROLLOFF_AWARD_CONFIRMATION"] = {
     text = "",
     button1 = "Yes",
     button2 = "No",
@@ -28,7 +28,7 @@ StaticPopupDialogs["AWARD_CONFIRMATION"] = {
 }
 
 -- Add a award confirmation dialog to Blizzard's global StaticPopupDialogs object
-StaticPopupDialogs["CLEAR_CONFIRMATION"] = {
+StaticPopupDialogs["CLEAR_ROLLOFF_CONFIRMATION"] = {
     text = "Are you sure you want to clear everything?",
     button1 = "Yes",
     button2 = "No",
@@ -58,7 +58,7 @@ function RollOff:announceStart(item, time, note)
         "RAID"
     ):send();
 
-    local announceMessage = string.format("You have %s seconds to roll on %s (%s)", time, item, note);
+    local announceMessage = string.format("You have %s seconds to roll on %s - %s", time, item, note);
     local reserveMessage = "";
     local reserves = App.SoftReserves:getSoftReservesByItemLink(item);
 
@@ -233,12 +233,12 @@ function RollOff:award(roller, itemLink)
     end
 
     -- Make sure the initiator has to confirm his choices
-    StaticPopupDialogs["AWARD_CONFIRMATION"].OnAccept = award;
-    StaticPopupDialogs["AWARD_CONFIRMATION"].text = string.format("Award %s to %s?",
+    StaticPopupDialogs["ROLLOFF_AWARD_CONFIRMATION"].OnAccept = award;
+    StaticPopupDialogs["ROLLOFF_AWARD_CONFIRMATION"].text = string.format("Award %s to %s?",
         itemLink,
         roller
     );
-    StaticPopup_Show("AWARD_CONFIRMATION");
+    StaticPopup_Show("ROLLOFF_AWARD_CONFIRMATION");
 end
 
 function RollOff:reset()
