@@ -77,6 +77,13 @@ function RollerUI:draw(time, itemId, itemName, itemLink, itemIcon, note)
         Settings:set("UI.Roller.Position.offsetX", offsetX);
         Settings:set("UI.Roller.Position.offsetY", offsetY);
     end);
+    RollerFrame:SetScript("OnMouseDown", function (_, button)
+        -- Call the bid window close function on rightclick
+        if (button == "RightButton") then
+            self:hide();
+            App:message("You can reopen the roll window by typing /gl bid");
+        end
+    end);
 
     self.Widgets.RollerFrameTexture = self.Widgets.RollerFrameTexture or RollerFrame:CreateTexture(nil,"BACKGROUND");
     local Texture = self.Widgets.RollerFrameTexture;
