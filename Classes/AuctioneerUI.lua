@@ -58,7 +58,7 @@ function AuctioneerUI:draw(itemLink)
 
     -- Create a container/parent frame
     local AuctioneerFrame = AceGUI:Create("Frame");
-    AuctioneerFrame:SetTitle("Gargul v" .. App.version);
+    AuctioneerFrame:SetTitle(App.name .. " v" .. App.version);
     AuctioneerFrame:SetLayout("Flow");
     AuctioneerFrame:SetWidth(430);
     AuctioneerFrame:SetHeight(350);

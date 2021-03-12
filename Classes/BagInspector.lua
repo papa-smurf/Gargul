@@ -177,7 +177,7 @@ function BagInspector:displayInspectionResults()
 
         AceGUI:Release(widget);
     end);
-    ResultFrame:SetTitle("Gargul v" .. App.version);
+    ResultFrame:SetTitle(App.name .. " v" .. App.version);
     ResultFrame:SetStatusText("Addon v" .. App.version);
     ResultFrame:SetLayout("Flow");
     ResultFrame:SetWidth(600);
