@@ -12,7 +12,7 @@ function Exporter:draw()
     -- Create a container/parent frame
     local ExportFrame = AceGUI:Create("Frame");
     ExportFrame:SetCallback("OnClose", function(widget) AceGUI:Release(widget); end);
-    ExportFrame:SetTitle(App.name .. " v" App.version);
+    ExportFrame:SetTitle(App.name .. " v" .. App.version);
     ExportFrame:SetStatusText("Addon v" .. App.version);
     ExportFrame:SetLayout("Flow");
     ExportFrame:SetWidth(600);

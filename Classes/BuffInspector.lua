@@ -194,7 +194,7 @@ function BuffInspector:displayInspectionResults(Buffs, Players)
 
         AceGUI:Release(widget);
     end);
-    ResultFrame:SetTitle(App.name .. " v" App.version);
+    ResultFrame:SetTitle(App.name .. " v" .. App.version);
     ResultFrame:SetStatusText("Addon v" .. App.version);
     ResultFrame:SetLayout("Flow");
     ResultFrame:SetWidth(600);

@@ -120,7 +120,7 @@ function SoftReserves:drawImporter()
 
     -- Create a container/parent frame
     local SoftReservesFrame = AceGUI:Create("Frame");
-    SoftReservesFrame:SetTitle(App.name .. " v" App.version);
+    SoftReservesFrame:SetTitle(App.name .. " v" .. App.version);
     SoftReservesFrame:SetStatusText("Addon v" .. App.version);
     SoftReservesFrame:SetLayout("Flow");
     SoftReservesFrame:SetWidth(600);

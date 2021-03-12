@@ -54,7 +54,7 @@ function MasterLooterUI:draw(itemLink)
 
     -- Create a container/parent frame
     local RollOffFrame = AceGUI:Create("Frame");
-    RollOffFrame:SetTitle(App.name .. " v" App.version);
+    RollOffFrame:SetTitle(App.name .. " v" .. App.version);
     RollOffFrame:SetLayout("Flow");
     RollOffFrame:SetWidth(430);
     RollOffFrame:SetHeight(350);
