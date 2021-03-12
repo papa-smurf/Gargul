@@ -60,7 +60,7 @@ function Dashboard:draw()
 
     -- Create a container/parent frame
     local DashboardFrame = AceGUI:Create("Frame");
-    DashboardFrame:SetTitle("Gargul v" .. App.version);
+    DashboardFrame:SetTitle(App.name .. " v" .. App.version);
     DashboardFrame:SetStatusText("You have |c00a79eff" .. App.User.Dkp.amount .. "|r DKP");
     DashboardFrame.statustext:GetParent():Show(); -- We want to explicitely show the status bar here
     DashboardFrame:SetLayout("Flow");

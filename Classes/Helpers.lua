@@ -182,7 +182,7 @@ function App:frameMessage(message)
     -- Create a container/parent frame
     local StacktraceFrame = AceGUI:Create("Frame");
     StacktraceFrame:SetCallback("OnClose", function(widget) AceGUI:Release(widget); end);
-    StacktraceFrame:SetTitle("Gargul v" .. App.version);
+    StacktraceFrame:SetTitle(App.name .. " v" .. App.version);
     StacktraceFrame:SetStatusText("");
     StacktraceFrame:SetLayout("Flow");
     StacktraceFrame:SetWidth(600);
