@@ -71,14 +71,6 @@
     <Include file="Libs\LibCandyBar-3.0\lib.xml" />
 
     <!--
-    LibCompress is a compression and decompression library implemented entirely in WoW-friendly Lua.
-    It supports the LZW and Huffman algorithms, and can automatically choose the most efficient algorithm for your data.
-    One popular usage for this library is to send a compressed table to another player or add-on.
-    Doing this requires additional encoding to remove the \000 characters from the data stream.
-    -->
-    <Include file="Libs\LibCompress\lib.xml" />
-
-    <!--
     Pure Lua compressor and decompressor with high compression ratio using DEFLATE/zlib format.
     -->
     <Include file="Libs\LibDeflate\LibDeflate.lua" />
