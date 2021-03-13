@@ -19,7 +19,6 @@ App.Ace = LibStub("AceAddon-3.0"):NewAddon(App.name, "AceConsole-3.0", "AceComm-
 
 -- Bootstrap the addon
 App.bootstrap = function(_, _, addonName)
-
     -- The addon was already bootstrapped or this is not the correct event
     if (App._initialized) then
         return;
@@ -63,6 +62,7 @@ function App:_init()
         App.isClassic = true
     end
 
+    -- Initialize classes
     App.DB:_init();
     App.Settings:_init()
     App.Comm:_init();
@@ -70,13 +70,6 @@ function App:_init()
     App.LootPriority:_init();
     App.SoftReserves:_init();
     App.DroppedLoot:_init();
-end
-
-function App.Ace:OnInitialize()
-    App:debug("App.Ace:OnInitialize");
-
-    App.Compressor = LibStub:GetLibrary("LibCompress");
-    App.Compressor.EncodeTable = App.Compressor:GetAddonEncodeTable();
 end
 
 App.Ace:RegisterChatCommand("gl", function (...)
