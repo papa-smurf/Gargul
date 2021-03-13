@@ -138,7 +138,7 @@ function Version:inspectGroup()
 
     local CommMessage = App.CommMessage.new(
         CommActions.requestAppVersion,
-        nill,
+        nil,
         "RAID"
     ):send();
 

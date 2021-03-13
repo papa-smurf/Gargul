@@ -24,6 +24,8 @@ local User = App.User;
 -- Initialize the user's more "static" details that
 -- shouldn't be able to change during playtime
 function User:_init()
+    App:debug("User:_init");
+
     self.name, self.realm = UnitName("player");
     self.id = UnitGUID("player");
     User:refresh();
@@ -32,18 +34,20 @@ function User:_init()
     self.eventFrame = CreateFrame("FRAME");
     self.eventFrame:RegisterEvent("PARTY_LOOT_METHOD_CHANGED");
     self.eventFrame:RegisterEvent("GROUP_ROSTER_UPDATE");
-    self.eventFrame:SetScript("OnEvent", self.lootMethodChanged);
+    self.eventFrame:RegisterEvent("PLAYER_ROLES_ASSIGNED");
+    self.eventFrame:SetScript("OnEvent", self.groupSetupChanged);
 end
 
 -- Refresh the User's details after the group
 -- composition or loot method changes
-function User:lootMethodChanged(_, event)
+function User:groupSetupChanged(_, event)
     User:refresh();
 end
 
--- Initialize the user's details, keep in
--- mind that these might change during playtime
+-- Refresh the user's details
 function User:refresh()
+    App:debug("User:refresh");
+
     local charactersTableEntry = App.DB.Characters[self.name] or {};
 
     self.level = UnitLevel("player");

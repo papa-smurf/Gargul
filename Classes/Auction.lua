@@ -122,7 +122,7 @@ function Auction:start(CommMessage)
         end, time);
 
         -- Play raid warning sound
-        PlaySound(8959, "Master");
+        App:playSound(8959, "Master");
     end
 
     --[[
@@ -155,14 +155,19 @@ function Auction:stop(CommMessage)
         return App:warning("Can't stop auction, no auction in progress");
     end
 
+    -- The person who's trying to stop the auction didn't start it, ABORT!
     if (not self.CurrentAuction.auctioneer == App.User.name
         and not CommMessage.Sender.name == self.auctioneer
     ) then
-        return App:warning(CommMessage.Sender.name .. " is not allowed to stop auction started by " .. self.auctioneer);
+        return App:warning(string.format(
+            "%s is not allowed to stop auction started by %s",
+            CommMessage.Sender.name,
+            self.auctionee
+        ));
     end
 
     -- Play raid warning sound
-    PlaySound(8959, "Master");
+    App:playSound(8959, "Master");
 
     self.inProgress = false;
     App.Ace:CancelTimer(self.timerId);
@@ -291,6 +296,8 @@ end
 
 -- Award the item to one of the bidders
 function Auction:award(bidder)
+    App:debug("Auction:award");
+
     local Auction = self.CurrentAuction;
     local character = App:tableGet(App.DB.Characters, bidder, {});
     local awardMessage = "";
@@ -360,6 +367,8 @@ function Auction:award(bidder)
 end
 
 function Auction:reset()
+    App:debug("Auction:reset");
+
     self.CurrentAuction = {
         auctioneer = nil, -- The player who started the auction
         time = nil, -- The amount of time players get to bid

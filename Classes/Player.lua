@@ -22,8 +22,7 @@ function App.Player.fromID(GUID)
     App:debug("App.Player.fromID");
 
     if (not GUID or not type(GUID) == "string") then
-        App:error("Invalid GUID provided for App.Player.fromID");
-        return;
+        return App:error("Invalid GUID provided for App.Player.fromID");
     end
 
     local self = App.Player._new();

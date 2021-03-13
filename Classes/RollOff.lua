@@ -96,7 +96,7 @@ function RollOff:announceStop()
 
     App.CommMessage.new(
         CommActions.stopRollOff,
-        nill,
+        nil,
         "RAID"
     ):send();
 end

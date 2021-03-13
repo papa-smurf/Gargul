@@ -185,8 +185,6 @@ end
 function SoftReserves:import(data, sender)
     App:debug("SoftReserves:import");
 
-    -- Try to decode data, pcall makes sure this won't throw an error
-
     -- Make sure all the required properties are available and of the correct type
     if (not data or type(data) ~= "string") then
         App:warning("Invalid data provided");
