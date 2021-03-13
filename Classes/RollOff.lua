@@ -105,11 +105,15 @@ end
 function RollOff:start(CommMessage)
     App:debug("RollOff:start");
 
+    if (not App.Settings:get("showRollOffWindow")) then
+        return;
+    end
+
     local content = CommMessage.content;
     local time, isValidItem, itemId, itemName, itemLink, itemIcon, note;
 
     -- We have to wait with starting the actual roll off process until
-    -- the item that's up for rolling has been sucessfully loaded by the Item API
+    -- the item that's up for rolling has been successfully loaded by the Item API
     local startRollOffSequence = function()
         isValidItem, itemId, itemName, itemLink, _, _, _, _, _, _, _, itemIcon = App:getItemInfoFromLink(content.item);
         time = tonumber(content.time);
@@ -149,7 +153,7 @@ function RollOff:start(CommMessage)
         end, time);
 
         -- Play raid warning sound
-        PlaySound(8959, "Master");
+        App:playSound(8959, "Master");
     end
 
     --[[
@@ -187,7 +191,7 @@ function RollOff:stop(CommMessage)
     end
 
     -- Play raid warning sound
-    PlaySound(8959, "Master");
+    App:playSound(8959, "Master");
 
     RollOff.inProgress = false;
     App.Ace:CancelTimer(RollOff.timerId);

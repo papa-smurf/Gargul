@@ -13,6 +13,30 @@ function UI:createFrame(...)
     return frame;
 end
 
+-- Generate a checkbox used in the Interface Options -> Settings menu
+function UI:createSettingCheckbox(ParentFrame, label, description, onClick)
+    local CheckBox = CreateFrame("CheckButton", App.name .. "Setting" .. label, ParentFrame, "InterfaceOptionsCheckButtonTemplate");
+
+    CheckBox:SetScript("OnClick", function(self)
+        local checked = self:GetChecked()
+
+        onClick(self, checked and true or false)
+
+        if checked then
+            PlaySound(856) -- SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON
+        else
+            PlaySound(857) -- SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF
+        end
+    end)
+
+    CheckBox.label = _G[CheckBox:GetName() .. "Text"];
+    CheckBox.label:SetText(label);
+    CheckBox.tooltipText = label;
+    CheckBox.tooltipRequirement = description;
+
+    return CheckBox
+end
+
 function UI:show(identifier)
     if (not UI.components[identifier]) then
         App:debug(identifier .. " has not been created yet");

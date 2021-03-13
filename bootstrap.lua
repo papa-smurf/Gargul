@@ -1,11 +1,8 @@
--- arg1 is the name off the addon, arg2 is the addon namespace
+-- arg1 is the name of the addon, arg2 is the addon namespace
 local appName, App = ...;
 
 --[[ APP VERSION ]]
 App.version = "2.1.3";
-
---[[ DEBUG MODE ]]
-App.debugEnabled = false;
 
 App.name = appName;
 App._initialized = false;

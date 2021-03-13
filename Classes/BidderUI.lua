@@ -10,6 +10,8 @@ BidderUI.Widgets = {};
 
 -- Hide the bidding window
 function BidderUI:hide(...)
+    App:debug("BidderUI:hide");
+
     if (not self.Widgets.BidderFrame) then
         return;
     end
@@ -19,6 +21,8 @@ end
 
 -- Show the bidding window (unless it's already active)
 function BidderUI:show(...)
+    App:debug("BidderUI:show");
+
     if (self.Widgets.BidderFrame
         and self.Widgets.BidderFrame:IsShown()
     ) then
@@ -30,6 +34,8 @@ end
 
 -- Reopen the bidding window (after closing it by right clicking)
 function BidderUI:reopen()
+    App:debug("BidderUI:reopen");
+
     if (not App.Auction.inProgress) then
         return App:warning("There is no auction in progress");
     end

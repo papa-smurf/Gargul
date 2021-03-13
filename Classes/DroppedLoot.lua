@@ -29,7 +29,11 @@ function DroppedLoot:lootWindowOpened()
     App:debug("DroppedLoot:lootWindowOpened");
 
     DroppedLoot:hookClickEvents();
-    DroppedLoot:announce();
+
+    -- Only announce loot in chat if the setting is enabled
+    if (App.Settings:get("announceLootToChat")) then
+        DroppedLoot:announce();
+    end
 end
 
 -- Hook click events to the item buttons in the
@@ -71,6 +75,7 @@ function DroppedLoot:hookClickEvents()
     DroppedLoot.eventsHooked = true;
 end
 
+-- Announce the loot that dropped in the party or raid chat
 function DroppedLoot:announce()
     App:debug("DroppedLoot:announce");
 
@@ -88,7 +93,7 @@ function DroppedLoot:announce()
         tinsert(playersInRaids, player.name);
     end
 
-    -- Get the total number of item that dropped
+    -- Get the total number of items that dropped
     local sourceGUID;
     local itemCount = GetNumLootItems();
     for lootIndex = 1, itemCount do
@@ -110,7 +115,9 @@ function DroppedLoot:announce()
             local activeSoftReserves = {};
             local hasSoftReserves = false;
 
-            if (softReserves) then
+            if (softReserves
+                and App.Settings:get("includeSoftReservesInLootAnnouncement")
+            ) then
                 -- Make sure we only show shoft reserves of people
                 -- Who are actually in the raid
                 for _, player in pairs(softReserves) do
@@ -145,7 +152,7 @@ function DroppedLoot:announce()
         end
     end
 
-    -- This ensures that we don't announced the same loot multiple times!
+    -- This ensures that we don't announce the same loot multiple times!
     -- Keep in mind that sourceGUID can be empty for some items!
     if (sourceGUID) then
         DroppedLoot.Announced[sourceGUID] = true;

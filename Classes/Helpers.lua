@@ -54,7 +54,9 @@ function App:debug(...)
     local message = string.join(" ", ...);
     tinsert(App.DebugLines, message);
 
-    if (App.debugEnabled) then
+    if (App.Settings
+        and App.Settings:get("debugModeEnabled")
+    ) then
         App:coloredMessage("f7922e", ...);
     end
 end
@@ -261,6 +263,16 @@ function App:strSplit(s, delimiter)
     end
 
     return result;
+end
+
+-- Play a sound
+function App:playSound(soundName, channel)
+    -- Check if the user muted the addon
+    if (App.Settings:get("muted")) then
+        return;
+    end
+
+    PlaySound(soundName, channel);
 end
 
 -- Check if a given array contains a given value

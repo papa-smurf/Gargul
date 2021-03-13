@@ -15,6 +15,7 @@ bootstrap.lua
 
 ## Data objects
 Data/Constants.lua
+Data/DefaultSettings.lua
 
 ## Class objects
 Classes/Helpers.lua
