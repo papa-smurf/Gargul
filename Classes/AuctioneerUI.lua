@@ -6,6 +6,7 @@ App.Ace.ScrollingTable = App.Ace.ScrollingTable or LibStub("ScrollingTable");
 
 local Settings = App.Settings;
 local AceGUI = App.Ace.GUI;
+local UI = App.UI;
 local AuctioneerUI = App.AuctioneerUI;
 local ScrollingTable = App.Ace.ScrollingTable;
 
@@ -16,8 +17,8 @@ AuctioneerUI.Defaults = {
     timer = 25,
 };
 
-AuctioneerUI.Widgets = {
-    Frame = {},
+AuctioneerUI.UIComponents = {
+    Frames = {},
     Buttons = {},
     EditBoxes = {},
     Labels = {},
@@ -38,19 +39,24 @@ AuctioneerUI.BidTable = {};
 function AuctioneerUI:draw(itemLink)
     App:debug("AuctioneerUI:draw");
 
+    -- Close the reopen auctioneer button if it exists
+    if (self.UIComponents.Buttons.ReopenAuctioneerButton) then
+        self.UIComponents.Buttons.ReopenAuctioneerButton:Hide();
+    end
+
     -- First we need to check if the frame hasn't been
     -- rendered already. If so then show it (if it's hidden)
     -- and pass the itemLink along in case one was provided
-    if (AuctioneerUI.Widgets.Frame
-            and AuctioneerUI.Widgets.Frame.rendered
+    if (AuctioneerUI.UIComponents.Frames.Auctioneer
+            and AuctioneerUI.UIComponents.Frames.Auctioneer.rendered
     ) then
         if (itemLink) then
             self:passItemLink(itemLink);
         end
 
         -- If the frame is hidden we need to show it again
-        if (not self.Widgets.Frame:IsShown()) then
-            self.Widgets.Frame:Show();
+        if (not self.UIComponents.Frames.Auctioneer:IsShown()) then
+            self.UIComponents.Frames.Auctioneer:Show();
         end
 
         return;
@@ -74,6 +80,14 @@ function AuctioneerUI:draw(itemLink)
         Settings:set("UI.Auctioneer.Position.relativePoint", relativePoint);
         Settings:set("UI.Auctioneer.Position.offsetX", offsetX);
         Settings:set("UI.Auctioneer.Position.offsetY", offsetY);
+
+        -- When the auctioneer closes the auction window with an auction
+        -- still in progress we show the reopen auctioneer button
+        if (App.Auction.inProgress
+            and App.Auction.CurrentAuction.auctioneer == App.User.name
+        ) then
+            self:drawReopenAuctioneerUIButton();
+        end
     end);
     AuctioneerFrame:SetPoint(
         Settings:get("UI.Auctioneer.Position.point"),
@@ -83,7 +97,7 @@ function AuctioneerUI:draw(itemLink)
         Settings:get("UI.Auctioneer.Position.offsetY")
     );
 
-    self.Widgets.Frame = AuctioneerFrame;
+    self.UIComponents.Frames.Auctioneer = AuctioneerFrame;
 
             --[[
                 FIRST ROW (ITEM ICON AND LINK BOX)
@@ -104,7 +118,7 @@ function AuctioneerUI:draw(itemLink)
                     ItemIcon:SetImageSize(30, 30);
                     ItemIcon:SetWidth(40);
                     FirstRow:AddChild(ItemIcon);
-                    self.Widgets.Icons.Item = ItemIcon;
+                    self.UIComponents.Icons.Item = ItemIcon;
 
                     --[[
                         ITEM TEXTBOX
@@ -117,7 +131,7 @@ function AuctioneerUI:draw(itemLink)
                     ItemBox:SetCallback("OnTextChanged", self.ItemBoxChanged); -- Update item info when input value changes
                     ItemBox:SetCallback("OnEnterPressed", self.ItemBoxChanged); -- Update item info when item is dragged on top (makes no sense to use OnEnterPressed I know)
 
-                    self.Widgets.EditBoxes.Item = ItemBox;
+                    self.UIComponents.EditBoxes.Item = ItemBox;
 
                     FirstRow:AddChild(ItemBox);
 
@@ -161,15 +175,15 @@ function AuctioneerUI:draw(itemLink)
                         App.Auction.inProgress = true;
 
                         App.Auction:announceStart(
-                            self.Widgets.EditBoxes.Item:GetText(),
-                            self.Widgets.EditBoxes.MinimumBid:GetText(),
-                            self.Widgets.EditBoxes.Timer:GetText()
+                            self.UIComponents.EditBoxes.Item:GetText(),
+                            self.UIComponents.EditBoxes.MinimumBid:GetText(),
+                            self.UIComponents.EditBoxes.Timer:GetText()
                         );
 
                         self:updateWidgets();
                     end);
                     FirstRow:AddChild(StartButton);
-                    self.Widgets.Buttons.StartButton = StartButton;
+                    self.UIComponents.Buttons.StartButton = StartButton;
 
                     --[[
                         STOP BUTTON
@@ -184,7 +198,7 @@ function AuctioneerUI:draw(itemLink)
                         App.Auction:announceStop();
                     end);
                     FirstRow:AddChild(StopButton);
-                    self.Widgets.Buttons.StopButton = StopButton;
+                    self.UIComponents.Buttons.StopButton = StopButton;
 
             --[[
                 SECOND ROW
@@ -215,7 +229,7 @@ function AuctioneerUI:draw(itemLink)
                     ItemPrio:SetHeight(20);
                     ItemPrio:SetWidth(150);
                     SecondRow:AddChild(ItemPrio);
-                    self.Widgets.Labels.ItemPriority = ItemPrio;
+                    self.UIComponents.Labels.ItemPriority = ItemPrio;
 
             --[[
                 THID ROW (ITEM ICON AND LINK BOX)
@@ -246,7 +260,7 @@ function AuctioneerUI:draw(itemLink)
                     MinimumBidLabel:SetHeight(20);
                     MinimumBidLabel:SetWidth(80);
                     ThirdRow:AddChild(MinimumBidLabel);
-                    self.Widgets.Labels.MinimumBidLabel = MinimumBidLabel;
+                    self.UIComponents.Labels.MinimumBidLabel = MinimumBidLabel;
 
                     --[[
                         MINIMUM BID TEXTBOX
@@ -258,7 +272,7 @@ function AuctioneerUI:draw(itemLink)
                     MinimumBidBox:SetWidth(40);
                     MinimumBidBox:SetText("10");
                     ThirdRow:AddChild(MinimumBidBox);
-                    self.Widgets.EditBoxes.MinimumBid = MinimumBidBox;
+                    self.UIComponents.EditBoxes.MinimumBid = MinimumBidBox;
 
                     --[[
                         SPACER
@@ -279,7 +293,7 @@ function AuctioneerUI:draw(itemLink)
                     TimerLabel:SetHeight(20);
                     TimerLabel:SetWidth(55);
                     ThirdRow:AddChild(TimerLabel);
-                    self.Widgets.Labels.TimerLabel = TimerLabel;
+                    self.UIComponents.Labels.TimerLabel = TimerLabel;
 
                     --[[
                         TIMER TEXTBOX
@@ -291,7 +305,7 @@ function AuctioneerUI:draw(itemLink)
                     TimerBox:SetWidth(40);
                     TimerBox:SetText("25");
                     ThirdRow:AddChild(TimerBox);
-                    self.Widgets.EditBoxes.Timer = TimerBox;
+                    self.UIComponents.EditBoxes.Timer = TimerBox;
 
                     --[[
                         SPACER
@@ -315,7 +329,7 @@ function AuctioneerUI:draw(itemLink)
                         StaticPopup_Show("CLEAR_AUCTION_CONFIRMATION");
                     end);
                     ThirdRow:AddChild(ClearButton);
-                    self.Widgets.Buttons.ClearButton = ClearButton;
+                    self.UIComponents.Buttons.ClearButton = ClearButton;
 
                     --[[
                         AWARD BUTTON
@@ -327,7 +341,7 @@ function AuctioneerUI:draw(itemLink)
                     AwardButton:SetHeight(20);
                     AwardButton:SetDisabled(true);
                     AwardButton:SetCallback("OnClick", function()
-                        local BidsTable = self.Widgets.Tables.Bids;
+                        local BidsTable = self.UIComponents.Tables.Bids;
                         local selected = BidsTable:GetRow(BidsTable:GetSelection());
 
                         if (not selected
@@ -339,7 +353,7 @@ function AuctioneerUI:draw(itemLink)
                         return App.Auction:award(unpack(selected));
                     end);
                     ThirdRow:AddChild(AwardButton);
-                    self.Widgets.Buttons.AwardButton = AwardButton;
+                    self.UIComponents.Buttons.AwardButton = AwardButton;
 
             --[[
                 FOURTH ROW (BIDS)
@@ -360,10 +374,85 @@ function AuctioneerUI:draw(itemLink)
     end
 end
 
+-- This button allows the auctioneer to easily reopen the
+-- auctioneer window when it's closed with an auction in progress
+-- This is very common in hectic situations where the auctioneer has to participate in combat f.e.
+function AuctioneerUI:drawReopenAuctioneerUIButton()
+    App:debug("AuctioneerUI:drawReopenAuctioneerUIButton");
+
+    local texture = App.Auction.CurrentAuction.itemIcon or "Interface\\Icons\\INV_Misc_QuestionMark";
+
+    if (self.UIComponents.ReopenAuctioneerButtonIcon) then
+        self.UIComponents.ReopenAuctioneerButtonIcon:Show();
+        return;
+    end
+
+    self.UIComponents.Buttons.ReopenAuctioneerButton = UI:createFrame("Button", "ReopenAuctioneerButton", nil, Frame);
+    local Button = self.UIComponents.Buttons.ReopenAuctioneerButton;
+
+    Button:SetSize(44, 44);
+    Button:SetNormalTexture(texture);
+    Button:SetText("text");
+    Button:SetPoint(
+        Settings:get("UI.ReopenAuctioneerUIButton.Position.point"),
+        UIParent,
+        Settings:get("UI.ReopenAuctioneerUIButton.Position.relativePoint"),
+        Settings:get("UI.ReopenAuctioneerUIButton.Position.offsetX"),
+        Settings:get("UI.ReopenAuctioneerUIButton.Position.offsetY")
+    );
+
+    Button:SetMovable(true);
+    Button:EnableMouse(true);
+    Button:SetClampedToScreen(true);
+    Button:SetFrameStrata("HIGH");
+    Button:RegisterForDrag("LeftButton");
+    Button:SetScript("OnDragStart", Button.StartMoving);
+    Button:SetScript("OnDragStop", function()
+        Button:StopMovingOrSizing();
+        local point, _, relativePoint, offsetX, offsetY = Button:GetPoint();
+
+        -- Store the frame's last position for future play sessions
+        Settings:set("UI.ReopenAuctioneerUIButton.Position.point", point);
+        Settings:set("UI.ReopenAuctioneerUIButton.Position.relativePoint", relativePoint);
+        Settings:set("UI.ReopenAuctioneerUIButton.Position.offsetX", offsetX);
+        Settings:set("UI.ReopenAuctioneerUIButton.Position.offsetY", offsetY);
+    end);
+
+    local ButtonBackground = Button:CreateTexture(nil, "BACKGROUND");
+    ButtonBackground:SetAllPoints(Button);
+    ButtonBackground:SetTexture("Interface\\Icons\\INV_Misc_QuestionMark");
+    ButtonBackground:SetTexCoord(0, 1, 0.23, 0.77);
+    ButtonBackground:SetBlendMode("ADD");
+    Button.ButtonBackground = ButtonBackground;
+
+    local ButtonHighlight = Button:CreateTexture(nil, "HIGHLIGHT");
+    ButtonHighlight:SetAllPoints(Button);
+    ButtonHighlight:SetTexture("Interface\\PaperDollInfoFrame\\UI-Character-Tab-Highlight");
+    ButtonHighlight:SetTexCoord(0, 1, 0.23, 0.77);
+    ButtonHighlight:SetBlendMode("ADD");
+    Button.ButtonHighlight = ButtonHighlight;
+
+    Button:SetScript("OnMouseUp", function (_, button)
+        if (button == "LeftButton") then
+            self:draw();
+        end
+    end);
+
+    Button:SetScript("OnEnter", function()
+        GameTooltip:SetOwner(Button, "ANCHOR_TOP");
+        GameTooltip:SetText("Open auction window");
+        GameTooltip:Show();
+    end);
+
+    Button:SetScript("OnLeave", function()
+        GameTooltip:Hide();
+    end);
+end
+
 function AuctioneerUI:ItemBoxChanged()
     App:debug("AuctioneerUI:ItemBoxChanged");
 
-    local itemLink = AuctioneerUI.Widgets.EditBoxes.Item:GetText();
+    local itemLink = AuctioneerUI.UIComponents.EditBoxes.Item:GetText();
 
     AuctioneerUI:passItemLink(itemLink);
 end
@@ -374,7 +463,7 @@ end
 function AuctioneerUI:passItemLink(itemLink)
     App:debug("AuctioneerUI:passItemLink");
 
-    if (not self.Widgets.Frame.rendered) then
+    if (not self.UIComponents.Frames.Auctioneer.rendered) then
 
         return;
     end
@@ -383,7 +472,7 @@ function AuctioneerUI:passItemLink(itemLink)
         return App:warning("An auction currently in progress");
     end
 
-    self.Widgets.EditBoxes.Item:SetText(itemLink);
+    self.UIComponents.EditBoxes.Item:SetText(itemLink);
     return self:update();
 end
 
@@ -391,8 +480,8 @@ end
 function AuctioneerUI:update()
     App:debug("AuctioneerUI:update");
 
-    local IconWidget = self.Widgets.Icons.Item;
-    local itemLink = self.Widgets.EditBoxes.Item:GetText();
+    local IconWidget = self.UIComponents.Icons.Item;
+    local itemLink = self.UIComponents.EditBoxes.Item:GetText();
 
     -- If the item link is not valid then
     --   Show the default question mark icon
@@ -410,8 +499,8 @@ function AuctioneerUI:update()
     local icon = select(10, GetItemInfo(itemLink));
 
     if (icon) then
-        self.Widgets.Tables.Bids:ClearSelection();
-        self.Widgets.Tables.Bids:SetData({}, true);
+        self.UIComponents.Tables.Bids:ClearSelection();
+        self.UIComponents.Tables.Bids:SetData({}, true);
 
         IconWidget:SetImage(icon);
         self.ItemBoxHoldsValidItem = true;
@@ -470,15 +559,15 @@ function AuctioneerUI:drawBidsTable(parent)
     table:EnableSelection(true);
     table.frame:SetPoint("BOTTOM", parent, "BOTTOM", 0, 50);
 
-    self.Widgets.Tables.Bids = table;
+    self.UIComponents.Tables.Bids = table;
 end
 
 -- Update the icon box based on the value of the ItemBox input
 function AuctioneerUI:updateItemIcon()
     App:debug("AuctioneerUI:updateItemIcon");
 
-    local IconWidget = self.Widgets.Icons.Item;
-    local itemLink = self.Widgets.EditBoxes.Item:GetText();
+    local IconWidget = self.UIComponents.Icons.Item;
+    local itemLink = self.UIComponents.EditBoxes.Item:GetText();
 
     if (not itemLink or itemLink == "") then
         self.ItemBoxHoldsValidItem = false;
@@ -493,8 +582,8 @@ function AuctioneerUI:updateItemIcon()
         if (App.Auction.CurrentAuction.itemLink
                 and itemLink ~= App.Auction.CurrentAuction.itemLink
         ) then
-            AuctioneerUI.Widgets.Tables.Bids:ClearSelection();
-            AuctioneerUI.Widgets.Tables.Bids:SetData({}, true);
+            AuctioneerUI.UIComponents.Tables.Bids:ClearSelection();
+            AuctioneerUI.UIComponents.Tables.Bids:SetData({}, true);
         end
 
         IconWidget:SetImage(icon);
@@ -507,8 +596,8 @@ end
 
 -- Update the item priority string
 function AuctioneerUI:updateItemPriority(ItemPriorityBox, itemLink)
-    local ItemPriorityBox = self.Widgets.Labels.ItemPriority;
-    local itemLink = self.Widgets.EditBoxes.Item:GetText();
+    local ItemPriorityBox = self.UIComponents.Labels.ItemPriority;
+    local itemLink = self.UIComponents.EditBoxes.Item:GetText();
 
     App:debug("AuctioneerUI:updateItemPriority");
 
@@ -529,15 +618,15 @@ end
 
 -- Reset the auctioneer's UI to its defaults
 function AuctioneerUI:reset()
-    self.Widgets.Icons.Item:SetImage(self.Defaults.itemIcon);
-    self.Widgets.EditBoxes.Item:SetText(self.Defaults.itemText);
-    self.Widgets.EditBoxes.MinimumBid:SetText(self.Defaults.minimumBid);
-    self.Widgets.EditBoxes.Timer:SetText(self.Defaults.timer);
-    self.Widgets.Labels.ItemPriority:SetText("");
+    self.UIComponents.Icons.Item:SetImage(self.Defaults.itemIcon);
+    self.UIComponents.EditBoxes.Item:SetText(self.Defaults.itemText);
+    self.UIComponents.EditBoxes.MinimumBid:SetText(self.Defaults.minimumBid);
+    self.UIComponents.EditBoxes.Timer:SetText(self.Defaults.timer);
+    self.UIComponents.Labels.ItemPriority:SetText("");
     self.ItemBoxHoldsValidItem = false;
 
-    self.Widgets.Tables.Bids:ClearSelection();
-    self.Widgets.Tables.Bids:SetData({}, true);
+    self.UIComponents.Tables.Bids:ClearSelection();
+    self.UIComponents.Tables.Bids:SetData({}, true);
 
     self:updateWidgets();
 end
@@ -551,10 +640,10 @@ function AuctioneerUI:updateWidgets()
     -- The stop button should be available
     -- The item box should be available
     if (not self.ItemBoxHoldsValidItem or not App.User.isInGroup) then
-        self.Widgets.Buttons.StartButton:SetDisabled(true);
-        self.Widgets.Buttons.StartButton:SetDisabled(true);
-        self.Widgets.Buttons.StopButton:SetDisabled(true);
-        self.Widgets.EditBoxes.Item:SetDisabled(false);
+        self.UIComponents.Buttons.StartButton:SetDisabled(true);
+        self.UIComponents.Buttons.StartButton:SetDisabled(true);
+        self.UIComponents.Buttons.StopButton:SetDisabled(true);
+        self.UIComponents.EditBoxes.Item:SetDisabled(false);
 
         return;
     end
@@ -566,22 +655,22 @@ function AuctioneerUI:updateWidgets()
     -- The stop button should not be available
     -- The item box should be available so we can enter an item link
     if (not App.Auction.inProgress) then
-        self.Widgets.Buttons.StartButton:SetDisabled(false);
-        self.Widgets.Buttons.AwardButton:SetDisabled(false);
-        self.Widgets.Buttons.StopButton:SetDisabled(true);
-        self.Widgets.Buttons.ClearButton:SetDisabled(false);
-        self.Widgets.EditBoxes.Item:SetDisabled(false);
+        self.UIComponents.Buttons.StartButton:SetDisabled(false);
+        self.UIComponents.Buttons.AwardButton:SetDisabled(false);
+        self.UIComponents.Buttons.StopButton:SetDisabled(true);
+        self.UIComponents.Buttons.ClearButton:SetDisabled(false);
+        self.UIComponents.EditBoxes.Item:SetDisabled(false);
 
     -- If an auction is currently in progress then:
         -- The start button should not be available
         -- The stop button should be available
         -- The item box should not be available
     else
-        self.Widgets.Buttons.StartButton:SetDisabled(true);
-        self.Widgets.Buttons.AwardButton:SetDisabled(true);
-        self.Widgets.Buttons.StopButton:SetDisabled(false);
-        self.Widgets.Buttons.ClearButton:SetDisabled(true);
-        self.Widgets.EditBoxes.Item:SetDisabled(true);
+        self.UIComponents.Buttons.StartButton:SetDisabled(true);
+        self.UIComponents.Buttons.AwardButton:SetDisabled(true);
+        self.UIComponents.Buttons.StopButton:SetDisabled(false);
+        self.UIComponents.Buttons.ClearButton:SetDisabled(true);
+        self.UIComponents.EditBoxes.Item:SetDisabled(true);
     end
 end
 
