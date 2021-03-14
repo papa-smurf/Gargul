@@ -67,11 +67,36 @@ function App:_init()
     App.LootPriority:_init();
     App.SoftReserves:_init();
     App.DroppedLoot:_init();
+    App:hookBagSlotEvents();
 end
 
+-- Register the gl slash command
 App.Ace:RegisterChatCommand("gl", function (...)
     App.Commands:_dispatch(...);
 end)
+
+-- Hook the bag slot events making it possible to alt(+shift) click
+-- items in bags to either start rolling or auctioning them off
+function App:hookBagSlotEvents()
+    hooksecurefunc("ContainerFrameItemButton_OnModifiedClick", function(self, mouseButtonPressed)
+        local bag, slot = self:GetParent():GetID(), self:GetID();
+        local itemLink = select(7, GetContainerItemInfo(bag, slot));
+
+        if (not itemLink or type(itemLink) ~= "string") then
+            return;
+        end
+
+        if (mouseButtonPressed == "LeftButton"
+                and IsAltKeyDown()
+        ) then
+            if (IsShiftKeyDown()) then
+                App.AuctioneerUI:draw(itemLink);
+            else
+                App.MasterLooterUI:draw(itemLink);
+            end
+        end
+    end);
+end
 
 -- Fire App.bootstrap every time an addon is loaded
 App.eventFrame = CreateFrame("FRAME");
