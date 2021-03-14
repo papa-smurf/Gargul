@@ -180,7 +180,7 @@ function AuctioneerUI:draw(itemLink)
                             self.UIComponents.EditBoxes.Timer:GetText()
                         );
 
-                        self:updateWidgets();
+                        self:updateUIComponents();
                     end);
                     FirstRow:AddChild(StartButton);
                     self.UIComponents.Buttons.StartButton = StartButton;
@@ -492,7 +492,7 @@ function AuctioneerUI:update()
         self.ItemBoxHoldsValidItem = false;
         IconWidget:SetImage(self.Defaults.itemIcon);
 
-        return self:updateWidgets();
+        return self:updateUIComponents();
     end
 
     -- The item's icon is in the 10th position
@@ -509,7 +509,7 @@ function AuctioneerUI:update()
         IconWidget:SetImage(self.Defaults.itemIcon);
     end
 
-    self:updateWidgets();
+    self:updateUIComponents();
 end
 
 function AuctioneerUI:drawBidsTable(parent)
@@ -628,12 +628,12 @@ function AuctioneerUI:reset()
     self.UIComponents.Tables.Bids:ClearSelection();
     self.UIComponents.Tables.Bids:SetData({}, true);
 
-    self:updateWidgets();
+    self:updateUIComponents();
 end
 
 -- Update the widgets based on the current state of the auction
-function AuctioneerUI:updateWidgets()
-    App:debug("AuctioneerUI:updateWidgets");
+function AuctioneerUI:updateUIComponents()
+    App:debug("AuctioneerUI:updateUIComponents");
 
     -- If the itembox doesn't hold a valid item link then
     -- The start button should not be available

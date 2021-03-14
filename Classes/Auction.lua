@@ -176,7 +176,7 @@ function Auction:stop(CommMessage)
 
     -- If we're the auctioneer then we need to update our auctioneer UI
     if (self.CurrentAuction.auctioneer == App.User.name) then
-        App.AuctioneerUI:updateWidgets();
+        App.AuctioneerUI:updateUIComponents();
     end
 end
 
@@ -284,7 +284,7 @@ function Auction:refreshBidTable()
 
     local BidTableData = {};
     local Bids = self.CurrentAuction.Bids;
-    local BidsTable = App.AuctioneerUI.Widgets.Tables.Bids;
+    local BidsTable = App.AuctioneerUI.UIComponents.Tables.Bids;
 
     for player, value in pairs(Bids) do
         BidTableData[#BidTableData + 1] = {player, value.bid, value.totalDkp};
