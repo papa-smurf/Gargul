@@ -373,7 +373,6 @@ function App:tableSlice(tbl, offset, length, preserveKeys)
     return Slice;
 end
 
-
 -- Get a table value by a given key. Use dot notation to traverse multiple levels e.g:
 -- Settings.UI.Auctioneer.offsetX can be fetched using App:tableGet(myTable, "Settings.UI.Auctioneer.offsetX", 0)
 -- without having to worry about tables or keys existing yes or no.
