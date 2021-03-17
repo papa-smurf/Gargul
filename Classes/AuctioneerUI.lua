@@ -39,6 +39,10 @@ AuctioneerUI.BidTable = {};
 function AuctioneerUI:draw(itemLink)
     App:debug("AuctioneerUI:draw");
 
+    if (not App.User.isOfficer) then
+        return App:warning("This feature requires officer privileges");
+    end
+
     -- Close the reopen auctioneer button if it exists
     if (self.UIComponents.Buttons.ReopenAuctioneerButton) then
         self.UIComponents.Buttons.ReopenAuctioneerButton:Hide();

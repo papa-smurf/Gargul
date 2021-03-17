@@ -34,6 +34,12 @@ MasterLooterUI.PlayersTable = {};
 function MasterLooterUI:draw(itemLink)
     App:debug("MasterLooterUI:draw");
 
+    if (not App.User.isMasterLooter
+        and not App.User.hasAssist
+    ) then
+        return App:warning("You need to be the master looter or have an assist / lead role!");
+    end
+
     -- First we need to check if the frame hasn't been
     -- rendered already. If so then show it (if it's hidden)
     -- and pass the itemLink along in case one was provided
