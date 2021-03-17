@@ -15,7 +15,6 @@ App.User = {
     isInParty = false,
     isInGroup = false,
     Dkp = {},
-    GroupMembers = {},
     raidsAttended = 0,
 };
 
@@ -32,9 +31,7 @@ function User:_init()
 
     -- Fire App.bootstrap every time an addon is loaded
     self.eventFrame = CreateFrame("FRAME");
-    self.eventFrame:RegisterEvent("PARTY_LOOT_METHOD_CHANGED");
     self.eventFrame:RegisterEvent("GROUP_ROSTER_UPDATE");
-    self.eventFrame:RegisterEvent("PLAYER_ROLES_ASSIGNED");
     self.eventFrame:SetScript("OnEvent", self.groupSetupChanged);
 end
 
@@ -58,27 +55,32 @@ function User:refresh()
     self.isOfficer = CanEditOfficerNote();
     self.isMasterLooter = 0 == select(2, GetLootMethod());
     self.isInRaid = IsInRaid();
-    self.raidIndex = nil;
-
-    if (self.isInRaid) then
-        for index = 1, MAX_RAID_MEMBERS do
-            local name, _, _, _, _, _, _, _, _, _, isMasterLooter = GetRaidRosterInfo(index);
-
-            if (name == self.name) then
-                self.raidIndex = index;
-                self.isMasterLooter = isMasterLooter;
-                break;
-            end
-        end
-    end
-
     self.isInParty = IsInGroup() and not self.isInRaid;
     self.isInGroup = self.isInRaid or self.isInParty;
 
-    if (self.isInGroup) then
-        self.GroupMembers = User:listGroupMembers();
+    -- Check if the current user is master looting
+    if (self.isInRaid) then
+        local nameOnIndex = "";
+
+        if (self.raidIndex and self.raidIndex > 0) then
+            local nameOnIndex = GetRaidRosterInfo(self.raidIndex);
+        end
+
+        if (nameOnIndex ~= self.name) then
+            self.raidIndex = nil;
+
+            for index = 1, MAX_RAID_MEMBERS do
+                local name, _, _, _, _, _, _, _, _, _, isMasterLooter = GetRaidRosterInfo(index);
+
+                if (name == self.name) then
+                    self.raidIndex = index;
+                    self.isMasterLooter = isMasterLooter;
+                    break;
+                end
+            end
+        end
     else
-        self.GroupMembers = {};
+        self.raidIndex = nil;
     end
 
     self.Dkp = {
@@ -91,7 +93,7 @@ end
 
 -- Get all of the people who are
 -- in the same party/raid as the current user
-function User:listGroupMembers()
+function User:groupMembers()
     local Roster = {};
 
     if (not App.User.isInGroup) then
@@ -104,7 +106,7 @@ function User:listGroupMembers()
     end
 
     for index = 1, maximumNumberOfGroupMembers do
-        local name, rank, subgroup, level, class, fileName, _, _, _, role, isML = GetRaidRosterInfo(index);
+        local name, rank, subgroup, level, class, fileName, zone, online, isDead, role, isML, combatRole = GetRaidRosterInfo(index);
 
         if (name) then
             tinsert(Roster, {

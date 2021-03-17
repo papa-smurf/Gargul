@@ -70,7 +70,7 @@ function BuffInspector:inspect(SpellIds)
         }
     end
 
-    local Players = App.User:listGroupMembers();
+    local Players = App.User:groupMembers();
 
     for _, player in pairs(Players) do
         -- Prefill the Buffs object for this player

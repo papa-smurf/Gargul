@@ -123,14 +123,12 @@ function Version:inspectGroup()
     local numberOfGroupMembers = 0;
 
     -- Loop through all members of the group (party or raid)
-    for index = 1, MAX_RAID_MEMBERS do
-        local name, _, _, _, _, _,
-        _, online = GetRaidRosterInfo(index);
-
-        if (name and online) then
+    for _, Player in pairs(App.User:groupMembers()) do
+App:dump({Player.name, Player.online});
+        if (Player.online) then
             -- No need to request our own version
-            if (name ~= App.User.name) then
-                self.GroupMembers[name] = "-";
+            if (Player.name ~= App.User.name) then
+                self.GroupMembers[Player.name] = "-";
                 numberOfGroupMembers = numberOfGroupMembers + 1;
             end
         end

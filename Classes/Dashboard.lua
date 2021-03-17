@@ -212,13 +212,8 @@ function Dashboard:drawCharactersTable(parent)
     local GroupMembers = {};
     if (App.User.isInGroup and Settings:get("UI.Dashboard.showInRaidOnly")) then
         -- Loop through all members of the group (party or raid)
-        for index = 1, MAX_RAID_MEMBERS do
-            local name, _, _, _, class, _,
-            _, online = GetRaidRosterInfo(index);
-
-            if (name) then
-                GroupMembers[name] = true;
-            end
+        for _, Player in pairs(App.User:groupMembers()) do
+            GroupMembers[Player.name] = true;
         end
     end
 

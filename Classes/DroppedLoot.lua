@@ -89,7 +89,7 @@ function DroppedLoot:announce()
 
     local playersInRaids = {};
     -- Fetch the name of everyone currently in the raid/party
-    for _, player in pairs(App.User.GroupMembers) do
+    for _, player in pairs(App.User:groupMembers()) do
         tinsert(playersInRaids, player.name);
     end
 

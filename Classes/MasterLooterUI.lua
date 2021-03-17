@@ -358,19 +358,9 @@ function MasterLooterUI:drawPlayersTable(parent)
     table.frame:SetPoint("BOTTOM", parent, "BOTTOM", 0, 50);
     MasterLooterUI.Widgets.Tables.Players = table;
 
-    local GroupMembers = {};
     local PlayersTableData = {};
 
-    -- Loop through all members of the group (party or raid)
-    for index = 1, MAX_RAID_MEMBERS do
-        local name = GetRaidRosterInfo(index);
-
-        if (name) then
-            tinsert(GroupMembers, name);
-        end
-    end
-
-    for _, player in pairs(GroupMembers) do
+    for _, player in pairs(App.User:groupMembers()) do
         tinsert(PlayersTableData, {player});
     end
 
