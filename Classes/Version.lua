@@ -124,7 +124,6 @@ function Version:inspectGroup()
 
     -- Loop through all members of the group (party or raid)
     for _, Player in pairs(App.User:groupMembers()) do
-App:dump({Player.name, Player.online});
         if (Player.online) then
             -- No need to request our own version
             if (Player.name ~= App.User.name) then
