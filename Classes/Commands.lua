@@ -25,19 +25,22 @@ end
 Commands.dashboard = function() App.Dashboard:draw(); end
 
 -- Open the auctioneer window (requires group and officer privileges)
-Commands.auction = function(...)
-    if (not App.User.isOfficer) then
-        return App:warning("This feature requires officer privileges");
-    end
-
-    App.AuctioneerUI:draw(...);
-end
+Commands.auction = function(...) App.AuctioneerUI:draw(...); end
 Commands.au = Commands.auction;
 
 -- Open the window for rolling off items
 Commands.rolloff = function(...) App.MasterLooterUI:draw(...); end
 Commands.roll = Commands.rolloff;
 Commands.ro = Commands.roll;
+
+Commands.raidcsv = function ()
+    App.RaidGroups:toCSV();
+end
+Commands.rcsv = Commands.raidcsv;
+
+-- Open the raid gorups window
+Commands.groups = function() App.RaidGroups:drawImporter(); end
+Commands.gr = Commands.groups;
 
 -- Open the soft reserves window
 Commands.softreserves = function() App.SoftReserves:drawImporter(); end

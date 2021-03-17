@@ -44,4 +44,5 @@ Classes/Player.lua
 Classes/Comm.lua
 Classes/CommMessage.lua
 Classes/Sync.lua
+Classes/RaidGroups.lua
 Classes/Dashboard.lua

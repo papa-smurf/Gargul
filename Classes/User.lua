@@ -11,11 +11,17 @@ App.User = {
     isOfficer = false,
     isMasterLooter = false,
     isInRaid = false,
-    raidIndex = nil,
     isInParty = false,
     isInGroup = false,
-    Dkp = {},
     raidsAttended = 0,
+    Dkp = {},
+
+    -- Raid specific
+    raidIndex = nil,
+    hasAssist = false,
+    isLead = false,
+    role = "",
+    combatRole = "",
 };
 
 local User = App.User;
@@ -53,10 +59,11 @@ function User:refresh()
     self.Guild = {};
     self.Guild.name, self.Guild.rank, self.Guild.index = GetGuildInfo("player");
     self.isOfficer = CanEditOfficerNote();
-    self.isMasterLooter = 0 == select(2, GetLootMethod());
     self.isInRaid = IsInRaid();
     self.isInParty = IsInGroup() and not self.isInRaid;
     self.isInGroup = self.isInRaid or self.isInParty;
+    self.hasAssist = false;
+    self.isLead = false;
 
     -- Check if the current user is master looting
     if (self.isInRaid) then
@@ -70,10 +77,15 @@ function User:refresh()
             self.raidIndex = nil;
 
             for index = 1, MAX_RAID_MEMBERS do
-                local name, _, _, _, _, _, _, _, _, _, isMasterLooter = GetRaidRosterInfo(index);
+                local name, rank, subgroup, _, _, _,
+                _, _, _, role, isMasterLooter, combatRole = GetRaidRosterInfo(index);
 
                 if (name == self.name) then
+                    self.role = role;
                     self.raidIndex = index;
+                    self.isLead = rank == 2;
+                    self.hasAssist = rank >= 1;
+                    self.combatRole = combatRole;
                     self.isMasterLooter = isMasterLooter;
                     break;
                 end
@@ -81,6 +93,7 @@ function User:refresh()
         end
     else
         self.raidIndex = nil;
+        self.isMasterLooter = 0 == select(2, GetLootMethod());
     end
 
     self.Dkp = {
