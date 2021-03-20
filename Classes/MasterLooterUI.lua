@@ -4,8 +4,10 @@ App.RollOff = App.RollOff or {};
 App.MasterLooterUI = App.MasterLooterUI or {};
 App.Ace.ScrollingTable = App.Ace.ScrollingTable or LibStub("ScrollingTable");
 
-local Settings = App.Settings;
+local UI = App.UI;
+local Utils = App.Utils;
 local AceGUI = App.Ace.GUI;
+local Settings = App.Settings;
 local MasterLooterUI = App.MasterLooterUI;
 local ScrollingTable = App.Ace.ScrollingTable;
 
@@ -14,7 +16,7 @@ MasterLooterUI.Defaults = {
     itemBoxText = "",
 };
 
-MasterLooterUI.Widgets = {
+MasterLooterUI.UIComponents = {
     Frame = {},
     Buttons = {},
     EditBoxes = {},
@@ -37,22 +39,27 @@ function MasterLooterUI:draw(itemLink)
     if (not App.User.isMasterLooter
         and not App.User.hasAssist
     ) then
-        return App:warning("You need to be the master looter or have an assist / lead role!");
+        return Utils:warning("You need to be the master looter or have an assist / lead role!");
+    end
+
+    -- Close the reopen masterlooter button if it exists
+    if (self.UIComponents.Buttons.ReopenMasterLooterButton) then
+        self.UIComponents.Buttons.ReopenMasterLooterButton:Hide();
     end
 
     -- First we need to check if the frame hasn't been
     -- rendered already. If so then show it (if it's hidden)
     -- and pass the itemLink along in case one was provided
-    if (MasterLooterUI.Widgets.Frame
-        and MasterLooterUI.Widgets.Frame.rendered
+    if (MasterLooterUI.UIComponents.Frame
+        and MasterLooterUI.UIComponents.Frame.rendered
     ) then
         if (itemLink) then
             MasterLooterUI:passItemLink(itemLink);
         end
 
         -- If the frame is hidden we need to show it again
-        if (not MasterLooterUI.Widgets.Frame:IsShown()) then
-            MasterLooterUI.Widgets.Frame:Show();
+        if (not MasterLooterUI.UIComponents.Frame:IsShown()) then
+            MasterLooterUI.UIComponents.Frame:Show();
         end
 
         return;
@@ -76,6 +83,14 @@ function MasterLooterUI:draw(itemLink)
         Settings:set("UI.RollOff.Position.relativePoint", relativePoint);
         Settings:set("UI.RollOff.Position.offsetX", offsetX);
         Settings:set("UI.RollOff.Position.offsetY", offsetY);
+
+        -- When the master looter closes the master loot window with a master
+        -- loot still in progress we show the reopen master looter button
+        if (App.RollOff.inProgress
+            and App.RollOff.CurrentRollOff.initiator == App.User.name
+        ) then
+            self:drawReopenMasterLooterUIButton();
+        end
     end);
     RollOffFrame:SetPoint(
         Settings:get("UI.RollOff.Position.point"),
@@ -85,7 +100,7 @@ function MasterLooterUI:draw(itemLink)
         Settings:get("UI.RollOff.Position.offsetY")
     );
 
-    MasterLooterUI.Widgets.Frame = RollOffFrame;
+    MasterLooterUI.UIComponents.Frame = RollOffFrame;
 
             --[[
                 FIRST ROW (ITEM ICON AND LINK BOX)
@@ -106,7 +121,7 @@ function MasterLooterUI:draw(itemLink)
                     ItemIcon:SetImageSize(30, 30);
                     ItemIcon:SetWidth(40);
                     FirstRow:AddChild(ItemIcon);
-                    MasterLooterUI.Widgets.Icons.Item = ItemIcon;
+                    MasterLooterUI.UIComponents.Icons.Item = ItemIcon;
 
                     --[[
                         ITEM TEXTBOX
@@ -119,7 +134,7 @@ function MasterLooterUI:draw(itemLink)
                     ItemBox:SetCallback("OnTextChanged", MasterLooterUI.ItemBoxChanged); -- Update item info when input value changes
                     ItemBox:SetCallback("OnEnterPressed", MasterLooterUI.ItemBoxChanged); -- Update item info when item is dragged on top (makes no sense to use OnEnterPressed I know)
 
-                    MasterLooterUI.Widgets.EditBoxes.Item = ItemBox;
+                    MasterLooterUI.UIComponents.EditBoxes.Item = ItemBox;
 
                     FirstRow:AddChild(ItemBox);
 
@@ -163,15 +178,15 @@ function MasterLooterUI:draw(itemLink)
                         App.RollOff.inProgress = true;
 
                         App.RollOff:announceStart(
-                            MasterLooterUI.Widgets.EditBoxes.Item:GetText(),
-                            MasterLooterUI.Widgets.EditBoxes.Timer:GetText(),
-                            MasterLooterUI.Widgets.EditBoxes.ItemNote:GetText()
+                            MasterLooterUI.UIComponents.EditBoxes.Item:GetText(),
+                            MasterLooterUI.UIComponents.EditBoxes.Timer:GetText(),
+                            MasterLooterUI.UIComponents.EditBoxes.ItemNote:GetText()
                         );
 
                         MasterLooterUI:updateWidgets();
                     end);
                     FirstRow:AddChild(StartButton);
-                    MasterLooterUI.Widgets.Buttons.StartButton = StartButton;
+                    MasterLooterUI.UIComponents.Buttons.StartButton = StartButton;
 
                     --[[
                         STOP BUTTON
@@ -186,7 +201,7 @@ function MasterLooterUI:draw(itemLink)
                         App.RollOff:announceStop();
                     end);
                     FirstRow:AddChild(StopButton);
-                    MasterLooterUI.Widgets.Buttons.StopButton = StopButton;
+                    MasterLooterUI.UIComponents.Buttons.StopButton = StopButton;
 
             --[[
                 SECOND ROW
@@ -217,7 +232,7 @@ function MasterLooterUI:draw(itemLink)
                     ItemNoteLabel:SetHeight(20);
                     ItemNoteLabel:SetWidth(35);
                     SecondRow:AddChild(ItemNoteLabel);
-                    MasterLooterUI.Widgets.EditBoxes.ItemNoteLabel = ItemNoteLabel;
+                    MasterLooterUI.UIComponents.EditBoxes.ItemNoteLabel = ItemNoteLabel;
 
                     --[[
                         ITEM NOTE
@@ -228,7 +243,7 @@ function MasterLooterUI:draw(itemLink)
                     ItemNote:SetHeight(20);
                     ItemNote:SetWidth(340);
                     SecondRow:AddChild(ItemNote);
-                    MasterLooterUI.Widgets.EditBoxes.ItemNote = ItemNote;
+                    MasterLooterUI.UIComponents.EditBoxes.ItemNote = ItemNote;
 
             --[[
                 THID ROW (ROLL TIMER)
@@ -259,7 +274,7 @@ function MasterLooterUI:draw(itemLink)
                     TimerLabel:SetHeight(20);
                     TimerLabel:SetWidth(55);
                     ThirdRow:AddChild(TimerLabel);
-                    MasterLooterUI.Widgets.Labels.TimerLabel = TimerLabel;
+                    MasterLooterUI.UIComponents.Labels.TimerLabel = TimerLabel;
 
                     --[[
                         TIMER TEXTBOX
@@ -271,7 +286,7 @@ function MasterLooterUI:draw(itemLink)
                     TimerBox:SetWidth(40);
                     TimerBox:SetText(Settings:get("UI.RollOff.timer"));
                     ThirdRow:AddChild(TimerBox);
-                    MasterLooterUI.Widgets.EditBoxes.Timer = TimerBox;
+                    MasterLooterUI.UIComponents.EditBoxes.Timer = TimerBox;
 
                     --[[
                         SPACER
@@ -295,7 +310,7 @@ function MasterLooterUI:draw(itemLink)
                         MasterLooterUI:reset();
                     end);
                     ThirdRow:AddChild(ClearButton);
-                    MasterLooterUI.Widgets.Buttons.ClearButton = ClearButton;
+                    MasterLooterUI.UIComponents.Buttons.ClearButton = ClearButton;
 
                     --[[
                         AWARD BUTTON
@@ -307,19 +322,19 @@ function MasterLooterUI:draw(itemLink)
                     AwardButton:SetHeight(20);
                     AwardButton:SetDisabled(true);
                     AwardButton:SetCallback("OnClick", function()
-                        local PlayersTable = MasterLooterUI.Widgets.Tables.Players;
+                        local PlayersTable = MasterLooterUI.UIComponents.Tables.Players;
                         local selected = PlayersTable:GetRow(PlayersTable:GetSelection());
 
                         if (not selected
                             or not type(selected) == "table"
                         ) then
-                            return App:warning("You need to select a player first");
+                            return Utils:warning("You need to select a player first");
                         end
 
-                        return App.RollOff:award(unpack(selected), MasterLooterUI.Widgets.EditBoxes.Item:GetText());
+                        return App.RollOff:award(unpack(selected), MasterLooterUI.UIComponents.EditBoxes.Item:GetText());
                     end);
                     ThirdRow:AddChild(AwardButton);
-                    MasterLooterUI.Widgets.Buttons.AwardButton = AwardButton;
+                    MasterLooterUI.UIComponents.Buttons.AwardButton = AwardButton;
 
             --[[
                 FOURTH ROW (GROUP MEMBERS)
@@ -340,13 +355,89 @@ function MasterLooterUI:draw(itemLink)
     end
 end
 
-function MasterLooterUI:drawPlayersTable(parent)
-    App:debug("MasterLooterUI:drawPlayersTable");
+-- This button allows the master looter to easily reopen the
+-- master looter window when it's closed with a roll in progress
+-- This is very common in hectic situations where the master looter has to participate in combat f.e.
+function MasterLooterUI:drawReopenMasterLooterUIButton()
+    Utils:debug("MasterLooterUI:drawReopenMasterLooterUIButton");
 
+    local texture = App.RollOff.CurrentRollOff.itemIcon or "Interface\\Icons\\INV_Misc_QuestionMark";
+
+    if (self.UIComponents.ReopenMasterLooterButtonIcon) then
+        self.UIComponents.ReopenMasterLooterButtonIcon:Show();
+        return;
+    end
+
+    self.UIComponents.Buttons.ReopenMasterLooterButton = UI:createFrame("Button", "ReopenMasterLooterButton", nil, Frame);
+    local Button = self.UIComponents.Buttons.ReopenMasterLooterButton;
+
+    Button:SetSize(44, 44);
+    Button:SetNormalTexture(texture);
+    Button:SetText("text");
+    Button:SetPoint(
+        Settings:get("UI.ReopenMasterLooterUIButton.Position.point"),
+        UIParent,
+        Settings:get("UI.ReopenMasterLooterUIButton.Position.relativePoint"),
+        Settings:get("UI.ReopenMasterLooterUIButton.Position.offsetX"),
+        Settings:get("UI.ReopenMasterLooterUIButton.Position.offsetY")
+    );
+
+    Button:SetMovable(true);
+    Button:EnableMouse(true);
+    Button:SetClampedToScreen(true);
+    Button:SetFrameStrata("HIGH");
+    Button:RegisterForDrag("LeftButton");
+    Button:SetScript("OnDragStart", Button.StartMoving);
+    Button:SetScript("OnDragStop", function()
+        Button:StopMovingOrSizing();
+        local point, _, relativePoint, offsetX, offsetY = Button:GetPoint();
+
+        -- Store the frame's last position for future play sessions
+        Settings:set("UI.ReopenMasterLooterUIButton.Position.point", point);
+        Settings:set("UI.ReopenMasterLooterUIButton.Position.relativePoint", relativePoint);
+        Settings:set("UI.ReopenMasterLooterUIButton.Position.offsetX", offsetX);
+        Settings:set("UI.ReopenMasterLooterUIButton.Position.offsetY", offsetY);
+    end);
+
+    local ButtonBackground = Button:CreateTexture(nil, "BACKGROUND");
+    ButtonBackground:SetAllPoints(Button);
+    ButtonBackground:SetTexture("Interface\\Icons\\INV_Misc_QuestionMark");
+    ButtonBackground:SetTexCoord(0, 1, 0.23, 0.77);
+    ButtonBackground:SetBlendMode("ADD");
+    Button.ButtonBackground = ButtonBackground;
+
+    local ButtonHighlight = Button:CreateTexture(nil, "HIGHLIGHT");
+    ButtonHighlight:SetAllPoints(Button);
+    ButtonHighlight:SetTexture("Interface\\PaperDollInfoFrame\\UI-Character-Tab-Highlight");
+    ButtonHighlight:SetTexCoord(0, 1, 0.23, 0.77);
+    ButtonHighlight:SetBlendMode("ADD");
+    Button.ButtonHighlight = ButtonHighlight;
+
+    Button:SetScript("OnMouseUp", function (_, button)
+        if (button == "LeftButton") then
+            self:draw();
+        end
+    end);
+
+    Button:SetScript("OnEnter", function()
+        GameTooltip:SetOwner(Button, "ANCHOR_TOP");
+        GameTooltip:SetText("Open master looter window");
+        GameTooltip:Show();
+    end);
+
+    Button:SetScript("OnLeave", function()
+        GameTooltip:Hide();
+    end);
+end
+
+function MasterLooterUI:drawPlayersTable(parent)
+    Utils:debug("MasterLooterUI:drawPlayersTable");
+
+    -- Combined width of all colums should be 340
     local columns = {
         {
             name = "Player",
-            width = 340,
+            width = 110,
             align = "LEFT",
             color = {
                 r = 0.5,
@@ -355,30 +446,46 @@ function MasterLooterUI:drawPlayersTable(parent)
                 a = 1.0
             },
             colorargs = nil,
-            sort = App.Data.Constants.ScrollingTable.ascending,
+        },
+        {
+            name = "Roll",
+            width = 85,
+            align = "LEFT",
+            color = {
+                r = 0.5,
+                g = 0.5,
+                b = 1.0,
+                a = 1.0
+            },
+            colorargs = nil,
+            sort = App.Data.Constants.ScrollingTable.descending,
+        },
+        {
+            name = " ",
+            width = 145,
+            align = "LEFT",
+            color = {
+                r = 0.5,
+                g = 0.5,
+                b = 1.0,
+                a = 1.0
+            },
+            colorargs = nil,
+            sort = App.Data.Constants.ScrollingTable.descending,
         },
     };
 
     local table = ScrollingTable:CreateST(columns, 8, 15, nil, parent);
     table:EnableSelection(true);
     table.frame:SetPoint("BOTTOM", parent, "BOTTOM", 0, 50);
-    MasterLooterUI.Widgets.Tables.Players = table;
-
-    local PlayersTableData = {};
-
-    for _, player in pairs(App.User:groupMembers()) do
-        tinsert(PlayersTableData, {player});
-    end
-
-    table:SetData(PlayersTableData, true);
-    table:SortData();
+    MasterLooterUI.UIComponents.Tables.Players = table;
 end
 
 -- The item box contents changed
 function MasterLooterUI:ItemBoxChanged()
     Utils:debug("MasterLooterUI:ItemBoxChanged");
 
-    local itemLink = MasterLooterUI.Widgets.EditBoxes.Item:GetText();
+    local itemLink = MasterLooterUI.UIComponents.EditBoxes.Item:GetText();
 
     MasterLooterUI:passItemLink(itemLink);
 end
@@ -389,30 +496,30 @@ end
 function MasterLooterUI:passItemLink(itemLink)
     Utils:debug("MasterLooterUI:passItemLink");
 
-    if (not MasterLooterUI.Widgets.Frame.rendered) then
+    if (not MasterLooterUI.UIComponents.Frame.rendered) then
         return;
     end
 
     if (App.RollOff.inProgress) then
-        return App:warning("A roll is currently in progress");
+        return Utils:warning("A roll is currently in progress");
     end
 
-    MasterLooterUI.Widgets.EditBoxes.Item:SetText(itemLink);
+    MasterLooterUI.UIComponents.EditBoxes.Item:SetText(itemLink);
     return MasterLooterUI:update();
 end
 
 -- Update the master looter UI based on the value of the ItemBox input
 function MasterLooterUI:update()
-    App:debug("MasterLooterUI:update");
+    Utils:debug("MasterLooterUI:update");
 
-    local IconWidget = MasterLooterUI.Widgets.Icons.Item;
-    local itemLink = MasterLooterUI.Widgets.EditBoxes.Item:GetText();
+    local IconWidget = MasterLooterUI.UIComponents.Icons.Item;
+    local itemLink = MasterLooterUI.UIComponents.EditBoxes.Item:GetText();
 
     -- If the item link is not valid then
     --   Show the default question mark icon
     --   Remove the item priority string
     if (not itemLink or itemLink == "") then
-        App:debug("MasterLooterUI:update. Item link is invalid");
+        Utils:debug("MasterLooterUI:update. Item link is invalid");
 
         MasterLooterUI.ItemBoxHoldsValidItem = false;
         IconWidget:SetImage(MasterLooterUI.Defaults.itemIcon);
@@ -427,7 +534,7 @@ function MasterLooterUI:update()
 
     if (icon) then
         -- TODO: Reset players / roll table
-        MasterLooterUI.Widgets.Tables.Players:ClearSelection();
+        MasterLooterUI.UIComponents.Tables.Players:ClearSelection();
 
         IconWidget:SetImage(icon);
         MasterLooterUI.ItemBoxHoldsValidItem = true;
@@ -444,8 +551,8 @@ end
 function MasterLooterUI:updateItemNote()
     Utils:debug("MasterLooterUI:updateItemNote");
 
-    local ItemNote = MasterLooterUI.Widgets.EditBoxes.ItemNote;
-    local itemLink = MasterLooterUI.Widgets.EditBoxes.Item:GetText();
+    local ItemNote = MasterLooterUI.UIComponents.EditBoxes.ItemNote;
+    local itemLink = MasterLooterUI.UIComponents.EditBoxes.Item:GetText();
 
     -- We don't have a valid itemlink at hand, clear the note
     if (not MasterLooterUI.ItemBoxHoldsValidItem) then
@@ -466,13 +573,17 @@ end
 
 -- Reset the roll off UI to its defaults
 function MasterLooterUI:reset()
-    MasterLooterUI.Widgets.Icons.Item:SetImage(MasterLooterUI.Defaults.itemIcon);
-    MasterLooterUI.Widgets.EditBoxes.Item:SetText(MasterLooterUI.Defaults.itemText);
-    MasterLooterUI.Widgets.EditBoxes.Timer:SetText(Settings:get("UI.RollOff.timer"));
-    MasterLooterUI.Widgets.EditBoxes.ItemNote:SetText("");
+    Utils:debug("MasterLooterUI:reset");
+
+    MasterLooterUI.UIComponents.Icons.Item:SetImage(MasterLooterUI.Defaults.itemIcon);
+    MasterLooterUI.UIComponents.EditBoxes.Item:SetText(MasterLooterUI.Defaults.itemText);
+    MasterLooterUI.UIComponents.EditBoxes.Timer:SetText(Settings:get("UI.RollOff.timer"));
+    MasterLooterUI.UIComponents.EditBoxes.ItemNote:SetText("");
     MasterLooterUI.ItemBoxHoldsValidItem = false;
 
-    MasterLooterUI.Widgets.Tables.Players:ClearSelection();
+    MasterLooterUI.UIComponents.Tables.Players:ClearSelection();
+    MasterLooterUI.UIComponents.Tables.Players:ClearSelection();
+    MasterLooterUI.UIComponents.Tables.Players:SetData({}, true);
 
     MasterLooterUI:updateWidgets();
 end
@@ -488,9 +599,9 @@ function MasterLooterUI:updateWidgets()
     if (not MasterLooterUI.ItemBoxHoldsValidItem
         or not App.User.isInGroup
     ) then
-        MasterLooterUI.Widgets.Buttons.StartButton:SetDisabled(true);
-        MasterLooterUI.Widgets.Buttons.StopButton:SetDisabled(true);
-        MasterLooterUI.Widgets.EditBoxes.Item:SetDisabled(false);
+        MasterLooterUI.UIComponents.Buttons.StartButton:SetDisabled(true);
+        MasterLooterUI.UIComponents.Buttons.StopButton:SetDisabled(true);
+        MasterLooterUI.UIComponents.EditBoxes.Item:SetDisabled(false);
 
         return;
     end
@@ -504,11 +615,11 @@ function MasterLooterUI:updateWidgets()
     --   The clear button should not be available
     --   The item box should be available so we can enter an item link
     if (not App.RollOff.inProgress) then
-        MasterLooterUI.Widgets.Buttons.StartButton:SetDisabled(false);
-        MasterLooterUI.Widgets.Buttons.StopButton:SetDisabled(true);
-        MasterLooterUI.Widgets.Buttons.AwardButton:SetDisabled(false);
-        MasterLooterUI.Widgets.Buttons.ClearButton:SetDisabled(false);
-        MasterLooterUI.Widgets.EditBoxes.Item:SetDisabled(false);
+        MasterLooterUI.UIComponents.Buttons.StartButton:SetDisabled(false);
+        MasterLooterUI.UIComponents.Buttons.StopButton:SetDisabled(true);
+        MasterLooterUI.UIComponents.Buttons.AwardButton:SetDisabled(false);
+        MasterLooterUI.UIComponents.Buttons.ClearButton:SetDisabled(false);
+        MasterLooterUI.UIComponents.EditBoxes.Item:SetDisabled(false);
 
     -- If a roll off is currently in progress then:
     --   The start button should not be available
@@ -517,11 +628,11 @@ function MasterLooterUI:updateWidgets()
     --   The clear button should not be available
     --   The item box should not be available
     else
-        MasterLooterUI.Widgets.Buttons.StartButton:SetDisabled(true);
-        MasterLooterUI.Widgets.Buttons.StopButton:SetDisabled(false);
-        MasterLooterUI.Widgets.Buttons.AwardButton:SetDisabled(true);
-        MasterLooterUI.Widgets.Buttons.ClearButton:SetDisabled(true);
-        MasterLooterUI.Widgets.EditBoxes.Item:SetDisabled(true);
+        MasterLooterUI.UIComponents.Buttons.StartButton:SetDisabled(true);
+        MasterLooterUI.UIComponents.Buttons.StopButton:SetDisabled(false);
+        MasterLooterUI.UIComponents.Buttons.AwardButton:SetDisabled(true);
+        MasterLooterUI.UIComponents.Buttons.ClearButton:SetDisabled(true);
+        MasterLooterUI.UIComponents.EditBoxes.Item:SetDisabled(true);
     end
 end
 

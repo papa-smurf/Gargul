@@ -1,8 +1,14 @@
 local _, App = ...;
 
-App.RollOff = {};
+App.RollOff = {
+    EventFrame = false,
+};
+
+local Utils = App.Utils;
 local RollOff = App.RollOff;
 local CommActions = App.Data.Constants.Comm.Actions;
+
+RollOff.rollPattern = Utils:createPattern(RANDOM_ROLL_RESULT);
 
 RollOff.CurrentRollOff = {
     initiator = nil, -- The player who started the roll off
@@ -16,7 +22,7 @@ RollOff.CurrentRollOff = {
 };
 
 -- Add a award confirmation dialog to Blizzard's global StaticPopupDialogs object
-StaticPopupDialogs["ROLLOFF_AWARD_CONFIRMATION"] = {
+StaticPopupDialogs[App.name .. "_ROLLOFF_AWARD_CONFIRMATION"] = {
     text = "",
     button1 = "Yes",
     button2 = "No",
@@ -28,7 +34,7 @@ StaticPopupDialogs["ROLLOFF_AWARD_CONFIRMATION"] = {
 }
 
 -- Add a award confirmation dialog to Blizzard's global StaticPopupDialogs object
-StaticPopupDialogs["CLEAR_ROLLOFF_CONFIRMATION"] = {
+StaticPopupDialogs[App.name .. "_CLEAR_ROLLOFF_CONFIRMATION"] = {
     text = "Are you sure you want to clear everything?",
     button1 = "Yes",
     button2 = "No",
@@ -46,7 +52,9 @@ RollOff.timerId = 0; -- ID of the timer event
 
 -- Anounce to everyone in the raid that a roll off is starting
 function RollOff:announceStart(item, time, note)
-    App:debug("RollOff:announceStart");
+    Utils:debug("RollOff:announceStart");
+
+    self:listenForRolls();
 
     App.CommMessage.new(
         CommActions.startRollOff,
@@ -92,18 +100,20 @@ end
 
 -- Anounce to everyone in the raid that a roll off has ended
 function RollOff:announceStop()
-    App:debug("RollOff:announceStop");
+    Utils:debug("RollOff:announceStop");
 
     App.CommMessage.new(
         CommActions.stopRollOff,
         nil,
         "RAID"
     ):send();
+
+    self:stopListeningForRolls();
 end
 
 -- Start a roll off
 function RollOff:start(CommMessage)
-    App:debug("RollOff:start");
+    Utils:debug("RollOff:start");
 
     if (not App.Settings:get("showRollOffWindow")) then
         return;
@@ -115,12 +125,12 @@ function RollOff:start(CommMessage)
     -- We have to wait with starting the actual roll off process until
     -- the item that's up for rolling has been successfully loaded by the Item API
     local startRollOffSequence = function()
-        isValidItem, itemId, itemName, itemLink, _, _, _, _, _, _, _, itemIcon = App:getItemInfoFromLink(content.item);
+        isValidItem, itemId, itemName, itemLink, _, _, _, _, _, _, _, itemIcon = Utils:getItemInfoFromLink(content.item);
         time = tonumber(content.time);
         note = content.note;
 
         if (not isValidItem) then
-            return App:error("Invalid item provided in RollOff:start");
+            return Utils:error("Invalid item provided in RollOff:start");
         end
 
         self.inProgress = true;
@@ -153,7 +163,7 @@ function RollOff:start(CommMessage)
         end, time);
 
         -- Play raid warning sound
-        App:playSound(8959, "Master");
+        Utils:playSound(8959, "Master");
     end
 
     --[[
@@ -161,13 +171,13 @@ function RollOff:start(CommMessage)
         PROVIDE VERY SPECIFIC ERROR MESSAGE IF IT'S NOT
     ]]
     if (not content) then
-        return App:error("Missing content in RollOff:start");
+        return Utils:error("Missing content in RollOff:start");
     elseif (not type(content) == "table") then
-        return App:error("Content is not a table in RollOff:start");
+        return Utils:error("Content is not a table in RollOff:start");
     elseif (not content.time) then
-        return App:error("No time provided in RollOff:start");
+        return Utils:error("No time provided in RollOff:start");
     elseif (not content.item) then
-        return App:error("No item provided in RollOff:start");
+        return Utils:error("No item provided in RollOff:start");
     else
         -- Load the item from the Blizzard API and start the roll off after it's retreived
         Item:CreateFromItemLink(content.item):ContinueOnItemLoad(function()
@@ -178,20 +188,20 @@ end
 
 -- Stop a roll off
 function RollOff:stop(CommMessage)
-    App:debug("RollOff:stop");
+    Utils:debug("RollOff:stop");
 
     if (not RollOff.inProgress) then
-        return App:warning("Can't stop roll off, no roll off in progress");
+        return Utils:warning("Can't stop roll off, no roll off in progress");
     end
 
     if (not self.CurrentRollOff.initiator == App.User.name
         and not CommMessage.Sender.name == self.initiator
     ) then
-        return App:warning(CommMessage.Sender.name .. " is not allowed to stop roll off started by " .. self.initiator);
+        return Utils:warning(CommMessage.Sender.name .. " is not allowed to stop roll off started by " .. self.initiator);
     end
 
     -- Play raid warning sound
-    App:playSound(8959, "Master");
+    Utils:playSound(8959, "Master");
 
     RollOff.inProgress = false;
     App.Ace:CancelTimer(RollOff.timerId);
@@ -206,11 +216,20 @@ end
 
 -- Award the item to one of the rollers
 function RollOff:award(roller, itemLink)
+    Utils:debug("RollOff:award");
+
+    -- If the roller has a roll number suffixed to his name
+    -- e.g. "playerName [2]" then make sure to remove that number
+    local openingBracketPosition = string.find(roller, " [");
+    if (openingBracketPosition) then
+        roller = string.sub(roller, 1, openingBracketPosition);
+    end
+
     local RollOff = self.CurrentRollOff;
-    local character = App:tableGet(App.DB.Characters, roller, {});
+    local character = Utils:tableGet(App.DB.Characters, roller, {});
     local awardMessage = "";
     local confirmationMessage = "";
-    itemLink = App:tableGet(self.CurrentRollOff, "itemLink", itemLink);
+    itemLink = Utils:tableGet(self.CurrentRollOff, "itemLink", itemLink);
 
     awardMessage = string.format("%s awarded to %s. Congrats!",
         itemLink,
@@ -237,15 +256,144 @@ function RollOff:award(roller, itemLink)
     end
 
     -- Make sure the initiator has to confirm his choices
-    StaticPopupDialogs["ROLLOFF_AWARD_CONFIRMATION"].OnAccept = award;
-    StaticPopupDialogs["ROLLOFF_AWARD_CONFIRMATION"].text = string.format("Award %s to %s?",
+    StaticPopupDialogs[App.name .. "_ROLLOFF_AWARD_CONFIRMATION"].OnAccept = award;
+    StaticPopupDialogs[App.name .. "_ROLLOFF_AWARD_CONFIRMATION"].text = string.format("Award %s to %s?",
         itemLink,
         roller
     );
-    StaticPopup_Show("ROLLOFF_AWARD_CONFIRMATION");
+    StaticPopup_Show(App.name .. "_ROLLOFF_AWARD_CONFIRMATION");
 end
 
+-- Start listening for rolls
+function RollOff:listenForRolls()
+    Utils:debug("RollOff:listenForRolls");
+
+    App.Events:register("RollOffChatMsgSystemListener", "CHAT_MSG_SYSTEM", RollOff.processRoll);
+end
+
+-- Process an incoming roll (if it's valid!)
+function RollOff:processRoll(event, message)
+    Utils:debug("RollOff:processRoll");
+
+    -- We only track rolls when a rollof is actually in progress
+    if (not RollOff.inProgress) then
+        return;
+    end
+
+    local Roll = false;
+    for roller, roll, low, high in string.gmatch(message, App.RollOff.rollPattern) do
+        Utils:debug(string.format("Roll detected: %s rolls %s (%s-%s)", roller, roll, low, high));
+
+        roll = tonumber(roll) or 0;
+        low = tonumber(low) or 0;
+        high = tonumber(high) or 0;
+
+        if (low ~= 1 or high ~= 100) then
+            return;
+        else
+            local maximumNumberOfGroupMembers = MEMBERS_PER_RAID_GROUP;
+            if (App.User.isInRaid) then
+                maximumNumberOfGroupMembers = MAX_RAID_MEMBERS;
+            end
+
+            -- This is to fetch the roller's class and to make sure
+            -- that the person rolling is actually part of our group/raid
+            for index = 1, maximumNumberOfGroupMembers do
+                local player, _, _, _, class = GetRaidRosterInfo(index);
+
+                if (roller == player) then
+                    Roll = {
+                        player = player,
+                        class = class,
+                        amount = roll,
+                        time = GetServerTime(),
+                    };
+
+                    break;
+                end
+            end
+        end
+    end
+
+    if (not Roll) then
+        return;
+    end
+
+    tinsert(RollOff.CurrentRollOff.Rolls, Roll);
+    RollOff:refreshRollsTable();
+end
+
+-- Unregister the CHAT_MSG_SYSTEM to stop listening for rolls
+function RollOff:stopListeningForRolls()
+    Utils:debug("RollOff:stopListeningForRolls");
+
+    if (not self.EventFrame) then
+        return;
+    end
+
+    App.Events:unregister("RollOffChatMsgSystemListener");
+end
+
+-- Whenever a new roll comes in we need to refresh
+-- the rolls table to make sure it actually shows up
+function RollOff:refreshRollsTable()
+    Utils:debug("RollOff:refreshRollsTable");
+
+    local RollTableData = {};
+    local Rolls = self.CurrentRollOff.Rolls;
+    local ClassColors = App.Data.Constants.ClassRgbColors;
+    local RollsTable = App.MasterLooterUI.UIComponents.Tables.Players;
+    local NumberOfRollsPerPlayer = {};
+
+    for _, Roll in pairs(Rolls) do
+        -- Determine how many times this player rolled during the current rolloff
+        NumberOfRollsPerPlayer[Roll.player] = NumberOfRollsPerPlayer[Roll.player] or 0;
+        NumberOfRollsPerPlayer[Roll.player] = NumberOfRollsPerPlayer[Roll.player] + 1;
+
+        local playerName = Roll.player;
+        local numberOfTimesRolledByPlayer = NumberOfRollsPerPlayer[Roll.player];
+
+        -- If this isn't the player's first roll for the current item
+        -- then we add a number behind the players name like so: PlayerName [#]
+        if (numberOfTimesRolledByPlayer > 1) then
+            playerName = string.format("%s [%s]", playerName, numberOfTimesRolledByPlayer);
+        end
+
+        -- Check if the player reserved the current item id
+        local softReservedValue = "";
+        if (App.SoftReserves:itemIdIsReservedByPlayer(self.CurrentRollOff.itemId, playerName)) then
+            softReservedValue = "reserved";
+        end
+
+        local class = string.lower(Roll.class);
+        local Row = {
+            cols = {
+                {
+                    value = playerName,
+                    color = ClassColors[class],
+                },
+                {
+                    value = Roll.amount,
+                    color = ClassColors[class],
+                },
+                {
+                    value = softReservedValue,
+                    color = ClassColors[class],
+                },
+            },
+        };
+        tinsert(RollTableData, Row);
+    end
+
+    RollsTable:SetData(RollTableData);
+    RollsTable:SortData();
+end
+
+-- Reset the last rolloff. This happens when the master looter
+-- awards an item or when he clicks the "clear" button in the UI
 function RollOff:reset()
+    Utils:debug("RollOff:reset");
+
     self.CurrentRollOff = {
         initiator = nil, -- The player who started the roll off
         time = nil, -- The amount of time players get to roll
@@ -259,4 +407,4 @@ function RollOff:reset()
     App.MasterLooterUI:reset();
 end
 
-App:debug("RollOff.lua");
+Utils:debug("RollOff.lua");

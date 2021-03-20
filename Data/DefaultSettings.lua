@@ -65,6 +65,14 @@ App.Data.DefaultSettings = {
                 offsetX = 0,
                 offsetY = 0,
             }
+        },
+        ReopenMasterLooterUIButton = {
+            Position = {
+                point = "CENTER",
+                relativePoint = "CENTER",
+                offsetX = 0,
+                offsetY = 0,
+            }
         }
     }
 };
