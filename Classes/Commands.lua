@@ -26,6 +26,15 @@ end
 -- Open the dashboard or main hub if you will
 Commands.dashboard = function() App.Dashboard:draw(); end
 
+-- Open the settings menu
+Commands.settings = function(...)
+    InterfaceOptionsFrame_OpenToCategory(App.name);
+    InterfaceOptionsFrame_OpenToCategory(App.name);
+end
+Commands.config = Commands.settings;
+Commands.se = Commands.settings;
+Commands.co = Commands.settings;
+
 -- Open the auctioneer window (requires group and officer privileges)
 Commands.auction = function(...) App.AuctioneerUI:draw(...); end
 Commands.au = Commands.auction;
