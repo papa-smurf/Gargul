@@ -220,7 +220,7 @@ function RollOff:award(roller, itemLink)
 
     -- If the roller has a roll number suffixed to his name
     -- e.g. "playerName [2]" then make sure to remove that number
-    local openingBracketPosition = string.find(roller, " [");
+    local openingBracketPosition = string.find(roller, " %[");
     if (openingBracketPosition) then
         roller = string.sub(roller, 1, openingBracketPosition);
     end
@@ -268,11 +268,13 @@ end
 function RollOff:listenForRolls()
     Utils:debug("RollOff:listenForRolls");
 
-    App.Events:register("RollOffChatMsgSystemListener", "CHAT_MSG_SYSTEM", RollOff.processRoll);
+    App.Events:register("RollOffChatMsgSystemListener", "CHAT_MSG_SYSTEM", function (message)
+        self:processRoll(message);
+    end);
 end
 
 -- Process an incoming roll (if it's valid!)
-function RollOff:processRoll(event, message)
+function RollOff:processRoll(message)
     Utils:debug("RollOff:processRoll");
 
     -- We only track rolls when a rollof is actually in progress

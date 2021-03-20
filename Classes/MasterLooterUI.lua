@@ -331,7 +331,7 @@ function MasterLooterUI:draw(itemLink)
                             return Utils:warning("You need to select a player first");
                         end
 
-                        return App.RollOff:award(unpack(selected), MasterLooterUI.UIComponents.EditBoxes.Item:GetText());
+                        return App.RollOff:award(selected.cols[1].value, MasterLooterUI.UIComponents.EditBoxes.Item:GetText());
                     end);
                     ThirdRow:AddChild(AwardButton);
                     MasterLooterUI.UIComponents.Buttons.AwardButton = AwardButton;
