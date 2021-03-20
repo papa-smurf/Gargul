@@ -188,33 +188,42 @@ function Settings:showSettingsMenu(Frame)
     EnableDebugModeCheckbox:SetChecked(self:get("debugModeEnabled"));
     EnableDebugModeCheckbox:SetPoint("TOPLEFT", MuteAddonCheckbox, "BOTTOMLEFT", 0, -8);
 
+    -- This is the "PackMule" button that opens the PackMule settings
+    local PackMuleSettings = CreateFrame("Button", nil, Frame, "UIPanelButtonTemplate");
+    PackMuleSettings:SetText("PackMule");
+    PackMuleSettings:SetWidth(177);
+    PackMuleSettings:SetHeight(24);
+    PackMuleSettings:SetPoint("TOPLEFT", EnableDebugModeCheckbox, "BOTTOMLEFT", -2, -16);
+    PackMuleSettings:SetScript("OnClick", function()
+        App.Commands.packmule();
+        InterfaceOptionsFrame_Show();
+    end);
+
     -- This is the "Reset to defaults" button that resets all settings
     local ResetToDefaultSettings = CreateFrame("Button", nil, Frame, "UIPanelButtonTemplate");
     ResetToDefaultSettings:SetText("Reset to defaults");
     ResetToDefaultSettings:SetWidth(177);
     ResetToDefaultSettings:SetHeight(24);
-    ResetToDefaultSettings:SetPoint("TOPLEFT", EnableDebugModeCheckbox, "BOTTOMLEFT", -2, -16);
+    ResetToDefaultSettings:SetPoint("TOPLEFT", PackMuleSettings, "BOTTOMLEFT", -2, -16);
     ResetToDefaultSettings:SetScript("OnClick", function()
-        StaticPopup_Show("RESET_TO_DEFAULTS_CONFIRMATION");
+        StaticPopup_Show(App.name .. "_RESET_TO_DEFAULTS_CONFIRMATION");
     end);
 
     Frame:SetScript("OnShow", nil);
 end
 
-
-
 -- Get a setting by a given key. Use dot notation to traverse multiple levels e.g:
 -- Settings.UI.Auctioneer.offsetX can be fetched using Settings:get("Settings.UI.Auctioneer.offsetX")
 -- without having to worry about tables or keys existing yes or no.
 function Settings:get(keyString, default)
-    return App:tableGet(self.Active, keyString, default);
+    return Utils:tableGet(self.Active, keyString, default);
 end
 
 -- Set a setting by a given key and value. Use dot notation to traverse multiple levels e.g:
 -- Settings.UI.Auctioneer.offsetX can be set using Settings:set("Settings.UI.Auctioneer.offsetX", myValue)
 -- without having to worry about tables or keys existing yes or no.
 function Settings:set(keyString, value)
-    return App:tableSet(self.Active, keyString, value);
+    return Utils:tableSet(self.Active, keyString, value);
 end
 
-App:debug("Settings.lua");
+Utils:debug("Settings.lua");

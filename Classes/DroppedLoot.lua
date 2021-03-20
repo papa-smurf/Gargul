@@ -37,7 +37,11 @@ function DroppedLoot:LOOT_OPENED()
 
     -- Only announce loot in chat if the setting is enabled
     if (App.Settings:get("announceLootToChat")) then
-        DroppedLoot:announce();
+        -- We give the announcing of loot some time
+        -- in case the master looter set up a packmule
+        C_Timer.After(.5, function()
+            DroppedLoot:announce();
+        end);
     end
 end
 

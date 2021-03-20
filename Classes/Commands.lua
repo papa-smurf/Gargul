@@ -58,6 +58,10 @@ Commands.gr = Commands.groups;
 Commands.softreserves = function() App.SoftReserves:drawImporter(); end
 Commands.so = Commands.softreserves;
 
+-- Open the pack mule window
+Commands.packmule = function() App.PackMuleUI:drawSetupWindow(); end
+Commands.pm = Commands.packmule;
+
 -- Open the loot priority window
 Commands.lootpriority = function() App.LootPriority:drawImporter(); end
 Commands.lo = Commands.lootpriority;

@@ -12,6 +12,10 @@ App.Data.Constants = {
     success = 0,
     failure = 1,
 
+    UntradeableItems = {
+        "Splinter of Atiesh",
+    },
+
     RaidingZones = {
         "Molten Core",
         "Onyxia's Lair",

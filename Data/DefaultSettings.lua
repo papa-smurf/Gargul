@@ -14,6 +14,13 @@ App.Data.DefaultSettings = {
     showRollOffWindow = true,
     debugModeEnabled = false,
 
+    PackMule = {
+        enabled = false,
+        persistsAfterReload = false,
+        persistsAfterZoneChange = false,
+        Rules = {},
+    },
+
     UI = {
         Dashboard = {
             showInRaidOnly = false,

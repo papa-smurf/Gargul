@@ -68,6 +68,7 @@ function App:_init()
     App.LootPriority:_init();
     App.SoftReserves:_init();
     App.DroppedLoot:_init();
+    App.PackMule:_init();
 
     -- Hook the bagslot events
     App:hookBagSlotEvents();
