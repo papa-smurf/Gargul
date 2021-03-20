@@ -12,27 +12,28 @@ App.Sync = {
 };
 
 local Sync = App.Sync;
+local Utils = App.Utils;
 local CommActions = App.Data.Constants.Comm.Actions;
 
 function Sync:broadcast()
-    App:debug("Sync:broadcast");
+    Utils:debug("Sync:broadcast");
 
     if (self.broadcastInProgress) then
-        return App:error("Broadcast still in progress");
+        return Utils:error("Broadcast still in progress");
     end
 
     -- Only officers are allowed to broadcast!
     if (not App.User.isOfficer) then
-        return App:warning("Only officers are allowed to use this feature");
+        return Utils:warning("Only officers are allowed to use this feature");
     end
 
-    App:success("Broadcast started");
+    Utils:success("Broadcast started");
 
     -- Check if the broadcaster's tables are valid
     local dbIsValid, messages = App.DB:isValid();
     if (not dbIsValid) then
         for key in pairs(messages) do
-            App:error(messages[key]);
+            Utils:error(messages[key]);
         end
 
         return;
@@ -43,7 +44,7 @@ function Sync:broadcast()
     self:broadcastLootHistory();
 
     App.Ace:ScheduleTimer(function ()
-        App:success("Broadcast finished");
+        Utils:success("Broadcast finished");
         self.broadcastInProgress = false;
 
 -- TODO: WIP!
@@ -53,7 +54,7 @@ function Sync:broadcast()
 end
 
 function Sync:broadcastCharacters()
-    App:debug("Sync:broadcastCharacters");
+    Utils:debug("Sync:broadcastCharacters");
 
     self.charactersBroadcastInProgress = true;
     local Message = App.CommMessage.new(
@@ -66,7 +67,7 @@ function Sync:broadcastCharacters()
 end
 
 function Sync:broadcastLootHistory()
-    App:debug("Sync:broadcastLootHistory");
+    Utils:debug("Sync:broadcastLootHistory");
 
     local Message = App.CommMessage.new(
         CommActions.broadcastLootHistory,
@@ -78,24 +79,24 @@ function Sync:broadcastLootHistory()
 end
 
 function Sync:receiveCharacters(CommMessage)
-    App:debug("Sync:receiveCharacters");
+    Utils:debug("Sync:receiveCharacters");
 
     -- No need to update our tables if we broadcasted them ourselves
     if (CommMessage.Sender.name == App.User.name) then
-        App:debug("Sync:receiveCharacters received by self, skip");
+        Utils:debug("Sync:receiveCharacters received by self, skip");
         return;
     end
 
     local CharactersTable = App.DB:decompressCharactersTable(CommMessage.content);
 
     if (not App.DB:charactersTableIsValid(CharactersTable)) then
-        return App:error("Characters table sent by " .. CommMessage.Sender.name .. " is invalid");
+        return Utils:error("Characters table sent by " .. CommMessage.Sender.name .. " is invalid");
     end
 
     App.DB.Characters = CharactersTable;
     App.User:refresh();
 
-    App:success("Your DKP table just got updated by " .. CommMessage.Sender.name);
+    Utils:success("Your DKP table just got updated by " .. CommMessage.Sender.name);
 
 -- TODO: DISABLED BECAUSE WIP
     if (false and not CommMessage.Sender.id == App.User.id) then
@@ -104,24 +105,24 @@ function Sync:receiveCharacters(CommMessage)
 end
 
 function Sync:receiveLoot(CommMessage)
-    App:debug("Sync:receiveLoot");
+    Utils:debug("Sync:receiveLoot");
 
     -- No need to update our tables if we broadcasted them ourselves
     if (CommMessage.Sender.name == App.User.name) then
-        App:debug("Sync:receiveLoot received by self, skip");
+        Utils:debug("Sync:receiveLoot received by self, skip");
         return;
     end
 
     local LootHistoryTable = App.DB:decompressLootHistoryTable(CommMessage.content);
 
     if (not App.DB:lootHistoryTableIsValid(LootHistoryTable)) then
-        App:error("LootHistory table sent by " .. CommMessage.Sender.name .. " is invalid");
+        Utils:error("LootHistory table sent by " .. CommMessage.Sender.name .. " is invalid");
         return CommMessage:respond(App.Data.Constants.failure);
     end
 
     App.DB.LootHistory = LootHistoryTable;
 
-    App:success("Your loot history table just got updated by " .. CommMessage.Sender.name);
+    Utils:success("Your loot history table just got updated by " .. CommMessage.Sender.name);
 
     -- Update the User's dashboard if it was open
     App.Dashboard:refresh();
@@ -136,7 +137,7 @@ function Sync:receiveLoot(CommMessage)
 end
 
 function Sync:processBroadcastCharactersResponses()
-    App:debug("Sync:processBroadcastCharactersResponses");
+    Utils:debug("Sync:processBroadcastCharactersResponses");
 
     local message = self.characterBroadCastMessage;
 
@@ -147,7 +148,7 @@ function Sync:processBroadcastCharactersResponses()
 end
 
 function Sync:processBroadcastLootHistoryResponses()
-    App:debug("Sync:processBroadcastLootHistoryResponses");
+    Utils:debug("Sync:processBroadcastLootHistoryResponses");
 
     local message = self.characterBroadCastMessage;
 
@@ -173,4 +174,4 @@ function Sync:processBroadcastLootHistoryResponses()
     -- Number - Returns index of the master looter in the raid (corresponding to a raidX unit), or nil if the player is not in a raid or master looting is not used.
 end
 
-App:debug("Sync.lua");
+Utils:debug("Sync.lua");

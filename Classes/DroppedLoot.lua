@@ -6,10 +6,11 @@ App.DroppedLoot = {
     Announced = {},
 }
 
+local Utils = App.Utils;
 local DroppedLoot = App.DroppedLoot;
 
 function DroppedLoot:_init()
-    App:debug("DroppedLoot:_init");
+    Utils:debug("DroppedLoot:_init");
 
     -- No need to initialize this class twice
     if (self._initialized) then
@@ -25,8 +26,14 @@ function DroppedLoot:_init()
 end
 
 -- Fired when a loot window is opened
-function DroppedLoot:lootWindowOpened()
-    App:debug("DroppedLoot:lootWindowOpened");
+function DroppedLoot:LOOT_OPENED()
+    Utils:debug("DroppedLoot:LOOT_OPENED");
+
+    if (not App.User.isInGroup
+            or not (App.User.isMasterLooter)
+    ) then
+        return;
+    end
 
     DroppedLoot:hookClickEvents();
 
@@ -41,7 +48,7 @@ end
 -- Only 4 buttons will be used regardless of number of drops
 -- Alt click opens the roll window, alt + shift opens the auctioneer window
 function DroppedLoot:hookClickEvents()
-    App:debug("DroppedLoot:hookClickEvents");
+    Utils:debug("DroppedLoot:hookClickEvents");
 
     if (DroppedLoot.eventsHooked) then
         return;
@@ -54,7 +61,7 @@ function DroppedLoot:hookClickEvents()
 
         Button:HookScript("OnClick", function()
             if (IsAltKeyDown()) then
-                App:debug("DroppedLoot:hookClickEvents. Alt click LootButton");
+                Utils:debug("DroppedLoot:hookClickEvents. Alt click LootButton");
 
                 local itemLink = GetLootSlotLink(Button.slot);
 
@@ -77,15 +84,7 @@ end
 
 -- Announce the loot that dropped in the party or raid chat
 function DroppedLoot:announce()
-    App:debug("DroppedLoot:announce");
-
-    -- Only announce loot if the current user
-    -- is in a group and is the master looter
-    if (not App.User.isInGroup
-        or not (App.User.isMasterLooter)
-    ) then
-        return;
-    end
+    Utils:debug("DroppedLoot:announce");
 
     local playersInRaids = {};
     -- Fetch the name of everyone currently in the raid/party
@@ -121,7 +120,7 @@ function DroppedLoot:announce()
                 -- Make sure we only show shoft reserves of people
                 -- Who are actually in the raid
                 for _, player in pairs(softReserves) do
-                    if (App:inArray(playersInRaids, player)) then
+                    if (Utils:inArray(playersInRaids, player)) then
                         tinsert(activeSoftReserves, player);
                         hasSoftReserves = true;
                     end
@@ -159,4 +158,4 @@ function DroppedLoot:announce()
     end
 end
 
-App:debug("DroppedLoot.lua");
+Utils:debug("DroppedLoot.lua");

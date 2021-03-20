@@ -2,6 +2,7 @@ local _, App = ...;
 
 App.Version = App.Version or {};
 
+local Utils = App.Utils;
 local Version = App.Version;
 local CommActions = App.Data.Constants.Comm.Actions;
 
@@ -16,12 +17,12 @@ Version.GroupMembers = {};
 -- check whether it's newer than anything else we've seen
 -- check whether we need to update our own addon
 function Version:addRelease(versionString)
-    App:debug("Version:addRelease");
+    Utils:debug("Version:addRelease");
 
     if (type(versionString) ~= "string"
             or not string.match(versionString, "%d+%.%d+%.%d+")
     ) then
-        App:warning("Invalid version string provided in Version:addRelease");
+        Utils:warning("Invalid version string provided in Version:addRelease");
         return false;
     end
 
@@ -36,7 +37,7 @@ end
 
 -- Check if the given versionString is newer than our current "latest" version
 function Version:checkIfNewerRelease(versionString)
-    App:debug("Version:checkIfNewerRelease");
+    Utils:debug("Version:checkIfNewerRelease");
 
     if (not self:leftIsOlderThanRight(self.latest, versionString)) then
         return;
@@ -51,17 +52,17 @@ end
 
 -- Validate the version string and return all parts (major/minor/trivial) individually
 function Version:validateAndSplit(versionString)
-    App:debug("Version:validateAndSplit");
+    Utils:debug("Version:validateAndSplit");
 
     if (not type(versionString) == "string") then
-        App:warning("Invalid version string provided in Version:validateAndSplit");
+        Utils:warning("Invalid version string provided in Version:validateAndSplit");
         return false;
     end
 
-    local versionParts = App:strSplit(versionString, ".");
+    local versionParts = Utils:strSplit(versionString, ".");
 
     if (not versionParts[1]) then
-        App:warning("Version string split failed");
+        Utils:warning("Version string split failed");
         return false;
     end
 
@@ -70,7 +71,7 @@ end
 
 -- Check if the versionstring passed first is older than the one passed second
 function Version:leftIsOlderThanRight(left, right)
-    App:debug("Version:leftIsOlderThanRight");
+    Utils:debug("Version:leftIsOlderThanRight");
 
     local leftSuccess, leftMajor, leftMinor, leftTrivial = self:validateAndSplit(left);
     local rightSuccess, rightMajor, rightMinor, rightTrivial = self:validateAndSplit(right);
@@ -104,20 +105,20 @@ end
 
 -- Check if our current app version is higher than the given one
 function Version:leftIsNewerThanOrEqualToRight(left, right)
-    App:debug("Version:leftIsNewerThanOrEqualToRight");
+    Utils:debug("Version:leftIsNewerThanOrEqualToRight");
 
     return not self:leftIsOlderThanRight(left, right);
 end
 
 -- Inspect to see if the current group members have the addon and check whether it's up-to-date
 function Version:inspectGroup()
-    App:debug("Version:inspectGroup");
+    Utils:debug("Version:inspectGroup");
 
     if (not App.User.isInGroup) then
-        return App:error("You're not in a group");
+        return Utils:error("You're not in a group");
     end
 
-    App:message("Checking group member addon versions...");
+    Utils:message("Checking group member addon versions...");
 
     self.GroupMembers = {}; -- Reset the self.GroupMembers object
     local numberOfGroupMembers = 0;
@@ -148,7 +149,7 @@ end
 
 -- Inspect the raid group to see who has the addon and who doesn't and who needs to update it
 function Version:finishInspectGroup(CommMessage)
-    App:debug("Version:finishInspectGroup");
+    Utils:debug("Version:finishInspectGroup");
 
     for _, response in pairs(CommMessage.Responses) do
         local senderName = response.Sender.name;
@@ -173,29 +174,29 @@ function Version:finishInspectGroup(CommMessage)
 
     -- Start out with checking our own addon version
     if (self.isOutOfDate) then
-        App:error(string.format("Your addon (v%s) is out of date, v%s is out", self.current, self.latest));
+        Utils:error(string.format("Your addon (v%s) is out of date, v%s is out", self.current, self.latest));
     else
-        App:success(string.format("Your addon (v%s) is up-to-date", self.current));
+        Utils:success(string.format("Your addon (v%s) is up-to-date", self.current));
     end
 
     -- List all player that are up-to-date
     if (#upToDate >= 1) then
-        App:message("The following players are up-to-date:");
-        App:success(table.concat(upToDate, ", "));
+        Utils:message("The following players are up-to-date:");
+        Utils:success(table.concat(upToDate, ", "));
     end
 
     -- List all player that didn't respond and most likely don't have the addon
     if (#noResponse >= 1) then
-        App:message("The following players did not respond:");
-        App:error(table.concat(noResponse, ", "));
+        Utils:message("The following players did not respond:");
+        Utils:error(table.concat(noResponse, ", "));
     end
 
     -- List all player that have an out-of-date addon
     if (#outdated >= 1) then
-        App:message("The following players need to update:");
-        App:error(table.concat(outdated, ", "));
+        Utils:message("The following players need to update:");
+        Utils:error(table.concat(outdated, ", "));
     end
 end
 
 Version:addRelease(Version.current);
-App:debug("Version.lua");
+Utils:debug("Version.lua");

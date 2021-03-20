@@ -1,24 +1,26 @@
 local _, App = ...;
 
 App.Commands = App.Commands or {};
+
+local Utils = App.Utils;
 local Commands = App.Commands;
 
 -- Display the command help
 function Commands:help ()
-    App:message("---------------------");
-    App:message("Commands:")
-    App:message("/gl - Shows the dashboard");
-    App:message("/gl version or /gl ve - Checks the addon version of everyone in the raid");
-    App:message("/gl inspect or /gl ins - Check the groups bags for passed item ids");
-    App:message("/gl stacktrace or /gl st - Displays a list of this session's debug lines");
-    App:message("/gl rolloff or /gl roll or /gl ro - Displays the master looter window for rolling off items");
-    App:message("/gl softreserves or /gl so - Opens the soft reserves window (master looter only)");
-    App:message("/gl auction  or /gl au - Opens the auctioneer window for master looting purposes (officer only)");
-    App:message("/gl bid or /gl bi - Reopens the bid window if you closed it");
-    App:message("/gl import or /gl im - Opens the DKP / loot history import window (officer only)");
-    App:message("/gl export or /gl ex - Opens the DKP / loot history export window (officer only)");
-    App:message("/gl broadcast or /gl br - Broadcasts the DKP tables and loot history to the entire guild (officer only)");
-    App:message("---------------------");
+    Utils:message("---------------------");
+    Utils:message("Commands:")
+    Utils:message("/gl - Shows the dashboard");
+    Utils:message("/gl version or /gl ve - Checks the addon version of everyone in the raid");
+    Utils:message("/gl inspect or /gl ins - Check the groups bags for passed item ids");
+    Utils:message("/gl stacktrace or /gl st - Displays a list of this session's debug lines");
+    Utils:message("/gl rolloff or /gl roll or /gl ro - Displays the master looter window for rolling off items");
+    Utils:message("/gl softreserves or /gl so - Opens the soft reserves window (master looter only)");
+    Utils:message("/gl auction  or /gl au - Opens the auctioneer window for master looting purposes (officer only)");
+    Utils:message("/gl bid or /gl bi - Reopens the bid window if you closed it");
+    Utils:message("/gl import or /gl im - Opens the DKP / loot history import window (officer only)");
+    Utils:message("/gl export or /gl ex - Opens the DKP / loot history export window (officer only)");
+    Utils:message("/gl broadcast or /gl br - Broadcasts the DKP tables and loot history to the entire guild (officer only)");
+    Utils:message("---------------------");
 end
 
 -- Open the dashboard or main hub if you will
@@ -33,6 +35,7 @@ Commands.rolloff = function(...) App.MasterLooterUI:draw(...); end
 Commands.roll = Commands.rolloff;
 Commands.ro = Commands.roll;
 
+-- Export the current raid roster to csv
 Commands.raidcsv = function ()
     App.RaidGroups:toCSV();
 end
@@ -54,7 +57,7 @@ Commands.bid = function() App.BidderUI:reopen(); end
 Commands.bi = Commands.bid;
 
 -- Output all debug lines in a readable manner
-Commands.stacktrace = function() App:stacktrace(); end
+Commands.stacktrace = function() Utils:stacktrace(); end
 Commands.st = Commands.stacktrace;
 
 -- Import data from our website into the addon
@@ -66,11 +69,11 @@ Commands.export = function() App.Exporter:draw(); end
 Commands.ex = Commands.export;
 
 -- Reset the dkp and loot history tables
-Commands.reset = function() StaticPopup_Show("RESET_TABLES_CONFIRMATION"); end
+Commands.reset = function() StaticPopup_Show(App.name .. "_RESET_TABLES_CONFIRMATION"); end
 Commands.re = Commands.reset;
 
 -- Broadcast our current dkp / loot tables to everyone
-Commands.broadcast = function() StaticPopup_Show("BROADCAST_TABLES_CONFIRMATION"); end
+Commands.broadcast = function() StaticPopup_Show(App.name .. "_BROADCAST_TABLES_CONFIRMATION"); end
 Commands.br = Commands.broadcast;
 
 -- Check if everyone is running the most up-to-date version
@@ -97,7 +100,7 @@ function Commands:_dispatch (str)
         return;
     end
 
-    App:debug("Dispatching " .. str);
+    Utils:debug("Dispatching " .. str);
 
     -- Search the str for a command / itemLink combination
     local command, itemLink = str:match("^(%w+)%s+(.+)$");
@@ -149,4 +152,4 @@ SlashCmdList.GIAL = function (...)
     Commands:_dispatch(...);
 end;
 
-App:debug("Commands.lua");
+Utils:debug("Commands.lua");

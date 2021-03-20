@@ -6,11 +6,14 @@ App.LootPriority = {
     initialized = false,
 };
 
-local LootPriority = App.LootPriority;
+local Utils = App.Utils;
 local AceGUI = App.Ace.GUI;
+local LootPriority = App.LootPriority;
 
 -- Fetch an items prio based on its ID
 function LootPriority:getPriorityByItemId(itemId)
+    Utils:debug("LootPriority:getPriorityByItemId");
+
     -- We couldn't find an item ID
     if (not itemId) then
         return;
@@ -22,11 +25,11 @@ function LootPriority:getPriorityByItemId(itemId)
 end
 
 function LootPriority:_init()
+    Utils:debug("LootPriority:_init");
+
     if (self._initialized) then
         return;
     end
-
-    App:debug("LootPriority:_init");
 
     -- Bind the appendLootPrioToTooltip method to the OnTooltipSetItem event
     GameTooltip:HookScript("OnTooltipSetItem", function(tooltip)
@@ -38,14 +41,14 @@ end
 
 -- Fetch an item's prio based on its item link
 function LootPriority:getPriorityByItemLink(itemLink)
-    App:debug("LootPriority:getPriorityByItemLink");
+    Utils:debug("LootPriority:getPriorityByItemLink");
 
-    return self:getPriorityByItemId(App:getItemIdFromLink(itemLink));
+    return self:getPriorityByItemId(Utils:getItemIdFromLink(itemLink));
 end
 
 -- Append the loot prio as defined in App.DB.LootPriority to an item's tooltip
 function LootPriority:appendLootPrioToTooltip(tooltip)
-    App:debug("LootPriority:appendLootPrioToTooltip");
+    Utils:debug("LootPriority:appendLootPrioToTooltip");
 
     -- No tooltip was provided
     if (not tooltip) then
@@ -76,7 +79,7 @@ function LootPriority:appendLootPrioToTooltip(tooltip)
 end
 
 function LootPriority:drawImporter()
-    App:debug("LootPriority:draw");
+    Utils:debug("LootPriority:drawImporter");
 
     -- Create a container/parent frame
     local LootPriorityFrame = AceGUI:Create("Frame");
@@ -146,20 +149,20 @@ function LootPriority:drawImporter()
 end
 
 function LootPriority:save(data, sender)
-    App:debug("LootPriority:save");
+    Utils:debug("LootPriority:save");
 
     -- Make sure all the required properties are available and of the correct type
     if (not data or type(data) ~= "string") then
-        return App:warning("Invalid data provided");
+        return Utils:warning("Invalid data provided");
     end
 
     local LootPriorityData = {};
     for line in data:gmatch("[^\n]+") do
-        local segments = App:strSplit(line, ">");
+        local segments = Utils:strSplit(line, ">");
         local segmentCount = #segments;
 
         if (segmentCount < 2) then
-            return App:warning(string.format("Invalid data provided in line: '%s': missing item id or priority", line));
+            return Utils:warning(string.format("Invalid data provided in line: '%s': missing item id or priority", line));
         end
 
         local itemId = tonumber(strtrim(segments[1]));
@@ -174,7 +177,7 @@ function LootPriority:save(data, sender)
 
     App.DB.LootPriority = LootPriorityData;
 
-    App:success("Save successful");
+    Utils:success("Save successful");
 end
 
-App:debug("LootPriority.lua");
+Utils:debug("LootPriority.lua");

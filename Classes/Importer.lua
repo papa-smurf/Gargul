@@ -3,11 +3,12 @@ local _, App = ...;
 App.Ace.GUI = App.Ace.GUI or LibStub("AceGUI-3.0");
 App.Importer = {};
 
-local Importer = App.Importer;
+local Utils = App.Utils;
 local AceGUI = App.Ace.GUI;
+local Importer = App.Importer;
 
 function Importer:draw()
-    App:debug("Importer:draw");
+    Utils:debug("Importer:draw");
 
     -- Create a container/parent frame
     local ImportFrame = AceGUI:Create("Frame");
@@ -60,7 +61,7 @@ function Importer:draw()
 end
 
 function Importer:import(data, sender)
-    App:debug("Importer:import");
+    Utils:debug("Importer:import");
 
     -- Try to decode data, pcall makes sure this won't throw an error
     local status, data = pcall(function () return App.JSON:decode(data); end);
@@ -71,7 +72,7 @@ function Importer:import(data, sender)
             or not data.Characters  or type(data.Characters) ~= "table"
             or not data.LootHistory or type(data.LootHistory) ~= "table"
     ) then
-        App:warning("Invalid data provided");
+        Utils:warning("Invalid data provided");
         return false;
     end
 
@@ -81,8 +82,8 @@ function Importer:import(data, sender)
 
     App.User:refresh();
 
-    App:success("Import successful");
+    Utils:success("Import successful");
     return true;
 end
 
-App:debug("Importer.lua");
+Utils:debug("Importer.lua");

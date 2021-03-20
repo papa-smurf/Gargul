@@ -1,7 +1,10 @@
 local _, App = ...;
 
 App.UI = {};
+
 local UI = App.UI;
+local Utils = App.Utils;
+
 UI.components = {};
 
 function UI:createFrame(...)
@@ -39,10 +42,10 @@ end
 
 function UI:show(identifier)
     if (not UI.components[identifier]) then
-        App:debug(identifier .. " has not been created yet");
+        Utils:debug(identifier .. " has not been created yet");
         return;
     elseif (UI.components[identifier]:IsVisible()) then
-        App:debug(identifier .. " is already visible");
+        Utils:debug(identifier .. " is already visible");
         return;
     end
 
@@ -51,10 +54,10 @@ end
 
 function UI:hide(identifier)
     if (not UI.components[identifier]) then
-        App:debug(identifier .. " has not been created yet");
+        Utils:debug(identifier .. " has not been created yet");
         return;
     elseif (not UI.components[identifier]:IsVisible()) then
-        App:debug(identifier .. " is not visible");
+        Utils:debug(identifier .. " is not visible");
         return;
     end
 
@@ -63,9 +66,9 @@ end
 
 function UI:hideAll()
     if (not #UI.components) then
-        App:debug("No components have been created yet");
+        Utils:debug("No components have been created yet");
         return;
     end
 end
 
-App:debug("UI.lua");
+Utils:debug("UI.lua");

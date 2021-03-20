@@ -3,6 +3,7 @@ local _, App = ...;
 App.JSON = {};
 
 local JSON = App.JSON;
+local Utils = App.Utils;
 
 local default_pretty_indent  = "  "
 local default_pretty_options = { pretty = true, align_keys = false, indent = default_pretty_indent  }
@@ -917,4 +918,4 @@ function JSON:new(args)
     return setmetatable(new, JSON)
 end
 
-App:debug("JSON.lua");
+Utils:debug("JSON.lua");

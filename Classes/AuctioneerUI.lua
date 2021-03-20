@@ -4,9 +4,10 @@ App.Auctioneer = App.Auctioneer or {};
 App.AuctioneerUI = App.AuctioneerUI or {};
 App.Ace.ScrollingTable = App.Ace.ScrollingTable or LibStub("ScrollingTable");
 
-local Settings = App.Settings;
-local AceGUI = App.Ace.GUI;
 local UI = App.UI;
+local Utils = App.Utils;
+local AceGUI = App.Ace.GUI;
+local Settings = App.Settings;
 local AuctioneerUI = App.AuctioneerUI;
 local ScrollingTable = App.Ace.ScrollingTable;
 
@@ -37,10 +38,10 @@ AuctioneerUI.BidTable = {};
 -- Keep track of bids
 -- Award the item to the winner
 function AuctioneerUI:draw(itemLink)
-    App:debug("AuctioneerUI:draw");
+    Utils:debug("AuctioneerUI:draw");
 
     if (not App.User.isOfficer) then
-        return App:warning("This feature requires officer privileges");
+        return Utils:warning("This feature requires officer privileges");
     end
 
     -- Close the reopen auctioneer button if it exists
@@ -330,7 +331,7 @@ function AuctioneerUI:draw(itemLink)
                     ClearButton:SetHeight(20);
                     ClearButton:SetDisabled(false);
                     ClearButton:SetCallback("OnClick", function()
-                        StaticPopup_Show("CLEAR_AUCTION_CONFIRMATION");
+                        StaticPopup_Show(App.name .. "_CLEAR_AUCTION_CONFIRMATION");
                     end);
                     ThirdRow:AddChild(ClearButton);
                     self.UIComponents.Buttons.ClearButton = ClearButton;
@@ -351,7 +352,7 @@ function AuctioneerUI:draw(itemLink)
                         if (not selected
                             or not type(selected) == "table"
                         ) then
-                            return App:warning("You need to select a bid first");
+                            return Utils:warning("You need to select a bid first");
                         end
 
                         return App.Auction:award(unpack(selected));
@@ -382,7 +383,7 @@ end
 -- auctioneer window when it's closed with an auction in progress
 -- This is very common in hectic situations where the auctioneer has to participate in combat f.e.
 function AuctioneerUI:drawReopenAuctioneerUIButton()
-    App:debug("AuctioneerUI:drawReopenAuctioneerUIButton");
+    Utils:debug("AuctioneerUI:drawReopenAuctioneerUIButton");
 
     local texture = App.Auction.CurrentAuction.itemIcon or "Interface\\Icons\\INV_Misc_QuestionMark";
 
@@ -454,7 +455,7 @@ function AuctioneerUI:drawReopenAuctioneerUIButton()
 end
 
 function AuctioneerUI:ItemBoxChanged()
-    App:debug("AuctioneerUI:ItemBoxChanged");
+    Utils:debug("AuctioneerUI:ItemBoxChanged");
 
     local itemLink = AuctioneerUI.UIComponents.EditBoxes.Item:GetText();
 
@@ -465,7 +466,7 @@ end
 -- This method is used when alt clicking an item
 -- in a loot window or when executing /gl roll [itemlink]
 function AuctioneerUI:passItemLink(itemLink)
-    App:debug("AuctioneerUI:passItemLink");
+    Utils:debug("AuctioneerUI:passItemLink");
 
     if (not self.UIComponents.Frames.Auctioneer.rendered) then
 
@@ -473,7 +474,7 @@ function AuctioneerUI:passItemLink(itemLink)
     end
 
     if (App.Auction.inProgress) then
-        return App:warning("An auction currently in progress");
+        return Utils:warning("An auction currently in progress");
     end
 
     self.UIComponents.EditBoxes.Item:SetText(itemLink);
@@ -482,7 +483,7 @@ end
 
 -- Update the master looter UI based on the value of the ItemBox input
 function AuctioneerUI:update()
-    App:debug("AuctioneerUI:update");
+    Utils:debug("AuctioneerUI:update");
 
     local IconWidget = self.UIComponents.Icons.Item;
     local itemLink = self.UIComponents.EditBoxes.Item:GetText();
@@ -491,7 +492,7 @@ function AuctioneerUI:update()
     --   Show the default question mark icon
     --   Remove the item priority string
     if (not itemLink or itemLink == "") then
-        App:debug("AuctioneerUI:update. Item link is invalid");
+        Utils:debug("AuctioneerUI:update. Item link is invalid");
 
         self.ItemBoxHoldsValidItem = false;
         IconWidget:SetImage(self.Defaults.itemIcon);
@@ -517,7 +518,7 @@ function AuctioneerUI:update()
 end
 
 function AuctioneerUI:drawBidsTable(parent)
-    App:debug("AuctioneerUI:drawBidsTable");
+    Utils:debug("AuctioneerUI:drawBidsTable");
 
     local columns = {
         {
@@ -543,7 +544,7 @@ function AuctioneerUI:drawBidsTable(parent)
                 a = 1.0
             },
             colorargs = nil,
-            sort = 2, -- 1 = ascending, 2 = descending
+            sort = App.Data.Constants.ScrollingTable.descending,
         },
         {
             name = "Total DKP",
@@ -568,7 +569,7 @@ end
 
 -- Update the icon box based on the value of the ItemBox input
 function AuctioneerUI:updateItemIcon()
-    App:debug("AuctioneerUI:updateItemIcon");
+    Utils:debug("AuctioneerUI:updateItemIcon");
 
     local IconWidget = self.UIComponents.Icons.Item;
     local itemLink = self.UIComponents.EditBoxes.Item:GetText();
@@ -600,10 +601,10 @@ end
 
 -- Update the item priority string
 function AuctioneerUI:updateItemPriority(ItemPriorityBox, itemLink)
+    Utils:debug("AuctioneerUI:updateItemPriority");
+
     local ItemPriorityBox = self.UIComponents.Labels.ItemPriority;
     local itemLink = self.UIComponents.EditBoxes.Item:GetText();
-
-    App:debug("AuctioneerUI:updateItemPriority");
 
     if (not self.ItemBoxHoldsValidItem) then
         ItemPriorityBox:SetText("");
@@ -622,6 +623,8 @@ end
 
 -- Reset the auctioneer's UI to its defaults
 function AuctioneerUI:reset()
+    Utils:debug("AuctioneerUI:reset");
+
     self.UIComponents.Icons.Item:SetImage(self.Defaults.itemIcon);
     self.UIComponents.EditBoxes.Item:SetText(self.Defaults.itemText);
     self.UIComponents.EditBoxes.MinimumBid:SetText(self.Defaults.minimumBid);
@@ -637,7 +640,7 @@ end
 
 -- Update the widgets based on the current state of the auction
 function AuctioneerUI:updateUIComponents()
-    App:debug("AuctioneerUI:updateUIComponents");
+    Utils:debug("AuctioneerUI:updateUIComponents");
 
     -- If the itembox doesn't hold a valid item link then
     -- The start button should not be available
@@ -678,4 +681,4 @@ function AuctioneerUI:updateUIComponents()
     end
 end
 
-App:debug("AuctioneerUI.lua");
+Utils:debug("AuctioneerUI.lua");

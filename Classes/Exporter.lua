@@ -3,11 +3,12 @@ local _, App = ...;
 App.Ace.GUI = App.Ace.GUI or LibStub("AceGUI-3.0");
 App.Exporter = {};
 
-local Exporter = App.Exporter;
+local Utils = App.Utils;
 local AceGUI = App.Ace.GUI;
+local Exporter = App.Exporter;
 
 function Exporter:draw()
-    App:debug("Exporter:draw");
+    Utils:debug("Exporter:draw");
 
     -- Create a container/parent frame
     local ExportFrame = AceGUI:Create("Frame");
@@ -35,4 +36,4 @@ function Exporter:draw()
     ExportFrame:AddChild(ExportBox);
 end
 
-App:debug("Exporter.lua");
+Utils:debug("Exporter.lua");

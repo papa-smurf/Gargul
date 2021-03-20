@@ -6,10 +6,11 @@ App.Comm = {
 };
 
 local Comm = App.Comm;
+local Utils = App.Utils;
 local CommActions = App.Data.Constants.Comm.Actions or {};
 
 function Comm:_init()
-    App:debug("Comm:_init");
+    Utils:debug("Comm:_init");
 
     -- No need to initialize this class twice
     if (self._initialized) then
@@ -26,7 +27,7 @@ end
 
 -- Send a CommMessage object
 function Comm:send(CommMessage)
-    App:debug("Comm:send");
+    Utils:debug("Comm:send");
 
     local distribution = CommMessage.channel;
     local recipient = CommMessage.recipient;
@@ -42,20 +43,20 @@ function Comm:send(CommMessage)
     end
 
     if (not compressedMessage) then
-        App:error("Something went wrong trying to compress the payload for 'Sync.Characters'");
+        Utils:error("Something went wrong trying to compress the payload for 'Sync.Characters'");
         return;
     end
 
-    App:debug("Payload size: " .. string.len(compressedMessage));
+    Utils:debug("Payload size: " .. string.len(compressedMessage));
 
     App.Ace:SendCommMessage(self.channel, compressedMessage, distribution, recipient, "NORMAL", function (_, sent, textlen)
-        App:debug(string.format("Sent %s from %s characters", sent, textlen));
+        Utils:debug(string.format("Sent %s from %s characters", sent, textlen));
     end);
 end
 
 -- Listen to any and all messages on the self.channel channel
 function Comm:listen(payload, distribution, senderName)
-    App:debug(string.format("Received message on %s", App.Comm.channel));
+    Utils:debug(string.format("Received message on %s", App.Comm.channel));
 
     payload = App.CommMessage:decompress(payload);
 
@@ -63,14 +64,14 @@ function Comm:listen(payload, distribution, senderName)
         or not payload.senderName or not type(payload.senderName) == "string"
         or not payload.senderName == senderName
     ) then
-        return App:warning("Failed to determine sender of COMM message");
+        return Utils:warning("Failed to determine sender of COMM message");
     end
 
     local Sender = App.Player.fromName(senderName) or {};
 
     if (not Sender.id) then
         if (distribution ~= "GUILD") then
-            return App:warning("Unable to confirm identity of sender '" .. senderName .. "'");
+            return Utils:warning("Unable to confirm identity of sender '" .. senderName .. "'");
         else
             Sender.name = senderName;
         end
@@ -78,9 +79,9 @@ function Comm:listen(payload, distribution, senderName)
 
     if (not payload) then
         if (type(payload) == "string") then
-            return App:warning("Failed to decompress payload: " .. string.sub(payload, 0, 100));
+            return Utils:warning("Failed to decompress payload: " .. string.sub(payload, 0, 100));
         else
-            return App:warning("Failed to decompress payload: not a string");
+            return Utils:warning("Failed to decompress payload: not a string");
         end
     end
 
@@ -88,34 +89,34 @@ function Comm:listen(payload, distribution, senderName)
         and type(payload.version) == "string"
         and not App.Version:leftIsNewerThanOrEqualToRight(App.version, payload.version)
     ) then
-        App:warning("There's an update available. Go to https://www.curseforge.com/wow/addons/gargul to update.");
+        Utils:warning("There's an update available. Go to https://www.curseforge.com/wow/addons/gargul to update.");
     end
 
     if (payload.minimumVersion
         and type(payload.minimumVersion) == "string"
         and not App.Version:leftIsNewerThanOrEqualToRight(App.version, payload.minimumVersion)
     ) then
-        return App:error("I'm out of date and won't work properly until you update me!");
+        return Utils:error("I'm out of date and won't work properly until you update me!");
     end
 
     if (not payload.action) then
-        return App:warning("Payload is missing required property 'action'");
+        return Utils:warning("Payload is missing required property 'action'");
     end
 
     if (not type(payload.action) == "string") then
-        return App:warning("Payload has an invalid action: not a string");
+        return Utils:warning("Payload has an invalid action: not a string");
     end
 
     if (not payload.id
         and not payload.action == CommActions.response
     ) then
-        return App:warning("Payload is missing required property 'id'");
+        return Utils:warning("Payload is missing required property 'id'");
     end
 
     if (not payload.correspondenceId
             and payload.action == CommActions.response
     ) then
-        return App:warning("Payload is missing required property 'correspondenceId'");
+        return Utils:warning("Payload is missing required property 'correspondenceId'");
     end
 
     -- Add the sender's profile to the payload
@@ -126,8 +127,7 @@ end
 
 -- Dispatch messages to their handlers
 function Comm:dispatch(CommMessage)
-
-    App:debug("Comm:dispatch: '" .. CommMessage.action .. "'");
+    Utils:debug("Comm:dispatch: '" .. CommMessage.action .. "'");
     App.User:refresh();
 
     local action = CommMessage.action;
@@ -158,14 +158,14 @@ function Comm:dispatch(CommMessage)
         return App.BagInspector:report(CommMessage);
     elseif (action == CommActions.requestAppVersion) then
         if (App.User.name ~= CommMessage.Sender.name) then
-            App:debug("Respond to CommActions.requestAppVersion");
+            Utils:debug("Respond to CommActions.requestAppVersion");
             return CommMessage:respond(App.Version.current);
         end
 
         return;
     end
 
-    App:warning(string.format("Unknown comm action '%s'", action));
+    Utils:warning(string.format("Unknown comm action '%s'", action));
 end
 
-App:debug("Comm.lua");
+Utils:debug("Comm.lua");

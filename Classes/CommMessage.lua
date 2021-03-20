@@ -3,6 +3,7 @@ local _, App = ...;
 App.CommMessage = {};
 App.CommMessage.__index = App.CommMessage;
 
+local Utils = App.Utils;
 local CommMessage = App.CommMessage;
 
 CommMessage.Box = {};
@@ -19,14 +20,14 @@ setmetatable(CommMessage, {
 
 -- Create a fresh new CommMessage
 function CommMessage.new(action, content, channel, recipient)
-    App:debug("CommMessage:new");
+    Utils:debug("CommMessage:new");
 
     local self = setmetatable({}, CommMessage);
 
     -- Make sure self.id is unique!
     -- This is very important if we wish to track responses to our comm message
     while(true) do
-        self.id = App:uuid();
+        self.id = Utils:uuid();
 
         if (not CommMessage.Box[self.id]) then
             break;
@@ -50,7 +51,7 @@ end
 -- Create a CommMessage from a received message's payload
 -- The channel and recipient always point to the sender of the original message using "WHISPER"
 function CommMessage.newFromReceived(Message)
-    App:debug("CommMessage:newFromReceived");
+    Utils:debug("CommMessage:newFromReceived");
 
     local self = setmetatable({}, CommMessage);
 
@@ -70,7 +71,7 @@ end
 
 -- Send the CommMessage as-is
 function CommMessage:send()
-    App:debug("CommMessage:send");
+    Utils:debug("CommMessage:send");
 
     App.Comm:send(self);
 
@@ -79,7 +80,7 @@ end
 
 -- Reply to a CommMessage
 function CommMessage:respond(message)
-    App:debug("CommMessage:respond");
+    Utils:debug("CommMessage:respond");
 
     local Response = {
         action = App.Data.Constants.Comm.Actions.response,
@@ -99,15 +100,15 @@ end
 
 -- A response to one of our messages came in, sort it
 function CommMessage:processResponse()
-    App:debug("CommMessage:processResponse");
+    Utils:debug("CommMessage:processResponse");
 
     if (not self.correspondenceId) then
-        App:warning("The message has no correspondence ID so we don't know what it responds to");
+        Utils:warning("The message has no correspondence ID so we don't know what it responds to");
         return;
     end
 
     if (not CommMessage.Box[self.correspondenceId]) then
-        App:warning("The response is valid, but doesn't belong to any of the message we've sent");
+        Utils:warning("The response is valid, but doesn't belong to any of the message we've sent");
         return;
     end
 
@@ -117,7 +118,7 @@ end
 
 -- Compress a CommMessage so we can safely send it
 function CommMessage:compress(message)
-    App:debug("CommMessage:compress");
+    Utils:debug("CommMessage:compress");
 
     message = message or self;
 
@@ -139,7 +140,7 @@ function CommMessage:compress(message)
     end);
 
     if (not success or not encoded) then
-        App:error("Something went wrong trying to compress a CommMessage in CommMessage:compress");
+        Utils:error("Something went wrong trying to compress a CommMessage in CommMessage:compress");
         return false;
     end
 
@@ -148,7 +149,7 @@ end
 
 -- Decompress and deserialize a CommMessage
 function CommMessage:decompress(encoded)
-    App:debug("CommMessage:compress");
+    Utils:debug("CommMessage:compress");
 
     local success, Payload = pcall(function ()
         local compressed = LibDeflate:DecodeForWoWAddonChannel(encoded);
@@ -159,7 +160,7 @@ function CommMessage:decompress(encoded)
     end);
 
     if not (success or Payload) then
-        return App:warning("Something went wrong while decoding the COMM payload");
+        return Utils:warning("Something went wrong while decoding the COMM payload");
     end
 
     return {
@@ -172,4 +173,4 @@ function CommMessage:decompress(encoded)
     };
 end
 
-App:debug("CommMessage.lua");
+Utils:debug("CommMessage.lua");

@@ -12,10 +12,11 @@ App.BagInspector = {
     inspectionInProgress = false,
 };
 
-local BagInspector = App.BagInspector;
-local CommActions = App.Data.Constants.Comm.Actions;
-local ScrollingTable = App.Ace.ScrollingTable;
+local Utils = App.Utils;
 local AceGUI = App.Ace.GUI;
+local BagInspector = App.BagInspector;
+local ScrollingTable = App.Ace.ScrollingTable;
+local CommActions = App.Data.Constants.Comm.Actions;
 
 BagInspector.Widgets = {
     Frame = {},
@@ -29,10 +30,10 @@ BagInspector.Widgets = {
 -- Inspect the raid group's bag contents for the
 -- availability of specific items (max 8)
 function BagInspector:inspect(items)
-    App:debug("BagInspector:inspect");
+    Utils:debug("BagInspector:inspect");
 
     if (not App.User.isInGroup) then
-        return App:error("You're not in a group");
+        return Utils:error("You're not in a group");
     end
 
     -- Only raid leader/assists or master
@@ -41,18 +42,18 @@ function BagInspector:inspect(items)
         and not UnitIsGroupLeader("player")
         and not App.User.isMasterLooter
     ) then
-        return App:error("You need lead, assist or master looter privileges to use this functionality");
+        return Utils:error("You need lead, assist or master looter privileges to use this functionality");
     end
 
     -- This ensures that the item exists and that
     -- all of its info is available
-    items = App:strSplit(items, ",");
-    items = App:tableSlice(items, 8); -- inspect supports up to 8 items
+    items = Utils:strSplit(items, ",");
+    items = Utils:tableSlice(items, 8); -- inspect supports up to 8 items
     BagInspector.inspectionInProgress = true;
 
     -- Send the inspection request to the correct channel
     local CommMessage = {};
-    App:success("Starting inspection...");
+    Utils:success("Starting inspection...");
     if (App.User.isInRaid) then
         CommMessage = App.CommMessage.new(
             CommActions.inspectBags,
@@ -69,7 +70,7 @@ function BagInspector:inspect(items)
 
     -- After a period of X seconds inspect the results
     App.Ace:ScheduleTimer(function ()
-        App:success("Inspection finished");
+        Utils:success("Inspection finished");
         BagInspector.inspectionInProgress = false;
 
         BagInspector:processInspectionResults(CommMessage);
@@ -78,7 +79,7 @@ end
 
 -- Someone requested an item count, report back!
 function BagInspector:report(CommMessage)
-    App:debug("BagInspector:report");
+    Utils:debug("BagInspector:report");
 
     local Items = CommMessage.content;
     local Report = {};
@@ -94,7 +95,7 @@ end
 -- Loop through all the inspection
 -- responses and process them
 function BagInspector:processInspectionResults(CommMessage)
-    App:debug("BagInspector:processInspectionResults");
+    Utils:debug("BagInspector:processInspectionResults");
 
     local ItemIds = {};
     local ItemLinksById = {};
@@ -115,7 +116,7 @@ function BagInspector:processInspectionResults(CommMessage)
             ) then
                 responseWasValid = true;
                 ItemIds[itemId] = true;
-                App:tableSet(BagInspector.InspectionReport.Reports, senderName .. "." .. itemId, amount);
+                Utils:tableSet(BagInspector.InspectionReport.Reports, senderName .. "." .. itemId, amount);
             end
         end
 
@@ -129,7 +130,7 @@ function BagInspector:processInspectionResults(CommMessage)
     -- their item links have been successfully loaded by the API
     local displayInspectionReport = function ()
         if (numberOfResponses < 1) then
-            return App:error("Bag inspection failed: no reports received");
+            return Utils:error("Bag inspection failed: no reports received");
         end
 
         BagInspector:displayInspectionResults(ItemIds, ItemLinksById);
@@ -163,10 +164,12 @@ end
 
 -- Display the report results from a group-wide bag inspection
 function BagInspector:displayInspectionResults()
+    Utils:debug("BagInspector:displayInspectionResults");
+
     -- Create a container/parent frame
     local ResultFrame = AceGUI:Create("Frame");
     ResultFrame:SetCallback("OnClose", function(widget)
-        App:clearScrollTable(BagInspector.Widgets.Tables.InspectionReport);
+        Utils:clearScrollTable(BagInspector.Widgets.Tables.InspectionReport);
 
         App.BagInspector.InspectionReport = {
             Items = {},
@@ -320,4 +323,4 @@ function BagInspector:displayInspectionResults()
     BagInspector.Widgets.Tables.InspectionReport = table;
 end
 
-App:debug("BagInspector.lua");
+Utils:debug("BagInspector.lua");

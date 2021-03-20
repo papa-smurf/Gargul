@@ -2,15 +2,16 @@ local _, App = ...;
 
 App.BidderUI = App.BidderUI or {};
 
+local UI = App.UI;
+local Utils = App.Utils;
 local Settings = App.Settings;
 local BidderUI = App.BidderUI;
-local UI = App.UI;
 
 BidderUI.Widgets = {};
 
 -- Hide the bidding window
 function BidderUI:hide(...)
-    App:debug("BidderUI:hide");
+    Utils:debug("BidderUI:hide");
 
     if (not self.Widgets.BidderFrame) then
         return;
@@ -21,7 +22,7 @@ end
 
 -- Show the bidding window (unless it's already active)
 function BidderUI:show(...)
-    App:debug("BidderUI:show");
+    Utils:debug("BidderUI:show");
 
     if (self.Widgets.BidderFrame
         and self.Widgets.BidderFrame:IsShown()
@@ -34,14 +35,14 @@ end
 
 -- Reopen the bidding window (after closing it by right clicking)
 function BidderUI:reopen()
-    App:debug("BidderUI:reopen");
+    Utils:debug("BidderUI:reopen");
 
     if (not App.Auction.inProgress) then
-        return App:warning("There is no auction in progress");
+        return Utils:warning("There is no auction in progress");
     end
 
     -- Should not be possible, but you never know
-    if (not App:tableGet(self.Widgets, "BidderFrame")) then
+    if (not Utils:tableGet(self.Widgets, "BidderFrame")) then
         return;
     end
 
@@ -50,7 +51,7 @@ end
 
 -- Note: we're not using Ace Gui here since we don't want any fancy frames
 function BidderUI:draw(time, minimumBid, itemId, itemName, itemLink, itemIcon)
-    App:debug("BidderUI:draw");
+    Utils:debug("BidderUI:draw");
 
     self.Widgets.BidderFrame = self.Widgets.BidderFrame or UI:createFrame("Frame", "BidderFrame", UIParent);
     local BidderFrame = self.Widgets.BidderFrame;
@@ -86,7 +87,7 @@ function BidderUI:draw(time, minimumBid, itemId, itemName, itemLink, itemIcon)
     BidderFrame:SetScript("OnMouseDown", function(_, button)
         if (button == "RightButton") then
             self:hide();
-            App:message("You can reopen the bidding window by typing /gl bid");
+            Utils:message("You can reopen the bidding window by typing /gl bid");
         end
     end)
 
@@ -222,7 +223,7 @@ function BidderUI:draw(time, minimumBid, itemId, itemName, itemLink, itemIcon)
     bar:SetScript("OnMouseDown", function(widget, button)
         if (button == "RightButton") then
             self:hide();
-            App:message("You can reopen the bidding window by typing /gl bid");
+            Utils:message("You can reopen the bidding window by typing /gl bid");
         end
     end)
 
@@ -238,4 +239,4 @@ function BidderUI:draw(time, minimumBid, itemId, itemName, itemLink, itemIcon)
     end);
 end
 
-App:debug("BidderUI.lua");
+Utils:debug("BidderUI.lua");

@@ -17,10 +17,11 @@ App.DB = {
 };
 
 local DB = App.DB;
+local Utils = App.Utils;
 local Constants = App.Data.Constants;
 
 function DB:_init()
-    App:debug("DB:_init");
+    Utils:debug("DB:_init");
 
     -- No need to initialize this class twice
     if (self._initialized) then
@@ -58,7 +59,7 @@ end
 -- This is just a safety precaution and should strictly
 -- speaking not be necessary, but hey you never know!
 function DB:store()
-    App:debug("DB:store");
+    Utils:debug("DB:store");
 
     GargulDB.Characters = App.DB.Characters;
     GargulDB.LootHistory = App.DB.LootHistory;
@@ -69,7 +70,7 @@ end
 
 -- Checks if all of our tables are valid
 function DB:isValid()
-    App:debug("DB:validateTables");
+    Utils:debug("DB:validateTables");
 
     local messages = {};
 
@@ -93,7 +94,7 @@ end
 -- Assert that the SavedVariables.Characters table or
 -- the table provided is a valid Characters table
 function DB:charactersTableIsValid(table)
-    App:debug("DB:charactersTableIsValid");
+    Utils:debug("DB:charactersTableIsValid");
 
     table = table or self.Characters;
 
@@ -108,7 +109,7 @@ end
 -- Assert that the SavedVariables.LootHistory table or
 -- the table provided is a valid LootHistory table
 function DB:lootHistoryTableIsValid(table)
-    App:debug("DB:lootHistoryTableIsValid");
+    Utils:debug("DB:lootHistoryTableIsValid");
 
     table = table or self.LootHistory;
 
@@ -123,7 +124,7 @@ end
 -- Compress the Characters table to its bare minimum
 -- Classes are replaced by numbers, see App.Data.Constants.Classes
 function DB:compressCharactersTable()
-    App:debug("DB:compressCharactersTable");
+    Utils:debug("DB:compressCharactersTable");
 
     local Characters = {};
     for name, value in pairs(self.Characters) do
@@ -142,7 +143,7 @@ end
 
 -- Decompress a compressed Characters table (usually provided via broadcast)
 function DB:decompressCharactersTable(compressedTable)
-    App:debug("DB:decompressCharactersTable");
+    Utils:debug("DB:decompressCharactersTable");
 
     local nameIndex = 1;
     local classIndex = 2;
@@ -173,7 +174,7 @@ end
 -- Compress a loot history table to its bare minimum
 -- ItemLinks are ommited and names are only passed once with a reference number
 function DB:compressLootHistoryTable()
-    App:debug("DB:compressLootHistoryTable");
+    Utils:debug("DB:compressLootHistoryTable");
 
     local names = {};
     local numberOfNames = 0;
@@ -233,7 +234,7 @@ end
 
 -- Decompress a compressed LootHistory table (usually provided via broadcast)
 function DB:decompressLootHistoryTable(compressedTable)
-    App:debug("DB:decompressLootHistoryTable");
+    Utils:debug("DB:decompressLootHistoryTable");
 
     local idIndex = 1;
     local playerIndex = 2;
@@ -275,7 +276,7 @@ end
 
 -- Add the item title and link to items that don't have them yet
 function DB:lootHistoryTableFillMetadata()
-    App:debug("DB:lootHistoryTableFillMetadata");
+    Utils:debug("DB:lootHistoryTableFillMetadata");
 
     for key, item in pairs(self.LootHistory) do
         if (not item.title or not item.link) then
@@ -286,8 +287,10 @@ end
 
 -- Reset the tables
 function DB:resetCharactersAndLoot()
+    Utils:debug("DB:resetCharactersAndLoot");
+
     self.Characters = {};
     self.LootHistory = {};
 end
 
-App:debug("DB.lua");
+Utils:debug("DB.lua");

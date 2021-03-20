@@ -11,9 +11,10 @@ App.BuffInspector = {
     },
 };
 
+local Utils = App.Utils;
+local AceGUI = App.Ace.GUI;
 local BuffInspector = App.BuffInspector;
 local ScrollingTable = App.Ace.ScrollingTable;
-local AceGUI = App.Ace.GUI;
 
 BuffInspector.Widgets = {
     Frame = {},
@@ -27,17 +28,17 @@ BuffInspector.Widgets = {
 -- Inspect the raid group's bag contents for the
 -- availability of specific items (max 8)
 function BuffInspector:inspect(SpellIds)
-    App:debug("BuffInspector:inspect");
+    Utils:debug("BuffInspector:inspect");
 
     if (not App.User.isInGroup) then
-        return App:error("You're not in a group");
+        return Utils:error("You're not in a group");
     end
 
-    SpellIds = App:strSplit(SpellIds, ",");
-    SpellIds = App:tableSlice(SpellIds, 8); -- inspect supports up to 8 spell ids
+    SpellIds = Utils:strSplit(SpellIds, ",");
+    SpellIds = Utils:tableSlice(SpellIds, 8); -- inspect supports up to 8 spell ids
 
     if (#SpellIds < 1) then
-        return App:error("No spell ids provided in BuffInspector.inspect");
+        return Utils:error("No spell ids provided in BuffInspector.inspect");
     end
 
     local Buffs = {}
@@ -52,14 +53,14 @@ function BuffInspector:inspect(SpellIds)
         local spellId = tonumber(SpellIds[index]);
 
         if (not spellId) then
-            return App:error("Unknown spell id provided in BuffInspector.inspect");
+            return Utils:error("Unknown spell id provided in BuffInspector.inspect");
         end
 
         -- Trim the buff name
         local name, _, icon = GetSpellInfo(spellId);
 
         if (not name) then
-            return App:error(string.format("Unknown spell id '%s' provided in BuffInspector.inspect", spellId));
+            return Utils:error(string.format("Unknown spell id '%s' provided in BuffInspector.inspect", spellId));
         end
 
         Buffs[tostring(spellId)] = {
@@ -99,11 +100,13 @@ function BuffInspector:inspect(SpellIds)
         return self:displayInspectionResults(Buffs, Players);
     end
 
-    App:message("Could not find anyone in your group with any of the specified buffs");
+    Utils:message("Could not find anyone in your group with any of the specified buffs");
 end
 
 -- Display the report results from a group-wide bag inspection
 function BuffInspector:displayInspectionResults(Buffs, Players)
+    Utils:debug("BuffInspector:displayInspectionResults");
+
     --[[ Buffs format:
         {
             "Devotion Aura":{
@@ -136,7 +139,7 @@ function BuffInspector:displayInspectionResults(Buffs, Players)
 
         for _, Buff in pairs(Buffs) do
             tinsert(Row.cols, {
-                value = App:tableGet(Buffs, string.format("%s.players.%s", Buff.spellId, Player.name)),
+                value = Utils:tableGet(Buffs, string.format("%s.players.%s", Buff.spellId, Player.name)),
                 color = ClassColors[string.lower(Player.class)],
             });
 
@@ -185,7 +188,7 @@ function BuffInspector:displayInspectionResults(Buffs, Players)
     -- Create a container/parent frame
     local ResultFrame = AceGUI:Create("Frame");
     ResultFrame:SetCallback("OnClose", function(widget)
-        App:clearScrollTable(self.Widgets.Tables.InspectionReport);
+        Utils:clearScrollTable(self.Widgets.Tables.InspectionReport);
 
         self.InspectionReport = {
             Buffs = {},
@@ -300,4 +303,4 @@ function BuffInspector:displayInspectionResults(Buffs, Players)
     BuffInspector.Widgets.Tables.InspectionReport = table;
 end
 
-App:debug("BuffInspector.lua");
+Utils:debug("BuffInspector.lua");

@@ -7,10 +7,7 @@
     The showSettingsMenu function is responsible for showing the
     settings in the WoW settings menu
 ]]
-
 local _, App = ...;
-
-local UI = App.UI;
 
 App.Settings = {
     _initialized = false,
@@ -18,10 +15,12 @@ App.Settings = {
     Active = {}, -- This object holds the actual setting values applicable to this runtime
 };
 
+local UI = App.UI;
+local Utils = App.Utils;
 local Settings = App.Settings;
 
 -- Add a award confirmation dialog to Blizzard's global StaticPopupDialogs object
-StaticPopupDialogs["RESET_TO_DEFAULTS_CONFIRMATION"] = {
+StaticPopupDialogs[App.name .. "_RESET_TO_DEFAULTS_CONFIRMATION"] = {
     text = string.format("Are you sure you want to reset %s to its default settings? DKP, Soft reserves and loot priorities will remain untouched!", App.name),
     button1 = "Yes",
     button2 = "No",
@@ -33,7 +32,7 @@ StaticPopupDialogs["RESET_TO_DEFAULTS_CONFIRMATION"] = {
 }
 
 function Settings:_init()
-    App:debug("Settings:_init");
+    Utils:debug("Settings:_init");
 
     -- No need to initialize this class twice
     if (self._initialized) then
@@ -56,7 +55,7 @@ end
 
 -- Reset the addon to its default settings
 function Settings:resetToDefault()
-    App:debug("Settings:resetToDefault");
+    Utils:debug("Settings:resetToDefault");
 
     self.Active = {};
     App.DB.Settings = {};
@@ -67,13 +66,13 @@ end
 
 -- Override the addon's default settings with the user's custom settings
 function Settings:overrideDefaultsWithUserSettings()
-    App:debug("Settings:overrideDefaultsWithUserSettings");
+    Utils:debug("Settings:overrideDefaultsWithUserSettings");
 
     -- Reset the currently active settings table
     self.Active = {};
 
     -- Combine the default and user's settings to one settings table
-    Settings = App:tableMerge(Settings.Defaults, App.DB.Settings);
+    Settings = Utils:tableMerge(Settings.Defaults, App.DB.Settings);
 
     -- Set the values of the settings table directly on the App.Settings table.
     for key, value in pairs(Settings) do
@@ -86,7 +85,7 @@ end
 -- We use this method to make sure that the interface is only built
 -- when the user has actually accessed the settings menu, which doesn't happen every session
 function Settings:showSettingsMenu(Frame)
-    App:debug("Settings:showSettingsMenu");
+    Utils:debug("Settings:showSettingsMenu");
 
     -- Add the addon title to the top of the settings frame
     local Title = Frame:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge");

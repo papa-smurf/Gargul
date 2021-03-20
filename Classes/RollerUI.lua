@@ -2,14 +2,17 @@ local _, App = ...;
 
 App.RollerUI = App.RollerUI or {};
 
+local UI = App.UI;
+local Utils = App.Utils;
 local Settings = App.Settings;
 local RollerUI = App.RollerUI;
-local UI = App.UI;
 
 RollerUI.Widgets = {};
 
 -- Hide the roll window
 function RollerUI:hide(...)
+    Utils:debug("RollerUI:hide");
+
     if (not self.Widgets.RollerFrame) then
         return;
     end
@@ -19,6 +22,8 @@ end
 
 -- Show the roll window (unless it's already active)
 function RollerUI:show(...)
+    Utils:debug("RollerUI:show");
+
     if (self.Widgets.RollerFrame
         and self.Widgets.RollerFrame:IsShown()
     ) then
@@ -30,12 +35,14 @@ end
 
 -- Reopen the roll window (after closing it by right clicking)
 function RollerUI:reopen()
+    Utils:debug("RollerUI:reopen");
+
     if (not App.RollOff.inProgress) then
-        return App:warning("There is no roll in progress");
+        return Utils:warning("There is no roll in progress");
     end
 
     -- Should not be possible, but you never know
-    if (not App:tableGet(self.Widgets, "RollerFrame")) then
+    if (not Utils:tableGet(self.Widgets, "RollerFrame")) then
         return;
     end
 
@@ -44,7 +51,7 @@ end
 
 -- Note: we're not using Ace Gui here since we don't want any fancy frames
 function RollerUI:draw(time, itemId, itemName, itemLink, itemIcon, note)
-    App:debug("RollerUI:draw");
+    Utils:debug("RollerUI:draw");
 
     local itemIsReserved = App.SoftReserves:getSoftReservesByItemId(itemId);
     local itemIsReservedByUser = itemIsReserved and App.SoftReserves:itemIdIsReservedByPlayer(itemId, App.User.name);
@@ -81,7 +88,7 @@ function RollerUI:draw(time, itemId, itemName, itemLink, itemIcon, note)
         -- Call the bid window close function on rightclick
         if (button == "RightButton") then
             self:hide();
-            App:message("You can reopen the roll window by typing /gl bid");
+            Utils:message("You can reopen the roll window by typing /gl bid");
         end
     end);
 
@@ -217,7 +224,7 @@ function RollerUI:draw(time, itemId, itemName, itemLink, itemIcon, note)
     bar:SetScript("OnMouseDown", function(widget, button)
         if (button == "RightButton") then
             self:hide();
-            App:message("You can reopen the roll window by typing /gl bid");
+            Utils:message("You can reopen the roll window by typing /gl bid");
         end
     end)
 
@@ -233,4 +240,4 @@ function RollerUI:draw(time, itemId, itemName, itemLink, itemIcon, note)
     end);
 end
 
-App:debug("RollerUI.lua");
+Utils:debug("RollerUI.lua");

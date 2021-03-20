@@ -25,11 +25,12 @@ App.User = {
 };
 
 local User = App.User;
+local Utils = App.Utils;
 
 -- Initialize the user's more "static" details that
 -- shouldn't be able to change during playtime
 function User:_init()
-    App:debug("User:_init");
+    Utils:debug("User:_init");
 
     self.name, self.realm = UnitName("player");
     self.id = UnitGUID("player");
@@ -49,7 +50,7 @@ end
 
 -- Refresh the user's details
 function User:refresh()
-    App:debug("User:refresh");
+    Utils:debug("User:refresh");
 
     local charactersTableEntry = App.DB.Characters[self.name] or {};
 
@@ -142,4 +143,4 @@ function User:groupMembers()
     return Roster;
 end
 
-App:debug("User.lua");
+Utils:debug("User.lua");

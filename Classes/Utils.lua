@@ -1,23 +1,26 @@
 local _, App = ...;
 
 App.Ace.GUI = App.Ace.GUI or LibStub("AceGUI-3.0");
+App.Utils = {};
+
 local AceGUI = App.Ace.GUI;
+local Utils = App.Utils;
 
 -- Print a normal message (white)
-function App:message(...)
+function Utils:message(...)
     print("|cff8aecffGargul: |r" .. string.join(" ", ...));
 end
 
 -- Print a colored message
-function App:coloredMessage (color, ...)
-    App:message(string.format("|c00%s%s", color, string.join(" ", ...)));
+function Utils:coloredMessage (color, ...)
+    Utils:message(string.format("|c00%s%s", color, string.join(" ", ...)));
 end
 
 -- Print a multicolored message
 -- ColoredMessages is an array of arrays, with the message
 -- being in the first and the color being in the second position
--- e.g. App:multiColoredMessage({{"message", "color"},{"message2", "color2"}});
-function App:multiColoredMessage (ColoredMessages, delimiter)
+-- e.g. Utils:multiColoredMessage({{"message", "color"},{"message2", "color2"}});
+function Utils:multiColoredMessage (ColoredMessages, delimiter)
     local multiColoredMessage = "";
     delimiter = delimiter or " ";
 
@@ -41,106 +44,107 @@ function App:multiColoredMessage (ColoredMessages, delimiter)
         end
     end
 
-    App:message(multiColoredMessage);
+    Utils:message(multiColoredMessage);
 end
 
 -- Print a success message (green)
-function App:success(...)
-    App:coloredMessage("92FF00", ...);
+function Utils:success(...)
+    Utils:coloredMessage("92FF00", ...);
 end
 
 -- Print a debug message (orange)
-function App:debug(...)
+function Utils:debug(...)
     local message = string.join(" ", ...);
     tinsert(App.DebugLines, message);
 
     if (App.Settings
         and App.Settings:get("debugModeEnabled")
     ) then
-        App:coloredMessage("f7922e", ...);
+        Utils:coloredMessage("f7922e", ...);
     end
 end
 
 -- Print a warning message (orange)
-function App:warning(...)
-    App:coloredMessage("f7922e", ...);
+function Utils:warning(...)
+    Utils:coloredMessage("f7922e", ...);
 end
 
 -- Print a error message (red)
-function App:error(...)
-    App:coloredMessage("be3333", ...);
+function Utils:error(...)
+    Utils:coloredMessage("be3333", ...);
 end
 
-function App:capitalize(value)
+function Utils:capitalize(value)
     return (value:gsub("^%l", string.upper));
 end
 
 -- Dump a variable (functions won't work!)
-function App:dump(mixed)
+function Utils:dump(mixed)
     local success, encoded = pcall(function () return App.JSON:encode(mixed); end);
 
     if (not success) then
-        App:error("Unable to encode payload provided in App:dump");
+        Utils:error("Unable to encode payload provided in Utils:dump");
         return;
     end
 
-    App:message(encoded);
+    Utils:message(encoded);
 end
 
 -- Print a table to the console
-function App:printTable( t )
-    local printTable_cache = {}
+function Utils:printTable(t)
+    local printTable_cache = {};
 
     local function sub_printTable( t, indent )
-        if ( printTable_cache[tostring(t)] ) then
-            print( indent .. "*" .. tostring(t) )
+        if (printTable_cache[tostring(t)]) then
+            print(indent .. "*" .. tostring(t));
         else
-            printTable_cache[tostring(t)] = true
-            if ( type( t ) == "table" ) then
+            printTable_cache[tostring(t)] = true;
+
+            if (type(t) == "table") then
                 for pos,val in pairs( t ) do
-                    if ( type(val) == "table" ) then
-                        print( indent .. "[" .. pos .. "] => " .. tostring( t ).. " {" )
-                        sub_printTable( val, indent .. string.rep( " ", string.len(pos)+8 ) )
-                        print( indent .. string.rep( " ", string.len(pos)+6 ) .. "}" )
-                    elseif ( type(val) == "string" ) then
-                        print( indent .. "[" .. pos .. '] => "' .. val .. '"' )
+                    if (type(val)== "table") then
+                        print(indent .. "[" .. pos .. "] => " .. tostring( t ).. " {");
+                        sub_printTable(val, indent .. string.rep( " ", string.len(pos)+8 ));
+                        print(indent .. string.rep( " ", string.len(pos)+6 ) .. "}");
+                    elseif (type(val) == "string") then
+                        print(indent .. "[" .. pos .. '] => "' .. val .. '"');
                     else
-                        print( indent .. "[" .. pos .. "] => " .. tostring(val) )
+                        print(indent .. "[" .. pos .. "] => " .. tostring(val));
                     end
                 end
             else
-                print( indent..tostring(t) )
+                print(indent .. tostring(t));
             end
         end
     end
 
-    if ( type(t) == "table" ) then
-        print( tostring(t) .. " {" )
-        sub_printTable( t, "  " )
-        print( "}" )
+    if (type(t) == "table") then
+        print(tostring(t) .. " {" );
+        sub_printTable(t, "  ");
+        print("}");
     else
-        sub_printTable( t, "  " )
+        sub_printTable(t, "  ");
     end
 end
 
 -- Clone a table
-function App:cloneTable(original)
+function Utils:cloneTable(original)
     return {unpack(original)};
 end
 
 -- Display all debug lines
-function App:stacktrace()
+function Utils:stacktrace()
     local debugLines = "";
 
     for key in pairs(App.DebugLines) do
-        debugLines = debugLines .. App.DebugLines[key] .. "\r\n";
+        debugLines = debugLines .. App.DebugLines[key] .. "\n";
     end
 
     return self:frameMessage(debugLines);
 end
 
 -- Clears the provided scrolling table (lib-ScrollingTable)
-function App:clearScrollTable(ScrollingTable)
+function Utils:clearScrollTable(ScrollingTable)
     ScrollingTable:SetData({}, true);
     ScrollingTable.frame:Hide();
     ScrollingTable:Hide();
@@ -148,35 +152,9 @@ function App:clearScrollTable(ScrollingTable)
     ScrollingTable = nil;
 end
 
--- Check if a player with a given player name is
--- in the same group as the current App.User
-function App:playerIsInSameGroup(playerName)
-    if (not playerName
-        or not App.User.isInGroup
-        or type(playerName) ~= "string"
-        or playerName == ""
-    ) then
-        return false
-    end
-
-    -- Loop through all members of the group (party or raid)
-    for index = 1, MAX_RAID_MEMBERS do
-        local name, _, _, _, _, _,
-        _, online = GetRaidRosterInfo(index);
-
-        if (name and online) then
-            if (name == playerName) then
-                return true;
-            end
-        end
-    end
-
-    return false;
-end
-
 -- Print large quantities of text to a multiline editbox
 -- Very useful for debugging purposes, should not be used for anything else
-function App:frameMessage(message)
+function Utils:frameMessage(message)
     if (type(message) == "table") then
         message = App.JSON:encode(message);
     end
@@ -202,21 +180,21 @@ function App:frameMessage(message)
 end
 
 local ItemsFetchedForLocalCache = {};
-function App:getItemInfoFromLink(rawItemLink)
-    App:debug("App:getItemInfoFromLink");
+function Utils:getItemInfoFromLink(rawItemLink)
+    Utils:debug("Utils:getItemInfoFromLink");
 
     if (not rawItemLink
         or not type(rawItemLink) == "string"
         or rawItemLink == ""
     ) then
-        App:debug("itemLink is invalid in App:getItemInfoFromLink");
+        Utils:debug("itemLink is invalid in Utils:getItemInfoFromLink");
         return false;
     end
 
     local itemId = self:getItemIdFromLink(rawItemLink);
 
     if (not itemId) then
-        App:debug("itemLink is invalid in App:getItemInfoFromLink");
+        Utils:debug("itemLink is invalid in Utils:getItemInfoFromLink");
         return false;
     end
 
@@ -225,7 +203,7 @@ function App:getItemInfoFromLink(rawItemLink)
     isCraftingReagent = GetItemInfo('"' .. rawItemLink .. '"');
 
     if (not itemName) then
-        App:debug("Couldn't retrieve item name in App:getItemInfoFromLink using " .. rawItemLink);
+        Utils:debug("Couldn't retrieve item name in Utils:getItemInfoFromLink using " .. rawItemLink);
         return false;
     end
 
@@ -235,7 +213,7 @@ function App:getItemInfoFromLink(rawItemLink)
 end
 
 -- Return an item's ID from an item link
-function App:getItemIdFromLink(itemLink)
+function Utils:getItemIdFromLink(itemLink)
     if (not itemLink or itemLink == "") then
         return false;
     end
@@ -250,12 +228,12 @@ function App:getItemIdFromLink(itemLink)
 end
 
 -- Check whether a given string
-function App:strIsItemLink(s)
-    return not App:getItemIdFromLink(s) == false;
+function Utils:strIsItemLink(s)
+    return not Utils:getItemIdFromLink(s) == false;
 end
 
 -- Split a string by a given delimiter
-function App:strSplit(s, delimiter)
+function Utils:strSplit(s, delimiter)
     local result = {};
 
     for match in (s..delimiter):gmatch("(.-)%" .. delimiter) do
@@ -265,8 +243,29 @@ function App:strSplit(s, delimiter)
     return result;
 end
 
+-- Turn a given wow pattern into something we can use in string.match
+function Utils:createPattern(pattern, maximize)
+    pattern = string.gsub(pattern, "[%(%)%-%+%[%]]", "%%%1");
+
+    if not maximize then
+        pattern = string.gsub(pattern, "%%s", "(.-)");
+    else
+        pattern = string.gsub(pattern, "%%s", "(.+)");
+    end
+
+    pattern = string.gsub(pattern, "%%d", "%(%%d-%)");
+
+    if not maximize then
+        pattern = string.gsub(pattern, "%%%d%$s", "(.-)");
+    else
+        pattern = string.gsub(pattern, "%%%d%$s", "(.+)");
+    end
+
+    return string.gsub(pattern, "%%%d$d", "%(%%d-%)");
+end
+
 -- Play a sound
-function App:playSound(soundName, channel)
+function Utils:playSound(soundName, channel)
     -- Check if the user muted the addon
     if (App.Settings:get("muted")) then
         return;
@@ -276,7 +275,7 @@ function App:playSound(soundName, channel)
 end
 
 -- Check if a given array contains a given value
-function App:inArray(array, value)
+function Utils:inArray(array, value)
     local lowerValue = string.lower(value);
 
     for index, val in ipairs(array) do
@@ -291,7 +290,7 @@ function App:inArray(array, value)
 end
 
 -- Generate a random (enough) uuid
-function App:uuid()
+function Utils:uuid()
     local random = math.random
     local template = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx";
 
@@ -302,7 +301,7 @@ function App:uuid()
 end
 
 -- Overwrite/compliment the original table (left) with the values from the right table
-function App:tableMerge(left, right)
+function Utils:tableMerge(left, right)
     for key,value in pairs(right) do
         if (type(value) == "table") then
             if (type(left[key] or false) == "table") then
@@ -319,7 +318,8 @@ function App:tableMerge(left, right)
 end
 
 -- Simple table flip
-function App:tableFlip(Table)
+-- (╯°□°）╯︵ ┻━┻
+function Utils:tableFlip(Table)
     local Flipped = {};
     for key, value in pairs(Table) do
         Flipped[value] = key;
@@ -329,7 +329,7 @@ function App:tableFlip(Table)
 end
 
 -- Table slice method
-function App:tableSlice(tbl, offset, length, preserveKeys)
+function Utils:tableSlice(tbl, offset, length, preserveKeys)
     if (not length) then
         length = offset;
         offset = 0;
@@ -374,23 +374,23 @@ function App:tableSlice(tbl, offset, length, preserveKeys)
 end
 
 -- Get a table value by a given key. Use dot notation to traverse multiple levels e.g:
--- Settings.UI.Auctioneer.offsetX can be fetched using App:tableGet(myTable, "Settings.UI.Auctioneer.offsetX", 0)
+-- Settings.UI.Auctioneer.offsetX can be fetched using Utils:tableGet(myTable, "Settings.UI.Auctioneer.offsetX", 0)
 -- without having to worry about tables or keys existing yes or no.
-function App:tableGet(table, keyString, default)
+function Utils:tableGet(table, keyString, default)
     if (not keyString
             or type(keyString) ~= "string"
             or keyString == ""
     ) then
-        App:warning("Invalid key provided in App:tableGet");
+        Utils:warning("Invalid key provided in Utils:tableGet");
         return default;
     end
 
-    local keys = App:strSplit(keyString, ".");
+    local keys = Utils:strSplit(keyString, ".");
     local numberOfKeys = #keys;
     local firstKey = keys[1];
 
     if (not numberOfKeys or not firstKey) then
-        App:warning("Invalid key provided in App:tableGet");
+        Utils:warning("Invalid key provided in Utils:tableGet");
         return default;
     end
 
@@ -410,18 +410,18 @@ function App:tableGet(table, keyString, default)
 end
 
 -- Set a table value by a given key and value. Use dot notation to traverse multiple levels e.g:
--- Settings.UI.Auctioneer.offsetX can be set using App:tableSet(myTable, "Settings.UI.Auctioneer.offsetX", myValue)
+-- Settings.UI.Auctioneer.offsetX can be set using Utils:tableSet(myTable, "Settings.UI.Auctioneer.offsetX", myValue)
 -- without having to worry about tables or keys existing yes or no.
-function App:tableSet(table, keyString, value)
+function Utils:tableSet(table, keyString, value)
     if (not keyString
             or type(keyString) ~= "string"
             or keyString == ""
     ) then
-        App:warning("Invalid key provided in App:tableSet");
+        Utils:warning("Invalid key provided in Utils:tableSet");
         return false;
     end
 
-    local keys = App:strSplit(keyString, ".");
+    local keys = Utils:strSplit(keyString, ".");
     local firstKey = keys[1];
 
     if (#keys == 1) then
@@ -437,4 +437,4 @@ function App:tableSet(table, keyString, value)
     return self:tableSet(table, strjoin(".", unpack(keys)), value);
 end
 
-App:debug("Helpers.lua");
+Utils:debug("Helpers.lua");

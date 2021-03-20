@@ -1,6 +1,8 @@
 local _, App = ...;
 
 App.Auction = {};
+
+local Utils = App.Utils;
 local Auction = App.Auction;
 local CommActions = App.Data.Constants.Comm.Actions;
 
@@ -16,7 +18,7 @@ Auction.CurrentAuction = {
 };
 
 -- Add a award confirmation dialog to Blizzard's global StaticPopupDialogs object
-StaticPopupDialogs["AUCTION_AWARD_CONFIRMATION"] = {
+StaticPopupDialogs[App.name .. "_AUCTION_AWARD_CONFIRMATION"] = {
     text = "",
     button1 = "Yes",
     button2 = "No",
@@ -28,7 +30,7 @@ StaticPopupDialogs["AUCTION_AWARD_CONFIRMATION"] = {
 }
 
 -- Add a award confirmation dialog to Blizzard's global StaticPopupDialogs object
-StaticPopupDialogs["CLEAR_AUCTION_CONFIRMATION"] = {
+StaticPopupDialogs[App.name .. "_CLEAR_AUCTION_CONFIRMATION"] = {
     text = "Are you sure you want to clear everything?",
     button1 = "Yes",
     button2 = "No",
@@ -46,7 +48,7 @@ Auction.timerId = 0; -- ID of the timer event
 
 -- Anounce to everyone in the raid that an auction is starting
 function Auction:announceStart(item, minimumBid, time)
-    App:debug("Auction:announceStart");
+    Utils:debug("Auction:announceStart");
 
     App.CommMessage.new(
         CommActions.startAuction,
@@ -61,7 +63,7 @@ end
 
 -- Anounce to everyone in the raid that an auction has ended
 function Auction:announceStop()
-    App:debug("Auction:announceStop");
+    Utils:debug("Auction:announceStop");
 
     App.CommMessage.new(
         CommActions.stopAuction,
@@ -72,7 +74,7 @@ end
 
 -- Start an auction
 function Auction:start(CommMessage)
-    App:debug("Auction:start");
+    Utils:debug("Auction:start");
 
     local content = CommMessage.content;
     local time, minimumBid, isValidItem, itemId, itemName, itemLink, _, itemIcon = nil;
@@ -80,14 +82,14 @@ function Auction:start(CommMessage)
     -- We have to wait with starting the actual bidding process until
     -- the item that's up for auction has been sucessfully loaded by the Item API
     local startAuctionSequence = function()
-        isValidItem, itemId, itemName, itemLink, _, _, _, _, _, _, _, itemIcon = App:getItemInfoFromLink(content.item);
+        isValidItem, itemId, itemName, itemLink, _, _, _, _, _, _, _, itemIcon = Utils:getItemInfoFromLink(content.item);
         time = tonumber(content.time);
         minimumBid = tonumber(content.minimumBid);
 
         if (not isValidItem) then
-            return App:error("Invalid item provided in Auction:start");
+            return Utils:error("Invalid item provided in Auction:start");
         elseif (minimumBid < 0) then
-            return App:error("Invalid minimum bid provided in Auction:start");
+            return Utils:error("Invalid minimum bid provided in Auction:start");
         end
 
         self.inProgress = true;
@@ -122,7 +124,7 @@ function Auction:start(CommMessage)
         end, time);
 
         -- Play raid warning sound
-        App:playSound(8959, "Master");
+        Utils:playSound(8959, "Master");
     end
 
     --[[
@@ -130,15 +132,15 @@ function Auction:start(CommMessage)
         PROVIDE VERY SPECIFIC ERROR MESSAGE IF IT'S NOT
     ]]
     if (not content) then
-        return App:error("Missing content in Auction:start");
+        return Utils:error("Missing content in Auction:start");
     elseif (not type(content) == "table") then
-        return App:error("Content is not a table in Auction:start");
+        return Utils:error("Content is not a table in Auction:start");
     elseif (not content.time) then
-        return App:error("No time provided in Auction:start");
+        return Utils:error("No time provided in Auction:start");
     elseif (not content.minimumBid) then
-        return App:error("No minimum bid provided in Auction:start");
+        return Utils:error("No minimum bid provided in Auction:start");
     elseif (not content.item) then
-        return App:error("No item provided in Auction:start");
+        return Utils:error("No item provided in Auction:start");
     else
         -- Load the item from the Blizzard API and start the auction after it's retreived
         Item:CreateFromItemLink(content.item):ContinueOnItemLoad(function()
@@ -149,17 +151,17 @@ end
 
 -- Stop an auction
 function Auction:stop(CommMessage)
-    App:debug("Auction:stop");
+    Utils:debug("Auction:stop");
 
     if (not self.inProgress) then
-        return App:warning("Can't stop auction, no auction in progress");
+        return Utils:warning("Can't stop auction, no auction in progress");
     end
 
     -- The person who's trying to stop the auction didn't start it, ABORT!
     if (not self.CurrentAuction.auctioneer == App.User.name
         and not CommMessage.Sender.name == self.auctioneer
     ) then
-        return App:warning(string.format(
+        return Utils:warning(string.format(
             "%s is not allowed to stop auction started by %s",
             CommMessage.Sender.name,
             self.auctionee
@@ -167,7 +169,7 @@ function Auction:stop(CommMessage)
     end
 
     -- Play raid warning sound
-    App:playSound(8959, "Master");
+    Utils:playSound(8959, "Master");
 
     self.inProgress = false;
     App.Ace:CancelTimer(self.timerId);
@@ -182,7 +184,7 @@ end
 
 -- Process an incoming bid
 function Auction:processBid(CommMessage)
-    App:debug("Auction:processBid");
+    Utils:debug("Auction:processBid");
 
     local bidIsNumerical, bid = pcall(function () return tonumber(CommMessage.content.bid); end);
     local sendersCurrentDkp = App.DB.Characters[CommMessage.Sender.name] or {};
@@ -238,7 +240,7 @@ end
 
 -- Someone wishes to retract their bid
 function Auction:processRetractBid(CommMessage)
-    App:debug("Auction:processRetractBid");
+    Utils:debug("Auction:processRetractBid");
 
     if (not self.inProgress) then
         return SendChatMessage(
@@ -254,7 +256,7 @@ end
 
 -- Accept an incoming bid
 function Auction:acceptBid(bidder, bid, biddersCurrentDkp)
-    App:debug("Auction:acceptBid");
+    Utils:debug("Auction:acceptBid");
 
     self.CurrentAuction.Bids[bidder] = {
         bid = bid,
@@ -265,7 +267,7 @@ end
 
 -- Retract a bidder's bids (bidder refers to a player's name)
 function Auction:retractBid(bidder)
-    App:debug("Auction:retractBid");
+    Utils:debug("Auction:retractBid");
 
     self.CurrentAuction.Bids[bidder] = nil;
 
@@ -280,7 +282,7 @@ function Auction:retractBid(bidder)
 end
 
 function Auction:refreshBidTable()
-    App:debug("Auction:refreshBidTable");
+    Utils:debug("Auction:refreshBidTable");
 
     local BidTableData = {};
     local Bids = self.CurrentAuction.Bids;
@@ -296,13 +298,13 @@ end
 
 -- Award the item to one of the bidders
 function Auction:award(bidder)
-    App:debug("Auction:award");
+    Utils:debug("Auction:award");
 
     local Auction = self.CurrentAuction;
-    local character = App:tableGet(App.DB.Characters, bidder, {});
+    local character = Utils:tableGet(App.DB.Characters, bidder, {});
     local awardMessage = "";
     local confirmationMessage = "";
-    local bid = App:tableGet(Auction, "Bids." .. bidder .. ".bid", 0);
+    local bid = Utils:tableGet(Auction, "Bids." .. bidder .. ".bid", 0);
 
     -- This item went out for free (roll), no need to get all fancy
     if (not bid) then
@@ -357,17 +359,17 @@ function Auction:award(bidder)
     end
 
     -- Make sure the auctioneer has to confirm his choices
-    StaticPopupDialogs["AUCTION_AWARD_CONFIRMATION"].OnAccept = award;
-    StaticPopupDialogs["AUCTION_AWARD_CONFIRMATION"].text = string.format("Award %s to %s for %s DKP?",
+    StaticPopupDialogs[App.name .. "_AUCTION_AWARD_CONFIRMATION"].OnAccept = award;
+    StaticPopupDialogs[App.name .. "_AUCTION_AWARD_CONFIRMATION"].text = string.format("Award %s to %s for %s DKP?",
         Auction.itemLink,
         bidder,
         bid
     );
-    StaticPopup_Show("AUCTION_AWARD_CONFIRMATION");
+    StaticPopup_Show(App.name .. "_AUCTION_AWARD_CONFIRMATION");
 end
 
 function Auction:reset()
-    App:debug("Auction:reset");
+    Utils:debug("Auction:reset");
 
     self.CurrentAuction = {
         auctioneer = nil, -- The player who started the auction
@@ -384,7 +386,7 @@ function Auction:reset()
 end
 
 function Auction:processResult(CommMessage)
-    App:debug("Auction:processResult");
+    Utils:debug("Auction:processResult");
 
     local itemLink = CommMessage.content.itemLink;
     local itemName = CommMessage.content.itemName;
@@ -396,7 +398,7 @@ function Auction:processResult(CommMessage)
     if (not itemLink
         or not winner or winner == ""
     ) then
-        return App:warning("Couldn't process auction result in Auction:processResult");
+        return Utils:warning("Couldn't process auction result in Auction:processResult");
     end
 
     -- Get the winner's DB.Characters entry or create a new one
@@ -445,4 +447,4 @@ function Auction:processResult(CommMessage)
     App.DB.LootHistory[timestamp] = LootHistoryEntry;
 end
 
-App:debug("Auction.lua");
+Utils:debug("Auction.lua");

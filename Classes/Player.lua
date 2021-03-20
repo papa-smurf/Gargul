@@ -3,29 +3,32 @@ local _, App = ...;
 App.Player = {};
 App.Player.__index = App.Player;
 
+local Utils = App.Utils;
+local Player = App.Player;
+
 -- This metatable allows us to have multiple instances of this object
-setmetatable(App.Player, {
+setmetatable(Player, {
     __call = function (cls, ...)
         return cls.new(...)
     end,
 })
 
-function App.Player._new()
-    App:debug("App.Player._new");
+function Player._new()
+    Utils:debug("Player._new");
 
-    local self = setmetatable({}, App.Player);
+    local self = setmetatable({}, Player);
     return self;
 end
 
 -- Instantiate a new player object using a player's GUID
-function App.Player.fromID(GUID)
-    App:debug("App.Player.fromID");
+function Player.fromID(GUID)
+    Utils:debug("Player.fromID");
 
     if (not GUID or not type(GUID) == "string") then
-        return App:error("Invalid GUID provided for App.Player.fromID");
+        return Utils:error("Invalid GUID provided for Player.fromID");
     end
 
-    local self = App.Player._new();
+    local self = Player._new();
 
     self.id = GUID;
     _, self.class, _, self.race, self.gender, self.name = GetPlayerInfoByGUID(self.id)
@@ -33,7 +36,7 @@ function App.Player.fromID(GUID)
     -- The GUID turns out to be invalid, destroy the player object
     if (not self.name or not type(self.name) == "string") then
         self = nil;
-        App:error("Invalid GUID provided for App.Player.fromID: " .. GUID);
+        Utils:error("Invalid GUID provided for Player.fromID: " .. GUID);
         return;
     end
 
@@ -44,8 +47,8 @@ function App.Player.fromID(GUID)
 end
 
 -- Instantiate a new player object using a player's name
-function App.Player.fromName(name)
-    App:debug("Player:fromName");
+function Player.fromName(name)
+    Utils:debug("Player.fromName");
 
     if (not name or not type(name) == "string") then
         return false;
@@ -57,21 +60,21 @@ function App.Player.fromName(name)
         return false;
     end
 
-    return App.Player.fromID(playerId);
+    return Player.fromID(playerId);
 end
 
 -- Instantiate a new player object for the addon actor (current player)
-function App.Player.fromActor()
-    App:debug("Player:fromName");
+function Player.fromActor()
+    Utils:debug("Player.fromActor");
 
     local playerId = UnitGUID("player");
 
     if (not playerId) then
-        App:warning("Unable to confirm identity of addon actor");
+        Utils:warning("Unable to confirm identity of addon actor");
         return;
     end
 
-    return App.Player.fromID(playerId);
+    return Player.fromID(playerId);
 end
 
-App:debug("Player.lua");
+Utils:debug("Player.lua");

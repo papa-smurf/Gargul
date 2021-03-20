@@ -32,7 +32,7 @@ MasterLooterUI.PlayersTable = {};
 -- Set the duration of the roll off
 -- Award the item to the winner
 function MasterLooterUI:draw(itemLink)
-    App:debug("MasterLooterUI:draw");
+    Utils:debug("MasterLooterUI:draw");
 
     if (not App.User.isMasterLooter
         and not App.User.hasAssist
@@ -376,7 +376,7 @@ end
 
 -- The item box contents changed
 function MasterLooterUI:ItemBoxChanged()
-    App:debug("MasterLooterUI:ItemBoxChanged");
+    Utils:debug("MasterLooterUI:ItemBoxChanged");
 
     local itemLink = MasterLooterUI.Widgets.EditBoxes.Item:GetText();
 
@@ -387,7 +387,7 @@ end
 -- This method is used when alt clicking an item
 -- in a loot window or when executing /gl roll [itemlink]
 function MasterLooterUI:passItemLink(itemLink)
-    App:debug("MasterLooterUI:passItemLink");
+    Utils:debug("MasterLooterUI:passItemLink");
 
     if (not MasterLooterUI.Widgets.Frame.rendered) then
         return;
@@ -442,7 +442,7 @@ end
 
 -- Update the item priority string
 function MasterLooterUI:updateItemNote()
-    App:debug("MasterLooterUI:updateItemNote");
+    Utils:debug("MasterLooterUI:updateItemNote");
 
     local ItemNote = MasterLooterUI.Widgets.EditBoxes.ItemNote;
     local itemLink = MasterLooterUI.Widgets.EditBoxes.Item:GetText();
@@ -479,7 +479,7 @@ end
 
 -- Update the widgets based on the current state of the roll off
 function MasterLooterUI:updateWidgets()
-    App:debug("MasterLooterUI:updateWidgets");
+    Utils:debug("MasterLooterUI:updateWidgets");
 
     -- If the itembox doesn't hold a valid item link then:
     --   The start button should not be available
@@ -525,4 +525,4 @@ function MasterLooterUI:updateWidgets()
     end
 end
 
-App:debug("MasterLooterUI.lua");
+Utils:debug("MasterLooterUI.lua");

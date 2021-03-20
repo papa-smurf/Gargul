@@ -4,9 +4,10 @@ App.Dashboard = App.Dashboard or {};
 App.Ace.GUI = App.Ace.GUI or LibStub("AceGUI-3.0");
 App.Ace.ScrollingTable = App.Ace.ScrollingTable or LibStub("ScrollingTable");
 
+local Utils = App.Utils;
+local AceGUI = App.Ace.GUI;
 local Settings = App.Settings;
 local Dashboard = App.Dashboard;
-local AceGUI = App.Ace.GUI;
 local ScrollingTable = App.Ace.ScrollingTable;
 
 Dashboard.visible = false;
@@ -21,7 +22,7 @@ Dashboard.Widgets = {
 };
 
 -- Add a resut table confirmation dialog to Blizzard's global StaticPopupDialogs object
-StaticPopupDialogs["RESET_TABLES_CONFIRMATION"] = {
+StaticPopupDialogs[App.name .. "_RESET_TABLES_CONFIRMATION"] = {
     text = "Are you sure you want to reset your tables? This cannot be undone!",
     button1 = "Yes",
     button2 = "No",
@@ -36,7 +37,7 @@ StaticPopupDialogs["RESET_TABLES_CONFIRMATION"] = {
 }
 
 -- Add a resut table confirmation dialog to Blizzard's global StaticPopupDialogs object
-StaticPopupDialogs["BROADCAST_TABLES_CONFIRMATION"] = {
+StaticPopupDialogs[App.name .. "_BROADCAST_TABLES_CONFIRMATION"] = {
     text = "Are you sure you want to broadcast your tables to the entire guild?",
     button1 = "Yes",
     button2 = "No",
@@ -50,8 +51,10 @@ StaticPopupDialogs["BROADCAST_TABLES_CONFIRMATION"] = {
 }
 
 function Dashboard:draw()
+    Utils:debug("Dashboard:draw");
+
     if (self.visible) then
-        App:warning("The dashboard is already visible");
+        Utils:warning("The dashboard is already visible");
         return;
     end
 
@@ -156,8 +159,10 @@ function Dashboard:draw()
 end
 
 function Dashboard:drawCharactersTable(parent)
+    Utils:debug("Dashboard:drawCharactersTable");
+
     if (not App.DB:isValid()) then
-        App:error("This feature is unavailable because your SavedVariables are corrupt");
+        Utils:error("This feature is unavailable because your SavedVariables are corrupt");
         return;
     end
 
@@ -226,7 +231,7 @@ function Dashboard:drawCharactersTable(parent)
                     color = ClassColors[character.class],
                 },
                 {
-                    value = App:capitalize(character.class),
+                    value = Utils:capitalize(character.class),
                     color = ClassColors[character.class],
                 },
                 {
@@ -240,7 +245,7 @@ function Dashboard:drawCharactersTable(parent)
         -- Check if in raid only is disabled or if not make sure
         -- the player is in the raid, if not don't show it
         if (not Settings:get("UI.Dashboard.showInRaidOnly")
-            or App:tableGet(GroupMembers, name, false)
+            or Utils:tableGet(GroupMembers, name, false)
         ) then
             tinsert(CharacterData, row);
             hasData = true;
@@ -285,6 +290,8 @@ end
     - etc
 ]]
 function Dashboard:lootHistoryToTreeData()
+    Utils:debug("Dashboard:lootHistoryToTreeData");
+
     local lootHistory = App.DB.LootHistory or {};
     local TreeData = {};
 
@@ -343,8 +350,8 @@ function Dashboard:lootHistoryToTreeData()
 
     -- Sort the keys in descending order (so newest items end up on top)
     sort(treeDataKeys, function (left, right)
-        local leftDateParts = App:strSplit(left, "-");
-        local rightDateParts = App:strSplit(right, "-");
+        local leftDateParts = Utils:strSplit(left, "-");
+        local rightDateParts = Utils:strSplit(right, "-");
         local leftTimestamp = time{year=leftDateParts[3], month=leftDateParts[2], day=leftDateParts[1]};
         local rightTimestamp = time{year=rightDateParts[3], month=rightDateParts[2], day=rightDateParts[1]};
 
@@ -365,6 +372,8 @@ end
 
 -- Close the dashboard
 function Dashboard:close()
+    Utils:debug("Dashboard:close");
+
     if (not self.visible) then
         return;
     end
@@ -388,6 +397,8 @@ end
 
 -- Refresh the dashboard
 function Dashboard:refresh()
+    Utils:debug("Dashboard:refresh");
+
     if (not self.visible) then
         return;
     end
@@ -396,4 +407,4 @@ function Dashboard:refresh()
     self:draw();
 end
 
-App:debug("Dashboard.lua");
+Utils:debug("Dashboard.lua");

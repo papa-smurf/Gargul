@@ -10,6 +10,7 @@ App.clientUIinterface = 0;
 App.clientVersion = 0;
 App.isClassic = false;
 App.DebugLines = {};
+App.EventFrame = {};
 
 -- Register our addon with the Ace framework
 App.Ace = LibStub("AceAddon-3.0"):NewAddon(App.name, "AceConsole-3.0", "AceComm-3.0", "AceTimer-3.0");
@@ -27,16 +28,15 @@ App.bootstrap = function(_, _, addonName)
         return;
     end
 
-    App:debug("App:bootstrap");
+    App.Utils:debug("App:bootstrap");
 
     -- The addon was loaded, we no longer need the event listener now
-    App.eventFrame:UnregisterEvent("ADDON_LOADED");
-    App.eventFrame = nil;
+    App.EventFrame:UnregisterEvent("ADDON_LOADED");
 
     -- Show a welcome message
     local successfullyLoadedMessage = "Sucessfully loaded (v" .. App.version .. ")";
-    App:debug(string.format("Successfully loaded v%s", App.version));
-    App:success("v" .. App:capitalize(App.version));
+    App.Utils:debug(string.format("Successfully loaded v%s", App.version));
+    App.Utils:success("v" .. App.Utils:capitalize(App.version));
 
     -- Initialize our classes / services
     App:_init();
@@ -45,7 +45,7 @@ end
 
 -- Callback to be fired when the addon is completely loaded
 function App:_init()
-    App:debug("App:_init");
+    App.Utils:debug("App:_init");
 
     do
         local version, _, _, uiVersion = GetBuildInfo()
@@ -101,6 +101,6 @@ function App:hookBagSlotEvents()
 end
 
 -- Fire App.bootstrap every time an addon is loaded
-App.eventFrame = CreateFrame("FRAME");
-App.eventFrame:RegisterEvent("ADDON_LOADED");
-App.eventFrame:SetScript("OnEvent", App.bootstrap);
+App.EventFrame = CreateFrame("FRAME");
+App.EventFrame:RegisterEvent("ADDON_LOADED");
+App.EventFrame:SetScript("OnEvent", App.bootstrap);

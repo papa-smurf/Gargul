@@ -5,12 +5,13 @@ App.SoftReserves = {
     broadcastInProgress = false,
 };
 
-local SoftReserves = App.SoftReserves;
+local Utils = App.Utils;
 local AceGUI = App.Ace.GUI;
+local SoftReserves = App.SoftReserves;
 local CommActions = App.Data.Constants.Comm.Actions;
 
 -- Add a award confirmation dialog to Blizzard's global StaticPopupDialogs object
-StaticPopupDialogs["CLEAR_SOFTRESERVES_CONFIRMATION"] = {
+StaticPopupDialogs[App.name .. "_CLEAR_SOFTRESERVES_CONFIRMATION"] = {
     text = "Are you sure you want to clear everything?",
     button1 = "Yes",
     button2 = "No",
@@ -22,6 +23,8 @@ StaticPopupDialogs["CLEAR_SOFTRESERVES_CONFIRMATION"] = {
 }
 
 function SoftReserves:_init()
+    Utils:debug("SoftReserves:_init");
+
     if (self._initialized) then
         return;
     end
@@ -36,6 +39,8 @@ end
 
 -- Fetch an item's soft reserves based on its ID
 function SoftReserves:getSoftReservesByItemId(itemId)
+    Utils:debug("SoftReserves:getSoftReservesByItemId");
+
     -- We couldn't find an item ID
     if (not itemId) then
         return;
@@ -46,26 +51,32 @@ end
 
 -- Fetch an item's soft reserves based on its item link
 function SoftReserves:getSoftReservesByItemLink(itemLink)
+    Utils:debug("SoftReserves:getSoftReservesByItemLink");
+
     if (not itemLink) then
         return;
     end
 
-    return self:getSoftReservesByItemId(App:getItemIdFromLink(itemLink));
+    return self:getSoftReservesByItemId(Utils:getItemIdFromLink(itemLink));
 end
 
 -- Fetch an item's soft reserves based on its item link
 function SoftReserves:itemIdIsReservedByPlayer(itemId, player)
+    Utils:debug("SoftReserves:itemIdIsReservedByPlayer");
+
     local reserves = self:getSoftReservesByItemId(itemId);
 
     if (not reserves) then
         return false;
     end
 
-    return App:inArray(reserves, player);
+    return Utils:inArray(reserves, player);
 end
 
 -- Append the soft reserves as defined in App.DB.SoftReserves to an item's tooltip
 function SoftReserves:appendSoftReserveInfoToTooltip(tooltip)
+    Utils:debug("SoftReserves:appendSoftReserveInfoToTooltip");
+
     -- No tooltip was provided
     if (not tooltip) then
         return;
@@ -101,7 +112,7 @@ function SoftReserves:appendSoftReserveInfoToTooltip(tooltip)
     -- Make sure we only show shoft reserves of people
     -- Who are actually in the raid
     for _, player in pairs(reserves) do
-        if (App:inArray(playersInRaids, player)) then
+        if (Utils:inArray(playersInRaids, player)) then
             tinsert(activeReserves, player);
         end
     end
@@ -116,7 +127,7 @@ function SoftReserves:appendSoftReserveInfoToTooltip(tooltip)
 end
 
 function SoftReserves:drawImporter()
-    App:debug("SoftReserves:drawImporter");
+    Utils:debug("SoftReserves:drawImporter");
 
     -- Create a container/parent frame
     local SoftReservesFrame = AceGUI:Create("Frame");
@@ -171,11 +182,11 @@ function SoftReserves:drawImporter()
     ClearButton:SetText("Clear");
     ClearButton:SetWidth(140);
     ClearButton:SetCallback("OnClick", function()
-        StaticPopupDialogs["CLEAR_SOFTRESERVES_CONFIRMATION"].OnAccept = function ()
+        StaticPopupDialogs[App.name .. "_CLEAR_SOFTRESERVES_CONFIRMATION"].OnAccept = function ()
             SoftReservesBox:SetText("");
         end
 
-        StaticPopup_Show("CLEAR_SOFTRESERVES_CONFIRMATION");
+        StaticPopup_Show(App.name .. "_CLEAR_SOFTRESERVES_CONFIRMATION");
     end);
     FooterFrame:AddChild(ClearButton);
 
@@ -183,11 +194,11 @@ function SoftReserves:drawImporter()
 end
 
 function SoftReserves:import(data, sender)
-    App:debug("SoftReserves:import");
+    Utils:debug("SoftReserves:import");
 
     -- Make sure all the required properties are available and of the correct type
     if (not data or type(data) ~= "string") then
-        App:warning("Invalid data provided");
+        Utils:warning("Invalid data provided");
         return false;
     end
 
@@ -196,7 +207,7 @@ function SoftReserves:import(data, sender)
     for line in data:gmatch("[^\n]+") do
         if (not first) then
 
-            local segments = App:strSplit(line, ",");
+            local segments = Utils:strSplit(line, ",");
             if (#segments == 5) then
 
                 local itemId = tonumber(segments[1]);
@@ -207,7 +218,7 @@ function SoftReserves:import(data, sender)
                     and type(player) == "string"
                 ) then
                     itemId = tostring(itemId);
-                    local entry = App:tableGet(SoftReserveData, itemId, {});
+                    local entry = Utils:tableGet(SoftReserveData, itemId, {});
 
                     tinsert(entry, player);
                     SoftReserveData[itemId] = entry;
@@ -220,12 +231,14 @@ function SoftReserves:import(data, sender)
 
     App.DB.SoftReserves = SoftReserveData;
 
-    App:success("Import successful");
+    Utils:success("Import successful");
     return true;
 end
 
 -- Check if the broadcast button should be available
 function SoftReserves:updateBroadCastButton(BroadCastButton)
+    Utils:debug("SoftReserves:updateBroadCastButton");
+
     if (not App.User.isMasterLooter) then
         return BroadCastButton:SetDisabled(true);
     end
@@ -235,10 +248,10 @@ end
 
 -- Broadcast our soft reserves table to the raid or group
 function SoftReserves:broadcast()
-    App:debug("SoftReserves:broadcast");
+    Utils:debug("SoftReserves:broadcast");
 
     if (SoftReserves.broadcastInProgress) then
-        App:error("Broadcast still in progress");
+        Utils:error("Broadcast still in progress");
         return;
     end
 
@@ -259,24 +272,24 @@ function SoftReserves:broadcast()
     end
 
     App.Ace:ScheduleTimer(function ()
-        App:success("Broadcast finished");
+        Utils:success("Broadcast finished");
         self.broadcastInProgress = false;
     end, 10);
 end
 
 -- Process an incoming soft reserve broadcast
 function SoftReserves:receiveSoftReserves(CommMessage)
-    App:debug("SoftReserves:receiveSoftReserves");
+    Utils:debug("SoftReserves:receiveSoftReserves");
 
     -- No need to update our tables if we broadcasted them ourselves
     if (CommMessage.Sender.name == App.User.name) then
-        App:debug("Sync:receiveSoftReserves received by self, skip");
+        Utils:debug("Sync:receiveSoftReserves received by self, skip");
         return;
     end
 
     App.DB.SoftReserves = CommMessage.content;
 
-    App:success("Your Soft Reserves just got updated by " .. CommMessage.Sender.name);
+    Utils:success("Your Soft Reserves just got updated by " .. CommMessage.Sender.name);
 end
 
-App:debug("SoftReserves.lua");
+Utils:debug("SoftReserves.lua");
