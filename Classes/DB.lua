@@ -48,9 +48,7 @@ function DB:_init()
     self.SoftReserves = GargulDB.SoftReserves;
 
     -- Fire DB:store before every logout/reload/exit
-    self.logoutEvent = CreateFrame("FRAME");
-    self.logoutEvent:RegisterEvent("PLAYER_LOGOUT");
-    self.logoutEvent:SetScript("OnEvent", self.store);
+    App.Events:register("DBPlayerLogoutListener", "PLAYER_LOGOUT", self.store);
 
     self._initialized = true;
 end

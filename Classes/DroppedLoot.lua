@@ -17,10 +17,8 @@ function DroppedLoot:_init()
         return;
     end
 
-    -- Fire DroppedLoot:announce every time a loot window is opened
-    DroppedLoot.eventFrame = CreateFrame("FRAME");
-    DroppedLoot.eventFrame:RegisterEvent("LOOT_OPENED");
-    DroppedLoot.eventFrame:SetScript("OnEvent", DroppedLoot.lootWindowOpened);
+    -- Fire DroppedLoot:lootReady every time a loot window is opened
+    App.Events:register("DroppedLootLootReadyListener", "LOOT_OPENED", DroppedLoot.LOOT_OPENED);
 
     self._initialized = true;
 end

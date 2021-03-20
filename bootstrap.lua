@@ -60,6 +60,7 @@ function App:_init()
     end
 
     -- Initialize classes
+    App.Events:_init(App.EventFrame);
     App.DB:_init();
     App.Settings:_init()
     App.Comm:_init();

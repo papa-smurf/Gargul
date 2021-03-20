@@ -19,6 +19,7 @@ Data/DefaultSettings.lua
 
 ## Class objects
 Classes/Utils.lua
+Classes/Events.lua
 Classes/JSON.lua
 Classes/UI.lua
 Classes/DB.lua
