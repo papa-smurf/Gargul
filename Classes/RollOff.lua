@@ -355,16 +355,16 @@ function RollOff:refreshRollsTable()
         local playerName = Roll.player;
         local numberOfTimesRolledByPlayer = NumberOfRollsPerPlayer[Roll.player];
 
-        -- If this isn't the player's first roll for the current item
-        -- then we add a number behind the players name like so: PlayerName [#]
-        if (numberOfTimesRolledByPlayer > 1) then
-            playerName = string.format("%s [%s]", playerName, numberOfTimesRolledByPlayer);
-        end
-
         -- Check if the player reserved the current item id
         local softReservedValue = "";
         if (App.SoftReserves:itemIdIsReservedByPlayer(self.CurrentRollOff.itemId, playerName)) then
             softReservedValue = "reserved";
+        end
+
+        -- If this isn't the player's first roll for the current item
+        -- then we add a number behind the players name like so: PlayerName [#]
+        if (numberOfTimesRolledByPlayer > 1) then
+            playerName = string.format("%s [%s]", playerName, numberOfTimesRolledByPlayer);
         end
 
         local class = string.lower(Roll.class);
