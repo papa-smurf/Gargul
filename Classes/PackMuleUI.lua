@@ -66,8 +66,11 @@ function PackMuleUI:drawSetupWindow()
     Frame:SetWidth(600);
     Frame:SetHeight(450);
     Frame.statustext:GetParent():Hide(); -- Hide the statustext bar
+    Frame:EnableResize(false);
 
     self:drawSpacer(Frame, 1, 10);
+
+    self:drawInfoSection(Frame);
 
     --[[ SETTINGS ]]
     self:drawHeader(Frame, "Settings");
@@ -95,6 +98,25 @@ function PackMuleUI:drawSetupWindow()
     for index = #self.UIComponents.Input.SpecificItemRules, 4 do
         self:drawSpecifItemRule(ScrollFrame);
     end
+end
+
+function PackMuleUI:drawInfoSection(Frame)
+    local Row = AceGUI:Create("SimpleGroup");
+    Row:SetLayout("Flow");
+    Row:SetFullWidth(true);
+    Row:SetHeight(30);
+    Frame:AddChild(Row);
+
+    self:drawSpacer(Row, 25, 1);
+
+    -- LABEL: Info about PackMule
+    local Info = AceGUI:Create("Label");
+    Info:SetText([[
+PackMule will only work if you are the master looter, you're in a raid and PackMule is "enabled"
+]]);
+    Info:SetHeight(20);
+    Info:SetWidth(520);
+    Row:AddChild(Info);
 end
 
 -- Process all values of the PackMule settings window
@@ -164,7 +186,7 @@ function PackMuleUI:drawSettingsSection(Frame)
     Row:SetHeight(30);
     Frame:AddChild(Row);
 
-    PackMuleUI:drawSpacer(Row, 35, 1);
+    self:drawSpacer(Row, 35, 1);
 
     local EnablePackMule = AceGUI:Create("CheckBox");
     EnablePackMule:SetLabel("Enable");
@@ -236,7 +258,7 @@ function PackMuleUI:drawScrollFrame(Frame)
         self:drawSpecifItemRule(ScrollFrame);
     end);
 
-    PackMuleUI:drawSpacer(Frame, 1, 10);
+    self:drawSpacer(Frame, 1, 10);
 
     local Row = AceGUI:Create("SimpleGroup");
     Row:SetLayout("Flow");
@@ -244,7 +266,7 @@ function PackMuleUI:drawScrollFrame(Frame)
     Row:SetHeight(30);
     Frame:AddChild(Row);
 
-    PackMuleUI:drawSpacer(Row, 35, 1);
+    self:drawSpacer(Row, 35, 1);
     Row:AddChild(AddRuleButton);
 
     return ScrollFrame;
@@ -264,7 +286,7 @@ function PackMuleUI:drawSpecifItemRule(Frame, Rule)
     Row:SetHeight(30);
     Frame:AddChild(Row);
 
-    PackMuleUI:drawSpacer(Row, 35, 1);
+    self:drawSpacer(Row, 35, 1);
 
     -- LABEL: Send loot of quality lower than
     local beforeItemLabel = AceGUI:Create("Label");
@@ -283,7 +305,7 @@ function PackMuleUI:drawSpecifItemRule(Frame, Rule)
     Row:AddChild(ItemName);
 
     -- Increase space between input and next label ("to")
-    PackMuleUI:drawSpacer(Row, 8, 1);
+    self:drawSpacer(Row, 8, 1);
 
     -- LABEL: to
     local afterItemLabel = AceGUI:Create("Label");
@@ -306,7 +328,7 @@ function PackMuleUI:drawSpecifItemRule(Frame, Rule)
 end
 
 function PackMuleUI:drawSpacer(Parent, width, height)
-    Utils:debug("PackMuleUI:drawSpacer");
+    Utils:debug("self:drawSpacer");
 
     local Spacer = AceGUI:Create("SimpleGroup");
     Spacer:SetLayout("Flow");
@@ -329,7 +351,7 @@ function PackMuleUI:drawLowerThanQualityRule(Frame, Rule)
     Row:SetHeight(30);
     Frame:AddChild(Row);
 
-    PackMuleUI:drawSpacer(Row, 35, 1);
+    self:drawSpacer(Row, 35, 1);
 
     -- LABEL: Send loot of quality lower than
     local beforeLowerThanRuleLabel = AceGUI:Create("Label");
@@ -355,7 +377,7 @@ function PackMuleUI:drawLowerThanQualityRule(Frame, Rule)
     self.UIComponents.Input.LowerThanRuleQuality = LowerThanRuleQuality;
 
     -- Increase space between dropdown and next label ("to")
-    PackMuleUI:drawSpacer(Row, 8, 1);
+    self:drawSpacer(Row, 8, 1);
 
     -- LABEL: to
     local afterLowerThanRuleLabel = AceGUI:Create("Label");
@@ -387,7 +409,7 @@ function PackMuleUI:drawHigherThanQualityRule(Frame, Rule)
     Row:SetHeight(40);
     Frame:AddChild(Row);
 
-    PackMuleUI:drawSpacer(Row, 35, 1);
+    self:drawSpacer(Row, 35, 1);
 
     -- LABEL: Send loot of quality lower than
     local beforeHigherThanRuleLabel = AceGUI:Create("Label");
@@ -413,7 +435,7 @@ function PackMuleUI:drawHigherThanQualityRule(Frame, Rule)
     self.UIComponents.Input.HigherThanRuleQuality = HigherThanRuleQuality;
 
     -- Increase space between dropdown and next label ("to")
-    PackMuleUI:drawSpacer(Row, 8, 1);
+    self:drawSpacer(Row, 8, 1);
 
     -- LABEL: to
     local afterHigherThanRuleLabel = AceGUI:Create("Label");
