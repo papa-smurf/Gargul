@@ -35,7 +35,30 @@ function PackMule:_init()
     self.Rules = Settings:get("PackMule.Rules");
 
     App.Events:register("PackMuleZoneChangeListener", "ZONE_CHANGED_NEW_AREA", self.zoneChanged);
-    App.Events:register("DroppedLootLootReadyListener", "LOOT_READY", self.lootReady);
+
+    App.Events:register("DroppedLootLootReadyListener", "LOOT_READY", function ()
+        if (self.timerId) then
+            App.Ace:CancelTimer(self.timerId);
+            self.timerId = false;
+        end
+
+        -- We keep scouring the loot window every .2 second because
+        -- the loot in a loot window can change for any number of reasons:
+        -- Quick loot is enabled for items
+        -- There was money in the loot window
+        -- The player has another weak aura or addon that distributes specific items
+        self.timerId = App.Ace:ScheduleTimer(function ()
+            self:lootReady();
+        end, .2);
+    end);
+
+    -- Make sure we stop checking the loot window after the player is done looting
+    App.Events:register("DroppedLootLootClosedListener", "LOOT_CLOSED", function ()
+        if (self.timerId) then
+            App.Ace:CancelTimer(self.timerId);
+            self.timerId = false;
+        end
+    end);
 
     self._initialized = true;
 end
@@ -58,7 +81,10 @@ function PackMule:lootReady()
 
     self = PackMule;
 
-    if (not self.Rules) then
+    if (not self.Rules
+        or not App.User.isInRaid
+        or not App.User.isMasterLooter
+    ) then
         return;
     end
 
@@ -75,7 +101,6 @@ function PackMule:lootReady()
         return;
     end
 
-    local itemsLeft = false;
     for itemIndex = GetNumLootItems(), 1, -1 do
         local itemName, _, _, itemQuality, locked = select(2, GetLootSlotInfo(itemIndex));
         local itemLink = GetLootSlotLink(itemIndex);
@@ -83,8 +108,6 @@ function PackMule:lootReady()
 
         -- If the item is locked or doesn't have an item link (money or other currency) then we can safely skip it
         if (not locked and itemLink) then
-            itemsLeft = true;
-
             for key, Rule in pairs(ValidRules) do
                 local ruleApplies = false;
                 local target = tostring(Rule.target or "");
@@ -122,10 +145,6 @@ function PackMule:lootReady()
                 end
             end
         end
-    end
-
-    if (itemsLeft) then
-        return self:lootReady();
     end
 end
 
@@ -183,69 +202,3 @@ function PackMule:ruleIsValid(Rule)
 end
 
 Utils:debug("PackMule.lua");
-
--- ====================
-
---Made by Anilusion @ Gehennas EU
---function()
---local lootMethod, _, masterIndex = GetLootMethod()
---    if masterIndex then
---        local masterName = GetRaidRosterInfo(masterIndex)
---        if masterName == UnitName("player") then
---            for i = GetNumLootItems(), 1, -1 do
---                local itemName, _, _, itemQuality  = select(2, GetLootSlotInfo(i))
---                if string.match(itemName, "Splinter of Atiesh") then
---                    for ci = 1, GetNumGroupMembers() do
---                        if (GetMasterLootCandidate(i, ci) == aura_env.config.SplintersTarget) then
---                            GiveMasterLoot(i, ci);
---                        end
---                    end
---                elseif string.match(itemName, "Scrap") and itemQuality == 3 then
---                    for ci = 1, GetNumGroupMembers() do
---                        if (GetMasterLootCandidate(i, ci) == aura_env.config.ScrapsTarget) then
---                            GiveMasterLoot(i, ci);
---                        end
---                    end
---                elseif string.match(itemName, "Word of Thawing") then
---                    for ci = 1, GetNumGroupMembers() do
---                        if (GetMasterLootCandidate(i, ci) == aura_env.config.WordsTarget) then
---                            GiveMasterLoot(i, ci);
---                        end
---                    end
---                elseif string.match(itemName, "Frozen Rune") then
---                    for ci = 1, GetNumGroupMembers() do
---                        if (GetMasterLootCandidate(i, ci) == aura_env.config.RunesTarget) then
---                            GiveMasterLoot(i, ci);
---                        end
---                    end
---                elseif itemName == "Major Mana Potion" then
---                    for ci = 1, GetNumGroupMembers() do
---                        if (GetMasterLootCandidate(i, ci) == aura_env.config.ManaPotionTarget) then
---                            GiveMasterLoot(i, ci);
---                        end
---                    end
---                elseif itemName == "Major Healing Potion" then
---                    for ci = 1, GetNumGroupMembers() do
---                        if (GetMasterLootCandidate(i, ci) == aura_env.config.HealingPotionTarget) then
---                            GiveMasterLoot(i, ci);
---                        end
---                    end
---                elseif itemQuality == 2 then
---                    for ci = 1, GetNumGroupMembers() do
---                        if (GetMasterLootCandidate(i, ci) == aura_env.config.GreensTarget) then
---                            GiveMasterLoot(i, ci);
---                        end
---                    end
---                elseif itemQuality <= 1 then
---                    for ci = 1, GetNumGroupMembers() do
---                        if (GetMasterLootCandidate(i, ci) == aura_env.config.TrashTarget) then
---                            GiveMasterLoot(i, ci);
---                        end
---                    end
---                end
---            end
---        end
---    end
---end
---Made by Anilusion @ Gehennas EU
-
