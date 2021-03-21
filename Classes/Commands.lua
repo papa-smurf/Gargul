@@ -57,6 +57,7 @@ Commands.gr = Commands.groups;
 -- Open the soft reserves window
 Commands.softreserves = function() App.SoftReserves:drawImporter(); end
 Commands.so = Commands.softreserves;
+Commands.sr = Commands.softreserves;
 
 -- Open the pack mule window
 Commands.packmule = function() App.PackMuleUI:drawSetupWindow(); end
