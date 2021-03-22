@@ -127,7 +127,7 @@ function Settings:showSettingsMenu(Frame)
 
         for i, qualityLevel in next, qualityLevels do
             info.text = names[i];
-            info.value = font;
+            info.value = i - 1;
 
             info.func = function(self)
                 App.Settings:set("minimumQualityOfAnnouncedLoot", self.value);

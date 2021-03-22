@@ -149,8 +149,7 @@ function Dashboard:draw()
     InRaidCheckbox:SetLabel("In raid only");
     InRaidCheckbox:SetValue(Settings:get("UI.Dashboard.showInRaidOnly", false));
     InRaidCheckbox:SetCallback("OnValueChanged", function (widget)
-        local checked = widget:GetValue();
-        Settings:set("UI.Dashboard.showInRaidOnly", checked);
+        Settings:set("UI.Dashboard.showInRaidOnly", widget:GetValue());
         Dashboard:refresh();
     end);
     FooterFrame:AddChild(InRaidCheckbox);
