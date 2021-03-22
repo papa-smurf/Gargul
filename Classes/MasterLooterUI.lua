@@ -1,8 +1,24 @@
 local _, App = ...;
 
 App.RollOff = App.RollOff or {};
-App.MasterLooterUI = App.MasterLooterUI or {};
 App.Ace.ScrollingTable = App.Ace.ScrollingTable or LibStub("ScrollingTable");
+
+App.MasterLooterUI = {
+    ItemBoxHoldsValidItem = false,
+    PlayersTable = {},
+    UIComponents = {
+        Frame = {},
+        Buttons = {},
+        EditBoxes = {},
+        Labels = {},
+        Tables = {},
+        Icons = {},
+    },
+    Defaults = {
+        itemIcon = "Interface\\Icons\\INV_Misc_QuestionMark",
+        itemBoxText = "",
+    },
+};
 
 local UI = App.UI;
 local Utils = App.Utils;
@@ -10,24 +26,6 @@ local AceGUI = App.Ace.GUI;
 local Settings = App.Settings;
 local MasterLooterUI = App.MasterLooterUI;
 local ScrollingTable = App.Ace.ScrollingTable;
-
-MasterLooterUI.Defaults = {
-    itemIcon = "Interface\\Icons\\INV_Misc_QuestionMark",
-    itemBoxText = "",
-};
-
-MasterLooterUI.UIComponents = {
-    Frame = {},
-    Buttons = {},
-    EditBoxes = {},
-    Labels = {},
-    Tables = {},
-    Icons = {},
-};
-
-MasterLooterUI.ItemBoxHoldsValidItem = false;
-
-MasterLooterUI.PlayersTable = {};
 
 -- This is the UI the person who rolls off an item uses to prepare everything e.g:
 -- Select an item
@@ -76,21 +74,7 @@ function MasterLooterUI:draw(itemLink)
     RollOffFrame.frame:SetFrameStrata("HIGH");
     RollOffFrame.statustext:GetParent():Hide(); -- Hide the statustext bar
     RollOffFrame:SetCallback("OnClose", function(widget)
-        local point, _, relativePoint, offsetX, offsetY = RollOffFrame:GetPoint();
-
-        -- Store the frame's last position for future play sessions
-        Settings:set("UI.RollOff.Position.point", point);
-        Settings:set("UI.RollOff.Position.relativePoint", relativePoint);
-        Settings:set("UI.RollOff.Position.offsetX", offsetX);
-        Settings:set("UI.RollOff.Position.offsetY", offsetY);
-
-        -- When the master looter closes the master loot window with a master
-        -- loot still in progress we show the reopen master looter button
-        if (App.RollOff.inProgress
-            and App.RollOff.CurrentRollOff.initiator == App.User.name
-        ) then
-            self:drawReopenMasterLooterUIButton();
-        end
+        self:close(widget);
     end);
     RollOffFrame:SetPoint(
         Settings:get("UI.RollOff.Position.point"),
@@ -182,6 +166,10 @@ function MasterLooterUI:draw(itemLink)
                             MasterLooterUI.UIComponents.EditBoxes.Timer:GetText(),
                             MasterLooterUI.UIComponents.EditBoxes.ItemNote:GetText()
                         );
+
+                        if (Settings:get("UI.RollOff.autoClose")) then
+                            MasterLooterUI.UIComponents.Frame:Hide();
+                        end
 
                         MasterLooterUI:updateWidgets();
                     end);
@@ -348,10 +336,67 @@ function MasterLooterUI:draw(itemLink)
 
             MasterLooterUI:drawPlayersTable(RollOffFrame.frame);
 
+            --[[
+                FIFTH ROW (AUTO CLOSE CHECKBOX)
+            ]]
+
+            local FifthRow = AceGUI:Create("SimpleGroup");
+            FifthRow:SetLayout("Flow");
+            FifthRow:SetFullWidth(true);
+            FifthRow:SetHeight(20);
+            RollOffFrame:AddChild(FifthRow);
+
+            local Spacer = AceGUI:Create("SimpleGroup");
+            Spacer:SetLayout("Flow");
+            Spacer:SetWidth(1);
+            Spacer:SetHeight(348);
+            FifthRow:AddChild(Spacer);
+
+            local EnableAutoClose = AceGUI:Create("CheckBox");
+            EnableAutoClose:SetLabel("Close this window when roll starts");
+            EnableAutoClose:SetValue(Settings:get("UI.RollOff.autoClose", false));
+            EnableAutoClose:SetCallback("OnValueChanged", function (widget)
+                Settings:set("UI.RollOff.autoClose", widget:GetValue());
+            end);
+            EnableAutoClose:SetWidth(300);
+            FifthRow:AddChild(EnableAutoClose);
+
+
+
     if (itemLink
         and type(itemLink) == "string"
     ) then
         MasterLooterUI:passItemLink(itemLink);
+    end
+end
+
+function MasterLooterUI:close(Frame)
+    Utils:debug("MasterLooterUI:close");
+
+    local point, _, relativePoint, offsetX, offsetY = Frame:GetPoint();
+
+    -- Store the frame's last position for future play sessions
+    Settings:set("UI.RollOff.Position.point", point);
+    Settings:set("UI.RollOff.Position.relativePoint", relativePoint);
+    Settings:set("UI.RollOff.Position.offsetX", offsetX);
+    Settings:set("UI.RollOff.Position.offsetY", offsetY);
+
+    -- When the master looter closes the master loot window with a master
+    -- loot still in progress we show the reopen master looter button
+    local timerIterations = 1;
+    if (App.RollOff.inProgress) then
+        local timerId;
+        timerId = App.Ace:ScheduleRepeatingTimer(function ()
+            if (timerIterations >= 25
+                or App.RollOff.CurrentRollOff.itemIcon
+            ) then
+                self:drawReopenMasterLooterUIButton();
+                App.Ace:CancelTimer(timerId);
+                timerId = false;
+            end
+
+            timerIterations = timerIterations + 1;
+        end, .1);
     end
 end
 

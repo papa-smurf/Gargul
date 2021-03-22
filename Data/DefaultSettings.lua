@@ -49,6 +49,7 @@ App.Data.DefaultSettings = {
             }
         },
         RollOff = {
+            autoClose = false,
             timer = 25,
             Position = {
                 point = "CENTER",
