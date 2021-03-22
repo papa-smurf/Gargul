@@ -91,39 +91,92 @@ function Utils:dump(mixed)
 end
 
 -- Print a table to the console
-function Utils:printTable(t)
+function Utils:printTable(t, shouldReturn)
+    local returnString = "";
+
     local printTable_cache = {};
 
+    local segment = "";
     local function sub_printTable( t, indent )
         if (printTable_cache[tostring(t)]) then
-            print(indent .. "*" .. tostring(t));
+            segment = indent .. "*" .. tostring(t);
+            if (shouldReturn) then
+                returnString = "\n" .. returnString .. segment;
+            else
+                print(segment);
+            end
         else
             printTable_cache[tostring(t)] = true;
 
             if (type(t) == "table") then
                 for pos,val in pairs( t ) do
                     if (type(val)== "table") then
-                        print(indent .. "[" .. pos .. "] => " .. tostring( t ).. " {");
+                        segment = indent .. "[" .. pos .. "] => " .. tostring( t ).. " {";
+
+                        if (shouldReturn) then
+                            returnString = "\n" .. returnString .. segment;
+                        else
+                            print(segment);
+                        end
+
                         sub_printTable(val, indent .. string.rep( " ", string.len(pos)+8 ));
-                        print(indent .. string.rep( " ", string.len(pos)+6 ) .. "}");
+
+                        segment = indent .. string.rep( " ", string.len(pos)+6 ) .. "}";
+                        if (shouldReturn) then
+                            returnString = "\n" .. returnString .. segment;
+                        else
+                            print(segment);
+                        end
                     elseif (type(val) == "string") then
-                        print(indent .. "[" .. pos .. '] => "' .. val .. '"');
+                        segment = indent .. "[" .. pos .. '] => "' .. val .. '"';
+                        if (shouldReturn) then
+                            returnString = "\n" .. returnString .. segment;
+                        else
+                            print(segment);
+                        end
                     else
-                        print(indent .. "[" .. pos .. "] => " .. tostring(val));
+                        segment = indent .. "[" .. pos .. "] => " .. tostring(val);
+                        if (shouldReturn) then
+                            returnString = "\n" .. returnString .. segment;
+                        else
+                            print(segment);
+                        end
                     end
                 end
             else
-                print(indent .. tostring(t));
+                segment = indent .. tostring(t);
+                if (shouldReturn) then
+                    returnString = "\n" .. returnString .. segment;
+                else
+                    print(segment);
+                end
             end
         end
     end
 
     if (type(t) == "table") then
-        print(tostring(t) .. " {" );
+        segment = tostring(t) .. " {" ;
+        if (shouldReturn) then
+            returnString = "\n" .. returnString .. segment .. "\n";
+        else
+            print(segment);
+            print();
+        end
+
         sub_printTable(t, "  ");
-        print("}");
+
+        segment = "}";
+        if (shouldReturn) then
+            returnString = "\n" .. returnString .. segment;
+        else
+            print(segment);
+        end
     else
         sub_printTable(t, "  ");
+    end
+
+    if (shouldReturn) then
+        return returnString;
     end
 end
 
