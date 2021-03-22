@@ -27,7 +27,7 @@ function PackMuleUI:drawSetupWindow()
     if (self.setupWindowIsActive) then
         return;
     else
-        self.setupWindowIsActive = false;
+        self.setupWindowIsActive = true;
     end
 
     self.UIComponents.Input = {
@@ -70,6 +70,7 @@ function PackMuleUI:drawSetupWindow()
 
     self:drawSpacer(Frame, 1, 10);
 
+    --[[ INFO ]]
     self:drawInfoSection(Frame);
 
     --[[ SETTINGS ]]
@@ -117,64 +118,6 @@ PackMule will only work if you are the master looter, you're in a raid and PackM
     Info:SetHeight(20);
     Info:SetWidth(520);
     Row:AddChild(Info);
-end
-
--- Process all values of the PackMule settings window
-function PackMuleUI:processSettings()
-    Utils:debug("PackMuleUI:processSettings");
-
-    local Rules = {};
-    local enabled = self.UIComponents.Input.Enabled:GetValue();
-    local persistAfterReload = self.UIComponents.Input.PeristAfterReload:GetValue();
-    local persistAfterZoneChange = self.UIComponents.Input.PeristAfterZoneChange:GetValue();
-
-    -- Lower/higher than quality rules
-    local lowerThanRuleQuality = self.UIComponents.Input.LowerThanRuleQuality:GetValue();
-    local lowerThanRuleTarget = tostring(self.UIComponents.Input.LowerThanRuleTarget:GetText());
-    local higherThanRuleQuality = self.UIComponents.Input.HigherThanRuleQuality:GetValue();
-    local higherThanRuleTarget = tostring(self.UIComponents.Input.HigherThanRuleTarget:GetText());
-
-    -- Reset (clear) all the current PackMule rules
-    App.PackMule:resetRules();
-
-    Settings:set("PackMule.enabled", enabled);
-    Settings:set("PackMule.persistsAfterZoneChange", persistAfterZoneChange);
-    Settings:set("PackMule.persistsAfterReload", persistAfterReload);
-
-    -- Add the item-specific rules first
-    for _, SpecificItemRule in pairs(self.UIComponents.Input.SpecificItemRules) do
-        local name = tostring(SpecificItemRule.Name:GetText());
-        local target = tostring(SpecificItemRule.Target:GetText());
-
-        App.PackMule:addRule({
-            item = name,
-            target = target,
-        });
-    end
-
-    -- Add the quality lower than X rule
-    if (type(lowerThanRuleQuality) ~= "nil"
-        and lowerThanRuleTarget
-        and lowerThanRuleTarget ~= ""
-    ) then
-        App.PackMule:addRule({
-            quality = lowerThanRuleQuality,
-            operator = "<",
-            target = lowerThanRuleTarget,
-        });
-    end
-
-    -- Add the quality higher than X rule
-    if (type(higherThanRuleQuality) ~= "nil"
-            and higherThanRuleTarget
-            and higherThanRuleTarget ~= ""
-    ) then
-        App.PackMule:addRule({
-            quality = higherThanRuleQuality,
-            operator = ">",
-            target = higherThanRuleTarget,
-        });
-    end
 end
 
 function PackMuleUI:drawSettingsSection(Frame)
@@ -242,7 +185,8 @@ function PackMuleUI:drawScrollFrame(Frame)
     local ScrollFrameParent = AceGUI:Create("SimpleGroup");
     ScrollFrameParent:SetLayout("Fill");
     ScrollFrameParent:SetFullWidth(true);
-    ScrollFrameParent:SetHeight(120);
+--    ScrollFrameParent:SetHeight(120);
+    ScrollFrameParent:SetHeight(110);
     Frame:AddChild(ScrollFrameParent);
 
     local ScrollFrame = AceGUI:Create("ScrollFrame");
@@ -460,6 +404,64 @@ function PackMuleUI:drawHeader(Frame, text)
     Heading:SetFullWidth(true);
     Heading:SetText(text);
     Frame:AddChild(Heading);
+end
+
+-- Process all values of the PackMule settings window
+function PackMuleUI:processSettings()
+    Utils:debug("PackMuleUI:processSettings");
+
+    local Rules = {};
+    local enabled = self.UIComponents.Input.Enabled:GetValue();
+    local persistAfterReload = self.UIComponents.Input.PeristAfterReload:GetValue();
+    local persistAfterZoneChange = self.UIComponents.Input.PeristAfterZoneChange:GetValue();
+
+    -- Lower/higher than quality rules
+    local lowerThanRuleQuality = self.UIComponents.Input.LowerThanRuleQuality:GetValue();
+    local lowerThanRuleTarget = tostring(self.UIComponents.Input.LowerThanRuleTarget:GetText());
+    local higherThanRuleQuality = self.UIComponents.Input.HigherThanRuleQuality:GetValue();
+    local higherThanRuleTarget = tostring(self.UIComponents.Input.HigherThanRuleTarget:GetText());
+
+    -- Reset (clear) all the current PackMule rules
+    App.PackMule:resetRules();
+
+    Settings:set("PackMule.enabled", enabled);
+    Settings:set("PackMule.persistsAfterZoneChange", persistAfterZoneChange);
+    Settings:set("PackMule.persistsAfterReload", persistAfterReload);
+
+    -- Add the item-specific rules first
+    for _, SpecificItemRule in pairs(self.UIComponents.Input.SpecificItemRules) do
+        local name = tostring(SpecificItemRule.Name:GetText());
+        local target = tostring(SpecificItemRule.Target:GetText());
+
+        App.PackMule:addRule({
+            item = name,
+            target = target,
+        });
+    end
+
+    -- Add the quality lower than X rule
+    if (type(lowerThanRuleQuality) ~= "nil"
+            and lowerThanRuleTarget
+            and lowerThanRuleTarget ~= ""
+    ) then
+        App.PackMule:addRule({
+            quality = lowerThanRuleQuality,
+            operator = "<",
+            target = lowerThanRuleTarget,
+        });
+    end
+
+    -- Add the quality higher than X rule
+    if (type(higherThanRuleQuality) ~= "nil"
+            and higherThanRuleTarget
+            and higherThanRuleTarget ~= ""
+    ) then
+        App.PackMule:addRule({
+            quality = higherThanRuleQuality,
+            operator = ">",
+            target = higherThanRuleTarget,
+        });
+    end
 end
 
 Utils:debug("PackMuleUI.lua");

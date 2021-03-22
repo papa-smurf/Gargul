@@ -7,6 +7,7 @@ local _, App = ...;
 
 App.PackMule = {
     _initialized = false,
+    processing = false,
     Rules = {},
     setupWindowIsActive = false,
 };
@@ -47,7 +48,7 @@ function PackMule:_init()
         -- Quick loot is enabled for items
         -- There was money in the loot window
         -- The player has another weak aura or addon that distributes specific items
-        self.timerId = App.Ace:ScheduleTimer(function ()
+        self.timerId = App.Ace:ScheduleRepeatingTimer(function ()
             self:lootReady();
         end, .2);
     end);
@@ -76,15 +77,23 @@ function PackMule:zoneChanged()
     end
 end
 
+-- Check all loot and implement applicable rules
 function PackMule:lootReady()
     Utils:debug("PackMule:lootReady");
 
     self = PackMule;
 
+    if (self.processing) then
+        return;
+    else
+        self.processing = true;
+    end
+
     if (not self.Rules
         or not App.User.isInRaid
         or not App.User.isMasterLooter
     ) then
+        self.processing = false;
         return;
     end
 
@@ -98,6 +107,7 @@ function PackMule:lootReady()
 
     -- There are no valid rules, no need to continue
     if (not ValidRules) then
+        self.processing = false;
         return;
     end
 
@@ -109,12 +119,21 @@ function PackMule:lootReady()
         -- If the item is locked or doesn't have an item link (money or other currency) then we can safely skip it
         if (not locked and itemLink) then
             for key, Rule in pairs(ValidRules) do
+                -- This is useful to see in which order rules are being handled
+                Utils:debug(string.format(
+                    "Item: %s\nOperator: %s\nQuality: %s\nTarget: %s",
+                    Rule.item or "",
+                    Rule.quality or "",
+                    Rule.operator or "",
+                    Rule.target or ""
+                ));
+
                 local ruleApplies = false;
                 local target = tostring(Rule.target or "");
-                local operator = tostring(Rule.operator or "");
                 local quality = tonumber(Rule.quality or "");
+                local operator = tostring(Rule.operator or "");
 
-                if (quality and operator and target and (
+                if (itemQuality and quality and operator and target and (
                     (operator == "=" and itemQuality == quality)
                     or (operator == ">" and itemQuality > quality)
                     or (operator == "<" and itemQuality < quality)
@@ -146,8 +165,11 @@ function PackMule:lootReady()
             end
         end
     end
+
+    self.processing = false;
 end
 
+-- Empty the ruleset
 function PackMule:resetRules()
     Utils:debug("PackMule:resetRules");
 
@@ -155,6 +177,7 @@ function PackMule:resetRules()
     Settings:set("PackMule.Rules", self.Rules);
 end
 
+-- Add a rule to the ruleset
 function PackMule:addRule(Rule)
     Utils:debug("PackMule:addRule");
 
