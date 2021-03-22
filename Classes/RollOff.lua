@@ -56,6 +56,17 @@ function RollOff:announceStart(item, time, note)
 
     self:listenForRolls();
 
+    self.CurrentRollOff = {
+        initiator = nil, -- The player who started the roll off
+        time = nil, -- The amount of time players get to roll
+        itemId = nil, -- The ID of the item we're rolling for
+        itemName = nil, -- The name of the item we're rolling for
+        itemLink = nil, -- The item link of the item we're rolling for
+        itemIcon = nil, -- The icon of the item we're rolling for
+        note = nil, -- The note displayed on the progress bar
+        Rolls = {}, -- Player rolls
+    };
+
     App.CommMessage.new(
         CommActions.startRollOff,
         {
