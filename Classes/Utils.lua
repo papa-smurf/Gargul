@@ -190,7 +190,7 @@ function Utils:stacktrace()
     local debugLines = "";
 
     for key in pairs(App.DebugLines) do
-        debugLines = debugLines .. App.DebugLines[key] .. "\n";
+        debugLines = string.format("%s%s\n", debugLines, App.DebugLines[key]);
     end
 
     return self:frameMessage(debugLines);
@@ -228,6 +228,7 @@ function Utils:frameMessage(message)
     StacktraceBox:SetFullWidth(true);
     StacktraceBox:DisableButton(true);
     StacktraceBox:SetNumLines(22);
+    StacktraceBox:HighlightText();
     StacktraceBox:SetMaxLetters(999999999);
     StacktraceFrame:AddChild(StacktraceBox);
 end
