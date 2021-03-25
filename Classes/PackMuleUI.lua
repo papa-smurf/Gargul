@@ -185,7 +185,6 @@ function PackMuleUI:drawScrollFrame(Frame)
     local ScrollFrameParent = AceGUI:Create("SimpleGroup");
     ScrollFrameParent:SetLayout("Fill");
     ScrollFrameParent:SetFullWidth(true);
---    ScrollFrameParent:SetHeight(120);
     ScrollFrameParent:SetHeight(110);
     Frame:AddChild(ScrollFrameParent);
 
