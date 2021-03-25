@@ -604,7 +604,7 @@ function MasterLooterUI:updateItemNote()
         return ItemNote:SetText("");
     end
 
-    local itemPriority = App.LootPriority:getPriorityByItemLink(itemLink);
+    local itemPriority = App.LootPriority:getPriority(itemLink);
 
     -- If there is no item priority then label the item with "Off spec"
     if (not itemPriority) then

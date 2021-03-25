@@ -611,7 +611,7 @@ function AuctioneerUI:updateItemPriority(ItemPriorityBox, itemLink)
         return;
     end
 
-    local itemPriority = App.LootPriority:getPriorityByItemLink(itemLink);
+    local itemPriority = App.LootPriority:getPriority(itemLink);
 
     if (not itemPriority) then
         ItemPriorityBox:SetText("Off spec");

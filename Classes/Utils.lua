@@ -267,11 +267,15 @@ end
 
 -- Return an item's ID from an item link
 function Utils:getItemIdFromLink(itemLink)
-    if (not itemLink or itemLink == "") then
+    if (not itemLink
+        or type(itemLink) ~= "string"
+        or itemLink == ""
+    ) then
         return false;
     end
 
-    local itemId = strsub(itemLink, string.find(itemLink, 'Hitem:') + 6, string.find(itemLink, ':', string.find(itemLink, 'Hitem:') + 6) -1);
+    local _, itemId = strsplit(":", itemLink);
+    itemId = tonumber(itemId);
 
     if (not itemId) then
         return false;
@@ -280,9 +284,30 @@ function Utils:getItemIdFromLink(itemLink)
     return itemId;
 end
 
+-- Return an item's name from an item link
+function Utils:getItemNameFromLink(itemLink)
+    if (not itemLink
+        or type(itemLink) ~= "string"
+        or itemLink == ""
+    ) then
+        return false;
+    end
+
+    local itemName = false;
+    local openingBracketPosition = string.find(itemLink, "%[");
+    local closingBracketPosition = string.find(itemLink, "%]");
+    if (openingBracketPosition and closingBracketPosition) then
+        itemName = string.sub(itemLink, openingBracketPosition + 1, closingBracketPosition - 1);
+    end
+
+    return itemName;
+end
+
 -- Check whether a given string
 function Utils:strIsItemLink(s)
-    return not Utils:getItemIdFromLink(s) == false;
+    return type(s) == "string"
+        and s ~= ""
+        and Utils:getItemIdFromLink(s) ~= false;
 end
 
 -- Split a string by a given delimiter

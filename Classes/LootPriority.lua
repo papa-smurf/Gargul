@@ -10,20 +10,6 @@ local Utils = App.Utils;
 local AceGUI = App.Ace.GUI;
 local LootPriority = App.LootPriority;
 
--- Fetch an items prio based on its ID
-function LootPriority:getPriorityByItemId(itemId)
-    Utils:debug("LootPriority:getPriorityByItemId");
-
-    -- We couldn't find an item ID
-    if (not itemId) then
-        return;
-    end
-
-    itemId = tonumber(itemId);
-
-    return App.DB.LootPriority[itemId];
-end
-
 function LootPriority:_init()
     Utils:debug("LootPriority:_init");
 
@@ -39,11 +25,18 @@ function LootPriority:_init()
     self._initialized = true;
 end
 
--- Fetch an item's prio based on its item link
-function LootPriority:getPriorityByItemLink(itemLink)
-    Utils:debug("LootPriority:getPriorityByItemLink");
+-- Fetch an item's prio
+function LootPriority:getPriority(itemIdOrLink, itemName)
+    Utils:debug("LootPriority:getPriority");
 
-    return self:getPriorityByItemId(Utils:getItemIdFromLink(itemLink));
+    local itemId = itemIdOrLink;
+    if (Utils:strIsItemLink(itemIdOrLink)) then
+        itemId = Utils:getItemIdFromLink(itemIdOrLink);
+        itemName = Utils:getItemNameFromLink(itemIdOrLink);
+    end
+
+    return App.DB.LootPriority[itemId]
+        or App.DB.LootPriority[itemName];
 end
 
 -- Append the loot prio as defined in App.DB.LootPriority to an item's tooltip
@@ -55,14 +48,14 @@ function LootPriority:appendLootPrioToTooltip(tooltip)
         return;
     end
 
-    local itemName, itemLink = tooltip:GetItem();
+    local _, itemLink = tooltip:GetItem();
 
-    -- We couldn't find an itemName or link (this can actually happen!)
-    if (not itemName or not itemLink) then
+    -- We couldn't find an itemLink (this can actually happen!)
+    if (not itemLink) then
         return;
     end
 
-    local itemPriority = self:getPriorityByItemLink(itemLink);
+    local itemPriority = self:getPriority(itemLink);
 
     -- No prio defined for this item
     if (not itemPriority) then
@@ -96,7 +89,7 @@ function LootPriority:drawImporter()
     LootPriorityBox:SetFullWidth(true);
     LootPriorityBox:DisableButton(true);
     LootPriorityBox:SetFocus();
-    LootPriorityBox:SetLabel("Provide a prio CSV in the following format (1 line per item): itemID > prio1, equalprio > prio2 > etc..");
+    LootPriorityBox:SetLabel("Provide a prio CSV in the following format (1 line per item): id or name > prio1, equalprio > prio2 > etc");
     LootPriorityBox:SetNumLines(22);
     LootPriorityBox:SetMaxLetters(999999999);
     LootPriorityFrame:AddChild(LootPriorityBox);
@@ -104,7 +97,7 @@ function LootPriority:drawImporter()
     local LootPriorityCSV = "";
 
     if (App.DB.LootPriority and type(App.DB.LootPriority) == "table") then
-        for itemId, priority in pairs(App.DB.LootPriority) do
+        for item, priority in pairs(App.DB.LootPriority) do
             local prioritycount = #priority;
             local priorityString = "";
 
@@ -112,7 +105,7 @@ function LootPriority:drawImporter()
                 priorityString = string.format("%s > %s", priorityString, priority[index]);
             end
 
-            LootPriorityCSV = string.format("%s%s %s\n", LootPriorityCSV, itemId, priorityString);
+            LootPriorityCSV = string.format("%s%s %s\n", LootPriorityCSV, item, priorityString);
         end
     end
 
@@ -151,7 +144,6 @@ end
 function LootPriority:save(data, sender)
     Utils:debug("LootPriority:save");
 
-    -- Make sure all the required properties are available and of the correct type
     if (not data or type(data) ~= "string") then
         return Utils:warning("Invalid data provided");
     end
@@ -165,13 +157,19 @@ function LootPriority:save(data, sender)
             return Utils:warning(string.format("Invalid data provided in line: '%s': missing item id or priority", line));
         end
 
-        local itemId = tonumber(strtrim(segments[1]));
-        LootPriorityData[itemId] = {};
+        local key = strtrim(segments[1]);
+        local keyIsNumeric = tonumber(key) ~= nil;
+
+        if (tonumber(key) ~= nil) then
+            key = tonumber(key);
+        end
+
+        LootPriorityData[key] = {};
 
         for segment = 2, segmentCount do
             local priority = strtrim(segments[segment]);
 
-            tinsert(LootPriorityData[itemId], priority);
+            tinsert(LootPriorityData[key], priority);
         end
     end
 

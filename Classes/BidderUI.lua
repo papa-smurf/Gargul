@@ -180,10 +180,10 @@ function BidderUI:draw(time, minimumBid, itemId, itemName, itemLink, itemIcon)
     local texture = self.Widgets.TimerBarTexture;
     self.Widgets.TimerBar = self.Widgets.TimerBar or LibStub("LibCandyBar-3.0"):New(texture, 350, 24);
     local bar = self.Widgets.TimerBar;
-    local itemPriority = App.LootPriority:getPriorityByItemId(itemId);
+    local itemPriority = App.LootPriority:getPriority(itemId, itemName);
 
     if (itemPriority) then
-        itemPriority = table.concat(App.LootPriority:getPriorityByItemId(itemId), " > ");
+        itemPriority = table.concat(App.LootPriority:getPriority(itemId, itemName), " > ");
     else
         itemPriority = "Off spec";
     end
