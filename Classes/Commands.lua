@@ -52,6 +52,7 @@ Commands.rcsv = Commands.raidcsv;
 
 -- Open the raid gorups window
 Commands.groups = function() App.RaidGroups:drawImporter(); end
+Commands.roster = Commands.groups;
 Commands.gr = Commands.groups;
 
 -- Open the soft reserves window
@@ -65,7 +66,9 @@ Commands.pm = Commands.packmule;
 
 -- Open the loot priority window
 Commands.lootpriority = function() App.LootPriority:drawImporter(); end
+Commands.priority = Commands.lootpriority;
 Commands.lo = Commands.lootpriority;
+Commands.pr = Commands.lootpriority;
 
 Commands.bid = function() App.BidderUI:reopen(); end
 Commands.bi = Commands.bid;
