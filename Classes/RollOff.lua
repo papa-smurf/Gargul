@@ -233,7 +233,7 @@ function RollOff:award(roller, itemLink)
     -- e.g. "playerName [2]" then make sure to remove that number
     local openingBracketPosition = string.find(roller, " %[");
     if (openingBracketPosition) then
-        roller = string.sub(roller, 1, openingBracketPosition);
+        roller = string.sub(roller, 1, openingBracketPosition - 1);
     end
 
     local RollOff = self.CurrentRollOff;
