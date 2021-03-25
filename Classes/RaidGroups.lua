@@ -7,8 +7,13 @@ local _, App = ...;
 
 App.RaidGroups = App.RaidGroups or {
     UIComponents = {},
-    MainTanksByPlayerName = {},
+    rosterString = "",
     migrationInProgress = false,
+    raidGroupsWindowIsActive = false,
+    UIComponents = {
+        Frame = nil,
+        TankAssignmentButton = nil,
+    },
 };
 
 App.Ace.GUI = App.Ace.GUI or LibStub("AceGUI-3.0");
@@ -39,6 +44,15 @@ end
 function RaidGroups:drawImporter()
     Utils:debug("RaidGroups:drawImporter");
 
+    -- Check to make sure the raid groups window isn't active already
+    if (self.UIComponents.MainFrame
+        and self.UIComponents.MainFrame:IsShown()
+    ) then
+        return;
+    elseif (self.UIComponents.MainFrame) then
+        return self.UIComponents.MainFrame:Show();
+    end
+
     -- Create a container/parent frame
     local RaidGroupsFrame = AceGUI:Create("Frame");
     RaidGroupsFrame:SetTitle(App.name .. " v" .. App.version);
@@ -47,21 +61,53 @@ function RaidGroups:drawImporter()
     RaidGroupsFrame:SetWidth(600);
     RaidGroupsFrame:SetHeight(450);
     RaidGroupsFrame.statustext:GetParent():Hide(); -- Hide the statustext bar
+    RaidGroupsFrame:SetCallback("OnClose", function(widget)
+        self.raidGroupsWindowIsActive = false;
+    end);
+    self.UIComponents.MainFrame = RaidGroupsFrame;
 
-    -- Large edit box
+    -- LABEL: Explanation of the RaidGroups window
+    local Explanation = AceGUI:Create("Label");
+    Explanation:SetFullWidth(true);
+    Explanation:SetText([[
+
+Here you can quickly sort your groups based on premade rosters and can easily check whether someone is missing or shouldn't be in the current raid. The format in which you can provide groups is fairly straightforward: you put each group on seperate line, prefixed with the group number. Example:
+
+|cff8aecff1:player1,player2,player3,player4,player5
+2:player6,player7,player8,player9,player10|r
+
+You can use group 9 ('9:') to define main tanks. Assigning main tanks automatically is not possible due to technical limitations, meaning you'll have to click the "Assign Tanks" button multiple times.
+
+]]);
+    RaidGroupsFrame:AddChild(Explanation);
+
+    -- Edit box
     local RaidGroupsBoxContent = "";
     local RaidGroupsBox = AceGUI:Create("MultiLineEditBox");
     RaidGroupsBox:SetFullWidth(true);
     RaidGroupsBox:DisableButton(true);
     RaidGroupsBox:SetFocus();
-    RaidGroupsBox:SetLabel("Put groups on seperate lines prefixed with group number: '1:player1,player2'. Group 9 are the tanks");
-    RaidGroupsBox:SetNumLines(22);
+    RaidGroupsBox:SetLabel("");
+    RaidGroupsBox:SetText(RaidGroups.rosterString);
+    RaidGroupsBox:SetNumLines(9);
     RaidGroupsBox:SetMaxLetters(999999999);
     RaidGroupsFrame:AddChild(RaidGroupsBox);
 
     RaidGroupsBox:SetCallback("OnTextChanged", function(_, _, text)
-        RaidGroupsBoxContent = text;
+        RaidGroups.rosterString = text;
     end)
+
+    local CheckAttendanceOutput = AceGUI:Create("Label");
+    CheckAttendanceOutput:SetFullWidth(true);
+    CheckAttendanceOutput:SetHeight(300);
+    CheckAttendanceOutput:SetText("");
+    RaidGroupsFrame:AddChild(CheckAttendanceOutput);
+
+    local Spacer = AceGUI:Create("SimpleGroup");
+    Spacer:SetLayout("Flow");
+    Spacer:SetWidth(1);
+    Spacer:SetHeight(95);
+    RaidGroupsFrame:AddChild(Spacer);
 
     --[[
         FOOTER BUTTON PARENT FRAME
@@ -72,21 +118,104 @@ function RaidGroups:drawImporter()
     FooterFrame:SetHeight(50);
     RaidGroupsFrame:AddChild(FooterFrame);
 
+    local AttendanceCheckButton = AceGUI:Create("Button");
+    AttendanceCheckButton:SetText("Check Attendance");
+    AttendanceCheckButton:SetWidth(140);
+    AttendanceCheckButton:SetCallback("OnClick", function()
+        self:checkAttendance(RaidGroups.rosterString, CheckAttendanceOutput);
+    end);
+    FooterFrame:AddChild(AttendanceCheckButton);
+
     local SaveButton = AceGUI:Create("Button");
     SaveButton:SetText("Apply");
-    SaveButton:SetWidth(140);
+    SaveButton:SetWidth(80);
     SaveButton:SetCallback("OnClick", function()
-        self:applyRaidGroups(RaidGroupsBoxContent);
+        self:applyRaidGroups(RaidGroups.rosterString);
     end);
     FooterFrame:AddChild(SaveButton);
 
-    local ClearButton = AceGUI:Create("Button");
-    ClearButton:SetText("Clear");
-    ClearButton:SetWidth(140);
-    ClearButton:SetCallback("OnClick", function()
-        RaidGroupsBox:SetText("");
+    Spacer = AceGUI:Create("SimpleGroup");
+    Spacer:SetLayout("Flow");
+    Spacer:SetWidth(120);
+    Spacer:SetHeight(1);
+    FooterFrame:AddChild(Spacer);
+
+    local SetTanksButton = CreateFrame("Button", nil, RaidGroupsFrame.frame, "SecureActionButtonTemplate, GameMenuButtonTemplate");
+    SetTanksButton:SetAttribute("type", "macro");
+    SetTanksButton:SetSize(120, 24);
+    SetTanksButton:SetText("Assign Tanks");
+    SetTanksButton:SetNormalFontObject("GameFontNormal");
+    SetTanksButton:SetHighlightFontObject("GameFontNormal");
+    SetTanksButton:SetPoint("TOPLEFT", SaveButton.frame, "TOPRIGHT", 10);
+    SetTanksButton:SetScript("PreClick", function ()
+        self:updateTankAssignmentButton();
     end);
-    FooterFrame:AddChild(ClearButton);
+
+    self.UIComponents.TankAssignmentButton = SetTanksButton;
+end
+
+-- Check if everyone's in the raid or if the raid contains players who shouldn't be there
+function RaidGroups:checkAttendance(raidGroupCsv, OutPutLabel)
+    Utils:debug("RaidGroups:checkAttendance");
+
+    if (not App.User.isInRaid) then
+        return Utils:warning("You need to be in a raid!");
+    end
+
+    local PlayersOnRoster = {};
+    local MissingPlayers = {};
+    local UnknownPlayers = {};
+
+    for line in raidGroupCsv:gmatch("[^\n]+") do
+        local Segments = Utils:strSplit(line, ":");
+        local group = tonumber(Segments[1]);
+
+        if (not group
+            or type(group) ~= "number"
+            or group < 1
+            or group > 9
+        ) then
+            return Utils:warning("Invalid raid groups provided!");
+        end
+
+        local Players = Utils:strSplit(Segments[2], ",");
+
+        for _, playerName in pairs(Players) do
+            if (group < 9) then
+                PlayersOnRoster[playerName] = true;
+            end
+        end
+    end
+
+    -- Check who's in the raid who doesn't belong
+    local PlayersInRaid = {};
+    for _, Player in pairs(App.User:groupMembers()) do
+        PlayersInRaid[Player.name] = true;
+
+        if (not PlayersOnRoster[Player.name]) then
+            tinsert(UnknownPlayers, Player.name);
+        end
+    end
+
+    -- Check who's missing
+    for playerName in pairs(PlayersOnRoster) do
+        if (not PlayersInRaid[playerName]) then
+            tinsert(MissingPlayers, playerName);
+        end
+    end
+
+    OutPutLabel:SetText(string.format([[
+The following people are missing from the raid:
+|c00be3333%s|r
+
+The following people are in the raid but shouldn't be:
+|c00f7922e%s|r
+]],
+    table.concat(MissingPlayers, ", "),
+    table.concat(UnknownPlayers, ", ")
+    ));
+    OutPutLabel:SetFullWidth(false);
+    OutPutLabel:SetWidth(500);
 end
 
 -- Build a list of migrations based on the csv provided by the user
@@ -98,14 +227,14 @@ function RaidGroups:applyRaidGroups(raidGroupCsv)
     end
 
     if (not App.User.hasAssist) then
-        return Utils:warning("You need to have an assist or lead role!");
+        return Utils:warning("You need to have a lead or assist role!");
     end
 
     if (self.migrationInProgress) then
         return Utils:warning("There's a migration still in progress, wait a bit!");
     end
 
-    local MainTanksByPlayerName = {};
+    local Tanks = {};
     local DesiredGroupByPlayerName = {};
     local PlayersOnTheRoster = {};
 
@@ -113,24 +242,26 @@ function RaidGroups:applyRaidGroups(raidGroupCsv)
         local Segments = Utils:strSplit(line, ":");
         local group = tonumber(Segments[1]);
 
-        if (not group or type(group) ~= "number" or group < 1 or group > 9) then
+        if (not group
+            or type(group) ~= "number"
+            or group < 1
+            or group > 9
+        ) then
             return Utils:warning("Invalid raid groups provided!");
         end
 
         local Players = Utils:strSplit(Segments[2], ",");
 
         for _, playerName in pairs(Players) do
-            -- We can't process the same name twice!
-            if (PlayersOnTheRoster[playerName]) then
-                return Utils:warning(string.format("%s is listed twice on the roster!", playerName));
-            end
-
             -- group 9 is a group we reserve for specifiying the tanks
             if (group < 9) then
+                -- We can't process the same name twice!
+                if (PlayersOnTheRoster[playerName]) then
+                    return Utils:warning(string.format("%s is listed twice on the roster!", playerName));
+                end
+
                 DesiredGroupByPlayerName[playerName] = group;
                 PlayersOnTheRoster[playerName] = true;
-            else
-                tinsert(MainTanksByPlayerName, playerName);
             end
         end
     end
@@ -244,7 +375,71 @@ function RaidGroups:applyRaidGroups(raidGroupCsv)
         Utils:message("Applying raid roster");
         self.migrationInProgress = true;
         self:processMigrations(Migrations, migrationCount, 1);
-        self.MainTanksByPlayerName = MainTanksByPlayerName;
+    end
+end
+
+-- Assigning tanks programmatically requires the use of a "SecureActionButton" which
+-- allows you to assign the main tank role to a maximum of 2 to 3 people depending
+-- on certain circumstances that I'm not fully aware of, requiring multiple clicks by the player
+function RaidGroups:updateTankAssignmentButton()
+    Utils:debug("RaidGroups:updateTankAssignmentButton");
+
+    if (not self.rosterString
+        or type(self.rosterString) ~= "string"
+        or self.rosterString == ""
+    ) then
+        return Utils:warning("No roster defined");
+    end
+
+    local Tanks = {};
+    for line in self.rosterString:gmatch("[^\n]+") do
+        local Segments = Utils:strSplit(line, ":");
+        local group = tonumber(Segments[1]);
+
+        if (group
+            and type(group) == "number"
+            and group == 9
+        ) then
+            local Players = Utils:strSplit(Segments[2], ",");
+
+            for _, playerName in pairs(Players) do
+                tinsert(Tanks, playerName);
+            end
+
+            break;
+        end
+    end
+
+    local Button = self.UIComponents.TankAssignmentButton;
+
+    -- No point in doing anything if there are no tanks
+    if (not Tanks) then
+        return Utils:message("No tanks defined");
+    end
+
+    -- Players who are currently assigned as main tank
+    local MainTankIndexes = { GetPartyAssignment("MAINTANK") };
+    local MainTanksByName = {};
+
+    for _, index in pairs(MainTankIndexes) do
+        local name = GetRaidRosterInfo(index);
+
+        if (name) then
+            MainTanksByName[name] = true;
+        end
+    end
+
+    local macros = "";
+    for _, tankName in pairs(Tanks) do
+        if (not MainTanksByName[tankName]) then
+            macros = string.format("%s/mt %s\n", macros, tankName);
+        end
+    end
+
+    if (macros and macros ~= "") then
+        Button:SetAttribute("macrotext", macros);
+    else
+        Utils:success("All tanks are assigned");
     end
 end
 
@@ -311,14 +506,14 @@ function RaidGroups:processMigrations(Migrations, numberOfMigrations, index)
     if (index < numberOfMigrations) then
         local nextIndex = index + 1;
 
-        C_Timer.After(.5, function()
+        App.Ace:ScheduleTimer(function ()
             RaidGroups:processMigrations(Migrations, numberOfMigrations, nextIndex);
-        end);
+        end, .5);
     else
-        C_Timer.After(2, function()
+        App.Ace:ScheduleTimer(function ()
             self.migrationInProgress = false;
             Utils:success("Finished applying raid roster");
-        end);
+        end, 2);
     end
 end
 
