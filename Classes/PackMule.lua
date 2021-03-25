@@ -43,6 +43,10 @@ function PackMule:_init()
             self.timerId = false;
         end
 
+        if (not Settings:get("PackMule.enabled")) then
+            return;
+        end
+
         -- We keep scouring the loot window every .2 second because
         -- the loot in a loot window can change for any number of reasons:
         -- Quick loot is enabled for items
