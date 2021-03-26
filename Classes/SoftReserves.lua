@@ -41,8 +41,12 @@ end
 function SoftReserves:getSoftReservesByItemId(itemId)
     Utils:debug("SoftReserves:getSoftReservesByItemId");
 
+    if (type(itemId) == "number") then
+        itemId = tostring(itemId);
+    end
+
     -- We couldn't find an item ID
-    if (not itemId) then
+    if (not itemId or itemId == "") then
         return;
     end
 
