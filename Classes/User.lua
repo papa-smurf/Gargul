@@ -2,6 +2,7 @@ local _, App = ...;
 
 App.User = {
     initialized = false,
+    groupSetupChangedTimer = false,
 
     id = 0,
     name = "",
@@ -45,7 +46,16 @@ end
 -- Refresh the User's details after the group
 -- composition or loot method changes
 function User:groupSetupChanged(_, event)
-    User:refresh();
+    -- The timer throttle is necessary to prevent performance
+    -- issues when an entire raid comes online after a break for example
+    if (User.groupSetupChangedTimer) then
+        return;
+    end
+
+    User.groupSetupChangedTimer = App.Ace:ScheduleTimer(function ()
+        User:refresh();
+        User.groupSetupChangedTimer = false;
+    end, .5);
 end
 
 -- Refresh the user's details
