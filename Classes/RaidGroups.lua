@@ -37,7 +37,7 @@ function RaidGroups:toCSV()
         csv = csv .. Player.name .. ",";
     end
 
-    Utils:frameMessage(string.sub("csv", 1, -2));
+    Utils:frameMessage(string.sub(csv, 1, -2));
 end
 
 -- Draw the ui that allows us to import/write a raid roster
