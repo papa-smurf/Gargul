@@ -55,7 +55,7 @@ function User:groupSetupChanged(_, event)
     User.groupSetupChangedTimer = App.Ace:ScheduleTimer(function ()
         User:refresh();
         User.groupSetupChangedTimer = false;
-    end, .5);
+    end, 1);
 end
 
 -- Refresh the user's details

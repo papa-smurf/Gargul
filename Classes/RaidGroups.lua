@@ -71,7 +71,7 @@ function RaidGroups:drawImporter()
     Explanation:SetFullWidth(true);
     Explanation:SetText([[
 
-Here you can quickly sort your groups based on premade rosters and can easily check whether someone is missing or shouldn't be in the current raid. The format in which you can provide groups is fairly straightforward: you put each group on seperate line, prefixed with the group number. Example:
+Here you can quickly sort your groups based on premade rosters and can easily check whether someone is missing or shouldn't be in the current raid. The format in which you can provide groups is fairly straightforward: you put each group on a seperate line, prefixed with the group number. Example:
 
 |cff8aecff1:player1,player2,player3,player4,player5
 2:player6,player7,player8,player9,player10|r
@@ -205,7 +205,7 @@ function RaidGroups:checkAttendance(raidGroupCsv, OutPutLabel)
     end
 
     OutPutLabel:SetText(string.format([[
-The following people are missing from the raid:
+The following people are missing in the raid:
 |c00be3333%s|r
 
 The following people are in the raid but shouldn't be:
@@ -290,7 +290,7 @@ function RaidGroups:applyRaidGroups(raidGroupCsv)
     -- We can't sort the groups if there's anyone in the raid who doesn't belong!
     if (UnwantedPlayers[1]) then
         return Utils:warning(string.format(
-            "The following players are not part of the group roster: %s",
+            "The following players are not part of the roster: %s",
             table.concat(UnwantedPlayers, ", ")
         ));
     end
