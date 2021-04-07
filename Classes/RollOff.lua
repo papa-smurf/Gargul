@@ -262,6 +262,9 @@ function RollOff:award(roller, itemLink)
             );
         end
 
+        -- Add the player we awarded the item to to the item's tooltip
+        App.AwardedLoot:addWinner(roller, itemLink);
+
         RollOff = {};
         App.MasterLooterUI:reset();
     end

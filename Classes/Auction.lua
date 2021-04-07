@@ -354,6 +354,9 @@ function Auction:award(bidder)
             "GUILD"
         ):send();
 
+        -- Add the player we awarded the item to to the item's tooltip
+        App.AwardedLoot:addWinner(bidder, Auction.itemLink);
+
         self:reset();
         Auction = {};
     end

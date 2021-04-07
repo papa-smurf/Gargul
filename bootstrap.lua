@@ -66,6 +66,7 @@ function App:_init()
     App.Comm:_init();
     App.User:_init();
     App.LootPriority:_init();
+    App.AwardedLoot:_init();
     App.SoftReserves:_init();
     App.DroppedLoot:_init();
     App.PackMule:_init();
