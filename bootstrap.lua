@@ -2,7 +2,7 @@
 local appName, App = ...;
 
 --[[ APP VERSION ]]
-App.version = "2.2.5";
+App.version = "2.2.6";
 
 App.name = appName;
 App._initialized = false;
@@ -36,7 +36,6 @@ App.bootstrap = function(_, _, addonName)
     -- Show a welcome message
     local successfullyLoadedMessage = "Sucessfully loaded (v" .. App.version .. ")";
     App.Utils:debug(string.format("Successfully loaded v%s", App.version));
-    App.Utils:success("v" .. App.Utils:capitalize(App.version));
 
     -- Initialize our classes / services
     App:_init();

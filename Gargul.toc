@@ -3,7 +3,7 @@
 ## Title: |cff8aecffGargul|r
 ## Author: <Give it a Lick> Zhorax
 ## Notes: Loot addon that supports soft reserves, rolling, DKP bidding / syncing, loot priorities and much more
-## Version: 2.2.5
+## Version: 2.2.6
 ## DefaultState: enabled
 ## SavedVariables: GargulDB
 
