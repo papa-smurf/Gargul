@@ -44,6 +44,9 @@ Commands.rolloff = function(...) App.MasterLooterUI:draw(...); end
 Commands.roll = Commands.rolloff;
 Commands.ro = Commands.roll;
 
+Commands.award = function(...) App.AwardedLoot:addWinner(...); end
+Commands.a = Commands.award;
+
 -- Export the current raid roster to csv
 Commands.raidcsv = function ()
     App.RaidGroups:toCSV();
@@ -109,56 +112,31 @@ Commands.bu = Commands.buffs;
 function Commands:_dispatch (str)
     App.User:refresh();
 
-    local path = Commands; -- required for updating found table.
+    local command = str:match("^(%S+)");
+    local argumentString = "";
+
+    if (command) then
+        argumentString = strsub(str, strlen(command) + 2);
+    end
+
+    local arguments = { strsplit(" ", argumentString, 2) };
 
     if (not str or #str < 1) then
         -- User entered "/gl" with no additional arguments
-        Commands.dashboard();
-        return;
+        return Commands.dashboard();
     end
 
     Utils:debug("Dispatching " .. str);
 
-    -- Search the str for a command / itemLink combination
-    local command, itemLink = str:match("^(%w+)%s+(.+)$");
-
-    -- We need to treat command requests with an item
-    -- link as an argument a little differently, since
-    -- item links may include spaces and shoult NOT be split
-    if (command and itemLink) then
-         return pcall(function () return path[command](itemLink); end);
+    if (command == "_dispatch") then
+        return Utils:warning("The 'dispatch' method is protected!");
     end
 
-    if (str == "_dispatch") then
-        App.warning("The 'dispatch' method is protected!");
-        return;
+    if (command and self[command] and type(self[command]) == "function") then
+        return self[command](unpack(arguments));
     end
 
-    local arguments = {};
-    for _, argument in ipairs({ string.split(" ", str, 2) }) do
-        if (#argument > 0) then
-            table.insert(arguments, argument);
-        end
-    end
-
-    for id, argument in ipairs(arguments) do
-        if (#argument > 0) then -- if string length is greater than 0.
-            argument = argument:lower();
-
-            if (path[argument]) then
-                if (type(path[argument]) == "function") then
-                    -- all remaining arguments passed to our function!
-                    path[argument](select(id + 1, unpack(arguments)));
-                    return;
-                elseif (type(path[argument]) == "table") then
-                    path = path[argument]; -- another sub-table found!
-                end
-            else
-                -- does not exist!
-                return self:help();
-            end
-        end
-    end
+    return self:help();
 end;
 
 -- Add slash command
