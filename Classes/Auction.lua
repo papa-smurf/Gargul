@@ -322,11 +322,7 @@ function Auction:award(bidder)
         );
     end
 
-    awardMessage = string.format("%s awarded to %s for %s DKP. Congrats!",
-        Auction.itemLink,
-        bidder,
-        bid
-    );
+
 
     local award = function ()
         SendChatMessage(
@@ -355,7 +351,7 @@ function Auction:award(bidder)
         ):send();
 
         -- Add the player we awarded the item to to the item's tooltip
-        App.AwardedLoot:addWinner(bidder, Auction.itemLink);
+        App.AwardedLoot:addWinner(bidder, Auction.itemLink, dkp);
 
         self:reset();
         Auction = {};

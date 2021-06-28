@@ -39,6 +39,7 @@ function DB:_init()
     GargulDB.LootPriority = GargulDB.LootPriority or {};
     GargulDB.Settings = GargulDB.Settings or {};
     GargulDB.SoftReserves = GargulDB.SoftReserves or {};
+    GargulDB.AwardHistory = GargulDB.AwardHistory or {};
 
     -- Provide a shortcut for each table
     self.Characters = GargulDB.Characters;
@@ -46,6 +47,7 @@ function DB:_init()
     self.LootPriority = GargulDB.LootPriority;
     self.Settings = GargulDB.Settings;
     self.SoftReserves = GargulDB.SoftReserves;
+    self.AwardHistory = GargulDB.AwardHistory;
 
     -- Fire DB:store before every logout/reload/exit
     App.Events:register("DBPlayerLogoutListener", "PLAYER_LOGOUT", self.store);
@@ -64,6 +66,7 @@ function DB:store()
     GargulDB.LootPriority = App.DB.LootPriority;
     GargulDB.Settings = App.Settings.Active;
     GargulDB.SoftReserves = App.DB.SoftReserves;
+    GargulDB.AwardHistory = App.DB.AwardHistory;
 end
 
 -- Checks if all of our tables are valid

@@ -242,26 +242,7 @@ function RollOff:award(roller, itemLink)
     local confirmationMessage = "";
     itemLink = Utils:tableGet(self.CurrentRollOff, "itemLink", itemLink);
 
-    awardMessage = string.format("%s awarded to %s. Congrats!",
-        itemLink,
-        roller
-    );
-
     local award = function ()
-        if (App.User.isInRaid) then
-            SendChatMessage(
-                awardMessage,
-                "RAID",
-                "COMMON"
-            );
-        else
-            SendChatMessage(
-                awardMessage,
-                "PARTY",
-                "COMMON"
-            );
-        end
-
         -- Add the player we awarded the item to to the item's tooltip
         App.AwardedLoot:addWinner(roller, itemLink);
 

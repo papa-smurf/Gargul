@@ -9,8 +9,7 @@ local _, App = ...;
 
 App.AwardedLoot = {
     initialized = false,
-
-    AwardHistory = {},
+    AwardedThisSession = {},
 };
 
 local Utils = App.Utils;
@@ -35,8 +34,8 @@ end
 function AwardedLoot:appendAwardedLootToTooltip(tooltip)
     Utils:debug("AwardedLoot:appendAwardedLootToTooltip");
 
-    -- No tooltip was provided
-    if (not tooltip) then
+    -- No tooltip was provided or the user is not in a party/raid
+    if (not tooltip or not App.User.isInParty) then
         return;
     end
 
@@ -47,7 +46,7 @@ function AwardedLoot:appendAwardedLootToTooltip(tooltip)
         return;
     end
 
-    local awardedTo = table.concat(Utils:tableGet(self.AwardHistory, itemLink, {}), ", ");
+    local awardedTo = table.concat(AwardedLoot.AwardedThisSession, ", ");
 
     if (not awardedTo
         or type(awardedTo) ~= "string"
@@ -63,19 +62,84 @@ function AwardedLoot:appendAwardedLootToTooltip(tooltip)
     tooltip:AddLine(string.format("|c008aecff %s|r", awardedTo));
 end
 
--- Add a winner for a specific item to the AwardHistory table
-function AwardedLoot:addWinner(winner, itemLink)
+-- Add a winner for a specific item to the SessionHistory table
+function AwardedLoot:addWinner(winner, itemLink, dkp, announce)
     Utils:debug("AwardedLoot:addWinner");
 
-    if (not itemLink or type(itemLink) ~= "string" or itemLink == ""
-        or not winner or type(winner) ~= "string" or winner == ""
-    ) then
-        return;
+    if (not winner or type(winner) ~= "string" or winner == "") then
+        return Utils:debug("Invalid winner provided for AwardedLoot:addWinner");
     end
 
-    local AwardHistory = Utils:tableGet(self.AwardHistory, itemLink, {});
-    tinsert(AwardHistory, winner);
-    self.AwardHistory[itemLink] = AwardHistory;
+    if (not itemLink or type(itemLink) ~= "string" or itemLink == "") then
+        return Utils:debug("Invalid itemLink provided for AwardedLoot:addWinner");
+    end
+
+    local itemId = Utils:getItemIdFromLink(itemLink);
+
+    if (not itemId) then
+        return Utils:debug("Invalid itemLink provided for AwardedLoot:addWinner");
+    end
+
+    -- Enable the announce switch by default
+    if (type(announce) ~= "boolean") then
+        announce = true;
+    end
+
+    -- Insert the award in the SessionHistory table used for rendering tooltips
+    local SessionHistory = Utils:tableGet(AwardedLoot.AwardedThisSession, itemLink, {});
+    tinsert(SessionHistory, winner);
+    AwardedLoot.AwardedThisSession[itemLink] = winner;
+
+    local AwardEntry = {
+            itemLink = itemLink,
+            itemId = itemId,
+            awardedTo = winner,
+            timestamp = GetServerTime()
+        };
+
+    -- Insert the award in the more permanent AwardHistory table (for export / audit purposes)
+    tinsert(App.DB.AwardHistory, AwardEntry);
+
+    if (announce) then
+        awardMessage = string.format("%s was awarded to %s. Congrats!",
+            itemLink,
+            winner,
+            dkp
+        );
+
+        local publicChannel = "PARTY";
+        if (App.User.isInRaid) then
+            publicChannel = "RAID";
+        end
+
+        if (type(dkp) == 'number' and dkp > 0) then
+            awardMessage = string.format("%s awarded to %s for %s DKP. Congrats!",
+                itemLink,
+                winner,
+                dkp
+            );
+
+            SendChatMessage(
+                awardMessage,
+                publicChannel,
+                "COMMON"
+            );
+
+            SendChatMessage(
+                awardMessage,
+                "GUILD",
+                "COMMON"
+            );
+
+            return;
+        end
+
+        SendChatMessage(
+            awardMessage,
+            publicChannel,
+            "COMMON"
+        );
+    end
 end
 
 Utils:debug("AwardedLoot.lua");
