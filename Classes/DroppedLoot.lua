@@ -73,9 +73,11 @@ function DroppedLoot:hookClickEvents()
                     return;
                 end
 
-                -- Open the auctioneer window if both alt and shift are pressed
+                -- Open the award window if both alt and shift are pressed
                 if (IsShiftKeyDown()) then
-                    App.AuctioneerUI:draw(itemLink);
+                    App.AwardUI:draw(itemLink);
+
+                -- Open the default roll window
                 else
                     App.MasterLooterUI:draw(itemLink);
                 end

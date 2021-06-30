@@ -38,6 +38,18 @@ App.Data.Constants = {
         warrior = 9,
     },
 
+    ClassHexColors = {
+        druid = "FF7D0A",
+        hunter = "ABD473",
+        mage = "69CCF0",
+        paladin = "F58CBA",
+        priest = "FFFFFF",
+        rogue = "FFF569",
+        shaman = "0070DE",
+        warlock = "9482C9",
+        warrior = "C79C6E",
+    },
+
     ClassRgbColors = {
         druid = {r = 1, g = .48627, b = .0392, a = 1},
         hunter = {r = .6666, g = .827450, b = .44705, a = 1},
@@ -121,6 +133,7 @@ App.Data.Constants = {
             startRollOff = 11,
             stopAuction = 12,
             stopRollOff = 13,
+            broadcastWishLists = 14
         },
     },
 

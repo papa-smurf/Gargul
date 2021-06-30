@@ -67,6 +67,7 @@ function App:_init()
     App.LootPriority:_init();
     App.AwardedLoot:_init();
     App.SoftReserves:_init();
+    App.WishLists:_init();
     App.DroppedLoot:_init();
     App.PackMule:_init();
 
@@ -93,8 +94,11 @@ function App:hookBagSlotEvents()
         if (mouseButtonPressed == "LeftButton"
                 and IsAltKeyDown()
         ) then
+            -- Open the award window if both alt and shift are pressed
             if (IsShiftKeyDown()) then
-                App.AuctioneerUI:draw(itemLink);
+                App.AwardUI:draw(itemLink);
+
+            -- Open the default roll window
             else
                 App.MasterLooterUI:draw(itemLink);
             end

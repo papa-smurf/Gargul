@@ -26,6 +26,7 @@ Classes/DB.lua
 Classes/Settings.lua
 Classes/Importer.lua
 Classes/SoftReserves.lua
+Classes/WishLists.lua
 Classes/Exporter.lua
 Classes/Auction.lua
 Classes/Bidder.lua
@@ -34,6 +35,7 @@ Classes/BidderUI.lua
 Classes/RollerUI.lua
 Classes/RollOff.lua
 Classes/MasterLooterUI.lua
+Classes/AwardUI.lua
 Classes/Commands.lua
 Classes/LootPriority.lua
 Classes/AwardedLoot.lua

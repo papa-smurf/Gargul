@@ -39,6 +39,16 @@ App.Data.DefaultSettings = {
                 offsetY = 0,
             }
         },
+        Award = {
+            autoClose = false,
+            timer = 25,
+            Position = {
+                point = "CENTER",
+                relativePoint = "CENTER",
+                offsetX = 0,
+                offsetY = 0,
+            }
+        },
         Bidder = {
             timer = 25,
             Position = {

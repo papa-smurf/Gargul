@@ -154,6 +154,8 @@ function Comm:dispatch(CommMessage)
         return App.RollOff:stop(CommMessage);
     elseif (action == CommActions.broadcastSoftReserves) then
         return App.SoftReserves:receiveSoftReserves(CommMessage);
+    elseif (action == CommActions.broadcastWishLists) then
+        return App.SoftReserves:receiveWishLists(CommMessage);
     elseif (action == CommActions.inspectBags) then
         return App.BagInspector:report(CommMessage);
     elseif (action == CommActions.requestAppVersion) then
