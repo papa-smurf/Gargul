@@ -9,11 +9,13 @@ local _, App = ...;
 
 App.DB = {
     initialized = false,
+    AwardHistory = {},
     Characters = {},
     LootHistory = {},
     LootPriority = {},
     Settings = {},
     SoftReserves = {},
+    WishLists = {},
 };
 
 local DB = App.DB;
@@ -34,20 +36,31 @@ function DB:_init()
     end
 
     -- Prepare our database tables
+    GargulDB.AwardHistory = GargulDB.AwardHistory or {};
     GargulDB.Characters = GargulDB.Characters or {};
     GargulDB.LootHistory = GargulDB.LootHistory or {};
     GargulDB.LootPriority = GargulDB.LootPriority or {};
     GargulDB.Settings = GargulDB.Settings or {};
     GargulDB.SoftReserves = GargulDB.SoftReserves or {};
-    GargulDB.AwardHistory = GargulDB.AwardHistory or {};
+    GargulDB.WishLists = GargulDB.WishLists or {};
+
+--     -- !! TEMPORARY !!
+--     GargulDB.WishLists = {
+--         ["Staff of Hale Magefire"] = {
+--             ["Léon"] = 1.4,
+--             ["Arvada"] = 1.6,
+--             ["Zhorax"] = .4
+--         }
+--     };
 
     -- Provide a shortcut for each table
+    self.AwardHistory = GargulDB.AwardHistory;
     self.Characters = GargulDB.Characters;
     self.LootHistory = GargulDB.LootHistory;
     self.LootPriority = GargulDB.LootPriority;
     self.Settings = GargulDB.Settings;
     self.SoftReserves = GargulDB.SoftReserves;
-    self.AwardHistory = GargulDB.AwardHistory;
+    self.WishLists = GargulDB.WishLists;
 
     -- Fire DB:store before every logout/reload/exit
     App.Events:register("DBPlayerLogoutListener", "PLAYER_LOGOUT", self.store);
@@ -61,12 +74,13 @@ end
 function DB:store()
     Utils:debug("DB:store");
 
+    GargulDB.AwardHistory = App.DB.AwardHistory;
     GargulDB.Characters = App.DB.Characters;
     GargulDB.LootHistory = App.DB.LootHistory;
     GargulDB.LootPriority = App.DB.LootPriority;
     GargulDB.Settings = App.Settings.Active;
     GargulDB.SoftReserves = App.DB.SoftReserves;
-    GargulDB.AwardHistory = App.DB.AwardHistory;
+    GargulDB.WishLists = App.DB.WishLists;
 end
 
 -- Checks if all of our tables are valid
@@ -287,11 +301,18 @@ function DB:lootHistoryTableFillMetadata()
 end
 
 -- Reset the tables
-function DB:resetCharactersAndLoot()
-    Utils:debug("DB:resetCharactersAndLoot");
+function DB:reset()
+    Utils:debug("DB:reset");
 
+    self.AwardHistory = {};
     self.Characters = {};
     self.LootHistory = {};
+    self.LootPriority = {};
+    self.Settings = {};
+    self.SoftReserves = {};
+    self.WishLists = {};
+
+    Utils:success("Tables reset");
 end
 
 Utils:debug("DB.lua");

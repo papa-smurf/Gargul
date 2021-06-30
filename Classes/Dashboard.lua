@@ -23,11 +23,11 @@ Dashboard.Widgets = {
 
 -- Add a resut table confirmation dialog to Blizzard's global StaticPopupDialogs object
 StaticPopupDialogs[App.name .. "_RESET_TABLES_CONFIRMATION"] = {
-    text = "Are you sure you want to reset your tables? This cannot be undone!",
+    text = "Are you sure you want to reset ALL of your tables? This cannot be undone!",
     button1 = "Yes",
     button2 = "No",
     OnAccept = function()
-        App.DB:resetCharactersAndLoot();
+        App.DB:reset();
         App.Dashboard:refresh();
     end,
     timeout = 0,
