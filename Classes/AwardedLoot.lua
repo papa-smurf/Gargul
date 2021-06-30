@@ -35,7 +35,7 @@ function AwardedLoot:appendAwardedLootToTooltip(tooltip)
     Utils:debug("AwardedLoot:appendAwardedLootToTooltip");
 
     -- No tooltip was provided or the user is not in a party/raid
-    if (not tooltip or not App.User.isInParty) then
+    if (type(tooltip) ~= "table" or not App.User.isInGroup) then
         return;
     end
 
@@ -46,7 +46,7 @@ function AwardedLoot:appendAwardedLootToTooltip(tooltip)
         return;
     end
 
-    local awardedTo = table.concat(AwardedLoot.AwardedThisSession, ", ");
+    local awardedTo = table.concat(Utils:tableGet(AwardedLoot.AwardedThisSession, itemLink, {}), ", ");
 
     if (not awardedTo
         or type(awardedTo) ~= "string"
@@ -83,12 +83,16 @@ function AwardedLoot:addWinner(winner, itemLink, dkp, announce)
     -- Enable the announce switch by default
     if (type(announce) ~= "boolean") then
         announce = true;
+
+    -- No need to announce if the player is not in a group of any kind
+    elseif (not App.User.isInGroup) then
+        announce = false;
     end
 
     -- Insert the award in the SessionHistory table used for rendering tooltips
     local SessionHistory = Utils:tableGet(AwardedLoot.AwardedThisSession, itemLink, {});
     tinsert(SessionHistory, winner);
-    AwardedLoot.AwardedThisSession[itemLink] = winner;
+    AwardedLoot.AwardedThisSession[itemLink] = SessionHistory;
 
     local AwardEntry = {
             itemLink = itemLink,
