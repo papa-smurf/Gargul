@@ -460,7 +460,6 @@ function Utils:tableGet(table, keyString, default)
             or type(keyString) ~= "string"
             or keyString == ""
     ) then
-        Utils:warning("Invalid key provided in Utils:tableGet");
         return default;
     end
 
@@ -469,7 +468,6 @@ function Utils:tableGet(table, keyString, default)
     local firstKey = keys[1];
 
     if (not numberOfKeys or not firstKey) then
-        Utils:warning("Invalid key provided in Utils:tableGet");
         return default;
     end
 
