@@ -2,6 +2,7 @@ local _, App = ...;
 
 App.Ace.GUI = App.Ace.GUI or LibStub("AceGUI-3.0");
 App.SoftReserves = {
+    _initialized = false,
     broadcastInProgress = false,
 };
 
@@ -107,16 +108,16 @@ function SoftReserves:appendSoftReserveInfoToTooltip(tooltip)
     end
 
     local activeReserves = {};
-    local playersInRaids = {};
+    local playersInRaid = {};
     -- Fetch the name of everyone currently in the raid/party
     for _, player in pairs(App.User:groupMembers()) do
-        tinsert(playersInRaids, player.name);
+        tinsert(playersInRaid, player.name);
     end
 
     -- Make sure we only show shoft reserves of people
     -- Who are actually in the raid
     for _, player in pairs(reserves) do
-        if (Utils:inArray(playersInRaids, player)) then
+        if (Utils:inArray(playersInRaid, player)) then
             tinsert(activeReserves, player);
         end
     end
