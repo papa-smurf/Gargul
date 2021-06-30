@@ -22,7 +22,6 @@ function Exporter:draw()
 
     local exportString = "dateTime,character,itemID";
     for _, AwardEntry in pairs(App.DB.AwardHistory) do
-        Utils:printTable(AwardEntry);
         exportString = string.format("%s\n%s,%s,%s",
             exportString,
             date('%Y-%m-%d', AwardEntry.timestamp),
