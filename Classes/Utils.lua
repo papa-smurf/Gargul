@@ -381,6 +381,10 @@ end
 
 -- Overwrite/compliment the original table (left) with the values from the right table
 function Utils:tableMerge(left, right)
+    if (type(left) ~= "table" or type(right) ~= "table") then
+        return false;
+    end
+
     for key,value in pairs(right) do
         if (type(value) == "table") then
             if (type(left[key] or false) == "table") then
@@ -450,6 +454,14 @@ function Utils:tableSlice(tbl, offset, length, preserveKeys)
     end
 
     return Slice;
+end
+
+function Utils:strPadLeft(str, padChar, length)
+    return str .. string.rep(padChar, length - #str);
+end
+
+function Utils:strPadRight(str, padChar, length)
+    return string.rep(padChar, length - #str) .. str;
 end
 
 -- Get a table value by a given key. Use dot notation to traverse multiple levels e.g:

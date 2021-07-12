@@ -40,8 +40,8 @@ function WishLists:_init()
 end
 
 -- Fetch an item's wish lists based on its ID
-function WishLists:getWishListsByItemName(itemId)
-    Utils:debug("WishLists:getWishListsByItemName");
+function WishLists:getWishListsByItemId(itemId)
+    Utils:debug("WishLists:getWishListsByItemId");
 
     if (type(itemId) == "number") then
         itemId = tostring(itemId);
@@ -52,7 +52,17 @@ function WishLists:getWishListsByItemName(itemId)
         return;
     end
 
-    return App.DB.WishLists[itemId];
+    if (not App.Data.Constants.IdenticalItemsWithDifferentIds[itemId]) then
+        return App.DB.WishLists[itemId];
+    end
+
+    -- The item linked to this id can have multiple IDs (head of Onyxia for example)
+    local Wishes = {};
+    for _, linkedItemId in pairs(App.Data.Constants.IdenticalItemsWithDifferentIds[itemId]) do
+        Wishes = Utils:tableMerge(Wishes, Utils:tableGet(App.DB.WishLists, tostring(linkedItemId), {}));
+    end
+
+    return Wishes;
 end
 
 -- Fetch an item's wish lists based on its item link
@@ -63,14 +73,14 @@ function WishLists:getWishListsByItemLink(itemLink)
         return;
     end
 
-    return self:getWishListsByItemName(Utils:getItemNameFromLink(string.lower(itemLink)));
+    return self:getWishListsByItemId(Utils:getItemIdFromLink(string.lower(itemLink)));
 end
 
 -- Fetch an item's wish lists based on its item link
 function WishLists:itemIdIsReservedByPlayer(itemId, player)
     Utils:debug("WishLists:itemIdIsReservedByPlayer");
 
-    local reserves = self:getWishListsByItemName(itemId);
+    local reserves = self:getWishListsByItemId(itemId);
 
     if (not reserves) then
         return false;
@@ -94,10 +104,10 @@ function WishLists:appendWishListInfoToTooltip(tooltip)
         return;
     end
 
-    local itemName, itemLink = tooltip:GetItem();
+    local _, itemLink = tooltip:GetItem();
 
-    -- We couldn't find an itemName or link (this can actually happen!)
-    if (not itemName or not itemLink) then
+    -- We couldn't find an itemLink (this can actually happen!)
+    if (not itemLink) then
         return;
     end
 
@@ -119,7 +129,7 @@ function WishLists:appendWishListInfoToTooltip(tooltip)
 
     local TooltipEntries = {};
     for playerName, prio in pairs(Wishes) do
-        if (PlayersInRaid[playerName]) then
+        if (PlayersInRaid[string.gsub(playerName, "(OS)", "")]) then
             tinsert(TooltipEntries, {prio, playerName});
         end
     end
@@ -136,7 +146,7 @@ function WishLists:appendWishListInfoToTooltip(tooltip)
         tooltip:AddLine(string.format(
             "|cFF%s%s[%s]|r",
             color,
-            Entry[2],
+            Utils:capitalize(Entry[2]),
             Entry[1]
         ));
     end
@@ -228,16 +238,9 @@ function WishLists:import(data, sender)
     end
 
     local WishListData = {};
-    for _, WishListEntry in pairs(WebsiteData) do
-        local itemName = Utils:tableGet(WishListEntry, "name", false);
-
-        if (not itemName or type(itemName) ~= "string") then
-            Utils:error("Invalid data provided");
-            return false;
-        end
-
-        WishListData[itemName] = {};
-        for _, characterString in pairs (Utils:tableGet(WishListEntry, "characters", {})) do
+    for itemId, WishListEntries in pairs(WebsiteData) do
+        WishListData[itemId] = {};
+        for _, characterString in pairs (WishListEntries) do
             local stringParts = Utils:strSplit(characterString, "|");
             local characterName = "";
             local order = .0;
@@ -252,7 +255,7 @@ function WishLists:import(data, sender)
                 return false;
             end
 
-            WishListData[itemName][characterName] = order;
+            WishListData[itemId][characterName] = order;
         end
     end
 

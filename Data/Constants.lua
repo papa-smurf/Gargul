@@ -12,6 +12,16 @@ App.Data.Constants = {
     success = 0,
     failure = 1,
 
+    IdenticalItemsWithDifferentIds = {
+        -- Head of Onyxia
+        ["18422"] = {18422, 18423},
+        ["18423"] = {18422, 18423},
+
+        -- Magtheridon's Head
+        ["32385"] = {32385, 32386},
+        ["32386"] = {32385, 32386},
+    },
+
     UntradeableItems = {
         "Splinter of Atiesh",
     },
