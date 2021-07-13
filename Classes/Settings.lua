@@ -152,6 +152,18 @@ function Settings:showSettingsMenu(Frame)
     IncludeSoftReservesInLootAnnouncementCheckbox:SetChecked(self:get("includeSoftReservesInLootAnnouncement"));
     IncludeSoftReservesInLootAnnouncementCheckbox:SetPoint("TOPLEFT", AnnounceMinimumQualityDropdown, "BOTTOMLEFT", 0, -8);
 
+    -- Do you want to include softreserve details on dropped loot?
+    local HideWishListsOfPeopleNotInraid = UI:createSettingCheckbox(
+        Frame,
+        "Hide wishlist of people not in raid",
+        "Checking this will make sure that you only see the names of players who are actually in your raid",
+        function (_, checked)
+            self:set("hideWishListsOfPeopleNotInraid", checked);
+        end
+    );
+    HideWishListsOfPeopleNotInraid:SetChecked(self:get("hideWishListsOfPeopleNotInraid"));
+    HideWishListsOfPeopleNotInraid:SetPoint("TOPLEFT", IncludeSoftReservesInLootAnnouncementCheckbox, "BOTTOMLEFT", 0, -8);
+
     -- Do you want to see the countdown window with roll button when a rolloff starts?
     local ShowRollOffWindowCheckbox = UI:createSettingCheckbox(
         Frame,
@@ -162,7 +174,7 @@ function Settings:showSettingsMenu(Frame)
         end
     );
     ShowRollOffWindowCheckbox:SetChecked(self:get("showRollOffWindow"));
-    ShowRollOffWindowCheckbox:SetPoint("TOPLEFT", IncludeSoftReservesInLootAnnouncementCheckbox, "BOTTOMLEFT", 0, -8);
+    ShowRollOffWindowCheckbox:SetPoint("TOPLEFT", HideWishListsOfPeopleNotInraid, "BOTTOMLEFT", 0, -8);
 
     -- Do you want this addon to operate quietly? Aka no sounds when auction starts/ends etc?
     local MuteAddonCheckbox = UI:createSettingCheckbox(

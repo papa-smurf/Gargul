@@ -11,6 +11,7 @@ App.Data.DefaultSettings = {
     announceLootToChat = true,
     minimumQualityOfAnnouncedLoot = 4,
     includeSoftReservesInLootAnnouncement = true,
+    hideWishListsOfPeopleNotInraid = true,
     showRollOffWindow = true,
     debugModeEnabled = false,
 

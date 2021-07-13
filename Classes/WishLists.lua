@@ -98,9 +98,10 @@ function WishLists:appendWishListInfoToTooltip(tooltip)
         return;
     end
 
-    -- If we're not in a group there's no
-    -- point in showing wishlists!
-    if (not App.User.isInGroup) then
+    -- If we're not in a group there's no point in showing wishlists! (unless the non-raider setting is active)
+    if (not App.User.isInGroup
+        and App.Settings:get("hideWishListsOfPeopleNotInraid")
+    ) then
         return;
     end
 
@@ -124,14 +125,21 @@ function WishLists:appendWishListInfoToTooltip(tooltip)
         PlayersInRaid[string.lower(Player.name)] = string.lower(Player.class);
     end
 
-    -- Add the header
-    tooltip:AddLine(string.format("\n|c00efb8cd%s", "Wish List"));
-
+    local itemIsOnSomeonesWishlist = false;
     local TooltipEntries = {};
     for playerName, prio in pairs(Wishes) do
-        if (PlayersInRaid[string.gsub(playerName, "(OS)", "")]) then
+        if (not App.Settings:get("hideWishListsOfPeopleNotInraid")
+            or PlayersInRaid[string.gsub(playerName, "(OS)", "")]
+        ) then
             tinsert(TooltipEntries, {prio, playerName});
+            itemIsOnSomeonesWishlist = true;
         end
+    end
+
+    -- Only add the 'Wishlist' header if the item is actually on someone's list
+    if (itemIsOnSomeonesWishlist) then
+        -- Add the header
+        tooltip:AddLine(string.format("\n|c00efb8cd%s", "Wishlist"));
     end
 
     -- Sort the TooltipEntries based on prio (lowest to highest)
@@ -237,31 +245,39 @@ function WishLists:import(data, sender)
         return false;
     end
 
-    local WishListData = {};
-    for itemId, WishListEntries in pairs(WebsiteData) do
-        WishListData[itemId] = {};
-        for _, characterString in pairs (WishListEntries) do
-            local stringParts = Utils:strSplit(characterString, "|");
-            local characterName = "";
-            local order = .0;
+    -- Import the actual wishlist data
+    if (WebsiteData.wishlists and type(WebsiteData.wishlists) == "table") then
+        local WishListData = {};
+        for itemId, WishListEntries in pairs(WebsiteData.wishlists) do
+            WishListData[itemId] = {};
+            for _, characterString in pairs (WishListEntries) do
+                local stringParts = Utils:strSplit(characterString, "|");
+                local characterName = "";
+                local order = .0;
 
-            if (stringParts[1] and stringParts[3]) then
-                characterName = stringParts[1];
-                order = tonumber(stringParts[3]);
+                if (stringParts[1] and stringParts[3]) then
+                    characterName = stringParts[1];
+                    order = tonumber(stringParts[3]);
+                end
+
+                if (not characterName or not order) then
+                    Utils:error("Invalid data provided");
+                    return false;
+                end
+
+                WishListData[itemId][characterName] = order;
             end
-
-            if (not characterName or not order) then
-                Utils:error("Invalid data provided");
-                return false;
-            end
-
-            WishListData[itemId][characterName] = order;
         end
+
+        App.DB.WishLists = WishListData;
     end
 
-    App.DB.WishLists = WishListData;
+    -- There is also loot priority data available, pass it to on!
+    if (WebsiteData.loot and type(WebsiteData.loot) == "string") then
+        App.LootPriority:save(WebsiteData.loot);
+    end
 
-    Utils:success("Import successful");
+    Utils:success("TMB Import successful");
     return true;
 end
 
@@ -302,7 +318,7 @@ function WishLists:broadcast()
     end
 
     App.Ace:ScheduleTimer(function ()
-        Utils:success("Broadcast finished");
+        Utils:success("Wishlist Broadcast finished");
         self.broadcastInProgress = false;
     end, 10);
 end
@@ -319,7 +335,7 @@ function WishLists:receiveWishLists(CommMessage)
 
     App.DB.WishLists = CommMessage.content;
 
-    Utils:success("Your Wish Lists just got updated by " .. CommMessage.Sender.name);
+    Utils:success("Your Wishlists just got updated by " .. CommMessage.Sender.name);
 end
 
 Utils:debug("WishLists.lua");
