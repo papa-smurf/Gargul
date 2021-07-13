@@ -144,24 +144,27 @@ function Commands:_dispatch (str)
 
     if (not str or #str < 1) then
         -- User entered "/gl" with no additional arguments
-        return Commands.dashboard();
+        command = "settings";
     end
 
     -- Fetch the actual command name in case a shorthand is provided
     command = Utils:tableGet(self.ShorthandDictionary, command, command);
 
     -- Some commands allow itemlinks, some don't. Items can contain spaces
-    -- at which point we need to make sure the item itself isn't split up!
+    -- at which point we need to make sure the item itself isn't split up.
+    -- We do that by specifying the number of (expected) arguments per command
     local arguments = {};
     local possibleArgumentChunks = nil;
 
     if (Utils:inArray({"rolloff", "auction"}, command)) then
-        possibleArgumentChunks = 1;
+        numberOfArguments = 1;
     elseif (Utils:inArray({"award"}, command)) then
-        possibleArgumentChunks = 2;
+        numberOfArguments = 2;
+    elseif (Utils:inArray({"awardOnDate"}, command)) then
+        numberOfArguments = 3;
     end
 
-    arguments = { strsplit(" ", argumentString, possibleArgumentChunks) };
+    arguments = { strsplit(" ", argumentString, numberOfArguments) };
 
     Utils:debug("Dispatching " .. str);
 
