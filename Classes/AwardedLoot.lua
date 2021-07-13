@@ -62,9 +62,18 @@ function AwardedLoot:appendAwardedLootToTooltip(tooltip)
     tooltip:AddLine(string.format("|c008aecff %s|r", awardedTo));
 end
 
+function AwardedLoot:addWinnerOnDate(winner, date, itemLink)
+    Utils:debug("AwardedLoot:addWinnerOnDate");
+
+    return AwardedLoot:addWinner(winner, itemLink, nil, nil, date)
+end
+
 -- Add a winner for a specific item to the SessionHistory table
-function AwardedLoot:addWinner(winner, itemLink, dkp, announce)
+function AwardedLoot:addWinner(winner, itemLink, dkp, announce, date)
     Utils:debug("AwardedLoot:addWinner");
+
+    local dateProvided = date and type(date) == "string";
+    local timestamp = GetServerTime();
 
     if (not winner or type(winner) ~= "string" or winner == "") then
         return Utils:debug("Invalid winner provided for AwardedLoot:addWinner");
@@ -80,12 +89,37 @@ function AwardedLoot:addWinner(winner, itemLink, dkp, announce)
         return Utils:debug("Invalid itemLink provided for AwardedLoot:addWinner");
     end
 
+    if (dateProvided) then
+        local year, month, day = string.match(date, "^(%d+)-(%d+)-(%d+)$");
+
+        if (
+            not year or not month or not day
+            or type(year) ~= "string" or type(month) ~= "string" or type(day) ~= "string"
+            or year == "" or month == "" or day == ""
+        ) then
+            return Utils:error(string.format("Unknown date format '%s' expecting yy-m-d", date));
+        end
+
+        if (string.len(year) == 2) then
+            year = "20" .. year;
+        end
+
+        local Date = {
+            year = year,
+            month = Utils:strPadLeft(month, 0, 2),
+            day = Utils:strPadLeft(day, 0, 2),
+        }
+
+        timestamp = time(Date);
+    end
+
     -- Enable the announce switch by default
     if (type(announce) ~= "boolean") then
         announce = true;
+    end
 
     -- No need to announce if the player is not in a group of any kind
-    elseif (not App.User.isInGroup) then
+    if (not App.User.isInGroup) then
         announce = false;
     end
 
@@ -95,11 +129,11 @@ function AwardedLoot:addWinner(winner, itemLink, dkp, announce)
     AwardedLoot.AwardedThisSession[itemLink] = SessionHistory;
 
     local AwardEntry = {
-            itemLink = itemLink,
-            itemId = itemId,
-            awardedTo = winner,
-            timestamp = GetServerTime()
-        };
+        itemLink = itemLink,
+        itemId = itemId,
+        awardedTo = winner,
+        timestamp = timestamp,
+    };
 
     -- Insert the award in the more permanent AwardHistory table (for export / audit purposes)
     tinsert(App.DB.AwardHistory, AwardEntry);
@@ -143,6 +177,12 @@ function AwardedLoot:addWinner(winner, itemLink, dkp, announce)
             publicChannel,
             "COMMON"
         );
+    end
+
+    -- We have to provide some feedback that it all worked out
+    -- in case the loot will not be announce in the player's group
+    if (not announce) then
+        Utils:success(itemLink .. " was successfully awarded!");
     end
 end
 

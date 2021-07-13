@@ -11,6 +11,7 @@ App.Commands = App.Commands or {
         ro = "rolloff",
         roll = "rolloff",
         a = "award",
+        aod = "awardOnDate",
         rcsv = "raidcsv",
         gr = "groups",
         roster = "groups",
@@ -59,6 +60,9 @@ App.Commands = App.Commands or {
 
             App.AwardedLoot:addWinner(...);
         end,
+
+        -- Award an item on a given date. Useful if you forgot to award an item and want to do it later
+        awardOnDate = function(...) App.AwardedLoot:addWinnerOnDate(...); end,
 
         -- Export the current raid roster to csv
         raidcsv = function ()
