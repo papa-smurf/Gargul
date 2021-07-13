@@ -175,7 +175,7 @@ function LootPriority:save(data, sender)
 
     App.DB.LootPriority = LootPriorityData;
 
-    Utils:success("Save successful");
+    Utils:success("Loot priorities imported successfully");
 end
 
 Utils:debug("LootPriority.lua");
