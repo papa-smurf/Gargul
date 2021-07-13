@@ -104,6 +104,7 @@ function DroppedLoot:announce()
     for lootIndex = 1, itemCount do
         local itemLink = GetLootSlotLink(lootIndex);
         local softReserves = App.SoftReserves:getSoftReservesByItemLink(itemLink);
+        local wishes = App.WishLists:getWishListsByItemLink(itemLink);
 
         local quality = select(5, GetLootSlotInfo(lootIndex));
         sourceGUID = GetLootSourceInfo(lootIndex);
@@ -115,9 +116,11 @@ function DroppedLoot:announce()
             ) and (
                 (quality and quality >= App.Settings:get("minimumQualityOfAnnouncedLoot", 4))
                 or softReserves
+                or wishes
             )
         ) then
             local activeSoftReserves = {};
+            local activeWishlistDetails = {};
             local hasSoftReserves = false;
 
             if (softReserves
@@ -129,6 +132,19 @@ function DroppedLoot:announce()
                     if (Utils:inArray(playersInRaids, player)) then
                         tinsert(activeSoftReserves, player);
                         hasSoftReserves = true;
+                    end
+                end
+            end
+
+            if (wishes
+                and App.Settings:get("includeWishlistsInLootAnnouncement")
+            ) then
+                -- Make sure we only show wishlist details of people
+                -- Who are actually in the raid
+                for playerName, prio in pairs(wishes) do
+                    if (Utils:inArray(playersInRaids, string.gsub(playerName, "(OS)", ""))) then
+                        tinsert(activeWishlistDetails, string.format("%s[%s]", playerName, prio));
+                        hasWishlists = true;
                     end
                 end
             end
@@ -150,6 +166,15 @@ function DroppedLoot:announce()
             if (hasSoftReserves) then
                 SendChatMessage(
                     "Reserved by: " .. table.concat(activeSoftReserves, ", "),
+                    chatChannel,
+                    "COMMON"
+                );
+            end
+
+            -- Show who wishlisted this item
+            if (hasWishlists) then
+                SendChatMessage(
+                    "Wishlisted by: " .. table.concat(activeWishlistDetails, ", "),
                     chatChannel,
                     "COMMON"
                 );

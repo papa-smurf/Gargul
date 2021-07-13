@@ -153,6 +153,18 @@ function Settings:showSettingsMenu(Frame)
     IncludeSoftReservesInLootAnnouncementCheckbox:SetPoint("TOPLEFT", AnnounceMinimumQualityDropdown, "BOTTOMLEFT", 0, -8);
 
     -- Do you want to include softreserve details on dropped loot?
+    local IncludeWishlistsInLootAnnouncementCheckbox = UI:createSettingCheckbox(
+        Frame,
+        "Include wishlist details in loot announcement",
+        "Checking this will make sure that wishlist details of dropped loot are announced in the chat (if any)",
+        function (_, checked)
+            self:set("includeWishlistsInLootAnnouncement", checked);
+        end
+    );
+    IncludeWishlistsInLootAnnouncementCheckbox:SetChecked(self:get("includeWishlistsInLootAnnouncement"));
+    IncludeWishlistsInLootAnnouncementCheckbox:SetPoint("TOPLEFT", IncludeSoftReservesInLootAnnouncementCheckbox, "BOTTOMLEFT", 0, -8);
+
+    -- Do you want to include wishlist details on dropped loot?
     local HideWishListsOfPeopleNotInraid = UI:createSettingCheckbox(
         Frame,
         "Hide wishlist of people not in raid",
@@ -162,7 +174,7 @@ function Settings:showSettingsMenu(Frame)
         end
     );
     HideWishListsOfPeopleNotInraid:SetChecked(self:get("hideWishListsOfPeopleNotInraid"));
-    HideWishListsOfPeopleNotInraid:SetPoint("TOPLEFT", IncludeSoftReservesInLootAnnouncementCheckbox, "BOTTOMLEFT", 0, -8);
+    HideWishListsOfPeopleNotInraid:SetPoint("TOPLEFT", IncludeWishlistsInLootAnnouncementCheckbox, "BOTTOMLEFT", 0, -8);
 
     -- Do you want to see the countdown window with roll button when a rolloff starts?
     local ShowRollOffWindowCheckbox = UI:createSettingCheckbox(
