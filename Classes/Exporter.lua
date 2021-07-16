@@ -12,6 +12,7 @@ App.Exporter = {
     },
 };
 
+local Settings = App.Settings;
 local Utils = App.Utils;
 local AceGUI = App.Ace.GUI;
 local ScrollingTable = App.Ace.ScrollingTable;
@@ -20,14 +21,10 @@ local Exporter = App.Exporter;
 -- Add a resut table confirmation dialog to Blizzard's global StaticPopupDialogs object
 StaticPopupDialogs[App.name .. "_RESET_AWARD_HISTORY_CONFIRMATION"] = {
     preferredIndex = 3,
-    text = "Are you sure you want to reset your reward history table? This cannot be undone!",
+    text = "",
     button1 = "Yes",
     button2 = "No",
-    OnAccept = function()
-        App.DB.AwardHistory = {};
-        Exporter:close();
-        Exporter:draw();
-    end,
+    OnAccept = {},
     timeout = 0,
     whileDead = true,
     hideOnEscape = true,
@@ -55,7 +52,6 @@ function Exporter:draw()
 
     -- Create a container/parent frame
     local ExportFrame = AceGUI:Create("Frame");
-    ExportFrame:SetCallback("OnClose", function(widget) AceGUI:Release(widget); end);
     ExportFrame:SetTitle(App.name .. " v" .. App.version);
     ExportFrame:SetStatusText("Addon v" .. App.version);
     ExportFrame:SetLayout("Flow");
@@ -64,6 +60,13 @@ function Exporter:draw()
     ExportFrame:SetCallback("OnClose", function(widget)
        Exporter:close();
    end);
+   ExportFrame:SetPoint(
+       Settings:get("UI.Exporter.Position.point"),
+       UIParent,
+       Settings:get("UI.Exporter.Position.relativePoint"),
+       Settings:get("UI.Exporter.Position.offsetX"),
+       Settings:get("UI.Exporter.Position.offsetY")
+   );
     ExportFrame.statustext:GetParent():Hide(); -- Hide the statustext bar
 
     Exporter.UIComponents.Frame = ExportFrame;
@@ -106,11 +109,51 @@ function Exporter:draw()
     ClearButton:SetText("Clear");
     ClearButton:SetWidth(140);
     ClearButton:SetCallback("OnClick", function()
-        StaticPopup_Show(App.name .. "_RESET_AWARD_HISTORY_CONFIRMATION");
+        Exporter:clearData();
     end);
     FooterFrame:AddChild(ClearButton);
 
     Exporter:refreshExportString();
+end
+
+function Exporter:clearData()
+    Utils:debug("Exporter:clearData");
+
+    local warning = nil;
+    local onAccept = nil;
+
+    -- No date is selected, delete everything!
+    if (not Exporter.dateSelected) then
+        warning = "Are you sure you want to remove your complete reward history table? This deletes ALL loot data and cannot be undone!";
+        onAccept = function ()
+            App.DB.AwardHistory = {};
+
+            Exporter:close();
+            Exporter:draw();
+        end;
+
+    -- Only delete entries on the selected date
+    else
+        warning = string.format("Are you sure you want to remove all data for %s? This cannot be undone!", Exporter.dateSelected);
+        onAccept = function ()
+            for key, AwardEntry in pairs(App.DB.AwardHistory) do
+                local dateString = date('%Y-%m-%d', AwardEntry.timestamp);
+
+                if (dateString == Exporter.dateSelected) then
+                    AwardEntry = nil;
+                    App.DB.AwardHistory[key] = nil;
+                end
+            end
+
+            Exporter:close();
+            Exporter:draw();
+        end
+    end
+
+    -- Update and show the confirmation dialog
+    StaticPopupDialogs[App.name .. "_CLEAR_SOFTRESERVES_CONFIRMATION"].text = warning;
+    StaticPopupDialogs[App.name .. "_CLEAR_SOFTRESERVES_CONFIRMATION"].OnAccept = onAccept;
+    StaticPopup_Show(App.name .. "_CLEAR_SOFTRESERVES_CONFIRMATION");
 end
 
 function Exporter:refreshExportString()
@@ -138,9 +181,18 @@ end
 function Exporter:close()
     Utils:debug("Exporter:close");
 
-    if (not Exporter.visible) then
+    if (not Exporter.visible
+        or not Exporter.UIComponents.Frame
+    ) then
         return;
     end
+
+    -- Store the frame's last position for future play sessions
+    local point, _, relativePoint, offsetX, offsetY = Exporter.UIComponents.Frame:GetPoint();
+    Settings:set("UI.Exporter.Position.point", point);
+    Settings:set("UI.Exporter.Position.relativePoint", relativePoint);
+    Settings:set("UI.Exporter.Position.offsetX", offsetX);
+    Settings:set("UI.Exporter.Position.offsetY", offsetY);
 
     -- Clear the frame and its widgets
     AceGUI:Release(Exporter.UIComponents.Frame);

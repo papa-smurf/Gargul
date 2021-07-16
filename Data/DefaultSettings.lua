@@ -60,6 +60,14 @@ App.Data.DefaultSettings = {
                 offsetY = 0,
             }
         },
+        Exporter = {
+            Position = {
+                point = "CENTER",
+                relativePoint = "CENTER",
+                offsetX = 0,
+                offsetY = 0,
+            }
+        },
         RollOff = {
             autoClose = false,
             timer = 25,
