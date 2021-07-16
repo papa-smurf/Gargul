@@ -608,7 +608,7 @@ function MasterLooterUI:updateItemNote()
 
     -- If there is no item priority then label the item with "Off spec"
     if (not itemPriority) then
-        return ItemNote:SetText("Off spec");
+        return ItemNote:SetText("");
     end
 
     -- There is a priority for this item
