@@ -6,6 +6,7 @@ App.DroppedLoot = {
     Announced = {},
 }
 
+local Constants = App.Data.Constants;
 local Utils = App.Utils;
 local DroppedLoot = App.DroppedLoot;
 
@@ -30,7 +31,7 @@ function DroppedLoot:lootOpened()
     self = DroppedLoot;
 
     if (not App.User.isInGroup
-            or not (App.User.isMasterLooter)
+        or not (App.User.isMasterLooter)
     ) then
         return;
     end
@@ -104,7 +105,7 @@ function DroppedLoot:announce()
     for lootIndex = 1, itemCount do
         local itemLink = GetLootSlotLink(lootIndex);
         local softReserves = App.SoftReserves:getSoftReservesByItemLink(itemLink);
-        local wishes = App.WishLists:getWishListsByItemLink(itemLink);
+        local TMBInfo = App.TMB:getTMBInfoByItemLink(itemLink);
 
         local quality = select(5, GetLootSlotInfo(lootIndex));
         sourceGUID = GetLootSourceInfo(lootIndex);
@@ -116,12 +117,15 @@ function DroppedLoot:announce()
             ) and (
                 (quality and quality >= App.Settings:get("minimumQualityOfAnnouncedLoot", 4))
                 or softReserves
-                or wishes
+                or TMBInfo
             )
         ) then
             local activeSoftReserves = {};
-            local activeWishlistDetails = {};
+            local activeWishListDetails = {};
+            local activePrioListDetails = {};
             local hasSoftReserves = false;
+            local itemIsOnSomeonesPriolist = false;
+            local itemIsOnSomeonesWishlist = false;
 
             if (softReserves
                 and App.Settings:get("includeSoftReservesInLootAnnouncement")
@@ -136,15 +140,29 @@ function DroppedLoot:announce()
                 end
             end
 
-            if (wishes
-                and App.Settings:get("includeWishlistsInLootAnnouncement")
+            if (TMBInfo
+                and (
+                    App.Settings:get("includePriolistsInLootAnnouncement")
+                    or App.Settings:get("includeWishlistsInLootAnnouncement")
+                )
             ) then
+
                 -- Make sure we only show wishlist details of people
                 -- Who are actually in the raid
-                for playerName, prio in pairs(wishes) do
+                for _, Entry in pairs(TMBInfo) do
+                    local playerName = Entry.character;
+
                     if (Utils:inArray(playersInRaids, string.gsub(playerName, "(OS)", ""))) then
-                        tinsert(activeWishlistDetails, string.format("%s[%s]", playerName, prio));
-                        hasWishlists = true;
+                        local prio = Entry.prio;
+                        local type = Entry.type or Constants.tmbTypeWish;
+
+                        if (type == Constants.tmbTypePrio) then
+                            tinsert(activePrioListDetails, string.format("%s[%s]", playerName, prio));
+                            itemIsOnSomeonesPriolist = true;
+                        else
+                            tinsert(activeWishListDetails, string.format("%s[%s]", playerName, prio));
+                            itemIsOnSomeonesWishlist = true;
+                        end
                     end
                 end
             end
@@ -171,10 +189,26 @@ function DroppedLoot:announce()
                 );
             end
 
-            -- Show who wishlisted this item
-            if (hasWishlists) then
+            -- Show who has priority on this item
+            if (itemIsOnSomeonesPriolist
+                and App.Settings:get("TMB.includePrioListInfoInLootAnnouncement")
+            ) then
                 SendChatMessage(
-                    "Wishlisted by: " .. table.concat(activeWishlistDetails, ", "),
+                    "TMB Priority: " .. table.concat(activePrioListDetails, ", "),
+                    chatChannel,
+                    "COMMON"
+                );
+            end
+
+            -- Show who wishlisted this item
+            if (itemIsOnSomeonesWishlist
+                and App.Settings:get("TMB.includeWishListInfoInLootAnnouncement")
+                and (not itemIsOnSomeonesPriolist
+                    or not App.Settings:get("TMB.hideWishListInfoIfPriorityIsPresent")
+                )
+            ) then
+                SendChatMessage(
+                    "TMB Wishlist: " .. table.concat(activeWishListDetails, ", "),
                     chatChannel,
                     "COMMON"
                 );
