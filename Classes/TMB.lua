@@ -145,12 +145,20 @@ function TMB:appendTMBItemInfoToTooltip(tooltip)
             local prio = Entry.prio;
             local type = Entry.type or Constants.tmbTypeWish;
             local Target = WishListEntries;
+            local isOffSpec = string.find(playerName, "(OS)");
+            local prioOffset = 0;
+
+            -- We add 100 to the prio (first key) of the object
+            -- This object is used for sorting later and is not visible to the player
+            if (isOffSpec) then
+                prioOffset = 100;
+            end
 
             if (type == Constants.tmbTypePrio) then
-                tinsert(PrioListEntries, {prio, playerName});
+                tinsert(PrioListEntries, {prio + prioOffset, string.format("%s[%s]", playerName, prio)});
                 itemIsOnSomeonesPriolist = true;
             else
-                tinsert(WishListEntries, {prio, playerName});
+                tinsert(WishListEntries, {prio + prioOffset, string.format("%s[%s]", playerName, prio)});
                 itemIsOnSomeonesWishlist = true;
             end
         end
@@ -175,10 +183,9 @@ function TMB:appendTMBItemInfoToTooltip(tooltip)
             local color = Utils:tableGet(Constants.ClassHexColors, PlayersInRaid[Entry[2]], "FFFFFF");
 
             tooltip:AddLine(string.format(
-                "|cFF%s%s[%s]|r",
+                "|cFF%s%s|r",
                 color,
-                Utils:capitalize(Entry[2]),
-                Entry[1]
+                Utils:capitalize(Entry[2])
             ));
         end
     end
@@ -193,7 +200,6 @@ function TMB:appendTMBItemInfoToTooltip(tooltip)
         -- Add the header
         tooltip:AddLine(string.format("\n|c00efb8cd%s", "TMB Wish List"));
 
-
         -- Sort the WishListEntries based on prio (lowest to highest)
         table.sort(WishListEntries, function (a, b)
             return a[1] < b[1];
@@ -204,10 +210,9 @@ function TMB:appendTMBItemInfoToTooltip(tooltip)
             local color = Utils:tableGet(Constants.ClassHexColors, PlayersInRaid[Entry[2]], "FFFFFF");
 
             tooltip:AddLine(string.format(
-                "|cFF%s%s[%s]|r",
+                "|cFF%s%s|r",
                 color,
-                Utils:capitalize(Entry[2]),
-                Entry[1]
+                Utils:capitalize(Entry[2])
             ));
         end
     end

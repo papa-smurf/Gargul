@@ -128,7 +128,7 @@ function DroppedLoot:announce()
             local itemIsOnSomeonesWishlist = false;
 
             if (softReserves
-                and App.Settings:get("includeSoftReservesInLootAnnouncement")
+                and App.Settings:get("TMB.includeSoftReservesInLootAnnouncement")
             ) then
                 -- Make sure we only show shoft reserves of people
                 -- Who are actually in the raid
@@ -142,8 +142,8 @@ function DroppedLoot:announce()
 
             if (TMBInfo
                 and (
-                    App.Settings:get("includePriolistsInLootAnnouncement")
-                    or App.Settings:get("includeWishlistsInLootAnnouncement")
+                    App.Settings:get("TMB.includePrioListInfoInLootAnnouncement")
+                    or App.Settings:get("TMB.includeWishListInfoInLootAnnouncement")
                 )
             ) then
 
@@ -155,12 +155,20 @@ function DroppedLoot:announce()
                     if (Utils:inArray(playersInRaids, string.gsub(playerName, "(OS)", ""))) then
                         local prio = Entry.prio;
                         local type = Entry.type or Constants.tmbTypeWish;
+                        local isOffSpec = string.find(playerName, "(OS)");
+                        local prioOffset = 0;
+
+                        -- We add 100 to the prio (first key) of the object
+                        -- This object is used for sorting later and is not visible to the player
+                        if (isOffSpec) then
+                            prioOffset = 100;
+                        end
 
                         if (type == Constants.tmbTypePrio) then
-                            tinsert(activePrioListDetails, string.format("%s[%s]", playerName, prio));
+                            tinsert(activePrioListDetails, {prio + prioOffset, string.format("%s[%s]", playerName, prio)});
                             itemIsOnSomeonesPriolist = true;
                         else
-                            tinsert(activeWishListDetails, string.format("%s[%s]", playerName, prio));
+                            tinsert(activeWishListDetails, {prio + prioOffset, string.format("%s[%s]", playerName, prio)});
                             itemIsOnSomeonesWishlist = true;
                         end
                     end
@@ -193,8 +201,18 @@ function DroppedLoot:announce()
             if (itemIsOnSomeonesPriolist
                 and App.Settings:get("TMB.includePrioListInfoInLootAnnouncement")
             ) then
+                -- Sort the PrioListEntries based on prio (lowest to highest)
+                table.sort(activePrioListDetails, function (a, b)
+                    return a[1] < b[1];
+                end);
+
+                local PrioData = {};
+                for _, Entry in pairs(activePrioListDetails) do
+                    tinsert(PrioData, Entry[2]);
+                end
+
                 SendChatMessage(
-                    "TMB Priority: " .. table.concat(activePrioListDetails, ", "),
+                    "TMB Priority: " .. table.concat(PrioData, ", "),
                     chatChannel,
                     "COMMON"
                 );
@@ -207,8 +225,18 @@ function DroppedLoot:announce()
                     or not App.Settings:get("TMB.hideWishListInfoIfPriorityIsPresent")
                 )
             ) then
+                -- Sort the WishListEntries based on prio (lowest to highest)
+                table.sort(activeWishListDetails, function (a, b)
+                    return a[1] < b[1];
+                end);
+
+                local WishListData = {};
+                for _, Entry in pairs(activeWishListDetails) do
+                    tinsert(WishListData, Entry[2]);
+                end
+
                 SendChatMessage(
-                    "TMB Wishlist: " .. table.concat(activeWishListDetails, ", "),
+                    "TMB Wishlist: " .. table.concat(WishListData, ", "),
                     chatChannel,
                     "COMMON"
                 );
