@@ -153,28 +153,28 @@ function Settings:showSettingsMenu(Frame)
     IncludeSoftReservesInLootAnnouncementCheckbox:SetPoint("TOPLEFT", AnnounceMinimumQualityDropdown, "BOTTOMLEFT", 0, -8);
 
     -- Do you want to include TMB wishlist details on dropped loot?
-    local includeTMBWishlistInfoInLootAnnouncementCheckbox = UI:createSettingCheckbox(
+    local TMBIncludeWishListInfoInLootAnnouncement = UI:createSettingCheckbox(
         Frame,
         "Include TMB wishlist information in loot announcement",
         "Checking this will make sure that TMB wishlist details of dropped loot are announced in the chat (if any)",
         function (_, checked)
-            self:set("TMB.includeTMBWishlistInfoInLootAnnouncement", checked);
+            self:set("TMB.includeWishListInfoInLootAnnouncement", checked);
         end
     );
-    includeTMBWishlistInfoInLootAnnouncementCheckbox:SetChecked(self:get("TMB.includeTMBWishlistInfoInLootAnnouncement"));
-    includeTMBWishlistInfoInLootAnnouncementCheckbox:SetPoint("TOPLEFT", IncludeSoftReservesInLootAnnouncementCheckbox, "BOTTOMLEFT", 0, -8);
+    TMBIncludeWishListInfoInLootAnnouncement:SetChecked(self:get("TMB.includeWishListInfoInLootAnnouncement"));
+    TMBIncludeWishListInfoInLootAnnouncement:SetPoint("TOPLEFT", IncludeSoftReservesInLootAnnouncementCheckbox, "BOTTOMLEFT", 0, -8);
 
     -- Do you want to include TMB priolist details on dropped loot?
-    local includeTMBPriolistInfoInLootAnnouncementCheckbox = UI:createSettingCheckbox(
+    local TMBIncludePrioListInfoInLootAnnouncementCheckbox = UI:createSettingCheckbox(
         Frame,
         "Include TMB item priority information in loot announcement",
         "Checking this will make sure that TMB item priority details of dropped loot is announced in the chat (if any)",
         function (_, checked)
-            self:set("TMB.includeTMBPriolistInfoInLootAnnouncement", checked);
+            self:set("TMB.includePrioListInfoInLootAnnouncement", checked);
         end
     );
-    includeTMBPriolistInfoInLootAnnouncementCheckbox:SetChecked(self:get("TMB.includeTMBPriolistInfoInLootAnnouncement"));
-    includeTMBPriolistInfoInLootAnnouncementCheckbox:SetPoint("TOPLEFT", includeTMBWishlistInfoInLootAnnouncementCheckbox, "BOTTOMLEFT", 0, -8);
+    TMBIncludePrioListInfoInLootAnnouncementCheckbox:SetChecked(self:get("TMB.includePrioListInfoInLootAnnouncement"));
+    TMBIncludePrioListInfoInLootAnnouncementCheckbox:SetPoint("TOPLEFT", TMBIncludeWishListInfoInLootAnnouncement, "BOTTOMLEFT", 0, -8);
 
     -- Do you want to include TMB info in tooltip of players who aren't in raid?
     local hideTMBInfoOfPeopleNotInraid = UI:createSettingCheckbox(
@@ -186,43 +186,43 @@ function Settings:showSettingsMenu(Frame)
         end
     );
     hideTMBInfoOfPeopleNotInraid:SetChecked(self:get("TMB.hideTMBInfoOfPeopleNotInraid"));
-    hideTMBInfoOfPeopleNotInraid:SetPoint("TOPLEFT", includeTMBPriolistInfoInLootAnnouncementCheckbox, "BOTTOMLEFT", 0, -8);
+    hideTMBInfoOfPeopleNotInraid:SetPoint("TOPLEFT", TMBIncludePrioListInfoInLootAnnouncementCheckbox, "BOTTOMLEFT", 0, -8);
 
     -- Do you want to include wishlist details on tooltips?
-    local showTMBWishListInfoOnTooltips = UI:createSettingCheckbox(
+    local TMBShowWishListInfoOnTooltips = UI:createSettingCheckbox(
         Frame,
         "Show TMB wishlist information on tooltips",
         "Checking this will allow you to see the names of those who have an item on their TMB wishlist on tooltips",
         function (_, checked)
-            self:set("TMB.showTMBWishListInfoOnTooltips", checked);
+            self:set("TMB.showWishListInfoOnTooltips", checked);
         end
     );
-    showTMBWishListInfoOnTooltips:SetChecked(self:get("TMB.showTMBWishListInfoOnTooltips"));
-    showTMBWishListInfoOnTooltips:SetPoint("TOPLEFT", hideTMBInfoOfPeopleNotInraid, "BOTTOMLEFT", 0, -8);
+    TMBShowWishListInfoOnTooltips:SetChecked(self:get("TMB.showWishListInfoOnTooltips"));
+    TMBShowWishListInfoOnTooltips:SetPoint("TOPLEFT", hideTMBInfoOfPeopleNotInraid, "BOTTOMLEFT", 0, -8);
 
     -- Do you want to include prio list details on tooltips?
-    local showTMBPrioListInfoOnTooltips = UI:createSettingCheckbox(
+    local TMBShowPrioListInfoOnTooltips = UI:createSettingCheckbox(
         Frame,
         "Show TMB priority information on tooltips",
         "Checking this will allow you to see the names of those who have an item prioritized in TMB on tooltips",
         function (_, checked)
-            self:set("TMB.showTMBPrioListInfoOnTooltips", checked);
+            self:set("TMB.showPrioListInfoOnTooltips", checked);
         end
     );
-    showTMBPrioListInfoOnTooltips:SetChecked(self:get("TMB.showTMBPrioListInfoOnTooltips"));
-    showTMBPrioListInfoOnTooltips:SetPoint("TOPLEFT", showTMBWishListInfoOnTooltips, "BOTTOMLEFT", 0, -8);
+    TMBShowPrioListInfoOnTooltips:SetChecked(self:get("TMB.showPrioListInfoOnTooltips"));
+    TMBShowPrioListInfoOnTooltips:SetPoint("TOPLEFT", TMBShowWishListInfoOnTooltips, "BOTTOMLEFT", 0, -8);
 
     -- Do you want to include prio list details on tooltips?
-    local hideTMBWishlistInfoIfPriorityIsPresent = UI:createSettingCheckbox(
+    local TMBHideWishListInfoIfPriorityIsPresent = UI:createSettingCheckbox(
         Frame,
         "Hide TMB wishlist information when a priority is set",
         "Checking makes sure that you only see an item's wishlist details if no priority (LC) is set for it",
         function (_, checked)
-            self:set("TMB.hideTMBWishlistInfoIfPriorityIsPresent", checked);
+            self:set("TMB.hideWishListInfoIfPriorityIsPresent", checked);
         end
     );
-    hideTMBWishlistInfoIfPriorityIsPresent:SetChecked(self:get("TMB.hideTMBWishlistInfoIfPriorityIsPresent"));
-    hideTMBWishlistInfoIfPriorityIsPresent:SetPoint("TOPLEFT", showTMBPrioListInfoOnTooltips, "BOTTOMLEFT", 0, -8);
+    TMBHideWishListInfoIfPriorityIsPresent:SetChecked(self:get("TMB.hideWishListInfoIfPriorityIsPresent"));
+    TMBHideWishListInfoIfPriorityIsPresent:SetPoint("TOPLEFT", TMBShowPrioListInfoOnTooltips, "BOTTOMLEFT", 0, -8);
 
     -- Do you want to see the countdown window with roll button when a rolloff starts?
     local ShowRollOffWindowCheckbox = UI:createSettingCheckbox(
@@ -234,7 +234,7 @@ function Settings:showSettingsMenu(Frame)
         end
     );
     ShowRollOffWindowCheckbox:SetChecked(self:get("showRollOffWindow"));
-    ShowRollOffWindowCheckbox:SetPoint("TOPLEFT", hideTMBWishlistInfoIfPriorityIsPresent, "BOTTOMLEFT", 0, -8);
+    ShowRollOffWindowCheckbox:SetPoint("TOPLEFT", TMBHideWishListInfoIfPriorityIsPresent, "BOTTOMLEFT", 0, -8);
 
     -- Do you want this addon to operate quietly? Aka no sounds when roll starts/ends etc?
     local MuteAddonCheckbox = UI:createSettingCheckbox(
