@@ -67,7 +67,7 @@ function App:_init()
     App.LootPriority:_init();
     App.AwardedLoot:_init();
     App.SoftReserves:_init();
-    App.WishLists:_init();
+    App.TMB:_init();
     App.DroppedLoot:_init();
     App.PackMule:_init();
 
