@@ -15,7 +15,7 @@ App.DB = {
     LootPriority = {},
     Settings = {},
     SoftReserves = {},
-    WishLists = {},
+    TMB = {},
 };
 
 local DB = App.DB;
@@ -42,16 +42,7 @@ function DB:_init()
     GargulDB.LootPriority = GargulDB.LootPriority or {};
     GargulDB.Settings = GargulDB.Settings or {};
     GargulDB.SoftReserves = GargulDB.SoftReserves or {};
-    GargulDB.WishLists = GargulDB.WishLists or {};
-
---     -- !! TEMPORARY !!
---     GargulDB.WishLists = {
---         ["Staff of Hale Magefire"] = {
---             ["Léon"] = 1.4,
---             ["Arvada"] = 1.6,
---             ["Zhorax"] = .4
---         }
---     };
+    GargulDB.TMB = GargulDB.TMB or {};
 
     -- Provide a shortcut for each table
     self.AwardHistory = GargulDB.AwardHistory;
@@ -60,7 +51,7 @@ function DB:_init()
     self.LootPriority = GargulDB.LootPriority;
     self.Settings = GargulDB.Settings;
     self.SoftReserves = GargulDB.SoftReserves;
-    self.WishLists = GargulDB.WishLists;
+    self.TMB = GargulDB.TMB;
 
     -- Fire DB:store before every logout/reload/exit
     App.Events:register("DBPlayerLogoutListener", "PLAYER_LOGOUT", self.store);
@@ -80,7 +71,7 @@ function DB:store()
     GargulDB.LootPriority = App.DB.LootPriority;
     GargulDB.Settings = App.Settings.Active;
     GargulDB.SoftReserves = App.DB.SoftReserves;
-    GargulDB.WishLists = App.DB.WishLists;
+    GargulDB.TMB = App.DB.TMB;
 end
 
 -- Checks if all of our tables are valid
@@ -310,7 +301,7 @@ function DB:reset()
     self.LootPriority = {};
     self.Settings = {};
     self.SoftReserves = {};
-    self.WishLists = {};
+    self.TMB = {};
 
     Utils:success("Tables reset");
 end

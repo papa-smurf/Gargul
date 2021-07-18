@@ -18,8 +18,8 @@ App.Commands = App.Commands or {
         so = "softreserves",
         sr = "softreserves",
         pm = "packmule",
-        wl = "wishlists",
-        wish = "wishlists",
+        tmb = "thatsmybis",
+        wl = "thatsmybis",
         lo = "lootpriority",
         pr = "lootpriority",
         priority = "lootpriority",
@@ -75,8 +75,8 @@ App.Commands = App.Commands or {
         -- Open the soft reserves window
         softreserves = function() App.SoftReserves:drawImporter(); end,
 
-        -- Open the wish lists window
-        wishlists = function() App.WishLists:drawImporter(); end,
+        -- Open the TMB window
+        thatsmybis = function() App.TMB:drawImporter(); end,
 
         -- Open the pack mule window
         packmule = function() App.PackMuleUI:drawSetupWindow(); end,
@@ -125,7 +125,7 @@ function Commands:help ()
     Utils:message("/gl roll - Displays the master looter window for rolling off items");
     Utils:message("/gl softreserves - Opens the soft reserves window (master looter only)");
     Utils:message("/gl export - Opens the loot history export window");
-    Utils:message("/gl wishlists - Opens the thatsmybis import window");
+    Utils:message("/gl thatsmybis - Opens the thatsmybis import window");
     Utils:message("/gl award - Opens the award UI");
 --     Utils:message("DKP Features:");
 --     Utils:message("/gl auction - Opens the auctioneer window for master looting purposes (officer only)");
@@ -133,6 +133,11 @@ function Commands:help ()
 --     Utils:message("/gl import - Opens the DKP / loot history import window (officer only)");
 --     Utils:message("/gl broadcast - Broadcasts the DKP tables and loot history to the entire guild (officer only)");
     Utils:message("---------------------");
+end
+
+-- Helper method to call commands from within the addon
+function Commands:call (str)
+    return Commands:_dispatch (str);
 end
 
 -- This method dispatches all slash commands to their final destination

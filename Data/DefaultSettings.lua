@@ -11,10 +11,17 @@ App.Data.DefaultSettings = {
     announceLootToChat = true,
     minimumQualityOfAnnouncedLoot = 4,
     includeSoftReservesInLootAnnouncement = true,
-    includeWishlistsInLootAnnouncement = true,
-    hideWishListsOfPeopleNotInraid = true,
     showRollOffWindow = true,
     debugModeEnabled = false,
+
+    TMB = {
+        includeTMBWishlistInfoInLootAnnouncement = true,
+        includeTMBPriolistInfoInLootAnnouncement = true,
+        hideTMBInfoOfPeopleNotInraid = true,
+        showTMBWishListInfoOnTooltips = true,
+        showTMBPrioListInfoOnTooltips = true,
+        hideTMBWishlistInfoIfPriorityIsPresent = true,
+    },
 
     PackMule = {
         enabled = false,

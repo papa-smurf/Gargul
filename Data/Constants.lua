@@ -12,6 +12,9 @@ App.Data.Constants = {
     success = 0,
     failure = 1,
 
+    tmbTypePrio = 1,
+    tmbTypeWish = 2,
+
     IdenticalItemsWithDifferentIds = {
         -- Head of Onyxia
         ["18422"] = {18422, 18423},
@@ -60,57 +63,6 @@ App.Data.Constants = {
         shaman = {r = 0, g = .44, b = .87, a = 1},
         warlock = {r = .57647, g = .5098, b = .788235, a = 1},
         warrior = {r = .77647, g = .607843, b = .42745, a = 1},
-    },
-
-    --[[
-        DEFAULT SETTINGS
-    ]]
-    Settings = {
-        UI = {
-            Dashboard = {
-                showInRaidOnly = false,
-                Position = {
-                    point = "Center",
-                    relativePoint = "Center",
-                    offsetX = 0,
-                    offsetY = 0,
-                }
-            },
-            Auctioneer = {
-                Position = {
-                    point = "Center",
-                    relativePoint = "Center",
-                    offsetX = 0,
-                    offsetY = 0,
-                }
-            },
-            Bidder = {
-                timer = 25,
-                Position = {
-                    point = "CENTER",
-                    relativePoint = "CENTER",
-                    offsetX = 0,
-                    offsetY = 0,
-                }
-            },
-            RollOff = {
-                timer = 25,
-                Position = {
-                    point = "CENTER",
-                    relativePoint = "CENTER",
-                    offsetX = 0,
-                    offsetY = 0,
-                }
-            },
-            Roller = {
-                Position = {
-                    point = "CENTER",
-                    relativePoint = "CENTER",
-                    offsetX = 0,
-                    offsetY = 0,
-                }
-            }
-        }
     },
 
     --[[
