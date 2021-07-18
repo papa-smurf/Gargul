@@ -100,7 +100,7 @@ function TMB:appendTMBItemInfoToTooltip(tooltip)
 
     -- If we're not in a group there's no point in showing anything! (unless the non-raider setting is active)
     if (not App.User.isInGroup
-        and App.Settings:get("TMB.hideTMBInfoOfPeopleNotInraid")
+        and App.Settings:get("TMB.hideInfoOfPeopleNotInraid")
     ) then
         return;
     end
@@ -139,7 +139,7 @@ function TMB:appendTMBItemInfoToTooltip(tooltip)
     for _, Entry in pairs(TMBInfo) do
         local playerName = Entry.character;
 
-        if (not App.Settings:get("TMB.hideTMBInfoOfPeopleNotInraid")
+        if (not App.Settings:get("TMB.hideInfoOfPeopleNotInraid")
             or PlayersInRaid[string.gsub(playerName, "(OS)", "")]
         ) then
             local prio = Entry.prio;

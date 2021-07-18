@@ -177,16 +177,16 @@ function Settings:showSettingsMenu(Frame)
     TMBIncludePrioListInfoInLootAnnouncementCheckbox:SetPoint("TOPLEFT", TMBIncludeWishListInfoInLootAnnouncement, "BOTTOMLEFT", 0, -8);
 
     -- Do you want to include TMB info in tooltip of players who aren't in raid?
-    local hideTMBInfoOfPeopleNotInraid = UI:createSettingCheckbox(
+    local TMBHideTMBInfoOfPeopleNotInraid = UI:createSettingCheckbox(
         Frame,
         "Hide TMB information of people not in raid",
         "Checking this will make sure that you only see the names of players who are actually in your raid on item tooltips",
         function (_, checked)
-            self:set("TMB.hideTMBInfoOfPeopleNotInraid", checked);
+            self:set("TMB.hideInfoOfPeopleNotInraid", checked);
         end
     );
-    hideTMBInfoOfPeopleNotInraid:SetChecked(self:get("TMB.hideTMBInfoOfPeopleNotInraid"));
-    hideTMBInfoOfPeopleNotInraid:SetPoint("TOPLEFT", TMBIncludePrioListInfoInLootAnnouncementCheckbox, "BOTTOMLEFT", 0, -8);
+    TMBHideTMBInfoOfPeopleNotInraid:SetChecked(self:get("TMB.hideInfoOfPeopleNotInraid"));
+    TMBHideTMBInfoOfPeopleNotInraid:SetPoint("TOPLEFT", TMBIncludePrioListInfoInLootAnnouncementCheckbox, "BOTTOMLEFT", 0, -8);
 
     -- Do you want to include wishlist details on tooltips?
     local TMBShowWishListInfoOnTooltips = UI:createSettingCheckbox(
@@ -198,7 +198,7 @@ function Settings:showSettingsMenu(Frame)
         end
     );
     TMBShowWishListInfoOnTooltips:SetChecked(self:get("TMB.showWishListInfoOnTooltips"));
-    TMBShowWishListInfoOnTooltips:SetPoint("TOPLEFT", hideTMBInfoOfPeopleNotInraid, "BOTTOMLEFT", 0, -8);
+    TMBShowWishListInfoOnTooltips:SetPoint("TOPLEFT", TMBHideTMBInfoOfPeopleNotInraid, "BOTTOMLEFT", 0, -8);
 
     -- Do you want to include prio list details on tooltips?
     local TMBShowPrioListInfoOnTooltips = UI:createSettingCheckbox(
