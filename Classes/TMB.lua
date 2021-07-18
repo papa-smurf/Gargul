@@ -105,6 +105,13 @@ function TMB:appendTMBItemInfoToTooltip(tooltip)
         return;
     end
 
+    -- Make sure the user actually wants to see any tooltip data
+    if (not App.Settings:get("TMB.showWishListInfoOnTooltips")
+        and not App.Settings:get("TMB.showPrioListInfoOnTooltips")
+    ) then
+        return;
+    end
+
     local _, itemLink = tooltip:GetItem();
 
     -- We couldn't find an itemLink (this can actually happen!)
@@ -129,12 +136,14 @@ function TMB:appendTMBItemInfoToTooltip(tooltip)
     local PrioListEntries = {};
     local itemIsOnSomeonesWishlist = false;
     local itemIsOnSomeonesPriolist = false;
-    for playerName, Entry in pairs(TMBInfo) do
+    for _, Entry in pairs(TMBInfo) do
+        local playerName = Entry.character;
+
         if (not App.Settings:get("TMB.hideTMBInfoOfPeopleNotInraid")
             or PlayersInRaid[string.gsub(playerName, "(OS)", "")]
         ) then
-            local prio = Entry[1];
-            local type = Entry[2] or Constants.tmbTypeWish;
+            local prio = Entry.prio;
+            local type = Entry.type or Constants.tmbTypeWish;
             local Target = WishListEntries;
 
             if (type == Constants.tmbTypePrio) then
@@ -152,9 +161,9 @@ function TMB:appendTMBItemInfoToTooltip(tooltip)
     end
 
     -- Only add the 'Prio List' header if the item is actually on someone's wishlist
-    if (itemIsOnSomeonesPriolist and App.Settings:get("TMB.showTMBPrioListInfoOnTooltips")) then
+    if (itemIsOnSomeonesPriolist and App.Settings:get("TMB.showPrioListInfoOnTooltips")) then
         -- Add the header
-        tooltip:AddLine(string.format("\n|c00efb8cd%s", "Prio List"));
+        tooltip:AddLine(string.format("\n|c00efb8cd%s", "TMB Prio List"));
 
         -- Sort the PrioListEntries based on prio (lowest to highest)
         table.sort(PrioListEntries, function (a, b)
@@ -175,14 +184,14 @@ function TMB:appendTMBItemInfoToTooltip(tooltip)
     end
 
     -- The item is on someone's prio list and the user is not interested in wishlist entries
-    if (App.Settings:get("TMB.hideTMBWishlistInfoIfPriorityIsPresent") and itemIsOnSomeonesPriolist) then
+    if (App.Settings:get("TMB.hideWishListInfoIfPriorityIsPresent") and itemIsOnSomeonesPriolist) then
         return;
     end
 
     -- Only add the 'Wish List' header if the item is actually on someone's wishlist
-    if (itemIsOnSomeonesWishlist and App.Settings:get("TMB.showTMBWishListInfoOnTooltips")) then
+    if (itemIsOnSomeonesWishlist and App.Settings:get("TMB.showWishListInfoOnTooltips")) then
         -- Add the header
-        tooltip:AddLine(string.format("\n|c00efb8cd%s", "Wish List"));
+        tooltip:AddLine(string.format("\n|c00efb8cd%s", "TMB Wish List"));
 
 
         -- Sort the WishListEntries based on prio (lowest to highest)
@@ -291,6 +300,7 @@ function TMB:import(data, sender)
 
     -- Import the actual TMB data
     if (WebsiteData.wishlists and type(WebsiteData.wishlists) == "table") then
+        local processedEntryCheckums = {};
         local TMBData = {};
         for itemId, WishListEntries in pairs(WebsiteData.wishlists) do
             TMBData[itemId] = {};
@@ -318,7 +328,17 @@ function TMB:import(data, sender)
                     return false;
                 end
 
-                TMBData[itemId][characterName] = {order,type};
+                local checkSum = string.format('%s|%s|%s', characterName, order, type);
+
+                if (not processedEntryCheckums[checkSum]) then
+                    tinsert(TMBData[itemId], {
+                        ["character"] = characterName,
+                        ["prio"] = order,
+                        ["type"] = type
+                    });
+
+                    processedEntryCheckums[checkSum] = true;
+                end
             end
         end
 

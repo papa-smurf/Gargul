@@ -15,12 +15,12 @@ App.Data.DefaultSettings = {
     debugModeEnabled = false,
 
     TMB = {
-        includeTMBWishlistInfoInLootAnnouncement = true,
-        includeTMBPriolistInfoInLootAnnouncement = true,
+        includeWishListInfoInLootAnnouncement = true,
+        includePrioListInfoInLootAnnouncement = true,
         hideTMBInfoOfPeopleNotInraid = true,
-        showTMBWishListInfoOnTooltips = true,
-        showTMBPrioListInfoOnTooltips = true,
-        hideTMBWishlistInfoIfPriorityIsPresent = true,
+        showWishListInfoOnTooltips = true,
+        showPrioListInfoOnTooltips = true,
+        hideWishListInfoIfPriorityIsPresent = true,
     },
 
     PackMule = {
