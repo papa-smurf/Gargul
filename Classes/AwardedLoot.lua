@@ -197,6 +197,25 @@ function AwardedLoot:addWinner(winner, itemLink, dkp, announce, date)
             },
             channel
         ):send();
+
+        if (App.Settings:get("autoTradeAfterAwardingAnItem")) then
+            -- Open a trade window with the winner
+            InitiateTrade(winner);
+
+            -- Try to trade the item to the winner if it's in your inventory
+            -- The delay is necessary because of server lag etc.
+            self.timerId = App.Ace:ScheduleTimer(function ()
+                if (not TradeFrame:IsShown()) then
+                    return;
+                end
+
+                local itemPositionInBag = Utils:findBagIdAndSlotForItem(itemId);
+
+                if (itemPositionInBag and TradeFrame:IsShown()) then
+                    UseContainerItem(unpack(itemPositionInBag));
+                end
+            end, .5);
+        end
     end
 end
 

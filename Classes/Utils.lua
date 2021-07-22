@@ -266,6 +266,25 @@ function Utils:getItemInfoFromLink(rawItemLink)
     isCraftingReagent;
 end
 
+-- Find the first bag id and slot for a given item id (or false)
+function Utils:findBagIdAndSlotForItem(itemId)
+    for bag = 0, 10 do
+        for slot = 1, GetContainerNumSlots(bag) do
+            local foundItemLink = GetContainerItemLink(bag,slot)
+
+            if (foundItemLink) then
+                local foundItemId = Utils:getItemIdFromLink(foundItemLink);
+
+                if (foundItemId and foundItemId == itemId) then
+                    return {bag, slot};
+                end
+            end
+        end
+    end
+
+    return false;
+end
+
 -- Return an item's ID from an item link
 function Utils:getItemIdFromLink(itemLink)
     if (not itemLink
