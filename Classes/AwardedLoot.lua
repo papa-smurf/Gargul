@@ -14,6 +14,7 @@ App.AwardedLoot = {
 
 local Utils = App.Utils;
 local AwardedLoot = App.AwardedLoot;
+local CommActions = App.Data.Constants.Comm.Actions;
 
 function AwardedLoot:_init()
     Utils:debug("AwardedLoot:_init");
@@ -89,6 +90,7 @@ function AwardedLoot:addWinner(winner, itemLink, dkp, announce, date)
         return Utils:debug("Invalid itemLink provided for AwardedLoot:addWinner");
     end
 
+    -- You can set the date for when this item was awarded, handy if you forgot an item for example
     if (dateProvided) then
         local year, month, day = string.match(date, "^(%d+)-(%d+)-(%d+)$");
 
@@ -138,17 +140,17 @@ function AwardedLoot:addWinner(winner, itemLink, dkp, announce, date)
     -- Insert the award in the more permanent AwardHistory table (for export / audit purposes)
     tinsert(App.DB.AwardHistory, AwardEntry);
 
+    local channel = "PARTY";
+    if (App.User.isInRaid) then
+        channel = "RAID";
+    end
+
     if (announce) then
         awardMessage = string.format("%s was awarded to %s. Congrats!",
             itemLink,
             winner,
             dkp
         );
-
-        local publicChannel = "PARTY";
-        if (App.User.isInRaid) then
-            publicChannel = "RAID";
-        end
 
         if (type(dkp) == 'number' and dkp > 0) then
             awardMessage = string.format("%s awarded to %s for %s DKP. Congrats!",
@@ -159,7 +161,7 @@ function AwardedLoot:addWinner(winner, itemLink, dkp, announce, date)
 
             SendChatMessage(
                 awardMessage,
-                publicChannel,
+                channel,
                 "COMMON"
             );
 
@@ -174,7 +176,7 @@ function AwardedLoot:addWinner(winner, itemLink, dkp, announce, date)
 
         SendChatMessage(
             awardMessage,
-            publicChannel,
+            channel,
             "COMMON"
         );
     end
@@ -184,6 +186,51 @@ function AwardedLoot:addWinner(winner, itemLink, dkp, announce, date)
     if (not announce) then
         Utils:success(itemLink .. " was successfully awarded!");
     end
+
+    if (App.User.isInGroup) then
+        App.CommMessage.new(
+            CommActions.awardItem,
+            {
+                itemLink = itemLink,
+                winner = winner,
+                timestamp = timestamp,
+            },
+            channel
+        ):send();
+    end
+end
+
+function AwardedLoot:processAwardedLoot(CommMessage)
+    Utils:debug("AwardedLoot:processAwardedLoot");
+
+    -- No need to add awawarded loot if we broadcasted it ourselves
+    if (CommMessage.Sender.name == App.User.name) then
+        Utils:debug("AwardedLoot:processAwardedLoot received by self, skip");
+        return;
+    end
+
+    local itemLink = CommMessage.content.itemLink;
+    local winner = CommMessage.content.winner;
+    local timestamp = CommMessage.content.timestamp;
+    local itemId = Utils:getItemIdFromLink(itemLink);
+
+    if (not itemLink
+        or not winner or winner == ""
+        or not timestamp or timestamp == ""
+        or not itemId
+    ) then
+        return Utils:warning("Couldn't process auction result in Auction:processResult");
+    end
+
+    local AwardEntry = {
+        itemLink = itemLink,
+        itemId = itemId,
+        awardedTo = winner,
+        timestamp = timestamp,
+    };
+
+    -- Insert the award in the more permanent AwardHistory table (for export / audit purposes)
+    tinsert(App.DB.AwardHistory, AwardEntry);
 end
 
 Utils:debug("AwardedLoot.lua");

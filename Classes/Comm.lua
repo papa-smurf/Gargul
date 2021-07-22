@@ -148,13 +148,15 @@ function Comm:dispatch(CommMessage)
         return App.Auction:processRetractBid(CommMessage);
     elseif (action == CommActions.auctionResult) then
         return App.Auction:processResult(CommMessage);
+    elseif (action == CommActions.awardItem) then
+        return App.AwardedLoot:processAwardedLoot(CommMessage);
     elseif (action == CommActions.startRollOff) then
         return App.RollOff:start(CommMessage);
     elseif (action == CommActions.stopRollOff) then
         return App.RollOff:stop(CommMessage);
     elseif (action == CommActions.broadcastSoftReserves) then
         return App.SoftReserves:receiveSoftReserves(CommMessage);
-    elseif (action == CommActions.broadcastWishLists) then
+    elseif (action == CommActions.broadcastTMBData) then
         return App.SoftReserves:receiveWishLists(CommMessage);
     elseif (action == CommActions.inspectBags) then
         return App.BagInspector:report(CommMessage);

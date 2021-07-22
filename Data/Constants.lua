@@ -204,7 +204,8 @@ App.Data.Constants = {
             startRollOff = 11,
             stopAuction = 12,
             stopRollOff = 13,
-            broadcastWishLists = 14
+            broadcastTMBData = 14,
+            awardItem = 15
         },
     },
 

@@ -52,13 +52,13 @@ function TMB:getTMBInfoByItemId(itemId)
         return;
     end
 
-    if (not App.Data.Constants.IdenticalItemsWithDifferentIds[itemId]) then
+    if (not App.Data.Constants.LinkedItems[itemId]) then
         return App.DB.TMB[itemId];
     end
 
     -- The item linked to this id can have multiple IDs (head of Onyxia for example)
-    local Wishes = {};
-    for _, linkedItemId in pairs(App.Data.Constants.IdenticalItemsWithDifferentIds[itemId]) do
+    local Wishes = Utils:tableGet(App.DB.TMB, tostring(itemId), {});
+    for _, linkedItemId in pairs(App.Data.Constants.LinkedItems[itemId]) do
         Wishes = Utils:tableMerge(Wishes, Utils:tableGet(App.DB.TMB, tostring(linkedItemId), {}));
     end
 
@@ -383,13 +383,13 @@ function TMB:broadcast()
 
     if (App.User.isInRaid) then
         App.CommMessage.new(
-            CommActions.broadcastWishLists,
+            CommActions.broadcastTMBData,
             "App.DB.TMB",
             "RAID"
         ):send();
     elseif (App.User.isInParty) then
         App.CommMessage.new(
-            CommActions.broadcastWishLists,
+            CommActions.broadcastTMBData,
             "App.DB.TMB",
             "PARTY"
         ):send();
