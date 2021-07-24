@@ -248,6 +248,18 @@ function Settings:showSettingsMenu(Frame)
     EnableAutoTradeAfterAwardingAnItem:SetChecked(self:get("autoTradeAfterAwardingAnItem"));
     EnableAutoTradeAfterAwardingAnItem:SetPoint("TOPLEFT", ShowRollOffWindowCheckbox, "BOTTOMLEFT", 0, -8);
 
+    -- Do you want to attempt to open a trade window with the winner after awarding an item?
+    local EnableAutoAssignAfterAwardingAnItem = UI:createSettingCheckbox(
+        Frame,
+        "Assign loot to winner after awarding an item",
+        "When checked Gargul will auto assign awarded loot to the winner. Only works if the loot window of whatever you killed is still opened",
+        function (_, checked)
+            self:set("autoAssignAfterAwardingAnItem", checked);
+        end
+    );
+    EnableAutoAssignAfterAwardingAnItem:SetChecked(self:get("autoAssignAfterAwardingAnItem"));
+    EnableAutoAssignAfterAwardingAnItem:SetPoint("TOPLEFT", EnableAutoTradeAfterAwardingAnItem, "BOTTOMLEFT", 0, -8);
+
     -- Do you want this addon to operate quietly? Aka no sounds when roll starts/ends etc?
     local MuteAddonCheckbox = UI:createSettingCheckbox(
         Frame,
@@ -258,7 +270,7 @@ function Settings:showSettingsMenu(Frame)
         end
     );
     MuteAddonCheckbox:SetChecked(self:get("muted"));
-    MuteAddonCheckbox:SetPoint("TOPLEFT", EnableAutoTradeAfterAwardingAnItem, "BOTTOMLEFT", 0, -8);
+    MuteAddonCheckbox:SetPoint("TOPLEFT", EnableAutoAssignAfterAwardingAnItem, "BOTTOMLEFT", 0, -8);
 
     -- Enable debug mode
     local EnableDebugModeCheckbox = UI:createSettingCheckbox(
@@ -272,26 +284,26 @@ function Settings:showSettingsMenu(Frame)
     EnableDebugModeCheckbox:SetChecked(self:get("debugModeEnabled"));
     EnableDebugModeCheckbox:SetPoint("TOPLEFT", MuteAddonCheckbox, "BOTTOMLEFT", 0, -8);
 
-    -- This is the "PackMule" button that opens the PackMule settings
-    local PackMuleSettings = CreateFrame("Button", nil, Frame, "UIPanelButtonTemplate");
-    PackMuleSettings:SetText("PackMule");
-    PackMuleSettings:SetWidth(177);
-    PackMuleSettings:SetHeight(24);
-    PackMuleSettings:SetPoint("TOPLEFT", EnableDebugModeCheckbox, "BOTTOMLEFT", -2, -16);
-    PackMuleSettings:SetScript("OnClick", function()
-        App.Commands:call("packmule");
-        InterfaceOptionsFrame_Show();
-    end);
-
-    -- This is the "Reset to defaults" button that resets all settings
-    local ResetToDefaultSettings = CreateFrame("Button", nil, Frame, "UIPanelButtonTemplate");
-    ResetToDefaultSettings:SetText("Reset to defaults");
-    ResetToDefaultSettings:SetWidth(177);
-    ResetToDefaultSettings:SetHeight(24);
-    ResetToDefaultSettings:SetPoint("TOPLEFT", PackMuleSettings, "BOTTOMLEFT", -2, -16);
-    ResetToDefaultSettings:SetScript("OnClick", function()
-        StaticPopup_Show(App.name .. "_RESET_TO_DEFAULTS_CONFIRMATION");
-    end);
+--     -- This is the "PackMule" button that opens the PackMule settings
+--     local PackMuleSettings = CreateFrame("Button", nil, Frame, "UIPanelButtonTemplate");
+--     PackMuleSettings:SetText("PackMule");
+--     PackMuleSettings:SetWidth(177);
+--     PackMuleSettings:SetHeight(24);
+--     PackMuleSettings:SetPoint("TOPLEFT", EnableDebugModeCheckbox, "BOTTOMLEFT", -2, -16);
+--     PackMuleSettings:SetScript("OnClick", function()
+--         App.Commands:call("packmule");
+--         InterfaceOptionsFrame_Show();
+--     end);
+--
+--     -- This is the "Reset to defaults" button that resets all settings
+--     local ResetToDefaultSettings = CreateFrame("Button", nil, Frame, "UIPanelButtonTemplate");
+--     ResetToDefaultSettings:SetText("Reset to defaults");
+--     ResetToDefaultSettings:SetWidth(177);
+--     ResetToDefaultSettings:SetHeight(24);
+--     ResetToDefaultSettings:SetPoint("TOPLEFT", PackMuleSettings, "BOTTOMLEFT", -2, -16);
+--     ResetToDefaultSettings:SetScript("OnClick", function()
+--         StaticPopup_Show(App.name .. "_RESET_TO_DEFAULTS_CONFIRMATION");
+--     end);
 
     Frame:SetScript("OnShow", nil);
 end

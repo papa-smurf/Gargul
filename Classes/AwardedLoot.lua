@@ -187,36 +187,105 @@ function AwardedLoot:addWinner(winner, itemLink, dkp, announce, date)
         Utils:success(itemLink .. " was successfully awarded!");
     end
 
-    if (App.User.isInGroup) then
-        App.CommMessage.new(
-            CommActions.awardItem,
-            {
-                itemLink = itemLink,
-                winner = winner,
-                timestamp = timestamp,
-            },
-            channel
-        ):send();
+    -- If the user is not in a group then there's no need
+    -- to broadcast or attempt to auto assign loot to the winner
+    if (not App.User.isInGroup) then
+        return;
+    end
 
-        if (App.Settings:get("autoTradeAfterAwardingAnItem")) then
-            -- Open a trade window with the winner
-            InitiateTrade(winner);
+    -- Broadcast the awarded loot details to everyone in the group
+    App.CommMessage.new(
+        CommActions.awardItem,
+        {
+            itemLink = itemLink,
+            winner = winner,
+            timestamp = timestamp,
+        },
+        channel
+    ):send();
 
-            -- Try to trade the item to the winner if it's in your inventory
-            -- The delay is necessary because of server lag etc.
-            self.timerId = App.Ace:ScheduleTimer(function ()
-                if (not TradeFrame:IsShown()) then
-                    return;
-                end
+    -- The loot window is still active and the auto assign setting is enabled
+    if (App.DroppedLoot.lootWindowIsOpened
+        and App.Settings:get("autoAssignAfterAwardingAnItem")
+    ) then
+        AwardedLoot:assignLootToPlayer(AwardEntry);
 
-                local itemPositionInBag = Utils:findBagIdAndSlotForItem(itemId);
+    -- The loot window is closed and the auto trade setting is enabled
+    -- Also skip this part if you yourself won the item
+    elseif (not App.DroppedLoot.lootWindowIsOpened
+        and App.Settings:get("autoTradeAfterAwardingAnItem")
+        and App.User.name ~= winner
+    ) then
+        AwardedLoot:initiateTrade(AwardEntry);
+    end
+end
 
-                if (itemPositionInBag and TradeFrame:IsShown()) then
-                    UseContainerItem(unpack(itemPositionInBag));
-                end
-            end, .5);
+-- Attempt to initiate a trade with whomever won the item
+function AwardedLoot:initiateTrade(AwardDetails)
+    Utils:debug("AwardedLoot:initiateTrade");
+
+    -- Open a trade window with the winner
+    InitiateTrade(AwardDetails.awardedTo);
+
+    -- Try to trade the item to the winner if it's in your inventory
+    -- The delay is necessary because of server lag etc.
+    self.timerId = App.Ace:ScheduleTimer(function ()
+        if (not TradeFrame:IsShown()) then
+            return;
+        end
+
+        local itemPositionInBag = Utils:findBagIdAndSlotForItem(AwardDetails.itemId);
+
+        if (itemPositionInBag and TradeFrame:IsShown()) then
+            UseContainerItem(unpack(itemPositionInBag));
+        end
+    end, .5);
+end
+
+-- Assign an awarded item to a player
+function AwardedLoot:assignLootToPlayer(AwardDetails)
+    Utils:debug("AwardedLoot:assignLootToPlayer");
+
+    -- Try to determine the loot index of the item we just awarded
+    local itemIndexOfAwardedItem = false;
+    local itemCount = GetNumLootItems();
+    for lootIndex = 1, itemCount do
+        local itemLink = GetLootSlotLink(lootIndex);
+        local itemId = App.Utils:getItemIdFromLink(itemLink);
+
+        if (itemId and itemId == AwardDetails.itemId) then
+            itemIndexOfAwardedItem = lootIndex;
+            break;
         end
     end
+
+    -- The item could not be found, most likely
+    -- because it was awarded manually already
+    if (not itemIndexOfAwardedItem) then
+        Utils:debug("No itemIndexOfAwardedItem found in AwardedLoot:assignLootToPlayer");
+        return;
+    end
+
+    -- Try to determine the index of whomever won the item
+    local winnerIndex = false;
+    for index = 1, MEMBERS_PER_RAID_GROUP do
+        local candidate = GetMasterLootCandidate(itemIndexOfAwardedItem, index);
+
+        if (candidate and candidate == AwardDetails.awardedTo) then
+            winnerIndex = index;
+            break;
+        end
+    end
+
+    -- The player the item was awarded to is not currently in the raid anymore
+    -- Or is not eligible to receive the item according to the GetMasterLootCandidate API
+    if (not winnerIndex) then
+        Utils:debug("No winnerIndex found in AwardedLoot:assignLootToPlayer");
+        return
+    end
+
+    -- Assign the item to the winner
+    GiveMasterLoot(itemIndexOfAwardedItem, winnerIndex);
 end
 
 function AwardedLoot:processAwardedLoot(CommMessage)

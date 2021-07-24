@@ -12,7 +12,8 @@ App.Data.DefaultSettings = {
     minimumQualityOfAnnouncedLoot = 4,
     includeSoftReservesInLootAnnouncement = true,
     showRollOffWindow = true,
-    autoTradeAfterAwardingAnItem = false,
+    autoTradeAfterAwardingAnItem = true,
+    autoAssignAfterAwardingAnItem = true,
     debugModeEnabled = false,
 
     TMB = {

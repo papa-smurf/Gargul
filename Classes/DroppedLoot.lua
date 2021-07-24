@@ -1,6 +1,7 @@
 local _, App = ...;
 
 App.DroppedLoot = {
+    lootWindowIsOpened = false,
     initialized = false,
     eventsHooked = false,
     Announced = {},
@@ -21,6 +22,11 @@ function DroppedLoot:_init()
     -- Fire DroppedLoot:lootReady every time a loot window is opened
     App.Events:register("DroppedLootLootReadyListener", "LOOT_OPENED", DroppedLoot.lootOpened);
 
+    -- Make sure to keep track of the loot window status
+    App.Events:register("DroppedLootLootClosedListener", "LOOT_CLOSED", function ()
+        DroppedLoot.lootWindowIsOpened = false;
+    end);
+
     self._initialized = true;
 end
 
@@ -28,7 +34,7 @@ end
 function DroppedLoot:lootOpened()
     Utils:debug("DroppedLoot:lootOpened");
 
-    self = DroppedLoot;
+    DroppedLoot.lootWindowIsOpened = true;
 
     if (not App.User.isInGroup
         or not (App.User.isMasterLooter)
@@ -36,14 +42,14 @@ function DroppedLoot:lootOpened()
         return;
     end
 
-    self:hookClickEvents();
+    DroppedLoot:hookClickEvents();
 
     -- Only announce loot in chat if the setting is enabled
     if (App.Settings:get("announceLootToChat")) then
         -- We give the announcing of loot some time
         -- in case the master looter set up a packmule
         App.Ace:ScheduleTimer(function ()
-            self:announce();
+            DroppedLoot:announce();
         end, .5);
     end
 end
