@@ -205,6 +205,10 @@ function Utils:clearScrollTable(ScrollingTable)
     ScrollingTable = nil;
 end
 
+function Utils:startsWith(str, startStr)
+   return string.sub(str, 1, string.len(startStr)) == startStr;
+end
+
 -- Print large quantities of text to a multiline editbox
 -- Very useful for debugging purposes, should not be used for anything else
 function Utils:frameMessage(message)
