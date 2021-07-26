@@ -108,17 +108,24 @@ function SoftReserves:appendSoftReserveInfoToTooltip(tooltip)
     end
 
     local activeReserves = {};
-    local playersInRaid = {};
+    local PlayersInRaid = {};
+
     -- Fetch the name of everyone currently in the raid/party
-    for _, player in pairs(App.User:groupMembers()) do
-        tinsert(playersInRaid, player.name);
+    for _, Player in pairs(App.User:groupMembers()) do
+        PlayersInRaid[string.lower(Player.name)] = Player;
     end
 
     -- Make sure we only show shoft reserves of people
     -- Who are actually in the raid
-    for _, player in pairs(reserves) do
-        if (Utils:inArray(playersInRaid, player)) then
-            tinsert(activeReserves, player);
+    for _, playerName in pairs(reserves) do
+        if (PlayersInRaid[playerName]) then
+            local color = Utils:tableGet(App.Data.Constants.ClassHexColors, string.lower(PlayersInRaid[playerName].class), "FFFFFF");
+
+            tinsert(activeReserves, string.format(
+                "|cFF%s%s|r",
+                color,
+                Utils:capitalize(playerName)
+            ));
         end
     end
 
@@ -128,7 +135,7 @@ function SoftReserves:appendSoftReserveInfoToTooltip(tooltip)
     tooltip:AddLine(string.format("\n|c00efb8cd%s", "Soft Reserves"));
 
     -- Add the actual soft reserves
-    tooltip:AddLine(string.format("|c008aecff %s", reserves));
+    tooltip:AddLine(string.format("|c008aecff%s", reserves));
 end
 
 function SoftReserves:drawImporter()
@@ -225,7 +232,7 @@ function SoftReserves:import(data, sender)
                     itemId = tostring(itemId);
                     local entry = Utils:tableGet(SoftReserveData, itemId, {});
 
-                    tinsert(entry, player);
+                    tinsert(entry, string.lower(player));
                     SoftReserveData[itemId] = entry;
                 end
             end
