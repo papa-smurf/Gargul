@@ -171,7 +171,7 @@ function DroppedLoot:announce()
                 -- Who are actually in the raid
                 for _, player in pairs(softReserves) do
                     if (Utils:inArray(playersInRaids, player)) then
-                        tinsert(activeSoftReserves, player);
+                        tinsert(activeSoftReserves, Utils:capitalize(player));
                         hasSoftReserves = true;
                     end
                 end
