@@ -464,7 +464,7 @@ function RaidGroups:processMigrations(Migrations, numberOfMigrations, index)
         local desiredGroup = Migration[3];
         local leftIndex = 0;
 
-        for index = 1, MAX_RAID_MEMBERS do
+        for index = 1, _G.MAX_RAID_MEMBERS do
             local nameOnIndex = GetRaidRosterInfo(index);
 
             if (name == nameOnIndex) then
@@ -485,7 +485,7 @@ function RaidGroups:processMigrations(Migrations, numberOfMigrations, index)
         local leftIndex = 0;
         local rightIndex = 0;
 
-        for index = 1, MAX_RAID_MEMBERS do
+        for index = 1, _G.MAX_RAID_MEMBERS do
             local nameOnIndex = GetRaidRosterInfo(index);
 
             if (leftName == nameOnIndex) then
