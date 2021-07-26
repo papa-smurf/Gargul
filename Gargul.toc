@@ -21,6 +21,7 @@ Data/DefaultSettings.lua
 Classes/Utils.lua
 Classes/Events.lua
 Classes/JSON.lua
+Classes/Base64.lua
 Classes/UI.lua
 Classes/DB.lua
 Classes/Settings.lua
