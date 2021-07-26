@@ -79,4 +79,9 @@
     LibSerialize is a Lua library for efficiently serializing/deserializing arbitrary values.
     -->
     <Include file="Libs\LibSerialize\LibSerialize.lua" />
+
+    <!--
+    LibCustomGlow Starts glow over target frame with set parameters.
+    -->
+    <Include file="Libs\LibCustomGlow-1.0\LibCustomGlow-1.0.lua" />
 </Ui>
