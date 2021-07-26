@@ -280,7 +280,7 @@ function BagInspector:displayInspectionResults()
     -- Loop through all members of the group (party or raid)
     local PlayerData = {};
     local ClassColors = App.Data.Constants.ClassRgbColors;
-    for index = 1, MAX_RAID_MEMBERS do
+    for index = 1, _G.MAX_RAID_MEMBERS do
         local name, _, _, _, class = GetRaidRosterInfo(index);
         local Row = {};
 

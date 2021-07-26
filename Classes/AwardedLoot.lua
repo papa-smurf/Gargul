@@ -268,7 +268,7 @@ function AwardedLoot:assignLootToPlayer(AwardDetails)
 
     -- Try to determine the index of whomever won the item
     local winnerIndex = false;
-    for index = 1, MEMBERS_PER_RAID_GROUP do
+    for index = 1, _G.MAX_RAID_MEMBERS do
         local candidate = GetMasterLootCandidate(itemIndexOfAwardedItem, index);
 
         if (candidate and candidate == AwardDetails.awardedTo) then

@@ -87,7 +87,7 @@ function User:refresh()
         if (nameOnIndex ~= self.name) then
             self.raidIndex = nil;
 
-            for index = 1, MAX_RAID_MEMBERS do
+            for index = 1, _G.MAX_RAID_MEMBERS do
                 local name, rank, subgroup, _, _, _,
                 _, _, _, role, isMasterLooter, combatRole = GetRaidRosterInfo(index);
 
@@ -124,9 +124,9 @@ function User:groupMembers()
         return Roster;
     end
 
-    local maximumNumberOfGroupMembers = MEMBERS_PER_RAID_GROUP;
+    local maximumNumberOfGroupMembers = _G.MEMBERS_PER_RAID_GROUP;
     if (App.User.isInRaid) then
-        maximumNumberOfGroupMembers = MAX_RAID_MEMBERS;
+        maximumNumberOfGroupMembers = _G.MAX_RAID_MEMBERS;
     end
 
     for index = 1, maximumNumberOfGroupMembers do

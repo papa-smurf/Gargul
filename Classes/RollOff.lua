@@ -292,9 +292,9 @@ function RollOff:processRoll(message)
         if (low ~= 1 or high ~= 100) then
             return;
         else
-            local maximumNumberOfGroupMembers = MEMBERS_PER_RAID_GROUP;
+            local maximumNumberOfGroupMembers = _G.MEMBERS_PER_RAID_GROUP;
             if (App.User.isInRaid) then
-                maximumNumberOfGroupMembers = MAX_RAID_MEMBERS;
+                maximumNumberOfGroupMembers = _G.MAX_RAID_MEMBERS;
             end
 
             -- This is to fetch the roller's class and to make sure
