@@ -10,6 +10,7 @@ App.DroppedLoot = {
 local Constants = App.Data.Constants;
 local Utils = App.Utils;
 local DroppedLoot = App.DroppedLoot;
+local LCG = LibStub("LibCustomGlow-1.0");
 
 function DroppedLoot:_init()
     Utils:debug("DroppedLoot:_init");
@@ -20,12 +21,16 @@ function DroppedLoot:_init()
     end
 
     -- Fire DroppedLoot:lootReady every time a loot window is opened
-    App.Events:register("DroppedLootLootReadyListener", "LOOT_OPENED", DroppedLoot.lootOpened);
+    App.Events:register("DroppedLootLootOpenedListener", "LOOT_OPENED", DroppedLoot.lootOpened);
 
     -- Make sure to keep track of the loot window status
     App.Events:register("DroppedLootLootClosedListener", "LOOT_CLOSED", function ()
         DroppedLoot.lootWindowIsOpened = false;
     end);
+
+    -- Highlight items that are soft-reserved or have TMB details
+    App.Events:register("DroppedLootLootOpenedHighlighterListener", "LOOT_OPENED", DroppedLoot.highlightItemsOfInterest);
+    App.Events:register("DroppedLootLootSlotChangedHighlighterListener", "LOOT_SLOT_CHANGED", DroppedLoot.highlightItemsOfInterest);
 
     self._initialized = true;
 end
@@ -54,8 +59,34 @@ function DroppedLoot:lootOpened()
     end
 end
 
+-- Highlight items that are soft-reserved or otherwise need extra attention
+function DroppedLoot:highlightItemsOfInterest()
+    Utils:debug("DroppedLoot:highlightItemsOfInterest");
+
+    -- 4 is the max since buttons seem to be reused
+    -- throughout loot pages... thanks Blizzard
+    for buttonIndex = 1, _G.LOOTFRAME_NUMBUTTONS do
+        local Button = getglobal("LootButton" .. buttonIndex);
+        LCG.PixelGlow_Stop(Button);
+
+        if (Button:IsVisible() and Button.slot) then
+            local itemLink = GetLootSlotLink(Button.slot);
+
+            if (itemLink and type(itemLink) == "string") then
+                local softReserves = App.SoftReserves:getSoftReservesByItemLink(itemLink);
+                local TMBInfo = App.TMB:getTMBInfoByItemLink(itemLink);
+
+                if (softReserves or TMBInfo) then
+                    -- Add an animated border to indicate that this item was reserved / wishlisted
+                    LCG.PixelGlow_Start(Button, {0.95, 0.95, 0.32, 1}, 10, .05, 5, 3);
+                end
+            end
+        end
+    end
+end
+
 -- Hook click events to the item buttons in the
--- loot window (name LootButton1 through LoootButton4)
+-- loot window (name LootButton1 through LootButton4)
 -- Only 4 buttons will be used regardless of number of drops
 -- Alt click opens the roll window, alt + shift opens the auctioneer window
 function DroppedLoot:hookClickEvents()
@@ -67,7 +98,7 @@ function DroppedLoot:hookClickEvents()
 
     -- 4 is the max since buttons seem to be reused
     -- throughout loot pages... thanks Blizzard
-    for buttonIndex = 1, LOOTFRAME_NUMBUTTONS do
+    for buttonIndex = 1, _G.LOOTFRAME_NUMBUTTONS do
         local Button = getglobal("LootButton" .. buttonIndex);
 
         Button:HookScript("OnClick", function()
@@ -214,7 +245,7 @@ function DroppedLoot:announce()
 
                 local PrioData = {};
                 for _, Entry in pairs(activePrioListDetails) do
-                    tinsert(PrioData, Entry[2]);
+                    tinsert(PrioData, Utils:capitalize(Entry[2]));
                 end
 
                 SendChatMessage(
@@ -238,7 +269,7 @@ function DroppedLoot:announce()
 
                 local WishListData = {};
                 for _, Entry in pairs(activeWishListDetails) do
-                    tinsert(WishListData, Entry[2]);
+                    tinsert(WishListData, Utils:capitalize(Entry[2]));
                 end
 
                 SendChatMessage(
