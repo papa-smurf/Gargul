@@ -69,6 +69,7 @@ function App:_init()
     App.SoftReserves:_init();
     App.TMB:_init();
     App.DroppedLoot:_init();
+    App.GroupLoot:_init();
     App.PackMule:_init();
 
     -- Hook the bagslot events
