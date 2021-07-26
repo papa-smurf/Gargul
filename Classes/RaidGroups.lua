@@ -311,7 +311,7 @@ function RaidGroups:applyRaidGroups(raidGroupCsv)
             and raidersCurrentGroup ~= raidersDesiredGroup
         ) then
             -- The raider's desired group is not full yet so we can just move him
-            if (NumRaidersInGroup[raidersDesiredGroup] < MEMBERS_PER_RAID_GROUP) then
+            if (NumRaidersInGroup[raidersDesiredGroup] < _G.MEMBERS_PER_RAID_GROUP) then
                 Utils:debug(string.format(
                     "%s is currently wants to be in group %s which is not full yet, so move him",
                     Raider.name,

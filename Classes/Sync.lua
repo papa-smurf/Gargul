@@ -158,7 +158,7 @@ function Sync:processBroadcastLootHistoryResponses()
     App.CommMessage.Box[message.id] = nil;
 
     -- name, rank, subgroup, level, class, fileName, zone, online, isDead, role, isML = GetRaidRosterInfo(raidIndex);
-    -- raidIndex. Number - Index of raid member between 1 and MAX_RAID_MEMBERS (40). If you specify an index that is out of bounds, the function returns nil.
+    -- raidIndex. Number - Index of raid member between 1 and _G.MAX_RAID_MEMBERS (40). If you specify an index that is out of bounds, the function returns nil.
 
     -- members = GetNumRaidMembers();
     -- Number - number of players in your raid group, including yourself; or 0 if you are not in a raid group.
