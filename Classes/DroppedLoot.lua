@@ -165,7 +165,7 @@ function DroppedLoot:announce()
             local itemIsOnSomeonesWishlist = false;
 
             if (softReserves
-                and App.Settings:get("TMB.includeSoftReservesInLootAnnouncement")
+                and App.Settings:get("includeSoftReservesInLootAnnouncement")
             ) then
                 -- Make sure we only show shoft reserves of people
                 -- Who are actually in the raid
