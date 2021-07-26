@@ -60,7 +60,7 @@ function AwardedLoot:appendAwardedLootToTooltip(tooltip)
     tooltip:AddLine(string.format("\n|c00efb8cd%s|r", "Awarded To"));
 
     -- Add the actual award info
-    tooltip:AddLine(string.format("|c008aecff %s|r", awardedTo));
+    tooltip:AddLine(string.format("|c008aecff%s|r", awardedTo));
 end
 
 function AwardedLoot:addWinnerOnDate(winner, date, itemLink)
