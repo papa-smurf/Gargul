@@ -2,7 +2,7 @@
 local appName, App = ...;
 
 --[[ APP VERSION ]]
-App.version = "3.0.7";
+App.version = "3.0.8";
 
 App.name = appName;
 App._initialized = false;
