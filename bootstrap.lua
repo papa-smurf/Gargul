@@ -81,6 +81,11 @@ App.Ace:RegisterChatCommand("gl", function (...)
     App.Commands:_dispatch(...);
 end)
 
+-- Register the gargul slash command
+App.Ace:RegisterChatCommand("gargul", function (...)
+    App.Commands:_dispatch(...);
+end)
+
 -- Hook the bag slot events making it possible to alt(+shift) click
 -- items in bags to either start rolling or auctioning them off
 function App:hookBagSlotEvents()
