@@ -339,7 +339,7 @@ function TMB:import(data, sender)
                 end
 
                 if (characterName and order) then
-                    local checkSum = string.format('%s|%s|%s', characterName, order, type);
+                    local checkSum = string.format('%s|%s|%s|%s', itemId, characterName, order, type);
 
                     if (not processedEntryCheckums[checkSum]) then
                         tinsert(TMBData[itemId], {
