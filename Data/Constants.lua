@@ -17,12 +17,12 @@ App.Data.Constants = {
 
     LinkedItems = {
         -- Head of Onyxia (Horde/Alliance)
-        ["18422"] = 18423,
-        ["18423"] = 18422,
+        ["18422"] = {18423},
+        ["18423"] = {18422},
 
         -- Magtheridon's Head (Horde/Alliance)
-        ["32385"] = 32386,
-        ["32386"] = 32385,
+        ["32385"] = {32386},
+        ["32386"] = {32385},
 
         -- Tier 3 items
             -- Desecrated Sandals
