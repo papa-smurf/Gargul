@@ -43,7 +43,7 @@ end
 function TMB:getTMBInfoByItemId(itemId)
     Utils:debug("TMB:getTMBInfoByItemId");
 
-    if (type(itemId) == "number") then
+    if (type(itemId) ~= "string") then
         itemId = tostring(itemId);
     end
 
@@ -143,10 +143,11 @@ function TMB:appendTMBItemInfoToTooltip(tooltip)
             or PlayersInRaid[string.gsub(playerName, "(OS)", "")]
         ) then
             local prio = Entry.prio;
-            local type = Entry.type or Constants.tmbTypeWish;
+            local entryType = Entry.type or Constants.tmbTypeWish;
             local Target = WishListEntries;
             local isOffSpec = string.find(playerName, "(OS)");
             local prioOffset = 0;
+            local sortingOrder = prio;
 
             -- We add 100 to the prio (first key) of the object
             -- This object is used for sorting later and is not visible to the player
@@ -154,11 +155,19 @@ function TMB:appendTMBItemInfoToTooltip(tooltip)
                 prioOffset = 100;
             end
 
-            if (type == Constants.tmbTypePrio) then
-                tinsert(PrioListEntries, {prio + prioOffset, string.format("%s[%s]", playerName, prio)});
+            if (type(sortingOrder) == "number") then
+                sortingOrder = prio + prioOffset;
+            else
+                -- If for whatever reason we can't determine the
+                -- item prio then we add it to the end of the list by default
+                sortingOrder = 1000;
+            end
+
+            if (entryType == Constants.tmbTypePrio) then
+                tinsert(PrioListEntries, {sortingOrder, string.format("%s[%s]", playerName, prio)});
                 itemIsOnSomeonesPriolist = true;
             else
-                tinsert(WishListEntries, {prio + prioOffset, string.format("%s[%s]", playerName, prio)});
+                tinsert(WishListEntries, {sortingOrder, string.format("%s[%s]", playerName, prio)});
                 itemIsOnSomeonesWishlist = true;
             end
         end
@@ -304,6 +313,7 @@ function TMB:import(data, sender)
     end
 
     -- Import the actual TMB data
+    local insufficientPermissions = false;
     if (WebsiteData.wishlists and type(WebsiteData.wishlists) == "table") then
         local processedEntryCheckums = {};
         local TMBData = {};
@@ -328,21 +338,22 @@ function TMB:import(data, sender)
                     end
                 end
 
-                if (not characterName or not order) then
-                    Utils:error("Invalid data provided");
-                    return false;
+                if (characterName and order) then
+                    local checkSum = string.format('%s|%s|%s', characterName, order, type);
+
+                    if (not processedEntryCheckums[checkSum]) then
+                        tinsert(TMBData[itemId], {
+                            ["character"] = characterName,
+                            ["prio"] = order,
+                            ["type"] = type
+                        });
+
+                        processedEntryCheckums[checkSum] = true;
+                    end
                 end
 
-                local checkSum = string.format('%s|%s|%s', characterName, order, type);
-
-                if (not processedEntryCheckums[checkSum]) then
-                    tinsert(TMBData[itemId], {
-                        ["character"] = characterName,
-                        ["prio"] = order,
-                        ["type"] = type
-                    });
-
-                    processedEntryCheckums[checkSum] = true;
+                if (not order) then
+                    insufficientPermissions = true;
                 end
             end
         end
@@ -355,7 +366,13 @@ function TMB:import(data, sender)
         App.LootPriority:save(WebsiteData.loot);
     end
 
-    Utils:success("TMB Import successful");
+    if (insufficientPermissions) then
+        Utils:success("TMB Import successful with notice:");
+        Utils:warning("It seems like you don't have sufficient permissions on TMB to view all priority data. Do you have the correct role in TMB?");
+    else
+        Utils:success("TMB Import successful");
+    end
+
     return true;
 end
 

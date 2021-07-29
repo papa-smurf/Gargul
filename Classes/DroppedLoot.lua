@@ -63,6 +63,11 @@ end
 function DroppedLoot:highlightItemsOfInterest()
     Utils:debug("DroppedLoot:highlightItemsOfInterest");
 
+    -- There's no point highlight loot if you're not in a group
+    if (not App.User.isInGroup) then
+        return;
+    end
+
     -- 4 is the max since buttons seem to be reused
     -- throughout loot pages... thanks Blizzard
     for buttonIndex = 1, _G.LOOTFRAME_NUMBUTTONS do
@@ -183,7 +188,6 @@ function DroppedLoot:announce()
                     or App.Settings:get("TMB.includeWishListInfoInLootAnnouncement")
                 )
             ) then
-
                 -- Make sure we only show wishlist details of people
                 -- Who are actually in the raid
                 for _, Entry in pairs(TMBInfo) do
@@ -191,9 +195,10 @@ function DroppedLoot:announce()
 
                     if (Utils:inArray(playersInRaids, string.gsub(playerName, "(OS)", ""))) then
                         local prio = Entry.prio;
-                        local type = Entry.type or Constants.tmbTypeWish;
+                        local entryType = Entry.type or Constants.tmbTypeWish;
                         local isOffSpec = string.find(playerName, "(OS)");
                         local prioOffset = 0;
+                        local sortingOrder = prio;
 
                         -- We add 100 to the prio (first key) of the object
                         -- This object is used for sorting later and is not visible to the player
@@ -201,11 +206,19 @@ function DroppedLoot:announce()
                             prioOffset = 100;
                         end
 
-                        if (type == Constants.tmbTypePrio) then
-                            tinsert(activePrioListDetails, {prio + prioOffset, string.format("%s[%s]", playerName, prio)});
+                        if (type(sortingOrder) == "number") then
+                            sortingOrder = prio + prioOffset;
+                        else
+                            -- If for whatever reason we can't determine the
+                            -- item prio then we add it to the end of the list by default
+                            sortingOrder = 1000;
+                        end
+
+                        if (entryType == Constants.tmbTypePrio) then
+                            tinsert(activePrioListDetails, {sortingOrder, string.format("%s[%s]", playerName, prio)});
                             itemIsOnSomeonesPriolist = true;
                         else
-                            tinsert(activeWishListDetails, {prio + prioOffset, string.format("%s[%s]", playerName, prio)});
+                            tinsert(activeWishListDetails, {sortingOrder, string.format("%s[%s]", playerName, prio)});
                             itemIsOnSomeonesWishlist = true;
                         end
                     end
