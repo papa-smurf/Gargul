@@ -193,7 +193,7 @@ function DroppedLoot:announce()
                 for _, Entry in pairs(TMBInfo) do
                     local playerName = Entry.character;
 
-                    if (Utils:inArray(playersInRaids, string.gsub(playerName, "(OS)", ""))) then
+                    if (Utils:inArray(playersInRaids, string.gsub(playerName, "%(OS%)", ""))) then
                         local prio = Entry.prio;
                         local entryType = Entry.type or Constants.tmbTypeWish;
                         local isOffSpec = string.find(playerName, "(OS)");

@@ -140,7 +140,7 @@ function TMB:appendTMBItemInfoToTooltip(tooltip)
         local playerName = Entry.character;
 
         if (not App.Settings:get("TMB.hideInfoOfPeopleNotInraid")
-            or PlayersInRaid[string.gsub(playerName, "(OS)", "")]
+            or PlayersInRaid[string.gsub(playerName, "%(OS%)", "")]
         ) then
             local prio = Entry.prio;
             local entryType = Entry.type or Constants.tmbTypeWish;
