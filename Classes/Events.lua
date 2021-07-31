@@ -1,7 +1,7 @@
 local _, App = ...;
 
 App.Events = {
-    initialized = false,
+    _initialized = false,
     Frame = nil,
     Registry = {
         EventListeners = {},

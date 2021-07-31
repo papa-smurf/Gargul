@@ -32,6 +32,9 @@ function DroppedLoot:_init()
     App.Events:register("DroppedLootLootOpenedHighlighterListener", "LOOT_OPENED", DroppedLoot.highlightItemsOfInterest);
     App.Events:register("DroppedLootLootSlotChangedHighlighterListener", "LOOT_SLOT_CHANGED", DroppedLoot.highlightItemsOfInterest);
 
+    -- Remove highlight on loot buttons when closing the loot window
+    App.Events:register("DroppedLootLootClosedHighlighterListener", "LOOT_CLOSED", DroppedLoot.removeHighlights);
+
     self._initialized = true;
 end
 
@@ -59,6 +62,17 @@ function DroppedLoot:lootOpened()
     end
 end
 
+-- Remove the highlights on all loot buttons
+function DroppedLoot:removeHighlights()
+    for buttonIndex = 1, _G.LOOTFRAME_NUMBUTTONS do
+        local Button = getglobal("LootButton" .. buttonIndex);
+
+        if (Button) then
+            LCG.PixelGlow_Stop(getglobal("LootButton" .. buttonIndex));
+        end
+    end
+end
+
 -- Highlight items that are soft-reserved or otherwise need extra attention
 function DroppedLoot:highlightItemsOfInterest()
     Utils:debug("DroppedLoot:highlightItemsOfInterest");
@@ -72,18 +86,21 @@ function DroppedLoot:highlightItemsOfInterest()
     -- throughout loot pages... thanks Blizzard
     for buttonIndex = 1, _G.LOOTFRAME_NUMBUTTONS do
         local Button = getglobal("LootButton" .. buttonIndex);
-        LCG.PixelGlow_Stop(Button);
 
-        if (Button:IsVisible() and Button.slot) then
-            local itemLink = GetLootSlotLink(Button.slot);
+        if (Button) then
+            -- Remove the button's highlight
+            LCG.PixelGlow_Stop(Button);
+            if (Button:IsVisible() and Button.slot) then
+                local itemLink = GetLootSlotLink(Button.slot);
 
-            if (itemLink and type(itemLink) == "string") then
-                local softReserves = App.SoftReserves:getSoftReservesByItemLink(itemLink);
-                local TMBInfo = App.TMB:getTMBInfoByItemLink(itemLink);
+                if (itemLink and type(itemLink) == "string") then
+                    local softReserves = App.SoftReserves:getSoftReservesByItemLink(itemLink);
+                    local TMBInfo = App.TMB:getTMBInfoByItemLink(itemLink);
 
-                if (softReserves or TMBInfo) then
-                    -- Add an animated border to indicate that this item was reserved / wishlisted
-                    LCG.PixelGlow_Start(Button, {0.95, 0.95, 0.32, 1}, 10, .05, 5, 3);
+                    if (softReserves or TMBInfo) then
+                        -- Add an animated border to indicate that this item was reserved / wishlisted
+                        LCG.PixelGlow_Start(Button, {0.95, 0.95, 0.32, 1}, 10, .05, 5, 3);
+                    end
                 end
             end
         end
