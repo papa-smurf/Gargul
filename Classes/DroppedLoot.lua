@@ -82,6 +82,12 @@ function DroppedLoot:highlightItemsOfInterest()
         return;
     end
 
+    local playersInRaid = {};
+    -- Fetch the name of everyone currently in the raid/party
+    for _, player in pairs(App.User:groupMembers()) do
+        tinsert(playersInRaid, player.name);
+    end
+
     -- 4 is the max since buttons seem to be reused
     -- throughout loot pages... thanks Blizzard
     for buttonIndex = 1, _G.LOOTFRAME_NUMBUTTONS do
@@ -94,10 +100,30 @@ function DroppedLoot:highlightItemsOfInterest()
                 local itemLink = GetLootSlotLink(Button.slot);
 
                 if (itemLink and type(itemLink) == "string") then
-                    local softReserves = App.SoftReserves:getSoftReservesByItemLink(itemLink);
-                    local TMBInfo = App.TMB:getTMBInfoByItemLink(itemLink);
+                    local softReserves = App.SoftReserves:getSoftReservesByItemLink(itemLink) or {};
+                    local TMBInfo = App.TMB:getTMBInfoByItemLink(itemLink) or {};
+                    local hasActiveSoftReserves = false;
+                    local hasActiveTMBReserves = false;
 
-                    if (softReserves or TMBInfo) then
+                    -- Make sure we only take soft-reserves of people who are actually in the raid into account
+                    for _, player in pairs(softReserves) do
+                        if (Utils:inArray(playersInRaid, player)) then
+                            hasActiveSoftReserves = true;
+                            break;
+                        end
+                    end
+
+                    -- Make sure we only take TMB reserves of people who are actually in the raid into account
+                    for _, Entry in pairs(TMBInfo) do
+                        local playerName = Entry.character;
+
+                        if (Utils:inArray(playersInRaid, string.gsub(playerName, "%(OS%)", ""))) then
+                            hasActiveTMBReserves = true;
+                            break;
+                        end
+                    end
+
+                    if (hasActiveSoftReserves or hasActiveTMBReserves) then
                         -- Add an animated border to indicate that this item was reserved / wishlisted
                         LCG.PixelGlow_Start(Button, {0.95, 0.95, 0.32, 1}, 10, .05, 5, 3);
                     end
@@ -152,10 +178,10 @@ end
 function DroppedLoot:announce()
     Utils:debug("DroppedLoot:announce");
 
-    local playersInRaids = {};
+    local playersInRaid = {};
     -- Fetch the name of everyone currently in the raid/party
     for _, player in pairs(App.User:groupMembers()) do
-        tinsert(playersInRaids, player.name);
+        tinsert(playersInRaid, player.name);
     end
 
     -- Get the total number of items that dropped
@@ -192,7 +218,7 @@ function DroppedLoot:announce()
                 -- Make sure we only show shoft reserves of people
                 -- Who are actually in the raid
                 for _, player in pairs(softReserves) do
-                    if (Utils:inArray(playersInRaids, player)) then
+                    if (Utils:inArray(playersInRaid, player)) then
                         tinsert(activeSoftReserves, Utils:capitalize(player));
                         hasSoftReserves = true;
                     end
@@ -210,7 +236,7 @@ function DroppedLoot:announce()
                 for _, Entry in pairs(TMBInfo) do
                     local playerName = Entry.character;
 
-                    if (Utils:inArray(playersInRaids, string.gsub(playerName, "%(OS%)", ""))) then
+                    if (Utils:inArray(playersInRaid, string.gsub(playerName, "%(OS%)", ""))) then
                         local prio = Entry.prio;
                         local entryType = Entry.type or Constants.tmbTypeWish;
                         local isOffSpec = string.find(playerName, "(OS)");
