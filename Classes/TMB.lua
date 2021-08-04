@@ -52,14 +52,30 @@ function TMB:getTMBInfoByItemId(itemId)
         return;
     end
 
+    -- The item linked to this id can have multiple IDs (head of Onyxia for example)
     if (not App.Data.Constants.LinkedItems[itemId]) then
         return App.DB.TMB[itemId];
     end
 
-    -- The item linked to this id can have multiple IDs (head of Onyxia for example)
-    local Wishes = Utils:tableGet(App.DB.TMB, tostring(itemId), {});
-    for _, linkedItemId in pairs(App.Data.Constants.LinkedItems[itemId]) do
-        Wishes = Utils:tableMerge(Wishes, Utils:tableGet(App.DB.TMB, tostring(linkedItemId), {}));
+    -- Gather all the item IDs that are linked to our item
+    local AllLinkedItemIds = {itemId};
+    for _, id in pairs(App.Data.Constants.LinkedItems[itemId]) do
+        tinsert(AllLinkedItemIds, id);
+    end
+
+    local Processed = {};
+    local Wishes = {};
+    for _, id in pairs(AllLinkedItemIds) do
+        id = tostring(id);
+        for _, Entry in pairs(Utils:tableGet(App.DB.TMB, tostring(id), {})) do
+            local checkSum = string.format('%s||%s||%s', Entry.character, tostring(Entry.prio), tostring(Entry.type));
+
+            -- Make sure we don't add the same player/prio combo more than once
+            if (not Processed[checkSum]) then
+                Processed[checkSum] = true;
+                tinsert(Wishes, Entry);
+            end
+        end
     end
 
     return Wishes;
@@ -339,7 +355,7 @@ function TMB:import(data, sender)
                 end
 
                 if (characterName and order) then
-                    local checkSum = string.format('%s|%s|%s|%s', itemId, characterName, order, type);
+                    local checkSum = string.format('%s||%s||%s||%s', itemId, characterName, order, type);
 
                     if (not processedEntryCheckums[checkSum]) then
                         tinsert(TMBData[itemId], {
