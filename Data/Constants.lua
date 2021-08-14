@@ -1,11 +1,10 @@
---[[
-    This class holds all static values the addon needs
-]]
+---@type GL
+local _, GL = ...;
 
-local _, App = ...;
-App.Data = App.Data or {};
+---@class Data
+GL.Data = GL.Data or {};
 
-App.Data.Constants = {
+GL.Data.Constants = {
     --[[
         GLOBAL
     ]]
@@ -14,6 +13,11 @@ App.Data.Constants = {
 
     tmbTypePrio = 1,
     tmbTypeWish = 2,
+
+    SoftReserveSources = {
+        weakaura = 0,
+        gargul = 1,
+    },
 
     LinkedItems = {
         -- Head of Onyxia (Horde/Alliance)
@@ -172,7 +176,7 @@ App.Data.Constants = {
         warrior = "C79C6E",
     },
 
-    ClassRgbColors = {
+    classRGBAColors = {
         druid = {r = 1, g = .48627, b = .0392, a = 1},
         hunter = {r = .6666, g = .827450, b = .44705, a = 1},
         mage = {r = .4078, g = .8, b = .93725, a = 1},
@@ -184,6 +188,18 @@ App.Data.Constants = {
         warrior = {r = .77647, g = .607843, b = .42745, a = 1},
     },
 
+    classRGBColors = {
+        druid = {1, .48627, .0392,},
+        hunter = {.6666, .827450, .44705,},
+        mage = {.4078, .8, .93725,},
+        paladin = {.95686, .5490, .72941,},
+        priest = {1, 1, 1, 1},
+        rogue = {1, .95686, .40784,},
+        shaman = {0, .44, .87,},
+        warlock = {.57647, .5098, .788235,},
+        warrior = {.77647, .607843, .42745,},
+    },
+
     --[[
         COMM
     ]]
@@ -191,18 +207,11 @@ App.Data.Constants = {
         channel = "GargulComm2",
         minimumAppVersion = "3",
         Actions = {
-            auctionResult = 1,
-            bid = 2,
-            broadcastCharacters = 3,
-            broadcastLootHistory = 4,
-            broadcastSoftReserves = 5,
+            broadcastSoftRes = 5,
             inspectBags = 6,
             response = 7,
-            retractBid = 8,
             requestAppVersion = 9,
-            startAuction = 10,
             startRollOff = 11,
-            stopAuction = 12,
             stopRollOff = 13,
             broadcastTMBData = 14,
             awardItem = 15

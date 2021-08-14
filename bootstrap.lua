@@ -1,94 +1,99 @@
 -- arg1 is the name of the addon, arg2 is the addon namespace
-local appName, App = ...;
+---@class Bootstrapper
+local appName, GL = ...;
 
 --[[ APP VERSION ]]
-App.version = "3.0.14";
+--GL.version = "3.1.0";
 
-App.name = appName;
-App._initialized = false;
-App.clientUIinterface = 0;
-App.clientVersion = 0;
-App.isClassic = false;
-App.DebugLines = {};
-App.EventFrame = {};
+---@todo This is temporary as to not spam raiders to shit!
+GL.version = "3.0.14";
+
+GL.name = appName;
+GL._initialized = false;
+GL.clientUIinterface = 0;
+GL.clientVersion = 0;
+GL.isClassic = false;
+GL.testMode = false;
+GL.DebugLines = {};
+GL.EventFrame = {};
 
 -- Register our addon with the Ace framework
-App.Ace = LibStub("AceAddon-3.0"):NewAddon(App.name, "AceConsole-3.0", "AceComm-3.0", "AceTimer-3.0");
+GL.Ace = LibStub("AceAddon-3.0"):NewAddon(GL.name, "AceConsole-3.0", "AceComm-3.0", "AceTimer-3.0");
 
 -- Bootstrap the addon
-App.bootstrap = function(_, _, addonName)
+GL.bootstrap = function(_, _, addonName)
     -- The addon was already bootstrapped or this is not the correct event
-    if (App._initialized) then
+    if (GL._initialized) then
         return;
     end
 
     -- We only want to continue bootstrapping
-    -- when it's this addon that's succesfully loaded
-    if (addonName ~= App.name) then
+    -- when it's this addon that's successfully loaded
+    if (addonName ~= GL.name) then
         return;
     end
 
-    App.Utils:debug("App:bootstrap");
+    GL:debug("GL:bootstrap");
 
     -- The addon was loaded, we no longer need the event listener now
-    App.EventFrame:UnregisterEvent("ADDON_LOADED");
+    GL.EventFrame:UnregisterEvent("ADDON_LOADED");
 
     -- Show a welcome message
-    local successfullyLoadedMessage = "Sucessfully loaded (v" .. App.version .. ")";
-    App.Utils:debug(string.format("Successfully loaded v%s", App.version));
+    local successfullyLoadedMessage = "Sucessfully loaded (v" .. GL.version .. ")";
+    GL:debug(string.format("Successfully loaded v%s", GL.version));
 
     -- Initialize our classes / services
-    App:_init();
-    App._initialized = true;
+    GL:_init();
+    GL._initialized = true;
 end
 
 -- Callback to be fired when the addon is completely loaded
-function App:_init()
-    App.Utils:debug("App:_init");
+function GL:_init()
+    GL:debug("GL:_init");
 
     do
         local version, _, _, uiVersion = GetBuildInfo()
 
-        App.clientUIinterface = uiVersion
+        GL.clientUIinterface = uiVersion
         local expansion,majorPatch,minorPatch = (version or "3.0.0"):match("^(%d+)%.(%d+)%.(%d+)")
-        App.clientVersion = (expansion or 0) * 10000 + (majorPatch or 0) * 100 + (minorPatch or 0)
+        GL.clientVersion = (expansion or 0) * 10000 + (majorPatch or 0) * 100 + (minorPatch or 0)
     end
 
-    if App.clientVersion < 30000 then
-        App.isClassic = true
+    if GL.clientVersion < 30000 then
+        GL.isClassic = true
     end
 
     -- Initialize classes
-    App.Events:_init(App.EventFrame);
-    App.DB:_init();
-    App.Settings:_init()
-    App.Comm:_init();
-    App.User:_init();
-    App.LootPriority:_init();
-    App.AwardedLoot:_init();
-    App.SoftReserves:_init();
-    App.TMB:_init();
-    App.DroppedLoot:_init();
-    App.GroupLoot:_init();
-    App.PackMule:_init();
+    GL.Events:_init(GL.EventFrame);
+    GL.DB:_init();
+    GL.Settings:_init()
+    GL.Comm:_init();
+    GL.User:_init();
+    GL.LootPriority:_init();
+    GL.AwardedLoot:_init();
+    GL.SoftRes:_init();
+    GL.TMB:_init();
+    GL.DroppedLoot:_init();
+    GL.GroupLoot:_init();
+    GL.PackMule:_init();
 
     -- Hook the bagslot events
-    App:hookBagSlotEvents();
+    GL:hookBagSlotEvents();
 end
 
 -- Register the gl slash command
-App.Ace:RegisterChatCommand("gl", function (...)
-    App.Commands:_dispatch(...);
+GL.Ace:RegisterChatCommand("gl", function (...)
+    GL.Commands:_dispatch(...);
 end)
 
 -- Register the gargul slash command
-App.Ace:RegisterChatCommand("gargul", function (...)
-    App.Commands:_dispatch(...);
+GL.Ace:RegisterChatCommand("gargul", function (...)
+    GL.Commands:_dispatch(...);
 end)
 
 -- Hook the bag slot events making it possible to alt(+shift) click
 -- items in bags to either start rolling or auctioning them off
-function App:hookBagSlotEvents()
+function GL:hookBagSlotEvents()
     hooksecurefunc("ContainerFrameItemButton_OnModifiedClick", function(self, mouseButtonPressed)
         local bag, slot = self:GetParent():GetID(), self:GetID();
         local itemLink = select(7, GetContainerItemInfo(bag, slot));
@@ -98,21 +103,21 @@ function App:hookBagSlotEvents()
         end
 
         if (mouseButtonPressed == "LeftButton"
-                and IsAltKeyDown()
+            and IsAltKeyDown()
         ) then
             -- Open the award window if both alt and shift are pressed
             if (IsShiftKeyDown()) then
-                App.AwardUI:draw(itemLink);
+                GL.Interface.Award:draw(itemLink);
 
             -- Open the default roll window
             else
-                App.MasterLooterUI:draw(itemLink);
+                GL.MasterLooterUI:draw(itemLink);
             end
         end
     end);
 end
 
--- Fire App.bootstrap every time an addon is loaded
-App.EventFrame = CreateFrame("FRAME");
-App.EventFrame:RegisterEvent("ADDON_LOADED");
-App.EventFrame:SetScript("OnEvent", App.bootstrap);
+-- Fire GL.bootstrap every time an addon is loaded
+GL.EventFrame = CreateFrame("FRAME");
+GL.EventFrame:RegisterEvent("ADDON_LOADED");
+GL.EventFrame:SetScript("OnEvent", GL.bootstrap);

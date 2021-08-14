@@ -1,9 +1,10 @@
-local _, App = ...;
+---@type GL
+local _, GL = ...;
 
-App.UI = {};
+---@class UI
+GL.UI = {};
 
-local UI = App.UI;
-local Utils = App.Utils;
+local UI = GL.UI; ---@type UI
 
 UI.components = {};
 
@@ -16,9 +17,50 @@ function UI:createFrame(...)
     return frame;
 end
 
+function UI:createShareButton(ParentFrame, onClick, tooltipText)
+    local ShareButton = GL.UI:createFrame("Frame", "ShareButton" .. GL:uuid(), ParentFrame);
+    ShareButton:Show();
+    ShareButton:SetSize(24, 24);
+    ShareButton:SetPoint("TOPRIGHT", ParentFrame, "TOPRIGHT", -20, -20);
+
+    ShareButton.texture = ShareButton:CreateTexture();
+    ShareButton.texture:SetTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\share-button-highlighted");
+    ShareButton.texture:SetTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\share-button");
+    ShareButton.texture:SetPoint("CENTER", ShareButton, "CENTER", 0, 0);
+    ShareButton.texture:SetSize(24, 24);
+
+    ShareButton:SetScript("OnEnter", function()
+        ShareButton.texture:SetTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\share-button-highlighted");
+
+        if (not GL:empty(tooltipText)) then
+            GameTooltip:SetOwner(ShareButton, "ANCHOR_TOP");
+            GameTooltip:AddLine(tooltipText);
+            GameTooltip:Show();
+        end
+    end);
+
+    ShareButton:SetScript("OnLeave", function()
+        ShareButton.texture:SetTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\share-button");
+
+        if (not GL:empty(tooltipText)) then
+            GameTooltip:Hide();
+        end
+    end);
+
+    if (type(onClick) == "function") then
+        ShareButton:SetScript("OnMouseDown", function(self, button)
+            if (button == 'LeftButton') then
+                onClick();
+            end
+        end);
+    end
+
+    return ShareButton;
+end
+
 -- Generate a checkbox used in the Interface Options -> Settings menu
 function UI:createSettingCheckbox(ParentFrame, label, description, onClick)
-    local CheckBox = CreateFrame("CheckButton", App.name .. "Setting" .. label, ParentFrame, "InterfaceOptionsCheckButtonTemplate");
+    local CheckBox = CreateFrame("CheckButton", GL.name .. "Setting" .. label, ParentFrame, "InterfaceOptionsCheckButtonTemplate");
 
     CheckBox:SetScript("OnClick", function(self)
         local checked = self:GetChecked()
@@ -42,10 +84,10 @@ end
 
 function UI:show(identifier)
     if (not UI.components[identifier]) then
-        Utils:debug(identifier .. " has not been created yet");
+        GL:debug(identifier .. " has not been created yet");
         return;
     elseif (UI.components[identifier]:IsVisible()) then
-        Utils:debug(identifier .. " is already visible");
+        GL:debug(identifier .. " is already visible");
         return;
     end
 
@@ -54,10 +96,10 @@ end
 
 function UI:hide(identifier)
     if (not UI.components[identifier]) then
-        Utils:debug(identifier .. " has not been created yet");
+        GL:debug(identifier .. " has not been created yet");
         return;
     elseif (not UI.components[identifier]:IsVisible()) then
-        Utils:debug(identifier .. " is not visible");
+        GL:debug(identifier .. " is not visible");
         return;
     end
 
@@ -66,9 +108,9 @@ end
 
 function UI:hideAll()
     if (not #UI.components) then
-        Utils:debug("No components have been created yet");
+        GL:debug("No components have been created yet");
         return;
     end
 end
 
-Utils:debug("UI.lua");
+GL:debug("UI.lua");

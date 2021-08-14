@@ -3,7 +3,7 @@
 ## Title: |cff8aecffGargul|r
 ## Author: <Give it a Lick> Zhorax
 ## Notes: Loot addon that supports soft reserves, rolling, thatsmybis, DKP bidding / syncing, loot priorities and much more
-## Version: 3.0.14
+## Version: 3.1.0
 ## DefaultState: enabled
 ## SavedVariables: GargulDB
 
@@ -18,21 +18,16 @@ Data/Constants.lua
 Data/DefaultSettings.lua
 
 ## Class objects
-Classes/Utils.lua
+Classes/Helpers.lua
 Classes/Events.lua
 Classes/JSON.lua
 Classes/Base64.lua
 Classes/UI.lua
 Classes/DB.lua
 Classes/Settings.lua
-Classes/Importer.lua
-Classes/SoftReserves.lua
+Classes/SoftRes.lua
 Classes/TMB.lua
 Classes/Exporter.lua
-Classes/Auction.lua
-Classes/Bidder.lua
-Classes/AuctioneerUI.lua
-Classes/BidderUI.lua
 Classes/RollerUI.lua
 Classes/RollOff.lua
 Classes/GroupLoot.lua
@@ -51,6 +46,24 @@ Classes/User.lua
 Classes/Player.lua
 Classes/Comm.lua
 Classes/CommMessage.lua
-Classes/Sync.lua
 Classes/RaidGroups.lua
-Classes/Dashboard.lua
+
+## Popup dialogs
+Interface/PopupDialogs.lua
+
+## Interface objects
+Interface/Interface.lua
+Interface/Award.lua
+Interface/Importer.lua
+Interface/Settings/Overview.lua
+Interface/Settings/DroppedLoot.lua
+Interface/Settings/PackMule.lua
+Interface/Settings/TMB.lua
+Interface/Settings/Rolling.lua
+Interface/Settings/SoftRes.lua
+Interface/Settings/General.lua
+Interface/Settings/LootHighlighting.lua
+Interface/Settings/AwardingLoot.lua
+Interface/Settings/SlashCommands.lua
+Interface/SoftRes/Importer.lua
+Interface/SoftRes/Overview.lua

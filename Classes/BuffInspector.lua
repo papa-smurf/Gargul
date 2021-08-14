@@ -1,9 +1,9 @@
-local _, App = ...;
+local _, GL = ...;
 
-App.Ace.GUI = App.Ace.GUI or LibStub("AceGUI-3.0");
-App.Ace.ScrollingTable = App.Ace.ScrollingTable or LibStub("ScrollingTable");
+GL.AceGUI = GL.AceGUI or LibStub("AceGUI-3.0");
+GL.ScrollingTable = GL.ScrollingTable or LibStub("ScrollingTable");
 
-App.BuffInspector = {
+GL.BuffInspector = {
     InspectionReport = {
         Buffs = {},
         Reports = {},
@@ -11,10 +11,9 @@ App.BuffInspector = {
     },
 };
 
-local Utils = App.Utils;
-local AceGUI = App.Ace.GUI;
-local BuffInspector = App.BuffInspector;
-local ScrollingTable = App.Ace.ScrollingTable;
+local AceGUI = GL.AceGUI;
+local BuffInspector = GL.BuffInspector;
+local ScrollingTable = GL.ScrollingTable;
 
 BuffInspector.Widgets = {
     Frame = {},
@@ -28,24 +27,24 @@ BuffInspector.Widgets = {
 -- Inspect the raid group's bag contents for the
 -- availability of specific items (max 8)
 function BuffInspector:inspect(SpellIds)
-    Utils:debug("BuffInspector:inspect");
+    GL:debug("BuffInspector:inspect");
 
-    if (not App.User.isInGroup) then
-        return Utils:error("You're not in a group");
+    if (not GL.User.isInGroup) then
+        return GL:error("You're not in a group");
     end
 
-    SpellIds = Utils:strSplit(SpellIds, ",");
-    SpellIds = Utils:tableSlice(SpellIds, 8); -- inspect supports up to 8 spell ids
+    SpellIds = GL:strSplit(SpellIds, ",");
+    SpellIds = GL:tableSlice(SpellIds, 8); -- inspect supports up to 8 spell ids
 
     if (#SpellIds < 1) then
-        return Utils:error("No spell ids provided in BuffInspector.inspect");
+        return GL:error("No spell ids provided in BuffInspector.inspect");
     end
 
     local Buffs = {}
     local buffsDetected = false;
     local groupType = "party";
 
-    if (App.User.isInRaid) then
+    if (GL.User.isInRaid) then
         groupType = "raid";
     end
 
@@ -53,14 +52,14 @@ function BuffInspector:inspect(SpellIds)
         local spellId = tonumber(SpellIds[index]);
 
         if (not spellId) then
-            return Utils:error("Unknown spell id provided in BuffInspector.inspect");
+            return GL:error("Unknown spell id provided in BuffInspector.inspect");
         end
 
         -- Trim the buff name
         local name, _, icon = GetSpellInfo(spellId);
 
         if (not name) then
-            return Utils:error(string.format("Unknown spell id '%s' provided in BuffInspector.inspect", spellId));
+            return GL:error(string.format("Unknown spell id '%s' provided in BuffInspector.inspect", spellId));
         end
 
         Buffs[tostring(spellId)] = {
@@ -71,7 +70,7 @@ function BuffInspector:inspect(SpellIds)
         }
     end
 
-    local Players = App.User:groupMembers();
+    local Players = GL.User:groupMembers();
 
     for _, player in pairs(Players) do
         -- Prefill the Buffs object for this player
@@ -100,12 +99,12 @@ function BuffInspector:inspect(SpellIds)
         return self:displayInspectionResults(Buffs, Players);
     end
 
-    Utils:message("Could not find anyone in your group with any of the specified buffs");
+    GL:message("Could not find anyone in your group with any of the specified buffs");
 end
 
 -- Display the report results from a group-wide bag inspection
 function BuffInspector:displayInspectionResults(Buffs, Players)
-    Utils:debug("BuffInspector:displayInspectionResults");
+    GL:debug("BuffInspector:displayInspectionResults");
 
     --[[ Buffs format:
         {
@@ -126,21 +125,20 @@ function BuffInspector:displayInspectionResults(Buffs, Players)
     local PlayerData = {};
     local SortedBuffs = {};
     local firstPassThrough = true;
-    local ClassColors = App.Data.Constants.ClassRgbColors;
     for _, Player in pairs(Players) do
         local Row = {
             cols = {
                 {
                     value = Player.name,
-                    color = ClassColors[string.lower(Player.class)],
+                    color = GL:classRGBAColor(Player.class),
                 },
             },
         };
 
         for _, Buff in pairs(Buffs) do
             tinsert(Row.cols, {
-                value = Utils:tableGet(Buffs, string.format("%s.players.%s", Buff.spellId, Player.name)),
-                color = ClassColors[string.lower(Player.class)],
+                value = GL:tableGet(Buffs, string.format("%s.players.%s", Buff.spellId, Player.name)),
+                color = GL:classRGBAColor(Player.class),
             });
 
             if (firstPassThrough) then
@@ -188,7 +186,7 @@ function BuffInspector:displayInspectionResults(Buffs, Players)
     -- Create a container/parent frame
     local ResultFrame = AceGUI:Create("Frame");
     ResultFrame:SetCallback("OnClose", function(widget)
-        Utils:clearScrollTable(self.Widgets.Tables.InspectionReport);
+        GL:clearScrollTable(self.Widgets.Tables.InspectionReport);
 
         self.InspectionReport = {
             Buffs = {},
@@ -197,8 +195,8 @@ function BuffInspector:displayInspectionResults(Buffs, Players)
 
         AceGUI:Release(widget);
     end);
-    ResultFrame:SetTitle(App.name .. " v" .. App.version);
-    ResultFrame:SetStatusText("Addon v" .. App.version);
+    ResultFrame:SetTitle(GL.name .. " v" .. GL.version);
+    ResultFrame:SetStatusText("Addon v" .. GL.version);
     ResultFrame:SetLayout("Flow");
     ResultFrame:SetWidth(600);
     ResultFrame:SetHeight(450);
@@ -269,7 +267,7 @@ function BuffInspector:displayInspectionResults(Buffs, Players)
                 a = 1.0
             },
             colorargs = nil,
-            sort = App.Data.Constants.ScrollingTable.ascending,
+            sort = GL.Data.Constants.ScrollingTable.ascending,
         },
     };
 
@@ -303,4 +301,4 @@ function BuffInspector:displayInspectionResults(Buffs, Players)
     BuffInspector.Widgets.Tables.InspectionReport = table;
 end
 
-Utils:debug("BuffInspector.lua");
+GL:debug("BuffInspector.lua");

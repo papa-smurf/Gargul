@@ -1,33 +1,39 @@
-local _, App = ...;
+---@type GL
+local _, GL = ...;
 
-App.GroupLoot = {
+---@class GroupLoot
+GL.GroupLoot = {
     _initialized = false,
     ProcessedRollIds = {},
 }
 
 local LCG = LibStub("LibCustomGlow-1.0");
-local User = App.User;
-local Utils = App.Utils;
+local SoftRes = GL.SoftRes; ---@type SoftRes
 
-local GroupLoot = App.GroupLoot;
+local GroupLoot = GL.GroupLoot; ---@type GroupLoot
 
+---@return boolean
 function GroupLoot:_init()
-    Utils:debug("GroupLoot:_init");
+    GL:debug("GroupLoot:_init");
 
     if (self._initialized) then
-        return;
+        return false;
     end
 
-    App.Events:register("GroupLootStartLootRollListener", "START_LOOT_ROLL", GroupLoot.highlightItemsOfInterest);
+    -- Whenever an item drops that is eligible for rolling on we trigger the highlighter method
+    GL.Events:register("GroupLootStartLootRollListener", "START_LOOT_ROLL", function () self:highlightItemsOfInterest(); end);
 
     self._initialized = true;
+    return true;
 end
 
--- Fired whenever a loot roll is started (only applicable to group loot)
--- The purpose of this handler is to add a glowing border to the item
--- frames of dropped loot in case it's SRed or otherwise marked on someone's list
+--- Fired whenever a loot roll is started (only applicable to group loot)
+--- The purpose of this handler is to add a glowing border to the item frames
+--- of dropped loot in case it's SRed or otherwise marked on someone's list
+---
+---@return void
 function GroupLoot:highlightItemsOfInterest()
-    Utils:debug("GroupLoot:highlightItemsOfInterest");
+    GL:debug("GroupLoot:highlightItemsOfInterest");
 
     for itemIndex = 1, _G.NUM_GROUP_LOOT_FRAMES do
         local ItemFrame = getglobal("GroupLootFrame" .. itemIndex);
@@ -38,16 +44,42 @@ function GroupLoot:highlightItemsOfInterest()
             local itemLink = GetLootRollItemLink(rollId);
 
             if (itemLink) then
-                local SoftReserves = App.SoftReserves:getSoftReservesByItemLink(itemLink);
-                local TMBInfo = App.TMB:getTMBInfoByItemLink(itemLink);
+                local enableHighlight = false;
+                local BorderColor = {1, .95686, .40784, 1}; -- The default border color is rogue-yellow and applies to wishlisted items
 
-                if (SoftReserves or TMBInfo) then
+                -- The item is hard-reserved
+                if (SoftRes:linkIsHardReserved(itemLink)) then
+                    enableHighlight = true;
+                    BorderColor = {.77, .12, .23, 1};  -- Make the border red for hard-reserved items
+
+                -- The item is soft-reserved
+                elseif (SoftRes:linkIsReserved(itemLink)) then
+                    enableHighlight = true;
+                    BorderColor = {.95686, .5490, .72941, 1}; -- Make the border paladin-pink for reserved items
+
+                -- Check if it's wishlisted
+                else
+                    local TMBInfo = GL.TMB:byItemLink(itemLink) or {};
+
+                    -- Check for active wishlist entries
+                    for _, Entry in pairs(TMBInfo) do
+                        enableHighlight = true;
+                        BorderColor = {1, 1, 1, 1}; -- Make the border priest-white for TMB wishlisted items
+
+                        if (Entry.type == Constants.tmbTypePrio) then
+                            BorderColor = {1, .48627, .0392, 1}; -- Make the border druid-orange for TMB character prio items
+                            break;
+                        end
+                    end
+                end
+
+                if (enableHighlight) then
                     -- Add an animated border to indicate that this item was reserved / wishlisted
-                    LCG.PixelGlow_Start(ItemFrame, {0.95, 0.95, 0.32, 1}, 32, .05, 10, 4);
+                    LCG.PixelGlow_Start(ItemFrame, BorderColor, 32, .05, 10, 4);
                 end
             end
         end
     end
 end
 
-Utils:debug("GroupLoot.lua");
+GL:debug("GroupLoot.lua");

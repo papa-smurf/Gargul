@@ -1,9 +1,8 @@
-local _, App = ...;
+local _, GL = ...;
 
-App.Base64 = {};
+GL.Base64 = {};
 
-local Base64 = App.Base64;
-local Utils = App.Utils;
+local Base64 = GL.Base64;
 
 local extract = _G.bit32 and _G.bit32.extract -- Lua 5.2/Lua 5.3 in compatibility mode
 if not extract then
@@ -137,4 +136,4 @@ function Base64.decode( b64, decoder, usecaching )
 	return concat( t )
 end
 
-Utils:debug("Base64.lua");
+GL:debug("Base64.lua");

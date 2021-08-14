@@ -1,9 +1,8 @@
-local _, App = ...;
+local _, GL = ...;
 
-App.JSON = {};
+GL.JSON = {};
 
-local JSON = App.JSON;
-local Utils = App.Utils;
+local JSON = GL.JSON;
 
 local default_pretty_indent  = "  "
 local default_pretty_options = { pretty = true, align_keys = false, indent = default_pretty_indent  }
@@ -918,4 +917,4 @@ function JSON:new(args)
     return setmetatable(new, JSON)
 end
 
-Utils:debug("JSON.lua");
+GL:debug("JSON.lua");

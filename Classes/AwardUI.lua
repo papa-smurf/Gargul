@@ -1,8 +1,8 @@
-local _, App = ...;
+local _, GL = ...;
 
-App.Ace.ScrollingTable = App.Ace.ScrollingTable or LibStub("ScrollingTable");
+GL.ScrollingTable = GL.ScrollingTable or LibStub("ScrollingTable");
 
-App.AwardUI = {
+GL.AwardUI = {
     ItemBoxHoldsValidItem = false,
     PlayersTable = {},
     UIComponents = {
@@ -19,31 +19,17 @@ App.AwardUI = {
     },
 };
 
--- Add a award confirmation dialog to Blizzard's global StaticPopupDialogs object
-StaticPopupDialogs[App.name .. "_AWARD_CONFIRMATION"] = {
-    text = "",
-    button1 = "Yes",
-    button2 = "No",
-    OnAccept = {},
-    timeout = 0,
-    whileDead = true,
-    hideOnEscape = true,
-    preferredIndex = 3,
-}
-
-local UI = App.UI;
-local Utils = App.Utils;
-local AceGUI = App.Ace.GUI;
-local Settings = App.Settings;
-local AwardUI = App.AwardUI;
-local ScrollingTable = App.Ace.ScrollingTable;
+local AceGUI = GL.AceGUI;
+local Settings = GL.Settings;
+local AwardUI = GL.AwardUI;
+local ScrollingTable = GL.ScrollingTable;
 
 -- This is the UI the person who rolls off an item uses to prepare everything e.g:
 -- Select an item
 -- Set the duration of the roll off
 -- Award the item to the winner
 function AwardUI:draw(itemLink)
-    Utils:debug("AwardUI:draw");
+    GL:debug("AwardUI:draw");
 
     -- First we need to check if the frame hasn't been
     -- rendered already. If so then show it (if it's hidden)
@@ -66,7 +52,7 @@ function AwardUI:draw(itemLink)
 
     -- Create a container/parent frame
     local AwardFrame = AceGUI:Create("Frame");
-    AwardFrame:SetTitle(App.name .. " v" .. App.version);
+    AwardFrame:SetTitle(GL.name .. " v" .. GL.version);
     AwardFrame:SetLayout("Flow");
     AwardFrame:SetWidth(430);
     AwardFrame:SetHeight(290);
@@ -77,13 +63,7 @@ function AwardUI:draw(itemLink)
     AwardFrame:SetCallback("OnClose", function(widget)
         self:close(widget);
     end);
-    AwardFrame:SetPoint(
-        Settings:get("UI.Award.Position.point"),
-        UIParent,
-        Settings:get("UI.Award.Position.relativePoint"),
-        Settings:get("UI.Award.Position.offsetX"),
-        Settings:get("UI.Award.Position.offsetY")
-    );
+    AwardFrame:SetPoint(GL.Interface:getPosition("Award"));
 
     AwardUI.UIComponents.Frame = AwardFrame;
 
@@ -186,24 +166,24 @@ function AwardUI:draw(itemLink)
                         if (not selected
                             or not type(selected) == "table"
                         ) then
-                            return Utils:warning("You need to select a player first");
+                            return GL:warning("You need to select a player first");
                         end
 
                         local award = function ()
                             -- Add the player we awarded the item to to the item's tooltip
-                            App.AwardedLoot:addWinner(winner, itemLink);
+                            GL.AwardedLoot:addWinner(winner, itemLink);
 
                             RollOff = {};
-                            App.AwardUI:reset();
+                            GL.AwardUI:reset();
                         end
 
                         -- Make sure the initiator has to confirm his choices
-                        StaticPopupDialogs[App.name .. "_AWARD_CONFIRMATION"].OnAccept = award;
-                        StaticPopupDialogs[App.name .. "_AWARD_CONFIRMATION"].text = string.format("Award %s to %s?",
+                        StaticPopupDialogs[GL.name .. "_AWARD_CONFIRMATION"].OnAccept = award;
+                        StaticPopupDialogs[GL.name .. "_AWARD_CONFIRMATION"].text = string.format("Award %s to %s?",
                             itemLink,
                             winner
                         );
-                        StaticPopup_Show(App.name .. "_AWARD_CONFIRMATION");
+                        StaticPopup_Show(GL.name .. "_AWARD_CONFIRMATION");
                     end);
                     FirstRow:AddChild(AwardButton);
                     AwardUI.UIComponents.Buttons.AwardButton = AwardButton;
@@ -230,7 +210,7 @@ function AwardUI:draw(itemLink)
 end
 
 function AwardUI:close(Frame)
-    Utils:debug("AwardUI:close");
+    GL:debug("AwardUI:close");
 
     local point, _, relativePoint, offsetX, offsetY = Frame:GetPoint();
 
@@ -242,7 +222,7 @@ function AwardUI:close(Frame)
 end
 
 function AwardUI:drawPlayersTable(parent)
-    Utils:debug("AwardUI:drawPlayersTable");
+    GL:debug("AwardUI:drawPlayersTable");
 
     -- Combined width of all colums should be 340
     local columns = {
@@ -276,22 +256,19 @@ function AwardUI:populatePlayersTable()
 
     AwardUI.UIComponents.Tables.Players:ClearSelection();
 
-    if (not App.User.isInGroup) then
+    if (not GL.User.isInGroup) then
         return AwardUI.UIComponents.Tables.Players:SetData({}, true);
     end
 
     local TableData = {};
-    local ClassColors = App.Data.Constants.ClassRgbColors;
-    for _, Player in pairs(App.User:groupMembers()) do
+    for _, Player in pairs(GL.User:groupMembers()) do
         local name = Player.name;
-        local class = string.lower(Player.class);
-        local color = ClassColors[class];
 
         tinsert(TableData, {
             cols = {
                 {
                     value = name,
-                    color = color,
+                    color = GL:classRGBAColor(Player.class),
                 },
             },
         });
@@ -302,7 +279,7 @@ end
 
 -- The item box contents changed
 function AwardUI:ItemBoxChanged()
-    Utils:debug("AwardUI:ItemBoxChanged");
+    GL:debug("AwardUI:ItemBoxChanged");
 
     local itemLink = AwardUI.UIComponents.EditBoxes.Item:GetText();
 
@@ -313,7 +290,7 @@ end
 -- This method is used when alt clicking an item
 -- in a loot window or when executing /gl roll [itemlink]
 function AwardUI:passItemLink(itemLink)
-    Utils:debug("AwardUI:passItemLink");
+    GL:debug("AwardUI:passItemLink");
 
     if (not AwardUI.UIComponents.Frame.rendered) then
         return;
@@ -325,7 +302,7 @@ end
 
 -- Update the master looter UI based on the value of the ItemBox input
 function AwardUI:update()
-    Utils:debug("AwardUI:update");
+    GL:debug("AwardUI:update");
 
     local IconWidget = AwardUI.UIComponents.Icons.Item;
     local itemLink = AwardUI.UIComponents.EditBoxes.Item:GetText();
@@ -333,7 +310,7 @@ function AwardUI:update()
     -- If the item link is not valid then
     --   Show the default question mark icon
     if (not itemLink or itemLink == "") then
-        Utils:debug("AwardUI:update. Item link is invalid");
+        GL:debug("AwardUI:update. Item link is invalid");
 
         AwardUI.ItemBoxHoldsValidItem = false;
         IconWidget:SetImage(AwardUI.Defaults.itemIcon);
@@ -360,7 +337,7 @@ end
 
 -- Reset the roll off UI to its defaults
 function AwardUI:reset()
-    Utils:debug("AwardUI:reset");
+    GL:debug("AwardUI:reset");
 
     AwardUI.UIComponents.Icons.Item:SetImage(AwardUI.Defaults.itemIcon);
     AwardUI.UIComponents.EditBoxes.Item:SetText(AwardUI.Defaults.itemText);
@@ -373,7 +350,7 @@ end
 
 -- Update the widgets based on the current state of the roll off
 function AwardUI:updateWidgets()
-    Utils:debug("AwardUI:updateWidgets");
+    GL:debug("AwardUI:updateWidgets");
 
     -- If the itembox doesn't hold a valid item link then:
     --   The start button should not be available
@@ -386,4 +363,4 @@ function AwardUI:updateWidgets()
     end
 end
 
-Utils:debug("AwardUI.lua");
+GL:debug("AwardUI.lua");

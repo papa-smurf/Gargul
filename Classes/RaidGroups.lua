@@ -3,9 +3,9 @@
     raid group compositions via a predefined csv format
 ]]
 
-local _, App = ...;
+local _, GL = ...;
 
-App.RaidGroups = App.RaidGroups or {
+GL.RaidGroups = GL.RaidGroups or {
     UIComponents = {},
     rosterString = "",
     migrationInProgress = false,
@@ -16,33 +16,30 @@ App.RaidGroups = App.RaidGroups or {
     },
 };
 
-App.Ace.GUI = App.Ace.GUI or LibStub("AceGUI-3.0");
+GL.AceGUI = GL.AceGUI or LibStub("AceGUI-3.0");
 
-local Utils = App.Utils;
-local AceGUI = App.Ace.GUI;
-local RaidGroups = App.RaidGroups;
+local AceGUI = GL.AceGUI;
+local RaidGroups = GL.RaidGroups;
 
 -- Output everyone currently in the group in a CSV format
 function RaidGroups:toCSV()
-    Utils:debug("RaidGroups:toCSV");
+    GL:debug("RaidGroups:toCSV");
 
-    local raidMembers = {};
-
-    if (not App.User.isInGroup) then
-        return Utils:warning("You're not currently in a raid");
+    if (not GL.User.isInGroup) then
+        return GL:warning("You're not currently in a raid");
     end
 
     local csv = "";
-    for _, Player in pairs(App.User:groupMembers()) do
+    for _, Player in pairs(GL.User:groupMembers()) do
         csv = csv .. Player.name .. ",";
     end
 
-    Utils:frameMessage(string.sub(csv, 1, -2));
+    GL:frameMessage(string.sub(csv, 1, -2));
 end
 
 -- Draw the ui that allows us to import/write a raid roster
 function RaidGroups:drawImporter()
-    Utils:debug("RaidGroups:drawImporter");
+    GL:debug("RaidGroups:drawImporter");
 
     -- Check to make sure the raid groups window isn't active already
     if (self.UIComponents.MainFrame
@@ -55,8 +52,8 @@ function RaidGroups:drawImporter()
 
     -- Create a container/parent frame
     local RaidGroupsFrame = AceGUI:Create("Frame");
-    RaidGroupsFrame:SetTitle(App.name .. " v" .. App.version);
-    RaidGroupsFrame:SetStatusText("Addon v" .. App.version);
+    RaidGroupsFrame:SetTitle(GL.name .. " v" .. GL.version);
+    RaidGroupsFrame:SetStatusText("Addon v" .. GL.version);
     RaidGroupsFrame:SetLayout("Flow");
     RaidGroupsFrame:SetWidth(600);
     RaidGroupsFrame:SetHeight(450);
@@ -156,10 +153,10 @@ end
 
 -- Check if everyone's in the raid or if the raid contains players who shouldn't be there
 function RaidGroups:checkAttendance(raidGroupCsv, OutPutLabel)
-    Utils:debug("RaidGroups:checkAttendance");
+    GL:debug("RaidGroups:checkAttendance");
 
-    if (not App.User.isInRaid) then
-        return Utils:warning("You need to be in a raid!");
+    if (not GL.User.isInRaid) then
+        return GL:warning("You need to be in a raid!");
     end
 
     local PlayersOnRoster = {};
@@ -167,7 +164,7 @@ function RaidGroups:checkAttendance(raidGroupCsv, OutPutLabel)
     local UnknownPlayers = {};
 
     for line in raidGroupCsv:gmatch("[^\n]+") do
-        local Segments = Utils:strSplit(line, ":");
+        local Segments = GL:strSplit(line, ":");
         local group = tonumber(Segments[1]);
 
         if (not group
@@ -175,10 +172,10 @@ function RaidGroups:checkAttendance(raidGroupCsv, OutPutLabel)
             or group < 1
             or group > 9
         ) then
-            return Utils:warning("Invalid raid groups provided!");
+            return GL:warning("Invalid raid groups provided!");
         end
 
-        local Players = Utils:strSplit(Segments[2], ",");
+        local Players = GL:strSplit(Segments[2], ",");
 
         for _, playerName in pairs(Players) do
             if (group < 9) then
@@ -189,7 +186,7 @@ function RaidGroups:checkAttendance(raidGroupCsv, OutPutLabel)
 
     -- Check who's in the raid who doesn't belong
     local PlayersInRaid = {};
-    for _, Player in pairs(App.User:groupMembers()) do
+    for _, Player in pairs(GL.User:groupMembers()) do
         PlayersInRaid[Player.name] = true;
 
         if (not PlayersOnRoster[Player.name]) then
@@ -220,18 +217,18 @@ end
 
 -- Build a list of migrations based on the csv provided by the user
 function RaidGroups:applyRaidGroups(raidGroupCsv)
-    Utils:debug("RaidGroups:applyRaidGroups");
+    GL:debug("RaidGroups:applyRaidGroups");
 
-    if (not App.User.isInRaid) then
-        return Utils:warning("You need to be in a raid!");
+    if (not GL.User.isInRaid) then
+        return GL:warning("You need to be in a raid!");
     end
 
-    if (not App.User.hasAssist) then
-        return Utils:warning("You need to have a lead or assist role!");
+    if (not GL.User.hasAssist) then
+        return GL:warning("You need to have a lead or assist role!");
     end
 
     if (self.migrationInProgress) then
-        return Utils:warning("There's a migration still in progress, wait a bit!");
+        return GL:warning("There's a migration still in progress, wait a bit!");
     end
 
     local Tanks = {};
@@ -239,7 +236,7 @@ function RaidGroups:applyRaidGroups(raidGroupCsv)
     local PlayersOnTheRoster = {};
 
     for line in raidGroupCsv:gmatch("[^\n]+") do
-        local Segments = Utils:strSplit(line, ":");
+        local Segments = GL:strSplit(line, ":");
         local group = tonumber(Segments[1]);
 
         if (not group
@@ -247,17 +244,17 @@ function RaidGroups:applyRaidGroups(raidGroupCsv)
             or group < 1
             or group > 9
         ) then
-            return Utils:warning("Invalid raid groups provided!");
+            return GL:warning("Invalid raid groups provided!");
         end
 
-        local Players = Utils:strSplit(Segments[2], ",");
+        local Players = GL:strSplit(Segments[2], ",");
 
         for _, playerName in pairs(Players) do
             -- group 9 is a group we reserve for specifiying the tanks
             if (group < 9) then
                 -- We can't process the same name twice!
                 if (PlayersOnTheRoster[playerName]) then
-                    return Utils:warning(string.format("%s is listed twice on the roster!", playerName));
+                    return GL:warning(string.format("%s is listed twice on the roster!", playerName));
                 end
 
                 DesiredGroupByPlayerName[playerName] = group;
@@ -272,9 +269,9 @@ function RaidGroups:applyRaidGroups(raidGroupCsv)
     local NumRaidersInGroup = {};
     for i = 1, 8 do RaidersPerGroup[i] = {}; end
     for i = 1, 8 do NumRaidersInGroup[i] = 0; end
-    for _, Raider in pairs(App.User:groupMembers()) do
+    for _, Raider in pairs(GL.User:groupMembers()) do
         if (UnitAffectingCombat("raid" .. Raider.index)) then
-            return Utils:warning(string.format("Can't sort groups while %s is in combat!", Raider.name));
+            return GL:warning(string.format("Can't sort groups while %s is in combat!", Raider.name));
         end
 
         -- Check if there's people in the raid who are not on the roster
@@ -289,7 +286,7 @@ function RaidGroups:applyRaidGroups(raidGroupCsv)
 
     -- We can't sort the groups if there's anyone in the raid who doesn't belong!
     if (UnwantedPlayers[1]) then
-        return Utils:warning(string.format(
+        return GL:warning(string.format(
             "The following players are not part of the roster: %s",
             table.concat(UnwantedPlayers, ", ")
         ));
@@ -302,7 +299,7 @@ function RaidGroups:applyRaidGroups(raidGroupCsv)
         local raidersDesiredGroup = DesiredGroupByPlayerName[Raider.name];
 
         -- Make sure the player is stripped of his maintank/mainassist role
-        if (Utils:inArray({"MAINTANK", "MAINASSIST"}, Raider.role or "")) then
+        if (GL:inTable({"MAINTANK", "MAINASSIST"}, Raider.role or "")) then
             tinsert(Migrations, {"stripRole", Raider.role, Raider.name});
         end
 
@@ -312,7 +309,7 @@ function RaidGroups:applyRaidGroups(raidGroupCsv)
         ) then
             -- The raider's desired group is not full yet so we can just move him
             if (NumRaidersInGroup[raidersDesiredGroup] < _G.MEMBERS_PER_RAID_GROUP) then
-                Utils:debug(string.format(
+                GL:debug(string.format(
                     "%s is currently wants to be in group %s which is not full yet, so move him",
                     Raider.name,
                     raidersDesiredGroup
@@ -329,7 +326,7 @@ function RaidGroups:applyRaidGroups(raidGroupCsv)
                     local teamMatesDesiredGroup = DesiredGroupByPlayerName[TeamMate.name];
 
                     if (teamMatesDesiredGroup ~= TeamMate.subgroup) then
-                        Utils:debug(string.format(
+                        GL:debug(string.format(
                             "%s is currently in group %s but wants to be in group %s so we can switch",
                             TeamMate.name,
                             TeamMate.subgroup,
@@ -348,7 +345,7 @@ function RaidGroups:applyRaidGroups(raidGroupCsv)
                 -- If there's noone in the group who doesn't belong then the user is
                 -- most likely tring to cram more than 5 people into 1 group
                 if (not MisplacedTeammate) then
-                    return Utils:warning(string.format(
+                    return GL:warning(string.format(
                         "Can't find a place for %s, are you trying to put more than 5 people in 1 group?",
                         Raider.name
                     ));
@@ -372,7 +369,7 @@ function RaidGroups:applyRaidGroups(raidGroupCsv)
 
     -- Move players
     if (migrationCount > 0) then
-        Utils:message("Applying raid roster");
+        GL:message("Applying raid roster");
         self.migrationInProgress = true;
         self:processMigrations(Migrations, migrationCount, 1);
     end
@@ -382,25 +379,25 @@ end
 -- allows you to assign the main tank role to a maximum of 2 to 3 people depending
 -- on certain circumstances that I'm not fully aware of, requiring multiple clicks by the player
 function RaidGroups:updateTankAssignmentButton()
-    Utils:debug("RaidGroups:updateTankAssignmentButton");
+    GL:debug("RaidGroups:updateTankAssignmentButton");
 
     if (not self.rosterString
         or type(self.rosterString) ~= "string"
         or self.rosterString == ""
     ) then
-        return Utils:warning("No roster defined");
+        return GL:warning("No roster defined");
     end
 
     local Tanks = {};
     for line in self.rosterString:gmatch("[^\n]+") do
-        local Segments = Utils:strSplit(line, ":");
+        local Segments = GL:strSplit(line, ":");
         local group = tonumber(Segments[1]);
 
         if (group
             and type(group) == "number"
             and group == 9
         ) then
-            local Players = Utils:strSplit(Segments[2], ",");
+            local Players = GL:strSplit(Segments[2], ",");
 
             for _, playerName in pairs(Players) do
                 tinsert(Tanks, playerName);
@@ -414,7 +411,7 @@ function RaidGroups:updateTankAssignmentButton()
 
     -- No point in doing anything if there are no tanks
     if (not Tanks) then
-        return Utils:message("No tanks defined");
+        return GL:message("No tanks defined");
     end
 
     -- Players who are currently assigned as main tank
@@ -439,7 +436,7 @@ function RaidGroups:updateTankAssignmentButton()
     if (macros and macros ~= "") then
         Button:SetAttribute("macrotext", macros);
     else
-        Utils:success("All tanks are assigned");
+        GL:success("All tanks are assigned");
     end
 end
 
@@ -449,7 +446,7 @@ end
 -- in rapid succession. The raider index also changes after moving a player
 -- which is why we have to keep fetching the current index all the time
 function RaidGroups:processMigrations(Migrations, numberOfMigrations, index)
-    Utils:debug("RaidGroups:processMigrations");
+    GL:debug("RaidGroups:processMigrations");
 
     local Migration = Migrations[index];
     local action = Migration[1];
@@ -474,7 +471,7 @@ function RaidGroups:processMigrations(Migrations, numberOfMigrations, index)
         end
 
         if (not leftIndex) then
-            return Utils:warning(string.format("Something went wrong while moving %s", playerName));
+            return GL:warning(string.format("Something went wrong while moving %s", playerName));
         end
 
         -- Move the player to his desired group
@@ -506,15 +503,15 @@ function RaidGroups:processMigrations(Migrations, numberOfMigrations, index)
     if (index < numberOfMigrations) then
         local nextIndex = index + 1;
 
-        App.Ace:ScheduleTimer(function ()
+        GL.Ace:ScheduleTimer(function ()
             RaidGroups:processMigrations(Migrations, numberOfMigrations, nextIndex);
         end, .5);
     else
-        App.Ace:ScheduleTimer(function ()
+        GL.Ace:ScheduleTimer(function ()
             self.migrationInProgress = false;
-            Utils:success("Finished applying raid roster");
+            GL:success("Finished applying raid roster");
         end, 2);
     end
 end
 
-Utils:debug("RaidGroups.lua");
+GL:debug("RaidGroups.lua");

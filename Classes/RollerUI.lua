@@ -1,112 +1,203 @@
-local _, App = ...;
+---@type GL
+local _, GL = ...;
 
-App.RollerUI = App.RollerUI or {};
+---@class RollerUI
+GL.RollerUI = GL.RollerUI or {};
+local RollerUI = GL.RollerUI; ---@type RollerUI
 
-local UI = App.UI;
-local Utils = App.Utils;
-local Settings = App.Settings;
-local RollerUI = App.RollerUI;
-
-RollerUI.Widgets = {};
-
--- Hide the roll window
-function RollerUI:hide(...)
-    Utils:debug("RollerUI:hide");
-
-    if (not self.Widgets.RollerFrame) then
-        return;
-    end
-
-    self.Widgets.RollerFrame:Hide();
-end
-
--- Show the roll window (unless it's already active)
+---@return boolean
 function RollerUI:show(...)
-    Utils:debug("RollerUI:show");
+    GL:debug("RollerUI:show");
 
-    if (self.Widgets.RollerFrame
-        and self.Widgets.RollerFrame:IsShown()
-    ) then
-        return;
+    local Window = GL.Interface:getItem(self, "Window");
+
+    if (Window and Window:IsShown()) then
+        return false;
     end
 
     self:draw(...);
+    return true;
 end
 
--- Reopen the roll window (after closing it by right clicking)
-function RollerUI:reopen()
-    Utils:debug("RollerUI:reopen");
+---@return void
+function RollerUI:hide()
+    local Window = GL.Interface:getItem(self, "Window");
+    local TimerBar = GL.Interface:getItem(self, "Frame.TimerBar");
 
-    if (not App.RollOff.inProgress) then
-        return Utils:warning("There is no roll in progress");
+    if (Window) then
+        Window:Hide();
     end
 
-    -- Should not be possible, but you never know
-    if (not Utils:tableGet(self.Widgets, "RollerFrame")) then
-        return;
+    if (TimerBar) then
+        TimerBar:Stop();
     end
-
-    self.Widgets.RollerFrame:Show();
 end
 
--- Note: we're not using Ace Gui here since we don't want any fancy frames
-function RollerUI:draw(time, itemId, itemName, itemLink, itemIcon, note)
-    Utils:debug("RollerUI:draw");
+--- Note: we're not using AceGUI here since getting a SimpleGroup to move properly is a friggin nightmare
+---
+---@param time number The duration of the RollOff
+---@param itemId number
+---@param itemLink string
+---@param itemIcon string
+---@param note string
+---@return boolean
+function RollerUI:draw(time, itemId, itemLink, itemIcon, note)
+    GL:debug("RollerUI:draw");
 
-    local itemIsReserved = App.SoftReserves:getSoftReservesByItemId(itemId);
-    local itemIsReservedByUser = itemIsReserved and App.SoftReserves:itemIdIsReservedByPlayer(itemId, App.User.name);
+    local Window = GL.Interface:getItem(self, "Window");
 
-    self.Widgets.RollerFrame = self.Widgets.RollerFrame or UI:createFrame("Frame", "RollerFrame", UIParent);
-    local RollerFrame = self.Widgets.RollerFrame;
-    RollerFrame:Show();
-    RollerFrame:SetSize(350, 48);
-    RollerFrame:SetPoint(
-        Settings:get("UI.Roller.Position.point"),
-        UIParent,
-        Settings:get("UI.Roller.Position.relativePoint"),
-        Settings:get("UI.Roller.Position.offsetX"),
-        Settings:get("UI.Roller.Position.offsetY")
-    );
+    -- All UI elements are already available, no need to render them again
+    if (Window) then
+        return self:update(time, itemId, itemLink, itemIcon, note);
+    end
 
-    RollerFrame:SetMovable(true);
-    RollerFrame:EnableMouse(true);
-    RollerFrame:SetClampedToScreen(true);
-    RollerFrame:SetFrameStrata("HIGH");
-    RollerFrame:RegisterForDrag("LeftButton");
-    RollerFrame:SetScript("OnDragStart", RollerFrame.StartMoving);
-    RollerFrame:SetScript("OnDragStop", function()
-        RollerFrame:StopMovingOrSizing();
-        local point, _, relativePoint, offsetX, offsetY = RollerFrame:GetPoint();
+    Window = CreateFrame("Frame", "GargulUI_RollerUI_Window", UIParent, Frame);
+    Window:Show();
+    Window:SetSize(350, 48);
+    Window:SetPoint(GL.Interface:getPosition("Roller"));
 
-        -- Store the frame's last position for future play sessions
-        Settings:set("UI.Roller.Position.point", point);
-        Settings:set("UI.Roller.Position.relativePoint", relativePoint);
-        Settings:set("UI.Roller.Position.offsetX", offsetX);
-        Settings:set("UI.Roller.Position.offsetY", offsetY);
+    Window:SetMovable(true);
+    Window:EnableMouse(true);
+    Window:SetClampedToScreen(true);
+    Window:SetFrameStrata("HIGH");
+    Window:RegisterForDrag("LeftButton");
+    Window:SetScript("OnDragStart", Window.StartMoving);
+    Window:SetScript("OnDragStop", function()
+        Window:StopMovingOrSizing();
+        GL.Interface:storePosition(Window, "Roller");
     end);
-    RollerFrame:SetScript("OnMouseDown", function (_, button)
-        -- Call the bid window close function on rightclick
+    Window:SetScript("OnMouseDown", function (_, button)
+        -- Close the roll window on right-click
         if (button == "RightButton") then
             self:hide();
-            Utils:message("You can reopen the roll window by typing /gl bid");
         end
     end);
 
-    self.Widgets.RollerFrameTexture = self.Widgets.RollerFrameTexture or RollerFrame:CreateTexture(nil,"BACKGROUND");
-    local Texture = self.Widgets.RollerFrameTexture;
+    local Texture = Window:CreateTexture(nil,"BACKGROUND");
     Texture:SetColorTexture(0, 0, 0, .6);
-    Texture:SetAllPoints(RollerFrame)
-    RollerFrame.texture = Texture;
-    self.Widgets.RollerFrameTexture = Texture;
+    Texture:SetAllPoints(Window)
+    Window.texture = Texture;
 
     -- Roll info label
-    self.Widgets.RollLabel = self.Widgets.RollLabel or UI:createFrame("Frame", "GialUI_Label_MinimumBid", RollerFrame);
-    local RollLabel = self.Widgets.RollLabel;
+    local RollLabel = CreateFrame("Frame", "GargulUI_RollerUI_Label", Window, Frame);
     RollLabel:SetSize(1, 1);
-    RollLabel:SetPoint("TOPLEFT", RollerFrame, "TOPLEFT", 5, -2);
-    RollLabel:SetPoint("BOTTOMRIGHT", RollerFrame, "BOTTOMRIGHT", -7);
+    RollLabel:SetPoint("TOPLEFT", Window, "TOPLEFT", 5, -2);
+    RollLabel:SetPoint("BOTTOMRIGHT", Window, "BOTTOMRIGHT", -7);
 
+    RollLabel.text = RollLabel:CreateFontString(nil, "ARTWORK");
+    RollLabel.text:SetFont("Fonts\\ARIALN.ttf", 11, "OUTLINE");
+    RollLabel.text:SetPoint("TOPLEFT", RollLabel, "TOPLEFT", 0, -4);
+
+    -- Roll button
+    local RollButton = CreateFrame("Button", "GargulUI_RollerUI_Roll", Window, "GameMenuButtonTemplate");
+
+    RollButton:SetPoint("TOPRIGHT", Window, "TOPRIGHT", -65, -2);
+    RollButton:SetSize(60, 20);
+    RollButton:SetText("Roll");
+    RollButton:SetNormalFontObject("GameFontNormal");
+    RollButton:SetHighlightFontObject("GameFontNormal");
+    RollButton:SetScript("OnClick", function ()
+        RandomRoll(1, 100);
+    end);
+
+    local PassButton = CreateFrame("Button", "GargulUI_RollerUI_Pass", Window, "GameMenuButtonTemplate");
+    PassButton:SetPoint("TOPLEFT", RollButton, "TOPRIGHT", 1, 0);
+    PassButton:SetSize(60, 20);
+    PassButton:SetText("Pass");
+    PassButton:SetNormalFontObject("GameFontNormal");
+    PassButton:SetHighlightFontObject("GameFontNormal");
+    PassButton:SetScript("OnClick", function ()
+        -- Retract roll message
+        local chatType = "PARTY";
+        if (GL.User.isInRaid) then
+            chatType = "RAID";
+        end
+
+        if (GL.Settings:get("Rolling.announcePass")) then
+            GL:sendChatMessage("I pass!", chatType);
+        end
+
+        self:hide();
+    end);
+
+    local TimerBar = LibStub("LibCandyBar-3.0"):New(
+        "Interface\\AddOns\\Gargul\\Assets\\Textures\\timer-bar",
+        350,
+        24
+    );
+
+    TimerBar:SetPoint("BOTTOM", Window, "BOTTOM");
+    TimerBar.candyBarLabel:SetFont("Fonts\\ARIALN.ttf", 13, "OUTLINE");
+
+    -- Make the bar turn green/yellow/red based on time left
+    TimerBar:AddUpdateFunction(function ()
+        local percentageLeft = 100 / (time / TimerBar.remaining);
+
+        if (percentageLeft >= 60) then
+            TimerBar:SetColor(0, 1, 0, .3);
+        elseif (percentageLeft >= 30) then
+            TimerBar:SetColor(1, 1, 0, .3);
+        else
+            TimerBar:SetColor(1, 0, 0, .3);
+        end
+    end);
+
+    -- Close the roll window on rightclick
+    TimerBar:SetScript("OnMouseDown", function(widget, button)
+        if (button == "RightButton") then
+            self:hide();
+        end
+    end)
+
+    TimerBar:SetScript("OnLeave", function()
+        GameTooltip:Hide();
+    end);
+
+    GL.Interface:setItem(self, "RollInfo", RollLabel);
+    GL.Interface:setItem(self, "Window", Window);
+    GL.Interface:setItem(self, "TimerBar", TimerBar);
+
+    return self:update(time, itemId, itemLink, itemIcon, note);
+end
+
+--- This method updates the values of the RollerUI only
+--- This allows us to keep reusing the same UI elements
+--- without having to build them over and over again
+---
+---@param time number The duration of the RollOff
+---@param itemId number
+---@param itemLink string
+---@param itemIcon string
+---@param note string
+---@return boolean
+function RollerUI:update(time, itemId, itemLink, itemIcon, note)
+    GL:debug("RollerUI:update");
+
+    -- Fetch all UI elements
+    local RollInfo = GL.Interface:getItem(self, "Frame.RollInfo");
+    local TimerBar = GL.Interface:getItem(self, "Frame.TimerBar");
+    local Window = GL.Interface:getItem(self, "Window");
+
+    -- This shouldn't be possible but you never know!
+    if (not RollInfo
+        or not TimerBar
+        or not Window
+    ) then
+        return false;
+    end
+
+    note = note or "";
+    local noteStringLengthAllowed = 53 - string.len(note);
+
+    -- Make sure the item note does not go out of bounds
+    if (noteStringLengthAllowed < 0) then
+        noteStringLengthAllowed = 0;
+    end
+
+    local itemIsReserved = GL.SoftRes:idIsReserved(itemId);
+    local itemIsReservedByUser = itemIsReserved and GL.SoftRes:itemIdIsReservedByPlayer(itemId, GL.User.name);
     local labelText = "";
+
     if (itemIsReserved) then
         local reservedByUserString = "NO";
 
@@ -119,125 +210,26 @@ function RollerUI:draw(time, itemId, itemName, itemLink, itemIcon, note)
         labelText = "SOFT RESERVED BY ANYONE: |c00efb8cdNO|r";
     end
 
-    self.Widgets.RollLabelText = self.Widgets.RollLabelText or RollLabel:CreateFontString(nil, "ARTWORK");
-    RollLabel.text = self.Widgets.RollLabelText;
-    RollLabel.text:SetFont("Fonts\\ARIALN.ttf", 11, "OUTLINE");
-    RollLabel.text:SetPoint("TOPLEFT", RollLabel, "TOPLEFT", 0, -4);
-    RollLabel.text:SetText(labelText);
+    RollInfo.text:SetText(labelText);
 
-    -- Bid/Roll/Cancel button
-    self.Widgets.RollButton = self.Widgets.RollButton or UI:createFrame("Button", "GialUI_Buttons_StartBidding", RollerFrame, "GameMenuButtonTemplate");
-    local RollButton = self.Widgets.RollButton;
+    TimerBar:SetParent(Window);
+    TimerBar:SetDuration(time);
+    TimerBar:SetLabel("  " .. itemLink .. " " .. string.sub(note, 0, noteStringLengthAllowed));
+    TimerBar.candyBarLabel:SetFont("Fonts\\ARIALN.ttf", 13, "OUTLINE");
 
-    RollButton:SetPoint("TOPRIGHT", RollerFrame, "TOPRIGHT", -4, -2);
-    RollButton:SetSize(60, 20);
-    RollButton:SetText("Roll");
-    RollButton:SetNormalFontObject("GameFontNormal");
-    RollButton:SetHighlightFontObject("GameFontNormal");
-    RollButton:SetScript("OnClick", function ()
-        local buttonText = RollButton:GetText();
-        local bid = self.Widgets.BidEditBox:GetText();
-        self.Widgets.BidEditBox:ClearFocus();
-        self.Widgets.BidEditBox:SetText("");
-
-        if (buttonText == "Roll") then
-            RandomRoll(1, 100);
-            return RollButton:SetText("Pass");
-        elseif (buttonText == "Bid"
-                and App.Bidder:bid(bid)
-        ) then
-            self.Widgets.BidEditBox:Hide();
-            return RollButton:SetText("Pass");
-        elseif (buttonText == "Pass") then
-            if (App.Bidder.hasEnoughDkpToBid) then
-                App.Bidder:retractBid();
-                self.Widgets.BidEditBox:Show();
-            else
-                -- Retract roll shit
-            end
-        end
-
-        ButtonText = "Bid";
-        if (not App.Bidder.hasEnoughDkpToBid) then
-            ButtonText = "Roll";
-        end
-        RollButton:SetText(ButtonText);
-    end);
-
-    -- Only add the DKP input field if the user actually has enough DKP to bid
-    self.Widgets.BidEditBox = self.Widgets.BidEditBox or UI:createFrame("EditBox", "GialUI_Input_MinimumBid", RollerFrame, "InputBoxTemplate");
-    local BidEditBox = self.Widgets.BidEditBox;
-    BidEditBox:SetPoint("TOPRIGHT", RollerFrame, "TOPRIGHT", -70, -2);
-    BidEditBox:SetSize(40, 20);
-    BidEditBox:SetMaxLetters(7);
-    BidEditBox:SetAutoFocus(false);
-    BidEditBox:Hide();
-    BidEditBox:SetScript("OnEscapePressed", function()
-        BidEditBox:ClearFocus();
-    end)
-    BidEditBox:SetScript("OnEnterPressed", function()
-        RollButton:Click();
-    end);
-
-    if (App.Bidder.hasEnoughDkpToBid) then
-        BidEditBox:Show();
-    end
-
-    self.Widgets.TimerBarTexture = self.Widgets.TimerBarTexture or "Interface\\AddOns\\Gargul\\Assets\\Textures\\timer-bar";
-    local texture = self.Widgets.TimerBarTexture;
-    self.Widgets.TimerBar = self.Widgets.TimerBar or LibStub("LibCandyBar-3.0"):New(texture, 350, 24);
-    local bar = self.Widgets.TimerBar;
-
-    note = note or "";
-    local noteStringLengthAllowed = 53 - string.len(note);
-
-    -- Make sure the item note does not go out of bounds
-    if (noteStringLengthAllowed < 0) then
-        noteStringLengthAllowed = 0;
-    end
-
-    bar:SetParent(RollerFrame);
-    bar:SetPoint("BOTTOM", RollerFrame, "BOTTOM");
-    bar:SetDuration(time);
-
-    bar:SetLabel("  " .. itemLink .. " " .. string.sub(note, 0, noteStringLengthAllowed));
-    bar.candyBarLabel:SetFont("Fonts\\ARIALN.ttf", 13, "OUTLINE");
-
-    bar:SetIcon(itemIcon);
-    bar:SetColor(0, 1, 0, .5);
-    bar:Start();
-
-    -- Make the bar turn green/yellow/red based on time left
-    bar:AddUpdateFunction(function ()
-        local percentageLeft = 100 / (time / bar.remaining);
-
-        if (percentageLeft >= 60) then
-            bar:SetColor(0, 1, 0, .3);
-        elseif (percentageLeft >= 30) then
-            bar:SetColor(1, 1, 0, .3);
-        else
-            bar:SetColor(1, 0, 0, .3);
-        end
-    end);
-
-    -- Call the bid window close function on rightclick
-    bar:SetScript("OnMouseDown", function(widget, button)
-        if (button == "RightButton") then
-            self:hide();
-            Utils:message("You can reopen the roll window by typing /gl bid");
-        end
-    end)
+    TimerBar:SetIcon(itemIcon);
+    TimerBar:Start();
+    Window:Show();
 
     -- Show a gametooltip for the item up for roll
     -- when hovering over the progress bar
-    bar:SetScript("OnEnter", function()
-        GameTooltip:SetOwner(RollerFrame, "ANCHOR_TOP");
+    TimerBar:SetScript("OnEnter", function()
+        GameTooltip:SetOwner(Window, "ANCHOR_TOP");
         GameTooltip:SetHyperlink(itemLink);
         GameTooltip:Show();
     end);
-    bar:SetScript("OnLeave", function()
-        GameTooltip:Hide();
-    end);
+
+    return true;
 end
 
-Utils:debug("RollerUI.lua");
+GL:debug("RollerUI.lua");

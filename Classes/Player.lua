@@ -1,10 +1,9 @@
-local _, App = ...;
+local _, GL = ...;
 
-App.Player = {};
-App.Player.__index = App.Player;
+GL.Player = {};
+GL.Player.__index = GL.Player;
 
-local Utils = App.Utils;
-local Player = App.Player;
+local Player = GL.Player;
 
 -- This metatable allows us to have multiple instances of this object
 setmetatable(Player, {
@@ -14,7 +13,7 @@ setmetatable(Player, {
 })
 
 function Player._new()
-    Utils:debug("Player._new");
+    GL:debug("Player._new");
 
     local self = setmetatable({}, Player);
     return self;
@@ -22,10 +21,10 @@ end
 
 -- Instantiate a new player object using a player's GUID
 function Player.fromID(GUID)
-    Utils:debug("Player.fromID");
+    GL:debug("Player.fromID");
 
     if (not GUID or not type(GUID) == "string") then
-        return Utils:error("Invalid GUID provided for Player.fromID");
+        return GL:error("Invalid GUID provided for Player.fromID");
     end
 
     local self = Player._new();
@@ -36,7 +35,7 @@ function Player.fromID(GUID)
     -- The GUID turns out to be invalid, destroy the player object
     if (not self.name or not type(self.name) == "string") then
         self = nil;
-        Utils:error("Invalid GUID provided for Player.fromID: " .. GUID);
+        GL:error("Invalid GUID provided for Player.fromID: " .. GUID);
         return;
     end
 
@@ -48,7 +47,7 @@ end
 
 -- Instantiate a new player object using a player's name
 function Player.fromName(name)
-    Utils:debug("Player.fromName");
+    GL:debug("Player.fromName");
 
     if (not name or not type(name) == "string") then
         return false;
@@ -65,16 +64,16 @@ end
 
 -- Instantiate a new player object for the addon actor (current player)
 function Player.fromActor()
-    Utils:debug("Player.fromActor");
+    GL:debug("Player.fromActor");
 
     local playerId = UnitGUID("player");
 
     if (not playerId) then
-        Utils:warning("Unable to confirm identity of addon actor");
+        GL:warning("Unable to confirm identity of addon actor");
         return;
     end
 
     return Player.fromID(playerId);
 end
 
-Utils:debug("Player.lua");
+GL:debug("Player.lua");

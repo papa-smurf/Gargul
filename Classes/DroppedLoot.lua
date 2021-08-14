@@ -1,65 +1,115 @@
-local _, App = ...;
+---@type GL
+local _, GL = ...;
 
-App.DroppedLoot = {
-    lootWindowIsOpened = false,
+---@class DroppedLoot
+GL.DroppedLoot = {
+    Announced = {},
     initialized = false,
     eventsHooked = false,
-    Announced = {},
+    LootButtonItemLinkCache = {},
+    lootChangedTimer = 0,
+    lootWindowIsOpened = false,
 }
 
-local Constants = App.Data.Constants;
-local Utils = App.Utils;
-local DroppedLoot = App.DroppedLoot;
+local Constants = GL.Data.Constants; ---@type Data
+local DroppedLoot = GL.DroppedLoot; ---@type DroppedLoot
+local Events = GL.Events; ---@type Events
+local SoftRes = GL.SoftRes; ---@type SoftRes
 local LCG = LibStub("LibCustomGlow-1.0");
 
+---@return boolean
 function DroppedLoot:_init()
-    Utils:debug("DroppedLoot:_init");
+    GL:debug("DroppedLoot:_init");
 
     -- No need to initialize this class twice
     if (self._initialized) then
-        return;
+        return false;
     end
 
     -- Fire DroppedLoot:lootReady every time a loot window is opened
-    App.Events:register("DroppedLootLootOpenedListener", "LOOT_OPENED", DroppedLoot.lootOpened);
+    Events:register("DroppedLootLootOpenedListener", "LOOT_OPENED", function () self:lootOpened(); end);
 
     -- Make sure to keep track of the loot window status
-    App.Events:register("DroppedLootLootClosedListener", "LOOT_CLOSED", function ()
+    Events:register("DroppedLootLootClosedListener", "LOOT_CLOSED", function ()
         DroppedLoot.lootWindowIsOpened = false;
+
+        -- Stop the timer responsible for trigger the GL.LOOT_CHANGED event
+        if (self.lootChangedTimer) then
+            GL.Ace:CancelTimer(self.lootChangedTimer);
+        end
     end);
 
-    -- Highlight items that are soft-reserved or have TMB details
-    App.Events:register("DroppedLootLootOpenedHighlighterListener", "LOOT_OPENED", DroppedLoot.highlightItemsOfInterest);
-    App.Events:register("DroppedLootLootSlotChangedHighlighterListener", "LOOT_SLOT_CHANGED", DroppedLoot.highlightItemsOfInterest);
-
     -- Remove highlight on loot buttons when closing the loot window
-    App.Events:register("DroppedLootLootClosedHighlighterListener", "LOOT_CLOSED", DroppedLoot.removeHighlights);
+    Events:register("DroppedLootLootClosedHighlighterListener", "LOOT_CLOSED", function () self:removeHighlights(); end);
+
+    -- Highlight items that are soft-reserved or have TMB details
+    Events:register("DroppedLootLootSlotChangedHighlighterListener", "GL.LOOT_CHANGED", function () self:highlightItemsOfInterest() end);
 
     self._initialized = true;
+    return true;
 end
 
--- Fired when a loot window is opened
+--- Fired when a loot window is opened
+---
+---@return void
 function DroppedLoot:lootOpened()
-    Utils:debug("DroppedLoot:lootOpened");
+    GL:debug("DroppedLoot:lootOpened");
 
-    DroppedLoot.lootWindowIsOpened = true;
+    self.lootWindowIsOpened = true;
 
-    if (not App.User.isInGroup
-        or not (App.User.isMasterLooter)
-    ) then
-        return;
-    end
+    self:lootChanged();
+    Events:fire("GL.LOOT_CHANGED");
+    self:hookClickEvents();
 
-    DroppedLoot:hookClickEvents();
+    -- Periodically check if the loot changed because the internal WoW events are not
+    -- comprehensive enough to detect things like the player moving to the next page of items.
+    self.lootChangedTimer = GL.Ace:ScheduleRepeatingTimer(function ()
+        if (self:lootChanged()) then
+            Events:fire("GL.LOOT_CHANGED");
+        end
+    end, .1);
 
     -- Only announce loot in chat if the setting is enabled
-    if (App.Settings:get("announceLootToChat")) then
+    if ((GL.testMode or GL.User.isMasterLooter)
+        and GL.Settings:get("announceLootToChat")
+    ) then
         -- We give the announcing of loot some time
         -- in case the master looter set up a packmule
-        App.Ace:ScheduleTimer(function ()
-            DroppedLoot:announce();
+        GL.Ace:ScheduleTimer(function ()
+            self:announce();
         end, .5);
     end
+end
+
+-- Check whether the loot in the loot window changed in any way e.g:
+-- An item was taken from the window
+-- The player navigated to a different page in the loot window
+function DroppedLoot:lootChanged()
+    local lootChanged = false;
+    for buttonIndex = 1, _G.LOOTFRAME_NUMBUTTONS do
+        local buttonName = "LootButton" .. buttonIndex;
+        local Button = getglobal("LootButton" .. buttonIndex);
+        local itemLink = "";
+
+        if (Button
+            and Button:IsVisible()
+            and Button.slot
+        ) then
+            itemLink = GetLootSlotLink(Button.slot);
+
+            if (GL:empty(itemLink)) then
+                itemLink = "";
+            end
+        end
+
+        if (GL:tableGet(self.LootButtonItemLinkCache, buttonName, -1) ~= itemLink) then
+            lootChanged = true;
+        end
+
+        self.LootButtonItemLinkCache[buttonName] = itemLink;
+    end
+
+    return lootChanged;
 end
 
 -- Remove the highlights on all loot buttons
@@ -75,17 +125,11 @@ end
 
 -- Highlight items that are soft-reserved or otherwise need extra attention
 function DroppedLoot:highlightItemsOfInterest()
-    Utils:debug("DroppedLoot:highlightItemsOfInterest");
+    GL:debug("DroppedLoot:highlightItemsOfInterest");
 
     -- There's no point highlight loot if you're not in a group
-    if (not App.User.isInGroup) then
+    if (not GL.User.isInGroup) then
         return;
-    end
-
-    local playersInRaid = {};
-    -- Fetch the name of everyone currently in the raid/party
-    for _, player in pairs(App.User:groupMembers()) do
-        tinsert(playersInRaid, player.name);
     end
 
     -- 4 is the max since buttons seem to be reused
@@ -99,33 +143,39 @@ function DroppedLoot:highlightItemsOfInterest()
             if (Button:IsVisible() and Button.slot) then
                 local itemLink = GetLootSlotLink(Button.slot);
 
-                if (itemLink and type(itemLink) == "string") then
-                    local softReserves = App.SoftReserves:getSoftReservesByItemLink(itemLink) or {};
-                    local TMBInfo = App.TMB:getTMBInfoByItemLink(itemLink) or {};
-                    local hasActiveSoftReserves = false;
-                    local hasActiveTMBReserves = false;
+                if (itemLink) then
+                    local enableHighlight = false;
+                    local BorderColor = {1, .95686, .40784, 1}; -- The default border color is rogue-yellow and applies to wishlisted items
 
-                    -- Make sure we only take soft-reserves of people who are actually in the raid into account
-                    for _, player in pairs(softReserves) do
-                        if (Utils:inArray(playersInRaid, player)) then
-                            hasActiveSoftReserves = true;
-                            break;
+                    -- The item is hard-reserved
+                    if (SoftRes:linkIsHardReserved(itemLink)) then
+                        enableHighlight = true;
+                        BorderColor = {.77, .12, .23, 1};  -- Make the border red for hard-reserved items
+
+                        -- The item is soft-reserved
+                    elseif (SoftRes:linkIsReserved(itemLink)) then
+                        enableHighlight = true;
+                        BorderColor = {.95686, .5490, .72941, 1}; -- Make the border paladin-pink for reserved items
+
+                    -- Check if it's wishlisted
+                    else
+                        local TMBInfo = GL.TMB:byItemLink(itemLink) or {};
+
+                        -- Check for active wishlist entries
+                        for _, Entry in pairs(TMBInfo) do
+                            enableHighlight = true;
+                            BorderColor = {1, 1, 1, 1}; -- Make the border priest-white for TMB wishlisted items
+
+                            if (Entry.type == Constants.tmbTypePrio) then
+                                BorderColor = {1, .48627, .0392, 1}; -- Make the border druid-orange for TMB character prio items
+                                break;
+                            end
                         end
                     end
 
-                    -- Make sure we only take TMB reserves of people who are actually in the raid into account
-                    for _, Entry in pairs(TMBInfo) do
-                        local playerName = Entry.character;
-
-                        if (Utils:inArray(playersInRaid, string.gsub(playerName, "%(OS%)", ""))) then
-                            hasActiveTMBReserves = true;
-                            break;
-                        end
-                    end
-
-                    if (hasActiveSoftReserves or hasActiveTMBReserves) then
+                    if (enableHighlight) then
                         -- Add an animated border to indicate that this item was reserved / wishlisted
-                        LCG.PixelGlow_Start(Button, {0.95, 0.95, 0.32, 1}, 10, .05, 5, 3);
+                        LCG.PixelGlow_Start(Button, BorderColor, 10, .05, 5, 3);
                     end
                 end
             end
@@ -138,7 +188,7 @@ end
 -- Only 4 buttons will be used regardless of number of drops
 -- Alt click opens the roll window, alt + shift opens the auctioneer window
 function DroppedLoot:hookClickEvents()
-    Utils:debug("DroppedLoot:hookClickEvents");
+    GL:debug("DroppedLoot:hookClickEvents");
 
     if (DroppedLoot.eventsHooked) then
         return;
@@ -151,7 +201,7 @@ function DroppedLoot:hookClickEvents()
 
         Button:HookScript("OnClick", function()
             if (IsAltKeyDown()) then
-                Utils:debug("DroppedLoot:hookClickEvents. Alt click LootButton");
+                GL:debug("DroppedLoot:hookClickEvents. Alt click LootButton");
 
                 local itemLink = GetLootSlotLink(Button.slot);
 
@@ -161,11 +211,11 @@ function DroppedLoot:hookClickEvents()
 
                 -- Open the award window if both alt and shift are pressed
                 if (IsShiftKeyDown()) then
-                    App.AwardUI:draw(itemLink);
+                    GL.Interface.Award:draw(itemLink);
 
                 -- Open the default roll window
                 else
-                    App.MasterLooterUI:draw(itemLink);
+                    GL.MasterLooterUI:draw(itemLink);
                 end
             end
         end);
@@ -176,59 +226,54 @@ end
 
 -- Announce the loot that dropped in the party or raid chat
 function DroppedLoot:announce()
-    Utils:debug("DroppedLoot:announce");
+    GL:debug("DroppedLoot:announce");
 
-    local playersInRaid = {};
     -- Fetch the name of everyone currently in the raid/party
-    for _, player in pairs(App.User:groupMembers()) do
-        tinsert(playersInRaid, player.name);
-    end
+    local PlayersInRaid = GL.User:groupMemberNames();
 
     -- Get the total number of items that dropped
     local sourceGUID;
     local itemCount = GetNumLootItems();
     for lootIndex = 1, itemCount do
         local itemLink = GetLootSlotLink(lootIndex);
-        local softReserves = App.SoftReserves:getSoftReservesByItemLink(itemLink);
-        local TMBInfo = App.TMB:getTMBInfoByItemLink(itemLink);
+        local itemIsHardReserved = false;
+        local SoftReserves = SoftRes:byItemLink(itemLink);
+        local TMBInfo = GL.TMB:byItemLink(itemLink);
 
         local quality = select(5, GetLootSlotInfo(lootIndex));
         sourceGUID = GetLootSourceInfo(lootIndex);
 
         if (itemLink
-            and (
-                sourceGUID
+            and (sourceGUID
                 and not DroppedLoot.Announced[sourceGUID]
             ) and (
-                (quality and quality >= App.Settings:get("minimumQualityOfAnnouncedLoot", 4))
-                or softReserves
-                or TMBInfo
+                (quality and quality >= GL.Settings:get("minimumQualityOfAnnouncedLoot", 4))
+                or not GL:empty(SoftReserves)
+                or not GL:empty(TMBInfo)
             )
         ) then
-            local activeSoftReserves = {};
+            itemIsHardReserved = SoftRes:linkIsHardReserved(itemLink);
+            local activeSoftRes = {};
             local activeWishListDetails = {};
             local activePrioListDetails = {};
-            local hasSoftReserves = false;
+            local hasSoftRes = false;
             local itemIsOnSomeonesPriolist = false;
             local itemIsOnSomeonesWishlist = false;
 
-            if (softReserves
-                and App.Settings:get("includeSoftReservesInLootAnnouncement")
+            if (not itemIsHardReserved
+                and SoftReserves
+                and GL.Settings:get("includeSoftResInLootAnnouncement")
             ) then
-                -- Make sure we only show shoft reserves of people
-                -- Who are actually in the raid
-                for _, player in pairs(softReserves) do
-                    if (Utils:inArray(playersInRaid, player)) then
-                        tinsert(activeSoftReserves, Utils:capitalize(player));
-                        hasSoftReserves = true;
-                    end
+                for _, player in pairs(SoftReserves) do
+                    tinsert(activeSoftRes, GL:capitalize(player));
+                    hasSoftRes = true;
                 end
             end
 
             if (TMBInfo
                 and (
-                    App.Settings:get("TMB.includePrioListInfoInLootAnnouncement")
-                    or App.Settings:get("TMB.includeWishListInfoInLootAnnouncement")
+                    GL.Settings:get("TMB.includePrioListInfoInLootAnnouncement")
+                    or GL.Settings:get("TMB.includeWishListInfoInLootAnnouncement")
                 )
             ) then
                 -- Make sure we only show wishlist details of people
@@ -236,7 +281,7 @@ function DroppedLoot:announce()
                 for _, Entry in pairs(TMBInfo) do
                     local playerName = Entry.character;
 
-                    if (Utils:inArray(playersInRaid, string.gsub(playerName, "%(OS%)", ""))) then
+                    if (GL:inTable(PlayersInRaid, string.gsub(playerName, "%(OS%)", ""))) then
                         local prio = Entry.prio;
                         local entryType = Entry.type or Constants.tmbTypeWish;
                         local isOffSpec = string.find(playerName, "(OS)");
@@ -269,22 +314,30 @@ function DroppedLoot:announce()
             end
 
             local chatChannel = "PARTY";
-            if (App.User.isInRaid) then
+            if (GL.User.isInRaid) then
                 chatChannel = "RAID";
             end
 
-            -- Link the item in the chat for
-            -- all group members to see
-            SendChatMessage(
-                itemLink,
-                chatChannel,
-                "COMMON"
-            );
+            if (itemIsHardReserved) then
+                GL:sendChatMessage(
+                    itemLink .. " (This item is hard-reserved!)",
+                    chatChannel,
+                    "COMMON"
+                );
+            else
+                -- Link the item in the chat for
+                -- all group members to see
+                GL:sendChatMessage(
+                    itemLink,
+                    chatChannel,
+                    "COMMON"
+                );
+            end
 
-            -- Show who softreserved this item
-            if (hasSoftReserves) then
-                SendChatMessage(
-                    "Reserved by: " .. table.concat(activeSoftReserves, ", "),
+            -- Show who reserved this item
+            if (hasSoftRes) then
+                GL:sendChatMessage(
+                    "Reserved by: " .. table.concat(activeSoftRes, ", "),
                     chatChannel,
                     "COMMON"
                 );
@@ -292,7 +345,7 @@ function DroppedLoot:announce()
 
             -- Show who has priority on this item
             if (itemIsOnSomeonesPriolist
-                and App.Settings:get("TMB.includePrioListInfoInLootAnnouncement")
+                and GL.Settings:get("TMB.includePrioListInfoInLootAnnouncement")
             ) then
                 -- Sort the PrioListEntries based on prio (lowest to highest)
                 table.sort(activePrioListDetails, function (a, b)
@@ -301,10 +354,10 @@ function DroppedLoot:announce()
 
                 local PrioData = {};
                 for _, Entry in pairs(activePrioListDetails) do
-                    tinsert(PrioData, Utils:capitalize(Entry[2]));
+                    tinsert(PrioData, GL:capitalize(Entry[2]));
                 end
 
-                SendChatMessage(
+                GL:sendChatMessage(
                     "TMB Priority: " .. table.concat(PrioData, ", "),
                     chatChannel,
                     "COMMON"
@@ -313,9 +366,9 @@ function DroppedLoot:announce()
 
             -- Show who wishlisted this item
             if (itemIsOnSomeonesWishlist
-                and App.Settings:get("TMB.includeWishListInfoInLootAnnouncement")
+                and GL.Settings:get("TMB.includeWishListInfoInLootAnnouncement")
                 and (not itemIsOnSomeonesPriolist
-                    or not App.Settings:get("TMB.hideWishListInfoIfPriorityIsPresent")
+                    or not GL.Settings:get("TMB.hideWishListInfoIfPriorityIsPresent")
                 )
             ) then
                 -- Sort the WishListEntries based on prio (lowest to highest)
@@ -325,10 +378,10 @@ function DroppedLoot:announce()
 
                 local WishListData = {};
                 for _, Entry in pairs(activeWishListDetails) do
-                    tinsert(WishListData, Utils:capitalize(Entry[2]));
+                    tinsert(WishListData, GL:capitalize(Entry[2]));
                 end
 
-                SendChatMessage(
+                GL:sendChatMessage(
                     "TMB Wishlist: " .. table.concat(WishListData, ", "),
                     chatChannel,
                     "COMMON"
@@ -344,4 +397,4 @@ function DroppedLoot:announce()
     end
 end
 
-Utils:debug("DroppedLoot.lua");
+GL:debug("DroppedLoot.lua");

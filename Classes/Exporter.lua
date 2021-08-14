@@ -1,8 +1,10 @@
-local _, App = ...;
+local _, GL = ...;
 
-App.Ace.GUI = App.Ace.GUI or LibStub("AceGUI-3.0");
-App.Ace.ScrollingTable = App.Ace.ScrollingTable or LibStub("ScrollingTable");
-App.Exporter = {
+GL.AceGUI = GL.AceGUI or LibStub("AceGUI-3.0");
+GL.ScrollingTable = GL.ScrollingTable or LibStub("ScrollingTable");
+
+---@class Exporter
+GL.Exporter = {
     visible = false,
     dateSelected = nil,
     UIComponents = {
@@ -12,26 +14,13 @@ App.Exporter = {
     },
 };
 
-local Settings = App.Settings;
-local Utils = App.Utils;
-local AceGUI = App.Ace.GUI;
-local ScrollingTable = App.Ace.ScrollingTable;
-local Exporter = App.Exporter;
-
--- Add a resut table confirmation dialog to Blizzard's global StaticPopupDialogs object
-StaticPopupDialogs[App.name .. "_RESET_AWARD_HISTORY_CONFIRMATION"] = {
-    preferredIndex = 3,
-    text = "",
-    button1 = "Yes",
-    button2 = "No",
-    OnAccept = {},
-    timeout = 0,
-    whileDead = true,
-    hideOnEscape = true,
-}
+local AceGUI = GL.AceGUI;
+local Exporter = GL.Exporter; ---@type Exporter
+local ScrollingTable = GL.ScrollingTable;
+local Settings = GL.Settings; ---@type Settings
 
 function Exporter:draw()
-    Utils:debug("Exporter:draw");
+    GL:debug("Exporter:draw");
 
     if (Exporter.visible) then
         return;
@@ -41,9 +30,9 @@ function Exporter:draw()
 
     -- Fetch award history per date
     local AwardHistoryByDate = {};
-    for _, AwardEntry in pairs(App.DB.AwardHistory) do
+    for _, AwardEntry in pairs(GL.DB.AwardHistory) do
         local date = date('%Y-%m-%d', AwardEntry.timestamp);
-        local Entries = Utils:tableGet(AwardHistoryByDate, date, {});
+        local Entries = GL:tableGet(AwardHistoryByDate, date, {});
 
         tinsert(Entries, AwardEntry);
 
@@ -52,21 +41,15 @@ function Exporter:draw()
 
     -- Create a container/parent frame
     local ExportFrame = AceGUI:Create("Frame");
-    ExportFrame:SetTitle(App.name .. " v" .. App.version);
-    ExportFrame:SetStatusText("Addon v" .. App.version);
+    ExportFrame:SetTitle(GL.name .. " v" .. GL.version);
+    ExportFrame:SetStatusText("Addon v" .. GL.version);
     ExportFrame:SetLayout("Flow");
     ExportFrame:SetWidth(600);
     ExportFrame:SetHeight(450);
     ExportFrame:SetCallback("OnClose", function(widget)
-       Exporter:close();
-   end);
-   ExportFrame:SetPoint(
-       Settings:get("UI.Exporter.Position.point"),
-       UIParent,
-       Settings:get("UI.Exporter.Position.relativePoint"),
-       Settings:get("UI.Exporter.Position.offsetX"),
-       Settings:get("UI.Exporter.Position.offsetY")
-   );
+        Exporter:close();
+    end);
+    ExportFrame:SetPoint(GL.Interface:getPosition("Exporter"));
     ExportFrame.statustext:GetParent():Hide(); -- Hide the statustext bar
 
     Exporter.UIComponents.Frame = ExportFrame;
@@ -81,7 +64,7 @@ function Exporter:draw()
     ExportFrame:AddChild(DateFrame);
 
     -- Generate the characters table and add it to DateFrame.frame
-    Exporter:drawDatesTable(ExportFrame.frame, Utils:tableFlip(AwardHistoryByDate));
+    Exporter:drawDatesTable(ExportFrame.frame, GL:tableFlip(AwardHistoryByDate));
 
     -- Large edit box
     local ExportBox = AceGUI:Create("MultiLineEditBox");
@@ -117,7 +100,7 @@ function Exporter:draw()
 end
 
 function Exporter:clearData()
-    Utils:debug("Exporter:clearData");
+    GL:debug("Exporter:clearData");
 
     local warning = nil;
     local onAccept = nil;
@@ -125,23 +108,23 @@ function Exporter:clearData()
     -- No date is selected, delete everything!
     if (not Exporter.dateSelected) then
         warning = "Are you sure you want to remove your complete reward history table? This deletes ALL loot data and cannot be undone!";
-        onAccept = function ()
-            App.DB.AwardHistory = {};
+        onAccept = function()
+            GL.DB.AwardHistory = {};
 
             Exporter:close();
             Exporter:draw();
         end;
 
-    -- Only delete entries on the selected date
+        -- Only delete entries on the selected date
     else
         warning = string.format("Are you sure you want to remove all data for %s? This cannot be undone!", Exporter.dateSelected);
-        onAccept = function ()
-            for key, AwardEntry in pairs(App.DB.AwardHistory) do
+        onAccept = function()
+            for key, AwardEntry in pairs(GL.DB.AwardHistory) do
                 local dateString = date('%Y-%m-%d', AwardEntry.timestamp);
 
                 if (dateString == Exporter.dateSelected) then
                     AwardEntry = nil;
-                    App.DB.AwardHistory[key] = nil;
+                    GL.DB.AwardHistory[key] = nil;
                 end
             end
 
@@ -151,25 +134,25 @@ function Exporter:clearData()
     end
 
     -- Update and show the confirmation dialog
-    StaticPopupDialogs[App.name .. "_CLEAR_SOFTRESERVES_CONFIRMATION"].text = warning;
-    StaticPopupDialogs[App.name .. "_CLEAR_SOFTRESERVES_CONFIRMATION"].OnAccept = onAccept;
-    StaticPopup_Show(App.name .. "_CLEAR_SOFTRESERVES_CONFIRMATION");
+    StaticPopupDialogs[GL.name .. "_RESET_AWARD_HISTORY_CONFIRMATION"].text = warning;
+    StaticPopupDialogs[GL.name .. "_RESET_AWARD_HISTORY_CONFIRMATION"].OnAccept = onAccept;
+    StaticPopup_Show(GL.name .. "_RESET_AWARD_HISTORY_CONFIRMATION");
 end
 
 function Exporter:refreshExportString()
-    Utils:debug("Exporter:refreshExportString");
+    GL:debug("Exporter:refreshExportString");
 
     local exportString = "dateTime,character,itemID";
 
-    for _, AwardEntry in pairs(App.DB.AwardHistory) do
+    for _, AwardEntry in pairs(GL.DB.AwardHistory) do
         local dateString = date('%Y-%m-%d', AwardEntry.timestamp);
 
         if (not Exporter.dateSelected or dateString == Exporter.dateSelected) then
             exportString = string.format("%s\n%s,%s,%s",
-                exportString,
-                dateString,
-                AwardEntry.awardedTo,
-                AwardEntry.itemId
+                    exportString,
+                    dateString,
+                    AwardEntry.awardedTo,
+                    AwardEntry.itemId
             );
         end
     end
@@ -179,7 +162,7 @@ end
 
 -- Close the exported
 function Exporter:close()
-    Utils:debug("Exporter:close");
+    GL:debug("Exporter:close");
 
     if (not Exporter.visible
         or not Exporter.UIComponents.Frame
@@ -204,7 +187,7 @@ function Exporter:close()
 end
 
 function Exporter:drawDatesTable(parent, Dates)
-    Utils:debug("Exporter:drawDatesTable");
+    GL:debug("Exporter:drawDatesTable");
 
     local columns = {
         {
@@ -218,7 +201,7 @@ function Exporter:drawDatesTable(parent, Dates)
                 a = 1.0
             },
             colorargs = nil,
-            sort = App.Data.Constants.ScrollingTable.descending,
+            sort = GL.Data.Constants.ScrollingTable.descending,
         },
     };
 
@@ -228,11 +211,11 @@ function Exporter:drawDatesTable(parent, Dates)
     table.frame:SetPoint("BOTTOMLEFT", parent, "BOTTOMLEFT", 50, 78);
 
     table:RegisterEvents({
-        ["OnClick"] = function (rowFrame, cellFrame, data, cols, row, realrow, column, scrollingTable, ...)
+        ["OnClick"] = function(rowFrame, cellFrame, data, cols, row, realrow, column, scrollingTable, ...)
 
             -- Even if we're still missing an answer from some of the group members
             -- we still want to make sure our inspection end after a set amount of time
-            App.Ace:ScheduleTimer(function ()
+            GL.Ace:ScheduleTimer(function()
                 Exporter.dateSelected = nil;
                 local Selected = table:GetRow(table:GetSelection());
 
@@ -247,7 +230,7 @@ function Exporter:drawDatesTable(parent, Dates)
 
     TableData = {};
     for _, date in pairs(Dates) do
-        tinsert(TableData, {date});
+        tinsert(TableData, { date });
     end
 
     -- The second argument refers to "isMinimalDataformat"
@@ -258,13 +241,15 @@ function Exporter:drawDatesTable(parent, Dates)
 end
 
 function Exporter:drawDkpExport()
-    Utils:debug("Exporter:drawDkpExport");
+    GL:debug("Exporter:drawDkpExport");
 
     -- Create a container/parent frame
     local ExportFrame = AceGUI:Create("Frame");
-    ExportFrame:SetCallback("OnClose", function(widget) AceGUI:Release(widget); end);
-    ExportFrame:SetTitle(App.name .. " v" .. App.version);
-    ExportFrame:SetStatusText("Addon v" .. App.version);
+    ExportFrame:SetCallback("OnClose", function(widget)
+        AceGUI:Release(widget);
+    end);
+    ExportFrame:SetTitle(GL.name .. " v" .. GL.version);
+    ExportFrame:SetStatusText("Addon v" .. GL.version);
     ExportFrame:SetLayout("Flow");
     ExportFrame:SetWidth(600);
     ExportFrame:SetHeight(450);
@@ -272,9 +257,9 @@ function Exporter:drawDkpExport()
 
     -- Large edit box
     local ExportBox = AceGUI:Create("MultiLineEditBox");
-    ExportBox:SetText(App.JSON:encode({
-        Characters = App.DB.Characters,
-        LootHistory = App.DB.LootHistory,
+    ExportBox:SetText(GL.JSON:encode({
+        Characters = GL.DB.Characters,
+        LootHistory = GL.DB.LootHistory,
     }));
     ExportBox:HighlightText();
     ExportBox:SetFocus();
@@ -286,4 +271,4 @@ function Exporter:drawDkpExport()
     ExportFrame:AddChild(ExportBox);
 end
 
-Utils:debug("Exporter.lua");
+GL:debug("Exporter.lua");
