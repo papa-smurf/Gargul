@@ -46,9 +46,9 @@ function Importer:draw()
 
     -- Explanation
     local Description = AceGUI:Create("Label");
-    Description:SetFontObject(_G["GameFontNormalSmall"]);
+    Description:SetFontObject(_G["GameFontNormal"]);
     Description:SetFullWidth(true);
-    Description:SetText("No active soft-reserve data. Paste the data from softres.it here, then click the 'Import' button");
+    Description:SetText("In order to get started you first need to create a raid on softres.it. Afterwards click the 'Copy Weakaura Data' button on the website, paste the contents in the box below and click 'Import'.");
     Window:AddChild(Description);
 
     -- Large edit box
@@ -70,7 +70,7 @@ function Importer:draw()
     local StatusMessageFrame = AceGUI:Create("SimpleGroup");
     StatusMessageFrame:SetLayout("FILL");
     StatusMessageFrame:SetWidth(570);
-    StatusMessageFrame:SetHeight(60);
+    StatusMessageFrame:SetHeight(46);
     Window:AddChild(StatusMessageFrame);
 
     local StatusMessageLabel = AceGUI:Create("Label");

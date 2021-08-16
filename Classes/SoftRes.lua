@@ -437,12 +437,14 @@ function SoftRes:import(data, openOverview)
 
     -- Make sure all the required properties are available and of the correct type
     if (GL:empty(data)) then
-        GL:warning("Invalid soft-reserve data provided");
+        GL.Interface:getItem("SoftRes.Importer", "Label.StatusMessage"):SetText("Invalid soft-reserve data provided");
         return false;
     end
 
     -- A weakaura export string was provided, import it
-    if (GL:strStartsWith(data, "ItemId,Name,Class,Note,Plus")) then
+    if (GL:strStartsWith(data, "ItemId,Name,Class,Note,Plus")
+        or GL:strStartsWith(data, "Item,ItemId,From,Name,Class,Spec,Note,Plus,Date")
+    ) then
         success = self:importWeakauraData(data);
     else
         -- Assume Gargul data was provided
@@ -462,7 +464,6 @@ function SoftRes:import(data, openOverview)
         return true;
     end
 
-    GL:error("Something went wrong while importing the SoftRes data");
     return false;
 end
 
@@ -481,7 +482,6 @@ function SoftRes:importGargulData(data)
     if (not base64DecodeSucceeded) then
         local errorMessage = "Unable to base64 decode the data. Make sure you copy/paste it as-is from softres.it without adding any additional characters or whitespaces!";
         GL.Interface:getItem("SoftRes.Importer", "Label.StatusMessage"):SetText(errorMessage);
-        GL:error(errorMessage);
 
         return false;
     end
@@ -494,7 +494,6 @@ function SoftRes:importGargulData(data)
     if (not zlibDecodeSucceeded) then
         local errorMessage = "Unable to zlib decode the data. Make sure you copy/paste it as-is from softres.it without adding any additional characters or whitespaces!";
         GL.Interface:getItem("SoftRes.Importer", "Label.StatusMessage"):SetText(errorMessage);
-        GL:error(errorMessage);
 
         return false;
     end
@@ -503,9 +502,8 @@ function SoftRes:importGargulData(data)
     local jsonDecodeSucceeded;
     jsonDecodeSucceeded, data = pcall(function () return GL.JSON:decode(data); end);
     if (not jsonDecodeSucceeded) then
-        local errorMessage = "Unable to json decode the data. This is most likely due to an error on either softres.it or Gargul, please let us know via our respective discords!";
+        local errorMessage = "Unable to json decode the data. Make sure you paste the SoftRes data as-is in the box up top without adding/removing anything! If the issue persists then hop in our Discord for support!";
         GL.Interface:getItem("SoftRes.Importer", "Label.StatusMessage"):SetText(errorMessage);
-        GL:error(errorMessage);
 
         return false;
     end
@@ -513,7 +511,6 @@ function SoftRes:importGargulData(data)
     local function throwGenericInvalidDataError()
         local errorMessage = "Invalid data provided. Make sure to click the 'Gargul Data Export' button on softres.it and paste the full contents here";
         GL.Interface:getItem("SoftRes.Importer", "Label.StatusMessage"):SetText(errorMessage);
-        GL:error(errorMessage);
 
         return false;
     end
@@ -631,6 +628,70 @@ end
 ---@param data string
 ---@return boolean
 function SoftRes:importWeakauraData(data)
+    GL:debug("SoftRes:import");
+
+    ---@todo make this active when the Gargul exporter is released on SoftRes.it
+    -- GL:warning("The Weakaura data import is still usable but deprecated, try using the Gargul export instead!");
+
+    local Columns = {};
+    local first = true;
+    local SoftReserveData = {};
+    for line in data:gmatch("[^\n]+") do
+        local Segments = GL:strSplit(line, ",");
+
+        if (first) then
+            Columns = GL:tableFlip(Segments);
+            first = false;
+        else -- The first line includes the heading, we don't need that
+            local itemId = tonumber(Segments[Columns.ItemId]);
+            local playerName = tostring(Segments[Columns.Name]);
+            local class = tostring(Segments[Columns.Class]);
+            local note = tostring(Segments[Columns.Note]);
+            local plusOnes = tonumber(Segments[Columns.Plus]);
+
+            if (GL:higherThanZero(itemId)
+                and not GL:empty(playerName)
+            ) then
+                playerName = string.lower(playerName);
+
+                if (not SoftReserveData[playerName]) then
+                    SoftReserveData[playerName] = {
+                        Items = {},
+                        name = playerName,
+                        class = class,
+                        note = note,
+                        plusOnes = plusOnes,
+                    };
+                end
+
+                tinsert(SoftReserveData[playerName].Items, itemId);
+            end
+        end
+    end
+
+    DB.SoftRes = {
+        SoftReserves = {},
+        HardReserves = {}, -- The weakaura format (CSV) doesn't include hard-reserves
+        MetaData = {
+            source = Constants.SoftReserveSources.weakaura,
+            importedAt = GetServerTime(),
+            importString = data,
+        },
+    };
+
+    -- We don't care for the playerName key in our database
+    for _, Entry in pairs(SoftReserveData) do
+        tinsert(DB.SoftRes.SoftReserves, Entry);
+    end
+
+    return not GL:empty(DB.SoftRes.SoftReserves);
+end
+
+--- Import a Weakaura data string (legacy)
+---
+---@param data string
+---@return boolean
+function SoftRes:importWeakauraData2(data)
     GL:debug("SoftRes:import");
 
     ---@todo make this active when the Gargul exporter is released on SoftRes.it
