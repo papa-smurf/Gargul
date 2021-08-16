@@ -18,7 +18,7 @@ function TMB:draw(Parent)
     MaximumNumberOfNames:SetLabel("Maximum number of tooltip entries");
     MaximumNumberOfNames.label:SetTextColor(1, .95686, .40784);
     MaximumNumberOfNames:SetFullWidth(true);
-    MaximumNumberOfNames:SetValue(GL.Settings:get("TMB.maximumNumberOfTooltipEntries"));
+    MaximumNumberOfNames:SetValue(GL.Settings:get("TMB.maximumNumberOfTooltipEntries", 35));
     MaximumNumberOfNames:SetSliderValues(1, 50, 1);
     MaximumNumberOfNames:SetCallback("OnValueChanged", function(Slider)
         local value = tonumber(Slider:GetValue());
@@ -77,8 +77,9 @@ function TMB:draw(Parent)
     Parent:AddChild(HorizontalSpacer);
 
     local OpenTMB = GL.AceGUI:Create("Button");
-    OpenTMB:SetText("Open TMB");
+    OpenTMB:SetText("TMB Data");
     OpenTMB:SetCallback("OnClick", function()
+        GL.Settings:close();
         GL.Commands:call("thatsmybis");
     end);
     Parent:AddChild(OpenTMB);

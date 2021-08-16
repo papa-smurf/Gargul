@@ -28,7 +28,7 @@ function SoftRes:draw(Parent)
         {
             label = "Announce details of dropped loot",
             description = "Checking this will make sure that SoftRes details of dropped loot are also announced in the chat",
-            setting = "includeSoftResInLootAnnouncement",
+            setting = "SoftRes.announceInfoInChat",
         },
     };
 
@@ -41,8 +41,9 @@ function SoftRes:draw(Parent)
     Parent:AddChild(HorizontalSpacer);
 
     local OpenSoftRes = GL.AceGUI:Create("Button");
-    OpenSoftRes:SetText("Open SoftRes");
+    OpenSoftRes:SetText("SoftRes Data");
     OpenSoftRes:SetCallback("OnClick", function()
+        GL.Settings:close();
         GL.Commands:call("softreserves");
     end);
     Parent:AddChild(OpenSoftRes);

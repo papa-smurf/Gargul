@@ -12,7 +12,6 @@ GL.PackMule = {
     setupWindowIsActive = false,
 };
 
-local AceGUI = GL.AceGUI;
 local PackMule = GL.PackMule;
 local Settings = GL.Settings;
 
@@ -24,7 +23,8 @@ function PackMule:_init()
         return;
     end
 
-    -- Disable packmule if the "perist after reload" setting is not enabled
+    -- Disable packmule if the "persist after reload" setting is not enabled
+    -- This piece of logic is only run once on boot/reload hence why this works
     if (not Settings:get("PackMule.persistsAfterReload")
         and Settings:get("PackMule.enabled")
     ) then
@@ -71,7 +71,7 @@ end
 function PackMule:zoneChanged()
     GL:debug("PackMule:zoneChanged");
 
-    -- Disable packmule if the "perist after reload" setting is not enabled
+    -- Disable packmule if the "persist after reload" setting is not enabled
     if (not Settings:get("PackMule.persistsAfterZoneChange")
         and Settings:get("PackMule.enabled")
     ) then
@@ -102,7 +102,7 @@ function PackMule:lootReady()
 
     -- Make sure we only use valid rules
     local ValidRules = {};
-    for key, Rule in pairs(self.Rules) do
+    for _, Rule in pairs(self.Rules) do
         if (self:ruleIsValid(Rule)) then
             tinsert(ValidRules, Rule);
         end
@@ -121,7 +121,7 @@ function PackMule:lootReady()
 
         -- If the item is locked or doesn't have an item link (money or other currency) then we can safely skip it
         if (not locked and itemLink) then
-            for key, Rule in pairs(ValidRules) do
+            for _, Rule in pairs(ValidRules) do
                 -- This is useful to see in which order rules are being handled
                 GL:debug(string.format(
                     "Item: %s\nOperator: %s\nQuality: %s\nTarget: %s",
@@ -131,7 +131,6 @@ function PackMule:lootReady()
                     Rule.target or ""
                 ));
 
-                local ruleApplies = false;
                 local target = tostring(Rule.target or "");
                 local quality = tonumber(Rule.quality or "");
                 local operator = tostring(Rule.operator or "");

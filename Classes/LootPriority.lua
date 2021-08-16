@@ -141,7 +141,7 @@ function LootPriority:drawImporter()
     FooterFrame:AddChild(ClearButton);
 end
 
-function LootPriority:save(data, sender)
+function LootPriority:save(data)
     GL:debug("LootPriority:save");
 
     if (not data or type(data) ~= "string") then
@@ -158,7 +158,6 @@ function LootPriority:save(data, sender)
         end
 
         local key = strtrim(segments[1]);
-        local keyIsNumeric = tonumber(key) ~= nil;
 
         if (tonumber(key) ~= nil) then
             key = tonumber(key);

@@ -382,6 +382,7 @@ function MasterLooterUI:close(Frame)
     local timerIterations = 1;
     if (GL.RollOff.inProgress) then
         self.timerId = GL.Ace:ScheduleRepeatingTimer(function ()
+print("ZOMG");
             if (timerIterations >= 25
                 or GL.RollOff.CurrentRollOff.itemIcon
             ) then
@@ -404,12 +405,12 @@ function MasterLooterUI:drawReopenMasterLooterUIButton()
     local Button = GL.Interface:getItem(self, "Frame.OpenMasterLooterButton");
 
     if (Button) then
+        Button:SetNormalTexture(GL.RollOff.CurrentRollOff.itemIcon or "Interface\\Icons\\INV_Misc_QuestionMark");
         Button:Show();
         return;
     end
 
     local texture = GL.RollOff.CurrentRollOff.itemIcon or "Interface\\Icons\\INV_Misc_QuestionMark";
-
     Button = CreateFrame("Button", "ReopenMasterLooterButton", UIParent, Frame);
     Button:SetSize(44, 44);
     Button:SetNormalTexture(texture);
@@ -424,13 +425,9 @@ function MasterLooterUI:drawReopenMasterLooterUIButton()
     Button:SetScript("OnDragStart", Button.StartMoving);
     Button:SetScript("OnDragStop", function()
         Button:StopMovingOrSizing();
-        local point, _, relativePoint, offsetX, offsetY = Button:GetPoint();
 
         -- Store the frame's last position for future play sessions
-        Settings:set("UI.ReopenMasterLooterUIButton.Position.point", point);
-        Settings:set("UI.ReopenMasterLooterUIButton.Position.relativePoint", relativePoint);
-        Settings:set("UI.ReopenMasterLooterUIButton.Position.offsetX", offsetX);
-        Settings:set("UI.ReopenMasterLooterUIButton.Position.offsetY", offsetY);
+        GL.Interface:storePosition(Button, "ReopenMasterLooterUIButton");
     end);
 
     local ButtonBackground = Button:CreateTexture(nil, "BACKGROUND");

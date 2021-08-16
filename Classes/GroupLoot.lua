@@ -35,6 +35,17 @@ end
 function GroupLoot:highlightItemsOfInterest()
     GL:debug("GroupLoot:highlightItemsOfInterest");
 
+    -- Check if the player disabled the highlighting of items
+    if (GL.Settings:get("highlightsDisabled")
+        or (
+            not GL.Settings:get("highlightHardReservedItems")
+            and not GL.Settings:get("highlightSoftReservedItems")
+            and not GL.Settings:get("highlightWishlistedItems")
+        )
+    ) then
+        return;
+    end
+
     for itemIndex = 1, _G.NUM_GROUP_LOOT_FRAMES do
         local ItemFrame = getglobal("GroupLootFrame" .. itemIndex);
         LCG.PixelGlow_Stop(ItemFrame);
@@ -48,17 +59,21 @@ function GroupLoot:highlightItemsOfInterest()
                 local BorderColor = {1, .95686, .40784, 1}; -- The default border color is rogue-yellow and applies to wishlisted items
 
                 -- The item is hard-reserved
-                if (SoftRes:linkIsHardReserved(itemLink)) then
+                if (GL.Settings:get("highlightHardReservedItems")
+                        and SoftRes:linkIsHardReserved(itemLink)
+                ) then
                     enableHighlight = true;
                     BorderColor = {.77, .12, .23, 1};  -- Make the border red for hard-reserved items
 
                 -- The item is soft-reserved
-                elseif (SoftRes:linkIsReserved(itemLink)) then
+                elseif (GL.Settings:get("highlightSoftReservedItems")
+                        and SoftRes:linkIsReserved(itemLink)
+                ) then
                     enableHighlight = true;
                     BorderColor = {.95686, .5490, .72941, 1}; -- Make the border paladin-pink for reserved items
 
                 -- Check if it's wishlisted
-                else
+                elseif (GL.Settings:get("highlightWishlistedItems")) then
                     local TMBInfo = GL.TMB:byItemLink(itemLink) or {};
 
                     -- Check for active wishlist entries

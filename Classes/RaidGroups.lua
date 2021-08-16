@@ -58,7 +58,7 @@ function RaidGroups:drawImporter()
     RaidGroupsFrame:SetWidth(600);
     RaidGroupsFrame:SetHeight(450);
     RaidGroupsFrame.statustext:GetParent():Hide(); -- Hide the statustext bar
-    RaidGroupsFrame:SetCallback("OnClose", function(widget)
+    RaidGroupsFrame:SetCallback("OnClose", function()
         self.raidGroupsWindowIsActive = false;
     end);
     self.UIComponents.MainFrame = RaidGroupsFrame;
@@ -79,7 +79,6 @@ You can use group 9 ('9:') to define main tanks. Assigning main tanks automatica
     RaidGroupsFrame:AddChild(Explanation);
 
     -- Edit box
-    local RaidGroupsBoxContent = "";
     local RaidGroupsBox = AceGUI:Create("MultiLineEditBox");
     RaidGroupsBox:SetFullWidth(true);
     RaidGroupsBox:DisableButton(true);
@@ -231,7 +230,6 @@ function RaidGroups:applyRaidGroups(raidGroupCsv)
         return GL:warning("There's a migration still in progress, wait a bit!");
     end
 
-    local Tanks = {};
     local DesiredGroupByPlayerName = {};
     local PlayersOnTheRoster = {};
 

@@ -64,6 +64,8 @@ Interface/Settings/SoftRes.lua
 Interface/Settings/General.lua
 Interface/Settings/LootHighlighting.lua
 Interface/Settings/AwardingLoot.lua
+Interface/Settings/ExportingLoot.lua
 Interface/Settings/SlashCommands.lua
 Interface/SoftRes/Importer.lua
 Interface/SoftRes/Overview.lua
+Interface/MinimapButton.lua

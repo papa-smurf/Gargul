@@ -44,7 +44,7 @@ end
 
 -- Refresh the User's details after the group
 -- composition or loot method changes
-function User:groupSetupChanged(_, event)
+function User:groupSetupChanged()
     GL:debug("User:groupSetupChanged");
 
     self.groupSetupChangedAt = GetServerTime();
@@ -82,14 +82,14 @@ function User:refresh()
         local nameOnIndex = "";
 
         if (self.raidIndex and self.raidIndex > 0) then
-            local nameOnIndex = GetRaidRosterInfo(self.raidIndex);
+            nameOnIndex = GetRaidRosterInfo(self.raidIndex);
         end
 
         if (nameOnIndex ~= self.name) then
             self.raidIndex = nil;
 
             for index = 1, _G.MAX_RAID_MEMBERS do
-                local name, rank, subgroup, _, _, _,
+                local name, rank, _, _, _, _,
                 _, _, _, role, isMasterLooter, combatRole = GetRaidRosterInfo(index);
 
                 if (name == self.name) then
@@ -126,7 +126,7 @@ function User:groupMembers()
     end
 
     for index = 1, maximumNumberOfGroupMembers do
-        local name, rank, subgroup, level, class, fileName, zone, online, isDead, role, isML, combatRole = GetRaidRosterInfo(index);
+        local name, rank, subgroup, level, class, fileName, zone, online, isDead, role, isML = GetRaidRosterInfo(index);
 
         if (name) then
             tinsert(Roster, {

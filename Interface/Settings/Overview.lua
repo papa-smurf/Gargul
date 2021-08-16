@@ -14,11 +14,12 @@ GL.Interface.Settings.Overview = {
         {"General", "General"},
         {"Rolling", "Rolling"},
         {"Dropped Loot", "DroppedLoot"},
+        {"Loot Highlighting", "LootHighlighting"},
         {"PackMule", "PackMule"},
         {"SoftRes", "SoftRes"},
         {"TMB", "TMB"},
-        {"Loot Highlighting", "LootHighlighting"},
         {"Awarding Loot", "AwardingLoot"},
+        {"Exporting Loot", "ExportingLoot"},
         {"", ""},
         {"Slash Commands", "SlashCommands"},
     },
@@ -65,11 +66,10 @@ function Overview:draw(section)
     Window:SetHeight(600);
     Window:EnableResize(false);
     Window.statustext:GetParent():Hide(); -- Hide the statustext bar
-    Window:SetCallback("OnClose", function(widget)
-        self.isVisible = false;
-        self.activeSection = nil;
-        GL.Interface:storePosition(Window, "Settings");
+    Window:SetCallback("OnClose", function()
+        self:close();
     end);
+    GL.Interface:setItem(self, "Window", Window);
     Window:SetPoint(GL.Interface:getPosition("Settings"));
 
     --[[
@@ -138,6 +138,19 @@ function Overview:draw(section)
     self:showSection(section);
 end
 
+---@return void
+function Overview:close()
+    local Window = GL.Interface:getItem(self, "Window");
+
+    self.isVisible = false;
+    self.activeSection = nil;
+
+    if (Window) then
+        GL.Interface:storePosition(Window, "Settings");
+        Window:Hide();
+    end
+end
+
 function Overview:drawSectionsTable(Parent, section)
     GL:debug("Overview:drawSectionsTable");
 
@@ -162,7 +175,7 @@ function Overview:drawSectionsTable(Parent, section)
     Table.frame:SetPoint("TOPLEFT", Parent, "TOPLEFT", 23, -40);
 
     Table:RegisterEvents({
-        OnClick = function (rowFrame, cellFrame, data, cols, row, realrow, column, scrollingTable, ...)
+        OnClick = function (_, _, _, _, _, realrow)
             -- Make sure something is actually selected, better safe than lua error
             if (not GL:higherThanZero(realrow)) then
                 return;
@@ -290,6 +303,10 @@ function Overview:drawCheckboxes(Checkboxes, Parent)
         Checkbox.text:SetTextColor(1, .95686, .40784);
         Checkbox:SetCallback("OnValueChanged", function()
             GL.Settings:set(Entry.setting, Checkbox:GetValue());
+
+            if (type(Entry.callback) == "function") then
+                Entry.callback();
+            end
         end);
         Parent:AddChild(Checkbox);
     end

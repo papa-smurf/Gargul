@@ -37,7 +37,7 @@ function Importer:draw()
     Window:SetHeight(450);
     Window:EnableResize(false);
     Window.statustext:GetParent():Hide(); -- Hide the statustext bar
-    Window:SetCallback("OnClose", function(widget)
+    Window:SetCallback("OnClose", function()
         self:close();
     end);
     GL.Interface:setItem(self, "Window", Window);

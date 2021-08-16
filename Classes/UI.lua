@@ -48,7 +48,7 @@ function UI:createShareButton(ParentFrame, onClick, tooltipText)
     end);
 
     if (type(onClick) == "function") then
-        ShareButton:SetScript("OnMouseDown", function(self, button)
+        ShareButton:SetScript("OnMouseDown", function(_, button)
             if (button == 'LeftButton') then
                 onClick();
             end

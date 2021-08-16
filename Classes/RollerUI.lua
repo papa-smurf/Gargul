@@ -107,13 +107,13 @@ function RollerUI:draw(time, itemId, itemLink, itemIcon, note)
     PassButton:SetNormalFontObject("GameFontNormal");
     PassButton:SetHighlightFontObject("GameFontNormal");
     PassButton:SetScript("OnClick", function ()
-        -- Retract roll message
-        local chatType = "PARTY";
-        if (GL.User.isInRaid) then
-            chatType = "RAID";
-        end
-
         if (GL.Settings:get("Rolling.announcePass")) then
+            -- Retract roll message
+            local chatType = "PARTY";
+            if (GL.User.isInRaid) then
+                chatType = "RAID";
+            end
+
             GL:sendChatMessage("I pass!", chatType);
         end
 
@@ -143,7 +143,7 @@ function RollerUI:draw(time, itemId, itemLink, itemIcon, note)
     end);
 
     -- Close the roll window on rightclick
-    TimerBar:SetScript("OnMouseDown", function(widget, button)
+    TimerBar:SetScript("OnMouseDown", function(_, button)
         if (button == "RightButton") then
             self:hide();
         end
@@ -214,6 +214,7 @@ function RollerUI:update(time, itemId, itemLink, itemIcon, note)
 
     TimerBar:SetParent(Window);
     TimerBar:SetDuration(time);
+    TimerBar:SetColor(0, 1, 0, .3); -- Reset color to green
     TimerBar:SetLabel("  " .. itemLink .. " " .. string.sub(note, 0, noteStringLengthAllowed));
     TimerBar.candyBarLabel:SetFont("Fonts\\ARIALN.ttf", 13, "OUTLINE");
 

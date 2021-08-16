@@ -688,17 +688,20 @@ function GL:playSound(soundNameOrNumber, channel)
     PlaySound(soundNameOrNumber, channel);
 end
 
+local gaveNoMessagesWarning = false;
 ---@param message string The message you'd like to send
 ---@param chatType string The type of message (SAY|EMOTE|YELL|PARTY|GUILD|OFFICER|RAID|RAID_WARNING|INSTANCE_CHAT|BATTLEGROUND|WHISPER|CHANNEL|AFK|DND)
 ---@param language string|nil The language of the message (COMMON|ORCISH|etc), if nil it's COMMON for Alliance and ORCISH for Horde
 ---@param channel string|nil The channel (numeric) or player (name string) receiving the message
 ---@return void
-local gaveNoMessagesWarning = false;
 function GL:sendChatMessage(message, chatType, language, channel)
     -- The player enabled the noMessages setting
-    if (not gaveNoMessagesWarning and GL.Settings:get("noMessages")) then
-        GL:message("A messages was blocked because you have the 'No messages' setting enabled.");
-        gaveNoMessagesWarning = true;
+    if (GL.Settings:get("noMessages")) then
+        if (not gaveNoMessagesWarning) then
+            GL:message("A message was blocked because you have the 'No messages' setting enabled.");
+            gaveNoMessagesWarning = true;
+        end
+
         return;
     end
 
@@ -884,7 +887,8 @@ function GL:tableGet(Table, keyString, default)
 
     Table = Table[firstKey];
 
-    if (#keys == 1) then
+    -- Changed if (#keys == 1) then to below, saved this just in case we get weird behavior
+    if (numberOfKeys == 1) then
         return Table;
     end
 

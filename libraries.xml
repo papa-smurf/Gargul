@@ -84,4 +84,9 @@
     LibCustomGlow Starts glow over target frame with set parameters.
     -->
     <Include file="Libs\LibCustomGlow-1.0\LibCustomGlow-1.0.lua" />
+
+    <!--
+    LibDBIcon-1.0 is a small library you can throw in your LDB addon that will create a small minimap icon for you and nothing more.
+    -->
+    <Include file="Libs\LibDBIcon-1.0\LibDBIcon-1.0\LibDBIcon-1.0.lua" />
 </Ui>

@@ -1,5 +1,6 @@
 local _, GL = ...;
 
+---@class Commands
 GL.Commands = GL.Commands or {
     CommandDescriptions = {
         settings = "Open the settings menu",
@@ -113,18 +114,18 @@ GL.Commands = GL.Commands or {
     }
 };
 
-local Commands = GL.Commands;
+local Commands = GL.Commands; ---@type Commands
 
 -- Display the command help
 function Commands:help () GL.Settings:draw("SlashCommands"); end
 
 -- Helper method to call commands from within the addon
-function Commands:call (str)
-    return Commands:_dispatch (str);
+function Commands:call(str)
+    return Commands:_dispatch(str);
 end
 
 -- This method dispatches all slash commands to their final destination
-function Commands:_dispatch (str)
+function Commands:_dispatch(str)
     GL.User:refresh();
 
     local command = str:match("^(%S+)");
@@ -146,7 +147,7 @@ function Commands:_dispatch (str)
     -- at which point we need to make sure the item itself isn't split up.
     -- We do that by specifying the number of (expected) arguments per command
     local arguments = {};
-    local possibleArgumentChunks = nil;
+    local numberOfArguments;
 
     if (GL:inTable({"rolloff", "auction"}, command)) then
         numberOfArguments = 1;
@@ -165,14 +166,6 @@ function Commands:_dispatch (str)
     end
 
     return self:help();
-end;
-
--- Add slash command
-SLASH_GIAL1 = "/gl";
-SlashCmdList.GIAL = function (...)
-    GL.User:refresh();
-
-    Commands:_dispatch(...);
 end;
 
 GL:debug("Commands.lua");

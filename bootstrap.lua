@@ -39,12 +39,14 @@ GL.bootstrap = function(_, _, addonName)
     GL.EventFrame:UnregisterEvent("ADDON_LOADED");
 
     -- Show a welcome message
-    local successfullyLoadedMessage = "Sucessfully loaded (v" .. GL.version .. ")";
     GL:debug(string.format("Successfully loaded v%s", GL.version));
 
     -- Initialize our classes / services
     GL:_init();
     GL._initialized = true;
+
+    -- Add the minimap icon
+    GL.MinimapButton:_init();
 end
 
 -- Callback to be fired when the addon is completely loaded

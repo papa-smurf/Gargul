@@ -45,7 +45,7 @@ function Overview:draw()
     Window:SetWidth(600);
     Window:SetHeight(470);
     Window:EnableResize(false);
-    Window:SetCallback("OnClose", function(widget)
+    Window:SetCallback("OnClose", function()
        self:close();
     end);
     GL.Interface:setItem(self, "Window", Window);
@@ -153,9 +153,6 @@ function Overview:draw()
 
     -- Add placeholders for all the item icons and labels
     for index = 1, SoftRes.maxNumberOfSoftReservedItems do
-        -- Using a string as key is important because the value
-        -- of a non-associative array's index can change during runtime
-        local key = tostring(index);
 
         --[[
             ITEM ICON
@@ -450,7 +447,7 @@ function Overview:drawCharacterTable(Parent)
     Table.frame:SetPoint("TOPLEFT", Parent, "TOPLEFT", 0, -18);
 
     Table:RegisterEvents({
-        OnClick = function (rowFrame, cellFrame, data, cols, row, realrow, column, scrollingTable, ...)
+        OnClick = function (_, _, data, _, _, realrow)
             -- Make sure something is actually selected, better safe than lua error
             if (not GL:higherThanZero(realrow)
                 or type(data) ~= "table"
@@ -555,7 +552,7 @@ function Overview:drawHardReservesTable(Parent)
     Table.frame:SetPoint("TOPLEFT", Parent, "TOPLEFT", 0, -18);
 
     Table:RegisterEvents({
-        OnEnter = function (rowFrame, cellFrame, data, cols, row, realrow, column, scrollingTable, ...)
+        OnEnter = function (rowFrame, _, data, _, _, realrow)
             local HardReservesLabel = GL.Interface:getItem(self, "Label.HardReserves");
 
             -- Make sure that all data is available, better safe than lua error

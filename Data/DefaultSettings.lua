@@ -5,35 +5,18 @@ local _, GL = ...;
 GL.Data = GL.Data or {};
 
 GL.Data.DefaultSettings = {
-    muted = false,
     announceLootToChat = true,
-    minimumQualityOfAnnouncedLoot = 4,
-    includeSoftResInLootAnnouncement = true,
-    autoTradeAfterAwardingAnItem = true,
     autoAssignAfterAwardingAnItem = true,
+    autoTradeAfterAwardingAnItem = true,
     debugModeEnabled = false,
     highlightsDisabled = false,
-
-    Rolling = {
-        showRollOffWindow = true,
-        announcePass = true,
-    },
-
-    SoftRes = {
-        includeSoftResInfoInLootAnnouncement = true,
-        hideInfoOfPeopleNotInGroup = true,
-        showSoftResInfoOnTooltips = true,
-    },
-
-    TMB = {
-        includeWishListInfoInLootAnnouncement = true,
-        includePrioListInfoInLootAnnouncement = true,
-        hideInfoOfPeopleNotInGroup = true,
-        showWishListInfoOnTooltips = true,
-        showPrioListInfoOnTooltips = true,
-        hideWishListInfoIfPriorityIsPresent = true,
-        maximumNumberOfTooltipEntries = 50,
-    },
+    highlightHardReservedItems = true,
+    highlightSoftReservedItems = true,
+    highlightWishlistedItems = true,
+    minimumQualityOfAnnouncedLoot = 4,
+    noMessages = false,
+    noSounds = false,
+    showMinimapButton = true,
 
     PackMule = {
         enabled = false,
@@ -41,21 +24,28 @@ GL.Data.DefaultSettings = {
         persistsAfterZoneChange = false,
         Rules = {},
     },
-
+    Rolling = {
+        announcePass = true,
+        showRollOffWindow = true,
+    },
+    SoftRes = {
+        announceInfoInChat = true,
+        enableTooltips = true,
+        hideInfoOfPeopleNotInGroup = true,
+    },
+    TMB = {
+        hideInfoOfPeopleNotInGroup = true,
+        hideWishListInfoIfPriorityIsPresent = true,
+        includePrioListInfoInLootAnnouncement = true,
+        includeWishListInfoInLootAnnouncement = true,
+        maximumNumberOfTooltipEntries = 35,
+        showPrioListInfoOnTooltips = true,
+        showWishListInfoOnTooltips = true,
+    },
     UI = {
-        Award = {
-            autoClose = false,
-            timer = 25,
-        },
-        Bidder = {
-            timer = 25,
-        },
-        Dashboard = {
-            showInRaidOnly = false,
-        },
         RollOff = {
             autoClose = false,
             timer = 25,
-        },
+        }
     }
 };

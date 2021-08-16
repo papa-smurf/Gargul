@@ -8,6 +8,8 @@ GL.Data.Constants = {
     --[[
         GLOBAL
     ]]
+    addonHexColor =  "967fd2",
+
     success = 0,
     failure = 1,
 

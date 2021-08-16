@@ -70,7 +70,7 @@ function DroppedLoot:lootOpened()
     end, .1);
 
     -- Only announce loot in chat if the setting is enabled
-    if ((GL.testMode or GL.User.isMasterLooter)
+    if (GL.User.isMasterLooter
         and GL.Settings:get("announceLootToChat")
     ) then
         -- We give the announcing of loot some time
@@ -127,8 +127,16 @@ end
 function DroppedLoot:highlightItemsOfInterest()
     GL:debug("DroppedLoot:highlightItemsOfInterest");
 
-    -- There's no point highlight loot if you're not in a group
-    if (not GL.User.isInGroup) then
+    -- There's no point highlight loot if the player
+    -- is not in a group or highlights are disabled
+    if (not GL.User.isInGroup
+        or GL.Settings:get("highlightsDisabled")
+        or (
+            not GL.Settings:get("highlightHardReservedItems")
+            and not GL.Settings:get("highlightSoftReservedItems")
+            and not GL.Settings:get("highlightWishlistedItems")
+        )
+    ) then
         return;
     end
 
@@ -148,17 +156,21 @@ function DroppedLoot:highlightItemsOfInterest()
                     local BorderColor = {1, .95686, .40784, 1}; -- The default border color is rogue-yellow and applies to wishlisted items
 
                     -- The item is hard-reserved
-                    if (SoftRes:linkIsHardReserved(itemLink)) then
+                    if (GL.Settings:get("highlightHardReservedItems")
+                        and SoftRes:linkIsHardReserved(itemLink)
+                    ) then
                         enableHighlight = true;
                         BorderColor = {.77, .12, .23, 1};  -- Make the border red for hard-reserved items
 
                         -- The item is soft-reserved
-                    elseif (SoftRes:linkIsReserved(itemLink)) then
+                    elseif (GL.Settings:get("highlightSoftReservedItems")
+                        and SoftRes:linkIsReserved(itemLink)
+                    ) then
                         enableHighlight = true;
                         BorderColor = {.95686, .5490, .72941, 1}; -- Make the border paladin-pink for reserved items
 
                     -- Check if it's wishlisted
-                    else
+                    elseif (GL.Settings:get("highlightWishlistedItems")) then
                         local TMBInfo = GL.TMB:byItemLink(itemLink) or {};
 
                         -- Check for active wishlist entries
@@ -245,7 +257,7 @@ function DroppedLoot:announce()
 
         if (itemLink
             and (sourceGUID
-                and not DroppedLoot.Announced[sourceGUID]
+                and not DroppedLoot.Announced[sourceGUID] -- This is to make sure we didn't announce the items already
             ) and (
                 (quality and quality >= GL.Settings:get("minimumQualityOfAnnouncedLoot", 4))
                 or not GL:empty(SoftReserves)
@@ -262,7 +274,7 @@ function DroppedLoot:announce()
 
             if (not itemIsHardReserved
                 and SoftReserves
-                and GL.Settings:get("includeSoftResInLootAnnouncement")
+                and GL.Settings:get("SoftRes.announceInfoInChat")
             ) then
                 for _, player in pairs(SoftReserves) do
                     tinsert(activeSoftRes, GL:capitalize(player));
@@ -318,7 +330,9 @@ function DroppedLoot:announce()
                 chatChannel = "RAID";
             end
 
-            if (itemIsHardReserved) then
+            if (itemIsHardReserved
+                and GL.Settings:get("SoftRes.announceInfoInChat")
+            ) then
                 GL:sendChatMessage(
                     itemLink .. " (This item is hard-reserved!)",
                     chatChannel,

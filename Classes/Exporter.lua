@@ -46,7 +46,7 @@ function Exporter:draw()
     ExportFrame:SetLayout("Flow");
     ExportFrame:SetWidth(600);
     ExportFrame:SetHeight(450);
-    ExportFrame:SetCallback("OnClose", function(widget)
+    ExportFrame:SetCallback("OnClose", function()
         Exporter:close();
     end);
     ExportFrame:SetPoint(GL.Interface:getPosition("Exporter"));
@@ -102,8 +102,8 @@ end
 function Exporter:clearData()
     GL:debug("Exporter:clearData");
 
-    local warning = nil;
-    local onAccept = nil;
+    local warning;
+    local onAccept;
 
     -- No date is selected, delete everything!
     if (not Exporter.dateSelected) then
@@ -211,7 +211,7 @@ function Exporter:drawDatesTable(parent, Dates)
     table.frame:SetPoint("BOTTOMLEFT", parent, "BOTTOMLEFT", 50, 78);
 
     table:RegisterEvents({
-        ["OnClick"] = function(rowFrame, cellFrame, data, cols, row, realrow, column, scrollingTable, ...)
+        ["OnClick"] = function()
 
             -- Even if we're still missing an answer from some of the group members
             -- we still want to make sure our inspection end after a set amount of time

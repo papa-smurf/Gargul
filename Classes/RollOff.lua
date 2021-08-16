@@ -55,7 +55,7 @@ function RollOff:announceStart(itemLink, time, note)
 
     local announceMessage = string.format("You have %s seconds to roll on %s", time, itemLink);
     local reserveMessage = "";
-    local reserves = GL.SoftRes:byItemLink(itemLink);
+    local Reserves = GL.SoftRes:byItemLink(itemLink);
 
     if (type(note) == "string"
         and not GL:empty(note)
@@ -63,9 +63,9 @@ function RollOff:announceStart(itemLink, time, note)
         announceMessage = string.format("You have %s seconds to roll on %s - %s", time, itemLink, note);
     end
 
-    if (reserves) then
-        reserves = table.concat(reserves, ", ");
-        reserveMessage = "This item has been reserved by: " .. reserves;
+    if (not GL:empty(Reserves)) then
+        Reserves = table.concat(Reserves, ", ");
+        reserveMessage = "This item has been reserved by: " .. Reserves;
     end
 
     if (GL.User.isInRaid) then

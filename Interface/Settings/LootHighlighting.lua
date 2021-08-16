@@ -28,7 +28,7 @@ function LootHighlighting:draw(Parent)
         {
             label = "SoftRes: Highlight hard-reserved items",
             description = "Checking this will make sure that items that are hard-reserved are highlighted\n(red glow)",
-            setting = "highlightSoftReservedItems",
+            setting = "highlightHardReservedItems",
         },
         {
             label = "TMB: Highlight wishlisted items",

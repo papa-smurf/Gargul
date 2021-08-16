@@ -43,6 +43,7 @@ function PackMule:draw(Parent)
     local OpenPackMule = GL.AceGUI:Create("Button");
     OpenPackMule:SetText("Set Up PackMules");
     OpenPackMule:SetCallback("OnClick", function()
+        GL.Settings:close();
         GL.Commands:call("packmule");
     end);
     Parent:AddChild(OpenPackMule);

@@ -45,6 +45,14 @@ function General:draw(Parent)
             setting = "noMessages",
         },
         {
+            label = "Enable Minimap Icon",
+            description = "This setting enables the minimap icon that allows quick access to Gargul or the Gargul importer",
+            setting = "showMinimapButton",
+            callback = function()
+                GL.MinimapButton:drawOrHide();
+            end,
+        },
+        {
             label = "Experimental: enable debug mode",
             description = "Checking this will enable debug mode, showing debug info in your chatbox. This is only meant for developers actively working on the Gargul add-on",
             setting = "debugModeEnabled",

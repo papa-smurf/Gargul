@@ -33,9 +33,9 @@ function DroppedLoot:draw(Parent)
     };
 
     local MinimumQuality = AceGUI:Create("Dropdown");
-    MinimumQuality:SetValue(GL.Settings:get("minimumQualityOfAnnouncedLoot"));
+    MinimumQuality:SetValue(GL.Settings:get("minimumQualityOfAnnouncedLoot", 4));
     MinimumQuality:SetList(DropDownItems);
-    MinimumQuality:SetText(DropDownItems[GL.Settings:get("minimumQualityOfAnnouncedLoot")]);
+    MinimumQuality:SetText(DropDownItems[GL.Settings:get("minimumQualityOfAnnouncedLoot", 4)]);
     MinimumQuality:SetWidth(150);
     MinimumQuality:SetCallback("OnValueChanged", function()
         GL.Settings:set("minimumQualityOfAnnouncedLoot", MinimumQuality:GetValue());
@@ -57,7 +57,7 @@ function DroppedLoot:draw(Parent)
         {
             label = "Include SoftRes details",
             description = "Checking this will make sure that SoftRes details of dropped loot are also announced in the chat",
-            setting = "includeSoftResInLootAnnouncement",
+            setting = "SoftRes.announceInfoInChat",
         },
         {
             label = "Include TMB wishlist details",

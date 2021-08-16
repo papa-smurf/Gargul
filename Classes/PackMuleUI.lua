@@ -40,7 +40,7 @@ function PackMuleUI:drawSetupWindow()
     local LowerThanRule;
     local HigherThanRule;
     local SpecificItemRules = {};
-    for _, Rule in pairs(Settings:get("PackMule.Rules")) do
+    for _, Rule in pairs(Settings:get("PackMule.Rules", {})) do
         if (Rule.item) then
             tinsert(SpecificItemRules, Rule);
         elseif (Rule.operator) then
@@ -159,7 +159,7 @@ If you check this box then PackMule will keep its former state even after moving
         GameTooltip:Hide();
     end);
     Row:AddChild(PackMulePersistsAfterZoneChange);
-    self.UIComponents.Input.PeristAfterZoneChange = PackMulePersistsAfterZoneChange;
+    self.UIComponents.Input.persistAfterZoneChange = PackMulePersistsAfterZoneChange;
 
     local PackMulePersistsAfterReload = AceGUI:Create("CheckBox");
     PackMulePersistsAfterReload:SetLabel("Persist after reload");
@@ -176,7 +176,7 @@ If you check this box then PackMule will keep its former state even after reload
         GameTooltip:Hide();
     end);
     Row:AddChild(PackMulePersistsAfterReload);
-    self.UIComponents.Input.PeristAfterReload = PackMulePersistsAfterReload;
+    self.UIComponents.Input.persistAfterReload = PackMulePersistsAfterReload;
 end
 
 function PackMuleUI:drawScrollFrame(Frame)
@@ -195,7 +195,6 @@ function PackMuleUI:drawScrollFrame(Frame)
     AddRuleButton:SetWidth(140);
     AddRuleButton:SetHeight(20);
     AddRuleButton:SetCallback("OnClick", function()
-        local index = self.numberOfSpecificItemRules or 0;
         self:drawSpecifItemRule(ScrollFrame);
     end);
 
@@ -407,10 +406,9 @@ end
 function PackMuleUI:processSettings()
     GL:debug("PackMuleUI:processSettings");
 
-    local Rules = {};
     local enabled = self.UIComponents.Input.Enabled:GetValue();
-    local persistAfterReload = self.UIComponents.Input.PeristAfterReload:GetValue();
-    local persistAfterZoneChange = self.UIComponents.Input.PeristAfterZoneChange:GetValue();
+    local persistAfterReload = self.UIComponents.Input.persistAfterReload:GetValue();
+    local persistAfterZoneChange = self.UIComponents.Input.persistAfterZoneChange:GetValue();
 
     -- Lower/higher than quality rules
     local lowerThanRuleQuality = self.UIComponents.Input.LowerThanRuleQuality:GetValue();

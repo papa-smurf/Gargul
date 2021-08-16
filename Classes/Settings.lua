@@ -18,8 +18,6 @@ GL.Settings = {
     Active = {}, -- This object holds the actual setting values applicable to this runtime
 };
 
-local UI = GL.UI;
-
 local Settings = GL.Settings; ---@type Settings
 
 function Settings:_init()
@@ -48,8 +46,8 @@ function Settings:draw(section)
     GL.Interface.Settings.Overview:draw(section);
 end
 
-function Settings:drawSectionsTable()
-
+function Settings:close()
+    GL.Interface.Settings.Overview:close();
 end
 
 -- Reset the addon to its default settings
