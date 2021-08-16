@@ -430,7 +430,7 @@ end
 ---
 ---@param data string
 ---@return boolean
-function SoftRes:import(data)
+function SoftRes:import(data, openOverview)
     GL:debug("SoftRes:import");
 
     local success = false;
@@ -454,7 +454,10 @@ function SoftRes:import(data)
 
         self:materializeData();
         GL.Interface.SoftRes.Importer:close();
-        self:draw();
+
+        if (openOverview) then
+            self:draw();
+        end
 
         return true;
     end

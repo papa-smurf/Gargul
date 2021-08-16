@@ -116,10 +116,6 @@ end
 function RollOff:start(CommMessage)
     GL:debug("RollOff:start");
 
-    if (not GL.Settings:get("Rolling.showRollOffWindow")) then
-        return;
-    end
-
     local content = CommMessage.content;
 
     --[[
@@ -144,7 +140,6 @@ function RollOff:start(CommMessage)
         GL:onItemLoadDo(content.item, function (Items)
             for _, Entry in pairs(Items) do
                 local time = tonumber(content.time);
-                self.inProgress = true;
 
                 -- This is a new roll off so clean everything
                 if (Entry.link ~= self.CurrentRollOff.itemLink) then
@@ -166,7 +161,19 @@ function RollOff:start(CommMessage)
                     self.CurrentRollOff.time = time;
                 end
 
-                GL.RollerUI:show(time, Entry.id, Entry.link, Entry.icon, content.note);
+                self.inProgress = true;
+
+                -- Don't show the roll UI if the user disabled it
+                -- and the current user is not the one who initiated the rolloff
+                if (GL.Settings:get("Rolling.showRollOffWindow")
+                    or CommMessage.Sender.name == GL.User.name
+                ) then
+                    GL.RollerUI:show(time, Entry.id, Entry.link, Entry.icon, content.note);
+
+                    if (CommMessage.Sender.name == GL.User.name) then
+                        GL.MasterLooterUI:drawReopenMasterLooterUIButton();
+                    end
+                end
 
                 self.timerId = GL.Ace:ScheduleTimer(function ()
                     self:stop();

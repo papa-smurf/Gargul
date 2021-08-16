@@ -86,7 +86,7 @@ function Importer:draw()
     ImportButton:SetText("Import");
     ImportButton:SetWidth(140);
     ImportButton:SetCallback("OnClick", function()
-        GL.SoftRes:import(softReservesBoxContent);
+        GL.SoftRes:import(softReservesBoxContent, true);
     end);
     Window:AddChild(ImportButton);
 end

@@ -369,30 +369,13 @@ end
 function MasterLooterUI:close(Frame)
     GL:debug("MasterLooterUI:close");
 
-    local point, _, relativePoint, offsetX, offsetY = Frame:GetPoint();
-
     -- Store the frame's last position for future play sessions
-    Settings:set("UI.RollOff.Position.point", point);
-    Settings:set("UI.RollOff.Position.relativePoint", relativePoint);
-    Settings:set("UI.RollOff.Position.offsetX", offsetX);
-    Settings:set("UI.RollOff.Position.offsetY", offsetY);
+    GL.Interface:storePosition(Frame, "RollOff");
 
     -- When the master looter closes the master loot window with a master
     -- loot still in progress we show the reopen master looter button
-    local timerIterations = 1;
     if (GL.RollOff.inProgress) then
-        self.timerId = GL.Ace:ScheduleRepeatingTimer(function ()
-print("ZOMG");
-            if (timerIterations >= 25
-                or GL.RollOff.CurrentRollOff.itemIcon
-            ) then
-                self:drawReopenMasterLooterUIButton();
-                GL.Ace:CancelTimer(self.timerId);
-                self.timerId = false;
-            end
-
-            timerIterations = timerIterations + 1;
-        end, .1);
+        self:drawReopenMasterLooterUIButton();
     end
 end
 
