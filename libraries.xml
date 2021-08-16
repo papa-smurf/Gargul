@@ -86,6 +86,12 @@
     <Include file="Libs\LibCustomGlow-1.0\LibCustomGlow-1.0.lua" />
 
     <!--
+    LibDataBroker is a small WoW addon library designed to provide a MVC interface for use in various addons.
+    LDB’s primary goal is to “detach” plugins for TitanPanel and FuBar from the display addon.
+    -->
+    <Include file="Libs\LibDataBroker-1.1\LibDataBroker-1.1.lua" />
+
+    <!--
     LibDBIcon-1.0 is a small library you can throw in your LDB addon that will create a small minimap icon for you and nothing more.
     -->
     <Include file="Libs\LibDBIcon-1.0\LibDBIcon-1.0\LibDBIcon-1.0.lua" />
