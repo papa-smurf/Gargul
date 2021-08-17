@@ -3,10 +3,7 @@
 local appName, GL = ...;
 
 --[[ APP VERSION ]]
---GL.version = "3.1.0";
-
----@todo This is temporary as to not spam raiders to shit!
-GL.version = "3.0.14";
+GL.version = "3.1.0";
 
 GL.name = appName;
 GL._initialized = false;
@@ -38,9 +35,6 @@ GL.bootstrap = function(_, _, addonName)
     -- The addon was loaded, we no longer need the event listener now
     GL.EventFrame:UnregisterEvent("ADDON_LOADED");
 
-    -- Show a welcome message
-    GL:debug(string.format("Successfully loaded v%s", GL.version));
-
     -- Initialize our classes / services
     GL:_init();
     GL._initialized = true;
@@ -68,7 +62,19 @@ function GL:_init()
     -- Initialize classes
     GL.Events:_init(GL.EventFrame);
     GL.DB:_init();
-    GL.Settings:_init()
+    GL.Settings:_init();
+
+    -- Show a welcome message
+    if (GL.Settings:get("welcomeMessage")) then
+        print(string.format(
+            "|cff%sGargul v%s|r by Zhorax@Razorgore. Type |cff%s/gl|r or |cff%s/gargul|r to get started!",
+            GL.Data.Constants.addonHexColor,
+            GL.version,
+            GL.Data.Constants.addonHexColor,
+            GL.Data.Constants.addonHexColor
+        ))
+    end
+
     GL.Comm:_init();
     GL.User:_init();
     GL.LootPriority:_init();

@@ -1,6 +1,8 @@
 ---@type GL
 local _, GL = ...;
 
+local Overview = GL.Interface.Settings.Overview; ---@type SettingsOverview
+
 ---@class SlashCommandsSettings
 GL.Interface.Settings.SlashCommands = {
     description = "There are many shorthand slash commands available in Gargul to help speed up your instance runs.\n",
@@ -43,6 +45,20 @@ function SlashCommands:draw(Parent)
     table.sort(Commands, function (a, b)
         return a.command:sub(1, 1) < b.command:sub(1, 1);
     end);
+
+    Overview:drawCheckboxes({
+        {
+            label = "Open on faulty command",
+            description = "If checked this window will always open if you try to run a command that doesn't exist or when the wrong input was provided",
+            setting = "autoOpenCommandHelp",
+        }
+    }, Parent);
+
+    local HorizontalSpacer = GL.AceGUI:Create("SimpleGroup");
+    HorizontalSpacer:SetLayout("FILL");
+    HorizontalSpacer:SetFullWidth(true);
+    HorizontalSpacer:SetHeight(20);
+    Parent:AddChild(HorizontalSpacer);
 
     for _, Entry in pairs(Commands) do
         local CommandLabel = GL.AceGUI:Create("Label");

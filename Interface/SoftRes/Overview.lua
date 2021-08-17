@@ -8,7 +8,6 @@ local AceGUI = GL.AceGUI;
 local Constants = GL.Data.Constants; ---@type Data
 local DB = GL.DB; ---@type DB
 local ScrollingTable = GL.ScrollingTable;
-local Settings = GL.Settings; ---@type Settings
 local SoftRes = GL.SoftRes; ---@type SoftRes
 
 GL:tableSet(GL, "Interface.SoftRes.Overview", {
@@ -36,11 +35,13 @@ function Overview:draw()
         return;
     end
 
+    GL.Events:register("ShareButtonRosterUpdatedListener", "GROUP_ROSTER_UPDATE", function () self:updateShareButton(); end);
+
     self.isVisible = true;
 
     -- Create a container/parent frame
     local Window = AceGUI:Create("Frame");
-    Window:SetTitle(GL.name .. " v" .. GL.version);
+    Window:SetTitle("Gargul v" .. GL.version);
     Window:SetLayout("Flow");
     Window:SetWidth(600);
     Window:SetHeight(470);
@@ -58,24 +59,34 @@ function Overview:draw()
         date('%H:%M', GL:tableGet(DB.SoftRes, "metaData.importedAt", GetServerTime()))
     ));
 
-    if (GL.User.isInGroup
-        and (GL.User.isMasterLooter
-            or GL.User.isLead
-            or GL.User.hasAssist
-        )
-    ) then
-        --[[
-            SHARE BUTTON
-        ]]
-        local ShareButton = GL.Interface:getItem(self, "Frame.ShareButton") or GL.UI:createShareButton(
+    -- Make sure the window can be closed by pressing the escape button
+    _G["GARGUL_SOFTRES_OVERVIEW_WINDOW"] = Window.frame;
+    tinsert(UISpecialFrames, "GARGUL_SOFTRES_OVERVIEW_WINDOW");
+
+    --[[
+        SHARE BUTTON
+    ]]
+    local ShareButton = GL.Interface:getItem(self, "Frame.ShareButton") or GL.UI:createShareButton(
             Window.frame,
             function ()
-                StaticPopup_Show(GL.name .. "_BROADCAST_SOFTRES_CONFIRMATION");
+                GL.Interface.PopupDialog:open("BROADCAST_SOFTRES_CONFIRMATION");
             end,
-            "Broadcast SoftRes Data"
-        );
-        GL.Interface:setItem(self, "ShareButton", ShareButton);
-        ShareButton:Show();
+            "Broadcast SoftRes Data",
+            "To broadcast you need to be in a group and need master loot, assist or lead!"
+    );
+    GL.Interface:setItem(self, "ShareButton", ShareButton);
+    ShareButton:Show();
+
+    -- The user doesn't have sufficient permissions to broadcast the data
+    if (not GL.User.isInGroup
+        or (not GL.User.isMasterLooter
+            and not GL.User.isLead
+            and not GL.User.hasAssist
+        )
+    ) then
+        ShareButton:Disable();
+    else
+        ShareButton:Enable();
     end
 
     --[[
@@ -227,7 +238,7 @@ function Overview:draw()
     ClearDataButton:SetText("Clear Data");
     ClearDataButton:SetWidth(141); -- Minimum is 102
     ClearDataButton:SetCallback("OnClick", function()
-        StaticPopup_Show(GL.name .. "_CLEAR_SOFTRES_CONFIRMATION");
+        GL.Interface.PopupDialog:open("CLEAR_SOFTRES_CONFIRMATION");
     end);
     ButtonFrame:AddChild(ClearDataButton);
 
@@ -267,6 +278,29 @@ function Overview:draw()
             HardReservesLabel:SetText("         No items are hard-reserved");
         end
     end
+end
+
+--- Update the share button when the group setup changes
+---
+---@return void
+function Overview:updateShareButton()
+    local ShareButton = GL.Interface:getItem(self, "Frame.ShareButton")
+
+    GL.Ace:ScheduleTimer(function ()
+        -- The user doesn't have sufficient permissions to broadcast the data
+        -- The user doesn't have sufficient permissions to broadcast the data
+        if (not GL.User.isInGroup
+            or (not GL.User.isMasterLooter
+                and not GL.User.isLead
+                and not GL.User.hasAssist
+            )
+        ) then
+            ShareButton:Disable();
+            return;
+        end
+
+        ShareButton:Enable();
+    end, 1.5);
 end
 
 --- Update the SoftRes details frame to show the information of the selected player
@@ -393,7 +427,7 @@ end
 
 function Overview:showHardReserves()
     self:clearDetailsFrame();
-    self:drawHardReservesTable(Interface:getItem(self, "Frame.SecondColumn").frame);
+    self:drawHardReservesTable(GL.Interface:getItem(self, "Frame.SecondColumn").frame);
 end
 
 function Overview:drawCharacterTable(Parent)
@@ -629,12 +663,10 @@ function Overview:close()
         return;
     end
 
+    GL.Events:unregister("ShareButtonRosterUpdatedListener");
+
     -- Store the frame's last position for future play sessions
-    local point, _, relativePoint, offsetX, offsetY = Window:GetPoint();
-    Settings:set("UI.SoftReserveOverview.Position.point", point);
-    Settings:set("UI.SoftReserveOverview.Position.relativePoint", relativePoint);
-    Settings:set("UI.SoftReserveOverview.Position.offsetX", offsetX);
-    Settings:set("UI.SoftReserveOverview.Position.offsetY", offsetY);
+    GL.Interface:storePosition(Window, "SoftReserveOverview");
 
     -- Clear the frame and its widgets
     AceGUI:Release(Window);

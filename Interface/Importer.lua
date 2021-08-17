@@ -24,7 +24,7 @@ function Importer:draw()
 
     -- Create a container/parent frame
     local Window = AceGUI:Create("Frame");
-    Window:SetTitle(GL.name .. " v" .. GL.version);
+    Window:SetTitle("Gargul v" .. GL.version);
     Window:SetLayout("Flow");
     Window:SetWidth(600);
     Window:SetHeight(150);
@@ -36,6 +36,10 @@ function Importer:draw()
     GL.Interface:setItem(self, "Window", Window);
 
     Window:SetPoint(GL.Interface:getPosition("Importer"));
+
+    -- Make sure the window can be closed by pressing the escape button
+    _G["GARGUL_IMPORT_WINDOW"] = Window.frame;
+    tinsert(UISpecialFrames, "GARGUL_IMPORT_WINDOW");
 
     --[[
         DESCRIPTION LABEL
@@ -57,7 +61,7 @@ function Importer:draw()
             return GL.SoftRes:draw();
         end
 
-        StaticPopup_Show(GL.name .. "_NEW_SOFTRES_IMPORT_CONFIRMATION");
+        GL.Interface.PopupDialog:open("NEW_SOFTRES_IMPORT_CONFIRMATION");
     end);
     Window:AddChild(SoftResButton);
 

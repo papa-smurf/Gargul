@@ -59,13 +59,17 @@ function PackMuleUI:drawSetupWindow()
         AceGUI:Release(widget);
         self.setupWindowIsActive = false;
     end);
-    Frame:SetTitle(GL.name .. " v" .. GL.version);
+    Frame:SetTitle("Gargul v" .. GL.version);
     Frame:SetStatusText("Addon v" .. GL.version);
     Frame:SetLayout("Flow");
     Frame:SetWidth(600);
     Frame:SetHeight(450);
     Frame.statustext:GetParent():Hide(); -- Hide the statustext bar
     Frame:EnableResize(false);
+
+    -- Make sure the window can be closed by pressing the escape button
+    _G["GARGUL_PACKMULE_WINDOW"] = Frame.frame;
+    tinsert(UISpecialFrames, "GARGUL_PACKMULE_WINDOW");
 
     self:drawSpacer(Frame, 1, 10);
 
@@ -111,7 +115,7 @@ function PackMuleUI:drawInfoSection(Frame)
     -- LABEL: Info about PackMule
     local Info = AceGUI:Create("Label");
     Info:SetText([[
-PackMule will only work if you are the master looter, you're in a raid and PackMule is "enabled"
+PackMule will only work if you are the master looter and PackMule is "enabled". You can use 'SELF' (all caps) to refer to your own character regardless of what character you're playing on!
 ]]);
     Info:SetHeight(20);
     Info:SetWidth(520);

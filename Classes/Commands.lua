@@ -165,7 +165,10 @@ function Commands:_dispatch(str)
         return self.Dictionary[command](unpack(arguments));
     end
 
-    return self:help();
+    -- Show the list of commands unless the user disabled this feature
+    if (GL.Settings:get("autoOpenCommandHelp")) then
+        self:help();
+    end
 end;
 
 GL:debug("Commands.lua");

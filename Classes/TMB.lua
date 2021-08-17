@@ -51,7 +51,7 @@ function TMB:byItemId(itemId, inRaidOnly)
     end
 
     -- The item linked to this id can have multiple IDs (head of Onyxia for example)
-    local AllLinkedItemIds = self:getLinkedItemsForId(itemId);
+    local AllLinkedItemIds = GL:getLinkedItemsForId(itemId);
 
     local GroupMemberNames = {};
     if (inRaidOnly) then
@@ -94,27 +94,6 @@ function TMB:byItemLink(itemLink, inRaidOnly)
     end
 
     return self:byItemId(GL:getItemIdFromLink(itemLink), inRaidOnly);
-end
-
---- Some items have items linked to them. Example: t4 tokens have their quest reward counterpart linked to them.
----
----@param itemId number
----@return table
-function TMB:getLinkedItemsForId(itemId)
-    -- An invalid item id was provided
-    itemId = tonumber(itemId);
-    if (not GL:higherThanZero(itemId)) then
-        return {};
-    end
-
-    -- Gather all the item IDs that are linked to our item
-    itemId = tostring(itemId);
-    local AllLinkedItemIds = {itemId};
-    for _, id in pairs(GL.Data.Constants.LinkedItems[itemId] or {}) do
-        tinsert(AllLinkedItemIds, id);
-    end
-
-    return AllLinkedItemIds;
 end
 
 --- Append the TMB info as defined in GL.DB.TMB to an item's tooltip
@@ -264,13 +243,24 @@ function TMB:drawImporter()
     GL:debug("TMB:drawImporter");
 
     -- Create a container/parent frame
-    local TMBFrame = AceGUI:Create("Frame");
-    TMBFrame:SetTitle(GL.name .. " v" .. GL.version);
-    TMBFrame:SetStatusText("Addon v" .. GL.version);
-    TMBFrame:SetLayout("Flow");
-    TMBFrame:SetWidth(600);
-    TMBFrame:SetHeight(450);
-    TMBFrame.statustext:GetParent():Hide(); -- Hide the statustext bar
+    local Window = AceGUI:Create("Frame");
+    Window:SetTitle("Gargul v" .. GL.version);
+    Window:SetStatusText("Addon v" .. GL.version);
+    Window:SetLayout("Flow");
+    Window:SetWidth(600);
+    Window:SetHeight(480);
+    Window.statustext:GetParent():Hide(); -- Hide the statustext bar
+
+    -- Make sure the window can be closed by pressing the escape button
+    _G["GARGUL_TMB_WINDOW"] = Window.frame;
+    tinsert(UISpecialFrames, "GARGUL_TMB_WINDOW");
+
+    -- Explanation
+    local Description = AceGUI:Create("Label");
+    Description:SetFontObject(_G["GameFontNormal"]);
+    Description:SetFullWidth(true);
+    Description:SetText("To get started you first need to export your guild's data on thatsmybis.com. In order to do that navigate to Guild > Exports and click the 'Download' button in the Gargul section. Afterwards paste the contents as-is in the box below and click 'Import'. That's it!");
+    Window:AddChild(Description);
 
     -- Large edit box
     local TMBBoxContent = "";
@@ -278,14 +268,29 @@ function TMB:drawImporter()
     TMBBox:SetFullWidth(true);
     TMBBox:DisableButton(true);
     TMBBox:SetFocus();
-    TMBBox:SetLabel("Paste the thatsmybis JSON here, then click the 'Import' button. Use 'Broadcast' to share with your group");
-    TMBBox:SetNumLines(22);
+    TMBBox:SetLabel("");
+    TMBBox:SetNumLines(20);
     TMBBox:SetMaxLetters(999999999);
-    TMBFrame:AddChild(TMBBox);
+    Window:AddChild(TMBBox);
 
     TMBBox:SetCallback("OnTextChanged", function(_, _, text)
         TMBBoxContent = text;
     end)
+
+    -- Status message frame
+    local StatusMessageFrame = AceGUI:Create("SimpleGroup");
+    StatusMessageFrame:SetLayout("FILL");
+    StatusMessageFrame:SetWidth(570);
+    StatusMessageFrame:SetHeight(56);
+    Window:AddChild(StatusMessageFrame);
+
+    local StatusMessageLabel = AceGUI:Create("Label");
+    StatusMessageLabel:SetFontObject(_G["GameFontNormal"]);
+    StatusMessageLabel:SetFullWidth(true);
+    StatusMessageLabel:SetColor(1, 0, 0);
+    StatusMessageLabel:SetText("");
+    StatusMessageFrame:AddChild(StatusMessageLabel);
+    GL.Interface:setItem(self, "StatusMessage", StatusMessageLabel);
 
     --[[
         FOOTER BUTTON PARENT FRAME
@@ -294,7 +299,7 @@ function TMB:drawImporter()
     FooterFrame:SetLayout("Flow");
     FooterFrame:SetFullWidth(true);
     FooterFrame:SetHeight(50);
-    TMBFrame:AddChild(FooterFrame);
+    Window:AddChild(FooterFrame);
 
     local ImportButton = AceGUI:Create("Button");
     ImportButton:SetText("Import");
@@ -316,12 +321,13 @@ function TMB:drawImporter()
     ClearButton:SetText("Clear");
     ClearButton:SetWidth(140);
     ClearButton:SetCallback("OnClick", function()
-        StaticPopupDialogs[GL.name .. "_CLEAR_TMB_CONFIRMATION"].OnAccept = function ()
-            TMBBox:SetText("");
-            GL.DB.TMB = {};
-        end
-
-        StaticPopup_Show(GL.name .. "_CLEAR_TMB_CONFIRMATION");
+        GL.Interface.PopupDialog:open({
+            question = "Are you sure you want to clear the TMB tables?",
+            OnYes = function ()
+                TMBBox:SetText("");
+                GL.DB.TMB = {};
+            end,
+        });
     end);
     FooterFrame:AddChild(ClearButton);
 
@@ -335,9 +341,13 @@ end
 function TMB:import(data)
     GL:debug("TMB:import");
 
+    local function displayGenericException()
+        GL.Interface:getItem(self, "Label.StatusMessage"):SetText("Invalid TMB data provided, make sure to click the 'Download' button in the Gargul section and paste the contents here as-is!");
+    end
+
     -- Make sure all the required properties are available and of the correct type
     if (not data or type(data) ~= "string") then
-        GL:error("Invalid data provided");
+        displayGenericException();
         return false;
     end
 
@@ -348,7 +358,7 @@ function TMB:import(data)
         or not WebsiteData
         or type(WebsiteData) ~= "table"
     ) then
-        GL:warning("Invalid TMB data provided");
+        displayGenericException();
         return false;
     end
 
@@ -392,7 +402,9 @@ function TMB:import(data)
                     end
                 end
 
-                if (not order) then
+                -- It seems like the user who exported didn't have the
+                -- permissions necessary to see all of the item orders
+                if (not order or order == "?") then
                     insufficientPermissions = true;
                 end
             end
@@ -407,10 +419,14 @@ function TMB:import(data)
     end
 
     if (insufficientPermissions) then
-        GL:success("TMB Import successful with notice:");
-        GL:warning("It seems like you don't have sufficient permissions on TMB to view all priority data. Do you have the correct role in TMB?");
+        local message = string.format(
+            "|cff92FF00%s|r\n\n|cfff7922e%s|r",
+            "TMB Import successful with notice:",
+            "It seems like you don't have sufficient permissions on TMB to view all priority data. Do you have the required roles and permissions in TMB?"
+        );
+        GL.Interface:getItem(self, "Label.StatusMessage"):SetText(message);
     else
-        GL:success("TMB Import successful");
+        GL.Interface:getItem(self, "Label.StatusMessage"):SetText("|cff92FF00TMB Import successful|r");
     end
 
     return true;

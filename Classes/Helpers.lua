@@ -375,7 +375,7 @@ function GL:frameMessage(message)
     -- Create a container/parent frame
     local StacktraceFrame = AceGUI:Create("Frame");
     StacktraceFrame:SetCallback("OnClose", function(widget) AceGUI:Release(widget); end);
-    StacktraceFrame:SetTitle(GL.name .. " v" .. GL.version);
+    StacktraceFrame:SetTitle("Gargul v" .. GL.version);
     StacktraceFrame:SetStatusText("");
     StacktraceFrame:SetLayout("Flow");
     StacktraceFrame:SetWidth(600);
@@ -564,6 +564,27 @@ function GL:findBagIdAndSlotForItem(itemId)
     end
 
     return {};
+end
+
+--- Some items have items linked to them. Example: t4 tokens have their quest reward counterpart linked to them.
+---
+---@param itemId number
+---@return table
+function GL:getLinkedItemsForId(itemId)
+    -- An invalid item id was provided
+    itemId = tonumber(itemId);
+    if (not GL:higherThanZero(itemId)) then
+        return {};
+    end
+
+    -- Gather all the item IDs that are linked to our item
+    itemId = tostring(itemId);
+    local AllLinkedItemIds = {itemId};
+    for _, id in pairs(GL.Data.Constants.LinkedItems[itemId] or {}) do
+        tinsert(AllLinkedItemIds, id);
+    end
+
+    return AllLinkedItemIds;
 end
 
 --- Return an item's ID from an item link, false if invalid itemlink is provided

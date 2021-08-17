@@ -60,7 +60,7 @@ function Overview:draw(section)
 
     -- Create a container/parent frame
     local Window = AceGUI:Create("Frame");
-    Window:SetTitle(GL.name .. " v" .. GL.version .. " - Settings");
+    Window:SetTitle("Gargul v" .. GL.version .. " - Settings");
     Window:SetLayout("Flow");
     Window:SetWidth(800);
     Window:SetHeight(600);
@@ -71,6 +71,10 @@ function Overview:draw(section)
     end);
     GL.Interface:setItem(self, "Window", Window);
     Window:SetPoint(GL.Interface:getPosition("Settings"));
+
+    -- Make sure the window can be closed by pressing the escape button
+    _G["GARGUL_SETTING_WINDOW"] = Window.frame;
+    tinsert(UISpecialFrames, "GARGUL_SETTING_WINDOW");
 
     --[[
         COLUMN SPACER

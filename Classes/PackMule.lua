@@ -93,7 +93,7 @@ function PackMule:lootReady()
     end
 
     if (not self.Rules
-        or not GL.User.isInRaid
+        or not GL.User.isInGroup
         or not GL.User.isMasterLooter
     ) then
         self.processing = false;
@@ -121,25 +121,41 @@ function PackMule:lootReady()
 
         -- If the item is locked or doesn't have an item link (money or other currency) then we can safely skip it
         if (not locked and itemLink) then
-            for _, Rule in pairs(ValidRules) do
+            for _, Entry in pairs(ValidRules) do
                 -- This is useful to see in which order rules are being handled
                 GL:debug(string.format(
                     "Item: %s\nOperator: %s\nQuality: %s\nTarget: %s",
-                    Rule.item or "",
-                    Rule.quality or "",
-                    Rule.operator or "",
-                    Rule.target or ""
+                    Entry.item or "",
+                    Entry.quality or "",
+                    Entry.operator or "",
+                    Entry.target or ""
                 ));
 
-                local target = tostring(Rule.target or "");
-                local quality = tonumber(Rule.quality or "");
-                local operator = tostring(Rule.operator or "");
+                local item = Entry.item or "";
+                local target = tostring(Entry.target or "");
+                local quality = tonumber(Entry.quality or "");
+                local operator = tostring(Entry.operator or "");
+
+                -- SELF serves as a placeholder for the current player name
+                if (target == "SELF") then
+                    target = GL.User.name;
+                end
+
+                -- The potential target replacement above requires us
+                -- To make a local copy of the current Rule entry
+                local Rule = {
+                    item = item,
+                    target = target,
+                    quality = quality,
+                    operator = operator,
+                }
 
                 if (itemQuality and quality and operator and target and (
                     (operator == "=" and itemQuality == quality)
                     or (operator == ">" and itemQuality > quality)
                     or (operator == "<" and itemQuality < quality)
                 )) then
+
                     -- Non-tradeable items will only be handed out if there's a specific rule for it
                     if (GL:inTable(GL.Data.Constants.UntradeableItems, itemName)) then
                         GL:warning(string.format(
@@ -149,7 +165,7 @@ function PackMule:lootReady()
                     else
                         RuleThatApplies = Rule;
                     end
-                elseif (Rule.item and Rule.item == itemName) then
+                elseif (item and item == itemName) then
                     -- We found an item-specific rule, we can stop checking now
                     RuleThatApplies = Rule;
                     break;

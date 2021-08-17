@@ -16,7 +16,9 @@ GL.Data.DefaultSettings = {
     minimumQualityOfAnnouncedLoot = 4,
     noMessages = false,
     noSounds = false,
+    autoOpenCommandHelp = true,
     showMinimapButton = true,
+    welcomeMessage = true,
 
     PackMule = {
         enabled = false,
@@ -45,7 +47,15 @@ GL.Data.DefaultSettings = {
     UI = {
         RollOff = {
             autoClose = false,
-            timer = 25,
+            timer = 15,
+        },
+        PopupDialog = {
+            Position = {
+                offsetX = 0,
+                offsetY = -115,
+                point = "TOP",
+                relativePoint = "TOP",
+            }
         }
     }
 };

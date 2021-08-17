@@ -150,7 +150,7 @@ function AwardedLoot:addWinner(winner, itemLink, dkp, announce, date)
     end
 
     if (announce) then
-        awardMessage = string.format("%s was awarded to %s. Congrats!",
+        local awardMessage = string.format("%s was awarded to %s. Congrats!",
             itemLink,
             winner,
             dkp
@@ -158,8 +158,7 @@ function AwardedLoot:addWinner(winner, itemLink, dkp, announce, date)
 
         GL:sendChatMessage(
             awardMessage,
-            channel,
-            "COMMON"
+            channel
         );
     end
 

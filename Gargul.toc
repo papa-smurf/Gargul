@@ -48,9 +48,6 @@ Classes/Comm.lua
 Classes/CommMessage.lua
 Classes/RaidGroups.lua
 
-## Popup dialogs
-Interface/PopupDialogs.lua
-
 ## Interface objects
 Interface/Interface.lua
 Interface/Award.lua
@@ -69,3 +66,7 @@ Interface/Settings/SlashCommands.lua
 Interface/SoftRes/Importer.lua
 Interface/SoftRes/Overview.lua
 Interface/MinimapButton.lua
+
+## Popup dialogs
+Interface/PopupDialog.lua
+Interface/PopupDialogWidget.lua

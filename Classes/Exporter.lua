@@ -40,20 +40,24 @@ function Exporter:draw()
     end
 
     -- Create a container/parent frame
-    local ExportFrame = AceGUI:Create("Frame");
-    ExportFrame:SetTitle(GL.name .. " v" .. GL.version);
-    ExportFrame:SetStatusText("Addon v" .. GL.version);
-    ExportFrame:SetLayout("Flow");
-    ExportFrame:SetWidth(600);
-    ExportFrame:SetHeight(450);
-    ExportFrame:SetCallback("OnClose", function()
+    local Window = AceGUI:Create("Frame");
+    Window:SetTitle("Gargul v" .. GL.version);
+    Window:SetStatusText("Addon v" .. GL.version);
+    Window:SetLayout("Flow");
+    Window:SetWidth(600);
+    Window:SetHeight(450);
+    Window:SetCallback("OnClose", function()
         Exporter:close();
     end);
-    ExportFrame:SetPoint(GL.Interface:getPosition("Exporter"));
-    ExportFrame.statustext:GetParent():Hide(); -- Hide the statustext bar
+    Window:SetPoint(GL.Interface:getPosition("Exporter"));
+    Window.statustext:GetParent():Hide(); -- Hide the statustext bar
 
-    Exporter.UIComponents.Frame = ExportFrame;
+    GL.Interface:setItem(self, "Window", Window);
 
+    -- Make sure the window can be closed by pressing the escape button
+    _G["GARGUL_EXPORTER_WINDOW"] = Window.frame;
+    tinsert(UISpecialFrames, "GARGUL_EXPORTER_WINDOW");
+    
     --[[
         DATES FRAME
     ]]
@@ -61,10 +65,10 @@ function Exporter:draw()
     DateFrame:SetLayout("FILL")
     DateFrame:SetWidth(200);
     DateFrame:SetHeight(350);
-    ExportFrame:AddChild(DateFrame);
+    Window:AddChild(DateFrame);
 
     -- Generate the characters table and add it to DateFrame.frame
-    Exporter:drawDatesTable(ExportFrame.frame, GL:tableFlip(AwardHistoryByDate));
+    Exporter:drawDatesTable(Window.frame, GL:tableFlip(AwardHistoryByDate));
 
     -- Large edit box
     local ExportBox = AceGUI:Create("MultiLineEditBox");
@@ -75,7 +79,7 @@ function Exporter:draw()
     ExportBox:SetLabel("");
     ExportBox:SetNumLines(22);
     ExportBox:SetMaxLetters(999999999);
-    ExportFrame:AddChild(ExportBox);
+    Window:AddChild(ExportBox);
 
     Exporter.UIComponents.EditBoxes.Export = ExportBox;
 
@@ -86,7 +90,7 @@ function Exporter:draw()
     FooterFrame:SetLayout("Flow");
     FooterFrame:SetFullWidth(true);
     FooterFrame:SetHeight(50);
-    ExportFrame:AddChild(FooterFrame);
+    Window:AddChild(FooterFrame);
 
     local ClearButton = AceGUI:Create("Button");
     ClearButton:SetText("Clear");
@@ -103,12 +107,12 @@ function Exporter:clearData()
     GL:debug("Exporter:clearData");
 
     local warning;
-    local onAccept;
+    local onConfirm;
 
     -- No date is selected, delete everything!
     if (not Exporter.dateSelected) then
         warning = "Are you sure you want to remove your complete reward history table? This deletes ALL loot data and cannot be undone!";
-        onAccept = function()
+        onConfirm = function()
             GL.DB.AwardHistory = {};
 
             Exporter:close();
@@ -118,7 +122,7 @@ function Exporter:clearData()
         -- Only delete entries on the selected date
     else
         warning = string.format("Are you sure you want to remove all data for %s? This cannot be undone!", Exporter.dateSelected);
-        onAccept = function()
+        onConfirm = function()
             for key, AwardEntry in pairs(GL.DB.AwardHistory) do
                 local dateString = date('%Y-%m-%d', AwardEntry.timestamp);
 
@@ -133,10 +137,11 @@ function Exporter:clearData()
         end
     end
 
-    -- Update and show the confirmation dialog
-    StaticPopupDialogs[GL.name .. "_RESET_AWARD_HISTORY_CONFIRMATION"].text = warning;
-    StaticPopupDialogs[GL.name .. "_RESET_AWARD_HISTORY_CONFIRMATION"].OnAccept = onAccept;
-    StaticPopup_Show(GL.name .. "_RESET_AWARD_HISTORY_CONFIRMATION");
+    -- Show a confirmation dialog before clearing entries
+    GL.Interface.PopupDialog:open({
+        question = warning,
+        OnYes = onConfirm,
+    });
 end
 
 function Exporter:refreshExportString()
@@ -165,20 +170,20 @@ function Exporter:close()
     GL:debug("Exporter:close");
 
     if (not Exporter.visible
-        or not Exporter.UIComponents.Frame
+        or not GL.Interface:getItem(self, "Window")
     ) then
         return;
     end
 
     -- Store the frame's last position for future play sessions
-    local point, _, relativePoint, offsetX, offsetY = Exporter.UIComponents.Frame:GetPoint();
+    local point, _, relativePoint, offsetX, offsetY = GL.Interface:getItem(self, "Window"):GetPoint();
     Settings:set("UI.Exporter.Position.point", point);
     Settings:set("UI.Exporter.Position.relativePoint", relativePoint);
     Settings:set("UI.Exporter.Position.offsetX", offsetX);
     Settings:set("UI.Exporter.Position.offsetY", offsetY);
 
     -- Clear the frame and its widgets
-    AceGUI:Release(Exporter.UIComponents.Frame);
+    AceGUI:Release(GL.Interface:getItem(self, "Window"));
     Exporter.visible = false;
 
     -- Clean up the Dates table seperately
@@ -248,7 +253,7 @@ function Exporter:drawDkpExport()
     ExportFrame:SetCallback("OnClose", function(widget)
         AceGUI:Release(widget);
     end);
-    ExportFrame:SetTitle(GL.name .. " v" .. GL.version);
+    ExportFrame:SetTitle("Gargul v" .. GL.version);
     ExportFrame:SetStatusText("Addon v" .. GL.version);
     ExportFrame:SetLayout("Flow");
     ExportFrame:SetWidth(600);

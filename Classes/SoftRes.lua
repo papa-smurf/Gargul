@@ -311,30 +311,33 @@ end
 function SoftRes:byItemId(itemId, inRaidOnly)
     GL:debug("SoftRes:byItemId");
 
-    if (type(inRaidOnly) ~= "boolean") then
-        inRaidOnly = Settings:get("SoftRes.hideInfoOfPeopleNotInGroup");
-    end
-
     -- An invalid item id was provided
     itemId = tonumber(itemId);
     if (not GL:higherThanZero(itemId)) then
         return {};
     end
 
-    local idString = tostring(itemId);
-    local Reservations = GL:tableGet(self.MaterializedData.PlayerNamesByItemId or {}, idString, {});
-
-    -- The user doesn't care about who's in the raid or not so return the data as-is
-    if (not inRaidOnly) then
-        return Reservations;
+    if (type(inRaidOnly) ~= "boolean") then
+        inRaidOnly = Settings:get("SoftRes.hideInfoOfPeopleNotInGroup");
     end
 
-    -- Make sure we only return reservations of people who are actually in the raid
+    -- The item linked to this id can have multiple IDs (head of Onyxia for example)
+    local AllLinkedItemIds = GL:getLinkedItemsForId(itemId);
+
+    local GroupMemberNames = {};
+    if (inRaidOnly) then
+        GroupMemberNames = GL.User:groupMemberNames();
+    end
+
     local ActiveReservations = {};
-    local GroupMemberNames = GL.User:groupMemberNames();
-    for _, playerName in pairs(Reservations) do
-        if (GL:inTable(GroupMemberNames, playerName)) then
-            tinsert(ActiveReservations, playerName);
+    for _, id in pairs(AllLinkedItemIds) do
+        local idString = tostring(id);
+
+        -- If inRaidOnly is true we need to make sure we only return details of people who are actually in the raid
+        for _, playerName in pairs(GL:tableGet(self.MaterializedData.PlayerNamesByItemId or {}, idString, {})) do
+            if (not inRaidOnly or GL:inTable(GroupMemberNames, playerName)) then
+                tinsert(ActiveReservations, playerName);
+            end
         end
     end
 
@@ -582,7 +585,7 @@ function SoftRes:importGargulData(data)
                 name = name,
                 note = note,
                 plusOnes = plusOnes,
-                items = {},
+                Items = {},
             };
 
             for _, Item in pairs(Items) do
@@ -591,7 +594,7 @@ function SoftRes:importGargulData(data)
                 if (GL:higherThanZero(itemId)) then
                     hasItems = true;
 
-                    tinsert(PlayerEntry.items, itemId);
+                    tinsert(PlayerEntry.Items, itemId);
                 end
             end
 
@@ -843,8 +846,7 @@ function SoftRes:postLink()
     -- Post the link in the chat for all group members to see
     GL:sendChatMessage(
         softResLink,
-        chatChannel,
-        "COMMON"
+        chatChannel
     );
 
     return true;
@@ -886,8 +888,7 @@ function SoftRes:postMissingSoftReserves()
     -- Post the link in the chat for all group members to see
     GL:sendChatMessage(
         "Missing soft-reserves from: " .. table.concat(PlayerNames, ", "),
-        chatChannel,
-        "COMMON"
+        chatChannel
     );
 
     return true;
@@ -921,8 +922,7 @@ function SoftRes:postDiscordLink()
     -- Post the link in the chat for all group members to see
     GL:sendChatMessage(
         discordLink,
-        chatChannel,
-        "COMMON"
+        chatChannel
     );
 
     return true;

@@ -31,7 +31,7 @@ function MinimapButton:_init()
             end
         end,
         OnTooltipShow = function(tooltip)
-            tooltip:AddLine(string.format("|cff%s%s v%s|r", GL.Data.Constants.addonHexColor, GL.name, GL.version));
+            tooltip:AddLine(string.format("|cff%sGargul v%s|r", GL.Data.Constants.addonHexColor, GL.version));
             tooltip:AddLine("|cffffffffClick:|r Open Gargul");
             tooltip:AddLine("|cffffffffRight-click:|r Import data");
             tooltip:AddLine("|cffffffffShift+click:|r SoftRes");

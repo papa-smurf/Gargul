@@ -52,7 +52,7 @@ function RaidGroups:drawImporter()
 
     -- Create a container/parent frame
     local RaidGroupsFrame = AceGUI:Create("Frame");
-    RaidGroupsFrame:SetTitle(GL.name .. " v" .. GL.version);
+    RaidGroupsFrame:SetTitle("Gargul v" .. GL.version);
     RaidGroupsFrame:SetStatusText("Addon v" .. GL.version);
     RaidGroupsFrame:SetLayout("Flow");
     RaidGroupsFrame:SetWidth(600);

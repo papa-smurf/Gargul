@@ -35,6 +35,11 @@ function General:draw(Parent)
 
     local Checkboxes = {
         {
+            label = "Welcome message",
+            description = "Enable or disable the Gargul welcome message",
+            setting = "welcomeMessage",
+        },
+        {
             label = "No sounds",
             description = "Checking this will make sure that Gargul will never play any sounds (raid warning when roll starts for example)",
             setting = "noSounds",

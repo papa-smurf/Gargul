@@ -335,16 +335,14 @@ function DroppedLoot:announce()
             ) then
                 GL:sendChatMessage(
                     itemLink .. " (This item is hard-reserved!)",
-                    chatChannel,
-                    "COMMON"
+                    chatChannel
                 );
             else
                 -- Link the item in the chat for
                 -- all group members to see
                 GL:sendChatMessage(
                     itemLink,
-                    chatChannel,
-                    "COMMON"
+                    chatChannel
                 );
             end
 
@@ -352,8 +350,7 @@ function DroppedLoot:announce()
             if (hasSoftRes) then
                 GL:sendChatMessage(
                     "Reserved by: " .. table.concat(activeSoftRes, ", "),
-                    chatChannel,
-                    "COMMON"
+                    chatChannel
                 );
             end
 
@@ -373,8 +370,7 @@ function DroppedLoot:announce()
 
                 GL:sendChatMessage(
                     "TMB Priority: " .. table.concat(PrioData, ", "),
-                    chatChannel,
-                    "COMMON"
+                    chatChannel
                 );
             end
 
@@ -397,8 +393,7 @@ function DroppedLoot:announce()
 
                 GL:sendChatMessage(
                     "TMB Wishlist: " .. table.concat(WishListData, ", "),
-                    chatChannel,
-                    "COMMON"
+                    chatChannel
                 );
             end
         end

@@ -17,42 +17,48 @@ function UI:createFrame(...)
     return frame;
 end
 
-function UI:createShareButton(ParentFrame, onClick, tooltipText)
-    local ShareButton = GL.UI:createFrame("Frame", "ShareButton" .. GL:uuid(), ParentFrame);
+function UI:createShareButton(ParentFrame, onClick, tooltipText, disabledTooltipText)
+    local ShareButton = GL.UI:createFrame("Button", "ShareButton" .. GL:uuid(), ParentFrame, "UIPanelButtonTemplate");
     ShareButton:Show();
     ShareButton:SetSize(24, 24);
     ShareButton:SetPoint("TOPRIGHT", ParentFrame, "TOPRIGHT", -20, -20);
+    ShareButton:SetMotionScriptsWhileDisabled(true); -- Make sure tooltip still shows even when button is disabled
 
-    ShareButton.texture = ShareButton:CreateTexture();
-    ShareButton.texture:SetTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\share-button-highlighted");
-    ShareButton.texture:SetTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\share-button");
-    ShareButton.texture:SetPoint("CENTER", ShareButton, "CENTER", 0, 0);
-    ShareButton.texture:SetSize(24, 24);
+    local HighlightTexture = ShareButton:CreateTexture();
+    HighlightTexture:SetTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\share-button-highlighted");
+    HighlightTexture:SetPoint("CENTER", ShareButton, "CENTER", 0, 0);
+    HighlightTexture:SetSize(24, 24);
+
+    ShareButton:SetNormalTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\share-button");
+    ShareButton:SetHighlightTexture(HighlightTexture);
+    ShareButton:SetDisabledTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\share-button-disabled");
 
     ShareButton:SetScript("OnEnter", function()
-        ShareButton.texture:SetTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\share-button-highlighted");
+        local textToShow = tooltipText;
 
-        if (not GL:empty(tooltipText)) then
+        if (not ShareButton:IsEnabled()) then
+            textToShow = disabledTooltipText;
+        end
+
+        if (not GL:empty(textToShow)) then
             GameTooltip:SetOwner(ShareButton, "ANCHOR_TOP");
-            GameTooltip:AddLine(tooltipText);
+            GameTooltip:AddLine(textToShow);
             GameTooltip:Show();
         end
     end);
 
     ShareButton:SetScript("OnLeave", function()
-        ShareButton.texture:SetTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\share-button");
-
-        if (not GL:empty(tooltipText)) then
-            GameTooltip:Hide();
-        end
+        GameTooltip:Hide();
     end);
 
     if (type(onClick) == "function") then
-        ShareButton:SetScript("OnMouseDown", function(_, button)
-            if (button == 'LeftButton') then
-                onClick();
-            end
-        end);
+        if (ShareButton:IsEnabled()) then
+            ShareButton:SetScript("OnClick", function(_, button)
+                if (button == 'LeftButton') then
+                    onClick();
+                end
+            end);
+        end
     end
 
     return ShareButton;
@@ -60,7 +66,7 @@ end
 
 -- Generate a checkbox used in the Interface Options -> Settings menu
 function UI:createSettingCheckbox(ParentFrame, label, description, onClick)
-    local CheckBox = CreateFrame("CheckButton", GL.name .. "Setting" .. label, ParentFrame, "InterfaceOptionsCheckButtonTemplate");
+    local CheckBox = CreateFrame("CheckButton", "GargulSetting" .. label, ParentFrame, "InterfaceOptionsCheckButtonTemplate");
 
     CheckBox:SetScript("OnClick", function(self)
         local checked = self:GetChecked()

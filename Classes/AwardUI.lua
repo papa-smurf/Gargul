@@ -52,7 +52,7 @@ function AwardUI:draw(itemLink)
 
     -- Create a container/parent frame
     local AwardFrame = AceGUI:Create("Frame");
-    AwardFrame:SetTitle(GL.name .. " v" .. GL.version);
+    AwardFrame:SetTitle("Gargul v" .. GL.version);
     AwardFrame:SetLayout("Flow");
     AwardFrame:SetWidth(430);
     AwardFrame:SetHeight(290);
@@ -173,17 +173,17 @@ function AwardUI:draw(itemLink)
                             -- Add the player we awarded the item to to the item's tooltip
                             GL.AwardedLoot:addWinner(winner, itemLink);
 
-                            RollOff = {};
                             GL.AwardUI:reset();
                         end
 
                         -- Make sure the initiator has to confirm his choices
-                        StaticPopupDialogs[GL.name .. "_AWARD_CONFIRMATION"].OnAccept = award;
-                        StaticPopupDialogs[GL.name .. "_AWARD_CONFIRMATION"].text = string.format("Award %s to %s?",
-                            itemLink,
-                            winner
-                        );
-                        StaticPopup_Show(GL.name .. "_AWARD_CONFIRMATION");
+                        GL.Interface.PopupDialog:open({
+                            question = string.format("Award %s to %s?",
+                                itemLink,
+                                winner
+                            ),
+                            OnYes = award,
+                        });
                     end);
                     FirstRow:AddChild(AwardButton);
                     AwardUI.UIComponents.Buttons.AwardButton = AwardButton;

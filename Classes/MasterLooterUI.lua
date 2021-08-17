@@ -68,8 +68,8 @@ function MasterLooterUI:draw(itemLink)
     end
 
     -- Create a container/parent frame
-    Window = AceGUI:Create("Frame");
-    Window:SetTitle(GL.name .. " v" .. GL.version);
+    Window = AceGUI:Create("Frame", "GARGUL_MASTERLOOTERUI_WINDOW");
+    Window:SetTitle("Gargul v" .. GL.version);
     Window:SetLayout("Flow");
     Window:SetWidth(430);
     Window:SetHeight(350);
@@ -269,7 +269,7 @@ function MasterLooterUI:draw(itemLink)
                 TimerBox:DisableButton(true);
                 TimerBox:SetHeight(20);
                 TimerBox:SetWidth(40);
-                TimerBox:SetText(Settings:get("UI.RollOff.timer"));
+                TimerBox:SetText(Settings:get("UI.RollOff.timer", 15));
                 ThirdRow:AddChild(TimerBox);
                 MasterLooterUI.UIComponents.EditBoxes.Timer = TimerBox;
 

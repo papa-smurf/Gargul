@@ -30,11 +30,11 @@ function Importer:draw()
 
     -- Create a container/parent frame
     local Window = AceGUI:Create("Frame");
-    Window:SetTitle(GL.name .. " v" .. GL.version);
+    Window:SetTitle("Gargul v" .. GL.version);
     Window:SetStatusText("Addon v" .. GL.version);
     Window:SetLayout("Flow");
     Window:SetWidth(600);
-    Window:SetHeight(450);
+    Window:SetHeight(480);
     Window:EnableResize(false);
     Window.statustext:GetParent():Hide(); -- Hide the statustext bar
     Window:SetCallback("OnClose", function()
@@ -44,11 +44,15 @@ function Importer:draw()
 
     Window:SetPoint(GL.Interface:getPosition("SoftReserveImport"));
 
+    -- Make sure the window can be closed by pressing the escape button
+    _G["GARGUL_SOFTRES_IMPORTER_WINDOW"] = Window.frame;
+    tinsert(UISpecialFrames, "GARGUL_SOFTRES_IMPORTER_WINDOW");
+
     -- Explanation
     local Description = AceGUI:Create("Label");
     Description:SetFontObject(_G["GameFontNormal"]);
     Description:SetFullWidth(true);
-    Description:SetText("In order to get started you first need to create a raid on softres.it. Afterwards click the 'Copy Weakaura Data' button on the website, paste the contents in the box below and click 'Import'.");
+    Description:SetText("In order to get started you first need to create a raid on softres.it. Afterwards click the 'Copy Weakaura Data' or 'Export CSV' button on the website, paste the contents in the box below and click 'Import'. NB: A new Gargul-specific exporter will be added to softres.it very soon!");
     Window:AddChild(Description);
 
     -- Large edit box
@@ -70,15 +74,15 @@ function Importer:draw()
     local StatusMessageFrame = AceGUI:Create("SimpleGroup");
     StatusMessageFrame:SetLayout("FILL");
     StatusMessageFrame:SetWidth(570);
-    StatusMessageFrame:SetHeight(46);
+    StatusMessageFrame:SetHeight(56);
     Window:AddChild(StatusMessageFrame);
 
     local StatusMessageLabel = AceGUI:Create("Label");
     StatusMessageLabel:SetFontObject(_G["GameFontNormal"]);
     StatusMessageLabel:SetFullWidth(true);
     StatusMessageLabel:SetColor(1, 0, 0);
+    StatusMessageLabel:SetText("|cFFf7922eNB: Some features, like hard-reserved items and posting the SoftRes link are not yet available and will be available when the Gargul-specific exporter has been added to softres.it!|r");
     StatusMessageFrame:AddChild(StatusMessageLabel);
-    self.InterfaceItems.Labels.StatusMessage = Window;
     GL.Interface:setItem(self, "StatusMessage", StatusMessageLabel);
 
     -- Import button
@@ -104,11 +108,7 @@ function Importer:close()
     end
 
     -- Store the frame's last position for future play sessions
-    local point, _, relativePoint, offsetX, offsetY = Window:GetPoint();
-    Settings:set("UI.SoftReserveImport.Position.point", point);
-    Settings:set("UI.SoftReserveImport.Position.relativePoint", relativePoint);
-    Settings:set("UI.SoftReserveImport.Position.offsetX", offsetX);
-    Settings:set("UI.SoftReserveImport.Position.offsetY", offsetY);
+    GL.Interface:storePosition(Window, "SoftReserveImport");
 
     -- Clear the frame and its widgets
     AceGUI:Release(Window);

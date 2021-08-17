@@ -76,36 +76,28 @@ function User:refresh()
     self.isInGroup = self.isInRaid or self.isInParty;
     self.hasAssist = false;
     self.isLead = false;
+    self.raidIndex = nil;
+
+    if (not self.isInGroup) then
+        return;
+    end
 
     -- Check if the current user is master looting
-    if (self.isInRaid) then
-        local nameOnIndex = "";
+    -- And check the user's roles in the group
+    for index = 1, _G.MAX_RAID_MEMBERS do
+        local name, rank, _, _, _, _,
+        _, _, _, role, isMasterLooter, combatRole = GetRaidRosterInfo(index);
 
-        if (self.raidIndex and self.raidIndex > 0) then
-            nameOnIndex = GetRaidRosterInfo(self.raidIndex);
+        if (name == self.name) then
+            self.role = role;
+            self.raidIndex = index;
+            self.isLead = rank == 2;
+            self.hasAssist = rank >= 1;
+            self.combatRole = combatRole;
+            self.isMasterLooter = isMasterLooter;
+
+            break;
         end
-
-        if (nameOnIndex ~= self.name) then
-            self.raidIndex = nil;
-
-            for index = 1, _G.MAX_RAID_MEMBERS do
-                local name, rank, _, _, _, _,
-                _, _, _, role, isMasterLooter, combatRole = GetRaidRosterInfo(index);
-
-                if (name == self.name) then
-                    self.role = role;
-                    self.raidIndex = index;
-                    self.isLead = rank == 2;
-                    self.hasAssist = rank >= 1;
-                    self.combatRole = combatRole;
-                    self.isMasterLooter = isMasterLooter;
-                    break;
-                end
-            end
-        end
-    else
-        self.raidIndex = nil;
-        self.isMasterLooter = 0 == select(2, GetLootMethod());
     end
 end
 

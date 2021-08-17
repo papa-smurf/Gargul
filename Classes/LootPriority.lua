@@ -76,7 +76,7 @@ function LootPriority:drawImporter()
 
     -- Create a container/parent frame
     local LootPriorityFrame = AceGUI:Create("Frame");
-    LootPriorityFrame:SetTitle(GL.name .. " v" .. GL.version);
+    LootPriorityFrame:SetTitle("Gargul v" .. GL.version);
     LootPriorityFrame:SetStatusText("Addon v" .. GL.version);
     LootPriorityFrame:SetLayout("Flow");
     LootPriorityFrame:SetWidth(600);

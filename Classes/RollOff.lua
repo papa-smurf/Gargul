@@ -33,6 +33,11 @@ function RollOff:announceStart(itemLink, time, note)
 
     time = tonumber(time);
 
+    -- Make sure we don't have any funny decimal business going on
+    if (time) then
+        time = math.floor(time);
+    end
+
     if (type(itemLink) ~= "string"
         or GL:empty(itemLink)
         or not GL:higherThanZero(time)
@@ -71,24 +76,23 @@ function RollOff:announceStart(itemLink, time, note)
     if (GL.User.isInRaid) then
         GL:sendChatMessage(
             announceMessage,
-            "RAID_WARNING",
-            "COMMON"
+            "RAID_WARNING"
         );
 
         if (reserveMessage) then
             GL:sendChatMessage(
                 reserveMessage,
-                "RAID",
-                "COMMON"
+                "RAID"
             );
         end
     else
         GL:sendChatMessage(
             announceMessage,
-            "PARTY",
-            "COMMON"
+            "PARTY"
         );
     end
+
+    GL.Settings:set("UI.RollOff.timer", time);
 
     return true;
 end
@@ -250,12 +254,13 @@ function RollOff:award(roller, itemLink)
     end
 
     -- Make sure the initiator has to confirm his choices
-    StaticPopupDialogs[GL.name .. "_ROLLOFF_AWARD_CONFIRMATION"].OnAccept = award;
-    StaticPopupDialogs[GL.name .. "_ROLLOFF_AWARD_CONFIRMATION"].text = string.format("Award %s to %s?",
-        itemLink,
-        roller
-    );
-    StaticPopup_Show(GL.name .. "_ROLLOFF_AWARD_CONFIRMATION");
+    GL.Interface.PopupDialog:open({
+        question = string.format("Award %s to %s?",
+            itemLink,
+            roller
+        ),
+        OnYes = award,
+    });
 end
 
 --- Start listening for rolls

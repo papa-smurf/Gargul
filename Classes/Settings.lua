@@ -33,7 +33,7 @@ function Settings:_init()
 
     -- Prepare the options / config frame
     local Frame = CreateFrame("Frame", nil, InterfaceOptionsFramePanelContainer);
-    Frame.name = GL.name;
+    Frame.name = "Gargul";
     Frame:SetScript("OnShow", function ()
         self:showSettingsMenu(Frame);
     end);
@@ -87,7 +87,7 @@ function Settings:showSettingsMenu(Frame)
     -- Add the addon title to the top of the settings frame
     local Title = Frame:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge");
     Title:SetPoint("TOPLEFT", 16, -16);
-    Title:SetText(GL.name);
+    Title:SetText("Gargul");
 
     -- This is the "PackMule" button that opens the PackMule settings
     local SettingsButton = CreateFrame("Button", nil, Frame, "UIPanelButtonTemplate");
