@@ -96,11 +96,11 @@ function Settings:showSettingsMenu(Frame)
     SettingsButton:SetHeight(24);
     SettingsButton:SetPoint("TOPLEFT", Title, "BOTTOMLEFT", 0, -8);
     SettingsButton:SetScript("OnClick", function()
-        self:draw();
-
         -- Make sure the vanilla interface options are closed and don't reopen automatically
         HideUIPanel(InterfaceOptionsFrame);
         HideUIPanel(GameMenuFrame);
+
+        self:draw();
     end);
 end
 
