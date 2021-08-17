@@ -1,9 +1,11 @@
-local _, App = ...;
+---@type GL
+local _, GL = ...;
 
-App.RollOff = App.RollOff or {};
-App.Ace.ScrollingTable = App.Ace.ScrollingTable or LibStub("ScrollingTable");
+GL.RollOff = GL.RollOff or {}; ---@type RollOff
+GL.ScrollingTable = GL.ScrollingTable or LibStub("ScrollingTable");
 
-App.MasterLooterUI = {
+---@class MasterLooterUI
+GL.MasterLooterUI = {
     ItemBoxHoldsValidItem = false,
     PlayersTable = {},
     UIComponents = {
@@ -20,348 +22,342 @@ App.MasterLooterUI = {
     },
 };
 
-local UI = App.UI;
-local Utils = App.Utils;
-local AceGUI = App.Ace.GUI;
-local Settings = App.Settings;
-local MasterLooterUI = App.MasterLooterUI;
-local ScrollingTable = App.Ace.ScrollingTable;
+local AceGUI = GL.AceGUI;
+local Settings = GL.Settings; ---@type Settings
+local MasterLooterUI = GL.MasterLooterUI; ---@type MasterLooterUI
+local ScrollingTable = GL.ScrollingTable;
 
--- This is the UI the person who rolls off an item uses to prepare everything e.g:
--- Select an item
--- Set the duration of the roll off
--- Award the item to the winner
+--- This is the UI the person who rolls off an item uses to prepare everything e.g:
+--- Select an item
+--- Set the duration of the roll off
+--- Award the item to the winner
+---
+---@param itemLink string|nil
+---@return void
 function MasterLooterUI:draw(itemLink)
-    Utils:debug("MasterLooterUI:draw");
+    GL:debug("MasterLooterUI:draw");
 
-    if (not App.User.isMasterLooter
-        and not App.User.hasAssist
+    if (not GL.testMode
+        and not GL.User.isMasterLooter
+        and not GL.User.hasAssist
     ) then
-        return Utils:warning("You need to be the master looter or have an assist / lead role!");
+        return GL:warning("You need to be the master looter or have an assist / lead role!");
     end
 
     -- Close the reopen masterlooter button if it exists
-    if (self.UIComponents.Buttons.ReopenMasterLooterButton) then
-        self.UIComponents.Buttons.ReopenMasterLooterButton:Hide();
+    local OpenMasterLooterButton = GL.Interface:getItem(self, "Frame.OpenMasterLooterButton");
+    if (OpenMasterLooterButton) then
+        OpenMasterLooterButton:Hide();
     end
 
     -- First we need to check if the frame hasn't been
     -- rendered already. If so then show it (if it's hidden)
     -- and pass the itemLink along in case one was provided
-    if (MasterLooterUI.UIComponents.Frame
-        and MasterLooterUI.UIComponents.Frame.rendered
-    ) then
+    local Window = GL.Interface:getItem(self, "Window");
+    if (Window) then
         if (itemLink) then
             MasterLooterUI:passItemLink(itemLink);
         end
 
         -- If the frame is hidden we need to show it again
-        if (not MasterLooterUI.UIComponents.Frame:IsShown()) then
-            MasterLooterUI.UIComponents.Frame:Show();
+        if (not Window:IsShown()) then
+            Window:Show();
         end
 
         return;
     end
 
     -- Create a container/parent frame
-    local RollOffFrame = AceGUI:Create("Frame");
-    RollOffFrame:SetTitle(App.name .. " v" .. App.version);
-    RollOffFrame:SetLayout("Flow");
-    RollOffFrame:SetWidth(430);
-    RollOffFrame:SetHeight(350);
-    RollOffFrame:EnableResize(false);
-    RollOffFrame.rendered = true;
-    RollOffFrame.frame:SetFrameStrata("HIGH");
-    RollOffFrame.statustext:GetParent():Hide(); -- Hide the statustext bar
-    RollOffFrame:SetCallback("OnClose", function(widget)
-        self:close(widget);
+    Window = AceGUI:Create("Frame", "GARGUL_MASTERLOOTERUI_WINDOW");
+    Window:SetTitle("Gargul v" .. GL.version);
+    Window:SetLayout("Flow");
+    Window:SetWidth(430);
+    Window:SetHeight(350);
+    Window:EnableResize(false);
+    Window.frame:SetFrameStrata("HIGH");
+    Window.statustext:GetParent():Hide(); -- Hide the statustext bar
+    Window:SetCallback("OnClose", function(widget)
+        self:close();
     end);
-    RollOffFrame:SetPoint(
-        Settings:get("UI.RollOff.Position.point"),
-        UIParent,
-        Settings:get("UI.RollOff.Position.relativePoint"),
-        Settings:get("UI.RollOff.Position.offsetX"),
-        Settings:get("UI.RollOff.Position.offsetY")
-    );
+    GL.Interface:setItem(self, "Window", Window);
 
-    MasterLooterUI.UIComponents.Frame = RollOffFrame;
+    Window:SetPoint(GL.Interface:getPosition("RollOff"));
 
-            --[[
-                FIRST ROW (ITEM ICON AND LINK BOX)
-            ]]
+        --[[
+            FIRST ROW (ITEM ICON AND LINK BOX)
+        ]]
 
-            local FirstRow = AceGUI:Create("SimpleGroup");
-            FirstRow:SetLayout("Flow");
-            FirstRow:SetFullWidth(true);
-            FirstRow:SetHeight(30);
-            RollOffFrame:AddChild(FirstRow);
+        local FirstRow = AceGUI:Create("SimpleGroup");
+        FirstRow:SetLayout("Flow");
+        FirstRow:SetFullWidth(true);
+        FirstRow:SetHeight(30);
+        Window:AddChild(FirstRow);
 
-                    --[[
-                        ITEM ICON
-                    ]]
+                --[[
+                    ITEM ICON
+                ]]
 
-                    local ItemIcon = AceGUI:Create("Icon");
-                    ItemIcon:SetImage(MasterLooterUI.Defaults.itemIcon);
-                    ItemIcon:SetImageSize(30, 30);
-                    ItemIcon:SetWidth(40);
-                    FirstRow:AddChild(ItemIcon);
-                    MasterLooterUI.UIComponents.Icons.Item = ItemIcon;
+                local ItemIcon = AceGUI:Create("Icon");
+                ItemIcon:SetImage(MasterLooterUI.Defaults.itemIcon);
+                ItemIcon:SetImageSize(30, 30);
+                ItemIcon:SetWidth(40);
+                FirstRow:AddChild(ItemIcon);
+                MasterLooterUI.UIComponents.Icons.Item = ItemIcon;
 
-                    --[[
-                        ITEM TEXTBOX
-                    ]]
-                    local ItemBox = AceGUI:Create("EditBox");
+                --[[
+                    ITEM TEXTBOX
+                ]]
+                local ItemBox = AceGUI:Create("EditBox");
 
-                    ItemBox:DisableButton(true);
-                    ItemBox:SetHeight(20);
-                    ItemBox:SetWidth(170);
-                    ItemBox:SetCallback("OnTextChanged", MasterLooterUI.ItemBoxChanged); -- Update item info when input value changes
-                    ItemBox:SetCallback("OnEnterPressed", MasterLooterUI.ItemBoxChanged); -- Update item info when item is dragged on top (makes no sense to use OnEnterPressed I know)
+                ItemBox:DisableButton(true);
+                ItemBox:SetHeight(20);
+                ItemBox:SetWidth(170);
+                ItemBox:SetCallback("OnTextChanged", MasterLooterUI.ItemBoxChanged); -- Update item info when input value changes
+                ItemBox:SetCallback("OnEnterPressed", MasterLooterUI.ItemBoxChanged); -- Update item info when item is dragged on top (makes no sense to use OnEnterPressed I know)
 
-                    MasterLooterUI.UIComponents.EditBoxes.Item = ItemBox;
+                MasterLooterUI.UIComponents.EditBoxes.Item = ItemBox;
 
-                    FirstRow:AddChild(ItemBox);
+                FirstRow:AddChild(ItemBox);
 
-                    -- Show a gametooltip if the icon shown belongs to an item
-                    ItemIcon:SetCallback("OnEnter", function()
-                        if (not MasterLooterUI.ItemBoxHoldsValidItem) then
-                            return;
-                        end
+                -- Show a gametooltip if the icon shown belongs to an item
+                ItemIcon:SetCallback("OnEnter", function()
+                    if (not MasterLooterUI.ItemBoxHoldsValidItem) then
+                        return;
+                    end
 
-                        local itemLink = ItemBox:GetText();
-                        GameTooltip:SetOwner(ItemIcon.frame, "ANCHOR_TOP");
-                        GameTooltip:SetHyperlink(itemLink);
-                        GameTooltip:Show();
-                    end)
+                    local itemLink = ItemBox:GetText();
+                    GameTooltip:SetOwner(ItemIcon.frame, "ANCHOR_TOP");
+                    GameTooltip:SetHyperlink(itemLink);
+                    GameTooltip:Show();
+                end)
 
-                    ItemIcon:SetCallback("OnLeave", function()
-                        GameTooltip:Hide();
-                    end)
+                ItemIcon:SetCallback("OnLeave", function()
+                    GameTooltip:Hide();
+                end)
 
-                    --[[
-                        BUTTON PADDER
-                        CONTAINER FOR PADDING PURPOSES ONLY
-                    ]]
+                --[[
+                    BUTTON PADDER
+                    CONTAINER FOR PADDING PURPOSES ONLY
+                ]]
 
-                    local ButtonPadder = AceGUI:Create("SimpleGroup");
-                    ButtonPadder:SetLayout("Flow");
-                    ButtonPadder:SetWidth(14);
-                    ButtonPadder:SetHeight(30);
-                    FirstRow:AddChild(ButtonPadder);
+                local ButtonPadder = AceGUI:Create("SimpleGroup");
+                ButtonPadder:SetLayout("Flow");
+                ButtonPadder:SetWidth(14);
+                ButtonPadder:SetHeight(30);
+                FirstRow:AddChild(ButtonPadder);
 
-                    --[[
-                        START/STOP BUTTON
-                    ]]
+                --[[
+                    START/STOP BUTTON
+                ]]
 
-                    local StartButton = AceGUI:Create("Button");
-                    StartButton:SetText("Start");
-                    StartButton:SetWidth(80);
-                    StartButton:SetHeight(20);
-                    StartButton:SetDisabled(true);
-                    StartButton:SetCallback("OnClick", function()
-                        App.RollOff.inProgress = true;
+                local StartButton = AceGUI:Create("Button");
+                StartButton:SetText("Start");
+                StartButton:SetWidth(80);
+                StartButton:SetHeight(20);
+                StartButton:SetDisabled(true);
+                StartButton:SetCallback("OnClick", function()
+                    if (GL.RollOff:announceStart(
+                        MasterLooterUI.UIComponents.EditBoxes.Item:GetText(),
+                        MasterLooterUI.UIComponents.EditBoxes.Timer:GetText(),
+                        MasterLooterUI.UIComponents.EditBoxes.ItemNote:GetText()
+                    )) then
+                        GL.RollOff.inProgress = true;
+                    end;
 
-                        App.RollOff:announceStart(
-                            MasterLooterUI.UIComponents.EditBoxes.Item:GetText(),
-                            MasterLooterUI.UIComponents.EditBoxes.Timer:GetText(),
-                            MasterLooterUI.UIComponents.EditBoxes.ItemNote:GetText()
-                        );
+                    if (Settings:get("UI.RollOff.autoClose")) then
+                        GL.Interface:getItem(self, "Window"):Hide();
+                    end
 
-                        if (Settings:get("UI.RollOff.autoClose")) then
-                            MasterLooterUI.UIComponents.Frame:Hide();
-                        end
+                    MasterLooterUI:updateWidgets();
+                end);
+                FirstRow:AddChild(StartButton);
+                MasterLooterUI.UIComponents.Buttons.StartButton = StartButton;
 
-                        MasterLooterUI:updateWidgets();
-                    end);
-                    FirstRow:AddChild(StartButton);
-                    MasterLooterUI.UIComponents.Buttons.StartButton = StartButton;
+                --[[
+                    STOP BUTTON
+                ]]
 
-                    --[[
-                        STOP BUTTON
-                    ]]
+                local StopButton = AceGUI:Create("Button");
+                StopButton:SetText("Stop");
+                StopButton:SetWidth(80);
+                StopButton:SetHeight(20);
+                StopButton:SetDisabled(true);
+                StopButton:SetCallback("OnClick", function()
+                    GL.RollOff:announceStop();
+                end);
+                FirstRow:AddChild(StopButton);
+                MasterLooterUI.UIComponents.Buttons.StopButton = StopButton;
 
-                    local StopButton = AceGUI:Create("Button");
-                    StopButton:SetText("Stop");
-                    StopButton:SetWidth(80);
-                    StopButton:SetHeight(20);
-                    StopButton:SetDisabled(true);
-                    StopButton:SetCallback("OnClick", function()
-                        App.RollOff:announceStop();
-                    end);
-                    FirstRow:AddChild(StopButton);
-                    MasterLooterUI.UIComponents.Buttons.StopButton = StopButton;
+        --[[
+            SECOND ROW
+        ]]
 
-            --[[
-                SECOND ROW
-            ]]
+        local SecondRow = AceGUI:Create("SimpleGroup");
+        SecondRow:SetLayout("Flow");
+        SecondRow:SetFullWidth(true);
+        SecondRow:SetHeight(20);
+        Window:AddChild(SecondRow);
 
-            local SecondRow = AceGUI:Create("SimpleGroup");
-            SecondRow:SetLayout("Flow");
-            SecondRow:SetFullWidth(true);
-            SecondRow:SetHeight(20);
-            RollOffFrame:AddChild(SecondRow);
+                --[[
+                    SPACER
+                ]]
 
-                    --[[
-                        SPACER
-                    ]]
+                local PreItemNoteLabelSpacer = AceGUI:Create("SimpleGroup");
+                PreItemNoteLabelSpacer:SetLayout("Flow");
+                PreItemNoteLabelSpacer:SetWidth(8);
+                PreItemNoteLabelSpacer:SetHeight(20);
+                SecondRow:AddChild(PreItemNoteLabelSpacer);
 
-                    local PreItemNoteLabelSpacer = AceGUI:Create("SimpleGroup");
-                    PreItemNoteLabelSpacer:SetLayout("Flow");
-                    PreItemNoteLabelSpacer:SetWidth(8);
-                    PreItemNoteLabelSpacer:SetHeight(20);
-                    SecondRow:AddChild(PreItemNoteLabelSpacer);
+                --[[
+                    ITEM NOTE LABEL
+                ]]
 
-                    --[[
-                        ITEM NOTE LABEL
-                    ]]
+                local ItemNoteLabel = AceGUI:Create("Label");
+                ItemNoteLabel:SetText("NOTE");
+                ItemNoteLabel:SetHeight(20);
+                ItemNoteLabel:SetWidth(35);
+                SecondRow:AddChild(ItemNoteLabel);
+                MasterLooterUI.UIComponents.EditBoxes.ItemNoteLabel = ItemNoteLabel;
 
-                    local ItemNoteLabel = AceGUI:Create("Label");
-                    ItemNoteLabel:SetText("NOTE");
-                    ItemNoteLabel:SetHeight(20);
-                    ItemNoteLabel:SetWidth(35);
-                    SecondRow:AddChild(ItemNoteLabel);
-                    MasterLooterUI.UIComponents.EditBoxes.ItemNoteLabel = ItemNoteLabel;
+                --[[
+                    ITEM NOTE
+                ]]
 
-                    --[[
-                        ITEM NOTE
-                    ]]
+                local ItemNote = AceGUI:Create("EditBox");
+                ItemNote:DisableButton(true);
+                ItemNote:SetHeight(20);
+                ItemNote:SetWidth(340);
+                SecondRow:AddChild(ItemNote);
+                MasterLooterUI.UIComponents.EditBoxes.ItemNote = ItemNote;
 
-                    local ItemNote = AceGUI:Create("EditBox");
-                    ItemNote:DisableButton(true);
-                    ItemNote:SetHeight(20);
-                    ItemNote:SetWidth(340);
-                    SecondRow:AddChild(ItemNote);
-                    MasterLooterUI.UIComponents.EditBoxes.ItemNote = ItemNote;
+        --[[
+            THID ROW (ROLL TIMER)
+        ]]
 
-            --[[
-                THID ROW (ROLL TIMER)
-            ]]
+        local ThirdRow = AceGUI:Create("SimpleGroup");
+        ThirdRow:SetLayout("Flow");
+        ThirdRow:SetFullWidth(true);
+        ThirdRow:SetHeight(20);
+        Window:AddChild(ThirdRow);
 
-            local ThirdRow = AceGUI:Create("SimpleGroup");
-            ThirdRow:SetLayout("Flow");
-            ThirdRow:SetFullWidth(true);
-            ThirdRow:SetHeight(20);
-            RollOffFrame:AddChild(ThirdRow);
+                --[[
+                    SPACER
+                ]]
 
-                    --[[
-                        SPACER
-                    ]]
+                local PreTimerLabelSpacer = AceGUI:Create("SimpleGroup");
+                PreTimerLabelSpacer:SetLayout("Flow");
+                PreTimerLabelSpacer:SetWidth(8);
+                PreTimerLabelSpacer:SetHeight(20);
+                ThirdRow:AddChild(PreTimerLabelSpacer);
 
-                    local PreTimerLabelSpacer = AceGUI:Create("SimpleGroup");
-                    PreTimerLabelSpacer:SetLayout("Flow");
-                    PreTimerLabelSpacer:SetWidth(8);
-                    PreTimerLabelSpacer:SetHeight(20);
-                    ThirdRow:AddChild(PreTimerLabelSpacer);
+                --[[
+                    TIMER LABEL
+                ]]
 
-                    --[[
-                        TIMER LABEL
-                    ]]
+                local TimerLabel = AceGUI:Create("Label");
+                TimerLabel:SetText("TIMER (s)");
+                TimerLabel:SetHeight(20);
+                TimerLabel:SetWidth(55);
+                ThirdRow:AddChild(TimerLabel);
+                MasterLooterUI.UIComponents.Labels.TimerLabel = TimerLabel;
 
-                    local TimerLabel = AceGUI:Create("Label");
-                    TimerLabel:SetText("TIMER (s)");
-                    TimerLabel:SetHeight(20);
-                    TimerLabel:SetWidth(55);
-                    ThirdRow:AddChild(TimerLabel);
-                    MasterLooterUI.UIComponents.Labels.TimerLabel = TimerLabel;
+                --[[
+                    TIMER TEXTBOX
+                ]]
 
-                    --[[
-                        TIMER TEXTBOX
-                    ]]
+                local TimerBox = AceGUI:Create("EditBox");
+                TimerBox:DisableButton(true);
+                TimerBox:SetHeight(20);
+                TimerBox:SetWidth(40);
+                TimerBox:SetText(Settings:get("UI.RollOff.timer", 15));
+                ThirdRow:AddChild(TimerBox);
+                MasterLooterUI.UIComponents.EditBoxes.Timer = TimerBox;
 
-                    local TimerBox = AceGUI:Create("EditBox");
-                    TimerBox:DisableButton(true);
-                    TimerBox:SetHeight(20);
-                    TimerBox:SetWidth(40);
-                    TimerBox:SetText(Settings:get("UI.RollOff.timer"));
-                    ThirdRow:AddChild(TimerBox);
-                    MasterLooterUI.UIComponents.EditBoxes.Timer = TimerBox;
+                --[[
+                    SPACER
+                ]]
 
-                    --[[
-                        SPACER
-                    ]]
+                local TimerAndAwardSpacer = AceGUI:Create("SimpleGroup");
+                TimerAndAwardSpacer:SetLayout("Flow");
+                TimerAndAwardSpacer:SetWidth(20);
+                TimerAndAwardSpacer:SetHeight(30);
+                ThirdRow:AddChild(TimerAndAwardSpacer);
 
-                    local TimerAndAwardSpacer = AceGUI:Create("SimpleGroup");
-                    TimerAndAwardSpacer:SetLayout("Flow");
-                    TimerAndAwardSpacer:SetWidth(20);
-                    TimerAndAwardSpacer:SetHeight(30);
-                    ThirdRow:AddChild(TimerAndAwardSpacer);
+                --[[
+                    RESET BUTTON
+                ]]
+                local ClearButton = AceGUI:Create("Button");
+                ClearButton:SetText("Clear");
+                ClearButton:SetWidth(66);
+                ClearButton:SetHeight(20);
+                ClearButton:SetDisabled(false);
+                ClearButton:SetCallback("OnClick", function()
+                    MasterLooterUI:reset();
+                    GL.RollOff:reset();
+                end);
+                ThirdRow:AddChild(ClearButton);
+                MasterLooterUI.UIComponents.Buttons.ClearButton = ClearButton;
 
-                    --[[
-                        RESET BUTTON
-                    ]]
-                    local ClearButton = AceGUI:Create("Button");
-                    ClearButton:SetText("Clear");
-                    ClearButton:SetWidth(66);
-                    ClearButton:SetHeight(20);
-                    ClearButton:SetDisabled(false);
-                    ClearButton:SetCallback("OnClick", function()
-                        MasterLooterUI:reset();
-                    end);
-                    ThirdRow:AddChild(ClearButton);
-                    MasterLooterUI.UIComponents.Buttons.ClearButton = ClearButton;
+                --[[
+                    AWARD BUTTON
+                ]]
 
-                    --[[
-                        AWARD BUTTON
-                    ]]
+                local AwardButton = AceGUI:Create("Button");
+                AwardButton:SetText("Award");
+                AwardButton:SetWidth(70);
+                AwardButton:SetHeight(20);
+                AwardButton:SetDisabled(true);
+                AwardButton:SetCallback("OnClick", function()
+                    local PlayersTable = MasterLooterUI.UIComponents.Tables.Players;
+                    local selected = PlayersTable:GetRow(PlayersTable:GetSelection());
 
-                    local AwardButton = AceGUI:Create("Button");
-                    AwardButton:SetText("Award");
-                    AwardButton:SetWidth(70);
-                    AwardButton:SetHeight(20);
-                    AwardButton:SetDisabled(true);
-                    AwardButton:SetCallback("OnClick", function()
-                        local PlayersTable = MasterLooterUI.UIComponents.Tables.Players;
-                        local selected = PlayersTable:GetRow(PlayersTable:GetSelection());
+                    if (not selected
+                        or not type(selected) == "table"
+                    ) then
+                        return GL:warning("You need to select a player first");
+                    end
 
-                        if (not selected
-                            or not type(selected) == "table"
-                        ) then
-                            return Utils:warning("You need to select a player first");
-                        end
+                    return GL.RollOff:award(selected.cols[1].value, MasterLooterUI.UIComponents.EditBoxes.Item:GetText());
+                end);
+                ThirdRow:AddChild(AwardButton);
+                MasterLooterUI.UIComponents.Buttons.AwardButton = AwardButton;
 
-                        return App.RollOff:award(selected.cols[1].value, MasterLooterUI.UIComponents.EditBoxes.Item:GetText());
-                    end);
-                    ThirdRow:AddChild(AwardButton);
-                    MasterLooterUI.UIComponents.Buttons.AwardButton = AwardButton;
+        --[[
+            FOURTH ROW (GROUP MEMBERS)
+        ]]
 
-            --[[
-                FOURTH ROW (GROUP MEMBERS)
-            ]]
+        local FourthRow = AceGUI:Create("SimpleGroup");
+        FourthRow:SetLayout("Flow");
+        FourthRow:SetFullWidth(true);
+        FourthRow:SetHeight(50);
+        Window:AddChild(FourthRow);
 
-            local FourthRow = AceGUI:Create("SimpleGroup");
-            FourthRow:SetLayout("Flow");
-            FourthRow:SetFullWidth(true);
-            FourthRow:SetHeight(50);
-            RollOffFrame:AddChild(FourthRow);
+        MasterLooterUI:drawPlayersTable(Window.frame);
 
-            MasterLooterUI:drawPlayersTable(RollOffFrame.frame);
+        --[[
+            FIFTH ROW (AUTO CLOSE CHECKBOX)
+        ]]
 
-            --[[
-                FIFTH ROW (AUTO CLOSE CHECKBOX)
-            ]]
+        local FifthRow = AceGUI:Create("SimpleGroup");
+        FifthRow:SetLayout("Flow");
+        FifthRow:SetFullWidth(true);
+        FifthRow:SetHeight(20);
+        Window:AddChild(FifthRow);
 
-            local FifthRow = AceGUI:Create("SimpleGroup");
-            FifthRow:SetLayout("Flow");
-            FifthRow:SetFullWidth(true);
-            FifthRow:SetHeight(20);
-            RollOffFrame:AddChild(FifthRow);
+        local Spacer = AceGUI:Create("SimpleGroup");
+        Spacer:SetLayout("Flow");
+        Spacer:SetWidth(1);
+        Spacer:SetHeight(348);
+        FifthRow:AddChild(Spacer);
 
-            local Spacer = AceGUI:Create("SimpleGroup");
-            Spacer:SetLayout("Flow");
-            Spacer:SetWidth(1);
-            Spacer:SetHeight(348);
-            FifthRow:AddChild(Spacer);
-
-            local EnableAutoClose = AceGUI:Create("CheckBox");
-            EnableAutoClose:SetLabel("Close this window when roll starts");
-            EnableAutoClose:SetValue(Settings:get("UI.RollOff.autoClose", false));
-            EnableAutoClose:SetCallback("OnValueChanged", function (widget)
-                Settings:set("UI.RollOff.autoClose", widget:GetValue());
-            end);
-            EnableAutoClose:SetWidth(300);
-            FifthRow:AddChild(EnableAutoClose);
-
-
+        local EnableAutoClose = AceGUI:Create("CheckBox");
+        EnableAutoClose:SetLabel("Close this window when roll starts");
+        EnableAutoClose:SetValue(Settings:get("UI.RollOff.autoClose", false));
+        EnableAutoClose:SetCallback("OnValueChanged", function (widget)
+            Settings:set("UI.RollOff.autoClose", widget:GetValue());
+        end);
+        EnableAutoClose:SetWidth(300);
+        FifthRow:AddChild(EnableAutoClose);
 
     if (itemLink
         and type(itemLink) == "string"
@@ -370,33 +366,20 @@ function MasterLooterUI:draw(itemLink)
     end
 end
 
-function MasterLooterUI:close(Frame)
-    Utils:debug("MasterLooterUI:close");
-
-    local point, _, relativePoint, offsetX, offsetY = Frame:GetPoint();
-
-    -- Store the frame's last position for future play sessions
-    Settings:set("UI.RollOff.Position.point", point);
-    Settings:set("UI.RollOff.Position.relativePoint", relativePoint);
-    Settings:set("UI.RollOff.Position.offsetX", offsetX);
-    Settings:set("UI.RollOff.Position.offsetY", offsetY);
+function MasterLooterUI:close()
+    GL:debug("MasterLooterUI:close");
 
     -- When the master looter closes the master loot window with a master
     -- loot still in progress we show the reopen master looter button
-    local timerIterations = 1;
-    if (App.RollOff.inProgress) then
-        local timerId;
-        timerId = App.Ace:ScheduleRepeatingTimer(function ()
-            if (timerIterations >= 25
-                or App.RollOff.CurrentRollOff.itemIcon
-            ) then
-                self:drawReopenMasterLooterUIButton();
-                App.Ace:CancelTimer(timerId);
-                timerId = false;
-            end
+    if (GL.RollOff.inProgress) then
+        self:drawReopenMasterLooterUIButton();
+    end
 
-            timerIterations = timerIterations + 1;
-        end, .1);
+    local Window = GL.Interface:getItem(self, "Window");
+    if (Window) then
+        -- Store the frame's last position for future play sessions
+        GL.Interface:storePosition(Window, "RollOff");
+        Window:Hide();
     end
 end
 
@@ -404,28 +387,22 @@ end
 -- master looter window when it's closed with a roll in progress
 -- This is very common in hectic situations where the master looter has to participate in combat f.e.
 function MasterLooterUI:drawReopenMasterLooterUIButton()
-    Utils:debug("MasterLooterUI:drawReopenMasterLooterUIButton");
+    GL:debug("MasterLooterUI:drawReopenMasterLooterUIButton");
 
-    local texture = App.RollOff.CurrentRollOff.itemIcon or "Interface\\Icons\\INV_Misc_QuestionMark";
+    local Button = GL.Interface:getItem(self, "Frame.OpenMasterLooterButton");
 
-    if (self.UIComponents.ReopenMasterLooterButtonIcon) then
-        self.UIComponents.ReopenMasterLooterButtonIcon:Show();
+    if (Button) then
+        Button:SetNormalTexture(GL.RollOff.CurrentRollOff.itemIcon or "Interface\\Icons\\INV_Misc_QuestionMark");
+        Button:Show();
         return;
     end
 
-    self.UIComponents.Buttons.ReopenMasterLooterButton = UI:createFrame("Button", "ReopenMasterLooterButton", nil, Frame);
-    local Button = self.UIComponents.Buttons.ReopenMasterLooterButton;
-
+    local texture = GL.RollOff.CurrentRollOff.itemIcon or "Interface\\Icons\\INV_Misc_QuestionMark";
+    Button = CreateFrame("Button", "ReopenMasterLooterButton", UIParent, Frame);
     Button:SetSize(44, 44);
     Button:SetNormalTexture(texture);
     Button:SetText("text");
-    Button:SetPoint(
-        Settings:get("UI.ReopenMasterLooterUIButton.Position.point"),
-        UIParent,
-        Settings:get("UI.ReopenMasterLooterUIButton.Position.relativePoint"),
-        Settings:get("UI.ReopenMasterLooterUIButton.Position.offsetX"),
-        Settings:get("UI.ReopenMasterLooterUIButton.Position.offsetY")
-    );
+    Button:SetPoint(GL.Interface:getPosition("ReopenMasterLooterUIButton"));
 
     Button:SetMovable(true);
     Button:EnableMouse(true);
@@ -435,13 +412,9 @@ function MasterLooterUI:drawReopenMasterLooterUIButton()
     Button:SetScript("OnDragStart", Button.StartMoving);
     Button:SetScript("OnDragStop", function()
         Button:StopMovingOrSizing();
-        local point, _, relativePoint, offsetX, offsetY = Button:GetPoint();
 
         -- Store the frame's last position for future play sessions
-        Settings:set("UI.ReopenMasterLooterUIButton.Position.point", point);
-        Settings:set("UI.ReopenMasterLooterUIButton.Position.relativePoint", relativePoint);
-        Settings:set("UI.ReopenMasterLooterUIButton.Position.offsetX", offsetX);
-        Settings:set("UI.ReopenMasterLooterUIButton.Position.offsetY", offsetY);
+        GL.Interface:storePosition(Button, "ReopenMasterLooterUIButton");
     end);
 
     local ButtonBackground = Button:CreateTexture(nil, "BACKGROUND");
@@ -473,10 +446,12 @@ function MasterLooterUI:drawReopenMasterLooterUIButton()
     Button:SetScript("OnLeave", function()
         GameTooltip:Hide();
     end);
+
+    GL.Interface:setItem(self, "OpenMasterLooterButton", Button);
 end
 
 function MasterLooterUI:drawPlayersTable(parent)
-    Utils:debug("MasterLooterUI:drawPlayersTable");
+    GL:debug("MasterLooterUI:drawPlayersTable");
 
     -- Combined width of all colums should be 340
     local columns = {
@@ -503,7 +478,7 @@ function MasterLooterUI:drawPlayersTable(parent)
                 a = 1.0
             },
             colorargs = nil,
-            sort = App.Data.Constants.ScrollingTable.descending,
+            sort = GL.Data.Constants.ScrollingTable.descending,
         },
         {
             name = " ",
@@ -516,7 +491,7 @@ function MasterLooterUI:drawPlayersTable(parent)
                 a = 1.0
             },
             colorargs = nil,
-            sort = App.Data.Constants.ScrollingTable.descending,
+            sort = GL.Data.Constants.ScrollingTable.descending,
         },
     };
 
@@ -528,7 +503,7 @@ end
 
 -- The item box contents changed
 function MasterLooterUI:ItemBoxChanged()
-    Utils:debug("MasterLooterUI:ItemBoxChanged");
+    GL:debug("MasterLooterUI:ItemBoxChanged");
 
     local itemLink = MasterLooterUI.UIComponents.EditBoxes.Item:GetText();
 
@@ -539,14 +514,14 @@ end
 -- This method is used when alt clicking an item
 -- in a loot window or when executing /gl roll [itemlink]
 function MasterLooterUI:passItemLink(itemLink)
-    Utils:debug("MasterLooterUI:passItemLink");
+    GL:debug("MasterLooterUI:passItemLink");
 
-    if (not MasterLooterUI.UIComponents.Frame.rendered) then
+    if (not GL.Interface:getItem(self, "Window")) then
         return;
     end
 
-    if (App.RollOff.inProgress) then
-        return Utils:warning("A roll is currently in progress");
+    if (GL.RollOff.inProgress) then
+        return GL:warning("A roll is currently in progress");
     end
 
     MasterLooterUI.UIComponents.EditBoxes.Item:SetText(itemLink);
@@ -555,7 +530,7 @@ end
 
 -- Update the master looter UI based on the value of the ItemBox input
 function MasterLooterUI:update()
-    Utils:debug("MasterLooterUI:update");
+    GL:debug("MasterLooterUI:update");
 
     local IconWidget = MasterLooterUI.UIComponents.Icons.Item;
     local itemLink = MasterLooterUI.UIComponents.EditBoxes.Item:GetText();
@@ -564,7 +539,7 @@ function MasterLooterUI:update()
     --   Show the default question mark icon
     --   Remove the item priority string
     if (not itemLink or itemLink == "") then
-        Utils:debug("MasterLooterUI:update. Item link is invalid");
+        GL:debug("MasterLooterUI:update. Item link is invalid");
 
         MasterLooterUI.ItemBoxHoldsValidItem = false;
         IconWidget:SetImage(MasterLooterUI.Defaults.itemIcon);
@@ -578,7 +553,7 @@ function MasterLooterUI:update()
     local icon = select(10, GetItemInfo(itemLink));
 
     if (icon) then
-        -- TODO: Reset players / roll table
+        ---@todo Reset players / roll table
         MasterLooterUI.UIComponents.Tables.Players:ClearSelection();
 
         IconWidget:SetImage(icon);
@@ -594,7 +569,7 @@ end
 
 -- Update the item priority string
 function MasterLooterUI:updateItemNote()
-    Utils:debug("MasterLooterUI:updateItemNote");
+    GL:debug("MasterLooterUI:updateItemNote");
 
     local ItemNote = MasterLooterUI.UIComponents.EditBoxes.ItemNote;
     local itemLink = MasterLooterUI.UIComponents.EditBoxes.Item:GetText();
@@ -604,7 +579,7 @@ function MasterLooterUI:updateItemNote()
         return ItemNote:SetText("");
     end
 
-    local itemPriority = App.LootPriority:getPriority(itemLink);
+    local itemPriority = GL.LootPriority:getPriority(itemLink);
 
     -- If there is no item priority then label the item with "Off spec"
     if (not itemPriority) then
@@ -618,7 +593,7 @@ end
 
 -- Reset the roll off UI to its defaults
 function MasterLooterUI:reset()
-    Utils:debug("MasterLooterUI:reset");
+    GL:debug("MasterLooterUI:reset");
 
     MasterLooterUI.UIComponents.Icons.Item:SetImage(MasterLooterUI.Defaults.itemIcon);
     MasterLooterUI.UIComponents.EditBoxes.Item:SetText(MasterLooterUI.Defaults.itemText);
@@ -635,14 +610,14 @@ end
 
 -- Update the widgets based on the current state of the roll off
 function MasterLooterUI:updateWidgets()
-    Utils:debug("MasterLooterUI:updateWidgets");
+    GL:debug("MasterLooterUI:updateWidgets");
 
     -- If the itembox doesn't hold a valid item link then:
     --   The start button should not be available
     --   The stop button should be available
     --   The item box should be available
     if (not MasterLooterUI.ItemBoxHoldsValidItem
-        or not App.User.isInGroup
+        or not GL.User.isInGroup
     ) then
         MasterLooterUI.UIComponents.Buttons.StartButton:SetDisabled(true);
         MasterLooterUI.UIComponents.Buttons.StopButton:SetDisabled(true);
@@ -659,7 +634,7 @@ function MasterLooterUI:updateWidgets()
     --   The award button should not be available
     --   The clear button should not be available
     --   The item box should be available so we can enter an item link
-    if (not App.RollOff.inProgress) then
+    if (not GL.RollOff.inProgress) then
         MasterLooterUI.UIComponents.Buttons.StartButton:SetDisabled(false);
         MasterLooterUI.UIComponents.Buttons.StopButton:SetDisabled(true);
         MasterLooterUI.UIComponents.Buttons.AwardButton:SetDisabled(false);
@@ -681,4 +656,4 @@ function MasterLooterUI:updateWidgets()
     end
 end
 
-Utils:debug("MasterLooterUI.lua");
+GL:debug("MasterLooterUI.lua");

@@ -1,9 +1,9 @@
-local _, App = ...;
+local _, GL = ...;
 
-App.Ace.GUI = App.Ace.GUI or LibStub("AceGUI-3.0");
-App.Ace.ScrollingTable = App.Ace.ScrollingTable or LibStub("ScrollingTable");
+GL.AceGUI = GL.AceGUI or LibStub("AceGUI-3.0");
+GL.ScrollingTable = GL.ScrollingTable or LibStub("ScrollingTable");
 
-App.BagInspector = {
+GL.BagInspector = {
     InspectionReport = {
         Items = {},
         Reports = {},
@@ -12,11 +12,10 @@ App.BagInspector = {
     inspectionInProgress = false,
 };
 
-local Utils = App.Utils;
-local AceGUI = App.Ace.GUI;
-local BagInspector = App.BagInspector;
-local ScrollingTable = App.Ace.ScrollingTable;
-local CommActions = App.Data.Constants.Comm.Actions;
+local AceGUI = GL.AceGUI;
+local BagInspector = GL.BagInspector;
+local ScrollingTable = GL.ScrollingTable;
+local CommActions = GL.Data.Constants.Comm.Actions;
 
 BagInspector.Widgets = {
     Frame = {},
@@ -30,38 +29,38 @@ BagInspector.Widgets = {
 -- Inspect the raid group's bag contents for the
 -- availability of specific items (max 8)
 function BagInspector:inspect(items)
-    Utils:debug("BagInspector:inspect");
+    GL:debug("BagInspector:inspect");
 
-    if (not App.User.isInGroup) then
-        return Utils:error("You're not in a group");
+    if (not GL.User.isInGroup) then
+        return GL:error("You're not in a group");
     end
 
     -- Only raid leader/assists or master
     -- looters can use this functionality
     if (not UnitIsGroupAssistant("player")
         and not UnitIsGroupLeader("player")
-        and not App.User.isMasterLooter
+        and not GL.User.isMasterLooter
     ) then
-        return Utils:error("You need lead, assist or master looter privileges to use this functionality");
+        return GL:error("You need lead, assist or master looter privileges to use this functionality");
     end
 
     -- This ensures that the item exists and that
     -- all of its info is available
-    items = Utils:strSplit(items, ",");
-    items = Utils:tableSlice(items, 8); -- inspect supports up to 8 items
+    items = GL:strSplit(items, ",");
+    items = GL:tableSlice(items, 8); -- inspect supports up to 8 items
     BagInspector.inspectionInProgress = true;
 
     -- Send the inspection request to the correct channel
     local CommMessage = {};
-    Utils:success("Starting inspection...");
-    if (App.User.isInRaid) then
-        CommMessage = App.CommMessage.new(
+    GL:success("Starting inspection...");
+    if (GL.User.isInRaid) then
+        CommMessage = GL.CommMessage.new(
             CommActions.inspectBags,
             items,
             "RAID"
         ):send();
     else
-        CommMessage = App.CommMessage.new(
+        CommMessage = GL.CommMessage.new(
             CommActions.inspectBags,
             items,
             "PARTY"
@@ -69,8 +68,8 @@ function BagInspector:inspect(items)
     end
 
     -- After a period of X seconds inspect the results
-    App.Ace:ScheduleTimer(function ()
-        Utils:success("Inspection finished");
+    GL.Ace:ScheduleTimer(function ()
+        GL:success("Inspection finished");
         BagInspector.inspectionInProgress = false;
 
         BagInspector:processInspectionResults(CommMessage);
@@ -79,7 +78,7 @@ end
 
 -- Someone requested an item count, report back!
 function BagInspector:report(CommMessage)
-    Utils:debug("BagInspector:report");
+    GL:debug("BagInspector:report");
 
     local Items = CommMessage.content;
     local Report = {};
@@ -95,7 +94,7 @@ end
 -- Loop through all the inspection
 -- responses and process them
 function BagInspector:processInspectionResults(CommMessage)
-    Utils:debug("BagInspector:processInspectionResults");
+    GL:debug("BagInspector:processInspectionResults");
 
     local ItemIds = {};
     local ItemLinksById = {};
@@ -116,7 +115,7 @@ function BagInspector:processInspectionResults(CommMessage)
             ) then
                 responseWasValid = true;
                 ItemIds[itemId] = true;
-                Utils:tableSet(BagInspector.InspectionReport.Reports, senderName .. "." .. itemId, amount);
+                GL:tableSet(BagInspector.InspectionReport.Reports, senderName .. "." .. itemId, amount);
             end
         end
 
@@ -130,7 +129,7 @@ function BagInspector:processInspectionResults(CommMessage)
     -- their item links have been successfully loaded by the API
     local displayInspectionReport = function ()
         if (numberOfResponses < 1) then
-            return Utils:error("Bag inspection failed: no reports received");
+            return GL:error("Bag inspection failed: no reports received");
         end
 
         BagInspector:displayInspectionResults(ItemIds, ItemLinksById);
@@ -143,7 +142,7 @@ function BagInspector:processInspectionResults(CommMessage)
 
     local itemsLoaded = 0;
     for itemId in pairs(ItemIds) do
-        local item = Item:CreateFromItemID(itemId)
+        local item = Item:CreateFromItemID(itemId);
 
         item:ContinueOnItemLoad(function()
             itemsLoaded = itemsLoaded + 1;
@@ -164,24 +163,24 @@ end
 
 -- Display the report results from a group-wide bag inspection
 function BagInspector:displayInspectionResults()
-    Utils:debug("BagInspector:displayInspectionResults");
+    GL:debug("BagInspector:displayInspectionResults");
 
     -- Create a container/parent frame
     local ResultFrame = AceGUI:Create("Frame");
     ResultFrame:SetCallback("OnClose", function(widget)
-        Utils:clearScrollTable(BagInspector.Widgets.Tables.InspectionReport);
+        GL:clearScrollTable(BagInspector.Widgets.Tables.InspectionReport);
 
-        App.BagInspector.InspectionReport = {
+        GL.BagInspector.InspectionReport = {
             Items = {},
             Reports = {},
             NumberOfItemsInspected = 0,
         };
-        App.BagInspector.inspectionInProgress = false;
+        GL.BagInspector.inspectionInProgress = false;
 
         AceGUI:Release(widget);
     end);
-    ResultFrame:SetTitle(App.name .. " v" .. App.version);
-    ResultFrame:SetStatusText("Addon v" .. App.version);
+    ResultFrame:SetTitle("Gargul v" .. GL.version);
+    ResultFrame:SetStatusText("Addon v" .. GL.version);
     ResultFrame:SetLayout("Flow");
     ResultFrame:SetWidth(600);
     ResultFrame:SetHeight(450);
@@ -252,7 +251,7 @@ function BagInspector:displayInspectionResults()
                 a = 1.0
             },
             colorargs = nil,
-            sort = App.Data.Constants.ScrollingTable.ascending,
+            sort = GL.Data.Constants.ScrollingTable.ascending,
         },
     };
 
@@ -277,9 +276,8 @@ function BagInspector:displayInspectionResults()
         });
     end
 
-    -- Loop through all members of the group (party or raid)
+    -- Loop through all members of the group
     local PlayerData = {};
-    local ClassColors = App.Data.Constants.ClassRgbColors;
     for index = 1, _G.MAX_RAID_MEMBERS do
         local name, _, _, _, class = GetRaidRosterInfo(index);
         local Row = {};
@@ -291,7 +289,7 @@ function BagInspector:displayInspectionResults()
                 cols = {
                     {
                         value = name,
-                        color = ClassColors[string.lower(class)],
+                        color = GL:classRGBAColor(class),
                     },
                 },
             };
@@ -305,7 +303,7 @@ function BagInspector:displayInspectionResults()
 
                     tinsert(Row.cols, {
                         value = amount,
-                        color = ClassColors[string.lower(class)],
+                        color = GL:classRGBAColor(class),
                     });
                 end
             end
@@ -323,4 +321,4 @@ function BagInspector:displayInspectionResults()
     BagInspector.Widgets.Tables.InspectionReport = table;
 end
 
-Utils:debug("BagInspector.lua");
+GL:debug("BagInspector.lua");

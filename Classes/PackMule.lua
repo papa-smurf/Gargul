@@ -3,47 +3,49 @@
     The pack mules (player) will automatically receive all items
     that they're eligible for according to the rules as set up by the ML
 ]]
-local _, App = ...;
+local _, GL = ...;
 
-App.PackMule = {
+GL.PackMule = {
     _initialized = false,
     processing = false,
     Rules = {},
     setupWindowIsActive = false,
 };
 
-local Utils = App.Utils;
-local AceGUI = App.Ace.GUI;
-local PackMule = App.PackMule;
-local Settings = App.Settings;
+local PackMule = GL.PackMule;
+local Settings = GL.Settings;
 
 function PackMule:_init()
-    Utils:debug("PackMule:_init");
+    GL:debug("PackMule:_init");
 
     -- No need to initialize this class twice
     if (self._initialized) then
         return;
     end
 
-    -- Disable packmule if the "perist after reload" setting is not enabled
+    -- Disable packmule if the "persist after reload" setting is not enabled
+    -- This piece of logic is only run once on boot/reload hence why this works
     if (not Settings:get("PackMule.persistsAfterReload")
         and Settings:get("PackMule.enabled")
     ) then
-        Utils:warning("PackMule was automatically disabled after reload");
+        GL:warning("PackMule was automatically disabled after reload");
         Settings:set("PackMule.enabled", false);
     end
 
     self.Rules = Settings:get("PackMule.Rules");
 
-    App.Events:register("PackMuleZoneChangeListener", "ZONE_CHANGED_NEW_AREA", self.zoneChanged);
+    GL.Events:register("PackMuleZoneChangeListener", "ZONE_CHANGED_NEW_AREA", self.zoneChanged);
 
-    App.Events:register("DroppedLootLootReadyListener", "LOOT_READY", function ()
+    GL.Events:register("PackMuleLootLootReadyListener", "LOOT_READY", function ()
         if (self.timerId) then
-            App.Ace:CancelTimer(self.timerId);
+            GL.Ace:CancelTimer(self.timerId);
             self.timerId = false;
         end
 
-        if (not Settings:get("PackMule.enabled")) then
+        -- Do nothing if packmule is not enabled or the user holds the shift key
+        if (not Settings:get("PackMule.enabled")
+            or IsShiftKeyDown()
+        ) then
             return;
         end
 
@@ -52,15 +54,15 @@ function PackMule:_init()
         -- Quick loot is enabled for items
         -- There was money in the loot window
         -- The player has another weak aura or addon that distributes specific items
-        self.timerId = App.Ace:ScheduleRepeatingTimer(function ()
+        self.timerId = GL.Ace:ScheduleRepeatingTimer(function ()
             self:lootReady();
         end, .2);
     end);
 
     -- Make sure we stop checking the loot window after the player is done looting
-    App.Events:register("DroppedLootLootClosedListener", "LOOT_CLOSED", function ()
+    GL.Events:register("PackMuleLootClosedListener", "LOOT_CLOSED", function ()
         if (self.timerId) then
-            App.Ace:CancelTimer(self.timerId);
+            GL.Ace:CancelTimer(self.timerId);
             self.timerId = false;
         end
     end);
@@ -70,20 +72,20 @@ end
 
 -- Disable PackMule after a zone switch, unless enabled in settings
 function PackMule:zoneChanged()
-    Utils:debug("PackMule:zoneChanged");
+    GL:debug("PackMule:zoneChanged");
 
-    -- Disable packmule if the "perist after reload" setting is not enabled
+    -- Disable packmule if the "persist after reload" setting is not enabled
     if (not Settings:get("PackMule.persistsAfterZoneChange")
         and Settings:get("PackMule.enabled")
     ) then
-        Utils:warning("PackMule was automatically disabled after zone change");
+        GL:warning("PackMule was automatically disabled after zone change");
         Settings:set("PackMule.enabled", false);
     end
 end
 
 -- Check all loot and implement applicable rules
 function PackMule:lootReady()
-    Utils:debug("PackMule:lootReady");
+    GL:debug("PackMule:lootReady");
 
     self = PackMule;
 
@@ -94,8 +96,8 @@ function PackMule:lootReady()
     end
 
     if (not self.Rules
-        or not App.User.isInRaid
-        or not App.User.isMasterLooter
+        or not GL.User.isInGroup
+        or not GL.User.isMasterLooter
     ) then
         self.processing = false;
         return;
@@ -103,7 +105,7 @@ function PackMule:lootReady()
 
     -- Make sure we only use valid rules
     local ValidRules = {};
-    for key, Rule in pairs(self.Rules) do
+    for _, Rule in pairs(self.Rules) do
         if (self:ruleIsValid(Rule)) then
             tinsert(ValidRules, Rule);
         end
@@ -122,36 +124,51 @@ function PackMule:lootReady()
 
         -- If the item is locked or doesn't have an item link (money or other currency) then we can safely skip it
         if (not locked and itemLink) then
-            for key, Rule in pairs(ValidRules) do
+            for _, Entry in pairs(ValidRules) do
                 -- This is useful to see in which order rules are being handled
-                Utils:debug(string.format(
+                GL:debug(string.format(
                     "Item: %s\nOperator: %s\nQuality: %s\nTarget: %s",
-                    Rule.item or "",
-                    Rule.quality or "",
-                    Rule.operator or "",
-                    Rule.target or ""
+                    Entry.item or "",
+                    Entry.quality or "",
+                    Entry.operator or "",
+                    Entry.target or ""
                 ));
 
-                local ruleApplies = false;
-                local target = tostring(Rule.target or "");
-                local quality = tonumber(Rule.quality or "");
-                local operator = tostring(Rule.operator or "");
+                local item = Entry.item or "";
+                local target = tostring(Entry.target or "");
+                local quality = tonumber(Entry.quality or "");
+                local operator = tostring(Entry.operator or "");
+
+                -- SELF serves as a placeholder for the current player name
+                if (target == "SELF") then
+                    target = GL.User.name;
+                end
+
+                -- The potential target replacement above requires us
+                -- To make a local copy of the current Rule entry
+                local Rule = {
+                    item = item,
+                    target = target,
+                    quality = quality,
+                    operator = operator,
+                }
 
                 if (itemQuality and quality and operator and target and (
                     (operator == "=" and itemQuality == quality)
                     or (operator == ">" and itemQuality > quality)
                     or (operator == "<" and itemQuality < quality)
                 )) then
+
                     -- Non-tradeable items will only be handed out if there's a specific rule for it
-                    if (Utils:inArray(App.Data.Constants.UntradeableItems, itemName)) then
-                        Utils:warning(string.format(
+                    if (GL:inTable(GL.Data.Constants.UntradeableItems, itemName)) then
+                        GL:warning(string.format(
                             "%s can not be traded after pickup and will not be handed out based on quality alone",
                             itemName
                         ));
                     else
                         RuleThatApplies = Rule;
                     end
-                elseif (Rule.item and Rule.item == itemName) then
+                elseif (item and item == itemName) then
                     -- We found an item-specific rule, we can stop checking now
                     RuleThatApplies = Rule;
                     break;
@@ -175,7 +192,7 @@ end
 
 -- Empty the ruleset
 function PackMule:resetRules()
-    Utils:debug("PackMule:resetRules");
+    GL:debug("PackMule:resetRules");
 
     self.Rules = {};
     Settings:set("PackMule.Rules", self.Rules);
@@ -183,7 +200,7 @@ end
 
 -- Add a rule to the ruleset
 function PackMule:addRule(Rule)
-    Utils:debug("PackMule:addRule");
+    GL:debug("PackMule:addRule");
 
     if (self:ruleIsValid(Rule)) then
         tinsert(self.Rules, Rule);
@@ -193,7 +210,7 @@ end
 
 -- Check if a given rule is valid
 function PackMule:ruleIsValid(Rule)
-    Utils:debug("PackMule:ruleIsValid");
+    GL:debug("PackMule:ruleIsValid");
 
     -- Every rule must have a target (who to give the item to)
     if (not Rule.target
@@ -206,7 +223,7 @@ function PackMule:ruleIsValid(Rule)
     -- If there's an operator then it has to be valid and there has to be a quality
     if (Rule.operator
         and (
-            not Utils:inArray({"=", "<", ">"}, Rule.operator)
+            not GL:inTable({"=", "<", ">"}, Rule.operator)
             or not Rule.quality
             or type(Rule.quality) ~= "number"
         )
@@ -228,4 +245,4 @@ function PackMule:ruleIsValid(Rule)
     return true;
 end
 
-Utils:debug("PackMule.lua");
+GL:debug("PackMule.lua");

@@ -1,12 +1,29 @@
-local _, App = ...;
+local _, GL = ...;
 
-local Utils = App.Utils;
+---@class Commands
+GL.Commands = GL.Commands or {
+    CommandDescriptions = {
+        settings = "Open the settings menu",
+        rolloff = "Open the RollOff UI where you can announce an item for players to roll on: /gl award [itemLink?]",
+        award = "Open the award window. Optionally accepts an ItemLink as an argument: /gl award [itemLink?]",
+        awardOnDate = "In case you need to award something retrospectively you can use this command: /gl awardOnDate [winnerName] [itemLink] [yy-mm-dd]",
+        raidcsv = "Output everyone currently in the group in a CSV format",
+        groups = "Open the group window where you can provide a group csv so that you can: see who's missing and sort groups automatically",
+        softreserves = "Open either the SoftRes import window if there's no data available or open the SoftRes overview",
+        thatsmybis = "Open the TMB importer. Data exported from tmb.com can be imported here",
+        packmule = "Open PackMule which allows you to automatically funnel dropped gear to specific players, very helpful with green items for example",
+        lootpriority = "Open the loot priority editor where you can import loot priorities separately from That's My BIS (covered here) or do it manually in the loot priority editor which you can open",
+        stacktrace = "Shows a list of all of the debug messages stored by Gargul, this can be helpful for debugging errors",
+        import = "Opens the general import window that includes shortcuts to the TMB, SoftRes or loot priority importers",
+        export = "Export dropped loot to a CSV format which is compatible with TMB for example.",
+        version = "Compare your Gargul version with everyone in your group and shows you exactly who needs to upgrade or who doesn't have the addon installed",
+        inspect = "You can check whether players brought items (and how many), e.g. to check for consumables (requires players to have Gargul!): /gl inspect itemId1, itemId2, itemId3",
+        buffs = "You can instantly check player buffs like Ony, ZG, but also protection consumables like shadow protection: /gl buffs 22888, 22818, 22817, 22820, 24425, 15366, 20079",
+    },
 
-App.Commands = App.Commands or {
     ShorthandDictionary = {
         co = "settings",
         config = "settings",
-        au = "auction",
         ro = "rolloff",
         ro = "rolloff",
         roll = "rolloff",
@@ -27,7 +44,6 @@ App.Commands = App.Commands or {
         st = "stacktrace",
         im = "import",
         ex = "export",
-        re = "reset",
         br = "broadcast",
         ve = "version",
         ins = "inspect",
@@ -35,114 +51,82 @@ App.Commands = App.Commands or {
     },
 
     Dictionary = {
-        -- Open the dashboard or main hub if you will
-        dashboard = function() App.Dashboard:draw(); end,
-
         -- Open the settings menu
-        settings = function(...)
-            InterfaceOptionsFrame_OpenToCategory(App.name);
-            InterfaceOptionsFrame_OpenToCategory(App.name);
-        end,
-
-        -- Open the auctioneer window (requires group and officer privileges)
-        auction = function(...) App.AuctioneerUI:draw(...); end,
+        settings = function(...) GL.Settings:draw(); end,
 
         -- Open the window for rolling off items
-        rolloff = function(...) App.MasterLooterUI:draw(...); end,
+        rolloff = function(...) GL.MasterLooterUI:draw(...); end,
 
         -- Award an item. This either award it directly or opens the UI
         award = function(...)
             local winner, itemLink = ...;
 
             if (not winner or winner == "" or not itemLink) then
-                return App.AwardUI:draw();
+                return GL.Interface.Award:draw();
             end
 
-            App.AwardedLoot:addWinner(...);
+            GL.AwardedLoot:addWinner(...);
         end,
 
         -- Award an item on a given date. Useful if you forgot to award an item and want to do it later
-        awardOnDate = function(...) App.AwardedLoot:addWinnerOnDate(...); end,
+        awardOnDate = function(...) GL.AwardedLoot:addWinnerOnDate(...); end,
 
         -- Export the current raid roster to csv
         raidcsv = function ()
-            App.RaidGroups:toCSV();
+            GL.RaidGroups:toCSV();
         end,
 
         -- Open the raid groups window
-        groups = function() App.RaidGroups:drawImporter(); end,
+        groups = function() GL.RaidGroups:drawImporter(); end,
 
         -- Open the soft reserves window
-        softreserves = function() App.SoftReserves:drawImporter(); end,
+        softreserves = function() GL.SoftRes:draw(); end,
 
         -- Open the TMB window
-        thatsmybis = function() App.TMB:drawImporter(); end,
+        thatsmybis = function() GL.TMB:drawImporter(); end,
 
         -- Open the pack mule window
-        packmule = function() App.PackMuleUI:drawSetupWindow(); end,
+        packmule = function() GL.PackMuleUI:drawSetupWindow(); end,
 
         -- Open the loot priority window
-        lootpriority = function() App.LootPriority:drawImporter(); end,
-
-        bid = function() App.BidderUI:reopen(); end,
+        lootpriority = function() GL.LootPriority:drawImporter(); end,
 
         -- Output all debug lines in a readable manner
-        stacktrace = function() Utils:stacktrace(); end,
+        stacktrace = function() GL:stacktrace(); end,
 
         -- Import data from our website into the addon
-        import = function() App.Importer:draw(); end,
+        import = function() GL.Interface.Importer:draw(); end,
 
         -- Export data from the addon to use on our website
-        export = function() App.Exporter:draw(); end,
-
-        -- Reset the dkp and loot history tables
-        reset = function() StaticPopup_Show(App.name .. "_RESET_TABLES_CONFIRMATION"); end,
-
-        -- Broadcast our current dkp / loot tables to everyone
-        broadcast = function() StaticPopup_Show(App.name .. "_BROADCAST_TABLES_CONFIRMATION"); end,
+        export = function() GL.Exporter:draw(); end,
 
         -- Check if everyone is running the most up-to-date version
-        version = function() App.Version:inspectGroup(); end,
+        version = function() GL.Version:inspectGroup(); end,
 
         -- Check if everyone is running the most up-to-date version
-        inspect = function(...) App.BagInspector:inspect(...); end,
+        inspect = function(...) GL.BagInspector:inspect(...); end,
 
         -- Check if everyone is running the most up-to-date version
-        buffs = function(...) App.BuffInspector:inspect(...); end,
+        buffs = function(...) GL.BuffInspector:inspect(...); end,
+
+        -- Toggle Gargul's testmode
+        test = function(...) GL.testMode = not GL.testMode; end,
     }
 };
 
-local Commands = App.Commands;
+local Commands = GL.Commands; ---@type Commands
 
 -- Display the command help
-function Commands:help ()
-    Utils:message("---------------------");
-    Utils:message("Commands:")
-    Utils:message("/gl - Shows the dashboard");
-    Utils:message("/gl version - Checks the addon version of everyone in the raid");
-    Utils:message("/gl inspect - Check player bags for passed item ids");
-    Utils:message("/gl stacktrace - Displays a list of debug lines, always include when reporting a bug!");
-    Utils:message("/gl roll - Displays the master looter window for rolling off items");
-    Utils:message("/gl softreserves - Opens the soft reserves window (master looter only)");
-    Utils:message("/gl export - Opens the loot history export window");
-    Utils:message("/gl thatsmybis - Opens the thatsmybis import window");
-    Utils:message("/gl award - Opens the award UI");
---     Utils:message("DKP Features:");
---     Utils:message("/gl auction - Opens the auctioneer window for master looting purposes (officer only)");
---     Utils:message("/gl bid - Reopens the bid window if you closed it");
---     Utils:message("/gl import - Opens the DKP / loot history import window (officer only)");
---     Utils:message("/gl broadcast - Broadcasts the DKP tables and loot history to the entire guild (officer only)");
-    Utils:message("---------------------");
-end
+function Commands:help () GL.Settings:draw("SlashCommands"); end
 
 -- Helper method to call commands from within the addon
-function Commands:call (str)
-    return Commands:_dispatch (str);
+function Commands:call(str)
+    return Commands:_dispatch(str);
 end
 
 -- This method dispatches all slash commands to their final destination
-function Commands:_dispatch (str)
-    App.User:refresh();
+function Commands:_dispatch(str)
+    GL.User:refresh();
 
     local command = str:match("^(%S+)");
     local argumentString = "";
@@ -157,39 +141,34 @@ function Commands:_dispatch (str)
     end
 
     -- Fetch the actual command name in case a shorthand is provided
-    command = Utils:tableGet(self.ShorthandDictionary, command, command);
+    command = GL:tableGet(self.ShorthandDictionary, command, command);
 
     -- Some commands allow itemlinks, some don't. Items can contain spaces
     -- at which point we need to make sure the item itself isn't split up.
     -- We do that by specifying the number of (expected) arguments per command
     local arguments = {};
-    local possibleArgumentChunks = nil;
+    local numberOfArguments;
 
-    if (Utils:inArray({"rolloff", "auction"}, command)) then
+    if (GL:inTable({"rolloff", "auction"}, command)) then
         numberOfArguments = 1;
-    elseif (Utils:inArray({"award"}, command)) then
+    elseif (GL:inTable({"award"}, command)) then
         numberOfArguments = 2;
-    elseif (Utils:inArray({"awardOnDate"}, command)) then
+    elseif (GL:inTable({"awardOnDate"}, command)) then
         numberOfArguments = 3;
     end
 
     arguments = { strsplit(" ", argumentString, numberOfArguments) };
 
-    Utils:debug("Dispatching " .. str);
+    GL:debug("Dispatching " .. str);
 
     if (command and self.Dictionary[command] and type(self.Dictionary[command]) == "function") then
         return self.Dictionary[command](unpack(arguments));
     end
 
-    return self:help();
+    -- Show the list of commands unless the user disabled this feature
+    if (GL.Settings:get("autoOpenCommandHelp")) then
+        self:help();
+    end
 end;
 
--- Add slash command
-SLASH_GIAL1 = "/gl";
-SlashCmdList.GIAL = function (...)
-    App.User:refresh();
-
-    Commands:_dispatch(...);
-end;
-
-Utils:debug("Commands.lua");
+GL:debug("Commands.lua");

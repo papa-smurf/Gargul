@@ -1,33 +1,34 @@
-local _, App = ...;
+---@type GL
+local _, GL = ...;
 
-App.Comm = {
+GL.Comm = {
     initialized = false,
     channel = "",
+    notifiedOfNewerVersion = false,
 };
 
-local Comm = App.Comm;
-local Utils = App.Utils;
-local CommActions = App.Data.Constants.Comm.Actions or {};
+local Comm = GL.Comm;
+local CommActions = GL.Data.Constants.Comm.Actions or {};
 
 function Comm:_init()
-    Utils:debug("Comm:_init");
+    GL:debug("Comm:_init");
 
     -- No need to initialize this class twice
     if (self._initialized) then
         return;
     end
 
-    self.channel = App.Data.Constants.Comm.channel;
+    self.channel = GL.Data.Constants.Comm.channel;
 
     -- Register the Ace Comm channel listener
-    App.Ace:RegisterComm(self.channel, Comm.listen);
+    GL.Ace:RegisterComm(self.channel, Comm.listen);
 
     self._initialized = true;
 end
 
 -- Send a CommMessage object
 function Comm:send(CommMessage)
-    Utils:debug("Comm:send");
+    GL:debug("Comm:send");
 
     local distribution = CommMessage.channel;
     local recipient = CommMessage.recipient;
@@ -35,43 +36,49 @@ function Comm:send(CommMessage)
     local compressedMessage = "";
 
     -- If this is a fresh message, not a response, then CommMessage will
-    -- be an instance of App.CommMessage and as such will have its own compression method
+    -- be an instance of GL.CommMessage and as such will have its own compression method
     if (CommMessage.compress) then
         compressedMessage = CommMessage:compress();
     else
-        compressedMessage = App.CommMessage:compress(CommMessage);
+        compressedMessage = GL.CommMessage:compress(CommMessage);
     end
 
     if (not compressedMessage) then
-        Utils:error("Something went wrong trying to compress the payload for 'Sync.Characters'");
+        GL:error("Something went wrong trying to compress the payload for 'Sync.Characters'");
         return;
     end
 
-    Utils:debug("Payload size: " .. string.len(compressedMessage));
+    GL:debug("Payload size: " .. string.len(compressedMessage));
 
-    App.Ace:SendCommMessage(self.channel, compressedMessage, distribution, recipient, "NORMAL", function (_, sent, textlen)
-        Utils:debug(string.format("Sent %s from %s characters", sent, textlen));
+    GL.Ace:SendCommMessage(self.channel, compressedMessage, distribution, recipient, "NORMAL", function (_, sent, textlen)
+        GL:debug(string.format("Sent %s from %s characters", sent, textlen));
     end);
 end
 
--- Listen to any and all messages on the self.channel channel
+--- Listen to any and all messages on the self.channel channel
+---@param payload string
+---@param distribution string
+---@param senderName string
+---@return boolean
 function Comm:listen(payload, distribution, senderName)
-    Utils:debug(string.format("Received message on %s", App.Comm.channel));
+    GL:debug(string.format("Received message on %s", GL.Comm.channel));
 
-    payload = App.CommMessage:decompress(payload);
+    payload = GL.CommMessage:decompress(payload);
 
     if (not senderName or not type(senderName) == "string"
         or not payload.senderName or not type(payload.senderName) == "string"
         or not payload.senderName == senderName
     ) then
-        return Utils:warning("Failed to determine sender of COMM message");
+        GL:warning("Failed to determine sender of COMM message");
+        return false;
     end
 
-    local Sender = App.Player.fromName(senderName) or {};
+    local Sender = GL.Player.fromName(senderName) or {};
 
     if (not Sender.id) then
         if (distribution ~= "GUILD") then
-            return Utils:warning("Unable to confirm identity of sender '" .. senderName .. "'");
+            GL:warning("Unable to confirm identity of sender '" .. senderName .. "'");
+            return false;
         else
             Sender.name = senderName;
         end
@@ -79,97 +86,93 @@ function Comm:listen(payload, distribution, senderName)
 
     if (not payload) then
         if (type(payload) == "string") then
-            return Utils:warning("Failed to decompress payload: " .. string.sub(payload, 0, 100));
+            GL:warning("Failed to decompress payload: " .. string.sub(payload, 0, 100));
+            return false;
         else
-            return Utils:warning("Failed to decompress payload: not a string");
+            GL:warning("Failed to decompress payload: not a string");
+            return false;
         end
     end
 
     if (payload.version
         and type(payload.version) == "string"
-        and not App.Version:leftIsNewerThanOrEqualToRight(App.version, payload.version)
+        and not GL.Version:leftIsNewerThanOrEqualToRight(GL.version, payload.version)
     ) then
-        Utils:warning("There's an update available. Go to https://www.curseforge.com/wow/addons/gargul to update.");
+        if (not GL.Comm.notifiedOfNewerVersion) then
+            GL:warning("There's an update available. Go to https://www.curseforge.com/wow/addons/gargul to update.");
+            GL.Comm.notifiedOfNewerVersion = true;
+        end
     end
 
     if (payload.minimumVersion
         and type(payload.minimumVersion) == "string"
-        and not App.Version:leftIsNewerThanOrEqualToRight(App.version, payload.minimumVersion)
+        and not GL.Version:leftIsNewerThanOrEqualToRight(GL.version, payload.minimumVersion)
     ) then
-        return Utils:error("I'm out of date and won't work properly until you update me!");
+        GL:error("I'm out of date and won't work properly until you update me!");
+        return false;
     end
 
     if (not payload.action) then
-        return Utils:warning("Payload is missing required property 'action'");
+        GL:warning("Payload is missing required property 'action'");
+        return false;
     end
 
     if (not type(payload.action) == "string") then
-        return Utils:warning("Payload has an invalid action: not a string");
+        GL:warning("Payload has an invalid action: not a string");
+        return false;
     end
 
     if (not payload.id
         and not payload.action == CommActions.response
     ) then
-        return Utils:warning("Payload is missing required property 'id'");
+        GL:warning("Payload is missing required property 'id'");
+        return false;
     end
 
     if (not payload.correspondenceId
             and payload.action == CommActions.response
     ) then
-        return Utils:warning("Payload is missing required property 'correspondenceId'");
+        GL:warning("Payload is missing required property 'correspondenceId'");
+        return false;
     end
 
     -- Add the sender's profile to the payload
     payload.Sender = Sender;
 
-    Comm:dispatch(App.CommMessage.newFromReceived(payload));
+    Comm:dispatch(GL.CommMessage.newFromReceived(payload));
 end
 
 -- Dispatch messages to their handlers
 function Comm:dispatch(CommMessage)
-    Utils:debug("Comm:dispatch: '" .. CommMessage.action .. "'");
-    App.User:refresh();
+    GL:debug("Comm:dispatch: '" .. CommMessage.action .. "'");
+    GL.User:refresh();
 
     local action = CommMessage.action;
 
     if (action == CommActions.response) then
         return CommMessage:processResponse();
-    elseif (action == CommActions.broadcastCharacters) then
-        return App.Sync:receiveCharacters(CommMessage);
-    elseif (action == CommActions.broadcastLootHistory) then
-        return App.Sync:receiveLoot(CommMessage);
-    elseif (action == CommActions.startAuction) then
-        return App.Auction:start(CommMessage);
-    elseif (action == CommActions.stopAuction) then
-        return App.Auction:stop(CommMessage);
-    elseif (action == CommActions.bid) then
-        return App.Auction:processBid(CommMessage);
-    elseif (action == CommActions.retractBid) then
-        return App.Auction:processRetractBid(CommMessage);
-    elseif (action == CommActions.auctionResult) then
-        return App.Auction:processResult(CommMessage);
     elseif (action == CommActions.awardItem) then
-        return App.AwardedLoot:processAwardedLoot(CommMessage);
+        return GL.AwardedLoot:processAwardedLoot(CommMessage);
     elseif (action == CommActions.startRollOff) then
-        return App.RollOff:start(CommMessage);
+        return GL.RollOff:start(CommMessage);
     elseif (action == CommActions.stopRollOff) then
-        return App.RollOff:stop(CommMessage);
-    elseif (action == CommActions.broadcastSoftReserves) then
-        return App.SoftReserves:receiveSoftReserves(CommMessage);
+        return GL.RollOff:stop(CommMessage);
+    elseif (action == CommActions.broadcastSoftRes) then
+        return GL.SoftRes:receiveSoftRes(CommMessage);
     elseif (action == CommActions.broadcastTMBData) then
-        return App.SoftReserves:receiveWishLists(CommMessage);
+        return GL.TMB:receiveWishLists(CommMessage);
     elseif (action == CommActions.inspectBags) then
-        return App.BagInspector:report(CommMessage);
+        return GL.BagInspector:report(CommMessage);
     elseif (action == CommActions.requestAppVersion) then
-        if (App.User.name ~= CommMessage.Sender.name) then
-            Utils:debug("Respond to CommActions.requestAppVersion");
-            return CommMessage:respond(App.Version.current);
+        if (GL.User.name ~= CommMessage.Sender.name) then
+            GL:debug("Respond to CommActions.requestAppVersion");
+            return CommMessage:respond(GL.Version.current);
         end
 
         return;
     end
 
-    Utils:warning(string.format("Unknown comm action '%s'", action));
+    GL:warning(string.format("Unknown comm action '%s'", action));
 end
 
-Utils:debug("Comm.lua");
+GL:debug("Comm.lua");

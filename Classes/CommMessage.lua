@@ -1,10 +1,11 @@
-local _, App = ...;
+---@type GL
+local _, GL = ...;
 
-App.CommMessage = {};
-App.CommMessage.__index = App.CommMessage;
+---@class CommMessage
+GL.CommMessage = {};
+GL.CommMessage.__index = GL.CommMessage;
 
-local Utils = App.Utils;
-local CommMessage = App.CommMessage;
+local CommMessage = GL.CommMessage; ---@type CommMessage
 
 CommMessage.Box = {};
 
@@ -20,14 +21,14 @@ setmetatable(CommMessage, {
 
 -- Create a fresh new CommMessage
 function CommMessage.new(action, content, channel, recipient)
-    Utils:debug("CommMessage:new");
+    GL:debug("CommMessage:new");
 
     local self = setmetatable({}, CommMessage);
 
     -- Make sure self.id is unique!
     -- This is very important if we wish to track responses to our comm message
     while(true) do
-        self.id = Utils:uuid();
+        self.id = GL:uuid();
 
         if (not CommMessage.Box[self.id]) then
             break;
@@ -37,9 +38,9 @@ function CommMessage.new(action, content, channel, recipient)
     self.action = action;
     self.content = content;
     self.channel = channel;
-    self.version = App.version;
-    self.minimumVersion = App.Data.Constants.Comm.minimumAppVersion;
-    self.senderName = App.User.name;
+    self.version = GL.version;
+    self.minimumVersion = GL.Data.Constants.Comm.minimumAppVersion;
+    self.senderName = GL.User.name;
     self.recipient = recipient;
     self.Responses = {};
 
@@ -51,7 +52,7 @@ end
 -- Create a CommMessage from a received message's payload
 -- The channel and recipient always point to the sender of the original message using "WHISPER"
 function CommMessage.newFromReceived(Message)
-    Utils:debug("CommMessage:newFromReceived");
+    GL:debug("CommMessage:newFromReceived");
 
     local self = setmetatable({}, CommMessage);
 
@@ -59,7 +60,7 @@ function CommMessage.newFromReceived(Message)
     self.content = Message.content;
     self.channel = Message.channel;
     self.version = Message.version;
-    self.minimumVersion = App.Data.Constants.Comm.minimumAppVersion;
+    self.minimumVersion = GL.Data.Constants.Comm.minimumAppVersion;
     self.Sender = Message.Sender;
     self.senderName = Message.Sender.name;
     self.recipient = Message.recipient;
@@ -71,44 +72,44 @@ end
 
 -- Send the CommMessage as-is
 function CommMessage:send()
-    Utils:debug("CommMessage:send");
+    GL:debug("CommMessage:send");
 
-    App.Comm:send(self);
+    GL.Comm:send(self);
 
     return self;
 end
 
 -- Reply to a CommMessage
 function CommMessage:respond(message)
-    Utils:debug("CommMessage:respond");
+    GL:debug("CommMessage:respond");
 
     local Response = {
-        action = App.Data.Constants.Comm.Actions.response,
+        action = GL.Data.Constants.Comm.Actions.response,
         content = message,
         channel = "WHISPER",
-        version = App.version;
-        minimumVersion = App.Data.Constants.Comm.minimumAppVersion;
-        senderName = App.User.name,
+        version = GL.version;
+        minimumVersion = GL.Data.Constants.Comm.minimumAppVersion;
+        senderName = GL.User.name,
         recipient = self.Sender.name,
         correspondenceId = self.correspondenceId or self.id,
     };
 
-    App.Comm:send(Response);
+    GL.Comm:send(Response);
 
     return self;
 end
 
 -- A response to one of our messages came in, sort it
 function CommMessage:processResponse()
-    Utils:debug("CommMessage:processResponse");
+    GL:debug("CommMessage:processResponse");
 
     if (not self.correspondenceId) then
-        Utils:warning("The message has no correspondence ID so we don't know what it responds to");
+        GL:warning("The message has no correspondence ID so we don't know what it responds to");
         return;
     end
 
     if (not CommMessage.Box[self.correspondenceId]) then
-        Utils:warning("The response is valid, but doesn't belong to any of the message we've sent");
+        GL:warning("The response is valid, but doesn't belong to any of the message we've sent");
         return;
     end
 
@@ -118,7 +119,7 @@ end
 
 -- Compress a CommMessage so we can safely send it
 function CommMessage:compress(message)
-    Utils:debug("CommMessage:compress");
+    GL:debug("CommMessage:compress");
 
     message = message or self;
 
@@ -140,7 +141,7 @@ function CommMessage:compress(message)
     end);
 
     if (not success or not encoded) then
-        Utils:error("Something went wrong trying to compress a CommMessage in CommMessage:compress");
+        GL:error("Something went wrong trying to compress a CommMessage in CommMessage:compress");
         return false;
     end
 
@@ -149,7 +150,7 @@ end
 
 -- Decompress and deserialize a CommMessage
 function CommMessage:decompress(encoded)
-    Utils:debug("CommMessage:compress");
+    GL:debug("CommMessage:compress");
 
     local success, Payload = pcall(function ()
         local compressed = LibDeflate:DecodeForWoWAddonChannel(encoded);
@@ -160,7 +161,7 @@ function CommMessage:decompress(encoded)
     end);
 
     if not (success or Payload) then
-        return Utils:warning("Something went wrong while decoding the COMM payload");
+        return GL:warning("Something went wrong while decoding the COMM payload");
     end
 
     return {
@@ -173,4 +174,4 @@ function CommMessage:decompress(encoded)
     };
 end
 
-Utils:debug("CommMessage.lua");
+GL:debug("CommMessage.lua");

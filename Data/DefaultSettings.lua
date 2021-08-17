@@ -1,29 +1,24 @@
---[[
-    DEFAULT SETTINGS
-]]
+---@type GL
+local _, GL = ...;
 
-local _, App = ...;
-App.Data = App.Data or {};
+---@class DefaultSettings : Data
+GL.Data = GL.Data or {};
 
-App.Data.DefaultSettings = {
-
-    muted = false,
+GL.Data.DefaultSettings = {
     announceLootToChat = true,
-    minimumQualityOfAnnouncedLoot = 4,
-    includeSoftReservesInLootAnnouncement = true,
-    showRollOffWindow = true,
-    autoTradeAfterAwardingAnItem = true,
     autoAssignAfterAwardingAnItem = true,
+    autoTradeAfterAwardingAnItem = true,
     debugModeEnabled = false,
-
-    TMB = {
-        includeWishListInfoInLootAnnouncement = true,
-        includePrioListInfoInLootAnnouncement = true,
-        hideInfoOfPeopleNotInraid = true,
-        showWishListInfoOnTooltips = true,
-        showPrioListInfoOnTooltips = true,
-        hideWishListInfoIfPriorityIsPresent = true,
-    },
+    highlightsDisabled = false,
+    highlightHardReservedItems = true,
+    highlightSoftReservedItems = true,
+    highlightWishlistedItems = true,
+    minimumQualityOfAnnouncedLoot = 4,
+    noMessages = false,
+    noSounds = false,
+    autoOpenCommandHelp = true,
+    showMinimapButton = true,
+    welcomeMessage = true,
 
     PackMule = {
         enabled = false,
@@ -31,84 +26,35 @@ App.Data.DefaultSettings = {
         persistsAfterZoneChange = false,
         Rules = {},
     },
-
+    Rolling = {
+        announcePass = true,
+        showRollOffWindow = true,
+    },
+    SoftRes = {
+        announceInfoInChat = true,
+        enableTooltips = true,
+        hideInfoOfPeopleNotInGroup = true,
+    },
+    TMB = {
+        hideInfoOfPeopleNotInGroup = true,
+        hideWishListInfoIfPriorityIsPresent = true,
+        includePrioListInfoInLootAnnouncement = true,
+        includeWishListInfoInLootAnnouncement = true,
+        maximumNumberOfTooltipEntries = 35,
+        showPrioListInfoOnTooltips = true,
+        showWishListInfoOnTooltips = true,
+    },
     UI = {
-        Dashboard = {
-            showInRaidOnly = false,
-            Position = {
-                point = "Center",
-                relativePoint = "Center",
-                offsetX = 0,
-                offsetY = 0,
-            }
-        },
-        Auctioneer = {
-            Position = {
-                point = "Center",
-                relativePoint = "Center",
-                offsetX = 0,
-                offsetY = 0,
-            }
-        },
-        Award = {
-            autoClose = false,
-            timer = 25,
-            Position = {
-                point = "CENTER",
-                relativePoint = "CENTER",
-                offsetX = 0,
-                offsetY = 0,
-            }
-        },
-        Bidder = {
-            timer = 25,
-            Position = {
-                point = "CENTER",
-                relativePoint = "CENTER",
-                offsetX = 0,
-                offsetY = 0,
-            }
-        },
-        Exporter = {
-            Position = {
-                point = "CENTER",
-                relativePoint = "CENTER",
-                offsetX = 0,
-                offsetY = 0,
-            }
-        },
         RollOff = {
             autoClose = false,
-            timer = 25,
-            Position = {
-                point = "CENTER",
-                relativePoint = "CENTER",
-                offsetX = 0,
-                offsetY = 0,
-            }
+            timer = 15,
         },
-        Roller = {
+        PopupDialog = {
             Position = {
-                point = "CENTER",
-                relativePoint = "CENTER",
                 offsetX = 0,
-                offsetY = 0,
-            }
-        },
-        ReopenAuctioneerUIButton = {
-            Position = {
-                point = "CENTER",
-                relativePoint = "CENTER",
-                offsetX = 0,
-                offsetY = 0,
-            }
-        },
-        ReopenMasterLooterUIButton = {
-            Position = {
-                point = "CENTER",
-                relativePoint = "CENTER",
-                offsetX = 0,
-                offsetY = 0,
+                offsetY = -115,
+                point = "TOP",
+                relativePoint = "TOP",
             }
         }
     }

@@ -1,34 +1,26 @@
-local _, App = ...;
+---@type GL
+local _, GL = ...;
 
-App.Ace.GUI = App.Ace.GUI or LibStub("AceGUI-3.0");
-App.TMB = {
+GL.AceGUI = GL.AceGUI or LibStub("AceGUI-3.0");
+
+---@class TMB
+GL.TMB = {
     _initialized = false,
     broadcastInProgress = false,
 };
+local TMB = GL.TMB; ---@type TMB
 
-local Utils = App.Utils;
-local AceGUI = App.Ace.GUI;
-local TMB = App.TMB;
-local CommActions = App.Data.Constants.Comm.Actions;
-local Constants = App.Data.Constants;
+local AceGUI = GL.AceGUI;
+local Constants = GL.Data.Constants; ---@type Data
+local CommActions = Constants.Comm.Actions;
+local Settings = GL.Settings; ---@type Settings
 
--- Add a award confirmation dialog to Blizzard's global StaticPopupDialogs object
-StaticPopupDialogs[App.name .. "_CLEAR_TMB_CONFIRMATION"] = {
-    text = "Are you sure you want to clear the TMB tables?",
-    button1 = "Yes",
-    button2 = "No",
-    OnAccept = {},
-    timeout = 0,
-    whileDead = true,
-    hideOnEscape = true,
-    preferredIndex = 3,
-}
-
+---@return boolean
 function TMB:_init()
-    Utils:debug("TMB:_init");
+    GL:debug("TMB:_init");
 
     if (self._initialized) then
-        return;
+        return false;
     end
 
     -- Bind the appendTMBItemInfoToTooltip method to the OnTooltipSetItem event
@@ -37,43 +29,51 @@ function TMB:_init()
     end);
 
     self._initialized = true;
+    return true;
 end
 
--- Fetch an item's TMB info based on its ID
-function TMB:getTMBInfoByItemId(itemId)
-    Utils:debug("TMB:getTMBInfoByItemId");
+--- Fetch an item's TMB info based on its ID
+---
+---@param itemId number
+---@param inRaidOnly boolean|nil
+---@return table
+function TMB:byItemId(itemId, inRaidOnly)
+    GL:debug("TMB:byItemId");
 
-    if (type(itemId) ~= "string") then
-        itemId = tostring(itemId);
+    -- An invalid item id was provided
+    itemId = tonumber(itemId);
+    if (not GL:higherThanZero(itemId)) then
+        return {};
     end
 
-    -- We couldn't find an item ID
-    if (not itemId or itemId == "") then
-        return;
+    if (type(inRaidOnly) ~= "boolean") then
+        inRaidOnly = Settings:get("TMB.hideInfoOfPeopleNotInGroup");
     end
 
     -- The item linked to this id can have multiple IDs (head of Onyxia for example)
-    if (not App.Data.Constants.LinkedItems[itemId]) then
-        return App.DB.TMB[itemId];
-    end
+    local AllLinkedItemIds = GL:getLinkedItemsForId(itemId);
 
-    -- Gather all the item IDs that are linked to our item
-    local AllLinkedItemIds = {itemId};
-    for _, id in pairs(App.Data.Constants.LinkedItems[itemId]) do
-        tinsert(AllLinkedItemIds, id);
+    local GroupMemberNames = {};
+    if (inRaidOnly) then
+        GroupMemberNames = GL.User:groupMemberNames();
     end
 
     local Processed = {};
     local Wishes = {};
     for _, id in pairs(AllLinkedItemIds) do
         id = tostring(id);
-        for _, Entry in pairs(Utils:tableGet(App.DB.TMB, tostring(id), {})) do
-            local checkSum = string.format('%s||%s||%s', Entry.character, tostring(Entry.prio), tostring(Entry.type));
+        for _, Entry in pairs(GL:tableGet(GL.DB.TMB, tostring(id), {})) do
+            local playerName = string.lower(Entry.character);
 
-            -- Make sure we don't add the same player/prio combo more than once
-            if (not Processed[checkSum]) then
-                Processed[checkSum] = true;
-                tinsert(Wishes, Entry);
+            -- If inRaidOnly is true we need to make sure we only return details of people who are actually in the raid
+            if (not inRaidOnly or GL:inTable(GroupMemberNames, string.gsub(playerName, "%(OS%)", ""))) then
+                local checkSum = string.format('%s||%s||%s', Entry.character, tostring(Entry.prio), tostring(Entry.type));
+
+                -- Make sure we don't add the same player/prio combo more than once
+                if (not Processed[checkSum]) then
+                    Processed[checkSum] = true;
+                    tinsert(Wishes, Entry);
+                end
             end
         end
     end
@@ -81,33 +81,27 @@ function TMB:getTMBInfoByItemId(itemId)
     return Wishes;
 end
 
--- Fetch an item's TMB info based on its item link
-function TMB:getTMBInfoByItemLink(itemLink)
-    Utils:debug("TMB:getTMBInfoByItemLink");
+--- Fetch an item's TMB info based on its item link
+---
+---@param itemLink string
+---@param inRaidOnly boolean|nil
+---@return table
+function TMB:byItemLink(itemLink, inRaidOnly)
+    GL:debug("TMB:byItemLink");
 
-    if (not itemLink) then
-        return;
+    if (GL:empty(itemLink)) then
+        return {};
     end
 
-    return self:getTMBInfoByItemId(Utils:getItemIdFromLink(string.lower(itemLink)));
+    return self:byItemId(GL:getItemIdFromLink(itemLink), inRaidOnly);
 end
 
--- Fetch an item's TMB info based on its item link
-function TMB:itemIdIsReservedByPlayer(itemId, player)
-    Utils:debug("TMB:itemIdIsReservedByPlayer");
-
-    local reserves = self:getTMBInfoByItemId(itemId);
-
-    if (not reserves) then
-        return false;
-    end
-
-    return Utils:inArray(reserves, player);
-end
-
--- Append the TMB info as defined in App.DB.TMB to an item's tooltip
+--- Append the TMB info as defined in GL.DB.TMB to an item's tooltip
+---
+---@param tooltip GameTooltip
+---@return void
 function TMB:appendTMBItemInfoToTooltip(tooltip)
-    Utils:debug("TMB:appendTMBItemInfoToTooltip");
+    GL:debug("TMB:appendTMBItemInfoToTooltip");
 
     -- No tooltip was provided
     if (not tooltip) then
@@ -115,15 +109,15 @@ function TMB:appendTMBItemInfoToTooltip(tooltip)
     end
 
     -- If we're not in a group there's no point in showing anything! (unless the non-raider setting is active)
-    if (not App.User.isInGroup
-        and App.Settings:get("TMB.hideInfoOfPeopleNotInraid")
+    if (not GL.User.isInGroup
+        and GL.Settings:get("TMB.hideInfoOfPeopleNotInGroup")
     ) then
         return;
     end
 
     -- Make sure the user actually wants to see any tooltip data
-    if (not App.Settings:get("TMB.showWishListInfoOnTooltips")
-        and not App.Settings:get("TMB.showPrioListInfoOnTooltips")
+    if (not GL.Settings:get("TMB.showWishListInfoOnTooltips")
+        and not GL.Settings:get("TMB.showPrioListInfoOnTooltips")
     ) then
         return;
     end
@@ -131,72 +125,73 @@ function TMB:appendTMBItemInfoToTooltip(tooltip)
     local _, itemLink = tooltip:GetItem();
 
     -- We couldn't find an itemLink (this can actually happen!)
-    if (not itemLink) then
+    if (GL:empty(itemLink)) then
         return;
     end
 
-    local TMBInfo = self:getTMBInfoByItemLink(itemLink);
+    local TMBInfo = self:byItemLink(itemLink);
 
     -- No wishes defined for this item
-    if (not TMBInfo) then
+    if (GL:empty(TMBInfo)) then
         return;
     end
 
-    local PlayersInRaid = {};
+    local GroupMemberClasses = {};
     -- Fetch the name/class of everyone currently in the raid/party
-    for _, Player in pairs(App.User:groupMembers()) do
-        PlayersInRaid[string.lower(Player.name)] = string.lower(Player.class);
+    for _, Player in pairs(GL.User:groupMembers()) do
+        GroupMemberClasses[string.lower(Player.name)] = string.lower(Player.class);
     end
 
     local WishListEntries = {};
     local PrioListEntries = {};
     local itemIsOnSomeonesWishlist = false;
     local itemIsOnSomeonesPriolist = false;
+    local entriesAdded = 0;
     for _, Entry in pairs(TMBInfo) do
-        local playerName = Entry.character;
+        local playerName = string.lower(Entry.character)
+        local prio = Entry.prio;
+        local entryType = Entry.type or Constants.tmbTypeWish;
+        local isOffSpec = string.find(Entry.character, "(OS)");
+        local prioOffset = 0;
+        local sortingOrder = prio;
+        local color = GL:classHexColor(GroupMemberClasses[playerName]);
 
-        if (not App.Settings:get("TMB.hideInfoOfPeopleNotInraid")
-            or PlayersInRaid[string.gsub(playerName, "%(OS%)", "")]
-        ) then
-            local prio = Entry.prio;
-            local entryType = Entry.type or Constants.tmbTypeWish;
-            local Target = WishListEntries;
-            local isOffSpec = string.find(playerName, "(OS)");
-            local prioOffset = 0;
-            local sortingOrder = prio;
+        -- Make sure we don't add more names to the tooltip than the user allowed
+        if (entriesAdded >= GL.Settings:get("TMB.maximumNumberOfTooltipEntries")) then
+            break;
+        end
 
-            -- We add 100 to the prio (first key) of the object
-            -- This object is used for sorting later and is not visible to the player
-            if (isOffSpec) then
-                prioOffset = 100;
-            end
+        -- We add 100 to the prio (first key) of the object
+        -- This object is used for sorting later and is not visible to the player
+        if (isOffSpec) then
+            prioOffset = 100;
+        end
 
-            if (type(sortingOrder) == "number") then
-                sortingOrder = prio + prioOffset;
-            else
-                -- If for whatever reason we can't determine the
-                -- item prio then we add it to the end of the list by default
-                sortingOrder = 1000;
-            end
+        if (type(sortingOrder) == "number") then
+            sortingOrder = prio + prioOffset;
+        else
+            -- If for whatever reason we can't determine the
+            -- item prio then we add it to the end of the list by default
+            sortingOrder = 1000;
+        end
 
-            if (entryType == Constants.tmbTypePrio) then
-                tinsert(PrioListEntries, {sortingOrder, string.format("%s[%s]", playerName, prio)});
-                itemIsOnSomeonesPriolist = true;
-            else
-                tinsert(WishListEntries, {sortingOrder, string.format("%s[%s]", playerName, prio)});
-                itemIsOnSomeonesWishlist = true;
-            end
+        -- TMB is not case-sensitive so people get creative with capital letters sometimes
+        playerName = GL:capitalize(playerName);
+        if (entryType == Constants.tmbTypePrio) then
+            tinsert(PrioListEntries, {sortingOrder, string.format("|cFF%s    %s[%s]|r", color, playerName, prio)});
+            itemIsOnSomeonesPriolist = true;
+            entriesAdded = entriesAdded + 1;
+        else
+            tinsert(WishListEntries, {sortingOrder, string.format("|cFF%s    %s[%s]|r", color, playerName, prio)});
+            itemIsOnSomeonesWishlist = true;
+            entriesAdded = entriesAdded + 1;
         end
     end
 
-    if (not itemIsOnSomeonesWishlist and not itemIsOnSomeonesPriolist) then
-        return;
-    end
-
-    -- Only add the 'Prio List' header if the item is actually on someone's wishlist
-    if (itemIsOnSomeonesPriolist and App.Settings:get("TMB.showPrioListInfoOnTooltips")) then
+    -- Only add the 'Prio List' header if the item is actually on someone's character prio list
+    if (itemIsOnSomeonesPriolist and GL.Settings:get("TMB.showPrioListInfoOnTooltips")) then
         -- Add the header
-        tooltip:AddLine(string.format("\n|c00efb8cd%s", "TMB Prio List"));
+        tooltip:AddLine(string.format("\n|cFFff7a0a%s|r", "TMB Prio List"));
 
         -- Sort the PrioListEntries based on prio (lowest to highest)
         table.sort(PrioListEntries, function (a, b)
@@ -205,25 +200,23 @@ function TMB:appendTMBItemInfoToTooltip(tooltip)
 
         -- Add the entries to the tooltip
         for _, Entry in pairs(PrioListEntries) do
-            local color = Utils:tableGet(Constants.ClassHexColors, PlayersInRaid[Entry[2]], "FFFFFF");
-
             tooltip:AddLine(string.format(
                 "|cFF%s%s|r",
-                color,
-                Utils:capitalize(Entry[2])
+                GL:classHexColor(GroupMemberClasses[Entry[2]]),
+                GL:capitalize(Entry[2])
             ));
         end
     end
 
     -- The item is on someone's prio list and the user is not interested in wishlist entries
-    if (App.Settings:get("TMB.hideWishListInfoIfPriorityIsPresent") and itemIsOnSomeonesPriolist) then
+    if (GL.Settings:get("TMB.hideWishListInfoIfPriorityIsPresent") and itemIsOnSomeonesPriolist) then
         return;
     end
 
     -- Only add the 'Wish List' header if the item is actually on someone's wishlist
-    if (itemIsOnSomeonesWishlist and App.Settings:get("TMB.showWishListInfoOnTooltips")) then
+    if (itemIsOnSomeonesWishlist and GL.Settings:get("TMB.showWishListInfoOnTooltips")) then
         -- Add the header
-        tooltip:AddLine(string.format("\n|c00efb8cd%s", "TMB Wish List"));
+        tooltip:AddLine(string.format("\n|cFFffffff%s|r", "TMB Wish List"));
 
         -- Sort the WishListEntries based on prio (lowest to highest)
         table.sort(WishListEntries, function (a, b)
@@ -232,28 +225,42 @@ function TMB:appendTMBItemInfoToTooltip(tooltip)
 
         -- Add the entries to the tooltip
         for _, Entry in pairs(WishListEntries) do
-            local color = Utils:tableGet(Constants.ClassHexColors, PlayersInRaid[Entry[2]], "FFFFFF");
-
             tooltip:AddLine(string.format(
                 "|cFF%s%s|r",
-                color,
-                Utils:capitalize(Entry[2])
+                GL:classHexColor(GroupMemberClasses[Entry[2]]),
+                GL:capitalize(Entry[2])
             ));
         end
     end
 end
 
+--- Draw the TMB importer interface
+---@todo Refactor to Interface
+---@todo Fix broadcast functionality (payload needs to be smaller)
+---
+---@return void
 function TMB:drawImporter()
-    Utils:debug("TMB:drawImporter");
+    GL:debug("TMB:drawImporter");
 
     -- Create a container/parent frame
-    local TMBFrame = AceGUI:Create("Frame");
-    TMBFrame:SetTitle(App.name .. " v" .. App.version);
-    TMBFrame:SetStatusText("Addon v" .. App.version);
-    TMBFrame:SetLayout("Flow");
-    TMBFrame:SetWidth(600);
-    TMBFrame:SetHeight(450);
-    TMBFrame.statustext:GetParent():Hide(); -- Hide the statustext bar
+    local Window = AceGUI:Create("Frame");
+    Window:SetTitle("Gargul v" .. GL.version);
+    Window:SetStatusText("Addon v" .. GL.version);
+    Window:SetLayout("Flow");
+    Window:SetWidth(600);
+    Window:SetHeight(480);
+    Window.statustext:GetParent():Hide(); -- Hide the statustext bar
+
+    -- Make sure the window can be closed by pressing the escape button
+    _G["GARGUL_TMB_WINDOW"] = Window.frame;
+    tinsert(UISpecialFrames, "GARGUL_TMB_WINDOW");
+
+    -- Explanation
+    local Description = AceGUI:Create("Label");
+    Description:SetFontObject(_G["GameFontNormal"]);
+    Description:SetFullWidth(true);
+    Description:SetText("To get started you first need to export your guild's data on thatsmybis.com. In order to do that navigate to Guild > Exports and click the 'Download' button in the Gargul section. Afterwards paste the contents as-is in the box below and click 'Import'. That's it!");
+    Window:AddChild(Description);
 
     -- Large edit box
     local TMBBoxContent = "";
@@ -261,14 +268,29 @@ function TMB:drawImporter()
     TMBBox:SetFullWidth(true);
     TMBBox:DisableButton(true);
     TMBBox:SetFocus();
-    TMBBox:SetLabel("Paste the thatsmybis JSON here, then click the 'Import' button. Use 'Broadcast' to share with your group");
-    TMBBox:SetNumLines(22);
+    TMBBox:SetLabel("");
+    TMBBox:SetNumLines(20);
     TMBBox:SetMaxLetters(999999999);
-    TMBFrame:AddChild(TMBBox);
+    Window:AddChild(TMBBox);
 
     TMBBox:SetCallback("OnTextChanged", function(_, _, text)
         TMBBoxContent = text;
     end)
+
+    -- Status message frame
+    local StatusMessageFrame = AceGUI:Create("SimpleGroup");
+    StatusMessageFrame:SetLayout("FILL");
+    StatusMessageFrame:SetWidth(570);
+    StatusMessageFrame:SetHeight(56);
+    Window:AddChild(StatusMessageFrame);
+
+    local StatusMessageLabel = AceGUI:Create("Label");
+    StatusMessageLabel:SetFontObject(_G["GameFontNormal"]);
+    StatusMessageLabel:SetFullWidth(true);
+    StatusMessageLabel:SetColor(1, 0, 0);
+    StatusMessageLabel:SetText("");
+    StatusMessageFrame:AddChild(StatusMessageLabel);
+    GL.Interface:setItem(self, "StatusMessage", StatusMessageLabel);
 
     --[[
         FOOTER BUTTON PARENT FRAME
@@ -277,7 +299,7 @@ function TMB:drawImporter()
     FooterFrame:SetLayout("Flow");
     FooterFrame:SetFullWidth(true);
     FooterFrame:SetHeight(50);
-    TMBFrame:AddChild(FooterFrame);
+    Window:AddChild(FooterFrame);
 
     local ImportButton = AceGUI:Create("Button");
     ImportButton:SetText("Import");
@@ -299,32 +321,44 @@ function TMB:drawImporter()
     ClearButton:SetText("Clear");
     ClearButton:SetWidth(140);
     ClearButton:SetCallback("OnClick", function()
-        StaticPopupDialogs[App.name .. "_CLEAR_TMB_CONFIRMATION"].OnAccept = function ()
-            TMBBox:SetText("");
-            App.DB.TMB = {};
-        end
-
-        StaticPopup_Show(App.name .. "_CLEAR_TMB_CONFIRMATION");
+        GL.Interface.PopupDialog:open({
+            question = "Are you sure you want to clear the TMB tables?",
+            OnYes = function ()
+                TMBBox:SetText("");
+                GL.DB.TMB = {};
+            end,
+        });
     end);
     FooterFrame:AddChild(ClearButton);
 
 --     TMB:updateBroadCastButton(BroadCastButton);
 end
 
-function TMB:import(data, sender)
-    Utils:debug("TMB:import");
+--- Import a given tmb string
+---
+---@param data string
+---@return boolean
+function TMB:import(data)
+    GL:debug("TMB:import");
+
+    local function displayGenericException()
+        GL.Interface:getItem(self, "Label.StatusMessage"):SetText("Invalid TMB data provided, make sure to click the 'Download' button in the Gargul section and paste the contents here as-is!");
+    end
 
     -- Make sure all the required properties are available and of the correct type
     if (not data or type(data) ~= "string") then
-        Utils:error("Invalid data provided");
+        displayGenericException();
         return false;
     end
 
-    local WebsiteData = App.JSON:decode(data);
+    local jsonDecodeSucceeded, WebsiteData = pcall(function () return GL.JSON:decode(data); end);
 
     -- Make sure the given string could actually be decoded
-    if (not WebsiteData or type(WebsiteData) ~= "table") then
-        Utils:error("Invalid data provided");
+    if (not jsonDecodeSucceeded
+        or not WebsiteData
+        or type(WebsiteData) ~= "table"
+    ) then
+        displayGenericException();
         return false;
     end
 
@@ -335,15 +369,15 @@ function TMB:import(data, sender)
         local TMBData = {};
         for itemId, WishListEntries in pairs(WebsiteData.wishlists) do
             TMBData[itemId] = {};
-            for _, characterString in pairs (WishListEntries) do
-                local stringParts = Utils:strSplit(characterString, "|");
+            for _, characterString in pairs(WishListEntries) do
+                local stringParts = GL:strSplit(characterString, "|");
                 local characterName = "";
-                local order = .0;
+                local order = "?";
                 local type = Constants.tmbTypeWish;
 
                 if (stringParts[1] and stringParts[3]) then
                     characterName = stringParts[1];
-                    order = tonumber(stringParts[3]);
+                    order = tonumber(stringParts[3]) or order;
                 end
 
                 if (stringParts[5]) then
@@ -368,85 +402,97 @@ function TMB:import(data, sender)
                     end
                 end
 
-                if (not order) then
+                -- It seems like the user who exported didn't have the
+                -- permissions necessary to see all of the item orders
+                if (not order or order == "?") then
                     insufficientPermissions = true;
                 end
             end
         end
 
-        App.DB.TMB = TMBData;
+        GL.DB.TMB = TMBData;
     end
 
     -- There is also loot priority data available, pass it to on!
     if (WebsiteData.loot and type(WebsiteData.loot) == "string") then
-        App.LootPriority:save(WebsiteData.loot);
+        GL.LootPriority:save(WebsiteData.loot);
     end
 
     if (insufficientPermissions) then
-        Utils:success("TMB Import successful with notice:");
-        Utils:warning("It seems like you don't have sufficient permissions on TMB to view all priority data. Do you have the correct role in TMB?");
+        local message = string.format(
+            "|cff92FF00%s|r\n\n|cfff7922e%s|r",
+            "TMB Import successful with notice:",
+            "It seems like you don't have sufficient permissions on TMB to view all priority data. Do you have the required roles and permissions in TMB?"
+        );
+        GL.Interface:getItem(self, "Label.StatusMessage"):SetText(message);
     else
-        Utils:success("TMB Import successful");
+        GL.Interface:getItem(self, "Label.StatusMessage"):SetText("|cff92FF00TMB Import successful|r");
     end
 
     return true;
 end
 
--- Check if the broadcast button should be available
+--- Check if the broadcast button should be available
+---
+---@param BroadCastButton table
+---@return void
 function TMB:updateBroadCastButton(BroadCastButton)
-    Utils:debug("TMB:updateBroadCastButton");
+    GL:debug("TMB:updateBroadCastButton");
 
-    if (not App.User.isMasterLooter) then
+    if (not GL.User.isMasterLooter) then
         return BroadCastButton:SetDisabled(true);
     end
 
     return BroadCastButton:SetDisabled(false);
 end
 
--- Broadcast our TMB info table to the raid or group
+--- Broadcast our TMB info table to the raid or group
+---@todo this doesn't work at the moment
+---
+---@return void
 function TMB:broadcast()
-    Utils:debug("TMB:broadcast");
+    GL:debug("TMB:broadcast");
 
     if (WishLists.broadcastInProgress) then
-        Utils:error("Broadcast still in progress");
+        GL:error("Broadcast still in progress");
         return;
     end
 
     self.broadcastInProgress = true;
 
-    if (App.User.isInRaid) then
-        App.CommMessage.new(
+    if (GL.User.isInRaid) then
+        GL.CommMessage.new(
             CommActions.broadcastTMBData,
-            "App.DB.TMB",
+            "GL.DB.TMB",
             "RAID"
         ):send();
-    elseif (App.User.isInParty) then
-        App.CommMessage.new(
+    elseif (GL.User.isInParty) then
+        GL.CommMessage.new(
             CommActions.broadcastTMBData,
-            "App.DB.TMB",
+            "GL.DB.TMB",
             "PARTY"
         ):send();
     end
 
-    App.Ace:ScheduleTimer(function ()
-        Utils:success("Wishlist Broadcast finished");
+    GL.Ace:ScheduleTimer(function ()
+        GL:success("Wishlist Broadcast finished");
         self.broadcastInProgress = false;
     end, 10);
 end
 
--- Process an incoming wishlist broadcast
+--- Process an incoming wishlist broadcast
 function TMB:receiveWishLists(CommMessage)
-    Utils:debug("TMB:receiveWishLists");
+    GL:debug("TMB:receiveWishLists");
 
     -- No need to update our tables if we broadcasted them ourselves
-    if (CommMessage.Sender.name == App.User.name) then
-        Utils:debug("Sync:receiveWishLists received by self, skip");
+    if (CommMessage.Sender.name == GL.User.name) then
+        GL:debug("Sync:receiveWishLists received by self, skip");
         return;
     end
 
-    App.DB.TMB = CommMessage.content;
+    GL.DB.TMB = CommMessage.content;
 
-    Utils:success("Your Wishlists just got updated by " .. CommMessage.Sender.name);
+    GL:success("Your Wishlists just got updated by " .. CommMessage.Sender.name);
 end
 
-Utils:debug("WishLists.lua");
+GL:debug("WishLists.lua");

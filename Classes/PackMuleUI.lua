@@ -3,9 +3,9 @@
     The pack mules (player) will automatically receive all items
     that their eligible for according to the rules as set up by the ML
 ]]
-local _, App = ...;
+local _, GL = ...;
 
-App.PackMuleUI = App.PackMuleUI or {
+GL.PackMuleUI = GL.PackMuleUI or {
     setupWindowIsActive = false,
 
     UIComponents = {
@@ -15,13 +15,12 @@ App.PackMuleUI = App.PackMuleUI or {
     },
 };
 
-local Utils = App.Utils;
-local AceGUI = App.Ace.GUI;
-local Settings = App.Settings;
-local PackMuleUI = App.PackMuleUI;
+local AceGUI = GL.AceGUI;
+local Settings = GL.Settings;
+local PackMuleUI = GL.PackMuleUI;
 
 function PackMuleUI:drawSetupWindow()
-    Utils:debug("PackMuleUI:drawSetupWindow");
+    GL:debug("PackMuleUI:drawSetupWindow");
 
     -- Check to make sure the setup window isn't active already
     if (self.setupWindowIsActive) then
@@ -41,7 +40,7 @@ function PackMuleUI:drawSetupWindow()
     local LowerThanRule;
     local HigherThanRule;
     local SpecificItemRules = {};
-    for _, Rule in pairs(Settings:get("PackMule.Rules")) do
+    for _, Rule in pairs(Settings:get("PackMule.Rules", {})) do
         if (Rule.item) then
             tinsert(SpecificItemRules, Rule);
         elseif (Rule.operator) then
@@ -60,13 +59,17 @@ function PackMuleUI:drawSetupWindow()
         AceGUI:Release(widget);
         self.setupWindowIsActive = false;
     end);
-    Frame:SetTitle(App.name .. " v" .. App.version);
-    Frame:SetStatusText("Addon v" .. App.version);
+    Frame:SetTitle("Gargul v" .. GL.version);
+    Frame:SetStatusText("Addon v" .. GL.version);
     Frame:SetLayout("Flow");
     Frame:SetWidth(600);
     Frame:SetHeight(450);
     Frame.statustext:GetParent():Hide(); -- Hide the statustext bar
     Frame:EnableResize(false);
+
+    -- Make sure the window can be closed by pressing the escape button
+    _G["GARGUL_PACKMULE_WINDOW"] = Frame.frame;
+    tinsert(UISpecialFrames, "GARGUL_PACKMULE_WINDOW");
 
     self:drawSpacer(Frame, 1, 10);
 
@@ -89,13 +92,12 @@ function PackMuleUI:drawSetupWindow()
     self:drawHeader(Frame, "Specific Items");
 
     local ScrollFrame = self:drawScrollFrame(Frame);
-    local numberOfRules = 4; -- TODO: Hardcoded for now, make dynamic
 
     for _, Rule in pairs(SpecificItemRules) do
         self:drawSpecifItemRule(ScrollFrame, Rule);
     end
 
-    -- Make sure to draw aditional item rules in case we have less than 4
+    -- Make sure to draw additional item rules in case we have less than 4
     for index = #self.UIComponents.Input.SpecificItemRules, 4 do
         self:drawSpecifItemRule(ScrollFrame);
     end
@@ -113,7 +115,7 @@ function PackMuleUI:drawInfoSection(Frame)
     -- LABEL: Info about PackMule
     local Info = AceGUI:Create("Label");
     Info:SetText([[
-PackMule will only work if you are the master looter, you're in a raid and PackMule is "enabled"
+PackMule will only work if you are the master looter and PackMule is "enabled". You can use 'SELF' (all caps) to refer to your own character regardless of what character you're playing on!
 ]]);
     Info:SetHeight(20);
     Info:SetWidth(520);
@@ -121,7 +123,7 @@ PackMule will only work if you are the master looter, you're in a raid and PackM
 end
 
 function PackMuleUI:drawSettingsSection(Frame)
-    Utils:debug("PackMuleUI:drawSettingsSection");
+    GL:debug("PackMuleUI:drawSettingsSection");
 
     local Row = AceGUI:Create("SimpleGroup");
     Row:SetLayout("Flow");
@@ -161,7 +163,7 @@ If you check this box then PackMule will keep its former state even after moving
         GameTooltip:Hide();
     end);
     Row:AddChild(PackMulePersistsAfterZoneChange);
-    self.UIComponents.Input.PeristAfterZoneChange = PackMulePersistsAfterZoneChange;
+    self.UIComponents.Input.persistAfterZoneChange = PackMulePersistsAfterZoneChange;
 
     local PackMulePersistsAfterReload = AceGUI:Create("CheckBox");
     PackMulePersistsAfterReload:SetLabel("Persist after reload");
@@ -178,7 +180,7 @@ If you check this box then PackMule will keep its former state even after reload
         GameTooltip:Hide();
     end);
     Row:AddChild(PackMulePersistsAfterReload);
-    self.UIComponents.Input.PeristAfterReload = PackMulePersistsAfterReload;
+    self.UIComponents.Input.persistAfterReload = PackMulePersistsAfterReload;
 end
 
 function PackMuleUI:drawScrollFrame(Frame)
@@ -197,7 +199,6 @@ function PackMuleUI:drawScrollFrame(Frame)
     AddRuleButton:SetWidth(140);
     AddRuleButton:SetHeight(20);
     AddRuleButton:SetCallback("OnClick", function()
-        local index = self.numberOfSpecificItemRules or 0;
         self:drawSpecifItemRule(ScrollFrame);
     end);
 
@@ -216,7 +217,7 @@ function PackMuleUI:drawScrollFrame(Frame)
 end
 
 function PackMuleUI:drawSpecifItemRule(Frame, Rule)
-    Utils:debug("PackMuleUI:drawSpecifItemRule");
+    GL:debug("PackMuleUI:drawSpecifItemRule");
 
     Rule = Rule or {
         item = "",
@@ -271,7 +272,7 @@ function PackMuleUI:drawSpecifItemRule(Frame, Rule)
 end
 
 function PackMuleUI:drawSpacer(Parent, width, height)
-    Utils:debug("self:drawSpacer");
+    GL:debug("self:drawSpacer");
 
     local Spacer = AceGUI:Create("SimpleGroup");
     Spacer:SetLayout("Flow");
@@ -281,7 +282,7 @@ function PackMuleUI:drawSpacer(Parent, width, height)
 end
 
 function PackMuleUI:drawLowerThanQualityRule(Frame, Rule)
-    Utils:debug("PackMuleUI:drawLowerThanQualityRule");
+    GL:debug("PackMuleUI:drawLowerThanQualityRule");
 
     Rule = Rule or {
         quality = nil,
@@ -339,7 +340,7 @@ function PackMuleUI:drawLowerThanQualityRule(Frame, Rule)
 end
 
 function PackMuleUI:drawHigherThanQualityRule(Frame, Rule)
-    Utils:debug("PackMuleUI:drawHigherThanQualityRule");
+    GL:debug("PackMuleUI:drawHigherThanQualityRule");
 
     Rule = Rule or {
         quality = nil,
@@ -397,7 +398,7 @@ function PackMuleUI:drawHigherThanQualityRule(Frame, Rule)
 end
 
 function PackMuleUI:drawHeader(Frame, text)
-    Utils:debug("PackMuleUI:drawHeader");
+    GL:debug("PackMuleUI:drawHeader");
 
     local Heading = AceGUI:Create("Heading");
     Heading:SetFullWidth(true);
@@ -407,12 +408,11 @@ end
 
 -- Process all values of the PackMule settings window
 function PackMuleUI:processSettings()
-    Utils:debug("PackMuleUI:processSettings");
+    GL:debug("PackMuleUI:processSettings");
 
-    local Rules = {};
     local enabled = self.UIComponents.Input.Enabled:GetValue();
-    local persistAfterReload = self.UIComponents.Input.PeristAfterReload:GetValue();
-    local persistAfterZoneChange = self.UIComponents.Input.PeristAfterZoneChange:GetValue();
+    local persistAfterReload = self.UIComponents.Input.persistAfterReload:GetValue();
+    local persistAfterZoneChange = self.UIComponents.Input.persistAfterZoneChange:GetValue();
 
     -- Lower/higher than quality rules
     local lowerThanRuleQuality = self.UIComponents.Input.LowerThanRuleQuality:GetValue();
@@ -421,7 +421,7 @@ function PackMuleUI:processSettings()
     local higherThanRuleTarget = tostring(self.UIComponents.Input.HigherThanRuleTarget:GetText());
 
     -- Reset (clear) all the current PackMule rules
-    App.PackMule:resetRules();
+    GL.PackMule:resetRules();
 
     Settings:set("PackMule.enabled", enabled);
     Settings:set("PackMule.persistsAfterZoneChange", persistAfterZoneChange);
@@ -432,7 +432,7 @@ function PackMuleUI:processSettings()
         local name = tostring(SpecificItemRule.Name:GetText());
         local target = tostring(SpecificItemRule.Target:GetText());
 
-        App.PackMule:addRule({
+        GL.PackMule:addRule({
             item = name,
             target = target,
         });
@@ -443,7 +443,7 @@ function PackMuleUI:processSettings()
             and lowerThanRuleTarget
             and lowerThanRuleTarget ~= ""
     ) then
-        App.PackMule:addRule({
+        GL.PackMule:addRule({
             quality = lowerThanRuleQuality,
             operator = "<",
             target = lowerThanRuleTarget,
@@ -455,7 +455,7 @@ function PackMuleUI:processSettings()
             and higherThanRuleTarget
             and higherThanRuleTarget ~= ""
     ) then
-        App.PackMule:addRule({
+        GL.PackMule:addRule({
             quality = higherThanRuleQuality,
             operator = ">",
             target = higherThanRuleTarget,
@@ -463,4 +463,4 @@ function PackMuleUI:processSettings()
     end
 end
 
-Utils:debug("PackMuleUI.lua");
+GL:debug("PackMuleUI.lua");

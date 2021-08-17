@@ -1,17 +1,16 @@
-local _, App = ...;
+local _, GL = ...;
 
-App.Ace.GUI = App.Ace.GUI or LibStub("AceGUI-3.0");
+GL.AceGUI = GL.AceGUI or LibStub("AceGUI-3.0");
 
-App.LootPriority = {
+GL.LootPriority = {
     initialized = false,
 };
 
-local Utils = App.Utils;
-local AceGUI = App.Ace.GUI;
-local LootPriority = App.LootPriority;
+local AceGUI = GL.AceGUI;
+local LootPriority = GL.LootPriority;
 
 function LootPriority:_init()
-    Utils:debug("LootPriority:_init");
+    GL:debug("LootPriority:_init");
 
     if (self._initialized) then
         return;
@@ -25,37 +24,38 @@ function LootPriority:_init()
     self._initialized = true;
 end
 
--- Fetch an item's prio
-function LootPriority:getPriority(itemIdOrLink, itemName)
-    Utils:debug("LootPriority:getPriority");
+--- Fetch an item's prio
+---
+---@param itemLink string
+---@param itemName string|nil
+---@return string|nil
+function LootPriority:getPriority(itemLink, itemName)
+    GL:debug("LootPriority:byItemLink");
 
-    local itemId = itemIdOrLink;
-    if (Utils:strIsItemLink(itemIdOrLink)) then
-        itemId = Utils:getItemIdFromLink(itemIdOrLink);
-        itemName = Utils:getItemNameFromLink(itemIdOrLink);
-    end
+    local itemId = GL:getItemIdFromLink(itemLink);
+    itemName = itemName or GL:getItemNameFromLink(itemLink);
 
-    return App.DB.LootPriority[itemId]
-        or App.DB.LootPriority[itemName];
+    return GL.DB.LootPriority[itemId]
+        or GL.DB.LootPriority[itemName];
 end
 
--- Append the loot prio as defined in App.DB.LootPriority to an item's tooltip
+-- Append the loot prio as defined in GL.DB.LootPriority to an item's tooltip
 function LootPriority:appendLootPrioToTooltip(tooltip)
-    Utils:debug("LootPriority:appendLootPrioToTooltip");
+    GL:debug("LootPriority:appendLootPrioToTooltip");
 
     -- No tooltip was provided
     if (not tooltip) then
         return;
     end
 
-    local _, itemLink = tooltip:GetItem();
+    local itemName, itemLink = tooltip:GetItem();
 
     -- We couldn't find an itemLink (this can actually happen!)
     if (not itemLink) then
         return;
     end
 
-    local itemPriority = self:getPriority(itemLink);
+    local itemPriority = self:getPriority(itemLink, itemName);
 
     -- No prio defined for this item
     if (not itemPriority) then
@@ -72,12 +72,12 @@ function LootPriority:appendLootPrioToTooltip(tooltip)
 end
 
 function LootPriority:drawImporter()
-    Utils:debug("LootPriority:drawImporter");
+    GL:debug("LootPriority:drawImporter");
 
     -- Create a container/parent frame
     local LootPriorityFrame = AceGUI:Create("Frame");
-    LootPriorityFrame:SetTitle(App.name .. " v" .. App.version);
-    LootPriorityFrame:SetStatusText("Addon v" .. App.version);
+    LootPriorityFrame:SetTitle("Gargul v" .. GL.version);
+    LootPriorityFrame:SetStatusText("Addon v" .. GL.version);
     LootPriorityFrame:SetLayout("Flow");
     LootPriorityFrame:SetWidth(600);
     LootPriorityFrame:SetHeight(450);
@@ -96,8 +96,8 @@ function LootPriority:drawImporter()
 
     local LootPriorityCSV = "";
 
-    if (App.DB.LootPriority and type(App.DB.LootPriority) == "table") then
-        for item, priority in pairs(App.DB.LootPriority) do
+    if (GL.DB.LootPriority and type(GL.DB.LootPriority) == "table") then
+        for item, priority in pairs(GL.DB.LootPriority) do
             local prioritycount = #priority;
             local priorityString = "";
 
@@ -141,24 +141,23 @@ function LootPriority:drawImporter()
     FooterFrame:AddChild(ClearButton);
 end
 
-function LootPriority:save(data, sender)
-    Utils:debug("LootPriority:save");
+function LootPriority:save(data)
+    GL:debug("LootPriority:save");
 
     if (not data or type(data) ~= "string") then
-        return Utils:warning("Invalid data provided");
+        return GL:warning("Invalid data provided");
     end
 
     local LootPriorityData = {};
     for line in data:gmatch("[^\n]+") do
-        local segments = Utils:strSplit(line, ">");
+        local segments = GL:strSplit(line, ">");
         local segmentCount = #segments;
 
         if (segmentCount < 2) then
-            return Utils:warning(string.format("Invalid data provided in line: '%s': missing item id or priority", line));
+            return GL:warning(string.format("Invalid data provided in line: '%s': missing item id or priority", line));
         end
 
         local key = strtrim(segments[1]);
-        local keyIsNumeric = tonumber(key) ~= nil;
 
         if (tonumber(key) ~= nil) then
             key = tonumber(key);
@@ -173,9 +172,9 @@ function LootPriority:save(data, sender)
         end
     end
 
-    App.DB.LootPriority = LootPriorityData;
+    GL.DB.LootPriority = LootPriorityData;
 
-    Utils:success("Loot priorities imported successfully");
+    GL:success("Loot priorities imported successfully");
 end
 
-Utils:debug("LootPriority.lua");
+GL:debug("LootPriority.lua");
