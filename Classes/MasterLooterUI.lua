@@ -77,7 +77,7 @@ function MasterLooterUI:draw(itemLink)
     Window.frame:SetFrameStrata("HIGH");
     Window.statustext:GetParent():Hide(); -- Hide the statustext bar
     Window:SetCallback("OnClose", function(widget)
-        self:close(widget);
+        self:close();
     end);
     GL.Interface:setItem(self, "Window", Window);
 
@@ -366,16 +366,20 @@ function MasterLooterUI:draw(itemLink)
     end
 end
 
-function MasterLooterUI:close(Frame)
+function MasterLooterUI:close()
     GL:debug("MasterLooterUI:close");
-
-    -- Store the frame's last position for future play sessions
-    GL.Interface:storePosition(Frame, "RollOff");
 
     -- When the master looter closes the master loot window with a master
     -- loot still in progress we show the reopen master looter button
     if (GL.RollOff.inProgress) then
         self:drawReopenMasterLooterUIButton();
+    end
+
+    local Window = GL.Interface:getItem(self, "Window");
+    if (Window) then
+        -- Store the frame's last position for future play sessions
+        GL.Interface:storePosition(Window, "RollOff");
+        Window:Hide();
     end
 end
 

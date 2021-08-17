@@ -42,7 +42,10 @@ function PackMule:_init()
             self.timerId = false;
         end
 
-        if (not Settings:get("PackMule.enabled")) then
+        -- Do nothing if packmule is not enabled or the user holds the shift key
+        if (not Settings:get("PackMule.enabled")
+            or IsShiftKeyDown()
+        ) then
             return;
         end
 

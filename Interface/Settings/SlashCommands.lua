@@ -5,7 +5,7 @@ local Overview = GL.Interface.Settings.Overview; ---@type SettingsOverview
 
 ---@class SlashCommandsSettings
 GL.Interface.Settings.SlashCommands = {
-    description = "There are many shorthand slash commands available in Gargul to help speed up your instance runs.\n",
+    description = "There are many shorthand slash commands available in Gargul to help speed up your instance runs. Keep in mind that you can use both /gl and /gargul as a prefix for the commands and their shorthands listed below!\n",
     hiddenCommands = {
         "test",
     },
@@ -49,7 +49,7 @@ function SlashCommands:draw(Parent)
     Overview:drawCheckboxes({
         {
             label = "Open on faulty command",
-            description = "If checked this window will always open if you try to run a command that doesn't exist or when the wrong input was provided",
+            description = "If checked this window will automatically open if you try to run a command that doesn't exist or when the wrong input was provided",
             setting = "autoOpenCommandHelp",
         }
     }, Parent);

@@ -127,7 +127,7 @@ end
 function DroppedLoot:highlightItemsOfInterest()
     GL:debug("DroppedLoot:highlightItemsOfInterest");
 
-    -- There's no point highlight loot if the player
+    -- There's no point highlighting loot if the player
     -- is not in a group or highlights are disabled
     if (not GL.User.isInGroup
         or GL.Settings:get("highlightsDisabled")

@@ -5,7 +5,7 @@ local Overview = GL.Interface.Settings.Overview; ---@type SettingsOverview
 
 ---@class PackMuleSettings
 GL.Interface.Settings.PackMule = {
-    description = "Gargul's PackMule allows you to funnel specific items or items of a given quality to people in your raid automatically without having to manually assign them all the time.\n\nNB: PackMule will only work if you are the master looter, you're in a group and PackMule is enabled!",
+    description = "Gargul's PackMule allows you to funnel specific items or items of a given quality to people in your raid automatically without having to manually assign them all the time.\n\nPackMule will only work if you are the master looter, you're in a group and PackMule is enabled! Also, when looting a corpse while holding the shift-button, PackMule will be temporarily disabled, allowing you to loot the old fashioned way!",
     wikiUrl = "https://github.com/papa-smurf/Gargul/wiki/Setting-up-PackMules",
 };
 local PackMule = GL.Interface.Settings.PackMule; ---@type PackMuleSettings

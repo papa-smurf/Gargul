@@ -72,6 +72,10 @@ function Award:draw(itemLink)
 
     Award.UIComponents.Frame = AwardFrame;
 
+    -- Make sure the window can be closed by pressing the escape button
+    _G["GARGUL_AWARd_WINDOW"] = AwardFrame.frame;
+    tinsert(UISpecialFrames, "GARGUL_AWARd_WINDOW");
+
     --[[
         FIRST ROW (ITEM AND BUTTONS)
     ]]

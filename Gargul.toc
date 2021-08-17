@@ -32,7 +32,6 @@ Classes/RollerUI.lua
 Classes/RollOff.lua
 Classes/GroupLoot.lua
 Classes/MasterLooterUI.lua
-Classes/AwardUI.lua
 Classes/Commands.lua
 Classes/LootPriority.lua
 Classes/AwardedLoot.lua

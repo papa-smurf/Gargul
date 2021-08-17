@@ -251,6 +251,7 @@ function RollOff:award(roller, itemLink)
 
         self:reset();
         GL.MasterLooterUI:reset();
+        GL.MasterLooterUI:close();
     end
 
     -- Make sure the initiator has to confirm his choices
