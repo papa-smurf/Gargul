@@ -66,7 +66,8 @@ function TMB:byItemId(itemId, inRaidOnly)
             local playerName = string.lower(Entry.character);
 
             -- If inRaidOnly is true we need to make sure we only return details of people who are actually in the raid
-            if (not inRaidOnly or GL:inTable(GroupMemberNames, string.gsub(playerName, "%(OS%)", ""))) then
+            --- NOTE TO SELF: it's (os) because of the string.lower, if you remove the lower then change below accordingly!
+            if (not inRaidOnly or GL:inTable(GroupMemberNames, string.gsub(playerName, "%(os%)", ""))) then
                 local checkSum = string.format('%s||%s||%s', Entry.character, tostring(Entry.prio), tostring(Entry.type));
 
                 -- Make sure we don't add the same player/prio combo more than once
@@ -203,7 +204,7 @@ function TMB:appendTMBItemInfoToTooltip(tooltip)
             tooltip:AddLine(string.format(
                 "|cFF%s%s|r",
                 GL:classHexColor(GroupMemberClasses[Entry[2]]),
-                GL:capitalize(Entry[2])
+                GL:capitalize(Entry[2]):gsub("%(os%)", " (OS)")
             ));
         end
     end
@@ -228,7 +229,7 @@ function TMB:appendTMBItemInfoToTooltip(tooltip)
             tooltip:AddLine(string.format(
                 "|cFF%s%s|r",
                 GL:classHexColor(GroupMemberClasses[Entry[2]]),
-                GL:capitalize(Entry[2])
+                GL:capitalize(Entry[2]):gsub("%(os%)", " (OS)")
             ));
         end
     end

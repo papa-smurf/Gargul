@@ -291,12 +291,13 @@ function DroppedLoot:announce()
                 -- Make sure we only show wishlist details of people
                 -- Who are actually in the raid
                 for _, Entry in pairs(TMBInfo) do
-                    local playerName = Entry.character;
+                    local playerName = string.lower(Entry.character);
 
-                    if (GL:inTable(PlayersInRaid, string.gsub(playerName, "%(OS%)", ""))) then
+                    --- NOTE TO SELF: it's (os) because of the string.lower, if you remove the lower then change below accordingly!
+                    if (GL:inTable(PlayersInRaid, string.gsub(playerName, "%(os%)", ""))) then
                         local prio = Entry.prio;
                         local entryType = Entry.type or Constants.tmbTypeWish;
-                        local isOffSpec = string.find(playerName, "(OS)");
+                        local isOffSpec = string.find(playerName, "(os)");
                         local prioOffset = 0;
                         local sortingOrder = prio;
 
