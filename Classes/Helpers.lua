@@ -580,7 +580,7 @@ function GL:getLinkedItemsForId(itemId)
     -- Gather all the item IDs that are linked to our item
     itemId = tostring(itemId);
     local AllLinkedItemIds = {itemId};
-    for _, id in pairs(GL.Data.Constants.LinkedItems[itemId] or {}) do
+    for _, id in pairs(GL.Data.ItemLinks[itemId] or {}) do
         tinsert(AllLinkedItemIds, id);
     end
 
