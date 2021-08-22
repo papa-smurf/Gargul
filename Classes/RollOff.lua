@@ -251,7 +251,11 @@ function RollOff:award(roller, itemLink)
 
         self:reset();
         GL.MasterLooterUI:reset();
-        GL.MasterLooterUI:close();
+        GL.MasterLooterUI:closeReopenMasterLooterUIButton();
+
+        if (GL.Settings:get("UI.RollOff.closeOnAward")) then
+            GL.MasterLooterUI:close();
+        end
     end
 
     -- Make sure the initiator has to confirm his choices

@@ -176,7 +176,9 @@ function PackMule:lootReady()
             end
 
             -- The rule applies, give it to the designated target
-            if (RuleThatApplies) then
+            if (RuleThatApplies
+                and RuleThatApplies.target ~= "IGNORE"
+            ) then
                 for playerIndex = 1, GetNumGroupMembers() do
                     if (GetMasterLootCandidate(itemIndex, playerIndex) == RuleThatApplies.target) then
                         GiveMasterLoot(itemIndex, playerIndex);

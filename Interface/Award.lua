@@ -73,8 +73,8 @@ function Award:draw(itemLink)
     Award.UIComponents.Frame = AwardFrame;
 
     -- Make sure the window can be closed by pressing the escape button
-    _G["GARGUL_AWARd_WINDOW"] = AwardFrame.frame;
-    tinsert(UISpecialFrames, "GARGUL_AWARd_WINDOW");
+    _G["GARGUL_AWARD_WINDOW"] = AwardFrame.frame;
+    tinsert(UISpecialFrames, "GARGUL_AWARD_WINDOW");
 
     --[[
         FIRST ROW (ITEM AND BUTTONS)
@@ -181,9 +181,11 @@ function Award:draw(itemLink)
         local award = function ()
             -- Add the player we awarded the item to to the item's tooltip
             GL.AwardedLoot:addWinner(winner, itemLink);
-
-            RollOff = {};
             GL.Interface.Award:reset();
+
+            if (Settings:get("UI.Award.closeOnAward", true)) then
+                self:close(AwardFrame);
+            end
         end
 
         -- Make sure the initiator has to confirm his choices
@@ -204,13 +206,31 @@ function Award:draw(itemLink)
     ]]
 
     local SecondRow = AceGUI:Create("SimpleGroup");
-    SecondRow:SetLayout("Flow");
+    SecondRow:SetLayout("FILL");
     SecondRow:SetFullWidth(true);
-    SecondRow:SetHeight(50);
+    SecondRow:SetHeight(170);
     AwardFrame:AddChild(SecondRow);
 
     Award:drawPlayersTable(AwardFrame.frame);
 
+    --[[
+        THIRD ROW (AUTO CLOSE CHECKBOX)
+    ]]
+
+    local ThirdRow = AceGUI:Create("SimpleGroup");
+    ThirdRow:SetLayout("Flow");
+    ThirdRow:SetFullWidth(true);
+    ThirdRow:SetHeight(50);
+    AwardFrame:AddChild(ThirdRow);
+
+    local CloseOnAward = AceGUI:Create("CheckBox");
+    CloseOnAward:SetLabel("Close on award");
+    CloseOnAward:SetValue(Settings:get("UI.Award.closeOnAward", true));
+    CloseOnAward:SetCallback("OnValueChanged", function (widget)
+        Settings:set("UI.Award.closeOnAward", widget:GetValue());
+    end);
+    CloseOnAward:SetWidth(150);
+    ThirdRow:AddChild(CloseOnAward);
 
     if (itemLink
             and type(itemLink) == "string"
@@ -224,13 +244,8 @@ end
 function Award:close(Frame)
     GL:debug("Award:close");
 
-    local point, _, relativePoint, offsetX, offsetY = Frame:GetPoint();
-
-    -- Store the frame's last position for future play sessions
-    Settings:set("UI.Award.Position.point", point);
-    Settings:set("UI.Award.Position.relativePoint", relativePoint);
-    Settings:set("UI.Award.Position.offsetX", offsetX);
-    Settings:set("UI.Award.Position.offsetY", offsetY);
+    GL.Interface:storePosition(Frame, "Award");
+    Frame:Hide();
 end
 
 ---@param Parent table

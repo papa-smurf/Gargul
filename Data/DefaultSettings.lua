@@ -46,7 +46,8 @@ GL.Data.DefaultSettings = {
     },
     UI = {
         RollOff = {
-            autoClose = false,
+            closeOnStart = true,
+            closeOnAward = true,
             timer = 15,
         },
         PopupDialog = {
@@ -56,6 +57,9 @@ GL.Data.DefaultSettings = {
                 point = "TOP",
                 relativePoint = "TOP",
             }
-        }
+        },
+        Award = {
+            closeOnAward = true,
+        },
     }
 };

@@ -45,10 +45,7 @@ function MasterLooterUI:draw(itemLink)
     end
 
     -- Close the reopen masterlooter button if it exists
-    local OpenMasterLooterButton = GL.Interface:getItem(self, "Frame.OpenMasterLooterButton");
-    if (OpenMasterLooterButton) then
-        OpenMasterLooterButton:Hide();
-    end
+    self:closeReopenMasterLooterUIButton();
 
     -- First we need to check if the frame hasn't been
     -- rendered already. If so then show it (if it's hidden)
@@ -162,11 +159,11 @@ function MasterLooterUI:draw(itemLink)
                         MasterLooterUI.UIComponents.EditBoxes.ItemNote:GetText()
                     )) then
                         GL.RollOff.inProgress = true;
-                    end;
 
-                    if (Settings:get("UI.RollOff.autoClose")) then
-                        GL.Interface:getItem(self, "Window"):Hide();
-                    end
+                        if (Settings:get("UI.RollOff.closeOnStart")) then
+                            self:close();
+                        end
+                    end;
 
                     MasterLooterUI:updateWidgets();
                 end);
@@ -350,14 +347,23 @@ function MasterLooterUI:draw(itemLink)
         Spacer:SetHeight(348);
         FifthRow:AddChild(Spacer);
 
-        local EnableAutoClose = AceGUI:Create("CheckBox");
-        EnableAutoClose:SetLabel("Close this window when roll starts");
-        EnableAutoClose:SetValue(Settings:get("UI.RollOff.autoClose", false));
-        EnableAutoClose:SetCallback("OnValueChanged", function (widget)
-            Settings:set("UI.RollOff.autoClose", widget:GetValue());
+        local CloseOnStart = AceGUI:Create("CheckBox");
+        CloseOnStart:SetLabel("Close on start");
+        CloseOnStart:SetValue(Settings:get("UI.RollOff.closeOnStart", true));
+        CloseOnStart:SetCallback("OnValueChanged", function (widget)
+            Settings:set("UI.RollOff.closeOnStart", widget:GetValue());
         end);
-        EnableAutoClose:SetWidth(300);
-        FifthRow:AddChild(EnableAutoClose);
+        CloseOnStart:SetWidth(150);
+        FifthRow:AddChild(CloseOnStart);
+
+        local CloseOnAward = AceGUI:Create("CheckBox");
+        CloseOnAward:SetLabel("Close on award");
+        CloseOnAward:SetValue(Settings:get("UI.RollOff.closeOnAward", true));
+        CloseOnAward:SetCallback("OnValueChanged", function (widget)
+            Settings:set("UI.RollOff.closeOnAward", widget:GetValue());
+        end);
+        CloseOnAward:SetWidth(150);
+        FifthRow:AddChild(CloseOnAward);
 
     if (itemLink
         and type(itemLink) == "string"
@@ -383,11 +389,27 @@ function MasterLooterUI:close()
     end
 end
 
+-- Close the reopen masterlooter button
+function MasterLooterUI:closeReopenMasterLooterUIButton()
+    -- Close the reopen masterlooter button if it exists
+    local OpenMasterLooterButton = GL.Interface:getItem(self, "Frame.OpenMasterLooterButton");
+
+    if (OpenMasterLooterButton) then
+        OpenMasterLooterButton:Hide();
+    end
+end
+
 -- This button allows the master looter to easily reopen the
 -- master looter window when it's closed with a roll in progress
 -- This is very common in hectic situations where the master looter has to participate in combat f.e.
 function MasterLooterUI:drawReopenMasterLooterUIButton()
     GL:debug("MasterLooterUI:drawReopenMasterLooterUIButton");
+
+    -- Only draw the button if the master looter window is closed
+    local Window = GL.Interface:getItem(self, "Window");
+    if (Window and Window:IsShown()) then
+        return;
+    end
 
     local Button = GL.Interface:getItem(self, "Frame.OpenMasterLooterButton");
 
