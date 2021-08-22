@@ -46,6 +46,7 @@ function Overview:draw()
     Window:SetWidth(600);
     Window:SetHeight(470);
     Window:EnableResize(false);
+    Window.statustext:GetParent():Show(); -- Explicitely show the statustext bar
     Window:SetCallback("OnClose", function()
        self:close();
     end);
@@ -55,8 +56,8 @@ function Overview:draw()
 
     Window:SetStatusText(string.format(
         "Imported on |c00a79eff%s|r at |c00a79eff%s|r",
-        date('%Y-%m-%d', GL:tableGet(DB.SoftRes, "metaData.importedAt", GetServerTime())),
-        date('%H:%M', GL:tableGet(DB.SoftRes, "metaData.importedAt", GetServerTime()))
+        date('%Y-%m-%d', GL:tableGet(DB.SoftRes, "MetaData.importedAt", GetServerTime())),
+        date('%H:%M', GL:tableGet(DB.SoftRes, "MetaData.importedAt", GetServerTime()))
     ));
 
     -- Make sure the window can be closed by pressing the escape button
