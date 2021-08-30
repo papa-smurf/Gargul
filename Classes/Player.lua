@@ -45,8 +45,29 @@ function Player.fromID(GUID)
     return self;
 end
 
+--- Instantiate a new player object using a player's FQN
+---
+---@param fqn string
+---@return table|boolean
+function Player:fromFqn(fqn)
+    local parts = GL:strSplit(fqn, "-");
+    local partCount = #parts;
+
+    if (partCount == 1) then
+        return self:fromName(fqn)
+    elseif (partCount ~= 2) then
+        return false
+    end
+
+    if (parts[2] == GL.User.realm) then
+        return self:fromName(parts[1]);
+    end
+
+    return self:fromName(fqn);
+end
+
 -- Instantiate a new player object using a player's name
-function Player.fromName(name)
+function Player:fromName(name)
     GL:debug("Player.fromName");
 
     if (not name or not type(name) == "string") then

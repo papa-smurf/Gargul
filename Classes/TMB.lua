@@ -140,7 +140,7 @@ function TMB:appendTMBItemInfoToTooltip(tooltip)
     local GroupMemberClasses = {};
     -- Fetch the name/class of everyone currently in the raid/party
     for _, Player in pairs(GL.User:groupMembers()) do
-        GroupMemberClasses[string.lower(Player.name)] = string.lower(Player.class);
+        GroupMemberClasses[string.lower(GL:stripRealm(Player.name))] = string.lower(Player.class);
     end
 
     local WishListEntries = {};

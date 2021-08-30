@@ -609,6 +609,47 @@ function GL:getItemIdFromLink(itemLink)
     return itemId;
 end
 
+--- Strip the realm off of a string (usually a player name)
+---
+---@param str string
+---@return str
+function GL:stripRealm(str)
+    str = tostring(str);
+
+    if (self:empty(str)) then
+        return "";
+    end
+
+    local Parts = self:strSplit(str, "-");
+
+    return Parts[1] or "";
+end
+
+--- Check whether the given player name occurs more than once in the player's group
+--- (only possible in Era because of cross-realm support)
+---
+---@param name string
+---@return boolean
+function GL:nameIsUnique(name)
+    if (not GL.isEra) then
+        return true;
+    end
+
+    name = string.lower(GL:stripRealm(name));
+    local nameEncountered = false;
+    for _, playerName in pairs(GL.User:groupMemberNames()) do
+        if (playerName == name) then
+            if (not nameEncountered) then
+                nameEncountered = true;
+            else
+                return false;
+            end
+        end
+    end
+
+    return true;
+end
+
 --- Return an item's name from an item link
 ---
 ---@param itemLink string

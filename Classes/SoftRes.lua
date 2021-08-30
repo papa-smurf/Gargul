@@ -869,9 +869,9 @@ function SoftRes:postMissingSoftReserves()
     end
 
     local PlayerNames = {};
-    for _, Player in pairs(GL.User:groupMembers()) do
-        if (not self.MaterializedData.DetailsByPlayerName[string.lower(Player.name)]) then
-            tinsert(PlayerNames, GL:capitalize(Player.name));
+    for _, playerName in pairs(GL.User:groupMemberNames()) do
+        if (not self.MaterializedData.DetailsByPlayerName[playerName]) then
+            tinsert(PlayerNames, GL:capitalize(playerName));
         end
     end
 
