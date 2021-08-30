@@ -282,6 +282,10 @@ function BagInspector:displayInspectionResults()
         local name, _, _, _, class = GetRaidRosterInfo(index);
         local Row = {};
 
+        if (GL.isEra and not strfind(name, "-")) then
+            name = string.format("%s-%s", name, GL.User.realm);
+        end
+
         if (name
             and BagInspector.InspectionReport.Reports[name]
         ) then

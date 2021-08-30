@@ -127,7 +127,7 @@ function Version:inspectGroup()
         if (Player.online) then
             -- No need to request our own version
             if (Player.name ~= GL.User.name) then
-                self.GroupMembers[Player.name] = "-";
+                self.GroupMembers[GL:stripRealm(Player.name)] = "-";
                 numberOfGroupMembers = numberOfGroupMembers + 1;
             end
         end

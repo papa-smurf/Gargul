@@ -513,7 +513,7 @@ function Overview:drawCharacterTable(Parent)
     -- Also go through everyone in the raid so that you can immediately tell who forgot to soft-reserve!
     if (GL.User.isInGroup) then
         for _, Player in pairs(GL.User:groupMembers()) do
-            local playerName = string.lower(Player.name);
+            local playerName = string.lower(GL:stripRealm(Player.name));
 
             if (not PlayerData[playerName]) then
                 PlayerData[playerName] = {

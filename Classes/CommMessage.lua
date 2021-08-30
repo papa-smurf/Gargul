@@ -86,6 +86,13 @@ end
 function CommMessage:respond(message)
     GL:debug("CommMessage:respond");
 
+    -- Support cross-realm response
+    local recipient = self.senderFqn;
+
+    if (self.senderRealm == GL.User.realm) then
+        recipient = self.Sender.name;
+    end
+
     local Response = {
         action = GL.Data.Constants.Comm.Actions.response,
         content = message,
@@ -93,7 +100,7 @@ function CommMessage:respond(message)
         version = GL.version;
         minimumVersion = GL.Data.Constants.Comm.minimumAppVersion;
         senderFqn = GL.User.fqn,
-        recipient = self.Sender.name,
+        recipient = recipient,
         correspondenceId = self.correspondenceId or self.id,
     };
 

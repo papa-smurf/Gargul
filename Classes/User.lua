@@ -157,7 +157,7 @@ function User:groupMemberNames()
     self.GroupMemberNames = {};
     -- Fetch the name of everyone currently in the raid/party
     for _, Player in pairs(self:groupMembers()) do
-        tinsert(self.GroupMemberNames, string.lower(Player.name));
+        tinsert(self.GroupMemberNames, string.lower(GL:stripRealm(Player.name)));
     end
 
     self.groupMemberNamesCachedAt = GetServerTime();

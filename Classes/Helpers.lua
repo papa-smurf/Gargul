@@ -638,9 +638,7 @@ function GL:nameIsUnique(name)
     name = string.lower(GL:stripRealm(name));
     local nameEncountered = false;
     for _, playerName in pairs(GL.User:groupMemberNames()) do
-        local realmFreeName = string.lower(GL:stripRealm(playerName));
-
-        if (realmFreeName == name) then
+        if (playerName == name) then
             if (not nameEncountered) then
                 nameEncountered = true;
             else
