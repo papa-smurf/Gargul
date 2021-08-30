@@ -3,12 +3,14 @@
 local appName, GL = ...;
 
 --[[ APP VERSION ]]
-GL.version = "3.1.3";
+GL.version = "3.1.4";
 
 GL.name = appName;
 GL._initialized = false;
 GL.clientUIinterface = 0;
 GL.clientVersion = 0;
+GL.isEra = false;
+GL.isRetail = false;
 GL.isClassic = false;
 GL.testMode = false;
 GL.DebugLines = {};
@@ -55,8 +57,12 @@ function GL:_init()
         GL.clientVersion = (expansion or 0) * 10000 + (majorPatch or 0) * 100 + (minorPatch or 0)
     end
 
-    if GL.clientVersion < 30000 then
-        GL.isClassic = true
+    if GL.clientVersion < 20000 then
+        GL.isEra = true;
+    elseif GL.clientVersion < 90000 then
+        GL.isClassic = true;
+    else
+        GL.isRetail = true;
     end
 
     -- Initialize classes

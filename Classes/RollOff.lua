@@ -150,7 +150,7 @@ function RollOff:start(CommMessage)
                     -- This is a new item so make sure to
                     -- override all previously set properties
                     self.CurrentRollOff = {
-                        initiator = CommMessage.Sender.name,
+                        initiator = CommMessage.Sender.id,
                         time = time,
                         itemId = Entry.id,
                         itemName = Entry.name,
@@ -170,11 +170,11 @@ function RollOff:start(CommMessage)
                 -- Don't show the roll UI if the user disabled it
                 -- and the current user is not the one who initiated the rolloff
                 if (GL.Settings:get("Rolling.showRollOffWindow")
-                    or CommMessage.Sender.name == GL.User.name
+                    or CommMessage.Sender.id == GL.User.id
                 ) then
                     GL.RollerUI:show(time, Entry.id, Entry.link, Entry.icon, content.note);
 
-                    if (CommMessage.Sender.name == GL.User.name) then
+                    if (CommMessage.Sender.id == GL.User.id) then
                         GL.MasterLooterUI:drawReopenMasterLooterUIButton();
                     end
                 end
@@ -204,11 +204,11 @@ function RollOff:stop(CommMessage)
     end
 
     if (CommMessage
-        and self.CurrentRollOff.initiator ~= GL.User.name
-        and CommMessage.Sender.name ~= self.CurrentRollOff.initiator
+        and self.CurrentRollOff.initiator ~= GL.User.id
+        and CommMessage.Sender.id ~= self.CurrentRollOff.initiator
     ) then
         if (self.CurrentRollOff.initiator) then
-            GL:warning(CommMessage.Sender.name .. " is not allowed to stop roll off started by " .. self.CurrentRollOff.initiator);
+            GL:warning(CommMessage.Sender.name .. " is not allowed to stop roll off");
         else
             GL:warning(CommMessage.Sender.name .. " is not allowed to stop current roll off: roll off is invalid");
         end
@@ -225,7 +225,7 @@ function RollOff:stop(CommMessage)
     GL.RollerUI:hide();
 
     -- If we're the initiator then we need to update our initiator UI
-    if (RollOff.CurrentRollOff.initiator == GL.User.name) then
+    if (RollOff.CurrentRollOff.initiator == GL.User.id) then
         GL.MasterLooterUI:updateWidgets();
     end
 
@@ -245,27 +245,55 @@ function RollOff:award(roller, itemLink)
 
     itemLink = GL:tableGet(self.CurrentRollOff, "itemLink", itemLink);
 
-    local award = function ()
-        -- Add the player we awarded the item to to the item's tooltip
-        GL.AwardedLoot:addWinner(roller, itemLink);
+    if (GL:nameIsUnique(roller)) then
+        -- Make sure the initiator has to confirm his choices
+        GL.Interface.PopupDialog:open({
+            question = string.format("Award %s to %s?",
+                    itemLink,
+                    roller
+            ),
+            OnYes = function ()
+                -- Add the player we awarded the item to to the item's tooltip
+                GL.AwardedLoot:addWinner(roller, itemLink);
 
-        self:reset();
-        GL.MasterLooterUI:reset();
-        GL.MasterLooterUI:closeReopenMasterLooterUIButton();
+                self:reset();
+                GL.MasterLooterUI:reset();
+                GL.MasterLooterUI:closeReopenMasterLooterUIButton();
 
-        if (GL.Settings:get("UI.RollOff.closeOnAward")) then
-            GL.MasterLooterUI:close();
-        end
+                if (GL.Settings:get("UI.RollOff.closeOnAward")) then
+                    GL.MasterLooterUI:close();
+                end
+            end,
+        });
+
+        return;
     end
 
-    -- Make sure the initiator has to confirm his choices
-    GL.Interface.PopupDialog:open({
-        question = string.format("Award %s to %s?",
-            itemLink,
-            roller
-        ),
-        OnYes = award,
-    });
+    local description = string.format("The winner's name is not unique, select the player you'd like to award %s to", itemLink);
+
+    GL.Interface.PlayerSelector:draw(description, roller, function (player)
+        -- Make sure the initiator has to confirm his choices
+        GL.Interface.PopupDialog:open({
+            question = string.format("Award %s to %s?",
+                    itemLink,
+                    player
+            ),
+            OnYes = function ()
+                -- Add the player we awarded the item to to the item's tooltip
+                GL.AwardedLoot:addWinner(player, itemLink);
+
+                self:reset();
+                GL.MasterLooterUI:reset();
+                GL.MasterLooterUI:closeReopenMasterLooterUIButton();
+
+                if (GL.Settings:get("UI.RollOff.closeOnAward")) then
+                    GL.MasterLooterUI:close();
+                end
+
+                GL.Interface.PlayerSelector:close();
+            end,
+        });
+    end);
 end
 
 --- Start listening for rolls
@@ -301,27 +329,20 @@ function RollOff:processRoll(message)
 
         if (low ~= 1 or high ~= 100) then
             return;
-        else
-            local maximumNumberOfGroupMembers = _G.MEMBERS_PER_RAID_GROUP;
-            if (GL.User.isInRaid) then
-                maximumNumberOfGroupMembers = _G.MAX_RAID_MEMBERS;
-            end
+        end
 
-            -- This is to fetch the roller's class and to make sure
-            -- that the person rolling is actually part of our group/raid
-            for index = 1, maximumNumberOfGroupMembers do
-                local player, _, _, _, class = GetRaidRosterInfo(index);
+        local rollerName = GL:stripRealm(roller);
+        for _, Player in pairs(GL.User:groupMembers()) do
+            local playerName = GL:stripRealm(Player.name);
+            if (rollerName == playerName) then
+                Roll = {
+                    player = Player.name,
+                    class = Player.class,
+                    amount = roll,
+                    time = GetServerTime(),
+                };
 
-                if (roller == player) then
-                    Roll = {
-                        player = player,
-                        class = class,
-                        amount = roll,
-                        time = GetServerTime(),
-                    };
-
-                    break;
-                end
+                break;
             end
         end
     end

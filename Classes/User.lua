@@ -35,7 +35,11 @@ local User = GL.User;
 function User:_init()
     GL:debug("User:_init");
 
-    self.name, self.realm = UnitName("player");
+    self.name = UnitName("player");
+    self.realm = GetRealmName();
+
+    -- fqn stands for Fully Qualified Name
+    self.fqn = string.format("%s-%s", self.name, self.realm);
     self.id = UnitGUID("player");
     User:refresh();
 

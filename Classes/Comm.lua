@@ -60,27 +60,24 @@ end
 ---@param distribution string
 ---@param senderName string
 ---@return boolean
-function Comm:listen(payload, distribution, senderName)
+function Comm:listen(payload, distribution)
     GL:debug(string.format("Received message on %s", GL.Comm.channel));
 
     payload = GL.CommMessage:decompress(payload);
 
-    if (not senderName or not type(senderName) == "string"
-        or not payload.senderName or not type(payload.senderName) == "string"
-        or not payload.senderName == senderName
-    ) then
+    if (not payload.senderFqn or not type(payload.senderFqn) == "string") then
         GL:warning("Failed to determine sender of COMM message");
         return false;
     end
 
-    local Sender = GL.Player.fromName(senderName) or {};
+    local Sender = GL.Player:fromFqn(payload.senderFqn) or {};
 
     if (not Sender.id) then
         if (distribution ~= "GUILD") then
-            GL:warning("Unable to confirm identity of sender '" .. senderName .. "'");
+            GL:warning("Unable to confirm identity of sender '" .. payload.senderFqn .. "'");
             return false;
         else
-            Sender.name = senderName;
+            Sender.name = payload.senderName;
         end
     end
 

@@ -41,6 +41,8 @@ function CommMessage.new(action, content, channel, recipient)
     self.version = GL.version;
     self.minimumVersion = GL.Data.Constants.Comm.minimumAppVersion;
     self.senderName = GL.User.name;
+    self.senderRealm = GL.User.realm;
+    self.senderFqn = GL.User.fqn;
     self.recipient = recipient;
     self.Responses = {};
 
@@ -63,6 +65,7 @@ function CommMessage.newFromReceived(Message)
     self.minimumVersion = GL.Data.Constants.Comm.minimumAppVersion;
     self.Sender = Message.Sender;
     self.senderName = Message.Sender.name;
+    self.senderFqn = Message.senderFqn;
     self.recipient = Message.recipient;
     self.correspondenceId = Message.correspondenceId or Message.id;
     self.Responses = Message.Responses or {};
@@ -89,7 +92,7 @@ function CommMessage:respond(message)
         channel = "WHISPER",
         version = GL.version;
         minimumVersion = GL.Data.Constants.Comm.minimumAppVersion;
-        senderName = GL.User.name,
+        senderFqn = GL.User.fqn,
         recipient = self.Sender.name,
         correspondenceId = self.correspondenceId or self.id,
     };
@@ -128,7 +131,7 @@ function CommMessage:compress(message)
         c = message.content, -- Content
         v = message.version, -- Version of sender
         mv = message.minimumVersion, -- Minimum version recipient should have
-        s = message.senderName, -- Name of the sender
+        s = message.senderFqn, -- Name of the sender
         r = message.correspondenceId or message.id, -- Response ID
     }
 
@@ -169,7 +172,7 @@ function CommMessage:decompress(encoded)
         content = Payload.c or nil, -- Content
         version = Payload.v or nil, -- Version of sender
         minimumVersion = Payload.mv or nil, -- Minimum version recipient should have
-        senderName = Payload.s or nil, -- Name of the sender
+        senderFqn = Payload.s or nil, -- Name of the sender
         correspondenceId = Payload.r or Payload.id, -- Response ID
     };
 end
