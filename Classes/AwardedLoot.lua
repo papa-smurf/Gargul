@@ -205,6 +205,13 @@ end
 function AwardedLoot:initiateTrade(AwardDetails)
     GL:debug("AwardedLoot:initiateTrade");
 
+    local itemPositionInBag = GL:findBagIdAndSlotForItem(AwardDetails.itemId);
+
+    -- Check whether we have the item in our inventory and didn't just close the loot window
+    if (GL:empty(itemPositionInBag)) then
+        return;
+    end
+
     -- Open a trade window with the winner
     InitiateTrade(AwardDetails.awardedTo);
 
@@ -215,7 +222,7 @@ function AwardedLoot:initiateTrade(AwardDetails)
             return;
         end
 
-        local itemPositionInBag = GL:findBagIdAndSlotForItem(AwardDetails.itemId);
+        itemPositionInBag = GL:findBagIdAndSlotForItem(AwardDetails.itemId);
 
         if (not GL:empty(itemPositionInBag)
             and TradeFrame:IsShown()
