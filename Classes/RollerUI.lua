@@ -41,14 +41,14 @@ end
 ---@param itemIcon string
 ---@param note string
 ---@return boolean
-function RollerUI:draw(time, itemId, itemLink, itemIcon, note)
+function RollerUI:draw(time, itemId, itemLink, itemIcon, note, osRollMax)
     GL:debug("RollerUI:draw");
 
     local Window = GL.Interface:getItem(self, "Window");
 
     -- All UI elements are already available, no need to render them again
     if (Window) then
-        return self:update(time, itemId, itemLink, itemIcon, note);
+        return self:update(time, itemId, itemLink, itemIcon, note, osRollMax);
     end
 
     Window = CreateFrame("Frame", "GargulUI_RollerUI_Window", UIParent, Frame);
@@ -78,30 +78,26 @@ function RollerUI:draw(time, itemId, itemLink, itemIcon, note)
     Texture:SetAllPoints(Window)
     Window.texture = Texture;
 
-    -- Roll info label
-    local RollLabel = CreateFrame("Frame", "GargulUI_RollerUI_Label", Window, Frame);
-    RollLabel:SetSize(1, 1);
-    RollLabel:SetPoint("TOPLEFT", Window, "TOPLEFT", 5, -2);
-    RollLabel:SetPoint("BOTTOMRIGHT", Window, "BOTTOMRIGHT", -7);
-
-    RollLabel.text = RollLabel:CreateFontString(nil, "ARTWORK");
-    RollLabel.text:SetFont("Fonts\\ARIALN.ttf", 11, "OUTLINE");
-    RollLabel.text:SetPoint("TOPLEFT", RollLabel, "TOPLEFT", 0, -4);
-
     -- Roll button
-    local RollButton = CreateFrame("Button", "GargulUI_RollerUI_Roll", Window, "GameMenuButtonTemplate");
-
-    RollButton:SetPoint("TOPRIGHT", Window, "TOPRIGHT", -65, -2);
-    RollButton:SetSize(60, 20);
-    RollButton:SetText("Roll");
-    RollButton:SetNormalFontObject("GameFontNormal");
-    RollButton:SetHighlightFontObject("GameFontNormal");
-    RollButton:SetScript("OnClick", function ()
+    local MSButton = CreateFrame("Button", "GargulUI_RollerUI_MS", Window, "GameMenuButtonTemplate");
+    MSButton:SetPoint("TOPLEFT", Window, "TOPLEFT", 2, -1);
+    MSButton:SetSize(60, 20);
+    MSButton:SetText("MS");
+    MSButton:SetNormalFontObject("GameFontNormal");
+    MSButton:SetHighlightFontObject("GameFontNormal");
+    MSButton:SetScript("OnClick", function ()
         RandomRoll(1, 100);
     end);
 
+    local OSButton = CreateFrame("Button", "GargulUI_RollerUI_OS", Window, "GameMenuButtonTemplate");
+    OSButton:SetPoint("TOPLEFT", MSButton, "TOPRIGHT", 1, 0);
+    OSButton:SetSize(60, 20);
+    OSButton:SetText("OS");
+    OSButton:SetNormalFontObject("GameFontNormal");
+    OSButton:SetHighlightFontObject("GameFontNormal");
+
     local PassButton = CreateFrame("Button", "GargulUI_RollerUI_Pass", Window, "GameMenuButtonTemplate");
-    PassButton:SetPoint("TOPLEFT", RollButton, "TOPRIGHT", 1, 0);
+    PassButton:SetPoint("TOPRIGHT", Window, "TOPRIGHT", -3, -1);
     PassButton:SetSize(60, 20);
     PassButton:SetText("Pass");
     PassButton:SetNormalFontObject("GameFontNormal");
@@ -153,11 +149,11 @@ function RollerUI:draw(time, itemId, itemLink, itemIcon, note)
         GameTooltip:Hide();
     end);
 
-    GL.Interface:setItem(self, "RollInfo", RollLabel);
     GL.Interface:setItem(self, "Window", Window);
     GL.Interface:setItem(self, "TimerBar", TimerBar);
+    GL.Interface:setItem(self, "OSButton", OSButton);
 
-    return self:update(time, itemId, itemLink, itemIcon, note);
+    return self:update(time, itemId, itemLink, itemIcon, note, osRollMax);
 end
 
 --- This method updates the values of the RollerUI only
@@ -170,17 +166,15 @@ end
 ---@param itemIcon string
 ---@param note string
 ---@return boolean
-function RollerUI:update(time, itemId, itemLink, itemIcon, note)
+function RollerUI:update(time, itemId, itemLink, itemIcon, note, osRollMax)
     GL:debug("RollerUI:update");
 
     -- Fetch all UI elements
-    local RollInfo = GL.Interface:getItem(self, "Frame.RollInfo");
     local TimerBar = GL.Interface:getItem(self, "Frame.TimerBar");
     local Window = GL.Interface:getItem(self, "Window");
 
     -- This shouldn't be possible but you never know!
-    if (not RollInfo
-        or not TimerBar
+    if (not TimerBar
         or not Window
     ) then
         return false;
@@ -193,24 +187,6 @@ function RollerUI:update(time, itemId, itemLink, itemIcon, note)
     if (noteStringLengthAllowed < 0) then
         noteStringLengthAllowed = 0;
     end
-
-    local itemIsReserved = GL.SoftRes:idIsReserved(itemId);
-    local itemIsReservedByUser = itemIsReserved and GL.SoftRes:itemIdIsReservedByPlayer(itemId, GL.User.name);
-    local labelText = "";
-
-    if (itemIsReserved) then
-        local reservedByUserString = "NO";
-
-        if (itemIsReservedByUser) then
-            reservedByUserString = "YES";
-        end
-
-        labelText = string.format("SOFT RESERVED: |c00efb8cdYES|r     BY YOU: |c00efb8cd%s|r", reservedByUserString)
-    else
-        labelText = "SOFT RESERVED BY ANYONE: |c00efb8cdNO|r";
-    end
-
-    RollInfo.text:SetText(labelText);
 
     TimerBar:SetParent(Window);
     TimerBar:SetDuration(time);
@@ -229,6 +205,20 @@ function RollerUI:update(time, itemId, itemLink, itemIcon, note)
         GameTooltip:SetHyperlink(itemLink);
         GameTooltip:Show();
     end);
+
+    -- Check whether the Master Looter supports OS rolls
+    local OSButton = GL.Interface:getItem(self, "Frame.OSButton");
+    if (type(osRollMax) == "number"
+        and not GL:higherThanZero(osRollMax)
+    ) then
+        OSButton:Hide();
+    else
+
+        OSButton:Show();
+        OSButton:SetScript("OnClick", function ()
+            RandomRoll(1, osRollMax or 99);
+        end);
+    end
 
     return true;
 end

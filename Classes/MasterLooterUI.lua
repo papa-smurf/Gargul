@@ -99,6 +99,7 @@ function MasterLooterUI:draw(itemLink)
                 ItemIcon:SetImageSize(30, 30);
                 ItemIcon:SetWidth(40);
                 FirstRow:AddChild(ItemIcon);
+                GL.Interface:setItem(self, "Item", ItemIcon);
                 MasterLooterUI.UIComponents.Icons.Item = ItemIcon;
 
                 --[[
@@ -491,7 +492,7 @@ function MasterLooterUI:drawPlayersTable(parent)
         },
         {
             name = "Roll",
-            width = 85,
+            width = 50,
             align = "LEFT",
             color = {
                 r = 0.5,
@@ -500,11 +501,24 @@ function MasterLooterUI:drawPlayersTable(parent)
                 a = 1.0
             },
             colorargs = nil,
-            sort = GL.Data.Constants.ScrollingTable.descending,
+            defaultsort = GL.Data.Constants.ScrollingTable.descending,
         },
         {
             name = " ",
-            width = 145,
+            width = 40,
+            align = "LEFT",
+            color = {
+                r = 0.5,
+                g = 0.5,
+                b = 1.0,
+                a = 1.0
+            },
+            colorargs = nil,
+            sort = GL.Data.Constants.ScrollingTable.ascending,
+        },
+        {
+            name = " ",
+            width = 140,
             align = "LEFT",
             color = {
                 r = 0.5,
@@ -554,7 +568,7 @@ end
 function MasterLooterUI:update()
     GL:debug("MasterLooterUI:update");
 
-    local IconWidget = MasterLooterUI.UIComponents.Icons.Item;
+    local IconWidget = GL.Interface:getItem(self, "Icon.Item");
     local itemLink = MasterLooterUI.UIComponents.EditBoxes.Item:GetText();
 
     -- If the item link is not valid then
@@ -617,7 +631,7 @@ end
 function MasterLooterUI:reset()
     GL:debug("MasterLooterUI:reset");
 
-    MasterLooterUI.UIComponents.Icons.Item:SetImage(MasterLooterUI.Defaults.itemIcon);
+    GL.Interface:getItem(self, "Icon.Item"):SetImage(MasterLooterUI.Defaults.itemIcon);
     MasterLooterUI.UIComponents.EditBoxes.Item:SetText(MasterLooterUI.Defaults.itemText);
     MasterLooterUI.UIComponents.EditBoxes.Timer:SetText(Settings:get("UI.RollOff.timer"));
     MasterLooterUI.UIComponents.EditBoxes.ItemNote:SetText("");
