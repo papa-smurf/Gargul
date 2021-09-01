@@ -1,9 +1,9 @@
-## Interface: 20501
+## Interface: 20502
 ## Title: Gargul
 ## Title: |cff8aecffGargul|r
 ## Author: <Give it a Lick> Zhorax
 ## Notes: Loot addon that supports soft reserves, rolling, thatsmybis, DKP bidding / syncing, loot priorities and much more
-## Version: 3.1.4
+## Version: 3.1.5
 ## DefaultState: enabled
 ## SavedVariables: GargulDB
 

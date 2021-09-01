@@ -3,7 +3,7 @@
 local appName, GL = ...;
 
 --[[ APP VERSION ]]
-GL.version = "3.1.4";
+GL.version = "3.1.5";
 
 GL.name = appName;
 GL._initialized = false;
