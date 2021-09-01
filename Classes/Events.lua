@@ -85,6 +85,7 @@ end
 -- Fire the event listeners whenever a registered event comes in
 function Events:listen(event, ...)
     local args = {...};
+
     for _, listener in pairs(GL.Events.Registry.EventListeners[event]) do
         pcall(function () listener(unpack(args)); end);
     end

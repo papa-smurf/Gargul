@@ -20,7 +20,7 @@ GL.User = {
     raidsAttended = 0,
     Dkp = {},
 
-    -- Raid specific
+    -- Group specific
     raidIndex = nil,
     hasAssist = false,
     isLead = false,
