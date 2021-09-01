@@ -48,24 +48,38 @@ function RollOff:announceStart(itemLink, time, note)
 
     self:listenForRolls();
 
+    local osRollMax = GL.Settings:get("Rolling.osRollMax", 99);
+
     GL.CommMessage.new(
         CommActions.startRollOff,
         {
             item = itemLink,
             time = time,
             note = note,
+            osRollMax = osRollMax,
         },
         "RAID"
     ):send();
 
-    local announceMessage = string.format("You have %s seconds to roll on %s", time, itemLink);
+    local announceMessage = string.format(
+        "You have %s seconds to roll on %s. Use /roll %s to roll for OS!",
+        time,
+        itemLink,
+        osRollMax
+    );
     local reserveMessage = "";
     local Reserves = GL.SoftRes:byItemLink(itemLink);
 
     if (type(note) == "string"
         and not GL:empty(note)
     ) then
-        announceMessage = string.format("You have %s seconds to roll on %s - %s", time, itemLink, note);
+        announceMessage = string.format(
+            "You have %s seconds to roll on %s - %s. Use /roll %s to roll for OS!",
+            time,
+            itemLink,
+            note,
+            osRollMax
+        );
     end
 
     if (not GL:empty(Reserves)) then
@@ -143,7 +157,8 @@ function RollOff:start(CommMessage)
         ---@return void
         GL:onItemLoadDo(content.item, function (Items)
             for _, Entry in pairs(Items) do
-                local time = tonumber(content.time);
+                local time = math.floor(tonumber(content.time));
+                local osRollMax = math.floor(tonumber(content.osRollMax or 99));
 
                 -- This is a new roll off so clean everything
                 if (Entry.link ~= self.CurrentRollOff.itemLink) then
@@ -156,6 +171,7 @@ function RollOff:start(CommMessage)
                         itemName = Entry.name,
                         itemLink = Entry.link,
                         itemIcon = Entry.icon,
+                        osRollMax = osRollMax,
                         note = content.note,
                         Rolls = {},
                     };
@@ -172,7 +188,7 @@ function RollOff:start(CommMessage)
                 if (GL.Settings:get("Rolling.showRollOffWindow")
                     or CommMessage.Sender.id == GL.User.id
                 ) then
-                    GL.RollerUI:show(time, Entry.id, Entry.link, Entry.icon, content.note);
+                    GL.RollerUI:show(time, Entry.id, Entry.link, Entry.icon, content.note, osRollMax);
 
                     if (CommMessage.Sender.id == GL.User.id) then
                         GL.MasterLooterUI:drawReopenMasterLooterUIButton();
@@ -314,6 +330,8 @@ end
 function RollOff:processRoll(message)
     GL:debug("RollOff:processRoll");
 
+    local osRoll = false;
+
     -- We only track rolls when a rollof is actually in progress
     if (not RollOff.inProgress) then
         return;
@@ -327,8 +345,20 @@ function RollOff:processRoll(message)
         low = tonumber(low) or 0;
         high = tonumber(high) or 0;
 
-        if (low ~= 1 or high ~= 100) then
+        -- We don't support rolls that don't start at 1
+        if (low ~= 1) then
             return;
+        end
+
+        local osRollMax = GL.Settings:get("Rolling.osRollMax", 99);
+
+        -- We don't support rolls that don't end at 100 or the osRollMax setting
+        if (high ~= 100
+            and high ~= osRollMax
+        ) then
+            return;
+        elseif (high == osRollMax) then
+            osRoll = true;
         end
 
         local rollerName = GL:stripRealm(roller);
@@ -340,6 +370,7 @@ function RollOff:processRoll(message)
                     class = Player.class,
                     amount = roll,
                     time = GetServerTime(),
+                    os = osRoll,
                 };
 
                 break;
@@ -384,14 +415,21 @@ function RollOff:refreshRollsTable()
 
         -- Check if the player reserved the current item id
         local softReservedValue = "";
-        if (GL.SoftRes:itemIdIsReservedByPlayer(self.CurrentRollOff.itemId, playerName)) then
-            softReservedValue = "reserved";
+        local normalizedPlayerName = string.lower(GL:stripRealm(playerName));
+
+        if (GL.SoftRes:itemIdIsReservedByPlayer(self.CurrentRollOff.itemId, normalizedPlayerName)) then
+            softReservedValue = "Reserved";
         end
 
         -- If this isn't the player's first roll for the current item
         -- then we add a number behind the players name like so: PlayerName [#]
         if (numberOfTimesRolledByPlayer > 1) then
             playerName = string.format("%s [%s]", playerName, numberOfTimesRolledByPlayer);
+        end
+
+        local msOrOsString = "MS";
+        if (Roll.os) then
+            msOrOsString = "OS";
         end
 
         local class = string.lower(Roll.class);
@@ -403,6 +441,10 @@ function RollOff:refreshRollsTable()
                 },
                 {
                     value = Roll.amount,
+                    color = GL:classRGBAColor(class),
+                },
+                {
+                    value = msOrOsString,
                     color = GL:classRGBAColor(class),
                 },
                 {

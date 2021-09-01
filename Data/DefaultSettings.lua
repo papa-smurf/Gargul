@@ -29,6 +29,7 @@ GL.Data.DefaultSettings = {
     Rolling = {
         announcePass = true,
         showRollOffWindow = true,
+        osRollMax = 99,
     },
     SoftRes = {
         announceInfoInChat = true,

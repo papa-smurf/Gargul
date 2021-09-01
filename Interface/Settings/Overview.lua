@@ -9,6 +9,7 @@ GL.Interface.Settings = GL.Interface.Settings or {};
 GL.Interface.Settings.Overview = {
     isVisible = false,
     activeSection = nil,
+    previousSection = nil,
     defaultSection = "General",
     Sections = {
         {"General", "General"},
@@ -50,12 +51,13 @@ function Overview:draw(section)
         end
     end
 
-    -- Open a specific section based on the section identifier or show the default
+    -- Open a specific section based on the section identifier
+    -- If no identifier is given we open the most recent one or open the homescreen
     if (type (section) ~= "string"
         or GL:empty(section)
         or not self.SectionIndexes[section]
     ) then
-        section = self.defaultSection;
+        section = self.previousSection or self.defaultSection;
     end
 
     -- Create a container/parent frame
@@ -147,6 +149,7 @@ function Overview:close()
     local Window = GL.Interface:getItem(self, "Window");
 
     self.isVisible = false;
+    self.previousSection = self.activeSection;
     self.activeSection = nil;
 
     if (Window) then

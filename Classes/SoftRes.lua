@@ -297,9 +297,11 @@ end
 function SoftRes:itemIdIsReservedByPlayer(itemId, playerName)
     GL:debug("SoftRes:itemIdIsReservedByPlayer");
 
+    local SoftResData = self.MaterializedData.PlayerNamesByItemId or {};
+
     return GL:inTable(
-        GL:tableGet(self.MaterializedData.PlayerNamesByItemId or {}, itemId, {}),
-        playerName
+        SoftResData[tostring(itemId)] or {},
+        string.lower(GL:stripRealm(playerName))
     );
 end
 
