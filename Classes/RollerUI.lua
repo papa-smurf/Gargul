@@ -87,6 +87,10 @@ function RollerUI:draw(time, itemId, itemLink, itemIcon, note, osRollMax)
     MSButton:SetHighlightFontObject("GameFontNormal");
     MSButton:SetScript("OnClick", function ()
         RandomRoll(1, 100);
+
+        if (GL.Settings:get("Rolling.closeAfterRoll")) then
+            self:hide();
+        end
     end);
 
     local OSButton = CreateFrame("Button", "GargulUI_RollerUI_OS", Window, "GameMenuButtonTemplate");
@@ -217,6 +221,10 @@ function RollerUI:update(time, itemId, itemLink, itemIcon, note, osRollMax)
         OSButton:Show();
         OSButton:SetScript("OnClick", function ()
             RandomRoll(1, osRollMax or 99);
+
+            if (GL.Settings:get("Rolling.closeAfterRoll")) then
+                self:hide();
+            end
         end);
     end
 
