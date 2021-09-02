@@ -515,6 +515,7 @@ function MasterLooterUI:drawPlayersTable(parent)
             },
             colorargs = nil,
             sort = GL.Data.Constants.ScrollingTable.ascending,
+            sortnext = 2,
         },
         {
             name = " ",
@@ -527,7 +528,6 @@ function MasterLooterUI:drawPlayersTable(parent)
                 a = 1.0
             },
             colorargs = nil,
-            sort = GL.Data.Constants.ScrollingTable.descending,
         },
     };
 
