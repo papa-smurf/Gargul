@@ -114,7 +114,7 @@ function PackMuleUI:drawInfoSection(Frame)
 
     -- LABEL: Info about PackMule
     local Info = AceGUI:Create("Label");
-    Info:SetText("PackMule will only work if you are the master looter and PackMule is enabled. You can use 'SELF' to refer to your own character or use 'IGNORE' to ignore specific items!");
+    Info:SetText("PackMule will only work if you are the master looter and PackMule is enabled. Use SELF to refer to yourself, IGNORE to ignore specific items, or use RANDOM to send items to random players!");
     Info:SetHeight(20);
     Info:SetWidth(520);
     Row:AddChild(Info);
