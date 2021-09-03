@@ -3,7 +3,7 @@
 local appName, GL = ...;
 
 --[[ APP VERSION ]]
-GL.version = "3.2.1";
+GL.version = "3.2.2";
 
 GL.name = appName;
 GL._initialized = false;
@@ -79,6 +79,14 @@ function GL:_init()
             GL.Data.Constants.addonHexColor,
             GL.Data.Constants.addonHexColor
         ))
+    end
+
+    if (GL.Settings:get("fixMasterLootWindow")) then
+        --[[
+            This fix was discovered by Kirsia-Dalaran. More info here: https://bit.ly/3tc8nvw
+        ]]--
+
+        hooksecurefunc(MasterLooterFrame, 'Hide', function(self) self:ClearAllPoints() end);
     end
 
     GL.Comm:_init();

@@ -6,7 +6,7 @@ GL.Commands = GL.Commands or {
         settings = "Open the settings menu",
         rolloff = "Open the RollOff UI where you can announce an item for players to roll on: /gl award [itemLink?]",
         award = "Open the award window. Optionally accepts an ItemLink as an argument: /gl award [itemLink?]",
-        awardOnDate = "In case you need to award something retrospectively you can use this command: /gl awardOnDate [winnerName] [itemLink] [yy-mm-dd]",
+        awardOnDate = "In case you need to award something retroactively you can use this command: /gl awardOnDate [winnerName] [itemLink] [yy-mm-dd]",
         raidcsv = "Output everyone currently in the group in a CSV format",
         groups = "Open the group window where you can provide a group csv so that you can: see who's missing and sort groups automatically",
         softreserves = "Open either the SoftRes import window if there's no data available or open the SoftRes overview",
@@ -116,15 +116,22 @@ GL.Commands = GL.Commands or {
 
 local Commands = GL.Commands; ---@type Commands
 
--- Display the command help
+--- Display the command help
+---@return void
 function Commands:help () GL.Settings:draw("SlashCommands"); end
 
--- Helper method to call commands from within the addon
+--- Helper method to call commands from within the addon
+---
+---@param str string
+---@return any
 function Commands:call(str)
     return Commands:_dispatch(str);
 end
 
--- This method dispatches all slash commands to their final destination
+--- This method dispatches all slash commands to their final destination
+---
+---@param str string
+---@return any
 function Commands:_dispatch(str)
     GL.User:refresh();
 

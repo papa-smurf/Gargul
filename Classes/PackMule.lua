@@ -179,8 +179,21 @@ function PackMule:lootReady()
             if (RuleThatApplies
                 and RuleThatApplies.target ~= "IGNORE"
             ) then
+                local target = RuleThatApplies.target;
+
+                -- Check whether we need to give the item to a random player
+                if (target == "RANDOM") then
+                    local GroupMembers = GL.User:groupMembers();
+                    target = GL:tableGet(GroupMembers[math.random( #GroupMembers)] or {}, "name", false);
+                end
+
+                -- This should be technically impossible, but you never know!
+                if (not target) then
+                    break;
+                end
+
                 for playerIndex = 1, GetNumGroupMembers() do
-                    if (GetMasterLootCandidate(itemIndex, playerIndex) == RuleThatApplies.target) then
+                    if (GetMasterLootCandidate(itemIndex, playerIndex) == target) then
                         GiveMasterLoot(itemIndex, playerIndex);
                         break;
                     end
