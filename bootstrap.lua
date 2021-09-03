@@ -81,6 +81,14 @@ function GL:_init()
         ))
     end
 
+    if (GL.Settings:get("fixMasterLootWindow")) then
+        --[[
+            This fix was discovered by Kirsia-Dalaran. More info here: https://bit.ly/3tc8nvw
+        ]]--
+
+        hooksecurefunc(MasterLooterFrame, 'Hide', function(self) self:ClearAllPoints() end);
+    end
+
     GL.Comm:_init();
     GL.User:_init();
     GL.LootPriority:_init();

@@ -19,6 +19,7 @@ GL.Data.DefaultSettings = {
     autoOpenCommandHelp = true,
     showMinimapButton = true,
     welcomeMessage = true,
+    fixMasterLootWindow = true,
 
     PackMule = {
         enabled = false,
