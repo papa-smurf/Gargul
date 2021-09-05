@@ -158,7 +158,7 @@ function Exporter:refreshExportString()
                 dateString,
                 AwardEntry.awardedTo,
                 AwardEntry.itemId,
-                tostring(toboolean(AwardEntry.OS))
+                AwardEntry.OS and 1 or 0
             );
         end
     end
