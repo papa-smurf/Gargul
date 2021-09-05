@@ -161,6 +161,9 @@ function User:groupMemberNames()
     end
 
     self.groupMemberNamesCachedAt = GetServerTime();
+
+    GL.Events:fire("GL.GROUP_COMPOSITION_CHANGED");
+
     return self.GroupMemberNames;
 end
 

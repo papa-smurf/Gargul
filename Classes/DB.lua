@@ -7,6 +7,7 @@ GL.DB = {
     AwardHistory = {},
     Cache = {},
     LootPriority = {},
+    MinimapButton = {},
     PlusOnes = {},
     Settings = {},
     SoftRes = {},
@@ -30,6 +31,7 @@ function DB:_init()
     -- Prepare our database tables
     GargulDB.AwardHistory = GargulDB.AwardHistory or {};
     GargulDB.LootPriority = GargulDB.LootPriority or {};
+    GargulDB.MinimapButton = GargulDB.MinimapButton or {};
     GargulDB.PlusOnes = GargulDB.PlusOnes or {};
     GargulDB.Settings = GargulDB.Settings or {};
     GargulDB.SoftRes = GargulDB.SoftRes or {};
@@ -38,6 +40,7 @@ function DB:_init()
     -- Provide a shortcut for each table
     self.AwardHistory = GargulDB.AwardHistory;
     self.LootPriority = GargulDB.LootPriority;
+    self.MinimapButton = GargulDB.MinimapButton;
     self.PlusOnes = GargulDB.PlusOnes;
     self.Settings = GargulDB.Settings;
     self.SoftRes = GargulDB.SoftRes;
@@ -57,6 +60,7 @@ function DB:store()
 
     GargulDB.AwardHistory = GL.DB.AwardHistory;
     GargulDB.LootPriority = GL.DB.LootPriority;
+    GargulDB.MinimapButton = GL.DB.MinimapButton;
     GargulDB.PlusOnes = GL.DB.PlusOnes;
     GargulDB.Settings = GL.Settings.Active;
     GargulDB.SoftRes = GL.DB.SoftRes;
@@ -79,6 +83,7 @@ function DB:reset()
 
     self.AwardHistory = {};
     self.LootPriority = {};
+    self.MinimapButton = {};
     self.PlusOnes = {};
     self.Settings = {};
     self.SoftRes = {};

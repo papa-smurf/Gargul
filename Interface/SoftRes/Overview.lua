@@ -321,7 +321,7 @@ function Overview:refreshDetailsFrame()
     local Note = GL.Interface:getItem(self, "Label.Note");
     local titleText = GL:capitalize(self.selectedCharacter);
 
-    local SoftResDetails = SoftRes:getDetailsForPlayer(self.selectedCharacter);
+    local SoftResDetails = SoftRes:getDetailsForPlayer(GL:stripRealm(self.selectedCharacter));
     local plusOnes = GL.PlusOnes:get(self.selectedCharacter);
     local class = GL:tableGet(SoftResDetails, "class", SoftRes:getPlayerClass(self.selectedCharacter));
 
@@ -504,26 +504,39 @@ function Overview:drawCharacterTable(Parent)
         end
     });
 
-    -- We can't do a direct assignment because we want to edit this table in a bit
     local PlayerData = {};
-    for playerName, Entry in pairs(SoftRes.MaterializedData.DetailsByPlayerName) do
-        PlayerData[playerName] = Entry;
-    end
+    local FqnNames = {};
 
-    -- Also go through everyone in the raid so that you can immediately tell who forgot to soft-reserve!
+    -- Go through everyone in the raid so that you can immediately tell who forgot to soft-reserve!
     if (GL.User.isInGroup) then
         for _, Player in pairs(GL.User:groupMembers()) do
-            local playerName = string.lower(GL:stripRealm(Player.name));
+            local playerName = string.lower(Player.name);
 
-            if (not PlayerData[playerName]) then
-                PlayerData[playerName] = {
-                    class = Player.class,
-                    note = "",
-                    plusOnes = 0,
-                    Items = {},
-                }
+            if (GL.isEra and not strfind(playerName, "-")) then
+                playerName = string.format("%s-%s", playerName, GL.User.realm);
+            end
+
+            PlayerData[playerName] = {
+                class = Player.class,
+                note = "",
+                plusOnes = 0,
+                Items = {},
+            }
+
+            if (GL.isEra) then
+                GL:tableSet(FqnNames, GL:stripRealm(playerName) .. "." .. string.lower(Player.class), playerName);
             end
         end
+    end
+
+    -- We can't do a direct assignment because we want to edit this table in a bit
+    for playerName, Entry in pairs(SoftRes.MaterializedData.DetailsByPlayerName) do
+
+        if (GL.isEra) then
+            playerName = GL:tableGet(FqnNames, string.lower(playerName) .. "." .. Entry.class, playerName);
+        end
+
+        PlayerData[playerName] = Entry;
     end
 
     local TableData = {};
@@ -564,6 +577,8 @@ function Overview:drawCharacterTable(Parent)
     GL.Interface:setItem(self, "Characters", Table);
 end
 
+---@param Parent table
+---@return void
 function Overview:drawHardReservesTable(Parent)
     GL:debug("SoftRes:drawHardReservesTable");
 
@@ -653,6 +668,7 @@ function Overview:drawHardReservesTable(Parent)
     GL.Interface:setItem(self, "HardReserves", Table);
 end
 
+---@return void
 function Overview:close()
     GL:debug("Overview:close");
 

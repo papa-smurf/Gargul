@@ -63,7 +63,8 @@ function Overview:draw()
 
     self:addPlayerPlusOneEntries(ScrollFrame);
 
-    GL.Events:register("PlusOnesOverChangeListener", "GL.PLUSONES_CHANGED", function () self:update(); end);
+    GL.Events:register("PlusOnesOverViewChangeListener", "GL.PLUSONES_CHANGED", function () self:update(); end);
+    GL.Events:register("PlusOnesOverViewRosterUpdatedListener","GROUP_ROSTER_UPDATE", function () GL.PlusOnes:triggerChangeEvent(); end);
 end
 
 --- Add all player entries to the PlusOnes ScrollFrame
@@ -164,19 +165,28 @@ function Overview:close()
     self.isVisible = false;
     GL.Interface:storePosition(Window, "PlusOnesOverview");
 
-    GL.Events:unregister("PlusOnesOverChangeListener");
+    GL.Events:unregister("PlusOnesOverViewChangeListener");
+    GL.Events:unregister("PlusOnesOverViewRosterUpdatedListener");
 end
 
 --- Update all PlusOne values in the plusone overview
 ---
 ---@return void
 function Overview:update()
+    if (not IsInGroup()) then
+        self:close();
+        return self:draw();
+    end
+
     for _, Player in pairs(GL.User:groupMembers()) do
         local normalizedName = GL.PlusOnes:normalizedName(Player.name);
         local PlusOneLabel = GL.Interface:getItem(self, "Label.PlusOnesOf_" .. normalizedName);
 
         if (PlusOneLabel) then
             PlusOneLabel:SetText(GL.PlusOnes:get(normalizedName));
+        else
+            self:close();
+            return self:draw();
         end
     end
 end
