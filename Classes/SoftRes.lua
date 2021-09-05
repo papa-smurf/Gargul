@@ -643,7 +643,14 @@ function SoftRes:importGargulData(data)
 
     -- At this point in Era we don't really know anyone's plus one because SoftRes doesn't support realm tags (yet)
     if (GL.isEra) then
-        GL.PlusOnes:clear();
+        if (not GL:empty(DB.PlusOnes)) then
+            GL.Interface.Dialogs.PopupDialog:open({
+                question = "Do you want to clear all previous PlusOne values?",
+                OnYes = function ()
+                    GL.PlusOnes:clear();
+                end,
+            });
+        end
     elseif (differentPlusOnes) then
         -- Show a confirmation dialog before overwriting the plusOnes
         GL.Interface.Dialogs.PopupDialog:open({
@@ -743,7 +750,14 @@ function SoftRes:importWeakauraData(data)
 
     -- At this point we don't really know anyone's plus one because SoftRes doesn't support realm tags (yet)
     if (GL.isEra) then
-        GL.PlusOnes:clear();
+        if (not GL:empty(DB.PlusOnes)) then
+            GL.Interface.Dialogs.PopupDialog:open({
+                question = "Do you want to clear all previous PlusOne values?",
+                OnYes = function ()
+                    GL.PlusOnes:clear();
+                end,
+            });
+        end
     elseif (differentPlusOnes) then
         -- Show a confirmation dialog before overwriting the plusOnes
         GL.Interface.Dialogs.PopupDialog:open({
