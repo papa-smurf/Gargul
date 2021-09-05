@@ -13,6 +13,10 @@ GL.Events = {
 
 local Events = GL.Events; ---@type Events
 
+--- Prepare the event frame for future use
+---
+---@param EventFrame table
+---@return void
 function Events:_init(EventFrame)
     GL:debug("Events:_init");
 
@@ -27,7 +31,12 @@ function Events:_init(EventFrame)
     self._initialized = true;
 end
 
--- Register an event listener
+--- Register an event listener
+---
+---@param identifier string
+---@param event string
+---@param callback function
+---@return boolean
 function Events:register(identifier, event, callback)
     GL:debug("Events:register");
 
@@ -51,9 +60,14 @@ function Events:register(identifier, event, callback)
 
     self.Registry.EventByIdentifier[identifier] = event;
     self.Registry.EventListeners[event][identifier] = callback;
+
+    return true;
 end
 
--- Unregister a listener based on its identifier
+--- Unregister a listener based on its identifier
+---
+---@param identifier string
+---@return void
 function Events:unregister(identifier)
     -- This is to get rid of any reference
     local event = tostring(self.Registry.EventByIdentifier[identifier]);
@@ -78,22 +92,35 @@ function Events:unregister(identifier)
     -- so we can unregister it on our event frame
     if (not eventStillHasListeners) then
         self.Registry.EventListeners[event] = nil;
-        self.Frame:UnregisterEvent(event);
+
+        -- We exclude internal events (prefixed with GL.) since we fire
+        -- those manually from within the codebase without relying on a frame
+        if (not GL:strStartsWith(event, "GL.")) then
+            self.Frame:UnregisterEvent(event);
+        end
     end
 end
 
--- Fire the event listeners whenever a registered event comes in
+--- Fire the event listeners whenever a registered event comes in
+---
+---@param event string
+---@param . any
+---@return void
 function Events:listen(event, ...)
     local args = {...};
 
-    for _, listener in pairs(GL.Events.Registry.EventListeners[event]) do
+    for _, listener in pairs(GL.Events.Registry.EventListeners[event] or {}) do
         pcall(function () listener(unpack(args)); end);
     end
 end
 
--- Fire an event manually (assuming there's a listener for it)
+--- Fire an event manually (assuming there's a listener for it)
+---
+---@param event string
+---@param . any
+---@return void
 function Events:fire(event, ...)
-    return self:listen(event, ...);
+    self:listen(event, ...);
 end
 
 GL:debug("Events.lua");
