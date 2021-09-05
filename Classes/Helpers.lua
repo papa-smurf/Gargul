@@ -3,6 +3,38 @@ local _, GL = ...;
 
 local Constants = GL.Data.Constants; ---@type Data
 
+-- LUA supports tostring, tonumber etc but no toboolean, let's fix that!
+if (not _G["toboolean"]
+    and not toboolean
+) then
+    ---@param var any
+    ---@return boolean
+    _G["toboolean"] = function(var)
+        if (type(var) == "boolean") then
+            return var;
+        end
+
+        return not GL:empty(var);
+    end
+end
+
+-- Future versions of WoW support the round method, older versions don't, let's fix that!
+if (not _G["round"]
+    and not round
+) then
+    ---@param var number
+    ---@param precision number
+    ---@return number
+    round = function(var, precision)
+        if (precision and precision > 0) then
+            local mult = 10^ precision;
+            return math.floor(var * mult + .5) / mult;
+        end
+
+        return math.floor(var + .5);
+    end
+end
+
 --- Print a normal message (white)
 ---
 ---@vararg string
