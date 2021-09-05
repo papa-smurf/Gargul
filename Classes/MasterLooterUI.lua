@@ -315,7 +315,8 @@ function MasterLooterUI:draw(itemLink)
                         return GL:warning("You need to select a player first");
                     end
 
-                    return GL.RollOff:award(selected.cols[1].value, MasterLooterUI.UIComponents.EditBoxes.Item:GetText());
+                    local osRoll = selected.cols[4].value == "OS";
+                    return GL.RollOff:award(selected.cols[1].value, MasterLooterUI.UIComponents.EditBoxes.Item:GetText(), osRoll);
                 end);
                 ThirdRow:AddChild(AwardButton);
                 MasterLooterUI.UIComponents.Buttons.AwardButton = AwardButton;
@@ -478,9 +479,10 @@ function MasterLooterUI:drawPlayersTable(parent)
 
     -- Combined width of all colums should be 340
     local columns = {
+        --[[ Player name ]]
         {
             name = "Player",
-            width = 110,
+            width = 120,
             align = "LEFT",
             color = {
                 r = 0.5,
@@ -490,9 +492,10 @@ function MasterLooterUI:drawPlayersTable(parent)
             },
             colorargs = nil,
         },
+        --[[ Roll ]]
         {
             name = "Roll",
-            width = 50,
+            width = 60,
             align = "LEFT",
             color = {
                 r = 0.5,
@@ -503,9 +506,24 @@ function MasterLooterUI:drawPlayersTable(parent)
             colorargs = nil,
             defaultsort = GL.Data.Constants.ScrollingTable.descending,
         },
+        --[[ +1 ]]
+        {
+            name = "+1",
+            width = 50,
+            align = "LEFT",
+            color = {
+                r = 0.5,
+                g = 0.5,
+                b = 1.0,
+                a = 1.0
+            },
+            colorargs = nil,
+            sortnext = 2,
+        },
+        --[[ MS/OS ]]
         {
             name = " ",
-            width = 40,
+            width = 50,
             align = "LEFT",
             color = {
                 r = 0.5,
@@ -517,9 +535,10 @@ function MasterLooterUI:drawPlayersTable(parent)
             sort = GL.Data.Constants.ScrollingTable.ascending,
             sortnext = 2,
         },
+        --[[ Reserved ]]
         {
             name = " ",
-            width = 140,
+            width = 60,
             align = "LEFT",
             color = {
                 r = 0.5,
@@ -531,10 +550,11 @@ function MasterLooterUI:drawPlayersTable(parent)
         },
     };
 
-    local table = ScrollingTable:CreateST(columns, 8, 15, nil, parent);
-    table:EnableSelection(true);
-    table.frame:SetPoint("BOTTOM", parent, "BOTTOM", 0, 50);
-    MasterLooterUI.UIComponents.Tables.Players = table;
+    local Table = ScrollingTable:CreateST(columns, 8, 15, nil, parent);
+    Table:SetWidth(340);
+    Table:EnableSelection(true);
+    Table.frame:SetPoint("BOTTOM", parent, "BOTTOM", 0, 50);
+    MasterLooterUI.UIComponents.Tables.Players = Table;
 end
 
 -- The item box contents changed
@@ -589,7 +609,6 @@ function MasterLooterUI:update()
     local icon = select(10, GetItemInfo(itemLink));
 
     if (icon) then
-        ---@todo Reset players / roll table
         MasterLooterUI.UIComponents.Tables.Players:ClearSelection();
 
         IconWidget:SetImage(icon);

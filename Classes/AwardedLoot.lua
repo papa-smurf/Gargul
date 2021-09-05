@@ -65,12 +65,22 @@ end
 function AwardedLoot:addWinnerOnDate(winner, date, itemLink)
     GL:debug("AwardedLoot:addWinnerOnDate");
 
-    return AwardedLoot:addWinner(winner, itemLink, nil, nil, date)
+    return AwardedLoot:addWinner(winner, itemLink, nil, date)
 end
 
--- Add a winner for a specific item to the SessionHistory table
-function AwardedLoot:addWinner(winner, itemLink, dkp, announce, date)
+--- Add a winner for a specific item to the SessionHistory table
+---
+---@param winner string
+---@param itemLink string
+---@param announce boolean|nil
+---@param date string|nil
+---@param isOS boolean|nil
+---@param addPlusOne boolean|nil
+---@return void
+function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS)
     GL:debug("AwardedLoot:addWinner");
+
+    isOS = toboolean(isOS);
 
     local dateProvided = date and type(date) == "string";
     local timestamp = GetServerTime();
@@ -134,6 +144,7 @@ function AwardedLoot:addWinner(winner, itemLink, dkp, announce, date)
         itemId = itemId,
         awardedTo = winner,
         timestamp = timestamp,
+        OS = isOS,
     };
 
     -- Insert the award in the more permanent AwardHistory table (for export / audit purposes)
@@ -181,6 +192,7 @@ function AwardedLoot:addWinner(winner, itemLink, dkp, announce, date)
             itemLink = itemLink,
             winner = winner,
             timestamp = timestamp,
+            OS = isOS,
         },
         channel
     ):send();

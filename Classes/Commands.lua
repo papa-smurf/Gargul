@@ -3,22 +3,24 @@ local _, GL = ...;
 ---@class Commands
 GL.Commands = GL.Commands or {
     CommandDescriptions = {
-        settings = "Open the settings menu",
-        rolloff = "Open the RollOff UI where you can announce an item for players to roll on: /gl award [itemLink?]",
+        awardondate = "In case you need to award something retroactively you can use this command: /gl awardOnDate [winnerName] [itemLink] [yy-mm-dd]",
         award = "Open the award window. Optionally accepts an ItemLink as an argument: /gl award [itemLink?]",
-        awardOnDate = "In case you need to award something retroactively you can use this command: /gl awardOnDate [winnerName] [itemLink] [yy-mm-dd]",
-        raidcsv = "Output everyone currently in the group in a CSV format",
-        groups = "Open the group window where you can provide a group csv so that you can: see who's missing and sort groups automatically",
-        softreserves = "Open either the SoftRes import window if there's no data available or open the SoftRes overview",
-        thatsmybis = "Open the TMB importer. Data exported from tmb.com can be imported here",
-        packmule = "Open PackMule which allows you to automatically funnel dropped gear to specific players, very helpful with green items for example",
-        lootpriority = "Open the loot priority editor where you can import loot priorities separately from That's My BIS (covered here) or do it manually in the loot priority editor which you can open",
-        stacktrace = "Shows a list of all of the debug messages stored by Gargul, this can be helpful for debugging errors",
-        import = "Opens the general import window that includes shortcuts to the TMB, SoftRes or loot priority importers",
-        export = "Export dropped loot to a CSV format which is compatible with TMB for example.",
-        version = "Compare your Gargul version with everyone in your group and shows you exactly who needs to upgrade or who doesn't have the addon installed",
-        inspect = "You can check whether players brought items (and how many), e.g. to check for consumables (requires players to have Gargul!): /gl inspect itemId1, itemId2, itemId3",
         buffs = "You can instantly check player buffs like Ony, ZG, but also protection consumables like shadow protection: /gl buffs 22888, 22818, 22817, 22820, 24425, 15366, 20079",
+        clearplusones = "Clear all plus one values",
+        export = "Export dropped loot to a CSV format which is compatible with TMB for example.",
+        groups = "Open the group window where you can provide a group csv so that you can: see who's missing and sort groups automatically",
+        import = "Opens the general import window that includes shortcuts to the TMB, SoftRes or loot priority importers",
+        inspect = "You can check whether players brought items (and how many), e.g. to check for consumables (requires players to have Gargul!): /gl inspect itemId1, itemId2, itemId3",
+        lootpriority = "Open the loot priority editor where you can import loot priorities separately from That's My BIS (covered here) or do it manually in the loot priority editor which you can open",
+        packmule = "Open PackMule which allows you to automatically funnel dropped gear to specific players, very helpful with green items for example",
+        plusones = "Open the PlusOnes window that allows you to check and manipulate all plus one values",
+        raidcsv = "Output everyone currently in the group in a CSV format",
+        rolloff = "Open the RollOff UI where you can announce an item for players to roll on: /gl award [itemLink?]",
+        softreserves = "Open either the SoftRes import window if there's no data available or open the SoftRes overview",
+        stacktrace = "Shows a list of all of the debug messages stored by Gargul, this can be helpful for debugging errors",
+        settings = "Open the settings menu",
+        thatsmybis = "Open the TMB importer. Data exported from tmb.com can be imported here",
+        version = "Compare your Gargul version with everyone in your group and shows you exactly who needs to upgrade or who doesn't have the addon installed",
     },
 
     ShorthandDictionary = {
@@ -28,7 +30,7 @@ GL.Commands = GL.Commands or {
         ro = "rolloff",
         roll = "rolloff",
         a = "award",
-        aod = "awardOnDate",
+        aod = "awardondate",
         rcsv = "raidcsv",
         gr = "groups",
         roster = "groups",
@@ -48,6 +50,11 @@ GL.Commands = GL.Commands or {
         ve = "version",
         ins = "inspect",
         bu = "buffs",
+        ["+1"] = "plusones",
+        plusone = "plusones",
+        po = "plusones",
+        cpo = "clearplusones",
+        clearplusone = "clearplusones",
     },
 
     Dictionary = {
@@ -69,7 +76,7 @@ GL.Commands = GL.Commands or {
         end,
 
         -- Award an item on a given date. Useful if you forgot to award an item and want to do it later
-        awardOnDate = function(...) GL.AwardedLoot:addWinnerOnDate(...); end,
+        awardondate = function(...) GL.AwardedLoot:addWinnerOnDate(...); end,
 
         -- Export the current raid roster to csv
         raidcsv = function ()
@@ -81,6 +88,12 @@ GL.Commands = GL.Commands or {
 
         -- Open the soft reserves window
         softreserves = function() GL.SoftRes:draw(); end,
+
+        -- Open the plus ones window
+        plusones = function() GL.Interface.PlusOnes.Overview:draw(); end,
+
+        -- Clear all plus ones
+        clearplusones = function() GL.PlusOnes:clear(); end,
 
         -- Open the TMB window
         thatsmybis = function() GL.TMB:drawImporter(); end,
@@ -160,7 +173,7 @@ function Commands:_dispatch(str)
         numberOfArguments = 1;
     elseif (GL:inTable({"award"}, command)) then
         numberOfArguments = 2;
-    elseif (GL:inTable({"awardOnDate"}, command)) then
+    elseif (GL:inTable({"awardondate"}, command)) then
         numberOfArguments = 3;
     end
 

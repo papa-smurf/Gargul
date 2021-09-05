@@ -1,24 +1,24 @@
 ## Interface: 11307
 ## Title: Gargul
 ## Title: |cff8aecffGargul|r
-## Author: <Give it a Lick> Zhorax
-## Notes: Loot addon that supports soft reserves, rolling, thatsmybis, DKP bidding / syncing, loot priorities and much more
-## Version: 3.2.2
+## Author: <Give it a Lick> Zhorax - Razorgore
+## Notes: Loot addon that supports softres.it, thatsmybis.com, auto-looting, loot priorities, plus one tracking and much more
+## Version: 3.3.0
 ## DefaultState: enabled
 ## SavedVariables: GargulDB
 
-## Libraries
+# Libraries
 libraries.xml
 
-## Bootstrapper
+# Bootstrapper
 bootstrap.lua
 
-## Data objects
+# Data objects
 Data/Constants.lua
 Data/DefaultSettings.lua
 Data/ItemLinks.lua
 
-## Class objects
+# Class objects
 Classes/Helpers.lua
 Classes/Events.lua
 Classes/JSON.lua
@@ -27,6 +27,7 @@ Classes/UI.lua
 Classes/DB.lua
 Classes/Settings.lua
 Classes/SoftRes.lua
+Classes/PlusOnes.lua
 Classes/TMB.lua
 Classes/Exporter.lua
 Classes/RollerUI.lua
@@ -48,7 +49,7 @@ Classes/Comm.lua
 Classes/CommMessage.lua
 Classes/RaidGroups.lua
 
-## Interface objects
+# Interface objects
 Interface/Interface.lua
 Interface/Award.lua
 Interface/Importer.lua
@@ -65,9 +66,12 @@ Interface/Settings/ExportingLoot.lua
 Interface/Settings/SlashCommands.lua
 Interface/SoftRes/Importer.lua
 Interface/SoftRes/Overview.lua
+Interface/PlusOnes/OverView.lua
 Interface/PlayerSelector.lua
 Interface/MinimapButton.lua
 
-## Popup dialogs
-Interface/PopupDialog.lua
-Interface/PopupDialogWidget.lua
+# Popup dialogs
+Interface/Dialogs/AwardDialog.lua
+Interface/Dialogs/AwardDialogWidget.lua
+Interface/Dialogs/PopupDialog.lua
+Interface/Dialogs/PopupDialogWidget.lua

@@ -2,9 +2,6 @@
 ---@class Bootstrapper
 local appName, GL = ...;
 
---[[ APP VERSION ]]
-GL.version = "3.2.2";
-
 GL.name = appName;
 GL._initialized = false;
 GL.clientUIinterface = 0;
@@ -13,6 +10,7 @@ GL.isEra = false;
 GL.isRetail = false;
 GL.isClassic = false;
 GL.testMode = false;
+GL.version = GetAddOnMetadata(GL.name, "Version");
 GL.DebugLines = {};
 GL.EventFrame = {};
 
@@ -20,68 +18,70 @@ GL.EventFrame = {};
 GL.Ace = LibStub("AceAddon-3.0"):NewAddon(GL.name, "AceConsole-3.0", "AceComm-3.0", "AceTimer-3.0");
 
 -- Bootstrap the addon
-GL.bootstrap = function(_, _, addonName)
+function GL:bootstrap(_, _, addonName)
     -- The addon was already bootstrapped or this is not the correct event
-    if (GL._initialized) then
+    if (self._initialized) then
         return;
     end
 
     -- We only want to continue bootstrapping
     -- when it's this addon that's successfully loaded
-    if (addonName ~= GL.name) then
+    if (addonName ~= self.name) then
         return;
     end
 
-    GL:debug("GL:bootstrap");
+    self:debug("GL:bootstrap");
 
     -- The addon was loaded, we no longer need the event listener now
-    GL.EventFrame:UnregisterEvent("ADDON_LOADED");
+    self.EventFrame:UnregisterEvent("ADDON_LOADED");
 
     -- Initialize our classes / services
-    GL:_init();
-    GL._initialized = true;
+    self:_init();
+    self._initialized = true;
 
     -- Add the minimap icon
-    GL.MinimapButton:_init();
+    self.MinimapButton:_init();
 end
 
--- Callback to be fired when the addon is completely loaded
+--- Callback to be fired when the addon is completely loaded
+---
+---@return void
 function GL:_init()
-    GL:debug("GL:_init");
+    self:debug("GL:_init");
 
     do
-        local version, _, _, uiVersion = GetBuildInfo()
+        local version, _, _, uiVersion = GetBuildInfo();
 
-        GL.clientUIinterface = uiVersion
-        local expansion,majorPatch,minorPatch = (version or "3.0.0"):match("^(%d+)%.(%d+)%.(%d+)")
-        GL.clientVersion = (expansion or 0) * 10000 + (majorPatch or 0) * 100 + (minorPatch or 0)
+        self.clientUIinterface = uiVersion;
+        local expansion,majorPatch,minorPatch = (version or "3.0.0"):match("^(%d+)%.(%d+)%.(%d+)");
+        self.clientVersion = (expansion or 0) * 10000 + (majorPatch or 0) * 100 + (minorPatch or 0);
     end
 
-    if GL.clientVersion < 20000 then
-        GL.isEra = true;
-    elseif GL.clientVersion < 90000 then
-        GL.isClassic = true;
+    if self.clientVersion < 20000 then
+        self.isEra = true;
+    elseif self.clientVersion < 90000 then
+        self.isClassic = true;
     else
-        GL.isRetail = true;
+        self.isRetail = true;
     end
 
     -- Initialize classes
-    GL.Events:_init(GL.EventFrame);
-    GL.DB:_init();
-    GL.Settings:_init();
+    self.Events:_init(self.EventFrame);
+    self.DB:_init();
+    self.Settings:_init();
 
     -- Show a welcome message
-    if (GL.Settings:get("welcomeMessage")) then
+    if (self.Settings:get("welcomeMessage")) then
         print(string.format(
             "|cff%sGargul v%s|r by Zhorax@Razorgore. Type |cff%s/gl|r or |cff%s/gargul|r to get started!",
-            GL.Data.Constants.addonHexColor,
-            GL.version,
-            GL.Data.Constants.addonHexColor,
-            GL.Data.Constants.addonHexColor
+            self.Data.Constants.addonHexColor,
+            self.version,
+            self.Data.Constants.addonHexColor,
+            self.Data.Constants.addonHexColor
         ))
     end
 
-    if (GL.Settings:get("fixMasterLootWindow")) then
+    if (self.Settings:get("fixMasterLootWindow")) then
         --[[
             This fix was discovered by Kirsia-Dalaran. More info here: https://bit.ly/3tc8nvw
         ]]--
@@ -89,18 +89,18 @@ function GL:_init()
         hooksecurefunc(MasterLooterFrame, 'Hide', function(self) self:ClearAllPoints() end);
     end
 
-    GL.Comm:_init();
-    GL.User:_init();
-    GL.LootPriority:_init();
-    GL.AwardedLoot:_init();
-    GL.SoftRes:_init();
-    GL.TMB:_init();
-    GL.DroppedLoot:_init();
-    GL.GroupLoot:_init();
-    GL.PackMule:_init();
+    self.Comm:_init();
+    self.User:_init();
+    self.LootPriority:_init();
+    self.AwardedLoot:_init();
+    self.SoftRes:_init();
+    self.TMB:_init();
+    self.DroppedLoot:_init();
+    self.GroupLoot:_init();
+    self.PackMule:_init();
 
     -- Hook the bagslot events
-    GL:hookBagSlotEvents();
+    self:hookBagSlotEvents();
 end
 
 -- Register the gl slash command
@@ -142,4 +142,4 @@ end
 -- Fire GL.bootstrap every time an addon is loaded
 GL.EventFrame = CreateFrame("FRAME");
 GL.EventFrame:RegisterEvent("ADDON_LOADED");
-GL.EventFrame:SetScript("OnEvent", GL.bootstrap);
+GL.EventFrame:SetScript("OnEvent", function (...) GL:bootstrap(...); end);

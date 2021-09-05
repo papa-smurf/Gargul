@@ -62,10 +62,9 @@ function RollOff:announceStart(itemLink, time, note)
     ):send();
 
     local announceMessage = string.format(
-        "You have %s seconds to roll on %s. Use /roll %s to roll for OS!",
+        "You have %s seconds to roll on %s",
         time,
-        itemLink,
-        osRollMax
+        itemLink
     );
     local reserveMessage = "";
     local Reserves = GL.SoftRes:byItemLink(itemLink);
@@ -74,10 +73,17 @@ function RollOff:announceStart(itemLink, time, note)
         and not GL:empty(note)
     ) then
         announceMessage = string.format(
-            "You have %s seconds to roll on %s - %s. Use /roll %s to roll for OS!",
+            "You have %s seconds to roll on %s - %s",
             time,
             itemLink,
-            note,
+            note
+        );
+    end
+
+    if (GL:higherThanZero(osRollMax)) then
+        announceMessage = string.format(
+            "%s. Use /roll %s to roll for OS!",
+            announceMessage,
             osRollMax
         );
     end
@@ -249,7 +255,7 @@ function RollOff:stop(CommMessage)
 end
 
 -- Award the item to one of the rollers
-function RollOff:award(roller, itemLink)
+function RollOff:award(roller, itemLink, osRoll)
     GL:debug("RollOff:award");
 
     -- If the roller has a roll number suffixed to his name
@@ -261,16 +267,32 @@ function RollOff:award(roller, itemLink)
 
     itemLink = GL:tableGet(self.CurrentRollOff, "itemLink", itemLink);
 
+    local isOS, addPlusOne = false;
+
     if (GL:nameIsUnique(roller)) then
         -- Make sure the initiator has to confirm his choices
-        GL.Interface.PopupDialog:open({
+        GL.Interface.Dialogs.AwardDialog:open({
             question = string.format("Award %s to %s?",
                     itemLink,
                     roller
             ),
             OnYes = function ()
+                local OSCheckBox = GL.Interface:getItem(GL.Interface.Dialogs.AwardDialog, "CheckBox.OffSpec");
+                if (OSCheckBox) then
+                    isOS = toboolean(OSCheckBox:GetValue());
+                end
+
+                local addPlusOneCheckBox = GL.Interface:getItem(GL.Interface.Dialogs.AwardDialog, "CheckBox.PlusOne");
+                if (addPlusOneCheckBox) then
+                    addPlusOne = toboolean(addPlusOneCheckBox:GetValue());
+
+                    if (addPlusOne) then
+                        GL.PlusOnes:add(roller);
+                    end
+                end
+
                 -- Add the player we awarded the item to to the item's tooltip
-                GL.AwardedLoot:addWinner(roller, itemLink);
+                GL.AwardedLoot:addWinner(roller, itemLink, nil, nil, isOS, addPlusOneCheckBox);
 
                 self:reset();
                 GL.MasterLooterUI:reset();
@@ -280,6 +302,7 @@ function RollOff:award(roller, itemLink)
                     GL.MasterLooterUI:close();
                 end
             end,
+            checkOS = osRoll,
         });
 
         return;
@@ -289,14 +312,28 @@ function RollOff:award(roller, itemLink)
 
     GL.Interface.PlayerSelector:draw(description, roller, function (player)
         -- Make sure the initiator has to confirm his choices
-        GL.Interface.PopupDialog:open({
+        GL.Interface.Dialogs.AwardDialog:open({
             question = string.format("Award %s to %s?",
                     itemLink,
                     player
             ),
             OnYes = function ()
+                local OSCheckBox = GL.Interface:getItem(GL.Interface.Dialogs.AwardDialog, "CheckBox.OffSpec");
+                if (OSCheckBox) then
+                    isOS = toboolean(OSCheckBox:GetValue());
+                end
+
+                local addPlusOneCheckBox = GL.Interface:getItem(GL.Interface.Dialogs.AwardDialog, "CheckBox.PlusOne");
+                if (addPlusOneCheckBox) then
+                    addPlusOne = toboolean(addPlusOneCheckBox:GetValue());
+
+                    if (addPlusOne) then
+                        GL.PlusOnes:add(roller);
+                    end
+                end
+
                 -- Add the player we awarded the item to to the item's tooltip
-                GL.AwardedLoot:addWinner(player, itemLink);
+                GL.AwardedLoot:addWinner(roller, itemLink, nil, nil, isOS, addPlusOneCheckBox);
 
                 self:reset();
                 GL.MasterLooterUI:reset();
@@ -308,6 +345,7 @@ function RollOff:award(roller, itemLink)
 
                 GL.Interface.PlayerSelector:close();
             end,
+            checkOS = osRoll,
         });
     end);
 end
@@ -421,10 +459,11 @@ function RollOff:refreshRollsTable()
             softReservedValue = "Reserved";
         end
 
+        local rollerName = playerName;
         -- If this isn't the player's first roll for the current item
         -- then we add a number behind the players name like so: PlayerName [#]
         if (numberOfTimesRolledByPlayer > 1) then
-            playerName = string.format("%s [%s]", playerName, numberOfTimesRolledByPlayer);
+            rollerName = string.format("%s [%s]", playerName, numberOfTimesRolledByPlayer);
         end
 
         local msOrOsString = "MS";
@@ -433,14 +472,24 @@ function RollOff:refreshRollsTable()
         end
 
         local class = string.lower(Roll.class);
+        local plusOnes = GL.PlusOnes:get(playerName);
+
+        if (GL:higherThanZero(plusOnes)) then
+            plusOnes = "+" .. plusOnes;
+        end
+
         local Row = {
             cols = {
                 {
-                    value = playerName,
+                    value = rollerName,
                     color = GL:classRGBAColor(class),
                 },
                 {
                     value = Roll.amount,
+                    color = GL:classRGBAColor(class),
+                },
+                {
+                    value = plusOnes,
                     color = GL:classRGBAColor(class),
                 },
                 {
