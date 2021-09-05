@@ -27,6 +27,7 @@ Classes/UI.lua
 Classes/DB.lua
 Classes/Settings.lua
 Classes/SoftRes.lua
+Classes/PlusOnes.lua
 Classes/TMB.lua
 Classes/Exporter.lua
 Classes/RollerUI.lua
@@ -65,9 +66,12 @@ Interface/Settings/ExportingLoot.lua
 Interface/Settings/SlashCommands.lua
 Interface/SoftRes/Importer.lua
 Interface/SoftRes/Overview.lua
+Interface/PlusOnes/OverView.lua
 Interface/PlayerSelector.lua
 Interface/MinimapButton.lua
 
-## Popup dialogs
-Interface/PopupDialog.lua
-Interface/PopupDialogWidget.lua
+# Popup dialogs
+Interface/Dialogs/AwardDialog.lua
+Interface/Dialogs/AwardDialogWidget.lua
+Interface/Dialogs/PopupDialog.lua
+Interface/Dialogs/PopupDialogWidget.lua

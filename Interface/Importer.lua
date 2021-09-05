@@ -61,7 +61,7 @@ function Importer:draw()
             return GL.SoftRes:draw();
         end
 
-        GL.Interface.PopupDialog:open("NEW_SOFTRES_IMPORT_CONFIRMATION");
+        GL.Interface.Dialogs.PopupDialog:open("NEW_SOFTRES_IMPORT_CONFIRMATION");
     end);
     Window:AddChild(SoftResButton);
 

@@ -179,8 +179,24 @@ function Award:draw(itemLink)
         end
 
         local award = function ()
+            local isOS, addPlusOne = false;
+
+            local OSCheckBox = GL.Interface:getItem(GL.Interface.Dialogs.AwardDialog, "CheckBox.OffSpec");
+            if (OSCheckBox) then
+                isOS = toboolean(OSCheckBox:GetValue());
+            end
+
+            local addPlusOneCheckBox = GL.Interface:getItem(GL.Interface.Dialogs.AwardDialog, "CheckBox.PlusOne");
+            if (addPlusOneCheckBox) then
+                addPlusOne = toboolean(addPlusOneCheckBox:GetValue());
+
+                if (addPlusOne) then
+                    GL.PlusOnes:add(winner);
+                end
+            end
+
             -- Add the player we awarded the item to to the item's tooltip
-            GL.AwardedLoot:addWinner(winner, itemLink);
+            GL.AwardedLoot:addWinner(winner, itemLink, nil, nil, isOS, addPlusOneCheckBox);
             GL.Interface.Award:reset();
 
             if (Settings:get("UI.Award.closeOnAward", true)) then
@@ -189,7 +205,7 @@ function Award:draw(itemLink)
         end
 
         -- Make sure the initiator has to confirm his choices
-        GL.Interface.PopupDialog:open({
+        GL.Interface.Dialogs.AwardDialog:open({
             question = string.format("Award %s to %s?",
                 itemLink,
                 winner

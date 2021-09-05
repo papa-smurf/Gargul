@@ -309,19 +309,11 @@ function TMB:drawImporter()
     end);
     FooterFrame:AddChild(ImportButton);
 
---     local BroadCastButton = AceGUI:Create("Button");
---     BroadCastButton:SetText("Broadcast");
---     BroadCastButton:SetWidth(140);
---     BroadCastButton:SetCallback("OnClick", function()
---         TMB:broadcast();
---     end);
---     FooterFrame:AddChild(BroadCastButton);
-
     local ClearButton = AceGUI:Create("Button");
     ClearButton:SetText("Clear");
     ClearButton:SetWidth(140);
     ClearButton:SetCallback("OnClick", function()
-        GL.Interface.PopupDialog:open({
+        GL.Interface.Dialogs.PopupDialog:open({
             question = "Are you sure you want to clear the TMB tables?",
             OnYes = function ()
                 TMBBox:SetText("");

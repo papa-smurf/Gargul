@@ -138,7 +138,7 @@ function Exporter:clearData()
     end
 
     -- Show a confirmation dialog before clearing entries
-    GL.Interface.PopupDialog:open({
+    GL.Interface.Dialogs.PopupDialog:open({
         question = warning,
         OnYes = onConfirm,
     });
@@ -147,17 +147,18 @@ end
 function Exporter:refreshExportString()
     GL:debug("Exporter:refreshExportString");
 
-    local exportString = "dateTime,character,itemID";
+    local exportString = "dateTime,character,itemID,offspec";
 
     for _, AwardEntry in pairs(GL.DB.AwardHistory) do
         local dateString = date('%Y-%m-%d', AwardEntry.timestamp);
 
         if (not Exporter.dateSelected or dateString == Exporter.dateSelected) then
-            exportString = string.format("%s\n%s,%s,%s",
-                    exportString,
-                    dateString,
-                    AwardEntry.awardedTo,
-                    AwardEntry.itemId
+            exportString = string.format("%s\n%s,%s,%s,%s",
+                exportString,
+                dateString,
+                AwardEntry.awardedTo,
+                AwardEntry.itemId,
+                tostring(toboolean(AwardEntry.OS))
             );
         end
     end

@@ -638,7 +638,9 @@ function SoftRes:importWeakauraData(data)
     ---@todo make this active when the Gargul exporter is released on SoftRes.it
     -- GL:warning("The Weakaura data import is still usable but deprecated, try using the Gargul export instead!");
 
+    local PlusOnes = {};
     local Columns = {};
+    local differentPlusOnes = false;
     local first = true;
     local SoftReserveData = {};
     for line in data:gmatch("[^\n]+") do
@@ -669,6 +671,20 @@ function SoftRes:importWeakauraData(data)
                     };
                 end
 
+                local currentPlusOneValue = GL.PlusOnes:get(playerName);
+
+                -- We don't simply overwrite the PlusOnes if plusone data is already present
+                -- If the player doesn't have any plusones yet then we set it to whatever is provided by softres
+                if (GL:higherThanZero(currentPlusOneValue)
+                    and currentPlusOneValue ~= plusOnes
+                ) then
+                    differentPlusOnes = true;
+                else
+                    GL.PlusOnes:set(playerName, plusOnes);
+                end
+
+                PlusOnes[playerName] = plusOnes;
+
                 tinsert(SoftReserveData[playerName].Items, itemId);
             end
         end
@@ -689,67 +705,17 @@ function SoftRes:importWeakauraData(data)
         tinsert(DB.SoftRes.SoftReserves, Entry);
     end
 
-    return not GL:empty(DB.SoftRes.SoftReserves);
-end
-
---- Import a Weakaura data string (legacy)
----
----@param data string
----@return boolean
-function SoftRes:importWeakauraData2(data)
-    GL:debug("SoftRes:import");
-
-    ---@todo make this active when the Gargul exporter is released on SoftRes.it
-    -- GL:warning("The Weakaura data import is still usable but deprecated, try using the Gargul export instead!");
-
-    local first = true;
-    local SoftReserveData = {};
-    for line in data:gmatch("[^\n]+") do
-        if (not first) then -- The first line includes the heading, we don't need that
-            local Segments = GL:strSplit(line, ",");
-            if (GL:count(Segments) == 5) then
-                local itemId = tonumber(Segments[1]);
-                local playerName = tostring(Segments[2]);
-                local class = tostring(Segments[3]);
-                local note = tostring(Segments[4]);
-                local plusOnes = tonumber(Segments[5]);
-
-                if (GL:higherThanZero(itemId)
-                    and not GL:empty(playerName)
-                ) then
-                    playerName = string.lower(playerName);
-
-                    if (not SoftReserveData[playerName]) then
-                        SoftReserveData[playerName] = {
-                            Items = {},
-                            name = playerName,
-                            class = class,
-                            note = note,
-                            plusOnes = plusOnes,
-                        };
-                    end
-
-                    tinsert(SoftReserveData[playerName].Items, itemId);
-                end
-            end
-        else
-            first = false;
-        end
-    end
-
-    DB.SoftRes = {
-        SoftReserves = {},
-        HardReserves = {}, -- The weakaura format (CSV) doesn't include hard-reserves
-        MetaData = {
-            source = Constants.SoftReserveSources.weakaura,
-            importedAt = GetServerTime(),
-            importString = data,
-        },
-    };
-
-    -- We don't care for the playerName key in our database
-    for _, Entry in pairs(SoftReserveData) do
-        tinsert(DB.SoftRes.SoftReserves, Entry);
+    if (differentPlusOnes) then
+        -- Show a confirmation dialog before overwriting the plusOnes
+        GL.Interface.Dialogs.PopupDialog:open({
+            question = "The PlusOne values provided collide with the ones already present. Do you want to replace your old PlusOne values?",
+            OnYes = function ()
+                GL.PlusOnes:clear();
+                GL.PlusOnes:set(PlusOnes);
+                GL.Interface.SoftRes.Overview:close();
+                self:draw();
+            end,
+        });
     end
 
     return not GL:empty(DB.SoftRes.SoftReserves);

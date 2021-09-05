@@ -4,7 +4,6 @@ local _, GL = ...;
 GL.AceGUI = GL.AceGUI or LibStub("AceGUI-3.0");
 
 local AceGUI = GL.AceGUI;
-local Settings = GL.Settings; ---@type Settings
 
 GL:tableSet(GL, "Interface.SoftRes.Importer", {
     isVisible = false,

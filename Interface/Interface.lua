@@ -115,3 +115,5 @@ function Interface:storePosition(Item, identifier)
     Settings:set(identifier .. ".offsetX", offsetX);
     Settings:set(identifier .. ".offsetY", offsetY);
 end
+
+GL:debug("Interface/Interface.lua");

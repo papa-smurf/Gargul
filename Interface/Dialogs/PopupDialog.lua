@@ -2,8 +2,8 @@
 local _, GL = ...;
 
 ---@class PopupDialogInterface
-GL.Interface.PopupDialog = {};
-local PopupDialog = GL.Interface.PopupDialog; ---@type PopupDialogInterface
+GL:tableSet(GL, "Interface.Dialogs.PopupDialog", {});
+local PopupDialog = GL.Interface.Dialogs.PopupDialog; ---@type PopupDialogInterface
 
 function PopupDialog:open(Dialog)
     local AceGUI = GL.AceGUI;
@@ -88,3 +88,5 @@ PopupDialog.CLEAR_TMB_CONFIRMATION = {
     question = "Are you sure you want to clear the TMB tables?",
     OnYes = {},
 }
+
+GL:debug("Interface/PopupDialog.lua");

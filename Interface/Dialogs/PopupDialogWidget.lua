@@ -5,7 +5,7 @@ local _, GL = ...;
 PopupDialog AceGUI Widget
 Simple container widget that creates a popup dialog similar to Blizzard's dialogs
 -------------------------------------------------------------------------------]]
-local Type, Version = "GargulPopupDialog", 22
+local Type, Version = "GargulPopupDialog", 1
 local AceGUI = LibStub and LibStub("AceGUI-3.0", true)
 if not AceGUI or (AceGUI:GetWidgetVersion(Type) or 0) >= Version then return end
 

@@ -15,7 +15,7 @@ GL:tableSet(GL, "Interface.SoftRes.Overview", {
     selectedCharacter = nil,
 });
 
----@class Overview
+---@class SoftResOverview
 local Overview = GL.Interface.SoftRes.Overview;
 
 --- Draw the UI elements required to show an overview of all soft-reserve data
@@ -70,7 +70,7 @@ function Overview:draw()
     local ShareButton = GL.Interface:getItem(self, "Frame.ShareButton") or GL.UI:createShareButton(
             Window.frame,
             function ()
-                GL.Interface.PopupDialog:open("BROADCAST_SOFTRES_CONFIRMATION");
+                GL.Interface.Dialogs.PopupDialog:open("BROADCAST_SOFTRES_CONFIRMATION");
             end,
             "Broadcast SoftRes Data",
             "To broadcast you need to be in a group and need master loot, assist or lead!"
@@ -239,7 +239,7 @@ function Overview:draw()
     ClearDataButton:SetText("Clear Data");
     ClearDataButton:SetWidth(141); -- Minimum is 102
     ClearDataButton:SetCallback("OnClick", function()
-        GL.Interface.PopupDialog:open("CLEAR_SOFTRES_CONFIRMATION");
+        GL.Interface.Dialogs.PopupDialog:open("CLEAR_SOFTRES_CONFIRMATION");
     end);
     ButtonFrame:AddChild(ClearDataButton);
 
@@ -322,19 +322,8 @@ function Overview:refreshDetailsFrame()
     local titleText = GL:capitalize(self.selectedCharacter);
 
     local SoftResDetails = SoftRes:getDetailsForPlayer(self.selectedCharacter);
-
-    if (GL:empty(SoftResDetails)) then
-        Title:SetText(titleText);
-        Note:SetText("This player did not reserve anything!");
-        Note:SetColor(1, 0, 0);
-
-        return;
-    end
-
-    local note = GL:tableGet(SoftResDetails, "note", "This player didn't set a note");
+    local plusOnes = GL.PlusOnes:get(self.selectedCharacter);
     local class = GL:tableGet(SoftResDetails, "class", SoftRes:getPlayerClass(self.selectedCharacter));
-    local plusOnes = GL:tableGet(SoftResDetails, "plusOnes", 0);
-    local Items = GL:tableGet(SoftResDetails, "Items", {});
 
     if (GL:higherThanZero(plusOnes)) then
         titleText = string.format("%s (+%s)", titleText, plusOnes);
@@ -342,6 +331,17 @@ function Overview:refreshDetailsFrame()
 
     Title:SetText(titleText);
     Title:SetColor(unpack(GL:classRGBColor(class)));
+
+    if (GL:empty(SoftResDetails)) then
+        Note:SetText("This player did not reserve anything!");
+        Note:SetColor(1, 0, 0);
+
+        return;
+    end
+
+    local note = GL:tableGet(SoftResDetails, "note", "This player didn't set a note");
+    local Items = GL:tableGet(SoftResDetails, "Items", {});
+
     Note:SetText(note);
 
     -- Display the items reserved by the player
@@ -529,7 +529,7 @@ function Overview:drawCharacterTable(Parent)
     local TableData = {};
 
     for playerName, Entry in pairs(PlayerData) do
-        local plusOnes = "";
+        local plusOnes = GL.PlusOnes:get(playerName);
         local numberOfSoftReservedItems = GL:count(Entry.Items);
 
         local SoftReserveColor = {r=0,g=1,b=0,a=1};
@@ -538,8 +538,8 @@ function Overview:drawCharacterTable(Parent)
             SoftReserveColor = {r=1,g=0,b=0,a=1};
         end
 
-        if (GL:higherThanZero(Entry.plusOnes)) then
-            plusOnes = "+" .. Entry.plusOnes;
+        if (GL:higherThanZero(plusOnes)) then
+            plusOnes = "+" .. plusOnes;
         end
 
         tinsert(TableData, {
