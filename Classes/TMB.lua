@@ -237,7 +237,6 @@ end
 
 --- Draw the TMB importer interface
 ---@todo Refactor to Interface
----@todo Fix broadcast functionality (payload needs to be smaller)
 ---
 ---@return void
 function TMB:drawImporter()
@@ -331,8 +330,6 @@ function TMB:drawImporter()
         });
     end);
     FooterFrame:AddChild(ClearButton);
-
---     TMB:updateBroadCastButton(BroadCastButton);
 end
 
 --- Import a given tmb string
@@ -431,69 +428,6 @@ function TMB:import(data)
     end
 
     return true;
-end
-
---- Check if the broadcast button should be available
----
----@param BroadCastButton table
----@return void
-function TMB:updateBroadCastButton(BroadCastButton)
-    GL:debug("TMB:updateBroadCastButton");
-
-    if (not GL.User.isMasterLooter) then
-        return BroadCastButton:SetDisabled(true);
-    end
-
-    return BroadCastButton:SetDisabled(false);
-end
-
---- Broadcast our TMB info table to the raid or group
----@todo this doesn't work at the moment
----
----@return void
-function TMB:broadcast()
-    GL:debug("TMB:broadcast");
-
-    if (WishLists.broadcastInProgress) then
-        GL:error("Broadcast still in progress");
-        return;
-    end
-
-    self.broadcastInProgress = true;
-
-    if (GL.User.isInRaid) then
-        GL.CommMessage.new(
-            CommActions.broadcastTMBData,
-            "GL.DB.TMB",
-            "RAID"
-        ):send();
-    elseif (GL.User.isInParty) then
-        GL.CommMessage.new(
-            CommActions.broadcastTMBData,
-            "GL.DB.TMB",
-            "PARTY"
-        ):send();
-    end
-
-    GL.Ace:ScheduleTimer(function ()
-        GL:success("Wishlist Broadcast finished");
-        self.broadcastInProgress = false;
-    end, 10);
-end
-
---- Process an incoming wishlist broadcast
-function TMB:receiveWishLists(CommMessage)
-    GL:debug("TMB:receiveWishLists");
-
-    -- No need to update our tables if we broadcasted them ourselves
-    if (CommMessage.Sender.name == GL.User.name) then
-        GL:debug("Sync:receiveWishLists received by self, skip");
-        return;
-    end
-
-    GL.DB.TMB = CommMessage.content;
-
-    GL:success("Your Wishlists just got updated by " .. CommMessage.Sender.name);
 end
 
 GL:debug("WishLists.lua");
