@@ -12,6 +12,7 @@ GL.Exporter = {
         Tables = {},
         EditBoxes = {},
     },
+    disenchantedItemIdentifier = "||de||",
 };
 
 local AceGUI = GL.AceGUI;
@@ -57,7 +58,7 @@ function Exporter:draw()
     -- Make sure the window can be closed by pressing the escape button
     _G["GARGUL_EXPORTER_WINDOW"] = Window.frame;
     tinsert(UISpecialFrames, "GARGUL_EXPORTER_WINDOW");
-    
+
     --[[
         DATES FRAME
     ]]
@@ -151,12 +152,19 @@ function Exporter:refreshExportString()
 
     for _, AwardEntry in pairs(GL.DB.AwardHistory) do
         local dateString = date('%Y-%m-%d', AwardEntry.timestamp);
+        local concernsDisenchantedItem = AwardEntry.awardedTo == self.disenchantedItemIdentifier;
 
-        if (not Exporter.dateSelected or dateString == Exporter.dateSelected) then
+        if ((concernsDisenchantedItem or GL.Settings:get("ExportingLoot.includeDisenchantedItems")
+        ) and (not Exporter.dateSelected or dateString == Exporter.dateSelected)) then
+            local awardedTo = AwardEntry.awardedTo;
+            if (concernsDisenchantedItem) then
+                awardedTo = GL.Settings:get("ExportingLoot.disenchanterIdentifier");
+            end
+
             exportString = string.format("%s\n%s,%s,%s,%s",
                 exportString,
                 dateString,
-                AwardEntry.awardedTo,
+                awardedTo,
                 AwardEntry.itemId,
                 AwardEntry.OS and 1 or 0
             );

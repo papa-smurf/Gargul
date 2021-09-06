@@ -7,12 +7,14 @@
 
 local _, GL = ...;
 
+---@class AwardedLoot
 GL.AwardedLoot = {
     initialized = false,
     AwardedThisSession = {},
 };
 
-local AwardedLoot = GL.AwardedLoot;
+local AwardedLoot = GL.AwardedLoot; ---@type AwardedLoot
+local PackMule = GL.PackMule; ---@type PackMule
 local CommActions = GL.Data.Constants.Comm.Actions;
 
 function AwardedLoot:_init()
@@ -135,9 +137,11 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS)
     end
 
     -- Insert the award in the SessionHistory table used for rendering tooltips
-    local SessionHistory = GL:tableGet(AwardedLoot.AwardedThisSession, itemLink, {});
-    tinsert(SessionHistory, winner);
-    AwardedLoot.AwardedThisSession[itemLink] = SessionHistory;
+    if (winner ~= GL.Exporter.disenchantedItemIdentifier) then
+        local SessionHistory = GL:tableGet(AwardedLoot.AwardedThisSession, itemLink, {});
+        tinsert(SessionHistory, winner);
+        AwardedLoot.AwardedThisSession[itemLink] = SessionHistory;
+    end
 
     local AwardEntry = {
         itemLink = itemLink,
@@ -173,12 +177,6 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS)
         );
     end
 
-    -- We have to provide some feedback that it all worked out
-    -- in case the loot will not be announce in the player's group
-    if (not announce) then
-        GL:success(itemLink .. " was successfully awarded!");
-    end
-
     -- If the user is not in a group then there's no need
     -- to broadcast or attempt to auto assign loot to the winner
     if (not GL.User.isInGroup) then
@@ -201,7 +199,7 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS)
     if (GL.DroppedLoot.lootWindowIsOpened
         and GL.Settings:get("autoAssignAfterAwardingAnItem")
     ) then
-        AwardedLoot:assignLootToPlayer(AwardEntry);
+        GL.PackMule:assignLootToPlayer(AwardEntry);
 
     -- The loot window is closed and the auto trade setting is enabled
     -- Also skip this part if you yourself won the item
@@ -242,52 +240,6 @@ function AwardedLoot:initiateTrade(AwardDetails)
             UseContainerItem(unpack(itemPositionInBag));
         end
     end, .5);
-end
-
--- Assign an awarded item to a player
-function AwardedLoot:assignLootToPlayer(AwardDetails)
-    GL:debug("AwardedLoot:assignLootToPlayer");
-
-    -- Try to determine the loot index of the item we just awarded
-    local itemIndexOfAwardedItem = false;
-    local itemCount = GetNumLootItems();
-    for lootIndex = 1, itemCount do
-        local itemLink = GetLootSlotLink(lootIndex);
-        local itemId = GL:getItemIdFromLink(itemLink);
-
-        if (itemId and itemId == AwardDetails.itemId) then
-            itemIndexOfAwardedItem = lootIndex;
-            break;
-        end
-    end
-
-    -- The item could not be found, most likely
-    -- because it was awarded manually already
-    if (not itemIndexOfAwardedItem) then
-        GL:debug("No itemIndexOfAwardedItem found in AwardedLoot:assignLootToPlayer");
-        return;
-    end
-
-    -- Try to determine the index of whomever won the item
-    local winnerIndex = false;
-    for index = 1, _G.MAX_RAID_MEMBERS do
-        local candidate = GetMasterLootCandidate(itemIndexOfAwardedItem, index);
-
-        if (candidate and candidate == AwardDetails.awardedTo) then
-            winnerIndex = index;
-            break;
-        end
-    end
-
-    -- The player the item was awarded to is not currently in the raid anymore
-    -- Or is not eligible to receive the item according to the GetMasterLootCandidate API
-    if (not winnerIndex) then
-        GL:debug("No winnerIndex found in AwardedLoot:assignLootToPlayer");
-        return
-    end
-
-    -- Assign the item to the winner
-    GiveMasterLoot(itemIndexOfAwardedItem, winnerIndex);
 end
 
 function AwardedLoot:processAwardedLoot(CommMessage)

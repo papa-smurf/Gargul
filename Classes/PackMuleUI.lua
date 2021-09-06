@@ -53,45 +53,46 @@ function PackMuleUI:drawSetupWindow()
     end
 
     -- Create a container/parent frame
-    local Frame = AceGUI:Create("Frame");
-    Frame:SetCallback("OnClose", function(widget)
+    local Window = AceGUI:Create("Frame");
+    Window:SetCallback("OnClose", function(widget)
         self:processSettings();
         AceGUI:Release(widget);
         self.setupWindowIsActive = false;
     end);
-    Frame:SetTitle("Gargul v" .. GL.version);
-    Frame:SetStatusText("Addon v" .. GL.version);
-    Frame:SetLayout("Flow");
-    Frame:SetWidth(600);
-    Frame:SetHeight(450);
-    Frame.statustext:GetParent():Hide(); -- Hide the statustext bar
-    Frame:EnableResize(false);
+    Window:SetTitle("Gargul v" .. GL.version);
+    Window:SetStatusText("Addon v" .. GL.version);
+    Window:SetLayout("Flow");
+    Window:SetWidth(600);
+    Window:SetHeight(450);
+    Window:EnableResize(false);
+    Window.statustext:GetParent():Hide(); -- Hide the statustext bar
+    Window:EnableResize(false);
 
     -- Make sure the window can be closed by pressing the escape button
-    _G["GARGUL_PACKMULE_WINDOW"] = Frame.frame;
+    _G["GARGUL_PACKMULE_WINDOW"] = Window.frame;
     tinsert(UISpecialFrames, "GARGUL_PACKMULE_WINDOW");
 
-    self:drawSpacer(Frame, 1, 10);
+    self:drawSpacer(Window, 1, 10);
 
     --[[ INFO ]]
-    self:drawInfoSection(Frame);
+    self:drawInfoSection(Window);
 
     --[[ SETTINGS ]]
-    self:drawHeader(Frame, "Settings");
-    self:drawSettingsSection(Frame);
-    self:drawSpacer(Frame, 1, 10);
+    self:drawHeader(Window, "Settings");
+    self:drawSettingsSection(Window);
+    self:drawSpacer(Window, 1, 10);
 
     --[[ ITEM QUALITY RULES ]]
-    self:drawHeader(Frame, "Item Quality");
-    self:drawLowerThanQualityRule(Frame, LowerThanRule);
-    self:drawSpacer(Frame, 1, 5);
-    self:drawHigherThanQualityRule(Frame, HigherThanRule);
-    self:drawSpacer(Frame, 1, 20);
+    self:drawHeader(Window, "Item Quality");
+    self:drawLowerThanQualityRule(Window, LowerThanRule);
+    self:drawSpacer(Window, 1, 5);
+    self:drawHigherThanQualityRule(Window, HigherThanRule);
+    self:drawSpacer(Window, 1, 20);
 
     --[[ SPECIFIC ITEM RULES ]]
-    self:drawHeader(Frame, "Specific Items");
+    self:drawHeader(Window, "Specific Items");
 
-    local ScrollFrame = self:drawScrollFrame(Frame);
+    local ScrollFrame = self:drawScrollFrame(Window);
 
     for _, Rule in pairs(SpecificItemRules) do
         self:drawSpecifItemRule(ScrollFrame, Rule);

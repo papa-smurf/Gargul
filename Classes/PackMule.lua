@@ -5,16 +5,29 @@
 ]]
 local _, GL = ...;
 
+---@class PackMule
 GL.PackMule = {
     _initialized = false,
+    disenchanter = false,
     processing = false,
-    Rules = {},
     setupWindowIsActive = false,
+
+    IgnoreItemsThatStartWith = {
+        "Design: ",
+        "Formula: ",
+        "Manual: ",
+        "Pattern: ",
+        "Plans: ",
+        "Recipe: ",
+        "Schematic: ",
+    },
+    Rules = {},
 };
 
-local PackMule = GL.PackMule;
-local Settings = GL.Settings;
+local PackMule = GL.PackMule; ---@type PackMule
+local Settings = GL.Settings; ---@type Settings
 
+---@return void
 function PackMule:_init()
     GL:debug("PackMule:_init");
 
@@ -70,7 +83,9 @@ function PackMule:_init()
     self._initialized = true;
 end
 
--- Disable PackMule after a zone switch, unless enabled in settings
+--- Disable PackMule after a zone switch, unless enabled in settings
+---
+---@return void
 function PackMule:zoneChanged()
     GL:debug("PackMule:zoneChanged");
 
@@ -83,7 +98,9 @@ function PackMule:zoneChanged()
     end
 end
 
--- Check all loot and implement applicable rules
+--- Check all loot and implement applicable rules
+---
+---@return void
 function PackMule:lootReady()
     GL:debug("PackMule:lootReady");
 
@@ -119,83 +136,95 @@ function PackMule:lootReady()
 
     for itemIndex = GetNumLootItems(), 1, -1 do
         local itemName, _, _, itemQuality, locked = select(2, GetLootSlotInfo(itemIndex));
-        local itemLink = GetLootSlotLink(itemIndex);
-        local RuleThatApplies = false;
+        local skip = false;
 
-        -- If the item is locked or doesn't have an item link (money or other currency) then we can safely skip it
-        if (not locked and itemLink) then
-            for _, Entry in pairs(ValidRules) do
-                -- This is useful to see in which order rules are being handled
-                GL:debug(string.format(
-                    "Item: %s\nOperator: %s\nQuality: %s\nTarget: %s",
-                    Entry.item or "",
-                    Entry.quality or "",
-                    Entry.operator or "",
-                    Entry.target or ""
-                ));
-
-                local item = Entry.item or "";
-                local target = tostring(Entry.target or "");
-                local quality = tonumber(Entry.quality or "");
-                local operator = tostring(Entry.operator or "");
-
-                -- SELF serves as a placeholder for the current player name
-                if (target == "SELF") then
-                    target = GL.User.name;
-                end
-
-                -- The potential target replacement above requires us
-                -- To make a local copy of the current Rule entry
-                local Rule = {
-                    item = item,
-                    target = target,
-                    quality = quality,
-                    operator = operator,
-                }
-
-                if (itemQuality and quality and operator and target and (
-                    (operator == "=" and itemQuality == quality)
-                    or (operator == ">" and itemQuality > quality)
-                    or (operator == "<" and itemQuality < quality)
-                )) then
-
-                    -- Non-tradeable items will only be handed out if there's a specific rule for it
-                    if (GL:inTable(GL.Data.Constants.UntradeableItems, itemName)) then
-                        GL:warning(string.format(
-                            "%s can not be traded after pickup and will not be handed out based on quality alone",
-                            itemName
-                        ));
-                    else
-                        RuleThatApplies = Rule;
-                    end
-                elseif (item and item == itemName) then
-                    -- We found an item-specific rule, we can stop checking now
-                    RuleThatApplies = Rule;
-                    break;
-                end
+        -- Check whether we need to skip this item or not
+        for _, skipIfStartsWith in pairs(self.IgnoreItemsThatStartWith) do
+            if (GL:strStartsWith(itemName, skipIfStartsWith)) then
+                skip = true;
+                break;
             end
+        end
 
-            -- The rule applies, give it to the designated target
-            if (RuleThatApplies
-                and RuleThatApplies.target ~= "IGNORE"
-            ) then
-                local target = RuleThatApplies.target;
+        if (not skip) then
+            local itemLink = GetLootSlotLink(itemIndex);
+            local RuleThatApplies = false;
 
-                -- Check whether we need to give the item to a random player
-                if (target == "RANDOM") then
-                    local GroupMembers = GL.User:groupMembers();
-                    target = GL:tableGet(GroupMembers[math.random( #GroupMembers)] or {}, "name", false);
-                end
+            -- If the item is locked or doesn't have an item link (money or other currency) then we can safely skip it
+            if (not locked and itemLink) then
+                for _, Entry in pairs(ValidRules) do
+                    -- This is useful to see in which order rules are being handled
+                    GL:debug(string.format(
+                        "Item: %s\nOperator: %s\nQuality: %s\nTarget: %s",
+                        Entry.item or "",
+                        Entry.quality or "",
+                        Entry.operator or "",
+                        Entry.target or ""
+                    ));
 
-                -- This should be technically impossible, but you never know!
-                if (not target) then
-                    break;
-                end
+                    local item = Entry.item or "";
+                    local target = tostring(Entry.target or "");
+                    local quality = tonumber(Entry.quality or "");
+                    local operator = tostring(Entry.operator or "");
 
-                for playerIndex = 1, GetNumGroupMembers() do
-                    if (GetMasterLootCandidate(itemIndex, playerIndex) == target) then
-                        GiveMasterLoot(itemIndex, playerIndex);
+                    -- SELF serves as a placeholder for the current player name
+                    if (target == "SELF") then
+                        target = GL.User.name;
+                    end
+
+                    -- The potential target replacement above requires us
+                    -- To make a local copy of the current Rule entry
+                    local Rule = {
+                        item = item,
+                        target = target,
+                        quality = quality,
+                        operator = operator,
+                    }
+
+                    if (itemQuality and quality and operator and target and (
+                        (operator == "=" and itemQuality == quality)
+                        or (operator == ">" and itemQuality > quality)
+                        or (operator == "<" and itemQuality < quality)
+                    )) then
+
+                        -- Non-tradeable items will only be handed out if there's a specific rule for it
+                        if (GL:inTable(GL.Data.Constants.UntradeableItems, itemName)) then
+                            GL:warning(string.format(
+                                "%s can not be traded after pickup and will not be handed out based on quality alone",
+                                itemName
+                            ));
+                        else
+                            RuleThatApplies = Rule;
+                        end
+                    elseif (item and item == itemName) then
+                        -- We found an item-specific rule, we can stop checking now
+                        RuleThatApplies = Rule;
                         break;
+                    end
+                end
+
+                -- The rule applies, give it to the designated target
+                if (RuleThatApplies
+                    and RuleThatApplies.target ~= "IGNORE"
+                ) then
+                    local target = RuleThatApplies.target;
+
+                    -- Check whether we need to give the item to a random player
+                    if (target == "RANDOM") then
+                        local GroupMembers = GL.User:groupMembers();
+                        target = GL:tableGet(GroupMembers[math.random( #GroupMembers)] or {}, "name", false);
+                    end
+
+                    -- This should be technically impossible, but you never know!
+                    if (not target) then
+                        break;
+                    end
+
+                    for playerIndex = 1, GetNumGroupMembers() do
+                        if (GetMasterLootCandidate(itemIndex, playerIndex) == target) then
+                            GiveMasterLoot(itemIndex, playerIndex);
+                            break;
+                        end
                     end
                 end
             end
@@ -205,7 +234,9 @@ function PackMule:lootReady()
     self.processing = false;
 end
 
--- Empty the ruleset
+--- Empty the ruleset
+---
+---@return void
 function PackMule:resetRules()
     GL:debug("PackMule:resetRules");
 
@@ -213,7 +244,10 @@ function PackMule:resetRules()
     Settings:set("PackMule.Rules", self.Rules);
 end
 
--- Add a rule to the ruleset
+--- Add a rule to the ruleset
+---
+---@param Rule table
+---@return void
 function PackMule:addRule(Rule)
     GL:debug("PackMule:addRule");
 
@@ -223,7 +257,10 @@ function PackMule:addRule(Rule)
     end
 end
 
--- Check if a given rule is valid
+--- Check if a given rule is valid
+---
+---@param Rule table
+---@return boolean
 function PackMule:ruleIsValid(Rule)
     GL:debug("PackMule:ruleIsValid");
 
@@ -258,6 +295,160 @@ function PackMule:ruleIsValid(Rule)
     end
 
     return true;
+end
+
+--- Disenchant a given item, marking it as disenchanted, posting a message and sending it to the disenchanter
+--- A confirmation dialog is shown by default but can be disabled using byPassConfirmationDialog = true
+---
+---@param itemLink string
+---@param byPassConfirmationDialog boolean
+---@return void
+function PackMule:disenchant(itemLink, byPassConfirmationDialog)
+    GL:debug("PackMule:disenchant");
+
+    if (not GL.User.isMasterLooter) then
+        return GL:warning("You need to be the master looter!");
+    end
+
+    local itemId = GL:getItemIdFromLink(itemLink);
+    byPassConfirmationDialog = toboolean(byPassConfirmationDialog);
+
+    -- We show the player selector if there is no disenchanter
+    -- set yet or if the old disenchanter is not in our group
+    if (GL:empty(self.disenchanter)
+        or not GL.User:unitIsInYourGroup(self.disenchanter)
+    ) then
+        local PlayerNames = {};
+        for _, Player in pairs(GL.User:groupMembers()) do
+            local playerName = string.lower(Player.name);
+
+            if (GL.isEra and not strfind(playerName, "-")) then
+                playerName = string.format("%s-%s", playerName, GL.User.realm);
+            end
+
+            tinsert(PlayerNames, playerName);
+        end
+
+        -- Show the player selector
+        GL.Interface.PlayerSelector:draw("Who is your disenchanter?", PlayerNames, function (playerName)
+            if (byPassConfirmationDialog) then
+                self.disenchanter = playerName;
+                self:disenchant(itemLink);
+
+                GL.Interface.PlayerSelector:close();
+
+                return;
+            end
+
+            GL.Interface.Dialogs.PopupDialog:open({
+                question = string.format("Set %s as your disenchanter?",
+                    playerName
+                ),
+                OnYes = function ()
+                    self.disenchanter = playerName;
+                    self:disenchant(itemLink, true);
+
+                    GL.Interface.PlayerSelector:close();
+                end,
+            });
+        end);
+
+        return;
+    end
+
+    if (byPassConfirmationDialog) then
+        self:assignLootToPlayer(itemId, self.disenchanter);
+        GL.Interface.PlayerSelector:close();
+        GL.AwardedLoot:addWinner(GL.Exporter.disenchantedItemIdentifier, itemLink, false);
+        self:announceDisenchantment(itemLink);
+
+        return;
+    end
+
+    -- Make sure the initiator confirms his choice
+    GL.Interface.Dialogs.PopupDialog:open({
+        question = string.format("Send %s to %s? Type /gl sd to select a new disenchanter!",
+            itemLink,
+            self.disenchanter
+        ),
+        OnYes = function ()
+            self:assignLootToPlayer(itemId, self.disenchanter);
+            GL.Interface.PlayerSelector:close();
+            GL.AwardedLoot:addWinner(GL.Exporter.disenchantedItemIdentifier, itemLink, false);
+            self:announceDisenchantment(itemLink);
+        end,
+    });
+end
+
+--- Announce the disenchantment of an item in the group chat
+---
+---@param itemLink string
+---@return void
+function PackMule:announceDisenchantment(itemLink)
+    if (not GL.Settings:get("PackMule.announceDisenchantedItems")) then
+        return
+    end
+
+    local channel = "PARTY";
+    if (GL.User.isInRaid) then
+        channel = "RAID";
+    end
+
+    GL:sendChatMessage(
+        string.format("%s was sent to %s for disenchanting",
+        itemLink,
+        self.disenchanter
+    ), channel);
+end
+
+--- Assign a item to a player
+---
+---@param itemId number
+---@param playerName string
+---@return void
+function PackMule:assignLootToPlayer(itemId, playerName)
+    GL:debug("PackMule:assignLootToPlayer");
+
+    -- Try to determine the loot index of the item
+    local itemIndex = false;
+    local itemCount = GetNumLootItems();
+    for lootIndex = 1, itemCount do
+        local itemLink = GetLootSlotLink(lootIndex);
+        local lootItemId = GL:getItemIdFromLink(itemLink);
+
+        if (lootItemId and lootItemId == itemId) then
+            itemIndex = lootIndex;
+            break;
+        end
+    end
+
+    -- The item could not be found, most likely
+    -- because it was handed out manually already
+    if (not itemIndex) then
+        GL:debug("No itemIndexOfAwardedItem found in PackMule:assignLootToPlayer");
+        return;
+    end
+
+    -- Try to determine the index of the player who should receive it
+    local playerIndex = false;
+    for _, Player in pairs(GL.User:groupMembers()) do
+        local candidate = GetMasterLootCandidate(itemIndex, Player.index);
+
+        if (candidate and candidate == playerName) then
+            playerIndex = Player.index;
+            break;
+        end
+    end
+
+    -- The player we want to assign the item to is not currently in the raid anymore
+    -- Or is not eligible to receive the item according to the GetMasterLootCandidate API
+    if (not playerIndex) then
+        GL:debug("No index found in PackMule:assignLootToPlayer");
+        return
+    end
+
+    -- Assign the item to the winner
+    GiveMasterLoot(itemIndex, playerIndex);
 end
 
 GL:debug("PackMule.lua");

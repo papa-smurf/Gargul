@@ -21,11 +21,6 @@ function Rolling:draw(Parent)
             setting = "Rolling.showRollOffWindow",
         },
         {
-            label = "Announce pass",
-            description = "Checking this makes sure that you announce in group chat whenever you pass on an item via the Gargul roll window",
-            setting = "Rolling.announcePass",
-        },
-        {
             label = "Close after roll",
             description = "Checking this makes sure that the roll window is automatically closed after you MS/OS roll",
             setting = "Rolling.closeAfterRoll",

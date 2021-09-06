@@ -30,6 +30,11 @@ function PackMule:draw(Parent)
             description = "PackMule is disabled by default after you as a player reload (e.g. reload the UI or restart the game). If you check this box then PackMule will keep its former state even after reloading. |c00be3333Use with EXTREME caution|r!",
             setting = "PackMule.persistsAfterReload",
         },
+        {
+            label = "Announce disenchanted items",
+            description = "If enabled PackMule will post a message whenever an item is disenchanted",
+            setting = "PackMule.announceDisenchantedItems",
+        },
     };
 
     Overview:drawCheckboxes(Checkboxes, Parent);

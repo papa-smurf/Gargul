@@ -145,6 +145,18 @@ function User:groupMembers()
     return Roster;
 end
 
+--- Check whether a given unit is in your raid/party
+---
+---@param unit string
+---@return boolean
+function User:unitIsInYourGroup(unit)
+    if (self.isInRaid) then
+        return toboolean(UnitInRaid(unit));
+    end
+
+    return toboolean(UnitInParty(unit));
+end
+
 -- Return the names of everyone in your party/raid
 function User:groupMemberNames()
     GL:debug("User:groupMemberNames");
