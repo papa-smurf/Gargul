@@ -229,6 +229,10 @@ function DroppedLoot:hookClickEvents()
                 else
                     GL.MasterLooterUI:draw(itemLink);
                 end
+            elseif (IsShiftKeyDown()) then
+                local itemLink = GetLootSlotLink(Button.slot);
+
+                GL.PackMule:disenchant(itemLink);
             end
         end);
     end

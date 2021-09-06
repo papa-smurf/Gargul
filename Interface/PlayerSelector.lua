@@ -2,7 +2,6 @@
 local _, GL = ...;
 
 GL.AceGUI = GL.AceGUI or LibStub("AceGUI-3.0");
-
 GL.ScrollingTable = GL.ScrollingTable or LibStub("ScrollingTable");
 
 local AceGUI = GL.AceGUI;
@@ -32,7 +31,7 @@ function PlayerSelector:draw(description, PlayerNames, callback)
     Window:SetTitle("Gargul v" .. GL.version);
     Window:SetLayout("FLOW");
     Window:SetWidth(430);
-    Window:SetHeight(290);
+    Window:SetHeight(282);
     Window:EnableResize(false);
     Window.statustext:GetParent():Hide(); -- Hide the statustext bar
     Window:SetCallback("OnClose", function()
@@ -45,26 +44,30 @@ function PlayerSelector:draw(description, PlayerNames, callback)
     _G["GARGUL_PLAYER_SELECTOR_WINDOW"] = Window.frame;
     tinsert(UISpecialFrames, "GARGUL_PLAYER_SELECTOR_WINDOW");
 
-    --[[
-        FIRST ROW (ITEM AND BUTTONS)
-    ]]
+    local DescriptionFrame = AceGUI:Create("SimpleGroup");
+    DescriptionFrame:SetLayout("FILL");
+    DescriptionFrame:SetFullWidth(true);
+    DescriptionFrame:SetHeight(25);
+    Window:AddChild(DescriptionFrame);
+
     local Description = AceGUI:Create("Label");
     Description:SetFontObject(_G["GameFontNormal"]);
     Description:SetFullWidth(true);
-    Description:SetText(description);
-    Window:AddChild(Description);
+    Description:SetJustifyH("CENTER");
+    Description:SetText("\n" .. description);
+    DescriptionFrame:AddChild(Description);
 
-    local HorizontalSpacer = GL.AceGUI:Create("SimpleGroup");
-    HorizontalSpacer:SetLayout("FILL");
-    HorizontalSpacer:SetFullWidth(true);
-    HorizontalSpacer:SetHeight(184);
-    Window:AddChild(HorizontalSpacer);
+    local TableFrame = GL.AceGUI:Create("SimpleGroup");
+    TableFrame:SetLayout("FILL");
+    TableFrame:SetFullWidth(true);
+    TableFrame:SetHeight(184);
+    Window:AddChild(TableFrame);
 
-    local AwardButton = AceGUI:Create("Button");
-    AwardButton:SetText("Award");
-    AwardButton:SetWidth(70);
-    AwardButton:SetHeight(20);
-    AwardButton:SetCallback("OnClick", function()
+    local ConfirmButton = AceGUI:Create("Button");
+    ConfirmButton:SetText("Confirm");
+    ConfirmButton:SetWidth(140);
+    ConfirmButton:SetHeight(20);
+    ConfirmButton:SetCallback("OnClick", function()
         local PlayersTable = GL.Interface:getItem(self, "Table.Players");
         local selected = PlayersTable:GetRow(PlayersTable:GetSelection());
 
@@ -76,13 +79,14 @@ function PlayerSelector:draw(description, PlayerNames, callback)
 
         callback(player);
     end);
-    Window:AddChild(AwardButton);
+
+    Window:AddChild(ConfirmButton);
 
     if (type(PlayerNames) ~= "table") then
         PlayerNames = { PlayerNames };
     end
 
-    self:drawPlayersTable(Window.frame, PlayerNames);
+    self:drawPlayersTable(TableFrame.frame, PlayerNames);
 end
 
 ---@return void
@@ -93,6 +97,7 @@ function PlayerSelector:close()
 
     GL.Interface:storePosition(Window, "PlayerSelector");
     local PlayersTable = GL.Interface:getItem(self, "Table.Players");
+    PlayersTable:ClearSelection();
     PlayersTable:SetData({}, true);
     PlayersTable:Hide();
     Window:Hide();
@@ -125,10 +130,10 @@ function PlayerSelector:drawPlayersTable(Parent, PlayerNames)
 
     local TableRows = {};
     for _, Player in pairs(GL.User:groupMembers()) do
-        local realmFreeMemberName = GL:stripRealm(Player.name);
+        local realmFreeMemberName = string.lower(GL:stripRealm(Player.name));
 
         for _, playerName in pairs(PlayerNames) do
-            local realmFreePlayerName = GL:stripRealm(playerName);
+            local realmFreePlayerName = string.lower(GL:stripRealm(playerName));
 
             if (realmFreeMemberName == realmFreePlayerName) then
                 tinsert(TableRows, {
@@ -145,7 +150,7 @@ function PlayerSelector:drawPlayersTable(Parent, PlayerNames)
 
     local Table = ScrollingTable:CreateST(columns, 8, 15, nil, Parent);
     Table:EnableSelection(true);
-    Table.frame:SetPoint("BOTTOM", Parent, "BOTTOM", 0, 60);
+    Table.frame:SetPoint("BOTTOM", Parent, "BOTTOM", 0, 20);
     Table:SetData(TableRows);
     GL.Interface:setItem(self, "Players", Table);
 end

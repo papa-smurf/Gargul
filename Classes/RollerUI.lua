@@ -107,16 +107,6 @@ function RollerUI:draw(time, itemId, itemLink, itemIcon, note, osRollMax)
     PassButton:SetNormalFontObject("GameFontNormal");
     PassButton:SetHighlightFontObject("GameFontNormal");
     PassButton:SetScript("OnClick", function ()
-        if (GL.Settings:get("Rolling.announcePass")) then
-            -- Retract roll message
-            local chatType = "PARTY";
-            if (GL.User.isInRaid) then
-                chatType = "RAID";
-            end
-
-            GL:sendChatMessage("I pass!", chatType);
-        end
-
         self:hide();
     end);
 

@@ -22,13 +22,17 @@ GL.Data.DefaultSettings = {
     fixMasterLootWindow = true,
 
     PackMule = {
+        announceDisenchantedItems = true,
         enabled = false,
         persistsAfterReload = false,
         persistsAfterZoneChange = false,
         Rules = {},
     },
+    ExportingLoot = {
+        includeDisenchantedItems = true,
+        disenchanterIdentifier = "_disenchanted",
+    },
     Rolling = {
-        announcePass = true,
         showRollOffWindow = true,
         osRollMax = 99,
         closeAfterRoll = false,
