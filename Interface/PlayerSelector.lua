@@ -95,6 +95,10 @@ function PlayerSelector:close()
 
     local Window = GL.Interface:getItem(self, "Window");
 
+    if (not Window) then
+        return;
+    end
+
     GL.Interface:storePosition(Window, "PlayerSelector");
     local PlayersTable = GL.Interface:getItem(self, "Table.Players");
     PlayersTable:ClearSelection();

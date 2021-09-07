@@ -138,12 +138,17 @@ function PackMule:lootReady()
         local itemName, _, _, itemQuality, locked = select(2, GetLootSlotInfo(itemIndex));
         local skip = false;
 
-        -- Check whether we need to skip this item or not
-        for _, skipIfStartsWith in pairs(self.IgnoreItemsThatStartWith) do
-            if (GL:strStartsWith(itemName, skipIfStartsWith)) then
-                skip = true;
-                break;
+        -- itemName can be nil
+        if (itemName) then
+            -- Check whether we need to skip this item or not
+            for _, skipIfStartsWith in pairs(self.IgnoreItemsThatStartWith) do
+                if (GL:strStartsWith(itemName, skipIfStartsWith)) then
+                    skip = true;
+                    break;
+                end
             end
+        else
+            skip = true;
         end
 
         if (not skip) then
@@ -313,6 +318,11 @@ function PackMule:disenchant(itemLink, byPassConfirmationDialog)
     local itemId = GL:getItemIdFromLink(itemLink);
     byPassConfirmationDialog = toboolean(byPassConfirmationDialog);
 
+    -- Make sure an itemlink was provided
+    if (not GL:higherThanZero(itemId)) then
+        return;
+    end
+
     -- We show the player selector if there is no disenchanter
     -- set yet or if the old disenchanter is not in our group
     if (GL:empty(self.disenchanter)
@@ -331,17 +341,9 @@ function PackMule:disenchant(itemLink, byPassConfirmationDialog)
 
         -- Show the player selector
         GL.Interface.PlayerSelector:draw("Who is your disenchanter?", PlayerNames, function (playerName)
-            if (byPassConfirmationDialog) then
-                self.disenchanter = playerName;
-                self:disenchant(itemLink);
-
-                GL.Interface.PlayerSelector:close();
-
-                return;
-            end
-
             GL.Interface.Dialogs.PopupDialog:open({
-                question = string.format("Set %s as your disenchanter?",
+                question = string.format("Set |cff%s%s|r as your disenchanter?",
+                    GL:classHexColor(GL.Player:classByName(playerName)),
                     playerName
                 ),
                 OnYes = function ()
@@ -367,8 +369,9 @@ function PackMule:disenchant(itemLink, byPassConfirmationDialog)
 
     -- Make sure the initiator confirms his choice
     GL.Interface.Dialogs.PopupDialog:open({
-        question = string.format("Send %s to %s? Type /gl sd to select a new disenchanter!",
+        question = string.format("Send %s to |cff%s%s|r? Type /gl cd to remove this disenchanter!",
             itemLink,
+            GL:classHexColor(GL.Player:classByName(self.disenchanter)),
             self.disenchanter
         ),
         OnYes = function ()
@@ -380,11 +383,20 @@ function PackMule:disenchant(itemLink, byPassConfirmationDialog)
     });
 end
 
+--- Clear the disenchanter
+---
+---@return void
+function PackMule:clearDisenchanter()
+    self.disenchanter = nil;
+end
+
 --- Announce the disenchantment of an item in the group chat
 ---
 ---@param itemLink string
 ---@return void
 function PackMule:announceDisenchantment(itemLink)
+    GL:debug("PackMule:announceDisenchantment");
+
     if (not GL.Settings:get("PackMule.announceDisenchantedItems")) then
         return
     end
@@ -395,7 +407,7 @@ function PackMule:announceDisenchantment(itemLink)
     end
 
     GL:sendChatMessage(
-        string.format("%s was sent to %s for disenchanting",
+        string.format("%s will be disenchanted by %s",
         itemLink,
         self.disenchanter
     ), channel);

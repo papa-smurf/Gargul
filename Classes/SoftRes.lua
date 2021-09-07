@@ -189,21 +189,13 @@ function SoftRes:getPlayerClass(name, defaultClass)
     name = string.lower(name);
     defaultClass = defaultClass or "priest";
 
+    -- We try to fetch the class from the softreserve data first
     local ClassByPlayerName = self.MaterializedData.ClassByPlayerName or {};
     if (ClassByPlayerName[name]) then
         return ClassByPlayerName[name]
     end
 
-    -- Classes don't change so there's nothing against
-    -- storing player classes by name indefinitely for this session
-    if (GL.User.isInGroup) then
-        for _, Player in pairs(GL.User.groupMembers()) do
-            local playerName = string.lower(Player.name);
-            ClassByPlayerName[playerName] = Player.class;
-        end
-    end
-
-    return ClassByPlayerName[name] or defaultClass;
+    return GL.Player:classByName(name, defaultClass);
 end
 
 --- Check whether a given item id is reserved (either soft or hard)

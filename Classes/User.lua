@@ -6,6 +6,7 @@ GL.User = {
     groupSetupChangedAt = 0,
     groupMemberNamesCachedAt = -1,
     GroupMemberNames = {},
+    playerClassByName = {},
 
     id = 0,
     name = "",
@@ -89,8 +90,10 @@ function User:refresh()
     -- Check if the current user is master looting
     -- And check the user's roles in the group
     for index = 1, _G.MAX_RAID_MEMBERS do
-        local name, rank, _, _, _, _,
+        local name, rank, _, _, class, _,
         _, _, _, role, isMasterLooter, combatRole = GetRaidRosterInfo(index);
+
+        GL.Player:cacheClass(name, class); -- We cache player classes wherever we can
 
         if (name == self.name) then
             self.role = role;
@@ -125,12 +128,14 @@ function User:groupMembers()
         local name, rank, subgroup, level, class, fileName, zone, online, isDead, role, isML = GetRaidRosterInfo(index);
 
         if (name) then
+            GL.Player:cacheClass(name, class); -- We cache player classes wherever we can
+
             tinsert(Roster, {
                 name = name,
                 rank = rank,
                 subgroup = subgroup,
                 level = level,
-                class = class,
+                class = string.lower(class),
                 fileName = fileName,
                 zone = zone,
                 online = online,

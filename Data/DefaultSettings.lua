@@ -6,8 +6,6 @@ GL.Data = GL.Data or {};
 
 GL.Data.DefaultSettings = {
     announceLootToChat = true,
-    autoAssignAfterAwardingAnItem = true,
-    autoTradeAfterAwardingAnItem = true,
     debugModeEnabled = false,
     highlightsDisabled = false,
     highlightHardReservedItems = true,
@@ -18,19 +16,26 @@ GL.Data.DefaultSettings = {
     noSounds = false,
     autoOpenCommandHelp = true,
     showMinimapButton = true,
+    spreadTheWord = true,
     welcomeMessage = true,
     fixMasterLootWindow = true,
 
+    AwardingLoot = {
+        awardMessagesDisabled = false,
+        announceAwardMessagesInRW = false,
+        autoAssignAfterAwardingAnItem = true,
+        autoTradeAfterAwardingAnItem = true,
+    },
+    ExportingLoot = {
+        includeDisenchantedItems = true,
+        disenchanterIdentifier = "_disenchanted",
+    },
     PackMule = {
         announceDisenchantedItems = true,
         enabled = false,
         persistsAfterReload = false,
         persistsAfterZoneChange = false,
         Rules = {},
-    },
-    ExportingLoot = {
-        includeDisenchantedItems = true,
-        disenchanterIdentifier = "_disenchanted",
     },
     Rolling = {
         showRollOffWindow = true,

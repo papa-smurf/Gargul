@@ -1,6 +1,8 @@
 local _, GL = ...;
 
-GL.Player = {};
+GL.Player = {
+    playerClassByName = {},
+};
 GL.Player.__index = GL.Player;
 
 local Player = GL.Player;
@@ -38,6 +40,8 @@ function Player.fromID(GUID)
         GL:error("Invalid GUID provided for Player.fromID: " .. GUID);
         return;
     end
+
+    self.class = string.lower(self.class);
 
     self.Guild = {};
     self.Guild.name, self.Guild.rank, self.Guild.index = GetGuildInfo(self.id);
@@ -95,6 +99,59 @@ function Player.fromActor()
     end
 
     return Player.fromID(playerId);
+end
+
+--- Fetch a player's class by a given player name
+---
+---@param playerName string
+---@param default string|nil
+---@return string
+function Player:classByName(playerName, default)
+    if (type(default) == "nil") then
+        default = "priest";
+    end
+
+    playerName = string.lower(playerName);
+
+    -- We already know this player's class name, return it
+    if (self.playerClassByName[playerName]) then
+        return self.playerClassByName[playerName];
+    end
+
+    -- Attempt to fetch the player class
+    local _, playerClass = UnitClass(playerName);
+
+    -- Player names can be stored for the entire session since
+    -- it's impossible for them to change during runtime
+    if (type(playerClass) == "string"
+        and not GL:empty(playerClass)
+    ) then
+        playerClass = string.lower(playerClass);
+
+        if (GL.Data.Constants.Classes[playerClass]) then
+            self.playerClassByName[playerName] = string.lower(playerClass);
+        end
+    end
+
+    return self.playerClassByName[playerName] or default;
+end
+
+--- Cache a player's class
+---
+---@param playerName string
+---@param class string
+function Player:cacheClass(playerName, class)
+    if (type(class) ~= "string") then
+        return;
+    end
+
+    class = string.lower(class);
+
+    if (not GL.Data.Constants.Classes[class]) then
+        return;
+    end
+
+    self.playerClassByName[string.lower(playerName)] = class;
 end
 
 GL:debug("Player.lua");

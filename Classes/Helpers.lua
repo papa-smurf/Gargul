@@ -799,6 +799,10 @@ function GL:sendChatMessage(message, chatType, language, channel)
         return;
     end
 
+    if (GL.Settings:get("spreadTheWord")) then
+        message = "Gargul: " .. message;
+    end
+
     SendChatMessage (
         message,
         chatType,
@@ -953,7 +957,7 @@ end
 
 --- Get a table value by a given key. Use dot notation to traverse multiple levels e.g:
 --- Settings.UI.Auctioneer.offsetX can be fetched using GL:tableGet(myTable, "Settings.UI.Auctioneer.offsetX", 0)
---- without having to worry about tables or keys existing yes or no.
+--- without having to worry about tables or keys existing along the way.
 --- This helper is absolutely invaluable for writing error-free code!
 ---
 ---@param Table table
@@ -975,7 +979,7 @@ function GL:tableGet(Table, keyString, default)
         return default;
     end
 
-    if (not Table[firstKey]) then
+    if (type(Table[firstKey]) == "nil") then
         return default;
     end
 
@@ -992,7 +996,7 @@ end
 
 --- Set a table value by a given key and value. Use dot notation to traverse multiple levels e.g:
 --- Settings.UI.Auctioneer.offsetX can be set using GL:tableSet(myTable, "Settings.UI.Auctioneer.offsetX", myValue)
---- without having to worry about tables or keys existing yes or no.
+--- without having to worry about tables or keys existing along the way.
 ---
 ---@param Table table
 ---@param keyString string

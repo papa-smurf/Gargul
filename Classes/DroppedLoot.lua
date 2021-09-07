@@ -153,7 +153,7 @@ function DroppedLoot:highlightItemsOfInterest()
 
                 if (itemLink) then
                     local enableHighlight = false;
-                    local BorderColor = {1, .95686, .40784, 1}; -- The default border color is rogue-yellow and applies to wishlisted items
+                    local BorderColor = {1, 1, 1, 1}; -- The default border color is priest-white and applies to wishlisted items
 
                     -- The item is hard-reserved
                     if (GL.Settings:get("highlightHardReservedItems")

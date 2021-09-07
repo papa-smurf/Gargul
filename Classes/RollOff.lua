@@ -272,8 +272,9 @@ function RollOff:award(roller, itemLink, osRoll)
     if (GL:nameIsUnique(roller)) then
         -- Make sure the initiator has to confirm his choices
         GL.Interface.Dialogs.AwardDialog:open({
-            question = string.format("Award %s to %s?",
+            question = string.format("Award %s to |cff%s%s|r?",
                     itemLink,
+                    GL:classHexColor(GL.Player:classByName(roller)),
                     roller
             ),
             OnYes = function ()
@@ -313,8 +314,9 @@ function RollOff:award(roller, itemLink, osRoll)
     GL.Interface.PlayerSelector:draw(description, roller, function (player)
         -- Make sure the initiator has to confirm his choices
         GL.Interface.Dialogs.AwardDialog:open({
-            question = string.format("Award %s to %s?",
+            question = string.format("Award %s to |cff%s%s|r?",
                     itemLink,
+                    GL:classHexColor(GL.Player:classByName(player)),
                     player
             ),
             OnYes = function ()
@@ -440,8 +442,12 @@ function RollOff:refreshRollsTable()
 
     local RollTableData = {};
     local Rolls = self.CurrentRollOff.Rolls;
-    local RollsTable = GL.MasterLooterUI.UIComponents.Tables.Players;
+    local RollsTable = GL.Interface:getItem(GL.MasterLooterUI, "Table.Players");
     local NumberOfRollsPerPlayer = {};
+
+    if (not RollsTable) then
+        return;
+    end
 
     for _, Roll in pairs(Rolls) do
         -- Determine how many times this player rolled during the current rolloff
@@ -471,7 +477,7 @@ function RollOff:refreshRollsTable()
             msOrOsString = "OS";
         end
 
-        local class = string.lower(Roll.class);
+        local class = Roll.class;
         local plusOnes = GL.PlusOnes:get(playerName);
 
         if (GL:higherThanZero(plusOnes)) then
