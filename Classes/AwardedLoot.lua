@@ -155,13 +155,17 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS)
     tinsert(GL.DB.AwardHistory, AwardEntry);
 
     -- Check whether the user disabled award announcement in the settings
-    if (GL.Settings:get("awardMessagesDisabled")) then
+    if (GL.Settings:get("AwardingLoot.awardMessagesDisabled")) then
         announce = false;
     end
 
     local channel = "PARTY";
     if (GL.User.isInRaid) then
         channel = "RAID";
+
+        if (GL.Settings:get("AwardingLoot.announceAwardMessagesInRW")) then
+            channel = "RAID_WARNING";
+        end
     end
 
     if (announce) then
@@ -196,14 +200,14 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS)
 
     -- The loot window is still active and the auto assign setting is enabled
     if (GL.DroppedLoot.lootWindowIsOpened
-        and GL.Settings:get("autoAssignAfterAwardingAnItem")
+        and GL.Settings:get("AwardingLoot.autoAssignAfterAwardingAnItem")
     ) then
         GL.PackMule:assignLootToPlayer(AwardEntry.itemId, winner);
 
     -- The loot window is closed and the auto trade setting is enabled
     -- Also skip this part if you yourself won the item
     elseif (not GL.DroppedLoot.lootWindowIsOpened
-        and GL.Settings:get("autoTradeAfterAwardingAnItem")
+        and GL.Settings:get("AwardingLoot.autoTradeAfterAwardingAnItem")
         and GL.User.name ~= winner
     ) then
         AwardedLoot:initiateTrade(AwardEntry);

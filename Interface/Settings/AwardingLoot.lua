@@ -18,17 +18,22 @@ function AwardingLoot:draw(Parent)
         {
             label = "Disable award messages",
             description = "Check this if you don't want Gargul to post a message regarding awarded items in raid/party chat",
-            setting = "awardMessagesDisabled",
+            setting = "AwardingLoot.awardMessagesDisabled",
+        },
+        {
+            label = "Use raid warning",
+            description = "Check this if you want Gargul to use /rw instead of /ra for announcing winners",
+            setting = "AwardingLoot.announceAwardMessagesInRW",
         },
         {
             label = "Auto assign loot",
             description = "Auto assign an item to the winner after awarding an item (with master loot enabled and boss window still open)",
-            setting = "autoAssignAfterAwardingAnItem",
+            setting = "AwardingLoot.autoAssignAfterAwardingAnItem",
         },
         {
             label = "Auto trade loot",
             description = "If master loot is disabled, you are not the master looter or the boss' loot window is closed attempt to open a trade window with the winner of the item and put the item in the trade window automatically",
-            setting = "autoTradeAfterAwardingAnItem",
+            setting = "AwardingLoot.autoTradeAfterAwardingAnItem",
         },
     };
 
