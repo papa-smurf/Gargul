@@ -138,12 +138,17 @@ function PackMule:lootReady()
         local itemName, _, _, itemQuality, locked = select(2, GetLootSlotInfo(itemIndex));
         local skip = false;
 
-        -- Check whether we need to skip this item or not
-        for _, skipIfStartsWith in pairs(self.IgnoreItemsThatStartWith) do
-            if (GL:strStartsWith(itemName, skipIfStartsWith)) then
-                skip = true;
-                break;
+        -- itemName can be nil
+        if (itemName) then
+            -- Check whether we need to skip this item or not
+            for _, skipIfStartsWith in pairs(self.IgnoreItemsThatStartWith) do
+                if (GL:strStartsWith(itemName, skipIfStartsWith)) then
+                    skip = true;
+                    break;
+                end
             end
+        else
+            skip = true;
         end
 
         if (not skip) then
