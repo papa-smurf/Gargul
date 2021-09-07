@@ -4,18 +4,11 @@ local _, GL = ...;
 GL.RollOff = GL.RollOff or {}; ---@type RollOff
 GL.ScrollingTable = GL.ScrollingTable or LibStub("ScrollingTable");
 
+---@todo Refactor to interface
 ---@class MasterLooterUI
 GL.MasterLooterUI = {
     ItemBoxHoldsValidItem = false,
     PlayersTable = {},
-    UIComponents = {
-        Frame = {},
-        Buttons = {},
-        EditBoxes = {},
-        Labels = {},
-        Tables = {},
-        Icons = {},
-    },
     Defaults = {
         itemIcon = "Interface\\Icons\\INV_Misc_QuestionMark",
         itemBoxText = "",
@@ -23,7 +16,6 @@ GL.MasterLooterUI = {
 };
 
 local AceGUI = GL.AceGUI;
-local Settings = GL.Settings; ---@type Settings
 local MasterLooterUI = GL.MasterLooterUI; ---@type MasterLooterUI
 local ScrollingTable = GL.ScrollingTable;
 
@@ -100,7 +92,6 @@ function MasterLooterUI:draw(itemLink)
                 ItemIcon:SetWidth(40);
                 FirstRow:AddChild(ItemIcon);
                 GL.Interface:setItem(self, "Item", ItemIcon);
-                MasterLooterUI.UIComponents.Icons.Item = ItemIcon;
 
                 --[[
                     ITEM TEXTBOX
@@ -113,7 +104,7 @@ function MasterLooterUI:draw(itemLink)
                 ItemBox:SetCallback("OnTextChanged", MasterLooterUI.ItemBoxChanged); -- Update item info when input value changes
                 ItemBox:SetCallback("OnEnterPressed", MasterLooterUI.ItemBoxChanged); -- Update item info when item is dragged on top (makes no sense to use OnEnterPressed I know)
 
-                MasterLooterUI.UIComponents.EditBoxes.Item = ItemBox;
+                GL.Interface:setItem(self, "Item", ItemBox);
 
                 FirstRow:AddChild(ItemBox);
 
@@ -155,13 +146,13 @@ function MasterLooterUI:draw(itemLink)
                 StartButton:SetDisabled(true);
                 StartButton:SetCallback("OnClick", function()
                     if (GL.RollOff:announceStart(
-                        MasterLooterUI.UIComponents.EditBoxes.Item:GetText(),
-                        MasterLooterUI.UIComponents.EditBoxes.Timer:GetText(),
-                        MasterLooterUI.UIComponents.EditBoxes.ItemNote:GetText()
+                        GL.Interface:getItem(self, "EditBox.Item"):GetText(),
+                        GL.Interface:getItem(self, "EditBox.Duration"):GetText(),
+                        GL.Interface:getItem(self, "EditBox.ItemNote"):GetText()
                     )) then
                         GL.RollOff.inProgress = true;
 
-                        if (Settings:get("UI.RollOff.closeOnStart")) then
+                        if (GL.Settings:get("UI.RollOff.closeOnStart")) then
                             self:close();
                         end
                     end;
@@ -169,7 +160,7 @@ function MasterLooterUI:draw(itemLink)
                     MasterLooterUI:updateWidgets();
                 end);
                 FirstRow:AddChild(StartButton);
-                MasterLooterUI.UIComponents.Buttons.StartButton = StartButton;
+                GL.Interface:setItem(self, "Start", StartButton);
 
                 --[[
                     STOP BUTTON
@@ -184,7 +175,7 @@ function MasterLooterUI:draw(itemLink)
                     GL.RollOff:announceStop();
                 end);
                 FirstRow:AddChild(StopButton);
-                MasterLooterUI.UIComponents.Buttons.StopButton = StopButton;
+                GL.Interface:setItem(self, "Stop", StopButton);
 
         --[[
             SECOND ROW
@@ -215,7 +206,6 @@ function MasterLooterUI:draw(itemLink)
                 ItemNoteLabel:SetHeight(20);
                 ItemNoteLabel:SetWidth(35);
                 SecondRow:AddChild(ItemNoteLabel);
-                MasterLooterUI.UIComponents.EditBoxes.ItemNoteLabel = ItemNoteLabel;
 
                 --[[
                     ITEM NOTE
@@ -226,7 +216,7 @@ function MasterLooterUI:draw(itemLink)
                 ItemNote:SetHeight(20);
                 ItemNote:SetWidth(340);
                 SecondRow:AddChild(ItemNote);
-                MasterLooterUI.UIComponents.EditBoxes.ItemNote = ItemNote;
+                GL.Interface:setItem(self, "ItemNote", ItemNote);
 
         --[[
             THID ROW (ROLL TIMER)
@@ -257,19 +247,18 @@ function MasterLooterUI:draw(itemLink)
                 TimerLabel:SetHeight(20);
                 TimerLabel:SetWidth(55);
                 ThirdRow:AddChild(TimerLabel);
-                MasterLooterUI.UIComponents.Labels.TimerLabel = TimerLabel;
 
                 --[[
                     TIMER TEXTBOX
                 ]]
 
-                local TimerBox = AceGUI:Create("EditBox");
-                TimerBox:DisableButton(true);
-                TimerBox:SetHeight(20);
-                TimerBox:SetWidth(40);
-                TimerBox:SetText(Settings:get("UI.RollOff.timer", 15));
-                ThirdRow:AddChild(TimerBox);
-                MasterLooterUI.UIComponents.EditBoxes.Timer = TimerBox;
+                local Duration = AceGUI:Create("EditBox");
+                Duration:DisableButton(true);
+                Duration:SetHeight(20);
+                Duration:SetWidth(40);
+                Duration:SetText(GL.Settings:get("UI.RollOff.timer", 15));
+                ThirdRow:AddChild(Duration);
+                GL.Interface:setItem(self, "Duration", Duration);
 
                 --[[
                     SPACER
@@ -294,7 +283,7 @@ function MasterLooterUI:draw(itemLink)
                     GL.RollOff:reset();
                 end);
                 ThirdRow:AddChild(ClearButton);
-                MasterLooterUI.UIComponents.Buttons.ClearButton = ClearButton;
+                GL.Interface:setItem(self, "Clear", ClearButton);
 
                 --[[
                     AWARD BUTTON
@@ -306,7 +295,7 @@ function MasterLooterUI:draw(itemLink)
                 AwardButton:SetHeight(20);
                 AwardButton:SetDisabled(true);
                 AwardButton:SetCallback("OnClick", function()
-                    local PlayersTable = MasterLooterUI.UIComponents.Tables.Players;
+                    local PlayersTable = GL.Interface:getItem(self, "Table.Players");
                     local selected = PlayersTable:GetRow(PlayersTable:GetSelection());
 
                     if (not selected
@@ -316,10 +305,10 @@ function MasterLooterUI:draw(itemLink)
                     end
 
                     local osRoll = selected.cols[4].value == "OS";
-                    return GL.RollOff:award(selected.cols[1].value, MasterLooterUI.UIComponents.EditBoxes.Item:GetText(), osRoll);
+                    return GL.RollOff:award(selected.cols[1].value, GL.Interface:getItem(self, "EditBox.Item"):GetText(), osRoll);
                 end);
                 ThirdRow:AddChild(AwardButton);
-                MasterLooterUI.UIComponents.Buttons.AwardButton = AwardButton;
+                GL.Interface:setItem(self, "Award", AwardButton);
 
         --[[
             FOURTH ROW (GROUP MEMBERS)
@@ -351,18 +340,18 @@ function MasterLooterUI:draw(itemLink)
 
         local CloseOnStart = AceGUI:Create("CheckBox");
         CloseOnStart:SetLabel("Close on start");
-        CloseOnStart:SetValue(Settings:get("UI.RollOff.closeOnStart", true));
+        CloseOnStart:SetValue(GL.Settings:get("UI.RollOff.closeOnStart", true));
         CloseOnStart:SetCallback("OnValueChanged", function (widget)
-            Settings:set("UI.RollOff.closeOnStart", widget:GetValue());
+            GL.Settings:set("UI.RollOff.closeOnStart", toboolean(widget:GetValue()));
         end);
         CloseOnStart:SetWidth(150);
         FifthRow:AddChild(CloseOnStart);
 
         local CloseOnAward = AceGUI:Create("CheckBox");
         CloseOnAward:SetLabel("Close on award");
-        CloseOnAward:SetValue(Settings:get("UI.RollOff.closeOnAward", true));
+        CloseOnAward:SetValue(GL.Settings:get("UI.RollOff.closeOnAward", true));
         CloseOnAward:SetCallback("OnValueChanged", function (widget)
-            Settings:set("UI.RollOff.closeOnAward", widget:GetValue());
+            GL.Settings:set("UI.RollOff.closeOnAward", toboolean(widget:GetValue()));
         end);
         CloseOnAward:SetWidth(150);
         FifthRow:AddChild(CloseOnAward);
@@ -554,14 +543,14 @@ function MasterLooterUI:drawPlayersTable(parent)
     Table:SetWidth(340);
     Table:EnableSelection(true);
     Table.frame:SetPoint("BOTTOM", parent, "BOTTOM", 0, 50);
-    MasterLooterUI.UIComponents.Tables.Players = Table;
+    GL.Interface:setItem(self, "Players", Table);
 end
 
 -- The item box contents changed
 function MasterLooterUI:ItemBoxChanged()
     GL:debug("MasterLooterUI:ItemBoxChanged");
 
-    local itemLink = MasterLooterUI.UIComponents.EditBoxes.Item:GetText();
+    local itemLink = GL.Interface:getItem(self, "EditBox.Item"):GetText();
 
     MasterLooterUI:passItemLink(itemLink);
 end
@@ -580,7 +569,7 @@ function MasterLooterUI:passItemLink(itemLink)
         return GL:warning("A roll is currently in progress");
     end
 
-    MasterLooterUI.UIComponents.EditBoxes.Item:SetText(itemLink);
+    GL.Interface:getItem(self, "EditBox.Item"):SetText(itemLink);
     return MasterLooterUI:update();
 end
 
@@ -589,7 +578,7 @@ function MasterLooterUI:update()
     GL:debug("MasterLooterUI:update");
 
     local IconWidget = GL.Interface:getItem(self, "Icon.Item");
-    local itemLink = MasterLooterUI.UIComponents.EditBoxes.Item:GetText();
+    local itemLink = GL.Interface:getItem(self, "EditBox.Item"):GetText();
 
     -- If the item link is not valid then
     --   Show the default question mark icon
@@ -609,7 +598,7 @@ function MasterLooterUI:update()
     local icon = select(10, GetItemInfo(itemLink));
 
     if (icon) then
-        MasterLooterUI.UIComponents.Tables.Players:ClearSelection();
+        GL.Interface:getItem(self, "Table.Players"):ClearSelection();
 
         IconWidget:SetImage(icon);
         MasterLooterUI.ItemBoxHoldsValidItem = true;
@@ -626,8 +615,8 @@ end
 function MasterLooterUI:updateItemNote()
     GL:debug("MasterLooterUI:updateItemNote");
 
-    local ItemNote = MasterLooterUI.UIComponents.EditBoxes.ItemNote;
-    local itemLink = MasterLooterUI.UIComponents.EditBoxes.Item:GetText();
+    local ItemNote = GL.Interface:getItem(self, "EditBox.ItemNote");
+    local itemLink = GL.Interface:getItem(self, "EditBox.Item"):GetText();
 
     -- We don't have a valid itemlink at hand, clear the note
     if (not MasterLooterUI.ItemBoxHoldsValidItem) then
@@ -651,14 +640,14 @@ function MasterLooterUI:reset()
     GL:debug("MasterLooterUI:reset");
 
     GL.Interface:getItem(self, "Icon.Item"):SetImage(MasterLooterUI.Defaults.itemIcon);
-    MasterLooterUI.UIComponents.EditBoxes.Item:SetText(MasterLooterUI.Defaults.itemText);
-    MasterLooterUI.UIComponents.EditBoxes.Timer:SetText(Settings:get("UI.RollOff.timer"));
-    MasterLooterUI.UIComponents.EditBoxes.ItemNote:SetText("");
+    GL.Interface:getItem(self, "EditBox.Item"):SetText(MasterLooterUI.Defaults.itemText);
+    GL.Interface:getItem(self, "EditBox.Duration"):SetText(GL.Settings:get("UI.RollOff.timer"));
+    GL.Interface:getItem(self, "EditBox.ItemNote"):SetText("");
     MasterLooterUI.ItemBoxHoldsValidItem = false;
 
-    MasterLooterUI.UIComponents.Tables.Players:ClearSelection();
-    MasterLooterUI.UIComponents.Tables.Players:ClearSelection();
-    MasterLooterUI.UIComponents.Tables.Players:SetData({}, true);
+    GL.Interface:getItem(self, "Table.Players"):ClearSelection();
+    GL.Interface:getItem(self, "Table.Players"):ClearSelection();
+    GL.Interface:getItem(self, "Table.Players"):SetData({}, true);
 
     MasterLooterUI:updateWidgets();
 end
@@ -674,9 +663,9 @@ function MasterLooterUI:updateWidgets()
     if (not MasterLooterUI.ItemBoxHoldsValidItem
         or not GL.User.isInGroup
     ) then
-        MasterLooterUI.UIComponents.Buttons.StartButton:SetDisabled(true);
-        MasterLooterUI.UIComponents.Buttons.StopButton:SetDisabled(true);
-        MasterLooterUI.UIComponents.EditBoxes.Item:SetDisabled(false);
+        GL.Interface:getItem(self, "Button.Start"):SetDisabled(true);
+        GL.Interface:getItem(self, "Button.Stop"):SetDisabled(true);
+        GL.Interface:getItem(self, "EditBox.Item"):SetDisabled(false);
 
         return;
     end
@@ -690,11 +679,11 @@ function MasterLooterUI:updateWidgets()
     --   The clear button should not be available
     --   The item box should be available so we can enter an item link
     if (not GL.RollOff.inProgress) then
-        MasterLooterUI.UIComponents.Buttons.StartButton:SetDisabled(false);
-        MasterLooterUI.UIComponents.Buttons.StopButton:SetDisabled(true);
-        MasterLooterUI.UIComponents.Buttons.AwardButton:SetDisabled(false);
-        MasterLooterUI.UIComponents.Buttons.ClearButton:SetDisabled(false);
-        MasterLooterUI.UIComponents.EditBoxes.Item:SetDisabled(false);
+        GL.Interface:getItem(self, "Button.Start"):SetDisabled(false);
+        GL.Interface:getItem(self, "Button.Stop"):SetDisabled(true);
+        GL.Interface:getItem(self, "Button.Award"):SetDisabled(false);
+        GL.Interface:getItem(self, "Button.Clear"):SetDisabled(false);
+        GL.Interface:getItem(self, "EditBox.Item"):SetDisabled(false);
 
     -- If a roll off is currently in progress then:
     --   The start button should not be available
@@ -703,11 +692,11 @@ function MasterLooterUI:updateWidgets()
     --   The clear button should not be available
     --   The item box should not be available
     else
-        MasterLooterUI.UIComponents.Buttons.StartButton:SetDisabled(true);
-        MasterLooterUI.UIComponents.Buttons.StopButton:SetDisabled(false);
-        MasterLooterUI.UIComponents.Buttons.AwardButton:SetDisabled(true);
-        MasterLooterUI.UIComponents.Buttons.ClearButton:SetDisabled(true);
-        MasterLooterUI.UIComponents.EditBoxes.Item:SetDisabled(true);
+        GL.Interface:getItem(self, "Button.Start"):SetDisabled(true);
+        GL.Interface:getItem(self, "Button.Stop"):SetDisabled(false);
+        GL.Interface:getItem(self, "Button.Award"):SetDisabled(true);
+        GL.Interface:getItem(self, "Button.Clear"):SetDisabled(true);
+        GL.Interface:getItem(self, "EditBox.Item"):SetDisabled(true);
     end
 end
 
