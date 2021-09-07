@@ -143,17 +143,11 @@ function Award:draw(itemLink)
         local selected = PlayersTable:GetRow(PlayersTable:GetSelection());
 
         if (not selected or type(selected) ~= "table") then
-            return;
+            return GL:warning("You need to select a player first");
         end
 
         local winner = selected.cols[1].value;
         local itemLink = GL.Interface:getItem(self, "EditBox.Item"):GetText();
-
-        if (not selected
-                or not type(selected) == "table"
-        ) then
-            return GL:warning("You need to select a player first");
-        end
 
         local award = function ()
             local isOS, addPlusOne = false;
@@ -203,6 +197,8 @@ function Award:draw(itemLink)
     DisenchantButton:SetHeight(20);
     DisenchantButton:SetDisabled(false);
     DisenchantButton:SetCallback("OnClick", function()
+        local itemLink = GL.Interface:getItem(self, "EditBox.Item"):GetText();
+
         if (GL.PackMule.disenchanter) then
             GL.PackMule:disenchant(itemLink);
 
@@ -217,17 +213,10 @@ function Award:draw(itemLink)
         local selected = PlayersTable:GetRow(PlayersTable:GetSelection());
 
         if (not selected or type(selected) ~= "table") then
-            return;
+            return GL:warning("You need to select a player first");
         end
 
         local disenchanter = selected.cols[1].value;
-        local itemLink = GL.Interface:getItem(self, "EditBox.Item"):GetText();
-
-        if (not selected
-            or not type(selected) == "table"
-        ) then
-            return GL:warning("You need to select a player first");
-        end
 
         -- No disenchanter was set yet
         GL.Interface.Dialogs.PopupDialog:open({
