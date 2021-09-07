@@ -56,6 +56,8 @@ function MasterLooterUI:draw(itemLink)
         return;
     end
 
+    local HorizonalSpacer, VerticalSpacer;
+
     -- Create a container/parent frame
     Window = AceGUI:Create("Frame", "GARGUL_MASTERLOOTERUI_WINDOW");
     Window:SetTitle("Gargul v" .. GL.version);
@@ -101,8 +103,8 @@ function MasterLooterUI:draw(itemLink)
                 ItemBox:DisableButton(true);
                 ItemBox:SetHeight(20);
                 ItemBox:SetWidth(170);
-                ItemBox:SetCallback("OnTextChanged", MasterLooterUI.ItemBoxChanged); -- Update item info when input value changes
-                ItemBox:SetCallback("OnEnterPressed", MasterLooterUI.ItemBoxChanged); -- Update item info when item is dragged on top (makes no sense to use OnEnterPressed I know)
+                ItemBox:SetCallback("OnTextChanged", function () MasterLooterUI:ItemBoxChanged() end); -- Update item info when input value changes
+                ItemBox:SetCallback("OnEnterPressed", function () MasterLooterUI:ItemBoxChanged() end); -- Update item info when item is dragged on top (makes no sense to use OnEnterPressed I know)
 
                 GL.Interface:setItem(self, "Item", ItemBox);
 
@@ -191,11 +193,11 @@ function MasterLooterUI:draw(itemLink)
                     SPACER
                 ]]
 
-                local PreItemNoteLabelSpacer = AceGUI:Create("SimpleGroup");
-                PreItemNoteLabelSpacer:SetLayout("Flow");
-                PreItemNoteLabelSpacer:SetWidth(8);
-                PreItemNoteLabelSpacer:SetHeight(20);
-                SecondRow:AddChild(PreItemNoteLabelSpacer);
+                VerticalSpacer = AceGUI:Create("SimpleGroup");
+                VerticalSpacer:SetLayout("Flow");
+                VerticalSpacer:SetWidth(8);
+                VerticalSpacer:SetHeight(20);
+                SecondRow:AddChild(VerticalSpacer);
 
                 --[[
                     ITEM NOTE LABEL
@@ -232,11 +234,11 @@ function MasterLooterUI:draw(itemLink)
                     SPACER
                 ]]
 
-                local PreTimerLabelSpacer = AceGUI:Create("SimpleGroup");
-                PreTimerLabelSpacer:SetLayout("Flow");
-                PreTimerLabelSpacer:SetWidth(8);
-                PreTimerLabelSpacer:SetHeight(20);
-                ThirdRow:AddChild(PreTimerLabelSpacer);
+                VerticalSpacer = AceGUI:Create("SimpleGroup");
+                VerticalSpacer:SetLayout("Flow");
+                VerticalSpacer:SetWidth(8);
+                VerticalSpacer:SetHeight(20);
+                ThirdRow:AddChild(VerticalSpacer);
 
                 --[[
                     TIMER LABEL
@@ -264,11 +266,11 @@ function MasterLooterUI:draw(itemLink)
                     SPACER
                 ]]
 
-                local TimerAndAwardSpacer = AceGUI:Create("SimpleGroup");
-                TimerAndAwardSpacer:SetLayout("Flow");
-                TimerAndAwardSpacer:SetWidth(20);
-                TimerAndAwardSpacer:SetHeight(30);
-                ThirdRow:AddChild(TimerAndAwardSpacer);
+                VerticalSpacer = AceGUI:Create("SimpleGroup");
+                VerticalSpacer:SetLayout("Flow");
+                VerticalSpacer:SetWidth(20);
+                VerticalSpacer:SetHeight(30);
+                ThirdRow:AddChild(VerticalSpacer);
 
                 --[[
                     RESET BUTTON
@@ -310,6 +312,28 @@ function MasterLooterUI:draw(itemLink)
                 ThirdRow:AddChild(AwardButton);
                 GL.Interface:setItem(self, "Award", AwardButton);
 
+                HorizonalSpacer = AceGUI:Create("SimpleGroup");
+                HorizonalSpacer:SetLayout("Flow");
+                HorizonalSpacer:SetWidth(24);
+                HorizonalSpacer:SetHeight(1);
+                ThirdRow:AddChild(HorizonalSpacer);
+
+                --[[
+                    DISENCHANT BUTTON
+                ]]
+                local DisenchantButton = AceGUI:Create("Button");
+                DisenchantButton:SetText("Disenchant");
+                DisenchantButton:SetWidth(100);
+                DisenchantButton:SetHeight(20);
+                DisenchantButton:SetDisabled(true);
+                DisenchantButton:SetCallback("OnClick", function()
+                    local itemLink = GL.Interface:getItem(self, "EditBox.Item"):GetText();
+
+                    GL.PackMule:disenchant(itemLink, true);
+                    self:close();
+                end);
+                ThirdRow:AddChild(DisenchantButton);
+                GL.Interface:setItem(self, "Disenchant", DisenchantButton);
         --[[
             FOURTH ROW (GROUP MEMBERS)
         ]]
@@ -332,11 +356,11 @@ function MasterLooterUI:draw(itemLink)
         FifthRow:SetHeight(20);
         Window:AddChild(FifthRow);
 
-        local Spacer = AceGUI:Create("SimpleGroup");
-        Spacer:SetLayout("Flow");
-        Spacer:SetWidth(1);
-        Spacer:SetHeight(348);
-        FifthRow:AddChild(Spacer);
+        local PlayersTableFrame = AceGUI:Create("SimpleGroup");
+        PlayersTableFrame:SetLayout("Flow");
+        PlayersTableFrame:SetWidth(1);
+        PlayersTableFrame:SetHeight(348);
+        FifthRow:AddChild(PlayersTableFrame);
 
         local CloseOnStart = AceGUI:Create("CheckBox");
         CloseOnStart:SetLabel("Close on start");
@@ -666,6 +690,8 @@ function MasterLooterUI:updateWidgets()
         GL.Interface:getItem(self, "Button.Start"):SetDisabled(true);
         GL.Interface:getItem(self, "Button.Stop"):SetDisabled(true);
         GL.Interface:getItem(self, "EditBox.Item"):SetDisabled(false);
+        GL.Interface:getItem(self, "Button.Award"):SetDisabled(true);
+        GL.Interface:getItem(self, "Button.Disenchant"):SetDisabled(true);
 
         return;
     end
@@ -682,6 +708,7 @@ function MasterLooterUI:updateWidgets()
         GL.Interface:getItem(self, "Button.Start"):SetDisabled(false);
         GL.Interface:getItem(self, "Button.Stop"):SetDisabled(true);
         GL.Interface:getItem(self, "Button.Award"):SetDisabled(false);
+        GL.Interface:getItem(self, "Button.Disenchant"):SetDisabled(false);
         GL.Interface:getItem(self, "Button.Clear"):SetDisabled(false);
         GL.Interface:getItem(self, "EditBox.Item"):SetDisabled(false);
 
@@ -695,6 +722,7 @@ function MasterLooterUI:updateWidgets()
         GL.Interface:getItem(self, "Button.Start"):SetDisabled(true);
         GL.Interface:getItem(self, "Button.Stop"):SetDisabled(false);
         GL.Interface:getItem(self, "Button.Award"):SetDisabled(true);
+        GL.Interface:getItem(self, "Button.Disenchant"):SetDisabled(true);
         GL.Interface:getItem(self, "Button.Clear"):SetDisabled(true);
         GL.Interface:getItem(self, "EditBox.Item"):SetDisabled(true);
     end
