@@ -198,7 +198,7 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS)
     if (GL.DroppedLoot.lootWindowIsOpened
         and GL.Settings:get("autoAssignAfterAwardingAnItem")
     ) then
-        GL.PackMule:assignLootToPlayer(AwardEntry);
+        GL.PackMule:assignLootToPlayer(AwardEntry.itemId, winner);
 
     -- The loot window is closed and the auto trade setting is enabled
     -- Also skip this part if you yourself won the item
