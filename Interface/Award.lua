@@ -7,14 +7,6 @@ GL.ScrollingTable = GL.ScrollingTable or LibStub("ScrollingTable");
 GL.Interface.Award = {
     ItemBoxHoldsValidItem = false,
     PlayersTable = {},
-    UIComponents = {
-        Frame = {},
-        Buttons = {},
-        EditBoxes = {},
-        Labels = {},
-        Tables = {},
-        Icons = {},
-    },
     Defaults = {
         itemIcon = "Interface\\Icons\\INV_Misc_QuestionMark",
         itemBoxText = "",
@@ -39,16 +31,16 @@ function Award:draw(itemLink)
     -- First we need to check if the frame hasn't been
     -- rendered already. If so then show it (if it's hidden)
     -- and pass the itemLink along in case one was provided
-    if (Award.UIComponents.Frame
-        and Award.UIComponents.Frame.rendered
+    if (GL.Interface:getItem(self, "Window")
+        and GL.Interface:getItem(self, "Window").rendered
     ) then
         if (itemLink) then
             Award:passItemLink(itemLink);
         end
 
         -- If the frame is hidden we need to show it again
-        if (not Award.UIComponents.Frame:IsShown()) then
-            Award.UIComponents.Frame:Show();
+        if (not GL.Interface:getItem(self, "Window"):IsShown()) then
+            GL.Interface:getItem(self, "Window"):Show();
         end
 
         Award:populatePlayersTable();
@@ -56,24 +48,24 @@ function Award:draw(itemLink)
     end
 
     -- Create a container/parent frame
-    local AwardFrame = AceGUI:Create("Frame");
-    AwardFrame:SetTitle("Gargul v" .. GL.version);
-    AwardFrame:SetLayout("Flow");
-    AwardFrame:SetWidth(430);
-    AwardFrame:SetHeight(290);
-    AwardFrame:EnableResize(false);
-    AwardFrame.rendered = true;
-    AwardFrame.frame:SetFrameStrata("HIGH");
-    AwardFrame.statustext:GetParent():Hide(); -- Hide the statustext bar
-    AwardFrame:SetCallback("OnClose", function(widget)
-        self:close(widget);
+    local Window = AceGUI:Create("Frame");
+    Window:SetTitle("Gargul v" .. GL.version);
+    Window:SetLayout("Flow");
+    Window:SetWidth(430);
+    Window:SetHeight(290);
+    Window:EnableResize(false);
+    Window.rendered = true;
+    Window.frame:SetFrameStrata("HIGH");
+    Window.statustext:GetParent():Hide(); -- Hide the statustext bar
+    Window:SetCallback("OnClose", function()
+        self:close();
     end);
-    AwardFrame:SetPoint(GL.Interface:getPosition("Award"));
+    Window:SetPoint(GL.Interface:getPosition("Award"));
 
-    Award.UIComponents.Frame = AwardFrame;
+    GL.Interface:setItem(self, "Window", Window);
 
     -- Make sure the window can be closed by pressing the escape button
-    _G["GARGUL_AWARD_WINDOW"] = AwardFrame.frame;
+    _G["GARGUL_AWARD_WINDOW"] = Window.frame;
     tinsert(UISpecialFrames, "GARGUL_AWARD_WINDOW");
 
     --[[
@@ -84,7 +76,7 @@ function Award:draw(itemLink)
     FirstRow:SetLayout("Flow");
     FirstRow:SetFullWidth(true);
     FirstRow:SetHeight(30);
-    AwardFrame:AddChild(FirstRow);
+    Window:AddChild(FirstRow);
 
     --[[
         ITEM ICON
@@ -95,7 +87,7 @@ function Award:draw(itemLink)
     ItemIcon:SetImageSize(30, 30);
     ItemIcon:SetWidth(40);
     FirstRow:AddChild(ItemIcon);
-    Award.UIComponents.Icons.Item = ItemIcon;
+    GL.Interface:setItem(self, "Item", ItemIcon);
 
     --[[
         ITEM TEXTBOX
@@ -105,10 +97,9 @@ function Award:draw(itemLink)
     ItemBox:DisableButton(true);
     ItemBox:SetHeight(20);
     ItemBox:SetWidth(170);
-    ItemBox:SetCallback("OnTextChanged", Award.ItemBoxChanged); -- Update item info when input value changes
-    ItemBox:SetCallback("OnEnterPressed", Award.ItemBoxChanged); -- Update item info when item is dragged on top (makes no sense to use OnEnterPressed I know)
-
-    Award.UIComponents.EditBoxes.Item = ItemBox;
+    ItemBox:SetCallback("OnTextChanged", function () self:ItemBoxChanged() end); -- Update item info when input value changes
+    ItemBox:SetCallback("OnEnterPressed", function () self:ItemBoxChanged() end); -- Update item info when item is dragged on top (makes no sense to use OnEnterPressed I know)
+    GL.Interface:setItem(self, "Item", ItemBox);
 
     FirstRow:AddChild(ItemBox);
 
@@ -132,25 +123,11 @@ function Award:draw(itemLink)
         SPACER
     ]]
 
-    local PreClearButtonSpacer = AceGUI:Create("SimpleGroup");
-    PreClearButtonSpacer:SetLayout("Flow");
-    PreClearButtonSpacer:SetWidth(8);
-    PreClearButtonSpacer:SetHeight(20);
-    FirstRow:AddChild(PreClearButtonSpacer);
-
-    --[[
-        RESET BUTTON
-    ]]
-    local ClearButton = AceGUI:Create("Button");
-    ClearButton:SetText("Clear");
-    ClearButton:SetWidth(66);
-    ClearButton:SetHeight(20);
-    ClearButton:SetDisabled(false);
-    ClearButton:SetCallback("OnClick", function()
-        Award:reset();
-    end);
-    FirstRow:AddChild(ClearButton);
-    Award.UIComponents.Buttons.ClearButton = ClearButton;
+    local PreButtonSpacer = AceGUI:Create("SimpleGroup");
+    PreButtonSpacer:SetLayout("Flow");
+    PreButtonSpacer:SetWidth(4);
+    PreButtonSpacer:SetHeight(20);
+    FirstRow:AddChild(PreButtonSpacer);
 
     --[[
         AWARD BUTTON
@@ -162,7 +139,7 @@ function Award:draw(itemLink)
     AwardButton:SetHeight(20);
     AwardButton:SetDisabled(true);
     AwardButton:SetCallback("OnClick", function()
-        local PlayersTable = Award.UIComponents.Tables.Players;
+        local PlayersTable = GL.Interface:getItem(self, "Table.Players");
         local selected = PlayersTable:GetRow(PlayersTable:GetSelection());
 
         if (not selected or type(selected) ~= "table") then
@@ -170,7 +147,7 @@ function Award:draw(itemLink)
         end
 
         local winner = selected.cols[1].value;
-        local itemLink = Award.UIComponents.EditBoxes.Item:GetText();
+        local itemLink = GL.Interface:getItem(self, "EditBox.Item"):GetText();
 
         if (not selected
                 or not type(selected) == "table"
@@ -200,13 +177,14 @@ function Award:draw(itemLink)
             GL.Interface.Award:reset();
 
             if (Settings:get("UI.Award.closeOnAward", true)) then
-                self:close(AwardFrame);
+                self:close();
             end
         end
 
         -- Make sure the initiator has to confirm his choices
         GL.Interface.Dialogs.AwardDialog:open({
-            question = string.format("Award %s to %s?",
+            question = string.format("Award %s to |cff%s%s|r?",
+                GL.Player:classByName(winner),
                 itemLink,
                 winner
             ),
@@ -214,8 +192,61 @@ function Award:draw(itemLink)
         });
     end);
     FirstRow:AddChild(AwardButton);
-    Award.UIComponents.Buttons.AwardButton = AwardButton;
+    GL.Interface:setItem(self, "Award", AwardButton);
 
+    --[[
+        DISENCHANT BUTTON
+    ]]
+    local DisenchantButton = AceGUI:Create("Button");
+    DisenchantButton:SetText("Disenchant");
+    DisenchantButton:SetWidth(100);
+    DisenchantButton:SetHeight(20);
+    DisenchantButton:SetDisabled(false);
+    DisenchantButton:SetCallback("OnClick", function()
+        if (GL.PackMule.disenchanter) then
+            GL.PackMule:disenchant(itemLink);
+
+            if (Settings:get("UI.Award.closeOnAward", true)) then
+                self:close();
+            end
+
+            return;
+        end
+
+        local PlayersTable = GL.Interface:getItem(self, "Table.Players");
+        local selected = PlayersTable:GetRow(PlayersTable:GetSelection());
+
+        if (not selected or type(selected) ~= "table") then
+            return;
+        end
+
+        local disenchanter = selected.cols[1].value;
+        local itemLink = GL.Interface:getItem(self, "EditBox.Item"):GetText();
+
+        if (not selected
+            or not type(selected) == "table"
+        ) then
+            return GL:warning("You need to select a player first");
+        end
+
+        -- No disenchanter was set yet
+        GL.Interface.Dialogs.PopupDialog:open({
+            question = string.format("Set |cff%s%s|r as your disenchanter?",
+                GL:classHexColor(GL.Player:classByName(disenchanter)),
+                disenchanter
+            ),
+            OnYes = function ()
+                GL.PackMule.disenchanter = disenchanter;
+                GL.PackMule:disenchant(itemLink, true);
+
+                if (Settings:get("UI.Award.closeOnAward", true)) then
+                    self:close();
+                end
+            end,
+        });
+    end);
+    FirstRow:AddChild(DisenchantButton);
+    GL.Interface:setItem(self, "Disenchant", DisenchantButton);
 
     --[[
         SECOND ROW (GROUP MEMBERS)
@@ -225,9 +256,9 @@ function Award:draw(itemLink)
     SecondRow:SetLayout("FILL");
     SecondRow:SetFullWidth(true);
     SecondRow:SetHeight(170);
-    AwardFrame:AddChild(SecondRow);
+    Window:AddChild(SecondRow);
 
-    Award:drawPlayersTable(AwardFrame.frame);
+    Award:drawPlayersTable();
 
     --[[
         THIRD ROW (AUTO CLOSE CHECKBOX)
@@ -237,7 +268,7 @@ function Award:draw(itemLink)
     ThirdRow:SetLayout("Flow");
     ThirdRow:SetFullWidth(true);
     ThirdRow:SetHeight(50);
-    AwardFrame:AddChild(ThirdRow);
+    Window:AddChild(ThirdRow);
 
     local CloseOnAward = AceGUI:Create("CheckBox");
     CloseOnAward:SetLabel("Close on award");
@@ -255,19 +286,26 @@ function Award:draw(itemLink)
     end
 end
 
----@param Frame table
 ---@return void
-function Award:close(Frame)
+function Award:close()
     GL:debug("Award:close");
 
-    GL.Interface:storePosition(Frame, "Award");
-    Frame:Hide();
+    local Window = GL.Interface:getItem(self, "Window");
+
+    if (not Window) then
+        return;
+    end
+
+    GL.Interface:storePosition(Window, "Award");
+    Window:Hide();
 end
 
 ---@param Parent table
 ---@return void
-function Award:drawPlayersTable(Parent)
+function Award:drawPlayersTable()
     GL:debug("Award:drawPlayersTable");
+
+    local Parent = GL.Interface:getItem(self, "Window").frame;
 
     -- Combined width of all colums should be 340
     local columns = {
@@ -286,24 +324,24 @@ function Award:drawPlayersTable(Parent)
         },
     };
 
-    local table = ScrollingTable:CreateST(columns, 8, 15, nil, Parent);
-    table:EnableSelection(true);
-    table.frame:SetPoint("BOTTOM", Parent, "BOTTOM", 0, 60);
-    Award.UIComponents.Tables.Players = table;
+    local Table = ScrollingTable:CreateST(columns, 8, 15, nil, Parent);
+    Table:EnableSelection(true);
+    Table.frame:SetPoint("BOTTOM", Parent, "BOTTOM", 0, 60);
+    GL.Interface:setItem(self, "Players", Table);
 
     Award:populatePlayersTable();
 end
 
 -- Populate the players table with your current group members
 function Award:populatePlayersTable()
-    if (not Award.UIComponents.Tables.Players) then
+    if (not GL.Interface:getItem(self, "Table.Players")) then
         return;
     end
 
-    Award.UIComponents.Tables.Players:ClearSelection();
+    GL.Interface:getItem(self, "Table.Players"):ClearSelection();
 
     if (not GL.User.isInGroup) then
-        return Award.UIComponents.Tables.Players:SetData({}, true);
+        return GL.Interface:getItem(self, "Table.Players"):SetData({}, true);
     end
 
     local TableData = {};
@@ -320,7 +358,7 @@ function Award:populatePlayersTable()
         });
     end
 
-    Award.UIComponents.Tables.Players:SetData(TableData);
+    GL.Interface:getItem(self, "Table.Players"):SetData(TableData);
 end
 
 --- The item box contents changed
@@ -328,7 +366,7 @@ end
 function Award:ItemBoxChanged()
     GL:debug("Award:ItemBoxChanged");
 
-    local itemLink = Award.UIComponents.EditBoxes.Item:GetText();
+    local itemLink = GL.Interface:getItem(self, "EditBox.Item"):GetText();
 
     Award:passItemLink(itemLink);
 end
@@ -342,11 +380,11 @@ end
 function Award:passItemLink(itemLink)
     GL:debug("Award:passItemLink");
 
-    if (not Award.UIComponents.Frame.rendered) then
+    if (not GL.Interface:getItem(self, "Window").rendered) then
         return;
     end
 
-    Award.UIComponents.EditBoxes.Item:SetText(itemLink);
+    GL.Interface:getItem(self, "EditBox.Item"):SetText(itemLink);
     Award:update();
 end
 
@@ -356,8 +394,8 @@ end
 function Award:update()
     GL:debug("Award:update");
 
-    local IconWidget = Award.UIComponents.Icons.Item;
-    local itemLink = Award.UIComponents.EditBoxes.Item:GetText();
+    local IconWidget = GL.Interface:getItem(self, "Icon.Item");
+    local itemLink = GL.Interface:getItem(self, "EditBox.Item"):GetText();
 
     -- If the item link is not valid then
     --   Show the default question mark icon
@@ -375,7 +413,7 @@ function Award:update()
     local icon = select(10, GetItemInfo(itemLink));
 
     if (icon) then
-        Award.UIComponents.Tables.Players:ClearSelection();
+        GL.Interface:getItem(self, "Table.Players"):ClearSelection();
 
         IconWidget:SetImage(icon);
         Award.ItemBoxHoldsValidItem = true;
@@ -393,8 +431,8 @@ end
 function Award:reset()
     GL:debug("Award:reset");
 
-    Award.UIComponents.Icons.Item:SetImage(Award.Defaults.itemIcon);
-    Award.UIComponents.EditBoxes.Item:SetText(Award.Defaults.itemText);
+    GL.Interface:getItem(self, "Icon.Item"):SetImage(Award.Defaults.itemIcon);
+    GL.Interface:getItem(self, "EditBox.Item"):SetText(Award.Defaults.itemText);
     Award.ItemBoxHoldsValidItem = false;
 
     Award:populatePlayersTable();
@@ -413,9 +451,11 @@ function Award:updateWidgets()
     --   The stop button should be available
     --   The item box should be available
     if (not Award.ItemBoxHoldsValidItem) then
-        Award.UIComponents.Buttons.AwardButton:SetDisabled(true);
+        GL.Interface:getItem(self, "Button.Award"):SetDisabled(true);
+        GL.Interface:getItem(self, "Button.Disenchant"):SetDisabled(true);
     else
-        Award.UIComponents.Buttons.AwardButton:SetDisabled(false);
+        GL.Interface:getItem(self, "Button.Award"):SetDisabled(false);
+        GL.Interface:getItem(self, "Button.Disenchant"):SetDisabled(false);
     end
 end
 

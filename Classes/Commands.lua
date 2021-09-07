@@ -7,6 +7,7 @@ GL.Commands = GL.Commands or {
         award = "Open the award window. Optionally accepts an ItemLink as an argument: /gl award [itemLink?]",
         buffs = "You can instantly check player buffs like Ony, ZG, but also protection consumables like shadow protection: /gl buffs 22888, 22818, 22817, 22820, 24425, 15366, 20079",
         clearplusones = "Clear all plus one values",
+        cleardisenchanter = "Clear the disenchanter entry so you can pick a new one the next time around",
         export = "Export dropped loot to a CSV format which is compatible with TMB for example.",
         groups = "Open the group window where you can provide a group csv so that you can: see who's missing and sort groups automatically",
         import = "Opens the general import window that includes shortcuts to the TMB, SoftRes or loot priority importers",
@@ -31,6 +32,7 @@ GL.Commands = GL.Commands or {
         roll = "rolloff",
         a = "award",
         aod = "awardondate",
+        cd = "cleardisenchanter",
         rcsv = "raidcsv",
         gr = "groups",
         roster = "groups",
@@ -91,6 +93,9 @@ GL.Commands = GL.Commands or {
 
         -- Open the plus ones window
         plusones = function() GL.Interface.PlusOnes.Overview:draw(); end,
+
+        -- Clear the disenchanter
+        cleardisenchanter = function () GL.PackMule:clearDisenchanter(); end,
 
         -- Clear all plus ones
         clearplusones = function() GL.PlusOnes:clear(); end,

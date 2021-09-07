@@ -165,10 +165,10 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS)
     end
 
     if (announce) then
-        local awardMessage = string.format("%s was awarded to %s. Congrats!",
+        local awardMessage = string.format("%s was awarded to |cff%s%s|r. Congrats!",
             itemLink,
-            winner,
-            dkp
+            GL:classHexColor(GL.Player:classByName(winner)),
+            winner
         );
 
         GL:sendChatMessage(

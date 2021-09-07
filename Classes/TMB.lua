@@ -137,12 +137,6 @@ function TMB:appendTMBItemInfoToTooltip(tooltip)
         return;
     end
 
-    local GroupMemberClasses = {};
-    -- Fetch the name/class of everyone currently in the raid/party
-    for _, Player in pairs(GL.User:groupMembers()) do
-        GroupMemberClasses[string.lower(GL:stripRealm(Player.name))] = string.lower(Player.class);
-    end
-
     local WishListEntries = {};
     local PrioListEntries = {};
     local itemIsOnSomeonesWishlist = false;
@@ -155,7 +149,7 @@ function TMB:appendTMBItemInfoToTooltip(tooltip)
         local isOffSpec = string.find(Entry.character, "(OS)");
         local prioOffset = 0;
         local sortingOrder = prio;
-        local color = GL:classHexColor(GroupMemberClasses[playerName]);
+        local color = GL:classHexColor(GL.Player:classByName(playerName));
 
         -- Make sure we don't add more names to the tooltip than the user allowed
         if (entriesAdded >= GL.Settings:get("TMB.maximumNumberOfTooltipEntries")) then
@@ -203,7 +197,7 @@ function TMB:appendTMBItemInfoToTooltip(tooltip)
         for _, Entry in pairs(PrioListEntries) do
             tooltip:AddLine(string.format(
                 "|cFF%s%s|r",
-                GL:classHexColor(GroupMemberClasses[Entry[2]]),
+                GL:classHexColor(GL.Player:classByName(Entry[2])),
                 GL:capitalize(Entry[2]):gsub("%(os%)", " (OS)")
             ));
         end
@@ -228,7 +222,7 @@ function TMB:appendTMBItemInfoToTooltip(tooltip)
         for _, Entry in pairs(WishListEntries) do
             tooltip:AddLine(string.format(
                 "|cFF%s%s|r",
-                GL:classHexColor(GroupMemberClasses[Entry[2]]),
+                GL:classHexColor(GL.Player:classByName(Entry[2])),
                 GL:capitalize(Entry[2]):gsub("%(os%)", " (OS)")
             ));
         end
