@@ -336,15 +336,6 @@ function PackMule:disenchant(itemLink, byPassConfirmationDialog)
 
         -- Show the player selector
         GL.Interface.PlayerSelector:draw("Who is your disenchanter?", PlayerNames, function (playerName)
-            --if (byPassConfirmationDialog) then
-            --    self.disenchanter = playerName;
-            --    self:disenchant(itemLink, byPassConfirmationDialog);
-            --
-            --    GL.Interface.PlayerSelector:close();
-            --
-            --    return;
-            --end
-
             GL.Interface.Dialogs.PopupDialog:open({
                 question = string.format("Set |cff%s%s|r as your disenchanter?",
                     GL:classHexColor(GL.Player:classByName(playerName)),
@@ -399,6 +390,8 @@ end
 ---@param itemLink string
 ---@return void
 function PackMule:announceDisenchantment(itemLink)
+    GL:debug("PackMule:announceDisenchantment");
+
     if (not GL.Settings:get("PackMule.announceDisenchantedItems")) then
         return
     end
@@ -409,9 +402,8 @@ function PackMule:announceDisenchantment(itemLink)
     end
 
     GL:sendChatMessage(
-        string.format("%s was sent to |cff%s%s|r for disenchanting",
+        string.format("%s will be disenchanted by %s",
         itemLink,
-        GL:classHexColor(GL.Player:classByName(self.disenchanter)),
         self.disenchanter
     ), channel);
 end
