@@ -799,6 +799,10 @@ function GL:sendChatMessage(message, chatType, language, channel)
         return;
     end
 
+    if (GL.Settings:get("spreadTheWord")) then
+        message = "Gargul: " .. message;
+    end
+
     SendChatMessage (
         message,
         chatType,
