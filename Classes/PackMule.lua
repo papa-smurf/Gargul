@@ -12,15 +12,13 @@ GL.PackMule = {
     processing = false,
     setupWindowIsActive = false,
 
-    IgnoreItemsThatStartWith = {
-        "Design: ",
-        "Formula: ",
-        "Manual: ",
-        "Pattern: ",
-        "Plans: ",
-        "Recipe: ",
-        "Schematic: ",
+    -- We ignore recipes and questitems by default
+    -- since they might not always be tradably
+    itemClassIdsToIgnore = {
+        LE_ITEM_CLASS_RECIPE,
+        LE_ITEM_CLASS_QUESTITEM,
     },
+
     Rules = {},
 };
 
@@ -136,100 +134,95 @@ function PackMule:lootReady()
 
     for itemIndex = GetNumLootItems(), 1, -1 do
         local itemName, _, _, itemQuality, locked = select(2, GetLootSlotInfo(itemIndex));
-        local skip = false;
+        local itemLink = GetLootSlotLink(itemIndex);
+        local itemID, itemClassID;
+        local skip = locked; -- Locked means that you aren't able to loot it (tinted red)
 
-        -- itemName can be nil
-        if (itemName) then
-            -- Check whether we need to skip this item or not
-            for _, skipIfStartsWith in pairs(self.IgnoreItemsThatStartWith) do
-                if (GL:strStartsWith(itemName, skipIfStartsWith)) then
-                    skip = true;
-                    break;
-                end
-            end
-        else
-            skip = true;
+        -- Some items don't have an itemLink (money for example)
+        if (not skip
+            and itemLink
+        ) then
+            itemID, _, _, _, _, itemClassID = GetItemInfoInstant(itemLink);
+            skip = not itemID; -- itemId can actually be nil!
         end
 
         if (not skip) then
-            local itemLink = GetLootSlotLink(itemIndex);
             local RuleThatApplies = false;
 
-            -- If the item is locked or doesn't have an item link (money or other currency) then we can safely skip it
-            if (not locked and itemLink) then
-                for _, Entry in pairs(ValidRules) do
-                    -- This is useful to see in which order rules are being handled
-                    GL:debug(string.format(
-                        "Item: %s\nOperator: %s\nQuality: %s\nTarget: %s",
-                        Entry.item or "",
-                        Entry.quality or "",
-                        Entry.operator or "",
-                        Entry.target or ""
-                    ));
+            for _, Entry in pairs(ValidRules) do
+                -- This is useful to see in which order rules are being handled
+                GL:debug(string.format(
+                    "Item: %s\nOperator: %s\nQuality: %s\nTarget: %s",
+                    Entry.item or "",
+                    Entry.quality or "",
+                    Entry.operator or "",
+                    Entry.target or ""
+                ));
 
-                    local item = Entry.item or "";
-                    local target = tostring(Entry.target or "");
-                    local quality = tonumber(Entry.quality or "");
-                    local operator = tostring(Entry.operator or "");
+                local item = Entry.item or "";
+                local target = tostring(Entry.target or "");
+                local quality = tonumber(Entry.quality or "");
+                local operator = tostring(Entry.operator or "");
 
-                    -- SELF serves as a placeholder for the current player name
-                    if (target == "SELF") then
-                        target = GL.User.name;
-                    end
-
-                    -- The potential target replacement above requires us
-                    -- To make a local copy of the current Rule entry
-                    local Rule = {
-                        item = item,
-                        target = target,
-                        quality = quality,
-                        operator = operator,
-                    }
-
-                    if (itemQuality and quality and operator and target and (
-                        (operator == "=" and itemQuality == quality)
-                        or (operator == ">" and itemQuality > quality)
-                        or (operator == "<" and itemQuality < quality)
-                    )) then
-
-                        -- Non-tradeable items will only be handed out if there's a specific rule for it
-                        if (GL:inTable(GL.Data.Constants.UntradeableItems, itemName)) then
-                            GL:warning(string.format(
-                                "%s can not be traded after pickup and will not be handed out based on quality alone",
-                                itemName
-                            ));
-                        else
-                            RuleThatApplies = Rule;
-                        end
-                    elseif (item and item == itemName) then
-                        -- We found an item-specific rule, we can stop checking now
-                        RuleThatApplies = Rule;
-                        break;
-                    end
+                -- SELF serves as a placeholder for the current player name
+                if (target == "SELF") then
+                    target = GL.User.name;
                 end
 
-                -- The rule applies, give it to the designated target
-                if (RuleThatApplies
-                    and RuleThatApplies.target ~= "IGNORE"
-                ) then
-                    local target = RuleThatApplies.target;
+                -- The potential target replacement above requires us
+                -- To make a local copy of the current Rule entry
+                local Rule = {
+                    item = item,
+                    target = target,
+                    quality = quality,
+                    operator = operator,
+                }
 
-                    -- Check whether we need to give the item to a random player
-                    if (target == "RANDOM") then
-                        local GroupMembers = GL.User:groupMembers();
-                        target = GL:tableGet(GroupMembers[math.random( #GroupMembers)] or {}, "name", false);
+                local ruleItemID = math.floor(tonumber(item) or 0);
+                local ruleConcernsItemID = GL:higherThanZero(ruleItemID);
+
+                -- Check if this is a non item-specific rule (aka quality based rule)
+                if (itemQuality and quality and operator and target and (
+                    (operator == "=" and itemQuality == quality)
+                    or (operator == ">" and itemQuality > quality)
+                    or (operator == "<" and itemQuality < quality)
+                )) then
+                    if (not GL:inTable(GL.Data.Constants.UntradeableItems, itemID) -- Untradable items are skipped in quality rules
+                        and not GL:inTable(self.itemClassIdsToIgnore, itemClassID) -- Recipes and Quest Items are skipped in quality rules
+                    ) then
+                        RuleThatApplies = Rule;
                     end
+                elseif (item and (
+                    (ruleConcernsItemID and ruleItemID == itemID) -- Item is an ID and the IDs match
+                    or (type(item) == "string" and string.lower(item) == string.lower(itemName)) -- Item is a name and the names match
+                )) then
+                    -- We found an item-specific rule, we can stop checking now
+                    RuleThatApplies = Rule;
+                    break;
+                end
+            end
 
-                    -- This should be technically impossible, but you never know!
-                    if (not target) then
+            -- The rule applies, give it to the designated target
+            if (RuleThatApplies
+                and RuleThatApplies.target ~= "IGNORE"
+            ) then
+                local target = RuleThatApplies.target;
+
+                -- Check whether we need to give the item to a random player
+                if (target == "RANDOM") then
+                    local GroupMembers = GL.User:groupMembers();
+                    target = GL:tableGet(GroupMembers[math.random( #GroupMembers)] or {}, "name", false);
+                end
+
+                -- This should be technically impossible, but you never know!
+                if (not target) then
+                    break;
+                end
+
+                for playerIndex = 1, GetNumGroupMembers() do
+                    if (GetMasterLootCandidate(itemIndex, playerIndex) == target) then
+                        GiveMasterLoot(itemIndex, playerIndex);
                         break;
-                    end
-
-                    for playerIndex = 1, GetNumGroupMembers() do
-                        if (GetMasterLootCandidate(itemIndex, playerIndex) == target) then
-                            GiveMasterLoot(itemIndex, playerIndex);
-                            break;
-                        end
                     end
                 end
             end
