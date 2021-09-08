@@ -13,6 +13,19 @@ GL.Data.ItemLinks = {
     ["32385"] = {32386, 28790, 28791, 28792, 28793,},
     ["32386"] = {32385, 28790, 28791, 28792, 28793,},
 
+    -- Head of Nefarian (Horde/Alliance/Rewards)
+    ["19002"] = {19003, 19383, 19366, 19384,},
+    ["19003"] = {19002, 19383, 19366, 19384,},
+
+    -- Head of Ossirian the Unscarred
+    ["21220"] = {21504, 21507, 21505, 21506,},
+
+    -- Heart of Hakkar
+    ["19802"] = {19948, 19950, 19949,},
+
+    -- Verdant Sphere
+    ["32405"] = {30015,30007,30018,30017,},
+
     --[[ TIER 3 ITEMS ]]
         -- Desecrated Sandals
         ["22372"] = {22500, 22508, 22516,},
@@ -131,4 +144,50 @@ GL.Data.ItemLinks = {
 
         -- Chestguard of the Fallen Hero
         ["29755"] = {29082, 29077, 28964,},
+
+    --[[ TIER 5 ITEMS ]]
+        -- Chestguard of the Vanquished Defender
+        ["30237"] = {30216, 30231, 30150, 30222, 30118, 30113, 30237,},
+
+        -- Chestguard of the Vanquished Hero
+        ["30238"] = {30196, 30214, 30139,},
+
+        -- Chestguard of the Vanquished Champion
+        ["30236"] = {30129, 30144, 30169, 30164, 30134, 30123, 30185,},
+
+        -- Leggings of the Vanquished Defender
+        ["30246"] = {30220, 30234, 30153, 30229, 30162, 30116, 30121,},
+
+        -- Leggings of the Vanquished Hero
+        ["30247"] = {30207, 30213, 30142,},
+
+        -- Leggings of the Vanquished Champion
+        ["30245"] = {30137, 30148, 30172, 30167, 30132, 30126, 30192,},
+
+        -- Helm of the Vanquished Defender
+        ["30243"] = {30219, 30233, 30152, 30228, 30161, 30120, 30243,},
+
+        -- Helm of the Vanquished Hero
+        ["30244"] = {30206, 30212, 30141,},
+
+        -- Helm of the Vanquished Champion
+        ["30242"] = {30190, 30146, 30166, 30136, 30171, 30131, 30125,},
+
+        -- Gloves of the Vanquished Defender
+        ["30240"] = {30217, 30232, 30151, 30223, 30160, 30119, 30114,},
+
+        -- Gloves of the Vanquished Hero
+        ["30241"] = {30211, 30205, 30140,},
+
+        -- Gloves of the Vanquished Champion
+        ["30239"] = {30135, 30165, 30145, 30170, 30124, 30189, 30130,},
+
+        -- Pauldrons of the Vanquished Defender
+        ["30249"] = {30221, 30235, 30154, 30230, 30117, 30122, 30163,},
+
+        -- Pauldrons of the Vanquished Hero
+        ["30250"] = {30215, 30210, 30143,},
+
+        -- Pauldrons of the Vanquished Champion
+        ["30248"] = {30127, 30149, 30173, 30133, 30194, 30138, 30168,},
 };

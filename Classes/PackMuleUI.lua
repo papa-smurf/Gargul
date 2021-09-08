@@ -235,7 +235,7 @@ function PackMuleUI:drawSpecifItemRule(Frame, Rule)
     -- LABEL: Send loot of quality lower than
     local beforeItemLabel = AceGUI:Create("Label");
     local ruleIndex = #self.UIComponents.Input.SpecificItemRules + 1;
-    beforeItemLabel:SetText(ruleIndex .. ". Send item with name");
+    beforeItemLabel:SetText(ruleIndex .. ". Send item Name or ID");
     beforeItemLabel:SetHeight(20);
     beforeItemLabel:SetWidth(140);
     Row:AddChild(beforeItemLabel);

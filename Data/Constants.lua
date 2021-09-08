@@ -22,7 +22,8 @@ GL.Data.Constants = {
     },
 
     UntradeableItems = {
-        "Splinter of Atiesh",
+        22726, -- Splinter of Atiesh
+        30183, -- Nether Vortex
     },
 
     Classes = {
