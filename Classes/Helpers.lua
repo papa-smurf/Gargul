@@ -789,6 +789,13 @@ local gaveNoMessagesWarning = false;
 ---@param channel string|nil The channel (numeric) or player (name string) receiving the message
 ---@return void
 function GL:sendChatMessage(message, chatType, language, channel)
+    GL:debug("GL:sendChatMessage");
+
+    -- No point sending an empty message!
+    if (GL:empty(message)) then
+        return;
+    end
+
     -- The player enabled the noMessages setting
     if (GL.Settings:get("noMessages")) then
         if (not gaveNoMessagesWarning) then
