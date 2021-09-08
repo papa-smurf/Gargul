@@ -66,7 +66,7 @@ function RollOff:announceStart(itemLink, time, note)
         time,
         itemLink
     );
-    local reserveMessage = "";
+    local reserveMessage = false;
     local Reserves = GL.SoftRes:byItemLink(itemLink);
 
     if (type(note) == "string"
@@ -99,7 +99,7 @@ function RollOff:announceStart(itemLink, time, note)
             "RAID_WARNING"
         );
 
-        if (reserveMessage) then
+        if (not GL:empty(reserveMessage)) then
             GL:sendChatMessage(
                 reserveMessage,
                 "RAID"
