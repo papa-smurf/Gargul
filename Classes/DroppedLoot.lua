@@ -40,7 +40,12 @@ function DroppedLoot:_init()
     end);
 
     -- Remove highlight on loot buttons when closing the loot window
-    Events:register("DroppedLootLootClosedHighlighterListener", "LOOT_CLOSED", function () self:removeHighlights(); end);
+    Events:register("DroppedLootLootClosedHighlighterListener", "LOOT_CLOSED",
+        function ()
+            self:removeHighlights();
+            self.DroppedLoot.LootButtonItemLinkCache = {};
+        end
+    );
 
     -- Highlight items that are soft-reserved or have TMB details
     Events:register("DroppedLootLootSlotChangedHighlighterListener", "GL.LOOT_CHANGED", function () self:highlightItemsOfInterest() end);
@@ -269,10 +274,9 @@ function DroppedLoot:announce()
             )
         ) then
             itemIsHardReserved = SoftRes:linkIsHardReserved(itemLink);
-            local activeSoftRes = {};
-            local activeWishListDetails = {};
-            local activePrioListDetails = {};
-            local hasSoftRes = false;
+            local ActiveSoftResDetails = {};
+            local ActiveWishListDetails = {};
+            local ActivePrioListDetails = {};
             local itemIsOnSomeonesPriolist = false;
             local itemIsOnSomeonesWishlist = false;
 
@@ -280,9 +284,40 @@ function DroppedLoot:announce()
                 and SoftReserves
                 and GL.Settings:get("SoftRes.announceInfoInChat")
             ) then
-                for _, player in pairs(SoftReserves) do
-                    tinsert(activeSoftRes, GL:capitalize(player));
-                    hasSoftRes = true;
+                local ReservationsByPlayerName = {};
+                for _, playerName in pairs(SoftReserves) do
+                    if (not ReservationsByPlayerName[playerName]) then
+                        ReservationsByPlayerName[playerName] = 1;
+                    else
+                        ReservationsByPlayerName[playerName] = ReservationsByPlayerName[playerName] + 1;
+                    end
+                end
+
+                -- This is necessary so we can sort the table based on number of reserves per item
+                local Reservations = {};
+                for playerName, reservations in pairs(ReservationsByPlayerName) do
+                    tinsert(Reservations, {
+                        player = playerName,
+                        reservations = reservations,
+                    })
+                end
+                ReservationsByPlayerName = {}; -- We no longer need this table, clean it up!
+
+                -- Sort the reservations based on whoever reserved it more often (highest to lowest)
+                table.sort(Reservations, function (a, b)
+                    return a.reservations > b.reservations;
+                end);
+
+                -- Add the reservation details to ActiveReservations (add 2x / 3x etc when same item was reserved multiple times)
+                for _, Entry in pairs(Reservations) do
+                    local entryString = Entry.player;
+
+                    -- User reserved the same item multiple times
+                    if (Entry.reservations > 1) then
+                        entryString = string.format("%s (%sx)", Entry.player, Entry.reservations);
+                    end
+
+                    tinsert(ActiveSoftResDetails, GL:capitalize(entryString));
                 end
             end
 
@@ -320,10 +355,10 @@ function DroppedLoot:announce()
                         end
 
                         if (entryType == Constants.tmbTypePrio) then
-                            tinsert(activePrioListDetails, {sortingOrder, string.format("%s[%s]", playerName, prio)});
+                            tinsert(ActivePrioListDetails, { sortingOrder, string.format("%s[%s]", playerName, prio)});
                             itemIsOnSomeonesPriolist = true;
                         else
-                            tinsert(activeWishListDetails, {sortingOrder, string.format("%s[%s]", playerName, prio)});
+                            tinsert(ActiveWishListDetails, { sortingOrder, string.format("%s[%s]", playerName, prio)});
                             itemIsOnSomeonesWishlist = true;
                         end
                     end
@@ -352,9 +387,9 @@ function DroppedLoot:announce()
             end
 
             -- Show who reserved this item
-            if (hasSoftRes) then
+            if (not GL:empty(ActiveSoftResDetails)) then
                 GL:sendChatMessage(
-                    "Reserved by: " .. table.concat(activeSoftRes, ", "),
+                    "Reserved by: " .. table.concat(ActiveSoftResDetails, ", "),
                     chatChannel
                 );
             end
@@ -364,12 +399,12 @@ function DroppedLoot:announce()
                 and GL.Settings:get("TMB.includePrioListInfoInLootAnnouncement")
             ) then
                 -- Sort the PrioListEntries based on prio (lowest to highest)
-                table.sort(activePrioListDetails, function (a, b)
+                table.sort(ActivePrioListDetails, function (a, b)
                     return a[1] < b[1];
                 end);
 
                 local PrioData = {};
-                for _, Entry in pairs(activePrioListDetails) do
+                for _, Entry in pairs(ActivePrioListDetails) do
                     tinsert(PrioData, GL:capitalize(Entry[2]));
                 end
 
@@ -387,12 +422,12 @@ function DroppedLoot:announce()
                 )
             ) then
                 -- Sort the WishListEntries based on prio (lowest to highest)
-                table.sort(activeWishListDetails, function (a, b)
+                table.sort(ActiveWishListDetails, function (a, b)
                     return a[1] < b[1];
                 end);
 
                 local WishListData = {};
-                for _, Entry in pairs(activeWishListDetails) do
+                for _, Entry in pairs(ActiveWishListDetails) do
                     tinsert(WishListData, GL:capitalize(Entry[2]));
                 end
 

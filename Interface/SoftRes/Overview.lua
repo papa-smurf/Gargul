@@ -341,12 +341,11 @@ function Overview:refreshDetailsFrame()
 
     local note = GL:tableGet(SoftResDetails, "note", "This player didn't set a note");
     local Items = GL:tableGet(SoftResDetails, "Items", {});
-
     Note:SetText(note);
 
     -- Display the items reserved by the player
     local processedItems = 0;
-    for itemId in pairs(Items) do
+    for itemId, numberOfReservations in pairs(Items) do
         local index = processedItems + 1;
 
         if (processedItems >= SoftRes.maxNumberOfSoftReservedItems) then
@@ -378,7 +377,14 @@ function Overview:refreshDetailsFrame()
         end
 
         if (ItemLabel) then
-            ItemLabel:SetText(Item.link);
+            local labelString = Item.link;
+
+            -- The user reserved this item multiple times
+            if (numberOfReservations > 1) then
+                labelString = string.format("%s (%sx)", Item.link, numberOfReservations);
+            end
+
+            ItemLabel:SetText(labelString);
             ItemLabel.frame:Show();
         end
 

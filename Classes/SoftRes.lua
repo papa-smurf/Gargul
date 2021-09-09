@@ -100,12 +100,15 @@ function SoftRes:materializeData()
                         PlayerNamesByItemId[idString] = {};
                     end
 
-                    -- Make sure we only store names once in the PlayerNamesByItemId array
-                    if (not GL:inTable(PlayerNamesByItemId[idString], name)) then
-                        tinsert(PlayerNamesByItemId[idString], name);
-                    end
+                    -- It's now possible to reserve the same item multiple times so we no longer
+                    -- check whether the given playername is unique!
+                    tinsert(PlayerNamesByItemId[idString], name);
 
-                    DetailsByPlayerName[name].Items[idString] = true;
+                    if (DetailsByPlayerName[name].Items[idString]) then
+                        DetailsByPlayerName[name].Items[idString] = DetailsByPlayerName[name].Items[idString] + 1;
+                    else
+                        DetailsByPlayerName[name].Items[idString] = 1;
+                    end
                 end
             end
         end
@@ -390,19 +393,16 @@ function SoftRes:appendSoftReserveInfoToTooltip(Tooltip)
         return true;
     end
 
-    local ActiveReservations = {};
     local Reservations = self:byItemLink(itemLink);
 
-    -- Make sure we only show reserves of people who are actually in the raid
     local itemHasActiveReservations = false;
+    local ReservationsByPlayerName = {};
     for _, playerName in pairs(Reservations) do
-        local class = self:getPlayerClass(playerName);
-
-        tinsert(ActiveReservations, string.format(
-            "|cFF%s    %s|r",
-            GL:classHexColor(class),
-            GL:capitalize(playerName)
-        ));
+        if (not ReservationsByPlayerName[playerName]) then
+            ReservationsByPlayerName[playerName] = 1;
+        else
+            ReservationsByPlayerName[playerName] = ReservationsByPlayerName[playerName] + 1;
+        end
 
         itemHasActiveReservations = true;
     end
@@ -412,15 +412,65 @@ function SoftRes:appendSoftReserveInfoToTooltip(Tooltip)
         return true;
     end
 
+    -- This is necessary so we can sort the table based on number of reserves per item
+    local ActiveReservations = {};
+    for playerName, reservations in pairs(ReservationsByPlayerName) do
+        tinsert(ActiveReservations, {
+            player = playerName,
+            reservations = reservations,
+        })
+    end
+    ReservationsByPlayerName = {}; -- We no longer need this table, clean it up!
+
+    -- Sort the reservations based on whoever reserved it more often (highest to lowest)
+    table.sort(ActiveReservations, function (a, b)
+        return a.reservations > b.reservations;
+    end);
+
     -- Add the header
     Tooltip:AddLine(string.format("\n|cFFEFB8CD%s|r", "Reserved by"));
 
-    -- Add the actual soft reserves
-    for _, line in pairs(ActiveReservations) do
-        Tooltip:AddLine(line);
+    -- Add the reservation details to ActiveReservations (add 2x / 3x etc when same item was reserved multiple times)
+    for _, Entry in pairs(ActiveReservations) do
+        local class = self:getPlayerClass(Entry.player);
+        local entryString = Entry.player;
+
+        -- User reserved the same item multiple times
+        if (Entry.reservations > 1) then
+            entryString = string.format("%s (%sx)", Entry.player, Entry.reservations);
+        end
+
+        -- Add the actual soft reserves to the tooltip
+        Tooltip:AddLine(string.format(
+            "|cFF%s    %s|r",
+            GL:classHexColor(class),
+            GL:capitalize(entryString)
+        ));
     end
 
     return true;
+end
+
+--- How many times did the given player reserve the given item?
+---
+---@param idOrLink number|string
+---@param playerName string
+---@return number
+function SoftRes:playerReservesOnItem(idOrLink, playerName)
+    local concernsID = GL:higherThanZero(tonumber(idOrLink));
+    local itemID;
+
+    if (concernsID) then
+        itemID = math.floor(tonumber(idOrLink));
+    else
+        itemID = GL:getItemIdFromLink(idOrLink);
+    end
+
+    return GL:tableGet(self.MaterializedData.DetailsByPlayerName, string.format(
+        "%s.Items.%s",
+        string.lower(playerName),
+        itemID
+    ), 0);
 end
 
 --- Try to import the data provided in the import window

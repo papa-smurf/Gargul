@@ -508,7 +508,7 @@ function MasterLooterUI:drawPlayersTable(parent)
         --[[ Roll ]]
         {
             name = "Roll",
-            width = 60,
+            width = 50,
             align = "LEFT",
             color = {
                 r = 0.5,
@@ -522,7 +522,7 @@ function MasterLooterUI:drawPlayersTable(parent)
         --[[ +1 ]]
         {
             name = "+1",
-            width = 50,
+            width = 45,
             align = "LEFT",
             color = {
                 r = 0.5,
@@ -536,7 +536,7 @@ function MasterLooterUI:drawPlayersTable(parent)
         --[[ MS/OS ]]
         {
             name = " ",
-            width = 50,
+            width = 40,
             align = "LEFT",
             color = {
                 r = 0.5,
@@ -551,7 +551,7 @@ function MasterLooterUI:drawPlayersTable(parent)
         --[[ Reserved ]]
         {
             name = " ",
-            width = 60,
+            width = 85,
             align = "LEFT",
             color = {
                 r = 0.5,

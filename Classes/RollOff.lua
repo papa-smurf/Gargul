@@ -463,6 +463,11 @@ function RollOff:refreshRollsTable()
 
         if (GL.SoftRes:itemIdIsReservedByPlayer(self.CurrentRollOff.itemId, normalizedPlayerName)) then
             softReservedValue = "Reserved";
+            local numberOfReserves = GL.SoftRes:playerReservesOnItem(self.CurrentRollOff.itemId, normalizedPlayerName);
+
+            if (numberOfReserves > 1) then
+                softReservedValue = string.format("%s (%sx)", softReservedValue, numberOfReserves);
+            end
         end
 
         local rollerName = playerName;
