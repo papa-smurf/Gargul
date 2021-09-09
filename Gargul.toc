@@ -2,8 +2,8 @@
 ## Title: Gargul
 ## Title: |cff8aecffGargul|r
 ## Author: <Give it a Lick> Zhorax - Razorgore
-## Notes: Loot addon that supports softres.it, thatsmybis.com, auto-looting, loot priorities, plus one tracking and much more
-## Version: 3.3.3
+## Notes: Loot addon that supports softres sr, thatsmybis tmb, auto looting, loot priorities, plus one tracking and much more
+## Version: 3.3.4
 ## DefaultState: enabled
 ## SavedVariables: GargulDB
 
