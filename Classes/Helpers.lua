@@ -10,10 +10,6 @@ if (not _G["toboolean"]
     ---@param var any
     ---@return boolean
     _G["toboolean"] = function(var)
-        if (type(var) == "boolean") then
-            return var;
-        end
-
         return not GL:empty(var);
     end
 end
@@ -145,32 +141,30 @@ function GL:dump(mixed)
     GL:message(encoded);
 end
 
---- Check whether a given variable is not empty
+--- Check whether a given variable is empty
 ---
 ---@param mixed any
 ---@return boolean
 function GL:empty(mixed)
+    mixed = mixed or false;
+
     ---@type string
     local varType = type(mixed);
 
-    mixed = mixed or false;
-
-    if (varType == "boolean"
-        and mixed
-    ) then
-        return false;
+    if (varType == "boolean") then
+        return not mixed;
     end
 
-    if (varType == "string"
-        and strtrim(mixed) ~= ""
-    ) then
-        return false;
+    if (varType == "string") then
+        return strtrim(mixed) == "";
     end
 
     if (varType == "table") then
         for _ in pairs(mixed) do
             return false;
         end
+
+        return true;
     end
 
     if (varType == "number") then
@@ -644,7 +638,7 @@ end
 --- Strip the realm off of a string (usually a player name)
 ---
 ---@param str string
----@return str
+---@return string
 function GL:stripRealm(str)
     str = tostring(str);
 
