@@ -20,6 +20,9 @@ GL.Data.ItemLinks = {
     -- Head of Ossirian the Unscarred
     ["21220"] = {21504, 21507, 21505, 21506,},
 
+    -- The Phylactery of Kel'Thuzad
+    ["22520"] = {23206, 23207,},
+
     -- Heart of Hakkar
     ["19802"] = {19948, 19950, 19949,},
 

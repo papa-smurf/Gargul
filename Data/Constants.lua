@@ -24,6 +24,65 @@ GL.Data.Constants = {
     UntradeableItems = {
         22726, -- Splinter of Atiesh
         30183, -- Nether Vortex
+
+        --[[ WORLD BOSS LOOT ]]
+        19132, -- Crystal Adorned Crown (Azuregos)
+        18541, -- Puissant Cape (Azuregos)
+        19130, -- Cold Snap (Azuregos)
+        18202, -- Eskhandar's Left Claw (Azuregos)
+        17070, -- Fang of the Mystics (Azuregos)
+        18542, -- Typhoon (Azuregos)
+        19131, -- Snowblind Shoes (Azuregos)
+        18547, -- Unmelting Ice Girdle (Azuregos)
+        18208, -- Drape of Benediction (Azuregos)
+        18545, -- Leggings of Arcane Supremacy (Azuregos)
+
+        18546, -- Infernal Headcage (Lord Kazzak)
+        17113, -- Amberseal Keeper (Lord Kazzak)
+        17111, -- Blazefury Medallion (Lord Kazzak)
+        19134, -- Flayed Doomguard Belt (Lord Kazzak)
+        19135, -- Blacklight Bracer (Lord Kazzak)
+        18204, -- Eskhandar's Pelt (Lord Kazzak)
+        18543, -- Ring of Entropy (Lord Kazzak)
+        18544, -- Doomhide Gauntlets (Lord Kazzak)
+        17112, -- Empyrean Demolisher (Lord Kazzak)
+        19133, -- Fel Infused Leggings (Lord Kazzak)
+
+        20578, -- Emerald Dragonfang (Ysondre)
+        20635, -- Jade Inlaid Vestments (Ysondre)
+        20636, -- Hibernation Crystal (Ysondre)
+        20637, -- Acid Inscribed Pauldrons (Ysondre)
+        20638, -- Leggings of the Demented Mind (Ysondre)
+        20639, -- Strangely Glyphed Legplates (Ysondre)
+
+        20634, -- Boots of Fright (Taerar)
+        20631, -- Mendicant's Slippers (Taerar)
+        20632, -- Mindtear Band (Taerar)
+        20577, -- Nightmare Blade (Taerar)
+        20633, -- Unnatural Leather Spaulders (Taerar)
+
+        20625, -- Belt of the Dark Bog (Lethon)
+        20626, -- Black Bark Wristbands (Lethon)
+        20627, -- Dark Heart Pants (Lethon)
+        20628, -- Deviate Growth Cap (Lethon)
+        20630, -- Gauntlets of the Shining Light (Lethon)
+
+        20621, -- Boots of the Endless Moor (Emeriss)
+        20623, -- Circlet of Restless Dreams (Emeriss)
+        20622, -- Dragonheart Necklace (Emeriss)
+        20599, -- Polished Ironwood Crossbow (Emeriss)
+        20624, -- Ring of the Unliving (Emeriss)
+
+        20615, -- Dragonspur Wraps (Ysondre, Taerar, Lethon, Emeriss)
+        20616, -- Dragonbone Wristguards (Ysondre, Taerar, Lethon, Emeriss)
+        20617, -- Ancient Corroded Leggings (Ysondre, Taerar, Lethon, Emeriss)
+        20618, -- Gloves of Delusional Power (Ysondre, Taerar, Lethon, Emeriss)
+        20619, -- Acid Inscribed Greaves (Ysondre, Taerar, Lethon, Emeriss)
+        20579, -- Green Dragonskin Cloak (Ysondre, Taerar, Lethon, Emeriss)
+        20581, -- Staff of Rampant Growth (Ysondre, Taerar, Lethon, Emeriss)
+        20582, -- Trance Stone (Ysondre, Taerar, Lethon, Emeriss)
+        20580, -- Hammer of Bestial Fury (Ysondre, Taerar, Lethon, Emeriss)
+        20644, -- Nightmare Engulfed Object (Ysondre, Taerar, Lethon, Emeriss)
     },
 
     Classes = {
