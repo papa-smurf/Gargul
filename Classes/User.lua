@@ -166,20 +166,24 @@ end
 function User:groupMemberNames()
     GL:debug("User:groupMemberNames");
 
+    -- The -1 is used as an extra buffer to make sure we don't miss out on any names...
+    -- Race conditions are a pain in the butt and I've seen them happen with this event
+    local timestamp = GetServerTime() - 1;
+
     -- The group names didn't change so there's no need to fetch them all again
-    if (self.groupMemberNamesCachedAt >= self.groupSetupChangedAt) then
+    if (self.groupMemberNamesCachedAt > self.groupSetupChangedAt) then
         return self.GroupMemberNames;
     end
 
-    self.GroupMemberNames = {};
+    self.groupMemberNamesCachedAt = timestamp;
+
+    local GroupMemberNames = {};
     -- Fetch the name of everyone currently in the raid/party
     for _, Player in pairs(self:groupMembers()) do
-        tinsert(self.GroupMemberNames, string.lower(GL:stripRealm(Player.name)));
+        tinsert(GroupMemberNames, string.lower(GL:stripRealm(Player.name)));
     end
 
-    self.groupMemberNamesCachedAt = GetServerTime();
-
-    GL.Events:fire("GL.GROUP_COMPOSITION_CHANGED");
+    self.GroupMemberNames = GroupMemberNames;
 
     return self.GroupMemberNames;
 end
