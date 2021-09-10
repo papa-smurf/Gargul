@@ -38,7 +38,7 @@ function LootHighlighting:draw(Parent)
         {
             label = "TMB: Highlight LC items",
             description = "Checking this will make sure that items that have a character (LC) priority are highlighted\n(orange glow)",
-            setting = "highlightWishlistedItems",
+            setting = "highlightPriolistedItems",
         },
     };
 

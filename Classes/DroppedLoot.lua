@@ -174,19 +174,31 @@ function DroppedLoot:highlightItemsOfInterest()
                         enableHighlight = true;
                         BorderColor = {.95686, .5490, .72941, 1}; -- Make the border paladin-pink for reserved items
 
-                    -- Check if it's wishlisted
-                    elseif (GL.Settings:get("highlightWishlistedItems")) then
+                    -- Check if it's wishlisted/priolisted
+                    elseif (GL.Settings:get("highlightWishlistedItems")
+                        or GL.Settings:get("highlightPriolistedItems")
+                    ) then
                         local TMBInfo = GL.TMB:byItemLink(itemLink) or {};
+                        local concernsPrio = false;
 
                         -- Check for active wishlist entries
                         for _, Entry in pairs(TMBInfo) do
-                            enableHighlight = true;
                             BorderColor = {1, 1, 1, 1}; -- Make the border priest-white for TMB wishlisted items
 
                             if (Entry.type == Constants.tmbTypePrio) then
+                                concernsPrio = true;
                                 BorderColor = {1, .48627, .0392, 1}; -- Make the border druid-orange for TMB character prio items
                                 break;
                             end
+                        end
+
+                        if (not GL:empty(TMBInfo)
+                            and (
+                                (not concernsPrio and GL.Settings:get("highlightWishlistedItems"))
+                                or (concernsPrio and GL.Settings:get("highlightPriolistedItems"))
+                            )
+                        ) then
+                            enableHighlight = true;
                         end
                     end
 

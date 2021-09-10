@@ -115,7 +115,7 @@ function PackMuleUI:drawInfoSection(Frame)
 
     -- LABEL: Info about PackMule
     local Info = AceGUI:Create("Label");
-    Info:SetText("Only works if you are loot master! Use SELF to refer to yourself, IGNORE to ignore specific items, or use RANDOM to send items to random players (will automatically skip player if his bags are full)! |cffC41E3ANB: PackMule IS CASE SENSITIVE AND IGNORES RECIPES!|r");
+    Info:SetText("Only works if you are loot master! Use SELF to refer to yourself, IGNORE to ignore an item or RANDOM to send items to random players! PackMule ignores recipes, quest items and a list of untradable items (see 'Show Ignored Items' button below!) |cffC41E3ANB: Player names are CASE SENSITIVE!|r");
     Info:SetHeight(20);
     Info:SetWidth(520);
     Info:SetJustifyH("CENTER");
@@ -212,6 +212,16 @@ function PackMuleUI:drawScrollFrame(Frame)
 
     self:drawSpacer(Row, 35, 1);
     Row:AddChild(AddRuleButton);
+
+    self:drawSpacer(Row, 50, 10);
+
+    local IgnoredItems = GL.AceGUI:Create("Button");
+    IgnoredItems:SetText("Show Ignored Items");
+    IgnoredItems:SetHeight(20);
+    IgnoredItems:SetCallback("OnClick", function()
+        GL.Interface.PackMule.IgnoredItems:draw();
+    end);
+    Row:AddChild(IgnoredItems);
 
     return ScrollFrame;
 end

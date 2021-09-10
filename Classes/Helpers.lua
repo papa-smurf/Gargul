@@ -450,8 +450,9 @@ end
 ---@param Items table
 ---@param callback function
 ---@param haltOnError boolean
+---@param sorter function
 ---@return void
-function GL:onItemLoadDo(Items, callback, haltOnError)
+function GL:onItemLoadDo(Items, callback, haltOnError, sorter)
     GL:debug("GL:onItemLoadDo");
 
     GL.DB.Cache.ItemsById = GL.DB.Cache.ItemsById or {};
@@ -541,6 +542,11 @@ function GL:onItemLoadDo(Items, callback, haltOnError)
                 and itemsLoaded >= numberOfItemsToLoad
             ) then
                 callbackCalled = true;
+
+                if (type(sorter) == "function") then
+                    table.sort(ItemData, sorter);
+                end
+
                 callback(ItemData);
                 return;
             end
@@ -564,6 +570,11 @@ function GL:onItemLoadDo(Items, callback, haltOnError)
             and itemsLoaded >= numberOfItemsToLoad
         ) then
             callbackCalled = true;
+
+            if (type(sorter) == "function") then
+                table.sort(ItemData, sorter);
+            end
+
             callback(ItemData);
             return;
         end
