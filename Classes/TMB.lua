@@ -63,7 +63,7 @@ function TMB:byItemId(itemId, inRaidOnly)
     for _, id in pairs(AllLinkedItemIds) do
         id = tostring(id);
         for _, Entry in pairs(GL:tableGet(GL.DB.TMB, tostring(id), {})) do
-            local playerName = string.lower(Entry.character);
+            local playerName = string.lower(GL:stripRealm(Entry.character));
 
             -- If inRaidOnly is true we need to make sure we only return details of people who are actually in the raid
             --- NOTE TO SELF: it's (os) because of the string.lower, if you remove the lower then change below accordingly!
@@ -143,18 +143,13 @@ function TMB:appendTMBItemInfoToTooltip(tooltip)
     local itemIsOnSomeonesPriolist = false;
     local entriesAdded = 0;
     for _, Entry in pairs(TMBInfo) do
-        local playerName = string.lower(Entry.character)
+        local playerName = string.lower(Entry.character);
         local prio = Entry.prio;
         local entryType = Entry.type or Constants.tmbTypeWish;
         local isOffSpec = string.find(Entry.character, "(OS)");
         local prioOffset = 0;
         local sortingOrder = prio;
         local color = GL:classHexColor(GL.Player:classByName(playerName));
-
-        -- Make sure we don't add more names to the tooltip than the user allowed
-        if (entriesAdded >= GL.Settings:get("TMB.maximumNumberOfTooltipEntries")) then
-            break;
-        end
 
         -- We add 100 to the prio (first key) of the object
         -- This object is used for sorting later and is not visible to the player
@@ -175,11 +170,9 @@ function TMB:appendTMBItemInfoToTooltip(tooltip)
         if (entryType == Constants.tmbTypePrio) then
             tinsert(PrioListEntries, {sortingOrder, string.format("|cFF%s    %s[%s]|r", color, playerName, prio)});
             itemIsOnSomeonesPriolist = true;
-            entriesAdded = entriesAdded + 1;
         else
             tinsert(WishListEntries, {sortingOrder, string.format("|cFF%s    %s[%s]|r", color, playerName, prio)});
             itemIsOnSomeonesWishlist = true;
-            entriesAdded = entriesAdded + 1;
         end
     end
 
@@ -194,12 +187,20 @@ function TMB:appendTMBItemInfoToTooltip(tooltip)
         end);
 
         -- Add the entries to the tooltip
+        entriesAdded = 0;
         for _, Entry in pairs(PrioListEntries) do
+            entriesAdded = entriesAdded + 1;
+
             tooltip:AddLine(string.format(
                 "|cFF%s%s|r",
                 GL:classHexColor(GL.Player:classByName(Entry[2])),
                 GL:capitalize(Entry[2]):gsub("%(os%)", " (OS)")
             ));
+
+            -- Make sure we don't add more names to the tooltip than the user allowed
+            if (entriesAdded >= GL.Settings:get("TMB.maximumNumberOfTooltipEntries")) then
+                break;
+            end
         end
     end
 
@@ -219,12 +220,20 @@ function TMB:appendTMBItemInfoToTooltip(tooltip)
         end);
 
         -- Add the entries to the tooltip
+        entriesAdded = 0;
         for _, Entry in pairs(WishListEntries) do
+            entriesAdded = entriesAdded + 1;
+
             tooltip:AddLine(string.format(
                 "|cFF%s%s|r",
                 GL:classHexColor(GL.Player:classByName(Entry[2])),
                 GL:capitalize(Entry[2]):gsub("%(os%)", " (OS)")
             ));
+
+            -- Make sure we don't add more names to the tooltip than the user allowed
+            if (entriesAdded >= GL.Settings:get("TMB.maximumNumberOfTooltipEntries")) then
+                break;
+            end
         end
     end
 end
