@@ -5,7 +5,7 @@ local Overview = GL.Interface.Settings.Overview; ---@type SettingsOverview
 
 ---@class PackMuleSettings
 GL.Interface.Settings.PackMule = {
-    description = "Gargul's PackMule allows you to funnel specific items or items of a given quality to people in your raid automatically without having to manually assign them all the time.\n\nPackMule will only work if you are the master looter, you're in a group and PackMule is enabled! Also, when looting a corpse while holding the shift-button, PackMule will be temporarily disabled, allowing you to loot the old fashioned way!",
+    description = "PackMule allows you to funnel specific items or items of a given quality to people in your raid automatically.\n\nThis will only work if you are the master looter and PackMule is enabled! When looting a corpse while holding the shift-button, PackMule will be temporarily disabled, allowing you to loot the old fashioned way!\n\nPackMule is safe to use because it ignores all recipes, quest items, and a list of other items that are not tradable. Want to check what's on this list? Click the 'Show Ignored Items' button below!",
     wikiUrl = "https://github.com/papa-smurf/Gargul/wiki/Setting-up-PackMules",
 };
 local PackMule = GL.Interface.Settings.PackMule; ---@type PackMuleSettings
@@ -52,6 +52,14 @@ function PackMule:draw(Parent)
         GL.Commands:call("packmule");
     end);
     Parent:AddChild(OpenPackMule);
+
+    local IgnoredItems = GL.AceGUI:Create("Button");
+    IgnoredItems:SetText("Show Ignored Items");
+    IgnoredItems:SetCallback("OnClick", function()
+        GL.Settings:close();
+        GL.Interface.PackMule.IgnoredItems:draw();
+    end);
+    Parent:AddChild(IgnoredItems);
 end
 
 GL:debug("Interface/Settings/PackMule.lua");
