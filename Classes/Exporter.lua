@@ -154,7 +154,7 @@ function Exporter:refreshExportString()
         local dateString = date('%Y-%m-%d', AwardEntry.timestamp);
         local concernsDisenchantedItem = AwardEntry.awardedTo == self.disenchantedItemIdentifier;
 
-        if ((concernsDisenchantedItem or GL.Settings:get("ExportingLoot.includeDisenchantedItems")
+        if ((not concernsDisenchantedItem or GL.Settings:get("ExportingLoot.includeDisenchantedItems")
         ) and (not Exporter.dateSelected or dateString == Exporter.dateSelected)) then
             local awardedTo = AwardEntry.awardedTo;
             if (concernsDisenchantedItem) then
