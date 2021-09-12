@@ -59,6 +59,7 @@ GL.Data.DefaultSettings = {
         includePrioListInfoInLootAnnouncement = true,
         includeWishListInfoInLootAnnouncement = true,
         maximumNumberOfTooltipEntries = 35,
+        maximumNumberOfAnouncementEntries = 5,
         showPrioListInfoOnTooltips = true,
         showWishListInfoOnTooltips = true,
     },

@@ -405,6 +405,7 @@ function DroppedLoot:announce()
             end
 
             -- Show who has priority on this item
+            local maximumNumberOfAnouncementEntries = GL.Settings:get("TMB.maximumNumberOfAnouncementEntries", 5);
             if (itemIsOnSomeonesPriolist
                 and GL.Settings:get("TMB.includePrioListInfoInLootAnnouncement")
             ) then
@@ -414,8 +415,15 @@ function DroppedLoot:announce()
                 end);
 
                 local PrioData = {};
+                local entries = 0;
                 for _, Entry in pairs(ActivePrioListDetails) do
+                    entries = entries + 1;
                     tinsert(PrioData, GL:capitalize(Entry[2]));
+
+                    -- The user only wants to see a limited number of entries, break!
+                    if (entries >= maximumNumberOfAnouncementEntries) then
+                        break;
+                    end
                 end
 
                 GL:sendChatMessage(
@@ -437,8 +445,15 @@ function DroppedLoot:announce()
                 end);
 
                 local WishListData = {};
+                local entries = 0;
                 for _, Entry in pairs(ActiveWishListDetails) do
+                    entries = entries + 1;
                     tinsert(WishListData, GL:capitalize(Entry[2]));
+
+                    -- The user only wants to see a limited number of entries, break!
+                    if (entries >= maximumNumberOfAnouncementEntries) then
+                        break;
+                    end
                 end
 
                 GL:sendChatMessage(
