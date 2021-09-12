@@ -21,6 +21,11 @@ GL.Data.DefaultSettings = {
     welcomeMessage = true,
     fixMasterLootWindow = true,
 
+    ShortcutKeys = {
+        rollOff = "ALT_CLICK",
+        award = "ALT_SHIFT_CLICK",
+        disenchant = "SHIFT_CLICK",
+    },
     AwardingLoot = {
         awardMessagesDisabled = false,
         announceAwardMessagesInRW = false,
@@ -54,6 +59,7 @@ GL.Data.DefaultSettings = {
         includePrioListInfoInLootAnnouncement = true,
         includeWishListInfoInLootAnnouncement = true,
         maximumNumberOfTooltipEntries = 35,
+        maximumNumberOfAnouncementEntries = 5,
         showPrioListInfoOnTooltips = true,
         showWishListInfoOnTooltips = true,
     },

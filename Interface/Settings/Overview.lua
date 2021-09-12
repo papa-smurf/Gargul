@@ -13,6 +13,7 @@ GL.Interface.Settings.Overview = {
     defaultSection = "General",
     Sections = {
         {"General", "General"},
+        {"Shortcut Keys", "ShortcutKeys"},
         {"Rolling", "Rolling"},
         {"Dropped Loot", "DroppedLoot"},
         {"Loot Highlighting", "LootHighlighting"},

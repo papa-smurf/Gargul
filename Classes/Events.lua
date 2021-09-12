@@ -31,6 +31,36 @@ function Events:_init(EventFrame)
     self._initialized = true;
 end
 
+--- Helper function that turns the mouse button pressed and modifier keys held into a identifier string
+---
+---@param mouseButtonPressed string
+---@return string
+function Events:getClickCombination(mouseButtonPressed)
+    local ShortcutKeySegments = {};
+
+    if (IsControlKeyDown()) then
+        tinsert(ShortcutKeySegments, "CTRL");
+    end
+
+    if (IsAltKeyDown()) then
+        tinsert(ShortcutKeySegments, "ALT");
+    end
+
+    if (IsShiftKeyDown()) then
+        tinsert(ShortcutKeySegments, "SHIFT");
+    end
+
+    if (mouseButtonPressed == "LeftButton") then
+        tinsert(ShortcutKeySegments, "CLICK");
+    end
+
+    if (mouseButtonPressed == "RightButton") then
+        tinsert(ShortcutKeySegments, "RIGHTCLICK");
+    end
+
+    return table.concat(ShortcutKeySegments, "_");
+end
+
 --- Register an event listener
 ---
 ---@param identifier string

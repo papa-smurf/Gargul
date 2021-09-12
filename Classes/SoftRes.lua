@@ -373,7 +373,7 @@ function SoftRes:appendSoftReserveInfoToTooltip(Tooltip)
     -- If we're not in a group andd we don't want to see
     -- out-of-raid data there's no point in showing soft-reserves
     if (not GL.User.isInGroup
-        and not Settings:get("SoftRes.hideInfoOfPeopleNotInGroup")
+        and Settings:get("SoftRes.hideInfoOfPeopleNotInGroup")
     ) then
         return true;
     end
@@ -575,7 +575,7 @@ function SoftRes:importGargulData(data)
     local discordUrl = data.metadata.discordUrl or "";
     local id = tostring(data.metadata.id) or "";
     local instance = data.metadata.instance or "";
-    local note = data.metadata.note or "";
+    local raidNote = data.metadata.note or "";
     local raidStartsAt = data.metadata.raidStartsAt or 0;
 
     -- Check the provided meta data to prevent any weird tampering
@@ -583,7 +583,7 @@ function SoftRes:importGargulData(data)
         or GL:empty(instance)
         or type(createdAt) ~= "number"
         or type(discordUrl) ~= "string"
-        or type(note) ~= "string"
+        or type(raidNote) ~= "string"
         or type(raidStartsAt) ~= "number"
     ) then
         return throwGenericInvalidDataError();
@@ -596,7 +596,7 @@ function SoftRes:importGargulData(data)
         importedAt = GetServerTime(),
         importString = importString,
         instance = instance,
-        note = note,
+        note = raidNote,
         raidStartsAt = raidStartsAt,
         url = "https://softres.it/raid/" .. id,
     };
@@ -608,6 +608,7 @@ function SoftRes:importGargulData(data)
         local Items = Entry.items or false;
         local name = Entry.name or false;
         local class = Entry.class or false;
+        local note = Entry.note or "";
         local plusOnes = tonumber(Entry.plusOnes) or 0;
 
         -- Someone provided an invalid class... tamper alert!

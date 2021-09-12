@@ -124,17 +124,15 @@ function GL:hookBagSlotEvents()
             return;
         end
 
-        if (mouseButtonPressed == "LeftButton"
-            and IsAltKeyDown()
-        ) then
-            -- Open the award window if both alt and shift are pressed
-            if (IsShiftKeyDown()) then
-                GL.Interface.Award:draw(itemLink);
+        local keyPressIdentifier = GL.Events:getClickCombination(mouseButtonPressed);
 
-            -- Open the default roll window
-            else
-                GL.MasterLooterUI:draw(itemLink);
-            end
+        -- Open the roll window
+        if (keyPressIdentifier == GL.Settings:get("ShortcutKeys.rollOff")) then
+            GL.MasterLooterUI:draw(itemLink);
+
+        -- Open the award window
+        elseif (keyPressIdentifier == GL.Settings:get("ShortcutKeys.award")) then
+            GL.Interface.Award:draw(itemLink);
         end
     end);
 end

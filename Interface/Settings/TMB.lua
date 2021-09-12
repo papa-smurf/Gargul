@@ -14,22 +14,43 @@ local TMB = GL.Interface.Settings.TMB; ---@type TMBSettings
 function TMB:draw(Parent)
     GL:debug("TMBSettings:draw");
 
-    local MaximumNumberOfNames = GL.AceGUI:Create("Slider");
-    MaximumNumberOfNames:SetLabel("Maximum number of tooltip entries");
-    MaximumNumberOfNames.label:SetTextColor(1, .95686, .40784);
-    MaximumNumberOfNames:SetFullWidth(true);
-    MaximumNumberOfNames:SetValue(GL.Settings:get("TMB.maximumNumberOfTooltipEntries", 35));
-    MaximumNumberOfNames:SetSliderValues(1, 50, 1);
-    MaximumNumberOfNames:SetCallback("OnValueChanged", function(Slider)
+    local MaxTooltipEntries = GL.AceGUI:Create("Slider");
+    MaxTooltipEntries:SetLabel("Maximum number of tooltip entries");
+    MaxTooltipEntries.label:SetTextColor(1, .95686, .40784);
+    MaxTooltipEntries:SetFullWidth(true);
+    MaxTooltipEntries:SetValue(GL.Settings:get("TMB.maximumNumberOfTooltipEntries", 35));
+    MaxTooltipEntries:SetSliderValues(1, 50, 1);
+    MaxTooltipEntries:SetCallback("OnValueChanged", function(Slider)
         local value = tonumber(Slider:GetValue());
 
         if (GL:higherThanZero(value)) then
             GL.Settings:set("TMB.maximumNumberOfTooltipEntries", value);
         end
     end);
-    Parent:AddChild(MaximumNumberOfNames);
+    Parent:AddChild(MaxTooltipEntries);
 
     local HorizontalSpacer = GL.AceGUI:Create("SimpleGroup");
+    HorizontalSpacer:SetLayout("FILL");
+    HorizontalSpacer:SetFullWidth(true);
+    HorizontalSpacer:SetHeight(20);
+    Parent:AddChild(HorizontalSpacer);
+
+    local MaxLootAnnouncementEntries = GL.AceGUI:Create("Slider");
+    MaxLootAnnouncementEntries:SetLabel("Maximum number of dropped loot announcement entries");
+    MaxLootAnnouncementEntries.label:SetTextColor(1, .95686, .40784);
+    MaxLootAnnouncementEntries:SetFullWidth(true);
+    MaxLootAnnouncementEntries:SetValue(GL.Settings:get("TMB.maximumNumberOfAnouncementEntries", 35));
+    MaxLootAnnouncementEntries:SetSliderValues(1, 50, 1);
+    MaxLootAnnouncementEntries:SetCallback("OnValueChanged", function(Slider)
+        local value = tonumber(Slider:GetValue());
+
+        if (GL:higherThanZero(value)) then
+            GL.Settings:set("TMB.maximumNumberOfAnouncementEntries", value);
+        end
+    end);
+    Parent:AddChild(MaxLootAnnouncementEntries);
+
+    HorizontalSpacer = GL.AceGUI:Create("SimpleGroup");
     HorizontalSpacer:SetLayout("FILL");
     HorizontalSpacer:SetFullWidth(true);
     HorizontalSpacer:SetHeight(20);
