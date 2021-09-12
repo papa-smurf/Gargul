@@ -54,21 +54,6 @@ function DroppedLoot:draw(Parent)
             description = "Checking this will make sure that dropped loot of a given minimum quality (see the minimum announce quality setting) is announced to the party or raid chat",
             setting = "announceLootToChat",
         },
-        {
-            label = "Include SoftRes details",
-            description = "Checking this will make sure that SoftRes details of dropped loot are also announced in the chat",
-            setting = "SoftRes.announceInfoInChat",
-        },
-        {
-            label = "Include TMB wishlist details",
-            description = "Checking this will make sure that TMB wishlist details of dropped loot are announced in the chat",
-            setting = "TMB.includeWishListInfoInLootAnnouncement",
-        },
-        {
-            label = "Include TMB item priority details",
-            description = "Checking this will make sure that TMB item priority details of dropped loot is announced in the chat",
-            setting = "TMB.includePrioListInfoInLootAnnouncement",
-        },
     };
 
     Overview:drawCheckboxes(Checkboxes, Parent);
