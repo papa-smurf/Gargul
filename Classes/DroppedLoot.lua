@@ -228,27 +228,25 @@ function DroppedLoot:hookClickEvents()
     for buttonIndex = 1, _G.LOOTFRAME_NUMBUTTONS do
         local Button = getglobal("LootButton" .. buttonIndex);
 
-        Button:HookScript("OnClick", function()
-            if (IsAltKeyDown()) then
-                GL:debug("DroppedLoot:hookClickEvents. Alt click LootButton");
+        Button:HookScript("OnClick", function(_, mouseButtonPressed)
+            local itemLink = GetLootSlotLink(Button.slot);
 
-                local itemLink = GetLootSlotLink(Button.slot);
+            if (not itemLink or type(itemLink) ~= "string") then
+                return;
+            end
 
-                if (not itemLink or type(itemLink) ~= "string") then
-                    return;
-                end
+            local keyPressIdentifier = GL.Events:getClickCombination(mouseButtonPressed);
 
-                -- Open the award window if both alt and shift are pressed
-                if (IsShiftKeyDown()) then
-                    GL.Interface.Award:draw(itemLink);
+            -- Open the roll window
+            if (keyPressIdentifier == GL.Settings:get("ShortcutKeys.rollOff")) then
+                GL.MasterLooterUI:draw(itemLink);
 
-                -- Open the default roll window
-                else
-                    GL.MasterLooterUI:draw(itemLink);
-                end
-            elseif (IsShiftKeyDown()) then
-                local itemLink = GetLootSlotLink(Button.slot);
+            -- Open the award window
+            elseif (keyPressIdentifier == GL.Settings:get("ShortcutKeys.award")) then
+                GL.Interface.Award:draw(itemLink);
 
+            -- Disenchant the item
+            elseif (keyPressIdentifier == GL.Settings:get("ShortcutKeys.disenchant")) then
                 GL.PackMule:disenchant(itemLink);
             end
         end);

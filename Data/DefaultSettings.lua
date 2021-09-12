@@ -21,6 +21,11 @@ GL.Data.DefaultSettings = {
     welcomeMessage = true,
     fixMasterLootWindow = true,
 
+    ShortcutKeys = {
+        rollOff = "ALT_CLICK",
+        award = "ALT_SHIFT_CLICK",
+        disenchant = "SHIFT_CLICK",
+    },
     AwardingLoot = {
         awardMessagesDisabled = false,
         announceAwardMessagesInRW = false,

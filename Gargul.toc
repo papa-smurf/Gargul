@@ -60,6 +60,7 @@ Interface/Settings/TMB.lua
 Interface/Settings/Rolling.lua
 Interface/Settings/SoftRes.lua
 Interface/Settings/General.lua
+Interface/Settings/ShortcutKeys.lua
 Interface/Settings/LootHighlighting.lua
 Interface/Settings/AwardingLoot.lua
 Interface/Settings/ExportingLoot.lua
