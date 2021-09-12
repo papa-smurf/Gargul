@@ -373,7 +373,7 @@ function SoftRes:appendSoftReserveInfoToTooltip(Tooltip)
     -- If we're not in a group andd we don't want to see
     -- out-of-raid data there's no point in showing soft-reserves
     if (not GL.User.isInGroup
-        and not Settings:get("SoftRes.hideInfoOfPeopleNotInGroup")
+        and Settings:get("SoftRes.hideInfoOfPeopleNotInGroup")
     ) then
         return true;
     end
