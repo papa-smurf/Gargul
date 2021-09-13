@@ -178,8 +178,8 @@ function Award:draw(itemLink)
         -- Make sure the initiator has to confirm his choices
         GL.Interface.Dialogs.AwardDialog:open({
             question = string.format("Award %s to |cff%s%s|r?",
-                GL.Player:classByName(winner),
                 itemLink,
+                GL.Player:classByName(winner),
                 winner
             ),
             OnYes = award,
