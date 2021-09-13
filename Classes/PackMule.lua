@@ -92,14 +92,18 @@ function PackMule:isItemIDIgnored(checkItemID)
         return GL:warning(string.format("Unknown item ID '%s'", checkItemID));
     end
 
-    GL:message("Ignored item class IDs: " .. table.concat(self.itemClassIdsToIgnore, ", "));
-    GL:message(string.format("Item class ID of %s: %s", itemID, itemClassID));
+    GL:onItemLoadDo(itemID, function (Items)
+        Loot = Items[1];
 
-    if (GL:inTable(self.itemClassIdsToIgnore, itemClassID)) then
+        if (not GL:inTable({LE_ITEM_BIND_ON_ACQUIRE, LE_ITEM_BIND_QUEST}, Loot.bindType) or ( -- The item is not BoP so we can safely PackMule it
+            not GL:inTable(GL.Data.Constants.UntradeableItems, itemID) -- Untradable items are skipped in quality rules
+            and not GL:inTable(self.itemClassIdsToIgnore, itemClassID) -- Recipes and Quest Items are skipped in quality rules
+        )) then
+            return GL:message("This item is NOT ignored!");
+        end
+
         GL:message("This item is ignored!");
-    else
-        GL:message("This item is not ignored!");
-    end
+    end);
 end
 
 --- Disable PackMule after a zone switch, unless enabled in settings
