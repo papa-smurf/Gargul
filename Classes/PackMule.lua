@@ -81,6 +81,27 @@ function PackMule:_init()
     self._initialized = true;
 end
 
+--- Check if an item ID is ignored by default by PackMule (displayed in chat)
+---
+---@param checkItemID number
+---@return void
+function PackMule:isItemIDIgnored(checkItemID)
+    local itemID, _, _, _, _, itemClassID = GetItemInfoInstant(checkItemID)
+
+    if (not itemID) then
+        return GL:warning(string.format("Unknown item ID '%s'", checkItemID));
+    end
+
+    GL:message("Ignored item class IDs: " .. table.concat(self.itemClassIdsToIgnore, ", "));
+    GL:message(string.format("Item class ID of %s: %s", itemID, itemClassID));
+
+    if (GL:inTable(self.itemClassIdsToIgnore, itemClassID)) then
+        GL:message("This item is ignored!");
+    else
+        GL:message("This item is not ignored!");
+    end
+end
+
 --- Disable PackMule after a zone switch, unless enabled in settings
 ---
 ---@return void

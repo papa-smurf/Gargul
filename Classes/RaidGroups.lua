@@ -6,7 +6,6 @@
 local _, GL = ...;
 
 GL.RaidGroups = GL.RaidGroups or {
-    UIComponents = {},
     rosterString = "",
     migrationInProgress = false,
     raidGroupsWindowIsActive = false,
