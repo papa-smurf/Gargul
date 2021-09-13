@@ -93,7 +93,11 @@ function PackMule:isItemIDIgnored(checkItemID)
     end
 
     GL:onItemLoadDo(itemID, function (Items)
-        Loot = Items[1];
+        local Loot = Items[1];
+
+        if (not Loot) then
+            return GL:warning(string.format("Unknown item ID '%s'", checkItemID));
+        end
 
         if (not GL:inTable({LE_ITEM_BIND_ON_ACQUIRE, LE_ITEM_BIND_QUEST}, Loot.bindType) or ( -- The item is not BoP so we can safely PackMule it
             not GL:inTable(GL.Data.Constants.UntradeableItems, itemID) -- Untradable items are skipped in quality rules
