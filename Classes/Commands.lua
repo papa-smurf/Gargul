@@ -11,9 +11,10 @@ GL.Commands = GL.Commands or {
         export = "Export dropped loot to a CSV format which is compatible with TMB for example.",
         groups = "Open the group window where you can provide a group csv so that you can: see who's missing and sort groups automatically",
         import = "Opens the general import window that includes shortcuts to the TMB, SoftRes or loot priority importers",
-        inspect = "You can check whether players brought items (and how many), e.g. to check for consumables (requires players to have Gargul!): /gl inspect itemId1, itemId2, itemId3",
+        inspect = "You can check whether players brought items (and how many), e.g. to check for consumables (requires players to have Gargul!): /gl inspect itemID1, itemID2, itemID3",
         lootpriority = "Open the loot priority editor where you can import loot priorities separately from That's My BIS (covered here) or do it manually in the loot priority editor which you can open",
         packmule = "Open PackMule which allows you to automatically funnel dropped gear to specific players, very helpful with green items for example",
+        packmuleignores = "Check whether the given item ID is ignored by default by PackMule: /gl packmuleignored itemID",
         plusones = "Open the PlusOnes window that allows you to check and manipulate all plus one values",
         raidcsv = "Output everyone currently in the group in a CSV format",
         rolloff = "Open the RollOff UI where you can announce an item for players to roll on: /gl award [itemLink?]",
@@ -27,7 +28,6 @@ GL.Commands = GL.Commands or {
     ShorthandDictionary = {
         co = "settings",
         config = "settings",
-        ro = "rolloff",
         ro = "rolloff",
         roll = "rolloff",
         a = "award",
@@ -55,6 +55,7 @@ GL.Commands = GL.Commands or {
         ["+1"] = "plusones",
         plusone = "plusones",
         po = "plusones",
+        pi = "packmuleignores",
         cpo = "clearplusones",
         clearplusone = "clearplusones",
     },
@@ -105,6 +106,9 @@ GL.Commands = GL.Commands or {
 
         -- Open the pack mule window
         packmule = function() GL.PackMuleUI:drawSetupWindow(); end,
+
+        -- Check if an item ID is ignored by default by PackMule
+        packmuleignores = function(...) GL.PackMule:isItemIDIgnored(...); end,
 
         -- Open the loot priority window
         lootpriority = function() GL.LootPriority:drawImporter(); end,
