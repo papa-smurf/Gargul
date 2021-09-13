@@ -168,85 +168,90 @@ function PackMule:lootReady()
         end
 
         if (not skip) then
-            local RuleThatApplies = false;
+            GL:onItemLoadDo(itemID, function (Items)
+                --local bindOnPickup = Loot.bindType == LE_ITEM_BIND_ON_ACQUIRE or Loot.bindType == LE_ITEM_BIND_QUEST;
+                local Loot = Items[1];
+                local RuleThatApplies = false;
 
-            for _, Entry in pairs(ValidRules) do
-                -- This is useful to see in which order rules are being handled
-                GL:debug(string.format(
-                    "Item: %s\nOperator: %s\nQuality: %s\nTarget: %s",
-                    Entry.item or "",
-                    Entry.quality or "",
-                    Entry.operator or "",
-                    Entry.target or ""
-                ));
+                for _, Entry in pairs(ValidRules) do
+                    -- This is useful to see in which order rules are being handled
+                    GL:debug(string.format(
+                        "Item: %s\nOperator: %s\nQuality: %s\nTarget: %s",
+                        Entry.item or "",
+                        Entry.quality or "",
+                        Entry.operator or "",
+                        Entry.target or ""
+                    ));
 
-                local item = Entry.item or "";
-                local target = tostring(Entry.target or "");
-                local quality = tonumber(Entry.quality or "");
-                local operator = tostring(Entry.operator or "");
+                    local item = Entry.item or "";
+                    local target = tostring(Entry.target or "");
+                    local quality = tonumber(Entry.quality or "");
+                    local operator = tostring(Entry.operator or "");
 
-                -- SELF serves as a placeholder for the current player name
-                if (target == "SELF") then
-                    target = GL.User.name;
-                end
-
-                -- The potential target replacement above requires us
-                -- To make a local copy of the current Rule entry
-                local Rule = {
-                    item = item,
-                    target = target,
-                    quality = quality,
-                    operator = operator,
-                }
-
-                local ruleItemID = math.floor(tonumber(item) or 0);
-                local ruleConcernsItemID = GL:higherThanZero(ruleItemID);
-
-                -- Check if this is a non item-specific rule (aka quality based rule)
-                if (itemQuality and quality and operator and target and (
-                    (operator == "=" and itemQuality == quality)
-                    or (operator == ">" and itemQuality > quality)
-                    or (operator == "<" and itemQuality < quality)
-                )) then
-                    if (not GL:inTable(GL.Data.Constants.UntradeableItems, itemID) -- Untradable items are skipped in quality rules
-                        and not GL:inTable(self.itemClassIdsToIgnore, itemClassID) -- Recipes and Quest Items are skipped in quality rules
-                    ) then
-                        RuleThatApplies = Rule;
+                    -- SELF serves as a placeholder for the current player name
+                    if (target == "SELF") then
+                        target = GL.User.name;
                     end
-                elseif (item and (
-                    (ruleConcernsItemID and ruleItemID == itemID) -- Item is an ID and the IDs match
-                    or (type(item) == "string" and string.lower(item) == string.lower(itemName)) -- Item is a name and the names match
-                )) then
-                    -- We found an item-specific rule, we can stop checking now
-                    RuleThatApplies = Rule;
-                    break;
-                end
-            end
 
-            -- The rule applies, give it to the designated target
-            if (RuleThatApplies
-                and RuleThatApplies.target ~= "IGNORE"
-            ) then
-                local target = RuleThatApplies.target;
+                    -- The potential target replacement above requires us
+                    -- To make a local copy of the current Rule entry
+                    local Rule = {
+                        item = item,
+                        target = target,
+                        quality = quality,
+                        operator = operator,
+                    }
 
-                -- Check whether we need to give the item to a random player
-                if (target == "RANDOM") then
-                    local GroupMembers = GL.User:groupMembers();
-                    target = GL:tableGet(GroupMembers[math.random( #GroupMembers)] or {}, "name", false);
-                end
+                    local ruleItemID = math.floor(tonumber(item) or 0);
+                    local ruleConcernsItemID = GL:higherThanZero(ruleItemID);
 
-                -- This should be technically impossible, but you never know!
-                if (not target) then
-                    break;
-                end
-
-                for playerIndex = 1, GetNumGroupMembers() do
-                    if (GetMasterLootCandidate(itemIndex, playerIndex) == target) then
-                        GiveMasterLoot(itemIndex, playerIndex);
+                    -- Check if this is a non item-specific rule (aka quality based rule)
+                    if (itemQuality and quality and operator and target and (
+                        (operator == "=" and itemQuality == quality)
+                        or (operator == ">" and itemQuality > quality)
+                        or (operator == "<" and itemQuality < quality)
+                    )) then
+                        if (not GL:inTable({LE_ITEM_BIND_ON_ACQUIRE, LE_ITEM_BIND_QUEST}, Loot.classID) or ( -- The item is not BoP so we can safely PackMule it
+                            not GL:inTable(GL.Data.Constants.UntradeableItems, itemID) -- Untradable items are skipped in quality rules
+                            and not GL:inTable(self.itemClassIdsToIgnore, itemClassID) -- Recipes and Quest Items are skipped in quality rules
+                        )) then
+                            RuleThatApplies = Rule;
+                        end
+                    elseif (item and (
+                        (ruleConcernsItemID and ruleItemID == itemID) -- Item is an ID and the IDs match
+                        or (type(item) == "string" and string.lower(item) == string.lower(itemName)) -- Item is a name and the names match
+                    )) then
+                        -- We found an item-specific rule, we can stop checking now
+                        RuleThatApplies = Rule;
                         break;
                     end
                 end
-            end
+
+                -- The rule applies, give it to the designated target
+                if (RuleThatApplies
+                    and RuleThatApplies.target ~= "IGNORE"
+                ) then
+                    local target = RuleThatApplies.target;
+
+                    -- Check whether we need to give the item to a random player
+                    if (target == "RANDOM") then
+                        local GroupMembers = GL.User:groupMembers();
+                        target = GL:tableGet(GroupMembers[math.random( #GroupMembers)] or {}, "name", false);
+                    end
+
+                    -- This should be technically impossible, but you never know!
+                    if (not target) then
+                        return;
+                    end
+
+                    for playerIndex = 1, GetNumGroupMembers() do
+                        if (GetMasterLootCandidate(itemIndex, playerIndex) == target) then
+                            GiveMasterLoot(itemIndex, playerIndex);
+                            return;
+                        end
+                    end
+                end
+            end);
         end
     end
 

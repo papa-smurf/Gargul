@@ -524,16 +524,20 @@ function GL:onItemLoadDo(Items, callback, haltOnError, sorter)
             local itemId = ItemResult:GetItemID();
             idString = tostring(itemId);
 
+            local itemName, itemLink, itemQuality, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount,
+            itemEquipLoc, itemTexture, sellPrice, classID, subclassID, bindType, expacID, setID, isCraftingReagent = GetItemInfo(itemId);
+
             GL.DB.Cache.ItemsById[idString] = {
                 id = itemId,
-                name = ItemResult:GetItemName(),
-                link = ItemResult:GetItemLink(),
-                icon = ItemResult:GetItemIcon(),
-                location = ItemResult:GetItemLocation(),
-                quality = ItemResult:GetItemQuality(),
-                level = ItemResult:GetCurrentItemLevel(),
-                inventoryType = ItemResult:GetInventoryType(),
-                GUID = ItemResult:GetItemGUID(),
+                name = itemName,
+                link = itemLink,
+                icon = itemTexture,
+                classID = classID,
+                subclassID = subclassID,
+                bindType = bindType,
+                quality = itemQuality,
+                level = itemLevel,
+                inventoryType = itemEquipLoc,
             };
 
             tinsert(ItemData, GL.DB.Cache.ItemsById[idString]);
