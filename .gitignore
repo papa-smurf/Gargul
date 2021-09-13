@@ -1,3 +1,4 @@
 .DS_Store
 .idea
 _ide_helper.lua
+build.sh
