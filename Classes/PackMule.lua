@@ -169,7 +169,6 @@ function PackMule:lootReady()
 
         if (not skip) then
             GL:onItemLoadDo(itemID, function (Items)
-                --local bindOnPickup = Loot.bindType == LE_ITEM_BIND_ON_ACQUIRE or Loot.bindType == LE_ITEM_BIND_QUEST;
                 local Loot = Items[1];
                 local RuleThatApplies = false;
 
@@ -211,7 +210,7 @@ function PackMule:lootReady()
                         or (operator == ">" and itemQuality > quality)
                         or (operator == "<" and itemQuality < quality)
                     )) then
-                        if (not GL:inTable({LE_ITEM_BIND_ON_ACQUIRE, LE_ITEM_BIND_QUEST}, Loot.classID) or ( -- The item is not BoP so we can safely PackMule it
+                        if (not GL:inTable({LE_ITEM_BIND_ON_ACQUIRE, LE_ITEM_BIND_QUEST}, Loot.bindType) or ( -- The item is not BoP so we can safely PackMule it
                             not GL:inTable(GL.Data.Constants.UntradeableItems, itemID) -- Untradable items are skipped in quality rules
                             and not GL:inTable(self.itemClassIdsToIgnore, itemClassID) -- Recipes and Quest Items are skipped in quality rules
                         )) then
