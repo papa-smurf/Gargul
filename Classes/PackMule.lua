@@ -179,6 +179,11 @@ function PackMule:lootReady()
         if (not skip) then
             GL:onItemLoadDo(itemID, function (Items)
                 local Loot = Items[1];
+
+                if (not Loot) then
+                    return;
+                end
+
                 local RuleThatApplies = false;
 
                 for _, Entry in pairs(ValidRules) do
