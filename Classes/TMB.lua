@@ -48,6 +48,14 @@ function TMB:byItemId(itemId, inRaidOnly)
 
     if (type(inRaidOnly) ~= "boolean") then
         inRaidOnly = Settings:get("TMB.hideInfoOfPeopleNotInGroup");
+
+        -- User is not in group and showEntriesWhenSolo is true
+        if (inRaidOnly
+            and not GL.User.isInGroup
+            and GL.Settings:get("TMB.showEntriesWhenSolo")
+        ) then
+            inRaidOnly = false;
+        end
     end
 
     -- The item linked to this id can have multiple IDs (head of Onyxia for example)
@@ -110,15 +118,8 @@ function TMB:appendTMBItemInfoToTooltip(tooltip)
     end
 
     -- If we're not in a group there's no point in showing anything! (unless the non-raider setting is active)
-    if (not GL.User.isInGroup
-        and GL.Settings:get("TMB.hideInfoOfPeopleNotInGroup")
-    ) then
-        return;
-    end
-
-    -- Make sure the user actually wants to see any tooltip data
-    if (not GL.Settings:get("TMB.showWishListInfoOnTooltips")
-        and not GL.Settings:get("TMB.showPrioListInfoOnTooltips")
+    if ((not GL.User.isInGroup and GL.Settings:get("TMB.hideInfoOfPeopleNotInGroup"))
+        and (not GL.User.isInGroup and not GL.Settings:get("TMB.showEntriesWhenSolo"))
     ) then
         return;
     end
@@ -177,7 +178,11 @@ function TMB:appendTMBItemInfoToTooltip(tooltip)
     end
 
     -- Only add the 'Prio List' header if the item is actually on someone's character prio list
-    if (itemIsOnSomeonesPriolist and GL.Settings:get("TMB.showPrioListInfoOnTooltips")) then
+    if (itemIsOnSomeonesPriolist
+        and (GL.Settings:get("TMB.showPrioListInfoOnTooltips")
+            or (not GL.User.isInGroup and GL.Settings:get("TMB.showEntriesWhenSolo"))
+        )
+    ) then
         -- Add the header
         tooltip:AddLine(string.format("\n|cFFff7a0a%s|r", "TMB Prio List"));
 
@@ -205,12 +210,18 @@ function TMB:appendTMBItemInfoToTooltip(tooltip)
     end
 
     -- The item is on someone's prio list and the user is not interested in wishlist entries
-    if (GL.Settings:get("TMB.hideWishListInfoIfPriorityIsPresent") and itemIsOnSomeonesPriolist) then
+    if (GL.Settings:get("TMB.hideWishListInfoIfPriorityIsPresent") and itemIsOnSomeonesPriolist)
+        and (GL.User.isInGroup or not GL.Settings:get("TMB.showEntriesWhenSolo"))
+    then
         return;
     end
 
     -- Only add the 'Wish List' header if the item is actually on someone's wishlist
-    if (itemIsOnSomeonesWishlist and GL.Settings:get("TMB.showWishListInfoOnTooltips")) then
+    if (itemIsOnSomeonesWishlist
+        and (GL.Settings:get("TMB.showWishListInfoOnTooltips")
+            or (not GL.User.isInGroup and GL.Settings:get("TMB.showEntriesWhenSolo"))
+        )
+    ) then
         -- Add the header
         tooltip:AddLine(string.format("\n|cFFffffff%s|r", "TMB Wish List"));
 
