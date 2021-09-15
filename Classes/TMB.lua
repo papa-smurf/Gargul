@@ -32,6 +32,13 @@ function TMB:_init()
     return true;
 end
 
+--- Check whether there is TMB data available
+---
+---@return boolean
+function TMB:available()
+    return not GL:empty(GL.DB.TMB);
+end
+
 --- Fetch an item's TMB info based on its ID
 ---
 ---@param itemId number
@@ -331,11 +338,20 @@ function TMB:drawImporter()
             question = "Are you sure you want to clear the TMB tables?",
             OnYes = function ()
                 TMBBox:SetText("");
-                GL.DB.TMB = {};
+                self:clear();
             end,
         });
     end);
     FooterFrame:AddChild(ClearButton);
+end
+
+--- Clear all TMB data
+---
+---@return void
+function TMB:clear()
+    GL.DB.TMB = {};
+
+    GL.Events:fire("GL.TMB_CLEARED");
 end
 
 --- Import a given tmb string
@@ -431,6 +447,7 @@ function TMB:import(data)
         GL.Interface:getItem(self, "Label.StatusMessage"):SetText(message);
     else
         GL.Interface:getItem(self, "Label.StatusMessage"):SetText("|cff92FF00TMB Import successful|r");
+        GL.Events:fire("GL.TMB_IMPORTED");
     end
 
     return true;

@@ -98,6 +98,7 @@ function GL:_init()
     self.DroppedLoot:_init();
     self.GroupLoot:_init();
     self.PackMule:_init();
+    self.Interface.MasterLooterDialog:_init();
 
     -- Hook the bagslot events
     self:hookBagSlotEvents();

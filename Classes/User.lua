@@ -70,6 +70,13 @@ end
 function User:refresh()
     GL:debug("User:refresh");
 
+    local userWasMasterLooter = self.isMasterLooter;
+
+    -- Make sure the window doens't popup after /reload
+    if (userWasMasterLooter == nil) then
+        userWasMasterLooter = true;
+    end
+
     self.level = UnitLevel("player");
     self.zone = GetRealZoneText();
 
@@ -105,6 +112,13 @@ function User:refresh()
 
             break;
         end
+    end
+
+    -- The user obtained the roll of master looter, fire the appropriate event
+    if (not userWasMasterLooter
+        and self.isMasterLooter
+    ) then
+        GL.Events:fire("GL.USER_OBTAINED_MASTER_LOOTER");
     end
 end
 

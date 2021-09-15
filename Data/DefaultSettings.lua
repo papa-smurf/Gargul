@@ -6,6 +6,7 @@ GL.Data = GL.Data or {};
 
 GL.Data.DefaultSettings = {
     announceLootToChat = true,
+    AutoOpenMasterLooterDialog = true,
     debugModeEnabled = false,
     highlightsDisabled = false,
     highlightHardReservedItems = true,

@@ -77,3 +77,4 @@ Interface/Dialogs/AwardDialog.lua
 Interface/Dialogs/AwardDialogWidget.lua
 Interface/Dialogs/PopupDialog.lua
 Interface/Dialogs/PopupDialogWidget.lua
+Interface/Dialogs/MasterLooterDialog.lua

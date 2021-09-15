@@ -500,6 +500,7 @@ function SoftRes:import(data, openOverview)
 
     if (success) then
         GL:success("Import of SoftRes data successful");
+        GL.Events:fire("GL.SOFTRES_IMPORTED");
 
         self:materializeData();
         GL.Interface.SoftRes.Importer:close();
