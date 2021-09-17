@@ -381,8 +381,6 @@ function PackMuleUI:drawHigherThanQualityRule(Frame, Rule)
         [1] = "1 - Common",
         [2] = "2 - Uncommon",
         [3] = "3 - Rare",
-        [4] = "4 - Epic",
-        [5] = "5 - Legendary"
     });
     HigherThanRuleQuality:SetValue(Rule.quality);
     Row:AddChild(HigherThanRuleQuality);
