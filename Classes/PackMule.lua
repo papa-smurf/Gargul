@@ -163,7 +163,8 @@ function PackMule:lootReady()
     end
 
     for itemIndex = GetNumLootItems(), 1, -1 do
-        local itemName, _, _, itemQuality, locked = select(2, GetLootSlotInfo(itemIndex));
+        local _, itemName, _, _, itemQuality, locked = GetLootSlotInfo(itemIndex);
+
         local itemLink = GetLootSlotLink(itemIndex);
         local itemID, itemClassID;
         local skip = locked; -- Locked means that you aren't able to loot it (tinted red)
