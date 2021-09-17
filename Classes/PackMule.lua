@@ -181,7 +181,7 @@ function PackMule:lootReady()
             GL:onItemLoadDo(itemID, function (Items)
                 local Loot = Items[1];
 
-                if (not Loot) then
+                if (GL:empty(Loot)) then
                     return;
                 end
 
