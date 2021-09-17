@@ -100,7 +100,8 @@ function PackMule:isItemIDIgnored(checkItemID)
         end
 
         if (not GL:inTable({LE_ITEM_BIND_ON_ACQUIRE, LE_ITEM_BIND_QUEST}, Loot.bindType) or ( -- The item is not BoP so we can safely PackMule it
-            not GL:inTable(GL.Data.Constants.UntradeableItems, itemID) -- Untradable items are skipped in quality rules
+            not Loot.quality >= 5 -- Legendary items are skipped
+            and not GL:inTable(GL.Data.Constants.UntradeableItems, itemID) -- Untradable items are skipped in quality rules
             and not GL:inTable(self.itemClassIdsToIgnore, itemClassID) -- Recipes and Quest Items are skipped in quality rules
         )) then
             return GL:message("This item is NOT ignored!");
@@ -162,7 +163,8 @@ function PackMule:lootReady()
     end
 
     for itemIndex = GetNumLootItems(), 1, -1 do
-        local itemName, _, _, itemQuality, locked = select(2, GetLootSlotInfo(itemIndex));
+        local _, itemName, _, _, itemQuality, locked = GetLootSlotInfo(itemIndex);
+
         local itemLink = GetLootSlotLink(itemIndex);
         local itemID, itemClassID;
         local skip = locked; -- Locked means that you aren't able to loot it (tinted red)
@@ -178,6 +180,11 @@ function PackMule:lootReady()
         if (not skip) then
             GL:onItemLoadDo(itemID, function (Items)
                 local Loot = Items[1];
+
+                if (GL:empty(Loot)) then
+                    return;
+                end
+
                 local RuleThatApplies = false;
 
                 for _, Entry in pairs(ValidRules) do
@@ -218,8 +225,11 @@ function PackMule:lootReady()
                         or (operator == ">" and itemQuality > quality)
                         or (operator == "<" and itemQuality < quality)
                     )) then
-                        if (not GL:inTable({LE_ITEM_BIND_ON_ACQUIRE, LE_ITEM_BIND_QUEST}, Loot.bindType) or ( -- The item is not BoP so we can safely PackMule it
-                            not GL:inTable(GL.Data.Constants.UntradeableItems, itemID) -- Untradable items are skipped in quality rules
+                        local bindType = Loot.bindType or LE_ITEM_BIND_NONE;
+
+                        if (not GL:inTable({LE_ITEM_BIND_ON_ACQUIRE, LE_ITEM_BIND_QUEST}, bindType) or ( -- The item is not BoP so we can safely PackMule it
+                            itemQuality < 5 -- Legendary items are skipped
+                            and not GL:inTable(GL.Data.Constants.UntradeableItems, itemID) -- Untradable items are skipped in quality rules
                             and not GL:inTable(self.itemClassIdsToIgnore, itemClassID) -- Recipes and Quest Items are skipped in quality rules
                         )) then
                             RuleThatApplies = Rule;

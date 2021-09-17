@@ -22,7 +22,7 @@ function Rolling:draw(Parent)
         },
         {
             label = "Close after roll",
-            description = "Checking this makes sure that the roll window is automatically closed after you MS/OS roll",
+            description = "Checking this makes sure that the roll window is automatically closed after roll",
             setting = "Rolling.closeAfterRoll",
         },
     };

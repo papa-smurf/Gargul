@@ -520,24 +520,34 @@ function GL:onItemLoadDo(Items, callback, haltOnError, sorter)
         end
 
         ItemResult:ContinueOnItemLoad(function()
+            local itemID = ItemResult:GetItemID();
             itemsLoaded = itemsLoaded + 1;
-            local itemId = ItemResult:GetItemID();
-            idString = tostring(itemId);
 
             local itemName, itemLink, itemQuality, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount,
-            itemEquipLoc, itemTexture, sellPrice, classID, subclassID, bindType, expacID, setID, isCraftingReagent = GetItemInfo(itemId);
+            itemEquipLoc, itemTexture, sellPrice, classID, subclassID, bindType, expacID, setID, isCraftingReagent = GetItemInfo(itemID);
+
+            if (GL:empty(itemName)
+                or GL:empty(itemLink)
+                or type (bindType) ~= "number"
+            ) then
+                GL:debug("GetItemInfo data was not yet available for item with ID: " .. itemID);
+
+                return; -- Return here so we don't cache any incomplete data
+            end
+
+            idString = tostring(itemID);
 
             GL.DB.Cache.ItemsById[idString] = {
-                id = itemId,
-                name = itemName,
-                link = itemLink,
-                icon = itemTexture,
-                classID = classID,
-                subclassID = subclassID,
+                id = itemID,
                 bindType = bindType,
-                quality = itemQuality,
-                level = itemLevel,
+                classID = classID,
+                icon = itemTexture,
                 inventoryType = itemEquipLoc,
+                level = itemLevel,
+                link = itemLink,
+                name = itemName,
+                subclassID = subclassID,
+                quality = itemQuality,
             };
 
             tinsert(ItemData, GL.DB.Cache.ItemsById[idString]);

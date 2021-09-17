@@ -87,6 +87,11 @@ function TMB:draw(Parent)
             description = "Checking this will make sure that TMB item priority details of dropped loot is announced in the chat",
             setting = "TMB.includePrioListInfoInLootAnnouncement",
         },
+        {
+            label = "Show everything when solo",
+            description = "Checking this will make sure that you see all entries on tooltips when not in a group",
+            setting = "TMB.showEntriesWhenSolo",
+        },
     };
 
     Overview:drawCheckboxes(Checkboxes, Parent);
