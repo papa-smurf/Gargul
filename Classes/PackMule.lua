@@ -224,8 +224,10 @@ function PackMule:lootReady()
                         or (operator == ">" and itemQuality > quality)
                         or (operator == "<" and itemQuality < quality)
                     )) then
-                        if (not GL:inTable({LE_ITEM_BIND_ON_ACQUIRE, LE_ITEM_BIND_QUEST}, Loot.bindType) or ( -- The item is not BoP so we can safely PackMule it
-                            not Loot.quality >= 5 -- Legendary items are skipped
+                        local bindType = Loot.bindType or LE_ITEM_BIND_NONE;
+
+                        if (not GL:inTable({LE_ITEM_BIND_ON_ACQUIRE, LE_ITEM_BIND_QUEST}, bindType) or ( -- The item is not BoP so we can safely PackMule it
+                            itemQuality < 5 -- Legendary items are skipped
                             and not GL:inTable(GL.Data.Constants.UntradeableItems, itemID) -- Untradable items are skipped in quality rules
                             and not GL:inTable(self.itemClassIdsToIgnore, itemClassID) -- Recipes and Quest Items are skipped in quality rules
                         )) then
