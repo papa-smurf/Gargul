@@ -6,7 +6,6 @@ GL.Data = GL.Data or {};
 
 GL.Data.DefaultSettings = {
     announceLootToChat = true,
-    AutoOpenMasterLooterDialog = true,
     debugModeEnabled = false,
     highlightsDisabled = false,
     highlightHardReservedItems = true,
@@ -26,6 +25,13 @@ GL.Data.DefaultSettings = {
         rollOff = "ALT_CLICK",
         award = "ALT_SHIFT_CLICK",
         disenchant = "SHIFT_CLICK",
+    },
+    MasterLooting = {
+        autoOpenMasterLooterDialog = true,
+        announceMasterLooter = true,
+        doCountdown = false,
+        announceRollEnd = true,
+        numberOfSecondsToCountdown = 5,
     },
     AwardingLoot = {
         awardMessagesDisabled = false,

@@ -201,12 +201,54 @@ function RollOff:start(CommMessage)
                     end
                 end
 
+                -- Make sure the rolloff stops when time is up
                 self.timerId = GL.Ace:ScheduleTimer(function ()
                     self:stop();
+
+                    -- This means that this player started the rolloff!
+                    if (CommMessage.Sender.id == GL.User.id) then
+                        if (self.countDownTimer) then
+                            GL.Ace:CancelTimer(self.countDownTimer);
+                            self.countDownTimer = nil;
+                        end
+
+                        -- Announce that the roll has ended
+                        if (GL.Settings:get("MasterLooting.announceRollEnd", true)) then
+                            GL:sendChatMessage(
+                                string.format("Stop your rolls!"),
+                                "RAID_WARNING"
+                            );
+                        end
+                    end
                 end, time);
+
+                -- Send a countdown in chat when enabled
+                local numberOfSecondsToCountdown = GL.Settings:get("MasterLooting.numberOfSecondsToCountdown", 5);
+                if (CommMessage.Sender.id == GL.User.id -- This means that this player started the rolloff!
+                    and time > numberOfSecondsToCountdown -- No point in counting down if there's hardly enough time anyways
+                    and GL.Settings:get("MasterLooting.doCountdown", false)
+                ) then
+                    local SecondsAnnounced = {};
+                    self.countDownTimer = GL.Ace:ScheduleRepeatingTimer(function ()
+                        local secondsLeft = math.ceil(GL.Ace:TimeLeft(self.timerId));
+                        if (secondsLeft <= numberOfSecondsToCountdown
+                            and secondsLeft > 0
+                            and not SecondsAnnounced[secondsLeft]
+                        ) then
+                            SecondsAnnounced[secondsLeft] = true;
+
+                            GL:sendChatMessage(
+                                string.format("%s seconds to roll", secondsLeft),
+                                "GROUP"
+                            );
+                        end
+                    end, .1);
+                end
 
                 -- Play raid warning sound
                 GL:playSound(8959, "Master");
+
+                -- Items should only contain 1 item but lets add a return just in case
                 return;
             end
         end);

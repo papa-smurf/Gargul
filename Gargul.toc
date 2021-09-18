@@ -1,4 +1,4 @@
-## Interface: 11307
+## Interface: 20502
 ## Title: Gargul
 ## Title: |cff8aecffGargul|r
 ## Author: <Give it a Lick> Zhorax - Razorgore
@@ -64,6 +64,7 @@ Interface/Settings/ShortcutKeys.lua
 Interface/Settings/LootHighlighting.lua
 Interface/Settings/AwardingLoot.lua
 Interface/Settings/ExportingLoot.lua
+Interface/Settings/MasterLooting.lua
 Interface/Settings/SlashCommands.lua
 Interface/SoftRes/Importer.lua
 Interface/SoftRes/Overview.lua

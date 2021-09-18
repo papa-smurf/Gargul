@@ -63,11 +63,6 @@ function General:draw(Parent)
             end,
         },
         {
-            label = "Show Master Looter Window",
-            description = "This setting enables the master looter window that provides easy access to clearing and importing data from SoftRes and Thatsmybis",
-            setting = "AutoOpenMasterLooterDialog",
-        },
-        {
             label = "Experimental: enable debug mode",
             description = "Checking this will enable debug mode, showing debug info in your chatbox. This is only meant for developers actively working on the Gargul add-on",
             setting = "debugModeEnabled",
