@@ -88,6 +88,11 @@ function TMB:draw(Parent)
             setting = "TMB.includePrioListInfoInLootAnnouncement",
         },
         {
+            label = "Show reminder to use Gargul",
+            description = "When trying to assign loot without using Gargul a reminder is shown to use Gargul instead in order to make exporting loot possible",
+            setting = "TMB.showLootAssignmentReminder",
+        },
+        {
             label = "Show everything when solo",
             description = "Checking this will make sure that you see all entries on tooltips when not in a group",
             setting = "TMB.showEntriesWhenSolo",

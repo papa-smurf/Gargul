@@ -29,6 +29,19 @@ function DroppedLoot:_init()
     -- Fire DroppedLoot:lootReady every time a loot window is opened
     Events:register("DroppedLootLootOpenedListener", "LOOT_OPENED", function () self:lootOpened(); end);
 
+    -- Show a reminder window to use Gargul when trying to assign using native loot assignment
+    Events:register("DroppedLootOpenMasterLooterListListener", "OPEN_MASTER_LOOT_LIST", function ()
+        if (GL.Settings:get("TMB.showLootAssignmentReminder")
+            and GL.TMB:available()
+        ) then
+            GL.Interface.ReminderToAssignLootUsingGargul:draw();
+        end
+    end);
+
+    MasterLooterFrame:HookScript("OnHide", function()
+        GL.Interface.ReminderToAssignLootUsingGargul:close();
+    end);
+
     -- Make sure to keep track of the loot window status
     Events:register("DroppedLootLootClosedListener", "LOOT_CLOSED", function ()
         DroppedLoot.lootWindowIsOpened = false;

@@ -13,6 +13,7 @@ GL.Interface.Settings.Overview = {
     defaultSection = "General",
     Sections = {
         {"General", "General"},
+        {"Master Looting", "MasterLooting"},
         {"Shortcut Keys", "ShortcutKeys"},
         {"Rolling", "Rolling"},
         {"Dropped Loot", "DroppedLoot"},
@@ -313,9 +314,10 @@ function Overview:drawCheckboxes(Checkboxes, Parent)
             GL.Settings:set(Entry.setting, Checkbox:GetValue());
 
             if (type(Entry.callback) == "function") then
-                Entry.callback();
+                Entry.callback(Checkbox);
             end
         end);
+        GL.Interface:setItem(GL.Settings, Entry.setting, Checkbox);
         Parent:AddChild(Checkbox);
     end
 end

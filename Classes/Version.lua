@@ -120,7 +120,7 @@ function Version:inspectGroup()
     GL:message("Checking group member addon versions...");
 
     self.GroupMembers = {}; -- Reset the self.GroupMembers object
-    local numberOfGroupMembers = 0;
+    local numberOfActiveGroupMembers = 0;
 
     -- Loop through all members of the group (party or raid)
     for _, Player in pairs(GL.User:groupMembers()) do
@@ -128,7 +128,7 @@ function Version:inspectGroup()
             -- No need to request our own version
             if (Player.name ~= GL.User.name) then
                 self.GroupMembers[GL:stripRealm(Player.name)] = "-";
-                numberOfGroupMembers = numberOfGroupMembers + 1;
+                numberOfActiveGroupMembers = numberOfActiveGroupMembers + 1;
             end
         end
     end
@@ -139,10 +139,101 @@ function Version:inspectGroup()
         "RAID"
     ):send();
 
+    -- Report back as soon as all the answers are in
+    self.recurringCheckTimer = GL.Ace:ScheduleRepeatingTimer(function ()
+        -- We received an answer from everyone
+        if (GL:count(CommMessage.Responses or {}) >= numberOfActiveGroupMembers) then
+            self:clearTimers();
+            self:finishInspectGroup(CommMessage);
+        end
+    end, .2);
+
     -- Even if we're still missing an answer from some of the group members
     -- we still want to make sure our inspection end after a set amount of time
-    GL.Ace:ScheduleTimer(function ()
+    self.maximumCheckTimer = GL.Ace:ScheduleTimer(function ()
+        self:clearTimers();
         self:finishInspectGroup(CommMessage);
+    end, 5);
+end
+
+--- Clear any outstanding timers
+---
+---@return void
+function Version:clearTimers()
+    if (self.recurringCheckTimer) then
+        GL.Ace:CancelTimer(self.recurringCheckTimer);
+        self.recurringCheckTimer = nil;
+    end
+
+    if (self.maximumCheckTimer) then
+        GL.Ace:CancelTimer(self.maximumCheckTimer);
+        self.maximumCheckTimer = nil;
+    end
+end
+
+--- Check which players are using the addon and send the results to a given callback
+---
+---@param callback function
+---@return void
+function Version:playersUsingAddon(callback)
+    GL:debug("Version:inspectGroup");
+
+    if (not GL.User.isInGroup
+        or not callback
+        or type(callback) ~= "function"
+    ) then
+        callback({});
+        return;
+    end
+
+    local GroupMembers = {};
+    local numberOfActiveGroupMembers = 0;
+
+    -- Loop through all members of the group (party or raid)
+    for _, Player in pairs(GL.User:groupMembers()) do
+        if (Player.online) then
+            -- No need to request our own version
+            if (Player.name ~= GL.User.name) then
+                GroupMembers[GL:stripRealm(Player.name)] = false;
+                numberOfActiveGroupMembers = numberOfActiveGroupMembers + 1;
+            end
+        end
+    end
+
+    local CommMessage = GL.CommMessage.new(
+        CommActions.requestAppVersion,
+        nil,
+        "RAID"
+    ):send();
+
+    local function handleResponses(GroupMembers, Responses, callback)
+        for _, Response in pairs(Responses) do
+            local senderName = Response.Sender.name;
+
+            if (GroupMembers[senderName] ~= nil) then
+                GroupMembers[senderName] = true;
+            end
+        end
+
+        callback(GroupMembers);
+    end
+
+    -- Report back as soon as all the answers are in
+    self.recurringCheckTimer = GL.Ace:ScheduleRepeatingTimer(function ()
+        -- We received an answer from everyone
+        if (GL:count(CommMessage.Responses or {}) >= numberOfActiveGroupMembers) then
+            self:clearTimers();
+            handleResponses(GroupMembers, CommMessage.Responses, callback);
+            return;
+        end
+    end, .2);
+
+    -- Even if we're still missing an answer from some of the group members
+    -- we still want to make sure our inspection end after a set amount of time
+    self.maximumCheckTimer = GL.Ace:ScheduleTimer(function ()
+        self:clearTimers();
+        handleResponses(GroupMembers, CommMessage.Responses, callback);
+        return;
     end, 5);
 end
 

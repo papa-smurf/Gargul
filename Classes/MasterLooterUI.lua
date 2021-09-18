@@ -357,9 +357,9 @@ function MasterLooterUI:draw(itemLink)
         Window:AddChild(FifthRow);
 
         local PlayersTableFrame = AceGUI:Create("SimpleGroup");
-        PlayersTableFrame:SetLayout("Flow");
-        PlayersTableFrame:SetWidth(1);
-        PlayersTableFrame:SetHeight(348);
+        PlayersTableFrame:SetLayout("fixed");
+        PlayersTableFrame:SetFullWidth(true);
+        PlayersTableFrame:SetHeight(158);
         FifthRow:AddChild(PlayersTableFrame);
 
         local CloseOnStart = AceGUI:Create("CheckBox");

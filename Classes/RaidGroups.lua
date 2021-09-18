@@ -50,17 +50,18 @@ function RaidGroups:drawImporter()
     end
 
     -- Create a container/parent frame
-    local RaidGroupsFrame = AceGUI:Create("Frame");
-    RaidGroupsFrame:SetTitle("Gargul v" .. GL.version);
-    RaidGroupsFrame:SetStatusText("Addon v" .. GL.version);
-    RaidGroupsFrame:SetLayout("Flow");
-    RaidGroupsFrame:SetWidth(600);
-    RaidGroupsFrame:SetHeight(450);
-    RaidGroupsFrame.statustext:GetParent():Hide(); -- Hide the statustext bar
-    RaidGroupsFrame:SetCallback("OnClose", function()
+    local Window = AceGUI:Create("Frame");
+    Window:SetTitle("Gargul v" .. GL.version);
+    Window:SetStatusText("Addon v" .. GL.version);
+    Window:SetLayout("Flow");
+    Window:EnableResize(false);
+    Window:SetWidth(600);
+    Window:SetHeight(376);
+    Window.statustext:GetParent():Hide(); -- Hide the statustext bar
+    Window:SetCallback("OnClose", function()
         self.raidGroupsWindowIsActive = false;
     end);
-    self.UIComponents.MainFrame = RaidGroupsFrame;
+    self.UIComponents.MainFrame = Window;
 
     -- LABEL: Explanation of the RaidGroups window
     local Explanation = AceGUI:Create("Label");
@@ -75,7 +76,7 @@ Here you can quickly sort your groups based on premade rosters and can easily ch
 You can use group 9 ('9:') to define main tanks. Assigning main tanks automatically is not possible due to technical limitations, meaning you'll have to click the "Assign Tanks" button multiple times.
 
 ]]);
-    RaidGroupsFrame:AddChild(Explanation);
+    Window:AddChild(Explanation);
 
     -- Edit box
     local RaidGroupsBox = AceGUI:Create("MultiLineEditBox");
@@ -86,7 +87,7 @@ You can use group 9 ('9:') to define main tanks. Assigning main tanks automatica
     RaidGroupsBox:SetText(RaidGroups.rosterString);
     RaidGroupsBox:SetNumLines(9);
     RaidGroupsBox:SetMaxLetters(999999999);
-    RaidGroupsFrame:AddChild(RaidGroupsBox);
+    Window:AddChild(RaidGroupsBox);
 
     RaidGroupsBox:SetCallback("OnTextChanged", function(_, _, text)
         RaidGroups.rosterString = text;
@@ -96,22 +97,22 @@ You can use group 9 ('9:') to define main tanks. Assigning main tanks automatica
     CheckAttendanceOutput:SetFullWidth(true);
     CheckAttendanceOutput:SetHeight(300);
     CheckAttendanceOutput:SetText("");
-    RaidGroupsFrame:AddChild(CheckAttendanceOutput);
+    Window:AddChild(CheckAttendanceOutput);
 
     local Spacer = AceGUI:Create("SimpleGroup");
     Spacer:SetLayout("Flow");
     Spacer:SetWidth(1);
     Spacer:SetHeight(95);
-    RaidGroupsFrame:AddChild(Spacer);
+    Window:AddChild(Spacer);
 
     --[[
         FOOTER BUTTON PARENT FRAME
     ]]
     local FooterFrame = AceGUI:Create("SimpleGroup");
     FooterFrame:SetLayout("Flow");
-    FooterFrame:SetFullWidth(true);
-    FooterFrame:SetHeight(50);
-    RaidGroupsFrame:AddChild(FooterFrame);
+    FooterFrame:SetWidth(340);
+    FooterFrame:SetHeight(30);
+    Window:AddChild(FooterFrame);
 
     local AttendanceCheckButton = AceGUI:Create("Button");
     AttendanceCheckButton:SetText("Check Attendance");
@@ -129,13 +130,7 @@ You can use group 9 ('9:') to define main tanks. Assigning main tanks automatica
     end);
     FooterFrame:AddChild(SaveButton);
 
-    Spacer = AceGUI:Create("SimpleGroup");
-    Spacer:SetLayout("Flow");
-    Spacer:SetWidth(120);
-    Spacer:SetHeight(1);
-    FooterFrame:AddChild(Spacer);
-
-    local SetTanksButton = CreateFrame("Button", nil, RaidGroupsFrame.frame, "SecureActionButtonTemplate, GameMenuButtonTemplate");
+    local SetTanksButton = CreateFrame("Button", nil, Window.frame, "SecureActionButtonTemplate, GameMenuButtonTemplate");
     SetTanksButton:SetAttribute("type", "macro");
     SetTanksButton:SetSize(120, 24);
     SetTanksButton:SetText("Assign Tanks");

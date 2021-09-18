@@ -3,7 +3,7 @@
 ## Title: |cff8aecffGargul|r
 ## Author: <Give it a Lick> Zhorax - Razorgore
 ## Notes: Loot addon that supports softres sr, thatsmybis tmb, auto looting, loot priorities, plus one tracking and much more
-## Version: 3.3.10
+## Version: 3.3.11
 ## DefaultState: enabled
 ## SavedVariables: GargulDB
 
@@ -64,6 +64,7 @@ Interface/Settings/ShortcutKeys.lua
 Interface/Settings/LootHighlighting.lua
 Interface/Settings/AwardingLoot.lua
 Interface/Settings/ExportingLoot.lua
+Interface/Settings/MasterLooting.lua
 Interface/Settings/SlashCommands.lua
 Interface/SoftRes/Importer.lua
 Interface/SoftRes/Overview.lua
@@ -78,3 +79,4 @@ Interface/Dialogs/AwardDialogWidget.lua
 Interface/Dialogs/PopupDialog.lua
 Interface/Dialogs/PopupDialogWidget.lua
 Interface/Dialogs/MasterLooterDialog.lua
+Interface/ReminderToAssignLootUsingGargul.lua
