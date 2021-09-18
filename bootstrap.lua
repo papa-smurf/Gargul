@@ -13,6 +13,7 @@ GL.testMode = false;
 GL.version = GetAddOnMetadata(GL.name, "Version");
 GL.DebugLines = {};
 GL.EventFrame = {};
+GL.loadedOn = 32503680000; -- Year 3000
 
 -- Register our addon with the Ace framework
 GL.Ace = LibStub("AceAddon-3.0"):NewAddon(GL.name, "AceConsole-3.0", "AceComm-3.0", "AceTimer-3.0");
@@ -41,6 +42,9 @@ function GL:bootstrap(_, _, addonName)
 
     -- Add the minimap icon
     self.MinimapButton:_init();
+
+    -- Mark the add-on as fully loaded
+    GL.loadedOn = GetServerTime();
 end
 
 --- Callback to be fired when the addon is completely loaded
