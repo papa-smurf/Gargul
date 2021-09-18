@@ -1,4 +1,4 @@
-## Interface: 20502
+## Interface: 11307
 ## Title: Gargul
 ## Title: |cff8aecffGargul|r
 ## Author: <Give it a Lick> Zhorax - Razorgore
@@ -78,3 +78,4 @@ Interface/Dialogs/AwardDialogWidget.lua
 Interface/Dialogs/PopupDialog.lua
 Interface/Dialogs/PopupDialogWidget.lua
 Interface/Dialogs/MasterLooterDialog.lua
+Interface/ReminderToAssignLootUsingGargul.lua
