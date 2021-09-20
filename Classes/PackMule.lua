@@ -302,9 +302,10 @@ function PackMule:lootMatchesSpecificRule(lootName, ruleItemName)
     -- When found this indicates that this is a wildcard rule
     local firstAsteriskPosition = strfind(ruleItemName, "*");
 
-    -- No asterisk was found so we're looking for an exact match
+    -- No asterisk was found so we're looking for
+    -- an exact match which we already checked before
     if (not firstAsteriskPosition) then
-        return lootName == ruleItemName;
+        return false;
     end
 
     -- Find the last asterisk
