@@ -32,6 +32,7 @@ GL.Data.DefaultSettings = {
         doCountdown = false,
         announceRollEnd = true,
         numberOfSecondsToCountdown = 5,
+        preferredMasterLootingThreshold = 2,
     },
     AwardingLoot = {
         awardMessagesDisabled = false,
