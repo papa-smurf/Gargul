@@ -236,7 +236,7 @@ function PackMule:lootReady()
                         end
                     elseif (item and (
                         (ruleConcernsItemID and ruleItemID == itemID) -- Item is an ID and the IDs match
-                        or (type(item) == "string" and string.lower(item) == string.lower(itemName)) -- Item is a name and the names match
+                        or (type(item) == "string" and PackMule:lootItemMatchesSpecificRule(itemName,item)) -- item (rule) is a name and it matches loot name
                     )) then
                         -- We found an item-specific rule, we can stop checking now
                         RuleThatApplies = Rule;
@@ -273,6 +273,21 @@ function PackMule:lootReady()
     end
 
     self.processing = false;
+end
+
+---See if loot item name matches a specific rule, supporting wildcard prefix
+---
+---@return boolean
+function PackMule:lootItemMatchesSpecificRule(lootItemName,specificRuleName)
+	if (string.lower(lootItemName) == string.lower(specificRuleName)) then -- loot item name is exact match
+		return true;
+	elseif (GL:strStartsWith(specificRuleName,"*")) then --specific rule starts with wildcard
+		local searchName = string.sub(specificRuleName,2,-1); --strip wildcard
+		if (GL:strEndsWith(lootItemName,searchName)) then --loot item name matches wildcard search
+			return true;
+		end
+	end
+	return false;
 end
 
 --- Empty the ruleset

@@ -386,6 +386,15 @@ function GL:strStartsWith(str, startStr)
    return string.sub(str, 1, string.len(startStr)) == startStr;
 end
 
+--- Check whether the provided string ends with a given substring
+---
+---@param str string
+---@param startStr string
+---@return boolean
+function GL:strEndsWith(str, endStr)
+	return string.sub(str,-(string.len(endStr))) == endStr;
+end
+
 --- Print large quantities of text to a multiline editbox
 --- Very useful for debugging purposes, should not be used for anything else
 ---
