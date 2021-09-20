@@ -18,6 +18,7 @@ function DroppedLoot:draw(Parent)
     local AceGUI = GL.AceGUI;
 
     local MinimumQualityLabel = AceGUI:Create("Label");
+    MinimumQualityLabel:SetColor(1, .95686, .40784);
     MinimumQualityLabel:SetText("The minimum quality an item should have in order to be announced in chat");
     MinimumQualityLabel:SetHeight(20);
     MinimumQualityLabel:SetFullWidth(true);

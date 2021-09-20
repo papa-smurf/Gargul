@@ -289,7 +289,6 @@ function Overview:updateShareButton()
 
     GL.Ace:ScheduleTimer(function ()
         -- The user doesn't have sufficient permissions to broadcast the data
-        -- The user doesn't have sufficient permissions to broadcast the data
         if (not GL.User.isInGroup
             or (not GL.User.isMasterLooter
                 and not GL.User.isLead
