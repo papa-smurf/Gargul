@@ -293,6 +293,11 @@ function PackMule:lootMatchesSpecificRule(lootName, ruleItemName)
     lootName = string.lower(lootName);
     ruleItemName = string.lower(ruleItemName);
 
+    -- No need to check any further, they match
+    if (lootName == ruleItemName) then
+        return true;
+    end
+
     -- Find the first asterisk in the ruleItemName
     -- When found this indicates that this is a wildcard rule
     local firstAsteriskPosition = strfind(ruleItemName, "*");
