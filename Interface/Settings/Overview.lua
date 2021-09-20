@@ -30,6 +30,9 @@ GL.Interface.Settings.Overview = {
 };
 local Overview = GL.Interface.Settings.Overview; ---@type SettingsOverview
 
+--- Draw a setting section
+---
+---@param section string|nil
 ---@return void
 function Overview:draw(section)
     GL:debug("Overview:draw");
@@ -37,7 +40,7 @@ function Overview:draw(section)
     local AceGUI = GL.AceGUI;
 
     if (self.isVisible) then
-        return false;
+        return;
     end
 
     self.isVisible = true;
