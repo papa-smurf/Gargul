@@ -236,7 +236,7 @@ function PackMule:lootReady()
                         end
                     elseif (item and (
                         (ruleConcernsItemID and ruleItemID == itemID) -- Item is an ID and the IDs match
-                        or (type(item) == "string" and string.lower(item) == string.lower(itemName)) -- Item is a name and the names match
+                        or (self:lootMatchesSpecificRule(itemName, item)) -- The rule's item name matches the loot name
                     )) then
                         -- We found an item-specific rule, we can stop checking now
                         RuleThatApplies = Rule;
@@ -273,6 +273,54 @@ function PackMule:lootReady()
     end
 
     self.processing = false;
+end
+
+--- Check whether the dropped item's name matches the rule's item name
+--- *ruleItemName results in GL:strEndsWith(lootName, ruleItemname
+--- ruleItemName* results in GL:strStartsWith(lootName, ruleItemname
+--- *ruleItemName* results in strfind(lootName, ruleItemname
+---
+---@param lootName string
+---@param ruleItemName string
+---@return boolean
+function PackMule:lootMatchesSpecificRule(lootName, ruleItemName)
+    if (type(lootName) ~= "string")
+        or type(ruleItemName) ~= "string"
+    then
+        return false;
+    end
+
+    lootName = string.lower(lootName);
+    ruleItemName = string.lower(ruleItemName);
+
+    -- Find the first asterisk in the ruleItemName
+    -- When found this indicates that this is a wildcard rule
+    local firstAsteriskPosition = strfind(ruleItemName, "*");
+
+    -- No asterisk was found so we're looking for an exact match
+    if (not firstAsteriskPosition) then
+        return lootName == ruleItemName;
+    end
+
+    -- Find the last asterisk
+    local lastAsteriskPosition = strfind(ruleItemName, "*", firstAsteriskPosition + 1);
+
+    -- Remove all asterisks from the ruleItemName
+    ruleItemName = ruleItemName:gsub("%*", "");
+
+    -- If there's only 1 asterisk then the name either
+    -- has to start with or end with the name provided in the rule
+    if (not lastAsteriskPosition) then
+
+        if (firstAsteriskPosition == 1) then
+            return GL:strEndsWith(lootName, ruleItemName);
+        end
+
+        return GL:strStartsWith(lootName, ruleItemName);
+    end
+
+    -- There are two asterisks, so check if the ruleItemName exists in the lootName
+    return GL:strContains(lootName, ruleItemName);
 end
 
 --- Empty the ruleset
