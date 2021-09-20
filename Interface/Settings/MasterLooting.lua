@@ -13,6 +13,58 @@ local MasterLooting = GL.Interface.Settings.MasterLooting; ---@type MasterLootin
 function MasterLooting:draw(Parent)
     GL:debug("MasterLootingSettings:draw");
 
+    -- SetLootMethod('Master','Character Name','1')
+
+    -- Give classic era users an easy way to change the master looting threshold
+    if (GL.isEra) then
+        local LootThresholdLabel = GL.AceGUI:Create("Label");
+        LootThresholdLabel:SetText("Master Loot quality Threshold");
+        LootThresholdLabel:SetColor(1, .95686, .40784);
+        LootThresholdLabel:SetHeight(20);
+        LootThresholdLabel:SetFullWidth(true);
+        Parent:AddChild(LootThresholdLabel);
+
+        local DropdownItems = {
+            [0] = "0 - Poor",
+            [1] = "1 - Common",
+            [2] = "2 - Uncommon",
+            [3] = "3 - Rare",
+            [4] = "4 - Epic",
+            [5] = "5 - Legendary",
+        };
+
+        local LootThreshold = GL.AceGUI:Create("Dropdown");
+        LootThreshold:SetValue(GL.Settings:get("MasterLooting.preferredMasterLootingThreshold", 2));
+        LootThreshold:SetList(DropdownItems);
+        LootThreshold:SetText(DropdownItems[GL.Settings:get("MasterLooting.preferredMasterLootingThreshold", 2)]);
+        LootThreshold:SetWidth(150);
+        LootThreshold:SetCallback("OnValueChanged", function()
+            GL.Settings:set("MasterLooting.preferredMasterLootingThreshold", LootThreshold:GetValue());
+        end);
+        Parent:AddChild(LootThreshold);
+
+        local VerticalSpacer = GL.AceGUI:Create("SimpleGroup");
+        VerticalSpacer:SetLayout("FILL");
+        VerticalSpacer:SetWidth(10);
+        VerticalSpacer:SetHeight(10);
+        Parent:AddChild(VerticalSpacer);
+
+        local ApplyLootThreshold = GL.AceGUI:Create("Button");
+        ApplyLootThreshold:SetText("Apply");
+        ApplyLootThreshold:SetWidth("80");
+        ApplyLootThreshold:SetCallback("OnClick", function()
+            local threshold = LootThreshold:GetValue();
+            SetLootMethod('Master', GL.User.name, tostring(threshold));
+        end);
+        Parent:AddChild(ApplyLootThreshold);
+
+        local HorizontalSpacer = GL.AceGUI:Create("SimpleGroup");
+        HorizontalSpacer:SetLayout("FILL");
+        HorizontalSpacer:SetFullWidth(true);
+        HorizontalSpacer:SetHeight(10);
+        Parent:AddChild(HorizontalSpacer);
+    end
+
     local Checkboxes = {
         {
             label = "Show Master Looter Popup",
@@ -21,11 +73,12 @@ function MasterLooting:draw(Parent)
         },
         {
             label = "Announce Master Looter",
-            description = "When enabled you automatically post a message in chat when you are given the role of master looter. Disabling this rule automatically disables the 'Countdown on rolls' setting in order to raise awareness for Gargul",
+            description = "When enabled you automatically post a message in chat when you are given the role of master looter. Disabling this rule automatically disables the 'Countdown on rolls' and enables the 'Spread the word!' settings in order to raise awareness for Gargul",
             setting = "MasterLooting.announceMasterLooter",
             callback = function (Checkbox)
                 if (not Checkbox:GetValue()) then
                     GL.Settings:set("MasterLooting.doCountdown", false);
+                    GL.Settings:set("spreadTheWord", true);
                     local LinkedCheckbox = GL.Interface:getItem(GL.Settings, "CheckBox." .. "MasterLooting.doCountdown");
 
                     if (LinkedCheckbox) then

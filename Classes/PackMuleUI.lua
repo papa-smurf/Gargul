@@ -115,7 +115,7 @@ function PackMuleUI:drawInfoSection(Frame)
 
     -- LABEL: Info about PackMule
     local Info = AceGUI:Create("Label");
-    Info:SetText("Only works if you are loot master! Use SELF to refer to yourself, IGNORE to ignore an item or RANDOM to send items to random players! PackMule ignores recipes, quest items and a list of untradable items (see 'Show Ignored Items' button below!) |cffC41E3ANB: Player names are CASE SENSITIVE!|r");
+    Info:SetText("Use SELF to refer to yourself, IGNORE to ignore an item or RANDOM to send items to random players! PackMule ignores recipes, quest items and a list of untradable items, see button below! You can add item IDs, item names and wilcards: '*ushroom', 'mushroo*' and '*ushroo*' will all match an item named 'mushroom'. |cffC41E3ANB: Player names are CASE SENSITIVE!|rgl pm");
     Info:SetHeight(20);
     Info:SetWidth(520);
     Info:SetJustifyH("CENTER");
@@ -187,7 +187,7 @@ function PackMuleUI:drawScrollFrame(Frame)
     local ScrollFrameParent = AceGUI:Create("SimpleGroup");
     ScrollFrameParent:SetLayout("Fill");
     ScrollFrameParent:SetFullWidth(true);
-    ScrollFrameParent:SetHeight(129);
+    ScrollFrameParent:SetHeight(100);
     Frame:AddChild(ScrollFrameParent);
 
     local ScrollFrame = AceGUI:Create("ScrollFrame");

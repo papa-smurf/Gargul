@@ -56,6 +56,7 @@ function ShortcutKeys:draw(Parent)
 
     local RollOffLabel = AceGUI:Create("Label");
     RollOffLabel:SetText("Set the hotkey for opening the master loot window where you can start a roll (default alt+click)");
+    RollOffLabel:SetColor(1, .95686, .40784);
     RollOffLabel:SetHeight(20);
     RollOffLabel:SetFullWidth(true);
     Parent:AddChild(RollOffLabel);
@@ -78,6 +79,7 @@ function ShortcutKeys:draw(Parent)
 
     local AwardLabel = AceGUI:Create("Label");
     AwardLabel:SetText("Set the hotkey for opening the item award window (default alt+shift+click)");
+    AwardLabel:SetColor(1, .95686, .40784);
     AwardLabel:SetHeight(20);
     AwardLabel:SetFullWidth(true);
     Parent:AddChild(AwardLabel);
@@ -100,6 +102,7 @@ function ShortcutKeys:draw(Parent)
 
     local DisenchantLabel = AceGUI:Create("Label");
     DisenchantLabel:SetText("Set the hotkey for disenchanting an item from an enemy's loot window (default shift+click)");
+    DisenchantLabel:SetColor(1, .95686, .40784);
     DisenchantLabel:SetHeight(20);
     DisenchantLabel:SetFullWidth(true);
     Parent:AddChild(DisenchantLabel);

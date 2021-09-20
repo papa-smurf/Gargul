@@ -20,6 +20,7 @@ GL.Settings = {
 
 local Settings = GL.Settings; ---@type Settings
 
+---@return void
 function Settings:_init()
     GL:debug("Settings:_init");
 
@@ -30,6 +31,9 @@ function Settings:_init()
 
     -- Combine defaults and user settings
     self:overrideDefaultsWithUserSettings();
+
+    -- Validate the settings and adjust discrepancies
+    self:sanitizeSettings();
 
     -- Prepare the options / config frame
     local Frame = CreateFrame("Frame", nil, InterfaceOptionsFramePanelContainer);
@@ -42,15 +46,37 @@ function Settings:_init()
     self._initialized = true;
 end
 
+---@return void
+function Settings:sanitizeSettings()
+    if (self:get("MasterLooting.doCountdown")) then
+        self:set("MasterLooting.announceMasterLooter", true);
+    end
+
+    if (not self:get("spreadTheWord")) then
+        self:set("MasterLooting.announceMasterLooter", true);
+    end
+
+    if (not self:get("MasterLooting.announceMasterLooter")) then
+        self:set("spreadTheWord", true);
+    end
+end
+
+--- Draw a setting section
+---
+---@param section string|nil
+---@return void
 function Settings:draw(section)
     GL.Interface.Settings.Overview:draw(section);
 end
 
+---@return void
 function Settings:close()
     GL.Interface.Settings.Overview:close();
 end
 
--- Reset the addon to its default settings
+--- Reset the addon to its default settings
+---
+---@return void
 function Settings:resetToDefault()
     GL:debug("Settings:resetToDefault");
 
@@ -61,7 +87,9 @@ function Settings:resetToDefault()
     self:overrideDefaultsWithUserSettings();
 end
 
--- Override the addon's default settings with the user's custom settings
+--- Override the addon's default settings with the user's custom settings
+---
+---@return void
 function Settings:overrideDefaultsWithUserSettings()
     GL:debug("Settings:overrideDefaultsWithUserSettings");
 
@@ -79,8 +107,10 @@ function Settings:overrideDefaultsWithUserSettings()
     GL.DB.Settings = self.Active;
 end
 
--- We use this method to make sure that the interface is only built
--- when the user has actually accessed the settings menu, which doesn't happen every session
+--- We use this method to make sure that the interface is only built
+--- when the user has actually accessed the settings menu, which doesn't happen every session
+---
+---@return void
 function Settings:showSettingsMenu(Frame)
     GL:debug("Settings:showSettingsMenu");
 
@@ -104,9 +134,13 @@ function Settings:showSettingsMenu(Frame)
     end);
 end
 
--- Get a setting by a given key. Use dot notation to traverse multiple levels e.g:
--- Settings.UI.Auctioneer.offsetX can be fetched using Settings:get("Settings.UI.Auctioneer.offsetX")
--- without having to worry about tables or keys existing yes or no.
+--- Get a setting by a given key. Use dot notation to traverse multiple levels e.g:
+--- Settings.UI.Auctioneer.offsetX can be fetched using Settings:get("Settings.UI.Auctioneer.offsetX")
+--- without having to worry about tables or keys existing yes or no.
+---
+---@param keyString string
+---@param default any
+---@return any
 function Settings:get(keyString, default)
     -- Just in case something went wrong with merging the default settings
     if (type(default) == "nil") then
@@ -116,9 +150,13 @@ function Settings:get(keyString, default)
     return GL:tableGet(self.Active, keyString, default);
 end
 
--- Set a setting by a given key and value. Use dot notation to traverse multiple levels e.g:
--- Settings.UI.Auctioneer.offsetX can be set using Settings:set("Settings.UI.Auctioneer.offsetX", myValue)
--- without having to worry about tables or keys existing yes or no.
+--- Set a setting by a given key and value. Use dot notation to traverse multiple levels e.g:
+--- Settings.UI.Auctioneer.offsetX can be set using Settings:set("Settings.UI.Auctioneer.offsetX", myValue)
+--- without having to worry about tables or keys existing yes or no.
+---
+---@param keyString string
+---@param value any
+---@return void
 function Settings:set(keyString, value)
     return GL:tableSet(self.Active, keyString, value);
 end

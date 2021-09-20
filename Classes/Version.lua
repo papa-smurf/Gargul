@@ -65,7 +65,7 @@ function Version:validateAndSplit(versionString)
         return false;
     end
 
-    return true, versionParts[1], versionParts[2] or "0", versionParts[3] or "0";
+    return true, tonumber(versionParts[1]), tonumber(versionParts[2]) or "0", tonumber(versionParts[3]) or "0";
 end
 
 -- Check if the versionstring passed first is older than the one passed second
@@ -76,7 +76,7 @@ function Version:leftIsOlderThanRight(left, right)
     local rightSuccess, rightMajor, rightMinor, rightTrivial = self:validateAndSplit(right);
 
     if (not leftSuccess
-            or not rightSuccess
+        or not rightSuccess
     ) then
         return;
     end
