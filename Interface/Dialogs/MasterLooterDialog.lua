@@ -25,7 +25,9 @@ function MasterLooterDialog:_init()
             self:draw();
         end
 
-        self:flightAttendant();
+        if (GL.Settings:get("MasterLooting.announceMasterLooter")) then
+            self:flightAttendant();
+        end
     end);
 end
 
