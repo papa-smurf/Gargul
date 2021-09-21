@@ -446,7 +446,7 @@ end
 --- @return number
 function GL:count(var)
     if (type(var) == "string") then
-        return string.length(var);
+        return strlen(var);
     end
 
     if (type(var) == "table") then
