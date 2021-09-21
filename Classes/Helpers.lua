@@ -404,6 +404,23 @@ function GL:strContains(str, subStr)
     return toboolean(strfind(str, subStr));
 end
 
+--- URL Decode a given url string
+---
+---@param url string
+---@return string
+function GL:urlDecode(url)
+    local hexToChar = function(x)
+        return string.char(tonumber(x, 16));
+    end
+
+    if (url == nil) then
+        return "";
+    end
+
+    url = url:gsub("+", " ");
+    return url:gsub("%%(%x%x)", hexToChar);
+end
+
 --- Print large quantities of text to a multiline editbox
 --- Very useful for debugging purposes, should not be used for anything else
 ---
