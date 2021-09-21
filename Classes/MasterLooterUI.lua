@@ -387,6 +387,7 @@ function MasterLooterUI:draw(itemLink)
     end
 end
 
+---@return void
 function MasterLooterUI:close()
     GL:debug("MasterLooterUI:close");
 
