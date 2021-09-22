@@ -312,7 +312,7 @@ function RaidGroups:invitePlayers(raidGroupCsv)
         for _, playerName in pairs(Players) do
             if (group < 9 -- group 9 is a group we reserve for specifiying the tanks
                 and not GL:empty(playerName) -- Make sure we skip empty names
-                and playerName ~= GL.User.name -- No need to invite ourselves
+                and string.lower(playerName) ~= string.lower(GL.User.name) -- No need to invite ourselves
             ) then
                 InviteUnit(playerName); -- Attempt to invite the player
             end
@@ -351,6 +351,8 @@ function RaidGroups:checkAttendance(raidGroupCsv, OutPutLabel)
         local Players = GL:strSplit(Segments[2], ",");
 
         for _, playerName in pairs(Players) do
+            playerName = string.lower(playerName);
+
             if (group < 9 -- group 9 is a group we reserve for specifiying the tanks
                 and not GL:empty(playerName) -- Make sure we skip empty names
             ) then
@@ -362,9 +364,10 @@ function RaidGroups:checkAttendance(raidGroupCsv, OutPutLabel)
     -- Check who's in the raid who doesn't belong
     local PlayersInRaid = {};
     for _, Player in pairs(GL.User:groupMembers()) do
-        PlayersInRaid[Player.name] = true;
+        local playerName = string.lower(Player.name);
+        PlayersInRaid[playerName] = true;
 
-        if (not PlayersOnRoster[Player.name]) then
+        if (not PlayersOnRoster[playerName]) then
             tinsert(UnknownPlayers, Player.name);
         end
     end
@@ -372,7 +375,7 @@ function RaidGroups:checkAttendance(raidGroupCsv, OutPutLabel)
     -- Check who's missing
     for playerName in pairs(PlayersOnRoster) do
         if (not PlayersInRaid[playerName]) then
-            tinsert(MissingPlayers, playerName);
+            tinsert(MissingPlayers, GL:capitalize(playerName));
         end
     end
 
@@ -424,6 +427,8 @@ function RaidGroups:applyRaidGroups(raidGroupCsv)
         local Players = GL:strSplit(Segments[2], ",");
 
         for _, playerName in pairs(Players) do
+            playerName = string.lower(playerName);
+
             if (group < 9 -- group 9 is a group we reserve for specifiying the tanks
                 and not GL:empty(playerName) -- Make sure we skip empty names
             ) then
@@ -445,17 +450,19 @@ function RaidGroups:applyRaidGroups(raidGroupCsv)
     for i = 1, 8 do RaidersPerGroup[i] = {}; end
     for i = 1, 8 do NumRaidersInGroup[i] = 0; end
     for _, Raider in pairs(GL.User:groupMembers()) do
+        local raiderName = string.lower(Raider.name);
+
         if (UnitAffectingCombat("raid" .. Raider.index)) then
             return GL:warning(string.format("Can't sort groups while %s is in combat!", Raider.name));
         end
 
         -- Check if there's people in the raid who are not on the roster
-        if (not DesiredGroupByPlayerName[Raider.name]) then
+        if (not DesiredGroupByPlayerName[raiderName]) then
             tinsert(UnwantedPlayers, Raider.name);
         end
 
-        RaidMembers[Raider.name] = Raider;
-        RaidersPerGroup[Raider.subgroup][Raider.name] = true;
+        RaidMembers[raiderName] = Raider;
+        RaidersPerGroup[Raider.subgroup][raiderName] = true;
         NumRaidersInGroup[Raider.subgroup] = NumRaidersInGroup[Raider.subgroup] + 1;
     end
 
@@ -470,8 +477,9 @@ function RaidGroups:applyRaidGroups(raidGroupCsv)
     local Migrations = {};
     for key in pairs(RaidMembers) do
         local Raider = RaidMembers[key];
+        local raiderName = string.lower(Raider.name);
         local raidersCurrentGroup = Raider.subgroup;
-        local raidersDesiredGroup = DesiredGroupByPlayerName[Raider.name];
+        local raidersDesiredGroup = DesiredGroupByPlayerName[raiderName];
 
         -- Make sure the player is stripped of his maintank/mainassist role
         if (GL:inTable({"MAINTANK", "MAINASSIST"}, Raider.role or "")) then
@@ -535,8 +543,8 @@ function RaidGroups:applyRaidGroups(raidGroupCsv)
             end
 
             Raider.subgroup = raidersDesiredGroup;
-            RaidersPerGroup[raidersDesiredGroup][Raider.name] = Raider;
-            RaidersPerGroup[raidersCurrentGroup][Raider.name] = nil;
+            RaidersPerGroup[raidersDesiredGroup][raiderName] = Raider;
+            RaidersPerGroup[raidersCurrentGroup][raiderName] = nil;
         end
     end
 
