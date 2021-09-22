@@ -66,7 +66,8 @@ function RollOff:announceStart(itemLink, time, note)
     GL.Settings:set("UI.RollOff.timer", time);
 
     -- The user doesn't want to announce anything in chat
-    if (not GL.Settings:get("MasterLooting.announceRollStart")) then
+    ---@todo THIS IS TEMPORARY!
+    if (false and not GL.Settings:get("MasterLooting.announceRollStart")) then
         return true;
     end
 

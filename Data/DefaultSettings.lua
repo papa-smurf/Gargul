@@ -31,6 +31,7 @@ GL.Data.DefaultSettings = {
         announceMasterLooter = true,
         doCountdown = false,
         announceRollEnd = true,
+        announceRollStart = true,
         numberOfSecondsToCountdown = 5,
         preferredMasterLootingThreshold = 2,
     },

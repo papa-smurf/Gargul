@@ -87,11 +87,12 @@ function MasterLooting:draw(Parent)
                 end
             end
         },
-        {
-            label = "Announce start of roll",
-            description = "When enabled you post an announcement in /rw when a roll starts",
-            setting = "MasterLooting.announceRollStart",
-        },
+        ---@todo THIS IS TEMPORARY!
+        --{
+        --    label = "Announce start of roll",
+        --    description = "When enabled you post an announcement in /rw when a roll starts",
+        --    setting = "MasterLooting.announceRollStart",
+        --},
         {
             label = "Countdown on rolls",
             description = "If enabled a countdown will be shown in chat when a roll is coming to an end (e.g: you have 5 seconds to roll). Enabling this rule automatically enables the 'Announce Master Looter' setting in order to raise awareness for Gargul",
