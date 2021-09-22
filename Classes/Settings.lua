@@ -59,6 +59,9 @@ function Settings:sanitizeSettings()
     if (not self:get("MasterLooting.announceMasterLooter")) then
         self:set("spreadTheWord", true);
     end
+
+    ---@todo THIS IS TEMPORARY!
+    self:set("MasterLooting.announceRollStart", true);
 end
 
 --- Draw a setting section
