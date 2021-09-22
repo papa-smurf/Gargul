@@ -179,7 +179,7 @@ function Award:draw(itemLink)
         GL.Interface.Dialogs.AwardDialog:open({
             question = string.format("Award %s to |cff%s%s|r?",
                 itemLink,
-                GL.Player:classByName(winner),
+                GL:classHexColor(GL.Player:classByName(winner)),
                 winner
             ),
             OnYes = award,
