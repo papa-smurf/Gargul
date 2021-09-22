@@ -120,7 +120,7 @@ function MasterLooterDialog:draw()
     Description:SetFontObject(_G["GameFontNormal"]);
     Description:SetFullWidth(true);
     Description:SetJustifyH("CENTER");
-    Description:SetText("You were given the roll of Master Looter");
+    Description:SetText("You were given the role of Master Looter");
     DescriptionFrame:AddChild(Description);
 
     -- SoftRes
