@@ -148,7 +148,7 @@ end
 function Exporter:refreshExportString()
     GL:debug("Exporter:refreshExportString");
 
-    local exportString = "dateTime,character,itemID,offspec";
+    local exportString = "dateTime,character,itemID,offspec,ID";
 
     for _, AwardEntry in pairs(GL.DB.AwardHistory) do
         local dateString = date('%Y-%m-%d', AwardEntry.timestamp);
@@ -161,12 +161,19 @@ function Exporter:refreshExportString()
                 awardedTo = GL.Settings:get("ExportingLoot.disenchanterIdentifier");
             end
 
-            exportString = string.format("%s\n%s,%s,%s,%s",
+            -- Old entries may not possess a checksum yet
+            local checksum = AwardEntry.checksum;
+            if (not checksum) then
+                checksum = GL:strPadRight(GL:strLimit(GL:stringHash(AwardEntry.timestamp .. AwardEntry.itemId) .. GL:stringHash(AwardEntry.winner), 20, ""), "0", 20);
+            end
+
+            exportString = string.format("%s\n%s,%s,%s,%s,%s",
                 exportString,
                 dateString,
                 awardedTo,
                 AwardEntry.itemId,
-                AwardEntry.OS and 1 or 0
+                AwardEntry.OS and 1 or 0,
+                checksum
             );
         end
     end
