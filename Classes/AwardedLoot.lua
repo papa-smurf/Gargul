@@ -105,10 +105,8 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS)
     if (dateProvided) then
         local year, month, day = string.match(date, "^(%d+)-(%d+)-(%d+)$");
 
-        if (
-            not year or not month or not day
-            or type(year) ~= "string" or type(month) ~= "string" or type(day) ~= "string"
-            or year == "" or month == "" or day == ""
+        if (not GL:allOfType("string", year, month, day)
+            or GL:anyEmpty(year, month, day)
         ) then
             return GL:error(string.format("Unknown date format '%s' expecting yy-m-d", date));
         end
@@ -144,10 +142,12 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS)
     end
 
     local AwardEntry = {
+        checksum = GL:strPadRight(GL:strLimit(GL:stringHash(timestamp .. itemId) .. GL:stringHash(winner .. GL.DB:get("SoftRes.MetaData.id", "")), 20, ""), "0", 20),
         itemLink = itemLink,
         itemId = itemId,
         awardedTo = winner,
         timestamp = timestamp,
+        softresid = GL.DB:get("SoftRes.MetaData.id"),
         OS = isOS,
     };
 
