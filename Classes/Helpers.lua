@@ -1030,7 +1030,7 @@ end
 ---@param length number
 ---@return string
 function GL:strPadLeft(str, padChar, length)
-    return str .. string.rep(padChar, length - GL:count(str));
+    return string.rep(padChar, length - GL:count(str)) .. str;
 end
 
 --- Pad a string to a certain length with another string (right side)
@@ -1040,7 +1040,7 @@ end
 ---@param length number
 ---@return string
 function GL:strPadRight(str, padChar, length)
-    return string.rep(padChar, length - GL:count(str)) .. str;
+    return str .. string.rep(padChar, length - GL:count(str));
 end
 
 --- Get a table value by a given key. Use dot notation to traverse multiple levels e.g:
