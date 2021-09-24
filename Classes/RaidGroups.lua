@@ -351,12 +351,10 @@ function RaidGroups:checkAttendance(raidGroupCsv, OutPutLabel)
         local Players = GL:strSplit(Segments[2], ",");
 
         for _, playerName in pairs(Players) do
-            playerName = string.lower(playerName);
-
             if (group < 9 -- group 9 is a group we reserve for specifiying the tanks
                 and not GL:empty(playerName) -- Make sure we skip empty names
             ) then
-                PlayersOnRoster[playerName] = true;
+                PlayersOnRoster[string.lower(playerName)] = true;
             end
         end
     end
@@ -364,10 +362,10 @@ function RaidGroups:checkAttendance(raidGroupCsv, OutPutLabel)
     -- Check who's in the raid who doesn't belong
     local PlayersInRaid = {};
     for _, Player in pairs(GL.User:groupMembers()) do
-        local playerName = string.lower(Player.name);
-        PlayersInRaid[playerName] = true;
+        Player.name = string.lower(Player.name);
+        PlayersInRaid[Player.name] = true;
 
-        if (not PlayersOnRoster[playerName]) then
+        if (not PlayersOnRoster[Player.name]) then
             tinsert(UnknownPlayers, Player.name);
         end
     end
@@ -375,7 +373,7 @@ function RaidGroups:checkAttendance(raidGroupCsv, OutPutLabel)
     -- Check who's missing
     for playerName in pairs(PlayersOnRoster) do
         if (not PlayersInRaid[playerName]) then
-            tinsert(MissingPlayers, GL:capitalize(playerName));
+            tinsert(MissingPlayers, playerName);
         end
     end
 
@@ -450,19 +448,19 @@ function RaidGroups:applyRaidGroups(raidGroupCsv)
     for i = 1, 8 do RaidersPerGroup[i] = {}; end
     for i = 1, 8 do NumRaidersInGroup[i] = 0; end
     for _, Raider in pairs(GL.User:groupMembers()) do
-        local raiderName = string.lower(Raider.name);
+        Raider.name = string.lower(Raider.name);
 
         if (UnitAffectingCombat("raid" .. Raider.index)) then
             return GL:warning(string.format("Can't sort groups while %s is in combat!", Raider.name));
         end
 
         -- Check if there's people in the raid who are not on the roster
-        if (not DesiredGroupByPlayerName[raiderName]) then
+        if (not DesiredGroupByPlayerName[Raider.name]) then
             tinsert(UnwantedPlayers, Raider.name);
         end
 
-        RaidMembers[raiderName] = Raider;
-        RaidersPerGroup[Raider.subgroup][raiderName] = true;
+        RaidMembers[Raider.name] = Raider;
+        RaidersPerGroup[Raider.subgroup][Raider.name] = true;
         NumRaidersInGroup[Raider.subgroup] = NumRaidersInGroup[Raider.subgroup] + 1;
     end
 
@@ -477,9 +475,8 @@ function RaidGroups:applyRaidGroups(raidGroupCsv)
     local Migrations = {};
     for key in pairs(RaidMembers) do
         local Raider = RaidMembers[key];
-        local raiderName = string.lower(Raider.name);
         local raidersCurrentGroup = Raider.subgroup;
-        local raidersDesiredGroup = DesiredGroupByPlayerName[raiderName];
+        local raidersDesiredGroup = DesiredGroupByPlayerName[Raider.name];
 
         -- Make sure the player is stripped of his maintank/mainassist role
         if (GL:inTable({"MAINTANK", "MAINASSIST"}, Raider.role or "")) then
@@ -493,7 +490,7 @@ function RaidGroups:applyRaidGroups(raidGroupCsv)
             -- The raider's desired group is not full yet so we can just move him
             if (NumRaidersInGroup[raidersDesiredGroup] < _G.MEMBERS_PER_RAID_GROUP) then
                 GL:debug(string.format(
-                    "%s is currently wants to be in group %s which is not full yet, so move him",
+                    "%s wants to be in group %s which is not full yet, so move him",
                     Raider.name,
                     raidersDesiredGroup
                 ));
@@ -543,8 +540,8 @@ function RaidGroups:applyRaidGroups(raidGroupCsv)
             end
 
             Raider.subgroup = raidersDesiredGroup;
-            RaidersPerGroup[raidersDesiredGroup][raiderName] = Raider;
-            RaidersPerGroup[raidersCurrentGroup][raiderName] = nil;
+            RaidersPerGroup[raidersDesiredGroup][Raider.name] = Raider;
+            RaidersPerGroup[raidersCurrentGroup][Raider.name] = nil;
         end
     end
 
@@ -645,7 +642,7 @@ function RaidGroups:processMigrations(Migrations, numberOfMigrations, index)
         local leftIndex = 0;
 
         for index = 1, _G.MAX_RAID_MEMBERS do
-            local nameOnIndex = GetRaidRosterInfo(index);
+            local nameOnIndex = string.lower(GetRaidRosterInfo(index));
 
             if (name == nameOnIndex) then
                 leftIndex = index;
@@ -666,7 +663,7 @@ function RaidGroups:processMigrations(Migrations, numberOfMigrations, index)
         local rightIndex = 0;
 
         for index = 1, _G.MAX_RAID_MEMBERS do
-            local nameOnIndex = GetRaidRosterInfo(index);
+            local nameOnIndex = string.lower(GetRaidRosterInfo(index));
 
             if (leftName == nameOnIndex) then
                 leftIndex = index;
