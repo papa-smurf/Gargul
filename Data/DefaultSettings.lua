@@ -24,7 +24,7 @@ GL.Data.DefaultSettings = {
     ShortcutKeys = {
         rollOff = "ALT_CLICK",
         award = "ALT_SHIFT_CLICK",
-        disenchant = "SHIFT_CLICK",
+        disenchant = "CTRL_SHIFT_CLICK",
     },
     MasterLooting = {
         autoOpenMasterLooterDialog = true,
