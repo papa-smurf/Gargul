@@ -9,6 +9,7 @@ local AceGUI = GL.AceGUI;
 GL.Interface.MasterLooterDialog = {
     _initialized = false,
     isVisible = false,
+    announcedConflictingAddons = false,
 };
 local MasterLooterDialog = GL.Interface.MasterLooterDialog; ---@type MasterLooterPopupInterface
 
@@ -27,6 +28,12 @@ function MasterLooterDialog:_init()
 
         if (GL.Settings:get("MasterLooting.announceMasterLooter")) then
             self:flightAttendant();
+        end
+
+        -- Announce potential addon conflicts
+        if (not self.announcedConflictingAddons) then
+            self.announcedConflictingAddons = true;
+            GL:announceConflictingAddons();
         end
     end);
 end
