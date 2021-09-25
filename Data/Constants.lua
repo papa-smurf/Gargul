@@ -21,6 +21,20 @@ GL.Data.Constants = {
         gargul = 1,
     },
 
+    GargulConflictsWith = {
+        "AutoDestroy",
+        "AutoLootAssist",
+        "AutoLooter",
+        "BetterAutoLoot",
+        "CEPGP",
+        "CommunityDKP",
+        "GogoLoot",
+        "KillTrack",
+        "LootFast2",
+        "RCLootCouncil_Classic",
+        "SpeedyAutoLoot",
+    },
+
     UntradeableItems = {
         22726, -- Splinter of Atiesh
         30183, -- Nether Vortex
