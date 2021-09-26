@@ -118,6 +118,27 @@ GL.Ace:RegisterChatCommand("gargul", function (...)
     GL.Commands:_dispatch(...);
 end)
 
+--- Announce conflicting addons if any
+---@return void
+function GL:announceConflictingAddons()
+    local ConflictingAddons = {};
+    for _, addon in pairs(GL.Data.Constants.GargulConflictsWith) do
+        if (IsAddOnLoaded(addon)) then
+            tinsert(ConflictingAddons, addon);
+        end
+    end
+
+    -- Nothing found, steady as she goes
+    if (GL:empty(ConflictingAddons)) then
+        return;
+    end
+
+    GL:warning(string.format(
+        "You have one or more addons installed that interact with the loot window. If you don't disable them you might experience strange behavior with Gargul's looting features. These are the potentially conflicting addons: %s",
+        table.concat(ConflictingAddons, ", ")
+    ));
+end
+
 -- Hook the bag slot events making it possible to alt(+shift) click
 -- items in bags to either start rolling or auctioning them off
 function GL:hookBagSlotEvents()

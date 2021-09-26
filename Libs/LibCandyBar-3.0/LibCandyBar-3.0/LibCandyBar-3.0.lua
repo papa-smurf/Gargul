@@ -1,26 +1,26 @@
---- **LibCandyBar-3.0** provides elegant timerbars with icons for use in addons.
+--- **LibCandyBarGargul-3.0** provides elegant timerbars with icons for use in addons.
 -- It is based of the original ideas of the CandyBar and CandyBar-2.0 library.
--- In contrary to the earlier libraries LibCandyBar-3.0 provides you with a timerbar object with a simple API.
+-- In contrary to the earlier libraries LibCandyBarGargul-3.0 provides you with a timerbar object with a simple API.
 --
 -- Creating a new timerbar using the ':New' function will return a new timerbar object. This timerbar object inherits all of the barPrototype functions listed here. \\
 --
 -- @usage
--- local candy = LibStub("LibCandyBar-3.0")
+-- local candy = LibStub("LibCandyBarGargul-3.0")
 -- local texture = "Interface\\AddOns\\MyAddOn\\statusbar"
 -- local mybar = candy:New(texture, 100, 16)
 -- mybar:SetLabel("Yay!")
 -- mybar:SetDuration(60)
 -- mybar:Start()
 -- @class file
--- @name LibCandyBar-3.0
+-- @name LibCandyBarGargul-3.0
 
-local GetTime, floor, next, wipe = GetTime, floor, next, wipe
+local GetTime, floor, next = GetTime, floor, next
 local CreateFrame, error, setmetatable, UIParent = CreateFrame, error, setmetatable, UIParent
 
-if not LibStub then error("LibCandyBar-3.0 requires LibStub.") end
+if not LibStub then error("LibCandyBarGargul-3.0 requires LibStub.") end
 local cbh = LibStub:GetLibrary("CallbackHandler-1.0")
-if not cbh then error("LibCandyBar-3.0 requires CallbackHandler-1.0") end
-local lib = LibStub:NewLibrary("LibCandyBar-3.0", 97) -- Bump minor on changes
+if not cbh then error("LibCandyBarGargul-3.0 requires CallbackHandler-1.0") end
+local lib = LibStub:NewLibrary("LibCandyBarGargul-3.0", 99) -- Bump minor on changes
 if not lib then return end
 lib.callbacks = lib.callbacks or cbh:New(lib)
 local cb = lib.callbacks
@@ -49,8 +49,8 @@ local SetWidth, SetHeight, SetSize = lib.dummyFrame.SetWidth, lib.dummyFrame.Set
 
 local function stopBar(bar)
 	bar.updater:Stop()
-	if bar.data then wipe(bar.data) end
-	if bar.funcs then wipe(bar.funcs) end
+	bar.data = nil
+	bar.funcs = nil
 	bar.running = nil
 	bar.paused = nil
 	bar:Hide()
@@ -373,13 +373,15 @@ end
 function barPrototype:Pause()
 	if not self.paused then
 		self.updater:Pause()
-		self.paused = true
+		self.paused = GetTime()
 	end
 end
 --- Resumes a paused bar
 function barPrototype:Resume()
 	if self.paused then
-		self.exp = GetTime() + self.remaining
+		local t = GetTime()
+		self.exp = t + self.remaining
+		self.start = self.start + (t-self.paused)
 		self.updater:Play()
 		self.paused = nil
 	end
@@ -392,7 +394,7 @@ end
 -- local function barstopped( callback, bar )
 --   print( bar:GetLabel(), "stopped")
 -- end
--- LibStub("LibCandyBar-3.0"):RegisterCallback(myaddonobject, "LibCandyBar_Stop", barstopped)
+-- LibStub("LibCandyBarGargul-3.0"):RegisterCallback(myaddonobject, "LibCandyBar_Stop", barstopped)
 -- @param ... Optional args to pass across in the LibCandyBar_Stop callback.
 function barPrototype:Stop(...)
 	cb:Fire("LibCandyBar_Stop", self, ...)
@@ -410,7 +412,7 @@ end
 -- @param width Width of the bar.
 -- @param height Height of the bar.
 -- @usage
--- mybar = LibStub("LibCandyBar-3.0"):New("Interface\\AddOns\\MyAddOn\\media\\statusbar", 100, 16)
+-- mybar = LibStub("LibCandyBarGargul-3.0"):New("Interface\\AddOns\\MyAddOn\\media\\statusbar", 100, 16)
 function lib:New(texture, width, height)
 	local bar = next(barCache)
 	if not bar then
@@ -461,6 +463,8 @@ function lib:New(texture, width, height)
 		barCache[bar] = nil
 	end
 
+	bar:SetFrameStrata("MEDIUM")
+	bar:SetFrameLevel(100) -- Lots of room to create above or below this level
 	bar.candyBarBar:SetStatusBarTexture(texture)
 	bar.candyBarBackground:SetTexture(texture)
 	bar.width = width

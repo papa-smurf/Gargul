@@ -101,7 +101,7 @@ function ShortcutKeys:draw(Parent)
     Parent:AddChild(HorizontalSpacer);
 
     local DisenchantLabel = AceGUI:Create("Label");
-    DisenchantLabel:SetText("Set the hotkey for disenchanting an item from an enemy's loot window (default shift+click)");
+    DisenchantLabel:SetText("Set the hotkey for disenchanting an item from an enemy's loot window (default ctrl+shift+click)");
     DisenchantLabel:SetColor(1, .95686, .40784);
     DisenchantLabel:SetHeight(20);
     DisenchantLabel:SetFullWidth(true);

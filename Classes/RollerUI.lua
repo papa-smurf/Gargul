@@ -110,7 +110,7 @@ function RollerUI:draw(time, itemId, itemLink, itemIcon, note, osRollMax)
         self:hide();
     end);
 
-    local TimerBar = LibStub("LibCandyBar-3.0"):New(
+    local TimerBar = LibStub("LibCandyBarGargul-3.0"):New(
         "Interface\\AddOns\\Gargul\\Assets\\Textures\\timer-bar",
         350,
         24
@@ -186,7 +186,6 @@ function RollerUI:update(time, itemId, itemLink, itemIcon, note, osRollMax)
     TimerBar:SetDuration(time);
     TimerBar:SetColor(0, 1, 0, .3); -- Reset color to green
     TimerBar:SetLabel("  " .. itemLink .. " " .. string.sub(note, 0, noteStringLengthAllowed));
-    TimerBar.candyBarLabel:SetFont("Fonts\\ARIALN.ttf", 13, "OUTLINE");
 
     TimerBar:SetIcon(itemIcon);
     TimerBar:Start();
