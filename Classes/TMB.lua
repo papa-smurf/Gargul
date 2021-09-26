@@ -357,8 +357,9 @@ end
 --- Import a given tmb string
 ---
 ---@param data string
+---@param triedToDecompress boolean
 ---@return boolean
-function TMB:import(data)
+function TMB:import(data, triedToDecompress)
     GL:debug("TMB:import");
 
     local function displayGenericException()
@@ -366,9 +367,19 @@ function TMB:import(data)
     end
 
     -- Make sure all the required properties are available and of the correct type
-    if (not data or type(data) ~= "string") then
+    if (type(data) ~= "string"
+        or GL:empty(data)
+    ) then
         displayGenericException();
         return false;
+    end
+
+    -- This is not the legacy JSON format, attempt to decompress it!
+    if (not triedToDecompress
+        and not GL:strStartsWith(data, "{\"wishlists\":{")
+    ) then
+        data = TMB:decompress(data);
+        return TMB:import(data, true);
     end
 
     local jsonDecodeSucceeded, WebsiteData = pcall(function () return GL.JSON:decode(data); end);
@@ -451,6 +462,34 @@ function TMB:import(data)
     end
 
     return true;
+end
+
+---@param data string
+---@return string
+function TMB:decompress(data)
+    local base64DecodeSucceeded;
+    base64DecodeSucceeded, data = pcall(function () return GL.Base64.decode(data); end);
+
+    -- Something went wrong while base64 decoding the payload
+    if (not base64DecodeSucceeded) then
+        local errorMessage = "Unable to base64 decode the data. Make sure you copy/paste it as-is from thatsmybis.com without adding any additional characters or whitespaces!";
+        GL.Interface:getItem(self, "Label.StatusMessage"):SetText(errorMessage);
+
+        return "";
+    end
+
+    local LibDeflate = LibStub:GetLibrary("LibDeflate");
+    local zlibDecodeSucceeded;
+    zlibDecodeSucceeded, data = pcall(function () return LibDeflate:DecompressZlib(data); end);
+
+    -- Something went wrong while zlib decoding the payload
+    if (not zlibDecodeSucceeded) then
+        local errorMessage = "Unable to zlib decode the data. Make sure you copy/paste it as-is from thatsmybis.com without adding any additional characters or whitespaces!";
+        GL.Interface:getItem(self, "Label.StatusMessage"):SetText(errorMessage);
+        return "";
+    end
+
+    return data;
 end
 
 GL:debug("WishLists.lua");
