@@ -492,4 +492,90 @@ function TMB:decompress(data)
     return data;
 end
 
+function TMB:broadcast()
+    GL:debug("TMB:broadcast");
+
+    if (self.broadcastInProgress) then
+        GL:error("Broadcast still in progress");
+        return false;
+    end
+
+    if (not GL.User.isInGroup) then
+        GL:warning("No one to broadcast to, you're not in a group!");
+        return false;
+    end
+
+    if (not GL.User.hasAssist
+            and not GL.User.isLead
+            and not GL.User.isMasterLooter
+    ) then
+        GL:warning("Insufficient permissions to broadcast, need ML, assist or lead!");
+        return false;
+    end
+
+    -- Check if there's anything to share
+    if (not self:available()) then
+        GL:warning("Nothing to broadcast, import TMB data first!");
+        return false;
+    end
+
+    self.broadcastInProgress = true;
+
+    for _, Player in pairs(GL.User:groupMembers()) do
+        GL.CommMessage.new(
+            CommActions.broadcastTMBData,
+            --"GARGUL DEEZ NUTS",
+            GL.DB.TMB,
+            "RAID"
+            --Player.name
+        ):send();
+        break;
+    end
+
+    GL.Ace:ScheduleTimer(function ()
+        GL:success("Broadcast finished");
+        self.broadcastInProgress = false;
+    end, 10);
+
+    return true;
+end
+
+--- Process an incoming TMB broadcast
+---
+---@param CommMessage CommMessage
+function TMB:receiveBroadcast(CommMessage)
+    GL:debug("TMB:receiveBroadcast");
+
+    -- No need to update our tables if we broadcasted them ourselves
+    if (CommMessage.Sender.id == GL.User.id) then
+        GL:debug("TMB:receiveBroadcast received by self, skip");
+        --return true;
+    end
+
+    local Data = CommMessage.content;
+    if (not GL:empty(Data)) then
+        GL:warning("Attempting to process incoming TMB data from " .. CommMessage.Sender.name);
+
+        if (type(Data) ~= "table"
+            or GL:empty(Data)
+        ) then
+            GL:error("Invalid TMB data received from " .. CommMessage.Sender.name);
+            return;
+        end
+
+        -- Validate dataset
+        for itemId, Entry in pairs(Data) do
+            itemId = tonumber(itemId);
+
+            if (GL:anyEmpty(itemId, Entry.character, Entry.prio, Entry.type)) then
+                GL:error("Invalid TMB data received from " .. CommMessage.Sender.name);
+                return;
+            end
+        end
+
+        GL:success("TMB data synced");
+        GL.DB.TMB = Data;
+    end
+end
+
 GL:debug("WishLists.lua");

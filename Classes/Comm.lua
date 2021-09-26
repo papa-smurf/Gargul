@@ -50,15 +50,18 @@ function Comm:send(CommMessage)
 
     GL:debug("Payload size: " .. string.len(compressedMessage));
 
-    GL.Ace:SendCommMessage(self.channel, compressedMessage, distribution, recipient, "NORMAL", function (_, sent, textlen)
+    local defaultBurstValue = _G.ChatThrottleLib.BURST or 4000;
+    _G.ChatThrottleLib.BURST = 1000;
+    GL.Ace:SendCommMessage(self.channel, compressedMessage, distribution, recipient, "BULK", function (_, sent, textlen)
         GL:debug(string.format("Sent %s from %s characters", sent, textlen));
+        print(string.format("Sent %s from %s characters", sent, textlen));
     end);
+    _G.ChatThrottleLib.BURST = defaultBurstValue;
 end
 
 --- Listen to any and all messages on the self.channel channel
 ---@param payload string
 ---@param distribution string
----@param senderName string
 ---@return boolean
 function Comm:listen(payload, distribution)
     GL:debug(string.format("Received message on %s", GL.Comm.channel));
@@ -157,7 +160,7 @@ function Comm:dispatch(CommMessage)
     elseif (action == CommActions.broadcastSoftRes) then
         return GL.SoftRes:receiveSoftRes(CommMessage);
     elseif (action == CommActions.broadcastTMBData) then
-        return GL.TMB:receiveWishLists(CommMessage);
+        return GL.TMB:receiveBroadcast(CommMessage);
     elseif (action == CommActions.inspectBags) then
         return GL.BagInspector:report(CommMessage);
     elseif (action == CommActions.requestAppVersion) then

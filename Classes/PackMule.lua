@@ -491,16 +491,11 @@ function PackMule:announceDisenchantment(itemLink)
         return
     end
 
-    local channel = "PARTY";
-    if (GL.User.isInRaid) then
-        channel = "RAID";
-    end
-
     GL:sendChatMessage(
         string.format("%s will be disenchanted by %s",
         itemLink,
         self.disenchanter
-    ), channel);
+    ), "GROUP");
 end
 
 --- Assign a item to a player
