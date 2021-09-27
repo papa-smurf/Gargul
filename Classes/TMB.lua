@@ -77,7 +77,7 @@ function TMB:byItemId(itemId, inRaidOnly)
     local Wishes = {};
     for _, id in pairs(AllLinkedItemIds) do
         id = tostring(id);
-        for _, Entry in pairs(GL:tableGet(GL.DB.TMB.Items, tostring(id), {})) do
+        for _, Entry in pairs(GL.DB:get("TMB.Items." .. tostring(id), {})) do
             local playerName = string.lower(GL:stripRealm(Entry.character));
 
             -- If inRaidOnly is true we need to make sure we only return details of people who are actually in the raid
