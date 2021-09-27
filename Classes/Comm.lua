@@ -56,15 +56,36 @@ function Comm:send(CommMessage)
         return;
     end
 
-    GL:debug("Payload size: " .. string.len(compressedMessage));
+    -- We lower the burst value on large payloads to make sure
+    -- our messages are not dropped by the server
+    local stringLength = string.len(compressedMessage);
+    GL:debug("Payload size: " .. stringLength);
+    local lowerBurstValue = stringLength > 800;
 
     local defaultBurstValue = _G.ChatThrottleLib.BURST or 4000;
-    _G.ChatThrottleLib.BURST = 1000;
+    if (lowerBurstValue) then
+        if (self.resetCTLBurstTimerID) then
+            GL.Ace:CancelTimer(self.resetCTLBurstTimerID);
+            self.resetCTLBurstTimerID = nil;
+        end
+
+        _G.ChatThrottleLib.BURST = 800;
+
+        -- Failsafe in case the sent >= textlen below is not reached
+        self.resetCTLBurstTimerID = GL.Ace:ScheduleTimer(function ()
+            _G.ChatThrottleLib.BURST = defaultBurstValue;
+        end, 5);
+    end
+
     GL.Ace:SendCommMessage(self.channel, compressedMessage, distribution, recipient, "BULK", function (_, sent, textlen)
         GL:debug(string.format("Sent %s from %s characters", sent, textlen));
-        print(string.format("Sent %s from %s characters", sent, textlen));
+
+        if (sent >= textlen) then
+            _G.ChatThrottleLib.BURST = defaultBurstValue;
+            GL.Ace:CancelTimer(self.resetCTLBurstTimerID);
+            self.resetCTLBurstTimerID = nil;
+        end
     end);
-    _G.ChatThrottleLib.BURST = defaultBurstValue;
 end
 
 --- Listen to any and all messages on the self.channel channel
