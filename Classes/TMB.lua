@@ -301,6 +301,9 @@ function TMB:import(data, triedToDecompress)
         return false;
     end
 
+    -- Make sure to get rid of any leadin/trailing whitespaces
+    data = strtrim(data);
+
     -- This is not the legacy JSON format, attempt to decompress it!
     if (not triedToDecompress
         and not GL:strStartsWith(data, "{\"wishlists\":{")
