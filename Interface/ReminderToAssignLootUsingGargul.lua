@@ -4,7 +4,6 @@ local _, GL = ...;
 GL.AceGUI = GL.AceGUI or LibStub("AceGUI-3.0");
 
 local AceGUI = GL.AceGUI;
-local Settings = GL.Settings; ---@type Settings
 
 ---@class ReminderToAssignLootUsingGargulInterface
 GL.Interface.ReminderToAssignLootUsingGargul = {
@@ -26,14 +25,20 @@ function ReminderToAssignLootUsingGargul:draw()
     -- Create a container/parent frame
     local Window = AceGUI:Create("InlineGroup");
     Window:SetLayout("Flow");
-    Window:SetWidth(MasterLooterFrame:GetWidth());
+    Window:SetWidth(220);
     Window:SetHeight(30);
     Window:SetCallback("OnClose", function()
         self:close();
     end);
+    Window.frame:SetScript("OnMouseDown", function(_, button)
+        if (button == "RightButton") then
+            GL.Settings:set("TMB.showLootAssignmentReminder", false);
+            self:close();
+        end
+    end);
     GL.Interface:setItem(self, "Window", Window);
 
-    Window:SetPoint("TOPLEFT", MasterLooterFrame, "TOPRIGHT");
+    Window:SetPoint("TOPLEFT", MasterLooterFrame, "TOPRIGHT", 0, 9);
 
     --[[
         DESCRIPTION LABEL
@@ -41,7 +46,7 @@ function ReminderToAssignLootUsingGargul:draw()
     local DescriptionLabel = AceGUI:Create("Label");
     DescriptionLabel:SetFullWidth(true);
     DescriptionLabel:SetFontObject(_G["GameFontNormalSmall"]);
-    DescriptionLabel:SetText("Don't forget to use Gargul instead\nif you wish to export loot later");
+    DescriptionLabel:SetText("Don't forget to use Gargul instead\nif you wish to export loot later\n\n\n-- Right-click to disable this window --");
     DescriptionLabel:SetColor(1, .95686, .40784);
     DescriptionLabel:SetJustifyH("CENTER")
     Window:AddChild(DescriptionLabel);
