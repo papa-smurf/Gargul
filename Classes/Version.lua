@@ -136,7 +136,7 @@ function Version:inspectGroup()
     local CommMessage = GL.CommMessage.new(
         CommActions.requestAppVersion,
         nil,
-        "RAID"
+        "GROUP"
     ):send();
 
     -- Report back as soon as all the answers are in
@@ -203,7 +203,7 @@ function Version:playersUsingAddon(callback)
     local CommMessage = GL.CommMessage.new(
         CommActions.requestAppVersion,
         nil,
-        "RAID"
+        "GROUP"
     ):send();
 
     local function handleResponses(GroupMembers, Responses, callback)

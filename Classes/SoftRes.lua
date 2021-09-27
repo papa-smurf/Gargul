@@ -844,15 +844,10 @@ function SoftRes:broadcast()
 
     self.broadcastInProgress = true;
 
-    local channel = "PARTY";
-    if (GL.User.isInRaid) then
-        channel = "RAID";
-    end
-
     GL.CommMessage.new(
         CommActions.broadcastSoftRes,
         DB:get("SoftRes.MetaData.importString"),
-        channel
+        "GROUP"
     ):send();
 
     GL.Ace:ScheduleTimer(function ()

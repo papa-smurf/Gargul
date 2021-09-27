@@ -33,6 +33,14 @@ function Comm:send(CommMessage)
     local distribution = CommMessage.channel;
     local recipient = CommMessage.recipient;
 
+    if (distribution == "GROUP") then
+        distribution = "PARTY";
+
+        if (GL.User.isInRaid) then
+            distribution = "RAID";
+        end
+    end
+
     local compressedMessage = "";
 
     -- If this is a fresh message, not a response, then CommMessage will
