@@ -111,12 +111,12 @@ end
 -- Register the gl slash command
 GL.Ace:RegisterChatCommand("gl", function (...)
     GL.Commands:_dispatch(...);
-end)
+end);
 
 -- Register the gargul slash command
 GL.Ace:RegisterChatCommand("gargul", function (...)
     GL.Commands:_dispatch(...);
-end)
+end);
 
 --- Announce conflicting addons if any
 ---@return void
