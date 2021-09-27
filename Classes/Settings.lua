@@ -79,6 +79,12 @@ function Settings:enforceTemporarySettings()
         self:set("Temp.3_3_16_loaded", true);
         self:set("ShortcutKeys.disenchant", "CTRL_SHIFT_CLICK");
     end
+
+    --- Make sure the new TMB data format is enforced and old data is removed
+    ---@todo THIS IS TEMPORARY! Remove on >= 11-10-2021
+    if (not GL.DB:get("TMB.MetaData.importedAt")) then
+        GL.DB.TMB = {};
+    end
 end
 
 --- Draw a setting section

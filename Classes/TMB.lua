@@ -36,7 +36,7 @@ end
 ---
 ---@return boolean
 function TMB:available()
-    return not GL:empty(GL.DB.TMB);
+    return GL:higherThanZero(GL.DB:get("TMB.MetaData.importedAt", 0));
 end
 
 --- Fetch an item's TMB info based on its ID
@@ -77,7 +77,7 @@ function TMB:byItemId(itemId, inRaidOnly)
     local Wishes = {};
     for _, id in pairs(AllLinkedItemIds) do
         id = tostring(id);
-        for _, Entry in pairs(GL:tableGet(GL.DB.TMB, tostring(id), {})) do
+        for _, Entry in pairs(GL:tableGet(GL.DB.TMB.Items, tostring(id), {})) do
             local playerName = string.lower(GL:stripRealm(Entry.character));
 
             -- If inRaidOnly is true we need to make sure we only return details of people who are actually in the raid
@@ -112,7 +112,7 @@ function TMB:byItemLink(itemLink, inRaidOnly)
     return self:byItemId(GL:getItemIdFromLink(itemLink), inRaidOnly);
 end
 
---- Append the TMB info as defined in GL.DB.TMB to an item's tooltip
+--- Append the TMB info as defined in GL.DB.TMB.Items to an item's tooltip
 ---
 ---@param tooltip GameTooltip
 ---@return void
@@ -256,93 +256,20 @@ function TMB:appendTMBItemInfoToTooltip(tooltip)
     end
 end
 
---- Draw the TMB importer interface
----@todo Refactor to Interface
+--- Draw either the importer or overview
+--- based on the current soft-reserve data
 ---
 ---@return void
-function TMB:drawImporter()
-    GL:debug("TMB:drawImporter");
+function TMB:draw()
+    GL:debug("TMB:draw");
 
-    -- Create a container/parent frame
-    local Window = AceGUI:Create("Frame");
-    Window:SetTitle("Gargul v" .. GL.version);
-    Window:SetStatusText("Addon v" .. GL.version);
-    Window:SetLayout("Flow");
-    Window:SetWidth(600);
-    Window:SetHeight(480);
-    Window.statustext:GetParent():Hide(); -- Hide the statustext bar
+    -- No data available, show importer
+    if (not self:available()) then
+        GL.Interface.TMB.Importer:draw();
+        return;
+    end
 
-    -- Make sure the window can be closed by pressing the escape button
-    _G["GARGUL_TMB_WINDOW"] = Window.frame;
-    tinsert(UISpecialFrames, "GARGUL_TMB_WINDOW");
-
-    -- Explanation
-    local Description = AceGUI:Create("Label");
-    Description:SetFontObject(_G["GameFontNormal"]);
-    Description:SetFullWidth(true);
-    Description:SetText("To get started you first need to export your guild's data on thatsmybis.com. In order to do that navigate to Guild > Exports and click the 'Download' button in the Gargul section. Afterwards paste the contents as-is in the box below and click 'Import'. That's it!");
-    Window:AddChild(Description);
-
-    -- Large edit box
-    local TMBBoxContent = "";
-    local TMBBox = AceGUI:Create("MultiLineEditBox");
-    TMBBox:SetFullWidth(true);
-    TMBBox:DisableButton(true);
-    TMBBox:SetFocus();
-    TMBBox:SetLabel("");
-    TMBBox:SetNumLines(20);
-    TMBBox:SetMaxLetters(999999999);
-    Window:AddChild(TMBBox);
-
-    TMBBox:SetCallback("OnTextChanged", function(_, _, text)
-        TMBBoxContent = text;
-    end)
-
-    -- Status message frame
-    local StatusMessageFrame = AceGUI:Create("SimpleGroup");
-    StatusMessageFrame:SetLayout("FILL");
-    StatusMessageFrame:SetWidth(570);
-    StatusMessageFrame:SetHeight(56);
-    Window:AddChild(StatusMessageFrame);
-
-    local StatusMessageLabel = AceGUI:Create("Label");
-    StatusMessageLabel:SetFontObject(_G["GameFontNormal"]);
-    StatusMessageLabel:SetFullWidth(true);
-    StatusMessageLabel:SetColor(1, 0, 0);
-    StatusMessageLabel:SetText("");
-    StatusMessageFrame:AddChild(StatusMessageLabel);
-    GL.Interface:setItem(self, "StatusMessage", StatusMessageLabel);
-
-    --[[
-        FOOTER BUTTON PARENT FRAME
-    ]]
-    local FooterFrame = AceGUI:Create("SimpleGroup");
-    FooterFrame:SetLayout("Flow");
-    FooterFrame:SetFullWidth(true);
-    FooterFrame:SetHeight(50);
-    Window:AddChild(FooterFrame);
-
-    local ImportButton = AceGUI:Create("Button");
-    ImportButton:SetText("Import");
-    ImportButton:SetWidth(140);
-    ImportButton:SetCallback("OnClick", function()
-        self:import(TMBBoxContent);
-    end);
-    FooterFrame:AddChild(ImportButton);
-
-    local ClearButton = AceGUI:Create("Button");
-    ClearButton:SetText("Clear");
-    ClearButton:SetWidth(140);
-    ClearButton:SetCallback("OnClick", function()
-        GL.Interface.Dialogs.PopupDialog:open({
-            question = "Are you sure you want to clear the TMB tables?",
-            OnYes = function ()
-                TMBBox:SetText("");
-                self:clear();
-            end,
-        });
-    end);
-    FooterFrame:AddChild(ClearButton);
+    GL.Interface.TMB.Overview:draw();
 end
 
 --- Clear all TMB data
@@ -363,7 +290,7 @@ function TMB:import(data, triedToDecompress)
     GL:debug("TMB:import");
 
     local function displayGenericException()
-        GL.Interface:getItem(self, "Label.StatusMessage"):SetText("Invalid TMB data provided, make sure to click the 'Download' button in the Gargul section and paste the contents here as-is!");
+        GL.Interface:getItem("TMB.Importer", "Label.StatusMessage"):SetText("Invalid TMB data provided, make sure to click the 'Download' button in the Gargul section and paste the contents here as-is!");
     end
 
     -- Make sure all the required properties are available and of the correct type
@@ -441,25 +368,21 @@ function TMB:import(data, triedToDecompress)
             end
         end
 
-        GL.DB.TMB = TMBData;
+        GL.DB.TMB.Items = TMBData;
     end
+
+    GL.DB.TMB.MetaData = {
+        importedAt = GetServerTime(),
+    };
 
     -- There is also loot priority data available, pass it to on!
     if (WebsiteData.loot and type(WebsiteData.loot) == "string") then
         GL.LootPriority:save(WebsiteData.loot);
     end
 
-    if (insufficientPermissions) then
-        local message = string.format(
-            "|cff92FF00%s|r\n\n|cfff7922e%s|r",
-            "TMB Import successful with notice:",
-            "It seems like you don't have sufficient permissions on TMB to view all priority data. Do you have the required roles and permissions in TMB?"
-        );
-        GL.Interface:getItem(self, "Label.StatusMessage"):SetText(message);
-    else
-        GL.Interface:getItem(self, "Label.StatusMessage"):SetText("|cff92FF00TMB Import successful|r");
-        GL.Events:fire("GL.TMB_IMPORTED");
-    end
+    GL.Events:fire("GL.TMB_IMPORTED");
+    GL.Interface.TMB.Importer:close();
+    self:draw();
 
     return true;
 end
@@ -473,7 +396,7 @@ function TMB:decompress(data)
     -- Something went wrong while base64 decoding the payload
     if (not base64DecodeSucceeded) then
         local errorMessage = "Unable to base64 decode the data. Make sure you copy/paste it as-is from thatsmybis.com without adding any additional characters or whitespaces!";
-        GL.Interface:getItem(self, "Label.StatusMessage"):SetText(errorMessage);
+        GL.Interface:getItem("TMB.Importer", "Label.StatusMessage"):SetText(errorMessage);
 
         return "";
     end
@@ -485,13 +408,15 @@ function TMB:decompress(data)
     -- Something went wrong while zlib decoding the payload
     if (not zlibDecodeSucceeded) then
         local errorMessage = "Unable to zlib decode the data. Make sure you copy/paste it as-is from thatsmybis.com without adding any additional characters or whitespaces!";
-        GL.Interface:getItem(self, "Label.StatusMessage"):SetText(errorMessage);
+        GL.Interface:getItem("TMB.Importer", "Label.StatusMessage"):SetText(errorMessage);
         return "";
     end
 
     return data;
 end
 
+--- Broadcast the TMB to the RAID / PARTY
+---@return boolean
 function TMB:broadcast()
     GL:debug("TMB:broadcast");
 
@@ -506,8 +431,8 @@ function TMB:broadcast()
     end
 
     if (not GL.User.hasAssist
-            and not GL.User.isLead
-            and not GL.User.isMasterLooter
+        and not GL.User.isLead
+        and not GL.User.isMasterLooter
     ) then
         GL:warning("Insufficient permissions to broadcast, need ML, assist or lead!");
         return false;
@@ -520,22 +445,36 @@ function TMB:broadcast()
     end
 
     self.broadcastInProgress = true;
+    GL.Events:fire("GL.TMB_BROADCAST_STARTED");
 
-    for _, Player in pairs(GL.User:groupMembers()) do
+    local Broadcast = function ()
+        GL:message("Broadcasting...");
+
         GL.CommMessage.new(
             CommActions.broadcastTMBData,
-            --"GARGUL DEEZ NUTS",
             GL.DB.TMB,
-            "RAID"
-            --Player.name
+            "GROUP"
         ):send();
-        break;
+
+        GL.Ace:ScheduleTimer(function ()
+            GL:success("Broadcast finished");
+            self.broadcastInProgress = false;
+            GL.Events:fire("GL.TMB_BROADCAST_ENDED");
+        end, 10);
     end
 
-    GL.Ace:ScheduleTimer(function ()
-        GL:success("Broadcast finished");
-        self.broadcastInProgress = false;
-    end, 10);
+    -- We're about to send a lot of data which will put strain on CTL
+    -- Make sure we're out of combat before doing so!
+    if (UnitAffectingCombat("player")) then
+        GL:message("You are currently in combat, delaying broadcast");
+
+        GL.Events:register("TMBOutOfCombatListener", "PLAYER_REGEN_ENABLED", function ()
+            GL.Events:unregister("TMBOutOfCombatListener");
+            Broadcast();
+        end);
+    else
+        Broadcast();
+    end
 
     return true;
 end
@@ -549,7 +488,7 @@ function TMB:receiveBroadcast(CommMessage)
     -- No need to update our tables if we broadcasted them ourselves
     if (CommMessage.Sender.id == GL.User.id) then
         GL:debug("TMB:receiveBroadcast received by self, skip");
-        --return true;
+        return true;
     end
 
     local Data = CommMessage.content;
@@ -557,14 +496,15 @@ function TMB:receiveBroadcast(CommMessage)
         GL:warning("Attempting to process incoming TMB data from " .. CommMessage.Sender.name);
 
         if (type(Data) ~= "table"
-            or GL:empty(Data)
+            or type(Data.Items) ~= "table"
+            or GL:anyEmpty(Data, Data.Items, GL:tableGet(Data, "MetaData.importedAt"))
         ) then
             GL:error("Invalid TMB data received from " .. CommMessage.Sender.name);
             return;
         end
 
         -- Validate dataset
-        for itemId, Entry in pairs(Data) do
+        for itemId, Entry in pairs(Data.Items) do
             itemId = tonumber(itemId);
 
             if (GL:anyEmpty(itemId, Entry.character, Entry.prio, Entry.type)) then

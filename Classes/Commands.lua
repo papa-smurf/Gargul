@@ -106,7 +106,7 @@ GL.Commands = GL.Commands or {
         clearplusones = function() GL.PlusOnes:clear(); end,
 
         -- Open the TMB window
-        thatsmybis = function() GL.TMB:drawImporter(); end,
+        thatsmybis = function() GL.TMB:draw(); end,
 
         -- Open the pack mule window
         packmule = function() GL.PackMuleUI:drawSetupWindow(); end,

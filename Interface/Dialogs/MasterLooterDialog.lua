@@ -178,7 +178,7 @@ function MasterLooterDialog:draw()
             return;
         end
 
-        GL.TMB:drawImporter();
+        GL.TMB:draw();
     end);
     Window:AddChild(TMBButton);
 
