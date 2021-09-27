@@ -61,10 +61,6 @@ GL.Commands = GL.Commands or {
     },
 
     Dictionary = {
-        broadcast = function()
-            GL.TMB:broadcast();
-        end,
-
         -- Open the settings menu
         settings = function(...) GL.Settings:draw(); end,
 
