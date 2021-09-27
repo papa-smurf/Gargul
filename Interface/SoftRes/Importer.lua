@@ -79,7 +79,6 @@ function Importer:draw()
     StatusMessageLabel:SetFontObject(_G["GameFontNormal"]);
     StatusMessageLabel:SetFullWidth(true);
     StatusMessageLabel:SetColor(1, 0, 0);
-    StatusMessageLabel:SetText("|cFFf7922eNB: Some features, like hard-reserved items and posting the SoftRes link are not yet available and will be available when the Gargul-specific exporter has been added to softres.it!|r");
     StatusMessageFrame:AddChild(StatusMessageLabel);
     GL.Interface:setItem(self, "StatusMessage", StatusMessageLabel);
 

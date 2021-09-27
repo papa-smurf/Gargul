@@ -719,7 +719,7 @@ end
 function SoftRes:importCSVData(data)
     GL:debug("SoftRes:import");
 
-    GL:warning("The Weakaura data import is still usable but deprecated, try using the Gargul export instead!");
+    GL:warning("The Weakaura data and CSV exports are still supported but are deprecated, try using the Gargul export instead!");
 
     local PlusOnes = {};
     local Columns = {};
