@@ -159,7 +159,8 @@ function SoftRes:draw()
 
     -- No data available, show importer
     if (not self:available()) then
-        GL.Interface.SoftRes.Importer:draw()
+        GL.Interface.SoftRes.Importer:draw();
+        return;
     end
 
     -- Show the soft-reserve overview after all items are loaded
@@ -488,11 +489,9 @@ function SoftRes:import(data, openOverview)
         return false;
     end
 
-    -- A weakaura export string was provided, import it
-    if (GL:strStartsWith(data, "ItemId,Name,Class,Note,Plus")
-        or GL:strStartsWith(data, "Item,ItemId,From,Name,Class,Spec,Note,Plus,Date")
-    ) then
-        success = self:importWeakauraData(data);
+    -- A CSV string was provided, import it
+    if (GL:strContains(data, ",")) then
+        success = self:importCSVData(data);
     else
         -- Assume Gargul data was provided
         success = self:importGargulData(data);
@@ -717,7 +716,7 @@ end
 ---
 ---@param data string
 ---@return boolean
-function SoftRes:importWeakauraData(data)
+function SoftRes:importCSVData(data)
     GL:debug("SoftRes:import");
 
     ---@todo make this active when the Gargul exporter is released on SoftRes.it

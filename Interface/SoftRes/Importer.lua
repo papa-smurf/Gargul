@@ -30,7 +30,6 @@ function Importer:draw()
     -- Create a container/parent frame
     local Window = AceGUI:Create("Frame");
     Window:SetTitle("Gargul v" .. GL.version);
-    Window:SetStatusText("Addon v" .. GL.version);
     Window:SetLayout("Flow");
     Window:SetWidth(600);
     Window:SetHeight(480);
