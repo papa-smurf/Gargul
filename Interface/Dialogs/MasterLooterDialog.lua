@@ -22,7 +22,7 @@ function MasterLooterDialog:_init()
     self._initialized = true;
 
     GL.Events:register("MasterLooterObtainedListener", "GL.USER_OBTAINED_MASTER_LOOTER", function ()
-        if (GL.Settings:get("AutoOpenMasterLooterDialog")) then
+        if (GL.Settings:get("MasterLooting.autoOpenMasterLooterDialog", true)) then
             self:draw();
         end
 
@@ -204,10 +204,10 @@ function MasterLooterDialog:draw()
     AutoOpenCheckbox:SetDescription("");
     AutoOpenCheckbox:SetHeight(20);
     AutoOpenCheckbox:SetWidth(24);
-    AutoOpenCheckbox:SetValue(GL.Settings:get("AutoOpenMasterLooterDialog"));
+    AutoOpenCheckbox:SetValue(GL.Settings:get("MasterLooting.autoOpenMasterLooterDialog", true));
     AutoOpenCheckbox:SetCallback("OnValueChanged", function(Checkbox)
-        GL.Settings:set("AutoOpenMasterLooterDialog", Checkbox:GetValue());
-        print(GL.Settings:get("AutoOpenMasterLooterDialog"));
+        GL.Settings:set("MasterLooting.autoOpenMasterLooterDialog", Checkbox:GetValue());
+        print(GL.Settings:get("MasterLooting.autoOpenMasterLooterDialog"));
     end);
     Window:AddChild(AutoOpenCheckbox);
 
