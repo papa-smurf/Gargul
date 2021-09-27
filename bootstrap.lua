@@ -128,6 +128,19 @@ function GL:announceConflictingAddons()
         end
     end
 
+    -- Check whether the player has ElvUI with the "Improve Loot" setting enabled.. We don't like that one bit, no no
+    if(IsAddOnLoaded("ElvUI")
+        and _G.ElvPrivateDB
+    ) then
+        local elvUILootSetting = GL:tableGet(_G.ElvPrivateDB, string.format("profiles.%s - %s.general.loot", GL.User.name, GL.User.realm));
+
+        if (elvUILootSetting ~= nil
+            and elvUILootSetting
+        ) then
+            GL:error("When using ElvUI you need to disable the loot improvement setting in order to be able to use Gargul to its full potential. Type /elvui, go to General > BlizzUI Improvements and disable 'Loot'");
+        end
+    end
+
     -- Nothing found, steady as she goes
     if (GL:empty(ConflictingAddons)) then
         return;
