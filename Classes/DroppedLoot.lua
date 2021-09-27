@@ -46,6 +46,8 @@ function DroppedLoot:_init()
     Events:register("DroppedLootLootClosedListener", "LOOT_CLOSED", function ()
         DroppedLoot.lootWindowIsOpened = false;
 
+        GL.Interface.ShortcutKeysLegend:close();
+
         -- Stop the timer responsible for trigger the GL.LOOT_CHANGED event
         if (self.lootChangedTimer) then
             GL.Ace:CancelTimer(self.lootChangedTimer);
@@ -96,6 +98,14 @@ function DroppedLoot:lootOpened()
         GL.Ace:ScheduleTimer(function ()
             self:announce();
         end, .5);
+    end
+
+    if (GL.Settings:get("ShortcutKeys.showLegend", true)) then
+        GL.Ace:ScheduleTimer(function ()
+            if (self.lootWindowIsOpened) then
+                GL.Interface.ShortcutKeysLegend:draw();
+            end
+        end, 1.4);
     end
 end
 

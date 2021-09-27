@@ -22,6 +22,7 @@ GL.Data.DefaultSettings = {
     fixMasterLootWindow = true,
 
     ShortcutKeys = {
+        showLegend = true,
         rollOff = "ALT_CLICK",
         award = "ALT_SHIFT_CLICK",
         disenchant = "CTRL_SHIFT_CLICK",

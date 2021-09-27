@@ -48,6 +48,16 @@ function ShortcutKeys:draw(Parent)
         "CTRL_ALT_SHIFT_RIGHTCLICK",
     }
 
+    local Checkboxes = {
+        {
+            label = "Show Shortcut Keys reminder",
+            description = "When enabled a small window appears when looting an enemy that shows your current shortcut key values for rolling, awarding or disenchanting an item",
+            setting = "ShortcutKeys.showLegend",
+        },
+    }
+
+    Overview:drawCheckboxes(Checkboxes, Parent);
+
     HorizontalSpacer = AceGUI:Create("SimpleGroup");
     HorizontalSpacer:SetLayout("FILL");
     HorizontalSpacer:SetFullWidth(true);
