@@ -719,8 +719,7 @@ end
 function SoftRes:importCSVData(data)
     GL:debug("SoftRes:import");
 
-    ---@todo make this active when the Gargul exporter is released on SoftRes.it
-    -- GL:warning("The Weakaura data import is still usable but deprecated, try using the Gargul export instead!");
+    GL:warning("The Weakaura data import is still usable but deprecated, try using the Gargul export instead!");
 
     local PlusOnes = {};
     local Columns = {};
@@ -962,9 +961,7 @@ function SoftRes:postDiscordLink()
     local discordLink = DB:get("SoftRes.MetaData.discordUrl", false);
 
     if (not discordLink) then
-        ---@todo Replace when SoftRes.it is updated
-        GL:warning("No discord URL available");
-        --GL:warning("No discord URL available. Make sure you actually set one and that you exported using the 'Export Gargul Data' button on softres.it!");
+        GL:warning("No discord URL available. Make sure you actually set one and that you exported using the Gargul export on softres.it!");
         return false;
     end
 
