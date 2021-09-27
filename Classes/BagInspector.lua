@@ -53,19 +53,11 @@ function BagInspector:inspect(items)
     -- Send the inspection request to the correct channel
     local CommMessage = {};
     GL:success("Starting inspection...");
-    if (GL.User.isInRaid) then
-        CommMessage = GL.CommMessage.new(
-            CommActions.inspectBags,
-            items,
-            "RAID"
-        ):send();
-    else
-        CommMessage = GL.CommMessage.new(
-            CommActions.inspectBags,
-            items,
-            "PARTY"
-        ):send();
-    end
+    CommMessage = GL.CommMessage.new(
+        CommActions.inspectBags,
+        items,
+        "GROUP"
+    ):send();
 
     -- After a period of X seconds inspect the results
     GL.Ace:ScheduleTimer(function ()

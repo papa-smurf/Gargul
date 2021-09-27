@@ -35,7 +35,7 @@ function Overview:draw()
         return;
     end
 
-    GL.Events:register("ShareButtonRosterUpdatedListener", "GROUP_ROSTER_UPDATE", function () self:updateShareButton(); end);
+    GL.Events:register("SoftResShareButtonRosterUpdatedListener", "GROUP_ROSTER_UPDATE", function () self:updateShareButton(); end);
 
     self.isVisible = true;
 
@@ -685,7 +685,7 @@ function Overview:close()
         return;
     end
 
-    GL.Events:unregister("ShareButtonRosterUpdatedListener");
+    GL.Events:unregister("SoftResShareButtonRosterUpdatedListener");
 
     -- Store the frame's last position for future play sessions
     GL.Interface:storePosition(Window, "SoftReserveOverview");

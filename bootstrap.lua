@@ -111,12 +111,12 @@ end
 -- Register the gl slash command
 GL.Ace:RegisterChatCommand("gl", function (...)
     GL.Commands:_dispatch(...);
-end)
+end);
 
 -- Register the gargul slash command
 GL.Ace:RegisterChatCommand("gargul", function (...)
     GL.Commands:_dispatch(...);
-end)
+end);
 
 --- Announce conflicting addons if any
 ---@return void
@@ -125,6 +125,19 @@ function GL:announceConflictingAddons()
     for _, addon in pairs(GL.Data.Constants.GargulConflictsWith) do
         if (IsAddOnLoaded(addon)) then
             tinsert(ConflictingAddons, addon);
+        end
+    end
+
+    -- Check whether the player has ElvUI with the "Improve Loot" setting enabled.. We don't like that one bit, no no
+    if(IsAddOnLoaded("ElvUI")
+        and _G.ElvPrivateDB
+    ) then
+        local elvUILootSetting = GL:tableGet(_G.ElvPrivateDB, string.format("profiles.%s - %s.general.loot", GL.User.name, GL.User.realm));
+
+        if (elvUILootSetting ~= nil
+            and elvUILootSetting
+        ) then
+            GL:error("When using ElvUI you need to disable the loot improvement setting in order to be able to use Gargul to its full potential. Type /elvui, go to General > BlizzUI Improvements and disable 'Loot'");
         end
     end
 

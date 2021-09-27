@@ -73,7 +73,7 @@ function Importer:draw()
     TMBButton:SetWidth(188);
     TMBButton:SetCallback("OnClick", function()
         self:close();
-        GL.TMB:drawImporter();
+        GL.TMB:draw();
     end);
     Window:AddChild(TMBButton);
 

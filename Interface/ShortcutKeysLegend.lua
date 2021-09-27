@@ -5,15 +5,15 @@ GL.AceGUI = GL.AceGUI or LibStub("AceGUI-3.0");
 
 local AceGUI = GL.AceGUI;
 
----@class ReminderToAssignLootUsingGargulInterface
-GL.Interface.ReminderToAssignLootUsingGargul = {
+---@class ShortcutKeysLegendInterface
+GL.Interface.ShortcutKeysLegend = {
     isVisible = false,
 };
-local ReminderToAssignLootUsingGargul = GL.Interface.ReminderToAssignLootUsingGargul; ---@type ReminderToAssignLootUsingGargulInterface
+local ShortcutKeysLegend = GL.Interface.ShortcutKeysLegend; ---@type ShortcutKeysLegendInterface
 
 ---@return void
-function ReminderToAssignLootUsingGargul:draw()
-    GL:debug("ReminderToAssignLootUsingGargul:draw");
+function ShortcutKeysLegend:draw()
+    GL:debug("ShortcutKeysLegend:draw");
 
     -- The reminder is already visible
     if (self.isVisible) then
@@ -32,13 +32,13 @@ function ReminderToAssignLootUsingGargul:draw()
     end);
     Window.frame:SetScript("OnMouseDown", function(_, button)
         if (button == "RightButton") then
-            GL.Settings:set("TMB.showLootAssignmentReminder", false);
+            GL.Settings:set("ShortcutKeys.showLegend", false);
             self:close();
         end
     end);
     GL.Interface:setItem(self, "Window", Window);
 
-    Window:SetPoint("TOPLEFT", MasterLooterFrame, "TOPRIGHT", 0, 9);
+    Window:SetPoint("TOPLEFT", LootFrame, "TOPRIGHT", 0, 9);
 
     --[[
         DESCRIPTION LABEL
@@ -46,15 +46,20 @@ function ReminderToAssignLootUsingGargul:draw()
     local DescriptionLabel = AceGUI:Create("Label");
     DescriptionLabel:SetFullWidth(true);
     DescriptionLabel:SetFontObject(_G["GameFontNormalSmall"]);
-    DescriptionLabel:SetText("Don't forget to use Gargul instead\nif you wish to export loot later\n\n\n-- Right-click to disable this window --");
+    DescriptionLabel:SetText(string.format(
+        "Gargul Item Hotkeys\n\nRoll out: |c00a79eff%s|r\nAward: |c00a79eff%s|r\nDisenchant: |c00a79eff%s|r\n\n\n-- Right-click to disable this window --",
+        GL.Settings:get("ShortcutKeys.rollOff"),
+        GL.Settings:get("ShortcutKeys.award"),
+        GL.Settings:get("ShortcutKeys.disenchant")
+    ));
     DescriptionLabel:SetColor(1, .95686, .40784);
     DescriptionLabel:SetJustifyH("CENTER")
     Window:AddChild(DescriptionLabel);
 end
 
 ---@return void
-function ReminderToAssignLootUsingGargul:close()
-    GL:debug("ReminderToAssignLootUsingGargul:close");
+function ShortcutKeysLegend:close()
+    GL:debug("ShortcutKeysLegend:close");
 
     local Window = GL.Interface:getItem(self, "Window");
 
@@ -68,4 +73,4 @@ function ReminderToAssignLootUsingGargul:close()
     self.isVisible = false;
 end
 
-GL:debug("ReminderToAssignLootUsingGargul.lua");
+GL:debug("ShortcutKeysLegend.lua");

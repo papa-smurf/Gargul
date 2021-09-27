@@ -60,7 +60,7 @@ function RollOff:announceStart(itemLink, time, note)
             note = note,
             osRollMax = osRollMax,
         },
-        "RAID"
+        "GROUP"
     ):send();
 
     GL.Settings:set("UI.RollOff.timer", time);
@@ -134,7 +134,7 @@ function RollOff:announceStop()
     GL.CommMessage.new(
         CommActions.stopRollOff,
         nil,
-        "RAID"
+        "GROUP"
     ):send();
 
     self:stopListeningForRolls();

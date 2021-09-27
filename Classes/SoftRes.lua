@@ -159,7 +159,8 @@ function SoftRes:draw()
 
     -- No data available, show importer
     if (not self:available()) then
-        GL.Interface.SoftRes.Importer:draw()
+        GL.Interface.SoftRes.Importer:draw();
+        return;
     end
 
     -- Show the soft-reserve overview after all items are loaded
@@ -488,11 +489,9 @@ function SoftRes:import(data, openOverview)
         return false;
     end
 
-    -- A weakaura export string was provided, import it
-    if (GL:strStartsWith(data, "ItemId,Name,Class,Note,Plus")
-        or GL:strStartsWith(data, "Item,ItemId,From,Name,Class,Spec,Note,Plus,Date")
-    ) then
-        success = self:importWeakauraData(data);
+    -- A CSV string was provided, import it
+    if (GL:strContains(data, ",")) then
+        success = self:importCSVData(data);
     else
         -- Assume Gargul data was provided
         success = self:importGargulData(data);
@@ -717,11 +716,10 @@ end
 ---
 ---@param data string
 ---@return boolean
-function SoftRes:importWeakauraData(data)
+function SoftRes:importCSVData(data)
     GL:debug("SoftRes:import");
 
-    ---@todo make this active when the Gargul exporter is released on SoftRes.it
-    -- GL:warning("The Weakaura data import is still usable but deprecated, try using the Gargul export instead!");
+    GL:warning("The Weakaura data and CSV exports are still supported but are deprecated, try using the Gargul export instead!");
 
     local PlusOnes = {};
     local Columns = {};
@@ -844,15 +842,10 @@ function SoftRes:broadcast()
 
     self.broadcastInProgress = true;
 
-    local channel = "PARTY";
-    if (GL.User.isInRaid) then
-        channel = "RAID";
-    end
-
     GL.CommMessage.new(
         CommActions.broadcastSoftRes,
         DB:get("SoftRes.MetaData.importString"),
-        channel
+        "GROUP"
     ):send();
 
     GL.Ace:ScheduleTimer(function ()
@@ -968,9 +961,7 @@ function SoftRes:postDiscordLink()
     local discordLink = DB:get("SoftRes.MetaData.discordUrl", false);
 
     if (not discordLink) then
-        ---@todo Replace when SoftRes.it is updated
-        GL:warning("No discord URL available");
-        --GL:warning("No discord URL available. Make sure you actually set one and that you exported using the 'Export Gargul Data' button on softres.it!");
+        GL:warning("No discord URL available. Make sure you actually set one and that you exported using the Gargul export on softres.it!");
         return false;
     end
 

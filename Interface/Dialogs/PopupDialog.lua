@@ -49,6 +49,14 @@ PopupDialog.BROADCAST_SOFTRES_CONFIRMATION = {
     end,
 }
 
+-- Broadcast soft-reserve data confirmation
+PopupDialog.BROADCAST_TMB_CONFIRMATION = {
+    question = "Are you sure you want to broadcast your TMB data to everyone in your party/raid? NB: EVERYONE can see your TMB data regardless of their permissions on the TMB website!",
+    OnYes = function ()
+        GL.TMB:broadcast();
+    end,
+}
+
 -- Reset settings to defaults confirmation
 PopupDialog.RESET_TO_DEFAULTS_CONFIRMATION = {
     question = "Are you sure you want to reset Gargul to its default settings? DKP, Soft reserves and loot priorities will remain untouched!",
@@ -86,7 +94,11 @@ PopupDialog.AWARD_CONFIRMATION = {
 -- Add a award confirmation dialog to Blizzard's global StaticPopupDialogs object
 PopupDialog.CLEAR_TMB_CONFIRMATION = {
     question = "Are you sure you want to clear the TMB tables?",
-    OnYes = {},
+    OnYes = function ()
+        GL.Interface.TMB.Overview:close();
+        GL.TMB:clear();
+        GL.TMB:draw();
+    end,
 }
 
 GL:debug("Interface/PopupDialog.lua");

@@ -5,18 +5,11 @@ GL.AceGUI = GL.AceGUI or LibStub("AceGUI-3.0");
 
 local AceGUI = GL.AceGUI;
 
-GL:tableSet(GL, "Interface.SoftRes.Importer", {
+GL:tableSet(GL, "Interface.TMB.Importer", {
     isVisible = false,
-
-    InterfaceItems = {
-        Icons = {},
-        Frames = {},
-        Labels = {},
-        Tables = {},
-    },
 });
 
-local Importer = GL.Interface.SoftRes.Importer;
+local Importer = GL.Interface.TMB.Importer;
 
 function Importer:draw()
     GL:debug("Importer:draw");
@@ -40,7 +33,7 @@ function Importer:draw()
     end);
     GL.Interface:setItem(self, "Window", Window);
 
-    Window:SetPoint(GL.Interface:getPosition("SoftReserveImport"));
+    Window:SetPoint(GL.Interface:getPosition("TMBImport"));
 
     -- Make sure the window can be closed by pressing the escape button
     _G["GARGUL_SOFTRES_IMPORTER_WINDOW"] = Window.frame;
@@ -50,22 +43,22 @@ function Importer:draw()
     local Description = AceGUI:Create("Label");
     Description:SetFontObject(_G["GameFontNormal"]);
     Description:SetFullWidth(true);
-    Description:SetText("In order to get started you first need to create a raid on softres.it. Afterwards click the 'Copy Weakaura Data' or 'Export CSV' button on the website, paste the contents in the box below and click 'Import'. NB: A new Gargul-specific exporter will be added to softres.it very soon!");
+    Description:SetText("To get started you first need to export your guild's data on thatsmybis.com. In order to do that navigate to Guild > Exports and click the 'Download' button in the Gargul section. Afterwards paste the contents as-is in the box below and click 'Import'. That's it!");
     Window:AddChild(Description);
 
     -- Large edit box
-    local softReservesBoxContent = "";
-    local SoftResBox = AceGUI:Create("MultiLineEditBox");
-    SoftResBox:SetFullWidth(true);
-    SoftResBox:DisableButton(true);
-    SoftResBox:SetFocus();
-    SoftResBox:SetLabel("");
-    SoftResBox:SetNumLines(20);
-    SoftResBox:SetMaxLetters(999999999);
-    Window:AddChild(SoftResBox);
+    local TMBBoxContent = "";
+    local TMBBox = AceGUI:Create("MultiLineEditBox");
+    TMBBox:SetFullWidth(true);
+    TMBBox:DisableButton(true);
+    TMBBox:SetFocus();
+    TMBBox:SetLabel("");
+    TMBBox:SetNumLines(20);
+    TMBBox:SetMaxLetters(999999999);
+    Window:AddChild(TMBBox);
 
-    SoftResBox:SetCallback("OnTextChanged", function(_, _, text)
-        softReservesBoxContent = text;
+    TMBBox:SetCallback("OnTextChanged", function(_, _, text)
+        TMBBoxContent = text;
     end)
 
     -- Status message frame
@@ -87,7 +80,7 @@ function Importer:draw()
     ImportButton:SetText("Import");
     ImportButton:SetWidth(140);
     ImportButton:SetCallback("OnClick", function()
-        GL.SoftRes:import(softReservesBoxContent, true);
+        GL.TMB:import(TMBBoxContent);
     end);
     Window:AddChild(ImportButton);
 end
@@ -105,11 +98,11 @@ function Importer:close()
     end
 
     -- Store the frame's last position for future play sessions
-    GL.Interface:storePosition(Window, "SoftReserveImport");
+    GL.Interface:storePosition(Window, "TMBImport");
 
     -- Clear the frame and its widgets
     AceGUI:Release(Window);
     self.isVisible = false;
 end
 
-GL:debug("Interfaces/SoftRes/Importer.lua");
+GL:debug("Interfaces/TMB/Importer.lua");
