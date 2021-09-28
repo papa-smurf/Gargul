@@ -100,7 +100,9 @@ function DroppedLoot:lootOpened()
         end, .5);
     end
 
-    if (GL.Settings:get("ShortcutKeys.showLegend", true)) then
+    if (GL.User.isMasterLooter
+        and GL.Settings:get("ShortcutKeys.showLegend", true)
+    ) then
         GL.Ace:ScheduleTimer(function ()
             if (self.lootWindowIsOpened) then
                 GL.Interface.ShortcutKeysLegend:draw();
