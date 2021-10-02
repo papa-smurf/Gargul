@@ -293,7 +293,6 @@ function TMB:import(data, triedToDecompress)
         GL.Interface:getItem("TMB.Importer", "Label.StatusMessage"):SetText("Invalid TMB data provided, make sure to click the 'Download' button in the Gargul section and paste the contents here as-is!");
     end
 
-    -- Make sure all the required properties are available and of the correct type
     if (type(data) ~= "string"
         or GL:empty(data)
     ) then
@@ -304,7 +303,7 @@ function TMB:import(data, triedToDecompress)
     -- Make sure to get rid of any leadin/trailing whitespaces
     data = strtrim(data);
 
-    -- This is not the legacy JSON format, attempt to decompress it!
+    -- This is the new zlib format, attempt to decompress it!
     if (not triedToDecompress
         and not GL:strStartsWith(data, "{\"wishlists\":{")
     ) then
@@ -324,49 +323,76 @@ function TMB:import(data, triedToDecompress)
     end
 
     -- Import the actual TMB data
-    local insufficientPermissions = false;
-    if (WebsiteData.wishlists and type(WebsiteData.wishlists) == "table") then
+    if (type(WebsiteData.wishlists) == "table"
+        and not GL:empty(WebsiteData.wishlists)
+    ) then
         local processedEntryCheckums = {};
+        local formatDecided = false; ---@todo Remove old format support >= 15-10-2021
         local TMBData = {};
+        local Keys = {
+            name = 1,
+            order = 2,
+            type = 3,
+            groupID = 4,
+        };
+
         for itemId, WishListEntries in pairs(WebsiteData.wishlists) do
             TMBData[itemId] = {};
             for _, characterString in pairs(WishListEntries) do
                 local stringParts = GL:strSplit(characterString, "|");
-                local characterName = "";
-                local order = "?";
-                local type = Constants.tmbTypeWish;
 
-                if (stringParts[1] and stringParts[3]) then
-                    characterName = stringParts[1];
-                    order = tonumber(stringParts[3]) or order;
+                -- Check whether the format provided is the old (deprecated) format
+                if (not formatDecided) then
+                    local isOldFormat = GL:count(stringParts) > 4; -- The old TMB format has more than 4 parts
+
+                    if (isOldFormat) then
+                        Keys = {
+                            name = 1,
+                            order = 3,
+                            type = 5,
+                            groupID = nil, -- The old format doesn't support the groupID
+                        };
+                    end
+
+                    formatDecided = true;
                 end
 
-                if (stringParts[5]) then
-                    local providedType = tonumber(stringParts[5]);
+                local characterName = "";
+                local order = "?";
+                local raidGroupID = nil;
+                local type = Constants.tmbTypeWish;
+
+                if (stringParts[Keys.name] and stringParts[Keys.order]) then
+                    characterName = stringParts[Keys.name];
+                    order = tonumber(stringParts[Keys.order]) or order;
+                end
+
+                if (stringParts[Keys.type]) then
+                    local providedType = tonumber(stringParts[Keys.type]);
 
                     if (providedType == Constants.tmbTypePrio) then
                         type = Constants.tmbTypePrio;
                     end
                 end
 
-                if (characterName and order) then
-                    local checkSum = string.format('%s||%s||%s||%s', itemId, characterName, order, type);
+                if (Keys.groupID and stringParts[Keys.groupID]) then
+                    raidGroupID = tonumber(stringParts[Keys.groupID]);
+                end
 
+                if (characterName and order) then
+                    local checkSum = string.format('%s||%s||%s||%s||%s', itemId, characterName, order, type, raidGroupID or 0);
+
+                    -- Make sure to ignore duplicates
                     if (not processedEntryCheckums[checkSum]) then
                         tinsert(TMBData[itemId], {
                             ["character"] = characterName,
                             ["prio"] = order,
-                            ["type"] = type
+                            ["type"] = type,
+                            ['group'] = raidGroupID,
                         });
 
                         processedEntryCheckums[checkSum] = true;
                     end
-                end
-
-                -- It seems like the user who exported didn't have the
-                -- permissions necessary to see all of the item orders
-                if (not order or order == "?") then
-                    insufficientPermissions = true;
                 end
             end
         end
@@ -387,6 +413,8 @@ function TMB:import(data, triedToDecompress)
     GL.Interface.TMB.Importer:close();
     self:draw();
 
+    GL:frameMessage(GL.JSON:encode(GL.DB.TMB.Items));
+
     return true;
 end
 
@@ -398,7 +426,7 @@ function TMB:decompress(data)
 
     -- Something went wrong while base64 decoding the payload
     if (not base64DecodeSucceeded) then
-        local errorMessage = "Unable to base64 decode the data. Make sure you copy/paste it as-is from thatsmybis.com without adding any additional characters or whitespaces!";
+        local errorMessage = "Unable to base64 decode the data. Make sure you copy/paste it as-is from thatsmybis.com without changing anything!";
         GL.Interface:getItem("TMB.Importer", "Label.StatusMessage"):SetText(errorMessage);
 
         return "";
@@ -410,7 +438,7 @@ function TMB:decompress(data)
 
     -- Something went wrong while zlib decoding the payload
     if (not zlibDecodeSucceeded) then
-        local errorMessage = "Unable to zlib decode the data. Make sure you copy/paste it as-is from thatsmybis.com without adding any additional characters or whitespaces!";
+        local errorMessage = "Unable to zlib decode the data. Make sure you copy/paste it as-is from thatsmybis.com without changing anything!";
         GL.Interface:getItem("TMB.Importer", "Label.StatusMessage"):SetText(errorMessage);
         return "";
     end
