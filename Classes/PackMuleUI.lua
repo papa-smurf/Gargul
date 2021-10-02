@@ -98,8 +98,8 @@ function PackMuleUI:drawSetupWindow()
         self:drawSpecifItemRule(ScrollFrame, Rule);
     end
 
-    -- Make sure to draw additional item rules in case we have less than 4
-    for index = #self.UIComponents.Input.SpecificItemRules, 4 do
+    -- Make sure to draw additional item rules in case we have less than 10
+    for index = #self.UIComponents.Input.SpecificItemRules, 10 do
         self:drawSpecifItemRule(ScrollFrame);
     end
 end
