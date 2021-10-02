@@ -98,8 +98,8 @@ function PackMuleUI:drawSetupWindow()
         self:drawSpecifItemRule(ScrollFrame, Rule);
     end
 
-    -- Make sure to draw additional item rules in case we have less than 4
-    for index = #self.UIComponents.Input.SpecificItemRules, 4 do
+    -- Make sure to draw additional item rules in case we have less than 10
+    for index = #self.UIComponents.Input.SpecificItemRules, 10 do
         self:drawSpecifItemRule(ScrollFrame);
     end
 end
@@ -115,7 +115,7 @@ function PackMuleUI:drawInfoSection(Frame)
 
     -- LABEL: Info about PackMule
     local Info = AceGUI:Create("Label");
-    Info:SetText("Use SELF to refer to yourself, IGNORE to ignore an item or RANDOM to send items to random players! PackMule ignores recipes, quest items and a list of untradable items, see button below! You can add item IDs, item names and wilcards: '*ushroom', 'mushroo*' and '*ushroo*' will all match an item named 'mushroom'. |cffC41E3ANB: Player names are CASE SENSITIVE!|rgl pm");
+    Info:SetText("Use SELF to refer to yourself, IGNORE to ignore an item or RANDOM to send items to random players! |c00a79effPackMule ignores recipes, quest items and a list of untradable items, see button below|r! You can add item IDs, item names and wilcards: '*ushroom', 'mushroo*' and '*ushroo*' will all match an item named 'mushroom'. |cffC41E3ANB: Player names are CASE SENSITIVE!|rgl pm");
     Info:SetHeight(20);
     Info:SetWidth(520);
     Info:SetJustifyH("CENTER");
