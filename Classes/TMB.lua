@@ -413,8 +413,6 @@ function TMB:import(data, triedToDecompress)
     GL.Interface.TMB.Importer:close();
     self:draw();
 
-    GL:frameMessage(GL.JSON:encode(GL.DB.TMB.Items));
-
     return true;
 end
 
