@@ -10,6 +10,8 @@ GL.Interface.MasterLooterDialog = {
     _initialized = false,
     isVisible = false,
     announcedConflictingAddons = false,
+    announcedUseOfGargul = false,
+    showedMasterLooterDialog = false,
 };
 local MasterLooterDialog = GL.Interface.MasterLooterDialog; ---@type MasterLooterPopupInterface
 
@@ -22,11 +24,17 @@ function MasterLooterDialog:_init()
     self._initialized = true;
 
     GL.Events:register("MasterLooterObtainedListener", "GL.USER_OBTAINED_MASTER_LOOTER", function ()
-        if (GL.Settings:get("MasterLooting.autoOpenMasterLooterDialog", true)) then
+        if (not self.showedMasterLooterDialog
+            and GL.Settings:get("MasterLooting.autoOpenMasterLooterDialog", true)
+        ) then
+            self.showedMasterLooterDialog = true;
             self:draw();
         end
 
-        if (GL.Settings:get("MasterLooting.announceMasterLooter")) then
+        if (not self.announcedUseOfGargul
+            and GL.Settings:get("MasterLooting.announceMasterLooter")
+        ) then
+            self.announcedUseOfGargul = true;
             self:flightAttendant();
         end
 
