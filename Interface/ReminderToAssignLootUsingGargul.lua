@@ -25,7 +25,7 @@ function ReminderToAssignLootUsingGargul:draw()
     -- Create a container/parent frame
     local Window = AceGUI:Create("InlineGroup");
     Window:SetLayout("Flow");
-    Window:SetWidth(220);
+    Window:SetWidth(240);
     Window:SetHeight(30);
     Window:SetCallback("OnClose", function()
         self:close();
@@ -36,6 +36,7 @@ function ReminderToAssignLootUsingGargul:draw()
             self:close();
         end
     end);
+    Window.frame:SetParent(MasterLooterFrame);
     GL.Interface:setItem(self, "Window", Window);
 
     Window:SetPoint("TOPLEFT", MasterLooterFrame, "TOPRIGHT", 0, 9);
