@@ -73,40 +73,18 @@ function MasterLooting:draw(Parent)
         },
         {
             label = "Announce Master Looter",
-            description = "When enabled you automatically post a message in chat when you are given the role of master looter. Disabling this rule automatically disables the 'Countdown on rolls' and enables the 'Spread the word!' settings in order to raise awareness for Gargul",
+            description = "When enabled you automatically post a message in chat when you are given the role of master looter.",
             setting = "MasterLooting.announceMasterLooter",
-            callback = function (Checkbox)
-                if (not Checkbox:GetValue()) then
-                    GL.Settings:set("MasterLooting.doCountdown", false);
-                    GL.Settings:set("spreadTheWord", true);
-                    local LinkedCheckbox = GL.Interface:getItem(GL.Settings, "CheckBox." .. "MasterLooting.doCountdown");
-
-                    if (LinkedCheckbox) then
-                        LinkedCheckbox:SetValue(false);
-                    end
-                end
-            end
         },
-        ---@todo THIS IS TEMPORARY!
-        --{
-        --    label = "Announce start of roll",
-        --    description = "When enabled you post an announcement in /rw when a roll starts",
-        --    setting = "MasterLooting.announceRollStart",
-        --},
+        {
+            label = "Announce start of roll",
+            description = "When enabled you post an announcement in /rw when a roll starts",
+            setting = "MasterLooting.announceRollStart",
+        },
         {
             label = "Countdown on rolls",
-            description = "If enabled a countdown will be shown in chat when a roll is coming to an end (e.g: you have 5 seconds to roll). Enabling this rule automatically enables the 'Announce Master Looter' setting in order to raise awareness for Gargul",
+            description = "If enabled a countdown will be shown in chat when a roll is coming to an end (e.g: you have 5 seconds to roll)",
             setting = "MasterLooting.doCountdown",
-            callback = function (Checkbox)
-                if (Checkbox:GetValue()) then
-                    GL.Settings:set("MasterLooting.announceMasterLooter", true);
-                    local LinkedCheckbox = GL.Interface:getItem(GL.Settings, "CheckBox." .. "MasterLooting.announceMasterLooter");
-
-                    if (LinkedCheckbox) then
-                        LinkedCheckbox:SetValue(true);
-                    end
-                end
-            end
         },
     };
 
