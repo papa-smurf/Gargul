@@ -22,12 +22,12 @@ function PackMule:draw(Parent)
         },
         {
             label = "Persist after zone switch",
-            description = "PackMule is disabled by default after you as a player change to a different zone (e.g. you enter or leave an instance). If you check this box then PackMule will keep its former state even after moving between zones. |cff8aecffUse with caution!",
+            description = "PackMule is disabled by default after you as a player change to a different zone (e.g. you enter or leave an instance). If you check this box then PackMule will keep its former state even after moving between zones",
             setting = "PackMule.persistsAfterZoneChange",
         },
         {
             label = "Persist after reload",
-            description = "PackMule is disabled by default after you as a player reload (e.g. reload the UI or restart the game). If you check this box then PackMule will keep its former state even after reloading. |c00be3333Use with EXTREME caution|r!",
+            description = "PackMule is disabled by default after you as a player reload (e.g. reload the UI or restart the game). If you check this box then PackMule will keep its former state even after reloading",
             setting = "PackMule.persistsAfterReload",
         },
         {

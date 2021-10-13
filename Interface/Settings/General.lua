@@ -46,7 +46,7 @@ function General:draw(Parent)
         },
         {
             label = "No sounds",
-            description = "Checking this will make sure that Gargul will never play any sounds (raid warning when roll starts for example)",
+            description = "Checking this will make sure that Gargul will never play any sounds",
             setting = "noSounds",
         },
         {
