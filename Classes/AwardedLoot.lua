@@ -161,11 +161,7 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS)
 
     local channel = "PARTY";
     if (GL.User.isInRaid) then
-        channel = "RAID";
-
-        if (GL.Settings:get("AwardingLoot.announceAwardMessagesInRW")) then
-            channel = "RAID_WARNING";
-        end
+        channel = "RAID_WARNING";
     end
 
     if (announce) then
