@@ -16,6 +16,11 @@ GL.Data.Constants = {
     tmbTypePrio = 1,
     tmbTypeWish = 2,
 
+    ExportFormats = {
+        TMB = 1,
+        DFT = 2,
+    },
+
     SoftReserveSources = {
         weakaura = 0,
         gargul = 1,

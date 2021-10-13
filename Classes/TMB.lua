@@ -515,7 +515,6 @@ function TMB:broadcast()
     end
 
     if (not GL.User.hasAssist
-        and not GL.User.isLead
         and not GL.User.isMasterLooter
     ) then
         GL:warning("Insufficient permissions to broadcast, need ML, assist or lead!");
