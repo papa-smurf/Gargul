@@ -81,7 +81,6 @@ function Overview:draw()
     -- The user doesn't have sufficient permissions to broadcast the data
     if (not GL.User.isInGroup
         or (not GL.User.isMasterLooter
-            and not GL.User.isLead
             and not GL.User.hasAssist
         )
     ) then
@@ -291,7 +290,6 @@ function Overview:updateShareButton()
         -- The user doesn't have sufficient permissions to broadcast the data
         if (not GL.User.isInGroup
             or (not GL.User.isMasterLooter
-                and not GL.User.isLead
                 and not GL.User.hasAssist
             )
         ) then
