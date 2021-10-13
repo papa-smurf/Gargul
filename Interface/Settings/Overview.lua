@@ -12,6 +12,8 @@ GL.Interface.Settings.Overview = {
     previousSection = nil,
     defaultSection = "General",
     Sections = {
+        {"|cFFff8000Hall of Fame|r", "HallOfFame"},
+        {"", ""},
         {"General", "General"},
         {"Master Looting", "MasterLooting"},
         {"Shortcut Keys", "ShortcutKeys"},
@@ -98,7 +100,7 @@ function Overview:draw(section)
     local FirstColumn = AceGUI:Create("SimpleGroup");
     FirstColumn:SetLayout("FILL")
     FirstColumn:SetWidth(180);
-    FirstColumn:SetHeight(516);
+    FirstColumn:SetHeight(505);
     Window:AddChild(FirstColumn);
 
     -- Generate the characters table and add it to Window.frame
@@ -112,17 +114,6 @@ function Overview:draw(section)
     ColumnSpacerTwo:SetWidth(20);
     ColumnSpacerTwo:SetHeight(400);
     Window:AddChild(ColumnSpacerTwo);
-
-    ----[[
-    --    SECOND COLUMN
-    --]]
-    --local SecondColumn = AceGUI:Create("InlineGroup");
-    --SecondColumn:SetLayout("FILL")
-    --SecondColumn:SetWidth(556);
-    --SecondColumn:SetHeight(516);
-    --GL.Interface:setItem(self, "SecondColumn", SecondColumn);
-    --Window:AddChild(SecondColumn);
-    --
 
     local SecondColumn = AceGUI:Create("SimpleGroup");
     SecondColumn:SetLayout("FLOW")
@@ -145,6 +136,28 @@ function Overview:draw(section)
     GL.Interface:setItem(self, "Window", Window);
     GL.Interface:setItem(self, "Title", SectionTitle);
     GL.Interface:setItem(self, "SectionWrapper", ScrollFrameHolder);
+
+    local PatreonButton = GL.UI:createFrame("Button", "PatreonButton" .. GL:uuid(), Window.frame, "UIPanelButtonTemplate");
+    PatreonButton:Show();
+    PatreonButton:SetSize(170, 43);
+    PatreonButton:SetPoint("BOTTOMLEFT", Window.frame, "BOTTOMLEFT", 25, 16);
+
+    local HighlightTexture = PatreonButton:CreateTexture();
+    HighlightTexture:SetTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\patreon-button");
+    HighlightTexture:SetPoint("CENTER", PatreonButton, "CENTER", 0, 0);
+    HighlightTexture:SetSize(170, 43);
+
+    PatreonButton:SetNormalTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\patreon-button");
+    PatreonButton:SetHighlightTexture(HighlightTexture);
+
+    PatreonButton:SetScript("OnClick", function(_, button)
+        if (button == 'LeftButton') then
+            GL.Interface.Dialogs.HyperlinkDialog:open({
+                description = "Thanks for considering becoming a Patron of Gargul, your support helps tremendously!",
+                hyperlink = "patreon.com/gargul",
+            });
+        end
+    end);
 
     self:showSection(section);
 end
