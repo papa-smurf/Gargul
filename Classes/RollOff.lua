@@ -107,17 +107,17 @@ function RollOff:announceStart(itemLink, time, note)
             announceMessage,
             "RAID_WARNING"
         );
-
-        if (not GL:empty(reserveMessage)) then
-            GL:sendChatMessage(
-                reserveMessage,
-                "RAID"
-            );
-        end
     else
         GL:sendChatMessage(
             announceMessage,
             "PARTY"
+        );
+    end
+
+    if (not GL:empty(reserveMessage)) then
+        GL:sendChatMessage(
+            reserveMessage,
+            "GROUP"
         );
     end
 
