@@ -12,8 +12,6 @@ GL.Interface.Settings.Overview = {
     previousSection = nil,
     defaultSection = "General",
     Sections = {
-        {"|cFFff8000Hall of Fame|r", "HallOfFame"},
-        {"", ""},
         {"General", "General"},
         {"Master Looting", "MasterLooting"},
         {"Shortcut Keys", "ShortcutKeys"},
