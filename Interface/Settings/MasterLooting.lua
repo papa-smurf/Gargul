@@ -73,7 +73,7 @@ function MasterLooting:draw(Parent)
         },
         {
             label = "Announce Master Looter",
-            description = "When enabled you automatically post a message in chat when you are given the role of master looter.",
+            description = "When enabled you automatically post a message in chat when you are given the role of master looter",
             setting = "MasterLooting.announceMasterLooter",
         },
         {
