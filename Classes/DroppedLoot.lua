@@ -373,7 +373,7 @@ function DroppedLoot:announce()
                         local entryType = Entry.type or Constants.tmbTypeWish;
                         local isOffSpec = string.find(playerName, "(os)");
                         local prioOffset = 0;
-                        local sortingOrder = prio;
+                        local sortingOrder = tonumber(prio);
 
                         -- We add 100 to the prio (first key) of the object
                         -- This object is used for sorting later and is not visible to the player
@@ -381,7 +381,7 @@ function DroppedLoot:announce()
                             prioOffset = 100;
                         end
 
-                        if (type(sortingOrder) == "number") then
+                        if (not GL:empty(sortingOrder)) then
                             sortingOrder = prio + prioOffset;
                         else
                             -- If for whatever reason we can't determine the
