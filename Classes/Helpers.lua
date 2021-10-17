@@ -905,6 +905,7 @@ function GL:playSound(soundNameOrNumber, channel)
 end
 
 local gaveNoMessagesWarning = false;
+local gaveNoAssistWarning = false;
 ---@param message string The message you'd like to send
 ---@param chatType string The type of message (SAY|EMOTE|YELL|PARTY|GUILD|OFFICER|RAID|RAID_WARNING|INSTANCE_CHAT|BATTLEGROUND|WHISPER|CHANNEL|AFK|DND)
 ---@param language string|nil The language of the message (COMMON|ORCISH|etc), if nil it's COMMON for Alliance and ORCISH for Horde
@@ -946,10 +947,19 @@ function GL:sendChatMessage(message, chatType, language, channel, spreadTheWord)
         if (GL.User.isInRaid) then
             chatType = "RAID";
         end
-    elseif (chatType == "RAID_WARNING"
-        and not GL.User.isInRaid
-    ) then
-        chatType = "PARTY";
+
+    -- The player wants to post in RAID_WARNING but is either not in a raid or doesn't have assist
+    elseif (chatType == "RAID_WARNING") then
+        if (not GL.User.isInRaid) then
+            chatType = "PARTY";
+        elseif (not GL.User.hasAssist) then
+            if (not gaveNoAssistWarning) then
+                GL:warning("You need assist to use raid warnings!");
+                gaveNoAssistWarning = true;
+            end
+
+            chatType = "RAID";
+        end
     end
 
     SendChatMessage (

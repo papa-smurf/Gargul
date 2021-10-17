@@ -69,22 +69,10 @@ end
 ---
 ---@return void
 function Settings:enforceTemporarySettings()
-    ---@todo THIS IS TEMPORARY! Remove on >= 09-10-2021 and re-enable setting in /gl and codebase
-    self:set("MasterLooting.announceRollStart", true);
+    -- This is reserved for version-based logic (e.g. cleaning up variables, settings etc.)
 
-    --- In v3.3.16 we set the default hotkey for disenchant to CTRL_SHIFT_CLICK
-    --- Make sure older versions are also updated!
-    ---@todo THIS IS TEMPORARY! Remove on >= 09-10-2021
-    if (not self:get("Temp.3_3_16_loaded", false)) then
-        self:set("Temp.3_3_16_loaded", true);
-        self:set("ShortcutKeys.disenchant", "CTRL_SHIFT_CLICK");
-    end
-
-    --- Make sure the new TMB data format is enforced and old data is removed
-    ---@todo THIS IS TEMPORARY! Remove on >= 11-10-2021
-    if (not GL.DB:get("TMB.MetaData.importedAt")) then
-        GL.DB.TMB = {};
-    end
+    ---@todo remove spreadTheWord setting checks from the codebase entirely >= 01-01-2022
+    GL.Settings:set("spreadTheWord", true);
 end
 
 --- Draw a setting section

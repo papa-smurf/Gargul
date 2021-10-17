@@ -112,6 +112,34 @@ function TMB:byItemLink(itemLink, inRaidOnly)
     return self:byItemId(GL:getItemIdFromLink(itemLink), inRaidOnly);
 end
 
+--- Fetch an item's TMB note based on its item link
+---
+---@param itemLink string
+---@return string
+function TMB:noteByItemLink(itemLink)
+    GL:debug("TMB:noteByItemLink");
+
+    if (GL:empty(itemLink)) then
+        return "";
+    end
+
+    return self:noteByItemID(GL:getItemIdFromLink(itemLink));
+end
+
+--- Fetch an item's TMB note based on its item ID
+---
+---@param itemLink string
+---@return string
+function TMB:noteByItemID(itemID)
+    GL:debug("TMB:noteByItemID");
+
+    if (GL:empty(itemID)) then
+        return "";
+    end
+
+    return GL.DB:get("TMB.Notes." .. itemID, "");
+end
+
 --- Append the TMB info as defined in GL.DB.TMB.Items to an item's tooltip
 ---
 ---@param tooltip GameTooltip
@@ -138,7 +166,20 @@ function TMB:appendTMBItemInfoToTooltip(tooltip)
         return;
     end
 
+    local TMBNote = self:noteByItemLink(itemLink);
     local TMBInfo = self:byItemLink(itemLink);
+
+    -- This item has a note, show it!
+    if (not GL:empty(TMBNote)) then
+        -- Add the header
+        tooltip:AddLine(string.format(
+            "\n|cFF%s%s|r",
+            GL.Data.Constants.addonHexColor,
+            "TMB Note"
+        ));
+
+        tooltip:AddLine(string.format("|cFFFFFFFF    %s|r", TMBNote));
+    end
 
     -- No wishes defined for this item
     if (GL:empty(TMBInfo)) then
@@ -305,7 +346,7 @@ function TMB:import(data, triedToDecompress)
 
     -- This is the new zlib format, attempt to decompress it!
     if (not triedToDecompress
-        and not GL:strStartsWith(data, "{\"wishlists\":{")
+        and not GL:strStartsWith(data, "{\"wishlists\":")
     ) then
         data = TMB:decompress(data);
         return TMB:import(data, true);
@@ -323,11 +364,12 @@ function TMB:import(data, triedToDecompress)
     end
 
     -- Import the actual TMB data
+    local wishlistItemsWereImported = false;
     if (type(WebsiteData.wishlists) == "table"
         and not GL:empty(WebsiteData.wishlists)
     ) then
         local processedEntryCheckums = {};
-        local formatDecided = false; ---@todo Remove old format support >= 15-10-2021
+        local formatDecided = false;
         local TMBData = {};
         local Keys = {
             name = 1,
@@ -391,6 +433,7 @@ function TMB:import(data, triedToDecompress)
                             ['group'] = raidGroupID,
                         });
 
+                        wishlistItemsWereImported = true;
                         processedEntryCheckums[checkSum] = true;
                     end
                 end
@@ -400,14 +443,26 @@ function TMB:import(data, triedToDecompress)
         GL.DB.TMB.Items = TMBData;
     end
 
-    GL.DB.TMB.MetaData = {
-        importedAt = GetServerTime(),
-    };
+    -- There are item notes available, store them
+    if (WebsiteData.notes and type(WebsiteData.notes) == "table") then
+        for itemID, note in pairs(WebsiteData.notes) do
+            GL.DB:set("TMB.Notes." .. itemID, note);
+        end
+    end
 
     -- There is also loot priority data available, pass it to on!
     if (WebsiteData.loot and type(WebsiteData.loot) == "string") then
         GL.LootPriority:save(WebsiteData.loot);
     end
+
+    -- This can happen if the user only imported item notes
+    if (GL:empty(wishlistItemsWereImported)) then
+        return true;
+    end
+
+    GL.DB.TMB.MetaData = {
+        importedAt = GetServerTime(),
+    };
 
     GL.Events:fire("GL.TMB_IMPORTED");
     GL.Interface.TMB.Importer:close();
@@ -460,7 +515,6 @@ function TMB:broadcast()
     end
 
     if (not GL.User.hasAssist
-        and not GL.User.isLead
         and not GL.User.isMasterLooter
     ) then
         GL:warning("Insufficient permissions to broadcast, need ML, assist or lead!");

@@ -66,8 +66,7 @@ function RollOff:announceStart(itemLink, time, note)
     GL.Settings:set("UI.RollOff.timer", time);
 
     -- The user doesn't want to announce anything in chat
-    ---@todo THIS IS TEMPORARY!
-    if (false and not GL.Settings:get("MasterLooting.announceRollStart")) then
+    if (not GL.Settings:get("MasterLooting.announceRollStart")) then
         return true;
     end
 
@@ -108,17 +107,17 @@ function RollOff:announceStart(itemLink, time, note)
             announceMessage,
             "RAID_WARNING"
         );
-
-        if (not GL:empty(reserveMessage)) then
-            GL:sendChatMessage(
-                reserveMessage,
-                "RAID"
-            );
-        end
     else
         GL:sendChatMessage(
             announceMessage,
             "PARTY"
+        );
+    end
+
+    if (not GL:empty(reserveMessage)) then
+        GL:sendChatMessage(
+            reserveMessage,
+            "GROUP"
         );
     end
 

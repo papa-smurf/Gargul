@@ -138,7 +138,6 @@ function Overview:updateShareButton()
     if (GL.TMB.broadcastInProgress
         or not GL.User.isInGroup
         or (not GL.User.isMasterLooter
-            and not GL.User.isLead
             and not GL.User.hasAssist
         )
     ) then
