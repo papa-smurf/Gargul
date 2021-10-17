@@ -1,4 +1,4 @@
-## Interface: 11400
+## Interface: 11410
 ## Title: Gargul
 ## Title: |cff8aecffGargul|r
 ## Author: <Give it a Lick> Zhorax - Razorgore
