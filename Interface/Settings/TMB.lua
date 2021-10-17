@@ -73,6 +73,11 @@ function TMB:draw(Parent)
             setting = "TMB.showPrioListInfoOnTooltips",
         },
         {
+            label = "Show item tier and note",
+            description = "Checking this makes sure that an item's guild note and item tier are shown on the item tooltip",
+            setting = "TMB.showItemInfoOnTooltips",
+        },
+        {
             label = "Hide wishlist info when priority is set",
             description = "Checking this makes sure that you only see an item's wishlist details if no priority (LC) is set for it",
             setting = "TMB.hideWishListInfoIfPriorityIsPresent",
