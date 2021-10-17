@@ -167,7 +167,7 @@ function Exporter:refreshExportString()
         local exportString = self:transformEntriesToTMBFormat(LootEntries);
         GL.Interface:getItem(self, "MultiLineEditBox.Export"):SetText(exportString);
 
-    elseif (exportFormat == Constants.ExportFormats.DFT) then
+    elseif (GL:inTable({Constants.ExportFormats.DFTUS, Constants.ExportFormats.DFTEU}, exportFormat)) then
         self:transformEntriesToDFTFormat(LootEntries, function (exportString)
             GL.Interface:getItem(self, "MultiLineEditBox.Export"):SetText(exportString);
         end);
@@ -249,6 +249,9 @@ function Exporter:transformEntriesToDFTFormat(Entries, callback)
         keyCounter = keyCounter + 1;
     end
 
+    -- Get the desired export format
+    local exportFormat = GL.Settings:get("ExportingLoot.format", Constants.ExportFormats.TMB);
+
     -- Flip it so the IDs are the value, not the key
     ItemIDs = GL:tableFlip(ItemIDs);
 
@@ -257,11 +260,19 @@ function Exporter:transformEntriesToDFTFormat(Entries, callback)
         local exportString = "";
         for _, Entry in pairs(Entries) do
             local loadedItem = GL.DB.Cache.ItemsById[tostring(Entry.itemId)];
+            local dateString = "";
+
+            -- Check whether the player wants an EU or US date string
+            if (exportFormat == Constants.ExportFormats.DFTEU) then
+                dateString = date('%d/%m/%Y', Entry.timestamp);
+            else
+                dateString = date('%m/%d/%Y', Entry.timestamp);
+            end
 
             if (not GL:anyEmpty(loadedItem, loadedItem.name)) then
                 exportString = string.format("%s%s;[%s];%s\n",
                     exportString,
-                    date('%m/%d/%Y', Entry.timestamp),
+                    dateString,
                     loadedItem.name,
                     Entry.awardedTo
                 );

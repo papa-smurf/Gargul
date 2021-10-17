@@ -70,7 +70,8 @@ function ExportingLoot:draw(Parent)
 
     local DropDownItems = {
         [1] = "Thatsmybis TMB / RCLC (default)",
-        [2] = "DFT-Fight-Club",
+        [2] = "DFT-Fight-Club (US date format)",
+        [3] = "DFT-Fight-Club (EU date format)",
     };
 
     local ExportFormat = GL.AceGUI:Create("Dropdown");

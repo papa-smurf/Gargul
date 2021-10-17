@@ -18,7 +18,8 @@ GL.Data.Constants = {
 
     ExportFormats = {
         TMB = 1,
-        DFT = 2,
+        DFTUS = 2,
+        DFTEU = 3,
     },
 
     SoftReserveSources = {
