@@ -390,10 +390,16 @@ function DroppedLoot:announce()
                         end
 
                         if (entryType == Constants.tmbTypePrio) then
-                            tinsert(ActivePrioListDetails, { sortingOrder, string.format("%s[%s]", playerName, prio)});
+                            tinsert(ActivePrioListDetails, {
+                                order = sortingOrder,
+                                player = string.format("%s[%s]", playerName, prio),
+                            });
                             itemIsOnSomeonesPriolist = true;
                         else
-                            tinsert(ActiveWishListDetails, { sortingOrder, string.format("%s[%s]", playerName, prio)});
+                            tinsert(ActiveWishListDetails, {
+                                order = sortingOrder,
+                                player = string.format("%s[%s]", playerName, prio),
+                            });
                             itemIsOnSomeonesWishlist = true;
                         end
                     end
@@ -436,14 +442,14 @@ function DroppedLoot:announce()
             ) then
                 -- Sort the PrioListEntries based on prio (lowest to highest)
                 table.sort(ActivePrioListDetails, function (a, b)
-                    return a[1] < b[1];
+                    return a.order < b.order;
                 end);
 
                 local PrioData = {};
                 local entries = 0;
                 for _, Entry in pairs(ActivePrioListDetails) do
                     entries = entries + 1;
-                    tinsert(PrioData, GL:capitalize(Entry[2]));
+                    tinsert(PrioData, GL:capitalize(Entry.player));
 
                     -- The user only wants to see a limited number of entries, break!
                     if (entries >= maximumNumberOfAnouncementEntries) then
@@ -466,14 +472,14 @@ function DroppedLoot:announce()
             ) then
                 -- Sort the WishListEntries based on prio (lowest to highest)
                 table.sort(ActiveWishListDetails, function (a, b)
-                    return a[1] < b[1];
+                    return a.order < b.order;
                 end);
 
                 local WishListData = {};
                 local entries = 0;
                 for _, Entry in pairs(ActiveWishListDetails) do
                     entries = entries + 1;
-                    tinsert(WishListData, GL:capitalize(Entry[2]));
+                    tinsert(WishListData, GL:capitalize(Entry.player));
 
                     -- The user only wants to see a limited number of entries, break!
                     if (entries >= maximumNumberOfAnouncementEntries) then
