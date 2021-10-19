@@ -71,6 +71,7 @@ GL.Data.DefaultSettings = {
         maximumNumberOfTooltipEntries = 35,
         maximumNumberOfAnouncementEntries = 5,
         showEntriesWhenSolo = false,
+        showItemInfoOnTooltips = true,
         showLootAssignmentReminder = true,
         showPrioListInfoOnTooltips = true,
         showWishListInfoOnTooltips = true,

@@ -19,6 +19,8 @@ GL.PackMule = {
         LE_ITEM_CLASS_QUESTITEM,
     },
 
+    playerIsInHeroicInstance = false,
+
     Rules = {},
 };
 
@@ -34,6 +36,11 @@ function PackMule:_init()
         return;
     end
 
+    -- Check whether the user is in a heroic instance
+    -- More info about difficultyIDs: https://wowpedia.fandom.com/wiki/DifficultyID
+    local _, _, difficultyID = GetInstanceInfo();
+    self.playerIsInHeroicInstance = GL:inTable({2, 174}, difficultyID);
+
     -- Disable packmule if the "persist after reload" setting is not enabled
     -- This piece of logic is only run once on boot/reload hence why this works
     if (not Settings:get("PackMule.persistsAfterReload")
@@ -45,7 +52,9 @@ function PackMule:_init()
 
     self.Rules = Settings:get("PackMule.Rules");
 
-    GL.Events:register("PackMuleZoneChangeListener", "ZONE_CHANGED_NEW_AREA", self.zoneChanged);
+    GL.Events:register("PackMuleZoneChangeListener", "ZONE_CHANGED_NEW_AREA", function ()
+        self:zoneChanged();
+    end);
 
     GL.Events:register("PackMuleLootLootReadyListener", "LOOT_READY", function ()
         if (self.timerId) then
@@ -124,6 +133,11 @@ function PackMule:zoneChanged()
         GL:warning("PackMule was automatically disabled after zone change");
         Settings:set("PackMule.enabled", false);
     end
+
+    -- Check whether the user is in a heroic instance
+    -- More info about difficultyIDs: https://wowpedia.fandom.com/wiki/DifficultyID
+    local _, _, difficultyID = GetInstanceInfo();
+    self.playerIsInHeroicInstance = GL:inTable({2, 174}, difficultyID);
 end
 
 --- Check all loot and implement applicable rules
@@ -132,8 +146,6 @@ end
 function PackMule:lootReady()
     GL:debug("PackMule:lootReady");
 
-    self = PackMule;
-
     if (self.processing) then
         return;
     else
@@ -141,7 +153,6 @@ function PackMule:lootReady()
     end
 
     if (not self.Rules
-        or not GL.User.isInGroup
         or not GL.User.isMasterLooter
     ) then
         self.processing = false;
@@ -226,9 +237,13 @@ function PackMule:lootReady()
                         or (operator == "<" and itemQuality < quality)
                     )) then
                         local bindType = Loot.bindType or LE_ITEM_BIND_NONE;
+                        local bindOnPickup = GL:inTable({ LE_ITEM_BIND_ON_ACQUIRE, LE_ITEM_BIND_QUEST}, bindType);
 
-                        if (not GL:inTable({LE_ITEM_BIND_ON_ACQUIRE, LE_ITEM_BIND_QUEST}, bindType) or ( -- The item is not BoP so we can safely PackMule it
+                        if (not bindOnPickup or ( -- The item is not BoP so we can safely PackMule it
                             itemQuality < 5 -- Legendary items are skipped
+                            and (GL.User.isInRaid -- Make sure PackMule doesn't mule BoP items when not in a raid or heroic instance
+                                or self.playerIsInHeroicInstance
+                            )
                             and not GL:inTable(GL.Data.Constants.UntradeableItems, itemID) -- Untradable items are skipped in quality rules
                             and not GL:inTable(self.itemClassIdsToIgnore, itemClassID) -- Recipes and Quest Items are skipped in quality rules
                         )) then
@@ -360,9 +375,8 @@ function PackMule:ruleIsValid(Rule)
     GL:debug("PackMule:ruleIsValid");
 
     -- Every rule must have a target (who to give the item to)
-    if (not Rule.target
-        or type(Rule.target) ~= "string"
-        or Rule.target == ""
+    if (type(Rule.target) ~= "string"
+        or GL:empty(Rule.target)
     ) then
         return false;
     end
@@ -380,10 +394,8 @@ function PackMule:ruleIsValid(Rule)
 
     -- If there's no operator then we need a specific item name to continue
     if (not Rule.operator
-        and (
-            not Rule.item
-            or type(Rule.item) ~= "string"
-            or Rule.item == ""
+        and (type(Rule.item) ~= "string"
+            or GL:empty(Rule.item)
         )
     ) then
         return false;
@@ -422,6 +434,7 @@ function PackMule:disenchant(itemLink, byPassConfirmationDialog)
         for _, Player in pairs(GL.User:groupMembers()) do
             local playerName = string.lower(Player.name);
 
+            -- Make sure all player names include the player's realm on Era servers
             if (GL.isEra and not strfind(playerName, "-")) then
                 playerName = string.format("%s-%s", playerName, GL.User.realm);
             end

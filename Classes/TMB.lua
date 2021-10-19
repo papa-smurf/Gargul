@@ -112,6 +112,34 @@ function TMB:byItemLink(itemLink, inRaidOnly)
     return self:byItemId(GL:getItemIdFromLink(itemLink), inRaidOnly);
 end
 
+--- Fetch an item's TMB tier based on its item link
+---
+---@param itemLink string
+---@return string
+function TMB:tierByItemLink(itemLink)
+    GL:debug("TMB:tierByItemLink");
+
+    if (GL:empty(itemLink)) then
+        return "";
+    end
+
+    return self:tierByItemID(GL:getItemIdFromLink(itemLink));
+end
+
+--- Fetch an item's TMB tier based on its item ID
+---
+---@param itemID string
+---@return string
+function TMB:tierByItemID(itemID)
+    GL:debug("TMB:tierByItemID");
+
+    if (GL:empty(itemID)) then
+        return "";
+    end
+
+    return GL.DB:get("TMB.Tiers." .. itemID, "");
+end
+
 --- Fetch an item's TMB note based on its item link
 ---
 ---@param itemLink string
@@ -128,7 +156,7 @@ end
 
 --- Fetch an item's TMB note based on its item ID
 ---
----@param itemLink string
+---@param itemID string
 ---@return string
 function TMB:noteByItemID(itemID)
     GL:debug("TMB:noteByItemID");
@@ -166,19 +194,54 @@ function TMB:appendTMBItemInfoToTooltip(tooltip)
         return;
     end
 
+    local TMBTier = self:tierByItemLink(itemLink);
     local TMBNote = self:noteByItemLink(itemLink);
     local TMBInfo = self:byItemLink(itemLink);
 
-    -- This item has a note, show it!
-    if (not GL:empty(TMBNote)) then
-        -- Add the header
-        tooltip:AddLine(string.format(
-            "\n|cFF%s%s|r",
-            GL.Data.Constants.addonHexColor,
-            "TMB Note"
-        ));
+    local TMBHeaderAdded = false;
 
-        tooltip:AddLine(string.format("|cFFFFFFFF    %s|r", TMBNote));
+    if (GL.Settings:get("TMB.showItemInfoOnTooltips")) then
+        -- This item has a tier, show it!
+        if (not GL:empty(TMBTier)
+            and GL.Data.Constants.TMBTierHexColors[TMBTier]
+        ) then
+            local tierString = string.format("|cFF%s%s|r",
+                GL.Data.Constants.TMBTierHexColors[TMBTier],
+                TMBTier
+            );
+
+            -- Add the header
+            tooltip:AddLine(string.format(
+                "\n|cFF%sTMB:|r",
+                GL.Data.Constants.addonHexColor,
+                "TMB"
+            ));
+            TMBHeaderAdded = true;
+
+            -- Add the tier string
+            tooltip:AddLine(string.format(
+                "|cFFFFFFFF    Tier:|r %s",
+                tierString
+            ));
+        end
+
+        -- This item has a note, show it!
+        if (not GL:empty(TMBNote)) then
+            if (not TMBHeaderAdded) then
+                -- Add the header
+                tooltip:AddLine(string.format(
+                    "\n|cFF%sTMB:|r",
+                    GL.Data.Constants.addonHexColor,
+                    "TMB"
+                ));
+            end
+
+            -- Add the note
+            tooltip:AddLine(string.format(
+                "|cFFFFFFFF    Note:|r |cFFFFF569%s|r",
+                TMBNote
+            ));
+        end
     end
 
     -- No wishes defined for this item
@@ -447,6 +510,13 @@ function TMB:import(data, triedToDecompress)
     if (WebsiteData.notes and type(WebsiteData.notes) == "table") then
         for itemID, note in pairs(WebsiteData.notes) do
             GL.DB:set("TMB.Notes." .. itemID, note);
+        end
+    end
+
+    -- There are item tiers available, store them
+    if (WebsiteData.tiers and type(WebsiteData.tiers) == "table") then
+        for itemID, tier in pairs(WebsiteData.tiers) do
+            GL.DB:set("TMB.Tiers." .. itemID, tier);
         end
     end
 
