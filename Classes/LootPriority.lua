@@ -67,7 +67,7 @@ function LootPriority:appendLootPrioToTooltip(tooltip)
 
     -- Add the actual item prio
     for priorityLevel, value in pairs(itemPriority) do
-        tooltip:AddLine(string.format("|c008aecff %s: %s", priorityLevel, value))
+        tooltip:AddLine(string.format("|c008aecff    %s: %s", priorityLevel, value))
     end
 end
 

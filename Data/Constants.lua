@@ -45,6 +45,20 @@ GL.Data.Constants = {
         22726, -- Splinter of Atiesh
         30183, -- Nether Vortex
 
+        --[[ EVENT LOOT ]]
+        20400, -- Pumpkin Bag (Hallow's End)
+        33117, -- Jack-o'-Lantern (Hallow's End)
+        20393, -- Treat Bag (Hallow's End)
+        34075, -- Ring of Ghoulish Delight (Hallow's End)
+        34073, -- The Horseman's Signet Ring (Hallow's End)
+        34074, -- Witches Band (Hallow's End)
+        33808, -- The Horseman's Helm (Hallow's End)
+        38175, -- The Horseman's Blade (Hallow's End)
+        37011, -- Magic Broom (Hallow's End)
+        33184, -- Swift Magic Broom (Hallow's End)
+        33154, -- Sinister Squashling (Hallow's End)
+        34068, -- Weighted Jack-o'-Lantern (Hallow's End)
+
         --[[ WORLD BOSS LOOT ]]
         19132, -- Crystal Adorned Crown (Azuregos)
         18541, -- Puissant Cape (Azuregos)
@@ -151,6 +165,21 @@ GL.Data.Constants = {
         shaman = {0, .44, .87,},
         warlock = {.57647, .5098, .788235,},
         warrior = {.77647, .607843, .42745,},
+    },
+
+    TMBTierHexColors = {
+        S = "02F3FF",
+        [1] = "02F3FF",
+        A = "20FF00",
+        [2] = "20FF00",
+        B = "F7FF00",
+        [3] = "F7FF00",
+        C = "F80F80",
+        [4] = "F80F80",
+        D = "F00000",
+        [5] = "F00000",
+        F = "FF0078",
+        [6] = "FF0078",
     },
 
     --[[

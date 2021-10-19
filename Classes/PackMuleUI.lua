@@ -195,8 +195,8 @@ function PackMuleUI:drawScrollFrame(Frame)
     ScrollFrameParent:AddChild(ScrollFrame);
 
     local AddRuleButton = AceGUI:Create("Button");
-    AddRuleButton:SetText("Add Item Rule");
-    AddRuleButton:SetWidth(140);
+    AddRuleButton:SetText("Add Additional Rule");
+    AddRuleButton:SetWidth(160);
     AddRuleButton:SetHeight(20);
     AddRuleButton:SetCallback("OnClick", function()
         self:drawSpecifItemRule(ScrollFrame);
@@ -210,7 +210,7 @@ function PackMuleUI:drawScrollFrame(Frame)
     Row:SetHeight(30);
     Frame:AddChild(Row);
 
-    self:drawSpacer(Row, 35, 1);
+    self:drawSpacer(Row, 15, 1);
     Row:AddChild(AddRuleButton);
 
     self:drawSpacer(Row, 50, 10);
