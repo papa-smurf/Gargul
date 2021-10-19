@@ -45,6 +45,20 @@ GL.Data.Constants = {
         22726, -- Splinter of Atiesh
         30183, -- Nether Vortex
 
+        --[[ EVENT LOOT ]]
+        20400, -- Pumpkin Bag (Hallow's End)
+        33117, -- Jack-o'-Lantern (Hallow's End)
+        20393, -- Treat Bag (Hallow's End)
+        34075, -- Ring of Ghoulish Delight (Hallow's End)
+        34073, -- The Horseman's Signet Ring (Hallow's End)
+        34074, -- Witches Band (Hallow's End)
+        33808, -- The Horseman's Helm (Hallow's End)
+        38175, -- The Horseman's Blade (Hallow's End)
+        37011, -- Magic Broom (Hallow's End)
+        33184, -- Swift Magic Broom (Hallow's End)
+        33154, -- Sinister Squashling (Hallow's End)
+        34068, -- Weighted Jack-o'-Lantern (Hallow's End)
+
         --[[ WORLD BOSS LOOT ]]
         19132, -- Crystal Adorned Crown (Azuregos)
         18541, -- Puissant Cape (Azuregos)
