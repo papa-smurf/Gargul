@@ -226,7 +226,7 @@ function Exporter:transformEntriesToTMBFormat(Entries)
             date('%Y-%m-%d', AwardEntry.timestamp),
             AwardEntry.awardedTo,
             AwardEntry.itemId,
-            AwardEntry.OS and 1 or 0,
+            AwardEntry.OS,
             AwardEntry.checksum
         );
     end
