@@ -546,20 +546,15 @@ function DroppedLoot:getTMBDetails(TMBInfo, PlayersInRaid)
                 sortingOrder = 1000;
             end
 
-            local osString = "";
-            if (isOffSpec) then
-                osString = "(OS)";
-            end
-
             if (entryType == Constants.tmbTypePrio) then
                 tinsert(ActivePrioListDetails, {
                     order = sortingOrder,
-                    player = string.format("%s[%s]%s", playerName, prio, osString),
+                    player = string.format("%s[%s]", playerName, prio),
                 });
             else
                 tinsert(ActiveWishListDetails, {
                     order = sortingOrder,
-                    player = string.format("%s[%s]%s", playerName, prio, osString),
+                    player = string.format("%s[%s]", playerName, prio),
                 });
             end
         end
