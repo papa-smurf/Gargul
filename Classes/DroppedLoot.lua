@@ -284,172 +284,129 @@ end
 function DroppedLoot:announce()
     GL:debug("DroppedLoot:announce");
 
+    -- The sourceGUID is something we use to make sure
+    -- we don't announce the same loot multiple times
+    local sourceGUID = false;
+
     -- Fetch the name of everyone currently in the raid/party
     local PlayersInRaid = GL.User:groupMemberNames();
 
     -- Get the total number of items that dropped
-    local sourceGUID;
     local itemCount = GetNumLootItems();
+
+    -- Loop through every item in the loot window
     for lootIndex = 1, itemCount do
         local itemLink = GetLootSlotLink(lootIndex);
-        local itemIsHardReserved = false;
-        local SoftReserves = SoftRes:byItemLink(itemLink);
-        local TMBInfo = GL.TMB:byItemLink(itemLink);
 
-        local quality = select(5, GetLootSlotInfo(lootIndex));
-        sourceGUID = GetLootSourceInfo(lootIndex);
+        -- This self-executing anonymous function gives us a bit more control
+        (function ()
+            local itemIsHardReserved = false;
 
-        if (itemLink
-            and (sourceGUID
-                and not DroppedLoot.Announced[sourceGUID] -- This is to make sure we didn't announce the items already
-            ) and (
-                (quality and quality >= GL.Settings:get("minimumQualityOfAnnouncedLoot", 4))
-                or not GL:empty(SoftReserves)
-                or not GL:empty(TMBInfo)
-            )
-        ) then
-            itemIsHardReserved = SoftRes:linkIsHardReserved(itemLink);
+            -- We need an itemLink to work with. If an item doesn't have it that means:
+            --     It's not a "real" item but gold/silver/copper
+            --     The item no longer exists in the loot window
+            --     The data is not yet available
+            --     Blizzard©
+            if (not itemLink) then
+                return;
+            end
+
+            -- Make sure we don't override sourceGUID with false/nil if it was already set!
+            sourceGUID = sourceGUID or GetLootSourceInfo(lootIndex);
+
+            -- We're missing crucial data, skip!
+            if (GL:empty(sourceGUID) -- Make sure we have a sourceGUID
+                or DroppedLoot.Announced[sourceGUID] -- We apparently already announced these items
+            ) then
+                return;
+            end
+
+            local quality = select(5, GetLootSlotInfo(lootIndex)) or 0;
+            local SoftReserves = SoftRes:byItemLink(itemLink);
+            local TMBInfo = GL.TMB:byItemLink(itemLink);
+
+            -- There is nothing to announce, skip!
+            if (quality < GL.Settings:get("minimumQualityOfAnnouncedLoot", 4) -- Quality is lower than our set minimum
+                and GL:empty(SoftReserves) -- Noone (hard)reserved it
+                and GL:empty(TMBInfo) -- Noone has it on his wishlist and it's not a prio item
+            ) then
+                return;
+            end
+
+            -- Fetch the applicable SoftRes data (if any)
             local ActiveSoftResDetails = {};
-            local ActiveWishListDetails = {};
-            local ActivePrioListDetails = {};
-            local itemIsOnSomeonesPriolist = false;
-            local itemIsOnSomeonesWishlist = false;
-
-            if (not itemIsHardReserved
-                and SoftReserves
-                and GL.Settings:get("SoftRes.announceInfoInChat")
+            itemIsHardReserved = SoftRes:linkIsHardReserved(itemLink);
+            if (not itemIsHardReserved -- Only fetch the SoftRes data if the item isn't hard-reserved
+                and not GL:empty(SoftReserves) -- This item wasn't reserved
+                and GL.Settings:get("SoftRes.announceInfoInChat") -- The player isn't interested in SoftRes data
             ) then
-                local ReservationsByPlayerName = {};
-                for _, playerName in pairs(SoftReserves) do
-                    if (not ReservationsByPlayerName[playerName]) then
-                        ReservationsByPlayerName[playerName] = 1;
-                    else
-                        ReservationsByPlayerName[playerName] = ReservationsByPlayerName[playerName] + 1;
-                    end
-                end
-
-                -- This is necessary so we can sort the table based on number of reserves per item
-                local Reservations = {};
-                for playerName, reservations in pairs(ReservationsByPlayerName) do
-                    tinsert(Reservations, {
-                        player = playerName,
-                        reservations = reservations,
-                    })
-                end
-                ReservationsByPlayerName = {}; -- We no longer need this table, clean it up!
-
-                -- Sort the reservations based on whoever reserved it more often (highest to lowest)
-                table.sort(Reservations, function (a, b)
-                    return a.reservations > b.reservations;
-                end);
-
-                -- Add the reservation details to ActiveReservations (add 2x / 3x etc when same item was reserved multiple times)
-                for _, Entry in pairs(Reservations) do
-                    local entryString = Entry.player;
-
-                    -- User reserved the same item multiple times
-                    if (Entry.reservations > 1) then
-                        entryString = string.format("%s (%sx)", Entry.player, Entry.reservations);
-                    end
-
-                    tinsert(ActiveSoftResDetails, GL:capitalize(entryString));
-                end
+                ActiveSoftResDetails = self:getSoftResDetails(SoftReserves);
             end
 
-            if (TMBInfo
-                and (
-                    GL.Settings:get("TMB.includePrioListInfoInLootAnnouncement")
-                    or GL.Settings:get("TMB.includeWishListInfoInLootAnnouncement")
-                )
-            ) then
-                -- Make sure we only show wishlist details of people
-                -- Who are actually in the raid
-                for _, Entry in pairs(TMBInfo) do
-                    local playerName = string.lower(Entry.character);
-
-                    --- NOTE TO SELF: it's (os) because of the string.lower, if you remove the lower then change below accordingly!
-                    if (GL:inTable(PlayersInRaid, string.gsub(playerName, "%(os%)", ""))) then
-                        local prio = Entry.prio;
-                        local entryType = Entry.type or Constants.tmbTypeWish;
-                        local isOffSpec = string.find(playerName, "(os)");
-                        local prioOffset = 0;
-                        local sortingOrder = tonumber(prio);
-
-                        -- We add 100 to the prio (first key) of the object
-                        -- This object is used for sorting later and is not visible to the player
-                        if (isOffSpec) then
-                            prioOffset = 100;
-                        end
-
-                        if (not GL:empty(sortingOrder)) then
-                            sortingOrder = prio + prioOffset;
-                        else
-                            -- If for whatever reason we can't determine the
-                            -- item prio then we add it to the end of the list by default
-                            sortingOrder = 1000;
-                        end
-
-                        if (entryType == Constants.tmbTypePrio) then
-                            tinsert(ActivePrioListDetails, {
-                                order = sortingOrder,
-                                player = string.format("%s[%s]", playerName, prio),
-                            });
-                            itemIsOnSomeonesPriolist = true;
-                        else
-                            tinsert(ActiveWishListDetails, {
-                                order = sortingOrder,
-                                player = string.format("%s[%s]", playerName, prio),
-                            });
-                            itemIsOnSomeonesWishlist = true;
-                        end
-                    end
-                end
-            end
-
-            local chatChannel = "PARTY";
-            if (GL.User.isInRaid) then
-                chatChannel = "RAID";
-            end
-
+            -- Either announce the item by itself or state that it's hard-reserved!
             if (itemIsHardReserved
                 and GL.Settings:get("SoftRes.announceInfoInChat")
             ) then
                 GL:sendChatMessage(
                     itemLink .. " (This item is hard-reserved!)",
-                    chatChannel
+                    "GROUP"
                 );
             else
                 -- Link the item in the chat for
                 -- all group members to see
                 GL:sendChatMessage(
                     itemLink,
-                    chatChannel
+                    "GROUP"
                 );
             end
 
-            -- Show who reserved this item
+            --[[
+                SHOW WHO RESERVED THIS ITEM (SOFTRES)
+            ]]
+            -- * This data is only available if the user has the announce SoftRes setting enabled
             if (not GL:empty(ActiveSoftResDetails)) then
                 GL:sendChatMessage(
                     "Reserved by: " .. table.concat(ActiveSoftResDetails, ", "),
-                    chatChannel
+                    "GROUP"
                 );
             end
 
-            -- Show who has priority on this item
+            -- Fetch the applicable TMB data (if any)
+            local ActiveWishListDetails = {};
+            local ActivePrioListDetails = {};
             local maximumNumberOfAnouncementEntries = GL.Settings:get("TMB.maximumNumberOfAnouncementEntries", 5);
+            if (TMBInfo and (
+                GL.Settings:get("TMB.includePrioListInfoInLootAnnouncement")
+                or GL.Settings:get("TMB.includeWishListInfoInLootAnnouncement")
+            )) then
+                ActivePrioListDetails, ActiveWishListDetails = self:getTMBDetails(TMBInfo, PlayersInRaid);
+            end
+            local itemIsOnSomeonesPriolist = not GL:empty(ActivePrioListDetails);
+            local itemIsOnSomeonesWishlist = not GL:empty(ActiveWishListDetails);
+
+            --[[
+                SHOW WHO HAS PRIORITY ON THIS ITEM (TMB)
+            ]]
             if (itemIsOnSomeonesPriolist
                 and GL.Settings:get("TMB.includePrioListInfoInLootAnnouncement")
             ) then
+GL:printTable(ActivePrioListDetails);
                 -- Sort the PrioListEntries based on prio (lowest to highest)
                 table.sort(ActivePrioListDetails, function (a, b)
                     return a.order < b.order;
                 end);
-
-                local PrioData = {};
+GL:printTable(ActivePrioListDetails);
                 local entries = 0;
+                local entryString = "";
                 for _, Entry in pairs(ActivePrioListDetails) do
                     entries = entries + 1;
-                    tinsert(PrioData, GL:capitalize(Entry.player));
+
+                    -- Add the player to the list (first entry should not start with a comma)
+                    if (GL:empty(entryString)) then
+                        entryString = GL:capitalize(Entry.player);
+                    else
+                        entryString = entryString .. ", " .. GL:capitalize(Entry.player);
+                    end
 
                     -- The user only wants to see a limited number of entries, break!
                     if (entries >= maximumNumberOfAnouncementEntries) then
@@ -458,12 +415,14 @@ function DroppedLoot:announce()
                 end
 
                 GL:sendChatMessage(
-                    "TMB Priority: " .. table.concat(PrioData, ", "),
-                    chatChannel
+                    "TMB Priority: " .. entryString,
+                    "GROUP"
                 );
             end
 
-            -- Show who wishlisted this item
+            --[[
+                SHOW WHO WISHLISTED THIS ITEM (TMB)
+            ]]
             if (itemIsOnSomeonesWishlist
                 and GL.Settings:get("TMB.includeWishListInfoInLootAnnouncement")
                 and (not itemIsOnSomeonesPriolist
@@ -475,11 +434,17 @@ function DroppedLoot:announce()
                     return a.order < b.order;
                 end);
 
-                local WishListData = {};
                 local entries = 0;
+                local entryString = "";
                 for _, Entry in pairs(ActiveWishListDetails) do
                     entries = entries + 1;
-                    tinsert(WishListData, GL:capitalize(Entry.player));
+
+                    -- Add the player to the list (first entry should not start with a comma)
+                    if (GL:empty(entryString)) then
+                        entryString = GL:capitalize(Entry.player);
+                    else
+                        entryString = entryString .. ", " .. GL:capitalize(Entry.player);
+                    end
 
                     -- The user only wants to see a limited number of entries, break!
                     if (entries >= maximumNumberOfAnouncementEntries) then
@@ -488,18 +453,149 @@ function DroppedLoot:announce()
                 end
 
                 GL:sendChatMessage(
-                    "TMB Wishlist: " .. table.concat(WishListData, ", "),
-                    chatChannel
+                    "TMB Wishlist: " .. entryString,
+                    "GROUP"
                 );
+            end
+        end)();
+    end
+
+    -- This ensures that we don't announce the same loot multiple times!
+    -- Keep in mind that sourceGUID can be empty!
+    if (sourceGUID) then
+        DroppedLoot.Announced[sourceGUID] = true;
+    end
+end
+
+--- Get all SoftRes details
+---
+---@return table
+function DroppedLoot:getSoftResDetails(SoftReserves)
+    local ActiveSoftResDetails = {};
+
+    local ReservationsByPlayerName = {};
+    for _, playerName in pairs(SoftReserves) do
+        if (not ReservationsByPlayerName[playerName]) then
+            ReservationsByPlayerName[playerName] = 1;
+        else
+            ReservationsByPlayerName[playerName] = ReservationsByPlayerName[playerName] + 1;
+        end
+    end
+
+    -- This is necessary so we can sort the table based on number of reserves per item
+    local Reservations = {};
+    for playerName, reservations in pairs(ReservationsByPlayerName) do
+        tinsert(Reservations, {
+            player = playerName,
+            reservations = reservations,
+        })
+    end
+    ReservationsByPlayerName = {}; -- We no longer need this table, clean it up!
+
+    -- Sort the reservations based on whoever reserved it more often (highest to lowest)
+    table.sort(Reservations, function (a, b)
+        return a.reservations > b.reservations;
+    end);
+
+    -- Add the reservation details to ActiveReservations (add 2x / 3x etc when same item was reserved multiple times)
+    for _, Entry in pairs(Reservations) do
+        local entryString = Entry.player;
+
+        -- User reserved the same item multiple times
+        if (Entry.reservations > 1) then
+            entryString = string.format("%s (%sx)", Entry.player, Entry.reservations);
+        end
+
+        tinsert(ActiveSoftResDetails, GL:capitalize(entryString));
+    end
+
+    return ActiveSoftResDetails;
+end
+
+--- Get all TMB details
+---
+---@return table, table
+function DroppedLoot:getTMBDetails(TMBInfo, PlayersInRaid)
+    local ActivePrioListDetails = {};
+    local ActiveWishListDetails = {};
+
+    -- Make sure we only show wishlist details of people
+    -- Who are actually in the raid
+    for _, Entry in pairs(TMBInfo) do
+        local playerName = string.lower(Entry.character);
+
+        --- NOTE TO SELF: it's (os) because of the string.lower, if you remove the lower then change below accordingly!
+        if (GL:inTable(PlayersInRaid, string.gsub(playerName, "%(os%)", ""))) then
+            local prio = Entry.prio;
+            local entryType = Entry.type or Constants.tmbTypeWish;
+            local isOffSpec = string.find(playerName, "%(os%)");
+            local prioOffset = 0;
+            local sortingOrder = tonumber(prio);
+
+            -- We add 100 to the prio (first key) of the object
+            -- This object is used for sorting later and is not visible to the player
+            if (isOffSpec) then
+                prioOffset = 100;
+            end
+
+            if (not GL:empty(sortingOrder)) then
+                sortingOrder = prio + prioOffset;
+            else
+                -- If for whatever reason we can't determine the
+                -- item prio then we add it to the end of the list by default
+                sortingOrder = 1000;
+            end
+
+            local osString = "";
+            if (isOffSpec) then
+                osString = "(OS)";
+            end
+
+            if (entryType == Constants.tmbTypePrio) then
+                tinsert(ActivePrioListDetails, {
+                    order = sortingOrder,
+                    player = string.format("%s[%s]%s", playerName, prio, osString),
+                });
+            else
+                tinsert(ActiveWishListDetails, {
+                    order = sortingOrder,
+                    player = string.format("%s[%s]%s", playerName, prio, osString),
+                });
             end
         end
     end
 
-    -- This ensures that we don't announce the same loot multiple times!
-    -- Keep in mind that sourceGUID can be empty for some items!
-    if (sourceGUID) then
-        DroppedLoot.Announced[sourceGUID] = true;
-    end
+    return ActivePrioListDetails, ActiveWishListDetails;
+end
+
+--- This function allows me to test the loot announcement without actually having to kill bosses in raids
+--- It also enables me to debug issues other players may have using their actual TMB/SoftRes data
+---
+---@return void
+function DroppedLoot:announceTest(...)
+    local itemIDs = {...};
+
+    GL:onItemLoadDo(itemIDs, function (Items)
+        GetNumLootItems = function () return GL:count(Items); end;
+        GetLootSlotLink = function (slot)
+            return Items[slot].link or nil;
+        end;
+        GetLootSlotInfo = function (slot)
+            local SlotItem = Items[slot];
+
+            return SlotItem.icon, SlotItem.name, 1, nil, SlotItem.quality, false, false, nil, true;
+        end;
+        GetLootSourceInfo = function() return GL:uuid() end;
+
+        -- This is optional
+        --GL.User.groupMemberNames = function()
+        --    return {"name1", "name2",};
+        --end;
+
+        self:announce();
+    end);
+
+    GL:warning("Don't forget to /reload when done testing!");
 end
 
 GL:debug("DroppedLoot.lua");
