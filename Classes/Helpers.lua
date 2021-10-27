@@ -695,17 +695,20 @@ end
 ---
 ---@param itemId number
 ---@return table
-function GL:findBagIdAndSlotForItem(itemId)
+function GL:findBagIdAndSlotForItem(itemID, skipSoulBound)
+    skipSoulBound = toboolean(skipSoulBound);
+
     for bag = 0, 10 do
         for slot = 1, GetContainerNumSlots(bag) do
-            local foundItemLink = GetContainerItemLink(bag,slot)
+            local _, _, _, _, _, _, _, _, _, bagItemID, isBound = GetContainerItemInfo(bag, slot);
 
-            if (foundItemLink) then
-                local foundItemId = GL:getItemIdFromLink(foundItemLink);
-
-                if (foundItemId and foundItemId == itemId) then
-                    return {bag, slot};
-                end
+            if (bagItemID
+                and bagItemID == itemID
+                and (not skipSoulBound
+                    or not isBound
+                )
+            ) then
+                return {bag, slot};
             end
         end
     end
@@ -1185,5 +1188,16 @@ function GL:tableSet(Table, keyString, value)
     Table = Table[firstKey];
     return self:tableSet(Table, strjoin(".", unpack(keys)), value);
 end
+
+--- Apply a user supplied function to every member of a table
+---
+---@param Table table
+---@param callback function
+---@return void
+function GL:tableWalk(Table, callback, ...)
+    for key, Value in pairs(Table) do
+        callback(key, Value, ...);
+    end
+end;
 
 GL:debug("Helpers.lua");

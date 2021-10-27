@@ -93,11 +93,7 @@ function DroppedLoot:lootOpened()
     if (GL.User.isMasterLooter
         and GL.Settings:get("announceLootToChat")
     ) then
-        -- We give the announcing of loot some time
-        -- in case the master looter set up a packmule
-        GL.Ace:ScheduleTimer(function ()
-            self:announce();
-        end, .5);
+        self:announce();
     end
 
     if (GL.User.isMasterLooter

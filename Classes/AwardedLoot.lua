@@ -29,6 +29,11 @@ function AwardedLoot:_init()
         self:appendAwardedLootToTooltip(tooltip);
     end);
 
+    -- Bind the opening of the trade window to the tradeInitiated method
+    GL.Events:register("AwardedLootTradeShowListener", "TRADE_SHOW", function ()
+        self:tradeInitiated();
+    end);
+
     self._initialized = true;
 end
 
@@ -82,16 +87,21 @@ end
 function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS)
     GL:debug("AwardedLoot:addWinner");
 
+    -- Determine whether the item should be flagged as off-spec
     isOS = toboolean(isOS);
 
     local dateProvided = date and type(date) == "string";
     local timestamp = GetServerTime();
 
-    if (not winner or type(winner) ~= "string" or winner == "") then
+    if (type(winner) ~= "string"
+        or GL:empty(winner)
+    ) then
         return GL:debug("Invalid winner provided for AwardedLoot:addWinner");
     end
 
-    if (not itemLink or type(itemLink) ~= "string" or itemLink == "") then
+    if (type(itemLink) ~= "string"
+        or GL:empty(itemLink)
+    ) then
         return GL:debug("Invalid itemLink provided for AwardedLoot:addWinner");
     end
 
@@ -147,7 +157,8 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS)
         itemId = itemId,
         awardedTo = winner,
         timestamp = timestamp,
-        softresid = GL.DB:get("SoftRes.MetaData.id"),
+        softresID = GL.DB:get("SoftRes.MetaData.id"),
+        received = false,
         OS = isOS,
     };
 
@@ -200,7 +211,7 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS)
     if (GL.DroppedLoot.lootWindowIsOpened
         and GL.Settings:get("AwardingLoot.autoAssignAfterAwardingAnItem")
     ) then
-        GL.PackMule:assignLootToPlayer(AwardEntry.itemId, winner);
+        PackMule:assignLootToPlayer(AwardEntry.itemId, winner);
 
     -- The loot window is closed and the auto trade setting is enabled
     -- Also skip this part if you yourself won the item
@@ -243,6 +254,54 @@ function AwardedLoot:initiateTrade(AwardDetails)
     end, .5);
 end
 
+--- When a trade is initiated we attempt to automatically add items that should be given to the tradee
+---
+---@return void
+function AwardedLoot:tradeInitiated()
+    -- Just in case it was closed immediately
+    if (not TradeFrame:IsShown()) then
+        return;
+    end
+
+    -- Fetch the player name of whomever we're trading with
+    local tradingPartner = _G.TradeFrameRecipientNameText:GetText();
+
+    -- The trading partner could not be determined
+    if (type(tradingPartner) ~= "string"
+        or GL:empty(tradingPartner)
+        or tradingPartner == "Player Name"
+    ) then
+        return;
+    end
+
+    -- Check whether there are any awarded items that need to be traded to your trading partner
+    local threeHoursAgo = GetServerTime() - 10800;
+
+    GL:tableWalk(GL.DB.AwardedLoot, function (_, Loot)
+        -- Check whether this item is meant for our current trading partner
+        if (Loot.received -- The item was already received by the winner, no need to check further
+            or Loot.awardedTo ~= tradingPartner -- The awarded item entry is not meant for this person
+            or Loot.timestamp < threeHoursAgo -- No need to check loot that was awarded 3 hours (or longer) ago
+        ) then
+            return;
+        end
+
+        -- Try to find the item in our bag, make sure to skip soulbound items
+        local skipSoulbound = true;
+        local itemPositionInBag = GL:findBagIdAndSlotForItem(Loot.itemId, skipSoulbound);
+
+        -- The item was not found or the trade window is not open anymore
+        if (GL:empty(itemPositionInBag)
+            or not TradeFrame:IsShown()
+        ) then
+            return;
+        end
+
+        -- Everything went well, put the item in the trade window!
+        UseContainerItem(unpack(itemPositionInBag));
+    end);
+end
+
 function AwardedLoot:processAwardedLoot(CommMessage)
     GL:debug("AwardedLoot:processAwardedLoot");
 
@@ -275,5 +334,7 @@ function AwardedLoot:processAwardedLoot(CommMessage)
     -- Insert the award in the more permanent AwardHistory table (for export / audit purposes)
     tinsert(GL.DB.AwardHistory, AwardEntry);
 end
+
+
 
 GL:debug("AwardedLoot.lua");
