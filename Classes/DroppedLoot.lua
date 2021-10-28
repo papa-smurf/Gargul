@@ -386,12 +386,11 @@ function DroppedLoot:announce()
             if (itemIsOnSomeonesPriolist
                 and GL.Settings:get("TMB.includePrioListInfoInLootAnnouncement")
             ) then
-GL:printTable(ActivePrioListDetails);
                 -- Sort the PrioListEntries based on prio (lowest to highest)
                 table.sort(ActivePrioListDetails, function (a, b)
                     return a.order < b.order;
                 end);
-GL:printTable(ActivePrioListDetails);
+
                 local entries = 0;
                 local entryString = "";
                 for _, Entry in pairs(ActivePrioListDetails) do
