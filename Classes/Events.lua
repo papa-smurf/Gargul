@@ -70,6 +70,11 @@ end
 function Events:register(identifier, event, callback)
     GL:debug("Events:register");
 
+    -- The user is attempting a mass assignment, pass it on!
+    if (type(identifier) == "table") then
+        return self:massRegister(identifier, event);
+    end
+
     if (GL:empty(identifier)
         or GL:empty(event)
         or type(callback) ~= "function"
@@ -140,7 +145,30 @@ function Events:listen(event, ...)
     local args = {...};
 
     for _, listener in pairs(GL.Events.Registry.EventListeners[event] or {}) do
-        pcall(function () listener(unpack(args)); end);
+        pcall(function () listener(event, unpack(args)); end);
+    end
+end
+
+--- Register multiple event listeners
+---
+---@param EventDetails table
+---@param callback function
+---@return boolean
+function Events:massRegister(EventDetails, callback)
+    for _, Entry in pairs(EventDetails) do
+        local identifier, event;
+
+        if (type(Entry) == "table") then
+            identifier = Entry[1];
+            event = Entry[2];
+        elseif (type(Entry) == "string") then
+            event = Entry;
+            identifier = Entry .. "Lister" .. GL:uuid();
+        else
+            return false;
+        end
+
+        self:register(identifier, event, callback);
     end
 end
 

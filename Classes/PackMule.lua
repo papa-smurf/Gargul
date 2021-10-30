@@ -56,7 +56,7 @@ function PackMule:_init()
         self:zoneChanged();
     end);
 
-    GL.Events:register("PackMuleLootLootReadyListener", "LOOT_READY", function ()
+    GL.Events:register("PackMuleLootLootAnnouncedListener", "GL.LOOT_ANNOUNCED", function ()
         if (self.timerId) then
             GL.Ace:CancelTimer(self.timerId);
             self.timerId = false;
@@ -513,10 +513,10 @@ end
 
 --- Assign a item to a player
 ---
----@param itemId number
+---@param itemID number
 ---@param playerName string
 ---@return void
-function PackMule:assignLootToPlayer(itemId, playerName)
+function PackMule:assignLootToPlayer(itemID, playerName)
     GL:debug("PackMule:assignLootToPlayer");
 
     -- Try to determine the loot index of the item
@@ -526,7 +526,7 @@ function PackMule:assignLootToPlayer(itemId, playerName)
         local itemLink = GetLootSlotLink(lootIndex);
         local lootItemId = GL:getItemIdFromLink(itemLink);
 
-        if (lootItemId and lootItemId == itemId) then
+        if (lootItemId and lootItemId == itemID) then
             itemIndex = lootIndex;
             break;
         end
@@ -557,8 +557,23 @@ function PackMule:assignLootToPlayer(itemId, playerName)
         return
     end
 
+    -- Make sure we fire an event when the user receives the item
+    local eventID = "PackMuleItemMasterLootedListener" .. GL:uuid();
+    GL.Events:register(eventID, "LOOT_SLOT_CLEARED", function (_, slot)
+        GL.Events:unregister(eventID);
+
+        if (slot == itemIndex) then
+            GL.Events:fire("GL.ITEM_MASTER_LOOTED", playerName, itemID);
+        end
+    end);
+
     -- Assign the item to the winner
     GiveMasterLoot(itemIndex, playerIndex);
+
+    -- Make sure the event listener doesn't linger
+    GL.Ace:ScheduleTimer(function ()
+        GL.Events:unregister(eventID);
+    end, 1);
 end
 
 GL:debug("PackMule.lua");

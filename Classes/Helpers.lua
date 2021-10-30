@@ -691,21 +691,125 @@ function GL:onItemLoadDo(Items, callback, haltOnError, sorter)
     end
 end
 
+--- Make sure era names are suffixed with a realm
+---
+---@param playerName string
+---@return string
+function GL:normalizedName(playerName)
+    GL:debug("GL:normalizedName");
+
+    if (GL.isEra and not strfind(playerName, "-")) then
+        playerName = string.format("%s-%s", playerName, GL.User.realm);
+    end
+
+    return string.lower(playerName);
+end
+
+-- Set up a table of all relevant localized time strings,
+-- mapping them to their equivalent time in seconds
+-- This allows us to fetch hours/minutes/seconds remaining from item tooltips
+local TimeTable = {}
+local TimeFormats = {
+    [INT_SPELL_DURATION_HOURS] = 60 * 60,
+    [INT_SPELL_DURATION_MIN] = 60,
+    [INT_SPELL_DURATION_SEC] = 1
+};
+for pattern, coefficient in pairs(TimeFormats) do
+    local prefix = "";
+    pattern = pattern:gsub("%%d(%s?)", function(s)
+        prefix = "(%d+)" .. s;
+        return "";
+    end);
+
+    pattern = pattern:gsub("|4", ""):gsub("[:;]", " ");
+
+    for s in pattern:gmatch("(%S+)") do
+        TimeTable[prefix .. s] = coefficient;
+    end
+end
+
+--- Read GL.TooltipFrame's tooltip and see if there's time remaining to trade the item
+---
+---@return number Seconds or 0
+function GL:tooltipItemTradeTimeRemaining()
+    local timeRemainingLine;
+    local needle = BIND_TRADE_TIME_REMAINING:gsub("%%s", ".*");
+    local itemIsSoulBound = false;
+
+    -- Attempt to find a tooltip line that holds the remaining trading time
+    for i = 1, GL.TooltipFrame:NumLines() do
+        local line = _G["GargulTooltipFrameTextLeft" .. i];
+
+        if line then
+            timeRemainingLine = line:GetText() or "";
+
+            -- The item is actually soulbound!
+            if (timeRemainingLine == ITEM_SOULBOUND) then
+                itemIsSoulBound = true;
+            end
+
+            -- The time remaining line was found, no need to continue searching!
+            if timeRemainingLine:find(needle) then
+                break;
+            end
+
+            timeRemainingLine = nil;
+        end
+    end
+
+    -- Extract each unit of time, convert it to seconds, and sum it
+    if (timeRemainingLine) then
+        local timeRemainingInSeconds = 0;
+        for pattern, coefficient in pairs(TimeTable) do
+            local timeRemainingSegment = timeRemainingLine:match(pattern);
+
+            if timeRemainingSegment then
+                timeRemainingInSeconds = timeRemainingInSeconds + timeRemainingSegment * coefficient;
+            end
+        end
+
+        return timeRemainingInSeconds;
+    end
+
+    -- The item isn't soulbound at all!
+    if (not itemIsSoulBound) then
+        return GL.Data.Constants.itemIsNotBound;
+    end
+
+    return 0;
+end
+
+--- Check how much time to trade is remaining on the given item in our bags
+---
+---@param bag number
+---@param slot number
+---@return number Seconds or 0
+function GL:inventoryItemTradeTimeRemaining(bag, slot)
+    GL.TooltipFrame:ClearLines();
+    GL.TooltipFrame:SetBagItem(bag, slot);
+
+    local timeRemaining = GL:tooltipItemTradeTimeRemaining();
+    GL.TooltipFrame:ClearLines();
+
+    return timeRemaining;
+end
+
 --- Find the first bag id and slot for a given item id (or false)
 ---
----@param itemId number
+---@param itemID number
+---@param skipSoulBound boolean
 ---@return table
 function GL:findBagIdAndSlotForItem(itemID, skipSoulBound)
     skipSoulBound = toboolean(skipSoulBound);
 
     for bag = 0, 10 do
         for slot = 1, GetContainerNumSlots(bag) do
-            local _, _, _, _, _, _, _, _, _, bagItemID, isBound = GetContainerItemInfo(bag, slot);
+            local _, _, locked, _, _, _, _, _, _, bagItemID = GetContainerItemInfo(bag, slot);
 
-            if (bagItemID
-                and bagItemID == itemID
-                and (not skipSoulBound
-                    or not isBound
+            if (bagItemID == itemID
+                and not locked -- The item is locked, aka it can not be put in the window
+                and (not skipSoulBound -- We don't care about the soulbound status of the item, return the bag/slot!
+                    or GL:inventoryItemTradeTimeRemaining(bag, slot) > 0 -- The item is tradeable
                 )
             ) then
                 return {bag, slot};

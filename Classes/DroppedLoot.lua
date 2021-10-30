@@ -27,7 +27,7 @@ function DroppedLoot:_init()
     end
 
     -- Fire DroppedLoot:lootReady every time a loot window is opened
-    Events:register("DroppedLootLootOpenedListener", "LOOT_OPENED", function () self:lootOpened(); end);
+    Events:register("DroppedLootLootOpenedListener", "LOOT_READY", function () self:lootReady(); end);
 
     -- Show a reminder window to use Gargul when trying to assign using native loot assignment
     Events:register("DroppedLootOpenMasterLooterListListener", "OPEN_MASTER_LOOT_LIST", function ()
@@ -72,7 +72,7 @@ end
 --- Fired when a loot window is opened
 ---
 ---@return void
-function DroppedLoot:lootOpened()
+function DroppedLoot:lootReady()
     GL:debug("DroppedLoot:lootOpened");
 
     self.lootWindowIsOpened = true;
@@ -105,6 +105,9 @@ function DroppedLoot:lootOpened()
             end
         end, 1.4);
     end
+
+    -- Let the rest of the application know we're done announcing the items
+    GL.Events:fire("GL.LOOT_ANNOUNCED");
 end
 
 -- Check whether the loot in the loot window changed in any way e.g:
@@ -302,7 +305,6 @@ function DroppedLoot:announce()
             --     It's not a "real" item but gold/silver/copper
             --     The item no longer exists in the loot window
             --     The data is not yet available
-            --     Blizzard©
             if (not itemLink) then
                 return;
             end
