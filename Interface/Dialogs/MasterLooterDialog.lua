@@ -46,6 +46,9 @@ function MasterLooterDialog:_init()
     end);
 end
 
+--- Announce the use of Gargul to the rest of the raid
+---
+---@return void
 function MasterLooterDialog:flightAttendant()
     local function announce()
         GL.Version:playersUsingAddon(function(Players)
@@ -88,7 +91,7 @@ function MasterLooterDialog:flightAttendant()
         end);
     end
 
-    -- The comm channel takes around 2 seconds to be fully establed
+    -- The comm channel takes around 2 seconds to be fully established
     -- If the add-on has not been loaded for that long yet we need
     -- to set a delay for the announcement message
     local addonLoadedInSeconds = GetServerTime() - GL.loadedOn;

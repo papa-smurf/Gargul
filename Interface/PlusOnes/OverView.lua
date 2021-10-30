@@ -77,7 +77,7 @@ function Overview:addPlayerPlusOneEntries(Parent)
     local PlusOneEntries = {};
 
     for _, Player in pairs(GL.User:groupMembers()) do
-        local normalizedName = GL.PlusOnes:normalizedName(Player.name);
+        local normalizedName = GL:normalizedName(Player.name);
 
         tinsert(PlusOneEntries, {
             name = normalizedName,
@@ -179,7 +179,7 @@ function Overview:update()
     end
 
     for _, Player in pairs(GL.User:groupMembers()) do
-        local normalizedName = GL.PlusOnes:normalizedName(Player.name);
+        local normalizedName = GL:normalizedName(Player.name);
         local PlusOneLabel = GL.Interface:getItem(self, "Label.PlusOnesOf_" .. normalizedName);
 
         if (PlusOneLabel) then

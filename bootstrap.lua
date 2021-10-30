@@ -102,6 +102,7 @@ function GL:_init()
     self.DroppedLoot:_init();
     self.GroupLoot:_init();
     self.PackMule:_init();
+    self.TradeWindow:_init();
     self.Interface.MasterLooterDialog:_init();
 
     -- Hook the bagslot events
@@ -176,7 +177,13 @@ function GL:hookBagSlotEvents()
     end);
 end
 
+--[[ CREATE NECESSARY FRAMES ]]
+
 -- Fire GL.bootstrap every time an addon is loaded
-GL.EventFrame = CreateFrame("FRAME");
+GL.EventFrame = CreateFrame("FRAME", "GargulEventFrame");
 GL.EventFrame:RegisterEvent("ADDON_LOADED");
 GL.EventFrame:SetScript("OnEvent", function (...) GL:bootstrap(...); end);
+
+-- Frame that we can bind tooltips to to check item details
+GL.TooltipFrame = CreateFrame("GameTooltip", "GargulTooltipFrame", nil, "GameTooltipTemplate");
+GL.TooltipFrame:SetOwner(WorldFrame, "ANCHOR_NONE");
