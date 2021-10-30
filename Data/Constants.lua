@@ -16,6 +16,8 @@ GL.Data.Constants = {
     tmbTypePrio = 1,
     tmbTypeWish = 2,
 
+    itemIsNotBound = 18000,
+
     ExportFormats = {
         TMB = 1,
         DFTUS = 2,
@@ -44,20 +46,11 @@ GL.Data.Constants = {
     UntradeableItems = {
         22726, -- Splinter of Atiesh
         30183, -- Nether Vortex
+        12662, -- Demonic Rune
 
         --[[ EVENT LOOT ]]
         20400, -- Pumpkin Bag (Hallow's End)
         33117, -- Jack-o'-Lantern (Hallow's End)
-        20393, -- Treat Bag (Hallow's End)
-        34075, -- Ring of Ghoulish Delight (Hallow's End)
-        34073, -- The Horseman's Signet Ring (Hallow's End)
-        34074, -- Witches Band (Hallow's End)
-        33808, -- The Horseman's Helm (Hallow's End)
-        38175, -- The Horseman's Blade (Hallow's End)
-        37011, -- Magic Broom (Hallow's End)
-        33184, -- Swift Magic Broom (Hallow's End)
-        33154, -- Sinister Squashling (Hallow's End)
-        34068, -- Weighted Jack-o'-Lantern (Hallow's End)
 
         --[[ WORLD BOSS LOOT ]]
         19132, -- Crystal Adorned Crown (Azuregos)
@@ -187,7 +180,7 @@ GL.Data.Constants = {
     ]]
     Comm = {
         channel = "GargulComm2",
-        minimumAppVersion = "3.1.4",
+        minimumAppVersion = "3.5.0",
         Actions = {
             broadcastSoftRes = 5,
             inspectBags = 6,

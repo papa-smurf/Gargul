@@ -27,7 +27,7 @@ function DroppedLoot:_init()
     end
 
     -- Fire DroppedLoot:lootReady every time a loot window is opened
-    Events:register("DroppedLootLootOpenedListener", "LOOT_OPENED", function () self:lootOpened(); end);
+    Events:register("DroppedLootLootOpenedListener", "LOOT_READY", function () self:lootReady(); end);
 
     -- Show a reminder window to use Gargul when trying to assign using native loot assignment
     Events:register("DroppedLootOpenMasterLooterListListener", "OPEN_MASTER_LOOT_LIST", function ()
@@ -72,7 +72,7 @@ end
 --- Fired when a loot window is opened
 ---
 ---@return void
-function DroppedLoot:lootOpened()
+function DroppedLoot:lootReady()
     GL:debug("DroppedLoot:lootOpened");
 
     self.lootWindowIsOpened = true;
@@ -93,11 +93,7 @@ function DroppedLoot:lootOpened()
     if (GL.User.isMasterLooter
         and GL.Settings:get("announceLootToChat")
     ) then
-        -- We give the announcing of loot some time
-        -- in case the master looter set up a packmule
-        GL.Ace:ScheduleTimer(function ()
-            self:announce();
-        end, .5);
+        self:announce();
     end
 
     if (GL.User.isMasterLooter
@@ -109,6 +105,9 @@ function DroppedLoot:lootOpened()
             end
         end, 1.4);
     end
+
+    -- Let the rest of the application know we're done announcing the items
+    GL.Events:fire("GL.LOOT_ANNOUNCED");
 end
 
 -- Check whether the loot in the loot window changed in any way e.g:
@@ -306,7 +305,6 @@ function DroppedLoot:announce()
             --     It's not a "real" item but gold/silver/copper
             --     The item no longer exists in the loot window
             --     The data is not yet available
-            --     Blizzard©
             if (not itemLink) then
                 return;
             end
@@ -390,12 +388,11 @@ function DroppedLoot:announce()
             if (itemIsOnSomeonesPriolist
                 and GL.Settings:get("TMB.includePrioListInfoInLootAnnouncement")
             ) then
-GL:printTable(ActivePrioListDetails);
                 -- Sort the PrioListEntries based on prio (lowest to highest)
                 table.sort(ActivePrioListDetails, function (a, b)
                     return a.order < b.order;
                 end);
-GL:printTable(ActivePrioListDetails);
+
                 local entries = 0;
                 local entryString = "";
                 for _, Entry in pairs(ActivePrioListDetails) do
@@ -546,20 +543,15 @@ function DroppedLoot:getTMBDetails(TMBInfo, PlayersInRaid)
                 sortingOrder = 1000;
             end
 
-            local osString = "";
-            if (isOffSpec) then
-                osString = "(OS)";
-            end
-
             if (entryType == Constants.tmbTypePrio) then
                 tinsert(ActivePrioListDetails, {
                     order = sortingOrder,
-                    player = string.format("%s[%s]%s", playerName, prio, osString),
+                    player = string.format("%s[%s]", playerName, prio),
                 });
             else
                 tinsert(ActiveWishListDetails, {
                     order = sortingOrder,
-                    player = string.format("%s[%s]%s", playerName, prio, osString),
+                    player = string.format("%s[%s]", playerName, prio),
                 });
             end
         end

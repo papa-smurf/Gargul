@@ -420,7 +420,7 @@ end
 function RollOff:listenForRolls()
     GL:debug("RollOff:listenForRolls");
 
-    Events:register("RollOffChatMsgSystemListener", "CHAT_MSG_SYSTEM", function (message)
+    Events:register("RollOffChatMsgSystemListener", "CHAT_MSG_SYSTEM", function (_, message)
         self:processRoll(message);
     end);
 end

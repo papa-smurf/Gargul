@@ -14,7 +14,7 @@ local PlusOnes = GL.PlusOnes; ---@type PlusOnes
 function PlusOnes:add(playerName)
     GL:debug("PlusOnes:add");
 
-    playerName = self:normalizedName(playerName);
+    playerName = GL:normalizedName(playerName);
 
     if (not DB.PlusOnes[playerName]) then
         DB.PlusOnes[playerName] = 1;
@@ -34,7 +34,7 @@ end
 function PlusOnes:deduct(playerName)
     GL:debug("PlusOnes:deduct");
 
-    playerName = self:normalizedName(playerName);
+    playerName = GL:normalizedName(playerName);
 
     if (not DB.PlusOnes[playerName]) then
         DB.PlusOnes[playerName] = 0;
@@ -55,7 +55,7 @@ end
 function PlusOnes:setToZero(playerName)
     GL:debug("PlusOnes:setToZero");
 
-    playerName = self:normalizedName(playerName);
+    playerName = GL:normalizedName(playerName);
 
     if (not DB.PlusOnes[playerName]) then
         DB.PlusOnes[playerName] = 0;
@@ -85,7 +85,7 @@ end
 function PlusOnes:get(playerName)
     GL:debug("PlusOnes:get");
 
-    playerName = self:normalizedName(playerName);
+    playerName = GL:normalizedName(playerName);
 
     return DB.PlusOnes[playerName] or 0;
 end
@@ -103,7 +103,7 @@ function PlusOnes:set(playerName, value)
         return self:massSet(playerName);
     end
 
-    playerName = self:normalizedName(playerName);
+    playerName = GL:normalizedName(playerName);
 
     DB.PlusOnes[playerName] = round(value);
 end
@@ -116,26 +116,12 @@ function PlusOnes:massSet(plusOnesByPlayerName)
     GL:debug("PlusOnes:massSet");
 
     for playerName, value in pairs(plusOnesByPlayerName) do
-        playerName = self:normalizedName(playerName);
+        playerName = GL:normalizedName(playerName);
 
         DB.PlusOnes[playerName] = round(value);
     end
 
     self:triggerChangeEvent();
-end
-
---- Make sure era names are suffixed with a realm
----
----@param playerName string
----@return string
-function PlusOnes:normalizedName(playerName)
-    GL:debug("PlusOnes:normalizedName");
-
-    if (GL.isEra and not strfind(playerName, "-")) then
-        playerName = string.format("%s-%s", playerName, GL.User.realm);
-    end
-
-    return string.lower(playerName);
 end
 
 --- Trigger the PLUSONES_CHANGED event
