@@ -15,11 +15,16 @@ local LibSerialize = LibStub:GetLibrary("LibSerialize");
 -- This metatable allows us to have multiple instances of this object
 setmetatable(CommMessage, {
     __call = function (cls, ...)
-        return cls.new(...)
+        return cls.new(...);
     end,
-})
+});
 
--- Create a fresh new CommMessage
+--- Create a fresh new CommMessage
+---
+---@param action string See GL.Data.Constants.Comm for more info
+---@param content any
+---@param channel string
+---@param recipient string
 function CommMessage.new(action, content, channel, recipient)
     GL:debug("CommMessage:new");
 
@@ -51,8 +56,11 @@ function CommMessage.new(action, content, channel, recipient)
     return self;
 end
 
--- Create a CommMessage from a received message's payload
--- The channel and recipient always point to the sender of the original message using "WHISPER"
+--- Create a CommMessage from a received message's payload
+--- The channel and recipient always point to the sender of the original message using "WHISPER"
+---
+---@param Message table
+---@return self
 function CommMessage.newFromReceived(Message)
     GL:debug("CommMessage:newFromReceived");
 
@@ -73,16 +81,23 @@ function CommMessage.newFromReceived(Message)
     return self;
 end
 
--- Send the CommMessage as-is
-function CommMessage:send()
+--- Send the CommMessage as-is
+---
+---@param broadcastFinishedCallback function thats gets executed when the message is fully broadcasted
+---@param packageSentCallback function that gets executed every time (part of) the message is sent
+---@return self
+function CommMessage:send(broadcastFinishedCallback, packageSentCallback)
     GL:debug("CommMessage:send");
 
-    GL.Comm:send(self);
+    GL.Comm:send(self, broadcastFinishedCallback, packageSentCallback);
 
     return self;
 end
 
--- Reply to a CommMessage
+--- Reply to a CommMessage
+---
+---@param message string
+---@return self
 function CommMessage:respond(message)
     GL:debug("CommMessage:respond");
 
@@ -109,7 +124,9 @@ function CommMessage:respond(message)
     return self;
 end
 
--- A response to one of our messages came in, sort it
+--- A response to one of our messages came in, sort it
+---
+---@return void
 function CommMessage:processResponse()
     GL:debug("CommMessage:processResponse");
 
@@ -127,19 +144,22 @@ function CommMessage:processResponse()
     CommMessage.Box[self.correspondenceId].Responses[numberOfResponses + 1] = self;
 end
 
--- Compress a CommMessage so we can safely send it
-function CommMessage:compress(message)
+--- Compress a CommMessage so we can safely send it
+---
+---@param Message CommMessage
+---@return string
+function CommMessage:compress(Message)
     GL:debug("CommMessage:compress");
 
-    message = message or self;
+    Message = Message or self;
 
     local Payload = {
-        a = message.action, -- Action
-        c = message.content, -- Content
-        v = message.version, -- Version of sender
-        mv = message.minimumVersion, -- Minimum version recipient should have
-        s = message.senderFqn, -- Name of the sender
-        r = message.correspondenceId or message.id, -- Response ID
+        a = Message.action, -- Action
+        c = Message.content, -- Content
+        v = Message.version, -- Version of sender
+        mv = Message.minimumVersion, -- Minimum version recipient should have
+        s = Message.senderFqn, -- Name of the sender
+        r = Message.correspondenceId or Message.id, -- Response ID
     }
 
     local success, encoded = pcall(function ()
@@ -158,7 +178,10 @@ function CommMessage:compress(message)
     return encoded;
 end
 
--- Decompress and deserialize a CommMessage
+--- Decompress and deserialize a CommMessage
+---
+---@param encoded string
+---@return table
 function CommMessage:decompress(encoded)
     GL:debug("CommMessage:compress");
 
