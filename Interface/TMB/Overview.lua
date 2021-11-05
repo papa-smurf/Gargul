@@ -5,7 +5,6 @@ GL.AceGUI = GL.AceGUI or LibStub("AceGUI-3.0");
 
 local AceGUI = GL.AceGUI;
 local DB = GL.DB; ---@type DB
-local TMB = GL.TMB; ---@type TMB
 
 GL:tableSet(GL, "Interface.TMB.Overview", {
     isVisible = false,
@@ -115,6 +114,24 @@ function Overview:draw()
         GL.Settings:draw("TMB");
     end);
     Window:AddChild(SettingsButton);
+
+    VerticalSpacer = AceGUI:Create("SimpleGroup");
+    VerticalSpacer:SetLayout("FILL");
+    VerticalSpacer:SetFullWidth(true);
+    VerticalSpacer:SetHeight(4);
+    Window:AddChild(VerticalSpacer);
+
+    local HorizontalSpacer = AceGUI:Create("SimpleGroup");
+    HorizontalSpacer:SetLayout("FILL");
+    HorizontalSpacer:SetWidth(4);
+    HorizontalSpacer:SetHeight(10);
+    Window:AddChild(HorizontalSpacer);
+
+    local BroadcastProgressLabel = AceGUI:Create("Label");
+    BroadcastProgressLabel:SetWidth(200);
+    BroadcastProgressLabel:SetFontObject(_G["GameFontNormal"]);
+    Window:AddChild(BroadcastProgressLabel);
+    GL.Interface:setItem(GL.TMB, "BroadcastProgress", BroadcastProgressLabel);
 
     self:updateShareButton();
 

@@ -603,17 +603,31 @@ function TMB:broadcast()
     local Broadcast = function ()
         GL:message("Broadcasting...");
 
+        local Label = GL.Interface:getItem(GL.TMB, "Label.BroadcastProgress");
+
+        if (Label) then
+            Label:SetText("Broadcasting...");
+        end
+
         GL.CommMessage.new(
             CommActions.broadcastTMBData,
             GL.DB.TMB,
             "GROUP"
-        ):send();
-
-        GL.Ace:ScheduleTimer(function ()
+        ):send(function ()
             GL:success("Broadcast finished");
             self.broadcastInProgress = false;
             GL.Events:fire("GL.TMB_BROADCAST_ENDED");
-        end, 10);
+
+            Label = GL.Interface:getItem(GL.TMB, "Label.BroadcastProgress");
+            if (Label) then
+                Label:SetText("Broadcast finished!");
+            end
+        end, function (sent, total)
+            Label = GL.Interface:getItem(GL.TMB, "Label.BroadcastProgress");
+            if (Label) then
+                Label:SetText(string.format("Sent %s of %s bytes", sent, total));
+            end
+        end);
     end
 
     -- We're about to send a lot of data which will put strain on CTL
