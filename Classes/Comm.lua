@@ -23,11 +23,20 @@ function Comm:_init()
     -- Register the Ace Comm channel listener
     GL.Ace:RegisterComm(self.channel, Comm.listen);
 
+    -- Store the default ChatThrottleLib burst and CPS values
+    self.defaultBurstValue = _G.ChatThrottleLib.BURST or 4000;
+    self.defaultCPSValue = _G.ChatThrottleLib.MAX_CPS or 800;
+
     self._initialized = true;
 end
 
--- Send a CommMessage object
-function Comm:send(CommMessage)
+--- Send a CommMessage object
+---
+---@param CommMessage CommMessage
+---@param broadcastFinishedCallback function
+---@param packageSentCallback function
+---@return void
+function Comm:send(CommMessage, broadcastFinishedCallback, packageSentCallback)
     GL:debug("Comm:send");
 
     local distribution = CommMessage.channel;
@@ -56,34 +65,60 @@ function Comm:send(CommMessage)
         return;
     end
 
-    -- We lower the burst value on large payloads to make sure
-    -- our messages are not dropped by the server
+    -- We lower the burst value and cps on large payloads to make sure
+    -- our messages are not dropped by the server, which happens A LOT ffs
     local stringLength = string.len(compressedMessage);
     GL:debug("Payload size: " .. stringLength);
-    local lowerBurstValue = stringLength > 800;
+    local throttle = stringLength > 800;
 
-    local defaultBurstValue = _G.ChatThrottleLib.BURST or 4000;
-    if (lowerBurstValue) then
-        if (self.resetCTLBurstTimerID) then
-            GL.Ace:CancelTimer(self.resetCTLBurstTimerID);
-            self.resetCTLBurstTimerID = nil;
-        end
+    local throttleResetTimer, stopThrottling;
+    if (throttle) then
+        GL:debug("Throttling burst value and cps");
 
-        _G.ChatThrottleLib.BURST = 800;
+        _G.ChatThrottleLib.BURST = 2000;
+        _G.ChatThrottleLib.MAX_CPS = 400;
 
-        -- Failsafe in case the sent >= textlen below is not reached
-        self.resetCTLBurstTimerID = GL.Ace:ScheduleTimer(function ()
-            _G.ChatThrottleLib.BURST = defaultBurstValue;
+        -- Stop throttling: reset the burst and max cps values
+        stopThrottling = function()
+            GL:debug("Resetting burst value and cps");
+
+            _G.ChatThrottleLib.BURST = self.defaultBurstValue;
+            _G.ChatThrottleLib.MAX_CPS = self.defaultCPSValue;
+        end;
+
+        -- Make sure we reset the values even if the message couldn't be sent
+        throttleResetTimer = GL.Ace:ScheduleTimer(function ()
+            stopThrottling();
         end, 5);
     end
 
     GL.Ace:SendCommMessage(self.channel, compressedMessage, distribution, recipient, "BULK", function (_, sent, textlen)
         GL:debug(string.format("Sent %s from %s characters", sent, textlen));
 
+        -- Cancel the throttle reset timer if it exists
+        if (throttleResetTimer) then
+            GL.Ace:CancelTimer(throttleResetTimer);
+        end
+
+        -- Execute the package sent calback
+        if (type(packageSentCallback) == "function") then
+            packageSentCallback(sent, textlen);
+        end
+
         if (sent >= textlen) then
-            _G.ChatThrottleLib.BURST = defaultBurstValue;
-            GL.Ace:CancelTimer(self.resetCTLBurstTimerID);
-            self.resetCTLBurstTimerID = nil;
+            if (throttle) then
+                stopThrottling();
+            end
+
+            -- Execute the broadcast finished callback
+            if (type(broadcastFinishedCallback) == "function") then
+                broadcastFinishedCallback(sent, textlen);
+            end
+        else
+            -- Make sure we reset the values even if the message couldn't be sent in full
+            throttleResetTimer = GL.Ace:ScheduleTimer(function ()
+                stopThrottling();
+            end, 5);
         end
     end);
 end
@@ -171,7 +206,10 @@ function Comm:listen(payload, distribution)
     Comm:dispatch(GL.CommMessage.newFromReceived(payload));
 end
 
--- Dispatch messages to their handlers
+--- Dispatch incoming messages to their handlers
+---
+---@param CommMessage CommMessage
+---@return any
 function Comm:dispatch(CommMessage)
     GL:debug("Comm:dispatch: '" .. CommMessage.action .. "'");
     GL.User:refresh();
