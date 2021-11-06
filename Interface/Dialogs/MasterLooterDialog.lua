@@ -12,6 +12,7 @@ GL.Interface.MasterLooterDialog = {
     announcedConflictingAddons = false,
     announcedUseOfGargul = false,
     showedMasterLooterDialog = false,
+    versionCheckTimer = nil,
 };
 local MasterLooterDialog = GL.Interface.MasterLooterDialog; ---@type MasterLooterPopupInterface
 
@@ -24,6 +25,10 @@ function MasterLooterDialog:_init()
     self._initialized = true;
 
     GL.Events:register("MasterLooterObtainedListener", "GL.USER_OBTAINED_MASTER_LOOTER", function ()
+        if (self.versionCheckTimer) then
+            GL.Ace:CancelTimer(self.versionCheckTimer);
+        end
+
         if (not self.showedMasterLooterDialog
             and GL.Settings:get("MasterLooting.autoOpenMasterLooterDialog", true)
         ) then
@@ -42,6 +47,19 @@ function MasterLooterDialog:_init()
         if (not self.announcedConflictingAddons) then
             self.announcedConflictingAddons = true;
             GL:announceConflictingAddons();
+        end
+
+        -- Make sure we periodically check whether the master looter's Gargul version is up-to-date
+        self.versionCheckTimer = GL.Ace:ScheduleRepeatingTimer(function ()
+            GL.Version:inspectQuietly();
+        end, 60);
+
+        GL.Version:inspectQuietly();
+    end);
+
+    GL.Events:register("MasterLooterLostListener", "GL.USER_LOST_MASTER_LOOTER", function ()
+        if (self.versionCheckTimer) then
+            GL.Ace:CancelTimer(self.versionCheckTimer);
         end
     end);
 end
