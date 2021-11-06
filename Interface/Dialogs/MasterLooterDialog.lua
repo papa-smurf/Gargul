@@ -95,10 +95,11 @@ function MasterLooterDialog:flightAttendant()
     -- If the add-on has not been loaded for that long yet we need
     -- to set a delay for the announcement message
     local addonLoadedInSeconds = GetServerTime() - GL.loadedOn;
+
     if (addonLoadedInSeconds < 4) then
         GL.Ace:ScheduleTimer(function ()
             announce();
-        end, 4 - addonLoadedInSeconds);
+        end, 4);
     else
         announce();
     end
@@ -218,7 +219,6 @@ function MasterLooterDialog:draw()
     AutoOpenCheckbox:SetValue(GL.Settings:get("MasterLooting.autoOpenMasterLooterDialog", true));
     AutoOpenCheckbox:SetCallback("OnValueChanged", function(Checkbox)
         GL.Settings:set("MasterLooting.autoOpenMasterLooterDialog", Checkbox:GetValue());
-        print(GL.Settings:get("MasterLooting.autoOpenMasterLooterDialog"));
     end);
     Window:AddChild(AutoOpenCheckbox);
 
