@@ -12,9 +12,12 @@ Version.isOutOfDate = false;
 
 Version.GroupMembers = {};
 
--- Add a given version string to our knowledgebase
--- check whether it's newer than anything else we've seen
--- check whether we need to update our own addon
+--- Add a given version string to our knowledgebase
+--- check whether it's newer than anything else we've seen
+--- check whether we need to update our own addon
+---
+---@param versionString string
+---@return void
 function Version:addRelease(versionString)
     GL:debug("Version:addRelease");
 
@@ -22,7 +25,7 @@ function Version:addRelease(versionString)
             or not string.match(versionString, "%d+%.%d+%.%d+")
     ) then
         GL:warning("Invalid version string provided in Version:addRelease");
-        return false;
+        return;
     end
 
     -- No need to process a version string that we already know
@@ -34,7 +37,11 @@ function Version:addRelease(versionString)
     self:checkIfNewerRelease(versionString);
 end
 
--- Check if the given versionString is newer than our current "latest" version
+--- Check if the given versionString is newer than our current "latest" version
+--- If so, mark our addon as "out of date"
+---
+---@param versionString string
+---@return void
 function Version:checkIfNewerRelease(versionString)
     GL:debug("Version:checkIfNewerRelease");
 
@@ -49,7 +56,10 @@ function Version:checkIfNewerRelease(versionString)
     end
 end
 
--- Validate the version string and return all parts (major/minor/trivial) individually
+--- Validate the version string and return all parts (major/minor/trivial) individually
+---
+---@param versionString string
+---@return any
 function Version:validateAndSplit(versionString)
     GL:debug("Version:validateAndSplit");
 
@@ -68,16 +78,18 @@ function Version:validateAndSplit(versionString)
     return true, tonumber(versionParts[1]), tonumber(versionParts[2]) or "0", tonumber(versionParts[3]) or "0";
 end
 
--- Check if the versionstring passed first is older than the one passed second
+--- Check if the versionstring passed first is older than the one passed second
+---
+---@param left string
+---@param right string
+---@return boolean
 function Version:leftIsOlderThanRight(left, right)
     GL:debug("Version:leftIsOlderThanRight");
 
     local leftSuccess, leftMajor, leftMinor, leftTrivial = self:validateAndSplit(left);
     local rightSuccess, rightMajor, rightMinor, rightTrivial = self:validateAndSplit(right);
 
-    if (not leftSuccess
-        or not rightSuccess
-    ) then
+    if (not leftSuccess or not rightSuccess) then
         return;
     end
 
@@ -102,14 +114,37 @@ function Version:leftIsOlderThanRight(left, right)
     return false;
 end
 
--- Check if our current app version is higher than the given one
+--- Check if our current app version is higher than the given one
+---
+---@param left string
+---@param right string
+---@return boolean
 function Version:leftIsNewerThanOrEqualToRight(left, right)
     GL:debug("Version:leftIsNewerThanOrEqualToRight");
 
     return not self:leftIsOlderThanRight(left, right);
 end
 
--- Inspect to see if the current group members have the addon and check whether it's up-to-date
+--- Inspect quietly, meaning there will be no visual feedback
+--- of the version check or its results, but both send and receiver(s)
+--- will receive warnings/errors in case their addon version is outdated
+---
+---@return void
+function Version:inspectQuietly()
+    if (not GL.User.isInGroup) then
+        return;
+    end
+
+    GL.CommMessage.new(
+        CommActions.requestAppVersion,
+        nil,
+        "GROUP"
+    ):send();
+end
+
+--- Inspect to see if the current group members have the addon and check whether it's up-to-date
+---
+---@return void
 function Version:inspectGroup()
     GL:debug("Version:inspectGroup");
 
@@ -237,7 +272,10 @@ function Version:playersUsingAddon(callback)
     end, 5);
 end
 
--- Inspect the raid group to see who has the addon and who doesn't and who needs to update it
+--- Inspect the raid group to see who has the addon and who doesn't and who needs to update it
+---
+---@param CommMessage CommMessage
+---@return void
 function Version:finishInspectGroup(CommMessage)
     GL:debug("Version:finishInspectGroup");
 
