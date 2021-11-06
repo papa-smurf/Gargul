@@ -662,21 +662,31 @@ function TMB:receiveBroadcast(CommMessage)
     if (not GL:empty(Data)) then
         GL:warning("Attempting to process incoming TMB data from " .. CommMessage.Sender.name);
 
-        if (type(Data) ~= "table"
-            or type(Data.Items) ~= "table"
-            or GL:anyEmpty(Data, Data.Items, GL:tableGet(Data, "MetaData.importedAt"))
+        if (type(Data) ~= "table" or GL:empty(Data)
+            or type(Data.Items) ~= "table" or GL:empty(Data.Items)
+            or GL:empty(GL:tableGet(Data, "MetaData.importedAt"))
         ) then
             GL:error("Invalid TMB data received from " .. CommMessage.Sender.name);
             return;
         end
 
         -- Validate dataset
-        for itemId, Entry in pairs(Data.Items) do
+        for itemId, Entries in pairs(Data.Items) do
             itemId = tonumber(itemId);
 
-            if (GL:anyEmpty(itemId, Entry.character, Entry.prio, Entry.type)) then
+            if (GL:empty(itemId)) then
                 GL:error("Invalid TMB data received from " .. CommMessage.Sender.name);
                 return;
+            end
+
+            for _, Entry in pairs(Entries) do
+                if (GL:empty(Entry.character)
+                    or GL:empty(Entry.prio)
+                    or GL:empty(Entry.type)
+                ) then
+                    GL:error("Invalid TMB data received from " .. CommMessage.Sender.name);
+                    return;
+                end
             end
         end
 

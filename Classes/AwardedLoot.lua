@@ -132,8 +132,9 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS)
     if (dateProvided) then
         local year, month, day = string.match(date, "^(%d+)-(%d+)-(%d+)$");
 
-        if (not GL:allOfType("string", year, month, day)
-            or GL:anyEmpty(year, month, day)
+        if (type(year) ~= "string" or GL:empty(year)
+            or type(month) ~= "string" or GL:empty(month)
+            or type(day) ~= "string" or GL:empty(day)
         ) then
             return GL:error(string.format("Unknown date format '%s' expecting yy-m-d", date));
         end
@@ -378,11 +379,11 @@ function AwardedLoot:processAwardedLoot(CommMessage)
     local AwardEntry = CommMessage.content;
 
     -- Make sure all values are available
-    if (GL:anyEmpty(AwardEntry.checksum,
-        AwardEntry.itemLink,
-        AwardEntry.itemId,
-        AwardEntry.awardedTo,
-        AwardEntry.timestamp)
+    if (GL:empty(AwardEntry.checksum)
+        or GL:empty(AwardEntry.itemLink)
+        or GL:empty(AwardEntry.itemId)
+        or GL:empty(AwardEntry.awardedTo)
+        or GL:empty(AwardEntry.timestamp)
     ) then
         return GL:warning("Couldn't process award result in AwardedLoot:processAwardedLoot");
     end

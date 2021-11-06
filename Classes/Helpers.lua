@@ -141,22 +141,6 @@ function GL:dump(mixed)
     GL:message(encoded);
 end
 
---- Check whether all values are of the given type
----
----@param typeStr string
----@return void
-function GL:allOfType(typeStr, ...)
-    local Values = {...};
-
-    for _, value in pairs(Values) do
-        if (type(value) ~= typeStr) then
-            return false;
-        end
-    end
-
-    return true;
-end
-
 --- Check whether a given variable is empty
 ---
 ---@param mixed any
@@ -195,33 +179,6 @@ function GL:empty(mixed)
     end
 
     return true;
-end
-
---- Check if any of the given values is empty
----
----@param _ table
----@return boolean
-function GL:allEmpty(...)
-    self:debug("GL:anyEmpty");
-
-    return not self:anyEmpty(...);
-end
-
---- Check if any of the given values is empty
----
----@param *
----@return boolean
-function GL:anyEmpty(...)
-    self:debug("GL:anyEmpty");
-    local Values = {...};
-
-    for _, value in pairs(Values) do
-        if (self:empty(value)) then
-            return true;
-        end
-    end
-
-    return false;
 end
 
 --- StringHash method, courtesy of Mikk38024 @ Wowpedia

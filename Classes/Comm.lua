@@ -5,6 +5,7 @@ GL.Comm = {
     initialized = false,
     channel = "",
     notifiedOfNewerVersion = false,
+    lastOutOfDateNotification = 0,
 };
 
 local Comm = GL.Comm;
@@ -139,41 +140,62 @@ function Comm:listen(payload, distribution)
 
     local Sender = GL.Player:fromFqn(payload.senderFqn) or {};
 
+    -- Let's find out who sent us this message
     if (not Sender.id) then
         if (distribution ~= "GUILD") then
             GL:warning("Unable to confirm identity of sender '" .. payload.senderFqn .. "'");
             return false;
-        else
-            Sender.name = payload.senderName;
         end
+
+        Sender.name = payload.senderName;
     end
 
+    -- We're missing a payload
     if (not payload) then
         if (type(payload) == "string") then
-            GL:warning("Failed to decompress payload: " .. string.sub(payload, 0, 100));
-            return false;
-        else
-            GL:warning("Failed to decompress payload: not a string");
+            GL:warning("Failed to decompress empty payload");
             return false;
         end
+
+        GL:warning("Failed to decompress payload: not a string");
+        return false;
     end
 
-    if (payload.version
-        and type(payload.version) == "string"
-        and not GL.Version:leftIsNewerThanOrEqualToRight(GL.version, payload.version)
-    ) then
-        if (not GL.Comm.notifiedOfNewerVersion) then
-            GL:warning("There's an update available. Go to https://www.curseforge.com/wow/addons/gargul to update.");
-            GL.Comm.notifiedOfNewerVersion = true;
-        end
-    end
-
+    -- The person sending us the message has a newer version that's not backwards compatible with ours
+    -- If that's the case then we'll notify the user that his version is out of date (max once every 5 seconds)
     if (payload.minimumVersion
         and type(payload.minimumVersion) == "string"
         and not GL.Version:leftIsNewerThanOrEqualToRight(GL.version, payload.minimumVersion)
     ) then
-        GL:error("I'm out of date and won't work properly until you update me!");
+        local serverTime = GetServerTime();
+        if (serverTime - GL.Comm.lastOutOfDateNotification >= 5) then
+            GL.Comm.lastOutOfDateNotification = serverTime;
+            GL:error("I'm out of date and won't work properly until you update me!");
+        end
         return false;
+    end
+
+    -- The version includes a version, see if it's one we can work with
+    if (payload.version and type(payload.version) == "string") then
+        -- The person sending us the message has a newer version. Ours is still compatible so we get off with a warning
+        if (not GL.Version:leftIsNewerThanOrEqualToRight(GL.version, payload.version)) then
+            if (not GL.Comm.notifiedOfNewerVersion) then
+                GL:warning("There's an update available. Go to https://www.curseforge.com/wow/addons/gargul to update.");
+                GL.Comm.notifiedOfNewerVersion = true;
+            end
+        end
+
+        -- The person sending us the message has an old version that's not compatible with ours, let him know!
+        if (not GL.Version:leftIsNewerThanOrEqualToRight(payload.version, GL.Data.Constants.Comm.minimumAppVersion)) then
+            -- This empty message will trigger an out-of-date error on the recipient's side
+            GL.CommMessage.new(
+                GL.Data.Constants.Comm.Actions.response,
+                nil,
+                "WHISPER",
+                Sender.name
+            ):send();
+            return;
+        end
     end
 
     if (not payload.action) then

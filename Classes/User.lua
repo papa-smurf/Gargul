@@ -42,7 +42,6 @@ function User:_init()
     -- fqn stands for Fully Qualified Name
     self.fqn = string.format("%s-%s", self.name, self.realm);
     self.id = UnitGUID("player");
-    User:refresh();
 
     GL.Events:register("UserGroupRosterUpdatedListener", "GROUP_ROSTER_UPDATE", function () self:groupSetupChanged(); end);
 end
@@ -119,6 +118,13 @@ function User:refresh()
         and self.isMasterLooter
     ) then
         GL.Events:fire("GL.USER_OBTAINED_MASTER_LOOTER");
+    end
+
+    -- The user lost the roll of master looter, fire the appropriate event
+    if (userWasMasterLooter
+        and not self.isMasterLooter
+    ) then
+        GL.Events:fire("GL.USER_LOST_MASTER_LOOTER");
     end
 end
 
