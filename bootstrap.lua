@@ -107,6 +107,9 @@ function GL:_init()
 
     -- Hook the bagslot events
     self:hookBagSlotEvents();
+
+    -- Make sure to initialize the user last
+    GL.User:refresh();
 end
 
 -- Register the gl slash command

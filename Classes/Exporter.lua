@@ -186,23 +186,31 @@ function Exporter:getLootEntries()
         local concernsDisenchantedItem = AwardEntry.awardedTo == self.disenchantedItemIdentifier;
         local dateString = date('%Y-%m-%d', AwardEntry.timestamp);
 
-        if ((not concernsDisenchantedItem or GL.Settings:get("ExportingLoot.includeDisenchantedItems")
-        ) and (not self.dateSelected or dateString == self.dateSelected)) then
+        if (
+            (not concernsDisenchantedItem or GL.Settings:get("ExportingLoot.includeDisenchantedItems"))
+            and (not self.dateSelected or dateString == self.dateSelected)
+            and not GL:empty(AwardEntry.timestamp)
+            and not GL:empty(AwardEntry.itemLink)
+            and not GL:empty(AwardEntry.awardedTo)
+        ) then
             local awardedTo = AwardEntry.awardedTo;
+
             if (concernsDisenchantedItem) then
                 awardedTo = GL.Settings:get("ExportingLoot.disenchanterIdentifier");
             end
 
-            -- Old entries may not possess a checksum yet
-            local checksum = AwardEntry.checksum;
+            -- Just in case an itemId is not available we will extract it from the item link
+            local itemID = AwardEntry.itemId or GL:getItemIdFromLink(AwardEntry.itemLink);
+
+            local checksum = AwardEntry.checksum; -- Old entries may not possess a checksum yet
             if (not checksum) then
-                checksum = GL:strPadRight(GL:strLimit(GL:stringHash(AwardEntry.timestamp .. AwardEntry.itemId) .. GL:stringHash(AwardEntry.winner), 20, ""), "0", 20);
+                checksum = GL:strPadRight(GL:strLimit(GL:stringHash(AwardEntry.timestamp .. itemID) .. GL:stringHash(awardedTo), 20, ""), "0", 20);
             end
 
             tinsert(Entries, {
                 timestamp = AwardEntry.timestamp,
                 awardedTo = awardedTo,
-                itemId = AwardEntry.itemId,
+                itemId = itemID,
                 OS = AwardEntry.OS and 1 or 0,
                 checksum = checksum,
             });
@@ -269,7 +277,9 @@ function Exporter:transformEntriesToDFTFormat(Entries, callback)
                 dateString = date('%m/%d/%Y', Entry.timestamp);
             end
 
-            if (not GL:anyEmpty(loadedItem, loadedItem.name)) then
+            if (not GL:empty(loadedItem)
+                and not GL:empty(loadedItem.name)
+            ) then
                 exportString = string.format("%s%s;[%s];%s\n",
                     exportString,
                     dateString,
