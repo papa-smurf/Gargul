@@ -15,7 +15,9 @@ GL.RollOff = GL.RollOff or {
         itemIcon = nil, -- The icon of the item we're rolling for
         note = nil, -- The note displayed on the progress bar
         Rolls = {}, -- Player rolls
-    }
+    },
+    listeningForRolls = false,
+    rollListenerCancelTimerId = nil,
 };
 local RollOff = GL.RollOff; ---@type RollOff
 
@@ -136,7 +138,10 @@ function RollOff:announceStop()
         "GROUP"
     ):send();
 
-    self:stopListeningForRolls();
+    -- We stop listening for rolls one second after the rolloff ends just in case there is server lag/jitter
+    self.rollListenerCancelTimerId = GL.Ace:ScheduleTimer(function()
+        self:stopListeningForRolls();
+    end, 1);
 end
 
 --- Start a roll off
@@ -427,9 +432,34 @@ end
 function RollOff:listenForRolls()
     GL:debug("RollOff:listenForRolls");
 
+    -- Make sure the timer to cancel listening for rolls is cancelled
+    if (self.rollListenerCancelTimerId) then
+        GL.Ace:CancelTimer(self.rollListenerCancelTimerId);
+    end
+
+    if (self.listeningForRolls) then
+        return;
+    end
+
+    self.listeningForRolls = true;
+
     Events:register("RollOffChatMsgSystemListener", "CHAT_MSG_SYSTEM", function (_, message)
         self:processRoll(message);
     end);
+end
+
+--- Unregister the CHAT_MSG_SYSTEM to stop listening for rolls
+---
+---@return void
+function RollOff:stopListeningForRolls()
+    GL:debug("RollOff:stopListeningForRolls");
+
+    if (self.rollListenerCancelTimerId) then
+        GL.Ace:CancelTimer(self.rollListenerCancelTimerId);
+    end
+
+    self.listeningForRolls = false;
+    Events:unregister("RollOffChatMsgSystemListener");
 end
 
 --- Process an incoming roll (if it's valid!)
@@ -493,15 +523,6 @@ function RollOff:processRoll(message)
 
     tinsert(RollOff.CurrentRollOff.Rolls, Roll);
     RollOff:refreshRollsTable();
-end
-
---- Unregister the CHAT_MSG_SYSTEM to stop listening for rolls
----
----@return void
-function RollOff:stopListeningForRolls()
-    GL:debug("RollOff:stopListeningForRolls");
-
-    Events:unregister("RollOffChatMsgSystemListener");
 end
 
 -- Whenever a new roll comes in we need to refresh
