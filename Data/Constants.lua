@@ -46,6 +46,7 @@ GL.Data.Constants = {
     UntradeableItems = {
         22726, -- Splinter of Atiesh
         30183, -- Nether Vortex
+        23572, -- Primal Nether
         12662, -- Demonic Rune
 
         --[[ EVENT LOOT ]]
