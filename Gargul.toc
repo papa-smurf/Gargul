@@ -73,6 +73,7 @@ Interface/TMB/Importer.lua
 Interface/TMB/Overview.lua
 Interface/PlusOnes/OverView.lua
 Interface/PackMule/IgnoredItems.lua
+Interface/TradeWindow/TimeLeft.lua
 Interface/PlayerSelector.lua
 Interface/MinimapButton.lua
 
