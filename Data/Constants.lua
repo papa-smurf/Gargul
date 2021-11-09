@@ -43,6 +43,17 @@ GL.Data.Constants = {
         "SpeedyAutoLoot",
     },
 
+    ItemsThatSouldntBeAnnounced = {
+        -- Temporary Kael'Thas weapons
+        30318, -- Netherstrand Longbow
+        30313, -- Staff of Disintegration
+        30317, -- Cosmic Infuser
+        30312, -- Infinity Blade
+        30311, -- Warp Slicer
+        30316, -- Devastation
+        30314, -- Phaseshift Bulwark
+    },
+
     UntradeableItems = {
         22726, -- Splinter of Atiesh
         30183, -- Nether Vortex
