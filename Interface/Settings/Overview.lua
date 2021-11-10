@@ -141,11 +141,11 @@ function Overview:draw(section)
     PatreonButton:SetPoint("BOTTOMLEFT", Window.frame, "BOTTOMLEFT", 25, 16);
 
     local HighlightTexture = PatreonButton:CreateTexture();
-    HighlightTexture:SetTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\patreon-button");
+    HighlightTexture:SetTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\patreon");
     HighlightTexture:SetPoint("CENTER", PatreonButton, "CENTER", 0, 0);
     HighlightTexture:SetSize(170, 43);
 
-    PatreonButton:SetNormalTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\patreon-button");
+    PatreonButton:SetNormalTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\patreon");
     PatreonButton:SetHighlightTexture(HighlightTexture);
 
     PatreonButton:SetScript("OnClick", function(_, button)
