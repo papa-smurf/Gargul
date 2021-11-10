@@ -127,7 +127,7 @@ end
 ---@return boolean
 function TimeLeft:enabled()
     -- Check whether we should be showing the bars at all
-    if (not GL.Settings:get("LootTradeTimers.enable") -- The user disabled this feature
+    if (not GL.Settings:get("LootTradeTimers.enabled") -- The user disabled this feature
         or ( -- The user only wants to see it when master looting and is not the master looter
             not GL.User.isMasterLooter
             and GL.Settings:get("LootTradeTimers.showOnlyWhenMasterLooting")

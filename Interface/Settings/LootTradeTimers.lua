@@ -39,7 +39,7 @@ function LootTradeTimers:draw(Parent)
         {
             label = "Enable timer bars",
             description = "Checking this will make sure Gargul shows timer bars for BoP items that can still be traded for a short time",
-            setting = "LootTradeTimers.enable",
+            setting = "LootTradeTimers.enabled",
             callback = function ()
                 GL.Interface.TradeWindow.TimeLeft:refreshBars();
             end,
