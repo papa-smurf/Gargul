@@ -12,7 +12,7 @@ function MinimapButton:_init()
     local GLDataBroker = LibDataBroker:NewDataObject("Gargul", {
         type = "data source",
         text = "Gargul",
-        icon = "Interface\\AddOns\\Gargul\\Assets\\Buttons\\minimap-button",
+        icon = "Interface\\AddOns\\Gargul\\Assets\\Buttons\\minimap",
         OnClick = function(_, button)
             if (button == "LeftButton") then
                 if (IsShiftKeyDown()) then

@@ -15,7 +15,9 @@ GL.RollOff = GL.RollOff or {
         itemIcon = nil, -- The icon of the item we're rolling for
         note = nil, -- The note displayed on the progress bar
         Rolls = {}, -- Player rolls
-    }
+    },
+    listeningForRolls = false,
+    rollListenerCancelTimerId = nil,
 };
 local RollOff = GL.RollOff; ---@type RollOff
 
@@ -136,7 +138,10 @@ function RollOff:announceStop()
         "GROUP"
     ):send();
 
-    self:stopListeningForRolls();
+    -- We stop listening for rolls one second after the rolloff ends just in case there is server lag/jitter
+    self.rollListenerCancelTimerId = GL.Ace:ScheduleTimer(function()
+        self:stopListeningForRolls();
+    end, 1);
 end
 
 --- Start a roll off
@@ -155,101 +160,108 @@ function RollOff:start(CommMessage)
     ]]
     if (not content) then
         return GL:error("Missing content in RollOff:start");
-    elseif (not type(content) == "table") then
-        return GL:error("Content is not a table in RollOff:start");
-    elseif (not content.time) then
-        return GL:error("No time provided in RollOff:start");
-    elseif (not content.item) then
-        return GL:error("No item provided in RollOff:start");
-    else
-
-        --- We have to wait with starting the actual roll off process until
-        --- the item that's up for rolling has been successfully loaded by the Item API
-        ---
-        ---@vararg Item
-        ---@return void
-        GL:onItemLoadDo(content.item, function (Items)
-            local Entry = Items[1];
-
-            if (GL:empty(Entry)) then
-                return;
-            end
-
-            local time = math.floor(tonumber(content.time));
-            local osRollMax = math.floor(tonumber(content.osRollMax or 99));
-
-            -- This is a new roll off so clean everything
-            if (Entry.link ~= self.CurrentRollOff.itemLink
-                or CommMessage.Sender.id ~= self.CurrentRollOff.initiator
-            ) then
-                -- This is a new item so make sure to
-                -- override all previously set properties
-                self.CurrentRollOff = {
-                    initiator = CommMessage.Sender.id,
-                    time = time,
-                    itemId = Entry.id,
-                    itemName = Entry.name,
-                    itemLink = Entry.link,
-                    itemIcon = Entry.icon,
-                    osRollMax = osRollMax,
-                    note = content.note,
-                    Rolls = {},
-                };
-            else
-                -- If we roll the same item again we do need to make
-                -- sure that we update the roll timer
-                self.CurrentRollOff.time = time;
-            end
-
-            self.inProgress = true;
-
-            -- Don't show the roll UI if the user disabled it
-            -- and the current user is not the one who initiated the rolloff
-            if (GL.Settings:get("Rolling.showRollOffWindow")
-                or self:startedByMe()
-            ) then
-                GL.RollerUI:show(time, Entry.id, Entry.link, Entry.icon, content.note, osRollMax);
-
-                if (CommMessage.Sender.id == GL.User.id) then
-                    GL.MasterLooterUI:drawReopenMasterLooterUIButton();
-                end
-            end
-
-            -- Make sure the rolloff stops when time is up
-            self.timerId = GL.Ace:ScheduleTimer(function ()
-                self:stop();
-            end, time);
-
-            -- Send a countdown in chat when enabled
-            local numberOfSecondsToCountdown = GL.Settings:get("MasterLooting.numberOfSecondsToCountdown", 5);
-            if (self:startedByMe() -- Only post a countdown if this user initiated the roll
-                and time > numberOfSecondsToCountdown -- No point in counting down if there's hardly enough time anyways
-                and GL.Settings:get("MasterLooting.doCountdown", false)
-            ) then
-                local SecondsAnnounced = {};
-                self.countDownTimer = GL.Ace:ScheduleRepeatingTimer(function ()
-                    local secondsLeft = math.ceil(GL.Ace:TimeLeft(self.timerId));
-                    if (secondsLeft <= numberOfSecondsToCountdown
-                        and secondsLeft > 0
-                        and not SecondsAnnounced[secondsLeft]
-                    ) then
-                        SecondsAnnounced[secondsLeft] = true;
-
-                        GL:sendChatMessage(
-                            string.format("%s seconds to roll", secondsLeft),
-                            "GROUP"
-                        );
-                    end
-                end, 1);
-            end
-
-            -- Play raid warning sound
-            GL:playSound(8959, "Master");
-
-            -- Items should only contain 1 item but lets add a return just in case
-            return;
-        end);
     end
+
+    if (type(content) ~= "table") then
+        return GL:error("Content is not a table in RollOff:start");
+    end
+
+    if (not content.time
+        or type(content.time) ~= "number"
+    ) then
+        return GL:error("No time provided in RollOff:start");
+    end
+
+    if (not content.item) then
+        return GL:error("No item provided in RollOff:start");
+    end
+
+    --- We have to wait with starting the actual roll off process until
+    --- the item that's up for rolling has been successfully loaded by the Item API
+    ---
+    ---@vararg Item
+    ---@return void
+    GL:onItemLoadDo(content.item, function (Items)
+        local Entry = Items[1];
+
+        if (GL:empty(Entry)) then
+            return;
+        end
+
+        local time = math.floor(tonumber(content.time));
+        local osRollMax = math.floor(tonumber(content.osRollMax or 99));
+
+        -- This is a new roll off so clean everything
+        if (Entry.link ~= self.CurrentRollOff.itemLink
+            or CommMessage.Sender.id ~= self.CurrentRollOff.initiator
+        ) then
+            -- This is a new item so make sure to
+            -- override all previously set properties
+            self.CurrentRollOff = {
+                initiator = CommMessage.Sender.id,
+                time = time,
+                itemId = Entry.id,
+                itemName = Entry.name,
+                itemLink = Entry.link,
+                itemIcon = Entry.icon,
+                osRollMax = osRollMax,
+                note = content.note,
+                Rolls = {},
+            };
+        else
+            -- If we roll the same item again we do need to make
+            -- sure that we update the roll timer
+            self.CurrentRollOff.time = time;
+        end
+
+        self.inProgress = true;
+
+        -- Don't show the roll UI if the user disabled it
+        -- and the current user is not the one who initiated the rolloff
+        if (GL.Settings:get("Rolling.showRollOffWindow")
+            or self:startedByMe()
+        ) then
+            GL.RollerUI:show(time, Entry.id, Entry.link, Entry.icon, content.note, osRollMax);
+
+            if (CommMessage.Sender.id == GL.User.id) then
+                GL.MasterLooterUI:drawReopenMasterLooterUIButton();
+            end
+        end
+
+        -- Make sure the rolloff stops when time is up
+        self.timerId = GL.Ace:ScheduleTimer(function ()
+            self:stop();
+        end, time);
+
+        -- Send a countdown in chat when enabled
+        local numberOfSecondsToCountdown = GL.Settings:get("MasterLooting.numberOfSecondsToCountdown", 5);
+        if (self:startedByMe() -- Only post a countdown if this user initiated the roll
+            and time > numberOfSecondsToCountdown -- No point in counting down if there's hardly enough time anyways
+            and GL.Settings:get("MasterLooting.doCountdown", false)
+        ) then
+            local SecondsAnnounced = {};
+            self.countDownTimer = GL.Ace:ScheduleRepeatingTimer(function ()
+                local secondsLeft = math.ceil(GL.Ace:TimeLeft(self.timerId));
+                if (secondsLeft <= numberOfSecondsToCountdown
+                    and secondsLeft > 0
+                    and not SecondsAnnounced[secondsLeft]
+                ) then
+                    SecondsAnnounced[secondsLeft] = true;
+
+                    GL:sendChatMessage(
+                        string.format("%s seconds to roll", secondsLeft),
+                        "GROUP"
+                    );
+                end
+            end, 1);
+        end
+
+        -- Play raid warning sound
+        GL:playSound(8959, "Master");
+
+        -- Items should only contain 1 item but lets add a return just in case
+        return;
+    end);
 end
 
 --- Check whether the current rolloff was started by me (the user)
@@ -420,9 +432,34 @@ end
 function RollOff:listenForRolls()
     GL:debug("RollOff:listenForRolls");
 
+    -- Make sure the timer to cancel listening for rolls is cancelled
+    if (self.rollListenerCancelTimerId) then
+        GL.Ace:CancelTimer(self.rollListenerCancelTimerId);
+    end
+
+    if (self.listeningForRolls) then
+        return;
+    end
+
+    self.listeningForRolls = true;
+
     Events:register("RollOffChatMsgSystemListener", "CHAT_MSG_SYSTEM", function (_, message)
         self:processRoll(message);
     end);
+end
+
+--- Unregister the CHAT_MSG_SYSTEM to stop listening for rolls
+---
+---@return void
+function RollOff:stopListeningForRolls()
+    GL:debug("RollOff:stopListeningForRolls");
+
+    if (self.rollListenerCancelTimerId) then
+        GL.Ace:CancelTimer(self.rollListenerCancelTimerId);
+    end
+
+    self.listeningForRolls = false;
+    Events:unregister("RollOffChatMsgSystemListener");
 end
 
 --- Process an incoming roll (if it's valid!)
@@ -486,15 +523,6 @@ function RollOff:processRoll(message)
 
     tinsert(RollOff.CurrentRollOff.Rolls, Roll);
     RollOff:refreshRollsTable();
-end
-
---- Unregister the CHAT_MSG_SYSTEM to stop listening for rolls
----
----@return void
-function RollOff:stopListeningForRolls()
-    GL:debug("RollOff:stopListeningForRolls");
-
-    Events:unregister("RollOffChatMsgSystemListener");
 end
 
 -- Whenever a new roll comes in we need to refresh

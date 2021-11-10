@@ -50,17 +50,7 @@ end
 ---
 ---@return void
 function Settings:sanitizeSettings()
-    if (self:get("MasterLooting.doCountdown")) then
-        self:set("MasterLooting.announceMasterLooter", true);
-    end
-
-    if (not self:get("spreadTheWord")) then
-        self:set("MasterLooting.announceMasterLooter", true);
-    end
-
-    if (not self:get("MasterLooting.announceMasterLooter")) then
-        self:set("spreadTheWord", true);
-    end
+    self:set("spreadTheWord", true);
 
     self:enforceTemporarySettings();
 end
