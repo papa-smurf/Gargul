@@ -1,14 +1,17 @@
+---@type GL
 local _, GL = ...;
 
 GL.AceGUI = GL.AceGUI or LibStub("AceGUI-3.0");
 
+---@class LootPriority
 GL.LootPriority = {
-    initialized = false,
+    _initialized = false,
 };
 
 local AceGUI = GL.AceGUI;
-local LootPriority = GL.LootPriority;
+local LootPriority = GL.LootPriority; ---@type LootPriority
 
+---@return void
 function LootPriority:_init()
     GL:debug("LootPriority:_init");
 
@@ -39,7 +42,10 @@ function LootPriority:getPriority(itemLink, itemName)
         or GL.DB.LootPriority[itemName];
 end
 
--- Append the loot prio as defined in GL.DB.LootPriority to an item's tooltip
+--- Append the loot prio as defined in GL.DB.LootPriority to an item's tooltip
+---
+---@param tooltip table
+---@return void
 function LootPriority:appendLootPrioToTooltip(tooltip)
     GL:debug("LootPriority:appendLootPrioToTooltip");
 
@@ -71,6 +77,7 @@ function LootPriority:appendLootPrioToTooltip(tooltip)
     end
 end
 
+---@return void
 function LootPriority:drawImporter()
     GL:debug("LootPriority:drawImporter");
 
@@ -141,10 +148,16 @@ function LootPriority:drawImporter()
     FooterFrame:AddChild(ClearButton);
 end
 
+--- Save a given loot priority string
+---
+---@param data string
+---@return void
 function LootPriority:save(data)
     GL:debug("LootPriority:save");
 
-    if (not data or type(data) ~= "string") then
+    if (type(data) ~= "string"
+        or GL:empty(data)
+    ) then
         return GL:warning("Invalid data provided");
     end
 

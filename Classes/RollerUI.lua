@@ -2,35 +2,21 @@
 local _, GL = ...;
 
 ---@class RollerUI
-GL.RollerUI = GL.RollerUI or {};
+GL.RollerUI = GL.RollerUI or {
+    Window = nil,
+};
 local RollerUI = GL.RollerUI; ---@type RollerUI
 
 ---@return boolean
 function RollerUI:show(...)
     GL:debug("RollerUI:show");
 
-    local Window = GL.Interface:getItem(self, "Window");
-
-    if (Window and Window:IsShown()) then
+    if (self.Window and self.Window:IsShown()) then
         return false;
     end
 
     self:draw(...);
     return true;
-end
-
----@return void
-function RollerUI:hide()
-    local Window = GL.Interface:getItem(self, "Window");
-    local TimerBar = GL.Interface:getItem(self, "Frame.TimerBar");
-
-    if (Window) then
-        Window:Hide();
-    end
-
-    if (TimerBar) then
-        TimerBar:Stop();
-    end
 end
 
 --- Note: we're not using AceGUI here since getting a SimpleGroup to move properly is a friggin nightmare
@@ -44,15 +30,8 @@ end
 function RollerUI:draw(time, itemId, itemLink, itemIcon, note, osRollMax)
     GL:debug("RollerUI:draw");
 
-    local Window = GL.Interface:getItem(self, "Window");
-
-    -- All UI elements are already available, no need to render them again
-    if (Window) then
-        return self:update(time, itemId, itemLink, itemIcon, note, osRollMax);
-    end
-
-    Window = CreateFrame("Frame", "GargulUI_RollerUI_Window", UIParent, Frame);
-    Window:Show();
+    local Window = CreateFrame("Frame", "GargulUI_RollerUI_Window", UIParent, Frame);
+    Window:Hide();
     Window:SetSize(350, 48);
     Window:SetPoint(GL.Interface:getPosition("Roller"));
 
@@ -72,6 +51,7 @@ function RollerUI:draw(time, itemId, itemLink, itemIcon, note, osRollMax)
             self:hide();
         end
     end);
+    self.Window = Window;
 
     local Texture = Window:CreateTexture(nil,"BACKGROUND");
     Texture:SetColorTexture(0, 0, 0, .6);
@@ -93,12 +73,25 @@ function RollerUI:draw(time, itemId, itemLink, itemIcon, note, osRollMax)
         end
     end);
 
-    local OSButton = CreateFrame("Button", "GargulUI_RollerUI_OS", Window, "GameMenuButtonTemplate");
-    OSButton:SetPoint("TOPLEFT", MSButton, "TOPRIGHT", 1, 0);
-    OSButton:SetSize(60, 20);
-    OSButton:SetText("OS");
-    OSButton:SetNormalFontObject("GameFontNormal");
-    OSButton:SetHighlightFontObject("GameFontNormal");
+    -- Check whether the Master Looter supports OS rolls
+    if (type(osRollMax) == "number"
+        and GL:higherThanZero(osRollMax)
+    ) then
+        local OSButton = CreateFrame("Button", "GargulUI_RollerUI_OS", Window, "GameMenuButtonTemplate");
+        OSButton:SetPoint("TOPLEFT", MSButton, "TOPRIGHT", 1, 0);
+        OSButton:SetSize(60, 20);
+        OSButton:SetText("OS");
+        OSButton:SetNormalFontObject("GameFontNormal");
+        OSButton:SetHighlightFontObject("GameFontNormal");
+        OSButton:Show();
+        OSButton:SetScript("OnClick", function ()
+            RandomRoll(1, osRollMax or 99);
+
+            if (GL.Settings:get("Rolling.closeAfterRoll")) then
+                self:hide();
+            end
+        end);
+    end
 
     local PassButton = CreateFrame("Button", "GargulUI_RollerUI_Pass", Window, "GameMenuButtonTemplate");
     PassButton:SetPoint("TOPRIGHT", Window, "TOPRIGHT", -3, -1);
@@ -110,25 +103,46 @@ function RollerUI:draw(time, itemId, itemLink, itemIcon, note, osRollMax)
         self:hide();
     end);
 
+    self:drawCountdownBar(time, itemLink, itemIcon, note);
+
+    Window:Show();
+end
+
+--- Draw the countdown bar
+---
+---@param time number
+---@param itemLink string
+---@param itemIcon string
+---@param note string
+---@return void
+function RollerUI:drawCountdownBar(time, itemLink, itemIcon, note)
+    GL:debug("RollerUI:drawCountdownBar");
+
+    -- This shouldn't be possible but you never know!
+    if (not self.Window) then
+        return false;
+    end
+
     local TimerBar = LibStub("LibCandyBarGargul-3.0"):New(
         "Interface\\AddOns\\Gargul\\Assets\\Textures\\timer-bar",
         350,
         24
     );
 
-    TimerBar:SetPoint("BOTTOM", Window, "BOTTOM");
+    TimerBar:SetParent(self.Window);
+    TimerBar:SetPoint("BOTTOM", self.Window, "BOTTOM");
     TimerBar.candyBarLabel:SetFont("Fonts\\ARIALN.ttf", 13, "OUTLINE");
 
     -- Make the bar turn green/yellow/red based on time left
-    TimerBar:AddUpdateFunction(function ()
-        local percentageLeft = 100 / (time / TimerBar.remaining);
+    TimerBar:AddUpdateFunction(function (Bar)
+        local percentageLeft = 100 / (time / Bar.remaining);
 
         if (percentageLeft >= 60) then
-            TimerBar:SetColor(0, 1, 0, .3);
+            Bar:SetColor(0, 1, 0, .3);
         elseif (percentageLeft >= 30) then
-            TimerBar:SetColor(1, 1, 0, .3);
+            Bar:SetColor(1, 1, 0, .3);
         else
-            TimerBar:SetColor(1, 0, 0, .3);
+            Bar:SetColor(1, 0, 0, .3);
         end
     end);
 
@@ -143,36 +157,8 @@ function RollerUI:draw(time, itemId, itemLink, itemIcon, note, osRollMax)
         GameTooltip:Hide();
     end);
 
-    GL.Interface:setItem(self, "Window", Window);
-    GL.Interface:setItem(self, "TimerBar", TimerBar);
-    GL.Interface:setItem(self, "OSButton", OSButton);
-
-    return self:update(time, itemId, itemLink, itemIcon, note, osRollMax);
-end
-
---- This method updates the values of the RollerUI only
---- This allows us to keep reusing the same UI elements
---- without having to build them over and over again
----
----@param time number The duration of the RollOff
----@param itemId number
----@param itemLink string
----@param itemIcon string
----@param note string
----@return boolean
-function RollerUI:update(time, itemId, itemLink, itemIcon, note, osRollMax)
-    GL:debug("RollerUI:update");
-
-    -- Fetch all UI elements
-    local TimerBar = GL.Interface:getItem(self, "Frame.TimerBar");
-    local Window = GL.Interface:getItem(self, "Window");
-
-    -- This shouldn't be possible but you never know!
-    if (not TimerBar
-        or not Window
-    ) then
-        return false;
-    end
+    TimerBar:SetDuration(time);
+    TimerBar:SetColor(0, 1, 0, .3); -- Reset color to green
 
     note = note or "";
     local noteStringLengthAllowed = 53 - string.len(note);
@@ -181,43 +167,31 @@ function RollerUI:update(time, itemId, itemLink, itemIcon, note, osRollMax)
     if (noteStringLengthAllowed < 0) then
         noteStringLengthAllowed = 0;
     end
-
-    TimerBar:SetParent(Window);
-    TimerBar:SetDuration(time);
-    TimerBar:SetColor(0, 1, 0, .3); -- Reset color to green
     TimerBar:SetLabel("  " .. itemLink .. " " .. string.sub(note, 0, noteStringLengthAllowed));
 
     TimerBar:SetIcon(itemIcon);
+    TimerBar:Set("type", "ROLLER_UI_COUNTDOWN");
     TimerBar:Start();
-    Window:Show();
 
     -- Show a gametooltip for the item up for roll
     -- when hovering over the progress bar
     TimerBar:SetScript("OnEnter", function()
-        GameTooltip:SetOwner(Window, "ANCHOR_TOP");
+        GameTooltip:SetOwner(self.Window, "ANCHOR_TOP");
         GameTooltip:SetHyperlink(itemLink);
         GameTooltip:Show();
     end);
+end
 
-    -- Check whether the Master Looter supports OS rolls
-    local OSButton = GL.Interface:getItem(self, "Frame.OSButton");
-    if (type(osRollMax) == "number"
-        and not GL:higherThanZero(osRollMax)
-    ) then
-        OSButton:Hide();
-    else
+---@return void
+function RollerUI:hide()
+    GL:debug("RollerUI:hide");
 
-        OSButton:Show();
-        OSButton:SetScript("OnClick", function ()
-            RandomRoll(1, osRollMax or 99);
-
-            if (GL.Settings:get("Rolling.closeAfterRoll")) then
-                self:hide();
-            end
-        end);
+    if (not self.Window) then
+        return;
     end
 
-    return true;
+    self.Window:Hide();
+    self.Window = nil;
 end
 
 GL:debug("RollerUI.lua");

@@ -108,11 +108,15 @@ function PackMule:isItemIDIgnored(checkItemID)
             return GL:warning(string.format("Unknown item ID '%s'", checkItemID));
         end
 
-        if (not GL:inTable({LE_ITEM_BIND_ON_ACQUIRE, LE_ITEM_BIND_QUEST}, Loot.bindType) or ( -- The item is not BoP so we can safely PackMule it
-            not Loot.quality >= 5 -- Legendary items are skipped
-            and not GL:inTable(GL.Data.Constants.UntradeableItems, itemID) -- Untradable items are skipped in quality rules
-            and not GL:inTable(self.itemClassIdsToIgnore, itemClassID) -- Recipes and Quest Items are skipped in quality rules
-        )) then
+        local bindType = Loot.bindType or LE_ITEM_BIND_NONE;
+        local bindOnPickup = GL:inTable({ LE_ITEM_BIND_ON_ACQUIRE, LE_ITEM_BIND_QUEST}, bindType);
+
+        if (not bindOnPickup or ( -- The item is not BoP so we can safely PackMule it
+                Loot.quality < 5 -- Legendary items are skipped
+                and not GL:inTable(GL.Data.Constants.UntradeableItems, itemID) -- Untradable items are skipped in quality rules
+                and not GL:inTable(self.itemClassIdsToIgnore, itemClassID) -- Recipes and Quest Items are skipped in quality rules
+            )
+        ) then
             return GL:message("This item is NOT ignored!");
         end
 

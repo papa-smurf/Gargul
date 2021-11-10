@@ -1060,7 +1060,7 @@ end
 ---
 ---@return string
 function GL:uuid()
-    local random = math.random
+    local random = math.random;
     local template = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx";
 
     return string.gsub(template, "[xy]", function (c)

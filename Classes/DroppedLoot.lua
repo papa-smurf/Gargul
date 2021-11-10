@@ -323,10 +323,14 @@ function DroppedLoot:announce()
             local SoftReserves = SoftRes:byItemLink(itemLink);
             local TMBInfo = GL.TMB:byItemLink(itemLink);
 
-            -- There is nothing to announce, skip!
-            if (quality < GL.Settings:get("minimumQualityOfAnnouncedLoot", 4) -- Quality is lower than our set minimum
-                and GL:empty(SoftReserves) -- Noone (hard)reserved it
-                and GL:empty(TMBInfo) -- Noone has it on his wishlist and it's not a prio item
+            -- Check if we need to announce this item
+            local itemId = tonumber(GL:getItemIdFromLink(itemLink)) or 0;
+            if ((
+                    quality < GL.Settings:get("minimumQualityOfAnnouncedLoot", 4) -- Quality is lower than our set minimum
+                    or GL:inTable(Constants.ItemsThatSouldntBeAnnounced, itemId) -- We don't want to announce this item
+                )
+                and GL:empty(SoftReserves) -- No one (hard)reserved it
+                and GL:empty(TMBInfo) -- No one has it on his wishlist and it's not a prio item
             ) then
                 return;
             end

@@ -25,13 +25,13 @@ function UI:createShareButton(ParentFrame, onClick, tooltipText, disabledTooltip
     ShareButton:SetMotionScriptsWhileDisabled(true); -- Make sure tooltip still shows even when button is disabled
 
     local HighlightTexture = ShareButton:CreateTexture();
-    HighlightTexture:SetTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\share-button-highlighted");
+    HighlightTexture:SetTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\share-highlighted");
     HighlightTexture:SetPoint("CENTER", ShareButton, "CENTER", 0, 0);
     HighlightTexture:SetSize(24, 24);
 
-    ShareButton:SetNormalTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\share-button");
+    ShareButton:SetNormalTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\share");
     ShareButton:SetHighlightTexture(HighlightTexture);
-    ShareButton:SetDisabledTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\share-button-disabled");
+    ShareButton:SetDisabledTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\share-disabled");
 
     ShareButton:SetScript("OnEnter", function()
         local textToShow = tooltipText;
