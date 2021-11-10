@@ -22,21 +22,31 @@ function TimeLeft:_init()
         return;
     end
 
-    GL.Events:register("AwardedLootTradeShowListener", "BAG_UPDATE_DELAYED", function ()
-        self:refreshBars();
-    end);
+    -- Make sure to wait a bit with registering everything after a reload
+    -- That way we don't have any stutters or weird behavior like bars not showing up
+    GL.Ace:ScheduleTimer(function ()
+        GL.Events:register({
+            {"AwardedLootTradeShowListener", "BAG_UPDATE_DELAYED"},
+            {"MasterLooterObtainedListener", "GL.USER_LOST_MASTER_LOOTER"},
+            {"MasterLooterObtainedListener", "GL.USER_OBTAINED_MASTER_LOOTER"},
+        }, function ()
+            self:refreshBars();
+        end);
 
-    LibStub("LibCandyBarGargul-3.0").RegisterCallback(GL.Ace, "LibCandyBar_Stop", function (_, Bar)
-        -- This is not a timer bar, ignore it!
-        if (not Bar
-            or type(Bar.Get) ~= "function"
-            or Bar:Get("type") ~= "TRADE_WINDOW_TIME_LEFT"
-        ) then
-            return;
-        end
+        LibStub("LibCandyBarGargul-3.0").RegisterCallback(GL.Ace, "LibCandyBar_Stop", function (_, Bar)
+            if (not self:enabled() -- The user doesn't want to see timer bars
+                or not Bar
+                or type(Bar.Get) ~= "function"
+                or Bar:Get("type") ~= "TRADE_WINDOW_TIME_LEFT" -- This is not a timer bar, ignore it!
+            ) then
+                return;
+            end
+
+            self:refreshBars();
+        end);
 
         self:refreshBars();
-    end);
+    end, 3);
 
     self._initialized = true;
 end
@@ -85,7 +95,48 @@ function TimeLeft:draw()
     Title:SetText("Trade expiration timers");
     Title:SetTextColor(1, 1, 1, 1);
 
+    local Cogwheel = CreateFrame("Button", "TimeLeft_Cogwheel" .. GL:uuid(), Window, Frame);
+    Cogwheel:Show();
+    Cogwheel:SetClipsChildren(true);
+    Cogwheel:SetSize(13, 13);
+    Cogwheel:SetPoint("TOPRIGHT", Window, "TOPRIGHT", -2, -3);
+
+    local CogwheelTexture = Cogwheel:CreateTexture();
+    CogwheelTexture:SetPoint("BOTTOMRIGHT", 0, 0);
+    CogwheelTexture:SetSize(16,16);
+    CogwheelTexture:SetTexture("interface\\cursor\\interact");
+    CogwheelTexture:SetTexture("interface\\cursor\\unableinteract");
+    Cogwheel.texture = CogwheelTexture;
+
+    Cogwheel:SetScript('OnEnter', function()
+        CogwheelTexture:SetTexture("interface\\cursor\\interact");
+    end);
+    Cogwheel:SetScript('OnLeave', function()
+        CogwheelTexture:SetTexture("interface\\cursor\\unableinteract");
+    end);
+
+    Cogwheel:SetScript("OnClick", function(_, button)
+        if (button == 'LeftButton') then
+            GL.Settings:draw("LootTradeTimers");
+        end
+    end);
+
     self:refreshBars();
+end
+
+---@return boolean
+function TimeLeft:enabled()
+    -- Check whether we should be showing the bars at all
+    if (not GL.Settings:get("LootTradeTimers.enable") -- The user disabled this feature
+        or ( -- The user only wants to see it when master looting and is not the master looter
+            not GL.User.isMasterLooter
+            and GL.Settings:get("LootTradeTimers.showOnlyWhenMasterLooting")
+        )
+    ) then
+        return false;
+    end
+
+    return true;
 end
 
 function TimeLeft:refreshBars()
@@ -93,6 +144,12 @@ function TimeLeft:refreshBars()
 
     -- We're already busy refreshing, return so we don't refresh endlessly
     if (self.refreshing) then
+        return;
+    end
+
+    if (not self:enabled()) then
+        self:stopAllBars();
+
         return;
     end
 
@@ -166,7 +223,7 @@ function TimeLeft:refreshBars()
         end
 
     -- We're not showing any bars but there are items available now
-    elseif (numberOfItemsAvailable > 0) then
+    else
         barsDiffer = true;
     end
 
@@ -179,7 +236,7 @@ function TimeLeft:refreshBars()
     self:stopAllBars();
 
     local barsAvailable = false;
-    for index = 1, 5 do
+    for index = 1, GL.Settings:get("LootTradeTimers.maximumNumberOfBars", 5) do
         local BagItem = ItemsWithTradeTimeRemaining[index];
 
         if (GL:empty(BagItem)) then
@@ -251,6 +308,12 @@ function TimeLeft:refreshBars()
         barsAvailable = true;
     end
 
+    if (barsAvailable) then
+        Window:Show();
+    else
+        Window:Hide();
+    end
+
     self.refreshing = false;
 end
 
@@ -265,6 +328,12 @@ function TimeLeft:stopAllBars()
     end
 
     self.Bars = {};
+
+    local Window = GL.Interface:getItem(self, "Window");
+
+    if (Window) then
+        Window:Hide();
+    end
 end
 
 ---@return void
