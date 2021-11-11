@@ -46,6 +46,11 @@ GL.Data.DefaultSettings = {
         includeDisenchantedItems = true,
         disenchanterIdentifier = "_disenchanted",
     },
+    LootTradeTimers = {
+        maximumNumberOfBars = 5,
+        enabled = true,
+        showOnlyWhenMasterLooting = true,
+    },
     PackMule = {
         announceDisenchantedItems = true,
         enabled = false,
