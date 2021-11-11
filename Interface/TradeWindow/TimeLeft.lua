@@ -26,9 +26,9 @@ function TimeLeft:_init()
     -- That way we don't have any stutters or weird behavior like bars not showing up
     GL.Ace:ScheduleTimer(function ()
         GL.Events:register({
-            {"AwardedLootTradeShowListener", "BAG_UPDATE_DELAYED"},
-            {"MasterLooterObtainedListener", "GL.USER_LOST_MASTER_LOOTER"},
-            {"MasterLooterObtainedListener", "GL.USER_OBTAINED_MASTER_LOOTER"},
+            {"TimeLeftBagUpdateDelayedListener", "BAG_UPDATE_DELAYED"},
+            {"TimeLeftBagMasterLooterLostListener", "GL.USER_LOST_MASTER_LOOTER"},
+            {"TimeLeftBagMasterLooterObtainedListener", "GL.USER_OBTAINED_MASTER_LOOTER"},
         }, function ()
             self:refreshBars();
         end);
@@ -127,7 +127,7 @@ end
 ---@return boolean
 function TimeLeft:enabled()
     -- Check whether we should be showing the bars at all
-    if (not GL.Settings:get("LootTradeTimers.enable") -- The user disabled this feature
+    if (not GL.Settings:get("LootTradeTimers.enabled") -- The user disabled this feature
         or ( -- The user only wants to see it when master looting and is not the master looter
             not GL.User.isMasterLooter
             and GL.Settings:get("LootTradeTimers.showOnlyWhenMasterLooting")
