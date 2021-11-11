@@ -521,7 +521,9 @@ function TMB:import(data, triedToDecompress)
     end
 
     -- There is also loot priority data available, pass it to on!
-    if (WebsiteData.loot and type(WebsiteData.loot) == "string") then
+    if (type(WebsiteData.loot) == "string"
+        and not GL:empty(WebsiteData.loot)
+    ) then
         GL.LootPriority:save(WebsiteData.loot);
     end
 
