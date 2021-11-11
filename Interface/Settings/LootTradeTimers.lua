@@ -11,7 +11,7 @@ local LootTradeTimers = GL.Interface.Settings.LootTradeTimers; ---@type LootTrad
 
 ---@return void
 function LootTradeTimers:draw(Parent)
-    GL:debug("LootTradeTimersSettings:draw");
+    GL:debug("LootTradeTimers:draw");
 
     local NumberOfTimerBars = GL.AceGUI:Create("Slider");
     NumberOfTimerBars:SetLabel("Maximum number of active countdown bars");
