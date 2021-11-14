@@ -110,7 +110,12 @@ function GL:_init()
     self:hookBagSlotEvents();
 
     -- Make sure to initialize the user last
-    GL.User:refresh();
+    self.User:refresh();
+
+    -- Allow easier testability for devs
+    if (self:inTable(self.Data.Constants.Devs, self.User.id)) then
+        _G.GL = self;
+    end
 end
 
 -- Register the gl slash command
