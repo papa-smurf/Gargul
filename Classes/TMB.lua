@@ -10,7 +10,6 @@ GL.TMB = {
 };
 local TMB = GL.TMB; ---@type TMB
 
-local AceGUI = GL.AceGUI;
 local Constants = GL.Data.Constants; ---@type Data
 local CommActions = Constants.Comm.Actions;
 local Settings = GL.Settings; ---@type Settings
@@ -603,7 +602,7 @@ function TMB:broadcast()
     GL.Events:fire("GL.TMB_BROADCAST_STARTED");
 
     local Broadcast = function ()
-        GL:message("Broadcasting...");
+        GL:message("Broadcasting TMB data...");
 
         local Label = GL.Interface:getItem(GL.TMB, "Label.BroadcastProgress");
 
@@ -616,7 +615,7 @@ function TMB:broadcast()
             GL.DB.TMB,
             "GROUP"
         ):send(function ()
-            GL:success("Broadcast finished");
+            GL:success("TMB broadcast finished");
             self.broadcastInProgress = false;
             GL.Events:fire("GL.TMB_BROADCAST_ENDED");
 
@@ -624,6 +623,9 @@ function TMB:broadcast()
             if (Label) then
                 Label:SetText("Broadcast finished!");
             end
+
+            -- Make sure to broadcast the loot priorities as well
+            GL.LootPriority:broadcast();
         end, function (sent, total)
             Label = GL.Interface:getItem(GL.TMB, "Label.BroadcastProgress");
             if (Label) then
@@ -635,7 +637,7 @@ function TMB:broadcast()
     -- We're about to send a lot of data which will put strain on CTL
     -- Make sure we're out of combat before doing so!
     if (UnitAffectingCombat("player")) then
-        GL:message("You are currently in combat, delaying broadcast");
+        GL:message("You are currently in combat, delaying TMB broadcast");
 
         GL.Events:register("TMBOutOfCombatListener", "PLAYER_REGEN_ENABLED", function ()
             GL.Events:unregister("TMBOutOfCombatListener");
