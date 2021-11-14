@@ -9,6 +9,7 @@ GL.LootPriority = {
 };
 
 local AceGUI = GL.AceGUI;
+local CommActions = GL.Data.Constants.Comm.Actions;
 local LootPriority = GL.LootPriority; ---@type LootPriority
 
 ---@return void
@@ -100,23 +101,7 @@ function LootPriority:drawImporter()
     LootPriorityBox:SetNumLines(22);
     LootPriorityBox:SetMaxLetters(999999999);
     LootPriorityFrame:AddChild(LootPriorityBox);
-
-    local LootPriorityCSV = "";
-
-    if (GL.DB.LootPriority and type(GL.DB.LootPriority) == "table") then
-        for item, priority in pairs(GL.DB.LootPriority) do
-            local prioritycount = #priority;
-            local priorityString = "";
-
-            for index = 1, prioritycount do
-                priorityString = string.format("%s > %s", priorityString, priority[index]);
-            end
-
-            LootPriorityCSV = string.format("%s%s %s\n", LootPriorityCSV, item, priorityString);
-        end
-    end
-
-    LootPriorityBox:SetText(LootPriorityCSV);
+    LootPriorityBox:SetText(self:toCSV());
 
     LootPriorityBox:SetCallback("OnTextChanged", function(_, _, text)
         LootPriorityBoxContent = text;
@@ -146,6 +131,36 @@ function LootPriority:drawImporter()
         LootPriorityBox:SetText("");
     end);
     FooterFrame:AddChild(ClearButton);
+
+    local ShareButton = AceGUI:Create("Button");
+    ShareButton:SetText("Share");
+    ShareButton:SetWidth(140);
+    ShareButton:SetCallback("OnClick", function()
+        self:broadcast();
+    end);
+    FooterFrame:AddChild(ShareButton);
+end
+
+--- Translate the lootpriority table to CSV
+---
+---@return string
+function LootPriority:toCSV()
+    local LootPriorityCSV = "";
+
+    if (GL.DB.LootPriority and type(GL.DB.LootPriority) == "table") then
+        for item, priority in pairs(GL.DB.LootPriority) do
+            local prioritycount = #priority;
+            local priorityString = "";
+
+            for index = 1, prioritycount do
+                priorityString = string.format("%s > %s", priorityString, priority[index]);
+            end
+
+            LootPriorityCSV = string.format("%s%s %s\n", LootPriorityCSV, item, priorityString);
+        end
+    end
+
+    return LootPriorityCSV;
 end
 
 --- Save a given loot priority string
@@ -155,10 +170,15 @@ end
 function LootPriority:save(data)
     GL:debug("LootPriority:save");
 
-    if (type(data) ~= "string"
-        or GL:empty(data)
-    ) then
+    if (type(data) ~= "string") then
         return GL:warning("Invalid data provided");
+    end
+
+    -- The user wishes to clear the loot priorities
+    if (GL:empty(data)) then
+        GL:success("Loot priorities cleared successfully");
+        GL.DB.LootPriority = {};
+        return;
     end
 
     local LootPriorityData = {};
@@ -188,6 +208,106 @@ function LootPriority:save(data)
     GL.DB.LootPriority = LootPriorityData;
 
     GL:success("Loot priorities imported successfully");
+end
+
+--- Broadcast the loot priorities to the RAID / PARTY
+---@return boolean
+function LootPriority:broadcast()
+    GL:debug("LootPriority:broadcast");
+
+    if (self.broadcastInProgress) then
+        GL:error("Broadcast still in progress");
+        return false;
+    end
+
+    if (not GL.User.isInGroup) then
+        GL:warning("No one to broadcast to, you're not in a group!");
+        return false;
+    end
+
+    if (not GL.User.hasAssist
+        and not GL.User.isMasterLooter
+    ) then
+        GL:warning("Insufficient permissions to broadcast, need ML, assist or lead!");
+        return false;
+    end
+
+    local LootPriorityCSV = self:toCSV();
+    -- Check if there's anything to share
+    if (GL:empty(LootPriorityCSV)) then
+        GL:warning("Nothing to broadcast, set up loot priorities first!");
+        return false;
+    end
+
+    self.broadcastInProgress = true;
+    GL.Events:fire("GL.LOOT_PRIORITY_BROADCAST_STARTED");
+
+    local Broadcast = function ()
+        GL:message("Broadcasting loot priorities...");
+
+        local Label = GL.Interface:getItem(GL.LootPriority, "Label.BroadcastProgress");
+
+        if (Label) then
+            Label:SetText("Broadcasting...");
+        end
+
+        GL.CommMessage.new(
+            CommActions.broadcastLootPriorities,
+            LootPriorityCSV,
+            "GROUP"
+        ):send(function ()
+            GL:success("Loot priority broadcast finished");
+            self.broadcastInProgress = false;
+            GL.Events:fire("GL.LOOT_PRIORITY_BROADCAST_ENDED");
+
+            Label = GL.Interface:getItem(GL.LootPriority, "Label.BroadcastProgress");
+            if (Label) then
+                Label:SetText("Broadcast finished!");
+            end
+        end, function (sent, total)
+            Label = GL.Interface:getItem(GL.LootPriority, "Label.BroadcastProgress");
+            if (Label) then
+                Label:SetText(string.format("Sent %s of %s bytes", sent, total));
+            end
+        end);
+    end
+
+    -- We're about to send a lot of data which will put strain on CTL
+    -- Make sure we're out of combat before doing so!
+    if (UnitAffectingCombat("player")) then
+        GL:message("You are currently in combat, delaying loot priority broadcast");
+
+        GL.Events:register("LootPriorityOutOfCombatListener", "PLAYER_REGEN_ENABLED", function ()
+            GL.Events:unregister("LootPriorityOutOfCombatListener");
+            Broadcast();
+        end);
+    else
+        Broadcast();
+    end
+
+    return true;
+end
+
+--- Process an incoming loot priority broadcast
+---
+---@param CommMessage CommMessage
+function LootPriority:receiveBroadcast(CommMessage)
+    GL:debug("LootPriority:receiveBroadcast");
+
+    -- No need to update our priorities if we broadcasted them ourselves
+    if (CommMessage.Sender.id == GL.User.id) then
+        GL:debug("LootPriority:receiveBroadcast received by self, skip");
+        return true;
+    end
+
+    local priorities = CommMessage.content;
+    if (type(priorities) == "string"
+        and not GL:empty(priorities)
+    ) then
+        GL:warning("Attempting to process incoming loot priorities from " .. CommMessage.Sender.name);
+
+        self:save(priorities);
+    end
 end
 
 GL:debug("LootPriority.lua");
