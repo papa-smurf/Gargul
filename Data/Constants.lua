@@ -160,6 +160,12 @@ GL.Data.Constants = {
         warrior = {r = .77647, g = .607843, b = .42745, a = 1},
     },
 
+    Devs = {
+        "Player-4478-02127978",
+        "Player-4478-02E36E30",
+        "Player-4478-01BF6C3B",
+    },
+
     classRGBColors = {
         druid = {1, .48627, .0392,},
         hunter = {.6666, .827450, .44705,},
@@ -193,6 +199,7 @@ GL.Data.Constants = {
     Comm = {
         channel = "GargulComm2",
         minimumAppVersion = "3.5.0",
+        ---@todo next major release re-index these actions
         Actions = {
             broadcastSoftRes = 5,
             inspectBags = 6,
@@ -201,7 +208,8 @@ GL.Data.Constants = {
             startRollOff = 11,
             stopRollOff = 13,
             broadcastTMBData = 14,
-            awardItem = 15
+            awardItem = 15,
+            broadcastLootPriorities = 16,
         },
     },
 

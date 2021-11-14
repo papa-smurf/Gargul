@@ -250,6 +250,8 @@ function Comm:dispatch(CommMessage)
         return GL.SoftRes:receiveSoftRes(CommMessage);
     elseif (action == CommActions.broadcastTMBData) then
         return GL.TMB:receiveBroadcast(CommMessage);
+    elseif (action == CommActions.broadcastLootPriorities) then
+        return GL.LootPriority:receiveBroadcast(CommMessage);
     elseif (action == CommActions.inspectBags) then
         return GL.BagInspector:report(CommMessage);
     elseif (action == CommActions.requestAppVersion) then
