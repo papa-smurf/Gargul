@@ -131,6 +131,14 @@ function LootPriority:drawImporter()
         LootPriorityBox:SetText("");
     end);
     FooterFrame:AddChild(ClearButton);
+
+    local ShareButton = AceGUI:Create("Button");
+    ShareButton:SetText("Share");
+    ShareButton:SetWidth(140);
+    ShareButton:SetCallback("OnClick", function()
+        self:broadcast();
+    end);
+    FooterFrame:AddChild(ShareButton);
 end
 
 --- Translate the lootpriority table to CSV
