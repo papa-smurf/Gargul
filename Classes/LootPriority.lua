@@ -100,23 +100,7 @@ function LootPriority:drawImporter()
     LootPriorityBox:SetNumLines(22);
     LootPriorityBox:SetMaxLetters(999999999);
     LootPriorityFrame:AddChild(LootPriorityBox);
-
-    local LootPriorityCSV = "";
-
-    if (GL.DB.LootPriority and type(GL.DB.LootPriority) == "table") then
-        for item, priority in pairs(GL.DB.LootPriority) do
-            local prioritycount = #priority;
-            local priorityString = "";
-
-            for index = 1, prioritycount do
-                priorityString = string.format("%s > %s", priorityString, priority[index]);
-            end
-
-            LootPriorityCSV = string.format("%s%s %s\n", LootPriorityCSV, item, priorityString);
-        end
-    end
-
-    LootPriorityBox:SetText(LootPriorityCSV);
+    LootPriorityBox:SetText(self:toCSV());
 
     LootPriorityBox:SetCallback("OnTextChanged", function(_, _, text)
         LootPriorityBoxContent = text;
@@ -148,6 +132,28 @@ function LootPriority:drawImporter()
     FooterFrame:AddChild(ClearButton);
 end
 
+--- Translate the lootpriority table to CSV
+---
+---@return string
+function LootPriority:toCSV()
+    local LootPriorityCSV = "";
+
+    if (GL.DB.LootPriority and type(GL.DB.LootPriority) == "table") then
+        for item, priority in pairs(GL.DB.LootPriority) do
+            local prioritycount = #priority;
+            local priorityString = "";
+
+            for index = 1, prioritycount do
+                priorityString = string.format("%s > %s", priorityString, priority[index]);
+            end
+
+            LootPriorityCSV = string.format("%s%s %s\n", LootPriorityCSV, item, priorityString);
+        end
+    end
+
+    return LootPriorityCSV;
+end
+
 --- Save a given loot priority string
 ---
 ---@param data string
@@ -155,10 +161,15 @@ end
 function LootPriority:save(data)
     GL:debug("LootPriority:save");
 
-    if (type(data) ~= "string"
-        or GL:empty(data)
-    ) then
+    if (type(data) ~= "string") then
         return GL:warning("Invalid data provided");
+    end
+
+    -- The user wishes to clear the loot priorities
+    if (GL:empty(data)) then
+        GL:success("Loot priorities cleared successfully");
+        GL.DB.LootPriority = {};
+        return;
     end
 
     local LootPriorityData = {};
