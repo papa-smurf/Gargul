@@ -36,6 +36,8 @@ function PackMule:_init()
         return;
     end
 
+    self._initialized = true;
+
     -- Check whether the user is in a heroic instance
     -- More info about difficultyIDs: https://wowpedia.fandom.com/wiki/DifficultyID
     local _, _, difficultyID = GetInstanceInfo();
@@ -86,8 +88,6 @@ function PackMule:_init()
             self.timerId = false;
         end
     end);
-
-    self._initialized = true;
 end
 
 --- Check if an item ID is ignored by default by PackMule (displayed in chat)
