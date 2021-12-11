@@ -168,28 +168,35 @@ function TimeLeft:refreshBars()
     local tradeTimeRemainingByLink = {};
     for bag = 0, 10 do
         for slot = 1, GetContainerNumSlots(bag) do
-            local icon, _, _, _, _, _, itemLink, _, _ = GetContainerItemInfo(bag, slot);
+            (function ()
+                local icon, _, _, _, _, _, itemLink, _, _ = GetContainerItemInfo(bag, slot);
 
-            if (icon and itemLink) then
-                local timeRemaining = GL:inventoryItemTradeTimeRemaining(bag, slot);
-
-                if (timeRemaining > 0 and timeRemaining ~= GL.Data.Constants.itemIsNotBound) then
-                    tinsert(ItemsWithTradeTimeRemaining, {
-                        icon = icon,
-                        itemLink = itemLink,
-                        timeRemaining = timeRemaining,
-                    });
-
-                    -- We're not tracking this item yet or this version of the item has a smaller trade time window
-                    -- I realize that this might not work perfectly with duplicate items in your inventory
-                    -- but since we always look at the item with the lowest trade duration left it should be fine
-                    if (not tradeTimeRemainingByLink[itemLink]
-                        or tradeTimeRemainingByLink[itemLink] > timeRemaining
-                    ) then
-                        tradeTimeRemainingByLink[itemLink] = timeRemaining;
-                    end
+                -- There's no eligible item in this bag slot
+                if (not icon or not itemLink) then
+                    return;
                 end
-            end
+
+                -- The item can not be traded anymore or is not soulbound to begin with
+                local timeRemaining = GL:inventoryItemTradeTimeRemaining(bag, slot);
+                if (timeRemaining < 1 or timeRemaining == GL.Data.Constants.itemIsNotBound) then
+                    return;
+                end
+
+                tinsert(ItemsWithTradeTimeRemaining, {
+                    icon = icon,
+                    itemLink = itemLink,
+                    timeRemaining = timeRemaining,
+                });
+
+                -- We're not tracking this item yet or this version of the item has a smaller trade time window
+                -- I realize that this might not work perfectly with duplicate items in your inventory
+                -- but since we always look at the item with the lowest trade duration left it should be fine
+                if (not tradeTimeRemainingByLink[itemLink]
+                    or tradeTimeRemainingByLink[itemLink] > timeRemaining
+                ) then
+                    tradeTimeRemainingByLink[itemLink] = timeRemaining;
+                end
+            end)();
         end
     end
 
