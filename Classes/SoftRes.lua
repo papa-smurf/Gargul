@@ -506,6 +506,11 @@ function SoftRes:import(data, openOverview)
 
         if (openOverview) then
             self:draw();
+
+            -- Automatically broadcast this data if it's not marked as "hidden"
+            if (not GL.DB:get('SoftRes.MetaData.hidden', true)) then
+                self:broadcast();
+            end
         end
 
         return true;
