@@ -6,6 +6,7 @@ GL.SoftRes = {
     _initialized = false,
     maxNumberOfSoftReservedItems = 6,
     broadcastInProgress = false,
+    requestingData = false,
 
     MaterializedData = {
         ClassByPlayerName = {},
@@ -32,10 +33,19 @@ function SoftRes:_init()
         return false;
     end
 
+    -- Remove old SoftRes data if it's more than 24h old
+    if (self:available()
+        and DB:get("SoftRes.MetaData.importedAt") < GetServerTime() - 86400
+    ) then
+        self:clear();
+    end
+
     -- Bind the appendSoftReserveInfoToTooltip method to the OnTooltipSetItem event
     GameTooltip:HookScript("OnTooltipSetItem", function(tooltip)
         self:appendSoftReserveInfoToTooltip(tooltip);
     end);
+
+    GL.Events:register("SoftResUserJoinedGroupListener", "GL.USER_JOINED_GROUP", function () self:requestData(); end);
 
     self:materializeData();
 
@@ -47,7 +57,122 @@ end
 ---
 ---@return boolean
 function SoftRes:available()
+    GL:debug("SoftRes:available");
+
     return GL:higherThanZero(DB:get("SoftRes.MetaData.importedAt", 0));
+end
+
+--- Request SoftRes data from the person in charge (ML or Leader)
+---
+---@return void
+function SoftRes:requestData()
+    GL:debug("SoftRes:requestData");
+
+    if (self.requestingData) then
+        return;
+    end
+
+    self.requestingData = true;
+
+    local playerToRequestFrom = (function()
+        -- We are the ML, we need to import the data ourselves
+        if (GL.User.isMasterLooter) then
+            return;
+        end
+
+        local lootMethod, _, masterLooterRaidID = GetLootMethod();
+
+        -- Master looting is not active and we are the leader, this means we should import it ourselves
+        if (lootMethod ~= 'master'
+            and GL.User.isLead
+        ) then
+            return;
+        end
+
+        -- Master looting is active, return the name of the master looter
+        if (lootMethod == 'master') then
+            return GetRaidRosterInfo(masterLooterRaidID);
+        end
+
+        -- Fetch the group leader
+        local maximumNumberOfGroupMembers = _G.MEMBERS_PER_RAID_GROUP;
+        if (GL.User.isInRaid) then
+            maximumNumberOfGroupMembers = _G.MAX_RAID_MEMBERS;
+        end
+
+        for index = 1, maximumNumberOfGroupMembers do
+            local name, rank = GetRaidRosterInfo(index);
+
+            -- Rank 2 means leader
+            if (name and rank == 2) then
+                return name;
+            end
+        end
+    end)();
+
+    -- There's no one to request data from, return
+    if (GL:empty(playerToRequestFrom)) then
+        self.requestingData = false;
+        return;
+    end
+
+    -- We send a data request to the person in charge
+    -- He will compare the ID and importedAt timestamp on his end to see if we actually need his data
+    GL.CommMessage.new(
+        CommActions.requestSoftResData,
+        {
+            currentSoftResID = GL.DB:get('SoftRes.MetaData.id', nil),
+            softResDataImportedAt = GL.DB:get('SoftRes.MetaData.importedAt', nil),
+        },
+        "WHISPER",
+        playerToRequestFrom
+    ):send();
+
+    self.requestingData = false;
+end
+
+--- Reply to a player's SoftRes data request
+---
+---@param CommMessage CommMessage
+---@return void
+function SoftRes:replyToDataRequest(CommMessage)
+    GL:debug("SoftRes:replyToDataRequest");
+
+    -- I don't have any data, leave me alone!
+    if (not self:available()) then
+        return;
+    end
+
+    -- We're not in a group (anymore), no need to help this person out
+    if (not GL.User.isInGroup) then
+        return;
+    end
+
+    -- Nice try, but our SoftRes is marked as "hidden", no data for you!
+    if (GL.DB:get('SoftRes.MetaData.hidden', true)) then
+        return;
+    end
+
+    local playerName = CommMessage.Sender.name;
+    local playerSoftResID = tonumber(CommMessage.content.currentSoftResID) or 0;
+    local playerSoftResImportedAt = tonumber(CommMessage.content.softResDataImportedAt) or 0;
+
+    -- Your data is newer that mine, leave me alone!
+    if (playerSoftResID > 0
+        and playerSoftResImportedAt > 0
+        and playerSoftResID == GL.DB:get('SoftRes.MetaData.id', 0)
+        and playerSoftResImportedAt > GL.DB:get('SoftRes.MetaData.importedAt', 0)
+    ) then
+        return;
+    end
+
+    -- Looks like you need my data, here it is!
+    GL.CommMessage.new(
+        CommActions.broadcastSoftRes,
+        DB:get("SoftRes.MetaData.importString"),
+        "WHISPER",
+        playerName
+    ):send();
 end
 
 --- Materialize the SoftRes data to make it more accessible during runtime
