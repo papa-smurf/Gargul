@@ -154,13 +154,13 @@ function SoftRes:replyToDataRequest(CommMessage)
     end
 
     local playerName = CommMessage.Sender.name;
-    local playerSoftResID = tonumber(CommMessage.content.currentSoftResID) or 0;
+    local playerSoftResID = CommMessage.content.currentSoftResID or '';
     local playerSoftResImportedAt = tonumber(CommMessage.content.softResDataImportedAt) or 0;
 
     -- Your data is newer that mine, leave me alone!
-    if (playerSoftResID > 0
+    if (not GL:empty(playerSoftResID)
         and playerSoftResImportedAt > 0
-        and playerSoftResID == GL.DB:get('SoftRes.MetaData.id', 0)
+        and playerSoftResID == GL.DB:get('SoftRes.MetaData.id', '')
         and playerSoftResImportedAt > GL.DB:get('SoftRes.MetaData.importedAt', 0)
     ) then
         return;
