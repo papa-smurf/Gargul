@@ -1,7 +1,7 @@
 local _, GL = ...;
 
 GL.User = {
-    initialized = false,
+    _initialized = false,
     groupSetupChangedTimer = false,
     groupSetupChangedAt = 0,
     groupMemberNamesCachedAt = -1,
@@ -35,6 +35,13 @@ local User = GL.User;
 -- shouldn't be able to change during playtime
 function User:_init()
     GL:debug("User:_init");
+
+    -- No need to initialize this class twice
+    if (self._initialized) then
+        return;
+    end
+
+    self._initialized = true;
 
     self.name = UnitName("player");
     self.realm = GetRealmName();
@@ -70,6 +77,8 @@ function User:refresh()
     GL:debug("User:refresh");
 
     local userWasMasterLooter = self.isMasterLooter;
+    local userWasInGroup = self.isInGroup;
+    local userWasInRaid = self.isInRaid;
 
     -- Make sure the window doens't popup after /reload
     if (userWasMasterLooter == nil) then
@@ -110,6 +119,34 @@ function User:refresh()
             self.isMasterLooter = isMasterLooter;
 
             break;
+        end
+    end
+
+    -- The user joined a group
+    if (not userWasInGroup
+        and self.isInGroup
+    ) then
+        GL.Events:fire("GL.USER_JOINED_GROUP");
+
+        -- Fire a seperate event for raid/party joined
+        if (self.isInRaid) then
+            GL.Events:fire("GL.USER_JOINED_RAID");
+        else
+            GL.Events:fire("GL.USER_JOINED_PARTY");
+        end
+    end
+
+    -- The user left a group
+    if (userWasInGroup
+        and not self.isInGroup
+    ) then
+        GL.Events:fire("GL.USER_LEFT_GROUP");
+
+        -- Fire a seperate event for raid/party joined
+        if (userWasInRaid) then
+            GL.Events:fire("GL.USER_LEFT_RAID");
+        else
+            GL.Events:fire("GL.USER_LEFT_PARTY");
         end
     end
 
@@ -162,6 +199,8 @@ function User:groupMembers()
                 isDead = isDead,
                 role = role,
                 isML = isML,
+                isLeader = rank == 2,
+                hasAssist = rank > 0,
                 index = index,
             });
         end
