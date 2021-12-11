@@ -67,7 +67,7 @@ function Overview:draw()
     --[[
         SHARE BUTTON
     ]]
-    local ShareButton = GL.Interface:getItem(self, "Frame.ShareButton") or GL.UI:createShareButton(
+    local ShareButton = GL.UI:createShareButton(
             Window.frame,
             function ()
                 GL.Interface.Dialogs.PopupDialog:open("BROADCAST_SOFTRES_CONFIRMATION");
