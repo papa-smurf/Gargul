@@ -573,6 +573,7 @@ function SoftRes:importGargulData(data)
     -- Store softres meta data (id, url etc)
     local createdAt = data.metadata.createdAt or 0;
     local discordUrl = data.metadata.discordUrl or "";
+    local hidden = toboolean(data.metadata.hidden or false);
     local id = tostring(data.metadata.id) or "";
     local instance = data.metadata.instance or "";
     local raidNote = data.metadata.note or "";
@@ -592,6 +593,7 @@ function SoftRes:importGargulData(data)
     DB.SoftRes.MetaData = {
         createdAt = createdAt,
         discordUrl = discordUrl,
+        hidden = hidden,
         id = id,
         importedAt = GetServerTime(),
         importString = importString,
