@@ -33,9 +33,9 @@ function SoftRes:_init()
         return false;
     end
 
-    -- Remove old SoftRes data if it's more than 24h old
+    -- Remove old SoftRes data if it's more than 10h old
     if (self:available()
-        and DB:get("SoftRes.MetaData.importedAt") < GetServerTime() - 86400
+        and DB:get("SoftRes.MetaData.importedAt") < GetServerTime() - 36000
     ) then
         self:clear();
     end
@@ -121,8 +121,8 @@ function SoftRes:requestData()
     GL.CommMessage.new(
         CommActions.requestSoftResData,
         {
-            currentSoftResID = GL.DB:get('SoftRes.MetaData.id', nil),
-            softResDataImportedAt = GL.DB:get('SoftRes.MetaData.importedAt', nil),
+            currentSoftResID = GL.DB:get('SoftRes.MetaData.id'),
+            softResDataUpdatedAt = GL.DB:get('SoftRes.MetaData.updatedAt'),
         },
         "WHISPER",
         playerToRequestFrom
@@ -155,13 +155,13 @@ function SoftRes:replyToDataRequest(CommMessage)
 
     local playerName = CommMessage.Sender.name;
     local playerSoftResID = CommMessage.content.currentSoftResID or '';
-    local playerSoftResImportedAt = tonumber(CommMessage.content.softResDataImportedAt) or 0;
+    local playerSoftResUpdatedAt = tonumber(CommMessage.content.softResDataUpdatedAt) or 0;
 
     -- Your data is newer that mine, leave me alone!
     if (not GL:empty(playerSoftResID)
-        and playerSoftResImportedAt > 0
+        and playerSoftResUpdatedAt > 0
         and playerSoftResID == GL.DB:get('SoftRes.MetaData.id', '')
-        and playerSoftResImportedAt > GL.DB:get('SoftRes.MetaData.importedAt', 0)
+        and playerSoftResUpdatedAt > GL.DB:get('SoftRes.MetaData.updatedAt', 0)
     ) then
         return;
     end
@@ -632,8 +632,9 @@ function SoftRes:import(data, openOverview)
         if (openOverview) then
             self:draw();
 
-            -- Automatically broadcast this data if it's not marked as "hidden"
-            if (not GL.DB:get('SoftRes.MetaData.hidden', true)) then
+            -- Automatically broadcast this data if it's not marked as "hidden" and the user has the required permissions
+            if (self:userIsAllowedToBroadcast()
+                and not GL.DB:get('SoftRes.MetaData.hidden', true)) then
                 self:broadcast();
             end
         end
@@ -702,6 +703,7 @@ function SoftRes:importGargulData(data)
 
     -- Store softres meta data (id, url etc)
     local createdAt = data.metadata.createdAt or 0;
+    local updatedAt = data.metadata.updatedAt or 0;
     local discordUrl = data.metadata.discordUrl or "";
     local hidden = toboolean(data.metadata.hidden or false);
     local id = tostring(data.metadata.id) or "";
@@ -730,6 +732,7 @@ function SoftRes:importGargulData(data)
         instance = instance,
         note = raidNote,
         raidStartsAt = raidStartsAt,
+        updatedAt = updatedAt,
         url = "https://softres.it/raid/" .. id,
     };
 
@@ -1114,6 +1117,13 @@ function SoftRes:postDiscordLink()
     );
 
     return true;
+end
+
+--- Check whether the current user is allowed to broadcast SoftRes data
+---
+---@return boolean
+function SoftRes:userIsAllowedToBroadcast()
+    return GL.User.isInGroup and (GL.User.isMasterLooter or GL.User.hasAssist);
 end
 
 GL:debug("SoftRes.lua");
