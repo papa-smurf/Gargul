@@ -7,6 +7,7 @@ GL.AceGUI = GL.AceGUI or LibStub("AceGUI-3.0");
 GL.TMB = {
     _initialized = false,
     broadcastInProgress = false,
+    requestingData = false,
 };
 local TMB = GL.TMB; ---@type TMB
 
@@ -26,6 +27,8 @@ function TMB:_init()
     GameTooltip:HookScript("OnTooltipSetItem", function(tooltip)
         self:appendTMBItemInfoToTooltip(tooltip);
     end);
+
+    GL.Events:register("TMBUserJoinedGroupListener", "GL.USER_JOINED_GROUP", function () self:requestData(); end);
 
     self._initialized = true;
     return true;
@@ -360,7 +363,7 @@ function TMB:appendTMBItemInfoToTooltip(tooltip)
 end
 
 --- Draw either the importer or overview
---- based on the current soft-reserve data
+--- based on the current TMB data
 ---
 ---@return void
 function TMB:draw()
@@ -533,11 +536,24 @@ function TMB:import(data, triedToDecompress)
 
     GL.DB.TMB.MetaData = {
         importedAt = GetServerTime(),
+        hash = GL:uuid() .. GetServerTime(),
     };
 
     GL.Events:fire("GL.TMB_IMPORTED");
     GL.Interface.TMB.Importer:close();
     self:draw();
+
+    -- The user is in charge of automatically sharing TMB data
+    -- after importing it, let's get crackin'!
+    if (GL.Settings:get("TMB.automaticallyShareData")
+        and (GL.User.isMasterLooter
+            or (GetLootMethod() ~= 'master'
+                and GL.User.isLead
+            )
+        )
+    ) then
+        self:broadcast();
+    end
 
     return true;
 end
@@ -697,6 +713,133 @@ function TMB:receiveBroadcast(CommMessage)
         GL:success("TMB data synced");
         GL.DB.TMB = Data;
     end
+end
+
+--- Request TMB data from the person in charge (ML or Leader)
+---
+---@return void
+function TMB:requestData()
+    GL:debug("TMB:requestData");
+
+    if (self.requestingData) then
+        return;
+    end
+
+    self.requestingData = true;
+
+    local playerToRequestFrom = (function()
+        -- We are the ML, we need to import the data ourselves
+        if (GL.User.isMasterLooter) then
+            return;
+        end
+
+        local lootMethod, _, masterLooterRaidID = GetLootMethod();
+
+        -- Master looting is not active and we are the leader, this means we should import it ourselves
+        if (lootMethod ~= 'master'
+            and GL.User.isLead
+        ) then
+            return;
+        end
+
+        -- Master looting is active, return the name of the master looter
+        if (lootMethod == 'master') then
+            return GetRaidRosterInfo(masterLooterRaidID);
+        end
+
+        -- Fetch the group leader
+        local maximumNumberOfGroupMembers = _G.MEMBERS_PER_RAID_GROUP;
+        if (GL.User.isInRaid) then
+            maximumNumberOfGroupMembers = _G.MAX_RAID_MEMBERS;
+        end
+
+        for index = 1, maximumNumberOfGroupMembers do
+            local name, rank = GetRaidRosterInfo(index);
+
+            -- Rank 2 means leader
+            if (name and rank == 2) then
+                return name;
+            end
+        end
+    end)();
+
+    -- There's no one to request data from, return
+    if (GL:empty(playerToRequestFrom)) then
+        self.requestingData = false;
+        return;
+    end
+
+    -- We send a data request to the person in charge
+    -- He will compare the ID and importedAt timestamp on his end to see if we actually need his data
+    GL.CommMessage.new(
+        CommActions.requestTMBData,
+        {
+            currentHash = GL.DB:get('TMB.MetaData.hash', nil),
+        },
+        "WHISPER",
+        playerToRequestFrom
+    ):send();
+
+    self.requestingData = false;
+end
+
+--- Reply to a player's TMB data request
+---
+---@param CommMessage CommMessage
+---@return void
+function TMB:replyToDataRequest(CommMessage)
+    GL:debug("TMB:replyToDataRequest");
+
+    -- I don't have any data, leave me alone!
+    if (not self:available()) then
+        return;
+    end
+
+    -- We're not in a group (anymore), no need to help this person out
+    if (not GL.User.isInGroup) then
+        return;
+    end
+
+    -- Nice try, but we don't allow auto-sharing
+    if (not Settings:get("TMB.automaticallyShareData")) then
+        return;
+    end
+
+    -- Nice try, but we're not allowed to share data
+    if (not self:userIsAllowedToBroadcast()) then
+        return;
+    end
+
+    -- The player is not in the same guild, this is something we won't support in data requests
+    if (not GL.User:playerIsGuildMember(CommMessage.senderFqn)) then
+        return;
+    end
+
+    local playerTMBHash = CommMessage.content.currentHash or '';
+    -- Your data is the same as mine, leave me alone!
+    if (not GL:empty(playerTMBHash)
+        and playerTMBHash == GL.DB:get('TMB.MetaData.hash')
+    ) then
+        return;
+    end
+
+    -- Looks like you need my data, here it is!
+    GL.CommMessage.new(
+        CommActions.broadcastTMBData,
+        GL.DB.TMB,
+        "WHISPER",
+        CommMessage.Sender.name
+    ):send(function ()
+        -- Make sure to broadcast the loot priorities as well
+        GL.LootPriority:broadcastToPlayer(CommMessage.Sender.name);
+    end);
+end
+
+--- Check whether the current user is allowed to broadcast TMB data
+---
+---@return boolean
+function TMB:userIsAllowedToBroadcast()
+    return GL.User.isInGroup and (GL.User.isMasterLooter or GL.User.hasAssist);
 end
 
 GL:debug("WishLists.lua");

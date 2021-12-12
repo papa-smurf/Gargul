@@ -58,6 +58,11 @@ function TMB:draw(Parent)
 
     local Checkboxes = {
         {
+            label = "Automatically share data",
+            description = "Checking this means you'll automatically share TMB data with players who join your raid or when you import new TMB data",
+            setting = "TMB.automaticallyShareData",
+        },
+        {
             label = "Show players in group only",
             description = "Checking this will make sure that you only see the names of players who are actually in your group on item tooltips and in dropped loot announcements",
             setting = "TMB.hideInfoOfPeopleNotInGroup",

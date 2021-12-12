@@ -67,7 +67,7 @@ function Overview:draw()
     --[[
         SHARE BUTTON
     ]]
-    local ShareButton = GL.Interface:getItem(self, "Frame.ShareButton") or GL.UI:createShareButton(
+    local ShareButton = GL.UI:createShareButton(
             Window.frame,
             function ()
                 GL.Interface.Dialogs.PopupDialog:open("BROADCAST_SOFTRES_CONFIRMATION");
@@ -79,11 +79,7 @@ function Overview:draw()
     ShareButton:Show();
 
     -- The user doesn't have sufficient permissions to broadcast the data
-    if (not GL.User.isInGroup
-        or (not GL.User.isMasterLooter
-            and not GL.User.hasAssist
-        )
-    ) then
+    if (not GL.SoftRes:userIsAllowedToBroadcast()) then
         ShareButton:Disable();
     else
         ShareButton:Enable();
@@ -288,11 +284,7 @@ function Overview:updateShareButton()
 
     GL.Ace:ScheduleTimer(function ()
         -- The user doesn't have sufficient permissions to broadcast the data
-        if (not GL.User.isInGroup
-            or (not GL.User.isMasterLooter
-                and not GL.User.hasAssist
-            )
-        ) then
+        if (not GL.SoftRes:userIsAllowedToBroadcast()) then
             ShareButton:Disable();
             return;
         end

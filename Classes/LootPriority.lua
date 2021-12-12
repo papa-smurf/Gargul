@@ -288,6 +288,27 @@ function LootPriority:broadcast()
     return true;
 end
 
+--- Broadcast the loot priorities to the given player
+---
+---@param playerName string
+---@return boolean
+function LootPriority:broadcastToPlayer(playerName)
+    GL:debug("LootPriority:broadcastToPlayer");
+
+    local LootPriorityCSV = self:toCSV();
+    -- Check if there's anything to share
+    if (GL:empty(LootPriorityCSV)) then
+        return false;
+    end
+
+    GL.CommMessage.new(
+        CommActions.broadcastLootPriorities,
+        LootPriorityCSV,
+        "WHISPER",
+        playerName
+    ):send();
+end
+
 --- Process an incoming loot priority broadcast
 ---
 ---@param CommMessage CommMessage

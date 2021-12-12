@@ -6,6 +6,7 @@ GL.SoftRes = {
     _initialized = false,
     maxNumberOfSoftReservedItems = 6,
     broadcastInProgress = false,
+    requestingData = false,
 
     MaterializedData = {
         ClassByPlayerName = {},
@@ -32,10 +33,19 @@ function SoftRes:_init()
         return false;
     end
 
+    -- Remove old SoftRes data if it's more than 10h old
+    if (self:available()
+        and DB:get("SoftRes.MetaData.importedAt") < GetServerTime() - 36000
+    ) then
+        self:clear();
+    end
+
     -- Bind the appendSoftReserveInfoToTooltip method to the OnTooltipSetItem event
     GameTooltip:HookScript("OnTooltipSetItem", function(tooltip)
         self:appendSoftReserveInfoToTooltip(tooltip);
     end);
+
+    GL.Events:register("SoftResUserJoinedGroupListener", "GL.USER_JOINED_GROUP", function () self:requestData(); end);
 
     self:materializeData();
 
@@ -47,7 +57,123 @@ end
 ---
 ---@return boolean
 function SoftRes:available()
+    GL:debug("SoftRes:available");
+
     return GL:higherThanZero(DB:get("SoftRes.MetaData.importedAt", 0));
+end
+
+--- Request SoftRes data from the person in charge (ML or Leader)
+---
+---@return void
+function SoftRes:requestData()
+    GL:debug("SoftRes:requestData");
+
+    if (self.requestingData) then
+        return;
+    end
+
+    self.requestingData = true;
+
+    local playerToRequestFrom = (function()
+        -- We are the ML, we need to import the data ourselves
+        if (GL.User.isMasterLooter) then
+            return;
+        end
+
+        local lootMethod, _, masterLooterRaidID = GetLootMethod();
+
+        -- Master looting is not active and we are the leader, this means we should import it ourselves
+        if (lootMethod ~= 'master'
+            and GL.User.isLead
+        ) then
+            return;
+        end
+
+        -- Master looting is active, return the name of the master looter
+        if (lootMethod == 'master') then
+            return GetRaidRosterInfo(masterLooterRaidID);
+        end
+
+        -- Fetch the group leader
+        local maximumNumberOfGroupMembers = _G.MEMBERS_PER_RAID_GROUP;
+        if (GL.User.isInRaid) then
+            maximumNumberOfGroupMembers = _G.MAX_RAID_MEMBERS;
+        end
+
+        for index = 1, maximumNumberOfGroupMembers do
+            local name, rank = GetRaidRosterInfo(index);
+
+            -- Rank 2 means leader
+            if (name and rank == 2) then
+                return name;
+            end
+        end
+    end)();
+
+    -- There's no one to request data from, return
+    if (GL:empty(playerToRequestFrom)) then
+        self.requestingData = false;
+        return;
+    end
+
+    -- We send a data request to the person in charge
+    -- He will compare the ID and importedAt timestamp on his end to see if we actually need his data
+    GL.CommMessage.new(
+        CommActions.requestSoftResData,
+        {
+            currentSoftResID = GL.DB:get('SoftRes.MetaData.id'),
+            softResDataUpdatedAt = GL.DB:get('SoftRes.MetaData.updatedAt'),
+        },
+        "WHISPER",
+        playerToRequestFrom
+    ):send();
+
+    self.requestingData = false;
+end
+
+--- Reply to a player's SoftRes data request
+---
+---@param CommMessage CommMessage
+---@return void
+function SoftRes:replyToDataRequest(CommMessage)
+    GL:debug("SoftRes:replyToDataRequest");
+
+    -- I don't have any data, leave me alone!
+    if (not self:available()) then
+        return;
+    end
+
+    -- We're not in a group (anymore), no need to help this person out
+    if (not GL.User.isInGroup) then
+        return;
+    end
+
+    -- Nice try, but our SoftRes is marked as "hidden", no data for you!
+    if (GL.DB:get('SoftRes.MetaData.hidden', true)) then
+        return;
+    end
+
+    local playerName = CommMessage.Sender.name;
+    local playerSoftResID = CommMessage.content.currentSoftResID or '';
+    local playerSoftResUpdatedAt = tonumber(CommMessage.content.softResDataUpdatedAt) or 0;
+
+    -- Your data is newer that mine, leave me alone!
+    if (not GL:empty(playerSoftResID)
+        and playerSoftResUpdatedAt > 0
+        and playerSoftResID == GL.DB:get('SoftRes.MetaData.id', '')
+        and playerSoftResUpdatedAt > GL.DB:get('SoftRes.MetaData.updatedAt', 0)
+    ) then
+        ---@todo enable the return when softres.it fully supports the updatedAt timestamp
+        --return;
+    end
+
+    -- Looks like you need my data, here it is!
+    GL.CommMessage.new(
+        CommActions.broadcastSoftRes,
+        DB:get("SoftRes.MetaData.importString"),
+        "WHISPER",
+        playerName
+    ):send();
 end
 
 --- Materialize the SoftRes data to make it more accessible during runtime
@@ -506,6 +632,12 @@ function SoftRes:import(data, openOverview)
 
         if (openOverview) then
             self:draw();
+
+            -- Automatically broadcast this data if it's not marked as "hidden" and the user has the required permissions
+            if (self:userIsAllowedToBroadcast()
+                and not GL.DB:get('SoftRes.MetaData.hidden', true)) then
+                self:broadcast();
+            end
         end
 
         return true;
@@ -572,7 +704,9 @@ function SoftRes:importGargulData(data)
 
     -- Store softres meta data (id, url etc)
     local createdAt = data.metadata.createdAt or 0;
+    local updatedAt = data.metadata.updatedAt or 0;
     local discordUrl = data.metadata.discordUrl or "";
+    local hidden = toboolean(data.metadata.hidden or false);
     local id = tostring(data.metadata.id) or "";
     local instance = data.metadata.instance or "";
     local raidNote = data.metadata.note or "";
@@ -592,12 +726,14 @@ function SoftRes:importGargulData(data)
     DB.SoftRes.MetaData = {
         createdAt = createdAt,
         discordUrl = discordUrl,
+        hidden = hidden,
         id = id,
         importedAt = GetServerTime(),
         importString = importString,
         instance = instance,
         note = raidNote,
         raidStartsAt = raidStartsAt,
+        updatedAt = updatedAt,
         url = "https://softres.it/raid/" .. id,
     };
 
@@ -982,6 +1118,13 @@ function SoftRes:postDiscordLink()
     );
 
     return true;
+end
+
+--- Check whether the current user is allowed to broadcast SoftRes data
+---
+---@return boolean
+function SoftRes:userIsAllowedToBroadcast()
+    return GL.User.isInGroup and (GL.User.isMasterLooter or GL.User.hasAssist);
 end
 
 GL:debug("SoftRes.lua");

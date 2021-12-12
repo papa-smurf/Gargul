@@ -161,9 +161,10 @@ GL.Data.Constants = {
     },
 
     Devs = {
+        "Player-4478-01BF6C3B",
+        "Player-4478-02127870",
         "Player-4478-02127978",
         "Player-4478-02E36E30",
-        "Player-4478-01BF6C3B",
     },
 
     classRGBColors = {
@@ -198,18 +199,19 @@ GL.Data.Constants = {
     ]]
     Comm = {
         channel = "GargulComm2",
-        minimumAppVersion = "3.5.0",
-        ---@todo next major release re-index these actions
+        minimumAppVersion = "4.0.0",
         Actions = {
-            broadcastSoftRes = 5,
-            inspectBags = 6,
-            response = 7,
-            requestAppVersion = 9,
-            startRollOff = 11,
-            stopRollOff = 13,
-            broadcastTMBData = 14,
-            awardItem = 15,
-            broadcastLootPriorities = 16,
+            awardItem = 1,
+            broadcastLootPriorities = 2,
+            broadcastSoftRes = 3,
+            broadcastTMBData = 4,
+            inspectBags = 5,
+            response = 6,
+            requestAppVersion = 7,
+            requestSoftResData = 8,
+            requestTMBData = 9,
+            startRollOff = 10,
+            stopRollOff = 11,
         },
     },
 

@@ -1,11 +1,14 @@
 local _, GL = ...;
 
 GL.User = {
-    initialized = false,
+    _initialized = false,
+    guildMembersCachedAt = 0,
     groupSetupChangedTimer = false,
     groupSetupChangedAt = 0,
     groupMemberNamesCachedAt = -1,
     GroupMemberNames = {},
+    GuildMemberNames = {},
+    GuildMembers = {},
     playerClassByName = {},
 
     id = 0,
@@ -35,6 +38,13 @@ local User = GL.User;
 -- shouldn't be able to change during playtime
 function User:_init()
     GL:debug("User:_init");
+
+    -- No need to initialize this class twice
+    if (self._initialized) then
+        return;
+    end
+
+    self._initialized = true;
 
     self.name = UnitName("player");
     self.realm = GetRealmName();
@@ -70,6 +80,8 @@ function User:refresh()
     GL:debug("User:refresh");
 
     local userWasMasterLooter = self.isMasterLooter;
+    local userWasInGroup = self.isInGroup;
+    local userWasInRaid = self.isInRaid;
 
     -- Make sure the window doens't popup after /reload
     if (userWasMasterLooter == nil) then
@@ -113,6 +125,34 @@ function User:refresh()
         end
     end
 
+    -- The user joined a group
+    if (not userWasInGroup
+        and self.isInGroup
+    ) then
+        GL.Events:fire("GL.USER_JOINED_GROUP");
+
+        -- Fire a seperate event for raid/party joined
+        if (self.isInRaid) then
+            GL.Events:fire("GL.USER_JOINED_RAID");
+        else
+            GL.Events:fire("GL.USER_JOINED_PARTY");
+        end
+    end
+
+    -- The user left a group
+    if (userWasInGroup
+        and not self.isInGroup
+    ) then
+        GL.Events:fire("GL.USER_LEFT_GROUP");
+
+        -- Fire a seperate event for raid/party joined
+        if (userWasInRaid) then
+            GL.Events:fire("GL.USER_LEFT_RAID");
+        else
+            GL.Events:fire("GL.USER_LEFT_PARTY");
+        end
+    end
+
     -- The user obtained the roll of master looter, fire the appropriate event
     if (not userWasMasterLooter
         and self.isMasterLooter
@@ -126,6 +166,72 @@ function User:refresh()
     ) then
         GL.Events:fire("GL.USER_LOST_MASTER_LOOTER");
     end
+end
+
+--- Get all of the people who are in the same guild as the current user
+---
+---@return table
+function User:guildMembers()
+    GL:debug("User:guildMembers");
+
+    local Roster = {};
+
+    if (GL:empty(self.Guild)) then
+        return Roster;
+    end
+
+    -- We cache guild member results for 5 minutes
+    if (GetServerTime() - self.guildMembersCachedAt <= 300) then
+        return self.GuildMembers;
+    end
+
+    self.GuildMembers = {};
+    self.GuildMemberNames = {};
+
+    for index = 1, GetNumGuildMembers() do
+        local name, rank, rankIndex, level, classDisplayName, zone, publicNote, officerNote, isOnline, status, class = GetGuildRosterInfo(index)
+
+        if (name) then
+            local fqn = string.lower(name);
+            self.GuildMemberNames[fqn] = fqn;
+
+            tinsert(Roster, {
+                name = GL:stripRealm(fqn),
+                fqn = fqn,
+                rank = rank,
+                rankIndex = rankIndex,
+                level = level,
+                classDisplayName = classDisplayName,
+                zone = zone,
+                publicNote = publicNote,
+                officerNote = officerNote,
+                isOnline = isOnline,
+                status = status,
+                class = string.lower(class),
+            });
+        end
+    end
+
+    self.GuildMembers = Roster;
+    self.guildMembersCachedAt = GetServerTime();
+
+    return Roster;
+end
+
+--- Check whether the given player is in our guild
+---
+---@return table
+function User:playerIsGuildMember(playerName)
+    GL:debug("User:guildMembers");
+
+    self:guildMembers();
+
+    if (not strfind(playerName, "-")) then
+        playerName = string.format("%s-%s", playerName, GL.User.realm);
+    end
+
+    playerName = string.lower(playerName);
+    return toboolean(self.GuildMemberNames[playerName]);
 end
 
 -- Get all of the people who are
@@ -162,6 +268,8 @@ function User:groupMembers()
                 isDead = isDead,
                 role = role,
                 isML = isML,
+                isLeader = rank == 2,
+                hasAssist = rank > 0,
                 index = index,
             });
         end

@@ -240,20 +240,22 @@ function Comm:dispatch(CommMessage)
 
     if (action == CommActions.response) then
         return CommMessage:processResponse();
+
     elseif (action == CommActions.awardItem) then
         return GL.AwardedLoot:processAwardedLoot(CommMessage);
-    elseif (action == CommActions.startRollOff) then
-        return GL.RollOff:start(CommMessage);
-    elseif (action == CommActions.stopRollOff) then
-        return GL.RollOff:stop(CommMessage);
-    elseif (action == CommActions.broadcastSoftRes) then
-        return GL.SoftRes:receiveSoftRes(CommMessage);
-    elseif (action == CommActions.broadcastTMBData) then
-        return GL.TMB:receiveBroadcast(CommMessage);
+
     elseif (action == CommActions.broadcastLootPriorities) then
         return GL.LootPriority:receiveBroadcast(CommMessage);
+
+    elseif (action == CommActions.broadcastSoftRes) then
+        return GL.SoftRes:receiveSoftRes(CommMessage);
+
+    elseif (action == CommActions.broadcastTMBData) then
+        return GL.TMB:receiveBroadcast(CommMessage);
+
     elseif (action == CommActions.inspectBags) then
         return GL.BagInspector:report(CommMessage);
+
     elseif (action == CommActions.requestAppVersion) then
         if (GL.User.name ~= CommMessage.Sender.name) then
             GL:debug("Respond to CommActions.requestAppVersion");
@@ -261,6 +263,18 @@ function Comm:dispatch(CommMessage)
         end
 
         return;
+
+    elseif (action == CommActions.requestSoftResData) then
+        return GL.SoftRes:replyToDataRequest(CommMessage);
+
+    elseif (action == CommActions.requestTMBData) then
+        return GL.TMB:replyToDataRequest(CommMessage);
+
+    elseif (action == CommActions.startRollOff) then
+        return GL.RollOff:start(CommMessage);
+
+    elseif (action == CommActions.stopRollOff) then
+        return GL.RollOff:stop(CommMessage);
     end
 
     GL:warning(string.format("Unknown comm action '%s'", action));
