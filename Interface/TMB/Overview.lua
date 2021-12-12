@@ -153,10 +153,7 @@ function Overview:updateShareButton()
     -- The user doesn't have sufficient permissions to broadcast
     -- Or a broadcast is already in progress
     if (GL.TMB.broadcastInProgress
-        or not GL.User.isInGroup
-        or (not GL.User.isMasterLooter
-            and not GL.User.hasAssist
-        )
+        or not GL.TMB:userIsAllowedToBroadcast()
     ) then
         ShareButton:SetDisabled(true);
         return;

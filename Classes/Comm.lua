@@ -267,6 +267,9 @@ function Comm:dispatch(CommMessage)
     elseif (action == CommActions.requestSoftResData) then
         return GL.SoftRes:replyToDataRequest(CommMessage);
 
+    elseif (action == CommActions.requestTMBData) then
+        return GL.TMB:replyToDataRequest(CommMessage);
+
     elseif (action == CommActions.startRollOff) then
         return GL.RollOff:start(CommMessage);
 
