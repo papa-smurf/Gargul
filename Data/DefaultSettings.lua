@@ -69,6 +69,7 @@ GL.Data.DefaultSettings = {
         hideInfoOfPeopleNotInGroup = true,
     },
     TMB = {
+        automaticallyShareData = false,
         hideInfoOfPeopleNotInGroup = true,
         hideWishListInfoIfPriorityIsPresent = true,
         includePrioListInfoInLootAnnouncement = true,
