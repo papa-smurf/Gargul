@@ -161,9 +161,10 @@ GL.Data.Constants = {
     },
 
     Devs = {
+        "Player-4478-01BF6C3B",
+        "Player-4478-02127870",
         "Player-4478-02127978",
         "Player-4478-02E36E30",
-        "Player-4478-01BF6C3B",
     },
 
     classRGBColors = {
