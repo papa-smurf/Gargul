@@ -163,7 +163,8 @@ function SoftRes:replyToDataRequest(CommMessage)
         and playerSoftResID == GL.DB:get('SoftRes.MetaData.id', '')
         and playerSoftResUpdatedAt > GL.DB:get('SoftRes.MetaData.updatedAt', 0)
     ) then
-        return;
+        ---@todo enable the return when softres.it fully supports the updatedAt timestamp
+        --return;
     end
 
     -- Looks like you need my data, here it is!
