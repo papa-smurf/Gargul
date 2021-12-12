@@ -28,7 +28,7 @@ function Overview:draw()
     local Window = AceGUI:Create("Frame");
     Window:SetTitle("Gargul v" .. GL.version);
     Window:SetLayout("Flow");
-    Window:SetWidth(600);
+    Window:SetWidth(500);
     Window:SetHeight(250);
     Window:EnableResize(false);
     Window.statustext:GetParent():Show(); -- Explicitely show the statustext bar
@@ -85,13 +85,29 @@ function Overview:draw()
     PriorityNotesLabel:SetFontObject(_G["GameFontNormal"]);
     Window:AddChild(PriorityNotesLabel);
 
+    local autoSharingEnabled = "no";
+
+    if (GL.Settings:get("TMB.automaticallyShareData", false)) then
+        autoSharingEnabled = "yes";
+    end
+
+    local AutoSharingStatusLabel = AceGUI:Create("Label");
+    AutoSharingStatusLabel:SetFullWidth(true);
+    AutoSharingStatusLabel:SetText(string.format(
+            "\nAuto-sharing enabled: |c00a79eff%s|r",
+            autoSharingEnabled
+    ));
+    AutoSharingStatusLabel:SetFontObject(_G["GameFontNormal"]);
+    Window:AddChild(AutoSharingStatusLabel);
+
     local VerticalSpacer = AceGUI:Create("SimpleGroup");
     VerticalSpacer:SetLayout("FILL");
     VerticalSpacer:SetFullWidth(true);
-    VerticalSpacer:SetHeight(40);
+    VerticalSpacer:SetHeight(15);
     Window:AddChild(VerticalSpacer);
 
     local ClearButton = AceGUI:Create("Button");
+    ClearButton:SetWidth(152);
     ClearButton:SetText("Clear Data");
     ClearButton:SetCallback("OnClick", function()
         GL.Interface.Dialogs.PopupDialog:open("CLEAR_TMB_CONFIRMATION");
@@ -99,6 +115,7 @@ function Overview:draw()
     Window:AddChild(ClearButton);
 
     local ShareButton = AceGUI:Create("Button");
+    ShareButton:SetWidth(152);
     ShareButton:SetText("Share Data");
     ShareButton:SetCallback("OnClick", function()
         GL.Interface.Dialogs.PopupDialog:open("BROADCAST_TMB_CONFIRMATION");
@@ -109,7 +126,7 @@ function Overview:draw()
 
     local SettingsButton = AceGUI:Create("Button");
     SettingsButton:SetText("Settings");
-    SettingsButton:SetWidth(160);
+    SettingsButton:SetWidth(152);
     SettingsButton:SetCallback("OnClick", function()
         GL.Settings:draw("TMB");
     end);
