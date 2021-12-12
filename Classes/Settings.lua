@@ -63,6 +63,14 @@ function Settings:enforceTemporarySettings()
 
     ---@todo remove spreadTheWord setting checks from the codebase entirely >= 01-01-2022
     GL.Settings:set("spreadTheWord", true);
+
+    --- This is to make sure old TMB imports also have a hash available to them
+    ---@todo remove on >= 01-02-2022
+    if (GL.TMB:available()
+        and GL:empty(GL.DB:get("TMB.MetaData.hash"))
+    ) then
+        GL.DB:set("TMB.MetaData.hash", GL:uuid() .. GetServerTime());
+    end
 end
 
 --- Draw a setting section
