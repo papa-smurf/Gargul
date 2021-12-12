@@ -810,9 +810,8 @@ function TMB:replyToDataRequest(CommMessage)
         return;
     end
 
-    local playerName = CommMessage.Sender.name;
     -- The player is not in the same guild, this is something we won't support in data requests
-    if (GL.User.Guild.name ~= GetGuildInfo(playerName)) then
+    if (not GL.User:playerIsGuildMember(CommMessage.senderFqn)) then
         return;
     end
 
@@ -829,10 +828,10 @@ function TMB:replyToDataRequest(CommMessage)
         CommActions.broadcastTMBData,
         GL.DB.TMB,
         "WHISPER",
-        playerName
+        CommMessage.Sender.name
     ):send(function ()
         -- Make sure to broadcast the loot priorities as well
-        GL.LootPriority:broadcastToPlayer(playerName);
+        GL.LootPriority:broadcastToPlayer(CommMessage.Sender.name);
     end);
 end
 

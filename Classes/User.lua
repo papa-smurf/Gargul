@@ -2,10 +2,13 @@ local _, GL = ...;
 
 GL.User = {
     _initialized = false,
+    guildMembersCachedAt = 0,
     groupSetupChangedTimer = false,
     groupSetupChangedAt = 0,
     groupMemberNamesCachedAt = -1,
     GroupMemberNames = {},
+    GuildMemberNames = {},
+    GuildMembers = {},
     playerClassByName = {},
 
     id = 0,
@@ -163,6 +166,72 @@ function User:refresh()
     ) then
         GL.Events:fire("GL.USER_LOST_MASTER_LOOTER");
     end
+end
+
+--- Get all of the people who are in the same guild as the current user
+---
+---@return table
+function User:guildMembers()
+    GL:debug("User:guildMembers");
+
+    local Roster = {};
+
+    if (GL:empty(self.Guild)) then
+        return Roster;
+    end
+
+    -- We cache guild member results for 5 minutes
+    if (GetServerTime() - self.guildMembersCachedAt <= 300) then
+        return self.GuildMembers;
+    end
+
+    self.GuildMembers = {};
+    self.GuildMemberNames = {};
+
+    for index = 1, GetNumGuildMembers() do
+        local name, rank, rankIndex, level, classDisplayName, zone, publicNote, officerNote, isOnline, status, class = GetGuildRosterInfo(index)
+
+        if (name) then
+            local fqn = string.lower(name);
+            self.GuildMemberNames[fqn] = fqn;
+
+            tinsert(Roster, {
+                name = GL:stripRealm(fqn),
+                fqn = fqn,
+                rank = rank,
+                rankIndex = rankIndex,
+                level = level,
+                classDisplayName = classDisplayName,
+                zone = zone,
+                publicNote = publicNote,
+                officerNote = officerNote,
+                isOnline = isOnline,
+                status = status,
+                class = string.lower(class),
+            });
+        end
+    end
+
+    self.GuildMembers = Roster;
+    self.guildMembersCachedAt = GetServerTime();
+
+    return Roster;
+end
+
+--- Check whether the given player is in our guild
+---
+---@return table
+function User:playerIsGuildMember(playerName)
+    GL:debug("User:guildMembers");
+
+    self:guildMembers();
+
+    if (not strfind(playerName, "-")) then
+        playerName = string.format("%s-%s", playerName, GL.User.realm);
+    end
+
+    playerName = string.lower(playerName);
+    return toboolean(self.GuildMemberNames[playerName]);
 end
 
 -- Get all of the people who are
