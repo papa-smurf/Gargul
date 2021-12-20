@@ -417,8 +417,11 @@ end
 function PackMule:disenchant(itemLink, byPassConfirmationDialog)
     GL:debug("PackMule:disenchant");
 
-    if (not GL.User.isMasterLooter) then
-        return GL:warning("You need to be the master looter!");
+    if (not GL.User.isMasterLooter
+        and not GL.User.hasAssist
+        and not GL.User.isLead
+    ) then
+        return GL:warning("You need to be the master looter or have lead/assist!");
     end
 
     local itemId = GL:getItemIdFromLink(itemLink);

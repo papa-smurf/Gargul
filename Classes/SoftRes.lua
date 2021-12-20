@@ -117,7 +117,7 @@ function SoftRes:requestData()
     end
 
     -- We send a data request to the person in charge
-    -- He will compare the ID and importedAt timestamp on his end to see if we actually need his data
+    -- He will compare the ID and updatedAt timestamp on his end to see if we actually need his data
     GL.CommMessage.new(
         CommActions.requestSoftResData,
         {
@@ -157,14 +157,13 @@ function SoftRes:replyToDataRequest(CommMessage)
     local playerSoftResID = CommMessage.content.currentSoftResID or '';
     local playerSoftResUpdatedAt = tonumber(CommMessage.content.softResDataUpdatedAt) or 0;
 
-    -- Your data is newer that mine, leave me alone!
+    -- Your data is newer than mine, leave me alone!
     if (not GL:empty(playerSoftResID)
         and playerSoftResUpdatedAt > 0
         and playerSoftResID == GL.DB:get('SoftRes.MetaData.id', '')
         and playerSoftResUpdatedAt > GL.DB:get('SoftRes.MetaData.updatedAt', 0)
     ) then
-        ---@todo enable the return when softres.it fully supports the updatedAt timestamp
-        --return;
+        return;
     end
 
     -- Looks like you need my data, here it is!
