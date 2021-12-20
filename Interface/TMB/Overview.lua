@@ -94,8 +94,8 @@ function Overview:draw()
     local AutoSharingStatusLabel = AceGUI:Create("Label");
     AutoSharingStatusLabel:SetFullWidth(true);
     AutoSharingStatusLabel:SetText(string.format(
-            "\nAuto-sharing enabled: |c00a79eff%s|r",
-            autoSharingEnabled
+        "\nAuto-sharing enabled: |c00a79eff%s|r",
+        autoSharingEnabled
     ));
     AutoSharingStatusLabel:SetFontObject(_G["GameFontNormal"]);
     Window:AddChild(AutoSharingStatusLabel);
