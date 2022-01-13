@@ -60,8 +60,14 @@ GL.Data.DefaultSettings = {
     },
     Rolling = {
         showRollOffWindow = true,
-        osRollMax = 99,
         closeAfterRoll = false,
+    },
+    RollTracking = {
+        trackAll = false,
+        Brackets = {
+            {"MS", 1, 100},
+            {"OS", 1, 99},
+        },
     },
     SoftRes = {
         announceInfoInChat = true,

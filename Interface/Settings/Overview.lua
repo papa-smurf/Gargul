@@ -16,6 +16,7 @@ GL.Interface.Settings.Overview = {
         {"Master Looting", "MasterLooting"},
         {"    Shortcut Keys", "ShortcutKeys"},
         {"    Dropped Loot", "DroppedLoot"},
+        {"    Roll Tracking", "RollTracking"},
         {"    Awarding Loot", "AwardingLoot"},
         {"    PackMule", "PackMule"},
         {"Rolling", "Rolling"},
