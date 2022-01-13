@@ -316,4 +316,11 @@ function User:groupMemberNames()
     return self.GroupMemberNames;
 end
 
+--- Check whether the current user is a dev
+---
+---@return boolean
+function User:isDev()
+    return GL:inTable(GL.Data.Constants.Devs, self.id);
+end
+
 GL:debug("User.lua");
