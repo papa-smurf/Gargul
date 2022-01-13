@@ -910,6 +910,14 @@ function SoftRes:importCSVData(data)
         end
     end
 
+    -- The user attempted to import invalid data
+    if (GL:empty(SoftReserveData)) then
+        local errorMessage = "Invalid data provided. Make sure to click the 'Gargul Data Export' button on softres.it and paste the full contents here";
+        GL.Interface:getItem("SoftRes.Importer", "Label.StatusMessage"):SetText(errorMessage);
+
+        return false;
+    end
+
     DB.SoftRes = {
         SoftReserves = {},
         HardReserves = {}, -- The weakaura format (CSV) doesn't include hard-reserves
