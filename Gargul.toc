@@ -60,6 +60,7 @@ Interface/Settings/PackMule.lua
 Interface/Settings/TMB.lua
 Interface/Settings/LootTradeTimers.lua
 Interface/Settings/Rolling.lua
+Interface/Settings/RollTracking.lua
 Interface/Settings/SoftRes.lua
 Interface/Settings/General.lua
 Interface/Settings/ShortcutKeys.lua

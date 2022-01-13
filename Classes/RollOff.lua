@@ -52,15 +52,13 @@ function RollOff:announceStart(itemLink, time, note)
 
     self:listenForRolls();
 
-    local osRollMax = GL.Settings:get("Rolling.osRollMax", 99);
-
     GL.CommMessage.new(
         CommActions.startRollOff,
         {
             item = itemLink,
             time = time,
             note = note,
-            osRollMax = osRollMax,
+            SupportedRolls = GL.Settings:get("RollTracking.Brackets", {}) or {},
         },
         "GROUP"
     ):send();
@@ -88,14 +86,6 @@ function RollOff:announceStart(itemLink, time, note)
             time,
             itemLink,
             note
-        );
-    end
-
-    if (GL:higherThanZero(osRollMax)) then
-        announceMessage = string.format(
-            "%s. Use /roll %s to roll for OS!",
-            announceMessage,
-            osRollMax
         );
     end
 
@@ -189,7 +179,7 @@ function RollOff:start(CommMessage)
         end
 
         local time = math.floor(tonumber(content.time));
-        local osRollMax = math.floor(tonumber(content.osRollMax or 99));
+        local SupportedRolls = content.SupportedRolls or {};
 
         -- This is a new roll off so clean everything
         if (Entry.link ~= self.CurrentRollOff.itemLink
@@ -204,7 +194,7 @@ function RollOff:start(CommMessage)
                 itemName = Entry.name,
                 itemLink = Entry.link,
                 itemIcon = Entry.icon,
-                osRollMax = osRollMax,
+                SupportedRolls = SupportedRolls,
                 note = content.note,
                 Rolls = {},
             };
@@ -221,7 +211,7 @@ function RollOff:start(CommMessage)
         if (GL.Settings:get("Rolling.showRollOffWindow")
             or self:startedByMe()
         ) then
-            GL.RollerUI:show(time, Entry.id, Entry.link, Entry.icon, content.note, osRollMax);
+            GL.RollerUI:show(time, Entry.id, Entry.link, Entry.icon, content.note, SupportedRolls);
 
             if (CommMessage.Sender.id == GL.User.id) then
                 GL.MasterLooterUI:drawReopenMasterLooterUIButton();
@@ -469,8 +459,6 @@ end
 function RollOff:processRoll(message)
     GL:debug("RollOff:processRoll");
 
-    local osRoll = false;
-
     -- We only track rolls when a rollof is actually in progress
     if (not RollOff.inProgress) then
         return;
@@ -484,23 +472,45 @@ function RollOff:processRoll(message)
         low = tonumber(low) or 0;
         high = tonumber(high) or 0;
 
-        -- We don't support rolls that don't start at 1
-        if (low ~= 1) then
-            return;
-        end
+        local rollType = (function()
+            for _, RollType in pairs(GL.Settings:get("RollTracking.Brackets", {})) do
+                if (low == RollType[2]
+                    and high == RollType[3]
+                ) then
+                    return RollType[1];
+                end
+            end
 
-        local osRollMax = GL.Settings:get("Rolling.osRollMax", 99);
+            return false;
+        end)();
 
-        -- We don't support rolls that don't end at 100 or the osRollMax setting
-        if (high ~= 100
-            and high ~= osRollMax
+        --- Invalid roll range provided
+        if (not rollType
+                and not GL.Settings:get("RollTracking.trackAll")
         ) then
             return;
-        elseif (high == osRollMax) then
-            osRoll = true;
+
+        --- The roll type is officially supported by any of the brackets, but since
+        --- the master looter allows any kind of roll we need to make sure he can tell what range was used
+        elseif (not rollType) then
+            rollType = string.format("%s-%s", low, high);
         end
 
         local rollerName = GL:stripRealm(roller);
+
+        --- The user is not in a group and is most likely testing the add-on
+        if (not GL.User.isInGroup
+            and rollerName == GL.User.name
+        ) then
+            Roll = {
+                player = GL.User.name,
+                class = GL.User.class,
+                amount = roll,
+                time = GetServerTime(),
+                rollType = rollType,
+            };
+        end
+
         for _, Player in pairs(GL.User:groupMembers()) do
             local playerName = GL:stripRealm(Player.name);
             if (rollerName == playerName) then
@@ -509,7 +519,7 @@ function RollOff:processRoll(message)
                     class = Player.class,
                     amount = roll,
                     time = GetServerTime(),
-                    os = osRoll,
+                     rollType = rollType,
                 };
 
                 break;
@@ -567,11 +577,6 @@ function RollOff:refreshRollsTable()
             rollerName = string.format("%s [%s]", playerName, numberOfTimesRolledByPlayer);
         end
 
-        local msOrOsString = "MS";
-        if (Roll.os) then
-            msOrOsString = "OS";
-        end
-
         local class = Roll.class;
         local plusOnes = GL.PlusOnes:get(playerName);
 
@@ -594,7 +599,7 @@ function RollOff:refreshRollsTable()
                     color = GL:classRGBAColor(class),
                 },
                 {
-                    value = msOrOsString,
+                    value = Roll.rollType,
                     color = GL:classRGBAColor(class),
                 },
                 {
