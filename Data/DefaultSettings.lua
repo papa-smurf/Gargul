@@ -17,7 +17,6 @@ GL.Data.DefaultSettings = {
     noSounds = false,
     autoOpenCommandHelp = true,
     showMinimapButton = true,
-    spreadTheWord = true,
     welcomeMessage = true,
     fixMasterLootWindow = true,
 

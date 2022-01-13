@@ -50,8 +50,6 @@ end
 ---
 ---@return void
 function Settings:sanitizeSettings()
-    self:set("spreadTheWord", true);
-
     self:enforceTemporarySettings();
 end
 
@@ -61,15 +59,18 @@ end
 function Settings:enforceTemporarySettings()
     -- This is reserved for version-based logic (e.g. cleaning up variables, settings etc.)
 
-    ---@todo remove spreadTheWord setting checks from the codebase entirely >= 01-01-2022
-    GL.Settings:set("spreadTheWord", true);
-
     --- This is to make sure old TMB imports also have a hash available to them
     ---@todo remove on >= 01-02-2022
     if (GL.TMB:available()
         and GL:empty(GL.DB:get("TMB.MetaData.hash"))
     ) then
         GL.DB:set("TMB.MetaData.hash", GL:uuid() .. GetServerTime());
+    end
+
+    --- This setting was removed in 4.1.0
+    ---@todo remove on >= 01-04-2022
+    if (GL:higherThanZero(GL.Settings:get("Rolling.osRollMax", 0))) then
+        GL.DB.Settings.Rolling.osRollMax = nil;
     end
 end
 
