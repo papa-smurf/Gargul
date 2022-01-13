@@ -48,6 +48,12 @@ function Comm:send(CommMessage, broadcastFinishedCallback, packageSentCallback)
 
         if (GL.User.isInRaid) then
             distribution = "RAID";
+
+        --- This might seem like an odd one, but it allows us to test
+        --- most of Gargul's feature without having to be in a group
+        elseif (not GL.User.isInGroup) then
+            distribution = "WHISPER";
+            recipient = GL.User.name;
         end
     end
 
