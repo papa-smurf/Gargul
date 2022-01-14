@@ -155,6 +155,7 @@ function RollTracking:draw(Parent)
         SortingPriority:SetHeight(20);
         SortingPriority:SetWidth(100);
         SortingPriority:SetText(priority);
+        SortingPriority:SetMaxLetters(1);
         Parent:AddChild(SortingPriority);
 
         EditBoxes[i] = {
