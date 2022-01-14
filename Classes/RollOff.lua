@@ -472,12 +472,12 @@ function RollOff:processRoll(message)
         low = tonumber(low) or 0;
         high = tonumber(high) or 0;
 
-        local rollType = (function()
+        local RollType = (function()
             for _, RollType in pairs(GL.Settings:get("RollTracking.Brackets", {})) do
                 if (low == RollType[2]
                     and high == RollType[3]
                 ) then
-                    return RollType[1];
+                    return RollType;
                 end
             end
 
@@ -485,15 +485,17 @@ function RollOff:processRoll(message)
         end)();
 
         --- Invalid roll range provided
-        if (not rollType
-                and not GL.Settings:get("RollTracking.trackAll")
+        if (not RollType
+            and not GL.Settings:get("RollTracking.trackAll")
         ) then
             return;
 
         --- The roll type is officially supported by any of the brackets, but since
         --- the master looter allows any kind of roll we need to make sure he can tell what range was used
-        elseif (not rollType) then
-            rollType = string.format("%s-%s", low, high);
+        elseif (not RollType) then
+            RollType = {};
+            RollType[1] = string.format("%s-%s", low, high);
+            RollType[4] = 10;
         end
 
         local rollerName = GL:stripRealm(roller);
@@ -507,7 +509,8 @@ function RollOff:processRoll(message)
                 class = GL.User.class,
                 amount = roll,
                 time = GetServerTime(),
-                rollType = rollType,
+                classification = RollType[1],
+                priority = RollType[4],
             };
         end
 
@@ -519,7 +522,8 @@ function RollOff:processRoll(message)
                     class = Player.class,
                     amount = roll,
                     time = GetServerTime(),
-                     rollType = rollType,
+                    classification = RollType[1],
+                    priority = RollType[4],
                 };
 
                 break;
@@ -599,12 +603,15 @@ function RollOff:refreshRollsTable()
                     color = GL:classRGBAColor(class),
                 },
                 {
-                    value = Roll.rollType,
+                    value = Roll.classification,
                     color = GL:classRGBAColor(class),
                 },
                 {
                     value = softReservedValue,
                     color = GL:classRGBAColor(class),
+                },
+                {
+                    value = Roll.priority,
                 },
             },
         };

@@ -532,7 +532,6 @@ function MasterLooterUI:drawPlayersTable(parent)
                 a = 1.0
             },
             colorargs = nil,
-            sortnext = 2,
         },
         --[[ ROLL TYPE: MS/OS etc ]]
         {
@@ -546,8 +545,6 @@ function MasterLooterUI:drawPlayersTable(parent)
                 a = 1.0
             },
             colorargs = nil,
-            sort = GL.Data.Constants.ScrollingTable.ascending,
-            sortnext = 2,
         },
         --[[ Reserved / TMB etc ]]
         {
@@ -561,6 +558,21 @@ function MasterLooterUI:drawPlayersTable(parent)
                 a = 1.0
             },
             colorargs = nil,
+        },
+        --[[ PRIORITY (NOT VISIBLE, FOR SORTING ONLY! ]]
+        {
+            name = "",
+            width = 1,
+            align = "LEFT",
+            color = {
+                r = 0,
+                g = 0,
+                b = 0,
+                a = 0
+            },
+            colorargs = nil,
+            sort = GL.Data.Constants.ScrollingTable.ascending,
+            sortnext = 2,
         },
     };
 
