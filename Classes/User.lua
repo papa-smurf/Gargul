@@ -100,6 +100,8 @@ function User:refresh()
     self.hasAssist = false;
     self.isLead = false;
     self.raidIndex = nil;
+    self.class, self.fileName = UnitClass("player");
+    self.class = string.lower(self.class);
 
     if (not self.isInGroup) then
         return;
@@ -239,10 +241,25 @@ end
 function User:groupMembers()
     GL:debug("User:groupMembers");
 
-    local Roster = {};
-
     if (not GL.User.isInGroup) then
-        return Roster;
+        return {
+            {
+                name = self.name,
+                rank = 2,
+                subgroup = 1,
+                level = self.level,
+                class = string.lower(self.class),
+                fileName = string.upper(self.class),
+                zone = "Development Land",
+                online = true,
+                isDead = false,
+                role = "",
+                isML = false,
+                isLeader = true,
+                hasAssist = false,
+                index = 1,
+            }
+        };
     end
 
     local maximumNumberOfGroupMembers = _G.MEMBERS_PER_RAID_GROUP;
@@ -250,6 +267,7 @@ function User:groupMembers()
         maximumNumberOfGroupMembers = _G.MAX_RAID_MEMBERS;
     end
 
+    local Roster = {};
     for index = 1, maximumNumberOfGroupMembers do
         local name, rank, subgroup, level, class, fileName, zone, online, isDead, role, isML = GetRaidRosterInfo(index);
 
