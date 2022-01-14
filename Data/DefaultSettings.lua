@@ -64,8 +64,8 @@ GL.Data.DefaultSettings = {
     RollTracking = {
         trackAll = false,
         Brackets = {
-            {"MS", 1, 100},
-            {"OS", 1, 99},
+            {"MS", 1, 100, 1},
+            {"OS", 1, 99, 2},
         },
     },
     SoftRes = {
