@@ -500,20 +500,7 @@ function RollOff:processRoll(message)
 
         local rollerName = GL:stripRealm(roller);
 
-        --- The user is not in a group and is most likely testing the add-on
-        if (not GL.User.isInGroup
-            and rollerName == GL.User.name
-        ) then
-            Roll = {
-                player = GL.User.name,
-                class = GL.User.class,
-                amount = roll,
-                time = GetServerTime(),
-                classification = RollType[1],
-                priority = RollType[4],
-            };
-        end
-
+        --- Make sure the person who rolled is in our group
         for _, Player in pairs(GL.User:groupMembers()) do
             local playerName = GL:stripRealm(Player.name);
             if (rollerName == playerName) then
