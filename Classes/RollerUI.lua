@@ -68,7 +68,7 @@ function RollerUI:draw(time, itemId, itemLink, itemIcon, note, SupportedRolls)
     };
     local RollButtons = {};
     local numberOfButtons = #SupportedRolls;
-    for i = 1, numberOfButtons do ---@todo
+    for i = 1, numberOfButtons do
         local RollDetails = SupportedRolls[i] or {};
 
         local identifier = string.sub(RollDetails[1] or "", 1, 3);
