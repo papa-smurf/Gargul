@@ -34,21 +34,6 @@ function Rolling:draw(Parent)
     HorizontalSpacer:SetFullWidth(true);
     HorizontalSpacer:SetHeight(20);
     Parent:AddChild(HorizontalSpacer);
-
-    local MaximumNumberOfNames = GL.AceGUI:Create("Slider");
-    MaximumNumberOfNames:SetLabel("Set a /roll amount for OS rolls. Eg: slider on 80 means /roll 80 counts as OS");
-    MaximumNumberOfNames.label:SetTextColor(1, .95686, .40784);
-    MaximumNumberOfNames:SetFullWidth(true);
-    MaximumNumberOfNames:SetValue(GL.Settings:get("Rolling.osRollMax", 99));
-    MaximumNumberOfNames:SetSliderValues(0, 99, 1);
-    MaximumNumberOfNames:SetCallback("OnValueChanged", function(Slider)
-        local value = math.floor(tonumber(Slider:GetValue()));
-
-        if (value >= 0) then
-            GL.Settings:set("Rolling.osRollMax", value);
-        end
-    end);
-    Parent:AddChild(MaximumNumberOfNames);
 end
 
 GL:debug("Interface/Settings/Rolling.lua");
