@@ -241,6 +241,7 @@ end
 function User:groupMembers()
     GL:debug("User:groupMembers");
 
+    --- This is purely for add-on testing purposes
     if (not GL.User.isInGroup) then
         return {
             {

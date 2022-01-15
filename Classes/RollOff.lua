@@ -490,7 +490,7 @@ function RollOff:processRoll(message)
         ) then
             return;
 
-        --- The roll type is officially supported by any of the brackets, but since
+        --- The roll type is not officially supported by any of the brackets, but since
         --- the master looter allows any kind of roll we need to make sure he can tell what range was used
         elseif (not RollType) then
             RollType = {};
