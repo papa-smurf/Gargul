@@ -65,6 +65,10 @@ function RaidGroups:drawImporter()
     end);
     GL.Interface:setItem(self, "Window", Window);
 
+    -- Make sure the window can be closed by pressing the escape button
+    _G["GARGUL_RAID_GROUP_WINDOW"] = Window.frame;
+    tinsert(UISpecialFrames, "GARGUL_RAID_GROUP_WINDOW");
+
     -- First part of explanation
     local Explanation = AceGUI:Create("Label");
     Explanation:SetFullWidth(true);
