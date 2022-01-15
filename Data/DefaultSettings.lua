@@ -17,7 +17,6 @@ GL.Data.DefaultSettings = {
     noSounds = false,
     autoOpenCommandHelp = true,
     showMinimapButton = true,
-    spreadTheWord = true,
     welcomeMessage = true,
     fixMasterLootWindow = true,
 
@@ -60,8 +59,14 @@ GL.Data.DefaultSettings = {
     },
     Rolling = {
         showRollOffWindow = true,
-        osRollMax = 99,
         closeAfterRoll = false,
+    },
+    RollTracking = {
+        trackAll = false,
+        Brackets = {
+            {"MS", 1, 100, 1},
+            {"OS", 1, 99, 2},
+        },
     },
     SoftRes = {
         announceInfoInChat = true,
@@ -76,7 +81,7 @@ GL.Data.DefaultSettings = {
         includeWishListInfoInLootAnnouncement = true,
         maximumNumberOfTooltipEntries = 35,
         maximumNumberOfAnouncementEntries = 5,
-        showEntriesWhenSolo = false,
+        showEntriesWhenSolo = true,
         showItemInfoOnTooltips = true,
         showLootAssignmentReminder = true,
         showPrioListInfoOnTooltips = true,

@@ -27,7 +27,7 @@ end
 ---@param itemIcon string
 ---@param note string
 ---@return boolean
-function RollerUI:draw(time, itemId, itemLink, itemIcon, note, osRollMax)
+function RollerUI:draw(time, itemId, itemLink, itemIcon, note, SupportedRolls)
     GL:debug("RollerUI:draw");
 
     local Window = CreateFrame("Frame", "GargulUI_RollerUI_Window", UIParent, Frame);
@@ -58,44 +58,54 @@ function RollerUI:draw(time, itemId, itemLink, itemIcon, note, osRollMax)
     Texture:SetAllPoints(Window)
     Window.texture = Texture;
 
-    -- Roll button
-    local MSButton = CreateFrame("Button", "GargulUI_RollerUI_MS", Window, "GameMenuButtonTemplate");
-    MSButton:SetPoint("TOPLEFT", Window, "TOPLEFT", 2, -1);
-    MSButton:SetSize(60, 20);
-    MSButton:SetText("MS");
-    MSButton:SetNormalFontObject("GameFontNormal");
-    MSButton:SetHighlightFontObject("GameFontNormal");
-    MSButton:SetScript("OnClick", function ()
-        RandomRoll(1, 100);
+    local RollButtonWidthByAmount = {
+        [1] = 80,
+        [2] = 80,
+        [3] = 72,
+        [4] = 64,
+        [5] = 56,
+        [6] = 48,
+    };
+    local RollButtons = {};
+    local numberOfButtons = #SupportedRolls;
+    for i = 1, numberOfButtons do
+        local RollDetails = SupportedRolls[i] or {};
 
-        if (GL.Settings:get("Rolling.closeAfterRoll")) then
-            self:hide();
+        local identifier = string.sub(RollDetails[1] or "", 1, 3);
+        local min = math.floor(tonumber(RollDetails[2]) or 0);
+        local max = math.floor(tonumber(RollDetails[3]) or 0);
+
+        -- There are no more buttons to display
+        if (GL:empty(identifier)) then
+            break;
         end
-    end);
 
-    -- Check whether the Master Looter supports OS rolls
-    if (type(osRollMax) == "number"
-        and GL:higherThanZero(osRollMax)
-    ) then
-        local OSButton = CreateFrame("Button", "GargulUI_RollerUI_OS", Window, "GameMenuButtonTemplate");
-        OSButton:SetPoint("TOPLEFT", MSButton, "TOPRIGHT", 1, 0);
-        OSButton:SetSize(60, 20);
-        OSButton:SetText("OS");
-        OSButton:SetNormalFontObject("GameFontNormal");
-        OSButton:SetHighlightFontObject("GameFontNormal");
-        OSButton:Show();
-        OSButton:SetScript("OnClick", function ()
-            RandomRoll(1, osRollMax or 99);
+        -- Roll button
+        local Button = CreateFrame("Button", nil, Window, "GameMenuButtonTemplate");
+        Button:SetSize(RollButtonWidthByAmount[numberOfButtons], 20);
+        Button:SetText(identifier);
+        Button:SetNormalFontObject("GameFontNormal");
+        Button:SetHighlightFontObject("GameFontNormal");
+        Button:SetScript("OnClick", function ()
+            RandomRoll(min, max);
 
             if (GL.Settings:get("Rolling.closeAfterRoll")) then
                 self:hide();
             end
         end);
+
+        if (i == 1) then
+            Button:SetPoint("TOPLEFT", Window, "TOPLEFT", 2, -1);
+        else
+            Button:SetPoint("TOPLEFT", RollButtons[i - 1], "TOPRIGHT", 1, 0);
+        end
+
+        tinsert(RollButtons, Button);
     end
 
     local PassButton = CreateFrame("Button", "GargulUI_RollerUI_Pass", Window, "GameMenuButtonTemplate");
     PassButton:SetPoint("TOPRIGHT", Window, "TOPRIGHT", -3, -1);
-    PassButton:SetSize(60, 20);
+    PassButton:SetSize(50, 20);
     PassButton:SetText("Pass");
     PassButton:SetNormalFontObject("GameFontNormal");
     PassButton:SetHighlightFontObject("GameFontNormal");

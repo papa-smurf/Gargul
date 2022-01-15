@@ -112,8 +112,8 @@ function GL:_init()
     -- Make sure to initialize the user last
     self.User:refresh();
 
-    -- Allow easier testability for devs
-    if (self:inTable(self.Data.Constants.Devs, self.User.id)) then
+    -- Makes testing easier for devs
+    if (self.User:isDev()) then
         _G.GL = self;
     end
 end

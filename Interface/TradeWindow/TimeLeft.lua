@@ -166,7 +166,7 @@ function TimeLeft:refreshBars()
 
     local ItemsWithTradeTimeRemaining = {};
     local tradeTimeRemainingByLink = {};
-    for bag = 0, 10 do
+    for bag = 0, 4 do
         for slot = 1, GetContainerNumSlots(bag) do
             (function ()
                 local icon, _, _, _, _, _, itemLink, _, _ = GetContainerItemInfo(bag, slot);

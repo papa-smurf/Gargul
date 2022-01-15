@@ -29,7 +29,7 @@ local ScrollingTable = GL.ScrollingTable;
 function MasterLooterUI:draw(itemLink)
     GL:debug("MasterLooterUI:draw");
 
-    if (not GL.testMode
+    if (GL.User.isInGroup
         and not GL.User.isMasterLooter
         and not GL.User.hasAssist
     ) then
@@ -509,7 +509,7 @@ function MasterLooterUI:drawPlayersTable(parent)
         --[[ Roll ]]
         {
             name = "Roll",
-            width = 50,
+            width = 35,
             align = "LEFT",
             color = {
                 r = 0.5,
@@ -523,7 +523,7 @@ function MasterLooterUI:drawPlayersTable(parent)
         --[[ +1 ]]
         {
             name = "+1",
-            width = 45,
+            width = 35,
             align = "LEFT",
             color = {
                 r = 0.5,
@@ -532,35 +532,47 @@ function MasterLooterUI:drawPlayersTable(parent)
                 a = 1.0
             },
             colorargs = nil,
-            sortnext = 2,
         },
-        --[[ MS/OS ]]
+        --[[ ROLL TYPE: MS/OS etc ]]
         {
-            name = " ",
-            width = 40,
+            name = "Type",
+            width = 63,
             align = "LEFT",
             color = {
                 r = 0.5,
                 g = 0.5,
                 b = 1.0,
                 a = 1.0
+            },
+            colorargs = nil,
+        },
+        --[[ Reserved / TMB etc ]]
+        {
+            name = "Note",
+            width = 88,
+            align = "LEFT",
+            color = {
+                r = 0.5,
+                g = 0.5,
+                b = 1.0,
+                a = 1.0
+            },
+            colorargs = nil,
+        },
+        --[[ PRIORITY (NOT VISIBLE, FOR SORTING ONLY! ]]
+        {
+            name = "",
+            width = 1,
+            align = "LEFT",
+            color = {
+                r = 0,
+                g = 0,
+                b = 0,
+                a = 0
             },
             colorargs = nil,
             sort = GL.Data.Constants.ScrollingTable.ascending,
             sortnext = 2,
-        },
-        --[[ Reserved ]]
-        {
-            name = " ",
-            width = 85,
-            align = "LEFT",
-            color = {
-                r = 0.5,
-                g = 0.5,
-                b = 1.0,
-                a = 1.0
-            },
-            colorargs = nil,
         },
     };
 
@@ -685,9 +697,7 @@ function MasterLooterUI:updateWidgets()
     --   The start button should not be available
     --   The stop button should be available
     --   The item box should be available
-    if (not MasterLooterUI.ItemBoxHoldsValidItem
-        or not GL.User.isInGroup
-    ) then
+    if (not MasterLooterUI.ItemBoxHoldsValidItem) then
         GL.Interface:getItem(self, "Button.Start"):SetDisabled(true);
         GL.Interface:getItem(self, "Button.Stop"):SetDisabled(true);
         GL.Interface:getItem(self, "EditBox.Item"):SetDisabled(false);

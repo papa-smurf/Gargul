@@ -50,7 +50,7 @@ function Importer:draw()
     local Description = AceGUI:Create("Label");
     Description:SetFontObject(_G["GameFontNormal"]);
     Description:SetFullWidth(true);
-    Description:SetText("In order to get started you first need to create a raid on softres.it. Afterwards click the 'Copy Weakaura Data' or 'Export CSV' button on the website, paste the contents in the box below and click 'Import'. NB: A new Gargul-specific exporter will be added to softres.it very soon!");
+    Description:SetText("In order to get started you first need to create a raid on softres.it. Afterwards click on 'Addon Export', select 'Gargul', copy the data and paste it in the form below.");
     Window:AddChild(Description);
 
     -- Large edit box

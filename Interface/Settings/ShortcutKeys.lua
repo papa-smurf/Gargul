@@ -51,7 +51,7 @@ function ShortcutKeys:draw(Parent)
     local Checkboxes = {
         {
             label = "Show Shortcut Keys reminder",
-            description = "When enabled a small window appears when looting an enemy that shows your current shortcut key values for rolling, awarding or disenchanting an item",
+            description = "When enabled, a small window appears when looting an enemy that shows your current shortcut key values for rolling, awarding or disenchanting an item",
             setting = "ShortcutKeys.showLegend",
         },
     }
