@@ -697,11 +697,7 @@ function MasterLooterUI:updateWidgets()
     --   The start button should not be available
     --   The stop button should be available
     --   The item box should be available
-    if (GL.User.isInGroup
-        and (not MasterLooterUI.ItemBoxHoldsValidItem
-            or not GL.User.isInGroup
-        )
-    ) then
+    if (not MasterLooterUI.ItemBoxHoldsValidItem) then
         GL.Interface:getItem(self, "Button.Start"):SetDisabled(true);
         GL.Interface:getItem(self, "Button.Stop"):SetDisabled(true);
         GL.Interface:getItem(self, "EditBox.Item"):SetDisabled(false);
