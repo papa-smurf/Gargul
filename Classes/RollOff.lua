@@ -547,17 +547,76 @@ function RollOff:refreshRollsTable()
 
         local playerName = Roll.player;
         local numberOfTimesRolledByPlayer = NumberOfRollsPerPlayer[Roll.player];
+        local rollPriority = Roll.priority or 1;
+
+        -- This is used to free up priority slots for soft-reserved/wishlisted etc. items
+        -- Think of it as a z-index in CSS: nasty but necessary
+        rollPriority = rollPriority + 10000;
 
         -- Check if the player reserved the current item id
-        local softReservedValue = "";
+        local rollNote = "";
         local normalizedPlayerName = string.lower(GL:stripRealm(playerName));
 
+        -- The item is soft-reserved, make sure we add a note to the roll
         if (GL.SoftRes:itemIdIsReservedByPlayer(self.CurrentRollOff.itemId, normalizedPlayerName)) then
-            softReservedValue = "Reserved";
+            rollPriority = 1;
+            rollNote = "Reserved";
             local numberOfReserves = GL.SoftRes:playerReservesOnItem(self.CurrentRollOff.itemId, normalizedPlayerName);
 
             if (numberOfReserves > 1) then
-                softReservedValue = string.format("%s (%sx)", softReservedValue, numberOfReserves);
+                rollNote = string.format("%s (%sx)", rollNote, numberOfReserves);
+            end
+
+        -- The item might be on a TMB list, make sure we add the appropriate note to the roll
+        else
+            local TMBData = GL.TMB:byItemIdAndPlayer(self.CurrentRollOff.itemId, normalizedPlayerName);
+            local TopEntry = false;
+
+            for _, Entry in pairs(TMBData) do
+                (function ()
+                    -- We don't have a #1 entry yet, so take this one
+                    if (not TopEntry) then
+                        TopEntry = Entry;
+                        return;
+                    end
+
+                    -- This entry is a wishlist entry, whereas TopEntry is a prio entry (aka more important)
+                    if (TopEntry.type == GL.Data.Constants.tmbTypePrio
+                        and Entry.type == GL.Data.Constants.tmbTypeWish
+                    ) then
+                        return;
+                    end
+
+                    -- This entry is a prio entry, whereas TopEntry is a wishlist entry: override it
+                    if (TopEntry.type == GL.Data.Constants.tmbTypeWish
+                        and Entry.type == GL.Data.Constants.tmbTypePrio
+                    ) then
+                        TopEntry = Entry;
+                        return;
+                    end
+
+                    -- This entry and TopEntry are of the same type, but this entry has a lower prio (aka more important)
+                    if (Entry.prio < TopEntry.prio) then
+                        TopEntry = Entry;
+                        return;
+                    end
+                end)();
+            end
+
+            -- The roller has this item on one of his lists, add a note and change the roll sorting!
+            if (TopEntry) then
+
+                -- Prio list entries are more important than wishlist ones (and therefore get sorted on top)
+                if (TopEntry.type == GL.Data.Constants.tmbTypePrio) then
+                    rollPriority = 2;
+                    rollNote = "Priolist";
+                else
+                    rollPriority = 3;
+                    rollNote = "Wishlist";
+                end
+
+                rollPriority = rollPriority + TopEntry.prio; -- Make sure rolls of identical list positions "clump" together
+                rollNote = string.format("%s [%s]", rollNote, TopEntry.prio);
             end
         end
 
@@ -594,11 +653,11 @@ function RollOff:refreshRollsTable()
                     color = GL:classRGBAColor(class),
                 },
                 {
-                    value = softReservedValue,
+                    value = rollNote,
                     color = GL:classRGBAColor(class),
                 },
                 {
-                    value = Roll.priority,
+                    value = rollPriority,
                 },
             },
         };
