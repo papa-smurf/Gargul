@@ -141,13 +141,8 @@ function Award:draw(itemLink)
     AwardButton:SetCallback("OnClick", function()
         local PlayersTable = GL.Interface:getItem(self, "Table.Players");
         local selected = PlayersTable:GetRow(PlayersTable:GetSelection());
-
-        if (not selected or type(selected) ~= "table") then
-            return GL:warning("You need to select a player first");
-        end
-
-        local winner = selected.cols[1].value;
-        local itemLink = GL.Interface:getItem(self, "EditBox.Item"):GetText();
+        itemLink = GL.Interface:getItem(self, "EditBox.Item"):GetText();
+        local winner = false;
 
         local award = function ()
             local isOS, addPlusOne = false;
@@ -174,6 +169,30 @@ function Award:draw(itemLink)
                 self:close();
             end
         end
+
+        -- No player was selected, check if the ML wants to award this item to a random player
+        if (not selected or type(selected) ~= "table") then
+            -- Show a confirmation dialog asking whether we should award this to a random person
+            return GL.Interface.Dialogs.PopupDialog:open({
+                question = string.format("Do you want to award %s to a random player?", itemLink),
+                OnYes = function ()
+                    local GroupMembers = GL.User:groupMembers();
+
+                    -- Pick a random winner
+                    winner = GL:tableGet(GroupMembers[math.random( #GroupMembers)] or {}, "name", false);
+
+                    -- We couldn't find any winner (shouldn't be possible, just a safety check)
+                    if (not winner) then
+                        return;
+                    end
+
+                    GL:sendChatMessage(string.format("Random winner for %s selected (%s)", itemLink, winner), "GROUP");
+                    award();
+                end,
+            });
+        end
+
+        winner = selected.cols[1].value;
 
         -- Make sure the initiator has to confirm his choices
         GL.Interface.Dialogs.AwardDialog:open({
@@ -328,10 +347,6 @@ function Award:populatePlayersTable()
     end
 
     GL.Interface:getItem(self, "Table.Players"):ClearSelection();
-
-    if (not GL.User.isInGroup) then
-        return GL.Interface:getItem(self, "Table.Players"):SetData({}, true);
-    end
 
     local TableData = {};
     for _, Player in pairs(GL.User:groupMembers()) do
