@@ -974,14 +974,15 @@ local gaveNoAssistWarning = false;
 ---@param chatType string The type of message (SAY|EMOTE|YELL|PARTY|GUILD|OFFICER|RAID|RAID_WARNING|INSTANCE_CHAT|BATTLEGROUND|WHISPER|CHANNEL|AFK|DND)
 ---@param language string|nil The language of the message (COMMON|ORCISH|etc), if nil it's COMMON for Alliance and ORCISH for Horde
 ---@param channel string|nil The channel (numeric) or player (name string) receiving the message
+---@param stw boolean|nil Important for throttling / spam prevention
 ---@return void
-function GL:sendChatMessage(message, chatType, language, channel, spreadTheWord)
+function GL:sendChatMessage(message, chatType, language, channel, stw)
     GL:debug("GL:sendChatMessage");
 
-    if (spreadTheWord == nil) then
-        spreadTheWord = true;
+    if (stw == nil) then
+        stw = true;
     end
-    spreadTheWord = toboolean(spreadTheWord);
+    stw = toboolean(stw);
 
     -- No point sending an empty message!
     if (GL:empty(message)) then
@@ -998,10 +999,8 @@ function GL:sendChatMessage(message, chatType, language, channel, spreadTheWord)
         return;
     end
 
-    if (spreadTheWord
-        and GL.Settings:get("spreadTheWord")
-    ) then
-        message = "Gargul: " .. message;
+    if (stw) then
+        message = string.format("<%s> %s", GL.name, message);
     end
 
     -- The player wants to message the group (either raid or party)
