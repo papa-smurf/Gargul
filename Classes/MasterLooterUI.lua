@@ -581,6 +581,7 @@ function MasterLooterUI:drawPlayersTable(parent)
     Table:EnableSelection(true);
 
     Table:RegisterEvents({
+        -- Show a tooltip that contains the items that the roller already won so far
         OnEnter = function (rowFrame, _, data, _, _, realrow)
             -- Make sure something is actually highlighted, better safe than lua error
             if (not GL:higherThanZero(realrow)
