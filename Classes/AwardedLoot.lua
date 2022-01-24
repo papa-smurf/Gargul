@@ -240,6 +240,30 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS)
     end
 end
 
+--- Return items won by the given player (with optional `after` timestamp)
+---
+---@param winner string
+---@param after number
+---@return table
+function AwardedLoot:byWinner(winner, after)
+    GL:debug("AwardedLoot:byWinner");
+
+    local Entries = {};
+    for _, AwardEntry in pairs(GL.DB.AwardHistory) do
+        if (
+            (not concernsDisenchantedItem or GL.Settings:get("ExportingLoot.includeDisenchantedItems"))
+            and (not after or AwardEntry.timestamp > after)
+            and AwardEntry.awardedTo == winner
+            and not GL:empty(AwardEntry.timestamp)
+            and not GL:empty(AwardEntry.itemLink)
+        ) then
+            tinsert(Entries, AwardEntry.itemLink);
+        end
+    end
+
+    return Entries;
+end
+
 --- Attempt to initiate a trade with whomever won the item and add the items
 ---
 ---@param AwardDetails table
