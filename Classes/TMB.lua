@@ -99,6 +99,49 @@ function TMB:byItemId(itemId, inRaidOnly)
     return Wishes;
 end
 
+--- Fetch TMB info for a specific item ID and player
+---
+---@param itemId number
+---@param player string
+---@return table
+function TMB:byItemIdAndPlayer(itemId, player)
+    GL:debug("TMB:byItemId");
+
+    -- An invalid item id or name was provided
+    itemId = tonumber(itemId);
+    player = strtrim(player);
+    if (not GL:higherThanZero(itemId)
+        or GL:empty(player)
+    ) then
+        return {};
+    end
+
+    -- The item linked to this id can have multiple IDs (head of Onyxia for example)
+    local AllLinkedItemIds = GL:getLinkedItemsForId(itemId);
+
+    local Processed = {};
+    local Entries = {};
+    for _, id in pairs(AllLinkedItemIds) do
+        id = tostring(id);
+        for _, Entry in pairs(GL.DB:get("TMB.Items." .. tostring(id), {})) do
+            local playerName = string.lower(GL:stripRealm(Entry.character));
+
+            --- NOTE TO SELF: it's (os) because of the string.lower, if you remove the lower then change below accordingly!
+            if (player == string.gsub(playerName, "%(os%)", "")) then
+                local checkSum = string.format('%s||%s||%s', player, tostring(Entry.prio), tostring(Entry.type));
+
+                -- Make sure we don't add the same player/prio combo more than once
+                if (not Processed[checkSum]) then
+                    Processed[checkSum] = true;
+                    tinsert(Entries, Entry);
+                end
+            end
+        end
+    end
+
+    return Entries;
+end
+
 --- Fetch an item's TMB info based on its item link
 ---
 ---@param itemLink string

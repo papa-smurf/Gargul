@@ -9,7 +9,7 @@ local _, GL = ...;
 
 ---@class AwardedLoot
 GL.AwardedLoot = {
-    initialized = false,
+    _initialized = false,
     AwardedThisSession = {},
 };
 
@@ -54,16 +54,18 @@ function AwardedLoot:_init()
     self._initialized = true;
 end
 
--- Append the players this item was awarded to to the tooltip
-function AwardedLoot:appendAwardedLootToTooltip(tooltip)
+--- Append the players this item was awarded to to the tooltip
+---
+---@param Tooltip Table
+function AwardedLoot:appendAwardedLootToTooltip(Tooltip)
     GL:debug("AwardedLoot:appendAwardedLootToTooltip");
 
     -- No tooltip was provided or the user is not in a party/raid
-    if (type(tooltip) ~= "table" or not GL.User.isInGroup) then
+    if (type(Tooltip) ~= "table" or not GL.User.isInGroup) then
         return;
     end
 
-    local _, itemLink = tooltip:GetItem();
+    local _, itemLink = Tooltip:GetItem();
 
     -- We couldn't find an itemLink (this can actually happen!)
     if (not itemLink) then
@@ -80,16 +82,22 @@ function AwardedLoot:appendAwardedLootToTooltip(tooltip)
     end
 
     -- Add the header
-    tooltip:AddLine(string.format("\n|c00efb8cd%s|r", "Awarded To"));
+    Tooltip:AddLine(string.format("\n|c00efb8cd%s|r", "Awarded To"));
 
     -- Add the actual award info
-    tooltip:AddLine(string.format("|c008aecff    %s|r", awardedTo));
+    Tooltip:AddLine(string.format("|c008aecff    %s|r", awardedTo));
 end
 
+--- Add a winner for a specific item, on a specific date, to the SessionHistory table
+---
+---@param winner string
+---@param date string
+---@param itemLink string
+---@return void
 function AwardedLoot:addWinnerOnDate(winner, date, itemLink)
     GL:debug("AwardedLoot:addWinnerOnDate");
 
-    return AwardedLoot:addWinner(winner, itemLink, nil, date)
+    return AwardedLoot:addWinner(winner, itemLink, nil, date);
 end
 
 --- Add a winner for a specific item to the SessionHistory table
@@ -230,6 +238,30 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS)
     ) then
         AwardedLoot:initiateTrade(AwardEntry);
     end
+end
+
+--- Return items won by the given player (with optional `after` timestamp)
+---
+---@param winner string
+---@param after number
+---@return table
+function AwardedLoot:byWinner(winner, after)
+    GL:debug("AwardedLoot:byWinner");
+
+    local Entries = {};
+    for _, AwardEntry in pairs(GL.DB.AwardHistory) do
+        if (
+            (not concernsDisenchantedItem or GL.Settings:get("ExportingLoot.includeDisenchantedItems"))
+            and (not after or AwardEntry.timestamp > after)
+            and AwardEntry.awardedTo == winner
+            and not GL:empty(AwardEntry.timestamp)
+            and not GL:empty(AwardEntry.itemLink)
+        ) then
+            tinsert(Entries, AwardEntry.itemLink);
+        end
+    end
+
+    return Entries;
 end
 
 --- Attempt to initiate a trade with whomever won the item and add the items

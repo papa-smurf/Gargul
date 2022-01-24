@@ -579,6 +579,51 @@ function MasterLooterUI:drawPlayersTable(parent)
     local Table = ScrollingTable:CreateST(columns, 8, 15, nil, parent);
     Table:SetWidth(340);
     Table:EnableSelection(true);
+
+    Table:RegisterEvents({
+        -- Show a tooltip that contains the items that the roller already won so far
+        OnEnter = function (rowFrame, _, data, _, _, realrow)
+            -- Make sure something is actually highlighted, better safe than lua error
+            if (not GL:higherThanZero(realrow)
+                or type(data) ~= "table"
+                or not data[realrow]
+                or not data[realrow].cols
+                or not data[realrow].cols[1]
+            ) then
+                return;
+            end
+
+            local roller = data[realrow].cols[1].value;
+
+            -- If the roller has a roll number suffixed to his name
+            -- e.g. "playerName [2]" then make sure to remove that number
+            local openingBracketPosition = string.find(roller, " %[");
+            if (openingBracketPosition) then
+                roller = string.sub(roller, 1, openingBracketPosition - 1);
+            end
+
+            local ItemsWonByRollerInTheLast8Hours = GL.AwardedLoot:byWinner(roller, GetServerTime() - (8 * 60 * 60));
+
+            if (GL:empty(ItemsWonByRollerInTheLast8Hours)) then
+                return;
+            end
+
+            GameTooltip:ClearLines();
+            GameTooltip:SetOwner(rowFrame, "ANCHOR_RIGHT");
+            GameTooltip:AddLine(string.format("Items won by %s:", roller));
+            GameTooltip:AddLine(" ");
+
+            for _, itemLink in pairs(ItemsWonByRollerInTheLast8Hours) do
+                GameTooltip:AddLine(itemLink);
+            end
+
+            GameTooltip:Show();
+        end,
+        OnLeave = function ()
+            GameTooltip:Hide();
+        end,
+    });
+
     Table.frame:SetPoint("BOTTOM", parent, "BOTTOM", 0, 50);
     GL.Interface:setItem(self, "Players", Table);
 end
