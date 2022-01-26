@@ -72,7 +72,7 @@ function RaidGroups:drawImporter()
     -- First part of explanation
     local Explanation = AceGUI:Create("Label");
     Explanation:SetFullWidth(true);
-    Explanation:SetText("In the large edit box below you can provide a roster and: invite everyone, check who's missing, apply groups and assign the tanks.\n\nDown below you can provide a Wowhead raid composition link:");
+    Explanation:SetText("In the large edit box below you can provide a roster and: invite everyone, check who's missing, apply groups and assign the tanks.\n\nYou can provide a |c00FFF569Wowhead raid composition|r link:");
     Window:AddChild(Explanation);
 
     Spacer = AceGUI:Create("SimpleGroup");
@@ -97,7 +97,7 @@ function RaidGroups:drawImporter()
     -- Second part of explanation
     Explanation = AceGUI:Create("Label");
     Explanation:SetFullWidth(true);
-    Explanation:SetText("Or a Gargul group composition CSV:");
+    Explanation:SetText("a |c00FFF569Raid-Helper export|r (Use the 'Groups sorted vertically' variant) or a |c00FFF569Gargul group composition|r CSV:");
     Window:AddChild(Explanation);
 
     Spacer = AceGUI:Create("SimpleGroup");
