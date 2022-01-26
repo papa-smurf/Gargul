@@ -303,9 +303,9 @@ function RaidGroups:normalizeWowheadInput(input)
     local urlLength = GL:count(input);
     local raiderString = GL:urlDecode(strsub(input, firstSemicolonPosition + 1));
     local specString = strsub(
-            input,
-            firstHashtagPosition + 2, -- 2 because we want to skip the leading zero
-            urlLength - firstHashtagPosition - (urlLength - firstSemicolonPosition - firstHashtagPosition) - 1 -- Quick math
+        input,
+        firstHashtagPosition + 2, -- 2 because we want to skip the leading zero
+        urlLength - firstHashtagPosition - (urlLength - firstSemicolonPosition - firstHashtagPosition) - 1 -- Quick math
     );
     local Specs = GL:strSplit(specString);
     local Members = GL:strSplit(raiderString, ";");
