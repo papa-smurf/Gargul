@@ -207,11 +207,69 @@ end
 ---@param input string
 ---@return string
 function RaidGroups:normalizeInput(EditBox, input)
-    -- A CSV was provided, or at least something that's not a wowhead url
-    if (not GL:strContains(input, "wowhead.com/raid%-composition")) then -- Escape of - is required!
-        return input;
+    --- The user provided a wowhead URL
+    if (GL:strContains(input, "wowhead.com/raid%-composition")) then -- Escape of - is required!
+        input = self:normalizeWowheadInput(input);
+
+    --- The user provided a non-Gargul format, most likely a raid helper export
+    elseif (not GL:strContains(input, ":")) then
+        input = self:normalizeRaidHelperInput(input);
     end
 
+    -- Update the editbox with the new format
+    EditBox:SetText(input);
+
+    return input;
+end
+
+--- Transform the raid helper comp tool format to something Gargul can use
+---
+---@param input string
+---@return string
+function RaidGroups:normalizeRaidHelperInput(input)
+    local playerDelimiter = " ";
+
+    -- Determine the correct delimiter
+    if (GL:strContains(input, ", ")) then
+        playerDelimiter = ", ";
+    elseif (GL:strContains(input, "; ")) then
+        playerDelimiter = "; ";
+    end
+
+    local group = 1;
+    local output = "";
+    for line in input:gmatch("[^\n]+") do
+        if (group >= 8) then
+            break;
+        elseif (group > 1) then
+            output = output .. "\n";
+        end
+
+        output = output .. group .. ":";
+
+        local Players = GL:strSplit(line, playerDelimiter);
+
+        local PlayerNames = {};
+        for _, playerName in pairs(Players) do
+            playerName = strtrim(playerName);
+
+            if (playerName ~= "-") then
+                tinsert(PlayerNames, playerName);
+            end
+        end
+
+        output = output .. table.concat(PlayerNames, ",");
+        group = group + 1;
+    end
+
+    return output;
+end
+
+--- Transform the wowhead raid comp format to something Gargul can use
+---
+---@param input string
+---@return string
+function RaidGroups:normalizeWowheadInput(input)
     --[[ A WOWHEAD LINK WAS PROVIDED, TRANSFORM IT TO OUR FORMAT ]]
     local firstSemicolonPosition = strfind(input, ";");
     local firstHashtagPosition = strfind(input, "#");
@@ -245,9 +303,9 @@ function RaidGroups:normalizeInput(EditBox, input)
     local urlLength = GL:count(input);
     local raiderString = GL:urlDecode(strsub(input, firstSemicolonPosition + 1));
     local specString = strsub(
-        input,
-        firstHashtagPosition + 2, -- 2 because we want to skip the leading zero
-        urlLength - firstHashtagPosition - (urlLength - firstSemicolonPosition - firstHashtagPosition) - 1 -- Quick math
+            input,
+            firstHashtagPosition + 2, -- 2 because we want to skip the leading zero
+            urlLength - firstHashtagPosition - (urlLength - firstSemicolonPosition - firstHashtagPosition) - 1 -- Quick math
     );
     local Specs = GL:strSplit(specString);
     local Members = GL:strSplit(raiderString, ";");
@@ -288,9 +346,6 @@ function RaidGroups:normalizeInput(EditBox, input)
         input = input .. group .. ":";
         input = input .. table.concat(GroupMembers, ",");
     end
-
-    -- Update the editbox with the new format
-    EditBox:SetText(input);
 
     return input;
 end
