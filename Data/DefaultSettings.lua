@@ -28,18 +28,19 @@ GL.Data.DefaultSettings = {
     },
     MasterLooting = {
         autoOpenMasterLooterDialog = true,
-        announceMasterLooter = true,
-        doCountdown = false,
+        announceMasterLooter = false,
+        doCountdown = true,
         announceRollEnd = true,
         announceRollStart = true,
         numberOfSecondsToCountdown = 5,
         preferredMasterLootingThreshold = 2,
     },
     AwardingLoot = {
-        awardMessagesDisabled = false,
+        announceAwardMessagesInGuildChat = false,
         announceAwardMessagesInRW = false,
         autoAssignAfterAwardingAnItem = true,
         autoTradeAfterAwardingAnItem = true,
+        awardMessagesDisabled = false,
     },
     ExportingLoot = {
         includeDisenchantedItems = true,

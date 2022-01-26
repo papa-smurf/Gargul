@@ -10,6 +10,7 @@ GL.DB = {
     MinimapButton = {},
     PlusOnes = {},
     Settings = {},
+    LoadDetails = {},
     SoftRes = {},
     TMB = {},
 };
@@ -34,6 +35,7 @@ function DB:_init()
     GargulDB.MinimapButton = GargulDB.MinimapButton or {};
     GargulDB.PlusOnes = GargulDB.PlusOnes or {};
     GargulDB.Settings = GargulDB.Settings or {};
+    GargulDB.LoadDetails = GargulDB.LoadDetails or {};
     GargulDB.SoftRes = GargulDB.SoftRes or {};
     GargulDB.TMB = GargulDB.TMB or {};
 
@@ -43,6 +45,7 @@ function DB:_init()
     self.MinimapButton = GargulDB.MinimapButton;
     self.PlusOnes = GargulDB.PlusOnes;
     self.Settings = GargulDB.Settings;
+    self.LoadDetails = GargulDB.LoadDetails;
     self.SoftRes = GargulDB.SoftRes;
     self.TMB = GargulDB.TMB;
 
@@ -63,6 +66,7 @@ function DB:store()
     GargulDB.MinimapButton = GL.DB.MinimapButton;
     GargulDB.PlusOnes = GL.DB.PlusOnes;
     GargulDB.Settings = GL.Settings.Active;
+    GargulDB.LoadDetails = GL.DB.LoadDetails;
     GargulDB.SoftRes = GL.DB.SoftRes;
     GargulDB.TMB = GL.DB.TMB;
 end
@@ -86,6 +90,7 @@ function DB:reset()
     self.MinimapButton = {};
     self.PlusOnes = {};
     self.Settings = {};
+    self.LoadDetails = {};
     self.SoftRes = {};
     self.TMB = {};
 

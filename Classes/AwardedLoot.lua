@@ -209,10 +209,19 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS)
             winner
         );
 
+        -- Announce awarded item on RAID or RAID_WARNING
         GL:sendChatMessage(
             awardMessage,
             channel
         );
+
+        -- Announce awarded item on GUILD
+        if (GL.Settings:get("AwardingLoot.announceAwardMessagesInGuildChat")) then
+            GL:sendChatMessage(
+                awardMessage,
+                "GUILD"
+            );
+        end
     end
 
     -- If the user is not in a group then there's no need

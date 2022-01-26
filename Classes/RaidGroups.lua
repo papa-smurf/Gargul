@@ -72,7 +72,7 @@ function RaidGroups:drawImporter()
     -- First part of explanation
     local Explanation = AceGUI:Create("Label");
     Explanation:SetFullWidth(true);
-    Explanation:SetText("In the large edit box below you can provide a roster and: invite everyone, check who's missing, apply groups and assign the tanks.\n\nDown below you can provide a Wowhead raid composition link:");
+    Explanation:SetText("In the large edit box below you can provide a roster and: invite everyone, check who's missing, apply groups and assign the tanks.\n\nYou can provide a |c00FFF569Wowhead raid composition|r link:");
     Window:AddChild(Explanation);
 
     Spacer = AceGUI:Create("SimpleGroup");
@@ -97,7 +97,7 @@ function RaidGroups:drawImporter()
     -- Second part of explanation
     Explanation = AceGUI:Create("Label");
     Explanation:SetFullWidth(true);
-    Explanation:SetText("Or a Gargul group composition CSV:");
+    Explanation:SetText("a |c00FFF569Raid-Helper export|r (Use the 'Groups sorted vertically' variant) or a |c00FFF569Gargul group composition|r CSV:");
     Window:AddChild(Explanation);
 
     Spacer = AceGUI:Create("SimpleGroup");
@@ -207,11 +207,69 @@ end
 ---@param input string
 ---@return string
 function RaidGroups:normalizeInput(EditBox, input)
-    -- A CSV was provided, or at least something that's not a wowhead url
-    if (not GL:strContains(input, "wowhead.com/raid%-composition")) then -- Escape of - is required!
-        return input;
+    --- The user provided a wowhead URL
+    if (GL:strContains(input, "wowhead.com/raid%-composition")) then -- Escape of - is required!
+        input = self:normalizeWowheadInput(input);
+
+    --- The user provided a non-Gargul format, most likely a raid helper export
+    elseif (not GL:strContains(input, ":")) then
+        input = self:normalizeRaidHelperInput(input);
     end
 
+    -- Update the editbox with the new format
+    EditBox:SetText(input);
+
+    return input;
+end
+
+--- Transform the raid helper comp tool format to something Gargul can use
+---
+---@param input string
+---@return string
+function RaidGroups:normalizeRaidHelperInput(input)
+    local playerDelimiter = " ";
+
+    -- Determine the correct delimiter
+    if (GL:strContains(input, ", ")) then
+        playerDelimiter = ", ";
+    elseif (GL:strContains(input, "; ")) then
+        playerDelimiter = "; ";
+    end
+
+    local group = 1;
+    local output = "";
+    for line in input:gmatch("[^\n]+") do
+        if (group >= 8) then
+            break;
+        elseif (group > 1) then
+            output = output .. "\n";
+        end
+
+        output = output .. group .. ":";
+
+        local Players = GL:strSplit(line, playerDelimiter);
+
+        local PlayerNames = {};
+        for _, playerName in pairs(Players) do
+            playerName = strtrim(playerName);
+
+            if (playerName ~= "-") then
+                tinsert(PlayerNames, playerName);
+            end
+        end
+
+        output = output .. table.concat(PlayerNames, ",");
+        group = group + 1;
+    end
+
+    return output;
+end
+
+--- Transform the wowhead raid comp format to something Gargul can use
+---
+---@param input string
+---@return string
+function RaidGroups:normalizeWowheadInput(input)
     --[[ A WOWHEAD LINK WAS PROVIDED, TRANSFORM IT TO OUR FORMAT ]]
     local firstSemicolonPosition = strfind(input, ";");
     local firstHashtagPosition = strfind(input, "#");
@@ -288,9 +346,6 @@ function RaidGroups:normalizeInput(EditBox, input)
         input = input .. group .. ":";
         input = input .. table.concat(GroupMembers, ",");
     end
-
-    -- Update the editbox with the new format
-    EditBox:SetText(input);
 
     return input;
 end

@@ -26,6 +26,11 @@ function AwardingLoot:draw(Parent)
             setting = "AwardingLoot.announceAwardMessagesInRW",
         },
         {
+            label = "Announce in Guild chat",
+            description = "Check this if you want Gargul to announce awarded items in guild chat as well",
+            setting = "AwardingLoot.announceAwardMessagesInGuildChat",
+        },
+        {
             label = "Auto assign loot",
             description = "Auto assign an item to the winner after awarding an item (with master loot enabled and boss window still open)",
             setting = "AwardingLoot.autoAssignAfterAwardingAnItem",
