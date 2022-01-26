@@ -6,6 +6,7 @@ GL.name = appName;
 GL._initialized = false;
 GL.clientUIinterface = 0;
 GL.clientVersion = 0;
+GL.firstBoot = false; -- Indicates whether the user is new to Gargul
 GL.isEra = false;
 GL.isRetail = false;
 GL.isClassic = false;
@@ -72,12 +73,13 @@ function GL:_init()
     -- Initialize classes
     self.Events:_init(self.EventFrame);
     self.DB:_init();
+    self.Version:_init();
     self.Settings:_init();
 
     -- Show a welcome message
     if (self.Settings:get("welcomeMessage")) then
         print(string.format(
-            "|cff%sGargul v%s|r by Zhorax@Razorgore. Type |cff%s/gl|r or |cff%s/gargul|r to get started!",
+            "|cff%sGargul v%s|r by Zhorax@Firemaw. Type |cff%s/gl|r or |cff%s/gargul|r to get started!",
             self.Data.Constants.addonHexColor,
             self.version,
             self.Data.Constants.addonHexColor,

@@ -5,12 +5,49 @@ GL.Version = GL.Version or {};
 local Version = GL.Version;
 local CommActions = GL.Data.Constants.Comm.Actions;
 
+Version._initialized = false;
 Version.current = GL.version;
 Version.latest = GL.version;
 Version.releases = {};
 Version.isOutOfDate = false;
+Version.firstBoot = false;
 
 Version.GroupMembers = {};
+
+---@return void
+function Version:_init()
+    GL:debug("Version:_init");
+
+    -- No need to initialize this class twice
+    if (self._initialized) then
+        return;
+    end
+
+    -- The user has never used the add-on before (or cleared all SavedVariables)
+    if (not GL.DB.LoadDetails.lastLoadedOn) then
+        GL.firstBoot = true;
+    end
+
+    -- This is the first time the user loads this version
+    if (not GL.DB.LoadDetails[self.current]) then
+        self.firstBoot = true;
+
+        if (not GL.firstBoot) then
+            print(string.format(
+                "|cff%sGargul|r is now updated to |cff%sv%s|r",
+                GL.Data.Constants.addonHexColor,
+                GL.Data.Constants.addonHexColor,
+                self.current
+            ))
+        end
+    end
+
+    local now = GetServerTime();
+    GL.DB.LoadDetails.lastLoadedOn = now;
+    GL.DB.LoadDetails[self.current] = now;
+
+    self._initialized = true;
+end
 
 --- Add a given version string to our knowledgebase
 --- check whether it's newer than anything else we've seen
@@ -22,7 +59,7 @@ function Version:addRelease(versionString)
     GL:debug("Version:addRelease");
 
     if (type(versionString) ~= "string"
-            or not string.match(versionString, "%d+%.%d+%.%d+")
+        or not string.match(versionString, "%d+%.%d+%.%d+")
     ) then
         GL:warning("Invalid version string provided in Version:addRelease");
         return;
