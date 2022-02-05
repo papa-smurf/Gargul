@@ -191,7 +191,7 @@ function DroppedLoot:highlightItemsOfInterest()
                         enableHighlight = true;
                         BorderColor = {.77, .12, .23, 1};  -- Make the border red for hard-reserved items
 
-                        -- The item is soft-reserved
+                    -- The item is soft-reserved
                     elseif (GL.Settings:get("highlightSoftReservedItems")
                         and SoftRes:linkIsReserved(itemLink)
                     ) then

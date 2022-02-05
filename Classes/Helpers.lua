@@ -904,6 +904,7 @@ function GL:strLimit(str, limit, append)
 end
 
 --- Split a string by a given delimiter
+--- WoWLua already has a strsplit function, but it returns multiple arguments instead of a table
 ---
 ---@param s string
 ---@param delimiter string
