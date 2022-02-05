@@ -248,6 +248,7 @@ function MasterLooterDialog:draw()
 
     CheckBoxLabel:SetCallback("OnClick", function()
         AutoOpenCheckbox:ToggleChecked();
+        AutoOpenCheckbox:Fire("OnValueChanged");
     end);
 
     Window:AddChild(CheckBoxLabel);
