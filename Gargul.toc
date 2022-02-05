@@ -37,7 +37,6 @@ Classes/Commands.lua
 Classes/LootPriority.lua
 Classes/AwardedLoot.lua
 Classes/PackMule.lua
-Classes/PackMuleUI.lua
 Classes/DroppedLoot.lua
 Classes/TradeWindow.lua
 Classes/Version.lua
@@ -56,6 +55,8 @@ Interface/Importer.lua
 Interface/Settings/Overview.lua
 Interface/Settings/DroppedLoot.lua
 Interface/Settings/PackMule.lua
+Interface/Settings/PackMuleRules.lua
+Interface/Settings/PackMuleIgnores.lua
 Interface/Settings/TMB.lua
 Interface/Settings/LootTradeTimers.lua
 Interface/Settings/Rolling.lua

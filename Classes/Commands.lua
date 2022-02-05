@@ -105,7 +105,7 @@ GL.Commands = GL.Commands or {
         thatsmybis = function() GL.TMB:draw(); end,
 
         -- Open the pack mule window
-        packmule = function() GL.PackMuleUI:drawSetupWindow(); end,
+        packmule = function() GL.Settings:draw("PackMule"); end,
 
         -- Check if an item ID is ignored by default by PackMule
         packmuleignores = function(...) GL.PackMule:isItemIDIgnored(...); end,
