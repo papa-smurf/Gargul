@@ -31,6 +31,11 @@ function AwardingLoot:draw(Parent)
             setting = "AwardingLoot.announceAwardMessagesInGuildChat",
         },
         {
+            label = "Announce disenchanted items",
+            description = "If enabled Gargul will post a message whenever an item is marked as disenchanted",
+            setting = "PackMule.announceDisenchantedItems",
+        },
+        {
             label = "Auto assign loot",
             description = "Auto assign an item to the winner after awarding an item (with master loot enabled and boss window still open)",
             setting = "AwardingLoot.autoAssignAfterAwardingAnItem",
