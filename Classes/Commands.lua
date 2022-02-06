@@ -130,9 +130,6 @@ GL.Commands = GL.Commands or {
 
         -- Check if everyone is running the most up-to-date version
         buffs = function(...) GL.BuffInspector:inspect(...); end,
-
-        -- Toggle Gargul's testmode
-        test = function(...) GL.testMode = not GL.testMode; end,
     }
 };
 

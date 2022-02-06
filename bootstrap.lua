@@ -10,7 +10,6 @@ GL.firstBoot = false; -- Indicates whether the user is new to Gargul
 GL.isEra = false;
 GL.isRetail = false;
 GL.isClassic = false;
-GL.testMode = false;
 GL.version = GetAddOnMetadata(GL.name, "Version");
 GL.DebugLines = {};
 GL.EventFrame = {};
@@ -117,6 +116,13 @@ function GL:_init()
     -- Makes testing easier for devs
     if (self.User:isDev()) then
         _G.GL = self;
+
+        -- Make sure we keep the command descriptions up-to-date during development
+        for command in pairs(GL.Commands.Dictionary) do
+            if (not GL.Commands.CommandDescriptions[command]) then
+                GL:error("Missing description for command: " .. command);
+            end
+        end
     end
 end
 
