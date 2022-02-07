@@ -93,19 +93,28 @@ end
 --- Check if an item ID is ignored by default by PackMule (displayed in chat)
 ---
 ---@param checkItemID number
+---@param callback function
 ---@return void
-function PackMule:isItemIDIgnored(checkItemID)
+function PackMule:isItemIDIgnored(checkItemID, callback)
     local itemID, _, _, _, _, itemClassID = GetItemInfoInstant(checkItemID)
 
     if (not itemID) then
-        return GL:warning(string.format("Unknown item ID '%s'", checkItemID));
+        if (callback and type(callback) == "function") then
+            return callback(false);
+        end
+
+        return;
     end
 
     GL:onItemLoadDo(itemID, function (Items)
         local Loot = Items[1];
 
         if (not Loot) then
-            return GL:warning(string.format("Unknown item ID '%s'", checkItemID));
+            if (callback and type(callback) == "function") then
+                return callback(false);
+            end
+
+            return;
         end
 
         local bindType = Loot.bindType or LE_ITEM_BIND_NONE;
@@ -117,10 +126,18 @@ function PackMule:isItemIDIgnored(checkItemID)
                 and not GL:inTable(self.itemClassIdsToIgnore, itemClassID) -- Recipes and Quest Items are skipped in quality rules
             )
         ) then
-            return GL:message("This item is NOT ignored!");
+            if (callback and type(callback) == "function") then
+                callback(Loot, false);
+            end
+
+            return false;
         end
 
-        GL:message("This item is ignored!");
+        if (callback and type(callback) == "function") then
+            callback(Loot, true);
+        end
+
+        return true;
     end);
 end
 
