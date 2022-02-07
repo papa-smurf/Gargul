@@ -59,18 +59,41 @@ end
 function Settings:enforceTemporarySettings()
     -- This is reserved for version-based logic (e.g. cleaning up variables, settings etc.)
 
-    --- This is to make sure old TMB imports also have a hash available to them
-    ---@todo remove on >= 01-02-2022
-    if (GL.TMB:available()
-        and GL:empty(GL.DB:get("TMB.MetaData.hash"))
+    -- No point enforcing these temp settings if the user has never used Gargul
+    -- before or has already loaded this version before!
+    if (GL.firstBoot
+        or not GL.Version.firstBoot
     ) then
-        GL.DB:set("TMB.MetaData.hash", GL:uuid() .. GetServerTime());
+        return;
     end
 
     --- This setting was removed in 4.1.0
     ---@todo remove on >= 01-04-2022
-    if (GL:higherThanZero(GL.Settings:get("Rolling.osRollMax", 0))) then
+    if (GL:higherThanZero(GL.Settings:get("Rolling.osRollMax", 0))
+    ) then
         GL.DB.Settings.Rolling.osRollMax = nil;
+    end
+
+    --- The PackMule quality settings where changed in 4.1.3
+    --- Make sure to rewrite old settings so old-time users don't lose anything
+    ---@todo remove on >= 01-04-2022
+    if (not GL:empty(self:get("PackMule.Rules", {}))) then
+        for _, Rule in pairs(self.Active.PackMule.Rules) do
+            if (Rule.operator) then
+                if (Rule.operator == "<="
+                    or Rule.operator == ">="
+                ) then
+                    -- This means the rules were already rewritten
+                    break;
+                elseif (Rule.operator == "<") then
+                    Rule.operator = "<=";
+                    Rule.quality = Rule.quality - 1;
+                elseif (Rule.operator == ">") then
+                    Rule.operator = ">=";
+                    Rule.quality = Rule.quality + 1;
+                end
+            end
+        end
     end
 end
 

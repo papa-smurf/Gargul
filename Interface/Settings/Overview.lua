@@ -18,7 +18,9 @@ GL.Interface.Settings.Overview = {
         {"    Dropped Loot", "DroppedLoot"},
         {"    Roll Tracking", "RollTracking"},
         {"    Awarding Loot", "AwardingLoot"},
-        {"    PackMule", "PackMule"},
+        {"PackMule Autoloot", "PackMule"},
+        {"    Item Rules", "PackMuleRules"},
+        {"    Ignored Items", "PackMuleIgnores"},
         {"Rolling", "Rolling"},
         {"Loot Highlighting", "LootHighlighting"},
         {"SoftRes", "SoftRes"},
@@ -42,7 +44,7 @@ function Overview:draw(section)
     local AceGUI = GL.AceGUI;
 
     if (self.isVisible) then
-        return;
+        return self:showSection(section);
     end
 
     self.isVisible = true;
@@ -103,7 +105,6 @@ function Overview:draw(section)
     FirstColumn:SetHeight(505);
     Window:AddChild(FirstColumn);
 
-    -- Generate the characters table and add it to Window.frame
     self:drawSectionsTable(Window.frame, section);
 
     --[[
@@ -166,6 +167,13 @@ end
 function Overview:close()
     local Window = GL.Interface:getItem(self, "Window");
 
+    -- Some sections require additional cleanup, check if that's the case here
+    if (self.activeSection
+        and type(GL.Interface.Settings[self.activeSection].onClose) == "function"
+    ) then
+        GL.Interface.Settings[self.activeSection]:onClose();
+    end
+
     self.isVisible = false;
     self.previousSection = self.activeSection;
     self.activeSection = nil;
@@ -176,13 +184,19 @@ function Overview:close()
     end
 end
 
+--- Draw the sections table (the left portion of the settings screen)
+---
+---@param Parent table
+---@param section string
+---@return void
 function Overview:drawSectionsTable(Parent, section)
     GL:debug("Overview:drawSectionsTable");
 
     local sectionIndex = self.SectionIndexes[section];
 
+    -- The given section wasn't found
     if (not GL:higherThanZero(sectionIndex)) then
-        return false;
+        return;
     end
 
     local columns = {
@@ -218,6 +232,7 @@ function Overview:drawSectionsTable(Parent, section)
     -- The second argument refers to "isMinimalDataformat"
     -- For the full format see https://www.wowace.com/projects/lib-st/pages/set-data
     Table:SetData(TableData, true);
+    GL.Interface:setItem(self, "Sections", Table);
 end
 
 --- Show a specific setting section
@@ -225,6 +240,7 @@ end
 ---@param section string
 ---@return boolean
 function Overview:showSection(section)
+    section = string.trim(section);
     local sectionIndex = self.SectionIndexes[section];
 
     if (not GL:higherThanZero(sectionIndex)) then
@@ -251,9 +267,9 @@ function Overview:showSection(section)
 
     -- Some sections require additional cleanup, check if that's the case here
     if (self.activeSection
-        and type(GL.Interface.Settings[self.activeSection].hide) == "function"
+        and type(GL.Interface.Settings[self.activeSection].onClose) == "function"
     ) then
-        GL.Interface.Settings[self.activeSection]:hide();
+        GL.Interface.Settings[self.activeSection]:onClose();
     end
 
     GL.Interface:release(self, "ScrollFrame.ScrollFrame");
@@ -261,7 +277,7 @@ function Overview:showSection(section)
     self.activeSection = sectionClassIdentifier;
 
     -- Set the Title of the section (shown top-right)
-    GL.Interface:getItem(self, "Label.Title"):SetText(" " .. SectionEntry[1]);
+    GL.Interface:getItem(self, "Label.Title"):SetText(" " .. strtrim(SectionEntry[1]));
 
     -- Prepare a new ScrollFrame for the section we're about to draw
     local ScrollFrame = GL.AceGUI:Create("ScrollFrame");
@@ -305,6 +321,15 @@ function Overview:showSection(section)
     -- Store the ScrollFrame so that we can clean/release it later
     GL.Interface:setItem(self, "ScrollFrame", ScrollFrame);
 
+    -- Highlight the correct section in the table on the left
+    -- This delay is necessary because of how lib-st handles click and selection events
+    GL.Ace:ScheduleTimer(function ()
+        local Table = GL.Interface:getItem(self, "Table.Sections");
+        if (Table and Table:GetSelection() ~= sectionIndex) then
+            Table:SetSelection(sectionIndex);
+        end
+    end, .1);
+
     return true;
 end
 
@@ -336,6 +361,28 @@ function Overview:drawCheckboxes(Checkboxes, Parent)
         GL.Interface:setItem(GL.Settings, Entry.setting, Checkbox);
         Parent:AddChild(Checkbox);
     end
+end
+
+--- This is a helper method that draws a spacer
+---
+---@param Parent table
+---@param width number|nil
+---@param height number
+---@return void
+function Overview:drawSpacer(Parent, width, height)
+    GL:debug("Overview:drawSpacer");
+
+    local Spacer = GL.AceGUI:Create("SimpleGroup");
+    Spacer:SetLayout("Flow");
+
+    if (width) then
+        Spacer:SetWidth(width);
+    else
+        Spacer:SetFullWidth(true);
+    end
+
+    Spacer:SetHeight(height);
+    Parent:AddChild(Spacer);
 end
 
 GL:debug("Interface/Settings/Overview.lua");

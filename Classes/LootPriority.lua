@@ -174,6 +174,9 @@ function LootPriority:save(data)
         return GL:warning("Invalid data provided");
     end
 
+    -- Some TMB users use newlines in their item priority notes, let's remove those!
+    data = data:gsub("\r\n", "");
+
     -- The user wishes to clear the loot priorities
     if (GL:empty(data)) then
         GL:success("Loot priorities cleared successfully");

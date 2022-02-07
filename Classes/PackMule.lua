@@ -93,19 +93,28 @@ end
 --- Check if an item ID is ignored by default by PackMule (displayed in chat)
 ---
 ---@param checkItemID number
+---@param callback function
 ---@return void
-function PackMule:isItemIDIgnored(checkItemID)
+function PackMule:isItemIDIgnored(checkItemID, callback)
     local itemID, _, _, _, _, itemClassID = GetItemInfoInstant(checkItemID)
 
     if (not itemID) then
-        return GL:warning(string.format("Unknown item ID '%s'", checkItemID));
+        if (callback and type(callback) == "function") then
+            return callback(false);
+        end
+
+        return;
     end
 
     GL:onItemLoadDo(itemID, function (Items)
         local Loot = Items[1];
 
         if (not Loot) then
-            return GL:warning(string.format("Unknown item ID '%s'", checkItemID));
+            if (callback and type(callback) == "function") then
+                return callback(false);
+            end
+
+            return;
         end
 
         local bindType = Loot.bindType or LE_ITEM_BIND_NONE;
@@ -117,10 +126,18 @@ function PackMule:isItemIDIgnored(checkItemID)
                 and not GL:inTable(self.itemClassIdsToIgnore, itemClassID) -- Recipes and Quest Items are skipped in quality rules
             )
         ) then
-            return GL:message("This item is NOT ignored!");
+            if (callback and type(callback) == "function") then
+                callback(Loot, false);
+            end
+
+            return false;
         end
 
-        GL:message("This item is ignored!");
+        if (callback and type(callback) == "function") then
+            callback(Loot, true);
+        end
+
+        return true;
     end);
 end
 
@@ -217,11 +234,6 @@ function PackMule:lootReady()
                     local quality = tonumber(Entry.quality or "");
                     local operator = tostring(Entry.operator or "");
 
-                    -- SELF serves as a placeholder for the current player name
-                    if (target == "SELF") then
-                        target = GL.User.name;
-                    end
-
                     -- The potential target replacement above requires us
                     -- To make a local copy of the current Rule entry
                     local Rule = {
@@ -231,14 +243,21 @@ function PackMule:lootReady()
                         operator = operator,
                     }
 
-                    local ruleItemID = math.floor(tonumber(item) or 0);
+                    -- This is to make sure we support item names, IDs and links
+                    local ruleItemID = math.floor(tonumber(GL:getItemIdFromLink(item)) or 0);
+                    if (not ruleItemID) then
+                        ruleItemID = math.floor(tonumber(item) or 0);
+                    end
+
                     local ruleConcernsItemID = GL:higherThanZero(ruleItemID);
 
                     -- Check if this is a non item-specific rule (aka quality based rule)
                     if (itemQuality and quality and operator and target and (
                         (operator == "=" and itemQuality == quality)
                         or (operator == ">" and itemQuality > quality)
+                        or (operator == ">=" and itemQuality >= quality)
                         or (operator == "<" and itemQuality < quality)
+                        or (operator == "<=" and itemQuality <= quality)
                     )) then
                         local bindType = Loot.bindType or LE_ITEM_BIND_NONE;
                         local bindOnPickup = GL:inTable({ LE_ITEM_BIND_ON_ACQUIRE, LE_ITEM_BIND_QUEST}, bindType);
@@ -267,21 +286,61 @@ function PackMule:lootReady()
                 if (RuleThatApplies
                     and RuleThatApplies.target ~= "IGNORE"
                 ) then
-                    local target = RuleThatApplies.target;
+                    local ruleTarget = strtrim(RuleThatApplies.target);
+                    local Targets = {};
 
                     -- Check whether we need to give the item to a random player
-                    if (target == "RANDOM") then
-                        local GroupMembers = GL.User:groupMembers();
-                        target = GL:tableGet(GroupMembers[math.random( #GroupMembers)] or {}, "name", false);
+                    if (ruleTarget == "RANDOM") then
+                        --target = GL:tableGet(GroupMembers[math.random( #GroupMembers)] or {}, "name", false);
+                        for _, Player in pairs(GL.User:groupMembers()) do
+                            tinsert(Targets, string.lower(Player.name));
+                        end
+                    else
+                        local RuleTargets = GL:strSplit(ruleTarget, " ");
+                        local GroupMemberNames = GL.User:groupMemberNames();
+
+                        for _, ruleTarget in pairs(RuleTargets) do
+                            local targetContainsExclamationMark = strfind(ruleTarget, "!");
+                            ruleTarget = strtrim(ruleTarget);
+                            ruleTarget = ruleTarget:gsub("!", "");
+
+                            -- SELF serves as a placeholder for the current player name
+                            if (ruleTarget == "SELF") then
+                                ruleTarget = GL.User.name;
+                            end
+
+                            -- GroupMemberNames are always in lowercase
+                            if (GL:inTable(GroupMemberNames, string.lower(ruleTarget))) then
+                                -- This is a high prio target, return it and stop checking
+                                if (targetContainsExclamationMark) then
+                                    Targets = {ruleTarget};
+                                    break;
+                                end
+
+                                tinsert(Targets, ruleTarget);
+                            end
+                        end
                     end
 
-                    -- This should be technically impossible, but you never know!
-                    if (not target) then
+                    -- Count the number of potential targets
+                    local numberOfTargets = #Targets;
+
+                    -- There is no potential target for this item!
+                    if (numberOfTargets < 1) then
+                        return;
+                    end
+
+                    -- Fetch a (random) target from the eligible target pool
+                    local target = string.lower(Targets[math.random(numberOfTargets)] or "");
+
+                    -- This should technically be impossible, but you never know!
+                    if (GL:empty(target)) then
                         return;
                     end
 
                     for playerIndex = 1, GetNumGroupMembers() do
-                        if (GetMasterLootCandidate(itemIndex, playerIndex) == target) then
+                        -- Make sure to do a case-insensitive check
+                        if (string.lower(GetMasterLootCandidate(itemIndex, playerIndex) or "") == target) then
                             GiveMasterLoot(itemIndex, playerIndex);
                             return;
                         end
@@ -388,7 +447,7 @@ function PackMule:ruleIsValid(Rule)
     -- If there's an operator then it has to be valid and there has to be a quality
     if (Rule.operator
         and (
-            not GL:inTable({"=", "<", ">"}, Rule.operator)
+            not GL:inTable({"=", "<", "<=", ">", ">="}, Rule.operator)
             or not Rule.quality
             or type(Rule.quality) ~= "number"
         )
