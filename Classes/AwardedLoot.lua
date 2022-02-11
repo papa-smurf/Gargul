@@ -247,6 +247,11 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS)
     ) then
         AwardedLoot:initiateTrade(AwardEntry);
     end
+
+    -- If awarded to us, update points
+    if (winner == GL.User.name and not isOS) then
+        GL.StackedRoll:awardedLoot();
+    end
 end
 
 --- Return items won by the given player (with optional `after` timestamp)
@@ -444,6 +449,11 @@ function AwardedLoot:processAwardedLoot(CommMessage)
         received = AwardEntry.received,
         OS = AwardEntry.OS,
     });
+
+    -- If awarded to us, update points
+    if (AwardEntry.awardedTo == GL.User.name and not AwardEntry.OS) then
+        GL.StackedRoll:awardedLoot();
+    end
 end
 
 

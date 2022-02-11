@@ -65,14 +65,23 @@ GL.Data.DefaultSettings = {
     RollTracking = {
         trackAll = false,
         Brackets = {
-            {"MS", 1, 100, 1},
-            {"OS", 1, 99, 2},
+            {"MS", 1, 100, 2},
+            {"OS", 1, 99, 3},
         },
     },
     SoftRes = {
         announceInfoInChat = true,
         enableTooltips = true,
         hideInfoOfPeopleNotInGroup = true,
+    },
+    StackedRoll = {
+        enabled = false,
+        priority = 1,
+        identifier = "PR",
+        reserveThreshold = 180,
+        currentPoints = 0,
+        raidUpdateReminder = true,
+        itemUpdateReminder = true,
     },
     TMB = {
         automaticallyShareData = false,

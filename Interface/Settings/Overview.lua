@@ -22,6 +22,7 @@ GL.Interface.Settings.Overview = {
         {"    Item Rules", "PackMuleRules"},
         {"    Ignored Items", "PackMuleIgnores"},
         {"Rolling", "Rolling"},
+        {"Stacked Roll", "StackedRoll"},
         {"Loot Highlighting", "LootHighlighting"},
         {"SoftRes", "SoftRes"},
         {"TMB", "TMB"},

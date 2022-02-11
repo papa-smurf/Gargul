@@ -68,7 +68,11 @@ function RollerUI:draw(time, itemId, itemLink, itemIcon, note, SupportedRolls)
     };
     local RollButtons = {};
     local numberOfButtons = #SupportedRolls;
-    for i = 1, numberOfButtons do
+    local numberOfDynamicButtons = numberOfButtons;
+    if (GL.Settings:get("StackedRoll.enabled")) then
+        numberOfButtons = numberOfButtons + 1;
+    end
+    for i = 1, numberOfDynamicButtons do
         local RollDetails = SupportedRolls[i] or {};
 
         local identifier = string.sub(RollDetails[1] or "", 1, 3);
@@ -79,6 +83,37 @@ function RollerUI:draw(time, itemId, itemLink, itemIcon, note, SupportedRolls)
         if (GL:empty(identifier)) then
             break;
         end
+
+        -- Roll button
+        local Button = CreateFrame("Button", nil, Window, "GameMenuButtonTemplate");
+        Button:SetSize(RollButtonWidthByAmount[numberOfButtons], 20);
+        Button:SetText(identifier);
+        Button:SetNormalFontObject("GameFontNormal");
+        Button:SetHighlightFontObject("GameFontNormal");
+        Button:SetScript("OnClick", function ()
+            RandomRoll(min, max);
+
+            if (GL.Settings:get("Rolling.closeAfterRoll")) then
+                self:hide();
+            end
+        end);
+
+        if (i == 1) then
+            Button:SetPoint("TOPLEFT", Window, "TOPLEFT", 2, -1);
+        else
+            Button:SetPoint("TOPLEFT", RollButtons[i - 1], "TOPRIGHT", 1, 0);
+        end
+
+        tinsert(RollButtons, Button);
+    end
+
+    -- Add Prio Roll
+    if (GL.Settings:get("StackedRoll.enabled")) then
+        local i = numberOfButtons;
+        local identifier = string.sub(GL.Settings:get("StackedRoll.identifier"), 1, 3);
+        local points = GL.Settings:get("StackedRoll.currentPoints");
+        local min = GL.StackedRoll:minStackedRoll(points);
+        local max = GL.StackedRoll:maxStackedRoll(points);
 
         -- Roll button
         local Button = CreateFrame("Button", nil, Window, "GameMenuButtonTemplate");

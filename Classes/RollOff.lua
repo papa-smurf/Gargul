@@ -484,6 +484,16 @@ function RollOff:processRoll(message)
             return false;
         end)();
 
+        --- Check for stacked rolls
+        if (not RollType
+            and GL.Settings:get("StackedRoll.enabled")
+            and GL.StackedRoll:isStackedRoll(low, high)
+        ) then
+            RollType = {};
+            RollType[1] = GL.Settings:get("StackedRoll.identifier");
+            RollType[4] = GL.Settings:get("StackedRoll.priority");
+        end
+
         --- Invalid roll range provided
         if (not RollType
             and not GL.Settings:get("RollTracking.trackAll")
