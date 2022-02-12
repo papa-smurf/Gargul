@@ -44,6 +44,9 @@ function SoftRes:_init()
     GameTooltip:HookScript("OnTooltipSetItem", function(tooltip)
         self:appendSoftReserveInfoToTooltip(tooltip);
     end);
+    ItemRefTooltip:HookScript("OnTooltipSetItem", function(tooltip)
+        self:appendSoftReserveInfoToTooltip(tooltip);
+    end);
 
     GL.Events:register("SoftResUserJoinedGroupListener", "GL.USER_JOINED_GROUP", function () self:requestData(); end);
 

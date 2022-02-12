@@ -24,6 +24,9 @@ function LootPriority:_init()
     GameTooltip:HookScript("OnTooltipSetItem", function(tooltip)
         self:appendLootPrioToTooltip(tooltip);
     end);
+    ItemRefTooltip:HookScript("OnTooltipSetItem", function(tooltip)
+        self:appendLootPrioToTooltip(tooltip);
+    end);
 
     self._initialized = true;
 end

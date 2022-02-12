@@ -27,6 +27,9 @@ function TMB:_init()
     GameTooltip:HookScript("OnTooltipSetItem", function(tooltip)
         self:appendTMBItemInfoToTooltip(tooltip);
     end);
+    ItemRefTooltip:HookScript("OnTooltipSetItem", function(tooltip)
+        self:appendTMBItemInfoToTooltip(tooltip);
+    end);
 
     GL.Events:register("TMBUserJoinedGroupListener", "GL.USER_JOINED_GROUP", function () self:requestData(); end);
 
