@@ -15,11 +15,6 @@ function StackedRoll:_init()
         return false;
     end
 
-    -- Bind the appendStackedRollItemInfoToTooltip method to the OnTooltipSetItem event
-    GameTooltip:HookScript("OnTooltipSetItem", function(tooltip)
-        self:appendStackedRollItemInfoToTooltip(tooltip);
-    end);
-
     GL.Events:register("StackedRollUserJoinedRaidListener", "GL.USER_JOINED_RAID", function () self:userJoinedRaid(); end);
 
     self._initialized = true;
