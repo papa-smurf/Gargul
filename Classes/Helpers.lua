@@ -925,6 +925,21 @@ function GL:strSplit(s, delimiter)
     return Result;
 end
 
+--- Split a string by any space characters or commas
+--- This is useful for CSV, TSV files and pasted tables from Google Docs
+---
+---@param s string
+---@return table
+function GL:separateValues(s)
+    local Segments = {};
+
+    for match in string.gmatch(s, "[^%s,]+") do
+        tinsert(Segments, match);
+    end
+
+    return Segments;
+end
+
 --- Turn a given wow pattern into something we can use in string.match
 ---
 ---@param pattern string

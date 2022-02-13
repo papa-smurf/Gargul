@@ -161,6 +161,15 @@ function Award:draw(itemLink)
                 end
             end
 
+            local stackedRollCostEditBox = GL.Interface:getItem(GL.Interface.Dialogs.AwardDialog, "EditBox.Cost");
+            if (stackedRollCostEditBox) then
+                local cost = GL.StackedRoll:toPoints(stackedRollCostEditBox:GetText());
+
+                if (cost) then
+                    GL.StackedRoll:modifyPoints(roller, -cost);
+                end
+            end
+
             -- Add the player we awarded the item to to the item's tooltip
             GL.AwardedLoot:addWinner(winner, itemLink, nil, nil, isOS, addPlusOneCheckBox);
             GL.Interface.Award:reset();

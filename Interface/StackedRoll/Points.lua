@@ -9,22 +9,25 @@ local AceGUI = GL.AceGUI;
 GL.Interface.Points = {
     isVisible = false,
     points = 0,
+    playerName = nil,
 };
 local Points = GL.Interface.Points; ---@type PointsInterface
+local StackedRoll = GL.StackedRoll; ---@type StackedRoll
 
 ---@return void
-function Points:draw()
+function Points:draw(playerName)
     GL:debug("Points:draw");
 
-    if (self.isVisible) then
+    if (self.isVisible or not playerName) then
         return;
     end
 
     self.isVisible = true;
-    self.points = GL.Settings:get("StackedRoll.currentPoints");
+    self.playerName = string.lower(playerName);
+    self.points = StackedRoll:getPoints(playerName, 0);
     local points = self.points;
-    local rollPoints = math.min(GL.Settings:get("StackedRoll.reserveThreshold"), GL.Settings:get("StackedRoll.currentPoints"));
-    local reserve = math.max(0, GL.Settings:get("StackedRoll.currentPoints") - GL.Settings:get("StackedRoll.reserveThreshold"));
+    local rollPoints = StackedRoll:rollPoints(points);
+    local reserve = StackedRoll:reserve(points);
 
     -- Create a container/parent frame
     local Window = AceGUI:Create("Frame");
@@ -54,10 +57,17 @@ function Points:draw()
     PrevDescription:SetFontObject(_G["GameFontNormal"]);
     PrevDescription:SetFullWidth(true);
     PrevDescription:SetJustifyH("CENTER");
-    PrevDescription:SetText(string.format(
-        "Previous Points: |cff%s%s|r Previous Reserve: |cff%s%s|r",
-        GL:classHexColor("paladin"), rollPoints, GL:classHexColor("paladin"), reserve
-    ));
+    if (not playerName) then
+        PrevDescription:SetText(string.format(
+            "Previous Points: |cff%s%s|r Previous Reserve: |cff%s%s|r",
+            GL:classHexColor("paladin"), rollPoints, GL:classHexColor("paladin"), reserve
+        ));
+    else
+        PrevDescription:SetText(string.format(
+            "Player Name: |cff%s%s|r\nPrevious Points: |cff%s%s|r Previous Reserve: |cff%s%s|r",
+            GL:classHexColor("paladin"), GL:capitalize(playerName), GL:classHexColor("paladin"), rollPoints, GL:classHexColor("paladin"), reserve
+        ));
+    end
     PrevDescriptionFrame:AddChild(PrevDescription);
 
     local UpdateFrame = AceGUI:Create("SimpleGroup");
@@ -78,7 +88,7 @@ function Points:draw()
     local StackedRollCurrentPoints = GL.AceGUI:Create("EditBox");
     StackedRollCurrentPoints:DisableButton(true);
     StackedRollCurrentPoints:SetHeight(20);
-    DecrementButton:SetWidth(100);
+    StackedRollCurrentPoints:SetWidth(100);
     StackedRollCurrentPoints:SetText(points);
     StackedRollCurrentPoints:SetLabel(string.format(
         "|cff%sUpdated points:|r",
@@ -138,8 +148,9 @@ function Points:draw()
     ConfirmButton:SetWidth(140);
     ConfirmButton:SetHeight(20);
     ConfirmButton:SetCallback("OnClick", function()
-        GL.Settings:set("StackedRoll.currentPoints", self.points);
+        GL.StackedRoll:setPoints(self.playerName, self.points);
         self:close();
+        GL.StackedRoll:draw();
     end);
 
     Window:AddChild(ConfirmButton);
@@ -170,9 +181,8 @@ function Points:updatePoints(points, updateEditBox)
     self.points = points;
 
     -- Update interface.
-    local threshold = GL.Settings:get("StackedRoll.reserveThreshold");
-    local rollPoints = math.min(threshold, points);
-    local reserve = math.max(0, points - threshold);
+    local rollPoints = StackedRoll:rollPoints(points);
+    local reserve = StackedRoll:reserve(points);
 
     if updateEditBox then
         GL.Interface:getItem(self, "EditBox.CurrentPoints"):SetText(points);

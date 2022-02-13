@@ -31,21 +31,31 @@ PopupDialog.CLEAR_SOFTRES_CONFIRMATION = {
    end,
 }
 
--- Import new soft-reserve data confirmation
-PopupDialog.NEW_SOFTRES_IMPORT_CONFIRMATION = {
-    question = "Are you sure you want to clear your existing soft-reserves and import new data?",
-    OnYes = function ()
-        GL.Interface.Importer:close();
-        GL.SoftRes:clear();
-        GL.SoftRes:draw();
-    end,
-}
-
 -- Broadcast soft-reserve data confirmation
 PopupDialog.BROADCAST_SOFTRES_CONFIRMATION = {
     question = "Are you sure you want to broadcast your softres data to everyone in your party/raid?",
     OnYes = function ()
         GL.SoftRes:broadcast();
+    end,
+}
+
+-- Clear stacked roll data confirmation
+PopupDialog.CLEAR_STACKEDROLL_CONFIRMATION = {
+    question = "Are you sure you want to clear all stacked roll data?",
+    OnYes = function ()
+        GL.Interface.StackedRoll.Overview:close();
+        GL.StackedRoll:clear();
+        GL.StackedRoll:draw();
+   end,
+}
+
+-- Import new stacked roll data confirmation
+PopupDialog.NEW_STACKEDROLL_IMPORT_CONFIRMATION = {
+    question = "Are you sure you want to clear your existing stacked rolls and import new data?",
+    OnYes = function ()
+        GL.Interface.StackedRoll.Importer:close();
+        GL.StackedRoll:clear();
+        GL.StackedRoll:draw();
     end,
 }
 

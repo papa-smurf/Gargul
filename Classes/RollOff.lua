@@ -52,16 +52,59 @@ function RollOff:announceStart(itemLink, time, note)
 
     self:listenForRolls();
 
-    GL.CommMessage.new(
-        CommActions.startRollOff,
-        {
+    --- If stacked rolls are enabled, send individually instead.
+    if (GL.StackedRoll:enabled()
+        and GL.StackedRoll:available()
+    ) then
+        --- Generate generic part of message first
+        local Players = GL.User:groupMembers();
+
+        --- Create a copy of the supported rolls data
+        local SupportedRolls = {};
+        for _, Entry in pairs(GL.Settings:get("RollTracking.Brackets", {}) or {}) do
+            tinsert(SupportedRolls, Entry);
+        end
+        --- Add stacked rolls
+        local stackedRollIdentifier = string.sub(GL.Settings:get("StackedRoll.identifier"), 1, 3);
+        --- @todo: Add an additional field to the stacked roll settings for later false-positive detection
+        local stackedRollSettings = { stackedRollIdentifier, 1, 1, GL.Settings:get("StackedRoll.priority") };
+        tinsert(SupportedRolls, stackedRollSettings);
+        local stackedRollIndex = #SupportedRolls;
+
+        local msg = {
             item = itemLink,
             time = time,
             note = note,
-            SupportedRolls = GL.Settings:get("RollTracking.Brackets", {}) or {},
-        },
-        "GROUP"
-    ):send();
+            SupportedRolls = SupportedRolls,
+        };
+
+        for _, player in pairs(Players) do
+            -- Then update for each player
+            local points = GL.StackedRoll:getPoints(player.name, 0);
+            local low = GL.StackedRoll:minStackedRoll(points);
+            local high = GL.StackedRoll:maxStackedRoll(points);
+            msg.SupportedRolls[stackedRollIndex][2] = low;
+            msg.SupportedRolls[stackedRollIndex][3] = high;
+
+            GL.CommMessage.new(
+                CommActions.startRollOff,
+                msg,
+                "WHISPER",
+                player.name
+            ):send();
+        end
+    else
+        GL.CommMessage.new(
+            CommActions.startRollOff,
+            {
+                item = itemLink,
+                time = time,
+                note = note,
+                SupportedRolls = GL.Settings:get("RollTracking.Brackets", {}) or {},
+            },
+            "GROUP"
+        ):send();
+    end
 
     GL.Settings:set("UI.RollOff.timer", time);
 
@@ -356,6 +399,15 @@ function RollOff:award(roller, itemLink, osRoll)
                     end
                 end
 
+                local stackedRollCostEditBox = GL.Interface:getItem(GL.Interface.Dialogs.AwardDialog, "EditBox.Cost");
+                if (stackedRollCostEditBox) then
+                    local cost = GL.StackedRoll:toPoints(stackedRollCostEditBox:GetText());
+
+                    if (cost) then
+                        GL.StackedRoll:modifyPoints(roller, -cost);
+                    end
+                end
+
                 -- Add the player we awarded the item to to the item's tooltip
                 GL.AwardedLoot:addWinner(roller, itemLink, nil, nil, isOS, addPlusOneCheckBox);
 
@@ -395,6 +447,15 @@ function RollOff:award(roller, itemLink, osRoll)
 
                     if (addPlusOne) then
                         GL.PlusOnes:add(roller);
+                    end
+                end
+
+                local stackedRollCostEditBox = GL.Interface:getItem(GL.Interface.Dialogs.AwardDialog, "EditBox.Cost");
+                if (stackedRollCostEditBox) then
+                    local cost = GL.StackedRoll:toPoints(stackedRollCostEditBox:GetText());
+
+                    if (cost) then
+                        GL.StackedRoll:modifyPoints(roller, -cost);
                     end
                 end
 
@@ -485,13 +546,20 @@ function RollOff:processRoll(message)
         end)();
 
         --- Check for stacked rolls
+        --- @todo: Take into account pre-announcement
         if (not RollType
-            and GL.Settings:get("StackedRoll.enabled")
+            and GL.StackedRoll:enabled()
+            and GL.StackedRoll:available()
             and GL.StackedRoll:isStackedRoll(low, high)
         ) then
-            RollType = {};
-            RollType[1] = GL.Settings:get("StackedRoll.identifier");
-            RollType[4] = GL.Settings:get("StackedRoll.priority");
+            local points = GL.StackedRoll:getPoints(roller, 0);
+            local actualLow = GL.StackedRoll:minStackedRoll(points);
+            local actualHigh = GL.StackedRoll:maxStackedRoll(points);
+            if (low == actualLow and high == actualHigh) then
+                RollType = {};
+                RollType[1] = GL.Settings:get("StackedRoll.identifier");
+                RollType[4] = GL.Settings:get("StackedRoll.priority");
+            end
         end
 
         --- Invalid roll range provided

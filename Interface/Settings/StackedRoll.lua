@@ -20,16 +20,6 @@ function StackedRoll:draw(Parent)
             description = "When enabled, the stacked roll button will be displayed in the rolling window",
             setting = "StackedRoll.enabled",
         },
-        {
-            label = "Raid reminder",
-            description = "When enabled, the points update window will automatically be opened when joining a raid group",
-            setting = "StackedRoll.raidUpdateReminder",
-        },
-        {
-            label = "Item reminder",
-            description = "When enabled, the points update window will automatically be opened when being awarded an item",
-            setting = "StackedRoll.itemUpdateReminder",
-        },
     };
 
     Overview:drawCheckboxes(Checkboxes, Parent);
@@ -106,39 +96,13 @@ function StackedRoll:draw(Parent)
     end);
     Parent:AddChild(StackedRollReserveThreshold);
 
-    HorizontalSpacer = GL.AceGUI:Create("SimpleGroup");
-    HorizontalSpacer:SetLayout("FILL");
-    HorizontalSpacer:SetFullWidth(true);
-    HorizontalSpacer:SetHeight(15);
-    Parent:AddChild(HorizontalSpacer);
-
-    local StackedRollCurrentPoints = GL.AceGUI:Create("EditBox");
-    StackedRollCurrentPoints:DisableButton(true);
-    StackedRollCurrentPoints:SetHeight(20);
-    StackedRollCurrentPoints:SetFullWidth(true);
-    StackedRollCurrentPoints:SetText(GL.Settings:get("StackedRoll.currentPoints"));
-    StackedRollCurrentPoints:SetLabel(string.format(
-        "|cff%sThe current points (including the reserve).|r",
-        GL:classHexColor("rogue")
-    ));
-    StackedRollCurrentPoints:SetCallback("OnTextChanged", function (self)
-        local value = GL.StackedRoll:toPoints(strtrim(self:GetText()));
-
-        if not value then
-            return;
-        end
-
-        GL.Settings:set("StackedRoll.currentPoints", value);
-    end);
-    Parent:AddChild(StackedRollCurrentPoints);
-
-    local OpenPointModifier = GL.AceGUI:Create("Button");
-    OpenPointModifier:SetText("Open Points Window");
-    OpenPointModifier:SetCallback("OnClick", function()
+    local OpenDataButton = GL.AceGUI:Create("Button");
+    OpenDataButton:SetText("Open Stacked Rolls Data");
+    OpenDataButton:SetCallback("OnClick", function()
         GL.Settings:close();
         GL.Commands:call("points");
     end);
-    Parent:AddChild(OpenPointModifier);
+    Parent:AddChild(OpenDataButton);
 end
 
 GL:debug("Interface/Settings/StackedRoll.lua");

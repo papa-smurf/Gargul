@@ -95,7 +95,7 @@ GL.Commands = GL.Commands or {
         plusones = function() GL.Interface.PlusOnes.Overview:draw(); end,
 
         -- Open the points window
-        points = function() GL.Interface.Points:draw(); end,
+        points = function() GL.StackedRoll:draw(); end,
 
         -- Clear the disenchanter
         cleardisenchanter = function () GL.PackMule:clearDisenchanter(); end,

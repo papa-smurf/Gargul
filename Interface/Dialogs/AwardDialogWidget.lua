@@ -255,6 +255,25 @@ local function constructor()
 
     OptionsFrame:AddChild(OffSpecLabel);
 
+    if (GL.StackedRoll:enabled()) then
+        -- Stacked Roll cost label
+        local CostLabel = AceGUI:Create("Label");
+        CostLabel:SetFontObject(_G["GameFontNormal"]);
+        CostLabel:SetWidth(90);
+        CostLabel:SetText("SR Cost");
+        OptionsFrame:AddChild(CostLabel);
+
+        -- Stacked Roll cost
+        local StackedRollCostEditBox = GL.AceGUI:Create("EditBox");
+        StackedRollCostEditBox:DisableButton(true);
+        StackedRollCostEditBox:SetHeight(20);
+        StackedRollCostEditBox:SetWidth(60);
+        StackedRollCostEditBox:SetText("0");
+        StackedRollCostEditBox:SetLabel("");
+        OptionsFrame:AddChild(StackedRollCostEditBox);
+        GL.Interface:setItem(GL.Interface.Dialogs.AwardDialog, "Cost", StackedRollCostEditBox);
+    end
+
     HorizontalSpacer = AceGUI:Create("SimpleGroup");
     HorizontalSpacer:SetLayout("FILL");
     HorizontalSpacer:SetFullWidth(true);

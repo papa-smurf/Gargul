@@ -79,9 +79,6 @@ GL.Data.DefaultSettings = {
         priority = 1,
         identifier = "PR",
         reserveThreshold = 180,
-        currentPoints = 0,
-        raidUpdateReminder = true,
-        itemUpdateReminder = true,
     },
     TMB = {
         automaticallyShareData = false,
