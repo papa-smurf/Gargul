@@ -241,7 +241,11 @@ function Overview:drawCharacterTable(Parent)
     for playerName, Entry in pairs(PlayerData) do
         local rollPoints = StackedRoll:rollPoints(Entry.points);
         local reserve = StackedRoll:reserve(Entry.points);
-        local aliases = table.concat(Entry.Aliases, ",");
+        local aliases = {};
+        for _, aliasName in pairs(Entry.Aliases) do
+            tinsert(aliases, GL:capitalize(aliasName));
+        end
+        local aliases = table.concat(aliases, ",");
 
         local StackedRollColor = {r=0,g=1,b=0,a=1};
 

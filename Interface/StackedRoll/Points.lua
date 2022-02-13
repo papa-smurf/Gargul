@@ -76,6 +76,12 @@ function Points:draw(playerName)
     UpdateFrame:SetHeight(25);
     Window:AddChild(UpdateFrame);
 
+    local VerticalSpacer = AceGUI:Create("SimpleGroup");
+    VerticalSpacer:SetLayout("FILL");
+    VerticalSpacer:SetWidth(20);
+    VerticalSpacer:SetHeight(20);
+    UpdateFrame:AddChild(VerticalSpacer);
+
     local DecrementButton = AceGUI:Create("Button");
     DecrementButton:SetText("-10");
     DecrementButton:SetWidth(80);
@@ -88,7 +94,7 @@ function Points:draw(playerName)
     local StackedRollCurrentPoints = GL.AceGUI:Create("EditBox");
     StackedRollCurrentPoints:DisableButton(true);
     StackedRollCurrentPoints:SetHeight(20);
-    StackedRollCurrentPoints:SetWidth(100);
+    StackedRollCurrentPoints:SetWidth(200);
     StackedRollCurrentPoints:SetText(points);
     StackedRollCurrentPoints:SetLabel(string.format(
         "|cff%sUpdated points:|r",

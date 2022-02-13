@@ -255,12 +255,24 @@ local function constructor()
 
     OptionsFrame:AddChild(OffSpecLabel);
 
+    HorizontalSpacer = AceGUI:Create("SimpleGroup");
+    HorizontalSpacer:SetLayout("FILL");
+    HorizontalSpacer:SetFullWidth(true);
+    HorizontalSpacer:SetHeight(8);
+    OptionsFrame:AddChild(HorizontalSpacer);
+
     if (GL.StackedRoll:enabled()) then
+        VerticalSpacer = AceGUI:Create("SimpleGroup");
+        VerticalSpacer:SetLayout("FILL");
+        VerticalSpacer:SetWidth(77);
+        VerticalSpacer:SetHeight(10);
+        OptionsFrame:AddChild(VerticalSpacer);
+
         -- Stacked Roll cost label
         local CostLabel = AceGUI:Create("Label");
         CostLabel:SetFontObject(_G["GameFontNormal"]);
-        CostLabel:SetWidth(90);
-        CostLabel:SetText("SR Cost");
+        CostLabel:SetWidth(58);
+        CostLabel:SetText("SR Cost:");
         OptionsFrame:AddChild(CostLabel);
 
         -- Stacked Roll cost
