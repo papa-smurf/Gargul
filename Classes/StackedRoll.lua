@@ -185,6 +185,10 @@ end
 ---@return void
 function StackedRoll:getPoints(name, default)
     GL:debug("StackedRoll:getPoints");
+    if (type(name) ~= "string") then
+        return default;
+    end
+
     local normalizedName = string.lower(name);
     --- Follow alias table if present
     if (DB.StackedRoll.Aliases[normalizedName]) then
@@ -204,6 +208,10 @@ end
 ---@return void
 function StackedRoll:setPoints(name, points)
     GL:debug("StackedRoll:setPoints");
+    if (type(name) ~= "string") then
+        return;
+    end
+
     local normalizedName = string.lower(name);
     --- Follow alias table if present
     if (DB.StackedRoll.Aliases[normalizedName]) then
@@ -222,6 +230,10 @@ end
 ---@return void
 function StackedRoll:modifyPoints(name, change)
     GL:debug("StackedRoll:modifyPoints");
+    if (type(name) ~= "string") then
+        return;
+    end
+
     local normalizedName = string.lower(name);
     --- Follow alias table if present
     if (DB.StackedRoll.Aliases[normalizedName]) then
