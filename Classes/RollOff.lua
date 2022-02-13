@@ -375,6 +375,7 @@ function RollOff:award(roller, itemLink, osRoll)
     itemLink = GL:tableGet(self.CurrentRollOff, "itemLink", itemLink);
 
     local isOS, addPlusOne = false;
+    local cost = nil;
 
     if (GL:nameIsUnique(roller)) then
         -- Make sure the initiator has to confirm his choices
@@ -401,7 +402,7 @@ function RollOff:award(roller, itemLink, osRoll)
 
                 local stackedRollCostEditBox = GL.Interface:getItem(GL.Interface.Dialogs.AwardDialog, "EditBox.Cost");
                 if (stackedRollCostEditBox) then
-                    local cost = GL.StackedRoll:toPoints(stackedRollCostEditBox:GetText());
+                    cost = GL.StackedRoll:toPoints(stackedRollCostEditBox:GetText());
 
                     if (cost) then
                         GL.StackedRoll:modifyPoints(roller, -cost);
@@ -409,7 +410,7 @@ function RollOff:award(roller, itemLink, osRoll)
                 end
 
                 -- Add the player we awarded the item to to the item's tooltip
-                GL.AwardedLoot:addWinner(roller, itemLink, nil, nil, isOS, addPlusOneCheckBox);
+                GL.AwardedLoot:addWinner(roller, itemLink, nil, nil, isOS, cost);
 
                 self:reset();
                 GL.MasterLooterUI:reset();
@@ -452,7 +453,7 @@ function RollOff:award(roller, itemLink, osRoll)
 
                 local stackedRollCostEditBox = GL.Interface:getItem(GL.Interface.Dialogs.AwardDialog, "EditBox.Cost");
                 if (stackedRollCostEditBox) then
-                    local cost = GL.StackedRoll:toPoints(stackedRollCostEditBox:GetText());
+                    cost = GL.StackedRoll:toPoints(stackedRollCostEditBox:GetText());
 
                     if (cost) then
                         GL.StackedRoll:modifyPoints(roller, -cost);
@@ -460,7 +461,7 @@ function RollOff:award(roller, itemLink, osRoll)
                 end
 
                 -- Add the player we awarded the item to to the item's tooltip
-                GL.AwardedLoot:addWinner(roller, itemLink, nil, nil, isOS, addPlusOneCheckBox);
+                GL.AwardedLoot:addWinner(roller, itemLink, nil, nil, isOS, cost);
 
                 self:reset();
                 GL.MasterLooterUI:reset();

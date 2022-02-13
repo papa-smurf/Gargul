@@ -146,6 +146,7 @@ function Award:draw(itemLink)
 
         local award = function ()
             local isOS, addPlusOne = false;
+            local cost = nil;
 
             local OSCheckBox = GL.Interface:getItem(GL.Interface.Dialogs.AwardDialog, "CheckBox.OffSpec");
             if (OSCheckBox) then
@@ -163,7 +164,7 @@ function Award:draw(itemLink)
 
             local stackedRollCostEditBox = GL.Interface:getItem(GL.Interface.Dialogs.AwardDialog, "EditBox.Cost");
             if (stackedRollCostEditBox) then
-                local cost = GL.StackedRoll:toPoints(stackedRollCostEditBox:GetText());
+                cost = GL.StackedRoll:toPoints(stackedRollCostEditBox:GetText());
 
                 if (cost) then
                     GL.StackedRoll:modifyPoints(roller, -cost);
@@ -171,7 +172,7 @@ function Award:draw(itemLink)
             end
 
             -- Add the player we awarded the item to to the item's tooltip
-            GL.AwardedLoot:addWinner(winner, itemLink, nil, nil, isOS, addPlusOneCheckBox);
+            GL.AwardedLoot:addWinner(winner, itemLink, nil, nil, isOS, cost);
             GL.Interface.Award:reset();
 
             if (Settings:get("UI.Award.closeOnAward", true)) then

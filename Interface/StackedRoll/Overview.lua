@@ -193,27 +193,6 @@ function Overview:drawCharacterTable(Parent)
     local PlayerData = {};
     local FqnNames = {};
 
-    -- Go through everyone in the raid!
-    if (GL.User.isInGroup) then
-        for _, Player in pairs(GL.User:groupMembers()) do
-            local playerName = string.lower(Player.name);
-
-            if (GL.isEra and not strfind(playerName, "-")) then
-                playerName = string.format("%s-%s", playerName, GL.User.realm);
-            end
-
-            PlayerData[playerName] = {
-                class = Player.class,
-                points = 0,
-                Aliases = {},
-            }
-
-            if (GL.isEra) then
-                GL:tableSet(FqnNames, GL:stripRealm(playerName) .. "." .. string.lower(Player.class), playerName);
-            end
-        end
-    end
-
     -- We can't do a direct assignment because we want to edit this table in a bit
     for playerName, Entry in pairs(StackedRoll.MaterializedData.DetailsByPlayerName) do
 

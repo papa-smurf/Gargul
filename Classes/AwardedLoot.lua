@@ -109,7 +109,7 @@ end
 ---@param isOS boolean|nil
 ---@param addPlusOne boolean|nil
 ---@return void
-function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS)
+function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, cost)
     GL:debug("AwardedLoot:addWinner");
 
     -- Determine whether the item should be flagged as off-spec
@@ -204,10 +204,19 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS)
     end
 
     if (announce) then
-        local awardMessage = string.format("%s was awarded to %s. Congrats!",
-            itemLink,
-            winner
-        );
+        local awardMessage = "";
+        if (GL.StackedRoll:enabled() and cost) then
+            awardMessage = string.format("%s was awarded to %s for %s points. Congrats!",
+                itemLink,
+                winner,
+                cost
+            );
+        else
+            awardMessage = string.format("%s was awarded to %s. Congrats!",
+                itemLink,
+                winner
+            );
+        end
 
         -- Announce awarded item on RAID or RAID_WARNING
         GL:sendChatMessage(
