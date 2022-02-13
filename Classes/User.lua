@@ -146,6 +146,7 @@ function User:refresh()
         and not userWasInRaid
         and self.isInRaid
     ) then
+        GL.Events:fire("GL.USER_JOINED_GROUP");
         GL.Events:fire("GL.USER_JOINED_RAID");
     end
 

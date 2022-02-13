@@ -65,9 +65,9 @@ function RollOff:announceStart(itemLink, time, note)
             tinsert(SupportedRolls, Entry);
         end
         --- Add stacked rolls
-        local stackedRollIdentifier = string.sub(GL.Settings:get("StackedRoll.identifier"), 1, 3);
+        local stackedRollIdentifier = string.sub(GL.Settings:get("StackedRoll.identifier", "ST"), 1, 3);
         --- @todo: Add an additional field to the stacked roll settings for later false-positive detection
-        local stackedRollSettings = { stackedRollIdentifier, 1, 1, GL.Settings:get("StackedRoll.priority") };
+        local stackedRollSettings = { stackedRollIdentifier, 1, 1, GL.Settings:get("StackedRoll.priority", 1) };
         tinsert(SupportedRolls, stackedRollSettings);
         local stackedRollIndex = #SupportedRolls;
 
@@ -557,9 +557,10 @@ function RollOff:processRoll(message)
             local actualLow = GL.StackedRoll:minStackedRoll(points);
             local actualHigh = GL.StackedRoll:maxStackedRoll(points);
             if (low == actualLow and high == actualHigh) then
-                RollType = {};
-                RollType[1] = GL.Settings:get("StackedRoll.identifier");
-                RollType[4] = GL.Settings:get("StackedRoll.priority");
+                RollType = {
+                    [1] = GL.Settings:get("StackedRoll.identifier", "ST"),
+                    [4] = GL.Settings:get("StackedRoll.priority", 1),
+                };
             end
         end
 

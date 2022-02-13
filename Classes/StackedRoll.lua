@@ -32,7 +32,7 @@ end
 function StackedRoll:enabled()
     GL:debug("StackedRoll:enabled");
 
-    return GL.Settings:get("StackedRoll.enabled");
+    return GL.Settings:get("StackedRoll.enabled", false);
 end
 
 --- Check whether there are stacked rolls available
@@ -106,7 +106,7 @@ end
 --- Format a stacked roll.
 ---
 ---@param points any
----@return number
+---@return number if valid, else nil
 function StackedRoll:toPoints(points)
     points = tonumber(points);
 
@@ -123,7 +123,7 @@ end;
 ---@param points number
 ---@return number
 function StackedRoll:rollPoints(points)
-    return math.min(GL.Settings:get("StackedRoll.reserveThreshold"), points);
+    return math.min(GL.Settings:get("StackedRoll.reserveThreshold", 0), points);
 end;
 
 --- Calculate reserve from points.
@@ -131,7 +131,7 @@ end;
 ---@param points number
 ---@return number
 function StackedRoll:reserve(points)
-    return math.max(0, points - GL.Settings:get("StackedRoll.reserveThreshold"));
+    return math.max(0, points - GL.Settings:get("StackedRoll.reserveThreshold", 0));
 end;
 
 --- Calculate max roll from points.
@@ -139,7 +139,7 @@ end;
 ---@param points number
 ---@return number
 function StackedRoll:maxStackedRoll(points)
-    return math.max(1, math.min(GL.Settings:get("StackedRoll.reserveThreshold"), points));
+    return math.max(1, math.min(GL.Settings:get("StackedRoll.reserveThreshold", 0), points));
 end;
 
 --- Calculate min roll from points.
@@ -152,21 +152,18 @@ end;
 
 --- Detect stacked rolls.
 ---
----@param min number
----@param max number
+---@param low number
+---@param high number
 ---@return boolean
 function StackedRoll:isStackedRoll(low, high)
-    local threshold = GL.Settings:get("StackedRoll.reserveThreshold");
+    local threshold = GL.Settings:get("StackedRoll.reserveThreshold", 0);
     --- Check maximum.
     if (self:maxStackedRoll(high) ~= high or high > threshold) then
         return false;
     end
 
     --- Check minimum.
-    if (self:minStackedRoll(high) ~= low) then
-        return false;
-    end
-    return true;
+    return self:minStackedRoll(high) == low;
 end;
 
 --- Clear all stacked roll data

@@ -35,7 +35,7 @@ function StackedRoll:draw(Parent)
     SortingPriority:SetHeight(20);
     SortingPriority:SetFullWidth(true);
     SortingPriority:SetMaxLetters(1);
-    SortingPriority:SetText(GL.Settings:get("StackedRoll.priority"));
+    SortingPriority:SetText(GL.Settings:get("StackedRoll.priority", 1));
     SortingPriority:SetLabel(string.format(
         "|cff%sThe 'Priority' field determines how rolls will be sorted in the roll tracking table (priority 1 is the highest priority).|r",
         GL:classHexColor("rogue")
@@ -58,7 +58,7 @@ function StackedRoll:draw(Parent)
     StackedRollIdentifier:SetHeight(20);
     StackedRollIdentifier:SetFullWidth(true);
     StackedRollIdentifier:SetMaxLetters(3);
-    StackedRollIdentifier:SetText(GL.Settings:get("StackedRoll.identifier"));
+    StackedRollIdentifier:SetText(GL.Settings:get("StackedRoll.identifier", "ST"));
     StackedRollIdentifier:SetLabel(string.format(
         "|cff%sThe 'Identifier' is the text shown on the button (maximum 3 characters).|r",
         GL:classHexColor("rogue")
@@ -80,7 +80,7 @@ function StackedRoll:draw(Parent)
     StackedRollReserveThreshold:DisableButton(true);
     StackedRollReserveThreshold:SetHeight(20);
     StackedRollReserveThreshold:SetFullWidth(true);
-    StackedRollReserveThreshold:SetText(GL.Settings:get("StackedRoll.reserveThreshold"));
+    StackedRollReserveThreshold:SetText(GL.Settings:get("StackedRoll.reserveThreshold", 0));
     StackedRollReserveThreshold:SetLabel(string.format(
         "|cff%sThe maximum roll, everything above is the 'reserve'.|r",
         GL:classHexColor("rogue")

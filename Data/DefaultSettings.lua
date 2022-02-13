@@ -77,7 +77,7 @@ GL.Data.DefaultSettings = {
     StackedRoll = {
         enabled = false,
         priority = 1,
-        identifier = "PR",
+        identifier = "ST",
         reserveThreshold = 180,
     },
     TMB = {
