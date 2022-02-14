@@ -79,6 +79,9 @@ GL.Data.DefaultSettings = {
         priority = 1,
         identifier = "ST",
         reserveThreshold = 180,
+        defaultPoints = 100,
+        defaultCost = 10,
+        defaultStep = 10,
     },
     TMB = {
         automaticallyShareData = false,

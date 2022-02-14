@@ -183,8 +183,10 @@ end
 ---@param name string
 ---@param points number
 ---@return void
-function StackedRoll:getPoints(name, default)
+function StackedRoll:getPoints(name)
     GL:debug("StackedRoll:getPoints");
+    local default = GL.Settings:get("StackedRoll.defaultPoints", 0);
+
     if (type(name) ~= "string") then
         return default;
     end

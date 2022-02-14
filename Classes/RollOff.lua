@@ -80,7 +80,7 @@ function RollOff:announceStart(itemLink, time, note)
 
         for _, player in pairs(Players) do
             -- Then update for each player
-            local points = GL.StackedRoll:getPoints(player.name, 0);
+            local points = GL.StackedRoll:getPoints(player.name);
             local low = GL.StackedRoll:minStackedRoll(points);
             local high = GL.StackedRoll:maxStackedRoll(points);
             msg.SupportedRolls[stackedRollIndex][2] = low;
@@ -362,7 +362,7 @@ function RollOff:stop(CommMessage)
 end
 
 -- Award the item to one of the rollers
-function RollOff:award(roller, itemLink, osRoll)
+function RollOff:award(roller, itemLink, osRoll, stackedRoll)
     GL:debug("RollOff:award");
 
     -- If the roller has a roll number suffixed to his name
@@ -376,6 +376,10 @@ function RollOff:award(roller, itemLink, osRoll)
 
     local isOS, addPlusOne = false;
     local cost = nil;
+
+    if (stackedRoll) then
+        cost = GL.Settings:get("StackedRoll.defaultCost", 0);
+    end
 
     if (GL:nameIsUnique(roller)) then
         -- Make sure the initiator has to confirm his choices
@@ -421,6 +425,7 @@ function RollOff:award(roller, itemLink, osRoll)
                 end
             end,
             checkOS = osRoll,
+            stackedRollCost = cost,
         });
 
         return;
@@ -474,6 +479,7 @@ function RollOff:award(roller, itemLink, osRoll)
                 GL.Interface.PlayerSelector:close();
             end,
             checkOS = osRoll,
+            stackedRollCost = cost,
         });
     end);
 end
@@ -553,7 +559,7 @@ function RollOff:processRoll(message)
             and GL.StackedRoll:available()
             and GL.StackedRoll:isStackedRoll(low, high)
         ) then
-            local points = GL.StackedRoll:getPoints(roller, 0);
+            local points = GL.StackedRoll:getPoints(roller);
             local actualLow = GL.StackedRoll:minStackedRoll(points);
             local actualHigh = GL.StackedRoll:maxStackedRoll(points);
             if (low == actualLow and high == actualHigh) then

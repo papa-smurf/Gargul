@@ -96,6 +96,66 @@ function StackedRoll:draw(Parent)
     end);
     Parent:AddChild(StackedRollReserveThreshold);
 
+    local StackedRollDefaultPoints = GL.AceGUI:Create("EditBox");
+    StackedRollDefaultPoints:DisableButton(true);
+    StackedRollDefaultPoints:SetHeight(20);
+    StackedRollDefaultPoints:SetFullWidth(true);
+    StackedRollDefaultPoints:SetText(GL.Settings:get("StackedRoll.defaultPoints", 0));
+    StackedRollDefaultPoints:SetLabel(string.format(
+        "|cff%sThe default points assigned to players.|r",
+        GL:classHexColor("rogue")
+    ));
+    StackedRollDefaultPoints:SetCallback("OnTextChanged", function (self)
+        local value = GL.StackedRoll:toPoints(strtrim(self:GetText()));
+
+        if not value then
+            return;
+        end
+
+        GL.Settings:set("StackedRoll.defaultPoints", value);
+    end);
+    Parent:AddChild(StackedRollDefaultPoints);
+
+    local StackedRollDefaultCost = GL.AceGUI:Create("EditBox");
+    StackedRollDefaultCost:DisableButton(true);
+    StackedRollDefaultCost:SetHeight(20);
+    StackedRollDefaultCost:SetFullWidth(true);
+    StackedRollDefaultCost:SetText(GL.Settings:get("StackedRoll.defaultCost", 0));
+    StackedRollDefaultCost:SetLabel(string.format(
+        "|cff%sThe default cost for items awarded (can be changed when awarding it).|r",
+        GL:classHexColor("rogue")
+    ));
+    StackedRollDefaultCost:SetCallback("OnTextChanged", function (self)
+        local value = GL.StackedRoll:toPoints(strtrim(self:GetText()));
+
+        if not value then
+            return;
+        end
+
+        GL.Settings:set("StackedRoll.defaultCost", value);
+    end);
+    Parent:AddChild(StackedRollDefaultCost);
+
+    local StackedRollDefaultStep = GL.AceGUI:Create("EditBox");
+    StackedRollDefaultStep:DisableButton(true);
+    StackedRollDefaultStep:SetHeight(20);
+    StackedRollDefaultStep:SetFullWidth(true);
+    StackedRollDefaultStep:SetText(GL.Settings:get("StackedRoll.defaultStep", 0));
+    StackedRollDefaultStep:SetLabel(string.format(
+        "|cff%sThe default step when modifying points.|r",
+        GL:classHexColor("rogue")
+    ));
+    StackedRollDefaultStep:SetCallback("OnTextChanged", function (self)
+        local value = GL.StackedRoll:toPoints(strtrim(self:GetText()));
+
+        if not value then
+            return;
+        end
+
+        GL.Settings:set("StackedRoll.defaultStep", value);
+    end);
+    Parent:AddChild(StackedRollDefaultStep);
+
     local OpenDataButton = GL.AceGUI:Create("Button");
     OpenDataButton:SetText("Open Stacked Rolls Data");
     OpenDataButton:SetCallback("OnClick", function()

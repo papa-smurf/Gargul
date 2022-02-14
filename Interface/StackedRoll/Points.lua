@@ -24,10 +24,11 @@ function Points:draw(playerName)
 
     self.isVisible = true;
     self.playerName = string.lower(playerName);
-    self.points = StackedRoll:getPoints(playerName, 0);
+    self.points = StackedRoll:getPoints(playerName);
     local points = self.points;
     local rollPoints = StackedRoll:rollPoints(points);
     local reserve = StackedRoll:reserve(points);
+    local step = GL.Settings:get("StackedRoll.defaultStep", 10);
 
     -- Create a container/parent frame
     local Window = AceGUI:Create("Frame");
@@ -83,11 +84,11 @@ function Points:draw(playerName)
     UpdateFrame:AddChild(VerticalSpacer);
 
     local DecrementButton = AceGUI:Create("Button");
-    DecrementButton:SetText("-10");
+    DecrementButton:SetText("-"..step);
     DecrementButton:SetWidth(80);
     DecrementButton:SetHeight(20);
     DecrementButton:SetCallback("OnClick", function()
-        self:updatePoints(self.points - 10, true);
+        self:updatePoints(self.points - step, true);
     end);
     UpdateFrame:AddChild(DecrementButton);
 
@@ -124,11 +125,11 @@ function Points:draw(playerName)
     GL.Interface:setItem(self, "CurrentPoints", StackedRollCurrentPoints);
 
     local IncrementButton = AceGUI:Create("Button");
-    IncrementButton:SetText("+10");
+    IncrementButton:SetText("+"..step);
     IncrementButton:SetWidth(80);
     IncrementButton:SetHeight(20);
     IncrementButton:SetCallback("OnClick", function()
-        self:updatePoints(self.points + 10, true);
+        self:updatePoints(self.points + step, true);
     end);
     UpdateFrame:AddChild(IncrementButton);
 

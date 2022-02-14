@@ -36,7 +36,7 @@ function AwardDialog:open(Dialog)
     end
 
     if (Dialog.stackedRollCost) then
-        local StackedRollCostEditBox = GL.Interface:getItem(self, "CheckBox.Cost");
+        local StackedRollCostEditBox = GL.Interface:getItem(self, "EditBox.Cost");
 
         if (StackedRollCostEditBox) then
             StackedRollCostEditBox:SetText(Dialog.stackedRollCost);
