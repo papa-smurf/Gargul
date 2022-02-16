@@ -20,6 +20,13 @@ function StackedRoll:_init()
         return false;
     end
 
+    --- Register listener for whisper command.
+    GL.Events:register("StackedRollWhisperListener", "CHAT_MSG_WHISPER", function (event, message, sender)
+        if (GL.Settings:get("StackedRoll.enableWhisperCommand", false)) then
+            self:handleWhisperCommand(event, message, sender);
+        end
+    end);
+
     self:materializeData();
 
     self._initialized = true;
@@ -59,6 +66,39 @@ function StackedRoll:draw()
 
     -- Show the stacked roll overview instead
     GL.Interface.StackedRoll.Overview:draw();
+end
+
+--- Checks and handles whisper commands if enabled.
+---
+---@param event string
+---@param message string
+---@return void
+function StackedRoll:handleWhisperCommand(event, message, sender)
+    if (GL:strStartsWith(message, "!rollbonus") or GL:strStartsWith(message, "!rb")) then
+        local args = GL:strSplit(message, " ");
+        -- See if name is given.
+        if (#args > 1) then
+            local name = string.lower(args[2]);
+            local points = self:getPoints(name);
+            local low = self:minStackedRoll(points);
+            local high = self:maxStackedRoll(points);
+            GL:sendChatMessage(
+                string.format("Player %s's stacked roll is /rnd %d-%d", GL:capitalize(name), low, high),
+                "WHISPER", nil, sender
+            );
+            return;
+        end
+
+        -- @todo: Era server support
+        local name = string.lower(GL:stripRealm(sender));
+        local points = self:getPoints(name);
+        local low = self:minStackedRoll(points);
+        local high = self:maxStackedRoll(points);
+        GL:sendChatMessage(
+            string.format("Your stacked roll is /rnd %d-%d", low, high),
+            "WHISPER", nil, sender
+        );
+    end
 end
 
 --- Materialize the stacked roll data to make it more accessible during runtime

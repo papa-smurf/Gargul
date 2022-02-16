@@ -82,6 +82,7 @@ GL.Data.DefaultSettings = {
         defaultPoints = 100,
         defaultCost = 10,
         defaultStep = 10,
+        enableWhisperCommand = true,
     },
     TMB = {
         automaticallyShareData = false,

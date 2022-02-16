@@ -16,9 +16,17 @@ function StackedRoll:draw(Parent)
     local HorizontalSpacer;
     local Checkboxes = {
         {
-            label = "Enable stacked rolls",
+            label = "Enable stacked rolls feature",
             description = "When enabled, the stacked roll button will be displayed in the rolling window",
             setting = "StackedRoll.enabled",
+        },
+        {
+            label = "Enable whisper command",
+            description = string.format(
+                "When enabled, players can whisper '|cff%s!rollbonus [<name>]|r' or '|cff%s!rb [<name>]|r to the master looter to get the current stacked roll for this name in response. If no name is given, their own stacked roll is given.",
+                GL:classHexColor("rogue"), GL:classHexColor("rogue")
+            ),
+            setting = "StackedRoll.enableWhisperCommand",
         },
     };
 
