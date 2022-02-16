@@ -78,24 +78,30 @@ function StackedRoll:handleWhisperCommand(event, message, sender)
         local args = GL:strSplit(message, " ");
         -- See if name is given.
         if (#args > 1) then
-            local name = string.lower(args[2]);
+            local name = GL:normalizedName(args[2]);
             local points = self:getPoints(name);
             local low = self:minStackedRoll(points);
             local high = self:maxStackedRoll(points);
+            local ext = "";
+            if (not self:hasPoints(name)) then
+                ext = " (default)";
+            end
             GL:sendChatMessage(
-                string.format("Player %s's stacked roll is /rnd %d-%d", GL:capitalize(name), low, high),
+                string.format("Player %s's stacked roll is /rnd %d-%d%s", GL:capitalize(name), low, high, ext),
                 "WHISPER", nil, sender
             );
             return;
         end
 
-        -- @todo: Era server support
-        local name = string.lower(GL:stripRealm(sender));
-        local points = self:getPoints(name);
+        local points = self:getPoints(sender);
         local low = self:minStackedRoll(points);
         local high = self:maxStackedRoll(points);
+        local ext = "";
+        if (not self:hasPoints(name)) then
+            ext = " (default)";
+        end
         GL:sendChatMessage(
-            string.format("Your stacked roll is /rnd %d-%d", low, high),
+            string.format("Your stacked roll is /rnd %d-%d%s", low, high, ext),
             "WHISPER", nil, sender
         );
     end
@@ -112,7 +118,7 @@ function StackedRoll:materializeData()
 
     --- Create entries from points data
     for name, points in pairs(DB:get("StackedRoll.Points", {})) do
-        local name = string.lower(name or "");
+        local name = GL:normalizedName(name or "");
         local points = self:toPoints(points or 0);
 
         if (type(name) == "string"
@@ -128,8 +134,8 @@ function StackedRoll:materializeData()
 
     --- Add aliases
     for alias, main in pairs(DB:get("StackedRoll.Aliases", {})) do
-        local alias = string.lower(alias or "");
-        local main = string.lower(main or "");
+        local alias = GL:normalizedName(alias or "");
+        local main = GL:normalizedName(main or "");
 
         if (type(alias) == "string" and type(main) == "string"
             and not GL:empty(alias) and not GL:empty(main)
@@ -218,10 +224,32 @@ function StackedRoll:clear()
     GL.Interface.StackedRoll.Overview:close();
 end
 
+--- Determine if a player is present in the table
+---
+---@param name string
+---@return boolean
+function StackedRoll:hasPoints(name)
+    GL:debug("StackedRoll:hasPoints");
+    
+    if (type(name) ~= "string") then
+        return false;
+    end
+
+    local normalizedName = GL:normalizedName(name);
+    --- Follow alias table if present
+    if (DB.StackedRoll.Aliases[normalizedName]) then
+        normalizedName = DB.StackedRoll.Aliases[normalizedName];
+    end
+    if (self.MaterializedData.DetailsByPlayerName[normalizedName]) then
+        return true;
+    end
+
+    return false;
+end
+
 --- Get a player's points
 ---
 ---@param name string
----@param points number
 ---@return void
 function StackedRoll:getPoints(name)
     GL:debug("StackedRoll:getPoints");
@@ -231,7 +259,7 @@ function StackedRoll:getPoints(name)
         return default;
     end
 
-    local normalizedName = string.lower(name);
+    local normalizedName = GL:normalizedName(name);
     --- Follow alias table if present
     if (DB.StackedRoll.Aliases[normalizedName]) then
         normalizedName = DB.StackedRoll.Aliases[normalizedName];
@@ -254,7 +282,7 @@ function StackedRoll:setPoints(name, points)
         return;
     end
 
-    local normalizedName = string.lower(name);
+    local normalizedName = GL:normalizedName(name);
     --- Follow alias table if present
     if (DB.StackedRoll.Aliases[normalizedName]) then
         normalizedName = DB.StackedRoll.Aliases[normalizedName];
@@ -276,7 +304,7 @@ function StackedRoll:modifyPoints(name, change)
         return;
     end
 
-    local normalizedName = string.lower(name);
+    local normalizedName = GL:normalizedName(name);
     --- Follow alias table if present
     if (DB.StackedRoll.Aliases[normalizedName]) then
         normalizedName = DB.StackedRoll.Aliases[normalizedName];
@@ -313,7 +341,7 @@ function StackedRoll:import(data, openOverview)
         local Segments = GL:separateValues(line);
         
         local playerName = tostring(Segments[1]);
-        playerName = string.lower(playerName);
+        playerName = GL:normalizedName(playerName);
         local points = self:toPoints(Segments[2]);
 
         if (not GL:empty(playerName) and not Points[playerName] and points) then
@@ -322,7 +350,7 @@ function StackedRoll:import(data, openOverview)
             --- Import further segments as aliases (twink names)
             for i = 3, #Segments do
                 local alias = tostring(Segments[i]);
-                alias = string.lower(alias);
+                alias = GL:normalizedName(alias);
                 if (not GL:empty(alias) and not Points[alias] and not Aliases[alias]) then
                     Aliases[alias] = playerName;
                 end
