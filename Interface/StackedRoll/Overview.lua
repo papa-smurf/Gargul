@@ -42,7 +42,7 @@ function Overview:draw()
     Window:SetTitle("Gargul v" .. GL.version);
     Window:SetLayout("Flow");
     Window:SetWidth(600);
-    Window:SetHeight(410);
+    Window:SetHeight(490);
     Window:EnableResize(false);
     Window.statustext:GetParent():Show(); -- Explicitely show the statustext bar
     Window:SetCallback("OnClose", function()
@@ -63,6 +63,20 @@ function Overview:draw()
     tinsert(UISpecialFrames, "GARGUL_STACKEDROLL_OVERVIEW_WINDOW");
 
     --[[
+        SHARE BUTTON
+    ]]
+    local ShareButton = GL.UI:createShareButton(
+            Window.frame,
+            function ()
+                GL.Interface.Dialogs.PopupDialog:open("BROADCAST_SOFTRES_CONFIRMATION");
+            end,
+            "Broadcast Data",
+            "To broadcast you need to be in a group and need master loot, assist or lead!"
+    );
+    GL.Interface:setItem(self, "ShareButton", ShareButton);
+    ShareButton:Show();
+
+    --[[
         FIRST COLUMN (character table / hard reserve counter)
     ]]
     local DataColumn = AceGUI:Create("SimpleGroup");
@@ -77,6 +91,118 @@ function Overview:draw()
     DataColumnVerticalSpacer:SetHeight(294);
     DataColumn:AddChild(DataColumnVerticalSpacer);
 
+    local HorizontalSpacer = AceGUI:Create("SimpleGroup");
+    HorizontalSpacer:SetLayout("FILL")
+    HorizontalSpacer:SetFullWidth(true);
+    HorizontalSpacer:SetHeight(10);
+    Window:AddChild(HorizontalSpacer);
+
+    --[[
+        PLAYER FRAME
+    ]]
+    local step = GL.Settings:get("StackedRoll.defaultStep", 10);
+    local PlayerFrame = AceGUI:Create("SimpleGroup");
+    PlayerFrame:SetLayout("FLOW")
+    PlayerFrame:SetFullWidth(true);
+    PlayerFrame:SetHeight(20);
+    Window:AddChild(PlayerFrame);
+
+    local PlayerNameLabel = AceGUI:Create("Label");
+    PlayerNameLabel:SetFontObject(_G["GameFontNormal"]);
+    PlayerNameLabel:SetWidth(100);
+    PlayerNameLabel:SetJustifyH("LEFT");
+    PlayerNameLabel:SetText(string.format(
+            "|cff%s%s|r",
+            GL:classHexColor("paladin"), "Someone"
+        ));
+    PlayerFrame:AddChild(PlayerNameLabel);
+
+    local DecrementButton = AceGUI:Create("Button");
+    DecrementButton:SetText("-"..step);
+    DecrementButton:SetWidth(60);
+    DecrementButton:SetHeight(20);
+    DecrementButton:SetCallback("OnClick", function()
+        self:updatePoints(self.points - step, true);
+    end);
+    PlayerFrame:AddChild(DecrementButton);
+
+    local StackedRollCurrentPoints = GL.AceGUI:Create("EditBox");
+    StackedRollCurrentPoints:DisableButton(true);
+    StackedRollCurrentPoints:SetHeight(20);
+    StackedRollCurrentPoints:SetWidth(100);
+    StackedRollCurrentPoints:SetText(100);
+    StackedRollCurrentPoints:SetCallback("OnTextChanged", function (widget)
+        local value = GL.StackedRoll:toPoints(strtrim(widget:GetText()));
+
+        if not value then
+            return;
+        end
+
+        -- Update
+        self:updatePoints(value, false);
+    end);
+    StackedRollCurrentPoints:SetCallback("OnEnterPressed", function (widget)
+        local value = GL.StackedRoll:toPoints(strtrim(widget:GetText()));
+
+        if not value then
+            return;
+        end
+
+        -- Update
+        self:updatePoints(value, true);
+    end);
+    PlayerFrame:AddChild(StackedRollCurrentPoints);
+    GL.Interface:setItem(self, "CurrentPoints", StackedRollCurrentPoints);
+
+    local IncrementButton = AceGUI:Create("Button");
+    IncrementButton:SetText("+"..step);
+    IncrementButton:SetWidth(60);
+    IncrementButton:SetHeight(20);
+    IncrementButton:SetCallback("OnClick", function()
+        self:updatePoints(self.points + step, true);
+    end);
+    PlayerFrame:AddChild(IncrementButton);
+
+    HorizontalSpacer = AceGUI:Create("SimpleGroup");
+    HorizontalSpacer:SetLayout("FILL")
+    HorizontalSpacer:SetWidth(15);
+    HorizontalSpacer:SetHeight(20);
+    PlayerFrame:AddChild(HorizontalSpacer);
+
+    local DeleteButton = AceGUI:Create("Button");
+    DeleteButton:SetText("Delete entry");
+    DeleteButton:SetWidth(120);
+    DeleteButton:SetCallback("OnClick", function()
+        self:updatePoints(self.points + step, true);
+    end);
+    PlayerFrame:AddChild(DeleteButton);
+
+    local AliasesFrame = AceGUI:Create("SimpleGroup");
+    AliasesFrame:SetLayout("FLOW")
+    AliasesFrame:SetFullWidth(true);
+    AliasesFrame:SetHeight(20);
+    Window:AddChild(AliasesFrame);
+
+    local AliasesLabel = AceGUI:Create("Label");
+    AliasesLabel:SetFontObject(_G["GameFontNormalSmall"]);
+    AliasesLabel:SetWidth(100);
+    AliasesLabel:SetJustifyH("RIGHT");
+    AliasesLabel:SetText("Aliases: ");
+    AliasesFrame:AddChild(AliasesLabel);
+
+    local AliasesEditBox = GL.AceGUI:Create("EditBox");
+    AliasesEditBox:DisableButton(true);
+    AliasesEditBox:SetHeight(20);
+    AliasesEditBox:SetWidth(220);
+    AliasesEditBox:SetText("Test");
+    AliasesFrame:AddChild(AliasesEditBox);
+
+    local VerticalSpacer = AceGUI:Create("SimpleGroup");
+    VerticalSpacer:SetLayout("FILL");
+    VerticalSpacer:SetFullWidth(true);
+    VerticalSpacer:SetHeight(15);
+    Window:AddChild(VerticalSpacer);
+
     --[[
         BUTTONS FRAME
     ]]
@@ -85,24 +211,35 @@ function Overview:draw()
     ButtonFrame:SetFullWidth(true);
     Window:AddChild(ButtonFrame);
 
-    local ModifyPointsButton = AceGUI:Create("Button");
-    ModifyPointsButton:SetText("Modify Points");
-    ModifyPointsButton:SetWidth(141); -- Minimum is 106
-    ModifyPointsButton:SetCallback("OnClick", function()
+    local ClearDataButton = AceGUI:Create("Button");
+    ClearDataButton:SetText("Clear Data");
+    ClearDataButton:SetWidth(102);
+    ClearDataButton:SetCallback("OnClick", function()
+        GL.Interface.Dialogs.PopupDialog:open("CLEAR_STACKEDROLL_CONFIRMATION");
+    end);
+    ButtonFrame:AddChild(ClearDataButton);
+
+    local ImportButton = AceGUI:Create("Button");
+    ImportButton:SetText("Import");
+    ImportButton:SetWidth(80);
+    ImportButton:SetCallback("OnClick", function()
         if (self.selectedCharacter) then
             self:close();
             GL.Interface.Points:draw(self.selectedCharacter);
         end
     end);
-    ButtonFrame:AddChild(ModifyPointsButton);
+    ButtonFrame:AddChild(ImportButton);
 
-    local ClearDataButton = AceGUI:Create("Button");
-    ClearDataButton:SetText("Clear Data");
-    ClearDataButton:SetWidth(141); -- Minimum is 102
-    ClearDataButton:SetCallback("OnClick", function()
-        GL.Interface.Dialogs.PopupDialog:open("CLEAR_STACKEDROLL_CONFIRMATION");
+    local AddRaidersButton = AceGUI:Create("Button");
+    AddRaidersButton:SetText("Add missing raiders");
+    AddRaidersButton:SetWidth(165);
+    AddRaidersButton:SetCallback("OnClick", function()
+        if (self.selectedCharacter) then
+            self:close();
+            GL.Interface.Points:draw(self.selectedCharacter);
+        end
     end);
-    ButtonFrame:AddChild(ClearDataButton);
+    ButtonFrame:AddChild(AddRaidersButton);
 
     self:drawCharacterTable(DataColumn.frame);
 end
@@ -152,7 +289,7 @@ function Overview:drawCharacterTable(Parent)
         },
         {
             name = "Aliases",
-            width = 262,
+            width = 302,
             align = "LEFT",
             color = {
                 r = 0.5,
@@ -166,7 +303,7 @@ function Overview:drawCharacterTable(Parent)
 
     local Table = ScrollingTable:CreateST(columns, 14, 20, nil, Parent);
     Table:EnableSelection(true);
-    Table:SetWidth(490);
+    Table:SetWidth(530);
     Table.frame:SetPoint("TOPLEFT", Parent, "TOPLEFT", 0, -18);
 
     Table:RegisterEvents({
@@ -224,7 +361,7 @@ function Overview:drawCharacterTable(Parent)
         for _, aliasName in pairs(Entry.Aliases) do
             tinsert(aliases, GL:capitalize(aliasName));
         end
-        local aliases = table.concat(aliases, ",");
+        aliases = table.concat(aliases, ",");
 
         local StackedRollColor = {r=0,g=1,b=0,a=1};
 

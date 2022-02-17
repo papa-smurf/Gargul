@@ -387,5 +387,35 @@ function StackedRoll:import(data, openOverview)
     return true;
 end
 
+--- Export to CSV
+---
+---@return void
+function StackedRoll:export()
+    GL:debug("StackedRoll:export");
+
+    -- Calculate max aliases to output a CSV compliant string
+    local numAliases = 0;
+    for _, Entry in self.MaterializedData.DetailsByPlayerName do
+        numAliases = math.max(numAliases, #Entry.Aliases);
+    end
+    
+    -- Create CSV string
+    local csv = "";
+    for name, Entry in self.MaterializedData.DetailsByPlayerName do
+        csv = csv..name..","..Entry.points;
+        
+        -- Always add maximum aliases
+        for i = 1,numAliases do
+            csv = csv..",";
+            if (Entry.Aliases[i]) then
+                csv = csv..Entry.Aliases[i];
+            end
+        end
+        csv = csv.."\n";
+    end
+
+    GL:frameMessage(csv);
+end
+
 
 GL:debug("StackedRoll.lua");
