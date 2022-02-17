@@ -53,8 +53,10 @@ PopupDialog.CLEAR_STACKEDROLL_CONFIRMATION = {
 PopupDialog.NEW_STACKEDROLL_IMPORT_CONFIRMATION = {
     question = "Are you sure you want to clear your existing stacked rolls and import new data?",
     OnYes = function ()
+        GL.Interface.StackedRoll.Importer:import();
+    end,
+    OnNo = function ()
         GL.Interface.StackedRoll.Importer:close();
-        GL.StackedRoll:clear();
         GL.StackedRoll:draw();
     end,
 }

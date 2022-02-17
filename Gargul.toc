@@ -78,7 +78,6 @@ Interface/TMB/Overview.lua
 Interface/PlusOnes/OverView.lua
 Interface/TradeWindow/TimeLeft.lua
 Interface/PlayerSelector.lua
-Interface/StackedRoll/Points.lua
 Interface/StackedRoll/Importer.lua
 Interface/StackedRoll/Overview.lua
 Interface/MinimapButton.lua

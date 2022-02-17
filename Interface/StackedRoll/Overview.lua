@@ -13,6 +13,7 @@ local StackedRoll = GL.StackedRoll; ---@type StackedRoll
 GL:tableSet(GL, "Interface.StackedRoll.Overview", {
     isVisible = false,
     selectedCharacter = nil,
+    points = 0,
 });
 
 ---@class StackedRollOverview
@@ -36,6 +37,8 @@ function Overview:draw()
     end
 
     self.isVisible = true;
+    self.selectedCharacter = nil;
+    self.points = 0;
 
     -- Create a container/parent frame
     local Window = AceGUI:Create("Frame");
@@ -52,11 +55,14 @@ function Overview:draw()
 
     Window:SetPoint(GL.Interface:getPosition("StackedRollOverview"));
 
-    Window:SetStatusText(string.format(
-        "Imported on |c00a79eff%s|r at |c00a79eff%s|r",
-        date('%Y-%m-%d', GL:tableGet(DB.StackedRoll, "MetaData.importedAt", GetServerTime())),
-        date('%H:%M', GL:tableGet(DB.StackedRoll, "MetaData.importedAt", GetServerTime()))
-    ));
+    local importedAt = GL:tableGet(DB.StackedRoll, "MetaData.importedAt", GetServerTime());
+    if (GL:higherThanZero(importedAt)) then
+        Window:SetStatusText(string.format(
+            "Imported on |c00a79eff%s|r at |c00a79eff%s|r",
+            date('%Y-%m-%d', importedAt),
+            date('%H:%M', importedAt)
+        ));
+    end
 
     -- Make sure the window can be closed by pressing the escape button
     _G["GARGUL_STACKEDROLL_OVERVIEW_WINDOW"] = Window.frame;
@@ -101,6 +107,7 @@ function Overview:draw()
         PLAYER FRAME
     ]]
     local step = GL.Settings:get("StackedRoll.defaultStep", 10);
+
     local PlayerFrame = AceGUI:Create("SimpleGroup");
     PlayerFrame:SetLayout("FLOW")
     PlayerFrame:SetFullWidth(true);
@@ -113,9 +120,10 @@ function Overview:draw()
     PlayerNameLabel:SetJustifyH("LEFT");
     PlayerNameLabel:SetText(string.format(
             "|cff%s%s|r",
-            GL:classHexColor("paladin"), "Someone"
+            GL:classHexColor(), "None"
         ));
     PlayerFrame:AddChild(PlayerNameLabel);
+    GL.Interface:setItem(self, "PlayerName", PlayerNameLabel);
 
     local DecrementButton = AceGUI:Create("Button");
     DecrementButton:SetText("-"..step);
@@ -141,16 +149,6 @@ function Overview:draw()
         -- Update
         self:updatePoints(value, false);
     end);
-    StackedRollCurrentPoints:SetCallback("OnEnterPressed", function (widget)
-        local value = GL.StackedRoll:toPoints(strtrim(widget:GetText()));
-
-        if not value then
-            return;
-        end
-
-        -- Update
-        self:updatePoints(value, true);
-    end);
     PlayerFrame:AddChild(StackedRollCurrentPoints);
     GL.Interface:setItem(self, "CurrentPoints", StackedRollCurrentPoints);
 
@@ -173,7 +171,7 @@ function Overview:draw()
     DeleteButton:SetText("Delete entry");
     DeleteButton:SetWidth(120);
     DeleteButton:SetCallback("OnClick", function()
-        self:updatePoints(self.points + step, true);
+        self:deleteEntry();
     end);
     PlayerFrame:AddChild(DeleteButton);
 
@@ -195,7 +193,12 @@ function Overview:draw()
     AliasesEditBox:SetHeight(20);
     AliasesEditBox:SetWidth(220);
     AliasesEditBox:SetText("Test");
+    AliasesEditBox:SetCallback("OnTextChanged", function (widget)
+        -- Update
+        self:updateAliases(strtrim(widget:GetText()));
+    end);
     AliasesFrame:AddChild(AliasesEditBox);
+    GL.Interface:setItem(self, "Aliases", AliasesEditBox);
 
     local VerticalSpacer = AceGUI:Create("SimpleGroup");
     VerticalSpacer:SetLayout("FILL");
@@ -223,10 +226,8 @@ function Overview:draw()
     ImportButton:SetText("Import");
     ImportButton:SetWidth(80);
     ImportButton:SetCallback("OnClick", function()
-        if (self.selectedCharacter) then
-            self:close();
-            GL.Interface.Points:draw(self.selectedCharacter);
-        end
+        self:close();
+        GL.Interface.StackedRoll.Importer:draw();
     end);
     ButtonFrame:AddChild(ImportButton);
 
@@ -234,10 +235,7 @@ function Overview:draw()
     ExportButton:SetText("Export");
     ExportButton:SetWidth(80);
     ExportButton:SetCallback("OnClick", function()
-        if (self.selectedCharacter) then
-            self:close();
-            GL.Interface.Points:draw(self.selectedCharacter);
-        end
+        StackedRoll:export();
     end);
     ButtonFrame:AddChild(ExportButton);
 
@@ -245,10 +243,8 @@ function Overview:draw()
     AddRaidersButton:SetText("Add missing raiders");
     AddRaidersButton:SetWidth(165);
     AddRaidersButton:SetCallback("OnClick", function()
-        if (self.selectedCharacter) then
-            self:close();
-            GL.Interface.Points:draw(self.selectedCharacter);
-        end
+        StackedRoll:addMissingRaiders();
+        self:refreshTable();
     end);
     ButtonFrame:AddChild(AddRaidersButton);
 
@@ -318,36 +314,51 @@ function Overview:drawCharacterTable(Parent)
     Table.frame:SetPoint("TOPLEFT", Parent, "TOPLEFT", 0, -18);
 
     Table:RegisterEvents({
-        OnClick = function (_, _, data, _, _, realrow)
-            -- Make sure something is actually selected, better safe than lua error
-            if (not GL:higherThanZero(realrow)
-                or type(data) ~= "table"
-                or not data[realrow]
-                or not data[realrow].cols
-                or not data[realrow].cols[1]
-            ) then
-                return;
-            end
+        OnClick = function (_, _, data, _, _, realrow, _, tbl, button)
+            if (button == "LeftButton") then
+                --- Unfortunately, the default handler is called *after* ours.
+                --- So, we need to check whether the selection is cleared ourselves!
+                local cleared = tbl:GetSelection() == realrow;
+                    
+                --- Make sure something is actually selected, better safe than lua error
+                if (cleared
+                    or not GL:higherThanZero(realrow)
+                    or type(data) ~= "table"
+                    or not data[realrow]
+                    or not data[realrow].cols
+                    or not data[realrow].cols[1]
+                ) then
+                    self.selectedCharacter = nil;
+                    self:loadPlayer();
+                    return;
+                end
 
-            -- We always select the first column of the selected row because that contains the player name
-            local selected = data[realrow].cols[1].value;
+                -- We always select the first column of the selected row because that contains the player name
+                local selected = data[realrow].cols[1].value;
 
-            if (selected and type(selected) == "string") then
-                self.selectedCharacter = string.lower(selected);
+                if (selected and type(selected) == "string") then
+                    self.selectedCharacter = string.lower(selected);
+                    self:loadPlayer();
+                end
             end
         end
     });
 
+    GL.Interface:setItem(self, "Characters", Table);
+    self:refreshTable();
+end
+
+---@return void
+function Overview:refreshTable()
+    local Table = GL.Interface:getItem(self, "Table.Characters");
+    if (not Table) then
+        return;
+    end
+
     local PlayerData = {};
-    local FqnNames = {};
 
     -- We can't do a direct assignment because we want to edit this table in a bit
     for playerName, Entry in pairs(StackedRoll.MaterializedData.DetailsByPlayerName) do
-
-        if (GL.isEra) then
-            playerName = GL:tableGet(FqnNames, string.lower(playerName) .. "." .. Entry.class, playerName);
-        end
-
         -- Augment with existing class data
         local class = nil;
         if (PlayerData[playerName]) then
@@ -399,7 +410,113 @@ function Overview:drawCharacterTable(Parent)
     end
 
     Table:SetData(TableData);
-    GL.Interface:setItem(self, "Characters", Table);
+end
+
+---@return void
+function Overview:deleteEntry()
+    GL:debug("Overview:deleteEntry");
+
+    if (not self.selectedCharacter) then
+        GL:warning("You need to select a player first");
+        return;
+    end
+
+    StackedRoll:deletePoints(self.selectedCharacter);
+    self:refreshTable();
+    self.selectedCharacter = nil;
+    self:loadPlayer();
+end
+
+---@param points number 
+---@return void
+function Overview:updatePoints(points, updateEditBox)
+    GL:debug("Overview:updatePoints");
+
+    if (not self.selectedCharacter) then
+        GL:warning("You need to select a player first");
+        return;
+    end
+
+    GL:warning(self.selectedCharacter);
+
+    self.points = points;
+
+    -- Update points locally.
+    StackedRoll:setPoints(self.selectedCharacter, points);
+
+    -- Update interface.
+    if updateEditBox then
+        GL.Interface:getItem(self, "EditBox.CurrentPoints"):SetText(points);
+    end
+
+    local Table = GL.Interface:getItem(self, "Table.Characters");
+    if (Table) then
+        local rollPoints = StackedRoll:rollPoints(points);
+        local reserve = StackedRoll:reserve(points);
+        Table:GetRow(Table:GetSelection()).cols[2].value = tostring(rollPoints);
+        Table:GetRow(Table:GetSelection()).cols[3].value = tostring(reserve);
+        Table:Refresh();
+    end
+end
+
+---@param aliases string 
+---@return void
+function Overview:updateAliases(aliases)
+    GL:debug("Overview:updateAliases");
+
+    if (not self.selectedCharacter) then
+        GL:warning("You need to select a player first");
+        return;
+    end
+
+    local Segments = GL:separateValues(aliases);
+
+    --- Import segments as aliases (twink names)
+    local Aliases = {};
+    for i = 1, #Segments do
+        local alias = tostring(Segments[i]);
+        alias = GL:normalizedName(alias);
+        --- Only set non-empty aliases
+        if (not GL:empty(alias)) then
+            tinsert(Aliases, alias);
+        end
+    end
+    StackedRoll:setAliases(self.selectedCharacter, Aliases);
+    self:refreshTable();
+end
+
+---@return void
+function Overview:loadPlayer()
+    GL:debug("Overview:loadPlayer");
+
+    -- Better be safe than getting a lua error
+    local class = nil;
+    local name = "None";
+    local Aliases = {};
+    if (not self.selectedCharacter
+        or not StackedRoll.MaterializedData.DetailsByPlayerName[self.selectedCharacter]
+    ) then
+        self.points = 0;
+    else
+        self.points = StackedRoll:getPoints(self.selectedCharacter);
+        class = StackedRoll.MaterializedData.DetailsByPlayerName[self.selectedCharacter].class;
+        name = GL:capitalize(GL:stripRealm(self.selectedCharacter));
+        Aliases = StackedRoll.MaterializedData.DetailsByPlayerName[self.selectedCharacter].Aliases;
+    end
+    
+    GL.Interface:getItem(self, "EditBox.CurrentPoints"):SetText(self.points);
+    GL.Interface:getItem(self, "Label.PlayerName"):SetText(string.format(
+            "|cff%s%s|r",
+            GL:classHexColor(class), name
+    ));
+
+    --- Aliases
+    local aliases = {};
+    for _, aliasName in pairs(Aliases) do
+        tinsert(aliases, GL:capitalize(aliasName));
+    end
+    aliases = table.concat(aliases, ",");
+    GL.Interface:getItem(self, "EditBox.Aliases"):SetText(aliases);
 end
 
 ---@return void

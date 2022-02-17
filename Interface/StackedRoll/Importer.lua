@@ -7,6 +7,7 @@ local AceGUI = GL.AceGUI;
 
 GL:tableSet(GL, "Interface.StackedRoll.Importer", {
     isVisible = false,
+    stackedRollsBoxContent = "",
 
     InterfaceItems = {
         Icons = {},
@@ -26,6 +27,7 @@ function Importer:draw()
     end
 
     self.isVisible = true;
+    self.stackedRollsBoxContent = "";
 
     -- Create a container/parent frame
     local Window = AceGUI:Create("Frame");
@@ -37,6 +39,7 @@ function Importer:draw()
     Window.statustext:GetParent():Hide(); -- Hide the statustext bar
     Window:SetCallback("OnClose", function()
         self:close();
+        GL.StackedRoll:draw();
     end);
     GL.Interface:setItem(self, "Window", Window);
 
@@ -54,7 +57,6 @@ function Importer:draw()
     Window:AddChild(Description);
 
     -- Large edit box
-    local stackedRollsBoxContent = "";
     local StackedRollBox = AceGUI:Create("MultiLineEditBox");
     StackedRollBox:SetFullWidth(true);
     StackedRollBox:DisableButton(true);
@@ -65,7 +67,7 @@ function Importer:draw()
     Window:AddChild(StackedRollBox);
 
     StackedRollBox:SetCallback("OnTextChanged", function(_, _, text)
-        stackedRollsBoxContent = text;
+        self.stackedRollsBoxContent = text;
     end)
 
     -- Status message frame
@@ -87,9 +89,18 @@ function Importer:draw()
     ImportButton:SetText("Import");
     ImportButton:SetWidth(140);
     ImportButton:SetCallback("OnClick", function()
-        GL.StackedRoll:import(stackedRollsBoxContent, true);
+        if (GL.StackedRoll:available()) then
+            GL.Interface.Dialogs.PopupDialog:open("NEW_STACKEDROLL_IMPORT_CONFIRMATION");
+        else
+            self:import();
+        end
     end);
     Window:AddChild(ImportButton);
+end
+
+-- Import
+function Importer:import()
+    GL.StackedRoll:import(self.stackedRollsBoxContent, true);
 end
 
 -- Close the import frame and clean up after ourselves

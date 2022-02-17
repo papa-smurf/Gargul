@@ -58,12 +58,6 @@ end
 function StackedRoll:draw()
     GL:debug("StackedRoll:draw");
 
-    -- No data available, show importer
-    if (not self:available()) then
-        GL.Interface.StackedRoll.Importer:draw();
-        return;
-    end
-
     -- Show the stacked roll overview instead
     GL.Interface.StackedRoll.Overview:draw();
 end
@@ -216,12 +210,52 @@ end;
 ---
 ---@return void
 function StackedRoll:clear()
-    DB.StackedRoll = {};
+    DB.StackedRoll = {
+        Points = {},
+        Aliases = {},
+        MetaData = {},
+    };
     self.MaterializedData = {
         DetailsByPlayerName = {},
     };
 
     GL.Interface.StackedRoll.Overview:close();
+    self:draw();
+end
+
+--- Set aliases
+---
+---@param name string
+---@param aliases table
+---@return void
+function StackedRoll:setAliases(name, aliases)
+    GL:debug("StackedRoll:setAliases");
+    if (type(name) ~= "string") then
+        return;
+    end
+
+    local normalizedName = GL:normalizedName(name);
+    --- Follow alias table if present
+    if (DB.StackedRoll.Aliases[normalizedName]) then
+        normalizedName = DB.StackedRoll.Aliases[normalizedName];
+    end
+    if (self.MaterializedData.DetailsByPlayerName[normalizedName]) then
+        --- Reset old aliases
+        for _, alias in pairs(self.MaterializedData.DetailsByPlayerName[normalizedName].Aliases) do
+            DB.StackedRoll.Aliases[alias] = nil;
+        end
+
+        --- Set new aliases
+        local cleanAliases = {};
+        for _, alias in pairs(aliases) do
+            --- Check that this alias does not yet exist, otherwise skip.
+            if (not DB.StackedRoll.Aliases[alias]) then
+                DB.StackedRoll.Aliases[alias] = normalizedName;
+                tinsert(cleanAliases, alias);
+            end
+        end
+        self.MaterializedData.DetailsByPlayerName[normalizedName].Aliases = cleanAliases;
+    end
 end
 
 --- Determine if a player is present in the table
@@ -290,6 +324,30 @@ function StackedRoll:setPoints(name, points)
     if (self.MaterializedData.DetailsByPlayerName[normalizedName]) then
         self.MaterializedData.DetailsByPlayerName[normalizedName].points = points;
         DB:set("StackedRoll.Points."..normalizedName, points);
+    end
+end
+
+--- Delete an entry
+---
+---@param name string
+---@return void
+function StackedRoll:deletePoints(name)
+    GL:debug("StackedRoll:deletePoints");
+    if (type(name) ~= "string") then
+        return;
+    end
+
+    local normalizedName = GL:normalizedName(name);
+    --- Follow alias table if present
+    if (DB.StackedRoll.Aliases[normalizedName]) then
+        normalizedName = DB.StackedRoll.Aliases[normalizedName];
+    end
+    if (self.MaterializedData.DetailsByPlayerName[normalizedName]) then
+        for _, alias in pairs(self.MaterializedData.DetailsByPlayerName[normalizedName].Aliases) do
+            DB.StackedRoll.Aliases[alias] = nil;
+        end
+        self.MaterializedData.DetailsByPlayerName[normalizedName] = nil;
+        DB.StackedRoll.Points[normalizedName] = nil;
     end
 end
 
@@ -370,7 +428,6 @@ function StackedRoll:import(data, openOverview)
         Aliases = Aliases,
         MetaData = {
             importedAt = GetServerTime(),
-            importString = data,
         },
     };
 
@@ -387,6 +444,26 @@ function StackedRoll:import(data, openOverview)
     return true;
 end
 
+--- Adds missing raiders with default points
+---
+---@return void
+function StackedRoll:addMissingRaiders()
+    GL:debug("StackedRoll:addMissingRaiders");
+
+    -- Go through everyone in the raid
+    if (GL.User.isInGroup) then
+        local default = GL.Settings:get("StackedRoll.defaultPoints", 0);
+        for _, Player in pairs(GL.User:groupMembers()) do
+            local playerName = GL:normalizedName(Player.name);
+            if (not self:hasPoints(playerName)) then
+                DB.StackedRoll.Points[playerName] = default;
+            end
+        end
+        DB:set("StackedRoll.MetaData.importedAt", GetServerTime())
+        self:materializeData();
+    end
+end
+
 --- Export to CSV
 ---
 ---@return void
@@ -395,20 +472,20 @@ function StackedRoll:export()
 
     -- Calculate max aliases to output a CSV compliant string
     local numAliases = 0;
-    for _, Entry in self.MaterializedData.DetailsByPlayerName do
+    for _, Entry in pairs(self.MaterializedData.DetailsByPlayerName) do
         numAliases = math.max(numAliases, #Entry.Aliases);
     end
     
     -- Create CSV string
     local csv = "";
-    for name, Entry in self.MaterializedData.DetailsByPlayerName do
-        csv = csv..name..","..Entry.points;
+    for name, Entry in pairs(self.MaterializedData.DetailsByPlayerName) do
+        csv = csv..GL:capitalize(name)..","..Entry.points;
         
         -- Always add maximum aliases
         for i = 1,numAliases do
             csv = csv..",";
             if (Entry.Aliases[i]) then
-                csv = csv..Entry.Aliases[i];
+                csv = csv..GL:capitalize(Entry.Aliases[i]);
             end
         end
         csv = csv.."\n";
