@@ -230,6 +230,17 @@ function Overview:draw()
     end);
     ButtonFrame:AddChild(ImportButton);
 
+    local ExportButton = AceGUI:Create("Button");
+    ExportButton:SetText("Export");
+    ExportButton:SetWidth(80);
+    ExportButton:SetCallback("OnClick", function()
+        if (self.selectedCharacter) then
+            self:close();
+            GL.Interface.Points:draw(self.selectedCharacter);
+        end
+    end);
+    ButtonFrame:AddChild(ExportButton);
+
     local AddRaidersButton = AceGUI:Create("Button");
     AddRaidersButton:SetText("Add missing raiders");
     AddRaidersButton:SetWidth(165);
