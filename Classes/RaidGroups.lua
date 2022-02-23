@@ -81,12 +81,25 @@ function RaidGroups:drawImporter()
     Spacer:SetHeight(8);
     Window:AddChild(Spacer);
 
-    -- Wowhead URL
-    local WowheadURL = AceGUI:Create("EditBox");
-    WowheadURL:SetFullWidth(true);
-    WowheadURL:DisableButton(true);
-    WowheadURL:SetText("https://tbc.wowhead.com/raid-composition");
-    Window:AddChild(WowheadURL);
+    -- Go to Wowhead
+    local RaidGroupsBox;
+    local WowheadButton = AceGUI:Create("Button");
+    WowheadButton:SetText("Wowhead Comp Tool");
+    WowheadButton:SetWidth(180);
+    WowheadButton:SetCallback("OnClick", function()
+        GL.Interface.Dialogs.HyperlinkDialog:open({
+            description = "You can visit the wowhead comp tool using the URL down below. After creating your comp you can paste it here or in the large edit field of the Gargul group window",
+            hyperlink = "https://tbc.wowhead.com/raid-composition",
+            OnConfirm = function (value)
+                RaidGroupsBox:SetText(value);
+                self:normalizeInput(RaidGroupsBox, RaidGroupsBox:GetText());
+
+                return true;
+            end,
+            closeOnConfirm = true,
+        });
+    end);
+    Window:AddChild(WowheadButton);
 
     Spacer = AceGUI:Create("SimpleGroup");
     Spacer:SetLayout("Flow");
@@ -106,20 +119,25 @@ function RaidGroups:drawImporter()
     Spacer:SetHeight(8);
     Window:AddChild(Spacer);
 
-    -- Wiki URL
-    local WikiURL = AceGUI:Create("EditBox");
-    WikiURL:SetFullWidth(true);
-    WikiURL:DisableButton(true);
-    WikiURL:SetText("https://github.com/papa-smurf/Gargul/wiki/Sort-Groups-&-Tanks");
-    Window:AddChild(WikiURL);
+    -- Go to Wiki
+    local WikiButton = AceGUI:Create("Button");
+    WikiButton:SetText("Gargul Group Wiki");
+    WikiButton:SetWidth(180);
+    WikiButton:SetCallback("OnClick", function()
+        GL.Interface.Dialogs.HyperlinkDialog:open({
+            description = "Visit the Gargul group wiki for more info on the raid group format",
+            hyperlink = "https://github.com/papa-smurf/Gargul/wiki/Sort-Groups-&-Tanks",
+        });
+    end);
+    Window:AddChild(WikiButton);
 
     -- Edit box
-    local RaidGroupsBox = AceGUI:Create("MultiLineEditBox");
+    RaidGroupsBox = AceGUI:Create("MultiLineEditBox");
     RaidGroupsBox:SetFullWidth(true);
     RaidGroupsBox:DisableButton(true);
     RaidGroupsBox:SetFocus();
     RaidGroupsBox:SetLabel("");
-    RaidGroupsBox:SetText(RaidGroups.rosterString);
+    RaidGroupsBox:SetText(RaidGroups.rosterString or "");
     RaidGroupsBox:SetNumLines(10);
     RaidGroupsBox:SetMaxLetters(999999999);
     Window:AddChild(RaidGroupsBox);
@@ -207,6 +225,12 @@ end
 ---@param input string
 ---@return string
 function RaidGroups:normalizeInput(EditBox, input)
+    GL:debug("RaidGroups:normalizeInput");
+
+    if (GL:empty(input)) then
+        return;
+    end
+
     --- The user provided a wowhead URL
     if (GL:strContains(input, "wowhead.com/raid%-composition")) then -- Escape of - is required!
         input = self:normalizeWowheadInput(input);
@@ -313,21 +337,25 @@ function RaidGroups:normalizeWowheadInput(input)
     local membersProcessed = 0;
     local currentGroupNumber = 1;
 
-    -- How can there be more than 40? Trick question: there can't be. YEET
-    if (GL:count(Members) > MAX_RAID_MEMBERS) then
-        return "";
-    end
-
     for _, member in pairs(Members) do
+        -- Everything past group 8 is considered "benched" in the comp tool
+        if (currentGroupNumber >= 8) then
+            break;
+        end
+
         membersProcessed = membersProcessed + 1;
 
-        -- Add the member to its group
-        tinsert(Groups[currentGroupNumber], member);
+        if (type(member) == "string"
+            and not GL:empty(member)
+        ) then
+            -- Add the member to its group
+            tinsert(Groups[currentGroupNumber], member);
 
-        -- If the member's spec is concerned "tank" we add it to the tank group as well
-        local spec = specHashToSpec(Specs[membersProcessed] or 0);
-        if (GL:inTable(TankSpecs, spec)) then
-            tinsert(Groups[9], member); -- 9 is reserved for tanking assignments, see wiki for more info
+            -- If the member's spec is concerned "tank" we add it to the tank group as well
+            local spec = specHashToSpec(Specs[membersProcessed] or 0);
+            if (GL:inTable(TankSpecs, spec)) then
+                tinsert(Groups[9], member); -- 9 is reserved for tanking assignments, see wiki for more info
+            end
         end
 
         -- Our current group has 5 members in it, switch to the next group
@@ -450,7 +478,10 @@ The following people are in the raid but shouldn't be:
     OutPutLabel:SetWidth(500);
 end
 
--- Build a list of migrations based on the csv provided by the user
+--- Build a list of migrations based on the csv provided by the user
+---
+---@param raidGroupCsv string
+---@return void
 function RaidGroups:applyRaidGroups(raidGroupCsv)
     GL:debug("RaidGroups:applyRaidGroups");
 
@@ -523,9 +554,14 @@ function RaidGroups:applyRaidGroups(raidGroupCsv)
         NumRaidersInGroup[Raider.subgroup] = NumRaidersInGroup[Raider.subgroup] + 1;
     end
 
-    -- We can't sort the groups if there's anyone in the raid who doesn't belong!
+    -- There are people in the raid who are not on the roster!
     if (UnwantedPlayers[1]) then
-        return GL:warning(string.format(
+        -- We can't sort the groups, there are too many people in the raid who souldn't be there
+        if (#UnwantedPlayers + #RaidMembers > MAX_RAID_MEMBERS) then
+            GL:error("Can't sort the groups, there are too many players who aren't on the roster");
+        end
+
+        GL:warning(string.format(
             "The following players are not part of the roster: %s",
             table.concat(UnwantedPlayers, ", ")
         ));

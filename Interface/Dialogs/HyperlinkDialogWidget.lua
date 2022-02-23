@@ -42,10 +42,22 @@ end
 
 -- Widget Events
 local Events = {
+    Close = function (self)
+        self.CloseButton:Fire("OnClick");
+    end,
+
+    EnableHyperLinkButton = function(self)
+        self.HyperlinkEditbox:DisableButton(false);
+    end,
+
     SetHyperlink = function(self, hyperlink)
         self.HyperlinkEditbox:SetText(hyperlink);
         self.HyperlinkEditbox:HighlightText();
         self.HyperlinkEditbox:SetFocus();
+    end,
+
+    SetOnConfirm = function(self, callback)
+        self.HyperlinkEditbox:SetCallback("OnEnterPressed", callback);
     end,
 
     SetDescription = function(self, description)
@@ -221,6 +233,7 @@ local function constructor()
         Frame:Hide();
     end);
     HyperlinkDialogInstance:AddChild(CloseButton);
+    Widget.CloseButton = CloseButton;
 
     HorizontalSpacer = AceGUI:Create("SimpleGroup");
     HorizontalSpacer:SetLayout("FILL");

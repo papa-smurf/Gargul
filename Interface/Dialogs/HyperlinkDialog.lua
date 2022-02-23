@@ -20,6 +20,17 @@ function HyperlinkDialog:open(Dialog)
     Frame:SetWidth(320);
     Frame:SetDescription(Dialog.description);
     Frame:SetHyperlink(Dialog.hyperlink);
+
+    if (Dialog.OnConfirm) then
+        Frame:EnableHyperLinkButton();
+        Frame:SetOnConfirm(function (_, _, value)
+            if (Dialog.OnConfirm(value)
+                and Dialog.closeOnConfirm
+            ) then
+                Frame:Close();
+            end
+        end);
+    end
 end
 
 GL:debug("Interface/HyperlinkDialog.lua");
