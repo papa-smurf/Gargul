@@ -36,7 +36,7 @@ end
 ---@vararg string
 ---@return void
 function GL:message(...)
-    print("|cff8aecffGargul: |r" .. string.join(" ", ...));
+    print("|cff8aecff<Gargul> |r" .. string.join(" ", ...));
 end
 
 --- Print a colored message
