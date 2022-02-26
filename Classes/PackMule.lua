@@ -297,7 +297,7 @@ function PackMule:lootReady()
                         end
                     else
                         local RuleTargets = GL:strSplit(ruleTarget, " ");
-                        local GroupMemberNames = GL.User:groupMemberNames();
+                        local GroupMemberNames = GL.User:groupMemberNames(true);
 
                         for _, ruleTarget in pairs(RuleTargets) do
                             local targetContainsExclamationMark = strfind(ruleTarget, "!");
