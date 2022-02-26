@@ -556,12 +556,8 @@ function RaidGroups:applyRaidGroups(raidGroupCsv)
 
     -- There are people in the raid who are not on the roster!
     if (UnwantedPlayers[1]) then
-        -- We can't sort the groups, there are too many people in the raid who souldn't be there
-        if (#UnwantedPlayers + #RaidMembers > MAX_RAID_MEMBERS) then
-            GL:error("Can't sort the groups, there are too many players who aren't on the roster");
-        end
-
-        GL:warning(string.format(
+        -- We can't sort the groups if there's anyone in the raid who doesn't belong!
+        return GL:warning(string.format(
             "The following players are not part of the roster: %s",
             table.concat(UnwantedPlayers, ", ")
         ));
