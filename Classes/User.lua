@@ -22,7 +22,6 @@ GL.User = {
     isInParty = false,
     isInGroup = false,
     raidsAttended = 0,
-    Dkp = {},
 
     -- Group specific
     raidIndex = nil,
