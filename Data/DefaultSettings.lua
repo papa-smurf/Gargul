@@ -5,14 +5,12 @@ local _, GL = ...;
 GL.Data = GL.Data or {};
 
 GL.Data.DefaultSettings = {
-    announceLootToChat = true,
     debugModeEnabled = false,
     highlightsDisabled = false,
     highlightHardReservedItems = true,
     highlightSoftReservedItems = true,
     highlightWishlistedItems = true,
     highlightPriolistedItems = true,
-    minimumQualityOfAnnouncedLoot = 4,
     noMessages = false,
     noSounds = false,
     autoOpenCommandHelp = true,
@@ -20,6 +18,11 @@ GL.Data.DefaultSettings = {
     welcomeMessage = true,
     fixMasterLootWindow = true,
 
+    DroppedLoot = {
+        announceLootToChat = true,
+        announceDroppedLootInRW = false,
+        minimumQualityOfAnnouncedLoot = 4,
+    },
     ShortcutKeys = {
         showLegend = true,
         rollOff = "ALT_CLICK",

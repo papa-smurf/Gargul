@@ -91,7 +91,7 @@ function DroppedLoot:lootReady()
 
     -- Only announce loot in chat if the setting is enabled
     if (GL.User.isMasterLooter
-        and GL.Settings:get("announceLootToChat")
+        and GL.Settings:get("DroppedLoot.announceLootToChat")
     ) then
         self:announce();
     end
@@ -326,7 +326,7 @@ function DroppedLoot:announce()
             -- Check if we need to announce this item
             local itemId = tonumber(GL:getItemIdFromLink(itemLink)) or 0;
             if ((
-                    quality < GL.Settings:get("minimumQualityOfAnnouncedLoot", 4) -- Quality is lower than our set minimum
+                    quality < GL.Settings:get("DroppedLoot.minimumQualityOfAnnouncedLoot", 4) -- Quality is lower than our set minimum
                     or GL:inTable(Constants.ItemsThatSouldntBeAnnounced, itemId) -- We don't want to announce this item
                 )
                 and GL:empty(SoftReserves) -- No one (hard)reserved it
@@ -345,20 +345,27 @@ function DroppedLoot:announce()
                 ActiveSoftResDetails = self:getSoftResDetails(SoftReserves);
             end
 
+            -- Determine the correct channel for announcing the loot
+            -- Both GROUP and RAID_WARNING will default to PARTY if not in a raid or if you don't have assist
+            local channel = "GROUP";
+            if (GL.Settings:get("DroppedLoot.announceDroppedLootInRW")) then
+                channel = "RAID_WARNING";
+            end
+
             -- Either announce the item by itself or state that it's hard-reserved!
             if (itemIsHardReserved
                 and GL.Settings:get("SoftRes.announceInfoInChat")
             ) then
                 GL:sendChatMessage(
                     itemLink .. " (This item is hard-reserved!)",
-                    "GROUP"
+                    channel
                 );
             else
                 -- Link the item in the chat for
                 -- all group members to see
                 GL:sendChatMessage(
                     itemLink,
-                    "GROUP"
+                    channel
                 );
             end
 
