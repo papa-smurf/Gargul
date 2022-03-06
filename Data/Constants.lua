@@ -215,6 +215,7 @@ GL.Data.Constants = {
             stopRollOff = 11,
             broadcastStackedRollData = 12,
             requestStackedRollData = 13,
+            broadcastStackedRollUpdate = 14,
         },
     },
 

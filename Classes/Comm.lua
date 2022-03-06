@@ -288,6 +288,9 @@ function Comm:dispatch(CommMessage)
     elseif (action == CommActions.requestStackedRollData) then
         return GL.StackedRoll:replyToDataRequest(CommMessage);
 
+    elseif (action == CommActions.broadcastStackedRollUpdate) then
+        return GL.StackedRoll:receiveUpdate(CommMessage);
+
     end
 
     GL:warning(string.format("Unknown comm action '%s'", action));

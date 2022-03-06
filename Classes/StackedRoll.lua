@@ -261,6 +261,9 @@ function StackedRoll:setAliases(name, aliases)
         end
         self.MaterializedData.DetailsByPlayerName[normalizedName].Aliases = cleanAliases;
         DB:set("StackedRoll.MetaData.updatedAt", GetServerTime());
+        if (GL.Settings:get("StackedRoll.automaticallyShareData")) then
+            self:broadcastUpdate(normalizedName, nil, aliases);
+        end
     end
 end
 
@@ -331,6 +334,9 @@ function StackedRoll:setPoints(name, points)
         self.MaterializedData.DetailsByPlayerName[normalizedName].points = points;
         DB:set("StackedRoll.Points."..normalizedName, points);
         DB:set("StackedRoll.MetaData.updatedAt", GetServerTime());
+        if (GL.Settings:get("StackedRoll.automaticallyShareData")) then
+            self:broadcastUpdate(normalizedName, points);
+        end
     end
 end
 
@@ -356,30 +362,9 @@ function StackedRoll:deletePoints(name)
         self.MaterializedData.DetailsByPlayerName[normalizedName] = nil;
         DB.StackedRoll.Points[normalizedName] = nil;
         DB:set("StackedRoll.MetaData.updatedAt", GetServerTime());
-    end
-end
-
---- Delete an entry
----
----@param name string
----@return void
-function StackedRoll:deletePoints(name)
-    GL:debug("StackedRoll:deletePoints");
-    if (type(name) ~= "string") then
-        return;
-    end
-
-    local normalizedName = GL:normalizedName(name);
-    --- Follow alias table if present
-    if (DB.StackedRoll.Aliases[normalizedName]) then
-        normalizedName = DB.StackedRoll.Aliases[normalizedName];
-    end
-    if (self.MaterializedData.DetailsByPlayerName[normalizedName]) then
-        for _, alias in pairs(self.MaterializedData.DetailsByPlayerName[normalizedName].Aliases) do
-            DB.StackedRoll.Aliases[alias] = nil;
+        if (GL.Settings:get("StackedRoll.automaticallyShareData")) then
+            self:broadcastUpdate(normalizedName, nil, nil, true);
         end
-        self.MaterializedData.DetailsByPlayerName[normalizedName] = nil;
-        DB.StackedRoll.Points[normalizedName] = nil;
     end
 end
 
@@ -783,6 +768,109 @@ function StackedRoll:replyToDataRequest(CommMessage)
         "WHISPER",
         CommMessage.Sender.name
     ):send();
+end
+
+--- Process an incoming stacked roll update
+---
+---@param playerName string
+---@param points number
+---@param aliases table
+---@param delete boolean
+function StackedRoll:broadcastUpdate(playerName, points, aliases, delete)
+    GL:debug("StackedRoll:broadcastUpdate");
+
+    if (self.broadcastInProgress) then
+        GL:error("Broadcast still in progress");
+        return false;
+    end
+
+    if (not GL.User.isInGroup) then
+        GL:warning("No one to broadcast to, you're not in a group!");
+        return false;
+    end
+
+    if (not self:userIsAllowedToBroadcast()) then
+        GL:warning("Insufficient permissions to broadcast, need ML, assist or lead!");
+        return false;
+    end
+
+    self.broadcastInProgress = true;
+    GL.Events:fire("GL.STACKEDROLL_UPDATE_STARTED");
+
+    local Broadcast = function ()
+        GL:message("Broadcasting StackedRoll update...");
+
+        GL.CommMessage.new(
+            CommActions.broadcastStackedRollUpdate,
+            {
+                playerName = playerName,
+                points = points or nil,
+                aliases = aliases or nil,
+                delete = delete or false,
+                uuid = DB:get("StackedRoll.MetaData.uuid", ""),
+            },
+            "GROUP"
+        ):send(function ()
+            GL:success("StackedRoll update finished");
+            self.broadcastInProgress = false;
+            GL.Events:fire("GL.STACKEDROLL_UPDATE_ENDED");
+        end);
+    end
+
+    -- We're about to send a lot of data which will put strain on CTL
+    -- Make sure we're out of combat before doing so!
+    if (UnitAffectingCombat("player")) then
+        GL:message("You are currently in combat, delaying StackedRoll update");
+
+        GL.Events:register("StackedRollOutOfCombatListener", "PLAYER_REGEN_ENABLED", function ()
+            GL.Events:unregister("StackedRollOutOfCombatListener");
+            Broadcast();
+        end);
+    else
+        Broadcast();
+    end
+
+    return true;
+end
+
+--- Process an incoming stacked roll update
+---
+---@param CommMessage CommMessage
+function StackedRoll:receiveUpdate(CommMessage)
+    GL:debug("StackedRoll:receiveUpdate");
+
+    -- No need to update our tables if we broadcasted them ourselves
+    if (CommMessage.Sender.name == GL.User.name) then
+        GL:debug("StackedRoll:receiveUpdate received by self, skip");
+        return true;
+    end
+
+    local uuid = DB:get("StackedRoll.MetaData.uuid", '');
+
+    local importUuid = CommMessage.content.uuid or GL:uuid();
+    local playerName = CommMessage.content.playerName or '';
+    local aliases = CommMessage.content.aliases or nil;
+    local points = CommMessage.content.points or nil;
+    local delete = CommMessage.content.delete or false;
+    
+    local importBroadcast = (function ()
+        if (aliases) then
+            self:setAliases(playerName, aliases);
+        end
+
+        if (points) then
+            self:setPoints(playerName, points);
+        end
+
+        if (delete) then
+            self:deletePoints(playerName);
+        end
+    end);
+
+    --- We only update if we have the same source data.
+    if (importUuid == uuid) then
+        importBroadcast();
+    end
 end
 
 --- Check whether the current user is allowed to broadcast StackedRoll data
