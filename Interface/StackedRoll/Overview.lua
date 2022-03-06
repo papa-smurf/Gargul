@@ -45,7 +45,7 @@ function Overview:draw()
     Window:SetTitle("Gargul v" .. GL.version);
     Window:SetLayout("Flow");
     Window:SetWidth(600);
-    Window:SetHeight(490);
+    Window:SetHeight(520);
     Window:EnableResize(false);
     Window.statustext:GetParent():Show(); -- Explicitely show the statustext bar
     Window:SetCallback("OnClose", function()
@@ -196,12 +196,23 @@ function Overview:draw()
     AliasesEditBox:SetHeight(20);
     AliasesEditBox:SetWidth(220);
     AliasesEditBox:SetText("Test");
-    AliasesEditBox:SetCallback("OnTextChanged", function (widget)
-        -- Update
-        self:updateAliases(strtrim(widget:GetText()));
-    end);
     AliasesFrame:AddChild(AliasesEditBox);
     GL.Interface:setItem(self, "Aliases", AliasesEditBox);
+
+    HorizontalSpacer = AceGUI:Create("SimpleGroup");
+    HorizontalSpacer:SetLayout("FILL")
+    HorizontalSpacer:SetWidth(15);
+    HorizontalSpacer:SetHeight(20);
+    AliasesFrame:AddChild(HorizontalSpacer);
+
+    local ApplyAliasesButton = AceGUI:Create("Button");
+    ApplyAliasesButton:SetText("Apply aliases");
+    ApplyAliasesButton:SetWidth(120);
+    ApplyAliasesButton:SetCallback("OnClick", function()
+        local text = GL.Interface:getItem(self, "EditBox.Aliases"):GetText();
+        self:updateAliases(strtrim(text));
+    end);
+    AliasesFrame:AddChild(ApplyAliasesButton);
 
     local VerticalSpacer = AceGUI:Create("SimpleGroup");
     VerticalSpacer:SetLayout("FILL");
@@ -209,9 +220,27 @@ function Overview:draw()
     VerticalSpacer:SetHeight(15);
     Window:AddChild(VerticalSpacer);
 
+    HorizontalSpacer = AceGUI:Create("SimpleGroup");
+    HorizontalSpacer:SetLayout("FILL");
+    HorizontalSpacer:SetWidth(4);
+    HorizontalSpacer:SetHeight(10);
+    Window:AddChild(HorizontalSpacer);
+
+    local BroadcastProgressLabel = AceGUI:Create("Label");
+    BroadcastProgressLabel:SetWidth(200);
+    BroadcastProgressLabel:SetFontObject(_G["GameFontNormal"]);
+    Window:AddChild(BroadcastProgressLabel);
+    GL.Interface:setItem(GL.StackedRoll, "BroadcastProgress", BroadcastProgressLabel);
+
     --[[
         BUTTONS FRAME
     ]]
+    VerticalSpacer = AceGUI:Create("SimpleGroup");
+    VerticalSpacer:SetLayout("FILL");
+    VerticalSpacer:SetFullWidth(true);
+    VerticalSpacer:SetHeight(15);
+    Window:AddChild(VerticalSpacer);
+
     local ButtonFrame = AceGUI:Create("SimpleGroup");
     ButtonFrame:SetLayout("FLOW")
     ButtonFrame:SetFullWidth(true);
@@ -238,7 +267,7 @@ function Overview:draw()
     ExportButton:SetText("Export");
     ExportButton:SetWidth(80);
     ExportButton:SetCallback("OnClick", function()
-        StackedRoll:export();
+        StackedRoll:export(true);
     end);
     ButtonFrame:AddChild(ExportButton);
 
@@ -252,6 +281,35 @@ function Overview:draw()
     ButtonFrame:AddChild(AddRaidersButton);
 
     self:drawCharacterTable(DataColumn.frame);
+
+    self:updateShareButton();
+
+    GL.Events:register("StackedRollShareButtonRosterUpdatedListener", "GROUP_ROSTER_UPDATE", function () self:updateShareButton(); end);
+    GL.Events:register("StackedRollBroadcastStartedListener", "GL.STACKEDROLL_BROADCAST_STARTED", function () self:updateShareButton(); end);
+    GL.Events:register("StackedRollBroadcastEndedListener", "GL.STACKEDROLL_BROADCAST_ENDED", function () self:updateShareButton(); end);
+
+end
+
+--- Update the share button when the group setup changes
+---
+---@return void
+function Overview:updateShareButton()
+    local ShareButton = GL.Interface:getItem(self, "Frame.ShareButton")
+
+    if (not ShareButton) then
+        return;
+    end
+
+    -- The user doesn't have sufficient permissions to broadcast
+    -- Or a broadcast is already in progress
+    if (GL.StackedRoll.broadcastInProgress
+        or not GL.StackedRoll:userIsAllowedToBroadcast()
+    ) then
+        ShareButton:Disable();
+        return;
+    end
+
+    ShareButton:Enable();
 end
 
 function Overview:drawCharacterTable(Parent)
@@ -353,6 +411,7 @@ end
 
 ---@return void
 function Overview:refreshTable()
+    GL:debug("Overview:refreshTable");
     local Table = GL.Interface:getItem(self, "Table.Characters");
     if (not Table) then
         return;
