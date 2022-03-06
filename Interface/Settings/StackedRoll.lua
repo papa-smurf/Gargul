@@ -21,6 +21,11 @@ function StackedRoll:draw(Parent)
             setting = "StackedRoll.enabled",
         },
         {
+            label = "Automatically share data",
+            description = "Checking this means you'll automatically share StackedRoll data with players who join your raid or when you import new StackedRoll data",
+            setting = "StackedRoll.automaticallyShareData",
+        },
+        {
             label = "Enable whisper command",
             description = string.format(
                 "When enabled, players can whisper '|cff%s!rollbonus [<name>]|r' or '|cff%s!rb [<name>]|r to the master looter to get the current stacked roll for this name in response. If no name is given, their own stacked roll is given.",

@@ -76,6 +76,7 @@ GL.Data.DefaultSettings = {
     },
     StackedRoll = {
         enabled = false,
+        automaticallyShareData = true,
         priority = 1,
         identifier = "ST",
         reserveThreshold = 180,

@@ -61,6 +61,19 @@ PopupDialog.NEW_STACKEDROLL_IMPORT_CONFIRMATION = {
     end,
 }
 
+-- Broadcast stacked roll data confirmation
+PopupDialog.BROADCAST_STACKEDROLL_CONFIRMATION = {
+    question = "Are you sure you want to broadcast your stacked roll data to everyone in your party/raid?",
+    OnYes = function ()
+        GL.StackedRoll:broadcast();
+    end,
+}
+
+-- Import new stacked roll data confirmation
+PopupDialog.STACKEDROLL_RECEIVE_BROADCAST_CONFIRMATION = {
+    question = "Are you sure you want to clear your existing stacked rolls and import new data broadcasted by %s?",
+}
+
 -- Broadcast soft-reserve data confirmation
 PopupDialog.BROADCAST_TMB_CONFIRMATION = {
     question = "Are you sure you want to broadcast your TMB data to everyone in your party/raid? NB: EVERYONE can see your TMB data regardless of their permissions on the TMB website!",

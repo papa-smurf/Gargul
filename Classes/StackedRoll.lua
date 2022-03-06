@@ -4,12 +4,15 @@ local _, GL = ...;
 ---@class StackedRoll
 GL.StackedRoll = {
     _initialized = false,
+    broadcastInProgress = false,
+    requestingData = false,
     MaterializedData = {
         DetailsByPlayerName = {},
     },
 };
 
 local DB = GL.DB; ---@type DB
+local CommActions = Constants.Comm.Actions;
 local StackedRoll = GL.StackedRoll; ---@type StackedRoll
 
 ---@return boolean
@@ -26,6 +29,8 @@ function StackedRoll:_init()
             self:handleWhisperCommand(event, message, sender);
         end
     end);
+
+    GL.Events:register("StackedRollUserJoinedGroupListener", "GL.USER_JOINED_GROUP", function () self:requestData(); end);
 
     self:materializeData();
 
@@ -255,6 +260,7 @@ function StackedRoll:setAliases(name, aliases)
             end
         end
         self.MaterializedData.DetailsByPlayerName[normalizedName].Aliases = cleanAliases;
+        DB:set("StackedRoll.MetaData.updatedAt", GetServerTime());
     end
 end
 
@@ -324,6 +330,32 @@ function StackedRoll:setPoints(name, points)
     if (self.MaterializedData.DetailsByPlayerName[normalizedName]) then
         self.MaterializedData.DetailsByPlayerName[normalizedName].points = points;
         DB:set("StackedRoll.Points."..normalizedName, points);
+        DB:set("StackedRoll.MetaData.updatedAt", GetServerTime());
+    end
+end
+
+--- Delete an entry
+---
+---@param name string
+---@return void
+function StackedRoll:deletePoints(name)
+    GL:debug("StackedRoll:deletePoints");
+    if (type(name) ~= "string") then
+        return;
+    end
+
+    local normalizedName = GL:normalizedName(name);
+    --- Follow alias table if present
+    if (DB.StackedRoll.Aliases[normalizedName]) then
+        normalizedName = DB.StackedRoll.Aliases[normalizedName];
+    end
+    if (self.MaterializedData.DetailsByPlayerName[normalizedName]) then
+        for _, alias in pairs(self.MaterializedData.DetailsByPlayerName[normalizedName].Aliases) do
+            DB.StackedRoll.Aliases[alias] = nil;
+        end
+        self.MaterializedData.DetailsByPlayerName[normalizedName] = nil;
+        DB.StackedRoll.Points[normalizedName] = nil;
+        DB:set("StackedRoll.MetaData.updatedAt", GetServerTime());
     end
 end
 
@@ -377,8 +409,10 @@ end
 --- Import a CSV or TSV data string
 ---
 ---@param data string
+---@param openOverview boolean (optional, default: false)
+---@param uuid string (optional, default: auto generate new uuid)
 ---@return boolean
-function StackedRoll:import(data, openOverview)
+function StackedRoll:import(data, openOverview, uuid)
     GL:debug("StackedRoll:import");
 
     -- Make sure all the required properties are available and of the correct type
@@ -423,11 +457,15 @@ function StackedRoll:import(data, openOverview)
         return false;
     end
 
+    uuid = uuid or GL:uuid();
+
     DB.StackedRoll = {
         Points = Points,
         Aliases = Aliases,
         MetaData = {
             importedAt = GetServerTime(),
+            updatedAt = GetServerTime(),
+            uuid = uuid,
         },
     };
 
@@ -439,6 +477,14 @@ function StackedRoll:import(data, openOverview)
 
     if (openOverview) then
         self:draw();
+
+        -- The user is in charge of automatically sharing TMB data
+        -- after importing it, let's get crackin'!
+        if (GL.Settings:get("StackedRoll.automaticallyShareData")
+            and self:userIsAllowedToBroadcast()
+        ) then
+            self:broadcast();
+        end
     end
 
     return true;
@@ -459,7 +505,11 @@ function StackedRoll:addMissingRaiders()
                 DB.StackedRoll.Points[playerName] = default;
             end
         end
-        DB:set("StackedRoll.MetaData.importedAt", GetServerTime())
+        DB:set("StackedRoll.MetaData.importedAt", GetServerTime());
+        DB:set("StackedRoll.MetaData.updatedAt", GetServerTime());
+        if (not DB:get("StackedRoll.MetaData.uuid", nil)) then
+            DB:set("StackedRoll.MetaData.uuid", GL:uuid());
+        end
         self:materializeData();
     end
 end
@@ -492,6 +542,254 @@ function StackedRoll:export()
     end
 
     GL:frameMessage(csv);
+end
+
+--- Broadcast our stacked roll data to the raid or group
+---
+---@return boolean
+function StackedRoll:broadcast()
+    GL:debug("StackedRoll:broadcast");
+
+    if (self.broadcastInProgress) then
+        GL:error("Broadcast still in progress");
+        return false;
+    end
+
+    if (not GL.User.isInGroup) then
+        GL:warning("No one to broadcast to, you're not in a group!");
+        return false;
+    end
+
+    if (not self:userIsAllowedToBroadcast()) then
+        GL:warning("Insufficient permissions to broadcast, need ML, assist or lead!");
+        return false;
+    end
+
+    -- Check if there's anything to share
+    if (not self:available()) then
+        GL:warning("Nothing to broadcast, import StackedRoll data first!");
+        return false;
+    end
+
+    self.broadcastInProgress = true;
+    GL.Events:fire("GL.STACKEDROLL_BROADCAST_STARTED");
+
+    local Broadcast = function ()
+        GL:message("Broadcasting StackedRoll data...");
+
+        local Label = GL.Interface:getItem(GL.StackedRoll, "Label.BroadcastProgress");
+
+        if (Label) then
+            Label:SetText("Broadcasting...");
+        end
+
+        GL.CommMessage.new(
+            CommActions.broadcastStackedRollData,
+            {
+                importString = self:export(),
+                uuid = DB:get("StackedRoll.MetaData.uuid", nil),
+            },
+            "GROUP"
+        ):send(function ()
+            GL:success("StackedRoll broadcast finished");
+            self.broadcastInProgress = false;
+            GL.Events:fire("GL.STACKEDROLL_BROADCAST_ENDED");
+
+            Label = GL.Interface:getItem(GL.StackedRoll, "Label.BroadcastProgress");
+            if (Label) then
+                Label:SetText("Broadcast finished!");
+            end
+
+            -- Make sure to broadcast the loot priorities as well
+            GL.LootPriority:broadcast();
+        end, function (sent, total)
+            Label = GL.Interface:getItem(GL.StackedRoll, "Label.BroadcastProgress");
+            if (Label) then
+                Label:SetText(string.format("Sent %s of %s bytes", sent, total));
+            end
+        end);
+    end
+
+    -- We're about to send a lot of data which will put strain on CTL
+    -- Make sure we're out of combat before doing so!
+    if (UnitAffectingCombat("player")) then
+        GL:message("You are currently in combat, delaying StackedRoll broadcast");
+
+        GL.Events:register("StackedRollOutOfCombatListener", "PLAYER_REGEN_ENABLED", function ()
+            GL.Events:unregister("StackedRollOutOfCombatListener");
+            Broadcast();
+        end);
+    else
+        Broadcast();
+    end
+
+    return true;
+end
+
+--- Process an incoming stacked roll broadcast
+---
+---@param CommMessage CommMessage
+function StackedRoll:receiveBroadcast(CommMessage)
+    GL:debug("StackedRoll:receiveBroadcast");
+
+    -- No need to update our tables if we broadcasted them ourselves
+    if (CommMessage.Sender.name == GL.User.name) then
+        GL:debug("StackedRoll:receiveBroadcast received by self, skip");
+        return true;
+    end
+
+    local uuid = DB:get("StackedRoll.MetaData.uuid", '');
+
+    local importString = CommMessage.content.importString or '';
+    local importUuid = CommMessage.content.uuid or GL:uuid();
+    local importBroadcast = (function ()
+        if (not GL:empty(importString)) then
+            GL:warning("Attempting to process incoming StackedRoll data from " .. CommMessage.Sender.name);
+            return self:import(importString, false, uuid);
+        end
+
+        GL:warning("Couldn't process StackedRoll data received from " .. CommMessage.Sender.name);
+        return false;
+    end);
+
+    local Dialog = {
+        question = string.format(GL.Interface.Dialogs.PopupDialog.STACKEDROLL_RECEIVE_BROADCAST_CONFIRMATION.question,
+                CommMessage.Sender.name
+            ),
+        OnYes = importBroadcast,
+    };
+
+    GL.Interface.Dialogs.PopupDialog:open(Dialog);
+end
+
+--- Request StackedRoll data from the person in charge (ML or Leader)
+---
+---@return void
+function StackedRoll:requestData()
+    GL:debug("StackedRoll:requestData");
+
+    if (self.requestingData) then
+        return;
+    end
+
+    self.requestingData = true;
+
+    local playerToRequestFrom = (function()
+        -- We are the ML, we need to import the data ourselves
+        if (GL.User.isMasterLooter) then
+            return;
+        end
+
+        local lootMethod, _, masterLooterRaidID = GetLootMethod();
+
+        -- Master looting is not active and we are the leader, this means we should import it ourselves
+        if (lootMethod ~= 'master'
+            and GL.User.isLead
+        ) then
+            return;
+        end
+
+        -- Master looting is active, return the name of the master looter
+        if (lootMethod == 'master') then
+            return GetRaidRosterInfo(masterLooterRaidID);
+        end
+
+        -- Fetch the group leader
+        local maximumNumberOfGroupMembers = _G.MEMBERS_PER_RAID_GROUP;
+        if (GL.User.isInRaid) then
+            maximumNumberOfGroupMembers = _G.MAX_RAID_MEMBERS;
+        end
+
+        for index = 1, maximumNumberOfGroupMembers do
+            local name, rank = GetRaidRosterInfo(index);
+
+            -- Rank 2 means leader
+            if (name and rank == 2) then
+                return name;
+            end
+        end
+    end)();
+
+    -- There's no one to request data from, return
+    if (GL:empty(playerToRequestFrom)) then
+        self.requestingData = false;
+        return;
+    end
+
+    -- We send a data request to the person in charge
+    -- He will compare the ID and importedAt timestamp on his end to see if we actually need his data
+    GL.CommMessage.new(
+        CommActions.requestStackedRollData,
+        {
+            updatedAt = DB:get('StackedRoll.MetaData.updatedAt', 0),
+            uuid = DB:get('StackedRoll.MetaData.uuid', ''),
+        },
+        "WHISPER",
+        playerToRequestFrom
+    ):send();
+
+    self.requestingData = false;
+end
+
+--- Reply to a player's StackedRoll data request
+---
+---@param CommMessage CommMessage
+---@return void
+function StackedRoll:replyToDataRequest(CommMessage)
+    GL:debug("StackedRoll:replyToDataRequest");
+
+    -- I don't have any data, leave me alone!
+    if (not self:available()) then
+        return;
+    end
+
+    -- We're not in a group (anymore), no need to help this person out
+    if (not GL.User.isInGroup) then
+        return;
+    end
+
+    -- Nice try, but we don't allow auto-sharing
+    if (not Settings:get("StackedRoll.automaticallyShareData")) then
+        return;
+    end
+
+    -- Nice try, but we're not allowed to share data
+    if (not self:userIsAllowedToBroadcast()) then
+        return;
+    end
+
+    -- The player is not in the same guild, this is something we won't support in data requests
+    if (not GL.User:playerIsGuildMember(CommMessage.senderFqn)) then
+        return;
+    end
+
+    local uuid = CommMessage.content.uuid or '';
+    local lastUpdate = CommMessage.content.updatedAt or 0;
+    -- Your data is up to date, leave me alone!
+    if (not GL:empty(uuid)
+        and uuid == DB:get('StackedRoll.MetaData.uuid', '')
+        and lastUpdate >= DB:get('StackedRoll.MetaData.updatedAt', 0)
+    ) then
+        return;
+    end
+
+    -- Looks like you need my data, here it is!
+    GL.CommMessage.new(
+        CommActions.broadcastStackedRollData,
+        {
+            importString = self:export(),
+            uuid = DB:get('StackedRoll.MetaData.uuid', ''),
+        },
+        "WHISPER",
+        CommMessage.Sender.name
+    ):send();
+end
+
+--- Check whether the current user is allowed to broadcast StackedRoll data
+---
+---@return boolean
+function StackedRoll:userIsAllowedToBroadcast()
+    return GL.User.isInGroup and GL.User.isMasterLooter;
 end
 
 

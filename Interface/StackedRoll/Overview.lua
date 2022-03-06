@@ -56,11 +56,14 @@ function Overview:draw()
     Window:SetPoint(GL.Interface:getPosition("StackedRollOverview"));
 
     local importedAt = GL:tableGet(DB.StackedRoll, "MetaData.importedAt", GetServerTime());
+    local updatedAt = GL:tableGet(DB.StackedRoll, "MetaData.updatedAt", GetServerTime());
     if (GL:higherThanZero(importedAt)) then
         Window:SetStatusText(string.format(
-            "Imported on |c00a79eff%s|r at |c00a79eff%s|r",
+            "Imported on |c00a79eff%s|r at |c00a79eff%s|r, Updated on |c00a79eff%s|r at |c00a79eff%s|r",
             date('%Y-%m-%d', importedAt),
-            date('%H:%M', importedAt)
+            date('%H:%M', importedAt),
+            date('%Y-%m-%d', updatedAt),
+            date('%H:%M', updatedAt)
         ));
     end
 
@@ -74,7 +77,7 @@ function Overview:draw()
     local ShareButton = GL.UI:createShareButton(
             Window.frame,
             function ()
-                GL.Interface.Dialogs.PopupDialog:open("BROADCAST_SOFTRES_CONFIRMATION");
+                GL.Interface.Dialogs.PopupDialog:open("BROADCAST_STACKEDROLL_CONFIRMATION");
             end,
             "Broadcast Data",
             "To broadcast you need to be in a group and need master loot, assist or lead!"
