@@ -69,11 +69,6 @@ PopupDialog.BROADCAST_STACKEDROLL_CONFIRMATION = {
     end,
 }
 
--- Import new stacked roll data confirmation
-PopupDialog.STACKEDROLL_RECEIVE_BROADCAST_CONFIRMATION = {
-    question = "Are you sure you want to clear your existing stacked rolls and import new data broadcasted by %s?",
-}
-
 -- Broadcast soft-reserve data confirmation
 PopupDialog.BROADCAST_TMB_CONFIRMATION = {
     question = "Are you sure you want to broadcast your TMB data to everyone in your party/raid? NB: EVERYONE can see your TMB data regardless of their permissions on the TMB website!",

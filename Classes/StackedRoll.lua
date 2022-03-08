@@ -9,6 +9,7 @@ GL.StackedRoll = {
     MaterializedData = {
         DetailsByPlayerName = {},
     },
+    queuedUpdates = {},
 };
 
 local DB = GL.DB; ---@type DB
@@ -395,9 +396,9 @@ end
 ---
 ---@param data string
 ---@param openOverview boolean (optional, default: false)
----@param uuid string (optional, default: auto generate new uuid)
+---@param MetaData table (optional, default: auto generate new metadata)
 ---@return boolean
-function StackedRoll:import(data, openOverview, uuid)
+function StackedRoll:import(data, openOverview, MetaData)
     GL:debug("StackedRoll:import");
 
     -- Make sure all the required properties are available and of the correct type
@@ -442,15 +443,15 @@ function StackedRoll:import(data, openOverview, uuid)
         return false;
     end
 
-    uuid = uuid or GL:uuid();
+    MetaData = MetaData or {};
 
     DB.StackedRoll = {
         Points = Points,
         Aliases = Aliases,
         MetaData = {
-            importedAt = GetServerTime(),
-            updatedAt = GetServerTime(),
-            uuid = uuid,
+            importedAt = MetaData.importedAt or GetServerTime(),
+            updatedAt = MetaData.updatedAt or GetServerTime(),
+            uuid = MetaData.uuid or GL:uuid(),
         },
     };
 
@@ -577,8 +578,7 @@ function StackedRoll:broadcast()
             CommActions.broadcastStackedRollData,
             {
                 importString = self:export(false),
-                uuid = DB:get("StackedRoll.MetaData.uuid", nil),
-                updatedAt = DB:get("StackedRoll.MetaData.updatedAt", nil),
+                MetaData = DB:get("StackedRoll.MetaData", {}),
             },
             "GROUP"
         ):send(function ()
@@ -630,12 +630,11 @@ function StackedRoll:receiveBroadcast(CommMessage)
     end
 
     local importString = CommMessage.content.importString or '';
-    local importUuid = CommMessage.content.uuid or GL:uuid();
-    local updatedAt = CommMessage.content.uuid or GL:uuid();
+    local MetaData = CommMessage.content.MetaData or {};
     local importBroadcast = (function ()
         if (not GL:empty(importString)) then
             GL:warning("Attempting to process incoming StackedRoll data from " .. CommMessage.Sender.name);
-            local result = self:import(importString, false, importUuid);
+            local result = self:import(importString, false, MetaData);
             if (result) then
                 GL.Interface.StackedRoll.Overview:refreshTable();
             end
@@ -646,10 +645,45 @@ function StackedRoll:receiveBroadcast(CommMessage)
         return false;
     end);
 
+    --- Check if we automatically accept data from this player.
+    local dataManagers = GL.Settings:get("StackedRoll.automaticallyAcceptDataFrom", '');
+    local DataManagers = GL:strSplit(dataManagers, ",");
+    local autoAccept = false;
+    for _, playerName in pairs(DataManagers) do
+        local normalizedName = GL:normalizedName(playerName);
+        if (normalizedName == GL:normalizedName(CommMessage.Sender.name)
+            or normalizedName == GL:normalizedName(CommMessage.senderFqn)
+        ) then
+            autoAccept = true;
+            break;
+        end
+    end
+
+    if (autoAccept) then
+        importBroadcast();
+        return;
+    end
+
+    --- Display different messages depending on whether it is an update of the same import or completely new data.
+    local uuid = DB:get("StackedRoll.MetaData.uuid", '');
+    local updatedAt = DB:get("StackedRoll.MetaData.updatedAt", 0);
+    local question;
+    if (MetaData.uuid and uuid == MetaData.uuid) then
+        question = string.format(
+            "Are you sure you want to update your existing stacked rolls with data from %s? Your latest update was on |c00a79eff%s|r, theirs on |c00a79eff%s|r.",
+            CommMessage.Sender.name,
+            date('%Y-%m-%d %H:%M', updatedAt),
+            date('%Y-%m-%d %H:%M', MetaData.updatedAt or 0)
+        );
+    else
+        question = string.format(
+            "Are you sure you want to clear your existing stacked rolls and import new data broadcasted by %s?",
+            CommMessage.Sender.name
+        );
+    end
+
     local Dialog = {
-        question = string.format(GL.Interface.Dialogs.PopupDialog.STACKEDROLL_RECEIVE_BROADCAST_CONFIRMATION.question,
-                CommMessage.Sender.name
-            ),
+        question = question,
         OnYes = importBroadcast,
     };
 
@@ -714,10 +748,7 @@ function StackedRoll:requestData()
     -- He will compare the ID and importedAt timestamp on his end to see if we actually need his data
     GL.CommMessage.new(
         CommActions.requestStackedRollData,
-        {
-            updatedAt = DB:get('StackedRoll.MetaData.updatedAt', 0),
-            uuid = DB:get('StackedRoll.MetaData.uuid', ''),
-        },
+        DB:get('StackedRoll.MetaData', {}),
         "WHISPER",
         playerToRequestFrom
     ):send();
@@ -771,8 +802,8 @@ function StackedRoll:replyToDataRequest(CommMessage)
     GL.CommMessage.new(
         CommActions.broadcastStackedRollData,
         {
-            importString = self:export(),
-            uuid = DB:get('StackedRoll.MetaData.uuid', ''),
+            importString = self:export(false),
+            MetaData = DB:get("StackedRoll.MetaData", {}),
         },
         "WHISPER",
         CommMessage.Sender.name
@@ -856,7 +887,6 @@ function StackedRoll:receiveUpdate(CommMessage)
         GL.Interface.StackedRoll.Overview:refreshTable();
     end);
 
-    GL:debug(importUuid, uuid);
     --- We only update if we have the same source data.
     if (importUuid == uuid) then
         importBroadcast();

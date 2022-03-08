@@ -43,6 +43,29 @@ function StackedRoll:draw(Parent)
     HorizontalSpacer:SetHeight(15);
     Parent:AddChild(HorizontalSpacer);
 
+    local StackedRollIdentifier = GL.AceGUI:Create("EditBox");
+    StackedRollIdentifier:DisableButton(true);
+    StackedRollIdentifier:SetHeight(20);
+    StackedRollIdentifier:SetFullWidth(true);
+    StackedRollIdentifier:SetMaxLetters(3);
+    StackedRollIdentifier:SetText(GL.Settings:get("StackedRoll.automaticallyAcceptDataFrom", ""));
+    StackedRollIdentifier:SetLabel(string.format(
+        "|cff%sAdd a comma separated list of players that are allowed to overwrite your data without your explicit consent:|r",
+        GL:classHexColor("rogue")
+    ));
+    StackedRollIdentifier:SetCallback("OnTextChanged", function (self)
+        local value = self:GetText();
+
+        if (type(value) ~= "string"
+            or GL:empty(value)
+        ) then
+            return;
+        end
+
+        GL.Settings:set("StackedRoll.automaticallyAcceptDataFrom", strtrim(value));
+    end);
+    Parent:AddChild(StackedRollIdentifier);
+
     local SortingPriority = GL.AceGUI:Create("EditBox");
     SortingPriority:DisableButton(true);
     SortingPriority:SetHeight(20);
