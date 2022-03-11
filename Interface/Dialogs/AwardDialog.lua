@@ -7,8 +7,8 @@ local AwardDialog = GL.Interface.Dialogs.AwardDialog; ---@type AwardDialogInterf
 
 function AwardDialog:open(Dialog)
     local AceGUI = GL.AceGUI;
-    Dialog.checkPlusOne = toboolean(Dialog.checkPlusOne);
-    Dialog.checkOS = toboolean(Dialog.checkOS);
+    Dialog.checkPlusOne = GL:toboolean(Dialog.checkPlusOne);
+    Dialog.checkOS = GL:toboolean(Dialog.checkOS);
 
     -- Create a container/parent frame
     local Frame = AceGUI:Create("GargulAwardDialog");

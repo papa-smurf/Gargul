@@ -3,32 +3,23 @@ local _, GL = ...;
 
 local Constants = GL.Data.Constants; ---@type Data
 
--- LUA supports tostring, tonumber etc but no toboolean, let's fix that!
-if (not _G["toboolean"]
-    and not toboolean
-) then
-    ---@param var any
-    ---@return boolean
-    _G["toboolean"] = function(var)
-        return not GL:empty(var);
-    end
+--- LUA supports tostring, tonumber etc but no toboolean, let's fix that!
+---@param var any
+---@return boolean
+function GL:toboolean(var)
+    return not GL:empty(var);
 end
 
--- Future versions of WoW support the round method, older versions don't, let's fix that!
-if (not _G["round"]
-    and not round
-) then
-    ---@param var number
-    ---@param precision number
-    ---@return number
-    round = function(var, precision)
-        if (precision and precision > 0) then
-            local mult = 10^ precision;
-            return math.floor(var * mult + .5) / mult;
-        end
-
-        return math.floor(var + .5);
+---@param var number
+---@param precision number
+---@return number
+function GL:round(var, precision)
+    if (precision and precision > 0) then
+        local mult = 10^ precision;
+        return math.floor(var * mult + .5) / mult;
     end
+
+    return math.floor(var + .5);
 end
 
 --- Print a normal message (white)
@@ -419,7 +410,7 @@ end
 ---@param subStr string
 ---@return boolean
 function GL:strContains(str, subStr)
-    return toboolean(strfind(str, subStr));
+    return GL:toboolean(strfind(str, subStr));
 end
 
 --- URL Decode a given url string
@@ -757,7 +748,7 @@ end
 ---@param skipSoulBound boolean
 ---@return table
 function GL:findBagIdAndSlotForItem(itemID, skipSoulBound)
-    skipSoulBound = toboolean(skipSoulBound);
+    skipSoulBound = GL:toboolean(skipSoulBound);
 
     for bag = 0, 10 do
         for slot = 1, GetContainerNumSlots(bag) do
@@ -983,7 +974,7 @@ function GL:sendChatMessage(message, chatType, language, channel, stw)
     if (stw == nil) then
         stw = true;
     end
-    stw = toboolean(stw);
+    stw = GL:toboolean(stw);
 
     -- No point sending an empty message!
     if (GL:empty(message)) then
