@@ -6,6 +6,8 @@ GL.TradeWindow = {
     _initialized = false,
     numberOfTradeSlots = 6,
 
+    AddItemsTimer = {},
+    ItemsToAdd = {},
     State = {
         partner = "",
         MyItems = {},
@@ -102,6 +104,28 @@ end
 function TradeWindow:handleEvents(event, message)
     GL:debug("TradeWindow:handleEvents");
 
+    -- Trade started
+    if (event == "TRADE_SHOW") then
+        self.ItemsToAdd = {};
+
+        -- Make sure to cancel any lingering timers
+        GL.Ace:CancelTimer(self.AddItemsTimer);
+
+        -- Periodically add items to the trade window
+        -- We don't do this instantly because that can bug out the UI
+        self.AddItemsTimer = GL.Ace:ScheduleRepeatingTimer(function ()
+            self:processItemsToAdd();
+        end, .3);
+    end
+
+    -- Trade cancelled
+    if (event == "TRADE_CLOSED") then
+        self.ItemsToAdd = {};
+
+        -- Make sure to cancel any lingering timers
+        GL.Ace:CancelTimer(self.AddItemsTimer);
+    end
+
     -- Something changed regarding the trade, update our trade state
     if (GL:inTable({
         "TRADE_PLAYER_ITEM_CHANGED",
@@ -150,6 +174,7 @@ function TradeWindow:updateState()
         -- Fetch and store the items on our side of the trade window
         local name, texture, quantity, isUsable, enchantment  = GetTradePlayerItemInfo(tradeSlot);
         local itemLink = GetTradePlayerItemLink(tradeSlot);
+        local itemID = GL:getItemIdFromLink(itemLink) or nil;
 
         self.State.MyItems[tradeSlot] = {
             name = name,
@@ -158,12 +183,13 @@ function TradeWindow:updateState()
             isUsable = isUsable,
             enchantment = enchantment,
             itemLink = itemLink,
-            itemID = GL:getItemIdFromLink(itemLink) or nil,
+            itemID = itemID,
         };
 
         -- Fetch and store the items on their side of the trade window
         name, texture, quantity, isUsable, enchantment  = GetTradeTargetItemInfo(tradeSlot);
         itemLink = GetTradeTargetItemLink(tradeSlot);
+        itemID = GL:getItemIdFromLink(itemLink) or nil;
 
         self.State.TheirItems[tradeSlot] = {
             name = name,
@@ -172,7 +198,7 @@ function TradeWindow:updateState()
             isUsable = isUsable,
             enchantment = enchantment,
             itemLink = itemLink,
-            itemID = GL:getItemIdFromLink(itemLink) or nil,
+            itemID = itemID,
         };
     end
 end
@@ -197,8 +223,32 @@ end
 --- Attempt to add a given itemID to the trade window
 ---
 ---@param itemID number
+---@return void
 function TradeWindow:addItem(itemID)
     GL:debug("TradeWindow:addItem");
+
+    tinsert(self.ItemsToAdd, itemID);
+end
+
+--- Process the ItemsToAdd table
+---
+---@return void
+function TradeWindow:processItemsToAdd()
+    GL:debug("TradeWindow:processItemsToAdd");
+
+    -- Make sure we don't use items if the trade window is not opened
+    -- The last thing we want to do is equip an item or use a consumable by mistake!
+    if (not TradeFrame:IsShown()) then
+        return;
+    end
+
+    -- There are no items left to add
+    if (not self.ItemsToAdd[1]) then
+        return;
+    end
+
+    local itemID = self.ItemsToAdd[1];
+    table.remove(self.ItemsToAdd, 1);
 
     -- Try to find the item in our bag, make sure to skip soulbound items
     local skipSoulbound = true;
