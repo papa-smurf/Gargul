@@ -484,7 +484,7 @@ function PackMule:disenchant(itemLink, byPassConfirmationDialog)
     end
 
     local itemId = GL:getItemIdFromLink(itemLink);
-    byPassConfirmationDialog = toboolean(byPassConfirmationDialog);
+    byPassConfirmationDialog = GL:toboolean(byPassConfirmationDialog);
 
     -- Make sure an itemlink was provided
     if (not GL:higherThanZero(itemId)) then

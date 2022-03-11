@@ -232,7 +232,7 @@ function User:playerIsGuildMember(playerName)
     end
 
     playerName = string.lower(playerName);
-    return toboolean(self.GuildMemberNames[playerName]);
+    return GL:toboolean(self.GuildMemberNames[playerName]);
 end
 
 -- Get all of the people who are
@@ -302,10 +302,10 @@ end
 ---@return boolean
 function User:unitIsInYourGroup(unit)
     if (self.isInRaid) then
-        return toboolean(UnitInRaid(unit));
+        return GL:toboolean(UnitInRaid(unit));
     end
 
-    return toboolean(UnitInParty(unit));
+    return GL:toboolean(UnitInParty(unit));
 end
 
 -- Return the names of everyone in your party/raid

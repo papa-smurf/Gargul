@@ -56,7 +56,7 @@ function TradeWindow:open(playerName, callback, allwaysExecuteCallback)
     GL:debug("TradeWindow:open");
 
     playerName = GL:normalizedName(playerName);
-    allwaysExecuteCallback = toboolean(allwaysExecuteCallback);
+    allwaysExecuteCallback = GL:toboolean(allwaysExecuteCallback);
 
     -- Make sure the callback runs when a trade window is opened
     -- with our desired target or allwaysExecuteCallback is true

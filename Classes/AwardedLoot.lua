@@ -113,7 +113,7 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS)
     GL:debug("AwardedLoot:addWinner");
 
     -- Determine whether the item should be flagged as off-spec
-    isOS = toboolean(isOS);
+    isOS = GL:toboolean(isOS);
 
     local dateProvided = date and type(date) == "string";
     local timestamp = GetServerTime();

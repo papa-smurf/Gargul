@@ -708,7 +708,7 @@ function SoftRes:importGargulData(data)
     local createdAt = data.metadata.createdAt or 0;
     local updatedAt = data.metadata.updatedAt or 0;
     local discordUrl = data.metadata.discordUrl or "";
-    local hidden = toboolean(data.metadata.hidden or false);
+    local hidden = GL:toboolean(data.metadata.hidden or false);
     local id = tostring(data.metadata.id) or "";
     local instance = data.metadata.instance or "";
     local raidNote = data.metadata.note or "";
