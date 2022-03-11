@@ -96,6 +96,8 @@ end
 ---@param callback function
 ---@return void
 function PackMule:isItemIDIgnored(checkItemID, callback)
+    GL:debug("PackMule:isItemIDIgnored");
+
     local itemID, _, _, _, _, itemClassID = GetItemInfoInstant(checkItemID)
 
     if (not itemID) then
@@ -362,6 +364,8 @@ end
 ---@param ruleItemName string
 ---@return boolean
 function PackMule:lootMatchesSpecificRule(lootName, ruleItemName)
+    GL:debug("PackMule:lootMatchesSpecificRule");
+
     if (type(lootName) ~= "string")
         or type(ruleItemName) ~= "string"
     then
@@ -556,6 +560,8 @@ end
 ---
 ---@return void
 function PackMule:clearDisenchanter()
+    GL:debug("PackMule:clearDisenchanter");
+
     self.disenchanter = nil;
 end
 
