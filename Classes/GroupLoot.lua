@@ -8,7 +8,7 @@ GL.GroupLoot = {
 }
 
 local Constants = GL.Data.Constants; ---@type Data
-local LCG = LibStub("LibCustomGlow-1.0");
+local LCG = LibStub("LibCustomGlowGargul-1.0");
 local SoftRes = GL.SoftRes; ---@type SoftRes
 
 local GroupLoot = GL.GroupLoot; ---@type GroupLoot

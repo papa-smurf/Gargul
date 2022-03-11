@@ -15,7 +15,7 @@ local Constants = GL.Data.Constants; ---@type Data
 local DroppedLoot = GL.DroppedLoot; ---@type DroppedLoot
 local Events = GL.Events; ---@type Events
 local SoftRes = GL.SoftRes; ---@type SoftRes
-local LCG = LibStub("LibCustomGlow-1.0");
+local LCG = LibStub("LibCustomGlowGargul-1.0");
 
 ---@return boolean
 function DroppedLoot:_init()
