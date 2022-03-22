@@ -22,7 +22,6 @@ GL.User = {
     isInParty = false,
     isInGroup = false,
     raidsAttended = 0,
-    Dkp = {},
 
     -- Group specific
     raidIndex = nil,
@@ -242,7 +241,7 @@ function User:playerIsGuildMember(playerName)
     end
 
     playerName = string.lower(playerName);
-    return toboolean(self.GuildMemberNames[playerName]);
+    return GL:toboolean(self.GuildMemberNames[playerName]);
 end
 
 -- Get all of the people who are
@@ -312,14 +311,14 @@ end
 ---@return boolean
 function User:unitIsInYourGroup(unit)
     if (self.isInRaid) then
-        return toboolean(UnitInRaid(unit));
+        return GL:toboolean(UnitInRaid(unit));
     end
 
-    return toboolean(UnitInParty(unit));
+    return GL:toboolean(UnitInParty(unit));
 end
 
 -- Return the names of everyone in your party/raid
-function User:groupMemberNames()
+function User:groupMemberNames(fqn)
     GL:debug("User:groupMemberNames");
 
     -- The -1 is used as an extra buffer to make sure we don't miss out on any names...
@@ -327,19 +326,28 @@ function User:groupMemberNames()
     local timestamp = GetServerTime() - 1;
 
     -- The group names didn't change so there's no need to fetch them all again
-    if (self.groupMemberNamesCachedAt > self.groupSetupChangedAt) then
-        return self.GroupMemberNames;
+    if (self.groupMemberNamesCachedAt <= self.groupSetupChangedAt) then
+        self.groupMemberNamesCachedAt = timestamp;
+
+        local GroupMemberNames = {};
+        -- Fetch the name of everyone currently in the raid/party
+        for _, Player in pairs(self:groupMembers()) do
+            tinsert(GroupMemberNames, Player.name);
+        end
+
+        self.GroupMemberNames = GroupMemberNames;
     end
 
-    self.groupMemberNamesCachedAt = timestamp;
+    -- Remove realm tags if the FQN is not desired
+    -- We build a new table here so that the original values are not affected
+    if (not fqn and GL.isEra) then
+        local RealmFreeNames = {};
+        for _, name in pairs(self.GroupMemberNames) do
+            tinsert(RealmFreeNames, GL:stripRealm(name));
+        end
 
-    local GroupMemberNames = {};
-    -- Fetch the name of everyone currently in the raid/party
-    for _, Player in pairs(self:groupMembers()) do
-        tinsert(GroupMemberNames, string.lower(GL:stripRealm(Player.name)));
+        return RealmFreeNames;
     end
-
-    self.GroupMemberNames = GroupMemberNames;
 
     return self.GroupMemberNames;
 end

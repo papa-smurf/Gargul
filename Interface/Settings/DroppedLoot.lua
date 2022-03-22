@@ -34,12 +34,12 @@ function DroppedLoot:draw(Parent)
     };
 
     local MinimumQuality = AceGUI:Create("Dropdown");
-    MinimumQuality:SetValue(GL.Settings:get("minimumQualityOfAnnouncedLoot", 4));
+    MinimumQuality:SetValue(GL.Settings:get("DroppedLoot.minimumQualityOfAnnouncedLoot", 4));
     MinimumQuality:SetList(DropDownItems);
-    MinimumQuality:SetText(DropDownItems[GL.Settings:get("minimumQualityOfAnnouncedLoot", 4)]);
+    MinimumQuality:SetText(DropDownItems[GL.Settings:get("DroppedLoot.minimumQualityOfAnnouncedLoot", 4)]);
     MinimumQuality:SetWidth(150);
     MinimumQuality:SetCallback("OnValueChanged", function()
-        GL.Settings:set("minimumQualityOfAnnouncedLoot", MinimumQuality:GetValue());
+        GL.Settings:set("DroppedLoot.minimumQualityOfAnnouncedLoot", MinimumQuality:GetValue());
     end);
     Parent:AddChild(MinimumQuality);
 
@@ -53,7 +53,12 @@ function DroppedLoot:draw(Parent)
         {
             label = "Announce loot to chat",
             description = "Checking this will make sure that dropped loot of a given minimum quality (see the minimum announce quality setting) is announced to the party or raid chat",
-            setting = "announceLootToChat",
+            setting = "DroppedLoot.announceLootToChat",
+        },
+        {
+            label = "Use raid warning",
+            description = "Check this if you want Gargul to use /rw instead of /ra when announcing dropped loot",
+            setting = "DroppedLoot.announceDroppedLootInRW",
         },
     };
 

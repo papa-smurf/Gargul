@@ -367,7 +367,7 @@ function MasterLooterUI:draw(itemLink)
         CloseOnStart:SetLabel("Close on start");
         CloseOnStart:SetValue(GL.Settings:get("UI.RollOff.closeOnStart", true));
         CloseOnStart:SetCallback("OnValueChanged", function (widget)
-            GL.Settings:set("UI.RollOff.closeOnStart", toboolean(widget:GetValue()));
+            GL.Settings:set("UI.RollOff.closeOnStart", GL:toboolean(widget:GetValue()));
         end);
         CloseOnStart:SetWidth(150);
         FifthRow:AddChild(CloseOnStart);
@@ -376,7 +376,7 @@ function MasterLooterUI:draw(itemLink)
         CloseOnAward:SetLabel("Close on award");
         CloseOnAward:SetValue(GL.Settings:get("UI.RollOff.closeOnAward", true));
         CloseOnAward:SetCallback("OnValueChanged", function (widget)
-            GL.Settings:set("UI.RollOff.closeOnAward", toboolean(widget:GetValue()));
+            GL.Settings:set("UI.RollOff.closeOnAward", GL:toboolean(widget:GetValue()));
         end);
         CloseOnAward:SetWidth(150);
         FifthRow:AddChild(CloseOnAward);

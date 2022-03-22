@@ -96,6 +96,8 @@ end
 ---@param callback function
 ---@return void
 function PackMule:isItemIDIgnored(checkItemID, callback)
+    GL:debug("PackMule:isItemIDIgnored");
+
     local itemID, _, _, _, _, itemClassID = GetItemInfoInstant(checkItemID)
 
     if (not itemID) then
@@ -260,7 +262,7 @@ function PackMule:lootReady()
                         or (operator == "<=" and itemQuality <= quality)
                     )) then
                         local bindType = Loot.bindType or LE_ITEM_BIND_NONE;
-                        local bindOnPickup = GL:inTable({ LE_ITEM_BIND_ON_ACQUIRE, LE_ITEM_BIND_QUEST}, bindType);
+                        local bindOnPickup = GL:inTable({LE_ITEM_BIND_ON_ACQUIRE, LE_ITEM_BIND_QUEST}, bindType);
 
                         if (not bindOnPickup or ( -- The item is not BoP so we can safely PackMule it
                             itemQuality < 5 -- Legendary items are skipped
@@ -291,13 +293,12 @@ function PackMule:lootReady()
 
                     -- Check whether we need to give the item to a random player
                     if (ruleTarget == "RANDOM") then
-                        --target = GL:tableGet(GroupMembers[math.random( #GroupMembers)] or {}, "name", false);
                         for _, Player in pairs(GL.User:groupMembers()) do
                             tinsert(Targets, string.lower(Player.name));
                         end
                     else
                         local RuleTargets = GL:strSplit(ruleTarget, " ");
-                        local GroupMemberNames = GL.User:groupMemberNames();
+                        local GroupMemberNames = GL.User:groupMemberNames(true);
 
                         for _, ruleTarget in pairs(RuleTargets) do
                             local targetContainsExclamationMark = strfind(ruleTarget, "!");
@@ -362,6 +363,8 @@ end
 ---@param ruleItemName string
 ---@return boolean
 function PackMule:lootMatchesSpecificRule(lootName, ruleItemName)
+    GL:debug("PackMule:lootMatchesSpecificRule");
+
     if (type(lootName) ~= "string")
         or type(ruleItemName) ~= "string"
     then
@@ -484,7 +487,7 @@ function PackMule:disenchant(itemLink, byPassConfirmationDialog)
     end
 
     local itemId = GL:getItemIdFromLink(itemLink);
-    byPassConfirmationDialog = toboolean(byPassConfirmationDialog);
+    byPassConfirmationDialog = GL:toboolean(byPassConfirmationDialog);
 
     -- Make sure an itemlink was provided
     if (not GL:higherThanZero(itemId)) then
@@ -556,6 +559,8 @@ end
 ---
 ---@return void
 function PackMule:clearDisenchanter()
+    GL:debug("PackMule:clearDisenchanter");
+
     self.disenchanter = nil;
 end
 

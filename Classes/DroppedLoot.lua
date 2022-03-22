@@ -5,7 +5,8 @@ local _, GL = ...;
 GL.DroppedLoot = {
     Announced = {},
     initialized = false,
-    eventsHooked = false,
+    ButtonsHooked = {},
+    allButtonsHooked = false,
     LootButtonItemLinkCache = {},
     lootChangedTimer = 0,
     lootWindowIsOpened = false,
@@ -15,7 +16,7 @@ local Constants = GL.Data.Constants; ---@type Data
 local DroppedLoot = GL.DroppedLoot; ---@type DroppedLoot
 local Events = GL.Events; ---@type Events
 local SoftRes = GL.SoftRes; ---@type SoftRes
-local LCG = LibStub("LibCustomGlow-1.0");
+local LCG = LibStub("LibCustomGlowGargul-1.0");
 
 ---@return boolean
 function DroppedLoot:_init()
@@ -79,7 +80,6 @@ function DroppedLoot:lootReady()
 
     self:lootChanged();
     Events:fire("GL.LOOT_CHANGED");
-    self:hookClickEvents();
 
     -- Periodically check if the loot changed because the internal WoW events are not
     -- comprehensive enough to detect things like the player moving to the next page of items.
@@ -91,7 +91,7 @@ function DroppedLoot:lootReady()
 
     -- Only announce loot in chat if the setting is enabled
     if (GL.User.isMasterLooter
-        and GL.Settings:get("announceLootToChat")
+        and GL.Settings:get("DroppedLoot.announceLootToChat")
     ) then
         self:announce();
     end
@@ -108,6 +108,12 @@ function DroppedLoot:lootReady()
 
     -- Let the rest of the application know we're done announcing the items
     GL.Events:fire("GL.LOOT_ANNOUNCED");
+
+    -- We need to delay the hooking of click events because some add-ons
+    -- are slow when it comes to adding their custom buttons (looking at you XLoot)
+    GL.Ace:ScheduleTimer(function ()
+        self:hookClickEvents();
+    end, .4);
 end
 
 -- Check whether the loot in the loot window changed in any way e.g:
@@ -243,40 +249,77 @@ end
 function DroppedLoot:hookClickEvents()
     GL:debug("DroppedLoot:hookClickEvents");
 
-    if (DroppedLoot.eventsHooked) then
-        return;
-    end
+    -- The first loot button should always exist,
+    -- that way we can determine the button provider for all future buttons
+    local buttonProvider = (function ()
+        --- ElvUI support
+        if (getglobal("ElvLootSlot1")) then
+            return "ElvUI";
+        end
 
-    -- 4 is the max since buttons seem to be reused
-    -- throughout loot pages... thanks Blizzard
+        --- XLoot 1.0 support
+        if (getglobal("XLootFrameButton1")) then
+            return "XLoot1";
+        end
+
+        --- XLoot support
+        if (getglobal("XLootButton1")) then
+            return "XLoot";
+        end
+
+        --- default (vanilla) UI
+        return "default";
+    end)();
+
+    --- The default UI only supports 4 buttons, but add-ons like XLoot
+    --- support a potentially unlimited number of loot buttons, hence the 99
+    ---@todo Some add-ons support more than 4 loot buttons (XLoot specifically), this needs to be fixed at some point
     for buttonIndex = 1, _G.LOOTFRAME_NUMBUTTONS do
-        local Button = getglobal("LootButton" .. buttonIndex);
+        self.ButtonsHooked[buttonProvider] = self.ButtonsHooked[buttonProvider] or {};
 
-        Button:HookScript("OnClick", function(_, mouseButtonPressed)
-            local itemLink = GetLootSlotLink(Button.slot);
-
-            if (not itemLink or type(itemLink) ~= "string") then
-                return;
+        if (not self.ButtonsHooked[buttonProvider][buttonIndex]) then
+            local Button;
+            if (buttonProvider == "ElvUI") then
+                Button = getglobal("ElvLootSlot" .. buttonIndex);
+            elseif (buttonProvider == "XLoot1") then
+                Button = getglobal("XLootFrameButton" .. buttonIndex);
+            elseif (buttonProvider == "XLoot") then
+                Button = getglobal("XLootButton" .. buttonIndex);
+            else
+                Button = getglobal("LootButton" .. buttonIndex);
             end
 
-            local keyPressIdentifier = GL.Events:getClickCombination(mouseButtonPressed);
-
-            -- Open the roll window
-            if (keyPressIdentifier == GL.Settings:get("ShortcutKeys.rollOff")) then
-                GL.MasterLooterUI:draw(itemLink);
-
-            -- Open the award window
-            elseif (keyPressIdentifier == GL.Settings:get("ShortcutKeys.award")) then
-                GL.Interface.Award:draw(itemLink);
-
-            -- Disenchant the item
-            elseif (keyPressIdentifier == GL.Settings:get("ShortcutKeys.disenchant")) then
-                GL.PackMule:disenchant(itemLink);
+            --- No button with this index was found, no need to look further
+            if (not Button) then
+                break;
             end
-        end);
+
+            Button:HookScript("OnClick", function(_, mouseButtonPressed)
+                local itemLink = GetLootSlotLink(Button.slot);
+
+                if (not itemLink or type(itemLink) ~= "string") then
+                    return;
+                end
+
+                local keyPressIdentifier = GL.Events:getClickCombination(mouseButtonPressed);
+
+                -- Open the roll window
+                if (keyPressIdentifier == GL.Settings:get("ShortcutKeys.rollOff")) then
+                    GL.MasterLooterUI:draw(itemLink);
+
+                    -- Open the award window
+                elseif (keyPressIdentifier == GL.Settings:get("ShortcutKeys.award")) then
+                    GL.Interface.Award:draw(itemLink);
+
+                    -- Disenchant the item
+                elseif (keyPressIdentifier == GL.Settings:get("ShortcutKeys.disenchant")) then
+                    GL.PackMule:disenchant(itemLink);
+                end
+            end);
+
+            self.ButtonsHooked[buttonProvider][buttonIndex] = true;
+        end
     end
-
-    DroppedLoot.eventsHooked = true;
 end
 
 -- Announce the loot that dropped in the party or raid chat
@@ -326,7 +369,7 @@ function DroppedLoot:announce()
             -- Check if we need to announce this item
             local itemId = tonumber(GL:getItemIdFromLink(itemLink)) or 0;
             if ((
-                    quality < GL.Settings:get("minimumQualityOfAnnouncedLoot", 4) -- Quality is lower than our set minimum
+                    quality < GL.Settings:get("DroppedLoot.minimumQualityOfAnnouncedLoot", 4) -- Quality is lower than our set minimum
                     or GL:inTable(Constants.ItemsThatSouldntBeAnnounced, itemId) -- We don't want to announce this item
                 )
                 and GL:empty(SoftReserves) -- No one (hard)reserved it
@@ -345,20 +388,27 @@ function DroppedLoot:announce()
                 ActiveSoftResDetails = self:getSoftResDetails(SoftReserves);
             end
 
+            -- Determine the correct channel for announcing the loot
+            -- Both GROUP and RAID_WARNING will default to PARTY if not in a raid or if you don't have assist
+            local channel = "GROUP";
+            if (GL.Settings:get("DroppedLoot.announceDroppedLootInRW")) then
+                channel = "RAID_WARNING";
+            end
+
             -- Either announce the item by itself or state that it's hard-reserved!
             if (itemIsHardReserved
                 and GL.Settings:get("SoftRes.announceInfoInChat")
             ) then
                 GL:sendChatMessage(
                     itemLink .. " (This item is hard-reserved!)",
-                    "GROUP"
+                    channel
                 );
             else
                 -- Link the item in the chat for
                 -- all group members to see
                 GL:sendChatMessage(
                     itemLink,
-                    "GROUP"
+                    channel
                 );
             end
 

@@ -150,12 +150,12 @@ function Award:draw(itemLink)
 
             local OSCheckBox = GL.Interface:getItem(GL.Interface.Dialogs.AwardDialog, "CheckBox.OffSpec");
             if (OSCheckBox) then
-                isOS = toboolean(OSCheckBox:GetValue());
+                isOS = GL:toboolean(OSCheckBox:GetValue());
             end
 
             local addPlusOneCheckBox = GL.Interface:getItem(GL.Interface.Dialogs.AwardDialog, "CheckBox.PlusOne");
             if (addPlusOneCheckBox) then
-                addPlusOne = toboolean(addPlusOneCheckBox:GetValue());
+                addPlusOne = GL:toboolean(addPlusOneCheckBox:GetValue());
 
                 if (addPlusOne) then
                     GL.PlusOnes:add(winner);

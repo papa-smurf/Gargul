@@ -10,12 +10,14 @@ local _, GL = ...;
 ---@class AwardedLoot
 GL.AwardedLoot = {
     _initialized = false,
+
     AwardedThisSession = {},
 };
 
 local AwardedLoot = GL.AwardedLoot; ---@type AwardedLoot
 local CommActions = GL.Data.Constants.Comm.Actions;
 
+---@return void
 function AwardedLoot:_init()
     GL:debug("AwardedLoot:_init");
 
@@ -56,7 +58,7 @@ end
 
 --- Append the players this item was awarded to to the tooltip
 ---
----@param Tooltip Table
+---@param Tooltip table
 function AwardedLoot:appendAwardedLootToTooltip(Tooltip)
     GL:debug("AwardedLoot:appendAwardedLootToTooltip");
 
@@ -113,7 +115,7 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, cost)
     GL:debug("AwardedLoot:addWinner");
 
     -- Determine whether the item should be flagged as off-spec
-    isOS = toboolean(isOS);
+    isOS = GL:toboolean(isOS);
 
     local dateProvided = date and type(date) == "string";
     local timestamp = GetServerTime();
@@ -289,14 +291,23 @@ end
 function AwardedLoot:initiateTrade(AwardDetails)
     GL:debug("AwardedLoot:initiateTrade");
 
+    local tradingPartner = AwardDetails.awardedTo;
+
     -- Check whether we have the item in our inventory, no point opening a trade window if not
     local itemPositionInBag = GL:findBagIdAndSlotForItem(AwardDetails.itemId);
     if (GL:empty(itemPositionInBag)) then
         return;
     end
 
+    -- If the item is marked as disenchanted then we need to open a trade window with the disenchanter
+    if (AwardDetails.awardedTo == GL.Exporter.disenchantedItemIdentifier
+        and GL.PackMule.disenchanter
+    ) then
+        tradingPartner = GL.PackMule.disenchanter;
+    end
+
     -- Open a trade window with the winner
-    GL.TradeWindow:open(AwardDetails.awardedTo, function ()
+    GL.TradeWindow:open(tradingPartner, function ()
         self:tradeInitiated();
     end);
 end
@@ -337,7 +348,13 @@ function AwardedLoot:tradeInitiated()
 
             -- Check whether this item is meant for our current trading partner
             if (Loot.received -- The item was already received by the winner, no need to check further
-                or awardedTo ~= tradingPartner -- The awarded item entry is not meant for this person
+                or (awardedTo ~= tradingPartner -- The awarded item entry is not meant for this person
+
+                    -- The item is marked as disenchanted and our trading partner is the designated enchanter
+                    and (awardedTo ~= GL.Exporter.disenchantedItemIdentifier
+                        or tradingPartner ~= GL.PackMule.disenchanter
+                    )
+                )
             ) then
                 return;
             end
@@ -356,6 +373,8 @@ function AwardedLoot:tradeCompleted(Details)
     GL:debug("AwardedLoot:tradeCompleted");
 
     local ItemsTradedByMe = {};
+    local tradedDisenchanter = Details.partner == GL.PackMule.disenchanter;
+
     for _, Entry in pairs(Details.MyItems) do
         local itemID = tonumber(Entry.itemID);
 
@@ -389,7 +408,11 @@ function AwardedLoot:tradeCompleted(Details)
             end
 
             -- The item is not meant for the person we traded with, skip it
-            if (string.lower(GL:stripRealm(Details.partner)) ~= string.lower(GL:stripRealm(Loot.awardedTo))) then
+            if (string.lower(GL:stripRealm(Details.partner)) ~= string.lower(GL:stripRealm(Loot.awardedTo))
+                and (not tradedDisenchanter
+                    or Loot.awardedTo ~= GL.Exporter.disenchantedItemIdentifier
+                )
+            ) then
                 return;
             end
 
