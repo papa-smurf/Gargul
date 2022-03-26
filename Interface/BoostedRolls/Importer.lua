@@ -5,9 +5,9 @@ GL.AceGUI = GL.AceGUI or LibStub("AceGUI-3.0");
 
 local AceGUI = GL.AceGUI;
 
-GL:tableSet(GL, "Interface.StackedRoll.Importer", {
+GL:tableSet(GL, "Interface.BoostedRolls.Importer", {
     isVisible = false,
-    stackedRollsBoxContent = "",
+    boostedRollsBoxContent = "",
 
     InterfaceItems = {
         Icons = {},
@@ -17,7 +17,7 @@ GL:tableSet(GL, "Interface.StackedRoll.Importer", {
     },
 });
 
-local Importer = GL.Interface.StackedRoll.Importer;
+local Importer = GL.Interface.BoostedRolls.Importer;
 
 function Importer:draw()
     GL:debug("Importer:draw");
@@ -27,7 +27,7 @@ function Importer:draw()
     end
 
     self.isVisible = true;
-    self.stackedRollsBoxContent = "";
+    self.boostedRollsBoxContent = "";
 
     -- Create a container/parent frame
     local Window = AceGUI:Create("Frame");
@@ -39,35 +39,35 @@ function Importer:draw()
     Window.statustext:GetParent():Hide(); -- Hide the statustext bar
     Window:SetCallback("OnClose", function()
         self:close();
-        GL.StackedRoll:draw();
+        GL.BoostedRolls:draw();
     end);
     GL.Interface:setItem(self, "Window", Window);
 
-    Window:SetPoint(GL.Interface:getPosition("StackedRollImport"));
+    Window:SetPoint(GL.Interface:getPosition("BoostedRollsImport"));
 
     -- Make sure the window can be closed by pressing the escape button
-    _G["GARGUL_STACKEDROLL_IMPORTER_WINDOW"] = Window.frame;
-    tinsert(UISpecialFrames, "GARGUL_STACKEDROLL_IMPORTER_WINDOW");
+    _G["GARGUL_BOOSTEDROLLS_IMPORTER_WINDOW"] = Window.frame;
+    tinsert(UISpecialFrames, "GARGUL_BOOSTEDROLLS_IMPORTER_WINDOW");
 
     -- Explanation
     local Description = AceGUI:Create("Label");
     Description:SetFontObject(_G["GameFontNormal"]);
     Description:SetFullWidth(true);
-    Description:SetText("Here you can import stacked rolls and aliases from a table in CSV or TSV format or pasted from a Google Docs Sheet.\n\nThe table needs at least two columns: The player name followed by the amount of points. Additional columns are optional and may contain aliases for the player.\nHere is an example line:\n\nFoobar,240,Barfoo");
+    Description:SetText("Here you can import boosted roll data and aliases from a table in CSV or TSV format or pasted from a Google Docs Sheet.\n\nThe table needs at least two columns: The player name followed by the amount of points. Additional columns are optional and may contain aliases for the player.\nHere is an example line:\n\nFoobar,240,Barfoo");
     Window:AddChild(Description);
 
     -- Large edit box
-    local StackedRollBox = AceGUI:Create("MultiLineEditBox");
-    StackedRollBox:SetFullWidth(true);
-    StackedRollBox:DisableButton(true);
-    StackedRollBox:SetFocus();
-    StackedRollBox:SetLabel("");
-    StackedRollBox:SetNumLines(20);
-    StackedRollBox:SetMaxLetters(999999999);
-    Window:AddChild(StackedRollBox);
+    local BoostedRollDataBox = AceGUI:Create("MultiLineEditBox");
+    BoostedRollDataBox:SetFullWidth(true);
+    BoostedRollDataBox:DisableButton(true);
+    BoostedRollDataBox:SetFocus();
+    BoostedRollDataBox:SetLabel("");
+    BoostedRollDataBox:SetNumLines(20);
+    BoostedRollDataBox:SetMaxLetters(999999999);
+    Window:AddChild(BoostedRollDataBox);
 
-    StackedRollBox:SetCallback("OnTextChanged", function(_, _, text)
-        self.stackedRollsBoxContent = text;
+    BoostedRollDataBox:SetCallback("OnTextChanged", function(_, _, text)
+        self.boostedRollsBoxContent = text;
     end)
 
     -- Status message frame
@@ -89,8 +89,8 @@ function Importer:draw()
     ImportButton:SetText("Import");
     ImportButton:SetWidth(140);
     ImportButton:SetCallback("OnClick", function()
-        if (GL.StackedRoll:available()) then
-            GL.Interface.Dialogs.PopupDialog:open("NEW_STACKEDROLL_IMPORT_CONFIRMATION");
+        if (GL.BoostedRolls:available()) then
+            GL.Interface.Dialogs.PopupDialog:open("NEW_BOOSTEDROLLS_IMPORT_CONFIRMATION");
         else
             self:import();
         end
@@ -100,7 +100,7 @@ end
 
 -- Import
 function Importer:import()
-    GL.StackedRoll:import(self.stackedRollsBoxContent, true);
+    GL.BoostedRolls:import(self.boostedRollsBoxContent, true);
 end
 
 -- Close the import frame and clean up after ourselves
@@ -116,11 +116,11 @@ function Importer:close()
     end
 
     -- Store the frame's last position for future play sessions
-    GL.Interface:storePosition(Window, "StackedRollImport");
+    GL.Interface:storePosition(Window, "BoostedRollsImport");
 
     -- Clear the frame and its widgets
     AceGUI:Release(Window);
     self.isVisible = false;
 end
 
-GL:debug("Interfaces/StackedRoll/Importer.lua");
+GL:debug("Interfaces/BoostedRolls/Importer.lua");

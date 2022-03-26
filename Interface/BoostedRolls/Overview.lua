@@ -8,18 +8,18 @@ local AceGUI = GL.AceGUI;
 local Constants = GL.Data.Constants; ---@type Data
 local DB = GL.DB; ---@type DB
 local ScrollingTable = GL.ScrollingTable;
-local StackedRoll = GL.StackedRoll; ---@type StackedRoll
+local BoostedRolls = GL.BoostedRolls; ---@type BoostedRolls
 
-GL:tableSet(GL, "Interface.StackedRoll.Overview", {
+GL:tableSet(GL, "Interface.BoostedRolls.Overview", {
     isVisible = false,
     selectedCharacter = nil,
     points = 0,
 });
 
----@class StackedRollOverview
-local Overview = GL.Interface.StackedRoll.Overview;
+---@class BoostedRollsOverview
+local Overview = GL.Interface.BoostedRolls.Overview;
 
---- Draw the UI elements required to show an overview of all stacked roll data
+--- Draw the UI elements required to show an overview of all boosted rolls data
 --- This is what this frame looks like:
 ---     +-----------------+
 ---     | Points          |
@@ -53,10 +53,10 @@ function Overview:draw()
     end);
     GL.Interface:setItem(self, "Window", Window);
 
-    Window:SetPoint(GL.Interface:getPosition("StackedRollOverview"));
+    Window:SetPoint(GL.Interface:getPosition("BoostedRollsOverview"));
 
-    local importedAt = GL:tableGet(DB.StackedRoll, "MetaData.importedAt", GetServerTime());
-    local updatedAt = GL:tableGet(DB.StackedRoll, "MetaData.updatedAt", GetServerTime());
+    local importedAt = GL:tableGet(DB.BoostedRolls, "MetaData.importedAt", GetServerTime());
+    local updatedAt = GL:tableGet(DB.BoostedRolls, "MetaData.updatedAt", GetServerTime());
     if (GL:higherThanZero(importedAt)) then
         Window:SetStatusText(string.format(
             "Imported on |c00a79eff%s|r at |c00a79eff%s|r, Updated on |c00a79eff%s|r at |c00a79eff%s|r",
@@ -68,8 +68,8 @@ function Overview:draw()
     end
 
     -- Make sure the window can be closed by pressing the escape button
-    _G["GARGUL_STACKEDROLL_OVERVIEW_WINDOW"] = Window.frame;
-    tinsert(UISpecialFrames, "GARGUL_STACKEDROLL_OVERVIEW_WINDOW");
+    _G["GARGUL_BOOSTEDROLLS_OVERVIEW_WINDOW"] = Window.frame;
+    tinsert(UISpecialFrames, "GARGUL_BOOSTEDROLLS_OVERVIEW_WINDOW");
 
     --[[
         SHARE BUTTON
@@ -77,7 +77,7 @@ function Overview:draw()
     local ShareButton = GL.UI:createShareButton(
             Window.frame,
             function ()
-                GL.Interface.Dialogs.PopupDialog:open("BROADCAST_STACKEDROLL_CONFIRMATION");
+                GL.Interface.Dialogs.PopupDialog:open("BROADCAST_BOOSTEDROLLS_CONFIRMATION");
             end,
             "Broadcast Data",
             "To broadcast you need to be in a group and need master loot, assist or lead!"
@@ -109,7 +109,7 @@ function Overview:draw()
     --[[
         PLAYER FRAME
     ]]
-    local step = GL.Settings:get("StackedRoll.defaultStep", 10);
+    local step = GL.Settings:get("BoostedRolls.defaultStep", 10);
 
     local PlayerFrame = AceGUI:Create("SimpleGroup");
     PlayerFrame:SetLayout("FLOW")
@@ -137,13 +137,13 @@ function Overview:draw()
     end);
     PlayerFrame:AddChild(DecrementButton);
 
-    local StackedRollCurrentPoints = GL.AceGUI:Create("EditBox");
-    StackedRollCurrentPoints:DisableButton(true);
-    StackedRollCurrentPoints:SetHeight(20);
-    StackedRollCurrentPoints:SetWidth(100);
-    StackedRollCurrentPoints:SetText(100);
-    StackedRollCurrentPoints:SetCallback("OnTextChanged", function (widget)
-        local value = GL.StackedRoll:toPoints(strtrim(widget:GetText()));
+    local BoostedRollsCurrentPoints = GL.AceGUI:Create("EditBox");
+    BoostedRollsCurrentPoints:DisableButton(true);
+    BoostedRollsCurrentPoints:SetHeight(20);
+    BoostedRollsCurrentPoints:SetWidth(100);
+    BoostedRollsCurrentPoints:SetText(100);
+    BoostedRollsCurrentPoints:SetCallback("OnTextChanged", function (widget)
+        local value = GL.BoostedRolls:toPoints(strtrim(widget:GetText()));
 
         if not value then
             return;
@@ -152,8 +152,8 @@ function Overview:draw()
         -- Update
         self:updatePoints(value, false);
     end);
-    PlayerFrame:AddChild(StackedRollCurrentPoints);
-    GL.Interface:setItem(self, "CurrentPoints", StackedRollCurrentPoints);
+    PlayerFrame:AddChild(BoostedRollsCurrentPoints);
+    GL.Interface:setItem(self, "CurrentPoints", BoostedRollsCurrentPoints);
 
     local IncrementButton = AceGUI:Create("Button");
     IncrementButton:SetText("+"..step);
@@ -230,7 +230,7 @@ function Overview:draw()
     BroadcastProgressLabel:SetWidth(200);
     BroadcastProgressLabel:SetFontObject(_G["GameFontNormal"]);
     Window:AddChild(BroadcastProgressLabel);
-    GL.Interface:setItem(GL.StackedRoll, "BroadcastProgress", BroadcastProgressLabel);
+    GL.Interface:setItem(GL.BoostedRolls, "BroadcastProgress", BroadcastProgressLabel);
 
     --[[
         BUTTONS FRAME
@@ -250,7 +250,7 @@ function Overview:draw()
     ClearDataButton:SetText("Clear Data");
     ClearDataButton:SetWidth(102);
     ClearDataButton:SetCallback("OnClick", function()
-        GL.Interface.Dialogs.PopupDialog:open("CLEAR_STACKEDROLL_CONFIRMATION");
+        GL.Interface.Dialogs.PopupDialog:open("CLEAR_BOOSTEDROLLS_CONFIRMATION");
     end);
     ButtonFrame:AddChild(ClearDataButton);
 
@@ -259,7 +259,7 @@ function Overview:draw()
     ImportButton:SetWidth(80);
     ImportButton:SetCallback("OnClick", function()
         self:close();
-        GL.Interface.StackedRoll.Importer:draw();
+        GL.Interface.BoostedRolls.Importer:draw();
     end);
     ButtonFrame:AddChild(ImportButton);
 
@@ -267,7 +267,7 @@ function Overview:draw()
     ExportButton:SetText("Export");
     ExportButton:SetWidth(80);
     ExportButton:SetCallback("OnClick", function()
-        StackedRoll:export(true);
+        BoostedRolls:export(true);
     end);
     ButtonFrame:AddChild(ExportButton);
 
@@ -275,7 +275,7 @@ function Overview:draw()
     AddRaidersButton:SetText("Add missing raiders");
     AddRaidersButton:SetWidth(165);
     AddRaidersButton:SetCallback("OnClick", function()
-        StackedRoll:addMissingRaiders();
+        BoostedRolls:addMissingRaiders();
         self:refreshTable();
     end);
     ButtonFrame:AddChild(AddRaidersButton);
@@ -284,9 +284,9 @@ function Overview:draw()
 
     self:updateShareButton();
 
-    GL.Events:register("StackedRollShareButtonRosterUpdatedListener", "GROUP_ROSTER_UPDATE", function () self:updateShareButton(); end);
-    GL.Events:register("StackedRollBroadcastStartedListener", "GL.STACKEDROLL_BROADCAST_STARTED", function () self:updateShareButton(); end);
-    GL.Events:register("StackedRollBroadcastEndedListener", "GL.STACKEDROLL_BROADCAST_ENDED", function () self:updateShareButton(); end);
+    GL.Events:register("BoostedRollsShareButtonRosterUpdatedListener", "GROUP_ROSTER_UPDATE", function () self:updateShareButton(); end);
+    GL.Events:register("BoostedRollsBroadcastStartedListener", "GL.BOOSTEDROLLS_BROADCAST_STARTED", function () self:updateShareButton(); end);
+    GL.Events:register("BoostedRollsBroadcastEndedListener", "GL.BOOSTEDROLLS_BROADCAST_ENDED", function () self:updateShareButton(); end);
 
 end
 
@@ -302,8 +302,8 @@ function Overview:updateShareButton()
 
     -- The user doesn't have sufficient permissions to broadcast
     -- Or a broadcast is already in progress
-    if (GL.StackedRoll.broadcastInProgress
-        or not GL.StackedRoll:userIsAllowedToBroadcast()
+    if (GL.BoostedRolls.broadcastInProgress
+        or not GL.BoostedRolls:userIsAllowedToBroadcast()
     ) then
         ShareButton:Disable();
         return;
@@ -420,7 +420,7 @@ function Overview:refreshTable()
     local PlayerData = {};
 
     -- We can't do a direct assignment because we want to edit this table in a bit
-    for playerName, Entry in pairs(StackedRoll.MaterializedData.DetailsByPlayerName) do
+    for playerName, Entry in pairs(BoostedRolls.MaterializedData.DetailsByPlayerName) do
         -- Augment with existing class data
         local class = nil;
         if (PlayerData[playerName]) then
@@ -439,15 +439,15 @@ function Overview:refreshTable()
     local TableData = {};
 
     for playerName, Entry in pairs(PlayerData) do
-        local rollPoints = StackedRoll:rollPoints(Entry.points);
-        local reserve = StackedRoll:reserve(Entry.points);
+        local rollPoints = BoostedRolls:rollPoints(Entry.points);
+        local reserve = BoostedRolls:reserve(Entry.points);
         local aliases = {};
         for _, aliasName in pairs(Entry.Aliases) do
             tinsert(aliases, GL:capitalize(aliasName));
         end
         aliases = table.concat(aliases, ",");
 
-        local StackedRollColor = {r=0,g=1,b=0,a=1};
+        local BoostedRollsColor = {r=0,g=1,b=0,a=1};
 
         tinsert(TableData, {
             cols = {
@@ -457,11 +457,11 @@ function Overview:refreshTable()
                 },
                 {
                     value = tostring(rollPoints),
-                    color = StackedRollColor,
+                    color = BoostedRollsColor,
                 },
                 {
                     value = tostring(reserve),
-                    color = StackedRollColor,
+                    color = BoostedRollsColor,
                 },
                 {
                     value = aliases,
@@ -483,7 +483,7 @@ function Overview:deleteEntry()
         return;
     end
 
-    StackedRoll:deletePoints(self.selectedCharacter);
+    BoostedRolls:deletePoints(self.selectedCharacter);
     self:refreshTable();
     self.selectedCharacter = nil;
     self:loadPlayer();
@@ -504,7 +504,7 @@ function Overview:updatePoints(points, updateEditBox)
     self.points = points;
 
     -- Update points locally.
-    StackedRoll:setPoints(self.selectedCharacter, points);
+    BoostedRolls:setPoints(self.selectedCharacter, points);
 
     -- Update interface.
     if updateEditBox then
@@ -513,8 +513,8 @@ function Overview:updatePoints(points, updateEditBox)
 
     local Table = GL.Interface:getItem(self, "Table.Characters");
     if (Table) then
-        local rollPoints = StackedRoll:rollPoints(points);
-        local reserve = StackedRoll:reserve(points);
+        local rollPoints = BoostedRolls:rollPoints(points);
+        local reserve = BoostedRolls:reserve(points);
         Table:GetRow(Table:GetSelection()).cols[2].value = tostring(rollPoints);
         Table:GetRow(Table:GetSelection()).cols[3].value = tostring(reserve);
         Table:Refresh();
@@ -533,7 +533,7 @@ function Overview:updateAliases(aliases)
 
     local Segments = GL:separateValues(aliases);
 
-    --- Import segments as aliases (twink names)
+    --- Import segments as aliases (alts)
     local Aliases = {};
     for i = 1, #Segments do
         local alias = tostring(Segments[i]);
@@ -543,7 +543,7 @@ function Overview:updateAliases(aliases)
             tinsert(Aliases, alias);
         end
     end
-    StackedRoll:setAliases(self.selectedCharacter, Aliases);
+    BoostedRolls:setAliases(self.selectedCharacter, Aliases);
     self:refreshTable();
 end
 
@@ -556,14 +556,14 @@ function Overview:loadPlayer()
     local name = "None";
     local Aliases = {};
     if (not self.selectedCharacter
-        or not StackedRoll.MaterializedData.DetailsByPlayerName[self.selectedCharacter]
+        or not BoostedRolls.MaterializedData.DetailsByPlayerName[self.selectedCharacter]
     ) then
         self.points = 0;
     else
-        self.points = StackedRoll:getPoints(self.selectedCharacter);
-        class = StackedRoll.MaterializedData.DetailsByPlayerName[self.selectedCharacter].class;
+        self.points = BoostedRolls:getPoints(self.selectedCharacter);
+        class = BoostedRolls.MaterializedData.DetailsByPlayerName[self.selectedCharacter].class;
         name = GL:capitalize(GL:stripRealm(self.selectedCharacter));
-        Aliases = StackedRoll.MaterializedData.DetailsByPlayerName[self.selectedCharacter].Aliases;
+        Aliases = BoostedRolls.MaterializedData.DetailsByPlayerName[self.selectedCharacter].Aliases;
     end
     
     GL.Interface:getItem(self, "EditBox.CurrentPoints"):SetText(self.points);
@@ -594,7 +594,7 @@ function Overview:close()
     end
 
     -- Store the frame's last position for future play sessions
-    GL.Interface:storePosition(Window, "StackedRollOverview");
+    GL.Interface:storePosition(Window, "BoostedRollsOverview");
 
     -- Clear the frame and its widgets
     AceGUI:Release(Window);
@@ -608,4 +608,4 @@ function Overview:close()
     end
 end
 
-GL:debug("Interfaces/StackedRoll/Overview.lua");
+GL:debug("Interfaces/BoostedRolls/Overview.lua");

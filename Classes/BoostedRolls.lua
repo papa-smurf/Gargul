@@ -1,8 +1,8 @@
 ---@type GL
 local _, GL = ...;
 
----@class StackedRoll
-GL.StackedRoll = {
+---@class BoostedRolls
+GL.BoostedRolls = {
     _initialized = false,
     broadcastInProgress = false,
     requestingData = false,
@@ -14,24 +14,24 @@ GL.StackedRoll = {
 
 local DB = GL.DB; ---@type DB
 local CommActions = GL.Data.Constants.Comm.Actions;
-local StackedRoll = GL.StackedRoll; ---@type StackedRoll
+local BoostedRolls = GL.BoostedRolls; ---@type BoostedRolls
 
 ---@return boolean
-function StackedRoll:_init()
-    GL:debug("StackedRoll:_init");
+function BoostedRolls:_init()
+    GL:debug("BoostedRolls:_init");
 
     if (self._initialized) then
         return false;
     end
 
     --- Register listener for whisper command.
-    GL.Events:register("StackedRollWhisperListener", "CHAT_MSG_WHISPER", function (event, message, sender)
-        if (GL.Settings:get("StackedRoll.enableWhisperCommand", false)) then
+    GL.Events:register("BoostedRollsWhisperListener", "CHAT_MSG_WHISPER", function (event, message, sender)
+        if (GL.Settings:get("BoostedRolls.enableWhisperCommand", false)) then
             self:handleWhisperCommand(event, message, sender);
         end
     end);
 
-    GL.Events:register("StackedRollUserJoinedGroupListener", "GL.USER_JOINED_GROUP", function () self:requestData(); end);
+    GL.Events:register("BoostedRollsUserJoinedGroupListener", "GL.USER_JOINED_GROUP", function () self:requestData(); end);
 
     self:materializeData();
 
@@ -39,33 +39,33 @@ function StackedRoll:_init()
     return true;
 end
 
---- Check whether stacked rolls are enabled
+--- Check whether boosted rolls are enabled
 ---
 ---@return boolean
-function StackedRoll:enabled()
-    GL:debug("StackedRoll:enabled");
+function BoostedRolls:enabled()
+    GL:debug("BoostedRolls:enabled");
 
-    return GL.Settings:get("StackedRoll.enabled", false);
+    return GL.Settings:get("BoostedRolls.enabled", false);
 end
 
---- Check whether there are stacked rolls available
+--- Check whether there are boosted rolls available
 ---
 ---@return boolean
-function StackedRoll:available()
-    GL:debug("StackedRoll:available");
+function BoostedRolls:available()
+    GL:debug("BoostedRolls:available");
 
-    return GL:higherThanZero(DB:get("StackedRoll.MetaData.importedAt", 0));
+    return GL:higherThanZero(DB:get("BoostedRolls.MetaData.importedAt", 0));
 end
 
 --- Draw either the importer or overview
---- based on the current stacked roll data
+--- based on the current boosted roll data
 ---
 ---@return void
-function StackedRoll:draw()
-    GL:debug("StackedRoll:draw");
+function BoostedRolls:draw()
+    GL:debug("BoostedRolls:draw");
 
-    -- Show the stacked roll overview instead
-    GL.Interface.StackedRoll.Overview:draw();
+    -- Show the boosted rolls overview instead
+    GL.Interface.BoostedRolls.Overview:draw();
 end
 
 --- Checks and handles whisper commands if enabled.
@@ -73,51 +73,51 @@ end
 ---@param event string
 ---@param message string
 ---@return void
-function StackedRoll:handleWhisperCommand(event, message, sender)
+function BoostedRolls:handleWhisperCommand(event, message, sender)
     if (GL:strStartsWith(message, "!rollbonus") or GL:strStartsWith(message, "!rb")) then
         local args = GL:strSplit(message, " ");
         -- See if name is given.
         if (#args > 1) then
             local name = GL:normalizedName(args[2]);
             local points = self:getPoints(name);
-            local low = self:minStackedRoll(points);
-            local high = self:maxStackedRoll(points);
+            local low = self:minBoostedRoll(points);
+            local high = self:maxBoostedRoll(points);
             local ext = "";
             if (not self:hasPoints(name)) then
                 ext = " (default)";
             end
             GL:sendChatMessage(
-                string.format("Player %s's stacked roll is /rnd %d-%d%s", GL:capitalize(name), low, high, ext),
+                string.format("Player %s's boosted roll is /rnd %d-%d%s", GL:capitalize(name), low, high, ext),
                 "WHISPER", nil, sender
             );
             return;
         end
 
         local points = self:getPoints(sender);
-        local low = self:minStackedRoll(points);
-        local high = self:maxStackedRoll(points);
+        local low = self:minBoostedRoll(points);
+        local high = self:maxBoostedRoll(points);
         local ext = "";
         if (not self:hasPoints(name)) then
             ext = " (default)";
         end
         GL:sendChatMessage(
-            string.format("Your stacked roll is /rnd %d-%d%s", low, high, ext),
+            string.format("Your boosted roll is /rnd %d-%d%s", low, high, ext),
             "WHISPER", nil, sender
         );
     end
 end
 
---- Materialize the stacked roll data to make it more accessible during runtime
+--- Materialize the boosted roll data to make it more accessible during runtime
 ---
 ---@return void
-function StackedRoll:materializeData()
-    GL:debug("StackedRoll:materializeData");
+function BoostedRolls:materializeData()
+    GL:debug("BoostedRolls:materializeData");
 
     local DetailsByPlayerName = {}; -- Details including aliases by player name
     local Aliases = {}; -- Direct access to aliases
 
     --- Create entries from points data
-    for name, points in pairs(DB:get("StackedRoll.Points", {})) do
+    for name, points in pairs(DB:get("BoostedRolls.Points", {})) do
         local name = GL:normalizedName(name or "");
         local points = self:toPoints(points or 0);
 
@@ -133,7 +133,7 @@ function StackedRoll:materializeData()
     end
 
     --- Add aliases
-    for alias, main in pairs(DB:get("StackedRoll.Aliases", {})) do
+    for alias, main in pairs(DB:get("BoostedRolls.Aliases", {})) do
         local alias = GL:normalizedName(alias or "");
         local main = GL:normalizedName(main or "");
 
@@ -149,11 +149,11 @@ function StackedRoll:materializeData()
     self.MaterializedData.DetailsByPlayerName = DetailsByPlayerName;
 end
 
---- Format a stacked roll.
+--- Format a boosted roll.
 ---
 ---@param points any
 ---@return number if valid, else nil
-function StackedRoll:toPoints(points)
+function BoostedRolls:toPoints(points)
     points = tonumber(points);
 
     if not points then
@@ -168,55 +168,55 @@ end;
 ---
 ---@param points number
 ---@return number
-function StackedRoll:rollPoints(points)
-    return math.min(GL.Settings:get("StackedRoll.reserveThreshold", 0), points);
+function BoostedRolls:rollPoints(points)
+    return math.min(GL.Settings:get("BoostedRolls.reserveThreshold", 0), points);
 end;
 
 --- Calculate reserve from points.
 ---
 ---@param points number
 ---@return number
-function StackedRoll:reserve(points)
-    return math.max(0, points - GL.Settings:get("StackedRoll.reserveThreshold", 0));
+function BoostedRolls:reserve(points)
+    return math.max(0, points - GL.Settings:get("BoostedRolls.reserveThreshold", 0));
 end;
 
 --- Calculate max roll from points.
 ---
 ---@param points number
 ---@return number
-function StackedRoll:maxStackedRoll(points)
-    return math.max(1, math.min(GL.Settings:get("StackedRoll.reserveThreshold", 0), points));
+function BoostedRolls:maxBoostedRoll(points)
+    return math.max(1, math.min(GL.Settings:get("BoostedRolls.reserveThreshold", 0), points));
 end;
 
 --- Calculate min roll from points.
 ---
 ---@param points number
 ---@return number
-function StackedRoll:minStackedRoll(points)
-    return math.max(1, self:maxStackedRoll(points) - 100);
+function BoostedRolls:minBoostedRoll(points)
+    return math.max(1, self:maxBoostedRoll(points) - 100);
 end;
 
---- Detect stacked rolls.
+--- Detect boosted rolls.
 ---
 ---@param low number
 ---@param high number
 ---@return boolean
-function StackedRoll:isStackedRoll(low, high)
-    local threshold = GL.Settings:get("StackedRoll.reserveThreshold", 0);
+function BoostedRolls:isBoostedRoll(low, high)
+    local threshold = GL.Settings:get("BoostedRolls.reserveThreshold", 0);
     --- Check maximum.
-    if (self:maxStackedRoll(high) ~= high or high > threshold) then
+    if (self:maxBoostedRoll(high) ~= high or high > threshold) then
         return false;
     end
 
     --- Check minimum.
-    return self:minStackedRoll(high) == low;
+    return self:minBoostedRoll(high) == low;
 end;
 
---- Clear all stacked roll data
+--- Clear all boosted roll data
 ---
 ---@return void
-function StackedRoll:clear()
-    DB.StackedRoll = {
+function BoostedRolls:clear()
+    DB.BoostedRolls = {
         Points = {},
         Aliases = {},
         MetaData = {},
@@ -225,7 +225,7 @@ function StackedRoll:clear()
         DetailsByPlayerName = {},
     };
 
-    GL.Interface.StackedRoll.Overview:close();
+    GL.Interface.BoostedRolls.Overview:close();
     self:draw();
 end
 
@@ -234,35 +234,35 @@ end
 ---@param name string
 ---@param aliases table
 ---@return void
-function StackedRoll:setAliases(name, aliases)
-    GL:debug("StackedRoll:setAliases");
+function BoostedRolls:setAliases(name, aliases)
+    GL:debug("BoostedRolls:setAliases");
     if (type(name) ~= "string") then
         return;
     end
 
     local normalizedName = GL:normalizedName(name);
     --- Follow alias table if present
-    if (DB.StackedRoll.Aliases[normalizedName]) then
-        normalizedName = DB.StackedRoll.Aliases[normalizedName];
+    if (DB.BoostedRolls.Aliases[normalizedName]) then
+        normalizedName = DB.BoostedRolls.Aliases[normalizedName];
     end
     if (self.MaterializedData.DetailsByPlayerName[normalizedName]) then
         --- Reset old aliases
         for _, alias in pairs(self.MaterializedData.DetailsByPlayerName[normalizedName].Aliases) do
-            DB.StackedRoll.Aliases[alias] = nil;
+            DB.BoostedRolls.Aliases[alias] = nil;
         end
 
         --- Set new aliases
         local cleanAliases = {};
         for _, alias in pairs(aliases) do
             --- Check that this alias does not yet exist, otherwise skip.
-            if (not DB.StackedRoll.Aliases[alias]) then
-                DB.StackedRoll.Aliases[alias] = normalizedName;
+            if (not DB.BoostedRolls.Aliases[alias]) then
+                DB.BoostedRolls.Aliases[alias] = normalizedName;
                 tinsert(cleanAliases, alias);
             end
         end
         self.MaterializedData.DetailsByPlayerName[normalizedName].Aliases = cleanAliases;
-        DB:set("StackedRoll.MetaData.updatedAt", GetServerTime());
-        if (GL.Settings:get("StackedRoll.automaticallyShareData")) then
+        DB:set("BoostedRolls.MetaData.updatedAt", GetServerTime());
+        if (GL.Settings:get("BoostedRolls.automaticallyShareData")) then
             self:broadcastUpdate(normalizedName, nil, aliases);
         end
     end
@@ -272,8 +272,8 @@ end
 ---
 ---@param name string
 ---@return boolean
-function StackedRoll:hasPoints(name)
-    GL:debug("StackedRoll:hasPoints");
+function BoostedRolls:hasPoints(name)
+    GL:debug("BoostedRolls:hasPoints");
     
     if (type(name) ~= "string") then
         return false;
@@ -281,8 +281,8 @@ function StackedRoll:hasPoints(name)
 
     local normalizedName = GL:normalizedName(name);
     --- Follow alias table if present
-    if (DB.StackedRoll.Aliases[normalizedName]) then
-        normalizedName = DB.StackedRoll.Aliases[normalizedName];
+    if (DB.BoostedRolls.Aliases[normalizedName]) then
+        normalizedName = DB.BoostedRolls.Aliases[normalizedName];
     end
     if (self.MaterializedData.DetailsByPlayerName[normalizedName]) then
         return true;
@@ -295,9 +295,9 @@ end
 ---
 ---@param name string
 ---@return void
-function StackedRoll:getPoints(name)
-    GL:debug("StackedRoll:getPoints");
-    local default = GL.Settings:get("StackedRoll.defaultPoints", 0);
+function BoostedRolls:getPoints(name)
+    GL:debug("BoostedRolls:getPoints");
+    local default = GL.Settings:get("BoostedRolls.defaultPoints", 0);
 
     if (type(name) ~= "string") then
         return default;
@@ -305,8 +305,8 @@ function StackedRoll:getPoints(name)
 
     local normalizedName = GL:normalizedName(name);
     --- Follow alias table if present
-    if (DB.StackedRoll.Aliases[normalizedName]) then
-        normalizedName = DB.StackedRoll.Aliases[normalizedName];
+    if (DB.BoostedRolls.Aliases[normalizedName]) then
+        normalizedName = DB.BoostedRolls.Aliases[normalizedName];
     end
     if (self.MaterializedData.DetailsByPlayerName[normalizedName]) then
         return self.MaterializedData.DetailsByPlayerName[normalizedName].points;
@@ -320,22 +320,22 @@ end
 ---@param name string
 ---@param points number
 ---@return void
-function StackedRoll:setPoints(name, points)
-    GL:debug("StackedRoll:setPoints");
+function BoostedRolls:setPoints(name, points)
+    GL:debug("BoostedRolls:setPoints");
     if (type(name) ~= "string") then
         return;
     end
 
     local normalizedName = GL:normalizedName(name);
     --- Follow alias table if present
-    if (DB.StackedRoll.Aliases[normalizedName]) then
-        normalizedName = DB.StackedRoll.Aliases[normalizedName];
+    if (DB.BoostedRolls.Aliases[normalizedName]) then
+        normalizedName = DB.BoostedRolls.Aliases[normalizedName];
     end
     if (self.MaterializedData.DetailsByPlayerName[normalizedName]) then
         self.MaterializedData.DetailsByPlayerName[normalizedName].points = points;
-        DB:set("StackedRoll.Points."..normalizedName, points);
-        DB:set("StackedRoll.MetaData.updatedAt", GetServerTime());
-        if (GL.Settings:get("StackedRoll.automaticallyShareData")) then
+        DB:set("BoostedRolls.Points."..normalizedName, points);
+        DB:set("BoostedRolls.MetaData.updatedAt", GetServerTime());
+        if (GL.Settings:get("BoostedRolls.automaticallyShareData")) then
             self:broadcastUpdate(normalizedName, points);
         end
     end
@@ -345,25 +345,25 @@ end
 ---
 ---@param name string
 ---@return void
-function StackedRoll:deletePoints(name)
-    GL:debug("StackedRoll:deletePoints");
+function BoostedRolls:deletePoints(name)
+    GL:debug("BoostedRolls:deletePoints");
     if (type(name) ~= "string") then
         return;
     end
 
     local normalizedName = GL:normalizedName(name);
     --- Follow alias table if present
-    if (DB.StackedRoll.Aliases[normalizedName]) then
-        normalizedName = DB.StackedRoll.Aliases[normalizedName];
+    if (DB.BoostedRolls.Aliases[normalizedName]) then
+        normalizedName = DB.BoostedRolls.Aliases[normalizedName];
     end
     if (self.MaterializedData.DetailsByPlayerName[normalizedName]) then
         for _, alias in pairs(self.MaterializedData.DetailsByPlayerName[normalizedName].Aliases) do
-            DB.StackedRoll.Aliases[alias] = nil;
+            DB.BoostedRolls.Aliases[alias] = nil;
         end
         self.MaterializedData.DetailsByPlayerName[normalizedName] = nil;
-        DB.StackedRoll.Points[normalizedName] = nil;
-        DB:set("StackedRoll.MetaData.updatedAt", GetServerTime());
-        if (GL.Settings:get("StackedRoll.automaticallyShareData")) then
+        DB.BoostedRolls.Points[normalizedName] = nil;
+        DB:set("BoostedRolls.MetaData.updatedAt", GetServerTime());
+        if (GL.Settings:get("BoostedRolls.automaticallyShareData")) then
             self:broadcastUpdate(normalizedName, nil, nil, true);
         end
     end
@@ -374,16 +374,16 @@ end
 ---@param name string
 ---@param points number
 ---@return void
-function StackedRoll:modifyPoints(name, change)
-    GL:debug("StackedRoll:modifyPoints");
+function BoostedRolls:modifyPoints(name, change)
+    GL:debug("BoostedRolls:modifyPoints");
     if (type(name) ~= "string") then
         return;
     end
 
     local normalizedName = GL:normalizedName(name);
     --- Follow alias table if present
-    if (DB.StackedRoll.Aliases[normalizedName]) then
-        normalizedName = DB.StackedRoll.Aliases[normalizedName];
+    if (DB.BoostedRolls.Aliases[normalizedName]) then
+        normalizedName = DB.BoostedRolls.Aliases[normalizedName];
     end
     if (self.MaterializedData.DetailsByPlayerName[normalizedName]) then
         local points = self.MaterializedData.DetailsByPlayerName[normalizedName].points;
@@ -398,18 +398,21 @@ end
 ---@param openOverview boolean (optional, default: false)
 ---@param MetaData table (optional, default: auto generate new metadata)
 ---@return boolean
-function StackedRoll:import(data, openOverview, MetaData)
-    GL:debug("StackedRoll:import");
+function BoostedRolls:import(data, openOverview, MetaData)
+    GL:debug("BoostedRolls:import");
 
     -- Make sure all the required properties are available and of the correct type
     if (GL:empty(data)) then
-        GL.Interface:getItem("StackedRoll.Importer", "Label.StatusMessage"):SetText("Invalid stacked roll data provided");
+        GL.Interface:getItem("BoostedRolls.Importer", "Label.StatusMessage"):SetText("Invalid boosted roll data provided");
         return false;
     end
 
     local Points = {};
     local Aliases = {};
-    
+
+    -- If the user copy/pasted from google sheets there will be addition quotes that need to be removed
+    data = data:gsub("\"", "");
+
     for line in data:gmatch("[^\n]+") do
         --- We expect lines to be in the form,
         --- where the individual variables are comma, tab, or spaces separated:
@@ -425,7 +428,7 @@ function StackedRoll:import(data, openOverview, MetaData)
         if (not GL:empty(playerName) and not Points[playerName] and points) then
             Points[playerName] = points;
 
-            --- Import further segments as aliases (twink names)
+            --- Import further segments as aliases (alts)
             for i = 3, #Segments do
                 local alias = tostring(Segments[i]);
                 alias = GL:normalizedName(alias);
@@ -438,14 +441,14 @@ function StackedRoll:import(data, openOverview, MetaData)
 
     if (GL:empty(Points)) then
         local errorMessage = "Invalid data provided. Make sure that the contents follows the required format and no header row is included.";
-        GL.Interface:getItem("StackedRoll.Importer", "Label.StatusMessage"):SetText(errorMessage);
+        GL.Interface:getItem("BoostedRolls.Importer", "Label.StatusMessage"):SetText(errorMessage);
 
         return false;
     end
 
-    MetaData = MetaData or {};
+    local MetaData = MetaData or {};
 
-    DB.StackedRoll = {
+    DB.BoostedRolls = {
         Points = Points,
         Aliases = Aliases,
         MetaData = {
@@ -455,18 +458,18 @@ function StackedRoll:import(data, openOverview, MetaData)
         },
     };
 
-    GL:success("Import of stacked roll data successful");
-    GL.Events:fire("GL.STACKEDROLL_IMPORTED");
+    GL:success("Import of boosted roll data successful");
+    GL.Events:fire("GL.BoostedRolls_IMPORTED");
 
     self:materializeData();
-    GL.Interface.StackedRoll.Importer:close();
+    GL.Interface.BoostedRolls.Importer:close();
 
     if (openOverview) then
         self:draw();
 
         -- The user is in charge of automatically sharing TMB data
         -- after importing it, let's get crackin'!
-        if (GL.Settings:get("StackedRoll.automaticallyShareData")
+        if (GL.Settings:get("BoostedRolls.automaticallyShareData")
             and self:userIsAllowedToBroadcast()
         ) then
             self:broadcast();
@@ -479,22 +482,22 @@ end
 --- Adds missing raiders with default points
 ---
 ---@return void
-function StackedRoll:addMissingRaiders()
-    GL:debug("StackedRoll:addMissingRaiders");
+function BoostedRolls:addMissingRaiders()
+    GL:debug("BoostedRolls:addMissingRaiders");
 
     -- Go through everyone in the raid
     if (GL.User.isInGroup) then
-        local default = GL.Settings:get("StackedRoll.defaultPoints", 0);
+        local default = GL.Settings:get("BoostedRolls.defaultPoints", 0);
         for _, Player in pairs(GL.User:groupMembers()) do
             local playerName = GL:normalizedName(Player.name);
             if (not self:hasPoints(playerName)) then
-                DB.StackedRoll.Points[playerName] = default;
+                DB.BoostedRolls.Points[playerName] = default;
             end
         end
-        DB:set("StackedRoll.MetaData.importedAt", GetServerTime());
-        DB:set("StackedRoll.MetaData.updatedAt", GetServerTime());
-        if (not DB:get("StackedRoll.MetaData.uuid", nil)) then
-            DB:set("StackedRoll.MetaData.uuid", GL:uuid());
+        DB:set("BoostedRolls.MetaData.importedAt", GetServerTime());
+        DB:set("BoostedRolls.MetaData.updatedAt", GetServerTime());
+        if (not DB:get("BoostedRolls.MetaData.uuid", nil)) then
+            DB:set("BoostedRolls.MetaData.uuid", GL:uuid());
         end
         self:materializeData();
     end
@@ -504,8 +507,8 @@ end
 ---
 ---@param displayFrame boolean
 ---@return void
-function StackedRoll:export(displayFrame)
-    GL:debug("StackedRoll:export");
+function BoostedRolls:export(displayFrame)
+    GL:debug("BoostedRolls:export");
 
     -- Calculate max aliases to output a CSV compliant string
     local numAliases = 0;
@@ -535,11 +538,11 @@ function StackedRoll:export(displayFrame)
     return csv;
 end
 
---- Broadcast our stacked roll data to the raid or group
+--- Broadcast our boosted roll data to the raid or group
 ---
 ---@return boolean
-function StackedRoll:broadcast()
-    GL:debug("StackedRoll:broadcast");
+function BoostedRolls:broadcast()
+    GL:debug("BoostedRolls:broadcast");
 
     if (self.broadcastInProgress) then
         GL:error("Broadcast still in progress");
@@ -558,35 +561,35 @@ function StackedRoll:broadcast()
 
     -- Check if there's anything to share
     if (not self:available()) then
-        GL:warning("Nothing to broadcast, import StackedRoll data first!");
+        GL:warning("Nothing to broadcast, import Boosted Rolls data first!");
         return false;
     end
 
     self.broadcastInProgress = true;
-    GL.Events:fire("GL.STACKEDROLL_BROADCAST_STARTED");
+    GL.Events:fire("GL.BoostedRolls_BROADCAST_STARTED");
 
     local Broadcast = function ()
-        GL:message("Broadcasting StackedRoll data...");
+        GL:message("Broadcasting BoostedRolls data...");
 
-        local Label = GL.Interface:getItem(GL.StackedRoll, "Label.BroadcastProgress");
+        local Label = GL.Interface:getItem(GL.BoostedRolls, "Label.BroadcastProgress");
 
         if (Label) then
             Label:SetText("Broadcasting...");
         end
 
         GL.CommMessage.new(
-            CommActions.broadcastStackedRollData,
+            CommActions.broadcastBoostedRollsData,
             {
                 importString = self:export(false),
-                MetaData = DB:get("StackedRoll.MetaData", {}),
+                MetaData = DB:get("BoostedRolls.MetaData", {}),
             },
             "GROUP"
         ):send(function ()
-            GL:success("StackedRoll broadcast finished");
+            GL:success("BoostedRolls broadcast finished");
             self.broadcastInProgress = false;
-            GL.Events:fire("GL.STACKEDROLL_BROADCAST_ENDED");
+            GL.Events:fire("GL.BoostedRolls_BROADCAST_ENDED");
 
-            Label = GL.Interface:getItem(GL.StackedRoll, "Label.BroadcastProgress");
+            Label = GL.Interface:getItem(GL.BoostedRolls, "Label.BroadcastProgress");
             if (Label) then
                 Label:SetText("Broadcast finished!");
             end
@@ -594,7 +597,7 @@ function StackedRoll:broadcast()
             -- Make sure to broadcast the loot priorities as well
             GL.LootPriority:broadcast();
         end, function (sent, total)
-            Label = GL.Interface:getItem(GL.StackedRoll, "Label.BroadcastProgress");
+            Label = GL.Interface:getItem(GL.BoostedRolls, "Label.BroadcastProgress");
             if (Label) then
                 Label:SetText(string.format("Sent %s of %s bytes", sent, total));
             end
@@ -604,10 +607,10 @@ function StackedRoll:broadcast()
     -- We're about to send a lot of data which will put strain on CTL
     -- Make sure we're out of combat before doing so!
     if (UnitAffectingCombat("player")) then
-        GL:message("You are currently in combat, delaying StackedRoll broadcast");
+        GL:message("You are currently in combat, delaying BoostedRolls broadcast");
 
-        GL.Events:register("StackedRollOutOfCombatListener", "PLAYER_REGEN_ENABLED", function ()
-            GL.Events:unregister("StackedRollOutOfCombatListener");
+        GL.Events:register("BoostedRollsOutOfCombatListener", "PLAYER_REGEN_ENABLED", function ()
+            GL.Events:unregister("BoostedRollsOutOfCombatListener");
             Broadcast();
         end);
     else
@@ -617,15 +620,15 @@ function StackedRoll:broadcast()
     return true;
 end
 
---- Process an incoming stacked roll broadcast
+--- Process an incoming boosted roll broadcast
 ---
 ---@param CommMessage CommMessage
-function StackedRoll:receiveBroadcast(CommMessage)
-    GL:debug("StackedRoll:receiveBroadcast");
+function BoostedRolls:receiveBroadcast(CommMessage)
+    GL:debug("BoostedRolls:receiveBroadcast");
 
     -- No need to update our tables if we broadcasted them ourselves
     if (CommMessage.Sender.name == GL.User.name) then
-        GL:debug("StackedRoll:receiveBroadcast received by self, skip");
+        GL:debug("BoostedRolls:receiveBroadcast received by self, skip");
         return true;
     end
 
@@ -633,20 +636,20 @@ function StackedRoll:receiveBroadcast(CommMessage)
     local MetaData = CommMessage.content.MetaData or {};
     local importBroadcast = (function ()
         if (not GL:empty(importString)) then
-            GL:warning("Attempting to process incoming StackedRoll data from " .. CommMessage.Sender.name);
+            GL:warning("Attempting to process incoming BoostedRolls data from " .. CommMessage.Sender.name);
             local result = self:import(importString, false, MetaData);
             if (result) then
-                GL.Interface.StackedRoll.Overview:refreshTable();
+                GL.Interface.BoostedRolls.Overview:refreshTable();
             end
             return result;
         end
 
-        GL:warning("Couldn't process StackedRoll data received from " .. CommMessage.Sender.name);
+        GL:warning("Couldn't process BoostedRolls data received from " .. CommMessage.Sender.name);
         return false;
     end);
 
     --- Check if we automatically accept data from this player.
-    local dataManagers = GL.Settings:get("StackedRoll.automaticallyAcceptDataFrom", '');
+    local dataManagers = GL.Settings:get("BoostedRolls.automaticallyAcceptDataFrom", '');
     local DataManagers = GL:strSplit(dataManagers, ",");
     local autoAccept = false;
     for _, playerName in pairs(DataManagers) do
@@ -665,19 +668,19 @@ function StackedRoll:receiveBroadcast(CommMessage)
     end
 
     --- Display different messages depending on whether it is an update of the same import or completely new data.
-    local uuid = DB:get("StackedRoll.MetaData.uuid", '');
-    local updatedAt = DB:get("StackedRoll.MetaData.updatedAt", 0);
+    local uuid = DB:get("BoostedRolls.MetaData.uuid", '');
+    local updatedAt = DB:get("BoostedRolls.MetaData.updatedAt", 0);
     local question;
     if (MetaData.uuid and uuid == MetaData.uuid) then
         question = string.format(
-            "Are you sure you want to update your existing stacked rolls with data from %s? Your latest update was on |c00a79eff%s|r, theirs on |c00a79eff%s|r.",
+            "Are you sure you want to update your existing boosted rolls with data from %s? Your latest update was on |c00a79eff%s|r, theirs on |c00a79eff%s|r.",
             CommMessage.Sender.name,
             date('%Y-%m-%d %H:%M', updatedAt),
             date('%Y-%m-%d %H:%M', MetaData.updatedAt or 0)
         );
     else
         question = string.format(
-            "Are you sure you want to clear your existing stacked rolls and import new data broadcasted by %s?",
+            "Are you sure you want to clear your existing boosted rolls and import new data broadcasted by %s?",
             CommMessage.Sender.name
         );
     end
@@ -690,11 +693,11 @@ function StackedRoll:receiveBroadcast(CommMessage)
     GL.Interface.Dialogs.PopupDialog:open(Dialog);
 end
 
---- Request StackedRoll data from the person in charge (ML or Leader)
+--- Request BoostedRolls data from the person in charge (ML or Leader)
 ---
 ---@return void
-function StackedRoll:requestData()
-    GL:debug("StackedRoll:requestData");
+function BoostedRolls:requestData()
+    GL:debug("BoostedRolls:requestData");
 
     if (self.requestingData) then
         return;
@@ -747,8 +750,8 @@ function StackedRoll:requestData()
     -- We send a data request to the person in charge
     -- He will compare the ID and importedAt timestamp on his end to see if we actually need his data
     GL.CommMessage.new(
-        CommActions.requestStackedRollData,
-        DB:get('StackedRoll.MetaData', {}),
+        CommActions.requestBoostedRollsData,
+        DB:get('BoostedRolls.MetaData', {}),
         "WHISPER",
         playerToRequestFrom
     ):send();
@@ -756,12 +759,12 @@ function StackedRoll:requestData()
     self.requestingData = false;
 end
 
---- Reply to a player's StackedRoll data request
+--- Reply to a player's BoostedRolls data request
 ---
 ---@param CommMessage CommMessage
 ---@return void
-function StackedRoll:replyToDataRequest(CommMessage)
-    GL:debug("StackedRoll:replyToDataRequest");
+function BoostedRolls:replyToDataRequest(CommMessage)
+    GL:debug("BoostedRolls:replyToDataRequest");
 
     -- I don't have any data, leave me alone!
     if (not self:available()) then
@@ -774,7 +777,7 @@ function StackedRoll:replyToDataRequest(CommMessage)
     end
 
     -- Nice try, but we don't allow auto-sharing
-    if (not GL.Settings:get("StackedRoll.automaticallyShareData")) then
+    if (not GL.Settings:get("BoostedRolls.automaticallyShareData")) then
         return;
     end
 
@@ -792,32 +795,32 @@ function StackedRoll:replyToDataRequest(CommMessage)
     local lastUpdate = CommMessage.content.updatedAt or 0;
     -- Your data is up to date, leave me alone!
     if (not GL:empty(uuid)
-        and uuid == DB:get('StackedRoll.MetaData.uuid', '')
-        and lastUpdate >= DB:get('StackedRoll.MetaData.updatedAt', 0)
+        and uuid == DB:get('BoostedRolls.MetaData.uuid', '')
+        and lastUpdate >= DB:get('BoostedRolls.MetaData.updatedAt', 0)
     ) then
         return;
     end
 
     -- Looks like you need my data, here it is!
     GL.CommMessage.new(
-        CommActions.broadcastStackedRollData,
+        CommActions.broadcastBoostedRollsData,
         {
             importString = self:export(false),
-            MetaData = DB:get("StackedRoll.MetaData", {}),
+            MetaData = DB:get("BoostedRolls.MetaData", {}),
         },
         "WHISPER",
         CommMessage.Sender.name
     ):send();
 end
 
---- Process an incoming stacked roll update
+--- Process an incoming boosted roll update
 ---
 ---@param playerName string
 ---@param points number
 ---@param aliases table
 ---@param delete boolean
-function StackedRoll:broadcastUpdate(playerName, points, aliases, delete)
-    GL:debug("StackedRoll:broadcastUpdate");
+function BoostedRolls:broadcastUpdate(playerName, points, aliases, delete)
+    GL:debug("BoostedRolls:broadcastUpdate");
 
     if (self.broadcastInProgress) then
         GL:error("Broadcast still in progress");
@@ -834,16 +837,16 @@ function StackedRoll:broadcastUpdate(playerName, points, aliases, delete)
         return false;
     end
 
-    GL:message("Broadcasting StackedRoll update...");
+    GL:message("Broadcasting BoostedRolls update...");
 
     GL.CommMessage.new(
-        CommActions.broadcastStackedRollUpdate,
+        CommActions.broadcastBoostedRollsMutation,
         {
             playerName = playerName,
             points = points or nil,
             aliases = aliases or nil,
             delete = delete or false,
-            uuid = DB:get("StackedRoll.MetaData.uuid", ""),
+            uuid = DB:get("BoostedRolls.MetaData.uuid", ""),
         },
         "GROUP"
     ):send();
@@ -851,19 +854,19 @@ function StackedRoll:broadcastUpdate(playerName, points, aliases, delete)
     return true;
 end
 
---- Process an incoming stacked roll update
+--- Process an incoming boosted roll update
 ---
 ---@param CommMessage CommMessage
-function StackedRoll:receiveUpdate(CommMessage)
-    GL:debug("StackedRoll:receiveUpdate");
+function BoostedRolls:receiveUpdate(CommMessage)
+    GL:debug("BoostedRolls:receiveUpdate");
 
     -- No need to update our tables if we broadcasted them ourselves
     if (CommMessage.Sender.name == GL.User.name) then
-        GL:debug("StackedRoll:receiveUpdate received by self, skip");
+        GL:debug("BoostedRolls:receiveUpdate received by self, skip");
         return true;
     end
 
-    local uuid = DB:get("StackedRoll.MetaData.uuid", '');
+    local uuid = DB:get("BoostedRolls.MetaData.uuid", '');
 
     local importUuid = CommMessage.content.uuid or GL:uuid();
     local playerName = CommMessage.content.playerName or '';
@@ -884,7 +887,7 @@ function StackedRoll:receiveUpdate(CommMessage)
             self:deletePoints(playerName);
         end
 
-        GL.Interface.StackedRoll.Overview:refreshTable();
+        GL.Interface.BoostedRolls.Overview:refreshTable();
     end);
 
     --- We only update if we have the same source data.
@@ -893,12 +896,12 @@ function StackedRoll:receiveUpdate(CommMessage)
     end
 end
 
---- Check whether the current user is allowed to broadcast StackedRoll data
+--- Check whether the current user is allowed to broadcast BoostedRolls data
 ---
 ---@return boolean
-function StackedRoll:userIsAllowedToBroadcast()
+function BoostedRolls:userIsAllowedToBroadcast()
     return GL.User.isInGroup and (GL.User.isMasterLooter or GL.User.hasAssist);
 end
 
 
-GL:debug("StackedRoll.lua");
+GL:debug("BoostedRolls.lua");

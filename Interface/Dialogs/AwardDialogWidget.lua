@@ -261,29 +261,29 @@ local function constructor()
     HorizontalSpacer:SetHeight(8);
     OptionsFrame:AddChild(HorizontalSpacer);
 
-    if (GL.StackedRoll:enabled()) then
+    if (GL.BoostedRolls:enabled()) then
         VerticalSpacer = AceGUI:Create("SimpleGroup");
         VerticalSpacer:SetLayout("FILL");
         VerticalSpacer:SetWidth(77);
         VerticalSpacer:SetHeight(10);
         OptionsFrame:AddChild(VerticalSpacer);
 
-        -- Stacked Roll cost label
+        -- Boosted Roll cost label
         local CostLabel = AceGUI:Create("Label");
         CostLabel:SetFontObject(_G["GameFontNormal"]);
         CostLabel:SetWidth(58);
         CostLabel:SetText("SR Cost:");
         OptionsFrame:AddChild(CostLabel);
 
-        -- Stacked Roll cost
-        local StackedRollCostEditBox = GL.AceGUI:Create("EditBox");
-        StackedRollCostEditBox:DisableButton(true);
-        StackedRollCostEditBox:SetHeight(20);
-        StackedRollCostEditBox:SetWidth(60);
-        StackedRollCostEditBox:SetText("0");
-        StackedRollCostEditBox:SetLabel("");
-        OptionsFrame:AddChild(StackedRollCostEditBox);
-        GL.Interface:setItem(GL.Interface.Dialogs.AwardDialog, "Cost", StackedRollCostEditBox);
+        -- Boosted Roll cost
+        local BoostedRollsCostEditBox = GL.AceGUI:Create("EditBox");
+        BoostedRollsCostEditBox:DisableButton(true);
+        BoostedRollsCostEditBox:SetHeight(20);
+        BoostedRollsCostEditBox:SetWidth(60);
+        BoostedRollsCostEditBox:SetText("0");
+        BoostedRollsCostEditBox:SetLabel("");
+        OptionsFrame:AddChild(BoostedRollsCostEditBox);
+        GL.Interface:setItem(GL.Interface.Dialogs.AwardDialog, "Cost", BoostedRollsCostEditBox);
     end
 
     HorizontalSpacer = AceGUI:Create("SimpleGroup");

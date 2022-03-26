@@ -207,7 +207,7 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, cost)
 
     if (announce) then
         local awardMessage = "";
-        if (GL.StackedRoll:enabled() and cost) then
+        if (GL.BoostedRolls:enabled() and cost) then
             awardMessage = string.format("%s was awarded to %s for %s points. Congrats!",
                 itemLink,
                 winner,

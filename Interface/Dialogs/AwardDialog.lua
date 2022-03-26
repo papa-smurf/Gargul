@@ -8,11 +8,11 @@ local AwardDialog = GL.Interface.Dialogs.AwardDialog; ---@type AwardDialogInterf
 function AwardDialog:open(Dialog)
     local AceGUI = GL.AceGUI;
 
-    Dialog.checkPlusOne = toboolean(Dialog.checkPlusOne);
-    Dialog.checkOS = toboolean(Dialog.checkOS);
     Dialog.checkPlusOne = GL:toboolean(Dialog.checkPlusOne);
     Dialog.checkOS = GL:toboolean(Dialog.checkOS);
-    Dialog.stackedRollCost = GL.StackedRoll:toPoints(Dialog.stackedRollCost);
+    Dialog.checkPlusOne = GL:toboolean(Dialog.checkPlusOne);
+    Dialog.checkOS = GL:toboolean(Dialog.checkOS);
+    Dialog.boostedRollCost = GL.BoostedRolls:toPoints(Dialog.boostedRollCost);
 
     -- Create a container/parent frame
     local Frame = AceGUI:Create("GargulAwardDialog");
@@ -38,11 +38,11 @@ function AwardDialog:open(Dialog)
         end
     end
 
-    if (Dialog.stackedRollCost) then
-        local StackedRollCostEditBox = GL.Interface:getItem(self, "EditBox.Cost");
+    if (Dialog.boostedRollCost) then
+        local BoostedRollsCostEditBox = GL.Interface:getItem(self, "EditBox.Cost");
 
-        if (StackedRollCostEditBox) then
-            StackedRollCostEditBox:SetText(Dialog.stackedRollCost);
+        if (BoostedRollsCostEditBox) then
+            BoostedRollsCostEditBox:SetText(Dialog.boostedRollCost);
         end
     end
 end

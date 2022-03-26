@@ -307,8 +307,8 @@ function MasterLooterUI:draw(itemLink)
                     end
 
                     local osRoll = selected.cols[4].value == "OS";
-                    local stackedRoll = selected.cols[4].value == GL.Settings:get("StackedRoll.identifier", "SR");
-                    return GL.RollOff:award(selected.cols[1].value, GL.Interface:getItem(self, "EditBox.Item"):GetText(), osRoll, stackedRoll);
+                    local boostedRoll = selected.cols[4].value == GL.Settings:get("BoostedRolls.identifier", "BR");
+                    return GL.RollOff:award(selected.cols[1].value, GL.Interface:getItem(self, "EditBox.Item"):GetText(), osRoll, boostedRoll);
                 end);
                 ThirdRow:AddChild(AwardButton);
                 GL.Interface:setItem(self, "Award", AwardButton);

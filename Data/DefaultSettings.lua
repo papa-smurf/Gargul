@@ -77,12 +77,12 @@ GL.Data.DefaultSettings = {
         enableTooltips = true,
         hideInfoOfPeopleNotInGroup = true,
     },
-    StackedRoll = {
+    BoostedRolls = {
         enabled = false,
         automaticallyShareData = true,
         automaticallyAcceptDataFrom = "",
         priority = 1,
-        identifier = "ST",
+        identifier = "BR",
         reserveThreshold = 180,
         defaultPoints = 100,
         defaultCost = 10,

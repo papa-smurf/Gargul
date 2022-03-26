@@ -162,12 +162,12 @@ function Award:draw(itemLink)
                 end
             end
 
-            local stackedRollCostEditBox = GL.Interface:getItem(GL.Interface.Dialogs.AwardDialog, "EditBox.Cost");
-            if (stackedRollCostEditBox) then
-                cost = GL.StackedRoll:toPoints(stackedRollCostEditBox:GetText());
+            local BoostedRollCostEditBox = GL.Interface:getItem(GL.Interface.Dialogs.AwardDialog, "EditBox.Cost");
+            if (BoostedRollCostEditBox) then
+                cost = GL.BoostedRolls:toPoints(BoostedRollCostEditBox:GetText());
 
                 if (cost) then
-                    GL.StackedRoll:modifyPoints(roller, -cost);
+                    GL.BoostedRolls:modifyPoints(winner, -cost);
                 end
             end
 

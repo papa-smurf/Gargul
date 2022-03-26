@@ -246,9 +246,9 @@ GL.Data.Constants = {
             requestTMBData = 9,
             startRollOff = 10,
             stopRollOff = 11,
-            broadcastStackedRollData = 12,
-            requestStackedRollData = 13,
-            broadcastStackedRollUpdate = 14,
+            broadcastBoostedRollsData = 12,
+            requestBoostedRollsData = 13,
+            broadcastBoostedRollsMutation = 14,
         },
     },
 

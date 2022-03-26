@@ -15,7 +15,7 @@ GL.Commands = GL.Commands or {
         lootpriority = "Open the loot priority editor where you can edit / clear loot priorities. These are the same priorities as imported by the TMB importer, clearing them here clears them for TMB as well",
         packmule = "Open PackMule which allows you to automatically funnel dropped gear to specific players, very helpful with green items for example",
         plusones = "Open the PlusOnes window that allows you to check and manipulate all plus one values",
-        points = "Open the Stacked Rolls UI that allows you to easily manage points.",
+        points = "Open the Boosted Rolls UI that allows you to easily manage roll boosts.",
         raidcsv = "Output everyone currently in the group in a CSV format",
         rolloff = "Open the RollOff UI where you can announce an item for players to roll on: /gl award [itemLink?]",
         softreserves = "Open either the SoftRes import window if there's no data available or open the SoftRes overview",
@@ -95,7 +95,7 @@ GL.Commands = GL.Commands or {
         plusones = function() GL.Interface.PlusOnes.Overview:draw(); end,
 
         -- Open the points window
-        points = function() GL.StackedRoll:draw(); end,
+        points = function() GL.BoostedRolls:draw(); end,
 
         -- Clear the disenchanter
         cleardisenchanter = function () GL.PackMule:clearDisenchanter(); end,

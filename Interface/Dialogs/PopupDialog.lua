@@ -39,33 +39,33 @@ PopupDialog.BROADCAST_SOFTRES_CONFIRMATION = {
     end,
 }
 
--- Clear stacked roll data confirmation
-PopupDialog.CLEAR_STACKEDROLL_CONFIRMATION = {
-    question = "Are you sure you want to clear all stacked roll data?",
+-- Clear boosted roll data confirmation
+PopupDialog.CLEAR_BOOSTEDROLLS_CONFIRMATION = {
+    question = "Are you sure you want to clear all boosted roll data?",
     OnYes = function ()
-        GL.Interface.StackedRoll.Overview:close();
-        GL.StackedRoll:clear();
-        GL.StackedRoll:draw();
+        GL.Interface.BoostedRolls.Overview:close();
+        GL.BoostedRolls:clear();
+        GL.BoostedRolls:draw();
    end,
 }
 
--- Import new stacked roll data confirmation
-PopupDialog.NEW_STACKEDROLL_IMPORT_CONFIRMATION = {
-    question = "Are you sure you want to clear your existing stacked rolls and import new data?",
+-- Import new boosted roll data confirmation
+PopupDialog.NEW_BOOSTEDROLLS_IMPORT_CONFIRMATION = {
+    question = "Are you sure you want to clear your existing boosted rolls and import new data?",
     OnYes = function ()
-        GL.Interface.StackedRoll.Importer:import();
+        GL.Interface.BoostedRolls.Importer:import();
     end,
     OnNo = function ()
-        GL.Interface.StackedRoll.Importer:close();
-        GL.StackedRoll:draw();
+        GL.Interface.BoostedRolls.Importer:close();
+        GL.BoostedRolls:draw();
     end,
 }
 
--- Broadcast stacked roll data confirmation
-PopupDialog.BROADCAST_STACKEDROLL_CONFIRMATION = {
-    question = "Are you sure you want to broadcast your stacked roll data to everyone in your party/raid?",
+-- Broadcast boosted roll data confirmation
+PopupDialog.BROADCAST_BOOSTEDROLLS_CONFIRMATION = {
+    question = "Are you sure you want to broadcast your boosted roll data to everyone in your party/raid?",
     OnYes = function ()
-        GL.StackedRoll:broadcast();
+        GL.BoostedRolls:broadcast();
     end,
 }
 

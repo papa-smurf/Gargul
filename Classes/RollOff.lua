@@ -52,9 +52,9 @@ function RollOff:announceStart(itemLink, time, note)
 
     self:listenForRolls();
 
-    --- If stacked rolls are enabled, send individually instead.
-    if (GL.StackedRoll:enabled()
-        and GL.StackedRoll:available()
+    --- If boosted rolls are enabled, send individually instead.
+    if (GL.BoostedRolls:enabled()
+        and GL.BoostedRolls:available()
     ) then
         --- Generate generic part of message first
         local Players = GL.User:groupMembers();
@@ -64,12 +64,12 @@ function RollOff:announceStart(itemLink, time, note)
         for _, Entry in pairs(GL.Settings:get("RollTracking.Brackets", {}) or {}) do
             tinsert(SupportedRolls, Entry);
         end
-        --- Add stacked rolls
-        local stackedRollIdentifier = string.sub(GL.Settings:get("StackedRoll.identifier", "ST"), 1, 3);
-        --- @todo: Add an additional field to the stacked roll settings for later false-positive detection
-        local stackedRollSettings = { stackedRollIdentifier, 1, 1, GL.Settings:get("StackedRoll.priority", 1) };
-        tinsert(SupportedRolls, stackedRollSettings);
-        local stackedRollIndex = #SupportedRolls;
+        --- Add boosted rolls
+        local BoostedRollsIdentifier = string.sub(GL.Settings:get("BoostedRolls.identifier", "BR"), 1, 3);
+        --- @todo: Add an additional field to the boosted roll settings for later false-positive detection
+        local boostedRollsSettings = { BoostedRollsIdentifier, 1, 1, GL.Settings:get("BoostedRolls.priority", 1) };
+        tinsert(SupportedRolls, boostedRollsSettings);
+        local boostedRollIndex = #SupportedRolls;
 
         local msg = {
             item = itemLink,
@@ -80,11 +80,11 @@ function RollOff:announceStart(itemLink, time, note)
 
         for _, player in pairs(Players) do
             -- Then update for each player
-            local points = GL.StackedRoll:getPoints(player.name);
-            local low = GL.StackedRoll:minStackedRoll(points);
-            local high = GL.StackedRoll:maxStackedRoll(points);
-            msg.SupportedRolls[stackedRollIndex][2] = low;
-            msg.SupportedRolls[stackedRollIndex][3] = high;
+            local points = GL.BoostedRolls:getPoints(player.name);
+            local low = GL.BoostedRolls:minBoostedRoll(points);
+            local high = GL.BoostedRolls:maxBoostedRoll(points);
+            msg.SupportedRolls[boostedRollIndex][2] = low;
+            msg.SupportedRolls[boostedRollIndex][3] = high;
 
             GL.CommMessage.new(
                 CommActions.startRollOff,
@@ -362,7 +362,7 @@ function RollOff:stop(CommMessage)
 end
 
 -- Award the item to one of the rollers
-function RollOff:award(roller, itemLink, osRoll, stackedRoll)
+function RollOff:award(roller, itemLink, osRoll, boostedRoll)
     GL:debug("RollOff:award");
 
     -- If the roller has a roll number suffixed to his name
@@ -377,8 +377,8 @@ function RollOff:award(roller, itemLink, osRoll, stackedRoll)
     local isOS, addPlusOne = false;
     local cost = nil;
 
-    if (stackedRoll) then
-        cost = GL.Settings:get("StackedRoll.defaultCost", 0);
+    if (boostedRoll) then
+        cost = GL.Settings:get("BoostedRolls.defaultCost", 0);
     end
 
     if (GL:nameIsUnique(roller)) then
@@ -404,12 +404,12 @@ function RollOff:award(roller, itemLink, osRoll, stackedRoll)
                     end
                 end
 
-                local stackedRollCostEditBox = GL.Interface:getItem(GL.Interface.Dialogs.AwardDialog, "EditBox.Cost");
-                if (stackedRollCostEditBox) then
-                    cost = GL.StackedRoll:toPoints(stackedRollCostEditBox:GetText());
+                local BoostedRollCostEditBox = GL.Interface:getItem(GL.Interface.Dialogs.AwardDialog, "EditBox.Cost");
+                if (BoostedRollCostEditBox) then
+                    cost = GL.BoostedRolls:toPoints(BoostedRollCostEditBox:GetText());
 
                     if (cost) then
-                        GL.StackedRoll:modifyPoints(roller, -cost);
+                        GL.BoostedRolls:modifyPoints(roller, -cost);
                     end
                 end
 
@@ -425,7 +425,7 @@ function RollOff:award(roller, itemLink, osRoll, stackedRoll)
                 end
             end,
             checkOS = osRoll,
-            stackedRollCost = cost,
+            boostedRollCost = cost,
         });
 
         return;
@@ -456,12 +456,12 @@ function RollOff:award(roller, itemLink, osRoll, stackedRoll)
                     end
                 end
 
-                local stackedRollCostEditBox = GL.Interface:getItem(GL.Interface.Dialogs.AwardDialog, "EditBox.Cost");
-                if (stackedRollCostEditBox) then
-                    cost = GL.StackedRoll:toPoints(stackedRollCostEditBox:GetText());
+                local boostedRollCostEditBox = GL.Interface:getItem(GL.Interface.Dialogs.AwardDialog, "EditBox.Cost");
+                if (boostedRollCostEditBox) then
+                    cost = GL.BoostedRolls:toPoints(boostedRollCostEditBox:GetText());
 
                     if (cost) then
-                        GL.StackedRoll:modifyPoints(roller, -cost);
+                        GL.BoostedRolls:modifyPoints(roller, -cost);
                     end
                 end
 
@@ -479,7 +479,7 @@ function RollOff:award(roller, itemLink, osRoll, stackedRoll)
                 GL.Interface.PlayerSelector:close();
             end,
             checkOS = osRoll,
-            stackedRollCost = cost,
+            boostedRollCost = cost,
         });
     end);
 end
@@ -552,20 +552,20 @@ function RollOff:processRoll(message)
             return false;
         end)();
 
-        --- Check for stacked rolls
+        --- Check for boosted rolls
         --- @todo: Take into account pre-announcement
         if (not RollType
-            and GL.StackedRoll:enabled()
-            and GL.StackedRoll:available()
-            and GL.StackedRoll:isStackedRoll(low, high)
+            and GL.BoostedRolls:enabled()
+            and GL.BoostedRolls:available()
+            and GL.BoostedRolls:isBoostedRolls(low, high)
         ) then
-            local points = GL.StackedRoll:getPoints(roller);
-            local actualLow = GL.StackedRoll:minStackedRoll(points);
-            local actualHigh = GL.StackedRoll:maxStackedRoll(points);
+            local points = GL.BoostedRolls:getPoints(roller);
+            local actualLow = GL.BoostedRolls:minBoostedRolls(points);
+            local actualHigh = GL.BoostedRolls:maxBoostedRolls(points);
             if (low == actualLow and high == actualHigh) then
                 RollType = {
-                    [1] = GL.Settings:get("StackedRoll.identifier", "ST"),
-                    [4] = GL.Settings:get("StackedRoll.priority", 1),
+                    [1] = GL.Settings:get("BoostedRolls.identifier", "BR"),
+                    [4] = GL.Settings:get("BoostedRolls.priority", 1),
                 };
             end
         end

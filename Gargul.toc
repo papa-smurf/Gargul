@@ -44,7 +44,7 @@ Classes/BagInspector.lua
 Classes/BuffInspector.lua
 Classes/User.lua
 Classes/Player.lua
-Classes/StackedRoll.lua
+Classes/BoostedRolls.lua
 Classes/Comm.lua
 Classes/CommMessage.lua
 Classes/RaidGroups.lua
@@ -63,7 +63,7 @@ Interface/Settings/LootTradeTimers.lua
 Interface/Settings/Rolling.lua
 Interface/Settings/RollTracking.lua
 Interface/Settings/SoftRes.lua
-Interface/Settings/StackedRoll.lua
+Interface/Settings/BoostedRolls.lua
 Interface/Settings/General.lua
 Interface/Settings/ShortcutKeys.lua
 Interface/Settings/LootHighlighting.lua
@@ -78,8 +78,8 @@ Interface/TMB/Overview.lua
 Interface/PlusOnes/OverView.lua
 Interface/TradeWindow/TimeLeft.lua
 Interface/PlayerSelector.lua
-Interface/StackedRoll/Importer.lua
-Interface/StackedRoll/Overview.lua
+Interface/BoostedRolls/Importer.lua
+Interface/BoostedRolls/Overview.lua
 Interface/MinimapButton.lua
 
 # Popup dialogs

@@ -13,7 +13,7 @@ GL.DB = {
     LoadDetails = {},
     SoftRes = {},
     TMB = {},
-    StackedRoll = {},
+    BoostedRolls = {},
 };
 
 local DB = GL.DB;
@@ -39,7 +39,7 @@ function DB:_init()
     GargulDB.LoadDetails = GargulDB.LoadDetails or {};
     GargulDB.SoftRes = GargulDB.SoftRes or {};
     GargulDB.TMB = GargulDB.TMB or {};
-    GargulDB.StackedRoll = GargulDB.StackedRoll or {};
+    GargulDB.BoostedRolls = GargulDB.BoostedRolls or {};
 
     -- Provide a shortcut for each table
     self.AwardHistory = GargulDB.AwardHistory;
@@ -50,7 +50,7 @@ function DB:_init()
     self.LoadDetails = GargulDB.LoadDetails;
     self.SoftRes = GargulDB.SoftRes;
     self.TMB = GargulDB.TMB;
-    self.StackedRoll = GargulDB.StackedRoll;
+    self.BoostedRolls = GargulDB.BoostedRolls;
 
     -- Fire DB:store before every logout/reload/exit
     GL.Events:register("DBPlayerLogoutListener", "PLAYER_LOGOUT", self.store);
@@ -72,7 +72,7 @@ function DB:store()
     GargulDB.LoadDetails = GL.DB.LoadDetails;
     GargulDB.SoftRes = GL.DB.SoftRes;
     GargulDB.TMB = GL.DB.TMB;
-    GargulDB.StackedRoll = GL.DB.StackedRoll;
+    GargulDB.BoostedRolls = GL.DB.BoostedRolls;
 end
 
 -- Get a value from the database, or return a default if it doesn't exist
@@ -97,7 +97,7 @@ function DB:reset()
     self.LoadDetails = {};
     self.SoftRes = {};
     self.TMB = {};
-    self.StackedRoll = {};
+    self.BoostedRolls = {};
 
     GL:success("Tables reset");
 end
