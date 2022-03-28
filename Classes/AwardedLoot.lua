@@ -218,6 +218,11 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, cost)
                 itemLink,
                 winner
             );
+
+            if (GL.BoostedRolls:enabled()) then
+                --- Make sure the cost is stored as the (new) default item cost
+                GL.Settings:set("BoostedRolls.defaultCost", cost);
+            end
         end
 
         -- Announce awarded item on RAID or RAID_WARNING
