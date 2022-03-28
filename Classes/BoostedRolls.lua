@@ -611,6 +611,9 @@ function BoostedRolls:broadcast()
             "GROUP"
         ):send(function ()
             GL:success("BoostedRolls broadcast finished");
+            --- Broadcast updates before we reset the flag.
+            self:broadcastQueuedUpdates();
+
             self.broadcastInProgress = false;
             GL.Events:fire("GL.BOOSTEDROLLS_BROADCAST_ENDED");
 
@@ -838,19 +841,28 @@ function BoostedRolls:replyToDataRequest(CommMessage)
     ):send();
 end
 
---- Process an incoming boosted roll update
+--- Queue an update until broadcast is finished
 ---
 ---@param playerName string
 ---@param points number
 ---@param aliases table
 ---@param delete boolean
-function BoostedRolls:broadcastUpdate(playerName, points, aliases, delete)
-    GL:debug("BoostedRolls:broadcastUpdate");
+function BoostedRolls:queueUpdate(playerName, points, aliases, delete)
+    local newUpdate = {
+        playerName = playerName,
+        points = points or nil,
+        aliases = aliases or nil,
+        delete = delete or false,
+    };
 
-    if (self.broadcastInProgress) then
-        GL:error("Broadcast still in progress");
-        return false;
-    end
+    --- Here we could implement some more advanced logic in the future.    
+
+    tinsert(self.queuedUpdates, newUpdate);
+end
+
+--- Send out the queued updates
+function BoostedRolls:broadcastQueuedUpdates()
+    GL:debug("BoostedRolls:broadcastQueuedUpdates");
 
     if (not GL.User.isInGroup) then
         GL:warning("No one to broadcast to, you're not in a group!");
@@ -862,15 +874,56 @@ function BoostedRolls:broadcastUpdate(playerName, points, aliases, delete)
         return false;
     end
 
+    GL:message("Broadcasting BoostedRolls queued updates...");
+
+    GL.CommMessage.new(
+        CommActions.broadcastBoostedRollsMutation,
+        {
+            updates = self.queuedUpdates,
+            uuid = DB:get("BoostedRolls.MetaData.uuid", ""),
+        },
+        "GROUP"
+    ):send();
+
+    self.queuedUpdates = {};
+end
+
+--- Process an incoming boosted roll update
+---
+---@param playerName string
+---@param points number
+---@param aliases table
+---@param delete boolean
+function BoostedRolls:broadcastUpdate(playerName, points, aliases, delete)
+    GL:debug("BoostedRolls:broadcastUpdate");
+
+    if (not GL.User.isInGroup) then
+        GL:warning("No one to broadcast to, you're not in a group!");
+        return false;
+    end
+
+    if (not self:userIsAllowedToBroadcast()) then
+        GL:warning("Insufficient permissions to broadcast, need ML, assist or lead!");
+        return false;
+    end
+
+    if (self.broadcastInProgress) then
+        GL:error("Broadcast still in progress");
+        self:queueUpdate(playerName, points, aliases, delete);
+        return false;
+    end
+
     GL:message("Broadcasting BoostedRolls update...");
 
     GL.CommMessage.new(
         CommActions.broadcastBoostedRollsMutation,
         {
-            playerName = playerName,
-            points = points or nil,
-            aliases = aliases or nil,
-            delete = delete or false,
+            updates = {{
+                playerName = playerName,
+                points = points or nil,
+                aliases = aliases or nil,
+                delete = delete or false,
+            }},
             uuid = DB:get("BoostedRolls.MetaData.uuid", ""),
         },
         "GROUP"
@@ -894,13 +947,15 @@ function BoostedRolls:receiveUpdate(CommMessage)
     local uuid = DB:get("BoostedRolls.MetaData.uuid", '');
 
     local importUuid = CommMessage.content.uuid or GL:uuid();
-    local playerName = CommMessage.content.playerName or '';
-    local aliases = CommMessage.content.aliases or nil;
-    local points = CommMessage.content.points or nil;
-    local delete = CommMessage.content.delete or false;
-    local dontBroadcast = true;
+    local updates = CommMessage.content.updates or {};
 
-    local importBroadcast = (function ()
+    local importBroadcast = (function (update)
+        local playerName = update.playerName or '';
+        local aliases = update.aliases or nil;
+        local points = update.points or nil;
+        local delete = update.delete or false;
+        local dontBroadcast = true;
+
         if (aliases) then
             self:setAliases(playerName, aliases, dontBroadcast);
         end
@@ -918,7 +973,9 @@ function BoostedRolls:receiveUpdate(CommMessage)
 
     --- We only update if we have the same source data.
     if (importUuid == uuid) then
-        importBroadcast();
+        for _, update in pairs(updates) do
+            importBroadcast(update);
+        end
     end
 end
 
