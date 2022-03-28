@@ -51,7 +51,7 @@ PopupDialog.CLEAR_BOOSTEDROLLS_CONFIRMATION = {
 
 -- Import new boosted roll data confirmation
 PopupDialog.NEW_BOOSTEDROLLS_IMPORT_CONFIRMATION = {
-    question = "Are you sure you want to clear your existing boosted rolls and import new data?",
+    question = "Are you sure you want to clear your existing boosted roll data and import new data?",
     OnYes = function ()
         GL.Interface.BoostedRolls.Importer:import();
     end,
