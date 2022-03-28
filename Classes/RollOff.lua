@@ -557,11 +557,11 @@ function RollOff:processRoll(message)
         if (not RollType
             and GL.BoostedRolls:enabled()
             and GL.BoostedRolls:available()
-            and GL.BoostedRolls:isBoostedRolls(low, high)
+            and GL.BoostedRolls:isBoostedRoll(low, high)
         ) then
             local points = GL.BoostedRolls:getPoints(roller);
-            local actualLow = GL.BoostedRolls:minBoostedRolls(points);
-            local actualHigh = GL.BoostedRolls:maxBoostedRolls(points);
+            local actualLow = GL.BoostedRolls:minBoostedRoll(points);
+            local actualHigh = GL.BoostedRolls:maxBoostedRoll(points);
             if (low == actualLow and high == actualHigh) then
                 RollType = {
                     [1] = GL.Settings:get("BoostedRolls.identifier", "BR"),
