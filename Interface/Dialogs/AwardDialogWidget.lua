@@ -280,7 +280,7 @@ local function constructor()
         BoostedRollsCostEditBox:DisableButton(true);
         BoostedRollsCostEditBox:SetHeight(20);
         BoostedRollsCostEditBox:SetWidth(60);
-        BoostedRollsCostEditBox:SetText("0");
+        BoostedRollsCostEditBox:SetText(GL.Settings:get("BoostedRolls.defaultCost", 0));
         BoostedRollsCostEditBox:SetLabel("");
         OptionsFrame:AddChild(BoostedRollsCostEditBox);
         GL.Interface:setItem(GL.Interface.Dialogs.AwardDialog, "Cost", BoostedRollsCostEditBox);
