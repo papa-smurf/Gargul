@@ -264,15 +264,15 @@ local function constructor()
     if (GL.BoostedRolls:enabled()) then
         VerticalSpacer = AceGUI:Create("SimpleGroup");
         VerticalSpacer:SetLayout("FILL");
-        VerticalSpacer:SetWidth(77);
+        VerticalSpacer:SetWidth(52);
         VerticalSpacer:SetHeight(10);
         OptionsFrame:AddChild(VerticalSpacer);
 
         -- Boosted Roll cost label
         local CostLabel = AceGUI:Create("Label");
         CostLabel:SetFontObject(_G["GameFontNormal"]);
-        CostLabel:SetWidth(58);
-        CostLabel:SetText("SR Cost:");
+        CostLabel:SetWidth(120);
+        CostLabel:SetText("Boosted Roll Cost:");
         OptionsFrame:AddChild(CostLabel);
 
         -- Boosted Roll cost
