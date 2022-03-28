@@ -233,12 +233,16 @@ end
 ---
 ---@param name string
 ---@param aliases table
+---@param dontBroadcast boolean
 ---@return void
-function BoostedRolls:setAliases(name, aliases)
+function BoostedRolls:setAliases(name, aliases, dontBroadcast)
     GL:debug("BoostedRolls:setAliases");
+
     if (type(name) ~= "string") then
         return;
     end
+
+    dontBroadcast = GL:toboolean(dontBroadcast);
 
     local normalizedName = GL:normalizedName(name);
     --- Follow alias table if present
@@ -262,7 +266,10 @@ function BoostedRolls:setAliases(name, aliases)
         end
         self.MaterializedData.DetailsByPlayerName[normalizedName].Aliases = cleanAliases;
         DB:set("BoostedRolls.MetaData.updatedAt", GetServerTime());
-        if (GL.Settings:get("BoostedRolls.automaticallyShareData")) then
+
+        if (not dontBroadcast
+            and GL.Settings:get("BoostedRolls.automaticallyShareData")
+        ) then
             self:broadcastUpdate(normalizedName, nil, aliases);
         end
     end
@@ -319,25 +326,34 @@ end
 ---
 ---@param name string
 ---@param points number
+---@param dontBroadcast boolean
 ---@return void
-function BoostedRolls:setPoints(name, points)
+function BoostedRolls:setPoints(name, points, dontBroadcast)
     GL:debug("BoostedRolls:setPoints");
     if (type(name) ~= "string") then
         return;
     end
+
+    dontBroadcast = GL:toboolean(dontBroadcast);
 
     local normalizedName = GL:normalizedName(name);
     --- Follow alias table if present
     if (DB.BoostedRolls.Aliases[normalizedName]) then
         normalizedName = DB.BoostedRolls.Aliases[normalizedName];
     end
-    if (self.MaterializedData.DetailsByPlayerName[normalizedName]) then
-        self.MaterializedData.DetailsByPlayerName[normalizedName].points = points;
-        DB:set("BoostedRolls.Points."..normalizedName, points);
-        DB:set("BoostedRolls.MetaData.updatedAt", GetServerTime());
-        if (GL.Settings:get("BoostedRolls.automaticallyShareData")) then
-            self:broadcastUpdate(normalizedName, points);
-        end
+
+    if (not self.MaterializedData.DetailsByPlayerName[normalizedName]) then
+        return;
+    end
+
+    self.MaterializedData.DetailsByPlayerName[normalizedName].points = points;
+    DB:set("BoostedRolls.Points." .. normalizedName, points);
+    DB:set("BoostedRolls.MetaData.updatedAt", GetServerTime());
+
+    if (not dontBroadcast
+        and GL.Settings:get("BoostedRolls.automaticallyShareData")
+    ) then
+        self:broadcastUpdate(normalizedName, points);
     end
 end
 
@@ -345,27 +361,36 @@ end
 ---
 ---@param name string
 ---@return void
-function BoostedRolls:deletePoints(name)
+function BoostedRolls:deletePoints(name, dontBroadcast)
     GL:debug("BoostedRolls:deletePoints");
     if (type(name) ~= "string") then
         return;
     end
+
+    dontBroadcast = GL:toboolean(dontBroadcast);
 
     local normalizedName = GL:normalizedName(name);
     --- Follow alias table if present
     if (DB.BoostedRolls.Aliases[normalizedName]) then
         normalizedName = DB.BoostedRolls.Aliases[normalizedName];
     end
-    if (self.MaterializedData.DetailsByPlayerName[normalizedName]) then
-        for _, alias in pairs(self.MaterializedData.DetailsByPlayerName[normalizedName].Aliases) do
-            DB.BoostedRolls.Aliases[alias] = nil;
-        end
-        self.MaterializedData.DetailsByPlayerName[normalizedName] = nil;
-        DB.BoostedRolls.Points[normalizedName] = nil;
-        DB:set("BoostedRolls.MetaData.updatedAt", GetServerTime());
-        if (GL.Settings:get("BoostedRolls.automaticallyShareData")) then
-            self:broadcastUpdate(normalizedName, nil, nil, true);
-        end
+
+    if (not self.MaterializedData.DetailsByPlayerName[normalizedName]) then
+        return;
+    end
+
+    for _, alias in pairs(self.MaterializedData.DetailsByPlayerName[normalizedName].Aliases) do
+        DB.BoostedRolls.Aliases[alias] = nil;
+    end
+
+    self.MaterializedData.DetailsByPlayerName[normalizedName] = nil;
+    DB.BoostedRolls.Points[normalizedName] = nil;
+    DB:set("BoostedRolls.MetaData.updatedAt", GetServerTime());
+
+    if (not dontBroadcast
+        and GL.Settings:get("BoostedRolls.automaticallyShareData")
+    ) then
+        self:broadcastUpdate(normalizedName, nil, nil, true);
     end
 end
 
@@ -459,7 +484,7 @@ function BoostedRolls:import(data, openOverview, MetaData)
     };
 
     GL:success("Import of boosted roll data successful");
-    GL.Events:fire("GL.BoostedRolls_IMPORTED");
+    GL.Events:fire("GL.BOOSTEDROLLS_IMPORTED");
 
     self:materializeData();
     GL.Interface.BoostedRolls.Importer:close();
@@ -566,7 +591,7 @@ function BoostedRolls:broadcast()
     end
 
     self.broadcastInProgress = true;
-    GL.Events:fire("GL.BoostedRolls_BROADCAST_STARTED");
+    GL.Events:fire("GL.BOOSTEDROLLS_BROADCAST_STARTED");
 
     local Broadcast = function ()
         GL:message("Broadcasting BoostedRolls data...");
@@ -587,7 +612,7 @@ function BoostedRolls:broadcast()
         ):send(function ()
             GL:success("BoostedRolls broadcast finished");
             self.broadcastInProgress = false;
-            GL.Events:fire("GL.BoostedRolls_BROADCAST_ENDED");
+            GL.Events:fire("GL.BOOSTEDROLLS_BROADCAST_ENDED");
 
             Label = GL.Interface:getItem(GL.BoostedRolls, "Label.BroadcastProgress");
             if (Label) then
@@ -680,7 +705,7 @@ function BoostedRolls:receiveBroadcast(CommMessage)
         );
     else
         question = string.format(
-            "Are you sure you want to clear your existing boosted rolls and import new data broadcasted by %s?",
+            "Are you sure you want to clear your existing boosted roll data and import new data broadcasted by %s?",
             CommMessage.Sender.name
         );
     end
@@ -873,18 +898,19 @@ function BoostedRolls:receiveUpdate(CommMessage)
     local aliases = CommMessage.content.aliases or nil;
     local points = CommMessage.content.points or nil;
     local delete = CommMessage.content.delete or false;
-    
+    local dontBroadcast = true;
+
     local importBroadcast = (function ()
         if (aliases) then
-            self:setAliases(playerName, aliases);
+            self:setAliases(playerName, aliases, dontBroadcast);
         end
 
         if (points) then
-            self:setPoints(playerName, points);
+            self:setPoints(playerName, points, dontBroadcast);
         end
 
         if (delete) then
-            self:deletePoints(playerName);
+            self:deletePoints(playerName, dontBroadcast);
         end
 
         GL.Interface.BoostedRolls.Overview:refreshTable();
