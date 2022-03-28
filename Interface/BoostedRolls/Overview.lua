@@ -14,6 +14,8 @@ GL:tableSet(GL, "Interface.BoostedRolls.Overview", {
     isVisible = false,
     selectedCharacter = nil,
     points = 0,
+
+    ShareButton = {},
 });
 
 ---@class BoostedRollsOverview
@@ -75,14 +77,14 @@ function Overview:draw()
         SHARE BUTTON
     ]]
     local ShareButton = GL.UI:createShareButton(
-            Window.frame,
-            function ()
-                GL.Interface.Dialogs.PopupDialog:open("BROADCAST_BOOSTEDROLLS_CONFIRMATION");
-            end,
-            "Broadcast Data",
-            "To broadcast you need to be in a group and need master loot, assist or lead!"
+        Window.frame,
+        function ()
+            GL.Interface.Dialogs.PopupDialog:open("BROADCAST_BOOSTEDROLLS_CONFIRMATION");
+        end,
+        "Broadcast Data",
+        "To broadcast you need to be in a group and need master loot, assist or lead!"
     );
-    GL.Interface:setItem(self, "ShareButton", ShareButton);
+    self.ShareButton = ShareButton;
     ShareButton:Show();
 
     --[[
@@ -195,7 +197,6 @@ function Overview:draw()
     AliasesEditBox:DisableButton(true);
     AliasesEditBox:SetHeight(20);
     AliasesEditBox:SetWidth(220);
-    AliasesEditBox:SetText("Test");
     AliasesFrame:AddChild(AliasesEditBox);
     GL.Interface:setItem(self, "Aliases", AliasesEditBox);
 
@@ -294,7 +295,7 @@ end
 ---
 ---@return void
 function Overview:updateShareButton()
-    local ShareButton = GL.Interface:getItem(self, "Frame.ShareButton")
+    local ShareButton = self.ShareButton;
 
     if (not ShareButton) then
         return;
@@ -568,8 +569,8 @@ function Overview:loadPlayer()
     
     GL.Interface:getItem(self, "EditBox.CurrentPoints"):SetText(self.points);
     GL.Interface:getItem(self, "Label.PlayerName"):SetText(string.format(
-            "|cff%s%s|r",
-            GL:classHexColor(class), name
+        "|cff%s%s|r",
+        GL:classHexColor(class), name
     ));
 
     --- Aliases
@@ -605,6 +606,11 @@ function Overview:close()
     if (CharacterTable) then
         CharacterTable:SetData({}, true);
         CharacterTable:Hide();
+    end
+
+    if (self.ShareButton) then
+        self.ShareButton:Hide();
+        self.ShareButton = nil;
     end
 end
 
