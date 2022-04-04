@@ -6,10 +6,12 @@ GL.BoostedRolls = {
     _initialized = false,
     broadcastInProgress = false,
     requestingData = false,
+    ImportDialog = false,
     MaterializedData = {
         DetailsByPlayerName = {},
     },
-    queuedUpdates = {},
+    QueuedUpdates = {},
+    QueuedUpdateBroadcastTimer = false,
 };
 
 local DB = GL.DB; ---@type DB
@@ -32,6 +34,15 @@ function BoostedRolls:_init()
     end);
 
     GL.Events:register("BoostedRollsUserJoinedGroupListener", "GL.USER_JOINED_GROUP", function () self:requestData(); end);
+
+    -- Make sure BoostedRoll changes are only broadcasted once every 3 seconds
+    GL.Events:register("BoostedRollsUpdateQueuedListener", "GL.BOOSTED_ROLLS_UPDATE_QUEUED", function ()
+        GL.Ace:CancelTimer(self.QueuedUpdateBroadcastTimer);
+
+        self.QueuedUpdateBroadcastTimer = GL.Ace:ScheduleTimer(function ()
+            self:broadcastQueuedUpdates();
+        end, 3);
+    end);
 
     self:materializeData();
 
@@ -574,8 +585,8 @@ function BoostedRolls:broadcast()
         return false;
     end
 
+    -- No need to broadcast anything when not in a group, this also doesn't warrent a warning
     if (not GL.User.isInGroup) then
-        GL:warning("No one to broadcast to, you're not in a group!");
         return false;
     end
 
@@ -611,6 +622,7 @@ function BoostedRolls:broadcast()
             "GROUP"
         ):send(function ()
             GL:success("BoostedRolls broadcast finished");
+
             --- Broadcast updates before we reset the flag.
             self:broadcastQueuedUpdates();
 
@@ -663,17 +675,20 @@ function BoostedRolls:receiveBroadcast(CommMessage)
     local importString = CommMessage.content.importString or '';
     local MetaData = CommMessage.content.MetaData or {};
     local importBroadcast = (function ()
-        if (not GL:empty(importString)) then
-            GL:warning("Attempting to process incoming BoostedRolls data from " .. CommMessage.Sender.name);
-            local result = self:import(importString, false, MetaData);
-            if (result) then
-                GL.Interface.BoostedRolls.Overview:refreshTable();
-            end
-            return result;
+        if (GL:empty(importString)) then
+            GL:warning("Couldn't process BoostedRolls data received from " .. CommMessage.Sender.name);
+
+            return false;
         end
 
-        GL:warning("Couldn't process BoostedRolls data received from " .. CommMessage.Sender.name);
-        return false;
+        GL:warning("Attempting to process incoming BoostedRolls data from " .. CommMessage.Sender.name);
+
+        local result = self:import(importString, false, MetaData);
+        if (result) then
+            GL.Interface.BoostedRolls.Overview:refreshTable();
+        end
+
+        return result;
     end);
 
     --- Check if we automatically accept data from this player.
@@ -718,6 +733,14 @@ function BoostedRolls:receiveBroadcast(CommMessage)
         OnYes = importBroadcast,
     };
 
+    -- Make sure a user can't be bombarded by import confirmation dialogs
+    if (self.ImportDialog) then
+        self.ImportDialog:Hide();
+
+        self.ImportDialog = nil;
+    end
+
+    self.ImportDialog = Dialog;
     GL.Interface.Dialogs.PopupDialog:open(Dialog);
 end
 
@@ -848,16 +871,17 @@ end
 ---@param aliases table
 ---@param delete boolean
 function BoostedRolls:queueUpdate(playerName, points, aliases, delete)
-    local newUpdate = {
+    local Update = {
         playerName = playerName,
         points = points or nil,
         aliases = aliases or nil,
         delete = delete or false,
     };
 
-    --- Here we could implement some more advanced logic in the future.    
+    tinsert(self.QueuedUpdates, Update);
 
-    tinsert(self.queuedUpdates, newUpdate);
+    -- Fire an event to let the application know that an update was queued
+    GL.Events:fire("GL.BOOSTED_ROLLS_UPDATE_QUEUED");
 end
 
 --- Send out the queued updates
@@ -879,13 +903,13 @@ function BoostedRolls:broadcastQueuedUpdates()
     GL.CommMessage.new(
         CommActions.broadcastBoostedRollsMutation,
         {
-            updates = self.queuedUpdates,
+            updates = self.QueuedUpdates,
             uuid = DB:get("BoostedRolls.MetaData.uuid", ""),
         },
         "GROUP"
     ):send();
 
-    self.queuedUpdates = {};
+    self.QueuedUpdates = {};
 end
 
 --- Process an incoming boosted roll update
