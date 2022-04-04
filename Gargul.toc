@@ -1,4 +1,4 @@
-## Interface: 20503
+## Interface: 20504
 ## Title: Gargul
 ## Author: Zhorax - Firemaw
 ## Notes: Loot addon that supports softres sr, thatsmybis tmb, auto looting, loot priorities, plus one tracking and much more
