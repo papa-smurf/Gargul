@@ -5,6 +5,7 @@ GL.Commands = GL.Commands or {
     CommandDescriptions = {
         awardondate = "In case you need to award something retroactively you can use this command: /gl awardOnDate [winnerName] [itemLink] [yy-mm-dd]",
         award = "Open the award window. Optionally accepts an ItemLink as an argument: /gl award [itemLink?]",
+        boostedrolls = "Open the Boosted Rolls UI that allows you to easily manage roll boosts.",
         buffs = "You can instantly check player buffs like Ony, ZG, but also protection consumables like shadow protection: /gl buffs 22888, 22818, 22817, 22820, 24425, 15366, 20079",
         clearplusones = "Clear all plus one values",
         cleardisenchanter = "Clear the disenchanter entry so you can pick a new one the next time around",
@@ -15,7 +16,6 @@ GL.Commands = GL.Commands or {
         lootpriority = "Open the loot priority editor where you can edit / clear loot priorities. These are the same priorities as imported by the TMB importer, clearing them here clears them for TMB as well",
         packmule = "Open PackMule which allows you to automatically funnel dropped gear to specific players, very helpful with green items for example",
         plusones = "Open the PlusOnes window that allows you to check and manipulate all plus one values",
-        points = "Open the Boosted Rolls UI that allows you to easily manage roll boosts.",
         raidcsv = "Output everyone currently in the group in a CSV format",
         rolloff = "Open the RollOff UI where you can announce an item for players to roll on: /gl award [itemLink?]",
         softreserves = "Open either the SoftRes import window if there's no data available or open the SoftRes overview",
@@ -26,6 +26,10 @@ GL.Commands = GL.Commands or {
     },
 
     ShorthandDictionary = {
+        br = "boostedrolls",
+        boosted = "boostedrolls",
+        boostedroll = "boostedrolls",
+        points = "boostedrolls",
         co = "settings",
         config = "settings",
         ro = "rolloff",
@@ -48,7 +52,6 @@ GL.Commands = GL.Commands or {
         st = "stacktrace",
         im = "import",
         ex = "export",
-        br = "broadcast",
         ve = "version",
         ins = "inspect",
         bu = "buffs",
@@ -80,6 +83,9 @@ GL.Commands = GL.Commands or {
         -- Award an item on a given date. Useful if you forgot to award an item and want to do it later
         awardondate = function(...) GL.AwardedLoot:addWinnerOnDate(...); end,
 
+        -- Open the boosted rolls window
+        boostedrolls = function() GL.BoostedRolls:draw(); end,
+
         -- Export the current raid roster to csv
         raidcsv = function ()
             GL.RaidGroups:toCSV();
@@ -93,9 +99,6 @@ GL.Commands = GL.Commands or {
 
         -- Open the plus ones window
         plusones = function() GL.Interface.PlusOnes.Overview:draw(); end,
-
-        -- Open the points window
-        points = function() GL.BoostedRolls:draw(); end,
 
         -- Clear the disenchanter
         cleardisenchanter = function () GL.PackMule:clearDisenchanter(); end,
