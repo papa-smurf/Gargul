@@ -443,7 +443,7 @@ function DroppedLoot:announce()
             -- Fetch the applicable TMB data (if any)
             local ActiveWishListDetails = {};
             local ActivePrioListDetails = {};
-            local maximumNumberOfAnouncementEntries = GL.Settings:get("TMB.maximumNumberOfAnouncementEntries", 5);
+            local maximumNumberOfAnnouncementEntries = GL.Settings:get("TMB.maximumNumberOfAnnouncementEntries", 5);
             if (TMBInfo and (
                 GL.Settings:get("TMB.includePrioListInfoInLootAnnouncement")
                 or GL.Settings:get("TMB.includeWishListInfoInLootAnnouncement")
@@ -477,7 +477,7 @@ function DroppedLoot:announce()
                     end
 
                     -- The user only wants to see a limited number of entries, break!
-                    if (entries >= maximumNumberOfAnouncementEntries) then
+                    if (entries >= maximumNumberOfAnnouncementEntries) then
                         break;
                     end
                 end
@@ -515,7 +515,7 @@ function DroppedLoot:announce()
                     end
 
                     -- The user only wants to see a limited number of entries, break!
-                    if (entries >= maximumNumberOfAnouncementEntries) then
+                    if (entries >= maximumNumberOfAnnouncementEntries) then
                         break;
                     end
                 end

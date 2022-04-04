@@ -112,6 +112,15 @@ function Settings:enforceTemporarySettings()
         self:set("DroppedLoot.minimumQualityOfAnnouncedLoot", self:get("minimumQualityOfAnnouncedLoot"));
         self:set("minimumQualityOfAnnouncedLoot", nil);
     end
+
+    --- Rename TMB.maximumNumberOfAnouncementEntries to TMB.maximumNumberOfAnnouncementEntries
+    ---@todo remove on >= 01-06-2022
+    if (self:get("TMB.maximumNumberOfAnouncementEntries") ~= nil
+            and self:get("TMB.maximumNumberOfAnnouncementEntries") == nil
+    ) then
+        GL.DB.Settings.TMB.maximumNumberOfAnnouncementEntries = GL.DB.Settings.TMB.maximumNumberOfAnouncementEntries;
+        GL.DB.Settings.TMB.maximumNumberOfAnouncementEntries = nil;
+    end
 end
 
 --- Draw a setting section
