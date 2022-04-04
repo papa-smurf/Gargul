@@ -201,6 +201,10 @@ function DroppedLoot:highlightItemsOfInterest()
                     -- The item is soft-reserved
                     elseif (GL.Settings:get("highlightSoftReservedItems")
                         and SoftRes:linkIsReserved(itemLink)
+                        and not (not GL.User.isMasterLooter
+                            and GL.Settings:get("highlightMyItemsOnly")
+                            and not SoftRes:itemLinkIsReservedByMe(itemLink)
+                        )
                     ) then
                         enableHighlight = true;
                         BorderColor = {.95686, .5490, .72941, 1}; -- Make the border paladin-pink for reserved items
@@ -209,7 +213,19 @@ function DroppedLoot:highlightItemsOfInterest()
                     elseif (GL.Settings:get("highlightWishlistedItems")
                         or GL.Settings:get("highlightPriolistedItems")
                     ) then
-                        local TMBInfo = GL.TMB:byItemLink(itemLink) or {};
+                        local TMBInfo = {};
+
+                        -- Fetch all TMB data for this item
+                        if (GL.User.isMasterLooter
+                            or not GL.Settings:get("highlightMyItemsOnly")
+                        ) then
+                            TMBInfo = GL.TMB:byItemLink(itemLink) or {};
+
+                        -- Fetch only the current user's TMB data, he's not interested in the rest
+                        else
+                            TMBInfo = GL.TMB:byItemLinkAndPlayer(itemLink, GL.User.name) or {};
+                        end
+
                         local concernsPrio = false;
 
                         -- Check for active wishlist entries

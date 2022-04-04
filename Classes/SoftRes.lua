@@ -178,6 +178,29 @@ function SoftRes:replyToDataRequest(CommMessage)
     ):send();
 end
 
+--- Check if an item ID is reserved by the current player
+---
+---@param itemID number
+---@return boolean
+function SoftRes:itemIDIsReservedByMe(itemID)
+    GL:debug("SoftRes:itemIDIsReservedByMe");
+
+    return GL:tableGet(
+        self.MaterializedData,
+        string.format("DetailsByPlayerName.%s.Items.%s", string.format(GL.User.name), itemID)
+    ) == nil;
+end
+
+--- Check if an itemlink is reserved by the current player
+---
+---@param itemLink string
+---@return boolean
+function SoftRes:itemLinkIsReservedByMe(itemLink)
+    GL:debug("SoftRes:itemLinkIsReservedByMe");
+
+    return self:itemIDIsReservedByMe(GL:getItemIdFromLink(itemLink));
+end
+
 --- Materialize the SoftRes data to make it more accessible during runtime
 ---
 ---@return void

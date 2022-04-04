@@ -7,6 +7,7 @@ GL.Data = GL.Data or {};
 GL.Data.DefaultSettings = {
     debugModeEnabled = false,
     highlightsDisabled = false,
+    highlightMyItemsOnly = false,
     highlightHardReservedItems = true,
     highlightSoftReservedItems = true,
     highlightWishlistedItems = true,
