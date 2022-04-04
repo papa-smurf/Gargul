@@ -131,7 +131,7 @@ function Overview:draw()
     GL.Interface:setItem(self, "PlayerName", PlayerNameLabel);
 
     local DecrementButton = AceGUI:Create("Button");
-    DecrementButton:SetText("-"..step);
+    DecrementButton:SetText("-" .. step);
     DecrementButton:SetWidth(60);
     DecrementButton:SetHeight(20);
     DecrementButton:SetCallback("OnClick", function()
@@ -141,9 +141,8 @@ function Overview:draw()
 
     local BoostedRollsCurrentPoints = GL.AceGUI:Create("EditBox");
     BoostedRollsCurrentPoints:DisableButton(true);
-    BoostedRollsCurrentPoints:SetHeight(20);
+    BoostedRollsCurrentPoints:SetHeight(22);
     BoostedRollsCurrentPoints:SetWidth(100);
-    BoostedRollsCurrentPoints:SetText(100);
     BoostedRollsCurrentPoints:SetCallback("OnTextChanged", function (widget)
         local value = GL.BoostedRolls:toPoints(strtrim(widget:GetText()));
 
@@ -158,7 +157,7 @@ function Overview:draw()
     GL.Interface:setItem(self, "CurrentPoints", BoostedRollsCurrentPoints);
 
     local IncrementButton = AceGUI:Create("Button");
-    IncrementButton:SetText("+"..step);
+    IncrementButton:SetText("+" .. step);
     IncrementButton:SetWidth(60);
     IncrementButton:SetHeight(20);
     IncrementButton:SetCallback("OnClick", function()
@@ -188,7 +187,7 @@ function Overview:draw()
 
     local AliasesLabel = AceGUI:Create("Label");
     AliasesLabel:SetFontObject(_G["GameFontNormalSmall"]);
-    AliasesLabel:SetWidth(100);
+    AliasesLabel:SetWidth(40);
     AliasesLabel:SetJustifyH("RIGHT");
     AliasesLabel:SetText("Aliases: ");
     AliasesFrame:AddChild(AliasesLabel);
@@ -196,7 +195,7 @@ function Overview:draw()
     local AliasesEditBox = GL.AceGUI:Create("EditBox");
     AliasesEditBox:DisableButton(true);
     AliasesEditBox:SetHeight(20);
-    AliasesEditBox:SetWidth(220);
+    AliasesEditBox:SetWidth(280);
     AliasesFrame:AddChild(AliasesEditBox);
     GL.Interface:setItem(self, "Aliases", AliasesEditBox);
 
@@ -215,32 +214,26 @@ function Overview:draw()
     end);
     AliasesFrame:AddChild(ApplyAliasesButton);
 
-    local VerticalSpacer = AceGUI:Create("SimpleGroup");
-    VerticalSpacer:SetLayout("FILL");
-    VerticalSpacer:SetFullWidth(true);
-    VerticalSpacer:SetHeight(15);
-    Window:AddChild(VerticalSpacer);
-
-    HorizontalSpacer = AceGUI:Create("SimpleGroup");
-    HorizontalSpacer:SetLayout("FILL");
-    HorizontalSpacer:SetWidth(4);
-    HorizontalSpacer:SetHeight(10);
-    Window:AddChild(HorizontalSpacer);
+    local ProgressFrame = AceGUI:Create("SimpleGroup");
+    ProgressFrame:SetLayout("FILL")
+    ProgressFrame:SetFullWidth(true);
+    ProgressFrame:SetHeight(35);
+    Window:AddChild(ProgressFrame);
 
     local BroadcastProgressLabel = AceGUI:Create("Label");
     BroadcastProgressLabel:SetWidth(200);
     BroadcastProgressLabel:SetFontObject(_G["GameFontNormal"]);
-    Window:AddChild(BroadcastProgressLabel);
+    ProgressFrame:AddChild(BroadcastProgressLabel);
     GL.Interface:setItem(GL.BoostedRolls, "BroadcastProgress", BroadcastProgressLabel);
 
     --[[
         BUTTONS FRAME
     ]]
-    VerticalSpacer = AceGUI:Create("SimpleGroup");
-    VerticalSpacer:SetLayout("FILL");
-    VerticalSpacer:SetFullWidth(true);
-    VerticalSpacer:SetHeight(15);
-    Window:AddChild(VerticalSpacer);
+    --local VerticalSpacer = AceGUI:Create("SimpleGroup");
+    --VerticalSpacer:SetLayout("FILL");
+    --VerticalSpacer:SetFullWidth(true);
+    --VerticalSpacer:SetHeight(15);
+    --Window:AddChild(VerticalSpacer);
 
     local ButtonFrame = AceGUI:Create("SimpleGroup");
     ButtonFrame:SetLayout("FLOW")
@@ -484,10 +477,18 @@ function Overview:deleteEntry()
         return;
     end
 
-    BoostedRolls:deletePoints(self.selectedCharacter);
-    self:refreshTable();
-    self.selectedCharacter = nil;
-    self:loadPlayer();
+    return GL.Interface.Dialogs.PopupDialog:open({
+        question = string.format("Delete |cff%s%s|r?",
+            GL:classHexColor(GL.Player:classByName(self.selectedCharacter)),
+            GL:capitalize(self.selectedCharacter)
+        ),
+        OnYes = function ()
+            BoostedRolls:deletePoints(self.selectedCharacter);
+            self:refreshTable();
+            self.selectedCharacter = nil;
+            self:loadPlayer();
+        end,
+    });
 end
 
 ---@param points number 
@@ -500,15 +501,13 @@ function Overview:updatePoints(points, updateEditBox)
         return;
     end
 
-    GL:warning(self.selectedCharacter);
-
     self.points = points;
 
     -- Update points locally.
-    BoostedRolls:setPoints(self.selectedCharacter, points);
+    BoostedRolls:queueUpdate(self.selectedCharacter, points);
 
     -- Update interface.
-    if updateEditBox then
+    if (updateEditBox) then
         GL.Interface:getItem(self, "EditBox.CurrentPoints"):SetText(points);
     end
 
