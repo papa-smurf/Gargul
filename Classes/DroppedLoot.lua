@@ -32,7 +32,8 @@ function DroppedLoot:_init()
 
     -- Show a reminder window to use Gargul when trying to assign using native loot assignment
     Events:register("DroppedLootOpenMasterLooterListListener", "OPEN_MASTER_LOOT_LIST", function ()
-        if (GL.Settings:get("TMB.showLootAssignmentReminder")
+        if (GL.User.isMasterLooter
+            and GL.Settings:get("TMB.showLootAssignmentReminder")
             and GL.TMB:available()
         ) then
             GL.Interface.ReminderToAssignLootUsingGargul:draw();
@@ -200,6 +201,10 @@ function DroppedLoot:highlightItemsOfInterest()
                     -- The item is soft-reserved
                     elseif (GL.Settings:get("highlightSoftReservedItems")
                         and SoftRes:linkIsReserved(itemLink)
+                        and not (not GL.User.isMasterLooter
+                            and GL.Settings:get("highlightMyItemsOnly")
+                            and not SoftRes:itemLinkIsReservedByMe(itemLink)
+                        )
                     ) then
                         enableHighlight = true;
                         BorderColor = {.95686, .5490, .72941, 1}; -- Make the border paladin-pink for reserved items
@@ -208,7 +213,19 @@ function DroppedLoot:highlightItemsOfInterest()
                     elseif (GL.Settings:get("highlightWishlistedItems")
                         or GL.Settings:get("highlightPriolistedItems")
                     ) then
-                        local TMBInfo = GL.TMB:byItemLink(itemLink) or {};
+                        local TMBInfo = {};
+
+                        -- Fetch all TMB data for this item
+                        if (GL.User.isMasterLooter
+                            or not GL.Settings:get("highlightMyItemsOnly")
+                        ) then
+                            TMBInfo = GL.TMB:byItemLink(itemLink) or {};
+
+                        -- Fetch only the current user's TMB data, he's not interested in the rest
+                        else
+                            TMBInfo = GL.TMB:byItemLinkAndPlayer(itemLink, GL.User.name) or {};
+                        end
+
                         local concernsPrio = false;
 
                         -- Check for active wishlist entries
@@ -426,7 +443,7 @@ function DroppedLoot:announce()
             -- Fetch the applicable TMB data (if any)
             local ActiveWishListDetails = {};
             local ActivePrioListDetails = {};
-            local maximumNumberOfAnouncementEntries = GL.Settings:get("TMB.maximumNumberOfAnouncementEntries", 5);
+            local maximumNumberOfAnnouncementEntries = GL.Settings:get("TMB.maximumNumberOfAnnouncementEntries", 5);
             if (TMBInfo and (
                 GL.Settings:get("TMB.includePrioListInfoInLootAnnouncement")
                 or GL.Settings:get("TMB.includeWishListInfoInLootAnnouncement")
@@ -460,7 +477,7 @@ function DroppedLoot:announce()
                     end
 
                     -- The user only wants to see a limited number of entries, break!
-                    if (entries >= maximumNumberOfAnouncementEntries) then
+                    if (entries >= maximumNumberOfAnnouncementEntries) then
                         break;
                     end
                 end
@@ -498,7 +515,7 @@ function DroppedLoot:announce()
                     end
 
                     -- The user only wants to see a limited number of entries, break!
-                    if (entries >= maximumNumberOfAnouncementEntries) then
+                    if (entries >= maximumNumberOfAnnouncementEntries) then
                         break;
                     end
                 end

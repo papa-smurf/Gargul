@@ -112,7 +112,7 @@ function TMB:byItemIdAndPlayer(itemId, player)
 
     -- An invalid item id or name was provided
     itemId = tonumber(itemId);
-    player = strtrim(player);
+    player = string.lower(strtrim(player));
     if (not GL:higherThanZero(itemId)
         or GL:empty(player)
     ) then
@@ -143,6 +143,21 @@ function TMB:byItemIdAndPlayer(itemId, player)
     end
 
     return Entries;
+end
+
+--- Fetch an item's TMB info based on its item link
+---
+---@param itemLink string
+---@param inRaidOnly boolean|nil
+---@return table
+function TMB:byItemLinkAndPlayer(itemLink, player)
+    GL:debug("TMB:byItemLink");
+
+    if (GL:empty(itemLink)) then
+        return {};
+    end
+
+    return self:byItemIdAndPlayer(GL:getItemIdFromLink(itemLink), player);
 end
 
 --- Fetch an item's TMB info based on its item link

@@ -39,13 +39,13 @@ function TMB:draw(Parent)
     MaxLootAnnouncementEntries:SetLabel("Maximum number of dropped loot announcement entries");
     MaxLootAnnouncementEntries.label:SetTextColor(1, .95686, .40784);
     MaxLootAnnouncementEntries:SetFullWidth(true);
-    MaxLootAnnouncementEntries:SetValue(GL.Settings:get("TMB.maximumNumberOfAnouncementEntries", 35));
+    MaxLootAnnouncementEntries:SetValue(GL.Settings:get("TMB.maximumNumberOfAnnouncementEntries", 35));
     MaxLootAnnouncementEntries:SetSliderValues(1, 50, 1);
     MaxLootAnnouncementEntries:SetCallback("OnValueChanged", function(Slider)
         local value = tonumber(Slider:GetValue());
 
         if (GL:higherThanZero(value)) then
-            GL.Settings:set("TMB.maximumNumberOfAnouncementEntries", value);
+            GL.Settings:set("TMB.maximumNumberOfAnnouncementEntries", value);
         end
     end);
     Parent:AddChild(MaxLootAnnouncementEntries);
