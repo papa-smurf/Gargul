@@ -32,7 +32,8 @@ function DroppedLoot:_init()
 
     -- Show a reminder window to use Gargul when trying to assign using native loot assignment
     Events:register("DroppedLootOpenMasterLooterListListener", "OPEN_MASTER_LOOT_LIST", function ()
-        if (GL.Settings:get("TMB.showLootAssignmentReminder")
+        if (GL.User.isMasterLooter
+            and GL.Settings:get("TMB.showLootAssignmentReminder")
             and GL.TMB:available()
         ) then
             GL.Interface.ReminderToAssignLootUsingGargul:draw();
