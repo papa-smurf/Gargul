@@ -54,6 +54,7 @@ Interface/Award.lua
 Interface/Importer.lua
 Interface/Settings/Overview.lua
 Interface/Settings/DroppedLoot.lua
+Interface/Settings/TradeAnnouncements.lua
 Interface/Settings/PackMule.lua
 Interface/Settings/PackMuleRules.lua
 Interface/Settings/PackMuleIgnores.lua

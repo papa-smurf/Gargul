@@ -45,6 +45,10 @@ function TradeWindow:_init()
         self:handleEvents(event, message);
     end);
 
+    GL.Events:register("TradeWindowTradeCompleted", "GL.TRADE_COMPLETED", function (_, Details)
+        self:announceTradeDetails(Details);
+    end);
+
     self._initialized = true;
 end
 
@@ -263,6 +267,110 @@ function TradeWindow:processItemsToAdd()
 
     -- Everything went well, put the item in the trade window!
     UseContainerItem(unpack(itemPositionInBag));
+end
+
+--- Announce the traded loot or gold in chat
+---
+---@param Details table
+---@return void
+function TradeWindow:announceTradeDetails(Details)
+    local mode = GL.Settings:get("TradeAnnouncements.mode", "WHEN_MASTERLOOTER");
+
+    if (mode == "NEVER") then
+        return;
+    end
+
+    if (mode == "IN_GROUP" and not GL.User.isInGroup) then
+        return;
+    end
+
+    if (mode == "WHEN_ASSIST" and not GL.User.hasAssist) then
+        return;
+    end
+
+    if (mode == "WHEN_MASTERLOOTER" and not GL.User.isMasterLooter) then
+        return;
+    end
+
+    if (not GL:empty(Details.MyItems) and GL.Settings:get("TradeAnnouncements.itemsGiven", true)) then
+        GL:sendChatMessage(string.format("I gave %s these items:", Details.partner), "GROUP");
+
+        local itemString = "";
+        local itemsAddedToString = 0;
+        for _, Entry in pairs(Details.MyItems) do
+            local itemID = tonumber(Entry.itemID);
+
+            if (itemID) then
+                itemString = itemString + Entry.itemLink;
+                itemsAddedToString = itemsAddedToString + 1;
+            end
+
+            -- We can only put 5 item links in 1 chat message
+            -- In case we reach 5 we announce it and reset the counter and string
+            if (itemsAddedToString >= 5) then
+                GL:sendChatMessage(itemString, "GROUP");
+
+                itemsAddedToString = 0;
+                itemString = "";
+            end
+        end
+
+        -- There are traded items that need to be announced still
+        -- This happens when 6 items or less than 5 were traded
+        if (itemsAddedToString) then
+            GL:sendChatMessage(itemString, "GROUP");
+        end
+    end
+
+    if (self.State.myGold and GL.Settings:get("TradeAnnouncements.goldGiven", true)) then
+        GL:sendChatMessage(string.format(
+            "I gave %s %dg %ds %dc",
+            Details.partner,
+            self.State.myGold / 100 / 100,
+            (self.State.myGold / 100) % 100,
+            self.State.myGold % 100)
+        );
+    end
+
+    if (not GL:empty(Details.TheirItems) and GL.Settings:get("TradeAnnouncements.itemsReceived", true)) then
+        GL:sendChatMessage(string.format("I received these items from %s:", Details.partner), "GROUP");
+
+        local itemString = "";
+        local itemsAddedToString = 0;
+        for _, Entry in pairs(Details.TheirItems) do
+            local itemID = tonumber(Entry.itemID);
+
+            if (itemID) then
+                itemString = itemString + Entry.itemLink;
+                itemsAddedToString = itemsAddedToString + 1;
+            end
+
+            -- We can only put 5 item links in 1 chat message
+            -- In case we reach 5 we announce it and reset the counter and string
+            if (itemsAddedToString >= 5) then
+                GL:sendChatMessage(itemString, "GROUP");
+
+                itemsAddedToString = 0;
+                itemString = "";
+            end
+        end
+
+        -- There are traded items that need to be announced still
+        -- This happens when 6 items or less than 5 were traded
+        if (itemsAddedToString) then
+            GL:sendChatMessage(itemString, "GROUP");
+        end
+    end
+
+    if (self.State.theirGold and GL.Settings:get("TradeAnnouncements.goldReceived", true)) then
+        GL:sendChatMessage(string.format(
+            "I received %dg %ds %dc from %s",
+            self.State.theirGold / 100 / 100,
+            (self.State.theirGold / 100) % 100,
+            self.State.theirGold % 100),
+            Details.partner
+        );
+    end
 end
 
 GL:debug("TradeWindow.lua");
