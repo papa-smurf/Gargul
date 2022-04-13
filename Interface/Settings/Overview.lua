@@ -240,7 +240,7 @@ end
 ---@param section string
 ---@return boolean
 function Overview:showSection(section)
-    section = string.trim(section);
+    section = string.trim(section or "");
     local sectionIndex = self.SectionIndexes[section];
 
     if (not GL:higherThanZero(sectionIndex)) then
