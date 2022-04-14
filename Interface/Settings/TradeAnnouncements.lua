@@ -17,14 +17,14 @@ function TradeAnnouncements:draw(Parent)
     local DropDownItems = {
         NEVER = "Never",
         ALWAYS = "Always",
-        IN_GROUP = "When in a group/raid",
+        WHEN_IN_GROUP = "When in a group/raid",
         WHEN_ASSIST = "When I have lead/assist",
         WHEN_MASTERLOOTER = "Only when I'm the master looter",
     };
     local ItemOrder = {
         "NEVER",
         "ALWAYS",
-        "IN_GROUP",
+        "WHEN_IN_GROUP",
         "WHEN_ASSIST",
         "WHEN_MASTERLOOTER",
     }
