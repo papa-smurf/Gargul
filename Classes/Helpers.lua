@@ -873,6 +873,93 @@ function GL:getItemNameFromLink(itemLink)
     return itemName;
 end
 
+--- Transform a copper value to a money string
+---
+--- copperToMoney(125000)                    > 12G 50S
+--- copperToMoney(125000, nil, true)         > 12G 50S 0C
+--- copperToMoney(125000, {".","",""}, true) > 12.5000
+--- copperToMoney(125000, nil, true, true)   > G12 S50 C0
+---
+---@param copper number
+---@param Separators table|nil
+---@param includeEmpty boolean|nil
+---@param separatorBeforeUnit boolean|nil
+---
+---@return string
+function GL:copperToMoney(copper, Separators, includeEmpty, separatorBeforeUnit)
+    local DefaultSeparators;
+
+    if (not separatorBeforeUnit) then
+        DefaultSeparators = {"G ", "S ", "C "};
+    else
+        DefaultSeparators = {" G", " S", " C"};
+    end
+
+    Separators = Separators or {};
+    includeEmpty = GL:toboolean(includeEmpty);
+    separatorBeforeUnit = GL:toboolean(separatorBeforeUnit);
+    local goldSeparator = Separators[1] or DefaultSeparators[1];
+    local silverSeparator = Separators[2] or DefaultSeparators[2];
+    local copperSeparator = Separators[3] or DefaultSeparators[3];
+
+    local gold = math.floor(copper / 10000);
+    local silver = math.floor(copper / 100) % 100
+    local copperLeft = copper % 100
+
+    -- The user doesn't care about empty units, return as-is
+    if (includeEmpty) then
+        if (not separatorBeforeUnit) then
+            return string.format(
+                "%s%s%s%s%s%s",
+                gold,
+                goldSeparator,
+                silver,
+                silverSeparator,
+                copperLeft,
+                copperSeparator
+            );
+        else
+            return string.format(
+                "%s%s%s%s%s%s",
+                goldSeparator,
+                gold,
+                silverSeparator,
+                silver,
+                copperSeparator,
+                copperLeft
+            );
+        end
+    end
+
+    local money;
+
+    if (gold > 0) then
+        if (separatorBeforeUnit) then
+            money = goldSeparator .. gold;
+        else
+            money = gold .. goldSeparator;
+        end
+    end
+
+    if (silver > 0) then
+        if (separatorBeforeUnit) then
+            money = money .. silverSeparator .. silver;
+        else
+            money = money .. silver .. silverSeparator;
+        end
+    end
+
+    if (copperLeft > 0) then
+        if (separatorBeforeUnit) then
+            money = money .. copperSeparator .. copperLeft;
+        else
+            money = money .. copperLeft .. copperSeparator;
+        end
+    end
+
+    return strtrim(money);
+end
+
 --- Limit a given string to a maximum number of characters
 ---
 ---@param str string
@@ -981,6 +1068,12 @@ function GL:sendChatMessage(message, chatType, language, channel, stw)
         return;
     end
 
+    -- No point sending an empty message!
+    if (GL:empty(chatType)) then
+        GL:warning("Missing 'chatType' in GL:sendChatMessage!");
+        return;
+    end
+
     -- The player enabled the noMessages setting
     if (GL.Settings:get("noMessages")) then
         if (not gaveNoMessagesWarning) then
@@ -992,7 +1085,7 @@ function GL:sendChatMessage(message, chatType, language, channel, stw)
     end
 
     if (stw) then
-        message = string.format("<%s> %s", GL.name, message);
+        message = string.format("{rt3} %s : %s", GL.name, message);
     end
 
     -- The player wants to message the group (either raid or party)
