@@ -250,6 +250,9 @@ function TradeWindow:processItemsToAdd()
     -- Make sure we don't use items if the trade window is not opened
     -- The last thing we want to do is equip an item or use a consumable by mistake!
     if (not TradeFrame:IsShown()) then
+        GL.Ace:CancelTimer(self.AddItemsTimer);
+        self.AddItemsTimer = nil;
+
         return;
     end
 
