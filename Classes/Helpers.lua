@@ -85,14 +85,14 @@ end
 ---
 ---@return void
 function GL:debug(...)
-    local message = string.join(" ", ...);
-    tinsert(self.DebugLines, message);
-
-    if (GL.Settings
-        and GL.Settings:get("debugModeEnabled")
+    if (not GL.Settings
+        or not GL.Settings.Active
+        or GL.Settings.Active.debugModeEnabled ~= true
     ) then
-        GL:coloredMessage("f7922e", ...);
+        return;
     end
+
+    GL:coloredMessage("f7922e", ...);
 end
 
 --- Print a warning message (orange)
@@ -361,19 +361,6 @@ function GL:cloneTable(original)
     return {unpack(original)};
 end
 
---- Display all debug lines
----
----@return void
-function GL:stacktrace()
-    local debugLines = "";
-
-    for key in pairs(GL.DebugLines) do
-        debugLines = string.format("%s%s\n", debugLines, GL.DebugLines[key]);
-    end
-
-    self:frameMessage(debugLines);
-end
-
 --- Clears the provided scrolling table (lib-ScrollingTable)
 ---
 ---@param ScrollingTable table
@@ -443,24 +430,24 @@ function GL:frameMessage(message)
     local AceGUI = GL.AceGUI or LibStub("AceGUI-3.0");
 
     -- Create a container/parent frame
-    local StacktraceFrame = AceGUI:Create("Frame");
-    StacktraceFrame:SetCallback("OnClose", function(widget) AceGUI:Release(widget); end);
-    StacktraceFrame:SetTitle("Gargul v" .. GL.version);
-    StacktraceFrame:SetStatusText("");
-    StacktraceFrame:SetLayout("Flow");
-    StacktraceFrame:SetWidth(600);
-    StacktraceFrame:SetHeight(450);
+    local MesseGrame = AceGUI:Create("Frame");
+    MesseGrame:SetCallback("OnClose", function(widget) AceGUI:Release(widget); end);
+    MesseGrame:SetTitle("Gargul v" .. GL.version);
+    MesseGrame:SetStatusText("");
+    MesseGrame:SetLayout("Flow");
+    MesseGrame:SetWidth(600);
+    MesseGrame:SetHeight(450);
 
     -- Large edit box
-    local StacktraceBox = AceGUI:Create("MultiLineEditBox");
-    StacktraceBox:SetText(message);
-    StacktraceBox:SetFocus();
-    StacktraceBox:SetFullWidth(true);
-    StacktraceBox:DisableButton(true);
-    StacktraceBox:SetNumLines(22);
-    StacktraceBox:HighlightText();
-    StacktraceBox:SetMaxLetters(999999999);
-    StacktraceFrame:AddChild(StacktraceBox);
+    local MessageBox = AceGUI:Create("MultiLineEditBox");
+    MessageBox:SetText(message);
+    MessageBox:SetFocus();
+    MessageBox:SetFullWidth(true);
+    MessageBox:DisableButton(true);
+    MessageBox:SetNumLines(22);
+    MessageBox:HighlightText();
+    MessageBox:SetMaxLetters(999999999);
+    MesseGrame:AddChild(MessageBox);
 end
 
 --- Counting tables (or arrays if you will) is anything but straight-forward in LUA. Examples:
