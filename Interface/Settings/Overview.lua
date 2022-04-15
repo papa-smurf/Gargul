@@ -21,6 +21,7 @@ GL.Interface.Settings.Overview = {
         {"PackMule Autoloot", "PackMule"},
         {"    Item Rules", "PackMuleRules"},
         {"    Ignored Items", "PackMuleIgnores"},
+        {"Trade Announcements", "TradeAnnouncements"},
         {"Rolling", "Rolling"},
         {"Loot Highlighting", "LootHighlighting"},
         {"SoftRes", "SoftRes"},
@@ -240,7 +241,7 @@ end
 ---@param section string
 ---@return boolean
 function Overview:showSection(section)
-    section = string.trim(section);
+    section = string.trim(section or "");
     local sectionIndex = self.SectionIndexes[section];
 
     if (not GL:higherThanZero(sectionIndex)) then

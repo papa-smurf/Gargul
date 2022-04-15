@@ -262,7 +262,7 @@ function PackMule:lootReady()
                         or (operator == "<=" and itemQuality <= quality)
                     )) then
                         local bindType = Loot.bindType or LE_ITEM_BIND_NONE;
-                        local bindOnPickup = GL:inTable({ LE_ITEM_BIND_ON_ACQUIRE, LE_ITEM_BIND_QUEST}, bindType);
+                        local bindOnPickup = GL:inTable({LE_ITEM_BIND_ON_ACQUIRE, LE_ITEM_BIND_QUEST}, bindType);
 
                         if (not bindOnPickup or ( -- The item is not BoP so we can safely PackMule it
                             itemQuality < 5 -- Legendary items are skipped
@@ -293,7 +293,6 @@ function PackMule:lootReady()
 
                     -- Check whether we need to give the item to a random player
                     if (ruleTarget == "RANDOM") then
-                        --target = GL:tableGet(GroupMembers[math.random( #GroupMembers)] or {}, "name", false);
                         for _, Player in pairs(GL.User:groupMembers()) do
                             tinsert(Targets, string.lower(Player.name));
                         end

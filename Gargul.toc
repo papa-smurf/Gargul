@@ -2,7 +2,7 @@
 ## Title: Gargul
 ## Author: Zhorax - Firemaw
 ## Notes: Loot addon that supports softres sr, thatsmybis tmb, auto looting, loot priorities, plus one tracking and much more
-## Version: 4.1.5
+## Version: 4.1.8
 ## DefaultState: enabled
 ## SavedVariables: GargulDB
 
@@ -54,6 +54,7 @@ Interface/Award.lua
 Interface/Importer.lua
 Interface/Settings/Overview.lua
 Interface/Settings/DroppedLoot.lua
+Interface/Settings/TradeAnnouncements.lua
 Interface/Settings/PackMule.lua
 Interface/Settings/PackMuleRules.lua
 Interface/Settings/PackMuleIgnores.lua

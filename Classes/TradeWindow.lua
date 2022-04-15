@@ -5,6 +5,7 @@ local _, GL = ...;
 GL.TradeWindow = {
     _initialized = false,
     numberOfTradeSlots = 6,
+    AnnouncementCheckBox = nil,
 
     AddItemsTimer = {},
     ItemsToAdd = {},
@@ -38,11 +39,15 @@ function TradeWindow:_init()
         {"TradeWindowTradeMoneyChangedListener", "TRADE_MONEY_CHANGED"},
         {"TradeWindowTradePlayerItemChangedListener", "TRADE_PLAYER_ITEM_CHANGED"},
         {"TradeWindowTradeShowListener", "TRADE_SHOW"},
-        {"TradeWindowTradeTargetItemChangedListener", "TRADE_TARGET_ITEM_CHANGED"},
+        {"TradeWindowTradeCloseListener", "TRADE_CLOSED"},
         {"TradeWindowUIInfoMessageListener", "UI_INFO_MESSAGE"},
         {"TradeWindowUIInfoMessageListener", "UI_ERROR_MESSAGE"},
     }, function (event, _, message)
         self:handleEvents(event, message);
+    end);
+
+    GL.Events:register("TradeWindowTradeCompleted", "GL.TRADE_COMPLETED", function (_, Details)
+        self:announceTradeDetails(Details);
     end);
 
     self._initialized = true;
@@ -108,6 +113,9 @@ function TradeWindow:handleEvents(event, message)
     if (event == "TRADE_SHOW") then
         self.ItemsToAdd = {};
 
+        -- Trade window shown, show/update the announcement checkbox
+        self:updateAnnouncementCheckBox();
+
         -- Make sure to cancel any lingering timers
         GL.Ace:CancelTimer(self.AddItemsTimer);
 
@@ -124,6 +132,9 @@ function TradeWindow:handleEvents(event, message)
 
         -- Make sure to cancel any lingering timers
         GL.Ace:CancelTimer(self.AddItemsTimer);
+
+        -- We don't want resetState to trigger since TRADE_CLOSED is fired before TRADE_COMPLETED
+        return;
     end
 
     -- Something changed regarding the trade, update our trade state
@@ -239,6 +250,9 @@ function TradeWindow:processItemsToAdd()
     -- Make sure we don't use items if the trade window is not opened
     -- The last thing we want to do is equip an item or use a consumable by mistake!
     if (not TradeFrame:IsShown()) then
+        GL.Ace:CancelTimer(self.AddItemsTimer);
+        self.AddItemsTimer = nil;
+
         return;
     end
 
@@ -263,6 +277,218 @@ function TradeWindow:processItemsToAdd()
 
     -- Everything went well, put the item in the trade window!
     UseContainerItem(unpack(itemPositionInBag));
+end
+
+--- Check whether we should announce trade details
+---
+---@return boolean
+function TradeWindow:shouldAnnounce()
+    -- When does the user want to announce trade details?
+    local mode = GL.Settings:get("TradeAnnouncements.mode", "WHEN_MASTERLOOTER");
+
+    if (mode == "ALWAYS") then
+        return true;
+    end
+
+    if (mode == "WHEN_IN_GROUP" and GL.User.isInGroup) then
+        return true;
+    end
+
+    if (mode == "WHEN_ASSIST" and GL.User.hasAssist) then
+        return true;
+    end
+
+    if (mode == "WHEN_MASTERLOOTER" and GL.User.isMasterLooter) then
+        return true;
+    end
+
+    return false;
+end
+
+--- Draw/Update the checkbox and settings cogwheel
+---
+---@return void
+function TradeWindow:updateAnnouncementCheckBox()
+    GL:debug("TradeWindow:updateAnnouncementCheckBox");
+
+    -- Only create the checbox / cogwheel once
+    if (not GL:empty(self.AnnouncementCheckBox)) then
+        self.AnnouncementCheckBox:SetValue(self:shouldAnnounce());
+        return;
+    end
+
+    -- Create a container/parent frame
+    local Window = GL.AceGUI:Create("SimpleGroup");
+    Window:SetLayout("Flow");
+    Window:SetWidth(150);
+    Window:SetHeight(15);
+    Window:SetCallback("OnClose", function()
+        self:close();
+    end);
+    Window.frame:SetParent(TradeFrame);
+    GL.Interface:setItem(self, "Window", Window);
+
+    Window:SetPoint("BOTTOMLEFT", TradeFrame, "BOTTOMLEFT", 10, 1);
+
+    -- Create the check box
+    local CheckBox = GL.AceGUI:Create("CheckBox");
+    CheckBox:SetValue(self:shouldAnnounce());
+    CheckBox:SetLabel("Announce trade");
+    CheckBox:SetDescription("");
+    CheckBox:SetWidth(120);
+    Window:AddChild(CheckBox);
+
+    self.AnnouncementCheckBox = CheckBox;
+
+    -- Create the cogwheel that links to the announcement settings
+    local Cogwheel = CreateFrame("Button", "TradeWindowAnnouncementBox", Window.frame, Frame);
+    Cogwheel:Show();
+    Cogwheel:SetClipsChildren(true);
+    Cogwheel:SetSize(13, 13);
+    Cogwheel:SetPoint("TOPRIGHT", Window.frame, "TOPRIGHT", 0, -10);
+
+    local CogwheelTexture = Cogwheel:CreateTexture();
+    CogwheelTexture:SetPoint("BOTTOMRIGHT", 0, 0);
+    CogwheelTexture:SetSize(16,16);
+    CogwheelTexture:SetTexture("interface\\cursor\\interact");
+    CogwheelTexture:SetTexture("interface\\cursor\\unableinteract");
+    Cogwheel.texture = CogwheelTexture;
+
+    Cogwheel:SetScript('OnEnter', function()
+        CogwheelTexture:SetTexture("interface\\cursor\\interact");
+    end);
+    Cogwheel:SetScript('OnLeave', function()
+        CogwheelTexture:SetTexture("interface\\cursor\\unableinteract");
+    end);
+
+    Cogwheel:SetScript("OnClick", function(_, button)
+        if (button == 'LeftButton') then
+            GL.Settings:draw("TradeAnnouncements");
+        end
+    end);
+end
+
+--- Announce the traded loot or gold in chat
+---
+---@param Details table
+---@return void
+function TradeWindow:announceTradeDetails(Details)
+    GL:debug("TradeWindow:announceTradeDetails");
+
+    -- Check the value of the "Announce trade" checkbox in the trade frame
+    if (self.AnnouncementCheckBox
+        and not self.AnnouncementCheckBox:GetValue()
+    ) then
+        return;
+    end
+
+    -- Found out on which channel we should post the trade details
+    local channel = "GROUP";
+    if (not GL.User.isInGroup) then
+        channel = "SAY";
+    end
+
+    local tradeString = "I gave ";
+    local TradeEntries = {};
+    if (Details.myGold > 0 and GL.Settings:get("TradeAnnouncements.goldGiven", true)) then
+        tinsert(TradeEntries, GL:copperToMoney(Details.myGold));
+    end
+
+    if (GL.Settings:get("TradeAnnouncements.itemsGiven", true)) then
+        for _, Entry in pairs(Details.MyItems or {}) do
+            local itemID = tonumber(Entry.itemID);
+
+            if (itemID) then
+                if (Entry.quantity > 1) then
+                    tinsert(TradeEntries, string.format("%sx%s", Entry.itemLink, Entry.quantity));
+                else
+                    tinsert(TradeEntries, Entry.itemLink);
+                end
+            end
+        end
+    end
+
+    if (not GL:empty(TradeEntries)) then
+        local EntriesProcessed = 0;
+        for _, entry in pairs(TradeEntries) do
+            if (EntriesProcessed == 0) then
+                tradeString = tradeString .. entry;
+            else
+                tradeString = tradeString .. " and " .. entry;
+            end
+
+            EntriesProcessed = EntriesProcessed + 1;
+            if (EntriesProcessed % 5 == 0) then
+                -- This is not the last entry (item/gold) that we need to display
+                if (TradeEntries[EntriesProcessed + 1] ~= nil) then
+                    GL:sendChatMessage(tradeString, channel);
+
+                -- This is the last entry, include the "to" part
+                else
+                    GL:sendChatMessage(tradeString .. " to " .. Details.partner, channel);
+                end
+                tradeString = "";
+            end
+        end
+    else
+        tradeString = "";
+    end
+
+    if (not GL:empty(tradeString)) then
+        GL:sendChatMessage(tradeString .. " to " .. Details.partner, channel);
+        tradeString = "";
+    end
+
+    tradeString = "I received ";
+    TradeEntries = {};
+    if (Details.theirGold > 0 and GL.Settings:get("TradeAnnouncements.goldReceived", true)) then
+        tinsert(TradeEntries, GL:copperToMoney(Details.theirGold));
+    end
+
+    if (GL.Settings:get("TradeAnnouncements.itemsReceived", true)) then
+        for _, Entry in pairs(Details.TheirItems or {}) do
+            local itemID = tonumber(Entry.itemID);
+
+            if (itemID) then
+                if (Entry.quantity > 1) then
+                    tinsert(TradeEntries, string.format("%sx%s", Entry.itemLink, Entry.quantity));
+                else
+                    tinsert(TradeEntries, Entry.itemLink);
+                end
+            end
+        end
+    end
+
+    if (not GL:empty(TradeEntries)) then
+        local EntriesProcessed = 0;
+        for _, entry in pairs(TradeEntries) do
+            if (EntriesProcessed == 0) then
+                tradeString = tradeString .. entry;
+            else
+                tradeString = tradeString .. " and " .. entry;
+            end
+
+            EntriesProcessed = EntriesProcessed + 1;
+            if (EntriesProcessed % 5 == 0) then
+                -- This is not the last entry (item/gold) that we need to display
+                if (TradeEntries[EntriesProcessed + 1] ~= nil) then
+                    GL:sendChatMessage(tradeString, channel);
+
+                    -- This is the last entry, include the "to" part
+                else
+                    GL:sendChatMessage(tradeString .. " to " .. Details.partner, channel);
+                end
+                tradeString = "";
+            end
+        end
+    else
+        tradeString = "";
+    end
+
+    if (not GL:empty(tradeString)) then
+        GL:sendChatMessage(tradeString .. " from " .. Details.partner, channel);
+        tradeString = "";
+    end
 end
 
 GL:debug("TradeWindow.lua");

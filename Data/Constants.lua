@@ -75,6 +75,8 @@ GL.Data.Constants = {
     },
 
     ItemsThatSouldntBeAnnounced = {
+        29434, -- Badge of Justice
+
         -- Temporary Kael'Thas weapons
         30318, -- Netherstrand Longbow
         30313, -- Staff of Disintegration

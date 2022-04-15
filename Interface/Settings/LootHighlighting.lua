@@ -21,6 +21,11 @@ function LootHighlighting:draw(Parent)
             setting = "highlightsDisabled",
         },
         {
+            label = "Highlight only my own items",
+            description = "Checking this will make sure that, while not master looting, items will only receive a glow if they are reserved by you or on your TMB list(s)",
+            setting = "highlightMyItemsOnly",
+        },
+        {
             label = "SoftRes: Highlight soft-reserved items",
             description = "Checking this will make sure that items that are soft-reserved are highlighted\n(yellow glow)",
             setting = "highlightSoftReservedItems",
