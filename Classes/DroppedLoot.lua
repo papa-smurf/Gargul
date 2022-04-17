@@ -312,7 +312,13 @@ function DroppedLoot:hookClickEvents()
             end
 
             Button:HookScript("OnClick", function(_, mouseButtonPressed)
-                local itemLink = GetLootSlotLink(Button.slot);
+                local slot = Button.slot or buttonIndex;
+
+                if (not slot) then
+                    return;
+                end
+
+                local itemLink = GetLootSlotLink(slot);
 
                 if (not itemLink or type(itemLink) ~= "string") then
                     return;
