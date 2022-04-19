@@ -93,7 +93,7 @@ GL.Data.DefaultSettings = {
         showWishListInfoOnTooltips = true,
     },
     TradeAnnouncements = {
-        mode = "WHEN_ASSIST",
+        mode = "WHEN_MASTERLOOTER",
         itemsReceived = true,
         itemsGiven = true,
         goldReceived = true,
