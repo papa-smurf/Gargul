@@ -22,6 +22,7 @@ GL.Interface.Settings.Overview = {
         {"PackMule Autoloot", "PackMule"},
         {"    Item Rules", "PackMuleRules"},
         {"    Ignored Items", "PackMuleIgnores"},
+        {"Trade Announcements", "TradeAnnouncements"},
         {"Rolling", "Rolling"},
         {"Loot Highlighting", "LootHighlighting"},
         {"SoftRes", "SoftRes"},

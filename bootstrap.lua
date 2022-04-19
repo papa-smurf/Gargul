@@ -1,6 +1,7 @@
 -- arg1 is the name of the addon, arg2 is the addon namespace
 ---@class Bootstrapper
 local appName, GL = ...;
+_G.Gargul = GL; -- Open Gargul up to other developer integrations
 
 GL.name = appName;
 GL._initialized = false;
@@ -116,8 +117,6 @@ function GL:_init()
 
     -- Makes testing easier for devs
     if (self.User:isDev()) then
-        _G.GL = self;
-
         -- Make sure we keep the command descriptions up-to-date during development
         for command in pairs(GL.Commands.Dictionary) do
             if (not GL.Commands.CommandDescriptions[command]) then

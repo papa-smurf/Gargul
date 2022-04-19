@@ -104,6 +104,13 @@ GL.Data.DefaultSettings = {
         showPrioListInfoOnTooltips = true,
         showWishListInfoOnTooltips = true,
     },
+    TradeAnnouncements = {
+        mode = "WHEN_MASTERLOOTER",
+        itemsReceived = true,
+        itemsGiven = true,
+        goldReceived = true,
+        goldGiven = true,
+    },
     UI = {
         RollOff = {
             closeOnStart = true,

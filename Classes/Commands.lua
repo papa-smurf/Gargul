@@ -19,7 +19,6 @@ GL.Commands = GL.Commands or {
         raidcsv = "Output everyone currently in the group in a CSV format",
         rolloff = "Open the RollOff UI where you can announce an item for players to roll on: /gl award [itemLink?]",
         softreserves = "Open either the SoftRes import window if there's no data available or open the SoftRes overview",
-        stacktrace = "Shows a list of all of the debug messages stored by Gargul, this can be helpful for debugging errors",
         settings = "Open the settings menu",
         thatsmybis = "Open the TMB importer. Data exported from tmb.com can be imported here",
         version = "Compare your Gargul version with everyone in your group and shows you exactly who needs to upgrade or who doesn't have the addon installed",
@@ -49,7 +48,6 @@ GL.Commands = GL.Commands or {
         pr = "lootpriority",
         priority = "lootpriority",
         bi = "bid",
-        st = "stacktrace",
         im = "import",
         ex = "export",
         ve = "version",
@@ -114,9 +112,6 @@ GL.Commands = GL.Commands or {
 
         -- Open the loot priority window
         lootpriority = function() GL.LootPriority:drawImporter(); end,
-
-        -- Output all debug lines in a readable manner
-        stacktrace = function() GL:stacktrace(); end,
 
         -- Import data from our website into the addon
         import = function() GL.Interface.Importer:draw(); end,
