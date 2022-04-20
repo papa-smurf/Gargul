@@ -109,6 +109,16 @@ end
 function TradeWindow:handleEvents(event, message)
     GL:debug("TradeWindow:handleEvents");
 
+    -- Incoming UI_INFO_MESSAGE
+    if (event == "UI_INFO_MESSAGE") then
+        -- Trade was successful
+        if (message == ERR_TRADE_COMPLETE) then
+            GL.Events:fire("GL.TRADE_COMPLETED", self.State);
+        else
+            return;
+        end
+    end
+
     -- Trade started
     if (event == "TRADE_SHOW") then
         self.ItemsToAdd = {};
@@ -123,7 +133,7 @@ function TradeWindow:handleEvents(event, message)
         -- We don't do this instantly because that can bug out the UI
         self.AddItemsTimer = GL.Ace:ScheduleRepeatingTimer(function ()
             self:processItemsToAdd();
-        end, .3);
+        end, .5);
     end
 
     -- Trade cancelled
@@ -146,19 +156,15 @@ function TradeWindow:handleEvents(event, message)
         "TRADE_SHOW",
         "ITEM_LOCKED",
     }, event)) then
-        self:updateState();
+        -- We only need to update the state if the trade frame is actually shown
+        if (TradeFrame:IsShown()) then
+            self:updateState();
+        end
 
         -- Fire a custom GL event. This ensures that the listeners have access to the data set in self.State
         GL.Events:fire("GL." .. event);
 
         return;
-    end
-
-    -- Trade was successfull
-    if (event == "UI_INFO_MESSAGE"
-        and message == ERR_TRADE_COMPLETE
-    ) then
-        GL.Events:fire("GL.TRADE_COMPLETED", self.State);
     end
 
     self:resetState();
