@@ -311,10 +311,17 @@ function AwardedLoot:initiateTrade(AwardDetails)
         tradingPartner = GL.PackMule.disenchanter;
     end
 
-    -- Open a trade window with the winner
-    GL.TradeWindow:open(tradingPartner, function ()
-        self:tradeInitiated();
-    end);
+    if (not TradeFrame:IsShown()) then
+        -- Open a trade window with the winner
+        GL.TradeWindow:open(tradingPartner, function ()
+            self:tradeInitiated();
+        end);
+
+    -- We're already trading with the winner
+    elseif (GL:tableGet(GL.TradeWindow, "State.partner") == tradingPartner) then
+        -- Attempt to add the item to the trade window
+        GL.TradeWindow:addItem(AwardDetails.itemId);
+    end
 end
 
 --- When a trade is initiated we attempt to automatically add items that should be given to the tradee
