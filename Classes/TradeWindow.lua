@@ -330,7 +330,7 @@ function TradeWindow:updateAnnouncementCheckBox()
 
     -- Only create the checbox / cogwheel once
     if (not GL:empty(self.AnnouncementCheckBox)) then
-        self.AnnouncementCheckBox:SetValue(self:shouldAnnounce());
+        self.AnnouncementCheckBox:SetChecked(self:shouldAnnounce());
         return;
     end
 
@@ -345,16 +345,15 @@ function TradeWindow:updateAnnouncementCheckBox()
     Window.frame:SetParent(TradeFrame);
     GL.Interface:setItem(self, "Window", Window);
 
-    Window:SetPoint("BOTTOMLEFT", TradeFrame, "BOTTOMLEFT", 10, 1);
+    Window:SetPoint("BOTTOMLEFT", TradeFrame, "BOTTOMLEFT", 8, 22);
 
-    -- Create the check box
-    local CheckBox = GL.AceGUI:Create("CheckBox");
-    CheckBox:SetValue(self:shouldAnnounce());
-    CheckBox:SetLabel("Announce trade");
-    CheckBox:SetDescription("");
-    CheckBox:SetWidth(120);
-    Window:AddChild(CheckBox);
-
+    local CheckBox = CreateFrame("CheckButton", "GargulAnnounceTradeDetails", Window.frame, "OptionsCheckButtonTemplate");
+    GargulAnnounceTradeDetailsText:SetText("Announce Trade");
+    CheckBox:SetChecked(self:shouldAnnounce());
+    CheckBox:SetPoint("TOPLEFT", Window.frame, "TOPLEFT");
+    CheckBox:SetWidth(20);
+    CheckBox:SetHeight(20);
+    CheckBox.tooltipText = "Announce trade details to group or in /say when not in a group";
     self.AnnouncementCheckBox = CheckBox;
 
     -- Create the cogwheel that links to the announcement settings
@@ -362,7 +361,7 @@ function TradeWindow:updateAnnouncementCheckBox()
     Cogwheel:Show();
     Cogwheel:SetClipsChildren(true);
     Cogwheel:SetSize(13, 13);
-    Cogwheel:SetPoint("TOPRIGHT", Window.frame, "TOPRIGHT", 0, -10);
+    Cogwheel:SetPoint("TOPRIGHT", Window.frame, "TOPRIGHT", 0, -4);
 
     local CogwheelTexture = Cogwheel:CreateTexture();
     CogwheelTexture:SetPoint("BOTTOMRIGHT", 0, 0);
@@ -394,7 +393,7 @@ function TradeWindow:announceTradeDetails(Details)
 
     -- Check the value of the "Announce trade" checkbox in the trade frame
     if (self.AnnouncementCheckBox
-        and not self.AnnouncementCheckBox:GetValue()
+        and not self.AnnouncementCheckBox:GetChecked()
     ) then
         return;
     end
