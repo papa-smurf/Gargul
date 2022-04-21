@@ -41,7 +41,6 @@ function TradeWindow:_init()
         {"TradeWindowTradeShowListener", "TRADE_SHOW"},
         {"TradeWindowTradeCloseListener", "TRADE_CLOSED"},
         {"TradeWindowUIInfoMessageListener", "UI_INFO_MESSAGE"},
-        {"TradeWindowUIInfoMessageListener", "UI_ERROR_MESSAGE"},
     }, function (event, _, message)
         self:handleEvents(event, message);
     end);
