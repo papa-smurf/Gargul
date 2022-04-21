@@ -65,6 +65,17 @@ function TradeWindow:open(playerName, callback, allwaysExecuteCallback)
     playerName = GL:normalizedName(playerName);
     allwaysExecuteCallback = GL:toboolean(allwaysExecuteCallback);
 
+    -- We're already trading with someone
+    if (TradeFrame:IsShown()) then
+        if (type(callback) == "function"
+            and (allwaysExecuteCallback or self.Sate.partner == playerName)
+        ) then
+            callback();
+        end
+
+        return;
+    end
+
     -- Make sure the callback runs when a trade window is opened
     -- with our desired target or allwaysExecuteCallback is true
     if (type(callback) == "function") then
