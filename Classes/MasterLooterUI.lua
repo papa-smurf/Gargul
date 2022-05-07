@@ -74,6 +74,15 @@ function MasterLooterUI:draw(itemLink)
 
     Window:SetPoint(GL.Interface:getPosition("RollOff"));
 
+    --[[
+        SETTINGS BUTTON
+    ]]
+    local SettingsButton = GL.UI:createSettingsButton(
+            Window.frame,
+            "MasterLooting"
+    );
+    self.SettingsButton = SettingsButton;
+
         --[[
             FIRST ROW (ITEM ICON AND LINK BOX)
         ]]
@@ -356,6 +365,19 @@ function MasterLooterUI:draw(itemLink)
         FifthRow:SetFullWidth(true);
         FifthRow:SetHeight(20);
         Window:AddChild(FifthRow);
+
+        --[[
+            TABLE SETTINGS BUTTON
+        ]]
+        local RollTrackingSettingsButton = GL.UI:createSettingsButton(
+            FifthRow.frame,
+            "RollTracking",
+            nil,
+            nil,
+            true
+        );
+        RollTrackingSettingsButton:SetPoint("TOPRIGHT", FifthRow.frame, "TOPRIGHT", -10, -8);
+        self.RollTrackingSettingsButton = RollTrackingSettingsButton;
 
         local PlayersTableFrame = AceGUI:Create("SimpleGroup");
         PlayersTableFrame:SetLayout("fixed");
