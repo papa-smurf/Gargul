@@ -26,6 +26,11 @@ function BoostedRolls:draw(Parent)
             setting = "BoostedRolls.automaticallyShareData",
         },
         {
+            label = "Fixed rolls",
+            description = "If this setting is enabled then a player with 140 points will /roll 140-140. If you disable this setting that player will roll 1-140 instead",
+            setting = "BoostedRolls.fixedRolls",
+        },
+        {
             label = "Enable whisper command",
             description = string.format(
                 "When enabled, players can whisper '|cff%s!rollbonus [<name>]|r' or '|cff%s!rb [<name>]|r to the master looter to get the current boosted roll for this name in response. If no name is given, their own boosted roll is given.",

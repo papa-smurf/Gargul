@@ -219,6 +219,10 @@ end;
 ---@param points number
 ---@return number
 function BoostedRolls:minBoostedRoll(points)
+    if (GL.Settings:get("BoostedRolls.fixedRolls", false)) then
+        return points;
+    end
+
     return math.max(1, self:maxBoostedRoll(points) - 100);
 end;
 
@@ -229,6 +233,7 @@ end;
 ---@return boolean
 function BoostedRolls:isBoostedRoll(low, high)
     local threshold = GL.Settings:get("BoostedRolls.reserveThreshold", 0);
+
     --- Check maximum.
     if (self:maxBoostedRoll(high) ~= high or high > threshold) then
         return false;
@@ -307,12 +312,13 @@ end
 ---@return boolean
 function BoostedRolls:hasPoints(name)
     GL:debug("BoostedRolls:hasPoints");
-    
+
     if (type(name) ~= "string") then
         return false;
     end
 
     local normalizedName = GL:normalizedName(name);
+
     --- Follow alias table if present
     if (DB.BoostedRolls.Aliases[normalizedName]) then
         normalizedName = DB.BoostedRolls.Aliases[normalizedName];
@@ -616,6 +622,9 @@ function BoostedRolls:broadcast()
         return false;
     end
 
+    -- No need to keep any queued updates, we're doing a full broadcast now anyways
+    self.QueuedUpdates = {};
+
     self.broadcastInProgress = true;
     GL.Events:fire("GL.BOOSTEDROLLS_BROADCAST_STARTED");
 
@@ -915,11 +924,12 @@ function BoostedRolls:queueUpdate(playerName, points, aliases, delete)
 end
 
 --- Send out the queued updates
+---
+---@return void
 function BoostedRolls:broadcastQueuedUpdates()
     GL:debug("BoostedRolls:broadcastQueuedUpdates");
 
     if (not GL.User.isInGroup) then
-        GL:warning("No one to broadcast to, you're not in a group!");
         return false;
     end
 
@@ -927,8 +937,6 @@ function BoostedRolls:broadcastQueuedUpdates()
         GL:warning("Insufficient permissions to broadcast, need ML, assist or lead!");
         return false;
     end
-
-    GL:message("Broadcasting BoostedRolls queued updates...");
 
     GL.CommMessage.new(
         CommActions.broadcastBoostedRollsMutation,
