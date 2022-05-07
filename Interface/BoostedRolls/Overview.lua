@@ -16,6 +16,7 @@ GL:tableSet(GL, "Interface.BoostedRolls.Overview", {
     points = 0,
 
     ShareButton = {},
+    SettingsButton = {},
 });
 
 ---@class BoostedRollsOverview
@@ -47,7 +48,7 @@ function Overview:draw()
     Window:SetTitle("Gargul v" .. GL.version);
     Window:SetLayout("Flow");
     Window:SetWidth(600);
-    Window:SetHeight(520);
+    Window:SetHeight(540);
     Window:EnableResize(false);
     Window.statustext:GetParent():Show(); -- Explicitely show the statustext bar
     Window:SetCallback("OnClose", function()
@@ -88,8 +89,20 @@ function Overview:draw()
     ShareButton:Show();
 
     --[[
-        FIRST COLUMN (character table / hard reserve counter)
+        SETTINGS BUTTON
     ]]
+    local SettingsButton = GL.UI:createSettingsButton(
+        Window.frame,
+        "BoostedRolls"
+    );
+    self.SettingsButton = SettingsButton;
+
+    local HorizontalSpacer = AceGUI:Create("SimpleGroup");
+    HorizontalSpacer:SetLayout("FILL")
+    HorizontalSpacer:SetWidth(500);
+    HorizontalSpacer:SetHeight(16);
+    Window:AddChild(HorizontalSpacer);
+
     local DataColumn = AceGUI:Create("SimpleGroup");
     DataColumn:SetLayout("FLOW")
     DataColumn:SetFullWidth(true);
@@ -142,7 +155,7 @@ function Overview:draw()
     local BoostedRollsCurrentPoints = GL.AceGUI:Create("EditBox");
     BoostedRollsCurrentPoints:DisableButton(true);
     BoostedRollsCurrentPoints:SetHeight(22);
-    BoostedRollsCurrentPoints:SetWidth(100);
+    BoostedRollsCurrentPoints:SetWidth(106);
     BoostedRollsCurrentPoints:SetCallback("OnTextChanged", function (widget)
         local value = GL.BoostedRolls:toPoints(strtrim(widget:GetText()));
 
@@ -187,7 +200,7 @@ function Overview:draw()
 
     local AliasesLabel = AceGUI:Create("Label");
     AliasesLabel:SetFontObject(_G["GameFontNormalSmall"]);
-    AliasesLabel:SetWidth(40);
+    AliasesLabel:SetWidth(46);
     AliasesLabel:SetJustifyH("RIGHT");
     AliasesLabel:SetText("Aliases: ");
     AliasesFrame:AddChild(AliasesLabel);
@@ -274,7 +287,7 @@ function Overview:draw()
     end);
     ButtonFrame:AddChild(AddRaidersButton);
 
-    self:drawCharacterTable(DataColumn.frame);
+    self:drawBoostedRollDataTable(DataColumn.frame);
 
     self:updateShareButton();
 
@@ -306,8 +319,8 @@ function Overview:updateShareButton()
     ShareButton:Enable();
 end
 
-function Overview:drawCharacterTable(Parent)
-    GL:debug("Overview:drawCharacterTable");
+function Overview:drawBoostedRollDataTable(Parent)
+    GL:debug("Overview:drawBoostedRollDataTable");
 
     local columns = {
         {
@@ -610,6 +623,11 @@ function Overview:close()
     if (self.ShareButton) then
         self.ShareButton:Hide();
         self.ShareButton = nil;
+    end
+
+    if (self.SettingsButton) then
+        self.SettingsButton:Hide();
+        self.SettingsButton = nil;
     end
 end
 
