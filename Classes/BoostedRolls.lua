@@ -888,6 +888,19 @@ end
 ---@param aliases table
 ---@param delete boolean
 function BoostedRolls:queueUpdate(playerName, points, aliases, delete)
+    local dontBroadcast = true;
+    if (aliases) then
+        self:setAliases(playerName, aliases, dontBroadcast);
+    end
+
+    if (points) then
+        self:setPoints(playerName, points, dontBroadcast);
+    end
+
+    if (delete) then
+        self:deletePoints(playerName, dontBroadcast);
+    end
+
     local Update = {
         playerName = playerName,
         points = points or nil,
