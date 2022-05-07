@@ -64,9 +64,11 @@ function RollOff:announceStart(itemLink, time, note)
         for _, Entry in pairs(GL.Settings:get("RollTracking.Brackets", {}) or {}) do
             tinsert(SupportedRolls, Entry);
         end
+
         --- Add boosted rolls
         local BoostedRollsIdentifier = string.sub(GL.Settings:get("BoostedRolls.identifier", "BR"), 1, 3);
-        --- @todo: Add an additional field to the boosted roll settings for later false-positive detection
+
+        ---@todo: Add an additional field to the boosted roll settings for later false-positive detection
         local boostedRollsSettings = { BoostedRollsIdentifier, 1, 1, GL.Settings:get("BoostedRolls.priority", 1) };
         tinsert(SupportedRolls, boostedRollsSettings);
         local boostedRollIndex = #SupportedRolls;
@@ -83,6 +85,8 @@ function RollOff:announceStart(itemLink, time, note)
             local points = GL.BoostedRolls:getPoints(player.name);
             local low = GL.BoostedRolls:minBoostedRoll(points);
             local high = GL.BoostedRolls:maxBoostedRoll(points);
+
+            --- Users always roll their current boosted roll value (/rnd 150-150 instead of 1-150)
             msg.SupportedRolls[boostedRollIndex][2] = low;
             msg.SupportedRolls[boostedRollIndex][3] = high;
 
@@ -560,9 +564,10 @@ function RollOff:processRoll(message)
             and GL.BoostedRolls:isBoostedRoll(low, high)
         ) then
             local points = GL.BoostedRolls:getPoints(roller);
-            local actualLow = GL.BoostedRolls:minBoostedRoll(points);
-            local actualHigh = GL.BoostedRolls:maxBoostedRoll(points);
-            if (low == actualLow and high == actualHigh) then
+            local allowedMinimumRoll = GL.BoostedRolls:minBoostedRoll(points);
+            local allowedMaximumRoll = GL.BoostedRolls:maxBoostedRoll(points);
+
+            if (low == allowedMinimumRoll and high == allowedMaximumRoll) then
                 RollType = {
                     [1] = GL.Settings:get("BoostedRolls.identifier", "BR"),
                     [4] = GL.Settings:get("BoostedRolls.priority", 1),
