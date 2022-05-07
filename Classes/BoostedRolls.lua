@@ -81,30 +81,26 @@ end
 
 --- Checks and handles whisper commands if enabled.
 ---
----@param event string
+---@param _ string
 ---@param message string
+---@param sender string
 ---@return void
-function BoostedRolls:handleWhisperCommand(event, message, sender)
-    if (GL:strStartsWith(message, "!rollbonus") or GL:strStartsWith(message, "!rb")) then
-        local args = GL:strSplit(message, " ");
-        -- See if name is given.
-        if (#args > 1) then
-            local name = GL:normalizedName(args[2]);
-            local points = self:getPoints(name);
-            local low = self:minBoostedRoll(points);
-            local high = self:maxBoostedRoll(points);
-            local ext = "";
-            if (not self:hasPoints(name)) then
-                ext = " (default)";
-            end
-            GL:sendChatMessage(
-                string.format("Player %s's boosted roll is /rnd %d-%d%s", GL:capitalize(name), low, high, ext),
-                "WHISPER", nil, sender
-            );
-            return;
-        end
+function BoostedRolls:handleWhisperCommand(_, message, sender)
+    GL:debug("BoostedRolls:handleWhisperCommand");
 
-        local points = self:getPoints(sender);
+    -- Only listen to the following messages
+    if (not GL:strStartsWith(message, "!rollbonus")
+        and not GL:strStartsWith(message, "!rb")
+        and not GL:strStartsWith(message, "!br")
+    ) then
+        return;
+    end
+
+    local args = GL:strSplit(message, " ");
+    -- See if name is given.
+    if (#args > 1) then
+        local name = GL:normalizedName(args[2]);
+        local points = self:getPoints(name);
         local low = self:minBoostedRoll(points);
         local high = self:maxBoostedRoll(points);
         local ext = "";
@@ -112,10 +108,29 @@ function BoostedRolls:handleWhisperCommand(event, message, sender)
             ext = " (default)";
         end
         GL:sendChatMessage(
-            string.format("Your boosted roll is /rnd %d-%d%s", low, high, ext),
+            string.format("Player %s's boosted roll is /rnd %d-%d%s", GL:capitalize(name), low, high, ext),
             "WHISPER", nil, sender
         );
+        return;
     end
+
+    local name = sender;
+    if (not GL.isEra) then
+        name = GL:stripRealm(name);
+    end
+
+    name = GL:normalizedName(name);
+    local points = self:getPoints(name);
+    local low = self:minBoostedRoll(points);
+    local high = self:maxBoostedRoll(points);
+    local ext = "";
+    if (not self:hasPoints(name)) then
+        ext = " (default)";
+    end
+    GL:sendChatMessage(
+        string.format("Your boosted roll is /rnd %d-%d%s", low, high, ext),
+        "WHISPER", nil, sender
+    );
 end
 
 --- Materialize the boosted roll data to make it more accessible during runtime
