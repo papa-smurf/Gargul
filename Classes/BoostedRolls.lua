@@ -729,18 +729,20 @@ function BoostedRolls:receiveBroadcast(CommMessage)
     local uuid = DB:get("BoostedRolls.MetaData.uuid", '');
     local updatedAt = DB:get("BoostedRolls.MetaData.updatedAt", 0);
     local question;
-    if (MetaData.uuid and uuid == MetaData.uuid) then
+    if (MetaData.uuid and uuid == MetaData.uuid) then -- This is an update to our dataset
         question = string.format(
             "Are you sure you want to update your existing boosted rolls with data from %s? Your latest update was on |c00a79eff%s|r, theirs on |c00a79eff%s|r.",
             CommMessage.Sender.name,
             date('%Y-%m-%d %H:%M', updatedAt),
             date('%Y-%m-%d %H:%M', MetaData.updatedAt or 0)
         );
-    else
+    elseif (not GL:empty(uuid)) then -- This is a different dataset, not an update
         question = string.format(
             "Are you sure you want to clear your existing boosted roll data and import new data broadcasted by %s?",
             CommMessage.Sender.name
         );
+    else -- We don't have a dataset yet, import!
+        return importBroadcast();
     end
 
     local Dialog = {
