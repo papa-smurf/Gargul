@@ -86,6 +86,8 @@ Interface/MinimapButton.lua
 # Popup dialogs
 Interface/Dialogs/AwardDialog.lua
 Interface/Dialogs/AwardDialogWidget.lua
+Interface/Dialogs/IncomingBoostedRollDataDialog.lua
+Interface/Dialogs/IncomingBoostedRollDataDialogWidget.lua
 Interface/Dialogs/PopupDialog.lua
 Interface/Dialogs/PopupDialogWidget.lua
 Interface/Dialogs/HyperlinkDialog.lua

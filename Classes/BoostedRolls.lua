@@ -50,6 +50,89 @@ function BoostedRolls:_init()
     return true;
 end
 
+--- Get the normalized player name (or alias parent if available)
+---
+---@param playerName string
+---@return string
+function BoostedRolls:normalizedName(playerName)
+    local normalizedName = GL:normalizedName(playerName);
+
+    --- Follow alias table if present
+    return GL.DB:get("BoostedRolls.Aliases." .. normalizedName, normalizedName);
+end
+
+--- Check whether we trust the given player (currently used to auto-accept incoming broadcasts)
+---
+---@param playerName string
+---@return boolean
+function BoostedRolls:playerIsTrusted(playerName)
+    GL:debug("BoostedRolls:playerIsTrusted");
+
+    if (not playerName) then
+        return false;
+    end
+
+    local normalizedName = self:normalizedName(playerName);
+
+    local trustedPlayerCSV = GL.Settings:get("BoostedRolls.automaticallyAcceptDataFrom", "");
+    local TrustedPlayers = GL:strSplit(trustedPlayerCSV, ",");
+    for _, player in pairs(TrustedPlayers) do
+        if (GL:normalizedName(player) == normalizedName) then
+            return true;
+        end
+    end
+
+    return false;
+end
+
+--- Mark a given player as "trusted"
+---
+---@param playerName string
+---@return void
+function BoostedRolls:markPlayerAsTrusted(playerName)
+    playerName = strtrim(playerName);
+
+    if (GL:empty(playerName)
+        or self:playerIsTrusted(playerName)
+    ) then
+        return;
+    end
+
+    local trustedPlayerCSV = GL.Settings:get("BoostedRolls.automaticallyAcceptDataFrom", "");
+    local TrustedPlayers = GL:strSplit(trustedPlayerCSV, ",");
+
+    tinsert(TrustedPlayers, playerName);
+    GL.Settings:set("BoostedRolls.automaticallyAcceptDataFrom", table.concat(TrustedPlayers, ","));
+end
+
+--- Remove a player from the list of "trusted" players
+---
+---@param playerName string
+---@return void
+function BoostedRolls:removePlayerFromTrusted(playerName)
+    playerName = strtrim(playerName);
+
+    -- No point removing the player if he's not trusted in the first place
+    if (GL:empty(playerName)
+        or not self:playerIsTrusted(playerName)
+    ) then
+        return;
+    end
+
+    local trustedPlayerCSV = GL.Settings:get("BoostedRolls.automaticallyAcceptDataFrom", "");
+    local TrustedPlayers = GL:strSplit(trustedPlayerCSV, ",");
+    local NewTrustedPlayers = {};
+    local normalizedName = GL:normalizedName(playerName);
+
+    for _, trustedPlayer in pairs(TrustedPlayers) do
+        if (GL:normalizedName(trustedPlayer) ~= normalizedName) then
+            tinsert(NewTrustedPlayers, trustedPlayer);
+        end
+    end
+
+    GL.Settings:set("BoostedRolls.automaticallyAcceptDataFrom", table.concat(NewTrustedPlayers, ","));
+end
+
 --- Check whether boosted rolls are enabled
 ---
 ---@return boolean
@@ -97,9 +180,10 @@ function BoostedRolls:handleWhisperCommand(_, message, sender)
     end
 
     local args = GL:strSplit(message, " ");
+
     -- See if name is given.
     if (#args > 1) then
-        local name = GL:normalizedName(args[2]);
+        local name = self:normalizedName(args[2]);
         local points = self:getPoints(name);
         local low = self:minBoostedRoll(points);
         local high = self:maxBoostedRoll(points);
@@ -119,7 +203,8 @@ function BoostedRolls:handleWhisperCommand(_, message, sender)
         name = GL:stripRealm(name);
     end
 
-    name = GL:normalizedName(name);
+    name = self:normalizedName(name);
+
     local points = self:getPoints(name);
     local low = self:minBoostedRoll(points);
     local high = self:maxBoostedRoll(points);
@@ -139,13 +224,13 @@ end
 function BoostedRolls:materializeData()
     GL:debug("BoostedRolls:materializeData");
 
-    local DetailsByPlayerName = {}; -- Details including aliases by player name
     local Aliases = {}; -- Direct access to aliases
+    local DetailsByPlayerName = {}; -- Details including aliases by player name
 
     --- Create entries from points data
     for name, points in pairs(DB:get("BoostedRolls.Points", {})) do
-        local name = GL:normalizedName(name or "");
-        local points = self:toPoints(points or 0);
+        name = GL:normalizedName(name or "");
+        points = self:toPoints(points or 0);
 
         if (type(name) == "string"
             and not GL:empty(name)
@@ -160,8 +245,8 @@ function BoostedRolls:materializeData()
 
     --- Add aliases
     for alias, main in pairs(DB:get("BoostedRolls.Aliases", {})) do
-        local alias = GL:normalizedName(alias or "");
-        local main = GL:normalizedName(main or "");
+        alias = GL:normalizedName(alias or "");
+        main = GL:normalizedName(main or "");
 
         if (type(alias) == "string" and type(main) == "string"
             and not GL:empty(alias) and not GL:empty(main)
@@ -172,6 +257,7 @@ function BoostedRolls:materializeData()
         end
     end
 
+    self.MaterializedData.Aliases = Aliases;
     self.MaterializedData.DetailsByPlayerName = DetailsByPlayerName;
 end
 
@@ -253,6 +339,7 @@ function BoostedRolls:clear()
         MetaData = {},
     };
     self.MaterializedData = {
+        Aliases = {},
         DetailsByPlayerName = {},
     };
 
@@ -275,11 +362,8 @@ function BoostedRolls:setAliases(name, aliases, dontBroadcast)
 
     dontBroadcast = GL:toboolean(dontBroadcast);
 
-    local normalizedName = GL:normalizedName(name);
-    --- Follow alias table if present
-    if (DB.BoostedRolls.Aliases[normalizedName]) then
-        normalizedName = DB.BoostedRolls.Aliases[normalizedName];
-    end
+    local normalizedName = self:normalizedName(name);
+
     if (self.MaterializedData.DetailsByPlayerName[normalizedName]) then
         --- Reset old aliases
         for _, alias in pairs(self.MaterializedData.DetailsByPlayerName[normalizedName].Aliases) do
@@ -317,12 +401,8 @@ function BoostedRolls:hasPoints(name)
         return false;
     end
 
-    local normalizedName = GL:normalizedName(name);
+    local normalizedName = self:normalizedName(name);
 
-    --- Follow alias table if present
-    if (DB.BoostedRolls.Aliases[normalizedName]) then
-        normalizedName = DB.BoostedRolls.Aliases[normalizedName];
-    end
     if (self.MaterializedData.DetailsByPlayerName[normalizedName]) then
         return true;
     end
@@ -342,16 +422,9 @@ function BoostedRolls:getPoints(name)
         return default;
     end
 
-    local normalizedName = GL:normalizedName(name);
-    --- Follow alias table if present
-    if (DB.BoostedRolls.Aliases[normalizedName]) then
-        normalizedName = DB.BoostedRolls.Aliases[normalizedName];
-    end
-    if (self.MaterializedData.DetailsByPlayerName[normalizedName]) then
-        return self.MaterializedData.DetailsByPlayerName[normalizedName].points;
-    end
+    local normalizedName = self:normalizedName(name);
 
-    return default;
+    return GL:tableGet(self.MaterializedData or {}, "DetailsByPlayerName." .. normalizedName .. ".points", default);
 end
 
 --- Set a player's points
@@ -362,17 +435,14 @@ end
 ---@return void
 function BoostedRolls:setPoints(name, points, dontBroadcast)
     GL:debug("BoostedRolls:setPoints");
+
     if (type(name) ~= "string") then
         return;
     end
 
     dontBroadcast = GL:toboolean(dontBroadcast);
 
-    local normalizedName = GL:normalizedName(name);
-    --- Follow alias table if present
-    if (DB.BoostedRolls.Aliases[normalizedName]) then
-        normalizedName = DB.BoostedRolls.Aliases[normalizedName];
-    end
+    local normalizedName = self:normalizedName(name);
 
     if (not self.MaterializedData.DetailsByPlayerName[normalizedName]) then
         return;
@@ -401,17 +471,13 @@ function BoostedRolls:deletePoints(name, dontBroadcast)
 
     dontBroadcast = GL:toboolean(dontBroadcast);
 
-    local normalizedName = GL:normalizedName(name);
-    --- Follow alias table if present
-    if (DB.BoostedRolls.Aliases[normalizedName]) then
-        normalizedName = DB.BoostedRolls.Aliases[normalizedName];
-    end
+    local normalizedName = self:normalizedName(name);
 
     if (not self.MaterializedData.DetailsByPlayerName[normalizedName]) then
         return;
     end
 
-    for _, alias in pairs(self.MaterializedData.DetailsByPlayerName[normalizedName].Aliases) do
+    for _, alias in pairs(self.MaterializedData.DetailsByPlayerName[normalizedName].Aliases or {}) do
         DB.BoostedRolls.Aliases[alias] = nil;
     end
 
@@ -437,16 +503,14 @@ function BoostedRolls:modifyPoints(name, change)
         return;
     end
 
-    local normalizedName = GL:normalizedName(name);
-    --- Follow alias table if present
-    if (DB.BoostedRolls.Aliases[normalizedName]) then
-        normalizedName = DB.BoostedRolls.Aliases[normalizedName];
+    local normalizedName = self:normalizedName(name);
+    if (not self.MaterializedData.DetailsByPlayerName[normalizedName]) then
+        return;
     end
-    if (self.MaterializedData.DetailsByPlayerName[normalizedName]) then
-        local points = self.MaterializedData.DetailsByPlayerName[normalizedName].points;
-        points = self:toPoints(points + change);
-        self:setPoints(normalizedName, points);
-    end
+
+    local points = self.MaterializedData.DetailsByPlayerName[normalizedName].points;
+    points = self:toPoints(points + change);
+    self:setPoints(normalizedName, points);
 end
 
 --- Import a CSV or TSV data string
@@ -548,14 +612,17 @@ function BoostedRolls:addMissingRaiders()
         for _, Player in pairs(GL.User:groupMembers()) do
             local playerName = GL:normalizedName(Player.name);
             if (not self:hasPoints(playerName)) then
-                DB.BoostedRolls.Points[playerName] = default;
+                DB:set("BoostedRolls.Points." .. playerName, default);
             end
         end
+
         DB:set("BoostedRolls.MetaData.importedAt", GetServerTime());
         DB:set("BoostedRolls.MetaData.updatedAt", GetServerTime());
-        if (not DB:get("BoostedRolls.MetaData.uuid", nil)) then
+
+        if (not DB:get("BoostedRolls.MetaData.uuid")) then
             DB:set("BoostedRolls.MetaData.uuid", GL:uuid());
         end
+
         self:materializeData();
     end
 end
@@ -715,21 +782,10 @@ function BoostedRolls:receiveBroadcast(CommMessage)
         return result;
     end);
 
-    --- Check if we automatically accept data from this player.
-    local dataManagers = GL.Settings:get("BoostedRolls.automaticallyAcceptDataFrom", '');
-    local DataManagers = GL:strSplit(dataManagers, ",");
-    local autoAccept = false;
-    for _, playerName in pairs(DataManagers) do
-        local normalizedName = GL:normalizedName(playerName);
-        if (normalizedName == GL:normalizedName(CommMessage.Sender.name)
-            or normalizedName == GL:normalizedName(CommMessage.senderFqn)
-        ) then
-            autoAccept = true;
-            break;
-        end
-    end
-
-    if (autoAccept) then
+    --- Check whether we can trust this sender (and as such immediately accept the incoming broadcast)
+    if (self:playerIsTrusted(CommMessage.Sender.name)
+        or self:playerIsTrusted(CommMessage.senderFqn)
+    ) then
         importBroadcast();
         return;
     end
@@ -740,7 +796,8 @@ function BoostedRolls:receiveBroadcast(CommMessage)
     local question;
     if (MetaData.uuid and uuid == MetaData.uuid) then -- This is an update to our dataset
         question = string.format(
-            "Are you sure you want to update your existing boosted rolls with data from %s? Your latest update was on |c00a79eff%s|r, theirs on |c00a79eff%s|r.",
+            "Are you sure you want to update your existing boosted rolls with data from |c00%s%s|r?\n\nYour latest update was on |c00a79eff%s|r, theirs on |c00a79eff%s|r.",
+            GL:classHexColor(GL.Player:classByName(CommMessage.Sender.name)),
             CommMessage.Sender.name,
             date('%Y-%m-%d %H:%M', updatedAt),
             date('%Y-%m-%d %H:%M', MetaData.updatedAt or 0)
@@ -757,17 +814,10 @@ function BoostedRolls:receiveBroadcast(CommMessage)
     local Dialog = {
         question = question,
         OnYes = importBroadcast,
+        sender = CommMessage.Sender.name,
     };
 
-    -- Make sure a user can't be bombarded by import confirmation dialogs
-    if (self.ImportDialog) then
-        self.ImportDialog:Hide();
-
-        self.ImportDialog = nil;
-    end
-
-    self.ImportDialog = Dialog;
-    GL.Interface.Dialogs.PopupDialog:open(Dialog);
+    GL.Interface.Dialogs.IncomingBoostedRollDataDialog:open(Dialog);
 end
 
 --- Request BoostedRolls data from the person in charge (ML or Leader)
