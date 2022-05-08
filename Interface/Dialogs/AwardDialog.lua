@@ -38,13 +38,19 @@ function AwardDialog:open(Dialog)
         end
     end
 
-    if (Dialog.boostedRollCost) then
-        local BoostedRollsCostEditBox = GL.Interface:getItem(self, "EditBox.Cost");
+    --- Adjust the value of the boosted roll cost editbox
+    local BoostedRollsCostEditBox = GL.Interface:getItem(self, "EditBox.Cost");
 
-        if (BoostedRollsCostEditBox) then
-            BoostedRollsCostEditBox:SetText(Dialog.boostedRollCost);
-        end
+    if (not BoostedRollsCostEditBox) then
+        return;
     end
+
+    local cost = 0;
+    if (Dialog.isBR) then
+        cost = Dialog.boostedRollCost;
+    end
+
+    BoostedRollsCostEditBox:SetText(cost);
 end
 
 GL:debug("Interface/AwardDialog.lua");
