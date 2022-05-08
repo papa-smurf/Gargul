@@ -23,7 +23,7 @@ end
 
 -- Clear soft-reserve data confirmation
 PopupDialog.CLEAR_SOFTRES_CONFIRMATION = {
-    question = "Are you sure you want to clear all soft-reserve data?",
+    question = "Are you sure you want to clear all existing soft-reserve data?",
     OnYes = function ()
        GL.Interface.SoftRes.Overview:close();
        GL.SoftRes:clear();
