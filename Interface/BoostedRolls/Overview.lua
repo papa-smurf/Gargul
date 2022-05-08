@@ -307,16 +307,18 @@ function Overview:updateShareButton()
         return;
     end
 
-    -- The user doesn't have sufficient permissions to broadcast
-    -- Or a broadcast is already in progress
-    if (GL.BoostedRolls.broadcastInProgress
-        or not GL.BoostedRolls:userIsAllowedToBroadcast()
-    ) then
-        ShareButton:Disable();
-        return;
-    end
+    GL.Ace:ScheduleTimer(function ()
+        -- The user doesn't have sufficient permissions to broadcast the data
+        -- Or a broadcast is already in process
+        if (GL.BoostedRolls.broadcastInProgress
+                or not GL.BoostedRolls:userIsAllowedToBroadcast()
+        ) then
+            ShareButton:Disable();
+            return;
+        end
 
-    ShareButton:Enable();
+        ShareButton:Enable();
+    end, 1.5);
 end
 
 function Overview:drawBoostedRollDataTable(Parent)
@@ -419,6 +421,7 @@ end
 ---@return void
 function Overview:refreshTable()
     GL:debug("Overview:refreshTable");
+
     local Table = GL.Interface:getItem(self, "Table.Characters");
     if (not Table) then
         return;
