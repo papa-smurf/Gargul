@@ -5,7 +5,7 @@ local Overview = GL.Interface.Settings.Overview; ---@type SettingsOverview
 
 ---@class BoostedRollsSettings
 GL.Interface.Settings.BoostedRolls = {
-    description = "This allows to enable an extra button for boosted rolls. Players will need to keep track of their points for the button to yield the correct roll. The addon will remind them when joining a raid group or being awarded an item to update their roll."
+    description = "With boosted rolls you can modify the individual rolling range of the players in your raid by giving them points. Giving a player 140 points for example will make them roll 40-140 instead of 1-100, increasing their odds of winning an item.\n\nThis is a perfect tool for those who'd like to take attendance, items soft-reserved in the past, or any other form of \"effort\" into account when rolling out items!"
 };
 local BoostedRolls = GL.Interface.Settings.BoostedRolls; ---@type BoostedRollsSettings
 
@@ -17,24 +17,26 @@ function BoostedRolls:draw(Parent)
     local Checkboxes = {
         {
             label = "Enable boosted rolls feature",
-            description = "When enabled, the boosted roll button will be displayed in the rolling window",
+            description = "When enabled, the boosted roll button will be displayed in the rolling window and boosted rolls will be tracked",
             setting = "BoostedRolls.enabled",
         },
         {
             label = "Automatically share data",
-            description = "Checking this means you'll automatically share BoostedRolls data with players who join your raid or when you import new BoostedRolls data",
+            description = "Checking this means you'll automatically share BoostedRolls data with players who join your raid, or when you import new BoostedRolls data",
             setting = "BoostedRolls.automaticallyShareData",
         },
         {
             label = "Fixed rolls",
-            description = "If this setting is enabled then a player with 140 points will /roll 140-140. If you disable this setting that player will roll 1-140 instead",
+            description = "If this setting is enabled then a player with 140 points will /roll 140-140. If you disable this setting (default) that player will roll 1-140 instead",
             setting = "BoostedRolls.fixedRolls",
         },
         {
             label = "Enable whisper command",
             description = string.format(
-                "When enabled, players can whisper '|cff%s!rollbonus [<name>]|r' or '|cff%s!rb [<name>]|r to the master looter to get the current boosted roll for this name in response. If no name is given, their own boosted roll is given.",
-                GL:classHexColor("rogue"), GL:classHexColor("rogue")
+                "When enabled, players can whisper '|cff%s!rollbonus [<name>]|r' or '|cff%s!rb [<name>]|r' or '|cff%s!br [<name>]|r' to the master looter to get the current boosted roll for this name in response. If no name is given, their own name is assumed instead.",
+                GL:classHexColor("rogue"),
+                GL:classHexColor("rogue"),
+                GL:classHexColor("rogue")
             ),
             setting = "BoostedRolls.enableWhisperCommand",
         },
@@ -52,7 +54,6 @@ function BoostedRolls:draw(Parent)
     BoostedRollsIdentifier:DisableButton(true);
     BoostedRollsIdentifier:SetHeight(20);
     BoostedRollsIdentifier:SetFullWidth(true);
-    BoostedRollsIdentifier:SetMaxLetters(3);
     BoostedRollsIdentifier:SetText(GL.Settings:get("BoostedRolls.automaticallyAcceptDataFrom", ""));
     BoostedRollsIdentifier:SetLabel(string.format(
         "|cff%sAdd a comma separated list of players that are allowed to overwrite your data without your explicit consent:|r",
@@ -67,7 +68,7 @@ function BoostedRolls:draw(Parent)
             return;
         end
 
-        GL.Settings:set("BoostedRolls.automaticallyAcceptDataFrom", strtrim(value));
+        GL.Settings:set("BoostedRolls.automaticallyAcceptDataFrom", value:gsub(" ", ""));
     end);
     Parent:AddChild(BoostedRollsIdentifier);
 
@@ -123,7 +124,7 @@ function BoostedRolls:draw(Parent)
     BoostedRollsReserveThreshold:SetFullWidth(true);
     BoostedRollsReserveThreshold:SetText(GL.Settings:get("BoostedRolls.reserveThreshold", 0));
     BoostedRollsReserveThreshold:SetLabel(string.format(
-        "|cff%sThe maximum roll, everything above is the 'reserve'.|r",
+        "|cff%sThe maximum roll, everything above is considered a 'reserve'.|r",
         GL:classHexColor("rogue")
     ));
     BoostedRollsReserveThreshold:SetCallback("OnTextChanged", function (self)
@@ -163,7 +164,7 @@ function BoostedRolls:draw(Parent)
     BoostedRollsDefaultCost:SetFullWidth(true);
     BoostedRollsDefaultCost:SetText(GL.Settings:get("BoostedRolls.defaultCost", 0));
     BoostedRollsDefaultCost:SetLabel(string.format(
-        "|cff%sThe default cost for items awarded (can be changed when awarding it).|r",
+        "|cff%sThe default cost for items awarded (can also be changed when awarding an item).|r",
         GL:classHexColor("rogue")
     ));
     BoostedRollsDefaultCost:SetCallback("OnTextChanged", function (self)
