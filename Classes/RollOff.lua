@@ -414,6 +414,7 @@ function RollOff:award(roller, itemLink, osRoll, boostedRoll)
 
                     if (cost) then
                         GL.BoostedRolls:modifyPoints(roller, -cost);
+                        GL.Interface.BoostedRolls.Overview:refreshTable();
                     end
                 end
 
@@ -429,6 +430,7 @@ function RollOff:award(roller, itemLink, osRoll, boostedRoll)
                 end
             end,
             checkOS = osRoll,
+            isBR = boostedRoll,
             boostedRollCost = cost,
         });
 
@@ -466,6 +468,7 @@ function RollOff:award(roller, itemLink, osRoll, boostedRoll)
 
                     if (cost) then
                         GL.BoostedRolls:modifyPoints(roller, -cost);
+                        GL.Interface.BoostedRolls.Overview:refreshTable();
                     end
                 end
 
@@ -483,6 +486,7 @@ function RollOff:award(roller, itemLink, osRoll, boostedRoll)
                 GL.Interface.PlayerSelector:close();
             end,
             checkOS = osRoll,
+            isBR = boostedRoll,
             boostedRollCost = cost,
         });
     end);
