@@ -333,34 +333,21 @@ function TradeWindow:updateAnnouncementCheckBox()
         return;
     end
 
-    -- Create a container/parent frame
-    local Window = GL.AceGUI:Create("SimpleGroup");
-    Window:SetLayout("Flow");
-    Window:SetWidth(150);
-    Window:SetHeight(15);
-    Window:SetCallback("OnClose", function()
-        self:close();
-    end);
-    Window.frame:SetParent(TradeFrame);
-    GL.Interface:setItem(self, "Window", Window);
-
-    Window:SetPoint("BOTTOMLEFT", TradeFrame, "BOTTOMLEFT", 8, 22);
-
-    local CheckBox = CreateFrame("CheckButton", "GargulAnnounceTradeDetails", Window.frame, "OptionsCheckButtonTemplate");
+    local CheckBox = CreateFrame("CheckButton", "GargulAnnounceTradeDetails", TradeFrame, "OptionsCheckButtonTemplate");
     GargulAnnounceTradeDetailsText:SetText("Announce Trade");
     CheckBox:SetChecked(self:shouldAnnounce());
-    CheckBox:SetPoint("TOPLEFT", Window.frame, "TOPLEFT");
+    CheckBox:SetPoint("BOTTOMLEFT", "TradeFrame", "BOTTOMLEFT", 8, 6);
     CheckBox:SetWidth(20);
     CheckBox:SetHeight(20);
     CheckBox.tooltipText = "Announce trade details to group or in /say when not in a group";
     self.AnnouncementCheckBox = CheckBox;
 
     -- Create the cogwheel that links to the announcement settings
-    local Cogwheel = CreateFrame("Button", "TradeWindowAnnouncementBox", Window.frame, Frame);
+    local Cogwheel = CreateFrame("Button", "TradeWindowAnnouncementBox", TradeFrame, Frame);
     Cogwheel:Show();
     Cogwheel:SetClipsChildren(true);
     Cogwheel:SetSize(13, 13);
-    Cogwheel:SetPoint("TOPRIGHT", Window.frame, "TOPRIGHT", 0, -4);
+    Cogwheel:SetPoint("TOPRIGHT", CheckBox, "TOPRIGHT", 138, -5);
 
     local CogwheelTexture = Cogwheel:CreateTexture();
     CogwheelTexture:SetPoint("BOTTOMRIGHT", 0, 0);
