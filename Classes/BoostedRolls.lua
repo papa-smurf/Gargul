@@ -192,7 +192,8 @@ function BoostedRolls:handleWhisperCommand(_, message, sender)
             ext = " (default)";
         end
         GL:sendChatMessage(
-            string.format("Player %s's boosted roll is /rnd %d-%d%s", GL:capitalize(name), low, high, ext),
+            string.format("Player %s's %s roll is /rnd %d-%d%s", GL:capitalize(name), low, high, ext),
+            GL.Settings:get("BoostedRolls.identifier", "BR"),
             "WHISPER", nil, sender
         );
         return;
@@ -213,7 +214,7 @@ function BoostedRolls:handleWhisperCommand(_, message, sender)
         ext = " (default)";
     end
     GL:sendChatMessage(
-        string.format("Your boosted roll is /rnd %d-%d%s", low, high, ext),
+        string.format("Your %s roll is /rnd %d-%d%s", GL.Settings:get("BoostedRolls.identifier", "BR"), low, high, ext),
         "WHISPER", nil, sender
     );
 end
