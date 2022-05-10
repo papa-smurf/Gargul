@@ -1153,16 +1153,18 @@ GL.Data.ItemLinks = {
         34542, -- Skyshatter Cord
         34543, -- Skyshatter Belt
         34545, -- Skyshatter Girdle
+        34547, -- Onslaught Waistguard
+        34546, -- Onslaught Belt
         34549, -- Gronnstalker's Belt
     },
     -- Boots of the Forgotten Protector
     ["34857"] = {
-        34546, -- Onslaught Belt
-        34547, -- Onslaught Waistguard
         34565, -- Skyshatter Boots
         34566, -- Skyshatter Treads
         34567, -- Skyshatter Greaves
         34570, -- Gronnstalker's Boots
+        34568, -- Onslaught Boots
+        34569, -- Onslaught Treads
     },
     -- Belt of the Forgotten Vanquisher
     ["34855"] = {
