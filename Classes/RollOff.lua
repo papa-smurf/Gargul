@@ -52,16 +52,63 @@ function RollOff:announceStart(itemLink, time, note)
 
     self:listenForRolls();
 
-    GL.CommMessage.new(
-        CommActions.startRollOff,
-        {
+    --- If boosted rolls are enabled, send individually instead.
+    if (GL.BoostedRolls:enabled()
+        and GL.BoostedRolls:available()
+    ) then
+        --- Generate generic part of message first
+        local Players = GL.User:groupMembers();
+
+        --- Create a copy of the supported rolls data
+        local SupportedRolls = {};
+        for _, Entry in pairs(GL.Settings:get("RollTracking.Brackets", {}) or {}) do
+            tinsert(SupportedRolls, Entry);
+        end
+
+        --- Add boosted rolls
+        local BoostedRollsIdentifier = string.sub(GL.Settings:get("BoostedRolls.identifier", "BR"), 1, 3);
+
+        ---@todo: Add an additional field to the boosted roll settings for later false-positive detection
+        local boostedRollsSettings = { BoostedRollsIdentifier, 1, 1, GL.Settings:get("BoostedRolls.priority", 1) };
+        tinsert(SupportedRolls, boostedRollsSettings);
+        local boostedRollIndex = #SupportedRolls;
+
+        local msg = {
             item = itemLink,
             time = time,
             note = note,
-            SupportedRolls = GL.Settings:get("RollTracking.Brackets", {}) or {},
-        },
-        "GROUP"
-    ):send();
+            SupportedRolls = SupportedRolls,
+        };
+
+        for _, player in pairs(Players) do
+            -- Then update for each player
+            local points = GL.BoostedRolls:getPoints(player.name);
+            local low = GL.BoostedRolls:minBoostedRoll(points);
+            local high = GL.BoostedRolls:maxBoostedRoll(points);
+
+            --- Users always roll their current boosted roll value (/rnd 150-150 instead of 1-150)
+            msg.SupportedRolls[boostedRollIndex][2] = low;
+            msg.SupportedRolls[boostedRollIndex][3] = high;
+
+            GL.CommMessage.new(
+                CommActions.startRollOff,
+                msg,
+                "WHISPER",
+                player.name
+            ):send();
+        end
+    else
+        GL.CommMessage.new(
+            CommActions.startRollOff,
+            {
+                item = itemLink,
+                time = time,
+                note = note,
+                SupportedRolls = GL.Settings:get("RollTracking.Brackets", {}) or {},
+            },
+            "GROUP"
+        ):send();
+    end
 
     GL.Settings:set("UI.RollOff.timer", time);
 
@@ -319,7 +366,7 @@ function RollOff:stop(CommMessage)
 end
 
 -- Award the item to one of the rollers
-function RollOff:award(roller, itemLink, osRoll)
+function RollOff:award(roller, itemLink, osRoll, boostedRoll)
     GL:debug("RollOff:award");
 
     -- If the roller has a roll number suffixed to his name
@@ -332,6 +379,11 @@ function RollOff:award(roller, itemLink, osRoll)
     itemLink = GL:tableGet(self.CurrentRollOff, "itemLink", itemLink);
 
     local isOS, addPlusOne = false;
+    local cost = nil;
+
+    if (boostedRoll) then
+        cost = GL.Settings:get("BoostedRolls.defaultCost", 0);
+    end
 
     if (GL:nameIsUnique(roller)) then
         -- Make sure the initiator has to confirm his choices
@@ -356,8 +408,18 @@ function RollOff:award(roller, itemLink, osRoll)
                     end
                 end
 
+                local BoostedRollCostEditBox = GL.Interface:getItem(GL.Interface.Dialogs.AwardDialog, "EditBox.Cost");
+                if (BoostedRollCostEditBox) then
+                    cost = GL.BoostedRolls:toPoints(BoostedRollCostEditBox:GetText());
+
+                    if (cost) then
+                        GL.BoostedRolls:modifyPoints(roller, -cost);
+                        GL.Interface.BoostedRolls.Overview:refreshTable();
+                    end
+                end
+
                 -- Add the player we awarded the item to to the item's tooltip
-                GL.AwardedLoot:addWinner(roller, itemLink, nil, nil, isOS, addPlusOneCheckBox);
+                GL.AwardedLoot:addWinner(roller, itemLink, nil, nil, isOS, cost);
 
                 self:reset();
                 GL.MasterLooterUI:reset();
@@ -368,6 +430,8 @@ function RollOff:award(roller, itemLink, osRoll)
                 end
             end,
             checkOS = osRoll,
+            isBR = boostedRoll,
+            boostedRollCost = cost,
         });
 
         return;
@@ -398,8 +462,18 @@ function RollOff:award(roller, itemLink, osRoll)
                     end
                 end
 
+                local boostedRollCostEditBox = GL.Interface:getItem(GL.Interface.Dialogs.AwardDialog, "EditBox.Cost");
+                if (boostedRollCostEditBox) then
+                    cost = GL.BoostedRolls:toPoints(boostedRollCostEditBox:GetText());
+
+                    if (cost) then
+                        GL.BoostedRolls:modifyPoints(roller, -cost);
+                        GL.Interface.BoostedRolls.Overview:refreshTable();
+                    end
+                end
+
                 -- Add the player we awarded the item to to the item's tooltip
-                GL.AwardedLoot:addWinner(roller, itemLink, nil, nil, isOS, addPlusOneCheckBox);
+                GL.AwardedLoot:addWinner(roller, itemLink, nil, nil, isOS, cost);
 
                 self:reset();
                 GL.MasterLooterUI:reset();
@@ -412,6 +486,8 @@ function RollOff:award(roller, itemLink, osRoll)
                 GL.Interface.PlayerSelector:close();
             end,
             checkOS = osRoll,
+            isBR = boostedRoll,
+            boostedRollCost = cost,
         });
     end);
 end
@@ -483,6 +559,25 @@ function RollOff:processRoll(message)
 
             return false;
         end)();
+
+        --- Check for boosted rolls
+        --- @todo: Take into account pre-announcement
+        if (not RollType
+            and GL.BoostedRolls:enabled()
+            and GL.BoostedRolls:available()
+            and GL.BoostedRolls:isBoostedRoll(low, high)
+        ) then
+            local points = GL.BoostedRolls:getPoints(roller);
+            local allowedMinimumRoll = GL.BoostedRolls:minBoostedRoll(points);
+            local allowedMaximumRoll = GL.BoostedRolls:maxBoostedRoll(points);
+
+            if (low == allowedMinimumRoll and high == allowedMaximumRoll) then
+                RollType = {
+                    [1] = GL.Settings:get("BoostedRolls.identifier", "BR"),
+                    [4] = GL.Settings:get("BoostedRolls.priority", 1),
+                };
+            end
+        end
 
         --- Invalid roll range provided
         if (not RollType

@@ -111,7 +111,7 @@ end
 ---@param isOS boolean|nil
 ---@param addPlusOne boolean|nil
 ---@return void
-function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS)
+function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, cost)
     GL:debug("AwardedLoot:addWinner");
 
     -- Determine whether the item should be flagged as off-spec
@@ -206,10 +206,24 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS)
     end
 
     if (announce) then
-        local awardMessage = string.format("%s was awarded to %s. Congrats!",
-            itemLink,
-            winner
-        );
+        local awardMessage = "";
+        if (GL.BoostedRolls:enabled() and cost > 0) then
+            awardMessage = string.format("%s was awarded to %s for %s points. Congrats!",
+                itemLink,
+                winner,
+                cost
+            );
+        else
+            awardMessage = string.format("%s was awarded to %s. Congrats!",
+                itemLink,
+                winner
+            );
+
+            if (GL.BoostedRolls:enabled()) then
+                --- Make sure the cost is stored as the (new) default item cost
+                GL.Settings:set("BoostedRolls.defaultCost", cost);
+            end
+        end
 
         -- Announce awarded item on RAID or RAID_WARNING
         GL:sendChatMessage(

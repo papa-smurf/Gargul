@@ -65,9 +65,11 @@ function RollerUI:draw(time, itemId, itemLink, itemIcon, note, SupportedRolls)
         [4] = 64,
         [5] = 56,
         [6] = 48,
+        [7] = 40,
     };
     local RollButtons = {};
     local numberOfButtons = #SupportedRolls;
+
     for i = 1, numberOfButtons do
         local RollDetails = SupportedRolls[i] or {};
 

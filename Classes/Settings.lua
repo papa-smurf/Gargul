@@ -67,23 +67,6 @@ function Settings:enforceTemporarySettings()
         return;
     end
 
-    --- Settings that influence the way dropped loot is announced
-    --- were moved to their own section, make sure "old" values are honored
-    ---@todo remove on >= 01-05-2022
-    if (self:get("DroppedLoot.announceLootToChat") == nil
-        and self:get("announceLootToChat") ~= nil
-    ) then
-        self:set("DroppedLoot.announceLootToChat", self:get("announceLootToChat"));
-        self:set("announceLootToChat", nil);
-    end
-
-    if (self:get("DroppedLoot.minimumQualityOfAnnouncedLoot") == nil
-        and self:get("minimumQualityOfAnnouncedLoot") ~= nil
-    ) then
-        self:set("DroppedLoot.minimumQualityOfAnnouncedLoot", self:get("minimumQualityOfAnnouncedLoot"));
-        self:set("minimumQualityOfAnnouncedLoot", nil);
-    end
-
     --- Rename TMB.maximumNumberOfAnouncementEntries to TMB.maximumNumberOfAnnouncementEntries
     ---@todo remove on >= 01-06-2022
     if (self:get("TMB.maximumNumberOfAnouncementEntries") ~= nil

@@ -281,6 +281,16 @@ function Comm:dispatch(CommMessage)
 
     elseif (action == CommActions.stopRollOff) then
         return GL.RollOff:stop(CommMessage);
+
+    elseif (action == CommActions.broadcastBoostedRollsData) then
+        return GL.BoostedRolls:receiveBroadcast(CommMessage);
+
+    elseif (action == CommActions.requestBoostedRollsData) then
+        return GL.BoostedRolls:replyToDataRequest(CommMessage);
+
+    elseif (action == CommActions.broadcastBoostedRollsMutation) then
+        return GL.BoostedRolls:receiveUpdate(CommMessage);
+
     end
 
     GL:warning(string.format("Unknown comm action '%s'", action));

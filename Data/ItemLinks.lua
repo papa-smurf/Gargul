@@ -1001,6 +1001,118 @@ GL.Data.ItemLinks = {
     ["35208"] = {
         34380, -- Sunblessed Gauntlets
     },
+    -- Felfury Legplates
+    ["34180"] = {
+        34381, -- Felstrength Legplates
+    },
+    -- Legplates of the Holy Juggernaut
+    ["34167"] = {
+        34382, -- Judicator's Legguards
+    },
+    -- Chain Links of the Tumultuous Storm
+    ["34186"] = {
+        34383, -- Kilt of Spiritual Reconstruction
+    },
+    -- Breeches of Natural Aggression
+    ["34169"] = {
+        34384, -- Breeches of Natural Splendor
+    },
+    -- Leggings of the Immortal Night
+    ["34188"] = {
+        34385, -- Leggings of the Immortal Beast
+    },
+    -- Pantaloons of Calming Strife
+    ["34170"] = {
+        34386, -- Pantaloons of Growing Strife
+    },
+    -- Pauldrons of Perseverance
+    ["34192"] = {
+        34388, -- Pauldrons of Berserking
+    },
+    -- Spaulders of the Thalassian Savior
+    ["34193"] = {
+        34389, -- Spaulders of the Thalassian Defender
+    },
+    -- Equilibrium Epaulets
+    ["34208"] = {
+        34390, -- Erupting Epaulets
+    },
+    -- Spaulders of Reclamation
+    ["34209"] = {
+        34391, -- Spaulders of Devastation
+    },
+    -- Shoulderpads of Vehemence
+    ["34195"] = {
+        34392, -- Demontooth Shoulderpads
+    },
+    -- Shawl of Wonderment
+    ["34202"] = {
+        34393, -- Shoulderpads of Knowledge's Pursuit
+    },
+    -- Warharness of Reckless Fury
+    ["34215"] = {
+        34394, -- Breastplate of Agony's Aversion
+    },
+    -- Heroic Judicator's Chestguard
+    ["34216"] = {
+        34395, -- Noble Judicator's Chestguard
+    },
+    -- Garments of Serene Shores
+    ["34229"] = {
+        34396, -- Garments of Crashing Shores
+    },
+    -- Harness of Carnal Instinct
+    ["34211"] = {
+        34397, -- Bladed Chaos Tunic
+    },
+    -- Sunglow Vest
+    ["34212"] = {
+        34398, -- Utopian Tunic of Elune
+    },
+    -- Robes of Faltered Light
+    ["34233"] = {
+        34399, -- Robes of Ghostly Hatred
+    },
+    -- Crown of Anasterian
+    ["34345"] = {
+        34400, -- Crown of Dath'Remar
+    },
+    -- Helm of Burning Righteousness
+    ["34243"] = {
+        34401, -- Helm of Uther's Resolve
+    },
+    -- Cowl of Gul'dan
+    ["34332"] = {
+        34402, -- Shroud of Chieftain Ner'zhul
+    },
+    -- Cover of Ursol the Wise
+    ["34245"] = {
+        34403, -- Cover of Ursoc the Mighty
+    },
+    -- Duplicitous Guise
+    ["34244"] = {
+        34404, -- Mask of the Fury Hunter
+    },
+    -- Cowl of Light's Purity
+    ["34339"] = {
+        34405, -- Helm of Arcane Purity
+    },
+    -- Handguards of the Dawn
+    ["34342"] = {
+        34406, -- Gloves of Tyri's Power
+    },
+    -- Tranquil Majesty Wraps
+    ["34351"] = {
+        34407, -- Tranquil Moonlight Wraps
+    },
+    -- Shadowed Gauntlets of Paroxysm
+    ["34234"] = {
+        34408, -- Gloves of the Forest Drifter
+    },
+    -- Gauntlets of the Ancient Shadowmoon
+    ["34350"] = {
+        34409, -- Gauntlets of the Ancient Frostwolf
+    },
     -- Bracers of the Forgotten Conqueror
     ["34848"] = {
         34431, -- Lightbringer Bands
@@ -1041,9 +1153,18 @@ GL.Data.ItemLinks = {
         34542, -- Skyshatter Cord
         34543, -- Skyshatter Belt
         34545, -- Skyshatter Girdle
-        34546, -- Onslaught Belt
         34547, -- Onslaught Waistguard
+        34546, -- Onslaught Belt
         34549, -- Gronnstalker's Belt
+    },
+    -- Boots of the Forgotten Protector
+    ["34857"] = {
+        34565, -- Skyshatter Boots
+        34566, -- Skyshatter Treads
+        34567, -- Skyshatter Greaves
+        34570, -- Gronnstalker's Boots
+        34568, -- Onslaught Boots
+        34569, -- Onslaught Treads
     },
     -- Belt of the Forgotten Vanquisher
     ["34855"] = {
@@ -1061,13 +1182,6 @@ GL.Data.ItemLinks = {
         34562, -- Boots of Absolution
         34563, -- Treads of Absolution
         34564, -- Boots of the Malefic
-    },
-    -- Boots of the Forgotten Protector
-    ["34857"] = {
-        34565, -- Skyshatter Boots
-        34566, -- Skyshatter Treads
-        34567, -- Skyshatter Greaves
-        34570, -- Gronnstalker's Boots
     },
     -- Boots of the Forgotten Vanquisher
     ["34858"] = {

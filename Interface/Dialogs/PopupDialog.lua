@@ -23,7 +23,7 @@ end
 
 -- Clear soft-reserve data confirmation
 PopupDialog.CLEAR_SOFTRES_CONFIRMATION = {
-    question = "Are you sure you want to clear all soft-reserve data?",
+    question = "Are you sure you want to clear all existing soft-reserve data?",
     OnYes = function ()
        GL.Interface.SoftRes.Overview:close();
        GL.SoftRes:clear();
@@ -31,21 +31,41 @@ PopupDialog.CLEAR_SOFTRES_CONFIRMATION = {
    end,
 }
 
--- Import new soft-reserve data confirmation
-PopupDialog.NEW_SOFTRES_IMPORT_CONFIRMATION = {
-    question = "Are you sure you want to clear your existing soft-reserves and import new data?",
-    OnYes = function ()
-        GL.Interface.Importer:close();
-        GL.SoftRes:clear();
-        GL.SoftRes:draw();
-    end,
-}
-
 -- Broadcast soft-reserve data confirmation
 PopupDialog.BROADCAST_SOFTRES_CONFIRMATION = {
     question = "Are you sure you want to broadcast your softres data to everyone in your party/raid?",
     OnYes = function ()
         GL.SoftRes:broadcast();
+    end,
+}
+
+-- Clear boosted roll data confirmation
+PopupDialog.CLEAR_BOOSTEDROLLS_CONFIRMATION = {
+    question = "Are you sure you want to clear all boosted roll data?",
+    OnYes = function ()
+        GL.Interface.BoostedRolls.Overview:close();
+        GL.BoostedRolls:clear();
+        GL.BoostedRolls:draw();
+   end,
+}
+
+-- Import new boosted roll data confirmation
+PopupDialog.NEW_BOOSTEDROLLS_IMPORT_CONFIRMATION = {
+    question = "Are you sure you want to clear your existing boosted roll data and import new data?",
+    OnYes = function ()
+        GL.Interface.BoostedRolls.Importer:import();
+    end,
+    OnNo = function ()
+        GL.Interface.BoostedRolls.Importer:close();
+        GL.BoostedRolls:draw();
+    end,
+}
+
+-- Broadcast boosted roll data confirmation
+PopupDialog.BROADCAST_BOOSTEDROLLS_CONFIRMATION = {
+    question = "Are you sure you want to broadcast your boosted roll data to everyone in your party/raid?",
+    OnYes = function ()
+        GL.BoostedRolls:broadcast();
     end,
 }
 

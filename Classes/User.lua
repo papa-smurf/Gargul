@@ -140,6 +140,15 @@ function User:refresh()
         end
     end
 
+    -- Make sure to also fire an event upon conversion to raid
+    if (userWasInGroup
+        and not userWasInRaid
+        and self.isInRaid
+    ) then
+        GL.Events:fire("GL.USER_JOINED_GROUP");
+        GL.Events:fire("GL.USER_JOINED_RAID");
+    end
+
     -- The user left a group
     if (userWasInGroup
         and not self.isInGroup

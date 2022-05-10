@@ -1,3 +1,5 @@
+---@todo see if we can remove this class entirely at some point
+
 ---@type GL
 local _, GL = ...;
 
@@ -15,6 +17,44 @@ function UI:createFrame(...)
     UI.components[identifier] = frame;
 
     return frame;
+end
+
+function UI:createSettingsButton(ParentFrame, settingsSection, width, height, omitPosition)
+    omitPosition = GL:toboolean(omitPosition);
+    width = width or 16;
+    height = height or 16;
+
+    -- Create the cogwheel that links to the announcement settings
+    local Cogwheel = CreateFrame("Button", "SettingsButton" .. GL:uuid(), ParentFrame, Frame);
+    Cogwheel:Show();
+    Cogwheel:SetClipsChildren(true);
+    Cogwheel:SetSize(width, height);
+
+    if (not omitPosition) then
+        Cogwheel:SetPoint("TOPLEFT", ParentFrame, "TOPLEFT", 18, -18);
+    end
+
+    local CogwheelTexture = Cogwheel:CreateTexture();
+    CogwheelTexture:SetPoint("BOTTOMRIGHT", math.ceil(width / 6.5) * -1, math.ceil(height / 6.5));
+    CogwheelTexture:SetSize(width,height);
+    CogwheelTexture:SetTexture("interface\\cursor\\interact");
+    CogwheelTexture:SetTexture("interface\\cursor\\unableinteract");
+    Cogwheel.texture = CogwheelTexture;
+
+    Cogwheel:SetScript('OnEnter', function()
+        CogwheelTexture:SetTexture("interface\\cursor\\interact");
+    end);
+    Cogwheel:SetScript('OnLeave', function()
+        CogwheelTexture:SetTexture("interface\\cursor\\unableinteract");
+    end);
+
+    Cogwheel:SetScript("OnClick", function(_, button)
+        if (button == 'LeftButton') then
+            GL.Settings:draw(settingsSection);
+        end
+    end);
+
+    return Cogwheel;
 end
 
 function UI:createShareButton(ParentFrame, onClick, tooltipText, disabledTooltipText)
@@ -86,37 +126,6 @@ function UI:createSettingCheckbox(ParentFrame, label, description, onClick)
     CheckBox.tooltipRequirement = description;
 
     return CheckBox
-end
-
-function UI:show(identifier)
-    if (not UI.components[identifier]) then
-        GL:debug(identifier .. " has not been created yet");
-        return;
-    elseif (UI.components[identifier]:IsVisible()) then
-        GL:debug(identifier .. " is already visible");
-        return;
-    end
-
-    UI.components[identifier]:Show();
-end
-
-function UI:hide(identifier)
-    if (not UI.components[identifier]) then
-        GL:debug(identifier .. " has not been created yet");
-        return;
-    elseif (not UI.components[identifier]:IsVisible()) then
-        GL:debug(identifier .. " is not visible");
-        return;
-    end
-
-    UI.components[identifier]:Hide();
-end
-
-function UI:hideAll()
-    if (not #UI.components) then
-        GL:debug("No components have been created yet");
-        return;
-    end
 end
 
 GL:debug("UI.lua");

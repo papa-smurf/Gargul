@@ -69,14 +69,27 @@ GL.Data.DefaultSettings = {
     RollTracking = {
         trackAll = false,
         Brackets = {
-            {"MS", 1, 100, 1},
-            {"OS", 1, 99, 2},
+            {"MS", 1, 100, 2},
+            {"OS", 1, 99, 3},
         },
     },
     SoftRes = {
         announceInfoInChat = true,
         enableTooltips = true,
         hideInfoOfPeopleNotInGroup = true,
+    },
+    BoostedRolls = {
+        automaticallyAcceptDataFrom = "",
+        automaticallyShareData = true,
+        defaultCost = 10,
+        defaultPoints = 100,
+        defaultStep = 10,
+        enabled = false,
+        enableWhisperCommand = true,
+        fixedRolls = false,
+        identifier = "BR",
+        priority = 1,
+        reserveThreshold = 180,
     },
     TMB = {
         automaticallyShareData = false,

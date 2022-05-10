@@ -74,6 +74,15 @@ function MasterLooterUI:draw(itemLink)
 
     Window:SetPoint(GL.Interface:getPosition("RollOff"));
 
+    --[[
+        SETTINGS BUTTON
+    ]]
+    local SettingsButton = GL.UI:createSettingsButton(
+            Window.frame,
+            "MasterLooting"
+    );
+    self.SettingsButton = SettingsButton;
+
         --[[
             FIRST ROW (ITEM ICON AND LINK BOX)
         ]]
@@ -307,7 +316,8 @@ function MasterLooterUI:draw(itemLink)
                     end
 
                     local osRoll = selected.cols[4].value == "OS";
-                    return GL.RollOff:award(selected.cols[1].value, GL.Interface:getItem(self, "EditBox.Item"):GetText(), osRoll);
+                    local boostedRoll = selected.cols[4].value == GL.Settings:get("BoostedRolls.identifier", "BR");
+                    return GL.RollOff:award(selected.cols[1].value, GL.Interface:getItem(self, "EditBox.Item"):GetText(), osRoll, boostedRoll);
                 end);
                 ThirdRow:AddChild(AwardButton);
                 GL.Interface:setItem(self, "Award", AwardButton);
@@ -355,6 +365,19 @@ function MasterLooterUI:draw(itemLink)
         FifthRow:SetFullWidth(true);
         FifthRow:SetHeight(20);
         Window:AddChild(FifthRow);
+
+        --[[
+            TABLE SETTINGS BUTTON
+        ]]
+        local RollTrackingSettingsButton = GL.UI:createSettingsButton(
+            FifthRow.frame,
+            "RollTracking",
+            nil,
+            nil,
+            true
+        );
+        RollTrackingSettingsButton:SetPoint("TOPRIGHT", FifthRow.frame, "TOPRIGHT", -10, -8);
+        self.RollTrackingSettingsButton = RollTrackingSettingsButton;
 
         local PlayersTableFrame = AceGUI:Create("SimpleGroup");
         PlayersTableFrame:SetLayout("fixed");

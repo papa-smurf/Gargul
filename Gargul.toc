@@ -2,7 +2,7 @@
 ## Title: Gargul
 ## Author: Zhorax - Firemaw
 ## Notes: Loot addon that supports softres sr, thatsmybis tmb, auto looting, loot priorities, plus one tracking and much more
-## Version: 4.2.0
+## Version: 4.3.0
 ## DefaultState: enabled
 ## SavedVariables: GargulDB
 
@@ -44,6 +44,7 @@ Classes/BagInspector.lua
 Classes/BuffInspector.lua
 Classes/User.lua
 Classes/Player.lua
+Classes/BoostedRolls.lua
 Classes/Comm.lua
 Classes/CommMessage.lua
 Classes/RaidGroups.lua
@@ -63,6 +64,7 @@ Interface/Settings/LootTradeTimers.lua
 Interface/Settings/Rolling.lua
 Interface/Settings/RollTracking.lua
 Interface/Settings/SoftRes.lua
+Interface/Settings/BoostedRolls.lua
 Interface/Settings/General.lua
 Interface/Settings/ShortcutKeys.lua
 Interface/Settings/LootHighlighting.lua
@@ -77,11 +79,15 @@ Interface/TMB/Overview.lua
 Interface/PlusOnes/OverView.lua
 Interface/TradeWindow/TimeLeft.lua
 Interface/PlayerSelector.lua
+Interface/BoostedRolls/Importer.lua
+Interface/BoostedRolls/Overview.lua
 Interface/MinimapButton.lua
 
 # Popup dialogs
 Interface/Dialogs/AwardDialog.lua
 Interface/Dialogs/AwardDialogWidget.lua
+Interface/Dialogs/IncomingBoostedRollDataDialog.lua
+Interface/Dialogs/IncomingBoostedRollDataDialogWidget.lua
 Interface/Dialogs/PopupDialog.lua
 Interface/Dialogs/PopupDialogWidget.lua
 Interface/Dialogs/HyperlinkDialog.lua

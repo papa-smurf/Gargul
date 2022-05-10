@@ -18,6 +18,7 @@ GL.Interface.Settings.Overview = {
         {"    Dropped Loot", "DroppedLoot"},
         {"    Roll Tracking", "RollTracking"},
         {"    Awarding Loot", "AwardingLoot"},
+        {"    Boosted Rolls", "BoostedRolls"},
         {"PackMule Autoloot", "PackMule"},
         {"    Item Rules", "PackMuleRules"},
         {"    Ignored Items", "PackMuleIgnores"},

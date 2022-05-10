@@ -101,6 +101,7 @@ function GL:_init()
     self.AwardedLoot:_init();
     self.SoftRes:_init();
     self.TMB:_init();
+    self.BoostedRolls:_init();
     self.DroppedLoot:_init();
     self.GroupLoot:_init();
     self.PackMule:_init();
