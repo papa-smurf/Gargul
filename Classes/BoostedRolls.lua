@@ -172,9 +172,12 @@ function BoostedRolls:handleWhisperCommand(_, message, sender)
     GL:debug("BoostedRolls:handleWhisperCommand");
 
     -- Only listen to the following messages
-    if (not GL:strStartsWith(message, "!rollbonus")
+    if (not GL:strStartsWith(message, "!bonus")
+        and not GL:strStartsWith(message, "!BONUS")
         and not GL:strStartsWith(message, "!rb")
+        and not GL:strStartsWith(message, "!RB")
         and not GL:strStartsWith(message, "!br")
+        and not GL:strStartsWith(message, "!BR")
     ) then
         return;
     end
