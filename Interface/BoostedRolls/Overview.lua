@@ -466,11 +466,11 @@ function Overview:refreshTable()
                     color = GL:classRGBAColor(Entry.class),
                 },
                 {
-                    value = tostring(rollPoints),
+                    value = rollPoints,
                     color = BoostedRollsColor,
                 },
                 {
-                    value = tostring(reserve),
+                    value = reserve,
                     color = BoostedRollsColor,
                 },
                 {
@@ -482,6 +482,7 @@ function Overview:refreshTable()
     end
 
     Table:SetData(TableData);
+    Table:SortData();
 end
 
 ---@return void
