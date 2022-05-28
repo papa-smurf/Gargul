@@ -207,7 +207,7 @@ function Overview:draw()
 
     local PostSoftReserveLinkButton = AceGUI:Create("Button");
     PostSoftReserveLinkButton:SetText("Post SR URL");
-    PostSoftReserveLinkButton:SetWidth(108); -- Minimum is 106
+    PostSoftReserveLinkButton:SetWidth(104); -- Minimum is 104
     PostSoftReserveLinkButton:SetCallback("OnClick", function()
         SoftRes:postLink();
     end);
@@ -216,7 +216,7 @@ function Overview:draw()
 
     local PostMissingSoftReserveInfoButton = AceGUI:Create("Button");
     PostMissingSoftReserveInfoButton:SetText("Post missing SRs");
-    PostMissingSoftReserveInfoButton:SetWidth(136); -- Minimum is 130
+    PostMissingSoftReserveInfoButton:SetWidth(130); -- Minimum is 130
     PostMissingSoftReserveInfoButton:SetCallback("OnClick", function()
         SoftRes:postMissingSoftReserves();
     end);
@@ -224,7 +224,7 @@ function Overview:draw()
 
     local PostDiscordLinkButton = AceGUI:Create("Button");
     PostDiscordLinkButton:SetText("Post Discord URL");
-    PostDiscordLinkButton:SetWidth(136); -- Minimum is 136
+    PostDiscordLinkButton:SetWidth(134); -- Minimum is 134
     PostDiscordLinkButton:SetCallback("OnClick", function()
         SoftRes:postDiscordLink();
     end);
