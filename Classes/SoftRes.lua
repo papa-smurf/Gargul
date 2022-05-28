@@ -35,7 +35,10 @@ function SoftRes:_init()
 
     --- Register listener for whisper command.
     GL.Events:register("SoftResWhisperListener", "CHAT_MSG_WHISPER", function (event, message, sender)
-        if (GL.Settings:get("SoftRes.enableWhisperCommand", true)) then
+        if (self:available()
+            and self:userIsAllowedToBroadcast()
+            and GL.Settings:get("SoftRes.enableWhisperCommand", true)
+        ) then
             self:handleWhisperCommand(event, message, sender);
         end
     end);
