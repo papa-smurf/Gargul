@@ -40,8 +40,8 @@ function SoftRes:draw(Parent)
             setting = "SoftRes.enableWhisperCommand",
         },
         {
-            label = "Fix player names",
-            description = "People tend to misspell their player names on soft-res. Gargul will try to fix those when importing soft-reserves",
+            label = "Fix character names",
+            description = "Players tend to misspell their character names on soft-res. Gargul will attempt to fix those when importing soft-reserves",
             setting = "SoftRes.fixPlayerNames",
         },
     };
