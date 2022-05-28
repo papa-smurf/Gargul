@@ -200,6 +200,57 @@ function GL:higherThanZero(numericValue)
         and numericValue > 0
 end
 
+--- Levenshtein string distance
+---
+---@param str1 string
+---@param str2 string
+---
+---@return number
+function GL:levenshtein(str1, str2)
+    local len1 = string.len(str1);
+    local len2 = string.len(str2);
+    local matrix = {};
+    local cost = 0;
+
+    if (len1 == 0) then
+        return len2;
+    end
+
+    if (len2 == 0) then
+        return len1;
+    end
+
+    if (str1 == str2) then
+        return 0;
+    end
+
+    -- Initialise the base matrix values
+    for i = 0, len1, 1 do
+        matrix[i] = {};
+        matrix[i][0] = i;
+    end
+
+    for j = 0, len2, 1 do
+        matrix[0][j] = j;
+    end
+
+    -- actual Levenshtein algorithm
+    for i = 1, len1, 1 do
+        for j = 1, len2, 1 do
+            if (str1:byte(i) == str2:byte(j)) then
+                cost = 0;
+            else
+                cost = 1;
+            end
+
+            matrix[i][j] = math.min(matrix[i-1][j] + 1, matrix[i][j-1] + 1, matrix[i-1][j-1] + cost);
+        end
+    end
+
+    -- return the last value - this is the Levenshtein distance
+    return matrix[len1][len2];
+end
+
 --- Get a class' RGB color by a given class name
 ---
 ---@param className string
