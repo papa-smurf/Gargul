@@ -648,27 +648,66 @@ function SoftRes:import(data, openOverview)
         success = self:importGargulData(data);
     end
 
-    if (success) then
-        GL:success("Import of SoftRes data successful");
-        GL.Events:fire("GL.SOFTRES_IMPORTED");
-
-        self:materializeData();
-        GL.Interface.SoftRes.Importer:close();
-
-        if (openOverview) then
-            self:draw();
-
-            -- Automatically broadcast this data if it's not marked as "hidden" and the user has the required permissions
-            if (self:userIsAllowedToBroadcast()
-                and not GL.DB:get('SoftRes.MetaData.hidden', true)) then
-                self:broadcast();
-            end
-        end
-
-        return true;
+    -- Whatever the data was, we couldn't import it
+    if (not success) then
+        return false;
     end
 
-    return false;
+    -- Reset the materialized data
+    self.MaterializedData = {
+        ClassByPlayerName = {},
+        DetailsByPlayerName = {},
+        HardReserveDetailsById = {},
+        PlayerNamesByItemId = {},
+        ReservedItemIds = {},
+        SoftReservedItemIds = {},
+    };
+
+    GL:success("Import of SoftRes data successful");
+
+    -- Attempt to "fix" player names (e.g. people misspelling their names)
+    if (Settings:get("SoftRes.fixPlayerNames", true)) then
+        local RewiredNames = self:fixPlayerNames();
+
+        for softResName, playerName in pairs(RewiredNames) do
+            GL:notice(string.format(
+                "The soft-reserve of \"%s\" is now linked to \"%s\"",
+                GL:capitalize(softResName),
+                GL:capitalize(playerName)
+            ));
+        end
+    end
+
+    GL.Events:fire("GL.SOFTRES_IMPORTED");
+
+    -- Materialize the data for ease of use
+    self:materializeData();
+
+    -- Display missing soft-reserves
+    local PlayersWhoDidntReserve = self:playersWithoutSoftReserves();
+    if (not GL:empty(PlayersWhoDidntReserve)) then
+        local MissingReservers = {};
+        for _, name in pairs(PlayersWhoDidntReserve) do
+            tinsert(MissingReservers, {GL:capitalize(name), GL:classHexColor(GL.Player:classByName(name))});
+        end
+
+        GL:warning("The following players did not reserve anything:");
+        GL:multiColoredMessage(MissingReservers, ", ");
+    end
+
+    GL.Interface.SoftRes.Importer:close();
+
+    -- Automatically broadcast this data if it's not marked as "hidden" and the user has the required permissions
+    if (self:userIsAllowedToBroadcast()
+        and not GL.DB:get('SoftRes.MetaData.hidden', true)) then
+        self:broadcast();
+    end
+
+    if (openOverview) then
+        self:draw();
+    end
+
+    return true;
 end
 
 --- Import a Gargul data string
@@ -713,7 +752,7 @@ function SoftRes:importGargulData(data)
     end
 
     local function throwGenericInvalidDataError()
-        local errorMessage = "Invalid data provided. Make sure to click the 'Gargul Data Export' button on softres.it and paste the full contents here";
+        local errorMessage = "Invalid data provided. Make sure to click the 'Gargul Export' button on softres.it and paste the full contents here";
         GL.Interface:getItem("SoftRes.Importer", "Label.StatusMessage"):SetText(errorMessage);
 
         return false;
@@ -938,7 +977,7 @@ function SoftRes:importCSVData(data)
 
     -- The user attempted to import invalid data
     if (GL:empty(SoftReserveData)) then
-        local errorMessage = "Invalid data provided. Make sure to click the 'Gargul Data Export' button on softres.it and paste the full contents here";
+        local errorMessage = "Invalid data provided. Make sure to click the 'Gargul Export' button on softres.it and paste the full contents here";
         GL.Interface:getItem("SoftRes.Importer", "Label.StatusMessage"):SetText(errorMessage);
 
         return false;
@@ -983,6 +1022,92 @@ function SoftRes:importCSVData(data)
     end
 
     return not GL:empty(DB.SoftRes.SoftReserves);
+end
+
+--- Attempt to fix players misspelling their character name on softres
+---
+---@return table
+function SoftRes:fixPlayerNames()
+    GL:debug("SoftRes:fixPlayerNames");
+
+    -- Get the names of everyone in our group and lowercase them
+    local GroupMemberNames = {};
+    for _, playerName in pairs(GL.User:groupMemberNames()) do
+        tinsert(GroupMemberNames, string.lower(playerName));
+    end
+
+    local GroupMembersThatReserved = {};
+    local PlayersNotInGroup = {};
+
+    -- Check all reservations and split them in players that are in our group, and players (+class) that aren't
+    for _, Reservation in pairs(DB.SoftRes.SoftReserves or {}) do
+        -- This player is actually in our group
+        if (GL:inTable(GroupMemberNames, Reservation.name)) then
+            tinsert(GroupMembersThatReserved, Reservation.name);
+
+        -- We don't know this player, potentially mistyped name
+        else
+            PlayersNotInGroup[Reservation.name] = string.lower(Reservation.class);
+        end
+    end
+
+    -- Check who's in our group and didn't reserve yet
+    local PlayersWhoDidntReserve = {};
+    for _, playerName in pairs(GroupMemberNames) do
+        if (not GL:inTable(GroupMembersThatReserved, playerName)) then
+            tinsert(PlayersWhoDidntReserve, playerName);
+        end
+    end
+
+    -- Everyone reserved, great, let's move on
+    if (GL:empty(PlayersWhoDidntReserve)) then
+        return {};
+    end
+
+    -- Try to find matching names for players who didn't soft-reserve, which means they likely made a typo
+    local NameDictionary = {};
+    for _, playerWhoDidntReserve in pairs(PlayersWhoDidntReserve) do
+        local playerClass = GL.Player:classByName(playerWhoDidntReserve);
+        local mostSimilarName = false;
+        local lastDistance = 99;
+
+        for playerNotInGroup, class in pairs(PlayersNotInGroup) do
+            local distance = GL:levenshtein(playerWhoDidntReserve, playerNotInGroup);
+            local maximumDistance = 4;
+
+            -- If the class of the player doesn't match with the class of the soft-reserve
+            -- then we drastically lower the maximum distance. If both name and class are wrong, a match is unlikely!
+            if (playerClass ~= class) then
+                maximumDistance = 2;
+            end
+
+            if (distance <= maximumDistance
+                and distance < lastDistance
+            ) then
+                mostSimilarName = playerNotInGroup;
+            end
+        end
+
+        if (mostSimilarName) then
+            NameDictionary[mostSimilarName] = playerWhoDidntReserve;
+        end
+    end
+
+    -- Nothing to rewire!
+    if (GL:empty(NameDictionary)) then
+        return {};
+    end
+
+    -- Rewire reservations e.g. match names
+    local RewiredNames = {};
+    for _, Reservation in pairs(DB.SoftRes.SoftReserves or {}) do
+        if (NameDictionary[Reservation.name]) then
+            RewiredNames[Reservation.name] = NameDictionary[Reservation.name];
+            Reservation.name = NameDictionary[Reservation.name];
+        end
+    end
+
+    return RewiredNames;
 end
 
 --- Broadcast our soft reserves table to the raid or group
@@ -1079,6 +1204,44 @@ function SoftRes:postLink()
     return true;
 end
 
+--- Return the names of all players that didn't soft-reserve yet
+---
+---@return table
+function SoftRes:playersWithoutSoftReserves()
+    GL:debug("SoftRes:playersWithoutSoftReserves");
+
+    local PlayerNames = {};
+
+    -- Materialized data is available, use it!
+    if (not GL:empty(self.MaterializedData.DetailsByPlayerName)) then
+        for _, playerName in pairs(GL.User:groupMemberNames()) do
+            if (not self.MaterializedData.DetailsByPlayerName[string.lower(playerName)]) then
+                tinsert(PlayerNames, GL:capitalize(playerName));
+            end
+        end
+
+        return PlayerNames;
+    end
+
+    -- No materialized data yet, use the raw softres data instead
+    local GroupMemberReserved = {};
+    for _, playerName in pairs(GL.User:groupMemberNames()) do
+        GroupMemberReserved[string.lower(playerName)] = false;
+    end
+
+    for _, Reservation in pairs(DB.SoftRes.SoftReserves or {}) do
+        GroupMemberReserved[string.lower(Reservation.name)] = true;
+    end
+
+    for name, reserved in pairs(GroupMemberReserved) do
+        if (not reserved) then
+            tinsert(PlayerNames, name);
+        end
+    end
+
+    return PlayerNames;
+end
+
 --- Attempt to post the names of the players who didn't soft-reserve anything
 ---
 ---@return boolean
@@ -1095,12 +1258,7 @@ function SoftRes:postMissingSoftReserves()
         return false;
     end
 
-    local PlayerNames = {};
-    for _, playerName in pairs(GL.User:groupMemberNames()) do
-        if (not self.MaterializedData.DetailsByPlayerName[string.lower(playerName)]) then
-            tinsert(PlayerNames, GL:capitalize(playerName));
-        end
-    end
+    local PlayerNames = self:playersWithoutSoftReserves();
 
     if (#PlayerNames < 1) then
         GL:success("Everyone filled out their soft-reserves");
