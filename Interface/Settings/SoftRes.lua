@@ -30,6 +30,11 @@ function SoftRes:draw(Parent)
             description = "Checking this will make sure that SoftRes details of dropped loot are also announced in the chat",
             setting = "SoftRes.announceInfoInChat",
         },
+        {
+            label = "Fix player names",
+            description = "People tend to misspell their player names on soft-res. Gargul will try to fix those",
+            setting = "SoftRes.fixPlayerNames",
+        },
     };
 
     Overview:drawCheckboxes(Checkboxes, Parent);

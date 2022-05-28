@@ -76,6 +76,7 @@ GL.Data.DefaultSettings = {
     SoftRes = {
         announceInfoInChat = true,
         enableTooltips = true,
+        fixPlayerNames = true,
         hideInfoOfPeopleNotInGroup = true,
     },
     BoostedRolls = {
