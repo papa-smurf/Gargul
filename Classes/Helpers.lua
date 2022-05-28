@@ -95,6 +95,14 @@ function GL:debug(...)
     GL:coloredMessage("f7922e", ...);
 end
 
+
+--- Print a notice message (yellow)
+---
+---@return void
+function GL:notice(...)
+    GL:coloredMessage("FFF569", ...);
+end
+
 --- Print a warning message (orange)
 ---
 ---@return void
