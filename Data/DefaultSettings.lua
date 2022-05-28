@@ -77,6 +77,7 @@ GL.Data.DefaultSettings = {
     SoftRes = {
         announceInfoInChat = true,
         enableTooltips = true,
+        enableWhisperCommand = true,
         fixPlayerNames = true,
         hideInfoOfPeopleNotInGroup = true,
     },

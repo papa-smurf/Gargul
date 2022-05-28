@@ -31,8 +31,17 @@ function SoftRes:draw(Parent)
             setting = "SoftRes.announceInfoInChat",
         },
         {
+            label = "Enable whisper command",
+            description = string.format(
+                    "When enabled, players can whisper '|cff%s!sr|r' or '|cff%s!softres|r' to you to double-check their soft-reserves",
+                    GL:classHexColor("rogue"),
+                    GL:classHexColor("rogue")
+            ),
+            setting = "SoftRes.enableWhisperCommand",
+        },
+        {
             label = "Fix player names",
-            description = "People tend to misspell their player names on soft-res. Gargul will try to fix those",
+            description = "People tend to misspell their player names on soft-res. Gargul will try to fix those when importing soft-reserves",
             setting = "SoftRes.fixPlayerNames",
         },
     };

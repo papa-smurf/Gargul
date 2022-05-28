@@ -33,6 +33,13 @@ function SoftRes:_init()
         return false;
     end
 
+    --- Register listener for whisper command.
+    GL.Events:register("SoftResWhisperListener", "CHAT_MSG_WHISPER", function (event, message, sender)
+        if (GL.Settings:get("SoftRes.enableWhisperCommand", true)) then
+            self:handleWhisperCommand(event, message, sender);
+        end
+    end);
+
     -- Remove old SoftRes data if it's more than 10h old
     if (self:available()
         and DB:get("SoftRes.MetaData.importedAt") < GetServerTime() - 36000
@@ -54,6 +61,73 @@ function SoftRes:_init()
 
     self._initialized = true;
     return true;
+end
+
+--- Checks and handles whisper commands if enabled.
+---
+---@param _ string
+---@param message string
+---@param sender string
+---@return void
+function SoftRes:handleWhisperCommand(_, message, sender)
+    GL:debug("SoftRes:handleWhisperCommand");
+
+    -- Only listen to the following messages
+    if (not GL:strStartsWith(message, "!sr")
+        and not GL:strStartsWith(message, "!softres")
+        and not GL:strStartsWith(message, "!softreserve")
+    ) then
+        return;
+    end
+
+    local name = GL:stripRealm(sender);
+
+    -- Fetch everything soft-reserved by the sender
+    local Reserves = GL:tableGet(self.MaterializedData.DetailsByPlayerName, string.format(
+        "%s.Items",
+        string.lower(name)
+    ), {});
+
+    -- Nothing reserved
+    if (GL:empty(Reserves)) then
+        GL:sendChatMessage(
+            "It seems like you didn't soft-reserve anything yet, check the soft-res sheet or ask your loot master",
+            "WHISPER", nil, sender
+        );
+
+        return;
+    end
+
+    -- Make sure to preload all items with their corresponding item link before moving on
+    local ItemIDs = {};
+    for itemID in pairs(Reserves) do
+        tinsert(ItemIDs, itemID);
+    end
+
+    GL:onItemLoadDo(ItemIDs, function (Items)
+        local Entries = {};
+
+        for _, Entry in pairs(Items) do
+            local itemIdString = tostring(Entry.id);
+            local entryString = Entry.link;
+
+            if (Reserves[itemIdString] > 1) then
+                entryString = string.format("%s (%sx)", entryString, Reserves[itemIdString]);
+            end
+
+            tinsert(Entries, entryString);
+        end
+
+        -- Let the sender know what he/she soft-reserved
+        if (not GL:empty(Entries)) then
+            GL:sendChatMessage(
+                "You reserved " .. table.concat(Entries, ", "),
+                "WHISPER", nil, sender
+            );
+
+            return;
+        end
+    end);
 end
 
 --- Check whether there are soft-reserves available
@@ -671,7 +745,7 @@ function SoftRes:import(data, openOverview)
 
         for softResName, playerName in pairs(RewiredNames) do
             GL:notice(string.format(
-                "The soft-reserve of \"%s\" is now linked to \"%s\"",
+                "Auto name fix: the SR of \"%s\" is now linked to \"%s\"",
                 GL:capitalize(softResName),
                 GL:capitalize(playerName)
             ));
@@ -697,10 +771,19 @@ function SoftRes:import(data, openOverview)
 
     GL.Interface.SoftRes.Importer:close();
 
-    -- Automatically broadcast this data if it's not marked as "hidden" and the user has the required permissions
-    if (self:userIsAllowedToBroadcast()
-        and not GL.DB:get('SoftRes.MetaData.hidden', true)) then
-        self:broadcast();
+    if (self:userIsAllowedToBroadcast()) then
+        -- Automatically broadcast this data if it's not marked as "hidden" and the user has the required permissions
+        if (not GL.DB:get('SoftRes.MetaData.hidden', true)) then
+            self:broadcast();
+        end
+
+        -- Let everyone know how to double-check their soft-reserves
+        if (GL.Settings:get("SoftRes.enableWhisperCommand", true)) then
+            GL:sendChatMessage(
+                string.format("I just imported soft-reserves into Gargul. Whisper !sr to me to double-check your reserves!"),
+                "GROUP"
+            );
+        end
     end
 
     if (openOverview) then
@@ -919,7 +1002,7 @@ end
 function SoftRes:importCSVData(data)
     GL:debug("SoftRes:import");
 
-    GL:warning("The Weakaura data and CSV exports are still supported but are deprecated, try using the Gargul export instead!");
+    GL:warning("SoftRes Weakaura and CSV data are deprecated, use the Gargul export instead!");
 
     local PlusOnes = {};
     local Columns = {};
