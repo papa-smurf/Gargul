@@ -40,6 +40,11 @@ function General:draw(Parent)
             setting = "welcomeMessage",
         },
         {
+            label = "Show changelog",
+            description = "Enable or disable the changelog which displays update details after updating Gargul",
+            setting = "changeLog",
+        },
+        {
             label = "Fix master looter UI",
             description = "The master loot window in the native Blizzard UI generates an error that prevents you from right-clicking target frames etc. This fixes that! (Discovered by Kirsia-Dalaran here https://bit.ly/3tc8nvw)",
             setting = "fixMasterLootWindow",

@@ -5,6 +5,7 @@ local _, GL = ...;
 GL.Data = GL.Data or {};
 
 GL.Data.DefaultSettings = {
+    changeLog = true,
     debugModeEnabled = false,
     highlightsDisabled = false,
     highlightMyItemsOnly = false,
@@ -33,6 +34,7 @@ GL.Data.DefaultSettings = {
     MasterLooting = {
         autoOpenMasterLooterDialog = true,
         announceMasterLooter = false,
+        defaultRollOffNote = "/roll 100 for MS or /roll 99 for OS",
         doCountdown = true,
         announceRollEnd = true,
         announceRollStart = true,
@@ -76,6 +78,8 @@ GL.Data.DefaultSettings = {
     SoftRes = {
         announceInfoInChat = true,
         enableTooltips = true,
+        enableWhisperCommand = true,
+        fixPlayerNames = true,
         hideInfoOfPeopleNotInGroup = true,
     },
     BoostedRolls = {

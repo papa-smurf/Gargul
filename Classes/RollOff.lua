@@ -258,7 +258,7 @@ function RollOff:start(CommMessage)
         if (GL.Settings:get("Rolling.showRollOffWindow")
             or self:startedByMe()
         ) then
-            GL.RollerUI:show(time, Entry.id, Entry.link, Entry.icon, content.note, SupportedRolls);
+            GL.RollerUI:show(time, Entry.link, Entry.icon, content.note, SupportedRolls);
 
             if (CommMessage.Sender.id == GL.User.id) then
                 GL.MasterLooterUI:drawReopenMasterLooterUIButton();

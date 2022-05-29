@@ -720,19 +720,20 @@ end
 function MasterLooterUI:updateItemNote()
     GL:debug("MasterLooterUI:updateItemNote");
 
+    local defaultNote = GL.Settings:get("MasterLooting.defaultRollOffNote", "/roll 100 for MS or /roll 99 for OS");
     local ItemNote = GL.Interface:getItem(self, "EditBox.ItemNote");
     local itemLink = GL.Interface:getItem(self, "EditBox.Item"):GetText();
 
     -- We don't have a valid itemlink at hand, clear the note
     if (not MasterLooterUI.ItemBoxHoldsValidItem) then
-        return ItemNote:SetText("");
+        return ItemNote:SetText(defaultNote);
     end
 
     local itemPriority = GL.LootPriority:getPriority(itemLink);
 
-    -- If there is no item priority then label the item with "Off spec"
+    -- If there is no item priority then keep the item label as-is
     if (not itemPriority) then
-        return ItemNote:SetText("");
+        return ItemNote:SetText(defaultNote);
     end
 
     -- There is a priority for this item

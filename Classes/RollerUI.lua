@@ -22,12 +22,11 @@ end
 --- Note: we're not using AceGUI here since getting a SimpleGroup to move properly is a friggin nightmare
 ---
 ---@param time number The duration of the RollOff
----@param itemId number
 ---@param itemLink string
 ---@param itemIcon string
 ---@param note string
 ---@return boolean
-function RollerUI:draw(time, itemId, itemLink, itemIcon, note, SupportedRolls)
+function RollerUI:draw(time, itemLink, itemIcon, note, SupportedRolls)
     GL:debug("RollerUI:draw");
 
     local Window = CreateFrame("Frame", "GargulUI_RollerUI_Window", UIParent, Frame);
@@ -173,7 +172,8 @@ function RollerUI:drawCountdownBar(time, itemLink, itemIcon, note)
     TimerBar:SetColor(0, 1, 0, .3); -- Reset color to green
 
     note = note or "";
-    local noteStringLengthAllowed = 53 - string.len(note);
+    local itemLinkLength = string.len(GL:getItemNameFromLink(itemLink)) + 2;
+    local noteStringLengthAllowed = 93 - itemLinkLength - string.len(note);
 
     -- Make sure the item note does not go out of bounds
     if (noteStringLengthAllowed < 0) then

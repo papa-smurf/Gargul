@@ -30,6 +30,20 @@ function SoftRes:draw(Parent)
             description = "Checking this will make sure that SoftRes details of dropped loot are also announced in the chat",
             setting = "SoftRes.announceInfoInChat",
         },
+        {
+            label = "Enable whisper command",
+            description = string.format(
+                    "When enabled, players can whisper '|cff%s!sr|r' or '|cff%s!softres|r' to you to double-check their soft-reserves",
+                    GL:classHexColor("rogue"),
+                    GL:classHexColor("rogue")
+            ),
+            setting = "SoftRes.enableWhisperCommand",
+        },
+        {
+            label = "Fix character names",
+            description = "Players tend to misspell their character names on soft-res. Gargul will attempt to fix those when importing soft-reserves",
+            setting = "SoftRes.fixPlayerNames",
+        },
     };
 
     Overview:drawCheckboxes(Checkboxes, Parent);

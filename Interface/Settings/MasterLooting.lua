@@ -124,6 +124,35 @@ function MasterLooting:draw(Parent)
             setting = "MasterLooting.announceRollEnd",
         },
     }, Parent);
+
+    HorizontalSpacer = GL.AceGUI:Create("SimpleGroup");
+    HorizontalSpacer:SetLayout("FILL");
+    HorizontalSpacer:SetFullWidth(true);
+    HorizontalSpacer:SetHeight(15);
+    Parent:AddChild(HorizontalSpacer);
+
+    local DefaultRollOffNote = GL.AceGUI:Create("EditBox");
+    DefaultRollOffNote:DisableButton(true);
+    DefaultRollOffNote:SetHeight(20);
+    DefaultRollOffNote:SetFullWidth(true);
+    DefaultRollOffNote:SetText(GL.Settings:get("MasterLooting.defaultRollOffNote", "/roll 100 for MS or /roll 99 for OS"));
+    DefaultRollOffNote:SetLabel(string.format(
+            "|cff%sSet a default note that's shown when rolling off items, pipes ( | ) are not allowed!|r",
+            GL:classHexColor("rogue")
+    ));
+    DefaultRollOffNote:SetCallback("OnTextChanged", function (self)
+        local value = self:GetText();
+
+        if (type(value) ~= "string"
+            or GL:strContains(value, "|")
+        ) then
+            GL:warning("Invalid note provided");
+            GL.Settings:set("MasterLooting.defaultRollOffNote", "/roll 100 for MS or /roll 99 for OS")
+        end
+
+        GL.Settings:set("MasterLooting.defaultRollOffNote", value);
+    end);
+    Parent:AddChild(DefaultRollOffNote);
 end
 
 GL:debug("Interface/Settings/MasterLooting.lua");

@@ -10,7 +10,7 @@ GL.DroppedLoot = {
     LootButtonItemLinkCache = {},
     lootChangedTimer = 0,
     lootWindowIsOpened = false,
-}
+};
 
 local Constants = GL.Data.Constants; ---@type Data
 local DroppedLoot = GL.DroppedLoot; ---@type DroppedLoot

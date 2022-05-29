@@ -207,7 +207,7 @@ function Overview:draw()
 
     local PostSoftReserveLinkButton = AceGUI:Create("Button");
     PostSoftReserveLinkButton:SetText("Post SR URL");
-    PostSoftReserveLinkButton:SetWidth(141); -- Minimum is 106
+    PostSoftReserveLinkButton:SetWidth(104); -- Minimum is 104
     PostSoftReserveLinkButton:SetCallback("OnClick", function()
         SoftRes:postLink();
     end);
@@ -216,7 +216,7 @@ function Overview:draw()
 
     local PostMissingSoftReserveInfoButton = AceGUI:Create("Button");
     PostMissingSoftReserveInfoButton:SetText("Post missing SRs");
-    PostMissingSoftReserveInfoButton:SetWidth(141); -- Minimum is 130
+    PostMissingSoftReserveInfoButton:SetWidth(130); -- Minimum is 130
     PostMissingSoftReserveInfoButton:SetCallback("OnClick", function()
         SoftRes:postMissingSoftReserves();
     end);
@@ -224,15 +224,23 @@ function Overview:draw()
 
     local PostDiscordLinkButton = AceGUI:Create("Button");
     PostDiscordLinkButton:SetText("Post Discord URL");
-    PostDiscordLinkButton:SetWidth(141); -- Minimum is 136
+    PostDiscordLinkButton:SetWidth(134); -- Minimum is 134
     PostDiscordLinkButton:SetCallback("OnClick", function()
         SoftRes:postDiscordLink();
     end);
     ButtonFrame:AddChild(PostDiscordLinkButton);
 
+        local SettingsButton = AceGUI:Create("Button");
+    SettingsButton:SetText("Settings");
+    SettingsButton:SetWidth(84); -- Minimum is 102
+    SettingsButton:SetCallback("OnClick", function()
+        GL.Settings:draw("SoftRes");
+    end);
+    ButtonFrame:AddChild(SettingsButton);
+
     local ClearDataButton = AceGUI:Create("Button");
     ClearDataButton:SetText("Clear Data");
-    ClearDataButton:SetWidth(141); -- Minimum is 102
+    ClearDataButton:SetWidth(100); -- Minimum is 102
     ClearDataButton:SetCallback("OnClick", function()
         GL.Interface.Dialogs.PopupDialog:open("CLEAR_SOFTRES_CONFIRMATION");
     end);

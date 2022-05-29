@@ -28,7 +28,7 @@ function BoostedRolls:_init()
 
     --- Register listener for whisper command.
     GL.Events:register("BoostedRollsWhisperListener", "CHAT_MSG_WHISPER", function (event, message, sender)
-        if (GL.Settings:get("BoostedRolls.enableWhisperCommand", false)) then
+        if (GL.Settings:get("BoostedRolls.enableWhisperCommand", true)) then
             self:handleWhisperCommand(event, message, sender);
         end
     end);
