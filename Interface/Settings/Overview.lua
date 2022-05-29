@@ -140,6 +140,21 @@ function Overview:draw(section)
     GL.Interface:setItem(self, "Title", SectionTitle);
     GL.Interface:setItem(self, "SectionWrapper", ScrollFrameHolder);
 
+    local HorizontalSpacer = GL.AceGUI:Create("SimpleGroup");
+    HorizontalSpacer:SetLayout("FILL");
+    HorizontalSpacer:SetFullWidth(true);
+    HorizontalSpacer:SetHeight(20);
+    SecondColumn:AddChild(HorizontalSpacer);
+
+    -- Show the changelog button
+    local ChangelogButton = GL.AceGUI:Create("Button");
+    ChangelogButton:SetText("Changelog");
+    ChangelogButton:SetCallback("OnClick", function()
+        GL.Interface.Changelog:draw();
+        self:close();
+    end);
+    SecondColumn:AddChild(ChangelogButton);
+
     local PatreonButton = GL.UI:createFrame("Button", "PatreonButton" .. GL:uuid(), Window.frame, "UIPanelButtonTemplate");
     PatreonButton:Show();
     PatreonButton:SetSize(170, 43);

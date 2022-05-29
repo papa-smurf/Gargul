@@ -5,6 +5,7 @@ local _, GL = ...;
 GL.Data = GL.Data or {};
 
 GL.Data.DefaultSettings = {
+    changeLog = true,
     debugModeEnabled = false,
     highlightsDisabled = false,
     highlightMyItemsOnly = false,
