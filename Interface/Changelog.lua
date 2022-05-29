@@ -16,7 +16,8 @@ GL.Interface.Changelog = {
             date = "May 29th, 2022",
             Changes = {
                 "Having issues with players misspelling their character names on |c00a79effsoftres.it|r? Gargul now automatically attempts to \"fix\" typos in character names when importing soft-reserves",
-                "When using soft-reserve, a player can now whisper |c00a79eff!sr|r to the master looter to double check his soft-reserves",
+                "When using soft-reserves, a player can now whisper |c00a79eff!sr|r to the master looter to double check his soft-reserves",
+                "You can now set a default raid warning / group message that shows when you roll off items. Want to let players know how to roll for MS or OS? Easy: open Gargul using |c00a79eff/gl|r and go to |c00a79effMaster Looting|r to set your message!"
             },
         },
         {
