@@ -60,7 +60,8 @@ function SoftRes:_init()
 
     GL.Events:register("SoftResUserJoinedGroupListener", "GL.USER_JOINED_GROUP", function () self:requestData(); end);
 
-    self:materializeData();
+    local reportStatus = false; -- No need to notify of "fixed" names after every /reload
+    self:materializeData(reportStatus);
 
     self._initialized = true;
     return true;
@@ -281,9 +282,10 @@ end
 --- Materialize the SoftRes data to make it more accessible during runtime
 ---
 ---@return void
-function SoftRes:materializeData()
+function SoftRes:materializeData(reportStatus)
     GL:debug("SoftRes:materializeData");
 
+    reportStatus = GL:toboolean(reportStatus);
     local ReservedItemIds = {}; -- All reserved item ids (both soft- and hard)
     local SoftReservedItemIds = {}; -- Soft-reserved item ids
     local DetailsByPlayerName = {}; -- Item ids per player name
@@ -709,6 +711,9 @@ end
 function SoftRes:import(data, openOverview)
     GL:debug("SoftRes:import");
 
+    openOverview = GL:toboolean(openOverview);
+    local broadcast = openOverview; -- Automatically broadcast after importing?
+    local reportStatus = openOverview; -- Notify of fixed names and other messages?
     local success = false;
 
     -- Make sure all the required properties are available and of the correct type
@@ -719,7 +724,7 @@ function SoftRes:import(data, openOverview)
 
     -- A CSV string was provided, import it
     if (GL:strContains(data, ",")) then
-        success = self:importCSVData(data);
+        success = self:importCSVData(data, reportStatus);
     else
         -- Assume Gargul data was provided
         success = self:importGargulData(data);
@@ -746,35 +751,41 @@ function SoftRes:import(data, openOverview)
     if (Settings:get("SoftRes.fixPlayerNames", true)) then
         local RewiredNames = self:fixPlayerNames();
 
-        for softResName, playerName in pairs(RewiredNames) do
-            GL:notice(string.format(
-                "Auto name fix: the SR of \"%s\" is now linked to \"%s\"",
-                GL:capitalize(softResName),
-                GL:capitalize(playerName)
-            ));
+        if (reportStatus) then
+            for softResName, playerName in pairs(RewiredNames) do
+                GL:notice(string.format(
+                    "Auto name fix: the SR of \"%s\" is now linked to \"%s\"",
+                    GL:capitalize(softResName),
+                    GL:capitalize(playerName)
+                ));
+            end
         end
     end
 
     GL.Events:fire("GL.SOFTRES_IMPORTED");
 
     -- Materialize the data for ease of use
-    self:materializeData();
+    self:materializeData(reportStatus);
 
-    -- Display missing soft-reserves
-    local PlayersWhoDidntReserve = self:playersWithoutSoftReserves();
-    if (not GL:empty(PlayersWhoDidntReserve)) then
-        local MissingReservers = {};
-        for _, name in pairs(PlayersWhoDidntReserve) do
-            tinsert(MissingReservers, {GL:capitalize(name), GL:classHexColor(GL.Player:classByName(name))});
+    if (reportStatus) then
+        -- Display missing soft-reserves
+        local PlayersWhoDidntReserve = self:playersWithoutSoftReserves();
+        if (not GL:empty(PlayersWhoDidntReserve)) then
+            local MissingReservers = {};
+            for _, name in pairs(PlayersWhoDidntReserve) do
+                tinsert(MissingReservers, {GL:capitalize(name), GL:classHexColor(GL.Player:classByName(name))});
+            end
+
+            GL:warning("The following players did not reserve anything:");
+            GL:multiColoredMessage(MissingReservers, ", ");
         end
-
-        GL:warning("The following players did not reserve anything:");
-        GL:multiColoredMessage(MissingReservers, ", ");
     end
 
     GL.Interface.SoftRes.Importer:close();
 
-    if (self:userIsAllowedToBroadcast()) then
+    if (broadcast
+        and self:userIsAllowedToBroadcast()
+    ) then
         -- Automatically broadcast this data if it's not marked as "hidden" and the user has the required permissions
         if (not GL.DB:get('SoftRes.MetaData.hidden', true)) then
             self:broadcast();
@@ -1001,11 +1012,14 @@ end
 --- Import a Weakaura data string (legacy)
 ---
 ---@param data string
+---@param reportStatus boolean
 ---@return boolean
-function SoftRes:importCSVData(data)
+function SoftRes:importCSVData(data, reportStatus)
     GL:debug("SoftRes:import");
 
-    GL:warning("SoftRes Weakaura and CSV data are deprecated, use the Gargul export instead!");
+    if (reportStatus) then
+        GL:warning("SoftRes Weakaura and CSV data are deprecated, use the Gargul export instead!");
+    end
 
     local PlusOnes = {};
     local Columns = {};
