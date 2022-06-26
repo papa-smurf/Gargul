@@ -263,7 +263,7 @@ function RaidGroups:normalizeRaidHelperInput(input)
     local group = 1;
     local output = "";
     for line in input:gmatch("[^\n]+") do
-        if (group >= 8) then
+        if (group > 8) then
             break;
         elseif (group > 1) then
             output = output .. "\n";

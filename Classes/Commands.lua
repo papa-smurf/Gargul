@@ -72,7 +72,11 @@ GL.Commands = GL.Commands or {
             local winner, itemLink = ...;
 
             if (not winner or winner == "" or not itemLink) then
-                return GL.Interface.Award:draw();
+                if (GL:getItemIdFromLink(winner)) then
+                    itemLink = winner;
+                end
+
+                return GL.Interface.Award:draw(itemLink);
             end
 
             GL.AwardedLoot:addWinner(...);

@@ -119,6 +119,11 @@ function PackMule:isItemIDIgnored(checkItemID, callback)
             return;
         end
 
+        -- Check whether the item is whitelisted, if so return it
+        if (GL:inTable(GL.Data.Constants.TradeableItems, itemID)) then
+            return true;
+        end
+
         local bindType = Loot.bindType or LE_ITEM_BIND_NONE;
         local bindOnPickup = GL:inTable({ LE_ITEM_BIND_ON_ACQUIRE, LE_ITEM_BIND_QUEST}, bindType);
 
@@ -264,14 +269,27 @@ function PackMule:lootReady()
                         local bindType = Loot.bindType or LE_ITEM_BIND_NONE;
                         local bindOnPickup = GL:inTable({LE_ITEM_BIND_ON_ACQUIRE, LE_ITEM_BIND_QUEST}, bindType);
 
-                        if (not bindOnPickup or ( -- The item is not BoP so we can safely PackMule it
-                            itemQuality < 5 -- Legendary items are skipped
-                            and (GL.User.isInRaid -- Make sure PackMule doesn't mule BoP items when not in a raid or heroic instance
-                                or self.playerIsInHeroicInstance
-                            )
-                            and not GL:inTable(GL.Data.Constants.UntradeableItems, itemID) -- Untradable items are skipped in quality rules
-                            and not GL:inTable(self.itemClassIdsToIgnore, itemClassID) -- Recipes and Quest Items are skipped in quality rules
-                        )) then
+                        local ruleApplies = (function ()
+                            -- Check whether the item is whitelisted
+                            if (GL:inTable(GL.Data.Constants.TradeableItems, itemID)) then
+                                return true;
+                            end
+
+                            if (not bindOnPickup or ( -- The item is not BoP so we can safely PackMule it
+                                itemQuality < 5 -- Legendary items are skipped
+                                and (GL.User.isInRaid -- Make sure PackMule doesn't mule BoP items when not in a raid or heroic instance
+                                    or self.playerIsInHeroicInstance
+                                )
+                                and not GL:inTable(GL.Data.Constants.UntradeableItems, itemID) -- Untradable items are skipped in quality rules
+                                and not GL:inTable(self.itemClassIdsToIgnore, itemClassID) -- Recipes and Quest Items are skipped in quality rules
+                            )) then
+                                return true;
+                            end
+
+                            return false;
+                        end)();
+
+                        if (ruleApplies) then
                             RuleThatApplies = Rule;
                         end
                     elseif (item and (

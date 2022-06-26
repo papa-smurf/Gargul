@@ -87,6 +87,19 @@ GL.Data.Constants = {
         30314, -- Phaseshift Bulwark
     },
 
+    TradeableItems = {
+        19717, -- Primal Hakkari Armsplint
+        19718, -- Primal Hakkari Stanchion
+        19719, -- Primal Hakkari Girdle
+        19720, -- Primal Hakkari Sash
+        19721, -- Primal Hakkari Shawl
+        19722, -- Primal Hakkari Tabard
+        19723, -- Primal Hakkari Kossack
+        19724, -- Primal Hakkari Aegis
+
+        --750, -- Tough wolf meat (For testing purposes)
+    },
+
     UntradeableItems = {
         22726, -- Splinter of Atiesh
         30183, -- Nether Vortex
