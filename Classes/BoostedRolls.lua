@@ -313,7 +313,9 @@ function BoostedRolls:minBoostedRoll(points)
         return points;
     end
 
-    return math.max(1, self:maxBoostedRoll(points) - 100);
+    -- /rnd 1-100 yields 100 possible numbers
+    -- /rnd 60-160 (60 points) yields 101 possible numbers which would give an undesired disadvantage, hence -99
+    return math.max(1, self:maxBoostedRoll(points) - 99);
 end;
 
 --- Detect boosted rolls.
