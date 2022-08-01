@@ -476,9 +476,9 @@ function TradeWindow:announceTradeDetails(Details)
                 if (TradeEntries[EntriesProcessed + 1] ~= nil) then
                     GL:sendChatMessage(tradeString, channel);
 
-                    -- This is the last entry, include the "to" part
+                    -- This is the last entry, include the "from" part
                 else
-                    GL:sendChatMessage(tradeString .. " to " .. Details.partner, channel);
+                    GL:sendChatMessage(tradeString .. " from " .. Details.partner, channel);
                 end
                 tradeString = "";
             end
