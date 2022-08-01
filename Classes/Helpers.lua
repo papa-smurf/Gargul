@@ -868,8 +868,15 @@ function GL:stripRealm(str)
         return "";
     end
 
-    local Parts = self:strSplit(str, "-");
+    -- WoW knows multiple realm separators ( - @ # * ) depending on version and locale
+    local separator = str:match("[" .. REALM_SEPARATORS .. "]");
 
+    -- No realm separator was found, return the original message
+    if (not separator) then
+        return str;
+    end
+
+    local Parts = self:strSplit(str, separator);
     return Parts[1] or "";
 end
 
