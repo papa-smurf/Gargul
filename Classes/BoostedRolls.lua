@@ -314,7 +314,8 @@ function BoostedRolls:minBoostedRoll(points)
     end
 
     -- /rnd 1-100 yields 100 possible numbers
-    -- /rnd 60-160 (60 points) yields 101 possible numbers which would give an undesired disadvantage, hence -99
+    -- /rnd 60-160 (60 points) yields 101 possible numbers which would give an undesired disadvantage,
+    -- hence the -99 which effectively turns it into /rnd 61-160 instead
     return math.max(1, self:maxBoostedRoll(points) - 99);
 end;
 
