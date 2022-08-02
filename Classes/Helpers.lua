@@ -942,6 +942,10 @@ end
 function GL:copperToMoney(copper, Separators, includeEmpty, separatorBeforeUnit)
     local DefaultSeparators;
 
+    if (copper < 1) then
+        return "";
+    end
+
     if (not separatorBeforeUnit) then
         DefaultSeparators = {"G ", "S ", "C "};
     else
@@ -984,7 +988,7 @@ function GL:copperToMoney(copper, Separators, includeEmpty, separatorBeforeUnit)
         end
     end
 
-    local money;
+    local money = "";
 
     if (gold > 0) then
         if (separatorBeforeUnit) then
