@@ -96,3 +96,6 @@ Interface/Dialogs/HyperlinkDialogWidget.lua
 Interface/Dialogs/MasterLooterDialog.lua
 Interface/ReminderToAssignLootUsingGargul.lua
 Interface/ShortcutKeysLegend.lua
+
+# Test classes
+Test.lua
