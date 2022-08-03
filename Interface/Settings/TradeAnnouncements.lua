@@ -47,14 +47,9 @@ function TradeAnnouncements:draw(Parent)
 
     local Checkboxes = {
         {
-            label = "Items received",
-            description = "Announce items received in a trade",
-            setting = "TradeAnnouncements.itemsReceived",
-        },
-        {
-            label = "Items given",
-            description = "Announce items given in a trade",
-            setting = "TradeAnnouncements.itemsGiven",
+            label = "Always announce enchantments",
+            description = "Announce trades that include enchants regardless of the setting above",
+            setting = "TradeAnnouncements.alwaysAnnounceEnchantments",
         },
         {
             label = "Gold received",
@@ -66,11 +61,62 @@ function TradeAnnouncements:draw(Parent)
             description = "Announce gold given in a trade",
             setting = "TradeAnnouncements.goldGiven",
         },
+        {
+            label = "Enchantment received",
+            description = "Announce enchantment received in a trade",
+            setting = "TradeAnnouncements.enchantmentReceived",
+        },
+        {
+            label = "Enchantment given",
+            description = "Announce enchantment given in a trade",
+            setting = "TradeAnnouncements.enchantmentGiven",
+        },
+        {
+            label = "Items received",
+            description = "Announce items received in a trade",
+            setting = "TradeAnnouncements.itemsReceived",
+        },
+        {
+            label = "Items given",
+            description = "Announce items given in a trade",
+            setting = "TradeAnnouncements.itemsGiven",
+        },
     };
 
     Overview:drawCheckboxes(Checkboxes, Parent);
 
-    local HorizontalSpacer = GL.AceGUI:Create("SimpleGroup");
+    HorizontalSpacer = GL.AceGUI:Create("SimpleGroup");
+    HorizontalSpacer:SetLayout("FILL");
+    HorizontalSpacer:SetFullWidth(true);
+    HorizontalSpacer:SetHeight(10);
+    Parent:AddChild(HorizontalSpacer);
+
+    local MinimumQualityLabel = AceGUI:Create("Label");
+    MinimumQualityLabel:SetText("The minimum quality an item should have in order to be announced in chat");
+    MinimumQualityLabel:SetHeight(20);
+    MinimumQualityLabel:SetFullWidth(true);
+    Parent:AddChild(MinimumQualityLabel);
+
+    DropDownItems = {
+        [0] = "0 - Poor",
+        [1] = "1 - Common",
+        [2] = "2 - Uncommon",
+        [3] = "3 - Rare",
+        [4] = "4 - Epic",
+        [5] = "5 - Legendary",
+    };
+
+    local MinimumQuality = AceGUI:Create("Dropdown");
+    MinimumQuality:SetValue(GL.Settings:get("TradeAnnouncements.minimumQualityOfAnnouncedLoot", 0));
+    MinimumQuality:SetList(DropDownItems);
+    MinimumQuality:SetText(DropDownItems[GL.Settings:get("TradeAnnouncements.minimumQualityOfAnnouncedLoot", 0)]);
+    MinimumQuality:SetWidth(150);
+    MinimumQuality:SetCallback("OnValueChanged", function()
+        GL.Settings:set("TradeAnnouncements.minimumQualityOfAnnouncedLoot", MinimumQuality:GetValue());
+    end);
+    Parent:AddChild(MinimumQuality);
+
+    HorizontalSpacer = GL.AceGUI:Create("SimpleGroup");
     HorizontalSpacer:SetLayout("FILL");
     HorizontalSpacer:SetFullWidth(true);
     HorizontalSpacer:SetHeight(20);

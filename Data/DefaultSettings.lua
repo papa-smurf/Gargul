@@ -110,11 +110,15 @@ GL.Data.DefaultSettings = {
         showWishListInfoOnTooltips = true,
     },
     TradeAnnouncements = {
-        mode = "WHEN_MASTERLOOTER",
-        itemsReceived = true,
-        itemsGiven = true,
+        alwaysAnnounceEnchantments = true,
+        enchantmentReceived = true,
+        enchantmentGiven = true,
         goldReceived = true,
         goldGiven = true,
+        itemsReceived = true,
+        itemsGiven = true,
+        minimumQualityOfAnnouncedLoot = 0,
+        mode = "WHEN_MASTERLOOTER",
     },
     UI = {
         RollOff = {
