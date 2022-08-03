@@ -4,6 +4,7 @@ local _, GL = ...;
 ---@class TradeWindow
 GL.TradeWindow = {
     _initialized = false,
+    manuallyChangedAnnounceCheckbox = false,
     AnnouncementCheckBox = nil,
 
     AddItemsTimer = {},
@@ -37,8 +38,10 @@ function TradeWindow:_init()
         {"TradeWindowTradeAcceptUpdateListener", "TRADE_ACCEPT_UPDATE"},
         {"TradeWindowTradeMoneyChangedListener", "TRADE_MONEY_CHANGED"},
         {"TradeWindowTradePlayerItemChangedListener", "TRADE_PLAYER_ITEM_CHANGED"},
+        {"TradeWindowTradeTargetItemChangedListener", "TRADE_TARGET_ITEM_CHANGED"},
         {"TradeWindowTradeShowListener", "TRADE_SHOW"},
         {"TradeWindowTradeCloseListener", "TRADE_CLOSED"},
+        {"TradeWindowTradeRequestCancelListener", "TRADE_REQUEST_CANCEL"},
         {"TradeWindowUIInfoMessageListener", "UI_INFO_MESSAGE"},
     }, function (event, _, message)
         self:handleEvents(event, message);
@@ -145,7 +148,7 @@ function TradeWindow:handleEvents(event, message)
         end, .5);
     end
 
-    -- Trade cancelled
+    -- Trade closed
     if (event == "TRADE_CLOSED") then
         self.ItemsToAdd = {};
 
@@ -247,7 +250,9 @@ function TradeWindow:updateState()
             itemID = itemID,
         };
 
-        name, texture, quantity, quality, isUsable, enchantment  = GetTradePlayerItemInfo(TRADE_ENCHANT_SLOT);
+        --- NOTE HOW THE RETURN VALUE ORDER IS DIFFERENT HERE, THANK YOU BLIZZARD!
+        --- Note 2: isUsable is actually canLoseTransmog, but since we don't strictly need either it doesn't matter
+        name, texture, quantity, quality, enchantment, isUsable  = GetTradePlayerItemInfo(TRADE_ENCHANT_SLOT);
         itemLink = GetTradePlayerItemLink(TRADE_ENCHANT_SLOT);
         itemID = GL:getItemIdFromLink(itemLink) or nil;
 
@@ -262,6 +267,8 @@ function TradeWindow:updateState()
             itemID = itemID,
         };
     end
+
+    self:updateAnnouncementCheckBox();
 end
 
 --- Reset the trade state object
@@ -269,6 +276,8 @@ end
 ---@return void
 function TradeWindow:resetState()
     GL:debug("TradeWindow:resetState");
+
+    self.manuallyChangedAnnounceCheckbox = false;
 
     self.State = {
         MyItems = {},
@@ -336,6 +345,13 @@ function TradeWindow:shouldAnnounce()
     -- When does the user want to announce trade details?
     local mode = GL.Settings:get("TradeAnnouncements.mode", "WHEN_MASTERLOOTER");
 
+    -- The user manually set the announcement state for the current trade, no need to override it
+    if (self.manuallyChangedAnnounceCheckbox
+        and GargulAnnounceTradeDetailsText
+    ) then
+        return GargulAnnounceTradeDetailsText:GetChecked();
+    end
+
     if (mode == "ALWAYS") then
         return true;
     end
@@ -350,6 +366,11 @@ function TradeWindow:shouldAnnounce()
 
     if (mode == "WHEN_MASTERLOOTER" and GL.User.isMasterLooter) then
         return true;
+    end
+
+    if (GL.Settings:get("TradeAnnouncements.alwaysAnnounceEnchantments", true)) then
+        return not GL:empty(GL:tableGet(self.State or {}, "EnchantedByMe.enchantment"))
+            or not GL:empty(GL:tableGet(self.State or {}, "EnchantedByThem.enchantment"));
     end
 
     return false;
@@ -373,6 +394,9 @@ function TradeWindow:updateAnnouncementCheckBox()
     CheckBox:SetPoint("BOTTOMLEFT", "TradeFrame", "BOTTOMLEFT", 8, 6);
     CheckBox:SetWidth(20);
     CheckBox:SetHeight(20);
+    CheckBox:SetScript("OnClick", function ()
+        self.manuallyChangedAnnounceCheckbox = true;
+    end);
     CheckBox.tooltipText = "Announce trade details to group or in /say when not in a group";
     self.AnnouncementCheckBox = CheckBox;
 
@@ -430,78 +454,86 @@ function TradeWindow:announceTradeDetails(Details)
 
     local ItemsTradedByMe = {};
     local iTradedItems = false;
-    local iTradedGold = Details.myGold > 0;
+    local iTradedGold = GL.Settings:get("TradeAnnouncements.goldGiven", true) and Details.myGold > 0;
     local iEnchantedSomething = false;
     local goldTradedByMe = GL:copperToMoney(Details.myGold or 0);
 
     local ItemsTradedByThem = {};
-    local theyTradedGold = Details.theirGold > 0;
+    local theyTradedGold = GL.Settings:get("TradeAnnouncements.goldReceived", true) and Details.theirGold > 0;
     local theyTradedItems = false;
-    local theyEnchantedSomething = not GL:empty(Details.EnchantedByThem.enchantment);
+    local theyEnchantedSomething = false;
     local goldTradedByThem = GL:copperToMoney(Details.theirGold or 0);
 
     -- Normalize the items we traded (combine stacks etc)
-    for _, Entry in pairs(Details.MyItems or {}) do
-        local itemID = tonumber(Entry.itemID);
-        if (itemID) then
-            iTradedItems = true;
+    if (GL.Settings:get("TradeAnnouncements.itemsGiven", true)) then
+        for _, Entry in pairs(Details.MyItems or {}) do
+            local itemID = tonumber(Entry.itemID);
+            if (itemID
+                and Entry.quality >= GL.Settings:get("TradeAnnouncements.minimumQualityOfAnnouncedLoot", 0)
+            ) then
+                iTradedItems = true;
 
-            if (Entry.quantity > 1) then
-                local quantity = Entry.quantity;
-                local itemIDString = tostring(Entry.itemID); -- Should already be a string, but need to make sure
+                if (Entry.quantity > 1) then
+                    local quantity = Entry.quantity;
+                    local itemIDString = tostring(Entry.itemID); -- Should already be a string, but need to make sure
 
-                -- Check to see if we already have a quantity of the same item available (multiple stacks?)
-                if (ItemsTradedByMe[itemIDString]) then
-                    quantity = quantity + ItemsTradedByMe[itemIDString].quantity;
+                    -- Check to see if we already have a quantity of the same item available (multiple stacks?)
+                    if (ItemsTradedByMe[itemIDString]) then
+                        quantity = quantity + ItemsTradedByMe[itemIDString].quantity;
+                    end
+                    ItemsTradedByMe[itemIDString] = {
+                        itemLink = Entry.itemLink,
+                        quantity = quantity,
+                    };
+                else
+                    tinsert(ItemsTradedByMe, {
+                        itemLink = Entry.itemLink,
+                        quantity = 1,
+                    });
                 end
-                ItemsTradedByMe[itemIDString] = {
-                    itemLink = Entry.itemLink,
-                    quantity = quantity,
-                };
-            else
-                tinsert(ItemsTradedByMe, {
-                    itemLink = Entry.itemLink,
-                    quantity = 1,
-                });
             end
         end
     end
 
     -- Normalize the items we received (combine stacks etc)
-    for _, Entry in pairs(Details.TheirItems or {}) do
-        local itemID = tonumber(Entry.itemID);
-        if (itemID) then
-            theyTradedItems = true;
+    if (GL.Settings:get("TradeAnnouncements.itemsReceived", true)) then
+        for _, Entry in pairs(Details.TheirItems or {}) do
+            local itemID = tonumber(Entry.itemID);
+            if (itemID
+                and Entry.quality >= GL.Settings:get("TradeAnnouncements.minimumQualityOfAnnouncedLoot", 0)
+            ) then
+                theyTradedItems = true;
 
-            if (Entry.quantity > 1) then
-                local quantity = Entry.quantity;
-                local itemIDString = tostring(Entry.itemID); -- Should already be a string, but need to make sure
+                if (Entry.quantity > 1) then
+                    local quantity = Entry.quantity;
+                    local itemIDString = tostring(Entry.itemID); -- Should already be a string, but need to make sure
 
-                -- Check to see if we already have a quantity of the same item available (multiple stacks?)
-                if (ItemsTradedByThem[itemIDString]) then
-                    quantity = quantity + ItemsTradedByThem[itemIDString].quantity;
+                    -- Check to see if we already have a quantity of the same item available (multiple stacks?)
+                    if (ItemsTradedByThem[itemIDString]) then
+                        quantity = quantity + ItemsTradedByThem[itemIDString].quantity;
+                    end
+                    ItemsTradedByThem[itemIDString] = {
+                        itemLink = Entry.itemLink,
+                        quantity = quantity,
+                    };
+                else
+                    tinsert(ItemsTradedByThem, {
+                        itemLink = Entry.itemLink,
+                        quantity = 1,
+                    });
                 end
-                ItemsTradedByThem[itemIDString] = {
-                    itemLink = Entry.itemLink,
-                    quantity = quantity,
-                };
-            else
-                tinsert(ItemsTradedByThem, {
-                    itemLink = Entry.itemLink,
-                    quantity = 1,
-                });
             end
         end
     end
 
     -- Include enchantment details
     local EnchantedByMe = Details.EnchantedByMe;
-    if (EnchantedByMe.enchantment) then
+    if (GL.Settings:get("TradeAnnouncements.enchantmentGiven", true) and EnchantedByMe.enchantment) then
         iEnchantedSomething = true;
     end
 
     local EnchantedByThem = Details.EnchantedByThem;
-    if (EnchantedByThem.enchantment) then
+    if (GL.Settings:get("TradeAnnouncements.enchantmentReceived", true) and EnchantedByThem.enchantment) then
         theyEnchantedSomething = true;
     end
 
