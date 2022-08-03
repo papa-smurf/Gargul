@@ -113,7 +113,12 @@ end
 ]]
 function Test.TradeState:announce()
     self:_init(function ()
-        GL.TradeWindow:announceTradeDetails(self:defaultState());
+        local State = self:defaultState();
+
+        -- It's not possible to trade gold against gold so one has to be disabled
+        State.theirGold = 0;
+
+        GL.TradeWindow:announceTradeDetails(State);
     end);
 end
 
@@ -297,6 +302,22 @@ function Test.TradeState:iGaveGoldTheyTradedItems()
         State.MyItems = {};
         State.EnchantedByMe = {};
         State.EnchantedByThem = {};
+        State.theirGold = 0;
+
+        GL.TradeWindow:announceTradeDetails(State);
+    end);
+end
+
+--[[ Show what happens if you gave and received items
+/script _G.Gargul.Test.TradeState:iTradedItemstheyTradedItems()
+]]
+function Test.TradeState:iTradedItemstheyTradedItems()
+    self:_init(function ()
+        local State = self:defaultState();
+
+        State.EnchantedByMe = {};
+        State.EnchantedByThem = {};
+        State.myGold = 0;
         State.theirGold = 0;
 
         GL.TradeWindow:announceTradeDetails(State);
