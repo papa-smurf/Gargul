@@ -412,12 +412,22 @@ function GL:printTable(t, shouldReturn)
     end
 end
 
---- Clone a table
+--- Clone a table recursively (no metatable properties)
 ---
----@param original table
+---@param Original table
 ---@return table
-function GL:cloneTable(original)
-    return {unpack(original)};
+function GL:cloneTable(Original)
+    local Copy = {};
+
+    for index, value in pairs(Original) do
+        if type(value) == "table" then
+            Copy[index] = self:cloneTable(value, Copy[index])
+        else
+            Copy[index] = value
+        end
+    end
+
+    return Copy;
 end
 
 --- Clears the provided scrolling table (lib-ScrollingTable)

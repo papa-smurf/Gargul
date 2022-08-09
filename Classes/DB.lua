@@ -5,15 +5,16 @@ local _, GL = ...;
 GL.DB = {
     _initialized = false,
     AwardHistory = {},
+    BoostedRolls = {},
     Cache = {},
+    GDKP = {},
+    LoadDetails = {},
     LootPriority = {},
     MinimapButton = {},
     PlusOnes = {},
     Settings = {},
-    LoadDetails = {},
     SoftRes = {},
     TMB = {},
-    BoostedRolls = {},
 };
 
 local DB = GL.DB;
@@ -32,30 +33,233 @@ function DB:_init()
 
     -- Prepare our database tables
     GargulDB.AwardHistory = GargulDB.AwardHistory or {};
+    GargulDB.BoostedRolls = GargulDB.BoostedRolls or {};
+    GargulDB.GDKP = GargulDB.GDKP or {};
+    GargulDB.LoadDetails = GargulDB.LoadDetails or {};
     GargulDB.LootPriority = GargulDB.LootPriority or {};
     GargulDB.MinimapButton = GargulDB.MinimapButton or {};
     GargulDB.PlusOnes = GargulDB.PlusOnes or {};
     GargulDB.Settings = GargulDB.Settings or {};
-    GargulDB.LoadDetails = GargulDB.LoadDetails or {};
     GargulDB.SoftRes = GargulDB.SoftRes or {};
     GargulDB.TMB = GargulDB.TMB or {};
-    GargulDB.BoostedRolls = GargulDB.BoostedRolls or {};
 
     -- Provide a shortcut for each table
     self.AwardHistory = GargulDB.AwardHistory;
+    self.BoostedRolls = GargulDB.BoostedRolls;
+    self.GDKP = GargulDB.GDKP;
+    self.LoadDetails = GargulDB.LoadDetails;
     self.LootPriority = GargulDB.LootPriority;
     self.MinimapButton = GargulDB.MinimapButton;
     self.PlusOnes = GargulDB.PlusOnes;
     self.Settings = GargulDB.Settings;
-    self.LoadDetails = GargulDB.LoadDetails;
     self.SoftRes = GargulDB.SoftRes;
     self.TMB = GargulDB.TMB;
-    self.BoostedRolls = GargulDB.BoostedRolls;
 
     -- Fire DB:store before every logout/reload/exit
     GL.Events:register("DBPlayerLogoutListener", "PLAYER_LOGOUT", self.store);
 
     self._initialized = true;
+
+    if (true) then return; end
+
+    GL.DB.GDKP = {
+        activeSession = "checksum_based_on_createdAt_and_uuid",
+        Ledger = {
+            ["checksum_based_on_createdAt_and_uuid"] = {
+                title = "Black Temple",
+                createdAt = 1659816223,
+                CreatedBy = {
+                    class = "rogue",
+                    player = "Gargultest",
+                    guild = "Gargul",
+                    uuid = "Player-4467-02A4245A",
+                },
+                Auctions = {
+                    ["checksum_based_on_item_and_timestamp"] = {
+                        itemID = 18608,
+                        HighestBids = {
+                            {
+                                {
+                                    name = "Zhorax",
+                                    class = "druid",
+                                    bid = 5500,
+                                    createdAt = 1659816523,
+                                },
+                                {
+                                    name = "Arvada",
+                                    class = "warlock",
+                                    bid = 5000,
+                                    createdAt = 1659816511,
+                                },
+                                {
+                                    name = "Feth",
+                                    class = "warrior",
+                                    bid = 3500,
+                                    createdAt = 1659816507,
+                                }
+                            }
+                        },
+                        PreviousStates = {
+                            ["checksum"] = {
+                                createdAt = 1659817021,
+                                winner = "Zhorax",
+                                class = "druid",
+                                price = 4000,
+                                reason = "Master Looter made a mistake",
+                                CreatedBy = {
+                                    class = "druid",
+                                    player = "Garguldruid",
+                                    guild = "Gargul",
+                                    uuid = "Player-4467-02A4245A",
+                                },
+                            }
+                        },
+                    },
+                    ["checksum_based_on_item_and_timestamp_2"] = {
+                        itemID = 18608,
+                        winner = "Zhorax",
+                        class = "druid",
+                        price = 3600,
+                        HighestBids = {
+                            {
+                                {
+                                    name = "Zhorax",
+                                    bid = 4000,
+                                    createdAt = 1659816523,
+                                },
+                                {
+                                    name = "Arvada",
+                                    bid = 3900,
+                                    createdAt = 1659816511,
+                                },
+                                {
+                                    name = "Omegalul",
+                                    bid = 3500,
+                                    createdAt = 1659816507,
+                                }
+                            }
+                        },
+                        PreviousStates = {
+                            ["checksum"] = {
+                                createdAt = 1659817021,
+                                winner = "Zhorax",
+                                class = "druid",
+                                price = 4000,
+                                reason = "Arvada was driving up price with 0 intent to buy",
+                                CreatedBy = {
+                                    class = "druid",
+                                    player = "Garguldruid",
+                                    guild = "Gargul",
+                                    uuid = "Player-4467-02A4245A",
+                                },
+                            }
+                        },
+                    },
+                    ["checksum_based_on_item_and_timestamp_3"] = {
+                        itemID = 33222,
+                        winner = "Arvada",
+                        class = "warlock",
+                        price = 2500,
+                    },
+                },
+            },
+            ["checksum_based_on_createdAt_and_uuid_2"] = {
+                title = "Mount Hyjal",
+                createdAt = 1659816103,
+                CreatedBy = {
+                    class = "rogue",
+                    player = "Gargultest",
+                    guild = "Gargul",
+                    uuid = "Player-4467-02A4245A",
+                },
+                Auctions = {
+                    ["checksum_based_on_item_and_timestamp"] = {
+                        itemID = 18608,
+                        winner = "Zhorax",
+                        class = "druid",
+                        price = 1200,
+                        itemID = 18608,
+                        HighestBids = {
+                            {
+                                {
+                                    name = "Zhorax",
+                                    class = "druid",
+                                    bid = 5500,
+                                    createdAt = 1659816523,
+                                },
+                                {
+                                    name = "Arvada",
+                                    class = "warlock",
+                                    bid = 5000,
+                                    createdAt = 1659816511,
+                                },
+                                {
+                                    name = "Feth",
+                                    class = "warrior",
+                                    bid = 3500,
+                                    createdAt = 1659816507,
+                                }
+                            }
+                        }
+                    },
+                    ["checksum_based_on_item_and_timestamp_2"] = {
+                        itemID = 18608,
+                        winner = "Zhorax",
+                        class = "druid",
+                        price = 3800,
+                        HighestBids = {
+                            {
+                                {
+                                    name = "Zhorax",
+                                    class = "druid",
+                                    bid = 4000,
+                                    createdAt = 1659816523,
+                                },
+                                {
+                                    name = "Arvada",
+                                    class = "warlock",
+                                    guild = "Gargul",
+                                    bid = 3900,
+                                    createdAt = 1659816511,
+                                },
+                                {
+                                    name = "Omegalul",
+                                    bid = 3500,
+                                    createdAt = 1659816507,
+                                }
+                            }
+                        },
+                        PreviousStates = {
+                            ["checksum"] = {
+                                createdAt = 1659817021,
+                                winner = "Zhorax",
+                                guild = "Gargul",
+                                class = "druid",
+                                price = 4000,
+                                reason = "Master Looter made a mistake",
+                            }
+                        },
+                    },
+                    ["checksum_based_on_item_and_timestamp_3"] = {
+                        itemID = 33222,
+                        winner = "Arvada",
+                        class = "warlock",
+                        guild = "Gargul",
+                        price = 2700,
+                    },
+                    ["checksum_based_on_item_and_timestamp_4"] = {
+                        itemID = 33251,
+                        winner = "Feth",
+                        class = "warrior",
+                        guild = "Slow and Steady",
+                        price = 6969,
+                    },
+                },
+            },
+        },
+    };
+
+    GargulDB.GDKP = GL.DB.GDKP;
 end
 
 --- Make sure the database persists between sessions
@@ -65,14 +269,15 @@ function DB:store()
     GL:debug("DB:store");
 
     GargulDB.AwardHistory = GL.DB.AwardHistory;
+    GargulDB.BoostedRolls = GL.DB.BoostedRolls;
+    GargulDB.GDKP = GL.DB.GDKP;
+    GargulDB.LoadDetails = GL.DB.LoadDetails;
     GargulDB.LootPriority = GL.DB.LootPriority;
     GargulDB.MinimapButton = GL.DB.MinimapButton;
     GargulDB.PlusOnes = GL.DB.PlusOnes;
     GargulDB.Settings = GL.Settings.Active;
-    GargulDB.LoadDetails = GL.DB.LoadDetails;
     GargulDB.SoftRes = GL.DB.SoftRes;
     GargulDB.TMB = GL.DB.TMB;
-    GargulDB.BoostedRolls = GL.DB.BoostedRolls;
 end
 
 -- Get a value from the database, or return a default if it doesn't exist
@@ -90,14 +295,15 @@ function DB:reset()
     GL:debug("DB:reset");
 
     self.AwardHistory = {};
+    self.BoostedRolls = {};
+    self.GDKP = {};
+    self.LoadDetails = {};
     self.LootPriority = {};
     self.MinimapButton = {};
     self.PlusOnes = {};
     self.Settings = {};
-    self.LoadDetails = {};
     self.SoftRes = {};
     self.TMB = {};
-    self.BoostedRolls = {};
 
     GL:success("Tables reset");
 end

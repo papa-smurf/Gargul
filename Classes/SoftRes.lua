@@ -1415,6 +1415,8 @@ end
 ---
 ---@return boolean
 function SoftRes:userIsAllowedToBroadcast()
+    GL:debug("SoftRes:userIsAllowedToBroadcast");
+
     return GL.User.isInGroup and (GL.User.isMasterLooter or GL.User.hasAssist);
 end
 

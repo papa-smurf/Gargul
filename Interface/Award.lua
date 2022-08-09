@@ -267,14 +267,31 @@ function Award:draw(itemLink)
     GL.Interface:setItem(self, "Disenchant", DisenchantButton);
 
     --[[
-        SECOND ROW (GROUP MEMBERS)
+        SECOND ROW (player name box)
     ]]
 
     local SecondRow = AceGUI:Create("SimpleGroup");
     SecondRow:SetLayout("FILL");
     SecondRow:SetFullWidth(true);
-    SecondRow:SetHeight(170);
+    SecondRow:SetHeight(24);
     Window:AddChild(SecondRow);
+
+    Award:drawPlayersTable();
+
+    local PlayerNameBox = AceGUI:Create("EditBox");
+
+    PlayerNameBox:DisableButton(true);
+    PlayerNameBox:SetHeight(20);
+    PlayerNameBox:SetWidth(170);
+    PlayerNameBox:SetCallback("OnEnterPressed", function () self:ItemBoxChanged() end); -- Award
+
+    SecondRow:AddChild(PlayerNameBox);
+
+    local ThirdRow = AceGUI:Create("SimpleGroup");
+    ThirdRow:SetLayout("FILL");
+    ThirdRow:SetFullWidth(true);
+    ThirdRow:SetHeight(194);
+    Window:AddChild(ThirdRow);
 
     Award:drawPlayersTable();
 
@@ -282,11 +299,11 @@ function Award:draw(itemLink)
         THIRD ROW (AUTO CLOSE CHECKBOX)
     ]]
 
-    local ThirdRow = AceGUI:Create("SimpleGroup");
-    ThirdRow:SetLayout("Flow");
-    ThirdRow:SetFullWidth(true);
-    ThirdRow:SetHeight(50);
-    Window:AddChild(ThirdRow);
+    local FourthRow = AceGUI:Create("SimpleGroup");
+    FourthRow:SetLayout("Flow");
+    FourthRow:SetFullWidth(true);
+    FourthRow:SetHeight(50);
+    Window:AddChild(FourthRow);
 
     local CloseOnAward = AceGUI:Create("CheckBox");
     CloseOnAward:SetLabel("Close on award");
@@ -295,10 +312,10 @@ function Award:draw(itemLink)
         Settings:set("UI.Award.closeOnAward", widget:GetValue());
     end);
     CloseOnAward:SetWidth(150);
-    ThirdRow:AddChild(CloseOnAward);
+    FourthRow:AddChild(CloseOnAward);
 
     if (itemLink
-            and type(itemLink) == "string"
+        and type(itemLink) == "string"
     ) then
         Award:passItemLink(itemLink);
     end
@@ -318,7 +335,6 @@ function Award:close()
     Window:Hide();
 end
 
----@param Parent table
 ---@return void
 function Award:drawPlayersTable()
     GL:debug("Award:drawPlayersTable");
@@ -328,7 +344,7 @@ function Award:drawPlayersTable()
     -- Combined width of all colums should be 340
     local columns = {
         {
-            name = "Player",
+            name = "In Group",
             width = 340,
             align = "LEFT",
             color = {
@@ -344,7 +360,7 @@ function Award:drawPlayersTable()
 
     local Table = ScrollingTable:CreateST(columns, 8, 15, nil, Parent);
     Table:EnableSelection(true);
-    Table.frame:SetPoint("BOTTOM", Parent, "BOTTOM", 0, 60);
+    Table.frame:SetPoint("BOTTOM", Parent, "BOTTOM", 0, 36);
     GL.Interface:setItem(self, "Players", Table);
 
     Award:populatePlayersTable();

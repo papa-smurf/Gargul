@@ -57,11 +57,16 @@ function UI:createSettingsButton(ParentFrame, settingsSection, width, height, om
     return Cogwheel;
 end
 
-function UI:createShareButton(ParentFrame, onClick, tooltipText, disabledTooltipText)
+function UI:createShareButton(ParentFrame, onClick, tooltipText, disabledTooltipText, omitPosition)
+    omitPosition = GL:toboolean(omitPosition);
     local ShareButton = GL.UI:createFrame("Button", "ShareButton" .. GL:uuid(), ParentFrame, "UIPanelButtonTemplate");
     ShareButton:Show();
     ShareButton:SetSize(24, 24);
-    ShareButton:SetPoint("TOPRIGHT", ParentFrame, "TOPRIGHT", -20, -20);
+
+    if (not omitPosition) then
+        ShareButton:SetPoint("TOPRIGHT", ParentFrame, "TOPRIGHT", -20, -20);
+    end
+
     ShareButton:SetMotionScriptsWhileDisabled(true); -- Make sure tooltip still shows even when button is disabled
 
     local HighlightTexture = ShareButton:CreateTexture();
