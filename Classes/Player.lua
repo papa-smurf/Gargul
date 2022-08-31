@@ -50,8 +50,21 @@ function Player.fromID(GUID)
         self.Guild.name = GL.User.Guild.name;
         self.Guild.rank = GL.User.Guild.rank;
         self.Guild.index = GL.User.Guild.index;
-    else
-        self.Guild.name, self.Guild.rank, self.Guild.index = GetGuildInfo(self.id);
+    elseif (GL.User.isInGroup) then
+        for _, Member in pairs(GL.User:groupMembers()) do
+            if (Member.name == self.name) then
+                local groupType = "raid";
+                local groupIndex = Member.index;
+
+                if (not GL.User.isInRaid) then
+                    groupIndex = groupIndex - 1;
+                    groupType = "party";
+                end
+
+                self.Guild.name, self.Guild.rank, self.Guild.index = GetGuildInfo(groupType .. groupIndex);
+                break;
+            end
+        end
     end
 
     return self;

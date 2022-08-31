@@ -232,11 +232,19 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, cost)
         );
 
         -- Announce awarded item on GUILD
-        if (GL.Settings:get("AwardingLoot.announceAwardMessagesInGuildChat")) then
-            GL:sendChatMessage(
-                awardMessage,
-                "GUILD"
-            );
+        if (GL.Settings:get("AwardingLoot.announceAwardMessagesInGuildChat")
+            and GL.User.Guild.name -- Make sure the loot master is actually in a guild
+        ) then
+            local Winner = GL.Player:fromName(winner);
+
+            if (Winner.Guild.name
+                and Winner.Guild.name == GL.User.Guild.name
+            ) then
+                GL:sendChatMessage(
+                    awardMessage,
+                    "GUILD"
+                );
+            end
         end
     end
 
