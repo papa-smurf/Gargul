@@ -88,6 +88,7 @@ GL.Data.Constants = {
     },
 
     TradeableItems = {
+        19716, -- Primal Hakkari Bindings
         19717, -- Primal Hakkari Armsplint
         19718, -- Primal Hakkari Stanchion
         19719, -- Primal Hakkari Girdle
