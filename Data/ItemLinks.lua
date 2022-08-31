@@ -7,17 +7,17 @@ GL.Data = GL.Data or {};
 GL.Data.ItemLinks = {
     -- Head of Onyxia (Horde)
     ["18422"] = {
-        18423, -- Head of Onyxia (Alliance)
         18403, -- Dragonslayer's Signet
         18404, -- Onyxia Tooth Pendant
         18406, -- Onyxia Blood Talisman
+        18423, -- Head of Onyxia (Alliance)
     },
     -- Head of Onyxia (Alliance)
     ["18423"] = {
-        18422, -- Head of Onyxia (Horde)
         18403, -- Dragonslayer's Signet
         18404, -- Onyxia Tooth Pendant
         18406, -- Onyxia Blood Talisman
+        18422, -- Head of Onyxia (Horde)
     },
     -- Head of Nefarian (Horde)
     ["19002"] = {
@@ -382,19 +382,19 @@ GL.Data.ItemLinks = {
     },
     -- Magtheridon's Head (Alliance)
     ["32385"] = {
-        32386, -- Magtheridon's Head (Horde)
         28790, -- Naaru Lightwarden's Band
         28791, -- Ring of the Recalcitrant
         28792, -- A'dal's Signet of Defense
         28793, -- Band of Crimson Fury
+        32386, -- Magtheridon's Head (Horde)
     },
     -- Magtheridon's Head (Horde)
     ["32386"] = {
-        32385, -- Magtheridon's Head (Alliance)
         28790, -- Naaru Lightwarden's Band
         28791, -- Ring of the Recalcitrant
         28792, -- A'dal's Signet of Defense
         28793, -- Band of Crimson Fury
+        32385, -- Magtheridon's Head (Alliance)
     },
     -- Helm of the Fallen Hero
     ["29759"] = {
@@ -1153,18 +1153,9 @@ GL.Data.ItemLinks = {
         34542, -- Skyshatter Cord
         34543, -- Skyshatter Belt
         34545, -- Skyshatter Girdle
-        34547, -- Onslaught Waistguard
         34546, -- Onslaught Belt
+        34547, -- Onslaught Waistguard
         34549, -- Gronnstalker's Belt
-    },
-    -- Boots of the Forgotten Protector
-    ["34857"] = {
-        34565, -- Skyshatter Boots
-        34566, -- Skyshatter Treads
-        34567, -- Skyshatter Greaves
-        34570, -- Gronnstalker's Boots
-        34568, -- Onslaught Boots
-        34569, -- Onslaught Treads
     },
     -- Belt of the Forgotten Vanquisher
     ["34855"] = {
@@ -1182,6 +1173,15 @@ GL.Data.ItemLinks = {
         34562, -- Boots of Absolution
         34563, -- Treads of Absolution
         34564, -- Boots of the Malefic
+    },
+    -- Boots of the Forgotten Protector
+    ["34857"] = {
+        34565, -- Skyshatter Boots
+        34566, -- Skyshatter Treads
+        34567, -- Skyshatter Greaves
+        34568, -- Onslaught Boots
+        34569, -- Onslaught Treads
+        34570, -- Gronnstalker's Boots
     },
     -- Boots of the Forgotten Vanquisher
     ["34858"] = {
@@ -1206,5 +1206,1275 @@ GL.Data.ItemLinks = {
     -- Schematic: Primal-Attuned Goggles
     ["35192"] = {
         35184, -- Primal-Attuned Goggles
+    },
+    -- Helm of the Lost Vanquisher
+    ["40618"] = {
+        39491, -- Heroes' Frostfire Circlet
+        39531, -- Heroes' Dreamwalker Headpiece
+        39545, -- Heroes' Dreamwalker Cover
+        39553, -- Heroes' Dreamwalker Headguard
+        39561, -- Heroes' Bonescythe Helmet
+        39619, -- Heroes' Scourgeborne Helmet
+        39625, -- Heroes' Scourgeborne Faceguard
+    },
+    -- Chestguard of the Lost Vanquisher
+    ["40612"] = {
+        39492, -- Heroes' Frostfire Robe
+        39538, -- Heroes' Dreamwalker Robe
+        39547, -- Heroes' Dreamwalker Vestments
+        39554, -- Heroes' Dreamwalker Raiments
+        39558, -- Heroes' Bonescythe Breastplate
+        39617, -- Heroes' Scourgeborne Battleplate
+        39623, -- Heroes' Scourgeborne Chestguard
+    },
+    -- Leggings of the Lost Vanquisher
+    ["40621"] = {
+        39493, -- Heroes' Frostfire Leggings
+        39539, -- Heroes' Dreamwalker Leggings
+        39546, -- Heroes' Dreamwalker Trousers
+        39555, -- Heroes' Dreamwalker Legguards
+        39564, -- Heroes' Bonescythe Legplates
+        39620, -- Heroes' Scourgeborne Legplates
+        39626, -- Heroes' Scourgeborne Legguards
+    },
+    -- Spaulders of the Lost Vanquisher
+    ["40624"] = {
+        39494, -- Heroes' Frostfire Shoulderpads
+        39542, -- Heroes' Dreamwalker Spaulders
+        39548, -- Heroes' Dreamwalker Mantle
+        39556, -- Heroes' Dreamwalker Shoulderpads
+        39565, -- Heroes' Bonescythe Pauldrons
+        39621, -- Heroes' Scourgeborne Shoulderplates
+        39627, -- Heroes' Scourgeborne Pauldrons
+    },
+    -- Gloves of the Lost Vanquisher
+    ["40615"] = {
+        39495, -- Heroes' Frostfire Gloves
+        39543, -- Heroes' Dreamwalker Handguards
+        39544, -- Heroes' Dreamwalker Gloves
+        39557, -- Heroes' Dreamwalker Handgrips
+        39560, -- Heroes' Bonescythe Gauntlets
+        39618, -- Heroes' Scourgeborne Gauntlets
+        39624, -- Heroes' Scourgeborne Handguards
+    },
+    -- Helm of the Lost Conqueror
+    ["40616"] = {
+        39496, -- Heroes' Plagueheart Circlet
+        39514, -- Heroes' Crown of Faith
+        39521, -- Heroes' Circlet of Faith
+        39628, -- Heroes' Redemption Headpiece
+        39635, -- Heroes' Redemption Helm
+        39640, -- Heroes' Redemption Faceguard
+    },
+    -- Chestguard of the Lost Conqueror
+    ["40610"] = {
+        39497, -- Heroes' Plagueheart Robe
+        39515, -- Heroes' Robe of Faith
+        39523, -- Heroes' Raiments of Faith
+        39629, -- Heroes' Redemption Tunic
+        39633, -- Heroes' Redemption Chestpiece
+        39638, -- Heroes' Redemption Breastplate
+    },
+    -- Leggings of the Lost Conqueror
+    ["40619"] = {
+        39498, -- Heroes' Plagueheart Leggings
+        39517, -- Heroes' Leggings of Faith
+        39528, -- Heroes' Pants of Faith
+        39630, -- Heroes' Redemption Greaves
+        39636, -- Heroes' Redemption Legplates
+        39641, -- Heroes' Redemption Legguards
+    },
+    -- Spaulders of the Lost Conqueror
+    ["40622"] = {
+        39499, -- Heroes' Plagueheart Shoulderpads
+        39518, -- Heroes' Shoulderpads of Faith
+        39529, -- Heroes' Mantle of Faith
+        39631, -- Heroes' Redemption Spaulders
+        39637, -- Heroes' Redemption Shoulderplates
+        39642, -- Heroes' Redemption Shoulderguards
+    },
+    -- Gloves of the Lost Conqueror
+    ["40613"] = {
+        39500, -- Heroes' Plagueheart Gloves
+        39519, -- Heroes' Gloves of Faith
+        39530, -- Heroes' Handwraps of Faith
+        39632, -- Heroes' Redemption Gloves
+        39634, -- Heroes' Redemption Gauntlets
+        39639, -- Heroes' Redemption Handguards
+    },
+    -- Helm of the Lost Protector
+    ["40617"] = {
+        39578, -- Heroes' Cryptstalker Headpiece
+        39583, -- Heroes' Earthshatter Headpiece
+        39594, -- Heroes' Earthshatter Helm
+        39602, -- Heroes' Earthshatter Faceguard
+        39605, -- Heroes' Dreadnaught Helmet
+        39610, -- Heroes' Dreadnaught Greathelm
+    },
+    -- Chestguard of the Lost Protector
+    ["40611"] = {
+        39579, -- Heroes' Cryptstalker Tunic
+        39588, -- Heroes' Earthshatter Tunic
+        39592, -- Heroes' Earthshatter Hauberk
+        39597, -- Heroes' Earthshatter Chestguard
+        39606, -- Heroes' Dreadnaught Battleplate
+        39611, -- Heroes' Dreadnaught Breastplate
+    },
+    -- Leggings of the Lost Protector
+    ["40620"] = {
+        39580, -- Heroes' Cryptstalker Legguards
+        39589, -- Heroes' Earthshatter Legguards
+        39595, -- Heroes' Earthshatter Kilt
+        39603, -- Heroes' Earthshatter War-Kilt
+        39607, -- Heroes' Dreadnaught Legplates
+        39612, -- Heroes' Dreadnaught Legguards
+    },
+    -- Spaulders of the Lost Protector
+    ["40623"] = {
+        39581, -- Heroes' Cryptstalker Spaulders
+        39590, -- Heroes' Earthshatter Spaulders
+        39596, -- Heroes' Earthshatter Shoulderpads
+        39604, -- Heroes' Earthshatter Shoulderguards
+        39608, -- Heroes' Dreadnaught Shoulderplates
+        39613, -- Heroes' Dreadnaught Pauldrons
+    },
+    -- Gloves of the Lost Protector
+    ["40614"] = {
+        39582, -- Heroes' Cryptstalker Handguards
+        39591, -- Heroes' Earthshatter Handguards
+        39593, -- Heroes' Earthshatter Gloves
+        39601, -- Heroes' Earthshatter Grips
+        39609, -- Heroes' Dreadnaught Gauntlets
+        39622, -- Heroes' Dreadnaught Handguards
+    },
+    -- Gauntlets of the Lost Vanquisher
+    ["40630"] = {
+        40415, -- Valorous Frostfire Gloves
+        40460, -- Valorous Dreamwalker Handguards
+        40466, -- Valorous Dreamwalker Gloves
+        40472, -- Valorous Dreamwalker Handgrips
+        40496, -- Valorous Bonescythe Gauntlets
+        40552, -- Valorous Scourgeborne Gauntlets
+        40563, -- Valorous Scourgeborne Handguards
+    },
+    -- Crown of the Lost Vanquisher
+    ["40633"] = {
+        40416, -- Valorous Frostfire Circlet
+        40461, -- Valorous Dreamwalker Headpiece
+        40467, -- Valorous Dreamwalker Cover
+        40473, -- Valorous Dreamwalker Headguard
+        40499, -- Valorous Bonescythe Helmet
+        40554, -- Valorous Scourgeborne Helmet
+        40565, -- Valorous Scourgeborne Faceguard
+    },
+    -- Legplates of the Lost Vanquisher
+    ["40636"] = {
+        40417, -- Valorous Frostfire Leggings
+        40462, -- Valorous Dreamwalker Leggings
+        40468, -- Valorous Dreamwalker Trousers
+        40493, -- Valorous Dreamwalker Legguards
+        40500, -- Valorous Bonescythe Legplates
+        40556, -- Valorous Scourgeborne Legplates
+        40567, -- Valorous Scourgeborne Legguards
+    },
+    -- Breastplate of the Lost Vanquisher
+    ["40627"] = {
+        40418, -- Valorous Frostfire Robe
+        40463, -- Valorous Dreamwalker Robe
+        40469, -- Valorous Dreamwalker Vestments
+        40471, -- Valorous Dreamwalker Raiments
+        40495, -- Valorous Bonescythe Breastplate
+        40550, -- Valorous Scourgeborne Battleplate
+        40559, -- Valorous Scourgeborne Chestguard
+    },
+    -- Mantle of the Lost Vanquisher
+    ["40639"] = {
+        40419, -- Valorous Frostfire Shoulderpads
+        40465, -- Valorous Dreamwalker Spaulders
+        40470, -- Valorous Dreamwalker Mantle
+        40494, -- Valorous Dreamwalker Shoulderpads
+        40502, -- Valorous Bonescythe Pauldrons
+        40557, -- Valorous Scourgeborne Shoulderplates
+        40568, -- Valorous Scourgeborne Pauldrons
+    },
+    -- Gauntlets of the Lost Conqueror
+    ["40628"] = {
+        40420, -- Valorous Plagueheart Gloves
+        40445, -- Valorous Gloves of Faith
+        40454, -- Valorous Handwraps of Faith
+        40570, -- Valorous Redemption Gloves
+        40575, -- Valorous Redemption Gauntlets
+        40580, -- Valorous Redemption Handguards
+    },
+    -- Crown of the Lost Conqueror
+    ["40631"] = {
+        40421, -- Valorous Plagueheart Circlet
+        40447, -- Valorous Crown of Faith
+        40456, -- Valorous Circlet of Faith
+        40571, -- Valorous Redemption Headpiece
+        40576, -- Valorous Redemption Helm
+        40581, -- Valorous Redemption Faceguard
+    },
+    -- Legplates of the Lost Conqueror
+    ["40634"] = {
+        40422, -- Valorous Plagueheart Leggings
+        40448, -- Valorous Leggings of Faith
+        40457, -- Valorous Pants of Faith
+        40572, -- Valorous Redemption Greaves
+        40577, -- Valorous Redemption Legplates
+        40583, -- Valorous Redemption Legguards
+    },
+    -- Breastplate of the Lost Conqueror
+    ["40625"] = {
+        40423, -- Valorous Plagueheart Robe
+        40449, -- Valorous Robe of Faith
+        40458, -- Valorous Raiments of Faith
+        40569, -- Valorous Redemption Tunic
+        40574, -- Valorous Redemption Chestpiece
+        40579, -- Valorous Redemption Breastplate
+    },
+    -- Mantle of the Lost Conqueror
+    ["40637"] = {
+        40424, -- Valorous Plagueheart Shoulderpads
+        40450, -- Valorous Shoulderpads of Faith
+        40459, -- Valorous Mantle of Faith
+        40573, -- Valorous Redemption Spaulders
+        40578, -- Valorous Redemption Shoulderplates
+        40584, -- Valorous Redemption Shoulderguards
+    },
+    -- Breastplate of the Lost Protector
+    ["40626"] = {
+        40503, -- Valorous Cryptstalker Tunic
+        40508, -- Valorous Earthshatter Tunic
+        40514, -- Valorous Earthshatter Hauberk
+        40523, -- Valorous Earthshatter Chestguard
+        40525, -- Valorous Dreadnaught Battleplate
+        40544, -- Valorous Dreadnaught Breastplate
+    },
+    -- Gauntlets of the Lost Protector
+    ["40629"] = {
+        40504, -- Valorous Cryptstalker Handguards
+        40509, -- Valorous Earthshatter Handguards
+        40515, -- Valorous Earthshatter Gloves
+        40520, -- Valorous Earthshatter Grips
+        40527, -- Valorous Dreadnaught Gauntlets
+        40545, -- Valorous Dreadnaught Handguards
+    },
+    -- Crown of the Lost Protector
+    ["40632"] = {
+        40505, -- Valorous Cryptstalker Headpiece
+        40510, -- Valorous Earthshatter Headpiece
+        40516, -- Valorous Earthshatter Helm
+        40521, -- Valorous Earthshatter Faceguard
+        40528, -- Valorous Dreadnaught Helmet
+        40546, -- Valorous Dreadnaught Greathelm
+    },
+    -- Legplates of the Lost Protector
+    ["40635"] = {
+        40506, -- Valorous Cryptstalker Legguards
+        40512, -- Valorous Earthshatter Legguards
+        40517, -- Valorous Earthshatter Kilt
+        40522, -- Valorous Earthshatter War-Kilt
+        40529, -- Valorous Dreadnaught Legplates
+        40547, -- Valorous Dreadnaught Legguards
+    },
+    -- Mantle of the Lost Protector
+    ["40638"] = {
+        40507, -- Valorous Cryptstalker Spaulders
+        40513, -- Valorous Earthshatter Spaulders
+        40518, -- Valorous Earthshatter Shoulderpads
+        40524, -- Valorous Earthshatter Shoulderguards
+        40530, -- Valorous Dreadnaught Shoulderplates
+        40548, -- Valorous Dreadnaught Pauldrons
+    },
+    -- Fragment of Val'anyr
+    ["45038"] = {
+        45039, -- Shattered Fragments of Val'anyr
+        45896, -- Unbound Fragments of Val'anyr
+        45897, -- Reforged Hammer of Ancient Kings
+        46017, -- Val'anyr, Hammer of Ancient Kings
+    },
+    -- Chestguard of the Wayward Vanquisher
+    ["45637"] = {
+        45335, -- Valorous Darkruned Chestguard
+        45340, -- Valorous Darkruned Battleplate
+        45348, -- Valorous Nightsong Robe
+        45354, -- Valorous Nightsong Vestments
+        45358, -- Valorous Nightsong Raiments
+        45368, -- Valorous Kirin Tor Tunic
+        45396, -- Valorous Terrorblade Breastplate
+    },
+    -- Helm of the Wayward Vanquisher
+    ["45649"] = {
+        45336, -- Valorous Darkruned Faceguard
+        45342, -- Valorous Darkruned Helmet
+        45346, -- Valorous Nightsong Headpiece
+        45356, -- Valorous Nightsong Headguard
+        45365, -- Valorous Kirin Tor Hood
+        45398, -- Valorous Terrorblade Helmet
+        46313, -- Valorous Nightsong Cover
+    },
+    -- Gloves of the Wayward Vanquisher
+    ["45646"] = {
+        45337, -- Valorous Darkruned Handguards
+        45341, -- Valorous Darkruned Gauntlets
+        45345, -- Valorous Nightsong Handguards
+        45351, -- Valorous Nightsong Gloves
+        45355, -- Valorous Nightsong Handgrips
+        45397, -- Valorous Terrorblade Gauntlets
+        46131, -- Valorous Kirin Tor Gauntlets
+    },
+    -- Leggings of the Wayward Vanquisher
+    ["45652"] = {
+        45338, -- Valorous Darkruned Legguards
+        45343, -- Valorous Darkruned Legplates
+        45347, -- Valorous Nightsong Leggings
+        45353, -- Valorous Nightsong Trousers
+        45357, -- Valorous Nightsong Legguards
+        45367, -- Valorous Kirin Tor Leggings
+        45399, -- Valorous Terrorblade Legplates
+    },
+    -- Spaulders of the Wayward Vanquisher
+    ["45661"] = {
+        45339, -- Valorous Darkruned Pauldrons
+        45344, -- Valorous Darkruned Shoulderplates
+        45349, -- Valorous Nightsong Spaulders
+        45352, -- Valorous Nightsong Mantle
+        45359, -- Valorous Nightsong Shoulderpads
+        45369, -- Valorous Kirin Tor Shoulderpads
+        45400, -- Valorous Terrorblade Pauldrons
+    },
+    -- Gloves of the Wayward Protector
+    ["45645"] = {
+        45360, -- Valorous Scourgestalker Handguards
+        45401, -- Valorous Worldbreaker Handguards
+        45406, -- Valorous Worldbreaker Gloves
+        45414, -- Valorous Worldbreaker Grips
+        45426, -- Valorous Siegebreaker Handguards
+        45430, -- Valorous Siegebreaker Gauntlets
+    },
+    -- Helm of the Wayward Protector
+    ["45648"] = {
+        45361, -- Valorous Scourgestalker Headpiece
+        45402, -- Valorous Worldbreaker Headpiece
+        45408, -- Valorous Worldbreaker Helm
+        45412, -- Valorous Worldbreaker Faceguard
+        45425, -- Valorous Siegebreaker Greathelm
+        45431, -- Valorous Siegebreaker Helmet
+    },
+    -- Leggings of the Wayward Protector
+    ["45651"] = {
+        45362, -- Valorous Scourgestalker Legguards
+        45403, -- Valorous Worldbreaker Legguards
+        45409, -- Valorous Worldbreaker Kilt
+        45416, -- Valorous Worldbreaker War-Kilt
+        45427, -- Valorous Siegebreaker Legguards
+        45432, -- Valorous Siegebreaker Legplates
+    },
+    -- Spaulders of the Wayward Protector
+    ["45660"] = {
+        45363, -- Valorous Scourgestalker Spaulders
+        45404, -- Valorous Worldbreaker Spaulders
+        45410, -- Valorous Worldbreaker Shoulderpads
+        45415, -- Valorous Worldbreaker Shoulderguards
+        45428, -- Valorous Siegebreaker Pauldrons
+        45433, -- Valorous Siegebreaker Shoulderplates
+    },
+    -- Chestguard of the Wayward Protector
+    ["45636"] = {
+        45364, -- Valorous Scourgestalker Tunic
+        45405, -- Valorous Worldbreaker Tunic
+        45411, -- Valorous Worldbreaker Hauberk
+        45413, -- Valorous Worldbreaker Chestguard
+        45424, -- Valorous Siegebreaker Breastplate
+        45429, -- Valorous Siegebreaker Battleplate
+    },
+    -- Gloves of the Wayward Conqueror
+    ["45644"] = {
+        45370, -- Valorous Aegis Gloves
+        45376, -- Valorous Aegis Gauntlets
+        45383, -- Valorous Aegis Handguards
+        45387, -- Valorous Gloves of Sanctification
+        45392, -- Valorous Handwraps of Sanctification
+        45419, -- Valorous Deathbringer Gloves
+    },
+    -- Leggings of the Wayward Conqueror
+    ["45650"] = {
+        45371, -- Valorous Aegis Greaves
+        45379, -- Valorous Aegis Legplates
+        45384, -- Valorous Aegis Legguards
+        45388, -- Valorous Leggings of Sanctification
+        45394, -- Valorous Pants of Sanctification
+        45420, -- Valorous Deathbringer Leggings
+    },
+    -- Helm of the Wayward Conqueror
+    ["45647"] = {
+        45372, -- Valorous Aegis Headpiece
+        45377, -- Valorous Aegis Helm
+        45382, -- Valorous Aegis Faceguard
+        45386, -- Valorous Cowl of Sanctification
+        45391, -- Valorous Circlet of Sanctification
+        45417, -- Valorous Deathbringer Hood
+    },
+    -- Spaulders of the Wayward Conqueror
+    ["45659"] = {
+        45373, -- Valorous Aegis Spaulders
+        45380, -- Valorous Aegis Shoulderplates
+        45385, -- Valorous Aegis Shoulderguards
+        45390, -- Valorous Shoulderpads of Sanctification
+        45393, -- Valorous Mantle of Sanctification
+        45422, -- Valorous Deathbringer Shoulderpads
+    },
+    -- Chestguard of the Wayward Conqueror
+    ["45635"] = {
+        45374, -- Valorous Aegis Tunic
+        45375, -- Valorous Aegis Battleplate
+        45381, -- Valorous Aegis Breastplate
+        45389, -- Valorous Robe of Sanctification
+        45395, -- Valorous Raiments of Sanctification
+        45421, -- Valorous Deathbringer Robe
+    },
+    -- Runed Orb
+    ["45087"] = {
+        45550, -- Belt of the Titans
+        45551, -- Indestructible Plate Girdle
+        45552, -- Plate Girdle of Righteousness
+        45553, -- Belt of Dragons
+        45554, -- Blue Belt of Chaos
+        45555, -- Death-warmed Belt
+        45556, -- Belt of Arctic Life
+        45557, -- Sash of Ancient Power
+        45558, -- Cord of the White Dawn
+        45559, -- Battlelord's Plate Boots
+        45560, -- Spiked Deathdealers
+        45561, -- Treads of Destiny
+        45562, -- Boots of Living Scale
+        45563, -- Lightning Grounded Boots
+        45564, -- Footpads of Silence
+        45565, -- Boots of Wintry Endurance
+        45566, -- Spellslinger's Slippers
+        45567, -- Savior's Slippers
+    },
+    -- Breastplate of the Wayward Vanquisher
+    ["45634"] = {
+        46111, -- Conqueror's Darkruned Battleplate
+        46118, -- Conqueror's Darkruned Chestguard
+        46123, -- Conqueror's Terrorblade Breastplate
+        46130, -- Conqueror's Kirin Tor Tunic
+        46159, -- Conqueror's Nightsong Raiments
+        46186, -- Conqueror's Nightsong Robe
+        46194, -- Conqueror's Nightsong Vestments
+    },
+    -- Gauntlets of the Wayward Vanquisher
+    ["45643"] = {
+        46113, -- Conqueror's Darkruned Gauntlets
+        46119, -- Conqueror's Darkruned Handguards
+        46124, -- Conqueror's Terrorblade Gauntlets
+        46132, -- Conqueror's Kirin Tor Gauntlets
+        46158, -- Conqueror's Nightsong Handgrips
+        46183, -- Conqueror's Nightsong Handguards
+        46189, -- Conqueror's Nightsong Gloves
+    },
+    -- Crown of the Wayward Vanquisher
+    ["45640"] = {
+        46115, -- Conqueror's Darkruned Helmet
+        46120, -- Conqueror's Darkruned Faceguard
+        46125, -- Conqueror's Terrorblade Helmet
+        46129, -- Conqueror's Kirin Tor Hood
+        46161, -- Conqueror's Nightsong Headguard
+        46184, -- Conqueror's Nightsong Headpiece
+        46191, -- Conqueror's Nightsong Cover
+    },
+    -- Legplates of the Wayward Vanquisher
+    ["45655"] = {
+        46116, -- Conqueror's Darkruned Legplates
+        46121, -- Conqueror's Darkruned Legguards
+        46126, -- Conqueror's Terrorblade Legplates
+        46133, -- Conqueror's Kirin Tor Leggings
+        46160, -- Conqueror's Nightsong Legguards
+        46185, -- Conqueror's Nightsong Leggings
+        46192, -- Conqueror's Nightsong Trousers
+    },
+    -- Mantle of the Wayward Vanquisher
+    ["45658"] = {
+        46117, -- Conqueror's Darkruned Shoulderplates
+        46122, -- Conqueror's Darkruned Pauldrons
+        46127, -- Conqueror's Terrorblade Pauldrons
+        46134, -- Conqueror's Kirin Tor Shoulderpads
+        46157, -- Conqueror's Nightsong Shoulderpads
+        46187, -- Conqueror's Nightsong Spaulders
+        46196, -- Conqueror's Nightsong Mantle
+    },
+    -- Gauntlets of the Wayward Conqueror
+    ["45641"] = {
+        46135, -- Conqueror's Deathbringer Gloves
+        46155, -- Conqueror's Aegis Gauntlets
+        46163, -- Conqueror's Handwraps of Sanctification
+        46174, -- Conqueror's Aegis Handguards
+        46179, -- Conqueror's Aegis Gloves
+        46188, -- Conqueror's Gloves of Sanctification
+    },
+    -- Mantle of the Wayward Conqueror
+    ["45656"] = {
+        46136, -- Conqueror's Deathbringer Shoulderpads
+        46152, -- Conqueror's Aegis Shoulderplates
+        46165, -- Conqueror's Mantle of Sanctification
+        46177, -- Conqueror's Aegis Shoulderguards
+        46182, -- Conqueror's Aegis Spaulders
+        46190, -- Conqueror's Shoulderpads of Sanctification
+    },
+    -- Breastplate of the Wayward Conqueror
+    ["45632"] = {
+        46137, -- Conqueror's Deathbringer Robe
+        46154, -- Conqueror's Aegis Battleplate
+        46168, -- Conqueror's Raiments of Sanctification
+        46173, -- Conqueror's Aegis Breastplate
+        46178, -- Conqueror's Aegis Tunic
+        46193, -- Conqueror's Robe of Sanctification
+    },
+    -- Legplates of the Wayward Conqueror
+    ["45653"] = {
+        46139, -- Conqueror's Deathbringer Leggings
+        46153, -- Conqueror's Aegis Legplates
+        46170, -- Conqueror's Pants of Sanctification
+        46176, -- Conqueror's Aegis Legguards
+        46181, -- Conqueror's Aegis Greaves
+        46195, -- Conqueror's Leggings of Sanctification
+    },
+    -- Crown of the Wayward Conqueror
+    ["45638"] = {
+        46140, -- Conqueror's Deathbringer Hood
+        46156, -- Conqueror's Aegis Helm
+        46172, -- Conqueror's Circlet of Sanctification
+        46175, -- Conqueror's Aegis Faceguard
+        46180, -- Conqueror's Aegis Headpiece
+        46197, -- Conqueror's Cowl of Sanctification
+    },
+    -- Breastplate of the Wayward Protector
+    ["45633"] = {
+        46141, -- Conqueror's Scourgestalker Tunic
+        46146, -- Conqueror's Siegebreaker Battleplate
+        46162, -- Conqueror's Siegebreaker Breastplate
+        46198, -- Conqueror's Worldbreaker Tunic
+        46205, -- Conqueror's Worldbreaker Chestguard
+        46206, -- Conqueror's Worldbreaker Hauberk
+    },
+    -- Gauntlets of the Wayward Protector
+    ["45642"] = {
+        46142, -- Conqueror's Scourgestalker Handguards
+        46148, -- Conqueror's Siegebreaker Gauntlets
+        46164, -- Conqueror's Siegebreaker Handguards
+        46199, -- Conqueror's Worldbreaker Handguards
+        46200, -- Conqueror's Worldbreaker Grips
+        46207, -- Conqueror's Worldbreaker Gloves
+    },
+    -- Crown of the Wayward Protector
+    ["45639"] = {
+        46143, -- Conqueror's Scourgestalker Headpiece
+        46151, -- Conqueror's Siegebreaker Helmet
+        46166, -- Conqueror's Siegebreaker Greathelm
+        46201, -- Conqueror's Worldbreaker Headpiece
+        46209, -- Conqueror's Worldbreaker Helm
+        46212, -- Conqueror's Worldbreaker Faceguard
+    },
+    -- Legplates of the Wayward Protector
+    ["45654"] = {
+        46144, -- Conqueror's Scourgestalker Legguards
+        46150, -- Conqueror's Siegebreaker Legplates
+        46169, -- Conqueror's Siegebreaker Legguards
+        46202, -- Conqueror's Worldbreaker Legguards
+        46208, -- Conqueror's Worldbreaker War-Kilt
+        46210, -- Conqueror's Worldbreaker Kilt
+    },
+    -- Mantle of the Wayward Protector
+    ["45657"] = {
+        46145, -- Conqueror's Scourgestalker Spaulders
+        46149, -- Conqueror's Siegebreaker Shoulderplates
+        46167, -- Conqueror's Siegebreaker Pauldrons
+        46203, -- Conqueror's Worldbreaker Shoulderguards
+        46204, -- Conqueror's Worldbreaker Spaulders
+        46211, -- Conqueror's Worldbreaker Shoulderpads
+    },
+    -- Crusader Orb
+    ["47556"] = {
+        47570, -- Saronite Swordbreakers
+        47571, -- Saronite Swordbreakers
+        47572, -- Titanium Spikeguards
+        47573, -- Titanium Spikeguards
+        47574, -- Sunforged Bracers
+        47575, -- Sunforged Bracers
+        47576, -- Crusader's Dragonscale Bracers
+        47577, -- Crusader's Dragonscale Bracers
+        47579, -- Black Chitin Bracers
+        47580, -- Black Chitin Bracers
+        47581, -- Bracers of Swift Death
+        47582, -- Bracers of Swift Death
+        47583, -- Moonshadow Armguards
+        47584, -- Moonshadow Armguards
+        47585, -- Bejeweled Wizard's Bracers
+        47586, -- Bejeweled Wizard's Bracers
+        47587, -- Royal Moonshroud Bracers
+        47588, -- Royal Moonshroud Bracers
+        47589, -- Titanium Razorplate
+        47590, -- Titanium Razorplate
+        47591, -- Breastplate of the White Knight
+        47592, -- Breastplate of the White Knight
+        47593, -- Sunforged Breastplate
+        47594, -- Sunforged Breastplate
+        47595, -- Crusader's Dragonscale Breastplate
+        47596, -- Crusader's Dragonscale Breastplate
+        47597, -- Ensorcelled Nerubian Breastplate
+        47598, -- Ensorcelled Nerubian Breastplate
+        47599, -- Knightbane Carapace
+        47600, -- Knightbane Carapace
+        47601, -- Lunar Eclipse Robes
+        47602, -- Lunar Eclipse Robes
+        47603, -- Merlin's Robe
+        47604, -- Merlin's Robe
+        47605, -- Royal Moonshroud Robe
+        47606, -- Royal Moonshroud Robe
+    },
+    -- Trophy of the Crusade
+    ["47242"] = {
+        47753, -- Khadgar's Gauntlets of Triumph
+        47754, -- Khadgar's Hood of Triumph
+        47755, -- Khadgar's Leggings of Triumph
+        47756, -- Khadgar's Robe of Triumph
+        47757, -- Khadgar's Shoulderpads of Triumph
+        47768, -- Sunstrider's Shoulderpads of Triumph
+        47769, -- Sunstrider's Robe of Triumph
+        47770, -- Sunstrider's Leggings of Triumph
+        47771, -- Sunstrider's Hood of Triumph
+        47772, -- Sunstrider's Gauntlets of Triumph
+        47778, -- Kel'Thuzad's Hood of Triumph
+        47779, -- Kel'Thuzad's Robe of Triumph
+        47780, -- Kel'Thuzad's Leggings of Triumph
+        47781, -- Kel'Thuzad's Shoulderpads of Triumph
+        47782, -- Kel'Thuzad's Gloves of Triumph
+        47803, -- Gul'dan's Gloves of Triumph
+        47804, -- Gul'dan's Hood of Triumph
+        47805, -- Gul'dan's Leggings of Triumph
+        47806, -- Gul'dan's Robe of Triumph
+        47807, -- Gul'dan's Shoulderpads of Triumph
+        47983, -- Velen's Gloves of Triumph
+        47984, -- Velen's Cowl of Triumph
+        47985, -- Velen's Leggings of Triumph
+        47986, -- Velen's Robe of Triumph
+        47987, -- Velen's Shoulderpads of Triumph
+        48062, -- Zabra's Shoulderpads of Triumph
+        48063, -- Zabra's Robe of Triumph
+        48064, -- Zabra's Leggings of Triumph
+        48065, -- Zabra's Cowl of Triumph
+        48066, -- Zabra's Gloves of Triumph
+        48077, -- Velen's Handwraps of Triumph
+        48078, -- Velen's Circlet of Triumph
+        48079, -- Velen's Pants of Triumph
+        48080, -- Velen's Raiments of Triumph
+        48081, -- Velen's Mantle of Triumph
+        48092, -- Zabra's Mantle of Triumph
+        48093, -- Zabra's Raiments of Triumph
+        48094, -- Zabra's Pants of Triumph
+        48095, -- Zabra's Circlet of Triumph
+        48096, -- Zabra's Handwraps of Triumph
+        48133, -- Malfurion's Handguards of Triumph
+        48134, -- Malfurion's Headpiece of Triumph
+        48135, -- Malfurion's Leggings of Triumph
+        48136, -- Malfurion's Robe of Triumph
+        48137, -- Malfurion's Spaulders of Triumph
+        48148, -- Runetotem's Spaulders of Triumph
+        48149, -- Runetotem's Robe of Triumph
+        48150, -- Runetotem's Leggings of Triumph
+        48151, -- Runetotem's Headpiece of Triumph
+        48152, -- Runetotem's Handguards of Triumph
+        48163, -- Malfurion's Gloves of Triumph
+        48164, -- Malfurion's Cover of Triumph
+        48165, -- Malfurion's Trousers of Triumph
+        48166, -- Malfurion's Vestments of Triumph
+        48167, -- Malfurion's Mantle of Triumph
+        48178, -- Runetotem's Mantle of Triumph
+        48179, -- Runetotem's Vestments of Triumph
+        48180, -- Runetotem's Trousers of Triumph
+        48181, -- Runetotem's Cover of Triumph
+        48182, -- Runetotem's Gloves of Triumph
+        48193, -- Runetotem's Handgrips of Triumph
+        48194, -- Runetotem's Headguard of Triumph
+        48195, -- Runetotem's Legguards of Triumph
+        48196, -- Runetotem's Raiments of Triumph
+        48197, -- Runetotem's Shoulderpads of Triumph
+        48208, -- Malfurion's Shoulderpads of Triumph
+        48209, -- Malfurion's Raiments of Triumph
+        48210, -- Malfurion's Legguards of Triumph
+        48211, -- Malfurion's Headguard of Triumph
+        48212, -- Malfurion's Handgrips of Triumph
+        48223, -- VanCleef's Breastplate of Triumph
+        48224, -- VanCleef's Gauntlets of Triumph
+        48225, -- VanCleef's Helmet of Triumph
+        48226, -- VanCleef's Legplates of Triumph
+        48227, -- VanCleef's Pauldrons of Triumph
+        48238, -- Garona's Pauldrons of Triumph
+        48239, -- Garona's Legplates of Triumph
+        48240, -- Garona's Helmet of Triumph
+        48241, -- Garona's Gauntlets of Triumph
+        48242, -- Garona's Breastplate of Triumph
+        48255, -- Windrunner's Tunic of Triumph
+        48256, -- Windrunner's Handguards of Triumph
+        48257, -- Windrunner's Headpiece of Triumph
+        48258, -- Windrunner's Legguards of Triumph
+        48259, -- Windrunner's Spaulders of Triumph
+        48270, -- Windrunner's Spaulders of Triumph
+        48271, -- Windrunner's Legguards of Triumph
+        48272, -- Windrunner's Headpiece of Triumph
+        48273, -- Windrunner's Handguards of Triumph
+        48274, -- Windrunner's Tunic of Triumph
+        48285, -- Nobundo's Tunic of Triumph
+        48286, -- Nobundo's Handguards of Triumph
+        48287, -- Nobundo's Headpiece of Triumph
+        48288, -- Nobundo's Legguards of Triumph
+        48289, -- Nobundo's Spaulders of Triumph
+        48300, -- Thrall's Tunic of Triumph
+        48301, -- Thrall's Handguards of Triumph
+        48302, -- Thrall's Headpiece of Triumph
+        48303, -- Thrall's Legguards of Triumph
+        48304, -- Thrall's Spaulders of Triumph
+        48316, -- Nobundo's Hauberk of Triumph
+        48317, -- Nobundo's Gloves of Triumph
+        48318, -- Nobundo's Helm of Triumph
+        48319, -- Nobundo's Kilt of Triumph
+        48320, -- Nobundo's Shoulderpads of Triumph
+        48331, -- Thrall's Shoulderpads of Triumph
+        48332, -- Thrall's Kilt of Triumph
+        48333, -- Thrall's Helm of Triumph
+        48334, -- Thrall's Gloves of Triumph
+        48335, -- Thrall's Hauberk of Triumph
+        48346, -- Nobundo's Chestguard of Triumph
+        48347, -- Nobundo's Grips of Triumph
+        48348, -- Nobundo's Faceguard of Triumph
+        48349, -- Nobundo's War-Kilt of Triumph
+        48350, -- Nobundo's Shoulderguards of Triumph
+        48361, -- Thrall's Shoulderguards of Triumph
+        48362, -- Thrall's War-Kilt of Triumph
+        48363, -- Thrall's Faceguard of Triumph
+        48364, -- Thrall's Grips of Triumph
+        48365, -- Thrall's Chestguard of Triumph
+        48376, -- Wrynn's Battleplate of Triumph
+        48377, -- Wrynn's Gauntlets of Triumph
+        48378, -- Wrynn's Helmet of Triumph
+        48379, -- Wrynn's Legplates of Triumph
+        48380, -- Wrynn's Shoulderplates of Triumph
+        48391, -- Hellscream's Battleplate of Triumph
+        48392, -- Hellscream's Gauntlets of Triumph
+        48393, -- Hellscream's Helmet of Triumph
+        48394, -- Hellscream's Legplates of Triumph
+        48395, -- Hellscream's Shoulderplates of Triumph
+        48430, -- Wrynn's Greathelm of Triumph
+        48446, -- Wrynn's Legguards of Triumph
+        48450, -- Wrynn's Breastplate of Triumph
+        48452, -- Wrynn's Handguards of Triumph
+        48454, -- Wrynn's Pauldrons of Triumph
+        48461, -- Hellscream's Breastplate of Triumph
+        48462, -- Hellscream's Handguards of Triumph
+        48463, -- Hellscream's Greathelm of Triumph
+        48464, -- Hellscream's Legguards of Triumph
+        48465, -- Hellscream's Pauldrons of Triumph
+        48481, -- Thassarian's Battleplate of Triumph
+        48482, -- Thassarian's Gauntlets of Triumph
+        48483, -- Thassarian's Helmet of Triumph
+        48484, -- Thassarian's Legplates of Triumph
+        48485, -- Thassarian's Shoulderplates of Triumph
+        48496, -- Koltira's Shoulderplates of Triumph
+        48497, -- Koltira's Legplates of Triumph
+        48498, -- Koltira's Helmet of Triumph
+        48499, -- Koltira's Gauntlets of Triumph
+        48500, -- Koltira's Battleplate of Triumph
+        48538, -- Thassarian's Chestguard of Triumph
+        48539, -- Thassarian's Handguards of Triumph
+        48540, -- Thassarian's Faceguard of Triumph
+        48541, -- Thassarian's Legguards of Triumph
+        48542, -- Thassarian's Pauldrons of Triumph
+        48553, -- Koltira's Pauldrons of Triumph
+        48554, -- Koltira's Legguards of Triumph
+        48555, -- Koltira's Faceguard of Triumph
+        48556, -- Koltira's Handguards of Triumph
+        48557, -- Koltira's Chestguard of Triumph
+        48575, -- Turalyon's Tunic of Triumph
+        48576, -- Turalyon's Gloves of Triumph
+        48577, -- Turalyon's Headpiece of Triumph
+        48578, -- Turalyon's Greaves of Triumph
+        48579, -- Turalyon's Spaulders of Triumph
+        48590, -- Liadrin's Spaulders of Triumph
+        48591, -- Liadrin's Greaves of Triumph
+        48592, -- Liadrin's Headpiece of Triumph
+        48593, -- Liadrin's Gloves of Triumph
+        48594, -- Liadrin's Tunic of Triumph
+        48607, -- Turalyon's Battleplate of Triumph
+        48608, -- Turalyon's Gauntlets of Triumph
+        48609, -- Turalyon's Helm of Triumph
+        48610, -- Turalyon's Legplates of Triumph
+        48611, -- Turalyon's Shoulderplates of Triumph
+        48622, -- Liadrin's Shoulderplates of Triumph
+        48623, -- Liadrin's Legplates of Triumph
+        48624, -- Liadrin's Helm of Triumph
+        48625, -- Liadrin's Gauntlets of Triumph
+        48626, -- Liadrin's Battleplate of Triumph
+        48637, -- Turalyon's Shoulderguards of Triumph
+        48638, -- Turalyon's Legguards of Triumph
+        48639, -- Turalyon's Faceguard of Triumph
+        48640, -- Turalyon's Handguards of Triumph
+        48641, -- Turalyon's Breastplate of Triumph
+        48657, -- Liadrin's Breastplate of Triumph
+        48658, -- Liadrin's Handguards of Triumph
+        48659, -- Liadrin's Faceguard of Triumph
+        48660, -- Liadrin's Legguards of Triumph
+        48661, -- Liadrin's Shoulderguards of Triumph
+    },
+    -- Regalia of the Grand Vanquisher
+    ["47559"] = {
+        47758, -- Khadgar's Shoulderpads of Triumph
+        47759, -- Khadgar's Robe of Triumph
+        47760, -- Khadgar's Leggings of Triumph
+        47761, -- Khadgar's Hood of Triumph
+        47762, -- Khadgar's Gauntlets of Triumph
+        47763, -- Sunstrider's Gauntlets of Triumph
+        47764, -- Sunstrider's Hood of Triumph
+        47765, -- Sunstrider's Leggings of Triumph
+        47766, -- Sunstrider's Robe of Triumph
+        47767, -- Sunstrider's Shoulderpads of Triumph
+        48138, -- Malfurion's Spaulders of Triumph
+        48139, -- Malfurion's Robe of Triumph
+        48140, -- Malfurion's Leggings of Triumph
+        48141, -- Malfurion's Headpiece of Triumph
+        48142, -- Malfurion's Handguards of Triumph
+        48143, -- Runetotem's Handguards of Triumph
+        48144, -- Runetotem's Headpiece of Triumph
+        48145, -- Runetotem's Leggings of Triumph
+        48146, -- Runetotem's Robe of Triumph
+        48147, -- Runetotem's Spaulders of Triumph
+        48168, -- Malfurion's Mantle of Triumph
+        48169, -- Malfurion's Vestments of Triumph
+        48170, -- Malfurion's Trousers of Triumph
+        48171, -- Malfurion's Cover of Triumph
+        48172, -- Malfurion's Gloves of Triumph
+        48173, -- Runetotem's Gloves of Triumph
+        48174, -- Runetotem's Cover of Triumph
+        48175, -- Runetotem's Trousers of Triumph
+        48176, -- Runetotem's Vestments of Triumph
+        48177, -- Runetotem's Mantle of Triumph
+        48198, -- Runetotem's Shoulderpads of Triumph
+        48199, -- Runetotem's Raiments of Triumph
+        48200, -- Runetotem's Legguards of Triumph
+        48201, -- Runetotem's Headguard of Triumph
+        48202, -- Runetotem's Handgrips of Triumph
+        48203, -- Malfurion's Handgrips of Triumph
+        48204, -- Malfurion's Headguard of Triumph
+        48205, -- Malfurion's Legguards of Triumph
+        48206, -- Malfurion's Raiments of Triumph
+        48207, -- Malfurion's Shoulderpads of Triumph
+        48228, -- VanCleef's Pauldrons of Triumph
+        48229, -- VanCleef's Legplates of Triumph
+        48230, -- VanCleef's Helmet of Triumph
+        48231, -- VanCleef's Gauntlets of Triumph
+        48232, -- VanCleef's Breastplate of Triumph
+        48233, -- Garona's Breastplate of Triumph
+        48234, -- Garona's Gauntlets of Triumph
+        48235, -- Garona's Helmet of Triumph
+        48236, -- Garona's Legplates of Triumph
+        48237, -- Garona's Pauldrons of Triumph
+        48486, -- Thassarian's Shoulderplates of Triumph
+        48487, -- Thassarian's Legplates of Triumph
+        48488, -- Thassarian's Helmet of Triumph
+        48489, -- Thassarian's Gauntlets of Triumph
+        48490, -- Thassarian's Battleplate of Triumph
+        48491, -- Koltira's Battleplate of Triumph
+        48492, -- Koltira's Gauntlets of Triumph
+        48493, -- Koltira's Helmet of Triumph
+        48494, -- Koltira's Legplates of Triumph
+        48495, -- Koltira's Shoulderplates of Triumph
+        48543, -- Thassarian's Pauldrons of Triumph
+        48544, -- Thassarian's Legguards of Triumph
+        48545, -- Thassarian's Faceguard of Triumph
+        48546, -- Thassarian's Handguards of Triumph
+        48547, -- Thassarian's Chestguard of Triumph
+        48548, -- Koltira's Chestguard of Triumph
+        48549, -- Koltira's Handguards of Triumph
+        48550, -- Koltira's Faceguard of Triumph
+        48551, -- Koltira's Legguards of Triumph
+        48552, -- Koltira's Pauldrons of Triumph
+    },
+    -- Regalia of the Grand Conqueror
+    ["47557"] = {
+        47788, -- Kel'Thuzad's Gloves of Triumph
+        47789, -- Kel'Thuzad's Hood of Triumph
+        47790, -- Kel'Thuzad's Leggings of Triumph
+        47791, -- Kel'Thuzad's Robe of Triumph
+        47792, -- Kel'Thuzad's Shoulderpads of Triumph
+        47793, -- Gul'dan's Shoulderpads of Triumph
+        47794, -- Gul'dan's Robe of Triumph
+        47795, -- Gul'dan's Leggings of Triumph
+        47796, -- Gul'dan's Hood of Triumph
+        47797, -- Gul'dan's Gloves of Triumph
+        48029, -- Velen's Shoulderpads of Triumph
+        48031, -- Velen's Robe of Triumph
+        48033, -- Velen's Leggings of Triumph
+        48035, -- Velen's Cowl of Triumph
+        48037, -- Velen's Gloves of Triumph
+        48057, -- Zabra's Gloves of Triumph
+        48058, -- Zabra's Cowl of Triumph
+        48059, -- Zabra's Leggings of Triumph
+        48060, -- Zabra's Robe of Triumph
+        48061, -- Zabra's Shoulderpads of Triumph
+        48082, -- Velen's Mantle of Triumph
+        48083, -- Velen's Raiments of Triumph
+        48084, -- Velen's Pants of Triumph
+        48085, -- Velen's Circlet of Triumph
+        48086, -- Velen's Handwraps of Triumph
+        48087, -- Zabra's Handwraps of Triumph
+        48088, -- Zabra's Circlet of Triumph
+        48089, -- Zabra's Pants of Triumph
+        48090, -- Zabra's Raiments of Triumph
+        48091, -- Zabra's Mantle of Triumph
+        48580, -- Turalyon's Spaulders of Triumph
+        48581, -- Turalyon's Greaves of Triumph
+        48582, -- Turalyon's Headpiece of Triumph
+        48583, -- Turalyon's Gloves of Triumph
+        48584, -- Turalyon's Tunic of Triumph
+        48585, -- Liadrin's Spaulders of Triumph
+        48586, -- Liadrin's Greaves of Triumph
+        48587, -- Liadrin's Headpiece of Triumph
+        48588, -- Liadrin's Gloves of Triumph
+        48589, -- Liadrin's Tunic of Triumph
+        48612, -- Turalyon's Shoulderplates of Triumph
+        48613, -- Turalyon's Legplates of Triumph
+        48614, -- Turalyon's Helm of Triumph
+        48615, -- Turalyon's Gauntlets of Triumph
+        48616, -- Turalyon's Battleplate of Triumph
+        48617, -- Liadrin's Battleplate of Triumph
+        48618, -- Liadrin's Gauntlets of Triumph
+        48619, -- Liadrin's Helm of Triumph
+        48620, -- Liadrin's Legplates of Triumph
+        48621, -- Liadrin's Shoulderplates of Triumph
+        48642, -- Turalyon's Breastplate of Triumph
+        48643, -- Turalyon's Handguards of Triumph
+        48644, -- Turalyon's Faceguard of Triumph
+        48645, -- Turalyon's Legguards of Triumph
+        48646, -- Turalyon's Shoulderguards of Triumph
+        48647, -- Liadrin's Shoulderguards of Triumph
+        48648, -- Liadrin's Legguards of Triumph
+        48649, -- Liadrin's Faceguard of Triumph
+        48650, -- Liadrin's Handguards of Triumph
+        48651, -- Liadrin's Breastplate of Triumph
+    },
+    -- Regalia of the Grand Protector
+    ["47558"] = {
+        48260, -- Windrunner's Spaulders of Triumph
+        48261, -- Windrunner's Legguards of Triumph
+        48262, -- Windrunner's Headpiece of Triumph
+        48263, -- Windrunner's Handguards of Triumph
+        48264, -- Windrunner's Tunic of Triumph
+        48265, -- Windrunner's Tunic of Triumph
+        48266, -- Windrunner's Handguards of Triumph
+        48267, -- Windrunner's Headpiece of Triumph
+        48268, -- Windrunner's Legguards of Triumph
+        48269, -- Windrunner's Spaulders of Triumph
+        48290, -- Nobundo's Spaulders of Triumph
+        48291, -- Nobundo's Legguards of Triumph
+        48292, -- Nobundo's Headpiece of Triumph
+        48293, -- Nobundo's Handguards of Triumph
+        48294, -- Nobundo's Tunic of Triumph
+        48305, -- Thrall's Tunic of Triumph
+        48306, -- Thrall's Handguards of Triumph
+        48307, -- Thrall's Headpiece of Triumph
+        48308, -- Thrall's Legguards of Triumph
+        48309, -- Thrall's Spaulders of Triumph
+        48321, -- Nobundo's Shoulderpads of Triumph
+        48322, -- Nobundo's Kilt of Triumph
+        48323, -- Nobundo's Helm of Triumph
+        48324, -- Nobundo's Gloves of Triumph
+        48325, -- Nobundo's Hauberk of Triumph
+        48326, -- Thrall's Hauberk of Triumph
+        48327, -- Thrall's Gloves of Triumph
+        48328, -- Thrall's Helm of Triumph
+        48329, -- Thrall's Kilt of Triumph
+        48330, -- Thrall's Shoulderpads of Triumph
+        48351, -- Nobundo's Shoulderguards of Triumph
+        48352, -- Nobundo's War-Kilt of Triumph
+        48353, -- Nobundo's Faceguard of Triumph
+        48354, -- Nobundo's Grips of Triumph
+        48355, -- Nobundo's Chestguard of Triumph
+        48356, -- Thrall's Chestguard of Triumph
+        48357, -- Thrall's Grips of Triumph
+        48358, -- Thrall's Faceguard of Triumph
+        48359, -- Thrall's War-Kilt of Triumph
+        48360, -- Thrall's Shoulderguards of Triumph
+        48381, -- Wrynn's Shoulderplates of Triumph
+        48382, -- Wrynn's Legplates of Triumph
+        48383, -- Wrynn's Helmet of Triumph
+        48384, -- Wrynn's Gauntlets of Triumph
+        48385, -- Wrynn's Battleplate of Triumph
+        48396, -- Hellscream's Battleplate of Triumph
+        48397, -- Hellscream's Gauntlets of Triumph
+        48398, -- Hellscream's Helmet of Triumph
+        48399, -- Hellscream's Legplates of Triumph
+        48400, -- Hellscream's Shoulderplates of Triumph
+        48433, -- Wrynn's Greathelm of Triumph
+        48447, -- Wrynn's Legguards of Triumph
+        48451, -- Wrynn's Breastplate of Triumph
+        48453, -- Wrynn's Handguards of Triumph
+        48455, -- Wrynn's Pauldrons of Triumph
+        48466, -- Hellscream's Breastplate of Triumph
+        48467, -- Hellscream's Handguards of Triumph
+        48468, -- Hellscream's Greathelm of Triumph
+        48469, -- Hellscream's Legguards of Triumph
+        48470, -- Hellscream's Pauldrons of Triumph
+    },
+    -- Shadowfrost Shard
+    ["50274"] = {
+        49623, -- Shadowmourne
+    },
+    -- Primordial Saronite
+    ["49908"] = {
+        49890, -- Deathfrost Boots
+        49891, -- Leggings of Woven Death
+        49892, -- Lightweave Leggings
+        49893, -- Sandals of Consecration
+        49894, -- Blessed Cenarion Boots
+        49895, -- Footpads of Impending Death
+        49896, -- Earthsoul Boots
+        49897, -- Rock-Steady Treads
+        49898, -- Legwraps of Unleashed Nature
+        49899, -- Bladeborn Leggings
+        49900, -- Lightning-Infused Leggings
+        49901, -- Draconic Bonesplinter Legguards
+        49902, -- Puresteel Legplates
+        49903, -- Legplates of Painful Death
+        49904, -- Pillars of Might
+        49905, -- Protectors of Life
+        49906, -- Hellfrozen Bonegrinders
+        49907, -- Boots of Kingly Upheaval
+        49953, -- Pattern: Leggings of Woven Death
+        49954, -- Pattern: Deathfrost Boots
+        49955, -- Pattern: Lightweave Leggings
+        49956, -- Pattern: Sandals of Consecration
+        49957, -- Pattern: Legwraps of Unleashed Nature
+        49958, -- Pattern: Blessed Cenarion Boots
+        49959, -- Pattern: Bladeborn Leggings
+        49961, -- Pattern: Footpads of Impending Death
+        49962, -- Pattern: Lightning-Infused Leggings
+        49963, -- Pattern: Earthsoul Boots
+        49965, -- Pattern: Draconic Bonesplinter Legguards
+        49966, -- Pattern: Rock-Steady Treads
+        49969, -- Plans: Puresteel Legplates
+        49970, -- Plans: Protectors of Life
+        49971, -- Plans: Legplates of Painful Death
+        49972, -- Plans: Hellfrozen Bonegrinders
+        49973, -- Plans: Pillars of Might
+        49974, -- Plans: Boots of Kingly Upheaval
+    },
+    -- Vanquisher's Mark of Sanctification
+    ["52025"] = {
+        51125, -- Sanctified Scourgelord Shoulderplates
+        51126, -- Sanctified Scourgelord Legplates
+        51127, -- Sanctified Scourgelord Helmet
+        51128, -- Sanctified Scourgelord Gauntlets
+        51129, -- Sanctified Scourgelord Battleplate
+        51130, -- Sanctified Scourgelord Pauldrons
+        51131, -- Sanctified Scourgelord Legguards
+        51132, -- Sanctified Scourgelord Handguards
+        51133, -- Sanctified Scourgelord Faceguard
+        51134, -- Sanctified Scourgelord Chestguard
+        51135, -- Sanctified Lasherweave Pauldrons
+        51136, -- Sanctified Lasherweave Legplates
+        51137, -- Sanctified Lasherweave Helmet
+        51138, -- Sanctified Lasherweave Gauntlets
+        51139, -- Sanctified Lasherweave Robes
+        51140, -- Sanctified Lasherweave Shoulderpads
+        51141, -- Sanctified Lasherweave Raiment
+        51142, -- Sanctified Lasherweave Legguards
+        51143, -- Sanctified Lasherweave Headguard
+        51144, -- Sanctified Lasherweave Handgrips
+        51145, -- Sanctified Lasherweave Vestment
+        51146, -- Sanctified Lasherweave Trousers
+        51147, -- Sanctified Lasherweave Mantle
+        51148, -- Sanctified Lasherweave Gloves
+        51149, -- Sanctified Lasherweave Cover
+        51155, -- Sanctified Bloodmage Shoulderpads
+        51156, -- Sanctified Bloodmage Robe
+        51157, -- Sanctified Bloodmage Leggings
+        51158, -- Sanctified Bloodmage Hood
+        51159, -- Sanctified Bloodmage Gloves
+        51185, -- Sanctified Shadowblade Pauldrons
+        51186, -- Sanctified Shadowblade Legplates
+        51187, -- Sanctified Shadowblade Helmet
+        51188, -- Sanctified Shadowblade Gauntlets
+        51189, -- Sanctified Shadowblade Breastplate
+    },
+    -- Protector's Mark of Sanctification
+    ["52026"] = {
+        51150, -- Sanctified Ahn'Kahar Blood Hunter's Tunic
+        51151, -- Sanctified Ahn'Kahar Blood Hunter's Spaulders
+        51152, -- Sanctified Ahn'Kahar Blood Hunter's Legguards
+        51153, -- Sanctified Ahn'Kahar Blood Hunter's Headpiece
+        51154, -- Sanctified Ahn'Kahar Blood Hunter's Handguards
+        51190, -- Sanctified Frost Witch's Tunic
+        51191, -- Sanctified Frost Witch's Handguards
+        51192, -- Sanctified Frost Witch's Headpiece
+        51193, -- Sanctified Frost Witch's Legguards
+        51194, -- Sanctified Frost Witch's Spaulders
+        51195, -- Sanctified Frost Witch's Chestguard
+        51196, -- Sanctified Frost Witch's Grips
+        51197, -- Sanctified Frost Witch's Faceguard
+        51198, -- Sanctified Frost Witch's War-Kilt
+        51199, -- Sanctified Frost Witch's Shoulderguards
+        51200, -- Sanctified Frost Witch's Hauberk
+        51201, -- Sanctified Frost Witch's Gloves
+        51202, -- Sanctified Frost Witch's Helm
+        51203, -- Sanctified Frost Witch's Kilt
+        51204, -- Sanctified Frost Witch's Shoulderpads
+        51210, -- Sanctified Ymirjar Lord's Shoulderplates
+        51211, -- Sanctified Ymirjar Lord's Legplates
+        51212, -- Sanctified Ymirjar Lord's Helmet
+        51213, -- Sanctified Ymirjar Lord's Gauntlets
+        51214, -- Sanctified Ymirjar Lord's Battleplate
+        51215, -- Sanctified Ymirjar Lord's Pauldrons
+        51216, -- Sanctified Ymirjar Lord's Legguards
+        51217, -- Sanctified Ymirjar Lord's Handguards
+        51218, -- Sanctified Ymirjar Lord's Greathelm
+        51219, -- Sanctified Ymirjar Lord's Breastplate
+    },
+    -- Conqueror's Mark of Sanctification
+    ["52027"] = {
+        51160, -- Sanctified Lightsworn Shoulderplates
+        51161, -- Sanctified Lightsworn Legplates
+        51162, -- Sanctified Lightsworn Helmet
+        51163, -- Sanctified Lightsworn Gauntlets
+        51164, -- Sanctified Lightsworn Battleplate
+        51165, -- Sanctified Lightsworn Tunic
+        51166, -- Sanctified Lightsworn Spaulders
+        51167, -- Sanctified Lightsworn Headpiece
+        51168, -- Sanctified Lightsworn Greaves
+        51169, -- Sanctified Lightsworn Gloves
+        51170, -- Sanctified Lightsworn Shoulderguards
+        51171, -- Sanctified Lightsworn Legguards
+        51172, -- Sanctified Lightsworn Handguards
+        51173, -- Sanctified Lightsworn Faceguard
+        51174, -- Sanctified Lightsworn Chestguard
+        51175, -- Sanctified Crimson Acolyte Shoulderpads
+        51176, -- Sanctified Crimson Acolyte Robe
+        51177, -- Sanctified Crimson Acolyte Leggings
+        51178, -- Sanctified Crimson Acolyte Hood
+        51179, -- Sanctified Crimson Acolyte Gloves
+        51180, -- Sanctified Crimson Acolyte Raiments
+        51181, -- Sanctified Crimson Acolyte Pants
+        51182, -- Sanctified Crimson Acolyte Mantle
+        51183, -- Sanctified Crimson Acolyte Handwraps
+        51184, -- Sanctified Crimson Acolyte Cowl
+        51205, -- Sanctified Dark Coven Shoulderpads
+        51206, -- Sanctified Dark Coven Robe
+        51207, -- Sanctified Dark Coven Leggings
+        51208, -- Sanctified Dark Coven Hood
+        51209, -- Sanctified Dark Coven Gloves
+    },
+    -- Protector's Mark of Sanctification
+    ["52029"] = {
+        51220, -- Sanctified Ymirjar Lord's Breastplate
+        51221, -- Sanctified Ymirjar Lord's Greathelm
+        51222, -- Sanctified Ymirjar Lord's Handguards
+        51223, -- Sanctified Ymirjar Lord's Legguards
+        51224, -- Sanctified Ymirjar Lord's Pauldrons
+        51225, -- Sanctified Ymirjar Lord's Battleplate
+        51226, -- Sanctified Ymirjar Lord's Gauntlets
+        51227, -- Sanctified Ymirjar Lord's Helmet
+        51228, -- Sanctified Ymirjar Lord's Legplates
+        51229, -- Sanctified Ymirjar Lord's Shoulderplates
+        51235, -- Sanctified Frost Witch's Shoulderpads
+        51236, -- Sanctified Frost Witch's Kilt
+        51237, -- Sanctified Frost Witch's Helm
+        51238, -- Sanctified Frost Witch's Gloves
+        51239, -- Sanctified Frost Witch's Hauberk
+        51240, -- Sanctified Frost Witch's Shoulderguards
+        51241, -- Sanctified Frost Witch's War-Kilt
+        51242, -- Sanctified Frost Witch's Faceguard
+        51243, -- Sanctified Frost Witch's Grips
+        51244, -- Sanctified Frost Witch's Chestguard
+        51245, -- Sanctified Frost Witch's Spaulders
+        51246, -- Sanctified Frost Witch's Legguards
+        51247, -- Sanctified Frost Witch's Headpiece
+        51248, -- Sanctified Frost Witch's Handguards
+        51249, -- Sanctified Frost Witch's Tunic
+        51285, -- Sanctified Ahn'Kahar Blood Hunter's Handguards
+        51286, -- Sanctified Ahn'Kahar Blood Hunter's Headpiece
+        51287, -- Sanctified Ahn'Kahar Blood Hunter's Legguards
+        51288, -- Sanctified Ahn'Kahar Blood Hunter's Spaulders
+        51289, -- Sanctified Ahn'Kahar Blood Hunter's Tunic
+    },
+    -- Conqueror's Mark of Sanctification
+    ["52030"] = {
+        51230, -- Sanctified Dark Coven Gloves
+        51231, -- Sanctified Dark Coven Hood
+        51232, -- Sanctified Dark Coven Leggings
+        51233, -- Sanctified Dark Coven Robe
+        51234, -- Sanctified Dark Coven Shoulderpads
+        51255, -- Sanctified Crimson Acolyte Cowl
+        51256, -- Sanctified Crimson Acolyte Handwraps
+        51257, -- Sanctified Crimson Acolyte Mantle
+        51258, -- Sanctified Crimson Acolyte Pants
+        51259, -- Sanctified Crimson Acolyte Raiments
+        51260, -- Sanctified Crimson Acolyte Gloves
+        51261, -- Sanctified Crimson Acolyte Hood
+        51262, -- Sanctified Crimson Acolyte Leggings
+        51263, -- Sanctified Crimson Acolyte Robe
+        51264, -- Sanctified Crimson Acolyte Shoulderpads
+        51265, -- Sanctified Lightsworn Chestguard
+        51266, -- Sanctified Lightsworn Faceguard
+        51267, -- Sanctified Lightsworn Handguards
+        51268, -- Sanctified Lightsworn Legguards
+        51269, -- Sanctified Lightsworn Shoulderguards
+        51270, -- Sanctified Lightsworn Gloves
+        51271, -- Sanctified Lightsworn Greaves
+        51272, -- Sanctified Lightsworn Headpiece
+        51273, -- Sanctified Lightsworn Spaulders
+        51274, -- Sanctified Lightsworn Tunic
+        51275, -- Sanctified Lightsworn Battleplate
+        51276, -- Sanctified Lightsworn Gauntlets
+        51277, -- Sanctified Lightsworn Helmet
+        51278, -- Sanctified Lightsworn Legplates
+        51279, -- Sanctified Lightsworn Shoulderplates
+    },
+    -- Vanquisher's Mark of Sanctification
+    ["52028"] = {
+        51250, -- Sanctified Shadowblade Breastplate
+        51251, -- Sanctified Shadowblade Gauntlets
+        51252, -- Sanctified Shadowblade Helmet
+        51253, -- Sanctified Shadowblade Legplates
+        51254, -- Sanctified Shadowblade Pauldrons
+        51280, -- Sanctified Bloodmage Gloves
+        51281, -- Sanctified Bloodmage Hood
+        51282, -- Sanctified Bloodmage Leggings
+        51283, -- Sanctified Bloodmage Robe
+        51284, -- Sanctified Bloodmage Shoulderpads
+        51290, -- Sanctified Lasherweave Cover
+        51291, -- Sanctified Lasherweave Gloves
+        51292, -- Sanctified Lasherweave Mantle
+        51293, -- Sanctified Lasherweave Trousers
+        51294, -- Sanctified Lasherweave Vestment
+        51295, -- Sanctified Lasherweave Handgrips
+        51296, -- Sanctified Lasherweave Headguard
+        51297, -- Sanctified Lasherweave Legguards
+        51298, -- Sanctified Lasherweave Raiment
+        51299, -- Sanctified Lasherweave Shoulderpads
+        51300, -- Sanctified Lasherweave Robes
+        51301, -- Sanctified Lasherweave Gauntlets
+        51302, -- Sanctified Lasherweave Helmet
+        51303, -- Sanctified Lasherweave Legplates
+        51304, -- Sanctified Lasherweave Pauldrons
+        51305, -- Sanctified Scourgelord Chestguard
+        51306, -- Sanctified Scourgelord Faceguard
+        51307, -- Sanctified Scourgelord Handguards
+        51308, -- Sanctified Scourgelord Legguards
+        51309, -- Sanctified Scourgelord Pauldrons
+        51310, -- Sanctified Scourgelord Battleplate
+        51311, -- Sanctified Scourgelord Gauntlets
+        51312, -- Sanctified Scourgelord Helmet
+        51313, -- Sanctified Scourgelord Legplates
+        51314, -- Sanctified Scourgelord Shoulderplates
     },
 };
