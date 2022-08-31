@@ -1487,6 +1487,13 @@ GL.Data.ItemLinks = {
         40530, -- Valorous Dreadnaught Shoulderplates
         40548, -- Valorous Dreadnaught Pauldrons
     },
+    -- Heart of Magic
+    ["44650"] = {
+        44657, -- Torque of the Red Dragonflight
+        44658, -- Chain of the Ancient Wyrm
+        44659, -- Pendant of the Dragonsworn
+        44660, -- Drakescale Collar
+    },
     -- Fragment of Val'anyr
     ["45038"] = {
         45039, -- Shattered Fragments of Val'anyr
