@@ -92,7 +92,7 @@ function TimeLeft:draw()
 
     local Title = Window:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall");
     Title:SetPoint("TOPLEFT", 3, -3);
-    Title:SetText("Trade expiration timers");
+    Title:SetText("Gargul Trade Timers");
     Title:SetTextColor(1, 1, 1, 1);
 
     local Cogwheel = CreateFrame("Button", "TimeLeft_Cogwheel" .. GL:uuid(), Window, Frame);
