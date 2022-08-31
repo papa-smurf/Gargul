@@ -49,13 +49,17 @@ function Overview:draw()
     _G["GARGUL_TMB_OVERVIEW_WINDOW"] = Window.frame;
     tinsert(UISpecialFrames, "GARGUL_TMB_OVERVIEW_WINDOW");
 
+    local source = "TMB";
+    if (GL.TMB:wasImportedFromDFT()) then
+        source = "DFT";
+    end
     local TimestampLabel = AceGUI:Create("Label");
     TimestampLabel:SetFullWidth(true);
     TimestampLabel:SetText(string.format(
-        "\nThis TMB data was imported on |c00a79eff%s|r at |c00a79eff%s|r",
+        "\nThis %s data was imported on |c00a79eff%s|r at |c00a79eff%s|r",
+        source,
         date('%Y-%m-%d', DB:get("TMB.MetaData.importedAt", GetServerTime())),
         date('%H:%M', DB:get("TMB.MetaData.importedAt", GetServerTime()))
-
     ));
     TimestampLabel:SetFontObject(_G["GameFontNormal"]);
     Window:AddChild(TimestampLabel);
@@ -63,8 +67,8 @@ function Overview:draw()
     local ItemNumberLabel = AceGUI:Create("Label");
     ItemNumberLabel:SetFullWidth(true);
     ItemNumberLabel:SetText(string.format(
-            "\nNumber of items imported: |c00a79eff%s|r",
-            GL:count(DB:get("TMB.Items")) or 0
+        "\nNumber of items imported: |c00a79eff%s|r",
+        GL:count(DB:get("TMB.Items")) or 0
 
     ));
     ItemNumberLabel:SetFontObject(_G["GameFontNormal"]);
