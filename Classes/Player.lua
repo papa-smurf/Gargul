@@ -44,7 +44,15 @@ function Player.fromID(GUID)
     self.class = string.lower(self.class);
 
     self.Guild = {};
-    self.Guild.name, self.Guild.rank, self.Guild.index = GetGuildInfo(self.id);
+
+    -- GetGuildInfo(yourOwnID) doesn't work for yourself.. silly Blizzard
+    if (self.id == GL.User.id) then
+        self.Guild.name = GL.User.Guild.name;
+        self.Guild.rank = GL.User.Guild.rank;
+        self.Guild.index = GL.User.Guild.index;
+    else
+        self.Guild.name, self.Guild.rank, self.Guild.index = GetGuildInfo(self.id);
+    end
 
     return self;
 end
