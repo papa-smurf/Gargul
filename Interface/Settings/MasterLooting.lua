@@ -153,6 +153,19 @@ function MasterLooting:draw(Parent)
         GL.Settings:set("MasterLooting.defaultRollOffNote", value);
     end);
     Parent:AddChild(DefaultRollOffNote);
+
+    Checkboxes = {
+        {
+            label = "Always show default note instead of item priority",
+            description = "Gargul uses item priorities (if available) when rolling off items. Enabling this means you can use your custom default note instead",
+            setting = "MasterLooting.alwaysUseDefaultNote",
+            callback = function ()
+                GL.MasterLooterUI:updateItemNote();
+            end
+        },
+    };
+
+    Overview:drawCheckboxes(Checkboxes, Parent);
 end
 
 GL:debug("Interface/Settings/MasterLooting.lua");
