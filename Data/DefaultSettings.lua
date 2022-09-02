@@ -51,6 +51,7 @@ GL.Data.DefaultSettings = {
     },
     ExportingLoot = {
         includeDisenchantedItems = true,
+        customFormat = "@ID\\t@WINNER\\t@DATE",
         disenchanterIdentifier = "_disenchanted",
     },
     LootTradeTimers = {

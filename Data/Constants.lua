@@ -53,6 +53,7 @@ GL.Data.Constants = {
         TMB = 1,
         DFTUS = 2,
         DFTEU = 3,
+        Custom = 4,
     },
 
     SoftReserveSources = {

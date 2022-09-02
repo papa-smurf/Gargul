@@ -167,6 +167,10 @@ function Exporter:refreshExportString()
         local exportString = self:transformEntriesToTMBFormat(LootEntries);
         GL.Interface:getItem(self, "MultiLineEditBox.Export"):SetText(exportString);
 
+    elseif (exportFormat == Constants.ExportFormats.Custom) then
+        local exportString = self:transformEntriesToCustomFormat(LootEntries);
+        GL.Interface:getItem(self, "MultiLineEditBox.Export"):SetText(exportString);
+
     elseif (GL:inTable({Constants.ExportFormats.DFTUS, Constants.ExportFormats.DFTEU}, exportFormat)) then
         self:transformEntriesToDFTFormat(LootEntries, function (exportString)
             GL.Interface:getItem(self, "MultiLineEditBox.Export"):SetText(exportString);
@@ -218,6 +222,49 @@ function Exporter:getLootEntries()
     end
 
     return Entries;
+end
+
+--- Transform the table of entries to the user specified (custom) format
+---
+---@return string
+function Exporter:transformEntriesToCustomFormat(Entries)
+    GL:debug("Exporter:transformEntriesToCustomFormat");
+
+    local exportString = "";
+
+    -- Make sure that all relevant item data is cached
+    GL:onItemLoadDo(GL:tableColumn(Entries, "itemId"), function ()
+        for _, AwardEntry in pairs(Entries) do
+            local exportEntry = GL.Settings:get("ExportingLoot.customFormat");
+            local ItemDetails = GL.DB.Cache.ItemsById[tostring(AwardEntry.itemId)];
+
+            if (not GL:empty(ItemDetails)) then
+                local Values = {
+                    ["@ID"] = AwardEntry.itemId,
+                    ["@LINK"] = ItemDetails.link:gsub('\124','\124\124'),
+                    ["@ITEM"] = ItemDetails.name,
+                    ["@QUALITY"] = ItemDetails.quality,
+                    ["@WINNER"] = AwardEntry.awardedTo,
+                    ["@OS"] = tostring(AwardEntry.OS),
+                    ["@CHECKSUM"] = AwardEntry.checksum,
+                    ["@YEAR"] = date('%Y', AwardEntry.timestamp),
+                    ["@MONTH"] = date('%m', AwardEntry.timestamp),
+                    ["@DAY"] = date('%d', AwardEntry.timestamp),
+                    ["@DATE"] = date('%Y-%m-%d', AwardEntry.timestamp),
+                    ["\\t"] = "\t",
+                };
+
+                for find, replace in pairs(Values) do
+                    exportEntry = exportEntry:gsub(find, replace);
+                end
+
+                exportString = exportString .. "\n" .. exportEntry;
+            end
+
+        end
+    end);
+
+    return strtrim(exportString);
 end
 
 --- Transform the table of entries to the TMB CSV format
