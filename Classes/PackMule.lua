@@ -323,12 +323,10 @@ function PackMule:lootReady()
                             ruleTarget = strtrim(ruleTarget);
                             ruleTarget = ruleTarget:gsub("!", "");
 
-                            -- SELF serves as a placeholder for the current player name, DISENCHANTER serves as a placeholder for the registered disenchanter.
-							if (ruleTarget == "SELF") then
-								ruleTarget = GL.User.name;
-							elseif (ruleTarget == "DISENCHANTER") then
-								ruleTarget = self.disenchanter;
-							end
+                            -- SELF serves as a placeholder for the current player name
+                            if (ruleTarget == "SELF") then
+                                ruleTarget = GL.User.name;
+                            end
 
                             -- GroupMemberNames are always in lowercase
                             if (GL:inTable(GroupMemberNames, string.lower(ruleTarget))) then
@@ -582,24 +580,6 @@ function PackMule:clearDisenchanter()
     GL:debug("PackMule:clearDisenchanter");
 
     self.disenchanter = nil;
-end
-
---- sets the disenchanter
----
----@return void
-function PackMule:setDisenchanter(disenchanter)
-    GL:debug("PackMule:setDisenchanter");
-	
-	if (not GL.User.isInGroup) then
-        return GL:warning("You're not currently in a raid");
-    end
-	
-    self.disenchanter = disenchanter;
-	
-	GL:sendChatMessage(
-        string.format("%s was set as disenchanter",
-        self.disenchanter
-    ), "GROUP");
 end
 
 --- Announce the disenchantment of an item in the group chat
