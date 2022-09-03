@@ -86,6 +86,7 @@ function ExportingLoot:draw(Parent)
         [4] = "Custom",
     };
 
+    local CustomFormatWrapper;
     local ExportFormat = GL.AceGUI:Create("Dropdown");
     ExportFormat:SetValue(GL.Settings:get("ExportingLoot.format", Constants.ExportFormats.TMB));
     ExportFormat:SetList(DropDownItems);
@@ -98,6 +99,12 @@ function ExportingLoot:draw(Parent)
         if (GL.Exporter.visible) then
             GL.Exporter:refreshExportString();
         end
+
+        if (ExportFormat:GetValue() == 4) then
+            CustomFormatWrapper.frame:Show();
+        else
+            CustomFormatWrapper.frame:Hide();
+        end
     end);
     Parent:AddChild(ExportFormat);
 
@@ -107,7 +114,7 @@ function ExportingLoot:draw(Parent)
     HorizontalSpacer:SetHeight(10);
     Parent:AddChild(HorizontalSpacer);
 
-    local CustomFormatWrapper = GL.AceGUI:Create("SimpleGroup");
+    CustomFormatWrapper = GL.AceGUI:Create("SimpleGroup");
     CustomFormatWrapper:SetFullWidth(true);
     Parent:AddChild(CustomFormatWrapper);
 
@@ -177,6 +184,11 @@ function ExportingLoot:draw(Parent)
         GL.Commands:call("export");
     end);
     Parent:AddChild(OpenExporter);
+
+    -- Hide the custom export format if custom is not selected
+    if (GL.Settings:get("ExportingLoot.format") ~= 4) then
+        CustomFormatWrapper.frame:Hide();
+    end
 end
 
 GL:debug("Interface/Settings/ExportingLoot.lua");
