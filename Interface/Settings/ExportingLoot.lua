@@ -129,18 +129,21 @@ function ExportingLoot:draw(Parent)
     CustomExportFormat.frame:EnableMouse();
     CustomExportFormat.frame:SetScript("OnEnter", function ()
         GameTooltip:SetOwner(CustomFormatWrapper.frame, "ANCHOR_TOP");
-        GameTooltip:SetText(string.format("Available values:\n\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n\n%s",
+        GameTooltip:SetText(string.format("Available values:\n\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n\n%s",
             "@ID",
             "@LINK",
             "@ITEM",
             "@QUALITY",
             "@WINNER",
+            "@DATE",
             "@OS",
             "@CHECKSUM",
             "@YEAR",
             "@MONTH",
             "@DAY",
-            "@DATE",
+            "@HOUR",
+            "@MINUTE",
+            "@TIME",
             "\\t is replaced by a tab"
         ));
         GameTooltip:Show();

@@ -250,7 +250,10 @@ function Exporter:transformEntriesToCustomFormat(Entries)
                     ["@YEAR"] = date('%Y', AwardEntry.timestamp),
                     ["@MONTH"] = date('%m', AwardEntry.timestamp),
                     ["@DAY"] = date('%d', AwardEntry.timestamp),
+                    ["@HOUR"] = date('%H', AwardEntry.timestamp),
+                    ["@MINUTE"] = date('%M', AwardEntry.timestamp),
                     ["@DATE"] = date('%Y-%m-%d', AwardEntry.timestamp),
+                    ["@TIME"] = date('%H:%M', AwardEntry.timestamp),
                     ["\\t"] = "\t",
                 };
 
