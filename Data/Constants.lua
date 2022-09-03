@@ -182,7 +182,7 @@ GL.Data.Constants = {
         shaman = 7,
         warlock = 8,
         warrior = 9,
-        death_knight = 10,
+        ["death knight"] = 10,
     },
 
     ClassHexColors = {
@@ -195,7 +195,7 @@ GL.Data.Constants = {
         shaman = "0070DE",
         warlock = "9482C9",
         warrior = "C79C6E",
-        death_knight = "C41E3A",
+        ["death knight"] = "C41E3A",
     },
 
     classRGBAColors = {
@@ -208,7 +208,7 @@ GL.Data.Constants = {
         shaman = {r = 0, g = .44, b = .87, a = 1},
         warlock = {r = .57647, g = .5098, b = .788235, a = 1},
         warrior = {r = .77647, g = .607843, b = .42745, a = 1},
-        death_knight = {r = .77, g = .12, b = .23},
+        ["death knight"] = {r = .77, g = .12, b = .23},
     },
 
     Devs = {

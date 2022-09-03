@@ -265,7 +265,6 @@ end
 ---@param default string|nil
 ---@return table
 function GL:classRGBAColor(className, default)
-    className = className:gsub(" ", "_");
     default = default or Constants.classRGBAColors.priest;
 
     if (not className or type(className) ~= "string") then
@@ -285,7 +284,6 @@ end
 ---@param default string|nil
 ---@return table
 function GL:classRGBColor(className, default)
-    className = className:gsub(" ", "_");
     default = default or Constants.classRGBColors.priest;
 
     if (not className
