@@ -211,16 +211,6 @@ GL.Data.Constants = {
         ["death knight"] = {r = .77, g = .12, b = .23},
     },
 
-    Devs = {
-        "Player-4467-02A4245A",
-        "Player-4467-02AB765C",
-        "Player-4478-01BF6C3B",
-        "Player-4478-02127870",
-        "Player-4478-02127978",
-        "Player-4478-02E36E30",
-        "Player-5278-0153632E",
-    },
-
     classRGBColors = {
         druid = {1, .48627, .0392,},
         hunter = {.6666, .827450, .44705,},
@@ -231,6 +221,17 @@ GL.Data.Constants = {
         shaman = {0, .44, .87,},
         warlock = {.57647, .5098, .788235,},
         warrior = {.77647, .607843, .42745,},
+        ["death knight"] = {.77, .12, .23},
+    },
+
+    Devs = {
+        "Player-4467-02A4245A",
+        "Player-4467-02AB765C",
+        "Player-4478-01BF6C3B",
+        "Player-4478-02127870",
+        "Player-4478-02127978",
+        "Player-4478-02E36E30",
+        "Player-5278-0153632E",
     },
 
     TMBTierHexColors = {
