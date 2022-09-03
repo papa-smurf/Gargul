@@ -53,6 +53,7 @@ GL.Data.Constants = {
         TMB = 1,
         DFTUS = 2,
         DFTEU = 3,
+        Custom = 4,
     },
 
     SoftReserveSources = {
@@ -181,6 +182,7 @@ GL.Data.Constants = {
         shaman = 7,
         warlock = 8,
         warrior = 9,
+        ["death knight"] = 10,
     },
 
     ClassHexColors = {
@@ -193,6 +195,7 @@ GL.Data.Constants = {
         shaman = "0070DE",
         warlock = "9482C9",
         warrior = "C79C6E",
+        ["death knight"] = "C41E3A",
     },
 
     classRGBAColors = {
@@ -205,16 +208,7 @@ GL.Data.Constants = {
         shaman = {r = 0, g = .44, b = .87, a = 1},
         warlock = {r = .57647, g = .5098, b = .788235, a = 1},
         warrior = {r = .77647, g = .607843, b = .42745, a = 1},
-    },
-
-    Devs = {
-        "Player-4467-02A4245A",
-        "Player-4467-02AB765C",
-        "Player-4478-01BF6C3B",
-        "Player-4478-02127870",
-        "Player-4478-02127978",
-        "Player-4478-02E36E30",
-        "Player-5278-0153632E",
+        ["death knight"] = {r = .77, g = .12, b = .23},
     },
 
     classRGBColors = {
@@ -227,6 +221,17 @@ GL.Data.Constants = {
         shaman = {0, .44, .87,},
         warlock = {.57647, .5098, .788235,},
         warrior = {.77647, .607843, .42745,},
+        ["death knight"] = {.77, .12, .23},
+    },
+
+    Devs = {
+        "Player-4467-02A4245A",
+        "Player-4467-02AB765C",
+        "Player-4478-01BF6C3B",
+        "Player-4478-02127870",
+        "Player-4478-02127978",
+        "Player-4478-02E36E30",
+        "Player-5278-0153632E",
     },
 
     TMBTierHexColors = {

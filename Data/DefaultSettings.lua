@@ -32,8 +32,9 @@ GL.Data.DefaultSettings = {
         disenchant = "CTRL_SHIFT_CLICK",
     },
     MasterLooting = {
-        autoOpenMasterLooterDialog = true,
+        alwaysUseDefaultNote = false,
         announceMasterLooter = false,
+        autoOpenMasterLooterDialog = true,
         defaultRollOffNote = "/roll 100 for MS or /roll 99 for OS",
         doCountdown = true,
         announceRollEnd = true,
@@ -50,6 +51,7 @@ GL.Data.DefaultSettings = {
     },
     ExportingLoot = {
         includeDisenchantedItems = true,
+        customFormat = "@ID;@DATE @TIME;@WINNER",
         disenchanterIdentifier = "_disenchanted",
     },
     LootTradeTimers = {

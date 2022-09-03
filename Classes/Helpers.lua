@@ -1250,6 +1250,23 @@ function GL:tableMerge(left, right)
     return left;
 end
 
+--- Return the values from a single column in the input table
+---
+---@param Table table
+---@param column string
+---@return table
+function GL:tableColumn(Table, column)
+    local Values = {};
+
+    for _, Entry in pairs(Table) do
+        if (Entry[column]) then
+            tinsert(Values, Entry[column]);
+        end
+    end
+
+    return Values;
+end
+
 --- Simple table flip (keys become values, values become keys)
 --- (╯°□°）╯︵ ┻━┻
 ---

@@ -720,7 +720,7 @@ function TMB:DFTFormatToTMB(data)
                     return;
                 end
 
-                tinsert(Priorities, string.format("%s||%s||1||1", string.lower(player), priority));
+                tinsert(Priorities, {player = player, priority = priority});
 
                 increaseLineNumber();
             end)();
@@ -740,6 +740,26 @@ function TMB:DFTFormatToTMB(data)
     -- No valid data detected
     if (GL:empty(TMBData.wishlists)) then
         return false;
+    end
+
+    -- Rewrite the priorities to match DFTs behavior
+    for itemID, Priorities in pairs(TMBData.wishlists) do
+        local lastPriority = 99999;
+        local priorityIndex = 0;
+
+        -- Sort the priorities (highest to lowest)
+        table.sort(Priorities, function (a, b)
+            return a.priority > b.priority;
+        end);
+
+        for key, Priority in pairs(Priorities) do
+            if (Priority.priority < lastPriority) then
+                lastPriority = Priority.priority;
+                priorityIndex = priorityIndex + 1;
+            end
+
+            TMBData.wishlists[itemID][key] = string.format("%s||%s||1||1", string.lower(Priority.player), priorityIndex);
+        end
     end
 
     return TMBData;

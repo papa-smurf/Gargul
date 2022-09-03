@@ -732,7 +732,9 @@ function MasterLooterUI:updateItemNote()
     local itemPriority = GL.LootPriority:getPriority(itemLink);
 
     -- If there is no item priority then keep the item label as-is
-    if (not itemPriority) then
+    if (not itemPriority
+        or GL.Settings:get("MasterLooting.alwaysUseDefaultNote", false)
+    ) then
         return ItemNote:SetText(defaultNote);
     end
 
