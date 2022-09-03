@@ -22,6 +22,12 @@ function ExportingLoot:draw(Parent)
             label = "Include disenchanted items",
             description = "Check this if you want to export disenchanted items as well",
             setting = "ExportingLoot.includeDisenchantedItems",
+            callback = function ()
+                -- Refresh the export window if it's open
+                if (GL.Exporter.visible) then
+                    GL.Exporter:refreshExportString();
+                end
+            end
         },
     };
 
@@ -52,6 +58,11 @@ function ExportingLoot:draw(Parent)
         end
 
         GL.Settings:set("ExportingLoot.disenchanterIdentifier", value);
+
+        -- Refresh the export window if it's open
+        if (GL.Exporter.visible) then
+            GL.Exporter:refreshExportString();
+        end
     end);
     Parent:AddChild(DisenchanterIdentifier);
 
