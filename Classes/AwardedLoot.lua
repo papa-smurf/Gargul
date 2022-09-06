@@ -256,15 +256,15 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, cost)
 
         -- The loot window is still active and the auto assign setting is enabled
         if (GL.DroppedLoot.lootWindowIsOpened
-                and GL.Settings:get("AwardingLoot.autoAssignAfterAwardingAnItem")
+            and GL.Settings:get("AwardingLoot.autoAssignAfterAwardingAnItem")
         ) then
             GL.PackMule:assignLootToPlayer(AwardEntry.itemId, winner);
 
             -- The loot window is closed and the auto trade setting is enabled
             -- Also skip this part if you yourself won the item
         elseif (not GL.DroppedLoot.lootWindowIsOpened
-                and GL.Settings:get("AwardingLoot.autoTradeAfterAwardingAnItem")
-                and GL.User.name ~= winner
+            and GL.Settings:get("AwardingLoot.autoTradeAfterAwardingAnItem")
+            and GL.User.name ~= winner
         ) then
             AwardedLoot:initiateTrade(AwardEntry);
         end
@@ -274,28 +274,30 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, cost)
     pcall(function ()
         local CLMEventDispatcher = LibStub("EventDispatcher");
 
-        if (CLMEventDispatcher) then
-            local normalizedPlayerName = string.lower(GL:stripRealm(winner));
-            local isPrioritized, isWishlisted = false, false;
-
-            for _, Entry in pairs(GL.TMB:byItemIdAndPlayer(itemId, normalizedPlayerName) or {}) do
-                if (Entry.type == GL.Data.Constants.tmbTypePrio) then
-                    isPrioritized = true;
-                elseif (Entry.type == GL.Data.Constants.tmbTypeWish) then
-                    isWishlisted = true;
-                end
-            end
-
-            CLMEventDispatcher.dispatchEvent("CLM_EXTERNAL_EVENT_ITEM_AWARDED", {
-                source = "Gargul",
-                itemLink = itemLink,
-                player = winner,
-                isOffSpec = isOS,
-                isWishlisted = isWishlisted,
-                isPrioritized = isPrioritized,
-                isReserved = GL.SoftRes:itemIdIsReservedByPlayer(itemId, normalizedPlayerName),
-            });
+        if (not CLMEventDispatcher) then
+            return;
         end
+
+        local normalizedPlayerName = string.lower(GL:stripRealm(winner));
+        local isPrioritized, isWishlisted = false, false;
+
+        for _, Entry in pairs(GL.TMB:byItemIdAndPlayer(itemId, normalizedPlayerName) or {}) do
+            if (Entry.type == GL.Data.Constants.tmbTypePrio) then
+                isPrioritized = true;
+            elseif (Entry.type == GL.Data.Constants.tmbTypeWish) then
+                isWishlisted = true;
+            end
+        end
+
+        CLMEventDispatcher.dispatchEvent("CLM_EXTERNAL_EVENT_ITEM_AWARDED", {
+            source = "Gargul",
+            itemLink = itemLink,
+            player = winner,
+            isOffSpec = isOS,
+            isWishlisted = isWishlisted,
+            isPrioritized = isPrioritized,
+            isReserved = GL.SoftRes:itemIdIsReservedByPlayer(itemId, normalizedPlayerName),
+        });
     end);
 end
 
