@@ -172,6 +172,40 @@ GL.Data.Constants = {
         20644, -- Nightmare Engulfed Object (Ysondre, Taerar, Lethon, Emeriss)
     },
 
+    -- Locked Items
+    LockedItems = {
+        4632, --Ornate Bronze Lockbox
+        4633, --Heavy Bronze Lockbox
+        4634, --Iron Lockbox
+        4636, --Strong Iron Lockbox
+        4637, --Steel Lockbox
+        4638, --Reinforced Steel Lockbox
+        5758, --Mithril Lockbox
+        5759, --Thorium Lockbox
+        5760, --Eternium Lockbox
+        6354, --Small Locked Chest
+        6355, --Sturdy Locked Chest
+        6712, --Practice Lock
+        7209, --Tazan's Satchel
+        7868, --Thieven' Kit
+        7869, --Lucius's Lockbox
+        12033, --Thaurissan Family Jewels
+        13875, --Ironbound Locked Chest
+        13918, --Reinforced Locked Chest
+        16882, --Battered Junkbox
+        16883, --Worn Junkbox
+        16884, --Sturdy Junkbox
+        16885, --Heavy Junkbox
+        29569, --Strong Junkbox
+        31952, --Khorium Lockbox
+        39014, --Floral Foundations
+        42953, --Strange Envelope
+        43575, --Reinforced Junkbox
+        43622, --Froststeel Lockbox
+        43624, --Titanium Lockbox
+        45986, --Tiny Titanium Lockbox
+    },
+
     Classes = {
         druid = 1,
         hunter = 2,

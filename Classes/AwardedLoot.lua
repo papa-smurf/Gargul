@@ -250,27 +250,55 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, cost)
 
     -- If the user is not in a group then there's no need
     -- to broadcast or attempt to auto assign loot to the winner
-    if (not GL.User.isInGroup) then
-        return;
+    if (GL.User.isInGroup) then
+        -- Broadcast the awarded loot details to everyone in the group
+        GL.CommMessage.new(CommActions.awardItem, AwardEntry, channel):send();
+
+        -- The loot window is still active and the auto assign setting is enabled
+        if (GL.DroppedLoot.lootWindowIsOpened
+            and GL.Settings:get("AwardingLoot.autoAssignAfterAwardingAnItem")
+        ) then
+            GL.PackMule:assignLootToPlayer(AwardEntry.itemId, winner);
+
+            -- The loot window is closed and the auto trade setting is enabled
+            -- Also skip this part if you yourself won the item
+        elseif (not GL.DroppedLoot.lootWindowIsOpened
+            and GL.Settings:get("AwardingLoot.autoTradeAfterAwardingAnItem")
+            and GL.User.name ~= winner
+        ) then
+            AwardedLoot:initiateTrade(AwardEntry);
+        end
     end
 
-    -- Broadcast the awarded loot details to everyone in the group
-    GL.CommMessage.new(CommActions.awardItem, AwardEntry, channel):send();
+    -- Send the award data along to CLM if the player has it installed
+    pcall(function ()
+        local CLMEventDispatcher = LibStub("EventDispatcher");
 
-    -- The loot window is still active and the auto assign setting is enabled
-    if (GL.DroppedLoot.lootWindowIsOpened
-        and GL.Settings:get("AwardingLoot.autoAssignAfterAwardingAnItem")
-    ) then
-        GL.PackMule:assignLootToPlayer(AwardEntry.itemId, winner);
+        if (not CLMEventDispatcher) then
+            return;
+        end
 
-    -- The loot window is closed and the auto trade setting is enabled
-    -- Also skip this part if you yourself won the item
-    elseif (not GL.DroppedLoot.lootWindowIsOpened
-        and GL.Settings:get("AwardingLoot.autoTradeAfterAwardingAnItem")
-        and GL.User.name ~= winner
-    ) then
-        AwardedLoot:initiateTrade(AwardEntry);
-    end
+        local normalizedPlayerName = string.lower(GL:stripRealm(winner));
+        local isPrioritized, isWishlisted = false, false;
+
+        for _, Entry in pairs(GL.TMB:byItemIdAndPlayer(itemId, normalizedPlayerName) or {}) do
+            if (Entry.type == GL.Data.Constants.tmbTypePrio) then
+                isPrioritized = true;
+            elseif (Entry.type == GL.Data.Constants.tmbTypeWish) then
+                isWishlisted = true;
+            end
+        end
+
+        CLMEventDispatcher.dispatchEvent("CLM_EXTERNAL_EVENT_ITEM_AWARDED", {
+            source = "Gargul",
+            itemLink = itemLink,
+            player = winner,
+            isOffSpec = isOS,
+            isWishlisted = isWishlisted,
+            isPrioritized = isPrioritized,
+            isReserved = GL.SoftRes:itemIdIsReservedByPlayer(itemId, normalizedPlayerName),
+        });
+    end);
 end
 
 --- Return items won by the given player (with optional `after` timestamp)
