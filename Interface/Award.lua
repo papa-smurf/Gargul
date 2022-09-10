@@ -28,6 +28,8 @@ local ScrollingTable = GL.ScrollingTable;
 function Award:draw(itemLink)
     GL:debug("Award:draw");
 
+    local itemID = GL:getItemIdFromLink(itemLink);
+
     -- First we need to check if the frame hasn't been
     -- rendered already. If so then show it (if it's hidden)
     -- and pass the itemLink along in case one was provided
@@ -43,7 +45,7 @@ function Award:draw(itemLink)
             GL.Interface:getItem(self, "Window"):Show();
         end
 
-        Award:populatePlayersTable();
+        Award:populatePlayersTable(itemID or nil);
         return;
     end
 
@@ -297,11 +299,7 @@ function Award:draw(itemLink)
     CloseOnAward:SetWidth(150);
     ThirdRow:AddChild(CloseOnAward);
 
-    if (itemLink
-            and type(itemLink) == "string"
-    ) then
-        Award:passItemLink(itemLink);
-    end
+    self:draw(itemLink);
 end
 
 ---@return void
@@ -350,15 +348,86 @@ function Award:drawPlayersTable()
     Award:populatePlayersTable();
 end
 
+--- Check if a single player is top prio on a given item ID
+---
+---@param itemID
+---@return nil|string
+function Award:topPrioForItem(itemID)
+    local SoftReserves = GL.SoftRes:byItemId(itemID);
+
+    -- This item was only reserved by one player
+    if (GL:count(SoftReserves) == 1) then
+        return SoftReserves[1];
+    end
+
+    local PrioListEntries = {};
+    local WishListEntries = {};
+    for _, Entry in pairs(GL.TMB:byItemId(itemID)) do
+        -- Priolist entry
+        if (Entry.type == 1) then
+            tinsert(PrioListEntries, Entry);
+
+        -- Wishlist entry
+        elseif (Entry.type == 2) then
+            tinsert(WishListEntries, Entry);
+        end
+    end
+
+    -- There are prio list entries available, use them
+    if (not GL:empty(PrioListEntries)) then
+        if (GL:count(PrioListEntries) == 1) then
+            return PrioListEntries[1].character;
+        end
+
+        -- Sort the PrioListEntries based on prio (lowest to highest)
+        table.sort(PrioListEntries, function (a, b)
+            return a.prio < b.prio;
+        end);
+
+        -- There's more than 1 person with top prio
+        if (PrioListEntries[1].prio == PrioListEntries[2].prio) then
+            return;
+        end
+
+        return PrioListEntries[1].character;
+    end
+
+    -- There are wish list entries available, use them
+    if (not GL:empty(WishListEntries)) then
+        if (GL:count(WishListEntries) == 1) then
+            return WishListEntries[1].character;
+        end
+
+        -- Sort the WishListEntries based on prio (lowest to highest)
+        table.sort(WishListEntries, function (a, b)
+            return a.prio < b.prio;
+        end);
+
+        -- There's more than 1 person with top prio
+        if (WishListEntries[1].prio == WishListEntries[2].prio) then
+            return;
+        end
+
+        return WishListEntries[1].character;
+    end
+end
+
 -- Populate the players table with your current group members
-function Award:populatePlayersTable()
-    if (not GL.Interface:getItem(self, "Table.Players")) then
+function Award:populatePlayersTable(itemID)
+    GL:debug("Award:populatePlayersTable");
+
+    local PlayersTable = GL.Interface:getItem(self, "Table.Players");
+
+    if (not PlayersTable) then
         return;
     end
 
-    GL.Interface:getItem(self, "Table.Players"):ClearSelection();
+    PlayersTable:ClearSelection();
+
+    local topPrioForItem = self:topPrioForItem(itemID);
 
     local TableData = {};
+    local row = 1;
     for _, Player in pairs(GL.User:groupMembers()) do
         local name = Player.name;
 
@@ -366,13 +435,19 @@ function Award:populatePlayersTable()
             cols = {
                 {
                     value = name,
-                    color = GL:classRGBAColor(Player.class),
+                    color = GL:classRGBAColor("priest"),
                 },
             },
         });
+
+        if (topPrioForItem == string.lower(GL:stripRealm(name))) then
+            PlayersTable:SetSelection(row);
+        end
+
+        row = row + 1;
     end
 
-    GL.Interface:getItem(self, "Table.Players"):SetData(TableData);
+    PlayersTable:SetData(TableData);
 end
 
 --- The item box contents changed
@@ -448,8 +523,6 @@ function Award:reset()
     GL.Interface:getItem(self, "Icon.Item"):SetImage(Award.Defaults.itemIcon);
     GL.Interface:getItem(self, "EditBox.Item"):SetText(Award.Defaults.itemText);
     Award.ItemBoxHoldsValidItem = false;
-
-    Award:populatePlayersTable();
 
     Award:updateWidgets();
 end
