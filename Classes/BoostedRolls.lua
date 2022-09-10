@@ -900,6 +900,11 @@ end
 function BoostedRolls:replyToDataRequest(CommMessage)
     GL:debug("BoostedRolls:replyToDataRequest");
 
+    -- I don't have boosted rolls enabled, leave me alone!
+    if (not self:enabled()) then
+        return;
+    end
+
     -- I don't have any data, leave me alone!
     if (not self:available()) then
         return;
