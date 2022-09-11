@@ -122,8 +122,9 @@ function RollOff:announceStart(itemLink, time, note)
         time,
         itemLink
     );
-    local reserveMessage = false;
+    local eligiblePlayersMessage = false;
     local Reserves = GL.SoftRes:byItemLink(itemLink);
+    local TMBDetails = GL.TMB:byItemLink(itemLink);
 
     if (type(note) == "string"
         and not GL:empty(note)
@@ -136,9 +137,74 @@ function RollOff:announceStart(itemLink, time, note)
         );
     end
 
+    -- Check if this item was reserved, if so: mentioned the players who reserved it!
     if (not GL:empty(Reserves)) then
         Reserves = table.concat(Reserves, ", ");
-        reserveMessage = "This item has been reserved by: " .. Reserves;
+        eligiblePlayersMessage = "This item has been reserved by: " .. Reserves;
+
+    -- Check if this item is on someone's TMB wish/prio list, if so: mention the player(s) first in line!
+    elseif (not GL:empty(TMBDetails)) then
+        local WishListEntries = {};
+        local PrioListEntries = {};
+
+        for _, Entry in pairs(TMBDetails) do
+            -- Priolist entry
+            if (Entry.type == 1) then
+                tinsert(PrioListEntries, Entry);
+
+                -- Wishlist entry
+            elseif (Entry.type == 2) then
+                tinsert(WishListEntries, Entry);
+            end
+        end
+
+        local EligiblePlayers = {};
+        if (not GL:empty(PrioListEntries)) then
+            -- Sort the PrioListEntries based on prio (lowest to highest)
+            table.sort(PrioListEntries, function (a, b)
+                return a.prio < b.prio;
+            end);
+
+            for _, Entry in pairs(PrioListEntries) do
+                -- This is the first player in the list, add him
+                if (not EligiblePlayers[1]) then
+                    tinsert(EligiblePlayers, Entry.character);
+                else
+                    -- This players prio is worse than the number one, break!
+                    if (Entry.prio > EligiblePlayers[1].prio) then
+                        break;
+                    end
+
+                    -- This player's prio is lte to the number one
+                    tinsert(EligiblePlayers, Entry.character);
+                end
+            end
+        elseif (not GL:empty(WishListEntries)) then
+            -- Sort the PrioListEntries based on prio (lowest to highest)
+            table.sort(WishListEntries, function (a, b)
+                return a.prio < b.prio;
+            end);
+
+            for _, Entry in pairs(WishListEntries) do
+                -- This is the first player in the list, add him
+                if (not EligiblePlayers[1]) then
+                    tinsert(EligiblePlayers, Entry);
+                else
+                    -- This players prio is worse than the number one, break!
+                    if (Entry.prio > EligiblePlayers[1].prio) then
+                        break;
+                    end
+
+                    -- This player's prio is lte to the number one
+                    tinsert(EligiblePlayers, Entry);
+                end
+            end
+        end
+
+        if (not GL:empty(EligiblePlayers)) then
+            local EligiblePlayerNames = table.concat(GL:tableColumn(EligiblePlayers, "character"), ", ");
+            eligiblePlayersMessage = "The following players have the highest TMB prio: " .. EligiblePlayerNames;
+        end
     end
 
     if (GL.User.isInRaid) then
@@ -153,9 +219,9 @@ function RollOff:announceStart(itemLink, time, note)
         );
     end
 
-    if (not GL:empty(reserveMessage)) then
+    if (not GL:empty(eligiblePlayersMessage)) then
         GL:sendChatMessage(
-            reserveMessage,
+            eligiblePlayersMessage,
             "GROUP"
         );
     end
