@@ -5,6 +5,8 @@
 # Gargul
 Looting made easy! If you use MS>OS (+1), soft-reserves, thatsmybis or simply want to auto-loot everything, so you can zug on, then look no further! Gargul can completely eliminate the need for group-loot if set up properly, check PackMule for more info (`/gl pm` in-game).
 
+Check https://www.curseforge.com/wow/addons/gargul/screenshots to see what it looks like!
+
 ## Does everyone in the raid need Gargul?
 No! For 99% of the features, only the loot master needs Gargul.
 
