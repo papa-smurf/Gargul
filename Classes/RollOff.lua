@@ -202,8 +202,13 @@ function RollOff:announceStart(itemLink, time, note)
         end
 
         if (not GL:empty(EligiblePlayers)) then
+            local source = "TMB";
+            if (GL.TMB:wasImportedFromDFT()) then
+                source = "DFT";
+            end
+
             local EligiblePlayerNames = table.concat(GL:tableColumn(EligiblePlayers, "character"), ", ");
-            eligiblePlayersMessage = "The following players have the highest TMB prio: " .. EligiblePlayerNames;
+            eligiblePlayersMessage = string.format("The following players have the highest %s prio: %s", source, EligiblePlayerNames);
         end
     end
 
