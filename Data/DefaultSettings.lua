@@ -98,7 +98,11 @@ GL.Data.DefaultSettings = {
         reserveThreshold = 180,
     },
     GDKP = {
-        closeOnStart = true,
+        announceBidsClosed = true,
+        closeAuctioneerOnAward = true,
+        closeAuctioneerOnStart = true,
+        minimumBid = 100,
+        minimumIncrement = 50,
     },
     TMB = {
         automaticallyShareData = false,

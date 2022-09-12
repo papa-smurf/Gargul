@@ -153,7 +153,7 @@ function Auctioneer:draw(itemLink)
         )) then
             GL.GDKP.inProgress = true;
 
-            if (GL.Settings:get("Auctioneer.closeOnStart")) then
+            if (GL.Settings:get("GDKP.closeAuctioneerOnStart", true)) then
                 self:close();
             end
         end;
@@ -208,7 +208,7 @@ function Auctioneer:draw(itemLink)
     MinimumBid:DisableButton(true);
     MinimumBid:SetHeight(20);
     MinimumBid:SetWidth(60);
-    MinimumBid:SetText(GL.Settings:get("UI.Auctioneer.minimumBid", 100));
+    MinimumBid:SetText(GL.Settings:get("GDKP.minimumBid", 100));
     SecondRow:AddChild(MinimumBid);
     GL.Interface:setItem(self, "MinimumBid", MinimumBid);
 
@@ -228,7 +228,7 @@ function Auctioneer:draw(itemLink)
     MinimumIncrement:DisableButton(true);
     MinimumIncrement:SetHeight(20);
     MinimumIncrement:SetWidth(40);
-    MinimumIncrement:SetText(GL.Settings:get("UI.Auctioneer.minimumBid", 50));
+    MinimumIncrement:SetText(GL.Settings:get("GDKP.minimumIncrement", 50));
     SecondRow:AddChild(MinimumIncrement);
     GL.Interface:setItem(self, "MinimumIncrement", MinimumIncrement);
 
@@ -286,7 +286,28 @@ function Auctioneer:draw(itemLink)
             return GL:warning("You need to select a player first");
         end
 
-        GL.Interface.Award:draw(itemLink);
+        local winner = selected.cols[1].value;
+        local bid = selected.cols[2].value;
+
+        GL.Interface.Dialogs.PopupDialog:open({
+            question = string.format("Award %s to |cff%s%s|r for %s|c00FFF569g|r?",
+                GL.GDKP.CurrentAuction.itemLink,
+                GL:classHexColor(GL.Player:classByName(winner)),
+                winner,
+                bid
+            ),
+            OnYes = function ()
+                GL.GDKP:createAuction(GL:getItemIdFromLink(GL.GDKP.CurrentAuction.itemLink), bid, winner);
+
+                self:reset(); -- Reset the UI
+                GL.GDKP:resetAuction(); -- Reset the actual auction object
+                self:closeReopenAuctioneerButton();
+
+                if (GL.Settings:get("GDKP.closeAuctioneerOnAward", true)) then
+                    self:close();
+                end
+            end,
+        });
     end);
     ThirdRow:AddChild(AwardButton);
     GL.Interface:setItem(self, "Award", AwardButton);
@@ -335,7 +356,7 @@ function Auctioneer:draw(itemLink)
 
     local CloseOnStart = AceGUI:Create("CheckBox");
     CloseOnStart:SetLabel("Close on start");
-    CloseOnStart:SetValue(GL.Settings:get("Auctioneer.closeOnStart", true));
+    CloseOnStart:SetValue(GL.Settings:get("GDKP.closeAuctioneerOnStart", true));
     CloseOnStart:SetCallback("OnValueChanged", function (widget)
         GL.Settings:set("Auctioneer.closeOnStart", GL:toboolean(widget:GetValue()));
     end);
@@ -344,7 +365,7 @@ function Auctioneer:draw(itemLink)
 
     local CloseOnAward = AceGUI:Create("CheckBox");
     CloseOnAward:SetLabel("Close on award");
-    CloseOnAward:SetValue(GL.Settings:get("UI.Auctioneer.closeOnAward", true));
+    CloseOnAward:SetValue(GL.Settings:get("GDKP.closeAuctioneerOnAward", true));
     CloseOnAward:SetCallback("OnValueChanged", function (widget)
         GL.Settings:set("UI.Auctioneer.closeOnAward", GL:toboolean(widget:GetValue()));
     end);
