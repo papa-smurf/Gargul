@@ -180,6 +180,11 @@ GL.Ace:RegisterChatCommand("gargul", function (...)
     GL.Commands:_dispatch(...);
 end);
 
+-- Register the gdkp slash command
+GL.Ace:RegisterChatCommand("gdkp", function (...)
+    GL.Interface.GDKP.Overview:draw();
+end);
+
 --- Announce conflicting addons if any
 ---@return void
 function GL:announceConflictingAddons()
