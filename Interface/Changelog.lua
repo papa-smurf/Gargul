@@ -12,6 +12,28 @@ GL.Interface.Changelog = {
 
     History = {
         {
+            version = "4.7.0",
+            date = "September 12th, 2022",
+            Changes = {
+                "TMB and DFT data is now included in the raid warning when rolling off items, that way players know who is allowed to roll which recudes confusion and spam!",
+                "When awarding an item the top prio player (if any) is selected by default, this will speed up awarding reserved loot or TMB/DFT loot for sure!",
+            },
+        },
+        {
+            version = "4.6.0",
+            date = "September 3rd, 2022",
+            Changes = {
+                "Custom export format: you can now export awarded loot to any format you want! Go to /gl export to check it out!"
+            },
+        },
+        {
+            version = "4.5.0",
+            date = "August 31st, 2022",
+            Changes = {
+                "Gargul now supports the DFT WotLK sheet! Are you a fan of the DFT-Fight-Club loot system? Gargul has you covered! Type /gl dft to get started"
+            },
+        },
+        {
             version = "4.3.1",
             date = "May 29th, 2022",
             Changes = {
