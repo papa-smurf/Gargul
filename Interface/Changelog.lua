@@ -12,7 +12,7 @@ GL.Interface.Changelog = {
 
     History = {
         {
-            version = "4.7.0",
+            version = "4.7.1",
             date = "September 12th, 2022",
             Changes = {
                 "TMB and DFT data is now included in the raid warning when rolling off items, that way players know who is allowed to roll which recudes confusion and spam!",
