@@ -435,7 +435,7 @@ function Award:populatePlayersTable(itemID)
             cols = {
                 {
                     value = name,
-                    color = GL:classRGBAColor("priest"),
+                    color = GL:classRGBAColor(Player.class),
                 },
             },
         });
