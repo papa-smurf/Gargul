@@ -43,6 +43,13 @@ function SoftRes:_init()
         end
     end);
 
+    --- Show an alert or a system message after sucessfully importing data
+    GL.Events:register("AlertsSoftresImported", "GL.SOFTRES_IMPORTED", function ()
+        if (not GL.Alerts:fire("SoftRes", "Import successful!")) then
+            GL:success("Import of SoftRes data successful");
+        end
+    end);
+
     -- Remove old SoftRes data if it's more than 10h old
     if (self:available()
         and DB:get("SoftRes.MetaData.importedAt") < GetServerTime() - 36000
@@ -744,8 +751,6 @@ function SoftRes:import(data, openOverview)
         ReservedItemIds = {},
         SoftReservedItemIds = {},
     };
-
-    GL:success("Import of SoftRes data successful");
 
     -- Attempt to "fix" player names (e.g. people misspelling their names)
     if (Settings:get("SoftRes.fixPlayerNames", true)) then
