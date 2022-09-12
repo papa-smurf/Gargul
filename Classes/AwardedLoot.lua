@@ -311,9 +311,7 @@ function AwardedLoot:byWinner(winner, after)
 
     local Entries = {};
     for _, AwardEntry in pairs(GL.DB.AwardHistory) do
-        if (
-            (not concernsDisenchantedItem or GL.Settings:get("ExportingLoot.includeDisenchantedItems"))
-            and (not after or AwardEntry.timestamp > after)
+        if ((not after or AwardEntry.timestamp > after)
             and AwardEntry.awardedTo == winner
             and not GL:empty(AwardEntry.timestamp)
             and not GL:empty(AwardEntry.itemLink)
