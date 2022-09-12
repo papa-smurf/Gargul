@@ -62,7 +62,7 @@ function TimeLeft:draw()
 
     self.isVisible = true;
 
-    local Window = CreateFrame("Frame", "GargulUI_RollerUI_Window", UIParent, Frame);
+    local Window = CreateFrame("Frame", "GARGUL_TIMELEFT_WINDOW", UIParent, Frame);
     Window:Show();
     Window:SetSize(240, 16);
     Window:SetPoint(GL.Interface:getPosition("TimeLeft"));

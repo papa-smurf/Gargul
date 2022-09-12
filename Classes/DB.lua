@@ -60,17 +60,34 @@ function DB:_init()
 
     self._initialized = true;
 
-    if (true) then return; end
-
     GL.DB.GDKP = {
         activeSession = "checksum_based_on_createdAt_and_uuid",
         Ledger = {
             ["checksum_based_on_createdAt_and_uuid"] = {
+                ID = "checksum_based_on_createdAt_and_uuid",
                 title = "Black Temple",
                 createdAt = 1659816223,
                 CreatedBy = {
                     class = "rogue",
-                    player = "Gargultest",
+                    name = "Gargultest",
+                    guild = "Gargul",
+                    uuid = "Player-4467-02A4245A",
+                },
+                Auctions = {},
+            },
+        },
+    };
+    if (true) then return; end
+    GL.DB.GDKP = {
+        activeSession = "checksum_based_on_createdAt_and_uuid",
+        Ledger = {
+            ["checksum_based_on_createdAt_and_uuid"] = {
+                ID = "checksum_based_on_createdAt_and_uuid",
+                title = "Black Temple",
+                createdAt = 1659816223,
+                CreatedBy = {
+                    class = "rogue",
+                    name = "Gargultest",
                     guild = "Gargul",
                     uuid = "Player-4467-02A4245A",
                 },
@@ -102,13 +119,17 @@ function DB:_init()
                         PreviousStates = {
                             ["checksum"] = {
                                 createdAt = 1659817021,
-                                winner = "Zhorax",
-                                class = "druid",
+                                Winner = {
+                                    name = "Zhorax",
+                                    class = "priest",
+                                    guild = "Gargul",
+                                    realm = "Firemaw",
+                                },
                                 price = 4000,
                                 reason = "Master Looter made a mistake",
                                 CreatedBy = {
                                     class = "druid",
-                                    player = "Garguldruid",
+                                    name = "Garguldruid",
                                     guild = "Gargul",
                                     uuid = "Player-4467-02A4245A",
                                 },
@@ -117,23 +138,42 @@ function DB:_init()
                     },
                     ["checksum_based_on_item_and_timestamp_2"] = {
                         itemID = 18608,
-                        winner = "Zhorax",
-                        class = "druid",
+                        Winner = {
+                            name = "Arvada",
+                            class = "Warlock",
+                            guild = "Gargul",
+                            realm = "Firemaw",
+                        },
                         price = 3600,
                         HighestBids = {
                             {
                                 {
-                                    name = "Zhorax",
+                                    Bidder = {
+                                        name = "Zhorax",
+                                        class = "priest",
+                                        guild = "Gargul",
+                                        realm = "Firemaw",
+                                    },
                                     bid = 4000,
                                     createdAt = 1659816523,
                                 },
                                 {
-                                    name = "Arvada",
+                                    Bidder = {
+                                        name = "Arvada",
+                                        class = "Warlock",
+                                        guild = "Gargul",
+                                        realm = "Firemaw",
+                                    },
                                     bid = 3900,
                                     createdAt = 1659816511,
                                 },
                                 {
-                                    name = "Omegalul",
+                                    Bidder = {
+                                        name = "Feth",
+                                        class = "warrior",
+                                        guild = "Gargul",
+                                        realm = "Firemaw",
+                                    },
                                     bid = 3500,
                                     createdAt = 1659816507,
                                 }
@@ -142,13 +182,17 @@ function DB:_init()
                         PreviousStates = {
                             ["checksum"] = {
                                 createdAt = 1659817021,
-                                winner = "Zhorax",
-                                class = "druid",
+                                Winner = {
+                                    name = "Zhorax",
+                                    class = "druid",
+                                    guild = "Gargul",
+                                    realm = "Firemaw",
+                                },
                                 price = 4000,
                                 reason = "Arvada was driving up price with 0 intent to buy",
                                 CreatedBy = {
                                     class = "druid",
-                                    player = "Garguldruid",
+                                    name = "Garguldruid",
                                     guild = "Gargul",
                                     uuid = "Player-4467-02A4245A",
                                 },
@@ -157,45 +201,73 @@ function DB:_init()
                     },
                     ["checksum_based_on_item_and_timestamp_3"] = {
                         itemID = 33222,
-                        winner = "Arvada",
-                        class = "warlock",
+                        Winner = {
+                            name = "Arvada",
+                            class = "warlock",
+                            guild = "Gargul",
+                            realm = "Firemaw",
+                        },
                         price = 2500,
+                        CreatedBy = {
+                            class = "druid",
+                            name = "Garguldruid",
+                            guild = "Gargul",
+                            uuid = "Player-4467-02A4245A",
+                        },
                     },
                 },
             },
             ["checksum_based_on_createdAt_and_uuid_2"] = {
+                ID = "checksum_based_on_createdAt_and_uuid_2",
                 title = "Mount Hyjal",
                 createdAt = 1659816103,
                 CreatedBy = {
                     class = "rogue",
-                    player = "Gargultest",
+                    name = "Gargultest",
                     guild = "Gargul",
                     uuid = "Player-4467-02A4245A",
                 },
                 Auctions = {
                     ["checksum_based_on_item_and_timestamp"] = {
+                        ID = "checksum_based_on_item_and_timestamp",
                         itemID = 18608,
-                        winner = "Zhorax",
-                        class = "druid",
+                        Winner = {
+                            name = "Zhorax",
+                            class = "druid",
+                            guild = "Gargul",
+                            realm = "Firemaw",
+                        },
                         price = 1200,
-                        itemID = 18608,
                         HighestBids = {
                             {
                                 {
-                                    name = "Zhorax",
+                                    Bidder = {
+                                        name = "Zhorax",
+                                        class = "warlock",
+                                        guild = "Gargul",
+                                        realm = "Firemaw",
+                                    },
                                     class = "druid",
                                     bid = 5500,
                                     createdAt = 1659816523,
                                 },
                                 {
-                                    name = "Arvada",
-                                    class = "warlock",
+                                    Winner = {
+                                        name = "Arvada",
+                                        class = "warlock",
+                                        guild = "Gargul",
+                                        realm = "Firemaw",
+                                    },
                                     bid = 5000,
                                     createdAt = 1659816511,
                                 },
                                 {
-                                    name = "Feth",
-                                    class = "warrior",
+                                    Winner = {
+                                        name = "Feth",
+                                        class = "Warrior",
+                                        guild = "Gargul",
+                                        realm = "Firemaw",
+                                    },
                                     bid = 3500,
                                     createdAt = 1659816507,
                                 }
@@ -204,26 +276,43 @@ function DB:_init()
                     },
                     ["checksum_based_on_item_and_timestamp_2"] = {
                         itemID = 18608,
-                        winner = "Zhorax",
-                        class = "druid",
+                        Winner = {
+                            name = "Zhorax",
+                            class = "druid",
+                            guild = "Gargul",
+                            realm = "Firemaw",
+                        },
                         price = 3800,
                         HighestBids = {
                             {
                                 {
-                                    name = "Zhorax",
-                                    class = "druid",
+                                    Winner = {
+                                        name = "Zhorax",
+                                        class = "druid",
+                                        guild = "Gargul",
+                                        realm = "Firemaw",
+                                    },
                                     bid = 4000,
                                     createdAt = 1659816523,
                                 },
                                 {
-                                    name = "Arvada",
-                                    class = "warlock",
+                                    Winner = {
+                                        name = "Arvada",
+                                        class = "warlock",
+                                        guild = "Gargul",
+                                        realm = "Firemaw",
+                                    },
                                     guild = "Gargul",
                                     bid = 3900,
                                     createdAt = 1659816511,
                                 },
                                 {
-                                    name = "Omegalul",
+                                    Winner = {
+                                        name = "Feth",
+                                        class = "warrior",
+                                        guild = "Gargul",
+                                        realm = "Firemaw",
+                                    },
                                     bid = 3500,
                                     createdAt = 1659816507,
                                 }
@@ -232,9 +321,12 @@ function DB:_init()
                         PreviousStates = {
                             ["checksum"] = {
                                 createdAt = 1659817021,
-                                winner = "Zhorax",
-                                guild = "Gargul",
-                                class = "druid",
+                                Winner = {
+                                    name = "Zhorax",
+                                    class = "druid",
+                                    guild = "Gargul",
+                                    realm = "Firemaw",
+                                },
                                 price = 4000,
                                 reason = "Master Looter made a mistake",
                             }
@@ -242,16 +334,22 @@ function DB:_init()
                     },
                     ["checksum_based_on_item_and_timestamp_3"] = {
                         itemID = 33222,
-                        winner = "Arvada",
-                        class = "warlock",
-                        guild = "Gargul",
+                        Winner = {
+                            name = "Arvada",
+                            class = "warlock",
+                            guild = "Gargul",
+                            realm = "Firemaw",
+                        },
                         price = 2700,
                     },
                     ["checksum_based_on_item_and_timestamp_4"] = {
                         itemID = 33251,
-                        winner = "Feth",
-                        class = "warrior",
-                        guild = "Slow and Steady",
+                        Winner = {
+                            name = "Feth",
+                            class = "warrior",
+                            guild = "Slow and Steady",
+                            realm = "Firemaw",
+                        },
                         price = 6969,
                     },
                 },

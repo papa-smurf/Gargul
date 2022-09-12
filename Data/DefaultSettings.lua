@@ -97,6 +97,9 @@ GL.Data.DefaultSettings = {
         priority = 1,
         reserveThreshold = 180,
     },
+    GDKP = {
+        closeOnStart = true,
+    },
     TMB = {
         automaticallyShareData = false,
         hideInfoOfPeopleNotInGroup = true,

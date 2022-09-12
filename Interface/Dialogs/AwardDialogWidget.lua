@@ -187,6 +187,7 @@ local function constructor()
 
     local VerticalSpacer;
     local HorizontalSpacer;
+    local YesButton;
 
     -- Dialog
     local Dialog = AceGUI:Create("Label");
@@ -255,13 +256,13 @@ local function constructor()
 
     OptionsFrame:AddChild(OffSpecLabel);
 
-    HorizontalSpacer = AceGUI:Create("SimpleGroup");
-    HorizontalSpacer:SetLayout("FILL");
-    HorizontalSpacer:SetFullWidth(true);
-    HorizontalSpacer:SetHeight(8);
-    OptionsFrame:AddChild(HorizontalSpacer);
-
     if (GL.BoostedRolls:enabled()) then
+        HorizontalSpacer = AceGUI:Create("SimpleGroup");
+        HorizontalSpacer:SetLayout("FILL");
+        HorizontalSpacer:SetFullWidth(true);
+        HorizontalSpacer:SetHeight(8);
+        OptionsFrame:AddChild(HorizontalSpacer);
+
         VerticalSpacer = AceGUI:Create("SimpleGroup");
         VerticalSpacer:SetLayout("FILL");
         VerticalSpacer:SetWidth(52);
@@ -283,7 +284,43 @@ local function constructor()
         BoostedRollsCostEditBox:SetText(GL.Settings:get("BoostedRolls.defaultCost", 0));
         BoostedRollsCostEditBox:SetLabel("");
         OptionsFrame:AddChild(BoostedRollsCostEditBox);
+        BoostedRollsCostEditBox:SetFocus();
         GL.Interface:setItem(GL.Interface.Dialogs.AwardDialog, "Cost", BoostedRollsCostEditBox);
+    end
+
+    if (GL.GDKP:hasActiveSession()) then
+        HorizontalSpacer = AceGUI:Create("SimpleGroup");
+        HorizontalSpacer:SetLayout("FILL");
+        HorizontalSpacer:SetFullWidth(true);
+        HorizontalSpacer:SetHeight(8);
+        OptionsFrame:AddChild(HorizontalSpacer);
+
+        VerticalSpacer = AceGUI:Create("SimpleGroup");
+        VerticalSpacer:SetLayout("FILL");
+        VerticalSpacer:SetWidth(52);
+        VerticalSpacer:SetHeight(10);
+        OptionsFrame:AddChild(VerticalSpacer);
+
+        -- Boosted Roll cost label
+        local PriceLabel = AceGUI:Create("Label");
+        PriceLabel:SetFontObject(_G["GameFontNormal"]);
+        PriceLabel:SetWidth(120);
+        PriceLabel:SetText("GDKP Price:");
+        OptionsFrame:AddChild(PriceLabel);
+
+        -- Boosted Roll cost
+        local GDKPPriceEditBox = GL.AceGUI:Create("EditBox");
+        GDKPPriceEditBox:DisableButton(true);
+        GDKPPriceEditBox:SetHeight(20);
+        GDKPPriceEditBox:SetWidth(60);
+        GDKPPriceEditBox:SetText("");
+        GDKPPriceEditBox:SetLabel("");
+        GDKPPriceEditBox:SetFocus();
+        OptionsFrame:AddChild(GDKPPriceEditBox);
+        GDKPPriceEditBox:SetCallback("OnEnterPressed", function ()
+            YesButton:Fire("OnClick");
+        end); -- Update item info when input value changes
+        GL.Interface:setItem(GL.Interface.Dialogs.AwardDialog, "GDKPPrice", GDKPPriceEditBox);
     end
 
     HorizontalSpacer = AceGUI:Create("SimpleGroup");
@@ -299,7 +336,7 @@ local function constructor()
     PopupDialogInstance:AddChild(VerticalSpacer);
 
     -- Yes
-    local YesButton = AceGUI:Create("Button");
+    YesButton = AceGUI:Create("Button");
     YesButton:SetText("Yes");
     YesButton:SetHeight(20);
     YesButton:SetWidth(120);

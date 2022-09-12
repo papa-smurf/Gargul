@@ -25,6 +25,7 @@ GL.Interface.Settings.Overview = {
         {"Trade Announcements", "TradeAnnouncements"},
         {"Rolling", "Rolling"},
         {"Loot Highlighting", "LootHighlighting"},
+        {"GDKP", "GDKP"},
         {"SoftRes", "SoftRes"},
         {"TMB", "TMB"},
         {"Exporting Loot", "ExportingLoot"},

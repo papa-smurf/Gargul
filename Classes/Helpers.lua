@@ -180,10 +180,33 @@ function GL:empty(mixed)
     return true;
 end
 
---- StringHash method, courtesy of Mikk38024 @ Wowpedia
+--- table.concat alternative that also works with multi-dimensional tables (implodes TOP LEVEL ONLY!)
 ---
----@param text string
+---@param Table table
+---@param delimiter string
+---@return string
+function GL:implode(Table, delimiter)
+    local Parts = {};
+
+    for _, entry in pairs(Table) do
+        local entryString = tostring(entry);
+
+        if (not GL:empty(entryString)) then
+            tinsert(Parts, entryString);
+        end
+    end
+
+    return table.concat(Parts, delimiter);
+end
+
+--- StringHash method, courtesy of Mikk38024 @ Wowpedia (https://wowpedia.fandom.com/wiki/StringHash)
+---
+---@param text string|table
 function GL:stringHash(text)
+    if (type(text) == "table") then
+        text = GL:implode(text, ".");
+    end
+
     text = tostring(text);
     local counter = 1;
     local len = string.len(text);
@@ -887,7 +910,7 @@ function GL:stripRealm(str)
     end
 
     local Parts = self:strSplit(str, separator);
-    return Parts[1] or "";
+    return Parts[1], Parts[2];
 end
 
 --- Check whether the given player name occurs more than once in the player's group

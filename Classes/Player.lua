@@ -46,7 +46,7 @@ function Player.fromID(GUID)
     self.Guild = {};
 
     -- GetGuildInfo(yourOwnID) doesn't work for yourself.. silly Blizzard
-    if (self.id == GL.User.id) then
+    if (self.id == GL.User.id or not GL.User.isInGroup) then
         self.Guild.name = GL.User.Guild.name;
         self.Guild.rank = GL.User.Guild.rank;
         self.Guild.index = GL.User.Guild.index;

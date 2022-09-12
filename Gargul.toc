@@ -75,6 +75,8 @@ Interface/Settings/MasterLooting.lua
 Interface/Settings/SlashCommands.lua
 Interface/SoftRes/Importer.lua
 Interface/SoftRes/Overview.lua
+Interface/GDKP/Auctioneer.lua
+Interface/GDKP/Bidder.lua
 Interface/GDKP/Overview.lua
 Interface/TMB/Importer.lua
 Interface/TMB/Overview.lua
@@ -98,6 +100,10 @@ Interface/Dialogs/HyperlinkDialogWidget.lua
 Interface/Dialogs/MasterLooterDialog.lua
 Interface/ReminderToAssignLootUsingGargul.lua
 Interface/ShortcutKeysLegend.lua
+
+# Alerts
+Interface\Alerts.lua
+Interface\Alerts.xml
 
 # Test classes
 Test.lua

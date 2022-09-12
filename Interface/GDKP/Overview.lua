@@ -11,6 +11,7 @@ local ScrollingTable = GL.ScrollingTable;
 local GDKP = GL.GDKP; ---@type GDKP
 
 GL:tableSet(GL, "Interface.GDKP.Overview", {
+    _initialized = false,
     isVisible = false,
     selectedSession = nil,
 
@@ -24,6 +25,22 @@ GL:tableSet(GL, "Interface.GDKP.Overview", {
 ---@class GDKPOverview
 local Overview = GL.Interface.GDKP.Overview;
 
+function Overview:_init()
+    GL:debug("Overview:_init");
+
+    self._initialized = true;
+
+    GL.Events:register("GDKPOverviewGDKPAuctionChangedListener", "GL.GDKP_AUCTION_CHANGED", function(_, sessionIdentifier)
+        if (not self.isVisible
+            or self.selectedSession ~= sessionIdentifier
+        ) then
+            --return;
+        end
+
+        self:drawDetails(sessionIdentifier);
+    end);
+end
+
 --- Draw the UI elements required to show an overview of all gdkp data
 --- This is what this frame looks like:
 ---     +-------+---------+
@@ -34,6 +51,8 @@ local Overview = GL.Interface.GDKP.Overview;
 ---
 ---@return void
 function Overview:draw()
+    self:_init();
+
     GL:debug("Overview:draw");
 
     -- The overview is already visible
@@ -57,6 +76,7 @@ function Overview:draw()
     end);
     GL.Interface:setItem(self, "Window", Window);
     Window:SetPoint(GL.Interface:getPosition("GDKPOverview"));
+    Window.frame:SetFrameStrata("HIGH");
 
     -- Make sure the window can be closed by pressing the escape button
     --_G["GARGUL_GDKP_OVERVIEW_WINDOW"] = Window.frame;
@@ -137,7 +157,7 @@ function Overview:draw()
 
     CreateButton:SetScript("OnClick", function(_, button)
         if (button == 'LeftButton') then
-            GL:dump("ADD!");
+            GL.Interface.Award:draw();
         end
     end);
 
@@ -215,14 +235,12 @@ end
 
 function Overview:drawDetails(sessionIdentifier)
     GL:debug("Overview:drawDetails");
-GL:dump("Overview:drawDetails for " .. sessionIdentifier);
 
-    -- No need to redraw the same session
-    --if (self.activeSession and self.activeSession == sessionIdentifier) then
-    --    return;
-    --elseif (self.activeSession) then
-        self:clearDetailsFrame();
-    --end
+    self:clearDetailsFrame();
+
+    if (not sessionIdentifier) then
+        return;
+    end
 
     local Session = DB:get("GDKP.Ledger." .. sessionIdentifier, false);
 
@@ -242,23 +260,23 @@ GL:dump("Overview:drawDetails for " .. sessionIdentifier);
     Title:SetText(string.format("|c00%s%s|r", Constants.addonHexColor, Session.title));
 
     local Note = GL.Interface:getItem(self, "Label.Note");
-    local CreatedBy = Session.CreatedBy or {class = "priest", player = "unknown", guild = "unknown", uuid = "unknown"};
+    local CreatedBy = Session.CreatedBy or {class = "priest", name = "unknown", guild = "unknown", uuid = "unknown"};
     Note:SetText(string.format(
         "Created by |c00%s%s|r |c001eff00<%s>|r on |c00%s%s|r",
         GL:classHexColor(CreatedBy.class),
-        CreatedBy.player,
-        CreatedBy.guild,
+        CreatedBy.name,
+        CreatedBy.guild or "",
         Constants.addonHexColor,
         date('%Y-%m-%d', Session.createdAt)
     ));
 
     local Window = GL.Interface:getItem(self, "Window");
     Window:SetStatusText(string.format(
-        "Currently active session: |c00%s%s|r which started at |c00%s%s|r",
+        "Active session: |c00%s%s|r, which started on |c00%s%s|r",
         Constants.addonHexColor,
-        date('%Y-%m-%d', Session.createdAt),
+        Session.title,
         Constants.addonHexColor,
-        date('%H:%M', Session.createdAt)
+        date('%Y-%m-%d', Session.createdAt)
     ));
 
     local ItemIDs = {};
@@ -267,9 +285,21 @@ GL:dump("Overview:drawDetails for " .. sessionIdentifier);
     end
 
     GL:onItemLoadDo(ItemIDs, function ()
-GL:dump("Items loaded!");
+        local Auctions = {};
+        local RawAuctions = DB:get("GDKP.Ledger." .. sessionIdentifier .. ".Auctions") or {};
+
+        -- RawAuctions is an associative table, which does not work with table.sort
+        for _, Entry in pairs(RawAuctions) do
+            tinsert(Auctions, Entry);
+        end
+
+        -- Sort the auctions based on date/time (highest to lowest)
+        table.sort(Auctions, function (a, b)
+            return a.createdAt > b.createdAt;
+        end);
+
         -- Add placeholders for all the item icons and labels
-        for auctionIdentifier, Auction in pairs(DB:get("GDKP.Ledger." .. sessionIdentifier .. ".Auctions") or {}) do
+        for _, Auction in pairs(Auctions) do
             local price = Auction.price or 0;
             local saleWasDeleted = price <= 0;
 
@@ -313,8 +343,8 @@ GL:dump("Items loaded!");
             if (not saleWasDeleted) then
                 ItemLabel:SetText(string.format(
                     "|cFF%s%s|r paid |cFF%s%sg|r for\n%s",
-                    GL:classHexColor(Auction.class),
-                    Auction.winner,
+                    GL:classHexColor(Auction.Winner.class),
+                    Auction.Winner.name,
                     GL:classHexColor("rogue"),
                     price,
                     ItemEntry.link
@@ -342,7 +372,7 @@ GL:dump("Items loaded!");
             ActionButtons:SetHeight(30);
             Details:AddChild(ActionButtons);
 
-            self.ActionButtons[auctionIdentifier] = {};
+            self.ActionButtons[Auction.ID] = {};
 
             --[[
                 EDIT BUTTON
@@ -389,7 +419,7 @@ GL:dump("Items loaded!");
                 end
             end);
 
-            self.ActionButtons[auctionIdentifier].EditButton = EditButton;
+            self.ActionButtons[Auction.ID].EditButton = EditButton;
 
             --[[
                 DELETE BUTTON
@@ -411,7 +441,7 @@ GL:dump("Items loaded!");
 
             DeleteButton:SetScript("OnEnter", function()
                 GameTooltip:SetOwner(DeleteButton, "ANCHOR_TOP");
-                GameTooltip:AddLine("Delete");
+                GameTooltip:AddLine("Delete (hold shift to bypass reason)");
                 GameTooltip:Show();
             end);
 
@@ -420,9 +450,14 @@ GL:dump("Items loaded!");
             end);
 
             DeleteButton:SetScript("OnClick", function(_, button)
-                if (button == 'LeftButton'
-                    and GL.GDKP:deleteAuction(sessionIdentifier, auctionIdentifier)
-                ) then
+                if (button == 'LeftButton') then
+                    if (IsShiftKeyDown()) then
+                        ---@todo Skip the reason dialog when holding the shift key
+                        GL.GDKP:deleteAuction(sessionIdentifier, Auction.ID, true)
+                    end
+                        GL.GDKP:deleteAuction(sessionIdentifier, Auction.ID)
+                    else
+
                     self:drawDetails(sessionIdentifier);
                 end
             end);
@@ -431,7 +466,7 @@ GL:dump("Items loaded!");
                 DeleteButton:Hide();
             end
 
-            self.ActionButtons[auctionIdentifier].DeleteButton = DeleteButton;
+            self.ActionButtons[Auction.ID].DeleteButton = DeleteButton;
 
             --[[
                 RESTORE BUTTON
@@ -463,7 +498,7 @@ GL:dump("Items loaded!");
 
             RestoreButton:SetScript("OnClick", function(_, button)
                 if (button == 'LeftButton'
-                    and GL.GDKP:restoreAuction(sessionIdentifier, auctionIdentifier)
+                    and GL.GDKP:restoreAuction(sessionIdentifier, Auction.ID)
                 ) then
                     self:drawDetails(sessionIdentifier);
                 end
@@ -473,7 +508,7 @@ GL:dump("Items loaded!");
                 RestoreButton:Hide();
             end
 
-            self.ActionButtons[auctionIdentifier].RestoreButton = RestoreButton;
+            self.ActionButtons[Auction.ID].RestoreButton = RestoreButton;
         end
     end);
 end
@@ -516,7 +551,7 @@ end
 function Overview:clearDetailsFrame()
     GL:debug("GDKP:clearDetailsFrame");
 
-    -- Release all of the action buttons
+    -- Release all of the action buttons into our pool so that we can reuse them later
     for _, Buttons in pairs(self.ActionButtons or {}) do
         for _, Button in pairs(Buttons) do
             Button:Enable();
@@ -541,6 +576,10 @@ function Overview:clearDetailsFrame()
     GL.Interface:release(self, "ScrollFrame.SessionDetails");
 end
 
+--- Draw the GDKP sessions table (left-hand side of the overview)
+---
+---@param Parent table
+---@return void
 function Overview:drawSessionsTable(Parent)
     GL:debug("GDKP:drawCharacterTable");
 

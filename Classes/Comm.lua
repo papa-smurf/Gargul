@@ -9,7 +9,65 @@ GL.Comm = {
 };
 
 local Comm = GL.Comm;
-local CommActions = GL.Data.Constants.Comm.Actions or {};
+local Actions = GL.Data.Constants.Comm.Actions or {};
+
+Comm.Actions = {
+    [Actions.awardItem] = function (Message)
+        GL.AwardedLoot:processAwardedLoot(Message);
+    end,
+    [Actions.response] = function (Message)
+        return Message:processResponse();
+    end,
+    [Actions.inspectBags] = function (Message)
+        GL.BagInspector:report(Message);
+    end,
+    [Actions.broadcastLootPriorities] = function (Message)
+        GL.LootPriority:receiveBroadcast(Message);
+    end,
+    [Actions.broadcastSoftRes] = function (Message)
+        GL.SoftRes:receiveSoftRes(Message);
+    end,
+    [Actions.broadcastTMBData] = function (Message)
+        GL.TMB:receiveBroadcast(Message);
+    end,
+    [Actions.inspectBags] = function (Message)
+        GL.BagInspector:report(Message);
+    end,
+    [Actions.requestAppVersion] = function (Message)
+        if (GL.User.name == Message.Sender.name) then
+            return;
+        end
+
+        Message:respond(GL.Version.current);
+    end,
+    [Actions.requestSoftResData] = function (Message)
+        GL.SoftRes:replyToDataRequest(Message);
+    end,
+    [Actions.requestTMBData] = function (Message)
+        GL.TMB:replyToDataRequest(Message);
+    end,
+    [Actions.startRollOff] = function (Message)
+        GL.RollOff:start(Message);
+    end,
+    [Actions.stopRollOff] = function (Message)
+        GL.RollOff:stop(Message);
+    end,
+    [Actions.startGDKPAuction] = function (Message)
+        GL.GDKP:start(Message);
+    end,
+    [Actions.stopGDKPAuction] = function (Message)
+        GL.GDKP:stop(Message);
+    end,
+    [Actions.broadcastBoostedRollsData] = function (Message)
+        GL.BoostedRolls:receiveBroadcast(Message);
+    end,
+    [Actions.requestBoostedRollsData] = function (Message)
+        GL.BoostedRolls:replyToDataRequest(Message);
+    end,
+    [Actions.broadcastBoostedRollsMutation] = function (Message)
+        GL.BoostedRolls:receiveUpdate(Message);
+    end
+};
 
 function Comm:_init()
     GL:debug("Comm:_init");
@@ -195,7 +253,7 @@ function Comm:listen(payload, distribution)
         if (not GL.Version:leftIsNewerThanOrEqualToRight(payload.version, GL.Data.Constants.Comm.minimumAppVersion)) then
             -- This empty message will trigger an out-of-date error on the recipient's side
             GL.CommMessage.new(
-                GL.Data.Constants.Comm.Actions.response,
+                Actions.response,
                 nil,
                 "WHISPER",
                 Sender.name
@@ -215,14 +273,14 @@ function Comm:listen(payload, distribution)
     end
 
     if (not payload.id
-        and not payload.action == CommActions.response
+        and not payload.action == Actions.response
     ) then
         GL:warning("Payload is missing required property 'id'");
         return false;
     end
 
     if (not payload.correspondenceId
-            and payload.action == CommActions.response
+        and payload.action == Actions.response
     ) then
         GL:warning("Payload is missing required property 'correspondenceId'");
         return false;
@@ -244,53 +302,8 @@ function Comm:dispatch(CommMessage)
 
     local action = CommMessage.action;
 
-    if (action == CommActions.response) then
-        return CommMessage:processResponse();
-
-    elseif (action == CommActions.awardItem) then
-        return GL.AwardedLoot:processAwardedLoot(CommMessage);
-
-    elseif (action == CommActions.broadcastLootPriorities) then
-        return GL.LootPriority:receiveBroadcast(CommMessage);
-
-    elseif (action == CommActions.broadcastSoftRes) then
-        return GL.SoftRes:receiveSoftRes(CommMessage);
-
-    elseif (action == CommActions.broadcastTMBData) then
-        return GL.TMB:receiveBroadcast(CommMessage);
-
-    elseif (action == CommActions.inspectBags) then
-        return GL.BagInspector:report(CommMessage);
-
-    elseif (action == CommActions.requestAppVersion) then
-        if (GL.User.name ~= CommMessage.Sender.name) then
-            GL:debug("Respond to CommActions.requestAppVersion");
-            return CommMessage:respond(GL.Version.current);
-        end
-
-        return;
-
-    elseif (action == CommActions.requestSoftResData) then
-        return GL.SoftRes:replyToDataRequest(CommMessage);
-
-    elseif (action == CommActions.requestTMBData) then
-        return GL.TMB:replyToDataRequest(CommMessage);
-
-    elseif (action == CommActions.startRollOff) then
-        return GL.RollOff:start(CommMessage);
-
-    elseif (action == CommActions.stopRollOff) then
-        return GL.RollOff:stop(CommMessage);
-
-    elseif (action == CommActions.broadcastBoostedRollsData) then
-        return GL.BoostedRolls:receiveBroadcast(CommMessage);
-
-    elseif (action == CommActions.requestBoostedRollsData) then
-        return GL.BoostedRolls:replyToDataRequest(CommMessage);
-
-    elseif (action == CommActions.broadcastBoostedRollsMutation) then
-        return GL.BoostedRolls:receiveUpdate(CommMessage);
-
+    if (Comm.Actions[action]) then
+        return Comm.Actions[action](CommMessage);
     end
 
     GL:warning(string.format("Unknown comm action '%s'", action));
