@@ -39,10 +39,6 @@ function GDKP:_init()
         return false;
     end
 
----@todo: remove
-if (GL.User.name == "Omegachrist" or GL.User.name == "Arvadabank") then
-    --GL.Interface.GDKP.Overview:draw();
-end
     --- Register listener for whisper command
     GL.Events:register({
         {"GDKPChatMsgWhisper", "CHAT_MSG_WHISPER"},
@@ -482,7 +478,7 @@ function GDKP:stop(CommMessage)
     -- If this user started the roll then we need to cancel some timers and post a message
     if (self:startedByMe()) then
         -- Announce that the roll has ended
-        if (GL.Settings:get("MasterLooting.announceRollEnd", true)) then
+        if (GL.Settings:get("GDKP.announceBidsClosed", true)) then
             GL:sendChatMessage(
                 string.format("Stop your bids!"),
                 "RAID_WARNING"
@@ -501,7 +497,7 @@ function GDKP:stop(CommMessage)
     self.inProgress = false;
     GL.Ace:CancelTimer(self.timerId);
 
-    GL.RollerUI:hide();
+    GL.Interface.GDKP.Bidder:hide();
 
     -- If we're the initiatorID then we need to update our initiatorID UI
     if (self:startedByMe()) then
