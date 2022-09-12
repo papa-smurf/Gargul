@@ -79,8 +79,8 @@ function Overview:draw()
     Window.frame:SetFrameStrata("HIGH");
 
     -- Make sure the window can be closed by pressing the escape button
-    --_G["GARGUL_GDKP_OVERVIEW_WINDOW"] = Window.frame;
-    --tinsert(UISpecialFrames, "GARGUL_GDKP_OVERVIEW_WINDOW");
+    _G["GARGUL_GDKP_OVERVIEW_WINDOW"] = Window.frame;
+    tinsert(UISpecialFrames, "GARGUL_GDKP_OVERVIEW_WINDOW");
 
     --[[
         FIRST COLUMN (session table)
