@@ -528,12 +528,18 @@ function TradeWindow:announceTradeDetails(Details)
 
     -- Include enchantment details
     local EnchantedByMe = Details.EnchantedByMe;
-    if (GL.Settings:get("TradeAnnouncements.enchantmentGiven", true) and EnchantedByMe.enchantment) then
+    if (GL.Settings:get("TradeAnnouncements.enchantmentGiven", true)
+        and EnchantedByMe.enchantment
+        and not GL:inTable(GL.Data.Constants.LockedItems, EnchantedByMe.itemID)
+    ) then
         iEnchantedSomething = true;
     end
 
     local EnchantedByThem = Details.EnchantedByThem;
-    if (GL.Settings:get("TradeAnnouncements.enchantmentReceived", true) and EnchantedByThem.enchantment) then
+    if (GL.Settings:get("TradeAnnouncements.enchantmentReceived", true)
+        and EnchantedByThem.enchantment
+        and not GL:inTable(GL.Data.Constants.LockedItems, EnchantedByThem.itemID)
+    ) then
         theyEnchantedSomething = true;
     end
 

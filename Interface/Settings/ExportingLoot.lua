@@ -22,6 +22,12 @@ function ExportingLoot:draw(Parent)
             label = "Include disenchanted items",
             description = "Check this if you want to export disenchanted items as well",
             setting = "ExportingLoot.includeDisenchantedItems",
+            callback = function ()
+                -- Refresh the export window if it's open
+                if (GL.Exporter.visible) then
+                    GL.Exporter:refreshExportString();
+                end
+            end
         },
     };
 
@@ -52,6 +58,11 @@ function ExportingLoot:draw(Parent)
         end
 
         GL.Settings:set("ExportingLoot.disenchanterIdentifier", value);
+
+        -- Refresh the export window if it's open
+        if (GL.Exporter.visible) then
+            GL.Exporter:refreshExportString();
+        end
     end);
     Parent:AddChild(DisenchanterIdentifier);
 
@@ -72,8 +83,10 @@ function ExportingLoot:draw(Parent)
         [1] = "Thatsmybis TMB / RCLC (default)",
         [2] = "DFT-Fight-Club (US date format)",
         [3] = "DFT-Fight-Club (EU date format)",
+        [4] = "Custom",
     };
 
+    local CustomFormatWrapper;
     local ExportFormat = GL.AceGUI:Create("Dropdown");
     ExportFormat:SetValue(GL.Settings:get("ExportingLoot.format", Constants.ExportFormats.TMB));
     ExportFormat:SetList(DropDownItems);
@@ -86,8 +99,77 @@ function ExportingLoot:draw(Parent)
         if (GL.Exporter.visible) then
             GL.Exporter:refreshExportString();
         end
+
+        if (ExportFormat:GetValue() == 4) then
+            CustomFormatWrapper.frame:Show();
+        else
+            CustomFormatWrapper.frame:Hide();
+        end
     end);
     Parent:AddChild(ExportFormat);
+
+    HorizontalSpacer = GL.AceGUI:Create("SimpleGroup");
+    HorizontalSpacer:SetLayout("FILL");
+    HorizontalSpacer:SetFullWidth(true);
+    HorizontalSpacer:SetHeight(10);
+    Parent:AddChild(HorizontalSpacer);
+
+    CustomFormatWrapper = GL.AceGUI:Create("SimpleGroup");
+    CustomFormatWrapper:SetFullWidth(true);
+    Parent:AddChild(CustomFormatWrapper);
+
+    local CustomExportFormat = GL.AceGUI:Create("EditBox");
+    CustomExportFormat:DisableButton(true);
+    CustomExportFormat:SetHeight(20);
+    CustomExportFormat:SetFullWidth(true);
+    CustomExportFormat:SetText(GL.Settings:get("ExportingLoot.customFormat"));
+    CustomExportFormat:SetLabel(string.format(
+        "|cff%sDefine your custom export format here. Hover for more details. Note: \\t is replaced by a tab!|r",
+        GL:classHexColor("rogue")
+    ));
+    CustomExportFormat:SetCallback("OnTextChanged", function (self)
+        local value = self:GetText();
+
+        if (type(value) ~= "string"
+            or GL:empty(value)
+        ) then
+            return;
+        end
+
+        GL.Settings:set("ExportingLoot.customFormat", value);
+
+        -- Refresh the export window if it's open
+        if (GL.Exporter.visible) then
+            GL.Exporter:refreshExportString();
+        end
+    end);
+
+    CustomExportFormat.frame:EnableMouse();
+    CustomExportFormat.frame:SetScript("OnEnter", function ()
+        GameTooltip:SetOwner(CustomFormatWrapper.frame, "ANCHOR_TOP");
+        GameTooltip:SetText(string.format("Available values:\n\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n\n%s",
+            "@ID",
+            "@LINK",
+            "@ITEM",
+            "@QUALITY",
+            "@WINNER",
+            "@DATE",
+            "@OS",
+            "@CHECKSUM",
+            "@YEAR",
+            "@MONTH",
+            "@DAY",
+            "@HOUR",
+            "@MINUTE",
+            "@TIME",
+            "\\t is replaced by a tab"
+        ));
+        GameTooltip:Show();
+    end);
+    CustomExportFormat.frame:SetScript("OnLeave", function ()
+        GameTooltip:Hide();
+    end);
+    CustomFormatWrapper:AddChild(CustomExportFormat);
 
     HorizontalSpacer = GL.AceGUI:Create("SimpleGroup");
     HorizontalSpacer:SetLayout("FILL");
@@ -102,6 +184,11 @@ function ExportingLoot:draw(Parent)
         GL.Commands:call("export");
     end);
     Parent:AddChild(OpenExporter);
+
+    -- Hide the custom export format if custom is not selected
+    if (GL.Settings:get("ExportingLoot.format") ~= 4) then
+        CustomFormatWrapper.frame:Hide();
+    end
 end
 
 GL:debug("Interface/Settings/ExportingLoot.lua");

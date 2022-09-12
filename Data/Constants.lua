@@ -53,6 +53,7 @@ GL.Data.Constants = {
         TMB = 1,
         DFTUS = 2,
         DFTEU = 3,
+        Custom = 4,
     },
 
     SoftReserveSources = {
@@ -88,6 +89,7 @@ GL.Data.Constants = {
     },
 
     TradeableItems = {
+        19716, -- Primal Hakkari Bindings
         19717, -- Primal Hakkari Armsplint
         19718, -- Primal Hakkari Stanchion
         19719, -- Primal Hakkari Girdle
@@ -170,6 +172,40 @@ GL.Data.Constants = {
         20644, -- Nightmare Engulfed Object (Ysondre, Taerar, Lethon, Emeriss)
     },
 
+    -- Locked Items
+    LockedItems = {
+        4632, --Ornate Bronze Lockbox
+        4633, --Heavy Bronze Lockbox
+        4634, --Iron Lockbox
+        4636, --Strong Iron Lockbox
+        4637, --Steel Lockbox
+        4638, --Reinforced Steel Lockbox
+        5758, --Mithril Lockbox
+        5759, --Thorium Lockbox
+        5760, --Eternium Lockbox
+        6354, --Small Locked Chest
+        6355, --Sturdy Locked Chest
+        6712, --Practice Lock
+        7209, --Tazan's Satchel
+        7868, --Thieven' Kit
+        7869, --Lucius's Lockbox
+        12033, --Thaurissan Family Jewels
+        13875, --Ironbound Locked Chest
+        13918, --Reinforced Locked Chest
+        16882, --Battered Junkbox
+        16883, --Worn Junkbox
+        16884, --Sturdy Junkbox
+        16885, --Heavy Junkbox
+        29569, --Strong Junkbox
+        31952, --Khorium Lockbox
+        39014, --Floral Foundations
+        42953, --Strange Envelope
+        43575, --Reinforced Junkbox
+        43622, --Froststeel Lockbox
+        43624, --Titanium Lockbox
+        45986, --Tiny Titanium Lockbox
+    },
+
     Classes = {
         druid = 1,
         hunter = 2,
@@ -180,6 +216,7 @@ GL.Data.Constants = {
         shaman = 7,
         warlock = 8,
         warrior = 9,
+        ["death knight"] = 10,
     },
 
     ClassHexColors = {
@@ -192,6 +229,7 @@ GL.Data.Constants = {
         shaman = "0070DE",
         warlock = "9482C9",
         warrior = "C79C6E",
+        ["death knight"] = "C41E3A",
     },
 
     classRGBAColors = {
@@ -204,16 +242,7 @@ GL.Data.Constants = {
         shaman = {r = 0, g = .44, b = .87, a = 1},
         warlock = {r = .57647, g = .5098, b = .788235, a = 1},
         warrior = {r = .77647, g = .607843, b = .42745, a = 1},
-    },
-
-    Devs = {
-        "Player-4467-02A4245A",
-        "Player-4467-02AB765C",
-        "Player-4478-01BF6C3B",
-        "Player-4478-02127870",
-        "Player-4478-02127978",
-        "Player-4478-02E36E30",
-        "Player-5278-0153632E",
+        ["death knight"] = {r = .77, g = .12, b = .23},
     },
 
     classRGBColors = {
@@ -226,6 +255,17 @@ GL.Data.Constants = {
         shaman = {0, .44, .87,},
         warlock = {.57647, .5098, .788235,},
         warrior = {.77647, .607843, .42745,},
+        ["death knight"] = {.77, .12, .23},
+    },
+
+    Devs = {
+        "Player-4467-02A4245A",
+        "Player-4467-02AB765C",
+        "Player-4478-01BF6C3B",
+        "Player-4478-02127870",
+        "Player-4478-02127978",
+        "Player-4478-02E36E30",
+        "Player-5278-0153632E",
     },
 
     TMBTierHexColors = {

@@ -232,37 +232,73 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, cost)
         );
 
         -- Announce awarded item on GUILD
-        if (GL.Settings:get("AwardingLoot.announceAwardMessagesInGuildChat")) then
-            GL:sendChatMessage(
-                awardMessage,
-                "GUILD"
-            );
+        if (GL.Settings:get("AwardingLoot.announceAwardMessagesInGuildChat")
+            and GL.User.Guild.name -- Make sure the loot master is actually in a guild
+        ) then
+            local Winner = GL.Player:fromName(winner);
+
+            if (Winner.Guild.name
+                and Winner.Guild.name == GL.User.Guild.name
+            ) then
+                GL:sendChatMessage(
+                    awardMessage,
+                    "GUILD"
+                );
+            end
         end
     end
 
     -- If the user is not in a group then there's no need
     -- to broadcast or attempt to auto assign loot to the winner
-    if (not GL.User.isInGroup) then
-        return;
+    if (GL.User.isInGroup) then
+        -- Broadcast the awarded loot details to everyone in the group
+        GL.CommMessage.new(CommActions.awardItem, AwardEntry, channel):send();
+
+        -- The loot window is still active and the auto assign setting is enabled
+        if (GL.DroppedLoot.lootWindowIsOpened
+            and GL.Settings:get("AwardingLoot.autoAssignAfterAwardingAnItem")
+        ) then
+            GL.PackMule:assignLootToPlayer(AwardEntry.itemId, winner);
+
+            -- The loot window is closed and the auto trade setting is enabled
+            -- Also skip this part if you yourself won the item
+        elseif (not GL.DroppedLoot.lootWindowIsOpened
+            and GL.Settings:get("AwardingLoot.autoTradeAfterAwardingAnItem")
+            and GL.User.name ~= winner
+        ) then
+            AwardedLoot:initiateTrade(AwardEntry);
+        end
     end
 
-    -- Broadcast the awarded loot details to everyone in the group
-    GL.CommMessage.new(CommActions.awardItem, AwardEntry, channel):send();
+    -- Send the award data along to CLM if the player has it installed
+    pcall(function ()
+        local CLMEventDispatcher = LibStub("EventDispatcher");
 
-    -- The loot window is still active and the auto assign setting is enabled
-    if (GL.DroppedLoot.lootWindowIsOpened
-        and GL.Settings:get("AwardingLoot.autoAssignAfterAwardingAnItem")
-    ) then
-        GL.PackMule:assignLootToPlayer(AwardEntry.itemId, winner);
+        if (not CLMEventDispatcher) then
+            return;
+        end
 
-    -- The loot window is closed and the auto trade setting is enabled
-    -- Also skip this part if you yourself won the item
-    elseif (not GL.DroppedLoot.lootWindowIsOpened
-        and GL.Settings:get("AwardingLoot.autoTradeAfterAwardingAnItem")
-        and GL.User.name ~= winner
-    ) then
-        AwardedLoot:initiateTrade(AwardEntry);
-    end
+        local normalizedPlayerName = string.lower(GL:stripRealm(winner));
+        local isPrioritized, isWishlisted = false, false;
+
+        for _, Entry in pairs(GL.TMB:byItemIdAndPlayer(itemId, normalizedPlayerName) or {}) do
+            if (Entry.type == GL.Data.Constants.tmbTypePrio) then
+                isPrioritized = true;
+            elseif (Entry.type == GL.Data.Constants.tmbTypeWish) then
+                isWishlisted = true;
+            end
+        end
+
+        CLMEventDispatcher.dispatchEvent("CLM_EXTERNAL_EVENT_ITEM_AWARDED", {
+            source = "Gargul",
+            itemLink = itemLink,
+            player = winner,
+            isOffSpec = isOS,
+            isWishlisted = isWishlisted,
+            isPrioritized = isPrioritized,
+            isReserved = GL.SoftRes:itemIdIsReservedByPlayer(itemId, normalizedPlayerName),
+        });
+    end);
 end
 
 --- Return items won by the given player (with optional `after` timestamp)
@@ -275,9 +311,7 @@ function AwardedLoot:byWinner(winner, after)
 
     local Entries = {};
     for _, AwardEntry in pairs(GL.DB.AwardHistory) do
-        if (
-            (not concernsDisenchantedItem or GL.Settings:get("ExportingLoot.includeDisenchantedItems"))
-            and (not after or AwardEntry.timestamp > after)
+        if ((not after or AwardEntry.timestamp > after)
             and AwardEntry.awardedTo == winner
             and not GL:empty(AwardEntry.timestamp)
             and not GL:empty(AwardEntry.itemLink)

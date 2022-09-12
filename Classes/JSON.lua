@@ -1,3 +1,20 @@
+--
+-- Simple JSON encoding and decoding in pure Lua.
+--
+-- Copyright 2010-2016 Jeffrey Friedl
+-- http://regex.info/blog/
+-- Latest version: http://regex.info/blog/lua/json
+--
+-- This code is released under a Creative Commons CC-BY "Attribution" License:
+-- http://creativecommons.org/licenses/by/3.0/deed.en_US
+--
+-- It can be used for any purpose so long as:
+--    1) the copyright notice above is maintained
+--    2) the web-page links above are maintained
+--    3) the 'AUTHOR_NOTE' string below is maintained
+--
+local AUTHOR_NOTE = "-[ JSON.lua package by Jeffrey Friedl (http://regex.info/blog/lua/json) version 20161109.21 ]-"
+
 local _, GL = ...;
 
 GL.JSON = {};

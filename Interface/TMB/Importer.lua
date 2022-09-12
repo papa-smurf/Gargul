@@ -11,7 +11,7 @@ GL:tableSet(GL, "Interface.TMB.Importer", {
 
 local Importer = GL.Interface.TMB.Importer;
 
-function Importer:draw()
+function Importer:draw(showDFT)
     GL:debug("Importer:draw");
 
     if (self.isVisible) then
@@ -43,7 +43,12 @@ function Importer:draw()
     local Description = AceGUI:Create("Label");
     Description:SetFontObject(_G["GameFontNormal"]);
     Description:SetFullWidth(true);
-    Description:SetText("To get started you first need to export your guild's data on thatsmybis.com. In order to do that navigate to Guild > Exports and click the 'Download' button in the Gargul section. Afterwards paste the contents as-is in the box below and click 'Import'. That's it!");
+
+    if (showDFT) then
+        Description:SetText("Export your DFT data as per the sheet's instructions. Afterwards paste the contents as-is in the box below and click 'Import'. That's it!");
+    else
+        Description:SetText("To get started you first need to export your guild's data on thatsmybis.com. In order to do that navigate to Guild > Exports and click the 'Download' button in the Gargul section. Afterwards paste the contents as-is in the box below and click 'Import'. That's it!");
+    end
     Window:AddChild(Description);
 
     -- Large edit box

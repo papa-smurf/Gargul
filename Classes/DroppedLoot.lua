@@ -488,8 +488,13 @@ function DroppedLoot:announce()
                     end
                 end
 
+                local source = "TMB";
+                if (GL.TMB:wasImportedFromDFT()) then
+                    source = "DFT";
+                end
+
                 GL:sendChatMessage(
-                    "TMB Priority: " .. entryString,
+                    source .. " Priority: " .. entryString,
                     "GROUP"
                 );
             end

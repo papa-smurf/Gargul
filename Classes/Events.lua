@@ -104,6 +104,14 @@ end
 ---@param identifier string
 ---@return void
 function Events:unregister(identifier)
+    if (type(identifier) == table) then
+        for _, event in pairs(identifier) do
+            self:unregister(event);
+        end
+
+        return;
+    end
+
     -- This is to get rid of any reference
     local event = tostring(self.Registry.EventByIdentifier[identifier]);
 

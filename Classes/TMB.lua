@@ -358,7 +358,11 @@ function TMB:appendTMBItemInfoToTooltip(tooltip)
         )
     ) then
         -- Add the header
-        tooltip:AddLine(string.format("\n|cFFff7a0a%s|r", "TMB Prio List"));
+        local source = "TMB";
+        if (GL.TMB:wasImportedFromDFT()) then
+            source = "DFT";
+        end
+        tooltip:AddLine(string.format("\n|cFFff7a0a%s|r", source .. " Prio List"));
 
         -- Sort the PrioListEntries based on prio (lowest to highest)
         table.sort(PrioListEntries, function (a, b)
@@ -427,12 +431,12 @@ end
 --- based on the current TMB data
 ---
 ---@return void
-function TMB:draw()
+function TMB:draw(showDFT)
     GL:debug("TMB:draw");
 
     -- No data available, show importer
     if (not self:available()) then
-        GL.Interface.TMB.Importer:draw();
+        GL.Interface.TMB.Importer:draw(showDFT);
         return;
     end
 
@@ -448,6 +452,13 @@ function TMB:clear()
     GL.Events:fire("GL.TMB_CLEARED");
 end
 
+--- Check whether the current TMB data was imported from DFT
+---
+---@return boolean
+function TMB:wasImportedFromDFT()
+    return self:available() and GL:toboolean(GL.DB.TMB.MetaData.importedFromDFT);
+end
+
 --- Import a given tmb string
 ---
 ---@param data string
@@ -456,6 +467,8 @@ end
 function TMB:import(data, triedToDecompress)
     GL:debug("TMB:import");
 
+    local jsonDecodeSucceeded;
+    local WebsiteData;
     local function displayGenericException()
         GL.Interface:getItem("TMB.Importer", "Label.StatusMessage"):SetText("Invalid TMB data provided, make sure to click the 'Download' button in the Gargul section and paste the contents here as-is!");
     end
@@ -470,6 +483,17 @@ function TMB:import(data, triedToDecompress)
     -- Make sure to get rid of any leadin/trailing whitespaces
     data = strtrim(data);
 
+    -- We might have the dft format on hands, let's check it out!
+    if (GL:strStartsWith(data, '"')) then
+        triedToDecompress = true;
+        data = self:DFTFormatToTMB(data);
+        WebsiteData = data;
+
+        if (not data) then
+            GL.Interface:getItem("TMB.Importer", "Label.StatusMessage"):SetText("Invalid TMB or DFT data provided, make sure to paste the export contents here as-is!");
+        end
+    end
+
     -- This is the new zlib format, attempt to decompress it!
     if (not triedToDecompress
         and not GL:strStartsWith(data, "{\"wishlists\":")
@@ -478,15 +502,18 @@ function TMB:import(data, triedToDecompress)
         return TMB:import(data, true);
     end
 
-    local jsonDecodeSucceeded, WebsiteData = pcall(function () return GL.JSON:decode(data); end);
+    -- In case of a DFT format, data will already be a table
+    if (type(data) ~= "table") then
+        jsonDecodeSucceeded, WebsiteData = pcall(function () return GL.JSON:decode(data); end);
 
-    -- Make sure the given string could actually be decoded
-    if (not jsonDecodeSucceeded
-        or not WebsiteData
-        or type(WebsiteData) ~= "table"
-    ) then
-        displayGenericException();
-        return false;
+        -- Make sure the given string could actually be decoded
+        if (not jsonDecodeSucceeded
+            or not WebsiteData
+            or type(WebsiteData) ~= "table"
+        ) then
+            displayGenericException();
+            return false;
+        end
     end
 
     -- Import the actual TMB data
@@ -596,6 +623,7 @@ function TMB:import(data, triedToDecompress)
     end
 
     GL.DB.TMB.MetaData = {
+        importedFromDFT = GL:toboolean(WebsiteData.importedFromDFT),
         importedAt = GetServerTime(),
         hash = GL:uuid() .. GetServerTime(),
     };
@@ -617,6 +645,124 @@ function TMB:import(data, triedToDecompress)
     end
 
     return true;
+end
+
+--- Attempt to transform the DFT format to a TMB format
+---
+---@param data string
+---@return boolean|table
+function TMB:DFTFormatToTMB(data)
+    GL:debug("TMB:DFTFormatToTMB");
+
+    local TMBData = {
+        importedFromDFT = true,
+        wishlists = {},
+    };
+
+    data = data:gsub('"', "");
+
+    local lineNumber;
+    local increaseLineNumber = function ()
+        lineNumber = lineNumber + 1;
+    end;
+    for _, entry in pairs(GL:strSplit(data, ";")) do
+        local Priorities = {};
+        local itemID;
+
+        lineNumber = 1;
+        for line in entry:gmatch("[^\n]+") do
+            local validLine = true;
+
+            (function ()
+                local lineParts;
+
+                -- The first line contains the item ID we're discussing
+                if (lineNumber == 1) then
+                    lineParts = GL:strSplit(line, "^");
+
+                    -- Extract the item ID from the line
+                    if (lineParts[1]) then
+                        itemID = tonumber(lineParts[1]);
+                    end
+
+                    -- Check if the item ID we extracted (if any) is valid
+                    if (not GL:higherThanZero(itemID)) then
+                        validLine = false;
+                    end
+
+                    increaseLineNumber();
+                    return;
+                end
+
+                -- We skip items that don't have an active priority
+                if (GL:strContains(line, "Free Roll")) then
+                    validLine = false;
+                    return;
+                end
+
+                line = strtrim(line);
+                line = string.sub(line, 12, string.len(line));
+                line = line:gsub("|r: ", "");
+
+                lineParts = GL:strSplit(line, "|");
+
+                -- We can't handle this line it seems
+                if (not lineParts[2]) then
+                    return;
+                end
+
+                local player = lineParts[1];
+                local priority = tonumber(lineParts[2]);
+
+                if (GL:empty(player)
+                    or not GL:higherThanZero(priority)
+                ) then
+                    return;
+                end
+
+                tinsert(Priorities, {player = player, priority = priority});
+
+                increaseLineNumber();
+            end)();
+
+            -- An invalid line was detected, break!
+            if (not validLine) then
+                break;
+            end
+        end
+
+        -- Valid priorities were detected, add them
+        if (not GL:empty(Priorities)) then
+            TMBData.wishlists[tostring(itemID)] = Priorities;
+        end
+    end
+
+    -- No valid data detected
+    if (GL:empty(TMBData.wishlists)) then
+        return false;
+    end
+
+    -- Rewrite the priorities to match DFTs behavior
+    for itemID, Priorities in pairs(TMBData.wishlists) do
+        local lastPriority = 99999;
+        local priorityIndex = 0;
+
+        -- Sort the priorities (highest to lowest)
+        table.sort(Priorities, function (a, b)
+            return a.priority > b.priority;
+        end);
+
+        for key, Priority in pairs(Priorities) do
+            if (Priority.priority < lastPriority) then
+                lastPriority = Priority.priority;
+                priorityIndex = priorityIndex + 1;
+            end
+
+            TMBData.wishlists[itemID][key] = string.format("%s||%s||1||1", string.lower(Priority.player), priorityIndex);
+        end
+    end
+
+    return TMBData;
 end
 
 ---@param data string

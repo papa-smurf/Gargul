@@ -908,9 +908,14 @@ function SoftRes:importGargulData(data)
         local note = Entry.note or "";
         local plusOnes = tonumber(Entry.plusOnes) or 0;
 
-        -- Someone provided an invalid class... tamper alert!
+        -- WoW itself uses Death Knight, so let's rewrite for compatibility
+        if (string.lower(class) == "deathknight") then
+            class = "death knight";
+        end
+
+        -- Someone provided an invalid class...
         if (not Constants.Classes[class]) then
-            class = false;
+            class = "priest";
         end
 
         -- Make sure we have a name, class and some items
@@ -1042,6 +1047,11 @@ function SoftRes:importCSVData(data, reportStatus)
             if (GL:higherThanZero(itemId)
                 and not GL:empty(playerName)
             ) then
+                -- WoW itself uses Death Knight, so let's rewrite for compatibility
+                if (string.lower(class) == "deathknight") then
+                    class = "death knight";
+                end
+
                 playerName = string.lower(playerName);
 
                 if (not SoftReserveData[playerName]) then

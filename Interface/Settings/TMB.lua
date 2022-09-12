@@ -5,7 +5,7 @@ local Overview = GL.Interface.Settings.Overview; ---@type SettingsOverview
 
 ---@class TMBSettings
 GL.Interface.Settings.TMB = {
-    description = "Gargul allows you to import wishlist and character priority data from thatsmybis.com. Details about items will, depending on your settings, show up on your tooltips and in the group chat assuming the master looter uses Gargul. Wishlisted or prioritized items will also receive an animated border in group loot or in a killed enemy's loot window (Check the 'Loot Highlighting' section on the left!)",
+    description = "|cffC41E3AThese settings affect both TMB and DFT!|r\n\nGargul allows you to import wishlist and character priority data from thatsmybis.com and the DFT loot sheet. Details about items will, depending on your settings, show up on your tooltips and in the group chat assuming the master looter uses Gargul. Wishlisted or prioritized items will also receive an animated border in group loot or in a killed enemy's loot window (Check the 'Loot Highlighting' section on the left!).",
     wikiUrl = "https://github.com/papa-smurf/Gargul/wiki/Import-TMB-Data",
 };
 local TMB = GL.Interface.Settings.TMB; ---@type TMBSettings
