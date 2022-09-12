@@ -171,9 +171,9 @@ function Bidder:drawCountdownBar(time, itemLink, itemIcon)
     end
 
     local TimerBar = LibStub("LibCandyBarGargul-3.0"):New(
-            "Interface\\AddOns\\Gargul\\Assets\\Textures\\timer-bar",
-            300,
-            24
+        "Interface\\AddOns\\Gargul\\Assets\\Textures\\timer-bar",
+        300,
+        24
     );
 
     TimerBar:SetParent(self.Window);
