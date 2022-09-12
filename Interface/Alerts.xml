@@ -1,9 +1,6 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\FrameXML\UI.xsd">
-<<<<<<< Updated upstream
-=======
     <!-- SOFTRES RELATED ALERTS -->
->>>>>>> Stashed changes
     <ContainedAlertFrame name="GargulSoftres" mixin="Gargul_ContainedAlertFrameMixin" parent="UIParent" hidden="true" frameStrata="DIALOG" virtual="true" inherits="AlertFrameTemplate">
         <Size x="249" y="71"/>
         <Animations>
@@ -58,9 +55,6 @@
             </Layer>
         </Layers>
     </ContainedAlertFrame>
-<<<<<<< Updated upstream
-=======
-
     <!-- ITEM RELATED ALERTS -->
     <ContainedAlertFrame name="GargulItem" mixin="Gargul_ContainedAlertFrameMixin" parent="UIParent" hidden="true" frameStrata="DIALOG" virtual="true" inherits="AlertFrameTemplate">
         <Size x="249" y="71"/>
@@ -116,5 +110,4 @@
             </Layer>
         </Layers>
     </ContainedAlertFrame>
->>>>>>> Stashed changes
 </Ui>
