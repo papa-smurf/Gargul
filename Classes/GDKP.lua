@@ -39,17 +39,6 @@ function GDKP:_init()
         return false;
     end
 
-    --- Register listener for whisper command
-    GL.Events:register({
-        {"GDKPChatMsgWhisper", "CHAT_MSG_WHISPER"},
-        {"GDKPChatMsgParty", "CHAT_MSG_PARTY"},
-        {"GDKPChatMsgPartyLeader", "CHAT_MSG_PARTY_LEADER"},
-        {"GDKPChatMsgRaid", "CHAT_MSG_RAID"},
-        {"GDKPChatMsgRaidLeader", "CHAT_MSG_RAID_LEADER"},
-    }, function (event, message, sender)
-
-    end);
-
     self._initialized = true;
     return true;
 end
@@ -634,7 +623,7 @@ function GDKP:processBid(event, message, bidder)
             response = "I'm not accepting closed bids, use the /gr channel instead!";
         end
 
-        --GL:sendChatMessage(response, "WHISPER", nil, sender);
+        GL:sendChatMessage(response, "WHISPER", nil, sender);
 
         return;
     end

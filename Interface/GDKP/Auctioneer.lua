@@ -283,7 +283,7 @@ function Auctioneer:draw(itemLink)
         if (not selected
             or not type(selected) == "table"
         ) then
-            return GL:warning("You need to select a player first");
+            return GL.Interface.Award:draw(ItemBox:GetText());
         end
 
         local winner = selected.cols[1].value;

@@ -68,11 +68,12 @@ function Overview:draw()
     Window:SetTitle("Gargul v" .. GL.version);
     Window:SetLayout("Flow");
     Window:SetWidth(640);
+    Window:SetWidth(642);
     Window:SetHeight(500);
     Window:EnableResize(false);
     Window.statustext:GetParent():Show(); -- Explicitely show the statustext bar
     Window:SetCallback("OnClose", function()
-        --self:close();
+        self.isVisible = false;
     end);
     GL.Interface:setItem(self, "Window", Window);
     Window:SetPoint(GL.Interface:getPosition("GDKPOverview"));
