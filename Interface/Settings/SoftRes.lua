@@ -31,6 +31,11 @@ function SoftRes:draw(Parent)
             setting = "SoftRes.announceInfoInChat",
         },
         {
+            label = "Announce details when rolling for loot",
+            description = "Checking this will make sure that SoftRes details will also be included whenever you roll off an item",
+            setting = "SoftRes.announceInfoWhenRolling",
+        },
+        {
             label = "Enable whisper command",
             description = string.format(
                     "When enabled, players can whisper '|cff%s!sr|r' or '|cff%s!softres|r' to you to double-check their soft-reserves",
