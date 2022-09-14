@@ -26,7 +26,7 @@ GL.Interface.Settings.Overview = {
         {"Rolling", "Rolling"},
         {"Loot Highlighting", "LootHighlighting"},
         {"SoftRes", "SoftRes"},
-        {"TMB", "TMB"},
+        {"TMB and DFT", "TMB"},
         {"Exporting Loot", "ExportingLoot"},
         {"Loot trade timers", "LootTradeTimers"},
         {"", ""},

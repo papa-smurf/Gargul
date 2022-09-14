@@ -353,11 +353,26 @@ end
 ---@param itemID
 ---@return nil|string
 function Award:topPrioForItem(itemID)
-    local SoftReserves = GL.SoftRes:byItemId(itemID);
+    GL:debug("Award:topPrioForItem");
 
     -- This item was only reserved by one player
-    if (GL:count(SoftReserves) == 1) then
-        return SoftReserves[1];
+    if (GL.SoftRes:available()) then
+        local lastPlayerName = false;
+        local moreThanOnePersonReservedThisItem = false;
+        for _, playerName in pairs(GL.SoftRes:byItemId(itemID)) do
+            if (not lastPlayerName) then
+                lastPlayerName = playerName;
+            end
+
+            if (playerName ~= lastPlayerName) then
+                moreThanOnePersonReservedThisItem = true;
+                break;
+            end
+        end
+
+        if (not moreThanOnePersonReservedThisItem) then
+            return lastPlayerName;
+        end
     end
 
     local PrioListEntries = {};

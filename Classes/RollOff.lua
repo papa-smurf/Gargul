@@ -724,7 +724,9 @@ function RollOff:refreshRollsTable()
         local normalizedPlayerName = string.lower(GL:stripRealm(playerName));
 
         -- The item is soft-reserved, make sure we add a note to the roll
-        if (GL.SoftRes:itemIdIsReservedByPlayer(self.CurrentRollOff.itemId, normalizedPlayerName)) then
+        if (GL.Settings:get("SoftRes.announceInfoWhenRolling", true)
+            and GL.SoftRes:itemIdIsReservedByPlayer(self.CurrentRollOff.itemId, normalizedPlayerName)
+        ) then
             rollPriority = 1;
             rollNote = "Reserved";
             local numberOfReserves = GL.SoftRes:playerReservesOnItem(self.CurrentRollOff.itemId, normalizedPlayerName);
@@ -734,7 +736,7 @@ function RollOff:refreshRollsTable()
             end
 
         -- The item might be on a TMB list, make sure we add the appropriate note to the roll
-        else
+        elseif (GL.Settings:get("TMB.announceInfoWhenRolling", true)) then
             local TMBData = GL.TMB:byItemIdAndPlayer(self.CurrentRollOff.itemId, normalizedPlayerName);
             local TopEntry = false;
 

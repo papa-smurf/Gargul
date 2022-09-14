@@ -346,8 +346,17 @@ function DroppedLoot:hookClickEvents()
 end
 
 -- Announce the loot that dropped in the party or raid chat
-function DroppedLoot:announce()
+function DroppedLoot:announce(Modifiers)
     GL:debug("DroppedLoot:announce");
+
+    Modifiers = Modifiers or {};
+    local Functions = Modifiers.Functions or {
+        GetNumLootItems = GetNumLootItems,
+        GetLootSlotInfo = GetLootSlotInfo,
+        GetLootSlotLink = GetLootSlotLink,
+        GetLootSlotType = GetLootSlotType,
+        GetLootSourceInfo = GetLootSourceInfo,
+    };
 
     -- The sourceGUID is something we use to make sure
     -- we don't announce the same loot multiple times
@@ -357,11 +366,11 @@ function DroppedLoot:announce()
     local PlayersInRaid = GL.User:groupMemberNames();
 
     -- Get the total number of items that dropped
-    local itemCount = GetNumLootItems();
+    local itemCount = Functions.GetNumLootItems();
 
     -- Loop through every item in the loot window
     for lootIndex = 1, itemCount do
-        local itemLink = GetLootSlotLink(lootIndex);
+        local itemLink = Functions.GetLootSlotLink(lootIndex);
 
         -- This self-executing anonymous function gives us a bit more control
         (function ()
@@ -376,7 +385,7 @@ function DroppedLoot:announce()
             end
 
             -- Make sure we don't override sourceGUID with false/nil if it was already set!
-            sourceGUID = sourceGUID or GetLootSourceInfo(lootIndex);
+            sourceGUID = sourceGUID or Functions.GetLootSourceInfo(lootIndex);
 
             -- We're missing crucial data, skip!
             if (GL:empty(sourceGUID) -- Make sure we have a sourceGUID
@@ -385,12 +394,24 @@ function DroppedLoot:announce()
                 return;
             end
 
-            local quality = select(5, GetLootSlotInfo(lootIndex)) or 0;
+            local quality = select(5, Functions.GetLootSlotInfo(lootIndex)) or 0;
+            local lootType = Functions.GetLootSlotType(lootIndex);
             local SoftReserves = SoftRes:byItemLink(itemLink);
             local TMBInfo = GL.TMB:byItemLink(itemLink);
 
             -- Check if we need to announce this item
             local itemId = tonumber(GL:getItemIdFromLink(itemLink)) or 0;
+
+            -- Double checking just in case!
+            if (not GL:higherThanZero(itemId)) then
+                return;
+            end
+
+            -- Make sure we're dealing with an actual item here, not currency for example
+            if (lootType ~= LOOT_SLOT_ITEM) then
+                return;
+            end
+
             if ((
                     quality < GL.Settings:get("DroppedLoot.minimumQualityOfAnnouncedLoot", 4) -- Quality is lower than our set minimum
                     or GL:inTable(Constants.ItemsThatSouldntBeAnnounced, itemId) -- We don't want to announce this item
@@ -647,29 +668,49 @@ end
 ---
 ---@return void
 function DroppedLoot:announceTest(...)
-    local itemIDs = {...};
+    local itemIDs = ...;
+
+    if (type(itemIDs) ~= "table") then
+        itemIDs = {itemIDs};
+    end
+
+    -- Make sure all item links are translated to IDs
+    for key, value in pairs(itemIDs) do
+        value = string.trim(value);
+        local concernsID = GL:higherThanZero(tonumber(value));
+
+        if (not concernsID) then
+            value = GL:getItemIdFromLink(value) or 0;
+        end
+
+        itemIDs[key] = value;
+    end
 
     GL:onItemLoadDo(itemIDs, function (Items)
-        GetNumLootItems = function () return GL:count(Items); end;
-        GetLootSlotLink = function (slot)
-            return Items[slot].link or nil;
-        end;
-        GetLootSlotInfo = function (slot)
-            local SlotItem = Items[slot];
+        self:announce({
+            Functions = {
+                GetNumLootItems = function () return GL:count(Items); end,
+                GetLootSlotInfo = function (slot)
+                    local SlotItem = Items[slot];
 
-            return SlotItem.icon, SlotItem.name, 1, nil, SlotItem.quality, false, false, nil, true;
-        end;
-        GetLootSourceInfo = function() return GL:uuid() end;
+                    return SlotItem.icon, SlotItem.name, 1, nil, SlotItem.quality, false, false, nil, true;
+                end,
+                GetLootSlotLink = function (slot)
+                    return Items[slot].link or nil;
+                end,
+                GetLootSlotType = function(slot)
+                    local itemLink = Items[slot].link or "";
 
-        -- This is optional
-        --GL.User.groupMemberNames = function()
-        --    return {"name1", "name2",};
-        --end;
+                    if (GL:strContains(itemLink, "Hcurrency:")) then
+                        return LOOT_SLOT_CURRENCY;
+                    end
 
-        self:announce();
+                    return LOOT_SLOT_ITEM;
+                end,
+                GetLootSourceInfo = function() return GL:uuid() end,
+            }
+        });
     end);
-
-    GL:warning("Don't forget to /reload when done testing!");
 end
 
 GL:debug("DroppedLoot.lua");
