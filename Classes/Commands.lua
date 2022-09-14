@@ -72,6 +72,11 @@ GL.Commands = GL.Commands or {
         award = function(...)
             local winner, itemLink = ...;
 
+            if (GL:strContains(winner, "Hitem:")) then
+                itemLink = winner .. itemLink;
+                winner = nil;
+            end
+
             if (not winner or winner == "" or not itemLink) then
                 if (GL:getItemIdFromLink(winner)) then
                     itemLink = winner;
