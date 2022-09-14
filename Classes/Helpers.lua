@@ -1156,6 +1156,14 @@ function GL:sendChatMessage(message, chatType, language, channel, stw)
         return;
     end
 
+    -- The user is not in a group of any kind but still wants to
+    -- post a message on group or raid. Let's assume he's testing stuff
+    if (not GL.User.isInGroup
+        and GL:inTable({"GROUP", "PARTY", "RAID", "RAID_WARNING"}, chatType)
+    ) then
+        return GL:coloredMessage("FF7D0A", message);
+    end
+
     if (stw) then
         message = string.format("{rt3} %s : %s", GL.name, message);
     end
