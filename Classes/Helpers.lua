@@ -1161,7 +1161,7 @@ function GL:sendChatMessage(message, chatType, language, channel, stw)
     if (not GL.User.isInGroup
         and GL:inTable({"GROUP", "PARTY", "RAID", "RAID_WARNING"}, chatType)
     ) then
-        return GL:coloredMessage("FF7D0A", message);
+        return GL:coloredMessage("FF7D0A", message); -- FF7D0A is the same color as /ra text
     end
 
     if (stw) then
