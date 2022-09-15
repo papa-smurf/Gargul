@@ -138,12 +138,16 @@ function RollOff:announceStart(itemLink, time, note)
     end
 
     -- Check if this item was reserved, if so: mentioned the players who reserved it!
-    if (not GL:empty(Reserves)) then
+    if (GL.Settings:get("SoftRes.announceInfoWhenRolling", true)
+        and not GL:empty(Reserves)
+    ) then
         Reserves = table.concat(Reserves, ", ");
         eligiblePlayersMessage = "This item has been reserved by: " .. Reserves;
 
     -- Check if this item is on someone's TMB wish/prio list, if so: mention the player(s) first in line!
-    elseif (not GL:empty(TMBDetails)) then
+    elseif (GL.Settings:get("TMB.announceInfoWhenRolling", true)
+        and not GL:empty(TMBDetails)
+    ) then
         local WishListEntries = {};
         local PrioListEntries = {};
 
@@ -724,9 +728,7 @@ function RollOff:refreshRollsTable()
         local normalizedPlayerName = string.lower(GL:stripRealm(playerName));
 
         -- The item is soft-reserved, make sure we add a note to the roll
-        if (GL.Settings:get("SoftRes.announceInfoWhenRolling", true)
-            and GL.SoftRes:itemIdIsReservedByPlayer(self.CurrentRollOff.itemId, normalizedPlayerName)
-        ) then
+        if (GL.SoftRes:itemIdIsReservedByPlayer(self.CurrentRollOff.itemId, normalizedPlayerName)) then
             rollPriority = 1;
             rollNote = "Reserved";
             local numberOfReserves = GL.SoftRes:playerReservesOnItem(self.CurrentRollOff.itemId, normalizedPlayerName);
@@ -736,7 +738,7 @@ function RollOff:refreshRollsTable()
             end
 
         -- The item might be on a TMB list, make sure we add the appropriate note to the roll
-        elseif (GL.Settings:get("TMB.announceInfoWhenRolling", true)) then
+        else
             local TMBData = GL.TMB:byItemIdAndPlayer(self.CurrentRollOff.itemId, normalizedPlayerName);
             local TopEntry = false;
 
