@@ -138,12 +138,16 @@ function RollOff:announceStart(itemLink, time, note)
     end
 
     -- Check if this item was reserved, if so: mentioned the players who reserved it!
-    if (not GL:empty(Reserves)) then
+    if (GL.Settings:get("SoftRes.announceInfoWhenRolling", true)
+        and not GL:empty(Reserves)
+    ) then
         Reserves = table.concat(Reserves, ", ");
         eligiblePlayersMessage = "This item has been reserved by: " .. Reserves;
 
     -- Check if this item is on someone's TMB wish/prio list, if so: mention the player(s) first in line!
-    elseif (not GL:empty(TMBDetails)) then
+    elseif (GL.Settings:get("TMB.announceInfoWhenRolling", true)
+        and not GL:empty(TMBDetails)
+    ) then
         local WishListEntries = {};
         local PrioListEntries = {};
 

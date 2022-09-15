@@ -79,6 +79,7 @@ GL.Data.DefaultSettings = {
     },
     SoftRes = {
         announceInfoInChat = true,
+        announceInfoWhenRolling = true,
         enableTooltips = true,
         enableWhisperCommand = true,
         fixPlayerNames = true,
@@ -105,6 +106,7 @@ GL.Data.DefaultSettings = {
         minimumIncrement = 50,
     },
     TMB = {
+        announceInfoWhenRolling = true,
         automaticallyShareData = false,
         hideInfoOfPeopleNotInGroup = true,
         hideWishListInfoIfPriorityIsPresent = true,

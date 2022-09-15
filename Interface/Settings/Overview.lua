@@ -27,7 +27,7 @@ GL.Interface.Settings.Overview = {
         {"Loot Highlighting", "LootHighlighting"},
         {"GDKP", "GDKP"},
         {"SoftRes", "SoftRes"},
-        {"TMB", "TMB"},
+        {"TMB and DFT", "TMB"},
         {"Exporting Loot", "ExportingLoot"},
         {"Loot trade timers", "LootTradeTimers"},
         {"", ""},

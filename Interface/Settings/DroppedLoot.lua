@@ -63,6 +63,67 @@ function DroppedLoot:draw(Parent)
     };
 
     Overview:drawCheckboxes(Checkboxes, Parent);
+
+    HorizontalSpacer = GL.AceGUI:Create("SimpleGroup");
+    HorizontalSpacer:SetLayout("FILL");
+    HorizontalSpacer:SetFullWidth(true);
+    HorizontalSpacer:SetHeight(15);
+    Parent:AddChild(HorizontalSpacer);
+
+    local defaultTestItems = (function ()
+        local normalizedPlayerName = string.lower(GL.User.name);
+        local Reserved = GL.SoftRes:getDetailsForPlayer(normalizedPlayerName);
+        local ItemIDs = {};
+
+        -- Check to see if the current player reserved anything
+        if (Reserved.Items) then
+            for itemID in pairs(Reserved.Items) do
+                tinsert(ItemIDs, itemID);
+                break;
+            end
+        end
+
+        if (GL.TMB:available()) then
+            -- Check to see if the current player TMBed anything
+            local TMBItemFound = false;
+            for itemID, ItemEntry in pairs(GL.DB:get("TMB.Items", {})) do
+                for _, Entry in pairs(ItemEntry) do
+                    local playerName = string.lower(GL:stripRealm(Entry.character));
+
+                    --- NOTE TO SELF: it's (os) because of the string.lower, if you remove the lower then change below accordingly!
+                    if (normalizedPlayerName == string.gsub(playerName, "%(os%)", "")) then
+                        tinsert(ItemIDs, itemID);
+                        TMBItemFound = true;
+                        break;
+                    end
+                end
+
+                if (TMBItemFound) then
+                    break;
+                end
+            end
+        end
+
+        return table.concat(ItemIDs, ";");
+    end)();
+
+    local TestItems = GL.AceGUI:Create("EditBox");
+    TestItems:DisableButton(true);
+    TestItems:SetHeight(20);
+    TestItems:SetFullWidth(true);
+    TestItems:SetText(defaultTestItems);
+    TestItems:SetLabel(string.format(
+        "|cff%sAdd item links or IDs here separated by ; (semicolon) and 'Simulate drop' to preview the announce:|r",
+        GL:classHexColor("rogue")
+    ));
+    Parent:AddChild(TestItems);
+
+    local OpenDataButton = GL.AceGUI:Create("Button");
+    OpenDataButton:SetText("Simulate drop");
+    OpenDataButton:SetCallback("OnClick", function()
+        GL.DroppedLoot:announceTest(GL:strSplit(TestItems:GetText(), ";"));
+    end);
+    Parent:AddChild(OpenDataButton);
 end
 
 GL:debug("Interface/Settings/DroppedLoot.lua");
