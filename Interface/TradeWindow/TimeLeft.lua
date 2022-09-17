@@ -126,6 +126,13 @@ end
 
 ---@return boolean
 function TimeLeft:enabled()
+    GL:debug("TimeLeft:enabled");
+
+    -- Check if test mode is enabled
+    if (GL.Interface.Settings.LootTradeTimers.testEnabled) then
+        return true;
+    end
+
     -- Check whether we should be showing the bars at all
     if (not GL.Settings:get("LootTradeTimers.enabled") -- The user disabled this feature
         or ( -- The user only wants to see it when master looting and is not the master looter
@@ -253,7 +260,6 @@ function TimeLeft:refreshBars()
         -- Make sure the bar window has the appropriate height
         Window:SetHeight(math.max(Window:GetHeight(), 16) + 18);
 
-        local barIdentifier = GL:stringHash(BagItem.timeRemaining .. BagItem.itemLink .. GL:uuid());
         local TimerBar = LibStub("LibCandyBarGargul-3.0"):New(
             "Interface\\AddOns\\Gargul\\Assets\\Textures\\timer-bar",
             240,

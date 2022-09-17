@@ -6,6 +6,7 @@ local Overview = GL.Interface.Settings.Overview; ---@type SettingsOverview
 ---@class LootTradeTimersSettings
 GL.Interface.Settings.LootTradeTimers = {
     description = "When obtaining items that have an active trade window, aka items that are BoP but can still be traded with raid members, Gargul will show timer bars to let you know when an item's trade window is coming to an end.",
+    testEnabled = false,
 };
 local LootTradeTimers = GL.Interface.Settings.LootTradeTimers; ---@type LootTradeTimersSettings
 
@@ -55,6 +56,36 @@ function LootTradeTimers:draw(Parent)
     };
 
     Overview:drawCheckboxes(Checkboxes, Parent);
+
+    HorizontalSpacer = GL.AceGUI:Create("SimpleGroup");
+    HorizontalSpacer:SetLayout("FILL");
+    HorizontalSpacer:SetFullWidth(true);
+    HorizontalSpacer:SetHeight(15);
+    Parent:AddChild(HorizontalSpacer);
+
+    local ButtonText = "Demo";
+    if (self.testEnabled == true) then
+        ButtonText = "Stop";
+    end
+
+    local DemoTradeTimersButton = GL.AceGUI:Create("Button");
+    DemoTradeTimersButton:SetText(ButtonText);
+    DemoTradeTimersButton:SetCallback("OnClick", function()
+        -- Disable test mode
+        if (self.testEnabled) then
+            self.testEnabled = false;
+            DemoTradeTimersButton:SetText("Demo");
+            GL.Interface.TradeWindow.TimeLeft:refreshBars();
+
+            return;
+        end
+
+        -- Enable test mode
+        self.testEnabled = true;
+        DemoTradeTimersButton:SetText("Stop");
+        GL.Interface.TradeWindow.TimeLeft:refreshBars();
+    end);
+    Parent:AddChild(DemoTradeTimersButton);
 end
 
 GL:debug("Interface/Settings/TMB.lua");

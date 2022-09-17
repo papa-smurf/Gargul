@@ -785,6 +785,10 @@ function GL:inventoryItemTradeTimeRemaining(bag, slot)
     local timeRemaining = GL:tooltipItemTradeTimeRemaining();
     GL.TooltipFrame:ClearLines();
 
+    if (GL.Interface.Settings.LootTradeTimers.testEnabled) then
+        return math.random(5000, 7200);
+    end
+
     return timeRemaining;
 end
 
