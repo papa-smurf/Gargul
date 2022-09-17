@@ -167,11 +167,6 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, cost)
         announce = true;
     end
 
-    -- No need to announce if the player is not in a group of any kind
-    if (not GL.User.isInGroup) then
-        announce = false;
-    end
-
     -- Insert the award in the SessionHistory table used for rendering tooltips
     if (winner ~= GL.Exporter.disenchantedItemIdentifier) then
         local SessionHistory = GL:tableGet(AwardedLoot.AwardedThisSession, itemLink, {});
