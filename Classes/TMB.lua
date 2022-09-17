@@ -511,7 +511,7 @@ function TMB:import(data, triedToDecompress)
             or not WebsiteData
             or type(WebsiteData) ~= "table"
         ) then
-            displayGenericException();
+            GL.Interface:getItem("TMB.Importer", "Label.StatusMessage"):SetText("Invalid DFT data provided, Export your DFT data as per the sheet's instructions and paste the contents here as-is!");
             return false;
         end
     end
@@ -702,6 +702,7 @@ function TMB:DFTFormatToTMB(data)
 
                 line = strtrim(line);
                 line = string.sub(line, 12, string.len(line));
+                line = line:gsub("|r: :", "");
                 line = line:gsub("|r: ", "");
 
                 lineParts = GL:strSplit(line, "|");

@@ -9,6 +9,7 @@ local _, GL = ...;
 GL.PackMule = {
     _initialized = false,
     disenchanter = false,
+    noDisenchanterSetWarningGiving = false,
     processing = false,
     setupWindowIsActive = false,
 
@@ -325,7 +326,20 @@ function PackMule:lootReady()
 
                             -- SELF serves as a placeholder for the current player name
                             if (ruleTarget == "SELF") then
-                                ruleTarget = GL.User.name;
+                              ruleTarget = GL.User.name;
+
+                            -- DE serves as a placeholder for the registered disenchanter
+                            elseif (ruleTarget == "DE") then
+                                ruleTarget = self.disenchanter;
+
+                                if (GL:empty(self.disenchanter)) then
+                                    if (not self.noDisenchanterSetWarningGiving) then
+                                        GL:warning("No disenchanter set, use /gl sd [mydisenchanter] to set one");
+                                        self.noDisenchanterSetWarningGiving = true;
+                                    end
+
+                                    return; -- No point continuing, don't want the item to end up in the wrong hands!
+                                end
                             end
 
                             -- GroupMemberNames are always in lowercase
@@ -580,6 +594,31 @@ function PackMule:clearDisenchanter()
     GL:debug("PackMule:clearDisenchanter");
 
     self.disenchanter = nil;
+end
+
+--- sets the disenchanter
+---
+---@param disenchanter string
+---@return void
+function PackMule:setDisenchanter(disenchanter)
+    GL:debug("PackMule:setDisenchanter");
+
+    -- Better safe than lua error
+    disenchanter = tostring(disenchanter);
+    if (GL:empty(disenchanter)) then
+        return;
+    end
+
+    if (not GL.User.isInGroup) then
+        return GL:warning("You're not currently in a group");
+    end
+
+    self.disenchanter = disenchanter;
+
+    GL:sendChatMessage(
+        string.format("%s was set as disenchanter",
+        self.disenchanter
+    ), "GROUP");
 end
 
 --- Announce the disenchantment of an item in the group chat

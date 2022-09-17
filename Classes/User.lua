@@ -267,7 +267,7 @@ function User:groupMembers()
                 isLeader = true,
                 hasAssist = false,
                 index = 1,
-            }
+            },
         };
     end
 
