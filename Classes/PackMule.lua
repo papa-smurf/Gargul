@@ -326,7 +326,7 @@ function PackMule:lootReady()
 
                             -- SELF serves as a placeholder for the current player name
                             if (ruleTarget == "SELF") then
-                              ruleTarget = GL.User.name;
+                                ruleTarget = GL.User.name;
 
                             -- DE serves as a placeholder for the registered disenchanter
                             elseif (ruleTarget == "DE") then
