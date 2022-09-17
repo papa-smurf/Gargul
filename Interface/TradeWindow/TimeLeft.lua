@@ -297,9 +297,17 @@ function TimeLeft:refreshBars()
             if (keyPressIdentifier == GL.Settings:get("ShortcutKeys.rollOff")) then
                 GL.MasterLooterUI:draw(BagItem.itemLink);
 
-                -- Open the award window
+            -- Open the award window
             elseif (keyPressIdentifier == GL.Settings:get("ShortcutKeys.award")) then
                 GL.Interface.Award:draw(BagItem.itemLink);
+
+            -- Unregistered hotkey was pressed and it turns out to be SHIFT_CLICK, add item link to chat/editbox etc
+            elseif (keyPressIdentifier == "SHIFT_CLICK") then
+                if (ChatFrameEditBox and ChatFrameEditBox:IsVisible()) then
+                    ChatFrameEditBox:Insert(BagItem.itemLink);
+                else
+                    ChatEdit_InsertLink(BagItem.itemLink);
+                end
             end
         end)
 
