@@ -512,6 +512,8 @@ function DroppedLoot:announce(Modifiers)
                 local source = "TMB";
                 if (GL.TMB:wasImportedFromDFT()) then
                     source = "DFT";
+                elseif (GL.TMB:wasImportedFromCSV()) then
+                    source = "Item";
                 end
 
                 GL:sendChatMessage(

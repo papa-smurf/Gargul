@@ -359,8 +359,10 @@ function TMB:appendTMBItemInfoToTooltip(tooltip)
     ) then
         -- Add the header
         local source = "TMB";
-        if (GL.TMB:wasImportedFromDFT()) then
+        if (self:wasImportedFromDFT()) then
             source = "DFT";
+        elseif (self:wasImportedFromCSV()) then
+            source = "Item";
         end
         tooltip:AddLine(string.format("\n|cFFff7a0a%s|r", source .. " Prio List"));
 
@@ -457,6 +459,13 @@ end
 ---@return boolean
 function TMB:wasImportedFromDFT()
     return self:available() and GL:toboolean(GL.DB.TMB.MetaData.importedFromDFT);
+end
+
+--- Check whether the current TMB data was imported from CSV
+---
+---@return boolean
+function TMB:wasImportedFromCSV()
+    return self:available() and GL:toboolean(GL.DB.TMB.MetaData.importedFromCSV);
 end
 
 --- Import a given tmb string
@@ -642,6 +651,7 @@ function TMB:import(data, triedToDecompress)
 
     GL.DB.TMB.MetaData = {
         importedFromDFT = GL:toboolean(WebsiteData.importedFromDFT),
+        importedFromCSV = GL:toboolean(WebsiteData.importedFromCSV),
         importedAt = GetServerTime(),
         hash = GL:uuid() .. GetServerTime(),
     };
