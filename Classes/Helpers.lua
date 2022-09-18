@@ -1057,7 +1057,7 @@ function GL:strSplit(s, delimiter)
         return Result;
     end
 
-    for match in (s..delimiter):gmatch("(.-)%" .. delimiter) do
+    for match in (s .. delimiter):gmatch("(.-)%" .. delimiter) do
         tinsert(Result, strtrim(match));
     end
 
