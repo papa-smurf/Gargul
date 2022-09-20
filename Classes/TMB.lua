@@ -813,7 +813,7 @@ function TMB:CSVFormatToTMB(data)
         OR
 
         6948,vejusatko,zhorax,feth,arvada,arrafart,ratomir
-        1372,ratomir,tonio,zhorax,feth,arvada,arrafart
+        1372,ratomir,tonio|zhorax,feth,arvada,arrafart
     ]]
 
     for line in data:gmatch("[^\n]+") do
@@ -844,17 +844,30 @@ function TMB:CSVFormatToTMB(data)
             table.remove(CSVParts, 1);
 
             for _, priorityEntry in pairs(CSVParts) do
-                local player = string.lower(GL:stripRealm(priorityEntry));
-                local playerPriority = player:match("(%[[0-9]+%])");
+                (function () -- Not having continue statements in LUA is getting silly at this point
+                    local player = string.lower(GL:stripRealm(priorityEntry));
+                    local playerPriority = player:match("(%[[0-9]+%])");
 
-                if (playerPriority) then
-                    local openingBracketPosition = string.find(player, "%[");
-                    player = string.sub(player, 1, openingBracketPosition - 1);
-                    priority = playerPriority:match("([0-9]+)");
-                end
+                    if (playerPriority) then
+                        local openingBracketPosition = string.find(player, "%[");
+                        player = string.sub(player, 1, openingBracketPosition - 1);
+                        priority = playerPriority:match("([0-9]+)");
+                    elseif (string.find(player, "%|")) then
+                        local Players = GL:strSplit(player, "|");
 
-                tinsert(Priorities, {player = player, priority = priority});
-                priority = priority + 1;
+                        for _, playerName in pairs(Players) do
+                            if (not GL:empty(playerName)) then
+                                tinsert(Priorities, {player = playerName, priority = priority});
+                            end
+                        end
+
+                        priority = priority + 1;
+                        return;
+                    end
+
+                    tinsert(Priorities, {player = player, priority = priority});
+                    priority = priority + 1;
+                end)();
             end
         end)();
 
