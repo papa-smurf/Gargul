@@ -744,14 +744,18 @@ function MasterLooterUI:updateItemNote()
 end
 
 -- Reset the roll off UI to its defaults
-function MasterLooterUI:reset()
+function MasterLooterUI:reset(keepItem)
     GL:debug("MasterLooterUI:reset");
 
-    GL.Interface:getItem(self, "Icon.Item"):SetImage(MasterLooterUI.Defaults.itemIcon);
-    GL.Interface:getItem(self, "EditBox.Item"):SetText(MasterLooterUI.Defaults.itemText);
-    GL.Interface:getItem(self, "EditBox.Duration"):SetText(GL.Settings:get("UI.RollOff.timer"));
-    GL.Interface:getItem(self, "EditBox.ItemNote"):SetText("");
-    MasterLooterUI.ItemBoxHoldsValidItem = false;
+    keepItem = GL:toboolean(keepItem);
+
+    if (not keepItem) then
+        GL.Interface:getItem(self, "Icon.Item"):SetImage(MasterLooterUI.Defaults.itemIcon);
+        GL.Interface:getItem(self, "EditBox.Item"):SetText(MasterLooterUI.Defaults.itemText);
+        GL.Interface:getItem(self, "EditBox.Duration"):SetText(GL.Settings:get("UI.RollOff.timer"));
+        GL.Interface:getItem(self, "EditBox.ItemNote"):SetText("");
+        MasterLooterUI.ItemBoxHoldsValidItem = false;
+    end
 
     GL.Interface:getItem(self, "Table.Players"):ClearSelection();
     GL.Interface:getItem(self, "Table.Players"):ClearSelection();

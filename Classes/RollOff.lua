@@ -35,19 +35,20 @@ function RollOff:announceStart(itemLink, time, note)
 
     time = tonumber(time);
 
-    -- Make sure we don't have any funny decimal business going on
-    if (time) then
-        time = math.floor(time);
-    else
-        ---@todo check for funny business
-    end
-
     if (type(itemLink) ~= "string"
         or GL:empty(itemLink)
         or not GL:higherThanZero(time)
     ) then
         GL:warning("Invalid data provided for roll of start!");
         return false;
+    end
+
+    -- Clear the rolls table whenever a new item is rolled off
+    if (not GL:empty(self.CurrentRollOff.itemLink)
+        and self.CurrentRollOff.itemLink ~= itemLink
+    ) then
+        self:reset();
+        GL.MasterLooterUI:reset(true);
     end
 
     self:listenForRolls();
@@ -209,6 +210,8 @@ function RollOff:announceStart(itemLink, time, note)
             local source = "TMB";
             if (GL.TMB:wasImportedFromDFT()) then
                 source = "DFT";
+            elseif (GL.TMB:wasImportedFromCSV()) then
+                source = "Item";
             end
 
             local EligiblePlayerNames = table.concat(GL:tableColumn(EligiblePlayers, "character"), ", ");
@@ -496,8 +499,6 @@ function RollOff:award(roller, itemLink, osRoll, boostedRoll)
                 -- Add the player we awarded the item to to the item's tooltip
                 GL.AwardedLoot:addWinner(roller, itemLink, nil, nil, isOS, cost);
 
-                self:reset();
-                GL.MasterLooterUI:reset();
                 GL.MasterLooterUI:closeReopenMasterLooterUIButton();
 
                 if (GL.Settings:get("UI.RollOff.closeOnAward")) then
@@ -550,8 +551,6 @@ function RollOff:award(roller, itemLink, osRoll, boostedRoll)
                 -- Add the player we awarded the item to to the item's tooltip
                 GL.AwardedLoot:addWinner(roller, itemLink, nil, nil, isOS, cost);
 
-                self:reset();
-                GL.MasterLooterUI:reset();
                 GL.MasterLooterUI:closeReopenMasterLooterUIButton();
 
                 if (GL.Settings:get("UI.RollOff.closeOnAward")) then
@@ -845,8 +844,6 @@ function RollOff:reset()
 
     -- All we need to do is reset the itemLink and let self:start() take care of the rest
     self.CurrentRollOff.itemLink = "";
-
-    GL.MasterLooterUI:reset();
 end
 
 GL:debug("RollOff.lua");

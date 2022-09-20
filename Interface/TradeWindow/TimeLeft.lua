@@ -126,6 +126,13 @@ end
 
 ---@return boolean
 function TimeLeft:enabled()
+    GL:debug("TimeLeft:enabled");
+
+    -- Check if test mode is enabled
+    if (GL.Interface.Settings.LootTradeTimers.testEnabled) then
+        return true;
+    end
+
     -- Check whether we should be showing the bars at all
     if (not GL.Settings:get("LootTradeTimers.enabled") -- The user disabled this feature
         or ( -- The user only wants to see it when master looting and is not the master looter
@@ -253,7 +260,6 @@ function TimeLeft:refreshBars()
         -- Make sure the bar window has the appropriate height
         Window:SetHeight(math.max(Window:GetHeight(), 16) + 18);
 
-        local barIdentifier = GL:stringHash(BagItem.timeRemaining .. BagItem.itemLink .. GL:uuid());
         local TimerBar = LibStub("LibCandyBarGargul-3.0"):New(
             "Interface\\AddOns\\Gargul\\Assets\\Textures\\timer-bar",
             240,
@@ -291,9 +297,17 @@ function TimeLeft:refreshBars()
             if (keyPressIdentifier == GL.Settings:get("ShortcutKeys.rollOff")) then
                 GL.MasterLooterUI:draw(BagItem.itemLink);
 
-                -- Open the award window
+            -- Open the award window
             elseif (keyPressIdentifier == GL.Settings:get("ShortcutKeys.award")) then
                 GL.Interface.Award:draw(BagItem.itemLink);
+
+            -- Unregistered hotkey was pressed and it turns out to be SHIFT_CLICK, add item link to chat/editbox etc
+            elseif (keyPressIdentifier == "SHIFT_CLICK") then
+                if (ChatFrameEditBox and ChatFrameEditBox:IsVisible()) then
+                    ChatFrameEditBox:Insert(BagItem.itemLink);
+                else
+                    ChatEdit_InsertLink(BagItem.itemLink);
+                end
             end
         end)
 

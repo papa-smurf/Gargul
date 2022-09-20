@@ -9,6 +9,7 @@ GL.Commands = GL.Commands or {
         buffs = "You can instantly check player buffs like Ony, ZG, but also protection consumables like shadow protection: /gl buffs 22888, 22818, 22817, 22820, 24425, 15366, 20079",
         clearplusones = "Clear all plus one values",
         cleardisenchanter = "Clear the disenchanter entry so you can pick a new one the next time around",
+        setdisenchanter = "Sets the disenchanter entry directly without having to select one: /gl sd [mydisenchanter]",
         dft = "Open the DFT importer. Data exported from your DFT sheet can be imported here",
         export = "Export dropped loot to a CSV format which is compatible with TMB for example.",
         gdkp = "Open the GDKP UI where you can manage your GDKP sessions",
@@ -20,8 +21,8 @@ GL.Commands = GL.Commands or {
         plusones = "Open the PlusOnes window that allows you to check and manipulate all plus one values",
         raidcsv = "Output everyone currently in the group in a CSV format",
         rolloff = "Open the RollOff UI where you can announce an item for players to roll on: /gl award [itemLink?]",
-        softreserves = "Open either the SoftRes import window if there's no data available or open the SoftRes overview",
         settings = "Open the settings menu",
+        softreserves = "Open either the SoftRes import window if there's no data available or open the SoftRes overview",
         thatsmybis = "Open the TMB importer. Data exported from tmb.com can be imported here",
         version = "Compare your Gargul version with everyone in your group and shows you exactly who needs to upgrade or who doesn't have the addon installed",
     },
@@ -38,6 +39,7 @@ GL.Commands = GL.Commands or {
         a = "award",
         aod = "awardondate",
         cd = "cleardisenchanter",
+        sd = "setdisenchanter",
         rcsv = "raidcsv",
         gd = "gdkp",
         gr = "groups",
@@ -110,6 +112,9 @@ GL.Commands = GL.Commands or {
 
         -- Clear the disenchanter
         cleardisenchanter = function () GL.PackMule:clearDisenchanter(); end,
+
+        -- sets the disenchanter
+        setdisenchanter = function (...) GL.PackMule:setDisenchanter(...); end,
 
         -- Clear all plus ones
         clearplusones = function() GL.PlusOnes:clear(); end,

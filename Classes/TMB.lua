@@ -359,8 +359,10 @@ function TMB:appendTMBItemInfoToTooltip(tooltip)
     ) then
         -- Add the header
         local source = "TMB";
-        if (GL.TMB:wasImportedFromDFT()) then
+        if (self:wasImportedFromDFT()) then
             source = "DFT";
+        elseif (self:wasImportedFromCSV()) then
+            source = "Item";
         end
         tooltip:AddLine(string.format("\n|cFFff7a0a%s|r", source .. " Prio List"));
 
@@ -459,6 +461,13 @@ function TMB:wasImportedFromDFT()
     return self:available() and GL:toboolean(GL.DB.TMB.MetaData.importedFromDFT);
 end
 
+--- Check whether the current TMB data was imported from CSV
+---
+---@return boolean
+function TMB:wasImportedFromCSV()
+    return self:available() and GL:toboolean(GL.DB.TMB.MetaData.importedFromCSV);
+end
+
 --- Import a given tmb string
 ---
 ---@param data string
@@ -483,14 +492,32 @@ function TMB:import(data, triedToDecompress)
     -- Make sure to get rid of any leadin/trailing whitespaces
     data = strtrim(data);
 
+    -- Fetch the first line
+    local firstLine = data:match("[^\n]+");
+
+    if (GL:empty(firstLine)) then
+        displayGenericException();
+        return false;
+    end
+
+    -- Let's check if we're dealing with Gargul's "official" CSV format here
+    if (firstLine:match("^[0-9]+,")) then
+        triedToDecompress = true;
+        data = self:CSVFormatToTMB(data);
+        WebsiteData = data;
+
+        if (not data) then
+            return GL.Interface:getItem("TMB.Importer", "Label.StatusMessage"):SetText("Invalid CSV provided, the format is: 6948,player1,player2");
+        end
+
     -- We might have the dft format on hands, let's check it out!
-    if (GL:strStartsWith(data, '"')) then
+    elseif (GL:strStartsWith(firstLine, '"')) then
         triedToDecompress = true;
         data = self:DFTFormatToTMB(data);
         WebsiteData = data;
 
         if (not data) then
-            GL.Interface:getItem("TMB.Importer", "Label.StatusMessage"):SetText("Invalid TMB or DFT data provided, make sure to paste the export contents here as-is!");
+            return GL.Interface:getItem("TMB.Importer", "Label.StatusMessage"):SetText("Invalid TMB or DFT data provided, make sure to paste the export contents here as-is!");
         end
     end
 
@@ -511,7 +538,7 @@ function TMB:import(data, triedToDecompress)
             or not WebsiteData
             or type(WebsiteData) ~= "table"
         ) then
-            displayGenericException();
+            GL.Interface:getItem("TMB.Importer", "Label.StatusMessage"):SetText("Invalid DFT data provided, Export your DFT data as per the sheet's instructions and paste the contents here as-is!");
             return false;
         end
     end
@@ -624,6 +651,7 @@ function TMB:import(data, triedToDecompress)
 
     GL.DB.TMB.MetaData = {
         importedFromDFT = GL:toboolean(WebsiteData.importedFromDFT),
+        importedFromCSV = GL:toboolean(WebsiteData.importedFromCSV),
         importedAt = GetServerTime(),
         hash = GL:uuid() .. GetServerTime(),
     };
@@ -702,6 +730,7 @@ function TMB:DFTFormatToTMB(data)
 
                 line = strtrim(line);
                 line = string.sub(line, 12, string.len(line));
+                line = line:gsub("|r: :", "");
                 line = line:gsub("|r: ", "");
 
                 lineParts = GL:strSplit(line, "|");
@@ -759,6 +788,104 @@ function TMB:DFTFormatToTMB(data)
             end
 
             TMBData.wishlists[itemID][key] = string.format("%s||%s||1||1", string.lower(Priority.player), priorityIndex);
+        end
+    end
+
+    return TMBData;
+end
+
+--- Attempt to transform the Gargul CSV format to a TMB format
+---
+---@param data string
+---@return boolean|table
+function TMB:CSVFormatToTMB(data)
+    GL:debug("TMB:CSVFormatToTMB");
+
+    local TMBData = {
+        importedFromCSV = true,
+        wishlists = {},
+    };
+
+    --[[
+        6948,zhorax[1],feth[2],arvada[3],arrafart[3],ratomir[4],tonio[99]
+        1372,ratomir[1],zhorax[2],feth[3],arvada[4],arrafart[4],vejusatko[99]
+
+        OR
+
+        6948,vejusatko,zhorax,feth,arvada,arrafart,ratomir
+        1372,ratomir,tonio|zhorax,feth,arvada,arrafart
+    ]]
+
+    for line in data:gmatch("[^\n]+") do
+        local Priorities = {};
+        local itemID;
+
+        (function ()
+            local priority = 1;
+            local CSVParts;
+            CSVParts = GL:strSplit(line, ",");
+
+            -- We can't handle this line it seems
+            if (not CSVParts[2]) then
+                return;
+            end
+
+            itemID = tonumber(CSVParts[1]);
+
+            if (not itemID) then
+                return;
+            end
+
+            itemID = math.floor(itemID);
+            if (not GL:higherThanZero(itemID)) then
+                return;
+            end
+
+            table.remove(CSVParts, 1);
+
+            for _, priorityEntry in pairs(CSVParts) do
+                (function () -- Not having continue statements in LUA is getting silly at this point
+                    local player = string.lower(GL:stripRealm(priorityEntry));
+                    local playerPriority = player:match("(%[[0-9]+%])");
+
+                    if (playerPriority) then
+                        local openingBracketPosition = string.find(player, "%[");
+                        player = string.sub(player, 1, openingBracketPosition - 1);
+                        priority = playerPriority:match("([0-9]+)");
+                    elseif (string.find(player, "%|")) then
+                        local Players = GL:strSplit(player, "|");
+
+                        for _, playerName in pairs(Players) do
+                            if (not GL:empty(playerName)) then
+                                tinsert(Priorities, {player = playerName, priority = priority});
+                            end
+                        end
+
+                        priority = priority + 1;
+                        return;
+                    end
+
+                    tinsert(Priorities, {player = player, priority = priority});
+                    priority = priority + 1;
+                end)();
+            end
+        end)();
+
+        -- Valid priorities were detected, add them
+        if (not GL:empty(Priorities)) then
+            TMBData.wishlists[tostring(itemID)] = Priorities;
+        end
+    end
+
+    -- No valid data detected
+    if (GL:empty(TMBData.wishlists)) then
+        return false;
+    end
+
+    -- Rewrite the priorities to match TMBs format
+    for itemID, Priorities in pairs(TMBData.wishlists) do
+        for key, PriorityEntry in pairs(Priorities) do
+            TMBData.wishlists[itemID][key] = string.format("%s||%s||1||1", string.lower(PriorityEntry.player), PriorityEntry.priority);
         end
     end
 
