@@ -237,6 +237,13 @@ function Exporter:transformEntriesToCustomFormat(Entries)
         for _, AwardEntry in pairs(Entries) do
             local exportEntry = GL.Settings:get("ExportingLoot.customFormat");
             local ItemDetails = GL.DB.Cache.ItemsById[tostring(AwardEntry.itemId)];
+            local wowheadLink;
+
+            if (GL.isEra) then
+                wowheadLink = string.format("https://classic.wowhead.com/item=%s", AwardEntry.itemId );
+            else
+                wowheadLink = string.format("https://www.wowhead.com/wotlk/item=%s", AwardEntry.itemId );
+            end
 
             if (not GL:empty(ItemDetails)) then
                 local Values = {
@@ -254,6 +261,7 @@ function Exporter:transformEntriesToCustomFormat(Entries)
                     ["@MINUTE"] = date('%M', AwardEntry.timestamp),
                     ["@DATE"] = date('%Y-%m-%d', AwardEntry.timestamp),
                     ["@TIME"] = date('%H:%M', AwardEntry.timestamp),
+                    ["@WOWHEAD"] = wowheadLink,
                     ["\\t"] = "\t",
                 };
 

@@ -4,8 +4,9 @@ local _, GL = ...;
 ---@class SoftRes
 GL.SoftRes = {
     _initialized = false,
-    maxNumberOfSoftReservedItems = 6,
+    announcedImportSoftResAt = false,
     broadcastInProgress = false,
+    maxNumberOfSoftReservedItems = 6,
     requestingData = false,
 
     MaterializedData = {
@@ -391,6 +392,11 @@ function SoftRes:draw()
     if (not self:available()) then
         GL.Interface.SoftRes.Importer:draw();
         return;
+    end
+
+    -- No items were reserved yet (this is possible!)
+    if (GL:empty(self.MaterializedData.ReservedItemIds)) then
+        return GL.Interface.SoftRes.Overview:draw();
     end
 
     -- Show the soft-reserve overview after all items are loaded
@@ -790,9 +796,21 @@ function SoftRes:import(data, openOverview)
         if (not GL.DB:get('SoftRes.MetaData.hidden', true)) then
             self:broadcast();
         end
+    end
 
+    -- Yes, we need to repeat this if-statement since userIsAllowedToBroadcast includes its own isInGroup check
+    if (not GL.User.isInGroup
+        or (broadcast
+            and self:userIsAllowedToBroadcast()
+        )
+    ) then
         -- Let everyone know how to double-check their soft-reserves
-        if (GL.Settings:get("SoftRes.enableWhisperCommand", true)) then
+        if (GL.Settings:get("SoftRes.enableWhisperCommand", true)
+            and (not GL.User.isInGroup
+                or not self.announcedImportSoftResAt -- Hasn't been announced yet
+                or self.announcedImportSoftResAt <= GetServerTime() - 300 -- Was announced 5 minutes ago or more
+            )
+        ) then
             GL:sendChatMessage(
                 string.format("I just imported soft-reserves into Gargul. Whisper !sr to me to double-check your reserves!"),
                 "GROUP"

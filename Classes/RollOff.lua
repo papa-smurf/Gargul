@@ -210,6 +210,8 @@ function RollOff:announceStart(itemLink, time, note)
             local source = "TMB";
             if (GL.TMB:wasImportedFromDFT()) then
                 source = "DFT";
+            elseif (GL.TMB:wasImportedFromCSV()) then
+                source = "Item";
             end
 
             local EligiblePlayerNames = table.concat(GL:tableColumn(EligiblePlayers, "character"), ", ");
