@@ -80,6 +80,9 @@ function Alerts:init()
 end
 
 function Alerts:fire(frameType, ...)
+    GL:debug("Alerts:fire");
+
+GL:error("HERE!"); ---@todo: REMOVE
     -- Old version of WoW use a secure mixin for alerts, making it completely unusable with native alert frames
     if (not self.Types.frameType
         and GL.clientVersion < 30000

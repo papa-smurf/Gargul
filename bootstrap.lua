@@ -96,7 +96,6 @@ function GL:_init()
     end
 
     self.Comm:_init();
-    self.Interface.Alerts:_init();
     self.User:_init();
     self.LootPriority:_init();
     self.AwardedLoot:_init();

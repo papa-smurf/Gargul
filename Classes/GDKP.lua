@@ -12,7 +12,7 @@ GL.GDKP = {
     CurrentAuction = {
         initiatorID = nil, -- The player who started the auction
         duration = nil, -- The amount of time players get to bid
-        refreshDuration = nil, -- The amount of time the timer resets to
+        refreshDuration = nil, -- The amount of time the timer resets to after each bid
         itemId = nil, -- The ID of the item we're bidding on
         itemName = nil, -- The name of the item we're bidding on
         itemLink = nil, -- The item link of the item we're bidding on
@@ -38,6 +38,27 @@ function GDKP:_init()
     if (self._initialized) then
         return false;
     end
+---@todo: remove
+GL.Ace:ScheduleTimer(function ()
+    GL:error("FIRE!");
+    GL.Interface.Alerts:fire("GargulNotification", {
+        message = "|c00BE3333You were outbid!|r",
+    });
+end, 1);
+
+    -- An event is fired whenever a bid is accepted, in which case we broadcast the latest auction details
+    GL.Events:register("GDKPBidAccepted", "GL.GDKP_BID_ACCEPTED", function ()
+        GL.CommMessage.new(
+            CommActions.refreshGDKPAuction,
+            self.CurrentAuction,
+            "GROUP"
+        ):send();
+    end);
+
+    -- Whenever we were outbid we show a notification
+    GL.Events:register("", "GL.GDKP_USER_WAS_OUTBID", function (_, NewTopBid)
+
+    end);
 
     self._initialized = true;
     return true;
@@ -496,6 +517,42 @@ function GDKP:stop(CommMessage)
     return true;
 end
 
+--- Something changed, see if we need to change anything (UI elements, top bid etc)
+---
+---@param CommMessage string|nil
+---@return void
+function GDKP:refresh(CommMessage)
+    -- Even if the auction is over we still want to update UI elements
+    -- if needed, this is why we don't use self.inProgress here!
+    if (GL:empty(self.CurrentAuction)) then
+        return;
+    end
+
+    -- The user who sent the refresh our way is not permitted to do so
+    if (CommMessage and CommMessage.Sender.id ~= self.CurrentAuction.initiatorID
+    ) then
+        return;
+    end
+
+    -- Check if there's a new highest bid
+    local NewTopBid = GL:tableGet(CommMessage, "content.TopBid" or {});
+    local OldTopBid = self.CurrentAuction.Top or {bid = 0, Bidder = {}};
+    if (not GL:empty(NewTopBid) and NewTopBid.bid > OldTopBid.bid) then
+        -- It seems like we were outbid!
+        if (OldTopBid.Bidder.name
+            and string.lower(GL.User.name) == OldTopBid.Bidder.name
+            and OldTopBid.Bidder.name ~= NewTopBid.Bidder.name
+        ) then
+            GL.Events:fire("GL.GDKP_USER_WAS_OUTBID", OldTopBid, NewTopBid);
+        end
+
+        self.CurrentAuction.Top = NewTopBid;
+        GL.Interface.GDKP.Bidder:refresh();
+    end
+
+    return;
+end
+
 function GDKP:resetAuction()
     -- Reset the last auction. This happens when the master looter
     -- awards an item or when he clicks the "clear" button in the auctioneer window
@@ -554,7 +611,7 @@ function GDKP:stopListeningForBids()
 end
 
 function GDKP:bid(message)
-    GL:dump(message);
+    GL:debug("GDKP:bid");
 
     -- There's no auction in progress
     if (not self.inProgress) then
@@ -588,7 +645,7 @@ end
 ---@return number
 function GDKP:lowestValidBid()
     return math.max(
-        GL:tableGet(self.CurrentAuction, "TopBid.price", 0) + (self.CurrentAuction.minimumIncrement or 0),
+        GL:tableGet(self.CurrentAuction, "TopBid.bid", 0) + (self.CurrentAuction.minimumIncrement or 0),
         self.CurrentAuction.minimumBid
     );
 end

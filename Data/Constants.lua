@@ -306,9 +306,10 @@ GL.Data.Constants = {
             broadcastBoostedRollsMutation = 14,
             startGDKPAuction = 15,
             stopGDKPAuction = 16,
-            requestGDKPSession = 17,
-            broadcastGDKPSession = 18,
-            broadcastGDKPMutation = 19,
+            refreshGDKPAuction = 17,
+            requestGDKPSession = 18,
+            broadcastGDKPSession = 19,
+            broadcastGDKPMutation = 20,
         },
     },
 

@@ -306,6 +306,17 @@ function Auctioneer:draw(itemLink)
                 if (GL.Settings:get("GDKP.closeAuctioneerOnAward", true)) then
                     self:close();
                 end
+
+                ---@todo: add setting for this
+                -- Announce awarded item on RAID or RAID_WARNING
+                GL:sendChatMessage(
+                    string.format("%s was awarded to %s for %sg. Congrats!",
+                            itemLink,
+                            winner,
+                            bid
+                    ),
+                    "GROUP"
+                );
             end,
         });
     end);
@@ -360,7 +371,7 @@ function Auctioneer:draw(itemLink)
     CloseOnStart:SetCallback("OnValueChanged", function (widget)
         GL.Settings:set("Auctioneer.closeOnStart", GL:toboolean(widget:GetValue()));
     end);
-    CloseOnStart:SetWidth(150);
+    CloseOnStart:SetWidth(110);
     FourthRow:AddChild(CloseOnStart);
 
     local CloseOnAward = AceGUI:Create("CheckBox");
@@ -369,7 +380,7 @@ function Auctioneer:draw(itemLink)
     CloseOnAward:SetCallback("OnValueChanged", function (widget)
         GL.Settings:set("UI.Auctioneer.closeOnAward", GL:toboolean(widget:GetValue()));
     end);
-    CloseOnAward:SetWidth(150);
+    CloseOnAward:SetWidth(116);
     FourthRow:AddChild(CloseOnAward);
 
     if (itemLink

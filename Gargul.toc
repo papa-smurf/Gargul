@@ -103,7 +103,7 @@ Interface/ShortcutKeysLegend.lua
 
 # Alerts
 Interface\Alerts.lua
-Classes\Alerts.lua
+# Classes\Alerts.lua
 Interface\Alerts.xml
 
 # Test classes

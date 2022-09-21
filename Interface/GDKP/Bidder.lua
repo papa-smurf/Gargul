@@ -16,7 +16,6 @@ function Bidder:show(...)
     end
 
     self:draw(...);
-    return true;
 end
 
 --- Note: we're not using AceGUI here since getting a SimpleGroup to move properly is a friggin nightmare
@@ -24,9 +23,8 @@ end
 ---@param time number The duration of the RollOff
 ---@param itemLink string
 ---@param itemIcon string
----@param note string
 ---@return boolean
-function Bidder:draw(time, itemLink, itemIcon, note)
+function Bidder:draw(time, itemLink, itemIcon)
     GL:debug("Bidder:draw");
 
     local Window = CreateFrame("Frame", "GARGUL_GDKP_BIDDER_WINDOW", UIParent, Frame);
@@ -61,11 +59,7 @@ function Bidder:draw(time, itemLink, itemIcon, note)
 
     local TopBidder = Window:CreateFontString(nil, "ARTWORK", "GameFontWhite");
     TopBidder:SetPoint("CENTER", Window, "CENTER", 0, 12);
-    TopBidder:SetText(string.format("Top bidder: |c00%s%s|r with %s|c00FFF569g|r",
-            "1eff00",
-            "You",
-            5000
-    ));
+    GL.Interface:setItem(self, "TopBidder", TopBidder);
 
     local NewBid = Window:CreateFontString(nil, "ARTWORK", "GameFontWhite");
     NewBid:SetPoint("TOPLEFT", Window, "TOPLEFT", 44, -51);
@@ -92,7 +86,6 @@ function Bidder:draw(time, itemLink, itemIcon, note)
     end);
 
     BidButtonClick = function ()
-        GL:dump("BID!"); ---@todo: remove
         GL.GDKP:bid(BidInput:GetText());
         BidInput:SetText("");
         BidInput:ClearFocus();
@@ -129,6 +122,8 @@ function Bidder:draw(time, itemLink, itemIcon, note)
         GL:dump("PASS!");
     end);
 
+    self:refresh();
+
     Window:Show();
 
     -- YOU should be GREEN, other player should be RED!
@@ -155,12 +150,36 @@ function Bidder:draw(time, itemLink, itemIcon, note)
     ]]
 end
 
+function Bidder:refresh()
+    local TopBidderLabel = GL.Interface:getItem(self, "Frame.TopBidder");
+
+    if (not TopBidderLabel) then
+        return;
+    end
+
+    local TopBid = GL:tableGet(GL.GDKP, "CurrentAuction.TopBid", {});
+    if (TopBid and TopBid.bid) then
+        -- We're the highest bidder, NICE!
+        if (string.lower(TopBid.Bidder.name) == string.lower(GL.User.name)) then
+            TopBidderLabel:SetText(string.format("Top bidder: |c001Eff00%s|r with %s|c00FFF569g|r",
+                "You",
+                TopBid.bid
+            ));
+        else
+            TopBidderLabel:SetText(string.format("Top bidder: |c00%s%s|r with %s|c00BE3333g|r",
+                GL:classHexColor(TopBid.Bidder.class),
+                TopBid.Bidder.name,
+                TopBid.bid
+            ));
+        end
+    end
+end
+
 --- Draw the countdown bar
 ---
 ---@param time number
 ---@param itemLink string
 ---@param itemIcon string
----@param note string
 ---@return void
 function Bidder:drawCountdownBar(time, itemLink, itemIcon)
     GL:debug("Bidder:drawCountdownBar");
