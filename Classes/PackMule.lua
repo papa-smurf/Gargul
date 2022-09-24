@@ -92,7 +92,6 @@ function PackMule:_init()
     end);
 
     -- Make sure to auto accept BoP loot when rolling on items
-    ---@todo: add setting check
     GL.Events:register("PackMuleConfirmLootRollListener", "CONFIRM_LOOT_ROLL", function (_, rollID, roll)
         if (not GL.Settings:get("PackMule.autoConfirmGroup")) then
             return;
@@ -102,7 +101,6 @@ function PackMule:_init()
     end);
 
     -- Make sure to auto accept BoP loot when opening containers
-    ---@todo: add setting check
     GL.Events:register("PackMuleLootOpenedListener", "LOOT_OPENED", function ()
         if (not GL.Settings:get("PackMule.autoConfirmSolo")) then
             return;
