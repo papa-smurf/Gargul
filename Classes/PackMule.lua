@@ -462,44 +462,49 @@ function PackMule:getTargetForItem(itemLinkOrId, callback)
         local ruleTarget = strtrim(RuleThatApplies.target);
         local Targets = {};
 
-        -- Check whether we need to give the item to a random player
-        if (ruleTarget == "RANDOM") then
-            for _, Player in pairs(GL.User:groupMembers()) do
-                tinsert(Targets, string.lower(Player.name));
-            end
-        else
-            local RuleTargets = GL:strSplit(ruleTarget, " ");
-            local GroupMemberNames = GL.User:groupMemberNames(true);
+        local RuleTargets = GL:strSplit(ruleTarget, " ");
+        local GroupMemberNames = GL.User:groupMemberNames(true);
 
-            for _, ruleTarget in pairs(RuleTargets) do
-                local targetContainsExclamationMark = strfind(ruleTarget, "!");
-                ruleTarget = strtrim(ruleTarget);
-                ruleTarget = ruleTarget:gsub("!", "");
+        for _, ruleTarget in pairs(RuleTargets) do
+            local targetContainsExclamationMark = strfind(ruleTarget, "!");
+            ruleTarget = strtrim(ruleTarget);
+            ruleTarget = ruleTarget:gsub("!", "");
 
-                if (not GL.User.isMasterLooter) then
-                    if (GL:inTable({"PASS", "GREED", "NEED"}, ruleTarget)) then
-                        Targets = {ruleTarget};
-                        break;
-                    end
-                else
-                    -- SELF serves as a placeholder for the current player name
-                    if (ruleTarget == "SELF") then
-                        ruleTarget = GL.User.name;
+            if (not GL.User.isMasterLooter) then
+                if (GL:inTable({"PASS", "GREED", "NEED"}, ruleTarget)) then
+                    Targets = {ruleTarget};
+                    break;
+                end
+            else
+                -- SELF serves as a placeholder for the current player name
+                if (ruleTarget == "SELF") then
+                    ruleTarget = GL.User.name;
 
-                        -- DE serves as a placeholder for the registered disenchanter
-                    elseif (ruleTarget == "DE") then
-                        ruleTarget = self.disenchanter;
+                -- DE serves as a placeholder for the registered disenchanter
+                elseif (ruleTarget == "DE") then
+                    ruleTarget = self.disenchanter;
 
-                        if (GL:empty(self.disenchanter)) then
-                            if (not self.noDisenchanterSetWarningGiving) then
-                                GL:warning("No disenchanter set, use /gl sd [mydisenchanter] to set one");
-                                self.noDisenchanterSetWarningGiving = true;
-                            end
-
-                            return callback(false); -- No point continuing, don't want the item to end up in the wrong hands!
+                    if (GL:empty(self.disenchanter)) then
+                        if (not self.noDisenchanterSetWarningGiving) then
+                            GL:warning("No disenchanter set, use /gl sd [mydisenchanter] to set one");
+                            self.noDisenchanterSetWarningGiving = true;
                         end
+
+                        return callback(false); -- No point continuing, don't want the item to end up in the wrong hands!
                     end
 
+                -- Check whether we need to give the item to a random player
+                elseif (ruleTarget == "RANDOM") then
+                    for _, Player in pairs(GL.User:groupMembers()) do
+                        tinsert(Targets, string.lower(Player.name));
+                    end
+
+                    -- No need to continue, if a ML sets up RANDOM and something else
+                    -- at the same time then he can expect some weird behavior.
+                    break;
+                end
+
+                if (not GL:inTable({"PASS", "GREED", "NEED"}, ruleTarget)) then
                     -- GroupMemberNames are always in lowercase
                     if (GL:inTable(GroupMemberNames, string.lower(ruleTarget))) then
                         -- This is a high prio target, return it and stop checking
