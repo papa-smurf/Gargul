@@ -104,7 +104,7 @@ function DroppedLoot:lootReady()
             if (self.lootWindowIsOpened) then
                 GL.Interface.ShortcutKeysLegend:draw();
             end
-        end, 1.4);
+        end, 1);
     end
 
     -- Let the rest of the application know we're done announcing the items
