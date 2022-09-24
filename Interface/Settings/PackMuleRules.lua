@@ -5,7 +5,7 @@ local Overview = GL.Interface.Settings.Overview; ---@type SettingsOverview
 
 ---@class PackMuleRulesSettings
 GL.Interface.Settings.PackMuleRules = {
-    description = "In the |c00f7922eto|r fields below you can decide to which player(s) loot should go. You can either use player names or one of the supported placeholders:\n\n- Use |c00f7922eSELF|r to send items to yourself\n- Use |c00f7922eRANDOM|r to send items to a random player\n- Use |c00f7922eDE|r to send items to your disenchanter (/gl sd [mydisenchanter])\n- Use |c00f7922eIGNORE|r to ignore items and prevent them from being auto-looted\n\nYou can also provide a list of players:\n\n|c00f7922ePlayer1 Player2 SELF|r\n\nItems will be sent to a random person in this list. If you wish to send an item to the first person on your list who's actually in the raid, you can add an exclamation mark:\n\n|c00f7922e!Player1 !Player2 SELF|r\n\nIf |c00f7922ePlayer1|r is in the raid he will receive the item, if not then |c00f7922ePlayer2|r, if he's also missing it will be sent to |c00f7922eSELF|r.\n",
+    description = "Group Loot Placeholders:\n|c00f7922ePASS|r, |c00f7922eGREED|r, |c00f7922eNEED|r, |c00f7922eIGNORE|r\n\nFor Master Looting use player names and placeholders:\n|c00f7922eSELF|r - send to yourself\n|c00f7922eRANDOM|r - send to random player\n|c00f7922eDE|r - send to disenchanter (/gl sd [mydisenchanter])\n|c00f7922eIGNORE|r - prevent from being auto-looted\n\nList of players are also supported:\n|c00f7922ePlayer1 Player2 SELF|r - Items will be sent to a random person in this list.\n\nSend an item to the first player who's in the raid instead of random by adding an exclamation mark: |c00f7922e!Player1 !Player2 SELF|r",
 
     UIComponents = {
         Input = {
