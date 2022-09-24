@@ -19,7 +19,11 @@ function MinimapButton:_init()
                     return GL.Commands:call("softreserves");
                 end
 
-                return GL.Commands:call("settings");
+                if (not GL.Interface.Settings.Overview.isVisible) then
+                    return GL.Commands:call("settings");
+                end
+
+                return GL.Interface.Settings.Overview:close();
             end
 
             if (button == "RightButton") then
