@@ -102,10 +102,6 @@ end
 function PackMule:processGroupLootItems()
     GL:debug("PackMule:processGroupLootItems");
 
-    if (true) then
-        return;
-    end
-
     -- This should not be possible, just double checking!
     if (GetLootMethod() == "master") then
         return;
