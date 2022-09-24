@@ -61,7 +61,10 @@ GL.Data.DefaultSettings = {
     },
     PackMule = {
         announceDisenchantedItems = true,
-        enabled = false,
+        autoConfirmSolo = false,
+        autoConfirmGroup = false,
+        enabledForGroupLoot = false,
+        enabledForMasterLoot = false,
         persistsAfterReload = false,
         persistsAfterZoneChange = false,
         Rules = {},

@@ -66,6 +66,16 @@ function Settings:enforceTemporarySettings()
     ) then
         return;
     end
+
+    -- We renamed PackMule.enabled to PackMule.enabledForMasterLoot in 4.8
+    local oldPackMuleEnabled = self:get("PackMule.enabled", nil);
+    if (type(oldPackMuleEnabled) == "boolean") then
+        self:set("PackMule.enabledForMasterLoot", oldPackMuleEnabled);
+        GL.DB.Settings.PackMule.enabledForMasterLoot = oldPackMuleEnabled;
+
+        self.Active.PackMule.enabled = nil;
+        GL.DB.Settings.PackMule.enabled = nil;
+    end
 end
 
 --- Draw a setting section
