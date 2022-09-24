@@ -288,9 +288,8 @@ function DroppedLoot:hookClickEvents()
         return "default";
     end)();
 
-    --- The default UI only supports 4 buttons, but add-ons like XLoot
-    --- support a potentially unlimited number of loot buttons, hence the 99
-    ---@todo Some add-ons support more than 4 loot buttons (XLoot specifically), this needs to be fixed at some point
+    --- Note: the default UI only supports 4 actionable buttons.
+    --- Even though Add-ons like XLoot show more than 4 at a time, you can only interact with the first 4
     for buttonIndex = 1, _G.LOOTFRAME_NUMBUTTONS do
         self.ButtonsHooked[buttonProvider] = self.ButtonsHooked[buttonProvider] or {};
 
