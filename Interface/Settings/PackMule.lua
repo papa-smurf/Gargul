@@ -37,7 +37,7 @@ function PackMule:draw(Parent)
         },
         {
             label = "Enable for Group Loot",
-            description = "The PackMule (NEED|GREED|PASS) rules apply in group loot",
+            description = "The PackMule (NEED|GREED|PASS|IGNORE) rules apply in group loot",
             setting = "PackMule.enabledForGroupLoot",
         },
         {
