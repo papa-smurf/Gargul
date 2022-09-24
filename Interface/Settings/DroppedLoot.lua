@@ -52,12 +52,11 @@ function DroppedLoot:draw(Parent)
     local Checkboxes = {
         {
             label = "Announce loot to chat",
-            description = "Checking this will make sure that dropped loot of a given minimum quality (see the minimum announce quality setting) is announced to the party or raid chat",
             setting = "DroppedLoot.announceLootToChat",
         },
         {
             label = "Use raid warning",
-            description = "Check this if you want Gargul to use /rw instead of /ra when announcing dropped loot",
+            description = "Use /rw instead of /ra when announcing dropped loot",
             setting = "DroppedLoot.announceDroppedLootInRW",
         },
     };

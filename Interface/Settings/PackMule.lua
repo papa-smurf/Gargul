@@ -47,7 +47,7 @@ function PackMule:draw(Parent)
         },
         {
             label = "Auto confirm loot when in group",
-            description = "Auto confirm all loot when not in a group, bypassing the 'looting this will bind it to you message'. Use with caution!",
+            description = "Auto confirm all loot when group looting, bypassing the 'looting this will bind it to you message'. Use with caution!",
             setting = "PackMule.autoConfirmGroup",
         },
         {

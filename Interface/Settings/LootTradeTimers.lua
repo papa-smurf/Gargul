@@ -5,7 +5,7 @@ local Overview = GL.Interface.Settings.Overview; ---@type SettingsOverview
 
 ---@class LootTradeTimersSettings
 GL.Interface.Settings.LootTradeTimers = {
-    description = "When obtaining items that have an active trade window, aka items that are BoP but can still be traded with raid members, Gargul will show timer bars to let you know when an item's trade window is coming to an end.",
+    description = "When obtaining items that have time left to trade, aka items that are BoP but can still be traded with raid members, Gargul can show timer bars to let you know when an item's trade window is coming to an end.",
     testEnabled = false,
 };
 local LootTradeTimers = GL.Interface.Settings.LootTradeTimers; ---@type LootTradeTimersSettings
@@ -38,8 +38,8 @@ function LootTradeTimers:draw(Parent)
 
     local Checkboxes = {
         {
-            label = "Enable timer bars",
-            description = "Checking this will make sure Gargul shows timer bars for BoP items that can still be traded for a short time",
+            label = "Timer bars",
+            description = "Show timer bars for BoP items that can still be traded for a limited time",
             setting = "LootTradeTimers.enabled",
             callback = function ()
                 GL.Interface.TradeWindow.TimeLeft:refreshBars();
@@ -47,7 +47,7 @@ function LootTradeTimers:draw(Parent)
         },
         {
             label = "Only show bars when I'm master looting",
-            description = "Checking this will make sure you only see countdown bars when you're actively master looting",
+            description = "Only show countdown bars when you're actively master looting",
             setting = "LootTradeTimers.showOnlyWhenMasterLooting",
             callback = function ()
                 GL.Interface.TradeWindow.TimeLeft:refreshBars();

@@ -6,7 +6,7 @@ GL.AceGUI = GL.AceGUI or LibStub("AceGUI-3.0");
 
 ---@class ExportingLootSettings
 GL.Interface.Settings.ExportingLoot = {
-    description = "Gargul keeps track of all loot awarded via /gl award or via one of the shortcuts (see the 'Awarding Loot' section on the left). Items awarded this way can be exported in order to share loot data with TMB, archiving purposes or audits. To export items you can run '/gl export' or Shift+Right-click the Gargul minimap icon.",
+    description = "Gargul keeps track of all loot awarded via one of the shortcuts (see the 'Awarding Loot' section on the left). Items awarded this way can be exported in order to share loot data with TMB/DFT, or just about any other format you can think of. To export items run '/gl export'.",
     wikiUrl = "https://github.com/papa-smurf/Gargul/wiki/Export-To-TMB",
 };
 local ExportingLoot = GL.Interface.Settings.ExportingLoot; ---@type ExportingLootSettings
@@ -20,7 +20,6 @@ function ExportingLoot:draw(Parent)
     local Checkboxes = {
         {
             label = "Include disenchanted items",
-            description = "Check this if you want to export disenchanted items as well",
             setting = "ExportingLoot.includeDisenchantedItems",
             callback = function ()
                 -- Refresh the export window if it's open
@@ -83,7 +82,7 @@ function ExportingLoot:draw(Parent)
         [1] = "Thatsmybis TMB / RCLC (default)",
         [2] = "DFT-Fight-Club (US date format)",
         [3] = "DFT-Fight-Club (EU date format)",
-        [4] = "Custom",
+        [4] = "Custom (create your own format)",
     };
 
     local CustomFormatWrapper;
@@ -124,7 +123,8 @@ function ExportingLoot:draw(Parent)
     CustomExportFormat:SetFullWidth(true);
     CustomExportFormat:SetText(GL.Settings:get("ExportingLoot.customFormat"));
     CustomExportFormat:SetLabel(string.format(
-        "|cff%sDefine your custom export format here. Hover for more details. Note: \\t is replaced by a tab!|r",
+        "|cff%sDefine your custom export format here. |cffC41E3AHover for more details. |cff%sNote: \\t is replaced by a tab!|r",
+        GL:classHexColor("rogue"),
         GL:classHexColor("rogue")
     ));
     CustomExportFormat:SetCallback("OnTextChanged", function (self)

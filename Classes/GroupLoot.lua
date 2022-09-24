@@ -36,7 +36,7 @@ function GroupLoot:highlightItemsOfInterest()
     GL:debug("GroupLoot:highlightItemsOfInterest");
 
     -- Check if the player disabled the highlighting of items
-    if (GL.Settings:get("highlightsDisabled")
+    if (not GL.Settings:get("highlightsEnabled")
         or (
             not GL.Settings:get("highlightHardReservedItems")
             and not GL.Settings:get("highlightSoftReservedItems")

@@ -166,7 +166,7 @@ function DroppedLoot:highlightItemsOfInterest()
     -- There's no point highlighting loot if the player
     -- is not in a group or highlights are disabled
     if (not GL.User.isInGroup
-        or GL.Settings:get("highlightsDisabled")
+        or not GL.Settings:get("highlightsEnabled")
         or (
             not GL.Settings:get("highlightHardReservedItems")
             and not GL.Settings:get("highlightSoftReservedItems")

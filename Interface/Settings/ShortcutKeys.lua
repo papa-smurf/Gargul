@@ -5,7 +5,7 @@ local Overview = GL.Interface.Settings.Overview; ---@type SettingsOverview
 
 ---@class ShortcutKeysSettings
 GL.Interface.Settings.ShortcutKeys = {
-    description = "By default Gargul offers 3 shortcut keys that you can use when clicking on items in your bag or an enemy's loot window: alt+click to start rolling for an item, alt+shift+click to award an item or shift+click to disenchant an item (only works in loot windows). You can edit or completely disable those hotkeys here, make sure not to pick the same hotkey twice to avoid silly behavior!",
+    description = "By default Gargul offers 3 shortcut keys that you can use when clicking items in your bag, an enemy's loot window or the trade timers",
 };
 local ShortcutKeys = GL.Interface.Settings.ShortcutKeys; ---@type ShortcutKeysSettings
 
@@ -50,8 +50,8 @@ function ShortcutKeys:draw(Parent)
 
     local Checkboxes = {
         {
-            label = "Show Shortcut Keys reminder",
-            description = "When enabled, a small window appears when looting an enemy that shows your current shortcut key values for rolling, awarding or disenchanting an item",
+            label = "Shortcut Keys reminder",
+            description = "Show a reminder when looting an enemy that shows your current shortcut key values",
             setting = "ShortcutKeys.showLegend",
         },
     }

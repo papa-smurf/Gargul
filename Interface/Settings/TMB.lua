@@ -5,7 +5,7 @@ local Overview = GL.Interface.Settings.Overview; ---@type SettingsOverview
 
 ---@class TMBSettings
 GL.Interface.Settings.TMB = {
-    description = "|cffC41E3AThese settings affect both TMB and DFT!|r\n\nGargul allows you to import wishlist and character priority data from thatsmybis.com and the DFT loot sheet. Details about items will, depending on your settings, show up on your tooltips and in the group chat assuming the master looter uses Gargul. Wishlisted or prioritized items will also receive an animated border in group loot or in a killed enemy's loot window (Check the 'Loot Highlighting' section on the left!).",
+    description = "|cffC41E3AThese settings affect all data imported via TMB and DFT!|r\n\nGargul allows you to import wishlist and character priority data from thatsmybis.com and the DFT loot sheet.",
     wikiUrl = "https://github.com/papa-smurf/Gargul/wiki/Import-TMB-Data",
 };
 local TMB = GL.Interface.Settings.TMB; ---@type TMBSettings
@@ -59,57 +59,57 @@ function TMB:draw(Parent)
     local Checkboxes = {
         {
             label = "Automatically share data",
-            description = "Checking this means you'll automatically share TMB data with players who join your raid or when you import new TMB data",
+            description = "Automatically share data with players who join your raid or when you import new data",
             setting = "TMB.automaticallyShareData",
         },
         {
             label = "Show players in group only",
-            description = "Checking this will make sure that you only see the names of players who are actually in your group on item tooltips and in dropped loot announcements",
+            description = "Makes sure you only see the names of players who are actually in your group",
             setting = "TMB.hideInfoOfPeopleNotInGroup",
         },
         {
             label = "Show wishlist details",
-            description = "Checking this will allow you to see the names of those who have an item on their TMB wishlist on tooltips",
+            description = "See the names of those who have an item on their list on tooltips",
             setting = "TMB.showWishListInfoOnTooltips",
         },
         {
             label = "Show item priority details",
-            description = "Checking this will allow you to see the names of those who have an item prioritized to them (LC) in TMB on tooltips",
+            description = "See the names of those who have an item prioritized to them (LC) on tooltips",
             setting = "TMB.showPrioListInfoOnTooltips",
         },
         {
             label = "Show item tier and note",
-            description = "Checking this makes sure that an item's guild note and item tier are shown on the item tooltip",
+            description = "An item's guild note and item tier are shown on its tooltip",
             setting = "TMB.showItemInfoOnTooltips",
         },
         {
             label = "Hide wishlist info when priority is set",
-            description = "Checking this makes sure that you only see an item's wishlist details if no priority (LC) is set for it",
+            description = "You will only see an item's wishlist details if no priority (LC) is set for it",
             setting = "TMB.hideWishListInfoIfPriorityIsPresent",
         },
         {
             label = "Announce wishlist details of dropped loot",
-            description = "Checking this will make sure that TMB wishlist details of dropped loot are announced in the chat",
+            description = "Wishlist details of dropped loot are announced in the chat",
             setting = "TMB.includeWishListInfoInLootAnnouncement",
         },
         {
             label = "Announce item priority details of dropped loot",
-            description = "Checking this will make sure that TMB item priority details of dropped loot is announced in the chat",
+            description = "Item priority details (LC) of dropped loot are announced in the chat",
             setting = "TMB.includePrioListInfoInLootAnnouncement",
         },
         {
             label = "Announce details when rolling for loot",
-            description = "Checking this will make sure that TMB/DFT details will also be included whenever you roll off an item",
+            description = "TMB/DFT details will also be included whenever you roll out an item",
             setting = "TMB.announceInfoWhenRolling",
         },
         {
-            label = "Show reminder to use Gargul",
-            description = "When trying to assign loot without using Gargul a reminder is shown to use Gargul instead in order to make exporting loot possible",
+            label = "Gargul award reminder",
+            description = "When assigning loot without using Gargul a reminder is shown to use Gargul instead in order to make exporting loot possible",
             setting = "TMB.showLootAssignmentReminder",
         },
         {
             label = "Show everything when solo",
-            description = "Checking this will make sure that you see all entries on tooltips when not in a group",
+            description = "Make sure that you see all DFT/TMB data when not in a group, perfect for testing!",
             setting = "TMB.showEntriesWhenSolo",
         },
     };

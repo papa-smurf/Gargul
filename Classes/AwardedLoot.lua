@@ -189,7 +189,7 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, cost)
     tinsert(GL.DB.AwardHistory, AwardEntry);
 
     -- Check whether the user disabled award announcement in the settings
-    if (GL.Settings:get("AwardingLoot.awardMessagesDisabled")) then
+    if (not GL.Settings:get("AwardingLoot.awardMessagesEnabled")) then
         announce = false;
     end
 

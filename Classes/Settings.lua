@@ -29,11 +29,11 @@ function Settings:_init()
         return;
     end
 
-    -- Combine defaults and user settings
-    self:overrideDefaultsWithUserSettings();
-
     -- Validate the settings and adjust discrepancies
     self:sanitizeSettings();
+
+    -- Combine defaults and user settings
+    self:overrideDefaultsWithUserSettings();
 
     -- Prepare the options / config frame
     local Frame = CreateFrame("Frame", nil, InterfaceOptionsFramePanelContainer);
@@ -68,14 +68,19 @@ function Settings:enforceTemporarySettings()
     end
 
     -- We renamed PackMule.enabled to PackMule.enabledForMasterLoot in 4.8
-    local oldPackMuleEnabled = self:get("PackMule.enabled", nil);
-    if (type(oldPackMuleEnabled) == "boolean") then
-        self:set("PackMule.enabledForMasterLoot", oldPackMuleEnabled);
-        GL.DB.Settings.PackMule.enabledForMasterLoot = oldPackMuleEnabled;
-
-        self.Active.PackMule.enabled = nil;
+    if (type(GL.DB.Settings.PackMule.enabled) == "boolean") then
+        GL.DB.Settings.PackMule.enabledForMasterLoot = GL.DB.Settings.PackMule.enabled;
         GL.DB.Settings.PackMule.enabled = nil;
     end
+
+    --- In an attempt to streamline settings, we used "enabled" for everything
+        if (type(GL.DB.Settings.AwardingLoot.awardMessagesDisabled == "boolean")) then
+            GL.DB.Settings.AwardingLoot.awardMessagesEnabled = not GL.DB.Settings.AwardingLoot.awardMessagesDisabled;
+        end
+
+        if (type(GL.DB.Settings.highlightsDisabled == "boolean")) then
+            GL.DB.Settings.highlightsEnabled = not GL.DB.Settings.highlightsDisabled;
+        end
 end
 
 --- Draw a setting section

@@ -49,7 +49,7 @@ function SlashCommands:draw(Parent)
     Overview:drawCheckboxes({
         {
             label = "Open on faulty command",
-            description = "If checked this window will automatically open if you try to run a command that doesn't exist or when the wrong input was provided",
+            description = "This window will automatically open if you try to run a command that doesn't exist",
             setting = "autoOpenCommandHelp",
         }
     }, Parent);
