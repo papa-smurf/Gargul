@@ -47,10 +47,14 @@ function PackMule:_init()
     -- Disable packmule if the "persist after reload" setting is not enabled
     -- This piece of logic is only run once on boot/reload hence why this works
     if (not Settings:get("PackMule.persistsAfterReload")
-        and Settings:get("PackMule.enabled")
+        and (
+            Settings:get("PackMule.enabledForMasterLoot")
+            or Settings:get("PackMule.enabledForGroupLoot")
+        )
     ) then
         GL:warning("PackMule was automatically disabled after reload");
-        Settings:set("PackMule.enabled", false);
+        Settings:set("PackMule.enabledForMasterLoot", false);
+        Settings:set("PackMule.enabledForGroupLoot", false);
     end
 
     self.Rules = Settings:get("PackMule.Rules");
@@ -71,7 +75,7 @@ function PackMule:_init()
         end
 
         -- Do nothing if packmule is not enabled or the user holds the shift key
-        if (not Settings:get("PackMule.enabled")
+        if (not Settings:get("PackMule.enabledForMasterLoot")
             or IsShiftKeyDown()
         ) then
             return;
@@ -85,6 +89,30 @@ function PackMule:_init()
         self.timerId = GL.Ace:ScheduleRepeatingTimer(function ()
             self:lootReady();
         end, .2);
+    end);
+
+    -- Make sure to auto accept BoP loot when rolling on items
+    ---@todo: add setting check
+    GL.Events:register("PackMuleConfirmLootRollListener", "CONFIRM_LOOT_ROLL", function (_, rollID, roll)
+        if (not GL.Settings:get("PackMule.autoConfirmGroup")) then
+            return;
+        end
+
+        ConfirmLootRoll(rollID, roll);
+    end);
+
+    -- Make sure to auto accept BoP loot when opening containers
+    ---@todo: add setting check
+    GL.Events:register("PackMuleLootOpenedListener", "LOOT_OPENED", function ()
+        if (not GL.Settings:get("PackMule.autoConfirmSolo")) then
+            return;
+        end
+
+        -- Auto confirm loot you open (lockbox etc)
+        for itemIndex = 1, GetNumLootItems() do
+            LootSlot(itemIndex);
+            ConfirmLootSlot(itemIndex);
+        end
     end);
 
     -- Make sure we stop checking the loot window after the player is done looting
@@ -122,18 +150,21 @@ function PackMule:processGroupLootItems()
                 return;
             end
 
-            -- See if there's a PackMule target, if so hand it out
-            self:getTargetForItem(itemLink, function(target)
-                if (not target) then
-                    return;
-                end
+            -- Check if the user has PackMule enabled for group loot
+            if (GL.Settings:get("PackMule.enabledForGroupLoot")) then
+                -- See if there's a PackMule target, if so hand it out
+                self:getTargetForItem(itemLink, function(target)
+                    if (not target) then
+                        return;
+                    end
 
-                -- PackMule treats everything as a player name and returns a string.lower
-                target = string.upper(target);
-                if (GL.Data.Constants.GroupLootActions[target]) then
-                    RollOnLoot(rollID, GL.Data.Constants.GroupLootActions[target]);
-                end
-            end);
+                    -- PackMule treats everything as a player name and returns a string.lower
+                    target = string.upper(target);
+                    if (GL.Data.Constants.GroupLootActions[target]) then
+                        RollOnLoot(rollID, GL.Data.Constants.GroupLootActions[target]);
+                    end
+                end);
+            end
         end)();
     end
 end
@@ -204,10 +235,10 @@ function PackMule:zoneChanged()
 
     -- Disable packmule if the "persist after reload" setting is not enabled
     if (not Settings:get("PackMule.persistsAfterZoneChange")
-        and Settings:get("PackMule.enabled")
+        and Settings:get("PackMule.enabledForMasterLoot")
     ) then
         GL:warning("PackMule was automatically disabled after zone change");
-        Settings:set("PackMule.enabled", false);
+        Settings:set("PackMule.enabledForMasterLoot", false);
     end
 
     -- Check whether the user is in a heroic instance
