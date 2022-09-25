@@ -91,6 +91,7 @@ function Bidder:draw(time, itemLink, itemIcon)
         BidInput:ClearFocus();
     end;
 
+    --[[ ENABLE THIS INSTEAD ONCE AUTOBID IS ADDED
     BidButton = CreateFrame("Button", "GARGUL_GDKP_BIDDER_BID_BUTTON", Window, "GameMenuButtonTemplate");
     BidButton:SetPoint("TOPLEFT", NewBid, "BOTTOMLEFT", -20, -10);
     BidButton:SetSize(60, 20); -- Minimum width is
@@ -114,6 +115,27 @@ function Bidder:draw(time, itemLink, itemIcon)
 
     local PassButton = CreateFrame("Button", "GARGUL_GDKP_BIDDER_PASS_BUTTON", Window, "GameMenuButtonTemplate");
     PassButton:SetPoint("TOPLEFT", AutoBidButton, "TOPRIGHT", 8, 0);
+    PassButton:SetSize(64, 20); -- Minimum width is
+    PassButton:SetText("Pass");
+    PassButton:SetNormalFontObject("GameFontNormal");
+    PassButton:SetHighlightFontObject("GameFontNormal");
+    PassButton:SetScript("OnClick", function ()
+        GL:dump("PASS!");
+    end);
+    --]]
+
+    BidButton = CreateFrame("Button", "GARGUL_GDKP_BIDDER_BID_BUTTON", Window, "GameMenuButtonTemplate");
+    BidButton:SetPoint("TOPLEFT", NewBid, "BOTTOMLEFT", 36, -10);
+    BidButton:SetSize(60, 20); -- Minimum width is
+    BidButton:SetText("Bid");
+    BidButton:SetNormalFontObject("GameFontNormal");
+    BidButton:SetHighlightFontObject("GameFontNormal");
+    BidButton:SetScript("OnClick", function ()
+        BidButtonClick();
+    end);
+
+    local PassButton = CreateFrame("Button", "GARGUL_GDKP_BIDDER_PASS_BUTTON", Window, "GameMenuButtonTemplate");
+    PassButton:SetPoint("TOPLEFT", BidButton, "TOPRIGHT", 8, 0);
     PassButton:SetSize(64, 20); -- Minimum width is
     PassButton:SetText("Pass");
     PassButton:SetNormalFontObject("GameFontNormal");

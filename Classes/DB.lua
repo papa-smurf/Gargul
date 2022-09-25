@@ -59,7 +59,7 @@ function DB:_init()
     GL.Events:register("DBPlayerLogoutListener", "PLAYER_LOGOUT", self.store);
 
     self._initialized = true;
-
+    if (true) then return; end
     GL.DB.GDKP = {
         activeSession = "checksum_based_on_createdAt_and_uuid",
         Ledger = {
@@ -77,7 +77,7 @@ function DB:_init()
             },
         },
     };
-    if (true) then return; end
+
     GL.DB.GDKP = {
         activeSession = "checksum_based_on_createdAt_and_uuid",
         Ledger = {

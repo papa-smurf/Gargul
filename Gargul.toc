@@ -77,6 +77,7 @@ Interface/SoftRes/Importer.lua
 Interface/SoftRes/Overview.lua
 Interface/GDKP/Auctioneer.lua
 Interface/GDKP/Bidder.lua
+Interface/GDKP/EditAuction.lua
 Interface/GDKP/Overview.lua
 Interface/TMB/Importer.lua
 Interface/TMB/Overview.lua
@@ -91,13 +92,15 @@ Interface/MinimapButton.lua
 # Popup dialogs
 Interface/Dialogs/AwardDialog.lua
 Interface/Dialogs/AwardDialogWidget.lua
+Interface/Dialogs/ConfirmWithSingleInputDialog.lua
+Interface/Dialogs/ConfirmWithSingleInputDialogWidget.lua
 Interface/Dialogs/IncomingBoostedRollDataDialog.lua
 Interface/Dialogs/IncomingBoostedRollDataDialogWidget.lua
-Interface/Dialogs/PopupDialog.lua
-Interface/Dialogs/PopupDialogWidget.lua
 Interface/Dialogs/HyperlinkDialog.lua
 Interface/Dialogs/HyperlinkDialogWidget.lua
 Interface/Dialogs/MasterLooterDialog.lua
+Interface/Dialogs/PopupDialog.lua
+Interface/Dialogs/PopupDialogWidget.lua
 Interface/ReminderToAssignLootUsingGargul.lua
 Interface/ShortcutKeysLegend.lua
 

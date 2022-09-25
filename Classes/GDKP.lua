@@ -149,10 +149,9 @@ end
 ---@param auctionIdentifier string
 ---
 ---@return void
-function GDKP:deleteAuction(sessionIdentifier, auctionIdentifier, byPassReason)
+function GDKP:deleteAuction(sessionIdentifier, auctionIdentifier, reason)
     GL:debug("GDKP:deleteAuction");
 
-    byPassReason = GL:toboolean(byPassReason);
     local Auction = DB:get(string.format("GDKP.Ledger.%s.Auctions.%s", sessionIdentifier, auctionIdentifier));
 
     -- The auction could not be found or is already deleted
@@ -164,7 +163,6 @@ function GDKP:deleteAuction(sessionIdentifier, auctionIdentifier, byPassReason)
 
     local PreviousState = {
         createdAt = GetServerTime(),
-        Winner = Auction.Winner,
         price = Auction.price,
         CreatedBy = {
             class = GL.User.class,
@@ -172,6 +170,7 @@ function GDKP:deleteAuction(sessionIdentifier, auctionIdentifier, byPassReason)
             guild = GL:tableGet(GL.User, "Guild.name") or nil,
             uuid = GL.User.id,
         },
+        Winner = Auction.Winner,
     };
 
     -- Add a state so we can restore later if needed
@@ -179,13 +178,14 @@ function GDKP:deleteAuction(sessionIdentifier, auctionIdentifier, byPassReason)
 
     Auction.Winner = nil;
     Auction.price = nil;
+    Auction.reason = tostring(reason);
 
     -- We don't point to Auction here, we want a copy not a pointer!
     local Before = DB:get(string.format("GDKP.Ledger.%s.Auctions.%s", sessionIdentifier, auctionIdentifier));
     DB:set(string.format("GDKP.Ledger.%s.Auctions.%s", sessionIdentifier, auctionIdentifier), Auction);
 
     GL.Events:fire("GL.GDKP_AUCTION_CHANGED", sessionIdentifier, auctionIdentifier, Before, Auction);
-    GL.Events:fire("GL.GDKP_AUCTION_DELETED", sessionIdentifier, auctionIdentifier);
+    GL.Events:fire("GL.GDKP_AUCTION_DELETED", sessionIdentifier, auctionIdentifier, Auction);
 
     return true;
 end
@@ -196,7 +196,7 @@ end
 ---
 ---@return boolean
 function GDKP:createAuction(itemID, price, winner, sessionIdentifier)
-    GL:debug("GDKP:deleteAuction");
+    GL:debug("GDKP:creataeAuction");
 
     if ((not sessionIdentifier
             or (sessionIdentifier and not self:sessionExists(sessionIdentifier))

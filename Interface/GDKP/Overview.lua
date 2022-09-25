@@ -8,7 +8,6 @@ local AceGUI = GL.AceGUI;
 local Constants = GL.Data.Constants; ---@type Data
 local DB = GL.DB; ---@type DB
 local ScrollingTable = GL.ScrollingTable;
-local GDKP = GL.GDKP; ---@type GDKP
 
 GL:tableSet(GL, "Interface.GDKP.Overview", {
     _initialized = false,
@@ -23,7 +22,7 @@ GL:tableSet(GL, "Interface.GDKP.Overview", {
 });
 
 ---@class GDKPOverview
-local Overview = GL.Interface.GDKP.Overview;
+local Overview = GL.Interface.GDKP.Overview; ---@type GDKPOverview
 
 function Overview:_init()
     GL:debug("Overview:_init");
@@ -67,7 +66,6 @@ function Overview:draw()
     local Window = AceGUI:Create("Frame");
     Window:SetTitle("Gargul v" .. GL.version);
     Window:SetLayout("Flow");
-    Window:SetWidth(640);
     Window:SetWidth(642);
     Window:SetHeight(500);
     Window:EnableResize(false);
@@ -290,7 +288,8 @@ function Overview:drawDetails(sessionIdentifier)
         local RawAuctions = DB:get("GDKP.Ledger." .. sessionIdentifier .. ".Auctions") or {};
 
         -- RawAuctions is an associative table, which does not work with table.sort
-        for _, Entry in pairs(RawAuctions) do
+        for checksum, Entry in pairs(RawAuctions) do
+            Entry.checksum = checksum; -- We need this step because the table.sort will remove the keys
             tinsert(Auctions, Entry);
         end
 
@@ -355,9 +354,9 @@ function Overview:drawDetails(sessionIdentifier)
             else
                 ItemLabel:SetText(string.format(
                     "|cFFbe3333Deleted by|r |cFF%s%s|r\nReason: %s",
-                    GL:classHexColor("druid"),
-                    "Garguldruid",
-                    "Master Looter made a mistake"
+                    GL:classHexColor(Auction.CreatedBy.class),
+                    Auction.CreatedBy.name,
+                    Auction.reason or "-"
                 ));
             end
 
@@ -416,7 +415,7 @@ function Overview:drawDetails(sessionIdentifier)
 
             EditButton:SetScript("OnClick", function(_, button)
                 if (button == 'LeftButton') then
-                    GL:dump("EDIT!");
+                    GL.Interface.GDKP.EditAuction:draw(sessionIdentifier, Auction.checksum);
                 end
             end);
 
@@ -454,10 +453,15 @@ function Overview:drawDetails(sessionIdentifier)
                 if (button == 'LeftButton') then
                     if (IsShiftKeyDown()) then
                         ---@todo Skip the reason dialog when holding the shift key
-                        GL.GDKP:deleteAuction(sessionIdentifier, Auction.ID, true)
-                    end
-                        GL.GDKP:deleteAuction(sessionIdentifier, Auction.ID)
+                        GL.GDKP:deleteAuction(sessionIdentifier, Auction.ID, "-")
                     else
+                        GL.Interface.Dialogs.ConfirmWithSingleInputDialog:open({
+                            question = string.format("Provide a reason for deleting this entry"),
+                            OnYes = function (reason)
+                                GL.GDKP:deleteAuction(sessionIdentifier, Auction.ID, reason);
+                            end,
+                        });
+                    end
 
                     self:drawDetails(sessionIdentifier);
                 end
