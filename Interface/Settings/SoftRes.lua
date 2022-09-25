@@ -5,7 +5,7 @@ local Overview = GL.Interface.Settings.Overview; ---@type SettingsOverview
 
 ---@class SoftResSettings
 GL.Interface.Settings.SoftRes = {
-    description = "Gargul allows you to import data from soft-reserve sheets create on softres.it. Details about reservations will, depending on your settings, show up on: your tooltips, in chat and in your roll window.",
+    description = "Gargul allows you to import data from soft-reserve sheets created on softres.it. Details about reservations will, depending on your settings, show up on: your tooltips, in chat and in your roll window.",
     wikiUrl = "https://github.com/papa-smurf/Gargul/wiki/Importing-Soft-Reserves",
 };
 local SoftRes = GL.Interface.Settings.SoftRes; ---@type SoftResSettings
@@ -22,25 +22,25 @@ function SoftRes:draw(Parent)
         },
         {
             label = "Show players in group only",
-            description = "Checking this will make sure that you only see the names of players who are actually in your group on item tooltips and in dropped loot announcements",
+            description = "You only see the names of players who are actually in your group on item tooltips and in dropped loot announcements",
             setting = "SoftRes.hideInfoOfPeopleNotInGroup",
         },
         {
             label = "Announce details of dropped loot",
-            description = "Checking this will make sure that SoftRes details of dropped loot are also announced in the chat",
+            description = "SoftRes details of dropped loot are also announced in chat",
             setting = "SoftRes.announceInfoInChat",
         },
         {
-            label = "Announce details when rolling for loot",
-            description = "Checking this will make sure that SoftRes details will also be included whenever you roll off an item",
+            label = "Announce details when rolling out loot",
+            description = "SoftRes details will also be included whenever you roll out an item",
             setting = "SoftRes.announceInfoWhenRolling",
         },
         {
-            label = "Enable whisper command",
+            label = "Whisper command",
             description = string.format(
-                    "When enabled, players can whisper '|cff%s!sr|r' or '|cff%s!softres|r' to you to double-check their soft-reserves",
-                    GL:classHexColor("rogue"),
-                    GL:classHexColor("rogue")
+                "Players can whisper '|cff%s!sr|r' or '|cff%s!softres|r' to you to double-check their soft-reserves",
+                GL:classHexColor("rogue"),
+                GL:classHexColor("rogue")
             ),
             setting = "SoftRes.enableWhisperCommand",
         },

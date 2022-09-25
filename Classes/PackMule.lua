@@ -47,16 +47,25 @@ function PackMule:_init()
     -- Disable packmule if the "persist after reload" setting is not enabled
     -- This piece of logic is only run once on boot/reload hence why this works
     if (not Settings:get("PackMule.persistsAfterReload")
-        and Settings:get("PackMule.enabled")
+        and (
+            Settings:get("PackMule.enabledForMasterLoot")
+            or Settings:get("PackMule.enabledForGroupLoot")
+        )
     ) then
         GL:warning("PackMule was automatically disabled after reload");
-        Settings:set("PackMule.enabled", false);
+        Settings:set("PackMule.enabledForMasterLoot", false);
+        Settings:set("PackMule.enabledForGroupLoot", false);
     end
 
     self.Rules = Settings:get("PackMule.Rules");
 
     GL.Events:register("PackMuleZoneChangeListener", "ZONE_CHANGED_NEW_AREA", function ()
         self:zoneChanged();
+    end);
+
+    -- Whenever an item drops that is eligible for rolling trigger the highlighter and packmule rules
+    GL.Events:register("GroupLootStartLootRollListener", "START_LOOT_ROLL", function ()
+        self:processGroupLootItems();
     end);
 
     GL.Events:register("PackMuleLootLootAnnouncedListener", "GL.LOOT_ANNOUNCED", function ()
@@ -66,7 +75,7 @@ function PackMule:_init()
         end
 
         -- Do nothing if packmule is not enabled or the user holds the shift key
-        if (not Settings:get("PackMule.enabled")
+        if (not Settings:get("PackMule.enabledForMasterLoot")
             or IsShiftKeyDown()
         ) then
             return;
@@ -82,6 +91,28 @@ function PackMule:_init()
         end, .2);
     end);
 
+    -- Make sure to auto accept BoP loot when rolling on items
+    GL.Events:register("PackMuleConfirmLootRollListener", "CONFIRM_LOOT_ROLL", function (_, rollID, roll)
+        if (not GL.Settings:get("PackMule.autoConfirmGroup")) then
+            return;
+        end
+
+        ConfirmLootRoll(rollID, roll);
+    end);
+
+    -- Make sure to auto accept BoP loot when opening containers
+    GL.Events:register("PackMuleLootOpenedListener", "LOOT_OPENED", function ()
+        if (not GL.Settings:get("PackMule.autoConfirmSolo")) then
+            return;
+        end
+
+        -- Auto confirm loot you open (lockbox etc)
+        for itemIndex = 1, GetNumLootItems() do
+            LootSlot(itemIndex);
+            ConfirmLootSlot(itemIndex);
+        end
+    end);
+
     -- Make sure we stop checking the loot window after the player is done looting
     GL.Events:register("PackMuleLootClosedListener", "LOOT_CLOSED", function ()
         if (self.timerId) then
@@ -89,6 +120,51 @@ function PackMule:_init()
             self.timerId = false;
         end
     end);
+end
+
+--- PASS/NEED/GREED on group loot items based on PackMule rules
+---
+---@return void
+function PackMule:processGroupLootItems()
+    GL:debug("PackMule:processGroupLootItems");
+
+    -- This should not be possible, just double checking!
+    if (GetLootMethod() == "master") then
+        return;
+    end
+
+    for itemIndex = 1, _G.NUM_GROUP_LOOT_FRAMES do
+        (function()
+            local ItemFrame = getglobal("GroupLootFrame" .. itemIndex);
+            local rollID = ItemFrame.rollID;
+
+            if (not rollID) then
+                return;
+            end
+
+            -- Shouldn't be possible, but you never know
+            local itemLink = GetLootRollItemLink(rollID);
+            if (not itemLink) then
+                return;
+            end
+
+            -- Check if the user has PackMule enabled for group loot
+            if (GL.Settings:get("PackMule.enabledForGroupLoot")) then
+                -- See if there's a PackMule target, if so hand it out
+                self:getTargetForItem(itemLink, function(target)
+                    if (not target) then
+                        return;
+                    end
+
+                    -- PackMule treats everything as a player name and returns a string.lower
+                    target = string.upper(target);
+                    if (GL.Data.Constants.GroupLootActions[target]) then
+                        RollOnLoot(rollID, GL.Data.Constants.GroupLootActions[target]);
+                    end
+                end);
+            end
+        end)();
+    end
 end
 
 --- Check if an item ID is ignored by default by PackMule (displayed in chat)
@@ -157,10 +233,10 @@ function PackMule:zoneChanged()
 
     -- Disable packmule if the "persist after reload" setting is not enabled
     if (not Settings:get("PackMule.persistsAfterZoneChange")
-        and Settings:get("PackMule.enabled")
+        and Settings:get("PackMule.enabledForMasterLoot")
     ) then
         GL:warning("PackMule was automatically disabled after zone change");
-        Settings:set("PackMule.enabled", false);
+        Settings:set("PackMule.enabledForMasterLoot", false);
     end
 
     -- Check whether the user is in a heroic instance
@@ -177,9 +253,8 @@ function PackMule:lootReady()
 
     if (self.processing) then
         return;
-    else
-        self.processing = true;
     end
+    self.processing = true;
 
     if (not self.Rules
         or not GL.User.isMasterLooter
@@ -188,7 +263,62 @@ function PackMule:lootReady()
         return;
     end
 
-    -- Make sure we only use valid rules
+    for itemIndex = GetNumLootItems(), 1, -1 do
+        (function()
+            local _, _, _, _, _, locked = GetLootSlotInfo(itemIndex);
+
+            -- Locked means that you aren't able to loot it (tinted red)
+            if (locked) then
+                return;
+            end
+
+            local itemLink = GetLootSlotLink(itemIndex);
+
+            -- Some items don't have an itemLink (money for example)
+            if (not itemLink) then
+                return;
+            end
+
+            local itemID = GetItemInfoInstant(itemLink);
+            if (not itemID) then -- Should not be possible, but better safe than lua error
+                return;
+            end
+
+            -- Check if there is a preferred target for this item and if so: hand it out!
+            self:getTargetForItem(itemID, function(target)
+                if (not target) then
+                    self.processing = false;
+                    return;
+                end
+
+                -- These are group loot targets that don't apply when master looting
+                if (GL:inTable({"PASS", "GREED", "NEED"}, target)) then
+                    return;
+                end
+
+                for playerIndex = 1, GetNumGroupMembers() do
+                    -- Make sure to do a case-insensitive check
+                    if (string.lower(GetMasterLootCandidate(itemIndex, playerIndex) or "") == target) then
+                        GiveMasterLoot(itemIndex, playerIndex);
+                        return;
+                    end
+                end
+            end);
+        end)();
+
+        -- Just a fail-safe to make sure processing doesn't end up in a stale mode
+        GL.Ace:ScheduleTimer(function ()
+            self.processing = false;
+        end, 1);
+    end
+end
+
+--- Return all valid rules from the PackMule configuration
+---
+---@return table
+function PackMule:getValidRules()
+    GL:debug("PackMule:getValidRules");
+
     local ValidRules = {};
     for _, Rule in pairs(self.Rules) do
         if (self:ruleIsValid(Rule)) then
@@ -196,194 +326,217 @@ function PackMule:lootReady()
         end
     end
 
-    -- There are no valid rules, no need to continue
-    if (not ValidRules) then
-        self.processing = false;
+    return ValidRules;
+end
+
+--- Get the designated PackMule target for an item ID or link (no return, callback is needed because of async item lookup)
+---
+---@param itemLinkOrId string|number
+---@param callback function
+---@return void
+function PackMule:getTargetForItem(itemLinkOrId, callback)
+    GL:debug("PackMule:getTargetForItem");
+
+    -- This method has no value without a callback
+    if (type(callback) ~= "function") then
         return;
     end
 
-    for itemIndex = GetNumLootItems(), 1, -1 do
-        local _, itemName, _, _, itemQuality, locked = GetLootSlotInfo(itemIndex);
+    local concernsID = GL:higherThanZero(tonumber(itemLinkOrId));
+    local itemID;
 
-        local itemLink = GetLootSlotLink(itemIndex);
-        local itemID, itemClassID;
-        local skip = locked; -- Locked means that you aren't able to loot it (tinted red)
-
-        -- Some items don't have an itemLink (money for example)
-        if (not skip
-            and itemLink
-        ) then
-            itemID, _, _, _, _, itemClassID = GetItemInfoInstant(itemLink);
-            skip = not itemID; -- itemId can actually be nil!
-        end
-
-        if (not skip) then
-            GL:onItemLoadDo(itemID, function (Items)
-                local Loot = Items[1];
-
-                if (GL:empty(Loot)) then
-                    return;
-                end
-
-                local RuleThatApplies = false;
-
-                for _, Entry in pairs(ValidRules) do
-                    -- This is useful to see in which order rules are being handled
-                    GL:debug(string.format(
-                        "Item: %s\nOperator: %s\nQuality: %s\nTarget: %s",
-                        Entry.item or "",
-                        Entry.quality or "",
-                        Entry.operator or "",
-                        Entry.target or ""
-                    ));
-
-                    local item = Entry.item or "";
-                    local target = tostring(Entry.target or "");
-                    local quality = tonumber(Entry.quality or "");
-                    local operator = tostring(Entry.operator or "");
-
-                    -- The potential target replacement above requires us
-                    -- To make a local copy of the current Rule entry
-                    local Rule = {
-                        item = item,
-                        target = target,
-                        quality = quality,
-                        operator = operator,
-                    }
-
-                    -- This is to make sure we support item names, IDs and links
-                    local ruleItemID = math.floor(tonumber(GL:getItemIdFromLink(item)) or 0);
-                    if (not ruleItemID) then
-                        ruleItemID = math.floor(tonumber(item) or 0);
-                    end
-
-                    local ruleConcernsItemID = GL:higherThanZero(ruleItemID);
-
-                    -- Check if this is a non item-specific rule (aka quality based rule)
-                    if (itemQuality and quality and operator and target and (
-                        (operator == "=" and itemQuality == quality)
-                        or (operator == ">" and itemQuality > quality)
-                        or (operator == ">=" and itemQuality >= quality)
-                        or (operator == "<" and itemQuality < quality)
-                        or (operator == "<=" and itemQuality <= quality)
-                    )) then
-                        local bindType = Loot.bindType or LE_ITEM_BIND_NONE;
-                        local bindOnPickup = GL:inTable({LE_ITEM_BIND_ON_ACQUIRE, LE_ITEM_BIND_QUEST}, bindType);
-
-                        local ruleApplies = (function ()
-                            -- Check whether the item is whitelisted
-                            if (GL:inTable(GL.Data.Constants.TradeableItems, itemID)) then
-                                return true;
-                            end
-
-                            if (not bindOnPickup or ( -- The item is not BoP so we can safely PackMule it
-                                itemQuality < 5 -- Legendary items are skipped
-                                and (GL.User.isInRaid -- Make sure PackMule doesn't mule BoP items when not in a raid or heroic instance
-                                    or self.playerIsInHeroicInstance
-                                )
-                                and not GL:inTable(GL.Data.Constants.UntradeableItems, itemID) -- Untradable items are skipped in quality rules
-                                and not GL:inTable(self.itemClassIdsToIgnore, itemClassID) -- Recipes and Quest Items are skipped in quality rules
-                            )) then
-                                return true;
-                            end
-
-                            return false;
-                        end)();
-
-                        if (ruleApplies) then
-                            RuleThatApplies = Rule;
-                        end
-                    elseif (item and (
-                        (ruleConcernsItemID and ruleItemID == itemID) -- Item is an ID and the IDs match
-                        or (self:lootMatchesSpecificRule(itemName, item)) -- The rule's item name matches the loot name
-                    )) then
-                        -- We found an item-specific rule, we can stop checking now
-                        RuleThatApplies = Rule;
-                        break;
-                    end
-                end
-
-                -- The rule applies, give it to the designated target
-                if (RuleThatApplies
-                    and RuleThatApplies.target ~= "IGNORE"
-                ) then
-                    local ruleTarget = strtrim(RuleThatApplies.target);
-                    local Targets = {};
-
-                    -- Check whether we need to give the item to a random player
-                    if (ruleTarget == "RANDOM") then
-                        for _, Player in pairs(GL.User:groupMembers()) do
-                            tinsert(Targets, string.lower(Player.name));
-                        end
-                    else
-                        local RuleTargets = GL:strSplit(ruleTarget, " ");
-                        local GroupMemberNames = GL.User:groupMemberNames(true);
-
-                        for _, ruleTarget in pairs(RuleTargets) do
-                            local targetContainsExclamationMark = strfind(ruleTarget, "!");
-                            ruleTarget = strtrim(ruleTarget);
-                            ruleTarget = ruleTarget:gsub("!", "");
-
-                            -- SELF serves as a placeholder for the current player name
-                            if (ruleTarget == "SELF") then
-                                ruleTarget = GL.User.name;
-
-                            -- DE serves as a placeholder for the registered disenchanter
-                            elseif (ruleTarget == "DE") then
-                                ruleTarget = self.disenchanter;
-
-                                if (GL:empty(self.disenchanter)) then
-                                    if (not self.noDisenchanterSetWarningGiving) then
-                                        GL:warning("No disenchanter set, use /gl sd [mydisenchanter] to set one");
-                                        self.noDisenchanterSetWarningGiving = true;
-                                    end
-
-                                    return; -- No point continuing, don't want the item to end up in the wrong hands!
-                                end
-                            end
-
-                            -- GroupMemberNames are always in lowercase
-                            if (GL:inTable(GroupMemberNames, string.lower(ruleTarget))) then
-                                -- This is a high prio target, return it and stop checking
-                                if (targetContainsExclamationMark) then
-                                    Targets = {ruleTarget};
-                                    break;
-                                end
-
-                                tinsert(Targets, ruleTarget);
-                            end
-                        end
-                    end
-
-                    -- Count the number of potential targets
-                    local numberOfTargets = #Targets;
-
-                    -- There is no potential target for this item!
-                    if (numberOfTargets < 1) then
-                        return;
-                    end
-
-                    -- Fetch a (random) target from the eligible target pool
-                    local target = string.lower(Targets[math.random(numberOfTargets)] or "");
-
-                    -- This should technically be impossible, but you never know!
-                    if (GL:empty(target)) then
-                        return;
-                    end
-
-                    for playerIndex = 1, GetNumGroupMembers() do
-                        -- Make sure to do a case-insensitive check
-                        if (string.lower(GetMasterLootCandidate(itemIndex, playerIndex) or "") == target) then
-                            GiveMasterLoot(itemIndex, playerIndex);
-                            return;
-                        end
-                    end
-                end
-            end);
-        end
+    if (concernsID) then
+        itemID = math.floor(tonumber(itemLinkOrId));
+    else
+        itemID = GL:getItemIdFromLink(itemLinkOrId);
     end
 
-    self.processing = false;
+    -- We can't work without an item ID!
+    if (not GL:higherThanZero(itemID)) then
+        return;
+    end
+
+    -- Load the item details first and then call the callback with the player target (only if any)
+    GL:onItemLoadDo(itemID, function (Items)
+        local Loot = Items[1];
+
+        if (GL:empty(Loot)) then
+            return;
+        end
+
+        local RuleThatApplies = false;
+
+        for _, Entry in pairs(self:getValidRules()) do
+            -- This is useful to see in which order rules are being handled
+            GL:debug(string.format(
+                "Item: %s\nOperator: %s\nQuality: %s\nTarget: %s",
+                Entry.item or "",
+                Entry.quality or "",
+                Entry.operator or "",
+                Entry.target or ""
+            ));
+
+            local item = Entry.item or "";
+            local target = tostring(Entry.target or "");
+            local quality = tonumber(Entry.quality or "");
+            local operator = tostring(Entry.operator or "");
+
+            -- The potential target replacement above requires us
+            -- To make a local copy of the current Rule entry
+            local Rule = {
+                item = item,
+                target = target,
+                quality = quality,
+                operator = operator,
+            }
+
+            -- This is to make sure we support item names, IDs and links
+            local ruleItemID = math.floor(tonumber(GL:getItemIdFromLink(item)) or 0);
+            if (not ruleItemID) then
+                ruleItemID = math.floor(tonumber(item) or 0);
+            end
+
+            local ruleConcernsItemID = GL:higherThanZero(ruleItemID);
+
+            -- Check if this is a non item-specific rule (aka quality based rule)
+            if (Loot.quality and quality and operator and target and (
+                (operator == "=" and Loot.quality == quality)
+                or (operator == ">" and Loot.quality > quality)
+                or (operator == ">=" and Loot.quality >= quality)
+                or (operator == "<" and Loot.quality < quality)
+                or (operator == "<=" and Loot.quality <= quality)
+            )) then
+                local bindType = Loot.bindType or LE_ITEM_BIND_NONE;
+                local bindOnPickup = GL:inTable({LE_ITEM_BIND_ON_ACQUIRE, LE_ITEM_BIND_QUEST}, bindType);
+
+                local ruleApplies = (function ()
+                    -- Check whether the item is whitelisted
+                    if (GL:inTable(GL.Data.Constants.TradeableItems, itemID)) then
+                        return true;
+                    end
+
+                    if (not bindOnPickup or ( -- The item is not BoP so we can safely PackMule it
+                        Loot.quality < 5 -- Legendary items are skipped
+                        and (not GL.User.isMasterLooter or ( -- The following checks only count if you're master looting
+                                GL.User.isInRaid -- Make sure PackMule doesn't mule BoP items when not in a raid
+                                or self.playerIsInHeroicInstance -- or heroic instance
+                            )
+                        )
+                        and not GL:inTable(GL.Data.Constants.UntradeableItems, itemID) -- Untradable items are skipped in quality rules
+                        and not GL:inTable(self.itemClassIdsToIgnore, Loot.classID) -- Recipes and Quest Items are skipped in quality rules
+                    )) then
+
+                        -- We can only use PASS/GREED/NEED in group loot
+                        if (GetLootMethod() == "master"
+                            and GL:inTable({"PASS", "GREED", "NEED"}, target)
+                        ) then
+                            return false;
+                        end
+
+                        return true;
+                    end
+
+                    return false;
+                end)();
+
+                if (ruleApplies) then
+                    RuleThatApplies = Rule;
+                end
+            elseif (item and (
+                (ruleConcernsItemID and ruleItemID == itemID) -- Item is an ID and the IDs match
+                or (self:lootMatchesSpecificRule(Loot.name, item)) -- The rule's item name matches the loot name
+            )) then
+                -- We found an item-specific rule, we can stop checking now
+                RuleThatApplies = Rule;
+                break;
+            end
+        end
+
+        -- There is no rule or we specifically want to ignore it
+        if (not RuleThatApplies
+            or RuleThatApplies.target == "IGNORE"
+        ) then
+            return callback(false);
+        end
+
+        local ruleTarget = strtrim(RuleThatApplies.target);
+        local Targets = {};
+
+        local RuleTargets = GL:strSplit(ruleTarget, " ");
+        local GroupMemberNames = GL.User:groupMemberNames(true);
+
+        for _, ruleTarget in pairs(RuleTargets) do
+            local targetContainsExclamationMark = strfind(ruleTarget, "!");
+            ruleTarget = strtrim(ruleTarget);
+            ruleTarget = ruleTarget:gsub("!", "");
+
+            if (not GL.User.isMasterLooter) then
+                if (GL:inTable({"PASS", "GREED", "NEED"}, ruleTarget)) then
+                    Targets = {ruleTarget};
+                    break;
+                end
+            else
+                -- SELF serves as a placeholder for the current player name
+                if (ruleTarget == "SELF") then
+                    ruleTarget = GL.User.name;
+
+                -- DE serves as a placeholder for the registered disenchanter
+                elseif (ruleTarget == "DE") then
+                    ruleTarget = self.disenchanter;
+
+                    if (GL:empty(self.disenchanter)) then
+                        if (not self.noDisenchanterSetWarningGiving) then
+                            GL:warning("No disenchanter set, use /gl sd [mydisenchanter] to set one");
+                            self.noDisenchanterSetWarningGiving = true;
+                        end
+
+                        return callback(false); -- No point continuing, don't want the item to end up in the wrong hands!
+                    end
+
+                -- Check whether we need to give the item to a random player
+                elseif (ruleTarget == "RANDOM") then
+                    for _, Player in pairs(GL.User:groupMembers()) do
+                        tinsert(Targets, string.lower(Player.name));
+                    end
+
+                    -- No need to continue, if a ML sets up RANDOM and something else
+                    -- at the same time then he can expect some weird behavior.
+                    break;
+                end
+
+                if (not GL:inTable({"PASS", "GREED", "NEED"}, ruleTarget)) then
+                    -- GroupMemberNames are always in lowercase
+                    if (GL:inTable(GroupMemberNames, string.lower(ruleTarget))) then
+                        -- This is a high prio target, return it and stop checking
+                        if (targetContainsExclamationMark) then
+                            Targets = {ruleTarget};
+                            break;
+                        end
+
+                        tinsert(Targets, ruleTarget);
+                    end
+                end
+            end
+        end
+
+        -- Count the number of potential targets
+        local numberOfTargets = #Targets;
+
+        -- There is no potential target for this item!
+        if (numberOfTargets < 1) then
+            return callback(false);
+        end
+
+        -- Fetch a (random) target from the eligible target pool
+        local target = string.lower(Targets[math.random(numberOfTargets)] or "");
+
+        -- This should technically be impossible, but you never know!
+        if (GL:empty(target)) then
+            return callback(false);
+        end
+
+        return callback(target);
+    end);
 end
 
 --- Check whether the dropped item's name matches the rule's item name

@@ -5,7 +5,7 @@ local Overview = GL.Interface.Settings.Overview; ---@type SettingsOverview
 
 ---@class GeneralSettings
 GL.Interface.Settings.General = {
-    description = "Gargul is a utility add-on that ads quality of life features for raiders, master looters and raid leaders. Gargul can be used together with SoftRes (softres.it) and TMB (thatsmybis.com) to create a hassle free raiding experience.\n\nCheck the various sections on the left-hand side of this window or visit our Wiki/Discord to get started!",
+    description = "Gargul is a loot add-on that adds quality of life features for raiders, master looters and raid leaders. Gargul can be used together with SoftRes (softres.it) and TMB (thatsmybis.com) to create a hassle free raiding experience.\n\nCheck the various sections on the left-hand side of this window or visit our Wiki/Discord to get started!",
     wikiUrl = "https://github.com/papa-smurf/Gargul/wiki",
 };
 local General = GL.Interface.Settings.General; ---@type GeneralSettings
@@ -36,40 +36,31 @@ function General:draw(Parent)
     local Checkboxes = {
         {
             label = "Welcome message",
-            description = "Enable or disable the Gargul welcome message",
             setting = "welcomeMessage",
         },
         {
-            label = "Show changelog",
-            description = "Enable or disable the changelog which displays update details after updating Gargul",
-            setting = "changeLog",
-        },
-        {
-            label = "Fix master looter UI",
-            description = "The master loot window in the native Blizzard UI generates an error that prevents you from right-clicking target frames etc. This fixes that! (Discovered by Kirsia-Dalaran here https://bit.ly/3tc8nvw)",
-            setting = "fixMasterLootWindow",
-        },
-        {
-            label = "No sounds",
-            description = "Checking this will make sure that Gargul will never play any sounds",
-            setting = "noSounds",
-        },
-        {
-            label = "No messages",
-            description = "Checking this will make sure that Gargul will never post any messages in the various chat channels. Keep in mind that you will still see debug messages, warnings or other messages that are solely visible to you",
-            setting = "noMessages",
-        },
-        {
-            label = "Enable Minimap Icon",
-            description = "This setting enables the minimap icon that allows quick access to Gargul or the Gargul importer",
+            label = "Minimap Icon",
             setting = "showMinimapButton",
             callback = function()
                 GL.MinimapButton:drawOrHide();
             end,
         },
         {
-            label = "Experimental: enable debug mode",
-            description = "Checking this will enable debug mode, showing debug info in your chatbox. This is only meant for developers actively working on the Gargul add-on",
+            label = "No sounds",
+            setting = "noSounds",
+        },
+        {
+            label = "No messages",
+            setting = "noMessages",
+        },
+        {
+            label = "Show changelog",
+            description = "Enable or disable the changelog which displays important update details after updating Gargul",
+            setting = "changeLog",
+        },
+        {
+            label = "Experimental: debug mode",
+            description = "Enable debug mode, showing debug info in your chatbox. This is only meant for developers actively working on the Gargul add-on",
             setting = "debugModeEnabled",
         },
     };

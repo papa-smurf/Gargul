@@ -22,6 +22,12 @@ function ShortcutKeysLegend:draw()
 
     self.isVisible = true;
 
+    local Parent = LootFrame;
+    local ElvLootFrame = getglobal("ElvLootFrame");
+    if (ElvLootFrame and ElvLootFrame:IsShown()) then
+        Parent = ElvLootFrame;
+    end
+
     -- Create a container/parent frame
     local Window = AceGUI:Create("InlineGroup");
     Window:SetLayout("Flow");
@@ -36,10 +42,14 @@ function ShortcutKeysLegend:draw()
             self:close();
         end
     end);
-    Window.frame:SetParent(LootFrame);
+    Window.frame:SetParent(Parent);
     GL.Interface:setItem(self, "Window", Window);
 
-    Window:SetPoint("TOPLEFT", LootFrame, "TOPRIGHT", 0, 9);
+    if (ElvLootFrame) then
+        Window:SetPoint("TOPLEFT", Parent, "TOPRIGHT", 0, 17);
+    else
+        Window:SetPoint("TOPLEFT", Parent, "TOPRIGHT", 0, 9);
+    end
 
     --[[
         DESCRIPTION LABEL

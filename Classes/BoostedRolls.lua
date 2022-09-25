@@ -613,25 +613,33 @@ end
 function BoostedRolls:addMissingRaiders()
     GL:debug("BoostedRolls:addMissingRaiders");
 
+    local default = GL.Settings:get("BoostedRolls.defaultPoints", 0);
+
+    -- Not in a group, add the current player
+    if (not GL.User.isInGroup) then
+        local playerName = GL:normalizedName(GL.User.name);
+        if (not self:hasPoints(playerName)) then
+            DB:set("BoostedRolls.Points." .. playerName, default);
+        end
+
     -- Go through everyone in the raid
-    if (GL.User.isInGroup) then
-        local default = GL.Settings:get("BoostedRolls.defaultPoints", 0);
+    else
         for _, Player in pairs(GL.User:groupMembers()) do
             local playerName = GL:normalizedName(Player.name);
             if (not self:hasPoints(playerName)) then
                 DB:set("BoostedRolls.Points." .. playerName, default);
             end
         end
-
-        DB:set("BoostedRolls.MetaData.importedAt", GetServerTime());
-        DB:set("BoostedRolls.MetaData.updatedAt", GetServerTime());
-
-        if (not DB:get("BoostedRolls.MetaData.uuid")) then
-            DB:set("BoostedRolls.MetaData.uuid", GL:uuid());
-        end
-
-        self:materializeData();
     end
+
+    DB:set("BoostedRolls.MetaData.importedAt", GetServerTime());
+    DB:set("BoostedRolls.MetaData.updatedAt", GetServerTime());
+
+    if (not DB:get("BoostedRolls.MetaData.uuid")) then
+        DB:set("BoostedRolls.MetaData.uuid", GL:uuid());
+    end
+
+    self:materializeData();
 end
 
 --- Export to CSV

@@ -4,7 +4,6 @@ local _, GL = ...;
 ---@class GroupLoot
 GL.GroupLoot = {
     _initialized = false,
-    ProcessedRollIds = {},
 }
 
 local Constants = GL.Data.Constants; ---@type Data
@@ -37,7 +36,7 @@ function GroupLoot:highlightItemsOfInterest()
     GL:debug("GroupLoot:highlightItemsOfInterest");
 
     -- Check if the player disabled the highlighting of items
-    if (GL.Settings:get("highlightsDisabled")
+    if (not GL.Settings:get("highlightsEnabled")
         or (
             not GL.Settings:get("highlightHardReservedItems")
             and not GL.Settings:get("highlightSoftReservedItems")
@@ -62,14 +61,14 @@ function GroupLoot:highlightItemsOfInterest()
 
                 -- The item is hard-reserved
                 if (GL.Settings:get("highlightHardReservedItems")
-                        and SoftRes:linkIsHardReserved(itemLink)
+                    and SoftRes:linkIsHardReserved(itemLink)
                 ) then
                     enableHighlight = true;
                     BorderColor = {.77, .12, .23, 1};  -- Make the border red for hard-reserved items
 
                 -- The item is soft-reserved
                 elseif (GL.Settings:get("highlightSoftReservedItems")
-                        and SoftRes:linkIsReserved(itemLink)
+                    and SoftRes:linkIsReserved(itemLink)
                 ) then
                     enableHighlight = true;
                     BorderColor = {.95686, .5490, .72941, 1}; -- Make the border paladin-pink for reserved items

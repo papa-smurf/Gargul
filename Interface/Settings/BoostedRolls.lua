@@ -16,24 +16,24 @@ function BoostedRolls:draw(Parent)
     local HorizontalSpacer;
     local Checkboxes = {
         {
-            label = "Enable boosted rolls feature",
+            label = "Enable boosted rolls",
             description = "When enabled, the boosted roll button will be displayed in the rolling window and boosted rolls will be tracked",
             setting = "BoostedRolls.enabled",
         },
         {
             label = "Automatically share data",
-            description = "Checking this means you'll automatically share BoostedRolls data with players who join your raid, or when you import new BoostedRolls data",
+            description = "Automatically share BoostedRolls data with players who join your raid, or when you import new BoostedRolls data",
             setting = "BoostedRolls.automaticallyShareData",
         },
         {
             label = "Fixed rolls",
-            description = "If this setting is enabled then a player with 140 points will /roll 140-140. If you disable this setting (default) that player will roll 1-140 instead",
+            description = "A player with 140 points will /roll 140-140 instead of the default 1-140",
             setting = "BoostedRolls.fixedRolls",
         },
         {
-            label = "Enable whisper command",
+            label = "Whisper command",
             description = string.format(
-                "When enabled, players can whisper '|cff%s!bonus [<name>]|r' or '|cff%s!rb [<name>]|r' or '|cff%s!br [<name>]|r' to the master looter to get the current boosted roll for this name in response. If no name is given, their own name is assumed instead.",
+                "Players can whisper '|cff%s!bonus [<name>]|r' or '|cff%s!rb [<name>]|r' or '|cff%s!br [<name>]|r' to the master looter to get the current boosted roll for this name in response. If no name is given, their own name is assumed instead.",
                 GL:classHexColor("rogue"),
                 GL:classHexColor("rogue"),
                 GL:classHexColor("rogue")

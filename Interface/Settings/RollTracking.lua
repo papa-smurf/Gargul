@@ -5,7 +5,7 @@ local Overview = GL.Interface.Settings.Overview; ---@type SettingsOverview
 
 ---@class RollTrackingSettings
 GL.Interface.Settings.RollTracking = {
-    description = "After announcing an item and rolling it out to players, Gargul will keep track of incoming rolls. By default, Gargul will only track MS and OS rolls (/rnd or /rnd 99). The fields below allow you to customize this to your liking up to a maximum of 6 roll 'ranges'. The 'Identifier' is the text shown on the buttons (maximum 3 characters) and the 'Priority' field determines how rolls will be sorted in the roll tracking table (priority 1 is the highest priority). Two or more roll ranges can share the same priority, these are not unique values. |cffC41E3AMake sure to click the 'Save roll ranges' button when you're done editing the ranges!|r"
+    description = "Gargul can keep track of incoming rolls. By default, Gargul will only track MS and OS rolls (/rnd or /rnd 99). The fields below allow you to customize this to your liking up to a maximum of 6 roll ranges. The 'Identifier' is the text shown on the buttons (maximum 3 characters), the 'Priority' field determines how rolls will be sorted in the roll tracking window (priority 1 is the top priority). |cffC41E3AMake sure to click the 'Save roll ranges' button when you're done editing the ranges!|r"
 };
 local RollTracking = GL.Interface.Settings.RollTracking; ---@type RollTrackingSettings
 

@@ -7,6 +7,7 @@ GL.Test = {
         _initialized = false,
         Items = {},
     },
+    PackMule = {},
 };
 
 local Test = GL.Test;
@@ -112,6 +113,8 @@ end
 /script _G.Gargul.Test.TradeState:announce()
 ]]
 function Test.TradeState:announce()
+    GL:success("Running Test.TradeState:announce() ...");
+
     self:_init(function ()
         local State = self:defaultState();
 
@@ -126,6 +129,8 @@ end
 /script _G.Gargul.Test.TradeState:iGaveGold()
 ]]
 function Test.TradeState:iGaveGold()
+    GL:success("Running Test.TradeState:iGaveGold() ...");
+
     self:_init(function ()
         local State = self:defaultState();
 
@@ -143,6 +148,8 @@ end
 /script _G.Gargul.Test.TradeState:iReceivedGold()
 ]]
 function Test.TradeState:iReceivedGold()
+    GL:success("Running Test.TradeState:iReceivedGold() ...");
+
     self:_init(function ()
         local State = self:defaultState();
 
@@ -160,6 +167,8 @@ end
 /script _G.Gargul.Test.TradeState:iEnchantedForFree()
 ]]
 function Test.TradeState:iEnchantedForFree()
+    GL:success("Running Test.TradeState:iEnchantedForFree() ...");
+
     self:_init(function ()
         local State = self:defaultState();
 
@@ -177,6 +186,8 @@ end
 /script _G.Gargul.Test.TradeState:theyEnchantedForFree()
 ]]
 function Test.TradeState:theyEnchantedForFree()
+    GL:success("Running Test.TradeState:theyEnchantedForFree() ...");
+
     self:_init(function ()
         local State = self:defaultState();
 
@@ -194,6 +205,8 @@ end
 /script _G.Gargul.Test.TradeState:iEnchantedForFee()
 ]]
 function Test.TradeState:iEnchantedForFee(feeInCopper)
+    GL:success("Running Test.TradeState:iEnchantedForFee() ...");
+
     self:_init(function ()
         local State = self:defaultState();
 
@@ -211,6 +224,8 @@ end
 /script _G.Gargul.Test.TradeState:theyEnchantedForFee()
 ]]
 function Test.TradeState:theyEnchantedForFee(feeInCopper)
+    GL:success("Running Test.TradeState:theyEnchantedForFee() ...");
+
     self:_init(function ()
         local State = self:defaultState();
 
@@ -228,6 +243,8 @@ end
 /script _G.Gargul.Test.TradeState:iEnchantedIGaveGold()
 ]]
 function Test.TradeState:iEnchantedIGaveGold(feeInCopper)
+    GL:success("Running Test.TradeState:iEnchantedIGaveGold() ...");
+
     self:_init(function ()
         local State = self:defaultState();
 
@@ -245,6 +262,8 @@ end
 /script _G.Gargul.Test.TradeState:theyEnchantedTheyGaveGold()
 ]]
 function Test.TradeState:theyEnchantedTheyGaveGold(feeInCopper)
+    GL:success("Running Test.TradeState:theyEnchantedTheyGaveGold() ...");
+
     self:_init(function ()
         local State = self:defaultState();
 
@@ -262,6 +281,8 @@ end
 /script _G.Gargul.Test.TradeState:iTradedItems()
 ]]
 function Test.TradeState:iTradedItems()
+    GL:success("Running Test.TradeState:iTradedItems() ...");
+
     self:_init(function ()
         local State = self:defaultState();
 
@@ -279,6 +300,8 @@ end
 /script _G.Gargul.Test.TradeState:theyTradedItems()
 ]]
 function Test.TradeState:theyTradedItems()
+    GL:success("Running Test.TradeState:theyTradedItems() ...");
+
     self:_init(function ()
         local State = self:defaultState();
 
@@ -296,6 +319,8 @@ end
 /script _G.Gargul.Test.TradeState:iGaveGoldTheyTradedItems()
 ]]
 function Test.TradeState:iGaveGoldTheyTradedItems()
+    GL:success("Running Test.TradeState:iGaveGoldTheyTradedItems() ...");
+
     self:_init(function ()
         local State = self:defaultState();
 
@@ -312,6 +337,8 @@ end
 /script _G.Gargul.Test.TradeState:iTradedItemstheyTradedItems()
 ]]
 function Test.TradeState:iTradedItemstheyTradedItems()
+    GL:success("Running Test.TradeState:iTradedItemstheyTradedItems() ...");
+
     self:_init(function ()
         local State = self:defaultState();
 
@@ -328,6 +355,8 @@ end
 /script _G.Gargul.Test.TradeState:theyGaveGoldITradedItems()
 ]]
 function Test.TradeState:theyGaveGoldITradedItems()
+    GL:success("Running Test.TradeState:theyGaveGoldITradedItems() ...");
+
     self:_init(function ()
         local State = self:defaultState();
 
@@ -344,6 +373,8 @@ end
 /script _G.Gargul.Test.TradeState:iGaveGoldAndItems()
 ]]
 function Test.TradeState:iGaveGoldAndItems()
+    GL:success("Running Test.TradeState:iGaveGoldAndItems() ...");
+
     self:_init(function ()
         local State = self:defaultState();
 
@@ -360,6 +391,8 @@ end
 /script _G.Gargul.Test.TradeState:theyGaveGoldAndItems()
 ]]
 function Test.TradeState:theyGaveGoldAndItems()
+    GL:success("Running Test.TradeState:theyGaveGoldAndItems() ...");
+
     self:_init(function ()
         local State = self:defaultState();
 
@@ -395,4 +428,50 @@ function Test.TradeState:all()
     GL.Ace:ScheduleTimer(function ()
         GL:success("Done with Test.TradeState:all()!");
     end, timeout + 1);
+end
+
+--[[ Show who's eligible to get an item by it's ID (if any)
+/script _G.Gargul.Test.PackMule:whoReceivesItem(18608, "group")
+]]
+function Test.PackMule:whoReceivesItem(itemID, lootMethod)
+    GL:success("Running Test.PackMule:whoReceivesItem() ...");
+
+    local oldGetLootMethod = GetLootMethod;
+    local oldIsMasterLooter = GL:toboolean(GL.User.isMasterLooter);
+    local oldIsInGroup = GL:toboolean(GL.User.isInGroup);
+    local oldIsInParty = GL:toboolean(GL.User.isInParty);
+    local oldIsInRaid = GL:toboolean(GL.User.isInRaid);
+    GetLootMethod = function () return lootMethod; end;
+
+    if (lootMethod == "master") then
+        GL.User.isMasterLooter = true;
+        GL.User.isInGroup = true;
+        GL.User.isInRaid = true;
+        GL.User.isInParty = false;
+    elseif (lootMethod == "group") then
+        GL.User.isMasterLooter = false;
+        GL.User.isInGroup = true;
+        GL.User.isInRaid = false;
+        GL.User.isInParty = true;
+    end
+
+    GL.PackMule:getTargetForItem(itemID, function(target)
+        if (not target) then
+            return GL:error("No target for item ID: " .. itemID);
+        end
+
+        GetLootMethod = oldGetLootMethod;
+        GL.User.isMasterLooter = oldIsMasterLooter;
+        GL.User.isInGroup = oldIsInGroup;
+        GL.User.isInRaid = oldIsInRaid;
+        GL.User.isInParty = oldIsInParty;
+
+        return GL:success("Item ID " .. itemID .. " will go to " .. target);
+    end);
+
+    -- Just in case the callback fails
+    GL.Ace:ScheduleTimer(function()
+        GetLootMethod = oldGetLootMethod;
+        GL.User.isMasterLooter = oldIsMasterLooter;
+    end, 1);
 end
