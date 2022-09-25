@@ -5,7 +5,7 @@ local Overview = GL.Interface.Settings.Overview; ---@type SettingsOverview
 
 ---@class SoftResSettings
 GL.Interface.Settings.SoftRes = {
-    description = "Gargul allows you to import data from soft-reserve sheets created on softres.it. Details about reservations will, depending on your settings, show up on: your tooltips, in chat and in your roll window.",
+    description = "Make a softreserve on softres.it and type |c00a79eff/gl sr|r in-game to get started!",
     wikiUrl = "https://github.com/papa-smurf/Gargul/wiki/Importing-Soft-Reserves",
 };
 local SoftRes = GL.Interface.Settings.SoftRes; ---@type SoftResSettings

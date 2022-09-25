@@ -12,23 +12,26 @@ GL.Interface.Settings.Overview = {
     previousSection = nil,
     defaultSection = "General",
     Sections = {
-        {"General", "General"},
-        {"Master Looting", "MasterLooting"},
-        {"    Shortcut Keys", "ShortcutKeys"},
-        {"    Dropped Loot", "DroppedLoot"},
-        {"    Roll Tracking", "RollTracking"},
-        {"    Awarding Loot", "AwardingLoot"},
-        {"    Boosted Rolls", "BoostedRolls"},
-        {"PackMule Autoloot", "PackMule"},
+        {"|c00a79effWELCOME|r", "General"},
+        {"SoftRes", "SoftRes"},
+        {"TMB and DFT", "TMB"},
+        {"Announce Loot", "DroppedLoot"},
+        {"Shortcut Keys", "ShortcutKeys"},
+        {"Exporting Loot", "ExportingLoot"},
+        {"Loot trade timers", "LootTradeTimers"},
+        {"Autoloot with PackMule", "PackMule"},
         {"    Item Rules", "PackMuleRules"},
         {"    Ignored Items", "PackMuleIgnores"},
+        {"", ""},
+        {"|c00a79effADVANCED|r", ""},
+        {"Master Looting", "MasterLooting"},
+        {"    Roll Tracking", "RollTracking"},
+        {"    Awarding Loot", "AwardingLoot"},
         {"Trade Announcements", "TradeAnnouncements"},
         {"Rolling", "Rolling"},
         {"Loot Highlighting", "LootHighlighting"},
-        {"SoftRes", "SoftRes"},
-        {"TMB and DFT", "TMB"},
-        {"Exporting Loot", "ExportingLoot"},
-        {"Loot trade timers", "LootTradeTimers"},
+        {"Boosted Rolls", "BoostedRolls"},
+        {"", ""},
         {"", ""},
         {"Slash Commands", "SlashCommands"},
     },
@@ -153,6 +156,7 @@ function Overview:draw(section)
         GL.Interface.Changelog:draw();
         self:close();
     end);
+    ChangelogButton:SetWidth(120);
     SecondColumn:AddChild(ChangelogButton);
 
     local PatreonButton = GL.UI:createFrame("Button", "PatreonButton" .. GL:uuid(), Window.frame, "UIPanelButtonTemplate");

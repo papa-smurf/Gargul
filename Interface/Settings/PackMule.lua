@@ -5,7 +5,7 @@ local Overview = GL.Interface.Settings.Overview; ---@type SettingsOverview
 
 ---@class PackMuleSettings
 GL.Interface.Settings.PackMule = {
-    description = "PackMule can auto loot items to any player in your raid.\n\nWhen looting you can hold the shift button to temporarily disable PackMule, allowing you to loot the old fashioned way! PackMule ignores legendaries, quest items and recipes.\n\nIf you want to see what else is ignored (by default) then click the |c00f7922eIgnored Items|r section on the left. To set up your own rules use the |c00f7922eItem Rules|r section.",
+    description = "PackMule can auto loot items to any player in your raid. When looting you can hold the shift button to temporarily disable PackMule.",
 };
 local PackMule = GL.Interface.Settings.PackMule; ---@type PackMuleSettings
 

@@ -5,56 +5,13 @@ local Overview = GL.Interface.Settings.Overview; ---@type SettingsOverview
 
 ---@class TMBSettings
 GL.Interface.Settings.TMB = {
-    description = "|cffC41E3AThese settings affect all data imported via TMB and DFT!|r\n\nGargul allows you to import wishlist and character priority data from thatsmybis.com and the DFT loot sheet.",
-    wikiUrl = "https://github.com/papa-smurf/Gargul/wiki/Import-TMB-Data",
+    description = "|cffC41E3AThese settings affect all data imported via TMB and DFT!|r\n\nType |c00a79eff/gl tmb|r or |c00a79eff/gl dft|r to get started!",
 };
 local TMB = GL.Interface.Settings.TMB; ---@type TMBSettings
 
 ---@return void
 function TMB:draw(Parent)
     GL:debug("TMBSettings:draw");
-
-    local MaxTooltipEntries = GL.AceGUI:Create("Slider");
-    MaxTooltipEntries:SetLabel("Maximum number of tooltip entries");
-    MaxTooltipEntries.label:SetTextColor(1, .95686, .40784);
-    MaxTooltipEntries:SetFullWidth(true);
-    MaxTooltipEntries:SetValue(GL.Settings:get("TMB.maximumNumberOfTooltipEntries", 35));
-    MaxTooltipEntries:SetSliderValues(1, 50, 1);
-    MaxTooltipEntries:SetCallback("OnValueChanged", function(Slider)
-        local value = tonumber(Slider:GetValue());
-
-        if (GL:higherThanZero(value)) then
-            GL.Settings:set("TMB.maximumNumberOfTooltipEntries", value);
-        end
-    end);
-    Parent:AddChild(MaxTooltipEntries);
-
-    local HorizontalSpacer = GL.AceGUI:Create("SimpleGroup");
-    HorizontalSpacer:SetLayout("FILL");
-    HorizontalSpacer:SetFullWidth(true);
-    HorizontalSpacer:SetHeight(20);
-    Parent:AddChild(HorizontalSpacer);
-
-    local MaxLootAnnouncementEntries = GL.AceGUI:Create("Slider");
-    MaxLootAnnouncementEntries:SetLabel("Maximum number of dropped loot announcement entries");
-    MaxLootAnnouncementEntries.label:SetTextColor(1, .95686, .40784);
-    MaxLootAnnouncementEntries:SetFullWidth(true);
-    MaxLootAnnouncementEntries:SetValue(GL.Settings:get("TMB.maximumNumberOfAnnouncementEntries", 35));
-    MaxLootAnnouncementEntries:SetSliderValues(1, 50, 1);
-    MaxLootAnnouncementEntries:SetCallback("OnValueChanged", function(Slider)
-        local value = tonumber(Slider:GetValue());
-
-        if (GL:higherThanZero(value)) then
-            GL.Settings:set("TMB.maximumNumberOfAnnouncementEntries", value);
-        end
-    end);
-    Parent:AddChild(MaxLootAnnouncementEntries);
-
-    HorizontalSpacer = GL.AceGUI:Create("SimpleGroup");
-    HorizontalSpacer:SetLayout("FILL");
-    HorizontalSpacer:SetFullWidth(true);
-    HorizontalSpacer:SetHeight(20);
-    Parent:AddChild(HorizontalSpacer);
 
     local Checkboxes = {
         {
@@ -82,6 +39,60 @@ function TMB:draw(Parent)
             description = "An item's guild note and item tier are shown on its tooltip",
             setting = "TMB.showItemInfoOnTooltips",
         },
+
+    };
+
+    Overview:drawCheckboxes(Checkboxes, Parent);
+
+    local HorizontalSpacer = GL.AceGUI:Create("SimpleGroup");
+    HorizontalSpacer:SetLayout("FILL");
+    HorizontalSpacer:SetFullWidth(true);
+    HorizontalSpacer:SetHeight(20);
+    Parent:AddChild(HorizontalSpacer);
+
+    local MaxTooltipEntries = GL.AceGUI:Create("Slider");
+    MaxTooltipEntries:SetLabel("Maximum number of tooltip entries");
+    MaxTooltipEntries.label:SetTextColor(1, .95686, .40784);
+    MaxTooltipEntries:SetFullWidth(true);
+    MaxTooltipEntries:SetValue(GL.Settings:get("TMB.maximumNumberOfTooltipEntries", 35));
+    MaxTooltipEntries:SetSliderValues(1, 50, 1);
+    MaxTooltipEntries:SetCallback("OnValueChanged", function(Slider)
+        local value = tonumber(Slider:GetValue());
+
+        if (GL:higherThanZero(value)) then
+            GL.Settings:set("TMB.maximumNumberOfTooltipEntries", value);
+        end
+    end);
+    Parent:AddChild(MaxTooltipEntries);
+
+    HorizontalSpacer = GL.AceGUI:Create("SimpleGroup");
+    HorizontalSpacer:SetLayout("FILL");
+    HorizontalSpacer:SetFullWidth(true);
+    HorizontalSpacer:SetHeight(20);
+    Parent:AddChild(HorizontalSpacer);
+
+    local MaxLootAnnouncementEntries = GL.AceGUI:Create("Slider");
+    MaxLootAnnouncementEntries:SetLabel("Maximum number of dropped loot announcement entries");
+    MaxLootAnnouncementEntries.label:SetTextColor(1, .95686, .40784);
+    MaxLootAnnouncementEntries:SetFullWidth(true);
+    MaxLootAnnouncementEntries:SetValue(GL.Settings:get("TMB.maximumNumberOfAnnouncementEntries", 35));
+    MaxLootAnnouncementEntries:SetSliderValues(1, 50, 1);
+    MaxLootAnnouncementEntries:SetCallback("OnValueChanged", function(Slider)
+        local value = tonumber(Slider:GetValue());
+
+        if (GL:higherThanZero(value)) then
+            GL.Settings:set("TMB.maximumNumberOfAnnouncementEntries", value);
+        end
+    end);
+    Parent:AddChild(MaxLootAnnouncementEntries);
+
+    HorizontalSpacer = GL.AceGUI:Create("SimpleGroup");
+    HorizontalSpacer:SetLayout("FILL");
+    HorizontalSpacer:SetFullWidth(true);
+    HorizontalSpacer:SetHeight(20);
+    Parent:AddChild(HorizontalSpacer);
+
+    Checkboxes = {
         {
             label = "Hide wishlist info when priority is set",
             description = "You will only see an item's wishlist details if no priority (LC) is set for it",
@@ -109,7 +120,7 @@ function TMB:draw(Parent)
         },
         {
             label = "Show everything when solo",
-            description = "Make sure that you see all DFT/TMB data when not in a group, perfect for testing!",
+            description = "Make sure that you see all TMB/DFT data when not in a group, perfect for testing!",
             setting = "TMB.showEntriesWhenSolo",
         },
     };
