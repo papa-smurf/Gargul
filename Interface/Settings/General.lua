@@ -5,8 +5,7 @@ local Overview = GL.Interface.Settings.Overview; ---@type SettingsOverview
 
 ---@class GeneralSettings
 GL.Interface.Settings.General = {
-    description = "Gargul is a loot add-on that adds quality of life features for raiders, master looters and raid leaders. Gargul can be used together with SoftRes (softres.it) and TMB (thatsmybis.com) to create a hassle free raiding experience.\n\nCheck the various sections on the left-hand side of this window or visit our Wiki/Discord to get started!",
-    wikiUrl = "https://github.com/papa-smurf/Gargul/wiki",
+    description = "Gargul adds quality of life features for raiders, master looters and raid leaders. It can be used with SoftRes (softres.it) and TMB (thatsmybis.com) to create a hassle free raiding experience. |c00f7922eMost of Gargul's features can be tested even when not in a group, so go check them out!|r",
 };
 local General = GL.Interface.Settings.General; ---@type GeneralSettings
 
@@ -15,19 +14,51 @@ function General:draw(Parent)
     GL:debug("GeneralSettings:draw");
 
     local MoreInfoLabel = GL.AceGUI:Create("Label");
-    MoreInfoLabel:SetText("For personal support or getting involved be sure to check out our Discord as well:\n");
+    MoreInfoLabel:SetText("Join our Discord for support and getting involved!\n");
     MoreInfoLabel:SetFontObject(_G["GameFontNormal"]);
     MoreInfoLabel:SetFullWidth(true);
     Parent:AddChild(MoreInfoLabel);
 
-    local WikiUrlBox = GL.AceGUI:Create("EditBox");
-    WikiUrlBox:DisableButton(true);
-    WikiUrlBox:SetHeight(20);
-    WikiUrlBox:SetFullWidth(true);
-    WikiUrlBox:SetText("https://discord.gg/D3mDhYPVzf");
-    Parent:AddChild(WikiUrlBox);
+    local DiscordURL = GL.AceGUI:Create("EditBox");
+    DiscordURL:DisableButton(true);
+    DiscordURL:SetHeight(20);
+    DiscordURL:SetFullWidth(true);
+    DiscordURL:SetText("https://discord.gg/D3mDhYPVzf");
+    Parent:AddChild(DiscordURL);
 
     local HorizontalSpacer = GL.AceGUI:Create("SimpleGroup");
+    HorizontalSpacer:SetLayout("FILL");
+    HorizontalSpacer:SetFullWidth(true);
+    HorizontalSpacer:SetHeight(10);
+    Parent:AddChild(HorizontalSpacer);
+
+    local OpenSoftRes = GL.AceGUI:Create("Button");
+    OpenSoftRes:SetText("SoftRes");
+    OpenSoftRes:SetCallback("OnClick", function()
+        GL.Settings:close();
+        GL.Commands:call("softreserves");
+    end);
+    OpenSoftRes:SetWidth(172);
+    Parent:AddChild(OpenSoftRes);
+
+    local OpenTMB = GL.AceGUI:Create("Button");
+    OpenTMB:SetText("TMB or DFT");
+    OpenTMB:SetCallback("OnClick", function()
+        GL.Settings:close();
+        GL.Commands:call("tmb");
+    end);
+    OpenTMB:SetWidth(172);
+    Parent:AddChild(OpenTMB);
+
+    local OpenPackMule = GL.AceGUI:Create("Button");
+    OpenPackMule:SetText("Autolooting");
+    OpenPackMule:SetCallback("OnClick", function()
+        GL.Settings:draw("PackMule");
+    end);
+    OpenPackMule:SetWidth(172);
+    Parent:AddChild(OpenPackMule);
+
+    HorizontalSpacer = GL.AceGUI:Create("SimpleGroup");
     HorizontalSpacer:SetLayout("FILL");
     HorizontalSpacer:SetFullWidth(true);
     HorizontalSpacer:SetHeight(20);

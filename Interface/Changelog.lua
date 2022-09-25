@@ -13,7 +13,7 @@ GL.Interface.Changelog = {
     History = {
         {
             version = "4.8.0",
-            date = "September 25th, 2022",
+            date = "September 26th, 2022",
             Changes = {
                 "|c00f7922eNEED|r? |c00f7922eGREED|r? |c00f7922ePASS|r?! PackMule's auto looting now also works in group loot: safe auto looting for everyone without any downtime! Type |c00a79eff/gl pm|r to speed up your raids!",
                 "Tired of those 'Are you sure you want to bind this item to you' messages when farming or raiding? We got you! Type |c00a79eff/gl pm|r and check the auto confirm settings!",
@@ -193,13 +193,38 @@ function Changelog:draw()
     ScrollFrame:SetLayout("Flow");
     ScrollFrameHolder:AddChild(ScrollFrame);
 
-    local HorizontalSpacer;
+    local WhatIsGargul = GL.AceGUI:Create("Label");
+    WhatIsGargul:SetText("Gargul makes handing out loot super easy, click the button below to get started!");
+    WhatIsGargul:SetFontObject(_G["GameFontNormal"]);
+    WhatIsGargul:SetFullWidth(true);
+    ScrollFrame:AddChild(WhatIsGargul);
 
-    local MoreInfoLabel = GL.AceGUI:Create("Label");
-    MoreInfoLabel:SetText("|c00a79effDon't want to miss anything Gargul?|r");
-    MoreInfoLabel:SetFontObject(_G["GameFontNormal"]);
-    MoreInfoLabel:SetFullWidth(true);
-    ScrollFrame:AddChild(MoreInfoLabel);
+    local HorizontalSpacer = GL.AceGUI:Create("SimpleGroup");
+    HorizontalSpacer:SetLayout("FILL");
+    HorizontalSpacer:SetFullWidth(true);
+    HorizontalSpacer:SetHeight(8);
+    ScrollFrame:AddChild(HorizontalSpacer);
+
+    local OpenGargul = GL.AceGUI:Create("Button");
+    OpenGargul:SetText("Open Gargul");
+    OpenGargul:SetCallback("OnClick", function()
+        self:close();
+        return GL.Commands:call("settings");
+    end);
+    OpenGargul:SetFullWidth(true);
+    ScrollFrame:AddChild(OpenGargul);
+
+    HorizontalSpacer = GL.AceGUI:Create("SimpleGroup");
+    HorizontalSpacer:SetLayout("FILL");
+    HorizontalSpacer:SetFullWidth(true);
+    HorizontalSpacer:SetHeight(8);
+    ScrollFrame:AddChild(HorizontalSpacer);
+
+    local DiscordLabel = GL.AceGUI:Create("Label");
+    DiscordLabel:SetText("|c00a79effGet support and involved on our Discord|r");
+    DiscordLabel:SetFontObject(_G["GameFontNormal"]);
+    DiscordLabel:SetFullWidth(true);
+    ScrollFrame:AddChild(DiscordLabel);
 
     local DiscordBox = GL.AceGUI:Create("EditBox");
     DiscordBox:DisableButton(true);

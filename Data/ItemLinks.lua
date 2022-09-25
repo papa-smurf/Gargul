@@ -1487,8 +1487,19 @@ GL.Data.ItemLinks = {
         40530, -- Valorous Dreadnaught Shoulderplates
         40548, -- Valorous Dreadnaught Pauldrons
     },
-    -- Heart of Magic
-    ["44650"] = {
+    -- Heroic Key to the Focusing Iris
+    ["44577"] = {
+        44581, -- Heroic Key to the Focusing Iris
+        44651, -- Heart of Magic (Heroic)
+        44661, -- Wyrmrest Necklace of Power
+        44662, -- Life-Binder's Locket
+        44664, -- Favor of the Dragon Queen
+        44665, -- Nexus War Champion Beads
+    },
+    -- Key to the Focusing Iris
+    ["44569"] = {
+        44582, -- Key to the Focusing Iris
+        44650, -- Heart of Magic (Normal)
         44657, -- Torque of the Red Dragonflight
         44658, -- Chain of the Ancient Wyrm
         44659, -- Pendant of the Dragonsworn

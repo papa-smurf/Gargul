@@ -26,7 +26,7 @@ function Importer:draw()
     local Window = AceGUI:Create("Frame");
     Window:SetTitle("Gargul v" .. GL.version);
     Window:SetLayout("Flow");
-    Window:SetWidth(600);
+    Window:SetWidth(270);
     Window:SetHeight(150);
     Window:EnableResize(false);
     Window.statustext:GetParent():Hide(); -- Hide the statustext bar
@@ -54,7 +54,7 @@ function Importer:draw()
     ]]
     local SoftResButton = AceGUI:Create("Button");
     SoftResButton:SetText("Import SoftRes data");
-    SoftResButton:SetWidth(188);
+    SoftResButton:SetFullWidth(true);
     SoftResButton:SetCallback("OnClick", function()
         if (not GL.SoftRes:available()) then
             self:close();
@@ -69,25 +69,13 @@ function Importer:draw()
         TMB BUTTON
     ]]
     local TMBButton = AceGUI:Create("Button");
-    TMBButton:SetText("Import TMB data");
-    TMBButton:SetWidth(188);
+    TMBButton:SetText("Import TMB/DFT data");
+    TMBButton:SetFullWidth(true);
     TMBButton:SetCallback("OnClick", function()
         self:close();
         GL.TMB:draw();
     end);
     Window:AddChild(TMBButton);
-
-    --[[
-        LOOT PRIO BUTTON
-    ]]
-    local LootPrioButton = AceGUI:Create("Button");
-    LootPrioButton:SetText("Import Loot Prio data");
-    LootPrioButton:SetWidth(188);
-    LootPrioButton:SetCallback("OnClick", function()
-        self:close();
-        GL.LootPriority:drawImporter();
-    end);
-    Window:AddChild(LootPrioButton);
 end
 
 function Importer:close()
