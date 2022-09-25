@@ -12,6 +12,14 @@ GL.Interface.Changelog = {
 
     History = {
         {
+            version = "4.8.0",
+            date = "September 25th, 2022",
+            Changes = {
+                "|c00f7922eNEED|r? |c00f7922eGREED|r? |c00f7922ePASS|r?! PackMule's auto looting now also works in group loot: safe auto looting for everyone without any downtime! Type |c00a79eff/gl pm|r to speed up your raids!",
+                "Tired of those 'Are you sure you want to bind this item to you' messages when farming or raiding? We got you! Type |c00a79eff/gl pm|r and check the auto confirm settings!",
+            },
+        },
+        {
             version = "4.7.1",
             date = "September 12th, 2022",
             Changes = {

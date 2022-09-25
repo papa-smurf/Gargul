@@ -92,7 +92,7 @@ function GL:debug(...)
         return;
     end
 
-    GL:coloredMessage("f7922e", ...);
+    GL:coloredMessage("F7922E", ...);
 end
 
 
@@ -107,14 +107,14 @@ end
 ---
 ---@return void
 function GL:warning(...)
-    GL:coloredMessage("f7922e", ...);
+    GL:coloredMessage("F7922E", ...);
 end
 
 --- Print a error message (red)
 ---
 ---@return void
 function GL:error(...)
-    GL:coloredMessage("be3333", ...);
+    GL:coloredMessage("BE3333", ...);
 end
 
 --- Capitalize a given value (e.g. gargul becomes Gargul)

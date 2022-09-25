@@ -5,7 +5,7 @@ local Overview = GL.Interface.Settings.Overview; ---@type SettingsOverview
 
 ---@class AwardingLootSettings
 GL.Interface.Settings.AwardingLoot = {
-    description = "By default, Gargul will attempt to aid in trading items to the winner and post congratulatory messages in the appropriate group channel.\n\nTo award items you can either run '/gl award' or alt+shift+left-click an item from your inventory (NOT character screen) or enemy's loot window.\n\nNB: If alt/alt+shift clicking items does not work for you then it's mostly likely an add-on interfering with the Blizzard UI (ElvUI and xLoot are confirmed culprits for example)",
+    description = string.format("By default, Gargul will attempt to aid in trading items to the winner and post congratulatory messages in the appropriate group channel.\n\nTo award items you can %s an item from your inventory, enemy loot window or trade timer bar.", GL.Settings:get("ShortcutKeys.award")),
     wikiUrl = "https://github.com/papa-smurf/Gargul/wiki/Awarding-Items",
 };
 local AwardingLoot = GL.Interface.Settings.AwardingLoot; ---@type AwardingLootSettings
@@ -16,23 +16,23 @@ function AwardingLoot:draw(Parent)
 
     local Checkboxes = {
         {
-            label = "Disable award messages",
-            description = "Check this if you don't want Gargul to post a message regarding awarded items in raid/party chat",
-            setting = "AwardingLoot.awardMessagesDisabled",
+            label = "Award messages",
+            description = "Gargul will anounce items awarded in raid/party chat",
+            setting = "AwardingLoot.awardMessagesEnabled",
         },
         {
             label = "Use raid warning",
-            description = "Check this if you want Gargul to use /rw instead of /ra for announcing winners",
+            description = "Announce winners in /rw instead of /ra",
             setting = "AwardingLoot.announceAwardMessagesInRW",
         },
         {
             label = "Announce in Guild chat",
-            description = "Check this if you want Gargul to announce awarded items in guild chat as well",
+            description = "Announce items awarded to guildies in your guild chat",
             setting = "AwardingLoot.announceAwardMessagesInGuildChat",
         },
         {
             label = "Announce disenchanted items",
-            description = "If enabled Gargul will post a message whenever an item is marked as disenchanted",
+            description = "Post a message whenever an item is marked as disenchanted",
             setting = "PackMule.announceDisenchantedItems",
         },
         {

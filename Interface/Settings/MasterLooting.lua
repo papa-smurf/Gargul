@@ -67,23 +67,23 @@ function MasterLooting:draw(Parent)
 
     local Checkboxes = {
         {
-            label = "Show Master Looter Popup",
-            description = "This setting enables the master looter window that automatically pops up when you are given the role of master looter. It provides easy access to clearing and importing data from SoftRes and Thatsmybis",
+            label = "Master Looter Popup",
+            description = "Enable the master looter window that automatically pops up when you are given the role of master looter. It provides easy access to clearing and importing data",
             setting = "MasterLooting.autoOpenMasterLooterDialog",
         },
         {
             label = "Announce Master Looter",
-            description = "When enabled you automatically post a message in chat when you are given the role of master looter",
+            description = "Post a message in chat when you are given the role of master looter",
             setting = "MasterLooting.announceMasterLooter",
         },
         {
             label = "Announce start of roll",
-            description = "When enabled you post an announcement in /rw when a roll starts",
+            description = "Post an announcement in /rw when a roll starts",
             setting = "MasterLooting.announceRollStart",
         },
         {
             label = "Countdown on rolls",
-            description = "If enabled a countdown will be shown in chat when a roll is coming to an end (e.g: you have 5 seconds to roll)",
+            description = "A countdown will be shown in chat when a roll is coming to an end (e.g: you have 5 seconds to roll)",
             setting = "MasterLooting.doCountdown",
         },
     };

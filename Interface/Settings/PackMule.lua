@@ -31,9 +31,24 @@ function PackMule:draw(Parent)
 
     local Checkboxes = {
         {
-            label = "Enable",
-            description = "The PackMule rules will only be applied if this box is checked",
-            setting = "PackMule.enabled",
+            label = "Enable for Master Loot",
+            description = "The PackMule rules will be applied if you're master looting",
+            setting = "PackMule.enabledForMasterLoot",
+        },
+        {
+            label = "Enable for Group Loot",
+            description = "The PackMule (NEED|GREED|PASS|IGNORE) rules apply in group loot",
+            setting = "PackMule.enabledForGroupLoot",
+        },
+        {
+            label = "Auto confirm loot when solo",
+            description = "Auto confirm all loot when not in a group, bypassing the 'looting this will bind it to you message'",
+            setting = "PackMule.autoConfirmSolo",
+        },
+        {
+            label = "Auto confirm loot when in group",
+            description = "Auto confirm all loot when group looting, bypassing the 'looting this will bind it to you message'. Use with caution!",
+            setting = "PackMule.autoConfirmGroup",
         },
         {
             label = "Persist after zone switch",

@@ -75,6 +75,12 @@ GL.Data.Constants = {
         "SpeedyAutoLoot",
     },
 
+    GroupLootActions = {
+        PASS = 0,
+        NEED = 1,
+        GREED = 2,
+    },
+
     ItemsThatSouldntBeAnnounced = {
         29434, -- Badge of Justice
 
