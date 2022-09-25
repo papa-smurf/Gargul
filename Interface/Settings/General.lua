@@ -38,7 +38,7 @@ function General:draw(Parent)
         GL.Settings:close();
         GL.Commands:call("softreserves");
     end);
-    OpenSoftRes:SetWidth(176);
+    OpenSoftRes:SetWidth(172);
     Parent:AddChild(OpenSoftRes);
 
     local OpenTMB = GL.AceGUI:Create("Button");
@@ -47,7 +47,7 @@ function General:draw(Parent)
         GL.Settings:close();
         GL.Commands:call("tmb");
     end);
-    OpenTMB:SetWidth(176);
+    OpenTMB:SetWidth(172);
     Parent:AddChild(OpenTMB);
 
     local OpenPackMule = GL.AceGUI:Create("Button");
@@ -55,7 +55,7 @@ function General:draw(Parent)
     OpenPackMule:SetCallback("OnClick", function()
         GL.Settings:draw("PackMule");
     end);
-    OpenPackMule:SetWidth(176);
+    OpenPackMule:SetWidth(172);
     Parent:AddChild(OpenPackMule);
 
     HorizontalSpacer = GL.AceGUI:Create("SimpleGroup");

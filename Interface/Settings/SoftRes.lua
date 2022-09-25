@@ -60,7 +60,7 @@ function SoftRes:draw(Parent)
     Parent:AddChild(HorizontalSpacer);
 
     local OpenSoftRes = GL.AceGUI:Create("Button");
-    OpenSoftRes:SetText("SoftRes Data");
+    OpenSoftRes:SetText("SoftRes");
     OpenSoftRes:SetCallback("OnClick", function()
         GL.Settings:close();
         GL.Commands:call("softreserves");
