@@ -5,7 +5,7 @@ local Overview = GL.Interface.Settings.Overview; ---@type SettingsOverview
 
 ---@class PackMuleRulesSettings
 GL.Interface.Settings.PackMuleRules = {
-    description = "Group Loot Placeholders:\n|c00f7922ePASS|r, |c00f7922eGREED|r, |c00f7922eNEED|r, |c00f7922eIGNORE|r\n\nFor Master Looting use player names and placeholders:\n|c00f7922eSELF|r - send to yourself\n|c00f7922eRANDOM|r - send to random player\n|c00f7922eDE|r - send to disenchanter (/gl sd [mydisenchanter])\n|c00f7922eIGNORE|r - prevent from being auto-looted\n\nList of players are also supported:\n|c00f7922ePlayer1 Player2 SELF|r - Items will be sent to a random person in this list.\n\nSend an item to the first player who's in the raid instead of random by adding an exclamation mark: |c00f7922e!Player1 !Player2 SELF|r",
+    description = "For group loot use:\n|c00f7922ePASS|r, |c00f7922eGREED|r, |c00f7922eNEED|r, |c00f7922eIGNORE|r\n\nFor Master Looting use player names and placeholders:\n|c00f7922eSELF|r - send to yourself\n|c00f7922eRANDOM|r - send to random player\n|c00f7922eDE|r - send to disenchanter (/gl sd [mydisenchanter])\n|c00f7922eIGNORE|r - prevent from being auto-looted\n\nList of players are also supported:\n|c00f7922ePlayer1 Player2 SELF|r - Items will be sent to a random person in this list.\n\nSend an item to the first player who's in the raid instead of random by adding an exclamation mark: |c00f7922e!Player1 !Player2 SELF|r",
 
     UIComponents = {
         Input = {
@@ -49,7 +49,7 @@ function PackMuleRules:draw(Parent)
     Overview:drawSpacer(Parent, 20, 1);
 
     local SectionDescription = GL.AceGUI:Create("Label");
-    SectionDescription:SetText("Legendary items are ignored");
+    SectionDescription:SetText("Example to send to yourself when loot master and greed when group looting:\n|c00a79effSELF GREED|r");
     SectionDescription:SetFontObject(_G["GameFontNormal"]);
     SectionDescription:SetFullWidth(true);
     Parent:AddChild(SectionDescription);
@@ -144,6 +144,13 @@ end
 function PackMuleRules:onClose()
     GL:debug("PackMuleRules:onClose");
 
+    local sanitizeTarget = function(target)
+        target = target:gsub(",", " ");
+        target = target:gsub("  ", " ");
+
+        return target;
+    end;
+
     -- Lower/higher than quality rules
     local lowerThanRuleQuality = self.UIComponents.Input.LowerThanOrEqualToRuleQuality:GetValue();
     local lowerThanRuleTarget = tostring(self.UIComponents.Input.LowerThanOrEqualToRuleTarget:GetText());
@@ -160,7 +167,7 @@ function PackMuleRules:onClose()
 
         GL.PackMule:addRule({
             item = name,
-            target = target,
+            target = sanitizeTarget(target),
         });
     end
 
@@ -172,7 +179,7 @@ function PackMuleRules:onClose()
         GL.PackMule:addRule({
             quality = lowerThanRuleQuality,
             operator = "<=",
-            target = lowerThanRuleTarget,
+            target = sanitizeTarget(lowerThanRuleTarget),
         });
     end
 
@@ -184,7 +191,7 @@ function PackMuleRules:onClose()
         GL.PackMule:addRule({
             quality = higherThanRuleQuality,
             operator = ">=",
-            target = higherThanRuleTarget,
+            target = sanitizeTarget(higherThanRuleTarget),
         });
     end
 end
