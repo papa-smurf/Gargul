@@ -1,28 +1,27 @@
 [![Gargul Discord](https://img.shields.io/discord/864124999300153344?label=discord)](https://discord.gg/D3mDhYPVzf)
 ##
-[![Patreon](https://user-images.githubusercontent.com/4224975/137632401-1131d679-e158-461d-b06e-56b92aa3eb25.png)](https://www.patreon.com/gargul)
 
-# Gargul
-Looting made easy! If you use MS>OS (+1), soft-reserves, thatsmybis or simply want to auto-loot everything, so you can zug on, then look no further! Gargul can completely eliminate the need for group-loot if set up properly, check PackMule for more info (`/gl pm` in-game).
+## When should I use Gargul?
+- If you use softres, tmb, dft or a combination of these:
+- https://softres.it: see who reserved what, who forgot to reserve, announce details it in chat etc
+- https://thatsmybis.com:  see wishlist/prio info, item notes, export loot back into TMB etc
+- Gargul tracks player rolls for you and speeds up assigning loot drastically!
+- It picks up loot automatically and can send it to anyone in the raid
+- It shows you exactly how long you still have before you need to start handing out loot
 
-Check https://www.curseforge.com/wow/addons/gargul/screenshots to see what it looks like!
+## Main Slash Commands
+- `/gl` - shows the GUI
+- Do you use softres? `/gl sr`
+- Do you use tmb? `/gl tmb`
+- Want to auto loot anything and speed up raids and farming? `/gl pm`
+- Want to know what else it can do? `/gl help`
 
 ## Does everyone in the raid need Gargul?
 No! For 99% of the features, only the loot master needs Gargul.
-
-## When should I use Gargul?
-- If you're the loot master in raids
-- If you're using https://softres.it/ (see who reserved what, announce it in chat, double reserve support etc. etc.)
-- Or If you're using https://thatsmybis.com/ (see wishlist/prio list info, item priority notes, export loot back into tmb, keep track of what was disenchanted etc. etc.)
-- If you need an easy way to track rolls on items for both MS and OS
-- If you need to keep track of +1 rolls
-- If you're sick and tired of picking up loot in raids and want to keep going without having to enable group loot
-
-## Slash Commands
-- /gl - shows the GUI
-- /gl commands - Shows all the other slash commands and how to use them
 
 ## (Default) Hotkeys
 - ALT_CLICK an item to roll it out
 - ALT_SHIFT_CLICK an item to award it to someone
 - CTRL_SHIFT_CLICK an item to mark it for disenchant
+
+[![Patreon](https://user-images.githubusercontent.com/4224975/137632401-1131d679-e158-461d-b06e-56b92aa3eb25.png)](https://www.patreon.com/gargul)
