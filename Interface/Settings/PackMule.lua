@@ -5,7 +5,7 @@ local Overview = GL.Interface.Settings.Overview; ---@type SettingsOverview
 
 ---@class PackMuleSettings
 GL.Interface.Settings.PackMule = {
-    description = "PackMule can auto loot items to any player in your raid. When looting you can hold the shift button to temporarily disable PackMule.",
+    description = "PackMule can auto loot items to any player in your raid. When looting you can hold the shift button to temporarily disable PackMule. |c00a79effGROUP LOOT SETTINGS ONLY AFFECT YOURSELF!|r",
 };
 local PackMule = GL.Interface.Settings.PackMule; ---@type PackMuleSettings
 
