@@ -176,6 +176,71 @@ GL.Data.Constants = {
         20582, -- Trance Stone (Ysondre, Taerar, Lethon, Emeriss)
         20580, -- Hammer of Bestial Fury (Ysondre, Taerar, Lethon, Emeriss)
         20644, -- Nightmare Engulfed Object (Ysondre, Taerar, Lethon, Emeriss)
+
+        --[[ ERA COMPANION PETS ]]
+        5332, --Glowing Cat Figurine
+        8485, --Cat Carrier (Bombay)
+        8486, --Cat Carrier (Cornish Rex)
+        8487, --Cat Carrier (Orange Tabby)
+        8488, --Cat Carrier (Silver Tabby)
+        8489, --Cat Carrier (White Kitten)
+        8490, --Cat Carrier (Siamese)
+        8491, --Cat Carrier (Black Tabby)
+        8492, --Parrot Cage (Green Wing Macaw)
+        8494, --Parrot Cage (Hyacinth Macaw)
+        8495, --Parrot Cage (Senegal)
+        8496, --Parrot Cage (Cockatiel)
+        8497, --Rabbit Crate (Snowshoe)
+        8498, --Tiny Emerald Whelpling
+        8499, --Tiny Crimson Whelpling
+        8500, --Great Horned Owl
+        8501, --Hawk Owl
+        10360, --Black Kingsnake
+        10361, --Brown Snake
+        10392, --Crimson Snake
+        10393, --Cockroach
+        10394, --Prairie Dog Whistle
+        10398, --Mechanical Chicken
+        10822, --Dark Whelpling
+        11023, --Ancona Chicken
+        11026, --Tree Frog Box
+        11027, --Wood Frog Box
+        11110, --Chicken Egg
+        11474, --Sprite Darter Egg
+        11903, --Cat Carrier (Corrupted Kitten)
+        12264, --Worg Carrier
+        12529, --Smolderweb Carrier
+        12565, --Winna's Kitten Carrier
+        13582, --Zergling Leash
+        13583, --Panda Collar
+        13584, --Diablo Stone
+        18963, --Turtle Egg (Albino)
+        18964, --Turtle Egg (Loggerhead)
+        18965, --Turtle Egg (Hawksbill)
+        18966, --Turtle Egg (Leatherback)
+        18967, --Turtle Egg (Olive)
+        19054, --Red Dragon Orb
+        19055, --Green Dragon Orb
+        19450, --A Jubling's Tiny Home
+        20371, --Blue Murloc Egg
+        20651, --Orange Murloc Egg
+        20769, --Disgusting Oozeling
+        21168, --Baby Shark
+        21301, --Green Helper Box
+        21305, --Red Helper Box
+        21308, --Jingling Bell
+        21309, --Snowman Kit
+        22114, --Pink Murloc Egg
+        22235, --Truesilver Shafted Arrow
+        22780, --White Murloc Egg
+        22781, --Polar Bear Collar
+        23002, --Turtle Box
+        23007, --Piglet's Collar
+        23015, --Rat Cage
+        23083, --Captured Flame
+        23712, --White Tiger Cub
+        23713, --Hippogryph Hatchling
+        180089, --Panda Collar
     },
 
     -- Locked Items
