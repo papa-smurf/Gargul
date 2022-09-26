@@ -165,66 +165,86 @@ end
 
 --- Check if an item ID is ignored by default by PackMule (displayed in chat)
 ---
----@param checkItemID number
+---@param itemID number
 ---@param callback function
 ---@return void
-function PackMule:isItemIDIgnored(checkItemID, callback)
+function PackMule:isItemIDIgnored(itemID, callback)
     GL:debug("PackMule:isItemIDIgnored");
 
-    local itemID, _, _, _, _, itemClassID = GetItemInfoInstant(checkItemID)
-
-    if (type(callback) ~= "function") then
-        callback = function () end;
-    end
-
-    if (not itemID) then
-        if (callback and type(callback) == "function") then
-            return callback(false);
-        end
-
+    itemID = math.floor(tonumber(itemID));
+    if (not GL:higherThanZero(itemID)) then
         return;
     end
 
-    GL:onItemLoadDo(itemID, function (Items)
-        local Loot = Items[1];
+    if (type(callback) ~= "function") then
+        return;
+    end
 
-        if (not Loot) then
-            if (callback and type(callback) == "function") then
-                return callback(false);
-            end
+    --- Down below we override the getValidRules and GetLootMethod function and some
+    --- user profile properties. This looks extremely nasty, but is the only surefire
+    --- way of replicating in-raid/group PackMule behavior and test it properly!
 
-            return;
-        end
+    local OriginalGetValidRulesFunction = self.getValidRules;
 
-        -- Check whether the item is whitelisted
-        if (GL:inTable(GL.Data.Constants.TradeableItems, itemID)) then
-            return callback(Loot, false);
-        end
+    -- Make sure items of every quality have one valid rule
+    self.getValidRules = function ()
+        return {
+            {
+                target = "SELF NEED",
+                quality = 1,
+                operator = ">=",
+            }
+        };
+    end;
 
-        -- Check whether the item is blacklisted
-        if (GL:inTable(GL.Data.Constants.UntradeableItems, itemID)) then
-            return callback(Loot, true);
-        end
+    local oldGetLootMethod = GetLootMethod;
+    local oldIsMasterLooter = GL:toboolean(GL.User.isMasterLooter);
+    local oldIsInGroup = GL:toboolean(GL.User.isInGroup);
+    local oldIsInParty = GL:toboolean(GL.User.isInParty);
+    local oldIsInRaid = GL:toboolean(GL.User.isInRaid);
 
-        -- Skip companion pets in group loot even if they're boe!
-        if (Loot.classID == LE_ITEM_CLASS_MISCELLANEOUS
-                and Loot.subclassID == Enum.ItemMiscellaneousSubclass.CompanionPet
-        ) then
-            return callback(Loot, true);
-        end
+    -- We test the item against PackMule in a loot master setting first
+    GetLootMethod = function () return "master"; end;
+    GL.User.isMasterLooter = true;
+    GL.User.isInGroup = true;
+    GL.User.isInRaid = true;
+    GL.User.isInParty = false;
 
-        local bindType = Loot.bindType or LE_ITEM_BIND_NONE;
-        local bindOnPickup = GL:inTable({ LE_ITEM_BIND_ON_ACQUIRE, LE_ITEM_BIND_QUEST}, bindType);
+    self:getTargetForItem(itemID, function(masterTarget)
+        local itemIDisIgnoredForMaster = GL:empty(masterTarget);
+        local Loot = GL.DB.Cache.ItemsById[tostring(itemID)] or {}; -- This is 100% set at this point
 
-        if (not bindOnPickup or ( -- The item is not BoP so we can safely PackMule it
-            Loot.quality < 5 -- Legendary items are skipped
-            and not GL:inTable(self.itemClassIdsToIgnore, itemClassID) -- Recipes and Quest Items are skipped in quality rules
-        )) then
-            return callback(Loot, false);
-        end
+        -- We now test the item against PackMule in a group loot setting
+        GetLootMethod = function () return "group"; end;
+        GL.User.isMasterLooter = false;
+        GL.User.isInGroup = true;
+        GL.User.isInRaid = false;
+        GL.User.isInParty = true;
 
-        return callback(Loot, true);
+        self:getTargetForItem(itemID, function(groupTarget)
+            local itemIDisIgnoredForGroup = GL:empty(groupTarget);
+
+            -- Reset everything
+            self.getValidRules = OriginalGetValidRulesFunction;
+            GetLootMethod = oldGetLootMethod;
+            GL.User.isMasterLooter = oldIsMasterLooter;
+            GL.User.isInGroup = oldIsInGroup;
+            GL.User.isInRaid = oldIsInRaid;
+            GL.User.isInParty = oldIsInParty;
+
+            callback(Loot, itemIDisIgnoredForMaster, itemIDisIgnoredForGroup);
+        end);
     end);
+
+    -- Just in case the callback fails
+    GL.Ace:ScheduleTimer(function()
+        self.getValidRules = OriginalGetValidRulesFunction;
+        GetLootMethod = oldGetLootMethod;
+        GL.User.isMasterLooter = oldIsMasterLooter;
+        GL.User.isInGroup = oldIsInGroup;
+        GL.User.isInRaid = oldIsInRaid;
+        GL.User.isInParty = oldIsInParty;
+    end, 2);
 end
 
 --- Disable PackMule after a zone switch, unless enabled in settings
@@ -422,12 +442,19 @@ function PackMule:getTargetForItem(itemLinkOrId, callback)
                         return false;
                     end
 
-                    -- Skip companion pets in group loot even if they're BoE!
-                    if (not GL.User.isMasterLooter
-                        and Loot.classID == LE_ITEM_CLASS_MISCELLANEOUS
-                        and Loot.subclassID == Enum.ItemMiscellaneousSubclass.CompanionPet
-                    ) then
-                        return false;
+                    -- When group looting we have some additional rules
+                    if (not GL.User.isMasterLooter) then
+                        -- Skip companion pets in group loot even if they're BoE!
+                        if (Loot.classID == LE_ITEM_CLASS_MISCELLANEOUS
+                            and Loot.subclassID == Enum.ItemMiscellaneousSubclass.CompanionPet
+                        ) then
+                            return false;
+                        end
+
+                        -- Always skip recipes and quest items
+                        if (GL:inTable(self.itemClassIdsToIgnore, Loot.classID)) then
+                            return false;
+                        end
                     end
 
                     -- Untradable items are skipped in quality rules whether they're BoP or not!

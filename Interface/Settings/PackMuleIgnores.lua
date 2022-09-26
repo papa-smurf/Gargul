@@ -13,6 +13,19 @@ local PackMuleIgnores = GL.Interface.Settings.PackMuleIgnores; ---@type PackMule
 function PackMuleIgnores:draw(Parent)
     GL:debug("PackMuleIgnoresSettings:draw");
 
+    local DiscordURL = GL.AceGUI:Create("EditBox");
+    DiscordURL:DisableButton(true);
+    DiscordURL:SetHeight(20);
+    DiscordURL:SetFullWidth(true);
+    DiscordURL:SetText("https://discord.gg/D3mDhYPVzf");
+    Parent:AddChild(DiscordURL);
+
+    local HorizontalSpacer = GL.AceGUI:Create("SimpleGroup");
+    HorizontalSpacer:SetLayout("FILL");
+    HorizontalSpacer:SetFullWidth(true);
+    HorizontalSpacer:SetHeight(10);
+    Parent:AddChild(HorizontalSpacer);
+
     local Heading = GL.AceGUI:Create("Heading");
     Heading:SetFullWidth(true);
     Heading:SetText("Is this item ignored by PackMule?");
@@ -25,6 +38,7 @@ function PackMuleIgnores:draw(Parent)
     ItemSearchBox:SetHeight(20);
     ItemSearchBox:SetFullWidth(true);
     ItemSearchBox:SetText("");
+    ItemSearchBox:SetFocus();
     ItemSearchBox:SetLabel(string.format(
         "Search using an item ID or item link (shift click or drag/drop)",
         GL:classHexColor("rogue")
@@ -59,7 +73,7 @@ function PackMuleIgnores:isItemIgnored(input)
     end
 
     local itemID = GL:getItemIdFromLink(input) or input;
-    GL.PackMule:isItemIDIgnored(itemID, function (Loot, itemIsIgnored)
+    GL.PackMule:isItemIDIgnored(itemID, function (Loot, itemIDisIgnoredForMaster, itemIDisIgnoredForGroup)
         -- The given item ID doesn't exist
         if (not Loot) then
             Label:SetText(string.format("|c00f7922eItem with ID \"%s\" doesn't exist!|r", itemID));
@@ -69,12 +83,24 @@ function PackMuleIgnores:isItemIgnored(input)
         local textColor = "92FF00";
         local flagText = "ignored";
 
-        if (not itemIsIgnored) then
+        if (not itemIDisIgnoredForMaster) then
             textColor = "f7922e";
             flagText = "not ignored";
         end
 
-        Label:SetText(string.format("Item with ID %s ( %s ) is |c00%s%s|r", itemID, Loot.link, textColor, flagText));
+        local masterLootText = string.format("In master loot, item with ID %s ( %s ) is |c00%s%s|r", itemID, Loot.link, textColor, flagText);
+
+        textColor = "92FF00";
+        flagText = "ignored";
+
+        if (not itemIDisIgnoredForGroup) then
+            textColor = "f7922e";
+            flagText = "not ignored";
+        end
+
+        local groupLootText = string.format("In group loot, item with ID %s ( %s ) is |c00%s%s|r", itemID, Loot.link, textColor, flagText);
+
+        Label:SetText(masterLootText .. "\n" .. groupLootText);
     end);
 end
 
