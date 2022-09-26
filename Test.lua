@@ -473,5 +473,8 @@ function Test.PackMule:whoReceivesItem(itemID, lootMethod)
     GL.Ace:ScheduleTimer(function()
         GetLootMethod = oldGetLootMethod;
         GL.User.isMasterLooter = oldIsMasterLooter;
+        GL.User.isInGroup = oldIsInGroup;
+        GL.User.isInRaid = oldIsInRaid;
+        GL.User.isInParty = oldIsInParty;
     end, 1);
 end

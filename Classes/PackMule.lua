@@ -64,8 +64,8 @@ function PackMule:_init()
     end);
 
     -- Whenever an item drops that is eligible for rolling trigger the highlighter and packmule rules
-    GL.Events:register("GroupLootStartLootRollListener", "START_LOOT_ROLL", function ()
-        self:processGroupLootItems();
+    GL.Events:register("GroupLootStartLootRollListener", "START_LOOT_ROLL", function (_, rollID)
+        self:processGroupLootItems(rollID);
     end);
 
     GL.Events:register("PackMuleLootLootAnnouncedListener", "GL.LOOT_ANNOUNCED", function ()
@@ -124,105 +124,127 @@ end
 
 --- PASS/NEED/GREED on group loot items based on PackMule rules
 ---
+---@param rollID number
 ---@return void
-function PackMule:processGroupLootItems()
+function PackMule:processGroupLootItems(rollID)
     GL:debug("PackMule:processGroupLootItems");
+
+    if (not rollID) then
+        return;
+    end
 
     -- This should not be possible, just double checking!
     if (GetLootMethod() == "master") then
         return;
     end
 
-    for itemIndex = 1, _G.NUM_GROUP_LOOT_FRAMES do
-        (function()
-            local ItemFrame = getglobal("GroupLootFrame" .. itemIndex);
-            local rollID = ItemFrame.rollID;
-
-            if (not rollID) then
-                return;
-            end
-
-            -- Shouldn't be possible, but you never know
-            local itemLink = GetLootRollItemLink(rollID);
-            if (not itemLink) then
-                return;
-            end
-
-            -- Check if the user has PackMule enabled for group loot
-            if (GL.Settings:get("PackMule.enabledForGroupLoot")) then
-                -- See if there's a PackMule target, if so hand it out
-                self:getTargetForItem(itemLink, function(target)
-                    if (not target) then
-                        return;
-                    end
-
-                    -- PackMule treats everything as a player name and returns a string.lower
-                    target = string.upper(target);
-                    if (GL.Data.Constants.GroupLootActions[target]) then
-                        RollOnLoot(rollID, GL.Data.Constants.GroupLootActions[target]);
-                    end
-                end);
-            end
-        end)();
+    -- Check if the user has PackMule enabled for group loot
+    if (not GL.Settings:get("PackMule.enabledForGroupLoot")) then
+        return;
     end
+
+    -- Shouldn't be possible, but you never know
+    local itemLink = GetLootRollItemLink(rollID);
+    if (not itemLink) then
+        return;
+    end
+
+    -- See if there's a PackMule target, if so hand it out
+    self:getTargetForItem(itemLink, function(target)
+        if (not target) then
+            return;
+        end
+
+        -- PackMule treats everything as a player name and returns a string.lower
+        target = string.upper(target);
+        if (GL.Data.Constants.GroupLootActions[target]) then
+            RollOnLoot(rollID, GL.Data.Constants.GroupLootActions[target]);
+        end
+    end);
 end
 
 --- Check if an item ID is ignored by default by PackMule (displayed in chat)
 ---
----@param checkItemID number
+---@param itemID number
 ---@param callback function
 ---@return void
-function PackMule:isItemIDIgnored(checkItemID, callback)
+function PackMule:isItemIDIgnored(itemID, callback)
     GL:debug("PackMule:isItemIDIgnored");
 
-    local itemID, _, _, _, _, itemClassID = GetItemInfoInstant(checkItemID)
-
-    if (not itemID) then
-        if (callback and type(callback) == "function") then
-            return callback(false);
-        end
-
+    itemID = math.floor(tonumber(itemID));
+    if (not GL:higherThanZero(itemID)) then
         return;
     end
 
-    GL:onItemLoadDo(itemID, function (Items)
-        local Loot = Items[1];
+    if (type(callback) ~= "function") then
+        return;
+    end
 
-        if (not Loot) then
-            if (callback and type(callback) == "function") then
-                return callback(false);
-            end
+    --- Down below we override the getValidRules and GetLootMethod function and some
+    --- user profile properties. This looks extremely nasty, but is the only surefire
+    --- way of replicating in-raid/group PackMule behavior and test it properly!
 
-            return;
-        end
+    local OriginalGetValidRulesFunction = self.getValidRules;
 
-        -- Check whether the item is whitelisted, if so return it
-        if (GL:inTable(GL.Data.Constants.TradeableItems, itemID)) then
-            return true;
-        end
+    -- Make sure items of every quality have one valid rule
+    self.getValidRules = function ()
+        return {
+            {
+                target = "SELF NEED",
+                quality = 1,
+                operator = ">=",
+            }
+        };
+    end;
 
-        local bindType = Loot.bindType or LE_ITEM_BIND_NONE;
-        local bindOnPickup = GL:inTable({ LE_ITEM_BIND_ON_ACQUIRE, LE_ITEM_BIND_QUEST}, bindType);
+    local oldGetLootMethod = GetLootMethod;
+    local oldIsMasterLooter = GL:toboolean(GL.User.isMasterLooter);
+    local oldIsInGroup = GL:toboolean(GL.User.isInGroup);
+    local oldIsInParty = GL:toboolean(GL.User.isInParty);
+    local oldIsInRaid = GL:toboolean(GL.User.isInRaid);
 
-        if (not bindOnPickup or ( -- The item is not BoP so we can safely PackMule it
-                Loot.quality < 5 -- Legendary items are skipped
-                and not GL:inTable(GL.Data.Constants.UntradeableItems, itemID) -- Untradable items are skipped in quality rules
-                and not GL:inTable(self.itemClassIdsToIgnore, itemClassID) -- Recipes and Quest Items are skipped in quality rules
-            )
-        ) then
-            if (callback and type(callback) == "function") then
-                callback(Loot, false);
-            end
+    -- We test the item against PackMule in a loot master setting first
+    GetLootMethod = function () return "master"; end;
+    GL.User.isMasterLooter = true;
+    GL.User.isInGroup = true;
+    GL.User.isInRaid = true;
+    GL.User.isInParty = false;
 
-            return false;
-        end
+    self:getTargetForItem(itemID, function(masterTarget)
+        local itemIDisIgnoredForMaster = GL:empty(masterTarget);
+        local Loot = GL.DB.Cache.ItemsById[tostring(itemID)] or {}; -- This is 100% set at this point
 
-        if (callback and type(callback) == "function") then
-            callback(Loot, true);
-        end
+        -- We now test the item against PackMule in a group loot setting
+        GetLootMethod = function () return "group"; end;
+        GL.User.isMasterLooter = false;
+        GL.User.isInGroup = true;
+        GL.User.isInRaid = false;
+        GL.User.isInParty = true;
 
-        return true;
+        self:getTargetForItem(itemID, function(groupTarget)
+            local itemIDisIgnoredForGroup = GL:empty(groupTarget);
+
+            -- Reset everything
+            self.getValidRules = OriginalGetValidRulesFunction;
+            GetLootMethod = oldGetLootMethod;
+            GL.User.isMasterLooter = oldIsMasterLooter;
+            GL.User.isInGroup = oldIsInGroup;
+            GL.User.isInRaid = oldIsInRaid;
+            GL.User.isInParty = oldIsInParty;
+
+            callback(Loot, itemIDisIgnoredForMaster, itemIDisIgnoredForGroup);
+        end);
     end);
+
+    -- Just in case the callback fails
+    GL.Ace:ScheduleTimer(function()
+        self.getValidRules = OriginalGetValidRulesFunction;
+        GetLootMethod = oldGetLootMethod;
+        GL.User.isMasterLooter = oldIsMasterLooter;
+        GL.User.isInGroup = oldIsInGroup;
+        GL.User.isInRaid = oldIsInRaid;
+        GL.User.isInParty = oldIsInParty;
+    end, 2);
 end
 
 --- Disable PackMule after a zone switch, unless enabled in settings
@@ -415,28 +437,50 @@ function PackMule:getTargetForItem(itemLinkOrId, callback)
                         return true;
                     end
 
-                    if (not bindOnPickup or ( -- The item is not BoP so we can safely PackMule it
-                        Loot.quality < 5 -- Legendary items are skipped
-                        and (not GL.User.isMasterLooter or ( -- The following checks only count if you're master looting
-                                GL.User.isInRaid -- Make sure PackMule doesn't mule BoP items when not in a raid
-                                or self.playerIsInHeroicInstance -- or heroic instance
-                            )
-                        )
-                        and not GL:inTable(GL.Data.Constants.UntradeableItems, itemID) -- Untradable items are skipped in quality rules
-                        and not GL:inTable(self.itemClassIdsToIgnore, Loot.classID) -- Recipes and Quest Items are skipped in quality rules
-                    )) then
+                    -- We ignore legendary+ loot for obvious reasons
+                    if (Loot.quality >= 5) then
+                        return false;
+                    end
 
-                        -- We can only use PASS/GREED/NEED in group loot
-                        if (GetLootMethod() == "master"
-                            and GL:inTable({"PASS", "GREED", "NEED"}, target)
+                    -- When group looting we have some additional rules
+                    if (not GL.User.isMasterLooter) then
+                        -- Skip companion pets in group loot even if they're BoE!
+                        if (Loot.classID == LE_ITEM_CLASS_MISCELLANEOUS
+                            and Loot.subclassID == Enum.ItemMiscellaneousSubclass.CompanionPet
                         ) then
                             return false;
                         end
 
+                        -- Always skip recipes and quest items
+                        if (GL:inTable(self.itemClassIdsToIgnore, Loot.classID)) then
+                            return false;
+                        end
+                    end
+
+                    -- Untradable items are skipped in quality rules whether they're BoP or not!
+                    if (GL:inTable(GL.Data.Constants.UntradeableItems, itemID)) then
+                        return false;
+                    end
+
+                    -- The item is not BoP so we can safely PackMule it
+                    if (not bindOnPickup) then
                         return true;
                     end
 
-                    return false;
+                    -- Recipes and Quest Items are skipped in quality rules
+                    if (GL:inTable(self.itemClassIdsToIgnore, Loot.classID)) then
+                        return false;
+                    end
+
+                    -- When masterloot is active PackMule doesn't mule BoP items unless in a raid or heroic instance
+                    if (GL.User.isMasterLooter
+                        and not GL.User.isInRaid
+                        and not self.playerIsInHeroicInstance
+                    ) then
+                        return false;
+                    end
+
+                    return true;
                 end)();
 
                 if (ruleApplies) then
