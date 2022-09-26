@@ -49,7 +49,7 @@ function PackMuleRules:draw(Parent)
     Overview:drawSpacer(Parent, 20, 1);
 
     local SectionDescription = GL.AceGUI:Create("Label");
-    SectionDescription:SetText("Legendary items are ignored from item quality rules");
+    SectionDescription:SetText("Legendary items are ignored");
     SectionDescription:SetFontObject(_G["GameFontNormal"]);
     SectionDescription:SetFullWidth(true);
     Parent:AddChild(SectionDescription);
