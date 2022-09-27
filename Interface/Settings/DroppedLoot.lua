@@ -5,7 +5,7 @@ local Overview = GL.Interface.Settings.Overview; ---@type SettingsOverview
 
 ---@class DroppedLootSettings
 GL.Interface.Settings.DroppedLoot = {
-    description = "Gargul allows you to automatically announce dropped loot into your group chat.\n\nNB: In order for loot to be announced you need to be in a group and need to have the master looter role!",
+    description = "Announce dropped loot into your group chat.\n\nNB: In order for loot to be announced you need to be in a group and need to have the master looter role!",
     wikiUrl = "https://github.com/papa-smurf/Gargul/wiki/Announcing-Loot-in-Chat",
 };
 local DroppedLoot = GL.Interface.Settings.DroppedLoot; ---@type DroppedLootSettings

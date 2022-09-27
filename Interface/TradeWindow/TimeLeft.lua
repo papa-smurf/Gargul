@@ -94,6 +94,7 @@ function TimeLeft:draw()
     Title:SetPoint("TOPLEFT", 3, -3);
     Title:SetText(string.format("%s to roll out loot!", GL.Settings:get("ShortcutKeys.rollOff")));
     Title:SetTextColor(1, 1, 1, 1);
+    GL.Interface:setItem(self, "Header", Title);
 
     local Cogwheel = CreateFrame("Button", "TimeLeft_Cogwheel" .. GL:uuid(), Window, Frame);
     Cogwheel:Show();
@@ -170,6 +171,9 @@ function TimeLeft:refreshBars()
 
     Window = GL.Interface:getItem(self, "Window");
     Window:SetHeight(0);
+
+    local Header = GL.Interface:getItem(self, "Frame.Header")
+    Header:SetText(string.format("%s to roll out loot!", GL.Settings:get("ShortcutKeys.rollOff")));
 
     local ItemsWithTradeTimeRemaining = {};
     local tradeTimeRemainingByLink = {};

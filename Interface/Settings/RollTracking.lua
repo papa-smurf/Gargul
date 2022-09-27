@@ -5,7 +5,7 @@ local Overview = GL.Interface.Settings.Overview; ---@type SettingsOverview
 
 ---@class RollTrackingSettings
 GL.Interface.Settings.RollTracking = {
-    description = "Gargul can keep track of incoming rolls. By default, Gargul will only track MS and OS rolls (/rnd or /rnd 99). The fields below allow you to customize this to your liking up to a maximum of 6 roll ranges. The 'Identifier' is the text shown on the buttons (maximum 3 characters), the 'Priority' field determines how rolls will be sorted in the roll tracking window (priority 1 is the top priority). |cffC41E3AMake sure to click the 'Save roll ranges' button when you're done editing the ranges!|r"
+    description = "Gargul can keep track of incoming rolls. By default, Gargul will only track MS and OS rolls (|c00a79eff/rnd|r or |c00a79eff/rnd 99|r). The fields below allow you to customize this to your liking up to a maximum of 6 roll ranges. The 'Identifier' is the text shown on the buttons (maximum 3 characters), the 'Priority' field determines how rolls will be sorted in the roll tracking window (priority 1 is the top priority). |cffC41E3AMake sure to click the 'Save roll ranges' button when you're done editing the ranges!|r"
 };
 local RollTracking = GL.Interface.Settings.RollTracking; ---@type RollTrackingSettings
 

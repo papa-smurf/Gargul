@@ -6,7 +6,7 @@ GL.AceGUI = GL.AceGUI or LibStub("AceGUI-3.0");
 
 ---@class ExportingLootSettings
 GL.Interface.Settings.ExportingLoot = {
-    description = "Gargul keeps track of all loot awarded via one of the shortcuts (see the 'Awarding Loot' section on the left). Items awarded this way can be exported in order to share loot data with TMB/DFT, or just about any other format you can think of. To export items run '/gl export'.",
+    description = "Items awarded using Gargul can be exported to TMB, DFT, or just about any other format you can think of. To export items run |c00a79eff/gl export|r.",
     wikiUrl = "https://github.com/papa-smurf/Gargul/wiki/Export-To-TMB",
 };
 local ExportingLoot = GL.Interface.Settings.ExportingLoot; ---@type ExportingLootSettings

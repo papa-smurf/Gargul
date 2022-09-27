@@ -249,60 +249,63 @@ end
 function User:groupMembers()
     GL:debug("User:groupMembers");
 
-    --- This is purely for add-on testing purposes
-    if (not GL.User.isInGroup) then
-        return {
-            {
-                name = self.name,
-                rank = 2,
-                subgroup = 1,
-                level = self.level,
-                class = string.lower(self.class),
-                fileName = string.upper(self.class),
-                zone = "Development Land",
-                online = true,
-                isDead = false,
-                role = "",
-                isML = false,
-                isLeader = true,
-                hasAssist = false,
-                index = 1,
-            },
-        };
-    end
-
-    local maximumNumberOfGroupMembers = _G.MEMBERS_PER_RAID_GROUP;
-    if (GL.User.isInRaid) then
-        maximumNumberOfGroupMembers = _G.MAX_RAID_MEMBERS;
-    end
-
     local Roster = {};
-    for index = 1, maximumNumberOfGroupMembers do
-        local name, rank, subgroup, level, class, fileName, zone, online, isDead, role, isML = GetRaidRosterInfo(index);
 
-        if (name) then
-            GL.Player:cacheClass(name, class); -- We cache player classes wherever we can
+    if (GL.User.isInGroup) then
+        local maximumNumberOfGroupMembers = _G.MEMBERS_PER_RAID_GROUP;
+        if (GL.User.isInRaid) then
+            maximumNumberOfGroupMembers = _G.MAX_RAID_MEMBERS;
+        end
 
-            tinsert(Roster, {
-                name = name,
-                rank = rank,
-                subgroup = subgroup,
-                level = level,
-                class = string.lower(class),
-                fileName = fileName,
-                zone = zone,
-                online = online,
-                isDead = isDead,
-                role = role,
-                isML = isML,
-                isLeader = rank == 2,
-                hasAssist = rank > 0,
-                index = index,
-            });
+        for index = 1, maximumNumberOfGroupMembers do
+            local name, rank, subgroup, level, class, fileName, zone, online, isDead, role, isML = GetRaidRosterInfo(index);
+
+            if (name) then
+                GL.Player:cacheClass(name, class); -- We cache player classes wherever we can
+
+                tinsert(Roster, {
+                    name = name,
+                    rank = rank,
+                    subgroup = subgroup,
+                    level = level,
+                    class = string.lower(class),
+                    fileName = fileName,
+                    zone = zone,
+                    online = online,
+                    isDead = isDead,
+                    role = role,
+                    isML = isML,
+                    isLeader = rank == 2,
+                    hasAssist = rank > 0,
+                    index = index,
+                });
+            end
         end
     end
 
-    return Roster;
+    if (not GL:empty(Roster)) then
+        return Roster;
+    end
+
+    --- This is purely for add-on testing purposes
+    return {
+        {
+            name = self.name,
+            rank = 2,
+            subgroup = 1,
+            level = self.level,
+            class = string.lower(self.class),
+            fileName = string.upper(self.class),
+            zone = "Development Land",
+            online = true,
+            isDead = false,
+            role = "",
+            isML = false,
+            isLeader = true,
+            hasAssist = false,
+            index = 1,
+        },
+    };
 end
 
 --- Check whether a given unit is in your raid/party
@@ -338,18 +341,27 @@ function User:groupMemberNames(fqn)
         self.GroupMemberNames = GroupMemberNames;
     end
 
-    -- Remove realm tags if the FQN is not desired
-    -- We build a new table here so that the original values are not affected
-    if (not fqn and GL.isEra) then
-        local RealmFreeNames = {};
-        for _, name in pairs(self.GroupMemberNames) do
-            tinsert(RealmFreeNames, GL:stripRealm(name));
+    if (not GL:empty(self.GroupMemberNames)) then
+        -- Remove realm tags if the FQN is not desired
+        -- We build a new table here so that the original values are not affected
+        if (not fqn and GL.isEra) then
+            local RealmFreeNames = {};
+            for _, name in pairs(self.GroupMemberNames) do
+                tinsert(RealmFreeNames, GL:stripRealm(name));
+            end
+
+            return RealmFreeNames;
         end
 
-        return RealmFreeNames;
+        return self.GroupMemberNames;
     end
 
-    return self.GroupMemberNames;
+    --- This is purely for add-on testing purposes
+    if (not fqn and GL.isEra) then
+        return {GL:stripRealm(self.name)};
+    end
+
+    return {self.name};
 end
 
 --- Check whether the current user is a dev
