@@ -467,6 +467,11 @@ function PackMule:getTargetForItem(itemLinkOrId, callback)
                         return true;
                     end
 
+                    -- When in group loot never auto loot anything that's BoP!
+                    if (not GL.User.isMasterLooter) then
+                        return false;
+                    end
+
                     -- Recipes and Quest Items are skipped in quality rules
                     if (GL:inTable(self.itemClassIdsToIgnore, Loot.classID)) then
                         return false;
