@@ -92,7 +92,7 @@ function User:refresh()
 
     self.Guild = {};
     self.Guild.name, self.Guild.rank, self.Guild.index = GetGuildInfo("player");
-    self.isOfficer = CanEditOfficerNote();
+    self.isOfficer = C_GuildInfo.CanEditOfficerNote();
     self.isInRaid = IsInRaid();
     self.isInParty = IsInGroup() and not self.isInRaid;
     self.isInGroup = self.isInRaid or self.isInParty;

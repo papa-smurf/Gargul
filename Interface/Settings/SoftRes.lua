@@ -22,7 +22,7 @@ function SoftRes:draw(Parent)
         },
         {
             label = "Show players in group only",
-            description = "You only see the names of players who are actually in your group on item tooltips and in dropped loot announcements",
+            description = "When in a group you only see players who are there with you on item tooltips and dropped loot announcements",
             setting = "SoftRes.hideInfoOfPeopleNotInGroup",
         },
         {
