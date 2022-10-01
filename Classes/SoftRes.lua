@@ -447,7 +447,7 @@ function SoftRes:idIsReserved(itemId, inRaidOnly)
     local idString = tostring(itemId);
 
     if (type(inRaidOnly) ~= "boolean") then
-        inRaidOnly = Settings:get("SoftRes.hideInfoOfPeopleNotInGroup");
+        inRaidOnly = GL.User.isInGroup and Settings:get("SoftRes.hideInfoOfPeopleNotInGroup");
     end
 
     -- The item is hard-reserved
@@ -552,7 +552,7 @@ function SoftRes:byItemId(itemId, inRaidOnly)
     end
 
     if (type(inRaidOnly) ~= "boolean") then
-        inRaidOnly = Settings:get("SoftRes.hideInfoOfPeopleNotInGroup");
+        inRaidOnly = GL.User.isInGroup and Settings:get("SoftRes.hideInfoOfPeopleNotInGroup");
     end
 
     -- The item linked to this id can have multiple IDs (head of Onyxia for example)
@@ -605,14 +605,6 @@ function SoftRes:appendSoftReserveInfoToTooltip(Tooltip)
     if (not Tooltip) then
         GL:debug("No tooltip found in SoftRes:appendSoftReserveInfoToTooltip");
         return false;
-    end
-
-    -- If we're not in a group andd we don't want to see
-    -- out-of-raid data there's no point in showing soft-reserves
-    if (not GL.User.isInGroup
-        and Settings:get("SoftRes.hideInfoOfPeopleNotInGroup")
-    ) then
-        return true;
     end
 
     local itemName, itemLink = Tooltip:GetItem();
