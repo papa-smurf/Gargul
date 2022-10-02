@@ -28,6 +28,8 @@ GL.PackMule = {
 local PackMule = GL.PackMule; ---@type PackMule
 local Settings = GL.Settings; ---@type Settings
 
+local RoundRobinItems = {}; 
+
 ---@return void
 function PackMule:_init()
     GL:debug("PackMule:_init");
@@ -509,6 +511,7 @@ function PackMule:getTargetForItem(itemLinkOrId, callback)
         end
 
         local ruleTarget = strtrim(RuleThatApplies.target);
+        
         local Targets = {};
 
         local RuleTargets = GL:strSplit(ruleTarget, " ");
@@ -542,10 +545,16 @@ function PackMule:getTargetForItem(itemLinkOrId, callback)
                         return callback(false); -- No point continuing, don't want the item to end up in the wrong hands!
                     end
 
+				-- RR placeholder represents the next player in a round robin scheme for this rule
+				elseif (ruleTarget == "RR") then
+					ruleTarget = self:roundRobinNextPlayerForRule(RuleThatApplies);
+
                 -- Check whether we need to give the item to a random player
                 elseif (ruleTarget == "RANDOM") then
                     for _, Player in pairs(GL.User:groupMembers()) do
-                        tinsert(Targets, string.lower(Player.name));
+						if (Player.online) then 
+							tinsert(Targets, string.lower(Player.name));
+                        end
                     end
 
                     -- No need to continue, if a ML sets up RANDOM and something else
@@ -839,6 +848,49 @@ function PackMule:announceDisenchantment(itemLink)
         itemLink,
         self.disenchanter
     ), "GROUP");
+end
+
+--- Returns next target player in a round robin fashion for a particular rule item
+---
+---@param ruleItem string
+---@return string
+function PackMule:roundRobinNextPlayerForRule(rule)
+	GL:debug("PackMule:roundRobinNextPlayerForRule");
+	
+	local ruleId = "";
+	
+	if (not GL.empty(rule.item)) then
+		ruleId = rule.item;
+	else 
+		ruleId = rule.quality;
+	end
+	
+	if (not RoundRobinItems[ruleId]) then
+		-- first time we've seen this item
+		RoundRobinItems[ruleId] = {};
+	end
+	
+	local targetPlayer = false;
+	
+	for _, Player in pairs(GL.User:groupMembers()) do
+		local playerName = string.lower(Player.name);
+		if (Player.online and not RoundRobinItems[ruleId][playerName]) then
+			-- this player hasn't received one of these items yet
+			RoundRobinItems[ruleId][playerName] = 1;
+			targetPlayer = playerName;
+			break;		
+		end
+    end
+    
+    if (not targetPlayer) then
+		-- everyone has received one of these, start over
+		GL:debug("PackMule:roundRobinNextPlayerForRule - starting over");
+		wipe(RoundRobinItems[ruleId]);
+		return self:roundRobinNextPlayerForRule(rule);
+    end
+    
+    return targetPlayer;
+	
 end
 
 --- Assign a item to a player
