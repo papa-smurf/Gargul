@@ -547,7 +547,10 @@ function PackMule:getTargetForItem(itemLinkOrId, callback)
                 -- Check whether we need to give the item to a random player
                 elseif (ruleTarget == "RANDOM") then
                     for _, Player in pairs(GL.User:groupMembers()) do
-                        tinsert(Targets, string.lower(Player.name));
+                        -- No need giving items to a random who's offline
+                        if (Player.online) then
+                            tinsert(Targets, string.lower(Player.name));
+                        end
                     end
 
                     -- No need to continue, if a ML sets up RANDOM and something else
