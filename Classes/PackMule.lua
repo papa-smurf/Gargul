@@ -102,7 +102,9 @@ function PackMule:_init()
 
     -- Make sure to auto accept BoP loot when opening containers
     GL.Events:register("PackMuleLootOpenedListener", "LOOT_OPENED", function ()
-        if (not GL.Settings:get("PackMule.autoConfirmSolo")) then
+        if (not GL.Settings:get("PackMule.autoConfirmSolo")
+            or GL.User.isMasterLooter
+        ) then
             return;
         end
 
