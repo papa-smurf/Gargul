@@ -23,6 +23,7 @@ GL.PackMule = {
     playerIsInHeroicInstance = false,
 
     Rules = {},
+    RoundRobinItems = {};
 };
 
 local PackMule = GL.PackMule; ---@type PackMule
@@ -544,6 +545,10 @@ function PackMule:getTargetForItem(itemLinkOrId, callback)
                         return callback(false); -- No point continuing, don't want the item to end up in the wrong hands!
                     end
 
+                -- RR placeholder represents the next player in a round robin scheme for this rule
+                elseif (ruleTarget == "RR") then
+                    ruleTarget = self:roundRobinTargetForRule(RuleThatApplies);
+
                 -- Check whether we need to give the item to a random player
                 elseif (ruleTarget == "RANDOM") then
                     for _, Player in pairs(GL.User:groupMembers()) do
@@ -844,6 +849,45 @@ function PackMule:announceDisenchantment(itemLink)
         itemLink,
         self.disenchanter
     ), "GROUP");
+end
+
+--- Returns next target player in a round robin fashion for a particular rule item
+---
+---@param Rule string
+---@return string
+function PackMule:roundRobinTargetForRule(Rule)
+    GL:debug("PackMule:roundRobinTargetForRule");
+
+    local ruleId = Rule.quality;
+    if (not GL.empty(Rule.item)) then
+        ruleId = Rule.item;
+    end
+
+    -- first time we've seen this item
+    if (not self.RoundRobinItems[ruleId]) then
+        self.RoundRobinItems[ruleId] = {};
+    end
+
+    local targetPlayer = false;
+    for _, Player in pairs(GL.User:groupMembers()) do
+        local playerName = string.lower(Player.name);
+
+        -- this player hasn't received one of these items yet
+        if (Player.online and not self.RoundRobinItems[ruleId][playerName]) then
+            self.RoundRobinItems[ruleId][playerName] = 1;
+            targetPlayer = playerName;
+            break;
+        end
+    end
+
+    if (not targetPlayer) then
+        -- everyone has received one of these, start over
+        GL:debug("PackMule:roundRobinTargetForRule - starting over");
+        self.RoundRobinItems[ruleId] = {};
+        return self:roundRobinTargetForRule(Rule);
+    end
+
+    return targetPlayer;
 end
 
 --- Assign a item to a player
