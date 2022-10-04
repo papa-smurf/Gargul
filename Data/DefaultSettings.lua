@@ -26,6 +26,7 @@ GL.Data.DefaultSettings = {
         minimumQualityOfAnnouncedLoot = 4,
     },
     ShortcutKeys = {
+        onlyInGroup = false,
         showLegend = true,
         rollOff = "ALT_CLICK",
         award = "ALT_SHIFT_CLICK",

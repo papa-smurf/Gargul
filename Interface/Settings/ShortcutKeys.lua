@@ -54,6 +54,11 @@ function ShortcutKeys:draw(Parent)
             description = "Show a reminder when looting an enemy that shows your current shortcut key values",
             setting = "ShortcutKeys.showLegend",
         },
+        {
+            label = "Only when in a group",
+            description = "Hotkeys should only work when I'm in a group",
+            setting = "ShortcutKeys.onlyInGroup",
+        },
     }
 
     Overview:drawCheckboxes(Checkboxes, Parent);

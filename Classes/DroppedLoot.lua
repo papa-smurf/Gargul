@@ -317,6 +317,13 @@ function DroppedLoot:hookClickEvents()
                     return;
                 end
 
+                -- The user doesnt want to use shortcut keys when solo
+                if (not GL.User.isInGroup
+                    and GL.Settings:get("ShortcutKeys.onlyInGroup")
+                ) then
+                    return;
+                end
+
                 local itemLink = GetLootSlotLink(slot);
 
                 if (not itemLink or type(itemLink) ~= "string") then

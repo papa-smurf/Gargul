@@ -222,6 +222,13 @@ end
 -- items in bags to either start rolling or auctioning them off
 function GL:hookBagSlotEvents()
     hooksecurefunc("ContainerFrameItemButton_OnModifiedClick", function(self, mouseButtonPressed)
+        -- The user doesnt want to use shortcut keys when solo
+        if (not GL.User.isInGroup
+            and GL.Settings:get("ShortcutKeys.onlyInGroup")
+        ) then
+            return;
+        end
+
         local bag, slot = self:GetParent():GetID(), self:GetID();
         local itemLink = select(7, GetContainerItemInfo(bag, slot));
 

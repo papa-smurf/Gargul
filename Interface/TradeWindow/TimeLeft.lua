@@ -295,6 +295,13 @@ function TimeLeft:refreshBars()
 
         -- Close the roll window on rightclick
         TimerBar:SetScript("OnMouseDown", function(_, mouseButtonPressed)
+            -- The user doesnt want to use shortcut keys when solo
+            if (not GL.User.isInGroup
+                and GL.Settings:get("ShortcutKeys.onlyInGroup")
+            ) then
+                return;
+            end
+
             local keyPressIdentifier = GL.Events:getClickCombination(mouseButtonPressed);
 
             -- Open the roll window
