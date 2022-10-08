@@ -173,7 +173,7 @@ function RollOff:announceStart(itemLink, time, note)
             for _, Entry in pairs(PrioListEntries) do
                 -- This is the first player in the list, add him
                 if (not EligiblePlayers[1]) then
-                    tinsert(EligiblePlayers, Entry.character);
+                    tinsert(EligiblePlayers, Entry);
                 else
                     -- This players prio is worse than the number one, break!
                     if (Entry.prio > EligiblePlayers[1].prio) then
@@ -181,7 +181,7 @@ function RollOff:announceStart(itemLink, time, note)
                     end
 
                     -- This player's prio is lte to the number one
-                    tinsert(EligiblePlayers, Entry.character);
+                    tinsert(EligiblePlayers, Entry);
                 end
             end
         elseif (not GL:empty(WishListEntries)) then
