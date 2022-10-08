@@ -34,10 +34,10 @@ function Interface:getItem(Scope, identifier)
     end
 
     if (type(Scope) == "table") then
-        return GL:tableGet(Scope, "InterfaceItems." .. identifier);
+        return GL:tableGet(Scope, "InterfaceItems." .. identifier), identifier;
     end
 
-    return GL:tableGet(GL.Interface, Scope .. ".InterfaceItems." .. identifier);
+    return GL:tableGet(GL.Interface, Scope .. ".InterfaceItems." .. identifier), identifier;
 end
 
 --- Release an item and remove it from our interface entirely
@@ -53,7 +53,7 @@ function Interface:release(Scope, identifier)
         return false
     end
 
-    local Item = self:getItem(Scope, identifier);
+    local Item, fullIdentifier = self:getItem(Scope, identifier);
 
     if (not Item
         or type(Item) ~= "table"
@@ -65,7 +65,7 @@ function Interface:release(Scope, identifier)
         GL.AceGUI:Release(Item);
     end
 
-    local path = string.format("InterfaceItems.%s", identifier);
+    local path = string.format("InterfaceItems.%s", fullIdentifier);
     return GL:tableSet(Scope, path, nil);
 end
 
@@ -88,8 +88,15 @@ end
 ---
 ---@param identifier string
 ---@return table
-function Interface:getPosition(identifier)
+function Interface:getPosition(identifier, default)
     identifier = string.format("UI.%s.Position", identifier);
+
+    -- There's a default, return it if no position points are available
+    if (default ~= nil
+        and not Settings:get(identifier .. ".point")
+    ) then
+        return default;
+    end
 
     return unpack({
         Settings:get(identifier .. ".point", "CENTER"),

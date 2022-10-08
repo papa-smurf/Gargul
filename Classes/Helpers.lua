@@ -582,7 +582,7 @@ function GL:onItemLoadDo(Items, callback, haltOnError, sorter)
     haltOnError = haltOnError or false;
 
     if (type(callback) ~= "function") then
-        GL:warning("Unexpected type '" .. type(callback) .. "' in GL:continueOnItemLoad, expecting type 'function'");
+        GL:warning("Unexpected type '" .. type(callback) .. "' in GL:onItemLoadDo, expecting type 'function'");
         return;
     end
 

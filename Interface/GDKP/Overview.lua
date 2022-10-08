@@ -60,7 +60,6 @@ function Overview:draw()
     end
 
     self.isVisible = true;
-    self.activeSession = DB:get("GDKP.activeSession", self.activeSession);
 
     -- Create a container/parent frame
     local Window = AceGUI:Create("Frame");
@@ -71,10 +70,18 @@ function Overview:draw()
     Window:EnableResize(false);
     Window.statustext:GetParent():Show(); -- Explicitely show the statustext bar
     Window:SetCallback("OnClose", function()
+        -- Close the edit window
+        GL.Interface.GDKP.EditAuction:close();
+
+        -- Close the edit window
+        GL.Interface.GDKP.CreateSession:close();
+
+        -- Store the frame's last position for future play sessions
+        GL.Interface:storePosition(Window, "GDKPOverview");
         self.isVisible = false;
     end);
+    Window.frame:SetPoint(GL.Interface:getPosition("GDKPOverview"));
     GL.Interface:setItem(self, "Window", Window);
-    Window:SetPoint(GL.Interface:getPosition("GDKPOverview"));
     Window.frame:SetFrameStrata("HIGH");
 
     -- Make sure the window can be closed by pressing the escape button
@@ -208,7 +215,7 @@ function Overview:draw()
     CreateSessionButton:SetText("New Session");
     CreateSessionButton:SetWidth(106); -- Minimum is 106
     CreateSessionButton:SetCallback("OnClick", function()
-        GL:dump("New Session");
+        GL.Interface.GDKP.CreateSession:draw();
     end);
     ButtonFrame:AddChild(CreateSessionButton);
 
@@ -224,7 +231,9 @@ function Overview:draw()
     DeleteButton:SetText("Delete Session");
     DeleteButton:SetWidth(120); -- Minimum is 120
     DeleteButton:SetCallback("OnClick", function()
-        GL.Interface.Dialogs.PopupDialog:open("CLEAR_GDKP_CONFIRMATION");
+        GL.GDKP:deleteSession(self.activeSession);
+        GL.Interface:getItem(self, "Window"):Hide();
+        self:draw();
     end);
     ButtonFrame:AddChild(DeleteButton);
 
@@ -352,11 +361,17 @@ function Overview:drawDetails(sessionIdentifier)
 
             -- Item was deleted
             else
+                local reason = Auction.reason;
+
+                if (GL:empty(reason)) then
+                    reason = "-";
+                end
+
                 ItemLabel:SetText(string.format(
                     "|cFFbe3333Deleted by|r |cFF%s%s|r\nReason: %s",
                     GL:classHexColor(Auction.CreatedBy.class),
                     Auction.CreatedBy.name,
-                    Auction.reason or "-"
+                    reason
                 ));
             end
 
@@ -636,10 +651,6 @@ function Overview:drawSessionsTable(Parent)
             -- We always select the first column of the selected row because that contains the player name
             local selected = data[realrow].cols[2].value;
 
-            if (selected and type(selected) == "string") then
-                GL:dump(string.lower(selected));
-            end
-
             self:drawDetails(selected);
         end
     });
@@ -652,16 +663,20 @@ function Overview:drawSessionsTable(Parent)
     local tableItem = 1;
     for checksum, Session in pairs(DB:get("GDKP.Ledger", {})) do
         local title = Session.title;
-        local priority = 99999999999 - Session.createdAt or 0;
+        local priority = 99999999999 - (Session.createdAt or 0);
 
-        if (checksum == DB:get("GDKP.activeSession")) then
+        if (checksum == DB.GDKP.activeSession) then
             title = Session.title .. " (active)";
         end
 
         if (priority < lowestPriority) then
             lowestPriority = priority;
-            lowestPrioritySessio= checksum;
             lowestPriorityTableItem = tableItem;
+        end
+
+        local color = GL:classRGBAColor("priest");
+        if (Session.deletedAt) then
+            color = {r = .77, g = .12, b = .23};
         end
 
         tinsert(TableData, {
