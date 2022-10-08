@@ -12,6 +12,13 @@ GL.Interface.Changelog = {
 
     History = {
         {
+            version = "4.8.5",
+            date = "October 3rd, 2022",
+            Changes = {
+                "PackMule now supports round robin! Type |c00a79eff/gl pm|r and check it out!",
+            },
+        },
+        {
             version = "4.8.0",
             date = "September 26th, 2022",
             Changes = {
