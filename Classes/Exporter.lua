@@ -284,7 +284,7 @@ end
 function Exporter:transformEntriesToTMBFormat(Entries)
     GL:debug("Exporter:transformEntriesToTMBFormat");
 
-    local exportString = "dateTime,character,itemID,offspec,ID";
+    local exportString = "dateTime,character,itemID,offspec,id";
 
     for _, AwardEntry in pairs(Entries) do
         exportString = string.format("%s\n%s,%s,%s,%s,%s",
