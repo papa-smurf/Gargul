@@ -79,7 +79,7 @@ function ExportingLoot:draw(Parent)
     Parent:AddChild(ExportFormatLabel);
 
     local DropDownItems = {
-        [1] = "Thatsmybis TMB / RCLC (default)",
+        [1] = "Thatsmybis TMB (default)",
         [2] = "DFT-Fight-Club (US date format)",
         [3] = "DFT-Fight-Club (EU date format)",
         [4] = "Custom (create your own format)",
