@@ -255,6 +255,7 @@ function Exporter:transformEntriesToCustomFormat(Entries)
                     ["@OS"] = tostring(AwardEntry.OS),
                     ["@CHECKSUM"] = AwardEntry.checksum,
                     ["@YEAR"] = date('%Y', AwardEntry.timestamp),
+                    ["@YY"] = date('%y', AwardEntry.timestamp),
                     ["@MONTH"] = date('%m', AwardEntry.timestamp),
                     ["@DAY"] = date('%d', AwardEntry.timestamp),
                     ["@HOUR"] = date('%H', AwardEntry.timestamp),
