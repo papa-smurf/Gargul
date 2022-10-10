@@ -792,6 +792,62 @@ function GL:inventoryItemTradeTimeRemaining(bag, slot)
     return timeRemaining;
 end
 
+--- Check whether a user can use the given item ID or link (callback required)
+---
+---@param itemLinkOrID string|number
+---@param callback function
+---
+---@return void
+function GL:canUserUseItem(itemLinkOrID, callback)
+    GL:debug("GL:canUserUseItem");
+
+    if (type(callback) ~= "function") then
+        GL:warning("Unexpected type '" .. type(callback) .. "' in GL:canUserUseItem, expecting type 'function'");
+        return;
+    end
+
+    local itemID;
+    local concernsID = GL:higherThanZero(tonumber(itemLinkOrID));
+
+    if (concernsID) then
+        itemID = math.floor(tonumber(itemLinkOrID));
+    else
+        itemID = GL:getItemIdFromLink(itemLinkOrID);
+    end
+
+    GL:onItemLoadDo(itemID, function (Results)
+        local Item = Results[1];
+
+        -- Better safe than lua error!
+        if (GL:empty(Item.link)) then
+            return callback(true);
+        end
+
+        GL.TooltipFrame:ClearLines();
+        GL.TooltipFrame:SetHyperlink("item:" .. itemID);
+
+        local IsTooltipTextRed = function (text)
+            if (text and text:GetText()) then
+                local r, g, b = text:GetTextColor();
+                return math.floor(r * 256) == 255 and math.floor(g * 256) == 32 and math.floor(b * 256) == 32;
+            end
+
+            return false
+        end;
+
+        for line = 1, GL.TooltipFrame:NumLines() do
+            local left = _G["GargulTooltipFrameTextLeft" .. line];
+            local right = _G["GargulTooltipFrameTextRight" .. line];
+
+            if (IsTooltipTextRed(left) or IsTooltipTextRed(right)) then
+                return callback(false);
+            end
+        end
+
+        return callback(true);
+    end);
+end
+
 --- Find the first bag id and slot for a given item id (or false)
 ---
 ---@param itemID number

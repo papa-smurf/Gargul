@@ -8,14 +8,24 @@ GL.RollerUI = GL.RollerUI or {
 local RollerUI = GL.RollerUI; ---@type RollerUI
 
 ---@return boolean
-function RollerUI:show(...)
+function RollerUI:show(time, itemLink, itemIcon, note, SupportedRolls)
     GL:debug("RollerUI:show");
 
     if (self.Window and self.Window:IsShown()) then
         return false;
     end
 
-    self:draw(...);
+    -- Make sure we can adjust the roller UI accordingly when a player can't use the item
+    GL:canUserUseItem(itemLink, function (userCanUseItem)
+        if (not userCanUseItem
+            and GL.Settings:get("Rolling.dontShowOnUnusableItems", false)
+        ) then
+            return false;
+        end
+
+        self:draw(time, itemLink, itemIcon, note, SupportedRolls, userCanUseItem);
+    end);
+
     return true;
 end
 
@@ -26,7 +36,7 @@ end
 ---@param itemIcon string
 ---@param note string
 ---@return boolean
-function RollerUI:draw(time, itemLink, itemIcon, note, SupportedRolls)
+function RollerUI:draw(time, itemLink, itemIcon, note, SupportedRolls, userCanUseItem)
     GL:debug("RollerUI:draw");
 
     local Window = CreateFrame("Frame", "GargulUI_RollerUI_Window", UIParent, Frame);
@@ -87,6 +97,21 @@ function RollerUI:draw(time, itemLink, itemIcon, note, SupportedRolls)
         Button:SetText(identifier);
         Button:SetNormalFontObject("GameFontNormal");
         Button:SetHighlightFontObject("GameFontNormal");
+
+        if (not userCanUseItem) then
+            Button:Disable();
+            Button:SetMotionScriptsWhileDisabled(true);
+
+            -- Make sure rolling is still possible in case something was amiss!
+            Button:SetScript("OnEnter", function()
+                Button:Enable();
+            end);
+
+            Button:SetScript("OnLeave", function()
+                Button:Disable();
+            end);
+        end
+
         Button:SetScript("OnClick", function ()
             RandomRoll(min, max);
 
@@ -114,7 +139,7 @@ function RollerUI:draw(time, itemLink, itemIcon, note, SupportedRolls)
         self:hide();
     end);
 
-    self:drawCountdownBar(time, itemLink, itemIcon, note);
+    self:drawCountdownBar(time, itemLink, itemIcon, note, userCanUseItem);
 
     Window:Show();
 end
@@ -126,7 +151,7 @@ end
 ---@param itemIcon string
 ---@param note string
 ---@return void
-function RollerUI:drawCountdownBar(time, itemLink, itemIcon, note)
+function RollerUI:drawCountdownBar(time, itemLink, itemIcon, note, userCanUseItem)
     GL:debug("RollerUI:drawCountdownBar");
 
     -- This shouldn't be possible but you never know!
@@ -146,6 +171,11 @@ function RollerUI:drawCountdownBar(time, itemLink, itemIcon, note)
 
     -- Make the bar turn green/yellow/red based on time left
     TimerBar:AddUpdateFunction(function (Bar)
+        if (not userCanUseItem) then
+            TimerBar:SetColor(0, 0, 0, .1);
+            return;
+        end
+
         local percentageLeft = 100 / (time / Bar.remaining);
 
         if (percentageLeft >= 60) then
@@ -169,7 +199,13 @@ function RollerUI:drawCountdownBar(time, itemLink, itemIcon, note)
     end);
 
     TimerBar:SetDuration(time);
-    TimerBar:SetColor(0, 1, 0, .3); -- Reset color to green
+
+    -- Reset color to green or disabled
+    if (userCanUseItem) then
+        TimerBar:SetColor(0, 1, 0, .3);
+    else
+        TimerBar:SetColor(0, 0, 0, .1);
+    end
 
     note = note or "";
     local itemLinkLength = string.len(GL:getItemNameFromLink(itemLink)) + 2;
@@ -180,6 +216,10 @@ function RollerUI:drawCountdownBar(time, itemLink, itemIcon, note)
         noteStringLengthAllowed = 0;
     end
     TimerBar:SetLabel("  " .. itemLink .. " " .. string.sub(note, 0, noteStringLengthAllowed));
+
+    if (not userCanUseItem) then
+        TimerBar:SetLabel("  |c00FFFFFFYou can't use this item!|r");
+    end
 
     TimerBar:SetIcon(itemIcon);
     TimerBar:Set("type", "ROLLER_UI_COUNTDOWN");
