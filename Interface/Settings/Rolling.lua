@@ -25,6 +25,11 @@ function Rolling:draw(Parent)
             description = "Automatically close the window after rolling",
             setting = "Rolling.closeAfterRoll",
         },
+        {
+            label = "Don't show on unusable items",
+            description = "Don't show the window if you can't use the item (lvl / class restriction etc.)",
+            setting = "Rolling.dontShowOnUnusableItems",
+        },
     };
 
     Overview:drawCheckboxes(Checkboxes, Parent);
