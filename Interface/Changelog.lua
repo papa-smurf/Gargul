@@ -12,7 +12,17 @@ GL.Interface.Changelog = {
 
     History = {
         {
-            version = "4.8.5",
+            version = "4.9.0",
+            date = "October 10th, 2022",
+            Changes = {
+                "When your master looter rolls out an item, you can now immediately tell whether it's something your class can use or not! You can also disable the roll window entirely in such cases if you prefer, type |c00a79eff/gl|r and check out the |c00a79effRolling|r section!",
+                "Tooltips are now fully cross-item, where priorities and reservations show on both the tier/quest items, and the items they reward (and vice versa!)",
+                "The exporter now supports a 2 digit year format (@YY), check it out with |c00a79eff/gl export|r",
+                "Gargul commands are no longer case sensitive"
+            },
+        },
+        {
+            version = "4.8.4",
             date = "October 3rd, 2022",
             Changes = {
                 "PackMule now supports round robin! Type |c00a79eff/gl pm|r and check it out!",
