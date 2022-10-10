@@ -181,6 +181,9 @@ function Commands:_dispatch(str)
         command = "settings";
     end
 
+    -- Make sure commands are case insensitive (Busmonstret = dumdum)
+    command = string.lower(command);
+
     -- Fetch the actual command name in case a shorthand is provided
     command = GL:tableGet(self.ShorthandDictionary, command, command);
 
