@@ -8115,7 +8115,7 @@ end
 --- [https://wowpedia.fandom.com/wiki/API_InitiateTrade]
 --- @param unit string @ unitId to initiate trade with, e.g. target.
 --- @return void
-function InitiateTrade(unit)
+    function InitiateTrade(unit)
 end
 
 --- [https://wowpedia.fandom.com/wiki/API_InteractUnit?action=edit&amp;redlink=1]

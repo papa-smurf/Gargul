@@ -14,6 +14,7 @@ GL.DB = {
     SoftRes = {},
     TMB = {},
     BoostedRolls = {},
+    TradeLog = {},
 };
 
 local DB = GL.DB;
@@ -40,6 +41,7 @@ function DB:_init()
     GargulDB.SoftRes = GargulDB.SoftRes or {};
     GargulDB.TMB = GargulDB.TMB or {};
     GargulDB.BoostedRolls = GargulDB.BoostedRolls or {};
+    GargulDB.TradeLog = GargulDB.TradeLog or {};
 
     -- Provide a shortcut for each table
     self.AwardHistory = GargulDB.AwardHistory;
@@ -51,6 +53,7 @@ function DB:_init()
     self.SoftRes = GargulDB.SoftRes;
     self.TMB = GargulDB.TMB;
     self.BoostedRolls = GargulDB.BoostedRolls;
+    self.TradeLog = GargulDB.TradeLog;
 
     -- Fire DB:store before every logout/reload/exit
     GL.Events:register("DBPlayerLogoutListener", "PLAYER_LOGOUT", self.store);
@@ -73,6 +76,7 @@ function DB:store()
     GargulDB.SoftRes = GL.DB.SoftRes;
     GargulDB.TMB = GL.DB.TMB;
     GargulDB.BoostedRolls = GL.DB.BoostedRolls;
+    GargulDB.TradeLog = GL.DB.TradeLog;
 end
 
 -- Get a value from the database, or return a default if it doesn't exist
@@ -98,6 +102,7 @@ function DB:reset()
     self.SoftRes = {};
     self.TMB = {};
     self.BoostedRolls = {};
+    self.TradeLog = {};
 
     GL:success("Tables reset");
 end

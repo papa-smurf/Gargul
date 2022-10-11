@@ -49,6 +49,9 @@ function TradeWindow:_init()
 
     GL.Events:register("TradeWindowTradeCompleted", "GL.TRADE_COMPLETED", function (_, Details)
         self:announceTradeDetails(Details);
+
+        -- Log the trade using our trade logger
+        GL.TradeLog:log(Details);
     end);
 
     self._initialized = true;
@@ -58,18 +61,18 @@ end
 ---
 ---@param playerName string
 ---@param callback function
----@param allwaysExecuteCallback boolean
+---@param alwaysExecuteCallback boolean
 ---@return void
-function TradeWindow:open(playerName, callback, allwaysExecuteCallback)
+function TradeWindow:open(playerName, callback, alwaysExecuteCallback)
     GL:debug("TradeWindow:open");
 
     playerName = GL:normalizedName(playerName);
-    allwaysExecuteCallback = GL:toboolean(allwaysExecuteCallback);
+    alwaysExecuteCallback = GL:toboolean(alwaysExecuteCallback);
 
     -- We're already trading with someone
     if (TradeFrame:IsShown()) then
         if (type(callback) == "function"
-            and (allwaysExecuteCallback or self.Sate.partner == playerName)
+            and (alwaysExecuteCallback or self.Sate.partner == playerName)
         ) then
             callback();
         end
@@ -78,14 +81,14 @@ function TradeWindow:open(playerName, callback, allwaysExecuteCallback)
     end
 
     -- Make sure the callback runs when a trade window is opened
-    -- with our desired target or allwaysExecuteCallback is true
+    -- with our desired target or alwaysExecuteCallback is true
     if (type(callback) == "function") then
         -- Even with jitter/lag opening a trade window should never take longer than a second
         -- If it does take longer however then we delete the eventlistener manually
         local timerID = GL.Ace:ScheduleTimer(function ()
             GL.Events:unregister("TradeWindowTradeShowCallbackListener");
 
-            if (allwaysExecuteCallback) then
+            if (alwaysExecuteCallback) then
                 callback();
             end
         end, 1);
@@ -98,7 +101,7 @@ function TradeWindow:open(playerName, callback, allwaysExecuteCallback)
             GL.Ace:CancelTimer(timerID);
 
             -- Perform the callback
-            if (allwaysExecuteCallback
+            if (alwaysExecuteCallback
                 or (
                     TradeFrame:IsShown()
                     and self.Sate.partner == playerName

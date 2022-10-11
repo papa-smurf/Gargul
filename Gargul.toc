@@ -39,6 +39,7 @@ Classes/AwardedLoot.lua
 Classes/PackMule.lua
 Classes/DroppedLoot.lua
 Classes/TradeWindow.lua
+Classes/TradeLog.lua
 Classes/Version.lua
 Classes/BagInspector.lua
 Classes/BuffInspector.lua
@@ -96,6 +97,9 @@ Interface/Dialogs/HyperlinkDialogWidget.lua
 Interface/Dialogs/MasterLooterDialog.lua
 Interface/ReminderToAssignLootUsingGargul.lua
 Interface/ShortcutKeysLegend.lua
+
+# Interface elements
+Interface/TradeLog.xml
 
 # Test classes
 Test.lua

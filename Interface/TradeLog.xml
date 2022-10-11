@@ -1,0 +1,429 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">
+    <Frame name="GargulTradeHighlightTemplate" hidden="false" virtual="true">
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture name="$parentTop" file="Interface\TradeFrame\UI-TradeFrame-Highlight">
+                    <Size x="161" y="16"/>
+                    <Anchors>
+                        <Anchor point="TOPLEFT"/>
+                    </Anchors>
+                    <TexCoords left="0" right="0.62890625" top="0" bottom="0.0625"/>
+                </Texture>
+                <Texture name="$parentBottom" file="Interface\TradeFrame\UI-TradeFrame-Highlight">
+                    <Size x="161" y="16"/>
+                    <Anchors>
+                        <Anchor point="BOTTOMLEFT"/>
+                    </Anchors>
+                    <TexCoords left="0" right="0.62890625" top="0.9375" bottom="1.0"/>
+                </Texture>
+                <Texture name="$parentMiddle" file="Interface\TradeFrame\UI-TradeFrame-Highlight">
+                    <Size x="161" y="10"/>
+                    <Anchors>
+                        <Anchor point="TOP" relativeTo="$parentTop" relativePoint="BOTTOM"/>
+                        <Anchor point="BOTTOM" relativeTo="$parentBottom" relativePoint="TOP"/>
+                    </Anchors>
+                    <TexCoords left="0" right="0.62890625" top="0.0625" bottom="0.9375"/>
+                </Texture>
+            </Layer>
+        </Layers>
+    </Frame>
+    <Frame name="GargulTradeItemTemplate" virtual="true">
+        <Size x="153" y="37"/>
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture name="$parentSlotTexture" parentKey="SlotTexture" file="Interface\Buttons\UI-EmptySlot">
+                    <Size x="64" y="64"/>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" x="-13" y="13"/>
+                    </Anchors>
+                </Texture>
+                <Texture name="$parentNameFrame" file="Interface\QuestFrame\UI-QuestItemNameFrame">
+                    <Size x="124" y="64"/>
+                    <Anchors>
+                        <Anchor point="LEFT" relativeTo="$parentSlotTexture" relativePoint="RIGHT" x="-20" y="0"/>
+                    </Anchors>
+                </Texture>
+                <FontString name="$parentName" inherits="GameFontNormalSmall" text="Item Name" justifyH="LEFT">
+                    <Size x="90" y="30"/>
+                    <Anchors>
+                        <Anchor point="LEFT" relativeTo="$parentNameFrame" x="15" y="0"/>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+    </Frame>
+    <Frame name="GargulRecipientTradeItemTemplate" inherits="GargulTradeItemTemplate" virtual="true">
+        <Frames>
+            <ItemButton name="$parentItemButton">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeTo="$parent"/>
+                </Anchors>
+<!--                <Scripts>-->
+<!--                    <OnLoad>-->
+<!--                        RaiseFrameLevelByTwo(self);-->
+<!--                    </OnLoad>-->
+<!--                    <OnEnter>-->
+<!--                        GameTooltip:SetOwner(self, "ANCHOR_RIGHT");-->
+<!--                        local speciesID, level, breedQuality, maxHealth, power, speed, name = GameTooltip:SetTradeTargetItem(self:GetParent():GetID());-->
+<!--                        if(speciesID and speciesID > 0) then-->
+<!--                        BattlePetToolTip_Show(speciesID, level, breedQuality, maxHealth, power, speed, name);-->
+<!--                        end-->
+<!--                        CursorUpdate(self);-->
+<!--                    </OnEnter>-->
+<!--                    <OnLeave>-->
+<!--                        GameTooltip_Hide();-->
+<!--                        ResetCursor();-->
+<!--                    </OnLeave>-->
+<!--                    <OnUpdate>-->
+<!--                        if ( GameTooltip:IsOwned(self) ) then-->
+<!--                        GameTooltip:SetOwner(self, "ANCHOR_RIGHT");-->
+<!--                        local speciesID, level, breedQuality, maxHealth, power, speed, name = GameTooltip:SetTradeTargetItem(self:GetParent():GetID());-->
+<!--                        if(speciesID and speciesID > 0) then-->
+<!--                        BattlePetToolTip_Show(speciesID, level, breedQuality, maxHealth, power, speed, name);-->
+<!--                        end-->
+<!--                        end-->
+<!--                        CursorOnUpdate(self);-->
+<!--                    </OnUpdate>-->
+<!--                </Scripts>-->
+            </ItemButton>
+        </Frames>
+    </Frame>
+    <Frame name="GargulPlayerTradeItemTemplate" inherits="GargulTradeItemTemplate" virtual="true">
+        <Frames>
+            <ItemButton name="$parentItemButton">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeTo="$parent"/>
+                </Anchors>
+<!--                <Scripts>-->
+<!--                    <OnLoad>-->
+<!--                        self:SetFrameLevel(self:GetFrameLevel() + 2);-->
+<!--                    </OnLoad>-->
+<!--                    <OnEnter>-->
+<!--                        GameTooltip:SetOwner(self, "ANCHOR_RIGHT");-->
+<!--                        local speciesID, level, breedQuality, maxHealth, power, speed, name = GameTooltip:SetTradePlayerItem(self:GetParent():GetID());-->
+<!--                        if(speciesID and speciesID > 0) then-->
+<!--                        BattlePetToolTip_Show(speciesID, level, breedQuality, maxHealth, power, speed, name);-->
+<!--                        end-->
+<!--                        CursorUpdate(self);-->
+<!--                    </OnEnter>-->
+<!--                    <OnLeave>-->
+<!--                        GameTooltip_Hide();-->
+<!--                        ResetCursor();-->
+<!--                    </OnLeave>-->
+<!--                    <OnUpdate>-->
+<!--                        if ( GameTooltip:IsOwned(self) ) then-->
+<!--                        GameTooltip:SetOwner(self, "ANCHOR_RIGHT");-->
+<!--                        local speciesID, level, breedQuality, maxHealth, power, speed, name = GameTooltip:SetTradePlayerItem(self:GetParent():GetID());-->
+<!--                        if(speciesID and speciesID > 0) then-->
+<!--                        BattlePetToolTip_Show(speciesID, level, breedQuality, maxHealth, power, speed, name);-->
+<!--                        end-->
+<!--                        end-->
+<!--                        CursorOnUpdate(self);-->
+<!--                    </OnUpdate>-->
+<!--                </Scripts>-->
+            </ItemButton>
+        </Frames>
+    </Frame>
+
+    <Frame name="GargulTradeFrame" inherits="ButtonFrameTemplate" toplevel="true" parent="UIParent" movable="true" enableMouse="true" hidden="true">
+        <Size x="344" y="446"/>
+        <Layers>
+            <Layer level="OVERLAY" textureSubLevel="2">
+                <Texture name="GargulTradeRecipientBotLeftCorner" inherits="UI-Frame-BotCornerLeft">
+                    <Anchors>
+                        <Anchor point="BOTTOMLEFT" relativeTo="GargulTradeFrame" relativePoint="BOTTOMRIGHT" x="-178" y="-3"/>
+                    </Anchors>
+                </Texture>
+                <Texture name="GargulTradeRecipientLeftBorder" inherits="!UI-Frame-LeftTile" parentKey="leftBorderBar">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeTo="GargulTradeFrame" relativePoint="TOPRIGHT" x="-178" y="-50" />
+                        <Anchor point="BOTTOMLEFT" relativeTo="GargulTradeRecipientBotLeftCorner" relativePoint="TOPLEFT"/>
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer level="BACKGROUND" textureSubLevel="1">
+                <Texture name="TradeRecipientBG" >
+                    <Color r="1" g="1" b="1" a=".15"/>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeTo="GargulTradeFrame" relativePoint="TOPRIGHT" x="-172" y="-20"/>
+                        <Anchor point="BOTTOMRIGHT" relativeTo="GargulTradeFrame" />
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer level="ARTWORK">
+                <FontString name="GargulTradeFrameRecipientNameText" inherits="GameFontNormal" text="Player Name">
+                    <Size x="80" y="12"/>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeTo="GargulTradeFrame" x="230" y="-5"/>
+                    </Anchors>
+                </FontString>
+                <FontString name="GargulTradeFramePlayerNameText" inherits="GameFontNormal" text="Recipient Name">
+                    <Size x="100" y="12"/>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeTo="GargulTradeFrame" x="65" y="-5"/>
+                    </Anchors>
+                </FontString>
+                <FontString name="GargulTradeFramePlayerEnchantText" inherits="GameFontHighlightSmall" text="TRADEFRAME_ENCHANT_SLOT_LABEL">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeTo="GargulTradeFrame" x="15" y="-360"/>
+                    </Anchors>
+                </FontString>
+                <FontString name="GargulTradeFrameRecipientEnchantText" inherits="GameFontHighlightSmall" text="TRADEFRAME_ENCHANT_SLOT_LABEL">
+                    <Anchors>
+                        <Anchor point="LEFT" relativeTo="GargulTradeFramePlayerEnchantText" x="166" y="0"/>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+        <Frames>
+            <Frame parentKey="GargulRecipientOverlay" frameLevel="550" inherits="ResizeLayoutFrame">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="TOPRIGHT" x="-180" y="7"/>
+                </Anchors>
+                <Layers>
+                    <Layer level="ARTWORK" textureSubLevel="1">
+                        <Texture parentKey="portrait">
+                            <Size x="60" y="60"/>
+                            <Anchors>
+                                <Anchor point="TOPLEFT"/>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                    <Layer level="ARTWORK" textureSubLevel="2">
+                        <Texture parentKey="portraitFrame" inherits="UI-Frame-Portrait">
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativeKey="$parent.portrait" x="-6" y="4"/>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                </Layers>
+            </Frame>
+            <Frame name="GargulTradeHighlightPlayer" inherits="GargulTradeHighlightTemplate">
+                <Size x="150" y="266"/>
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeTo="GargulTradeFrame" x="6" y="-85"/>
+                </Anchors>
+            </Frame>
+            <Frame name="GargulTradeHighlightRecipient" inherits="GargulTradeHighlightTemplate">
+                <Size x="150" y="266"/>
+                <Anchors>
+                    <Anchor point="TOPLEFT" x="176" y="-85"/>
+                </Anchors>
+            </Frame>
+            <Frame name="GargulTradeHighlightPlayerEnchant" inherits="GargulTradeHighlightTemplate">
+                <Size x="150" y="61"/>
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeTo="GargulTradeHighlightPlayer" relativePoint="BOTTOMLEFT" x="0" y="-4"/>
+                </Anchors>
+            </Frame>
+            <Frame name="GargulTradeHighlightRecipientEnchant" inherits="GargulTradeHighlightTemplate">
+                <Size x="150" y="61"/>
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeTo="GargulTradeHighlightRecipient" relativePoint="BOTTOMLEFT" x="0" y="-4"/>
+                </Anchors>
+            </Frame>
+            <Frame name="GargulTradeRecipientItemsInset" inherits="InsetFrameTemplate" parentKey="LeftInset" useParentLevel="true">
+                <Anchors>
+                    <Anchor point="TOPLEFT" x="175" y="-83"/>
+                    <Anchor point="BOTTOMRIGHT" relativeTo="GargulTradeFrame" relativePoint="TOPLEFT" x="338" y="-352"/>
+                </Anchors>
+            </Frame>
+            <Frame name="GargulTradeRecipientItem1" inherits="GargulRecipientTradeItemTemplate" id="1">
+                <Anchors>
+                    <Anchor point="TOPLEFT" x="182" y="-89"/>
+                </Anchors>
+            </Frame>
+            <Frame name="GargulTradeRecipientItem2" inherits="GargulRecipientTradeItemTemplate" id="2">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeTo="GargulTradeRecipientItem1" relativePoint="BOTTOMLEFT" x="0" y="-7"/>
+                </Anchors>
+            </Frame>
+            <Frame name="GargulTradeRecipientItem3" inherits="GargulRecipientTradeItemTemplate" id="3">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeTo="GargulTradeRecipientItem2" relativePoint="BOTTOMLEFT" x="0" y="-7"/>
+                </Anchors>
+            </Frame>
+            <Frame name="GargulTradeRecipientItem4" inherits="GargulRecipientTradeItemTemplate" id="4">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeTo="GargulTradeRecipientItem3" relativePoint="BOTTOMLEFT" x="0" y="-7"/>
+                </Anchors>
+            </Frame>
+            <Frame name="GargulTradeRecipientItem5" inherits="GargulRecipientTradeItemTemplate" id="5">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeTo="GargulTradeRecipientItem4" relativePoint="BOTTOMLEFT" x="0" y="-7"/>
+                </Anchors>
+            </Frame>
+            <Frame name="GargulTradeRecipientItem6" inherits="GargulRecipientTradeItemTemplate" id="6">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeTo="GargulTradeRecipientItem5" relativePoint="BOTTOMLEFT" x="0" y="-7"/>
+                </Anchors>
+            </Frame>
+            <Frame name="GargulTradeRecipientEnchantInset" inherits="InsetFrameTemplate" parentKey="LeftInset" useParentLevel="true">
+                <Anchors>
+                    <Anchor point="TOPLEFT" x="175" y="-354"/>
+                    <Anchor point="BOTTOMRIGHT" relativeTo="GargulTradeFrame" relativePoint="TOPLEFT" x="338" y="-418"/>
+                </Anchors>
+            </Frame>
+            <Frame name="GargulTradeRecipientItem7" inherits="GargulRecipientTradeItemTemplate" id="7">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeTo="GargulTradeRecipientItem6" relativePoint="BOTTOMLEFT" x="0" y="-28"/>
+                </Anchors>
+                <Layers>
+                    <Layer level="ARTWORK">
+                        <Texture file="Interface\TradeFrame\UI-TradeFrame-EnchantIcon">
+                            <Size x="62" y="62"/>
+                            <Anchors>
+                                <Anchor point="TOPLEFT" x="0" y="0"/>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                </Layers>
+            </Frame>
+            <Frame name="GargulTradePlayerItemsInset" inherits="InsetFrameTemplate" parentKey="LeftInset" useParentLevel="true">
+                <Anchors>
+                    <Anchor point="TOPLEFT" x="4" y="-83"/>
+                    <Anchor point="BOTTOMRIGHT" relativeTo="GargulTradeFrame" relativePoint="TOPLEFT" x="166" y="-352"/>
+                </Anchors>
+            </Frame>
+            <Frame name="GargulTradePlayerItem1" inherits="GargulPlayerTradeItemTemplate" id="1">
+                <Anchors>
+                    <Anchor point="TOPLEFT" x="14" y="-89"/>
+                </Anchors>
+            </Frame>
+            <Frame name="GargulTradePlayerItem2" inherits="GargulPlayerTradeItemTemplate" id="2">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeTo="GargulTradePlayerItem1" relativePoint="BOTTOMLEFT" x="0" y="-7"/>
+                </Anchors>
+            </Frame>
+            <Frame name="GargulTradePlayerItem3" inherits="GargulPlayerTradeItemTemplate" id="3">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeTo="GargulTradePlayerItem2" relativePoint="BOTTOMLEFT" x="0" y="-7"/>
+                </Anchors>
+            </Frame>
+            <Frame name="GargulTradePlayerItem4" inherits="GargulPlayerTradeItemTemplate" id="4">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeTo="GargulTradePlayerItem3" relativePoint="BOTTOMLEFT" x="0" y="-7"/>
+                </Anchors>
+            </Frame>
+            <Frame name="GargulTradePlayerItem5" inherits="GargulPlayerTradeItemTemplate" id="5">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeTo="GargulTradePlayerItem4" relativePoint="BOTTOMLEFT" x="0" y="-7"/>
+                </Anchors>
+            </Frame>
+            <Frame name="GargulTradePlayerItem6" inherits="GargulPlayerTradeItemTemplate" id="6">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeTo="GargulTradePlayerItem5" relativePoint="BOTTOMLEFT" x="0" y="-7"/>
+                </Anchors>
+            </Frame>
+            <Frame name="GargulTradePlayerEnchantInset" inherits="InsetFrameTemplate" parentKey="LeftInset" useParentLevel="true">
+                <Anchors>
+                    <Anchor point="TOPLEFT" x="4" y="-354"/>
+                    <Anchor point="BOTTOMRIGHT" relativeTo="GargulTradeFrame" relativePoint="TOPLEFT" x="166" y="-418"/>
+                </Anchors>
+            </Frame>
+            <Frame name="GargulTradePlayerItem7" inherits="GargulPlayerTradeItemTemplate" id="7">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeTo="GargulTradePlayerItem6" relativePoint="BOTTOMLEFT" x="0" y="-28"/>
+                </Anchors>
+                <Layers>
+                    <Layer level="ARTWORK">
+                        <Texture file="Interface\TradeFrame\UI-TradeFrame-EnchantIcon">
+                            <Size x="62" y="62"/>
+                            <Anchors>
+                                <Anchor point="TOPLEFT" x="0" y="0"/>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                </Layers>
+                <Scripts>
+<!--                    <OnEnter>-->
+<!--                        if ( self.hasItem ) then-->
+<!--                        GameTooltip:SetOwner(self, "ANCHOR_RIGHT");-->
+<!--                        local speciesID, level, breedQuality, maxHealth, power, speed, name = GameTooltip:SetTradePlayerItem(self:GetParent():GetID());-->
+<!--                        if(speciesID and speciesID > 0) then-->
+<!--                        BattlePetToolTip_Show(speciesID, level, breedQuality, maxHealth, power, speed, name);-->
+<!--                        end-->
+<!--                        end-->
+<!--                    </OnEnter>-->
+<!--                    <OnLeave function="GameTooltip_Hide"/>-->
+                </Scripts>
+            </Frame>
+<!--            <Button name="GargulTradeFrameTradeButton" inherits="UIPanelButtonTemplate" text="TRADE">-->
+<!--                <Size x="85" y="22"/>-->
+<!--                <Anchors>-->
+<!--                    <Anchor point="BOTTOMRIGHT" relativeTo="GargulTradeFrame" relativePoint="BOTTOMRIGHT" x="-85" y="5"/>-->
+<!--                </Anchors>-->
+<!--                <Scripts>-->
+<!--&lt;!&ndash;                    <OnClick function="AcceptTrade"/>&ndash;&gt;-->
+<!--                </Scripts>-->
+<!--                <ButtonText text="TRADE"/>-->
+<!--                <NormalFont style="GameFontNormal"/>-->
+<!--                <HighlightFont style="GameFontHighlight"/>-->
+<!--                <DisabledFont style="GameFontDisable"/>-->
+<!--            </Button>-->
+            <Button name="GargulTradeFrameCancelButton" inherits="UIPanelButtonTemplate" text="CANCEL">
+                <Size x="77" y="22"/>
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeTo="TradeFrameTradeButton" relativePoint="TOPRIGHT" x="3" y="0"/>
+                </Anchors>
+                <Scripts>
+<!--                    <OnClick function="GargulTradeFrameCancelButton_OnClick"/>-->
+                </Scripts>
+                <ButtonText text="CANCEL"/>
+                <NormalFont style="GameFontNormal"/>
+                <HighlightFont style="GameFontHighlight"/>
+                <DisabledFont style="GameFontDisable"/>
+            </Button>
+            <Frame name="GargulTradePlayerInputMoneyInset" inherits="InsetFrameTemplate" parentKey="LeftInset" useParentLevel="true">
+                <Anchors>
+                    <Anchor point="TOPLEFT" x="4" y="-58"/>
+                    <Anchor point="BOTTOMRIGHT" relativeTo="GargulTradeFrame" relativePoint="TOPLEFT" x="166" y="-82"/>
+                </Anchors>
+            </Frame>
+<!--            <Frame name="GargulTradePlayerInputMoneyFrame" inherits="MoneyInputFrameTemplate">-->
+            <Frame name="GargulTradePlayerInputMoneyFrame" inherits="">
+                <Anchors>
+                    <Anchor point="TOPLEFT" x="11" y="-61"/>
+                </Anchors>
+                <Scripts>
+                    <OnLoad>
+<!--                        MoneyInputFrame_SetCopper(5000);-->
+<!--                        MoneyInputFrame_SetCompact(self, 62, 7);-->
+<!--                        MoneyInputFrame_SetOnValueChangedFunc(self, TradeFrame_UpdateMoney);-->
+<!--                        self:RegisterEvent("PLAYER_TRADE_MONEY");-->
+                    </OnLoad>
+<!--                    <OnEvent>-->
+<!--                        MoneyInputFrame_SetCopper(self, GetPlayerTradeMoney());-->
+<!--                    </OnEvent>-->
+                </Scripts>
+            </Frame>
+            <Frame name="GargulTradeRecipientMoneyInset" inherits="InsetFrameTemplate" parentKey="LeftInset" useParentLevel="true">
+                <Anchors>
+                    <Anchor point="TOPLEFT" x="175" y="-58"/>
+                    <Anchor point="BOTTOMRIGHT" relativeTo="GargulTradeFrame" relativePoint="TOPLEFT" x="338" y="-81"/>
+                </Anchors>
+            </Frame>
+            <Frame name="GargulTradeRecipientMoneyBg" inherits="ThinGoldEdgeTemplate" >
+                <Size x="120" y="30"/>
+                <Anchors>
+                    <Anchor point="TOPRIGHT" relativeTo="GargulTradeFrame" relativePoint="TOPRIGHT" x="-7" y="-60"/>
+                    <Anchor point="BOTTOMLEFT" relativeTo="GargulTradeFrame" relativePoint="TOPRIGHT" x="-168" y="-80"/>
+                </Anchors>
+            </Frame>
+<!--            <Frame name="GargulTradeRecipientMoneyFrame" inherits="SmallMoneyFrameTemplate">-->
+            <Frame name="GargulTradeRecipientMoneyFrame" inherits="">
+                <Anchors>
+                    <Anchor point="TOPRIGHT" relativeTo="GargulTradeFrame" relativePoint="TOPRIGHT" x="-5" y="-64"/>
+                </Anchors>
+                <Scripts>
+                    <OnLoad>
+<!--                        SmallMoneyFrame_OnLoad(self);-->
+<!--                        MoneyFrame_SetType(self, "TARGET_TRADE");-->
+<!--                        MoneyFrame_SetMaxDisplayWidth(self, 160);-->
+                    </OnLoad>
+                </Scripts>
+            </Frame>
+        </Frames>
+    </Frame>
+</Ui>
