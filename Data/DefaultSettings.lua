@@ -57,8 +57,9 @@ GL.Data.DefaultSettings = {
         disenchanterIdentifier = "_disenchanted",
     },
     LootTradeTimers = {
-        maximumNumberOfBars = 5,
         enabled = true,
+        maximumNumberOfBars = 5,
+        showHotkeyReminder = true,
         showOnlyWhenMasterLooting = true,
     },
     PackMule = {
@@ -74,6 +75,7 @@ GL.Data.DefaultSettings = {
     Rolling = {
         showRollOffWindow = true,
         closeAfterRoll = false,
+        scale = 1,
     },
     RollTracking = {
         trackAll = false,
