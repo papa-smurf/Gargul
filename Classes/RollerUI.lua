@@ -60,6 +60,7 @@ function RollerUI:draw(time, itemLink, itemIcon, note, SupportedRolls, userCanUs
             self:hide();
         end
     end);
+    Window:SetScale(GL.Settings:get("Rolling.scale", 1));
     self.Window = Window;
 
     local Texture = Window:CreateTexture(nil,"BACKGROUND");
@@ -117,6 +118,22 @@ function RollerUI:draw(time, itemLink, itemIcon, note, SupportedRolls, userCanUs
 
             if (GL.Settings:get("Rolling.closeAfterRoll")) then
                 self:hide();
+            else
+                local RollAcceptedNotification = GL.AceGUI:Create("InlineGroup");
+                RollAcceptedNotification:SetLayout("Fill");
+                RollAcceptedNotification:SetWidth(150);
+                RollAcceptedNotification:SetHeight(50);
+                RollAcceptedNotification.frame:SetParent(Window);
+                RollAcceptedNotification.frame:SetPoint("BOTTOMLEFT", Window, "TOPLEFT", 0, 4);
+
+                local Text = GL.AceGUI:Create("Label");
+                Text:SetText("Roll accepted!");
+                RollAcceptedNotification:AddChild(Text);
+                Text:SetJustifyH("MIDDLE");
+
+                self.RollAcceptedTimer = GL.Ace:ScheduleTimer(function ()
+                    RollAcceptedNotification.frame:Hide();
+                end, 2);
             end
         end);
 
