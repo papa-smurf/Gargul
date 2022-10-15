@@ -86,6 +86,11 @@ function MasterLooting:draw(Parent)
             description = "A countdown will be shown in chat when a roll is coming to an end (e.g: you have 5 seconds to roll)",
             setting = "MasterLooting.doCountdown",
         },
+        {
+            label = "Countdown ONCE",
+            description = "Announce countdown only once at the desired seconds before end of roll",
+            setting = "MasterLooting.announceCountdownOnce",
+        },
     };
 
     Overview:drawCheckboxes(Checkboxes, Parent);

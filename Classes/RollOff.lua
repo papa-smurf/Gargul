@@ -367,6 +367,10 @@ function RollOff:start(CommMessage)
                         string.format("%s seconds to roll", secondsLeft),
                         "GROUP"
                     );
+
+                    if (GL.Settings:get("MasterLooting.announceCountdownOnce")) then
+                        GL.Ace:CancelTimer(self.countDownTimer);
+                    end
                 end
             end, 1);
         end

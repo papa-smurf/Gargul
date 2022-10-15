@@ -34,6 +34,7 @@ GL.Data.DefaultSettings = {
     },
     MasterLooting = {
         alwaysUseDefaultNote = false,
+        announceCountdownOnce = false,
         announceMasterLooter = false,
         autoOpenMasterLooterDialog = true,
         defaultRollOffNote = "/roll 100 for MS or 99 for OS",
