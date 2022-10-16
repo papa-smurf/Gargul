@@ -226,7 +226,7 @@ function TimeLeft:createHotkeyExplanationWindow()
 
     local Text = GL.AceGUI:Create("Label");
     Text:SetText(string.format(
-        "Roll: |c00a79eff%s|r\nAward: |c00a79eff%s|r\nDisenchant: |c00a79eff%s|r",
+        "\nRoll: |c00a79eff%s|r\nAward: |c00a79eff%s|r\nDisenchant: |c00a79eff%s|r",
         GL.Settings:get("ShortcutKeys.rollOff"),
         GL.Settings:get("ShortcutKeys.award"),
         GL.Settings:get("ShortcutKeys.disenchant")
@@ -248,7 +248,11 @@ function TimeLeft:createBroadcastWindow()
     BroadCast.frame:SetParent(self.Window);
 
     local Text = GL.AceGUI:Create("Label");
-    Text:SetText("Broadcast to group");
+    local channel = "party";
+    if (GL.User.isInRaid) then
+        channel = "raid";
+    end
+    Text:SetText("Broadcast to " .. channel);
     BroadCast:AddChild(Text);
     Text:SetJustifyH("MIDDLE");
 
@@ -373,10 +377,11 @@ function TimeLeft:showExplanationWindow()
         or (GL.User.isInGroup and not (GL.User.hasAssist or GL.User.isMasterLooter))
         or not GL.Settings:get("LootTradeTimers.showHotkeyReminder")
     ) then
-        return;
+        return false;
     end
 
     self.HotKeyExplanation.frame:SetAlpha(1);
+    return true;
 end
 
 ---@return boolean
@@ -585,8 +590,15 @@ function TimeLeft:refreshBars()
         -- Show a gametooltip for the item up for roll
         -- when hovering over the progress bar
         TimerBar:SetScript("OnEnter", function()
-            self:showExplanationWindow();
-            GameTooltip:SetOwner(Window, "ANCHOR_TOP");
+            if (self:showExplanationWindow()) then
+                if (GL:inTable({"BOTTOM", "BOTTOMLEFT", "BOTTOMRIGHT"}, select(1, self.Window:GetPoint()))) then
+                    GameTooltip:SetOwner(self.Window, "ANCHOR_TOP");
+                else
+                    GameTooltip:SetOwner(self.HotKeyExplanation.frame, "ANCHOR_BOTTOM");
+                end
+            else
+                GameTooltip:SetOwner(Window, "ANCHOR_TOP");
+            end
             GameTooltip:SetHyperlink(BagItem.itemLink);
             GameTooltip:Show();
         end);
