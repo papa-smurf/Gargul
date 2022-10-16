@@ -2,7 +2,7 @@
 ##
 
 ## When should I use Gargul?
-- If you use softres, tmb, dft or a combination of these:
+- If you use softres, tmb, dft or a combination of these
 - https://softres.it: see who reserved what, who forgot to reserve, announce details it in chat etc
 - https://thatsmybis.com:  see wishlist/prio info, item notes, export loot back into TMB etc
 - Gargul tracks player rolls for you and speeds up assigning loot drastically!
