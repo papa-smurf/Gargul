@@ -1,6 +1,8 @@
 local _, GL = ...;
 
-GL.Version = GL.Version or {};
+GL.Version = GL.Version or {
+    RecurringCheckTimer = nil,
+};
 
 local Version = GL.Version;
 local CommActions = GL.Data.Constants.Comm.Actions;
@@ -212,7 +214,10 @@ function Version:inspectGroup()
     ):send();
 
     -- Report back as soon as all the answers are in
-    self.recurringCheckTimer = GL.Ace:ScheduleRepeatingTimer(function ()
+    GL:debug("Schedule new Version.RecurringCheckTimer");
+    self.RecurringCheckTimer = GL.Ace:ScheduleRepeatingTimer(function ()
+        GL:debug("Run Version.RecurringCheckTimer");
+
         -- We received an answer from everyone
         if (GL:count(CommMessage.Responses or {}) >= numberOfActiveGroupMembers) then
             self:clearTimers();
@@ -222,7 +227,7 @@ function Version:inspectGroup()
 
     -- Even if we're still missing an answer from some of the group members
     -- we still want to make sure our inspection end after a set amount of time
-    self.maximumCheckTimer = GL.Ace:ScheduleTimer(function ()
+    self.MaximumCheckTimer = GL.Ace:ScheduleTimer(function ()
         self:clearTimers();
         self:finishInspectGroup(CommMessage);
     end, 5);
@@ -232,14 +237,16 @@ end
 ---
 ---@return void
 function Version:clearTimers()
-    if (self.recurringCheckTimer) then
-        GL.Ace:CancelTimer(self.recurringCheckTimer);
-        self.recurringCheckTimer = nil;
+    if (self.RecurringCheckTimer) then
+        GL:debug("Cancel Version.RecurringCheckTimer");
+
+        GL.Ace:CancelTimer(self.RecurringCheckTimer);
+        self.RecurringCheckTimer = nil;
     end
 
-    if (self.maximumCheckTimer) then
-        GL.Ace:CancelTimer(self.maximumCheckTimer);
-        self.maximumCheckTimer = nil;
+    if (self.MaximumCheckTimer) then
+        GL.Ace:CancelTimer(self.MaximumCheckTimer);
+        self.MaximumCheckTimer = nil;
     end
 end
 
@@ -291,18 +298,23 @@ function Version:playersUsingAddon(callback)
     end
 
     -- Report back as soon as all the answers are in
-    self.recurringCheckTimer = GL.Ace:ScheduleRepeatingTimer(function ()
-        -- We received an answer from everyone
-        if (GL:count(CommMessage.Responses or {}) >= numberOfActiveGroupMembers) then
-            self:clearTimers();
-            handleResponses(GroupMembers, CommMessage.Responses, callback);
-            return;
-        end
-    end, .2);
+    if (not self.RecurringCheckTimer) then
+        GL:debug("Schedule new Version.RecurringCheckTimer");
+        self.RecurringCheckTimer = GL.Ace:ScheduleRepeatingTimer(function ()
+            GL:debug("Run Version.RecurringCheckTimer");
+
+            -- We received an answer from everyone
+            if (GL:count(CommMessage.Responses or {}) >= numberOfActiveGroupMembers) then
+                self:clearTimers();
+                handleResponses(GroupMembers, CommMessage.Responses, callback);
+                return;
+            end
+        end, .2);
+    end
 
     -- Even if we're still missing an answer from some of the group members
     -- we still want to make sure our inspection end after a set amount of time
-    self.maximumCheckTimer = GL.Ace:ScheduleTimer(function ()
+    self.MaximumCheckTimer = GL.Ace:ScheduleTimer(function ()
         self:clearTimers();
         handleResponses(GroupMembers, CommMessage.Responses, callback);
         return;

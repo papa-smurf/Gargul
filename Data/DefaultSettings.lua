@@ -34,6 +34,7 @@ GL.Data.DefaultSettings = {
     },
     MasterLooting = {
         alwaysUseDefaultNote = false,
+        announceCountdownOnce = false,
         announceMasterLooter = false,
         autoOpenMasterLooterDialog = true,
         defaultRollOffNote = "/roll 100 for MS or 99 for OS",
@@ -56,8 +57,9 @@ GL.Data.DefaultSettings = {
         disenchanterIdentifier = "_disenchanted",
     },
     LootTradeTimers = {
-        maximumNumberOfBars = 5,
         enabled = true,
+        maximumNumberOfBars = 5,
+        showHotkeyReminder = true,
         showOnlyWhenMasterLooting = true,
     },
     PackMule = {
@@ -66,13 +68,12 @@ GL.Data.DefaultSettings = {
         autoConfirmGroup = false,
         enabledForGroupLoot = false,
         enabledForMasterLoot = false,
-        persistsAfterReload = false,
-        persistsAfterZoneChange = false,
         Rules = {},
     },
     Rolling = {
         showRollOffWindow = true,
         closeAfterRoll = false,
+        scale = 1,
     },
     RollTracking = {
         trackAll = false,
@@ -130,8 +131,8 @@ GL.Data.DefaultSettings = {
     },
     UI = {
         RollOff = {
-            closeOnStart = true,
-            closeOnAward = true,
+            closeOnStart = false,
+            closeOnAward = false,
             timer = 15,
         },
         PopupDialog = {

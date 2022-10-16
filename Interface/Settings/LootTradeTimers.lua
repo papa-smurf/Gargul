@@ -46,9 +46,15 @@ function LootTradeTimers:draw(Parent)
             end,
         },
         {
-            label = "Only show bars when I'm master looting",
-            description = "Only show countdown bars when you're actively master looting",
+            label = "Only show bars when I'm the master looter",
             setting = "LootTradeTimers.showOnlyWhenMasterLooting",
+            callback = function ()
+                GL.Interface.TradeWindow.TimeLeft:refreshBars();
+            end,
+        },
+        {
+            label = "Show hotkey reminder",
+            setting = "LootTradeTimers.showHotkeyReminder",
             callback = function ()
                 GL.Interface.TradeWindow.TimeLeft:refreshBars();
             end,

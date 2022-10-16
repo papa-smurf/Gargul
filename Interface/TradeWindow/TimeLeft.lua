@@ -6,8 +6,12 @@ GL.AceGUI = GL.AceGUI or LibStub("AceGUI-3.0");
 GL:tableSet(GL, "Interface.TradeWindow.TimeLeft", {
     _initialized = false,
     isVisible = false,
+    broadcastIsVisible = false,
+    dragging = false,
     refreshing = false,
     Bars = {},
+    HotKeyExplanation = nil,
+    Broadcast = nil,
 });
 
 ---@class TradeWindowTimeLeft
@@ -63,6 +67,8 @@ function TimeLeft:draw()
     self.isVisible = true;
 
     local Window = CreateFrame("Frame", "GargulUI_RollerUI_Window", UIParent, Frame);
+    self.Window = Window;
+
     Window:Show();
     Window:SetSize(240, 16);
     Window:SetPoint(GL.Interface:getPosition("TimeLeft"));
@@ -72,10 +78,25 @@ function TimeLeft:draw()
     Window:SetClampedToScreen(true);
     Window:SetFrameStrata("HIGH");
     Window:RegisterForDrag("LeftButton");
-    Window:SetScript("OnDragStart", Window.StartMoving);
+
+    Window:SetScript("OnDragStart", function ()
+        self.dragging = true;
+        self:hideExplanationWindow();
+        self.BroadCast.frame:SetAlpha(0);
+        Window:StartMoving();
+    end);
     Window:SetScript("OnDragStop", function()
+        self.dragging = false;
+        self:showExplanationWindow();
+
+        if (self.broadcastIsVisible) then
+            self:showBroadcastWindow();
+        end
+
         Window:StopMovingOrSizing();
         GL.Interface:storePosition(Window, "TimeLeft");
+
+        self:positionExplanationWindow();
     end);
     Window:SetScript("OnMouseDown", function (_, button)
         -- Close the roll window on right-click
@@ -84,17 +105,56 @@ function TimeLeft:draw()
         end
     end);
 
+    self:createHotkeyExplanationWindow();
+    self:createBroadcastWindow();
+
+    self:positionExplanationWindow();
+
+    Window:SetScript('OnEnter', function()
+        self:showExplanationWindow();
+    end);
+    Window:SetScript('OnLeave', function()
+        self:hideExplanationWindow();
+    end);
+
     local Texture = Window:CreateTexture(nil,"BACKGROUND");
     Texture:SetColorTexture(0, 0, 0, .6);
     Texture:SetAllPoints(Window)
     Window.texture = Texture;
     GL.Interface:setItem(self, "Window", Window);
 
+    local howToRollText = string.format("%s to roll out loot!", GL.Settings:get("ShortcutKeys.rollOff"));
+    local howToAwardText = string.format("%s to award loot!", GL.Settings:get("ShortcutKeys.award"));
     local Title = Window:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall");
     Title:SetPoint("TOPLEFT", 3, -3);
-    Title:SetText(string.format("%s to roll out loot!", GL.Settings:get("ShortcutKeys.rollOff")));
+    Title:SetText(howToRollText);
     Title:SetTextColor(1, 1, 1, 1);
+    Title.headerTextType = "howToRoll";
     GL.Interface:setItem(self, "Header", Title);
+
+    -- Keep switching the text in the header from how to roll to how to award
+    if (not self.HeaderSwitchTimer) then
+        GL:debug("Schedule new TimeLeft.HeaderSwitchTimer");
+        self.HeaderSwitchTimer = GL.Ace:ScheduleRepeatingTimer(function ()
+            GL:debug("Run TimeLeft.HeaderSwitchTimer");
+
+            if (Title.headerTextType == "howToRoll") then
+                Title:SetText(howToAwardText);
+                Title.headerTextType = "howToAward";
+            else
+                Title:SetText(howToRollText);
+                Title.headerTextType = "howToRoll";
+            end
+
+            -- There are no bars shown, stop the timer
+            if (not Window:IsVisible()) then
+                GL:debug("Cancel TimeLeft.HeaderSwitchTimer");
+
+                GL.Ace:CancelTimer(self.HeaderSwitchTimer);
+                self.HeaderSwitchTimer = nil;
+            end
+        end, 10);
+    end
 
     local Cogwheel = CreateFrame("Button", "TimeLeft_Cogwheel" .. GL:uuid(), Window, Frame);
     Cogwheel:Show();
@@ -122,7 +182,206 @@ function TimeLeft:draw()
         end
     end);
 
+    local BroadCast = CreateFrame("Button", "TimeLeft_BroadCast" .. GL:uuid(), Window, Frame);
+    BroadCast:Show();
+    BroadCast:SetClipsChildren(true);
+    BroadCast:SetSize(13, 13);
+    BroadCast:SetPoint("TOPRIGHT", Window, "TOPRIGHT", -20, -1);
+
+    local BroadCastTexture = BroadCast:CreateTexture();
+    BroadCastTexture:SetPoint("BOTTOMRIGHT", 0, 0);
+    BroadCastTexture:SetSize(11,11);
+    BroadCastTexture:SetTexture("Interface\\AddOns\\Gargul\\Assets\\Icons\\broadcast-highlighted");
+    BroadCastTexture:SetTexture("Interface\\AddOns\\Gargul\\Assets\\Icons\\broadcast");
+    BroadCast.texture = BroadCastTexture;
+
+    BroadCast:SetScript('OnEnter', function()
+        BroadCastTexture:SetTexture("Interface\\AddOns\\Gargul\\Assets\\Icons\\broadcast-highlighted");
+    end);
+    BroadCast:SetScript('OnLeave', function()
+        BroadCastTexture:SetTexture("Interface\\AddOns\\Gargul\\Assets\\Icons\\broadcast");
+    end);
+
+    BroadCast:SetScript("OnClick", function(_, button)
+        if (button == 'LeftButton') then
+            self:toggleBroadcastWindow();
+        end
+    end);
+
     self:refreshBars();
+end
+
+--- Create the hotkey explanation window
+---
+---@return void
+function TimeLeft:createHotkeyExplanationWindow()
+    local HotKeyExplanation = GL.AceGUI:Create("InlineGroup");
+    self.HotKeyExplanation = HotKeyExplanation;
+
+    HotKeyExplanation:SetLayout("Fill");
+    HotKeyExplanation:SetWidth(210);
+    HotKeyExplanation:SetHeight(74);
+    HotKeyExplanation.frame:SetParent(self.Window);
+    self:hideExplanationWindow();
+
+    local Text = GL.AceGUI:Create("Label");
+    Text:SetText(string.format(
+        "\nRoll: |c00a79eff%s|r\nAward: |c00a79eff%s|r\nDisenchant: |c00a79eff%s|r",
+        GL.Settings:get("ShortcutKeys.rollOff"),
+        GL.Settings:get("ShortcutKeys.award"),
+        GL.Settings:get("ShortcutKeys.disenchant")
+    ));
+    HotKeyExplanation:AddChild(Text);
+    Text:SetJustifyH("MIDDLE");
+end
+
+--- Create the hotkey explanation window
+---
+---@return void
+function TimeLeft:createBroadcastWindow()
+    local BroadCast = GL.AceGUI:Create("InlineGroup");
+    self.BroadCast = BroadCast;
+
+    BroadCast:SetLayout("Fill");
+    BroadCast:SetWidth(210);
+    BroadCast:SetHeight(110);
+    BroadCast.frame:SetParent(self.Window);
+
+    local Text = GL.AceGUI:Create("Label");
+    local channel = "party";
+    if (GL.User.isInRaid) then
+        channel = "raid";
+    end
+    Text:SetText("Broadcast to " .. channel);
+    BroadCast:AddChild(Text);
+    Text:SetJustifyH("MIDDLE");
+
+    local BroadcastButton = CreateFrame("Button", "GargulUI_TradeTimers_Broadcast", BroadCast.frame, "GameMenuButtonTemplate");
+    BroadcastButton:SetPoint("TOPLEFT", BroadCast.frame, "BOTTOMLEFT", 20, 72);
+    BroadcastButton:SetSize(160, 20);
+    BroadcastButton:SetText("Broadcast");
+    BroadcastButton:SetNormalFontObject("GameFontNormal");
+    BroadcastButton:SetHighlightFontObject("GameFontNormal");
+    BroadcastButton:SetScript("OnClick", function ()
+        local timeFormat1 = "%d:%02d:%02d"
+        local timeFormat2 = "%d:%02d"
+        local timeFormat3 = "%.1f"
+        local timeFormat4 = "%.0f"
+        local barNumber = 1;
+        local broadcastBars;
+        broadcastBars = function()
+            local Bar = self.Bars[barNumber];
+
+            if (not Bar or not Bar.Details or Bar.Details.timeRemaining <= 0) then
+                return;
+            end
+
+            local timeString;
+            local time = Bar.Details.timeRemaining;
+            if (time > 3599.9) then -- > 1 hour
+                local h = floor(time/3600);
+                local m = floor((time - (h*3600))/60);
+                local s = (time - (m*60)) - (h*3600);
+                timeString = string.format(timeFormat1, h, m, s);
+            elseif (time > 59.9) then -- 1 minute to 1 hour
+                local m = floor(time/60);
+                local s = time - (m*60);
+                timeString = string.format(timeFormat2, m, s);
+            elseif (time < 10) then -- 0 to 10 seconds
+                timeString = string.format(timeFormat3, time);
+            else -- 10 seconds to one minute
+                timeString = string.format(timeFormat4, time);
+            end
+
+            GL:sendChatMessage(string.format("%s (%s)",
+                Bar.Details.itemLink,
+                timeString
+            ), "GROUP");
+
+            barNumber = barNumber + 1;
+            GL.Ace:ScheduleTimer(function ()
+                broadcastBars(barNumber);
+            end, .5);
+        end;
+
+        broadcastBars();
+        self:hideBroadcastWindow();
+    end);
+
+    local CancelButton = CreateFrame("Button", "GargulUI_TradeTimers_Broadcast", BroadCast.frame, "GameMenuButtonTemplate");
+    CancelButton:SetPoint("TOPLEFT", BroadcastButton, "BOTTOMLEFT", 0, -10);
+    CancelButton:SetSize(160, 20);
+    CancelButton:SetText("Cancel");
+    CancelButton:SetNormalFontObject("GameFontNormal");
+    CancelButton:SetHighlightFontObject("GameFontNormal");
+    CancelButton:SetScript("OnClick", function ()
+        self:hideBroadcastWindow();
+    end);
+end
+
+function TimeLeft:toggleBroadcastWindow()
+    if (self.broadcastIsVisible) then
+        self:hideBroadcastWindow();
+    else
+        self:showBroadcastWindow();
+    end
+end
+
+function TimeLeft:showBroadcastWindow()
+    self.broadcastIsVisible = true;
+    self.BroadCast.frame:ClearAllPoints();
+
+    if (GL:inTable({"LEFT", "BOTTOMLEFT", "TOPLEFT"}, select(1, self.Window:GetPoint()))) then
+        self.BroadCast.frame:SetPoint("TOPLEFT", self.HotKeyExplanation.frame, "TOPLEFT", 0, 0);
+    else
+        self.BroadCast.frame:SetPoint("TOPRIGHT", self.HotKeyExplanation.frame, "TOPRIGHT", 0, 0);
+    end
+
+    self.BroadCast.frame:SetAlpha(1);
+end
+
+function TimeLeft:hideBroadcastWindow()
+    self.broadcastIsVisible = false;
+    self.BroadCast.frame:SetAlpha(0);
+end
+
+--- Position the explanation window either left or right of the trade timer bars depending on its location
+---
+---@return void
+function TimeLeft:positionExplanationWindow()
+    -- Position the explanation to the right of the trade timers since there's more space there
+    if (GL:inTable({"LEFT", "BOTTOMLEFT", "TOPLEFT"}, select(1, self.Window:GetPoint()))) then
+        self.HotKeyExplanation.frame:ClearAllPoints();
+        self.HotKeyExplanation.frame:SetPoint("TOPLEFT", self.Window, "TOPRIGHT", 0, 18);
+
+        return;
+    end
+
+    self.HotKeyExplanation.frame:ClearAllPoints();
+    self.HotKeyExplanation.frame:SetPoint("TOPRIGHT", self.Window, "TOPLEFT", 0, 18);
+end;
+
+--- Hide the explanation tooltip-like window
+---
+---@return void
+function TimeLeft:hideExplanationWindow()
+    self.HotKeyExplanation.frame:SetAlpha(0);
+end
+
+--- Show the explanation tooltip-like window
+---
+---@return void
+function TimeLeft:showExplanationWindow()
+    if (self.dragging
+        or self.broadcastIsVisible
+        or (GL.User.isInGroup and not (GL.User.hasAssist or GL.User.isMasterLooter))
+        or not GL.Settings:get("LootTradeTimers.showHotkeyReminder")
+    ) then
+        return false;
+    end
+
+    self.HotKeyExplanation.frame:SetAlpha(1);
+    return true;
 end
 
 ---@return boolean
@@ -172,8 +431,8 @@ function TimeLeft:refreshBars()
     Window = GL.Interface:getItem(self, "Window");
     Window:SetHeight(0);
 
-    local Header = GL.Interface:getItem(self, "Frame.Header")
-    Header:SetText(string.format("%s to roll out loot!", GL.Settings:get("ShortcutKeys.rollOff")));
+    --local Header = GL.Interface:getItem(self, "Frame.Header")
+    --Header:SetText(string.format("%s to roll out loot!", GL.Settings:get("ShortcutKeys.rollOff")));
 
     local ItemsWithTradeTimeRemaining = {};
     local tradeTimeRemainingByLink = {};
@@ -275,6 +534,7 @@ function TimeLeft:refreshBars()
         TimerBar:SetLabel(BagItem.itemLink);
         TimerBar:SetIcon(BagItem.icon);
         TimerBar:Set("type", "TRADE_WINDOW_TIME_LEFT");
+        TimerBar.Details = BagItem;
 
         local offsetY = ((index - 1) * 18) * -1 - 16;
         TimerBar:SetPoint("TOP", Window, "TOP", 0, offsetY);
@@ -323,13 +583,22 @@ function TimeLeft:refreshBars()
         end)
 
         TimerBar:SetScript("OnLeave", function()
+            self:hideExplanationWindow();
             GameTooltip:Hide();
         end);
 
         -- Show a gametooltip for the item up for roll
         -- when hovering over the progress bar
         TimerBar:SetScript("OnEnter", function()
-            GameTooltip:SetOwner(Window, "ANCHOR_TOP");
+            if (self:showExplanationWindow()) then
+                if (GL:inTable({"BOTTOM", "BOTTOMLEFT", "BOTTOMRIGHT"}, select(1, self.Window:GetPoint()))) then
+                    GameTooltip:SetOwner(self.Window, "ANCHOR_TOP");
+                else
+                    GameTooltip:SetOwner(self.HotKeyExplanation.frame, "ANCHOR_BOTTOM");
+                end
+            else
+                GameTooltip:SetOwner(Window, "ANCHOR_TOP");
+            end
             GameTooltip:SetHyperlink(BagItem.itemLink);
             GameTooltip:Show();
         end);

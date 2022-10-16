@@ -39,6 +39,28 @@ function Rolling:draw(Parent)
     HorizontalSpacer:SetFullWidth(true);
     HorizontalSpacer:SetHeight(20);
     Parent:AddChild(HorizontalSpacer);
+
+    local Scale = GL.AceGUI:Create("Slider");
+    Scale:SetLabel("Magnification scale of the roller window");
+    Scale.label:SetTextColor(1, .95686, .40784);
+    Scale:SetFullWidth(true);
+    Scale:SetValue(GL.Settings:get("Rolling.scale", 35));
+    Scale:SetSliderValues(.8, 1.8, .1);
+    Scale:SetCallback("OnValueChanged", function(Slider)
+        local value = tonumber(Slider:GetValue());
+
+        if (value) then
+            GL.Settings:set("Rolling.scale", value);
+
+            -- Change the existing roll window if it's active!
+            if (GL.RollerUI.Window
+                and type(GL.RollerUI.Window.SetScale == "function")
+            ) then
+                GL.RollerUI.Window:SetScale(value);
+            end
+        end
+    end);
+    Parent:AddChild(Scale);
 end
 
 GL:debug("Interface/Settings/Rolling.lua");

@@ -22,8 +22,9 @@ GL.PackMule = {
 
     playerIsInHeroicInstance = false,
 
+    LootChangedTimer = nil,
     Rules = {},
-    RoundRobinItems = {};
+    RoundRobinItems = {},
 };
 
 local PackMule = GL.PackMule; ---@type PackMule
@@ -45,19 +46,6 @@ function PackMule:_init()
     local _, _, difficultyID = GetInstanceInfo();
     self.playerIsInHeroicInstance = GL:inTable({2, 174}, difficultyID);
 
-    -- Disable packmule if the "persist after reload" setting is not enabled
-    -- This piece of logic is only run once on boot/reload hence why this works
-    if (not Settings:get("PackMule.persistsAfterReload")
-        and (
-            Settings:get("PackMule.enabledForMasterLoot")
-            or Settings:get("PackMule.enabledForGroupLoot")
-        )
-    ) then
-        GL:warning("PackMule was automatically disabled after reload");
-        Settings:set("PackMule.enabledForMasterLoot", false);
-        Settings:set("PackMule.enabledForGroupLoot", false);
-    end
-
     self.Rules = Settings:get("PackMule.Rules");
 
     GL.Events:register("PackMuleZoneChangeListener", "ZONE_CHANGED_NEW_AREA", function ()
@@ -70,9 +58,11 @@ function PackMule:_init()
     end);
 
     GL.Events:register("PackMuleLootLootAnnouncedListener", "GL.LOOT_ANNOUNCED", function ()
-        if (self.timerId) then
-            GL.Ace:CancelTimer(self.timerId);
-            self.timerId = false;
+        if (self.LootChangedTimer) then
+            GL:debug("Cancel PackMule.LootChangedTimer");
+
+            GL.Ace:CancelTimer(self.LootChangedTimer);
+            self.LootChangedTimer = nil;
         end
 
         -- Do nothing if packmule is not enabled or the user holds the shift key
@@ -87,7 +77,10 @@ function PackMule:_init()
         -- Quick loot is enabled for items
         -- There was money in the loot window
         -- The player has another weak aura or addon that distributes specific items
-        self.timerId = GL.Ace:ScheduleRepeatingTimer(function ()
+        GL:debug("Schedule new PackMule.LootChangedTimer");
+        self.LootChangedTimer = GL.Ace:ScheduleRepeatingTimer(function ()
+            GL:debug("Run PackMule.LootChangedTimer");
+
             self:lootReady();
         end, .2);
     end);
@@ -103,8 +96,9 @@ function PackMule:_init()
 
     -- Make sure to auto accept BoP loot when opening containers
     GL.Events:register("PackMuleLootOpenedListener", "LOOT_OPENED", function ()
-        if (not GL.Settings:get("PackMule.autoConfirmSolo")
-            or GL.User.isMasterLooter
+        if (IsShiftKeyDown() -- Shift should disable this
+            or (GL.User.isInGroup and not GL.Settings:get("PackMule.autoConfirmGroup"))
+            or (not GL.User.isInGroup and not GL.Settings:get("PackMule.autoConfirmSolo"))
         ) then
             return;
         end
@@ -118,9 +112,11 @@ function PackMule:_init()
 
     -- Make sure we stop checking the loot window after the player is done looting
     GL.Events:register("PackMuleLootClosedListener", "LOOT_CLOSED", function ()
-        if (self.timerId) then
-            GL.Ace:CancelTimer(self.timerId);
-            self.timerId = false;
+        if (self.LootChangedTimer) then
+            GL:debug("Cancel PackMule.LootChangedTimer");
+
+            GL.Ace:CancelTimer(self.LootChangedTimer);
+            self.LootChangedTimer = nil;
         end
     end);
 end
@@ -255,14 +251,6 @@ end
 ---@return void
 function PackMule:zoneChanged()
     GL:debug("PackMule:zoneChanged");
-
-    -- Disable packmule if the "persist after reload" setting is not enabled
-    if (not Settings:get("PackMule.persistsAfterZoneChange")
-        and Settings:get("PackMule.enabledForMasterLoot")
-    ) then
-        GL:warning("PackMule was automatically disabled after zone change");
-        Settings:set("PackMule.enabledForMasterLoot", false);
-    end
 
     -- Check whether the user is in a heroic instance
     -- More info about difficultyIDs: https://wowpedia.fandom.com/wiki/DifficultyID

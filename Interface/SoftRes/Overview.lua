@@ -68,12 +68,12 @@ function Overview:draw()
         SHARE BUTTON
     ]]
     local ShareButton = GL.UI:createShareButton(
-            Window.frame,
-            function ()
-                GL.Interface.Dialogs.PopupDialog:open("BROADCAST_SOFTRES_CONFIRMATION");
-            end,
-            "Broadcast SoftRes Data",
-            "To broadcast you need to be in a group and need master loot, assist or lead!"
+        Window.frame,
+        function ()
+            GL.Interface.Dialogs.PopupDialog:open("BROADCAST_SOFTRES_CONFIRMATION");
+        end,
+        "Broadcast SoftRes Data",
+        "To broadcast you need to be in a group and need master loot, assist or lead!"
     );
     GL.Interface:setItem(self, "ShareButton", ShareButton);
     ShareButton:Show();
@@ -546,7 +546,11 @@ function Overview:drawCharacterTable(Parent)
 
     for playerName, Entry in pairs(PlayerData) do
         local plusOnes = GL.PlusOnes:get(playerName);
-        local numberOfSoftReservedItems = GL:count(Entry.Items);
+        local numberOfSoftReservedItems = 0;
+
+        for _, numberOfReserves in pairs(Entry.Items) do
+            numberOfSoftReservedItems = numberOfSoftReservedItems + numberOfReserves;
+        end
 
         local SoftReserveColor = {r=0,g=1,b=0,a=1};
 

@@ -7,7 +7,7 @@ GL.TradeWindow = {
     manuallyChangedAnnounceCheckbox = false,
     AnnouncementCheckBox = nil,
 
-    AddItemsTimer = {},
+    AddItemsTimer = nil,
     ItemsToAdd = {},
     State = {
         partner = "",
@@ -139,11 +139,16 @@ function TradeWindow:handleEvents(event, message)
         self:updateAnnouncementCheckBox();
 
         -- Make sure to cancel any lingering timers
+        GL:debug("Cancel TradeWindow.AddItemsTimer");
         GL.Ace:CancelTimer(self.AddItemsTimer);
+        self.AddItemsTimer = nil;
 
         -- Periodically add items to the trade window
         -- We don't do this instantly because that can bug out the UI
+        GL:debug("Schedule new TradeWindow.AddItemsTimer");
         self.AddItemsTimer = GL.Ace:ScheduleRepeatingTimer(function ()
+            GL:debug("Run TradeWindow.AddItemsTimer");
+
             self:processItemsToAdd();
         end, .5);
     end
@@ -153,7 +158,9 @@ function TradeWindow:handleEvents(event, message)
         self.ItemsToAdd = {};
 
         -- Make sure to cancel any lingering timers
+        GL:debug("Cancel TradeWindow.AddItemsTimer");
         GL.Ace:CancelTimer(self.AddItemsTimer);
+        self.AddItemsTimer = nil;
 
         -- We don't want resetState to trigger since TRADE_CLOSED is fired before TRADE_COMPLETED
         return;
@@ -309,6 +316,7 @@ function TradeWindow:processItemsToAdd()
     -- Make sure we don't use items if the trade window is not opened
     -- The last thing we want to do is equip an item or use a consumable by mistake!
     if (not TradeFrame:IsShown()) then
+        GL:debug("Cancel TradeWindow.AddItemsTimer");
         GL.Ace:CancelTimer(self.AddItemsTimer);
         self.AddItemsTimer = nil;
 
