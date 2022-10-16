@@ -4,8 +4,9 @@ local _, GL = ...;
 ---@class RollOff
 GL.RollOff = GL.RollOff or {
     inProgress = false,
-    timerId = 0, -- ID of the timer event
+    listeningForRolls = false,
     rollPattern = GL:createPattern(RANDOM_ROLL_RESULT), -- This pattern is used to validate incoming rules
+    CountDownTimer = nil,
     CurrentRollOff = {
         initiator = nil, -- The player who started the roll off
         time = nil, -- The amount of time players get to roll
@@ -16,8 +17,9 @@ GL.RollOff = GL.RollOff or {
         note = nil, -- The note displayed on the progress bar
         Rolls = {}, -- Player rolls
     },
-    listeningForRolls = false,
-    rollListenerCancelTimerId = nil,
+    InitiateCountDownTimer = nil;
+    StopRollOffTimer = nil,
+    StopListeningForRollsTimer = nil,
 };
 local RollOff = GL.RollOff; ---@type RollOff
 
@@ -254,7 +256,7 @@ function RollOff:announceStop()
     ):send();
 
     -- We stop listening for rolls one second after the rolloff ends just in case there is server lag/jitter
-    self.rollListenerCancelTimerId = GL.Ace:ScheduleTimer(function()
+    self.StopListeningForRollsTimer = GL.Ace:ScheduleTimer(function()
         self:stopListeningForRolls();
     end, 1);
 end
@@ -344,7 +346,7 @@ function RollOff:start(CommMessage)
         end
 
         -- Make sure the rolloff stops when time is up
-        self.timerId = GL.Ace:ScheduleTimer(function ()
+        self.StopRollOffTimer = GL.Ace:ScheduleTimer(function ()
             self:stop();
         end, time);
 
@@ -352,27 +354,35 @@ function RollOff:start(CommMessage)
         local numberOfSecondsToCountdown = GL.Settings:get("MasterLooting.numberOfSecondsToCountdown", 5);
         if (self:startedByMe() -- Only post a countdown if this user initiated the roll
             and time > numberOfSecondsToCountdown -- No point in counting down if there's hardly enough time anyways
-            and GL.Settings:get("MasterLooting.doCountdown", false)
+            and GL.Settings:get("MasterLooting.doCountdown")
         ) then
             local SecondsAnnounced = {};
-            self.countDownTimer = GL.Ace:ScheduleRepeatingTimer(function ()
-                local secondsLeft = math.ceil(GL.Ace:TimeLeft(self.timerId));
-                if (secondsLeft <= numberOfSecondsToCountdown
-                    and secondsLeft > 0
-                    and not SecondsAnnounced[secondsLeft]
-                ) then
-                    SecondsAnnounced[secondsLeft] = true;
 
-                    GL:sendChatMessage(
-                        string.format("%s seconds to roll", secondsLeft),
-                        "GROUP"
-                    );
+            self.InitiateCountDownTimer = GL.Ace:ScheduleTimer(function ()
+                self.CountDownTimer = GL.Ace:ScheduleRepeatingTimer(function ()
+                    GL:debug("Run RollOff.CountDownTimer");
 
-                    if (GL.Settings:get("MasterLooting.announceCountdownOnce")) then
-                        GL.Ace:CancelTimer(self.countDownTimer);
+                    local secondsLeft = math.ceil(GL.Ace:TimeLeft(self.StopRollOffTimer));
+                    if (secondsLeft <= numberOfSecondsToCountdown
+                            and secondsLeft > 0
+                            and not SecondsAnnounced[secondsLeft]
+                    ) then
+                        SecondsAnnounced[secondsLeft] = true;
+
+                        GL:sendChatMessage(
+                                string.format("%s seconds to roll", secondsLeft),
+                                "GROUP"
+                        );
+
+                        if (GL.Settings:get("MasterLooting.announceCountdownOnce")) then
+                            GL:debug("Cancel RollOff.CountDownTimer");
+
+                            GL.Ace:CancelTimer(self.CountDownTimer);
+                            self.CountDownTimer = nil;
+                        end
                     end
-                end
-            end, 1);
+                end, .2);
+            end, time - numberOfSecondsToCountdown - 2);
         end
 
         -- Play raid warning sound
@@ -426,16 +436,23 @@ function RollOff:stop(CommMessage)
         end
     end
 
-    if (self.countDownTimer) then
-        GL.Ace:CancelTimer(self.countDownTimer);
-        self.countDownTimer = nil;
+    if (self.InitiateCountDownTimer) then
+        GL.Ace:CancelTimer(self.InitiateCountDownTimer);
+        self.InitiateCountDownTimer = nil;
+    end
+
+    if (self.CountDownTimer) then
+        GL:debug("Cancel RollOff.CountDownTimer");
+
+        GL.Ace:CancelTimer(self.CountDownTimer);
+        self.CountDownTimer = nil;
     end
 
     -- Play raid warning sound
     GL:playSound(8959);
 
     RollOff.inProgress = false;
-    GL.Ace:CancelTimer(RollOff.timerId);
+    GL.Ace:CancelTimer(RollOff.StopRollOffTimer);
 
     GL.RollerUI:hide();
 
@@ -577,8 +594,8 @@ function RollOff:listenForRolls()
     GL:debug("RollOff:listenForRolls");
 
     -- Make sure the timer to cancel listening for rolls is cancelled
-    if (self.rollListenerCancelTimerId) then
-        GL.Ace:CancelTimer(self.rollListenerCancelTimerId);
+    if (self.StopListeningForRollsTimer) then
+        GL.Ace:CancelTimer(self.StopListeningForRollsTimer);
     end
 
     if (self.listeningForRolls) then
@@ -598,8 +615,8 @@ end
 function RollOff:stopListeningForRolls()
     GL:debug("RollOff:stopListeningForRolls");
 
-    if (self.rollListenerCancelTimerId) then
-        GL.Ace:CancelTimer(self.rollListenerCancelTimerId);
+    if (self.StopListeningForRollsTimer) then
+        GL.Ace:CancelTimer(self.StopListeningForRollsTimer);
     end
 
     self.listeningForRolls = false;

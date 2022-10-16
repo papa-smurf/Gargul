@@ -12,7 +12,7 @@ GL.Interface.MasterLooterDialog = {
     announcedConflictingAddons = false,
     announcedUseOfGargul = false,
     showedMasterLooterDialog = false,
-    versionCheckTimer = nil,
+    VersionCheckTimer = nil,
 };
 local MasterLooterDialog = GL.Interface.MasterLooterDialog; ---@type MasterLooterPopupInterface
 
@@ -25,12 +25,15 @@ function MasterLooterDialog:_init()
     self._initialized = true;
 
     GL.Events:register("MasterLooterObtainedListener", "GL.USER_OBTAINED_MASTER_LOOTER", function ()
-        if (self.versionCheckTimer) then
-            GL.Ace:CancelTimer(self.versionCheckTimer);
+        if (self.VersionCheckTimer) then
+            GL:debug("Cancel MasterLooterDialog.VersionCheckTimer");
+
+            GL.Ace:CancelTimer(self.VersionCheckTimer);
+            self.VersionCheckTimer = nil;
         end
 
         if (not self.showedMasterLooterDialog
-            and GL.Settings:get("MasterLooting.autoOpenMasterLooterDialog", true)
+            and GL.Settings:get("MasterLooting.autoOpenMasterLooterDialog")
         ) then
             self.showedMasterLooterDialog = true;
             self:draw();
@@ -50,7 +53,10 @@ function MasterLooterDialog:_init()
         end
 
         -- Make sure we periodically check whether the master looter's Gargul version is up-to-date
-        self.versionCheckTimer = GL.Ace:ScheduleRepeatingTimer(function ()
+        GL:debug("Schedule new MasterLooterDialog.VersionCheckTimer");
+        self.VersionCheckTimer = GL.Ace:ScheduleRepeatingTimer(function ()
+            GL:debug("Run MasterLooterDialog.VersionCheckTimer");
+
             GL.Version:inspectQuietly();
         end, 60);
 
@@ -58,8 +64,11 @@ function MasterLooterDialog:_init()
     end);
 
     GL.Events:register("MasterLooterLostListener", "GL.USER_LOST_MASTER_LOOTER", function ()
-        if (self.versionCheckTimer) then
-            GL.Ace:CancelTimer(self.versionCheckTimer);
+        if (self.VersionCheckTimer) then
+            GL:debug("Cancel MasterLooterDialog.VersionCheckTimer");
+
+            GL.Ace:CancelTimer(self.VersionCheckTimer);
+            self.VersionCheckTimer = nil;
         end
     end);
 end

@@ -8,7 +8,7 @@ GL.DroppedLoot = {
     ButtonsHooked = {},
     allButtonsHooked = false,
     LootButtonItemLinkCache = {},
-    lootChangedTimer = 0,
+    LootChangedTimer = nil,
     lootWindowIsOpened = false,
 };
 
@@ -49,11 +49,6 @@ function DroppedLoot:_init()
         DroppedLoot.lootWindowIsOpened = false;
 
         GL.Interface.ShortcutKeysLegend:close();
-
-        -- Stop the timer responsible for trigger the GL.LOOT_CHANGED event
-        if (self.lootChangedTimer) then
-            GL.Ace:CancelTimer(self.lootChangedTimer);
-        end
     end);
 
     -- Remove highlight on loot buttons when closing the loot window
@@ -75,7 +70,7 @@ end
 ---
 ---@return void
 function DroppedLoot:lootReady()
-    GL:debug("DroppedLoot:lootOpened");
+    GL:debug("DroppedLoot:lootReady");
 
     self.lootWindowIsOpened = true;
 
@@ -84,11 +79,23 @@ function DroppedLoot:lootReady()
 
     -- Periodically check if the loot changed because the internal WoW events are not
     -- comprehensive enough to detect things like the player moving to the next page of items.
-    self.lootChangedTimer = GL.Ace:ScheduleRepeatingTimer(function ()
-        if (self:lootChanged()) then
-            Events:fire("GL.LOOT_CHANGED");
-        end
-    end, .1);
+    if (not self.LootChangedTimer) then
+        GL:debug("Schedule new DroppedLoot.LootChangedTimer");
+        self.LootChangedTimer = GL.Ace:ScheduleRepeatingTimer(function (a)
+            GL:debug("Run DroppedLoot.LootChangedTimer");
+            if (self:lootChanged()) then
+                Events:fire("GL.LOOT_CHANGED");
+            end
+
+            if (not self.lootWindowIsOpened
+                    and self.LootChangedTimer
+            ) then
+                GL:debug("Cancel DroppedLoot.LootChangedTimer");
+                GL.Ace:CancelTimer(self.LootChangedTimer);
+                self.LootChangedTimer = nil;
+            end
+        end, .1);
+    end
 
     -- Only announce loot in chat if the setting is enabled
     if (GL.User.isMasterLooter

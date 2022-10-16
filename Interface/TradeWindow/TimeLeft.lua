@@ -134,7 +134,10 @@ function TimeLeft:draw()
 
     -- Keep switching the text in the header from how to roll to how to award
     if (not self.HeaderSwitchTimer) then
+        GL:debug("Schedule new TimeLeft.HeaderSwitchTimer");
         self.HeaderSwitchTimer = GL.Ace:ScheduleRepeatingTimer(function ()
+            GL:debug("Run TimeLeft.HeaderSwitchTimer");
+
             if (Title.headerTextType == "howToRoll") then
                 Title:SetText(howToAwardText);
                 Title.headerTextType = "howToAward";
@@ -145,6 +148,8 @@ function TimeLeft:draw()
 
             -- There are no bars shown, stop the timer
             if (not Window:IsVisible()) then
+                GL:debug("Cancel TimeLeft.HeaderSwitchTimer");
+
                 GL.Ace:CancelTimer(self.HeaderSwitchTimer);
                 self.HeaderSwitchTimer = nil;
             end

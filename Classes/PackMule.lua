@@ -22,8 +22,9 @@ GL.PackMule = {
 
     playerIsInHeroicInstance = false,
 
+    LootChangedTimer = nil,
     Rules = {},
-    RoundRobinItems = {};
+    RoundRobinItems = {},
 };
 
 local PackMule = GL.PackMule; ---@type PackMule
@@ -70,9 +71,11 @@ function PackMule:_init()
     end);
 
     GL.Events:register("PackMuleLootLootAnnouncedListener", "GL.LOOT_ANNOUNCED", function ()
-        if (self.timerId) then
-            GL.Ace:CancelTimer(self.timerId);
-            self.timerId = false;
+        if (self.LootChangedTimer) then
+            GL:debug("Cancel PackMule.LootChangedTimer");
+
+            GL.Ace:CancelTimer(self.LootChangedTimer);
+            self.LootChangedTimer = nil;
         end
 
         -- Do nothing if packmule is not enabled or the user holds the shift key
@@ -87,7 +90,10 @@ function PackMule:_init()
         -- Quick loot is enabled for items
         -- There was money in the loot window
         -- The player has another weak aura or addon that distributes specific items
-        self.timerId = GL.Ace:ScheduleRepeatingTimer(function ()
+        GL:debug("Schedule new PackMule.LootChangedTimer");
+        self.LootChangedTimer = GL.Ace:ScheduleRepeatingTimer(function ()
+            GL:debug("Run PackMule.LootChangedTimer");
+
             self:lootReady();
         end, .2);
     end);
@@ -103,8 +109,9 @@ function PackMule:_init()
 
     -- Make sure to auto accept BoP loot when opening containers
     GL.Events:register("PackMuleLootOpenedListener", "LOOT_OPENED", function ()
-        if (not GL.Settings:get("PackMule.autoConfirmSolo")
-            or GL.User.isMasterLooter
+        if (IsShiftKeyDown() -- Shift should disable this
+            or (GL.User.isInGroup and not GL.Settings:get("PackMule.autoConfirmGroup"))
+            or (not GL.User.isInGroup and not GL.Settings:get("PackMule.autoConfirmSolo"))
         ) then
             return;
         end
@@ -118,9 +125,11 @@ function PackMule:_init()
 
     -- Make sure we stop checking the loot window after the player is done looting
     GL.Events:register("PackMuleLootClosedListener", "LOOT_CLOSED", function ()
-        if (self.timerId) then
-            GL.Ace:CancelTimer(self.timerId);
-            self.timerId = false;
+        if (self.LootChangedTimer) then
+            GL:debug("Cancel PackMule.LootChangedTimer");
+
+            GL.Ace:CancelTimer(self.LootChangedTimer);
+            self.LootChangedTimer = nil;
         end
     end);
 end
