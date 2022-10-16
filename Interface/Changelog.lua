@@ -12,6 +12,15 @@ GL.Interface.Changelog = {
 
     History = {
         {
+            version = "4.10.0",
+            date = "October 16th, 2022",
+            Changes = {
+                "When enabled, PackMule will now always stay enabled even after a zone switch/reload",
+                "Only want to announce the seconds left to roll once? Check |c00a79eff/gl|r -> |c00a79effMaster Looting|r",
+                "Accessibility: you can now increase the rolling window's size via |c00a79eff/gl|r -> |c00a79effRolling|r",
+            },
+        },
+        {
             version = "4.9.0",
             date = "October 10th, 2022",
             Changes = {
