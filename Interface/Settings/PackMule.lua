@@ -50,16 +50,6 @@ function PackMule:draw(Parent)
             description = "Auto confirm all loot when group looting, bypassing the 'looting this will bind it to you message'. Use with caution!",
             setting = "PackMule.autoConfirmGroup",
         },
-        {
-            label = "Persist after zone switch",
-            description = "PackMule is disabled by default after you change zones (e.g. you enter/leave an instance). Checking this ensures PackMule stays on instead",
-            setting = "PackMule.persistsAfterZoneChange",
-        },
-        {
-            label = "Persist after reload",
-            description = "PackMule is disabled by default after you reload (e.g. reload UI or restart game). Checking this ensures PackMule stays on instead",
-            setting = "PackMule.persistsAfterReload",
-        },
     };
 
     Overview:drawCheckboxes(Checkboxes, Parent);

@@ -68,8 +68,6 @@ GL.Data.DefaultSettings = {
         autoConfirmGroup = false,
         enabledForGroupLoot = false,
         enabledForMasterLoot = false,
-        persistsAfterReload = false,
-        persistsAfterZoneChange = false,
         Rules = {},
     },
     Rolling = {
