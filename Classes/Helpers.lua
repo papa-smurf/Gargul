@@ -1451,6 +1451,7 @@ function GL:tableGet(Table, keyString, default)
 
     -- Changed if (#keys == 1) then to below, saved this just in case we get weird behavior
     if (numberOfKeys == 1) then
+        default = nil;
         return Table;
     end
 
