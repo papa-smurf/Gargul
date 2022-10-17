@@ -1302,20 +1302,10 @@ function SoftRes:postLink()
         return false;
     end
 
-    if (not GL.User.isInGroup) then
-        GL:warning("You need to be in a group in order to post the link!");
-        return false;
-    end
-
-    local chatChannel = "PARTY";
-    if (GL.User.isInRaid) then
-        chatChannel = "RAID";
-    end
-
     -- Post the link in the chat for all group members to see
     GL:sendChatMessage(
         softResLink,
-        chatChannel
+        "GROUP"
     );
 
     return true;
@@ -1370,11 +1360,6 @@ function SoftRes:postMissingSoftReserves()
         return false;
     end
 
-    if (not GL.User.isInGroup) then
-        GL:warning("You need to be in a group in order to post missing soft-reserves!");
-        return false;
-    end
-
     local PlayerNames = self:playersWithoutSoftReserves();
 
     if (#PlayerNames < 1) then
@@ -1382,15 +1367,10 @@ function SoftRes:postMissingSoftReserves()
         return true;
     end
 
-    local chatChannel = "PARTY";
-    if (GL.User.isInRaid) then
-        chatChannel = "RAID";
-    end
-
     -- Post the link in the chat for all group members to see
     GL:sendChatMessage(
         "Missing soft-reserves from: " .. table.concat(PlayerNames, ", "),
-        chatChannel
+        "GROUP"
     );
 
     return true;
@@ -1409,20 +1389,10 @@ function SoftRes:postDiscordLink()
         return false;
     end
 
-    if (not GL.User.isInGroup) then
-        GL:warning("You need to be in a group in order to post the Discord link!");
-        return false;
-    end
-
-    local chatChannel = "PARTY";
-    if (GL.User.isInRaid) then
-        chatChannel = "RAID";
-    end
-
     -- Post the link in the chat for all group members to see
     GL:sendChatMessage(
         discordLink,
-        chatChannel
+        "GROUP"
     );
 
     return true;

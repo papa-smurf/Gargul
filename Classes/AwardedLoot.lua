@@ -63,7 +63,7 @@ function AwardedLoot:appendAwardedLootToTooltip(Tooltip)
     GL:debug("AwardedLoot:appendAwardedLootToTooltip");
 
     -- No tooltip was provided or the user is not in a party/raid
-    if (type(Tooltip) ~= "table" or not GL.User.isInGroup) then
+    if (type(Tooltip) ~= "table") then
         return;
     end
 
