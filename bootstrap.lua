@@ -163,7 +163,7 @@ end
 -- Hook the bag slot events making it possible to alt(+shift) click
 -- items in bags to either start rolling or auctioning them off
 function GL:hookBagSlotEvents()
-    hooksecurefunc("ContainerFrameItemButton_OnModifiedClick", function(self, mouseButtonPressed)
+    hooksecurefunc("HandleModifiedItemClick", function(itemLink)
         -- The user doesnt want to use shortcut keys when solo
         if (not GL.User.isInGroup
             and GL.Settings:get("ShortcutKeys.onlyInGroup")
@@ -171,14 +171,11 @@ function GL:hookBagSlotEvents()
             return;
         end
 
-        local bag, slot = self:GetParent():GetID(), self:GetID();
-        local itemLink = select(7, GetContainerItemInfo(bag, slot));
-
         if (not itemLink or type(itemLink) ~= "string") then
             return;
         end
 
-        local keyPressIdentifier = GL.Events:getClickCombination(mouseButtonPressed);
+        local keyPressIdentifier = GL.Events:getClickCombination();
 
         -- Open the roll window
         if (keyPressIdentifier == GL.Settings:get("ShortcutKeys.rollOff")) then

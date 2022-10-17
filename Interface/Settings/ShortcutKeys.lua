@@ -20,32 +20,20 @@ function ShortcutKeys:draw(Parent)
         SHIFT_CLICK = "Shift + Click",
         ALT_CLICK = "Alt + Click",
         ALT_SHIFT_CLICK = "Alt + Shift + Click",
-        ALT_RIGHTCLICK = "Alt + Right Click",
-        ALT_SHIFT_RIGHTCLICK = "Alt + Shift + Right Click",
         CTRL_CLICK = "Control + Click",
         CTRL_SHIFT_CLICK = "Control + Shift + Click",
-        CTRL_RIGHTCLICK = "Control + Right Click",
-        CTRL_SHIFT_RIGHTCLICK = "Control + Shift + Right Click",
         CTRL_ALT_CLICK = "Control + Alt + Click",
         CTRL_ALT_SHIFT_CLICK = "Control + Alt + Shift + Click",
-        CTRL_ALT_RIGHTCLICK = "Control + Alt + Right Click",
-        CTRL_ALT_SHIFT_RIGHTCLICK = "Control + Alt + Shift + Right Click",
     };
     local ItemOrder = {
         "DISABLED",
         "SHIFT_CLICK",
         "ALT_CLICK",
         "ALT_SHIFT_CLICK",
-        "ALT_RIGHTCLICK",
-        "ALT_SHIFT_RIGHTCLICK",
         "CTRL_CLICK",
         "CTRL_SHIFT_CLICK",
-        "CTRL_RIGHTCLICK",
-        "CTRL_SHIFT_RIGHTCLICK",
         "CTRL_ALT_CLICK",
         "CTRL_ALT_SHIFT_CLICK",
-        "CTRL_ALT_RIGHTCLICK",
-        "CTRL_ALT_SHIFT_RIGHTCLICK",
     }
 
     local Checkboxes = {

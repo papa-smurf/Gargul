@@ -50,11 +50,11 @@ function Events:getClickCombination(mouseButtonPressed)
         tinsert(ShortcutKeySegments, "SHIFT");
     end
 
-    if (mouseButtonPressed == "LeftButton") then
+    if (not mouseButtonPressed
+        or mouseButtonPressed == "LeftButton"
+    ) then
         tinsert(ShortcutKeySegments, "CLICK");
-    end
-
-    if (mouseButtonPressed == "RightButton") then
+    elseif (mouseButtonPressed == "RightButton") then
         tinsert(ShortcutKeySegments, "RIGHTCLICK");
     end
 

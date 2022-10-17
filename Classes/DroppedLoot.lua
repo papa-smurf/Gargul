@@ -317,7 +317,7 @@ function DroppedLoot:hookClickEvents()
                 break;
             end
 
-            Button:HookScript("OnClick", function(_, mouseButtonPressed)
+            Button:HookScript("OnClick", function()
                 local slot = Button.slot or buttonIndex;
 
                 if (not slot) then
@@ -337,7 +337,7 @@ function DroppedLoot:hookClickEvents()
                     return;
                 end
 
-                local keyPressIdentifier = GL.Events:getClickCombination(mouseButtonPressed);
+                local keyPressIdentifier = GL.Events:getClickCombination();
 
                 -- Open the roll window
                 if (keyPressIdentifier == GL.Settings:get("ShortcutKeys.rollOff")) then
