@@ -1,26 +1,26 @@
---- **LibCandyBarGargul-3.0** provides elegant timerbars with icons for use in addons.
+--- **LibCandyBar-3.0** provides elegant timerbars with icons for use in addons.
 -- It is based of the original ideas of the CandyBar and CandyBar-2.0 library.
--- In contrary to the earlier libraries LibCandyBarGargul-3.0 provides you with a timerbar object with a simple API.
+-- In contrary to the earlier libraries LibCandyBar-3.0 provides you with a timerbar object with a simple API.
 --
 -- Creating a new timerbar using the ':New' function will return a new timerbar object. This timerbar object inherits all of the barPrototype functions listed here. \\
 --
 -- @usage
--- local candy = LibStub("LibCandyBarGargul-3.0")
+-- local candy = LibStub("LibCandyBar-3.0")
 -- local texture = "Interface\\AddOns\\MyAddOn\\statusbar"
 -- local mybar = candy:New(texture, 100, 16)
 -- mybar:SetLabel("Yay!")
 -- mybar:SetDuration(60)
 -- mybar:Start()
 -- @class file
--- @name LibCandyBarGargul-3.0
+-- @name LibCandyBar-3.0
 
 local GetTime, floor, next = GetTime, floor, next
 local CreateFrame, error, setmetatable, UIParent = CreateFrame, error, setmetatable, UIParent
 
-if not LibStub then error("LibCandyBarGargul-3.0 requires LibStub.") end
+if not LibStub then error("LibCandyBar-3.0 requires LibStub.") end
 local cbh = LibStub:GetLibrary("CallbackHandler-1.0")
-if not cbh then error("LibCandyBarGargul-3.0 requires CallbackHandler-1.0") end
-local lib = LibStub:NewLibrary("LibCandyBarGargul-3.0", 99) -- Bump minor on changes
+if not cbh then error("LibCandyBar-3.0 requires CallbackHandler-1.0") end
+local lib = LibStub:NewLibrary("LibCandyBarGargul-3.0", 100) -- Bump minor on changes
 if not lib then return end
 lib.callbacks = lib.callbacks or cbh:New(lib)
 local cb = lib.callbacks
@@ -394,7 +394,7 @@ end
 -- local function barstopped( callback, bar )
 --   print( bar:GetLabel(), "stopped")
 -- end
--- LibStub("LibCandyBarGargul-3.0"):RegisterCallback(myaddonobject, "LibCandyBar_Stop", barstopped)
+-- LibStub("LibCandyBar-3.0"):RegisterCallback(myaddonobject, "LibCandyBar_Stop", barstopped)
 -- @param ... Optional args to pass across in the LibCandyBar_Stop callback.
 function barPrototype:Stop(...)
 	cb:Fire("LibCandyBar_Stop", self, ...)
@@ -412,7 +412,7 @@ end
 -- @param width Width of the bar.
 -- @param height Height of the bar.
 -- @usage
--- mybar = LibStub("LibCandyBarGargul-3.0"):New("Interface\\AddOns\\MyAddOn\\media\\statusbar", 100, 16)
+-- mybar = LibStub("LibCandyBar-3.0"):New("Interface\\AddOns\\MyAddOn\\media\\statusbar", 100, 16)
 function lib:New(texture, width, height)
 	local bar = next(barCache)
 	if not bar then
@@ -434,20 +434,20 @@ function lib:New(texture, width, height)
 		bg:SetAllPoints()
 		bar.candyBarBackground = bg
 
-		local backdrop = CreateFrame("Frame", nil, bar, BackdropTemplateMixin and "BackdropTemplate") -- Used by bar stylers for backdrops
+		local backdrop = CreateFrame("Frame", nil, bar, "BackdropTemplate") -- Used by bar stylers for backdrops
 		backdrop:SetFrameLevel(0)
 		bar.candyBarBackdrop = backdrop
 
-		local iconBackdrop = CreateFrame("Frame", nil, bar, BackdropTemplateMixin and "BackdropTemplate") -- Used by bar stylers for backdrops
+		local iconBackdrop = CreateFrame("Frame", nil, bar, "BackdropTemplate") -- Used by bar stylers for backdrops
 		iconBackdrop:SetFrameLevel(0)
 		bar.candyBarIconFrameBackdrop = iconBackdrop
 
-		local duration = statusbar:CreateFontString(nil, "OVERLAY", GameFontHighlightSmallOutline)
+		local duration = statusbar:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmallOutline")
 		duration:SetPoint("TOPLEFT", statusbar, "TOPLEFT", 2, 0)
 		duration:SetPoint("BOTTOMRIGHT", statusbar, "BOTTOMRIGHT", -2, 0)
 		bar.candyBarDuration = duration
 
-		local label = statusbar:CreateFontString(nil, "OVERLAY", GameFontHighlightSmallOutline)
+		local label = statusbar:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmallOutline")
 		label:SetPoint("TOPLEFT", statusbar, "TOPLEFT", 2, 0)
 		label:SetPoint("BOTTOMRIGHT", statusbar, "BOTTOMRIGHT", -2, 0)
 		bar.candyBarLabel = label
