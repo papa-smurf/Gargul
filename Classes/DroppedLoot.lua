@@ -81,14 +81,14 @@ function DroppedLoot:lootReady()
     -- comprehensive enough to detect things like the player moving to the next page of items.
     if (not self.LootChangedTimer) then
         GL:debug("Schedule new DroppedLoot.LootChangedTimer");
-        self.LootChangedTimer = GL.Ace:ScheduleRepeatingTimer(function (a)
+        self.LootChangedTimer = GL.Ace:ScheduleRepeatingTimer(function ()
             GL:debug("Run DroppedLoot.LootChangedTimer");
             if (self:lootChanged()) then
                 Events:fire("GL.LOOT_CHANGED");
             end
 
             if (not self.lootWindowIsOpened
-                    and self.LootChangedTimer
+                and self.LootChangedTimer
             ) then
                 GL:debug("Cancel DroppedLoot.LootChangedTimer");
                 GL.Ace:CancelTimer(self.LootChangedTimer);

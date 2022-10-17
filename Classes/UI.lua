@@ -1,5 +1,3 @@
----@todo see if we can remove this class entirely at some point
-
 ---@type GL
 local _, GL = ...;
 

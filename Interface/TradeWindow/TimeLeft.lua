@@ -431,9 +431,6 @@ function TimeLeft:refreshBars()
     Window = GL.Interface:getItem(self, "Window");
     Window:SetHeight(0);
 
-    --local Header = GL.Interface:getItem(self, "Frame.Header")
-    --Header:SetText(string.format("%s to roll out loot!", GL.Settings:get("ShortcutKeys.rollOff")));
-
     local ItemsWithTradeTimeRemaining = {};
     local tradeTimeRemainingByLink = {};
     for bag = 0, 4 do
