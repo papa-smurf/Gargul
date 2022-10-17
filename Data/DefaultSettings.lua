@@ -133,7 +133,7 @@ GL.Data.DefaultSettings = {
         RollOff = {
             closeOnStart = false,
             closeOnAward = false,
-            timer = 15,
+            timer = 30,
         },
         PopupDialog = {
             Position = {
