@@ -21,11 +21,8 @@ function LootPriority:_init()
     end
 
     -- Bind the appendLootPrioToTooltip method to the OnTooltipSetItem event
-    GameTooltip:HookScript("OnTooltipSetItem", function(tooltip)
-        self:appendLootPrioToTooltip(tooltip);
-    end);
-    ItemRefTooltip:HookScript("OnTooltipSetItem", function(tooltip)
-        self:appendLootPrioToTooltip(tooltip);
+    GL:onTooltipSetItem(function(Tooltip)
+        self:appendLootPrioToTooltip(Tooltip);
     end);
 
     self._initialized = true;

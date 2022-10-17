@@ -24,11 +24,8 @@ function TMB:_init()
     end
 
     -- Bind the appendTMBItemInfoToTooltip method to the OnTooltipSetItem event
-    GameTooltip:HookScript("OnTooltipSetItem", function(tooltip)
-        self:appendTMBItemInfoToTooltip(tooltip);
-    end);
-    ItemRefTooltip:HookScript("OnTooltipSetItem", function(tooltip)
-        self:appendTMBItemInfoToTooltip(tooltip);
+    GL:onTooltipSetItem(function(Tooltip)
+        self:appendTMBItemInfoToTooltip(Tooltip);
     end);
 
     GL.Events:register("TMBUserJoinedGroupListener", "GL.USER_JOINED_GROUP", function () self:requestData(); end);
