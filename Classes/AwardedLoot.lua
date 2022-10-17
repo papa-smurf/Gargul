@@ -26,8 +26,8 @@ function AwardedLoot:_init()
     end
 
     -- Bind the appendAwardedLootToTooltip method to the OnTooltipSetItem event
-    GameTooltip:HookScript("OnTooltipSetItem", function(tooltip)
-        self:appendAwardedLootToTooltip(tooltip);
+    GL:onTooltipSetItem(function(Tooltip)
+        self:appendAwardedLootToTooltip(Tooltip);
     end);
 
     -- Bind the opening of the trade window to the tradeInitiated method
