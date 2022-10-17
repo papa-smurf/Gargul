@@ -352,7 +352,7 @@ function RollOff:start(CommMessage)
         -- Send a countdown in chat when enabled
         local numberOfSecondsToCountdown = GL.Settings:get("MasterLooting.numberOfSecondsToCountdown", 5);
         if (self:startedByMe() -- Only post a countdown if this user initiated the roll
-            and time > numberOfSecondsToCountdown -- No point in counting down if there's hardly enough time anyways
+            and time - numberOfSecondsToCountdown > 2-- No point in counting down if there's hardly enough time anyways
             and GL.Settings:get("MasterLooting.doCountdown")
         ) then
             local SecondsAnnounced = {};
