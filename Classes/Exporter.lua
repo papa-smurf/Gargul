@@ -172,9 +172,7 @@ function Exporter:refreshExportString()
         GL.Interface:getItem(self, "MultiLineEditBox.Export"):SetText(exportString);
 
     elseif (GL:inTable({Constants.ExportFormats.DFTUS, Constants.ExportFormats.DFTEU}, exportFormat)) then
-        self:transformEntriesToDFTFormat(LootEntries, function (exportString)
-            GL.Interface:getItem(self, "MultiLineEditBox.Export"):SetText(exportString);
-        end);
+        GL.Interface:getItem(self, "MultiLineEditBox.Export"):SetText(self:transformEntriesToDFTFormat(LootEntries));
     end
 end
 
@@ -303,53 +301,34 @@ end
 
 --- Transform the table of entries to the DFT sheet format
 ---
----@return void
-function Exporter:transformEntriesToDFTFormat(Entries, callback)
+---@return string
+function Exporter:transformEntriesToDFTFormat(Entries)
     GL:debug("Exporter:transformEntriesToDFTFormat");
-
-    local ItemIDs = {};
-
-    -- Build a table of all (unique) item IDs of the awarded loot
-    local keyCounter = 1;
-    for _, Entry in pairs(Entries) do
-        ItemIDs[Entry.itemId] = keyCounter;
-        keyCounter = keyCounter + 1;
-    end
 
     -- Get the desired export format
     local exportFormat = GL.Settings:get("ExportingLoot.format", Constants.ExportFormats.TMB);
 
-    -- Flip it so the IDs are the value, not the key
-    ItemIDs = GL:tableFlip(ItemIDs);
-
     -- We need to load all items first to make sure the item names are available
-    GL:onItemLoadDo(ItemIDs, function ()
-        local exportString = "";
-        for _, Entry in pairs(Entries) do
-            local loadedItem = GL.DB.Cache.ItemsById[tostring(Entry.itemId)];
-            local dateString = "";
+    local exportString = "";
+    for _, Entry in pairs(Entries) do
+        local dateString = "";
 
-            -- Check whether the player wants an EU or US date string
-            if (exportFormat == Constants.ExportFormats.DFTEU) then
-                dateString = date('%d/%m/%Y', Entry.timestamp);
-            else
-                dateString = date('%m/%d/%Y', Entry.timestamp);
-            end
-
-            if (not GL:empty(loadedItem)
-                and not GL:empty(loadedItem.name)
-            ) then
-                exportString = string.format("%s%s;[%s];%s\n",
-                    exportString,
-                    dateString,
-                    loadedItem.name,
-                    Entry.awardedTo
-                );
-            end
+        -- Check whether the player wants an EU or US date string
+        if (exportFormat == Constants.ExportFormats.DFTEU) then
+            dateString = date('%d/%m/%Y', Entry.timestamp);
+        else
+            dateString = date('%m/%d/%Y', Entry.timestamp);
         end
 
-        callback(exportString);
-    end);
+        exportString = string.format("%s%s;[%s];%s\n",
+            exportString,
+            dateString,
+            Entry.itemId,
+            Entry.awardedTo
+        );
+    end;
+
+    return exportString;
 end
 
 --- Close the export window
