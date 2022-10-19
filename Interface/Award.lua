@@ -49,12 +49,14 @@ function Award:draw(itemLink)
         return;
     end
 
+    local Spacer;
+
     -- Create a container/parent frame
     local Window = AceGUI:Create("Frame");
     Window:SetTitle("Gargul v" .. GL.version);
     Window:SetLayout("Flow");
     Window:SetWidth(430);
-    Window:SetHeight(290);
+    Window:SetHeight(300);
     Window:EnableResize(false);
     Window.rendered = true;
     Window.frame:SetFrameStrata("HIGH");
@@ -63,6 +65,7 @@ function Award:draw(itemLink)
         self:close();
     end);
     Window:SetPoint(GL.Interface:getPosition("Award"));
+    Window.frame:SetFrameStrata("DIALOG");
 
     GL.Interface:setItem(self, "Window", Window);
 
@@ -108,12 +111,15 @@ function Award:draw(itemLink)
     -- Show a gametooltip if the icon shown belongs to an item
     ItemIcon:SetCallback("OnEnter", function()
         if (not Award.ItemBoxHoldsValidItem) then
+            GameTooltip:SetOwner(ItemIcon.frame, "ANCHOR_TOP");
+            GameTooltip:AddLine("Drag and drop or shift+click an item in the box on the right");
+            GameTooltip:Show();
             return;
         end
 
-        local itemLink = ItemBox:GetText();
+        local tooltipItemLink = ItemBox:GetText();
         GameTooltip:SetOwner(ItemIcon.frame, "ANCHOR_TOP");
-        GameTooltip:SetHyperlink(itemLink);
+        GameTooltip:SetHyperlink(tooltipItemLink);
         GameTooltip:Show();
     end)
 
@@ -121,20 +127,17 @@ function Award:draw(itemLink)
         GameTooltip:Hide();
     end)
 
-    --[[
-        SPACER
-    ]]
-
-    local PreButtonSpacer = AceGUI:Create("SimpleGroup");
-    PreButtonSpacer:SetLayout("Flow");
-    PreButtonSpacer:SetWidth(4);
-    PreButtonSpacer:SetHeight(20);
-    FirstRow:AddChild(PreButtonSpacer);
+    Spacer = AceGUI:Create("SimpleGroup");
+    Spacer:SetLayout("Flow");
+    Spacer:SetWidth(4);
+    Spacer:SetHeight(20);
+    FirstRow:AddChild(Spacer);
 
     --[[
         AWARD BUTTON
     ]]
 
+    local PlayerNameBox;
     local AwardButton = AceGUI:Create("Button");
     AwardButton:SetText("Award");
     AwardButton:SetWidth(70);
@@ -148,7 +151,8 @@ function Award:draw(itemLink)
 
         local award = function ()
             local isOS, addPlusOne = false;
-            local cost = nil;
+            local boostedRollCost = nil;
+            local GDKPPrice = nil;
 
             local OSCheckBox = GL.Interface:getItem(GL.Interface.Dialogs.AwardDialog, "CheckBox.OffSpec");
             if (OSCheckBox) then
@@ -166,15 +170,24 @@ function Award:draw(itemLink)
 
             local BoostedRollCostEditBox = GL.Interface:getItem(GL.Interface.Dialogs.AwardDialog, "EditBox.Cost");
             if (BoostedRollCostEditBox) then
-                cost = GL.BoostedRolls:toPoints(BoostedRollCostEditBox:GetText());
+                boostedRollCost = GL.BoostedRolls:toPoints(BoostedRollCostEditBox:GetText());
 
-                if (cost) then
-                    GL.BoostedRolls:modifyPoints(winner, -cost);
+                if (boostedRollCost) then
+                    GL.BoostedRolls:modifyPoints(winner, -boostedRollCost);
+                end
+            end
+
+            local GDKPPriceEditBox = GL.Interface:getItem(GL.Interface.Dialogs.AwardDialog, "EditBox.GDKPPrice");
+            if (GDKPPriceEditBox) then
+                GDKPPrice = tonumber(GDKPPriceEditBox:GetText());
+
+                if (GL:higherThanZero(GDKPPrice)) then
+                    GL.GDKP:createAuction(GL:getItemIdFromLink(itemLink), GDKPPrice, winner);
                 end
             end
 
             -- Add the player we awarded the item to to the item's tooltip
-            GL.AwardedLoot:addWinner(winner, itemLink, nil, nil, isOS, cost);
+            GL.AwardedLoot:addWinner(winner, itemLink, nil, nil, isOS, boostedRollCost);
             GL.Interface.Award:reset();
 
             if (Settings:get("UI.Award.closeOnAward", true)) then
@@ -184,27 +197,31 @@ function Award:draw(itemLink)
 
         -- No player was selected, check if the ML wants to award this item to a random player
         if (not selected or type(selected) ~= "table") then
-            -- Show a confirmation dialog asking whether we should award this to a random person
-            return GL.Interface.Dialogs.PopupDialog:open({
-                question = string.format("Do you want to award %s to a random player?", itemLink),
-                OnYes = function ()
-                    local GroupMembers = GL.User:groupMembers();
+            winner = PlayerNameBox:GetText();
 
-                    -- Pick a random winner
-                    winner = GL:tableGet(GroupMembers[math.random( #GroupMembers)] or {}, "name", false);
+            if (GL:empty(winner)) then
+                -- Show a confirmation dialog asking whether we should award this to a random person
+                return GL.Interface.Dialogs.PopupDialog:open({
+                    question = string.format("Do you want to award %s to a random player?", itemLink),
+                    OnYes = function ()
+                        local GroupMembers = GL.User:groupMembers();
 
-                    -- We couldn't find any winner (shouldn't be possible, just a safety check)
-                    if (not winner) then
-                        return;
-                    end
+                        -- Pick a random winner
+                        winner = GL:tableGet(GroupMembers[math.random( #GroupMembers)] or {}, "name", false);
 
-                    GL:sendChatMessage(string.format("Random winner for %s selected (%s)", itemLink, winner), "GROUP");
-                    award();
-                end,
-            });
+                        -- We couldn't find any winner (shouldn't be possible, just a safety check)
+                        if (not winner) then
+                            return;
+                        end
+
+                        GL:sendChatMessage(string.format("Random winner for %s selected (%s)", itemLink, winner), "GROUP");
+                        award();
+                    end,
+                });
+            end
+        else
+            winner = selected.cols[1].value;
         end
-
-        winner = selected.cols[1].value;
 
         -- Make sure the initiator has to confirm his choices
         GL.Interface.Dialogs.AwardDialog:open({
@@ -269,14 +286,60 @@ function Award:draw(itemLink)
     GL.Interface:setItem(self, "Disenchant", DisenchantButton);
 
     --[[
-        SECOND ROW (GROUP MEMBERS)
+        SECOND ROW (player name box)
     ]]
 
     local SecondRow = AceGUI:Create("SimpleGroup");
-    SecondRow:SetLayout("FILL");
+    SecondRow:SetLayout("Flow");
     SecondRow:SetFullWidth(true);
-    SecondRow:SetHeight(170);
+    SecondRow:SetHeight(24);
     Window:AddChild(SecondRow);
+
+    Spacer = AceGUI:Create("SimpleGroup");
+    Spacer:SetLayout("Fill");
+    Spacer:SetWidth(4);
+    Spacer:SetHeight(20);
+    SecondRow:AddChild(Spacer);
+
+    local PlayerNameLabel = AceGUI:Create("Label");
+    PlayerNameLabel:SetText("Type player name here");
+    PlayerNameLabel:SetHeight(20);
+    PlayerNameLabel:SetWidth(128); -- Minimum is 122
+    SecondRow:AddChild(PlayerNameLabel);
+
+    PlayerNameBox = AceGUI:Create("EditBox");
+    PlayerNameBox:SetHeight(20);
+    PlayerNameBox:SetWidth(120);
+    PlayerNameBox:SetCallback("OnEnterPressed", function ()
+        -- Remove table selection because we're awarding from the player name field
+        local PlayersTable = GL.Interface:getItem(self, "Table.Players");
+
+        if (PlayersTable) then
+            PlayersTable:ClearSelection();
+        end
+
+        AwardButton:Fire("OnClick");
+    end); -- Award
+    SecondRow:AddChild(PlayerNameBox);
+    GL.Interface:setItem(self, "PlayerName", PlayerNameBox);
+
+    Spacer = AceGUI:Create("SimpleGroup");
+    Spacer:SetLayout("Fill");
+    Spacer:SetWidth(6);
+    Spacer:SetHeight(20);
+    SecondRow:AddChild(Spacer);
+
+    local PlayerNameLabelSuffix = AceGUI:Create("Label");
+    PlayerNameLabelSuffix:SetText("or select one below");
+    PlayerNameLabelSuffix:SetHeight(20);
+    PlayerNameLabelSuffix:SetWidth(104); -- Minimum is 104
+    SecondRow:AddChild(PlayerNameLabelSuffix);
+
+    local ThirdRow = AceGUI:Create("SimpleGroup");
+    ThirdRow:SetLayout("FILL");
+    ThirdRow:SetFullWidth(true);
+    ThirdRow:SetHeight(150);
+    Window:AddChild(ThirdRow);
 
     Award:drawPlayersTable();
 
@@ -284,11 +347,11 @@ function Award:draw(itemLink)
         THIRD ROW (AUTO CLOSE CHECKBOX)
     ]]
 
-    local ThirdRow = AceGUI:Create("SimpleGroup");
-    ThirdRow:SetLayout("Flow");
-    ThirdRow:SetFullWidth(true);
-    ThirdRow:SetHeight(50);
-    Window:AddChild(ThirdRow);
+    local FourthRow = AceGUI:Create("SimpleGroup");
+    FourthRow:SetLayout("Flow");
+    FourthRow:SetFullWidth(true);
+    FourthRow:SetHeight(50);
+    Window:AddChild(FourthRow);
 
     local CloseOnAward = AceGUI:Create("CheckBox");
     CloseOnAward:SetLabel("Close on award");
@@ -297,7 +360,7 @@ function Award:draw(itemLink)
         Settings:set("UI.Award.closeOnAward", widget:GetValue());
     end);
     CloseOnAward:SetWidth(150);
-    ThirdRow:AddChild(CloseOnAward);
+    FourthRow:AddChild(CloseOnAward);
 
     self:draw(itemLink);
 end
@@ -312,11 +375,16 @@ function Award:close()
         return;
     end
 
+    local EditBox = GL.Interface:getItem(self, "EditBox.PlayerName");
+
+    if (EditBox and EditBox.SetText) then
+        EditBox:SetText("");
+    end
+
     GL.Interface:storePosition(Window, "Award");
     Window:Hide();
 end
 
----@param Parent table
 ---@return void
 function Award:drawPlayersTable()
     GL:debug("Award:drawPlayersTable");
@@ -326,7 +394,7 @@ function Award:drawPlayersTable()
     -- Combined width of all colums should be 340
     local columns = {
         {
-            name = "Player",
+            name = "In Group",
             width = 340,
             align = "LEFT",
             color = {
@@ -342,8 +410,29 @@ function Award:drawPlayersTable()
 
     local Table = ScrollingTable:CreateST(columns, 8, 15, nil, Parent);
     Table:EnableSelection(true);
-    Table.frame:SetPoint("BOTTOM", Parent, "BOTTOM", 0, 60);
+    Table.frame:SetPoint("BOTTOM", Parent, "BOTTOM", 0, 46);
     GL.Interface:setItem(self, "Players", Table);
+
+    Table:RegisterEvents({
+        OnClick = function (_, _, data, _, _, realrow)
+            -- Make sure something is actually selected, better safe than lua error
+            if (not GL:higherThanZero(realrow)
+                or type(data) ~= "table"
+                or not data[realrow]
+                or not data[realrow].cols
+                or not data[realrow].cols[1]
+            ) then
+                return;
+            end
+
+            local selectedPlayer = data[realrow].cols[1].value;
+            local EditBox = GL.Interface:getItem(self, "EditBox.PlayerName");
+
+            if (EditBox and EditBox.SetText) then
+                EditBox:SetText(selectedPlayer);
+            end
+        end
+    });
 
     Award:populatePlayersTable();
 end
@@ -457,6 +546,11 @@ function Award:populatePlayersTable(itemID)
 
         if (topPrioForItem == string.lower(GL:stripRealm(name))) then
             PlayersTable:SetSelection(row);
+            local EditBox = GL.Interface:getItem(self, "EditBox.PlayerName");
+
+            if (EditBox and EditBox.SetText) then
+                EditBox:SetText(topPrioForItem);
+            end
         end
 
         row = row + 1;

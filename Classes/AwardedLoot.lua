@@ -264,9 +264,8 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, cost)
         ) then
             local Winner = GL.Player:fromName(winner);
 
-            if (Winner.Guild.name
-                and Winner.Guild.name == GL.User.Guild.name
-            ) then
+            -- Make sure the winner is actually in our guild before we announce him there
+            if (GL:tableGet(Winner, "Guild.name") == GL.User.Guild.name) then
                 GL:sendChatMessage(
                     awardMessage,
                     "GUILD"
