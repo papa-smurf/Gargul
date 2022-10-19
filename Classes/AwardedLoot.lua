@@ -312,7 +312,7 @@ function AwardedLoot:byWinner(winner, after)
             and not GL:empty(AwardEntry.timestamp)
             and not GL:empty(AwardEntry.itemLink)
         ) then
-            tinsert(Entries, AwardEntry.itemLink);
+            tinsert(Entries, AwardEntry);
         end
     end
 
