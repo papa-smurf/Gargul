@@ -910,6 +910,26 @@ function GL:onTooltipSetItem(Callback, includeItemRefTooltip)
     end
 end
 
+--- In some very rare cases we need to manipulate the close button on AceGUI elements
+---
+---@param Widget table
+---
+---@return void|table
+function GL:fetchCloseButtonFromAceGUIWidget(Widget)
+    GL:debug("GL:removeCloseButtonFromAceGUIWidget");
+
+    if (not Widget or not Widget.frame) then
+        return;
+    end
+
+    -- Try to locate the Close button and hide it
+    for _, Child in pairs({Widget.frame:GetChildren()}) do
+        if (Child.GetText and Child:GetText() == "Close") then
+            return Child;
+        end
+    end
+end
+
 --- Some items have items linked to them. Example: t4 tokens have their quest reward counterpart linked to them.
 ---
 ---@param itemId number

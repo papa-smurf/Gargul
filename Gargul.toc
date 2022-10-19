@@ -25,6 +25,7 @@ Classes/Base64.lua
 Classes/UI.lua
 Classes/DB.lua
 Classes/Settings.lua
+Classes/Profiler.lua
 Classes/SoftRes.lua
 Classes/PlusOnes.lua
 Classes/TMB.lua

@@ -41,6 +41,11 @@ function GL:bootstrap(_, _, addonName)
     self:_init();
     self._initialized = true;
 
+    -- Draw the profiler if enabled
+    if (GL.Settings:get("profilerEnabled")) then
+        GL.Profiler:draw();
+    end
+
     -- Add the minimap icon
     self.MinimapButton:_init();
 

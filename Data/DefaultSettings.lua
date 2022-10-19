@@ -5,6 +5,7 @@ local _, GL = ...;
 GL.Data = GL.Data or {};
 
 GL.Data.DefaultSettings = {
+    autoOpenCommandHelp = true,
     changeLog = true,
     debugModeEnabled = false,
     highlightsEnabled = true,
@@ -15,10 +16,9 @@ GL.Data.DefaultSettings = {
     highlightPriolistedItems = true,
     noMessages = false,
     noSounds = false,
-    autoOpenCommandHelp = true,
+    profilerEnabled = false,
     showMinimapButton = true,
     welcomeMessage = true,
-    fixMasterLootWindow = true,
 
     DroppedLoot = {
         announceLootToChat = true,
