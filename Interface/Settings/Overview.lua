@@ -82,11 +82,20 @@ function Overview:draw(section)
     Window:SetHeight(600);
     Window:EnableResize(false);
     Window.statustext:GetParent():Hide(); -- Hide the statustext bar
+    GL.Interface:setItem(self, "Window", Window);
+    Window:SetPoint(GL.Interface:getPosition("Settings"));
+
     Window:SetCallback("OnClose", function()
         self:close();
     end);
-    GL.Interface:setItem(self, "Window", Window);
-    Window:SetPoint(GL.Interface:getPosition("Settings"));
+
+    -- Override the default close button behavior
+    local CloseButton = GL:fetchCloseButtonFromAceGUIWidget(Window);
+    if (CloseButton) then
+        CloseButton:SetScript("OnClick", function ()
+            self:close();
+        end);
+    end
 
     -- Make sure the window can be closed by pressing the escape button
     _G["GARGUL_SETTING_WINDOW"] = Window.frame;
@@ -192,7 +201,11 @@ function Overview:close()
     if (self.activeSection
         and type(GL.Interface.Settings[self.activeSection].onClose) == "function"
     ) then
-        GL.Interface.Settings[self.activeSection]:onClose();
+        local result = GL.Interface.Settings[self.activeSection]:onClose();
+
+        if (result == false) then
+            return;
+        end
     end
 
     self.isVisible = false;
@@ -202,6 +215,7 @@ function Overview:close()
     if (Window) then
         GL.Interface:storePosition(Window, "Settings");
         Window:Hide();
+        PlaySound(799) -- SOUNDKIT.GS_TITLE_OPTION_EXIT
     end
 end
 
@@ -337,7 +351,7 @@ function Overview:showSection(section)
         ScrollFrame:AddChild(HorizontalSpacer);
     end
 
-    SectionClass:draw(ScrollFrame);
+    SectionClass:draw(ScrollFrame, GL.Interface:getItem(self, "Window"));
 
     -- Store the ScrollFrame so that we can clean/release it later
     GL.Interface:setItem(self, "ScrollFrame", ScrollFrame);

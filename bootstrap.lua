@@ -100,6 +100,9 @@ function GL:_init()
         hooksecurefunc(MasterLooterFrame, 'Hide', function(self) self:ClearAllPoints() end);
     end
 
+    -- Add forwards compatibility
+    self:polyFill();
+
     self.Comm:_init();
     self.User:_init();
     self.LootPriority:_init();
@@ -129,9 +132,18 @@ function GL:_init()
             end
         end
     end
+end
 
-    -- Show the changelog window
-    GL.Interface.Changelog:reportChanges();
+--- Adds forwards compatibility
+---
+---@return void
+function GL:polyFill()
+    if (not C_Container) then
+        C_Container = {
+            GetContainerNumSlots = GetContainerNumSlots,
+            GetContainerItemInfo = GetContainerItemInfo,
+        }
+    end
 end
 
 -- Register the gl slash command
