@@ -481,13 +481,16 @@ function Test.PackMule:whoReceivesItem(itemID, lootMethod)
     end, 1);
 end
 
---[[ Show who's eligible to get an item by it's ID (if any)
+--[[ Simulate being in an X-man group
 /script _G.Gargul.Test:simulateGroup(25)
 ]]
 function Test:simulateGroup(numberOfPlayers, includeSelf)
     local Players = {};
     numberOfPlayers = numberOfPlayers or 25;
-    includeSelf = GL:toboolean(includeSelf);
+
+    if (includeSelf == nil) then
+        includeSelf = true;
+    end
 
     if (includeSelf) then
         numberOfPlayers = numberOfPlayers - 1;
