@@ -16,9 +16,10 @@ GL.Interface.Changelog = {
             date = "October 19th, 2022",
             Changes = {
                 "You can now add up to 10 roll buttons with unlimited characters!",
-                "Gargul shortcut keys no longer support the right mouse button",
+                "Gargul shortcut keys no longer support the right mouse button for technical reasons",
                 "Updated the DFT loot export format to now use item IDs instead of names",
                 "You can now exclude offspec items when exporting loot via |c00a79eff/gl export|r -> |c00a79effMaster Looting|r",
+                "Item tooltips now include more details of (recent) winners",
             },
         },
         {

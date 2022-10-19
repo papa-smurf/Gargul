@@ -57,11 +57,11 @@ function Profiler:draw()
 
         -- Use color to indicate the severety of the memory usage
         local color = "92FF00";
-        if (memory >= 5000) then
+        if (memory >= 8000) then
             color = "FFF569";
-        elseif (memory >= 10000) then
+        elseif (memory >= 15000) then
             color = "F7922E";
-        elseif (memory >= 20000) then
+        elseif (memory >= 30000) then
             color = "BE3333";
         end
 
