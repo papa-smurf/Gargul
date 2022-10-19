@@ -50,6 +50,8 @@ end
 ---
 ---@return void
 function Settings:sanitizeSettings()
+    GL:debug("Settings:sanitizeSettings");
+
     self:enforceTemporarySettings();
 end
 
@@ -57,6 +59,8 @@ end
 ---
 ---@return void
 function Settings:enforceTemporarySettings()
+    GL:debug("Settings:enforceTemporarySettings");
+
     -- This is reserved for version-based logic (e.g. cleaning up variables, settings etc.)
 
     -- No point enforcing these temp settings if the user has never used Gargul
@@ -67,20 +71,44 @@ function Settings:enforceTemporarySettings()
         return;
     end
 
-    -- We renamed PackMule.enabled to PackMule.enabledForMasterLoot in 4.8
+    ---@todo: remove >= 31-10-2022
+    --- We renamed PackMule.enabled to PackMule.enabledForMasterLoot in 4.8
     if (type(GL.DB.Settings.PackMule.enabled) == "boolean") then
         GL.DB.Settings.PackMule.enabledForMasterLoot = GL.DB.Settings.PackMule.enabled;
         GL.DB.Settings.PackMule.enabled = nil;
     end
 
+    ---@todo: remove >= 31-10-2022
     --- In an attempt to streamline settings, we used "enabled" for everything
-        if (type(GL.DB.Settings.AwardingLoot.awardMessagesDisabled == "boolean")) then
-            GL.DB.Settings.AwardingLoot.awardMessagesEnabled = not GL.DB.Settings.AwardingLoot.awardMessagesDisabled;
-        end
+    if (type(GL.DB.Settings.AwardingLoot.awardMessagesDisabled == "boolean")) then
+        GL.DB.Settings.AwardingLoot.awardMessagesEnabled = not GL.DB.Settings.AwardingLoot.awardMessagesDisabled;
+    end
 
-        if (type(GL.DB.Settings.highlightsDisabled == "boolean")) then
-            GL.DB.Settings.highlightsEnabled = not GL.DB.Settings.highlightsDisabled;
+    if (type(GL.DB.Settings.highlightsDisabled == "boolean")) then
+        GL.DB.Settings.highlightsEnabled = not GL.DB.Settings.highlightsDisabled;
+    end
+
+    ---@todo: remove >= 07-11-2022
+    --- Right click shortcut keys are no longer supported
+    local headerSent = false;
+    for _, setting in pairs({"award", "disenchant", "rollOff"}) do
+        if (string.find(GL.DB.Settings.ShortcutKeys[setting], "RIGHTCLICK")) then
+            if (not headerSent) then
+                GL:warning("Some Gargul shortcut keys have changed, more info below");
+                headerSent = true;
+            end
+
+            local oldShortcutKey = GL.DB.Settings.ShortcutKeys[setting];
+            local newShortcutKey = GL.DB.Settings.ShortcutKeys[setting]:gsub("RIGHTCLICK", "CLICK");
+            GL.DB.Settings.ShortcutKeys[setting] = newShortcutKey;
+
+            GL:message(string.format("|c00FFF569%s|r was changed from |c00FFF569%s|r to |c00FFF569%s|r",
+                GL:capitalize(setting),
+                oldShortcutKey,
+                newShortcutKey
+            ));
         end
+    end
 end
 
 --- Draw a setting section

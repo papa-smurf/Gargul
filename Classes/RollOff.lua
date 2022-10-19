@@ -71,7 +71,6 @@ function RollOff:announceStart(itemLink, time, note)
         --- Add boosted rolls
         local BoostedRollsIdentifier = string.sub(GL.Settings:get("BoostedRolls.identifier", "BR"), 1, 3);
 
-        ---@todo: Add an additional field to the boosted roll settings for later false-positive detection
         local boostedRollsSettings = { BoostedRollsIdentifier, 1, 1, GL.Settings:get("BoostedRolls.priority", 1) };
         tinsert(SupportedRolls, boostedRollsSettings);
         local boostedRollIndex = #SupportedRolls;
@@ -353,7 +352,7 @@ function RollOff:start(CommMessage)
         -- Send a countdown in chat when enabled
         local numberOfSecondsToCountdown = GL.Settings:get("MasterLooting.numberOfSecondsToCountdown", 5);
         if (self:startedByMe() -- Only post a countdown if this user initiated the roll
-            and time > numberOfSecondsToCountdown -- No point in counting down if there's hardly enough time anyways
+            and time - numberOfSecondsToCountdown > 2-- No point in counting down if there's hardly enough time anyways
             and GL.Settings:get("MasterLooting.doCountdown")
         ) then
             local SecondsAnnounced = {};
@@ -364,14 +363,14 @@ function RollOff:start(CommMessage)
 
                     local secondsLeft = math.ceil(GL.Ace:TimeLeft(self.StopRollOffTimer));
                     if (secondsLeft <= numberOfSecondsToCountdown
-                            and secondsLeft > 0
-                            and not SecondsAnnounced[secondsLeft]
+                        and secondsLeft > 0
+                        and not SecondsAnnounced[secondsLeft]
                     ) then
                         SecondsAnnounced[secondsLeft] = true;
 
                         GL:sendChatMessage(
-                                string.format("%s seconds to roll", secondsLeft),
-                                "GROUP"
+                            string.format("%s seconds to roll", secondsLeft),
+                            "GROUP"
                         );
 
                         if (GL.Settings:get("MasterLooting.announceCountdownOnce")) then
@@ -656,7 +655,6 @@ function RollOff:processRoll(message)
         end)();
 
         --- Check for boosted rolls
-        --- @todo: Take into account pre-announcement
         if (not RollType
             and GL.BoostedRolls:enabled()
             and GL.BoostedRolls:available()

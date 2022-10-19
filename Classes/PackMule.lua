@@ -105,8 +105,10 @@ function PackMule:_init()
 
         -- Auto confirm loot you open (lockbox etc)
         for itemIndex = 1, GetNumLootItems() do
-            LootSlot(itemIndex);
-            ConfirmLootSlot(itemIndex);
+            if (GetLootSlotLink(itemIndex)) then
+                LootSlot(itemIndex);
+                ConfirmLootSlot(itemIndex);
+            end
         end
     end);
 

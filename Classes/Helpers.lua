@@ -853,11 +853,17 @@ end
 ---@param itemID number
 ---@param skipSoulBound boolean
 ---@return table
-function GL:findBagIdAndSlotForItem(itemID, skipSoulBound)
+function GL:findBagIdAndSlotForItem(itemID, skipSoulBound, includeBankBags)
     skipSoulBound = GL:toboolean(skipSoulBound);
+    includeBankBags = GL:toboolean(includeBankBags);
 
-    for bag = 0, 10 do
-        for slot = 1, GetContainerNumSlots(bag) do
+    local numberOfBagsToCheck = 4;
+    if (includeBankBags) then
+        numberOfBagsToCheck = 10;
+    end
+
+    for bag = 0, numberOfBagsToCheck do
+        for slot = 1, C_Container.GetContainerNumSlots(bag) do
             local _, _, locked, _, _, _, _, _, _, bagItemID = GetContainerItemInfo(bag, slot);
 
             if (bagItemID == itemID
@@ -872,6 +878,56 @@ function GL:findBagIdAndSlotForItem(itemID, skipSoulBound)
     end
 
     return {};
+end
+
+--- Dragonflight and future WoW releases no longer support OnTooltipSetItem
+---
+---@param Callback function
+---@return any
+function GL:onTooltipSetItem(Callback, includeItemRefTooltip)
+    GL:debug("GL:onTooltipSetItem");
+
+    if (includeItemRefTooltip == nil) then
+        includeItemRefTooltip = true;
+    end
+
+    includeItemRefTooltip = GL:toboolean(includeItemRefTooltip);
+
+    if (TooltipDataProcessor) then
+        TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Item, function (Tooltip)
+            return Callback(Tooltip);
+        end);
+    else
+        GameTooltip:HookScript("OnTooltipSetItem", function(Tooltip)
+            return Callback(Tooltip);
+        end);
+
+        if (includeItemRefTooltip) then
+            ItemRefTooltip:HookScript("OnTooltipSetItem", function(Tooltip)
+                return Callback(Tooltip);
+            end);
+        end
+    end
+end
+
+--- In some very rare cases we need to manipulate the close button on AceGUI elements
+---
+---@param Widget table
+---
+---@return void|table
+function GL:fetchCloseButtonFromAceGUIWidget(Widget)
+    GL:debug("GL:removeCloseButtonFromAceGUIWidget");
+
+    if (not Widget or not Widget.frame) then
+        return;
+    end
+
+    -- Try to locate the Close button and hide it
+    for _, Child in pairs({Widget.frame:GetChildren()}) do
+        if (Child.GetText and Child:GetText() == "Close") then
+            return Child;
+        end
+    end
 end
 
 --- Some items have items linked to them. Example: t4 tokens have their quest reward counterpart linked to them.

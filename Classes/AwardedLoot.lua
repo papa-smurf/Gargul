@@ -10,8 +10,6 @@ local _, GL = ...;
 ---@class AwardedLoot
 GL.AwardedLoot = {
     _initialized = false,
-
-    AwardedThisSession = {},
 };
 
 local AwardedLoot = GL.AwardedLoot; ---@type AwardedLoot
@@ -26,8 +24,8 @@ function AwardedLoot:_init()
     end
 
     -- Bind the appendAwardedLootToTooltip method to the OnTooltipSetItem event
-    GameTooltip:HookScript("OnTooltipSetItem", function(tooltip)
-        self:appendAwardedLootToTooltip(tooltip);
+    GL:onTooltipSetItem(function(Tooltip)
+        self:appendAwardedLootToTooltip(Tooltip);
     end);
 
     -- Bind the opening of the trade window to the tradeInitiated method
@@ -63,7 +61,7 @@ function AwardedLoot:appendAwardedLootToTooltip(Tooltip)
     GL:debug("AwardedLoot:appendAwardedLootToTooltip");
 
     -- No tooltip was provided or the user is not in a party/raid
-    if (type(Tooltip) ~= "table" or not GL.User.isInGroup) then
+    if (type(Tooltip) ~= "table") then
         return;
     end
 
@@ -74,12 +72,50 @@ function AwardedLoot:appendAwardedLootToTooltip(Tooltip)
         return;
     end
 
-    local awardedTo = table.concat(GL:tableGet(AwardedLoot.AwardedThisSession, itemLink, {}), ", ");
+    local itemID = GL:getItemIdFromLink(itemLink);
 
-    if (not awardedTo
-        or type(awardedTo) ~= "string"
-        or awardedTo == ""
-    ) then
+    -- Loop through our awarded loot table in reverse
+    local fiveHoursAgo = GetServerTime() - 18000;
+    local loadItemsGTE = math.min(fiveHoursAgo, GL.loadedOn);
+    local winnersAvailable = false;
+    local Lines = {};
+    for index = #GL.DB.AwardHistory, 1, -1 do
+        local result = (function ()
+            local Loot = GL.DB.AwardHistory[index];
+
+            -- loadItemsGTE will equal five hours, or however long the players
+            -- current playsession is ongoing (whichever is longest)
+            if (Loot.timestamp < loadItemsGTE) then
+                return false;
+            end
+
+            -- This is not the item we're looking for
+            if (Loot.itemId ~= itemID) then
+                return;
+            end
+
+            local winner = string.lower(GL:stripRealm(Loot.awardedTo));
+            local receivedString = " (received)";
+            if (not Loot.received) then
+                receivedString = " (not received yet)";
+            end
+
+            local line = string.format("|c00%s%s|r%s",
+                GL:classHexColor(GL.Player:classByName(winner, 0), "5f5f5f"),
+                winner,
+                receivedString
+            );
+            tinsert(Lines, line);
+            winnersAvailable = true;
+        end)();
+
+        if (result == false) then
+            break;
+        end
+    end
+
+    -- Nothing to show
+    if (not winnersAvailable) then
         return;
     end
 
@@ -87,7 +123,9 @@ function AwardedLoot:appendAwardedLootToTooltip(Tooltip)
     Tooltip:AddLine(string.format("\n|c00efb8cd%s|r", "Awarded To"));
 
     -- Add the actual award info
-    Tooltip:AddLine(string.format("|c008aecff    %s|r", awardedTo));
+    for _, line in pairs(Lines) do
+        Tooltip:AddLine("    " .. line);
+    end
 end
 
 --- Add a winner for a specific item, on a specific date, to the SessionHistory table
@@ -167,13 +205,6 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, cost)
         announce = true;
     end
 
-    -- Insert the award in the SessionHistory table used for rendering tooltips
-    if (winner ~= GL.Exporter.disenchantedItemIdentifier) then
-        local SessionHistory = GL:tableGet(AwardedLoot.AwardedThisSession, itemLink, {});
-        tinsert(SessionHistory, winner);
-        AwardedLoot.AwardedThisSession[itemLink] = SessionHistory;
-    end
-
     local AwardEntry = {
         checksum = GL:strPadRight(GL:strLimit(GL:stringHash(timestamp .. itemId) .. GL:stringHash(winner .. GL.DB:get("SoftRes.MetaData.id", "")), 20, ""), "0", 20),
         itemLink = itemLink,
@@ -181,7 +212,7 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, cost)
         awardedTo = winner,
         timestamp = timestamp,
         softresID = GL.DB:get("SoftRes.MetaData.id"),
-        received = false,
+        received = string.lower(winner) == string.lower(GL.User.name),
         OS = isOS,
     };
 
@@ -233,9 +264,8 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, cost)
         ) then
             local Winner = GL.Player:fromName(winner);
 
-            if (Winner.Guild.name
-                and Winner.Guild.name == GL.User.Guild.name
-            ) then
+            -- Make sure the winner is actually in our guild before we announce him there
+            if (GL:tableGet(Winner, "Guild.name") == GL.User.Guild.name) then
                 GL:sendChatMessage(
                     awardMessage,
                     "GUILD"
@@ -312,7 +342,7 @@ function AwardedLoot:byWinner(winner, after)
             and not GL:empty(AwardEntry.timestamp)
             and not GL:empty(AwardEntry.itemLink)
         ) then
-            tinsert(Entries, AwardEntry.itemLink);
+            tinsert(Entries, AwardEntry);
         end
     end
 

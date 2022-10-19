@@ -68,22 +68,14 @@ function RollerUI:draw(time, itemLink, itemIcon, note, SupportedRolls, userCanUs
     Texture:SetAllPoints(Window)
     Window.texture = Texture;
 
-    local RollButtonWidthByAmount = {
-        [1] = 80,
-        [2] = 80,
-        [3] = 72,
-        [4] = 64,
-        [5] = 56,
-        [6] = 48,
-        [7] = 40,
-    };
     local RollButtons = {};
     local numberOfButtons = #SupportedRolls;
 
+    local rollerUIWidth = 0;
     for i = 1, numberOfButtons do
         local RollDetails = SupportedRolls[i] or {};
 
-        local identifier = string.sub(RollDetails[1] or "", 1, 3);
+        local identifier = RollDetails[1];
         local min = math.floor(tonumber(RollDetails[2]) or 0);
         local max = math.floor(tonumber(RollDetails[3]) or 0);
 
@@ -94,7 +86,9 @@ function RollerUI:draw(time, itemLink, itemIcon, note, SupportedRolls, userCanUs
 
         -- Roll button
         local Button = CreateFrame("Button", nil, Window, "GameMenuButtonTemplate");
-        Button:SetSize(RollButtonWidthByAmount[numberOfButtons], 20);
+        local buttonWidth = math.max(string.len(identifier) * 12, 70);
+        rollerUIWidth = rollerUIWidth + buttonWidth + 4;
+        Button:SetSize(buttonWidth, 20);
         Button:SetText(identifier);
         Button:SetNormalFontObject("GameFontNormal");
         Button:SetHighlightFontObject("GameFontNormal");
@@ -156,7 +150,10 @@ function RollerUI:draw(time, itemLink, itemIcon, note, SupportedRolls, userCanUs
         self:hide();
     end);
 
-    self:drawCountdownBar(time, itemLink, itemIcon, note, userCanUseItem);
+    rollerUIWidth = math.max(rollerUIWidth + 54, 350);
+    Window:SetWidth(rollerUIWidth);
+
+    self:drawCountdownBar(time, itemLink, itemIcon, note, userCanUseItem, rollerUIWidth);
 
     Window:Show();
 end
@@ -168,7 +165,7 @@ end
 ---@param itemIcon string
 ---@param note string
 ---@return void
-function RollerUI:drawCountdownBar(time, itemLink, itemIcon, note, userCanUseItem)
+function RollerUI:drawCountdownBar(time, itemLink, itemIcon, note, userCanUseItem, width)
     GL:debug("RollerUI:drawCountdownBar");
 
     -- This shouldn't be possible but you never know!
@@ -178,7 +175,7 @@ function RollerUI:drawCountdownBar(time, itemLink, itemIcon, note, userCanUseIte
 
     local TimerBar = LibStub("LibCandyBarGargul-3.0"):New(
         "Interface\\AddOns\\Gargul\\Assets\\Textures\\timer-bar",
-        350,
+        width,
         24
     );
 

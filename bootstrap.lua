@@ -41,6 +41,11 @@ function GL:bootstrap(_, _, addonName)
     self:_init();
     self._initialized = true;
 
+    -- Draw the profiler if enabled
+    if (GL.Settings:get("profilerEnabled")) then
+        GL.Profiler:draw();
+    end
+
     -- Add the minimap icon
     self.MinimapButton:_init();
 
@@ -95,6 +100,9 @@ function GL:_init()
         hooksecurefunc(MasterLooterFrame, 'Hide', function(self) self:ClearAllPoints() end);
     end
 
+    -- Add forwards compatibility
+    self:polyFill();
+
     self.Comm:_init();
     self.User:_init();
     self.LootPriority:_init();
@@ -124,9 +132,18 @@ function GL:_init()
             end
         end
     end
+end
 
-    -- Show the changelog window
-    GL.Interface.Changelog:reportChanges();
+--- Adds forwards compatibility
+---
+---@return void
+function GL:polyFill()
+    if (not C_Container) then
+        C_Container = {
+            GetContainerNumSlots = GetContainerNumSlots,
+            GetContainerItemInfo = GetContainerItemInfo,
+        }
+    end
 end
 
 -- Register the gl slash command
@@ -163,7 +180,7 @@ end
 -- Hook the bag slot events making it possible to alt(+shift) click
 -- items in bags to either start rolling or auctioning them off
 function GL:hookBagSlotEvents()
-    hooksecurefunc("ContainerFrameItemButton_OnModifiedClick", function(self, mouseButtonPressed)
+    hooksecurefunc("HandleModifiedItemClick", function(itemLink)
         -- The user doesnt want to use shortcut keys when solo
         if (not GL.User.isInGroup
             and GL.Settings:get("ShortcutKeys.onlyInGroup")
@@ -171,14 +188,11 @@ function GL:hookBagSlotEvents()
             return;
         end
 
-        local bag, slot = self:GetParent():GetID(), self:GetID();
-        local itemLink = select(7, GetContainerItemInfo(bag, slot));
-
         if (not itemLink or type(itemLink) ~= "string") then
             return;
         end
 
-        local keyPressIdentifier = GL.Events:getClickCombination(mouseButtonPressed);
+        local keyPressIdentifier = GL.Events:getClickCombination();
 
         -- Open the roll window
         if (keyPressIdentifier == GL.Settings:get("ShortcutKeys.rollOff")) then

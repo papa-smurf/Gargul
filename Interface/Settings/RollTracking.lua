@@ -5,12 +5,12 @@ local Overview = GL.Interface.Settings.Overview; ---@type SettingsOverview
 
 ---@class RollTrackingSettings
 GL.Interface.Settings.RollTracking = {
-    description = "Gargul can keep track of incoming rolls. By default, Gargul will only track MS and OS rolls (|c00a79eff/rnd|r or |c00a79eff/rnd 99|r). The fields below allow you to customize this to your liking up to a maximum of 6 roll ranges. The 'Identifier' is the text shown on the buttons (maximum 3 characters), the 'Priority' field determines how rolls will be sorted in the roll tracking window (priority 1 is the top priority). |cffC41E3AMake sure to click the 'Save roll ranges' button when you're done editing the ranges!|r"
+    description = "Gargul can keep track of incoming rolls. By default, Gargul will only track MS and OS rolls (|c00a79eff/rnd|r or |c00a79eff/rnd 99|r). The fields below allow you to customize this to your liking. The 'Identifier' is the text shown on the buttons, the 'Priority' field determines how rolls will be sorted in the roll tracking window (priority 1 is the top priority)"
 };
 local RollTracking = GL.Interface.Settings.RollTracking; ---@type RollTrackingSettings
 
 ---@return void
-function RollTracking:draw(Parent)
+function RollTracking:draw(Parent, Window)
     GL:debug("RollTrackingSettings:draw");
 
     local EditBoxes = {};
@@ -24,19 +24,11 @@ function RollTracking:draw(Parent)
 
     Overview:drawCheckboxes(Checkboxes, Parent);
 
-    local HorizontalSpacer = GL.AceGUI:Create("SimpleGroup");
-    HorizontalSpacer:SetLayout("FILL");
-    HorizontalSpacer:SetFullWidth(true);
-    HorizontalSpacer:SetHeight(15);
-    Parent:AddChild(HorizontalSpacer);
-
-    local StatusMessageLabel = nil;
-    local SaveRollRanges = GL.AceGUI:Create("Button");
-    SaveRollRanges:SetText("Save roll ranges");
-    SaveRollRanges:SetCallback("OnClick", function()
+    local StatusMessageLabel;
+    self.onClose = function()
         local TempNewRollSettings = GL.Settings:get("RollTracking.Brackets");
 
-        for i = 1, 6 do
+        for i = 1, 10 do
             local identifier = strtrim(EditBoxes[i].Identifier:GetText());
             local min = tonumber(strtrim(EditBoxes[i].Min:GetText()));
             local max = tonumber(strtrim(EditBoxes[i].Max:GetText()));
@@ -48,8 +40,10 @@ function RollTracking:draw(Parent)
                     or not max
                     or not priority
                 ) then
-                    StatusMessageLabel:SetText(string.format("Missing data for identifier '%s'", identifier));
-                    return;
+                    local error = string.format("Missing data for identifier '%s'", identifier);
+                    StatusMessageLabel:SetText(error);
+                    GL:error(error);
+                    return false;
                 end
 
                 min = math.floor(min);
@@ -61,12 +55,11 @@ function RollTracking:draw(Parent)
                     or max < min
                     or priority < 1
                 ) then
-                    StatusMessageLabel:SetText(string.format("Invalid data for identifier '%s'. Min must be greater than 0, max must be higher than min and priority must be greater than 0", identifier));
-                    return;
+                    local error = string.format("Invalid data for identifier '%s'. Min must be greater than 0, max must be higher than min and priority must be greater than 0", identifier);
+                    StatusMessageLabel:SetText(error);
+                    GL:error(error);
+                    return false;
                 end
-
-                -- The identifier can hold a maximum of 3 characters
-                identifier = string.sub(identifier, 1, 3);
 
                 TempNewRollSettings[i] = { identifier, min, max, priority};
             else
@@ -86,20 +79,8 @@ function RollTracking:draw(Parent)
         -- Remove error messages (if any), since all data is valid
         StatusMessageLabel:SetText("");
 
-        -- Show a simple sucess message in the chat
-        GL:success("Success!");
-
-        -- Redraw the settings overview to make sure it reflects these changes
-        GL.Settings:close();
-        GL.Settings:draw("RollTracking");
-    end);
-    Parent:AddChild(SaveRollRanges);
-
-    HorizontalSpacer = GL.AceGUI:Create("SimpleGroup");
-    HorizontalSpacer:SetLayout("FILL");
-    HorizontalSpacer:SetFullWidth(true);
-    HorizontalSpacer:SetHeight(6);
-    Parent:AddChild(HorizontalSpacer);
+        return true;
+    end;
 
     -- Status message frame
     local StatusMessageFrame = GL.AceGUI:Create("SimpleGroup");
@@ -108,7 +89,7 @@ function RollTracking:draw(Parent)
     StatusMessageFrame:SetHeight(10);
     Parent:AddChild(StatusMessageFrame);
 
-    HorizontalSpacer = GL.AceGUI:Create("SimpleGroup");
+    local HorizontalSpacer = GL.AceGUI:Create("SimpleGroup");
     HorizontalSpacer:SetLayout("FILL");
     HorizontalSpacer:SetFullWidth(true);
     HorizontalSpacer:SetHeight(12);
@@ -120,7 +101,7 @@ function RollTracking:draw(Parent)
     StatusMessageLabel:SetColor(1, 0, 0);
     StatusMessageFrame:AddChild(StatusMessageLabel);
 
-    for i = 1, 6 do
+    for i = 1, 10 do
         local RollTrackingSettings = GL.Settings:get("RollTracking.Brackets", {})[i] or {};
 
         local identifier = RollTrackingSettings[1] or "";
@@ -131,9 +112,8 @@ function RollTracking:draw(Parent)
         local Identifier = GL.AceGUI:Create("EditBox");
         Identifier:DisableButton(true);
         Identifier:SetHeight(20);
-        Identifier:SetWidth(100);
+        Identifier:SetWidth(190);
         Identifier:SetText(identifier);
-        Identifier:SetMaxLetters(3);
         Parent:AddChild(Identifier);
 
         local Min = GL.AceGUI:Create("EditBox");
@@ -155,7 +135,7 @@ function RollTracking:draw(Parent)
         SortingPriority:SetHeight(20);
         SortingPriority:SetWidth(100);
         SortingPriority:SetText(priority);
-        SortingPriority:SetMaxLetters(1);
+        SortingPriority:SetMaxLetters(2);
         Parent:AddChild(SortingPriority);
 
         EditBoxes[i] = {
@@ -187,7 +167,7 @@ function RollTracking:draw(Parent)
             ));
         end
 
-        if (i < 6) then
+        if (i < 10) then
             HorizontalSpacer = GL.AceGUI:Create("SimpleGroup");
             HorizontalSpacer:SetLayout("FILL");
             HorizontalSpacer:SetFullWidth(true);
@@ -195,6 +175,25 @@ function RollTracking:draw(Parent)
             Parent:AddChild(HorizontalSpacer);
         end
     end
+
+    HorizontalSpacer = GL.AceGUI:Create("SimpleGroup");
+    HorizontalSpacer:SetLayout("FILL");
+    HorizontalSpacer:SetFullWidth(true);
+    HorizontalSpacer:SetHeight(10);
+    Parent:AddChild(HorizontalSpacer);
+
+    local ResetButton = GL.AceGUI:Create("Button");
+    ResetButton:SetText("Undo");
+    ResetButton:SetCallback("OnClick", function()
+        self.onClose = nil;
+        GL.Interface.Settings.Overview:close();
+        GL.Settings:draw("RollTracking");
+        GL.Commands:call("settings");
+    end);
+    Parent:AddChild(ResetButton);
 end
+
+--- Store the button details (will be overwritten by the draw method)
+function RollTracking:onClose() end
 
 GL:debug("Interface/Settings/RollTracking.lua");

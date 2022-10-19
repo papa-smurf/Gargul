@@ -66,7 +66,7 @@ function TimeLeft:draw()
 
     self.isVisible = true;
 
-    local Window = CreateFrame("Frame", "GargulUI_RollerUI_Window", UIParent, Frame);
+    local Window = CreateFrame("Frame", "GARGUL_TIMELEFT_WINDOW", UIParent, Frame);
     self.Window = Window;
 
     Window:Show();
@@ -431,15 +431,12 @@ function TimeLeft:refreshBars()
     Window = GL.Interface:getItem(self, "Window");
     Window:SetHeight(0);
 
-    --local Header = GL.Interface:getItem(self, "Frame.Header")
-    --Header:SetText(string.format("%s to roll out loot!", GL.Settings:get("ShortcutKeys.rollOff")));
-
     local ItemsWithTradeTimeRemaining = {};
     local tradeTimeRemainingByLink = {};
     for bag = 0, 4 do
-        for slot = 1, GetContainerNumSlots(bag) do
+        for slot = 1, C_Container.GetContainerNumSlots(bag) do
             (function ()
-                local icon, _, _, _, _, _, itemLink, _, _ = GetContainerItemInfo(bag, slot);
+                local icon, _, _, _, _, _, itemLink, _, _ = C_Container.GetContainerItemInfo(bag, slot);
 
                 -- There's no eligible item in this bag slot
                 if (not icon or not itemLink) then

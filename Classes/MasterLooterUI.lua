@@ -636,8 +636,12 @@ function MasterLooterUI:drawPlayersTable(parent)
             GameTooltip:AddLine(string.format("Items won by %s:", roller));
             GameTooltip:AddLine(" ");
 
-            for _, itemLink in pairs(ItemsWonByRollerInTheLast8Hours) do
-                GameTooltip:AddLine(itemLink);
+            for _, Entry in pairs(ItemsWonByRollerInTheLast8Hours) do
+                if (Entry.OS) then
+                    GameTooltip:AddLine(Entry.itemLink .. " (OS)");
+                else
+                    GameTooltip:AddLine(Entry.itemLink);
+                end
             end
 
             GameTooltip:Show();
