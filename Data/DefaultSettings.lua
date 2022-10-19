@@ -53,6 +53,7 @@ GL.Data.DefaultSettings = {
     },
     ExportingLoot = {
         includeDisenchantedItems = true,
+        includeOffspecItems = true,
         customFormat = "@ID;@DATE @TIME;@WINNER",
         disenchanterIdentifier = "_disenchanted",
     },

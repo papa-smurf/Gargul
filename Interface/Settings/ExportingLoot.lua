@@ -28,6 +28,16 @@ function ExportingLoot:draw(Parent)
                 end
             end
         },
+        {
+            label = "Include offspec items",
+            setting = "ExportingLoot.includeOffspecItems",
+            callback = function ()
+                -- Refresh the export window if it's open
+                if (GL.Exporter.visible) then
+                    GL.Exporter:refreshExportString();
+                end
+            end
+        },
     };
 
     Overview:drawCheckboxes(Checkboxes, Parent);
