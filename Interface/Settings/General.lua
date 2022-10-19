@@ -96,7 +96,7 @@ function General:draw(Parent)
         },
         {
             label = "Experimental: addon usage",
-            description = "Show add-on memory usage",
+            description = "Show add-on memory usage. Warning: may cause FPS drop!",
             setting = "profilerEnabled",
             callback = function ()
                 if (GL.Settings:get("profilerEnabled")) then
