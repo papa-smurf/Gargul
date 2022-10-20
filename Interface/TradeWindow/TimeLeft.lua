@@ -434,9 +434,9 @@ function TimeLeft:refreshBars()
     local ItemsWithTradeTimeRemaining = {};
     local tradeTimeRemainingByLink = {};
     for bag = 0, 4 do
-        for slot = 1, C_Container.GetContainerNumSlots(bag) do
+        for slot = 1, GetContainerNumSlots(bag) do
             (function ()
-                local icon, _, _, _, _, _, itemLink, _, _ = C_Container.GetContainerItemInfo(bag, slot);
+                local icon, _, _, _, _, _, itemLink, _, _ = GetContainerItemInfo(bag, slot);
 
                 -- There's no eligible item in this bag slot
                 if (not icon or not itemLink) then

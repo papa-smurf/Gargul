@@ -863,7 +863,7 @@ function GL:findBagIdAndSlotForItem(itemID, skipSoulBound, includeBankBags)
     end
 
     for bag = 0, numberOfBagsToCheck do
-        for slot = 1, C_Container.GetContainerNumSlots(bag) do
+        for slot = 1, GetContainerNumSlots(bag) do
             local _, _, locked, _, _, _, _, _, _, bagItemID = GetContainerItemInfo(bag, slot);
 
             if (bagItemID == itemID
