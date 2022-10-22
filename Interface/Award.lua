@@ -429,7 +429,7 @@ function Award:drawPlayersTable()
             local EditBox = GL.Interface:getItem(self, "EditBox.PlayerName");
 
             if (EditBox and EditBox.SetText) then
-                EditBox:SetText(selectedPlayer);
+                EditBox:SetText(GL:capitalize(selectedPlayer));
             end
         end
     });
