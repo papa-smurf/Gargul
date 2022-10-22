@@ -46,11 +46,15 @@ function TimeLeft:_init()
                 return;
             end
 
-            self:refreshBars();
+            GL.Ace:ScheduleTimer(function ()
+                self:refreshBars();
+            end, 2);
         end);
 
-        self:refreshBars();
-    end, 3);
+        GL.Ace:ScheduleTimer(function ()
+            self:refreshBars();
+        end, 2);
+    end, 2);
 
     self._initialized = true;
 end
