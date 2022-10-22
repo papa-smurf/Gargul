@@ -32,7 +32,7 @@ function ReminderToAssignLootUsingGargul:draw()
     end);
     Window.frame:SetScript("OnMouseDown", function(_, button)
         if (button == "RightButton") then
-            GL.Settings:set("TMB.showLootAssignmentReminder", false);
+            GL.Settings:set("ExportingLoot.showLootAssignmentReminder", false);
             self:close();
         end
     end);
