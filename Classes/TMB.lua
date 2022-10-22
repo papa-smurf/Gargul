@@ -321,11 +321,11 @@ function TMB:appendTMBItemInfoToTooltip(tooltip)
         local isOffSpec = string.find(Entry.character, "%(OS%)");
         local prioOffset = 0;
         local sortingOrder = prio;
-        local color = GL:classHexColor(GL.Player:classByName(playerName));
+        local color = GL:classHexColor(GL.Player:classByName(playerName:gsub("%(os%)", "")));
 
         -- We add 100 to the prio (first key) of the object
         -- This object is used for sorting later and is not visible to the player
-        if (isOffSpec) then
+        if (isOffSpec and GL.Settings:get("TMB.OSHasLowerPriority")) then
             prioOffset = 100;
         end
 
