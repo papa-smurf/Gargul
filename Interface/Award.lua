@@ -448,7 +448,7 @@ function Award:topPrioForItem(itemID)
     if (GL.SoftRes:available()) then
         local lastPlayerName = false;
         local moreThanOnePersonReservedThisItem = false;
-        for _, playerName in pairs(GL.SoftRes:byItemId(itemID)) do
+        for _, playerName in pairs(GL.SoftRes:byItemId(itemID, true)) do
             if (not lastPlayerName) then
                 lastPlayerName = playerName;
             end
@@ -466,7 +466,7 @@ function Award:topPrioForItem(itemID)
 
     local PrioListEntries = {};
     local WishListEntries = {};
-    for _, Entry in pairs(GL.TMB:byItemId(itemID)) do
+    for _, Entry in pairs(GL.TMB:byItemId(itemID, true)) do
         -- Priolist entry
         if (Entry.type == 1) then
             tinsert(PrioListEntries, Entry);
@@ -496,10 +496,16 @@ function Award:topPrioForItem(itemID)
         return PrioListEntries[1].character;
     end
 
+    -- Return a sanitized name variant to ensure proper name matching
+    local sanitizePlayerName = function(name)
+        name = string.lower(GL:stripRealm(name));
+        return name:gsub("%(os%)", "");
+    end;
+
     -- There are wish list entries available, use them
     if (not GL:empty(WishListEntries)) then
         if (GL:count(WishListEntries) == 1) then
-            return WishListEntries[1].character;
+            return sanitizePlayerName(WishListEntries[1].character);
         end
 
         -- Sort the WishListEntries based on prio (lowest to highest)
@@ -512,7 +518,7 @@ function Award:topPrioForItem(itemID)
             return;
         end
 
-        return WishListEntries[1].character;
+        return sanitizePlayerName(WishListEntries[1].character);
     end
 end
 
@@ -549,7 +555,7 @@ function Award:populatePlayersTable(itemID)
             local EditBox = GL.Interface:getItem(self, "EditBox.PlayerName");
 
             if (EditBox and EditBox.SetText) then
-                EditBox:SetText(topPrioForItem);
+                EditBox:SetText(GL:capitalize(topPrioForItem));
             end
         end
 
