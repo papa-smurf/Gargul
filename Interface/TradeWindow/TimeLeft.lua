@@ -46,15 +46,11 @@ function TimeLeft:_init()
                 return;
             end
 
-            GL.Ace:ScheduleTimer(function ()
-                self:refreshBars();
-            end, 2);
+            self:refreshBars();
         end);
 
-        GL.Ace:ScheduleTimer(function ()
-            self:refreshBars();
-        end, 2);
-    end, 2);
+        self:refreshBars();
+    end, 3);
 
     self._initialized = true;
 end
@@ -219,6 +215,8 @@ end
 ---
 ---@return void
 function TimeLeft:createHotkeyExplanationWindow()
+    GL:debug("TimeLeft:createHotkeyExplanationWindow");
+
     local HotKeyExplanation = GL.AceGUI:Create("InlineGroup");
     self.HotKeyExplanation = HotKeyExplanation;
 
@@ -243,6 +241,8 @@ end
 ---
 ---@return void
 function TimeLeft:createBroadcastWindow()
+    GL:debug("TimeLeft:createBroadcastWindow");
+
     local BroadCast = GL.AceGUI:Create("InlineGroup");
     self.BroadCast = BroadCast;
 
@@ -324,6 +324,8 @@ function TimeLeft:createBroadcastWindow()
 end
 
 function TimeLeft:toggleBroadcastWindow()
+    GL:debug("TimeLeft:toggleBroadcastWindow");
+
     if (self.broadcastIsVisible) then
         self:hideBroadcastWindow();
     else
@@ -332,6 +334,8 @@ function TimeLeft:toggleBroadcastWindow()
 end
 
 function TimeLeft:showBroadcastWindow()
+    GL:debug("TimeLeft:showBroadcastWindow");
+
     self.broadcastIsVisible = true;
     self.BroadCast.frame:ClearAllPoints();
 
@@ -345,6 +349,8 @@ function TimeLeft:showBroadcastWindow()
 end
 
 function TimeLeft:hideBroadcastWindow()
+    GL:debug("TimeLeft:hideBroadcastWindow");
+
     self.broadcastIsVisible = false;
     self.BroadCast.frame:SetAlpha(0);
 end
@@ -353,6 +359,8 @@ end
 ---
 ---@return void
 function TimeLeft:positionExplanationWindow()
+    GL:debug("TimeLeft:positionExplanationWindow");
+
     -- Position the explanation to the right of the trade timers since there's more space there
     if (GL:inTable({"LEFT", "BOTTOMLEFT", "TOPLEFT"}, select(1, self.Window:GetPoint()))) then
         self.HotKeyExplanation.frame:ClearAllPoints();
@@ -369,6 +377,8 @@ end;
 ---
 ---@return void
 function TimeLeft:hideExplanationWindow()
+    GL:debug("TimeLeft:hideExplanationWindow");
+
     self.HotKeyExplanation.frame:SetAlpha(0);
 end
 
@@ -376,6 +386,8 @@ end
 ---
 ---@return void
 function TimeLeft:showExplanationWindow()
+    GL:debug("TimeLeft:showExplanationWindow");
+
     if (self.dragging
         or self.broadcastIsVisible
         or (GL.User.isInGroup and not (GL.User.hasAssist or GL.User.isMasterLooter))
@@ -480,7 +492,7 @@ function TimeLeft:refreshBars()
     local numberOfItemsAvailable = #ItemsWithTradeTimeRemaining;
 
     -- We're already showing timer expiration bars, see if something changed in the meantime
-    if (not GL:empty(self.Bars)) then
+    if (not GL:empty(self.Bars) and not GL.Interface.Settings.LootTradeTimers.testEnabled) then
         -- The number of bars don't match so we're definitely missing some
         if (GL:count(self.Bars) ~= math.max(numberOfItemsAvailable, 5)) then
             barsDiffer = true;
@@ -623,7 +635,7 @@ end
 ---
 ---@return void
 function TimeLeft:stopAllBars()
-    GL:debug("TimeLeft:barStopped");
+    GL:debug("TimeLeft:stopAllBars");
 
     for _, Bar in pairs(self.Bars) do
         Bar:Stop();
@@ -662,4 +674,4 @@ function TimeLeft:close()
     self.isVisible = false;
 end
 
-GL:debug("Interfaces/TMB/Overview.lua");
+GL:debug("Interfaces/TradeWindow/TimeLeft.lua");
