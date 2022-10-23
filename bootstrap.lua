@@ -100,6 +100,9 @@ function GL:_init()
         hooksecurefunc(MasterLooterFrame, 'Hide', function(self) self:ClearAllPoints() end);
     end
 
+    -- Add forwards compatibility
+    self:polyFill();
+
     self.Comm:_init();
     self.User:_init();
     self.LootPriority:_init();
