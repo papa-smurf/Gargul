@@ -82,7 +82,10 @@ GL.Data.Constants = {
     },
 
     ItemsThatSouldntBeAnnounced = {
+        20725, -- Nexus Crystal
+        22450, -- Void Crystal
         29434, -- Badge of Justice
+        34057, -- Abyss Crystal
 
         -- Temporary Kael'Thas weapons
         30318, -- Netherstrand Longbow
