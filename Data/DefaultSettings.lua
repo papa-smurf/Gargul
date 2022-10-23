@@ -56,6 +56,7 @@ GL.Data.DefaultSettings = {
         includeOffspecItems = true,
         customFormat = "@ID;@DATE @TIME;@WINNER",
         disenchanterIdentifier = "_disenchanted",
+        showLootAssignmentReminder = true,
     },
     LootTradeTimers = {
         enabled = true,
@@ -113,9 +114,9 @@ GL.Data.DefaultSettings = {
         includeWishListInfoInLootAnnouncement = true,
         maximumNumberOfTooltipEntries = 35,
         maximumNumberOfAnnouncementEntries = 5,
+        OSHasLowerPriority = true,
         showEntriesWhenSolo = true,
         showItemInfoOnTooltips = true,
-        showLootAssignmentReminder = true,
         showPrioListInfoOnTooltips = true,
         showWishListInfoOnTooltips = true,
     },

@@ -38,6 +38,11 @@ function ExportingLoot:draw(Parent)
                 end
             end
         },
+        {
+            label = "Show award reminder",
+            description = "When assigning loot without using Gargul a reminder is shown to use Gargul instead in order to make exporting loot possible",
+            setting = "ExportingLoot.showLootAssignmentReminder",
+        },
     };
 
     Overview:drawCheckboxes(Checkboxes, Parent);

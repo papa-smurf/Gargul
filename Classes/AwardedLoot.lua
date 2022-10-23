@@ -102,7 +102,7 @@ function AwardedLoot:appendAwardedLootToTooltip(Tooltip)
 
             local line = string.format("|c00%s%s|r%s",
                 GL:classHexColor(GL.Player:classByName(winner, 0), "5f5f5f"),
-                winner,
+                GL:capitalize(winner),
                 receivedString
             );
             tinsert(Lines, line);

@@ -129,6 +129,33 @@ function GL:_init()
             end
         end
     end
+
+    -- Show the changelog window
+    GL.Interface.Changelog:reportChanges();
+end
+
+--- Adds forwards compatibility
+---
+---@return void
+function GL:polyFill()
+    if (_G.GetContainerItemInfo ~= nil or not C_Container.GetContainerItemInfo) then
+        return;
+    end
+
+    -- The GetContainerNumSlots has the same return type in both classic and DF
+    _G.GetContainerNumSlots = C_Container.GetContainerNumSlots;
+
+    -- DF returns a single table instead of single values, polyFill time!
+    _G.GetContainerItemInfo = function (bagID, slot)
+        local result = C_Container.GetContainerItemInfo(bagID, slot);
+
+        if (not result) then
+            return nil;
+        end
+
+        return result.iconFileID, result.stackCount, result.isLocked, result.quality, result.isReadable,
+            result.hasLoot, result.hyperlink, result.isFiltered, result.hasNoValue, result.itemID, result.isBound;
+    end
 end
 
 -- Register the gl slash command
