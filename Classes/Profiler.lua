@@ -16,6 +16,14 @@ local Profiler = GL.Profiler; ---@type Profiler
 ---
 ---@return void
 function Profiler:draw()
+    GL:debug("Profiler:draw");
+
+    if (self.isVisible) then
+        return;
+    end
+
+    self.isVisible = true;
+
     local Window = GL.AceGUI:Create("Frame");
     Window:SetTitle("Gargul v" .. GL.version);
     Window:SetLayout("Flow");
@@ -83,6 +91,8 @@ end
 ---
 ---@return string
 function Profiler:humanReadableNumber(number)
+    GL:debug("Profiler:humanReadableNumber");
+
     local pattern = "%.1f";
     local numberString = string.format(pattern, number);
 
@@ -100,6 +110,8 @@ end
 ---
 ---@return void
 function Profiler:close()
+    GL:debug("Profiler:close");
+
     if (not self.isVisible) then
         return;
     end
@@ -107,12 +119,15 @@ function Profiler:close()
     GL.Ace:CancelTimer(self.RefreshTimer);
     self:storePosition();
     self.Window:Hide();
+    self.isVisible = false;
 end
 
 --- Store the profiler's position so it persists between playsessions
 ---
 ---@return void
 function Profiler:storePosition()
+    GL:debug("Profiler:storePosition");
+
     GL.Interface:storePosition(self.Window, "Profiler");
 end
 
