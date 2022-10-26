@@ -10,8 +10,9 @@ GL:tableSet(GL, "Interface.TradeWindow.TimeLeft", {
     dragging = false,
     refreshing = false,
     Bars = {},
-    HotKeyExplanation = nil,
     Broadcast = nil,
+    HotKeyExplanation = nil,
+    Window = nil,
 });
 
 ---@class TradeWindowTimeLeft
@@ -78,6 +79,7 @@ function TimeLeft:draw()
     Window:SetClampedToScreen(true);
     Window:SetFrameStrata("HIGH");
     Window:RegisterForDrag("LeftButton");
+    Window:SetScale(GL.Settings:get("LootTradeTimers.scale", 1));
 
     Window:SetScript("OnDragStart", function ()
         self.dragging = true;
@@ -97,12 +99,6 @@ function TimeLeft:draw()
         GL.Interface:storePosition(Window, "TimeLeft");
 
         self:positionExplanationWindow();
-    end);
-    Window:SetScript("OnMouseDown", function (_, button)
-        -- Close the roll window on right-click
-        if (button == "RightButton") then
-            self:close();
-        end
     end);
 
     self:createHotkeyExplanationWindow();

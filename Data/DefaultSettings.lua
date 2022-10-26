@@ -61,6 +61,7 @@ GL.Data.DefaultSettings = {
     LootTradeTimers = {
         enabled = true,
         maximumNumberOfBars = 5,
+        scale = 1,
         showHotkeyReminder = true,
         showOnlyWhenMasterLooting = true,
     },
