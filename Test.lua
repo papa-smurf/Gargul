@@ -484,7 +484,7 @@ end
 --[[ Simulate being in an X-man group
 /script _G.Gargul.Test:simulateGroup(25)
 ]]
-function Test:simulateGroup(numberOfPlayers, includeSelf)
+function Test:simulateGroup(numberOfPlayers, includeSelf, includeCurrentGroupMembers)
     local Players = {};
     numberOfPlayers = numberOfPlayers or 25;
 
@@ -492,7 +492,11 @@ function Test:simulateGroup(numberOfPlayers, includeSelf)
         includeSelf = true;
     end
 
-    if (includeSelf) then
+    if (includeCurrentGroupMembers == nil) then
+        includeCurrentGroupMembers = true;
+    end
+
+    if (includeSelf and not includeCurrentGroupMembers) then
         numberOfPlayers = numberOfPlayers - 1;
         tinsert(Players, {
             name = GL.User.name,
@@ -510,6 +514,10 @@ function Test:simulateGroup(numberOfPlayers, includeSelf)
             hasAssist = false,
             index = 1,
         });
+    end
+
+    if (includeCurrentGroupMembers) then
+        Players = GL.User:GroupMembers();
     end
 
     local Names = GL:cloneTable(self.Names);
