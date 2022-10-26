@@ -223,8 +223,13 @@ function AwardHistory:draw(AnchorTo)
 
                 local ActionButtonFrame = GL.AceGUI:Create("SimpleGroup");
                 ActionButtonFrame:SetLayout("FILL");
-                ActionButtonFrame:SetWidth(50);
-                ActionButtonFrame:SetWidth(WindowWidth - 30 - itemLinkLabelWidth - 100 - 50 - 16);
+
+                local elvUIStupendousScalingCrapModifier = 0;
+                if (GL.elvUILoaded) then
+                    elvUIStupendousScalingCrapModifier = 10;
+                end
+
+                ActionButtonFrame:SetWidth(WindowWidth - 30 - itemLinkLabelWidth - 100 - 50 - 16 - elvUIStupendousScalingCrapModifier);
                 ActionButtonFrame:SetHeight(30);
                 ItemRow:AddChild(ActionButtonFrame);
 

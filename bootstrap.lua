@@ -7,6 +7,7 @@ GL.name = appName;
 GL._initialized = false;
 GL.clientUIinterface = 0;
 GL.clientVersion = 0;
+GL.elvUILoaded = false;
 GL.firstBoot = false; -- Indicates whether the user is new to Gargul
 GL.isEra = false;
 GL.isRetail = false;
@@ -51,6 +52,10 @@ function GL:bootstrap(_, _, addonName)
 
     -- Mark the add-on as fully loaded
     GL.loadedOn = GetServerTime();
+
+    GL.Ace:ScheduleTimer(function()
+        self.elvUILoaded = GetAddOnMemoryUsage("ElvUI") > 0;
+    end, 1);
 end
 
 --- Callback to be fired when the addon is completely loaded
