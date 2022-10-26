@@ -105,7 +105,6 @@ function GL:_init()
 
     self.Comm:_init();
     self.User:_init();
-    self.LootPriority:_init();
     self.AwardedLoot:_init();
     self.SoftRes:_init();
     self.TMB:_init();
@@ -119,6 +118,9 @@ function GL:_init()
 
     -- Hook the bagslot events
     self:hookBagSlotEvents();
+
+    -- Hook item tooltip events
+    self:hookTooltipSetItemEvents();
 
     -- Make sure to initialize the user last
     self.User:refresh();
@@ -171,7 +173,8 @@ GL.Ace:RegisterChatCommand("gargul", function (...)
     GL.Commands:_dispatch(...);
 end);
 
---- Announce conflicting addons if any
+--- Announce conflicting addons, if any
+---
 ---@return void
 function GL:announceConflictingAddons()
     local ConflictingAddons = {};
@@ -192,8 +195,9 @@ function GL:announceConflictingAddons()
     ));
 end
 
--- Hook the bag slot events making it possible to alt(+shift) click
--- items in bags to either start rolling or auctioning them off
+--- Hook into the HandleModifiedItemClick event to allow for Gargul's many hotkeys
+---
+---@return void
 function GL:hookBagSlotEvents()
     hooksecurefunc("HandleModifiedItemClick", function(itemLink)
         -- The user doesnt want to use shortcut keys when solo
@@ -221,13 +225,76 @@ function GL:hookBagSlotEvents()
             keyPressRecognized = true;
         end
 
-        -- Prevent the stack split window from popping up
+        -- Close the stack split window immediately after opening
         if (keyPressRecognized and IsShiftKeyDown()) then
             GL.Ace:ScheduleTimer(function ()
                 if (_G.StackSplitFrame) then
                     _G.StackSplitFrame:Hide();
                 end
             end, .05);
+        end
+    end);
+end
+
+--- We hook all the tooltip data (tmb/softres etc) to a single event to make caching easier
+---
+---@return void
+function GL:hookTooltipSetItemEvents()
+    -- Bind the appendAwardedLootToTooltip method to the OnTooltipSetItem event
+    GL:onTooltipSetItem(function(Tooltip)
+        -- No valid item tooltip was provided
+        if (not Tooltip
+            or not Tooltip.GetItem
+        ) then
+            return false;
+        end
+
+        local _, itemLink = Tooltip:GetItem();
+
+        -- We couldn't find an itemLink (this can actually happen!)
+        if (GL:empty(itemLink)) then
+            return;
+        end
+
+        local Lines = {};
+        local clientTime = GetTime();
+
+        if (self.lastTooltipTime
+            and self.lastTooltipItemLink == itemLink
+            and self.lastTooltipTime >= clientTime - .4
+        ) then
+            -- Use cached data
+            Lines = self.LastTooltipLines;
+        else
+            for _, line in pairs(GL.AwardedLoot:tooltipLines(itemLink)) do
+                tinsert(Lines, line);
+            end
+
+            for _, line in pairs(GL.SoftRes:tooltipLines(itemLink)) do
+                tinsert(Lines, line);
+            end
+
+            for _, line in pairs(GL.TMB:tooltipLines(itemLink)) do
+                tinsert(Lines, line);
+            end
+
+            for _, line in pairs(GL.LootPriority:tooltipLines(itemLink)) do
+                tinsert(Lines, line);
+            end
+        end
+
+        self.lastTooltipItemLink = itemLink;
+        self.lastTooltipTime = clientTime;
+        self.LastTooltipLines = Lines;
+
+        local linesAdded = false;
+        for _, line in pairs(Lines or {}) do
+            Tooltip:AddLine(line);
+            linesAdded = true;
+        end
+
+        if (linesAdded) then
+            Tooltip:AddLine(" ");
         end
     end);
 end

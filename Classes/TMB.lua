@@ -7,6 +7,9 @@ GL.AceGUI = GL.AceGUI or LibStub("AceGUI-3.0");
 GL.TMB = {
     _initialized = false,
     broadcastInProgress = false,
+    lastTooltipData = nil,
+    lastTooltipItemLink = nil,
+    lastTooltipTime = nil,
     requestingData = false,
 };
 local TMB = GL.TMB; ---@type TMB
@@ -22,11 +25,6 @@ function TMB:_init()
     if (self._initialized) then
         return false;
     end
-
-    -- Bind the appendTMBItemInfoToTooltip method to the OnTooltipSetItem event
-    GL:onTooltipSetItem(function(Tooltip)
-        self:appendTMBItemInfoToTooltip(Tooltip);
-    end);
 
     GL.Events:register("TMBUserJoinedGroupListener", "GL.USER_JOINED_GROUP", function () self:requestData(); end);
 
@@ -230,15 +228,10 @@ end
 
 --- Append the TMB info as defined in GL.DB.TMB.Items to an item's tooltip
 ---
----@param tooltip GameTooltip
+---@param itemLink string
 ---@return void
-function TMB:appendTMBItemInfoToTooltip(tooltip)
+function TMB:tooltipLines(itemLink)
     GL:debug("TMB:appendTMBItemInfoToTooltip");
-
-    -- No tooltip was provided
-    if (not tooltip) then
-        return;
-    end
 
     -- If we're not in a group there's no point in showing anything! (unless the non-raider setting is active)
     if ((not GL.User.isInGroup and GL.Settings:get("TMB.hideInfoOfPeopleNotInGroup"))
@@ -247,13 +240,7 @@ function TMB:appendTMBItemInfoToTooltip(tooltip)
         return;
     end
 
-    local _, itemLink = tooltip:GetItem();
-
-    -- We couldn't find an itemLink (this can actually happen!)
-    if (GL:empty(itemLink)) then
-        return;
-    end
-
+    local Lines = {};
     local TMBTier = self:tierByItemLink(itemLink);
     local TMBNote = self:noteByItemLink(itemLink);
     local TMBInfo = self:byItemLink(itemLink);
@@ -271,7 +258,7 @@ function TMB:appendTMBItemInfoToTooltip(tooltip)
             );
 
             -- Add the header
-            tooltip:AddLine(string.format(
+            tinsert(Lines, string.format(
                 "\n|cFF%sTMB:|r",
                 GL.Data.Constants.addonHexColor,
                 "TMB"
@@ -279,7 +266,7 @@ function TMB:appendTMBItemInfoToTooltip(tooltip)
             TMBHeaderAdded = true;
 
             -- Add the tier string
-            tooltip:AddLine(string.format(
+            tinsert(Lines, string.format(
                 "|cFFFFFFFF    Tier:|r %s",
                 tierString
             ));
@@ -289,7 +276,7 @@ function TMB:appendTMBItemInfoToTooltip(tooltip)
         if (not GL:empty(TMBNote)) then
             if (not TMBHeaderAdded) then
                 -- Add the header
-                tooltip:AddLine(string.format(
+                tinsert(Lines, string.format(
                     "\n|cFF%sTMB:|r",
                     GL.Data.Constants.addonHexColor,
                     "TMB"
@@ -297,7 +284,7 @@ function TMB:appendTMBItemInfoToTooltip(tooltip)
             end
 
             -- Add the note
-            tooltip:AddLine(string.format(
+            tinsert(Lines, string.format(
                 "|cFFFFFFFF    Note:|r |cFFFFF569%s|r",
                 TMBNote
             ));
@@ -306,7 +293,7 @@ function TMB:appendTMBItemInfoToTooltip(tooltip)
 
     -- No wishes defined for this item
     if (GL:empty(TMBInfo)) then
-        return;
+        return {};
     end
 
     local WishListEntries = {};
@@ -361,7 +348,7 @@ function TMB:appendTMBItemInfoToTooltip(tooltip)
         elseif (self:wasImportedFromCSV()) then
             source = "Item";
         end
-        tooltip:AddLine(string.format("\n|cFFff7a0a%s|r", source .. " Prio List"));
+        tinsert(Lines, string.format("\n|cFFff7a0a%s|r", source .. " Prio List"));
 
         -- Sort the PrioListEntries based on prio (lowest to highest)
         table.sort(PrioListEntries, function (a, b)
@@ -373,7 +360,7 @@ function TMB:appendTMBItemInfoToTooltip(tooltip)
         for _, Entry in pairs(PrioListEntries) do
             entriesAdded = entriesAdded + 1;
 
-            tooltip:AddLine(string.format(
+            tinsert(Lines, string.format(
                 "|cFF%s%s|r",
                 GL:classHexColor(GL.Player:classByName(Entry[2])),
                 GL:capitalize(Entry[2]):gsub("%(os%)", " (OS)")
@@ -390,7 +377,7 @@ function TMB:appendTMBItemInfoToTooltip(tooltip)
     if (GL.Settings:get("TMB.hideWishListInfoIfPriorityIsPresent") and itemIsOnSomeonesPriolist)
         and (GL.User.isInGroup or not GL.Settings:get("TMB.showEntriesWhenSolo"))
     then
-        return;
+        return Lines;
     end
 
     -- Only add the 'Wish List' header if the item is actually on someone's wishlist
@@ -400,7 +387,7 @@ function TMB:appendTMBItemInfoToTooltip(tooltip)
         )
     ) then
         -- Add the header
-        tooltip:AddLine(string.format("\n|cFFffffff%s|r", "TMB Wish List"));
+        tinsert(Lines, string.format("\n|cFFffffff%s|r", "TMB Wish List"));
 
         -- Sort the WishListEntries based on prio (lowest to highest)
         table.sort(WishListEntries, function (a, b)
@@ -412,7 +399,7 @@ function TMB:appendTMBItemInfoToTooltip(tooltip)
         for _, Entry in pairs(WishListEntries) do
             entriesAdded = entriesAdded + 1;
 
-            tooltip:AddLine(string.format(
+            tinsert(Lines, string.format(
                 "|cFF%s%s|r",
                 GL:classHexColor(GL.Player:classByName(Entry[2])),
                 GL:capitalize(Entry[2]):gsub("%(os%)", " (OS)")
@@ -424,6 +411,8 @@ function TMB:appendTMBItemInfoToTooltip(tooltip)
             end
         end
     end
+
+    return Lines;
 end
 
 --- Draw either the importer or overview

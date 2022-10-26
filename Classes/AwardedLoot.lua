@@ -23,11 +23,6 @@ function AwardedLoot:_init()
         return;
     end
 
-    -- Bind the appendAwardedLootToTooltip method to the OnTooltipSetItem event
-    GL:onTooltipSetItem(function(Tooltip)
-        self:appendAwardedLootToTooltip(Tooltip);
-    end);
-
     -- Bind the opening of the trade window to the tradeInitiated method
     GL.Events:register("AwardedLootTradeShowListener", "GL.TRADE_SHOW", function ()
         self:tradeInitiated();
@@ -54,31 +49,14 @@ function AwardedLoot:_init()
     self._initialized = true;
 end
 
---- Append the players this item was awarded to to the tooltip
----
----@param Tooltip table
-function AwardedLoot:appendAwardedLootToTooltip(Tooltip)
-    GL:debug("AwardedLoot:appendAwardedLootToTooltip");
-
-    -- No tooltip was provided or the user is not in a party/raid
-    if (type(Tooltip) ~= "table") then
-        return;
-    end
-
-    local _, itemLink = Tooltip:GetItem();
-
-    -- We couldn't find an itemLink (this can actually happen!)
-    if (not itemLink) then
-        return;
-    end
-
+function AwardedLoot:tooltipLines(itemLink)
     local itemID = GL:getItemIdFromLink(itemLink);
 
     -- Loop through our awarded loot table in reverse
     local fiveHoursAgo = GetServerTime() - 18000;
     local loadItemsGTE = math.min(fiveHoursAgo, GL.loadedOn);
     local winnersAvailable = false;
-    local Lines = {};
+    local Lines = { string.format("\n|c00efb8cd%s|r", "Awarded To") };
     for index = #GL.DB.AwardHistory, 1, -1 do
         local result = (function ()
             local Loot = GL.DB.AwardHistory[index];
@@ -100,9 +78,21 @@ function AwardedLoot:appendAwardedLootToTooltip(Tooltip)
                 receivedString = " (not received yet)";
             end
 
-            local line = string.format("|c00%s%s|r%s",
+            local OSString = "";
+            if (Loot.OS) then
+                OSString = " (OS)"
+            end
+
+            local BRString = "";
+            if (GL:higherThanZero(Loot.BRCost)) then
+                BRString = string.format(" (BR: %s)", Loot.BRCost);
+            end
+
+            local line = string.format("    |c00%s%s|r%s%s%s",
                 GL:classHexColor(GL.Player:classByName(winner, 0), "5f5f5f"),
                 GL:capitalize(winner),
+                OSString,
+                BRString,
                 receivedString
             );
             tinsert(Lines, line);
@@ -116,16 +106,10 @@ function AwardedLoot:appendAwardedLootToTooltip(Tooltip)
 
     -- Nothing to show
     if (not winnersAvailable) then
-        return;
+        return {};
     end
 
-    -- Add the header
-    Tooltip:AddLine(string.format("\n|c00efb8cd%s|r", "Awarded To"));
-
-    -- Add the actual award info
-    for _, line in pairs(Lines) do
-        Tooltip:AddLine("    " .. line);
-    end
+    return Lines;
 end
 
 --- Add a winner for a specific item, on a specific date, to the SessionHistory table
@@ -134,10 +118,14 @@ end
 ---@param date string
 ---@param itemLink string
 ---@return void
-function AwardedLoot:addWinnerOnDate(winner, date, itemLink)
+function AwardedLoot:addWinnerOnDate(winner, date, itemLink, announce)
     GL:debug("AwardedLoot:addWinnerOnDate");
 
-    return AwardedLoot:addWinner(winner, itemLink, nil, date);
+    announce = GL:toboolean(announce);
+
+    return AwardedLoot:addWinner(winner, itemLink, announce, date);
+end
+
 --- Remove a winner for an item
 ---
 ---@param checksum string
@@ -211,16 +199,23 @@ end
 ---@param announce boolean|nil
 ---@param date string|nil
 ---@param isOS boolean|nil
----@param addPlusOne boolean|nil
+---@param BRCost number|nil
+---@param GDKPCost number|nil
 ---@return void
-function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, cost)
+function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, GDKPCost)
     GL:debug("AwardedLoot:addWinner");
 
     -- Determine whether the item should be flagged as off-spec
     isOS = GL:toboolean(isOS);
 
+    local timestamp;
     local dateProvided = date and type(date) == "string";
-    local timestamp = GetServerTime();
+
+    if (not dateProvided and type(date) == "number") then
+        timestamp = date;
+    else
+        timestamp = GetServerTime();
+    end
 
     if (type(winner) ~= "string"
         or GL:empty(winner)
@@ -299,11 +294,11 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, cost)
 
     if (announce) then
         local awardMessage = "";
-        if (GL.BoostedRolls:enabled() and cost > 0) then
+        if (GL.BoostedRolls:enabled() and GL:higherThanZero(BRCost)) then
             awardMessage = string.format("%s was awarded to %s for %s points. Congrats!",
                 itemLink,
                 winner,
-                cost
+                BRCost
             );
         else
             awardMessage = string.format("%s was awarded to %s. Congrats!",
@@ -313,7 +308,7 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, cost)
 
             if (GL.BoostedRolls:enabled()) then
                 --- Make sure the cost is stored as the (new) default item cost
-                GL.Settings:set("BoostedRolls.defaultCost", cost);
+                GL.Settings:set("BoostedRolls.defaultCost", BRCost);
             end
         end
 
