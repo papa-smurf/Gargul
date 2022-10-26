@@ -99,6 +99,12 @@ function AwardHistory:draw(AnchorTo)
     local loadItemsGTE = math.min(fiveHoursAgo, GL.loadedOn);
     local AwardedItemsToShow = {};
     local thereAreItemsToShow = false;
+
+    -- Sort the awarded loot by timestamp (highest to lowest)
+    table.sort(GL.DB.AwardHistory, function (a, b)
+        return a.timestamp < b.timestamp;
+    end);
+
     for index = #GL.DB.AwardHistory, 1, -1 do
         local Loot = GL.DB.AwardHistory[index];
 
@@ -116,7 +122,8 @@ function AwardHistory:draw(AnchorTo)
         Window.frame:SetAlpha(1);
     end
 
-    local itemLinkLabelWidth = math.max(160, 160 + (WindowWidth - 430));
+    --local itemLinkLabelWidth = math.max(160, 160 + (WindowWidth - 430));
+    local itemLinkLabelWidth = math.max(150, 150 + (WindowWidth - 430));
     GL:onItemLoadDo(GL:tableColumn(AwardedItemsToShow, "itemId"), function()
         for _, Award in pairs(AwardedItemsToShow) do
             (function ()
@@ -195,8 +202,14 @@ function AwardHistory:draw(AnchorTo)
                     GameTooltip:Show();
                 end)
 
+                local VerticalSpacer = GL.AceGUI:Create("SimpleGroup");
+                VerticalSpacer:SetLayout("FILL");
+                VerticalSpacer:SetWidth(8);
+                VerticalSpacer:SetHeight(1);
+                ItemRow:AddChild(VerticalSpacer);
+
                 local ItemLinkLabel = GL.AceGUI:Create("Label");
-                ItemLinkLabel:SetText("   " .. ItemDetails.link);
+                ItemLinkLabel:SetText(ItemDetails.link);
                 ItemLinkLabel:SetWidth(itemLinkLabelWidth);
                 ItemRow:AddChild(ItemLinkLabel);
 
@@ -211,7 +224,7 @@ function AwardHistory:draw(AnchorTo)
                 local ActionButtonFrame = GL.AceGUI:Create("SimpleGroup");
                 ActionButtonFrame:SetLayout("FILL");
                 ActionButtonFrame:SetWidth(50);
-                ActionButtonFrame:SetWidth(WindowWidth - 30 - itemLinkLabelWidth - 100 - 50);
+                ActionButtonFrame:SetWidth(WindowWidth - 30 - itemLinkLabelWidth - 100 - 50 - 16);
                 ActionButtonFrame:SetHeight(30);
                 ItemRow:AddChild(ActionButtonFrame);
 
