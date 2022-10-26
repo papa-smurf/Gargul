@@ -46,9 +46,10 @@ function Exporter:draw()
     Window:SetWidth(600);
     Window:SetHeight(450);
     Window:SetCallback("OnClose", function()
-        Exporter:close();
+        self:close();
     end);
     Window:SetPoint(GL.Interface:getPosition("Exporter"));
+    --GL.Interface.AwardHistory:draw(Window);
     Window.statustext:GetParent():Hide(); -- Hide the statustext bar
 
     GL.Interface:setItem(self, "Window", Window);
@@ -150,7 +151,12 @@ function Exporter:clearData()
     -- Show a confirmation dialog before clearing entries
     GL.Interface.Dialogs.PopupDialog:open({
         question = warning,
-        OnYes = onConfirm,
+        OnYes = function ()
+            onConfirm();
+
+            -- Let the application know that an item was unawarded (deleted)
+            GL.Events:fire("GL.ITEM_UNAWARDED");
+        end,
     });
 end
 

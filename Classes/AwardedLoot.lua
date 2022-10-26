@@ -138,6 +138,70 @@ function AwardedLoot:addWinnerOnDate(winner, date, itemLink)
     GL:debug("AwardedLoot:addWinnerOnDate");
 
     return AwardedLoot:addWinner(winner, itemLink, nil, date);
+--- Remove a winner for an item
+---
+---@param checksum string
+---@return void
+function AwardedLoot:deleteWinner(checksum)
+    GL:debug("AwardedLoot:deleteWinner");
+
+    -- Do this in reverse orde because it's more likely that
+    -- players delete more recently awarded items
+    for index = #GL.DB.AwardHistory, 1, -1 do
+        local Loot = GL.DB.AwardHistory[index];
+
+        if (Loot and Loot.checksum == checksum) then
+            GL.DB.AwardHistory[index] = nil;
+            table.remove(GL.DB.AwardHistory, index);
+
+            -- Refund BR cost
+            if (Loot.BRCost and GL:higherThanZero(Loot.BRCost)) then
+                GL.BoostedRolls:addPoints(Loot.awardedTo, Loot.BRCost);
+            end
+
+            -- Let the application know that an item was unawarded (deleted)
+            GL.Events:fire("GL.ITEM_UNAWARDED", Loot);
+
+            return;
+        end
+    end
+end
+
+--- Edit the winner of an item
+---
+---@param checksum string
+---@return void
+function AwardedLoot:editWinner(checksum, winner)
+    GL:debug("AwardedLoot:editWinner");
+
+    -- Do this in reverse orde because it's more likely that
+    -- players edit more recently awarded items
+    for index = #GL.DB.AwardHistory, 1, -1 do
+        local Loot = GL.DB.AwardHistory[index];
+
+        if (Loot and Loot.checksum == checksum) then
+            -- Redistribute BR cost
+            if (Loot.BRCost and GL:higherThanZero(Loot.BRCost)) then
+                GL.BoostedRolls:addPoints(Loot.awardedTo, Loot.BRCost);
+                GL.BoostedRolls:subtractPoints(winner, Loot.BRCost);
+            end
+
+            Loot.received = false;
+            Loot.awardedTo = winner;
+
+            -- If we awarded to ourselves then we should already have the item
+            if (string.lower(winner) == string.lower(GL.User.name)) then
+                Loot.received = true;
+            end
+
+            GL.DB.AwardHistory[index] = Loot;
+
+            -- Let the application know that an item was edited
+            GL.Events:fire("GL.ITEM_AWARD_EDITED", Loot);
+
+            return;
+        end
+    end
 end
 
 --- Add a winner for a specific item to the SessionHistory table
@@ -213,6 +277,8 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, cost)
         timestamp = timestamp,
         softresID = GL.DB:get("SoftRes.MetaData.id"),
         received = string.lower(winner) == string.lower(GL.User.name),
+        BRCost = tonumber(BRCost),
+        GDKPCost = tonumber(GDKPCost),
         OS = isOS,
     };
 
@@ -295,6 +361,9 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, cost)
             AwardedLoot:initiateTrade(AwardEntry);
         end
     end
+
+    -- Let the application know that an item was awarded
+    GL.Events:fire("GL.ITEM_AWARDED", AwardEntry);
 
     -- Send the award data along to CLM if the player has it installed
     pcall(function ()

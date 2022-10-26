@@ -51,6 +51,7 @@ function MasterLooterUI:draw(itemLink)
         -- If the frame is hidden we need to show it again
         if (not Window:IsShown()) then
             Window:Show();
+            GL.Interface.AwardHistory:draw(Window);
         end
 
         return;
@@ -408,6 +409,8 @@ function MasterLooterUI:draw(itemLink)
     ) then
         MasterLooterUI:passItemLink(itemLink);
     end
+
+    GL.Interface.AwardHistory:draw(Window);
 end
 
 ---@return void

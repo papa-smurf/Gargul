@@ -913,10 +913,9 @@ end
 --- In some very rare cases we need to manipulate the close button on AceGUI elements
 ---
 ---@param Widget table
----
 ---@return void|table
 function GL:fetchCloseButtonFromAceGUIWidget(Widget)
-    GL:debug("GL:removeCloseButtonFromAceGUIWidget");
+    GL:debug("GL:fetchCloseButtonFromAceGUIWidget");
 
     if (not Widget or not Widget.frame) then
         return;
@@ -925,6 +924,25 @@ function GL:fetchCloseButtonFromAceGUIWidget(Widget)
     -- Try to locate the Close button and hide it
     for _, Child in pairs({Widget.frame:GetChildren()}) do
         if (Child.GetText and Child:GetText() == "Close") then
+            return Child;
+        end
+    end
+end
+
+--- In some very rare cases we need to manipulate the border on AceGUI Inline Group elements
+---
+---@param Widget table
+---@return void|table
+function GL:fetchBorderFromAceGUIInlineGroup(Widget)
+    GL:debug("GL:fetchBorderFromAceGUIInlineGroup");
+
+    if (not Widget or not Widget.frame) then
+        return;
+    end
+
+    -- Try to locate the Close button and hide it
+    for _, Child in pairs({Widget.frame:GetChildren()}) do
+        if (Child.SetBackdropColor) then
             return Child;
         end
     end
