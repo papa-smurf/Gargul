@@ -5,6 +5,7 @@ local _, GL = ...;
 GL.Profiler = {
     addonIndex = nil,
     isVisible = false,
+    maxReportedMemory = 0,
     updateRateInSeconds = 5,
     RefreshTimer = nil,
     Window = nil,
@@ -28,7 +29,7 @@ function Profiler:draw()
     Window:SetTitle("Gargul v" .. GL.version);
     Window:SetLayout("Flow");
     Window:SetWidth(180);
-    Window:SetHeight(60);
+    Window:SetHeight(90);
     Window:EnableResize(false);
     Window.statustext:GetParent():Hide(); -- Hide the statustext bar
     Window:SetPoint(GL.Interface:getPosition("Profiler"));
@@ -62,18 +63,28 @@ function Profiler:draw()
 
     local updateMemoryUsage = function ()
         local memory = self:getMemoryUsage();
+        local maxMemory = self.maxReportedMemory;
 
         -- Use color to indicate the severety of the memory usage
-        local color = "92FF00";
-        if (memory >= 8000) then
-            color = "FFF569";
-        elseif (memory >= 15000) then
-            color = "F7922E";
-        elseif (memory >= 30000) then
-            color = "BE3333";
+        local function memoryColor(number)
+            local color = "92FF00";
+            if (number >= 8000) then
+                color = "FFF569";
+            elseif (number >= 15000) then
+                color = "F7922E";
+            elseif (number >= 30000) then
+                color = "BE3333";
+            end
+
+            return color;
         end
 
-        Usage:SetText(string.format("MEM: |c00%s%s|rk", color, self:humanReadableNumber(memory)));
+        Usage:SetText(string.format("MEM: |c00%s%s|rk\nMAX: |c00%s%s|rk",
+            memoryColor(memory),
+            self:humanReadableNumber(memory),
+            memoryColor(maxMemory),
+            self:humanReadableNumber(maxMemory)
+        ));
     end;
 
     -- Make sure the usage gets updated every X seconds
@@ -139,7 +150,15 @@ function Profiler:getMemoryUsage()
 
     UpdateAddOnMemoryUsage();
 
-    return GetAddOnMemoryUsage("Gargul");
+    local usage = GetAddOnMemoryUsage("Gargul");
+
+    -- Keep track of the higest memory usage recorded
+    self.maxReportedMemory = self.maxReportedMemory or 0;
+    if (usage > self.maxReportedMemory) then
+        self.maxReportedMemory = usage;
+    end
+
+    return usage;
 end
 
 GL:debug("Profiler.lua");
