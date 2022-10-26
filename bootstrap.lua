@@ -208,14 +208,26 @@ function GL:hookBagSlotEvents()
         end
 
         local keyPressIdentifier = GL.Events:getClickCombination();
+        local keyPressRecognized = false;
 
         -- Open the roll window
         if (keyPressIdentifier == GL.Settings:get("ShortcutKeys.rollOff")) then
             GL.MasterLooterUI:draw(itemLink);
+            keyPressRecognized = true;
 
         -- Open the award window
         elseif (keyPressIdentifier == GL.Settings:get("ShortcutKeys.award")) then
             GL.Interface.Award:draw(itemLink);
+            keyPressRecognized = true;
+        end
+
+        -- Prevent the stack split window from popping up
+        if (keyPressRecognized and IsShiftKeyDown()) then
+            GL.Ace:ScheduleTimer(function ()
+                if (_G.StackSplitFrame) then
+                    _G.StackSplitFrame:Hide();
+                end
+            end, .05);
         end
     end);
 end
