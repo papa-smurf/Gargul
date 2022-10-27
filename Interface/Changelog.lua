@@ -12,6 +12,16 @@ GL.Interface.Changelog = {
 
     History = {
         {
+            version = "4.11.0",
+            date = "October 27th, 2022",
+            Changes = {
+                "Player passed on an item? Did you assign an item to the wrong player? No worries, you can edit all that now!",
+                "You can now change the size of the Loot trade timers window in |c00a79eff/gl|r -> |c00a79effLoot trade timers|r",
+                "Improved performance greatly and prepared Gargul for Dragonflight",
+                "Changed the Gargul master looter message and made sure it doens't spam the raid on /reload",
+            },
+        },
+        {
             version = "4.10.1",
             date = "October 19th, 2022",
             Changes = {
