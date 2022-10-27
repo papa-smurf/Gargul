@@ -54,7 +54,7 @@ function GL:bootstrap(_, _, addonName)
     GL.loadedOn = GetServerTime();
 
     GL.Ace:ScheduleTimer(function()
-        self.elvUILoaded = GetAddOnMemoryUsage("ElvUI") > 0;
+        self.elvUILoaded = GetAddOnEnableState(nil,"ElvUI") == 2;
     end, 1);
 end
 
