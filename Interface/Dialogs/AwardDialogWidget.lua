@@ -158,7 +158,7 @@ local function constructor()
     Frame:SetFrameStrata("FULLSCREEN_DIALOG");
     Frame:SetBackdrop(FrameBackdrop);
     Frame:SetBackdropColor(0, 0, 0, 1);
-    Frame:SetMinResize(320, 10);
+
     Frame:SetWidth(320);
     Frame:SetToplevel(true);
     Frame:SetScript("OnHide", OnClose);
@@ -309,6 +309,19 @@ local function constructor()
         end
     end);
     PopupDialogInstance:AddChild(YesButton);
+
+    local YesButtonEnterCatcher = AceGUI:Create("EditBox");
+    YesButtonEnterCatcher:DisableButton(true);
+    YesButtonEnterCatcher:SetWidth(.1);
+    YesButtonEnterCatcher:SetHeight(.1);
+    YesButtonEnterCatcher.frame:SetAlpha(0);
+    PopupDialogInstance:AddChild(YesButtonEnterCatcher);
+    YesButtonEnterCatcher:SetCallback("OnEnterPressed", function ()
+        if (type(Widget.yesCallback) == "function") then
+            Widget.yesCallback();
+        end
+    end);
+    GL.Interface:setItem(GL.Interface.Dialogs.AwardDialog, "YesButtonEnterCatcher", YesButtonEnterCatcher);
 
     VerticalSpacer = AceGUI:Create("SimpleGroup");
     VerticalSpacer:SetLayout("FILL");

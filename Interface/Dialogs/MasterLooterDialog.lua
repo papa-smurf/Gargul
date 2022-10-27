@@ -78,56 +78,24 @@ end
 ---@return void
 function MasterLooterDialog:flightAttendant()
     local function announce()
-        GL.Version:playersUsingAddon(function(Players)
-            -- Both are set to one because the current user counts as well!
-            local total = 1;
-            local haveAddon = 1;
-            for _, hasAddon in pairs(Players) do
-                total = total + 1;
+        local message = GL.Settings:get("MasterLooting.announceMasterLooterMessage");
+        local stw = not GL:strContains(string.lower(message), "gargul");
 
-                if (hasAddon) then
-                    haveAddon = haveAddon + 1;
-                end
-            end
-
-            if (total > haveAddon) then
-                GL:sendChatMessage(
-                        string.format(
-                            "Ladies and gentlemen this is your Master Looter %s speaking, today we are raiding with our trusty loot add-on: Gargul. %s/%s people are already on board. Get Gargul on CurseForge or your favorite add-on manager!",
-                            GL.User.name,
-                            haveAddon,
-                            total
-                        ),
-                        "GROUP",
-                        nil,
-                        nil,
-                        false
-                );
-            else
-                GL:sendChatMessage(
-                    string.format(
-                        "Ladies and gentlemen this is your Master Looter %s speaking, today we are raiding with our trusty loot add-on: Gargul!",
-                        GL.User.name
-                    ),
-                    "GROUP",
-                    nil,
-                    nil,
-                    false
-                );
-            end
-        end);
+        GL:sendChatMessage(
+            GL.Settings:get("MasterLooting.announceMasterLooterMessage"),
+            "GROUP",
+            nil,
+            nil,
+            stw
+        );
     end
 
-    -- The comm channel takes around 2 seconds to be fully established
     -- If the add-on has not been loaded for that long yet we need
     -- to set a delay for the announcement message
     local addonLoadedInSeconds = GetServerTime() - GL.loadedOn;
 
-    if (addonLoadedInSeconds < 4) then
-        GL.Ace:ScheduleTimer(function ()
-            announce();
-        end, 4);
-    else
+    -- No need to announce if it's < 5 since it's most likely a /reload
+    if (addonLoadedInSeconds >= 5) then
         announce();
     end
 end

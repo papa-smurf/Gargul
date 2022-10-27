@@ -4,29 +4,11 @@ local _, GL = ...;
 GL.AceGUI = GL.AceGUI or LibStub("AceGUI-3.0");
 
 ---@class LootPriority
-GL.LootPriority = {
-    _initialized = false,
-};
+GL.LootPriority = {};
 
 local AceGUI = GL.AceGUI;
 local CommActions = GL.Data.Constants.Comm.Actions;
 local LootPriority = GL.LootPriority; ---@type LootPriority
-
----@return void
-function LootPriority:_init()
-    GL:debug("LootPriority:_init");
-
-    if (self._initialized) then
-        return;
-    end
-
-    -- Bind the appendLootPrioToTooltip method to the OnTooltipSetItem event
-    GL:onTooltipSetItem(function(Tooltip)
-        self:appendLootPrioToTooltip(Tooltip);
-    end);
-
-    self._initialized = true;
-end
 
 --- Fetch an item's prio
 ---
@@ -45,37 +27,27 @@ end
 
 --- Append the loot prio as defined in GL.DB.LootPriority to an item's tooltip
 ---
----@param tooltip table
----@return void
-function LootPriority:appendLootPrioToTooltip(tooltip)
+---@param itemLink string
+---@return table
+function LootPriority:tooltipLines(itemLink)
     GL:debug("LootPriority:appendLootPrioToTooltip");
-
-    -- No tooltip was provided
-    if (not tooltip) then
-        return;
-    end
-
-    local itemName, itemLink = tooltip:GetItem();
-
-    -- We couldn't find an itemLink (this can actually happen!)
-    if (not itemLink) then
-        return;
-    end
 
     local itemPriority = self:getPriority(itemLink, itemName);
 
     -- No prio defined for this item
     if (not itemPriority) then
-        return;
+        return {};
     end
 
     -- Add the header
-    tooltip:AddLine(string.format("\n|c00efb8cd%s", "Loot Prio"));
+    local Lines = { (string.format("\n|c00efb8cd%s", "Loot Prio")) };
 
     -- Add the actual item prio
     for priorityLevel, value in pairs(itemPriority) do
-        tooltip:AddLine(string.format("|c008aecff    %s: %s", priorityLevel, value))
+        tinsert(Lines, string.format("|c008aecff    %s: %s", priorityLevel, value));
     end
+
+    return Lines;
 end
 
 ---@return void

@@ -36,16 +36,27 @@ function Award:draw(itemLink)
     if (GL.Interface:getItem(self, "Window")
         and GL.Interface:getItem(self, "Window").rendered
     ) then
+        local PlayerNameBox = GL.Interface:getItem(self, "EditBox.PlayerName");
+        local Window = GL.Interface:getItem(self, "Window");
+
         if (itemLink) then
             Award:passItemLink(itemLink);
         end
 
         -- If the frame is hidden we need to show it again
-        if (not GL.Interface:getItem(self, "Window"):IsShown()) then
-            GL.Interface:getItem(self, "Window"):Show();
+        if (not Window:IsShown()) then
+            Window:Show();
+            GL.Interface.AwardHistory:draw(Window);
+        end
+
+        -- Reset the player name box (BEFORE POPULATING THE TABLE!)
+        if (PlayerNameBox) then
+            PlayerNameBox:SetText("");
+            PlayerNameBox:SetFocus();
         end
 
         Award:populatePlayersTable(itemID or nil);
+
         return;
     end
 
@@ -66,6 +77,7 @@ function Award:draw(itemLink)
     end);
     Window:SetPoint(GL.Interface:getPosition("Award"));
     Window.frame:SetFrameStrata("DIALOG");
+    GL.Interface.AwardHistory:draw(Window);
 
     GL.Interface:setItem(self, "Window", Window);
 
@@ -320,6 +332,7 @@ function Award:draw(itemLink)
 
         AwardButton:Fire("OnClick");
     end); -- Award
+    PlayerNameBox:SetFocus();
     SecondRow:AddChild(PlayerNameBox);
     GL.Interface:setItem(self, "PlayerName", PlayerNameBox);
 

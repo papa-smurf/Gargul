@@ -8,6 +8,9 @@ GL.SoftRes = {
     broadcastInProgress = false,
     maxNumberOfSoftReservedItems = 6,
     requestingData = false,
+    lastTooltipData = nil,
+    lastTooltipItemLink = nil,
+    lastTooltipTime = nil,
 
     MaterializedData = {
         ClassByPlayerName = {},
@@ -50,11 +53,6 @@ function SoftRes:_init()
     ) then
         self:clear();
     end
-
-    -- Bind the appendSoftReserveInfoToTooltip method to the OnTooltipSetItem event
-    GL:onTooltipSetItem(function(Tooltip)
-        self:appendSoftReserveInfoToTooltip(Tooltip);
-    end);
 
     GL.Events:register("SoftResUserJoinedGroupListener", "GL.USER_JOINED_GROUP", function () self:requestData(); end);
 
@@ -588,35 +586,19 @@ end
 
 --- Append the soft reserves as defined in DB.SoftRes to an item's tooltip
 ---
----@param Tooltip GameTooltip
----@return boolean
-function SoftRes:appendSoftReserveInfoToTooltip(Tooltip)
+---@param itemLink string
+---@return table
+function SoftRes:tooltipLines(itemLink)
     GL:debug("SoftRes:appendSoftReserveInfoToTooltip");
 
     -- The player doesn't want to see softres details on tooltips
     if (not Settings:get("SoftRes.enableTooltips")) then
-        return true;
-    end
-
-    -- No tooltip was provided
-    if (not Tooltip) then
-        GL:debug("No tooltip found in SoftRes:appendSoftReserveInfoToTooltip");
-        return false;
-    end
-
-    local itemName, itemLink = Tooltip:GetItem();
-
-    -- We couldn't find an itemName or link (this can actually happen!)
-    if (not itemName or not itemLink) then
-        GL:debug("No item found in SoftRes:appendSoftReserveInfoToTooltip");
-        return false;
+        return {};
     end
 
     -- Check if the item is hard-reserved
     if (self:linkIsHardReserved(itemLink)) then
-        Tooltip:AddLine(string.format("|cFFcc2743%s|r", "\nThis item is hard-reserved!"));
-
-        return true;
+        return { string.format("|cFFcc2743%s|r", "\nThis item is hard-reserved!") };
     end
 
     local Reservations = self:byItemLink(itemLink);
@@ -635,8 +617,13 @@ function SoftRes:appendSoftReserveInfoToTooltip(Tooltip)
 
     -- No active reservations were found for this item
     if (not itemHasActiveReservations) then
-        return true;
+        return {};
     end
+
+    local Lines = {};
+
+    -- Add the header
+    tinsert(Lines, string.format("\n|cFFEFB8CD%s|r", "Reserved by"));
 
     -- This is necessary so we can sort the table based on number of reserves per item
     local ActiveReservations = {};
@@ -644,7 +631,7 @@ function SoftRes:appendSoftReserveInfoToTooltip(Tooltip)
         tinsert(ActiveReservations, {
             player = playerName,
             reservations = reservations,
-        })
+        });
     end
     ReservationsByPlayerName = {}; -- We no longer need this table, clean it up!
 
@@ -652,9 +639,6 @@ function SoftRes:appendSoftReserveInfoToTooltip(Tooltip)
     table.sort(ActiveReservations, function (a, b)
         return a.reservations > b.reservations;
     end);
-
-    -- Add the header
-    Tooltip:AddLine(string.format("\n|cFFEFB8CD%s|r", "Reserved by"));
 
     -- Add the reservation details to ActiveReservations (add 2x / 3x etc when same item was reserved multiple times)
     for _, Entry in pairs(ActiveReservations) do
@@ -667,14 +651,14 @@ function SoftRes:appendSoftReserveInfoToTooltip(Tooltip)
         end
 
         -- Add the actual soft reserves to the tooltip
-        Tooltip:AddLine(string.format(
+        tinsert(Lines, string.format(
             "|cFF%s    %s|r",
             GL:classHexColor(class),
             GL:capitalize(entryString)
         ));
     end
 
-    return true;
+    return Lines;
 end
 
 --- How many times did the given player reserve the given item?

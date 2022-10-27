@@ -4,9 +4,9 @@ local _, GL = ...;
 --[[-----------------------------------------------------------------------------
 PopupDialog AceGUI Widget
 Simple container widget that creates a popup dialog similar to Blizzard's dialogs
-But with added checkboxes for OS and +1 markers
+But with added editbox
 -------------------------------------------------------------------------------]]
-local Type, Version = "GargulIncomingBoostedRollDataDialog", 1
+local Type, Version = "ConfirmWithSingleInputDialog", 1
 local AceGUI = LibStub and LibStub("AceGUI-3.0", true)
 if not AceGUI or (AceGUI:GetWidgetVersion(Type) or 0) >= Version then return end
 
@@ -15,8 +15,6 @@ local pairs = pairs;
 
 -- WoW APIs
 local CreateFrame, UIParent = CreateFrame, UIParent;
-
-local sender = "";
 
 local function OnClose(Frame)
     PlaySound(799) -- SOUNDKIT.GS_TITLE_OPTION_EXIT
@@ -60,15 +58,6 @@ local Events = {
 
     SetQuestion = function(self, question)
         self.DialogLabel:SetText(question);
-    end,
-
-    SetSender = function(self, playerName)
-        sender = playerName;
-
-        self.TrustSenderLabel:SetText(string.format(
-            "Automatically accept incoming broadcasts from %s",
-                playerName
-        ));
     end,
 
     OnAcquire = function(self)
@@ -159,13 +148,8 @@ local FrameBackdrop = {
 }
 
 local function constructor()
-    local Frame = GL.Interface:getItem(GL.Interface.Dialogs.IncomingBoostedRollDataDialog, "Window");
-    if (Frame) then
-        Frame:Hide();
-    end
-
-    local frameName = "GargulIncomingBoostedRollDataDialog";
-    Frame = CreateFrame("Frame", frameName, UIParent, BackdropTemplateMixin and "BackdropTemplate" or nil);
+    local frameName = "GargulAwardDialog" .. GL:uuid();
+    local Frame = CreateFrame("Frame", frameName, UIParent, BackdropTemplateMixin and "BackdropTemplate" or nil);
     Frame:Hide();
 
     Frame:EnableMouse(true);
@@ -179,7 +163,6 @@ local function constructor()
     Frame:SetScript("OnHide", OnClose);
     Frame:SetScript("OnMouseDown", OnMouseDown);
     Frame:SetScript("OnMouseUp", OnMouseUp);
-    GL.Interface:setItem(GL.Interface.Dialogs.IncomingBoostedRollDataDialog, "Window", Frame);
 
     -- Container Support
     local content = CreateFrame("Frame", nil, Frame)
@@ -212,62 +195,20 @@ local function constructor()
     PopupDialogInstance:AddChild(Dialog);
     Widget.DialogLabel = Dialog;
 
-    HorizontalSpacer = AceGUI:Create("SimpleGroup");
-    HorizontalSpacer:SetLayout("FILL");
-    HorizontalSpacer:SetFullWidth(true);
-    HorizontalSpacer:SetHeight(8);
-    PopupDialogInstance:AddChild(HorizontalSpacer);
+    local InputEditBox = GL.AceGUI:Create("EditBox");
+    InputEditBox:DisableButton(true);
+    InputEditBox:SetHeight(20);
+    InputEditBox:SetFullWidth(true);
+    InputEditBox:SetText("");
+    InputEditBox:SetLabel("");
+    PopupDialogInstance:AddChild(InputEditBox);
+    GL.Interface:setItem(GL.Interface.Dialogs.ConfirmWithSingleInputDialog, "Input", InputEditBox);
 
-    local OptionsFrame = AceGUI:Create("SimpleGroup");
-    OptionsFrame:SetFullWidth(true);
-    OptionsFrame:SetLayout("FLOW");
-    PopupDialogInstance:AddChild(OptionsFrame);
-
-    VerticalSpacer = AceGUI:Create("SimpleGroup");
-    VerticalSpacer:SetLayout("FILL");
-    VerticalSpacer:SetWidth(40);
-    VerticalSpacer:SetHeight(10);
-    OptionsFrame:AddChild(VerticalSpacer);
-
-    if (sender) then
-        -- Trust sender checkbox
-        local TrustSenderCheckBox = AceGUI:Create("CheckBox");
-        TrustSenderCheckBox:SetLabel("");
-        TrustSenderCheckBox:SetDescription("");
-        TrustSenderCheckBox:SetHeight(20);
-        TrustSenderCheckBox:SetWidth(24);
-        OptionsFrame:AddChild(TrustSenderCheckBox);
-        GL.Interface:setItem(GL.Interface.Dialogs.IncomingBoostedRollDataDialog, "TrustSender", TrustSenderCheckBox);
-        Widget.TrustSenderCheckBox = TrustSenderCheckBox;
-
-        TrustSenderCheckBox:SetCallback("OnValueChanged", function (widget)
-            if (widget:GetValue()) then
-                GL.BoostedRolls:markPlayerAsTrusted(sender);
-            else
-                GL.BoostedRolls:removePlayerFromTrusted(sender);
-            end
-        end);
-
-        -- Trust sender label
-        local TrustSenderLabel = AceGUI:Create("InteractiveLabel");
-        TrustSenderLabel:SetFontObject(_G["GameFontNormal"]);
-        TrustSenderLabel:SetWidth(200);
-        TrustSenderLabel:SetText("");
-        Widget.TrustSenderLabel = TrustSenderLabel;
-
-        TrustSenderLabel:SetCallback("OnClick", function()
-            TrustSenderCheckBox:ToggleChecked();
-            TrustSenderCheckBox:Fire("OnValueChanged", TrustSenderCheckBox:GetValue());
-        end);
-
-        OptionsFrame:AddChild(TrustSenderLabel);
-    end
-
-    HorizontalSpacer = AceGUI:Create("SimpleGroup");
-    HorizontalSpacer:SetLayout("FILL");
-    HorizontalSpacer:SetFullWidth(true);
-    HorizontalSpacer:SetHeight(8);
-    OptionsFrame:AddChild(HorizontalSpacer);
+    InputEditBox:SetCallback("OnEnterPressed", function ()
+        if (type(Widget.yesCallback) == "function") then
+            Widget.yesCallback();
+        end
+    end);
 
     HorizontalSpacer = AceGUI:Create("SimpleGroup");
     HorizontalSpacer:SetLayout("FILL");
@@ -322,4 +263,4 @@ end
 
 AceGUI:RegisterWidgetType(Type, constructor, Version)
 
-GL:debug("Interface/IncomingBoostedRollDataDialogWidget.lua");
+GL:debug("Interface/AwardDialogWidget.lua");

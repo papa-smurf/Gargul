@@ -51,6 +51,7 @@ function MasterLooterUI:draw(itemLink)
         -- If the frame is hidden we need to show it again
         if (not Window:IsShown()) then
             Window:Show();
+            GL.Interface.AwardHistory:draw(Window);
         end
 
         return;
@@ -78,8 +79,8 @@ function MasterLooterUI:draw(itemLink)
         SETTINGS BUTTON
     ]]
     local SettingsButton = GL.UI:createSettingsButton(
-            Window.frame,
-            "MasterLooting"
+        Window.frame,
+        "MasterLooting"
     );
     self.SettingsButton = SettingsButton;
 
@@ -408,6 +409,8 @@ function MasterLooterUI:draw(itemLink)
     ) then
         MasterLooterUI:passItemLink(itemLink);
     end
+
+    GL.Interface.AwardHistory:draw(Window);
 end
 
 ---@return void
@@ -637,11 +640,29 @@ function MasterLooterUI:drawPlayersTable(parent)
             GameTooltip:AddLine(" ");
 
             for _, Entry in pairs(ItemsWonByRollerInTheLast8Hours) do
-                if (Entry.OS) then
-                    GameTooltip:AddLine(Entry.itemLink .. " (OS)");
-                else
-                    GameTooltip:AddLine(Entry.itemLink);
+                local receivedString = " (received)";
+                if (not Entry.received) then
+                    receivedString = " (not received yet)";
                 end
+
+                local OSString = "";
+                if (Entry.OS) then
+                    OSString = " (OS)"
+                end
+
+                local BRString = "";
+                if (GL:higherThanZero(Entry.BRCost)) then
+                    BRString = string.format(" (BR: %s)", Entry.BRCost);
+                end
+
+                local line = string.format("%s%s%s%s",
+                    Entry.itemLink,
+                    OSString,
+                    BRString,
+                    receivedString
+                );
+
+                GameTooltip:AddLine(line);
             end
 
             GameTooltip:Show();

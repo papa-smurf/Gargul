@@ -37,7 +37,8 @@ GL.Data.DefaultSettings = {
         announceCountdownOnce = false,
         announceMasterLooter = false,
         autoOpenMasterLooterDialog = true,
-        defaultRollOffNote = "/roll 100 for MS or 99 for OS",
+        announceMasterLooterMessage = "I'm using the Gargul addon to distribute loot. Download it if you don't want to miss out on rolls!",
+        defaultRollOffNote = "/roll for MS or /roll 99 for OS",
         doCountdown = true,
         announceRollEnd = true,
         announceRollStart = true,
@@ -61,6 +62,7 @@ GL.Data.DefaultSettings = {
     LootTradeTimers = {
         enabled = true,
         maximumNumberOfBars = 5,
+        scale = 1,
         showHotkeyReminder = true,
         showOnlyWhenMasterLooting = true,
     },

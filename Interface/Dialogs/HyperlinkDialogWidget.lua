@@ -162,7 +162,6 @@ local function constructor()
     Frame:SetFrameStrata("FULLSCREEN_DIALOG");
     Frame:SetBackdrop(FrameBackdrop);
     Frame:SetBackdropColor(0, 0, 0, 1);
-    Frame:SetMinResize(320, 10);
     Frame:SetWidth(320);
     Frame:SetToplevel(true);
     Frame:SetScript("OnHide", OnClose);
