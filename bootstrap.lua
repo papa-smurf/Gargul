@@ -271,19 +271,19 @@ function GL:hookTooltipSetItemEvents()
             -- Use cached data
             Lines = self.LastTooltipLines;
         else
-            for _, line in pairs(GL.AwardedLoot:tooltipLines(itemLink)) do
+            for _, line in pairs(GL.AwardedLoot:tooltipLines(itemLink) or {}) do
                 tinsert(Lines, line);
             end
 
-            for _, line in pairs(GL.SoftRes:tooltipLines(itemLink)) do
+            for _, line in pairs(GL.SoftRes:tooltipLines(itemLink) or {}) do
                 tinsert(Lines, line);
             end
 
-            for _, line in pairs(GL.TMB:tooltipLines(itemLink)) do
+            for _, line in pairs(GL.TMB:tooltipLines(itemLink) or {}) do
                 tinsert(Lines, line);
             end
 
-            for _, line in pairs(GL.LootPriority:tooltipLines(itemLink)) do
+            for _, line in pairs(GL.LootPriority:tooltipLines(itemLink) or {}) do
                 tinsert(Lines, line);
             end
         end

@@ -229,7 +229,7 @@ end
 --- Append the TMB info as defined in GL.DB.TMB.Items to an item's tooltip
 ---
 ---@param itemLink string
----@return void
+---@return table
 function TMB:tooltipLines(itemLink)
     GL:debug("TMB:appendTMBItemInfoToTooltip");
 
@@ -237,7 +237,7 @@ function TMB:tooltipLines(itemLink)
     if ((not GL.User.isInGroup and GL.Settings:get("TMB.hideInfoOfPeopleNotInGroup"))
         and (not GL.User.isInGroup and not GL.Settings:get("TMB.showEntriesWhenSolo"))
     ) then
-        return;
+        return {};
     end
 
     local Lines = {};
