@@ -167,6 +167,7 @@ function ExportingLoot:draw(Parent)
             "@LINK",
             "@WOWHEAD",
             "@ITEM",
+            "@ILVL",
             "@QUALITY",
             "@WINNER",
             "@DATE",
