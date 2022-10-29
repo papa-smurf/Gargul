@@ -282,17 +282,27 @@ function AwardHistory:draw(AnchorTo)
 
                 EditButton:SetScript("OnClick", function(_, button)
                     if (button == 'LeftButton') then
-                        GL.Interface.Dialogs.ConfirmWithSingleInputDialog:open({
-                            question = string.format("Who should %s go to instead?", Award.itemLink),
-                            OnYes = function (player)
-                                if (not player or type(player) ~= "string") then
-                                    return;
-                                end
+                        -- Show the player selector
+                        local question = string.format("Who should %s go to instead?", Award.itemLink);
+                        GL.Interface.PlayerSelector:draw(question, GL.User:groupMemberNames(), function (playerName)
+                            GL.Interface.Dialogs.PopupDialog:open({
+                                question = string.format("Award %s to |cff%s%s|r?",
+                                    Award.itemLink,
+                                    GL:classHexColor(GL.Player:classByName(playerName)),
+                                    playerName
+                                ),
+                                OnYes = function ()
+                                    if (not playerName or type(playerName) ~= "string") then
+                                        return;
+                                    end
 
-                                player = GL:capitalize(string.trim(string.lower(GL:stripRealm(player))));
-                                GL.AwardedLoot:editWinner(Award.checksum, player);
-                            end,
-                        });
+                                    playerName = GL:capitalize(string.trim(string.lower(GL:stripRealm(playerName))));
+                                    GL.AwardedLoot:editWinner(Award.checksum, playerName);
+
+                                    GL.Interface.PlayerSelector:close();
+                                end,
+                            });
+                        end);
                     end
                 end);
             end)();
