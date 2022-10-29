@@ -297,7 +297,7 @@ GL.Data.Constants = {
     ]]
     Comm = {
         channel = "GargulComm2",
-        minimumAppVersion = "4.0.0",
+        minimumAppVersion = "4.12.0",
         Actions = {
             awardItem = 1,
             broadcastLootPriorities = 2,
@@ -313,6 +313,8 @@ GL.Data.Constants = {
             broadcastBoostedRollsData = 12,
             requestBoostedRollsData = 13,
             broadcastBoostedRollsMutation = 14,
+            editAwardedItem = 15,
+            deleteAwardedItem = 16,
         },
     },
 
