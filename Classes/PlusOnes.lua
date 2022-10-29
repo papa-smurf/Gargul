@@ -105,7 +105,7 @@ function PlusOnes:set(playerName, value)
 
     playerName = GL:normalizedName(playerName);
 
-    DB.PlusOnes[playerName] = GL:round(value);
+    DB.PlusOnes[playerName] = GL:round(value or 0);
 end
 
 --- Assign PlusOne values en masse
@@ -116,9 +116,9 @@ function PlusOnes:massSet(plusOnesByPlayerName)
     GL:debug("PlusOnes:massSet");
 
     for playerName, value in pairs(plusOnesByPlayerName) do
-        playerName = GL:normalizedName(playerName);
+        playerName = GL:normalizedName(playerName or 0);
 
-        DB.PlusOnes[playerName] = GL:round(value);
+        DB.PlusOnes[playerName] = GL:round(value or 0);
     end
 
     self:triggerChangeEvent();
