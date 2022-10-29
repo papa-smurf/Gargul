@@ -21,6 +21,11 @@ function Rolling:draw(Parent)
             setting = "Rolling.showRollOffWindow",
         },
         {
+            label = "Blizzard lookalike window",
+            description = "Show the roll window similar to group loot roll window.",
+            setting = "Rolling.blizzardWindowStyle",
+        },
+        {
             label = "Close after roll",
             description = "Automatically close the window after rolling",
             setting = "Rolling.closeAfterRoll",
@@ -57,6 +62,13 @@ function Rolling:draw(Parent)
                 and type(GL.RollerUI.Window.SetScale == "function")
             ) then
                 GL.RollerUI.Window:SetScale(value);
+            end
+			
+            -- Change the existing blizz roll window if it's active!
+            if (GL.RollerUIBlizz.Window
+                and type(GL.RollerUIBlizz.Window.SetScale == "function")
+            ) then
+                GL.RollerUIBlizz.Window:SetScale(value);
             end
         end
     end);

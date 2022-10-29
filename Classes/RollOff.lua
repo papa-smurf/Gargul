@@ -337,7 +337,9 @@ function RollOff:start(CommMessage)
         if (GL.Settings:get("Rolling.showRollOffWindow")
             or self:startedByMe()
         ) then
-            GL.RollerUI:show(time, Entry.link, Entry.icon, content.note, SupportedRolls);
+		
+			local RollerUI = GL.Settings:get("Rolling.blizzardWindowStyle", false) and GL.RollerUIBlizz or GL.RollerUI
+            RollerUI:show(time, Entry.link, Entry.icon, content.note, SupportedRolls);
 
             if (CommMessage.Sender.id == GL.User.id) then
                 GL.MasterLooterUI:drawReopenMasterLooterUIButton();
@@ -454,6 +456,7 @@ function RollOff:stop(CommMessage)
     GL.Ace:CancelTimer(RollOff.StopRollOffTimer);
 
     GL.RollerUI:hide();
+    GL.RollerUIBlizz:hide();
 
     -- If we're the initiator then we need to update our initiator UI
     if (self:startedByMe()) then

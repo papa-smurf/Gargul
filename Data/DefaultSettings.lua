@@ -76,6 +76,7 @@ GL.Data.DefaultSettings = {
     },
     Rolling = {
         showRollOffWindow = true,
+        blizzardWindowStyle = false,
         closeAfterRoll = false,
         scale = 1,
     },
