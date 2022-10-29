@@ -517,7 +517,7 @@ function Test:simulateGroup(numberOfPlayers, includeSelf, includeCurrentGroupMem
     end
 
     if (includeCurrentGroupMembers) then
-        Players = GL.User:GroupMembers();
+        Players = GL.User:groupMembers();
     end
 
     local Names = GL:cloneTable(self.Names);
