@@ -255,6 +255,7 @@ function Exporter:transformEntriesToCustomFormat(Entries)
                     ["@ID"] = AwardEntry.itemId,
                     ["@LINK"] = ItemDetails.link:gsub('\124','\124\124'),
                     ["@ITEM"] = ItemDetails.name,
+                    ["@ILVL"] = ItemDetails.level,
                     ["@QUALITY"] = ItemDetails.quality,
                     ["@WINNER"] = AwardEntry.awardedTo,
                     ["@OS"] = tostring(AwardEntry.OS),
