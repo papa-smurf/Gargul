@@ -112,7 +112,7 @@ function AwardedLoot:tooltipLines(itemLink)
     return Lines;
 end
 
---- Add a winner for a specific item, on a specific date, to the SessionHistory table
+--- Add a winner for a specific item, on a specific date
 ---
 ---@param winner string
 ---@param date string
@@ -133,6 +133,11 @@ end
 function AwardedLoot:deleteWinner(checksum)
     GL:debug("AwardedLoot:deleteWinner");
 
+    -- This method can directly be accessed via a comm command, hence the double check
+    if (type(checksum) ~= "string" or GL:empty(checksum)) then
+        return;
+    end
+
     -- Do this in reverse orde because it's more likely that
     -- players delete more recently awarded items
     for index = #GL.DB.AwardHistory, 1, -1 do
@@ -150,6 +155,13 @@ function AwardedLoot:deleteWinner(checksum)
             -- Let the application know that an item was unawarded (deleted)
             GL.Events:fire("GL.ITEM_UNAWARDED", Loot);
 
+            -- If the user is not in a group then there's no need
+            -- to broadcast or attempt to auto assign loot to the winner
+            if (GL.User.isInGroup) then
+                -- Broadcast the awarded loot details to everyone in the group
+                GL.CommMessage.new(CommActions.deleteAwardedItem, checksum, "GROUP"):send();
+            end
+
             return;
         end
     end
@@ -159,40 +171,124 @@ end
 ---
 ---@param checksum string
 ---@return void
-function AwardedLoot:editWinner(checksum, winner)
+function AwardedLoot:editWinner(checksum, winner, announce)
     GL:debug("AwardedLoot:editWinner");
 
-    -- Do this in reverse orde because it's more likely that
-    -- players edit more recently awarded items
+    -- Do this in reverse order because it's more likely that players edit more recently awarded items
+    local lootIndex, Loot;
     for index = #GL.DB.AwardHistory, 1, -1 do
-        local Loot = GL.DB.AwardHistory[index];
+        Loot = GL.DB.AwardHistory[index];
 
         if (Loot and Loot.checksum == checksum) then
-            -- Redistribute BR cost
-            if (Loot.BRCost and GL:higherThanZero(Loot.BRCost)) then
-                GL.BoostedRolls:addPoints(Loot.awardedTo, Loot.BRCost);
-                GL.BoostedRolls:subtractPoints(winner, Loot.BRCost);
+            local originalWinner = string.lower(GL:stripRealm(Loot.awardedTo));
+
+            -- Nothing changed, silly player stuff
+            if (string.lower(GL:stripRealm(winner)) == originalWinner) then
+                return;
             end
 
-            Loot.received = false;
-            Loot.awardedTo = winner;
-
-            -- If we awarded to ourselves then we should already have the item
-            if (string.lower(winner) == string.lower(GL.User.name)) then
-                Loot.received = true;
-            end
-
-            GL.DB.AwardHistory[index] = Loot;
-
-            -- Let the application know that an item was edited
-            GL.Events:fire("GL.ITEM_AWARD_EDITED", Loot);
-
-            return;
+            lootIndex = index;
+            break;
         end
     end
+
+    -- No matching entry was found
+    if (not lootIndex) then
+        return;
+    end
+
+    -- Redistribute BR cost
+    if (Loot.BRCost and GL:higherThanZero(Loot.BRCost)) then
+        GL.BoostedRolls:addPoints(Loot.awardedTo, Loot.BRCost);
+        GL.BoostedRolls:subtractPoints(winner, Loot.BRCost);
+    end
+
+    Loot.received = false;
+    Loot.awardedTo = winner;
+
+    -- If we awarded to ourselves then we should already have the item
+    if (string.lower(winner) == string.lower(GL.User.name)) then
+        Loot.received = true;
+    end
+
+    GL.DB.AwardHistory[lootIndex] = Loot;
+
+    -- If announce is not provided then take the settings value
+    if (announce == nil) then
+        announce = GL.Settings:get("AwardingLoot.awardMessagesEnabled");
+    end
+
+    -- Do we need to announce this award?
+    if (announce) then
+        local channel = "GROUP";
+        if (GL.User.isInRaid
+            and GL.Settings:get("AwardingLoot.announceAwardMessagesInRW")
+        ) then
+            channel = "RAID_WARNING";
+        end
+
+        local awardMessage = "";
+        if (GL.BoostedRolls:enabled() and GL:higherThanZero(Loot.BRCost)) then
+            awardMessage = string.format("%s was awarded to %s for %s points. Congrats!",
+                Loot.itemLink,
+                winner,
+                Loot.BRCost
+            );
+        else
+            awardMessage = string.format("%s was awarded to %s. Congrats!",
+                Loot.itemLink,
+                winner
+            );
+
+            if (GL.BoostedRolls:enabled()) then
+                --- Make sure the cost is stored as the (new) default item cost
+                GL.Settings:set("BoostedRolls.defaultCost", Loot.BRCost);
+            end
+        end
+
+        -- Announce awarded item on RAID or RAID_WARNING
+        GL:sendChatMessage(
+            awardMessage,
+            channel
+        );
+
+        -- Announce awarded item on GUILD
+        if (GL.Settings:get("AwardingLoot.announceAwardMessagesInGuildChat")
+            and GL.User.Guild.name -- Make sure the loot master is actually in a guild
+            and GL.User.isInGroup -- Make sure the user is in some kind of group (and not just testing)
+        ) then
+            local Winner = GL.Player:fromName(winner);
+
+            -- Make sure the winner is actually in our guild before we announce him there
+            if (GL:tableGet(Winner, "Guild.name") == GL.User.Guild.name) then
+                GL:sendChatMessage(
+                    awardMessage,
+                    "GUILD"
+                );
+            end
+        end
+    end
+
+    -- If the user is not in a group then there's no need
+    -- to broadcast or attempt to auto assign loot to the winner
+    if (GL.User.isInGroup) then
+        -- Broadcast the awarded loot details to everyone in the group
+        GL.CommMessage.new(CommActions.editAwardedItem, Loot, "GROUP"):send();
+
+        -- The loot window is still active and the auto assign setting is enabled
+        if (not GL.DroppedLoot.lootWindowIsOpened
+            and GL.Settings:get("AwardingLoot.autoTradeAfterAwardingAnItem")
+            and GL.User.name ~= winner
+        ) then
+            self:initiateTrade(Loot);
+        end
+    end
+
+    -- Let the application know that an item was edited
+    GL.Events:fire("GL.ITEM_AWARD_EDITED", Loot);
 end
 
---- Add a winner for a specific item to the SessionHistory table
+--- Add a winner for a specific item
 ---
 ---@param winner string
 ---@param itemLink string
@@ -339,7 +435,7 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, G
     -- to broadcast or attempt to auto assign loot to the winner
     if (GL.User.isInGroup) then
         -- Broadcast the awarded loot details to everyone in the group
-        GL.CommMessage.new(CommActions.awardItem, AwardEntry, channel):send();
+        GL.CommMessage.new(CommActions.awardItem, AwardEntry, "GROUP"):send();
 
         -- The loot window is still active and the auto assign setting is enabled
         if (GL.DroppedLoot.lootWindowIsOpened
@@ -610,10 +706,69 @@ function AwardedLoot:processAwardedLoot(CommMessage)
         timestamp = AwardEntry.timestamp,
         softresID = AwardEntry.softresID,
         received = AwardEntry.received,
+        BRCost = AwardEntry.BRCost,
+        GDKPCost = AwardEntry.GDKPCost,
         OS = AwardEntry.OS,
     });
 end
 
+--- The loot master edited an item award, make sure our list reflect those changes
+---
+---@param CommMessage table
+---@return void
+function AwardedLoot:processEditedLoot(CommMessage)
+    GL:debug("AwardedLoot:processEditedLoot");
 
+    -- No need to do anything if we broadcasted it ourselves
+    if (CommMessage.Sender.name == GL.User.name) then
+        GL:debug("AwardedLoot:processEditedLoot received by self, skip");
+        return;
+    end
+
+    local AwardEntry = CommMessage.content;
+
+    -- Make sure all values are available
+    if (GL:empty(AwardEntry.checksum)
+        or GL:empty(AwardEntry.itemLink)
+        or GL:empty(AwardEntry.itemId)
+        or GL:empty(AwardEntry.awardedTo)
+        or GL:empty(AwardEntry.timestamp)
+    ) then
+        return GL:warning("Couldn't process edit result in AwardedLoot:processEditedLoot");
+    end
+
+    -- There's no point to us giving the winner the item since we don't have it
+    AwardEntry.received = true;
+
+    local lootIndex, Loot;
+    for index = #GL.DB.AwardHistory, 1, -1 do
+        Loot = GL.DB.AwardHistory[index];
+
+        if (Loot and Loot.checksum == AwardEntry.checksum) then
+            lootIndex = index;
+            break;
+        end
+    end
+
+    -- We don't have any record of this item, add it instead
+    if (not lootIndex) then
+        self:processAwardedLoot(CommMessage);
+        return;
+    end
+
+    -- Store the changes
+    GL.DB.AwardHistory[lootIndex] = {
+        checksum = AwardEntry.checksum,
+        itemLink = AwardEntry.itemLink,
+        itemId = AwardEntry.itemId,
+        awardedTo = AwardEntry.awardedTo,
+        timestamp = AwardEntry.timestamp,
+        softresID = AwardEntry.softresID,
+        received = AwardEntry.received,
+        BRCost = AwardEntry.BRCost,
+        GDKPCost = AwardEntry.GDKPCost,
+        OS = AwardEntry.OS,
+    };
+end
 
 GL:debug("AwardedLoot.lua");
