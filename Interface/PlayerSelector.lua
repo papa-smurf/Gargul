@@ -57,13 +57,65 @@ function PlayerSelector:draw(description, PlayerNames, callback)
     Description:SetText("\n" .. description);
     DescriptionFrame:AddChild(Description);
 
+    --[[
+        SECOND ROW (player name box)
+    ]]
+
+    local SecondRow = AceGUI:Create("SimpleGroup");
+    SecondRow:SetLayout("Flow");
+    SecondRow:SetFullWidth(true);
+    SecondRow:SetHeight(24);
+    Window:AddChild(SecondRow);
+
+    local Spacer = AceGUI:Create("SimpleGroup");
+    Spacer:SetLayout("Fill");
+    Spacer:SetWidth(18);
+    Spacer:SetHeight(20);
+    SecondRow:AddChild(Spacer);
+
+    local PlayerNameLabel = AceGUI:Create("Label");
+    PlayerNameLabel:SetText("Type player name here");
+    PlayerNameLabel:SetHeight(20);
+    PlayerNameLabel:SetWidth(128); -- Minimum is 122
+    SecondRow:AddChild(PlayerNameLabel);
+
+    local ConfirmButton;
+    local PlayerNameBox = AceGUI:Create("EditBox");
+    PlayerNameBox:SetHeight(20);
+    PlayerNameBox:SetWidth(120);
+    PlayerNameBox:SetCallback("OnEnterPressed", function ()
+        -- Remove table selection because we're awarding from the player name field
+        local PlayersTable = GL.Interface:getItem(self, "Table.Players");
+
+        if (PlayersTable) then
+            PlayersTable:ClearSelection();
+        end
+
+        ConfirmButton:Fire("OnClick");
+    end); -- Award
+    PlayerNameBox:SetFocus();
+    SecondRow:AddChild(PlayerNameBox);
+    GL.Interface:setItem(self, "PlayerName", PlayerNameBox);
+
+    Spacer = AceGUI:Create("SimpleGroup");
+    Spacer:SetLayout("Fill");
+    Spacer:SetWidth(6);
+    Spacer:SetHeight(20);
+    SecondRow:AddChild(Spacer);
+
+    local PlayerNameLabelSuffix = AceGUI:Create("Label");
+    PlayerNameLabelSuffix:SetText("or select one below");
+    PlayerNameLabelSuffix:SetHeight(20);
+    PlayerNameLabelSuffix:SetWidth(104); -- Minimum is 104
+    SecondRow:AddChild(PlayerNameLabelSuffix);
+
     local TableFrame = GL.AceGUI:Create("SimpleGroup");
     TableFrame:SetLayout("FILL");
     TableFrame:SetFullWidth(true);
-    TableFrame:SetHeight(184);
+    TableFrame:SetHeight(156);
     Window:AddChild(TableFrame);
 
-    local ConfirmButton = AceGUI:Create("Button");
+    ConfirmButton = AceGUI:Create("Button");
     ConfirmButton:SetText("Confirm");
     ConfirmButton:SetWidth(140);
     ConfirmButton:SetHeight(20);
@@ -118,7 +170,7 @@ function PlayerSelector:drawPlayersTable(Parent, PlayerNames)
     -- Combined width of all colums should be 340
     local columns = {
         {
-            name = "Player",
+            name = "",
             width = 340,
             align = "LEFT",
             color = {
@@ -154,9 +206,30 @@ function PlayerSelector:drawPlayersTable(Parent, PlayerNames)
 
     local Table = ScrollingTable:CreateST(columns, 8, 15, nil, Parent);
     Table:EnableSelection(true);
-    Table.frame:SetPoint("BOTTOM", Parent, "BOTTOM", 0, 20);
+    Table.frame:SetPoint("BOTTOM", Parent, "BOTTOM", 0, 10);
     Table:SetData(TableRows);
     GL.Interface:setItem(self, "Players", Table);
+
+    Table:RegisterEvents({
+        OnClick = function (_, _, data, _, _, realrow)
+            -- Make sure something is actually selected, better safe than lua error
+            if (not GL:higherThanZero(realrow)
+                or type(data) ~= "table"
+                or not data[realrow]
+                or not data[realrow].cols
+                or not data[realrow].cols[1]
+            ) then
+                return;
+            end
+
+            local selectedPlayer = data[realrow].cols[1].value;
+            local EditBox = GL.Interface:getItem(self, "EditBox.PlayerName");
+
+            if (EditBox and EditBox.SetText) then
+                EditBox:SetText(GL:capitalize(selectedPlayer));
+            end
+        end
+    });
 end
 
 GL:debug("Interfaces/PlayerSelector.lua");
