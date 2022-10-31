@@ -5,7 +5,6 @@ local _, GL = ...;
 GL.Profiler = {
     addonIndex = nil,
     isVisible = false,
-    maxReportedMemory = 0,
     updateRateInSeconds = 5,
     RefreshTimer = nil,
     Window = nil,
@@ -29,7 +28,7 @@ function Profiler:draw()
     Window:SetTitle("Gargul v" .. GL.version);
     Window:SetLayout("Flow");
     Window:SetWidth(180);
-    Window:SetHeight(90);
+    Window:SetHeight(60);
     Window:EnableResize(false);
     Window.statustext:GetParent():Hide(); -- Hide the statustext bar
     Window:SetPoint(GL.Interface:getPosition("Profiler"));
@@ -63,7 +62,6 @@ function Profiler:draw()
 
     local updateMemoryUsage = function ()
         local memory = self:getMemoryUsage();
-        local maxMemory = self.maxReportedMemory;
 
         -- Use color to indicate the severety of the memory usage
         local function memoryColor(number)
@@ -79,11 +77,9 @@ function Profiler:draw()
             return color;
         end
 
-        Usage:SetText(string.format("MEM: |c00%s%s|rk\nMAX: |c00%s%s|rk",
+        Usage:SetText(string.format("MEM: |c00%s%s|rk",
             memoryColor(memory),
-            self:humanReadableNumber(memory),
-            memoryColor(maxMemory),
-            self:humanReadableNumber(maxMemory)
+            self:humanReadableNumber(memory)
         ));
     end;
 
@@ -151,12 +147,6 @@ function Profiler:getMemoryUsage()
     UpdateAddOnMemoryUsage();
 
     local usage = GetAddOnMemoryUsage("Gargul");
-
-    -- Keep track of the higest memory usage recorded
-    self.maxReportedMemory = self.maxReportedMemory or 0;
-    if (usage > self.maxReportedMemory) then
-        self.maxReportedMemory = usage;
-    end
 
     return usage;
 end
