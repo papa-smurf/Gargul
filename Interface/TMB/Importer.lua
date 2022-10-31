@@ -25,7 +25,6 @@ function Importer:draw(showDFT)
     Window:SetTitle("Gargul v" .. GL.version);
     Window:SetLayout("Flow");
     Window:SetWidth(600);
-    Window:SetHeight(480);
     Window:EnableResize(false);
     Window.statustext:GetParent():Hide(); -- Hide the statustext bar
     Window:SetCallback("OnClose", function()
@@ -39,17 +38,52 @@ function Importer:draw(showDFT)
     _G["GARGUL_SOFTRES_IMPORTER_WINDOW"] = Window.frame;
     tinsert(UISpecialFrames, "GARGUL_SOFTRES_IMPORTER_WINDOW");
 
-    -- Explanation
-    local Description = AceGUI:Create("Label");
-    Description:SetFontObject(_G["GameFontNormal"]);
-    Description:SetFullWidth(true);
-
     if (showDFT) then
+        Window:SetHeight(480);
+
+        -- Explanation
+        local Description = AceGUI:Create("Label");
+        Description:SetFontObject(_G["GameFontNormal"]);
+        Description:SetFullWidth(true);
         Description:SetText("Export your DFT data as per the sheet's instructions. Afterwards paste the contents as-is in the box below and click 'Import'. That's it!");
+        Window:AddChild(Description);
     else
-        Description:SetText("To get started you first need to export your guild's data on thatsmybis.com. In order to do that navigate to Guild > Exports and click the 'Download' button in the Gargul section. Afterwards paste the contents as-is in the box below and click 'Import'. That's it!");
+        Window:SetHeight(520);
+
+        local VerticalSpacer = GL.AceGUI:Create("SimpleGroup");
+        VerticalSpacer:SetLayout("FILL");
+        VerticalSpacer:SetFullWidth(true);
+        VerticalSpacer:SetHeight(6);
+        Window:AddChild(VerticalSpacer);
+
+        local MoreInfoLabel = GL.AceGUI:Create("Label");
+        MoreInfoLabel:SetText(string.format("|c00FFF569How to use Gargul with TMB|r"));
+        MoreInfoLabel:SetFontObject(_G["GameFontGreenLarge"]);
+        MoreInfoLabel:SetFullWidth(true);
+        MoreInfoLabel:SetJustifyH("MIDDLE");
+        Window:AddChild(MoreInfoLabel);
+
+        local DiscordURL = GL.AceGUI:Create("EditBox");
+        DiscordURL:DisableButton(true);
+        DiscordURL:SetHeight(20);
+        DiscordURL:SetFullWidth(true);
+        DiscordURL:SetText("https://github.com/papa-smurf/Gargul/wiki/Gargul-and-ThatsMyBIS");
+        Window:AddChild(DiscordURL);
+
+        VerticalSpacer = GL.AceGUI:Create("SimpleGroup");
+        VerticalSpacer:SetLayout("FILL");
+        VerticalSpacer:SetFullWidth(true);
+        VerticalSpacer:SetHeight(10);
+        Window:AddChild(VerticalSpacer);
+
+        -- Explanation
+        local Description = AceGUI:Create("Label");
+        Description:SetFontObject(_G["GameFontNormal"]);
+        Description:SetFullWidth(true);
+        Description:SetText("Paste your TMB export contents as-is in the box below and click 'Import'");
+        Window:AddChild(Description);
     end
-    Window:AddChild(Description);
+
 
     -- Large edit box
     local TMBBoxContent = "";
