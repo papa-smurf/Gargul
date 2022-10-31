@@ -26,17 +26,17 @@ BuffInspector.Widgets = {
 
 -- Inspect the raid group's bag contents for the
 -- availability of specific items (max 8)
-function BuffInspector:inspect(SpellIds)
+function BuffInspector:inspect(SpellIDs)
     GL:debug("BuffInspector:inspect");
 
     if (not GL.User.isInGroup) then
         return GL:error("You're not in a group");
     end
 
-    SpellIds = GL:strSplit(SpellIds, ",");
-    SpellIds = GL:tableSlice(SpellIds, 8); -- inspect supports up to 8 spell ids
+    SpellIDs = GL:strSplit(SpellIDs, ",");
+    SpellIDs = GL:tableSlice(SpellIDs, 8); -- inspect supports up to 8 spell ids
 
-    if (#SpellIds < 1) then
+    if (#SpellIDs < 1) then
         return GL:error("No spell ids provided in BuffInspector.inspect");
     end
 
@@ -48,8 +48,8 @@ function BuffInspector:inspect(SpellIds)
         groupType = "raid";
     end
 
-    for index = 1, #SpellIds do
-        local spellId = tonumber(SpellIds[index]);
+    for index = 1, #SpellIDs do
+        local spellId = tonumber(SpellIDs[index]);
 
         if (not spellId) then
             return GL:error("Unknown spell id provided in BuffInspector.inspect");

@@ -413,10 +413,10 @@ function DroppedLoot:announce(Modifiers)
             local TMBInfo = GL.TMB:byItemLink(itemLink);
 
             -- Check if we need to announce this item
-            local itemId = tonumber(GL:getItemIdFromLink(itemLink)) or 0;
+            local itemID = tonumber(GL:getItemIDFromLink(itemLink)) or 0;
 
             -- Double checking just in case!
-            if (not GL:higherThanZero(itemId)) then
+            if (not GL:higherThanZero(itemID)) then
                 return;
             end
 
@@ -427,7 +427,7 @@ function DroppedLoot:announce(Modifiers)
 
             if ((
                     quality < GL.Settings:get("DroppedLoot.minimumQualityOfAnnouncedLoot", 4) -- Quality is lower than our set minimum
-                    or GL:inTable(Constants.ItemsThatSouldntBeAnnounced, itemId) -- We don't want to announce this item
+                    or GL:inTable(Constants.ItemsThatSouldntBeAnnounced, itemID) -- We don't want to announce this item
                 )
                 and GL:empty(SoftReserves) -- No one (hard)reserved it
                 and GL:empty(TMBInfo) -- No one has it on his wishlist and it's not a prio item
@@ -640,7 +640,7 @@ function DroppedLoot:getTMBDetails(TMBInfo, PlayersInRaid)
         local playerName = string.lower(Entry.character);
 
         --- NOTE TO SELF: it's (os) because of the string.lower, if you remove the lower then change below accordingly!
-        if (GL:inTable(PlayersInRaid, string.gsub(playerName, "%(os%)", ""))) then
+        if (not GL.User.isInGroup or GL:inTable(PlayersInRaid, string.gsub(playerName, "%(os%)", ""))) then
             local prio = Entry.prio;
             local entryType = Entry.type or Constants.tmbTypeWish;
             local isOffSpec = string.find(playerName, "%(os%)");
@@ -695,7 +695,7 @@ function DroppedLoot:announceTest(...)
         local concernsID = GL:higherThanZero(tonumber(value));
 
         if (not concernsID) then
-            value = GL:getItemIdFromLink(value) or 0;
+            value = GL:getItemIDFromLink(value) or 0;
         end
 
         itemIDs[key] = value;

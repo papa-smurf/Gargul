@@ -160,10 +160,10 @@ function AwardHistory:draw(AnchorTo)
 
     --local itemLinkLabelWidth = math.max(160, 160 + (WindowWidth - 430));
     local itemLinkLabelWidth = math.max(150, 150 + (WindowWidth - 430));
-    GL:onItemLoadDo(GL:tableColumn(AwardedItemsToShow, "itemId"), function()
+    GL:onItemLoadDo(GL:tableColumn(AwardedItemsToShow, "itemID"), function()
         for _, Award in pairs(AwardedItemsToShow) do
             (function ()
-                local ItemDetails = GL.DB.Cache.ItemsById[tostring(Award.itemId)];
+                local ItemDetails = GL.DB.Cache.ItemsByID[tostring(Award.itemID)];
 
                 -- Item was not found, better safe than lua error
                 if (not ItemDetails) then

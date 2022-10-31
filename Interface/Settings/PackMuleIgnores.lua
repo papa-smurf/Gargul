@@ -72,7 +72,7 @@ function PackMuleIgnores:isItemIgnored(input)
         return;
     end
 
-    local itemID = GL:getItemIdFromLink(input) or input;
+    local itemID = GL:getItemIDFromLink(input) or input;
     GL.PackMule:isItemIDIgnored(itemID, function (Loot, itemIDisIgnoredForMaster, itemIDisIgnoredForGroup)
         -- The given item ID doesn't exist
         if (not Loot) then
