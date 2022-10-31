@@ -64,6 +64,16 @@ function TradeWindow:open(playerName, callback, allwaysExecuteCallback)
     GL:debug("TradeWindow:open");
 
     playerName = GL:normalizedName(playerName);
+
+    -- ERA is an odd duck. It requires a realm, but only if the trade partner's realm differs from ours
+    if (GL.isEra) then
+        local playerRealm = GL:getRealmFromName(playerName);
+
+        if (string.lower(playerRealm) == string.lower(GL.User.realm)) then
+            playerName = GL:stripRealm(playerName);
+        end
+    end
+
     allwaysExecuteCallback = GL:toboolean(allwaysExecuteCallback);
 
     -- We're already trading with someone
