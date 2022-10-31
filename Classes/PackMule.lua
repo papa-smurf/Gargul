@@ -411,12 +411,12 @@ function PackMule:getTargetForItem(itemLinkOrId, callback)
             }
 
             -- This is to make sure we support item names, IDs and links
-            local ruleItemID = math.floor(tonumber(GL:getItemIDFromLink(item)) or 0);
-            if (not ruleItemID) then
-                ruleItemID = math.floor(tonumber(item) or 0);
+            local ruleConcernsItemID = false;
+            local ruleItemID = tonumber(item) or GL:getItemIDFromLink(item);
+            if (ruleItemID) then
+                ruleItemID = math.floor(ruleItemID);
+                ruleConcernsItemID = GL:higherThanZero(ruleItemID);
             end
-
-            local ruleConcernsItemID = GL:higherThanZero(ruleItemID);
 
             -- Check if this is a non item-specific rule (aka quality based rule)
             if (Loot.quality and quality and operator and target and (
