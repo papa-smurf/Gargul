@@ -41,15 +41,15 @@ end
 
 --- Fetch an item's TMB info based on its ID
 ---
----@param itemId number
+---@param itemID number
 ---@param inRaidOnly boolean|nil
 ---@return table
-function TMB:byItemId(itemId, inRaidOnly)
-    GL:debug("TMB:byItemId");
+function TMB:byItemID(itemID, inRaidOnly)
+    GL:debug("TMB:byItemID");
 
     -- An invalid item id was provided
-    itemId = tonumber(itemId);
-    if (not GL:higherThanZero(itemId)) then
+    itemID = tonumber(itemID);
+    if (not GL:higherThanZero(itemID)) then
         return {};
     end
 
@@ -66,7 +66,7 @@ function TMB:byItemId(itemId, inRaidOnly)
     end
 
     -- The item linked to this id can have multiple IDs (head of Onyxia for example)
-    local AllLinkedItemIds = GL:getLinkedItemsForId(itemId);
+    local AllLinkedItemIDs = GL:getLinkedItemsForID(itemID);
 
     local GroupMemberNames = {};
     if (inRaidOnly) then
@@ -75,7 +75,7 @@ function TMB:byItemId(itemId, inRaidOnly)
 
     local Processed = {};
     local Wishes = {};
-    for _, id in pairs(AllLinkedItemIds) do
+    for _, id in pairs(AllLinkedItemIDs) do
         id = tostring(id);
         for _, Entry in pairs(GL.DB:get("TMB.Items." .. tostring(id), {})) do
             local playerName = string.lower(GL:stripRealm(Entry.character));
@@ -99,27 +99,27 @@ end
 
 --- Fetch TMB info for a specific item ID and player
 ---
----@param itemId number
+---@param itemID number
 ---@param player string
 ---@return table
-function TMB:byItemIdAndPlayer(itemId, player)
-    GL:debug("TMB:byItemId");
+function TMB:byItemIDAndPlayer(itemID, player)
+    GL:debug("TMB:byItemID");
 
     -- An invalid item id or name was provided
-    itemId = tonumber(itemId);
+    itemID = tonumber(itemID);
     player = string.lower(strtrim(player));
-    if (not GL:higherThanZero(itemId)
+    if (not GL:higherThanZero(itemID)
         or GL:empty(player)
     ) then
         return {};
     end
 
     -- The item linked to this id can have multiple IDs (head of Onyxia for example)
-    local AllLinkedItemIds = GL:getLinkedItemsForId(itemId);
+    local AllLinkedItemIDs = GL:getLinkedItemsForID(itemID);
 
     local Processed = {};
     local Entries = {};
-    for _, id in pairs(AllLinkedItemIds) do
+    for _, id in pairs(AllLinkedItemIDs) do
         id = tostring(id);
         for _, Entry in pairs(GL.DB:get("TMB.Items." .. tostring(id), {})) do
             local playerName = string.lower(GL:stripRealm(Entry.character));
@@ -152,7 +152,7 @@ function TMB:byItemLinkAndPlayer(itemLink, player)
         return {};
     end
 
-    return self:byItemIdAndPlayer(GL:getItemIdFromLink(itemLink), player);
+    return self:byItemIDAndPlayer(GL:getItemIDFromLink(itemLink), player);
 end
 
 --- Fetch an item's TMB info based on its item link
@@ -167,7 +167,7 @@ function TMB:byItemLink(itemLink, inRaidOnly)
         return {};
     end
 
-    return self:byItemId(GL:getItemIdFromLink(itemLink), inRaidOnly);
+    return self:byItemID(GL:getItemIDFromLink(itemLink), inRaidOnly);
 end
 
 --- Fetch an item's TMB tier based on its item link
@@ -181,7 +181,7 @@ function TMB:tierByItemLink(itemLink)
         return "";
     end
 
-    return self:tierByItemID(GL:getItemIdFromLink(itemLink));
+    return self:tierByItemID(GL:getItemIDFromLink(itemLink));
 end
 
 --- Fetch an item's TMB tier based on its item ID
@@ -209,7 +209,7 @@ function TMB:noteByItemLink(itemLink)
         return "";
     end
 
-    return self:noteByItemID(GL:getItemIdFromLink(itemLink));
+    return self:noteByItemID(GL:getItemIDFromLink(itemLink));
 end
 
 --- Fetch an item's TMB note based on its item ID
@@ -544,8 +544,8 @@ function TMB:import(data, triedToDecompress)
             groupID = 4,
         };
 
-        for itemId, WishListEntries in pairs(WebsiteData.wishlists) do
-            TMBData[itemId] = {};
+        for itemID, WishListEntries in pairs(WebsiteData.wishlists) do
+            TMBData[itemID] = {};
             for _, characterString in pairs(WishListEntries) do
                 local stringParts = GL:strSplit(characterString, "|");
 
@@ -588,11 +588,11 @@ function TMB:import(data, triedToDecompress)
                 end
 
                 if (characterName and order) then
-                    local checkSum = string.format('%s||%s||%s||%s||%s', itemId, characterName, order, type, raidGroupID or 0);
+                    local checkSum = string.format('%s||%s||%s||%s||%s', itemID, characterName, order, type, raidGroupID or 0);
 
                     -- Make sure to ignore duplicates
                     if (not processedEntryCheckums[checkSum]) then
-                        tinsert(TMBData[itemId], {
+                        tinsert(TMBData[itemID], {
                             ["character"] = characterName,
                             ["prio"] = order,
                             ["type"] = type,
@@ -1011,10 +1011,10 @@ function TMB:receiveBroadcast(CommMessage)
         end
 
         -- Validate dataset
-        for itemId, Entries in pairs(Data.Items) do
-            itemId = tonumber(itemId);
+        for itemID, Entries in pairs(Data.Items) do
+            itemID = tonumber(itemID);
 
-            if (GL:empty(itemId)) then
+            if (GL:empty(itemID)) then
                 GL:error("Invalid TMB data received from " .. CommMessage.Sender.name);
                 return;
             end

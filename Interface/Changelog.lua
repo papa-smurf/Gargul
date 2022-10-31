@@ -12,6 +12,15 @@ GL.Interface.Changelog = {
 
     History = {
         {
+            version = "4.12.0",
+            date = "October 31th, 2022",
+            Changes = {
+                "|c00BE3333Important:|r This version introduces a complete rewrite of the awarded loot structure, making it incompatible with older versions of Gargul. Encourage your fellow raiders to update!",
+                "Hold shift on the roll window to compare the item with what you have equipped!",
+                "Notable bugfix: Edited and deleted awarded items are now broadcast to the entire raid properly",
+            },
+        },
+        {
             version = "4.11.0",
             date = "October 27th, 2022",
             Changes = {

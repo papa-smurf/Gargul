@@ -28,7 +28,7 @@ local ScrollingTable = GL.ScrollingTable;
 function Award:draw(itemLink)
     GL:debug("Award:draw");
 
-    local itemID = GL:getItemIdFromLink(itemLink);
+    local itemID = GL:getItemIDFromLink(itemLink);
 
     -- First we need to check if the frame hasn't been
     -- rendered already. If so then show it (if it's hidden)
@@ -194,7 +194,7 @@ function Award:draw(itemLink)
                 GDKPPrice = tonumber(GDKPPriceEditBox:GetText());
 
                 if (GL:higherThanZero(GDKPPrice)) then
-                    GL.GDKP:createAuction(GL:getItemIdFromLink(itemLink), GDKPPrice, winner);
+                    GL.GDKP:createAuction(GL:getItemIDFromLink(itemLink), GDKPPrice, winner);
                 end
             end
 
@@ -461,7 +461,7 @@ function Award:topPrioForItem(itemID)
     if (GL.SoftRes:available()) then
         local lastPlayerName = false;
         local moreThanOnePersonReservedThisItem = false;
-        for _, playerName in pairs(GL.SoftRes:byItemId(itemID, true)) do
+        for _, playerName in pairs(GL.SoftRes:byItemID(itemID, true)) do
             if (not lastPlayerName) then
                 lastPlayerName = playerName;
             end
@@ -479,7 +479,7 @@ function Award:topPrioForItem(itemID)
 
     local PrioListEntries = {};
     local WishListEntries = {};
-    for _, Entry in pairs(GL.TMB:byItemId(itemID, true)) do
+    for _, Entry in pairs(GL.TMB:byItemID(itemID, true)) do
         -- Priolist entry
         if (Entry.type == 1) then
             tinsert(PrioListEntries, Entry);

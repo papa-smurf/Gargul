@@ -24,7 +24,7 @@ function Test.TradeState:_init(callback)
     end
 
     self._initialized = true;
-    local ItemIds = {};
+    local ItemIDs = {};
 
     local ItemIDSources = {
         GL.Data.Constants.ItemsThatSouldntBeAnnounced,
@@ -34,12 +34,12 @@ function Test.TradeState:_init(callback)
 
     for _, itemIDSource in pairs(ItemIDSources) do
         for _, itemID in pairs(itemIDSource) do
-            tinsert(ItemIds, itemID);
+            tinsert(ItemIDs, itemID);
         end
     end
 
     -- Preload items
-    GL:onItemLoadDo(ItemIds, function (ResultSet)
+    GL:onItemLoadDo(ItemIDs, function (ResultSet)
         self.Items = ResultSet;
 
         if (callback and type(callback) == "function") then
@@ -517,7 +517,7 @@ function Test:simulateGroup(numberOfPlayers, includeSelf, includeCurrentGroupMem
     end
 
     if (includeCurrentGroupMembers) then
-        Players = GL.User:GroupMembers();
+        Players = GL.User:groupMembers();
     end
 
     local Names = GL:cloneTable(self.Names);

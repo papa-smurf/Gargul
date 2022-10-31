@@ -18,10 +18,10 @@ local LootPriority = GL.LootPriority; ---@type LootPriority
 function LootPriority:getPriority(itemLink, itemName)
     GL:debug("LootPriority:byItemLink");
 
-    local itemId = GL:getItemIdFromLink(itemLink);
+    local itemID = GL:getItemIDFromLink(itemLink);
     itemName = itemName or GL:getItemNameFromLink(itemLink);
 
-    return GL.DB.LootPriority[itemId]
+    return GL.DB.LootPriority[itemID]
         or GL.DB.LootPriority[itemName];
 end
 

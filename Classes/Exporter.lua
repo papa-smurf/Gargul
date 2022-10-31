@@ -208,8 +208,8 @@ function Exporter:getLootEntries()
                 awardedTo = GL.Settings:get("ExportingLoot.disenchanterIdentifier");
             end
 
-            -- Just in case an itemId is not available we will extract it from the item link
-            local itemID = AwardEntry.itemId or GL:getItemIdFromLink(AwardEntry.itemLink);
+            -- Just in case an itemID is not available we will extract it from the item link
+            local itemID = AwardEntry.itemID or GL:getItemIDFromLink(AwardEntry.itemLink);
 
             local checksum = AwardEntry.checksum; -- Old entries may not possess a checksum yet
             if (not checksum) then
@@ -219,7 +219,7 @@ function Exporter:getLootEntries()
             tinsert(Entries, {
                 timestamp = AwardEntry.timestamp,
                 awardedTo = awardedTo,
-                itemId = itemID,
+                itemID = itemID,
                 OS = AwardEntry.OS and 1 or 0,
                 checksum = checksum,
             });
@@ -238,23 +238,24 @@ function Exporter:transformEntriesToCustomFormat(Entries)
     local exportString = "";
 
     -- Make sure that all relevant item data is cached
-    GL:onItemLoadDo(GL:tableColumn(Entries, "itemId"), function ()
+    GL:onItemLoadDo(GL:tableColumn(Entries, "itemID"), function ()
         for _, AwardEntry in pairs(Entries) do
             local exportEntry = GL.Settings:get("ExportingLoot.customFormat");
-            local ItemDetails = GL.DB.Cache.ItemsById[tostring(AwardEntry.itemId)];
+            local ItemDetails = GL.DB.Cache.ItemsByID[tostring(AwardEntry.itemID)];
             local wowheadLink;
 
             if (GL.isEra) then
-                wowheadLink = string.format("https://classic.wowhead.com/item=%s", AwardEntry.itemId );
+                wowheadLink = string.format("https://classic.wowhead.com/item=%s", AwardEntry.itemID );
             else
-                wowheadLink = string.format("https://www.wowhead.com/wotlk/item=%s", AwardEntry.itemId );
+                wowheadLink = string.format("https://www.wowhead.com/wotlk/item=%s", AwardEntry.itemID );
             end
 
             if (not GL:empty(ItemDetails)) then
                 local Values = {
-                    ["@ID"] = AwardEntry.itemId,
+                    ["@ID"] = AwardEntry.itemID,
                     ["@LINK"] = ItemDetails.link:gsub('\124','\124\124'),
                     ["@ITEM"] = ItemDetails.name,
+                    ["@ILVL"] = ItemDetails.level,
                     ["@QUALITY"] = ItemDetails.quality,
                     ["@WINNER"] = AwardEntry.awardedTo,
                     ["@OS"] = tostring(AwardEntry.OS),
@@ -296,8 +297,8 @@ function Exporter:transformEntriesToTMBFormat(Entries)
         exportString = string.format("%s\n%s,%s,%s,%s,%s",
             exportString,
             date('%Y-%m-%d', AwardEntry.timestamp),
-            AwardEntry.awardedTo,
-            AwardEntry.itemId,
+            GL:stripRealm(AwardEntry.awardedTo),
+            AwardEntry.itemID,
             AwardEntry.OS,
             AwardEntry.checksum
         );
@@ -330,7 +331,7 @@ function Exporter:transformEntriesToDFTFormat(Entries)
         exportString = string.format("%s%s;[%s];%s\n",
             exportString,
             dateString,
-            Entry.itemId,
+            Entry.itemID,
             Entry.awardedTo
         );
     end;

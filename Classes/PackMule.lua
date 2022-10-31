@@ -15,7 +15,7 @@ GL.PackMule = {
 
     -- We ignore recipes and questitems by default
     -- since they might not always be tradably
-    itemClassIdsToIgnore = {
+    itemClassIDsToIgnore = {
         LE_ITEM_CLASS_RECIPE,
         LE_ITEM_CLASS_QUESTITEM,
     },
@@ -53,7 +53,7 @@ function PackMule:_init()
     end);
 
     -- Whenever an item drops that is eligible for rolling trigger the highlighter and packmule rules
-    GL.Events:register("GroupLootStartLootRollListener", "START_LOOT_ROLL", function (_, rollID)
+    GL.Events:register("PackMuleStartLootRollListener", "START_LOOT_ROLL", function (_, rollID)
         self:processGroupLootItems(rollID);
     end);
 
@@ -104,8 +104,13 @@ function PackMule:_init()
         end
 
         -- Auto confirm loot you open (lockbox etc)
-        for itemIndex = 1, GetNumLootItems() do
-            if (GetLootSlotLink(itemIndex)) then
+        local lootThreshold = GetLootThreshold();
+        for itemIndex = GetNumLootItems(), 1, -1 do
+            local itemLink = GetLootSlotLink(itemIndex);
+            local _, _, _, _, quality, locked = GetLootSlotInfo(itemIndex);
+
+            -- We have to make sure that the item is lootable before we attempt to
+            if (itemLink and not locked and quality and (not GL.User.isInGroup or quality < lootThreshold)) then
                 LootSlot(itemIndex);
                 ConfirmLootSlot(itemIndex);
             end
@@ -213,7 +218,7 @@ function PackMule:isItemIDIgnored(itemID, callback)
 
     self:getTargetForItem(itemID, function(masterTarget)
         local itemIDisIgnoredForMaster = GL:empty(masterTarget);
-        local Loot = GL.DB.Cache.ItemsById[tostring(itemID)] or {}; -- This is 100% set at this point
+        local Loot = GL.DB.Cache.ItemsByID[tostring(itemID)] or {}; -- This is 100% set at this point
 
         -- We now test the item against PackMule in a group loot setting
         GetLootMethod = function () return "group"; end;
@@ -363,7 +368,7 @@ function PackMule:getTargetForItem(itemLinkOrId, callback)
     if (concernsID) then
         itemID = math.floor(tonumber(itemLinkOrId));
     else
-        itemID = GL:getItemIdFromLink(itemLinkOrId);
+        itemID = GL:getItemIDFromLink(itemLinkOrId);
     end
 
     -- We can't work without an item ID!
@@ -406,12 +411,12 @@ function PackMule:getTargetForItem(itemLinkOrId, callback)
             }
 
             -- This is to make sure we support item names, IDs and links
-            local ruleItemID = math.floor(tonumber(GL:getItemIdFromLink(item)) or 0);
-            if (not ruleItemID) then
-                ruleItemID = math.floor(tonumber(item) or 0);
+            local ruleConcernsItemID = false;
+            local ruleItemID = tonumber(item) or GL:getItemIDFromLink(item);
+            if (ruleItemID) then
+                ruleItemID = math.floor(ruleItemID);
+                ruleConcernsItemID = GL:higherThanZero(ruleItemID);
             end
-
-            local ruleConcernsItemID = GL:higherThanZero(ruleItemID);
 
             -- Check if this is a non item-specific rule (aka quality based rule)
             if (Loot.quality and quality and operator and target and (
@@ -445,7 +450,7 @@ function PackMule:getTargetForItem(itemLinkOrId, callback)
                         end
 
                         -- Always skip recipes and quest items
-                        if (GL:inTable(self.itemClassIdsToIgnore, Loot.classID)) then
+                        if (GL:inTable(self.itemClassIDsToIgnore, Loot.classID)) then
                             return false;
                         end
                     end
@@ -466,7 +471,7 @@ function PackMule:getTargetForItem(itemLinkOrId, callback)
                     end
 
                     -- Recipes and Quest Items are skipped in quality rules
-                    if (GL:inTable(self.itemClassIdsToIgnore, Loot.classID)) then
+                    if (GL:inTable(self.itemClassIDsToIgnore, Loot.classID)) then
                         return false;
                     end
 
@@ -720,11 +725,11 @@ function PackMule:disenchant(itemLink, byPassConfirmationDialog)
         return GL:warning("You need to be the master looter or have lead/assist!");
     end
 
-    local itemId = GL:getItemIdFromLink(itemLink);
+    local itemID = GL:getItemIDFromLink(itemLink);
     byPassConfirmationDialog = GL:toboolean(byPassConfirmationDialog);
 
     -- Make sure an itemlink was provided
-    if (not GL:higherThanZero(itemId)) then
+    if (not GL:higherThanZero(itemID)) then
         return;
     end
 
@@ -765,7 +770,7 @@ function PackMule:disenchant(itemLink, byPassConfirmationDialog)
     end
 
     if (byPassConfirmationDialog) then
-        self:assignLootToPlayer(itemId, self.disenchanter);
+        self:assignLootToPlayer(itemID, self.disenchanter);
         GL.Interface.PlayerSelector:close();
         GL.AwardedLoot:addWinner(GL.Exporter.disenchantedItemIdentifier, itemLink, false);
         self:announceDisenchantment(itemLink);
@@ -781,7 +786,7 @@ function PackMule:disenchant(itemLink, byPassConfirmationDialog)
             self.disenchanter
         ),
         OnYes = function ()
-            self:assignLootToPlayer(itemId, self.disenchanter);
+            self:assignLootToPlayer(itemID, self.disenchanter);
             GL.Interface.PlayerSelector:close();
             GL.AwardedLoot:addWinner(GL.Exporter.disenchantedItemIdentifier, itemLink, false);
             self:announceDisenchantment(itemLink);
@@ -893,9 +898,9 @@ function PackMule:assignLootToPlayer(itemID, playerName)
     local itemCount = GetNumLootItems();
     for lootIndex = 1, itemCount do
         local itemLink = GetLootSlotLink(lootIndex);
-        local lootItemId = GL:getItemIdFromLink(itemLink);
+        local lootItemID = GL:getItemIDFromLink(itemLink);
 
-        if (lootItemId and lootItemId == itemID) then
+        if (lootItemID and lootItemID == itemID) then
             itemIndex = lootIndex;
             break;
         end
@@ -910,8 +915,9 @@ function PackMule:assignLootToPlayer(itemID, playerName)
 
     -- Try to determine the index of the player who should receive it
     local playerIndex = false;
+    playerName = GL:normalizedName(playerName);
     for _, Player in pairs(GL.User:groupMembers()) do
-        local candidate = GetMasterLootCandidate(itemIndex, Player.index);
+        local candidate = GL:normalizedName(GetMasterLootCandidate(itemIndex, Player.index));
 
         if (candidate and candidate == playerName) then
             playerIndex = Player.index;

@@ -71,6 +71,86 @@ function Settings:enforceTemporarySettings()
         return;
     end
 
+    --- In 4.12.0 we completely rewrote the awarded item structure
+    --- If the user is now on 4.12.0 or has not used 4.12.0 then we restructure the awarded items
+    ---@todo: remove if award history structure ever changes again
+    if (GL.version == "4.12.0" or (
+        not GL.firstBoot and not GL.DB.LoadDetails["4.12.0"])
+    ) then
+        GL:notice("Rewriting Gargul's award history, this could drops FPS for a second or two!");
+        GL.DB.LoadDetails["4.12.0"] = GetServerTime();
+
+        local AwardHistory = {};
+        for _, AwardEntry in pairs(GL.DB.AwardHistory) do
+            (function ()
+                local itemIDfromItemLink = GL:getItemIDFromLink(AwardEntry.itemLink);
+
+                -- We can't work with this record
+                if (not AwardEntry.awardedTo or (
+                    not AwardEntry.itemId and not itemIDfromItemLink
+                )) then
+                    return;
+                elseif (not AwardEntry.itemId) then
+                    AwardEntry.itemId = itemIDfromItemLink;
+                end
+
+                -- Make sure we always have a timestamp
+                if (not AwardEntry.timestamp) then
+                    AwardEntry.timestamp = AwardEntry.awardedOn;
+                end
+
+                if (not GL:higherThanZero(AwardEntry.timestamp)) then
+                    AwardEntry.timestamp = 0;
+                end
+
+                -- Make sure we always have a checksum
+                if (GL:empty(AwardEntry.checksum)) then
+                    AwardEntry.checksum = GL:strPadRight(GL:strLimit(GL:stringHash(AwardEntry.timestamp .. AwardEntry.itemId) .. GL:stringHash(AwardEntry.awardedTo .. GL.DB:get("SoftRes.MetaData.id", "")), 20, ""), "0", 20);
+                end
+
+                local addEntryToTable = function (Entry)
+                    AwardHistory[Entry.checksum] = {
+                        checksum = Entry.checksum,
+                        itemLink = Entry.itemLink,
+                        itemID = Entry.itemId,
+                        awardedTo = Entry.awardedTo,
+                        timestamp = Entry.timestamp,
+                        softresID = Entry.softresID,
+                        received = Entry.received or false,
+                        BRCost = Entry.BRCost or 0,
+                        GDKPCost = Entry.BRCost or 0,
+                        OS = GL:toboolean(Entry.OS),
+                        Rolls = Entry.Rolls or {},
+                    };
+                end;
+
+                -- We have all we need, process the entry now
+                if (AwardEntry.itemLink and GL:getItemIDFromLink(AwardEntry.itemLink)) then
+                    addEntryToTable(AwardEntry);
+
+                -- We need to fetch the itemLink first before we can process
+                else
+                    GL:onItemLoadDo(AwardEntry.itemId, function (Items)
+                        local Item = Items[1];
+
+                        -- Better safe than lua error!
+                        if (GL:empty(Item.link)) then
+                            return;
+                        end
+
+                        AwardEntry.itemLink = Item.link;
+
+                        addEntryToTable(AwardEntry);
+                    end);
+                end
+            end)();
+        end
+
+        GL.DB.AwardHistory = AwardHistory;
+
+        GL:notice("All done!");
+    end
+
     ---@todo: remove >= 31-10-2022
     --- We renamed PackMule.enabled to PackMule.enabledForMasterLoot in 4.8
     if (type(GL.DB.Settings.PackMule.enabled) == "boolean") then

@@ -6,13 +6,51 @@ GL.ScrollingTable = GL.ScrollingTable or LibStub("ScrollingTable");
 ---@class AwardHistoryInterface
 GL.Interface.AwardHistory = {
     isVisible = false,
+    eventListenersSet = false,
     RefreshTimer = nil,
+    ChecksumsToShow = nil,
     PreviousAnchors = {},
     Window = nil,
 };
 
 ---@type AwardHistoryInterface
 local AwardHistory = GL.Interface.AwardHistory;
+
+--- Determine which checksums should be shown in the awardhistory window
+---
+---@return void
+function AwardHistory:populateChecksumsToShow()
+    self.ChecksumsToShow = {};
+    local fiveHoursAgo = GetServerTime() - 18000;
+    local loadItemsGTE = math.min(fiveHoursAgo, GL.loadedOn);
+
+    for checksum, Entry in pairs(GL.DB.AwardHistory) do
+        if (checksum and Entry.timestamp and Entry.timestamp >= loadItemsGTE) then
+            tinsert(self.ChecksumsToShow, {checksum, Entry.timestamp});
+        end
+    end
+
+    local sortChecksumsNewestToOldest = function ()
+        table.sort(self.ChecksumsToShow, function (a, b)
+            return a[2] > b[2];
+        end);
+    end;
+
+    sortChecksumsNewestToOldest();
+
+    if (not self.eventListenersSet) then
+        self.eventListenersSet = true;
+
+        GL.Events:register("AwardHistoryItemAwardedInstantListener", "GL.ITEM_AWARDED", function (_, Entry)
+            if (not Entry.checksum or not Entry.timestamp) then
+                return;
+            end
+
+            tinsert(self.ChecksumsToShow, {Entry.checksum, Entry.timestamp});
+            sortChecksumsNewestToOldest();
+        end);
+    end
+end
 
 --- Draw the award history window
 ---
@@ -33,6 +71,11 @@ function AwardHistory:draw(AnchorTo)
 
         -- Store this anchor in order to create an anchor "history"
         tinsert(self.PreviousAnchors, AnchorTo);
+    end
+
+    -- Cache the items we need to show first
+    if (not self.ChecksumsToShow) then
+        self:populateChecksumsToShow();
     end
 
     self.isVisible = true;
@@ -94,28 +137,21 @@ function AwardHistory:draw(AnchorTo)
     ScrollFrame:SetLayout("Flow");
     ScrollFrameHolder:AddChild(ScrollFrame);
 
-    -- Loop through our awarded loot table in reverse
     local fiveHoursAgo = GetServerTime() - 18000;
     local loadItemsGTE = math.min(fiveHoursAgo, GL.loadedOn);
     local AwardedItemsToShow = {};
     local thereAreItemsToShow = false;
 
-    -- Sort the awarded loot by timestamp (highest to lowest)
-    table.sort(GL.DB.AwardHistory, function (a, b)
-        return a.timestamp < b.timestamp;
-    end);
+    for _, Entry in pairs(self.ChecksumsToShow) do
+        local Loot = GL.DB.AwardHistory[Entry[1]];
 
-    for index = #GL.DB.AwardHistory, 1, -1 do
-        local Loot = GL.DB.AwardHistory[index];
-
-        -- loadItemsGTE will equal five hours, or however long the players
-        -- current playsession is ongoing (whichever is longest)
-        if (Loot.timestamp < loadItemsGTE) then
-            break;
+        -- This item should no longer be shown
+        if (not Loot or not Loot.timestamp or Loot.timestamp < loadItemsGTE) then
+            GL.DB.AwardHistory[Entry[1]] = nil;
+        else
+            tinsert(AwardedItemsToShow, Loot);
+            thereAreItemsToShow = true;
         end
-
-        tinsert(AwardedItemsToShow, Loot);
-        thereAreItemsToShow = true;
     end
 
     if (thereAreItemsToShow) then
@@ -124,10 +160,10 @@ function AwardHistory:draw(AnchorTo)
 
     --local itemLinkLabelWidth = math.max(160, 160 + (WindowWidth - 430));
     local itemLinkLabelWidth = math.max(150, 150 + (WindowWidth - 430));
-    GL:onItemLoadDo(GL:tableColumn(AwardedItemsToShow, "itemId"), function()
+    GL:onItemLoadDo(GL:tableColumn(AwardedItemsToShow, "itemID"), function()
         for _, Award in pairs(AwardedItemsToShow) do
             (function ()
-                local ItemDetails = GL.DB.Cache.ItemsById[tostring(Award.itemId)];
+                local ItemDetails = GL.DB.Cache.ItemsByID[tostring(Award.itemID)];
 
                 -- Item was not found, better safe than lua error
                 if (not ItemDetails) then
@@ -282,17 +318,27 @@ function AwardHistory:draw(AnchorTo)
 
                 EditButton:SetScript("OnClick", function(_, button)
                     if (button == 'LeftButton') then
-                        GL.Interface.Dialogs.ConfirmWithSingleInputDialog:open({
-                            question = string.format("Who should %s go to instead?", Award.itemLink),
-                            OnYes = function (player)
-                                if (not player or type(player) ~= "string") then
-                                    return;
-                                end
+                        -- Show the player selector
+                        local question = string.format("Who should %s go to instead?", Award.itemLink);
+                        GL.Interface.PlayerSelector:draw(question, GL.User:groupMemberNames(), function (playerName)
+                            GL.Interface.Dialogs.PopupDialog:open({
+                                question = string.format("Award %s to |cff%s%s|r?",
+                                    Award.itemLink,
+                                    GL:classHexColor(GL.Player:classByName(playerName)),
+                                    playerName
+                                ),
+                                OnYes = function ()
+                                    if (not playerName or type(playerName) ~= "string") then
+                                        return;
+                                    end
 
-                                player = GL:capitalize(string.trim(string.lower(GL:stripRealm(player))));
-                                GL.AwardedLoot:editWinner(Award.checksum, player);
-                            end,
-                        });
+                                    playerName = GL:capitalize(string.trim(string.lower(GL:stripRealm(playerName))));
+                                    GL.AwardedLoot:editWinner(Award.checksum, playerName);
+
+                                    GL.Interface.PlayerSelector:close();
+                                end,
+                            });
+                        end);
                     end
                 end);
             end)();

@@ -64,6 +64,16 @@ function TradeWindow:open(playerName, callback, allwaysExecuteCallback)
     GL:debug("TradeWindow:open");
 
     playerName = GL:normalizedName(playerName);
+
+    -- ERA is an odd duck. It requires a realm, but only if the trade partner's realm differs from ours
+    if (GL.isEra) then
+        local playerRealm = GL:getRealmFromName(playerName);
+
+        if (string.lower(playerRealm) == string.lower(GL.User.realm)) then
+            playerName = GL:stripRealm(playerName);
+        end
+    end
+
     allwaysExecuteCallback = GL:toboolean(allwaysExecuteCallback);
 
     -- We're already trading with someone
@@ -210,7 +220,7 @@ function TradeWindow:updateState()
         -- Fetch and store the items on our side of the trade window
         local name, texture, quantity, quality, isUsable, _ = GetTradePlayerItemInfo(tradeSlot);
         local itemLink = GetTradePlayerItemLink(tradeSlot);
-        local itemID = GL:getItemIdFromLink(itemLink) or nil;
+        local itemID = GL:getItemIDFromLink(itemLink) or nil;
 
         self.State.MyItems[tradeSlot] = {
             name = name,
@@ -226,7 +236,7 @@ function TradeWindow:updateState()
         -- Fetch and store the items on their side of the trade window
         name, texture, quantity, quality, isUsable, _ = GetTradeTargetItemInfo(tradeSlot);
         itemLink = GetTradeTargetItemLink(tradeSlot);
-        itemID = GL:getItemIdFromLink(itemLink) or nil;
+        itemID = GL:getItemIDFromLink(itemLink) or nil;
 
         self.State.TheirItems[tradeSlot] = {
             name = name,
@@ -244,7 +254,7 @@ function TradeWindow:updateState()
         -- The enchantment return value is only available for slot TRADE_ENCHANT_SLOT (the "locked slot"), not the regular trade slots above
         local name, texture, quantity, quality, isUsable, enchantment = GetTradeTargetItemInfo(TRADE_ENCHANT_SLOT);
         local itemLink = GetTradeTargetItemLink(TRADE_ENCHANT_SLOT);
-        local itemID = GL:getItemIdFromLink(itemLink) or nil;
+        local itemID = GL:getItemIDFromLink(itemLink) or nil;
 
         self.State.EnchantedByMe = {
             name = name,
@@ -261,7 +271,7 @@ function TradeWindow:updateState()
         --- Note 2: isUsable is actually canLoseTransmog, but since we don't strictly need either it doesn't matter
         name, texture, quantity, quality, enchantment, isUsable  = GetTradePlayerItemInfo(TRADE_ENCHANT_SLOT);
         itemLink = GetTradePlayerItemLink(TRADE_ENCHANT_SLOT);
-        itemID = GL:getItemIdFromLink(itemLink) or nil;
+        itemID = GL:getItemIDFromLink(itemLink) or nil;
 
         self.State.EnchantedByThem = {
             name = name,

@@ -5,7 +5,7 @@ local Overview = GL.Interface.Settings.Overview; ---@type SettingsOverview
 
 ---@class GeneralSettings
 GL.Interface.Settings.General = {
-    description = "Gargul adds quality of life features for raiders, master looters and raid leaders. It can be used with SoftRes (softres.it) and TMB (thatsmybis.com) to create a hassle free raiding experience. |c00f7922eMost of Gargul's features can be tested even when not in a group, so go check them out!|r",
+    description = "Gargul adds quality of life features for raiders, master looters and raid leaders. It can be used with SoftRes (softres.it) and TMB (thatsmybis.com) to create a hassle free raiding experience. |c00f7922eMost of Gargul's features can be tested when not in a group, so go check them out, just use it!!|r",
 };
 local General = GL.Interface.Settings.General; ---@type GeneralSettings
 
@@ -27,6 +27,24 @@ function General:draw(Parent)
     Parent:AddChild(DiscordURL);
 
     local HorizontalSpacer = GL.AceGUI:Create("SimpleGroup");
+    HorizontalSpacer:SetLayout("FILL");
+    HorizontalSpacer:SetFullWidth(true);
+    HorizontalSpacer:SetHeight(10);
+    Parent:AddChild(HorizontalSpacer);
+
+    local CurrentHotkeysLabel = GL.AceGUI:Create("Label");
+    CurrentHotkeysLabel:SetText(string.format(
+        "Roll: |c00a79eff%s|r. Award: |c00a79eff%s|r. Disenchant: |c00a79eff%s|r",
+        GL.Settings:get("ShortcutKeys.rollOff"),
+        GL.Settings:get("ShortcutKeys.award"),
+        GL.Settings:get("ShortcutKeys.disenchant")
+    ));
+    CurrentHotkeysLabel:SetFontObject(_G["GameFontNormal"]);
+    CurrentHotkeysLabel:SetFullWidth(true);
+    CurrentHotkeysLabel:SetJustifyH("MIDDLE");
+    Parent:AddChild(CurrentHotkeysLabel);
+
+    HorizontalSpacer = GL.AceGUI:Create("SimpleGroup");
     HorizontalSpacer:SetLayout("FILL");
     HorizontalSpacer:SetFullWidth(true);
     HorizontalSpacer:SetHeight(10);
@@ -61,7 +79,7 @@ function General:draw(Parent)
     HorizontalSpacer = GL.AceGUI:Create("SimpleGroup");
     HorizontalSpacer:SetLayout("FILL");
     HorizontalSpacer:SetFullWidth(true);
-    HorizontalSpacer:SetHeight(20);
+    HorizontalSpacer:SetHeight(10);
     Parent:AddChild(HorizontalSpacer);
 
     local Checkboxes = {
