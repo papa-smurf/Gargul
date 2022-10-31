@@ -587,11 +587,6 @@ function AwardedLoot:tradeInitiated()
             thereAreItemsToAdd = true;
         end)();
     end
-
-    -- CloseAllBags taints the container frame slots in retail+ (DF)
-    if (thereAreItemsToAdd and not GL.isRetail) then
-        CloseAllBags();
-    end
 end
 
 --- Whenever a successful trade is completed we need to check whether we need to mark awarded loot as "received"
