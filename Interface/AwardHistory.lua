@@ -6,13 +6,51 @@ GL.ScrollingTable = GL.ScrollingTable or LibStub("ScrollingTable");
 ---@class AwardHistoryInterface
 GL.Interface.AwardHistory = {
     isVisible = false,
+    eventListenersSet = false,
     RefreshTimer = nil,
+    ChecksumsToShow = nil,
     PreviousAnchors = {},
     Window = nil,
 };
 
 ---@type AwardHistoryInterface
 local AwardHistory = GL.Interface.AwardHistory;
+
+--- Determine which checksums should be shown in the awardhistory window
+---
+---@return void
+function AwardHistory:populateChecksumsToShow()
+    self.ChecksumsToShow = {};
+    local fiveHoursAgo = GetServerTime() - 18000;
+    local loadItemsGTE = math.min(fiveHoursAgo, GL.loadedOn);
+
+    for checksum, Entry in pairs(GL.DB.AwardHistory) do
+        if (checksum and Entry.timestamp and Entry.timestamp >= loadItemsGTE) then
+            tinsert(self.ChecksumsToShow, {checksum, Entry.timestamp});
+        end
+    end
+
+    local sortChecksumsNewestToOldest = function ()
+        table.sort(self.ChecksumsToShow, function (a, b)
+            return a[2] > b[2];
+        end);
+    end;
+
+    sortChecksumsNewestToOldest();
+
+    if (not self.eventListenersSet) then
+        self.eventListenersSet = true;
+
+        GL.Events:register("AwardHistoryItemAwardedInstantListener", "GL.ITEM_AWARDED", function (_, Entry)
+            if (not Entry.checksum or not Entry.timestamp) then
+                return;
+            end
+
+            tinsert(self.ChecksumsToShow, {Entry.checksum, Entry.timestamp});
+            sortChecksumsNewestToOldest();
+        end);
+    end
+end
 
 --- Draw the award history window
 ---
@@ -33,6 +71,11 @@ function AwardHistory:draw(AnchorTo)
 
         -- Store this anchor in order to create an anchor "history"
         tinsert(self.PreviousAnchors, AnchorTo);
+    end
+
+    -- Cache the items we need to show first
+    if (not self.ChecksumsToShow) then
+        self:populateChecksumsToShow();
     end
 
     self.isVisible = true;
@@ -94,28 +137,21 @@ function AwardHistory:draw(AnchorTo)
     ScrollFrame:SetLayout("Flow");
     ScrollFrameHolder:AddChild(ScrollFrame);
 
-    -- Loop through our awarded loot table in reverse
     local fiveHoursAgo = GetServerTime() - 18000;
     local loadItemsGTE = math.min(fiveHoursAgo, GL.loadedOn);
     local AwardedItemsToShow = {};
     local thereAreItemsToShow = false;
 
-    -- Sort the awarded loot by timestamp (highest to lowest)
-    table.sort(GL.DB.AwardHistory, function (a, b)
-        return a.timestamp < b.timestamp;
-    end);
+    for _, Entry in pairs(self.ChecksumsToShow) do
+        local Loot = GL.DB.AwardHistory[Entry[1]];
 
-    for index = #GL.DB.AwardHistory, 1, -1 do
-        local Loot = GL.DB.AwardHistory[index];
-
-        -- loadItemsGTE will equal five hours, or however long the players
-        -- current playsession is ongoing (whichever is longest)
-        if (Loot.timestamp < loadItemsGTE) then
-            break;
+        -- This item should no longer be shown
+        if (not Loot or not Loot.timestamp or Loot.timestamp < loadItemsGTE) then
+            GL.DB.AwardHistory[Entry[1]] = nil;
+        else
+            tinsert(AwardedItemsToShow, Loot);
+            thereAreItemsToShow = true;
         end
-
-        tinsert(AwardedItemsToShow, Loot);
-        thereAreItemsToShow = true;
     end
 
     if (thereAreItemsToShow) then

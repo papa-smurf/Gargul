@@ -254,7 +254,7 @@ function Comm:dispatch(CommMessage)
         return GL.AwardedLoot:processEditedLoot(CommMessage);
 
     elseif (action == CommActions.deleteAwardedItem) then
-        return GL.AwardedLoot:deleteWinner(CommMessage.content);
+        return GL.AwardedLoot:deleteWinner(CommMessage.content, false);
 
     elseif (action == CommActions.broadcastLootPriorities) then
         return GL.LootPriority:receiveBroadcast(CommMessage);

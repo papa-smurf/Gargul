@@ -297,8 +297,8 @@ function Exporter:transformEntriesToTMBFormat(Entries)
         exportString = string.format("%s\n%s,%s,%s,%s,%s",
             exportString,
             date('%Y-%m-%d', AwardEntry.timestamp),
-            AwardEntry.awardedTo,
-            AwardEntry.itemId,
+            GL:stripRealm(AwardEntry.awardedTo),
+            AwardEntry.itemID,
             AwardEntry.OS,
             AwardEntry.checksum
         );

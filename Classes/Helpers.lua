@@ -1014,6 +1014,29 @@ function GL:stripRealm(str)
     return Parts[1] or "";
 end
 
+--- Get the realm from a given player name
+---
+---@param playerName string
+---@return string
+function GL:getRealmFromName(playerName)
+    playerName = tostring(playerName);
+
+    if (self:empty(playerName)) then
+        return "";
+    end
+
+    -- WoW knows multiple realm separators ( - @ # * ) depending on version and locale
+    local separator = playerName:match("[" .. REALM_SEPARATORS .. "]");
+
+    -- No realm separator was found, return the original message
+    if (not separator) then
+        return playerName;
+    end
+
+    local Parts = self:strSplit(playerName, separator);
+    return Parts[2] or "";
+end
+
 --- Check whether the given player name occurs more than once in the player's group
 --- (only possible in Era because of cross-realm support)
 ---

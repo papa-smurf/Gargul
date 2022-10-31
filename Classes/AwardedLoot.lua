@@ -49,26 +49,24 @@ function AwardedLoot:_init()
     self._initialized = true;
 end
 
+--- Fetch all the tooltip lines that include award info, this allows for easy caching
+---
+---@param itemLink string
+---@return table
 function AwardedLoot:tooltipLines(itemLink)
-    local itemID = GL:getItemIdFromLink(itemLink);
+    local itemID = GL:getItemIDFromLink(itemLink);
 
-    -- Loop through our awarded loot table in reverse
     local fiveHoursAgo = GetServerTime() - 18000;
     local loadItemsGTE = math.min(fiveHoursAgo, GL.loadedOn);
     local winnersAvailable = false;
     local Lines = { string.format("\n|c00efb8cd%s|r", "Awarded To") };
-    for index = #GL.DB.AwardHistory, 1, -1 do
-        local result = (function ()
-            local Loot = GL.DB.AwardHistory[index];
-
+    for _, Loot in pairs(GL.DB.AwardHistory) do
+        (function ()
             -- loadItemsGTE will equal five hours, or however long the players
             -- current playsession is ongoing (whichever is longest)
-            if (Loot.timestamp < loadItemsGTE) then
-                return false;
-            end
-
-            -- This is not the item we're looking for
-            if (Loot.itemId ~= itemID) then
+            if (Loot.timestamp < loadItemsGTE
+                or Loot.itemID ~= itemID -- This is not the item we're looking for
+            ) then
                 return;
             end
 
@@ -98,10 +96,6 @@ function AwardedLoot:tooltipLines(itemLink)
             tinsert(Lines, line);
             winnersAvailable = true;
         end)();
-
-        if (result == false) then
-            break;
-        end
     end
 
     -- Nothing to show
@@ -129,8 +123,9 @@ end
 --- Remove a winner for an item
 ---
 ---@param checksum string
+---@param adjustPoints boolean|nil
 ---@return void
-function AwardedLoot:deleteWinner(checksum)
+function AwardedLoot:deleteWinner(checksum, adjustPoints)
     GL:debug("AwardedLoot:deleteWinner");
 
     -- This method can directly be accessed via a comm command, hence the double check
@@ -138,32 +133,32 @@ function AwardedLoot:deleteWinner(checksum)
         return;
     end
 
-    -- Do this in reverse orde because it's more likely that
-    -- players delete more recently awarded items
-    for index = #GL.DB.AwardHistory, 1, -1 do
-        local Loot = GL.DB.AwardHistory[index];
+    if (adjustPoints == nil) then
+        adjustPoints = true;
+    end
 
-        if (Loot and Loot.checksum == checksum) then
-            GL.DB.AwardHistory[index] = nil;
-            table.remove(GL.DB.AwardHistory, index);
+    -- We don't know this entry
+    if (not GL.DB.AwardHistory[checksum]) then
+        return;
+    end
 
-            -- Refund BR cost
-            if (Loot.BRCost and GL:higherThanZero(Loot.BRCost)) then
-                GL.BoostedRolls:addPoints(Loot.awardedTo, Loot.BRCost);
-            end
+    local AwardEntry = GL.DB.AwardHistory[checksum];
 
-            -- Let the application know that an item was unawarded (deleted)
-            GL.Events:fire("GL.ITEM_UNAWARDED", Loot);
+    -- Refund BR cost
+    if (adjustPoints and AwardEntry.BRCost and GL:higherThanZero(AwardEntry.BRCost)) then
+        GL.BoostedRolls:addPoints(AwardEntry.awardedTo, AwardEntry.BRCost);
+    end
 
-            -- If the user is not in a group then there's no need
-            -- to broadcast or attempt to auto assign loot to the winner
-            if (GL.User.isInGroup) then
-                -- Broadcast the awarded loot details to everyone in the group
-                GL.CommMessage.new(CommActions.deleteAwardedItem, checksum, "GROUP"):send();
-            end
+    GL.DB.AwardHistory[checksum] = nil;
 
-            return;
-        end
+    -- Let the application know that an item was unawarded (deleted)
+    GL.Events:fire("GL.ITEM_UNAWARDED", AwardEntry);
+
+    -- If the user is not in a group then there's no need
+    -- to broadcast or attempt to auto assign loot to the winner
+    if (GL.User.isInGroup) then
+        -- Broadcast the awarded loot details to everyone in the group
+        GL.CommMessage.new(CommActions.deleteAwardedItem, checksum, "GROUP"):send();
     end
 end
 
@@ -174,44 +169,38 @@ end
 function AwardedLoot:editWinner(checksum, winner, announce)
     GL:debug("AwardedLoot:editWinner");
 
-    -- Do this in reverse order because it's more likely that players edit more recently awarded items
-    local lootIndex, Loot;
-    for index = #GL.DB.AwardHistory, 1, -1 do
-        Loot = GL.DB.AwardHistory[index];
-
-        if (Loot and Loot.checksum == checksum) then
-            local originalWinner = string.lower(GL:stripRealm(Loot.awardedTo));
-
-            -- Nothing changed, silly player stuff
-            if (string.lower(GL:stripRealm(winner)) == originalWinner) then
-                return;
-            end
-
-            lootIndex = index;
-            break;
-        end
+    -- We don't know this entry
+    if (not GL.DB.AwardHistory[checksum]) then
+        return;
     end
 
-    -- No matching entry was found
-    if (not lootIndex) then
+    local AwardEntry = GL.DB.AwardHistory[checksum];
+    local originalWinner = string.lower(GL:stripRealm(AwardEntry.awardedTo));
+
+    if (GL.isEra and not strfind(winner, "-")) then
+        winner = string.format("%s-%s", winner, GL.User.realm);
+    end
+
+    -- Nothing changed, silly player stuff
+    if (string.lower(GL:stripRealm(winner)) == originalWinner) then
         return;
     end
 
     -- Redistribute BR cost
-    if (Loot.BRCost and GL:higherThanZero(Loot.BRCost)) then
-        GL.BoostedRolls:addPoints(Loot.awardedTo, Loot.BRCost);
-        GL.BoostedRolls:subtractPoints(winner, Loot.BRCost);
+    if (AwardEntry.BRCost and GL:higherThanZero(AwardEntry.BRCost)) then
+        GL.BoostedRolls:addPoints(AwardEntry.awardedTo, AwardEntry.BRCost);
+        GL.BoostedRolls:subtractPoints(winner, AwardEntry.BRCost);
     end
 
-    Loot.received = false;
-    Loot.awardedTo = winner;
+    AwardEntry.received = false;
+    AwardEntry.awardedTo = winner;
 
     -- If we awarded to ourselves then we should already have the item
     if (string.lower(winner) == string.lower(GL.User.name)) then
-        Loot.received = true;
+        AwardEntry.received = true;
     end
 
-    GL.DB.AwardHistory[lootIndex] = Loot;
+    GL.DB.AwardHistory[checksum] = AwardEntry;
 
     -- If announce is not provided then take the settings value
     if (announce == nil) then
@@ -228,21 +217,21 @@ function AwardedLoot:editWinner(checksum, winner, announce)
         end
 
         local awardMessage = "";
-        if (GL.BoostedRolls:enabled() and GL:higherThanZero(Loot.BRCost)) then
+        if (GL.BoostedRolls:enabled() and GL:higherThanZero(AwardEntry.BRCost)) then
             awardMessage = string.format("%s was awarded to %s for %s points. Congrats!",
-                Loot.itemLink,
+                AwardEntry.itemLink,
                 winner,
-                Loot.BRCost
+                AwardEntry.BRCost
             );
         else
             awardMessage = string.format("%s was awarded to %s. Congrats!",
-                Loot.itemLink,
+                AwardEntry.itemLink,
                 winner
             );
 
             if (GL.BoostedRolls:enabled()) then
                 --- Make sure the cost is stored as the (new) default item cost
-                GL.Settings:set("BoostedRolls.defaultCost", Loot.BRCost);
+                GL.Settings:set("BoostedRolls.defaultCost", AwardEntry.BRCost);
             end
         end
 
@@ -273,19 +262,19 @@ function AwardedLoot:editWinner(checksum, winner, announce)
     -- to broadcast or attempt to auto assign loot to the winner
     if (GL.User.isInGroup) then
         -- Broadcast the awarded loot details to everyone in the group
-        GL.CommMessage.new(CommActions.editAwardedItem, Loot, "GROUP"):send();
+        GL.CommMessage.new(CommActions.editAwardedItem, AwardEntry, "GROUP"):send();
 
         -- The loot window is still active and the auto assign setting is enabled
         if (not GL.DroppedLoot.lootWindowIsOpened
             and GL.Settings:get("AwardingLoot.autoTradeAfterAwardingAnItem")
             and GL.User.name ~= winner
         ) then
-            self:initiateTrade(Loot);
+            self:initiateTrade(AwardEntry);
         end
     end
 
     -- Let the application know that an item was edited
-    GL.Events:fire("GL.ITEM_AWARD_EDITED", Loot);
+    GL.Events:fire("GL.ITEM_AWARD_EDITED", AwardEntry);
 end
 
 --- Add a winner for a specific item
@@ -298,7 +287,7 @@ end
 ---@param BRCost number|nil
 ---@param GDKPCost number|nil
 ---@return void
-function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, GDKPCost)
+function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, GDKPCost, Rolls)
     GL:debug("AwardedLoot:addWinner");
 
     -- Determine whether the item should be flagged as off-spec
@@ -325,10 +314,14 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, G
         return GL:debug("Invalid itemLink provided for AwardedLoot:addWinner");
     end
 
-    local itemId = GL:getItemIdFromLink(itemLink);
+    local itemID = GL:getItemIDFromLink(itemLink);
 
-    if (not itemId) then
+    if (not itemID) then
         return GL:debug("Invalid itemLink provided for AwardedLoot:addWinner");
+    end
+
+    if (GL.isEra and not strfind(winner, "-")) then
+        winner = string.format("%s-%s", winner, GL.User.realm);
     end
 
     -- You can set the date for when this item was awarded, handy if you forgot an item for example
@@ -361,9 +354,9 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, G
     end
 
     local AwardEntry = {
-        checksum = GL:strPadRight(GL:strLimit(GL:stringHash(timestamp .. itemId) .. GL:stringHash(winner .. GL.DB:get("SoftRes.MetaData.id", "")), 20, ""), "0", 20),
+        checksum = GL:strPadRight(GL:strLimit(GL:stringHash(timestamp .. itemID) .. GL:stringHash(winner .. GL.DB:get("SoftRes.MetaData.id", "")), 20, ""), "0", 20),
         itemLink = itemLink,
-        itemId = itemId,
+        itemID = itemID,
         awardedTo = winner,
         timestamp = timestamp,
         softresID = GL.DB:get("SoftRes.MetaData.id"),
@@ -371,10 +364,11 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, G
         BRCost = tonumber(BRCost),
         GDKPCost = tonumber(GDKPCost),
         OS = isOS,
+        Rolls = Rolls or {},
     };
 
     -- Insert the award in the more permanent AwardHistory table (for export / audit purposes)
-    tinsert(GL.DB.AwardHistory, AwardEntry);
+    GL.DB.AwardHistory[AwardEntry.checksum] = AwardEntry;
 
     -- Check whether the user disabled award announcement in the settings
     if (not GL.Settings:get("AwardingLoot.awardMessagesEnabled")) then
@@ -441,10 +435,10 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, G
         if (GL.DroppedLoot.lootWindowIsOpened
             and GL.Settings:get("AwardingLoot.autoAssignAfterAwardingAnItem")
         ) then
-            GL.PackMule:assignLootToPlayer(AwardEntry.itemId, winner);
+            GL.PackMule:assignLootToPlayer(AwardEntry.itemID, winner);
 
-            -- The loot window is closed and the auto trade setting is enabled
-            -- Also skip this part if you yourself won the item
+        -- The loot window is closed and the auto trade setting is enabled
+        -- Also skip this part if you yourself won the item
         elseif (not GL.DroppedLoot.lootWindowIsOpened
             and GL.Settings:get("AwardingLoot.autoTradeAfterAwardingAnItem")
             and GL.User.name ~= winner
@@ -467,7 +461,7 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, G
         local normalizedPlayerName = string.lower(GL:stripRealm(winner));
         local isPrioritized, isWishlisted = false, false;
 
-        for _, Entry in pairs(GL.TMB:byItemIdAndPlayer(itemId, normalizedPlayerName) or {}) do
+        for _, Entry in pairs(GL.TMB:byItemIDAndPlayer(itemID, normalizedPlayerName) or {}) do
             if (Entry.type == GL.Data.Constants.tmbTypePrio) then
                 isPrioritized = true;
             elseif (Entry.type == GL.Data.Constants.tmbTypeWish) then
@@ -482,7 +476,7 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, G
             isOffSpec = isOS,
             isWishlisted = isWishlisted,
             isPrioritized = isPrioritized,
-            isReserved = GL.SoftRes:itemIdIsReservedByPlayer(itemId, normalizedPlayerName),
+            isReserved = GL.SoftRes:itemIDIsReservedByPlayer(itemID, normalizedPlayerName),
         });
     end);
 end
@@ -496,13 +490,13 @@ function AwardedLoot:byWinner(winner, after)
     GL:debug("AwardedLoot:byWinner");
 
     local Entries = {};
-    for _, AwardEntry in pairs(GL.DB.AwardHistory) do
+    for checksum, AwardEntry in pairs(GL.DB.AwardHistory) do
         if ((not after or AwardEntry.timestamp > after)
             and AwardEntry.awardedTo == winner
             and not GL:empty(AwardEntry.timestamp)
             and not GL:empty(AwardEntry.itemLink)
         ) then
-            tinsert(Entries, AwardEntry);
+            Entries[checksum] = AwardEntry;
         end
     end
 
@@ -519,7 +513,7 @@ function AwardedLoot:initiateTrade(AwardDetails)
     local tradingPartner = AwardDetails.awardedTo;
 
     -- Check whether we have the item in our inventory, no point opening a trade window if not
-    local itemPositionInBag = GL:findBagIdAndSlotForItem(AwardDetails.itemId);
+    local itemPositionInBag = GL:findBagIdAndSlotForItem(AwardDetails.itemID);
     if (GL:empty(itemPositionInBag)) then
         return;
     end
@@ -540,7 +534,7 @@ function AwardedLoot:initiateTrade(AwardDetails)
     -- We're already trading with the winner
     elseif (GL:tableGet(GL.TradeWindow, "State.partner") == tradingPartner) then
         -- Attempt to add the item to the trade window
-        GL.TradeWindow:addItem(AwardDetails.itemId);
+        GL.TradeWindow:addItem(AwardDetails.itemID);
     end
 end
 
@@ -560,22 +554,18 @@ function AwardedLoot:tradeInitiated()
     local threeHoursAgo = GetServerTime() - 10800;
 
     -- Loop through our awarded loot table in reverse
-    for index = #GL.DB.AwardHistory, 1, -1 do
-        local Loot = GL.DB.AwardHistory[index];
-
+    local thereAreItemsToAdd = false;
+    for _, Loot in pairs(GL.DB.AwardHistory) do
         -- Our trading partner changed in the meantime, stop!
         if (tradingPartner ~= GL:tableGet(GL.TradeWindow, "State.partner")) then
             break;
         end
 
-        -- No need to check loot that was awarded 3 hours (or longer) ago
-        -- Since we're looping through the table in reverse (newest to oldest)
-        -- there's no reason to keep looping through the awarded loot table
-        if (Loot.timestamp < threeHoursAgo) then
-            break;
-        end
-
         (function ()
+            if (Loot.timestamp < threeHoursAgo) then
+                return;
+            end
+
             local awardedTo = GL:stripRealm(Loot.awardedTo);
 
             -- Check whether this item is meant for our current trading partner
@@ -592,8 +582,15 @@ function AwardedLoot:tradeInitiated()
             end
 
             -- Attempt to add the item to the trade window
-            GL.TradeWindow:addItem(Loot.itemId);
+            GL.TradeWindow:addItem(Loot.itemID);
+
+            thereAreItemsToAdd = true;
         end)();
+    end
+
+    -- CloseAllBags taints the container frame slots in retail+ (DF)
+    if (thereAreItemsToAdd and not GL.isRetail) then
+        CloseAllBags();
     end
 end
 
@@ -623,19 +620,10 @@ function AwardedLoot:tradeCompleted(Details)
     local threeHoursAgo = GetServerTime() - 10800;
 
     -- Loop through our awarded loot table in reverse
-    for index = #GL.DB.AwardHistory, 1, -1 do
-        local Loot = GL.DB.AwardHistory[index];
-
-        -- No need to check loot that was awarded 3 hours (or longer) ago
-        -- Since we're looping through the table in reverse (newest to oldest)
-        -- there's no reason to keep looping through the awarded loot table
-        if (Loot.timestamp < threeHoursAgo) then
-            break;
-        end
-
+    for checksum, Loot in pairs(GL.DB.AwardHistory) do
         (function ()
             -- The item was already marked as received, skip it
-            if (Loot.received) then
+            if (Loot.received or Loot.timestamp < threeHoursAgo) then
                 return;
             end
 
@@ -649,17 +637,17 @@ function AwardedLoot:tradeCompleted(Details)
             end
 
             -- We didn't trade this item
-            if (not GL:inTable(ItemsTradedByMe, Loot.itemId)) then
+            if (not GL:inTable(ItemsTradedByMe, Loot.itemID)) then
                 return;
             end
 
             -- We gave this item to the user, mark it as received!
-            GL.DB.AwardHistory[index].received = true;
+            GL.DB.AwardHistory[checksum].received = true;
 
             -- Remove (one of) the item ID entries. This is necessary because
             -- a person might get the same item more than once
             for key, itemID in pairs(ItemsTradedByMe) do
-                if (itemID == Loot.itemId) then
+                if (itemID == Loot.itemID) then
                     ItemsTradedByMe[key] = nil;
                     break;
                 end
@@ -686,7 +674,7 @@ function AwardedLoot:processAwardedLoot(CommMessage)
     -- Make sure all values are available
     if (GL:empty(AwardEntry.checksum)
         or GL:empty(AwardEntry.itemLink)
-        or GL:empty(AwardEntry.itemId)
+        or GL:empty(AwardEntry.itemID)
         or GL:empty(AwardEntry.awardedTo)
         or GL:empty(AwardEntry.timestamp)
     ) then
@@ -698,10 +686,10 @@ function AwardedLoot:processAwardedLoot(CommMessage)
 
     -- Insert the award in the more permanent AwardHistory table (for export / audit purposes)
     -- We don't pass the actual AwardEntry object as-is here just in case there are some additional keys that we don't need
-    tinsert(GL.DB.AwardHistory, {
+    GL.DB.AwardHistory[AwardEntry.checksum] = {
         checksum = AwardEntry.checksum,
         itemLink = AwardEntry.itemLink,
-        itemId = AwardEntry.itemId,
+        itemID = AwardEntry.itemID,
         awardedTo = AwardEntry.awardedTo,
         timestamp = AwardEntry.timestamp,
         softresID = AwardEntry.softresID,
@@ -709,7 +697,10 @@ function AwardedLoot:processAwardedLoot(CommMessage)
         BRCost = AwardEntry.BRCost,
         GDKPCost = AwardEntry.GDKPCost,
         OS = AwardEntry.OS,
-    });
+        Rolls = AwardEntry.Rolls,
+    };
+
+    GL.Events:fire("GL.ITEM_AWARDED", GL.DB.AwardHistory[AwardEntry.checksum]);
 end
 
 --- The loot master edited an item award, make sure our list reflect those changes
@@ -730,7 +721,7 @@ function AwardedLoot:processEditedLoot(CommMessage)
     -- Make sure all values are available
     if (GL:empty(AwardEntry.checksum)
         or GL:empty(AwardEntry.itemLink)
-        or GL:empty(AwardEntry.itemId)
+        or GL:empty(AwardEntry.itemID)
         or GL:empty(AwardEntry.awardedTo)
         or GL:empty(AwardEntry.timestamp)
     ) then
@@ -740,27 +731,25 @@ function AwardedLoot:processEditedLoot(CommMessage)
     -- There's no point to us giving the winner the item since we don't have it
     AwardEntry.received = true;
 
-    local lootIndex, Loot;
-    for index = #GL.DB.AwardHistory, 1, -1 do
-        Loot = GL.DB.AwardHistory[index];
-
-        if (Loot and Loot.checksum == AwardEntry.checksum) then
-            lootIndex = index;
+    local checksum;
+    for index, Loot in pairs(GL.DB.AwardHistory) do
+        if (Loot and index == AwardEntry.checksum) then
+            checksum = index;
             break;
         end
     end
 
     -- We don't have any record of this item, add it instead
-    if (not lootIndex) then
+    if (not checksum) then
         self:processAwardedLoot(CommMessage);
         return;
     end
 
     -- Store the changes
-    GL.DB.AwardHistory[lootIndex] = {
+    GL.DB.AwardHistory[checksum] = {
         checksum = AwardEntry.checksum,
         itemLink = AwardEntry.itemLink,
-        itemId = AwardEntry.itemId,
+        itemID = AwardEntry.itemID,
         awardedTo = AwardEntry.awardedTo,
         timestamp = AwardEntry.timestamp,
         softresID = AwardEntry.softresID,
@@ -768,6 +757,7 @@ function AwardedLoot:processEditedLoot(CommMessage)
         BRCost = AwardEntry.BRCost,
         GDKPCost = AwardEntry.GDKPCost,
         OS = AwardEntry.OS,
+        Rolls = AwardEntry.Rolls,
     };
 end
 
