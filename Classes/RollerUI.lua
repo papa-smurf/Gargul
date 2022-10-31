@@ -40,7 +40,6 @@ function RollerUI:draw(time, itemLink, itemIcon, note, SupportedRolls, userCanUs
     GL:debug("RollerUI:draw");
 
     local Window = CreateFrame("Frame", "GargulUI_RollerUI_Window", UIParent, Frame);
-    Window:Hide();
     Window:SetSize(350, 48);
     Window:SetPoint(GL.Interface:getPosition("Roller"));
 
@@ -61,6 +60,7 @@ function RollerUI:draw(time, itemLink, itemIcon, note, SupportedRolls, userCanUs
         end
     end);
     Window:SetScale(GL.Settings:get("Rolling.scale", 1));
+    Window.ownedByGargul = true; -- We used this in the tooltip check later
     self.Window = Window;
 
     local Texture = Window:CreateTexture(nil,"BACKGROUND");
@@ -154,8 +154,6 @@ function RollerUI:draw(time, itemLink, itemIcon, note, SupportedRolls, userCanUs
     Window:SetWidth(rollerUIWidth);
 
     self:drawCountdownBar(time, itemLink, itemIcon, note, userCanUseItem, rollerUIWidth);
-
-    Window:Show();
 end
 
 --- Draw the countdown bar
@@ -208,10 +206,6 @@ function RollerUI:drawCountdownBar(time, itemLink, itemIcon, note, userCanUseIte
         end
     end)
 
-    TimerBar:SetScript("OnLeave", function()
-        GameTooltip:Hide();
-    end);
-
     TimerBar:SetDuration(time);
 
     -- Reset color to green or disabled
@@ -239,12 +233,49 @@ function RollerUI:drawCountdownBar(time, itemLink, itemIcon, note, userCanUseIte
     TimerBar:Set("type", "ROLLER_UI_COUNTDOWN");
     TimerBar:Start();
 
-    -- Show a gametooltip for the item up for roll
-    -- when hovering over the progress bar
-    TimerBar:SetScript("OnEnter", function()
+    local refreshTooltip = function ()
+        GameTooltip:Hide();
         GameTooltip:SetOwner(self.Window, "ANCHOR_TOP");
         GameTooltip:SetHyperlink(itemLink);
         GameTooltip:Show();
+    end;
+
+    local lastShiftStatus;
+    TimerBar:SetScript("OnEvent", function(self, event, ...)
+        if (event == "MODIFIER_STATE_CHANGED") then
+            return self[event] and self[event](self, ...);
+        end
+    end)
+    TimerBar:RegisterEvent("MODIFIER_STATE_CHANGED")
+    function TimerBar:MODIFIER_STATE_CHANGED(key, pressed)
+        if (key ~= "LSHIFT" and key ~= "RSHIFT") then
+            return;
+        end
+
+        local Owner = GameTooltip:GetOwner();
+        local gameTooltipIsShown = GameTooltip:IsShown();
+        if (pressed == 1 and (not gameTooltipIsShown or not Owner or not Owner.ownedByGargul)) then
+            return;
+        end
+
+        if (lastShiftStatus ~= pressed and gameTooltipIsShown) then
+            refreshTooltip();
+            lastShiftStatus = pressed;
+        end
+    end
+
+    -- Show a gametooltip for the item up for roll
+    -- when hovering over the progress bar
+    TimerBar:SetScript("OnEnter", function()
+        lastShiftStatus = IsShiftKeyDown();
+
+        GameTooltip:SetOwner(self.Window, "ANCHOR_TOP");
+        GameTooltip:SetHyperlink(itemLink);
+        GameTooltip:Show();
+    end);
+
+    TimerBar:SetScript("OnLeave", function()
+        GameTooltip:Hide();
     end);
 end
 
