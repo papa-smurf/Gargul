@@ -84,14 +84,11 @@ function PlayerSelector:draw(description, PlayerNames, callback)
     PlayerNameBox:SetHeight(20);
     PlayerNameBox:SetWidth(120);
     PlayerNameBox:SetCallback("OnEnterPressed", function ()
-        -- Remove table selection because we're awarding from the player name field
-        local PlayersTable = GL.Interface:getItem(self, "Table.Players");
+        local player = PlayerNameBox:GetText();
 
-        if (PlayersTable) then
-            PlayersTable:ClearSelection();
+        if (not GL:empty(player)) then
+            callback(player);
         end
-
-        ConfirmButton:Fire("OnClick");
     end); -- Award
     PlayerNameBox:SetFocus();
     SecondRow:AddChild(PlayerNameBox);
