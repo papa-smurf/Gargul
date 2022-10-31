@@ -53,7 +53,7 @@ function PackMule:_init()
     end);
 
     -- Whenever an item drops that is eligible for rolling trigger the highlighter and packmule rules
-    GL.Events:register("GroupLootStartLootRollListener", "START_LOOT_ROLL", function (_, rollID)
+    GL.Events:register("PackMuleStartLootRollListener", "START_LOOT_ROLL", function (_, rollID)
         self:processGroupLootItems(rollID);
     end);
 
