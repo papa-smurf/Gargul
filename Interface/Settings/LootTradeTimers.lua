@@ -19,7 +19,7 @@ function LootTradeTimers:draw(Parent)
     Scale.label:SetTextColor(1, .95686, .40784);
     Scale:SetFullWidth(true);
     Scale:SetValue(GL.Settings:get("LootTradeTimers.scale", 35));
-    Scale:SetSliderValues(.8, 1.8, .1);
+    Scale:SetSliderValues(.2, 1.8, .1);
     Scale:SetCallback("OnValueChanged", function(Slider)
         local value = tonumber(Slider:GetValue());
 
@@ -41,7 +41,7 @@ function LootTradeTimers:draw(Parent)
     NumberOfTimerBars.label:SetTextColor(1, .95686, .40784);
     NumberOfTimerBars:SetFullWidth(true);
     NumberOfTimerBars:SetValue(GL.Settings:get("LootTradeTimers.maximumNumberOfBars", 5));
-    NumberOfTimerBars:SetSliderValues(1, 25, 1);
+    NumberOfTimerBars:SetSliderValues(1, 100, 1);
     NumberOfTimerBars:SetCallback("OnValueChanged", function(Slider)
         local value = tonumber(Slider:GetValue());
 
