@@ -176,6 +176,7 @@ function RollerUI:drawCountdownBar(time, itemLink, itemIcon, note, userCanUseIte
         width,
         24
     );
+    self.TimerBar = TimerBar;
 
     TimerBar:SetParent(self.Window);
     TimerBar:SetPoint("BOTTOM", self.Window, "BOTTOM");
@@ -235,6 +236,11 @@ function RollerUI:drawCountdownBar(time, itemLink, itemIcon, note, userCanUseIte
 
     local refreshTooltip = function ()
         GameTooltip:Hide();
+
+        if (not self.Window) then
+            return;
+        end
+
         GameTooltip:SetOwner(self.Window, "ANCHOR_TOP");
         GameTooltip:SetHyperlink(itemLink);
         GameTooltip:Show();
@@ -289,6 +295,19 @@ function RollerUI:hide()
 
     self.Window:Hide();
     self.Window = nil;
+
+    if (not self.TimerBar) then
+        return;
+    end
+
+    self.TimerBar:UnregisterEvent("MODIFIER_STATE_CHANGED");
+    self.TimerBar.MODIFIER_STATE_CHANGED = nil;
+    self.TimerBar.OnEvent = nil;
+    self.TimerBar.OnEnter = nil;
+    self.TimerBar.OnLeave = nil;
+    self.TimerBar.OnMouseDown = nil;
+    self.TimerBar:Hide();
+    self.TimerBar = nil;
 end
 
 GL:debug("RollerUI.lua");
