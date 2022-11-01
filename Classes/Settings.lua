@@ -71,6 +71,14 @@ function Settings:enforceTemporarySettings()
         return;
     end
 
+    --- In 4.12.1 we added a concernsOS and givesPlusOne checkbox field to the roll tracking settings
+    for key, RollType in pairs(GL.Settings:get("RollTracking.Brackets", {})) do
+        if (RollType[5] == nil) then
+            GL.DB.RollTracking.Brackets[key][5] = RollType[1] == "OS";
+            GL.DB.RollTracking.Brackets[key][6] = false;
+        end
+    end
+
     --- In 4.12.0 we completely rewrote the awarded item structure
     --- If the user is now on 4.12.0 or has not used 4.12.0 then we restructure the awarded items
     ---@todo: remove if award history structure ever changes again
