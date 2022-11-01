@@ -293,7 +293,7 @@ function TMB:tooltipLines(itemLink)
 
     -- No wishes defined for this item
     if (GL:empty(TMBInfo)) then
-        return {};
+        return Lines;
     end
 
     local WishListEntries = {};

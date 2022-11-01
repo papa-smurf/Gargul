@@ -409,7 +409,9 @@ function AwardHistory:close(reattach)
             table.remove(self.PreviousAnchors, index);
 
             if (anchorIsValid) then
-                self:draw(Anchor);
+                GL.Ace:ScheduleTimer(function ()
+                    self:draw(Anchor);
+                end, 1);
                 break;
             end
         end

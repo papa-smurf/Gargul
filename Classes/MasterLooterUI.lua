@@ -316,9 +316,19 @@ function MasterLooterUI:draw(itemLink)
                         return GL:warning("You need to select a player first");
                     end
 
-                    local osRoll = selected.cols[4].value == "OS";
+                    local RollType = (function()
+                        for _, RollType in pairs(GL.Settings:get("RollTracking.Brackets", {})) do
+                            if (RollType[1] == selected.cols[4].value) then
+                                return RollType;
+                            end
+                        end
+
+                        return {};
+                    end)();
+                    local osRoll = GL:toboolean(RollType[5]);
+                    local plusOneRoll = GL:toboolean(RollType[6]);
                     local boostedRoll = selected.cols[4].value == GL.Settings:get("BoostedRolls.identifier", "BR");
-                    return GL.RollOff:award(selected.cols[1].value, GL.Interface:getItem(self, "EditBox.Item"):GetText(), osRoll, boostedRoll);
+                    return GL.RollOff:award(selected.cols[1].value, GL.Interface:getItem(self, "EditBox.Item"):GetText(), osRoll, boostedRoll, plusOneRoll);
                 end);
                 ThirdRow:AddChild(AwardButton);
                 GL.Interface:setItem(self, "Award", AwardButton);

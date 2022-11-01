@@ -464,7 +464,7 @@ function RollOff:stop(CommMessage)
 end
 
 -- Award the item to one of the rollers
-function RollOff:award(roller, itemLink, osRoll, boostedRoll)
+function RollOff:award(roller, itemLink, osRoll, boostedRoll, plusOneRoll)
     GL:debug("RollOff:award");
 
     -- If the roller has a roll number suffixed to his name
@@ -531,6 +531,7 @@ function RollOff:award(roller, itemLink, osRoll, boostedRoll)
                 end
             end,
             checkOS = osRoll,
+            checkPlusOne = plusOneRoll,
             isBR = boostedRoll,
             boostedRollCost = BRCost,
         });
