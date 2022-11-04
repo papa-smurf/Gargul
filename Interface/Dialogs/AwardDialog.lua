@@ -47,10 +47,6 @@ function AwardDialog:open(Dialog)
         end
     end
 
-    --- Set focus on the hidden YesButtonEnterCatcher field in order to support confirming with enter press
-    local YesButtonEnterCatcher = GL.Interface:getItem(self, "EditBox.YesButtonEnterCatcher");
-    YesButtonEnterCatcher:SetFocus();
-
     --- Adjust the value of the boosted roll cost editbox
     local BoostedRollsCostEditBox = GL.Interface:getItem(self, "EditBox.Cost");
 

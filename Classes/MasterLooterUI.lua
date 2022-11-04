@@ -51,7 +51,6 @@ function MasterLooterUI:draw(itemLink)
         -- If the frame is hidden we need to show it again
         if (not Window:IsShown()) then
             Window:Show();
-            GL.Interface.AwardHistory:draw(Window);
         end
 
         return;
@@ -72,8 +71,7 @@ function MasterLooterUI:draw(itemLink)
         self:close();
     end);
     GL.Interface:setItem(self, "Window", Window);
-
-    Window:SetPoint(GL.Interface:getPosition("RollOff"));
+    GL.Interface:restorePosition(Window, "MasterLooterUI");
 
     --[[
         SETTINGS BUTTON
@@ -336,8 +334,40 @@ function MasterLooterUI:draw(itemLink)
                 HorizonalSpacer = AceGUI:Create("SimpleGroup");
                 HorizonalSpacer:SetLayout("Flow");
                 HorizonalSpacer:SetWidth(24);
-                HorizonalSpacer:SetHeight(1);
+                HorizonalSpacer:SetHeight(20);
                 ThirdRow:AddChild(HorizonalSpacer);
+
+                --[[
+                    AWARD HISTORY BUTTON
+                ]]
+
+                local AwardHistoryButton = GL.UI:createFrame("Button", "MasterLooterUIAwardHistoryButton" .. GL:uuid(), Window.frame, "UIPanelButtonTemplate");
+                AwardHistoryButton:SetSize(22, 20);
+                AwardHistoryButton:SetPoint("TOPLEFT", AwardButton.frame, "TOPRIGHT", 1, 0);
+                AwardHistoryButton:SetMotionScriptsWhileDisabled(true); -- Make sure tooltip still shows even when button is disabled
+
+                local AwardHistoryButtonHighlight = AwardHistoryButton:CreateTexture();
+                AwardHistoryButtonHighlight:SetTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\award");
+                AwardHistoryButtonHighlight:SetPoint("CENTER", AwardHistoryButton, "CENTER", 0, 0);
+                AwardHistoryButtonHighlight:SetSize(22, 20);
+
+                AwardHistoryButton:SetNormalTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\award");
+                AwardHistoryButton:SetDisabledTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\award-disabled");
+                AwardHistoryButton:SetHighlightTexture(AwardHistoryButtonHighlight);
+
+                AwardHistoryButton:SetScript("OnEnter", function()
+                    GameTooltip:SetOwner(AwardHistoryButton, "ANCHOR_TOP");
+                    GameTooltip:SetText("Award history");
+                    GameTooltip:Show();
+                end);
+
+                AwardHistoryButton:SetScript("OnLeave", function()
+                    GameTooltip:Hide();
+                end);
+
+                AwardHistoryButton:SetScript("OnClick", function()
+                    GL.Interface.AwardHistory:toggle();
+                end);
 
                 --[[
                     DISENCHANT BUTTON
@@ -419,8 +449,6 @@ function MasterLooterUI:draw(itemLink)
     ) then
         MasterLooterUI:passItemLink(itemLink);
     end
-
-    GL.Interface.AwardHistory:draw(Window);
 end
 
 ---@return void
@@ -436,7 +464,7 @@ function MasterLooterUI:close()
     local Window = GL.Interface:getItem(self, "Window");
     if (Window) then
         -- Store the frame's last position for future play sessions
-        GL.Interface:storePosition(Window, "RollOff");
+        GL.Interface:storePosition(Window, "MasterLooterUI");
         Window:Hide();
     end
 end

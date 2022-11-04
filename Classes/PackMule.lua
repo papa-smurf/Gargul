@@ -718,7 +718,8 @@ end
 function PackMule:disenchant(itemLink, byPassConfirmationDialog)
     GL:debug("PackMule:disenchant");
 
-    if (not GL.User.isMasterLooter
+    if (GL.User.isInGroup
+        and not GL.User.isMasterLooter
         and not GL.User.hasAssist
         and not GL.User.isLead
     ) then

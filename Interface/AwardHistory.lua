@@ -7,6 +7,7 @@ GL.ScrollingTable = GL.ScrollingTable or LibStub("ScrollingTable");
 GL.Interface.AwardHistory = {
     isVisible = false,
     eventListenersSet = false,
+    showingItemsAwardedSince = nil,
     RefreshTimer = nil,
     ChecksumsToShow = nil,
     PreviousAnchors = {},
@@ -23,6 +24,8 @@ function AwardHistory:populateChecksumsToShow()
     self.ChecksumsToShow = {};
     local fiveHoursAgo = GetServerTime() - 18000;
     local loadItemsGTE = math.min(fiveHoursAgo, GL.loadedOn);
+
+    self.showingItemsAwardedSince = loadItemsGTE;
 
     for checksum, Entry in pairs(GL.DB.AwardHistory) do
         if (checksum and Entry.timestamp and Entry.timestamp >= loadItemsGTE) then
@@ -52,78 +55,48 @@ function AwardHistory:populateChecksumsToShow()
     end
 end
 
+--- Toggle the award history window
+---
+---@return void
+function AwardHistory:toggle()
+    if (self.isVisible) then
+        return self:close();
+    end
+
+    self:draw();
+end
+
 --- Draw the award history window
 ---
----@param AnchorTo table|nil This is the AceGUI element the history should attach itself to
 ---@return void
-function AwardHistory:draw(AnchorTo)
+function AwardHistory:draw()
     GL:debug("AwardHistory:draw");
 
-    if (type(AnchorTo) ~= "table") then
-        AnchorTo = nil;
+    if (self.isVisible) then
+        return;
     end
 
-    if (AnchorTo) then
-        if (self.isVisible) then
-            self:reAnchor(AnchorTo);
-            return;
-        end
-
-        -- Store this anchor in order to create an anchor "history"
-        tinsert(self.PreviousAnchors, AnchorTo);
-    end
+    self.isVisible = true;
 
     -- Cache the items we need to show first
     if (not self.ChecksumsToShow) then
         self:populateChecksumsToShow();
     end
 
-    self.isVisible = true;
-
     local Window;
     local WindowWidth;
 
-    if (AnchorTo) then
-        WindowWidth = math.max(AnchorTo.frame:GetWidth(), 430);
-        Window = GL.AceGUI:Create("InlineGroup");
-        Window:SetHeight(140);
-
-        Window.frame:ClearAllPoints();
-        Window.frame:SetParent(AnchorTo.frame);
-        Window.frame:SetPoint("TOP", AnchorTo.frame, "BOTTOM", 0, 12);
-        Window.frame:SetPoint("CENTER", AnchorTo.frame, "CENTER");
-        Window.frame.AnchoredTo = AnchorTo;
-        Window.frame:SetAlpha(0);
-
-        -- Remove the close button
-        local CloseButton = GL:fetchCloseButtonFromAceGUIWidget(Window);
-        if (CloseButton) then
-            CloseButton:Hide();
-        end
-
-        -- Make the frame less transparent
-        local Border = GL:fetchBorderFromAceGUIInlineGroup(Window);
-        if (Border) then
-            Border:SetBackdropColor(.1, .1, .1, .9);
-        end
-
-        -- We need to keep the default hide behavior intact, hence the post hook
-        hooksecurefunc(AnchorTo.frame, "Hide", function()
-            self:close();
-        end);
-    else
-        -- Not in use yet! Use at own risk!
-        --[[
-            /script _G.Gargul.Interface.AwardHistory:draw();
-        ]]
-        WindowWidth = 430;
-        Window = GL.AceGUI:Create("Frame");
-        Window:SetTitle("Award History");
-        Window:SetHeight(420);
-    end
-
+    WindowWidth = 430;
+    Window = GL.AceGUI:Create("Frame");
+    Window:SetTitle("Award History");
+    Window:SetStatusText("Items awarded since " .. date('%d-%m-%Y %H:%M', self.showingItemsAwardedSince));
     Window:SetLayout("FILL");
     Window:SetWidth(WindowWidth);
+    GL.Interface:restorePosition(Window, "AwardHistory");
+    GL.Interface:restoreDimensions(Window, "AwardHistory", WindowWidth, 420);
+    Window:SetCallback("OnClose", function()
+        self:close();
+    end);
 
     self.Window = Window;
 
@@ -170,6 +143,9 @@ function AwardHistory:draw(AnchorTo)
                     return;
                 end
 
+                -- Was this item disenchanted?
+                local itemWasDisenchanted = Award.awardedTo == GL.Exporter.disenchantedItemIdentifier;
+
                 local ItemRow = GL.AceGUI:Create("SimpleGroup");
                 ItemRow:SetLayout("FLOW");
                 ItemRow:SetFullWidth(true);
@@ -183,9 +159,14 @@ function AwardHistory:draw(AnchorTo)
                     end
 
                     if (not GL:empty(ItemsWonByRollerInTheLastFiveHours)) then
+                        local header = string.format("Items won by %s:", Award.awardedTo);
+                        if (itemWasDisenchanted) then
+                            header = "Disenchanted items:"
+                        end
+
                         GameTooltip:ClearLines();
                         GameTooltip:SetOwner(ItemRow.frame, "ANCHOR_RIGHT");
-                        GameTooltip:AddLine(string.format("Items won by %s:", Award.awardedTo));
+                        GameTooltip:AddLine(header);
                         GameTooltip:AddLine(" ");
 
                         for _, Entry in pairs(ItemsWonByRollerInTheLastFiveHours) do
@@ -250,10 +231,15 @@ function AwardHistory:draw(AnchorTo)
                 ItemRow:AddChild(ItemLinkLabel);
 
                 local PlayerLabel = GL.AceGUI:Create("Label");
-                PlayerLabel:SetText(string.format("|c00%s%s|r",
-                    GL:classHexColor(GL.Player:classByName(Award.awardedTo, 0), "5f5f5f"),
-                    Award.awardedTo
-                ));
+                if (not itemWasDisenchanted) then
+                    PlayerLabel:SetText(string.format("|c00%s%s|r",
+                        GL:classHexColor(GL.Player:classByName(Award.awardedTo, 0), "5f5f5f"),
+                        Award.awardedTo
+                    ));
+                else
+                    PlayerLabel:SetText("Disenchanted!");
+                end
+
                 PlayerLabel:SetWidth(100);
                 ItemRow:AddChild(PlayerLabel);
 
@@ -360,16 +346,13 @@ function AwardHistory:draw(AnchorTo)
 
         GL.Ace:CancelTimer(self.RefreshTimer);
         self.RefreshTimer = GL.Ace:ScheduleTimer(function ()
-            self:refresh(AnchorTo);
+            self:refresh();
         end, .3);
     end);
 end
 
---- Close the current AwardHistory instance and by default reattach it to its last known location
----
----@param reattach boolean|nil
 ---@return void
-function AwardHistory:close(reattach)
+function AwardHistory:close()
     GL:debug("AwardHistory:close");
 
     if (not self.isVisible) then
@@ -382,6 +365,8 @@ function AwardHistory:close(reattach)
         and self.Window.frame
         and self.Window.frame.Hide
     ) then
+        GL.Interface:storePosition(self.Window, "AwardHistory");
+        GL.Interface:storeDimensions(self.Window, "AwardHistory");
         self.Window.frame:Hide();
     end
 
@@ -390,44 +375,8 @@ function AwardHistory:close(reattach)
     GL.Events:unregister({
         "AwardHistoryItemAwardedListener",
         "AwardHistoryItemUnAwardedListener",
+        "AwardHistoryItemEditedListener",
     });
-
-    if (reattach == nil or reattach) then
-        for index = #self.PreviousAnchors, 1, -1 do
-            local anchorIsValid = false;
-            local Anchor = self.PreviousAnchors[index];
-
-            if (Anchor
-                and type(Anchor) == "table"
-                and Anchor.frame
-                and Anchor.frame:IsVisible()
-            ) then
-                anchorIsValid = true;
-            end
-
-            self.PreviousAnchors[index] = nil;
-            table.remove(self.PreviousAnchors, index);
-
-            if (anchorIsValid) then
-                GL.Ace:ScheduleTimer(function ()
-                    self:draw(Anchor);
-                end, 1);
-                break;
-            end
-        end
-    end
-end
-
---- Reanchor the award history instance to a new AceGUI element
----
----@parm AnchorTo table
----@param AnchorTo table|nil
----@return void
-function AwardHistory:reAnchor(AnchorTo)
-    GL:debug("AwardHistory:reAnchor");
-
-    self:close(false);
-    self:draw(AnchorTo);
 end
 
 --- Refresh

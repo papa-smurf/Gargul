@@ -14,7 +14,10 @@ GL.isRetail = false;
 GL.isClassic = false;
 GL.version = GetAddOnMetadata(GL.name, "Version");
 GL.DebugLines = {};
-GL.EventFrame = {};
+GL.EventFrame = nil;
+GL.auctionHouseIsShown = false
+GL.mailIsShown = false
+GL.merchantIsShown = false
 GL.loadedOn = 32503680000; -- Year 3000
 
 -- Register our addon with the Ace framework
@@ -121,6 +124,9 @@ function GL:_init()
     self.Interface.MasterLooterDialog:_init();
     self.Interface.TradeWindow.TimeLeft:_init();
 
+    -- Hook native window events
+    self:hookNativeWindowEvents();
+
     -- Hook the bagslot events
     self:hookBagSlotEvents();
 
@@ -200,6 +206,35 @@ function GL:announceConflictingAddons()
     ));
 end
 
+--- Keep track of when native UI elements (like AH/mailbox) are active
+---
+---@return void
+function GL:hookNativeWindowEvents()
+    GL.Events:register("BootstrapAuctionHouseShowListener", "AUCTION_HOUSE_SHOW", function()
+        self.auctionHouseIsShown = true;
+    end);
+
+    GL.Events:register("BootstrapAuctionHouseClosedListener", "AUCTION_HOUSE_CLOSED", function()
+        self.auctionHouseIsShown = false;
+    end);
+
+    GL.Events:register("BootstrapMailShowListener", "MAIL_SHOW", function()
+        self.mailIsShown = true;
+    end);
+
+    GL.Events:register("BootstrapMailClosedListener", "MAIL_CLOSED", function()
+        self.mailIsShown = false;
+    end);
+
+    GL.Events:register("BootstrapMerchantShowListener", "MERCHANT_SHOW", function()
+        self.merchantIsShown = true;
+    end);
+
+    GL.Events:register("BootstrapMerchantClosedListener", "MERCHANT_CLOSED", function()
+        self.merchantIsShown = false;
+    end);
+end
+
 --- Hook into the HandleModifiedItemClick event to allow for Gargul's many hotkeys
 ---
 ---@return void
@@ -216,27 +251,24 @@ function GL:hookBagSlotEvents()
             return;
         end
 
+        -- Make sure item interaction elements like ah/mail/shop are closed
+        if (self.auctionHouseIsShown
+            or self.mailIsShown
+            or self.merchantIsShown
+        ) then
+            return;
+        end
+
         local keyPressIdentifier = GL.Events:getClickCombination();
         local keyPressRecognized = false;
 
         -- Open the roll window
         if (keyPressIdentifier == GL.Settings:get("ShortcutKeys.rollOff")) then
             GL.MasterLooterUI:draw(itemLink);
-            keyPressRecognized = true;
 
         -- Open the award window
         elseif (keyPressIdentifier == GL.Settings:get("ShortcutKeys.award")) then
             GL.Interface.Award:draw(itemLink);
-            keyPressRecognized = true;
-        end
-
-        -- Close the stack split window immediately after opening
-        if (keyPressRecognized and IsShiftKeyDown()) then
-            GL.Ace:ScheduleTimer(function ()
-                if (_G.StackSplitFrame) then
-                    _G.StackSplitFrame:Hide();
-                end
-            end, .05);
         end
     end);
 end

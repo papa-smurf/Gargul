@@ -547,7 +547,7 @@ function TimeLeft:refreshBars()
 
         local offsetY = ((index - 1) * 18) * -1 - 16;
         TimerBar:SetPoint("TOP", Window, "TOP", 0, offsetY);
-        TimerBar.candyBarLabel:SetFont("Fonts\\ARIALN.ttf", 13, "OUTLINE");
+        TimerBar.candyBarLabel:SetFont(STANDARD_TEXT_FONT, 12, "OUTLINE");
 
         -- Make the bar turn green/yellow/red based on time left
         TimerBar:AddUpdateFunction(function (Bar)

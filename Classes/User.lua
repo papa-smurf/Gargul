@@ -313,6 +313,11 @@ end
 ---@param unit string
 ---@return boolean
 function User:unitIsInYourGroup(unit)
+    -- We're clearly trying to test something, allow it
+    if (not self.isInGroup) then
+        return true;
+    end
+
     if (self.isInRaid) then
         return GL:toboolean(UnitInRaid(unit));
     end

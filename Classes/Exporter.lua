@@ -49,7 +49,6 @@ function Exporter:draw()
         self:close();
     end);
     Window:SetPoint(GL.Interface:getPosition("Exporter"));
-    --GL.Interface.AwardHistory:draw(Window);
     Window.statustext:GetParent():Hide(); -- Hide the statustext bar
 
     GL.Interface:setItem(self, "Window", Window);
