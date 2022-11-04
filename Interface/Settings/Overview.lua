@@ -10,9 +10,10 @@ GL.Interface.Settings.Overview = {
     isVisible = false,
     activeSection = nil,
     previousSection = nil,
-    defaultSection = "General",
+    defaultSection = "Welcome",
     Sections = {
-        {"|c00a79effWELCOME|r", "General"},
+        {"|c00a79effWELCOME|r", "Welcome"},
+        {"General", "General"},
         {"SoftRes", "SoftRes"},
         {"TMB and DFT", "TMB"},
         {"Announce Loot", "DroppedLoot"},
@@ -326,6 +327,7 @@ function Overview:showSection(section)
         SectionDescription:SetText(SectionClass.description .. "\n\n");
         SectionDescription:SetFontObject(_G["GameFontNormal"]);
         SectionDescription:SetFullWidth(true);
+        SectionDescription:SetJustifyH("MIDDLE");
         ScrollFrame:AddChild(SectionDescription);
     end
 

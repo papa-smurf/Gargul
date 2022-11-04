@@ -67,6 +67,7 @@ Interface/Settings/Rolling.lua
 Interface/Settings/RollTracking.lua
 Interface/Settings/SoftRes.lua
 Interface/Settings/BoostedRolls.lua
+Interface/Settings/Welcome.lua
 Interface/Settings/General.lua
 Interface/Settings/ShortcutKeys.lua
 Interface/Settings/LootHighlighting.lua

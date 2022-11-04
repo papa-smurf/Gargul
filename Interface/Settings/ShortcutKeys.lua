@@ -5,7 +5,7 @@ local Overview = GL.Interface.Settings.Overview; ---@type SettingsOverview
 
 ---@class ShortcutKeysSettings
 GL.Interface.Settings.ShortcutKeys = {
-    description = "By default Gargul offers 3 shortcut keys that you can use when clicking items in your bag, an enemy's loot window or the trade timers",
+    description = "By default Gargul offers 3 shortcut keys that you can use when clicking items in your bag, an enemy's loot window or the trade timers. These hotkeys are disabled when the auction house, mailbox or merchant (shop) windows are active!",
 };
 local ShortcutKeys = GL.Interface.Settings.ShortcutKeys; ---@type ShortcutKeysSettings
 
