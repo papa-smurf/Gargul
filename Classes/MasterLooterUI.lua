@@ -51,7 +51,6 @@ function MasterLooterUI:draw(itemLink)
         -- If the frame is hidden we need to show it again
         if (not Window:IsShown()) then
             Window:Show();
-            GL.Interface.AwardHistory:draw(Window);
         end
 
         return;
@@ -72,8 +71,7 @@ function MasterLooterUI:draw(itemLink)
         self:close();
     end);
     GL.Interface:setItem(self, "Window", Window);
-
-    Window:SetPoint(GL.Interface:getPosition("RollOff"));
+    GL.Interface:restorePosition(Window, "MasterLooterUI");
 
     --[[
         SETTINGS BUTTON
@@ -83,6 +81,38 @@ function MasterLooterUI:draw(itemLink)
         "MasterLooting"
     );
     self.SettingsButton = SettingsButton;
+
+    --[[
+        AWARD BUTTON
+    ]]
+
+    local AwardButton = GL.UI:createFrame("Button", "ReopenMasterLooterAwardButton" .. GL:uuid(), Window.frame, "UIPanelButtonTemplate");
+    AwardButton:SetSize(20, 20);
+    AwardButton:SetPoint("TOPRIGHT", Window.frame, "TOPRIGHT", -12, -12);
+    AwardButton:SetMotionScriptsWhileDisabled(true); -- Make sure tooltip still shows even when button is disabled
+
+    local AwardButtonHighlight = AwardButton:CreateTexture();
+    AwardButtonHighlight:SetTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\award");
+    AwardButtonHighlight:SetPoint("CENTER", AwardButton, "CENTER", 0, 0);
+    AwardButtonHighlight:SetSize(20, 20);
+
+    AwardButton:SetNormalTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\award");
+    AwardButton:SetDisabledTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\award-disabled");
+    AwardButton:SetHighlightTexture(AwardButtonHighlight);
+
+    AwardButton:SetScript("OnEnter", function()
+        GameTooltip:SetOwner(AwardButton, "ANCHOR_TOP");
+        GameTooltip:SetText("Award history");
+        GameTooltip:Show();
+    end);
+
+    AwardButton:SetScript("OnLeave", function()
+        GameTooltip:Hide();
+    end);
+
+    AwardButton:SetScript("OnClick", function()
+        GL.Interface.AwardHistory:toggle();
+    end);
 
         --[[
             FIRST ROW (ITEM ICON AND LINK BOX)
@@ -419,8 +449,6 @@ function MasterLooterUI:draw(itemLink)
     ) then
         MasterLooterUI:passItemLink(itemLink);
     end
-
-    GL.Interface.AwardHistory:draw(Window);
 end
 
 ---@return void
@@ -436,7 +464,7 @@ function MasterLooterUI:close()
     local Window = GL.Interface:getItem(self, "Window");
     if (Window) then
         -- Store the frame's last position for future play sessions
-        GL.Interface:storePosition(Window, "RollOff");
+        GL.Interface:storePosition(Window, "MasterLooterUI");
         Window:Hide();
     end
 end

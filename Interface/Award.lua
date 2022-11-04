@@ -46,7 +46,6 @@ function Award:draw(itemLink)
         -- If the frame is hidden we need to show it again
         if (not Window:IsShown()) then
             Window:Show();
-            GL.Interface.AwardHistory:draw(Window);
         end
 
         -- Reset the player name box (BEFORE POPULATING THE TABLE!)
@@ -76,7 +75,6 @@ function Award:draw(itemLink)
     end);
     Window:SetPoint(GL.Interface:getPosition("Award"));
     Window.frame:SetFrameStrata("DIALOG");
-    GL.Interface.AwardHistory:draw(Window);
 
     GL.Interface:setItem(self, "Window", Window);
 
