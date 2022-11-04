@@ -86,38 +86,6 @@ function Award:draw(itemLink)
     );
     self.SettingsButton = SettingsButton;
 
-    --[[
-        AWARD HISTORY BUTTON
-    ]]
-
-    local AwardHistoryButton = GL.UI:createFrame("Button", "MasterLooterUIAwardHistoryButton" .. GL:uuid(), Window.frame, "UIPanelButtonTemplate");
-    AwardHistoryButton:SetSize(20, 20);
-    AwardHistoryButton:SetPoint("TOPRIGHT", Window.frame, "TOPRIGHT", -12, -12);
-    AwardHistoryButton:SetMotionScriptsWhileDisabled(true); -- Make sure tooltip still shows even when button is disabled
-
-    local AwardHistoryButtonHighlight = AwardHistoryButton:CreateTexture();
-    AwardHistoryButtonHighlight:SetTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\award");
-    AwardHistoryButtonHighlight:SetPoint("CENTER", AwardHistoryButton, "CENTER", 0, 0);
-    AwardHistoryButtonHighlight:SetSize(20, 20);
-
-    AwardHistoryButton:SetNormalTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\award");
-    AwardHistoryButton:SetDisabledTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\award-disabled");
-    AwardHistoryButton:SetHighlightTexture(AwardHistoryButtonHighlight);
-
-    AwardHistoryButton:SetScript("OnEnter", function()
-        GameTooltip:SetOwner(AwardHistoryButton, "ANCHOR_TOP");
-        GameTooltip:SetText("AwardHistory history");
-        GameTooltip:Show();
-    end);
-
-    AwardHistoryButton:SetScript("OnLeave", function()
-        GameTooltip:Hide();
-    end);
-
-    AwardHistoryButton:SetScript("OnClick", function()
-        GL.Interface.AwardHistory:toggle();
-    end);
-
     -- Make sure the window can be closed by pressing the escape button
     _G["GARGUL_AWARD_WINDOW"] = Window.frame;
     tinsert(UISpecialFrames, "GARGUL_AWARD_WINDOW");
@@ -150,7 +118,7 @@ function Award:draw(itemLink)
 
     ItemBox:DisableButton(true);
     ItemBox:SetHeight(20);
-    ItemBox:SetWidth(170);
+    ItemBox:SetWidth(150);
     ItemBox:SetCallback("OnTextChanged", function () self:ItemBoxChanged() end); -- Update item info when input value changes
     ItemBox:SetCallback("OnEnterPressed", function () self:ItemBoxChanged() end); -- Update item info when item is dragged on top (makes no sense to use OnEnterPressed I know)
     GL.Interface:setItem(self, "Item", ItemBox);
@@ -284,6 +252,44 @@ function Award:draw(itemLink)
     end);
     FirstRow:AddChild(AwardButton);
     GL.Interface:setItem(self, "Award", AwardButton);
+
+    --[[
+        AWARD HISTORY BUTTON
+    ]]
+
+    local AwardHistoryButton = GL.UI:createFrame("Button", "MasterLooterUIAwardHistoryButton" .. GL:uuid(), Window.frame, "UIPanelButtonTemplate");
+    AwardHistoryButton:SetSize(22, 20);
+    AwardHistoryButton:SetPoint("TOPLEFT", AwardButton.frame, "TOPRIGHT", 0, 0);
+    AwardHistoryButton:SetMotionScriptsWhileDisabled(true); -- Make sure tooltip still shows even when button is disabled
+
+    local AwardHistoryButtonHighlight = AwardHistoryButton:CreateTexture();
+    AwardHistoryButtonHighlight:SetTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\award");
+    AwardHistoryButtonHighlight:SetPoint("CENTER", AwardHistoryButton, "CENTER", 0, 0);
+    AwardHistoryButtonHighlight:SetSize(22, 20);
+
+    AwardHistoryButton:SetNormalTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\award");
+    AwardHistoryButton:SetDisabledTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\award-disabled");
+    AwardHistoryButton:SetHighlightTexture(AwardHistoryButtonHighlight);
+
+    AwardHistoryButton:SetScript("OnEnter", function()
+        GameTooltip:SetOwner(AwardHistoryButton, "ANCHOR_TOP");
+        GameTooltip:SetText("Award history");
+        GameTooltip:Show();
+    end);
+
+    AwardHistoryButton:SetScript("OnLeave", function()
+        GameTooltip:Hide();
+    end);
+
+    AwardHistoryButton:SetScript("OnClick", function()
+        GL.Interface.AwardHistory:toggle();
+    end);
+
+    Spacer = AceGUI:Create("SimpleGroup");
+    Spacer:SetLayout("Flow");
+    Spacer:SetWidth(22);
+    Spacer:SetHeight(20);
+    FirstRow:AddChild(Spacer);
 
     --[[
         DISENCHANT BUTTON
