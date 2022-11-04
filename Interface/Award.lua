@@ -52,7 +52,6 @@ function Award:draw(itemLink)
         -- Reset the player name box (BEFORE POPULATING THE TABLE!)
         if (PlayerNameBox) then
             PlayerNameBox:SetText("");
-            PlayerNameBox:SetFocus();
         end
 
         Award:populatePlayersTable(itemID or nil);
@@ -332,7 +331,6 @@ function Award:draw(itemLink)
 
         AwardButton:Fire("OnClick");
     end); -- Award
-    PlayerNameBox:SetFocus();
     SecondRow:AddChild(PlayerNameBox);
     GL.Interface:setItem(self, "PlayerName", PlayerNameBox);
 

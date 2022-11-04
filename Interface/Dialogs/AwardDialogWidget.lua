@@ -310,19 +310,6 @@ local function constructor()
     end);
     PopupDialogInstance:AddChild(YesButton);
 
-    local YesButtonEnterCatcher = AceGUI:Create("EditBox");
-    YesButtonEnterCatcher:DisableButton(true);
-    YesButtonEnterCatcher:SetWidth(.1);
-    YesButtonEnterCatcher:SetHeight(.1);
-    YesButtonEnterCatcher.frame:SetAlpha(0);
-    PopupDialogInstance:AddChild(YesButtonEnterCatcher);
-    YesButtonEnterCatcher:SetCallback("OnEnterPressed", function ()
-        if (type(Widget.yesCallback) == "function") then
-            Widget.yesCallback();
-        end
-    end);
-    GL.Interface:setItem(GL.Interface.Dialogs.AwardDialog, "YesButtonEnterCatcher", YesButtonEnterCatcher);
-
     VerticalSpacer = AceGUI:Create("SimpleGroup");
     VerticalSpacer:SetLayout("FILL");
     VerticalSpacer:SetWidth(12);

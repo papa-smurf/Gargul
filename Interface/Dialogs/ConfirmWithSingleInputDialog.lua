@@ -15,9 +15,6 @@ function Dialog:open(Details)
     Frame:SetQuestion(Details.question);
 
     local InputField = GL.Interface:getItem(self, "EditBox.Input");
-    if (InputField) then
-        InputField:SetFocus();
-    end
 
     Frame:OnYes(function ()
         if (Details.OnYes) then
