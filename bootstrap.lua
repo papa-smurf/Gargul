@@ -251,6 +251,14 @@ function GL:hookBagSlotEvents()
             return;
         end
 
+        -- Make sure item interaction elements like ah/mail/shop are closed
+        if (self.auctionHouseIsShown
+            or self.mailIsShown
+            or self.merchantIsShown
+        ) then
+            return;
+        end
+
         local keyPressIdentifier = GL.Events:getClickCombination();
         local keyPressRecognized = false;
 
