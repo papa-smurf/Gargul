@@ -83,34 +83,34 @@ function MasterLooterUI:draw(itemLink)
     self.SettingsButton = SettingsButton;
 
     --[[
-        AWARD BUTTON
+        AWARD HISTORY BUTTON
     ]]
 
-    local AwardButton = GL.UI:createFrame("Button", "ReopenMasterLooterAwardButton" .. GL:uuid(), Window.frame, "UIPanelButtonTemplate");
-    AwardButton:SetSize(20, 20);
-    AwardButton:SetPoint("TOPRIGHT", Window.frame, "TOPRIGHT", -12, -12);
-    AwardButton:SetMotionScriptsWhileDisabled(true); -- Make sure tooltip still shows even when button is disabled
+    local AwardHistoryButton = GL.UI:createFrame("Button", "MasterLooterUIAwardHistoryButton" .. GL:uuid(), Window.frame, "UIPanelButtonTemplate");
+    AwardHistoryButton:SetSize(20, 20);
+    AwardHistoryButton:SetPoint("TOPRIGHT", Window.frame, "TOPRIGHT", -12, -12);
+    AwardHistoryButton:SetMotionScriptsWhileDisabled(true); -- Make sure tooltip still shows even when button is disabled
 
-    local AwardButtonHighlight = AwardButton:CreateTexture();
-    AwardButtonHighlight:SetTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\award");
-    AwardButtonHighlight:SetPoint("CENTER", AwardButton, "CENTER", 0, 0);
-    AwardButtonHighlight:SetSize(20, 20);
+    local AwardHistoryButtonHighlight = AwardHistoryButton:CreateTexture();
+    AwardHistoryButtonHighlight:SetTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\award");
+    AwardHistoryButtonHighlight:SetPoint("CENTER", AwardHistoryButton, "CENTER", 0, 0);
+    AwardHistoryButtonHighlight:SetSize(20, 20);
 
-    AwardButton:SetNormalTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\award");
-    AwardButton:SetDisabledTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\award-disabled");
-    AwardButton:SetHighlightTexture(AwardButtonHighlight);
+    AwardHistoryButton:SetNormalTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\award");
+    AwardHistoryButton:SetDisabledTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\award-disabled");
+    AwardHistoryButton:SetHighlightTexture(AwardHistoryButtonHighlight);
 
-    AwardButton:SetScript("OnEnter", function()
-        GameTooltip:SetOwner(AwardButton, "ANCHOR_TOP");
-        GameTooltip:SetText("Award history");
+    AwardHistoryButton:SetScript("OnEnter", function()
+        GameTooltip:SetOwner(AwardHistoryButton, "ANCHOR_TOP");
+        GameTooltip:SetText("AwardHistory history");
         GameTooltip:Show();
     end);
 
-    AwardButton:SetScript("OnLeave", function()
+    AwardHistoryButton:SetScript("OnLeave", function()
         GameTooltip:Hide();
     end);
 
-    AwardButton:SetScript("OnClick", function()
+    AwardHistoryButton:SetScript("OnClick", function()
         GL.Interface.AwardHistory:toggle();
     end);
 

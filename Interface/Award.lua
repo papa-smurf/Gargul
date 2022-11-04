@@ -73,10 +73,50 @@ function Award:draw(itemLink)
     Window:SetCallback("OnClose", function()
         self:close();
     end);
-    Window:SetPoint(GL.Interface:getPosition("Award"));
     Window.frame:SetFrameStrata("DIALOG");
-
+    GL.Interface:restorePosition(Window, "Award");
     GL.Interface:setItem(self, "Window", Window);
+
+    --[[
+        SETTINGS BUTTON
+    ]]
+    local SettingsButton = GL.UI:createSettingsButton(
+            Window.frame,
+            "AwardingLoot"
+    );
+    self.SettingsButton = SettingsButton;
+
+    --[[
+        AWARD HISTORY BUTTON
+    ]]
+
+    local AwardHistoryButton = GL.UI:createFrame("Button", "MasterLooterUIAwardHistoryButton" .. GL:uuid(), Window.frame, "UIPanelButtonTemplate");
+    AwardHistoryButton:SetSize(20, 20);
+    AwardHistoryButton:SetPoint("TOPRIGHT", Window.frame, "TOPRIGHT", -12, -12);
+    AwardHistoryButton:SetMotionScriptsWhileDisabled(true); -- Make sure tooltip still shows even when button is disabled
+
+    local AwardHistoryButtonHighlight = AwardHistoryButton:CreateTexture();
+    AwardHistoryButtonHighlight:SetTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\award");
+    AwardHistoryButtonHighlight:SetPoint("CENTER", AwardHistoryButton, "CENTER", 0, 0);
+    AwardHistoryButtonHighlight:SetSize(20, 20);
+
+    AwardHistoryButton:SetNormalTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\award");
+    AwardHistoryButton:SetDisabledTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\award-disabled");
+    AwardHistoryButton:SetHighlightTexture(AwardHistoryButtonHighlight);
+
+    AwardHistoryButton:SetScript("OnEnter", function()
+        GameTooltip:SetOwner(AwardHistoryButton, "ANCHOR_TOP");
+        GameTooltip:SetText("AwardHistory history");
+        GameTooltip:Show();
+    end);
+
+    AwardHistoryButton:SetScript("OnLeave", function()
+        GameTooltip:Hide();
+    end);
+
+    AwardHistoryButton:SetScript("OnClick", function()
+        GL.Interface.AwardHistory:toggle();
+    end);
 
     -- Make sure the window can be closed by pressing the escape button
     _G["GARGUL_AWARD_WINDOW"] = Window.frame;
