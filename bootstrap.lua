@@ -14,7 +14,10 @@ GL.isRetail = false;
 GL.isClassic = false;
 GL.version = GetAddOnMetadata(GL.name, "Version");
 GL.DebugLines = {};
-GL.EventFrame = {};
+GL.EventFrame = nil;
+GL.auctionHouseIsShown = false
+GL.mailIsShown = false
+GL.merchantIsShown = false
 GL.loadedOn = 32503680000; -- Year 3000
 
 -- Register our addon with the Ace framework
@@ -121,6 +124,9 @@ function GL:_init()
     self.Interface.MasterLooterDialog:_init();
     self.Interface.TradeWindow.TimeLeft:_init();
 
+    -- Hook native window events
+    self:hookNativeWindowEvents();
+
     -- Hook the bagslot events
     self:hookBagSlotEvents();
 
@@ -198,6 +204,35 @@ function GL:announceConflictingAddons()
         "You have one or more addons installed that interact with the loot window. If you don't disable them you might experience strange behavior with Gargul's looting features. These are the potentially conflicting addons: %s",
         table.concat(ConflictingAddons, ", ")
     ));
+end
+
+--- Keep track of when native UI elements (like AH/mailbox) are active
+---
+---@return void
+function GL:hookNativeWindowEvents()
+    GL.Events:register("BootstrapAuctionHouseShowListener", "AUCTION_HOUSE_SHOW", function()
+        self.auctionHouseIsShown = true;
+    end);
+
+    GL.Events:register("BootstrapAuctionHouseClosedListener", "AUCTION_HOUSE_CLOSED", function()
+        self.auctionHouseIsShown = false;
+    end);
+
+    GL.Events:register("BootstrapMailShowListener", "MAIL_SHOW", function()
+        self.mailIsShown = true;
+    end);
+
+    GL.Events:register("BootstrapMailClosedListener", "MAIL_CLOSED", function()
+        self.mailIsShown = false;
+    end);
+
+    GL.Events:register("BootstrapMerchantShowListener", "MERCHANT_SHOW", function()
+        self.merchantIsShown = true;
+    end);
+
+    GL.Events:register("BootstrapMerchantClosedListener", "MERCHANT_CLOSED", function()
+        self.merchantIsShown = false;
+    end);
 end
 
 --- Hook into the HandleModifiedItemClick event to allow for Gargul's many hotkeys
