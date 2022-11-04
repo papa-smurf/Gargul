@@ -12,6 +12,15 @@ GL.Interface.Changelog = {
 
     History = {
         {
+            version = "4.12.2",
+            date = "November 4th, 2022",
+            Changes = {
+                "Awarded loot history is moved to a separate window, click the trophy icon in your rolloff or award window",
+                "You can now mark rolls as +1 or OS in your settings so that the checkboxes will be checked automatically when awarding an item based on the type of roll",
+                "Gargul's hotkeys are now inactive when the auction house, mailbox or shop is opened",
+            },
+        },
+        {
             version = "4.12.0",
             date = "October 31th, 2022",
             Changes = {
