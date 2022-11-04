@@ -387,6 +387,9 @@ function RollOff:start(CommMessage)
         -- Play raid warning sound
         GL:playSound(8959, "Master");
 
+        -- Let the application know that a rolloff has started
+        GL.Events:fire("GL.ROLLOFF_STARTED");
+
         -- Items should only contain 1 item but lets add a return just in case
         return;
     end);
@@ -459,6 +462,9 @@ function RollOff:stop(CommMessage)
     if (self:startedByMe()) then
         GL.MasterLooterUI:updateWidgets();
     end
+
+    -- Let the application know that a rolloff has ended
+    GL.Events:fire("GL.ROLLOFF_STOPPED");
 
     return true;
 end
@@ -717,6 +723,9 @@ function RollOff:processRoll(message)
     end
 
     tinsert(RollOff.CurrentRollOff.Rolls, Roll);
+
+    GL.Events:fire("GL.ROLLOFF_ROLL_ACCEPTED");
+
     RollOff:refreshRollsTable();
 end
 
