@@ -17,7 +17,7 @@ GL.Interface.Changelog = {
             Changes = {
                 "Awarded loot history is moved to a separate window, click the trophy icon in your rolloff or award window",
                 "You can now mark rolls as +1 or OS in your settings so that the checkboxes will be checked automatically when awarding an item based on the type of roll",
-                "Gargul's hotkeys are now inactive when the auction house, mailbox or shop is opened",
+                "Gargul's hotkeys are now inactive when the auction house, mailbox, shop or bank are active",
             },
         },
         {
