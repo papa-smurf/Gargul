@@ -16,6 +16,8 @@ GL.version = GetAddOnMetadata(GL.name, "Version");
 GL.DebugLines = {};
 GL.EventFrame = nil;
 GL.auctionHouseIsShown = false
+GL.bankIsShown = false
+GL.guildBankIsShown = false
 GL.mailIsShown = false
 GL.merchantIsShown = false
 GL.loadedOn = 32503680000; -- Year 3000
@@ -232,6 +234,22 @@ function GL:hookNativeWindowEvents()
 
     GL.Events:register("BootstrapMerchantClosedListener", "MERCHANT_CLOSED", function()
         self.merchantIsShown = false;
+    end);
+
+    GL.Events:register("BootstrapBankFrameShowListener", "BANKFRAME_OPENED", function()
+        self.bankIsShown = true;
+    end);
+
+    GL.Events:register("BootstrapBankFrameClosedListener", "BANKFRAME_CLOSED", function()
+        self.bankIsShown = false;
+    end);
+
+    GL.Events:register("BootstrapGuildBankFrameShowListener", "GUILDBANKFRAME_OPENED", function()
+        self.guildBankIsShown = true;
+    end);
+
+    GL.Events:register("BootstrapGuildBankFrameClosedListener", "GUILDBANKFRAME_CLOSED", function()
+        self.guildBankIsShown = false;
     end);
 end
 
