@@ -386,6 +386,10 @@ end
 function AwardHistory:refresh(AnchorTo)
     GL:debug("AwardHistory:refresh");
 
+    if (not self.isVisible) then
+        return;
+    end
+
     self:close();
     self:draw(AnchorTo);
 end
