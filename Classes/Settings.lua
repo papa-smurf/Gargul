@@ -53,6 +53,16 @@ function Settings:sanitizeSettings()
     GL:debug("Settings:sanitizeSettings");
 
     self:enforceTemporarySettings();
+
+    -- Remove old roll data so it doesn't clog our SavedVariables
+    local twoWeeksAgo = GetServerTime() - 1209600;
+    for key, Award in pairs(GL.DB.AwardHistory) do
+        if (Award.timestamp < twoWeeksAgo) then
+            GL.DB.AwardHistory[key] = nil;
+            Award = nil;
+            table.remove(GL.DB.AwardHistory, key);
+        end
+    end
 end
 
 --- These settings are version-specific and will be removed over time!
