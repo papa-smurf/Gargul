@@ -12,6 +12,7 @@ GL.firstBoot = false; -- Indicates whether the user is new to Gargul
 GL.isEra = false;
 GL.isRetail = false;
 GL.isClassic = false;
+GL.clientIsDragonFlightOrLater = false;
 GL.version = GetAddOnMetadata(GL.name, "Version");
 GL.DebugLines = {};
 GL.EventFrame = nil;
@@ -82,6 +83,10 @@ function GL:_init()
     elseif self.clientVersion < 90000 then
         self.isClassic = true;
     else
+        if (self.clientVersion >= 100000) then
+            self.clientIsDragonFlightOrLater = true;
+        end
+
         self.isRetail = true;
     end
 
