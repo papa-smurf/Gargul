@@ -581,6 +581,9 @@ function TimeLeft:refreshBars()
             elseif (keyPressIdentifier == GL.Settings:get("ShortcutKeys.award")) then
                 GL.Interface.Award:draw(BagItem.itemLink);
 
+            elseif (keyPressIdentifier == GL.Settings:get("ShortcutKeys.disenchant")) then
+                GL.PackMule:disenchant(BagItem.itemLink);
+
             -- Unregistered hotkey was pressed and it turns out to be SHIFT_CLICK, add item link to chat/editbox etc
             elseif (keyPressIdentifier == "SHIFT_CLICK") then
                 if (ChatFrameEditBox and ChatFrameEditBox:IsVisible()) then
