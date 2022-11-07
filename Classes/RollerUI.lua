@@ -180,7 +180,7 @@ function RollerUI:drawCountdownBar(time, itemLink, itemIcon, note, userCanUseIte
 
     TimerBar:SetParent(self.Window);
     TimerBar:SetPoint("BOTTOM", self.Window, "BOTTOM");
-    TimerBar.candyBarLabel:SetFont(STANDARD_TEXT_FONT, 11, "OUTLINE");
+    TimerBar.candyBarLabel:SetFont(STANDARD_TEXT_FONT, 12, "OUTLINE");
 
     -- Make the bar turn green/yellow/red based on time left
     TimerBar:AddUpdateFunction(function (Bar)
@@ -217,14 +217,7 @@ function RollerUI:drawCountdownBar(time, itemLink, itemIcon, note, userCanUseIte
     end
 
     note = note or "";
-    local itemLinkLength = string.len(GL:getItemNameFromLink(itemLink)) + 2;
-    local noteStringLengthAllowed = 93 - itemLinkLength - string.len(note);
-
-    -- Make sure the item note does not go out of bounds
-    if (noteStringLengthAllowed < 0) then
-        noteStringLengthAllowed = 0;
-    end
-    TimerBar:SetLabel("  " .. itemLink .. " " .. string.sub(note, 0, noteStringLengthAllowed));
+    TimerBar:SetLabel("  " .. itemLink);
 
     if (not userCanUseItem) then
         TimerBar:SetLabel("  |c00FFFFFFYou can't use this item!|r");

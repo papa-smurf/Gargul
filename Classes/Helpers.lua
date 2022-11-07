@@ -866,6 +866,11 @@ function GL:findBagIdAndSlotForItem(itemID, skipSoulBound, includeBankBags)
         numberOfBagsToCheck = 10;
     end
 
+    -- Dragon Flight introduced an extra bag slot
+    if (GL.clientIsDragonFlightOrLater) then
+        numberOfBagsToCheck = numberOfBagsToCheck + 1;
+    end
+
     for bag = 0, numberOfBagsToCheck do
         for slot = 1, GetContainerNumSlots(bag) do
             local _, _, locked, _, _, _, _, _, _, bagItemID = GetContainerItemInfo(bag, slot);
