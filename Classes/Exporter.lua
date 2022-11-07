@@ -359,7 +359,7 @@ function Exporter:close()
     GL.Interface:storePosition(Window, "Exporter");
     Window:Hide();
 
-    -- Clean up the Dates table seperately
+    -- Clean up the Dates table separately
     GL.Interface:getItem(self, "Table.Dates"):SetData({}, true);
     GL.Interface:getItem(self, "Table.Dates"):Hide();
 end

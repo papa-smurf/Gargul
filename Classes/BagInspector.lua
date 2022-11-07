@@ -117,7 +117,7 @@ function BagInspector:processInspectionResults(CommMessage)
     end
 
     -- We wrapped the inspection report logic in a method so
-    -- that we can fire it seperately when all items including
+    -- that we can fire it separately when all items including
     -- their item links have been successfully loaded by the API
     local displayInspectionReport = function ()
         if (numberOfResponses < 1) then

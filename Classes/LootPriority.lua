@@ -210,7 +210,6 @@ function LootPriority:broadcast()
     local LootPriorityCSV = self:toCSV();
     -- Check if there's anything to share
     if (GL:empty(LootPriorityCSV)) then
-        GL:warning("Nothing to broadcast, set up loot priorities first!");
         return false;
     end
 
