@@ -274,8 +274,10 @@ function GL:hookBagSlotEvents()
             return;
         end
 
-        -- Make sure item interaction elements like ah/mail/shop are closed
+        -- Make sure item interaction elements like ah/mail/shop/bank are closed
         if (self.auctionHouseIsShown
+            or self.bankIsShown
+            or self.guildBankIsShown
             or self.mailIsShown
             or self.merchantIsShown
         ) then
@@ -283,7 +285,6 @@ function GL:hookBagSlotEvents()
         end
 
         local keyPressIdentifier = GL.Events:getClickCombination();
-        local keyPressRecognized = false;
 
         -- Open the roll window
         if (keyPressIdentifier == GL.Settings:get("ShortcutKeys.rollOff")) then
@@ -292,6 +293,10 @@ function GL:hookBagSlotEvents()
         -- Open the award window
         elseif (keyPressIdentifier == GL.Settings:get("ShortcutKeys.award")) then
             GL.Interface.Award:draw(itemLink);
+
+        --Disenchant items from bags is disabled for now since it always triggers the dressupframe
+        --elseif (keyPressIdentifier == GL.Settings:get("ShortcutKeys.disenchant")) then
+        --    GL.PackMule:disenchant(itemLink);
         end
     end);
 end
