@@ -22,6 +22,7 @@ GL.GDKP = {
         Bids = {}, -- Player bids
         TopBid = {}, -- Top bid
     },
+    lastOutBidNotificationShownAt = nil,
     listeningForBids = false,
     BidListenerCancelTimerId = nil,
 };
@@ -39,6 +40,15 @@ function GDKP:_init()
         return false;
     end
 
+---@todo: remove
+GL.Ace:ScheduleTimer(function ()
+    if (true) then return; end;
+    GL:error("FIRE!");
+    GL.Interface.Alerts:fire("GargulNotification", {
+        message = "|c00BE3333You were outbid!|r",
+    });
+end, 1);
+
     -- An event is fired whenever a bid is accepted, in which case we broadcast the latest auction details
     GL.Events:register("GDKPBidAccepted", "GL.GDKP_BID_ACCEPTED", function ()
         GL.CommMessage.new(
@@ -49,8 +59,18 @@ function GDKP:_init()
     end);
 
     -- Whenever we were outbid we show a notification
-    GL.Events:register("", "GL.GDKP_USER_WAS_OUTBID", function (_, NewTopBid)
+    GL.Events:register("GDKPGDKPUserWasOutBid", "GL.GDKP_USER_WAS_OUTBID", function (_, NewTopBid)
+        -- We don't want to spam the user with alerts!
+        if (self.lastOutBidNotificationShownAt
+            and GetServerTime() - self.lastOutBidNotificationShownAt <= 8
+        ) then
+            return;
+        end
 
+        self.lastOutBidNotificationShownAt = GetServerTime();
+        GL.Interface.Alerts:fire("GargulNotification", {
+            message = string.format("|c00BE3333You were outbid!|r", NewTopBid.Bidder.name),
+        });
     end);
 
     self._initialized = true;
@@ -375,25 +395,17 @@ function GDKP:announceStart(itemLink, minimumBid, minimumIncrement)
         return true;
     end
 
-    local announceMessage = "You have %TIME seconds to bid on %ITEM. Minimum bid is %MINIMUMBID and the minimum increment is %MINIMUMINCREMENT";
-    announceMessage = announceMessage:gsub("%S+", {
-        ["%TIME"] = duration,
-        ["%ITEM"] = itemLink,
-        ["%MINIMUMBID"] = minimumBid,
-        ["%MINIMUMINCREMENT"] = minimumIncrement
-    });
+    local announceMessage = string.format("You have %s seconds to bid on %s. Minimum bid is %s, increment is %s",
+        duration,
+        itemLink,
+        minimumBid,
+        minimumIncrement
+    );
 
-    if (GL.User.isInRaid) then
-        GL:sendChatMessage(
-            announceMessage,
-            "RAID_WARNING"
-        );
-    else
-        GL:sendChatMessage(
-            announceMessage,
-            "PARTY"
-        );
-    end
+    GL:sendChatMessage(
+        announceMessage,
+        "GROUP"
+    );
 
     return true;
 end
@@ -409,8 +421,6 @@ function GDKP:announceStop()
         nil,
         "GROUP"
     ):send();
-
-    self:stopListeningForBids();
 end
 
 --- Start an auction
@@ -578,6 +588,11 @@ function GDKP:stop(CommMessage)
                 "RAID_WARNING"
             );
         end
+
+        -- We stop listening for bids one second after the rolloff ends just in case there is server lag/jitter
+        GL.Ace:ScheduleTimer(function()
+            self:stopListeningForBids();
+        end, 1);
     end
 
     if (self.countDownTimer) then
@@ -609,31 +624,51 @@ function GDKP:refresh(CommMessage)
     -- Even if the auction is over we still want to update UI elements
     -- if needed, this is why we don't use self.inProgress here!
     if (GL:empty(self.CurrentAuction)) then
+GL:error("Auction is empty");
         return;
     end
 
     -- The user who sent the refresh our way is not permitted to do so
-    if (CommMessage and CommMessage.Sender.id ~= self.CurrentAuction.initiatorID
+    if (CommMessage
+        and CommMessage.Sender.id ~= self.CurrentAuction.initiatorID
     ) then
+GL:error("Not allowed!");
         return;
     end
 
     -- Check if there's a new highest bid
     local NewTopBid = GL:tableGet(CommMessage, "content.TopBid" or {});
-    local OldTopBid = self.CurrentAuction.Top or {bid = 0, Bidder = {}};
-    if (not GL:empty(NewTopBid) and NewTopBid.bid > OldTopBid.bid) then
+    local OldTopBid = self.CurrentAuction.TopBid or {};
+
+    if (GL:empty(OldTopBid.bid)) then
+        OldTopBid = false;
+    end
+
+    -- Payload seems invalid, abort!
+    if (GL:empty(NewTopBid)
+        or not GL:higherThanZero(NewTopBid.bid)
+    ) then
+        return;
+    end
+
+    -- Valid bid, act accordingly!
+    if (not OldTopBid or NewTopBid.bid > OldTopBid.bid) then
+GL:error("WE HAVE A NEW BID");
+GL:printTable({OldTopBid = OldTopBid});
         -- It seems like we were outbid!
-        if (OldTopBid.Bidder.name
-            and string.lower(GL.User.name) == OldTopBid.Bidder.name
+        if (OldTopBid and OldTopBid.Bidder.name
+            and GL.User.name == OldTopBid.Bidder.name
             and OldTopBid.Bidder.name ~= NewTopBid.Bidder.name
         ) then
+GL:error("WE WERE OUTBID!");
             GL.Events:fire("GL.GDKP_USER_WAS_OUTBID", OldTopBid, NewTopBid);
         end
 
-        self.CurrentAuction.Top = NewTopBid;
+        self.CurrentAuction.TopBid = NewTopBid;
         GL.Interface.GDKP.Bidder:refresh();
     end
 
+GL:error("Nothing");
     return;
 end
 
@@ -737,11 +772,6 @@ end
 function GDKP:processBid(event, message, bidder)
     GL:debug("GDKP:processBid");
 
-    -- We only track rolls when a rollof is actually in progress
-    if (not GDKP.inProgress) then
-        return;
-    end
-
     message = string.lower(message);
 
     -- This is most likely a message generated by gargul
@@ -808,8 +838,7 @@ function GDKP:processBid(event, message, bidder)
     if (BidEntry.bid < math.max(
         self.CurrentAuction.minimumBid,
         GL:tableGet(self.CurrentAuction, "TopBid.bid", 0) + self.CurrentAuction.minimumIncrement
-    ))
-    then
+    )) then
         return;
     end
 

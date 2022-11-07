@@ -203,8 +203,8 @@ function Overview:draw()
     Window:AddChild(ButtonFrame);
 
     local SetActiveSessionButton = AceGUI:Create("Button");
-    SetActiveSessionButton:SetText("Set Active");
-    SetActiveSessionButton:SetWidth(92); -- Minimum is 92
+    SetActiveSessionButton:SetText("Enable Session");
+    SetActiveSessionButton:SetWidth(118); -- Minimum is 118
     SetActiveSessionButton:SetCallback("OnClick", function()
         GL:dump("Set Active");
     end);

@@ -108,11 +108,13 @@ GL.Data.DefaultSettings = {
         reserveThreshold = 180,
     },
     GDKP = {
+        announceAuctionStart = true,
         announceBidsClosed = true,
         closeAuctioneerOnAward = true,
         closeAuctioneerOnStart = true,
         minimumBid = 100,
         minimumIncrement = 50,
+        showBidWindow = true,
     },
     TMB = {
         announceInfoWhenRolling = true,
