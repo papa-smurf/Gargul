@@ -60,7 +60,6 @@ function Settings:sanitizeSettings()
         if (Award.timestamp < twoWeeksAgo) then
             GL.DB.AwardHistory[key] = nil;
             Award = nil;
-            table.remove(GL.DB.AwardHistory, key);
         end
     end
 end
