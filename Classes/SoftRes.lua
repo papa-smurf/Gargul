@@ -8,14 +8,17 @@ GL.SoftRes = {
     broadcastInProgress = false,
     maxNumberOfSoftReservedItems = 6,
     requestingData = false,
+    lastTooltipData = nil,
+    lastTooltipItemLink = nil,
+    lastTooltipTime = nil,
 
     MaterializedData = {
         ClassByPlayerName = {},
         DetailsByPlayerName = {},
-        HardReserveDetailsById = {},
-        PlayerNamesByItemId = {},
-        ReservedItemIds = {},
-        SoftReservedItemIds = {},
+        HardReserveDetailsByID = {},
+        PlayerNamesByItemID = {},
+        ReservedItemIDs = {},
+        SoftReservedItemIDs = {},
     },
 };
 
@@ -24,7 +27,6 @@ local Constants = GL.Data.Constants; ---@type Data
 local CommActions = Constants.Comm.Actions;
 local Settings = GL.Settings; ---@type Settings
 local SoftRes = GL.SoftRes; ---@type SoftRes
-local GameTooltip = GameTooltip; ---@type GameTooltip
 
 --- @return boolean
 function SoftRes:_init()
@@ -57,14 +59,6 @@ function SoftRes:_init()
     ) then
         self:clear();
     end
-
-    -- Bind the appendSoftReserveInfoToTooltip method to the OnTooltipSetItem event
-    GameTooltip:HookScript("OnTooltipSetItem", function(tooltip)
-        self:appendSoftReserveInfoToTooltip(tooltip);
-    end);
-    ItemRefTooltip:HookScript("OnTooltipSetItem", function(tooltip)
-        self:appendSoftReserveInfoToTooltip(tooltip);
-    end);
 
     GL.Events:register("SoftResUserJoinedGroupListener", "GL.USER_JOINED_GROUP", function () self:requestData(); end);
 
@@ -120,11 +114,11 @@ function SoftRes:handleWhisperCommand(_, message, sender)
         local Entries = {};
 
         for _, Entry in pairs(Items) do
-            local itemIdString = tostring(Entry.id);
+            local itemIDString = tostring(Entry.id);
             local entryString = Entry.link;
 
-            if (Reserves[itemIdString] > 1) then
-                entryString = string.format("%s (%sx)", entryString, Reserves[itemIdString]);
+            if (Reserves[itemIDString] > 1) then
+                entryString = string.format("%s (%sx)", entryString, Reserves[itemIDString]);
             end
 
             tinsert(Entries, entryString);
@@ -284,7 +278,7 @@ end
 function SoftRes:itemLinkIsReservedByMe(itemLink)
     GL:debug("SoftRes:itemLinkIsReservedByMe");
 
-    return self:itemIDIsReservedByMe(GL:getItemIdFromLink(itemLink));
+    return self:itemIDIsReservedByMe(GL:getItemIDFromLink(itemLink));
 end
 
 --- Materialize the SoftRes data to make it more accessible during runtime
@@ -294,11 +288,11 @@ function SoftRes:materializeData(reportStatus)
     GL:debug("SoftRes:materializeData");
 
     reportStatus = GL:toboolean(reportStatus);
-    local ReservedItemIds = {}; -- All reserved item ids (both soft- and hard)
-    local SoftReservedItemIds = {}; -- Soft-reserved item ids
+    local ReservedItemIDs = {}; -- All reserved item ids (both soft- and hard)
+    local SoftReservedItemIDs = {}; -- Soft-reserved item ids
     local DetailsByPlayerName = {}; -- Item ids per player name
-    local PlayerNamesByItemId = {}; -- Player names per reserved item id
-    local HardReserveDetailsById = {}; -- Hard reserve details per item id
+    local PlayerNamesByItemID = {}; -- Player names per reserved item id
+    local HardReserveDetailsByID = {}; -- Hard reserve details per item id
 
     for _, SoftResEntry in pairs(DB:get("SoftRes.SoftReserves", {})) do
         local class = string.lower(SoftResEntry.class or "");
@@ -328,19 +322,19 @@ function SoftRes:materializeData(reportStatus)
                 self.MaterializedData.ClassByPlayerName[name] = class;
             end
 
-            for _, itemId in pairs(SoftResEntry.Items or {}) do
-                if (GL:higherThanZero(itemId)) then
+            for _, itemID in pairs(SoftResEntry.Items or {}) do
+                if (GL:higherThanZero(itemID)) then
                     -- This seems very counterintuitive, but using numeric keys
                     -- in a lua tables has some insanely annoying drawbacks
-                    local idString = tostring(itemId);
+                    local idString = tostring(itemID);
 
-                    if (not PlayerNamesByItemId[idString]) then
-                        PlayerNamesByItemId[idString] = {};
+                    if (not PlayerNamesByItemID[idString]) then
+                        PlayerNamesByItemID[idString] = {};
                     end
 
                     -- It's now possible to reserve the same item multiple times so we no longer
                     -- check whether the given playername is unique!
-                    tinsert(PlayerNamesByItemId[idString], name);
+                    tinsert(PlayerNamesByItemID[idString], name);
 
                     if (DetailsByPlayerName[name].Items[idString]) then
                         DetailsByPlayerName[name].Items[idString] = DetailsByPlayerName[name].Items[idString] + 1;
@@ -358,7 +352,7 @@ function SoftRes:materializeData(reportStatus)
         local note = HardResEntry.note or "";
 
         if (GL:higherThanZero(id)) then
-            HardReserveDetailsById[tostring(id)] = {
+            HardReserveDetailsByID[tostring(id)] = {
                 id = id,
                 reservedFor = reservedFor,
                 note = note,
@@ -366,26 +360,26 @@ function SoftRes:materializeData(reportStatus)
         end
     end
 
-    local reservedItemIdsIndex = 1;
-    for idString in pairs(PlayerNamesByItemId) do
-        SoftReservedItemIds[idString] = true;
-        ReservedItemIds[idString] = reservedItemIdsIndex;
+    local reservedItemIDsIndex = 1;
+    for idString in pairs(PlayerNamesByItemID) do
+        SoftReservedItemIDs[idString] = true;
+        ReservedItemIDs[idString] = reservedItemIDsIndex;
 
-        reservedItemIdsIndex = reservedItemIdsIndex + 1;
+        reservedItemIDsIndex = reservedItemIDsIndex + 1;
     end
 
-    for idString in pairs(HardReserveDetailsById) do
-        if (not ReservedItemIds[idString]) then
-            ReservedItemIds[idString] = reservedItemIdsIndex;
-            reservedItemIdsIndex = reservedItemIdsIndex + 1;
+    for idString in pairs(HardReserveDetailsByID) do
+        if (not ReservedItemIDs[idString]) then
+            ReservedItemIDs[idString] = reservedItemIDsIndex;
+            reservedItemIDsIndex = reservedItemIDsIndex + 1;
         end
     end
 
     self.MaterializedData.DetailsByPlayerName = DetailsByPlayerName;
-    self.MaterializedData.HardReserveDetailsById = HardReserveDetailsById;
-    self.MaterializedData.PlayerNamesByItemId = PlayerNamesByItemId;
-    self.MaterializedData.ReservedItemIds = GL:tableFlip(ReservedItemIds);
-    self.MaterializedData.SoftReservedItemIds = SoftReservedItemIds;
+    self.MaterializedData.HardReserveDetailsByID = HardReserveDetailsByID;
+    self.MaterializedData.PlayerNamesByItemID = PlayerNamesByItemID;
+    self.MaterializedData.ReservedItemIDs = GL:tableFlip(ReservedItemIDs);
+    self.MaterializedData.SoftReservedItemIDs = SoftReservedItemIDs;
 end
 
 --- Draw either the importer or overview
@@ -402,14 +396,14 @@ function SoftRes:draw()
     end
 
     -- No items were reserved yet (this is possible!)
-    if (GL:empty(self.MaterializedData.ReservedItemIds)) then
+    if (GL:empty(self.MaterializedData.ReservedItemIDs)) then
         return GL.Interface.SoftRes.Overview:draw();
     end
 
     -- Show the soft-reserve overview after all items are loaded
     -- This is to ensure that all item data is available before we draw the UI
     GL:onItemLoadDo(
-        self.MaterializedData.ReservedItemIds or {},
+        self.MaterializedData.ReservedItemIDs or {},
         function () GL.Interface.SoftRes.Overview:draw(); end
     );
 end
@@ -447,23 +441,23 @@ end
 
 --- Check whether a given item id is reserved (either soft or hard)
 ---
----@param itemId number|string
+---@param itemID number|string
 ---@param inRaidOnly boolean
 ---@return boolean
-function SoftRes:idIsReserved(itemId, inRaidOnly)
-    local idString = tostring(itemId);
+function SoftRes:idIsReserved(itemID, inRaidOnly)
+    local idString = tostring(itemID);
 
     if (type(inRaidOnly) ~= "boolean") then
         inRaidOnly = GL.User.isInGroup and Settings:get("SoftRes.hideInfoOfPeopleNotInGroup");
     end
 
     -- The item is hard-reserved
-    if (self:idIsHardReserved(idString)) then
+    if (self:IDIsHardReserved(idString)) then
         return true;
     end
 
     -- The item is not reserved at all
-    if (not GL:inTable(self.MaterializedData.ReservedItemIds, idString)) then
+    if (not GL:inTable(self.MaterializedData.ReservedItemIDs, idString)) then
         return false;
     end
 
@@ -476,7 +470,7 @@ function SoftRes:idIsReserved(itemId, inRaidOnly)
     local GroupMemberNames = GL.User:groupMemberNames();
 
     for _, playerName in pairs(GroupMemberNames) do
-        if (GL:inTable(self.MaterializedData.PlayerNamesByItemId[idString], playerName)) then
+        if (GL:inTable(self.MaterializedData.PlayerNamesByItemID[idString], playerName)) then
             return true;
         end
     end
@@ -490,17 +484,15 @@ end
 ---@param inRaidOnly boolean
 ---@return boolean
 function SoftRes:linkIsReserved(itemLink, inRaidOnly)
-    return self:idIsReserved(GL:getItemIdFromLink(itemLink), inRaidOnly);
+    return self:idIsReserved(GL:getItemIDFromLink(itemLink), inRaidOnly);
 end
 
 --- Check whether a given item id is hard-reserved
 ---
----@param itemId number|string
+---@param itemID number|string
 ---@return boolean
-function SoftRes:idIsHardReserved(itemId)
-    local idString = tostring(itemId);
-
-    return self.MaterializedData.HardReserveDetailsById[idString] ~= nil;
+function SoftRes:IDIsHardReserved(itemID)
+    return self.MaterializedData.HardReserveDetailsByID[tostring(itemID)] ~= nil;
 end
 
 --- Check whether a given itemlink is hard-reserved
@@ -508,7 +500,7 @@ end
 ---@param itemLink string
 ---@return boolean
 function SoftRes:linkIsHardReserved(itemLink)
-    return self:idIsHardReserved(GL:getItemIdFromLink(itemLink));
+    return self:IDIsHardReserved(GL:getItemIDFromLink(itemLink));
 end
 
 --- Clear all SoftRes data
@@ -519,10 +511,10 @@ function SoftRes:clear()
     self.MaterializedData = {
         ClassByPlayerName = {},
         DetailsByPlayerName = {},
-        HardReserveDetailsById = {},
-        PlayerNamesByItemId = {},
-        ReservedItemIds = {},
-        SoftReservedItemIds = {},
+        HardReserveDetailsByID = {},
+        PlayerNamesByItemID = {},
+        ReservedItemIDs = {},
+        SoftReservedItemIDs = {},
     };
 
     GL.Interface.SoftRes.Overview:close();
@@ -530,31 +522,31 @@ end
 
 --- Check whether the given player reserved the given item id
 ---
----@param itemId number|string
+---@param itemID number|string
 ---@param playerName string
 ---@return boolean
-function SoftRes:itemIdIsReservedByPlayer(itemId, playerName)
-    GL:debug("SoftRes:itemIdIsReservedByPlayer");
+function SoftRes:itemIDIsReservedByPlayer(itemID, playerName)
+    GL:debug("SoftRes:itemIDIsReservedByPlayer");
 
-    local SoftResData = self.MaterializedData.PlayerNamesByItemId or {};
+    local SoftResData = self.MaterializedData.PlayerNamesByItemID or {};
 
     return GL:inTable(
-        SoftResData[tostring(itemId)] or {},
+        SoftResData[tostring(itemID)] or {},
         string.lower(GL:stripRealm(playerName))
     );
 end
 
 --- Fetch an item's reservations based on its ID
 ---
----@param itemId number|string
+---@param itemID number|string
 ---@param inRaidOnly boolean
 ---@return table
-function SoftRes:byItemId(itemId, inRaidOnly)
-    GL:debug("SoftRes:byItemId");
+function SoftRes:byItemID(itemID, inRaidOnly)
+    GL:debug("SoftRes:byItemID");
 
     -- An invalid item id was provided
-    itemId = tonumber(itemId);
-    if (not GL:higherThanZero(itemId)) then
+    itemID = tonumber(itemID);
+    if (not GL:higherThanZero(itemID)) then
         return {};
     end
 
@@ -563,7 +555,7 @@ function SoftRes:byItemId(itemId, inRaidOnly)
     end
 
     -- The item linked to this id can have multiple IDs (head of Onyxia for example)
-    local AllLinkedItemIds = GL:getLinkedItemsForId(itemId);
+    local AllLinkedItemIDs = GL:getLinkedItemsForID(itemID);
 
     local GroupMemberNames = {};
     if (inRaidOnly) then
@@ -571,11 +563,11 @@ function SoftRes:byItemId(itemId, inRaidOnly)
     end
 
     local ActiveReservations = {};
-    for _, id in pairs(AllLinkedItemIds) do
+    for _, id in pairs(AllLinkedItemIDs) do
         local idString = tostring(id);
 
         -- If inRaidOnly is true we need to make sure we only return details of people who are actually in the raid
-        for _, playerName in pairs(GL:tableGet(self.MaterializedData.PlayerNamesByItemId or {}, idString, {})) do
+        for _, playerName in pairs(GL:tableGet(self.MaterializedData.PlayerNamesByItemID or {}, idString, {})) do
             if (not inRaidOnly or GL:inTable(GroupMemberNames, playerName)) then
                 tinsert(ActiveReservations, playerName);
             end
@@ -593,40 +585,24 @@ end
 function SoftRes:byItemLink(itemLink, inRaidOnly)
     GL:debug("SoftRes:byItemLink");
 
-    return self:byItemId(GL:getItemIdFromLink(itemLink), inRaidOnly);
+    return self:byItemID(GL:getItemIDFromLink(itemLink), inRaidOnly);
 end
 
 --- Append the soft reserves as defined in DB.SoftRes to an item's tooltip
 ---
----@param Tooltip GameTooltip
----@return boolean
-function SoftRes:appendSoftReserveInfoToTooltip(Tooltip)
+---@param itemLink string
+---@return table
+function SoftRes:tooltipLines(itemLink)
     GL:debug("SoftRes:appendSoftReserveInfoToTooltip");
 
     -- The player doesn't want to see softres details on tooltips
     if (not Settings:get("SoftRes.enableTooltips")) then
-        return true;
-    end
-
-    -- No tooltip was provided
-    if (not Tooltip) then
-        GL:debug("No tooltip found in SoftRes:appendSoftReserveInfoToTooltip");
-        return false;
-    end
-
-    local itemName, itemLink = Tooltip:GetItem();
-
-    -- We couldn't find an itemName or link (this can actually happen!)
-    if (not itemName or not itemLink) then
-        GL:debug("No item found in SoftRes:appendSoftReserveInfoToTooltip");
-        return false;
+        return {};
     end
 
     -- Check if the item is hard-reserved
     if (self:linkIsHardReserved(itemLink)) then
-        Tooltip:AddLine(string.format("|cFFcc2743%s|r", "\nThis item is hard-reserved!"));
-
-        return true;
+        return { string.format("|cFFcc2743%s|r", "\nThis item is hard-reserved!") };
     end
 
     local Reservations = self:byItemLink(itemLink);
@@ -645,8 +621,13 @@ function SoftRes:appendSoftReserveInfoToTooltip(Tooltip)
 
     -- No active reservations were found for this item
     if (not itemHasActiveReservations) then
-        return true;
+        return {};
     end
+
+    local Lines = {};
+
+    -- Add the header
+    tinsert(Lines, string.format("\n|cFFEFB8CD%s|r", "Reserved by"));
 
     -- This is necessary so we can sort the table based on number of reserves per item
     local ActiveReservations = {};
@@ -654,7 +635,7 @@ function SoftRes:appendSoftReserveInfoToTooltip(Tooltip)
         tinsert(ActiveReservations, {
             player = playerName,
             reservations = reservations,
-        })
+        });
     end
     ReservationsByPlayerName = {}; -- We no longer need this table, clean it up!
 
@@ -662,9 +643,6 @@ function SoftRes:appendSoftReserveInfoToTooltip(Tooltip)
     table.sort(ActiveReservations, function (a, b)
         return a.reservations > b.reservations;
     end);
-
-    -- Add the header
-    Tooltip:AddLine(string.format("\n|cFFEFB8CD%s|r", "Reserved by"));
 
     -- Add the reservation details to ActiveReservations (add 2x / 3x etc when same item was reserved multiple times)
     for _, Entry in pairs(ActiveReservations) do
@@ -677,14 +655,14 @@ function SoftRes:appendSoftReserveInfoToTooltip(Tooltip)
         end
 
         -- Add the actual soft reserves to the tooltip
-        Tooltip:AddLine(string.format(
+        tinsert(Lines, string.format(
             "|cFF%s    %s|r",
             GL:classHexColor(class),
             GL:capitalize(entryString)
         ));
     end
 
-    return true;
+    return Lines;
 end
 
 --- How many times did the given player reserve the given item?
@@ -699,7 +677,7 @@ function SoftRes:playerReservesOnItem(idOrLink, playerName)
     if (concernsID) then
         itemID = math.floor(tonumber(idOrLink));
     else
-        itemID = GL:getItemIdFromLink(idOrLink);
+        itemID = GL:getItemIDFromLink(idOrLink);
     end
 
     return GL:tableGet(self.MaterializedData.DetailsByPlayerName, string.format(
@@ -744,10 +722,10 @@ function SoftRes:import(data, openOverview)
     self.MaterializedData = {
         ClassByPlayerName = {},
         DetailsByPlayerName = {},
-        HardReserveDetailsById = {},
-        PlayerNamesByItemId = {},
-        ReservedItemIds = {},
-        SoftReservedItemIds = {},
+        HardReserveDetailsByID = {},
+        PlayerNamesByItemID = {},
+        ReservedItemIDs = {},
+        SoftReservedItemIDs = {},
     };
 
     -- Attempt to "fix" player names (e.g. people misspelling their names)
@@ -953,12 +931,12 @@ function SoftRes:importGargulData(data)
             };
 
             for _, Item in pairs(Items) do
-                local itemId = tonumber(Item.id) or 0;
+                local itemID = tonumber(Item.id) or 0;
 
-                if (GL:higherThanZero(itemId)) then
+                if (GL:higherThanZero(itemID)) then
                     hasItems = true;
 
-                    tinsert(PlayerEntry.Items, itemId);
+                    tinsert(PlayerEntry.Items, itemID);
                 end
             end
 
@@ -1053,13 +1031,13 @@ function SoftRes:importCSVData(data, reportStatus)
             Columns = GL:tableFlip(Segments);
             first = false;
         else -- The first line includes the heading, we don't need that
-            local itemId = tonumber(Segments[Columns.ItemId]);
+            local itemID = tonumber(Segments[Columns.ItemId]);
             local playerName = tostring(Segments[Columns.Name]);
             local class = tostring(Segments[Columns.Class]);
             local note = tostring(Segments[Columns.Note]);
             local plusOnes = tonumber(Segments[Columns.Plus]);
 
-            if (GL:higherThanZero(itemId)
+            if (GL:higherThanZero(itemID)
                 and not GL:empty(playerName)
             ) then
                 -- WoW itself uses Death Knight, so let's rewrite for compatibility
@@ -1095,7 +1073,7 @@ function SoftRes:importCSVData(data, reportStatus)
 
                 PlusOnes[playerName] = plusOnes;
 
-                tinsert(SoftReserveData[playerName].Items, itemId);
+                tinsert(SoftReserveData[playerName].Items, itemID);
             end
         end
     end
@@ -1310,20 +1288,10 @@ function SoftRes:postLink()
         return false;
     end
 
-    if (not GL.User.isInGroup) then
-        GL:warning("You need to be in a group in order to post the link!");
-        return false;
-    end
-
-    local chatChannel = "PARTY";
-    if (GL.User.isInRaid) then
-        chatChannel = "RAID";
-    end
-
     -- Post the link in the chat for all group members to see
     GL:sendChatMessage(
         softResLink,
-        chatChannel
+        "GROUP"
     );
 
     return true;
@@ -1378,11 +1346,6 @@ function SoftRes:postMissingSoftReserves()
         return false;
     end
 
-    if (not GL.User.isInGroup) then
-        GL:warning("You need to be in a group in order to post missing soft-reserves!");
-        return false;
-    end
-
     local PlayerNames = self:playersWithoutSoftReserves();
 
     if (#PlayerNames < 1) then
@@ -1390,15 +1353,10 @@ function SoftRes:postMissingSoftReserves()
         return true;
     end
 
-    local chatChannel = "PARTY";
-    if (GL.User.isInRaid) then
-        chatChannel = "RAID";
-    end
-
     -- Post the link in the chat for all group members to see
     GL:sendChatMessage(
         "Missing soft-reserves from: " .. table.concat(PlayerNames, ", "),
-        chatChannel
+        "GROUP"
     );
 
     return true;
@@ -1417,20 +1375,10 @@ function SoftRes:postDiscordLink()
         return false;
     end
 
-    if (not GL.User.isInGroup) then
-        GL:warning("You need to be in a group in order to post the Discord link!");
-        return false;
-    end
-
-    local chatChannel = "PARTY";
-    if (GL.User.isInRaid) then
-        chatChannel = "RAID";
-    end
-
     -- Post the link in the chat for all group members to see
     GL:sendChatMessage(
         discordLink,
-        chatChannel
+        "GROUP"
     );
 
     return true;

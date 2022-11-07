@@ -28,7 +28,7 @@ local ScrollingTable = GL.ScrollingTable;
 function Award:draw(itemLink)
     GL:debug("Award:draw");
 
-    local itemID = GL:getItemIdFromLink(itemLink);
+    local itemID = GL:getItemIDFromLink(itemLink);
 
     -- First we need to check if the frame hasn't been
     -- rendered already. If so then show it (if it's hidden)
@@ -36,16 +36,25 @@ function Award:draw(itemLink)
     if (GL.Interface:getItem(self, "Window")
         and GL.Interface:getItem(self, "Window").rendered
     ) then
+        local PlayerNameBox = GL.Interface:getItem(self, "EditBox.PlayerName");
+        local Window = GL.Interface:getItem(self, "Window");
+
         if (itemLink) then
             Award:passItemLink(itemLink);
         end
 
         -- If the frame is hidden we need to show it again
-        if (not GL.Interface:getItem(self, "Window"):IsShown()) then
-            GL.Interface:getItem(self, "Window"):Show();
+        if (not Window:IsShown()) then
+            Window:Show();
+        end
+
+        -- Reset the player name box (BEFORE POPULATING THE TABLE!)
+        if (PlayerNameBox) then
+            PlayerNameBox:SetText("");
         end
 
         Award:populatePlayersTable(itemID or nil);
+
         return;
     end
 
@@ -64,10 +73,18 @@ function Award:draw(itemLink)
     Window:SetCallback("OnClose", function()
         self:close();
     end);
-    Window:SetPoint(GL.Interface:getPosition("Award"));
     Window.frame:SetFrameStrata("DIALOG");
-
+    GL.Interface:restorePosition(Window, "Award");
     GL.Interface:setItem(self, "Window", Window);
+
+    --[[
+        SETTINGS BUTTON
+    ]]
+    local SettingsButton = GL.UI:createSettingsButton(
+            Window.frame,
+            "AwardingLoot"
+    );
+    self.SettingsButton = SettingsButton;
 
     -- Make sure the window can be closed by pressing the escape button
     _G["GARGUL_AWARD_WINDOW"] = Window.frame;
@@ -101,7 +118,7 @@ function Award:draw(itemLink)
 
     ItemBox:DisableButton(true);
     ItemBox:SetHeight(20);
-    ItemBox:SetWidth(170);
+    ItemBox:SetWidth(150);
     ItemBox:SetCallback("OnTextChanged", function () self:ItemBoxChanged() end); -- Update item info when input value changes
     ItemBox:SetCallback("OnEnterPressed", function () self:ItemBoxChanged() end); -- Update item info when item is dragged on top (makes no sense to use OnEnterPressed I know)
     GL.Interface:setItem(self, "Item", ItemBox);
@@ -182,7 +199,7 @@ function Award:draw(itemLink)
                 GDKPPrice = tonumber(GDKPPriceEditBox:GetText());
 
                 if (GL:higherThanZero(GDKPPrice)) then
-                    GL.GDKP:createAuction(GL:getItemIdFromLink(itemLink), GDKPPrice, winner);
+                    GL.GDKP:createAuction(GL:getItemIDFromLink(itemLink), GDKPPrice, winner);
                 end
             end
 
@@ -235,6 +252,44 @@ function Award:draw(itemLink)
     end);
     FirstRow:AddChild(AwardButton);
     GL.Interface:setItem(self, "Award", AwardButton);
+
+    --[[
+        AWARD HISTORY BUTTON
+    ]]
+
+    local AwardHistoryButton = GL.UI:createFrame("Button", "MasterLooterUIAwardHistoryButton" .. GL:uuid(), Window.frame, "UIPanelButtonTemplate");
+    AwardHistoryButton:SetSize(22, 20);
+    AwardHistoryButton:SetPoint("TOPLEFT", AwardButton.frame, "TOPRIGHT", 0, 0);
+    AwardHistoryButton:SetMotionScriptsWhileDisabled(true); -- Make sure tooltip still shows even when button is disabled
+
+    local AwardHistoryButtonHighlight = AwardHistoryButton:CreateTexture();
+    AwardHistoryButtonHighlight:SetTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\award");
+    AwardHistoryButtonHighlight:SetPoint("CENTER", AwardHistoryButton, "CENTER", 0, 0);
+    AwardHistoryButtonHighlight:SetSize(22, 20);
+
+    AwardHistoryButton:SetNormalTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\award");
+    AwardHistoryButton:SetDisabledTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\award-disabled");
+    AwardHistoryButton:SetHighlightTexture(AwardHistoryButtonHighlight);
+
+    AwardHistoryButton:SetScript("OnEnter", function()
+        GameTooltip:SetOwner(AwardHistoryButton, "ANCHOR_TOP");
+        GameTooltip:SetText("Award history");
+        GameTooltip:Show();
+    end);
+
+    AwardHistoryButton:SetScript("OnLeave", function()
+        GameTooltip:Hide();
+    end);
+
+    AwardHistoryButton:SetScript("OnClick", function()
+        GL.Interface.AwardHistory:toggle();
+    end);
+
+    Spacer = AceGUI:Create("SimpleGroup");
+    Spacer:SetLayout("Flow");
+    Spacer:SetWidth(22);
+    Spacer:SetHeight(20);
+    FirstRow:AddChild(Spacer);
 
     --[[
         DISENCHANT BUTTON
@@ -321,6 +376,7 @@ function Award:draw(itemLink)
         AwardButton:Fire("OnClick");
     end); -- Award
     SecondRow:AddChild(PlayerNameBox);
+    GL.Interface:setItem(self, "PlayerName", PlayerNameBox);
 
     Spacer = AceGUI:Create("SimpleGroup");
     Spacer:SetLayout("Fill");
@@ -374,6 +430,12 @@ function Award:close()
         return;
     end
 
+    local EditBox = GL.Interface:getItem(self, "EditBox.PlayerName");
+
+    if (EditBox and EditBox.SetText) then
+        EditBox:SetText("");
+    end
+
     GL.Interface:storePosition(Window, "Award");
     Window:Hide();
 end
@@ -406,6 +468,27 @@ function Award:drawPlayersTable()
     Table.frame:SetPoint("BOTTOM", Parent, "BOTTOM", 0, 46);
     GL.Interface:setItem(self, "Players", Table);
 
+    Table:RegisterEvents({
+        OnClick = function (_, _, data, _, _, realrow)
+            -- Make sure something is actually selected, better safe than lua error
+            if (not GL:higherThanZero(realrow)
+                or type(data) ~= "table"
+                or not data[realrow]
+                or not data[realrow].cols
+                or not data[realrow].cols[1]
+            ) then
+                return;
+            end
+
+            local selectedPlayer = data[realrow].cols[1].value;
+            local EditBox = GL.Interface:getItem(self, "EditBox.PlayerName");
+
+            if (EditBox and EditBox.SetText) then
+                EditBox:SetText(GL:capitalize(selectedPlayer));
+            end
+        end
+    });
+
     Award:populatePlayersTable();
 end
 
@@ -420,7 +503,7 @@ function Award:topPrioForItem(itemID)
     if (GL.SoftRes:available()) then
         local lastPlayerName = false;
         local moreThanOnePersonReservedThisItem = false;
-        for _, playerName in pairs(GL.SoftRes:byItemId(itemID)) do
+        for _, playerName in pairs(GL.SoftRes:byItemID(itemID, true)) do
             if (not lastPlayerName) then
                 lastPlayerName = playerName;
             end
@@ -438,7 +521,7 @@ function Award:topPrioForItem(itemID)
 
     local PrioListEntries = {};
     local WishListEntries = {};
-    for _, Entry in pairs(GL.TMB:byItemId(itemID)) do
+    for _, Entry in pairs(GL.TMB:byItemID(itemID, true)) do
         -- Priolist entry
         if (Entry.type == 1) then
             tinsert(PrioListEntries, Entry);
@@ -468,10 +551,16 @@ function Award:topPrioForItem(itemID)
         return PrioListEntries[1].character;
     end
 
+    -- Return a sanitized name variant to ensure proper name matching
+    local sanitizePlayerName = function(name)
+        name = string.lower(GL:stripRealm(name));
+        return name:gsub("%(os%)", "");
+    end;
+
     -- There are wish list entries available, use them
     if (not GL:empty(WishListEntries)) then
         if (GL:count(WishListEntries) == 1) then
-            return WishListEntries[1].character;
+            return sanitizePlayerName(WishListEntries[1].character);
         end
 
         -- Sort the WishListEntries based on prio (lowest to highest)
@@ -484,7 +573,7 @@ function Award:topPrioForItem(itemID)
             return;
         end
 
-        return WishListEntries[1].character;
+        return sanitizePlayerName(WishListEntries[1].character);
     end
 end
 
@@ -518,6 +607,11 @@ function Award:populatePlayersTable(itemID)
 
         if (topPrioForItem == string.lower(GL:stripRealm(name))) then
             PlayersTable:SetSelection(row);
+            local EditBox = GL.Interface:getItem(self, "EditBox.PlayerName");
+
+            if (EditBox and EditBox.SetText) then
+                EditBox:SetText(GL:capitalize(topPrioForItem));
+            end
         end
 
         row = row + 1;

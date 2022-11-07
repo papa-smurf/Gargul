@@ -7,6 +7,9 @@ GL.AceGUI = GL.AceGUI or LibStub("AceGUI-3.0");
 GL.TMB = {
     _initialized = false,
     broadcastInProgress = false,
+    lastTooltipData = nil,
+    lastTooltipItemLink = nil,
+    lastTooltipTime = nil,
     requestingData = false,
 };
 local TMB = GL.TMB; ---@type TMB
@@ -23,14 +26,6 @@ function TMB:_init()
         return false;
     end
 
-    -- Bind the appendTMBItemInfoToTooltip method to the OnTooltipSetItem event
-    GameTooltip:HookScript("OnTooltipSetItem", function(tooltip)
-        self:appendTMBItemInfoToTooltip(tooltip);
-    end);
-    ItemRefTooltip:HookScript("OnTooltipSetItem", function(tooltip)
-        self:appendTMBItemInfoToTooltip(tooltip);
-    end);
-
     GL.Events:register("TMBUserJoinedGroupListener", "GL.USER_JOINED_GROUP", function () self:requestData(); end);
 
     self._initialized = true;
@@ -46,15 +41,15 @@ end
 
 --- Fetch an item's TMB info based on its ID
 ---
----@param itemId number
+---@param itemID number
 ---@param inRaidOnly boolean|nil
 ---@return table
-function TMB:byItemId(itemId, inRaidOnly)
-    GL:debug("TMB:byItemId");
+function TMB:byItemID(itemID, inRaidOnly)
+    GL:debug("TMB:byItemID");
 
     -- An invalid item id was provided
-    itemId = tonumber(itemId);
-    if (not GL:higherThanZero(itemId)) then
+    itemID = tonumber(itemID);
+    if (not GL:higherThanZero(itemID)) then
         return {};
     end
 
@@ -71,7 +66,7 @@ function TMB:byItemId(itemId, inRaidOnly)
     end
 
     -- The item linked to this id can have multiple IDs (head of Onyxia for example)
-    local AllLinkedItemIds = GL:getLinkedItemsForId(itemId);
+    local AllLinkedItemIDs = GL:getLinkedItemsForID(itemID);
 
     local GroupMemberNames = {};
     if (inRaidOnly) then
@@ -80,7 +75,7 @@ function TMB:byItemId(itemId, inRaidOnly)
 
     local Processed = {};
     local Wishes = {};
-    for _, id in pairs(AllLinkedItemIds) do
+    for _, id in pairs(AllLinkedItemIDs) do
         id = tostring(id);
         for _, Entry in pairs(GL.DB:get("TMB.Items." .. tostring(id), {})) do
             local playerName = string.lower(GL:stripRealm(Entry.character));
@@ -104,27 +99,27 @@ end
 
 --- Fetch TMB info for a specific item ID and player
 ---
----@param itemId number
+---@param itemID number
 ---@param player string
 ---@return table
-function TMB:byItemIdAndPlayer(itemId, player)
-    GL:debug("TMB:byItemId");
+function TMB:byItemIDAndPlayer(itemID, player)
+    GL:debug("TMB:byItemID");
 
     -- An invalid item id or name was provided
-    itemId = tonumber(itemId);
+    itemID = tonumber(itemID);
     player = string.lower(strtrim(player));
-    if (not GL:higherThanZero(itemId)
+    if (not GL:higherThanZero(itemID)
         or GL:empty(player)
     ) then
         return {};
     end
 
     -- The item linked to this id can have multiple IDs (head of Onyxia for example)
-    local AllLinkedItemIds = GL:getLinkedItemsForId(itemId);
+    local AllLinkedItemIDs = GL:getLinkedItemsForID(itemID);
 
     local Processed = {};
     local Entries = {};
-    for _, id in pairs(AllLinkedItemIds) do
+    for _, id in pairs(AllLinkedItemIDs) do
         id = tostring(id);
         for _, Entry in pairs(GL.DB:get("TMB.Items." .. tostring(id), {})) do
             local playerName = string.lower(GL:stripRealm(Entry.character));
@@ -157,7 +152,7 @@ function TMB:byItemLinkAndPlayer(itemLink, player)
         return {};
     end
 
-    return self:byItemIdAndPlayer(GL:getItemIdFromLink(itemLink), player);
+    return self:byItemIDAndPlayer(GL:getItemIDFromLink(itemLink), player);
 end
 
 --- Fetch an item's TMB info based on its item link
@@ -172,7 +167,7 @@ function TMB:byItemLink(itemLink, inRaidOnly)
         return {};
     end
 
-    return self:byItemId(GL:getItemIdFromLink(itemLink), inRaidOnly);
+    return self:byItemID(GL:getItemIDFromLink(itemLink), inRaidOnly);
 end
 
 --- Fetch an item's TMB tier based on its item link
@@ -186,7 +181,7 @@ function TMB:tierByItemLink(itemLink)
         return "";
     end
 
-    return self:tierByItemID(GL:getItemIdFromLink(itemLink));
+    return self:tierByItemID(GL:getItemIDFromLink(itemLink));
 end
 
 --- Fetch an item's TMB tier based on its item ID
@@ -214,7 +209,7 @@ function TMB:noteByItemLink(itemLink)
         return "";
     end
 
-    return self:noteByItemID(GL:getItemIdFromLink(itemLink));
+    return self:noteByItemID(GL:getItemIDFromLink(itemLink));
 end
 
 --- Fetch an item's TMB note based on its item ID
@@ -233,30 +228,19 @@ end
 
 --- Append the TMB info as defined in GL.DB.TMB.Items to an item's tooltip
 ---
----@param tooltip GameTooltip
----@return void
-function TMB:appendTMBItemInfoToTooltip(tooltip)
+---@param itemLink string
+---@return table
+function TMB:tooltipLines(itemLink)
     GL:debug("TMB:appendTMBItemInfoToTooltip");
-
-    -- No tooltip was provided
-    if (not tooltip) then
-        return;
-    end
 
     -- If we're not in a group there's no point in showing anything! (unless the non-raider setting is active)
     if ((not GL.User.isInGroup and GL.Settings:get("TMB.hideInfoOfPeopleNotInGroup"))
         and (not GL.User.isInGroup and not GL.Settings:get("TMB.showEntriesWhenSolo"))
     ) then
-        return;
+        return {};
     end
 
-    local _, itemLink = tooltip:GetItem();
-
-    -- We couldn't find an itemLink (this can actually happen!)
-    if (GL:empty(itemLink)) then
-        return;
-    end
-
+    local Lines = {};
     local TMBTier = self:tierByItemLink(itemLink);
     local TMBNote = self:noteByItemLink(itemLink);
     local TMBInfo = self:byItemLink(itemLink);
@@ -274,7 +258,7 @@ function TMB:appendTMBItemInfoToTooltip(tooltip)
             );
 
             -- Add the header
-            tooltip:AddLine(string.format(
+            tinsert(Lines, string.format(
                 "\n|cFF%sTMB:|r",
                 GL.Data.Constants.addonHexColor,
                 "TMB"
@@ -282,7 +266,7 @@ function TMB:appendTMBItemInfoToTooltip(tooltip)
             TMBHeaderAdded = true;
 
             -- Add the tier string
-            tooltip:AddLine(string.format(
+            tinsert(Lines, string.format(
                 "|cFFFFFFFF    Tier:|r %s",
                 tierString
             ));
@@ -292,7 +276,7 @@ function TMB:appendTMBItemInfoToTooltip(tooltip)
         if (not GL:empty(TMBNote)) then
             if (not TMBHeaderAdded) then
                 -- Add the header
-                tooltip:AddLine(string.format(
+                tinsert(Lines, string.format(
                     "\n|cFF%sTMB:|r",
                     GL.Data.Constants.addonHexColor,
                     "TMB"
@@ -300,7 +284,7 @@ function TMB:appendTMBItemInfoToTooltip(tooltip)
             end
 
             -- Add the note
-            tooltip:AddLine(string.format(
+            tinsert(Lines, string.format(
                 "|cFFFFFFFF    Note:|r |cFFFFF569%s|r",
                 TMBNote
             ));
@@ -309,7 +293,7 @@ function TMB:appendTMBItemInfoToTooltip(tooltip)
 
     -- No wishes defined for this item
     if (GL:empty(TMBInfo)) then
-        return;
+        return Lines;
     end
 
     local WishListEntries = {};
@@ -324,11 +308,11 @@ function TMB:appendTMBItemInfoToTooltip(tooltip)
         local isOffSpec = string.find(Entry.character, "%(OS%)");
         local prioOffset = 0;
         local sortingOrder = prio;
-        local color = GL:classHexColor(GL.Player:classByName(playerName));
+        local color = GL:classHexColor(GL.Player:classByName(playerName:gsub("%(os%)", "")));
 
         -- We add 100 to the prio (first key) of the object
         -- This object is used for sorting later and is not visible to the player
-        if (isOffSpec) then
+        if (isOffSpec and GL.Settings:get("TMB.OSHasLowerPriority")) then
             prioOffset = 100;
         end
 
@@ -364,7 +348,7 @@ function TMB:appendTMBItemInfoToTooltip(tooltip)
         elseif (self:wasImportedFromCSV()) then
             source = "Item";
         end
-        tooltip:AddLine(string.format("\n|cFFff7a0a%s|r", source .. " Prio List"));
+        tinsert(Lines, string.format("\n|cFFff7a0a%s|r", source .. " Prio List"));
 
         -- Sort the PrioListEntries based on prio (lowest to highest)
         table.sort(PrioListEntries, function (a, b)
@@ -376,7 +360,7 @@ function TMB:appendTMBItemInfoToTooltip(tooltip)
         for _, Entry in pairs(PrioListEntries) do
             entriesAdded = entriesAdded + 1;
 
-            tooltip:AddLine(string.format(
+            tinsert(Lines, string.format(
                 "|cFF%s%s|r",
                 GL:classHexColor(GL.Player:classByName(Entry[2])),
                 GL:capitalize(Entry[2]):gsub("%(os%)", " (OS)")
@@ -393,7 +377,7 @@ function TMB:appendTMBItemInfoToTooltip(tooltip)
     if (GL.Settings:get("TMB.hideWishListInfoIfPriorityIsPresent") and itemIsOnSomeonesPriolist)
         and (GL.User.isInGroup or not GL.Settings:get("TMB.showEntriesWhenSolo"))
     then
-        return;
+        return Lines;
     end
 
     -- Only add the 'Wish List' header if the item is actually on someone's wishlist
@@ -403,7 +387,7 @@ function TMB:appendTMBItemInfoToTooltip(tooltip)
         )
     ) then
         -- Add the header
-        tooltip:AddLine(string.format("\n|cFFffffff%s|r", "TMB Wish List"));
+        tinsert(Lines, string.format("\n|cFFffffff%s|r", "TMB Wish List"));
 
         -- Sort the WishListEntries based on prio (lowest to highest)
         table.sort(WishListEntries, function (a, b)
@@ -415,7 +399,7 @@ function TMB:appendTMBItemInfoToTooltip(tooltip)
         for _, Entry in pairs(WishListEntries) do
             entriesAdded = entriesAdded + 1;
 
-            tooltip:AddLine(string.format(
+            tinsert(Lines, string.format(
                 "|cFF%s%s|r",
                 GL:classHexColor(GL.Player:classByName(Entry[2])),
                 GL:capitalize(Entry[2]):gsub("%(os%)", " (OS)")
@@ -427,6 +411,8 @@ function TMB:appendTMBItemInfoToTooltip(tooltip)
             end
         end
     end
+
+    return Lines;
 end
 
 --- Draw either the importer or overview
@@ -558,8 +544,8 @@ function TMB:import(data, triedToDecompress)
             groupID = 4,
         };
 
-        for itemId, WishListEntries in pairs(WebsiteData.wishlists) do
-            TMBData[itemId] = {};
+        for itemID, WishListEntries in pairs(WebsiteData.wishlists) do
+            TMBData[itemID] = {};
             for _, characterString in pairs(WishListEntries) do
                 local stringParts = GL:strSplit(characterString, "|");
 
@@ -602,11 +588,11 @@ function TMB:import(data, triedToDecompress)
                 end
 
                 if (characterName and order) then
-                    local checkSum = string.format('%s||%s||%s||%s||%s', itemId, characterName, order, type, raidGroupID or 0);
+                    local checkSum = string.format('%s||%s||%s||%s||%s', itemID, characterName, order, type, raidGroupID or 0);
 
                     -- Make sure to ignore duplicates
                     if (not processedEntryCheckums[checkSum]) then
-                        tinsert(TMBData[itemId], {
+                        tinsert(TMBData[itemID], {
                             ["character"] = characterName,
                             ["prio"] = order,
                             ["type"] = type,
@@ -1025,10 +1011,10 @@ function TMB:receiveBroadcast(CommMessage)
         end
 
         -- Validate dataset
-        for itemId, Entries in pairs(Data.Items) do
-            itemId = tonumber(itemId);
+        for itemID, Entries in pairs(Data.Items) do
+            itemID = tonumber(itemID);
 
-            if (GL:empty(itemId)) then
+            if (GL:empty(itemID)) then
                 GL:error("Invalid TMB data received from " .. CommMessage.Sender.name);
                 return;
             end

@@ -5,7 +5,7 @@ local Overview = GL.Interface.Settings.Overview; ---@type SettingsOverview
 
 ---@class PackMuleRulesSettings
 GL.Interface.Settings.PackMuleRules = {
-    description = "For group loot use:\n|c00f7922ePASS|r, |c00f7922eGREED|r, |c00f7922eNEED|r, |c00f7922eIGNORE|r\n\nFor Master Looting use player names and placeholders:\n|c00f7922eSELF|r - send to yourself\n|c00f7922eRANDOM|r - send to random player\n|c00f7922eRR|r - round robin\n|c00f7922eDE|r - send to disenchanter (/gl sd [mydisenchanter])\n|c00f7922eIGNORE|r - prevent from being auto-looted\n\nList of players are also supported:\n|c00f7922ePlayer1 Player2 SELF|r - Items will be sent to a random person in this list.\n\nSend an item to the first player who's in the raid instead of random by adding an exclamation mark: |c00f7922e!Player1 !Player2 SELF|r",
+    description = "For group loot use:\n|c00f7922ePASS|r, |c00f7922eGREED|r, |c00f7922eNEED|r, |c00f7922eIGNORE|r\n\nFor Master Looting use player names and placeholders:\n|c00f7922eSELF|r - send to yourself\n|c00f7922eRANDOM|r - send to random player\n|c00f7922eRR|r - round robin\n|c00f7922eDE|r - send to disenchanter (/gl sd [mydisenchanter])\n|c00f7922eIGNORE|r - prevent from being auto-looted\n\nList of players are also supported:\n|c00f7922ePlayer1,Player2,SELF|r - Items will be sent to a random person in this list.\n\nSend an item to the first player who's in the raid instead of random by adding an exclamation mark: |c00f7922e!Player1,!Player2,SELF|r",
 
     UIComponents = {
         Input = {

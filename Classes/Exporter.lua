@@ -46,7 +46,7 @@ function Exporter:draw()
     Window:SetWidth(600);
     Window:SetHeight(450);
     Window:SetCallback("OnClose", function()
-        Exporter:close();
+        self:close();
     end);
     Window:SetPoint(GL.Interface:getPosition("Exporter"));
     Window.statustext:GetParent():Hide(); -- Hide the statustext bar
@@ -150,7 +150,12 @@ function Exporter:clearData()
     -- Show a confirmation dialog before clearing entries
     GL.Interface.Dialogs.PopupDialog:open({
         question = warning,
-        OnYes = onConfirm,
+        OnYes = function ()
+            onConfirm();
+
+            -- Let the application know that an item was unawarded (deleted)
+            GL.Events:fire("GL.ITEM_UNAWARDED");
+        end,
     });
 end
 
@@ -172,9 +177,7 @@ function Exporter:refreshExportString()
         GL.Interface:getItem(self, "MultiLineEditBox.Export"):SetText(exportString);
 
     elseif (GL:inTable({Constants.ExportFormats.DFTUS, Constants.ExportFormats.DFTEU}, exportFormat)) then
-        self:transformEntriesToDFTFormat(LootEntries, function (exportString)
-            GL.Interface:getItem(self, "MultiLineEditBox.Export"):SetText(exportString);
-        end);
+        GL.Interface:getItem(self, "MultiLineEditBox.Export"):SetText(self:transformEntriesToDFTFormat(LootEntries));
     end
 end
 
@@ -192,6 +195,7 @@ function Exporter:getLootEntries()
 
         if (
             (not concernsDisenchantedItem or GL.Settings:get("ExportingLoot.includeDisenchantedItems"))
+            and (not AwardEntry.OS or GL.Settings:get("ExportingLoot.includeOffspecItems"))
             and (not self.dateSelected or dateString == self.dateSelected)
             and not GL:empty(AwardEntry.timestamp)
             and not GL:empty(AwardEntry.itemLink)
@@ -203,8 +207,8 @@ function Exporter:getLootEntries()
                 awardedTo = GL.Settings:get("ExportingLoot.disenchanterIdentifier");
             end
 
-            -- Just in case an itemId is not available we will extract it from the item link
-            local itemID = AwardEntry.itemId or GL:getItemIdFromLink(AwardEntry.itemLink);
+            -- Just in case an itemID is not available we will extract it from the item link
+            local itemID = AwardEntry.itemID or GL:getItemIDFromLink(AwardEntry.itemLink);
 
             local checksum = AwardEntry.checksum; -- Old entries may not possess a checksum yet
             if (not checksum) then
@@ -214,7 +218,7 @@ function Exporter:getLootEntries()
             tinsert(Entries, {
                 timestamp = AwardEntry.timestamp,
                 awardedTo = awardedTo,
-                itemId = itemID,
+                itemID = itemID,
                 OS = AwardEntry.OS and 1 or 0,
                 checksum = checksum,
             });
@@ -233,28 +237,30 @@ function Exporter:transformEntriesToCustomFormat(Entries)
     local exportString = "";
 
     -- Make sure that all relevant item data is cached
-    GL:onItemLoadDo(GL:tableColumn(Entries, "itemId"), function ()
+    GL:onItemLoadDo(GL:tableColumn(Entries, "itemID"), function ()
         for _, AwardEntry in pairs(Entries) do
             local exportEntry = GL.Settings:get("ExportingLoot.customFormat");
-            local ItemDetails = GL.DB.Cache.ItemsById[tostring(AwardEntry.itemId)];
+            local ItemDetails = GL.DB.Cache.ItemsByID[tostring(AwardEntry.itemID)];
             local wowheadLink;
 
             if (GL.isEra) then
-                wowheadLink = string.format("https://classic.wowhead.com/item=%s", AwardEntry.itemId );
+                wowheadLink = string.format("https://classic.wowhead.com/item=%s", AwardEntry.itemID );
             else
-                wowheadLink = string.format("https://www.wowhead.com/wotlk/item=%s", AwardEntry.itemId );
+                wowheadLink = string.format("https://www.wowhead.com/wotlk/item=%s", AwardEntry.itemID );
             end
 
             if (not GL:empty(ItemDetails)) then
                 local Values = {
-                    ["@ID"] = AwardEntry.itemId,
+                    ["@ID"] = AwardEntry.itemID,
                     ["@LINK"] = ItemDetails.link:gsub('\124','\124\124'),
                     ["@ITEM"] = ItemDetails.name,
+                    ["@ILVL"] = ItemDetails.level,
                     ["@QUALITY"] = ItemDetails.quality,
                     ["@WINNER"] = AwardEntry.awardedTo,
                     ["@OS"] = tostring(AwardEntry.OS),
                     ["@CHECKSUM"] = AwardEntry.checksum,
                     ["@YEAR"] = date('%Y', AwardEntry.timestamp),
+                    ["@YY"] = date('%y', AwardEntry.timestamp),
                     ["@MONTH"] = date('%m', AwardEntry.timestamp),
                     ["@DAY"] = date('%d', AwardEntry.timestamp),
                     ["@HOUR"] = date('%H', AwardEntry.timestamp),
@@ -284,14 +290,14 @@ end
 function Exporter:transformEntriesToTMBFormat(Entries)
     GL:debug("Exporter:transformEntriesToTMBFormat");
 
-    local exportString = "dateTime,character,itemID,offspec,ID";
+    local exportString = "dateTime,character,itemID,offspec,id";
 
     for _, AwardEntry in pairs(Entries) do
         exportString = string.format("%s\n%s,%s,%s,%s,%s",
             exportString,
             date('%Y-%m-%d', AwardEntry.timestamp),
-            AwardEntry.awardedTo,
-            AwardEntry.itemId,
+            GL:stripRealm(AwardEntry.awardedTo),
+            AwardEntry.itemID,
             AwardEntry.OS,
             AwardEntry.checksum
         );
@@ -302,53 +308,34 @@ end
 
 --- Transform the table of entries to the DFT sheet format
 ---
----@return void
-function Exporter:transformEntriesToDFTFormat(Entries, callback)
+---@return string
+function Exporter:transformEntriesToDFTFormat(Entries)
     GL:debug("Exporter:transformEntriesToDFTFormat");
-
-    local ItemIDs = {};
-
-    -- Build a table of all (unique) item IDs of the awarded loot
-    local keyCounter = 1;
-    for _, Entry in pairs(Entries) do
-        ItemIDs[Entry.itemId] = keyCounter;
-        keyCounter = keyCounter + 1;
-    end
 
     -- Get the desired export format
     local exportFormat = GL.Settings:get("ExportingLoot.format", Constants.ExportFormats.TMB);
 
-    -- Flip it so the IDs are the value, not the key
-    ItemIDs = GL:tableFlip(ItemIDs);
-
     -- We need to load all items first to make sure the item names are available
-    GL:onItemLoadDo(ItemIDs, function ()
-        local exportString = "";
-        for _, Entry in pairs(Entries) do
-            local loadedItem = GL.DB.Cache.ItemsById[tostring(Entry.itemId)];
-            local dateString = "";
+    local exportString = "";
+    for _, Entry in pairs(Entries) do
+        local dateString = "";
 
-            -- Check whether the player wants an EU or US date string
-            if (exportFormat == Constants.ExportFormats.DFTEU) then
-                dateString = date('%d/%m/%Y', Entry.timestamp);
-            else
-                dateString = date('%m/%d/%Y', Entry.timestamp);
-            end
-
-            if (not GL:empty(loadedItem)
-                and not GL:empty(loadedItem.name)
-            ) then
-                exportString = string.format("%s%s;[%s];%s\n",
-                    exportString,
-                    dateString,
-                    loadedItem.name,
-                    Entry.awardedTo
-                );
-            end
+        -- Check whether the player wants an EU or US date string
+        if (exportFormat == Constants.ExportFormats.DFTEU) then
+            dateString = date('%d/%m/%Y', Entry.timestamp);
+        else
+            dateString = date('%m/%d/%Y', Entry.timestamp);
         end
 
-        callback(exportString);
-    end);
+        exportString = string.format("%s%s;[%s];%s\n",
+            exportString,
+            dateString,
+            Entry.itemID,
+            Entry.awardedTo
+        );
+    end;
+
+    return exportString;
 end
 
 --- Close the export window
@@ -372,7 +359,7 @@ function Exporter:close()
     GL.Interface:storePosition(Window, "Exporter");
     Window:Hide();
 
-    -- Clean up the Dates table seperately
+    -- Clean up the Dates table separately
     GL.Interface:getItem(self, "Table.Dates"):SetData({}, true);
     GL.Interface:getItem(self, "Table.Dates"):Hide();
 end

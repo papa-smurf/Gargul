@@ -50,13 +50,27 @@ end
 ---
 ---@return void
 function Settings:sanitizeSettings()
+    GL:debug("Settings:sanitizeSettings");
+
     self:enforceTemporarySettings();
+
+    -- Remove old roll data so it doesn't clog our SavedVariables
+    local twoWeeksAgo = GetServerTime() - 1209600;
+    for key, Award in pairs(GL.DB.AwardHistory) do
+        if (Award.timestamp < twoWeeksAgo) then
+            GL.DB.AwardHistory[key] = nil;
+            Award = nil;
+            table.remove(GL.DB.AwardHistory, key);
+        end
+    end
 end
 
 --- These settings are version-specific and will be removed over time!
 ---
 ---@return void
 function Settings:enforceTemporarySettings()
+    GL:debug("Settings:enforceTemporarySettings");
+
     -- This is reserved for version-based logic (e.g. cleaning up variables, settings etc.)
 
     -- No point enforcing these temp settings if the user has never used Gargul
@@ -67,20 +81,115 @@ function Settings:enforceTemporarySettings()
         return;
     end
 
-    -- We renamed PackMule.enabled to PackMule.enabledForMasterLoot in 4.8
-    if (type(GL.DB.Settings.PackMule.enabled) == "boolean") then
-        GL.DB.Settings.PackMule.enabledForMasterLoot = GL.DB.Settings.PackMule.enabled;
-        GL.DB.Settings.PackMule.enabled = nil;
+    --- In 4.12.1 we added a concernsOS and givesPlusOne checkbox field to the roll tracking settings
+    for key, RollType in pairs(GL.Settings:get("RollTracking.Brackets", {})) do
+        if (RollType[5] == nil) then
+            GL.DB.RollTracking.Brackets[key][5] = RollType[1] == "OS";
+            GL.DB.RollTracking.Brackets[key][6] = false;
+        end
     end
 
-    --- In an attempt to streamline settings, we used "enabled" for everything
-        if (type(GL.DB.Settings.AwardingLoot.awardMessagesDisabled == "boolean")) then
-            GL.DB.Settings.AwardingLoot.awardMessagesEnabled = not GL.DB.Settings.AwardingLoot.awardMessagesDisabled;
+    --- In 4.12.0 we completely rewrote the awarded item structure
+    --- If the user is now on 4.12.0 or has not used 4.12.0 then we restructure the awarded items
+    ---@todo: remove if award history structure ever changes again
+    if (GL.version == "4.12.0" or (
+        not GL.firstBoot and not GL.DB.LoadDetails["4.12.0"])
+    ) then
+        GL:notice("Rewriting Gargul's award history, this could drops FPS for a second or two!");
+        GL.DB.LoadDetails["4.12.0"] = GetServerTime();
+
+        local AwardHistory = {};
+        for _, AwardEntry in pairs(GL.DB.AwardHistory) do
+            (function ()
+                local itemIDfromItemLink = GL:getItemIDFromLink(AwardEntry.itemLink);
+
+                -- We can't work with this record
+                if (not AwardEntry.awardedTo or (
+                    not AwardEntry.itemId and not itemIDfromItemLink
+                )) then
+                    return;
+                elseif (not AwardEntry.itemId) then
+                    AwardEntry.itemId = itemIDfromItemLink;
+                end
+
+                -- Make sure we always have a timestamp
+                if (not AwardEntry.timestamp) then
+                    AwardEntry.timestamp = AwardEntry.awardedOn;
+                end
+
+                if (not GL:higherThanZero(AwardEntry.timestamp)) then
+                    AwardEntry.timestamp = 0;
+                end
+
+                -- Make sure we always have a checksum
+                if (GL:empty(AwardEntry.checksum)) then
+                    AwardEntry.checksum = GL:strPadRight(GL:strLimit(GL:stringHash(AwardEntry.timestamp .. AwardEntry.itemId) .. GL:stringHash(AwardEntry.awardedTo .. GL.DB:get("SoftRes.MetaData.id", "")), 20, ""), "0", 20);
+                end
+
+                local addEntryToTable = function (Entry)
+                    AwardHistory[Entry.checksum] = {
+                        checksum = Entry.checksum,
+                        itemLink = Entry.itemLink,
+                        itemID = Entry.itemId,
+                        awardedTo = Entry.awardedTo,
+                        timestamp = Entry.timestamp,
+                        softresID = Entry.softresID,
+                        received = Entry.received or false,
+                        BRCost = Entry.BRCost or 0,
+                        GDKPCost = Entry.BRCost or 0,
+                        OS = GL:toboolean(Entry.OS),
+                        Rolls = Entry.Rolls or {},
+                    };
+                end;
+
+                -- We have all we need, process the entry now
+                if (AwardEntry.itemLink and GL:getItemIDFromLink(AwardEntry.itemLink)) then
+                    addEntryToTable(AwardEntry);
+
+                -- We need to fetch the itemLink first before we can process
+                else
+                    GL:onItemLoadDo(AwardEntry.itemId, function (Items)
+                        local Item = Items[1];
+
+                        -- Better safe than lua error!
+                        if (GL:empty(Item.link)) then
+                            return;
+                        end
+
+                        AwardEntry.itemLink = Item.link;
+
+                        addEntryToTable(AwardEntry);
+                    end);
+                end
+            end)();
         end
 
-        if (type(GL.DB.Settings.highlightsDisabled == "boolean")) then
-            GL.DB.Settings.highlightsEnabled = not GL.DB.Settings.highlightsDisabled;
+        GL.DB.AwardHistory = AwardHistory;
+
+        GL:notice("All done!");
+    end
+
+    ---@todo: remove >= 07-11-2022
+    --- Right click shortcut keys are no longer supported
+    local headerSent = false;
+    for _, setting in pairs({"award", "disenchant", "rollOff"}) do
+        if (string.find(GL.DB.Settings.ShortcutKeys[setting], "RIGHTCLICK")) then
+            if (not headerSent) then
+                GL:warning("Some Gargul shortcut keys have changed, more info below");
+                headerSent = true;
+            end
+
+            local oldShortcutKey = GL.DB.Settings.ShortcutKeys[setting];
+            local newShortcutKey = GL.DB.Settings.ShortcutKeys[setting]:gsub("RIGHTCLICK", "CLICK");
+            GL.DB.Settings.ShortcutKeys[setting] = newShortcutKey;
+
+            GL:message(string.format("|c00FFF569%s|r was changed from |c00FFF569%s|r to |c00FFF569%s|r",
+                GL:capitalize(setting),
+                oldShortcutKey,
+                newShortcutKey
+            ));
         end
+    end
 end
 
 --- Draw a setting section

@@ -5,6 +5,7 @@ local _, GL = ...;
 GL.Data = GL.Data or {};
 
 GL.Data.DefaultSettings = {
+    autoOpenCommandHelp = true,
     changeLog = true,
     debugModeEnabled = false,
     highlightsEnabled = true,
@@ -15,10 +16,9 @@ GL.Data.DefaultSettings = {
     highlightPriolistedItems = true,
     noMessages = false,
     noSounds = false,
-    autoOpenCommandHelp = true,
+    profilerEnabled = false,
     showMinimapButton = true,
     welcomeMessage = true,
-    fixMasterLootWindow = true,
 
     DroppedLoot = {
         announceLootToChat = true,
@@ -34,9 +34,11 @@ GL.Data.DefaultSettings = {
     },
     MasterLooting = {
         alwaysUseDefaultNote = false,
+        announceCountdownOnce = false,
         announceMasterLooter = false,
         autoOpenMasterLooterDialog = true,
-        defaultRollOffNote = "/roll 100 for MS or 99 for OS",
+        announceMasterLooterMessage = "I'm using the Gargul addon to distribute loot. Download it if you don't want to miss out on rolls!",
+        defaultRollOffNote = "/roll for MS or /roll 99 for OS",
         doCountdown = true,
         announceRollEnd = true,
         announceRollStart = true,
@@ -52,12 +54,16 @@ GL.Data.DefaultSettings = {
     },
     ExportingLoot = {
         includeDisenchantedItems = true,
+        includeOffspecItems = true,
         customFormat = "@ID;@DATE @TIME;@WINNER",
         disenchanterIdentifier = "_disenchanted",
+        showLootAssignmentReminder = true,
     },
     LootTradeTimers = {
-        maximumNumberOfBars = 5,
         enabled = true,
+        maximumNumberOfBars = 5,
+        scale = 1,
+        showHotkeyReminder = true,
         showOnlyWhenMasterLooting = true,
     },
     PackMule = {
@@ -66,19 +72,18 @@ GL.Data.DefaultSettings = {
         autoConfirmGroup = false,
         enabledForGroupLoot = false,
         enabledForMasterLoot = false,
-        persistsAfterReload = false,
-        persistsAfterZoneChange = false,
         Rules = {},
     },
     Rolling = {
         showRollOffWindow = true,
         closeAfterRoll = false,
+        scale = 1,
     },
     RollTracking = {
         trackAll = false,
         Brackets = {
-            {"MS", 1, 100, 2},
-            {"OS", 1, 99, 3},
+            {"MS", 1, 100, 2, false, false},
+            {"OS", 1, 99, 3, true, false},
         },
     },
     SoftRes = {
@@ -118,9 +123,9 @@ GL.Data.DefaultSettings = {
         includeWishListInfoInLootAnnouncement = true,
         maximumNumberOfTooltipEntries = 35,
         maximumNumberOfAnnouncementEntries = 5,
+        OSHasLowerPriority = true,
         showEntriesWhenSolo = true,
         showItemInfoOnTooltips = true,
-        showLootAssignmentReminder = true,
         showPrioListInfoOnTooltips = true,
         showWishListInfoOnTooltips = true,
     },
@@ -137,9 +142,9 @@ GL.Data.DefaultSettings = {
     },
     UI = {
         RollOff = {
-            closeOnStart = true,
-            closeOnAward = true,
-            timer = 15,
+            closeOnStart = false,
+            closeOnAward = false,
+            timer = 30,
         },
         PopupDialog = {
             Position = {

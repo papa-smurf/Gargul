@@ -132,7 +132,7 @@ function User:refresh()
     ) then
         GL.Events:fire("GL.USER_JOINED_GROUP");
 
-        -- Fire a seperate event for raid/party joined
+        -- Fire a separate event for raid/party joined
         if (self.isInRaid) then
             GL.Events:fire("GL.USER_JOINED_RAID");
         else
@@ -155,7 +155,7 @@ function User:refresh()
     ) then
         GL.Events:fire("GL.USER_LEFT_GROUP");
 
-        -- Fire a seperate event for raid/party joined
+        -- Fire a separate event for raid/party joined
         if (userWasInRaid) then
             GL.Events:fire("GL.USER_LEFT_RAID");
         else
@@ -313,6 +313,11 @@ end
 ---@param unit string
 ---@return boolean
 function User:unitIsInYourGroup(unit)
+    -- We're clearly trying to test something, allow it
+    if (not self.isInGroup) then
+        return true;
+    end
+
     if (self.isInRaid) then
         return GL:toboolean(UnitInRaid(unit));
     end

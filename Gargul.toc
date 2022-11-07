@@ -1,8 +1,8 @@
 ## Interface: 30400
-## Title: Gargul |c00967fd2v4.8.4|r
+## Title: Gargul |c00967FD2v4.12.4|r
 ## Author: Zhorax - Firemaw
 ## Notes: Loot addon that supports softres sr, thatsmybis tmb, auto looting, loot priorities, plus one tracking and much more
-## Version: 4.8.4
+## Version: 4.12.4
 ## DefaultState: enabled
 ## SavedVariables: GargulDB
 
@@ -25,6 +25,7 @@ Classes/Base64.lua
 Classes/UI.lua
 Classes/DB.lua
 Classes/Settings.lua
+Classes/Profiler.lua
 Classes/SoftRes.lua
 Classes/GDKP.lua
 Classes/PlusOnes.lua
@@ -53,6 +54,7 @@ Classes/RaidGroups.lua
 # Interface objects
 Interface/Interface.lua
 Interface/Award.lua
+Interface/AwardHistory.lua
 Interface/Importer.lua
 Interface/Settings/Overview.lua
 Interface/Settings/DroppedLoot.lua
@@ -66,6 +68,7 @@ Interface/Settings/Rolling.lua
 Interface/Settings/RollTracking.lua
 Interface/Settings/SoftRes.lua
 Interface/Settings/BoostedRolls.lua
+Interface/Settings/Welcome.lua
 Interface/Settings/General.lua
 Interface/Settings/ShortcutKeys.lua
 Interface/Settings/LootHighlighting.lua

@@ -12,7 +12,7 @@ GL.Interface.MasterLooterDialog = {
     announcedConflictingAddons = false,
     announcedUseOfGargul = false,
     showedMasterLooterDialog = false,
-    versionCheckTimer = nil,
+    VersionCheckTimer = nil,
 };
 local MasterLooterDialog = GL.Interface.MasterLooterDialog; ---@type MasterLooterPopupInterface
 
@@ -25,12 +25,15 @@ function MasterLooterDialog:_init()
     self._initialized = true;
 
     GL.Events:register("MasterLooterObtainedListener", "GL.USER_OBTAINED_MASTER_LOOTER", function ()
-        if (self.versionCheckTimer) then
-            GL.Ace:CancelTimer(self.versionCheckTimer);
+        if (self.VersionCheckTimer) then
+            GL:debug("Cancel MasterLooterDialog.VersionCheckTimer");
+
+            GL.Ace:CancelTimer(self.VersionCheckTimer);
+            self.VersionCheckTimer = nil;
         end
 
         if (not self.showedMasterLooterDialog
-            and GL.Settings:get("MasterLooting.autoOpenMasterLooterDialog", true)
+            and GL.Settings:get("MasterLooting.autoOpenMasterLooterDialog")
         ) then
             self.showedMasterLooterDialog = true;
             self:draw();
@@ -50,7 +53,10 @@ function MasterLooterDialog:_init()
         end
 
         -- Make sure we periodically check whether the master looter's Gargul version is up-to-date
-        self.versionCheckTimer = GL.Ace:ScheduleRepeatingTimer(function ()
+        GL:debug("Schedule new MasterLooterDialog.VersionCheckTimer");
+        self.VersionCheckTimer = GL.Ace:ScheduleRepeatingTimer(function ()
+            GL:debug("Run MasterLooterDialog.VersionCheckTimer");
+
             GL.Version:inspectQuietly();
         end, 60);
 
@@ -58,8 +64,11 @@ function MasterLooterDialog:_init()
     end);
 
     GL.Events:register("MasterLooterLostListener", "GL.USER_LOST_MASTER_LOOTER", function ()
-        if (self.versionCheckTimer) then
-            GL.Ace:CancelTimer(self.versionCheckTimer);
+        if (self.VersionCheckTimer) then
+            GL:debug("Cancel MasterLooterDialog.VersionCheckTimer");
+
+            GL.Ace:CancelTimer(self.VersionCheckTimer);
+            self.VersionCheckTimer = nil;
         end
     end);
 end
@@ -69,56 +78,24 @@ end
 ---@return void
 function MasterLooterDialog:flightAttendant()
     local function announce()
-        GL.Version:playersUsingAddon(function(Players)
-            -- Both are set to one because the current user counts as well!
-            local total = 1;
-            local haveAddon = 1;
-            for _, hasAddon in pairs(Players) do
-                total = total + 1;
+        local message = GL.Settings:get("MasterLooting.announceMasterLooterMessage");
+        local stw = not GL:strContains(string.lower(message), "gargul");
 
-                if (hasAddon) then
-                    haveAddon = haveAddon + 1;
-                end
-            end
-
-            if (total > haveAddon) then
-                GL:sendChatMessage(
-                        string.format(
-                            "Ladies and gentlemen this is your Master Looter %s speaking, today we are raiding with our trusty loot add-on: Gargul. %s/%s people are already on board. Get Gargul on CurseForge or your favorite add-on manager!",
-                            GL.User.name,
-                            haveAddon,
-                            total
-                        ),
-                        "GROUP",
-                        nil,
-                        nil,
-                        false
-                );
-            else
-                GL:sendChatMessage(
-                    string.format(
-                        "Ladies and gentlemen this is your Master Looter %s speaking, today we are raiding with our trusty loot add-on: Gargul!",
-                        GL.User.name
-                    ),
-                    "GROUP",
-                    nil,
-                    nil,
-                    false
-                );
-            end
-        end);
+        GL:sendChatMessage(
+            GL.Settings:get("MasterLooting.announceMasterLooterMessage"),
+            "GROUP",
+            nil,
+            nil,
+            stw
+        );
     end
 
-    -- The comm channel takes around 2 seconds to be fully established
     -- If the add-on has not been loaded for that long yet we need
     -- to set a delay for the announcement message
     local addonLoadedInSeconds = GetServerTime() - GL.loadedOn;
 
-    if (addonLoadedInSeconds < 4) then
-        GL.Ace:ScheduleTimer(function ()
-            announce();
-        end, 4);
-    else
+    -- No need to announce if it's < 5 since it's most likely a /reload
+    if (addonLoadedInSeconds >= 5) then
         announce();
     end
 end

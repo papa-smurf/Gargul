@@ -76,8 +76,8 @@ function BagInspector:report(CommMessage)
     local Report = {};
 
     -- Collect the item count for the requested item ids
-    for _, itemId in pairs(Items) do
-        Report[itemId] = GetItemCount(itemId);
+    for _, itemID in pairs(Items) do
+        Report[itemID] = GetItemCount(itemID);
     end
 
     CommMessage:respond(Report);
@@ -88,8 +88,8 @@ end
 function BagInspector:processInspectionResults(CommMessage)
     GL:debug("BagInspector:processInspectionResults");
 
-    local ItemIds = {};
-    local ItemLinksById = {};
+    local ItemIDs = {};
+    local ItemLinksByID = {};
 
     local numberOfResponses = 0;
     local senderName = "";
@@ -98,16 +98,16 @@ function BagInspector:processInspectionResults(CommMessage)
         local responseWasValid = false;
         local Report = response.content;
 
-        for itemId, amount in pairs(Report) do
-            itemId = tonumber(itemId);
+        for itemID, amount in pairs(Report) do
+            itemID = tonumber(itemID);
 
-            if (type(itemId) == "number"
+            if (type(itemID) == "number"
                 and type(amount) == "number"
-                and itemId > 0
+                and itemID > 0
             ) then
                 responseWasValid = true;
-                ItemIds[itemId] = true;
-                GL:tableSet(BagInspector.InspectionReport.Reports, senderName .. "." .. itemId, amount);
+                ItemIDs[itemID] = true;
+                GL:tableSet(BagInspector.InspectionReport.Reports, senderName .. "." .. itemID, amount);
             end
         end
 
@@ -117,29 +117,29 @@ function BagInspector:processInspectionResults(CommMessage)
     end
 
     -- We wrapped the inspection report logic in a method so
-    -- that we can fire it seperately when all items including
+    -- that we can fire it separately when all items including
     -- their item links have been successfully loaded by the API
     local displayInspectionReport = function ()
         if (numberOfResponses < 1) then
             return GL:error("Bag inspection failed: no reports received");
         end
 
-        BagInspector:displayInspectionResults(ItemIds, ItemLinksById);
+        BagInspector:displayInspectionResults(ItemIDs, ItemLinksByID);
     end
 
     local numberOfItems = 0;
-    for _ in pairs(ItemIds) do
+    for _ in pairs(ItemIDs) do
         numberOfItems = numberOfItems + 1;
     end
 
     local itemsLoaded = 0;
-    for itemId in pairs(ItemIds) do
-        local item = Item:CreateFromItemID(itemId);
+    for itemID in pairs(ItemIDs) do
+        local item = Item:CreateFromItemID(itemID);
 
         item:ContinueOnItemLoad(function()
             itemsLoaded = itemsLoaded + 1;
             tinsert(BagInspector.InspectionReport.Items, {
-                id = itemId,
+                id = itemID,
                 name = item:GetItemName(),
                 link = item:GetItemLink(),
                 icon = item:GetItemIcon(),
@@ -274,10 +274,6 @@ function BagInspector:displayInspectionResults()
         local name, _, _, _, class = GetRaidRosterInfo(index);
         local Row = {};
 
-        if (GL.isEra and not strfind(name, "-")) then
-            name = string.format("%s-%s", name, GL.User.realm);
-        end
-
         if (name
             and BagInspector.InspectionReport.Reports[name]
         ) then
@@ -294,8 +290,8 @@ function BagInspector:displayInspectionResults()
                 local Item = BagInspector.InspectionReport.Items[index];
 
                 if (Item and Item.id) then
-                    local itemIdString = tostring(Item.id);
-                    local amount = BagInspector.InspectionReport.Reports[name][itemIdString];
+                    local itemIDString = tostring(Item.id);
+                    local amount = BagInspector.InspectionReport.Reports[name][itemIDString];
 
                     tinsert(Row.cols, {
                         value = amount,

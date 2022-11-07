@@ -28,6 +28,21 @@ function ExportingLoot:draw(Parent)
                 end
             end
         },
+        {
+            label = "Include offspec items",
+            setting = "ExportingLoot.includeOffspecItems",
+            callback = function ()
+                -- Refresh the export window if it's open
+                if (GL.Exporter.visible) then
+                    GL.Exporter:refreshExportString();
+                end
+            end
+        },
+        {
+            label = "Show award reminder",
+            description = "When assigning loot without using Gargul a reminder is shown to use Gargul instead in order to make exporting loot possible",
+            setting = "ExportingLoot.showLootAssignmentReminder",
+        },
     };
 
     Overview:drawCheckboxes(Checkboxes, Parent);
@@ -79,7 +94,7 @@ function ExportingLoot:draw(Parent)
     Parent:AddChild(ExportFormatLabel);
 
     local DropDownItems = {
-        [1] = "Thatsmybis TMB / RCLC (default)",
+        [1] = "Thatsmybis TMB (default)",
         [2] = "DFT-Fight-Club (US date format)",
         [3] = "DFT-Fight-Club (EU date format)",
         [4] = "Custom (create your own format)",
@@ -147,17 +162,19 @@ function ExportingLoot:draw(Parent)
     CustomExportFormat.frame:EnableMouse();
     CustomExportFormat.frame:SetScript("OnEnter", function ()
         GameTooltip:SetOwner(CustomFormatWrapper.frame, "ANCHOR_TOP");
-        GameTooltip:SetText(string.format("Available values:\n\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n\n%s",
+        GameTooltip:SetText(string.format("Available values:\n\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n\n%s",
             "@ID",
             "@LINK",
             "@WOWHEAD",
             "@ITEM",
+            "@ILVL",
             "@QUALITY",
             "@WINNER",
             "@DATE",
             "@OS",
             "@CHECKSUM",
             "@YEAR",
+            "@YY",
             "@MONTH",
             "@DAY",
             "@HOUR",

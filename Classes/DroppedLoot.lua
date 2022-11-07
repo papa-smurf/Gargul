@@ -8,7 +8,7 @@ GL.DroppedLoot = {
     ButtonsHooked = {},
     allButtonsHooked = false,
     LootButtonItemLinkCache = {},
-    lootChangedTimer = 0,
+    LootChangedTimer = nil,
     lootWindowIsOpened = false,
 };
 
@@ -33,7 +33,7 @@ function DroppedLoot:_init()
     -- Show a reminder window to use Gargul when trying to assign using native loot assignment
     Events:register("DroppedLootOpenMasterLooterListListener", "OPEN_MASTER_LOOT_LIST", function ()
         if (GL.User.isMasterLooter
-            and GL.Settings:get("TMB.showLootAssignmentReminder")
+            and GL.Settings:get("ExportingLoot.showLootAssignmentReminder")
             and GL.TMB:available()
         ) then
             GL.Interface.ReminderToAssignLootUsingGargul:draw();
@@ -49,11 +49,6 @@ function DroppedLoot:_init()
         DroppedLoot.lootWindowIsOpened = false;
 
         GL.Interface.ShortcutKeysLegend:close();
-
-        -- Stop the timer responsible for trigger the GL.LOOT_CHANGED event
-        if (self.lootChangedTimer) then
-            GL.Ace:CancelTimer(self.lootChangedTimer);
-        end
     end);
 
     -- Remove highlight on loot buttons when closing the loot window
@@ -75,7 +70,7 @@ end
 ---
 ---@return void
 function DroppedLoot:lootReady()
-    GL:debug("DroppedLoot:lootOpened");
+    GL:debug("DroppedLoot:lootReady");
 
     self.lootWindowIsOpened = true;
 
@@ -84,11 +79,23 @@ function DroppedLoot:lootReady()
 
     -- Periodically check if the loot changed because the internal WoW events are not
     -- comprehensive enough to detect things like the player moving to the next page of items.
-    self.lootChangedTimer = GL.Ace:ScheduleRepeatingTimer(function ()
-        if (self:lootChanged()) then
-            Events:fire("GL.LOOT_CHANGED");
-        end
-    end, .1);
+    if (not self.LootChangedTimer) then
+        GL:debug("Schedule new DroppedLoot.LootChangedTimer");
+        self.LootChangedTimer = GL.Ace:ScheduleRepeatingTimer(function ()
+            GL:debug("Run DroppedLoot.LootChangedTimer");
+            if (self:lootChanged()) then
+                Events:fire("GL.LOOT_CHANGED");
+            end
+
+            if (not self.lootWindowIsOpened
+                and self.LootChangedTimer
+            ) then
+                GL:debug("Cancel DroppedLoot.LootChangedTimer");
+                GL.Ace:CancelTimer(self.LootChangedTimer);
+                self.LootChangedTimer = nil;
+            end
+        end, .1);
+    end
 
     -- Only announce loot in chat if the setting is enabled
     if (GL.User.isMasterLooter
@@ -310,7 +317,7 @@ function DroppedLoot:hookClickEvents()
                 break;
             end
 
-            Button:HookScript("OnClick", function(_, mouseButtonPressed)
+            Button:HookScript("OnClick", function()
                 local slot = Button.slot or buttonIndex;
 
                 if (not slot) then
@@ -330,7 +337,7 @@ function DroppedLoot:hookClickEvents()
                     return;
                 end
 
-                local keyPressIdentifier = GL.Events:getClickCombination(mouseButtonPressed);
+                local keyPressIdentifier = GL.Events:getClickCombination();
 
                 -- Open the roll window
                 if (keyPressIdentifier == GL.Settings:get("ShortcutKeys.rollOff")) then
@@ -406,10 +413,10 @@ function DroppedLoot:announce(Modifiers)
             local TMBInfo = GL.TMB:byItemLink(itemLink);
 
             -- Check if we need to announce this item
-            local itemId = tonumber(GL:getItemIdFromLink(itemLink)) or 0;
+            local itemID = tonumber(GL:getItemIDFromLink(itemLink)) or 0;
 
             -- Double checking just in case!
-            if (not GL:higherThanZero(itemId)) then
+            if (not GL:higherThanZero(itemID)) then
                 return;
             end
 
@@ -420,7 +427,7 @@ function DroppedLoot:announce(Modifiers)
 
             if ((
                     quality < GL.Settings:get("DroppedLoot.minimumQualityOfAnnouncedLoot", 4) -- Quality is lower than our set minimum
-                    or GL:inTable(Constants.ItemsThatSouldntBeAnnounced, itemId) -- We don't want to announce this item
+                    or GL:inTable(Constants.ItemsThatSouldntBeAnnounced, itemID) -- We don't want to announce this item
                 )
                 and GL:empty(SoftReserves) -- No one (hard)reserved it
                 and GL:empty(TMBInfo) -- No one has it on his wishlist and it's not a prio item
@@ -633,7 +640,7 @@ function DroppedLoot:getTMBDetails(TMBInfo, PlayersInRaid)
         local playerName = string.lower(Entry.character);
 
         --- NOTE TO SELF: it's (os) because of the string.lower, if you remove the lower then change below accordingly!
-        if (GL:inTable(PlayersInRaid, string.gsub(playerName, "%(os%)", ""))) then
+        if (not GL.User.isInGroup or GL:inTable(PlayersInRaid, string.gsub(playerName, "%(os%)", ""))) then
             local prio = Entry.prio;
             local entryType = Entry.type or Constants.tmbTypeWish;
             local isOffSpec = string.find(playerName, "%(os%)");
@@ -688,7 +695,7 @@ function DroppedLoot:announceTest(...)
         local concernsID = GL:higherThanZero(tonumber(value));
 
         if (not concernsID) then
-            value = GL:getItemIdFromLink(value) or 0;
+            value = GL:getItemIDFromLink(value) or 0;
         end
 
         itemIDs[key] = value;

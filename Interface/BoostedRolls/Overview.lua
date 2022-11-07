@@ -617,7 +617,7 @@ function Overview:close()
     AceGUI:Release(Window);
     self.isVisible = false;
 
-    -- Clean up the Character table seperately
+    -- Clean up the Character table separately
     local CharacterTable = GL.Interface:getItem(self, "Table.Characters");
     if (CharacterTable) then
         CharacterTable:SetData({}, true);

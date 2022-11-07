@@ -12,6 +12,71 @@ GL.Interface.Changelog = {
 
     History = {
         {
+            version = "4.12.2",
+            date = "November 4th, 2022",
+            Changes = {
+                "Awarded loot history is moved to a separate window, click the trophy icon in your rolloff or award window",
+                "You can now mark rolls as +1 or OS in your settings so that the checkboxes will be checked automatically when awarding an item based on the type of roll",
+                "Gargul's hotkeys are now inactive when the auction house, mailbox, shop or bank are active",
+            },
+        },
+        {
+            version = "4.12.0",
+            date = "October 31th, 2022",
+            Changes = {
+                "|c00BE3333Important:|r This version introduces a complete rewrite of the awarded loot structure, making it incompatible with older versions of Gargul. Encourage your fellow raiders to update!",
+                "Hold shift on the roll window to compare the item with what you have equipped!",
+                "Notable bugfix: Edited and deleted awarded items are now broadcast to the entire raid properly",
+            },
+        },
+        {
+            version = "4.11.0",
+            date = "October 27th, 2022",
+            Changes = {
+                "Player passed on an item? Did you assign an item to the wrong player? No worries, you can edit all that now!",
+                "You can now change the size of the Loot trade timers window in |c00a79eff/gl|r -> |c00a79effLoot trade timers|r",
+                "Improved performance greatly and prepared Gargul for Dragonflight",
+                "Changed the Gargul master looter message and made sure it doens't spam the raid on /reload",
+            },
+        },
+        {
+            version = "4.10.1",
+            date = "October 19th, 2022",
+            Changes = {
+                "You can now add up to 10 roll buttons with unlimited characters!",
+                "Gargul shortcut keys no longer support the right mouse button for technical reasons",
+                "Updated the DFT loot export format to now use item IDs instead of names",
+                "You can now exclude offspec items when exporting loot via |c00a79eff/gl export|r -> |c00a79effMaster Looting|r",
+                "Item tooltips now include more details of (recent) winners",
+            },
+        },
+        {
+            version = "4.10.0",
+            date = "October 16th, 2022",
+            Changes = {
+                "When enabled, PackMule will now always stay enabled even after a zone switch/reload",
+                "Only want to announce the seconds left to roll once? Check |c00a79eff/gl|r -> |c00a79effMaster Looting|r",
+                "Accessibility: you can now increase the rolling window's size via |c00a79eff/gl|r -> |c00a79effRolling|r",
+            },
+        },
+        {
+            version = "4.9.0",
+            date = "October 10th, 2022",
+            Changes = {
+                "When your master looter rolls out an item, you can now immediately tell whether it's something your class can use or not! You can also disable the roll window entirely in such cases if you prefer, type |c00a79eff/gl|r and check out the |c00a79effRolling|r section!",
+                "Tooltips are now fully cross-item, where priorities and reservations show on both the tier/quest items, and the items they reward (and vice versa!)",
+                "The exporter now supports a 2 digit year format (@YY), check it out with |c00a79eff/gl export|r",
+                "Gargul commands are no longer case sensitive"
+            },
+        },
+        {
+            version = "4.8.4",
+            date = "October 3rd, 2022",
+            Changes = {
+                "PackMule now supports round robin! Type |c00a79eff/gl pm|r and check it out!",
+            },
+        },
+        {
             version = "4.8.0",
             date = "September 26th, 2022",
             Changes = {

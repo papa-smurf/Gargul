@@ -12,6 +12,7 @@ function AwardDialog:open(Dialog)
     Dialog.checkOS = GL:toboolean(Dialog.checkOS);
     Dialog.checkPlusOne = GL:toboolean(Dialog.checkPlusOne);
     Dialog.checkOS = GL:toboolean(Dialog.checkOS);
+    Dialog.checkPlusOne = GL:toboolean(Dialog.checkPlusOne);
     Dialog.boostedRollCost = GL.BoostedRolls:toPoints(Dialog.boostedRollCost);
 
     -- Create a container/parent frame
@@ -35,6 +36,14 @@ function AwardDialog:open(Dialog)
 
         if (OSCheckBox) then
             OSCheckBox:SetValue(true);
+        end
+    end
+
+    if (Dialog.checkPlusOne) then
+        local PlusOneCheckBox = GL.Interface:getItem(self, "CheckBox.PlusOne");
+
+        if (PlusOneCheckBox) then
+            PlusOneCheckBox:SetValue(true);
         end
     end
 

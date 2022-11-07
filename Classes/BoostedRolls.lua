@@ -960,6 +960,38 @@ function BoostedRolls:replyToDataRequest(CommMessage)
     ):send();
 end
 
+--- Add points to a give user's balance
+---
+---@param playerName string
+---@param points number
+function BoostedRolls:addPoints(playerName, points)
+    GL:debug("BoostedRolls:addPoints");
+
+    if (points <= 0) then
+        return;
+    end
+
+    local currentPoints = self:getPoints(playerName) or 0;
+
+    self:queueUpdate(playerName, currentPoints + points);
+end
+
+--- Subtract points from a give user's balance
+---
+---@param playerName string
+---@param points number
+function BoostedRolls:subtractPoints(playerName, points)
+    GL:debug("BoostedRolls:subtractPoints");
+
+    if (points <= 0) then
+        return;
+    end
+
+    local currentPoints = self:getPoints(playerName) or 0;
+
+    self:queueUpdate(playerName, currentPoints - points);
+end
+
 --- Queue an update until broadcast is finished
 ---
 ---@param playerName string

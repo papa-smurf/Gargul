@@ -29,7 +29,7 @@ function Overview:draw()
     Window:SetTitle("Gargul v" .. GL.version);
     Window:SetLayout("Flow");
     Window:SetWidth(500);
-    Window:SetHeight(250);
+    Window:SetHeight(300);
     Window:EnableResize(false);
     Window.statustext:GetParent():Show(); -- Explicitely show the statustext bar
     Window:SetCallback("OnClose", function()
@@ -53,6 +53,33 @@ function Overview:draw()
     if (GL.TMB:wasImportedFromDFT()) then
         source = "DFT";
     end
+
+    local VerticalSpacer = GL.AceGUI:Create("SimpleGroup");
+    VerticalSpacer:SetLayout("FILL");
+    VerticalSpacer:SetFullWidth(true);
+    VerticalSpacer:SetHeight(6);
+    Window:AddChild(VerticalSpacer);
+
+    local MoreInfoLabel = GL.AceGUI:Create("Label");
+    MoreInfoLabel:SetText(string.format("|c00FFF569How to use Gargul with %s|r", source));
+    MoreInfoLabel:SetFontObject(_G["GameFontGreenLarge"]);
+    MoreInfoLabel:SetFullWidth(true);
+    MoreInfoLabel:SetJustifyH("MIDDLE");
+    Window:AddChild(MoreInfoLabel);
+
+    local DiscordURL = GL.AceGUI:Create("EditBox");
+    DiscordURL:DisableButton(true);
+    DiscordURL:SetHeight(20);
+    DiscordURL:SetFullWidth(true);
+    DiscordURL:SetText("https://github.com/papa-smurf/Gargul/wiki/Gargul-and-ThatsMyBIS");
+    Window:AddChild(DiscordURL);
+
+    VerticalSpacer = GL.AceGUI:Create("SimpleGroup");
+    VerticalSpacer:SetLayout("FILL");
+    VerticalSpacer:SetFullWidth(true);
+    VerticalSpacer:SetHeight(10);
+    Window:AddChild(VerticalSpacer);
+
     local TimestampLabel = AceGUI:Create("Label");
     TimestampLabel:SetFullWidth(true);
     TimestampLabel:SetText(string.format(
@@ -61,6 +88,7 @@ function Overview:draw()
         date('%Y-%m-%d', DB:get("TMB.MetaData.importedAt", GetServerTime())),
         date('%H:%M', DB:get("TMB.MetaData.importedAt", GetServerTime()))
     ));
+    TimestampLabel:SetJustifyH("MIDDLE");
     TimestampLabel:SetFontObject(_G["GameFontNormal"]);
     Window:AddChild(TimestampLabel);
 
@@ -71,6 +99,7 @@ function Overview:draw()
         GL:count(DB:get("TMB.Items")) or 0
 
     ));
+    ItemNumberLabel:SetJustifyH("MIDDLE");
     ItemNumberLabel:SetFontObject(_G["GameFontNormal"]);
     Window:AddChild(ItemNumberLabel);
 
@@ -86,6 +115,7 @@ function Overview:draw()
         "\nPriority notes available: |c00a79eff%s|r",
         notesAvailable
     ));
+    PriorityNotesLabel:SetJustifyH("MIDDLE");
     PriorityNotesLabel:SetFontObject(_G["GameFontNormal"]);
     Window:AddChild(PriorityNotesLabel);
 
@@ -101,10 +131,11 @@ function Overview:draw()
         "\nAuto-sharing enabled: |c00a79eff%s|r",
         autoSharingEnabled
     ));
+    AutoSharingStatusLabel:SetJustifyH("MIDDLE");
     AutoSharingStatusLabel:SetFontObject(_G["GameFontNormal"]);
     Window:AddChild(AutoSharingStatusLabel);
 
-    local VerticalSpacer = AceGUI:Create("SimpleGroup");
+    VerticalSpacer = AceGUI:Create("SimpleGroup");
     VerticalSpacer:SetLayout("FILL");
     VerticalSpacer:SetFullWidth(true);
     VerticalSpacer:SetHeight(15);

@@ -71,15 +71,14 @@ function MasterLooterUI:draw(itemLink)
         self:close();
     end);
     GL.Interface:setItem(self, "Window", Window);
-
-    Window:SetPoint(GL.Interface:getPosition("RollOff"));
+    GL.Interface:restorePosition(Window, "MasterLooterUI");
 
     --[[
         SETTINGS BUTTON
     ]]
     local SettingsButton = GL.UI:createSettingsButton(
-            Window.frame,
-            "MasterLooting"
+        Window.frame,
+        "MasterLooting"
     );
     self.SettingsButton = SettingsButton;
 
@@ -315,9 +314,19 @@ function MasterLooterUI:draw(itemLink)
                         return GL:warning("You need to select a player first");
                     end
 
-                    local osRoll = selected.cols[4].value == "OS";
+                    local RollType = (function()
+                        for _, RollType in pairs(GL.Settings:get("RollTracking.Brackets", {})) do
+                            if (RollType[1] == selected.cols[4].value) then
+                                return RollType;
+                            end
+                        end
+
+                        return {};
+                    end)();
+                    local osRoll = GL:toboolean(RollType[5]);
+                    local plusOneRoll = GL:toboolean(RollType[6]);
                     local boostedRoll = selected.cols[4].value == GL.Settings:get("BoostedRolls.identifier", "BR");
-                    return GL.RollOff:award(selected.cols[1].value, GL.Interface:getItem(self, "EditBox.Item"):GetText(), osRoll, boostedRoll);
+                    return GL.RollOff:award(selected.cols[1].value, GL.Interface:getItem(self, "EditBox.Item"):GetText(), osRoll, boostedRoll, plusOneRoll);
                 end);
                 ThirdRow:AddChild(AwardButton);
                 GL.Interface:setItem(self, "Award", AwardButton);
@@ -325,8 +334,40 @@ function MasterLooterUI:draw(itemLink)
                 HorizonalSpacer = AceGUI:Create("SimpleGroup");
                 HorizonalSpacer:SetLayout("Flow");
                 HorizonalSpacer:SetWidth(24);
-                HorizonalSpacer:SetHeight(1);
+                HorizonalSpacer:SetHeight(20);
                 ThirdRow:AddChild(HorizonalSpacer);
+
+                --[[
+                    AWARD HISTORY BUTTON
+                ]]
+
+                local AwardHistoryButton = GL.UI:createFrame("Button", "MasterLooterUIAwardHistoryButton" .. GL:uuid(), Window.frame, "UIPanelButtonTemplate");
+                AwardHistoryButton:SetSize(22, 20);
+                AwardHistoryButton:SetPoint("TOPLEFT", AwardButton.frame, "TOPRIGHT", 1, 0);
+                AwardHistoryButton:SetMotionScriptsWhileDisabled(true); -- Make sure tooltip still shows even when button is disabled
+
+                local AwardHistoryButtonHighlight = AwardHistoryButton:CreateTexture();
+                AwardHistoryButtonHighlight:SetTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\award");
+                AwardHistoryButtonHighlight:SetPoint("CENTER", AwardHistoryButton, "CENTER", 0, 0);
+                AwardHistoryButtonHighlight:SetSize(22, 20);
+
+                AwardHistoryButton:SetNormalTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\award");
+                AwardHistoryButton:SetDisabledTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\award-disabled");
+                AwardHistoryButton:SetHighlightTexture(AwardHistoryButtonHighlight);
+
+                AwardHistoryButton:SetScript("OnEnter", function()
+                    GameTooltip:SetOwner(AwardHistoryButton, "ANCHOR_TOP");
+                    GameTooltip:SetText("Award history");
+                    GameTooltip:Show();
+                end);
+
+                AwardHistoryButton:SetScript("OnLeave", function()
+                    GameTooltip:Hide();
+                end);
+
+                AwardHistoryButton:SetScript("OnClick", function()
+                    GL.Interface.AwardHistory:toggle();
+                end);
 
                 --[[
                     DISENCHANT BUTTON
@@ -423,7 +464,7 @@ function MasterLooterUI:close()
     local Window = GL.Interface:getItem(self, "Window");
     if (Window) then
         -- Store the frame's last position for future play sessions
-        GL.Interface:storePosition(Window, "RollOff");
+        GL.Interface:storePosition(Window, "MasterLooterUI");
         Window:Hide();
     end
 end
@@ -492,6 +533,14 @@ function MasterLooterUI:drawReopenMasterLooterUIButton()
     ButtonHighlight:SetBlendMode("ADD");
     Button.ButtonHighlight = ButtonHighlight;
 
+    local RollCountLabel = CreateFrame("Frame","ReopenMasterLooterRollCount", Button);
+    RollCountLabel:SetSize(22, 22);
+    RollCountLabel:SetPoint("BOTTOMLEFT", Button, "BOTTOMLEFT", 2, 2);
+
+    local RollCountText = RollCountLabel:CreateFontString(nil, "OVERLAY", GameFontNormal);
+    RollCountText:SetFont(STANDARD_TEXT_FONT, 10, "OUTLINE");
+    RollCountText:SetPoint("BOTTOMLEFT", RollCountLabel, "BOTTOMLEFT");
+
     Button:SetScript("OnMouseUp", function (_, button)
         if (button == "LeftButton") then
             self:draw();
@@ -507,6 +556,107 @@ function MasterLooterUI:drawReopenMasterLooterUIButton()
     Button:SetScript("OnLeave", function()
         GameTooltip:Hide();
     end);
+
+    --[[
+        PAUSE / PLAY BUTTON
+    ]]
+
+    local PlayStopButton = GL.UI:createFrame("Button", "ReopenMasterLooterPlayStopButton" .. GL:uuid(), Button, "UIPanelButtonTemplate");
+    PlayStopButton:SetSize(20, 20);
+    PlayStopButton:SetPoint("TOPLEFT", Button, "TOPRIGHT", 2, -1);
+
+    local PlayStopButtonHighlight = PlayStopButton:CreateTexture();
+    PlayStopButtonHighlight:SetTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\play");
+    PlayStopButtonHighlight:SetTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\stop");
+    PlayStopButtonHighlight:SetPoint("CENTER", PlayStopButton, "CENTER", 0, 0);
+    PlayStopButtonHighlight:SetSize(20, 20);
+
+    PlayStopButton:SetNormalTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\play");
+    PlayStopButton:SetNormalTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\stop");
+    PlayStopButton:SetHighlightTexture(PlayStopButtonHighlight);
+
+    PlayStopButton:SetScript("OnEnter", function()
+        GameTooltip:SetOwner(PlayStopButton, "ANCHOR_TOP");
+        GameTooltip:SetText("Start/Stop");
+        GameTooltip:Show();
+    end);
+
+    PlayStopButton:SetScript("OnLeave", function()
+        GameTooltip:Hide();
+    end);
+
+    PlayStopButton:SetScript("OnClick", function()
+        local StartButton = GL.Interface:getItem(self, "Button.Start");
+        local StopButton = GL.Interface:getItem(self, "Button.Stop");
+
+        if (GL.RollOff.inProgress) then
+            StopButton.frame:Click();
+        else
+            StartButton.frame:Click();
+        end
+    end);
+
+    --[[
+        DISENCHANT BUTTON
+    ]]
+
+    local DisenchantButton = GL.UI:createFrame("Button", "ReopenMasterLooterDisenchantButton" .. GL:uuid(), Button, "UIPanelButtonTemplate");
+    DisenchantButton:SetSize(20, 20);
+    DisenchantButton:SetPoint("TOPLEFT", PlayStopButton, "BOTTOMLEFT", 0, -2);
+    DisenchantButton:SetMotionScriptsWhileDisabled(true); -- Make sure tooltip still shows even when button is disabled
+
+    local DisenchantButtonHighlight = DisenchantButton:CreateTexture();
+    DisenchantButtonHighlight:SetTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\disenchant");
+    DisenchantButtonHighlight:SetPoint("CENTER", DisenchantButton, "CENTER", 0, 0);
+    DisenchantButtonHighlight:SetSize(20, 20);
+
+    DisenchantButton:SetNormalTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\disenchant");
+    DisenchantButton:SetDisabledTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\disenchant-disabled");
+    DisenchantButton:SetHighlightTexture(DisenchantButtonHighlight);
+
+    DisenchantButton:SetScript("OnEnter", function()
+        GameTooltip:SetOwner(DisenchantButton, "ANCHOR_TOP");
+        GameTooltip:SetText("Disenchant");
+        GameTooltip:Show();
+    end);
+
+    DisenchantButton:SetScript("OnLeave", function()
+        GameTooltip:Hide();
+    end);
+
+    DisenchantButton:SetScript("OnClick", function()
+        local MLUIDisenchantButton = GL.Interface:getItem(self, "Button.Disenchant");
+
+        if (MLUIDisenchantButton) then
+            pcall(function ()
+                MLUIDisenchantButton.frame:Click();
+                self:closeReopenMasterLooterUIButton();
+            end);
+        end
+    end);
+
+    local refreshWidget = function()
+        RollCountText:SetText("rolls: " .. #GL.RollOff.CurrentRollOff.Rolls);
+
+        if (GL.RollOff.inProgress) then
+            DisenchantButton:Disable();
+
+            PlayStopButton:SetNormalTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\stop");
+            PlayStopButtonHighlight:SetTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\stop");
+        else
+            DisenchantButton:Enable();
+
+            PlayStopButton:SetNormalTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\play");
+            PlayStopButtonHighlight:SetTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\play");
+        end
+    end;
+    refreshWidget();
+
+    GL.Events:register({
+        { "MasterLooterUIRolloffRollAcceptedListener", "GL.ROLLOFF_ROLL_ACCEPTED" },
+        { "MasterLooterUIRolloffRollStartListener", "GL.ROLLOFF_STARTED" },
+        { "MasterLooterUIRolloffRollStartListener", "GL.ROLLOFF_STOPPED" },
+    }, refreshWidget);
 
     GL.Interface:setItem(self, "OpenMasterLooterButton", Button);
 end
@@ -636,8 +786,30 @@ function MasterLooterUI:drawPlayersTable(parent)
             GameTooltip:AddLine(string.format("Items won by %s:", roller));
             GameTooltip:AddLine(" ");
 
-            for _, itemLink in pairs(ItemsWonByRollerInTheLast8Hours) do
-                GameTooltip:AddLine(itemLink);
+            for _, Entry in pairs(ItemsWonByRollerInTheLast8Hours) do
+                local receivedString = " (received)";
+                if (not Entry.received) then
+                    receivedString = " (not received yet)";
+                end
+
+                local OSString = "";
+                if (Entry.OS) then
+                    OSString = " (OS)"
+                end
+
+                local BRString = "";
+                if (GL:higherThanZero(Entry.BRCost)) then
+                    BRString = string.format(" (BR: %s)", Entry.BRCost);
+                end
+
+                local line = string.format("%s%s%s%s",
+                    Entry.itemLink,
+                    OSString,
+                    BRString,
+                    receivedString
+                );
+
+                GameTooltip:AddLine(line);
             end
 
             GameTooltip:Show();

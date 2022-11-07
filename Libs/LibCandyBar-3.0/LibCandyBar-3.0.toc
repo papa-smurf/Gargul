@@ -1,10 +1,12 @@
-## Interface: 90002
+## Interface: 90207
+## Version: v9.2.2
 ## LoadOnDemand: 1
 ## Title: Lib: LibCandyBar-3.0
 ## Notes: Timer bars with that extra sweetness.
 ## Author: Funkydude
 ## X-Credits: Ammo, Rabbit
 ## X-Category: Library
+## X-License: All Rights Reserved
 
 embeds.xml
 LibCandyBar-3.0\lib.xml

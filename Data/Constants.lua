@@ -36,10 +36,42 @@ GL.Data.Constants = {
         ["ü"] = "Ü",
     },
 
+    ItemSlotTable = {
+        -- Source: http://wowwiki.wikia.com/wiki/ItemEquipLoc
+        INVTYPE_AMMO = { 0 },
+        INVTYPE_HEAD = { 1 },
+        INVTYPE_NECK = { 2 },
+        INVTYPE_SHOULDER = { 3 },
+        INVTYPE_BODY = { 4 },
+        INVTYPE_CHEST = { 5 },
+        INVTYPE_ROBE = { 5 },
+        INVTYPE_WAIST = { 6 },
+        INVTYPE_LEGS = { 7 },
+        INVTYPE_FEET = { 8 },
+        INVTYPE_WRIST = { 9 },
+        INVTYPE_HAND = { 10 },
+        INVTYPE_FINGER = { 11, 12 },
+        INVTYPE_TRINKET = { 13, 14 },
+        INVTYPE_CLOAK = { 15 },
+        INVTYPE_WEAPON = { 16, 17 },
+        INVTYPE_SHIELD = { 17 },
+        INVTYPE_2HWEAPON = { 16 },
+        INVTYPE_WEAPONMAINHAND = { 16 },
+        INVTYPE_WEAPONOFFHAND = { 17 },
+        INVTYPE_HOLDABLE = { 17 },
+        INVTYPE_RANGED = { 18 },
+        INVTYPE_THROWN = { 18 },
+        INVTYPE_RANGEDRIGHT = { 18 },
+        INVTYPE_RELIC = { 18 },
+        INVTYPE_TABARD = { 19 },
+        INVTYPE_BAG = { 20, 21, 22, 23 },
+        INVTYPE_QUIVER = { 20, 21, 22, 23 }
+    },
+
     --[[
         GLOBAL
     ]]
-    addonHexColor =  "967fd2",
+    addonHexColor =  "967FD2",
 
     success = 0,
     failure = 1,
@@ -82,7 +114,10 @@ GL.Data.Constants = {
     },
 
     ItemsThatSouldntBeAnnounced = {
+        20725, -- Nexus Crystal
+        22450, -- Void Crystal
         29434, -- Badge of Justice
+        34057, -- Abyss Crystal
 
         -- Temporary Kael'Thas weapons
         30318, -- Netherstrand Longbow
@@ -223,6 +258,9 @@ GL.Data.Constants = {
         warlock = 8,
         warrior = 9,
         ["death knight"] = 10,
+        ["demon hunter"] = 11,
+        evoker = 12,
+        monk = 13,
     },
 
     ClassHexColors = {
@@ -236,6 +274,9 @@ GL.Data.Constants = {
         warlock = "9482C9",
         warrior = "C79C6E",
         ["death knight"] = "C41E3A",
+        ["demon hunter"] = "A330C9",
+        evoker = "33937F",
+        monk = "00FF98",
     },
 
     classRGBAColors = {
@@ -248,7 +289,10 @@ GL.Data.Constants = {
         shaman = {r = 0, g = .44, b = .87, a = 1},
         warlock = {r = .57647, g = .5098, b = .788235, a = 1},
         warrior = {r = .77647, g = .607843, b = .42745, a = 1},
-        ["death knight"] = {r = .77, g = .12, b = .23},
+        ["death knight"] = {r = .77, g = .12, b = .23, a = 1},
+        ["demon hunter"] = {r = 0.64, g = 0.19, b = 0.79, a = 1},
+        evoker = {r = 0.20, g = 0.58, b = 0.50, a = 1},
+        monk = {r = 0.00, g = 1.00, b= 0.60, a = 1},
     },
 
     classRGBColors = {
@@ -261,7 +305,10 @@ GL.Data.Constants = {
         shaman = {0, .44, .87,},
         warlock = {.57647, .5098, .788235,},
         warrior = {.77647, .607843, .42745,},
-        ["death knight"] = {.77, .12, .23},
+        ["death knight"] = {r = .77, g = .12, b = .23},
+        ["demon hunter"] = {r = 0.64, g = 0.19, b = 0.79},
+        evoker = {r = 0.20, g = 0.58, b = 0.50},
+        monk = {r = 0.00, g = 1.00, b= 0.60},
     },
 
     Devs = {
@@ -294,7 +341,7 @@ GL.Data.Constants = {
     ]]
     Comm = {
         channel = "GargulComm2",
-        minimumAppVersion = "4.0.0",
+        minimumAppVersion = "4.12.0",
         Actions = {
             awardItem = 1,
             broadcastLootPriorities = 2,
@@ -310,12 +357,14 @@ GL.Data.Constants = {
             broadcastBoostedRollsData = 12,
             requestBoostedRollsData = 13,
             broadcastBoostedRollsMutation = 14,
-            startGDKPAuction = 15,
-            stopGDKPAuction = 16,
-            refreshGDKPAuction = 17,
-            requestGDKPSession = 18,
-            broadcastGDKPSession = 19,
-            broadcastGDKPMutation = 20,
+            editAwardedItem = 15,
+            deleteAwardedItem = 16,
+            startGDKPAuction = 17,
+            stopGDKPAuction = 18,
+            refreshGDKPAuction = 19,
+            requestGDKPSession = 20,
+            broadcastGDKPSession = 21,
+            broadcastGDKPMutation = 22,
         },
     },
 

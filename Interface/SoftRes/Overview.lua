@@ -68,12 +68,12 @@ function Overview:draw()
         SHARE BUTTON
     ]]
     local ShareButton = GL.UI:createShareButton(
-            Window.frame,
-            function ()
-                GL.Interface.Dialogs.PopupDialog:open("BROADCAST_SOFTRES_CONFIRMATION");
-            end,
-            "Broadcast SoftRes Data",
-            "To broadcast you need to be in a group and need master loot, assist or lead!"
+        Window.frame,
+        function ()
+            GL.Interface.Dialogs.PopupDialog:open("BROADCAST_SOFTRES_CONFIRMATION");
+        end,
+        "Broadcast SoftRes Data",
+        "To broadcast you need to be in a group and need master loot, assist or lead!"
     );
     GL.Interface:setItem(self, "ShareButton", ShareButton);
     ShareButton:Show();
@@ -269,7 +269,7 @@ function Overview:draw()
         HardReservesLabel:SetCallback("OnEnter", function() return end);
 
         -- Add interface items to the Overview class so we can manipulate them later
-        for _ in pairs(SoftRes.MaterializedData.HardReserveDetailsById or {}) do
+        for _ in pairs(SoftRes.MaterializedData.HardReserveDetailsByID or {}) do
             somethingWasHardReserved = true;
             HardReservesLabel:SetText("     Click here to see hard-reserve info");
             HardReservesLabel:SetCallback("OnClick", function()
@@ -342,17 +342,17 @@ function Overview:refreshDetailsFrame()
 
     -- Display the items reserved by the player
     local processedItems = 0;
-    for itemId, numberOfReservations in pairs(Items) do
+    for itemID, numberOfReservations in pairs(Items) do
         local index = processedItems + 1;
 
         if (processedItems >= SoftRes.maxNumberOfSoftReservedItems) then
             break;
         end
 
-        local idString = tostring(itemId);
+        local idString = tostring(itemID);
 
         -- This item has to exist in our cache because we ALWAYS populate it before opening the overview
-        local Item = GL.DB.Cache.ItemsById[idString];
+        local Item = GL.DB.Cache.ItemsByID[idString];
 
         -- This should never be possible, but you never know what those weirdos are up to nowadays
         if (not Item) then
@@ -546,7 +546,11 @@ function Overview:drawCharacterTable(Parent)
 
     for playerName, Entry in pairs(PlayerData) do
         local plusOnes = GL.PlusOnes:get(playerName);
-        local numberOfSoftReservedItems = GL:count(Entry.Items);
+        local numberOfSoftReservedItems = 0;
+
+        for _, numberOfReserves in pairs(Entry.Items) do
+            numberOfSoftReservedItems = numberOfSoftReservedItems + numberOfReserves;
+        end
 
         local SoftReserveColor = {r=0,g=1,b=0,a=1};
 
@@ -621,9 +625,9 @@ function Overview:drawHardReservesTable(Parent)
 
             -- We always select the first column of the selected row because that contains the player name
             local selected = data[realrow].cols[1].value;
-            local itemId = GL:getItemIdFromLink(selected);
-            local idString = tostring(itemId);
-            local hardReserveDetails = SoftRes.MaterializedData.HardReserveDetailsById[idString];
+            local itemID = GL:getItemIDFromLink(selected);
+            local IDString = tostring(itemID);
+            local hardReserveDetails = SoftRes.MaterializedData.HardReserveDetailsByID[IDString];
 
             if (not hardReserveDetails
                 or (not hardReserveDetails.reservedFor
@@ -654,7 +658,7 @@ function Overview:drawHardReservesTable(Parent)
     local TableData = {};
     for _, Entry in pairs(DB.SoftRes.HardReserves) do
         local idString = tostring(Entry.id);
-        local Item = GL.DB.Cache.ItemsById[idString];
+        local Item = GL.DB.Cache.ItemsByID[idString];
 
         if (Item) then
             tinsert(TableData, {
@@ -697,7 +701,7 @@ function Overview:close()
         ShareButton:Hide();
     end
 
-    -- Clean up the Character table seperately
+    -- Clean up the Character table separately
     local CharacterTable = GL.Interface:getItem(self, "Table.Characters");
     if (CharacterTable) then
         CharacterTable:SetData({}, true);

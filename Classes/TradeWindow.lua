@@ -7,7 +7,7 @@ GL.TradeWindow = {
     manuallyChangedAnnounceCheckbox = false,
     AnnouncementCheckBox = nil,
 
-    AddItemsTimer = {},
+    AddItemsTimer = nil,
     ItemsToAdd = {},
     State = {
         partner = "",
@@ -64,6 +64,16 @@ function TradeWindow:open(playerName, callback, allwaysExecuteCallback)
     GL:debug("TradeWindow:open");
 
     playerName = GL:normalizedName(playerName);
+
+    -- ERA is an odd duck. It requires a realm, but only if the trade partner's realm differs from ours
+    if (GL.isEra) then
+        local playerRealm = GL:getRealmFromName(playerName);
+
+        if (string.lower(playerRealm) == string.lower(GL.User.realm)) then
+            playerName = GL:stripRealm(playerName);
+        end
+    end
+
     allwaysExecuteCallback = GL:toboolean(allwaysExecuteCallback);
 
     -- We're already trading with someone
@@ -139,11 +149,16 @@ function TradeWindow:handleEvents(event, message)
         self:updateAnnouncementCheckBox();
 
         -- Make sure to cancel any lingering timers
+        GL:debug("Cancel TradeWindow.AddItemsTimer");
         GL.Ace:CancelTimer(self.AddItemsTimer);
+        self.AddItemsTimer = nil;
 
         -- Periodically add items to the trade window
         -- We don't do this instantly because that can bug out the UI
+        GL:debug("Schedule new TradeWindow.AddItemsTimer");
         self.AddItemsTimer = GL.Ace:ScheduleRepeatingTimer(function ()
+            GL:debug("Run TradeWindow.AddItemsTimer");
+
             self:processItemsToAdd();
         end, .5);
     end
@@ -153,7 +168,9 @@ function TradeWindow:handleEvents(event, message)
         self.ItemsToAdd = {};
 
         -- Make sure to cancel any lingering timers
+        GL:debug("Cancel TradeWindow.AddItemsTimer");
         GL.Ace:CancelTimer(self.AddItemsTimer);
+        self.AddItemsTimer = nil;
 
         -- We don't want resetState to trigger since TRADE_CLOSED is fired before TRADE_COMPLETED
         return;
@@ -203,7 +220,7 @@ function TradeWindow:updateState()
         -- Fetch and store the items on our side of the trade window
         local name, texture, quantity, quality, isUsable, _ = GetTradePlayerItemInfo(tradeSlot);
         local itemLink = GetTradePlayerItemLink(tradeSlot);
-        local itemID = GL:getItemIdFromLink(itemLink) or nil;
+        local itemID = GL:getItemIDFromLink(itemLink) or nil;
 
         self.State.MyItems[tradeSlot] = {
             name = name,
@@ -219,7 +236,7 @@ function TradeWindow:updateState()
         -- Fetch and store the items on their side of the trade window
         name, texture, quantity, quality, isUsable, _ = GetTradeTargetItemInfo(tradeSlot);
         itemLink = GetTradeTargetItemLink(tradeSlot);
-        itemID = GL:getItemIdFromLink(itemLink) or nil;
+        itemID = GL:getItemIDFromLink(itemLink) or nil;
 
         self.State.TheirItems[tradeSlot] = {
             name = name,
@@ -237,7 +254,7 @@ function TradeWindow:updateState()
         -- The enchantment return value is only available for slot TRADE_ENCHANT_SLOT (the "locked slot"), not the regular trade slots above
         local name, texture, quantity, quality, isUsable, enchantment = GetTradeTargetItemInfo(TRADE_ENCHANT_SLOT);
         local itemLink = GetTradeTargetItemLink(TRADE_ENCHANT_SLOT);
-        local itemID = GL:getItemIdFromLink(itemLink) or nil;
+        local itemID = GL:getItemIDFromLink(itemLink) or nil;
 
         self.State.EnchantedByMe = {
             name = name,
@@ -254,7 +271,7 @@ function TradeWindow:updateState()
         --- Note 2: isUsable is actually canLoseTransmog, but since we don't strictly need either it doesn't matter
         name, texture, quantity, quality, enchantment, isUsable  = GetTradePlayerItemInfo(TRADE_ENCHANT_SLOT);
         itemLink = GetTradePlayerItemLink(TRADE_ENCHANT_SLOT);
-        itemID = GL:getItemIdFromLink(itemLink) or nil;
+        itemID = GL:getItemIDFromLink(itemLink) or nil;
 
         self.State.EnchantedByThem = {
             name = name,
@@ -309,6 +326,7 @@ function TradeWindow:processItemsToAdd()
     -- Make sure we don't use items if the trade window is not opened
     -- The last thing we want to do is equip an item or use a consumable by mistake!
     if (not TradeFrame:IsShown()) then
+        GL:debug("Cancel TradeWindow.AddItemsTimer");
         GL.Ace:CancelTimer(self.AddItemsTimer);
         self.AddItemsTimer = nil;
 

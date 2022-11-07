@@ -123,4 +123,56 @@ function Interface:storePosition(Item, identifier)
     Settings:set(identifier .. ".offsetY", offsetY);
 end
 
+--- Restore an element's position from the settings table
+---
+---@param Item table
+---@param identifier string The name under which the settings should be stored
+---@return void
+function Interface:restorePosition(Item, identifier)
+    Item:SetPoint(self:getPosition(identifier));
+end
+
+--- Get an element's stored dimensions
+---
+---@param identifier string
+---@return number|nil, number|nil
+function Interface:getDimensions(identifier)
+    identifier = string.format("UI.%s.Dimensions", identifier);
+
+    local Dimensions = Settings:get(identifier, {});
+    return Dimensions.width, Dimensions.height;
+end
+
+--- Store an element's position in the settings table
+---
+---@param Item table
+---@param identifier string The name under which the settings should be stored
+---@return void
+function Interface:storeDimensions(Item, identifier)
+    identifier = string.format("UI.%s.Dimensions", identifier);
+
+    if (Item.frame) then
+        Settings:set(identifier .. ".width", Item.frame:GetWidth());
+        Settings:set(identifier .. ".height", Item.frame:GetHeight());
+        return;
+    end
+
+    Settings:set(identifier .. ".width", Item:GetWidth());
+    Settings:set(identifier .. ".height", Item:GetHeight());
+end
+
+--- Restore an element's position from the settings table
+---
+---@param Item table
+---@param identifier string The name under which the settings should be stored
+---@param defaultWidth number The default width of no width is stored yet
+---@param defaultHeight number The default height of no height is stored yet
+---@return void
+function Interface:restoreDimensions(Item, identifier, defaultWidth, defaultHeight)
+    local width, height = self:getDimensions(identifier);
+
+    Item:SetWidth(width or defaultWidth);
+    Item:SetHeight(height or defaultHeight);
+end
+
 GL:debug("Interface/Interface.lua");

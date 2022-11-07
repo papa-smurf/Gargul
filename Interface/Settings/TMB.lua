@@ -114,14 +114,14 @@ function TMB:draw(Parent)
             setting = "TMB.announceInfoWhenRolling",
         },
         {
-            label = "Gargul award reminder",
-            description = "When assigning loot without using Gargul a reminder is shown to use Gargul instead in order to make exporting loot possible",
-            setting = "TMB.showLootAssignmentReminder",
-        },
-        {
             label = "Show everything when solo",
             description = "Make sure that you see all TMB/DFT data when not in a group, perfect for testing!",
             setting = "TMB.showEntriesWhenSolo",
+        },
+        {
+            label = "Give OS items a lower priority",
+            description = "Items marked as OS on wishlist or priolist will put at the bottom of the list",
+            setting = "TMB.OSHasLowerPriority",
         },
     };
 
