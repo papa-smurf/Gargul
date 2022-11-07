@@ -147,29 +147,6 @@ function Bidder:draw(time, itemLink, itemIcon)
     self:refresh();
 
     Window:Show();
-
-    -- YOU should be GREEN, other player should be RED!
-
-    --[[
-    ---------- Countdown Bar ----------
-         TOP BIDDER: YOU WITH 5000g
-            NEW BID [________]
-        <BID>   <AUTO BID>   <PASS>
-    ]]
-
-    --[[
-    ---------- Countdown Bar ----------
-      TOP BIDDER: PLAYER X WITH 5000g
-        NEW BID [MINIMUM INCREMENT]
-        <BID>   <AUTO BID>   <PASS>
-    ]]
-
-    --[[
-    ---------- Countdown Bar ----------
-         TOP BIDDER: YOU WITH 5000g
-            NEW BID [________]
-      <BID>   <STOP AUTO BID>   <PASS>
-    ]]
 end
 
 function Bidder:refresh()

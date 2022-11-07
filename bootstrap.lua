@@ -119,6 +119,7 @@ function GL:_init()
     self:polyFill();
 
     self.Comm:_init();
+    self.Interface.Alerts:_init();
     self.User:_init();
     self.AwardedLoot:_init();
     self.SoftRes:_init();
