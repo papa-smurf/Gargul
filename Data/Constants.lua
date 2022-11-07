@@ -71,7 +71,7 @@ GL.Data.Constants = {
     --[[
         GLOBAL
     ]]
-    addonHexColor =  "967fd2",
+    addonHexColor =  "967FD2",
 
     success = 0,
     failure = 1,
@@ -258,6 +258,9 @@ GL.Data.Constants = {
         warlock = 8,
         warrior = 9,
         ["death knight"] = 10,
+        ["demon hunter"] = 11,
+        evoker = 12,
+        monk = 13,
     },
 
     ClassHexColors = {
@@ -271,6 +274,9 @@ GL.Data.Constants = {
         warlock = "9482C9",
         warrior = "C79C6E",
         ["death knight"] = "C41E3A",
+        ["demon hunter"] = "A330C9",
+        evoker = "33937F",
+        monk = "00FF98",
     },
 
     classRGBAColors = {
@@ -283,7 +289,10 @@ GL.Data.Constants = {
         shaman = {r = 0, g = .44, b = .87, a = 1},
         warlock = {r = .57647, g = .5098, b = .788235, a = 1},
         warrior = {r = .77647, g = .607843, b = .42745, a = 1},
-        ["death knight"] = {r = .77, g = .12, b = .23},
+        ["death knight"] = {r = .77, g = .12, b = .23, a = 1},
+        ["demon hunter"] = {r = 0.64, g = 0.19, b = 0.79, a = 1},
+        evoker = {r = 0.20, g = 0.58, b = 0.50, a = 1},
+        monk = {r = 0.00, g = 1.00, b= 0.60, a = 1},
     },
 
     classRGBColors = {
@@ -296,7 +305,10 @@ GL.Data.Constants = {
         shaman = {0, .44, .87,},
         warlock = {.57647, .5098, .788235,},
         warrior = {.77647, .607843, .42745,},
-        ["death knight"] = {.77, .12, .23},
+        ["death knight"] = {r = .77, g = .12, b = .23},
+        ["demon hunter"] = {r = 0.64, g = 0.19, b = 0.79},
+        evoker = {r = 0.20, g = 0.58, b = 0.50},
+        monk = {r = 0.00, g = 1.00, b= 0.60},
     },
 
     Devs = {
