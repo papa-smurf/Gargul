@@ -313,7 +313,7 @@ function Overview:drawDetails(sessionIdentifier)
             local saleWasDeleted = price <= 0;
 
             -- This entry should always exist, if it doesn't something went wrong (badly)
-            local ItemEntry = DB.Cache.ItemsById[tostring(Auction.itemID)];
+            local ItemEntry = DB.Cache.ItemsByID[tostring(Auction.itemID)];
 
             if (GL:empty(ItemEntry)) then
                 break;
