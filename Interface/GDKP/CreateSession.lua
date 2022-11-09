@@ -40,10 +40,12 @@ function CreateSession:draw()
     SessionNameInput:SetLabel("Session name");
     Window:AddChild(SessionNameInput);
 
+    local thereIsAnActiveGDKPSession = GL.GDKP:getActiveSession() ~= false;
     local SwitchCheckbox = AceGUI:Create("CheckBox");
     SwitchCheckbox:SetValue(false);
     SwitchCheckbox:SetLabel("Switch to this session");
     SwitchCheckbox:SetFullWidth(true);
+    SwitchCheckbox:SetValue(not thereIsAnActiveGDKPSession);
     SwitchCheckbox.text:SetTextColor(.99, .85, .06);
     SwitchCheckbox.text:SetFontObject(_G["GameFontHighlightSmall"]);
     Window:AddChild(SwitchCheckbox);
