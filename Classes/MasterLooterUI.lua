@@ -67,7 +67,7 @@ function MasterLooterUI:draw(itemLink)
     Window:EnableResize(false);
     Window.frame:SetFrameStrata("HIGH");
     Window.statustext:GetParent():Hide(); -- Hide the statustext bar
-    Window:SetCallback("OnClose", function(widget)
+    Window:SetCallback("OnClose", function()
         self:close();
     end);
     GL.Interface:setItem(self, "Window", Window);
