@@ -193,7 +193,17 @@ function GDKP:restoreAuction(sessionIdentifier, auctionIdentifier)
     return true;
 end
 
+--- Delete, or soft-delete a session depending on whether or not it has auctions attached to it
+---
+---@param session string
+---@return void
 function GDKP:deleteSession(session)
+    GL:debug("GDKP:deleteSession");
+
+    if (GL:empty(session)) then
+        return;
+    end
+
     local Session = DB:get("GDKP.Ledger." .. session);
 
     if (not Session) then
@@ -201,8 +211,9 @@ function GDKP:deleteSession(session)
     end
 
     -- There are no auctions attached to this session, we can safely remove it!
-    if (GL:empty(Session.Ledger)) then
-        return DB:set("GDKP.Ledger." .. session, nil);
+    if (GL:empty(Session.Auctions)) then
+        DB:set("GDKP.Ledger." .. session, nil);
+        return;
     end
 
     -- There are auctions, mark the Session as deleted but keep it for 24h still
