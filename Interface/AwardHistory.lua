@@ -154,20 +154,22 @@ function AwardHistory:draw()
                 -- Show player details on hover
                 local ItemsWonByRollerInTheLastFiveHours;
                 ItemRow.frame:SetScript("OnEnter", function()
+                    local linesAdded = false;
+                    GameTooltip:ClearLines();
+                    GameTooltip:SetOwner(ItemRow.frame, "ANCHOR_RIGHT");
+
                     if (not ItemsWonByRollerInTheLastFiveHours) then
                         ItemsWonByRollerInTheLastFiveHours = GL.AwardedLoot:byWinner(Award.awardedTo, fiveHoursAgo);
                     end
 
                     if (not GL:empty(ItemsWonByRollerInTheLastFiveHours)) then
+                        linesAdded = true;
                         local header = string.format("Items won by %s:", Award.awardedTo);
                         if (itemWasDisenchanted) then
                             header = "Disenchanted items:"
                         end
 
-                        GameTooltip:ClearLines();
-                        GameTooltip:SetOwner(ItemRow.frame, "ANCHOR_RIGHT");
                         GameTooltip:AddLine(header);
-                        GameTooltip:AddLine(" ");
 
                         for _, Entry in pairs(ItemsWonByRollerInTheLastFiveHours) do
                             local receivedString = " (received)";
@@ -194,7 +196,47 @@ function AwardHistory:draw()
 
                             GameTooltip:AddLine(line);
                         end
+                    end
 
+                    if (not GL:empty(Award.Rolls)) then
+                        local rollsPerPlayer = {};
+
+                        -- Sort the PrioListEntries based on prio (lowest to highest)
+                        table.sort(Award.Rolls, function (a, b)
+                            if (a.time and b.time) then
+                                return a.time < b.time;
+                            end
+
+                            return false;
+                        end);
+
+                        if (linesAdded) then
+                            GameTooltip:AddLine(" ");
+                        end
+
+                        GameTooltip:AddLine("Rolls");
+                        linesAdded = true;
+
+                        for _, Roll in pairs (Award.Rolls or {}) do
+                            local rollCount = "";
+                            if (not rollsPerPlayer[Roll.player]) then
+                                rollsPerPlayer[Roll.player] = 1;
+                            else
+                                rollsPerPlayer[Roll.player] = rollsPerPlayer[Roll.player] + 1;
+                                rollCount = string.format("[%s]", rollsPerPlayer[Roll.player]);
+                            end
+
+                            GameTooltip:AddLine(string.format("|c00%s%s|r: %s%s (%s)",
+                                GL:classHexColor(Roll.class),
+                                Roll.player,
+                                Roll.amount,
+                                rollCount,
+                                Roll.classification
+                            ));
+                        end
+                    end
+
+                    if (linesAdded) then
                         GameTooltip:Show();
                     end
                 end);
