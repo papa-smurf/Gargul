@@ -60,8 +60,7 @@ function Auctioneer:draw(itemLink)
     end);
     self:show(Window);
     GL.Interface:setItem(self, "Window", Window);
-
-    Window:SetPoint(GL.Interface:getPosition("Auctioneer"));
+    GL.Interface:restorePosition(Window, "Auctioneer");
 
     --[[
         SETTINGS BUTTON
@@ -297,13 +296,13 @@ function Auctioneer:draw(itemLink)
                 bid
             ),
             OnYes = function ()
-                GL.GDKP:createAuction(GL:getItemIdFromLink(GL.GDKP.CurrentAuction.itemLink), bid, winner);
+                GL.GDKP:createAuction(GL:getItemIDFromLink(GL.GDKP.CurrentAuction.itemLink), bid, winner);
 
                 self:reset(); -- Reset the UI
                 GL.GDKP:resetAuction(); -- Reset the actual auction object
                 self:closeReopenAuctioneerButton();
 
-                if (GL.Settings:get("GDKP.closeAuctioneerOnAward", true)) then
+                if (GL.Settings:get("GDKP.closeAuctioneerOnAward")) then
                     self:close();
                 end
 
@@ -367,18 +366,18 @@ function Auctioneer:draw(itemLink)
 
     local CloseOnStart = AceGUI:Create("CheckBox");
     CloseOnStart:SetLabel("Close on start");
-    CloseOnStart:SetValue(GL.Settings:get("GDKP.closeAuctioneerOnStart", true));
+    CloseOnStart:SetValue(GL.Settings:get("GDKP.closeAuctioneerOnStart"));
     CloseOnStart:SetCallback("OnValueChanged", function (widget)
-        GL.Settings:set("Auctioneer.closeOnStart", GL:toboolean(widget:GetValue()));
+        GL.Settings:set("GDKP.closeAuctioneerOnStart", GL:toboolean(widget:GetValue()));
     end);
     CloseOnStart:SetWidth(110);
     FourthRow:AddChild(CloseOnStart);
 
     local CloseOnAward = AceGUI:Create("CheckBox");
     CloseOnAward:SetLabel("Close on award");
-    CloseOnAward:SetValue(GL.Settings:get("GDKP.closeAuctioneerOnAward", true));
+    CloseOnAward:SetValue(GL.Settings:get("GDKP.closeAuctioneerOnAward"));
     CloseOnAward:SetCallback("OnValueChanged", function (widget)
-        GL.Settings:set("UI.Auctioneer.closeOnAward", GL:toboolean(widget:GetValue()));
+        GL.Settings:set("GDKP.closeAuctioneerOnAward", GL:toboolean(widget:GetValue()));
     end);
     CloseOnAward:SetWidth(116);
     FourthRow:AddChild(CloseOnAward);
@@ -391,6 +390,8 @@ function Auctioneer:draw(itemLink)
 end
 
 function Auctioneer:show(Window)
+    GL:debug("Auctioneer:show");
+
     local ActiveSession = GL.GDKP:getActiveSession();
 
     if (not ActiveSession) then
