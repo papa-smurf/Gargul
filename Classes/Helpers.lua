@@ -110,6 +110,22 @@ function GL:warning(...)
     GL:coloredMessage("F7922E", ...);
 end
 
+--- Print a debug message (bright red)
+--- We use a separate method for this to make searching for, and cleaning up debug dumps, easier
+---
+---@return void
+function GL:xd(mixed)
+    mixed = mixed or " ";
+    local success, encoded = pcall(function () return GL.JSON:encode(mixed); end);
+
+    if (not success) then
+        GL:error("Unable to encode payload provided in GL:dump");
+        return;
+    end
+
+    print(string.format("\n================ |c00967FD2%s|r\n|c00FF0000%s|r\n", date('%H:%M:%S'), encoded));
+end
+
 --- Print a error message (red)
 ---
 ---@return void
