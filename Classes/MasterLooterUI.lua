@@ -533,6 +533,14 @@ function MasterLooterUI:drawReopenMasterLooterUIButton()
     ButtonHighlight:SetBlendMode("ADD");
     Button.ButtonHighlight = ButtonHighlight;
 
+    local RollCountLabel = CreateFrame("Frame","ReopenMasterLooterRollCount", Button);
+    RollCountLabel:SetSize(22, 22);
+    RollCountLabel:SetPoint("BOTTOMLEFT", Button, "BOTTOMLEFT", 2, 2);
+
+    local RollCountText = RollCountLabel:CreateFontString(nil, "OVERLAY", GameFontNormal);
+    RollCountText:SetFont(STANDARD_TEXT_FONT, 10, "OUTLINE");
+    RollCountText:SetPoint("BOTTOMLEFT", RollCountLabel, "BOTTOMLEFT");
+
     Button:SetScript("OnMouseUp", function (_, button)
         if (button == "LeftButton") then
             self:draw();
@@ -548,6 +556,107 @@ function MasterLooterUI:drawReopenMasterLooterUIButton()
     Button:SetScript("OnLeave", function()
         GameTooltip:Hide();
     end);
+
+    --[[
+        PAUSE / PLAY BUTTON
+    ]]
+
+    local PlayStopButton = GL.UI:createFrame("Button", "ReopenMasterLooterPlayStopButton" .. GL:uuid(), Button, "UIPanelButtonTemplate");
+    PlayStopButton:SetSize(20, 20);
+    PlayStopButton:SetPoint("TOPLEFT", Button, "TOPRIGHT", 2, -1);
+
+    local PlayStopButtonHighlight = PlayStopButton:CreateTexture();
+    PlayStopButtonHighlight:SetTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\play");
+    PlayStopButtonHighlight:SetTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\stop");
+    PlayStopButtonHighlight:SetPoint("CENTER", PlayStopButton, "CENTER", 0, 0);
+    PlayStopButtonHighlight:SetSize(20, 20);
+
+    PlayStopButton:SetNormalTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\play");
+    PlayStopButton:SetNormalTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\stop");
+    PlayStopButton:SetHighlightTexture(PlayStopButtonHighlight);
+
+    PlayStopButton:SetScript("OnEnter", function()
+        GameTooltip:SetOwner(PlayStopButton, "ANCHOR_TOP");
+        GameTooltip:SetText("Start/Stop");
+        GameTooltip:Show();
+    end);
+
+    PlayStopButton:SetScript("OnLeave", function()
+        GameTooltip:Hide();
+    end);
+
+    PlayStopButton:SetScript("OnClick", function()
+        local StartButton = GL.Interface:getItem(self, "Button.Start");
+        local StopButton = GL.Interface:getItem(self, "Button.Stop");
+
+        if (GL.RollOff.inProgress) then
+            StopButton.frame:Click();
+        else
+            StartButton.frame:Click();
+        end
+    end);
+
+    --[[
+        DISENCHANT BUTTON
+    ]]
+
+    local DisenchantButton = GL.UI:createFrame("Button", "ReopenMasterLooterDisenchantButton" .. GL:uuid(), Button, "UIPanelButtonTemplate");
+    DisenchantButton:SetSize(20, 20);
+    DisenchantButton:SetPoint("TOPLEFT", PlayStopButton, "BOTTOMLEFT", 0, -2);
+    DisenchantButton:SetMotionScriptsWhileDisabled(true); -- Make sure tooltip still shows even when button is disabled
+
+    local DisenchantButtonHighlight = DisenchantButton:CreateTexture();
+    DisenchantButtonHighlight:SetTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\disenchant");
+    DisenchantButtonHighlight:SetPoint("CENTER", DisenchantButton, "CENTER", 0, 0);
+    DisenchantButtonHighlight:SetSize(20, 20);
+
+    DisenchantButton:SetNormalTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\disenchant");
+    DisenchantButton:SetDisabledTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\disenchant-disabled");
+    DisenchantButton:SetHighlightTexture(DisenchantButtonHighlight);
+
+    DisenchantButton:SetScript("OnEnter", function()
+        GameTooltip:SetOwner(DisenchantButton, "ANCHOR_TOP");
+        GameTooltip:SetText("Disenchant");
+        GameTooltip:Show();
+    end);
+
+    DisenchantButton:SetScript("OnLeave", function()
+        GameTooltip:Hide();
+    end);
+
+    DisenchantButton:SetScript("OnClick", function()
+        local MLUIDisenchantButton = GL.Interface:getItem(self, "Button.Disenchant");
+
+        if (MLUIDisenchantButton) then
+            pcall(function ()
+                MLUIDisenchantButton.frame:Click();
+                self:closeReopenMasterLooterUIButton();
+            end);
+        end
+    end);
+
+    local refreshWidget = function()
+        RollCountText:SetText("rolls: " .. #GL.RollOff.CurrentRollOff.Rolls);
+
+        if (GL.RollOff.inProgress) then
+            DisenchantButton:Disable();
+
+            PlayStopButton:SetNormalTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\stop");
+            PlayStopButtonHighlight:SetTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\stop");
+        else
+            DisenchantButton:Enable();
+
+            PlayStopButton:SetNormalTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\play");
+            PlayStopButtonHighlight:SetTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\play");
+        end
+    end;
+    refreshWidget();
+
+    GL.Events:register({
+        { "MasterLooterUIRolloffRollAcceptedListener", "GL.ROLLOFF_ROLL_ACCEPTED" },
+        { "MasterLooterUIRolloffRollStartListener", "GL.ROLLOFF_STARTED" },
+        { "MasterLooterUIRolloffRollStartListener", "GL.ROLLOFF_STOPPED" },
+    }, refreshWidget);
 
     GL.Interface:setItem(self, "OpenMasterLooterButton", Button);
 end
