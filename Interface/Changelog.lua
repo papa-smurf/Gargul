@@ -16,6 +16,7 @@ GL.Interface.Changelog = {
             date = "November 9th, 2022",
             Changes = {
                 "Master looters! Closing the auction/rolloff window now presents you with a roll counter and two quick access buttons: one for stopping/starting the rolls and one for disenchanting the item",
+                "You can now also see all rolls on an awarded item, by opening the award history window and hovering your mouse over an entry",
             },
         },
         {
