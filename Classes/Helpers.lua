@@ -918,6 +918,7 @@ function GL:onTooltipSetItem(Callback, includeItemRefTooltip)
 
     includeItemRefTooltip = GL:toboolean(includeItemRefTooltip);
 
+    -- Support native GameToolTip
     if (TooltipDataProcessor) then
         TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Item, function (Tooltip)
             return Callback(Tooltip);
@@ -933,6 +934,9 @@ function GL:onTooltipSetItem(Callback, includeItemRefTooltip)
             end);
         end
     end
+
+    -- Support AceConfigDialog
+    LibStub("AceConfigDialog-3.0").tooltip:HookScript("OnTooltipSetItem", Callback);
 end
 
 --- In some very rare cases we need to manipulate the close button on AceGUI elements
