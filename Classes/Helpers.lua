@@ -110,6 +110,22 @@ function GL:warning(...)
     GL:coloredMessage("F7922E", ...);
 end
 
+--- Print a debug message (bright red)
+--- We use a separate method for this to make searching for, and cleaning up debug dumps, easier
+---
+---@return void
+function GL:xd(mixed)
+    mixed = mixed or " ";
+    local success, encoded = pcall(function () return GL.JSON:encode(mixed); end);
+
+    if (not success) then
+        GL:error("Unable to encode payload provided in GL:dump");
+        return;
+    end
+
+    print(string.format("\n================ |c00967FD2%s|r\n|c00FF0000%s|r\n", date('%H:%M:%S'), encoded));
+end
+
 --- Print a error message (red)
 ---
 ---@return void
@@ -902,6 +918,7 @@ function GL:onTooltipSetItem(Callback, includeItemRefTooltip)
 
     includeItemRefTooltip = GL:toboolean(includeItemRefTooltip);
 
+    -- Support native GameToolTip
     if (TooltipDataProcessor) then
         TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Item, function (Tooltip)
             return Callback(Tooltip);
@@ -917,6 +934,9 @@ function GL:onTooltipSetItem(Callback, includeItemRefTooltip)
             end);
         end
     end
+
+    -- Support AceConfigDialog
+    LibStub("AceConfigDialog-3.0").tooltip:HookScript("OnTooltipSetItem", Callback);
 end
 
 --- In some very rare cases we need to manipulate the close button on AceGUI elements
