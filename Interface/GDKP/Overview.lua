@@ -674,24 +674,25 @@ function Overview:drawSessionsTable(Parent)
             lowestPriorityTableItem = tableItem;
         end
 
-        local color = GL:classRGBAColor("priest");
+        local color = {r = 1, g = 1, b = 1};
         if (Session.deletedAt) then
             color = {r = .77, g = .12, b = .23};
+            title = title .. " (deleted)";
         end
 
         tinsert(TableData, {
             cols = {
                 {
                     value = title,
-                    color = GL:classRGBAColor("priest"),
+                    color = color,
                 },
                 {
                     value = checksum,
-                    color = GL:classRGBAColor("priest"),
+                    color = color,
                 },
                 {
                     value = priority,
-                    color = GL:classRGBAColor("priest"),
+                    color = color,
                 }
             },
         });
