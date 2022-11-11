@@ -56,6 +56,12 @@
     <Include file="Libs\AceTimer-3.0\AceTimer-3.0.xml" />
 
     <!--
+    Provides an API to register an options table with the config registry,
+    as well as associate it with a slash command.
+    -->
+    <Include file="Libs\AceConfig-3.0\AceConfig-3.0.xml" />
+
+    <!--
     lib-st provides a convenient way to create and display a scrolling table of data.
     Supply column info and your table data, and you're off!
 
