@@ -141,6 +141,15 @@ function GDKP:createSession(title)
     return Session;
 end
 
+--- Clear the currently active session
+---
+---@return void
+function GDKP:clearActiveSession()
+    GL:debug("GDKP:clearActiveSession");
+
+    DB.GDKP.activeSession = nil;
+end
+
 --- Restore the given auction
 ---
 ---@param sessionIdentifier string
@@ -208,6 +217,11 @@ function GDKP:deleteSession(session)
 
     if (not Session) then
         return;
+    end
+
+    -- This session is the currently active one, clear it
+    if (DB.GDKP.activeSession == session) then
+        self:clearActiveSession();
     end
 
     -- There are no auctions attached to this session, we can safely remove it!
