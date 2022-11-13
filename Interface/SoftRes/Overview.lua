@@ -50,7 +50,7 @@ function Overview:draw()
     Window:SetCallback("OnClose", function()
        self:close();
     end);
-    GL.Interface:setItem(self, "Window", Window);
+    GL.Interface:set(self, "Window", Window);
 
     Window:SetPoint(GL.Interface:getPosition("SoftReserveOverview"));
 
@@ -75,7 +75,7 @@ function Overview:draw()
         "Broadcast SoftRes Data",
         "To broadcast you need to be in a group and need master loot, assist or lead!"
     );
-    GL.Interface:setItem(self, "ShareButton", ShareButton);
+    GL.Interface:set(self, "ShareButton", ShareButton);
     ShareButton:Show();
 
     -- The user doesn't have sufficient permissions to broadcast the data
@@ -115,7 +115,7 @@ function Overview:draw()
     local HardReservesLabel = AceGUI:Create("InteractiveLabel");
     HardReservesLabel:SetText("         No hard-reserve info available");
     HardReservesLabel:SetFontObject(_G["GameFontNormalSmall"]);
-    GL.Interface:setItem(self, "HardReserves", HardReservesLabel);
+    GL.Interface:set(self, "HardReserves", HardReservesLabel);
     HardReserveFrame:AddChild(HardReservesLabel);
 
     --[[
@@ -134,7 +134,7 @@ function Overview:draw()
     SecondColumn:SetLayout("FILL")
     SecondColumn:SetWidth(300);
     SecondColumn:SetHeight(350);
-    GL.Interface:setItem(self, "SecondColumn", SecondColumn);
+    GL.Interface:set(self, "SecondColumn", SecondColumn);
     Window:AddChild(SecondColumn);
 
     -- This "Details" frame is necessary to
@@ -193,8 +193,8 @@ function Overview:draw()
         ItemLabel:SetText(" \n ");
 
         -- Add interface items to the Overview class so we can manipulate them later
-        GL.Interface:setItem(self, "Item" .. index, ItemIcon);
-        GL.Interface:setItem(self, "Item" .. index, ItemLabel);
+        GL.Interface:set(self, "Item" .. index, ItemIcon);
+        GL.Interface:set(self, "Item" .. index, ItemLabel);
     end
 
     --[[
@@ -249,8 +249,8 @@ function Overview:draw()
     self:drawCharacterTable(FirstColumn.frame);
 
     -- Add interface items to the Overview class so we can manipulate them later
-    GL.Interface:setItem(self, "Title", Title);
-    GL.Interface:setItem(self, "Note", Note);
+    GL.Interface:set(self, "Title", Title);
+    GL.Interface:set(self, "Note", Note);
 
     if (DB.SoftRes.MetaData.source == Constants.SoftReserveSources.weakaura) then
         -- Show a game tooltip that explains the question mark
@@ -288,7 +288,7 @@ end
 ---
 ---@return void
 function Overview:updateShareButton()
-    local ShareButton = GL.Interface:getItem(self, "Frame.ShareButton")
+    local ShareButton = GL.Interface:get(self, "Frame.ShareButton")
 
     GL.Ace:ScheduleTimer(function ()
         -- The user doesn't have sufficient permissions to broadcast the data
@@ -314,8 +314,8 @@ function Overview:refreshDetailsFrame()
         return;
     end
 
-    local Title = GL.Interface:getItem(self, "Label.Title");
-    local Note = GL.Interface:getItem(self, "Label.Note");
+    local Title = GL.Interface:get(self, "Label.Title");
+    local Note = GL.Interface:get(self, "Label.Note");
     local titleText = GL:capitalize(self.selectedCharacter);
 
     local SoftResDetails = SoftRes:getDetailsForPlayer(GL:stripRealm(self.selectedCharacter));
@@ -360,8 +360,8 @@ function Overview:refreshDetailsFrame()
             return false;
         end
 
-        local ItemIcon = GL.Interface:getItem(self, "Icon.Item" .. index);
-        local ItemLabel = GL.Interface:getItem(self, "Label.Item" .. index);
+        local ItemIcon = GL.Interface:get(self, "Icon.Item" .. index);
+        local ItemLabel = GL.Interface:get(self, "Label.Item" .. index);
 
         if (ItemIcon) then
             ItemIcon:SetImage(Item.icon);
@@ -393,8 +393,8 @@ end
 function Overview:clearDetailsFrame()
     GL:debug("SoftRes:clearDetailsFrame");
 
-    local Title = GL.Interface:getItem(self, "Label.Title");
-    local Note = GL.Interface:getItem(self, "Label.Note");
+    local Title = GL.Interface:get(self, "Label.Title");
+    local Note = GL.Interface:get(self, "Label.Note");
 
     if (Title) then
         Title:SetColor(1, 1, 1);
@@ -407,8 +407,8 @@ function Overview:clearDetailsFrame()
     end
 
     for index = 1, SoftRes.maxNumberOfSoftReservedItems do
-        local ItemIcon = GL.Interface:getItem(self, "Icon.Item" .. index);
-        local ItemLabel = GL.Interface:getItem(self, "Label.Item" .. index);
+        local ItemIcon = GL.Interface:get(self, "Icon.Item" .. index);
+        local ItemLabel = GL.Interface:get(self, "Label.Item" .. index);
 
         if (ItemIcon) then
             ItemIcon:SetImage("");
@@ -422,7 +422,7 @@ function Overview:clearDetailsFrame()
     end
 
     -- This table only exists if the player clicked on the hard-reserve info label
-    local HardReservesTable = GL.Interface:getItem(self, "Table.HardReserves");
+    local HardReservesTable = GL.Interface:get(self, "Table.HardReserves");
     if (HardReservesTable) then
         HardReservesTable:SetData({}, true);
         HardReservesTable:Hide();
@@ -431,7 +431,7 @@ end
 
 function Overview:showHardReserves()
     self:clearDetailsFrame();
-    self:drawHardReservesTable(GL.Interface:getItem(self, "Frame.SecondColumn").frame);
+    self:drawHardReservesTable(GL.Interface:get(self, "Frame.SecondColumn").frame);
 end
 
 function Overview:drawCharacterTable(Parent)
@@ -581,7 +581,7 @@ function Overview:drawCharacterTable(Parent)
     end
 
     Table:SetData(TableData);
-    GL.Interface:setItem(self, "Characters", Table);
+    GL.Interface:set(self, "Characters", Table);
 end
 
 ---@param Parent table
@@ -610,7 +610,7 @@ function Overview:drawHardReservesTable(Parent)
 
     Table:RegisterEvents({
         OnEnter = function (rowFrame, _, data, _, _, realrow)
-            local HardReservesLabel = GL.Interface:getItem(self, "Label.HardReserves");
+            local HardReservesLabel = GL.Interface:get(self, "Label.HardReserves");
 
             -- Make sure that all data is available, better safe than lua error
             if (not HardReservesLabel
@@ -672,14 +672,14 @@ function Overview:drawHardReservesTable(Parent)
     end
 
     Table:SetData(TableData);
-    GL.Interface:setItem(self, "HardReserves", Table);
+    GL.Interface:set(self, "HardReserves", Table);
 end
 
 ---@return void
 function Overview:close()
     GL:debug("Overview:close");
 
-    local Window = GL.Interface:getItem(self, "Window");
+    local Window = GL.Interface:get(self, "Window");
 
     if (not self.isVisible
         or not Window
@@ -696,13 +696,13 @@ function Overview:close()
     AceGUI:Release(Window);
     self.isVisible = false;
 
-    local ShareButton = GL.Interface:getItem(self, "Frame.ShareButton");
+    local ShareButton = GL.Interface:get(self, "Frame.ShareButton");
     if (ShareButton) then
         ShareButton:Hide();
     end
 
     -- Clean up the Character table separately
-    local CharacterTable = GL.Interface:getItem(self, "Table.Characters");
+    local CharacterTable = GL.Interface:get(self, "Table.Characters");
     if (CharacterTable) then
         CharacterTable:SetData({}, true);
         CharacterTable:Hide();

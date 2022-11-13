@@ -30,7 +30,7 @@ function Importer:draw(showDFT)
     Window:SetCallback("OnClose", function()
         self:close();
     end);
-    GL.Interface:setItem(self, "Window", Window);
+    GL.Interface:set(self, "Window", Window);
 
     Window:SetPoint(GL.Interface:getPosition("TMBImport"));
 
@@ -112,7 +112,7 @@ function Importer:draw(showDFT)
     StatusMessageLabel:SetFullWidth(true);
     StatusMessageLabel:SetColor(1, 0, 0);
     StatusMessageFrame:AddChild(StatusMessageLabel);
-    GL.Interface:setItem(self, "StatusMessage", StatusMessageLabel);
+    GL.Interface:set(self, "StatusMessage", StatusMessageLabel);
 
     -- Import button
     local ImportButton = AceGUI:Create("Button");
@@ -128,7 +128,7 @@ end
 function Importer:close()
     GL:debug("Importer:close");
 
-    local Window = GL.Interface:getItem(self, "Window");
+    local Window = GL.Interface:get(self, "Window");
 
     if (not self.isVisible
         or not Window
