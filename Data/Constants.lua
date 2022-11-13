@@ -5,6 +5,8 @@ local _, GL = ...;
 GL.Data = GL.Data or {};
 
 GL.Data.Constants = {
+    defaultFrameTitle = string.format("Gargul |c00967FD2v%s|r", GL.version),
+
     AccentedCharacterCaseMap = {
         ["á"] = "Á",
         ["à"] = "À",

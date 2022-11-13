@@ -41,18 +41,9 @@ function Overview:draw()
 
     -- Create a container/parent frame
     local Window = AceGUI:Create("Frame");
-    Window:SetTitle("Gargul v" .. GL.version);
-    Window:SetLayout("Flow");
-    Window:SetWidth(600);
-    Window:SetHeight(470);
+    GL.Interface:AceGUIDefaults(self, Window, "SoftReserveOverview", 600, 470);
     Window:EnableResize(false);
-    Window.statustext:GetParent():Show(); -- Explicitely show the statustext bar
-    Window:SetCallback("OnClose", function()
-       self:close();
-    end);
-    GL.Interface:setItem(self, "Window", Window);
-
-    Window:SetPoint(GL.Interface:getPosition("SoftReserveOverview"));
+    GL.Interface:set(self, "Window", Window);
 
     Window:SetStatusText(string.format(
         "Imported on |c00a79eff%s|r at |c00a79eff%s|r",
@@ -67,16 +58,13 @@ function Overview:draw()
     --[[
         SHARE BUTTON
     ]]
-    local ShareButton = GL.UI:createShareButton(
-        Window.frame,
-        function ()
-            GL.Interface.Dialogs.PopupDialog:open("BROADCAST_SOFTRES_CONFIRMATION");
-        end,
-        "Broadcast SoftRes Data",
-        "To broadcast you need to be in a group and need master loot, assist or lead!"
-    );
-    GL.Interface:setItem(self, "ShareButton", ShareButton);
-    ShareButton:Show();
+    local ShareButton = GL.Interface:createShareButton(Window, {
+        onClick = function() GL.Interface.Dialogs.PopupDialog:open("BROADCAST_SOFTRES_CONFIRMATION"); end,
+        tooltip = "Broadcast SoftRes Data",
+        disabledTooltip = "To broadcast you need to be in a group and need master loot, assist or lead!",
+        position = "TOPRIGHT",
+    });
+    GL.Interface:set(self, "ShareButton", ShareButton);
 
     -- The user doesn't have sufficient permissions to broadcast the data
     if (not GL.SoftRes:userIsAllowedToBroadcast()) then
@@ -672,37 +660,26 @@ function Overview:drawHardReservesTable(Parent)
     end
 
     Table:SetData(TableData);
-    GL.Interface:setItem(self, "HardReserves", Table);
+    GL.Interface:set(self, "HardReserves", Table);
 end
 
 ---@return void
-function Overview:close()
+function Overview:close(Window)
     GL:debug("Overview:close");
 
-    local Window = GL.Interface:getItem(self, "Window");
-
-    if (not self.isVisible
-        or not Window
-    ) then
-        return;
-    end
-
     GL.Events:unregister("SoftResShareButtonRosterUpdatedListener");
-
-    -- Store the frame's last position for future play sessions
-    GL.Interface:storePosition(Window, "SoftReserveOverview");
 
     -- Clear the frame and its widgets
     AceGUI:Release(Window);
     self.isVisible = false;
 
-    local ShareButton = GL.Interface:getItem(self, "Frame.ShareButton");
+    local ShareButton = GL.Interface:get(self, "Frame.ShareButton");
     if (ShareButton) then
         ShareButton:Hide();
     end
 
     -- Clean up the Character table separately
-    local CharacterTable = GL.Interface:getItem(self, "Table.Characters");
+    local CharacterTable = GL.Interface:get(self, "Table.Characters");
     if (CharacterTable) then
         CharacterTable:SetData({}, true);
         CharacterTable:Hide();

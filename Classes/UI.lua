@@ -55,27 +55,75 @@ function UI:createSettingsButton(ParentFrame, settingsSection, width, height, om
     return Cogwheel;
 end
 
-function UI:createShareButton(ParentFrame, onClick, tooltipText, disabledTooltipText, omitPosition)
-    omitPosition = GL:toboolean(omitPosition);
-    local ShareButton = GL.UI:createFrame("Button", "ShareButton" .. GL:uuid(), ParentFrame, "UIPanelButtonTemplate");
-    ShareButton:Show();
-    ShareButton:SetSize(24, 24);
+---@param Parent Frame
+---@param Details table<string,any>
+function UI:createShareButton(Parent, Details)
+    GL:debug("UI:createShareButton");
 
-    if (not omitPosition) then
-        ShareButton:SetPoint("TOPRIGHT", ParentFrame, "TOPRIGHT", -20, -20);
+    -- Invalid Parent provided
+    if (not Parent
+        or type(Parent) ~= "table"
+        or (not Parent.Hide
+            and not Parent.frame)
+    ) then
+        return;
     end
 
-    ShareButton:SetMotionScriptsWhileDisabled(true); -- Make sure tooltip still shows even when button is disabled
+    Details = Details or {};
+    local onClick = Details.onClick or function() end;
+    local alwaysFireOnClick = Details.alwaysFireOnClick or false;
+    local tooltipText = Details.tooltipText or "";
+    local disabledTooltipText = Details.disabledTooltipText or "";
+    local position = Details.position or "TOPRIGHT";
+    local x = Details.x;
+    local y = Details.y;
+    local width = Details.width or 24;
+    local height = Details.height or 24;
+    local update = Details.update or nil;
+    local updateOn = Details.updateOn or {};
+    local fireUpdateOnCreation = Details.updateOnCreate;
+
+    if (fireUpdateOnCreation == nil) then
+        fireUpdateOnCreation = true;
+    end
+
+    if (type(updateOn) ~= "table") then
+        updateOn = { updateOn };
+    end
+
+    -- Check if Parent is a AceGUI element
+    if (Parent.frame) then
+        Parent = Parent.frame;
+    end
+
+    local name = "ShareButton" .. GL:uuid();
+    local ShareButton = self:createFrame("Button", name, Parent, "UIPanelButtonTemplate");
+    ShareButton:SetSize(width, height);
+
+    if (position == "TOPRIGHT") then
+        ShareButton:SetPoint("TOPRIGHT", Parent, "TOPRIGHT", x or -20, y or -20);
+    elseif (position == "TOPCENTER") then
+        ShareButton:SetPoint("TOP", Parent, "TOP", x or 0, y or -7);
+        ShareButton:SetPoint("CENTER", Parent, "CENTER");
+    else
+        ShareButton:SetPoint("TOPRIGHT", Parent, "TOPRIGHT", x or -20, y or -20);
+    end
+
+    -- Make sure the tooltip still shows even when the button is disabled
+    if (disabledTooltipText) then
+        ShareButton:SetMotionScriptsWhileDisabled(true);
+    end
 
     local HighlightTexture = ShareButton:CreateTexture();
     HighlightTexture:SetTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\share-highlighted");
     HighlightTexture:SetPoint("CENTER", ShareButton, "CENTER", 0, 0);
-    HighlightTexture:SetSize(24, 24);
+    HighlightTexture:SetSize(width, height);
 
     ShareButton:SetNormalTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\share");
     ShareButton:SetHighlightTexture(HighlightTexture);
     ShareButton:SetDisabledTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\share-disabled");
 
+    -- Show the tooltip on hover
     ShareButton:SetScript("OnEnter", function()
         local textToShow = tooltipText;
 
@@ -95,14 +143,30 @@ function UI:createShareButton(ParentFrame, onClick, tooltipText, disabledTooltip
     end);
 
     if (type(onClick) == "function") then
-        if (ShareButton:IsEnabled()) then
-            ShareButton:SetScript("OnClick", function(_, button)
-                if (button == 'LeftButton') then
-                    onClick();
-                end
-            end);
+        ShareButton:SetScript("OnClick", function(_, button)
+            if (ShareButton:IsEnabled() or alwaysFireOnClick) then
+                return;
+            end
+
+            if (button == 'LeftButton') then
+                onClick();
+            end
+        end);
+    end
+
+    if (type(update) == "function") then
+        ShareButton.update = update;
+
+        for _, event in pairs(updateOn) do
+            GL.Events:register(name .. event .. "Listener", event, function () ShareButton:update(); end);
+        end
+
+        if (fireUpdateOnCreation) then
+            ShareButton:update();
         end
     end
+
+    ShareButton:Show();
 
     return ShareButton;
 end

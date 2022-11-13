@@ -77,14 +77,12 @@ function Overview:draw()
     --[[
         SHARE BUTTON
     ]]
-    local ShareButton = GL.UI:createShareButton(
-        Window.frame,
-        function ()
-            GL.Interface.Dialogs.PopupDialog:open("BROADCAST_BOOSTEDROLLS_CONFIRMATION");
-        end,
-        "Broadcast Data",
-        "To broadcast you need to be in a group and need master loot, assist or lead!"
-    );
+    local ShareButton = GL.Interface:createShareButton(Window, {
+        onClick = function() GL.Interface.Dialogs.PopupDialog:open("BROADCAST_BOOSTEDROLLS_CONFIRMATION"); end,
+        tooltip = "Broadcast Data",
+        disabledTooltip = "To broadcast you need to be in a group and need master loot, assist or lead!",
+        position = "TOPRIGHT",
+    });
     self.ShareButton = ShareButton;
     ShareButton:Show();
 
