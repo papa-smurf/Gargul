@@ -3,6 +3,7 @@ local _, GL = ...;
 
 ---@class Interface
 GL.Interface = GL.Interface or {
+    _resizeBoundsMethod = nil,
     typeDictionary = {
         InteractiveLabel = "Label",
         SimpleGroup = "Frame",
@@ -12,6 +13,28 @@ GL.Interface = GL.Interface or {
 
 local Settings = GL.Settings; ---@type Settings
 local Interface = GL.Interface; ---@type Interface
+
+--- Set resize bounds of given element
+---
+---@param Element Frame
+---@return any
+function Interface:resizeBounds(Element, ...)
+    GL:debug("Interface:resizeBounds");
+
+    if (not self._resizeBoundsMethod) then
+        if (GL.EventFrame.SetResizeBounds) then
+            self._resizeBoundsMethod = "SetResizeBounds";
+        else
+            self._resizeBoundsMethod = "SetMinResize";
+        end
+    end
+
+    if (Element.frame) then
+        return Element.frame[self._resizeBoundsMethod](Element.frame, ...);
+    end
+
+    return Element[self._resizeBoundsMethod](Element, ...);
+end
 
 --- Provide AceGUI Frame with default settings
 ---
@@ -256,6 +279,139 @@ function Interface:restoreDimensions(Item, identifier, defaultWidth, defaultHeig
     end
 end
 
+--- Create a button
+---
+---@param Parent Frame
+---@param Details table<string,any>
+--- Supported Details keys:
+---     onClick: function that fires on click
+---     alwaysFireOnClick: onClick also fires when button is disabled
+---     tooltipText: tooltip text on hover
+---     disabledTooltipText: tooltip text on hover when button is disabled
+---     position: TOPRIGHT|TOPCENTER
+---     update: method that runs when the button is updated
+---     updateOn: events on which the update method is run
+---     fireUpdateOnCreation: run the update method immediately after creating the button
+---     normalTexture: the texture to use when the button has the normal state
+---     highlightTexture: the texture to use when the button has the highlight state
+---     disabledTexture: the texture to use when the button has the disabled state
+---     width, height
+---@return Frame
+function Interface:createButton(Parent, Details)
+    GL:debug("Interface:createButton");
+
+    -- Invalid Parent provided
+    if (not Parent
+        or type(Parent) ~= "table"
+        or (not Parent.Hide
+        and not Parent.frame)
+    ) then
+        GL:error("Invalid Parent provided in Interface:createShareButton");
+        return;
+    end
+
+    Details = Details or {};
+    local onClick = Details.onClick or function() end;
+    local alwaysFireOnClick = Details.alwaysFireOnClick or false;
+    local tooltip = Details.tooltip or "";
+    local disabledTooltip = Details.disabledTooltip or "";
+    local position = Details.position;
+    local width = Details.width or 24;
+    local height = Details.height or 24;
+    local update = Details.update or nil;
+    local updateOn = Details.updateOn or {};
+    local fireUpdateOnCreation = Details.updateOnCreate;
+    local normalTexture = Details.normalTexture;
+    local highlightTexture = Details.highlightTexture;
+    local disabledTexture = Details.disabledTexture;
+
+    if (fireUpdateOnCreation == nil) then
+        fireUpdateOnCreation = true;
+    end
+
+    if (type(updateOn) ~= "table") then
+        updateOn = { updateOn };
+    end
+
+    -- If the parent element is an AceGUI element then refer to its frame instead
+    if (Parent.frame) then
+        Parent = Parent.frame;
+    end
+
+    local name = "GargulButton" .. GL:uuid();
+    local Button = CreateFrame("Button", name, Parent, "UIPanelButtonTemplate");
+    Button:SetSize(width, height);
+
+    -- Make sure the tooltip still shows even when the button is disabled
+    if (disabledTooltip) then
+        Button:SetMotionScriptsWhileDisabled(true);
+    end
+
+    if (highlightTexture) then
+        local HighlightTexture = Button:CreateTexture();
+        HighlightTexture:SetTexture(highlightTexture);
+        HighlightTexture:SetPoint("CENTER", Button, "CENTER", 0, 0);
+        HighlightTexture:SetSize(width, height);
+        Button:SetHighlightTexture(HighlightTexture);
+    end
+
+    if (normalTexture) then
+        Button:SetNormalTexture(normalTexture);
+    end
+
+    if (disabledTexture) then
+        Button:SetDisabledTexture(disabledTexture);
+    end
+
+    -- Show the tooltip on hover
+    Button:SetScript("OnEnter", function()
+        local textToShow = tooltip;
+
+        if (not Button:IsEnabled()) then
+            textToShow = disabledTooltip;
+        end
+
+        if (not GL:empty(textToShow)) then
+            GameTooltip:SetOwner(Button, "ANCHOR_TOP");
+            GameTooltip:AddLine(textToShow);
+            GameTooltip:Show();
+        end
+    end);
+
+    Button:SetScript("OnLeave", function()
+        GameTooltip:Hide();
+    end);
+
+    if (type(onClick) == "function") then
+        Button:SetScript("OnClick", function(_, button)
+            if (not Button:IsEnabled() and not alwaysFireOnClick) then
+                return;
+            end
+
+            if (button == 'LeftButton') then
+                onClick();
+            end
+        end);
+    end
+
+    -- Make sure the button's update method is called whenever any of the given events are fired
+    if (type(update) == "function") then
+        Button.update = update;
+
+        for _, event in pairs(updateOn) do
+            GL.Events:register(name .. event .. "Listener", event, function () Button:update(); end);
+        end
+
+        if (fireUpdateOnCreation) then
+            Button:update();
+        end
+    end
+
+    Button:Show();
+
+    return Button;
+end
+
 --- Create a settings (cogwheel) button
 ---
 ---@param Parent Frame
@@ -274,37 +430,14 @@ end
 function Interface:createShareButton(Parent, Details)
     GL:debug("Interface:createShareButton");
 
-    -- Invalid Parent provided
-    if (not Parent
-        or type(Parent) ~= "table"
-        or (not Parent.Hide
-        and not Parent.frame)
-    ) then
-        GL:error("Invalid Parent provided in Interface:createShareButton");
-        return;
-    end
+    local Button = self:createButton(Parent, Details);
 
     Details = Details or {};
-    local onClick = Details.onClick or function() end;
-    local alwaysFireOnClick = Details.alwaysFireOnClick or false;
-    local tooltipText = Details.tooltipText or "";
-    local disabledTooltipText = Details.disabledTooltipText or "";
     local position = Details.position;
     local x = Details.x;
     local y = Details.y;
     local width = Details.width or 24;
     local height = Details.height or 24;
-    local update = Details.update or nil;
-    local updateOn = Details.updateOn or {};
-    local fireUpdateOnCreation = Details.updateOnCreate;
-
-    if (fireUpdateOnCreation == nil) then
-        fireUpdateOnCreation = true;
-    end
-
-    if (type(updateOn) ~= "table") then
-        updateOn = { updateOn };
-    end
 
     -- If the parent element is an AceGUI element and no position was given we assume that the user wants
     -- to add the button as-is to the parent frame
@@ -312,77 +445,23 @@ function Interface:createShareButton(Parent, Details)
         Parent = Parent.frame;
     end
 
-    local name = "ShareButton" .. GL:uuid();
-    local ShareButton = CreateFrame("Button", name, Parent, "UIPanelButtonTemplate");
-    ShareButton:SetSize(width, height);
-
     if (position == "TOPRIGHT") then
-        ShareButton:SetPoint("TOPRIGHT", Parent, "TOPRIGHT", x or -20, y or -20);
+        Button:SetPoint("TOPRIGHT", Parent, "TOPRIGHT", x or -20, y or -20);
     elseif (position == "TOPCENTER") then
-        ShareButton:SetPoint("TOP", Parent, "TOP", x or 0, y or -7);
-        ShareButton:SetPoint("CENTER", Parent, "CENTER");
+        Button:SetPoint("TOP", Parent, "TOP", x or 0, y or -7);
+        Button:SetPoint("CENTER", Parent, "CENTER");
     end
 
-    -- Make sure the tooltip still shows even when the button is disabled
-    if (disabledTooltipText) then
-        ShareButton:SetMotionScriptsWhileDisabled(true);
-    end
-
-    local HighlightTexture = ShareButton:CreateTexture();
+    local HighlightTexture = Button:CreateTexture();
     HighlightTexture:SetTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\share-highlighted");
-    HighlightTexture:SetPoint("CENTER", ShareButton, "CENTER", 0, 0);
+    HighlightTexture:SetPoint("CENTER", Button, "CENTER", 0, 0);
     HighlightTexture:SetSize(width, height);
 
-    ShareButton:SetNormalTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\share");
-    ShareButton:SetHighlightTexture(HighlightTexture);
-    ShareButton:SetDisabledTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\share-disabled");
+    Button:SetNormalTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\share");
+    Button:SetHighlightTexture(HighlightTexture);
+    Button:SetDisabledTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\share-disabled");
 
-    -- Show the tooltip on hover
-    ShareButton:SetScript("OnEnter", function()
-        local textToShow = tooltipText;
-
-        if (not ShareButton:IsEnabled()) then
-            textToShow = disabledTooltipText;
-        end
-
-        if (not GL:empty(textToShow)) then
-            GameTooltip:SetOwner(ShareButton, "ANCHOR_TOP");
-            GameTooltip:AddLine(textToShow);
-            GameTooltip:Show();
-        end
-    end);
-
-    ShareButton:SetScript("OnLeave", function()
-        GameTooltip:Hide();
-    end);
-
-    if (type(onClick) == "function") then
-        ShareButton:SetScript("OnClick", function(_, button)
-            if (not ShareButton:IsEnabled() and not alwaysFireOnClick) then
-                return;
-            end
-
-            if (button == 'LeftButton') then
-                onClick();
-            end
-        end);
-    end
-
-    if (type(update) == "function") then
-        ShareButton.update = update;
-
-        for _, event in pairs(updateOn) do
-            GL.Events:register(name .. event .. "Listener", event, function () ShareButton:update(); end);
-        end
-
-        if (fireUpdateOnCreation) then
-            ShareButton:update();
-        end
-    end
-
-    ShareButton:Show();
-
-    return ShareButton;
+    return Button;
 end
 
 GL:debug("Interface/Interface.lua");
