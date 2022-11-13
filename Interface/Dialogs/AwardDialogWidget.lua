@@ -220,7 +220,7 @@ local function constructor()
     PlusOneCheckBox:SetHeight(20);
     PlusOneCheckBox:SetWidth(24);
     OptionsFrame:AddChild(PlusOneCheckBox);
-    GL.Interface:setItem(GL.Interface.Dialogs.AwardDialog, "PlusOne", PlusOneCheckBox);
+    GL.Interface:set(GL.Interface.Dialogs.AwardDialog, "PlusOne", PlusOneCheckBox);
 
     -- Plus one label
     local PlusOneLabel = AceGUI:Create("InteractiveLabel");
@@ -241,7 +241,7 @@ local function constructor()
     OffSpecCheckBox:SetHeight(20);
     OffSpecCheckBox:SetWidth(24);
     OptionsFrame:AddChild(OffSpecCheckBox);
-    GL.Interface:setItem(GL.Interface.Dialogs.AwardDialog, "OffSpec", OffSpecCheckBox);
+    GL.Interface:set(GL.Interface.Dialogs.AwardDialog, "OffSpec", OffSpecCheckBox);
 
     -- Plus one label
     local OffSpecLabel = AceGUI:Create("InteractiveLabel");
@@ -283,7 +283,8 @@ local function constructor()
         BoostedRollsCostEditBox:SetText(GL.Settings:get("BoostedRolls.defaultCost", 0));
         BoostedRollsCostEditBox:SetLabel("");
         OptionsFrame:AddChild(BoostedRollsCostEditBox);
-        GL.Interface:setItem(GL.Interface.Dialogs.AwardDialog, "Cost", BoostedRollsCostEditBox);
+
+        GL.Interface:set(GL.Interface.Dialogs.AwardDialog, "Cost", BoostedRollsCostEditBox);
     end
 
     HorizontalSpacer = AceGUI:Create("SimpleGroup");

@@ -56,7 +56,7 @@ function PackMuleIgnores:draw(Parent)
     ItemIsIgnoredResult:SetFullWidth(true);
     Parent:AddChild(ItemIsIgnoredResult);
 
-    GL.Interface:setItem(self, "ItemIsIgnored", ItemIsIgnoredResult);
+    GL.Interface:set(self, "ItemIsIgnored", ItemIsIgnoredResult);
 end
 
 --- Check whether a given item ID or link is ignored
@@ -65,7 +65,7 @@ end
 function PackMuleIgnores:isItemIgnored(input)
     GL:debug("PackMuleIgnoresSettings:isItemIgnored");
 
-    local Label = GL.Interface:getItem(self, "Label.ItemIsIgnored");
+    local Label = GL.Interface:get(self, "Label.ItemIsIgnored");
 
     -- Better safe than LUA error
     if (not Label) then

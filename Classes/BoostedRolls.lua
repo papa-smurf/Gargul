@@ -531,7 +531,7 @@ function BoostedRolls:import(data, openOverview, MetaData)
 
     -- Make sure all the required properties are available and of the correct type
     if (GL:empty(data)) then
-        GL.Interface:getItem("BoostedRolls.Importer", "Label.StatusMessage"):SetText("Invalid boosted roll data provided");
+        GL.Interface:get("BoostedRolls.Importer", "Label.StatusMessage"):SetText("Invalid boosted roll data provided");
         return false;
     end
 
@@ -569,7 +569,7 @@ function BoostedRolls:import(data, openOverview, MetaData)
 
     if (GL:empty(Points)) then
         local errorMessage = "Invalid data provided. Make sure that the contents follows the required format and no header row is included.";
-        GL.Interface:getItem("BoostedRolls.Importer", "Label.StatusMessage"):SetText(errorMessage);
+        GL.Interface:get("BoostedRolls.Importer", "Label.StatusMessage"):SetText(errorMessage);
 
         return false;
     end
@@ -713,7 +713,7 @@ function BoostedRolls:broadcast()
     local Broadcast = function ()
         GL:message("Broadcasting BoostedRolls data...");
 
-        local Label = GL.Interface:getItem(GL.BoostedRolls, "Label.BroadcastProgress");
+        local Label = GL.Interface:get(GL.BoostedRolls, "Label.BroadcastProgress");
 
         if (Label) then
             Label:SetText("Broadcasting...");
@@ -735,7 +735,7 @@ function BoostedRolls:broadcast()
             self.broadcastInProgress = false;
             GL.Events:fire("GL.BOOSTEDROLLS_BROADCAST_ENDED");
 
-            Label = GL.Interface:getItem(GL.BoostedRolls, "Label.BroadcastProgress");
+            Label = GL.Interface:get(GL.BoostedRolls, "Label.BroadcastProgress");
             if (Label) then
                 Label:SetText("Broadcast finished!");
             end
@@ -743,7 +743,7 @@ function BoostedRolls:broadcast()
             -- Make sure to broadcast the loot priorities as well
             GL.LootPriority:broadcast();
         end, function (sent, total)
-            Label = GL.Interface:getItem(GL.BoostedRolls, "Label.BroadcastProgress");
+            Label = GL.Interface:get(GL.BoostedRolls, "Label.BroadcastProgress");
             if (Label) then
                 Label:SetText(string.format("Sent %s of %s bytes", sent, total));
             end

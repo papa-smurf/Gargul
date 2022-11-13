@@ -14,7 +14,7 @@ function Dialog:open(Details)
     Frame:SetWidth(320);
     Frame:SetQuestion(Details.question);
 
-    local InputField = GL.Interface:getItem(self, "EditBox.Input");
+    local InputField = GL.Interface:get(self, "EditBox.Input");
 
     Frame:OnYes(function ()
         if (Details.OnYes) then

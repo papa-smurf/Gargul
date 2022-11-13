@@ -252,7 +252,7 @@ function Changelog:draw()
     Window:SetCallback("OnClose", function()
         self:close();
     end);
-    GL.Interface:setItem(self, "Window", Window);
+    GL.Interface:set(self, "Window", Window);
 
     Window:SetPoint(GL.Interface:getPosition("Changelog"));
 
@@ -350,7 +350,7 @@ function Changelog:draw()
     Checkbox:SetValue(GL.Settings:get("changeLog"));
     Checkbox:SetLabel("Enable changelog");
     Checkbox:SetDescription("");
-    Checkbox:SetWidth(130);
+    Checkbox:SetWidth(220);
     Checkbox:SetCallback("OnValueChanged", function()
         GL.Settings:set("changeLog", Checkbox:GetValue());
     end);
@@ -363,7 +363,7 @@ end
 function Changelog:close()
     GL:debug("Changelog:close");
 
-    local Window = GL.Interface:getItem(self, "Window");
+    local Window = GL.Interface:get(self, "Window");
 
     if (not self.isVisible
         or not Window
