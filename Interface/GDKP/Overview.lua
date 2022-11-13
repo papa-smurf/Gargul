@@ -6,6 +6,10 @@ local Constants = GL.Data.Constants;
 local DB = GL.DB;
 local Interface = GL.Interface;
 
+--[[ CONSTANTS ]]
+local SESSION_ROWS = 22;
+local HEIGHT_PER_SESSION_ROW = 16;
+
 GL:tableSet(GL, "Interface.GDKP.Overview", {
     _initialized = false,
     isVisible = false,
@@ -77,7 +81,9 @@ function Overview:create()
     self:_init();
 
     local Window = AceGUI:Create("Frame");
-    Interface:AceGUIDefaults(self, Window, "GDKPOverview");
+    Interface:AceGUIDefaults(self, Window, "GDKPOverview", 400, 600);
+    Interface:resizeBounds(Window, 444, 300);
+    Window.statustext:GetParent():Hide(); -- Hide the statustext bar
     self.Window = Window;
 
     --[[ FIRST COLUMN: sessions ]]
@@ -93,10 +99,6 @@ function Overview:create()
     local SecondColumn = AceGUI:Create("SimpleGroup");
     SecondColumn:SetLayout("FLOW")
     SecondColumn:SetFullHeight(true);
-    --SecondColumn:SetHeight(Window.frame:GetHeight() - 100);
-    --SecondColumn:SetAutoAdjustHeight(false);
-    --SecondColumn.frame:ClearAllPoints();
-    --SecondColumn.frame:SetPoint("BOTTOMRIGHT", Window.frame, "BOTTOMRIGHT");
 
     local Title = AceGUI:Create("Label");
     Title:SetFontObject(_G["GameFontNormalLarge"]);
@@ -115,36 +117,18 @@ function Overview:create()
     SecondColumn:AddChild(ScrollFrameHolder);
 
     --[[ CREATE BUTTON ]]
-    local CreateButton = GL.UI:createFrame("Button", "GDKPActionButton" .. GL:uuid(), ScrollFrameHolder.frame, "UIPanelButtonTemplate");
-    CreateButton:Show();
-    CreateButton:SetSize(24, 24);
-    CreateButton:SetPoint("TOP", ScrollFrameHolder.frame, "TOP", -16, -7);
-    CreateButton:SetMotionScriptsWhileDisabled(true); -- Make sure tooltip still shows even when button is disabled
-
-    local HighlightTexture = CreateButton:CreateTexture();
-    HighlightTexture:SetTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\create-highlighted");
-    HighlightTexture:SetPoint("CENTER", CreateButton, "CENTER", 0, 0);
-    HighlightTexture:SetSize(24, 24);
-
-    CreateButton:SetNormalTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\create");
-    CreateButton:SetHighlightTexture(HighlightTexture);
-    CreateButton:SetDisabledTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\create-disabled");
-
-    CreateButton:SetScript("OnEnter", function()
-        GameTooltip:SetOwner(CreateButton, "ANCHOR_TOP");
-        GameTooltip:AddLine("Add entry");
-        GameTooltip:Show();
-    end);
-
-    CreateButton:SetScript("OnLeave", function()
-        GameTooltip:Hide();
-    end);
-
-    CreateButton:SetScript("OnClick", function(_, button)
-        if (button == 'LeftButton') then
-            Interface.Award:draw();
-        end
-    end);
+    GL.Interface:createButton(ScrollFrameHolder, {
+        onClick = function() Interface.Award:draw(); end,
+        tooltip = "Add entry",
+        disabledTooltip = "You need lead or master loot to add entries.\nYou can't add entries to deleted sessions",
+        normalTexture = "Interface\\AddOns\\Gargul\\Assets\\Buttons\\create",
+        highlightTexture = "Interface\\AddOns\\Gargul\\Assets\\Buttons\\create-highlighted",
+        disabledTexture = "Interface\\AddOns\\Gargul\\Assets\\Buttons\\create-disabled",
+        update = function (self)
+            self:SetEnabled(not GL.User.isInGroup or GL.User.hasLead or GL.User.isMasterLooter);
+        end,
+        updateOn = { "GROUP_ROSTER_UPDATE", "GL.GDKP_SESSION_CHANGED" },
+    }):SetPoint("TOP", ScrollFrameHolder.frame, "TOP", -9, -7);
 
     --[[ SHARE BUTTON ]]
     Interface:createShareButton(ScrollFrameHolder, {
@@ -161,56 +145,62 @@ function Overview:create()
     Interface:set(self, "Note", Note);
     Interface:set(self, "SectionWrapper", ScrollFrameHolder);
 
-    --[[ BUTTONS FRAME ]]
-    local ButtonFrame = AceGUI:Create("SimpleGroup");
-    ButtonFrame:SetLayout("FLOW")
-    ButtonFrame:SetFullWidth(true);
+    Window:AddChildren(FirstColumn, SecondColumn);
 
-    local SetActiveSessionButton = AceGUI:Create("Button");
-    SetActiveSessionButton:SetText("Enable Session");
-    SetActiveSessionButton:SetWidth(118); -- Minimum is 118
-    SetActiveSessionButton:SetCallback("OnClick", function()
-        GL:dump("Set Active");
+    --[[ FOOTER BUTTONS ]]
+    local ThirdColumn = AceGUI:Create("SimpleGroup");
+    ThirdColumn:SetLayout("FLOW");
+    ThirdColumn:SetWidth(580);
+    ThirdColumn:SetHeight(40);
+
+    local EnableSession = AceGUI:Create("Button");
+    EnableSession:SetText("Enable");
+    EnableSession:SetWidth(74);
+    EnableSession:SetHeight(20);
+    EnableSession:SetCallback("OnClick", function()
+        GL:dump("Enable");
     end);
-    ButtonFrame:AddChild(SetActiveSessionButton);
-    SetActiveSessionButton:ClearAllPoints();
 
-    local CreateSessionButton = AceGUI:Create("Button");
-    CreateSessionButton:SetText("New Session");
-    CreateSessionButton:SetWidth(106); -- Minimum is 106
-    CreateSessionButton:SetCallback("OnClick", function()
+    local CreateSession = AceGUI:Create("Button");
+    CreateSession:SetText("New");
+    CreateSession:SetWidth(74);
+    CreateSession:SetHeight(20);
+    CreateSession:SetCallback("OnClick", function()
         Interface.GDKP.CreateSession:draw();
     end);
-    ButtonFrame:AddChild(CreateSessionButton);
 
-    local EditSessionButton = AceGUI:Create("Button");
-    EditSessionButton:SetText("Edit Session");
-    EditSessionButton:SetWidth(102); -- Minimum is 102
-    EditSessionButton:SetCallback("OnClick", function()
-        GL:dump("Edit Session");
+    local EditSession = AceGUI:Create("Button");
+    EditSession:SetText("Edit");
+    EditSession:SetWidth(74);
+    EditSession:SetHeight(20);
+    EditSession:SetCallback("OnClick", function()
+        GL:dump("Edit");
     end);
-    ButtonFrame:AddChild(EditSessionButton);
 
-    local DeleteButton = AceGUI:Create("Button");
-    DeleteButton:SetText("Delete Session");
-    DeleteButton:SetWidth(120); -- Minimum is 120
-    DeleteButton:SetCallback("OnClick", function()
+    local DeleteSession = AceGUI:Create("Button");
+    DeleteSession:SetText("Delete");
+    DeleteSession:SetWidth(74);
+    DeleteSession:SetHeight(20);
+    DeleteSession:SetCallback("OnClick", function()
         GL.GDKP:deleteSession(self.activeSession);
         Interface:get(self, "Window"):Hide();
         self:draw();
     end);
-    ButtonFrame:AddChild(DeleteButton);
 
-    Window:AddChildren(FirstColumn, SecondColumn, ButtonFrame);
+    ThirdColumn:AddChildren(EnableSession, CreateSession, EditSession, DeleteSession);
+    ThirdColumn.frame:SetParent(Window.frame);
+    ThirdColumn.frame:SetPoint("BOTTOMLEFT", Window.frame, "BOTTOMLEFT", 20, 17);
+
     self:refreshSessions();
 
     local originalOnHeightSet = Window.OnHeightSet;
     local styleWindowAfterResize = function ()
-        ScrollFrameHolder:SetWidth(math.max(Window.frame:GetWidth() - FirstColumn.frame:GetWidth() - 50, 100));
         SecondColumn:SetWidth(math.max(Window.frame:GetWidth() - FirstColumn.frame:GetWidth() - 50, 100));
         ScrollFrameHolder:DoLayout();
         SecondColumn:DoLayout();
         Window:DoLayout();
+
+        self.SessionsTable:SetDisplayRows(math.floor(FirstColumn.frame:GetHeight() / HEIGHT_PER_SESSION_ROW - 1), HEIGHT_PER_SESSION_ROW);
     end;
     Window.OnHeightSet = function (...)
         originalOnHeightSet(...);
@@ -255,7 +245,7 @@ function Overview:refreshLedger()
     Wrapper:AddChild(Details);
 
     local Title = Interface:get(self, "Label.Title");
-    Title:SetText(string.format("|c00%s%s|r", Constants.addonHexColor, Session.title));
+    Title:SetText(string.format("\n|c00%s%s|r", Constants.addonHexColor, Session.title));
 
     local Note = Interface:get(self, "Label.Note");
     local CreatedBy = Session.CreatedBy or {class = "priest", name = "unknown", guild = "unknown", uuid = "unknown"};
@@ -264,14 +254,6 @@ function Overview:refreshLedger()
         GL:classHexColor(CreatedBy.class),
         CreatedBy.name,
         CreatedBy.guild or "",
-        Constants.addonHexColor,
-        date('%Y-%m-%d', Session.createdAt)
-    ));
-
-    self.Window:SetStatusText(string.format(
-        "Active session: |c00%s%s|r, which started on |c00%s%s|r",
-        Constants.addonHexColor,
-        Session.title,
         Constants.addonHexColor,
         date('%Y-%m-%d', Session.createdAt)
     ));
@@ -603,7 +585,7 @@ function Overview:createSessionsTable()
 
     local columns = {
         {
-            name = "Sessions",
+            name = "",
             width = 130,
             align = "LEFT",
             color = {
@@ -628,11 +610,10 @@ function Overview:createSessionsTable()
         },
     };
 
-    local ROWS = 22;
-    local HEIGHT_PER_ROW = 16;
     local Table = AceGUI:Create("CLMLibScrollingTable");
+    self.SessionsTable = Table;
     Table:SetDisplayCols(columns);
-    Table:SetDisplayRows(ROWS, HEIGHT_PER_ROW);
+    Table:SetDisplayRows(SESSION_ROWS, HEIGHT_PER_SESSION_ROW);
     Table:EnableSelection(true);
     Table:GetScrollingTable().multiselection = false;
 
@@ -673,6 +654,7 @@ function Overview:refreshSessions()
 
     local lowestPriority = 99999999999;
     local lowestPriorityTableItem = 1;
+    local selectedTableItem = nil;
     local tableItem = 1;
     for checksum, Session in pairs(DB:get("GDKP.Ledger", {})) do
         local title = Session.title;
@@ -680,6 +662,13 @@ function Overview:refreshSessions()
 
         if (checksum == DB.GDKP.activeSession) then
             title = Session.title .. " (active)";
+        end
+
+        -- Make sure we select the currently selected session by default
+        if (self.selectedSession
+            and self.selectedSession == checksum
+        ) then
+            selectedTableItem = tableItem;
         end
 
         if (priority < lowestPriority) then
@@ -704,7 +693,10 @@ function Overview:refreshSessions()
         tableItem = tableItem + 1;
     end
 
-    if (lowestPriorityTableItem) then
+    if (not selectedTableItem
+        and lowestPriorityTableItem
+    ) then
+        selectedTableItem = lowestPriorityTableItem;
         self.selectedSession = TableData[lowestPriorityTableItem].cols[2].value;
     end
     Table:SetData(TableData);
@@ -713,8 +705,8 @@ function Overview:refreshSessions()
     -- This nasty delay is necessary because of how lib-st handles click and selection events
     Table:ClearSelection();
     GL.Ace:ScheduleTimer(function ()
-        if (Table and Table:GetSelection() ~= lowestPriorityTableItem) then
-            Table:SetSelection(lowestPriorityTableItem);
+        if (Table and Table:GetSelection() ~= selectedTableItem) then
+            Table:SetSelection(selectedTableItem);
         end
     end, .1);
 end

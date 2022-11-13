@@ -30,20 +30,34 @@ function CreateSession:draw()
     -- Create a container/parent frame
     local Window = AceGUI:Create("InlineGroup");
     Window:SetLayout("Flow");
-    Window:SetWidth(300);
+    Window:SetWidth(200);
     Window:SetHeight(280);
     Window:SetPoint("TOPLEFT", Overview.Window.frame, "TOPRIGHT", 2, 16);
     GL.Interface:set(self, "Window", Window);
     Window.frame:SetFrameStrata("HIGH");
     Window.frame:Show();
 
-    local SessionNameInput = GL.AceGUI:Create("EditBox");
-    SessionNameInput:DisableButton(true);
-    SessionNameInput:SetHeight(20);
-    SessionNameInput:SetWidth(250);
-    SessionNameInput:SetText("");
-    SessionNameInput:SetLabel("Session name");
-    Window:AddChild(SessionNameInput);
+    local Label = GL.AceGUI:Create("Label");
+    Label:SetHeight(20);
+    Label:SetFullWidth(true);
+    Label:SetText("Create a new GDKP session");
+    Window:AddChild(Label);
+
+    local Name = GL.AceGUI:Create("EditBox");
+    Name:DisableButton(true);
+    Name:SetHeight(20);
+    Name:SetFullWidth(true);
+    Name:SetText("");
+    Name:SetLabel("Name");
+    Window:AddChild(Name);
+
+    local Description = GL.AceGUI:Create("EditBox");
+    Description:DisableButton(true);
+    Description:SetHeight(20);
+    Description:SetFullWidth(true);
+    Description:SetText("");
+    Description:SetLabel("Description");
+    Window:AddChild(Description);
 
     local thereIsAnActiveGDKPSession = GL.GDKP:getActiveSession() ~= false;
     local SwitchCheckbox = AceGUI:Create("CheckBox");
@@ -55,11 +69,11 @@ function CreateSession:draw()
     SwitchCheckbox.text:SetFontObject(_G["GameFontHighlightSmall"]);
     Window:AddChild(SwitchCheckbox);
 
-    local SaveButton = AceGUI:Create("Button");
-    SaveButton:SetText("Save");
-    SaveButton:SetWidth(100); -- Minimum is 60
-    SaveButton:SetCallback("OnClick", function()
-        local title = strtrim(SessionNameInput:GetText());
+    local Save = AceGUI:Create("Button");
+    Save:SetText("Save");
+    Save:SetFullWidth(true);
+    Save:SetCallback("OnClick", function()
+        local title = strtrim(Description:GetText());
 
         if (GL:empty(title)) then
             return;
@@ -72,15 +86,15 @@ function CreateSession:draw()
 
         self:close();
     end);
-    Window:AddChild(SaveButton);
+    Window:AddChild(Save);
 
-    local CancelButton = AceGUI:Create("Button");
-    CancelButton:SetText("Cancel");
-    CancelButton:SetWidth(100); -- Minimum is 60
-    CancelButton:SetCallback("OnClick", function()
+    local Cancel = AceGUI:Create("Button");
+    Cancel:SetText("Cancel");
+    Cancel:SetFullWidth(true);
+    Cancel:SetCallback("OnClick", function()
         self:close();
     end);
-    Window:AddChild(CancelButton);
+    Window:AddChild(Cancel);
 end
 
 function CreateSession:close()
