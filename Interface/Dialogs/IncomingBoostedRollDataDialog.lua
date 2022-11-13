@@ -22,7 +22,7 @@ function IncomingBoostedRollDataDialog:open(Dialog)
     if (Dialog.sender
         and GL.BoostedRolls:playerIsTrusted(Dialog.sender)
     ) then
-        local TrustSenderCheckBox = GL.Interface:getItem(GL.Interface.Dialogs.IncomingBoostedRollDataDialog, "CheckBox.TrustSender");
+        local TrustSenderCheckBox = GL.Interface:get(GL.Interface.Dialogs.IncomingBoostedRollDataDialog, "CheckBox.TrustSender");
         TrustSenderCheckBox:SetValue(TrustSenderCheckBox);
     end
 end

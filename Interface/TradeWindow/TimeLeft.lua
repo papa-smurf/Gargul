@@ -116,7 +116,7 @@ function TimeLeft:draw()
     Texture:SetColorTexture(0, 0, 0, .6);
     Texture:SetAllPoints(Window)
     Window.texture = Texture;
-    GL.Interface:setItem(self, "Window", Window);
+    GL.Interface:set(self, "Window", Window);
 
     local howToRollText = string.format("%s to roll out loot!", GL.Settings:get("ShortcutKeys.rollOff"));
     local howToAwardText = string.format("%s to award loot!", GL.Settings:get("ShortcutKeys.award"));
@@ -125,7 +125,7 @@ function TimeLeft:draw()
     Title:SetText(howToRollText);
     Title:SetTextColor(1, 1, 1, 1);
     Title.headerTextType = "howToRoll";
-    GL.Interface:setItem(self, "Header", Title);
+    GL.Interface:set(self, "Header", Title);
 
     -- Keep switching the text in the header from how to roll to how to award
     if (not self.HeaderSwitchTimer) then
@@ -433,13 +433,13 @@ function TimeLeft:refreshBars()
 
     self.refreshing = true;
 
-    local Window = GL.Interface:getItem(self, "Window");
+    local Window = GL.Interface:get(self, "Window");
 
     if (not Window) then
         self:draw();
     end
 
-    Window = GL.Interface:getItem(self, "Window");
+    Window = GL.Interface:get(self, "Window");
     Window:SetHeight(0);
 
     local ItemsWithTradeTimeRemaining = {};
@@ -641,7 +641,7 @@ function TimeLeft:stopAllBars()
 
     self.Bars = {};
 
-    local Window = GL.Interface:getItem(self, "Window");
+    local Window = GL.Interface:get(self, "Window");
 
     if (Window) then
         Window:Hide();
@@ -652,7 +652,7 @@ end
 function TimeLeft:close()
     GL:debug("Overview:close");
 
-    local Window = GL.Interface:getItem(self, "Window");
+    local Window = GL.Interface:get(self, "Window");
 
     if (not self.isVisible
         or not Window

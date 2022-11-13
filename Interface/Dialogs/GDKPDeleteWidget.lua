@@ -234,7 +234,7 @@ local function constructor()
     GDKPReasonEditBox:SetText("");
     GDKPDeleteReasonEditBox:SetLabel("");
     OptionsFrame:AddChild(GDKPDeleteReasonEditBox);
-    GL.Interface:setItem(GL.Interface.Dialogs.AwardDialog, "GDKPDeleteReason", GDKPDeleteReasonEditBox);
+    GL.Interface:set(GL.Interface.Dialogs.AwardDialog, "GDKPDeleteReason", GDKPDeleteReasonEditBox);
 
     HorizontalSpacer = AceGUI:Create("SimpleGroup");
     HorizontalSpacer:SetLayout("FILL");

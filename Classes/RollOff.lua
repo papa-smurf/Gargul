@@ -508,12 +508,12 @@ function RollOff:award(roller, itemLink, osRoll, boostedRoll, plusOneRoll)
                 roller
             ),
             OnYes = function ()
-                local OSCheckBox = GL.Interface:getItem(GL.Interface.Dialogs.AwardDialog, "CheckBox.OffSpec");
+                local OSCheckBox = GL.Interface:get(GL.Interface.Dialogs.AwardDialog, "CheckBox.OffSpec");
                 if (OSCheckBox) then
                     isOS = GL:toboolean(OSCheckBox:GetValue());
                 end
 
-                local addPlusOneCheckBox = GL.Interface:getItem(GL.Interface.Dialogs.AwardDialog, "CheckBox.PlusOne");
+                local addPlusOneCheckBox = GL.Interface:get(GL.Interface.Dialogs.AwardDialog, "CheckBox.PlusOne");
                 if (addPlusOneCheckBox) then
                     addPlusOne = GL:toboolean(addPlusOneCheckBox:GetValue());
 
@@ -522,7 +522,7 @@ function RollOff:award(roller, itemLink, osRoll, boostedRoll, plusOneRoll)
                     end
                 end
 
-                local BoostedRollCostEditBox = GL.Interface:getItem(GL.Interface.Dialogs.AwardDialog, "EditBox.Cost");
+                local BoostedRollCostEditBox = GL.Interface:get(GL.Interface.Dialogs.AwardDialog, "EditBox.Cost");
                 if (BoostedRollCostEditBox) then
                     BRCost = GL.BoostedRolls:toPoints(BoostedRollCostEditBox:GetText());
 
@@ -561,12 +561,12 @@ function RollOff:award(roller, itemLink, osRoll, boostedRoll, plusOneRoll)
                 player
             ),
             OnYes = function ()
-                local OSCheckBox = GL.Interface:getItem(GL.Interface.Dialogs.AwardDialog, "CheckBox.OffSpec");
+                local OSCheckBox = GL.Interface:get(GL.Interface.Dialogs.AwardDialog, "CheckBox.OffSpec");
                 if (OSCheckBox) then
                     isOS = GL:toboolean(OSCheckBox:GetValue());
                 end
 
-                local addPlusOneCheckBox = GL.Interface:getItem(GL.Interface.Dialogs.AwardDialog, "CheckBox.PlusOne");
+                local addPlusOneCheckBox = GL.Interface:get(GL.Interface.Dialogs.AwardDialog, "CheckBox.PlusOne");
                 if (addPlusOneCheckBox) then
                     addPlusOne = GL:toboolean(addPlusOneCheckBox:GetValue());
 
@@ -575,7 +575,7 @@ function RollOff:award(roller, itemLink, osRoll, boostedRoll, plusOneRoll)
                     end
                 end
 
-                local boostedRollCostEditBox = GL.Interface:getItem(GL.Interface.Dialogs.AwardDialog, "EditBox.Cost");
+                local boostedRollCostEditBox = GL.Interface:get(GL.Interface.Dialogs.AwardDialog, "EditBox.Cost");
                 if (boostedRollCostEditBox) then
                     BRCost = GL.BoostedRolls:toPoints(boostedRollCostEditBox:GetText());
 
@@ -741,7 +741,7 @@ function RollOff:refreshRollsTable()
 
     local RollTableData = {};
     local Rolls = self.CurrentRollOff.Rolls;
-    local RollsTable = GL.Interface:getItem(GL.MasterLooterUI, "Table.Players");
+    local RollsTable = GL.Interface:get(GL.MasterLooterUI, "Table.Players");
     local NumberOfRollsPerPlayer = {};
 
     if (not RollsTable) then

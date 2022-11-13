@@ -202,7 +202,7 @@ local function constructor()
     InputEditBox:SetText("");
     InputEditBox:SetLabel("");
     PopupDialogInstance:AddChild(InputEditBox);
-    GL.Interface:setItem(GL.Interface.Dialogs.ConfirmWithSingleInputDialog, "Input", InputEditBox);
+    GL.Interface:set(GL.Interface.Dialogs.ConfirmWithSingleInputDialog, "Input", InputEditBox);
 
     InputEditBox:SetCallback("OnEnterPressed", function ()
         if (type(Widget.yesCallback) == "function") then

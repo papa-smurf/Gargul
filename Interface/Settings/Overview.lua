@@ -84,7 +84,7 @@ function Overview:draw(section)
     Window:SetHeight(600);
     Window:EnableResize(false);
     Window.statustext:GetParent():Hide(); -- Hide the statustext bar
-    GL.Interface:setItem(self, "Window", Window);
+    GL.Interface:set(self, "Window", Window);
     Window:SetPoint(GL.Interface:getPosition("Settings"));
 
     Window:SetCallback("OnClose", function()
@@ -135,7 +135,7 @@ function Overview:draw(section)
     local SecondColumn = AceGUI:Create("SimpleGroup");
     SecondColumn:SetLayout("FLOW")
     SecondColumn:SetWidth(550);
-    GL.Interface:setItem(self, "SecondColumn", SecondColumn);
+    GL.Interface:set(self, "SecondColumn", SecondColumn);
     Window:AddChild(SecondColumn);
 
     local SectionTitle = AceGUI:Create("Label");
@@ -150,9 +150,9 @@ function Overview:draw(section)
     ScrollFrameHolder:SetHeight(480);
     SecondColumn:AddChild(ScrollFrameHolder);
 
-    GL.Interface:setItem(self, "Window", Window);
-    GL.Interface:setItem(self, "Title", SectionTitle);
-    GL.Interface:setItem(self, "SectionWrapper", ScrollFrameHolder);
+    GL.Interface:set(self, "Window", Window);
+    GL.Interface:set(self, "Title", SectionTitle);
+    GL.Interface:set(self, "SectionWrapper", ScrollFrameHolder);
 
     local HorizontalSpacer = GL.AceGUI:Create("SimpleGroup");
     HorizontalSpacer:SetLayout("FILL");
@@ -197,7 +197,7 @@ end
 
 ---@return void
 function Overview:close()
-    local Window = GL.Interface:getItem(self, "Window");
+    local Window = GL.Interface:get(self, "Window");
 
     -- Some sections require additional cleanup, check if that's the case here
     if (self.activeSection
@@ -269,7 +269,7 @@ function Overview:drawSectionsTable(Parent, section)
     -- The second argument refers to "isMinimalDataformat"
     -- For the full format see https://www.wowace.com/projects/lib-st/pages/set-data
     Table:SetData(TableData, true);
-    GL.Interface:setItem(self, "Sections", Table);
+    GL.Interface:set(self, "Sections", Table);
 end
 
 --- Show a specific setting section
@@ -314,11 +314,11 @@ function Overview:showSection(section)
     self.activeSection = sectionClassIdentifier;
 
     -- Set the Title of the section (shown top-right)
-    GL.Interface:getItem(self, "Label.Title"):SetText(" " .. strtrim(SectionEntry[1]));
+    GL.Interface:get(self, "Label.Title"):SetText(" " .. strtrim(SectionEntry[1]));
 
     -- Prepare a new ScrollFrame for the section we're about to draw
     local ScrollFrame = GL.AceGUI:Create("ScrollFrame");
-    local Parent = GL.Interface:getItem(self, "Frame.SectionWrapper");
+    local Parent = GL.Interface:get(self, "Frame.SectionWrapper");
     ScrollFrame:SetLayout("Flow");
     Parent:AddChild(ScrollFrame);
 
@@ -354,15 +354,15 @@ function Overview:showSection(section)
         ScrollFrame:AddChild(HorizontalSpacer);
     end
 
-    SectionClass:draw(ScrollFrame, GL.Interface:getItem(self, "Window"));
+    SectionClass:draw(ScrollFrame, GL.Interface:get(self, "Window"));
 
     -- Store the ScrollFrame so that we can clean/release it later
-    GL.Interface:setItem(self, "ScrollFrame", ScrollFrame);
+    GL.Interface:set(self, "ScrollFrame", ScrollFrame);
 
     -- Highlight the correct section in the table on the left
     -- This delay is necessary because of how lib-st handles click and selection events
     GL.Ace:ScheduleTimer(function ()
-        local Table = GL.Interface:getItem(self, "Table.Sections");
+        local Table = GL.Interface:get(self, "Table.Sections");
         if (Table and Table:GetSelection() ~= sectionIndex) then
             Table:SetSelection(sectionIndex);
         end
@@ -396,7 +396,7 @@ function Overview:drawCheckboxes(Checkboxes, Parent)
                 Entry.callback(Checkbox);
             end
         end);
-        GL.Interface:setItem(GL.Settings, Entry.setting, Checkbox);
+        GL.Interface:set(GL.Settings, Entry.setting, Checkbox);
         Parent:AddChild(Checkbox);
     end
 end

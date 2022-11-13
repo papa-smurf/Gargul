@@ -59,7 +59,7 @@ function Bidder:draw(time, itemLink, itemIcon)
 
     local TopBidder = Window:CreateFontString(nil, "ARTWORK", "GameFontWhite");
     TopBidder:SetPoint("CENTER", Window, "CENTER", 0, 12);
-    GL.Interface:setItem(self, "TopBidder", TopBidder);
+    GL.Interface:set(self, "TopBidder", TopBidder);
 
     local NewBid = Window:CreateFontString(nil, "ARTWORK", "GameFontWhite");
     NewBid:SetPoint("TOPLEFT", Window, "TOPLEFT", 44, -51);
@@ -151,7 +151,7 @@ function Bidder:draw(time, itemLink, itemIcon)
 end
 
 function Bidder:refresh()
-    local TopBidderLabel = GL.Interface:getItem(self, "Frame.TopBidder");
+    local TopBidderLabel = GL.Interface:get(self, "Frame.TopBidder");
 
     if (not TopBidderLabel) then
 GL:error("NO TOP BIDDER LABEL");

@@ -701,7 +701,7 @@ function SoftRes:import(data, openOverview)
 
     -- Make sure all the required properties are available and of the correct type
     if (GL:empty(data)) then
-        GL.Interface:getItem("SoftRes.Importer", "Label.StatusMessage"):SetText("Invalid soft-reserve data provided");
+        GL.Interface:get("SoftRes.Importer", "Label.StatusMessage"):SetText("Invalid soft-reserve data provided");
         return false;
     end
 
@@ -814,7 +814,7 @@ function SoftRes:importGargulData(data)
     -- Something went wrong while base64 decoding the payload
     if (not base64DecodeSucceeded) then
         local errorMessage = "Unable to base64 decode the data. Make sure you copy/paste it as-is from softres.it without adding any additional characters or whitespaces!";
-        GL.Interface:getItem("SoftRes.Importer", "Label.StatusMessage"):SetText(errorMessage);
+        GL.Interface:get("SoftRes.Importer", "Label.StatusMessage"):SetText(errorMessage);
 
         return false;
     end
@@ -826,7 +826,7 @@ function SoftRes:importGargulData(data)
     -- Something went wrong while zlib decoding the payload
     if (not zlibDecodeSucceeded) then
         local errorMessage = "Unable to zlib decode the data. Make sure you copy/paste it as-is from softres.it without adding any additional characters or whitespaces!";
-        GL.Interface:getItem("SoftRes.Importer", "Label.StatusMessage"):SetText(errorMessage);
+        GL.Interface:get("SoftRes.Importer", "Label.StatusMessage"):SetText(errorMessage);
 
         return false;
     end
@@ -836,14 +836,14 @@ function SoftRes:importGargulData(data)
     jsonDecodeSucceeded, data = pcall(function () return GL.JSON:decode(data); end);
     if (not jsonDecodeSucceeded) then
         local errorMessage = "Unable to json decode the data. Make sure you paste the SoftRes data as-is in the box up top without adding/removing anything! If the issue persists then hop in our Discord for support!";
-        GL.Interface:getItem("SoftRes.Importer", "Label.StatusMessage"):SetText(errorMessage);
+        GL.Interface:get("SoftRes.Importer", "Label.StatusMessage"):SetText(errorMessage);
 
         return false;
     end
 
     local function throwGenericInvalidDataError()
         local errorMessage = "Invalid data provided. Make sure to click the 'Gargul Export' button on softres.it and paste the full contents here";
-        GL.Interface:getItem("SoftRes.Importer", "Label.StatusMessage"):SetText(errorMessage);
+        GL.Interface:get("SoftRes.Importer", "Label.StatusMessage"):SetText(errorMessage);
 
         return false;
     end
@@ -1081,7 +1081,7 @@ function SoftRes:importCSVData(data, reportStatus)
     -- The user attempted to import invalid data
     if (GL:empty(SoftReserveData)) then
         local errorMessage = "Invalid data provided. Make sure to click the 'Gargul Export' button on softres.it and paste the full contents here";
-        GL.Interface:getItem("SoftRes.Importer", "Label.StatusMessage"):SetText(errorMessage);
+        GL.Interface:get("SoftRes.Importer", "Label.StatusMessage"):SetText(errorMessage);
 
         return false;
     end

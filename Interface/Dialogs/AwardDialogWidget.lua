@@ -221,7 +221,7 @@ local function constructor()
     PlusOneCheckBox:SetHeight(20);
     PlusOneCheckBox:SetWidth(24);
     OptionsFrame:AddChild(PlusOneCheckBox);
-    GL.Interface:setItem(GL.Interface.Dialogs.AwardDialog, "PlusOne", PlusOneCheckBox);
+    GL.Interface:set(GL.Interface.Dialogs.AwardDialog, "PlusOne", PlusOneCheckBox);
 
     -- Plus one label
     local PlusOneLabel = AceGUI:Create("InteractiveLabel");
@@ -242,7 +242,7 @@ local function constructor()
     OffSpecCheckBox:SetHeight(20);
     OffSpecCheckBox:SetWidth(24);
     OptionsFrame:AddChild(OffSpecCheckBox);
-    GL.Interface:setItem(GL.Interface.Dialogs.AwardDialog, "OffSpec", OffSpecCheckBox);
+    GL.Interface:set(GL.Interface.Dialogs.AwardDialog, "OffSpec", OffSpecCheckBox);
 
     -- Plus one label
     local OffSpecLabel = AceGUI:Create("InteractiveLabel");
@@ -285,7 +285,7 @@ local function constructor()
         BoostedRollsCostEditBox:SetLabel("");
         OptionsFrame:AddChild(BoostedRollsCostEditBox);
         BoostedRollsCostEditBox:SetFocus();
-        GL.Interface:setItem(GL.Interface.Dialogs.AwardDialog, "Cost", BoostedRollsCostEditBox);
+        GL.Interface:set(GL.Interface.Dialogs.AwardDialog, "Cost", BoostedRollsCostEditBox);
     end
 
     if (GL.GDKP:hasActiveSession()) then
@@ -320,7 +320,7 @@ local function constructor()
         GDKPPriceEditBox:SetCallback("OnEnterPressed", function ()
             YesButton:Fire("OnClick");
         end); -- Update item info when input value changes
-        GL.Interface:setItem(GL.Interface.Dialogs.AwardDialog, "GDKPPrice", GDKPPriceEditBox);
+        GL.Interface:set(GL.Interface.Dialogs.AwardDialog, "GDKPPrice", GDKPPriceEditBox);
     end
 
     HorizontalSpacer = AceGUI:Create("SimpleGroup");

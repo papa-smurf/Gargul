@@ -54,7 +54,7 @@ function Overview:draw()
     Window:SetCallback("OnClose", function()
        self:close();
     end);
-    GL.Interface:setItem(self, "Window", Window);
+    GL.Interface:set(self, "Window", Window);
 
     Window:SetPoint(GL.Interface:getPosition("BoostedRollsOverview"));
 
@@ -141,7 +141,7 @@ function Overview:draw()
             GL:classHexColor(), "None"
         ));
     PlayerFrame:AddChild(PlayerNameLabel);
-    GL.Interface:setItem(self, "PlayerName", PlayerNameLabel);
+    GL.Interface:set(self, "PlayerName", PlayerNameLabel);
 
     local DecrementButton = AceGUI:Create("Button");
     DecrementButton:SetText("-" .. step);
@@ -167,7 +167,7 @@ function Overview:draw()
         self:updatePoints(value, false);
     end);
     PlayerFrame:AddChild(BoostedRollsCurrentPoints);
-    GL.Interface:setItem(self, "CurrentPoints", BoostedRollsCurrentPoints);
+    GL.Interface:set(self, "CurrentPoints", BoostedRollsCurrentPoints);
 
     local IncrementButton = AceGUI:Create("Button");
     IncrementButton:SetText("+" .. step);
@@ -210,7 +210,7 @@ function Overview:draw()
     AliasesEditBox:SetHeight(20);
     AliasesEditBox:SetWidth(280);
     AliasesFrame:AddChild(AliasesEditBox);
-    GL.Interface:setItem(self, "Aliases", AliasesEditBox);
+    GL.Interface:set(self, "Aliases", AliasesEditBox);
 
     HorizontalSpacer = AceGUI:Create("SimpleGroup");
     HorizontalSpacer:SetLayout("FILL")
@@ -222,7 +222,7 @@ function Overview:draw()
     ApplyAliasesButton:SetText("Apply aliases");
     ApplyAliasesButton:SetWidth(120);
     ApplyAliasesButton:SetCallback("OnClick", function()
-        local text = GL.Interface:getItem(self, "EditBox.Aliases"):GetText();
+        local text = GL.Interface:get(self, "EditBox.Aliases"):GetText();
         self:updateAliases(strtrim(text));
     end);
     AliasesFrame:AddChild(ApplyAliasesButton);
@@ -237,7 +237,7 @@ function Overview:draw()
     BroadcastProgressLabel:SetWidth(200);
     BroadcastProgressLabel:SetFontObject(_G["GameFontNormal"]);
     ProgressFrame:AddChild(BroadcastProgressLabel);
-    GL.Interface:setItem(GL.BoostedRolls, "BroadcastProgress", BroadcastProgressLabel);
+    GL.Interface:set(GL.BoostedRolls, "BroadcastProgress", BroadcastProgressLabel);
 
     --[[
         BUTTONS FRAME
@@ -414,7 +414,7 @@ function Overview:drawBoostedRollDataTable(Parent)
         end
     });
 
-    GL.Interface:setItem(self, "Characters", Table);
+    GL.Interface:set(self, "Characters", Table);
     self:refreshTable();
 end
 
@@ -422,7 +422,7 @@ end
 function Overview:refreshTable()
     GL:debug("Overview:refreshTable");
 
-    local Table = GL.Interface:getItem(self, "Table.Characters");
+    local Table = GL.Interface:get(self, "Table.Characters");
     if (not Table) then
         return;
     end
@@ -525,10 +525,10 @@ function Overview:updatePoints(points, updateEditBox)
 
     -- Update interface.
     if (updateEditBox) then
-        GL.Interface:getItem(self, "EditBox.CurrentPoints"):SetText(points);
+        GL.Interface:get(self, "EditBox.CurrentPoints"):SetText(points);
     end
 
-    local Table = GL.Interface:getItem(self, "Table.Characters");
+    local Table = GL.Interface:get(self, "Table.Characters");
     if (Table) then
         local rollPoints = BoostedRolls:rollPoints(points);
         local reserve = BoostedRolls:reserve(points);
@@ -583,8 +583,8 @@ function Overview:loadPlayer()
         Aliases = BoostedRolls.MaterializedData.DetailsByPlayerName[self.selectedCharacter].Aliases;
     end
     
-    GL.Interface:getItem(self, "EditBox.CurrentPoints"):SetText(self.points);
-    GL.Interface:getItem(self, "Label.PlayerName"):SetText(string.format(
+    GL.Interface:get(self, "EditBox.CurrentPoints"):SetText(self.points);
+    GL.Interface:get(self, "Label.PlayerName"):SetText(string.format(
         "|cff%s%s|r",
         GL:classHexColor(class), name
     ));
@@ -595,14 +595,14 @@ function Overview:loadPlayer()
         tinsert(aliases, GL:capitalize(aliasName));
     end
     aliases = table.concat(aliases, ",");
-    GL.Interface:getItem(self, "EditBox.Aliases"):SetText(aliases);
+    GL.Interface:get(self, "EditBox.Aliases"):SetText(aliases);
 end
 
 ---@return void
 function Overview:close()
     GL:debug("Overview:close");
 
-    local Window = GL.Interface:getItem(self, "Window");
+    local Window = GL.Interface:get(self, "Window");
 
     if (not self.isVisible
         or not Window
@@ -618,7 +618,7 @@ function Overview:close()
     self.isVisible = false;
 
     -- Clean up the Character table separately
-    local CharacterTable = GL.Interface:getItem(self, "Table.Characters");
+    local CharacterTable = GL.Interface:get(self, "Table.Characters");
     if (CharacterTable) then
         CharacterTable:SetData({}, true);
         CharacterTable:Hide();

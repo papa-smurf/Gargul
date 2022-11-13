@@ -231,7 +231,7 @@ end
 ---@param itemLink string
 ---@return table
 function TMB:tooltipLines(itemLink)
-    GL:debug("TMB:appendTMBItemInfoToTooltip");
+    GL:debug("TMB:tooltipLines");
 
     -- If we're not in a group there's no point in showing anything! (unless the non-raider setting is active)
     if ((not GL.User.isInGroup and GL.Settings:get("TMB.hideInfoOfPeopleNotInGroup"))
@@ -465,7 +465,7 @@ function TMB:import(data, triedToDecompress)
     local jsonDecodeSucceeded;
     local WebsiteData;
     local function displayGenericException()
-        GL.Interface:getItem("TMB.Importer", "Label.StatusMessage"):SetText("Invalid TMB data provided, make sure to click the 'Download' button in the Gargul section and paste the contents here as-is!");
+        GL.Interface:get("TMB.Importer", "Label.StatusMessage"):SetText("Invalid TMB data provided, make sure to click the 'Download' button in the Gargul section and paste the contents here as-is!");
     end
 
     if (type(data) ~= "string"
@@ -493,7 +493,7 @@ function TMB:import(data, triedToDecompress)
         WebsiteData = data;
 
         if (not data) then
-            return GL.Interface:getItem("TMB.Importer", "Label.StatusMessage"):SetText("Invalid CSV provided, the format is: 6948,player1,player2");
+            return GL.Interface:get("TMB.Importer", "Label.StatusMessage"):SetText("Invalid CSV provided, the format is: 6948,player1,player2");
         end
 
     -- We might have the dft format on hands, let's check it out!
@@ -503,7 +503,7 @@ function TMB:import(data, triedToDecompress)
         WebsiteData = data;
 
         if (not data) then
-            return GL.Interface:getItem("TMB.Importer", "Label.StatusMessage"):SetText("Invalid TMB or DFT data provided, make sure to paste the export contents here as-is!");
+            return GL.Interface:get("TMB.Importer", "Label.StatusMessage"):SetText("Invalid TMB or DFT data provided, make sure to paste the export contents here as-is!");
         end
     end
 
@@ -524,7 +524,7 @@ function TMB:import(data, triedToDecompress)
             or not WebsiteData
             or type(WebsiteData) ~= "table"
         ) then
-            GL.Interface:getItem("TMB.Importer", "Label.StatusMessage"):SetText("Invalid DFT data provided, Export your DFT data as per the sheet's instructions and paste the contents here as-is!");
+            GL.Interface:get("TMB.Importer", "Label.StatusMessage"):SetText("Invalid DFT data provided, Export your DFT data as per the sheet's instructions and paste the contents here as-is!");
             return false;
         end
     end
@@ -887,7 +887,7 @@ function TMB:decompress(data)
     -- Something went wrong while base64 decoding the payload
     if (not base64DecodeSucceeded) then
         local errorMessage = "Unable to base64 decode the data. Make sure you copy/paste it as-is from thatsmybis.com without changing anything!";
-        GL.Interface:getItem("TMB.Importer", "Label.StatusMessage"):SetText(errorMessage);
+        GL.Interface:get("TMB.Importer", "Label.StatusMessage"):SetText(errorMessage);
 
         return "";
     end
@@ -899,7 +899,7 @@ function TMB:decompress(data)
     -- Something went wrong while zlib decoding the payload
     if (not zlibDecodeSucceeded) then
         local errorMessage = "Unable to zlib decode the data. Make sure you copy/paste it as-is from thatsmybis.com without changing anything!";
-        GL.Interface:getItem("TMB.Importer", "Label.StatusMessage"):SetText(errorMessage);
+        GL.Interface:get("TMB.Importer", "Label.StatusMessage"):SetText(errorMessage);
         return "";
     end
 
@@ -940,7 +940,7 @@ function TMB:broadcast()
     local Broadcast = function ()
         GL:message("Broadcasting TMB data...");
 
-        local Label = GL.Interface:getItem(GL.TMB, "Label.BroadcastProgress");
+        local Label = GL.Interface:get(GL.TMB, "Label.BroadcastProgress");
 
         if (Label) then
             Label:SetText("Broadcasting...");
@@ -955,7 +955,7 @@ function TMB:broadcast()
             self.broadcastInProgress = false;
             GL.Events:fire("GL.TMB_BROADCAST_ENDED");
 
-            Label = GL.Interface:getItem(GL.TMB, "Label.BroadcastProgress");
+            Label = GL.Interface:get(GL.TMB, "Label.BroadcastProgress");
             if (Label) then
                 Label:SetText("Broadcast finished!");
             end
@@ -963,7 +963,7 @@ function TMB:broadcast()
             -- Make sure to broadcast the loot priorities as well
             GL.LootPriority:broadcast();
         end, function (sent, total)
-            Label = GL.Interface:getItem(GL.TMB, "Label.BroadcastProgress");
+            Label = GL.Interface:get(GL.TMB, "Label.BroadcastProgress");
             if (Label) then
                 Label:SetText(string.format("Sent %s of %s bytes", sent, total));
             end

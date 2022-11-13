@@ -37,7 +37,7 @@ function ReminderToAssignLootUsingGargul:draw()
         end
     end);
     Window.frame:SetParent(MasterLooterFrame);
-    GL.Interface:setItem(self, "Window", Window);
+    GL.Interface:set(self, "Window", Window);
 
     Window:SetPoint("TOPLEFT", MasterLooterFrame, "TOPRIGHT", 0, 9);
 
@@ -57,7 +57,7 @@ end
 function ReminderToAssignLootUsingGargul:close()
     GL:debug("ReminderToAssignLootUsingGargul:close");
 
-    local Window = GL.Interface:getItem(self, "Window");
+    local Window = GL.Interface:get(self, "Window");
 
     if (not self.isVisible
         or not Window

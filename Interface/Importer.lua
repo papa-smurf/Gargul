@@ -33,7 +33,7 @@ function Importer:draw()
     Window:SetCallback("OnClose", function()
        self:close();
     end);
-    GL.Interface:setItem(self, "Window", Window);
+    GL.Interface:set(self, "Window", Window);
 
     Window:SetPoint(GL.Interface:getPosition("Importer"));
 
@@ -81,7 +81,7 @@ end
 function Importer:close()
     GL:debug("Importer:close");
 
-    local Window = GL.Interface:getItem(self, "Window");
+    local Window = GL.Interface:get(self, "Window");
 
     if (not self.isVisible
         or not Window
