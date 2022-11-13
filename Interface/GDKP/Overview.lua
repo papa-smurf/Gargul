@@ -1,13 +1,10 @@
 ---@type GL
 local _, GL = ...;
 
-GL.AceGUI = GL.AceGUI or LibStub("AceGUI-3.0");
-GL.ScrollingTable = GL.ScrollingTable or LibStub("ScrollingTable");
-
-local AceGUI = GL.AceGUI;
-local Constants = GL.Data.Constants; ---@type Data
-local DB = GL.DB; ---@type DB
-local ScrollingTable = GL.ScrollingTable;
+local AceGUI = LibStub("AceGUI-3.0");
+local Constants = GL.Data.Constants;
+local DB = GL.DB;
+local Interface = GL.Interface;
 
 GL:tableSet(GL, "Interface.GDKP.Overview", {
     _initialized = false,
@@ -19,127 +16,109 @@ GL:tableSet(GL, "Interface.GDKP.Overview", {
 
     -- Hidden buttons are added to this pool so that we can reuse them later
     ButtonPool = {},
+
+    Window = nil,
 });
 
 ---@class GDKPOverview
-local Overview = GL.Interface.GDKP.Overview; ---@type GDKPOverview
+local Overview = Interface.GDKP.Overview; ---@type GDKPOverview
 
 function Overview:_init()
     GL:debug("Overview:_init");
 
+    if (self._initialized) then
+        return;
+    end
+
     self._initialized = true;
 
-    GL.Events:register("GDKPOverviewGDKPAuctionChangedListener", "GL.GDKP_AUCTION_CHANGED", function(_, sessionIdentifier)
-        if (not self.isVisible
-            or self.selectedSession ~= sessionIdentifier
-        ) then
-            --return;
-        end
+    GL.Events:register("GDKPOverviewGDKPAuctionChangedListener", "GL.GDKP_AUCTION_CHANGED", function()
+        if (not self.isVisible) then return; end
+        GL.Ace:ScheduleTimer(function()
+            self:refreshLedger();
+        end, .1);
+    end);
 
-        self:drawDetails(sessionIdentifier);
+    GL.Events:register({
+        { "GDKPOverviewGDKPActiveSessionChangedListener", "GL.GDKP_ACTIVE_SESSION_CHANGED" },
+        { "GDKPOverviewGDKPSessionChangedListener", "GL.GDKP_SESSION_CHANGED" }
+    }, function()
+        if (not self.isVisible) then return; end
+        self:refreshSessions();
     end);
 end
 
---- Draw the UI elements required to show an overview of all gdkp data
---- This is what this frame looks like:
----     +-------+---------+
----     | Col1  |  Col2   |
----     +-----------------+
----     | Button Frame    |
----     +-----------------+
----
----@return void
 function Overview:draw()
-    self:_init();
-
     GL:debug("Overview:draw");
 
-    -- The overview is already visible
+    if (not self.Window) then
+        self:create();
+    end
+
     if (self.isVisible) then
         return;
     end
 
     self.isVisible = true;
 
-    -- Create a container/parent frame
+    self:refreshLedger();
+    self:refreshSessions();
+    self.Window:Show();
+end
+
+function Overview:create()
+    GL:debug("Overview:create");
+
+    -- Looks like we already created the overview before
+    if (self.Window) then
+        return;
+    end
+
+    self:_init();
+
     local Window = AceGUI:Create("Frame");
-    Window:SetTitle("Gargul v" .. GL.version);
-    Window:SetLayout("Flow");
-    Window:SetWidth(642);
-    Window:SetHeight(500);
-    Window:EnableResize(false);
-    Window.statustext:GetParent():Show(); -- Explicitely show the statustext bar
-    Window:SetCallback("OnClose", function()
-        -- Close the edit window
-        GL.Interface.GDKP.EditAuction:close();
+    Interface:AceGUIDefaults(self, Window, "GDKPOverview");
+    self.Window = Window;
 
-        -- Close the edit window
-        GL.Interface.GDKP.CreateSession:close();
-
-        -- Store the frame's last position for future play sessions
-        GL.Interface:storePosition(Window, "GDKPOverview");
-        self.isVisible = false;
-    end);
-    Window.frame:SetPoint(GL.Interface:getPosition("GDKPOverview"));
-    GL.Interface:setItem(self, "Window", Window);
-    Window.frame:SetFrameStrata("HIGH");
-
-    -- Make sure the window can be closed by pressing the escape button
-    _G["GARGUL_GDKP_OVERVIEW_WINDOW"] = Window.frame;
-    tinsert(UISpecialFrames, "GARGUL_GDKP_OVERVIEW_WINDOW");
-
-    --[[
-        FIRST COLUMN (session table)
-    ]]
+    --[[ FIRST COLUMN: sessions ]]
     local FirstColumn = AceGUI:Create("SimpleGroup");
-    FirstColumn:SetLayout("FLOW")
-    FirstColumn:SetWidth(190);
-    FirstColumn:SetHeight(350);
-    Window:AddChild(FirstColumn);
+    FirstColumn:SetLayout("FILL")
+    FirstColumn:SetWidth(200);
+    FirstColumn:SetFullHeight(true);
 
-    --[[
-        COLUMN SPACER
-    ]]
-    local ColumnSpacer = AceGUI:Create("SimpleGroup");
-    ColumnSpacer:SetLayout("FILL")
-    ColumnSpacer:SetWidth(10);
-    ColumnSpacer:SetHeight(350);
-    Window:AddChild(ColumnSpacer);
+    self.SessionsTable = self:createSessionsTable(Window);
+    FirstColumn:AddChild(self.SessionsTable);
 
-    --[[
-        SECOND COLUMN (GDKP ledger)
-    ]]
+    --[[ SECOND COLUMN: ledger ]]
     local SecondColumn = AceGUI:Create("SimpleGroup");
     SecondColumn:SetLayout("FLOW")
-    SecondColumn:SetWidth(406);
-    GL.Interface:setItem(self, "SecondColumn", SecondColumn);
-    Window:AddChild(SecondColumn);
+    SecondColumn:SetFullHeight(true);
+    --SecondColumn:SetHeight(Window.frame:GetHeight() - 100);
+    --SecondColumn:SetAutoAdjustHeight(false);
+    --SecondColumn.frame:ClearAllPoints();
+    --SecondColumn.frame:SetPoint("BOTTOMRIGHT", Window.frame, "BOTTOMRIGHT");
 
-    local SectionTitle = AceGUI:Create("Label");
-    SectionTitle:SetFontObject(_G["GameFontNormalLarge"]);
-    SectionTitle:SetFullWidth(true);
-    SectionTitle:SetText("BWL something");
-    SecondColumn:AddChild(SectionTitle);
+    local Title = AceGUI:Create("Label");
+    Title:SetFontObject(_G["GameFontNormalLarge"]);
+    Title:SetFullWidth(true);
+    SecondColumn:AddChild(Title);
 
-    local SectionNote = AceGUI:Create("Label");
-    SectionNote:SetFontObject(_G["GameFontNormalSmall"]);
-    SectionNote:SetFullWidth(true);
-    SectionNote:SetText("Some note here");
-    SecondColumn:AddChild(SectionNote);
+    local Note = AceGUI:Create("Label");
+    Note:SetFontObject(_G["GameFontNormalSmall"]);
+    Note:SetFullWidth(true);
+    SecondColumn:AddChild(Note);
 
     local ScrollFrameHolder = AceGUI:Create("InlineGroup");
     ScrollFrameHolder:SetLayout("FILL")
-    ScrollFrameHolder:SetWidth(400);
-    ScrollFrameHolder:SetHeight(350);
+    ScrollFrameHolder:SetFullWidth(true)
+    ScrollFrameHolder:SetFullHeight(true)
     SecondColumn:AddChild(ScrollFrameHolder);
 
-    --[[
-        CREATE BUTTON
-    ]]
+    --[[ CREATE BUTTON ]]
     local CreateButton = GL.UI:createFrame("Button", "GDKPActionButton" .. GL:uuid(), ScrollFrameHolder.frame, "UIPanelButtonTemplate");
     CreateButton:Show();
     CreateButton:SetSize(24, 24);
-    CreateButton:SetPoint("TOPLEFT", ScrollFrameHolder.frame, "TOPLEFT", 164, -7);
+    CreateButton:SetPoint("TOP", ScrollFrameHolder.frame, "TOP", -16, -7);
     CreateButton:SetMotionScriptsWhileDisabled(true); -- Make sure tooltip still shows even when button is disabled
 
     local HighlightTexture = CreateButton:CreateTexture();
@@ -163,44 +142,29 @@ function Overview:draw()
 
     CreateButton:SetScript("OnClick", function(_, button)
         if (button == 'LeftButton') then
-            GL.Interface.Award:draw();
+            Interface.Award:draw();
         end
     end);
 
-    --[[
-        SHARE BUTTON
-    ]]
-    local ShareButton = GL.UI:createShareButton(
-        ScrollFrameHolder.frame,
-        function ()
-            GL.Interface.Dialogs.PopupDialog:open("BROADCAST_GDKP_CONFIRMATION");
-        end,
-        "Broadcast data",
-        "Broadcast data: you need loot master, assist or lead!",
-        true
-    );
-    ShareButton:SetPoint("TOPLEFT", ScrollFrameHolder.frame, "TOPLEFT", 190, -7);
-    GL.Interface:setItem(self, "ShareButton", ShareButton);
-    ShareButton:Show();
+    --[[ SHARE BUTTON ]]
+    Interface:createShareButton(ScrollFrameHolder, {
+        onClick = function() Interface.Dialogs.PopupDialog:open("BROADCAST_GDKP_CONFIRMATION"); end,
+        tooltip = "Broadcast data",
+        disabledTooltip = "Broadcast data: you need loot master, assist or lead!",
+        position = "TOPCENTER",
+        update = function (self) self:SetEnabled(GL.GDKP:userIsAllowedToBroadcast()); end,
+        updateOn = "GROUP_ROSTER_UPDATE",
+        x = 16,
+    });
 
-    -- The user doesn't have sufficient permissions to broadcast the data
-    if (not GL.GDKP:userIsAllowedToBroadcast()) then
-        ShareButton:Disable();
-    else
-        ShareButton:Enable();
-    end
+    Interface:set(self, "Title", Title);
+    Interface:set(self, "Note", Note);
+    Interface:set(self, "SectionWrapper", ScrollFrameHolder);
 
-    GL.Interface:setItem(self, "Title", SectionTitle);
-    GL.Interface:setItem(self, "Note", SectionNote);
-    GL.Interface:setItem(self, "SectionWrapper", ScrollFrameHolder);
-
-    --[[
-        BUTTONS FRAME
-    ]]
+    --[[ BUTTONS FRAME ]]
     local ButtonFrame = AceGUI:Create("SimpleGroup");
     ButtonFrame:SetLayout("FLOW")
     ButtonFrame:SetFullWidth(true);
-    Window:AddChild(ButtonFrame);
 
     local SetActiveSessionButton = AceGUI:Create("Button");
     SetActiveSessionButton:SetText("Enable Session");
@@ -215,7 +179,7 @@ function Overview:draw()
     CreateSessionButton:SetText("New Session");
     CreateSessionButton:SetWidth(106); -- Minimum is 106
     CreateSessionButton:SetCallback("OnClick", function()
-        GL.Interface.GDKP.CreateSession:draw();
+        Interface.GDKP.CreateSession:draw();
     end);
     ButtonFrame:AddChild(CreateSessionButton);
 
@@ -232,20 +196,46 @@ function Overview:draw()
     DeleteButton:SetWidth(120); -- Minimum is 120
     DeleteButton:SetCallback("OnClick", function()
         GL.GDKP:deleteSession(self.activeSession);
-        GL.Interface:getItem(self, "Window"):Hide();
+        Interface:get(self, "Window"):Hide();
         self:draw();
     end);
     ButtonFrame:AddChild(DeleteButton);
 
-    self:drawSessionsTable(FirstColumn.frame);
-    self:drawDetails(self.activeSession);
+    Window:AddChildren(FirstColumn, SecondColumn, ButtonFrame);
+    self:refreshSessions();
+
+    local originalOnHeightSet = Window.OnHeightSet;
+    local styleWindowAfterResize = function ()
+        ScrollFrameHolder:SetWidth(math.max(Window.frame:GetWidth() - FirstColumn.frame:GetWidth() - 50, 100));
+        SecondColumn:SetWidth(math.max(Window.frame:GetWidth() - FirstColumn.frame:GetWidth() - 50, 100));
+        ScrollFrameHolder:DoLayout();
+        SecondColumn:DoLayout();
+        Window:DoLayout();
+    end;
+    Window.OnHeightSet = function (...)
+        originalOnHeightSet(...);
+        styleWindowAfterResize();
+    end
+
+    GL.Ace:ScheduleTimer(function()
+        self:refreshLedger();
+        styleWindowAfterResize();
+    end, .05);
 end
 
-function Overview:drawDetails(sessionIdentifier)
+function Overview:close()
+    Interface.GDKP.EditAuction:close(); -- Close the edit window
+    Interface.GDKP.CreateSession:close(); -- Close the edit window
+
+    self.isVisible = false;
+end
+
+function Overview:refreshLedger()
     GL:debug("Overview:drawDetails");
 
     self:clearDetailsFrame();
 
+    local sessionIdentifier = self.selectedSession;
     if (not sessionIdentifier) then
         return;
     end
@@ -258,16 +248,16 @@ function Overview:drawDetails(sessionIdentifier)
 
     self.activeSession = sessionIdentifier;
 
-    local Wrapper = GL.Interface:getItem(self, "Frame.SectionWrapper");
+    local Wrapper = Interface:get(self, "Frame.SectionWrapper");
     local Details = GL.AceGUI:Create("ScrollFrame");
     Details:SetLayout("Flow");
-    GL.Interface:setItem(self, "SessionDetails", Details);
+    Interface:set(self, "SessionDetails", Details);
     Wrapper:AddChild(Details);
 
-    local Title = GL.Interface:getItem(self, "Label.Title");
+    local Title = Interface:get(self, "Label.Title");
     Title:SetText(string.format("|c00%s%s|r", Constants.addonHexColor, Session.title));
 
-    local Note = GL.Interface:getItem(self, "Label.Note");
+    local Note = Interface:get(self, "Label.Note");
     local CreatedBy = Session.CreatedBy or {class = "priest", name = "unknown", guild = "unknown", uuid = "unknown"};
     Note:SetText(string.format(
         "Created by |c00%s%s|r |c001eff00<%s>|r on |c00%s%s|r",
@@ -278,8 +268,7 @@ function Overview:drawDetails(sessionIdentifier)
         date('%Y-%m-%d', Session.createdAt)
     ));
 
-    local Window = GL.Interface:getItem(self, "Window");
-    Window:SetStatusText(string.format(
+    self.Window:SetStatusText(string.format(
         "Active session: |c00%s%s|r, which started on |c00%s%s|r",
         Constants.addonHexColor,
         Session.title,
@@ -319,6 +308,12 @@ function Overview:drawDetails(sessionIdentifier)
                 break;
             end
 
+            local ItemRow = AceGUI:Create("SimpleGroup");
+            ItemRow:SetLayout("FLOW")
+            ItemRow:SetHeight(30);
+            ItemRow:SetFullWidth(true);
+            Details:AddChild(ItemRow);
+
             --[[
                 ITEM ICON
             ]]
@@ -327,7 +322,7 @@ function Overview:drawDetails(sessionIdentifier)
             ItemIcon:SetHeight(30);
             ItemIcon:SetImageSize(30, 30);
             ItemIcon:SetImage(ItemEntry.icon);
-            Details:AddChild(ItemIcon);
+            ItemRow:AddChild(ItemIcon);
             ItemIcon:SetCallback("OnLeave", function()
                 GameTooltip:Hide();
             end);
@@ -339,7 +334,7 @@ function Overview:drawDetails(sessionIdentifier)
             ItemSpacer:SetLayout("FILL")
             ItemSpacer:SetWidth(10);
             ItemSpacer:SetHeight(30);
-            Details:AddChild(ItemSpacer);
+            ItemRow:AddChild(ItemSpacer);
 
             --[[
                 ITEM LABEL
@@ -353,9 +348,9 @@ function Overview:drawDetails(sessionIdentifier)
                 ItemLabel:SetText(string.format(
                     "|cFF%s%s|r paid |cFF%s%sg|r for\n%s",
                     GL:classHexColor(Auction.Winner.class),
-                    Auction.Winner.name,
-                    GL:classHexColor("rogue"),
-                    price,
+                    Auction.Winner.name or "",
+                    Constants.ClassHexColors.rogue,
+                    price or "0",
                     ItemEntry.link
                 ));
 
@@ -375,7 +370,7 @@ function Overview:drawDetails(sessionIdentifier)
                 ));
             end
 
-            Details:AddChild(ItemLabel);
+            ItemRow:AddChild(ItemLabel);
 
             --[[
                 ACTION BUTTONS
@@ -385,7 +380,7 @@ function Overview:drawDetails(sessionIdentifier)
             ActionButtons:SetLayout("FILL")
             ActionButtons:SetWidth(50);
             ActionButtons:SetHeight(30);
-            Details:AddChild(ActionButtons);
+            ItemRow:AddChild(ActionButtons);
 
             self.ActionButtons[Auction.ID] = {};
 
@@ -395,7 +390,8 @@ function Overview:drawDetails(sessionIdentifier)
             local EditButton = self:newTableButton(ActionButtons.frame);
             EditButton:Show();
             EditButton:SetSize(24, 24);
-            EditButton:SetPoint("TOPLEFT", ActionButtons.frame, "TOPLEFT", 0, -4);
+            EditButton:ClearAllPoints();
+            EditButton:SetPoint("TOPRIGHT", ItemRow.frame, "TOPRIGHT", -60, -10);
             EditButton:SetMotionScriptsWhileDisabled(true); -- Make sure tooltip still shows even when button is disabled
 
             if (saleWasDeleted) then
@@ -430,7 +426,7 @@ function Overview:drawDetails(sessionIdentifier)
 
             EditButton:SetScript("OnClick", function(_, button)
                 if (button == 'LeftButton') then
-                    GL.Interface.GDKP.EditAuction:draw(sessionIdentifier, Auction.checksum);
+                    Interface.GDKP.EditAuction:draw(sessionIdentifier, Auction.checksum);
                 end
             end);
 
@@ -441,6 +437,7 @@ function Overview:drawDetails(sessionIdentifier)
             ]]
             local DeleteButton = GL.UI:createFrame("Button", "GDKPActionButton" .. GL:uuid(), ActionButtons.frame, "UIPanelButtonTemplate");
             DeleteButton:SetSize(24, 24);
+            DeleteButton:ClearAllPoints();
             DeleteButton:SetPoint("TOPLEFT", EditButton, "TOPRIGHT", 2, 0);
             DeleteButton:SetMotionScriptsWhileDisabled(true); -- Make sure tooltip still shows even when button is disabled
 
@@ -470,7 +467,7 @@ function Overview:drawDetails(sessionIdentifier)
                         ---@todo Skip the reason dialog when holding the shift key
                         GL.GDKP:deleteAuction(sessionIdentifier, Auction.ID, "-")
                     else
-                        GL.Interface.Dialogs.ConfirmWithSingleInputDialog:open({
+                        Interface.Dialogs.ConfirmWithSingleInputDialog:open({
                             question = string.format("Provide a reason for deleting this entry"),
                             OnYes = function (reason)
                                 GL.GDKP:deleteAuction(sessionIdentifier, Auction.ID, reason);
@@ -478,7 +475,7 @@ function Overview:drawDetails(sessionIdentifier)
                         });
                     end
 
-                    self:drawDetails(sessionIdentifier);
+                    self:refreshLedger();
                 end
             end);
 
@@ -520,7 +517,7 @@ function Overview:drawDetails(sessionIdentifier)
                 if (button == 'LeftButton'
                     and GL.GDKP:restoreAuction(sessionIdentifier, Auction.ID)
                 ) then
-                    self:drawDetails(sessionIdentifier);
+                    self:refreshLedger();
                 end
             end);
 
@@ -531,13 +528,15 @@ function Overview:drawDetails(sessionIdentifier)
             self.ActionButtons[Auction.ID].RestoreButton = RestoreButton;
         end
     end);
+
+    self.Window:DoLayout();
 end
 
 --- Update the share button when the group setup changes
 ---
 ---@return void
 function Overview:updateShareButton()
-    local ShareButton = GL.Interface:getItem(self, "Frame.ShareButton")
+    local ShareButton = Interface:get(self, "Frame.ShareButton")
 
     GL.Ace:ScheduleTimer(function ()
         -- The user doesn't have sufficient permissions to broadcast the data
@@ -582,8 +581,8 @@ function Overview:clearDetailsFrame()
 
     self.ActionButtons = {};
 
-    local Title = GL.Interface:getItem(self, "Label.Title");
-    local Note = GL.Interface:getItem(self, "Label.Note");
+    local Title = Interface:get(self, "Label.Title");
+    local Note = Interface:get(self, "Label.Note");
 
     if (Title) then
         Title:SetText("");
@@ -593,15 +592,14 @@ function Overview:clearDetailsFrame()
         Note:SetText("");
     end
 
-    GL.Interface:release(self, "ScrollFrame.SessionDetails");
+    Interface:release(self, "ScrollFrame.SessionDetails");
 end
 
 --- Draw the GDKP sessions table (left-hand side of the overview)
 ---
----@param Parent table
 ---@return void
-function Overview:drawSessionsTable(Parent)
-    GL:debug("GDKP:drawCharacterTable");
+function Overview:createSessionsTable()
+    GL:debug("GDKP:createSessionsTable");
 
     local columns = {
         {
@@ -630,11 +628,13 @@ function Overview:drawSessionsTable(Parent)
         },
     };
 
-    local Table = ScrollingTable:CreateST(columns, 22, 16, nil, Parent);
+    local ROWS = 22;
+    local HEIGHT_PER_ROW = 16;
+    local Table = AceGUI:Create("CLMLibScrollingTable");
+    Table:SetDisplayCols(columns);
+    Table:SetDisplayRows(ROWS, HEIGHT_PER_ROW);
     Table:EnableSelection(true);
-    Table:SetWidth(160);
-    Table.frame:SetPoint("TOPLEFT", Parent, "TOPLEFT", 0, -3);
-    GL.Interface:setItem(self, "Sessions", Table);
+    Table:GetScrollingTable().multiselection = false;
 
     Table:RegisterEvents({
         OnClick = function (_, _, data, _, _, realrow)
@@ -649,16 +649,29 @@ function Overview:drawSessionsTable(Parent)
             end
 
             -- We always select the first column of the selected row because that contains the player name
-            local selected = data[realrow].cols[2].value;
-
-            self:drawDetails(selected);
+            self.selectedSession = data[realrow].cols[2].value;
+            self:refreshLedger();
         end
     });
 
+    return Table;
+end
+
+--- Refresh the sessions table
+---
+---@return void
+function Overview:refreshSessions()
+    GL:debug("Overview:refreshSessions");
+
+    -- If there's no sessions table then there's nothing to refresh
+    if (not self.SessionsTable) then
+        return;
+    end
+
+    local Table = self.SessionsTable;
     local TableData = {};
 
     local lowestPriority = 99999999999;
-    local lowestPrioritySession = "";
     local lowestPriorityTableItem = 1;
     local tableItem = 1;
     for checksum, Session in pairs(DB:get("GDKP.Ledger", {})) do
@@ -682,29 +695,23 @@ function Overview:drawSessionsTable(Parent)
 
         tinsert(TableData, {
             cols = {
-                {
-                    value = title,
-                    color = color,
-                },
-                {
-                    value = checksum,
-                    color = color,
-                },
-                {
-                    value = priority,
-                    color = color,
-                }
+                { value = title, color = color, },
+                { value = checksum, color = color, },
+                { value = priority, color = color, }
             },
         });
 
         tableItem = tableItem + 1;
     end
 
-    self.selectedSession = lowestPrioritySession;
+    if (lowestPriorityTableItem) then
+        self.selectedSession = TableData[lowestPriorityTableItem].cols[2].value;
+    end
     Table:SetData(TableData);
 
     -- Highlight the correct section in the table on the left
     -- This nasty delay is necessary because of how lib-st handles click and selection events
+    Table:ClearSelection();
     GL.Ace:ScheduleTimer(function ()
         if (Table and Table:GetSelection() ~= lowestPriorityTableItem) then
             Table:SetSelection(lowestPriorityTableItem);
