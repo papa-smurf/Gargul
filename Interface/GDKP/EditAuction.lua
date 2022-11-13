@@ -23,7 +23,7 @@ function EditAuction:draw(session, checksum)
     checksum = tostring(checksum);
     local Auction = GL.DB:get(string.format("GDKP.Ledger.%s.Auctions.%s", session, checksum));
 
-    -- The given GDKP Ledger entry does not exist
+    -- The given auction does not exist
     if (not Auction) then
         return;
     end
@@ -31,13 +31,18 @@ function EditAuction:draw(session, checksum)
     ---@type GDKPOverview
     local Overview = GL.Interface.GDKP.Overview;
 
+    -- It seems our GDKP overview window is not opened
+    if (not Overview.isVisible) then
+        return;
+    end
+
     -- Create a container/parent frame
     local Window = AceGUI:Create("InlineGroup");
     Window:SetLayout("Flow");
     Window:SetWidth(300);
     Window:SetHeight(280);
-    Window:SetPoint("TOPLEFT", GL.Interface:getItem(Overview, "Window").frame, "TOPRIGHT", 2, 16);
-    GL.Interface:setItem(self, "Window", Window);
+    Window:SetPoint("TOPLEFT", Overview.Window.frame, "TOPRIGHT", 2, 16);
+    GL.Interface:set(self, "Window", Window);
     Window.frame:SetFrameStrata("HIGH");
     Window.frame:Show();
 
@@ -47,9 +52,9 @@ function EditAuction:draw(session, checksum)
     ItemLink:SetText(string.format(
         "|cFF%s%s|r paid |cFF%s%sg|r for\n%s",
         GL:classHexColor(Auction.Winner.class),
-        Auction.Winner.name,
+        Auction.Winner.name or "",
         GL:classHexColor("rogue"),
-        Auction.price,
+        Auction.price or "0",
         GL.DB.Cache.ItemsByID[tostring(Auction.itemID)].link
     ));
     Window:AddChild(ItemLink);
@@ -107,8 +112,7 @@ function EditAuction:draw(session, checksum)
         if (not GL:empty(newName)
             and Auction.Winner.name ~= newName
         ) then
-            GL.DB:set(string.format("GDKP.Ledger.%s.Auctions.%s.Winner.name", session, checksum, newName));
-            somethingChanged = true;
+            somethingChanged = GL.GDKP:reassignAuction(session, checksum, newName);
         end
 
         -- The session was changed (make sure we do this last!)
@@ -118,7 +122,6 @@ function EditAuction:draw(session, checksum)
         end
 
         if (somethingChanged) then
-            Overview:drawDetails(session);
             self:close();
         end
     end);
