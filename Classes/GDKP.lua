@@ -98,7 +98,15 @@ function GDKP:setActiveSession(session)
         return false;
     end
 
+    if (DB.GDKP.activeSession == session) then
+        return false;
+    end
+
     DB.GDKP.activeSession = session;
+
+    GL.Events:fire("GL.GDKP_SESSION_ACTIVATED", session);
+    GL.Events:fire("GL.GDKP_ACTIVE_SESSION_CHANGED");
+
     return true;
 end
 
@@ -147,7 +155,15 @@ end
 function GDKP:clearActiveSession()
     GL:debug("GDKP:clearActiveSession");
 
+    if (not DB.GDKP.activeSession) then
+        return false;
+    end
+
+    GL.Events:fire("GL.GDKP_ACTIVE_SESSION_CLEARED", DB.GDKP.activeSession);
+    GL.Events:fire("GL.GDKP_ACTIVE_SESSION_CHANGED");
     DB.GDKP.activeSession = nil;
+
+    return true;
 end
 
 --- Restore the given auction
@@ -205,18 +221,18 @@ end
 --- Delete, or soft-delete a session depending on whether or not it has auctions attached to it
 ---
 ---@param session string
----@return void
+---@return boolean
 function GDKP:deleteSession(session)
     GL:debug("GDKP:deleteSession");
 
     if (GL:empty(session)) then
-        return;
+        return false;
     end
 
     local Session = DB:get("GDKP.Ledger." .. session);
 
     if (not Session) then
-        return;
+        return false;
     end
 
     -- This session is the currently active one, clear it
@@ -227,11 +243,16 @@ function GDKP:deleteSession(session)
     -- There are no auctions attached to this session, we can safely remove it!
     if (GL:empty(Session.Auctions)) then
         DB:set("GDKP.Ledger." .. session, nil);
-        return;
-    end
 
     -- There are auctions, mark the Session as deleted but keep it for 24h still
-    DB:set("GDKP.Ledger." .. session .. ".deletedAt", GetServerTime());
+    else
+        DB:set("GDKP.Ledger." .. session .. ".deletedAt", GetServerTime());
+    end
+
+    GL.Events:fire("GL.GDKP_SESSION_CHANGED", DB:get("GDKP.Ledger." .. session, nil));
+    GL.Events:fire("GL.GDKP_SESSION_DELETED", session);
+
+    return true;
 end
 
 --- Delete the given auction
@@ -336,6 +357,37 @@ function GDKP:createAuction(itemID, price, winner, sessionIdentifier)
     return true;
 end
 
+--- Change the recipient of an auction
+---
+---@param sessionIdentifier string
+---@param auctionID string
+---@param winner string
+---
+---@return boolean
+function GDKP:reassignAuction(sessionIdentifier, auctionID, winner)
+    GL:debug("GDKP:reassignAuction");
+
+    local OldAuction = GL.DB:get(string.format("GDKP.Ledger.%s.Auctions.%s", sessionIdentifier, auctionID));
+
+    if (not OldAuction
+        or OldAuction.Winner.name == winner
+    ) then
+        return false;
+    end
+
+    winner = GL:capitalize(string.lower(winner));
+    DB.GDKP.Ledger[sessionIdentifier].Auctions[auctionID].Winner.name = winner;
+
+    GL.Events:fire("GL.GDKP_AUCTION_CHANGED",
+        sessionIdentifier,
+        auctionID,
+        OldAuction,
+        DB.GDKP.Ledger[sessionIdentifier].Auctions[auctionID]
+    );
+    GL.Events:fire("GL.GDKP_AUCTION_REASSIGNED", sessionIdentifier, OldAuction, winner);
+
+    return true;
+end
 
 --- Move an auction from one session to another
 ---
@@ -345,11 +397,16 @@ end
 ---
 ---@return boolean
 function GDKP:moveAuction(auctionID, fromSession, toSession)
+    GL:debug("GDKP:moveAuction");
+
+GL:xd("moveAuction");
+GL:xd(1);
     -- There's nothing to move!
     if (fromSession == toSession) then
         return false;
     end
 
+GL:xd(2);
     local Auction = GL.DB:get(string.format("GDKP.Ledger.%s.Auctions.%s", fromSession, auctionID));
 
     -- The auction doesn't exist
@@ -357,11 +414,13 @@ function GDKP:moveAuction(auctionID, fromSession, toSession)
         return false;
     end
 
+GL:xd(3);
     -- The target session doesn't exist
     if (not GL.DB:get(string.format("GDKP.Ledger.%s", toSession))) then
         return false;
     end
 
+GL:xd(4);
     -- Copy the auction to its new location
     GL.DB:set(string.format("GDKP.Ledger.%s.Auctions.%s", toSession, auctionID), Auction);
 
@@ -371,6 +430,7 @@ function GDKP:moveAuction(auctionID, fromSession, toSession)
     GL.Events:fire("GL.GDKP_AUCTION_CHANGED", toSession, auctionID, Auction, Auction);
     GL.Events:fire("GL.GDKP_AUCTION_MOVED", Auction, fromSession, toSession);
 
+GL:xd(5);
     return true;
 end
 
