@@ -52,6 +52,7 @@ Classes/CommMessage.lua
 Classes/RaidGroups.lua
 
 # Interface objects
+Interface/AceGUIWidget-LibScrollingTable.lua
 Interface/Interface.lua
 Interface/Award.lua
 Interface/AwardHistory.lua
