@@ -12,11 +12,10 @@ function AwardDialog:open(Dialog)
     Dialog.checkOS = GL:toboolean(Dialog.checkOS);
     Dialog.checkPlusOne = GL:toboolean(Dialog.checkPlusOne);
     Dialog.checkOS = GL:toboolean(Dialog.checkOS);
-    Dialog.checkPlusOne = GL:toboolean(Dialog.checkPlusOne);
     Dialog.boostedRollCost = GL.BoostedRolls:toPoints(Dialog.boostedRollCost);
 
     -- Create a container/parent frame
-    local Frame = AceGUI:Create("GargulAwardDialog");
+    local Frame = AceGUI:Create("GargulDKPDeleteDialog");
     Frame:SetLayout("Flow");
     Frame:SetWidth(320);
     Frame:SetQuestion(Dialog.question);
@@ -39,27 +38,17 @@ function AwardDialog:open(Dialog)
         end
     end
 
-    if (Dialog.checkPlusOne) then
-        local PlusOneCheckBox = GL.Interface:get(self, "CheckBox.PlusOne");
-
-        if (PlusOneCheckBox) then
-            PlusOneCheckBox:SetValue(true);
-        end
-    end
-
     --- Adjust the value of the boosted roll cost editbox
     local BoostedRollsCostEditBox = GL.Interface:get(self, "EditBox.Cost");
 
-    if (not BoostedRollsCostEditBox) then
-        return;
-    end
+    if (BoostedRollsCostEditBox) then
+        local cost = 0;
+        if (Dialog.isBR) then
+            cost = Dialog.boostedRollCost;
+        end
 
-    local cost = 0;
-    if (Dialog.isBR) then
-        cost = Dialog.boostedRollCost;
+        BoostedRollsCostEditBox:SetText(cost);
     end
-
-    BoostedRollsCostEditBox:SetText(cost);
 end
 
 GL:debug("Interface/AwardDialog.lua");

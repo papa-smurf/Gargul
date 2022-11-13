@@ -219,7 +219,7 @@ function LootPriority:broadcast()
     local Broadcast = function ()
         GL:message("Broadcasting loot priorities...");
 
-        local Label = GL.Interface:getItem(GL.LootPriority, "Label.BroadcastProgress");
+        local Label = GL.Interface:get(GL.LootPriority, "Label.BroadcastProgress");
 
         if (Label) then
             Label:SetText("Broadcasting...");
@@ -234,12 +234,12 @@ function LootPriority:broadcast()
             self.broadcastInProgress = false;
             GL.Events:fire("GL.LOOT_PRIORITY_BROADCAST_ENDED");
 
-            Label = GL.Interface:getItem(GL.LootPriority, "Label.BroadcastProgress");
+            Label = GL.Interface:get(GL.LootPriority, "Label.BroadcastProgress");
             if (Label) then
                 Label:SetText("Broadcast finished!");
             end
         end, function (sent, total)
-            Label = GL.Interface:getItem(GL.LootPriority, "Label.BroadcastProgress");
+            Label = GL.Interface:get(GL.LootPriority, "Label.BroadcastProgress");
             if (Label) then
                 Label:SetText(string.format("Sent %s of %s bytes", sent, total));
             end

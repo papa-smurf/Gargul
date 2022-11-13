@@ -122,7 +122,7 @@ function MasterLooterDialog:draw()
         self:close();
     end);
     Window:SetPoint(GL.Interface:getPosition("MasterLooterDialog"));
-    GL.Interface:setItem(self, "Window", Window);
+    GL.Interface:set(self, "Window", Window);
 
     local DescriptionFrame = AceGUI:Create("SimpleGroup");
     DescriptionFrame:SetLayout("FILL");
@@ -235,7 +235,7 @@ end
 function MasterLooterDialog:close()
     GL:debug("MasterLooterDialog:close");
 
-    local Window = GL.Interface:getItem(self, "Window");
+    local Window = GL.Interface:get(self, "Window");
 
     if (not Window) then
         return;

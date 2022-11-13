@@ -43,7 +43,7 @@ function ShortcutKeysLegend:draw()
         end
     end);
     Window.frame:SetParent(Parent);
-    GL.Interface:setItem(self, "Window", Window);
+    GL.Interface:set(self, "Window", Window);
 
     if (ElvLootFrame) then
         Window:SetPoint("TOPLEFT", Parent, "TOPRIGHT", 0, 17);
@@ -72,7 +72,7 @@ end
 function ShortcutKeysLegend:close()
     GL:debug("ShortcutKeysLegend:close");
 
-    local Window = GL.Interface:getItem(self, "Window");
+    local Window = GL.Interface:get(self, "Window");
 
     if (not self.isVisible
         or not Window

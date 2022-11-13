@@ -33,11 +33,11 @@ function Award:draw(itemLink)
     -- First we need to check if the frame hasn't been
     -- rendered already. If so then show it (if it's hidden)
     -- and pass the itemLink along in case one was provided
-    if (GL.Interface:getItem(self, "Window")
-        and GL.Interface:getItem(self, "Window").rendered
+    if (GL.Interface:get(self, "Window")
+        and GL.Interface:get(self, "Window").rendered
     ) then
-        local PlayerNameBox = GL.Interface:getItem(self, "EditBox.PlayerName");
-        local Window = GL.Interface:getItem(self, "Window");
+        local PlayerNameBox = GL.Interface:get(self, "EditBox.PlayerName");
+        local Window = GL.Interface:get(self, "Window");
 
         if (itemLink) then
             Award:passItemLink(itemLink);
@@ -75,7 +75,7 @@ function Award:draw(itemLink)
     end);
     Window.frame:SetFrameStrata("DIALOG");
     GL.Interface:restorePosition(Window, "Award");
-    GL.Interface:setItem(self, "Window", Window);
+    GL.Interface:set(self, "Window", Window);
 
     --[[
         SETTINGS BUTTON
@@ -109,7 +109,7 @@ function Award:draw(itemLink)
     ItemIcon:SetImageSize(30, 30);
     ItemIcon:SetWidth(40);
     FirstRow:AddChild(ItemIcon);
-    GL.Interface:setItem(self, "Item", ItemIcon);
+    GL.Interface:set(self, "Item", ItemIcon);
 
     --[[
         ITEM TEXTBOX
@@ -121,7 +121,7 @@ function Award:draw(itemLink)
     ItemBox:SetWidth(150);
     ItemBox:SetCallback("OnTextChanged", function () self:ItemBoxChanged() end); -- Update item info when input value changes
     ItemBox:SetCallback("OnEnterPressed", function () self:ItemBoxChanged() end); -- Update item info when item is dragged on top (makes no sense to use OnEnterPressed I know)
-    GL.Interface:setItem(self, "Item", ItemBox);
+    GL.Interface:set(self, "Item", ItemBox);
 
     FirstRow:AddChild(ItemBox);
 
@@ -161,9 +161,9 @@ function Award:draw(itemLink)
     AwardButton:SetHeight(20);
     AwardButton:SetDisabled(true);
     AwardButton:SetCallback("OnClick", function()
-        local PlayersTable = GL.Interface:getItem(self, "Table.Players");
+        local PlayersTable = GL.Interface:get(self, "Table.Players");
         local selected = PlayersTable:GetRow(PlayersTable:GetSelection());
-        itemLink = GL.Interface:getItem(self, "EditBox.Item"):GetText();
+        itemLink = GL.Interface:get(self, "EditBox.Item"):GetText();
         local winner = false;
 
         local award = function ()
@@ -171,12 +171,12 @@ function Award:draw(itemLink)
             local boostedRollCost = nil;
             local GDKPPrice = nil;
 
-            local OSCheckBox = GL.Interface:getItem(GL.Interface.Dialogs.AwardDialog, "CheckBox.OffSpec");
+            local OSCheckBox = GL.Interface:get(GL.Interface.Dialogs.AwardDialog, "CheckBox.OffSpec");
             if (OSCheckBox) then
                 isOS = GL:toboolean(OSCheckBox:GetValue());
             end
 
-            local addPlusOneCheckBox = GL.Interface:getItem(GL.Interface.Dialogs.AwardDialog, "CheckBox.PlusOne");
+            local addPlusOneCheckBox = GL.Interface:get(GL.Interface.Dialogs.AwardDialog, "CheckBox.PlusOne");
             if (addPlusOneCheckBox) then
                 addPlusOne = GL:toboolean(addPlusOneCheckBox:GetValue());
 
@@ -185,7 +185,7 @@ function Award:draw(itemLink)
                 end
             end
 
-            local BoostedRollCostEditBox = GL.Interface:getItem(GL.Interface.Dialogs.AwardDialog, "EditBox.Cost");
+            local BoostedRollCostEditBox = GL.Interface:get(GL.Interface.Dialogs.AwardDialog, "EditBox.Cost");
             if (BoostedRollCostEditBox) then
                 boostedRollCost = GL.BoostedRolls:toPoints(BoostedRollCostEditBox:GetText());
 
@@ -194,7 +194,7 @@ function Award:draw(itemLink)
                 end
             end
 
-            local GDKPPriceEditBox = GL.Interface:getItem(GL.Interface.Dialogs.AwardDialog, "EditBox.GDKPPrice");
+            local GDKPPriceEditBox = GL.Interface:get(GL.Interface.Dialogs.AwardDialog, "EditBox.GDKPPrice");
             if (GDKPPriceEditBox) then
                 GDKPPrice = tonumber(GDKPPriceEditBox:GetText());
 
@@ -251,7 +251,7 @@ function Award:draw(itemLink)
         });
     end);
     FirstRow:AddChild(AwardButton);
-    GL.Interface:setItem(self, "Award", AwardButton);
+    GL.Interface:set(self, "Award", AwardButton);
 
     --[[
         AWARD HISTORY BUTTON
@@ -300,7 +300,7 @@ function Award:draw(itemLink)
     DisenchantButton:SetHeight(20);
     DisenchantButton:SetDisabled(false);
     DisenchantButton:SetCallback("OnClick", function()
-        local itemLink = GL.Interface:getItem(self, "EditBox.Item"):GetText();
+        local itemLink = GL.Interface:get(self, "EditBox.Item"):GetText();
 
         if (GL.PackMule.disenchanter) then
             GL.PackMule:disenchant(itemLink);
@@ -312,7 +312,7 @@ function Award:draw(itemLink)
             return;
         end
 
-        local PlayersTable = GL.Interface:getItem(self, "Table.Players");
+        local PlayersTable = GL.Interface:get(self, "Table.Players");
         local selected = PlayersTable:GetRow(PlayersTable:GetSelection());
 
         if (not selected or type(selected) ~= "table") then
@@ -338,7 +338,7 @@ function Award:draw(itemLink)
         });
     end);
     FirstRow:AddChild(DisenchantButton);
-    GL.Interface:setItem(self, "Disenchant", DisenchantButton);
+    GL.Interface:set(self, "Disenchant", DisenchantButton);
 
     --[[
         SECOND ROW (player name box)
@@ -367,7 +367,7 @@ function Award:draw(itemLink)
     PlayerNameBox:SetWidth(120);
     PlayerNameBox:SetCallback("OnEnterPressed", function ()
         -- Remove table selection because we're awarding from the player name field
-        local PlayersTable = GL.Interface:getItem(self, "Table.Players");
+        local PlayersTable = GL.Interface:get(self, "Table.Players");
 
         if (PlayersTable) then
             PlayersTable:ClearSelection();
@@ -376,7 +376,7 @@ function Award:draw(itemLink)
         AwardButton:Fire("OnClick");
     end); -- Award
     SecondRow:AddChild(PlayerNameBox);
-    GL.Interface:setItem(self, "PlayerName", PlayerNameBox);
+    GL.Interface:set(self, "PlayerName", PlayerNameBox);
 
     Spacer = AceGUI:Create("SimpleGroup");
     Spacer:SetLayout("Fill");
@@ -424,13 +424,13 @@ end
 function Award:close()
     GL:debug("Award:close");
 
-    local Window = GL.Interface:getItem(self, "Window");
+    local Window = GL.Interface:get(self, "Window");
 
     if (not Window) then
         return;
     end
 
-    local EditBox = GL.Interface:getItem(self, "EditBox.PlayerName");
+    local EditBox = GL.Interface:get(self, "EditBox.PlayerName");
 
     if (EditBox and EditBox.SetText) then
         EditBox:SetText("");
@@ -444,7 +444,7 @@ end
 function Award:drawPlayersTable()
     GL:debug("Award:drawPlayersTable");
 
-    local Parent = GL.Interface:getItem(self, "Window").frame;
+    local Parent = GL.Interface:get(self, "Window").frame;
 
     -- Combined width of all colums should be 340
     local columns = {
@@ -466,7 +466,7 @@ function Award:drawPlayersTable()
     local Table = ScrollingTable:CreateST(columns, 8, 15, nil, Parent);
     Table:EnableSelection(true);
     Table.frame:SetPoint("BOTTOM", Parent, "BOTTOM", 0, 46);
-    GL.Interface:setItem(self, "Players", Table);
+    GL.Interface:set(self, "Players", Table);
 
     Table:RegisterEvents({
         OnClick = function (_, _, data, _, _, realrow)
@@ -481,7 +481,7 @@ function Award:drawPlayersTable()
             end
 
             local selectedPlayer = data[realrow].cols[1].value;
-            local EditBox = GL.Interface:getItem(self, "EditBox.PlayerName");
+            local EditBox = GL.Interface:get(self, "EditBox.PlayerName");
 
             if (EditBox and EditBox.SetText) then
                 EditBox:SetText(GL:capitalize(selectedPlayer));
@@ -581,7 +581,7 @@ end
 function Award:populatePlayersTable(itemID)
     GL:debug("Award:populatePlayersTable");
 
-    local PlayersTable = GL.Interface:getItem(self, "Table.Players");
+    local PlayersTable = GL.Interface:get(self, "Table.Players");
 
     if (not PlayersTable) then
         return;
@@ -607,7 +607,7 @@ function Award:populatePlayersTable(itemID)
 
         if (topPrioForItem == string.lower(GL:stripRealm(name))) then
             PlayersTable:SetSelection(row);
-            local EditBox = GL.Interface:getItem(self, "EditBox.PlayerName");
+            local EditBox = GL.Interface:get(self, "EditBox.PlayerName");
 
             if (EditBox and EditBox.SetText) then
                 EditBox:SetText(GL:capitalize(topPrioForItem));
@@ -625,7 +625,7 @@ end
 function Award:ItemBoxChanged()
     GL:debug("Award:ItemBoxChanged");
 
-    local itemLink = GL.Interface:getItem(self, "EditBox.Item"):GetText();
+    local itemLink = GL.Interface:get(self, "EditBox.Item"):GetText();
 
     Award:passItemLink(itemLink);
 end
@@ -639,11 +639,11 @@ end
 function Award:passItemLink(itemLink)
     GL:debug("Award:passItemLink");
 
-    if (not GL.Interface:getItem(self, "Window").rendered) then
+    if (not GL.Interface:get(self, "Window").rendered) then
         return;
     end
 
-    GL.Interface:getItem(self, "EditBox.Item"):SetText(itemLink);
+    GL.Interface:get(self, "EditBox.Item"):SetText(itemLink);
     Award:update();
 end
 
@@ -653,8 +653,8 @@ end
 function Award:update()
     GL:debug("Award:update");
 
-    local IconWidget = GL.Interface:getItem(self, "Icon.Item");
-    local itemLink = GL.Interface:getItem(self, "EditBox.Item"):GetText();
+    local IconWidget = GL.Interface:get(self, "Icon.Item");
+    local itemLink = GL.Interface:get(self, "EditBox.Item"):GetText();
 
     -- If the item link is not valid then
     --   Show the default question mark icon
@@ -672,7 +672,7 @@ function Award:update()
     local icon = select(10, GetItemInfo(itemLink));
 
     if (icon) then
-        GL.Interface:getItem(self, "Table.Players"):ClearSelection();
+        GL.Interface:get(self, "Table.Players"):ClearSelection();
 
         IconWidget:SetImage(icon);
         Award.ItemBoxHoldsValidItem = true;
@@ -690,8 +690,8 @@ end
 function Award:reset()
     GL:debug("Award:reset");
 
-    GL.Interface:getItem(self, "Icon.Item"):SetImage(Award.Defaults.itemIcon);
-    GL.Interface:getItem(self, "EditBox.Item"):SetText(Award.Defaults.itemText);
+    GL.Interface:get(self, "Icon.Item"):SetImage(Award.Defaults.itemIcon);
+    GL.Interface:get(self, "EditBox.Item"):SetText(Award.Defaults.itemText);
     Award.ItemBoxHoldsValidItem = false;
 
     Award:updateWidgets();
@@ -708,11 +708,11 @@ function Award:updateWidgets()
     --   The stop button should be available
     --   The item box should be available
     if (not Award.ItemBoxHoldsValidItem) then
-        GL.Interface:getItem(self, "Button.Award"):SetDisabled(true);
-        GL.Interface:getItem(self, "Button.Disenchant"):SetDisabled(true);
+        GL.Interface:get(self, "Button.Award"):SetDisabled(true);
+        GL.Interface:get(self, "Button.Disenchant"):SetDisabled(true);
     else
-        GL.Interface:getItem(self, "Button.Award"):SetDisabled(false);
-        GL.Interface:getItem(self, "Button.Disenchant"):SetDisabled(false);
+        GL.Interface:get(self, "Button.Award"):SetDisabled(false);
+        GL.Interface:get(self, "Button.Disenchant"):SetDisabled(false);
     end
 end
 

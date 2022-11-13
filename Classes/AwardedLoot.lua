@@ -433,6 +433,7 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, G
 
         -- The loot window is still active and the auto assign setting is enabled
         if (GL.DroppedLoot.lootWindowIsOpened
+            and GL.User.isMasterLooter
             and GL.Settings:get("AwardingLoot.autoAssignAfterAwardingAnItem")
         ) then
             GL.PackMule:assignLootToPlayer(AwardEntry.itemID, winner);

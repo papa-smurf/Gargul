@@ -159,7 +159,7 @@ local FrameBackdrop = {
 }
 
 local function constructor()
-    local Frame = GL.Interface:getItem(GL.Interface.Dialogs.IncomingBoostedRollDataDialog, "Window");
+    local Frame = GL.Interface:get(GL.Interface.Dialogs.IncomingBoostedRollDataDialog, "Window");
     if (Frame) then
         Frame:Hide();
     end
@@ -179,7 +179,7 @@ local function constructor()
     Frame:SetScript("OnHide", OnClose);
     Frame:SetScript("OnMouseDown", OnMouseDown);
     Frame:SetScript("OnMouseUp", OnMouseUp);
-    GL.Interface:setItem(GL.Interface.Dialogs.IncomingBoostedRollDataDialog, "Window", Frame);
+    GL.Interface:set(GL.Interface.Dialogs.IncomingBoostedRollDataDialog, "Window", Frame);
 
     -- Container Support
     local content = CreateFrame("Frame", nil, Frame)
@@ -237,7 +237,7 @@ local function constructor()
         TrustSenderCheckBox:SetHeight(20);
         TrustSenderCheckBox:SetWidth(24);
         OptionsFrame:AddChild(TrustSenderCheckBox);
-        GL.Interface:setItem(GL.Interface.Dialogs.IncomingBoostedRollDataDialog, "TrustSender", TrustSenderCheckBox);
+        GL.Interface:set(GL.Interface.Dialogs.IncomingBoostedRollDataDialog, "TrustSender", TrustSenderCheckBox);
         Widget.TrustSenderCheckBox = TrustSenderCheckBox;
 
         TrustSenderCheckBox:SetCallback("OnValueChanged", function (widget)

@@ -51,7 +51,7 @@ function Exporter:draw()
     Window:SetPoint(GL.Interface:getPosition("Exporter"));
     Window.statustext:GetParent():Hide(); -- Hide the statustext bar
 
-    GL.Interface:setItem(self, "Window", Window);
+    GL.Interface:set(self, "Window", Window);
 
     -- Make sure the window can be closed by pressing the escape button
     _G["GARGUL_EXPORTER_WINDOW"] = Window.frame;
@@ -79,9 +79,9 @@ function Exporter:draw()
     ExportBox:SetNumLines(22);
     ExportBox:SetMaxLetters(999999999);
     Window:AddChild(ExportBox);
-    GL.Interface:setItem(self, "Export", ExportBox);
+    GL.Interface:set(self, "Export", ExportBox);
 
-    GL.Interface:setItem(self, "Export", ExportBox);
+    GL.Interface:set(self, "Export", ExportBox);
 
     --[[
         FOOTER BUTTON PARENT FRAME
@@ -170,14 +170,14 @@ function Exporter:refreshExportString()
 
     if (exportFormat == Constants.ExportFormats.TMB) then
         local exportString = self:transformEntriesToTMBFormat(LootEntries);
-        GL.Interface:getItem(self, "MultiLineEditBox.Export"):SetText(exportString);
+        GL.Interface:get(self, "MultiLineEditBox.Export"):SetText(exportString);
 
     elseif (exportFormat == Constants.ExportFormats.Custom) then
         local exportString = self:transformEntriesToCustomFormat(LootEntries);
-        GL.Interface:getItem(self, "MultiLineEditBox.Export"):SetText(exportString);
+        GL.Interface:get(self, "MultiLineEditBox.Export"):SetText(exportString);
 
     elseif (GL:inTable({Constants.ExportFormats.DFTUS, Constants.ExportFormats.DFTEU}, exportFormat)) then
-        GL.Interface:getItem(self, "MultiLineEditBox.Export"):SetText(self:transformEntriesToDFTFormat(LootEntries));
+        GL.Interface:get(self, "MultiLineEditBox.Export"):SetText(self:transformEntriesToDFTFormat(LootEntries));
     end
 end
 
@@ -349,7 +349,7 @@ function Exporter:close()
     end
 
     self.visible = false;
-    local Window = GL.Interface:getItem(self, "Window");
+    local Window = GL.Interface:get(self, "Window");
 
     if (not Window) then
         return;
@@ -360,8 +360,8 @@ function Exporter:close()
     Window:Hide();
 
     -- Clean up the Dates table separately
-    GL.Interface:getItem(self, "Table.Dates"):SetData({}, true);
-    GL.Interface:getItem(self, "Table.Dates"):Hide();
+    GL.Interface:get(self, "Table.Dates"):SetData({}, true);
+    GL.Interface:get(self, "Table.Dates"):Hide();
 end
 
 --- Draw the dates table shown on the left hand side of the window
@@ -418,7 +418,7 @@ function Exporter:drawDatesTable(Parent, Dates)
     -- For the full format see https://www.wowace.com/projects/lib-st/pages/set-data
     Table:SetData(TableData, true);
 
-    GL.Interface:setItem(self, "Dates", Table);
+    GL.Interface:set(self, "Dates", Table);
 end
 
 GL:debug("Exporter.lua");

@@ -4,9 +4,9 @@ local _, GL = ...;
 --[[-----------------------------------------------------------------------------
 PopupDialog AceGUI Widget
 Simple container widget that creates a popup dialog similar to Blizzard's dialogs
-But with added editbox
+But with added checkboxes for OS and +1 markers
 -------------------------------------------------------------------------------]]
-local Type, Version = "ConfirmWithSingleInputDialog", 1
+local Type, Version = "GargulDKPDeleteDialog", 1
 local AceGUI = LibStub and LibStub("AceGUI-3.0", true)
 if not AceGUI or (AceGUI:GetWidgetVersion(Type) or 0) >= Version then return end
 
@@ -158,6 +158,7 @@ local function constructor()
     Frame:SetFrameStrata("FULLSCREEN_DIALOG");
     Frame:SetBackdrop(FrameBackdrop);
     Frame:SetBackdropColor(0, 0, 0, 1);
+    Frame:SetMinResize(320, 10);
     Frame:SetWidth(320);
     Frame:SetToplevel(true);
     Frame:SetScript("OnHide", OnClose);
@@ -195,20 +196,45 @@ local function constructor()
     PopupDialogInstance:AddChild(Dialog);
     Widget.DialogLabel = Dialog;
 
-    local InputEditBox = GL.AceGUI:Create("EditBox");
-    InputEditBox:DisableButton(true);
-    InputEditBox:SetHeight(20);
-    InputEditBox:SetFullWidth(true);
-    InputEditBox:SetText("");
-    InputEditBox:SetLabel("");
-    PopupDialogInstance:AddChild(InputEditBox);
-    GL.Interface:set(GL.Interface.Dialogs.ConfirmWithSingleInputDialog, "Input", InputEditBox);
+    HorizontalSpacer = AceGUI:Create("SimpleGroup");
+    HorizontalSpacer:SetLayout("FILL");
+    HorizontalSpacer:SetFullWidth(true);
+    HorizontalSpacer:SetHeight(8);
+    PopupDialogInstance:AddChild(HorizontalSpacer);
 
-    InputEditBox:SetCallback("OnEnterPressed", function ()
-        if (type(Widget.yesCallback) == "function") then
-            Widget.yesCallback();
-        end
-    end);
+    local OptionsFrame = AceGUI:Create("SimpleGroup");
+    OptionsFrame:SetFullWidth(true);
+    OptionsFrame:SetLayout("FLOW");
+    PopupDialogInstance:AddChild(OptionsFrame);
+
+    HorizontalSpacer = AceGUI:Create("SimpleGroup");
+    HorizontalSpacer:SetLayout("FILL");
+    HorizontalSpacer:SetFullWidth(true);
+    HorizontalSpacer:SetHeight(8);
+    OptionsFrame:AddChild(HorizontalSpacer);
+
+    VerticalSpacer = AceGUI:Create("SimpleGroup");
+    VerticalSpacer:SetLayout("FILL");
+    VerticalSpacer:SetWidth(52);
+    VerticalSpacer:SetHeight(10);
+    OptionsFrame:AddChild(VerticalSpacer);
+
+    -- Boosted Roll cost label
+    local ReasonLabel = AceGUI:Create("Label");
+    ReasonLabel:SetFontObject(_G["GameFontNormal"]);
+    ReasonLabel:SetWidth(120);
+    ReasonLabel:SetText("GDKP Reason:");
+    OptionsFrame:AddChild(ReasonLabel);
+
+    -- Boosted Roll cost
+    local GDKPDeleteReasonEditBox = GL.AceGUI:Create("EditBox");
+    GDKPDeleteReasonEditBox:DisableButton(true);
+    GDKPDeleteReasonEditBox:SetHeight(20);
+    GDKPDeleteReasonEditBox:SetWidth(60);
+    GDKPReasonEditBox:SetText("");
+    GDKPDeleteReasonEditBox:SetLabel("");
+    OptionsFrame:AddChild(GDKPDeleteReasonEditBox);
+    GL.Interface:set(GL.Interface.Dialogs.AwardDialog, "GDKPDeleteReason", GDKPDeleteReasonEditBox);
 
     HorizontalSpacer = AceGUI:Create("SimpleGroup");
     HorizontalSpacer:SetLayout("FILL");
