@@ -22,13 +22,18 @@ function CreateSession:draw()
     ---@type GDKPOverview
     local Overview = GL.Interface.GDKP.Overview;
 
+    -- It seems our GDKP overview window is not opened
+    if (not Overview.isVisible) then
+        return;
+    end
+
     -- Create a container/parent frame
     local Window = AceGUI:Create("InlineGroup");
     Window:SetLayout("Flow");
     Window:SetWidth(300);
     Window:SetHeight(280);
-    Window:SetPoint("TOPLEFT", GL.Interface:getItem(Overview, "Window").frame, "TOPRIGHT", 2, 16);
-    GL.Interface:setItem(self, "Window", Window);
+    Window:SetPoint("TOPLEFT", Overview.Window.frame, "TOPRIGHT", 2, 16);
+    GL.Interface:set(self, "Window", Window);
     Window.frame:SetFrameStrata("HIGH");
     Window.frame:Show();
 
@@ -65,11 +70,7 @@ function CreateSession:draw()
             GL.GDKP:setActiveSession(Session.ID);
         end
 
-        if (Overview.isVisible) then
-            GL.Interface:getItem(Overview, "Window"):Hide();
-            Overview:draw();
-            self:close();
-        end
+        self:close();
     end);
     Window:AddChild(SaveButton);
 
