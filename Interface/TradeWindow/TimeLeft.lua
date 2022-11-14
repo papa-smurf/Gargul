@@ -34,6 +34,8 @@ function TimeLeft:_init()
             {"TimeLeftBagUpdateDelayedListener", "BAG_UPDATE_DELAYED"},
             {"TimeLeftBagMasterLooterLostListener", "GL.USER_LOST_MASTER_LOOTER"},
             {"TimeLeftBagMasterLooterObtainedListener", "GL.USER_OBTAINED_MASTER_LOOTER"},
+            --Listen to ItemAwarded so that we can update timer bars
+            {"TimeLeftItemAwardedListener","GL.ITEM_AWARDED"},
         }, function ()
             self:refreshBars();
         end);
@@ -461,10 +463,19 @@ function TimeLeft:refreshBars()
                     return;
                 end
 
+                -- Checks for "awarded but not received gear"
+                local notReceived = false;
+                for _, line in pairs(GL.AwardedLoot:tooltipLines(itemLink) or {}) do
+                    if (string.match(line, "(not received yet)")) then
+                        notReceived = true;
+                    end
+                end
+
                 tinsert(ItemsWithTradeTimeRemaining, {
                     icon = icon,
                     itemLink = itemLink,
                     timeRemaining = timeRemaining,
+                    notReceived = notReceived,
                 });
 
                 -- We're not tracking this item yet or this version of the item has a smaller trade time window
@@ -542,6 +553,9 @@ function TimeLeft:refreshBars()
         TimerBar:SetColor(0, 1, 0, .3); -- Reset color to green
         TimerBar:SetLabel(BagItem.itemLink);
         TimerBar:SetIcon(BagItem.icon);
+        if (BagItem.notReceived ) then
+            TimerBar:SetIcon("Interface\\AddOns\\Gargul\\Assets\\Buttons\\award.tga")
+        end
         TimerBar:Set("type", "TRADE_WINDOW_TIME_LEFT");
         TimerBar.Details = BagItem;
 
