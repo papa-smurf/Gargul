@@ -34,7 +34,6 @@ function TimeLeft:_init()
             {"TimeLeftBagUpdateDelayedListener", "BAG_UPDATE_DELAYED"},
             {"TimeLeftBagMasterLooterLostListener", "GL.USER_LOST_MASTER_LOOTER"},
             {"TimeLeftBagMasterLooterObtainedListener", "GL.USER_OBTAINED_MASTER_LOOTER"},
-            --Listen to ItemAwarded so that we can update timer bars
             {"TimeLeftItemAwardedListener","GL.ITEM_AWARDED"},
         }, function ()
             self:refreshBars();
@@ -447,9 +446,16 @@ function TimeLeft:refreshBars()
 
     local ItemsWithTradeTimeRemaining = {};
     local tradeTimeRemainingByLink = {};
-    local awardedItemCountByLink = {};
-    local deItemCountByLink = {};
-    for bag = 0, 4 do
+    local UnreceivedAwardedItemCountByLink = {};
+    local UnreceivedDisenchantedItemCountByLink = {};
+
+    local numberOfBagsToCheck = 4;
+    -- Dragon Flight introduced an extra bag slot
+    if (GL.clientIsDragonFlightOrLater) then
+        numberOfBagsToCheck = numberOfBagsToCheck + 1;
+    end
+
+    for bag = 0, numberOfBagsToCheck do
         for slot = 1, GetContainerNumSlots(bag) do
             (function ()
                 local icon, _, _, _, _, _, itemLink, _, _ = GetContainerItemInfo(bag, slot);
@@ -467,29 +473,29 @@ function TimeLeft:refreshBars()
 
                 -- Checks for "awarded but not received gear" and initialize counts of
                 --    items unreceived for both award and de
-                local notReceived = false;
-                local deNotReceived = false;
-                local notReceivedCount = 0;
-                local deNotReceivedCount = 0;
+                local received = true;
+                local deReceived = true;
+                local unreceivedCount = 0;
+                local unreceivedDECount = 0;
                 for _, line in pairs(GL.AwardedLoot:tooltipLines(itemLink) or {}) do
                     if (string.match(line, "|de|") and string.match(line, "(not received yet)")) then
-                        deNotReceived = true;
-                        deNotReceivedCount = deNotReceivedCount + 1
+                        deReceived = false;
+                        unreceivedDECount = unreceivedDECount + 1
                     elseif (string.match(line, "(not received yet)")) then
-                        notReceived = true;
-                        notReceivedCount = notReceivedCount + 1
+                        received = false;
+                        unreceivedCount = unreceivedCount + 1;
                     end
                 end
 
-                awardedItemCountByLink[itemLink] = notReceivedCount
-                deItemCountByLink[itemLink] = deNotReceivedCount
+                UnreceivedAwardedItemCountByLink[itemLink] = unreceivedCount;
+                UnreceivedDisenchantedItemCountByLink[itemLink] = unreceivedDECount;
 
                 tinsert(ItemsWithTradeTimeRemaining, {
                     icon = icon,
                     itemLink = itemLink,
                     timeRemaining = timeRemaining,
-                    notReceived = notReceived,
-                    deNotReceived = deNotReceived,
+                    received = received,
+                    deReceived = deReceived,
                 });
 
                 -- We're not tracking this item yet or this version of the item has a smaller trade time window
@@ -567,12 +573,12 @@ function TimeLeft:refreshBars()
         TimerBar:SetColor(0, 1, 0, .3); -- Reset color to green
         TimerBar:SetLabel(BagItem.itemLink);
         TimerBar:SetIcon(BagItem.icon);
-        if (BagItem.notReceived and awardedItemCountByLink[BagItem.itemLink] > 0) then
-            TimerBar:SetIcon("Interface\\AddOns\\Gargul\\Assets\\Icons\\trophy")
-            awardedItemCountByLink[BagItem.itemLink] = awardedItemCountByLink[BagItem.itemLink] - 1
-        elseif (BagItem.deNotReceived and deItemCountByLink[BagItem.itemLink] > 0) then
-            TimerBar:SetIcon("Interface\\AddOns\\Gargul\\Assets\\Icons\\disenchant")
-            deItemCountByLink[BagItem.itemLink] = deItemCountByLink[BagItem.itemLink] - 1
+        if (not BagItem.received and UnreceivedAwardedItemCountByLink[BagItem.itemLink] or 0 > 0) then
+            TimerBar:SetIcon("Interface\\AddOns\\Gargul\\Assets\\Icons\\trophy");
+            UnreceivedAwardedItemCountByLink[BagItem.itemLink] = UnreceivedAwardedItemCountByLink[BagItem.itemLink] - 1
+        elseif (not BagItem.deReceived and UnreceivedDisenchantedItemCountByLink[BagItem.itemLink] or 0 > 0) then
+            TimerBar:SetIcon("Interface\\AddOns\\Gargul\\Assets\\Icons\\disenchant");
+            UnreceivedDisenchantedItemCountByLink[BagItem.itemLink] = UnreceivedDisenchantedItemCountByLink[BagItem.itemLink] - 1
         end
 
         TimerBar:Set("type", "TRADE_WINDOW_TIME_LEFT");
