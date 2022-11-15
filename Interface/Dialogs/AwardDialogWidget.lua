@@ -284,7 +284,6 @@ local function constructor()
         BoostedRollsCostEditBox:SetText(GL.Settings:get("BoostedRolls.defaultCost", 0));
         BoostedRollsCostEditBox:SetLabel("");
         OptionsFrame:AddChild(BoostedRollsCostEditBox);
-        BoostedRollsCostEditBox:SetFocus();
         GL.Interface:set(GL.Interface.Dialogs.AwardDialog, "Cost", BoostedRollsCostEditBox);
     end
 

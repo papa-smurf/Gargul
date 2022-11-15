@@ -5,6 +5,7 @@ GL.Commands = GL.Commands or {
     CommandDescriptions = {
         awardondate = "In case you need to award something retroactively you can use this command: /gl awardOnDate [winnerName] [yy-mm-dd] [itemLink]",
         award = "Open the award window. Optionally accepts an ItemLink as an argument: /gl award [itemLink?]",
+        awardhistory = "Open the award history window which shows recently awarded items and their rolls",
         boostedrolls = "Open the Boosted Rolls UI that allows you to easily manage roll boosts.",
         buffs = "You can instantly check player buffs like Ony, ZG, but also protection consumables like shadow protection: /gl buffs 22888, 22818, 22817, 22820, 24425, 15366, 20079",
         clearplusones = "Clear all plus one values",
@@ -28,6 +29,7 @@ GL.Commands = GL.Commands or {
     },
 
     ShorthandDictionary = {
+        ah = "awardhistory",
         br = "boostedrolls",
         boosted = "boostedrolls",
         boostedroll = "boostedrolls",
@@ -90,6 +92,11 @@ GL.Commands = GL.Commands or {
             end
 
             GL.AwardedLoot:addWinner(...);
+        end,
+
+        -- Toggle the award history window
+        awardhistory = function ()
+            GL.Interface.AwardHistory:toggle();
         end,
 
         -- Award an item on a given date. Useful if you forgot to award an item and want to do it later

@@ -43,7 +43,6 @@ function Overview:draw()
     local Window = AceGUI:Create("Frame");
     GL.Interface:AceGUIDefaults(self, Window, "SoftReserveOverview", 600, 470);
     Window:EnableResize(false);
-    GL.Interface:set(self, "Window", Window);
 
     Window:SetStatusText(string.format(
         "Imported on |c00a79eff%s|r at |c00a79eff%s|r",
@@ -210,22 +209,6 @@ function Overview:draw()
     end);
     ButtonFrame:AddChild(PostMissingSoftReserveInfoButton);
 
-    local PostDiscordLinkButton = AceGUI:Create("Button");
-    PostDiscordLinkButton:SetText("Post Discord URL");
-    PostDiscordLinkButton:SetWidth(134); -- Minimum is 134
-    PostDiscordLinkButton:SetCallback("OnClick", function()
-        SoftRes:postDiscordLink();
-    end);
-    ButtonFrame:AddChild(PostDiscordLinkButton);
-
-        local SettingsButton = AceGUI:Create("Button");
-    SettingsButton:SetText("Settings");
-    SettingsButton:SetWidth(84); -- Minimum is 102
-    SettingsButton:SetCallback("OnClick", function()
-        GL.Settings:draw("SoftRes");
-    end);
-    ButtonFrame:AddChild(SettingsButton);
-
     local ClearDataButton = AceGUI:Create("Button");
     ClearDataButton:SetText("Clear Data");
     ClearDataButton:SetWidth(100); -- Minimum is 102
@@ -233,6 +216,14 @@ function Overview:draw()
         GL.Interface.Dialogs.PopupDialog:open("CLEAR_SOFTRES_CONFIRMATION");
     end);
     ButtonFrame:AddChild(ClearDataButton);
+
+    local SettingsButton = AceGUI:Create("Button");
+    SettingsButton:SetText("Settings");
+    SettingsButton:SetWidth(84); -- Minimum is 102
+    SettingsButton:SetCallback("OnClick", function()
+        GL.Settings:draw("SoftRes");
+    end);
+    ButtonFrame:AddChild(SettingsButton);
 
     self:drawCharacterTable(FirstColumn.frame);
 
@@ -666,6 +657,12 @@ end
 ---@return void
 function Overview:close(Window)
     GL:debug("Overview:close");
+
+    if (not self.isVisible
+        or not Window
+    ) then
+        return;
+    end
 
     GL.Events:unregister("SoftResShareButtonRosterUpdatedListener");
 

@@ -4,7 +4,10 @@ local _, GL = ...;
 ---@class Interface
 GL.Interface = GL.Interface or {
     _resizeBoundsMethod = nil,
-    typeDictionary = {
+    FramePool = {
+        Buttons = {};
+    },
+    TypeDictionary = {
         InteractiveLabel = "Label",
         SimpleGroup = "Frame",
         InlineGroup = "Frame",
@@ -166,6 +169,8 @@ end
 ---@param Item Frame
 ---@return string
 function Interface:determineItemType(Item)
+    GL:debug("Interface:determineItemType");
+
     if (type(Item.GetCell) == "function") then
         return "Table";
     end
@@ -173,7 +178,7 @@ function Interface:determineItemType(Item)
     if (type(Item.type) == "string") then
         local itemType = Item.type;
 
-        return self.typeDictionary[itemType] or itemType;
+        return self.TypeDictionary[itemType] or itemType;
     end
 
     return "Frame";
@@ -337,8 +342,18 @@ function Interface:createButton(Parent, Details)
         Parent = Parent.frame;
     end
 
-    local name = "GargulButton" .. GL:uuid();
-    local Button = CreateFrame("Button", name, Parent, "UIPanelButtonTemplate");
+    local name;
+
+    ---@type Frame
+    local Button = table.remove(self.FramePool.Buttons, 1);
+
+    if (not Button) then
+        name = "GargulButton" .. GL:uuid();
+        CreateFrame("Button", name, Parent, "UIPanelButtonTemplate");
+    else
+        name = Button:GetName();
+    end
+
     Button:SetParent(Parent);
     Button:ClearAllPoints();
     Button:SetSize(width, height);
@@ -406,6 +421,27 @@ function Interface:createButton(Parent, Details)
         if (fireUpdateOnCreation) then
             Button:update();
         end
+    end
+
+    -- Make sure we can release the button unto our pool for recycling purposes
+    Button.Release = function ()
+        Button:SetMotionScriptsWhileDisabled(false);
+        Button:SetNormalTexture(nil,"ARTWORK");
+        Button:SetHighlightTexture(nil,"ARTWORK");
+        Button:SetDisabledTexture(nil,"ARTWORK");
+        Button.update = nil;
+        Button.OnEnter = nil;
+        Button.OnLeave = nil;
+        Button.OnClick = nil;
+        Button:ClearAllPoints();
+        Button:Hide();
+
+        -- Get rid of the button's event listeners
+        for _, event in pairs(updateOn) do
+            GL.Events:unregister(name .. event .. "Listener");
+        end
+
+        tinsert(self.FramePool.Buttons, Button);
     end
 
     Button:Show();

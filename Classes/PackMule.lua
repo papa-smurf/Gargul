@@ -918,7 +918,7 @@ function PackMule:assignLootToPlayer(itemID, playerName)
     local playerIndex = false;
     playerName = GL:normalizedName(playerName);
     for _, Player in pairs(GL.User:groupMembers()) do
-        local candidate = GL:normalizedName(GetMasterLootCandidate(itemIndex, Player.index));
+        local candidate = GL:normalizedName(GetMasterLootCandidate(itemIndex, Player.index) or "");
 
         if (candidate and candidate == playerName) then
             playerIndex = Player.index;

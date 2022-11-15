@@ -350,7 +350,7 @@ function Changelog:draw()
     Checkbox:SetValue(GL.Settings:get("changeLog"));
     Checkbox:SetLabel("Enable changelog");
     Checkbox:SetDescription("");
-    Checkbox:SetWidth(130);
+    Checkbox:SetWidth(220);
     Checkbox:SetCallback("OnValueChanged", function()
         GL.Settings:set("changeLog", Checkbox:GetValue());
     end);
