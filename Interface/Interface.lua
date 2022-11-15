@@ -315,7 +315,6 @@ function Interface:createButton(Parent, Details)
     local alwaysFireOnClick = Details.alwaysFireOnClick or false;
     local tooltip = Details.tooltip or "";
     local disabledTooltip = Details.disabledTooltip or "";
-    local position = Details.position;
     local width = Details.width or 24;
     local height = Details.height or 24;
     local update = Details.update or nil;
@@ -340,6 +339,8 @@ function Interface:createButton(Parent, Details)
 
     local name = "GargulButton" .. GL:uuid();
     local Button = CreateFrame("Button", name, Parent, "UIPanelButtonTemplate");
+    Button:SetParent(Parent);
+    Button:ClearAllPoints();
     Button:SetSize(width, height);
 
     -- Make sure the tooltip still shows even when the button is disabled
