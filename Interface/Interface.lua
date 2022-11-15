@@ -349,7 +349,7 @@ function Interface:createButton(Parent, Details)
 
     if (not Button) then
         name = "GargulButton" .. GL:uuid();
-        CreateFrame("Button", name, Parent, "UIPanelButtonTemplate");
+        Button = CreateFrame("Button", name, Parent, "UIPanelButtonTemplate");
     else
         name = Button:GetName();
     end
