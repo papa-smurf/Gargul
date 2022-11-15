@@ -234,7 +234,7 @@ end);
 
 -- Register the gdkp slash command
 GL.Ace:RegisterChatCommand("gdkp", function (...)
-    GL.Interface.GDKP.Overview:draw();
+    GL.Commands:call("gdkp");
 end);
 
 --- Announce conflicting addons, if any

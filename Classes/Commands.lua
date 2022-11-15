@@ -99,7 +99,7 @@ GL.Commands = GL.Commands or {
         boostedrolls = function() GL.BoostedRolls:draw(); end,
 
         -- Open the GDKP overview
-        gdkp = function () GL.Interface.GDKP.Overview:draw(); end,
+        gdkp = function () GL.Interface.GDKP.Overview:open(); end,
 
         -- Open the raid groups window
         groups = function() GL.RaidGroups:drawImporter(); end,

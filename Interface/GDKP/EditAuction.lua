@@ -10,6 +10,9 @@ GL.Interface.GDKP.EditAuction = {}
 ---@type EditAuction
 local EditAuction = GL.Interface.GDKP.EditAuction;
 
+---@type Interface
+local Interface = GL.Interface;
+
 ---@return void
 function EditAuction:draw(session, checksum)
     GL:debug("GDKP.Edit:draw");
@@ -41,8 +44,8 @@ function EditAuction:draw(session, checksum)
     Window:SetLayout("Flow");
     Window:SetWidth(300);
     Window:SetHeight(280);
-    Window:SetPoint("TOPLEFT", Overview.Window.frame, "TOPRIGHT", 2, 16);
-    GL.Interface:set(self, "Window", Window);
+    Window:SetPoint("TOPLEFT", Interface:get(Overview, "GDKPOverview").frame, "TOPRIGHT", 2, 16);
+    Interface:set(self, "Window", Window);
     Window.frame:SetFrameStrata("HIGH");
     Window.frame:Show();
 
@@ -112,18 +115,18 @@ function EditAuction:draw(session, checksum)
         if (not GL:empty(newName)
             and Auction.Winner.name ~= newName
         ) then
-            somethingChanged = GL.GDKP:reassignAuction(session, checksum, newName);
+            GL.GDKP:reassignAuction(session, checksum, newName);
         end
 
         -- The session was changed (make sure we do this last!)
         if (session ~= SessionDropdown:GetValue()) then
             GL.GDKP:moveAuction(checksum, session, SessionDropdown:GetValue());
-            somethingChanged = true;
         end
 
-        if (somethingChanged) then
-            self:close();
-        end
+        -- The paid status was changed
+        ---@todo: implement
+
+        self:close();
     end);
     Window:AddChild(SaveButton);
 
@@ -137,7 +140,7 @@ function EditAuction:draw(session, checksum)
 end
 
 function EditAuction:close()
-    GL.Interface:release(self, "Window");
+    Interface:release(self, "Window");
 end
 
 GL:debug("Interfaces/GDKP/EditAuction.lua");
