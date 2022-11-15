@@ -31,6 +31,7 @@ function TimeLeft:_init()
     -- That way we don't have any stutters or weird behavior like bars not showing up
     GL.Ace:ScheduleTimer(function ()
         GL.Events:register({
+            {"TimeLeftPlayerEnteringWorldListener", "PLAYER_ENTERING_WORLD"},
             {"TimeLeftBagUpdateDelayedListener", "BAG_UPDATE_DELAYED"},
             {"TimeLeftBagMasterLooterLostListener", "GL.USER_LOST_MASTER_LOOTER"},
             {"TimeLeftBagMasterLooterObtainedListener", "GL.USER_OBTAINED_MASTER_LOOTER"},
