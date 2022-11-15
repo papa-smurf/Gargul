@@ -81,9 +81,9 @@ Interface/SoftRes/Importer.lua
 Interface/SoftRes/Overview.lua
 Interface/GDKP/Auctioneer.lua
 Interface/GDKP/Bidder.lua
+Interface/GDKP/Overview.lua
 Interface/GDKP/CreateSession.lua
 Interface/GDKP/EditAuction.lua
-Interface/GDKP/Overview.lua
 Interface/TMB/Importer.lua
 Interface/TMB/Overview.lua
 Interface/PlusOnes/OverView.lua

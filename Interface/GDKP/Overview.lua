@@ -2,8 +2,14 @@
 local _, GL = ...;
 
 local AceGUI = LibStub("AceGUI-3.0");
+
+---@type Data
 local Constants = GL.Data.Constants;
+
+---@type DB
 local DB = GL.DB;
+
+---@type Interface
 local Interface = GL.Interface;
 
 --[[ CONSTANTS ]]
@@ -18,17 +24,16 @@ GL:tableSet(GL, "Interface.GDKP.Overview", {
     -- All action buttons are stored here so we can release them properly
     ActionButtons = {},
 
-    -- Hidden buttons are added to this pool so that we can reuse them later
+    -- Released buttons are added to this pool so that we can reuse them later
     ButtonPool = {},
-
-    Window = nil,
 });
 
 ---@class GDKPOverview
 local Overview = Interface.GDKP.Overview; ---@type GDKPOverview
 
+---@return void
 function Overview:_init()
-    GL:debug("Overview:_init");
+    GL:debug("Interface.GDKP.Overview:_init");
 
     if (self._initialized) then
         return;
@@ -52,11 +57,14 @@ function Overview:_init()
     end);
 end
 
-function Overview:draw()
-    GL:debug("Overview:draw");
+---@return void
+function Overview:open()
+    GL:debug("Interface.GDKP.Overview:draw");
 
-    if (not self.Window) then
-        self:create();
+    local Window = Interface:get(self, "GDKPOverview");
+
+    if (not Window) then
+        Window = self:build();
     end
 
     if (self.isVisible) then
@@ -67,24 +75,25 @@ function Overview:draw()
 
     self:refreshLedger();
     self:refreshSessions();
-    self.Window:Show();
+    Window:Show();
 end
 
-function Overview:create()
-    GL:debug("Overview:create");
+function Overview:build()
+    GL:debug("Overview:build");
+
+    local Window = Interface:get(self, "GDKPOverview");
 
     -- Looks like we already created the overview before
-    if (self.Window) then
+    if (Window) then
         return;
     end
 
     self:_init();
 
-    local Window = AceGUI:Create("Frame");
+    Window = AceGUI:Create("Frame");
     Interface:AceGUIDefaults(self, Window, "GDKPOverview", 400, 600);
     Interface:resizeBounds(Window, 444, 300);
     Window.statustext:GetParent():Hide(); -- Hide the statustext bar
-    self.Window = Window;
 
     --[[ FIRST COLUMN: sessions ]]
     local FirstColumn = AceGUI:Create("SimpleGroup");
@@ -117,7 +126,7 @@ function Overview:create()
     SecondColumn:AddChild(ScrollFrameHolder);
 
     --[[ CREATE BUTTON ]]
-    GL.Interface:createButton(ScrollFrameHolder, {
+    Interface:createButton(ScrollFrameHolder, {
         onClick = function() Interface.Award:draw(); end,
         tooltip = "Add entry",
         disabledTooltip = "You need lead or master loot to add entries.\nYou can't add entries to deleted sessions",
@@ -166,7 +175,7 @@ function Overview:create()
     CreateSession:SetWidth(74);
     CreateSession:SetHeight(20);
     CreateSession:SetCallback("OnClick", function()
-        Interface.GDKP.CreateSession:draw();
+        Interface.GDKP.CreateSession:toggle();
     end);
 
     local EditSession = AceGUI:Create("Button");
@@ -183,7 +192,7 @@ function Overview:create()
     DeleteSession:SetHeight(20);
     DeleteSession:SetCallback("OnClick", function()
         GL.GDKP:deleteSession(self.activeSession);
-        Interface:get(self, "Window"):Hide();
+        Interface:get(self, "GDKPOverview"):Hide();
         self:draw();
     end);
 
@@ -211,6 +220,8 @@ function Overview:create()
         self:refreshLedger();
         styleWindowAfterResize();
     end, .05);
+
+    return Window;
 end
 
 function Overview:close()
@@ -281,7 +292,7 @@ function Overview:refreshLedger()
         -- Add placeholders for all the item icons and labels
         for _, Auction in pairs(Auctions) do
             local price = Auction.price or 0;
-            local saleWasDeleted = price <= 0;
+            local auctionWasDeleted = price <= 0;
 
             -- This entry should always exist, if it doesn't something went wrong (badly)
             local ItemEntry = DB.Cache.ItemsByID[tostring(Auction.itemID)];
@@ -326,7 +337,7 @@ function Overview:refreshLedger()
             ItemLabel:SetWidth(268);
 
             -- Item was sold
-            if (not saleWasDeleted) then
+            if (not auctionWasDeleted) then
                 ItemLabel:SetText(string.format(
                     "|cFF%s%s|r paid |cFF%s%sg|r for\n%s",
                     GL:classHexColor(Auction.Winner.class),
@@ -366,169 +377,67 @@ function Overview:refreshLedger()
 
             self.ActionButtons[Auction.ID] = {};
 
-            --[[
-                EDIT BUTTON
-            ]]
-            local EditButton = self:newTableButton(ActionButtons.frame);
-            EditButton:Show();
-            EditButton:SetSize(24, 24);
-            EditButton:ClearAllPoints();
-            EditButton:SetPoint("TOPRIGHT", ItemRow.frame, "TOPRIGHT", -60, -10);
-            EditButton:SetMotionScriptsWhileDisabled(true); -- Make sure tooltip still shows even when button is disabled
-
-            if (saleWasDeleted) then
-                EditButton:Disable();
-            end
-
-            local HighlightTexture = EditButton:CreateTexture();
-            HighlightTexture:SetTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\edit-highlighted");
-            HighlightTexture:SetPoint("CENTER", EditButton, "CENTER", 0, 0);
-            HighlightTexture:SetSize(24, 24);
-
-            EditButton:SetNormalTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\edit");
-            EditButton:SetHighlightTexture(HighlightTexture);
-            EditButton:SetDisabledTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\edit-disabled");
-
-            EditButton:SetScript("OnEnter", function()
-                GameTooltip:SetOwner(EditButton, "ANCHOR_TOP");
-
-                if (not saleWasDeleted) then
-                    GameTooltip:AddLine("Edit");
-                else
-                    GameTooltip:AddLine("Can't edit deleted entry");
-                end
-
-                GameTooltip:Show();
-            end);
-
-            EditButton:SetScript("OnLeave", function()
-                GameTooltip:Hide();
-            end);
-
-
-            EditButton:SetScript("OnClick", function(_, button)
-                if (button == 'LeftButton') then
+            --[[ EDIT BUTTON ]]
+            local Edit = Interface:createButton(ActionButtons, {
+                onClick = function()
                     Interface.GDKP.EditAuction:draw(sessionIdentifier, Auction.checksum);
-                end
-            end);
+                end,
+                tooltip = "Edit",
+                disabledTooltip = "You need lead or master loot to edit entries.\nYou can't edit deleted entries or entries on deleted sessions",
+                normalTexture = "Interface\\AddOns\\Gargul\\Assets\\Buttons\\edit",
+                highlightTexture = "Interface\\AddOns\\Gargul\\Assets\\Buttons\\edit-highlighted",
+                disabledTexture = "Interface\\AddOns\\Gargul\\Assets\\Buttons\\edit-disabled",
+                onUpdate = function (self)
+                    self:SetEnabled(auctionWasDeleted);
+                end,
+            });
+            Edit:SetPoint("TOPRIGHT", ItemRow.frame, "TOPRIGHT", -60, -10);
+            self.ActionButtons[Auction.ID].EditButton = Edit;
 
-            self.ActionButtons[Auction.ID].EditButton = EditButton;
+            --[[ DELETE BUTTON ]]
+            if (not auctionWasDeleted) then
+                local Delete = Interface:createButton(ActionButtons, {
+                    onClick = function()
+                        -- Shift button was held, skip reason
+                        if (IsShiftKeyDown()) then
+                            GL.GDKP:deleteAuction(sessionIdentifier, Auction.ID, "-");
+                            return;
+                        end
 
-            --[[
-                DELETE BUTTON
-            ]]
-            local DeleteButton = GL.UI:createFrame("Button", "GDKPActionButton" .. GL:uuid(), ActionButtons.frame, "UIPanelButtonTemplate");
-            DeleteButton:SetSize(24, 24);
-            DeleteButton:ClearAllPoints();
-            DeleteButton:SetPoint("TOPLEFT", EditButton, "TOPRIGHT", 2, 0);
-            DeleteButton:SetMotionScriptsWhileDisabled(true); -- Make sure tooltip still shows even when button is disabled
-
-            HighlightTexture = DeleteButton:CreateTexture();
-            HighlightTexture:SetTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\delete-highlighted");
-            HighlightTexture:SetTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\delete-highlighted");
-            HighlightTexture:SetPoint("CENTER", DeleteButton, "CENTER", 0, 0);
-            HighlightTexture:SetSize(24, 24);
-
-            DeleteButton:SetNormalTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\delete");
-            DeleteButton:SetDisabledTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\delete-disabled");
-            DeleteButton:SetHighlightTexture(HighlightTexture);
-
-            DeleteButton:SetScript("OnEnter", function()
-                GameTooltip:SetOwner(DeleteButton, "ANCHOR_TOP");
-                GameTooltip:AddLine("Delete (hold shift to bypass reason)");
-                GameTooltip:Show();
-            end);
-
-            DeleteButton:SetScript("OnLeave", function()
-                GameTooltip:Hide();
-            end);
-
-            DeleteButton:SetScript("OnClick", function(_, button)
-                if (button == 'LeftButton') then
-                    if (IsShiftKeyDown()) then
-                        ---@todo Skip the reason dialog when holding the shift key
-                        GL.GDKP:deleteAuction(sessionIdentifier, Auction.ID, "-")
-                    else
                         Interface.Dialogs.ConfirmWithSingleInputDialog:open({
                             question = string.format("Provide a reason for deleting this entry"),
                             OnYes = function (reason)
                                 GL.GDKP:deleteAuction(sessionIdentifier, Auction.ID, reason);
                             end,
                         });
-                    end
-
-                    self:refreshLedger();
-                end
-            end);
-
-            if (saleWasDeleted) then
-                DeleteButton:Hide();
+                    end,
+                    tooltip = "Delete",
+                    disabledTooltip = "You need lead or master loot to delete entries.\nYou can't delete entries on deleted sessions",
+                    normalTexture = "Interface\\AddOns\\Gargul\\Assets\\Buttons\\delete",
+                    highlightTexture = "Interface\\AddOns\\Gargul\\Assets\\Buttons\\delete-highlighted",
+                    disabledTexture = "Interface\\AddOns\\Gargul\\Assets\\Buttons\\delete-disabled",
+                });
+                Delete:SetPoint("TOPLEFT", Edit, "TOPRIGHT", 2, 0)
+                self.ActionButtons[Auction.ID].DeleteButton = Delete;
             end
 
-            self.ActionButtons[Auction.ID].DeleteButton = DeleteButton;
-
-            --[[
-                RESTORE BUTTON
-            ]]
-            local RestoreButton = GL.UI:createFrame("Button", "GDKPActionButton" .. GL:uuid(), ActionButtons.frame, "UIPanelButtonTemplate");
-            RestoreButton:SetSize(24, 24);
-            RestoreButton:SetPoint("TOPLEFT", EditButton, "TOPRIGHT", 2, 0);
-            RestoreButton:SetMotionScriptsWhileDisabled(true); -- Make sure tooltip still shows even when button is disabled
-
-            HighlightTexture = RestoreButton:CreateTexture();
-            HighlightTexture:SetTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\restore-highlighted");
-            HighlightTexture:SetTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\restore-highlighted");
-            HighlightTexture:SetPoint("CENTER", RestoreButton, "CENTER", 0, 0);
-            HighlightTexture:SetSize(24, 24);
-
-            RestoreButton:SetNormalTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\restore");
-            RestoreButton:SetDisabledTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\restore-disabled");
-            RestoreButton:SetHighlightTexture(HighlightTexture);
-
-            RestoreButton:SetScript("OnEnter", function()
-                GameTooltip:SetOwner(RestoreButton, "ANCHOR_TOP");
-                GameTooltip:AddLine("Restore");
-                GameTooltip:Show();
-            end);
-
-            RestoreButton:SetScript("OnLeave", function()
-                GameTooltip:Hide();
-            end);
-
-            RestoreButton:SetScript("OnClick", function(_, button)
-                if (button == 'LeftButton'
-                    and GL.GDKP:restoreAuction(sessionIdentifier, Auction.ID)
-                ) then
-                    self:refreshLedger();
-                end
-            end);
-
-            if (not saleWasDeleted) then
-                RestoreButton:Hide();
+            --[[ RESTORE BUTTON ]]
+            if (auctionWasDeleted) then
+                local Restore = Interface:createButton(ActionButtons, {
+                    onClick = function() GL.GDKP:restoreAuction(sessionIdentifier, Auction.ID); end,
+                    tooltip = "Restore",
+                    disabledTooltip = "You need lead or master loot to restore entries.\nYou can't restore entries of deleted sessions",
+                    normalTexture = "Interface\\AddOns\\Gargul\\Assets\\Buttons\\restore",
+                    highlightTexture = "Interface\\AddOns\\Gargul\\Assets\\Buttons\\restore-highlighted",
+                    disabledTexture = "Interface\\AddOns\\Gargul\\Assets\\Buttons\\restore-disabled",
+                });
+                Restore:SetPoint("TOPLEFT", Edit, "TOPRIGHT", 2, 0);
+                self.ActionButtons[Auction.ID].RestoreButton = Restore;
             end
-
-            self.ActionButtons[Auction.ID].RestoreButton = RestoreButton;
         end
     end);
 
-    self.Window:DoLayout();
-end
-
---- Update the share button when the group setup changes
----
----@return void
-function Overview:updateShareButton()
-    local ShareButton = Interface:get(self, "Frame.ShareButton")
-
-    GL.Ace:ScheduleTimer(function ()
-        -- The user doesn't have sufficient permissions to broadcast the data
-        if (not GL.GDKP:userIsAllowedToBroadcast()) then
-            ShareButton:Disable();
-            return;
-        end
-
-        ShareButton:Enable();
-    end, 1.5);
+    Interface:get(self, "GDKPOverview"):DoLayout();
 end
 
 --- Make sure we re-use button frames whenever possible
@@ -654,8 +563,9 @@ function Overview:refreshSessions()
 
     local lowestPriority = 99999999999;
     local lowestPriorityTableItem = 1;
-    local selectedTableItem = nil;
+    local selectedTableItem;
     local tableItem = 1;
+
     for checksum, Session in pairs(DB:get("GDKP.Ledger", {})) do
         local title = Session.title;
         local priority = 99999999999 - (Session.createdAt or 0);
@@ -695,6 +605,7 @@ function Overview:refreshSessions()
 
     if (not selectedTableItem
         and lowestPriorityTableItem
+        and TableData[lowestPriorityTableItem]
     ) then
         selectedTableItem = lowestPriorityTableItem;
         self.selectedSession = TableData[lowestPriorityTableItem].cols[2].value;

@@ -5,37 +5,30 @@ GL.AceGUI = GL.AceGUI or LibStub("AceGUI-3.0");
 local AceGUI = GL.AceGUI;
 
 ---@class CreateSession
-GL.Interface.GDKP.CreateSession = {}
+GL.Interface.GDKP.CreateSession = {
+    isVisible = false,
+};
 
 ---@type CreateSession
 local CreateSession = GL.Interface.GDKP.CreateSession;
 
----@return void
-function CreateSession:draw()
-    GL:debug("GDKP.CreateSession:draw");
+---@type GDKPOverview
+local Overview = GL.Interface.GDKP.Overview;
 
-    local VerticalSpacer;
+---@type Interface
+local Interface = GL.Interface;
 
-    -- Release any existing edit auction window
-    self:close();
+---@return Frame
+function CreateSession:build()
+    GL:debug("Interface.GDKP.CreateSession:build");
 
-    ---@type GDKPOverview
-    local Overview = GL.Interface.GDKP.Overview;
-
-    -- It seems our GDKP overview window is not opened
-    if (not Overview.isVisible) then
-        return;
-    end
-
-    -- Create a container/parent frame
     local Window = AceGUI:Create("InlineGroup");
     Window:SetLayout("Flow");
     Window:SetWidth(200);
     Window:SetHeight(280);
-    Window:SetPoint("TOPLEFT", Overview.Window.frame, "TOPRIGHT", 2, 16);
-    GL.Interface:set(self, "Window", Window);
     Window.frame:SetFrameStrata("HIGH");
     Window.frame:Show();
+    Interface:set(self, "Window", Window);
 
     local Label = GL.AceGUI:Create("Label");
     Label:SetHeight(20);
@@ -47,7 +40,6 @@ function CreateSession:draw()
     Name:DisableButton(true);
     Name:SetHeight(20);
     Name:SetFullWidth(true);
-    Name:SetText("");
     Name:SetLabel("Name");
     Window:AddChild(Name);
 
@@ -55,25 +47,24 @@ function CreateSession:draw()
     Description:DisableButton(true);
     Description:SetHeight(20);
     Description:SetFullWidth(true);
-    Description:SetText("");
     Description:SetLabel("Description");
     Window:AddChild(Description);
 
-    local thereIsAnActiveGDKPSession = GL.GDKP:getActiveSession() ~= false;
     local SwitchCheckbox = AceGUI:Create("CheckBox");
     SwitchCheckbox:SetValue(false);
     SwitchCheckbox:SetLabel("Switch to this session");
     SwitchCheckbox:SetFullWidth(true);
-    SwitchCheckbox:SetValue(not thereIsAnActiveGDKPSession);
+    SwitchCheckbox:SetValue(GL.GDKP:getActiveSession() == false);
     SwitchCheckbox.text:SetTextColor(.99, .85, .06);
     SwitchCheckbox.text:SetFontObject(_G["GameFontHighlightSmall"]);
+    Interface:set(self, "Switch", SwitchCheckbox);
     Window:AddChild(SwitchCheckbox);
 
     local Save = AceGUI:Create("Button");
     Save:SetText("Save");
     Save:SetFullWidth(true);
     Save:SetCallback("OnClick", function()
-        local title = strtrim(Description:GetText());
+        local title = strtrim(Name:GetText());
 
         if (GL:empty(title)) then
             return;
@@ -95,10 +86,63 @@ function CreateSession:draw()
         self:close();
     end);
     Window:AddChild(Cancel);
+
+    return Window;
 end
 
+---@return Frame
+function CreateSession:window()
+    GL:debug("Interface.GDKP.CreateSession:window");
+
+    local Window = Interface:get(self, "Window");
+
+    if (not Window) then
+        Window = self:build();
+    end
+
+    return Window;
+end
+
+--- Toggle the create session window that's anchored to the right side of the GDKP overview window
+---
+---@return void
+function CreateSession:toggle()
+    GL:debug("Interface.GDKP.CreateSession:toggle");
+
+    if (self.isVisible) then
+        return self:close();
+    end
+
+    self:open();
+end
+
+---@return void
+function CreateSession:open()
+    GL:debug("Interface.GDKP.CreateSession:open");
+
+    -- It seems our GDKP overview window is not opened
+    if (not Overview.isVisible) then
+        return;
+    end
+
+    local Window = self:window();
+
+    self.isVisible = true;
+    Interface:get(self, "CheckBox.Switch"):SetValue(GL.GDKP:getActiveSession() == false);
+    Window.frame:SetPoint("TOPLEFT", Interface:get(Overview, "GDKPOverview").frame, "TOPRIGHT", 2, 16);
+    Window.frame:Show();
+end
+
+---@return void
 function CreateSession:close()
-    GL.Interface:release(self, "Window");
+    GL:debug("Interface.GDKP.CreateSession:close");
+
+    local Window = self:window();
+
+    if (self.isVisible) then
+        Window.frame:Hide();
+        self.isVisible = false;
+    end
 end
 
-GL:debug("Interfaces/GDKP/CreateSession.lua");
+GL:debug("Interface.GDKP.CreateSession.lua");
