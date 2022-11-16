@@ -105,7 +105,7 @@ function LootTradeTimers:draw(Parent)
     Parent:AddChild(TrophyIcon);
 
     local TrophyExplanation = GL.AceGUI:Create("Label");
-    TrophyExplanation:SetText("This icon indicates that the item was already awarded");
+    TrophyExplanation:SetText("This icon indicates that the item was already awarded. |c00a79effNOTE: items awarded to self do not have an icon (yet)!|r");
     Parent:AddChild(TrophyExplanation);
 
     local DisenchantIcon = AceGUI:Create("Icon");
