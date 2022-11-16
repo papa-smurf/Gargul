@@ -433,5 +433,5 @@ GL.Data.Constants = {
     ScrollingTable = {
         ascending = 1,
         descending = 2,
-    }
+    },
 };
