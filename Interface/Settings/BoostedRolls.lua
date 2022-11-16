@@ -62,9 +62,7 @@ function BoostedRolls:draw(Parent)
     BoostedRollsIdentifier:SetCallback("OnTextChanged", function (self)
         local value = self:GetText();
 
-        if (type(value) ~= "string"
-            or GL:empty(value)
-        ) then
+        if (type(value) ~= "string") then
             return;
         end
 

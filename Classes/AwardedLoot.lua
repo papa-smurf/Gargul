@@ -194,6 +194,7 @@ function AwardedLoot:editWinner(checksum, winner, announce)
 
     AwardEntry.received = false;
     AwardEntry.awardedTo = winner;
+    AwardEntry.awardedBy = GL.User.name;
 
     -- If we awarded to ourselves then we should already have the item
     if (string.lower(winner) == string.lower(GL.User.name)) then
@@ -358,6 +359,7 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, G
         itemLink = itemLink,
         itemID = itemID,
         awardedTo = winner,
+        awardedBy = GL.User.name,
         timestamp = timestamp,
         softresID = GL.DB:get("SoftRes.MetaData.id"),
         received = string.lower(winner) == string.lower(GL.User.name),
@@ -687,6 +689,7 @@ function AwardedLoot:processAwardedLoot(CommMessage)
         itemLink = AwardEntry.itemLink,
         itemID = AwardEntry.itemID,
         awardedTo = AwardEntry.awardedTo,
+        awardedBy = CommMessage.Sender.name,
         timestamp = AwardEntry.timestamp,
         softresID = AwardEntry.softresID,
         received = AwardEntry.received,
@@ -747,6 +750,7 @@ function AwardedLoot:processEditedLoot(CommMessage)
         itemLink = AwardEntry.itemLink,
         itemID = AwardEntry.itemID,
         awardedTo = AwardEntry.awardedTo,
+        awardedBy = AwardEntry.awardedBy,
         timestamp = AwardEntry.timestamp,
         softresID = AwardEntry.softresID,
         received = AwardEntry.received,

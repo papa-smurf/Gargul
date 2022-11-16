@@ -31,9 +31,11 @@ function TimeLeft:_init()
     -- That way we don't have any stutters or weird behavior like bars not showing up
     GL.Ace:ScheduleTimer(function ()
         GL.Events:register({
+            {"TimeLeftPlayerEnteringWorldListener", "PLAYER_ENTERING_WORLD"},
             {"TimeLeftBagUpdateDelayedListener", "BAG_UPDATE_DELAYED"},
             {"TimeLeftBagMasterLooterLostListener", "GL.USER_LOST_MASTER_LOOTER"},
             {"TimeLeftBagMasterLooterObtainedListener", "GL.USER_OBTAINED_MASTER_LOOTER"},
+            {"TimeLeftItemAwardedListener","GL.ITEM_AWARDED"},
         }, function ()
             self:refreshBars();
         end);
@@ -445,7 +447,16 @@ function TimeLeft:refreshBars()
 
     local ItemsWithTradeTimeRemaining = {};
     local tradeTimeRemainingByLink = {};
-    for bag = 0, 4 do
+    local awardedItemCountByLink = {};
+    local deItemCountByLink = {};
+
+    local numberOfBagsToCheck = 4;
+    -- Dragon Flight introduced an extra bag slot
+    if (GL.clientIsDragonFlightOrLater) then
+        numberOfBagsToCheck = numberOfBagsToCheck + 1;
+    end
+
+    for bag = 0, numberOfBagsToCheck do
         for slot = 1, GetContainerNumSlots(bag) do
             (function ()
                 local icon, _, _, _, _, _, itemLink, _, _ = GetContainerItemInfo(bag, slot);
@@ -461,10 +472,31 @@ function TimeLeft:refreshBars()
                     return;
                 end
 
+                -- Checks for "awarded but not received gear" and initialize counts of
+                --    items unreceived for both award and de
+                local unreceived = false;
+                local deUnreceived = false;
+                local unreceivedCount = 0;
+                local deUnreceivedCount = 0;
+                for _, line in pairs(GL.AwardedLoot:tooltipLines(itemLink) or {}) do
+                    if (string.match(line, "|de|") and string.match(line, "(not received yet)")) then
+                        deUnreceived = true;
+                        deUnreceivedCount = deUnreceivedCount + 1
+                    elseif (string.match(line, "(not received yet)")) then
+                        unreceived = true;
+                        unreceivedCount = unreceivedCount + 1
+                    end
+                end
+
+                awardedItemCountByLink[itemLink] = unreceivedCount
+                deItemCountByLink[itemLink] = deUnreceivedCount
+
                 tinsert(ItemsWithTradeTimeRemaining, {
                     icon = icon,
                     itemLink = itemLink,
                     timeRemaining = timeRemaining,
+                    unreceived = unreceived,
+                    deUnreceived = deUnreceived,
                 });
 
                 -- We're not tracking this item yet or this version of the item has a smaller trade time window
@@ -542,6 +574,18 @@ function TimeLeft:refreshBars()
         TimerBar:SetColor(0, 1, 0, .3); -- Reset color to green
         TimerBar:SetLabel(BagItem.itemLink);
         TimerBar:SetIcon(BagItem.icon);
+        local awarded = false;
+        local disenchanted = false;
+        if (BagItem.unreceived and awardedItemCountByLink[BagItem.itemLink] > 0) then
+            TimerBar:SetIcon("Interface\\AddOns\\Gargul\\Assets\\Icons\\trophy");
+            awardedItemCountByLink[BagItem.itemLink] = awardedItemCountByLink[BagItem.itemLink] - 1;
+            awarded = true;
+        elseif (BagItem.deUnreceived and deItemCountByLink[BagItem.itemLink] > 0) then
+            TimerBar:SetIcon("Interface\\AddOns\\Gargul\\Assets\\Icons\\disenchant");
+            deItemCountByLink[BagItem.itemLink] = deItemCountByLink[BagItem.itemLink] - 1;
+            disenchanted = true;
+        end
+
         TimerBar:Set("type", "TRADE_WINDOW_TIME_LEFT");
         TimerBar.Details = BagItem;
 
@@ -553,7 +597,9 @@ function TimeLeft:refreshBars()
         TimerBar:AddUpdateFunction(function (Bar)
             local percentageLeft = (BagItem.timeRemaining / 7200) * 100;
 
-            if (percentageLeft >= 60) then
+            if (awarded or disenchanted) then
+                Bar:SetColor(0, 0, 0, .6);
+            elseif (percentageLeft >= 60) then
                 Bar:SetColor(0, 1, 0, .3);
             elseif (percentageLeft >= 30) then
                 Bar:SetColor(1, 1, 0, .3);
