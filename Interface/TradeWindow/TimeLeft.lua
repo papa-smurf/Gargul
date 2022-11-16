@@ -574,12 +574,16 @@ function TimeLeft:refreshBars()
         TimerBar:SetColor(0, 1, 0, .3); -- Reset color to green
         TimerBar:SetLabel(BagItem.itemLink);
         TimerBar:SetIcon(BagItem.icon);
+        local awarded = false;
+        local disenchanted = false;
         if (BagItem.unreceived and awardedItemCountByLink[BagItem.itemLink] > 0) then
             TimerBar:SetIcon("Interface\\AddOns\\Gargul\\Assets\\Icons\\trophy");
             awardedItemCountByLink[BagItem.itemLink] = awardedItemCountByLink[BagItem.itemLink] - 1;
+            awarded = true;
         elseif (BagItem.deUnreceived and deItemCountByLink[BagItem.itemLink] > 0) then
             TimerBar:SetIcon("Interface\\AddOns\\Gargul\\Assets\\Icons\\disenchant");
             deItemCountByLink[BagItem.itemLink] = deItemCountByLink[BagItem.itemLink] - 1;
+            disenchanted = true;
         end
 
         TimerBar:Set("type", "TRADE_WINDOW_TIME_LEFT");
@@ -593,7 +597,9 @@ function TimeLeft:refreshBars()
         TimerBar:AddUpdateFunction(function (Bar)
             local percentageLeft = (BagItem.timeRemaining / 7200) * 100;
 
-            if (percentageLeft >= 60) then
+            if (awarded or disenchanted) then
+                Bar:SetColor(0, 0, 0, .6);
+            elseif (percentageLeft >= 60) then
                 Bar:SetColor(0, 1, 0, .3);
             elseif (percentageLeft >= 30) then
                 Bar:SetColor(1, 1, 0, .3);
