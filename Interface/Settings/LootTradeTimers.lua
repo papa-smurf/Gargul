@@ -97,6 +97,11 @@ function LootTradeTimers:draw(Parent)
     Spacer:SetHeight(15);
     Parent:AddChild(Spacer);
 
+    local BarColorExplanation = GL.AceGUI:Create("Label");
+    BarColorExplanation:SetText("Trade timer bars will turn black and get one of the icons listed below when processed\n\n");
+    BarColorExplanation:SetFullWidth(true);
+    Parent:AddChild(BarColorExplanation);
+
     local TrophyIcon = AceGUI:Create("Icon");
     TrophyIcon:SetWidth(30);
     TrophyIcon:SetHeight(30);
