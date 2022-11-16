@@ -12,6 +12,13 @@ GL.Interface.Changelog = {
 
     History = {
         {
+            version = "4.12.8",
+            date = "November 16th, 2022",
+            Changes = {
+                "Loot trade timers change icon and color after awarding or disenchanting an item. That way you can easily tell which items still need to be rolled out!",
+            },
+        },
+        {
             version = "4.12.5",
             date = "November 9th, 2022",
             Changes = {
