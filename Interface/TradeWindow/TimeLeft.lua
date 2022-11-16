@@ -449,7 +449,14 @@ function TimeLeft:refreshBars()
     local tradeTimeRemainingByLink = {};
     local awardedItemCountByLink = {};
     local deItemCountByLink = {};
-    for bag = 0, 4 do
+
+    local numberOfBagsToCheck = 4;
+    -- Dragon Flight introduced an extra bag slot
+    if (GL.clientIsDragonFlightOrLater) then
+        numberOfBagsToCheck = numberOfBagsToCheck + 1;
+    end
+
+    for bag = 0, numberOfBagsToCheck do
         for slot = 1, GetContainerNumSlots(bag) do
             (function ()
                 local icon, _, _, _, _, _, itemLink, _, _ = GetContainerItemInfo(bag, slot);
