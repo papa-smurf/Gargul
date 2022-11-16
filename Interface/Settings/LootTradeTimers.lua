@@ -101,7 +101,7 @@ function LootTradeTimers:draw(Parent)
     TrophyIcon:SetWidth(30);
     TrophyIcon:SetHeight(30);
     TrophyIcon:SetImageSize(20, 20);
-    TrophyIcon:SetImage("Interface\\AddOns\\Gargul\\Assets\\Icons\\trophy-white");
+    TrophyIcon:SetImage("Interface\\AddOns\\Gargul\\Assets\\Icons\\trophy");
     Parent:AddChild(TrophyIcon);
 
     local TrophyExplanation = GL.AceGUI:Create("Label");
@@ -112,7 +112,7 @@ function LootTradeTimers:draw(Parent)
     DisenchantIcon:SetWidth(30);
     DisenchantIcon:SetHeight(30);
     DisenchantIcon:SetImageSize(20, 20);
-    DisenchantIcon:SetImage("Interface\\AddOns\\Gargul\\Assets\\Icons\\disenchant-white");
+    DisenchantIcon:SetImage("Interface\\AddOns\\Gargul\\Assets\\Icons\\disenchant");
     Parent:AddChild(DisenchantIcon);
 
     local DisenchantExplanation = GL.AceGUI:Create("Label");

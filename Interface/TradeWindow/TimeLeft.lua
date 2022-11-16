@@ -575,10 +575,10 @@ function TimeLeft:refreshBars()
         TimerBar:SetLabel(BagItem.itemLink);
         TimerBar:SetIcon(BagItem.icon);
         if (BagItem.unreceived and awardedItemCountByLink[BagItem.itemLink] > 0) then
-            TimerBar:SetIcon("Interface\\AddOns\\Gargul\\Assets\\Icons\\trophy-white");
+            TimerBar:SetIcon("Interface\\AddOns\\Gargul\\Assets\\Icons\\trophy");
             awardedItemCountByLink[BagItem.itemLink] = awardedItemCountByLink[BagItem.itemLink] - 1;
         elseif (BagItem.deUnreceived and deItemCountByLink[BagItem.itemLink] > 0) then
-            TimerBar:SetIcon("Interface\\AddOns\\Gargul\\Assets\\Icons\\disenchant-white");
+            TimerBar:SetIcon("Interface\\AddOns\\Gargul\\Assets\\Icons\\disenchant");
             deItemCountByLink[BagItem.itemLink] = deItemCountByLink[BagItem.itemLink] - 1;
         end
 
