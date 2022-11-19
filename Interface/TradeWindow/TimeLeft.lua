@@ -33,6 +33,9 @@ function TimeLeft:_init()
         GL.Events:register({
             {"TimeLeftPlayerEnteringWorldListener", "PLAYER_ENTERING_WORLD"},
             {"TimeLeftBagUpdateDelayedListener", "BAG_UPDATE_DELAYED"},
+            {"TimeLeftZoneChangedListener", "ZONE_CHANGED"},
+            {"TimeLeftPlayerAliveListener", "PLAYER_ALIVE"},
+            {"TimeLeftPlayerUnghostListener", "PLAYER_UNGHOST"},
             {"TimeLeftBagMasterLooterLostListener", "GL.USER_LOST_MASTER_LOOTER"},
             {"TimeLeftBagMasterLooterObtainedListener", "GL.USER_OBTAINED_MASTER_LOOTER"},
             {"TimeLeftItemAwardedListener","GL.ITEM_AWARDED"},
