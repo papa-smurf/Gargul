@@ -928,15 +928,15 @@ function GL:onTooltipSetItem(Callback, includeItemRefTooltip)
             return Callback(Tooltip);
         end);
 
+        -- Support AceConfigDialog
+        LibStub("AceConfigDialog-3.0").tooltip:HookScript("OnTooltipSetItem", Callback);
+
         if (includeItemRefTooltip) then
             ItemRefTooltip:HookScript("OnTooltipSetItem", function(Tooltip)
                 return Callback(Tooltip);
             end);
         end
     end
-
-    -- Support AceConfigDialog
-    LibStub("AceConfigDialog-3.0").tooltip:HookScript("OnTooltipSetItem", Callback);
 end
 
 --- In some very rare cases we need to manipulate the close button on AceGUI elements
