@@ -139,20 +139,20 @@ function Comm:send(CommMessage, broadcastFinishedCallback, packageSentCallback)
     GL:debug("Payload size: " .. stringLength);
     local throttle = stringLength > 800;
 
-    local throttleResetTimer, stopThrottling;
+    local throttleResetTimer;
+    -- Stop throttling: reset the burst and max cps values
+    local stopThrottling = function()
+        GL:debug("Resetting burst value and cps");
+
+        _G.ChatThrottleLib.BURST = self.defaultBurstValue;
+        _G.ChatThrottleLib.MAX_CPS = self.defaultCPSValue;
+    end;
+
     if (throttle) then
         GL:debug("Throttling burst value and cps");
 
         _G.ChatThrottleLib.BURST = 2000;
         _G.ChatThrottleLib.MAX_CPS = 400;
-
-        -- Stop throttling: reset the burst and max cps values
-        stopThrottling = function()
-            GL:debug("Resetting burst value and cps");
-
-            _G.ChatThrottleLib.BURST = self.defaultBurstValue;
-            _G.ChatThrottleLib.MAX_CPS = self.defaultCPSValue;
-        end;
 
         -- Make sure we reset the values even if the message couldn't be sent
         throttleResetTimer = GL.Ace:ScheduleTimer(function ()

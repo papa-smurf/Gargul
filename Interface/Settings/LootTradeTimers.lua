@@ -1,14 +1,20 @@
 ---@type GL
 local _, GL = ...;
 
-local Overview = GL.Interface.Settings.Overview; ---@type SettingsOverview
+---@type SettingsOverview
+local Overview = GL.Interface.Settings.Overview;
+
+---@type Interface
+local Interface = GL.Interface;
+
+local AceGUI = GL.AceGUI;
 
 ---@class LootTradeTimersSettings
-GL.Interface.Settings.LootTradeTimers = {
+Interface.Settings.LootTradeTimers = {
     description = "When obtaining items that have time left to trade, aka items that are BoP but can still be traded with raid members, Gargul can show timer bars to let you know when an item's trade window is coming to an end.",
     testEnabled = false,
 };
-local LootTradeTimers = GL.Interface.Settings.LootTradeTimers; ---@type LootTradeTimersSettings
+local LootTradeTimers = Interface.Settings.LootTradeTimers; ---@type LootTradeTimersSettings
 
 ---@return void
 function LootTradeTimers:draw(Parent)
@@ -27,10 +33,10 @@ function LootTradeTimers:draw(Parent)
             GL.Settings:set("LootTradeTimers.scale", value);
 
             -- Change the loot trade timer window if it's active!
-            if (GL.Interface.TradeWindow.TimeLeft.Window
-                and type(GL.Interface.TradeWindow.TimeLeft.Window.SetScale == "function")
+            if (Interface.TradeWindow.TimeLeft.Window
+                and type(Interface.TradeWindow.TimeLeft.Window.SetScale == "function")
             ) then
-                GL.Interface.TradeWindow.TimeLeft.Window:SetScale(value);
+                Interface.TradeWindow.TimeLeft.Window:SetScale(value);
             end
         end
     end);
@@ -47,16 +53,16 @@ function LootTradeTimers:draw(Parent)
 
         if (type(value) ~= nil) then
             GL.Settings:set("LootTradeTimers.maximumNumberOfBars", value);
-            GL.Interface.TradeWindow.TimeLeft:refreshBars();
+            Interface.TradeWindow.TimeLeft:refreshBars();
         end
     end);
     Parent:AddChild(NumberOfTimerBars);
 
-    local HorizontalSpacer = GL.AceGUI:Create("SimpleGroup");
-    HorizontalSpacer:SetLayout("FILL");
-    HorizontalSpacer:SetFullWidth(true);
-    HorizontalSpacer:SetHeight(20);
-    Parent:AddChild(HorizontalSpacer);
+    local Spacer = GL.AceGUI:Create("SimpleGroup");
+    Spacer:SetLayout("FILL");
+    Spacer:SetFullWidth(true);
+    Spacer:SetHeight(20);
+    Parent:AddChild(Spacer);
 
     local Checkboxes = {
         {
@@ -64,32 +70,65 @@ function LootTradeTimers:draw(Parent)
             description = "Show timer bars for BoP items that can still be traded for a limited time",
             setting = "LootTradeTimers.enabled",
             callback = function ()
-                GL.Interface.TradeWindow.TimeLeft:refreshBars();
+                Interface.TradeWindow.TimeLeft:refreshBars();
             end,
         },
         {
             label = "Only show bars when I'm the master looter",
             setting = "LootTradeTimers.showOnlyWhenMasterLooting",
             callback = function ()
-                GL.Interface.TradeWindow.TimeLeft:refreshBars();
+                Interface.TradeWindow.TimeLeft:refreshBars();
             end,
         },
         {
             label = "Show hotkey reminder",
             setting = "LootTradeTimers.showHotkeyReminder",
             callback = function ()
-                GL.Interface.TradeWindow.TimeLeft:refreshBars();
+                Interface.TradeWindow.TimeLeft:refreshBars();
             end,
         },
     };
 
     Overview:drawCheckboxes(Checkboxes, Parent);
 
-    HorizontalSpacer = GL.AceGUI:Create("SimpleGroup");
-    HorizontalSpacer:SetLayout("FILL");
-    HorizontalSpacer:SetFullWidth(true);
-    HorizontalSpacer:SetHeight(15);
-    Parent:AddChild(HorizontalSpacer);
+    Spacer = GL.AceGUI:Create("SimpleGroup");
+    Spacer:SetLayout("FILL");
+    Spacer:SetFullWidth(true);
+    Spacer:SetHeight(15);
+    Parent:AddChild(Spacer);
+
+    local BarColorExplanation = GL.AceGUI:Create("Label");
+    BarColorExplanation:SetText("Trade timer bars will turn black and get one of the icons listed below when processed\n\n");
+    BarColorExplanation:SetFullWidth(true);
+    Parent:AddChild(BarColorExplanation);
+
+    local TrophyIcon = AceGUI:Create("Icon");
+    TrophyIcon:SetWidth(30);
+    TrophyIcon:SetHeight(30);
+    TrophyIcon:SetImageSize(20, 20);
+    TrophyIcon:SetImage("Interface\\AddOns\\Gargul\\Assets\\Icons\\trophy");
+    Parent:AddChild(TrophyIcon);
+
+    local TrophyExplanation = GL.AceGUI:Create("Label");
+    TrophyExplanation:SetText("This icon indicates that the item was already awarded. |c00a79effNOTE: items awarded to self do not have an icon (yet)!|r");
+    Parent:AddChild(TrophyExplanation);
+
+    local DisenchantIcon = AceGUI:Create("Icon");
+    DisenchantIcon:SetWidth(30);
+    DisenchantIcon:SetHeight(30);
+    DisenchantIcon:SetImageSize(20, 20);
+    DisenchantIcon:SetImage("Interface\\AddOns\\Gargul\\Assets\\Icons\\disenchant");
+    Parent:AddChild(DisenchantIcon);
+
+    local DisenchantExplanation = GL.AceGUI:Create("Label");
+    DisenchantExplanation:SetText("This icon indicates that the item was marked for disenchantment");
+    Parent:AddChild(DisenchantExplanation);
+
+    Spacer = GL.AceGUI:Create("SimpleGroup");
+    Spacer:SetLayout("FILL");
+    Spacer:SetFullWidth(true);
+    Spacer:SetHeight(15);
+    Parent:AddChild(Spacer);
 
     local ButtonText = "Demo";
     if (self.testEnabled == true) then
@@ -103,7 +142,7 @@ function LootTradeTimers:draw(Parent)
         if (self.testEnabled) then
             self.testEnabled = false;
             DemoTradeTimersButton:SetText("Demo");
-            GL.Interface.TradeWindow.TimeLeft:refreshBars();
+            Interface.TradeWindow.TimeLeft:refreshBars();
 
             return;
         end
@@ -111,7 +150,7 @@ function LootTradeTimers:draw(Parent)
         -- Enable test mode
         self.testEnabled = true;
         DemoTradeTimersButton:SetText("Stop");
-        GL.Interface.TradeWindow.TimeLeft:refreshBars();
+        Interface.TradeWindow.TimeLeft:refreshBars();
     end);
     Parent:AddChild(DemoTradeTimersButton);
 end
