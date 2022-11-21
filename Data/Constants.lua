@@ -70,10 +70,38 @@ GL.Data.Constants = {
         INVTYPE_QUIVER = { 20, 21, 22, 23 }
     },
 
+    Vips = {
+        Contributors = {
+            "Arvada",
+            "Curnil",
+            "Lantis",
+            "Schweex",
+            "Tonio",
+        },
+        Uncommon = {
+            "Sneaky",
+            "Snickels",
+        },
+        Rare = {
+            "Busmonstret",
+            "Coldemort",
+            "Kelziad",
+            "Nambojambo",
+            "Scratchd",
+            "Vejusatko",
+            "WaDaFruCK",
+        },
+        Legendary = {
+            "Cuckster",
+            "Freezythree",
+        },
+    },
+
     --[[
         GLOBAL
     ]]
     addonHexColor =  "967FD2",
+    disabledTextColor =  "5F5F5F",
 
     success = 0,
     failure = 1,

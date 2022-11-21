@@ -646,7 +646,7 @@ function SoftRes:tooltipLines(itemLink)
 
     -- Add the reservation details to ActiveReservations (add 2x / 3x etc when same item was reserved multiple times)
     for _, Entry in pairs(ActiveReservations) do
-        local class = self:getPlayerClass(Entry.player);
+        local class = self:getPlayerClass(Entry.player, 0);
         local entryString = Entry.player;
 
         -- User reserved the same item multiple times
@@ -657,7 +657,7 @@ function SoftRes:tooltipLines(itemLink)
         -- Add the actual soft reserves to the tooltip
         tinsert(Lines, string.format(
             "|cFF%s    %s|r",
-            GL:classHexColor(class),
+            GL:classHexColor(class, GL.Data.Constants.disabledTextColor),
             GL:capitalize(entryString)
         ));
     end
