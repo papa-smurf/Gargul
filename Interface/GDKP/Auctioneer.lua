@@ -45,16 +45,16 @@ function Auctioneer:draw(itemLink)
         return;
     end
 
-    local HorizonalSpacer, VerticalSpacer;
+    local Spacer, HelpIcon;
 
     -- Create a container/parent frame
     Window = AceGUI:Create("Frame", "GARGUL_AUCTIONEER_WINDOW");
     Window:SetTitle("Gargul GDKP Auction");
     Window:SetLayout("Flow");
     Window:SetWidth(430);
-    Window:SetHeight(364);
+    Window:SetHeight(390);
     Window:EnableResize(false);
-    Window.frame:SetFrameStrata("HIGH");
+    Window.frame:SetFrameStrata("FULLSCREEN_DIALOG");
     Window:SetCallback("OnClose", function()
         self:close();
     end);
@@ -71,9 +71,7 @@ function Auctioneer:draw(itemLink)
     );
     self.SettingsButton = SettingsButton;
 
-    --[[
-        FIRST ROW (ITEM ICON AND LINK BOX)
-    ]]
+    --[[ ROWS ]]
 
     local FirstRow = AceGUI:Create("SimpleGroup");
     FirstRow:SetLayout("Flow");
@@ -81,32 +79,160 @@ function Auctioneer:draw(itemLink)
     FirstRow:SetHeight(30);
     Window:AddChild(FirstRow);
 
-    --[[
-        ITEM ICON
-    ]]
+    local SecondRow = AceGUI:Create("SimpleGroup");
+    SecondRow:SetLayout("Flow");
+    SecondRow:SetFullWidth(true);
+    SecondRow:SetHeight(20);
+    Window:AddChild(SecondRow);
+
+    local ThirdRow = AceGUI:Create("SimpleGroup");
+    ThirdRow:SetLayout("Flow");
+    ThirdRow:SetFullWidth(true);
+    ThirdRow:SetHeight(20);
+    Window:AddChild(ThirdRow);
+
+    local FourthRow = AceGUI:Create("SimpleGroup");
+    FourthRow:SetLayout("Flow");
+    FourthRow:SetFullWidth(true);
+    FourthRow:SetHeight(20);
+    Window:AddChild(FourthRow);
+
+    --[[ AUCTION SETTINGS ]]
+
+    local MinimumBidLabel = AceGUI:Create("Label");
+    MinimumBidLabel:SetText("Minimum bid ");
+    MinimumBidLabel:SetHeight(20);
+    MinimumBidLabel:SetWidth(74); -- Minimum length 72
+    FirstRow:AddChild(MinimumBidLabel);
+
+    local MinimumBid = AceGUI:Create("EditBox");
+    MinimumBid:DisableButton(true);
+    MinimumBid:SetHeight(20);
+    MinimumBid:SetWidth(60);
+    MinimumBid:SetText(GL.Settings:get("GDKP.minimumBid", 100));
+    FirstRow:AddChild(MinimumBid);
+    GL.Interface:set(self, "MinimumBid", MinimumBid);
+
+    local MinimumIncrementLabel = AceGUI:Create("Label");
+    MinimumIncrementLabel:SetText(" Bid increment ");
+    MinimumIncrementLabel:SetHeight(20);
+    MinimumIncrementLabel:SetWidth(80); -- Minimum length 74
+    FirstRow:AddChild(MinimumIncrementLabel);
+
+    local MinimumIncrement = AceGUI:Create("EditBox");
+    MinimumIncrement:DisableButton(true);
+    MinimumIncrement:SetHeight(20);
+    MinimumIncrement:SetWidth(40);
+    MinimumIncrement:SetText(false or 50);
+    FirstRow:AddChild(MinimumIncrement);
+    GL.Interface:set(self, "MinimumIncrement", MinimumIncrement);
+
+    HelpIcon = AceGUI:Create("Icon");
+    HelpIcon:SetWidth(24);
+    HelpIcon:SetHeight(24);
+    HelpIcon:SetImageSize(12, 12);
+    HelpIcon:SetImage("interface/friendsframe/informationicon");
+    FirstRow:AddChild(HelpIcon);
+
+    HelpIcon:SetCallback("OnEnter", function()
+        GameTooltip:SetOwner(HelpIcon.frame, "ANCHOR_RIGHT");
+        GameTooltip:AddLine(" ");
+        GameTooltip:AddLine("The minimum bid and bid increment values are remembered for");
+        GameTooltip:AddLine(" each item. That means that you only need to set them once per item!");
+        GameTooltip:AddLine(" ");
+        GameTooltip:Show();
+    end);
+
+    HelpIcon:SetCallback("OnLeave", function()
+        GameTooltip:Hide();
+    end);
+
+    local StartButton = AceGUI:Create("Button");
+    StartButton:SetText("?");
+    StartButton:SetWidth(10);
+    StartButton:SetHeight(20);
+    StartButton:SetDisabled(true);
+
+    StartButton:SetCallback("OnEnter", function()
+        GameTooltip:SetOwner(StartButton.frame, "ANCHOR_RIGHT");
+        GameTooltip:AddLine(" ");
+        GameTooltip:AddLine("The minimum bid and bid increment values are remembered for");
+        GameTooltip:AddLine(" each item. That means that you only need to set them once per item!");
+        GameTooltip:AddLine(" ");
+        GameTooltip:Show();
+    end);
+
+    StartButton:SetCallback("OnLeave", function()
+        GameTooltip:Hide();
+    end);
+
+    local AuctionTimeLabel = AceGUI:Create("Label");
+    AuctionTimeLabel:SetText("Auction length in seconds");
+    AuctionTimeLabel:SetHeight(20);
+    AuctionTimeLabel:SetWidth(142); -- Minimum length 74
+    SecondRow:AddChild(AuctionTimeLabel);
+
+    local AuctionTime = AceGUI:Create("EditBox");
+    AuctionTime:DisableButton(true);
+    AuctionTime:SetHeight(20);
+    AuctionTime:SetWidth(30);
+    AuctionTime:SetText(GL.Settings:get("GDKP.time", 30));
+    SecondRow:AddChild(AuctionTime);
+
+    local AntiSnipeLabel = AceGUI:Create("Label");
+    AntiSnipeLabel:SetText(" Anti Snipe ");
+    AntiSnipeLabel:SetHeight(20);
+    AntiSnipeLabel:SetWidth(62); -- Minimum length 74
+    SecondRow:AddChild(AntiSnipeLabel);
+
+    local AntiSnipe = AceGUI:Create("EditBox");
+    AntiSnipe:DisableButton(true);
+    AntiSnipe:SetHeight(20);
+    AntiSnipe:SetWidth(30);
+    AntiSnipe:SetText(GL.Settings:get("GDKP.antiSnipe", 10));
+    SecondRow:AddChild(AntiSnipe);
+    GL.Interface:set(self, "MinimumIncrement", AntiSnipe);
+
+    HelpIcon = AceGUI:Create("Icon");
+    HelpIcon:SetWidth(24);
+    HelpIcon:SetHeight(24);
+    HelpIcon:SetImageSize(12, 12);
+    HelpIcon:SetImage("interface/friendsframe/informationicon");
+    SecondRow:AddChild(HelpIcon);
+
+    HelpIcon:SetCallback("OnEnter", function()
+        GameTooltip:SetOwner(HelpIcon.frame, "ANCHOR_RIGHT");
+        GameTooltip:AddLine(" ");
+        GameTooltip:AddLine("An Anti Snipe value of 10 means that 10 seconds will be added");
+        GameTooltip:AddLine("to the auction if someone bids within the last 10 seconds");
+        GameTooltip:AddLine(" ");
+        GameTooltip:AddLine("You can leave this empty or set to 0 to disable Anti Snipe completely");
+        GameTooltip:AddLine(" ");
+        GameTooltip:Show();
+    end)
+
+    HelpIcon:SetCallback("OnLeave", function()
+        GameTooltip:Hide();
+    end)
+
+    --[[ ITEM ICON ]]
 
     local ItemIcon = AceGUI:Create("Icon");
     ItemIcon:SetImage(Auctioneer.Defaults.itemIcon);
     ItemIcon:SetImageSize(30, 30);
     ItemIcon:SetWidth(40);
-    FirstRow:AddChild(ItemIcon);
+    ThirdRow:AddChild(ItemIcon);
     GL.Interface:set(self, "Item", ItemIcon);
 
-    --[[
-        ITEM TEXTBOX
-    ]]
-
+    --[[ ITEM TEXTBOX ]]
     local ItemBox = AceGUI:Create("EditBox");
-
     ItemBox:DisableButton(true);
     ItemBox:SetHeight(20);
     ItemBox:SetWidth(170);
     ItemBox:SetCallback("OnTextChanged", function () Auctioneer:ItemBoxChanged() end); -- Update item info when input value changes
     ItemBox:SetCallback("OnEnterPressed", function () Auctioneer:ItemBoxChanged() end); -- Update item info when item is dragged on top (makes no sense to use OnEnterPressed I know)
-
     GL.Interface:set(self, "Item", ItemBox);
-
-    FirstRow:AddChild(ItemBox);
+    ThirdRow:AddChild(ItemBox);
 
     -- Show a gametooltip if the icon shown belongs to an item
     ItemIcon:SetCallback("OnEnter", function()
@@ -124,20 +250,7 @@ function Auctioneer:draw(itemLink)
         GameTooltip:Hide();
     end)
 
-    --[[
-        BUTTON PADDER
-        CONTAINER FOR PADDING PURPOSES ONLY
-    ]]
-
-    HorizonalSpacer = AceGUI:Create("SimpleGroup");
-    HorizonalSpacer:SetLayout("Flow");
-    HorizonalSpacer:SetWidth(14);
-    HorizonalSpacer:SetHeight(30);
-    FirstRow:AddChild(HorizonalSpacer);
-
-    --[[
-        START/STOP BUTTON
-    ]]
+    --[[ START/STOP BUTTON ]]
 
     local StartButton = AceGUI:Create("Button");
     StartButton:SetText("Start");
@@ -159,12 +272,10 @@ function Auctioneer:draw(itemLink)
 
         Auctioneer:updateWidgets();
     end);
-    FirstRow:AddChild(StartButton);
+    ThirdRow:AddChild(StartButton);
     GL.Interface:set(self, "Start", StartButton);
 
-    --[[
-        STOP BUTTON
-    ]]
+    --[[ STOP BUTTON ]]
 
     local StopButton = AceGUI:Create("Button");
     StopButton:SetText("Stop");
@@ -174,86 +285,10 @@ function Auctioneer:draw(itemLink)
     StopButton:SetCallback("OnClick", function()
         GL.GDKP:announceStop();
     end);
-    FirstRow:AddChild(StopButton);
+    ThirdRow:AddChild(StopButton);
     GL.Interface:set(self, "Stop", StopButton);
 
-    --[[
-        SECOND ROW
-    ]]
-
-    local SecondRow = AceGUI:Create("SimpleGroup");
-    SecondRow:SetLayout("Flow");
-    SecondRow:SetFullWidth(true);
-    SecondRow:SetHeight(20);
-    Window:AddChild(SecondRow);
-
-    --[[
-        SPACER
-    ]]
-
-    HorizonalSpacer = AceGUI:Create("SimpleGroup");
-    HorizonalSpacer:SetLayout("Flow");
-    HorizonalSpacer:SetWidth(8);
-    HorizonalSpacer:SetHeight(20);
-    SecondRow:AddChild(HorizonalSpacer);
-
-    local MinimumBidLabel = AceGUI:Create("Label");
-    MinimumBidLabel:SetText("Minimum bid");
-    MinimumBidLabel:SetHeight(20);
-    MinimumBidLabel:SetWidth(72); -- Minimum length 72
-    SecondRow:AddChild(MinimumBidLabel);
-
-    local MinimumBid = AceGUI:Create("EditBox");
-    MinimumBid:DisableButton(true);
-    MinimumBid:SetHeight(20);
-    MinimumBid:SetWidth(60);
-    MinimumBid:SetText(GL.Settings:get("GDKP.minimumBid", 100));
-    SecondRow:AddChild(MinimumBid);
-    GL.Interface:set(self, "MinimumBid", MinimumBid);
-
-    HorizonalSpacer = AceGUI:Create("SimpleGroup");
-    HorizonalSpacer:SetLayout("Flow");
-    HorizonalSpacer:SetWidth(8);
-    HorizonalSpacer:SetHeight(20);
-    SecondRow:AddChild(HorizonalSpacer);
-
-    local MinimumIncrementLabel = AceGUI:Create("Label");
-    MinimumIncrementLabel:SetText("Bid increment");
-    MinimumIncrementLabel:SetHeight(20);
-    MinimumIncrementLabel:SetWidth(74); -- Minimum length 74
-    SecondRow:AddChild(MinimumIncrementLabel);
-
-    local MinimumIncrement = AceGUI:Create("EditBox");
-    MinimumIncrement:DisableButton(true);
-    MinimumIncrement:SetHeight(20);
-    MinimumIncrement:SetWidth(40);
-    MinimumIncrement:SetText(GL.Settings:get("GDKP.minimumIncrement", 50));
-    SecondRow:AddChild(MinimumIncrement);
-    GL.Interface:set(self, "MinimumIncrement", MinimumIncrement);
-
-    --[[
-        THIRD ROW
-    ]]
-
-    local ThirdRow = AceGUI:Create("SimpleGroup");
-    ThirdRow:SetLayout("Flow");
-    ThirdRow:SetFullWidth(true);
-    ThirdRow:SetHeight(20);
-    Window:AddChild(ThirdRow);
-
-    --[[
-        SPACER
-    ]]
-
-    VerticalSpacer = AceGUI:Create("SimpleGroup");
-    VerticalSpacer:SetLayout("Flow");
-    VerticalSpacer:SetWidth(8);
-    VerticalSpacer:SetHeight(20);
-    ThirdRow:AddChild(VerticalSpacer);
-
-    --[[
-        RESET BUTTON
-    ]]
+    --[[ CLEAR BUTTON ]]
     local ClearButton = AceGUI:Create("Button");
     ClearButton:SetText("Clear");
     ClearButton:SetWidth(66);
@@ -263,13 +298,10 @@ function Auctioneer:draw(itemLink)
         self:reset();
         GL.GDKP:resetAuction();
     end);
-    ThirdRow:AddChild(ClearButton);
+    FourthRow:AddChild(ClearButton);
     GL.Interface:set(self, "Clear", ClearButton);
 
-    --[[
-        AWARD BUTTON
-    ]]
-
+    --[[ AWARD BUTTON ]]
     local AwardButton = AceGUI:Create("Button");
     AwardButton:SetText("Award");
     AwardButton:SetWidth(70);
@@ -319,12 +351,10 @@ function Auctioneer:draw(itemLink)
             end,
         });
     end);
-    ThirdRow:AddChild(AwardButton);
+    FourthRow:AddChild(AwardButton);
     GL.Interface:set(self, "Award", AwardButton);
 
-    --[[
-        DISENCHANT BUTTON
-    ]]
+    --[[ DISENCHANT BUTTON ]]
     local DisenchantButton = AceGUI:Create("Button");
     DisenchantButton:SetText("Disenchant");
     DisenchantButton:SetWidth(98); -- Minimum length is
@@ -336,24 +366,20 @@ function Auctioneer:draw(itemLink)
         GL.PackMule:disenchant(itemLink, true);
         self:close();
     end);
-    ThirdRow:AddChild(DisenchantButton);
+    FourthRow:AddChild(DisenchantButton);
     GL.Interface:set(self, "Disenchant", DisenchantButton);
 
-    --[[
-        FOURTH ROW
-    ]]
+    --[[ FOURTH ROW ]]
 
     self:drawPlayersTable(Window.frame);
 
-    --[[
-        FIFTH ROW (AUTO CLOSE CHECKBOX)
-    ]]
+    --[[ FIFTH ROW (AUTO CLOSE CHECKBOX) ]]
 
-    local FourthRow = AceGUI:Create("SimpleGroup");
-    FourthRow:SetLayout("Flow");
-    FourthRow:SetFullWidth(true);
-    FourthRow:SetHeight(20);
-    Window:AddChild(FourthRow);
+    local FifthRow = AceGUI:Create("SimpleGroup");
+    FifthRow:SetLayout("Flow");
+    FifthRow:SetFullWidth(true);
+    FifthRow:SetHeight(20);
+    Window:AddChild(FifthRow);
 
     --[[
         TABLE SETTINGS BUTTON
@@ -362,7 +388,7 @@ function Auctioneer:draw(itemLink)
     PlayersTableFrame:SetLayout("Fill");
     PlayersTableFrame:SetFullWidth(true);
     PlayersTableFrame:SetHeight(160);
-    FourthRow:AddChild(PlayersTableFrame);
+    FifthRow:AddChild(PlayersTableFrame);
 
     local CloseOnStart = AceGUI:Create("CheckBox");
     CloseOnStart:SetLabel("Close on start");
@@ -371,7 +397,7 @@ function Auctioneer:draw(itemLink)
         GL.Settings:set("GDKP.closeAuctioneerOnStart", GL:toboolean(widget:GetValue()));
     end);
     CloseOnStart:SetWidth(110);
-    FourthRow:AddChild(CloseOnStart);
+    FifthRow:AddChild(CloseOnStart);
 
     local CloseOnAward = AceGUI:Create("CheckBox");
     CloseOnAward:SetLabel("Close on award");
@@ -380,7 +406,7 @@ function Auctioneer:draw(itemLink)
         GL.Settings:set("GDKP.closeAuctioneerOnAward", GL:toboolean(widget:GetValue()));
     end);
     CloseOnAward:SetWidth(116);
-    FourthRow:AddChild(CloseOnAward);
+    FifthRow:AddChild(CloseOnAward);
 
     if (itemLink
         and type(itemLink) == "string"

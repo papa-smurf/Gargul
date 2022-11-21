@@ -36,19 +36,12 @@ function CreateSession:build()
     Label:SetText("Create a new GDKP session");
     Window:AddChild(Label);
 
-    local Name = GL.AceGUI:Create("EditBox");
-    Name:DisableButton(true);
-    Name:SetHeight(20);
-    Name:SetFullWidth(true);
-    Name:SetLabel("Name");
-    Window:AddChild(Name);
-
-    local Description = GL.AceGUI:Create("EditBox");
-    Description:DisableButton(true);
-    Description:SetHeight(20);
-    Description:SetFullWidth(true);
-    Description:SetLabel("Description");
-    Window:AddChild(Description);
+    local Title = GL.AceGUI:Create("EditBox");
+    Title:DisableButton(true);
+    Title:SetHeight(20);
+    Title:SetFullWidth(true);
+    Title:SetLabel("Name");
+    Window:AddChild(Title);
 
     local SwitchCheckbox = AceGUI:Create("CheckBox");
     SwitchCheckbox:SetValue(false);
@@ -64,7 +57,7 @@ function CreateSession:build()
     Save:SetText("Save");
     Save:SetFullWidth(true);
     Save:SetCallback("OnClick", function()
-        local title = strtrim(Name:GetText());
+        local title = strtrim(Title:GetText());
 
         if (GL:empty(title)) then
             return;

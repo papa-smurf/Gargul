@@ -12,6 +12,12 @@ local DB = GL.DB;
 ---@type Interface
 local Interface = GL.Interface;
 
+---@type Events
+local Events = GL.Events;
+
+---@type GDKP
+local GDKP = GL.GDKP;
+
 --[[ CONSTANTS ]]
 local SESSION_ROWS = 22;
 local HEIGHT_PER_SESSION_ROW = 16;
@@ -44,6 +50,7 @@ function Overview:_init()
     GL.Events:register("GDKPOverviewGDKPAuctionChangedListener", "GL.GDKP_AUCTION_CHANGED", function()
         if (not self.isVisible) then return; end
         GL.Ace:ScheduleTimer(function()
+            self:updatePot();
             self:refreshLedger();
         end, .1);
     end);
@@ -55,6 +62,73 @@ function Overview:_init()
         if (not self.isVisible) then return; end
         self:refreshSessions();
     end);
+
+    GL.Events:register({
+        { "GDKPOverviewGDKPOverviewSessionChangedListener", "GL.GDKP_OVERVIEW_SESSION_CHANGED" },
+        { "GDKPOverviewGDKPOverviewSessionsRefreshed", "GL.GDKP_OVERVIEW_SESSIONS_REFRESHED" }
+    }, function ()
+        self:sessionChanged();
+    end);
+end
+
+function Overview:sessionChanged()
+    GL:debug("Overview:sessionChanged");
+
+    local Session = self:getSelectedSession();
+
+    if (not Session) then
+        return GL:debug(string.format("Unknown GDKP session '%s'", self.selectedSession));
+    end
+
+    local DeleteRestoreButton = Interface:get(self, "Button.DeleteRestore");
+    if (DeleteRestoreButton) then
+        if (Session.deletedAt) then
+            DeleteRestoreButton:SetText("Restore");
+            DeleteRestoreButton:SetWidth(78);
+            DeleteRestoreButton.mode = "restore";
+        else
+            DeleteRestoreButton:SetText("Delete");
+            DeleteRestoreButton:SetWidth(74);
+            DeleteRestoreButton.mode = "delete";
+        end
+    end
+
+    local EnableButton = Interface:get(self, "Button.Enable");
+    if (EnableButton) then
+        if (Session.deletedAt) then
+            EnableButton:SetDisabled(true);
+        else
+            EnableButton:SetDisabled(false);
+        end
+    end
+
+    self:refreshLedger();
+    self:updatePot();
+end
+
+function Overview:updatePot()
+    GL:debug("Overview:updatePot");
+
+    local Session = self:getSelectedSession();
+
+    if (not Session) then
+        return;
+    end
+
+    local Pot = Interface:get(self, "Frame.Pot");
+
+    if (not Pot) then
+        return;
+    end
+
+    local pot = 0;
+    for _, Auction in pairs(Session.Auctions or {}) do
+        if (not Auction.deletedAt and GL:higherThanZero(Auction.price)) then
+            pot = pot + Auction.price;
+        end
+    end
+
+    Pot:SetText(string.format("|cFF%s%sg|r", Constants.ClassHexColors.rogue, pot));
 end
 
 ---@return void
@@ -91,9 +165,35 @@ function Overview:build()
     self:_init();
 
     Window = AceGUI:Create("Frame");
-    Interface:AceGUIDefaults(self, Window, "GDKPOverview", 400, 600);
-    Interface:resizeBounds(Window, 444, 300);
+
+    ---@type Frame
+    local WindowFrame = Window.frame;
+
+    Interface:AceGUIDefaults(self, Window, "GDKPOverview", 547, 600);
+    Interface:resizeBounds(Window, 517, 300);
     Window.statustext:GetParent():Hide(); -- Hide the statustext bar
+
+    --[[ POT ICON AND VALUE ]]
+
+    local PotIcon = AceGUI:Create("Icon");
+
+    ---@type Frame
+    local PotIconFrame = PotIcon.frame;
+
+    PotIcon:SetImage("interface/icons/inv_misc_coin_17");
+    PotIcon:SetImageSize(26, 26);
+    PotIcon:SetWidth(26);
+    PotIcon:SetHeight(26);
+
+    PotIconFrame:SetParent(WindowFrame);
+    PotIconFrame:SetPoint("TOPRIGHT", WindowFrame, "TOPRIGHT", -56, -24);
+    PotIconFrame:Show();
+
+    local Pot = PotIconFrame:CreateFontString(nil, "ARTWORK", "GameFontWhite");
+    Pot:SetPoint("CENTER", PotIconFrame, "CENTER");
+    Pot:SetPoint("TOP", PotIconFrame, "BOTTOM", 0, -6);
+    Pot:SetText();
+    Interface:set(self, "Pot", Pot);
 
     --[[ FIRST COLUMN: sessions ]]
     local FirstColumn = AceGUI:Create("SimpleGroup");
@@ -134,9 +234,10 @@ function Overview:build()
         highlightTexture = "Interface\\AddOns\\Gargul\\Assets\\Buttons\\create-highlighted",
         disabledTexture = "Interface\\AddOns\\Gargul\\Assets\\Buttons\\create-disabled",
         update = function (self)
-            self:SetEnabled(not GL.User.isInGroup or GL.User.hasLead or GL.User.isMasterLooter);
+            local SelectedSession = Overview:getSelectedSession();
+            self:SetEnabled(SelectedSession and not SelectedSession.deletedAt and (not GL.User.isInGroup or GL.User.hasLead or GL.User.isMasterLooter));
         end,
-        updateOn = { "GROUP_ROSTER_UPDATE", "GL.GDKP_SESSION_CHANGED" },
+        updateOn = { "GROUP_ROSTER_UPDATE", "GL.GDKP_OVERVIEW_SESSION_CHANGED", "GL.GDKP_OVERVIEW_SESSION_CHANGED", "GL.GDKP_OVERVIEW_SESSIONS_REFRESHED" },
     }):SetPoint("TOP", ScrollFrameHolder.frame, "TOP", -9, -7);
 
     --[[ SHARE BUTTON ]]
@@ -145,7 +246,7 @@ function Overview:build()
         tooltip = "Broadcast data",
         disabledTooltip = "Broadcast data: you need loot master, assist or lead!",
         position = "TOPCENTER",
-        update = function (self) self:SetEnabled(GL.GDKP:userIsAllowedToBroadcast()); end,
+        update = function (self) self:SetEnabled(GDKP:userIsAllowedToBroadcast()); end,
         updateOn = "GROUP_ROSTER_UPDATE",
         x = 16,
     });
@@ -159,7 +260,7 @@ function Overview:build()
     --[[ FOOTER BUTTONS ]]
     local ThirdColumn = AceGUI:Create("SimpleGroup");
     ThirdColumn:SetLayout("FLOW");
-    ThirdColumn:SetWidth(580);
+    ThirdColumn:SetWidth(382);
     ThirdColumn:SetHeight(40);
 
     local EnableSession = AceGUI:Create("Button");
@@ -167,14 +268,16 @@ function Overview:build()
     EnableSession:SetWidth(74);
     EnableSession:SetHeight(20);
     EnableSession:SetCallback("OnClick", function()
-        GL:dump("Enable");
+        GDKP:setActiveSession(self.selectedSession);
     end);
+    Interface:set(self, "Enable", EnableSession);
 
     local CreateSession = AceGUI:Create("Button");
     CreateSession:SetText("New");
     CreateSession:SetWidth(74);
     CreateSession:SetHeight(20);
     CreateSession:SetCallback("OnClick", function()
+        self:closeSubWindows();
         Interface.GDKP.CreateSession:toggle();
     end);
 
@@ -183,28 +286,40 @@ function Overview:build()
     EditSession:SetWidth(74);
     EditSession:SetHeight(20);
     EditSession:SetCallback("OnClick", function()
-        GL:dump("Edit");
+        self:closeSubWindows();
+        Interface.GDKP.EditSession:toggle(self.selectedSession);
     end);
 
-    local DeleteSession = AceGUI:Create("Button");
-    DeleteSession:SetText("Delete");
-    DeleteSession:SetWidth(74);
-    DeleteSession:SetHeight(20);
-    DeleteSession:SetCallback("OnClick", function()
-        GL.GDKP:deleteSession(self.activeSession);
-        Interface:get(self, "GDKPOverview"):Hide();
-        self:draw();
+    local DeleteOrRestoreSession = AceGUI:Create("Button");
+    DeleteOrRestoreSession:SetText("Delete");
+    DeleteOrRestoreSession:SetWidth(74);
+    DeleteOrRestoreSession:SetHeight(20);
+    DeleteOrRestoreSession:SetCallback("OnClick", function()
+        if (DeleteOrRestoreSession.mode == "delete") then
+            GDKP:deleteSession(self.selectedSession);
+        else
+            GDKP:restoreSession(self.selectedSession);
+        end
+    end);
+    Interface:set(self, "DeleteRestore", DeleteOrRestoreSession);
+
+    local Export = AceGUI:Create("Button");
+    Export:SetText("Export");
+    Export:SetWidth(74);
+    Export:SetHeight(20);
+    Export:SetCallback("OnClick", function()
+        GL:xd("Export");
     end);
 
-    ThirdColumn:AddChildren(EnableSession, CreateSession, EditSession, DeleteSession);
-    ThirdColumn.frame:SetParent(Window.frame);
-    ThirdColumn.frame:SetPoint("BOTTOMLEFT", Window.frame, "BOTTOMLEFT", 20, 17);
+    ThirdColumn:AddChildren(EnableSession, CreateSession, EditSession, DeleteOrRestoreSession, Export);
+    ThirdColumn.frame:SetParent(WindowFrame);
+    ThirdColumn.frame:SetPoint("BOTTOMLEFT", WindowFrame, "BOTTOMLEFT", 20, 15);
 
     self:refreshSessions();
 
     local originalOnHeightSet = Window.OnHeightSet;
     local styleWindowAfterResize = function ()
-        SecondColumn:SetWidth(math.max(Window.frame:GetWidth() - FirstColumn.frame:GetWidth() - 50, 100));
+        SecondColumn:SetWidth(math.max(WindowFrame:GetWidth() - FirstColumn.frame:GetWidth() - 50, 100));
         ScrollFrameHolder:DoLayout();
         SecondColumn:DoLayout();
         Window:DoLayout();
@@ -224,30 +339,48 @@ function Overview:build()
     return Window;
 end
 
+---@return void
 function Overview:close()
-    Interface.GDKP.EditAuction:close(); -- Close the edit window
-    Interface.GDKP.CreateSession:close(); -- Close the edit window
+    GL:debug("Overview:close");
+
+    self:closeSubWindows();
 
     self.isVisible = false;
 end
 
-function Overview:refreshLedger()
-    GL:debug("Overview:drawDetails");
+---@return void
+function Overview:closeSubWindows()
+    GL:debug("Overview:closeSubWindows");
 
-    self:clearDetailsFrame();
+    Interface.GDKP.EditAuction:close(); -- Close the edit window
+    Interface.GDKP.CreateSession:close(); -- Close the edit window
+    Interface.GDKP.EditSession:close(); -- Close the edit window
+end
+
+--- Get the actively selected GDKP session
+---
+---@return table|nil
+function Overview:getSelectedSession()
+    GL:debug("Overview:getSelectedSession");
 
     local sessionIdentifier = self.selectedSession;
     if (not sessionIdentifier) then
         return;
     end
 
-    local Session = DB:get("GDKP.Ledger." .. sessionIdentifier, false);
+    return GDKP:getSessionByID(sessionIdentifier);
+end
+
+function Overview:refreshLedger()
+    GL:debug("Overview:drawDetails");
+
+    local Session = self:getSelectedSession();
 
     if (not Session) then
-        return GL:warning(string.format("Unknown GDKP session '%s'", sessionIdentifier));
+        return GL:warning(string.format("Unknown GDKP session '%s'", self.selectedSession));
     end
 
-    self.activeSession = sessionIdentifier;
+    self:clearDetailsFrame();
 
     local Wrapper = Interface:get(self, "Frame.SectionWrapper");
     local Details = GL.AceGUI:Create("ScrollFrame");
@@ -270,13 +403,13 @@ function Overview:refreshLedger()
     ));
 
     local ItemIDs = {};
-    for _, Sale in pairs(DB:get("GDKP.Ledger." .. sessionIdentifier .. ".Auctions") or {}) do
+    for _, Sale in pairs(Session.Auctions or {}) do
         tinsert(ItemIDs, Sale.itemID);
     end
 
     GL:onItemLoadDo(ItemIDs, function ()
         local Auctions = {};
-        local RawAuctions = DB:get("GDKP.Ledger." .. sessionIdentifier .. ".Auctions") or {};
+        local RawAuctions = Session.Auctions or {};
 
         -- RawAuctions is an associative table, which does not work with table.sort
         for checksum, Entry in pairs(RawAuctions) do
@@ -380,15 +513,15 @@ function Overview:refreshLedger()
             --[[ EDIT BUTTON ]]
             local Edit = Interface:createButton(ActionButtons, {
                 onClick = function()
-                    Interface.GDKP.EditAuction:draw(sessionIdentifier, Auction.checksum);
+                    Interface.GDKP.EditAuction:draw(Session.ID, Auction.checksum);
                 end,
                 tooltip = "Edit",
                 disabledTooltip = "You need lead or master loot to edit entries.\nYou can't edit deleted entries or entries on deleted sessions",
                 normalTexture = "Interface\\AddOns\\Gargul\\Assets\\Buttons\\edit",
                 highlightTexture = "Interface\\AddOns\\Gargul\\Assets\\Buttons\\edit-highlighted",
                 disabledTexture = "Interface\\AddOns\\Gargul\\Assets\\Buttons\\edit-disabled",
-                onUpdate = function (self)
-                    self:SetEnabled(auctionWasDeleted);
+                update = function (self)
+                    self:SetEnabled(not auctionWasDeleted and not Session.deletedAt);
                 end,
             });
             Edit:SetPoint("TOPRIGHT", ItemRow.frame, "TOPRIGHT", -60, -10);
@@ -400,14 +533,14 @@ function Overview:refreshLedger()
                     onClick = function()
                         -- Shift button was held, skip reason
                         if (IsShiftKeyDown()) then
-                            GL.GDKP:deleteAuction(sessionIdentifier, Auction.ID, "-");
+                            GDKP:deleteAuction(Session.ID, Auction.ID, "-");
                             return;
                         end
 
                         Interface.Dialogs.ConfirmWithSingleInputDialog:open({
                             question = string.format("Provide a reason for deleting this entry"),
                             OnYes = function (reason)
-                                GL.GDKP:deleteAuction(sessionIdentifier, Auction.ID, reason);
+                                GDKP:deleteAuction(Session.ID, Auction.ID, reason);
                             end,
                         });
                     end,
@@ -416,6 +549,9 @@ function Overview:refreshLedger()
                     normalTexture = "Interface\\AddOns\\Gargul\\Assets\\Buttons\\delete",
                     highlightTexture = "Interface\\AddOns\\Gargul\\Assets\\Buttons\\delete-highlighted",
                     disabledTexture = "Interface\\AddOns\\Gargul\\Assets\\Buttons\\delete-disabled",
+                    update = function (self)
+                        self:SetEnabled(not auctionWasDeleted and not Session.deletedAt);
+                    end,
                 });
                 Delete:SetPoint("TOPLEFT", Edit, "TOPRIGHT", 2, 0)
                 self.ActionButtons[Auction.ID].DeleteButton = Delete;
@@ -424,12 +560,15 @@ function Overview:refreshLedger()
             --[[ RESTORE BUTTON ]]
             if (auctionWasDeleted) then
                 local Restore = Interface:createButton(ActionButtons, {
-                    onClick = function() GL.GDKP:restoreAuction(sessionIdentifier, Auction.ID); end,
+                    onClick = function() GDKP:restoreAuction(Session.ID, Auction.ID); end,
                     tooltip = "Restore",
                     disabledTooltip = "You need lead or master loot to restore entries.\nYou can't restore entries of deleted sessions",
                     normalTexture = "Interface\\AddOns\\Gargul\\Assets\\Buttons\\restore",
                     highlightTexture = "Interface\\AddOns\\Gargul\\Assets\\Buttons\\restore-highlighted",
                     disabledTexture = "Interface\\AddOns\\Gargul\\Assets\\Buttons\\restore-disabled",
+                    update = function (self)
+                        self:SetEnabled(not Session.deletedAt);
+                    end,
                 });
                 Restore:SetPoint("TOPLEFT", Edit, "TOPRIGHT", 2, 0);
                 self.ActionButtons[Auction.ID].RestoreButton = Restore;
@@ -540,7 +679,7 @@ function Overview:createSessionsTable()
 
             -- We always select the first column of the selected row because that contains the player name
             self.selectedSession = data[realrow].cols[2].value;
-            self:refreshLedger();
+            Events:fire("GL.GDKP_OVERVIEW_SESSION_CHANGED");
         end
     });
 
@@ -562,6 +701,7 @@ function Overview:refreshSessions()
     local TableData = {};
 
     local lowestPriority = 99999999999;
+    local deletedAtPriorityModifier = 19999999999;
     local lowestPriorityTableItem = 1;
     local selectedTableItem;
     local tableItem = 1;
@@ -569,6 +709,13 @@ function Overview:refreshSessions()
     for checksum, Session in pairs(DB:get("GDKP.Ledger", {})) do
         local title = Session.title;
         local priority = 99999999999 - (Session.createdAt or 0);
+
+        local color = {r = 1, g = 1, b = 1};
+        if (Session.deletedAt) then
+            priority = priority + deletedAtPriorityModifier;
+            color = {r = .77, g = .12, b = .23};
+            title = title .. " (deleted)";
+        end
 
         if (checksum == DB.GDKP.activeSession) then
             title = Session.title .. " (active)";
@@ -584,12 +731,6 @@ function Overview:refreshSessions()
         if (priority < lowestPriority) then
             lowestPriority = priority;
             lowestPriorityTableItem = tableItem;
-        end
-
-        local color = {r = 1, g = 1, b = 1};
-        if (Session.deletedAt) then
-            color = {r = .77, g = .12, b = .23};
-            title = title .. " (deleted)";
         end
 
         tinsert(TableData, {
@@ -620,6 +761,8 @@ function Overview:refreshSessions()
             Table:SetSelection(selectedTableItem);
         end
     end, .1);
+
+    Events:fire("GL.GDKP_OVERVIEW_SESSIONS_REFRESHED");
 end
 
 GL:debug("Interfaces/GDKP/Overview.lua");

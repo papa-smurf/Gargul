@@ -7,6 +7,9 @@ GL:tableSet(GL, "Interface.GDKP.Bidder", {
 });
 local Bidder = GL.Interface.GDKP.Bidder; ---@type GDKPBidderInterface
 
+---@type GDKP
+local GDKP = GL.GDKP;
+
 ---@return boolean
 function Bidder:show(...)
     GL:debug("Bidder:show");
@@ -82,12 +85,12 @@ function Bidder:draw(time, itemLink, itemIcon)
     MinimumButton:SetNormalFontObject("GameFontNormal");
     MinimumButton:SetHighlightFontObject("GameFontNormal");
     MinimumButton:SetScript("OnClick", function ()
-        BidInput:SetText(GL.GDKP:lowestValidBid());
+        BidInput:SetText(GDKP:lowestValidBid());
         BidInput:SetFocus();
     end);
 
     BidButtonClick = function ()
-        GL.GDKP:bid(BidInput:GetText());
+        GDKP:bid(BidInput:GetText());
         BidInput:SetText("");
         BidInput:ClearFocus();
     end;
@@ -151,22 +154,21 @@ function Bidder:draw(time, itemLink, itemIcon)
 end
 
 function Bidder:refresh()
+    GL:debug("Bidder:refresh");
+
     local TopBidderLabel = GL.Interface:get(self, "Frame.TopBidder");
 
     if (not TopBidderLabel) then
-GL:error("NO TOP BIDDER LABEL");
         return;
     end
 
-    local TopBid = GL:tableGet(GL.GDKP, "CurrentAuction.TopBid", {});
-GL:printTable(TopBid);
+    local TopBid = GL:tableGet(GDKP, "CurrentAuction.TopBid", {});
+
     -- The given bids seems to be invalid somehow? Better safe than LUA error!
     if (not TopBid or not TopBid.bid) then
-GL:error("INVALID BID IN BIDDER:REFRESH");
         return;
     end
 
-GL:error("ALL GOOD, SHOW TEXT!");
     -- We're the highest bidder, NICE!
     if (string.lower(TopBid.Bidder.name) == string.lower(GL.User.name)) then
         TopBidderLabel:SetText(string.format("Top bidder: |c001Eff00%s|r with %s|c00FFF569g|r",
