@@ -1323,7 +1323,7 @@ end
 ---
 ---@param soundNameOrNumber string
 ---@param channel string
-function GL:playSound(soundNameOrNumber, channel)
+function GL:playSound(soundNameOrNumber, channel, forceNoDuplicates, runFinishCallback)
     -- Check if the user muted the addon
     if (GL.Settings:get("noSounds")) then
         return;
@@ -1335,7 +1335,7 @@ function GL:playSound(soundNameOrNumber, channel)
         channel = "Master";
     end
 
-    PlaySound(soundNameOrNumber, channel);
+    PlaySound(soundNameOrNumber, channel, forceNoDuplicates, runFinishCallback);
 end
 
 local gaveNoMessagesWarning = false;

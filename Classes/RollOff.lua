@@ -385,7 +385,7 @@ function RollOff:start(CommMessage)
         end
 
         -- Play raid warning sound
-        GL:playSound(8959, "Master");
+        GL:playSound(SOUNDKIT.RAID_WARNING, "SFX");
 
         -- Let the application know that a rolloff has started
         GL.Events:fire("GL.ROLLOFF_STARTED");
@@ -456,7 +456,7 @@ function RollOff:stop(CommMessage)
     end
 
     -- Play raid warning sound
-    GL:playSound(8959);
+    GL:playSound(SOUNDKIT.RAID_WARNING, "SFX");
 
     RollOff.inProgress = false;
     GL.Ace:CancelTimer(RollOff.StopRollOffTimer);
