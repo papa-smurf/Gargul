@@ -1,6 +1,12 @@
 ---@type GL
 local _, GL = ...;
 
+---@type GDKP
+local GDKP = GL.GDKP;
+
+local AceGUI = GL.AceGUI;
+GL.ScrollingTable = GL.ScrollingTable or LibStub("ScrollingTable");
+
 ---@class GDKPAuctioneerInterface
 GL:tableSet(GL, "Interface.GDKP.Auctioneer", {
     itemBoxHoldsValidItem = false,
@@ -10,10 +16,9 @@ GL:tableSet(GL, "Interface.GDKP.Auctioneer", {
         itemBoxText = "",
     },
 });
-local Auctioneer = GL.Interface.GDKP.Auctioneer; ---@type GDKPAuctioneerInterface
-local AceGUI = GL.AceGUI;
 
-GL.ScrollingTable = GL.ScrollingTable or LibStub("ScrollingTable");
+---@type GDKPAuctioneerInterface
+local Auctioneer = GL.Interface.GDKP.Auctioneer;
 
 function Auctioneer:draw(itemLink)
     GL:debug("Auctioneer:draw");
@@ -258,7 +263,7 @@ function Auctioneer:draw(itemLink)
     StartButton:SetHeight(20);
     StartButton:SetDisabled(true);
     StartButton:SetCallback("OnClick", function()
-        if (GL.GDKP:announceStart(
+        if (GDKP:announceStart(
             GL.Interface:get(self, "EditBox.Item"):GetText(),
             GL.Interface:get(self, "EditBox.MinimumBid"):GetText(),
             GL.Interface:get(self, "EditBox.MinimumIncrement"):GetText()
@@ -283,7 +288,7 @@ function Auctioneer:draw(itemLink)
     StopButton:SetHeight(20);
     StopButton:SetDisabled(true);
     StopButton:SetCallback("OnClick", function()
-        GL.GDKP:announceStop();
+        GDKP:announceStop();
     end);
     ThirdRow:AddChild(StopButton);
     GL.Interface:set(self, "Stop", StopButton);
@@ -296,7 +301,7 @@ function Auctioneer:draw(itemLink)
     ClearButton:SetDisabled(false);
     ClearButton:SetCallback("OnClick", function()
         self:reset();
-        GL.GDKP:resetAuction();
+        GDKP:resetAuction();
     end);
     FourthRow:AddChild(ClearButton);
     GL.Interface:set(self, "Clear", ClearButton);
@@ -328,26 +333,35 @@ function Auctioneer:draw(itemLink)
                 bid
             ),
             OnYes = function ()
-                GL.GDKP:createAuction(GL:getItemIDFromLink(GL.GDKP.CurrentAuction.itemLink), bid, winner);
+                local isOS, addPlusOne;
+                local OSCheckBox = GL.Interface:get(GL.Interface.Dialogs.AwardDialog, "CheckBox.OffSpec");
+                if (OSCheckBox) then
+                    isOS = GL:toboolean(OSCheckBox:GetValue());
+                end
+
+                local addPlusOneCheckBox = GL.Interface:get(GL.Interface.Dialogs.AwardDialog, "CheckBox.PlusOne");
+                if (addPlusOneCheckBox) then
+                    addPlusOne = GL:toboolean(addPlusOneCheckBox:GetValue());
+
+                    if (addPlusOne) then
+                        GL.PlusOnes:add(winner);
+                    end
+                end
+
+                GDKP:createAuction(GL:getItemIDFromLink(GL.GDKP.CurrentAuction.itemLink), bid, winner);
 
                 self:reset(); -- Reset the UI
-                GL.GDKP:resetAuction(); -- Reset the actual auction object
+                GDKP:resetAuction(); -- Reset the actual auction object
                 self:closeReopenAuctioneerButton();
 
                 if (GL.Settings:get("GDKP.closeAuctioneerOnAward")) then
                     self:close();
                 end
 
-                ---@todo: add setting for this
-                -- Announce awarded item on RAID or RAID_WARNING
-                GL:sendChatMessage(
-                    string.format("%s was awarded to %s for %sg. Congrats!",
-                            itemLink,
-                            winner,
-                            bid
-                    ),
-                    "GROUP"
-                );
+                GL.AwardedLoot:addWinner(winner, itemLink, nil, nil, isOS, nil, bid, nil);
+
+                ---@todo add setting > [ ] Announce current pot after each auction
+                GL:sendChatMessage(string.format("Pot was updated, it now holds %sg", GDKP:pot()), "GROUP");
             end,
         });
     end);
@@ -418,7 +432,7 @@ end
 function Auctioneer:show(Window)
     GL:debug("Auctioneer:show");
 
-    local ActiveSession = GL.GDKP:getActiveSession();
+    local ActiveSession = GDKP:getActiveSession();
 
     if (not ActiveSession) then
         return false;

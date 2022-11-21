@@ -48,15 +48,6 @@ function GDKP:_init()
         return false;
     end
 
----@todo: remove
-GL.Ace:ScheduleTimer(function ()
-    if (true) then return; end;
-    GL:error("FIRE!");
-    GL.Interface.Alerts:fire("GargulNotification", {
-        message = "|c00BE3333You were outbid!|r",
-    });
-end, 1);
-
     -- An event is fired whenever a bid is accepted, in which case we broadcast the latest auction details
     Events:register("GDKPBidAccepted", "GL.GDKP_BID_ACCEPTED", function (_, OldTopBid, NewTopBid)
         GL.CommMessage.new(
@@ -89,6 +80,33 @@ end, 1);
 
     self._initialized = true;
     return true;
+end
+
+---@param sessionID string|nil If nil use currently active session
+---@return number
+function GDKP:pot(sessionID)
+    GL:debug("GDKP:pot");
+
+    sessionID = sessionID or DB.GDKP.activeSession;
+
+    if (not sessionID) then
+        return 0;
+    end
+
+    local Session = self:getSessionByID(sessionID);
+
+    if (not Session) then
+        return 0;
+    end
+
+    local pot = 0;
+    for _, Auction in pairs(Session.Auctions or {}) do
+        if (not Auction.deletedAt and GL:higherThanZero(Auction.price)) then
+            pot = pot + Auction.price;
+        end
+    end
+
+    return pot;
 end
 
 --- Return the currently active GDKP session
@@ -349,19 +367,30 @@ function GDKP:deleteAuction(sessionIdentifier, auctionIdentifier, reason)
     return true;
 end
 
---- Delete the given auction
+--- Create an auction
 ---
----@param Details table
+---@param itemID number
+---@param price number
+---@param winner string
+---@param sessionIdentifier string
 ---
 ---@return boolean
 function GDKP:createAuction(itemID, price, winner, sessionIdentifier)
-    GL:debug("GDKP:creataeAuction");
+    GL:debug("GDKP:createAuction");
 
     if ((not sessionIdentifier
             or (sessionIdentifier and not self:sessionExists(sessionIdentifier))
-        )
-        and not self:hasActiveSession()
-    ) then
+        ) and not self:hasActiveSession()
+    )
+    then
+        GL:warning("Unknown sessionIdentifier in GDKP:createAuction: " .. tostring(sessionIdentifier));
+        return false;
+    end
+
+    itemID = GetItemInfoInstant(itemID);
+
+    if (not GL:higherThanZero(itemID)) then
+        GL:warning("Unknown itemID in GDKP:createAuction: " .. tostring(itemID));
         return false;
     end
 
@@ -521,8 +550,7 @@ function GDKP:announceStart(itemLink, minimumBid, minimumIncrement)
         return true;
     end
 
-    local announceMessage = string.format("You have %s seconds to bid on %s. Minimum bid is %s, increment is %s",
-        duration,
+    local announceMessage = string.format("Bidding starts on %s. Minimum is %sg, increment is %sg. Use raid chat!",
         itemLink,
         minimumBid,
         minimumIncrement
@@ -972,6 +1000,8 @@ function GDKP:processBid(event, message, bidder)
         GL:sendChatMessage(string.format("Bid denied, the minimum bid is %sg", minimumBid), "WHISPER", nil, bidder);
         return;
     end
+
+    GL:sendChatMessage(string.format("%s is the highest bidder (%sg)", BidEntry.Bidder.name, bid), "GROUP");
 
     tinsert(self.CurrentAuction.Bids, BidEntry);
     GL.Interface.GDKP.Auctioneer:refreshRollsTable();

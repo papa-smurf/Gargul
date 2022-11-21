@@ -106,6 +106,7 @@ function Overview:sessionChanged()
     self:updatePot();
 end
 
+---@return void
 function Overview:updatePot()
     GL:debug("Overview:updatePot");
 
@@ -121,13 +122,7 @@ function Overview:updatePot()
         return;
     end
 
-    local pot = 0;
-    for _, Auction in pairs(Session.Auctions or {}) do
-        if (not Auction.deletedAt and GL:higherThanZero(Auction.price)) then
-            pot = pot + Auction.price;
-        end
-    end
-
+    local pot = GDKP:pot(Session.ID);
     Pot:SetText(string.format("|cFF%s%sg|r", Constants.ClassHexColors.rogue, pot));
 end
 
@@ -152,6 +147,9 @@ function Overview:open()
     Window:Show();
 end
 
+--- Build the GDKP overview. We only do this once and reuse it when reopened
+---
+---@return void
 function Overview:build()
     GL:debug("Overview:build");
 
@@ -718,6 +716,7 @@ function Overview:refreshSessions()
         end
 
         if (checksum == DB.GDKP.activeSession) then
+            priority = 0;
             title = Session.title .. " (active)";
         end
 
