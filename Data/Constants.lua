@@ -68,6 +68,33 @@ GL.Data.Constants = {
         INVTYPE_QUIVER = { 20, 21, 22, 23 }
     },
 
+    Vips = {
+        Contributors = {
+            "Arvada",
+            "Curnil",
+            "Lantis",
+            "Schweex",
+            "Tonio",
+        },
+        Uncommon = {
+            "Sneaky",
+            "Snickels",
+        },
+        Rare = {
+            "Busmonstret",
+            "Coldemort",
+            "Kelziad",
+            "Nambojambo",
+            "Scratchd",
+            "Vejusatko",
+            "WaDaFruCK",
+        },
+        Legendary = {
+            "Cuckster",
+            "Freezythree",
+        },
+    },
+
     --[[
         GLOBAL
     ]]
