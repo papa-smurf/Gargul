@@ -459,14 +459,14 @@ end
 function Interface:createShareButton(Parent, Details)
     GL:debug("Interface:createShareButton");
 
-    local Button = self:createButton(Parent, Details);
-
     Details = Details or {};
     local position = Details.position;
     local x = Details.x;
     local y = Details.y;
     local width = Details.width or 24;
     local height = Details.height or 24;
+
+    local Button = self:createButton(Parent, Details);
 
     -- If the parent element is an AceGUI element and no position was given we assume that the user wants
     -- to add the button as-is to the parent frame

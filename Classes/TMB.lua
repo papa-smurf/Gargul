@@ -308,7 +308,7 @@ function TMB:tooltipLines(itemLink)
         local isOffSpec = string.find(Entry.character, "%(OS%)");
         local prioOffset = 0;
         local sortingOrder = prio;
-        local color = GL:classHexColor(GL.Player:classByName(playerName:gsub("%(os%)", "")));
+        local color = GL:classHexColor(GL.Player:classByName(playerName:gsub("%(os%)", ""), 0), GL.Data.Constants.disabledTextColor);
 
         -- We add 100 to the prio (first key) of the object
         -- This object is used for sorting later and is not visible to the player
@@ -362,7 +362,7 @@ function TMB:tooltipLines(itemLink)
 
             tinsert(Lines, string.format(
                 "|cFF%s%s|r",
-                GL:classHexColor(GL.Player:classByName(Entry[2])),
+                GL:classHexColor(GL.Player:classByName(Entry[2], 0), GL.Data.Constants.disabledTextColor),
                 GL:capitalize(Entry[2]):gsub("%(os%)", " (OS)")
             ));
 
@@ -401,7 +401,7 @@ function TMB:tooltipLines(itemLink)
 
             tinsert(Lines, string.format(
                 "|cFF%s%s|r",
-                GL:classHexColor(GL.Player:classByName(Entry[2])),
+                GL:classHexColor(GL.Player:classByName(Entry[2], 0), GL.Data.Constants.disabledTextColor),
                 GL:capitalize(Entry[2]):gsub("%(os%)", " (OS)")
             ));
 
