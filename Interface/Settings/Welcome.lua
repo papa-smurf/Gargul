@@ -162,10 +162,9 @@ function Welcome:draw(Parent)
     end
 
     local Title = AceGUI:Create("Label");
-    Title:SetText("\n\n|c00ff424dGargul would not be here without these awesome people!|r\n");
+    Title:SetText("\n\n|c00ff424dGargul would not be here without these awesome people, thank you! <3|r\n");
     Title:SetFontObject(_G["GameFontNormal"]);
     Title:SetFullWidth(true);
-    Title:SetJustifyH("MIDDLE");
     Parent:AddChild(Title);
 end
 
