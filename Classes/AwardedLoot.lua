@@ -87,7 +87,7 @@ function AwardedLoot:tooltipLines(itemLink)
             end
 
             local line = string.format("    |c00%s%s|r%s%s%s",
-                GL:classHexColor(GL.Player:classByName(winner, 0), "5f5f5f"),
+                GL:classHexColor(GL.Player:classByName(winner, 0), GL.Data.Constants.disabledTextColor),
                 GL:capitalize(winner),
                 OSString,
                 BRString,

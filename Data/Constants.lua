@@ -72,6 +72,7 @@ GL.Data.Constants = {
         GLOBAL
     ]]
     addonHexColor =  "967FD2",
+    disabledTextColor =  "5F5F5F",
 
     success = 0,
     failure = 1,
