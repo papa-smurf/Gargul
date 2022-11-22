@@ -83,6 +83,7 @@ GL.Data.Constants = {
         Rare = {
             "Busmonstret",
             "Coldemort",
+            "Die_Quelle",
             "Kelziad",
             "Nambojambo",
             "Scratchd",
