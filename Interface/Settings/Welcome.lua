@@ -69,7 +69,7 @@ function Welcome:draw(Parent)
     Parent:AddChild(OpenSoftRes);
 
     local OpenTMB = AceGUI:Create("Button");
-    OpenTMB:SetText("TMB or DFT");
+    OpenTMB:SetText("TMB / DFT");
     OpenTMB:SetCallback("OnClick", function()
         GL.Settings:close();
         GL.Commands:call("tmb");
