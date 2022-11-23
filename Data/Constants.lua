@@ -39,7 +39,7 @@ GL.Data.Constants = {
     },
 
     ItemSlotTable = {
-        -- Source: http://wowwiki.wikia.com/wiki/ItemEquipLoc
+        -- Source: https://wowpedia.fandom.com/wiki/Enum.InventoryType
         INVTYPE_AMMO = { 0 },
         INVTYPE_HEAD = { 1 },
         INVTYPE_NECK = { 2 },
@@ -85,12 +85,14 @@ GL.Data.Constants = {
         Rare = {
             "Busmonstret",
             "Coldemort",
-            "Die_Quelle",
             "Kelziad",
             "Nambojambo",
             "Scratchd",
             "Vejusatko",
             "WaDaFruCK",
+        },
+        Epic = {
+            "Die_Quelle",
         },
         Legendary = {
             "Cuckster",
