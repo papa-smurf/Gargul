@@ -119,7 +119,7 @@ function EditSession:open()
     local Window = self:window();
 
     Interface:get(self, "Label.Title"):SetText("Editing " .. Session.title);
-    Interface:get(self, "EditBox.Title"):SetValue(Session.title);
+    Interface:get(self, "EditBox.Title"):SetText(Session.title);
 
     self.isVisible = true;
     Window.frame:SetPoint("TOPLEFT", Interface:get(Overview, "GDKPOverview").frame, "TOPRIGHT", 2, 16);
