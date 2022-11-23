@@ -78,11 +78,11 @@ end
 ---@return void
 function MasterLooterDialog:flightAttendant()
     local function announce()
-        local message = GL.Settings:get("MasterLooting.announceMasterLooterMessage");
+        local message = "I'm using Gargul to distribute loot. It makes rolling easier so be sure to try it out!"
         local stw = not GL:strContains(string.lower(message), "gargul");
 
         GL:sendChatMessage(
-            GL.Settings:get("MasterLooting.announceMasterLooterMessage"),
+            message,
             "GROUP",
             nil,
             nil,
