@@ -79,7 +79,7 @@ function PackMuleRules:draw(Parent)
     end
 
     -- Make sure to draw additional item rules in case we have less than 30
-    for _ = #SpecificItemRules, 30 do
+    for _ = #SpecificItemRules, 75 do
         self:drawSpecifItemRule(Parent);
     end
 end

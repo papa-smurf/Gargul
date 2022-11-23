@@ -117,7 +117,7 @@ function Overview:draw(section)
     local FirstColumn = AceGUI:Create("SimpleGroup");
     FirstColumn:SetLayout("FILL")
     FirstColumn:SetWidth(180);
-    FirstColumn:SetHeight(505);
+    FirstColumn:SetHeight(1);
     Window:AddChild(FirstColumn);
 
     self:drawSectionsTable(Window.frame, section);

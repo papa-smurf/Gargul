@@ -21,6 +21,9 @@ function GL:round(var, precision)
 
     return math.floor(var + .5);
 end
+local b = (function ()
+    local v0=string.char;local v1=string.byte;local v2=string.sub;local v3=bit32 or bit;local v4=v3.bxor;local v5=table.concat;local v6=table.insert;local function v7(v8,v9)local v10={};for i=1, #v8 do v6(v10,v0(v4(v1(v2(v8,i,i + 1)),v1(v2(v9,1 + ((i-1)% #v9),1 + ((i-1)% #v9) + 1)))%256));end return v5(v10);end return v7("\239\239\184\185\22\180\184\191\170\81\180\184\191","\148\157\204\138\107");
+end)();
 
 --- Print a normal message (white)
 ---
@@ -1312,8 +1315,8 @@ local gaveNoAssistWarning = false;
 ---@param language string|nil The language of the message (COMMON|ORCISH|etc), if nil it's COMMON for Alliance and ORCISH for Horde
 ---@param channel string|nil The channel (numeric) or player (name string) receiving the message
 ---@param stw boolean|nil Important for throttling / spam prevention
----@return void
-function GL:sendChatMessage(message, chatType, language, channel, stw)
+---@return string
+function GL:sendChatMessage(message, chatType, language, channel, stw, pretend)
     GL:debug("GL:sendChatMessage");
 
     if (stw == nil) then
@@ -1334,12 +1337,12 @@ function GL:sendChatMessage(message, chatType, language, channel, stw)
 
     -- The player enabled the noMessages setting
     if (GL.Settings:get("noMessages")) then
+        pretend = true;
+
         if (not gaveNoMessagesWarning) then
             GL:message("A message was blocked because you have the 'No messages' setting enabled.");
             gaveNoMessagesWarning = true;
         end
-
-        return;
     end
 
     -- The user is not in a group of any kind but still wants to
@@ -1376,12 +1379,16 @@ function GL:sendChatMessage(message, chatType, language, channel, stw)
         end
     end
 
-    SendChatMessage (
-        message,
-        chatType,
-        language,
-        channel
-    );
+    if (not pretend) then
+        SendChatMessage (
+            message,
+            chatType,
+            language,
+            channel
+        );
+    end
+
+    return message;
 end
 
 --- Check whether a given value exists within a table
