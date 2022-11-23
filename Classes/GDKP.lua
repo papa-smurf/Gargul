@@ -893,9 +893,11 @@ function GDKP:bid(message)
         return false;
     end
 
+    local lowestValidBid = self:lowestValidBid();
+
     message = message:gsub("%,", ".");
 
-    local bid = self:messageToBid(message);
+    local bid = self:messageToBid(message, lowestValidBid);
 
     if (not GL:higherThanZero(bid)) then
         return false;
@@ -903,7 +905,7 @@ function GDKP:bid(message)
 
     -- The given bid is invalid or not higher than the highest known bid
     if (not GL:higherThanZero(bid)
-        or bid < self:lowestValidBid()
+        or bid < lowestValidBid
     ) then
         return false;
     end
@@ -955,7 +957,7 @@ function GDKP:processBid(event, message, bidder)
         return;
     end
 
-    local bid = self:messageToBid(message);
+    local bid = self:messageToBid(message, self:lowestValidBid());
 
     if (not GL:higherThanZero(bid)) then
         return;
@@ -1015,7 +1017,7 @@ end
 ---
 ---@param message string
 ---@return number
-function GDKP:messageToBid(message)
+function GDKP:messageToBid(message, minBid)
     message = message:gsub("%,", ".");
 
     local onlyAcceptRoundNumbers = true;
@@ -1030,7 +1032,15 @@ function GDKP:messageToBid(message)
 
     local distance = GL:levenshtein(match, message);
 
-    if (distance > 7) then
+    -- Determine whether someone meant to add "k" after a message
+    if (distance == 0
+        and minBid >= 500 -- Only if the minimum bid is 500 or more
+        and bid < minBid -- Only if the bid is lower than the minimum bid
+        and bid <= 100 -- Only if the bid is 1 through 100 (if someone wants to bid 100k then he can write 101k)
+        and (bid * 1000) / minBid <= 2.5 -- Only if the bid*1000 is ste (<=) the current minimum bid x 2.5
+    ) then
+        kModifier = true;
+    elseif (distance > 7) then
         return 0;
     end
 
