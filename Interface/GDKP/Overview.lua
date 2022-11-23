@@ -80,25 +80,33 @@ function Overview:sessionChanged()
         return GL:debug(string.format("Unknown GDKP session '%s'", self.selectedSession));
     end
 
-    local DeleteRestoreButton = Interface:get(self, "Button.DeleteRestore");
-    if (DeleteRestoreButton) then
+    local DeleteOrRestoreButton = Interface:get(self, "Button.DeleteRestore");
+    if (DeleteOrRestoreButton) then
         if (Session.deletedAt) then
-            DeleteRestoreButton:SetText("Restore");
-            DeleteRestoreButton:SetWidth(78);
-            DeleteRestoreButton.mode = "restore";
+            DeleteOrRestoreButton:SetText("Restore");
+            DeleteOrRestoreButton:SetWidth(78);
+            DeleteOrRestoreButton.mode = "restore";
         else
-            DeleteRestoreButton:SetText("Delete");
-            DeleteRestoreButton:SetWidth(74);
-            DeleteRestoreButton.mode = "delete";
+            DeleteOrRestoreButton:SetText("Delete");
+            DeleteOrRestoreButton:SetWidth(74);
+            DeleteOrRestoreButton.mode = "delete";
         end
     end
 
-    local EnableButton = Interface:get(self, "Button.Enable");
-    if (EnableButton) then
+    local EnableOrDisableButton = Interface:get(self, "Button.EnableDisable");
+    if (EnableOrDisableButton) then
         if (Session.deletedAt) then
-            EnableButton:SetDisabled(true);
+            EnableOrDisableButton:SetDisabled(true);
         else
-            EnableButton:SetDisabled(false);
+            EnableOrDisableButton:SetDisabled(false);
+        end
+
+        if (DB.GDKP.activeSession == Session.ID) then
+            EnableOrDisableButton:SetText("Disable");
+            EnableOrDisableButton.mode = "disable";
+        else
+            EnableOrDisableButton:SetText("Enable");
+            EnableOrDisableButton.mode = "enable";
         end
     end
 
@@ -229,7 +237,6 @@ function Overview:build()
         tooltip = "Add entry",
         disabledTooltip = "You need lead or master loot to add entries.\nYou can't add entries to deleted sessions",
         normalTexture = "Interface\\AddOns\\Gargul\\Assets\\Buttons\\create",
-        highlightTexture = "Interface\\AddOns\\Gargul\\Assets\\Buttons\\create-highlighted",
         disabledTexture = "Interface\\AddOns\\Gargul\\Assets\\Buttons\\create-disabled",
         update = function (self)
             local SelectedSession = Overview:getSelectedSession();
@@ -261,14 +268,18 @@ function Overview:build()
     ThirdColumn:SetWidth(382);
     ThirdColumn:SetHeight(40);
 
-    local EnableSession = AceGUI:Create("Button");
-    EnableSession:SetText("Enable");
-    EnableSession:SetWidth(74);
-    EnableSession:SetHeight(20);
-    EnableSession:SetCallback("OnClick", function()
-        GDKP:setActiveSession(self.selectedSession);
+    local EnableOrDisableSession = AceGUI:Create("Button");
+    EnableOrDisableSession:SetText("Enable");
+    EnableOrDisableSession:SetWidth(80);
+    EnableOrDisableSession:SetHeight(20);
+    EnableOrDisableSession:SetCallback("OnClick", function()
+        if (EnableOrDisableSession.mode == "enable") then
+            GDKP:setActiveSession(self.selectedSession);
+        else
+            GDKP:clearActiveSession();
+        end
     end);
-    Interface:set(self, "Enable", EnableSession);
+    Interface:set(self, "EnableDisable", EnableOrDisableSession);
 
     local CreateSession = AceGUI:Create("Button");
     CreateSession:SetText("New");
@@ -309,7 +320,7 @@ function Overview:build()
         GL:xd("Export");
     end);
 
-    ThirdColumn:AddChildren(EnableSession, CreateSession, EditSession, DeleteOrRestoreSession, Export);
+    ThirdColumn:AddChildren(EnableOrDisableSession, CreateSession, EditSession, DeleteOrRestoreSession, Export);
     ThirdColumn.frame:SetParent(WindowFrame);
     ThirdColumn.frame:SetPoint("BOTTOMLEFT", WindowFrame, "BOTTOMLEFT", 20, 15);
 
@@ -516,7 +527,6 @@ function Overview:refreshLedger()
                 tooltip = "Edit",
                 disabledTooltip = "You need lead or master loot to edit entries.\nYou can't edit deleted entries or entries on deleted sessions",
                 normalTexture = "Interface\\AddOns\\Gargul\\Assets\\Buttons\\edit",
-                highlightTexture = "Interface\\AddOns\\Gargul\\Assets\\Buttons\\edit-highlighted",
                 disabledTexture = "Interface\\AddOns\\Gargul\\Assets\\Buttons\\edit-disabled",
                 update = function (self)
                     self:SetEnabled(not auctionWasDeleted and not Session.deletedAt);
@@ -526,8 +536,9 @@ function Overview:refreshLedger()
             self.ActionButtons[Auction.ID].EditButton = Edit;
 
             --[[ DELETE BUTTON ]]
+            local Restore, Delete;
             if (not auctionWasDeleted) then
-                local Delete = Interface:createButton(ActionButtons, {
+                Delete = Interface:createButton(ActionButtons, {
                     onClick = function()
                         -- Shift button was held, skip reason
                         if (IsShiftKeyDown()) then
@@ -545,7 +556,6 @@ function Overview:refreshLedger()
                     tooltip = "Delete",
                     disabledTooltip = "You need lead or master loot to delete entries.\nYou can't delete entries on deleted sessions",
                     normalTexture = "Interface\\AddOns\\Gargul\\Assets\\Buttons\\delete",
-                    highlightTexture = "Interface\\AddOns\\Gargul\\Assets\\Buttons\\delete-highlighted",
                     disabledTexture = "Interface\\AddOns\\Gargul\\Assets\\Buttons\\delete-disabled",
                     update = function (self)
                         self:SetEnabled(not auctionWasDeleted and not Session.deletedAt);
@@ -557,12 +567,11 @@ function Overview:refreshLedger()
 
             --[[ RESTORE BUTTON ]]
             if (auctionWasDeleted) then
-                local Restore = Interface:createButton(ActionButtons, {
+                Restore = Interface:createButton(ActionButtons, {
                     onClick = function() GDKP:restoreAuction(Session.ID, Auction.ID); end,
                     tooltip = "Restore",
                     disabledTooltip = "You need lead or master loot to restore entries.\nYou can't restore entries of deleted sessions",
                     normalTexture = "Interface\\AddOns\\Gargul\\Assets\\Buttons\\restore",
-                    highlightTexture = "Interface\\AddOns\\Gargul\\Assets\\Buttons\\restore-highlighted",
                     disabledTexture = "Interface\\AddOns\\Gargul\\Assets\\Buttons\\restore-disabled",
                     update = function (self)
                         self:SetEnabled(not Session.deletedAt);
@@ -571,6 +580,18 @@ function Overview:refreshLedger()
                 Restore:SetPoint("TOPLEFT", Edit, "TOPRIGHT", 2, 0);
                 self.ActionButtons[Auction.ID].RestoreButton = Restore;
             end
+
+            --[[ DETAILS BUTTON ]]
+            local Eye = Interface:createButton(ActionButtons, {
+                onClick = function()
+                    Interface.GDKP.AuctionDetails:draw(Session.ID, Auction.checksum);
+                end,
+                tooltip = "Details",
+                normalTexture = "Interface\\AddOns\\Gargul\\Assets\\Buttons\\eye",
+                disabledTexture = "Interface\\AddOns\\Gargul\\Assets\\Buttons\\eye-disabled",
+            });
+            Eye:SetPoint("TOPLEFT", Delete or Restore, "TOPRIGHT", 2, 0);
+            self.ActionButtons[Auction.ID].DetailsButton = Eye;
         end
     end);
 

@@ -197,6 +197,85 @@ function GDKP:createSession(title)
     return Session;
 end
 
+--- Create a new GDKP session
+---
+---@param sessionID string
+---@param title string
+---@return boolean|table
+function GDKP:editSession(sessionID, title)
+    GL:debug("GDKP:createSession");
+
+    if (type(title) ~= "string" or GL:empty(title)) then
+        return false;
+    end
+
+    local Session = self:getSessionByID(sessionID);
+
+    if (not Session) then
+        return false;
+    end
+
+    Session.title = GL:capitalize(string.sub(title, 0, 30));
+    DB:set("GDKP.Ledger." .. Session.ID, Session);
+    Events:fire("GL.GDKP_SESSION_CHANGED", Session, self:getSessionByID(sessionID));
+
+    return Session;
+end
+
+--- Delete, or soft-delete a session depending on whether or not it has auctions attached to it
+---
+---@param sessionID string
+---@return boolean
+function GDKP:deleteSession(sessionID)
+    GL:debug("GDKP:deleteSession");
+
+    local Session = self:getSessionByID(sessionID);
+
+    if (not Session) then
+        return false;
+    end
+
+    -- This session is the currently active one, clear it
+    if (DB.GDKP.activeSession == sessionID) then
+        self:clearActiveSession();
+    end
+
+    -- There are no auctions attached to this session, we can safely remove it!
+    if (GL:empty(Session.Auctions)) then
+        DB:set("GDKP.Ledger." .. sessionID, nil);
+
+        -- There are auctions, mark the Session as deleted but keep it for 24h still
+    else
+        DB:set("GDKP.Ledger." .. sessionID .. ".deletedAt", GetServerTime());
+    end
+
+    Events:fire("GL.GDKP_SESSION_CHANGED", Session);
+    Events:fire("GL.GDKP_SESSION_DELETED", sessionID);
+
+    return true;
+end
+
+--- Restore a deleted session
+---
+---@param sessionID string
+---@return boolean
+function GDKP:restoreSession(sessionID)
+    GL:debug("GDKP:restoreSession");
+
+    local Session = self:getSessionByID(sessionID);
+
+    if (not Session or not Session.deletedAt) then
+        return false;
+    end
+
+    DB:set("GDKP.Ledger." .. sessionID .. ".deletedAt", nil);
+
+    Events:fire("GL.GDKP_SESSION_CHANGED", Session, self:getSessionByID(sessionID));
+    Events:fire("GL.GDKP_SESSION_RESTORED", sessionID);
+
+    return true;
+end
+
 --- Clear the currently active session
 ---
 ---@return void
@@ -207,9 +286,11 @@ function GDKP:clearActiveSession()
         return false;
     end
 
-    Events:fire("GL.GDKP_ACTIVE_SESSION_CLEARED", DB.GDKP.activeSession);
-    Events:fire("GL.GDKP_ACTIVE_SESSION_CHANGED");
+    local activeSession = DB.GDKP.activeSession;
     DB.GDKP.activeSession = nil;
+
+    Events:fire("GL.GDKP_ACTIVE_SESSION_CLEARED", activeSession);
+    Events:fire("GL.GDKP_ACTIVE_SESSION_CHANGED");
 
     return true;
 end
@@ -262,60 +343,6 @@ function GDKP:restoreAuction(sessionIdentifier, auctionIdentifier)
 
     Events:fire("GL.GDKP_AUCTION_CHANGED", sessionIdentifier, auctionIdentifier, Before, Auction);
     Events:fire("GL.GDKP_AUCTION_RESTORED", sessionIdentifier, auctionIdentifier);
-
-    return true;
-end
-
---- Delete, or soft-delete a session depending on whether or not it has auctions attached to it
----
----@param sessionID string
----@return boolean
-function GDKP:deleteSession(sessionID)
-    GL:debug("GDKP:deleteSession");
-
-    local Session = self:getSessionByID(sessionID);
-
-    if (not Session) then
-        return false;
-    end
-
-    -- This session is the currently active one, clear it
-    if (DB.GDKP.activeSession == sessionID) then
-        self:clearActiveSession();
-    end
-
-    -- There are no auctions attached to this session, we can safely remove it!
-    if (GL:empty(Session.Auctions)) then
-        DB:set("GDKP.Ledger." .. sessionID, nil);
-
-    -- There are auctions, mark the Session as deleted but keep it for 24h still
-    else
-        DB:set("GDKP.Ledger." .. sessionID .. ".deletedAt", GetServerTime());
-    end
-
-    Events:fire("GL.GDKP_SESSION_CHANGED", self:getSessionByID(sessionID));
-    Events:fire("GL.GDKP_SESSION_DELETED", sessionID);
-
-    return true;
-end
-
---- Restore a deleted session
----
----@param sessionID string
----@return boolean
-function GDKP:restoreSession(sessionID)
-    GL:debug("GDKP:restoreSession");
-
-    local Session = self:getSessionByID(sessionID);
-
-    if (not Session or not Session.deletedAt) then
-        return false;
-    end
-
-    DB:set("GDKP.Ledger." .. sessionID .. ".deletedAt", nil);
-
-    Events:fire("GL.GDKP_SESSION_CHANGED", self:getSessionByID(sessionID));
-    Events:fire("GL.GDKP_SESSION_RESTORED", sessionID);
 
     return true;
 end

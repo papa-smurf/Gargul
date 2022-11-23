@@ -58,7 +58,7 @@ function EditSession:build()
             return;
         end
 
-        GL:xd("EDIT SESSION!")
+        GDKP:editSession(Overview.selectedSession, title);
 
         self:close();
     end);
