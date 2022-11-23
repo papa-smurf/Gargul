@@ -85,6 +85,7 @@ Interface/GDKP/Overview.lua
 Interface/GDKP/CreateSession.lua
 Interface/GDKP/EditSession.lua
 Interface/GDKP/EditAuction.lua
+Interface/GDKP/AuctionDetails.lua
 Interface/TMB/Importer.lua
 Interface/TMB/Overview.lua
 Interface/PlusOnes/OverView.lua
