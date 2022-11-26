@@ -294,6 +294,23 @@ GL.Data.Constants = {
         monk = 13,
     },
 
+    Races = {
+        'human',
+        'dwarf',
+        'night elf',
+        'gnome',
+        'draenei',
+        'worgen',
+        'orc',
+        'undead',
+        'tauren',
+        'troll',
+        'blood elf',
+        'goblin',
+        'pandaren',
+        'dracthyr',
+    },
+
     ClassHexColors = {
         druid = "FF7D0A",
         hunter = "ABD473",
