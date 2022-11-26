@@ -398,6 +398,56 @@ function GDKP:deleteAuction(sessionIdentifier, auctionIdentifier, reason)
     return true;
 end
 
+--- Store the currently active auction in the session ledger
+---
+---@param winner string
+---@param bid number
+---@return boolean
+function GDKP:storeCurrentAuction(winner, bid)
+    GL:debug("GDKP:storeCurrentAuction");
+
+    local Auction = GL.GDKP.CurrentAuction or {};
+
+    if (type(Auction) ~= "table"
+        or GL:empty(Auction)
+        or not Auction.itemLink
+        or tonumber(GL:tableGet(Auction, "TopBid.bid", 0)) <= 0
+        or GL:empty(GL:tableGet(Auction, "TopBid.Bidder.name"))
+    ) then
+        return false;
+    end
+
+    winner = winner or Auction.TopBid.Bidder.name;
+    bid = bid or Auction.TopBid.bid;
+
+    local itemID = GL:getItemIDFromLink(GL.GDKP.CurrentAuction.itemLink)
+
+    -- Make sure the item is valid
+    if (not GL:higherThanZero(itemID)
+        or not GL:higherThanZero(GetItemInfoInstant(itemID))
+    ) then
+        GL:warning("Unknown itemID in GDKP:createAuction: " .. tostring(itemID));
+        return false;
+    end
+
+    local HighestBidPerPlayer = {};
+    for _, Bid in pairs(Auction.Bids or {}) do
+        (function ()
+            local bidder = strtrim(tostring(Bid.Bidder.name));
+
+            if (not HighestBidPerPlayer[bidder]) then
+                HighestBidPerPlayer[bidder] = {};
+            end
+
+            if (HighestBidPerPlayer[bidder].bid or 0 < Bid.bid) then
+                HighestBidPerPlayer[bidder] = Bid;
+            end
+        end)();
+    end
+
+    return self:createAuction(itemID, bid, winner, nil, HighestBidPerPlayer);
+end
+
 --- Create an auction
 ---
 ---@param itemID number
