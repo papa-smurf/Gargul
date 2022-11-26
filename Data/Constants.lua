@@ -73,8 +73,10 @@ GL.Data.Constants = {
     Vips = {
         Contributors = {
             "Arvada",
+            "Codzima",
             "Curnil",
             "Lantis",
+            "Lemmings19",
             "Schweex",
             "Tonio",
         },
