@@ -1,17 +1,17 @@
 ---@type GL
 local _, GL = ...;
 
+---@type Interface
+local Interface = GL.Interface;
+
 GL.AceGUI = GL.AceGUI or LibStub("AceGUI-3.0");
 local AceGUI = GL.AceGUI;
 
----@class EditAuction
+---@class GDKPEditAuction
 GL.Interface.GDKP.EditAuction = {}
 
----@type EditAuction
+---@type GDKPEditAuction
 local EditAuction = GL.Interface.GDKP.EditAuction;
-
----@type Interface
-local Interface = GL.Interface;
 
 ---@return void
 function EditAuction:draw(session, checksum)
@@ -42,7 +42,7 @@ function EditAuction:draw(session, checksum)
     -- Create a container/parent frame
     local Window = AceGUI:Create("InlineGroup");
     Window:SetLayout("Flow");
-    Window:SetWidth(300);
+    Window:SetWidth(200);
     Window:SetHeight(280);
     Window:SetPoint("TOPLEFT", Interface:get(Overview, "GDKPOverview").frame, "TOPRIGHT", 2, 16);
     Interface:set(self, "Window", Window);
