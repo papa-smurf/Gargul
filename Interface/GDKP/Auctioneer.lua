@@ -7,15 +7,17 @@ local GDKP = GL.GDKP;
 local AceGUI = GL.AceGUI;
 GL.ScrollingTable = GL.ScrollingTable or LibStub("ScrollingTable");
 
+GL.Interface.GDKP = GL.Interface.GDKP or {};
 ---@class GDKPAuctioneerInterface
-GL:tableSet(GL, "Interface.GDKP.Auctioneer", {
+GL.Interface.GDKP.Auctioneer = {
+    isVisible = false,
     itemBoxHoldsValidItem = false,
     PlayersTable = {},
     Defaults = {
         itemIcon = "Interface\\Icons\\INV_Misc_QuestionMark",
         itemBoxText = "",
     },
-});
+};
 
 ---@type GDKPAuctioneerInterface
 local Auctioneer = GL.Interface.GDKP.Auctioneer;
@@ -43,13 +45,14 @@ function Auctioneer:draw(itemLink)
         end
 
         -- If the frame is hidden we need to show it again
-        if (not Window:IsShown()) then
+        if (not self.isVisible) then
             self:show(Window);
         end
 
         return;
     end
 
+    self.isVisible = true;
     local Spacer, HelpIcon;
 
     -- Create a container/parent frame
@@ -181,8 +184,9 @@ function Auctioneer:draw(itemLink)
     AuctionTime:DisableButton(true);
     AuctionTime:SetHeight(20);
     AuctionTime:SetWidth(30);
-    AuctionTime:SetText(GL.Settings:get("GDKP.time", 30));
+    AuctionTime:SetText(GL.Settings:get("GDKP.time"));
     SecondRow:AddChild(AuctionTime);
+    GL.Interface:set(self, "Time", AuctionTime);
 
     local AntiSnipeLabel = AceGUI:Create("Label");
     AntiSnipeLabel:SetText(" Anti Snipe ");
@@ -194,9 +198,9 @@ function Auctioneer:draw(itemLink)
     AntiSnipe:DisableButton(true);
     AntiSnipe:SetHeight(20);
     AntiSnipe:SetWidth(30);
-    AntiSnipe:SetText(GL.Settings:get("GDKP.antiSnipe", 10));
+    AntiSnipe:SetText(GL.Settings:get("GDKP.antiSnipe"));
     SecondRow:AddChild(AntiSnipe);
-    GL.Interface:set(self, "MinimumIncrement", AntiSnipe);
+    GL.Interface:set(self, "AntiSnipe", AntiSnipe);
 
     HelpIcon = AceGUI:Create("Icon");
     HelpIcon:SetWidth(24);
@@ -266,7 +270,9 @@ function Auctioneer:draw(itemLink)
         if (GDKP:announceStart(
             GL.Interface:get(self, "EditBox.Item"):GetText(),
             GL.Interface:get(self, "EditBox.MinimumBid"):GetText(),
-            GL.Interface:get(self, "EditBox.MinimumIncrement"):GetText()
+            GL.Interface:get(self, "EditBox.MinimumIncrement"):GetText(),
+            GL.Interface:get(self, "EditBox.Time"):GetText(),
+            GL.Interface:get(self, "EditBox.AntiSnipe"):GetText()
         )) then
             GL.GDKP.inProgress = true;
 
@@ -348,7 +354,11 @@ function Auctioneer:draw(itemLink)
                     end
                 end
 
-                GDKP:createAuction(GL:getItemIDFromLink(GL.GDKP.CurrentAuction.itemLink), bid, winner);
+                if (not GDKP:storeCurrentAuction(winner, bid)) then
+                    return;
+                end
+                ---@todo: select top bid if none is selected
+                -- GDKP:createAuction(GL:getItemIDFromLink(GL.GDKP.CurrentAuction.itemLink), bid, winner);
 
                 self:reset(); -- Reset the UI
                 GDKP:resetAuction(); -- Reset the actual auction object
@@ -429,12 +439,13 @@ function Auctioneer:draw(itemLink)
     end
 end
 
+---@return boolean
 function Auctioneer:show(Window)
     GL:debug("Auctioneer:show");
 
     local ActiveSession = GDKP:getActiveSession();
-
     if (not ActiveSession) then
+        GL:error("No active GDKP session, you have to create one first in /gl gdkp");
         return false;
     end
 
@@ -444,12 +455,17 @@ function Auctioneer:show(Window)
         date('%Y-%m-%d', ActiveSession.createdAt)
     ));
 
+    self.isVisible = true;
     Window:Show();
+
+    return true;
 end
 
 ---@return void
 function Auctioneer:close()
     GL:debug("Auctioneer:close");
+
+    self.isVisible = false;
 
     -- When the master looter closes the master loot window with a master
     -- loot still in progress we show the reopen master looter button
