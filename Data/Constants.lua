@@ -71,8 +71,10 @@ GL.Data.Constants = {
     Vips = {
         Contributors = {
             "Arvada",
+            "Codzima",
             "Curnil",
             "Lantis",
+            "Lemmings19",
             "Schweex",
             "Tonio",
         },
@@ -357,6 +359,23 @@ GL.Data.Constants = {
         ["demon hunter"] = 11,
         evoker = 12,
         monk = 13,
+    },
+
+    Races = {
+        'human',
+        'dwarf',
+        'night elf',
+        'gnome',
+        'draenei',
+        'worgen',
+        'orc',
+        'undead',
+        'tauren',
+        'troll',
+        'blood elf',
+        'goblin',
+        'pandaren',
+        'dracthyr',
     },
 
     ClassHexColors = {
