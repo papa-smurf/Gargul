@@ -1,6 +1,16 @@
 ---@type GL
 local _, GL = ...;
 
+---@type DB
+local DB = GL.DB;
+
+---@type Data
+local Constants = GL.Data.Constants;
+local CommActions = Constants.Comm.Actions;
+
+---@type Events
+local Events = GL.Events;
+
 ---@class GDKP
 GL.GDKP = {
     _initialized = false,
@@ -10,13 +20,14 @@ GL.GDKP = {
     inProgress = false,
     timerId = 0, -- ID of the timer event
     CurrentAuction = {
-        initiatorID = nil, -- The player who started the auction
+        antiSnipe = nil, -- The anti snipe time
         duration = nil, -- The amount of time players get to bid
-        refreshDuration = nil, -- The amount of time the timer resets to after each bid
-        itemId = nil, -- The ID of the item we're bidding on
-        itemName = nil, -- The name of the item we're bidding on
-        itemLink = nil, -- The item link of the item we're bidding on
+        initiatorID = nil, -- The ID of the player who started the auction
+        initiatorName = nil, -- The name of the player who started the auction
         itemIcon = nil, -- The icon of the item we're bidding on
+        itemID = nil, -- The ID of the item we're bidding on
+        itemLink = nil, -- The item link of the item we're bidding on
+        itemName = nil, -- The name of the item we're bidding on
         minimumBid = nil, -- The minimum amount players need to bid
         minimumIncrement = nil, -- The minimum amount between two player bids
         Bids = {}, -- Player bids
@@ -27,18 +38,11 @@ GL.GDKP = {
     BidListenerCancelTimerId = nil,
 };
 
----@type DB
-local DB = GL.DB;
-
----@type Data
-local Constants = GL.Data.Constants;
-local CommActions = Constants.Comm.Actions;
-
 ---@type GDKP
 local GDKP = GL.GDKP;
 
----@type Events
-local Events = GL.Events;
+---@type table
+local SecondsAnnounced = {};
 
 --- @return boolean
 function GDKP:_init()
@@ -402,14 +406,13 @@ end
 ---@param sessionIdentifier string
 ---
 ---@return boolean
-function GDKP:createAuction(itemID, price, winner, sessionIdentifier)
+function GDKP:createAuction(itemID, price, winner, sessionIdentifier, Bids)
     GL:debug("GDKP:createAuction");
 
     if ((not sessionIdentifier
             or (sessionIdentifier and not self:sessionExists(sessionIdentifier))
         ) and not self:hasActiveSession()
-    )
-    then
+    ) then
         GL:warning("Unknown sessionIdentifier in GDKP:createAuction: " .. tostring(sessionIdentifier));
         return false;
     end
@@ -435,6 +438,7 @@ function GDKP:createAuction(itemID, price, winner, sessionIdentifier)
             realm = GL.User.realm,
             uuid = GL.User.id,
         },
+        Bids = Bids or {},
     };
 
     local Winner = GL.Player:fromName(winner) or {};
@@ -449,8 +453,14 @@ function GDKP:createAuction(itemID, price, winner, sessionIdentifier)
         uuid = Winner.id,
     };
 
-    local checksum = Auction.createdAt .. GL:stringHash(Auction);
+    local checksum = Auction.createdAt .. GL:stringHash({ Auction.itemID, Auction.createdAt, table.concat(Auction.CreatedBy, ".") });
     Auction.ID = checksum;
+
+    -- Something is wrong with the Auction. Tampering maybe? RETURN!
+    Auction = self:sanitizeAuction(Auction);
+    if (not Auction) then
+        return false;
+    end
 
     DB.GDKP.Ledger[sessionIdentifier].Auctions[checksum] = Auction;
 
@@ -711,34 +721,47 @@ function GDKP:userIsAllowedToBroadcast()
     return GL.User.isInGroup and (GL.User.isMasterLooter or GL.User.hasAssist);
 end
 
---- Anounce to everyone in the raid that a roll off is starting
+--- Anounce to everyone in the raid that an auction is starting
 ---
 ---@param itemLink string
----@param time number
----@param note string|nil
+---@param minimumBid number
+---@param minimumIncrement number
 ---@return void
-function GDKP:announceStart(itemLink, minimumBid, minimumIncrement)
+function GDKP:announceStart(itemLink, minimumBid, minimumIncrement, duration, antiSnipe)
     GL:debug("GDKP:announceStart");
 
-    local duration = GL.Settings:get("GDKP.auctionDuration", 20);
+    duration = tonumber(duration or 0) or 0 > 0;
+    antiSnipe = tonumber(antiSnipe or 0) or 0 > 0
 
     if (type(itemLink) ~= "string"
         or GL:empty(itemLink)
         or not GL:higherThanZero(duration)
+        or antiSnipe < 0
     ) then
         GL:warning("Invalid data provided for GDKP auction start!");
         return false;
     end
 
+    local itemID = GL:getItemIDFromLink(itemLink);
+    if (not tonumber(itemID or 0) or 0 > 0
+        or not GetItemInfoInstant(itemID)
+    ) then
+        GL:warning("Invalid item provided for GDKP auction start!");
+        return false;
+    end
+
     self:listenForBids();
+
+    minimumBid = math.max(minimumBid, GL:tableGet(self.CurrentAuction, "TopBid.bid", 0));
 
     GL.CommMessage.new(
         CommActions.startGDKPAuction,
         {
             item = itemLink,
-            duration = duration,
             minimumBid = minimumBid,
             minimumIncrement = minimumIncrement,
+            duration = tonumber(duration),
+            antiSnipe = tonumber(antiSnipe),
         },
         "GROUP"
     ):send();
@@ -773,6 +796,63 @@ function GDKP:announceStop()
         nil,
         "GROUP"
     ):send();
+end
+
+--- Anounce to everyone in the raid that were extending the current auction
+---
+---@param time number
+---@return void
+function GDKP:announceExtension(time)
+    GL:debug("GDKP:announceExtension");
+
+    if (not tonumber(time or 0) or 0 > 0) then
+        GL:warning("Invalid data provided for GDKP extension!");
+        return false;
+    end
+
+    GL.CommMessage.new(
+        CommActions.extendGDKPAuction,
+        time,
+        "GROUP"
+    ):send();
+
+    return true;
+end
+
+function GDKP:extend(CommMessage)
+    GL:debug("GDKP:extend");
+
+    if (not self.CurrentAuction.initiatorID
+        or CommMessage.Sender.id ~= self.CurrentAuction.initiatorID
+    ) then
+        GL:debug("GDKP:extend received by non-initiator");
+        return;
+    end
+
+    local time = CommMessage.content;
+
+    if (not tonumber(time or 0) or 0 > 0) then
+        return GL:error("Invalid time provided in GDKP:extend");
+    end
+
+    -- There appears to be no active auction
+    if (not self.timerId) then
+        return;
+    end
+
+    local secondsLeft = math.ceil(GL.Ace:TimeLeft(self.timerId) + tonumber(time));
+
+    -- Make sure the extended time doesn't exceed the original duration
+    secondsLeft = math.min(secondsLeft, self.CurrentAuction.duration),
+    GL.Ace:CancelTimer(self.timerId);
+
+    self.timerId = GL.Ace:ScheduleTimer(function ()
+        self:stop();
+    end, secondsLeft);
+
+    GL.Interface.GDKP.Bidder:changeDuration(secondsLeft);
+
+    SecondsAnnounced = {};
 end
 
 --- Start an auction
@@ -820,6 +900,7 @@ function GDKP:start(CommMessage)
         end
 
         local duration = math.floor(tonumber(content.duration));
+        local antiSnipe = math.floor(tonumber(content.antiSnipe));
         local SupportedBids = content.SupportedBids or {};
         local minimumBid = content.minimumBid or 0;
         local minimumIncrement = content.minimumIncrement or 1;
@@ -831,15 +912,17 @@ function GDKP:start(CommMessage)
             -- This is a new item so make sure to
             -- override all previously set properties
             self.CurrentAuction = {
+                antiSnipe = antiSnipe,
+                duration = duration,
                 initiatorID = CommMessage.Sender.id,
                 initiatorName = CommMessage.Sender.name,
-                duration = duration,
-                itemId = Entry.id,
-                itemName = Entry.name,
-                itemLink = Entry.link,
                 itemIcon = Entry.icon,
+                itemID = Entry.id,
+                itemLink = Entry.link,
+                itemName = Entry.name,
                 minimumBid = minimumBid,
                 minimumIncrement = minimumIncrement,
+
                 Bids = {},
                 TopBid = {},
             };
@@ -874,18 +957,17 @@ function GDKP:start(CommMessage)
             and duration > numberOfSecondsToCountdown -- No point in counting down if there's hardly enough time anyways
             and GL.Settings:get("MasterLooting.doCountdown", false)
         ) then
-            local SecondsAnnounced = {};
             self.countDownTimer = GL.Ace:ScheduleRepeatingTimer(function ()
                 local secondsLeft = math.ceil(GL.Ace:TimeLeft(self.timerId));
                 if (secondsLeft <= numberOfSecondsToCountdown
-                        and secondsLeft > 0
-                        and not SecondsAnnounced[secondsLeft]
+                    and secondsLeft > 0
+                    and not SecondsAnnounced[secondsLeft]
                 ) then
                     SecondsAnnounced[secondsLeft] = true;
 
                     GL:sendChatMessage(
-                            string.format("%s seconds to roll", secondsLeft),
-                            "GROUP"
+                        string.format("%s seconds to roll", secondsLeft),
+                        "GROUP"
                     );
                 end
             end, 1);
@@ -893,6 +975,9 @@ function GDKP:start(CommMessage)
 
         -- Play raid warning sound
         GL:playSound(SOUNDKIT.RAID_WARNING, "SFX");
+
+        -- Flash the game icon in case the player alt-tabbed
+        FlashClientIcon();
 
         -- Items should only contain 1 item but lets add a return just in case
         return;
@@ -1080,6 +1165,10 @@ end
 function GDKP:getSessionByID(ID)
     GL:debug("GDKP:sessionByID");
 
+    if (not ID) then
+        return;
+    end
+
     return DB:get("GDKP.Ledger." .. ID);
 end
 
@@ -1150,7 +1239,7 @@ function GDKP:processBid(event, message, bidder)
             response = "I'm not accepting closed bids, use the /gr channel instead!";
         end
 
-        GL:sendChatMessage(response, "WHISPER", nil, sender);
+        GL:sendChatMessage(response, "WHISPER", nil, bidder);
 
         return;
     end
@@ -1187,6 +1276,16 @@ function GDKP:processBid(event, message, bidder)
 
     if (not BidEntry) then
         return;
+    end
+
+    if (self.CurrentAuction
+        and self.CurrentAuction.antiSnipe
+    ) then
+        local secondsLeft = math.floor(GL.Ace:TimeLeft(self.timerId));
+
+        if (secondsLeft <= self.CurrentAuction.antiSnipe) then
+            self:announceExtension(self.CurrentAuction.antiSnipe);
+        end
     end
 
     -- Determine the minimum bid
