@@ -90,6 +90,12 @@ function Settings:enforceTemporarySettings()
         return;
     end
 
+    --- In the GDKP module we added extra shortcut keys forcing us to remap old ones
+    if (not GL.DB.Settings.ShortcutKeys.rollOffOrAuction) then
+        GL.DB.Settings.ShortcutKeys.rollOffOrAuction = GL.DB.Settings.ShortcutKeys.rollOff or "ALT_CLICK";
+        GL.DB.Settings.ShortcutKeys.rollOff = "DISABLED";
+    end
+
     --- In 4.12.1 we added a concernsOS and givesPlusOne checkbox field to the roll tracking settings
     for key, RollType in pairs(GL.Settings:get("RollTracking.Brackets", {})) do
         if (RollType[5] == nil) then

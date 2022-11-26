@@ -4,11 +4,38 @@ local _, GL = ...;
 ---@class GDKPBidderInterface
 GL:tableSet(GL, "Interface.GDKP.Bidder", {
     Window = nil,
+    TimerBar = nil,
 });
 local Bidder = GL.Interface.GDKP.Bidder; ---@type GDKPBidderInterface
 
 ---@type GDKP
 local GDKP = GL.GDKP;
+
+--- Adjust the duration shown on the timer bar
+---@param time number
+---@return boolean
+function Bidder:changeDuration(time)
+    GL:debug("Bidder:show");
+
+    if (not self.Window
+        or not self.Window:IsShown()
+        or not self.TimerBar
+        or not self.TimerBar.SetDuration
+    ) then
+        return false;
+    end
+
+    self.TimerBar.exp = self.TimerBar.exp + time;
+    if (true) then return true; end
+
+    --self.TimerBar:SetDuration(time);
+    self.TimerBar:Stop();
+    self.TimerBar:Hide();
+
+    self:drawCountdownBar(time, GDKP.CurrentAuction.itemLink, GDKP.CurrentAuction.itemIcon, GDKP.CurrentAuction.duration);
+
+    return true;
+end
 
 ---@return boolean
 function Bidder:show(...)
@@ -171,12 +198,9 @@ function Bidder:refresh()
 
     -- We're the highest bidder, NICE!
     if (string.lower(TopBid.Bidder.name) == string.lower(GL.User.name)) then
-        TopBidderLabel:SetText(string.format("Top bidder: |c001Eff00%s|r with %s|c00FFF569g|r",
-            "You",
-            TopBid.bid
-        ));
+        TopBidderLabel:SetText(string.format("|c001Eff00Top bidder: you with %sg|r", TopBid.bid));
     else
-        TopBidderLabel:SetText(string.format("Top bidder: |c00%s%s|r with %s|c00BE3333g|r",
+        TopBidderLabel:SetText(string.format("|c00BE3333Top bidder: |c00%s%s|r with %sg|r",
             GL:classHexColor(TopBid.Bidder.class),
             TopBid.Bidder.name,
             TopBid.bid
@@ -190,7 +214,7 @@ end
 ---@param itemLink string
 ---@param itemIcon string
 ---@return void
-function Bidder:drawCountdownBar(time, itemLink, itemIcon)
+function Bidder:drawCountdownBar(time, itemLink, itemIcon, maxValue)
     GL:debug("Bidder:drawCountdownBar");
 
     -- This shouldn't be possible but you never know!
@@ -203,7 +227,6 @@ function Bidder:drawCountdownBar(time, itemLink, itemIcon)
         300,
         24
     );
-
     TimerBar:SetParent(self.Window);
     TimerBar:SetPoint("TOP", self.Window, "TOP");
     TimerBar.candyBarLabel:SetFont("Fonts\\ARIALN.ttf", 13, "OUTLINE");
@@ -238,7 +261,7 @@ function Bidder:drawCountdownBar(time, itemLink, itemIcon)
 
     TimerBar:SetIcon(itemIcon);
     TimerBar:Set("type", "ROLLER_UI_COUNTDOWN");
-    TimerBar:Start();
+    TimerBar:Start(maxValue);
 
     -- Show a gametooltip for the item up for roll
     -- when hovering over the progress bar
@@ -247,6 +270,9 @@ function Bidder:drawCountdownBar(time, itemLink, itemIcon)
         GameTooltip:SetHyperlink(itemLink);
         GameTooltip:Show();
     end);
+
+    TimerBar:SetDuration(5);
+    self.TimerBar = TimerBar;
 end
 
 ---@return void

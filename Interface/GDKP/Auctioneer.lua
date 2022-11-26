@@ -1,8 +1,17 @@
 ---@type GL
 local _, GL = ...;
 
+---@type DB
+local DB = GL.DB;
+
 ---@type GDKP
 local GDKP = GL.GDKP;
+
+---@type Settings
+local Settings = GL.Settings;
+
+---@type Interface
+local Interface = GL.Interface;
 
 local AceGUI = GL.AceGUI;
 GL.ScrollingTable = GL.ScrollingTable or LibStub("ScrollingTable");
@@ -32,13 +41,13 @@ function Auctioneer:draw(itemLink)
         return GL:warning("You need to be the master looter or have an assist / lead role!");
     end
 
-    -- Close the reopen masterlooter button if it exists
+    -- Close the reopen auctioneer button if it exists
     self:closeReopenAuctioneerButton();
 
     -- First we need to check if the frame hasn't been
     -- rendered already. If so then show it (if it's hidden)
     -- and pass the itemLink along in case one was provided
-    local Window = GL.Interface:get(self, "Window");
+    local Window = Interface:get(self, "Window");
     if (Window) then
         if (itemLink) then
             Auctioneer:passItemLink(itemLink);
@@ -67,8 +76,8 @@ function Auctioneer:draw(itemLink)
         self:close();
     end);
     self:show(Window);
-    GL.Interface:set(self, "Window", Window);
-    GL.Interface:restorePosition(Window, "Auctioneer");
+    Interface:set(self, "Window", Window);
+    Interface:restorePosition(Window, "Auctioneer");
 
     --[[
         SETTINGS BUTTON
@@ -117,9 +126,8 @@ function Auctioneer:draw(itemLink)
     MinimumBid:DisableButton(true);
     MinimumBid:SetHeight(20);
     MinimumBid:SetWidth(60);
-    MinimumBid:SetText(GL.Settings:get("GDKP.minimumBid", 100));
     FirstRow:AddChild(MinimumBid);
-    GL.Interface:set(self, "MinimumBid", MinimumBid);
+    Interface:set(self, "MinimumBid", MinimumBid);
 
     local MinimumIncrementLabel = AceGUI:Create("Label");
     MinimumIncrementLabel:SetText(" Bid increment ");
@@ -133,7 +141,7 @@ function Auctioneer:draw(itemLink)
     MinimumIncrement:SetWidth(40);
     MinimumIncrement:SetText(false or 50);
     FirstRow:AddChild(MinimumIncrement);
-    GL.Interface:set(self, "MinimumIncrement", MinimumIncrement);
+    Interface:set(self, "MinimumIncrement", MinimumIncrement);
 
     HelpIcon = AceGUI:Create("Icon");
     HelpIcon:SetWidth(24);
@@ -155,25 +163,6 @@ function Auctioneer:draw(itemLink)
         GameTooltip:Hide();
     end);
 
-    local StartButton = AceGUI:Create("Button");
-    StartButton:SetText("?");
-    StartButton:SetWidth(10);
-    StartButton:SetHeight(20);
-    StartButton:SetDisabled(true);
-
-    StartButton:SetCallback("OnEnter", function()
-        GameTooltip:SetOwner(StartButton.frame, "ANCHOR_RIGHT");
-        GameTooltip:AddLine(" ");
-        GameTooltip:AddLine("The minimum bid and bid increment values are remembered for");
-        GameTooltip:AddLine(" each item. That means that you only need to set them once per item!");
-        GameTooltip:AddLine(" ");
-        GameTooltip:Show();
-    end);
-
-    StartButton:SetCallback("OnLeave", function()
-        GameTooltip:Hide();
-    end);
-
     local AuctionTimeLabel = AceGUI:Create("Label");
     AuctionTimeLabel:SetText("Auction length in seconds");
     AuctionTimeLabel:SetHeight(20);
@@ -184,9 +173,9 @@ function Auctioneer:draw(itemLink)
     AuctionTime:DisableButton(true);
     AuctionTime:SetHeight(20);
     AuctionTime:SetWidth(30);
-    AuctionTime:SetText(GL.Settings:get("GDKP.time"));
+    AuctionTime:SetText(Settings:get("GDKP.time"));
     SecondRow:AddChild(AuctionTime);
-    GL.Interface:set(self, "Time", AuctionTime);
+    Interface:set(self, "Time", AuctionTime);
 
     local AntiSnipeLabel = AceGUI:Create("Label");
     AntiSnipeLabel:SetText(" Anti Snipe ");
@@ -198,9 +187,9 @@ function Auctioneer:draw(itemLink)
     AntiSnipe:DisableButton(true);
     AntiSnipe:SetHeight(20);
     AntiSnipe:SetWidth(30);
-    AntiSnipe:SetText(GL.Settings:get("GDKP.antiSnipe"));
+    AntiSnipe:SetText(Settings:get("GDKP.antiSnipe"));
     SecondRow:AddChild(AntiSnipe);
-    GL.Interface:set(self, "AntiSnipe", AntiSnipe);
+    Interface:set(self, "AntiSnipe", AntiSnipe);
 
     HelpIcon = AceGUI:Create("Icon");
     HelpIcon:SetWidth(24);
@@ -216,6 +205,7 @@ function Auctioneer:draw(itemLink)
         GameTooltip:AddLine("to the auction if someone bids within the last 10 seconds");
         GameTooltip:AddLine(" ");
         GameTooltip:AddLine("You can leave this empty or set to 0 to disable Anti Snipe completely");
+        GameTooltip:AddLine("The Anti Snipe can be no more than half of the auction length!");
         GameTooltip:AddLine(" ");
         GameTooltip:Show();
     end)
@@ -231,7 +221,7 @@ function Auctioneer:draw(itemLink)
     ItemIcon:SetImageSize(30, 30);
     ItemIcon:SetWidth(40);
     ThirdRow:AddChild(ItemIcon);
-    GL.Interface:set(self, "Item", ItemIcon);
+    Interface:set(self, "Item", ItemIcon);
 
     --[[ ITEM TEXTBOX ]]
     local ItemBox = AceGUI:Create("EditBox");
@@ -240,7 +230,7 @@ function Auctioneer:draw(itemLink)
     ItemBox:SetWidth(170);
     ItemBox:SetCallback("OnTextChanged", function () Auctioneer:ItemBoxChanged() end); -- Update item info when input value changes
     ItemBox:SetCallback("OnEnterPressed", function () Auctioneer:ItemBoxChanged() end); -- Update item info when item is dragged on top (makes no sense to use OnEnterPressed I know)
-    GL.Interface:set(self, "Item", ItemBox);
+    Interface:set(self, "Item", ItemBox);
     ThirdRow:AddChild(ItemBox);
 
     -- Show a gametooltip if the icon shown belongs to an item
@@ -268,15 +258,24 @@ function Auctioneer:draw(itemLink)
     StartButton:SetDisabled(true);
     StartButton:SetCallback("OnClick", function()
         if (GDKP:announceStart(
-            GL.Interface:get(self, "EditBox.Item"):GetText(),
-            GL.Interface:get(self, "EditBox.MinimumBid"):GetText(),
-            GL.Interface:get(self, "EditBox.MinimumIncrement"):GetText(),
-            GL.Interface:get(self, "EditBox.Time"):GetText(),
-            GL.Interface:get(self, "EditBox.AntiSnipe"):GetText()
+            Interface:get(self, "EditBox.Item"):GetText(),
+            Interface:get(self, "EditBox.MinimumBid"):GetText(),
+            Interface:get(self, "EditBox.MinimumIncrement"):GetText(),
+            Interface:get(self, "EditBox.Time"):GetText(),
+            Interface:get(self, "EditBox.AntiSnipe"):GetText()
         )) then
             GL.GDKP.inProgress = true;
 
-            if (GL.Settings:get("GDKP.closeAuctioneerOnStart", true)) then
+            -- Store the bid values for this item
+            local itemID = GL:getItemIDFromLink(Interface:get(self, "EditBox.Item"):GetText());
+            if (itemID) then
+                GL.DB.Settings.GDKP.SettingsPerItem[itemID] = {
+                    minimumBid = tonumber(Interface:get(self, "EditBox.MinimumBid"):GetText()),
+                    minimumIncrement = tonumber(Interface:get(self, "EditBox.MinimumIncrement"):GetText()),
+                };
+            end
+
+            if (Settings:get("GDKP.closeAuctioneerOnStart", true)) then
                 self:close();
             end
         end;
@@ -284,7 +283,7 @@ function Auctioneer:draw(itemLink)
         Auctioneer:updateWidgets();
     end);
     ThirdRow:AddChild(StartButton);
-    GL.Interface:set(self, "Start", StartButton);
+    Interface:set(self, "Start", StartButton);
 
     --[[ STOP BUTTON ]]
 
@@ -297,7 +296,7 @@ function Auctioneer:draw(itemLink)
         GDKP:announceStop();
     end);
     ThirdRow:AddChild(StopButton);
-    GL.Interface:set(self, "Stop", StopButton);
+    Interface:set(self, "Stop", StopButton);
 
     --[[ CLEAR BUTTON ]]
     local ClearButton = AceGUI:Create("Button");
@@ -310,7 +309,7 @@ function Auctioneer:draw(itemLink)
         GDKP:resetAuction();
     end);
     FourthRow:AddChild(ClearButton);
-    GL.Interface:set(self, "Clear", ClearButton);
+    Interface:set(self, "Clear", ClearButton);
 
     --[[ AWARD BUTTON ]]
     local AwardButton = AceGUI:Create("Button");
@@ -319,7 +318,7 @@ function Auctioneer:draw(itemLink)
     AwardButton:SetHeight(20);
     AwardButton:SetDisabled(true);
     AwardButton:SetCallback("OnClick", function()
-        local PlayersTable = GL.Interface:get(self, "Table.Players");
+        local PlayersTable = Interface:get(self, "Table.Players");
         local selected = PlayersTable:GetRow(PlayersTable:GetSelection());
 
         if (not selected
@@ -340,12 +339,12 @@ function Auctioneer:draw(itemLink)
             ),
             OnYes = function ()
                 local isOS, addPlusOne;
-                local OSCheckBox = GL.Interface:get(GL.Interface.Dialogs.AwardDialog, "CheckBox.OffSpec");
+                local OSCheckBox = Interface:get(GL.Interface.Dialogs.AwardDialog, "CheckBox.OffSpec");
                 if (OSCheckBox) then
                     isOS = GL:toboolean(OSCheckBox:GetValue());
                 end
 
-                local addPlusOneCheckBox = GL.Interface:get(GL.Interface.Dialogs.AwardDialog, "CheckBox.PlusOne");
+                local addPlusOneCheckBox = Interface:get(GL.Interface.Dialogs.AwardDialog, "CheckBox.PlusOne");
                 if (addPlusOneCheckBox) then
                     addPlusOne = GL:toboolean(addPlusOneCheckBox:GetValue());
 
@@ -364,7 +363,7 @@ function Auctioneer:draw(itemLink)
                 GDKP:resetAuction(); -- Reset the actual auction object
                 self:closeReopenAuctioneerButton();
 
-                if (GL.Settings:get("GDKP.closeAuctioneerOnAward")) then
+                if (Settings:get("GDKP.closeAuctioneerOnAward")) then
                     self:close();
                 end
 
@@ -376,7 +375,7 @@ function Auctioneer:draw(itemLink)
         });
     end);
     FourthRow:AddChild(AwardButton);
-    GL.Interface:set(self, "Award", AwardButton);
+    Interface:set(self, "Award", AwardButton);
 
     --[[ DISENCHANT BUTTON ]]
     local DisenchantButton = AceGUI:Create("Button");
@@ -385,13 +384,13 @@ function Auctioneer:draw(itemLink)
     DisenchantButton:SetHeight(20);
     DisenchantButton:SetDisabled(true);
     DisenchantButton:SetCallback("OnClick", function()
-        itemLink = GL.Interface:get(self, "EditBox.Item"):GetText();
+        itemLink = Interface:get(self, "EditBox.Item"):GetText();
 
         GL.PackMule:disenchant(itemLink, true);
         self:close();
     end);
     FourthRow:AddChild(DisenchantButton);
-    GL.Interface:set(self, "Disenchant", DisenchantButton);
+    Interface:set(self, "Disenchant", DisenchantButton);
 
     --[[ FOURTH ROW ]]
 
@@ -416,18 +415,18 @@ function Auctioneer:draw(itemLink)
 
     local CloseOnStart = AceGUI:Create("CheckBox");
     CloseOnStart:SetLabel("Close on start");
-    CloseOnStart:SetValue(GL.Settings:get("GDKP.closeAuctioneerOnStart"));
+    CloseOnStart:SetValue(Settings:get("GDKP.closeAuctioneerOnStart"));
     CloseOnStart:SetCallback("OnValueChanged", function (widget)
-        GL.Settings:set("GDKP.closeAuctioneerOnStart", GL:toboolean(widget:GetValue()));
+        Settings:set("GDKP.closeAuctioneerOnStart", GL:toboolean(widget:GetValue()));
     end);
     CloseOnStart:SetWidth(110);
     FifthRow:AddChild(CloseOnStart);
 
     local CloseOnAward = AceGUI:Create("CheckBox");
     CloseOnAward:SetLabel("Close on award");
-    CloseOnAward:SetValue(GL.Settings:get("GDKP.closeAuctioneerOnAward"));
+    CloseOnAward:SetValue(Settings:get("GDKP.closeAuctioneerOnAward"));
     CloseOnAward:SetCallback("OnValueChanged", function (widget)
-        GL.Settings:set("GDKP.closeAuctioneerOnAward", GL:toboolean(widget:GetValue()));
+        Settings:set("GDKP.closeAuctioneerOnAward", GL:toboolean(widget:GetValue()));
     end);
     CloseOnAward:SetWidth(116);
     FifthRow:AddChild(CloseOnAward);
@@ -467,43 +466,43 @@ function Auctioneer:close()
 
     self.isVisible = false;
 
-    -- When the master looter closes the master loot window with a master
-    -- loot still in progress we show the reopen master looter button
+    -- When the master looter closes the auctioneer window with an auction
+    -- still in progress we show the reopen auctioneer button
     if (GL.GDKP.inProgress) then
         self:drawReopenAuctioneerButton();
     end
 
-    local Window = GL.Interface:get(self, "Window");
+    local Window = Interface:get(self, "Window");
     if (Window) then
         -- Store the frame's last position for future play sessions
-        GL.Interface:storePosition(Window, "Auctioneer");
+        Interface:storePosition(Window, "Auctioneer");
         Window:Hide();
     end
 end
 
--- Close the reopen masterlooter button
+--- Close the reopen auctioneer button
 function Auctioneer:closeReopenAuctioneerButton()
-    -- Close the reopen masterlooter button if it exists
-    local OpenMasterLooterButton = GL.Interface:get(self, "Frame.OpenMasterLooterButton");
+    -- Close the reopen auctioneer button if it exists
+    local OpenAuctioneerButton = Interface:get(self, "Frame.OpenAuctioneerButton");
 
-    if (OpenMasterLooterButton) then
-        OpenMasterLooterButton:Hide();
+    if (OpenAuctioneerButton) then
+        OpenAuctioneerButton:Hide();
     end
 end
 
 -- This button allows the master looter to easily reopen the
--- master looter window when it's closed with a roll in progress
+-- auctioneer window when it's closed with a roll in progress
 -- This is very common in hectic situations where the master looter has to participate in combat f.e.
 function Auctioneer:drawReopenAuctioneerButton()
     GL:debug("Auctioneer:drawReopenAuctioneerButton");
 
     -- Only draw the button if the master looter window is closed
-    local Window = GL.Interface:get(self, "Window");
+    local Window = Interface:get(self, "Window");
     if (Window and Window:IsShown()) then
         return;
     end
 
-    local Button = GL.Interface:get(self, "Frame.OpenMasterLooterButton");
+    local Button = Interface:get(self, "Frame.OpenAuctioneerButton");
 
     if (Button) then
         Button:SetNormalTexture(GL.GDKP.CurrentAuction.itemIcon or "Interface\\Icons\\INV_Misc_QuestionMark");
@@ -512,11 +511,11 @@ function Auctioneer:drawReopenAuctioneerButton()
     end
 
     local texture = GL.GDKP.CurrentAuction.itemIcon or "Interface\\Icons\\INV_Misc_QuestionMark";
-    Button = CreateFrame("Button", "ReopenMasterLooterButton", UIParent, Frame);
-    Button:SetSize(44, 44);
+    Button = CreateFrame("Button", "GargulReopenAuctioneerButton", UIParent, Frame);
+    Button:SetSize(42, 42);
     Button:SetNormalTexture(texture);
     Button:SetText("text");
-    Button:SetPoint(GL.Interface:getPosition("ReopenAuctioneerButton"));
+    Button:SetPoint(Interface:getPosition("ReopenAuctioneerButton"));
 
     Button:SetMovable(true);
     Button:EnableMouse(true);
@@ -528,7 +527,7 @@ function Auctioneer:drawReopenAuctioneerButton()
         Button:StopMovingOrSizing();
 
         -- Store the frame's last position for future play sessions
-        GL.Interface:storePosition(Button, "ReopenAuctioneerButton");
+        Interface:storePosition(Button, "ReopenAuctioneerButton");
     end);
 
     local ButtonBackground = Button:CreateTexture(nil, "BACKGROUND");
@@ -561,7 +560,7 @@ function Auctioneer:drawReopenAuctioneerButton()
         GameTooltip:Hide();
     end);
 
-    GL.Interface:set(self, "OpenMasterLooterButton", Button);
+    Interface:set(self, "OpenAuctioneerButton", Button);
 end
 
 function Auctioneer:drawPlayersTable(parent)
@@ -662,7 +661,7 @@ function Auctioneer:drawPlayersTable(parent)
     });
 
     Table.frame:SetPoint("BOTTOM", parent, "BOTTOM", 0, 76);
-    GL.Interface:set(self, "Players", Table);
+    Interface:set(self, "Players", Table);
 end
 
 function Auctioneer:refreshRollsTable()
@@ -670,7 +669,7 @@ function Auctioneer:refreshRollsTable()
 
     local BidTableData = {};
     local Bids = GL.GDKP.CurrentAuction.Bids;
-    local BidsTable = GL.Interface:get(self, "Table.Players");
+    local BidsTable = Interface:get(self, "Table.Players");
 
     if (not BidsTable) then
         return;
@@ -707,35 +706,47 @@ end
 function Auctioneer:ItemBoxChanged()
     GL:debug("Auctioneer:ItemBoxChanged");
 
-    local itemLink = GL.Interface:get(self, "EditBox.Item"):GetText();
+    local itemLink = Interface:get(self, "EditBox.Item"):GetText();
 
     Auctioneer:passItemLink(itemLink);
 end
 
--- Pass an item link to the master looter UI
+-- Pass an item link to the Auctioneer UI
 -- This method is used when alt clicking an item
 -- in a loot window or when executing /gl roll [itemlink]
 function Auctioneer:passItemLink(itemLink)
     GL:debug("Auctioneer:passItemLink");
 
-    if (not GL.Interface:get(self, "Window")) then
+    if (not Interface:get(self, "Window")) then
         return;
     end
 
     if (GL.GDKP.inProgress) then
-        return GL:warning("A roll is currently in progress");
+        return GL:warning("An auction is currently in progress");
     end
 
-    GL.Interface:get(self, "EditBox.Item"):SetText(itemLink);
+    local itemID = tonumber(GL:getItemIDFromLink(itemLink) or 0) or 0;
+
+    if (itemID <= 0) then
+        return GL:warning("Invalid itme provided");
+    end
+    local PerItemSettings = Settings:get("GDKP.SettingsPerItem", {})[itemID] or {};
+    PerItemSettings.minimumBid = PerItemSettings.minimumBid or Settings:get("GDKP.minimumBid");
+    PerItemSettings.minimumIncrement = PerItemSettings.minimumIncrement or Settings:get("GDKP.minimumIncrement");
+
+    Interface:get(self, "EditBox.Item"):SetText(itemLink);
+    Interface:get(self, "EditBox.MinimumBid"):SetText(PerItemSettings.minimumBid);
+    Interface:get(self, "EditBox.MinimumIncrement"):SetText(PerItemSettings.minimumIncrement);
+
     return Auctioneer:update();
 end
 
--- Update the master looter UI based on the value of the ItemBox input
+--- Update the auctioneer based on the value of the ItemBox input
 function Auctioneer:update()
     GL:debug("Auctioneer:update");
 
-    local IconWidget = GL.Interface:get(self, "Icon.Item");
-    local itemLink = GL.Interface:get(self, "EditBox.Item"):GetText();
+    local IconWidget = Interface:get(self, "Icon.Item");
+    local itemLink = Interface:get(self, "EditBox.Item"):GetText();
 
     -- If the item link is not valid then
     --   Show the default question mark icon
@@ -754,7 +765,7 @@ function Auctioneer:update()
     local icon = select(10, GetItemInfo(itemLink));
 
     if (icon) then
-        GL.Interface:get(self, "Table.Players"):ClearSelection();
+        Interface:get(self, "Table.Players"):ClearSelection();
 
         IconWidget:SetImage(icon);
         Auctioneer.itemBoxHoldsValidItem = true;
@@ -770,12 +781,12 @@ end
 function Auctioneer:reset()
     GL:debug("Auctioneer:reset");
 
-    GL.Interface:get(self, "Icon.Item"):SetImage(Auctioneer.Defaults.itemIcon);
-    GL.Interface:get(self, "EditBox.Item"):SetText(Auctioneer.Defaults.itemText);
+    Interface:get(self, "Icon.Item"):SetImage(Auctioneer.Defaults.itemIcon);
+    Interface:get(self, "EditBox.Item"):SetText(Auctioneer.Defaults.itemText);
     Auctioneer.itemBoxHoldsValidItem = false;
 
-    GL.Interface:get(self, "Table.Players"):ClearSelection();
-    GL.Interface:get(self, "Table.Players"):SetData({}, true);
+    Interface:get(self, "Table.Players"):ClearSelection();
+    Interface:get(self, "Table.Players"):SetData({}, true);
 
     Auctioneer:updateWidgets();
 end
@@ -789,11 +800,11 @@ function Auctioneer:updateWidgets()
     --   The stop button should be available
     --   The item box should be available
     if (not Auctioneer.itemBoxHoldsValidItem) then
-        GL.Interface:get(self, "Button.Start"):SetDisabled(true);
-        GL.Interface:get(self, "Button.Stop"):SetDisabled(true);
-        GL.Interface:get(self, "EditBox.Item"):SetDisabled(false);
-        GL.Interface:get(self, "Button.Award"):SetDisabled(true);
-        GL.Interface:get(self, "Button.Disenchant"):SetDisabled(true);
+        Interface:get(self, "Button.Start"):SetDisabled(true);
+        Interface:get(self, "Button.Stop"):SetDisabled(true);
+        Interface:get(self, "EditBox.Item"):SetDisabled(false);
+        Interface:get(self, "Button.Award"):SetDisabled(true);
+        Interface:get(self, "Button.Disenchant"):SetDisabled(true);
 
         return;
     end
@@ -807,12 +818,12 @@ function Auctioneer:updateWidgets()
     --   The clear button should not be available
     --   The item box should be available so we can enter an item link
     if (not GL.GDKP.inProgress) then
-        GL.Interface:get(self, "Button.Start"):SetDisabled(false);
-        GL.Interface:get(self, "Button.Stop"):SetDisabled(true);
-        GL.Interface:get(self, "Button.Award"):SetDisabled(false);
-        GL.Interface:get(self, "Button.Disenchant"):SetDisabled(false);
-        GL.Interface:get(self, "Button.Clear"):SetDisabled(false);
-        GL.Interface:get(self, "EditBox.Item"):SetDisabled(false);
+        Interface:get(self, "Button.Start"):SetDisabled(false);
+        Interface:get(self, "Button.Stop"):SetDisabled(true);
+        Interface:get(self, "Button.Award"):SetDisabled(false);
+        Interface:get(self, "Button.Disenchant"):SetDisabled(false);
+        Interface:get(self, "Button.Clear"):SetDisabled(false);
+        Interface:get(self, "EditBox.Item"):SetDisabled(false);
 
         -- If a roll off is currently in progress then:
         --   The start button should not be available
@@ -821,12 +832,12 @@ function Auctioneer:updateWidgets()
         --   The clear button should not be available
         --   The item box should not be available
     else
-        GL.Interface:get(self, "Button.Start"):SetDisabled(true);
-        GL.Interface:get(self, "Button.Stop"):SetDisabled(false);
-        GL.Interface:get(self, "Button.Award"):SetDisabled(true);
-        GL.Interface:get(self, "Button.Disenchant"):SetDisabled(true);
-        GL.Interface:get(self, "Button.Clear"):SetDisabled(true);
-        GL.Interface:get(self, "EditBox.Item"):SetDisabled(true);
+        Interface:get(self, "Button.Start"):SetDisabled(true);
+        Interface:get(self, "Button.Stop"):SetDisabled(false);
+        Interface:get(self, "Button.Award"):SetDisabled(true);
+        Interface:get(self, "Button.Disenchant"):SetDisabled(true);
+        Interface:get(self, "Button.Clear"):SetDisabled(true);
+        Interface:get(self, "EditBox.Item"):SetDisabled(true);
     end
 end
 

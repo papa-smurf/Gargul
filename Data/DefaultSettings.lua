@@ -26,10 +26,12 @@ GL.Data.DefaultSettings = {
         minimumQualityOfAnnouncedLoot = 4,
     },
     ShortcutKeys = {
-        onlyInGroup = false,
-        showLegend = true,
-        rollOff = "ALT_CLICK",
+        auction = "DISABLED",
         award = "ALT_SHIFT_CLICK",
+        onlyInGroup = false,
+        rollOffOrAuction = "ALT_CLICK",
+        rollOff = "DISABLED",
+        showLegend = true,
         disenchant = "CTRL_SHIFT_CLICK",
     },
     MasterLooting = {
@@ -110,11 +112,19 @@ GL.Data.DefaultSettings = {
     GDKP = {
         announceAuctionStart = true,
         announceBidsClosed = true,
+        antiSnipe = 10,
         closeAuctioneerOnAward = true,
         closeAuctioneerOnStart = true,
+        exportFormat = 1,
+        customExportHeader = "",
+        customExportFormat = "",
         minimumBid = 100,
         minimumIncrement = 50,
         showBidWindow = true,
+        time = 30,
+
+        -- This holds minimum bid and increment settings per item
+        SettingsPerItem = {},
     },
     TMB = {
         announceInfoWhenRolling = true,
