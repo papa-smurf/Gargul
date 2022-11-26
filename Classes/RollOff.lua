@@ -387,6 +387,9 @@ function RollOff:start(CommMessage)
         -- Play raid warning sound
         GL:playSound(SOUNDKIT.RAID_WARNING, "SFX");
 
+        -- Flash the game icon in case the player alt-tabbed
+        FlashClientIcon();
+
         -- Let the application know that a rolloff has started
         GL.Events:fire("GL.ROLLOFF_STARTED");
 
