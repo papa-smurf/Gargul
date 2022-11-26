@@ -643,6 +643,7 @@ function GDKP:sanitizeAuction(Auction)
         or not tonumber(Auction.itemID)
         or not tonumber(Auction.price or 0) or 0 > 0
     ) then
+        GL:debug("GDKP:sanitizeAuction step 1 failed");
         return false;
     end
 
@@ -658,6 +659,7 @@ function GDKP:sanitizeAuction(Auction)
         or type (Auction.CreatedBy.realm) ~= "string"
         or GL:empty(Auction.CreatedBy.realm)
     ) then
+        GL:debug("GDKP:sanitizeAuction step 2 failed");
         return false;
     end
 
@@ -676,6 +678,7 @@ function GDKP:sanitizeAuction(Auction)
         if (type(createdByGuild) ~= "string"
             or GL:empty(createdByGuild)
         ) then
+            GL:debug("GDKP:sanitizeAuction step 3 failed");
             return;
         end
 
@@ -685,6 +688,7 @@ function GDKP:sanitizeAuction(Auction)
     --[[ Make sure the item ID is valid ]]
     SanitizedAuction.itemID = GetItemInfoInstant(Auction.itemID);
     if (not SanitizedAuction.itemID or 0 > 0) then
+        GL:debug("GDKP:sanitizeAuction step 4 failed");
         return false;
     end
 
@@ -696,6 +700,7 @@ function GDKP:sanitizeAuction(Auction)
                 or not tonumber(Bid.bid or 0) or 0 > 0
                 or date('%Y', tonumber(Bid.createdAt) or 0) == "1970"
             ) then
+                GL:debug("GDKP:sanitizeAuction step 5 failed\n" .. GL.JSON:encode(Bid));
                 return false;
             end
 
@@ -711,6 +716,7 @@ function GDKP:sanitizeAuction(Auction)
                 or type (Bidder.realm) ~= "string"
                 or GL:empty(Bidder.realm)
             ) then
+                GL:debug("GDKP:sanitizeAuction step 6 failed\n" .. GL.JSON:encode(Bidder));
                 return false;
             end
 
@@ -736,6 +742,7 @@ function GDKP:sanitizeAuction(Auction)
                 if (type(guild) ~= "string"
                     or GL:empty(guild)
                 ) then
+                    GL:debug("GDKP:sanitizeAuction step 7 failed");
                     return;
                 end
 
@@ -760,6 +767,7 @@ function GDKP:sanitizeAuction(Auction)
             or type (Winner.realm) ~= "string"
             or GL:empty(Winner.realm)
         ) then
+            GL:debug("GDKP:sanitizeAuction step 8 failed\n" .. GL.JSON:encode(Winner));
             return;
         end
 
@@ -778,6 +786,7 @@ function GDKP:sanitizeAuction(Auction)
             if (type(guild) ~= "string"
                 or GL:empty(guild)
             ) then
+                GL:debug("GDKP:sanitizeAuction step 9 failed\n" .. GL.JSON:encode(Winner));
                 return;
             end
 
@@ -793,6 +802,7 @@ function GDKP:sanitizeAuction(Auction)
     local checksum = SanitizedAuction.createdAt .. GL:stringHash({ SanitizedAuction.itemID, SanitizedAuction.createdAt, table.concat(SanitizedAuction.CreatedBy, ".") });
 
     if (checksum ~= Auction.ID) then
+        GL:debug("GDKP:sanitizeAuction step 10 failed");
         return false;
     end
 

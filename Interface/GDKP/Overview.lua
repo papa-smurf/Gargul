@@ -458,6 +458,11 @@ function Overview:refreshLedger()
             ItemIcon:SetImageSize(30, 30);
             ItemIcon:SetImage(ItemEntry.icon);
             ItemRow:AddChild(ItemIcon);
+            ItemIcon:SetCallback("OnEnter", function()
+                GameTooltip:SetOwner(ItemIcon.frame, "ANCHOR_TOP");
+                GameTooltip:SetHyperlink(ItemEntry.link);
+                GameTooltip:Show();
+            end);
             ItemIcon:SetCallback("OnLeave", function()
                 GameTooltip:Hide();
             end);

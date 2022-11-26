@@ -96,14 +96,6 @@ function EditAuction:draw(session, checksum)
     PlayernameInput:SetLabel("Player name");
     Window:AddChild(PlayernameInput);
 
-    local Checkbox = AceGUI:Create("CheckBox");
-    Checkbox:SetValue(Auction.paid);
-    Checkbox:SetLabel("Paid");
-    Checkbox:SetFullWidth(true);
-    Checkbox.text:SetTextColor(.99, .85, .06);
-    Checkbox.text:SetFontObject(_G["GameFontHighlightSmall"]);
-    Window:AddChild(Checkbox);
-
     local SaveButton = AceGUI:Create("Button");
     SaveButton:SetText("Save");
     SaveButton:SetWidth(100); -- Minimum is 60

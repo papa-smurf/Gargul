@@ -334,7 +334,7 @@ function GL:hookBagSlotEvents()
 
         -- Open the action selection window
         if (keyPressIdentifier == GL.Settings:get("ShortcutKeys.rollOffOrAuction")) then
-            if (GL.GDKP:userOwnsSession() and GL.GDKP:hasActiveSession()) then
+            if (GL.GDKP:hasActiveSession()) then
                 GL.Interface.GDKP.Auctioneer:draw(itemLink);
             else
                 GL.MasterLooterUI:draw(itemLink);
