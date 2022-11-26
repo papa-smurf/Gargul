@@ -101,6 +101,8 @@ function User:refresh()
     self.raidIndex = nil;
     self.class, self.fileName = UnitClass("player");
     self.class = string.lower(self.class);
+    _, self.race = UnitRace("player");
+    self.race = string.lower(self.race);
 
     if (not self.isInGroup) then
         return;
