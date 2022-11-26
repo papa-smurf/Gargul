@@ -460,6 +460,177 @@ function GDKP:createAuction(itemID, price, winner, sessionIdentifier)
     return true;
 end
 
+function GDKP:sanitizeAuction(Auction)
+    local SanitizedAuction = {};
+
+    --[[ Top level Auction check ]]
+    if (not Auction
+        or type(Auction) ~= "table"
+        or type(Auction.CreatedBy) ~= "table"
+        or (Auction.Winner and type(Auction.Winner) ~= "table")
+        or (Auction.Bids and type(Auction.Bids) ~= "table")
+        or date('%Y', tonumber(Auction.createdAt) or 0) == "1970"
+        or not tonumber(Auction.itemID)
+        or not tonumber(Auction.price or 0) or 0 > 0
+    ) then
+        return false;
+    end
+
+    --[[ Auction.CreatedBy ]]
+    if (type (Auction.CreatedBy.class) ~= "string"
+        or not Constants.Classes[Auction.CreatedBy.class]
+        or type (Auction.CreatedBy.name) ~= "string"
+        or GL:empty(Auction.CreatedBy.name)
+        or type (Auction.CreatedBy.race) ~= "string"
+        or not GL:inTable(Constants.Races, Auction.CreatedBy.race)
+        or type (Auction.CreatedBy.uuid) ~= "string"
+        or not string.match(Auction.CreatedBy.uuid, "^Player%-[0-9]+%-[A-Z0-9]+$")
+        or type (Auction.CreatedBy.realm) ~= "string"
+        or GL:empty(Auction.CreatedBy.realm)
+    ) then
+        return false;
+    end
+
+    SanitizedAuction.CreatedBy = {
+        class = Auction.CreatedBy.class,
+        name = Auction.CreatedBy.name,
+        race = Auction.CreatedBy.race,
+        realm = Auction.CreatedBy.realm,
+        uuid = Auction.CreatedBy.uuid,
+    };
+
+    -- Add the winner's guild if he was part of one
+    local createdByGuild = Auction.CreatedBy.guild;
+
+    if (createdByGuild) then
+        if (type(createdByGuild) ~= "string"
+            or GL:empty(createdByGuild)
+        ) then
+            return;
+        end
+
+        SanitizedAuction.CreatedBy.guild = strtrim(createdByGuild);
+    end
+
+    --[[ Make sure the item ID is valid ]]
+    SanitizedAuction.itemID = GetItemInfoInstant(Auction.itemID);
+    if (not SanitizedAuction.itemID or 0 > 0) then
+        return false;
+    end
+
+    --[[ Auction.Bids ]]
+    if (Auction.Bids) then
+        for key, Bid in pairs(Auction.Bids) do
+            if (type(Bid) ~= "table"
+                or type(Bid.Bidder) ~= "table"
+                or not tonumber(Bid.bid or 0) or 0 > 0
+                or date('%Y', tonumber(Bid.createdAt) or 0) == "1970"
+            ) then
+                return false;
+            end
+
+            local Bidder = Bid.Bidder;
+            if (type (Bidder.class) ~= "string"
+                or not Constants.Classes[Bidder.class]
+                or type (Bidder.name) ~= "string"
+                or GL:empty(Bidder.name)
+                or type (Bidder.race) ~= "string"
+                or not GL:inTable(Constants.Races, Bidder.race)
+                or type (Bidder.uuid) ~= "string"
+                or not string.match(Bidder.uuid, "^Player%-[0-9]+%-[A-Z0-9]+$")
+                or type (Bidder.realm) ~= "string"
+                or GL:empty(Bidder.realm)
+            ) then
+                return false;
+            end
+
+            -- Make sure we only maintain valid keys
+            SanitizedAuction.Bids = SanitizedAuction.Bids or {};
+            SanitizedAuction.Bids[key] = {
+                Bidder = {
+                    class = Bidder.class,
+                    guild = Bidder.guild,
+                    name = Bidder.name,
+                    race = Bidder.race,
+                    realm = Bidder.realm,
+                    uuid = Bidder.uuid,
+                },
+                bid = tonumber(Bid.bid),
+                createdAt = tonumber(Bid.createdAt),
+            };
+
+            -- Add the player's guild if he was part of one
+            local guild = Bidder.guild;
+
+            if (guild) then
+                if (type(guild) ~= "string"
+                    or GL:empty(guild)
+                ) then
+                    return;
+                end
+
+                SanitizedAuction.Bids[key].guild = strtrim(guild);
+            end
+        end
+    end
+
+    --[[ Auction.Winner ]]
+    if (Auction.Winner) then
+        local Winner = Auction.Winner;
+
+        if (type(Winner) ~= "table"
+            or type (Winner.race) ~= "string"
+            or not GL:inTable(Constants.Races, Winner.race)
+            or type (Winner.class) ~= "string"
+            or not Constants.Classes[Winner.class]
+            or type (Winner.name) ~= "string"
+            or GL:empty(Winner.name)
+            or type (Winner.uuid) ~= "string"
+            or not string.match(Winner.uuid, "^Player%-[0-9]+%-[A-Z0-9]+$")
+            or type (Winner.realm) ~= "string"
+            or GL:empty(Winner.realm)
+        ) then
+            return;
+        end
+
+        SanitizedAuction.Winner = {
+            race = Winner.race;
+            name = Winner.name;
+            class = Winner.class;
+            uuid = Winner.uuid;
+            realm = Winner.realm;
+        };
+
+        -- Add the winner's guild if he was part of one
+        local guild = Winner.guild;
+
+        if (guild) then
+            if (type(guild) ~= "string"
+                or GL:empty(guild)
+            ) then
+                return;
+            end
+
+            SanitizedAuction.Winner.guild = strtrim(guild);
+        end
+    end
+
+    SanitizedAuction.createdAt = tonumber(Auction.createdAt);
+    SanitizedAuction.itemID = tonumber(Auction.itemID);
+    SanitizedAuction.price = Auction.price;
+
+    --[[ Make sure the checksum is valid ]]
+    local checksum = SanitizedAuction.createdAt .. GL:stringHash({ SanitizedAuction.itemID, SanitizedAuction.createdAt, table.concat(SanitizedAuction.CreatedBy, ".") });
+
+    if (checksum ~= Auction.ID) then
+        return false;
+    end
+
+    SanitizedAuction.ID = checksum;
+
+    return SanitizedAuction;
+end
+
 --- Change the recipient of an auction
 ---
 ---@param sessionIdentifier string
