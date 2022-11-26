@@ -332,19 +332,31 @@ function GL:hookBagSlotEvents()
 
         local keyPressIdentifier = GL.Events:getClickCombination();
 
+        -- Open the action selection window
+        if (keyPressIdentifier == GL.Settings:get("ShortcutKeys.rollOffOrAuction")) then
+            if (GL.GDKP:userOwnsSession() and GL.GDKP:hasActiveSession()) then
+                GL.Interface.ActionSelector:open(itemLink);
+            else
+                GL.MasterLooterUI:draw(itemLink);
+            end
         -- Open the roll window
-        if (keyPressIdentifier == GL.Settings:get("ShortcutKeys.rollOff")) then
----@todo: Fixie fix
+        elseif (keyPressIdentifier == GL.Settings:get("ShortcutKeys.rollOff")) then
+            GL.MasterLooterUI:draw(itemLink);
+
+        -- Open the auction window
+        elseif (keyPressIdentifier == GL.Settings:get("ShortcutKeys.auction")) then
             GL.Interface.GDKP.Auctioneer:draw(itemLink);
-            --GL.MasterLooterUI:draw(itemLink);
 
         -- Open the award window
         elseif (keyPressIdentifier == GL.Settings:get("ShortcutKeys.award")) then
             GL.Interface.Award:draw(itemLink);
 
-        --Disenchant items from bags is disabled for now since it always triggers the dressupframe
-        --elseif (keyPressIdentifier == GL.Settings:get("ShortcutKeys.disenchant")) then
-        --    GL.PackMule:disenchant(itemLink);
+        elseif (keyPressIdentifier == GL.Settings:get("ShortcutKeys.disenchant")) then
+            -- We only allow disenchanting from bags if the disenchant hotkey does not include control
+            -- because otherwise it triggers the dressupframe which can be really annoying
+            if (not IsControlKeyDown()) then
+                GL.PackMule:disenchant(itemLink);
+            end
         end
     end);
 end
@@ -379,6 +391,10 @@ function GL:hookTooltipSetItemEvents()
             -- Use cached data
             Lines = self.LastTooltipLines;
         else
+            for _, line in pairs(GL.GDKP:tooltipLines(itemLink) or {}) do
+                tinsert(Lines, line);
+            end
+
             for _, line in pairs(GL.AwardedLoot:tooltipLines(itemLink) or {}) do
                 tinsert(Lines, line);
             end
