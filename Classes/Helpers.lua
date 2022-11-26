@@ -118,7 +118,16 @@ end
 ---
 ---@return void
 function GL:xd(mixed)
+    if (type(mixed) == "boolean") then
+        mixed = "true";
+
+        if (mixed) then
+            mixed = "false";
+        end
+    end
+
     mixed = mixed or " ";
+
     local success, encoded = pcall(function () return GL.JSON:encode(mixed); end);
 
     if (not success) then
