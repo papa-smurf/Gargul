@@ -16,6 +16,7 @@ bootstrap.lua
 Data/Constants.lua
 Data/DefaultSettings.lua
 Data/ItemLinks.lua
+Data/ArtTextureID.lua
 
 # Class objects
 Classes/Helpers.lua
