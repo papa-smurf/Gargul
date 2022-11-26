@@ -58,12 +58,38 @@ function ShortcutKeys:draw(Parent)
 
     --[[ ROLLOFF OR AUCTION ]]
 
+    local HelpIcon = AceGUI:Create("Icon");
+    HelpIcon:SetWidth(24);
+    HelpIcon:SetHeight(24);
+    HelpIcon:SetImageSize(12, 12);
+    HelpIcon:SetImage("interface/friendsframe/informationicon");
+    Parent:AddChild(HelpIcon);
+
+    HelpIcon:SetCallback("OnEnter", function()
+        GameTooltip:SetOwner(HelpIcon.frame, "ANCHOR_RIGHT");
+        GameTooltip:AddLine(" ");
+        GameTooltip:AddLine("If you own an active GDKP session then the auction window will be shown");
+        GameTooltip:AddLine("If not then the roll out window will be shown instead");
+        GameTooltip:AddLine(" ");
+        GameTooltip:Show();
+    end);
+
+    HelpIcon:SetCallback("OnLeave", function()
+        GameTooltip:Hide();
+    end);
+
     local RollOffOrAuctionLabel = AceGUI:Create("Label");
     RollOffOrAuctionLabel:SetText("Roll out or auction an item (default alt+click)");
     RollOffOrAuctionLabel:SetColor(1, .95686, .40784);
     RollOffOrAuctionLabel:SetHeight(20);
-    RollOffOrAuctionLabel:SetFullWidth(true);
+    RollOffOrAuctionLabel:SetWidth(240);
     Parent:AddChild(RollOffOrAuctionLabel);
+
+    HorizontalSpacer = AceGUI:Create("SimpleGroup");
+    HorizontalSpacer:SetLayout("FILL");
+    HorizontalSpacer:SetFullWidth(true);
+    HorizontalSpacer:SetHeight(1);
+    Parent:AddChild(HorizontalSpacer);
 
     local RollOffOrAuctionHotkey = AceGUI:Create("Dropdown");
     RollOffOrAuctionHotkey:SetValue(GL.Settings:get("ShortcutKeys.rollOffOrAuction"));
