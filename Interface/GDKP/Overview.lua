@@ -317,7 +317,7 @@ function Overview:build()
     Export:SetWidth(74);
     Export:SetHeight(20);
     Export:SetCallback("OnClick", function()
-        GL:xd("Export");
+        GL.Interface.GDKP.Export:open(self.selectedSession);
     end);
 
     ThirdColumn:AddChildren(EnableOrDisableSession, CreateSession, EditSession, DeleteOrRestoreSession, Export);
