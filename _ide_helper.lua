@@ -8,6 +8,9 @@ AceGUIFrame = {};
 ---@class AceGUISimpleGroup
 AceGUISimpleGroup = {};
 
+---@class AceGUIScrollFrame
+AceGUIScrollFrame = {};
+
 ---@class AceGUIInlineGroup
 AceGUIInlineGroup = {};
 
@@ -57,8 +60,18 @@ function AceGUISimpleGroup:Show() end
 function AceGUIFrame:PauseLayout() end
 function AceGUIFrame:DoLayout() end
 
+-- [[ AceGUIScrollFrame ]]
+---@param Child table
+function AceGUIScrollFrame:AddChild(Child) end
+
+function AceGUIScrollFrame:Hide() end
+function AceGUIScrollFrame:Show() end
+
+function AceGUIFrame:PauseLayout() end
+function AceGUIFrame:DoLayout() end
+
 ---@return AceGUIFrame
-function AceGUISimpleGroup:GetParent() end
+function AceGUIScrollFrame:GetParent() end
 
 -- [[ AceGUIInlineGroup ]]
 ---@param Child table
