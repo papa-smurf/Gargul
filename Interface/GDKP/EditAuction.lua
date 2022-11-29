@@ -100,7 +100,6 @@ function EditAuction:draw(session, checksum)
     SaveButton:SetText("Save");
     SaveButton:SetWidth(100); -- Minimum is 60
     SaveButton:SetCallback("OnClick", function()
-        local somethingChanged = false;
         local newName = strtrim(PlayernameInput:GetText());
 
         -- The winner was changed
@@ -114,9 +113,6 @@ function EditAuction:draw(session, checksum)
         if (session ~= SessionDropdown:GetValue()) then
             GL.GDKP:moveAuction(checksum, session, SessionDropdown:GetValue());
         end
-
-        -- The paid status was changed
-        ---@todo: implement
 
         self:close();
     end);
