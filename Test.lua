@@ -522,7 +522,7 @@ function Test:simulateGroup(numberOfPlayers, includeSelf, includeCurrentGroupMem
 
     local Names = GL:cloneTable(self.Names);
 
-    for _ = 1, numberOfPlayers do
+    for _ = 1, numberOfPlayers - #Players do
         local nameIndex = math.random(1, #Names);
         local name = Names[nameIndex];
         local class = self.Classes[math.random(1, #self.Classes)];
