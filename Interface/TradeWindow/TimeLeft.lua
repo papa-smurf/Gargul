@@ -483,10 +483,10 @@ function TimeLeft:refreshBars()
                 local unreceivedCount = 0;
                 local deUnreceivedCount = 0;
                 for _, line in pairs(GL.AwardedLoot:tooltipLines(itemLink) or {}) do
-                    if (string.match(line, "|de|") and string.match(line, "(not received yet)")) then
+                    if (string.match(line, "|de|") and string.match(line, "(item given: no)")) then
                         deUnreceived = true;
                         deUnreceivedCount = deUnreceivedCount + 1
-                    elseif (string.match(line, "(not received yet)")) then
+                    elseif (string.match(line, "(item given: no)")) then
                         unreceived = true;
                         unreceivedCount = unreceivedCount + 1
                     end

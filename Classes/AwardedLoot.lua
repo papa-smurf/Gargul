@@ -71,9 +71,9 @@ function AwardedLoot:tooltipLines(itemLink)
             end
 
             local winner = string.lower(GL:stripRealm(Loot.awardedTo));
-            local receivedString = " (received)";
+            local receivedString = " (item given: yes)";
             if (not Loot.received) then
-                receivedString = " (not received yet)";
+                receivedString = " (item given: no)";
             end
 
             local OSString = "";

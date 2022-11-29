@@ -172,9 +172,9 @@ function AwardHistory:draw()
                         GameTooltip:AddLine(header);
 
                         for _, Entry in pairs(ItemsWonByRollerInTheLastFiveHours) do
-                            local receivedString = " (received)";
+                            local receivedString = " (item given: yes)";
                             if (not Entry.received) then
-                                receivedString = " (not received yet)";
+                                receivedString = " (item given: no)";
                             end
 
                             local OSString = "";
