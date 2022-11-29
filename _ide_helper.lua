@@ -8,6 +8,12 @@ AceGUIFrame = {};
 ---@class AceGUISimpleGroup
 AceGUISimpleGroup = {};
 
+---@class AceGUIScrollFrame
+AceGUIScrollFrame = {};
+
+---@class AceGUIInlineGroup
+AceGUIInlineGroup = {};
+
 ---@class AceGUILabel
 AceGUILabel = {};
 
@@ -22,6 +28,9 @@ AceGUIDropdown = {};
 
 ---@class AceGUIIcon
 AceGUIIcon = {};
+
+---@class AceGUIButton
+AceGUIButton = {};
 
 -- [[ AceGUIFrame ]]
 ---@param value string
@@ -51,8 +60,43 @@ function AceGUISimpleGroup:Show() end
 function AceGUIFrame:PauseLayout() end
 function AceGUIFrame:DoLayout() end
 
+-- [[ AceGUIScrollFrame ]]
+---@param Child table
+function AceGUIScrollFrame:AddChild(Child) end
+
+function AceGUIScrollFrame:Hide() end
+function AceGUIScrollFrame:Show() end
+
+function AceGUIFrame:PauseLayout() end
+function AceGUIFrame:DoLayout() end
+
 ---@return AceGUIFrame
-function AceGUISimpleGroup:GetParent() end
+function AceGUIScrollFrame:GetParent() end
+
+-- [[ AceGUIInlineGroup ]]
+---@param Child table
+function AceGUIInlineGroup:AddChild(Child) end
+
+function AceGUIInlineGroup:Hide() end
+function AceGUIInlineGroup:Show() end
+
+function AceGUIInlineGroup:PauseLayout() end
+function AceGUIInlineGroup:DoLayout() end
+
+---@param width number
+function AceGUIInlineGroup:SetWidth(width); end
+
+---@param height number
+function AceGUIInlineGroup:SetHeight(height); end
+
+---@param trueOrFalse boolean
+function AceGUIInlineGroup:SetFullWidth(trueOrFalse); end
+
+---@param trueOrFalse boolean
+function AceGUIInlineGroup:SetFullHeight(trueOrFalse); end
+
+---@return AceGUIFrame
+function AceGUIInlineGroup:GetParent() end
 
 -- [[ AceGUILabel ]]
 

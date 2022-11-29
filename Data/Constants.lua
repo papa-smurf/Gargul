@@ -105,6 +105,7 @@ GL.Data.Constants = {
     ]]
     addonHexColor =  "967FD2",
     disabledTextColor =  "5F5F5F",
+    GDKPPotIncreaseItemID = 45978,
 
     success = 0,
     failure = 1,
@@ -364,7 +365,7 @@ GL.Data.Constants = {
     Races = {
         'human',
         'dwarf',
-        'night elf',
+        'nightelf',
         'gnome',
         'draenei',
         'worgen',
@@ -372,7 +373,7 @@ GL.Data.Constants = {
         'undead',
         'tauren',
         'troll',
-        'blood elf',
+        'bloodelf',
         'goblin',
         'pandaren',
         'dracthyr',

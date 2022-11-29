@@ -1,8 +1,8 @@
 ## Interface: 11403
-## Title: Gargul |c00967FD2v4.12.12|r
+## Title: Gargul |c00967FD2v4.12.13|r
 ## Author: Zhorax - Firemaw
 ## Notes: Loot addon that supports softres sr, thatsmybis tmb, auto looting, loot priorities, plus one tracking and much more
-## Version: 4.12.12
+## Version: 4.12.13
 ## DefaultState: enabled
 ## SavedVariables: GargulDB
 
