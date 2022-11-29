@@ -397,7 +397,7 @@ function PackMule:getTargetForItem(itemLinkOrId, callback)
             ));
 
             local item = Entry.item or "";
-            local target = tostring(Entry.target or "");
+            local target = strtrim(tostring(Entry.target or ""));
             local quality = tonumber(Entry.quality or "");
             local operator = tostring(Entry.operator or "");
 
@@ -465,8 +465,11 @@ function PackMule:getTargetForItem(itemLinkOrId, callback)
                         return true;
                     end
 
-                    -- When in group loot never auto loot anything that's BoP unless you have lead or assist!
-                    if (not GL.User.isMasterLooter and not GL.User.hasAssist) then
+                    -- When in group loot never auto need anything that's BoP unless you have lead or assist!
+                    if (not GL.User.isMasterLooter
+                        and not GL.User.hasAssist
+                        and strfind(target, "NEED")
+                    ) then
                         return false;
                     end
 
@@ -475,7 +478,7 @@ function PackMule:getTargetForItem(itemLinkOrId, callback)
                         return false;
                     end
 
-                    -- PackMule doesn't mule BoP items unless in a raid or heroic instance
+                    -- PackMule doesn't pack BoP items unless in a raid or heroic instance
                     if (not GL.User.isInRaid
                         and not self.playerIsInHeroicInstance ---@todo: ADD ALL RAID FORMS TO THIS TO REPLACE isInRaid
                     ) then
