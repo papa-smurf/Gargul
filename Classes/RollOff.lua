@@ -390,6 +390,9 @@ function RollOff:start(CommMessage)
         -- Flash the game icon in case the player alt-tabbed
         FlashClientIcon();
 
+        -- Flash the game icon in case the player alt-tabbed
+        FlashClientIcon();
+
         -- Let the application know that a rolloff has started
         GL.Events:fire("GL.ROLLOFF_STARTED");
 
