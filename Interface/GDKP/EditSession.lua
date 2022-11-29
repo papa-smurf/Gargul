@@ -48,17 +48,34 @@ function EditSession:build()
     Window:AddChild(Title);
     Interface:set(self, "Title", Title);
 
+    local ManagementCut = GL.AceGUI:Create("EditBox");
+    ManagementCut:DisableButton(true);
+    ManagementCut:SetHeight(20);
+    ManagementCut:SetFullWidth(true);
+    ManagementCut:SetLabel("Management Cut %");
+    Window:AddChild(ManagementCut);
+    Interface:set(self, "ManagementCut", ManagementCut);
+
     local Save = AceGUI:Create("Button");
     Save:SetText("Save");
     Save:SetFullWidth(true);
     Save:SetCallback("OnClick", function()
         local title = strtrim(Title:GetText());
-
         if (GL:empty(title)) then
+            GL:warning("Add a GDKP name");
             return;
         end
 
-        GDKP:editSession(Overview.selectedSession, title);
+        local managementCut = strtrim(ManagementCut:GetText());
+        if (not GL:empty(managementCut)
+            and tonumber(managementCut)
+            and not GL:higherThanZero(tonumber(managementCut))
+        ) then
+            GL:warning("The cut needs to be empty or between 0 and 99");
+            return;
+        end
+
+        GDKP:editSession(Overview.selectedSession, title, managementCut);
 
         self:close();
     end);
@@ -120,6 +137,7 @@ function EditSession:open()
 
     Interface:get(self, "Label.Title"):SetText("Editing " .. Session.title);
     Interface:get(self, "EditBox.Title"):SetText(Session.title);
+    Interface:get(self, "EditBox.ManagementCut"):SetText(Session.managementCut);
 
     self.isVisible = true;
     Window.frame:SetPoint("TOPLEFT", Interface:get(Overview, "GDKPOverview").frame, "TOPRIGHT", 2, 16);

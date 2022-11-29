@@ -175,8 +175,8 @@ function Overview:build()
     ---@type Frame
     local WindowFrame = Window.frame;
 
-    Interface:AceGUIDefaults(self, Window, "GDKPOverview", 547, 600);
-    Interface:resizeBounds(Window, 517, 300);
+    Interface:AceGUIDefaults(self, Window, "GDKPOverview", 660, 600);
+    Interface:resizeBounds(Window, 660, 300);
     Window.statustext:GetParent():Hide(); -- Hide the statustext bar
 
     --[[ POT ICON AND VALUE ]]
@@ -186,7 +186,7 @@ function Overview:build()
     ---@type Frame
     local PotIconFrame = PotIcon.frame;
 
-    PotIcon:SetImage("interface/icons/inv_misc_coin_17");
+    PotIcon:SetImage("Interface/AddOns/Gargul/Assets/Icons/achievement_guildperk_cashflow");
     PotIcon:SetImageSize(26, 26);
     PotIcon:SetWidth(26);
     PotIcon:SetHeight(26);
@@ -195,11 +195,63 @@ function Overview:build()
     PotIconFrame:SetPoint("TOPRIGHT", WindowFrame, "TOPRIGHT", -56, -24);
     PotIconFrame:Show();
 
+    PotIcon:SetCallback("OnClick", function ()
+        GL.Test:simulateGroup(24) ---@todo: REMOVE!
+        Interface.GDKP.Distribute:open(self.selectedSession);
+        Window.frame:Hide();
+    end);
+
+    PotIcon:SetCallback("OnEnter", function ()
+        local Session = GDKP:getSessionByID(self.selectedSession);
+        local pot = GDKP:pot(Session.ID);
+        local numberOfRaidMembers = math.max(#GL.User:groupMemberNames() - 1, 1);
+        local managementCut = tonumber(Session.managementCut or 0);
+        local managementPot = math.ceil(pot * (0 + managementCut / 100));
+
+        GameTooltip:SetOwner(PotIconFrame, "ANCHOR_TOP");
+        GameTooltip:AddLine(string.format("Pot: %sg", pot));
+        GameTooltip:AddLine(string.format("Management cut (%s%%): %sg", managementCut, managementPot));
+        GameTooltip:AddLine(string.format("Per player cut (1/%s): %sg", numberOfRaidMembers, math.floor((pot - managementPot) / numberOfRaidMembers)));
+        GameTooltip:Show();
+    end);
+    PotIcon:SetCallback("OnLeave", function ()
+        GameTooltip:Hide();
+    end);
+
     local Pot = PotIconFrame:CreateFontString(nil, "ARTWORK", "GameFontWhite");
     Pot:SetPoint("CENTER", PotIconFrame, "CENTER");
     Pot:SetPoint("TOP", PotIconFrame, "BOTTOM", 0, -6);
     Pot:SetText();
     Interface:set(self, "Pot", Pot);
+
+    ----[[ RAIDER ICON ]]
+    --
+    --local RaiderIcon = AceGUI:Create("Icon");
+    --
+    -----@type Frame
+    --local RaiderconFrame = RaiderIcon.frame;
+    --
+    --RaiderIcon:SetImage("interface/icons/achievement_guildperk_everybodysfriend");
+    --RaiderIcon:SetImageSize(26, 26);
+    --RaiderIcon:SetWidth(26);
+    --RaiderIcon:SetHeight(26);
+    --
+    --RaiderconFrame:SetParent(WindowFrame);
+    --RaiderconFrame:SetPoint("TOPRIGHT", Pot, "TOPLEFT", -20, 32);
+    --RaiderconFrame:Show();
+    --
+    --RaiderIcon:SetCallback("OnClick", function ()
+    --    GL.Interface.GDKP.Export:open(self.selectedSession);
+    --end);
+    --
+    --RaiderIcon:SetCallback("OnEnter", function ()
+    --    GameTooltip:SetOwner(RaiderconFrame, "ANCHOR_TOP");
+    --    GameTooltip:AddLine("Raiders");
+    --    GameTooltip:Show();
+    --end);
+    --RaiderIcon:SetCallback("OnLeave", function ()
+    --    GameTooltip:Hide();
+    --end);
 
     --[[ FIRST COLUMN: sessions ]]
     local FirstColumn = AceGUI:Create("SimpleGroup");
@@ -233,9 +285,12 @@ function Overview:build()
 
     --[[ CREATE BUTTON ]]
     Interface:createButton(ScrollFrameHolder, {
-        onClick = function() Interface.Award:draw(); end,
-        tooltip = "Add entry",
-        disabledTooltip = "You need lead or master loot to add entries.\nYou can't add entries to deleted sessions",
+        onClick = function()
+            self:closeSubWindows();
+            Interface.GDKP.AddGold:toggle(self.selectedSession);
+        end,
+        tooltip = "Add gold to pot",
+        disabledTooltip = "You need lead or master loot to add gold.\nYou can't add godl to deleted sessions",
         normalTexture = "Interface\\AddOns\\Gargul\\Assets\\Buttons\\create",
         disabledTexture = "Interface\\AddOns\\Gargul\\Assets\\Buttons\\create-disabled",
         update = function (self)
@@ -265,7 +320,7 @@ function Overview:build()
     --[[ FOOTER BUTTONS ]]
     local ThirdColumn = AceGUI:Create("SimpleGroup");
     ThirdColumn:SetLayout("FLOW");
-    ThirdColumn:SetWidth(382);
+    ThirdColumn:SetWidth(500);
     ThirdColumn:SetHeight(40);
 
     local EnableOrDisableSession = AceGUI:Create("Button");
@@ -320,7 +375,16 @@ function Overview:build()
         GL.Interface.GDKP.Export:open(self.selectedSession);
     end);
 
-    ThirdColumn:AddChildren(EnableOrDisableSession, CreateSession, EditSession, DeleteOrRestoreSession, Export);
+    local Distribute = AceGUI:Create("Button");
+    Distribute:SetText("Distribute");
+    Distribute:SetWidth(90);
+    Distribute:SetHeight(20);
+    Distribute:SetCallback("OnClick", function()
+        GL.Interface.GDKP.Distribute:open(self.selectedSession);
+        Window.frame:Hide();
+    end);
+
+    ThirdColumn:AddChildren(EnableOrDisableSession, CreateSession, EditSession, DeleteOrRestoreSession, Export, Distribute);
     ThirdColumn.frame:SetParent(WindowFrame);
     ThirdColumn.frame:SetPoint("BOTTOMLEFT", WindowFrame, "BOTTOMLEFT", 20, 15);
 
@@ -361,9 +425,11 @@ end
 function Overview:closeSubWindows()
     GL:debug("Overview:closeSubWindows");
 
-    Interface.GDKP.EditAuction:close(); -- Close the edit window
-    Interface.GDKP.CreateSession:close(); -- Close the edit window
-    Interface.GDKP.EditSession:close(); -- Close the edit window
+    Interface.GDKP.CreateSession:close();
+    Interface.GDKP.EditSession:close();
+    Interface.GDKP.EditAuction:close();
+    Interface.GDKP.AuctionDetails:close();
+    Interface.GDKP.AddGold:close();
 end
 
 --- Get the actively selected GDKP session
@@ -434,13 +500,22 @@ function Overview:refreshLedger()
         -- Add placeholders for all the item icons and labels
         for _, Auction in pairs(Auctions) do
             local price = Auction.price or 0;
-            local auctionWasDeleted = price <= 0;
+            local auctionWasDeleted = not GL:higherThanZero(price);
+            local concernsManualAdjustment = Auction.itemID == Constants.GDKPPotIncreaseItemID;
 
             -- This entry should always exist, if it doesn't something went wrong (badly)
             local ItemEntry = DB.Cache.ItemsByID[tostring(Auction.itemID)];
 
             if (GL:empty(ItemEntry)) then
                 break;
+            end
+
+            -- [[ SET DETAILS ]]
+            local iconPath = ItemEntry.icon;
+            local itemLabel;
+
+            if (concernsManualAdjustment) then
+                iconPath = "Interface/AddOns/Gargul/Assets/Icons/achievement_guildperk_cashflow";
             end
 
             local ItemRow = AceGUI:Create("SimpleGroup");
@@ -456,7 +531,7 @@ function Overview:refreshLedger()
             ItemIcon:SetWidth(30);
             ItemIcon:SetHeight(30);
             ItemIcon:SetImageSize(30, 30);
-            ItemIcon:SetImage(ItemEntry.icon);
+            ItemIcon:SetImage(iconPath);
             ItemRow:AddChild(ItemIcon);
             ItemIcon:SetCallback("OnEnter", function()
                 GameTooltip:SetOwner(ItemIcon.frame, "ANCHOR_TOP");
@@ -469,7 +544,7 @@ function Overview:refreshLedger()
 
             --[[
                ITEM ICON/LABEL SPACER
-           ]]
+            ]]
             local ItemSpacer = AceGUI:Create("SimpleGroup");
             ItemSpacer:SetLayout("FILL")
             ItemSpacer:SetWidth(10);
@@ -485,14 +560,24 @@ function Overview:refreshLedger()
 
             -- Item was sold
             if (not auctionWasDeleted) then
-                ItemLabel:SetText(string.format(
-                    "|cFF%s%s|r paid |cFF%s%sg|r for\n%s",
-                    GL:classHexColor(Auction.Winner.class),
-                    Auction.Winner.name or "",
-                    Constants.ClassHexColors.rogue,
-                    price or "0",
-                    ItemEntry.link
-                ));
+                if (concernsManualAdjustment) then
+                    itemLabel = string.format("|cFF%s%sg|r added to pot by |c00%s%s|r\nNote: %s",
+                        Constants.ClassHexColors.rogue,
+                        price or "0",
+                        GL:classHexColor(GL.Player:classByName(Auction.Winner.name, 0), GL.Data.Constants.disabledTextColor),
+                        Auction.Winner.name,
+                        Auction.note or ""
+                    );
+                else
+                    itemLabel = string.format(
+                        "|cFF%s%s|r paid |cFF%s%sg|r for\n%s",
+                        GL:classHexColor(Auction.Winner.class),
+                        Auction.Winner.name or "",
+                        Constants.ClassHexColors.rogue,
+                        price or "0",
+                        ItemEntry.link
+                    );
+                end
 
             -- Item was deleted
             else
@@ -502,14 +587,15 @@ function Overview:refreshLedger()
                     reason = "-";
                 end
 
-                ItemLabel:SetText(string.format(
+                itemLabel = string.format(
                     "|cFFbe3333Deleted by|r |cFF%s%s|r\nReason: %s",
                     GL:classHexColor(Auction.CreatedBy.class),
                     Auction.CreatedBy.name,
                     reason
-                ));
+                );
             end
 
+            ItemLabel:SetText(itemLabel);
             ItemRow:AddChild(ItemLabel);
 
             --[[
@@ -527,6 +613,7 @@ function Overview:refreshLedger()
             --[[ EDIT BUTTON ]]
             local Edit = Interface:createButton(ActionButtons, {
                 onClick = function()
+                    self:closeSubWindows();
                     Interface.GDKP.EditAuction:draw(Session.ID, Auction.checksum);
                 end,
                 tooltip = "Edit",
@@ -589,6 +676,7 @@ function Overview:refreshLedger()
             --[[ DETAILS BUTTON ]]
             local Eye = Interface:createButton(ActionButtons, {
                 onClick = function()
+                    self:closeSubWindows();
                     Interface.GDKP.AuctionDetails:draw(Session.ID, Auction.checksum);
                 end,
                 tooltip = "Details",

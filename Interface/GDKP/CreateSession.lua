@@ -43,6 +43,13 @@ function CreateSession:build()
     Title:SetLabel("Name");
     Window:AddChild(Title);
 
+    local ManagementCut = GL.AceGUI:Create("EditBox");
+    ManagementCut:DisableButton(true);
+    ManagementCut:SetHeight(20);
+    ManagementCut:SetFullWidth(true);
+    ManagementCut:SetLabel("Management Cut %");
+    Window:AddChild(ManagementCut);
+
     local SwitchCheckbox = AceGUI:Create("CheckBox");
     SwitchCheckbox:SetValue(false);
     SwitchCheckbox:SetLabel("Switch to this session");
@@ -58,12 +65,20 @@ function CreateSession:build()
     Save:SetFullWidth(true);
     Save:SetCallback("OnClick", function()
         local title = strtrim(Title:GetText());
-
         if (GL:empty(title)) then
+            GL:warning("Add a GDKP name");
             return;
         end
 
-        local Session = GL.GDKP:createSession(title);
+        local managementCut = strtrim(ManagementCut:GetText());
+        if (not GL:empty(managementCut)
+            and not tonumber(managementCut or 0) or 0 >= 0
+        ) then
+            GL:warning("The cut needs to be empty or between 0 and 99");
+            return;
+        end
+
+        local Session = GL.GDKP:createSession(title, managementCut);
         if (SwitchCheckbox:GetValue()) then
             GL.GDKP:setActiveSession(Session.ID);
         end
