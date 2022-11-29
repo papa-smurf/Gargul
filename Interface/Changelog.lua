@@ -12,6 +12,13 @@ GL.Interface.Changelog = {
 
     History = {
         {
+            version = "4.12.13",
+            date = "November 29th, 2022",
+            Changes = {
+                "Auto looting now also works for group loot in raids/heroics, even on BoP items in a safe and secure way! Check it out in |c00a79eff/gl pm|r!",
+            },
+        },
+        {
             version = "4.12.8",
             date = "November 16th, 2022",
             Changes = {
