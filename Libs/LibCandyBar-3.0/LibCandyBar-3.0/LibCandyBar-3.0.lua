@@ -412,7 +412,7 @@ end
 -- @param width Width of the bar.
 -- @param height Height of the bar.
 -- @usage
--- mybar = LibStub("LibCandyBar-3.0"):New("Interface\\AddOns\\MyAddOn\\media\\statusbar", 100, 16)
+-- mybar = LibStub("LibCandyBarGargul-3.0"):New("Interface\\AddOns\\MyAddOn\\media\\statusbar", 100, 16)
 function lib:New(texture, width, height)
 	local bar = next(barCache)
 	if not bar then
