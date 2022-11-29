@@ -85,8 +85,10 @@ Interface/GDKP/Auctioneer.lua
 Interface/GDKP/Bidder.lua
 Interface/GDKP/Overview.lua
 Interface/GDKP/Export.lua
+Interface/GDKP/Distribute.lua
 Interface/GDKP/CreateSession.lua
 Interface/GDKP/EditSession.lua
+Interface/GDKP/AddGold.lua
 Interface/GDKP/EditAuction.lua
 Interface/GDKP/AuctionDetails.lua
 Interface/TMB/Importer.lua
