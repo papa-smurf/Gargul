@@ -70,28 +70,33 @@ function AwardedLoot:tooltipLines(itemLink)
                 return;
             end
 
+            local Details = {};
+
             local winner = string.lower(GL:stripRealm(Loot.awardedTo));
-            local receivedString = " (received)";
-            if (not Loot.received) then
-                receivedString = " (not received yet)";
-            end
 
-            local OSString = "";
             if (Loot.OS) then
-                OSString = " (OS)"
+                tinsert(Details, "OS");
             end
 
-            local BRString = "";
             if (GL:higherThanZero(Loot.BRCost)) then
-                BRString = string.format(" (BR: %s)", Loot.BRCost);
+                tinsert(Details, string.format("BR: %s", Loot.BRCost));
             end
 
-            local line = string.format("    |c00%s%s|r%s%s%s",
+            if (GL:higherThanZero(Loot.GDKPCost)) then
+                tinsert(Details, string.format("Price: %sg", Loot.GDKPCost));
+                tinsert(Details, "Paid: no");
+            end
+
+            local receivedString = "Given: yes";
+            if (not Loot.received) then
+                receivedString = "Given: no";
+            end
+            tinsert(Details, receivedString);
+
+            local line = string.format("    |c00%s%s|r\n      - %s",
                 GL:classHexColor(GL.Player:classByName(winner, 0), GL.Data.Constants.disabledTextColor),
                 GL:capitalize(winner),
-                OSString,
-                BRString,
-                receivedString
+                table.concat(Details, "\n      - ")
             );
             tinsert(Lines, line);
             winnersAvailable = true;
