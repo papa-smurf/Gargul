@@ -465,8 +465,8 @@ function PackMule:getTargetForItem(itemLinkOrId, callback)
                         return true;
                     end
 
-                    -- When in group loot never auto loot anything that's BoP!
-                    if (not GL.User.isMasterLooter) then
+                    -- When in group loot never auto loot anything that's BoP unless you have lead or assist!
+                    if (not GL.User.isMasterLooter and not GL.User.hasAssist) then
                         return false;
                     end
 
@@ -475,10 +475,9 @@ function PackMule:getTargetForItem(itemLinkOrId, callback)
                         return false;
                     end
 
-                    -- When masterloot is active PackMule doesn't mule BoP items unless in a raid or heroic instance
-                    if (GL.User.isMasterLooter
-                        and not GL.User.isInRaid
-                        and not self.playerIsInHeroicInstance
+                    -- PackMule doesn't mule BoP items unless in a raid or heroic instance
+                    if (not GL.User.isInRaid
+                        and not self.playerIsInHeroicInstance ---@todo: ADD ALL RAID FORMS TO THIS TO REPLACE isInRaid
                     ) then
                         return false;
                     end
