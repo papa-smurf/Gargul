@@ -279,24 +279,33 @@ end
 --- Create a new GDKP session
 ---
 ---@param title string
+---@param managementCut number
 ---@return table|boolean
-function GDKP:createSession(title)
+function GDKP:createSession(title, managementCut)
     GL:debug("GDKP:createSession");
 
     if (type(title) ~= "string" or GL:empty(title)) then
         return false;
     end
 
+    if (not GL:empty(managementCut)
+        and not tonumber(managementCut or 0) or 0 >= 0
+    ) then
+        return false;
+    end
+
     local Session = {
         title = GL:capitalize(string.sub(title, 0, 30)),
         createdAt = GetServerTime(),
+        managementCut = managementCut,
+        Auctions = {},
         CreatedBy = {
             class = GL.User.class,
             name = GL.User.name,
             guild = GL.User.Guild.name,
             uuid = GL.User.id,
         },
-        Auctions = {},
+        Raiders = {},
     };
 
     local checksum = Session.createdAt .. GL:stringHash(Session);
@@ -312,8 +321,9 @@ end
 ---
 ---@param sessionID string
 ---@param title string
+---@param managementCut number|nil
 ---@return boolean|table
-function GDKP:editSession(sessionID, title)
+function GDKP:editSession(sessionID, title, managementCut)
     GL:debug("GDKP:createSession");
 
     if (type(title) ~= "string" or GL:empty(title)) then
@@ -324,6 +334,19 @@ function GDKP:editSession(sessionID, title)
 
     if (not Session) then
         return false;
+    end
+
+    if (not GL:empty(managementCut)
+        and tonumber(managementCut)
+        and not GL:higherThanZero(tonumber(managementCut))
+    ) then
+        return false;
+    end
+
+    if (not GL:empty(managementCut)) then
+        Session.managementCut = tonumber(managementCut);
+    else
+        Session.managementCut = 0;
     end
 
     Session.title = GL:capitalize(string.sub(title, 0, 30));
@@ -423,7 +446,13 @@ function GDKP:restoreAuction(sessionIdentifier, auctionIdentifier)
     end
 
     -- Sort the states on createdAt so that we can get the most recent state
-    table.sort(Auction.PreviousStates, function (a, b)
+    table.sort(Auction.PreviousStates or {}, function (a, b)
+        if (not tonumber(a.createdAt or 0)
+            or not tonumber(b.createdAt or 0)
+        ) then
+            return true;
+        end
+
         return a.createdAt > b.createdAt;
     end);
 
@@ -555,15 +584,37 @@ function GDKP:storeCurrentAuction(winner, bid)
     return self:createAuction(itemID, bid, winner, nil, HighestBidPerPlayer);
 end
 
+--- Manually add gold to a pot
+---
+---@param sessionID string
+---@param gold number
+---@param player string
+---@param note string
+---@return boolean
+function GDKP:addGold(sessionID, gold, player, note)
+    GL:debug("GDKP:addGold");
+
+    note = strtrim(tostring(note));
+    local Auction = self:createAuction(Constants.GDKPPotIncreaseItemID, gold, player, sessionID, nil, note);
+
+    if (type(Auction) == "table") then
+        return true;
+    end
+
+    return false;
+end
+
 --- Create an auction
 ---
 ---@param itemID number
 ---@param price number
 ---@param winner string
 ---@param sessionIdentifier string
+---@param Bids table
+---@param note string
 ---
----@return boolean
-function GDKP:createAuction(itemID, price, winner, sessionIdentifier, Bids)
+---@return boolean|table
+function GDKP:createAuction(itemID, price, winner, sessionIdentifier, Bids, note)
     GL:debug("GDKP:createAuction");
 
     if ((not sessionIdentifier
@@ -587,6 +638,7 @@ function GDKP:createAuction(itemID, price, winner, sessionIdentifier, Bids)
         price = price,
         itemID = itemID,
         createdAt = GetServerTime(),
+        note = strtrim(tostring(note)),
         CreatedBy = {
             class = GL.User.class,
             guild = GL.User.Guild.name,
@@ -627,7 +679,7 @@ function GDKP:createAuction(itemID, price, winner, sessionIdentifier, Bids)
     -- Make sure we invalidate this item's history
     self.ItemHistory[itemID] = nil;
 
-    return true;
+    return Auction;
 end
 
 function GDKP:sanitizeAuction(Auction)
@@ -643,7 +695,7 @@ function GDKP:sanitizeAuction(Auction)
         or not tonumber(Auction.itemID)
         or not tonumber(Auction.price or 0) or 0 > 0
     ) then
-        GL:debug("GDKP:sanitizeAuction step 1 failed");
+        GL:xd("GDKP:sanitizeAuction step 1 failed");
         return false;
     end
 
@@ -659,16 +711,17 @@ function GDKP:sanitizeAuction(Auction)
         or type (Auction.CreatedBy.realm) ~= "string"
         or GL:empty(Auction.CreatedBy.realm)
     ) then
-        GL:debug("GDKP:sanitizeAuction step 2 failed");
+        GL:xd("GDKP:sanitizeAuction step 2 failed");
+        GL:xd(Auction);
         return false;
     end
 
     SanitizedAuction.CreatedBy = {
-        class = Auction.CreatedBy.class,
-        name = Auction.CreatedBy.name,
-        race = Auction.CreatedBy.race,
-        realm = Auction.CreatedBy.realm,
-        uuid = Auction.CreatedBy.uuid,
+        class = tostring(Auction.CreatedBy.class),
+        name = tostring(Auction.CreatedBy.name),
+        race = tostring(Auction.CreatedBy.race),
+        realm = tostring(Auction.CreatedBy.realm),
+        uuid = tostring(Auction.CreatedBy.uuid),
     };
 
     -- Add the winner's guild if he was part of one
@@ -678,7 +731,7 @@ function GDKP:sanitizeAuction(Auction)
         if (type(createdByGuild) ~= "string"
             or GL:empty(createdByGuild)
         ) then
-            GL:debug("GDKP:sanitizeAuction step 3 failed");
+            GL:xd("GDKP:sanitizeAuction step 3 failed");
             return;
         end
 
@@ -688,7 +741,7 @@ function GDKP:sanitizeAuction(Auction)
     --[[ Make sure the item ID is valid ]]
     SanitizedAuction.itemID = GetItemInfoInstant(Auction.itemID);
     if (not SanitizedAuction.itemID or 0 > 0) then
-        GL:debug("GDKP:sanitizeAuction step 4 failed");
+        GL:xd("GDKP:sanitizeAuction step 4 failed");
         return false;
     end
 
@@ -700,7 +753,7 @@ function GDKP:sanitizeAuction(Auction)
                 or not tonumber(Bid.bid or 0) or 0 > 0
                 or date('%Y', tonumber(Bid.createdAt) or 0) == "1970"
             ) then
-                GL:debug("GDKP:sanitizeAuction step 5 failed\n" .. GL.JSON:encode(Bid));
+                GL:xd("GDKP:sanitizeAuction step 5 failed\n" .. GL.JSON:encode(Bid));
                 return false;
             end
 
@@ -716,7 +769,7 @@ function GDKP:sanitizeAuction(Auction)
                 or type (Bidder.realm) ~= "string"
                 or GL:empty(Bidder.realm)
             ) then
-                GL:debug("GDKP:sanitizeAuction step 6 failed\n" .. GL.JSON:encode(Bidder));
+                GL:xd("GDKP:sanitizeAuction step 6 failed\n" .. GL.JSON:encode(Bidder));
                 return false;
             end
 
@@ -724,12 +777,12 @@ function GDKP:sanitizeAuction(Auction)
             SanitizedAuction.Bids = SanitizedAuction.Bids or {};
             SanitizedAuction.Bids[key] = {
                 Bidder = {
-                    class = Bidder.class,
-                    guild = Bidder.guild,
-                    name = Bidder.name,
-                    race = Bidder.race,
-                    realm = Bidder.realm,
-                    uuid = Bidder.uuid,
+                    class = tostring(Bidder.class),
+                    guild = tostring(Bidder.guild),
+                    name = tostring(Bidder.name),
+                    race = tostring(Bidder.race),
+                    realm = tostring(Bidder.realm),
+                    uuid = tostring(Bidder.uuid),
                 },
                 bid = tonumber(Bid.bid),
                 createdAt = tonumber(Bid.createdAt),
@@ -742,7 +795,7 @@ function GDKP:sanitizeAuction(Auction)
                 if (type(guild) ~= "string"
                     or GL:empty(guild)
                 ) then
-                    GL:debug("GDKP:sanitizeAuction step 7 failed");
+                    GL:xd("GDKP:sanitizeAuction step 7 failed");
                     return;
                 end
 
@@ -756,27 +809,34 @@ function GDKP:sanitizeAuction(Auction)
         local Winner = Auction.Winner;
 
         if (type(Winner) ~= "table"
-            or type (Winner.race) ~= "string"
-            or not GL:inTable(Constants.Races, Winner.race)
-            or type (Winner.class) ~= "string"
-            or not Constants.Classes[Winner.class]
+            or (not GL:empty(Winner.race) and (
+                type(Winner.race) ~= "string"
+                or not GL:inTable(Constants.Races, Winner.race)
+            ))
+            or (not GL:empty(Winner.class) and (
+                type(Winner.class) ~= "string"
+                or not Constants.Classes[Winner.class]
+            ))
+            or (not GL:empty(Winner.uuid) and (
+                type(Winner.uuid) ~= "string"
+                or not string.match(Winner.uuid, "^Player%-[0-9]+%-[A-Z0-9]+$")
+            ))
+            or (not GL:empty(Winner.realm) and
+                type(Winner.realm) ~= "string"
+            )
             or type (Winner.name) ~= "string"
             or GL:empty(Winner.name)
-            or type (Winner.uuid) ~= "string"
-            or not string.match(Winner.uuid, "^Player%-[0-9]+%-[A-Z0-9]+$")
-            or type (Winner.realm) ~= "string"
-            or GL:empty(Winner.realm)
         ) then
-            GL:debug("GDKP:sanitizeAuction step 8 failed\n" .. GL.JSON:encode(Winner));
+            GL:xd("GDKP:sanitizeAuction step 8 failed\n" .. GL.JSON:encode(Winner));
             return;
         end
 
         SanitizedAuction.Winner = {
-            race = Winner.race;
-            name = Winner.name;
-            class = Winner.class;
-            uuid = Winner.uuid;
-            realm = Winner.realm;
+            race = tostring(Winner.race);
+            name = tostring(Winner.name);
+            class = tostring(Winner.class);
+            uuid = tostring(Winner.uuid);
+            realm = tostring(Winner.realm);
         };
 
         -- Add the winner's guild if he was part of one
@@ -786,7 +846,7 @@ function GDKP:sanitizeAuction(Auction)
             if (type(guild) ~= "string"
                 or GL:empty(guild)
             ) then
-                GL:debug("GDKP:sanitizeAuction step 9 failed\n" .. GL.JSON:encode(Winner));
+                GL:xd("GDKP:sanitizeAuction step 9 failed\n" .. GL.JSON:encode(Winner));
                 return;
             end
 
@@ -796,13 +856,14 @@ function GDKP:sanitizeAuction(Auction)
 
     SanitizedAuction.createdAt = tonumber(Auction.createdAt);
     SanitizedAuction.itemID = tonumber(Auction.itemID);
-    SanitizedAuction.price = Auction.price;
+    SanitizedAuction.price = tonumber(Auction.price);
+    SanitizedAuction.note = strtrim(tostring(Auction.note));
 
     --[[ Make sure the checksum is valid ]]
     local checksum = SanitizedAuction.createdAt .. GL:stringHash({ SanitizedAuction.itemID, SanitizedAuction.createdAt, table.concat(SanitizedAuction.CreatedBy, ".") });
 
     if (checksum ~= Auction.ID) then
-        GL:debug("GDKP:sanitizeAuction step 10 failed");
+        GL:xd("GDKP:sanitizeAuction step 10 failed");
         return false;
     end
 
@@ -927,7 +988,10 @@ function GDKP:announceStart(itemLink, minimumBid, minimumIncrement, duration, an
 
     self:listenForBids();
 
-    minimumBid = math.max(minimumBid, GL:tableGet(self.CurrentAuction, "TopBid.bid", 0));
+    -- This is still the same item, use the previous highest bid as the starting point
+    if (itemLink == self.CurrentAuction.itemLink) then
+        minimumBid = math.max(minimumBid, GL:tableGet(self.CurrentAuction, "TopBid.bid", 0));
+    end
 
     GL.CommMessage.new(
         CommActions.startGDKPAuction,
@@ -1299,11 +1363,11 @@ function GDKP:listenForBids()
     self.listeningForBids = true;
 
     Events:register({
-        {"GDKPChatMsgWhisper", "CHAT_MSG_WHISPER"},
-        {"GDKPChatMsgParty", "CHAT_MSG_PARTY"},
-        {"GDKPChatMsgPartyLeader", "CHAT_MSG_PARTY_LEADER"},
-        {"GDKPChatMsgRaid", "CHAT_MSG_RAID"},
-        {"GDKPChatMsgRaidLeader", "CHAT_MSG_RAID_LEADER"},
+        {"GDKPChatMsgWhisperListener", "CHAT_MSG_WHISPER"},
+        {"GDKPChatMsgPartyListener", "CHAT_MSG_PARTY"},
+        {"GDKPChatMsgPartyLeaderListener", "CHAT_MSG_PARTY_LEADER"},
+        {"GDKPChatMsgRaidListener", "CHAT_MSG_RAID"},
+        {"GDKPChatMsgRaidLeaderListener", "CHAT_MSG_RAID_LEADER"},
     }, function (event, message, sender)
         self:processBid(event, message, sender);
     end);
@@ -1321,11 +1385,11 @@ function GDKP:stopListeningForBids()
 
     self.listeningForBids = false;
     Events:unregister({
-        "GDKPChatMsgWhisper",
-        "GDKPChatMsgParty",
-        "GDKPChatMsgPartyLeader",
-        "GDKPChatMsgRaid",
-        "GDKPChatMsgRaidLeader",
+        "GDKPChatMsgWhisperListener",
+        "GDKPChatMsgPartyListener",
+        "GDKPChatMsgPartyLeaderListener",
+        "GDKPChatMsgRaidListener",
+        "GDKPChatMsgRaidLeaderListener",
     });
 end
 
