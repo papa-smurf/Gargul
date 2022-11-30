@@ -124,7 +124,7 @@ function TimeLeft:draw()
     Window.texture = Texture;
     GL.Interface:set(self, "Window", Window);
 
-    local howToRollText = string.format("%s to roll out loot!", GL.Settings:get("ShortcutKeys.rollOff"));
+    local howToRollText = string.format("%s to roll out loot!", GL.Settings:get("ShortcutKeys.rollOffOrAuction"));
     local howToAwardText = string.format("%s to award loot!", GL.Settings:get("ShortcutKeys.award"));
     local Title = Window:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall");
     Title:SetPoint("TOPLEFT", 3, -3);
@@ -622,8 +622,15 @@ function TimeLeft:refreshBars()
 
             local keyPressIdentifier = GL.Events:getClickCombination(mouseButtonPressed);
 
-            -- Open the roll window
-            if (keyPressIdentifier == GL.Settings:get("ShortcutKeys.rollOff")) then
+            -- Open the action selection window
+            if (keyPressIdentifier == GL.Settings:get("ShortcutKeys.rollOffOrAuction")) then
+                if (GL.GDKP:hasActiveSession()) then
+                    GL.Interface.GDKP.Auctioneer:draw(BagItem.itemLink);
+                else
+                    GL.MasterLooterUI:draw(BagItem.itemLink);
+                end
+                -- Open the roll window
+            elseif (keyPressIdentifier == GL.Settings:get("ShortcutKeys.rollOff")) then
                 GL.MasterLooterUI:draw(BagItem.itemLink);
 
             -- Open the award window

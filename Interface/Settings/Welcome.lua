@@ -10,7 +10,7 @@ local AceGUI = GL.AceGUI;
 GL.Interface.Settings.Welcome = {
     description = string.format(
             "Welcome! Almost all of Gargul's features can be tested when not in a group, so go check them out\n\nRoll: |c00a79eff%s|r. Award: |c00a79eff%s|r. Disenchant: |c00a79eff%s|r\n|c00f7922eNote: hotkeys are disabled when the AH, mailbox, shop or bank are active!|r",
-            GL.Settings:get("ShortcutKeys.rollOff"),
+            GL.Settings:get("ShortcutKeys.rollOffOrAuction"),
             GL.Settings:get("ShortcutKeys.award"),
             GL.Settings:get("ShortcutKeys.disenchant")
     ),
