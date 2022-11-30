@@ -12,6 +12,7 @@ GL.Commands = GL.Commands or {
         cleardisenchanter = "Clear the disenchanter entry so you can pick a new one the next time around",
         setdisenchanter = "Sets the disenchanter entry directly without having to select one: /gl sd [mydisenchanter]",
         dft = "Open the DFT importer. Data exported from your DFT sheet can be imported here",
+        cpr = "Open the classicpr importer. Data exported from https://classicpr.io/ can be imported here",
         export = "Export dropped loot to a CSV format which is compatible with TMB for example.",
         groups = "Open the group window where you can provide a roster from csv/raidhelper/wowhead so that you can: see who's missing and sort groups automatically",
         import = "Opens the general import window that includes shortcuts to the TMB, SoftRes or loot priority importers",
@@ -130,7 +131,10 @@ GL.Commands = GL.Commands or {
         thatsmybis = function() GL.TMB:draw(); end,
 
         -- Open the TMB window with DFT skin
-        dft = function() GL.TMB:draw(true); end,
+        dft = function() GL.TMB:draw("dft"); end,
+
+        -- Open the TMB window with CPR skin
+        cpr = function() GL.TMB:draw("cpr"); end,
 
         -- Open the pack mule window
         packmule = function() GL.Settings:draw("PackMule"); end,

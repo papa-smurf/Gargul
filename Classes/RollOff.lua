@@ -211,6 +211,8 @@ function RollOff:announceStart(itemLink, time, note)
             local source = "TMB";
             if (GL.TMB:wasImportedFromDFT()) then
                 source = "DFT";
+            elseif (GL.TMB:wasImportedFromCPR()) then
+                source = "CPR";
             elseif (GL.TMB:wasImportedFromCSV()) then
                 source = "Item";
             end
