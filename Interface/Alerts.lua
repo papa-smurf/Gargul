@@ -17,8 +17,6 @@ GL.Interface.Alerts = {
     Types = {
 
         GargulNotification = AlertFrame:AddQueuedAlertFrameSubSystem("GargulNotification", function (self, Details)
-GL:error("IM IN THE NOTIFICATION FUNCTION!"); ---@todo: REMOVE
-
             -- Override the defaults with whatever the user wants to show
             Details = GL:tableMerge({
                 message = "",

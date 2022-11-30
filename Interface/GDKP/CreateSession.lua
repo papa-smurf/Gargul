@@ -72,13 +72,20 @@ function CreateSession:build()
 
         local managementCut = strtrim(ManagementCut:GetText());
         if (not GL:empty(managementCut)
-            and not tonumber(managementCut or 0) or 0 >= 0
+                and tonumber(managementCut)
+                and not GL:higherThanZero(tonumber(managementCut))
         ) then
             GL:warning("The cut needs to be empty or between 0 and 99");
             return;
         end
 
         local Session = GL.GDKP:createSession(title, managementCut);
+
+        if (not Session) then
+            GL:warning("Something went wrong while creating the session!");
+            return;
+        end
+
         if (SwitchCheckbox:GetValue()) then
             GL.GDKP:setActiveSession(Session.ID);
         end

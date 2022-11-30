@@ -288,8 +288,10 @@ function GDKP:createSession(title, managementCut)
         return false;
     end
 
+    managementCut = strtrim(managementCut);
     if (not GL:empty(managementCut)
-        and not tonumber(managementCut or 0) or 0 >= 0
+        and tonumber(managementCut)
+        and not GL:higherThanZero(tonumber(managementCut))
     ) then
         return false;
     end
@@ -705,7 +707,7 @@ function GDKP:sanitizeAuction(Auction)
         or type (Auction.CreatedBy.name) ~= "string"
         or GL:empty(Auction.CreatedBy.name)
         or type (Auction.CreatedBy.race) ~= "string"
-        or not GL:inTable(Constants.Races, Auction.CreatedBy.race)
+        or not Constants.Races[Auction.CreatedBy.race]
         or type (Auction.CreatedBy.uuid) ~= "string"
         or not string.match(Auction.CreatedBy.uuid, "^Player%-[0-9]+%-[A-Z0-9]+$")
         or type (Auction.CreatedBy.realm) ~= "string"
@@ -763,7 +765,7 @@ function GDKP:sanitizeAuction(Auction)
                 or type (Bidder.name) ~= "string"
                 or GL:empty(Bidder.name)
                 or type (Bidder.race) ~= "string"
-                or not GL:inTable(Constants.Races, Bidder.race)
+                or not Constants.Races[Bidder.race]
                 or type (Bidder.uuid) ~= "string"
                 or not string.match(Bidder.uuid, "^Player%-[0-9]+%-[A-Z0-9]+$")
                 or type (Bidder.realm) ~= "string"
@@ -811,7 +813,7 @@ function GDKP:sanitizeAuction(Auction)
         if (type(Winner) ~= "table"
             or (not GL:empty(Winner.race) and (
                 type(Winner.race) ~= "string"
-                or not GL:inTable(Constants.Races, Winner.race)
+                or not Constants.Races[Winner.race]
             ))
             or (not GL:empty(Winner.class) and (
                 type(Winner.class) ~= "string"
