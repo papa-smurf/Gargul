@@ -103,7 +103,7 @@ function User:refresh()
     self.combatRole = nil;
     self.class, self.fileName = UnitClass("player");
     self.class = string.lower(self.class);
-    _, self.race = UnitRace("player");
+    self.localizedRace, self.race = UnitRace("player");
     self.race = string.lower(self.race);
 
     if (self.isInGroup) then
