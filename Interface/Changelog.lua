@@ -16,6 +16,7 @@ GL.Interface.Changelog = {
             date = "December 1st, 2022",
             Changes = {
                 "Gargul now also supports prio3 runs using |c00a79effhttp://classicpr.io/|r. Go check them out and use the |c00a79eff/gl cpr|r command in-game to import!",
+                "PackMule's auto group loot is automatically disabled when leaving the raid/group. Check out the settings in |c00a79eff/gl pm|r!",
             },
         },
         {
