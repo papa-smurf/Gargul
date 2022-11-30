@@ -81,6 +81,7 @@ GL.Data.Constants = {
             "Tonio",
         },
         Uncommon = {
+            "CarbonFury",
             "Sneaky",
             "Snickels",
         },
@@ -95,6 +96,7 @@ GL.Data.Constants = {
         },
         Epic = {
             "Die_Quelle",
+            "Sapmagic",
         },
         Legendary = {
             "Cuckster",
