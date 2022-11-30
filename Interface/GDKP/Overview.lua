@@ -26,6 +26,7 @@ GL:tableSet(GL, "Interface.GDKP.Overview", {
     _initialized = false,
     isVisible = false,
     selectedSession = nil,
+    styleWindowAfterResize = nil,
 
     -- All action buttons are stored here so we can release them properly
     ActionButtons = {},
@@ -52,6 +53,7 @@ function Overview:_init()
         GL.Ace:ScheduleTimer(function()
             self:updatePot();
             self:refreshLedger();
+            self.styleWindowAfterResize();
         end, .1);
     end);
 
@@ -61,6 +63,8 @@ function Overview:_init()
     }, function()
         if (not self.isVisible) then return; end
         self:refreshSessions();
+        self:refreshLedger();
+        self.styleWindowAfterResize();
     end);
 
     GL.Events:register({
@@ -68,6 +72,8 @@ function Overview:_init()
         { "GDKPOverviewGDKPOverviewSessionsRefreshed", "GL.GDKP_OVERVIEW_SESSIONS_REFRESHED" }
     }, function ()
         self:sessionChanged();
+        self:refreshLedger();
+        self.styleWindowAfterResize();
     end);
 end
 
@@ -196,12 +202,15 @@ function Overview:build()
     PotIconFrame:Show();
 
     PotIcon:SetCallback("OnClick", function ()
-        GL.Test:simulateGroup(24) ---@todo: REMOVE!
         Interface.GDKP.Distribute:open(self.selectedSession);
         Window.frame:Hide();
     end);
 
     PotIcon:SetCallback("OnEnter", function ()
+        if (not self.selectedSession) then
+            return;
+        end
+
         local Session = GDKP:getSessionByID(self.selectedSession);
         local pot = GDKP:pot(Session.ID);
         local numberOfRaidMembers = math.max(#GL.User:groupMemberNames() - 1, 1);
@@ -270,11 +279,13 @@ function Overview:build()
     local Title = AceGUI:Create("Label");
     Title:SetFontObject(_G["GameFontNormalLarge"]);
     Title:SetFullWidth(true);
+    Title:SetText("\n ");
     SecondColumn:AddChild(Title);
 
     local Note = AceGUI:Create("Label");
     Note:SetFontObject(_G["GameFontNormalSmall"]);
     Note:SetFullWidth(true);
+    Note:SetText("\n ");
     SecondColumn:AddChild(Note);
 
     local ScrollFrameHolder = AceGUI:Create("InlineGroup");
@@ -290,7 +301,7 @@ function Overview:build()
             Interface.GDKP.AddGold:toggle(self.selectedSession);
         end,
         tooltip = "Add gold to pot",
-        disabledTooltip = "You need lead or master loot to add gold.\nYou can't add godl to deleted sessions",
+        disabledTooltip = "You need lead or master loot to add gold.\nYou can't add gold to deleted sessions",
         normalTexture = "Interface\\AddOns\\Gargul\\Assets\\Buttons\\create",
         disabledTexture = "Interface\\AddOns\\Gargul\\Assets\\Buttons\\create-disabled",
         update = function (self)
@@ -306,7 +317,7 @@ function Overview:build()
         tooltip = "Broadcast data",
         disabledTooltip = "Broadcast data: you need loot master, assist or lead!",
         position = "TOPCENTER",
-        update = function (self) self:SetEnabled(GDKP:userIsAllowedToBroadcast()); end,
+        update = function (self) self:SetEnabled(self.selectedSession and GDKP:userIsAllowedToBroadcast()); end,
         updateOn = "GROUP_ROSTER_UPDATE",
         x = 16,
     });
@@ -391,7 +402,7 @@ function Overview:build()
     self:refreshSessions();
 
     local originalOnHeightSet = Window.OnHeightSet;
-    local styleWindowAfterResize = function ()
+    self.styleWindowAfterResize = function ()
         SecondColumn:SetWidth(math.max(WindowFrame:GetWidth() - FirstColumn.frame:GetWidth() - 50, 100));
         ScrollFrameHolder:DoLayout();
         SecondColumn:DoLayout();
@@ -401,12 +412,12 @@ function Overview:build()
     end;
     Window.OnHeightSet = function (...)
         originalOnHeightSet(...);
-        styleWindowAfterResize();
+        self.styleWindowAfterResize();
     end
 
     GL.Ace:ScheduleTimer(function()
         self:refreshLedger();
-        styleWindowAfterResize();
+        self.styleWindowAfterResize();
     end, .05);
 
     return Window;
@@ -446,13 +457,22 @@ function Overview:getSelectedSession()
     return GDKP:getSessionByID(sessionIdentifier);
 end
 
+---@return void
 function Overview:refreshLedger()
     GL:debug("Overview:drawDetails");
+
+    if (not self.selectedSession) then
+        return self:showTutorial();
+    end
 
     local Session = self:getSelectedSession();
 
     if (not Session) then
         return GL:warning(string.format("Unknown GDKP session '%s'", self.selectedSession));
+    end
+
+    if (GL:empty(Session.Auctions)) then
+        return self:showTutorial();
     end
 
     self:clearDetailsFrame();
@@ -689,6 +709,79 @@ function Overview:refreshLedger()
     end);
 
     Interface:get(self, "GDKPOverview"):DoLayout();
+end
+
+---@return void
+function Overview:showTutorial()
+    GL:debug("Overview:drawDetails");
+
+    self:clearDetailsFrame();
+
+    local Wrapper = Interface:get(self, "Frame.SectionWrapper");
+    local Details = GL.AceGUI:Create("ScrollFrame");
+    Details:SetLayout("Flow");
+    Interface:set(self, "SessionDetails", Details);
+    Wrapper:AddChild(Details);
+
+    local Title = Interface:get(self, "Label.Title");
+    Title:SetText("\n|c00FFF569Getting started|r");
+
+    local Note = Interface:get(self, "Label.Note");
+    Note:SetText("|c00a79effFollow the steps below to quickly get started with Gargul GDKP!|r");
+
+    local Steps = {
+        {1, "|c00a79effClick the |c00FFF569New|r button below to create a GDKP session. It will show on the left when done.|r"},
+        {2, "|c00a79effMake sure your session says |c00FFF569(active)|r. If that's not the case then click the |c00a79effEnable|r button below!|r"},
+        {3, string.format("|c00a79effYou can now start auctioning off items. Open your inventory, |c00FFF569%s|r an item and start. Don't forget to award the item when you're done!|r", GL.Settings:get("ShortcutKeys.rollOffOrAuction"))},
+        {4, "|c00a79effIf all went well then, instead of this tutorial, you should see your freshly auctioned item(s) here!|r"},
+    };
+
+    table.sort(Steps, function (a, b)
+        return a[1] < b[1];
+    end);
+
+    -- Add placeholders for all the item icons and labels
+    for order, Step in pairs(Steps) do
+        local step = Step[2];
+        local iconPath = "Interface/AddOns/Gargul/Assets/Icons/" .. order;
+
+        local ItemRow = AceGUI:Create("SimpleGroup");
+        ItemRow:SetLayout("FLOW")
+        ItemRow:SetHeight(30);
+        ItemRow:SetFullWidth(true);
+        Details:AddChild(ItemRow);
+
+        --[[
+            ITEM ICON
+        ]]
+        local ItemIcon = AceGUI:Create("Icon");
+        ItemIcon:SetWidth(30);
+        ItemIcon:SetHeight(30);
+        ItemIcon:SetImageSize(30, 30);
+        ItemIcon:SetImage(iconPath);
+        ItemRow:AddChild(ItemIcon);
+
+        --[[
+           ITEM ICON/LABEL SPACER
+        ]]
+        local ItemSpacer = AceGUI:Create("SimpleGroup");
+        ItemSpacer:SetLayout("FILL")
+        ItemSpacer:SetWidth(10);
+        ItemSpacer:SetHeight(30);
+        ItemRow:AddChild(ItemSpacer);
+
+        --[[
+            ITEM LABEL
+        ]]
+        local ItemLabel = AceGUI:Create("Label");
+        ItemLabel:SetFontObject(_G["GameFontNormalSmall"]);
+        ItemLabel:SetWidth(268);
+        ItemLabel:SetText(step);
+        ItemRow:AddChild(ItemLabel);
+    end
+
+    Interface:get(self, "GDKPOverview"):DoLayout();
+    self.styleWindowAfterResize();
 end
 
 --- Make sure we re-use button frames whenever possible
