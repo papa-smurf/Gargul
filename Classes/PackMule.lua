@@ -52,6 +52,10 @@ function PackMule:_init()
         self:zoneChanged();
     end);
 
+    GL.Events:register("PackMuleUserLeftGroupListener", "GL.USER_LEFT_GROUP", function ()
+        self:leftGroup();
+    end);
+
     -- Whenever an item drops that is eligible for rolling trigger the highlighter and packmule rules
     GL.Events:register("PackMuleStartLootRollListener", "START_LOOT_ROLL", function (_, rollID)
         self:processGroupLootItems(rollID);
@@ -253,7 +257,18 @@ function PackMule:isItemIDIgnored(itemID, callback)
     end, 2);
 end
 
---- Disable PackMule after a zone switch, unless enabled in settings
+--- Disable PackMule after leaving a group
+---
+---@return void
+function PackMule:leftGroup()
+    GL:debug("PackMule:leftGroup");
+
+    if (Settings:get("PackMule.autoDisableForGroupLoot")) then
+        Settings:set("PackMule.enabledForGroupLoot", false);
+    end
+end
+
+--- Check whether the user is in a heroic instance
 ---
 ---@return void
 function PackMule:zoneChanged()

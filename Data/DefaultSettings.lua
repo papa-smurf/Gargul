@@ -72,6 +72,7 @@ GL.Data.DefaultSettings = {
         announceDisenchantedItems = true,
         autoConfirmSolo = false,
         autoConfirmGroup = false,
+        autoDisableForGroupLoot = true,
         enabledForGroupLoot = false,
         enabledForMasterLoot = false,
         Rules = {},

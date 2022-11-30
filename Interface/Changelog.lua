@@ -12,6 +12,13 @@ GL.Interface.Changelog = {
 
     History = {
         {
+            version = "4.12.14",
+            date = "December 1st, 2022",
+            Changes = {
+                "PackMule's auto group loot is automatically disabled when leaving the raid/group. Check out the settings in |c00a79eff/gl pm|r!",
+            },
+        },
+        {
             version = "4.12.13",
             date = "November 29th, 2022",
             Changes = {
