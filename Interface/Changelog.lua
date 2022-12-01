@@ -12,6 +12,13 @@ GL.Interface.Changelog = {
 
     History = {
         {
+            version = "4.12.14",
+            date = "December 1st, 2022",
+            Changes = {
+                "Gargul now also supports prio3 runs using |c00a79effhttp://classicpr.io/|r. Go check them out and use the |c00a79eff/gl cpr|r command in-game to import!",
+            },
+        },
+        {
             version = "4.12.13",
             date = "November 29th, 2022",
             Changes = {
