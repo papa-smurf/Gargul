@@ -98,33 +98,33 @@ function User:refresh()
     self.isInGroup = self.isInRaid or self.isInParty;
     self.hasAssist = false;
     self.isLead = false;
+    self.isMasterLooter = false;
     self.raidIndex = nil;
+    self.combatRole = nil;
     self.class, self.fileName = UnitClass("player");
     self.class = string.lower(self.class);
-    _, self.race = UnitRace("player");
+    self.localizedRace, self.race = UnitRace("player");
     self.race = string.lower(self.race);
 
-    if (not self.isInGroup) then
-        return;
-    end
+    if (self.isInGroup) then
+        -- Check if the current user is master looting
+        -- And check the user's roles in the group
+        for index = 1, _G.MAX_RAID_MEMBERS do
+            local name, rank, _, _, class, _,
+            _, _, _, role, isMasterLooter, combatRole = GetRaidRosterInfo(index);
 
-    -- Check if the current user is master looting
-    -- And check the user's roles in the group
-    for index = 1, _G.MAX_RAID_MEMBERS do
-        local name, rank, _, _, class, _,
-        _, _, _, role, isMasterLooter, combatRole = GetRaidRosterInfo(index);
+            GL.Player:cacheClass(name, class); -- We cache player classes wherever we can
 
-        GL.Player:cacheClass(name, class); -- We cache player classes wherever we can
+            if (name == self.name) then
+                self.role = role;
+                self.raidIndex = index;
+                self.isLead = rank == 2;
+                self.hasAssist = rank >= 1;
+                self.combatRole = combatRole;
+                self.isMasterLooter = isMasterLooter;
 
-        if (name == self.name) then
-            self.role = role;
-            self.raidIndex = index;
-            self.isLead = rank == 2;
-            self.hasAssist = rank >= 1;
-            self.combatRole = combatRole;
-            self.isMasterLooter = isMasterLooter;
-
-            break;
+                break;
+            end
         end
     end
 

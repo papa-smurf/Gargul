@@ -32,13 +32,15 @@ function PackMule:draw(Parent)
     local Checkboxes = {
         {
             label = "Enable for Master Loot",
-            description = "The PackMule rules will be applied if you're master looting",
             setting = "PackMule.enabledForMasterLoot",
         },
         {
             label = "Enable for Group Loot",
-            description = "The PackMule (NEED|GREED|PASS|IGNORE) rules apply in group loot",
             setting = "PackMule.enabledForGroupLoot",
+        },
+        {
+            label = "Disable for Group Loot when leaving group",
+            setting = "PackMule.autoDisableForGroupLoot",
         },
         {
             label = "Auto confirm loot when solo",

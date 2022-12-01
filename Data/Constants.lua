@@ -79,6 +79,7 @@ GL.Data.Constants = {
             "Tonio",
         },
         Uncommon = {
+            "CarbonFury",
             "Sneaky",
             "Snickels",
         },
@@ -93,6 +94,7 @@ GL.Data.Constants = {
         },
         Epic = {
             "Die_Quelle",
+            "Sapmagic",
         },
         Legendary = {
             "Cuckster",
@@ -363,20 +365,20 @@ GL.Data.Constants = {
     },
 
     Races = {
-        'human',
-        'dwarf',
-        'nightelf',
-        'gnome',
-        'draenei',
-        'worgen',
-        'orc',
-        'undead',
-        'tauren',
-        'troll',
-        'bloodelf',
-        'goblin',
-        'pandaren',
-        'dracthyr',
+        human = "Human",
+        dwarf = "Dwarf",
+        nightelf = "Night Elf",
+        gnome = "Gnome",
+        draenei = "Draenei",
+        worgen = "Worgen",
+        orc = "orc",
+        scourge = "Undead",
+        tauren = "Tauren",
+        troll = "Troll",
+        bloodelf = "Blood Elf",
+        goblin = "Goblin",
+        pandaren = "Pandaren",
+        dracthyr = "Dracthyr",
     },
 
     ClassHexColors = {
