@@ -32,7 +32,8 @@ function Player.fromID(GUID)
     local self = Player._new();
 
     self.id = GUID;
-    _, self.class, _, self.race, self.gender, self.name = GetPlayerInfoByGUID(self.id)
+    self.localizedClass, self.class, self.localizedRace, self.race, self.gender, self.name = GetPlayerInfoByGUID(self.id);
+    self.race = string.lower(self.race);
 
     -- The GUID turns out to be invalid, destroy the player object
     if (not self.name or not type(self.name) == "string") then

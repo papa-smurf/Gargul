@@ -345,6 +345,8 @@ function TMB:tooltipLines(itemLink)
         local source = "TMB";
         if (self:wasImportedFromDFT()) then
             source = "DFT";
+        elseif (self:wasImportedFromCPR()) then
+            source = "CPR";
         elseif (self:wasImportedFromCSV()) then
             source = "Item";
         end
@@ -419,12 +421,12 @@ end
 --- based on the current TMB data
 ---
 ---@return void
-function TMB:draw(showDFT)
+function TMB:draw(source)
     GL:debug("TMB:draw");
 
     -- No data available, show importer
     if (not self:available()) then
-        GL.Interface.TMB.Importer:draw(showDFT);
+        GL.Interface.TMB.Importer:draw(source);
         return;
     end
 
@@ -447,6 +449,13 @@ function TMB:wasImportedFromDFT()
     return self:available() and GL:toboolean(GL.DB.TMB.MetaData.importedFromDFT);
 end
 
+--- Check whether the current TMB data was imported from CPR
+---
+---@return boolean
+function TMB:wasImportedFromCPR()
+    return self:available() and GL:toboolean(GL.DB.TMB.MetaData.importedFromCPR);
+end
+
 --- Check whether the current TMB data was imported from CSV
 ---
 ---@return boolean
@@ -459,7 +468,7 @@ end
 ---@param data string
 ---@param triedToDecompress boolean
 ---@return boolean
-function TMB:import(data, triedToDecompress)
+function TMB:import(data, triedToDecompress, source)
     GL:debug("TMB:import");
 
     local jsonDecodeSucceeded;
@@ -512,7 +521,7 @@ function TMB:import(data, triedToDecompress)
         and not GL:strStartsWith(data, "{\"wishlists\":")
     ) then
         data = TMB:decompress(data);
-        return TMB:import(data, true);
+        return TMB:import(data, true, source);
     end
 
     -- In case of a DFT format, data will already be a table
@@ -638,6 +647,7 @@ function TMB:import(data, triedToDecompress)
     GL.DB.TMB.MetaData = {
         importedFromDFT = GL:toboolean(WebsiteData.importedFromDFT),
         importedFromCSV = GL:toboolean(WebsiteData.importedFromCSV),
+        importedFromCPR = source == "cpr",
         importedAt = GetServerTime(),
         hash = GL:uuid() .. GetServerTime(),
     };

@@ -11,7 +11,7 @@ GL:tableSet(GL, "Interface.TMB.Importer", {
 
 local Importer = GL.Interface.TMB.Importer;
 
-function Importer:draw(showDFT)
+function Importer:draw(source)
     GL:debug("Importer:draw");
 
     if (self.isVisible) then
@@ -38,7 +38,7 @@ function Importer:draw(showDFT)
     _G["GARGUL_SOFTRES_IMPORTER_WINDOW"] = Window.frame;
     tinsert(UISpecialFrames, "GARGUL_SOFTRES_IMPORTER_WINDOW");
 
-    if (showDFT) then
+    if (source == "dft") then
         Window:SetHeight(480);
 
         -- Explanation
@@ -46,6 +46,15 @@ function Importer:draw(showDFT)
         Description:SetFontObject(_G["GameFontNormal"]);
         Description:SetFullWidth(true);
         Description:SetText("Export your DFT data as per the sheet's instructions. Afterwards paste the contents as-is in the box below and click 'Import'. That's it!");
+        Window:AddChild(Description);
+    elseif (source == "cpr") then
+        Window:SetHeight(480);
+
+        -- Explanation
+        local Description = AceGUI:Create("Label");
+        Description:SetFontObject(_G["GameFontNormal"]);
+        Description:SetFullWidth(true);
+        Description:SetText("On your classicpr.io run click on the 'Gargul Export' button and copy the contents. Afterwards paste the contents as-is in the box below and click 'Import'. That's it!");
         Window:AddChild(Description);
     else
         Window:SetHeight(520);
@@ -119,7 +128,7 @@ function Importer:draw(showDFT)
     ImportButton:SetText("Import");
     ImportButton:SetWidth(140);
     ImportButton:SetCallback("OnClick", function()
-        GL.TMB:import(TMBBoxContent);
+        GL.TMB:import(TMBBoxContent, nil, source);
     end);
     Window:AddChild(ImportButton);
 end

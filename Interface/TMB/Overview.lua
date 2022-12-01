@@ -52,6 +52,8 @@ function Overview:draw()
     local source = "TMB";
     if (GL.TMB:wasImportedFromDFT()) then
         source = "DFT";
+    elseif (GL.TMB:wasImportedFromCPR()) then
+        source = "CPR";
     end
 
     local VerticalSpacer = GL.AceGUI:Create("SimpleGroup");
