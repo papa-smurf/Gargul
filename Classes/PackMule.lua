@@ -876,6 +876,11 @@ function PackMule:roundRobinTargetForRule(Rule)
         ruleId = Rule.item;
     end
 
+    -- This is apparently possible?
+    if (not ruleId) then
+        return;
+    end
+
     -- first time we've seen this item
     if (not self.RoundRobinItems[ruleId]) then
         self.RoundRobinItems[ruleId] = {};
