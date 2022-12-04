@@ -36,13 +36,13 @@ function AwardingLoot:draw(Parent)
             setting = "PackMule.announceDisenchantedItems",
         },
         {
-            label = "Auto assign loot",
-            description = "Auto assign an item to the winner after awarding an item (with master loot enabled and boss window still open)",
+            label = "Auto assign master loot items",
+            description = "Auto assign an item to the winner after awarding it through master loot (with boss window still open)",
             setting = "AwardingLoot.autoAssignAfterAwardingAnItem",
         },
         {
-            label = "Auto trade loot",
-            description = "If master loot is disabled, you are not the master looter or the boss' loot window is closed attempt to open a trade window with the winner of the item and put the item in the trade window automatically",
+            label = "Auto trade winner",
+            description = "If you award an item from your inventory then automatically trade the winner if he's within reach",
             setting = "AwardingLoot.autoTradeAfterAwardingAnItem",
         },
     };
