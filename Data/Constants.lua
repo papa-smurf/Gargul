@@ -99,6 +99,7 @@ GL.Data.Constants = {
         Legendary = {
             "Cuckster",
             "Freezythree",
+            "TiredReyun",
         },
     },
 
