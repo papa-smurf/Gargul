@@ -489,6 +489,14 @@ function SoftRes:getHardReservedByLink(itemLink)
     return self.MaterializedData.HardReserveDetailsByID[tostring(itemID)];
 end
 
+--- Check whether a given item id is hard-reserved
+---
+---@param itemID number|string
+---@return boolean
+function SoftRes:IDIsHardReserved(itemID)
+    return self.MaterializedData.HardReserveDetailsByID[tostring(itemID)] ~= nil;
+end
+
 --- Check whether a given itemlink is hard-reserved
 ---
 ---@param itemLink string
