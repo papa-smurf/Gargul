@@ -20,6 +20,9 @@ AceGUILabel = {};
 ---@class AceGUIEditBox
 AceGUIEditBox = {};
 
+---@class AceGUICheckBox
+AceGUICheckBox = {};
+
 ---@class AceGUIMultiLineEditBox
 AceGUIMultiLineEditBox = {};
 
@@ -182,6 +185,22 @@ function AceGUIEditBox:ClearAllPoints(); end
 
 ---@type Frame
 AceGUIEditBox.frame = Frame;
+
+--[[ AceGUICheckBox ]]
+---@param trueOrFalse boolean
+function AceGUICheckBox:SetDisabled(trueOrFalse); end
+
+---@param value boolean
+function AceGUICheckBox:SetValue(value); end
+
+---@param onChangeDo function
+function AceGUICheckBox:SetCallBack(onChangeDo); end
+
+---@param label string
+function AceGUICheckBox:SetLabel(label); end
+
+---@type Frame
+AceGUICheckBox.frame = Frame;
 
 --[[ AceGUIMultiLineEditBox ]]
 ---@param trueOrFalse boolean
