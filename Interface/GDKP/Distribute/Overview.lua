@@ -6,31 +6,38 @@ local AceGUI = LibStub("AceGUI-3.0");
 ---@type Interface
 local Interface = GL.Interface;
 
+---@type Data
+local Constants = GL.Data.Constants;
+
 ---@type Events
 local Events = GL.Events;
 
----@type GDKP
-local GDKP = GL.GDKP;
+---@type GDKPSession
+local GDKPSession = GL.GDKP.Session;
+
+---@type GDKPPot
+local GDKPPot = GL.GDKP.Pot;
+
+GL.Interface.GDKP.Distribute = GL.Interface.GDKP.Distribute or {};
 
 ---@class GDKPDistribute
-GL.Interface.GDKP.Distribute = {
+GL.Interface.GDKP.Distribute.Overview = {
     isVisible = false,
-    session = nil,
+    sessionID = nil,
 
     CutHolders = {}, -- The labels that hold the actula cut values
     MutationFrame = nil,
-    Mutators = {},
     PotDistributionDetails = {},
 };
 
 ---@type GDKPDistribute
-local Distribute = GL.Interface.GDKP.Distribute;
+local Overview = GL.Interface.GDKP.Distribute.Overview;
 
 ---@return void
-function Distribute:open(sessionID)
-    GL:debug("Interface.GDKP.Distribute:open");
+function Overview:open(sessionID)
+    GL:debug("Interface.GDKP.Overview:open");
 
-    local Session = GDKP:getSessionByID(sessionID);
+    local Session = GDKPSession:byID(sessionID);
     if (not Session) then
         return;
     end
@@ -40,18 +47,7 @@ function Distribute:open(sessionID)
         Window = self:build();
     end
 
-    self.Mutators = GL:tableGet(Session, "Pot.Mutators", nil) or {
-        --mgmt = {title="mgmt", percentage=20, flat=0, AutoGiveOnRolls={"LEAD"}},
-        --mgmt = {title="mgmt", percentage=20, flat=0,},
-        tank = {title="tank", percentage=2, flat=0, AutoGiveOnRolls={"TANK"}},
-        healer = {title="healer", percentage=1, flat=0, AutoGiveOnRolls={"HEALER"}},
-        --dps1 = {title="dps1", percentage=2, flat=0},
-        --dps2 = {title="dps2", percentage=1, flat=0},
-        --dps3 = {title="dps3", percentage=.5, flat=0},
-        utility = {title="utility", percentage=.5, flat=0, AutoGiveOnRolls={"MASTERLOOTER", "ROGUE"}},
-    };
-
-    self.session = sessionID;
+    self.sessionID = sessionID;
     self:refresh();
 
     if (self.isVisible) then
@@ -63,8 +59,8 @@ function Distribute:open(sessionID)
 end
 
 ---@return void
-function Distribute:build()
-    GL:debug("Distribute:build");
+function Overview:build()
+    GL:debug("Overview:build");
 
     ---@type AceGUIFrame
     local Window = Interface:get(self, "GDKPDistribute");
@@ -74,29 +70,55 @@ function Distribute:build()
         return;
     end
 
+    Events:register("GDKPMutatorCreatedListener", "GL.GDKP_MUTATOR_CREATED", function ()
+        self:refresh();
+    end);
+
     ---@type AceGUIFrame
     Window = AceGUI:Create("Frame");
     Interface:AceGUIDefaults(self, Window, "GDKPDistribute", 700, 550);
     Interface:resizeBounds(Window, 700, 550);
 
     ---@type AceGUIInlineGroup
-    local MutationsHeader = AceGUI:Create("InlineGroup");
-    MutationsHeader:SetFullWidth(true);
-    Window:AddChild(MutationsHeader);
+    local MutatorsHeader = AceGUI:Create("InlineGroup");
+    MutatorsHeader:SetFullWidth(true);
+    Window:AddChild(MutatorsHeader);
 
     ---@type AceGUILabel
-    local MutationsLabel = AceGUI:Create("Label");
-    MutationsLabel:SetText("Mutations");
-    MutationsLabel:SetWidth(150);
-    MutationsHeader:AddChild(MutationsLabel);
+    local MutatorsLabel = AceGUI:Create("Label");
+    MutatorsLabel:SetText("    Mutators");
+    MutatorsLabel:SetWidth(150);
+    MutatorsHeader:AddChild(MutatorsLabel);
+
+    local HelpIcon = AceGUI:Create("Icon");
+    HelpIcon:SetWidth(12);
+    HelpIcon:SetHeight(12);
+    HelpIcon:SetImageSize(12, 12);
+    HelpIcon:SetImage("interface/friendsframe/informationicon");
+    HelpIcon.frame:SetParent(MutatorsLabel.frame);
+    HelpIcon.frame:SetPoint("BOTTOMLEFT", MutatorsHeader.frame, "BOTTOMLEFT", 7, 8);
+    HelpIcon.frame:Show();
+
+    HelpIcon:SetCallback("OnEnter", function()
+        GameTooltip:SetOwner(HelpIcon.frame, "ANCHOR_RIGHT");
+        GameTooltip:AddLine(" ");
+        GameTooltip:AddLine("With mutators you can give more or less to players");
+        GameTooltip:AddLine("Example: giving 2% extra to tanks is what mutators are for!");
+        GameTooltip:AddLine(" ");
+        GameTooltip:Show();
+    end);
+
+    HelpIcon:SetCallback("OnLeave", function()
+        GameTooltip:Hide();
+    end);
 
     ---@type AceGUISimpleGroup
-    local Mutations = AceGUI:Create("SimpleGroup");
-    Mutations:SetFullWidth(true);
-    Mutations:SetLayout("List");
-    Mutations:SetHeight(150);
-    Window:AddChild(Mutations);
-    Interface:set(self, "Mutations", Mutations);
+    local Mutators = AceGUI:Create("SimpleGroup");
+    Mutators:SetFullWidth(true);
+    Mutators:SetLayout("List");
+    Mutators:SetHeight(150);
+    Window:AddChild(Mutators);
+    Interface:set(self, "Mutators", Mutators);
 
     ---@type AceGUIInlineGroup
     local RaidersHeader = AceGUI:Create("InlineGroup");
@@ -150,7 +172,15 @@ function Distribute:build()
     Announce:SetWidth(150);
     Announce:SetHeight(20);
     Announce:SetCallback("OnClick", function()
-        GL.Interface.GDKP.Announce:open(self.selectedSession);
+        GL:xd("ANNOUNCE!");
+    end);
+
+    local Import = AceGUI:Create("Button");
+    Import:SetText("Import");
+    Import:SetWidth(150);
+    Import:SetHeight(20);
+    Import:SetCallback("OnClick", function()
+        GL.Interface.GDKP.Distribute.Import:open(self.sessionID);
     end);
 
     local Export = AceGUI:Create("Button");
@@ -169,7 +199,7 @@ function Distribute:build()
         GL.Interface.GDKP.Export:open(self.selectedSession);
     end);
 
-    Footer:AddChildren(Announce, Export, LockAndPay);
+    Footer:AddChildren(Announce, Import, Export, LockAndPay);
 
     Window.OnHeightSet = function (...)
         self:resizeFrames();
@@ -179,39 +209,53 @@ function Distribute:build()
 end
 
 ---@return void
-function Distribute:close()
-    GL:debug("Distribute:close");
+function Overview:close()
+    GL:debug("Overview:close");
 
     self.isVisible = false;
+
+    self:closeSubWindows();
 end
 
-function Distribute:refresh()
-    GL:debug("Distribute:refresh");
+---@return void
+function Overview:closeSubWindows()
+    GL:debug("Overview:closeSubWindows");
 
-    local Session = GDKP:getSessionByID(self.session);
+    Interface.GDKP.Distribute.Import:close();
+end
+
+function Overview:refresh()
+    GL:debug("Overview:refresh");
+
+    local Session = GDKPSession:byID(self.sessionID);
 
     if (type(Session) ~= "table") then
         return;
     end
 
-    local MutationsFrame = Interface:get(self, "Frame.Mutations");
+    local MutatorsFrame = Interface:get(self, "Frame.Mutators");
     local RaidersFrame = Interface:get(self, "Frame.Raiders");
     local RaidersTableHeader = Interface:get(self, "Frame.RaidersTableHeader");
     local Window = Interface:get(self, "GDKPDistribute");
 
     if (not Window
-        or not MutationsFrame
+        or not MutatorsFrame
         or not RaidersFrame
     ) then
         return;
     end
 
+    self:calculateCuts();
+    local PotDistributionDetails = Session.Pot.DistributionDetails or {};
+
     self.CutHolders = {};
-    MutationsFrame:ReleaseChildren();
+    MutatorsFrame:ReleaseChildren();
     RaidersFrame:ReleaseChildren();
     RaidersTableHeader:ReleaseChildren();
 
-    local totalPot = GDKP:pot(self.session);
+    local Mutators = GL:tableGet(Session, "Pot.Mutators", {});
+
+    local totalPot = GDKPPot:total(self.sessionID);
     local managementCutPercentage = tonumber(Session.managementCut) or 0;
     local managementCut = math.floor(totalPot * (0 + managementCutPercentage / 100));
     Window:SetStatusText(string.format(
@@ -225,44 +269,66 @@ function Distribute:refresh()
     -- [[ SHOW MUTATORS ]]
 
     local mutatorHeight = 210;
-    for _, Mutator in pairs(self.Mutators) do
+    for _, Mutator in pairs(Mutators or {}) do
         ---@type AceGUISimpleGroup
         local MutatorHolder = AceGUI:Create("SimpleGroup");
         MutatorHolder:SetLayout("FLOW");
         MutatorHolder:SetFullWidth(true);
-        MutationsFrame:AddChild(MutatorHolder);
+        MutatorsFrame:AddChild(MutatorHolder);
 
         ---@type AceGUILabel
+        local mutatorName = GL:capitalize(strsub(Mutator.name, 1,20));
+        local MutatorTitleLabel = AceGUI:Create("Label");
+        MutatorTitleLabel:SetText("    |c00967FD2" .. mutatorName .. "|r");
+        MutatorTitleLabel:SetWidth(100);
+        MutatorHolder:AddChild(MutatorTitleLabel);
+
         local MutatorPercentageLabel = AceGUI:Create("Label");
-        MutatorPercentageLabel:SetText("    " .. GL:capitalize(Mutator.title) .. " [%]");
-        MutatorPercentageLabel:SetWidth(80);
+        MutatorPercentageLabel:SetText("%");
+        MutatorPercentageLabel:SetWidth(20);
         MutatorHolder:AddChild(MutatorPercentageLabel);
 
         ---@type AceGUIEditBox
         local MutatorPercentageBox = AceGUI:Create("EditBox");
         MutatorPercentageBox:SetText(Mutator.percentage);
+        MutatorPercentageBox:DisableButton(true);
         MutatorPercentageBox:SetWidth(50);
         MutatorHolder:AddChild(MutatorPercentageBox);
 
         ---@type AceGUILabel
         local MutatorFlatLabel = AceGUI:Create("Label");
-        MutatorFlatLabel:SetText("      " .. GL:capitalize(Mutator.title));
-        MutatorFlatLabel:SetWidth(80);
+        MutatorFlatLabel:SetText("             g");
+        MutatorFlatLabel:SetWidth(60);
         MutatorHolder:AddChild(MutatorFlatLabel);
 
         ---@type AceGUIEditBox
         local MutatorFlatBox = AceGUI:Create("EditBox");
         MutatorFlatBox:SetText(Mutator.flat);
+        MutatorFlatBox:DisableButton(true);
         MutatorFlatBox:SetWidth(80);
         MutatorHolder:AddChild(MutatorFlatBox);
 
         mutatorHeight = mutatorHeight + MutatorHolder.frame:GetHeight();
     end
 
+    ---@type AceGUILabel
+    local Filler = AceGUI:Create("Label");
+    Filler:SetText(" ");
+    Filler:SetFullWidth(true);
+    MutatorsFrame:AddChild(Filler);
+
+    local AddMutator = AceGUI:Create("Button");
+    AddMutator:SetText("New Mutator");
+    AddMutator:SetWidth(150);
+    AddMutator:SetHeight(20);
+    AddMutator:SetCallback("OnClick", function()
+        GL.Interface.GDKP.Distribute.CreateMutator:open(self.sessionID);
+    end);
+    MutatorsFrame:AddChild(AddMutator);
+
     --[[ SHOW RAIDERS ]]
 
     -- [[ HEADER ]]
-
 
     ---@type AceGUILabel
     local HeaderLabel = AceGUI:Create("Label");
@@ -277,28 +343,28 @@ function Distribute:refresh()
     HeaderLabel:SetWidth(50);
     RaidersTableHeader:AddChild(HeaderLabel);
 
-    for _, Mutator in pairs(self.Mutators) do
+    for _, Mutator in pairs(Mutators or {}) do
         ---@type AceGUILabel
         HeaderLabel = AceGUI:Create("Label");
-        HeaderLabel:SetText(strlower(Mutator.title));
+        HeaderLabel:SetText(strlower(Mutator.name));
         HeaderLabel:SetWidth(50);
         RaidersTableHeader:AddChild(HeaderLabel);
     end
 
+    ---@type AceGUILabel
+    HeaderLabel = AceGUI:Create("Label");
+    HeaderLabel:SetText("adjust [g]");
+    HeaderLabel:SetWidth(70);
+    RaidersTableHeader:AddChild(HeaderLabel);
+
+    ---@type AceGUILabel
     HeaderLabel = AceGUI:Create("Label");
     HeaderLabel:SetText("Share");
     HeaderLabel:SetWidth(50);
     RaidersTableHeader:AddChild(HeaderLabel);
 
-    self.PotDistributionDetails = {};
-    local PotDistributionDetails = self.PotDistributionDetails;
-
     -- [[ RAIDERS ]]
     for _, Player in pairs(GL.User:groupMembers() or {}) do
-        if (not PotDistributionDetails[Player.name]) then
-            PotDistributionDetails[Player.name] = self:determineDistributionDefaults(Player);
-        end
-
         local PlayerPotDetails = PotDistributionDetails[Player.name];
         ---@type AceGUISimpleGroup
         local RaiderHolder = AceGUI:Create("SimpleGroup");
@@ -312,67 +378,90 @@ function Distribute:refresh()
         RaiderNameLabel:SetWidth(150);
         RaiderHolder:AddChild(RaiderNameLabel);
 
+        ---@type AceGUICheckBox
+        if (PlayerPotDetails[Constants.GDKP.baseMutatorIdentifier] == nil) then
+            PlayerPotDetails[Constants.GDKP.baseMutatorIdentifier] = true;
+        end
+
         local Checkbox = AceGUI:Create("CheckBox");
-        Checkbox:SetValue(true);
+        Checkbox:SetValue(PlayerPotDetails[Constants.GDKP.baseMutatorIdentifier]);
         Checkbox:SetWidth(50);
         Checkbox:SetLabel("");
         Checkbox:SetDescription("");
-        Checkbox:SetCallback("OnValueChanged", function()
+        Checkbox:SetCallback("OnValueChanged", function(El)
+            PlayerPotDetails[Constants.GDKP.baseMutatorIdentifier] = GL:toboolean(El:GetValue());
             self:calculateCuts(true);
         end);
         RaiderHolder:AddChild(Checkbox);
 
-        for _, Mutator in pairs(self.Mutators) do
-            if (PlayerPotDetails[Mutator.title] == nil) then
-                PlayerPotDetails[Mutator.title] = false;
+        for _, Mutator in pairs(Mutators or {}) do
+            if (PlayerPotDetails[Mutator.name] == nil) then
+                PlayerPotDetails[Mutator.name] = false;
             end
 
             Checkbox = AceGUI:Create("CheckBox");
-            Checkbox:SetValue(PlayerPotDetails[Mutator.title]);
+            Checkbox:SetValue(PlayerPotDetails[Mutator.name]);
             Checkbox:SetWidth(50);
             Checkbox:SetLabel("");
             Checkbox:SetDescription("");
             Checkbox:SetCallback("OnValueChanged", function(El)
-                PlayerPotDetails[Mutator.title] = GL:toboolean(El:GetValue());
+                PlayerPotDetails[Mutator.name] = GL:toboolean(El:GetValue());
                 self:calculateCuts(true);
             end);
             RaiderHolder:AddChild(Checkbox);
         end
 
+        ---@type AceGUIEditBox
+        local AdjustBox = AceGUI:Create("EditBox");
+        AdjustBox:SetText();
+        AdjustBox:DisableButton(true);
+        AdjustBox:SetWidth(60);
+        AdjustBox:SetHeight(18);
+        AdjustBox:SetCallback("OnTextChanged", function(El)
+            PlayerPotDetails[Constants.GDKP.adjustMutatorIdentifier] = El:GetText();
+            self:calculateCuts(true);
+        end);
+        RaiderHolder:AddChild(AdjustBox);
+
+        ---@type AceGUILabel
+        local FillerLabel = AceGUI:Create("Label");
+        FillerLabel:SetText(" ");
+        FillerLabel:SetWidth(10);
+        RaiderHolder:AddChild(FillerLabel);
+
         local CutLabel = AceGUI:Create("Label");
         CutLabel:SetText("2157g");
-        CutLabel:SetWidth(80);
+        CutLabel:SetWidth(120);
         RaiderHolder:AddChild(CutLabel);
         self.CutHolders[Player.name] = CutLabel;
     end
 
     self.mutatorHeight = mutatorHeight;
     self:resizeFrames();
-    self:calculateCuts();
 end
 
 --- Do some resizing magic when the user resizes the distribution window
 ---
 ---@return void
-function Distribute:resizeFrames()
-    GL:debug("Distribute:resizeFrames");
+function Overview:resizeFrames()
+    GL:debug("Overview:resizeFrames");
 
-    local MutationsFrame = Interface:get(self, "Frame.Mutations");
+    local MutatorsFrame = Interface:get(self, "Frame.Mutators");
     local RaidersFrame = Interface:get(self, "Frame.Raiders");
     local RaidersScrollFrame = Interface:get(self, "ScrollFrame.Raiders");
     local Window = Interface:get(self, "GDKPDistribute");
 
-    local height = Window.frame:GetHeight() - (self.mutatorHeight or 0) - 20;
+    local height = Window.frame:GetHeight() - (self.mutatorHeight or 0) - 44;
 
     Interface:get(self, "Frame.ScrollFrameHolder"):SetHeight(height);
-    MutationsFrame:DoLayout();
+    MutatorsFrame:DoLayout();
     RaidersFrame:DoLayout();
     RaidersScrollFrame:DoLayout();
     Window:DoLayout();
 end
 
-function Distribute:determineDistributionDefaults(Player)
-    GL:debug("Distribute:determineDistributionDefaults");
+function Overview:determineDistributionDefaults(Player)
+    GL:debug("Overview:determineDistributionDefaults");
 
     local PlayerRoles = {};
     local DistributionDetails = {};
@@ -411,82 +500,31 @@ function Distribute:determineDistributionDefaults(Player)
             end
         end
 
-        DistributionDetails[Mutator.title] = active;
+        DistributionDetails[Mutator.name] = active;
     end
 
     return DistributionDetails;
 end
 
-function Distribute:calculateCuts(forceRecalculate)
-    GL:debug("Distribute:calculateCuts");
+function Overview:calculateCuts()
+    GL:debug("Overview:calculateCuts");
 
-    local Session = GDKP:getSessionByID(self.session);
-    if (not Session) then
+    local Session, totalToDistribute = GDKPPot:calculateCuts(self.sessionID);
+
+    if (type(Session) ~= "table") then
         return;
     end
 
-    Session.Pot = Session.Pot or {};
+    local Cuts = GL:tableGet(Session, "Pot.Cuts", {});
 
-    if (not GL:empty(Session.Pot) and not forceRecalculate) then
-        return;
-    end
-
-    -- If there's a management cut then we remove it from the pot first
-    local totalPot = GDKP:pot(self.session);
-    local managementCut = tonumber(Session.managementCut) or 0;
-    managementCut = math.floor(totalPot * (0 + managementCut / 100));
-    totalPot = math.floor(totalPot - managementCut);
-
-    local percentages = 0;
-    local flat = 0;
-    local leftToDistribute = totalPot;
-    local base;
-
-    for _, Mutators in pairs(self.PotDistributionDetails or {}) do
-        for title, active in pairs(Mutators or {}) do
-            if (self.Mutators[title] and active) then
-                percentages = percentages + (self.Mutators[title].percentage or 0);
-                flat = flat + (self.Mutators[title].flat or 0);
-            end
-        end
-    end
-
-    leftToDistribute = totalPot - flat;
-    leftToDistribute = leftToDistribute - (totalPot * (0 + (percentages / 100)));
-    base = GL:round(leftToDistribute / GL:count(self.PotDistributionDetails), 2);
-
-    local totalToDistribute = 0;
-    for player, Mutators in pairs(self.PotDistributionDetails or {}) do
-        local playerPot = base;
-        for title, active in pairs(Mutators or {}) do
-            if (self.Mutators[title] and active) then
-                local percentage = tonumber(self.Mutators[title].percentage);
-                flat = self.Mutators[title].flat;
-
-                if (percentage) then
-                    playerPot = playerPot + (totalPot * (0 + percentage / 100));
-                end
-
-                if (flat) then
-                    playerPot = playerPot + flat;
-                end
-            end
-        end
-
-        Session.Pot[player] = playerPot;
-        totalToDistribute = totalToDistribute + playerPot;
-    end
-
-    GL:debug("Distribute:calculateCuts total to distribute = " .. totalToDistribute);
-
-    for player, cut in pairs(Session.Pot or {}) do
+    for player, cut in pairs(Cuts or {}) do
         local CutHolder = self.CutHolders[player];
 
         if (CutHolder and CutHolder.SetText) then
-            local cutPercentage = 100 / (totalPot / cut);
-            CutHolder:SetText(string.format("%sg\n(%s%%)", GL:round(cut, 2), GL:round(cutPercentage, 2)));
+            local cutPercentage = 100 / (totalToDistribute / cut);
+            CutHolder:SetText(string.format("|c00967FD2%s|r|c00FFF569g|r  (%s%%)", GL:round(cut, 2), GL:round(cutPercentage, 2)));
         end
     end
 end
 
-GL:debug("Interfaces/GDKP/Export.lua");
+GL:debug("Interfaces/GDKP/Distribute.lua");

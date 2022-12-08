@@ -53,16 +53,16 @@ Comm.Actions = {
         GL.RollOff:stop(Message);
     end,
     [Actions.startGDKPAuction] = function (Message)
-        GL.GDKP:start(Message);
+        GL.GDKP.Auction:start(Message);
     end,
     [Actions.stopGDKPAuction] = function (Message)
-        GL.GDKP:stop(Message);
+        GL.GDKP.Auction:stop(Message);
     end,
     [Actions.extendGDKPAuction] = function (Message)
-        GL.GDKP:extend(Message);
+        GL.GDKP.Auction:extend(Message);
     end,
     [Actions.refreshGDKPAuction] = function (Message)
-        GL.GDKP:refresh(Message);
+        GL.GDKP.Auction:refresh(Message);
     end,
     [Actions.broadcastBoostedRollsData] = function (Message)
         GL.BoostedRolls:receiveBroadcast(Message);

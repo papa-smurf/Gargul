@@ -4,6 +4,15 @@ local _, GL = ...;
 GL.AceGUI = GL.AceGUI or LibStub("AceGUI-3.0");
 local AceGUI = GL.AceGUI;
 
+---@type GDKPOverview
+local Overview = GL.Interface.GDKP.Overview;
+
+---@type Interface
+local Interface = GL.Interface;
+
+---@type GDKPSession
+local GDKPSession = GL.GDKP.Session;
+
 ---@class EditSession
 GL.Interface.GDKP.EditSession = {
     isVisible = false,
@@ -11,15 +20,6 @@ GL.Interface.GDKP.EditSession = {
 
 ---@type EditSession
 local EditSession = GL.Interface.GDKP.EditSession;
-
----@type GDKPOverview
-local Overview = GL.Interface.GDKP.Overview;
-
----@type Interface
-local Interface = GL.Interface;
-
----@type GDKP
-local GDKP = GL.GDKP;
 
 ---@return Frame
 function EditSession:build()
@@ -75,7 +75,7 @@ function EditSession:build()
             return;
         end
 
-        GDKP:editSession(Overview.selectedSession, title, managementCut);
+        GDKPSession:edit(Overview.selectedSession, title, managementCut);
 
         self:close();
     end);
@@ -122,7 +122,7 @@ end
 function EditSession:open()
     GL:debug("Interface.GDKP.EditSession:open");
 
-    local Session = GDKP:getSessionByID(Overview.selectedSession);
+    local Session = GDKPSession:byID(Overview.selectedSession);
 
     if (not Session) then
         return;

@@ -73,7 +73,7 @@ function AuctionDetails:draw(session, checksum)
     ScrollFrameHolder:AddChild(ScrollFrame);
 
     local auctionWasDeleted = not GL:higherThanZero(Auction.price);
-    local concernsManualAdjustment = Auction.itemID == Constants.GDKPPotIncreaseItemID;
+    local concernsManualAdjustment = Auction.itemID == Constants.GDKP.potIncreaseItemID;
     local itemLabel;
 
     if (not auctionWasDeleted) then
@@ -212,8 +212,17 @@ function AuctionDetails:draw(session, checksum)
     ScrollFrame:AddChild(CloseButton);
 end
 
+--- Close the details
+---
+---@return void
+---
+---@todo use build/draw to reuse frames. Can't simply :Release() because of ScrollBar
 function AuctionDetails:close()
-    Interface:release(self, "Window");
+    local Window = Interface:get(self, "Window");
+
+    if (Window and Window.frame) then
+        Window.frame:Hide();
+    end
 end
 
 GL:debug("Interfaces/GDKP/AuctionDetails.lua");

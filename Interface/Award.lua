@@ -3,6 +3,15 @@ local _, GL = ...;
 
 GL.ScrollingTable = GL.ScrollingTable or LibStub("ScrollingTable");
 
+local AceGUI = GL.AceGUI;
+local ScrollingTable = GL.ScrollingTable;
+
+---@type Settings
+local Settings = GL.Settings;
+
+---@type GDKPAuction
+local GDKPAuction = GL.GDKP.Auction;
+
 ---@class AwardInterface
 GL.Interface.Award = {
     ItemBoxHoldsValidItem = false,
@@ -13,10 +22,8 @@ GL.Interface.Award = {
     },
 };
 
-local AceGUI = GL.AceGUI;
-local Settings = GL.Settings; ---@type Settings
-local Award = GL.Interface.Award; ---@type AwardInterface
-local ScrollingTable = GL.ScrollingTable;
+---@type AwardInterface
+local Award = GL.Interface.Award;
 
 --- This is the UI the person who rolls off an item uses to prepare everything e.g:
 --- Select an item
@@ -199,7 +206,7 @@ function Award:draw(itemLink)
                 GDKPPrice = tonumber(GDKPPriceEditBox:GetText());
 
                 if (GL:higherThanZero(GDKPPrice)) then
-                    GL.GDKP:createAuction(GL:getItemIDFromLink(itemLink), GDKPPrice, winner);
+                    GDKPAuction:create(GL:getItemIDFromLink(itemLink), GDKPPrice, winner);
                 end
             end
 

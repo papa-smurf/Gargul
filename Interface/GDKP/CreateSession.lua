@@ -4,6 +4,15 @@ local _, GL = ...;
 GL.AceGUI = GL.AceGUI or LibStub("AceGUI-3.0");
 local AceGUI = GL.AceGUI;
 
+---@type GDKPSession
+local GDKPSession = GL.GDKP.Session;
+
+---@type GDKPOverview
+local Overview = GL.Interface.GDKP.Overview;
+
+---@type Interface
+local Interface = GL.Interface;
+
 ---@class CreateSession
 GL.Interface.GDKP.CreateSession = {
     isVisible = false,
@@ -11,12 +20,6 @@ GL.Interface.GDKP.CreateSession = {
 
 ---@type CreateSession
 local CreateSession = GL.Interface.GDKP.CreateSession;
-
----@type GDKPOverview
-local Overview = GL.Interface.GDKP.Overview;
-
----@type Interface
-local Interface = GL.Interface;
 
 ---@return Frame
 function CreateSession:build()
@@ -54,7 +57,7 @@ function CreateSession:build()
     SwitchCheckbox:SetValue(false);
     SwitchCheckbox:SetLabel("Switch to this session");
     SwitchCheckbox:SetFullWidth(true);
-    SwitchCheckbox:SetValue(GL.GDKP:getActiveSession() == false);
+    SwitchCheckbox:SetValue(GDKPSession:getActive() == false);
     SwitchCheckbox.text:SetTextColor(.99, .85, .06);
     SwitchCheckbox.text:SetFontObject(_G["GameFontHighlightSmall"]);
     Interface:set(self, "Switch", SwitchCheckbox);
@@ -79,7 +82,7 @@ function CreateSession:build()
             return;
         end
 
-        local Session = GL.GDKP:createSession(title, managementCut);
+        local Session = GDKPSession:create(title, managementCut);
 
         if (not Session) then
             GL:warning("Something went wrong while creating the session!");
@@ -87,7 +90,7 @@ function CreateSession:build()
         end
 
         if (SwitchCheckbox:GetValue()) then
-            GL.GDKP:setActiveSession(Session.ID);
+            GDKPSession:setActive(Session.ID);
         end
 
         self:close();
@@ -143,7 +146,7 @@ function CreateSession:open()
     local Window = self:window();
 
     self.isVisible = true;
-    Interface:get(self, "CheckBox.Switch"):SetValue(GL.GDKP:getActiveSession() == false);
+    Interface:get(self, "CheckBox.Switch"):SetValue(GDKPSession:getActive() == false);
     Window.frame:SetPoint("TOPLEFT", Interface:get(Overview, "GDKPOverview").frame, "TOPRIGHT", 2, 16);
     Window.frame:Show();
 end

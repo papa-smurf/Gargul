@@ -18,8 +18,11 @@ local Overview = GL.Interface.GDKP.Overview;
 ---@type Interface
 local Interface = GL.Interface;
 
----@type GDKP
-local GDKP = GL.GDKP;
+---@type GDKPSession
+local GDKPSession = GL.GDKP.Session;
+
+---@type GDKPPot
+local GDKPPot = GL.GDKP.Pot;
 
 ---@return Frame
 function AddGold:build()
@@ -80,7 +83,7 @@ function AddGold:build()
             return;
         end
 
-        GDKP:addGold(Overview.selectedSession, gold, paidForBy, Note:GetText());
+        GDKPPot:addGold(Overview.selectedSession, gold, paidForBy, Note:GetText());
 
         self:close();
     end);
@@ -127,7 +130,7 @@ end
 function AddGold:open()
     GL:debug("Interface.GDKP.AddGold:open");
 
-    local Session = GDKP:getSessionByID(Overview.selectedSession);
+    local Session = GDKPSession:byID(Overview.selectedSession);
 
     if (not Session) then
         return;

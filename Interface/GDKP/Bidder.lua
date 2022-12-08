@@ -1,15 +1,15 @@
 ---@type GL
 local _, GL = ...;
 
+---@type GDKPAuction
+local GDKPAuction = GL.GDKP.Auction;
+
 ---@class GDKPBidderInterface
 GL:tableSet(GL, "Interface.GDKP.Bidder", {
     Window = nil,
     TimerBar = nil,
 });
 local Bidder = GL.Interface.GDKP.Bidder; ---@type GDKPBidderInterface
-
----@type GDKP
-local GDKP = GL.GDKP;
 
 --- Adjust the duration shown on the timer bar
 ---@param time number
@@ -32,7 +32,7 @@ function Bidder:changeDuration(time)
     self.TimerBar:Stop();
     self.TimerBar:Hide();
 
-    self:drawCountdownBar(time, GDKP.CurrentAuction.itemLink, GDKP.CurrentAuction.itemIcon, GDKP.CurrentAuction.duration);
+    self:drawCountdownBar(time, GDKP.Auction.Current.itemLink, GDKP.Auction.Current.itemIcon, GDKP.Auction.Current.duration);
 
     return true;
 end
@@ -112,12 +112,12 @@ function Bidder:draw(time, itemLink, itemIcon)
     MinimumButton:SetNormalFontObject("GameFontNormal");
     MinimumButton:SetHighlightFontObject("GameFontNormal");
     MinimumButton:SetScript("OnClick", function ()
-        BidInput:SetText(GDKP:lowestValidBid());
+        BidInput:SetText(GDKPAuction:lowestValidBid());
         BidInput:SetFocus();
     end);
 
     BidButtonClick = function ()
-        GDKP:bid(BidInput:GetText());
+        GDKPAuction:bid(BidInput:GetText());
         BidInput:SetText("");
         BidInput:ClearFocus();
     end;
@@ -189,7 +189,7 @@ function Bidder:refresh()
         return;
     end
 
-    local TopBid = GL:tableGet(GDKP, "CurrentAuction.TopBid", {});
+    local TopBid = GL:tableGet(GDKPAuction, "Current.TopBid", {});
 
     -- The given bids seems to be invalid somehow? Better safe than LUA error!
     if (not TopBid or not TopBid.bid) then

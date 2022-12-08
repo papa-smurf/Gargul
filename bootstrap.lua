@@ -123,7 +123,7 @@ function GL:_init()
     self.User:_init();
     self.AwardedLoot:_init();
     self.SoftRes:_init();
-    self.GDKP:_init();
+    self.GDKP.Auction:_init();
     self.TMB:_init();
     self.BoostedRolls:_init();
     self.DroppedLoot:_init();
@@ -334,7 +334,7 @@ function GL:hookBagSlotEvents()
 
         -- Open the action selection window
         if (keyPressIdentifier == GL.Settings:get("ShortcutKeys.rollOffOrAuction")) then
-            if (GL.GDKP:hasActiveSession()) then
+            if (GL.GDKP.Session:activeSessionID()) then
                 GL.Interface.GDKP.Auctioneer:draw(itemLink);
             else
                 GL.MasterLooterUI:draw(itemLink);
@@ -407,7 +407,7 @@ function GL:hookTooltipSetItemEvents()
                 tinsert(Lines, line);
             end
 
-            for _, line in pairs(GL.GDKP:tooltipLines(itemLink) or {}) do
+            for _, line in pairs(GL.GDKP.Session:tooltipLines(itemLink) or {}) do
                 tinsert(Lines, line);
             end
         end

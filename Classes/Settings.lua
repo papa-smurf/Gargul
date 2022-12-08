@@ -1,15 +1,8 @@
---[[
-    This class handles the addon's default and user settings
-
-    The default settings are overwritten with the user's settings
-    after the addon is loaded
-
-    The showSettingsMenu function is responsible for showing the
-    settings in the WoW settings menu
-]]
-
 ---@type GL
 local _, GL = ...;
+
+---@type DB
+local DB = GL.DB;
 
 ---@class Settings
 GL.Settings = {
@@ -18,7 +11,8 @@ GL.Settings = {
     Active = {}, -- This object holds the actual setting values applicable to this runtime
 };
 
-local Settings = GL.Settings; ---@type Settings
+---@type Settings
+local Settings = GL.Settings;
 
 ---@return void
 function Settings:_init()
@@ -58,7 +52,7 @@ function Settings:sanitizeSettings()
 
     -- Remove old roll data so it doesn't clog our SavedVariables
     local twoWeeksAgo = GetServerTime() - 1209600;
-    for key, Award in pairs(GL.DB.AwardHistory) do
+    for key, Award in pairs(DB:get("AwardHistory")) do
         if (Award.timestamp < twoWeeksAgo) then
             GL.DB.AwardHistory[key] = nil;
             Award = nil;
@@ -114,7 +108,7 @@ function Settings:enforceTemporarySettings()
         GL.DB.LoadDetails["4.12.0"] = GetServerTime();
 
         local AwardHistory = {};
-        for _, AwardEntry in pairs(GL.DB.AwardHistory) do
+        for _, AwardEntry in pairs(DB:get("AwardHistory")) do
             (function ()
                 local itemIDfromItemLink = GL:getItemIDFromLink(AwardEntry.itemLink);
 

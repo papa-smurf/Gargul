@@ -624,7 +624,7 @@ function TimeLeft:refreshBars()
 
             -- Open the action selection window
             if (keyPressIdentifier == GL.Settings:get("ShortcutKeys.rollOffOrAuction")) then
-                if (GL.GDKP:hasActiveSession()) then
+                if (GL.GDKP.Session:activeSessionID()) then
                     GL.Interface.GDKP.Auctioneer:draw(BagItem.itemLink);
                 else
                     GL.MasterLooterUI:draw(BagItem.itemLink);

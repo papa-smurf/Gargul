@@ -7,6 +7,9 @@ local Interface = GL.Interface;
 GL.AceGUI = GL.AceGUI or LibStub("AceGUI-3.0");
 local AceGUI = GL.AceGUI;
 
+---@type GDKPAuction
+local GDKPAuction = GL.GDKP.Auction;
+
 ---@class GDKPEditAuction
 GL.Interface.GDKP.EditAuction = {}
 
@@ -106,12 +109,12 @@ function EditAuction:draw(session, checksum)
         if (not GL:empty(newName)
             and Auction.Winner.name ~= newName
         ) then
-            GL.GDKP:reassignAuction(session, checksum, newName);
+            GDKPAuction:reassignAuction(session, checksum, newName);
         end
 
         -- The session was changed (make sure we do this last!)
         if (session ~= SessionDropdown:GetValue()) then
-            GL.GDKP:moveAuction(checksum, session, SessionDropdown:GetValue());
+            GDKPAuction:move(checksum, session, SessionDropdown:GetValue());
         end
 
         self:close();

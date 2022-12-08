@@ -15,8 +15,14 @@ local Interface = GL.Interface;
 ---@type Events
 local Events = GL.Events;
 
----@type GDKP
-local GDKP = GL.GDKP;
+---@type GDKPPot
+local GDKPPot = GL.GDKP.Pot;
+
+---@type GDKPSession
+local GDKPSession = GL.GDKP.Session;
+
+---@type GDKPAuction
+local GDKPAuction = GL.GDKP.Auction;
 
 --[[ CONSTANTS ]]
 local SESSION_ROWS = 22;
@@ -59,7 +65,8 @@ function Overview:_init()
 
     GL.Events:register({
         { "GDKPOverviewGDKPActiveSessionChangedListener", "GL.GDKP_ACTIVE_SESSION_CHANGED" },
-        { "GDKPOverviewGDKPSessionChangedListener", "GL.GDKP_SESSION_CHANGED" }
+        { "GDKPOverviewGDKPSessionChangedListener", "GL.GDKP_SESSION_CHANGED" },
+        { "GDKPOverviewGDKPSessionChangedListener", "GL.GDKP_SESSION_CREATED" }
     }, function()
         if (not self.isVisible) then return; end
         self:refreshSessions();
@@ -136,7 +143,7 @@ function Overview:updatePot()
         return;
     end
 
-    local pot = GDKP:pot(Session.ID);
+    local pot = GDKPPot:total(Session.ID);
     Pot:SetText(string.format("|cFF%s%sg|r", Constants.ClassHexColors.rogue, pot));
 end
 
@@ -202,7 +209,7 @@ function Overview:build()
     PotIconFrame:Show();
 
     PotIcon:SetCallback("OnClick", function ()
-        Interface.GDKP.Distribute:open(self.selectedSession);
+        Interface.GDKP.Distribute.Overview:open(self.selectedSession);
         Window.frame:Hide();
     end);
 
@@ -211,10 +218,10 @@ function Overview:build()
             return;
         end
 
-        local Session = GDKP:getSessionByID(self.selectedSession);
-        local pot = GDKP:pot(Session.ID);
+        local Session = GDKPSession:byID(self.selectedSession);
+        local pot = GDKPPot:total(Session.ID);
         local numberOfRaidMembers = math.max(#GL.User:groupMemberNames() - 1, 1);
-        local managementCut = tonumber(Session.managementCut or 0);
+        local managementCut = tonumber(Session.managementCut or 0) or 0;
         local managementPot = math.ceil(pot * (0 + managementCut / 100));
 
         GameTooltip:SetOwner(PotIconFrame, "ANCHOR_TOP");
@@ -340,9 +347,9 @@ function Overview:build()
     EnableOrDisableSession:SetHeight(20);
     EnableOrDisableSession:SetCallback("OnClick", function()
         if (EnableOrDisableSession.mode == "enable") then
-            GDKP:setActiveSession(self.selectedSession);
+            GDKPSession:setActive(self.selectedSession);
         else
-            GDKP:clearActiveSession();
+            GDKPSession:clearActive();
         end
     end);
     Interface:set(self, "EnableDisable", EnableOrDisableSession);
@@ -371,9 +378,9 @@ function Overview:build()
     DeleteOrRestoreSession:SetHeight(20);
     DeleteOrRestoreSession:SetCallback("OnClick", function()
         if (DeleteOrRestoreSession.mode == "delete") then
-            GDKP:deleteSession(self.selectedSession);
+            GDKPSession:delete(self.selectedSession);
         else
-            GDKP:restoreSession(self.selectedSession);
+            GDKPSession:restore(self.selectedSession);
         end
     end);
     Interface:set(self, "DeleteRestore", DeleteOrRestoreSession);
@@ -391,7 +398,7 @@ function Overview:build()
     Distribute:SetWidth(90);
     Distribute:SetHeight(20);
     Distribute:SetCallback("OnClick", function()
-        GL.Interface.GDKP.Distribute:open(self.selectedSession);
+        GL.Interface.GDKP.Distribute.Overview:open(self.selectedSession);
         Window.frame:Hide();
     end);
 
@@ -428,6 +435,7 @@ function Overview:close()
     GL:debug("Overview:close");
 
     self:closeSubWindows();
+    self:clearDetailsFrame();
 
     self.isVisible = false;
 end
@@ -454,7 +462,7 @@ function Overview:getSelectedSession()
         return;
     end
 
-    return GDKP:getSessionByID(sessionIdentifier);
+    return GDKPSession:byID(sessionIdentifier);
 end
 
 ---@return void
@@ -521,7 +529,7 @@ function Overview:refreshLedger()
         for _, Auction in pairs(Auctions) do
             local price = Auction.price or 0;
             local auctionWasDeleted = not GL:higherThanZero(price);
-            local concernsManualAdjustment = Auction.itemID == Constants.GDKPPotIncreaseItemID;
+            local concernsManualAdjustment = Auction.itemID == Constants.GDKP.potIncreaseItemID;
 
             -- This entry should always exist, if it doesn't something went wrong (badly)
             local ItemEntry = DB.Cache.ItemsByID[tostring(Auction.itemID)];
@@ -554,6 +562,10 @@ function Overview:refreshLedger()
             ItemIcon:SetImage(iconPath);
             ItemRow:AddChild(ItemIcon);
             ItemIcon:SetCallback("OnEnter", function()
+                if (concernsManualAdjustment) then
+                    return;
+                end
+
                 GameTooltip:SetOwner(ItemIcon.frame, "ANCHOR_TOP");
                 GameTooltip:SetHyperlink(ItemEntry.link);
                 GameTooltip:Show();
@@ -654,14 +666,14 @@ function Overview:refreshLedger()
                     onClick = function()
                         -- Shift button was held, skip reason
                         if (IsShiftKeyDown()) then
-                            GDKP:deleteAuction(Session.ID, Auction.ID, "-");
+                            GDKPAuction:delete(Session.ID, Auction.ID, "-");
                             return;
                         end
 
                         Interface.Dialogs.ConfirmWithSingleInputDialog:open({
                             question = string.format("Provide a reason for deleting this entry"),
                             OnYes = function (reason)
-                                GDKP:deleteAuction(Session.ID, Auction.ID, reason);
+                                GDKPAuction:delete(Session.ID, Auction.ID, reason);
                             end,
                         });
                     end,
@@ -680,7 +692,7 @@ function Overview:refreshLedger()
             --[[ RESTORE BUTTON ]]
             if (auctionWasDeleted) then
                 Restore = Interface:createButton(ActionButtons, {
-                    onClick = function() GDKP:restoreAuction(Session.ID, Auction.ID); end,
+                    onClick = function() GDKPAuction:restore(Session.ID, Auction.ID); end,
                     tooltip = "Restore",
                     disabledTooltip = "You need lead or master loot to restore entries.\nYou can't restore entries of deleted sessions",
                     normalTexture = "Interface\\AddOns\\Gargul\\Assets\\Buttons\\restore",
@@ -808,8 +820,7 @@ function Overview:clearDetailsFrame()
     -- Release all of the action buttons into our pool so that we can reuse them later
     for _, Buttons in pairs(self.ActionButtons or {}) do
         for _, Button in pairs(Buttons) do
-            Button:Enable();
-            Button:Hide();
+            Button:Release();
             tinsert(self.ButtonPool, Button);
         end
     end

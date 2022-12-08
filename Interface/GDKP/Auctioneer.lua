@@ -1,17 +1,20 @@
 ---@type GL
 local _, GL = ...;
 
----@type DB
-local DB = GL.DB;
+---@type GDKPAuction
+local GDKPAuction = GL.GDKP.Auction;
 
----@type GDKP
-local GDKP = GL.GDKP;
+---@type GDKPPot
+local GDKPPot = GL.GDKP.Pot;
 
 ---@type Settings
 local Settings = GL.Settings;
 
 ---@type Interface
 local Interface = GL.Interface;
+
+---@type GDKPSession
+local GDKPSession = GL.GDKP.Session;
 
 local AceGUI = GL.AceGUI;
 GL.ScrollingTable = GL.ScrollingTable or LibStub("ScrollingTable");
@@ -257,14 +260,14 @@ function Auctioneer:draw(itemLink)
     StartButton:SetHeight(20);
     StartButton:SetDisabled(true);
     StartButton:SetCallback("OnClick", function()
-        if (GDKP:announceStart(
+        if (GDKPAuction:announceStart(
             Interface:get(self, "EditBox.Item"):GetText(),
             Interface:get(self, "EditBox.MinimumBid"):GetText(),
             Interface:get(self, "EditBox.MinimumIncrement"):GetText(),
             Interface:get(self, "EditBox.Time"):GetText(),
             Interface:get(self, "EditBox.AntiSnipe"):GetText()
         )) then
-            GL.GDKP.inProgress = true;
+            GDKPAuction.inProgress = true;
 
             -- Store the bid values for this item
             local itemID = GL:getItemIDFromLink(Interface:get(self, "EditBox.Item"):GetText());
@@ -293,7 +296,7 @@ function Auctioneer:draw(itemLink)
     StopButton:SetHeight(20);
     StopButton:SetDisabled(true);
     StopButton:SetCallback("OnClick", function()
-        GDKP:announceStop();
+        GDKPAuction:announceStop();
     end);
     ThirdRow:AddChild(StopButton);
     Interface:set(self, "Stop", StopButton);
@@ -306,7 +309,7 @@ function Auctioneer:draw(itemLink)
     ClearButton:SetDisabled(false);
     ClearButton:SetCallback("OnClick", function()
         self:reset();
-        GDKP:resetAuction();
+        GDKPAuction:reset();
     end);
     FourthRow:AddChild(ClearButton);
     Interface:set(self, "Clear", ClearButton);
@@ -332,7 +335,7 @@ function Auctioneer:draw(itemLink)
 
         GL.Interface.Dialogs.PopupDialog:open({
             question = string.format("Award %s to |cff%s%s|r for %s|c00FFF569g|r?",
-                GL.GDKP.CurrentAuction.itemLink,
+                GL.GDKP.Auction.Current.itemLink,
                 GL:classHexColor(GL.Player:classByName(winner)),
                 winner,
                 bid
@@ -353,14 +356,14 @@ function Auctioneer:draw(itemLink)
                     end
                 end
 
-                if (not GDKP:storeCurrentAuction(winner, bid)) then
+                if (not GDKPAuction:storeCurrent(winner, bid)) then
                     return;
                 end
                 ---@todo: select top bid if none is selected
-                -- GDKP:createAuction(GL:getItemIDFromLink(GL.GDKP.CurrentAuction.itemLink), bid, winner);
+                -- GDKP:create(GL:getItemIDFromLink(GL.GDKP.Auction.Current.itemLink), bid, winner);
 
                 self:reset(); -- Reset the UI
-                GDKP:resetAuction(); -- Reset the actual auction object
+                GDKPAuction:reset(); -- Reset the actual auction object
                 self:closeReopenAuctioneerButton();
 
                 if (Settings:get("GDKP.closeAuctioneerOnAward")) then
@@ -370,7 +373,7 @@ function Auctioneer:draw(itemLink)
                 GL.AwardedLoot:addWinner(winner, itemLink, nil, nil, isOS, nil, bid, nil);
 
                 ---@todo add setting > [ ] Announce current pot after each auction
-                GL:sendChatMessage(string.format("Pot was updated, it now holds %sg", GDKP:pot()), "GROUP");
+                GL:sendChatMessage(string.format("Pot was updated, it now holds %sg", GDKPPot:total()), "GROUP");
             end,
         });
     end);
@@ -442,7 +445,7 @@ end
 function Auctioneer:show(Window)
     GL:debug("Auctioneer:show");
 
-    local ActiveSession = GDKP:getActiveSession();
+    local ActiveSession = GDKPSession:getActive();
     if (not ActiveSession) then
         GL:error("No active GDKP session, you have to create one first in /gl gdkp");
         return false;
@@ -468,7 +471,7 @@ function Auctioneer:close()
 
     -- When the master looter closes the auctioneer window with an auction
     -- still in progress we show the reopen auctioneer button
-    if (GL.GDKP.inProgress) then
+    if (GDKPAuction.inProgress) then
         self:drawReopenAuctioneerButton();
     end
 
@@ -505,12 +508,12 @@ function Auctioneer:drawReopenAuctioneerButton()
     local Button = Interface:get(self, "Frame.OpenAuctioneerButton");
 
     if (Button) then
-        Button:SetNormalTexture(GL.GDKP.CurrentAuction.itemIcon or "Interface\\Icons\\INV_Misc_QuestionMark");
+        Button:SetNormalTexture(GL.GDKP.Auction.Current.itemIcon or "Interface\\Icons\\INV_Misc_QuestionMark");
         Button:Show();
         return;
     end
 
-    local texture = GL.GDKP.CurrentAuction.itemIcon or "Interface\\Icons\\INV_Misc_QuestionMark";
+    local texture = GL.GDKP.Auction.Current.itemIcon or "Interface\\Icons\\INV_Misc_QuestionMark";
     Button = CreateFrame("Button", "GargulReopenAuctioneerButton", UIParent, Frame);
     Button:SetSize(42, 42);
     Button:SetNormalTexture(texture);
@@ -621,10 +624,10 @@ function Auctioneer:drawPlayersTable(parent)
         OnEnter = function (rowFrame, _, data, _, _, realrow)
             -- Make sure something is actually highlighted, better safe than lua error
             if (not GL:higherThanZero(realrow)
-                    or type(data) ~= "table"
-                    or not data[realrow]
-                    or not data[realrow].cols
-                    or not data[realrow].cols[1]
+                or type(data) ~= "table"
+                or not data[realrow]
+                or not data[realrow].cols
+                or not data[realrow].cols[1]
             ) then
                 return;
             end
@@ -668,7 +671,7 @@ function Auctioneer:refreshRollsTable()
     GL:debug("RollOff:refreshRollsTable");
 
     local BidTableData = {};
-    local Bids = GL.GDKP.CurrentAuction.Bids;
+    local Bids = GL.GDKP.Auction.Current.Bids;
     local BidsTable = Interface:get(self, "Table.Players");
 
     if (not BidsTable) then
@@ -721,7 +724,7 @@ function Auctioneer:passItemLink(itemLink)
         return;
     end
 
-    if (GL.GDKP.inProgress) then
+    if (GDKPAuction.inProgress) then
         return GL:warning("An auction is currently in progress");
     end
 
@@ -817,7 +820,7 @@ function Auctioneer:updateWidgets()
     --   The award button should not be available
     --   The clear button should not be available
     --   The item box should be available so we can enter an item link
-    if (not GL.GDKP.inProgress) then
+    if (not GDKPAuction.inProgress) then
         Interface:get(self, "Button.Start"):SetDisabled(false);
         Interface:get(self, "Button.Stop"):SetDisabled(true);
         Interface:get(self, "Button.Award"):SetDisabled(false);

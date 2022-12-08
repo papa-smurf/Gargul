@@ -15,8 +15,8 @@ local Interface = GL.Interface;
 ---@type Events
 local Events = GL.Events;
 
----@type GDKP
-local GDKP = GL.GDKP;
+---@type GDKPSession
+local GDKPSession = GL.GDKP.Session;
 
 ---@class GDKPExport
 GL.Interface.GDKP.Export = {
@@ -221,7 +221,7 @@ end
 function Export:refresh()
     GL:debug("Export:refresh");
 
-    local Session = GDKP:getSessionByID(self.session);
+    local Session = GDKPSession:byID(self.session);
 
     if (type(Session) ~= "table") then
         return;

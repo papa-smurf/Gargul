@@ -1,19 +1,18 @@
---[[
-    This class lets the master looter keep track of
-	who was awarded what item. This is especially useful
-	for master looters who bring items with them and do
-	the rolling along the way.
-]]
-
 local _, GL = ...;
+
+---@type Data
+local CommActions = GL.Data.Constants.Comm.Actions;
+
+---@type DB
+local DB = GL.DB;
 
 ---@class AwardedLoot
 GL.AwardedLoot = {
     _initialized = false,
 };
 
-local AwardedLoot = GL.AwardedLoot; ---@type AwardedLoot
-local CommActions = GL.Data.Constants.Comm.Actions;
+---@type AwardedLoot
+local AwardedLoot = GL.AwardedLoot;
 
 ---@return void
 function AwardedLoot:_init()
@@ -60,7 +59,7 @@ function AwardedLoot:tooltipLines(itemLink)
     local loadItemsGTE = math.min(fiveHoursAgo, GL.loadedOn);
     local winnersAvailable = false;
     local Lines = { string.format("\n|c00efb8cd%s|r", "Awarded To") };
-    for _, Loot in pairs(GL.DB.AwardHistory) do
+    for _, Loot in pairs(DB:get("AwardHistory")) do
         (function ()
             -- loadItemsGTE will equal five hours, or however long the players
             -- current playsession is ongoing (whichever is longest)
@@ -498,7 +497,7 @@ function AwardedLoot:byWinner(winner, after)
     GL:debug("AwardedLoot:byWinner");
 
     local Entries = {};
-    for checksum, AwardEntry in pairs(GL.DB.AwardHistory) do
+    for checksum, AwardEntry in pairs(DB:get("AwardHistory")) do
         if ((not after or AwardEntry.timestamp > after)
             and AwardEntry.awardedTo == winner
             and not GL:empty(AwardEntry.timestamp)
@@ -563,7 +562,7 @@ function AwardedLoot:tradeInitiated()
 
     -- Loop through our awarded loot table in reverse
     local thereAreItemsToAdd = false;
-    for _, Loot in pairs(GL.DB.AwardHistory) do
+    for _, Loot in pairs(DB:get("AwardHistory")) do
         -- Our trading partner changed in the meantime, stop!
         if (tradingPartner ~= GL:tableGet(GL.TradeWindow, "State.partner")) then
             break;
@@ -623,7 +622,7 @@ function AwardedLoot:tradeCompleted(Details)
     local threeHoursAgo = GetServerTime() - 10800;
 
     -- Loop through our awarded loot table in reverse
-    for checksum, Loot in pairs(GL.DB.AwardHistory) do
+    for checksum, Loot in pairs(DB:get("AwardHistory")) do
         (function ()
             -- The item was already marked as received, skip it
             if (Loot.received or Loot.timestamp < threeHoursAgo) then
@@ -736,7 +735,7 @@ function AwardedLoot:processEditedLoot(CommMessage)
     AwardEntry.received = true;
 
     local checksum;
-    for index, Loot in pairs(GL.DB.AwardHistory) do
+    for index, Loot in pairs(DB:get("AwardHistory")) do
         if (Loot and index == AwardEntry.checksum) then
             checksum = index;
             break;
