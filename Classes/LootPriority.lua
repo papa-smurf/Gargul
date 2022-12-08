@@ -2,13 +2,19 @@
 local _, GL = ...;
 
 GL.AceGUI = GL.AceGUI or LibStub("AceGUI-3.0");
+local AceGUI = GL.AceGUI;
+
+---@type Data
+local CommActions = GL.Data.Constants.Comm.Actions;
+
+---@type DB
+local DB = GL.DB;
 
 ---@class LootPriority
 GL.LootPriority = {};
 
-local AceGUI = GL.AceGUI;
-local CommActions = GL.Data.Constants.Comm.Actions;
-local LootPriority = GL.LootPriority; ---@type LootPriority
+---@type LootPriority
+local LootPriority = GL.LootPriority;
 
 --- Fetch an item's prio
 ---
@@ -21,11 +27,11 @@ function LootPriority:getPriority(itemLink, itemName)
     local itemID = GL:getItemIDFromLink(itemLink);
     itemName = itemName or GL:getItemNameFromLink(itemLink);
 
-    return GL.DB.LootPriority[itemID]
-        or GL.DB.LootPriority[itemName];
+    return DB:get("LootPriority", {})[itemID]
+        or DB:get("LootPriority", {})[itemName];
 end
 
---- Append the loot prio as defined in GL.DB.LootPriority to an item's tooltip
+--- Append the loot prio as defined in DB:get("LootPriority to an item's tooltip
 ---
 ---@param itemLink string
 ---@return table
@@ -119,17 +125,14 @@ end
 function LootPriority:toCSV()
     local LootPriorityCSV = "";
 
-    if (GL.DB.LootPriority and type(GL.DB.LootPriority) == "table") then
-        for item, priority in pairs(GL.DB.LootPriority) do
-            local prioritycount = #priority;
-            local priorityString = "";
+    for item, priority in pairs(DB:get("LootPriority", {}) or {}) do
+        local priorityString = "";
 
-            for index = 1, prioritycount do
-                priorityString = string.format("%s > %s", priorityString, priority[index]);
-            end
-
-            LootPriorityCSV = string.format("%s%s %s\n", LootPriorityCSV, item, priorityString);
+        for index = 1, #priority do
+            priorityString = string.format("%s > %s", priorityString, priority[index]);
         end
+
+        LootPriorityCSV = string.format("%s%s %s\n", LootPriorityCSV, item, priorityString);
     end
 
     return LootPriorityCSV;
@@ -152,7 +155,7 @@ function LootPriority:save(data)
     -- The user wishes to clear the loot priorities
     if (GL:empty(data)) then
         GL:success("Loot priorities cleared successfully");
-        GL.DB.LootPriority = {};
+        GL:set("LootPriority", {});
         return;
     end
 
@@ -180,7 +183,7 @@ function LootPriority:save(data)
         end
     end
 
-    GL.DB.LootPriority = LootPriorityData;
+    DB:set("LootPriority", LootPriorityData);
 
     GL:success("Loot priorities imported successfully");
 end
