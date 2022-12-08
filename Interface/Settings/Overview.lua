@@ -327,7 +327,6 @@ function Overview:showSection(section)
         SectionDescription:SetText(SectionClass.description .. "\n\n");
         SectionDescription:SetFontObject(_G["GameFontNormal"]);
         SectionDescription:SetFullWidth(true);
-        SectionDescription:SetJustifyH("MIDDLE");
         ScrollFrame:AddChild(SectionDescription);
     end
 
@@ -398,6 +397,21 @@ function Overview:drawCheckboxes(Checkboxes, Parent)
         GL.Interface:set(GL.Settings, Entry.setting, Checkbox);
         Parent:AddChild(Checkbox);
     end
+end
+
+---@param text string
+---@param Parent table
+---@return void
+function Overview:drawHeader(text, Parent)
+    local Header = GL.AceGUI:Create("InlineGroup");
+    Header:SetFullWidth(true);
+    Header:SetHeight(20);
+    Parent:AddChild(Header);
+
+    local HeaderText = GL.AceGUI:Create("Label");
+    HeaderText:SetHeight(20);
+    HeaderText:SetText(text);
+    Header:AddChild(HeaderText);
 end
 
 --- This is a helper method that draws a spacer

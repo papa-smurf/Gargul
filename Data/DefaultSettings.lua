@@ -109,7 +109,8 @@ GL.Data.DefaultSettings = {
         reserveThreshold = 180,
     },
     TMB = {
-        announceInfoWhenRolling = true,
+        announcePriolistInfoWhenRolling = true,
+        announceWishlistInfoWhenRolling = true,
         automaticallyShareData = false,
         hideInfoOfPeopleNotInGroup = true,
         hideWishListInfoIfPriorityIsPresent = true,

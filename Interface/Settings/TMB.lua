@@ -5,7 +5,7 @@ local Overview = GL.Interface.Settings.Overview; ---@type SettingsOverview
 
 ---@class TMBSettings
 GL.Interface.Settings.TMB = {
-    description = "|cffC41E3AThese settings affect all data imported via TMB and DFT!|r\n\nType |c00a79eff/gl tmb|r or |c00a79eff/gl dft|r to get started!",
+    description = "|cffC41E3AThese settings affect all data imported via TMB and DFT!|r\n\nType |c00a79eff/gl tmb|r or |c00a79eff/gl dft|r or click the button below to get started!",
 };
 local TMB = GL.Interface.Settings.TMB; ---@type TMBSettings
 
@@ -13,7 +13,17 @@ local TMB = GL.Interface.Settings.TMB; ---@type TMBSettings
 function TMB:draw(Parent)
     GL:debug("TMBSettings:draw");
 
-    local Checkboxes = {
+    local OpenTMB = GL.AceGUI:Create("Button");
+    OpenTMB:SetText("TMB Data");
+    OpenTMB:SetCallback("OnClick", function()
+        GL.Settings:close();
+        GL.Commands:call("thatsmybis");
+    end);
+    Parent:AddChild(OpenTMB);
+
+    Overview:drawHeader("General", Parent);
+
+    Overview:drawCheckboxes({
         {
             label = "Automatically share data",
             description = "Automatically share data with players who join your raid or when you import new data",
@@ -24,6 +34,21 @@ function TMB:draw(Parent)
             description = "Makes sure you only see the names of players who are actually in your group",
             setting = "TMB.hideInfoOfPeopleNotInGroup",
         },
+        {
+            label = "Show everything when solo",
+            description = "Make sure that you see all TMB/DFT data when not in a group, perfect for testing!",
+            setting = "TMB.showEntriesWhenSolo",
+        },
+        {
+            label = "Hide wishlist info when priority is set",
+            description = "You will only see an item's wishlist details if no priority (LC) is set for it",
+            setting = "TMB.hideWishListInfoIfPriorityIsPresent",
+        },
+    }, Parent);
+
+    Overview:drawHeader("Tooltips", Parent);
+
+    Overview:drawCheckboxes({
         {
             label = "Show wishlist details",
             description = "See the names of those who have an item on their list on tooltips",
@@ -39,10 +64,12 @@ function TMB:draw(Parent)
             description = "An item's guild note and item tier are shown on its tooltip",
             setting = "TMB.showItemInfoOnTooltips",
         },
-
-    };
-
-    Overview:drawCheckboxes(Checkboxes, Parent);
+        {
+            label = "Give OS items a lower priority",
+            description = "Items marked as OS on wishlist or priolist will be put at the bottom of the list",
+            setting = "TMB.OSHasLowerPriority",
+        },
+    }, Parent);
 
     local HorizontalSpacer = GL.AceGUI:Create("SimpleGroup");
     HorizontalSpacer:SetLayout("FILL");
@@ -71,6 +98,27 @@ function TMB:draw(Parent)
     HorizontalSpacer:SetHeight(20);
     Parent:AddChild(HorizontalSpacer);
 
+    Overview:drawHeader("Dropped loot", Parent);
+
+    Overview:drawCheckboxes({
+        {
+            label = "Announce wishlist details of dropped loot",
+            description = "Wishlist details of dropped loot are announced in the chat",
+            setting = "TMB.includeWishListInfoInLootAnnouncement",
+        },
+        {
+            label = "Announce priolist details of dropped loot",
+            description = "Item priolist details (LC) of dropped loot are announced in the chat",
+            setting = "TMB.includePrioListInfoInLootAnnouncement",
+        },
+    }, Parent);
+
+    HorizontalSpacer = GL.AceGUI:Create("SimpleGroup");
+    HorizontalSpacer:SetLayout("FILL");
+    HorizontalSpacer:SetFullWidth(true);
+    HorizontalSpacer:SetHeight(20);
+    Parent:AddChild(HorizontalSpacer);
+
     local MaxLootAnnouncementEntries = GL.AceGUI:Create("Slider");
     MaxLootAnnouncementEntries:SetLabel("Maximum number of dropped loot announcement entries");
     MaxLootAnnouncementEntries.label:SetTextColor(1, .95686, .40784);
@@ -86,60 +134,20 @@ function TMB:draw(Parent)
     end);
     Parent:AddChild(MaxLootAnnouncementEntries);
 
-    HorizontalSpacer = GL.AceGUI:Create("SimpleGroup");
-    HorizontalSpacer:SetLayout("FILL");
-    HorizontalSpacer:SetFullWidth(true);
-    HorizontalSpacer:SetHeight(20);
-    Parent:AddChild(HorizontalSpacer);
+    Overview:drawHeader("Rolling out items", Parent);
 
-    Checkboxes = {
+    Overview:drawCheckboxes({
         {
-            label = "Hide wishlist info when priority is set",
-            description = "You will only see an item's wishlist details if no priority (LC) is set for it",
-            setting = "TMB.hideWishListInfoIfPriorityIsPresent",
+            label = "Announce wishlist details when rolling out loot",
+            description = "TMB wishlist details will also be included whenever you roll out an item",
+            setting = "TMB.announceWishlistInfoWhenRolling",
         },
         {
-            label = "Announce wishlist details of dropped loot",
-            description = "Wishlist details of dropped loot are announced in the chat",
-            setting = "TMB.includeWishListInfoInLootAnnouncement",
+            label = "Announce priolist details when rolling out loot",
+            description = "TMB/DFT priolist details will also be included whenever you roll out an item",
+            setting = "TMB.announcePriolistInfoWhenRolling",
         },
-        {
-            label = "Announce item priority details of dropped loot",
-            description = "Item priority details (LC) of dropped loot are announced in the chat",
-            setting = "TMB.includePrioListInfoInLootAnnouncement",
-        },
-        {
-            label = "Announce details when rolling for loot",
-            description = "TMB/DFT details will also be included whenever you roll out an item",
-            setting = "TMB.announceInfoWhenRolling",
-        },
-        {
-            label = "Show everything when solo",
-            description = "Make sure that you see all TMB/DFT data when not in a group, perfect for testing!",
-            setting = "TMB.showEntriesWhenSolo",
-        },
-        {
-            label = "Give OS items a lower priority",
-            description = "Items marked as OS on wishlist or priolist will put at the bottom of the list",
-            setting = "TMB.OSHasLowerPriority",
-        },
-    };
-
-    Overview:drawCheckboxes(Checkboxes, Parent);
-
-    HorizontalSpacer = GL.AceGUI:Create("SimpleGroup");
-    HorizontalSpacer:SetLayout("FILL");
-    HorizontalSpacer:SetFullWidth(true);
-    HorizontalSpacer:SetHeight(20);
-    Parent:AddChild(HorizontalSpacer);
-
-    local OpenTMB = GL.AceGUI:Create("Button");
-    OpenTMB:SetText("TMB Data");
-    OpenTMB:SetCallback("OnClick", function()
-        GL.Settings:close();
-        GL.Commands:call("thatsmybis");
-    end);
-    Parent:AddChild(OpenTMB);
+    }, Parent);
 end
 
 GL:debug("Interface/Settings/TMB.lua");
