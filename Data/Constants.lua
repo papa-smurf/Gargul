@@ -110,7 +110,6 @@ GL.Data.Constants = {
     ]]
     addonHexColor =  "967FD2",
     disabledTextColor =  "5F5F5F",
-    GDKPPotIncreaseItemID = 45978,
 
     success = 0,
     failure = 1,
@@ -144,6 +143,12 @@ GL.Data.Constants = {
         "LootFast2",
         "RCLootCouncil_Classic",
         "SpeedyAutoLoot",
+    },
+
+    GDKP = {
+        adjustMutatorIdentifier = "+.__adjust__.+",
+        baseMutatorIdentifier = "+.__base__.+",
+        potIncreaseItemID = 45978,
     },
 
     GroupLootActions = {
