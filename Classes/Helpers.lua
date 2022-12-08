@@ -1608,8 +1608,9 @@ end
 ---@param Table table
 ---@param keyString string
 ---@param value any
+---@param ignoreIfExists boolean If the given final key exists then it will not be overwritten
 ---@return boolean
-function GL:tableSet(Table, keyString, value)
+function GL:tableSet(Table, keyString, value, ignoreIfExists)
     if (not keyString
         or type(keyString) ~= "string"
         or keyString == ""
@@ -1618,11 +1619,15 @@ function GL:tableSet(Table, keyString, value)
         return false;
     end
 
+    ignoreIfExists = GL:toboolean(ignoreIfExists);
     local keys = GL:strSplit(keyString, ".");
     local firstKey = keys[1];
 
     if (#keys == 1) then
-        Table[firstKey] = value;
+        if (not Table[firstKey] or not ignoreIfExists) then
+            Table[firstKey] = value;
+        end
+
         return true;
     elseif (not Table[firstKey]) then
         Table[firstKey] = {};
