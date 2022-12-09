@@ -128,7 +128,8 @@ GL.Data.DefaultSettings = {
         SettingsPerItem = {},
     },
     TMB = {
-        announceInfoWhenRolling = true,
+        announcePriolistInfoWhenRolling = true,
+        announceWishlistInfoWhenRolling = true,
         automaticallyShareData = false,
         hideInfoOfPeopleNotInGroup = true,
         hideWishListInfoIfPriorityIsPresent = true,

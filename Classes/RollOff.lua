@@ -140,14 +140,16 @@ function RollOff:announceStart(itemLink, time, note)
     end
 
     -- Check if this item was reserved, if so: mentioned the players who reserved it!
-    if (GL.Settings:get("SoftRes.announceInfoWhenRolling", true)
+    if (GL.Settings:get("SoftRes.announceInfoWhenRolling")
         and not GL:empty(Reserves)
     ) then
         Reserves = table.concat(Reserves, ", ");
         eligiblePlayersMessage = "This item has been reserved by: " .. Reserves;
 
     -- Check if this item is on someone's TMB wish/prio list, if so: mention the player(s) first in line!
-    elseif (GL.Settings:get("TMB.announceInfoWhenRolling", true)
+    elseif ((GL.Settings:get("TMB.announceWishlistInfoWhenRolling")
+            or GL.Settings:get("TMB.announcePriolistInfoWhenRolling")
+        )
         and not GL:empty(TMBDetails)
     ) then
         local WishListEntries = {};
@@ -165,7 +167,9 @@ function RollOff:announceStart(itemLink, time, note)
         end
 
         local EligiblePlayers = {};
-        if (not GL:empty(PrioListEntries)) then
+        if (not GL:empty(PrioListEntries)
+            and GL.Settings:get("TMB.announcePriolistInfoWhenRolling")
+        ) then
             -- Sort the PrioListEntries based on prio (lowest to highest)
             table.sort(PrioListEntries, function (a, b)
                 return a.prio < b.prio;
@@ -185,7 +189,9 @@ function RollOff:announceStart(itemLink, time, note)
                     tinsert(EligiblePlayers, Entry);
                 end
             end
-        elseif (not GL:empty(WishListEntries)) then
+        elseif (not GL:empty(WishListEntries)
+            and GL.Settings:get("TMB.announceWishlistInfoWhenRolling")
+        ) then
             -- Sort the PrioListEntries based on prio (lowest to highest)
             table.sort(WishListEntries, function (a, b)
                 return a.prio < b.prio;

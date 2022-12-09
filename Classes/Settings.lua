@@ -90,6 +90,14 @@ function Settings:enforceTemporarySettings()
         GL.DB.Settings.ShortcutKeys.rollOff = "DISABLED";
     end
 
+    --- In 4.12.16 we split up the TMB.announceInfoWhenRolling setting into separate wishlist/priolist settings
+    local announce = self:get("TMB.announceInfoWhenRolling");
+    if (type(announce) == "boolean") then
+        self:set("TMB.announcePriolistInfoWhenRolling", announce);
+        self:set("TMB.announceWishlistInfoWhenRolling", announce);
+        self:set("TMB.announceInfoWhenRolling", nil);
+    end
+
     --- In 4.12.1 we added a concernsOS and givesPlusOne checkbox field to the roll tracking settings
     for key, RollType in pairs(GL.Settings:get("RollTracking.Brackets", {})) do
         if (RollType[5] == nil) then
@@ -176,28 +184,6 @@ function Settings:enforceTemporarySettings()
         GL.DB.AwardHistory = AwardHistory;
 
         GL:notice("All done!");
-    end
-
-    ---@todo: remove >= 07-11-2022
-    --- Right click shortcut keys are no longer supported
-    local headerSent = false;
-    for _, setting in pairs({"award", "disenchant", "rollOff"}) do
-        if (string.find(GL.DB.Settings.ShortcutKeys[setting], "RIGHTCLICK")) then
-            if (not headerSent) then
-                GL:warning("Some Gargul shortcut keys have changed, more info below");
-                headerSent = true;
-            end
-
-            local oldShortcutKey = GL.DB.Settings.ShortcutKeys[setting];
-            local newShortcutKey = GL.DB.Settings.ShortcutKeys[setting]:gsub("RIGHTCLICK", "CLICK");
-            GL.DB.Settings.ShortcutKeys[setting] = newShortcutKey;
-
-            GL:message(string.format("|c00FFF569%s|r was changed from |c00FFF569%s|r to |c00FFF569%s|r",
-                GL:capitalize(setting),
-                oldShortcutKey,
-                newShortcutKey
-            ));
-        end
     end
 end
 
