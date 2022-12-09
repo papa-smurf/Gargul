@@ -155,6 +155,8 @@ function Session:getActive()
     return DB:get("GDKP.Ledger." .. activeSessionIdentifier, false);
 end
 
+---@param SessionObj table
+---@return boolean
 function Session:store(SessionObj)
     GL:debug("Session:store");
 
@@ -166,6 +168,8 @@ function Session:store(SessionObj)
     end
 
     DB:set("GDKP.Ledger." .. SessionObj.ID, SessionObj);
+
+    return true;
 end
 
 ---@param sessionID string

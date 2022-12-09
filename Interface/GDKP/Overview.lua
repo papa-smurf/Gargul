@@ -240,6 +240,8 @@ function Overview:build()
     Pot:SetText();
     Interface:set(self, "Pot", Pot);
 
+    ---@todo add all items icon here (with loot tracked for this session)
+
     ----[[ RAIDER ICON ]]
     --
     --local RaiderIcon = AceGUI:Create("Icon");
@@ -309,8 +311,8 @@ function Overview:build()
         end,
         tooltip = "Add gold to pot",
         disabledTooltip = "You need lead or master loot to add gold.\nYou can't add gold to deleted sessions",
-        normalTexture = "Interface\\AddOns\\Gargul\\Assets\\Buttons\\create",
-        disabledTexture = "Interface\\AddOns\\Gargul\\Assets\\Buttons\\create-disabled",
+        normalTexture = "Interface/AddOns/Gargul/Assets/Buttons/create",
+        disabledTexture = "Interface/AddOns/Gargul/Assets/Buttons/create-disabled",
         update = function (self)
             local SelectedSession = Overview:getSelectedSession();
             self:SetEnabled(SelectedSession and not SelectedSession.deletedAt and (not GL.User.isInGroup or GL.User.hasLead or GL.User.isMasterLooter));
@@ -650,8 +652,8 @@ function Overview:refreshLedger()
                 end,
                 tooltip = "Edit",
                 disabledTooltip = "You need lead or master loot to edit entries.\nYou can't edit deleted entries or entries on deleted sessions",
-                normalTexture = "Interface\\AddOns\\Gargul\\Assets\\Buttons\\edit",
-                disabledTexture = "Interface\\AddOns\\Gargul\\Assets\\Buttons\\edit-disabled",
+                normalTexture = "Interface/AddOns/Gargul/Assets/Buttons/edit",
+                disabledTexture = "Interface/AddOns/Gargul/Assets/Buttons/edit-disabled",
                 update = function (self)
                     self:SetEnabled(not auctionWasDeleted and not Session.deletedAt);
                 end,
@@ -679,8 +681,8 @@ function Overview:refreshLedger()
                     end,
                     tooltip = "Delete",
                     disabledTooltip = "You need lead or master loot to delete entries.\nYou can't delete entries on deleted sessions",
-                    normalTexture = "Interface\\AddOns\\Gargul\\Assets\\Buttons\\delete",
-                    disabledTexture = "Interface\\AddOns\\Gargul\\Assets\\Buttons\\delete-disabled",
+                    normalTexture = "Interface/AddOns/Gargul/Assets/Buttons/delete",
+                    disabledTexture = "Interface/AddOns/Gargul/Assets/Buttons/delete-disabled",
                     update = function (self)
                         self:SetEnabled(not auctionWasDeleted and not Session.deletedAt);
                     end,
@@ -695,8 +697,8 @@ function Overview:refreshLedger()
                     onClick = function() GDKPAuction:restore(Session.ID, Auction.ID); end,
                     tooltip = "Restore",
                     disabledTooltip = "You need lead or master loot to restore entries.\nYou can't restore entries of deleted sessions",
-                    normalTexture = "Interface\\AddOns\\Gargul\\Assets\\Buttons\\restore",
-                    disabledTexture = "Interface\\AddOns\\Gargul\\Assets\\Buttons\\restore-disabled",
+                    normalTexture = "Interface/AddOns/Gargul/Assets/Buttons/restore",
+                    disabledTexture = "Interface/AddOns/Gargul/Assets/Buttons/restore-disabled",
                     update = function (self)
                         self:SetEnabled(not Session.deletedAt);
                     end,
@@ -712,8 +714,8 @@ function Overview:refreshLedger()
                     Interface.GDKP.AuctionDetails:draw(Session.ID, Auction.checksum);
                 end,
                 tooltip = "Details",
-                normalTexture = "Interface\\AddOns\\Gargul\\Assets\\Buttons\\eye",
-                disabledTexture = "Interface\\AddOns\\Gargul\\Assets\\Buttons\\eye-disabled",
+                normalTexture = "Interface/AddOns/Gargul/Assets/Buttons/eye",
+                disabledTexture = "Interface/AddOns/Gargul/Assets/Buttons/eye-disabled",
             });
             Eye:SetPoint("TOPLEFT", Delete or Restore, "TOPRIGHT", 2, 0);
             self.ActionButtons[Auction.ID].DetailsButton = Eye;
@@ -796,23 +798,6 @@ function Overview:showTutorial()
     self.styleWindowAfterResize();
 end
 
---- Make sure we re-use button frames whenever possible
----
----@param parent table
----@return table
-function Overview:newTableButton(parent)
-    GL:debug("Overview:newTableButton");
-
-    local Button = table.remove(self.ButtonPool, 1);
-
-    if (Button) then
-        Button:SetParent(parent);
-        return Button;
-    end
-
-    return GL.UI:createFrame("Button", "GDKPActionButton" .. GL:uuid(), parent, "UIPanelButtonTemplate");
-end
-
 -- Clear the details frame
 function Overview:clearDetailsFrame()
     GL:debug("GDKP:clearDetailsFrame");
@@ -820,8 +805,8 @@ function Overview:clearDetailsFrame()
     -- Release all of the action buttons into our pool so that we can reuse them later
     for _, Buttons in pairs(self.ActionButtons or {}) do
         for _, Button in pairs(Buttons) do
+            Button:Hide();
             Button:Release();
-            tinsert(self.ButtonPool, Button);
         end
     end
 

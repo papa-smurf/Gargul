@@ -1657,7 +1657,7 @@ function GL:tableSet(Table, keyString, value, ignoreIfExists)
     local firstKey = keys[1];
 
     if (#keys == 1) then
-        if (not Table[firstKey] or not ignoreIfExists) then
+        if (Table[firstKey] ~= nil or not ignoreIfExists) then
             Table[firstKey] = value;
         end
 

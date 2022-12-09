@@ -176,13 +176,16 @@ function Pot:calculateCuts(sessionID)
         return false;
     end
 
-    GL:tableSet(Session, "Pot.DistributionDetails", {}, true);
+    --GL:tableSet(Session, "Pot.DistributionDetails", {}, true);
+
     Session.Pot.Mutators = Session.Pot.Mutators or {};
     local Cuts = Session.Pot.Cuts or {};
     local DistributionDetails = Session.Pot.DistributionDetails or {};
 
+    local PlayerNames = {};
     for _, Player in pairs(GL.User:groupMembers() or {}) do
-        if (true or not DistributionDetails[Player.name]) then
+        tinsert(PlayerNames, Player.name);
+        if (not DistributionDetails[Player.name]) then
             DistributionDetails[Player.name] = self:determineDistributionDefaults(Player, Session);
         end
     end
@@ -210,12 +213,17 @@ function Pot:calculateCuts(sessionID)
                 -- This player receives a manual gold adjustment
             elseif (name == Constants.GDKP.adjustMutatorIdentifier) then
                 if (tonumber(value)) then
-                    flat = flat + math.floor(tonumber(value));
+                    flat = flat + value;
                 end
 
             elseif (Session.Pot.Mutators[name] and value) then
-                percentages = percentages + (Session.Pot.Mutators[name].percentage or 0);
-                flat = flat + (Session.Pot.Mutators[name].flat or 0);
+                if (tonumber(Session.Pot.Mutators[name].percentage)) then
+                    percentages = percentages + Session.Pot.Mutators[name].percentage;
+                end
+
+                if (tonumber(Session.Pot.Mutators[name].flat)) then
+                    flat = flat + Session.Pot.Mutators[name].flat;
+                end
             end
         end
     end
@@ -239,19 +247,16 @@ function Pot:calculateCuts(sessionID)
         for name, value in pairs(Mutators or {}) do
             if (name == Constants.GDKP.adjustMutatorIdentifier) then
                 if (tonumber(value)) then
-                    playerPot = playerPot + math.floor(tonumber(value));
+                    playerPot = playerPot + value;
                 end
 
             elseif (name ~= Constants.GDKP.baseMutatorIdentifier and Session.Pot.Mutators[name] and value) then
-                local percentage = tonumber(Session.Pot.Mutators[name].percentage);
-                flat = Session.Pot.Mutators[name].flat;
-
-                if (percentage) then
-                    playerPot = playerPot + (leftToDistribute * (0 + percentage / 100));
+                if (tonumber(Session.Pot.Mutators[name].percentage)) then
+                    playerPot = playerPot + (leftToDistribute * (0 + Session.Pot.Mutators[name].percentage / 100));
                 end
 
-                if (flat) then
-                    playerPot = playerPot + flat;
+                if (tonumber(Session.Pot.Mutators[name].flat)) then
+                    playerPot = playerPot + Session.Pot.Mutators[name].flat;
                 end
             end
         end
@@ -265,7 +270,7 @@ function Pot:calculateCuts(sessionID)
 
     GDKPSession:store(Session);
 
-    return Session, totalDistributed;
+    return Session, totalToDistribute, totalDistributed;
 end
 
 function Pot:determineDistributionDefaults(Player, Session)
@@ -314,6 +319,81 @@ function Pot:determineDistributionDefaults(Player, Session)
     DistributionDetails[Constants.GDKP.baseMutatorIdentifier] = true;
 
     return DistributionDetails;
+end
+
+---@param sessionID string
+---@return boolean
+function Pot:resetCuts(sessionID)
+    GL:debug("Pot:resetDistributionDetails");
+
+    local Session = GDKPSession:byID(sessionID);
+    if (not Session) then
+        return false;
+    end
+
+    GL:tableSet(Session, "Pot.Cuts", {});
+    GL:tableSet(Session, "Pot.DistributionDetails", {});
+    GDKPSession:store(Session);
+
+    return true;
+end
+
+---@param sessionID string
+---@param player string
+---@param mutator string
+---@param value boolean|number
+---@return boolean
+function Pot:setPlayerMutatorValue(sessionID, player, mutator, value)
+    GL:debug("Pot:setPlayerMutatorValue");
+
+    local Session = GDKPSession:byID(sessionID);
+    if (not Session) then
+        return false;
+    end
+
+    ---@todo Figure out why this doesn't work
+    --GL:tableSet(
+    --    Session,
+    --    "Pot.DistributionDetails." .. player,
+    --    {},
+    --    true
+    --);
+
+    Session.Pot = Session.Pot or {};
+    Session.Pot.DistributionDetails = Session.Pot.DistributionDetails or {};
+    Session.Pot.DistributionDetails[player] = Session.Pot.DistributionDetails[player] or {};
+
+    Session.Pot.DistributionDetails[player][mutator] = value;
+
+    return GDKPSession:store(Session);
+end
+
+---@param sessionID string
+---@param player string
+---@return boolean
+function Pot:deletePlayer(sessionID, player)
+    GL:debug("Pot:deletePlayer");
+
+    local Session = GDKPSession:byID(sessionID);
+    if (not Session) then
+        return false;
+    end
+
+    Session.Pot = Session.Pot or {};
+    Session.Pot.DistributionDetails = Session.Pot.DistributionDetails or {};
+    Session.Pot.DistributionDetails[player] = nil;
+
+    local PlayerDetails = {};
+    for name, Details in pairs(Session.Pot.DistributionDetails or {}) do
+        if (type(Details) == "table" and not GL:empty(Details)) then
+            GL:xd(name);
+            PlayerDetails[name] = Details;
+        end
+    end
+
+    Session.Pot.DistributionDetails = PlayerDetails;
+
+    return GDKPSession:store(Session);
 end
 
 GL:debug("Pot.lua");

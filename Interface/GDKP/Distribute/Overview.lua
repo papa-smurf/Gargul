@@ -25,6 +25,7 @@ GL.Interface.GDKP.Distribute.Overview = {
     isVisible = false,
     sessionID = nil,
 
+    ActionButtons = {},
     CutHolders = {}, -- The labels that hold the actula cut values
     MutationFrame = nil,
     PotDistributionDetails = {},
@@ -90,17 +91,17 @@ function Overview:build()
     MutatorsLabel:SetWidth(150);
     MutatorsHeader:AddChild(MutatorsLabel);
 
-    local HelpIcon = AceGUI:Create("Icon");
-    HelpIcon:SetWidth(12);
-    HelpIcon:SetHeight(12);
-    HelpIcon:SetImageSize(12, 12);
-    HelpIcon:SetImage("interface/friendsframe/informationicon");
-    HelpIcon.frame:SetParent(MutatorsLabel.frame);
-    HelpIcon.frame:SetPoint("BOTTOMLEFT", MutatorsHeader.frame, "BOTTOMLEFT", 7, 8);
-    HelpIcon.frame:Show();
+    local MutatorHelpIcon = AceGUI:Create("Icon");
+    MutatorHelpIcon:SetWidth(12);
+    MutatorHelpIcon:SetHeight(12);
+    MutatorHelpIcon:SetImageSize(12, 12);
+    MutatorHelpIcon:SetImage("interface/friendsframe/informationicon");
+    MutatorHelpIcon.frame:SetParent(MutatorsLabel.frame);
+    MutatorHelpIcon.frame:SetPoint("BOTTOMLEFT", MutatorsHeader.frame, "BOTTOMLEFT", 7, 8);
+    MutatorHelpIcon.frame:Show();
 
-    HelpIcon:SetCallback("OnEnter", function()
-        GameTooltip:SetOwner(HelpIcon.frame, "ANCHOR_RIGHT");
+    MutatorHelpIcon:SetCallback("OnEnter", function()
+        GameTooltip:SetOwner(MutatorHelpIcon.frame, "ANCHOR_RIGHT");
         GameTooltip:AddLine(" ");
         GameTooltip:AddLine("With mutators you can give more or less to players");
         GameTooltip:AddLine("Example: giving 2% extra to tanks is what mutators are for!");
@@ -108,7 +109,7 @@ function Overview:build()
         GameTooltip:Show();
     end);
 
-    HelpIcon:SetCallback("OnLeave", function()
+    MutatorHelpIcon:SetCallback("OnLeave", function()
         GameTooltip:Hide();
     end);
 
@@ -129,8 +130,30 @@ function Overview:build()
     ---@type AceGUILabel
     local RaidersLabel = AceGUI:Create("Label");
     RaidersLabel:SetText("Raiders");
-    RaidersLabel:SetWidth(150);
+    RaidersLabel:SetWidth(300);
     RaidersHeader:AddChild(RaidersLabel);
+    Interface:set(self, "RaidersHeaderLabel", RaidersLabel);
+
+    local PotHelpIcon = AceGUI:Create("Icon");
+    PotHelpIcon:SetWidth(12);
+    PotHelpIcon:SetHeight(12);
+    PotHelpIcon:SetImageSize(12, 12);
+    PotHelpIcon:SetImage("interface/friendsframe/informationicon");
+    PotHelpIcon.frame:SetParent(RaidersHeader.frame);
+    PotHelpIcon.frame:SetPoint("BOTTOMLEFT", RaidersHeader.frame, "BOTTOMLEFT", 7, 8);
+    PotHelpIcon.frame:Show();
+
+    PotHelpIcon:SetCallback("OnEnter", function()
+        GameTooltip:SetOwner(PotHelpIcon.frame, "ANCHOR_RIGHT");
+        GameTooltip:AddLine(" ");
+        GameTooltip:AddLine("The total payout can be slightly lower than the pot due to rounding differences!");
+        GameTooltip:AddLine(" ");
+        GameTooltip:Show();
+    end);
+
+    PotHelpIcon:SetCallback("OnLeave", function()
+        GameTooltip:Hide();
+    end);
 
     ---@type AceGUISimpleGroup
     local RaidersTableHeader = AceGUI:Create("SimpleGroup");
@@ -169,7 +192,7 @@ function Overview:build()
 
     local Announce = AceGUI:Create("Button");
     Announce:SetText("Announce");
-    Announce:SetWidth(150);
+    Announce:SetWidth(100);
     Announce:SetHeight(20);
     Announce:SetCallback("OnClick", function()
         GL:xd("ANNOUNCE!");
@@ -177,7 +200,7 @@ function Overview:build()
 
     local Import = AceGUI:Create("Button");
     Import:SetText("Import");
-    Import:SetWidth(150);
+    Import:SetWidth(90);
     Import:SetHeight(20);
     Import:SetCallback("OnClick", function()
         GL.Interface.GDKP.Distribute.Import:open(self.sessionID);
@@ -185,21 +208,35 @@ function Overview:build()
 
     local Export = AceGUI:Create("Button");
     Export:SetText("Export");
-    Export:SetWidth(150);
+    Export:SetWidth(90);
     Export:SetHeight(20);
     Export:SetCallback("OnClick", function()
         GL.Interface.GDKP.Export:open(self.selectedSession);
     end);
 
+    local Clear = AceGUI:Create("Button");
+    Clear:SetText("Clear");
+    Clear:SetWidth(90);
+    Clear:SetHeight(20);
+    Clear:SetCallback("OnClick", function()
+        GL.Interface.Dialogs.PopupDialog:open({
+            question = "Are you sure you want to reset all players and calculations? Note: all players no longer in the raid will be removed from the list!",
+            OnYes = function ()
+                GDKPPot:resetCuts(self.sessionID);
+            end,
+        });
+    end);
+
     local LockAndPay = AceGUI:Create("Button");
     LockAndPay:SetText("Lock and Pay");
-    LockAndPay:SetWidth(150);
+    LockAndPay:SetWidth(120);
     LockAndPay:SetHeight(20);
     LockAndPay:SetCallback("OnClick", function()
         GL.Interface.GDKP.Export:open(self.selectedSession);
+        self:calculateCuts();
     end);
 
-    Footer:AddChildren(Announce, Import, Export, LockAndPay);
+    Footer:AddChildren(Announce, Import, Export, Clear, LockAndPay);
 
     Window.OnHeightSet = function (...)
         self:resizeFrames();
@@ -227,12 +264,6 @@ end
 function Overview:refresh()
     GL:debug("Overview:refresh");
 
-    local Session = GDKPSession:byID(self.sessionID);
-
-    if (type(Session) ~= "table") then
-        return;
-    end
-
     local MutatorsFrame = Interface:get(self, "Frame.Mutators");
     local RaidersFrame = Interface:get(self, "Frame.Raiders");
     local RaidersTableHeader = Interface:get(self, "Frame.RaidersTableHeader");
@@ -246,12 +277,17 @@ function Overview:refresh()
     end
 
     self:calculateCuts();
-    local PotDistributionDetails = Session.Pot.DistributionDetails or {};
+
+    local Session = GDKPSession:byID(self.sessionID);
+    if (type(Session) ~= "table") then
+        return;
+    end
 
     self.CutHolders = {};
     MutatorsFrame:ReleaseChildren();
     RaidersFrame:ReleaseChildren();
     RaidersTableHeader:ReleaseChildren();
+    self:releaseActionButtons();
 
     local Mutators = GL:tableGet(Session, "Pot.Mutators", {});
 
@@ -318,8 +354,8 @@ function Overview:refresh()
     MutatorsFrame:AddChild(Filler);
 
     local AddMutator = AceGUI:Create("Button");
-    AddMutator:SetText("New Mutator");
-    AddMutator:SetWidth(150);
+    AddMutator:SetText("Add Mutator");
+    AddMutator:SetWidth(110);
     AddMutator:SetHeight(20);
     AddMutator:SetCallback("OnClick", function()
         GL.Interface.GDKP.Distribute.CreateMutator:open(self.sessionID);
@@ -364,8 +400,9 @@ function Overview:refresh()
     RaidersTableHeader:AddChild(HeaderLabel);
 
     -- [[ RAIDERS ]]
-    for _, Player in pairs(GL.User:groupMembers() or {}) do
-        local PlayerPotDetails = PotDistributionDetails[Player.name];
+    for player, PlayerPotDetails in pairs(Session.Pot.DistributionDetails or {}) do
+        self.ActionButtons[player] = {};
+
         ---@type AceGUISimpleGroup
         local RaiderHolder = AceGUI:Create("SimpleGroup");
         RaiderHolder:SetLayout("FLOW");
@@ -374,14 +411,9 @@ function Overview:refresh()
 
         ---@type AceGUILabel
         local RaiderNameLabel = AceGUI:Create("Label");
-        RaiderNameLabel:SetText("    " .. Player.name);
+        RaiderNameLabel:SetText("    " .. player);
         RaiderNameLabel:SetWidth(150);
         RaiderHolder:AddChild(RaiderNameLabel);
-
-        ---@type AceGUICheckBox
-        if (PlayerPotDetails[Constants.GDKP.baseMutatorIdentifier] == nil) then
-            PlayerPotDetails[Constants.GDKP.baseMutatorIdentifier] = true;
-        end
 
         local Checkbox = AceGUI:Create("CheckBox");
         Checkbox:SetValue(PlayerPotDetails[Constants.GDKP.baseMutatorIdentifier]);
@@ -389,8 +421,13 @@ function Overview:refresh()
         Checkbox:SetLabel("");
         Checkbox:SetDescription("");
         Checkbox:SetCallback("OnValueChanged", function(El)
-            PlayerPotDetails[Constants.GDKP.baseMutatorIdentifier] = GL:toboolean(El:GetValue());
-            self:calculateCuts(true);
+            GDKPPot:setPlayerMutatorValue(
+                self.sessionID,
+                player,
+                Constants.GDKP.baseMutatorIdentifier,
+                GL:toboolean(El:GetValue())
+            );
+            self:calculateCuts();
         end);
         RaiderHolder:AddChild(Checkbox);
 
@@ -405,8 +442,13 @@ function Overview:refresh()
             Checkbox:SetLabel("");
             Checkbox:SetDescription("");
             Checkbox:SetCallback("OnValueChanged", function(El)
-                PlayerPotDetails[Mutator.name] = GL:toboolean(El:GetValue());
-                self:calculateCuts(true);
+                GDKPPot:setPlayerMutatorValue(
+                    self.sessionID,
+                    player,
+                    Mutator.name,
+                    GL:toboolean(El:GetValue())
+                );
+                self:calculateCuts();
             end);
             RaiderHolder:AddChild(Checkbox);
         end
@@ -418,8 +460,13 @@ function Overview:refresh()
         AdjustBox:SetWidth(60);
         AdjustBox:SetHeight(18);
         AdjustBox:SetCallback("OnTextChanged", function(El)
-            PlayerPotDetails[Constants.GDKP.adjustMutatorIdentifier] = El:GetText();
-            self:calculateCuts(true);
+            GDKPPot:setPlayerMutatorValue(
+                self.sessionID,
+                player,
+                Constants.GDKP.adjustMutatorIdentifier,
+                El:GetText()
+            );
+            self:calculateCuts();
         end);
         RaiderHolder:AddChild(AdjustBox);
 
@@ -433,11 +480,44 @@ function Overview:refresh()
         CutLabel:SetText("2157g");
         CutLabel:SetWidth(120);
         RaiderHolder:AddChild(CutLabel);
-        self.CutHolders[Player.name] = CutLabel;
+        self.CutHolders[player] = CutLabel;
+
+        --[[ EDIT BUTTON ]]
+        local Edit = Interface:createButton(RaiderHolder, {
+            onClick = function()
+                GL:xd("EDIT");
+            end,
+            tooltip = "Edit raider",
+            normalTexture = "Interface/AddOns/Gargul/Assets/Buttons/edit",
+        });
+        Edit:SetPoint("TOPLEFT", CutLabel.frame, "TOPRIGHT", 20, 10);
+        self.ActionButtons[player].EditButton = Edit;
+
+        --[[ DELETE BUTTON ]]
+        local Delete = Interface:createButton(RaiderHolder, {
+            onClick = function()
+                GDKPPot:deletePlayer(self.sessionID, player);
+                self:refresh();
+            end,
+            tooltip = "Delete raider",
+            normalTexture = "Interface/AddOns/Gargul/Assets/Buttons/delete",
+        });
+        Delete:SetPoint("TOPLEFT", Edit, "TOPRIGHT", 2);
+        self.ActionButtons[player].DeleteButton = Delete;
     end
+
+    local AddRaider = AceGUI:Create("Button");
+    AddRaider:SetText("Add Raider");
+    AddRaider:SetWidth(110);
+    AddRaider:SetHeight(20);
+    AddRaider:SetCallback("OnClick", function()
+        GL.Interface.GDKP.Distribute.CreateMutator:open(self.sessionID);
+    end);
+    RaidersFrame:AddChild(AddRaider);
 
     self.mutatorHeight = mutatorHeight;
     self:resizeFrames();
+    self:calculateCuts();
 end
 
 --- Do some resizing magic when the user resizes the distribution window
@@ -509,7 +589,7 @@ end
 function Overview:calculateCuts()
     GL:debug("Overview:calculateCuts");
 
-    local Session, totalToDistribute = GDKPPot:calculateCuts(self.sessionID);
+    local Session, totalToDistribute, totalDistributed = GDKPPot:calculateCuts(self.sessionID);
 
     if (type(Session) ~= "table") then
         return;
@@ -517,12 +597,40 @@ function Overview:calculateCuts()
 
     local Cuts = GL:tableGet(Session, "Pot.Cuts", {});
 
+    local numberOfRaiders = 0;
     for player, cut in pairs(Cuts or {}) do
         local CutHolder = self.CutHolders[player];
+        numberOfRaiders = numberOfRaiders + 1;
 
         if (CutHolder and CutHolder.SetText) then
             local cutPercentage = 100 / (totalToDistribute / cut);
+
+            if (cutPercentage < 1) then
+                cutPercentage = 0;
+            end
+
             CutHolder:SetText(string.format("|c00967FD2%s|r|c00FFF569g|r  (%s%%)", GL:round(cut, 2), GL:round(cutPercentage, 2)));
+        end
+    end
+
+    if (totalDistributed < 1) then
+        totalDistributed = 0;
+    end
+
+    Interface:get(self, "Label.RaidersHeaderLabel"):SetText(
+        string.format("    %s Raiders | Total payout: %sg", numberOfRaiders, GL:round(totalDistributed, 2))
+    );
+end
+
+---@return void
+function Overview:releaseActionButtons()
+    GL:debug("Overview:releaseActionButtons");
+
+    -- Release all of the action buttons into our pool so that we can reuse them later
+    for _, Buttons in pairs(self.ActionButtons or {}) do
+        for _, Button in pairs(Buttons) do
+            Button:Hide();
+            Button:Release();
         end
     end
 end
