@@ -1,5 +1,9 @@
 local _, GL = ...;
 
+
+---@type Settings
+local Settings = GL.Settings;
+
 ---@class Commands
 GL.Commands = GL.Commands or {
     CommandDescriptions = {
@@ -22,6 +26,7 @@ GL.Commands = GL.Commands or {
         packmule = "Open PackMule which allows you to automatically funnel dropped gear to specific players, very helpful with green items for example",
         plusones = "Open the PlusOnes window that allows you to check and manipulate all plus one values",
         raidcsv = "Output everyone currently in the group in a CSV format",
+        resetui = "Reset Gargul's UI sizes and positions. Useful in case something went out of bounds!",
         rolloff = "Open the RollOff UI where you can announce an item for players to roll on: /gl award [itemLink?]",
         settings = "Open the settings menu",
         softreserves = "Open either the SoftRes import window if there's no data available or open the SoftRes overview",
@@ -70,7 +75,7 @@ GL.Commands = GL.Commands or {
 
     Dictionary = {
         -- Open the settings menu
-        settings = function(...) GL.Settings:draw(); end,
+        settings = function(...) Settings:draw(); end,
 
         -- Open the window for rolling off items
         rolloff = function(...) GL.MasterLooterUI:draw(...); end,
@@ -132,6 +137,11 @@ GL.Commands = GL.Commands or {
             GL.RaidGroups:toCSV();
         end,
 
+        resetui = function ()
+            Settings:set("UI", {});
+            C_UI.Reload();
+        end,
+
         -- Open the TMB window
         thatsmybis = function() GL.TMB:draw(); end,
 
@@ -142,7 +152,7 @@ GL.Commands = GL.Commands or {
         cpr = function() GL.TMB:draw("cpr"); end,
 
         -- Open the pack mule window
-        packmule = function() GL.Settings:draw("PackMule"); end,
+        packmule = function() Settings:draw("PackMule"); end,
 
         -- Open the loot priority window
         lootpriority = function() GL.LootPriority:drawImporter(); end,
@@ -168,7 +178,7 @@ local Commands = GL.Commands; ---@type Commands
 
 --- Display the command help
 ---@return void
-function Commands:help () GL.Settings:draw("SlashCommands"); end
+function Commands:help () Settings:draw("SlashCommands"); end
 
 --- Helper method to call commands from within the addon
 ---
@@ -226,7 +236,7 @@ function Commands:_dispatch(str)
     end
 
     -- Show the list of commands unless the user disabled this feature
-    if (GL.Settings:get("autoOpenCommandHelp")) then
+    if (Settings:get("autoOpenCommandHelp")) then
         self:help();
     end
 end;

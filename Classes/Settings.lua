@@ -243,20 +243,28 @@ function Settings:showSettingsMenu(Frame)
     -- Add the addon title to the top of the settings frame
     local Title = Frame:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge");
     Title:SetPoint("TOPLEFT", 16, -16);
-    Title:SetText("Gargul");
+    Title:SetText(string.format("Gargul |c00967FD2(v%s)|r", GL.version));
 
-    -- This is the "PackMule" button that opens the PackMule settings
     local SettingsButton = CreateFrame("Button", nil, Frame, "UIPanelButtonTemplate");
     SettingsButton:SetText("Settings");
     SettingsButton:SetWidth(177);
     SettingsButton:SetHeight(24);
-    SettingsButton:SetPoint("TOPLEFT", Title, "BOTTOMLEFT", 0, -8);
+    SettingsButton:SetPoint("TOPLEFT", Title, "BOTTOMLEFT", 0, -16);
     SettingsButton:SetScript("OnClick", function()
         -- Make sure the vanilla interface options are closed and don't reopen automatically
         HideUIPanel(InterfaceOptionsFrame);
         HideUIPanel(GameMenuFrame);
 
         self:draw();
+    end);
+
+    local ResetUIButton = CreateFrame("Button", nil, Frame, "UIPanelButtonTemplate");
+    ResetUIButton:SetText("Reset Gargul UI");
+    ResetUIButton:SetWidth(177);
+    ResetUIButton:SetHeight(24);
+    ResetUIButton:SetPoint("TOPLEFT", Title, "BOTTOMLEFT", 200, -16);
+    ResetUIButton:SetScript("OnClick", function()
+        GL.Commands:call("resetui");
     end);
 end
 
