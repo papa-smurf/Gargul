@@ -191,7 +191,7 @@ function TradeWindow:handleEvents(event, message)
         end
 
         -- Fire a custom GL event. This ensures that the listeners have access to the data set in self.State
-        GL.Events:fire("GL." .. event);
+        GL.Events:fire("GL." .. event, self.State);
 
         return;
     end
@@ -315,6 +315,23 @@ function TradeWindow:addItem(itemID)
     GL:debug("TradeWindow:addItem");
 
     tinsert(self.ItemsToAdd, itemID);
+end
+
+--- Attempt to set a gold amount to the trade window
+---
+---@param amount number
+---@return void
+function TradeWindow:setCopper(amount, callback)
+    GL:debug("TradeWindow:setCopper");
+
+    GL.Ace:ScheduleTimer(function ()
+        _G.MoneyInputFrame_SetCopper(_G.TradePlayerInputMoneyFrame, amount);
+
+        -- Let the application know whether setting the desired amount of copper succeeded
+        if (type(callback) == "function") then
+            callback(_G.MoneyInputFrame_GetCopper(_G.TradePlayerInputMoneyFrame) == amount);
+        end
+    end, .5);
 end
 
 --- Process the ItemsToAdd table
