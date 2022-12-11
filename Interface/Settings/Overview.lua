@@ -159,7 +159,6 @@ function Overview:draw(section)
     HorizontalSpacer:SetHeight(20);
     SecondColumn:AddChild(HorizontalSpacer);
 
-    -- Show the changelog button
     local ChangelogButton = GL.AceGUI:Create("Button");
     ChangelogButton:SetText("Changelog");
     ChangelogButton:SetCallback("OnClick", function()
@@ -168,6 +167,19 @@ function Overview:draw(section)
     end);
     ChangelogButton:SetWidth(120);
     SecondColumn:AddChild(ChangelogButton);
+
+    local ResetUIButton = GL.AceGUI:Create("Button");
+    ResetUIButton:SetText("Reset Gargul UI");
+    ResetUIButton:SetCallback("OnClick", function()
+        GL.Interface.Dialogs.PopupDialog:open({
+            question = "Are you sure you want to reset all of Gargul's window sizes and locations?",
+            OnYes = function ()
+                GL.Commands:call("resetui");
+            end,
+        });
+    end);
+    ResetUIButton:SetWidth(136);
+    SecondColumn:AddChild(ResetUIButton);
 
     local PatreonButton = GL.UI:createFrame("Button", "PatreonButton" .. GL:uuid(), Window.frame, "UIPanelButtonTemplate");
     PatreonButton:Show();
