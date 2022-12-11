@@ -45,12 +45,6 @@ GDKP.Pot = {
 ---@type GDKPPot
 local Pot = GDKP.Pot;
 
---Pot.Mutators = {
---    tank = {name="tank", percentage=2, flat=0, AutoGiveOnRolls={"TANK"}},
---    healer = {name="healer", percentage=1, flat=0, AutoGiveOnRolls={"HEALER"}},
---    utility = {name="utility", percentage=.5, flat=0, AutoGiveOnRolls={"MASTERLOOTER", "ROGUE"}},
---};
-
 ---@param sessionID string
 ---@param gold number
 ---@param player string

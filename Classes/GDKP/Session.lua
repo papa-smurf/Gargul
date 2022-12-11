@@ -26,7 +26,6 @@ GDKP.Session = {
     broadcastInProgress = false,
     inProgress = false,
     lastOutBidNotificationShownAt = nil,
-    listeningForBids = false,
     requestingData = false,
     timerId = 0, -- ID of the timer event
 
@@ -36,6 +35,7 @@ GDKP.Session = {
 ---@type GDKPSession
 local Session = GDKP.Session;
 
+---@return void
 function Session:_init()
     GL:debug("Session:_init");
 
@@ -48,6 +48,137 @@ function Session:_init()
     Events:register("GDKPSessionTradeCompletedListener", "GL.TRADE_COMPLETED", function (_, Details)
         self:registerGoldTrade(Details);
     end);
+
+    Events:register("GDKPSessionTradeInitiatedListener", "GL.TRADE_SHOW", function (_, Details)
+        self:tradeInitiated(Details);
+    end);
+end
+
+function Session:tradeInitiated(Details)
+    GL:debug("Session:tradeInitiated");
+
+    if (not Details.partner) then
+        return;
+    end
+
+    local Instance = self:getActive();
+
+    -- Check if the GDKP session exists and is locked for payout
+    if (not Instance) then
+        return;
+    end
+
+    local message = "";
+    local playerCut = 0;
+    if (Instance.lockedAt) then
+        playerCut = GL:tableGet(Instance, "Pot.Cuts." .. Details.partner, 0) or 0;
+    end
+
+    local GoldTrades = GL:tableGet(Instance, "GoldTrades." .. Details.partner, {
+        from = 0,
+        to = 0,
+    });
+
+    local playerCutInCopper = playerCut * 10000;
+    local copperReceived = GoldTrades.from;
+    local copperGiven = GoldTrades.to;
+    local copperSpentByPlayer = self:goldSpentByPlayer(Details.partner) * 10000;
+    local copperToReceive = copperSpentByPlayer - copperReceived;
+    local copperToGive = playerCutInCopper - copperToReceive - copperGiven;
+
+    local balanceMessage = " ";
+    local whisperMessage = nil;
+    if (copperToGive > 0) then
+        local due = GL:copperToMoney(copperToGive);
+        balanceMessage = string.format("|c00F7922ETo give: %s|r", due);
+        whisperMessage = string.format("I owe you %s. Enjoy!", due);
+
+    elseif (copperToGive < 0) then
+        local owed = GL:copperToMoney(copperToGive * -1);
+        balanceMessage = string.format("|c0092FF00To receive: %s|r", owed);
+        whisperMessage = string.format("You owe me %s. Thank you!", owed);
+    end
+
+    if (whisperMessage and Settings:get("GDKP.whisperGoldDetails")) then
+        GL:sendChatMessage(whisperMessage, "WHISPER", nil, Details.partner);
+    end
+
+    message = string.format(
+        "|c00967FD2GDKP Session|r\nSpent by player: %s\nGiven: %s\nReceived: %s\nPlayer cut: %s\n\n%s",
+        GL:copperToMoney(copperSpentByPlayer),
+        GL:copperToMoney(copperGiven),
+        GL:copperToMoney(copperReceived),
+        GL:copperToMoney(playerCutInCopper),
+        balanceMessage
+    );
+
+    -- Just to be sure!
+    if (not TradeFrame:IsShown()) then
+        return;
+    end
+
+    if (Settings:get("GDKP.showGoldDetailsWindow")) then
+        local Window = GL.AceGUI:Create("InlineGroup");
+        Window:SetLayout("Flow");
+        Window:SetWidth(190);
+        Window:SetHeight(30);
+        Window.frame:SetParent(TradeFrame);
+        Window.frame:SetScript("OnHide", function()
+            GL.Interface:release(Window);
+        end);
+        Window:SetPoint("TOPLEFT", TradeFrame, "TOPRIGHT", 0, 9);
+        Window.frame:Show();
+
+        local DescriptionLabel = GL.AceGUI:Create("Label");
+        DescriptionLabel:SetFullWidth(true);
+        DescriptionLabel:SetFontObject(_G["GameFontNormalSmall"]);
+        DescriptionLabel:SetText(message);
+        DescriptionLabel:SetColor(1, .95686, .40784);
+        Window:AddChild(DescriptionLabel);
+    end
+
+    -- Add the gold to the trade window
+    if (playerCutInCopper > 0
+        and copperToGive
+        and Settings:get("GDKP.addGoldToTradeWindow")
+    ) then
+        if (copperToGive > GetMoney()) then
+            GL:error("You don't have enough money to pay " .. Details.partner);
+        else
+            GL.TradeWindow:setCopper(copperToGive * 10000, function(success)
+                if (success) then
+                    return;
+                end
+
+                GL:error(string.format(
+                    "Unable to add %s to the trade window. Try adding it manually!",
+                    GL:copperToMoney(copperToGive)
+                ));
+            end);
+        end
+    end
+end
+
+---@param player string
+---@param sessionID string
+---@return number
+function Session:goldSpentByPlayer(player, sessionID)
+    GL:debug("Session:goldSpentByPlayer");
+
+    sessionID = sessionID or self:activeSessionID();
+    local Instance = self:byID(sessionID);
+    if (not Instance) then
+        return 0;
+    end
+
+    local spent = 0;
+    for _, Sale in pairs(Instance.Auctions or {}) do
+        if (not Sale.deletedAt and Sale.price and Sale.Winner.name == player and GL:higherThanZero(Sale.price)) then
+            spent = spent + Sale.price;
+        end
+    end
+
+    return spent;
 end
 
 ---@param Details table
@@ -189,7 +320,7 @@ end
 
 ---@return table|boolean
 function Session:getActive()
-    GL:debug("Session:getActiveSession");
+    GL:debug("Session:getActive");
 
     local activeSessionIdentifier = DB:get("GDKP.activeSession", false);
 

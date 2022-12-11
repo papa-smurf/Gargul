@@ -886,7 +886,7 @@ function Auction:stop(CommMessage)
             );
         end
 
-        -- We stop listening for bids one second after the rolloff ends just in case there is server lag/jitter
+        -- We stop listening for bids one second after the auction ends just in case there is server lag/jitter
         GL.Ace:ScheduleTimer(function()
             self:stopListeningForBids();
         end, 1);
@@ -977,14 +977,12 @@ end
 function Auction:listenForBids()
     GL:debug("GDKP.Auction:listenForBids");
 
-    -- Make sure the timer to cancel listening for rolls is cancelled
-    if (self.bidListenerCancelTimerId) then
-        GL.Ace:CancelTimer(self.bidListenerCancelTimerId);
-    end
-
     if (self.listeningForBids) then
         return;
     end
+
+    -- Make sure the timer to cancel listening for rolls is cancelled
+    GL.Ace:CancelTimer(self.bidListenerCancelTimerId);
 
     self.listeningForBids = true;
 
@@ -1061,6 +1059,10 @@ function Auction:lowestValidBid()
     );
 end
 
+---@param event string
+---@param message string
+---@param bidder string
+---@return void
 function Auction:processBid(event, message, bidder)
     GL:debug("GDKP.Auction:processBid");
 
@@ -1071,14 +1073,19 @@ function Auction:processBid(event, message, bidder)
         return;
     end
 
+    -- We're no longer listening for bids
+    if (not self.listeningForBids) then
+        return;
+    end
+
     ---@todo set to false
     --local acceptClosedBids = false;
     local acceptClosedBids = true;
 
     -- We only accept bids in /w when we're accepting closed bids or when we're not in a group (e.g. testing)
     if (event == "CHAT_MSG_WHISPER"
-            and not acceptClosedBids
-            and GL.User.isInGroup)
+        and not acceptClosedBids
+        and GL.User.isInGroup)
     then
         local response = "I'm not accepting closed bids, use the /ra channel instead!";
 

@@ -111,6 +111,7 @@ GL.Data.DefaultSettings = {
         reserveThreshold = 180,
     },
     GDKP = {
+        addGoldToTradeWindow = true,
         announceAuctionStart = true,
         announceBidsClosed = true,
         antiSnipe = 10,
@@ -122,7 +123,9 @@ GL.Data.DefaultSettings = {
         minimumBid = 100,
         minimumIncrement = 50,
         showBidWindow = true,
+        showGoldDetailsWindow = true,
         time = 30,
+        whisperGoldDetails = true,
 
         -- This holds minimum bid and increment settings per item
         SettingsPerItem = {},

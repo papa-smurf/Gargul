@@ -23,6 +23,7 @@ GL.Interface.GDKP.Distribute = GL.Interface.GDKP.Distribute or {};
 ---@class GDKPDistribute
 GL.Interface.GDKP.Distribute.Overview = {
     isVisible = false,
+    refreshing = false,
     sessionID = nil,
 
     MutatorActionButtons = {},
@@ -49,13 +50,12 @@ function Overview:open(sessionID)
         Window = self:build();
     end
 
-    self.sessionID = sessionID;
-    self:refresh();
-
     if (self.isVisible) then
         return;
     end
 
+    self.sessionID = sessionID;
+    self:refresh();
     self.isVisible = true;
     Window:Show();
 end
@@ -79,7 +79,7 @@ function Overview:build()
         {"DistributionOverviewGDKPSessionLockedListener", "GL.GDKP_SESSION_LOCKED"},
         {"DistributionOverviewGDKPSessionUnlockedListener", "GL.GDKP_SESSION_UNLOCKED"},
     }, function ()
-        self:refresh();
+        self:throttledRefresh();
     end);
 
     ---@type AceGUIFrame
@@ -206,6 +206,45 @@ function Overview:build()
     AddRaider:SetCallback("OnClick", function()
         GL.Interface.GDKP.AddRaider:open(self.sessionID);
     end);
+    Interface:set(self, "AddRaider", AddRaider);
+
+    local Import = AceGUI:Create("Button");
+    Import:SetText("Import");
+    Import:SetWidth(90);
+    Import:SetHeight(20);
+    Import:SetCallback("OnClick", function()
+        GL.Interface.GDKP.Distribute.Import:open(self.sessionID);
+    end);
+    Interface:set(self, "Import", Import);
+
+    local Clear = AceGUI:Create("Button");
+    Clear:SetText("Clear");
+    Clear:SetWidth(90);
+    Clear:SetHeight(20);
+    Clear:SetCallback("OnClick", function()
+        GL.Interface.Dialogs.PopupDialog:open({
+            question = "Are you sure you want to reset all players and calculations? Note: all players no longer in the raid will be removed from the list!",
+            OnYes = function ()
+                GDKPPot:resetCuts(self.sessionID);
+                self:throttledRefresh();
+            end,
+        });
+    end);
+    Interface:set(self, "Clear", Clear);
+
+    local Export = AceGUI:Create("Button");
+    Export:SetText("Export");
+    Export:SetWidth(90);
+    Export:SetHeight(20);
+    Export:SetCallback("OnClick", function()
+        GL.Interface.GDKP.Export:open(self.selectedSession);
+    end);
+
+    local LockToggler = AceGUI:Create("Button");
+    LockToggler:SetText("Lock and Pay");
+    LockToggler:SetWidth(120);
+    LockToggler:SetHeight(20);
+    Interface:set(self, "LockToggler", LockToggler);
 
     local Announce = AceGUI:Create("Button");
     Announce:SetText("Announce");
@@ -218,46 +257,7 @@ function Overview:build()
         end);
     end);
 
-    local Import = AceGUI:Create("Button");
-    Import:SetText("Import");
-    Import:SetWidth(90);
-    Import:SetHeight(20);
-    Import:SetCallback("OnClick", function()
-        GL.Interface.GDKP.Distribute.Import:open(self.sessionID);
-    end);
-
-    local Export = AceGUI:Create("Button");
-    Export:SetText("Export");
-    Export:SetWidth(90);
-    Export:SetHeight(20);
-    Export:SetCallback("OnClick", function()
-        GL.Interface.GDKP.Export:open(self.selectedSession);
-    end);
-
-    local Clear = AceGUI:Create("Button");
-    Clear:SetText("Clear");
-    Clear:SetWidth(90);
-    Clear:SetHeight(20);
-    Clear:SetCallback("OnClick", function()
-        GL.Interface.Dialogs.PopupDialog:open({
-            question = "Are you sure you want to reset all players and calculations? Note: all players no longer in the raid will be removed from the list!",
-            OnYes = function ()
-                GDKPPot:resetCuts(self.sessionID);
-                self:refresh();
-            end,
-        });
-    end);
-
-    local LockToggler = AceGUI:Create("Button");
-    LockToggler:SetText("Lock and Pay");
-    LockToggler:SetWidth(120);
-    LockToggler:SetHeight(20);
-    LockToggler:SetCallback("OnClick", function()
-        GDKPSession:toggleLock(self.sessionID);
-    end);
-    Interface:set(self, "LockToggler", LockToggler);
-
-    Footer:AddChildren(AddRaider, Announce, Import, Clear, LockToggler);
+    Footer:AddChildren(AddRaider, Import, Clear, LockToggler, Announce);
 
     Window.OnHeightSet = function (...)
         self:resizeFrames();
@@ -282,18 +282,41 @@ function Overview:closeSubWindows()
     Interface.GDKP.Distribute.Import:close();
 end
 
+---@return void
+function Overview:throttledRefresh()
+    GL:debug("Overview:throttledRefresh");
+
+    GL.Ace:CancelTimer(self.RefreshTimer);
+
+    self.RefreshTimer = GL.Ace:ScheduleTimer(function ()
+        self:refresh();
+    end, .5);
+end
+
+---@return void
 function Overview:refresh()
     GL:debug("Overview:refresh");
+
+    -- Make sure we try to prevent race-conditions as much as possible
+    if (self.refreshing) then
+        return self:throttledRefresh();
+    end
+
+    self.refreshing = true;
 
     local MutatorsFrame = Interface:get(self, "Frame.Mutators");
     local RaidersFrame = Interface:get(self, "Frame.Raiders");
     local RaidersTableHeader = Interface:get(self, "Frame.RaidersTableHeader");
     local Window = Interface:get(self, "GDKPDistribute");
+    local AddRaiderButton = Interface:get(self, "Button.AddRaider");
+    local ImportButton = Interface:get(self, "Button.Import");
+    local ClearButton = Interface:get(self, "Button.Clear");
 
     if (not Window
         or not MutatorsFrame
         or not RaidersFrame
     ) then
+        self.refreshing = false;
         return;
     end
 
@@ -301,20 +324,45 @@ function Overview:refresh()
 
     local Session = GDKPSession:byID(self.sessionID);
     if (type(Session) ~= "table") then
+        self.refreshing = false;
         return;
     end
 
-    local Buttontext = "Lock and Pay";
-    if (Session.lockedAt) then
-        Buttontext = "Unlock";
+    if (AddRaiderButton and AddRaiderButton.SetDisabled) then
+        AddRaiderButton:SetDisabled(Session.lockedAt);
     end
-    Interface:get(self, "Button.LockToggler"):SetText(Buttontext);
+
+    if (ImportButton and ImportButton.SetDisabled) then
+        ImportButton:SetDisabled(Session.lockedAt);
+    end
+
+    if (ClearButton and ClearButton.SetDisabled) then
+        ClearButton:SetDisabled(Session.lockedAt);
+    end
 
     self.CutHolders = {};
+    self:releaseActionButtons();
     MutatorsFrame:ReleaseChildren();
     RaidersFrame:ReleaseChildren();
     RaidersTableHeader:ReleaseChildren();
-    self:releaseActionButtons();
+
+    local question;
+    local LockToggler = Interface:get(self, "Button.LockToggler");
+    if (Session.lockedAt) then
+        LockToggler:SetText("Unlock");
+        question = "Unlocking and changing the pot or cuts can get really messy, especially if you've already done payouts. Are you sure?";
+    else
+        LockToggler:SetText("Lock and Pay");
+        question = "Locking a session means you can't auction items or otherwise change anything until you unlock it, are you sure?";
+    end
+    LockToggler:SetCallback("OnClick", function()
+        GL.Interface.Dialogs.PopupDialog:open({
+            question = question,
+            OnYes = function ()
+                GDKPSession:toggleLock(self.sessionID);
+            end,
+        });
+    end);
 
     local Mutators = GL:tableGet(Session, "Pot.Mutators", {});
 
@@ -372,36 +420,38 @@ function Overview:refresh()
         MutatorFlatBox:SetWidth(80);
         MutatorHolder:AddChild(MutatorFlatBox);
 
-        --[[ EDIT BUTTON ]]
-        local Edit = Interface:createButton(MutatorHolder, {
-            onClick = function()
-                GL.Interface.GDKP.Distribute.EditMutator:open(self.sessionID, Mutator.name);
-            end,
-            tooltip = "Edit mutator",
-            normalTexture = "Interface/AddOns/Gargul/Assets/Buttons/edit",
-        });
-        Edit:SetPoint("TOPLEFT", MutatorFlatBox.frame, "TOPRIGHT", 20, 0);
-        tinsert(self.MutatorActionButtons, Edit);
+        if (not Session.lockedAt) then
+            --[[ EDIT BUTTON ]]
+            local Edit = Interface:createButton(MutatorHolder, {
+                onClick = function()
+                    GL.Interface.GDKP.Distribute.EditMutator:open(self.sessionID, Mutator.name);
+                end,
+                tooltip = "Edit mutator",
+                normalTexture = "Interface/AddOns/Gargul/Assets/Buttons/edit",
+            });
+            Edit:SetPoint("TOPLEFT", MutatorFlatBox.frame, "TOPRIGHT", 20, 0);
+            tinsert(self.MutatorActionButtons, Edit);
 
-        --[[ DELETE BUTTON ]]
-        local Delete = Interface:createButton(MutatorHolder, {
-            onClick = function()
-                GL.Interface.Dialogs.PopupDialog:open({
-                    question = string.format("Are you sure you want to delete the %s mutator?", Mutator.name),
-                    OnYes = function ()
-                        if (GDKPPot:removeMutator(Mutator.name, self.sessionID)) then
-                            self:refresh();
-                        else
-                            GL:error("Unable to delete mutator " .. Mutator.name);
-                        end
-                    end,
-                });
-            end,
-            tooltip = "Delete mutator",
-            normalTexture = "Interface/AddOns/Gargul/Assets/Buttons/delete",
-        });
-        Delete:SetPoint("TOPLEFT", Edit, "TOPRIGHT", 2);
-        tinsert(self.MutatorActionButtons, Delete);
+            --[[ DELETE BUTTON ]]
+            local Delete = Interface:createButton(MutatorHolder, {
+                onClick = function()
+                    GL.Interface.Dialogs.PopupDialog:open({
+                        question = string.format("Are you sure you want to delete the %s mutator?", Mutator.name),
+                        OnYes = function ()
+                            if (GDKPPot:removeMutator(Mutator.name, self.sessionID)) then
+                                self:throttledRefresh();
+                            else
+                                GL:error("Unable to delete mutator " .. Mutator.name);
+                            end
+                        end,
+                    });
+                end,
+                tooltip = "Delete mutator",
+                normalTexture = "Interface/AddOns/Gargul/Assets/Buttons/delete",
+            });
+            Delete:SetPoint("TOPLEFT", Edit, "TOPRIGHT", 2);
+            tinsert(self.MutatorActionButtons, Delete);
+        end
 
         mutatorHeight = mutatorHeight + MutatorHolder.frame:GetHeight();
     end
@@ -419,6 +469,7 @@ function Overview:refresh()
     AddMutator:SetCallback("OnClick", function()
         GL.Interface.GDKP.Distribute.CreateMutator:open(self.sessionID);
     end);
+    AddMutator:SetDisabled(Session.lockedAt);
     MutatorsFrame:AddChild(AddMutator);
 
     --[[ SHOW RAIDERS ]]
@@ -490,6 +541,7 @@ function Overview:refresh()
         Checkbox:SetWidth(50);
         Checkbox:SetLabel("");
         Checkbox:SetDescription("");
+        Checkbox:SetDisabled(Session.lockedAt);
         Checkbox:SetCallback("OnValueChanged", function(El)
             GDKPPot:setPlayerMutatorValue(
                 self.sessionID,
@@ -511,6 +563,7 @@ function Overview:refresh()
             Checkbox:SetWidth(50);
             Checkbox:SetLabel("");
             Checkbox:SetDescription("");
+            Checkbox:SetDisabled(Session.lockedAt);
             Checkbox:SetCallback("OnValueChanged", function(El)
                 GDKPPot:setPlayerMutatorValue(
                     self.sessionID,
@@ -530,6 +583,7 @@ function Overview:refresh()
         AdjustBox:SetWidth(60);
         AdjustBox:SetHeight(18);
         AdjustBox:SetText(PlayerPotDetails[Constants.GDKP.adjustMutatorIdentifier]);
+        AdjustBox:SetDisabled(Session.lockedAt);
         AdjustBox:SetCallback("OnTextChanged", function(El)
             GDKPPot:setPlayerMutatorValue(
                 self.sessionID,
@@ -553,7 +607,7 @@ function Overview:refresh()
         RaiderHolder:AddChild(CutLabel);
         self.CutHolders[player] = CutLabel;
 
-        if (not playerIsInMyGroup) then
+        if (not playerIsInMyGroup and not Session.lockedAt) then
             --[[ EDIT BUTTON ]]
             local Edit = Interface:createButton(RaiderHolder, {
                 onClick = function()
@@ -569,7 +623,7 @@ function Overview:refresh()
             local Delete = Interface:createButton(RaiderHolder, {
                 onClick = function()
                     GDKPPot:deletePlayer(self.sessionID, player);
-                    self:refresh();
+                    self:throttledRefresh();
                 end,
                 tooltip = "Delete raider",
                 normalTexture = "Interface/AddOns/Gargul/Assets/Buttons/delete",
@@ -582,6 +636,8 @@ function Overview:refresh()
     self.mutatorHeight = mutatorHeight;
     self:resizeFrames();
     self:calculateCuts();
+
+    self.refreshing = false;
 end
 
 --- Do some resizing magic when the user resizes the distribution window
@@ -595,7 +651,7 @@ function Overview:resizeFrames()
     local RaidersScrollFrame = Interface:get(self, "ScrollFrame.Raiders");
     local Window = Interface:get(self, "GDKPDistribute");
 
-    local height = Window.frame:GetHeight() - (self.mutatorHeight or 0) - 44;
+    local height = Window.frame:GetHeight() - (self.mutatorHeight or 0) - 56;
 
     Interface:get(self, "Frame.ScrollFrameHolder"):SetHeight(height);
     MutatorsFrame:DoLayout();
@@ -692,12 +748,12 @@ function Overview:releaseActionButtons()
 
     -- Release all of the action buttons into our pool so that we can reuse them later
     for _, Button in pairs(self.MutatorActionButtons or {}) do
-        Button:Hide();
+        --Button:Hide();
         Button:Release();
     end
 
     for _, Button in pairs(self.RaiderActionButtons or {}) do
-        Button:Hide();
+        --Button:Hide();
         Button:Release();
     end
 end

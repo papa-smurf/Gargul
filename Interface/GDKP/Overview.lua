@@ -54,7 +54,11 @@ function Overview:_init()
 
     self._initialized = true;
 
-    GL.Events:register("GDKPOverviewGDKPAuctionChangedListener", "GL.GDKP_AUCTION_CHANGED", function()
+    GL.Events:register({
+        {"GDKPOverviewGDKPAuctionChangedListener", "GL.GDKP_AUCTION_CHANGED"},
+        {"GDKPOverviewGDKPSessionLockedListener", "GL.GDKP_SESSION_LOCKED"},
+        {"GDKPOverviewGDKPSessionUnlockedListener", "GL.GDKP_SESSION_UNLOCKED"},
+    }, function(e)
         if (not self.isVisible) then return; end
         GL.Ace:ScheduleTimer(function()
             self:updatePot();
@@ -240,34 +244,32 @@ function Overview:build()
 
     ---@todo add all items icon here (with loot tracked for this session)
 
-    ----[[ RAIDER ICON ]]
-    --
-    --local RaiderIcon = AceGUI:Create("Icon");
-    --
-    -----@type Frame
-    --local RaiderconFrame = RaiderIcon.frame;
-    --
-    --RaiderIcon:SetImage("interface/icons/achievement_guildperk_everybodysfriend");
-    --RaiderIcon:SetImageSize(26, 26);
-    --RaiderIcon:SetWidth(26);
-    --RaiderIcon:SetHeight(26);
-    --
-    --RaiderconFrame:SetParent(WindowFrame);
-    --RaiderconFrame:SetPoint("TOPRIGHT", Pot, "TOPLEFT", -20, 32);
-    --RaiderconFrame:Show();
-    --
-    --RaiderIcon:SetCallback("OnClick", function ()
-    --    GL.Interface.GDKP.Export:open(self.selectedSession);
-    --end);
-    --
-    --RaiderIcon:SetCallback("OnEnter", function ()
-    --    GameTooltip:SetOwner(RaiderconFrame, "ANCHOR_TOP");
-    --    GameTooltip:AddLine("Raiders");
-    --    GameTooltip:Show();
-    --end);
-    --RaiderIcon:SetCallback("OnLeave", function ()
-    --    GameTooltip:Hide();
-    --end);
+    ----[[ LOCK STATUS ICON ]]
+
+    local LockIcon = AceGUI:Create("Icon");
+
+    ---@type Frame
+    local RaiderconFrame = LockIcon.frame;
+
+    LockIcon:SetImage("Interface/AddOns/Gargul/Assets/Icons/unlocked");
+    LockIcon:SetImage("Interface/AddOns/Gargul/Assets/Icons/locked");
+    LockIcon:SetImageSize(26, 26);
+    LockIcon:SetWidth(26);
+    LockIcon:SetHeight(26);
+    Interface:set(self, "LockIcon", LockIcon);
+
+    RaiderconFrame:SetParent(WindowFrame);
+    RaiderconFrame:SetPoint("TOPRIGHT", Pot, "TOPLEFT", -20, 32);
+    RaiderconFrame:Show();
+
+    LockIcon:SetCallback("OnEnter", function ()
+        GameTooltip:SetOwner(RaiderconFrame, "ANCHOR_TOP");
+        GameTooltip:AddLine("Lock or unlock the session");
+        GameTooltip:Show();
+    end);
+    LockIcon:SetCallback("OnLeave", function ()
+        GameTooltip:Hide();
+    end);
 
     --[[ FIRST COLUMN: sessions ]]
     local FirstColumn = AceGUI:Create("SimpleGroup");
@@ -467,6 +469,7 @@ end
 ---@return void
 function Overview:refreshLedger()
     GL:debug("Overview:drawDetails");
+
 GL:xd("REFRESH LEDGER");
     if (not self.selectedSession) then
         return self:showTutorial();
@@ -490,18 +493,48 @@ GL:xd("REFRESH LEDGER");
     Interface:set(self, "SessionDetails", Details);
     Wrapper:AddChild(Details);
 
+    local question;
+    local LockIcon = Interface:get(self, "Icon.LockIcon");
+    if (Session.lockedAt) then
+        LockIcon:SetImage("Interface/AddOns/Gargul/Assets/Icons/locked");
+        question = "Unlocking and changing the pot or cuts can get really messy, especially if you've already done payouts. Are you sure?";
+    else
+        LockIcon:SetImage("Interface/AddOns/Gargul/Assets/Icons/unlocked");
+        question = "Locking a session means you can't auction items or otherwise change anything until you unlock it, are you sure?";
+    end
+    LockIcon:SetCallback("OnClick", function()
+        GL.Interface.Dialogs.PopupDialog:open({
+            question = question,
+            OnYes = function ()
+                GDKPSession:toggleLock(self.selectedSession);
+            end,
+        });
+    end);
+
     local Title = Interface:get(self, "Label.Title");
     Title:SetText(string.format("\n|c00%s%s|r", Constants.addonHexColor, Session.title));
 
     local Note = Interface:get(self, "Label.Note");
     local CreatedBy = Session.CreatedBy or {class = "priest", name = "unknown", guild = "unknown", uuid = "unknown"};
+    local managementCut = "";
+    local guild = "";
+
+    if (Session.managementCut) then
+        managementCut = string.format(" | Cut |c00%s%s%%|r", Constants.addonHexColor, Session.managementCut);
+    end
+
+    if (CreatedBy.guild) then
+        guild = string.format(" |c001eff00<%s>|r", CreatedBy.guild);
+    end
+
     Note:SetText(string.format(
-        "Created by |c00%s%s|r |c001eff00<%s>|r on |c00%s%s|r",
+        "By |c00%s%s|r%s | On |c00%s%s|r%s",
         GL:classHexColor(CreatedBy.class),
         CreatedBy.name,
-        CreatedBy.guild or "",
+        guild,
         Constants.addonHexColor,
-        date('%Y-%m-%d', Session.createdAt)
+        date('%Y-%m-%d', Session.createdAt),
+        managementCut
     ));
 
     local ItemIDs = {};

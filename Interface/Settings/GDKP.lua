@@ -52,6 +52,23 @@ function GDKP:draw(Parent)
         },
     }, Parent);
 
+    Overview:drawHeader("Trading", Parent);
+
+    Overview:drawCheckboxes({
+        {
+            label = "Show GDKP gold details window",
+            setting = "GDKP.showGoldDetailsWindow",
+        },
+        {
+            label = "Whisper a gold to give or receive message",
+            setting = "GDKP.whisperGoldDetails",
+        },
+        {
+            label = "Automatically add gold you owe",
+            setting = "GDKP.addGoldToTradeWindow",
+        },
+    }, Parent);
+
     Overview:drawHeader("Mutators", Parent);
 
     local MutatorExplanation = GL.AceGUI:Create("Label");
