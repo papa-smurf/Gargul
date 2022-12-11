@@ -1353,7 +1353,7 @@ end
 local gaveNoMessagesWarning = false;
 local gaveNoAssistWarning = false;
 ---@param message string The message you'd like to send
----@param chatType string The type of message (SAY|EMOTE|YELL|PARTY|GUILD|OFFICER|RAID|RAID_WARNING|INSTANCE_CHAT|BATTLEGROUND|WHISPER|CHANNEL|AFK|DND)
+---@param chatType string The type of message (GROUP|SAY|EMOTE|YELL|PARTY|GUILD|OFFICER|RAID|RAID_WARNING|INSTANCE_CHAT|BATTLEGROUND|WHISPER|CHANNEL|AFK|DND)
 ---@param language string|nil The language of the message (COMMON|ORCISH|etc), if nil it's COMMON for Alliance and ORCISH for Horde
 ---@param channel string|nil The channel (numeric) or player (name string) receiving the message
 ---@param stw boolean|nil Important for throttling / spam prevention
@@ -1632,6 +1632,21 @@ function GL:tableGet(Table, keyString, default)
 
     tremove(keys, 1);
     return self:tableGet(Table, strjoin(".", unpack(keys)), default);
+end
+
+--- Check if a reference and control are equal. Case insensitive, and whitespaces are trimmed
+---
+---@param reference string
+---@param control string
+---@return boolean
+function GL:iEquals(reference, control)
+    if (type(reference) ~= "string"
+        or type(control) ~= "string"
+    ) then
+        return false
+    end
+
+    return string.lower(strtrim(reference)) == string.lower(strtrim(control));
 end
 
 --- Set a table value by a given key and value. Use dot notation to traverse multiple levels e.g:
