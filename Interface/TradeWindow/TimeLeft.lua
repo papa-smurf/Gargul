@@ -305,7 +305,7 @@ function TimeLeft:createBroadcastWindow()
 
             barNumber = barNumber + 1;
             GL.Ace:ScheduleTimer(function ()
-                broadcastBars(barNumber);
+                broadcastBars();
             end, .5);
         end;
 
