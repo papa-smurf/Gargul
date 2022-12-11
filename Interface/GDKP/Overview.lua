@@ -70,7 +70,6 @@ function Overview:_init()
     }, function()
         if (not self.isVisible) then return; end
         self:refreshSessions();
-        self:refreshLedger();
         self.styleWindowAfterResize();
     end);
 
@@ -79,7 +78,6 @@ function Overview:_init()
         { "GDKPOverviewGDKPOverviewSessionsRefreshed", "GL.GDKP_OVERVIEW_SESSIONS_REFRESHED" }
     }, function ()
         self:sessionChanged();
-        self:refreshLedger();
         self.styleWindowAfterResize();
     end);
 end
@@ -155,6 +153,8 @@ function Overview:open()
 
     if (not Window) then
         Window = self:build();
+    else
+        self:refreshLedger();
     end
 
     if (self.isVisible) then
@@ -163,8 +163,6 @@ function Overview:open()
 
     self.isVisible = true;
 
-    self:refreshLedger();
-    self:refreshSessions();
     Window:Show();
 end
 
@@ -425,7 +423,6 @@ function Overview:build()
     end
 
     GL.Ace:ScheduleTimer(function()
-        self:refreshLedger();
         self.styleWindowAfterResize();
     end, .05);
 
@@ -470,7 +467,7 @@ end
 ---@return void
 function Overview:refreshLedger()
     GL:debug("Overview:drawDetails");
-
+GL:xd("REFRESH LEDGER");
     if (not self.selectedSession) then
         return self:showTutorial();
     end

@@ -75,8 +75,8 @@ function CreateSession:build()
 
         local managementCut = strtrim(ManagementCut:GetText());
         if (not GL:empty(managementCut)
-                and tonumber(managementCut)
-                and not GL:higherThanZero(tonumber(managementCut))
+            and tonumber(managementCut)
+            and not GL:higherThanZero(tonumber(managementCut))
         ) then
             GL:warning("The cut needs to be empty or between 0 and 99");
             return;
@@ -93,6 +93,9 @@ function CreateSession:build()
             GDKPSession:setActive(Session.ID);
         end
 
+        Title:SetText();
+        ManagementCut:SetText();
+        SwitchCheckbox:SetValue(false);
         self:close();
     end);
     Window:AddChild(Save);

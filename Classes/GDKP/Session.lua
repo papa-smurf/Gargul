@@ -36,6 +36,51 @@ GDKP.Session = {
 ---@type GDKPSession
 local Session = GDKP.Session;
 
+function Session:_init()
+    GL:debug("Session:_init");
+
+    if (self._initialized) then
+        return;
+    end
+
+    self._initialized = true;
+
+    Events:register("GDKPSessionTradeCompletedListener", "GL.TRADE_COMPLETED", function (_, Details)
+        self:registerGoldTrade(Details);
+    end);
+end
+
+---@param Details table
+---@return void
+function Session:registerGoldTrade(Details)
+    GL:debug("Session:registerTrade");
+
+    local Instance = self:getActive();
+
+    if (not Instance) then
+        return;
+    end
+
+    local myGold = Details.myGold;
+    local theirGold = Details.theirGold;
+
+    -- No gold was involved in this trade
+    if (myGold <= 0 and theirGold <=0) then
+        return;
+    end
+
+    Instance.GoldTrades = Instance.GoldTrades or {};
+    Instance.GoldTrades[Details.partner] = Instance.GoldTrades[Details.partner] or {
+        to = 0,
+        from = 0,
+    };
+
+    Instance.GoldTrades[Details.partner].from = Instance.GoldTrades[Details.partner].from + theirGold;
+    Instance.GoldTrades[Details.partner].to = Instance.GoldTrades[Details.partner].to + myGold;
+
+    self:store(Instance);
+end
+
 ---@param ID string
 ---@return table|nil
 function Session:byID(ID)
@@ -299,6 +344,58 @@ function Session:edit(sessionID, title, managementCut)
     Events:fire("GL.GDKP_SESSION_CHANGED", Instance, self:byID(sessionID));
 
     return Instance;
+end
+
+---@param sessionID string
+---@return boolean
+function Session:lock(sessionID)
+    GL:debug("Session:lock");
+
+    local Instance = self:byID(sessionID);
+
+    if (not Instance or Instance.lockedAt) then
+        return false;
+    end
+
+    Instance.lockedAt = GetServerTime();
+    self:store(Instance);
+
+    Events:fire("GL.GDKP_SESSION_LOCKED", Instance);
+    return true;
+end
+
+---@param sessionID string
+---@return boolean
+function Session:unlock(sessionID)
+    GL:debug("Session:lock");
+
+    local Instance = self:byID(sessionID);
+    if (not Instance or not Instance.lockedAt) then
+        return false;
+    end
+
+    Instance.lockedAt = nil;
+    self:store(Instance);
+
+    Events:fire("GL.GDKP_SESSION_UNLOCKED", Instance);
+    return true;
+end
+
+---@param sessionID string
+---@return boolean
+function Session:toggleLock(sessionID)
+    GL:debug("Session:toggleLock");
+
+    local Instance = self:byID(sessionID);
+    if (not Instance) then
+        return false;
+    end
+
+    if (Instance.lockedAt) then
+        return self:unlock(sessionID);
+    end
+
+    return self:lock(sessionID);
 end
 
 ---@param sessionID string

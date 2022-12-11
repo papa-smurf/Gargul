@@ -4,11 +4,11 @@ local _, GL = ...;
 ---@type Data
 local Constants = GL.Data.Constants or {};
 
----@type DB
-local DB = GL.DB;
-
 ---@type GDKP
 local GDKP = GL.GDKP;
+
+---@type Settings
+local Settings = GL.Settings;
 
 ---@type GDKPSession
 local GDKPSession = GDKP.Session;
@@ -145,23 +145,171 @@ function Pot:addMutator(sessionID, Data)
         end
     end
 
-    local Instance = GDKPSession:byID(sessionID);
+    local Session = GDKPSession:byID(sessionID);
 
-    if (not Instance) then
+    if (not Session) then
         return false;
     end
 
-    Instance.Pot = Instance.Pot or {};
-    Instance.Pot.Mutators = Instance.Pot.Mutators or {};
+    Session.Pot = Session.Pot or {};
+    Session.Pot.Mutators = Session.Pot.Mutators or {};
 
-    Instance.Pot.Mutators[Data.name] = {
+    Session.Pot.Mutators[Data.name] = {
         name = Data.name,
         percentage = Data.percentage,
         flat = Data.flat,
         AutoApplyTo = ValidPlaceholders,
     };
 
-    GDKPSession:store(Instance);
+    GDKPSession:store(Session);
+
+    return true;
+end
+
+---@param sessionID string
+---@param Data table
+---@return boolean
+function Pot:editMutator(originalName, Data, sessionID)
+    Data = {
+        autoApplyTo = Data.autoApplyTo or "",
+        flat = Data.flat or "",
+        name = Data.name or "",
+        percentage = Data.percentage or "",
+    };
+
+    local name = strtrim(Data.name);
+    if (GL:empty(name)) then
+        return false;
+    end
+
+    local percentage = strtrim(Data.percentage);
+    if (not GL:empty(percentage)
+            and GL:empty(tonumber(percentage))
+    ) then
+        return false;
+    end
+
+    local flat = strtrim(Data.flat);
+    if (not GL:empty(flat)
+            and GL:empty(tonumber(flat))
+    ) then
+        return false;
+    end
+
+    local autoApplyTo = strtrim(Data.autoApplyTo);
+    local ValidPlaceholders = {};
+    if (not GL:empty(autoApplyTo)) then
+        local Placeholders = GL.strSplit(autoApplyTo, ",");
+
+        for _, placeholder in pairs(Placeholders or {}) do
+            placeholder = string.upper(strtrim(placeholder));
+
+            if (not GL:empty(placeholder) and GL:inTable(self.ValidAutoApplyPlaceholders, placeholder)) then
+                tinsert(ValidPlaceholders, placeholder);
+            end
+        end
+    end
+
+    -- If a sessionID is provided then we only want to edit it for a specific session
+    if (sessionID) then
+        local Session = GDKPSession:byID(sessionID);
+        if (not Session) then
+            return false;
+        end
+
+        Session.Pot = Session.Pot or {};
+        Session.Pot.Mutators = Session.Pot.Mutators or {};
+
+        if (not Session.Pot.Mutators[originalName]) then
+            return false;
+        end
+
+        Session.Pot.Mutators[originalName] = nil;
+        Session.Pot.Mutators[Data.name] = Data;
+        local ValidMutators = {};
+        for mutatorName, Details in pairs(Session.Pot.Mutators or {}) do
+            if (Details) then
+                ValidMutators[mutatorName] = Details;
+            end
+        end
+        Session.Pot.Mutators = ValidMutators;
+
+        local DistributionDetails = Session.Pot.DistributionDetails or {};
+        for player, Mutators in pairs(DistributionDetails or {}) do
+            if (Mutators.originalName) then
+                DistributionDetails[player][originalName] = nil;
+                DistributionDetails[player][Data.name] = Data;
+
+                ValidMutators = {};
+                for mutatorName, value in pairs(Mutators or {}) do
+                    if (type(value) ~= nil) then
+                        ValidMutators[mutatorName] = value;
+                    end
+                end
+
+                Session.Pot.DistributionDetails[player] = ValidMutators;
+            end
+        end
+    end
+
+    GDKPSession:store(Session);
+
+    return true;
+end
+
+---@param name string
+---@param sessionID string
+---@return boolean
+function Pot:removeMutator(name, sessionID)
+    GL:debug("Pot:removeMutator");
+
+    -- If a sessionID is provided then we only want to remove it from a specific session
+    if (sessionID) then
+        local Session = GDKPSession:byID(sessionID);
+        if (not Session) then
+            return false;
+        end
+
+        Session.Pot = Session.Pot or {};
+        Session.Pot.Mutators = Session.Pot.Mutators or {};
+        Session.Pot.Mutators[name] = nil;
+        local ValidMutators = {};
+        for mutatorName, Details in pairs(Session.Pot.Mutators or {}) do
+            if (Details) then
+                ValidMutators[mutatorName] = Details;
+            end
+        end
+        Session.Pot.Mutators = ValidMutators;
+
+        local DistributionDetails = Session.Pot.DistributionDetails or {};
+        for player, Mutators in pairs(DistributionDetails or {}) do
+            DistributionDetails[player][name] = nil;
+
+            ValidMutators = {};
+            for mutatorName, value in pairs(Mutators or {}) do
+                if (type(value) ~= nil) then
+                    ValidMutators[mutatorName] = value;
+                end
+            end
+
+            Session.Pot.DistributionDetails[player] = ValidMutators;
+        end
+
+        GDKPSession:store(Session);
+
+        return true;
+    end
+
+    local Mutators = Settings:get("GDKP.Mutators", {});
+    Mutators[name] = nil;
+    local ValidMutators = {};
+    for mutatorName, Details in pairs(Mutators or {}) do
+        if (Details) then
+            ValidMutators[mutatorName] = Details;
+        end
+    end
+
+    Settings:set("GDKP.Mutators", ValidMutators);
 
     return true;
 end
@@ -203,7 +351,6 @@ function Pot:calculateCuts(sessionID)
 
     for _, Mutators in pairs(DistributionDetails or {}) do
         for name, value in pairs(Mutators or {}) do
-
             -- This player receives the base cut
             if (name == Constants.GDKP.baseMutatorIdentifier) then
                 if (value) then
@@ -251,6 +398,14 @@ function Pot:calculateCuts(sessionID)
                 end
 
             elseif (name ~= Constants.GDKP.baseMutatorIdentifier and Session.Pot.Mutators[name] and value) then
+                if (name == "ml") then
+                    GL:xd({
+                        player = player,
+                        mutator = name,
+                        value = value,
+                    });
+                end
+
                 if (tonumber(Session.Pot.Mutators[name].percentage)) then
                     playerPot = playerPot + (leftToDistribute * (0 + Session.Pot.Mutators[name].percentage / 100));
                 end
@@ -368,6 +523,27 @@ function Pot:setPlayerMutatorValue(sessionID, player, mutator, value)
     return GDKPSession:store(Session);
 end
 
+function Pot:addPlayer(sessionID, player)
+    GL:debug("Pot:addPlayer");
+
+    local Session = GDKPSession:byID(sessionID);
+    if (not Session) then
+        return false;
+    end
+
+    local Player = GL.Player:fromName(player);
+
+    Session.Pot = Session.Pot or {};
+    Session.Pot.DistributionDetails = Session.Pot.DistributionDetails or {};
+
+    Session.Pot.DistributionDetails[player] = {};
+    if (type(Player) == "table") then
+        Session.Pot.DistributionDetails[player] = self:determineDistributionDefaults(Player, sessionID);
+    end
+
+    return GDKPSession:store(Session);
+end
+
 ---@param sessionID string
 ---@param player string
 ---@return boolean
@@ -386,7 +562,6 @@ function Pot:deletePlayer(sessionID, player)
     local PlayerDetails = {};
     for name, Details in pairs(Session.Pot.DistributionDetails or {}) do
         if (type(Details) == "table" and not GL:empty(Details)) then
-            GL:xd(name);
             PlayerDetails[name] = Details;
         end
     end
@@ -394,6 +569,184 @@ function Pot:deletePlayer(sessionID, player)
     Session.Pot.DistributionDetails = PlayerDetails;
 
     return GDKPSession:store(Session);
+end
+
+---@param sessionID string
+---@param playerOld string
+---@param playerNew string
+---@return boolean
+function Pot:renamePlayer(sessionID, playerOld, playerNew)
+    GL:debug("Pot:renamePlayer");
+
+    local Session = GDKPSession:byID(sessionID);
+    if (not Session) then
+        return false;
+    end
+
+    Session.Pot = Session.Pot or {};
+    Session.Pot.DistributionDetails = Session.Pot.DistributionDetails or {};
+    Session.Pot.DistributionDetails[playerNew] = Session.Pot.DistributionDetails[playerOld];
+    Session.Pot.DistributionDetails[playerOld] = nil;
+
+    local PlayerDetails = {};
+    for name, Details in pairs(Session.Pot.DistributionDetails or {}) do
+        if (type(Details) == "table" and not GL:empty(Details)) then
+            PlayerDetails[name] = Details;
+        end
+    end
+
+    Session.Pot.DistributionDetails = PlayerDetails;
+
+    return GDKPSession:store(Session);
+end
+
+---@param sessionID string
+---@param callback function
+---@return void
+function Pot:announce(sessionID, callback)
+    GL:debug("Pot:announce");
+
+    local Session = GDKPSession:byID(sessionID);
+    if (not Session) then
+        return false;
+    end
+
+    Session.Pot = Session.Pot or {};
+    Session.Pot.DistributionDetails = Session.Pot.DistributionDetails or {};
+    Session.Pot.Cuts = Session.Pot.Cuts or {};
+
+    -- Make sure we sort by name (asc)
+    local Players = {};
+    for player in pairs(Session.Pot.DistributionDetails or {}) do
+        tinsert(Players, player);
+    end
+
+    table.sort(Players, function(a, b)
+        return a < b;
+    end);
+
+    local playerIndex = 1;
+    local broadcastPlayerCut;
+    broadcastPlayerCut = function ()
+        local player = Players[playerIndex];
+
+        if (GL:empty(player)) then
+            if (type(callback) == "function") then
+                callback();
+            end
+
+            return;
+        end
+
+        local ActiveMutators = {};
+        for mutator, value in pairs(Session.Pot.DistributionDetails[player] or {}) do
+            if (value
+                and mutator ~= Constants.GDKP.baseMutatorIdentifier
+                and mutator ~= Constants.GDKP.adjustMutatorIdentifier
+            ) then
+                tinsert(ActiveMutators, mutator);
+            end
+        end
+
+        local message;
+        if (GL:empty(ActiveMutators)) then
+            message = string.format("%s: %sg",
+                player,
+                Session.Pot.Cuts[player] or 0
+            );
+        else
+            message = string.format("%s: %sg (%s)",
+                player,
+                Session.Pot.Cuts[player] or 0,
+                table.concat(ActiveMutators, ", ")
+            );
+        end
+
+        if (Session.Pot.Cuts[player] > 0) then
+            GL:sendChatMessage(message, "GROUP");
+        end
+
+        playerIndex = playerIndex + 1;
+        GL.Ace:ScheduleTimer(function ()
+            broadcastPlayerCut();
+        end, .5);
+    end;
+
+    broadcastPlayerCut();
+end
+
+---@param sessionID string
+---@param data string
+---@return boolean
+function Pot:importCuts(sessionID, data)
+    GL:debug("Pot:importCuts");
+
+    local Session = GDKPSession:byID(sessionID);
+    if (not Session) then
+        return false;
+    end
+
+    local first = true;
+    local Columns = {};
+    local Cuts = {};
+    for line in data:gmatch("[^\n]+") do
+        local Segments = GL:strSplit(line, ",");
+
+        if (first) then
+            Columns = GL:tableFlip(Segments);
+            first = false;
+
+            if (not Columns.Player or not Columns.Gold) then
+                GL:error("Missing header, note: it's case-sensitive!");
+                return;
+            end
+        else -- The first line includes the heading, we don't need that
+            local error = false;
+            local playerName = strtrim(tostring(Segments[Columns.Player]));
+            local gold = tonumber(Segments[Columns.Gold]);
+
+            if (not gold) then
+                error = true;
+
+                if (not GL:empty(playerName)) then
+                    GL:warning("Missing gold for player " .. playerName);
+                end
+            elseif (GL:empty(playerName) and gold) then
+                error = true;
+
+                GL:warning("Missing player name");
+            end
+
+            if (not error) then
+                Cuts[playerName] = GL:round(gold, 2);
+            end
+        end
+    end
+
+    if (GL:empty(Cuts)) then
+        GL:warning("Nothing to import, double check your CSV");
+
+        return false;
+    end
+
+    Session.Pot = Session.Pot or {};
+    Session.Pot.DistributionDetails = {};
+    Session.Pot.Cuts = {};
+
+    for _, Player in pairs(GL.User:groupMembers() or {}) do
+        Session.Pot.DistributionDetails[Player.name] = {};
+        Session.Pot.Cuts[Player.name] = 0;
+    end
+
+    for player, cut in pairs(Cuts or {}) do
+        Session.Pot.DistributionDetails[player] = Session.Pot.DistributionDetails[player] or {};
+        Session.Pot.DistributionDetails[player][Constants.GDKP.adjustMutatorIdentifier] = tostring(cut);
+        Session.Pot.Cuts[player] = cut;
+    end
+
+    GDKPSession:store(Session);
+    GL.Events:fire("GL.GDKP_CUTS_IMPORTED");
+    return true;
 end
 
 GL:debug("Pot.lua");

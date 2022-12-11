@@ -67,6 +67,7 @@ Interface/Settings/PackMule.lua
 Interface/Settings/PackMuleRules.lua
 Interface/Settings/PackMuleIgnores.lua
 Interface/Settings/TMB.lua
+Interface/Settings/GDKP.lua
 Interface/Settings/LootTradeTimers.lua
 Interface/Settings/Rolling.lua
 Interface/Settings/RollTracking.lua
@@ -90,6 +91,9 @@ Interface/GDKP/Export.lua
 Interface/GDKP/Distribute/Overview.lua
 Interface/GDKP/Distribute/Import.lua
 Interface/GDKP/Distribute/CreateMutator.lua
+Interface/GDKP/Distribute/EditMutator.lua
+Interface/GDKP/Distribute/AddRaider.lua
+Interface/GDKP/Distribute/EditRaider.lua
 Interface/GDKP/CreateSession.lua
 Interface/GDKP/EditSession.lua
 Interface/GDKP/AddGold.lua

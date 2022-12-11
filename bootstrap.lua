@@ -125,6 +125,7 @@ function GL:_init()
     self.SoftRes:_init();
     self.GDKP.Auction:_init();
     self.TMB:_init();
+    self.GDKP.Session:_init();
     self.BoostedRolls:_init();
     self.DroppedLoot:_init();
     self.GroupLoot:_init();

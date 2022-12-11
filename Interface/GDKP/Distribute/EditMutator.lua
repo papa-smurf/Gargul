@@ -19,18 +19,19 @@ local Overview = GL.Interface.GDKP.Distribute.Overview;
 ---@type Interface
 local Interface = GL.Interface;
 
----@class CreateMutator
-GL.Interface.GDKP.Distribute.CreateMutator = {
+---@class EditMutator
+GL.Interface.GDKP.Distribute.EditMutator = {
     isVisible = false,
-    session = nil,
+    originalMutatorName = nil,
+    sessionID = nil,
 };
 
----@type CreateMutator
-local CreateMutator = GL.Interface.GDKP.Distribute.CreateMutator;
+---@type EditMutator
+local EditMutator = GL.Interface.GDKP.Distribute.EditMutator;
 
 ---@return Frame
-function CreateMutator:build()
-    GL:debug("Interface.GDKP.CreateMutator:build");
+function EditMutator:build()
+    GL:debug("Interface.GDKP.EditMutator:build");
 
     local Window = AceGUI:Create("InlineGroup");
     Window:SetLayout("Flow");
@@ -39,21 +40,6 @@ function CreateMutator:build()
     Window.frame:SetFrameStrata("HIGH");
     Window.frame:Show();
     Interface:set(self, "Window", Window);
-
-    local Label = GL.AceGUI:Create("Label");
-    Label:SetHeight(20);
-    Label:SetFullWidth(true);
-    Label:SetText("Create a new GDKP mutator");
-    Window:AddChild(Label);
-
-    local StorePermanently = AceGUI:Create("CheckBox");
-    StorePermanently:SetValue(false);
-    StorePermanently:SetLabel("Store for future sessions");
-    StorePermanently:SetFullWidth(true);
-    StorePermanently.text:SetTextColor(.99, .85, .06);
-    StorePermanently.text:SetFontObject(_G["GameFontHighlightSmall"]);
-    Interface:set(self, "StorePermanently", StorePermanently);
-    Window:AddChild(StorePermanently);
 
     local Name = GL.AceGUI:Create("EditBox");
     Name:DisableButton(true);
@@ -129,7 +115,7 @@ function CreateMutator:build()
 
         local percentage = strtrim(Percentage:GetText());
         if (not GL:empty(percentage)
-            and GL:empty(tonumber(percentage))
+                and GL:empty(tonumber(percentage))
         ) then
             GL:warning("The percentage needs to be a number");
             return;
@@ -158,20 +144,12 @@ function CreateMutator:build()
             percentage = percentage,
         };
 
-        local mutatorAdded = GDKPPot:addMutator(self.sessionID, MutatorObj);
-
-        -- Something went wrong, no need to close the window
-        if (not mutatorAdded) then
+        if (not GDKPPot:editMutator(self.originalMutatorName, MutatorObj, self.sessionID)) then
             GL:error("Something went wrong adding your mutator, fill the form out correctly!")
             return;
         end
 
-        -- Store the mutator permanently so that we can use it in future sessions
-        if (StorePermanently:GetValue()) then
-            GL.Settings:set("GDKP.Mutators." .. name, MutatorObj);
-        end
-
-        Events:fire("GL.GDKP_MUTATOR_CREATED", MutatorObj);
+        Events:fire("GL.GDKP_MUTATOR_CHANGED", MutatorObj);
 
         self:close();
     end);
@@ -189,8 +167,8 @@ function CreateMutator:build()
 end
 
 ---@return Frame
-function CreateMutator:window()
-    GL:debug("Interface.GDKP.CreateMutator:window");
+function EditMutator:window()
+    GL:debug("Interface.GDKP.EditMutator:window");
 
     local Window = Interface:get(self, "Window");
 
@@ -204,8 +182,8 @@ end
 --- Toggle the create session window that's anchored to the right side of the GDKP overview window
 ---
 ---@return void
-function CreateMutator:toggle()
-    GL:debug("Interface.GDKP.CreateMutator:toggle");
+function EditMutator:toggle()
+    GL:debug("Interface.GDKP.EditMutator:toggle");
 
     if (self.isVisible) then
         return self:close();
@@ -215,27 +193,43 @@ function CreateMutator:toggle()
 end
 
 ---@return void
-function CreateMutator:open(sessionID)
-    GL:debug("Interface.GDKP.CreateMutator:open");
+function EditMutator:open(sessionID, mutator)
+    GL:debug("Interface.GDKP.EditMutator:open");
 
     -- It seems our GDKP overview window is not opened
     if (not Overview.isVisible) then
         return;
     end
 
-    self.sessionID = sessionID;
+    local Session = GDKPSession:byID(sessionID);
+    if (not Session) then
+        return;
+    end
 
+    self.sessionID = sessionID;
+    self.originalMutatorName = mutator;
     local Window = self:window();
 
+    local Mutator = GL:tableGet(Session, "Pot.Mutators." .. mutator);
+    if (not Mutator) then
+        GL:error("Unknown mutator " .. mutator);
+
+        return;
+    end
+
+    Interface:get(self, "EditBox.Name"):SetText(Mutator.name);
+    Interface:get(self, "EditBox.Percentage"):SetText(Mutator.percentage);
+    Interface:get(self, "EditBox.Flat"):SetText(Mutator.flat);
+    Interface:get(self, "EditBox.AutoApplyTo"):SetText(Mutator.autoApplyTo);
+
     self.isVisible = true;
-    Interface:get(self, "CheckBox.StorePermanently"):SetValue(false);
     Window.frame:SetPoint("TOPLEFT", Interface:get(Overview, "GDKPDistribute").frame, "TOPRIGHT", 2, 16);
     Window.frame:Show();
 end
 
 ---@return void
-function CreateMutator:close()
-    GL:debug("Interface.GDKP.CreateMutator:close");
+function EditMutator:close()
+    GL:debug("Interface.GDKP.EditMutator:close");
 
     local Window = self:window();
 
@@ -245,4 +239,4 @@ function CreateMutator:close()
     end
 end
 
-GL:debug("Interface.GDKP.CreateMutator.lua");
+GL:debug("Interface.GDKP.EditMutator.lua");

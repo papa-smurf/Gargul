@@ -4,16 +4,6 @@ local _, GL = ...;
 GL.AceGUI = GL.AceGUI or LibStub("AceGUI-3.0");
 local AceGUI = GL.AceGUI;
 
-GL.Interface.GDKP.Distribute = GL.Interface.GDKP.Distribute or {};
-
----@class Import
-GL.Interface.GDKP.Distribute.Import = {
-    isVisible = false,
-};
-
----@type Import
-local Import = GL.Interface.GDKP.Distribute.Import;
-
 ---@type GDKPOverview
 local Overview = GL.Interface.GDKP.Distribute.Overview;
 
@@ -22,6 +12,19 @@ local Interface = GL.Interface;
 
 ---@type GDKPSession
 local GDKPSession = GL.GDKP.Session;
+
+---@type GDKPSession
+local GDKPPot = GL.GDKP.Pot;
+
+GL.Interface.GDKP.Distribute = GL.Interface.GDKP.Distribute or {};
+---@class Import
+GL.Interface.GDKP.Distribute.Import = {
+    isVisible = false,
+    sessionID = nil,
+};
+
+---@type Import
+local Import = GL.Interface.GDKP.Distribute.Import;
 
 ---@return Frame
 function Import:build()
@@ -55,9 +58,15 @@ function Import:build()
     Confirm:SetText("Import");
     Confirm:SetFullWidth(true);
     Confirm:SetCallback("OnClick", function()
-        GL:xd("GO!");
-
-        self:close();
+        GL.Interface.Dialogs.PopupDialog:open({
+            question = "This will override any changes you've made to the cut window, are you sure?",
+            OnYes = function ()
+                if (GDKPPot:importCuts(self.sessionID, ImportBox:GetText())) then
+                    ImportBox:SetText("");
+                    self:close();
+                end
+            end,
+        });
     end);
     Window:AddChild(Confirm);
 
@@ -113,7 +122,7 @@ function Import:open(sessionID)
         return;
     end
 
-    self.session = sessionID;
+    self.sessionID = sessionID;
     self.isVisible = true;
 
     local Window = self:window();
