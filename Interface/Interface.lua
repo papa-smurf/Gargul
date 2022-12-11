@@ -345,38 +345,57 @@ function Interface:createButton(Parent, Details)
     local name;
 
     ---@type Frame
-    local Button = table.remove(self.FramePool.Buttons, 1);
+    local Button = tremove(self.FramePool.Buttons);
 
     if (not Button) then
-        name = "GargulButton" .. GL:uuid();
+        name = "GargulButton" .. GL:uuid() .. GL:uuid();
         Button = CreateFrame("Button", name, Parent, "UIPanelButtonTemplate");
     else
         name = Button:GetName();
     end
 
     Button:SetParent(Parent);
+    Button:SetEnabled(true);
     Button:ClearAllPoints();
     Button:SetSize(width, height);
+    Button.updateOn = updateOn;
 
     -- Make sure the tooltip still shows even when the button is disabled
     if (disabledTooltip) then
         Button:SetMotionScriptsWhileDisabled(true);
     end
 
+    if (normalTexture) then
+        local NormalTexture = Button.normalTexture or Button:CreateTexture();
+        NormalTexture:SetTexture(normalTexture);
+        NormalTexture:ClearAllPoints();
+        NormalTexture:SetPoint("CENTER", Button, "CENTER", 0, 0);
+        NormalTexture:SetSize(width, height);
+        Button:SetNormalTexture(NormalTexture);
+
+        Button.normalTexture = NormalTexture;
+    end
+
     if (highlightTexture) then
-        local HighlightTexture = Button:CreateTexture();
+        local HighlightTexture = Button.highlightTexture or Button:CreateTexture();
         HighlightTexture:SetTexture(highlightTexture);
+        HighlightTexture:ClearAllPoints();
         HighlightTexture:SetPoint("CENTER", Button, "CENTER", 0, 0);
         HighlightTexture:SetSize(width, height);
         Button:SetHighlightTexture(HighlightTexture);
-    end
 
-    if (normalTexture) then
-        Button:SetNormalTexture(normalTexture);
+        Button.highlightTexture = HighlightTexture;
     end
 
     if (disabledTexture) then
-        Button:SetDisabledTexture(disabledTexture);
+        local DisabledTexture = Button.disabledTexture or Button:CreateTexture();
+        DisabledTexture:SetTexture(disabledTexture);
+        DisabledTexture:ClearAllPoints();
+        DisabledTexture:SetPoint("CENTER", Button, "CENTER", 0, 0);
+        DisabledTexture:SetSize(width, height);
+        Button:SetDisabledTexture(DisabledTexture);
+
+        Button.disabledTexture = DisabledTexture;
     end
 
     -- Show the tooltip on hover
@@ -423,30 +442,38 @@ function Interface:createButton(Parent, Details)
         end
     end
 
+    Button:Show();
+    return Button;
+end
+
+function Interface:releaseActionButton(Button)
+    local name = Button:GetName();
+
     -- Make sure we can release the button unto our pool for recycling purposes
-    Button.Release = function ()
-        Button:SetMotionScriptsWhileDisabled(false);
-        Button:SetNormalTexture(nil,"ARTWORK");
-        Button:SetHighlightTexture(nil,"ARTWORK");
-        Button:SetDisabledTexture(nil,"ARTWORK");
-        Button.update = nil;
-        Button.OnEnter = nil;
-        Button.OnLeave = nil;
-        Button.OnClick = nil;
-        Button:ClearAllPoints();
-        Button:Hide();
+    Button:SetMotionScriptsWhileDisabled(false);
+    Button:SetNormalTexture(nil,"ARTWORK");
+    Button:SetHighlightTexture(nil,"ARTWORK");
+    Button:SetDisabledTexture(nil,"ARTWORK");
+    Button:SetParent(UIParent);
+    Button.normalTexture = nil;
+    Button.highlightTexture = nil;
+    Button.disabledTexture = nil;
+    Button.update = nil;
+    Button.OnEnter = nil;
+    Button.OnLeave = nil;
+    Button.OnClick = nil;
+    Button:ClearAllPoints();
 
-        -- Get rid of the button's event listeners
-        for _, event in pairs(updateOn) do
-            GL.Events:unregister(name .. event .. "Listener");
-        end
-
-        tinsert(self.FramePool.Buttons, Button);
+    -- Get rid of the button's event listeners
+    for _, event in pairs(Button.updateOn or {}) do
+        GL.Events:unregister(name .. event .. "Listener");
     end
 
-    Button:Show();
+    Button:Hide();
+    Button = nil;
 
-    return Button;
+    ---@todo: figure out why reusing doesn't work
+    --tinsert(self.FramePool.Buttons, Button);
 end
 
 --- Create a settings (cogwheel) button
@@ -468,13 +495,14 @@ function Interface:createShareButton(Parent, Details)
     GL:debug("Interface:createShareButton");
 
     Details = Details or {};
+    Details.normalTexture = "Interface/AddOns/Gargul/Assets/Buttons/share";
+    Details.highlightTexture = "Interface/AddOns/Gargul/Assets/Buttons/share-highlighted";
+    Details.disabledTexture = "Interface/AddOns/Gargul/Assets/Buttons/share-disabled";
+
+    local Button = self:createButton(Parent, Details);
     local position = Details.position;
     local x = Details.x;
     local y = Details.y;
-    local width = Details.width or 24;
-    local height = Details.height or 24;
-
-    local Button = self:createButton(Parent, Details);
 
     -- If the parent element is an AceGUI element and no position was given we assume that the user wants
     -- to add the button as-is to the parent frame
@@ -488,15 +516,6 @@ function Interface:createShareButton(Parent, Details)
         Button:SetPoint("TOP", Parent, "TOP", x or 0, y or -7);
         Button:SetPoint("CENTER", Parent, "CENTER");
     end
-
-    local HighlightTexture = Button:CreateTexture();
-    HighlightTexture:SetTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\share-highlighted");
-    HighlightTexture:SetPoint("CENTER", Button, "CENTER", 0, 0);
-    HighlightTexture:SetSize(width, height);
-
-    Button:SetNormalTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\share");
-    Button:SetHighlightTexture(HighlightTexture);
-    Button:SetDisabledTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\share-disabled");
 
     return Button;
 end

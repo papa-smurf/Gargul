@@ -290,7 +290,7 @@ function Overview:throttledRefresh()
 
     self.RefreshTimer = GL.Ace:ScheduleTimer(function ()
         self:refresh();
-    end, .5);
+    end, .2);
 end
 
 ---@return void
@@ -380,6 +380,7 @@ function Overview:refresh()
     -- [[ SHOW MUTATORS ]]
 
     local mutatorHeight = 210;
+
     for _, Mutator in pairs(Mutators or {}) do
         ---@type AceGUISimpleGroup
         local MutatorHolder = AceGUI:Create("SimpleGroup");
@@ -748,14 +749,15 @@ function Overview:releaseActionButtons()
 
     -- Release all of the action buttons into our pool so that we can reuse them later
     for _, Button in pairs(self.MutatorActionButtons or {}) do
-        --Button:Hide();
-        Button:Release();
+        Interface:releaseActionButton(Button);
     end
 
     for _, Button in pairs(self.RaiderActionButtons or {}) do
-        --Button:Hide();
-        Button:Release();
+        Interface:releaseActionButton(Button);
     end
+
+    self.MutatorActionButtons = {};
+    self.RaiderActionButtons = {};
 end
 
 GL:debug("Interfaces/GDKP/Distribute.lua");

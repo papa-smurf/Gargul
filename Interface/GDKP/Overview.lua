@@ -310,17 +310,17 @@ function Overview:build()
             Interface.GDKP.AddGold:toggle(self.selectedSession);
         end,
         tooltip = "Add gold to pot",
-        disabledTooltip = "You need lead or master loot to add gold.\nYou can't add gold to deleted sessions",
+        disabledTooltip = "You need lead or master loot to add gold.\nYou can't add gold to locked/deleted sessions",
         normalTexture = "Interface/AddOns/Gargul/Assets/Buttons/create",
         disabledTexture = "Interface/AddOns/Gargul/Assets/Buttons/create-disabled",
         update = function (self)
             local SelectedSession = Overview:getSelectedSession();
-            self:SetEnabled(SelectedSession and not SelectedSession.deletedAt and (not GL.User.isInGroup or GL.User.hasLead or GL.User.isMasterLooter));
+            self:SetEnabled(SelectedSession and not SelectedSession.deletedAt and not SelectedSession.lockedAt and (not GL.User.isInGroup or GL.User.hasLead or GL.User.isMasterLooter));
         end,
         updateOn = { "GROUP_ROSTER_UPDATE", "GL.GDKP_OVERVIEW_SESSION_CHANGED", "GL.GDKP_OVERVIEW_SESSION_CHANGED", "GL.GDKP_OVERVIEW_SESSIONS_REFRESHED" },
     }):SetPoint("TOP", ScrollFrameHolder.frame, "TOP", -9, -7);
 
-    --[[ SHARE BUTTON ]]
+    ----[[ SHARE BUTTON ]]
     Interface:createShareButton(ScrollFrameHolder, {
         onClick = function() Interface.Dialogs.PopupDialog:open("BROADCAST_GDKP_CONFIRMATION"); end,
         tooltip = "Broadcast data",
@@ -470,7 +470,6 @@ end
 function Overview:refreshLedger()
     GL:debug("Overview:drawDetails");
 
-GL:xd("REFRESH LEDGER");
     if (not self.selectedSession) then
         return self:showTutorial();
     end
@@ -681,11 +680,11 @@ GL:xd("REFRESH LEDGER");
                     Interface.GDKP.EditAuction:draw(Session.ID, Auction.checksum);
                 end,
                 tooltip = "Edit",
-                disabledTooltip = "You need lead or master loot to edit entries.\nYou can't edit deleted entries or entries on deleted sessions",
+                disabledTooltip = "You need lead or master loot to edit entries.\nYou can't edit deleted entries or entries on locked/deleted sessions",
                 normalTexture = "Interface/AddOns/Gargul/Assets/Buttons/edit",
                 disabledTexture = "Interface/AddOns/Gargul/Assets/Buttons/edit-disabled",
                 update = function (self)
-                    self:SetEnabled(not auctionWasDeleted and not Session.deletedAt);
+                    self:SetEnabled(not auctionWasDeleted and not Session.deletedAt and not Session.lockedAt);
                 end,
             });
             Edit:SetPoint("TOPRIGHT", ItemRow.frame, "TOPRIGHT", -60, -10);
@@ -710,11 +709,11 @@ GL:xd("REFRESH LEDGER");
                         });
                     end,
                     tooltip = "Delete",
-                    disabledTooltip = "You need lead or master loot to delete entries.\nYou can't delete entries on deleted sessions",
+                    disabledTooltip = "You need lead or master loot to delete entries.\nYou can't delete entries on locked/deleted sessions",
                     normalTexture = "Interface/AddOns/Gargul/Assets/Buttons/delete",
                     disabledTexture = "Interface/AddOns/Gargul/Assets/Buttons/delete-disabled",
                     update = function (self)
-                        self:SetEnabled(not auctionWasDeleted and not Session.deletedAt);
+                        self:SetEnabled(not auctionWasDeleted and not Session.deletedAt and not Session.lockedAt);
                     end,
                 });
                 Delete:SetPoint("TOPLEFT", Edit, "TOPRIGHT", 2, 0)
@@ -726,11 +725,11 @@ GL:xd("REFRESH LEDGER");
                 Restore = Interface:createButton(ActionButtons, {
                     onClick = function() GDKPAuction:restore(Session.ID, Auction.ID); end,
                     tooltip = "Restore",
-                    disabledTooltip = "You need lead or master loot to restore entries.\nYou can't restore entries of deleted sessions",
+                    disabledTooltip = "You need lead or master loot to restore entries.\nYou can't restore entries of locked/deleted sessions",
                     normalTexture = "Interface/AddOns/Gargul/Assets/Buttons/restore",
                     disabledTexture = "Interface/AddOns/Gargul/Assets/Buttons/restore-disabled",
                     update = function (self)
-                        self:SetEnabled(not Session.deletedAt);
+                        self:SetEnabled(not Session.deletedAt and not Session.lockedAt);
                     end,
                 });
                 Restore:SetPoint("TOPLEFT", Edit, "TOPRIGHT", 2, 0);
@@ -835,8 +834,7 @@ function Overview:clearDetailsFrame()
     -- Release all of the action buttons into our pool so that we can reuse them later
     for _, Buttons in pairs(self.ActionButtons or {}) do
         for _, Button in pairs(Buttons) do
-            Button:Hide();
-            Button:Release();
+            Interface:releaseActionButton(Button);
         end
     end
 
