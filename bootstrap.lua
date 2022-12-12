@@ -119,7 +119,6 @@ function GL:_init()
     self:polyFill();
 
     self.Comm:_init();
-    --self.Interface.Alerts:_init();
     self.User:_init();
     self.AwardedLoot:_init();
     self.SoftRes:_init();
@@ -158,45 +157,6 @@ function GL:_init()
 
     -- Show the changelog window
     GL.Interface.Changelog:reportChanges();
-
----@todo: remove
-
-    --Gargul_ContainedAlertFrameMixin = {};
-    --Gargul_ContainedAlertFrameMixin.OnPostShow = ContainedAlertFrameMixin.OnPostShow;
-    --Gargul_ContainedAlertFrameMixin.OnPostHide = ContainedAlertFrameMixin.OnPostHide;
-    --Gargul_ContainedAlertFrameMixin.SetAlertContainer = ContainedAlertFrameMixin.SetAlertContainer;
-    --Gargul_ContainedAlertFrameMixin.GetAlertContainer = ContainedAlertFrameMixin.GetAlertContainer;
-    --Gargul_ContainedAlertFrameMixin.OnManagedAlertFrameVisibilityChanged = ContainedAlertFrameMixin.OnManagedAlertFrameVisibilityChanged;
-    --Gargul_ContainedAlertFrameMixin.ManagesOwnOutroAnimation = ContainedAlertFrameMixin.ManagesOwnOutroAnimation;
-    --Gargul_ContainedAlertFrameMixin.SetExternallyManagedOutroAnimation = ContainedAlertFrameMixin.SetExternallyManagedOutroAnimation;
-    --
-    ---- /script _G.alertFrameTester()
-    --local NotificationLoader = AlertFrame:AddSimpleAlertFrameSubSystem("DKPReceivedAlertFrameTemplate", function (self) self.Amount:SetText("69 DKP. Nice!"); end, 6, 6, function () end);
-    --_G.alertFrameTester = function() NotificationLoader:AddAlert(); end;
-    -- /script _G.gargultest();
-    _G.gargultest = function () self.Events:fire("GL.SOFTRES_IMPORTED"); end;
-
-    if (true) then return; end
-
-    local Notification = function (self)
-        self.Amount:SetText("TEST");
-    end;
-
-    local NotificationSystem = AlertFrame:AddSimpleAlertFrameSubSystem("GargulBidAccepted", Notification, 6, 6), function () end;
-
-    -- /script _G.Gargul:alertMe()
-    GL.alertMe = function()
-        GL:dump("NOW!");
-
-        NotificationSystem:AddAlert();
-    end
-
-    -- /script _G.Gargul:alertMe2()
-    GL.alertMe2 = function ()
-        GL:dump("NOW 2!");
-
-        NotificationLoader:AddAlert();
-    end
 end
 
 --- Adds forwards compatibility

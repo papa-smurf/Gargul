@@ -125,20 +125,6 @@ function Pot:addMutator(sessionID, Data)
         return false;
     end
 
-    local autoApplyTo = strtrim(Data.autoApplyTo);
-    local ValidPlaceholders = {};
-    if (not GL:empty(autoApplyTo)) then
-        local Placeholders = GL.strSplit(autoApplyTo, ",");
-
-        for _, placeholder in pairs(Placeholders or {}) do
-            placeholder = string.upper(strtrim(placeholder));
-
-            if (not GL:empty(placeholder) and GL:inTable(self.ValidAutoApplyPlaceholders, placeholder)) then
-                tinsert(ValidPlaceholders, placeholder);
-            end
-        end
-    end
-
     local Session = GDKPSession:byID(sessionID);
 
     if (not Session) then
@@ -152,10 +138,8 @@ function Pot:addMutator(sessionID, Data)
         name = Data.name,
         percentage = Data.percentage,
         flat = Data.flat,
-        AutoApplyTo = ValidPlaceholders,
+        autoApplyTo = Data.autoApplyTo,
     };
-
-    GDKPSession:store(Session);
 
     return true;
 end
@@ -185,23 +169,9 @@ function Pot:editMutator(originalName, Data, sessionID)
 
     local flat = strtrim(Data.flat);
     if (not GL:empty(flat)
-            and GL:empty(tonumber(flat))
+        and GL:empty(tonumber(flat))
     ) then
         return false;
-    end
-
-    local autoApplyTo = strtrim(Data.autoApplyTo);
-    local ValidPlaceholders = {};
-    if (not GL:empty(autoApplyTo)) then
-        local Placeholders = GL.strSplit(autoApplyTo, ",");
-
-        for _, placeholder in pairs(Placeholders or {}) do
-            placeholder = string.upper(strtrim(placeholder));
-
-            if (not GL:empty(placeholder) and GL:inTable(self.ValidAutoApplyPlaceholders, placeholder)) then
-                tinsert(ValidPlaceholders, placeholder);
-            end
-        end
     end
 
     -- If a sessionID is provided then we only want to edit it for a specific session
@@ -236,7 +206,7 @@ function Pot:editMutator(originalName, Data, sessionID)
 
                 ValidMutators = {};
                 for mutatorName, value in pairs(Mutators or {}) do
-                    if (type(value) ~= nil) then
+                    if (type(value) ~= "nil") then
                         ValidMutators[mutatorName] = value;
                     end
                 end
@@ -245,8 +215,6 @@ function Pot:editMutator(originalName, Data, sessionID)
             end
         end
     end
-
-    GDKPSession:store(Session);
 
     return true;
 end
@@ -281,15 +249,13 @@ function Pot:removeMutator(name, sessionID)
 
             ValidMutators = {};
             for mutatorName, value in pairs(Mutators or {}) do
-                if (type(value) ~= nil) then
+                if (type(value) ~= "nil") then
                     ValidMutators[mutatorName] = value;
                 end
             end
 
             Session.Pot.DistributionDetails[player] = ValidMutators;
         end
-
-        GDKPSession:store(Session);
 
         return true;
     end
@@ -392,14 +358,6 @@ function Pot:calculateCuts(sessionID)
                 end
 
             elseif (name ~= Constants.GDKP.baseMutatorIdentifier and Session.Pot.Mutators[name] and value) then
-                if (name == "ml") then
-                    GL:xd({
-                        player = player,
-                        mutator = name,
-                        value = value,
-                    });
-                end
-
                 if (tonumber(Session.Pot.Mutators[name].percentage)) then
                     playerPot = playerPot + (leftToDistribute * (0 + Session.Pot.Mutators[name].percentage / 100));
                 end
@@ -416,8 +374,6 @@ function Pot:calculateCuts(sessionID)
 
     Session.Pot.Cuts = Cuts;
     Session.Pot.DistributionDetails = DistributionDetails;
-
-    GDKPSession:store(Session);
 
     return Session, totalToDistribute, totalDistributed;
 end
@@ -482,7 +438,6 @@ function Pot:resetCuts(sessionID)
 
     GL:tableSet(Session, "Pot.Cuts", {});
     GL:tableSet(Session, "Pot.DistributionDetails", {});
-    GDKPSession:store(Session);
 
     return true;
 end
@@ -514,17 +469,24 @@ function Pot:setPlayerMutatorValue(sessionID, player, mutator, value)
 
     Session.Pot.DistributionDetails[player][mutator] = value;
 
-    return GDKPSession:store(Session);
+    GDKPSession:store(Session);
+    return true;
 end
 
 function Pot:addPlayer(sessionID, player)
     GL:debug("Pot:addPlayer");
 
     local Session = GDKPSession:byID(sessionID);
-    if (not Session) then
+    if (not Session or Session.lockedAt) then
         return false;
     end
 
+    -- Player names shouldn't include numbers
+    if (string.match(player,"%d+")) then
+        return false;
+    end
+
+    player = GL:capitalize(strtrim(player));
     local Player = GL.Player:fromName(player);
 
     Session.Pot = Session.Pot or {};
@@ -535,7 +497,9 @@ function Pot:addPlayer(sessionID, player)
         Session.Pot.DistributionDetails[player] = self:determineDistributionDefaults(Player, sessionID);
     end
 
-    return GDKPSession:store(Session);
+    GDKPSession:store(Session);
+
+    return true;
 end
 
 ---@param sessionID string
@@ -545,24 +509,23 @@ function Pot:deletePlayer(sessionID, player)
     GL:debug("Pot:deletePlayer");
 
     local Session = GDKPSession:byID(sessionID);
-    if (not Session) then
+    if (not Session or Session.lockedAt) then
         return false;
     end
 
-    Session.Pot = Session.Pot or {};
-    Session.Pot.DistributionDetails = Session.Pot.DistributionDetails or {};
-    Session.Pot.DistributionDetails[player] = nil;
+    local DistributionDetails = GL:tableGet(Session, "Pot.DistributionDetails", {});
+    DistributionDetails[player] = nil;
 
     local PlayerDetails = {};
     for name, Details in pairs(Session.Pot.DistributionDetails or {}) do
-        if (type(Details) == "table" and not GL:empty(Details)) then
+        if (type(Details) == "table" and Details ~= nil) then
             PlayerDetails[name] = Details;
         end
     end
 
-    Session.Pot.DistributionDetails = PlayerDetails;
+    GL:tableSet(Session, "Pot.DistributionDetails", PlayerDetails);
 
-    return GDKPSession:store(Session);
+    return true;
 end
 
 ---@param sessionID string
@@ -573,7 +536,7 @@ function Pot:renamePlayer(sessionID, playerOld, playerNew)
     GL:debug("Pot:renamePlayer");
 
     local Session = GDKPSession:byID(sessionID);
-    if (not Session) then
+    if (not Session or Session.lockedAt) then
         return false;
     end
 
@@ -590,8 +553,9 @@ function Pot:renamePlayer(sessionID, playerOld, playerNew)
     end
 
     Session.Pot.DistributionDetails = PlayerDetails;
+    GDKPSession:store(Session);
 
-    return GDKPSession:store(Session);
+    return true;
 end
 
 ---@param sessionID string
@@ -738,7 +702,6 @@ function Pot:importCuts(sessionID, data)
         Session.Pot.Cuts[player] = cut;
     end
 
-    GDKPSession:store(Session);
     GL.Events:fire("GL.GDKP_CUTS_IMPORTED");
     return true;
 end

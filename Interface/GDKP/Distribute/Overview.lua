@@ -18,10 +18,10 @@ local GDKPSession = GL.GDKP.Session;
 ---@type GDKPPot
 local GDKPPot = GL.GDKP.Pot;
 
-GL.Interface.GDKP.Distribute = GL.Interface.GDKP.Distribute or {};
+Interface.GDKP.Distribute = Interface.GDKP.Distribute or {};
 
 ---@class GDKPDistribute
-GL.Interface.GDKP.Distribute.Overview = {
+Interface.GDKP.Distribute.Overview = {
     isVisible = false,
     refreshing = false,
     sessionID = nil,
@@ -34,7 +34,7 @@ GL.Interface.GDKP.Distribute.Overview = {
 };
 
 ---@type GDKPDistribute
-local Overview = GL.Interface.GDKP.Distribute.Overview;
+local Overview = Interface.GDKP.Distribute.Overview;
 
 ---@return void
 function Overview:open(sessionID)
@@ -204,7 +204,8 @@ function Overview:build()
     AddRaider:SetWidth(110);
     AddRaider:SetHeight(20);
     AddRaider:SetCallback("OnClick", function()
-        GL.Interface.GDKP.AddRaider:open(self.sessionID);
+        self:closeSubWindows();
+        Interface.GDKP.Distribute.AddRaider:open(self.sessionID);
     end);
     Interface:set(self, "AddRaider", AddRaider);
 
@@ -213,7 +214,8 @@ function Overview:build()
     Import:SetWidth(90);
     Import:SetHeight(20);
     Import:SetCallback("OnClick", function()
-        GL.Interface.GDKP.Distribute.Import:open(self.sessionID);
+        self:closeSubWindows();
+        Interface.GDKP.Distribute.Import:open(self.sessionID);
     end);
     Interface:set(self, "Import", Import);
 
@@ -222,7 +224,7 @@ function Overview:build()
     Clear:SetWidth(90);
     Clear:SetHeight(20);
     Clear:SetCallback("OnClick", function()
-        GL.Interface.Dialogs.PopupDialog:open({
+        Interface.Dialogs.PopupDialog:open({
             question = "Are you sure you want to reset all players and calculations? Note: all players no longer in the raid will be removed from the list!",
             OnYes = function ()
                 GDKPPot:resetCuts(self.sessionID);
@@ -237,7 +239,7 @@ function Overview:build()
     Export:SetWidth(90);
     Export:SetHeight(20);
     Export:SetCallback("OnClick", function()
-        GL.Interface.GDKP.Export:open(self.selectedSession);
+        Interface.GDKP.Export:open(self.selectedSession);
     end);
 
     local LockToggler = AceGUI:Create("Button");
@@ -279,6 +281,10 @@ end
 function Overview:closeSubWindows()
     GL:debug("Overview:closeSubWindows");
 
+    Interface.GDKP.Distribute.CreateMutator:close();
+    Interface.GDKP.Distribute.EditMutator:close();
+    Interface.GDKP.Distribute.AddRaider:close();
+    Interface.GDKP.Distribute.EditRaider:close();
     Interface.GDKP.Distribute.Import:close();
 end
 
@@ -342,9 +348,9 @@ function Overview:refresh()
 
     self.CutHolders = {};
     self:releaseActionButtons();
-    MutatorsFrame:ReleaseChildren();
-    RaidersFrame:ReleaseChildren();
-    RaidersTableHeader:ReleaseChildren();
+    Interface:releaseChildren(MutatorsFrame);
+    Interface:releaseChildren(RaidersFrame);
+    Interface:releaseChildren(RaidersTableHeader);
 
     local question;
     local LockToggler = Interface:get(self, "Button.LockToggler");
@@ -356,7 +362,7 @@ function Overview:refresh()
         question = "Locking a session means you can't auction items or otherwise change anything until you unlock it, are you sure?";
     end
     LockToggler:SetCallback("OnClick", function()
-        GL.Interface.Dialogs.PopupDialog:open({
+        Interface.Dialogs.PopupDialog:open({
             question = question,
             OnYes = function ()
                 GDKPSession:toggleLock(self.sessionID);
@@ -425,7 +431,8 @@ function Overview:refresh()
             --[[ EDIT BUTTON ]]
             local Edit = Interface:createButton(MutatorHolder, {
                 onClick = function()
-                    GL.Interface.GDKP.Distribute.EditMutator:open(self.sessionID, Mutator.name);
+                    self:closeSubWindows();
+                    Interface.GDKP.Distribute.EditMutator:open(self.sessionID, Mutator.name);
                 end,
                 tooltip = "Edit mutator",
                 normalTexture = "Interface/AddOns/Gargul/Assets/Buttons/edit",
@@ -436,7 +443,7 @@ function Overview:refresh()
             --[[ DELETE BUTTON ]]
             local Delete = Interface:createButton(MutatorHolder, {
                 onClick = function()
-                    GL.Interface.Dialogs.PopupDialog:open({
+                    Interface.Dialogs.PopupDialog:open({
                         question = string.format("Are you sure you want to delete the %s mutator?", Mutator.name),
                         OnYes = function ()
                             if (GDKPPot:removeMutator(Mutator.name, self.sessionID)) then
@@ -468,7 +475,8 @@ function Overview:refresh()
     AddMutator:SetWidth(110);
     AddMutator:SetHeight(20);
     AddMutator:SetCallback("OnClick", function()
-        GL.Interface.GDKP.Distribute.CreateMutator:open(self.sessionID);
+        self:closeSubWindows();
+        Interface.GDKP.Distribute.CreateMutator:open(self.sessionID);
     end);
     AddMutator:SetDisabled(Session.lockedAt);
     MutatorsFrame:AddChild(AddMutator);
@@ -612,7 +620,8 @@ function Overview:refresh()
             --[[ EDIT BUTTON ]]
             local Edit = Interface:createButton(RaiderHolder, {
                 onClick = function()
-                    GL.Interface.GDKP.EditRaider:open(self.sessionID, player);
+                    self:closeSubWindows();
+                    Interface.GDKP.Distribute.EditRaider:open(self.sessionID, player);
                 end,
                 tooltip = "Edit raider",
                 normalTexture = "Interface/AddOns/Gargul/Assets/Buttons/edit",
@@ -749,11 +758,11 @@ function Overview:releaseActionButtons()
 
     -- Release all of the action buttons into our pool so that we can reuse them later
     for _, Button in pairs(self.MutatorActionButtons or {}) do
-        Interface:releaseActionButton(Button);
+        Interface:releaseButton(Button);
     end
 
     for _, Button in pairs(self.RaiderActionButtons or {}) do
-        Interface:releaseActionButton(Button);
+        Interface:releaseButton(Button);
     end
 
     self.MutatorActionButtons = {};

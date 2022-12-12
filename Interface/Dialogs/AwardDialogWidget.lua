@@ -287,7 +287,9 @@ local function constructor()
         GL.Interface:set(GL.Interface.Dialogs.AwardDialog, "Cost", BoostedRollsCostEditBox);
     end
 
-    if (GL.GDKP.Session:activeSessionID()) then
+    if (GL.GDKP.Session:activeSessionID()
+        and not GL.GDKP.Session:getActive().lockedAt
+    ) then
         HorizontalSpacer = AceGUI:Create("SimpleGroup");
         HorizontalSpacer:SetLayout("FILL");
         HorizontalSpacer:SetFullWidth(true);

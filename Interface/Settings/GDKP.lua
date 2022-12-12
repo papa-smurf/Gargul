@@ -10,14 +10,13 @@ local Settings = GL.Settings;
 ---@class GDKPSettings
 GL.Interface.Settings.GDKP = {
     description = "Type |c00a79eff/gl gdkp|r or simply |c00a79eff/gdkp|r or click the button below to get started!",
+    InputElements = {},
 };
 local GDKP = GL.Interface.Settings.GDKP; ---@type GDKPSettings
 
 ---@return void
 function GDKP:draw(Parent)
     GL:debug("GDKPSettings:draw");
-
-    local InputElements = {};
     local Spacer;
 
     local OpenGDKP = GL.AceGUI:Create("Button");
@@ -25,7 +24,7 @@ function GDKP:draw(Parent)
     OpenGDKP:SetWidth(130);
     OpenGDKP:SetCallback("OnClick", function()
         GL.Settings:close();
-        GL.Commands:call("thatsmybis");
+        GL.Commands:call("gdkp");
     end);
     Parent:AddChild(OpenGDKP);
 
@@ -46,11 +45,50 @@ function GDKP:draw(Parent)
 
     Overview:drawCheckboxes({
         {
-            label = "Automatically share data",
-            description = "Automatically broadcast GDKP-related data to players who also have Gargul",
-            setting = "GDKP.automaticallyShareData",
+            label = "Show GDKP data on item tooltips",
+            setting = "GDKP.showHistoryOnTooltip",
         },
     }, Parent);
+
+    Overview:drawHeader("Auctions", Parent);
+
+    Overview:drawCheckboxes({
+        {
+            label = "Announce start of auction",
+            setting = "GDKP.announceAuctionStart",
+        },
+        {
+            label = "Countdown on auctions",
+            description = "A countdown will be shown in chat when an auction is coming to an end (e.g: 5 seconds to bid)",
+            setting = "GDKP.doCountdown",
+        },
+        {
+            label = "Countdown ONCE",
+            description = "Announce countdown only once at the desired seconds before end of auction",
+            setting = "GDKP.announceCountdownOnce",
+        },
+    }, Parent);
+
+    local HorizontalSpacer = GL.AceGUI:Create("SimpleGroup");
+    HorizontalSpacer:SetLayout("FILL");
+    HorizontalSpacer:SetFullWidth(true);
+    HorizontalSpacer:SetHeight(20);
+    Parent:AddChild(HorizontalSpacer);
+
+    local NumberOfSecondsToCountdown = GL.AceGUI:Create("Slider");
+    NumberOfSecondsToCountdown:SetLabel("At how many seconds left do you want to start the countdown?");
+    NumberOfSecondsToCountdown.label:SetTextColor(1, .95686, .40784);
+    NumberOfSecondsToCountdown:SetFullWidth(true);
+    NumberOfSecondsToCountdown:SetValue(GL.Settings:get("GDKP.numberOfSecondsToCountdown", 5));
+    NumberOfSecondsToCountdown:SetSliderValues(3, 25, 1);
+    NumberOfSecondsToCountdown:SetCallback("OnValueChanged", function(Slider)
+        local value = math.floor(tonumber(Slider:GetValue()));
+
+        if (value >= 3) then
+            GL.Settings:set("GDKP.numberOfSecondsToCountdown", value);
+        end
+    end);
+    Parent:AddChild(NumberOfSecondsToCountdown);
 
     Overview:drawHeader("Trading", Parent);
 
@@ -128,7 +166,7 @@ function GDKP:draw(Parent)
         AutoApplyTo:SetMaxLetters(2);
         Parent:AddChild(AutoApplyTo);
 
-        InputElements[i] = {
+        self.InputElements[i] = {
             Name = Name,
             Percentage = Percentage,
             Flat = Flat,
@@ -153,6 +191,42 @@ function GDKP:draw(Parent)
 end
 
 --- Store the button details (will be overwritten by the draw method)
-function GDKP:onClose() end
+function GDKP:onClose()
+    GL.Settings:set("GDKP.Mutators", {});
+
+    for _, Mutator in pairs(self.InputElements or {}) do
+        (function ()
+            local name = strtrim(Mutator.Name:GetText());
+            if (GL:empty(name)) then
+                return;
+            end
+
+            local percentage = strtrim(Mutator.Percentage:GetText());
+            if (not GL:empty(percentage)
+                and GL:empty(tonumber(percentage))
+            ) then
+                return;
+            end
+
+            local flat = strtrim(Mutator.Flat:GetText());
+            if (not GL:empty(flat)
+                and GL:empty(tonumber(flat))
+            ) then
+                return;
+            end
+
+            local autoApplyTo = strtrim(Mutator.AutoApplyTo:GetText());
+
+            local MutatorObj = {
+                autoApplyTo = autoApplyTo,
+                flat = flat,
+                name = name,
+                percentage = percentage,
+            };
+
+            GL.Settings:set("GDKP.Mutators." .. name, MutatorObj);
+        end)();
+    end
+end
 
 GL:debug("Interface/Settings/GDKP.lua");

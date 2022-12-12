@@ -14,17 +14,17 @@ local Overview = GL.Interface.GDKP.Distribute.Overview;
 local Interface = GL.Interface;
 
 ---@class AddRaider
-GL.Interface.GDKP.AddRaider = {
+GL.Interface.GDKP.Distribute.AddRaider = {
     isVisible = false,
     sessionID = nil,
 };
 
 ---@type AddRaider
-local AddRaider = GL.Interface.GDKP.AddRaider;
+local AddRaider = GL.Interface.GDKP.Distribute.AddRaider;
 
 ---@return Frame
 function AddRaider:build()
-    GL:debug("Interface.GDKP.AddRaider:build");
+    GL:debug("Interface.GDKP.Distribute.AddRaider:build");
 
     local Window = AceGUI:Create("InlineGroup");
     Window:SetLayout("Flow");
@@ -78,7 +78,7 @@ end
 
 ---@return Frame
 function AddRaider:window()
-    GL:debug("Interface.GDKP.AddRaider:window");
+    GL:debug("Interface.GDKP.Distribute.AddRaider:window");
 
     local Window = Interface:get(self, "Window");
 
@@ -93,7 +93,7 @@ end
 ---
 ---@return void
 function AddRaider:toggle()
-    GL:debug("Interface.GDKP.AddRaider:toggle");
+    GL:debug("Interface.GDKP.Distribute.AddRaider:toggle");
 
     if (self.isVisible) then
         return self:close();
@@ -104,7 +104,7 @@ end
 
 ---@return void
 function AddRaider:open(sessionID)
-    GL:debug("Interface.GDKP.AddRaider:open");
+    GL:debug("Interface.GDKP.Distribute.AddRaider:open");
 
     -- It seems our GDKP overview window is not opened
     if (not Overview.isVisible) then
@@ -121,7 +121,7 @@ end
 
 ---@return void
 function AddRaider:close()
-    GL:debug("Interface.GDKP.AddRaider:close");
+    GL:debug("Interface.GDKP.Distribute.AddRaider:close");
 
     local Window = self:window();
 
@@ -131,4 +131,4 @@ function AddRaider:close()
     end
 end
 
-GL:debug("Interface.GDKP.AddRaider.lua");
+GL:debug("Interface.GDKP.Distribute.AddRaider.lua");

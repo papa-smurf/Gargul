@@ -69,17 +69,17 @@ function Auction:_init()
     end);
 
     -- Whenever we were outbid we show a notification
-    Events:register("GDKPGDKPUserWasOutBid", "GL.GDKP_USER_WAS_OUTBID", function (_, NewTopBid)
+    Events:register("GDKPGDKPUserWasOutBid", "GL.GDKP_USER_WAS_OUTBID", function ()
         -- We don't want to spam the user with alerts!
         if (self.lastOutBidNotificationShownAt
-                and GetServerTime() - self.lastOutBidNotificationShownAt <= 8
+            and GetServerTime() - self.lastOutBidNotificationShownAt <= 8
         ) then
             return;
         end
 
         self.lastOutBidNotificationShownAt = GetServerTime();
         GL.Interface.Alerts:fire("GargulNotification", {
-            message = string.format("|c00BE3333You were outbid!|r", NewTopBid.Bidder.name),
+            message = string.format("|c00BE3333You were outbid!|r"),
         });
     end);
 
@@ -92,19 +92,19 @@ end
 ---@param itemID number
 ---@param price number
 ---@param winner string
----@param sessionIdentifier string
+---@param sessionID string
 ---@param Bids table
 ---@param note string
 ---
 ---@return boolean|table
-function Auction:create(itemID, price, winner, sessionIdentifier, Bids, note)
+function Auction:create(itemID, price, winner, sessionID, Bids, note)
     GL:debug("Auction:create");
 
-    if ((not sessionIdentifier
-        or (sessionIdentifier and not GDKPSession:exists(sessionIdentifier))
+    if ((not sessionID
+        or (sessionID and not GDKPSession:exists(sessionID))
     ) and not GDKPSession:activeSessionID()
     ) then
-        GL:warning("Unknown sessionIdentifier in Auction:create: " .. tostring(sessionIdentifier));
+        GL:warning("Unknown sessionIdentifier in Auction:create: " .. tostring(sessionID));
         return false;
     end
 
@@ -115,7 +115,13 @@ function Auction:create(itemID, price, winner, sessionIdentifier, Bids, note)
         return false;
     end
 
-    sessionIdentifier = sessionIdentifier or DB.GDKP.activeSession;
+    sessionID = sessionID or GDKPSession:activeSessionID();
+
+    local Session = GDKPSession:byID(sessionID);
+    if (not Session or Session.lockedAt) then
+        GL:warning("The GDKP Session is not available or locked");
+        return;
+    end
 
     local Instance = {
         price = price,
@@ -154,10 +160,10 @@ function Auction:create(itemID, price, winner, sessionIdentifier, Bids, note)
         return false;
     end
 
-    DB.GDKP.Ledger[sessionIdentifier].Auctions[checksum] = Instance;
+    GL:tableSet(Session, "Auctions." .. checksum, Instance);
 
-    Events:fire("GL.GDKP_AUCTION_CHANGED", sessionIdentifier, checksum, {}, Instance);
-    Events:fire("GL.GDKP_AUCTION_CREATED", sessionIdentifier, checksum);
+    Events:fire("GL.GDKP_AUCTION_CHANGED", sessionID, checksum, {}, Instance);
+    Events:fire("GL.GDKP_AUCTION_CREATED", sessionID, checksum);
 
     -- Make sure we invalidate this item's history
     GDKPSession.ItemHistory[itemID] = nil;
@@ -165,14 +171,20 @@ function Auction:create(itemID, price, winner, sessionIdentifier, Bids, note)
     return Instance;
 end
 
----@param sessionIdentifier string
----@param auctionIdentifier string
+---@param sessionID string
+---@param auctionID string
 ---
 ---@return void
-function Auction:delete(sessionIdentifier, auctionIdentifier, reason)
+function Auction:delete(sessionID, auctionID, reason)
     GL:debug("Auction:delete");
 
-    local Instance = DB:get(string.format("GDKP.Ledger.%s.Auctions.%s", sessionIdentifier, auctionIdentifier));
+    local Session = GDKPSession:byID(sessionID);
+    if (not Session or Session.lockedAt) then
+        GL:warning("The GDKP Session is not available or locked");
+        return;
+    end
+
+    local Instance = GL:tableGet(Session, "Auctions." .. auctionID);
 
     -- The auction could not be found or is already deleted
     if (not Instance or not Instance.price) then
@@ -201,23 +213,29 @@ function Auction:delete(sessionIdentifier, auctionIdentifier, reason)
     Instance.reason = tostring(reason);
 
     -- We don't point to Auction here, we want a copy not a pointer!
-    local Before = DB:get(string.format("GDKP.Ledger.%s.Auctions.%s", sessionIdentifier, auctionIdentifier));
-    DB:set(string.format("GDKP.Ledger.%s.Auctions.%s", sessionIdentifier, auctionIdentifier), Instance);
+    local Before = GL:tableGet(Session, "Auctions." .. auctionID);
+    GL:tableSet(Session, "Auctions." .. auctionID, Instance);
 
-    Events:fire("GL.GDKP_AUCTION_CHANGED", sessionIdentifier, auctionIdentifier, Before, Instance);
-    Events:fire("GL.GDKP_AUCTION_DELETED", sessionIdentifier, auctionIdentifier, Instance);
+    Events:fire("GL.GDKP_AUCTION_CHANGED", sessionID, auctionID, Before, Instance);
+    Events:fire("GL.GDKP_AUCTION_DELETED", sessionID, auctionID, Instance);
 
     return true;
 end
 
----@param sessionIdentifier string
----@param auctionIdentifier string
+---@param sessionID string
+---@param auctionID string
 ---
 ---@return void
-function Auction:restore(sessionIdentifier, auctionIdentifier)
+function Auction:restore(sessionID, auctionID)
     GL:debug("Auction:restore");
 
-    local Instance = DB:get(string.format("GDKP.Ledger.%s.Auctions.%s", sessionIdentifier, auctionIdentifier));
+    local Session = GDKPSession:byID(sessionID);
+    if (not Session or Session.lockedAt) then
+        GL:warning("The GDKP Session is not available or locked");
+        return;
+    end
+
+    local Instance = GL:tableGet(Session, "Auctions." .. auctionID);
 
     -- The auction could not be found or is not deleted
     if (not Instance or Instance.price) then
@@ -257,11 +275,11 @@ function Auction:restore(sessionIdentifier, auctionIdentifier)
     Instance.PreviousStates[mostRecentStateIdentifier] = nil;
 
     -- We don't point to Auction here, we want a copy not a pointer!
-    local Before = DB:get(string.format("GDKP.Ledger.%s.Auctions.%s", sessionIdentifier, auctionIdentifier));
-    DB:set(string.format("GDKP.Ledger.%s.Auctions.%s", sessionIdentifier, auctionIdentifier), Instance);
+    local Before = GL:tableGet(Session, "Auctions." .. auctionID);
+    GL:tableSet(Session, "Auctions." .. auctionID, Instance);
 
-    Events:fire("GL.GDKP_AUCTION_CHANGED", sessionIdentifier, auctionIdentifier, Before, Instance);
-    Events:fire("GL.GDKP_AUCTION_RESTORED", sessionIdentifier, auctionIdentifier);
+    Events:fire("GL.GDKP_AUCTION_CHANGED", sessionID, auctionID, Before, Instance);
+    Events:fire("GL.GDKP_AUCTION_RESTORED", sessionID, auctionID);
 
     return true;
 end
@@ -316,6 +334,7 @@ function Auction:storeCurrent(winner, bid)
     return self:create(itemID, bid, winner, nil, HighestBidPerPlayer);
 end
 
+---@param Instance table
 function Auction:sanitize(Instance)
     local SanitizedAuction = {};
 
@@ -508,15 +527,21 @@ end
 
 --- Change the recipient of an auction
 ---
----@param sessionIdentifier string
+---@param sessionID string
 ---@param auctionID string
 ---@param winner string
 ---
 ---@return boolean
-function Auction:reassignAuction(sessionIdentifier, auctionID, winner)
+function Auction:reassignAuction(sessionID, auctionID, winner)
     GL:debug("Auction:reassignAuction");
 
-    local OldAuction = GL.DB:get(string.format("GDKP.Ledger.%s.Auctions.%s", sessionIdentifier, auctionID));
+    local Session = GDKPSession:byID(sessionID);
+    if (not Session or Session.lockedAt) then
+        GL:warning("The GDKP Session is not available or locked");
+        return;
+    end
+
+    local OldAuction = GL:tableGet(Session, "Auctions." .. auctionID);
 
     if (not OldAuction
         or OldAuction.Winner.name == winner
@@ -525,15 +550,15 @@ function Auction:reassignAuction(sessionIdentifier, auctionID, winner)
     end
 
     winner = GL:capitalize(string.lower(winner));
-    DB.GDKP.Ledger[sessionIdentifier].Auctions[auctionID].Winner.name = winner;
+    GL:tableSet(Session, string.format("Auctions.%s.Winner.name", auctionID), winner);
 
     Events:fire("GL.GDKP_AUCTION_CHANGED",
-        sessionIdentifier,
+        sessionID,
         auctionID,
         OldAuction,
-        DB.GDKP.Ledger[sessionIdentifier].Auctions[auctionID]
+        DB.GDKP.Ledger[sessionID].Auctions[auctionID]
     );
-    Events:fire("GL.GDKP_AUCTION_REASSIGNED", sessionIdentifier, OldAuction, winner);
+    Events:fire("GL.GDKP_AUCTION_REASSIGNED", sessionID, OldAuction, winner);
 
     return true;
 end
@@ -541,38 +566,46 @@ end
 --- Move an auction from one session to another
 ---
 ---@param auctionID string
----@param fromSession string
----@param toSession string
+---@param fromSessionID string
+---@param toSessionID string
 ---
 ---@return boolean
-function Auction:move(auctionID, fromSession, toSession)
+function Auction:move(auctionID, fromSessionID, toSessionID)
     GL:debug("Auction:move");
 
     -- There's nothing to move!
-    if (fromSession == toSession) then
+    if (fromSessionID == toSessionID) then
         return false;
     end
 
-    local Instance = GL.DB:get(string.format("GDKP.Ledger.%s.Auctions.%s", fromSession, auctionID));
+    local FromSession = GDKPSession:byID(fromSessionID);
+    if (not FromSession or FromSession.lockedAt) then
+        GL:warning("The GDKP Session is not available or locked");
+        return false;
+    end
 
-    -- The auction doesn't exist
+    local ToSession = GDKPSession:byID(toSessionID);
+    if (not ToSession or ToSession.lockedAt) then
+        GL:warning("The GDKP Session is not available or locked");
+        return false;
+    end
+
+    local Instance = GL:tableGet(FromSession, "Auctions." .. auctionID);
     if (not Instance) then
         return false;
     end
 
-    -- The target session doesn't exist
-    if (not GL.DB:get(string.format("GDKP.Ledger.%s", toSession))) then
-        return false;
-    end
+    GL:tableSet(ToSession, "Auctions." .. auctionID, Instance);
+    GL:tableSet(FromSession, "Auctions." .. auctionID, nil);
 
-    -- Copy the auction to its new location
-    GL.DB:set(string.format("GDKP.Ledger.%s.Auctions.%s", toSession, auctionID), Instance);
+    --if (not GDKPSession:store(ToSession)
+    --    or GDKPSession:store(FromSession)
+    --) then
+    --    return false;
+    --end
 
-    -- Delete the original auction completely
-    GL.DB:set(string.format("GDKP.Ledger.%s.Auctions.%s", fromSession, auctionID), nil);
-
-    Events:fire("GL.GDKP_AUCTION_CHANGED", toSession, auctionID, Instance, Instance);
-    Events:fire("GL.GDKP_AUCTION_MOVED", Instance, fromSession, toSession);
+    Events:fire("GL.GDKP_AUCTION_CHANGED", toSessionID, auctionID, Instance, Instance);
+    Events:fire("GL.GDKP_AUCTION_MOVED", Instance, fromSessionID, toSessionID);
 
     return true;
 end
@@ -590,9 +623,9 @@ function Auction:announceStart(itemLink, minimumBid, minimumIncrement, duration,
     antiSnipe = tonumber(antiSnipe or 0) or 0 > 0
 
     if (type(itemLink) ~= "string"
-            or GL:empty(itemLink)
-            or not GL:higherThanZero(duration)
-            or antiSnipe < 0
+        or GL:empty(itemLink)
+        or not GL:higherThanZero(duration)
+        or antiSnipe < 0
     ) then
         GL:warning("Invalid data provided for GDKP auction start!");
         return false;
@@ -600,7 +633,7 @@ function Auction:announceStart(itemLink, minimumBid, minimumIncrement, duration,
 
     local itemID = GL:getItemIDFromLink(itemLink);
     if (not tonumber(itemID or 0) or 0 > 0
-            or not GetItemInfoInstant(itemID)
+        or not GetItemInfoInstant(itemID)
     ) then
         GL:warning("Invalid item provided for GDKP auction start!");
         return false;
@@ -619,15 +652,15 @@ function Auction:announceStart(itemLink, minimumBid, minimumIncrement, duration,
     end
 
     GL.CommMessage.new(
-            CommActions.startGDKPAuction,
-            {
-                item = itemLink,
-                minimumBid = minimumBid,
-                minimumIncrement = minimumIncrement,
-                duration = tonumber(duration),
-                antiSnipe = tonumber(antiSnipe),
-            },
-            "GROUP"
+        CommActions.startGDKPAuction,
+        {
+            item = itemLink,
+            minimumBid = minimumBid,
+            minimumIncrement = minimumIncrement,
+            duration = tonumber(duration),
+            antiSnipe = tonumber(antiSnipe),
+        },
+        "GROUP"
     ):send();
 
     -- The user doesn't want to announce anything in chat
@@ -636,14 +669,14 @@ function Auction:announceStart(itemLink, minimumBid, minimumIncrement, duration,
     end
 
     local announceMessage = string.format("Bidding starts on %s. Minimum is %sg, increment is %sg. Use raid chat!",
-            itemLink,
-            minimumBid,
-            minimumIncrement
+        itemLink,
+        minimumBid,
+        minimumIncrement
     );
 
     GL:sendChatMessage(
-            announceMessage,
-            "GROUP"
+        announceMessage,
+        "GROUP"
     );
 
     return true;
@@ -826,7 +859,7 @@ function Auction:start(CommMessage)
                     SecondsAnnounced[secondsLeft] = true;
 
                     GL:sendChatMessage(
-                            string.format("%s seconds to roll", secondsLeft),
+                            string.format("%s seconds to bid", secondsLeft),
                             "GROUP"
                     );
                 end
@@ -1054,8 +1087,8 @@ end
 ---@return number
 function Auction:lowestValidBid()
     return math.max(
-            GL:tableGet(self.Current, "TopBid.bid", 0) + (self.Current.minimumIncrement or 0),
-            self.Current.minimumBid
+        GL:tableGet(self.Current, "TopBid.bid", 0) + (self.Current.minimumIncrement or 0),
+        self.Current.minimumBid
     );
 end
 

@@ -14,18 +14,18 @@ local Overview = GL.Interface.GDKP.Distribute.Overview;
 local Interface = GL.Interface;
 
 ---@class EditRaider
-GL.Interface.GDKP.EditRaider = {
+GL.Interface.GDKP.Distribute.EditRaider = {
     isVisible = false,
     player = nil,
     sessionID = nil,
 };
 
 ---@type EditRaider
-local EditRaider = GL.Interface.GDKP.EditRaider;
+local EditRaider = GL.Interface.GDKP.Distribute.EditRaider;
 
 ---@return Frame
 function EditRaider:build()
-    GL:debug("Interface.GDKP.EditRaider:build");
+    GL:debug("Interface.GDKP.Distribute.EditRaider:build");
 
     local Window = AceGUI:Create("InlineGroup");
     Window:SetLayout("Flow");
@@ -34,12 +34,6 @@ function EditRaider:build()
     Window.frame:SetFrameStrata("HIGH");
     Window.frame:Show();
     Interface:set(self, "Window", Window);
-
-    local Label = GL.AceGUI:Create("Label");
-    Label:SetHeight(20);
-    Label:SetFullWidth(true);
-    Label:SetText("Add a raider to this session");
-    Window:AddChild(Label);
 
     local Name = GL.AceGUI:Create("EditBox");
     Name:DisableButton(true);
@@ -80,7 +74,7 @@ end
 
 ---@return Frame
 function EditRaider:window()
-    GL:debug("Interface.GDKP.EditRaider:window");
+    GL:debug("Interface.GDKP.Distribute.EditRaider:window");
 
     local Window = Interface:get(self, "Window");
 
@@ -95,7 +89,7 @@ end
 ---
 ---@return void
 function EditRaider:toggle()
-    GL:debug("Interface.GDKP.EditRaider:toggle");
+    GL:debug("Interface.GDKP.Distribute.EditRaider:toggle");
 
     if (self.isVisible) then
         return self:close();
@@ -106,7 +100,7 @@ end
 
 ---@return void
 function EditRaider:open(sessionID, player)
-    GL:debug("Interface.GDKP.EditRaider:open");
+    GL:debug("Interface.GDKP.Distribute.EditRaider:open");
 
     -- It seems our GDKP overview window is not opened
     if (not Overview.isVisible) then
@@ -126,7 +120,7 @@ end
 
 ---@return void
 function EditRaider:close()
-    GL:debug("Interface.GDKP.EditRaider:close");
+    GL:debug("Interface.GDKP.Distribute.EditRaider:close");
 
     local Window = self:window();
 
@@ -136,4 +130,4 @@ function EditRaider:close()
     end
 end
 
-GL:debug("Interface.GDKP.EditRaider.lua");
+GL:debug("Interface.GDKP.Distribute.EditRaider.lua");

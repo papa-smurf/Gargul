@@ -487,7 +487,7 @@ function Overview:refreshLedger()
     self:clearDetailsFrame();
 
     local Wrapper = Interface:get(self, "Frame.SectionWrapper");
-    local Details = GL.AceGUI:Create("ScrollFrame");
+    local Details = Interface:get(self, "ScrollFrame.SessionDetails") or GL.AceGUI:Create("ScrollFrame");
     Details:SetLayout("Flow");
     Interface:set(self, "SessionDetails", Details);
     Wrapper:AddChild(Details);
@@ -761,7 +761,7 @@ function Overview:showTutorial()
     self:clearDetailsFrame();
 
     local Wrapper = Interface:get(self, "Frame.SectionWrapper");
-    local Details = GL.AceGUI:Create("ScrollFrame");
+    local Details = Interface:get(self, "ScrollFrame.SessionDetails") or GL.AceGUI:Create("ScrollFrame");
     Details:SetLayout("Flow");
     Interface:set(self, "SessionDetails", Details);
     Wrapper:AddChild(Details);
@@ -773,10 +773,11 @@ function Overview:showTutorial()
     Note:SetText("|c00a79effFollow the steps below to quickly get started with Gargul GDKP!|r");
 
     local Steps = {
-        {1, "|c00a79effClick the |c00FFF569New|r button below to create a GDKP session. It will show on the left when done.|r"},
-        {2, "|c00a79effMake sure your session says |c00FFF569(active)|r. If that's not the case then click the |c00a79effEnable|r button below!|r"},
-        {3, string.format("|c00a79effYou can now start auctioning off items. Open your inventory, |c00FFF569%s|r an item and start. Don't forget to award the item when you're done!|r", GL.Settings:get("ShortcutKeys.rollOffOrAuction"))},
-        {4, "|c00a79effIf all went well then, instead of this tutorial, you should see your freshly auctioned item(s) here!|r"},
+        {1, "|c00a79effGargul's GDKP module is |c00FFF569currently in beta, use at your own risk|r and record the raid/keep track of sales manually just in case!|r"},
+        {2, "|c00a79effClick the |c00FFF569New|r button below to create a GDKP session. It will show on the left when done.|r"},
+        {3, "|c00a79effMake sure your session says |c00FFF569(active)|r. If that's not the case then click the |c00a79effEnable|r button below!|r"},
+        {4, string.format("|c00a79effYou can now start auctioning off items. Open your inventory, |c00FFF569%s|r an item and start. Don't forget to award the item when you're done!|r", GL.Settings:get("ShortcutKeys.rollOffOrAuction"))},
+        {5, "|c00a79effIf all went well then, instead of this tutorial, you should see your freshly auctioned item(s) here!|r"},
     };
 
     table.sort(Steps, function (a, b)
@@ -803,6 +804,12 @@ function Overview:showTutorial()
         ItemIcon:SetImageSize(30, 30);
         ItemIcon:SetImage(iconPath);
         ItemRow:AddChild(ItemIcon);
+
+        if (order == 1) then
+            local BorderColor = {.77, .12, .23, 1};
+            local LCG = LibStub("LibCustomGlowGargul-1.0");
+            LCG.PixelGlow_Start(ItemRow.frame, BorderColor, 70, .05, 5, 3, 10);
+        end
 
         --[[
            ITEM ICON/LABEL SPACER
@@ -834,7 +841,7 @@ function Overview:clearDetailsFrame()
     -- Release all of the action buttons into our pool so that we can reuse them later
     for _, Buttons in pairs(self.ActionButtons or {}) do
         for _, Button in pairs(Buttons) do
-            Interface:releaseActionButton(Button);
+            Interface:releaseButton(Button);
         end
     end
 
@@ -851,7 +858,14 @@ function Overview:clearDetailsFrame()
         Note:SetText("");
     end
 
-    Interface:release(self, "ScrollFrame.SessionDetails");
+    local ScrollFrame = Interface:get(self, "ScrollFrame.SessionDetails");
+    if (ScrollFrame) then
+        local children = ScrollFrame.children or {};
+        for i = 1,#children do
+            children[i].frame:Hide();
+            children[i] = nil;
+        end
+    end
 end
 
 --- Draw the GDKP sessions table (left-hand side of the overview)

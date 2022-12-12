@@ -20,7 +20,7 @@ GL.Interface.Alerts = {
             -- Override the defaults with whatever the user wants to show
             Details = GL:tableMerge({
                 message = "",
-                icon = "Interface\\AddOns\\Gargul\\Assets\\Icons\\gargul",
+                icon = "Interface/AddOns/Gargul/Assets/Icons/gargul",
                 hex = "",
             }, Details);
             local Alert = self;
@@ -62,23 +62,6 @@ local Alerts = GL.Interface.Alerts;
 
 function Alerts:fire(frameType, ...)
     GL:debug("Alerts:fire");
-
-    ---@todo: /script _G.gargultest();
-    _G.gargultest = function ()
-        --GL:onItemLoadDo(18608, function (Items)
-        GL:onItemLoadDo(31986, function (Items)
-            local Benediction = Items[1];
-            local LootAlertSystem = AlertFrame:AddQueuedAlertFrameSubSystem("LootWonAlertFrameTemplate", _G.LootWonAlertFrame_SetUp, 6, math.huge);
-            LootAlertSystem:AddAlert(Benediction.link);
-        end);
-    end;
-
-    -- Old version of WoW use a secure mixin for alerts, making it completely unusable with native alert frames
-    if (not self.Types.frameType
-        or GL.clientVersion < 30000
-    ) then
-        --return false;
-    end
 
     if (self.Types[frameType]) then
         self.Types[frameType]:AddAlert(...);

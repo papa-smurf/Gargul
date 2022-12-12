@@ -125,6 +125,7 @@ function Session:tradeInitiated(Details)
         Window.frame:SetParent(TradeFrame);
         Window.frame:SetScript("OnHide", function()
             GL.Interface:release(Window);
+            Window.frame:Hide();
         end);
         Window:SetPoint("TOPLEFT", TradeFrame, "TOPRIGHT", 0, 9);
         Window.frame:Show();
@@ -289,6 +290,10 @@ end
 function Session:tooltipLines(itemLink)
     GL:debug("Session:tooltipLines");
 
+    if (not Settings:get("GDKP.showHistoryOnTooltip")) then
+        return {};
+    end
+
     local Details = self:itemHistory(itemLink);
 
     if (not Details
@@ -339,6 +344,7 @@ function Session:store(SessionObj)
     if (type(SessionObj) ~= "table"
         or GL:empty(SessionObj)
         or GL:empty(SessionObj.ID)
+        or SessionObj.lockedAt
     ) then
         return false;
     end
