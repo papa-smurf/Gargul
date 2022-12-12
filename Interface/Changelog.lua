@@ -401,7 +401,7 @@ function Changelog:close()
     Settings:set("UI.Changelog.Position.offsetY", offsetY);
 
     -- Clear the frame and its widgets
-    AceGUI:Release(Window);
+    GL.Interface:release(Window);
     self.isVisible = false;
 end
 

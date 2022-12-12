@@ -667,7 +667,7 @@ function Overview:close(Window)
     GL.Events:unregister("SoftResShareButtonRosterUpdatedListener");
 
     -- Clear the frame and its widgets
-    AceGUI:Release(Window);
+    GL.Interface:release(Window);
     self.isVisible = false;
 
     local ShareButton = GL.Interface:get(self, "Frame.ShareButton");

@@ -554,13 +554,13 @@ function GL:frameMessage(message)
     local AceGUI = GL.AceGUI or LibStub("AceGUI-3.0");
 
     -- Create a container/parent frame
-    local MesseGrame = AceGUI:Create("Frame");
-    MesseGrame:SetCallback("OnClose", function(widget) AceGUI:Release(widget); end);
-    MesseGrame:SetTitle("Gargul v" .. GL.version);
-    MesseGrame:SetStatusText("");
-    MesseGrame:SetLayout("Flow");
-    MesseGrame:SetWidth(600);
-    MesseGrame:SetHeight(450);
+    local MessageFrame = AceGUI:Create("Frame");
+    MessageFrame:SetCallback("OnClose", function(widget) GL.Interface:release(widget); end);
+    MessageFrame:SetTitle("Gargul v" .. GL.version);
+    MessageFrame:SetStatusText("");
+    MessageFrame:SetLayout("Flow");
+    MessageFrame:SetWidth(600);
+    MessageFrame:SetHeight(450);
 
     -- Large edit box
     local MessageBox = AceGUI:Create("MultiLineEditBox");
@@ -570,8 +570,9 @@ function GL:frameMessage(message)
     MessageBox:DisableButton(true);
     MessageBox:SetNumLines(22);
     MessageBox:HighlightText();
+    MessageBox:SetLabel();
     MessageBox:SetMaxLetters(999999999);
-    MesseGrame:AddChild(MessageBox);
+    MessageFrame:AddChild(MessageBox);
 end
 
 --- Counting tables (or arrays if you will) is anything but straight-forward in LUA. Examples:

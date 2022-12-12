@@ -321,18 +321,23 @@ function Overview:showSection(section)
         GL.Interface.Settings[self.activeSection]:onClose();
     end
 
-    GL.Interface:release(self, "ScrollFrame.ScrollFrame");
-
     self.activeSection = sectionClassIdentifier;
 
     -- Set the Title of the section (shown top-right)
     GL.Interface:get(self, "Label.Title"):SetText(" " .. strtrim(SectionEntry[1]));
 
     -- Prepare a new ScrollFrame for the section we're about to draw
-    local ScrollFrame = GL.AceGUI:Create("ScrollFrame");
+    local ScrollFrame = GL.Interface:get(self, "ScrollFrame.ScrollFrame") or GL.AceGUI:Create("ScrollFrame");
     local Parent = GL.Interface:get(self, "Frame.SectionWrapper");
     ScrollFrame:SetLayout("Flow");
+
+    -- Clean the ScrollFrame in case it still holds old data
+    GL.Interface:releaseChildren(ScrollFrame);
+
     Parent:AddChild(ScrollFrame);
+
+    -- Store the ScrollFrame so that we can clean/release it later
+    GL.Interface:set(self, "ScrollFrame", ScrollFrame);
 
     -- Add a description to the section if available
     if (not GL:empty(SectionClass.description)) then
@@ -366,9 +371,6 @@ function Overview:showSection(section)
     end
 
     SectionClass:draw(ScrollFrame, GL.Interface:get(self, "Window"));
-
-    -- Store the ScrollFrame so that we can clean/release it later
-    GL.Interface:set(self, "ScrollFrame", ScrollFrame);
 
     -- Highlight the correct section in the table on the left
     -- This delay is necessary because of how lib-st handles click and selection events

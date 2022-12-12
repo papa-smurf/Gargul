@@ -612,7 +612,7 @@ function Overview:close()
     GL.Interface:storePosition(Window, "BoostedRollsOverview");
 
     -- Clear the frame and its widgets
-    AceGUI:Release(Window);
+    GL.Interface:release(Window);
     self.isVisible = false;
 
     -- Clean up the Character table separately
