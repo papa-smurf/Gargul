@@ -104,7 +104,7 @@ end
 ---@param identifier string
 ---@return void
 function Events:unregister(identifier)
-    if (type(identifier) == table) then
+    if (type(identifier) == "table") then
         for _, event in pairs(identifier) do
             self:unregister(event);
         end
