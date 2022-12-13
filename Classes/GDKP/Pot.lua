@@ -333,7 +333,8 @@ function Pot:calculateCuts(sessionID)
     local baseTotal = leftToDistribute - (leftToDistribute * (0 + (percentages / 100)));
 
     if (GL:higherThanZero(baseTotal) and GL:higherThanZero(numberOfPlayersWithBase)) then
-        base = GL:round(baseTotal / numberOfPlayersWithBase, 2);
+        --base = GL:round(baseTotal / numberOfPlayersWithBase, 2);
+        base = baseTotal / numberOfPlayersWithBase;
     elseif (not GL:higherThanZero(baseTotal) and GL:higherThanZero(percentages)) then
         GL:error("There's not enough gold to distribute, expect some weird cut calculations!");
     end
@@ -362,7 +363,7 @@ function Pot:calculateCuts(sessionID)
             end
         end
 
-        Cuts[player] = GL:round(playerPot, 0);
+        Cuts[player] = math.floor(playerPot);
         totalDistributed = totalDistributed + Cuts[player];
     end
 
@@ -399,6 +400,8 @@ function Pot:determineDistributionDefaults(Player, Session)
     if (Player.isML) then
         tinsert(PlayerRoles, "ML");
     end
+
+    tinsert(PlayerRoles, strupper(Player.name));
 
     for _, Mutator in pairs(Session.Pot.Mutators or {}) do
         local active = false;
