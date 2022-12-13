@@ -54,13 +54,7 @@ function Pot:addGold(sessionID, gold, player, note)
     GL:debug("Auction:addGold");
 
     note = strtrim(tostring(note));
-    local Instance = GDKPAuction:create(Constants.GDKP.potIncreaseItemID, gold, player, sessionID, nil, note);
-
-    if (type(Instance) == "table") then
-        return true;
-    end
-
-    return false;
+    return GDKPAuction:create(Constants.GDKP.potIncreaseItemID, gold, player, sessionID, nil, note);
 end
 
 ---@param sessionID string|nil If nil use currently active session

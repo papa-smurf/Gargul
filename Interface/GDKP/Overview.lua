@@ -157,9 +157,9 @@ function Overview:open()
 
     if (not Window) then
         Window = self:build();
-    else
-        self:refreshLedger();
     end
+
+    self:refreshLedger();
 
     if (self.isVisible) then
         return;
@@ -190,9 +190,17 @@ function Overview:build()
     ---@type Frame
     local WindowFrame = Window.frame;
 
-    Interface:AceGUIDefaults(self, Window, "GDKPOverview", 660, 600);
+    Interface:AceGUIDefaults(self, Window, "GDKPOverview", 660, 410);
     Interface:resizeBounds(Window, 660, 300);
     Window.statustext:GetParent():Hide(); -- Hide the statustext bar
+
+    --[[
+        SETTINGS BUTTON
+    ]]
+    GL.UI:createSettingsButton(
+        Window.frame,
+        "GDKP"
+    );
 
     --[[ POT ICON AND VALUE ]]
 
@@ -222,7 +230,7 @@ function Overview:build()
 
         local Session = GDKPSession:byID(self.selectedSession);
         local pot = GDKPPot:total(Session.ID);
-        local numberOfRaidMembers = math.max(#GL.User:groupMemberNames() - 1, 1);
+        local numberOfRaidMembers = math.max(#GL.User:groupMemberNames(), 1);
         local managementCut = tonumber(Session.managementCut or 0) or 0;
         local managementPot = math.ceil(pot * (0 + managementCut / 100));
 
@@ -318,18 +326,19 @@ function Overview:build()
             self:SetEnabled(SelectedSession and not SelectedSession.deletedAt and not SelectedSession.lockedAt and (not GL.User.isInGroup or GL.User.hasLead or GL.User.isMasterLooter));
         end,
         updateOn = { "GROUP_ROSTER_UPDATE", "GL.GDKP_OVERVIEW_SESSION_CHANGED", "GL.GDKP_OVERVIEW_SESSION_CHANGED", "GL.GDKP_OVERVIEW_SESSIONS_REFRESHED" },
-    }):SetPoint("TOP", ScrollFrameHolder.frame, "TOP", -9, -7);
+    --}):SetPoint("TOP", ScrollFrameHolder.frame, "TOP", -9, -7)
+    }):SetPoint("TOP", ScrollFrameHolder.frame, "TOP", -9, -7)
 
     ----[[ SHARE BUTTON ]]
-    Interface:createShareButton(ScrollFrameHolder, {
-        onClick = function() Interface.Dialogs.PopupDialog:open("BROADCAST_GDKP_CONFIRMATION"); end,
-        tooltip = "Broadcast data",
-        disabledTooltip = "Broadcast data: you need loot master, assist or lead!",
-        position = "TOPCENTER",
-        update = function (self) self:SetEnabled(self.selectedSession and GDKP:userIsAllowedToBroadcast()); end,
-        updateOn = "GROUP_ROSTER_UPDATE",
-        x = 16,
-    });
+    --Interface:createShareButton(ScrollFrameHolder, {
+    --    onClick = function() Interface.Dialogs.PopupDialog:open("BROADCAST_GDKP_CONFIRMATION"); end,
+    --    tooltip = "Broadcast data",
+    --    disabledTooltip = "Broadcast data: you need loot master, assist or lead!",
+    --    position = "TOPCENTER",
+    --    update = function (self) self:SetEnabled(self.selectedSession and GDKP:userIsAllowedToBroadcast()); end,
+    --    updateOn = "GROUP_ROSTER_UPDATE",
+    --    x = 16,
+    --});
 
     Interface:set(self, "Title", Title);
     Interface:set(self, "Note", Note);
@@ -386,6 +395,15 @@ function Overview:build()
         end
     end);
     Interface:set(self, "DeleteRestore", DeleteOrRestoreSession);
+
+    DeleteOrRestoreSession:SetCallback("OnEnter", function ()
+        GameTooltip:SetOwner(DeleteOrRestoreSession.frame, "ANCHOR_TOP");
+        GameTooltip:AddLine("Sessions with auctions attached to them will be deleted after 48 hours");
+        GameTooltip:Show();
+    end);
+    DeleteOrRestoreSession:SetCallback("OnLeave", function ()
+        GameTooltip:Hide();
+    end);
 
     local Export = AceGUI:Create("Button");
     Export:SetText("Export");
@@ -470,7 +488,11 @@ end
 function Overview:refreshLedger()
     GL:debug("Overview:drawDetails");
 
+    local LockIcon = Interface:get(self, "Icon.LockIcon");
+    LockIcon.frame:Show();
+
     if (not self.selectedSession) then
+        LockIcon.frame:Hide();
         return self:showTutorial();
     end
 
@@ -480,20 +502,7 @@ function Overview:refreshLedger()
         return GL:warning(string.format("Unknown GDKP session '%s'", self.selectedSession));
     end
 
-    if (GL:empty(Session.Auctions)) then
-        return self:showTutorial();
-    end
-
-    self:clearDetailsFrame();
-
-    local Wrapper = Interface:get(self, "Frame.SectionWrapper");
-    local Details = Interface:get(self, "ScrollFrame.SessionDetails") or GL.AceGUI:Create("ScrollFrame");
-    Details:SetLayout("Flow");
-    Interface:set(self, "SessionDetails", Details);
-    Wrapper:AddChild(Details);
-
     local question;
-    local LockIcon = Interface:get(self, "Icon.LockIcon");
     if (Session.lockedAt) then
         LockIcon:SetImage("Interface/AddOns/Gargul/Assets/Icons/locked");
         question = "Unlocking and changing the pot or cuts can get really messy, especially if you've already done payouts. Are you sure?";
@@ -509,6 +518,19 @@ function Overview:refreshLedger()
             end,
         });
     end);
+
+    if (GL:empty(Session.Auctions)) then
+        LockIcon.frame:Hide();
+        return self:showTutorial();
+    end
+
+    self:clearDetailsFrame();
+
+    local Wrapper = Interface:get(self, "Frame.SectionWrapper");
+    local Details = Interface:get(self, "ScrollFrame.SessionDetails") or GL.AceGUI:Create("ScrollFrame");
+    Details:SetLayout("Flow");
+    Interface:set(self, "SessionDetails", Details);
+    Wrapper:AddChild(Details);
 
     local Title = Interface:get(self, "Label.Title");
     Title:SetText(string.format("\n|c00%s%s|r", Constants.addonHexColor, Session.title));
@@ -708,7 +730,7 @@ function Overview:refreshLedger()
                             end,
                         });
                     end,
-                    tooltip = "Delete",
+                    tooltip = "Delete. Hold shift to bypass note",
                     disabledTooltip = "You need lead or master loot to delete entries.\nYou can't delete entries on locked/deleted sessions",
                     normalTexture = "Interface/AddOns/Gargul/Assets/Buttons/delete",
                     disabledTexture = "Interface/AddOns/Gargul/Assets/Buttons/delete-disabled",
@@ -739,8 +761,7 @@ function Overview:refreshLedger()
             --[[ DETAILS BUTTON ]]
             local Eye = Interface:createButton(ActionButtons, {
                 onClick = function()
-                    self:closeSubWindows();
-                    Interface.GDKP.AuctionDetails:draw(Session.ID, Auction.checksum);
+                    Interface.GDKP.AuctionDetails:toggle(Session.ID, Auction.checksum);
                 end,
                 tooltip = "Details",
                 normalTexture = "Interface/AddOns/Gargul/Assets/Buttons/eye",
@@ -830,8 +851,8 @@ function Overview:showTutorial()
         ItemRow:AddChild(ItemLabel);
     end
 
-    Interface:get(self, "GDKPOverview"):DoLayout();
     self.styleWindowAfterResize();
+    Interface:get(self, "GDKPOverview"):DoLayout();
 end
 
 -- Clear the details frame

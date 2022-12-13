@@ -45,6 +45,11 @@ function GDKP:draw(Parent)
 
     Overview:drawCheckboxes({
         {
+            label = "Bid window",
+            description = "Show the bid window whenever the master looter starts an auction. This only works if the master looter uses Gargul!",
+            setting = "GDKP.showBidWindow",
+        },
+        {
             label = "Show GDKP data on item tooltips",
             setting = "GDKP.showHistoryOnTooltip",
         },
@@ -58,14 +63,27 @@ function GDKP:draw(Parent)
             setting = "GDKP.announceAuctionStart",
         },
         {
+            label = "Announce pot after awarding item",
+            setting = "GDKP.announcePotAfterAuction",
+        },
+        {
+            label = "Whisper bidder if their bid is too low",
+            setting = "GDKP.notifyIfBidTooLow",
+        },
+        {
             label = "Countdown on auctions",
             description = "A countdown will be shown in chat when an auction is coming to an end (e.g: 5 seconds to bid)",
             setting = "GDKP.doCountdown",
         },
         {
             label = "Countdown ONCE",
-            description = "Announce countdown only once at the desired seconds before end of auction",
+            description = "Announce auction countdown only once instead of every second when countdown timer is reached",
             setting = "GDKP.announceCountdownOnce",
+        },
+        {
+            label = "Announce incoming bids",
+            description = "Announce all accepted bids in group chat",
+            setting = "GDKP.announceNewBid",
         },
     }, Parent);
 

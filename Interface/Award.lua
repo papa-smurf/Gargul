@@ -25,11 +25,6 @@ GL.Interface.Award = {
 ---@type AwardInterface
 local Award = GL.Interface.Award;
 
---- This is the UI the person who rolls off an item uses to prepare everything e.g:
---- Select an item
---- Set the duration of the roll off
---- Award the item to the winner
----
 ---@param itemLink string
 ---@return void
 function Award:draw(itemLink)
@@ -206,12 +201,15 @@ function Award:draw(itemLink)
                 GDKPPrice = tonumber(GDKPPriceEditBox:GetText());
 
                 if (GL:higherThanZero(GDKPPrice)) then
-                    GDKPAuction:create(GL:getItemIDFromLink(itemLink), GDKPPrice, winner);
+                    local awardChecksum = GL.AwardedLoot:addWinner(winner, itemLink, nil, nil, isOS, boostedRollCost, GDKPPrice);
+
+                    GDKPAuction:create(GL:getItemIDFromLink(itemLink), GDKPPrice, winner, nil, nil, nil, awardChecksum);
                 end
+            else
+                -- Add the player we awarded the item to to the item's tooltip
+                GL.AwardedLoot:addWinner(winner, itemLink, nil, nil, isOS, boostedRollCost);
             end
 
-            -- Add the player we awarded the item to to the item's tooltip
-            GL.AwardedLoot:addWinner(winner, itemLink, nil, nil, isOS, boostedRollCost);
             GL.Interface.Award:reset();
 
             if (Settings:get("UI.Award.closeOnAward", true)) then

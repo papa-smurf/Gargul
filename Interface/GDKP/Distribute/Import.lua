@@ -40,7 +40,7 @@ function Import:build()
 
     ---@type AceGUILabel
     local Info = AceGUI:Create("Label");
-    Info:SetText("You can import player cuts from your own calculations like a google sheet. softres GDKP etc.\n\nThe format is as follows (include the header!):\n\nPlayer,Gold\nPlayer1,4000\nPlayer2,4125\nPlayer3,3998\n\n\n");
+    Info:SetText("You can import player cuts from your own calculations like a google sheet. softres GDKP etc.\n\nThe format is as follows (|c00BE3333INCLUDE THE HEADER!!|r):\n\n|c00BE3333Player,Gold|r|c00967FD2\nPlayer1,4000\nPlayer2,4125\nPlayer3,3998\n\n\n|r");
     Info:SetFullWidth(true);
     Window:AddChild(Info);
 

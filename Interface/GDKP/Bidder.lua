@@ -60,7 +60,7 @@ function Bidder:draw(time, itemLink, itemIcon)
     local Window = CreateFrame("Frame", "GARGUL_GDKP_BIDDER_WINDOW", UIParent, Frame);
     Window:Hide();
     Window:SetSize(300, 96);
-    Window:SetPoint(GL.Interface:getPosition("Roller"));
+    Window:SetPoint(GL.Interface:getPosition("Bidder"));
 
     Window:SetMovable(true);
     Window:EnableMouse(true);
@@ -70,7 +70,7 @@ function Bidder:draw(time, itemLink, itemIcon)
     Window:SetScript("OnDragStart", Window.StartMoving);
     Window:SetScript("OnDragStop", function()
         Window:StopMovingOrSizing();
-        GL.Interface:storePosition(Window, "Roller");
+        GL.Interface:storePosition(Window, "Bidder");
     end);
     Window:SetScript("OnMouseDown", function (_, button)
         -- Close the roll window on right-click
@@ -172,7 +172,7 @@ function Bidder:draw(time, itemLink, itemIcon)
     PassButton:SetNormalFontObject("GameFontNormal");
     PassButton:SetHighlightFontObject("GameFontNormal");
     PassButton:SetScript("OnClick", function ()
-        GL:dump("PASS!");
+        self:hide();
     end);
 
     self:refresh();

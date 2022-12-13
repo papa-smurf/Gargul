@@ -11,28 +11,36 @@ local Interface = GL.Interface;
 local Constants = GL.Data.Constants;
 
 ---@class AuctionDetails
-GL.Interface.GDKP.AuctionDetails = {}
+GL.Interface.GDKP.AuctionDetails = {
+    auctionID = nil,
+    sessionID = nil,
+};
 
 ---@type AuctionDetails
 local AuctionDetails = GL.Interface.GDKP.AuctionDetails;
 
+---@param sessionID string
+---@param auctionID string
 ---@return void
-function AuctionDetails:draw(session, checksum)
+function AuctionDetails:toggle(sessionID, auctionID)
+    GL:debug("GDKP.AuctionDetails:toggle");
+
+    if (self.sessionID == sessionID
+        and self.auctionID == auctionID
+    ) then
+        return self:close();
+    end
+
+    self:draw(sessionID, auctionID);
+end
+
+---@param sessionID string
+---@param auctionID string
+---@return void
+function AuctionDetails:draw(sessionID, auctionID)
     GL:debug("GDKP.AuctionDetails:draw");
 
     local Spacer;
-
-    -- Release any existing edit auction window
-    self:close();
-
-    session = tostring(session);
-    checksum = tostring(checksum);
-    local Auction = GL.DB:get(string.format("GDKP.Ledger.%s.Auctions.%s", session, checksum));
-
-    -- The given auction does not exist
-    if (not Auction) then
-        return;
-    end
 
     ---@type GDKPOverview
     local Overview = GL.Interface.GDKP.Overview;
@@ -41,6 +49,21 @@ function AuctionDetails:draw(session, checksum)
     if (not Overview.isVisible) then
         return;
     end
+
+    -- Release any existing edit auction window
+    Overview:closeSubWindows();
+
+    sessionID = tostring(sessionID);
+    auctionID = tostring(auctionID);
+    local Auction = GL.DB:get(string.format("GDKP.Ledger.%s.Auctions.%s", sessionID, auctionID));
+
+    -- The given auction does not exist
+    if (not Auction) then
+        return;
+    end
+
+    self.sessionID = sessionID;
+    self.auctionID = auctionID;
 
     local GDKPOverviewFrame = Interface:get(Overview, "GDKPOverview").frame;
 
@@ -223,6 +246,9 @@ function AuctionDetails:close()
     if (Window and Window.frame) then
         Window.frame:Hide();
     end
+
+    self.sessionID = nil;
+    self.auctionID = nil;
 end
 
 GL:debug("Interfaces/GDKP/AuctionDetails.lua");

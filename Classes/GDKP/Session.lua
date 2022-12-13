@@ -20,6 +20,9 @@ GL.GDKP = GL.GDKP or {};
 ---@type GDKP
 local GDKP = GL.GDKP;
 
+---@type GDKPPot
+local GDKPPot = GDKP.Pot;
+
 ---@class GDKPSession
 GDKP.Session = {
     _initialized = false,
@@ -51,6 +54,15 @@ function Session:_init()
 
     Events:register("GDKPSessionTradeInitiatedListener", "GL.TRADE_SHOW", function (_, Details)
         self:tradeInitiated(Details);
+    end);
+
+    ---@todo: here
+    Events:register("GDKPSessionAuctionCreatedListener", "GL.GDKP_AUCTION_CREATED", function (_, sessionID)
+        if (Settings:get("GDKP.announcePotAfterAuction")
+            and sessionID == self:activeSessionID()
+        ) then
+            GL:sendChatMessage(string.format("Pot was updated, it now holds %sg", GDKPPot:total()), "GROUP");
+        end
     end);
 end
 
@@ -146,7 +158,7 @@ function Session:tradeInitiated(Details)
         if (copperToGive > GetMoney()) then
             GL:error("You don't have enough money to pay " .. Details.partner);
         else
-            GL.TradeWindow:setCopper(copperToGive * 10000, function(success)
+            GL.TradeWindow:setCopper(copperToGive, function(success)
                 if (success) then
                     return;
                 end

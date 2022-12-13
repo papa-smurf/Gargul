@@ -96,8 +96,8 @@ end
 ---@param Bids table
 ---@param note string
 ---
----@return boolean|table
-function Auction:create(itemID, price, winner, sessionID, Bids, note)
+---@return boolean
+function Auction:create(itemID, price, winner, sessionID, Bids, note, awardChecksum)
     GL:debug("Auction:create");
 
     if ((not sessionID
@@ -160,15 +160,28 @@ function Auction:create(itemID, price, winner, sessionID, Bids, note)
         return false;
     end
 
-    GL:tableSet(Session, "Auctions." .. checksum, Instance);
+    if (awardChecksum and DB:get("AwardHistory." .. awardChecksum)) then
+        Instance.awardChecksum = awardChecksum;
+    end
 
-    Events:fire("GL.GDKP_AUCTION_CHANGED", sessionID, checksum, {}, Instance);
-    Events:fire("GL.GDKP_AUCTION_CREATED", sessionID, checksum);
+    GL:onItemLoadDo(itemID, function (Result)
+        Result = Result[1];
+
+        if (not Result) then
+            return;
+        end
+
+        Instance.itemLink = Result.link;
+        GL:tableSet(Session, "Auctions." .. checksum, Instance);
+
+        Events:fire("GL.GDKP_AUCTION_CHANGED", sessionID, checksum, {}, Instance);
+        Events:fire("GL.GDKP_AUCTION_CREATED", sessionID, checksum);
+    end);
 
     -- Make sure we invalidate this item's history
     GDKPSession.ItemHistory[itemID] = nil;
 
-    return Instance;
+    return true;
 end
 
 ---@param sessionID string
@@ -211,6 +224,10 @@ function Auction:delete(sessionID, auctionID, reason)
     Instance.Winner = nil;
     Instance.price = nil;
     Instance.reason = tostring(reason);
+
+    if (Instance.awardChecksum) then
+        GL.AwardedLoot:deleteWinner(Instance.awardChecksum);
+    end
 
     -- We don't point to Auction here, we want a copy not a pointer!
     local Before = GL:tableGet(Session, "Auctions." .. auctionID);
@@ -274,6 +291,8 @@ function Auction:restore(sessionID, auctionID)
     -- Remove the restored state from the previous states table
     Instance.PreviousStates[mostRecentStateIdentifier] = nil;
 
+    Instance.awardChecksum = GL.AwardedLoot:addWinner(Instance.Winner.name, Instance.itemLink, false, nil, nil, nil, Instance.price, nil);
+
     -- We don't point to Auction here, we want a copy not a pointer!
     local Before = GL:tableGet(Session, "Auctions." .. auctionID);
     GL:tableSet(Session, "Auctions." .. auctionID, Instance);
@@ -288,8 +307,9 @@ end
 ---
 ---@param winner string
 ---@param bid number
+---@param awardChecksum string|nil
 ---@return boolean
-function Auction:storeCurrent(winner, bid)
+function Auction:storeCurrent(winner, bid, awardChecksum)
     GL:debug("Auction:storeCurrent");
 
     local Instance = GL.GDKP.Auction.Current or {};
@@ -331,7 +351,7 @@ function Auction:storeCurrent(winner, bid)
         end)();
     end
 
-    return self:create(itemID, bid, winner, nil, HighestBidPerPlayer);
+    return self:create(itemID, bid, winner, nil, HighestBidPerPlayer, nil, awardChecksum);
 end
 
 ---@param Instance table
@@ -552,6 +572,10 @@ function Auction:reassignAuction(sessionID, auctionID, winner)
     winner = GL:capitalize(string.lower(winner));
     GL:tableSet(Session, string.format("Auctions.%s.Winner.name", auctionID), winner);
 
+    if (OldAuction.awardChecksum) then
+        GL.AwardedLoot:editWinner(OldAuction.awardChecksum, winner);
+    end
+
     Events:fire("GL.GDKP_AUCTION_CHANGED",
         sessionID,
         auctionID,
@@ -559,6 +583,38 @@ function Auction:reassignAuction(sessionID, auctionID, winner)
         DB.GDKP.Ledger[sessionID].Auctions[auctionID]
     );
     Events:fire("GL.GDKP_AUCTION_REASSIGNED", sessionID, OldAuction, winner);
+
+    return true;
+end
+
+---@param sessionID string
+---@param auctionID string
+---@param note string
+function Auction:setNote(sessionID, auctionID, note)
+    GL:debug("Auction:setNote");
+
+    local Session = GDKPSession:byID(sessionID);
+    if (not Session or Session.lockedAt) then
+        GL:warning("The GDKP Session is not available or locked");
+        return;
+    end
+
+    local OldAuction = GL:tableGet(Session, "Auctions." .. auctionID);
+
+    if (not OldAuction
+        or OldAuction.Winner.note == note
+    ) then
+        return false;
+    end
+
+    GL:tableSet(Session, string.format("Auctions.%s.note", auctionID), note);
+
+    Events:fire("GL.GDKP_AUCTION_CHANGED",
+        sessionID,
+        auctionID,
+        OldAuction,
+        DB.GDKP.Ledger[sessionID].Auctions[auctionID]
+    );
 
     return true;
 end
@@ -616,7 +672,7 @@ end
 ---@param minimumBid number
 ---@param minimumIncrement number
 ---@return void
-function Auction:announceStart(itemLink, minimumBid, minimumIncrement, duration, antiSnipe)
+function Auction:announceStart(itemLink, minimumBid, minimumIncrement, duration, antiSnipe, Bids, TopBid)
     GL:debug("GDKP.Auction:announceStart");
 
     duration = tonumber(duration or 0) or 0 > 0;
@@ -659,6 +715,8 @@ function Auction:announceStart(itemLink, minimumBid, minimumIncrement, duration,
             minimumIncrement = minimumIncrement,
             duration = tonumber(duration),
             antiSnipe = tonumber(antiSnipe),
+            Bids = Bids,
+            TopBid = TopBid,
         },
         "GROUP"
     ):send();
@@ -771,7 +829,7 @@ function Auction:start(CommMessage)
     end
 
     if (not content.duration
-            or type(content.duration) ~= "number"
+        or type(content.duration) ~= "number"
     ) then
         return GL:error("No duration provided in Auction:start");
     end
@@ -800,7 +858,7 @@ function Auction:start(CommMessage)
 
         -- This is a new auction so clean everything
         if (Entry.link ~= self.Current.itemLink
-                or CommMessage.Sender.id ~= self.Current.initiatorID
+            or CommMessage.Sender.id ~= self.Current.initiatorID
         ) then
             -- This is a new item so make sure to
             -- override all previously set properties
@@ -816,13 +874,16 @@ function Auction:start(CommMessage)
                 minimumBid = minimumBid,
                 minimumIncrement = minimumIncrement,
 
-                Bids = {},
-                TopBid = {},
+                Bids = content.Bids,
+                TopBid = content.TopBid,
             };
         else
             -- If we roll the same item again we do need to make
             -- sure that we update the roll timer
             self.Current.time = duration;
+            self.Current.minimumBid = minimumBid;
+            self.Current.Bids = content.Bids;
+            self.Current.TopBid = content.TopBid;
         end
 
         self.inProgress = true;
@@ -830,7 +891,7 @@ function Auction:start(CommMessage)
         -- Don't show the bid UI if the user disabled it
         -- and the current user is not the one who initiated the auction
         if (Settings:get("GDKP.showBidWindow")
-                or self:startedByMe()
+            or self:startedByMe()
         ) then
             GL.Interface.GDKP.Bidder:show(duration, Entry.link, Entry.icon, content.note, SupportedBids);
 
@@ -845,22 +906,22 @@ function Auction:start(CommMessage)
         end, duration);
 
         -- Send a countdown in chat when enabled
-        local numberOfSecondsToCountdown = Settings:get("MasterLooting.numberOfSecondsToCountdown", 5);
+        local numberOfSecondsToCountdown = Settings:get("GDKP.numberOfSecondsToCountdown", 5);
         if (self:startedByMe() -- Only post a countdown if this user initiated the auction
-                and duration > numberOfSecondsToCountdown -- No point in counting down if there's hardly enough time anyways
-                and Settings:get("MasterLooting.doCountdown", false)
+            and duration > numberOfSecondsToCountdown -- No point in counting down if there's hardly enough time anyways
+            and Settings:get("GDKP.doCountdown", false)
         ) then
             self.countDownTimer = GL.Ace:ScheduleRepeatingTimer(function ()
                 local secondsLeft = math.ceil(GL.Ace:TimeLeft(self.timerId));
                 if (secondsLeft <= numberOfSecondsToCountdown
-                        and secondsLeft > 0
-                        and not SecondsAnnounced[secondsLeft]
+                    and secondsLeft > 0
+                    and not SecondsAnnounced[secondsLeft]
                 ) then
                     SecondsAnnounced[secondsLeft] = true;
 
                     GL:sendChatMessage(
-                            string.format("%s seconds to bid", secondsLeft),
-                            "GROUP"
+                        string.format("%s seconds to bid", secondsLeft),
+                        "GROUP"
                     );
                 end
             end, 1);
@@ -959,7 +1020,7 @@ function Auction:refresh(CommMessage)
 
     -- The user who sent the refresh our way is not permitted to do so
     if (CommMessage
-            and CommMessage.Sender.id ~= self.Current.initiatorID
+        and CommMessage.Sender.id ~= self.Current.initiatorID
     ) then
         return;
     end
@@ -974,7 +1035,7 @@ function Auction:refresh(CommMessage)
 
     -- Payload seems invalid, abort!
     if (GL:empty(NewTopBid)
-            or not GL:higherThanZero(NewTopBid.bid)
+        or not GL:higherThanZero(NewTopBid.bid)
     ) then
         return;
     end
@@ -983,8 +1044,8 @@ function Auction:refresh(CommMessage)
     if (not OldTopBid or NewTopBid.bid > OldTopBid.bid) then
         -- It seems like we were outbid!
         if (OldTopBid and OldTopBid.Bidder.name
-                and GL.User.name == OldTopBid.Bidder.name
-                and OldTopBid.Bidder.name ~= NewTopBid.Bidder.name
+            and GL.User.name == OldTopBid.Bidder.name
+            and OldTopBid.Bidder.name ~= NewTopBid.Bidder.name
         ) then
             Events:fire("GL.GDKP_USER_WAS_OUTBID", OldTopBid, NewTopBid);
         end
@@ -1002,6 +1063,8 @@ function Auction:reset()
 
     -- All we need to do is reset the itemLink and let self:start() take care of the rest
     self.Current.itemLink = "";
+    self.Current.Bids = {};
+    self.Current.TopBid = {};
 end
 
 --- Start listening for rolls
@@ -1177,17 +1240,19 @@ function Auction:processBid(event, message, bidder)
 
     -- Determine the minimum bid
     local minimumBid = math.max(
-            self.Current.minimumBid,
-            GL:tableGet(self.Current, "TopBid.bid", 0) + self.Current.minimumIncrement
+        self.Current.minimumBid,
+        GL:tableGet(self.Current, "TopBid.bid", 0) + self.Current.minimumIncrement
     );
 
     -- The bid is not high enough for us to accept
-    if (BidEntry.bid < minimumBid) then
+    if (BidEntry.bid < minimumBid and Settings:get("GDKP.notifyIfBidTooLow")) then
         GL:sendChatMessage(string.format("Bid denied, the minimum bid is %sg", minimumBid), "WHISPER", nil, bidder);
         return;
     end
 
-    GL:sendChatMessage(string.format("%s is the highest bidder (%sg)", BidEntry.Bidder.name, bid), "GROUP");
+    if (Settings:get("GDKP.announceNewBid")) then
+        GL:sendChatMessage(string.format("%s is the highest bidder (%sg)", BidEntry.Bidder.name, bid), "GROUP");
+    end
 
     tinsert(self.Current.Bids, BidEntry);
     GL.Interface.GDKP.Auctioneer:refreshRollsTable();

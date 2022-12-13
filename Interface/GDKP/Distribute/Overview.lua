@@ -234,14 +234,6 @@ function Overview:build()
     end);
     Interface:set(self, "Clear", Clear);
 
-    local Export = AceGUI:Create("Button");
-    Export:SetText("Export");
-    Export:SetWidth(90);
-    Export:SetHeight(20);
-    Export:SetCallback("OnClick", function()
-        Interface.GDKP.Export:open(self.selectedSession);
-    end);
-
     local LockToggler = AceGUI:Create("Button");
     LockToggler:SetText("Lock and Pay");
     LockToggler:SetWidth(120);
@@ -259,7 +251,15 @@ function Overview:build()
         end);
     end);
 
-    Footer:AddChildren(AddRaider, Import, Clear, LockToggler, Announce);
+    local Export = AceGUI:Create("Button");
+    Export:SetText("Export");
+    Export:SetWidth(100);
+    Export:SetHeight(20);
+    Export:SetCallback("OnClick", function()
+        Interface.GDKP.Distribute.Export:open(self.sessionID);
+    end);
+
+    Footer:AddChildren(AddRaider, Import, Clear, LockToggler, Announce, Export);
 
     Window.OnHeightSet = function (...)
         self:resizeFrames();

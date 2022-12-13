@@ -99,17 +99,33 @@ function EditAuction:draw(session, checksum)
     PlayernameInput:SetLabel("Player name");
     Window:AddChild(PlayernameInput);
 
+    local NoteInput = GL.AceGUI:Create("EditBox");
+    NoteInput:DisableButton(true);
+    NoteInput:SetHeight(20);
+    NoteInput:SetWidth(250);
+    NoteInput:SetText(Auction.note);
+    NoteInput:SetLabel("Note");
+    Window:AddChild(NoteInput);
+
     local SaveButton = AceGUI:Create("Button");
     SaveButton:SetText("Save");
-    SaveButton:SetWidth(100); -- Minimum is 60
+    SaveButton:SetFullWidth(true);
     SaveButton:SetCallback("OnClick", function()
         local newName = strtrim(PlayernameInput:GetText());
+        local note = strtrim(NoteInput:GetText());
 
         -- The winner was changed
         if (not GL:empty(newName)
             and Auction.Winner.name ~= newName
         ) then
             GDKPAuction:reassignAuction(session, checksum, newName);
+        end
+
+        -- The note was changed
+        if (not GL:empty(note)
+            and Auction.note ~= note
+        ) then
+            GDKPAuction:setNote(session, checksum, note);
         end
 
         -- The session was changed (make sure we do this last!)
@@ -123,7 +139,7 @@ function EditAuction:draw(session, checksum)
 
     local CancelButton = AceGUI:Create("Button");
     CancelButton:SetText("Cancel");
-    CancelButton:SetWidth(100); -- Minimum is 60
+    CancelButton:SetFullWidth(true);
     CancelButton:SetCallback("OnClick", function()
         self:close();
     end);

@@ -85,11 +85,10 @@ function Auctioneer:draw(itemLink)
     --[[
         SETTINGS BUTTON
     ]]
-    local SettingsButton = GL.UI:createSettingsButton(
+    GL.UI:createSettingsButton(
         Window.frame,
         "GDKP"
     );
-    self.SettingsButton = SettingsButton;
 
     --[[ ROWS ]]
 
@@ -157,7 +156,9 @@ function Auctioneer:draw(itemLink)
         GameTooltip:SetOwner(HelpIcon.frame, "ANCHOR_RIGHT");
         GameTooltip:AddLine(" ");
         GameTooltip:AddLine("The minimum bid and bid increment values are remembered for");
-        GameTooltip:AddLine(" each item. That means that you only need to set them once per item!");
+        GameTooltip:AddLine("each item. That means that you only need to set them once per item!");
+        GameTooltip:AddLine(" ");
+        GameTooltip:AddLine("Note: the increment may not be higher than the minimum bid");
         GameTooltip:AddLine(" ");
         GameTooltip:Show();
     end);
@@ -265,7 +266,9 @@ function Auctioneer:draw(itemLink)
             Interface:get(self, "EditBox.MinimumBid"):GetText(),
             Interface:get(self, "EditBox.MinimumIncrement"):GetText(),
             Interface:get(self, "EditBox.Time"):GetText(),
-            Interface:get(self, "EditBox.AntiSnipe"):GetText()
+            Interface:get(self, "EditBox.AntiSnipe"):GetText(),
+            GDKPAuction.Current.Bids,
+            GDKPAuction.Current.TopBid
         )) then
             GDKPAuction.inProgress = true;
 
@@ -356,11 +359,13 @@ function Auctioneer:draw(itemLink)
                     end
                 end
 
-                if (not GDKPAuction:storeCurrent(winner, bid)) then
+                ---@todo: select top bid if none is selected
+
+                local awardChecksum = GL.AwardedLoot:addWinner(winner, GDKPAuction.Current.itemLink, nil, nil, isOS, nil, bid, nil);
+
+                if (not GDKPAuction:storeCurrent(winner, bid, awardChecksum)) then
                     return;
                 end
-                ---@todo: select top bid if none is selected
-                -- GDKP:create(GL:getItemIDFromLink(GL.GDKP.Auction.Current.itemLink), bid, winner);
 
                 self:reset(); -- Reset the UI
                 GDKPAuction:reset(); -- Reset the actual auction object
@@ -369,11 +374,6 @@ function Auctioneer:draw(itemLink)
                 if (Settings:get("GDKP.closeAuctioneerOnAward")) then
                     self:close();
                 end
-
-                GL.AwardedLoot:addWinner(winner, itemLink, nil, nil, isOS, nil, bid, nil);
-
-                ---@todo add setting > [ ] Announce current pot after each auction
-                GL:sendChatMessage(string.format("Pot was updated, it now holds %sg", GDKPPot:total()), "GROUP");
             end,
         });
     end);

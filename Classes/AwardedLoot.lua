@@ -83,7 +83,6 @@ function AwardedLoot:tooltipLines(itemLink)
 
             if (GL:higherThanZero(Loot.GDKPCost)) then
                 tinsert(Details, string.format("Price: %sg", Loot.GDKPCost));
-                tinsert(Details, "Paid: no");
             end
 
             local receivedString = "Given: yes";
@@ -92,10 +91,10 @@ function AwardedLoot:tooltipLines(itemLink)
             end
             tinsert(Details, receivedString);
 
-            local line = string.format("    |c00%s%s|r\n      - %s",
+            local line = string.format("    |c00%s%s|r | %s",
                 GL:classHexColor(GL.Player:classByName(winner, 0), GL.Data.Constants.disabledTextColor),
                 GL:capitalize(winner),
-                table.concat(Details, "\n      - ")
+                table.concat(Details, " | ")
             );
             tinsert(Lines, line);
             winnersAvailable = true;
@@ -173,12 +172,11 @@ end
 function AwardedLoot:editWinner(checksum, winner, announce)
     GL:debug("AwardedLoot:editWinner");
 
-    -- We don't know this entry
-    if (not GL.DB.AwardHistory[checksum]) then
+    local AwardEntry = DB:get("AwardHistory." .. checksum);
+    if (not AwardEntry) then
         return;
     end
 
-    local AwardEntry = GL.DB.AwardHistory[checksum];
     local originalWinner = string.lower(GL:stripRealm(AwardEntry.awardedTo));
 
     if (GL.isEra and not strfind(winner, "-")) then
@@ -291,7 +289,7 @@ end
 ---@param isOS boolean|nil
 ---@param BRCost number|nil
 ---@param GDKPCost number|nil
----@return void
+---@return void|string
 function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, GDKPCost, Rolls)
     GL:debug("AwardedLoot:addWinner");
 
@@ -310,19 +308,22 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, G
     if (type(winner) ~= "string"
         or GL:empty(winner)
     ) then
-        return GL:debug("Invalid winner provided for AwardedLoot:addWinner");
+        GL:debug("Invalid winner provided for AwardedLoot:addWinner");
+        return false;
     end
 
     if (type(itemLink) ~= "string"
         or GL:empty(itemLink)
     ) then
-        return GL:debug("Invalid itemLink provided for AwardedLoot:addWinner");
+        GL:debug("Invalid itemLink provided for AwardedLoot:addWinner");
+        return false;
     end
 
     local itemID = GL:getItemIDFromLink(itemLink);
 
     if (not itemID) then
-        return GL:debug("Invalid itemLink provided for AwardedLoot:addWinner");
+        GL:debug("Invalid itemLink provided for AwardedLoot:addWinner");
+        return false;
     end
 
     if (GL.isEra and not strfind(winner, "-")) then
@@ -337,7 +338,8 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, G
             or type(month) ~= "string" or GL:empty(month)
             or type(day) ~= "string" or GL:empty(day)
         ) then
-            return GL:error(string.format("Unknown date format '%s' expecting yy-m-d", date));
+            GL:error(string.format("Unknown date format '%s' expecting yy-m-d", date));
+            return false;
         end
 
         if (string.len(year) == 2) then
@@ -358,8 +360,9 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, G
         announce = true;
     end
 
+    local checksum = GL:strPadRight(GL:strLimit(GL:stringHash(timestamp .. itemID) .. GL:stringHash(winner .. GL.DB:get("SoftRes.MetaData.id", "")), 20, ""), "0", 20);
     local AwardEntry = {
-        checksum = GL:strPadRight(GL:strLimit(GL:stringHash(timestamp .. itemID) .. GL:stringHash(winner .. GL.DB:get("SoftRes.MetaData.id", "")), 20, ""), "0", 20),
+        checksum = checksum,
         itemLink = itemLink,
         itemID = itemID,
         awardedTo = winner,
@@ -374,7 +377,7 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, G
     };
 
     -- Insert the award in the more permanent AwardHistory table (for export / audit purposes)
-    GL.DB.AwardHistory[AwardEntry.checksum] = AwardEntry;
+    DB:set("AwardHistory." .. AwardEntry.checksum, AwardEntry)
 
     -- Check whether the user disabled award announcement in the settings
     if (not GL.Settings:get("AwardingLoot.awardMessagesEnabled")) then
@@ -486,6 +489,8 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, G
             isReserved = GL.SoftRes:itemIDIsReservedByPlayer(itemID, normalizedPlayerName),
         });
     end);
+
+    return checksum;
 end
 
 --- Return items won by the given player (with optional `after` timestamp)
