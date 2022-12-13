@@ -349,6 +349,8 @@ function Interface:createButton(Parent, Details)
     local normalTexture = Details.normalTexture;
     local highlightTexture = Details.highlightTexture;
     local disabledTexture = Details.disabledTexture;
+    local imageWidth = Details.imageWidth or width;
+    local imageHeight = Details.imageHeight or height;
 
     if (fireUpdateOnCreation == nil) then
         fireUpdateOnCreation = true;
@@ -391,7 +393,7 @@ function Interface:createButton(Parent, Details)
         NormalTexture:SetTexture(normalTexture);
         NormalTexture:ClearAllPoints();
         NormalTexture:SetPoint("CENTER", Button, "CENTER", 0, 0);
-        NormalTexture:SetSize(width, height);
+        NormalTexture:SetSize(imageWidth, imageHeight);
         Button:SetNormalTexture(NormalTexture);
 
         Button.normalTexture = NormalTexture;
