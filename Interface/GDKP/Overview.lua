@@ -326,8 +326,10 @@ function Overview:build()
         disabledTexture = "Interface/AddOns/Gargul/Assets/Buttons/create-disabled",
         update = function (self)
             local SelectedSession = Overview:getSelectedSession();
-            self:SetEnabled(SelectedSession and not SelectedSession.deletedAt and not SelectedSession.lockedAt and (not GL.User.isInGroup or GL.User.hasLead or GL.User.isMasterLooter));
+
+            self:SetEnabled(SelectedSession and SelectedSession.deletedAt == nil and SelectedSession.lockedAt == nil and (not GL.User.isInGroup or GL.User.isLead or GL.User.isMasterLooter));
         end,
+        updateOnCreate = false,
         updateOn = { "GROUP_ROSTER_UPDATE", "GL.GDKP_OVERVIEW_SESSION_CHANGED", "GL.GDKP_OVERVIEW_SESSION_CHANGED", "GL.GDKP_OVERVIEW_SESSIONS_REFRESHED" },
     --}):SetPoint("TOP", ScrollFrameHolder.frame, "TOP", -9, -7)
     }):SetPoint("TOP", ScrollFrameHolder.frame, "TOP", -9, -7)
@@ -686,21 +688,10 @@ function Overview:refreshLedger()
             ItemLabel:SetText(itemLabel);
             ItemRow:AddChild(ItemLabel);
 
-            --[[
-                ACTION BUTTONS
-            ]]
-            -- We need a holder first because we're not using acegui
-            --local ActionButtons = AceGUI:Create("SimpleGroup");
-            --ActionButtons:SetLayout("FILL")
-            --ActionButtons:SetWidth(50);
-            --ActionButtons:SetHeight(30);
-            --ItemRow:AddChild(ActionButtons);
-
             self.ActionButtons[Auction.ID] = {};
-            local ActionButtons = ItemRow.frame;
 
             --[[ DETAILS BUTTON ]]
-            local Eye = Interface:createButton(ActionButtons, {
+            local Eye = Interface:createButton(ItemRow.frame, {
                 onClick = function()
                     Interface.GDKP.AuctionDetails:toggle(Session.ID, Auction.checksum);
                 end,
@@ -715,7 +706,7 @@ function Overview:refreshLedger()
             --[[ DELETE BUTTON ]]
             local Restore, Delete;
             if (not auctionWasDeleted) then
-                Delete = Interface:createButton(ActionButtons, {
+                Delete = Interface:createButton(ItemRow.frame, {
                     onClick = function()
                         -- Shift button was held, skip reason
                         if (IsShiftKeyDown()) then
@@ -744,7 +735,7 @@ function Overview:refreshLedger()
 
             --[[ RESTORE BUTTON ]]
             if (auctionWasDeleted) then
-                Restore = Interface:createButton(ActionButtons, {
+                Restore = Interface:createButton(ItemRow.frame, {
                     onClick = function() GDKPAuction:restore(Session.ID, Auction.ID); end,
                     tooltip = "Restore",
                     disabledTooltip = "You need lead or master loot to restore entries.\nYou can't restore entries of locked/deleted sessions",
@@ -759,7 +750,7 @@ function Overview:refreshLedger()
             end
 
             --[[ EDIT BUTTON ]]
-            local Edit = Interface:createButton(ActionButtons, {
+            local Edit = Interface:createButton(ItemRow.frame, {
                 onClick = function()
                     self:closeSubWindows();
                     Interface.GDKP.EditAuction:draw(Session.ID, Auction.checksum);
