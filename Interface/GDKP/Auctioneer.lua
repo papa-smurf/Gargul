@@ -231,7 +231,7 @@ function Auctioneer:draw(itemLink)
     local ItemBox = AceGUI:Create("EditBox");
     ItemBox:DisableButton(true);
     ItemBox:SetHeight(20);
-    ItemBox:SetWidth(170);
+    ItemBox:SetWidth(120);
     ItemBox:SetCallback("OnTextChanged", function () Auctioneer:ItemBoxChanged() end); -- Update item info when input value changes
     ItemBox:SetCallback("OnEnterPressed", function () Auctioneer:ItemBoxChanged() end); -- Update item info when item is dragged on top (makes no sense to use OnEnterPressed I know)
     Interface:set(self, "Item", ItemBox);
@@ -257,7 +257,7 @@ function Auctioneer:draw(itemLink)
 
     local StartButton = AceGUI:Create("Button");
     StartButton:SetText("Start");
-    StartButton:SetWidth(80);
+    StartButton:SetWidth(72);
     StartButton:SetHeight(20);
     StartButton:SetDisabled(true);
     StartButton:SetCallback("OnClick", function()
@@ -292,10 +292,9 @@ function Auctioneer:draw(itemLink)
     Interface:set(self, "Start", StartButton);
 
     --[[ STOP BUTTON ]]
-
     local StopButton = AceGUI:Create("Button");
     StopButton:SetText("Stop");
-    StopButton:SetWidth(80);
+    StopButton:SetWidth(71);
     StopButton:SetHeight(20);
     StopButton:SetDisabled(true);
     StopButton:SetCallback("OnClick", function()
@@ -303,6 +302,23 @@ function Auctioneer:draw(itemLink)
     end);
     ThirdRow:AddChild(StopButton);
     Interface:set(self, "Stop", StopButton);
+
+    --[[ ADD TIME BUTTON ]]
+
+    local ProlongButton = AceGUI:Create("Button");
+    ProlongButton:SetText("+ 10");
+    ProlongButton:SetWidth(60);
+    ProlongButton:SetHeight(20);
+    ProlongButton:SetDisabled(true);
+    ProlongButton:SetCallback("OnClick", function()
+        GDKPAuction:announceExtension(10);
+        ProlongButton:SetDisabled(true);
+        GL.Ace:ScheduleTimer(function ()
+            self:updateWidgets();
+        end, 3);
+    end);
+    ThirdRow:AddChild(ProlongButton);
+    Interface:set(self, "Prolong", ProlongButton);
 
     --[[ CLEAR BUTTON ]]
     local ClearButton = AceGUI:Create("Button");
@@ -316,6 +332,21 @@ function Auctioneer:draw(itemLink)
     end);
     FourthRow:AddChild(ClearButton);
     Interface:set(self, "Clear", ClearButton);
+
+    --[[ DISENCHANT BUTTON ]]
+    local DisenchantButton = AceGUI:Create("Button");
+    DisenchantButton:SetText("Disenchant");
+    DisenchantButton:SetWidth(98); -- Minimum length is
+    DisenchantButton:SetHeight(20);
+    DisenchantButton:SetDisabled(true);
+    DisenchantButton:SetCallback("OnClick", function()
+        itemLink = Interface:get(self, "EditBox.Item"):GetText();
+
+        GL.PackMule:disenchant(itemLink, true);
+        self:close();
+    end);
+    FourthRow:AddChild(DisenchantButton);
+    Interface:set(self, "Disenchant", DisenchantButton);
 
     --[[ AWARD BUTTON ]]
     local AwardButton = AceGUI:Create("Button");
@@ -381,19 +412,21 @@ function Auctioneer:draw(itemLink)
     Interface:set(self, "Award", AwardButton);
 
     --[[ DISENCHANT BUTTON ]]
-    local DisenchantButton = AceGUI:Create("Button");
-    DisenchantButton:SetText("Disenchant");
-    DisenchantButton:SetWidth(98); -- Minimum length is
-    DisenchantButton:SetHeight(20);
-    DisenchantButton:SetDisabled(true);
-    DisenchantButton:SetCallback("OnClick", function()
-        itemLink = Interface:get(self, "EditBox.Item"):GetText();
+    local DeleteLastBid = AceGUI:Create("Button");
+    DeleteLastBid:SetText("Remove last bid");
+    DeleteLastBid:SetWidth(130);
+    DeleteLastBid:SetHeight(20);
+    DeleteLastBid:SetDisabled(true);
+    DeleteLastBid:SetCallback("OnClick", function()
+        tremove(GDKPAuction.Current.Bids); -- We don't want to store this
+        local PreviousBid = tremove(GDKPAuction.Current.Bids);
 
-        GL.PackMule:disenchant(itemLink, true);
-        self:close();
+        tinsert(GDKPAuction.Current.Bids, PreviousBid);
+        GDKPAuction.Current.TopBid = PreviousBid;
+        self:refreshRollsTable();
     end);
-    FourthRow:AddChild(DisenchantButton);
-    Interface:set(self, "Disenchant", DisenchantButton);
+    FourthRow:AddChild(DeleteLastBid);
+    Interface:set(self, "DeleteLastBid", DeleteLastBid);
 
     --[[ FOURTH ROW ]]
 
@@ -798,49 +831,46 @@ end
 function Auctioneer:updateWidgets()
     GL:debug("Auctioneer:updateWidgets");
 
-    -- If the itembox doesn't hold a valid item link then:
-    --   The start button should not be available
-    --   The stop button should be available
-    --   The item box should be available
+    local Start = Interface:get(self, "Button.Start");
+    local Stop = Interface:get(self, "Button.Stop");
+    local DeleteLastBid = Interface:get(self, "Button.DeleteLastBid");
+    local Item = Interface:get(self, "EditBox.Item");
+    local Award = Interface:get(self, "Button.Award");
+    local Disenchant = Interface:get(self, "Button.Disenchant");
+    local Prolong = Interface:get(self, "Button.Prolong");
+    local Clear = Interface:get(self, "Button.Clear");
+
     if (not Auctioneer.itemBoxHoldsValidItem) then
-        Interface:get(self, "Button.Start"):SetDisabled(true);
-        Interface:get(self, "Button.Stop"):SetDisabled(true);
-        Interface:get(self, "EditBox.Item"):SetDisabled(false);
-        Interface:get(self, "Button.Award"):SetDisabled(true);
-        Interface:get(self, "Button.Disenchant"):SetDisabled(true);
+        Start:SetDisabled(true);
+        Stop:SetDisabled(true);
+        DeleteLastBid:SetDisabled(true);
+        Prolong:SetDisabled(true);
+        Item:SetDisabled(false);
+        Award:SetDisabled(true);
+        Disenchant:SetDisabled(true);
 
         return;
     end
 
-    -- The value in the itembox is valid (e.g. contains a valid item link)
-
-    -- If no roll off is currently in progress then:
-    --   The start button should be available
-    --   The stop button should not be available
-    --   The award button should not be available
-    --   The clear button should not be available
-    --   The item box should be available so we can enter an item link
     if (not GDKPAuction.inProgress) then
-        Interface:get(self, "Button.Start"):SetDisabled(false);
-        Interface:get(self, "Button.Stop"):SetDisabled(true);
-        Interface:get(self, "Button.Award"):SetDisabled(false);
-        Interface:get(self, "Button.Disenchant"):SetDisabled(false);
-        Interface:get(self, "Button.Clear"):SetDisabled(false);
-        Interface:get(self, "EditBox.Item"):SetDisabled(false);
+        Start:SetDisabled(false);
+        Stop:SetDisabled(true);
+        DeleteLastBid:SetDisabled(false);
+        Prolong:SetDisabled(true);
+        Item:SetDisabled(false);
+        Award:SetDisabled(false);
+        Disenchant:SetDisabled(false);
+        Clear:SetDisabled(false);
 
-        -- If a roll off is currently in progress then:
-        --   The start button should not be available
-        --   The stop button should be available
-        --   The award button should not be available
-        --   The clear button should not be available
-        --   The item box should not be available
     else
-        Interface:get(self, "Button.Start"):SetDisabled(true);
-        Interface:get(self, "Button.Stop"):SetDisabled(false);
-        Interface:get(self, "Button.Award"):SetDisabled(true);
-        Interface:get(self, "Button.Disenchant"):SetDisabled(true);
-        Interface:get(self, "Button.Clear"):SetDisabled(true);
-        Interface:get(self, "EditBox.Item"):SetDisabled(true);
+        Start:SetDisabled(true);
+        Stop:SetDisabled(false);
+        DeleteLastBid:SetDisabled(true);
+        Prolong:SetDisabled(false);
+        Item:SetDisabled(true);
+        Award:SetDisabled(true);
+        Disenchant:SetDisabled(true);
+        Clear:SetDisabled(true);
     end
 end
 

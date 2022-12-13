@@ -87,11 +87,11 @@ function GDKP:draw(Parent)
         },
     }, Parent);
 
-    local HorizontalSpacer = GL.AceGUI:Create("SimpleGroup");
-    HorizontalSpacer:SetLayout("FILL");
-    HorizontalSpacer:SetFullWidth(true);
-    HorizontalSpacer:SetHeight(20);
-    Parent:AddChild(HorizontalSpacer);
+    Spacer = GL.AceGUI:Create("SimpleGroup");
+    Spacer:SetLayout("FILL");
+    Spacer:SetFullWidth(true);
+    Spacer:SetHeight(20);
+    Parent:AddChild(Spacer);
 
     local NumberOfSecondsToCountdown = GL.AceGUI:Create("Slider");
     NumberOfSecondsToCountdown:SetLabel("At how many seconds left do you want to start the countdown?");
@@ -107,6 +107,45 @@ function GDKP:draw(Parent)
         end
     end);
     Parent:AddChild(NumberOfSecondsToCountdown);
+
+    Spacer = GL.AceGUI:Create("SimpleGroup");
+    Spacer:SetLayout("FILL");
+    Spacer:SetFullWidth(true);
+    Spacer:SetHeight(20);
+    Parent:AddChild(Spacer);
+
+    Overview:drawHeader("UI Style", Parent);
+
+    local LedgerAuctionSizeExplanation = GL.AceGUI:Create("Label");
+    LedgerAuctionSizeExplanation:SetText("The slider below affects how tightly auctions are packed together in the |c00967FD2/gdkp|r overview");
+    LedgerAuctionSizeExplanation:SetFullWidth(true);
+    Parent:AddChild(LedgerAuctionSizeExplanation);
+
+    local LedgerAuctionSize = GL.AceGUI:Create("Slider");
+    LedgerAuctionSize:SetLabel("Auction scale");
+    LedgerAuctionSize.label:SetTextColor(1, .95686, .40784);
+    LedgerAuctionSize:SetFullWidth(true);
+    LedgerAuctionSize:SetValue(GL.Settings:get("GDKP.ledgerAuctionScale"));
+    LedgerAuctionSize:SetSliderValues(11, 50, 1);
+    LedgerAuctionSize:SetCallback("OnValueChanged", function(Slider)
+        local value = math.floor(tonumber(Slider:GetValue()));
+        local currentValue = GL.Settings:get("GDKP.ledgerAuctionScale");
+
+        if (currentValue ~= value) then
+            GL.Settings:set("GDKP.ledgerAuctionScale", value);
+
+            if (GL.Interface.GDKP.Overview.isVisible) then
+                GL.Interface.GDKP.Overview:refreshLedger();
+            end
+        end
+    end);
+    Parent:AddChild(LedgerAuctionSize);
+
+    Spacer = GL.AceGUI:Create("SimpleGroup");
+    Spacer:SetLayout("FILL");
+    Spacer:SetFullWidth(true);
+    Spacer:SetHeight(20);
+    Parent:AddChild(Spacer);
 
     Overview:drawHeader("Trading", Parent);
 

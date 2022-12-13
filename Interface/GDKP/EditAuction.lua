@@ -111,8 +111,8 @@ function EditAuction:draw(session, checksum)
     AdjustPaidInput:DisableButton(true);
     AdjustPaidInput:SetHeight(20);
     AdjustPaidInput:SetWidth(250);
-    AdjustPaidInput:SetText(Auction.note);
-    AdjustPaidInput:SetLabel("     Adjust amount paid");
+    AdjustPaidInput:SetText(Auction.paid);
+    AdjustPaidInput:SetLabel("     Set paid amount (read left)");
     Window:AddChild(AdjustPaidInput);
 
     local HelpIcon = AceGUI:Create("Icon");
@@ -127,7 +127,7 @@ function EditAuction:draw(session, checksum)
     HelpIcon:SetCallback("OnEnter", function()
         GameTooltip:SetOwner(HelpIcon.frame, "ANCHOR_RIGHT");
         GameTooltip:AddLine(" ");
-        GameTooltip:AddLine("Warning: only add a value here if the player promises to pay");
+        GameTooltip:AddLine("Warning: only set a value here if the player promises to pay");
         GameTooltip:AddLine("outside of the raid or trades the gold from an alt / mail etc!");
         GameTooltip:AddLine(" ");
         GameTooltip:AddLine("Gargul automatically keeps track of gold traded, so as long as players");
@@ -145,7 +145,8 @@ function EditAuction:draw(session, checksum)
     SaveButton:SetFullWidth(true);
     SaveButton:SetCallback("OnClick", function()
         local newName = strtrim(PlayernameInput:GetText());
-        local note = strtrim(AdjustPaidInput:GetText());
+        local note = strtrim(NoteInput:GetText());
+        local paid = strtrim(AdjustPaidInput:GetText());
 
         -- The winner was changed
         if (not GL:empty(newName)
@@ -159,6 +160,14 @@ function EditAuction:draw(session, checksum)
             and Auction.note ~= note
         ) then
             GDKPAuction:setNote(session, checksum, note);
+        end
+
+        -- The note was changed
+        if (not GL:empty(paid)
+            and Auction.paid ~= paid
+            and tonumber(paid)
+        ) then
+            GDKPAuction:setPaid(session, checksum, paid);
         end
 
         -- The session was changed (make sure we do this last!)

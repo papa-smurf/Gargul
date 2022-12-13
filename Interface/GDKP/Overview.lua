@@ -15,6 +15,9 @@ local Interface = GL.Interface;
 ---@type Events
 local Events = GL.Events;
 
+---@type Settings
+local Settings = GL.Settings;
+
 ---@type GDKPPot
 local GDKPPot = GL.GDKP.Pot;
 
@@ -191,7 +194,7 @@ function Overview:build()
     local WindowFrame = Window.frame;
 
     Interface:AceGUIDefaults(self, Window, "GDKPOverview", 660, 410);
-    Interface:resizeBounds(Window, 660, 300);
+    Interface:resizeBounds(Window, 680, 300);
     Window.statustext:GetParent():Hide(); -- Hide the statustext bar
 
     --[[
@@ -219,7 +222,7 @@ function Overview:build()
     PotIconFrame:Show();
 
     PotIcon:SetCallback("OnClick", function ()
-        Interface.GDKP.Distribute.Overview:open(self.selectedSession);
+        Interface.GDKP.Distribute.Overview:open(self.selectedSession, true);
         Window.frame:Hide();
     end);
 
@@ -418,7 +421,7 @@ function Overview:build()
     Distribute:SetWidth(90);
     Distribute:SetHeight(20);
     Distribute:SetCallback("OnClick", function()
-        GL.Interface.GDKP.Distribute.Overview:open(self.selectedSession);
+        GL.Interface.GDKP.Distribute.Overview:open(self.selectedSession, true);
         Window.frame:Hide();
     end);
 
@@ -601,7 +604,7 @@ function Overview:refreshLedger()
 
             local ItemRow = AceGUI:Create("SimpleGroup");
             ItemRow:SetLayout("FLOW")
-            ItemRow:SetHeight(30);
+            ItemRow:SetHeight(Settings:get("GDKP.ledgerAuctionScale"));
             ItemRow:SetFullWidth(true);
             Details:AddChild(ItemRow);
 
@@ -609,9 +612,9 @@ function Overview:refreshLedger()
                 ITEM ICON
             ]]
             local ItemIcon = AceGUI:Create("Icon");
-            ItemIcon:SetWidth(30);
-            ItemIcon:SetHeight(30);
-            ItemIcon:SetImageSize(30, 30);
+            ItemIcon:SetWidth(Settings:get("GDKP.ledgerAuctionScale"));
+            ItemIcon:SetHeight(Settings:get("GDKP.ledgerAuctionScale"));
+            ItemIcon:SetImageSize(Settings:get("GDKP.ledgerAuctionScale"), Settings:get("GDKP.ledgerAuctionScale"));
             ItemIcon:SetImage(iconPath);
             ItemRow:AddChild(ItemIcon);
             ItemIcon:SetCallback("OnEnter", function()
@@ -633,7 +636,7 @@ function Overview:refreshLedger()
             local ItemSpacer = AceGUI:Create("SimpleGroup");
             ItemSpacer:SetLayout("FILL")
             ItemSpacer:SetWidth(10);
-            ItemSpacer:SetHeight(30);
+            ItemSpacer:SetHeight(Settings:get("GDKP.ledgerAuctionScale"));
             ItemRow:AddChild(ItemSpacer);
 
             --[[
@@ -687,30 +690,27 @@ function Overview:refreshLedger()
                 ACTION BUTTONS
             ]]
             -- We need a holder first because we're not using acegui
-            local ActionButtons = AceGUI:Create("SimpleGroup");
-            ActionButtons:SetLayout("FILL")
-            ActionButtons:SetWidth(50);
-            ActionButtons:SetHeight(30);
-            ItemRow:AddChild(ActionButtons);
+            --local ActionButtons = AceGUI:Create("SimpleGroup");
+            --ActionButtons:SetLayout("FILL")
+            --ActionButtons:SetWidth(50);
+            --ActionButtons:SetHeight(30);
+            --ItemRow:AddChild(ActionButtons);
 
             self.ActionButtons[Auction.ID] = {};
+            local ActionButtons = ItemRow.frame;
 
-            --[[ EDIT BUTTON ]]
-            local Edit = Interface:createButton(ActionButtons, {
+            --[[ DETAILS BUTTON ]]
+            local Eye = Interface:createButton(ActionButtons, {
                 onClick = function()
-                    self:closeSubWindows();
-                    Interface.GDKP.EditAuction:draw(Session.ID, Auction.checksum);
+                    Interface.GDKP.AuctionDetails:toggle(Session.ID, Auction.checksum);
                 end,
-                tooltip = "Edit",
-                disabledTooltip = "You need lead or master loot to edit entries.\nYou can't edit deleted entries or entries on locked/deleted sessions",
-                normalTexture = "Interface/AddOns/Gargul/Assets/Buttons/edit",
-                disabledTexture = "Interface/AddOns/Gargul/Assets/Buttons/edit-disabled",
-                update = function (self)
-                    self:SetEnabled(not auctionWasDeleted and not Session.deletedAt and not Session.lockedAt);
-                end,
+                tooltip = "Details",
+                normalTexture = "Interface/AddOns/Gargul/Assets/Buttons/eye",
+                disabledTexture = "Interface/AddOns/Gargul/Assets/Buttons/eye-disabled",
             });
-            Edit:SetPoint("TOPRIGHT", ItemRow.frame, "TOPRIGHT", -60, -10);
-            self.ActionButtons[Auction.ID].EditButton = Edit;
+            Eye:SetPoint("CENTER", ItemRow.frame, "CENTER");
+            Eye:SetPoint("RIGHT", ItemRow.frame, "RIGHT", 0, 0);
+            self.ActionButtons[Auction.ID].DetailsButton = Eye;
 
             --[[ DELETE BUTTON ]]
             local Restore, Delete;
@@ -738,7 +738,7 @@ function Overview:refreshLedger()
                         self:SetEnabled(not auctionWasDeleted and not Session.deletedAt and not Session.lockedAt);
                     end,
                 });
-                Delete:SetPoint("TOPLEFT", Edit, "TOPRIGHT", 2, 0)
+                Delete:SetPoint("TOPRIGHT", Eye, "TOPLEFT", -2, 0);
                 self.ActionButtons[Auction.ID].DeleteButton = Delete;
             end
 
@@ -754,21 +754,26 @@ function Overview:refreshLedger()
                         self:SetEnabled(not Session.deletedAt and not Session.lockedAt);
                     end,
                 });
-                Restore:SetPoint("TOPLEFT", Edit, "TOPRIGHT", 2, 0);
+                Restore:SetPoint("TOPRIGHT", Eye, "TOPLEFT", -2, 0);
                 self.ActionButtons[Auction.ID].RestoreButton = Restore;
             end
 
-            --[[ DETAILS BUTTON ]]
-            local Eye = Interface:createButton(ActionButtons, {
+            --[[ EDIT BUTTON ]]
+            local Edit = Interface:createButton(ActionButtons, {
                 onClick = function()
-                    Interface.GDKP.AuctionDetails:toggle(Session.ID, Auction.checksum);
+                    self:closeSubWindows();
+                    Interface.GDKP.EditAuction:draw(Session.ID, Auction.checksum);
                 end,
-                tooltip = "Details",
-                normalTexture = "Interface/AddOns/Gargul/Assets/Buttons/eye",
-                disabledTexture = "Interface/AddOns/Gargul/Assets/Buttons/eye-disabled",
+                tooltip = "Edit",
+                disabledTooltip = "You need lead or master loot to edit entries.\nYou can't edit deleted entries or entries on locked/deleted sessions",
+                normalTexture = "Interface/AddOns/Gargul/Assets/Buttons/edit",
+                disabledTexture = "Interface/AddOns/Gargul/Assets/Buttons/edit-disabled",
+                update = function (self)
+                    self:SetEnabled(not auctionWasDeleted and not Session.deletedAt and not Session.lockedAt);
+                end,
             });
-            Eye:SetPoint("TOPLEFT", Delete or Restore, "TOPRIGHT", 2, 0);
-            self.ActionButtons[Auction.ID].DetailsButton = Eye;
+            Edit:SetPoint("TOPRIGHT", Delete or Restore, "TOPLEFT", -2, 0);
+            self.ActionButtons[Auction.ID].EditButton = Edit;
         end
     end);
 
@@ -812,7 +817,7 @@ function Overview:showTutorial()
 
         local ItemRow = AceGUI:Create("SimpleGroup");
         ItemRow:SetLayout("FLOW")
-        ItemRow:SetHeight(30);
+        ItemRow:SetHeight(Settings:get("GDKP.ledgerAuctionScale"));
         ItemRow:SetFullWidth(true);
         Details:AddChild(ItemRow);
 
@@ -820,9 +825,9 @@ function Overview:showTutorial()
             ITEM ICON
         ]]
         local ItemIcon = AceGUI:Create("Icon");
-        ItemIcon:SetWidth(30);
-        ItemIcon:SetHeight(30);
-        ItemIcon:SetImageSize(30, 30);
+        ItemIcon:SetWidth(Settings:get("GDKP.ledgerAuctionScale"));
+        ItemIcon:SetHeight(Settings:get("GDKP.ledgerAuctionScale"));
+        ItemIcon:SetImageSize(Settings:get("GDKP.ledgerAuctionScale"), Settings:get("GDKP.ledgerAuctionScale"));
         ItemIcon:SetImage(iconPath);
         ItemRow:AddChild(ItemIcon);
 
@@ -838,7 +843,7 @@ function Overview:showTutorial()
         local ItemSpacer = AceGUI:Create("SimpleGroup");
         ItemSpacer:SetLayout("FILL")
         ItemSpacer:SetWidth(10);
-        ItemSpacer:SetHeight(30);
+        ItemSpacer:SetHeight(Settings:get("GDKP.ledgerAuctionScale"));
         ItemRow:AddChild(ItemSpacer);
 
         --[[

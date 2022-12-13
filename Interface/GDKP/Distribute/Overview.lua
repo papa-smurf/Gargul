@@ -24,6 +24,7 @@ Interface.GDKP.Distribute = Interface.GDKP.Distribute or {};
 Interface.GDKP.Distribute.Overview = {
     isVisible = false,
     refreshing = false,
+    openedViaOverview = false,
     sessionID = nil,
 
     MutatorActionButtons = {},
@@ -37,13 +38,15 @@ Interface.GDKP.Distribute.Overview = {
 local Overview = Interface.GDKP.Distribute.Overview;
 
 ---@return void
-function Overview:open(sessionID)
+function Overview:open(sessionID, openedViaOverview)
     GL:debug("Interface.GDKP.Overview:open");
 
     local Session = GDKPSession:byID(sessionID);
     if (not Session) then
         return;
     end
+
+    self.openedViaOverview = openedViaOverview;
 
     local Window = Interface:get(self, "GDKPDistribute");
     if (not Window) then
@@ -112,7 +115,10 @@ function Overview:build()
         GameTooltip:AddLine(" ");
         GameTooltip:AddLine("With mutators you can give more or less gold to players");
         GameTooltip:AddLine("Example: giving 2% extra to tanks is what mutators are for!");
-        GameTooltip:AddLine("Note: editing or deleting mutators here only changes them for this session");
+        GameTooltip:AddLine(" ");
+        GameTooltip:AddLine("Notes:");
+        GameTooltip:AddLine("- Negative percentages are not allowed");
+        GameTooltip:AddLine("- Editing or deleting mutators here only changes them for this session");
         GameTooltip:AddLine(" ");
         GameTooltip:Show();
     end);
@@ -275,6 +281,9 @@ function Overview:close()
     self.isVisible = false;
 
     self:closeSubWindows();
+    if (self.openedViaOverview) then
+        GL.Interface.GDKP.Overview:open();
+    end
 end
 
 ---@return void

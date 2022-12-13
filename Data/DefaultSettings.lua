@@ -127,6 +127,7 @@ GL.Data.DefaultSettings = {
         customExportFormat = "@ITEM,@WINNER,@GOLD,@WOWHEAD",
         customPotExportHeader = "Player,Cut",
         customPotExportFormat = "@PLAYER,@CUT",
+        ledgerAuctionScale = 25,
         minimumBid = 100,
         minimumIncrement = 50,
         notifyIfBidTooLow = true,

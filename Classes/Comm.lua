@@ -15,6 +15,12 @@ Comm.Actions = {
     [Actions.awardItem] = function (Message)
         GL.AwardedLoot:processAwardedLoot(Message);
     end,
+    [Actions.editAwardedItem] = function (Message)
+        GL.AwardedLoot:processEditedLoot(Message);
+    end,
+    [Actions.deleteAwardedItem] = function (Message)
+        GL.AwardedLoot:deleteWinner(Message.content, false);
+    end,
     [Actions.response] = function (Message)
         return Message:processResponse();
     end,

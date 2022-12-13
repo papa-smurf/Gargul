@@ -188,6 +188,10 @@ function Session:goldSpentByPlayer(player, sessionID)
     for _, Sale in pairs(Instance.Auctions or {}) do
         if (not Sale.deletedAt and Sale.price and Sale.Winner.name == player and GL:higherThanZero(Sale.price)) then
             spent = spent + Sale.price;
+
+            if (Sale.paid) then
+                spent = spent - Sale.paid
+            end
         end
     end
 

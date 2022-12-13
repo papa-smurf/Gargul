@@ -602,12 +602,49 @@ function Auction:setNote(sessionID, auctionID, note)
     local OldAuction = GL:tableGet(Session, "Auctions." .. auctionID);
 
     if (not OldAuction
-        or OldAuction.Winner.note == note
+        or OldAuction.note == note
     ) then
         return false;
     end
 
     GL:tableSet(Session, string.format("Auctions.%s.note", auctionID), note);
+
+    Events:fire("GL.GDKP_AUCTION_CHANGED",
+        sessionID,
+        auctionID,
+        OldAuction,
+        DB.GDKP.Ledger[sessionID].Auctions[auctionID]
+    );
+
+    return true;
+end
+
+---@param sessionID string
+---@param auctionID string
+---@param paid number
+function Auction:setPaid(sessionID, auctionID, paid)
+    GL:debug("Auction:setPaid");
+
+    local Session = GDKPSession:byID(sessionID);
+    if (not Session or Session.lockedAt) then
+        GL:warning("The GDKP Session is not available or locked");
+        return;
+    end
+
+    paid = tonumber(paid);
+
+    if (not paid) then
+        GL:warning("Invalid number provided for 'paid'");
+        return;
+    end
+
+    local OldAuction = GL:tableGet(Session, "Auctions." .. auctionID);
+
+    if (not OldAuction or OldAuction.paid == paid) then
+        return false;
+    end
+
+    GL:tableSet(Session, string.format("Auctions.%s.paid", auctionID), paid);
 
     Events:fire("GL.GDKP_AUCTION_CHANGED",
         sessionID,
@@ -765,10 +802,14 @@ function Auction:announceExtension(time)
         return false;
     end
 
+    local secondsLeft = GL.Ace:TimeLeft(self.timerId);
+    local maximumTimeToExtend = self.Current.duration - secondsLeft;
+    local extendWith = math.min(maximumTimeToExtend, time);
+
     GL.CommMessage.new(
-            CommActions.extendGDKPAuction,
-            time,
-            "GROUP"
+        CommActions.extendGDKPAuction,
+        extendWith,
+        "GROUP"
     ):send();
 
     return true;
@@ -1229,9 +1270,7 @@ function Auction:processBid(event, message, bidder)
         return;
     end
 
-    if (self.Current
-            and self.Current.antiSnipe
-    ) then
+    if (self.Current and self.Current.antiSnipe) then
         local secondsLeft = math.floor(GL.Ace:TimeLeft(self.timerId));
 
         if (secondsLeft <= self.Current.antiSnipe) then
