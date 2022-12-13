@@ -197,6 +197,7 @@ function Award:draw(itemLink)
             end
 
             local GDKPPriceEditBox = GL.Interface:get(GL.Interface.Dialogs.AwardDialog, "EditBox.GDKPPrice");
+            local added = false;
             if (GDKPPriceEditBox) then
                 GDKPPrice = tonumber(GDKPPriceEditBox:GetText());
 
@@ -204,8 +205,11 @@ function Award:draw(itemLink)
                     local awardChecksum = GL.AwardedLoot:addWinner(winner, itemLink, nil, nil, isOS, boostedRollCost, GDKPPrice);
 
                     GDKPAuction:create(GL:getItemIDFromLink(itemLink), GDKPPrice, winner, nil, nil, nil, awardChecksum);
+                    added = true;
                 end
-            else
+            end
+
+            if (not added) then
                 -- Add the player we awarded the item to to the item's tooltip
                 GL.AwardedLoot:addWinner(winner, itemLink, nil, nil, isOS, boostedRollCost);
             end

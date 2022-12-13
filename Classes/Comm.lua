@@ -313,7 +313,6 @@ function Comm:dispatch(CommMessage)
     GL.User:refresh();
 
     local action = CommMessage.action;
-
     if (Comm.Actions[action]) then
         return Comm.Actions[action](CommMessage);
     end

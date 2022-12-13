@@ -708,6 +708,19 @@ function AwardedLoot:processAwardedLoot(CommMessage)
         Rolls = AwardEntry.Rolls,
     };
 
+    if (not GL.isEra and GL:iEquals(AwardEntry.awardedTo, GL.User.name)) then
+        GL:onItemLoadDo(AwardEntry.itemID, function (Result)
+            Result = Result[1];
+
+            if (not Result) then
+                return;
+            end
+
+            local LootAlertSystem = AlertFrame:AddQueuedAlertFrameSubSystem("LootWonAlertFrameTemplate", _G.LootWonAlertFrame_SetUp, 6, math.huge);
+            LootAlertSystem:AddAlert(Result.link);
+        end);
+    end
+
     GL.Events:fire("GL.ITEM_AWARDED", GL.DB.AwardHistory[AwardEntry.checksum]);
 end
 

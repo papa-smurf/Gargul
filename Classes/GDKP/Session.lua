@@ -56,7 +56,6 @@ function Session:_init()
         self:tradeInitiated(Details);
     end);
 
-    ---@todo: here
     Events:register("GDKPSessionAuctionCreatedListener", "GL.GDKP_AUCTION_CREATED", function (_, sessionID)
         if (Settings:get("GDKP.announcePotAfterAuction")
             and sessionID == self:activeSessionID()
