@@ -107,12 +107,45 @@ function EditAuction:draw(session, checksum)
     NoteInput:SetLabel("Note");
     Window:AddChild(NoteInput);
 
+    local AdjustPaidInput = GL.AceGUI:Create("EditBox");
+    AdjustPaidInput:DisableButton(true);
+    AdjustPaidInput:SetHeight(20);
+    AdjustPaidInput:SetWidth(250);
+    AdjustPaidInput:SetText(Auction.note);
+    AdjustPaidInput:SetLabel("     Adjust amount paid");
+    Window:AddChild(AdjustPaidInput);
+
+    local HelpIcon = AceGUI:Create("Icon");
+    HelpIcon:SetWidth(12);
+    HelpIcon:SetHeight(12);
+    HelpIcon:SetImageSize(12, 12);
+    HelpIcon:SetImage("interface/friendsframe/informationicon");
+    HelpIcon.frame:SetParent(AdjustPaidInput.frame);
+    HelpIcon.frame:SetPoint("BOTTOMLEFT", AdjustPaidInput.frame, "BOTTOMLEFT", 2, 22);
+    HelpIcon.frame:Show();
+
+    HelpIcon:SetCallback("OnEnter", function()
+        GameTooltip:SetOwner(HelpIcon.frame, "ANCHOR_RIGHT");
+        GameTooltip:AddLine(" ");
+        GameTooltip:AddLine("Warning: only add a value here if the player promises to pay");
+        GameTooltip:AddLine("outside of the raid or trades the gold from an alt / mail etc!");
+        GameTooltip:AddLine(" ");
+        GameTooltip:AddLine("Gargul automatically keeps track of gold traded, so as long as players");
+        GameTooltip:AddLine("pay by themselves for what they bought then you shouldn't ever need this");
+        GameTooltip:AddLine(" ");
+        GameTooltip:Show();
+    end);
+
+    HelpIcon:SetCallback("OnLeave", function()
+        GameTooltip:Hide();
+    end);
+
     local SaveButton = AceGUI:Create("Button");
     SaveButton:SetText("Save");
     SaveButton:SetFullWidth(true);
     SaveButton:SetCallback("OnClick", function()
         local newName = strtrim(PlayernameInput:GetText());
-        local note = strtrim(NoteInput:GetText());
+        local note = strtrim(AdjustPaidInput:GetText());
 
         -- The winner was changed
         if (not GL:empty(newName)

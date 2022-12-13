@@ -970,6 +970,14 @@ function Auction:stop(CommMessage)
         return false;
     end
 
+    -- Play raid warning sound
+    GL:playSound(SOUNDKIT.RAID_WARNING, "SFX");
+
+    self.inProgress = false;
+    GL.Ace:CancelTimer(self.timerId);
+
+    GL.Interface.GDKP.Bidder:hide();
+
     -- If this user started the roll then we need to cancel some timers and post a message
     if (self:startedByMe()) then
         -- Announce that the roll has ended
@@ -981,23 +989,16 @@ function Auction:stop(CommMessage)
         end
 
         -- We stop listening for bids one second after the auction ends just in case there is server lag/jitter
-        GL.Ace:ScheduleTimer(function()
+        ---@todo: reinstate this at some point, making sure that it also respects the anti-snipe setting
+        --GL.Ace:ScheduleTimer(function()
             self:stopListeningForBids();
-        end, 1);
+        --end, 1);
     end
 
     if (self.countDownTimer) then
         GL.Ace:CancelTimer(self.countDownTimer);
         self.countDownTimer = nil;
     end
-
-    -- Play raid warning sound
-    GL:playSound(SOUNDKIT.RAID_WARNING, "SFX");
-
-    self.inProgress = false;
-    GL.Ace:CancelTimer(self.timerId);
-
-    GL.Interface.GDKP.Bidder:hide();
 
     -- If we're the initiatorID then we need to update our initiatorID UI
     if (self:startedByMe()) then
