@@ -23,7 +23,7 @@ local LedgerList = GL.Interface.GDKP.LedgerList;
 
 --[[ CONSTANTS ]]
 local SESSION_ROWS = 22;
-local HEIGHT_PER_SESSION_ROW = 16;
+local HEIGHT_PER_SESSION_ROW = 18;
 
 ---@param sessionID string
 ---@return void
@@ -84,25 +84,20 @@ function LedgerList:build()
         originalOnHeightSet(...);
 
         Window:SetWidth(440);
-        Interface:get(self, "Table.Auctions"):SetDisplayRows(math.floor(Window.frame:GetHeight() / HEIGHT_PER_SESSION_ROW - 6), HEIGHT_PER_SESSION_ROW);
+        Interface:get(self, "Table.Auctions"):SetDisplayRows(math.floor(
+            Window.frame:GetHeight() / HEIGHT_PER_SESSION_ROW - (GL.elvUILoaded and 6 or 5)
+            ), HEIGHT_PER_SESSION_ROW
+        );
     end
 
     local columns = {
         {
             width = HEIGHT_PER_SESSION_ROW,
             align = "LEFT",
-            color = {
-                r = 0.5,
-                g = 0.5,
-                b = 1.0,
-                a = 1
-            },
-            colorargs = nil,
             DoCellUpdate = GL.LibStItemCellUpdate,
         },
         {
             width = 200,
-            colorargs = nil,
         },
         {
             width = 160,
