@@ -117,7 +117,24 @@ function Bidder:draw(time, itemLink, itemIcon)
     end);
 
     BidButtonClick = function ()
-        GDKPAuction:bid(BidInput:GetText());
+        if (not GDKPAuction:bid(BidInput:GetText())) then
+            local BidDeniedNotification = GL.AceGUI:Create("InlineGroup");
+            BidDeniedNotification:SetLayout("Fill");
+            BidDeniedNotification:SetWidth(150);
+            BidDeniedNotification:SetHeight(50);
+            BidDeniedNotification.frame:SetParent(Window);
+            BidDeniedNotification.frame:SetPoint("BOTTOMLEFT", Window, "TOPLEFT", 0, 4);
+
+            local Text = GL.AceGUI:Create("Label");
+            Text:SetText("|c00BE3333Bid denied!|r");
+            BidDeniedNotification:AddChild(Text);
+            Text:SetJustifyH("MIDDLE");
+
+            self.RollAcceptedTimer = GL.Ace:ScheduleTimer(function ()
+                BidDeniedNotification.frame:Hide();
+            end, 2);
+        end
+
         BidInput:SetText("");
         BidInput:ClearFocus();
     end;

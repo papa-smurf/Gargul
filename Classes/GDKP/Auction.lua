@@ -1175,7 +1175,7 @@ function Auction:bid(message)
 
     -- The given bid is invalid or not higher than the highest known bid
     if (not GL:higherThanZero(bid)
-            or bid < lowestValidBid
+        or bid < lowestValidBid
     ) then
         return false;
     end
@@ -1185,6 +1185,8 @@ function Auction:bid(message)
     else
         GL:sendChatMessage(bid, "WHISPER", nil, self.Current.initiatorName, false);
     end
+
+    return true;
 end
 
 --- Return the lowest possible valid bid based on the current bid or the minimum price

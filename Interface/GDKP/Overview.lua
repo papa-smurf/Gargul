@@ -314,8 +314,8 @@ function Overview:build()
     ScrollFrameHolder:SetFullHeight(true)
     SecondColumn:AddChild(ScrollFrameHolder);
 
-    --[[ CREATE BUTTON ]]
-    Interface:createButton(ScrollFrameHolder, {
+    --[[ ALD GOLD BUTTON ]]
+    local AddGoldButton = Interface:createButton(ScrollFrameHolder, {
         onClick = function()
             self:closeSubWindows();
             Interface.GDKP.AddGold:toggle(self.selectedSession);
@@ -331,8 +331,8 @@ function Overview:build()
         end,
         updateOnCreate = false,
         updateOn = { "GROUP_ROSTER_UPDATE", "GL.GDKP_OVERVIEW_SESSION_CHANGED", "GL.GDKP_OVERVIEW_SESSION_CHANGED", "GL.GDKP_OVERVIEW_SESSIONS_REFRESHED" },
-    --}):SetPoint("TOP", ScrollFrameHolder.frame, "TOP", -9, -7)
-    }):SetPoint("TOP", ScrollFrameHolder.frame, "TOP", -9, -7)
+    });
+    AddGoldButton:SetPoint("TOP", ScrollFrameHolder.frame, "TOP", -9, -7);
 
     ----[[ SHARE BUTTON ]]
     --Interface:createShareButton(ScrollFrameHolder, {
@@ -344,6 +344,21 @@ function Overview:build()
     --    updateOn = "GROUP_ROSTER_UPDATE",
     --    x = 16,
     --});
+
+    ----[[ LIST VIEW BUTTON ]]
+    local ListViewButton = Interface:createButton(ScrollFrameHolder, {
+        onClick = function()
+            GL.Interface.GDKP.LedgerList:toggle(self.selectedSession);
+        end,
+        tooltip = "Show a condensed view of the ledger,\nideal for screenshotting purposes!",
+        normalTexture = "Interface/AddOns/Gargul/Assets/Buttons/eye",
+        disabledTexture = "Interface/AddOns/Gargul/Assets/Buttons/eye-disabled",
+        updateOn = { "GL.GDKP_OVERVIEW_SESSION_CHANGED", "GL.GDKP_OVERVIEW_SESSION_CHANGED", "GL.GDKP_OVERVIEW_SESSIONS_REFRESHED", "GL.GDKP_AUCTION_CHANGED" },
+        update = function (self)
+            self:SetEnabled(not GL:empty(GL:tableGet(Overview:getSelectedSession() or {}, "Auctions")));
+        end,
+    });
+    ListViewButton:SetPoint("TOPLEFT", AddGoldButton, "TOPRIGHT", 2, 0);
 
     Interface:set(self, "Title", Title);
     Interface:set(self, "Note", Note);

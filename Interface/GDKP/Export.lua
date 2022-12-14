@@ -3,17 +3,8 @@ local _, GL = ...;
 
 local AceGUI = LibStub("AceGUI-3.0");
 
----@type Data
-local Constants = GL.Data.Constants;
-
----@type DB
-local DB = GL.DB;
-
 ---@type Interface
 local Interface = GL.Interface;
-
----@type Events
-local Events = GL.Events;
 
 ---@type GDKPSession
 local GDKPSession = GL.GDKP.Session;

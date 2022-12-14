@@ -119,9 +119,9 @@ end
 ---@return void
 function GL:xd(mixed)
     if (type(mixed) == "boolean") then
-        mixed = "true";
-
         if (mixed) then
+            mixed = "true";
+        else
             mixed = "false";
         end
     end
@@ -479,6 +479,25 @@ function GL:cloneTable(Original)
     end
 
     return Copy;
+end
+
+--- Courtesy of Lantis and the team over at Classic Loot Manager: https://github.com/ClassicLootManager/ClassicLootManager
+function GL.LibStItemCellUpdate (rowFrame, frame, data, cols, row, realrow, column, fShow, table, ...)
+    local itemId = data[realrow].cols[column].value
+    local _, _, _, _, icon = GetItemInfoInstant(itemId or 0)
+    if icon then
+        frame:SetNormalTexture(icon)
+        frame:Show()
+        frame:SetScript("OnEnter", function()
+            GameTooltip:SetOwner(rowFrame, "ANCHOR_RIGHT")
+            GameTooltip:SetHyperlink("item:" .. tostring(itemId))
+            GameTooltip:Show()
+        end)
+
+        frame:SetScript("OnLeave", function() GameTooltip:Hide() end)
+    else
+        frame:Hide()
+    end
 end
 
 --- Clears the provided scrolling table (lib-ScrollingTable)

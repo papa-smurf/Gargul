@@ -20,9 +20,6 @@ GL.GDKP = GL.GDKP or {};
 ---@type GDKP
 local GDKP = GL.GDKP;
 
----@type GDKPPot
-local GDKPPot = GDKP.Pot;
-
 ---@class GDKPSession
 GDKP.Session = {
     _initialized = false,
@@ -60,7 +57,12 @@ function Session:_init()
         if (Settings:get("GDKP.announcePotAfterAuction")
             and sessionID == self:activeSessionID()
         ) then
-            GL:sendChatMessage(string.format("Pot was updated, it now holds %sg", GDKPPot:total()), "GROUP");
+            local total = GL.GDKP.Pot:total();
+            if (not tonumber(total)) then
+                return;
+            end
+
+            GL:sendChatMessage(string.format("Pot was updated, it now holds %sg", tostring(total)), "GROUP");
         end
     end);
 end
