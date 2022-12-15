@@ -805,7 +805,7 @@ function Overview:showTutorial()
     Note:SetText("|c00a79effFollow the steps below to quickly get started with Gargul GDKP!|r");
 
     local Steps = {
-        {1, "|c00a79effGargul's GDKP module is |c00FFF569currently in beta, use at your own risk|r and record the raid/keep track of sales manually just in case!|r"},
+        {1, "|c00a79effGargul's GDKP module is still very new. We recommend you to record raids and to double check calculations before payout|r"},
         {2, "|c00a79effClick the |c00FFF569New|r button below to create a GDKP session. It will show on the left when done.|r"},
         {3, "|c00a79effMake sure your session says |c00FFF569(active)|r. If that's not the case then click the |c00a79effEnable|r button below!|r"},
         {4, string.format("|c00a79effYou can now start auctioning off items. Open your inventory, |c00FFF569%s|r an item and start. Don't forget to award the item when you're done!|r", GL.Settings:get("ShortcutKeys.rollOffOrAuction"))},
