@@ -761,9 +761,9 @@ function Auctioneer:passItemLink(itemLink)
         return GL:warning("An auction is currently in progress");
     end
 
-    local itemID = GL:getItemIDFromLink(itemLink);
+    local itemID = tonumber(GL:getItemIDFromLink(itemLink)) or 0;
 
-    if (not tonumber(itemID) or itemID < 1) then
+    if (itemID < 1) then
         return GL:warning("Invalid item provided");
     end
 

@@ -57,8 +57,8 @@ function Session:_init()
         if (Settings:get("GDKP.announcePotAfterAuction")
             and sessionID == self:activeSessionID()
         ) then
-            local total = GL.GDKP.Pot:total();
-            if (not tonumber(total)) then
+            local total = tonumber(GL.GDKP.Pot:total()) or 0;
+            if (total < 1) then
                 return;
             end
 
@@ -256,7 +256,8 @@ function Session:itemHistory(itemLinkOrID)
         itemID = GL:getItemIDFromLink(itemLinkOrID);
     end
 
-    if (not tonumber(itemID) or itemID < 1) then
+    itemID = tonumber(itemID) or 0;
+    if (itemID < 1) then
         return;
     end
 

@@ -261,13 +261,13 @@ function Auction:restore(sessionID, auctionID)
 
     -- Sort the states on createdAt so that we can get the most recent state
     table.sort(Instance.PreviousStates or {}, function (a, b)
-        if (not tonumber(a.createdAt or 0)
-                or not tonumber(b.createdAt or 0)
+        if (not tonumber(a.createdAt)
+            or not tonumber(b.createdAt)
         ) then
             return true;
         end
 
-        return a.createdAt > b.createdAt;
+        return tonumber(a.createdAt) > tonumber(b.createdAt);
     end);
 
     local mostRecentStateIdentifier;
@@ -369,7 +369,7 @@ function Auction:sanitize(Instance)
         or not tonumber(Instance.price)
         or Instance.price < 1
     ) then
-        GL:xd("Auction:sanitize step 1 failed");
+        GL:xd("Auction:sanitize step 1 failed, contact support!");
         return false;
     end
 
@@ -385,7 +385,7 @@ function Auction:sanitize(Instance)
         or type (Instance.CreatedBy.realm) ~= "string"
         or GL:empty(Instance.CreatedBy.realm)
     ) then
-        GL:xd("Auction:sanitize step 2 failed");
+        GL:xd("Auction:sanitize step 2 failed, contact support!");
         GL:xd(Instance);
         return false;
     end
@@ -405,7 +405,7 @@ function Auction:sanitize(Instance)
         if (type(createdByGuild) ~= "string"
                 or GL:empty(createdByGuild)
         ) then
-            GL:xd("Auction:sanitize step 3 failed");
+            GL:xd("Auction:sanitize step 3 failed, contact support!");
             return;
         end
 
@@ -415,7 +415,7 @@ function Auction:sanitize(Instance)
     --[[ Make sure the item ID is valid ]]
     SanitizedAuction.itemID = GetItemInfoInstant(Instance.itemID);
     if (not tonumber(SanitizedAuction.itemID)) then
-        GL:xd("Auction:sanitize step 4 failed");
+        GL:xd("Auction:sanitize step 4 failed, contact support!");
         return false;
     end
 
@@ -428,7 +428,7 @@ function Auction:sanitize(Instance)
                 or Bid.bid < 1
                 or date('%Y', tonumber(Bid.createdAt) or 0) == "1970"
             ) then
-                GL:xd("Auction:sanitize step 5 failed\n" .. GL.JSON:encode(Bid));
+                GL:xd("Auction:sanitize step 5 failed, contact support!\n" .. GL.JSON:encode(Bid));
                 return false;
             end
 
@@ -445,7 +445,7 @@ function Auction:sanitize(Instance)
                 or type (Bidder.realm) ~= "string"
                 or GL:empty(Bidder.realm)
             ) then
-                GL:xd("Auction:sanitize step 6 failed\n" .. GL.JSON:encode(Bidder));
+                GL:xd("Auction:sanitize step 6 failed, contact support!\n" .. GL.JSON:encode(Bidder));
                 return false;
             end
 
@@ -471,7 +471,7 @@ function Auction:sanitize(Instance)
                 if (type(guild) ~= "string"
                     or GL:empty(guild)
                 ) then
-                    GL:xd("Auction:sanitize step 7 failed");
+                    GL:xd("Auction:sanitize step 7 failed, contact support!");
                     return;
                 end
 
@@ -503,7 +503,7 @@ function Auction:sanitize(Instance)
             or type (Winner.name) ~= "string"
             or GL:empty(Winner.name)
         ) then
-            GL:xd("GDKP:sanitize step 8 failed\n" .. GL.JSON:encode(Winner));
+            GL:xd("GDKP:sanitize step 8 failed, contact support!\n" .. GL.JSON:encode(Winner));
             return;
         end
 
@@ -522,7 +522,7 @@ function Auction:sanitize(Instance)
             if (type(guild) ~= "string"
                     or GL:empty(guild)
             ) then
-                GL:xd("Auction:sanitize step 9 failed\n" .. GL.JSON:encode(Winner));
+                GL:xd("Auction:sanitize step 9 failed, contact support!\n" .. GL.JSON:encode(Winner));
                 return;
             end
 
@@ -539,7 +539,7 @@ function Auction:sanitize(Instance)
     local checksum = SanitizedAuction.createdAt .. GL:stringHash({ SanitizedAuction.itemID, SanitizedAuction.createdAt, table.concat(SanitizedAuction.CreatedBy, ".") });
 
     if (checksum ~= Instance.ID) then
-        GL:xd("Auction:sanitize step 10 failed");
+        GL:xd("Auction:sanitize step 10 failed, contact support!");
         return false;
     end
 
@@ -717,11 +717,15 @@ function Auction:announceStart(itemLink, minimumBid, minimumIncrement, duration,
 
     duration = tonumber(duration) or 0;
     antiSnipe = tonumber(antiSnipe) or 0;
+    minimumBid = tonumber(minimumBid) or 1;
+    minimumIncrement = tonumber(minimumIncrement) or 0;
 
     if (type(itemLink) ~= "string"
         or GL:empty(itemLink)
         or duration < 1
         or antiSnipe < 0
+        or minimumBid < 1
+        or minimumIncrement < 0
     ) then
         GL:warning("Invalid data provided for GDKP auction start!");
         return false;
@@ -754,8 +758,8 @@ function Auction:announceStart(itemLink, minimumBid, minimumIncrement, duration,
             item = itemLink,
             minimumBid = minimumBid,
             minimumIncrement = minimumIncrement,
-            duration = tonumber(duration),
-            antiSnipe = tonumber(antiSnipe),
+            duration = duration,
+            antiSnipe = antiSnipe,
             Bids = Bids,
             TopBid = TopBid,
         },
@@ -808,7 +812,8 @@ end
 function Auction:announceExtension(time)
     GL:debug("GDKP.Auction:announceExtension");
 
-    if (not tonumber(time) or time < 1) then
+    time = tonumber(time) or 0
+    if (time < 1) then
         GL:warning("Invalid data provided for GDKP extension!");
         return false;
     end
@@ -836,8 +841,8 @@ function Auction:extend(CommMessage)
         return;
     end
 
-    local time = CommMessage.content;
-    if (not tonumber(time) or time < 1) then
+    local time = tonumber(CommMessage.content) or 0;
+    if (time < 1) then
         return GL:error("Invalid time provided in Auction:extend");
     end
 
