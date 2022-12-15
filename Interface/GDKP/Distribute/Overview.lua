@@ -163,6 +163,10 @@ function Overview:build()
         GameTooltip:AddLine("The total payout can differ slightly from the pot due to rounding differences!");
         GameTooltip:AddLine("Players currently in the raid can not be edited or removed!");
         GameTooltip:AddLine(" ");
+        GameTooltip:AddLine("Color explanation:");
+        GameTooltip:AddLine("|c00BE3333(2000)|r Means you owe this person 2000g");
+        GameTooltip:AddLine("|c00F7922E(3000)|r Means this person owes you 3000g");
+        GameTooltip:AddLine("|c0092FF00(0)|r Means that you're square");
         GameTooltip:Show();
     end);
 
@@ -548,9 +552,40 @@ function Overview:refresh()
         RaiderHolder:SetFullWidth(true);
         RaidersFrame:AddChild(RaiderHolder);
 
+        local nameText;
+        if (not Session.lockedAt) then
+            nameText = "    " .. player;
+        else
+            if (player ~= GL.User.name) then
+                do
+                    local GoldTrades = GL:tableGet(Session, "GoldTrades." .. player, {
+                        from = 0,
+                        to = 0,
+                    });
+
+                    local playerCutInCopper = GL:tableGet(Session, "Pot.Cuts." .. player, 0) * 10000;
+                    local copperReceived = GoldTrades.from;
+                    local copperGiven = GoldTrades.to;
+                    local copperSpentByPlayer = GDKPSession:goldSpentByPlayer(player, Session.ID) * 10000;
+                    local copperToReceive = copperSpentByPlayer - copperReceived;
+                    local copperToGive = playerCutInCopper - copperToReceive - copperGiven;
+
+                    if (copperToGive > 0) then
+                        nameText = string.format("    |c00BE3333(%s)|r %s", copperToGive / 10000, player);
+                    elseif (copperToGive < 0) then
+                        nameText = string.format("    |c00F7922E(%s)|r %s", (copperToGive * -1) / 10000, player);
+                    else
+                        nameText = "    |c0092FF00(0)|r " .. player;
+                    end
+                end
+            else
+                nameText = "    |c0092FF00(0)|r " .. player;
+            end
+        end
+
         ---@type AceGUILabel
         local RaiderNameLabel = AceGUI:Create("Label");
-        RaiderNameLabel:SetText("    " .. player);
+        RaiderNameLabel:SetText(nameText);
         RaiderNameLabel:SetWidth(150);
         RaiderHolder:AddChild(RaiderNameLabel);
 
