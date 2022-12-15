@@ -432,11 +432,12 @@ function Auction:sanitize(Instance)
 
             local Bidder = Bid.Bidder;
             if (type (Bidder.class) ~= "string"
-                or not Constants.Classes[Bidder.class]
+                ---@todo: issue here, got deathknight, constant is death_knight
+                --or not Constants.Classes[Bidder.class]
                 or type (Bidder.name) ~= "string"
                 or GL:empty(Bidder.name)
                 or type (Bidder.race) ~= "string"
-                or not Constants.Races[Bidder.race]
+                --or not Constants.Races[Bidder.race]
                 or type (Bidder.uuid) ~= "string"
                 or not string.match(Bidder.uuid, "^Player%-[0-9]+%-[A-Z0-9]+$")
                 or type (Bidder.realm) ~= "string"
@@ -466,7 +467,7 @@ function Auction:sanitize(Instance)
 
             if (guild) then
                 if (type(guild) ~= "string"
-                        or GL:empty(guild)
+                    or GL:empty(guild)
                 ) then
                     GL:xd("Auction:sanitize step 7 failed");
                     return;

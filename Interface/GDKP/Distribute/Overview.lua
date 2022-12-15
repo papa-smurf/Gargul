@@ -164,8 +164,8 @@ function Overview:build()
         GameTooltip:AddLine("Players currently in the raid can not be edited or removed!");
         GameTooltip:AddLine(" ");
         GameTooltip:AddLine("Color explanation:");
-        GameTooltip:AddLine("|c00BE3333(2000)|r Means you owe this person 2000g");
-        GameTooltip:AddLine("|c00F7922E(3000)|r Means this person owes you 3000g");
+        GameTooltip:AddLine("|c00F7922E(2000g)|r Means you owe this person 2000g");
+        GameTooltip:AddLine("|c00BE3333(3000g)|r Means this person owes you 3000g");
         GameTooltip:AddLine("|c0092FF00(0)|r Means that you're square");
         GameTooltip:Show();
     end);
@@ -571,9 +571,9 @@ function Overview:refresh()
                     local copperToGive = playerCutInCopper - copperToReceive - copperGiven;
 
                     if (copperToGive > 0) then
-                        nameText = string.format("    |c00BE3333(%s)|r %s", copperToGive / 10000, player);
+                        nameText = string.format("    |c00F7922E(%sg)|r %s", copperToGive / 10000, player);
                     elseif (copperToGive < 0) then
-                        nameText = string.format("    |c00F7922E(%s)|r %s", (copperToGive * -1) / 10000, player);
+                        nameText = string.format("    |c00BE3333(%sg)|r %s", (copperToGive * -1) / 10000, player);
                     else
                         nameText = "    |c0092FF00(0)|r " .. player;
                     end
