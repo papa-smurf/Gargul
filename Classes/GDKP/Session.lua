@@ -251,12 +251,12 @@ function Session:itemHistory(itemLinkOrID)
     local concernsID = GL:higherThanZero(tonumber(itemLinkOrID));
 
     if (concernsID) then
-        itemID = tonumber(itemLinkOrID or 0) or 0
+        itemID = itemLinkOrID;
     else
         itemID = GL:getItemIDFromLink(itemLinkOrID);
     end
 
-    if (itemID <= 0) then
+    if (not tonumber(itemID) or itemID < 1) then
         return;
     end
 

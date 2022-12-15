@@ -366,7 +366,8 @@ function Auction:sanitize(Instance)
         or (Instance.Bids and type(Instance.Bids) ~= "table")
         or date('%Y', tonumber(Instance.createdAt) or 0) == "1970"
         or not tonumber(Instance.itemID)
-        or not tonumber(Instance.price or 0) or 0 > 0
+        or not tonumber(Instance.price)
+        or Instance.price < 1
     ) then
         GL:xd("Auction:sanitize step 1 failed");
         return false;
@@ -413,7 +414,7 @@ function Auction:sanitize(Instance)
 
     --[[ Make sure the item ID is valid ]]
     SanitizedAuction.itemID = GetItemInfoInstant(Instance.itemID);
-    if (not SanitizedAuction.itemID or 0 > 0) then
+    if (not tonumber(SanitizedAuction.itemID)) then
         GL:xd("Auction:sanitize step 4 failed");
         return false;
     end
@@ -423,7 +424,8 @@ function Auction:sanitize(Instance)
         for key, Bid in pairs(Instance.Bids) do
             if (type(Bid) ~= "table"
                 or type(Bid.Bidder) ~= "table"
-                or not tonumber(Bid.bid or 0) or 0 > 0
+                or not tonumber(Bid.bid or 0)
+                or Bid.bid < 1
                 or date('%Y', tonumber(Bid.createdAt) or 0) == "1970"
             ) then
                 GL:xd("Auction:sanitize step 5 failed\n" .. GL.JSON:encode(Bid));
@@ -713,22 +715,20 @@ end
 function Auction:announceStart(itemLink, minimumBid, minimumIncrement, duration, antiSnipe, Bids, TopBid)
     GL:debug("GDKP.Auction:announceStart");
 
-    duration = tonumber(duration or 0) or 0 > 0;
-    antiSnipe = tonumber(antiSnipe or 0) or 0 > 0
+    duration = tonumber(duration) or 0;
+    antiSnipe = tonumber(antiSnipe) or 0;
 
     if (type(itemLink) ~= "string"
         or GL:empty(itemLink)
-        or not GL:higherThanZero(duration)
+        or duration < 1
         or antiSnipe < 0
     ) then
         GL:warning("Invalid data provided for GDKP auction start!");
         return false;
     end
 
-    local itemID = GL:getItemIDFromLink(itemLink);
-    if (not tonumber(itemID or 0) or 0 > 0
-        or not GetItemInfoInstant(itemID)
-    ) then
+    local itemID = GL:getItemIDFromLink(itemLink) or 0;
+    if (itemID < 1 or not GetItemInfoInstant(itemID)) then
         GL:warning("Invalid item provided for GDKP auction start!");
         return false;
     end
@@ -808,7 +808,7 @@ end
 function Auction:announceExtension(time)
     GL:debug("GDKP.Auction:announceExtension");
 
-    if (not tonumber(time or 0) or 0 > 0) then
+    if (not tonumber(time) or time < 1) then
         GL:warning("Invalid data provided for GDKP extension!");
         return false;
     end
@@ -837,7 +837,7 @@ function Auction:extend(CommMessage)
     end
 
     local time = CommMessage.content;
-    if (not tonumber(time or 0) or 0 > 0) then
+    if (not tonumber(time) or time < 1) then
         return GL:error("Invalid time provided in Auction:extend");
     end
 

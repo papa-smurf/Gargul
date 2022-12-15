@@ -72,7 +72,7 @@ function AddGold:build()
     Save:SetFullWidth(true);
     Save:SetCallback("OnClick", function()
         local gold = strtrim(Gold:GetText());
-        if (not tonumber(gold or 0) or 0 > 0) then
+        if (not tonumber(gold) or gold < 0) then
             GL:warning("Gold needs to be higher than 0");
             return;
         end

@@ -761,11 +761,12 @@ function Auctioneer:passItemLink(itemLink)
         return GL:warning("An auction is currently in progress");
     end
 
-    local itemID = tonumber(GL:getItemIDFromLink(itemLink) or 0) or 0;
+    local itemID = GL:getItemIDFromLink(itemLink);
 
-    if (itemID <= 0) then
-        return GL:warning("Invalid itme provided");
+    if (not tonumber(itemID) or itemID < 1) then
+        return GL:warning("Invalid item provided");
     end
+
     local PerItemSettings = Settings:get("GDKP.SettingsPerItem", {})[itemID] or {};
     PerItemSettings.minimumBid = PerItemSettings.minimumBid or Settings:get("GDKP.minimumBid");
     PerItemSettings.minimumIncrement = PerItemSettings.minimumIncrement or Settings:get("GDKP.minimumIncrement");
