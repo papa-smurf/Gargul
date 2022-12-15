@@ -226,6 +226,12 @@ function AwardedLoot:editWinner(checksum, winner, announce)
                 winner,
                 AwardEntry.BRCost
             );
+        elseif (AwardEntry.GDKPCost and AwardEntry.GDKPCost > 0) then
+            awardMessage = string.format("%s was awarded to %s for %sg. Congrats!",
+                AwardEntry.itemLink,
+                winner,
+                AwardEntry.GDKPCost
+            );
         else
             awardMessage = string.format("%s was awarded to %s. Congrats!",
                 AwardEntry.itemLink,
@@ -398,6 +404,12 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, G
                 itemLink,
                 winner,
                 BRCost
+            );
+        elseif (GDKPCost and GDKPCost > 0) then
+            awardMessage = string.format("%s was awarded to %s for %sg. Congrats!",
+                itemLink,
+                winner,
+                GDKPCost
             );
         else
             awardMessage = string.format("%s was awarded to %s. Congrats!",
