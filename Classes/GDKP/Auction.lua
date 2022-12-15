@@ -738,6 +738,9 @@ function Auction:announceStart(itemLink, minimumBid, minimumIncrement, duration,
         return false;
     end
 
+    Settings:set("GDKP.time", duration);
+    Settings:set("GDKP.antiSnipe", antiSnipe);
+
     self:listenForBids();
 
     -- This is still the same item, use the previous highest bid as the starting point
@@ -958,7 +961,7 @@ function Auction:start(CommMessage)
         local numberOfSecondsToCountdown = Settings:get("GDKP.numberOfSecondsToCountdown", 5);
         if (self:startedByMe() -- Only post a countdown if this user initiated the auction
             and duration > numberOfSecondsToCountdown -- No point in counting down if there's hardly enough time anyways
-            and Settings:get("GDKP.doCountdown", false)
+            and Settings:get("GDKP.doCountdown")
         ) then
             self.countDownTimer = GL.Ace:ScheduleRepeatingTimer(function ()
                 local secondsLeft = math.ceil(GL.Ace:TimeLeft(self.timerId));
@@ -972,6 +975,13 @@ function Auction:start(CommMessage)
                         string.format("%s seconds to bid", secondsLeft),
                         "GROUP"
                     );
+
+                    if (GL.Settings:get("GDKP.announceCountdownOnce")) then
+                        GL:debug("Cancel Auction.countDownTimer");
+
+                        GL.Ace:CancelTimer(self.countDownTimer);
+                        self.countDownTimer = nil;
+                    end
                 end
             end, 1);
         end
@@ -1029,6 +1039,8 @@ function Auction:stop(CommMessage)
 
     -- If this user started the roll then we need to cancel some timers and post a message
     if (self:startedByMe()) then
+        SecondsAnnounced = {};
+
         -- Announce that the roll has ended
         if (Settings:get("GDKP.announceBidsClosed", true)) then
             GL:sendChatMessage(
