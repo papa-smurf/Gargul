@@ -22,7 +22,7 @@ function Welcome:draw(Parent)
     GL:debug("WelcomeSettings:draw");
 
     local MoreInfoLabel = AceGUI:Create("Label");
-    MoreInfoLabel:SetText("Join our Discord for support and getting involved!\n");
+    MoreInfoLabel:SetText("Need help? Join our Discord!\n");
     MoreInfoLabel:SetFontObject(_G["GameFontNormal"]);
     MoreInfoLabel:SetFullWidth(true);
     Parent:AddChild(MoreInfoLabel);
