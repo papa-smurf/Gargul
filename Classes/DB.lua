@@ -15,6 +15,7 @@ GL.DB = {
     Settings = {},
     SoftRes = {},
     TMB = {},
+    Utility = {},
 };
 
 local DB = GL.DB;
@@ -42,6 +43,7 @@ function DB:_init()
     GargulDB.Settings = GargulDB.Settings or {};
     GargulDB.SoftRes = GargulDB.SoftRes or {};
     GargulDB.TMB = GargulDB.TMB or {};
+    GargulDB.Utility = GargulDB.Utility or {};
 
     -- Provide a shortcut for each table
     self.AwardHistory = GargulDB.AwardHistory;
@@ -54,6 +56,7 @@ function DB:_init()
     self.Settings = GargulDB.Settings;
     self.SoftRes = GargulDB.SoftRes;
     self.TMB = GargulDB.TMB;
+    self.Utility = GargulDB.Utility;
 
     -- Fire DB:store before every logout/reload/exit
     GL.Events:register("DBPlayerLogoutListener", "PLAYER_LOGOUT", self.store);
@@ -77,6 +80,7 @@ function DB:store()
     GargulDB.Settings = GL.Settings.Active;
     GargulDB.SoftRes = GL.DB.SoftRes;
     GargulDB.TMB = GL.DB.TMB;
+    GargulDB.Utility = GL.DB.Utility;
 end
 
 -- Get a value from the database, or return a default if it doesn't exist
@@ -103,6 +107,7 @@ function DB:reset()
     self.Settings = {};
     self.SoftRes = {};
     self.TMB = {};
+    self.Utility = {};
 
     GL:success("Tables reset");
 end

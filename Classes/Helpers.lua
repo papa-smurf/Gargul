@@ -153,6 +153,64 @@ function GL:capitalize(value)
     return (value:gsub("^%l", string.upper));
 end
 
+---@param constant string
+---@param messageID number
+---@return boolean
+--- Era test: /script print(_G.Gargul:isGameMessageID("ERR_LOOT_CANT_LOOT_THAT_NOW", 571));
+--- WotLK test: /script print(_G.Gargul:isGameMessageID("ERR_LOOT_CANT_LOOT_THAT_NOW", 579));
+--- Retail test: /script print(_G.Gargul:isGameMessageID("ERR_LOOT_CANT_LOOT_THAT_NOW", 604));
+function GL:isGameMessageID(constant, messageID)
+    GL:debug("GL:isGameMessageID");
+
+    if (type(constant) ~= "string"
+        or GL:empty(constant)
+    ) then
+        return false;
+    end
+
+    local constantID = GL.DB:get(string.format(
+        "Utility.GameMessageIDs.%s.%s",
+        GL.clientVersion,
+        constant
+    ));
+
+    -- We haven't seen this ID yet, let's scan it!
+    if (not constantID) then
+        local i = 1;
+        while(true) do
+            local identifier = GetGameMessageInfo(i);
+
+            if (not identifier) then
+                break;
+            end
+
+            if (constant == identifier) then
+                GL.DB:set(string.format(
+                    "Utility.GameMessageIDs.%s.%s",
+                    GL.clientVersion,
+                    constant
+                ), i);
+
+                constantID = i;
+                break;
+            end
+
+            i = i + 1;
+        end
+    end
+
+    -- Seems like this constant simply doesn't exist
+    if (constantID == nil) then
+        GL.DB:set(string.format(
+            "Utility.GameMessageIDs.%s.%s",
+            GL.clientVersion,
+            constant
+        ), -1);
+    end
+
+    return constantID == messageID;
+end
+
 --- Dump a variable (functions won't work!)
 ---
 ---@param mixed any
