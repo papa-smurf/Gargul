@@ -769,10 +769,17 @@ function Auction:announceStart(itemLink, minimumBid, minimumIncrement, duration,
         minimumIncrement
     );
 
-    GL:sendChatMessage(
-        announceMessage,
-        "GROUP"
-    );
+    if (GL.User.isInRaid) then
+        GL:sendChatMessage(
+            announceMessage,
+            "RAID_WARNING"
+        );
+    else
+        GL:sendChatMessage(
+            announceMessage,
+            "PARTY"
+        );
+    end
 
     return true;
 end
