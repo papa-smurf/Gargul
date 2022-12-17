@@ -72,8 +72,7 @@ function Auction:_init()
     Events:register("GDKPGDKPUserWasOutBid", "GL.GDKP_USER_WAS_OUTBID", function ()
         local outbidSound = GL.Settings:get("GDKP.outbidSound");
         if (not GL:empty(outbidSound)) then
-            local Sounds = LibStub("LibSharedMedia-3.0"):List("sound");
-            local sound = LibStub("LibSharedMedia-3.0"):Fetch("sound", Sounds[outbidSound]);
+            local sound = LibStub("LibSharedMedia-3.0"):Fetch("sound", outbidSound);
             PlaySoundFile(sound, "SFX");
         end
 

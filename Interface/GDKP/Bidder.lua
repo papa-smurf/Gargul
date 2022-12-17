@@ -113,7 +113,7 @@ function Bidder:draw(time, itemLink, itemIcon)
     MinimumButton:SetHighlightFontObject("GameFontNormal");
     MinimumButton:SetScript("OnClick", function ()
         BidInput:SetText(GDKPAuction:lowestValidBid());
-        BidInput:SetFocus();
+        BidButtonClick();
     end);
 
     BidButtonClick = function ()
@@ -139,7 +139,7 @@ function Bidder:draw(time, itemLink, itemIcon)
         BidInput:ClearFocus();
     end;
 
-    --[[ ENABLE THIS INSTEAD ONCE AUTOBID IS ADDED
+    --[[ ENABLE THIS INSTEAD ONCE AUTOBID IS ADDED ]]
     BidButton = CreateFrame("Button", "GARGUL_GDKP_BIDDER_BID_BUTTON", Window, "GameMenuButtonTemplate");
     BidButton:SetPoint("TOPLEFT", NewBid, "BOTTOMLEFT", -20, -10);
     BidButton:SetSize(60, 20); -- Minimum width is
@@ -172,6 +172,7 @@ function Bidder:draw(time, itemLink, itemIcon)
     end);
     --]]
 
+    --[[ WITHOUT AUTO BID:
     BidButton = CreateFrame("Button", "GARGUL_GDKP_BIDDER_BID_BUTTON", Window, "GameMenuButtonTemplate");
     BidButton:SetPoint("TOPLEFT", NewBid, "BOTTOMLEFT", 36, -10);
     BidButton:SetSize(60, 20); -- Minimum width is
@@ -191,6 +192,7 @@ function Bidder:draw(time, itemLink, itemIcon)
     PassButton:SetScript("OnClick", function ()
         self:hide();
     end);
+    ]]
 
     self:refresh();
 
