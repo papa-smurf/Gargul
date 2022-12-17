@@ -67,11 +67,12 @@ function GDKP:draw(Parent)
     Parent:AddChild(PlaySoundWhenOutbidLabel);
 
     local Sounds = LibStub("LibSharedMedia-3.0"):List("sound");
+    local SoundsByName = GL:tableFlip(Sounds);
 
     local OutbidSoundDropdown = GL.AceGUI:Create("Dropdown");
-    OutbidSoundDropdown:SetValue(GL.Settings:get("GDKP.outbidSound"));
+    OutbidSoundDropdown:SetValue(SoundsByName[GL.Settings:get("GDKP.outbidSound")]);
     OutbidSoundDropdown:SetList(Sounds);
-    OutbidSoundDropdown:SetText(Sounds[GL.Settings:get("GDKP.outbidSound")]);
+    OutbidSoundDropdown:SetText(GL.Settings:get("GDKP.outbidSound"));
     OutbidSoundDropdown:SetWidth(250);
     OutbidSoundDropdown:SetCallback("OnValueChanged", function()
         local value = OutbidSoundDropdown:GetValue();
@@ -80,7 +81,7 @@ function GDKP:draw(Parent)
         if (type(sound) == "string" and not GL:empty(sound)) then
             PlaySoundFile(sound);
 
-            GL.Settings:set("GDKP.outbidSound", value);
+            GL.Settings:set("GDKP.outbidSound", Sounds[value]);
         end
     end);
     Parent:AddChild(OutbidSoundDropdown);

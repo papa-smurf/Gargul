@@ -133,9 +133,11 @@ GL.Data.DefaultSettings = {
         minimumIncrement = 50,
         notifyIfBidTooLow = true,
         numberOfSecondsToCountdown = 5,
+        outbidSound = "Gargul: uh-oh",
         showBidWindow = true,
         showHistoryOnTooltip = true,
         showGoldDetailsWindow = true,
+        storeMinimumAndIncrementPerItem = true,
         time = 30,
         whisperGoldDetails = true,
 

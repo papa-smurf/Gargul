@@ -157,6 +157,10 @@ function GL:_init()
 
     -- Show the changelog window
     GL.Interface.Changelog:reportChanges();
+
+    -- Register sounds
+    local media = LibStub("LibSharedMedia-3.0")
+    media:Register("sound", "Gargul: uh-oh", "Interface/AddOns/".. self.name .."/Assets/Sounds/uh-oh.ogg");
 end
 
 --- Adds forwards compatibility
