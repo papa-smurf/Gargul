@@ -113,6 +113,7 @@ GL.Data.DefaultSettings = {
     GDKP = {
         addGoldToTradeWindow = true,
         announceAuctionStart = true,
+        announceCountdownInRW = true,
         announceBidsClosed = true,
         announceCountdownOnce = false,
         announceNewBid = false,

@@ -970,9 +970,14 @@ function Auction:start(CommMessage)
                 ) then
                     SecondsAnnounced[secondsLeft] = true;
 
+                    local chatType = "GROUP";
+                    if (GL.User.isInRaid and Settings:get("GDKP.announceCountdownInRW")) then
+                        chatType = "RAID_WARNING";
+                    end
+
                     GL:sendChatMessage(
                         string.format("%s seconds to bid", secondsLeft),
-                        "GROUP"
+                        chatType
                     );
 
                     if (GL.Settings:get("GDKP.announceCountdownOnce")) then

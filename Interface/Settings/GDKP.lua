@@ -81,6 +81,11 @@ function GDKP:draw(Parent)
             setting = "GDKP.announceCountdownOnce",
         },
         {
+            label = "Announce countdown in raid warning",
+            description = "Announce countdown in /rw instead of /ra",
+            setting = "GDKP.announceCountdownInRW",
+        },
+        {
             label = "Announce incoming bids",
             description = "Announce all accepted bids in group chat",
             setting = "GDKP.announceNewBid",
