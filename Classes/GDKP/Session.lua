@@ -67,6 +67,40 @@ function Session:_init()
     end);
 end
 
+--- Copper owed to player based on everything bought, earned, cut, etc. This is the bottom line for this session!
+--- The return value can be negative, in which case it's the player who owes you money
+---
+---@param player string
+---@param sessionID string
+---@return number
+function Session:copperOwedToPlayer(player, sessionID)
+    GL:debug("Session:owedToPlayer");
+
+    local Instance = self:byID(sessionID);
+    if (not Instance) then
+        return;
+    end
+
+    local GoldTrades = GL:tableGet(Instance, "GoldTrades." .. player, {
+        from = 0,
+        to = 0,
+    });
+
+    local playerCutInCopper = 0;
+    -- Only include the player cut if the current GDKP session is locked and ready for payout
+    if (Instance.lockedAt) then
+        playerCutInCopper = GL:tableGet(Instance, "Pot.Cuts." .. player, 0) * 10000;
+    end
+
+    local copperReceived = GoldTrades.from;
+    local copperGiven = GoldTrades.to;
+    local copperSpentByPlayer = self:goldSpentByPlayer(player, Instance.ID) * 10000;
+    local copperToReceive = copperSpentByPlayer - copperReceived;
+    local copperToGive = playerCutInCopper - copperToReceive - copperGiven;
+
+    return copperToGive;
+end
+
 function Session:tradeInitiated(Details)
     GL:debug("Session:tradeInitiated");
 

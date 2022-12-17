@@ -160,7 +160,7 @@ function Export:build()
         GameTooltip:SetOwner(HelpIconFrame, "ANCHOR_RIGHT");
         GameTooltip:SetText(string.format("Available values:\n\n%s\n%s\n\n%s",
             "@PLAYER",
-            "@GOLD",
+            "@CUT",
             "\\t is replaced by a tab"
         ));
         GameTooltip:Show();

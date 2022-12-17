@@ -711,7 +711,9 @@ function Auctioneer:refreshRollsTable()
         return;
     end
 
+    local row = 0;
     for _, Entry in pairs(Bids) do
+        row = row + 1;
         local bidder = Entry.Bidder.name;
         local class = Entry.Bidder.class;
         local priority = 1;
@@ -736,6 +738,10 @@ function Auctioneer:refreshRollsTable()
 
     BidsTable:SetData(BidTableData);
     BidsTable:SortData();
+
+    if (row > 0) then
+        BidsTable:SetSelection(row);
+    end
 end
 
 -- The item box contents changed

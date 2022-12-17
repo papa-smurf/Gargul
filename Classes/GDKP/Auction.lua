@@ -375,11 +375,11 @@ function Auction:sanitize(Instance)
 
     --[[ Auction.CreatedBy ]]
     if (type (Instance.CreatedBy.class) ~= "string"
-        or not Constants.Classes[Instance.CreatedBy.class]
+        --or not Constants.Classes[Instance.CreatedBy.class]
         or type (Instance.CreatedBy.name) ~= "string"
         or GL:empty(Instance.CreatedBy.name)
         or type (Instance.CreatedBy.race) ~= "string"
-        or not Constants.Races[Instance.CreatedBy.race]
+        --or not Constants.Races[Instance.CreatedBy.race]
         or type (Instance.CreatedBy.uuid) ~= "string"
         or not string.match(Instance.CreatedBy.uuid, "^Player%-[0-9]+%-[A-Z0-9]+$")
         or type (Instance.CreatedBy.realm) ~= "string"
@@ -487,11 +487,11 @@ function Auction:sanitize(Instance)
         if (type(Winner) ~= "table"
             or (not GL:empty(Winner.race) and (
                 type(Winner.race) ~= "string"
-                or not Constants.Races[Winner.race]
+                --or not Constants.Races[Winner.race]
             ))
             or (not GL:empty(Winner.class) and (
                 type(Winner.class) ~= "string"
-                or not Constants.Classes[Winner.class]
+                --or not Constants.Classes[Winner.class]
             ))
             or (not GL:empty(Winner.uuid) and (
                 type(Winner.uuid) ~= "string"
@@ -693,12 +693,6 @@ function Auction:move(auctionID, fromSessionID, toSessionID)
 
     GL:tableSet(ToSession, "Auctions." .. auctionID, Instance);
     GL:tableSet(FromSession, "Auctions." .. auctionID, nil);
-
-    --if (not GDKPSession:store(ToSession)
-    --    or GDKPSession:store(FromSession)
-    --) then
-    --    return false;
-    --end
 
     Events:fire("GL.GDKP_AUCTION_CHANGED", toSessionID, auctionID, Instance, Instance);
     Events:fire("GL.GDKP_AUCTION_MOVED", Instance, fromSessionID, toSessionID);

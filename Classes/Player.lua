@@ -141,17 +141,17 @@ function Player:classByName(playerName, default)
     end
 
     -- Attempt to fetch the player class
-    local _, playerClass = UnitClass(playerName);
+    local fileName = UnitClassBase(playerName);
 
     -- Player names can be stored for the entire session since
     -- it's impossible for them to change during runtime
-    if (type(playerClass) == "string"
-        and not GL:empty(playerClass)
+    if (type(fileName) == "string"
+        and not GL:empty(fileName)
     ) then
-        playerClass = string.lower(playerClass);
+        fileName = string.lower(fileName);
 
-        if (GL.Data.Constants.Classes[playerClass]) then
-            self.playerClassByName[playerName] = string.lower(playerClass);
+        if (GL.Data.Constants.UnitClasses[fileName]) then
+            self.playerClassByName[playerName] = string.lower(fileName);
         end
     end
 
@@ -169,7 +169,7 @@ function Player:cacheClass(playerName, class)
 
     class = string.lower(class);
 
-    if (not GL.Data.Constants.Classes[class]) then
+    if (GL:empty(class)) then
         return;
     end
 

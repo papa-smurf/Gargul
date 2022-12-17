@@ -558,17 +558,7 @@ function Overview:refresh()
         else
             if (player ~= GL.User.name) then
                 do
-                    local GoldTrades = GL:tableGet(Session, "GoldTrades." .. player, {
-                        from = 0,
-                        to = 0,
-                    });
-
-                    local playerCutInCopper = GL:tableGet(Session, "Pot.Cuts." .. player, 0) * 10000;
-                    local copperReceived = GoldTrades.from;
-                    local copperGiven = GoldTrades.to;
-                    local copperSpentByPlayer = GDKPSession:goldSpentByPlayer(player, Session.ID) * 10000;
-                    local copperToReceive = copperSpentByPlayer - copperReceived;
-                    local copperToGive = playerCutInCopper - copperToReceive - copperGiven;
+                    local copperToGive = GDKPSession:copperOwedToPlayer(player, Session.ID);
 
                     if (copperToGive > 0) then
                         nameText = string.format("    |c00F7922E(%sg)|r %s", copperToGive / 10000, player);
