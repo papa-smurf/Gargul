@@ -121,7 +121,87 @@ function GDKP:draw(Parent)
             description = "Announce all accepted bids in group chat",
             setting = "GDKP.announceNewBid",
         },
+        {
+            label = "Announce incoming bids in raid warning",
+            description = "Announce bids in /rw instead of /ra. Requires |c00967FD2Announce incoming bids|r to be enabled!|r",
+            setting = "GDKP.announceNewBidInRW",
+        },
+        {
+            label = "Remember minimum bid and increment for each item",
+            description = "If enabled, minimum and increment are remembered for each item. If not, the last minimum/increment you used will remain in place",
+            setting = "GDKP.storeMinimumAndIncrementPerItem",
+        },
     }, Parent);
+
+    Spacer = GL.AceGUI:Create("SimpleGroup");
+    Spacer:SetLayout("FILL");
+    Spacer:SetFullWidth(true);
+    Spacer:SetHeight(20);
+    Parent:AddChild(Spacer);
+
+    local DefaultMinimumBidLabel = GL.AceGUI:Create("Label");
+    DefaultMinimumBidLabel:SetText("|c00FFF569Set a default minimum bid for items that don't have a set minimum yet (only applies when |c00967FD2Remember minimum bid and increment for each item|r is enabled!|r");
+    DefaultMinimumBidLabel:SetFullWidth(true);
+    Parent:AddChild(DefaultMinimumBidLabel);
+
+    local DefaultMinimumBid = GL.AceGUI:Create("EditBox");
+    DefaultMinimumBid:DisableButton(true);
+    DefaultMinimumBid:SetHeight(20);
+    DefaultMinimumBid:SetFullWidth(true);
+    DefaultMinimumBid:SetText(GL.Settings:get("GDKP.defaultMinimumBid"));
+    DefaultMinimumBid:SetCallback("OnTextChanged", function (self)
+        local value = self:GetText();
+
+        if (type(value) ~= "string"
+            or GL:empty(value)
+        ) then
+            return;
+        end
+
+        value = tonumber(value);
+
+        if (not value or value < 1) then
+            return;
+        end
+
+        GL.Settings:set("GDKP.defaultMinimumBid", value);
+    end);
+    Parent:AddChild(DefaultMinimumBid);
+
+    Spacer = GL.AceGUI:Create("SimpleGroup");
+    Spacer:SetLayout("FILL");
+    Spacer:SetFullWidth(true);
+    Spacer:SetHeight(20);
+    Parent:AddChild(Spacer);
+
+    local DefaultIncrementLabel = GL.AceGUI:Create("Label");
+    DefaultIncrementLabel:SetText("|c00FFF569Set a default increment for items that don't have a set increment yet (only applies when |c00967FD2Remember minimum bid and increment for each item|r is enabled!|r");
+    DefaultIncrementLabel:SetFullWidth(true);
+    Parent:AddChild(DefaultIncrementLabel);
+
+    local DefaultIncrement = GL.AceGUI:Create("EditBox");
+    DefaultIncrement:DisableButton(true);
+    DefaultIncrement:SetHeight(20);
+    DefaultIncrement:SetFullWidth(true);
+    DefaultIncrement:SetText(GL.Settings:get("GDKP.defaultIncrement"));
+    DefaultIncrement:SetCallback("OnTextChanged", function (self)
+        local value = self:GetText();
+
+        if (type(value) ~= "string"
+                or GL:empty(value)
+        ) then
+            return;
+        end
+
+        value = tonumber(value);
+
+        if (not value or value < 1) then
+            return;
+        end
+
+        GL.Settings:set("GDKP.defaultIncrement", value);
+    end);
+    Parent:AddChild(DefaultIncrement);
 
     Spacer = GL.AceGUI:Create("SimpleGroup");
     Spacer:SetLayout("FILL");

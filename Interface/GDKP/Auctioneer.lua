@@ -128,6 +128,7 @@ function Auctioneer:draw(itemLink)
     MinimumBid:DisableButton(true);
     MinimumBid:SetHeight(20);
     MinimumBid:SetWidth(60);
+    MinimumBid:SetText(GL.Settings:get("GDKP.defaultMinimumBid"));
     FirstRow:AddChild(MinimumBid);
     Interface:set(self, "MinimumBid", MinimumBid);
 
@@ -141,7 +142,7 @@ function Auctioneer:draw(itemLink)
     MinimumIncrement:DisableButton(true);
     MinimumIncrement:SetHeight(20);
     MinimumIncrement:SetWidth(40);
-    MinimumIncrement:SetText(false or 50);
+    MinimumIncrement:SetText(GL.Settings:get("GDKP.defaultIncrement"));
     FirstRow:AddChild(MinimumIncrement);
     Interface:set(self, "MinimumIncrement", MinimumIncrement);
 
@@ -773,13 +774,16 @@ function Auctioneer:passItemLink(itemLink)
         return GL:warning("Invalid item provided");
     end
 
-    local PerItemSettings = Settings:get("GDKP.SettingsPerItem", {})[itemID] or {};
-    PerItemSettings.minimumBid = PerItemSettings.minimumBid or Settings:get("GDKP.minimumBid");
-    PerItemSettings.minimumIncrement = PerItemSettings.minimumIncrement or Settings:get("GDKP.minimumIncrement");
+    if (Settings:get("GDKP.storeMinimumAndIncrementPerItem")) then
+        local PerItemSettings = Settings:get("GDKP.SettingsPerItem", {})[itemID] or {};
+        PerItemSettings.minimumBid = PerItemSettings.minimumBid or Settings:get("GDKP.minimumBid");
+        PerItemSettings.minimumIncrement = PerItemSettings.minimumIncrement or Settings:get("GDKP.minimumIncrement");
+
+        Interface:get(self, "EditBox.MinimumBid"):SetText(PerItemSettings.minimumBid);
+        Interface:get(self, "EditBox.MinimumIncrement"):SetText(PerItemSettings.minimumIncrement);
+    end
 
     Interface:get(self, "EditBox.Item"):SetText(itemLink);
-    Interface:get(self, "EditBox.MinimumBid"):SetText(PerItemSettings.minimumBid);
-    Interface:get(self, "EditBox.MinimumIncrement"):SetText(PerItemSettings.minimumIncrement);
 
     return Auctioneer:update();
 end

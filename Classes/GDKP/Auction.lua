@@ -984,7 +984,10 @@ function Auction:start(CommMessage)
 
                     GL:sendChatMessage(
                         string.format("%s seconds to bid", secondsLeft),
-                        chatType
+                        chatType,
+                        nil,
+                        nil,
+                        false
                     );
 
                     if (GL.Settings:get("GDKP.announceCountdownOnce")) then
@@ -1324,7 +1327,12 @@ function Auction:processBid(event, message, bidder)
     end
 
     if (Settings:get("GDKP.announceNewBid")) then
-        GL:sendChatMessage(string.format("%s is the highest bidder (%sg)", BidEntry.Bidder.name, bid), "GROUP");
+        local chatType = "GROUP";
+        if (GL.User.isInRaid and Settings:get("GDKP.announceNewBidInRW")) then
+            chatType = "RAID_WARNING";
+        end
+
+        GL:sendChatMessage(string.format("%s is the highest bidder (%sg)", BidEntry.Bidder.name, bid), chatType, nil, nil, false);
     end
 
     tinsert(self.Current.Bids, BidEntry);
