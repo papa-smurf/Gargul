@@ -12,6 +12,13 @@ GL.Interface.Changelog = {
 
     History = {
         {
+            version = "5.0.3",
+            date = "December 17th, 2022",
+            Changes = {
+                "Happy Holidays everyone! May your loot be plenty!",
+            },
+        },
+        {
             version = "4.12.14",
             date = "December 1st, 2022",
             Changes = {
@@ -277,6 +284,15 @@ function Changelog:draw()
     GL.Interface:set(self, "Window", Window);
 
     Window:SetPoint(GL.Interface:getPosition("Changelog"));
+
+    --[[ CHRISTMAS HOLIDAYS SANTA HAT ]]
+    local SantaHat = GL.AceGUI:Create("Icon");
+    SantaHat:SetWidth(83);
+    SantaHat:SetHeight(81);
+    SantaHat:SetImage("Interface/AddOns/Gargul/Assets/Icons/santa_hat");
+    SantaHat.frame:SetParent(Window.frame);
+    SantaHat.frame:SetPoint("TOPLEFT", Window.frame, "TOPLEFT", -26, 36);
+    SantaHat.frame:Show();
 
     local ScrollFrameHolder = GL.AceGUI:Create("ScrollFrame");
     ScrollFrameHolder:SetLayout("Fill");
