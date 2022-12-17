@@ -59,7 +59,7 @@ function ShortcutKeysLegend:draw()
     DescriptionLabel:SetFontObject(_G["GameFontNormalSmall"]);
     DescriptionLabel:SetText(string.format(
         "Gargul Item Hotkeys\n\nRoll out: |c00a79eff%s|r\nAward: |c00a79eff%s|r\nDisenchant: |c00a79eff%s|r\n\n\n-- Right-click to disable this window --",
-        GL.Settings:get("ShortcutKeys.rollOff"),
+        GL.Settings:get("ShortcutKeys.rollOffOrAuction"),
         GL.Settings:get("ShortcutKeys.award"),
         GL.Settings:get("ShortcutKeys.disenchant")
     ));

@@ -1,8 +1,8 @@
 ## Interface: 30400
-## Title: Gargul |c00967FD2v4.12.17|r
+## Title: Gargul |c00967FD2v5.0.3|r
 ## Author: Zhorax - Firemaw
 ## Notes: Loot addon that supports softres sr, thatsmybis tmb, auto looting, loot priorities, plus one tracking and much more
-## Version: 4.12.17
+## Version: 5.0.3
 ## DefaultState: enabled
 ## SavedVariables: GargulDB
 
@@ -16,6 +16,7 @@ bootstrap.lua
 Data/Constants.lua
 Data/DefaultSettings.lua
 Data/ItemLinks.lua
+Data/ArtTextureID.lua
 
 # Class objects
 Classes/Helpers.lua
@@ -27,6 +28,9 @@ Classes/DB.lua
 Classes/Settings.lua
 Classes/Profiler.lua
 Classes/SoftRes.lua
+Classes/GDKP/Session.lua
+Classes/GDKP/Auction.lua
+Classes/GDKP/Pot.lua
 Classes/PlusOnes.lua
 Classes/TMB.lua
 Classes/Exporter.lua
@@ -63,6 +67,7 @@ Interface/Settings/PackMule.lua
 Interface/Settings/PackMuleRules.lua
 Interface/Settings/PackMuleIgnores.lua
 Interface/Settings/TMB.lua
+Interface/Settings/GDKP.lua
 Interface/Settings/LootTradeTimers.lua
 Interface/Settings/Rolling.lua
 Interface/Settings/RollTracking.lua
@@ -78,6 +83,24 @@ Interface/Settings/MasterLooting.lua
 Interface/Settings/SlashCommands.lua
 Interface/SoftRes/Importer.lua
 Interface/SoftRes/Overview.lua
+Interface/ActionSelector.lua
+Interface/GDKP/Auctioneer.lua
+Interface/GDKP/Bidder.lua
+Interface/GDKP/Overview.lua
+Interface/GDKP/Export.lua
+Interface/GDKP/LedgerList.lua
+Interface/GDKP/Distribute/Overview.lua
+Interface/GDKP/Distribute/Import.lua
+Interface/GDKP/Distribute/Export.lua
+Interface/GDKP/Distribute/CreateMutator.lua
+Interface/GDKP/Distribute/EditMutator.lua
+Interface/GDKP/Distribute/AddRaider.lua
+Interface/GDKP/Distribute/EditRaider.lua
+Interface/GDKP/CreateSession.lua
+Interface/GDKP/EditSession.lua
+Interface/GDKP/AddGold.lua
+Interface/GDKP/EditAuction.lua
+Interface/GDKP/AuctionDetails.lua
 Interface/TMB/Importer.lua
 Interface/TMB/Overview.lua
 Interface/PlusOnes/OverView.lua
@@ -95,13 +118,17 @@ Interface/Dialogs/ConfirmWithSingleInputDialog.lua
 Interface/Dialogs/ConfirmWithSingleInputDialogWidget.lua
 Interface/Dialogs/IncomingBoostedRollDataDialog.lua
 Interface/Dialogs/IncomingBoostedRollDataDialogWidget.lua
-Interface/Dialogs/PopupDialog.lua
-Interface/Dialogs/PopupDialogWidget.lua
 Interface/Dialogs/HyperlinkDialog.lua
 Interface/Dialogs/HyperlinkDialogWidget.lua
 Interface/Dialogs/MasterLooterDialog.lua
+Interface/Dialogs/PopupDialog.lua
+Interface/Dialogs/PopupDialogWidget.lua
 Interface/ReminderToAssignLootUsingGargul.lua
 Interface/ShortcutKeysLegend.lua
+
+# Alerts
+Interface\Alerts.lua
+Interface\Alerts.xml
 
 # Test classes
 Test.lua

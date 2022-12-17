@@ -97,7 +97,7 @@ function Importer:close()
     Settings:set("UI.Importer.Position.offsetY", offsetY);
 
     -- Clear the frame and its widgets
-    AceGUI:Release(Window);
+    GL.Interface:release(Window);
     self.isVisible = false;
 end
 

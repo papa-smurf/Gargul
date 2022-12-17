@@ -75,7 +75,6 @@ function TimeLeft:draw()
 
     local Window = CreateFrame("Frame", "GARGUL_TIMELEFT_WINDOW", UIParent, Frame);
     self.Window = Window;
-
     Window:Show();
     Window:SetSize(240, 16);
     Window:SetPoint(GL.Interface:getPosition("TimeLeft"));
@@ -125,7 +124,7 @@ function TimeLeft:draw()
     Window.texture = Texture;
     GL.Interface:set(self, "Window", Window);
 
-    local howToRollText = string.format("%s to roll out loot!", GL.Settings:get("ShortcutKeys.rollOff"));
+    local howToRollText = string.format("%s to roll out loot!", GL.Settings:get("ShortcutKeys.rollOffOrAuction"));
     local howToAwardText = string.format("%s to award loot!", GL.Settings:get("ShortcutKeys.award"));
     local Title = Window:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall");
     Title:SetPoint("TOPLEFT", 3, -3);
@@ -230,8 +229,8 @@ function TimeLeft:createHotkeyExplanationWindow()
 
     local Text = GL.AceGUI:Create("Label");
     Text:SetText(string.format(
-        "\nRoll: |c00a79eff%s|r\nAward: |c00a79eff%s|r\nDisenchant: |c00a79eff%s|r",
-        GL.Settings:get("ShortcutKeys.rollOff"),
+        "\nRoll or auction: |c00a79eff%s|r\nAward: |c00a79eff%s|r\nDisenchant: |c00a79eff%s|r",
+        GL.Settings:get("ShortcutKeys.rollOffOrAuction"),
         GL.Settings:get("ShortcutKeys.award"),
         GL.Settings:get("ShortcutKeys.disenchant")
     ));
@@ -306,7 +305,7 @@ function TimeLeft:createBroadcastWindow()
 
             barNumber = barNumber + 1;
             GL.Ace:ScheduleTimer(function ()
-                broadcastBars(barNumber);
+                broadcastBars();
             end, .5);
         end;
 
@@ -483,10 +482,11 @@ function TimeLeft:refreshBars()
                 local unreceivedCount = 0;
                 local deUnreceivedCount = 0;
                 for _, line in pairs(GL.AwardedLoot:tooltipLines(itemLink) or {}) do
-                    if (string.match(line, "|de|") and string.match(line, "(item given: no)")) then
+                    line = string.lower(line);
+                    if (string.match(line, "|de|") and string.match(line, "given: no")) then
                         deUnreceived = true;
                         deUnreceivedCount = deUnreceivedCount + 1
-                    elseif (string.match(line, "(item given: no)")) then
+                    elseif (string.match(line, "given: no")) then
                         unreceived = true;
                         unreceivedCount = unreceivedCount + 1
                     end
@@ -623,8 +623,17 @@ function TimeLeft:refreshBars()
 
             local keyPressIdentifier = GL.Events:getClickCombination(mouseButtonPressed);
 
+            -- Open the action selection window
+            if (keyPressIdentifier == GL.Settings:get("ShortcutKeys.rollOffOrAuction")) then
+                if (GL.GDKP.Session:activeSessionID()
+                    and not GL.GDKP.Session:getActive().lockedAt
+                ) then
+                    GL.Interface.GDKP.Auctioneer:draw(BagItem.itemLink);
+                else
+                    GL.MasterLooterUI:draw(BagItem.itemLink);
+                end
             -- Open the roll window
-            if (keyPressIdentifier == GL.Settings:get("ShortcutKeys.rollOff")) then
+            elseif (keyPressIdentifier == GL.Settings:get("ShortcutKeys.rollOff")) then
                 GL.MasterLooterUI:draw(BagItem.itemLink);
 
             -- Open the award window
@@ -664,6 +673,15 @@ function TimeLeft:refreshBars()
             GameTooltip:SetHyperlink(BagItem.itemLink);
             GameTooltip:Show();
         end);
+
+        -- Make sure the bars are refreshed when they run out
+        local oldStop = TimerBar.Stop;
+        TimerBar.Stop = function ()
+            pcall(function ()
+                oldStop(TimerBar);
+            end);
+            self:refreshBars();
+        end;
 
         TimerBar:Start(7200); -- Default trade duration is two hours
         tinsert(self.Bars, TimerBar);

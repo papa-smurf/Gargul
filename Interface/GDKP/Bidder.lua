@@ -1,11 +1,41 @@
 ---@type GL
 local _, GL = ...;
 
+---@type GDKPAuction
+local GDKPAuction = GL.GDKP.Auction;
+
 ---@class GDKPBidderInterface
 GL:tableSet(GL, "Interface.GDKP.Bidder", {
     Window = nil,
+    TimerBar = nil,
 });
 local Bidder = GL.Interface.GDKP.Bidder; ---@type GDKPBidderInterface
+
+--- Adjust the duration shown on the timer bar
+---@param time number
+---@return boolean
+function Bidder:changeDuration(time)
+    GL:debug("Bidder:show");
+
+    if (not self.Window
+        or not self.Window:IsShown()
+        or not self.TimerBar
+        or not self.TimerBar.SetDuration
+    ) then
+        return false;
+    end
+
+    self.TimerBar.exp = self.TimerBar.exp + time;
+    if (true) then return true; end
+
+    --self.TimerBar:SetDuration(time);
+    self.TimerBar:Stop();
+    self.TimerBar:Hide();
+
+    self:drawCountdownBar(time, GDKP.Auction.Current.itemLink, GDKP.Auction.Current.itemIcon, GDKP.Auction.Current.duration);
+
+    return true;
+end
 
 ---@return boolean
 function Bidder:show(...)
@@ -30,7 +60,7 @@ function Bidder:draw(time, itemLink, itemIcon)
     local Window = CreateFrame("Frame", "GARGUL_GDKP_BIDDER_WINDOW", UIParent, Frame);
     Window:Hide();
     Window:SetSize(300, 96);
-    Window:SetPoint(GL.Interface:getPosition("Roller"));
+    Window:SetPoint(GL.Interface:getPosition("Bidder"));
 
     Window:SetMovable(true);
     Window:EnableMouse(true);
@@ -40,7 +70,7 @@ function Bidder:draw(time, itemLink, itemIcon)
     Window:SetScript("OnDragStart", Window.StartMoving);
     Window:SetScript("OnDragStop", function()
         Window:StopMovingOrSizing();
-        GL.Interface:storePosition(Window, "Roller");
+        GL.Interface:storePosition(Window, "Bidder");
     end);
     Window:SetScript("OnMouseDown", function (_, button)
         -- Close the roll window on right-click
@@ -82,12 +112,29 @@ function Bidder:draw(time, itemLink, itemIcon)
     MinimumButton:SetNormalFontObject("GameFontNormal");
     MinimumButton:SetHighlightFontObject("GameFontNormal");
     MinimumButton:SetScript("OnClick", function ()
-        BidInput:SetText(GL.GDKP:lowestValidBid());
+        BidInput:SetText(GDKPAuction:lowestValidBid());
         BidInput:SetFocus();
     end);
 
     BidButtonClick = function ()
-        GL.GDKP:bid(BidInput:GetText());
+        if (not GDKPAuction:bid(BidInput:GetText())) then
+            local BidDeniedNotification = GL.AceGUI:Create("InlineGroup");
+            BidDeniedNotification:SetLayout("Fill");
+            BidDeniedNotification:SetWidth(150);
+            BidDeniedNotification:SetHeight(50);
+            BidDeniedNotification.frame:SetParent(Window);
+            BidDeniedNotification.frame:SetPoint("BOTTOMLEFT", Window, "TOPLEFT", 0, 4);
+
+            local Text = GL.AceGUI:Create("Label");
+            Text:SetText("|c00BE3333Bid denied!|r");
+            BidDeniedNotification:AddChild(Text);
+            Text:SetJustifyH("MIDDLE");
+
+            self.RollAcceptedTimer = GL.Ace:ScheduleTimer(function ()
+                BidDeniedNotification.frame:Hide();
+            end, 2);
+        end
+
         BidInput:SetText("");
         BidInput:ClearFocus();
     end;
@@ -142,7 +189,7 @@ function Bidder:draw(time, itemLink, itemIcon)
     PassButton:SetNormalFontObject("GameFontNormal");
     PassButton:SetHighlightFontObject("GameFontNormal");
     PassButton:SetScript("OnClick", function ()
-        GL:dump("PASS!");
+        self:hide();
     end);
 
     self:refresh();
@@ -151,30 +198,26 @@ function Bidder:draw(time, itemLink, itemIcon)
 end
 
 function Bidder:refresh()
+    GL:debug("Bidder:refresh");
+
     local TopBidderLabel = GL.Interface:get(self, "Frame.TopBidder");
 
     if (not TopBidderLabel) then
-GL:error("NO TOP BIDDER LABEL");
         return;
     end
 
-    local TopBid = GL:tableGet(GL.GDKP, "CurrentAuction.TopBid", {});
-GL:printTable(TopBid);
+    local TopBid = GL:tableGet(GDKPAuction, "Current.TopBid", {});
+
     -- The given bids seems to be invalid somehow? Better safe than LUA error!
     if (not TopBid or not TopBid.bid) then
-GL:error("INVALID BID IN BIDDER:REFRESH");
         return;
     end
 
-GL:error("ALL GOOD, SHOW TEXT!");
     -- We're the highest bidder, NICE!
     if (string.lower(TopBid.Bidder.name) == string.lower(GL.User.name)) then
-        TopBidderLabel:SetText(string.format("Top bidder: |c001Eff00%s|r with %s|c00FFF569g|r",
-            "You",
-            TopBid.bid
-        ));
+        TopBidderLabel:SetText(string.format("|c001Eff00Top bidder: you with %sg|r", TopBid.bid));
     else
-        TopBidderLabel:SetText(string.format("Top bidder: |c00%s%s|r with %s|c00BE3333g|r",
+        TopBidderLabel:SetText(string.format("|c00BE3333Top bidder: |c00%s%s|r with %sg|r",
             GL:classHexColor(TopBid.Bidder.class),
             TopBid.Bidder.name,
             TopBid.bid
@@ -188,7 +231,7 @@ end
 ---@param itemLink string
 ---@param itemIcon string
 ---@return void
-function Bidder:drawCountdownBar(time, itemLink, itemIcon)
+function Bidder:drawCountdownBar(time, itemLink, itemIcon, maxValue)
     GL:debug("Bidder:drawCountdownBar");
 
     -- This shouldn't be possible but you never know!
@@ -201,7 +244,6 @@ function Bidder:drawCountdownBar(time, itemLink, itemIcon)
         300,
         24
     );
-
     TimerBar:SetParent(self.Window);
     TimerBar:SetPoint("TOP", self.Window, "TOP");
     TimerBar.candyBarLabel:SetFont("Fonts\\ARIALN.ttf", 13, "OUTLINE");
@@ -236,7 +278,7 @@ function Bidder:drawCountdownBar(time, itemLink, itemIcon)
 
     TimerBar:SetIcon(itemIcon);
     TimerBar:Set("type", "ROLLER_UI_COUNTDOWN");
-    TimerBar:Start();
+    TimerBar:Start(maxValue);
 
     -- Show a gametooltip for the item up for roll
     -- when hovering over the progress bar
@@ -245,6 +287,9 @@ function Bidder:drawCountdownBar(time, itemLink, itemIcon)
         GameTooltip:SetHyperlink(itemLink);
         GameTooltip:Show();
     end);
+
+    TimerBar:SetDuration(5);
+    self.TimerBar = TimerBar;
 end
 
 ---@return void

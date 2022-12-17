@@ -5,7 +5,7 @@ local Overview = GL.Interface.Settings.Overview; ---@type SettingsOverview
 
 ---@class ShortcutKeysSettings
 GL.Interface.Settings.ShortcutKeys = {
-    description = "By default Gargul offers 3 shortcut keys that you can use when clicking items in your bag, an enemy's loot window or the trade timers. These hotkeys are disabled when the auction house, mailbox or merchant (shop) windows are active!",
+    description = "|cffC41E3AHotkeys are disabled when auction house, mail, shop or bank windows are active!|r",
 };
 local ShortcutKeys = GL.Interface.Settings.ShortcutKeys; ---@type ShortcutKeysSettings
 
@@ -43,8 +43,7 @@ function ShortcutKeys:draw(Parent)
             setting = "ShortcutKeys.showLegend",
         },
         {
-            label = "Only when in a group",
-            description = "Hotkeys should only work when I'm in a group",
+            label = "Hotkeys should only work when I'm in a group",
             setting = "ShortcutKeys.onlyInGroup",
         },
     }
@@ -57,22 +56,50 @@ function ShortcutKeys:draw(Parent)
     HorizontalSpacer:SetHeight(10);
     Parent:AddChild(HorizontalSpacer);
 
-    local RollOffLabel = AceGUI:Create("Label");
-    RollOffLabel:SetText("Set the hotkey for opening the master loot window where you can start a roll (default alt+click)");
-    RollOffLabel:SetColor(1, .95686, .40784);
-    RollOffLabel:SetHeight(20);
-    RollOffLabel:SetFullWidth(true);
-    Parent:AddChild(RollOffLabel);
+    --[[ ROLLOFF OR AUCTION ]]
 
-    local RollOffHotkey = AceGUI:Create("Dropdown");
-    RollOffHotkey:SetValue(GL.Settings:get("ShortcutKeys.rollOff"));
-    RollOffHotkey:SetList(DropDownItems, ItemOrder);
-    RollOffHotkey:SetText(DropDownItems[GL.Settings:get("ShortcutKeys.rollOff")]);
-    RollOffHotkey:SetWidth(250);
-    RollOffHotkey:SetCallback("OnValueChanged", function()
-        GL.Settings:set("ShortcutKeys.rollOff", RollOffHotkey:GetValue());
+    local HelpIcon = AceGUI:Create("Icon");
+    HelpIcon:SetWidth(24);
+    HelpIcon:SetHeight(24);
+    HelpIcon:SetImageSize(12, 12);
+    HelpIcon:SetImage("interface/friendsframe/informationicon");
+    Parent:AddChild(HelpIcon);
+
+    HelpIcon:SetCallback("OnEnter", function()
+        GameTooltip:SetOwner(HelpIcon.frame, "ANCHOR_RIGHT");
+        GameTooltip:AddLine(" ");
+        GameTooltip:AddLine("If you own an active GDKP session then the auction window will be shown");
+        GameTooltip:AddLine("If not then the roll out window will be shown instead");
+        GameTooltip:AddLine(" ");
+        GameTooltip:Show();
     end);
-    Parent:AddChild(RollOffHotkey);
+
+    HelpIcon:SetCallback("OnLeave", function()
+        GameTooltip:Hide();
+    end);
+
+    local RollOffOrAuctionLabel = AceGUI:Create("Label");
+    RollOffOrAuctionLabel:SetText("Roll out or auction an item (default alt+click)");
+    RollOffOrAuctionLabel:SetColor(1, .95686, .40784);
+    RollOffOrAuctionLabel:SetHeight(20);
+    RollOffOrAuctionLabel:SetWidth(240);
+    Parent:AddChild(RollOffOrAuctionLabel);
+
+    HorizontalSpacer = AceGUI:Create("SimpleGroup");
+    HorizontalSpacer:SetLayout("FILL");
+    HorizontalSpacer:SetFullWidth(true);
+    HorizontalSpacer:SetHeight(1);
+    Parent:AddChild(HorizontalSpacer);
+
+    local RollOffOrAuctionHotkey = AceGUI:Create("Dropdown");
+    RollOffOrAuctionHotkey:SetValue(GL.Settings:get("ShortcutKeys.rollOffOrAuction"));
+    RollOffOrAuctionHotkey:SetList(DropDownItems, ItemOrder);
+    RollOffOrAuctionHotkey:SetText(DropDownItems[GL.Settings:get("ShortcutKeys.rollOffOrAuction")]);
+    RollOffOrAuctionHotkey:SetWidth(250);
+    RollOffOrAuctionHotkey:SetCallback("OnValueChanged", function()
+        GL.Settings:set("ShortcutKeys.rollOffOrAuction", RollOffOrAuctionHotkey:GetValue());
+    end);
+    Parent:AddChild(RollOffOrAuctionHotkey);
 
     HorizontalSpacer = AceGUI:Create("SimpleGroup");
     HorizontalSpacer:SetLayout("FILL");
@@ -80,8 +107,10 @@ function ShortcutKeys:draw(Parent)
     HorizontalSpacer:SetHeight(20);
     Parent:AddChild(HorizontalSpacer);
 
+    --[[ AWARD ]]
+
     local AwardLabel = AceGUI:Create("Label");
-    AwardLabel:SetText("Set the hotkey for opening the item award window (default alt+shift+click)");
+    AwardLabel:SetText("Award an item (default alt+shift+click)");
     AwardLabel:SetColor(1, .95686, .40784);
     AwardLabel:SetHeight(20);
     AwardLabel:SetFullWidth(true);
@@ -103,8 +132,10 @@ function ShortcutKeys:draw(Parent)
     HorizontalSpacer:SetHeight(20);
     Parent:AddChild(HorizontalSpacer);
 
+    --[[ DISENCHANT ]]
+
     local DisenchantLabel = AceGUI:Create("Label");
-    DisenchantLabel:SetText("Set the hotkey for disenchanting an item from an enemy's loot window (default ctrl+shift+click)");
+    DisenchantLabel:SetText("Disenchant an item (default ctrl+shift+click)");
     DisenchantLabel:SetColor(1, .95686, .40784);
     DisenchantLabel:SetHeight(20);
     DisenchantLabel:SetFullWidth(true);
@@ -119,6 +150,56 @@ function ShortcutKeys:draw(Parent)
         GL.Settings:set("ShortcutKeys.disenchant", DisenchantHotkey:GetValue());
     end);
     Parent:AddChild(DisenchantHotkey);
+
+    HorizontalSpacer = AceGUI:Create("SimpleGroup");
+    HorizontalSpacer:SetLayout("FILL");
+    HorizontalSpacer:SetFullWidth(true);
+    HorizontalSpacer:SetHeight(20);
+    Parent:AddChild(HorizontalSpacer);
+
+    --[[ ROLLOFF ]]
+
+    local RollOffLabel = AceGUI:Create("Label");
+    RollOffLabel:SetText("Dedicated roll out hotkey (default disabled)");
+    RollOffLabel:SetColor(1, .95686, .40784);
+    RollOffLabel:SetHeight(20);
+    RollOffLabel:SetFullWidth(true);
+    Parent:AddChild(RollOffLabel);
+
+    local RollOffHotkey = AceGUI:Create("Dropdown");
+    RollOffHotkey:SetValue(GL.Settings:get("ShortcutKeys.rollOff"));
+    RollOffHotkey:SetList(DropDownItems, ItemOrder);
+    RollOffHotkey:SetText(DropDownItems[GL.Settings:get("ShortcutKeys.rollOff")]);
+    RollOffHotkey:SetWidth(250);
+    RollOffHotkey:SetCallback("OnValueChanged", function()
+        GL.Settings:set("ShortcutKeys.rollOff", RollOffHotkey:GetValue());
+    end);
+    Parent:AddChild(RollOffHotkey);
+
+    HorizontalSpacer = AceGUI:Create("SimpleGroup");
+    HorizontalSpacer:SetLayout("FILL");
+    HorizontalSpacer:SetFullWidth(true);
+    HorizontalSpacer:SetHeight(20);
+    Parent:AddChild(HorizontalSpacer);
+
+    --[[ ROLLOFF ]]
+
+    local AuctionLabel = AceGUI:Create("Label");
+    AuctionLabel:SetText("Dedicated auction off hotkey (default disabled)");
+    AuctionLabel:SetColor(1, .95686, .40784);
+    AuctionLabel:SetHeight(20);
+    AuctionLabel:SetFullWidth(true);
+    Parent:AddChild(AuctionLabel);
+
+    local AuctionHotkey = AceGUI:Create("Dropdown");
+    AuctionHotkey:SetValue(GL.Settings:get("ShortcutKeys.auction"));
+    AuctionHotkey:SetList(DropDownItems, ItemOrder);
+    AuctionHotkey:SetText(DropDownItems[GL.Settings:get("ShortcutKeys.auction")]);
+    AuctionHotkey:SetWidth(250);
+    AuctionHotkey:SetCallback("OnValueChanged", function()
+        GL.Settings:set("ShortcutKeys.auction", AuctionHotkey:GetValue());
+    end);
+    Parent:AddChild(AuctionHotkey);
 end
 
 GL:debug("Interface/Settings/ShortcutKeys.lua");
