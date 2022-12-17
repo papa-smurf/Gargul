@@ -229,8 +229,8 @@ function TimeLeft:createHotkeyExplanationWindow()
 
     local Text = GL.AceGUI:Create("Label");
     Text:SetText(string.format(
-        "\nRoll: |c00a79eff%s|r\nAward: |c00a79eff%s|r\nDisenchant: |c00a79eff%s|r",
-        GL.Settings:get("ShortcutKeys.rollOff"),
+        "\nRoll or auction: |c00a79eff%s|r\nAward: |c00a79eff%s|r\nDisenchant: |c00a79eff%s|r",
+        GL.Settings:get("ShortcutKeys.rollOffOrAuction"),
         GL.Settings:get("ShortcutKeys.award"),
         GL.Settings:get("ShortcutKeys.disenchant")
     ));
@@ -632,7 +632,7 @@ function TimeLeft:refreshBars()
                 else
                     GL.MasterLooterUI:draw(BagItem.itemLink);
                 end
-                -- Open the roll window
+            -- Open the roll window
             elseif (keyPressIdentifier == GL.Settings:get("ShortcutKeys.rollOff")) then
                 GL.MasterLooterUI:draw(BagItem.itemLink);
 
@@ -673,6 +673,15 @@ function TimeLeft:refreshBars()
             GameTooltip:SetHyperlink(BagItem.itemLink);
             GameTooltip:Show();
         end);
+
+        -- Make sure the bars are refreshed when they run out
+        local oldStop = TimerBar.Stop;
+        TimerBar.Stop = function ()
+            pcall(function ()
+                oldStop(TimerBar);
+            end);
+            self:refreshBars();
+        end;
 
         TimerBar:Start(7200); -- Default trade duration is two hours
         tinsert(self.Bars, TimerBar);
