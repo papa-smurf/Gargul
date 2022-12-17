@@ -29,10 +29,6 @@ BuffInspector.Widgets = {
 function BuffInspector:inspect(SpellIDs)
     GL:debug("BuffInspector:inspect");
 
-    if (not GL.User.isInGroup) then
-        return GL:error("You're not in a group");
-    end
-
     SpellIDs = GL:strSplit(SpellIDs, ",");
     SpellIDs = GL:tableSlice(SpellIDs, 8); -- inspect supports up to 8 spell ids
 
@@ -193,7 +189,7 @@ function BuffInspector:displayInspectionResults(Buffs, Players)
             Reports = {},
         };
 
-        AceGUI:Release(widget);
+        GL.Interface:release(widget);
     end);
     ResultFrame:SetTitle("Gargul v" .. GL.version);
     ResultFrame:SetStatusText("Addon v" .. GL.version);

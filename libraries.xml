@@ -101,4 +101,9 @@
     LibDBIcon-1.0 is a small library you can throw in your LDB addon that will create a small minimap icon for you and nothing more.
     -->
     <Include file="Libs\LibDBIcon-1.0\LibDBIcon-1.0\LibDBIcon-1.0.lua" />
+
+    <!--
+    LibSharedMedia-3.0: Shared handling of media data (fonts, sounds, textures, ...) between addons.
+    -->
+    <Include file="Libs\LibSharedMedia-3.0\lib.xml"/>
 </Ui>

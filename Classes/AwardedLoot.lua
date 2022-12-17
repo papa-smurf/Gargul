@@ -1,19 +1,18 @@
---[[
-    This class lets the master looter keep track of
-	who was awarded what item. This is especially useful
-	for master looters who bring items with them and do
-	the rolling along the way.
-]]
-
 local _, GL = ...;
+
+---@type Data
+local CommActions = GL.Data.Constants.Comm.Actions;
+
+---@type DB
+local DB = GL.DB;
 
 ---@class AwardedLoot
 GL.AwardedLoot = {
     _initialized = false,
 };
 
-local AwardedLoot = GL.AwardedLoot; ---@type AwardedLoot
-local CommActions = GL.Data.Constants.Comm.Actions;
+---@type AwardedLoot
+local AwardedLoot = GL.AwardedLoot;
 
 ---@return void
 function AwardedLoot:_init()
@@ -60,7 +59,7 @@ function AwardedLoot:tooltipLines(itemLink)
     local loadItemsGTE = math.min(fiveHoursAgo, GL.loadedOn);
     local winnersAvailable = false;
     local Lines = { string.format("\n|c00efb8cd%s|r", "Awarded To") };
-    for _, Loot in pairs(GL.DB.AwardHistory) do
+    for _, Loot in pairs(DB:get("AwardHistory")) do
         (function ()
             -- loadItemsGTE will equal five hours, or however long the players
             -- current playsession is ongoing (whichever is longest)
@@ -70,28 +69,32 @@ function AwardedLoot:tooltipLines(itemLink)
                 return;
             end
 
+            local Details = {};
+
             local winner = string.lower(GL:stripRealm(Loot.awardedTo));
-            local receivedString = " (item given: yes)";
-            if (not Loot.received) then
-                receivedString = " (item given: no)";
-            end
 
-            local OSString = "";
             if (Loot.OS) then
-                OSString = " (OS)"
+                tinsert(Details, "OS");
             end
 
-            local BRString = "";
             if (GL:higherThanZero(Loot.BRCost)) then
-                BRString = string.format(" (BR: %s)", Loot.BRCost);
+                tinsert(Details, string.format("BR: %s", Loot.BRCost));
             end
 
-            local line = string.format("    |c00%s%s|r%s%s%s",
+            if (GL:higherThanZero(Loot.GDKPCost)) then
+                tinsert(Details, string.format("Price: %sg", Loot.GDKPCost));
+            end
+
+            local receivedString = "Given: yes";
+            if (not Loot.received) then
+                receivedString = "Given: no";
+            end
+            tinsert(Details, receivedString);
+
+            local line = string.format("    |c00%s%s|r | %s",
                 GL:classHexColor(GL.Player:classByName(winner, 0), GL.Data.Constants.disabledTextColor),
                 GL:capitalize(winner),
-                OSString,
-                BRString,
-                receivedString
+                table.concat(Details, " | ")
             );
             tinsert(Lines, line);
             winnersAvailable = true;
@@ -169,12 +172,11 @@ end
 function AwardedLoot:editWinner(checksum, winner, announce)
     GL:debug("AwardedLoot:editWinner");
 
-    -- We don't know this entry
-    if (not GL.DB.AwardHistory[checksum]) then
+    local AwardEntry = DB:get("AwardHistory." .. checksum);
+    if (not AwardEntry) then
         return;
     end
 
-    local AwardEntry = GL.DB.AwardHistory[checksum];
     local originalWinner = string.lower(GL:stripRealm(AwardEntry.awardedTo));
 
     if (GL.isEra and not strfind(winner, "-")) then
@@ -223,6 +225,12 @@ function AwardedLoot:editWinner(checksum, winner, announce)
                 AwardEntry.itemLink,
                 winner,
                 AwardEntry.BRCost
+            );
+        elseif (AwardEntry.GDKPCost and AwardEntry.GDKPCost > 0) then
+            awardMessage = string.format("%s was awarded to %s for %sg. Congrats!",
+                AwardEntry.itemLink,
+                winner,
+                AwardEntry.GDKPCost
             );
         else
             awardMessage = string.format("%s was awarded to %s. Congrats!",
@@ -287,7 +295,7 @@ end
 ---@param isOS boolean|nil
 ---@param BRCost number|nil
 ---@param GDKPCost number|nil
----@return void
+---@return void|string
 function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, GDKPCost, Rolls)
     GL:debug("AwardedLoot:addWinner");
 
@@ -306,19 +314,22 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, G
     if (type(winner) ~= "string"
         or GL:empty(winner)
     ) then
-        return GL:debug("Invalid winner provided for AwardedLoot:addWinner");
+        GL:debug("Invalid winner provided for AwardedLoot:addWinner");
+        return false;
     end
 
     if (type(itemLink) ~= "string"
         or GL:empty(itemLink)
     ) then
-        return GL:debug("Invalid itemLink provided for AwardedLoot:addWinner");
+        GL:debug("Invalid itemLink provided for AwardedLoot:addWinner");
+        return false;
     end
 
     local itemID = GL:getItemIDFromLink(itemLink);
 
     if (not itemID) then
-        return GL:debug("Invalid itemLink provided for AwardedLoot:addWinner");
+        GL:debug("Invalid itemLink provided for AwardedLoot:addWinner");
+        return false;
     end
 
     if (GL.isEra and not strfind(winner, "-")) then
@@ -333,7 +344,8 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, G
             or type(month) ~= "string" or GL:empty(month)
             or type(day) ~= "string" or GL:empty(day)
         ) then
-            return GL:error(string.format("Unknown date format '%s' expecting yy-m-d", date));
+            GL:error(string.format("Unknown date format '%s' expecting yy-m-d", date));
+            return false;
         end
 
         if (string.len(year) == 2) then
@@ -354,8 +366,9 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, G
         announce = true;
     end
 
+    local checksum = GL:strPadRight(GL:strLimit(GL:stringHash(timestamp .. itemID) .. GL:stringHash(winner .. GL.DB:get("SoftRes.MetaData.id", "")), 20, ""), "0", 20);
     local AwardEntry = {
-        checksum = GL:strPadRight(GL:strLimit(GL:stringHash(timestamp .. itemID) .. GL:stringHash(winner .. GL.DB:get("SoftRes.MetaData.id", "")), 20, ""), "0", 20),
+        checksum = checksum,
         itemLink = itemLink,
         itemID = itemID,
         awardedTo = winner,
@@ -370,7 +383,7 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, G
     };
 
     -- Insert the award in the more permanent AwardHistory table (for export / audit purposes)
-    GL.DB.AwardHistory[AwardEntry.checksum] = AwardEntry;
+    DB:set("AwardHistory." .. AwardEntry.checksum, AwardEntry)
 
     -- Check whether the user disabled award announcement in the settings
     if (not GL.Settings:get("AwardingLoot.awardMessagesEnabled")) then
@@ -391,6 +404,12 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, G
                 itemLink,
                 winner,
                 BRCost
+            );
+        elseif (GDKPCost and GDKPCost > 0) then
+            awardMessage = string.format("%s was awarded to %s for %sg. Congrats!",
+                itemLink,
+                winner,
+                GDKPCost
             );
         else
             awardMessage = string.format("%s was awarded to %s. Congrats!",
@@ -482,6 +501,8 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, G
             isReserved = GL.SoftRes:itemIDIsReservedByPlayer(itemID, normalizedPlayerName),
         });
     end);
+
+    return checksum;
 end
 
 --- Return items won by the given player (with optional `after` timestamp)
@@ -493,7 +514,7 @@ function AwardedLoot:byWinner(winner, after)
     GL:debug("AwardedLoot:byWinner");
 
     local Entries = {};
-    for checksum, AwardEntry in pairs(GL.DB.AwardHistory) do
+    for checksum, AwardEntry in pairs(DB:get("AwardHistory")) do
         if ((not after or AwardEntry.timestamp > after)
             and AwardEntry.awardedTo == winner
             and not GL:empty(AwardEntry.timestamp)
@@ -558,7 +579,7 @@ function AwardedLoot:tradeInitiated()
 
     -- Loop through our awarded loot table in reverse
     local thereAreItemsToAdd = false;
-    for _, Loot in pairs(GL.DB.AwardHistory) do
+    for _, Loot in pairs(DB:get("AwardHistory")) do
         -- Our trading partner changed in the meantime, stop!
         if (tradingPartner ~= GL:tableGet(GL.TradeWindow, "State.partner")) then
             break;
@@ -618,7 +639,7 @@ function AwardedLoot:tradeCompleted(Details)
     local threeHoursAgo = GetServerTime() - 10800;
 
     -- Loop through our awarded loot table in reverse
-    for checksum, Loot in pairs(GL.DB.AwardHistory) do
+    for checksum, Loot in pairs(DB:get("AwardHistory")) do
         (function ()
             -- The item was already marked as received, skip it
             if (Loot.received or Loot.timestamp < threeHoursAgo) then
@@ -699,6 +720,19 @@ function AwardedLoot:processAwardedLoot(CommMessage)
         Rolls = AwardEntry.Rolls,
     };
 
+    if (not GL.isEra and GL:iEquals(AwardEntry.awardedTo, GL.User.name)) then
+        GL:onItemLoadDo(AwardEntry.itemID, function (Result)
+            Result = Result[1];
+
+            if (not Result) then
+                return;
+            end
+
+            local LootAlertSystem = AlertFrame:AddQueuedAlertFrameSubSystem("LootWonAlertFrameTemplate", _G.LootWonAlertFrame_SetUp, 6, math.huge);
+            LootAlertSystem:AddAlert(Result.link);
+        end);
+    end
+
     GL.Events:fire("GL.ITEM_AWARDED", GL.DB.AwardHistory[AwardEntry.checksum]);
 end
 
@@ -731,7 +765,7 @@ function AwardedLoot:processEditedLoot(CommMessage)
     AwardEntry.received = true;
 
     local checksum;
-    for index, Loot in pairs(GL.DB.AwardHistory) do
+    for index, Loot in pairs(DB:get("AwardHistory")) do
         if (Loot and index == AwardEntry.checksum) then
             checksum = index;
             break;

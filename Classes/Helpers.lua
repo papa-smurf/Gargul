@@ -119,9 +119,9 @@ end
 ---@return void
 function GL:xd(mixed)
     if (type(mixed) == "boolean") then
-        mixed = "true";
-
         if (mixed) then
+            mixed = "true";
+        else
             mixed = "false";
         end
     end
@@ -151,6 +151,64 @@ end
 ---@return string
 function GL:capitalize(value)
     return (value:gsub("^%l", string.upper));
+end
+
+---@param constant string
+---@param messageID number
+---@return boolean
+--- Era test: /script print(_G.Gargul:isGameMessageID("ERR_LOOT_CANT_LOOT_THAT_NOW", 571));
+--- WotLK test: /script print(_G.Gargul:isGameMessageID("ERR_LOOT_CANT_LOOT_THAT_NOW", 579));
+--- Retail test: /script print(_G.Gargul:isGameMessageID("ERR_LOOT_CANT_LOOT_THAT_NOW", 604));
+function GL:isGameMessageID(constant, messageID)
+    GL:debug("GL:isGameMessageID");
+
+    if (type(constant) ~= "string"
+        or GL:empty(constant)
+    ) then
+        return false;
+    end
+
+    local constantID = GL.DB:get(string.format(
+        "Utility.GameMessageIDs.%s.%s",
+        GL.clientVersion,
+        constant
+    ));
+
+    -- We haven't seen this ID yet, let's scan it!
+    if (not constantID) then
+        local i = 1;
+        while(true) do
+            local identifier = GetGameMessageInfo(i);
+
+            if (not identifier) then
+                break;
+            end
+
+            if (constant == identifier) then
+                GL.DB:set(string.format(
+                    "Utility.GameMessageIDs.%s.%s",
+                    GL.clientVersion,
+                    constant
+                ), i);
+
+                constantID = i;
+                break;
+            end
+
+            i = i + 1;
+        end
+    end
+
+    -- Seems like this constant simply doesn't exist
+    if (constantID == nil) then
+        GL.DB:set(string.format(
+            "Utility.GameMessageIDs.%s.%s",
+            GL.clientVersion,
+            constant
+        ), -1);
+    end
+
+    return constantID == messageID;
 end
 
 --- Dump a variable (functions won't work!)
@@ -208,10 +266,33 @@ function GL:empty(mixed)
     return true;
 end
 
---- StringHash method, courtesy of Mikk38024 @ Wowpedia
+--- table.concat alternative that also works with multi-dimensional tables (implodes TOP LEVEL ONLY!)
 ---
----@param text string
+---@param Table table
+---@param delimiter string
+---@return string
+function GL:implode(Table, delimiter)
+    local Parts = {};
+
+    for _, entry in pairs(Table) do
+        local entryString = tostring(entry);
+
+        if (not GL:empty(entryString)) then
+            tinsert(Parts, entryString);
+        end
+    end
+
+    return table.concat(Parts, delimiter);
+end
+
+--- StringHash method, courtesy of Mikk38024 @ Wowpedia (https://wowpedia.fandom.com/wiki/StringHash)
+---
+---@param text string|table
 function GL:stringHash(text)
+    if (type(text) == "table") then
+        text = GL:implode(text, ".");
+    end
+
     text = tostring(text);
     local counter = 1;
     local len = string.len(text);
@@ -440,12 +521,41 @@ function GL:printTable(t, shouldReturn)
     end
 end
 
---- Clone a table
+--- Clone a table recursively (no metatable properties)
 ---
----@param original table
+---@param Original table
 ---@return table
-function GL:cloneTable(original)
-    return {unpack(original)};
+function GL:cloneTable(Original)
+    local Copy = {};
+
+    for index, value in pairs(Original) do
+        if type(value) == "table" then
+            Copy[index] = self:cloneTable(value, Copy[index])
+        else
+            Copy[index] = value
+        end
+    end
+
+    return Copy;
+end
+
+--- Courtesy of Lantis and the team over at Classic Loot Manager: https://github.com/ClassicLootManager/ClassicLootManager
+function GL.LibStItemCellUpdate (rowFrame, frame, data, cols, row, realrow, column, fShow, table, ...)
+    local itemId = data[realrow].cols[column].value
+    local _, _, _, _, icon = GetItemInfoInstant(itemId or 0)
+    if icon then
+        frame:SetNormalTexture(icon)
+        frame:Show()
+        frame:SetScript("OnEnter", function()
+            GameTooltip:SetOwner(rowFrame, "ANCHOR_RIGHT")
+            GameTooltip:SetHyperlink("item:" .. tostring(itemId))
+            GameTooltip:Show()
+        end)
+
+        frame:SetScript("OnLeave", function() GameTooltip:Hide() end)
+    else
+        frame:Hide()
+    end
 end
 
 --- Clears the provided scrolling table (lib-ScrollingTable)
@@ -521,13 +631,13 @@ function GL:frameMessage(message)
     local AceGUI = GL.AceGUI or LibStub("AceGUI-3.0");
 
     -- Create a container/parent frame
-    local MesseGrame = AceGUI:Create("Frame");
-    MesseGrame:SetCallback("OnClose", function(widget) AceGUI:Release(widget); end);
-    MesseGrame:SetTitle("Gargul v" .. GL.version);
-    MesseGrame:SetStatusText("");
-    MesseGrame:SetLayout("Flow");
-    MesseGrame:SetWidth(600);
-    MesseGrame:SetHeight(450);
+    local MessageFrame = AceGUI:Create("Frame");
+    MessageFrame:SetCallback("OnClose", function(widget) GL.Interface:release(widget); end);
+    MessageFrame:SetTitle("Gargul v" .. GL.version);
+    MessageFrame:SetStatusText("");
+    MessageFrame:SetLayout("Flow");
+    MessageFrame:SetWidth(600);
+    MessageFrame:SetHeight(450);
 
     -- Large edit box
     local MessageBox = AceGUI:Create("MultiLineEditBox");
@@ -537,8 +647,9 @@ function GL:frameMessage(message)
     MessageBox:DisableButton(true);
     MessageBox:SetNumLines(22);
     MessageBox:HighlightText();
+    MessageBox:SetLabel();
     MessageBox:SetMaxLetters(999999999);
-    MesseGrame:AddChild(MessageBox);
+    MessageFrame:AddChild(MessageBox);
 end
 
 --- Counting tables (or arrays if you will) is anything but straight-forward in LUA. Examples:
@@ -581,7 +692,7 @@ function GL:onItemLoadDo(Items, callback, haltOnError, sorter)
     haltOnError = haltOnError or false;
 
     if (type(callback) ~= "function") then
-        GL:warning("Unexpected type '" .. type(callback) .. "' in GL:continueOnItemLoad, expecting type 'function'");
+        GL:warning("Unexpected type '" .. type(callback) .. "' in GL:onItemLoadDo, expecting type 'function'");
         return;
     end
 
@@ -1052,7 +1163,7 @@ function GL:stripRealm(str)
     end
 
     local Parts = self:strSplit(str, separator);
-    return Parts[1] or "";
+    return Parts[1], Parts[2];
 end
 
 --- Get the realm from a given player name
@@ -1302,7 +1413,7 @@ end
 ---
 ---@param soundNameOrNumber string
 ---@param channel string
-function GL:playSound(soundNameOrNumber, channel)
+function GL:playSound(soundNameOrNumber, channel, forceNoDuplicates, runFinishCallback)
     -- Check if the user muted the addon
     if (GL.Settings:get("noSounds")) then
         return;
@@ -1314,7 +1425,7 @@ function GL:playSound(soundNameOrNumber, channel)
         channel = "Master";
     end
 
-    PlaySound(soundNameOrNumber, channel);
+    PlaySound(soundNameOrNumber, channel, forceNoDuplicates, runFinishCallback);
 end
 
 local gaveNoMessagesWarning = false;
@@ -1639,7 +1750,7 @@ function GL:tableSet(Table, keyString, value, ignoreIfExists)
     local firstKey = keys[1];
 
     if (#keys == 1) then
-        if (not Table[firstKey] or not ignoreIfExists) then
+        if (Table[firstKey] ~= nil or not ignoreIfExists) then
             Table[firstKey] = value;
         end
 

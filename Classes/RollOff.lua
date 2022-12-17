@@ -393,7 +393,10 @@ function RollOff:start(CommMessage)
         end
 
         -- Play raid warning sound
-        GL:playSound(8959, "Master");
+        GL:playSound(SOUNDKIT.RAID_WARNING, "SFX");
+
+        -- Flash the game icon in case the player alt-tabbed
+        FlashClientIcon();
 
         -- Flash the game icon in case the player alt-tabbed
         FlashClientIcon();
@@ -447,6 +450,11 @@ function RollOff:stop(CommMessage)
                 "RAID_WARNING"
             );
         end
+
+        -- We stop listening for rolls one second after the rolloff ends just in case there is server lag/jitter
+        self.rollListenerCancelTimerId = GL.Ace:ScheduleTimer(function()
+            self:stopListeningForRolls();
+        end, 1);
     end
 
     if (self.InitiateCountDownTimer) then
@@ -462,7 +470,7 @@ function RollOff:stop(CommMessage)
     end
 
     -- Play raid warning sound
-    GL:playSound(8959);
+    GL:playSound(SOUNDKIT.RAID_WARNING, "SFX");
 
     RollOff.inProgress = false;
     GL.Ace:CancelTimer(RollOff.StopRollOffTimer);

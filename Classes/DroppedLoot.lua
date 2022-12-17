@@ -340,7 +340,7 @@ function DroppedLoot:hookClickEvents()
                 local keyPressIdentifier = GL.Events:getClickCombination();
 
                 -- Open the roll window
-                if (keyPressIdentifier == GL.Settings:get("ShortcutKeys.rollOff")) then
+                if (keyPressIdentifier == GL.Settings:get("ShortcutKeys.rollOffOrAuction")) then
                     GL.MasterLooterUI:draw(itemLink);
 
                     -- Open the award window
