@@ -55,6 +55,36 @@ function GDKP:draw(Parent)
         },
     }, Parent);
 
+    Spacer = GL.AceGUI:Create("SimpleGroup");
+    Spacer:SetLayout("FILL");
+    Spacer:SetFullWidth(true);
+    Spacer:SetHeight(20);
+    Parent:AddChild(Spacer);
+
+    local PlaySoundWhenOutbidLabel = GL.AceGUI:Create("Label");
+    PlaySoundWhenOutbidLabel:SetText("|c00FFF569Choose a sound that plays when you're outbid|r");
+    PlaySoundWhenOutbidLabel:SetFullWidth(true);
+    Parent:AddChild(PlaySoundWhenOutbidLabel);
+
+    local Sounds = LibStub("LibSharedMedia-3.0"):List("sound");
+
+    local OutbidSoundDropdown = GL.AceGUI:Create("Dropdown");
+    OutbidSoundDropdown:SetValue(GL.Settings:get("GDKP.outbidSound"));
+    OutbidSoundDropdown:SetList(Sounds);
+    OutbidSoundDropdown:SetText(Sounds[GL.Settings:get("GDKP.outbidSound")]);
+    OutbidSoundDropdown:SetWidth(250);
+    OutbidSoundDropdown:SetCallback("OnValueChanged", function()
+        local value = OutbidSoundDropdown:GetValue();
+        local sound = LibStub("LibSharedMedia-3.0"):Fetch("sound", Sounds[value]);
+
+        if (type(sound) == "string" and not GL:empty(sound)) then
+            PlaySoundFile(sound);
+
+            GL.Settings:set("GDKP.outbidSound", value);
+        end
+    end);
+    Parent:AddChild(OutbidSoundDropdown);
+
     Overview:drawHeader("Auctions", Parent);
 
     Overview:drawCheckboxes({
