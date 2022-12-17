@@ -78,9 +78,9 @@ function GL:_init()
         self.clientVersion = (expansion or 0) * 10000 + (majorPatch or 0) * 100 + (minorPatch or 0);
     end
 
-    if self.clientVersion < 20000 then
+    if (self.clientVersion) < 20000 then
         self.isEra = true;
-    elseif self.clientVersion < 90000 then
+    elseif (self.clientVersion) < 90000 then
         self.isClassic = true;
     else
         if (self.clientVersion >= 100000) then
@@ -122,7 +122,9 @@ function GL:_init()
     self.User:_init();
     self.AwardedLoot:_init();
     self.SoftRes:_init();
+    self.GDKP.Auction:_init();
     self.TMB:_init();
+    self.GDKP.Session:_init();
     self.BoostedRolls:_init();
     self.DroppedLoot:_init();
     self.GroupLoot:_init();
@@ -155,6 +157,10 @@ function GL:_init()
 
     -- Show the changelog window
     GL.Interface.Changelog:reportChanges();
+
+    -- Register sounds
+    local media = LibStub("LibSharedMedia-3.0")
+    media:Register("sound", "Gargul: uh-oh", "Interface/AddOns/".. self.name .."/Assets/Sounds/uh-oh.ogg");
 end
 
 --- Adds forwards compatibility
@@ -189,6 +195,11 @@ end);
 -- Register the gargul slash command
 GL.Ace:RegisterChatCommand("gargul", function (...)
     GL.Commands:_dispatch(...);
+end);
+
+-- Register the gdkp slash command
+GL.Ace:RegisterChatCommand("gdkp", function (...)
+    GL.Commands:call("gdkp");
 end);
 
 --- Announce conflicting addons, if any
@@ -286,17 +297,33 @@ function GL:hookBagSlotEvents()
 
         local keyPressIdentifier = GL.Events:getClickCombination();
 
+        -- Open the action selection window
+        if (keyPressIdentifier == GL.Settings:get("ShortcutKeys.rollOffOrAuction")) then
+            if (GL.GDKP.Session:activeSessionID()
+                and not GL.GDKP.Session:getActive().lockedAt
+            ) then
+                GL.Interface.GDKP.Auctioneer:draw(itemLink);
+            else
+                GL.MasterLooterUI:draw(itemLink);
+            end
         -- Open the roll window
-        if (keyPressIdentifier == GL.Settings:get("ShortcutKeys.rollOff")) then
+        elseif (keyPressIdentifier == GL.Settings:get("ShortcutKeys.rollOff")) then
             GL.MasterLooterUI:draw(itemLink);
+
+        -- Open the auction window
+        elseif (keyPressIdentifier == GL.Settings:get("ShortcutKeys.auction")) then
+            GL.Interface.GDKP.Auctioneer:draw(itemLink);
 
         -- Open the award window
         elseif (keyPressIdentifier == GL.Settings:get("ShortcutKeys.award")) then
             GL.Interface.Award:draw(itemLink);
 
-        --Disenchant items from bags is disabled for now since it always triggers the dressupframe
-        --elseif (keyPressIdentifier == GL.Settings:get("ShortcutKeys.disenchant")) then
-        --    GL.PackMule:disenchant(itemLink);
+        elseif (keyPressIdentifier == GL.Settings:get("ShortcutKeys.disenchant")) then
+            -- We only allow disenchanting from bags if the disenchant hotkey does not include control
+            -- because otherwise it triggers the dressupframe which can be really annoying
+            if (not IsControlKeyDown()) then
+                GL.PackMule:disenchant(itemLink);
+            end
         end
     end);
 end
@@ -344,6 +371,10 @@ function GL:hookTooltipSetItemEvents()
             end
 
             for _, line in pairs(GL.LootPriority:tooltipLines(itemLink) or {}) do
+                tinsert(Lines, line);
+            end
+
+            for _, line in pairs(GL.GDKP.Session:tooltipLines(itemLink) or {}) do
                 tinsert(Lines, line);
             end
         end

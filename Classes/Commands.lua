@@ -18,6 +18,7 @@ GL.Commands = GL.Commands or {
         dft = "Open the DFT importer. Data exported from your DFT sheet can be imported here",
         cpr = "Open the classicpr importer. Data exported from https://classicpr.io/ can be imported here",
         export = "Export dropped loot to a CSV format which is compatible with TMB for example.",
+        gdkp = "Open the GDKP UI where you can manage your GDKP sessions",
         groups = "Open the group window where you can provide a roster from csv/raidhelper/wowhead so that you can: see who's missing and sort groups automatically",
         import = "Opens the general import window that includes shortcuts to the TMB, SoftRes or loot priority importers",
         inspect = "You can check whether players brought items (and how many), e.g. to check for consumables (requires players to have Gargul!): /gl inspect itemID1, itemID2, itemID3",
@@ -48,6 +49,7 @@ GL.Commands = GL.Commands or {
         cd = "cleardisenchanter",
         sd = "setdisenchanter",
         rcsv = "raidcsv",
+        gd = "gdkp",
         gr = "groups",
         roster = "groups",
         so = "softreserves",
@@ -109,10 +111,8 @@ GL.Commands = GL.Commands or {
         -- Open the boosted rolls window
         boostedrolls = function() GL.BoostedRolls:draw(); end,
 
-        -- Export the current raid roster to csv
-        raidcsv = function ()
-            GL.RaidGroups:toCSV();
-        end,
+        -- Open the GDKP overview
+        gdkp = function () GL.Interface.GDKP.Overview:open(); end,
 
         -- Open the raid groups window
         groups = function() GL.RaidGroups:drawImporter(); end,

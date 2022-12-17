@@ -12,6 +12,14 @@ GL.Interface.Changelog = {
 
     History = {
         {
+            version = "5.0.3",
+            date = "December 17th, 2022",
+            Changes = {
+                --"Happy Holidays everyone! Stay healthy and may your loot be plenty!",
+                "|c00FFFFFF|c00FF0000H|ra|c00FF0000p|rp|c00FF0000y|r H|c00FF0000o|rl|c00FF0000i|rd|c00FF0000a|ry|c00FF0000s|r e|c00FF0000v|re|c00FF0000r|ry|c00FF0000o|rn|c00FF0000e|r|r! Stay healthy and may your loot be plenty!",
+            },
+        },
+        {
             version = "4.12.14",
             date = "December 1st, 2022",
             Changes = {
@@ -278,6 +286,15 @@ function Changelog:draw()
 
     Window:SetPoint(GL.Interface:getPosition("Changelog"));
 
+    --[[ CHRISTMAS HOLIDAYS SANTA HAT ]]
+    local SantaHat = GL.AceGUI:Create("Icon");
+    SantaHat:SetWidth(83);
+    SantaHat:SetHeight(81);
+    SantaHat:SetImage("Interface/AddOns/Gargul/Assets/Icons/santa_hat");
+    SantaHat.frame:SetParent(Window.frame);
+    SantaHat.frame:SetPoint("TOPLEFT", Window.frame, "TOPLEFT", -26, 36);
+    SantaHat.frame:Show();
+
     local ScrollFrameHolder = GL.AceGUI:Create("ScrollFrame");
     ScrollFrameHolder:SetLayout("Fill");
     ScrollFrameHolder:SetWidth(400);
@@ -401,7 +418,7 @@ function Changelog:close()
     Settings:set("UI.Changelog.Position.offsetY", offsetY);
 
     -- Clear the frame and its widgets
-    AceGUI:Release(Window);
+    GL.Interface:release(Window);
     self.isVisible = false;
 end
 

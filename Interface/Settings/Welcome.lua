@@ -10,7 +10,7 @@ local AceGUI = GL.AceGUI;
 GL.Interface.Settings.Welcome = {
     description = string.format(
             "Welcome! Almost all of Gargul's features can be tested when not in a group, so go check them out\n\nRoll: |c00a79eff%s|r. Award: |c00a79eff%s|r. Disenchant: |c00a79eff%s|r\n|c00f7922eNote: hotkeys are disabled when the AH, mailbox, shop or bank are active!|r",
-            GL.Settings:get("ShortcutKeys.rollOff"),
+            GL.Settings:get("ShortcutKeys.rollOffOrAuction"),
             GL.Settings:get("ShortcutKeys.award"),
             GL.Settings:get("ShortcutKeys.disenchant")
     ),
@@ -22,7 +22,7 @@ function Welcome:draw(Parent)
     GL:debug("WelcomeSettings:draw");
 
     local MoreInfoLabel = AceGUI:Create("Label");
-    MoreInfoLabel:SetText("Join our Discord for support and getting involved!\n");
+    MoreInfoLabel:SetText("Need help? Join our Discord!\n");
     MoreInfoLabel:SetFontObject(_G["GameFontNormal"]);
     MoreInfoLabel:SetFullWidth(true);
     Parent:AddChild(MoreInfoLabel);
@@ -65,7 +65,7 @@ function Welcome:draw(Parent)
         GL.Settings:close();
         GL.Commands:call("softreserves");
     end);
-    OpenSoftRes:SetWidth(172);
+    OpenSoftRes:SetWidth(129);
     Parent:AddChild(OpenSoftRes);
 
     local OpenTMB = AceGUI:Create("Button");
@@ -74,7 +74,16 @@ function Welcome:draw(Parent)
         GL.Settings:close();
         GL.Commands:call("tmb");
     end);
-    OpenTMB:SetWidth(172);
+    OpenTMB:SetWidth(129);
+    Parent:AddChild(OpenTMB);
+
+    local OpenTMB = GL.AceGUI:Create("Button");
+    OpenTMB:SetText("GDKP");
+    OpenTMB:SetCallback("OnClick", function()
+        GL.Settings:close();
+        GL.Commands:call("gdkp");
+    end);
+    OpenTMB:SetWidth(129);
     Parent:AddChild(OpenTMB);
 
     local OpenPackMule = AceGUI:Create("Button");
@@ -82,7 +91,7 @@ function Welcome:draw(Parent)
     OpenPackMule:SetCallback("OnClick", function()
         GL.Settings:draw("PackMule");
     end);
-    OpenPackMule:SetWidth(172);
+    OpenPackMule:SetWidth(129);
     Parent:AddChild(OpenPackMule);
 
     --[[ CONTRIBUTORS ]]

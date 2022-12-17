@@ -814,8 +814,8 @@ function BoostedRolls:receiveBroadcast(CommMessage)
             "Are you sure you want to update your existing boosted rolls with data from |c00%s%s|r?\n\nYour latest update was on |c00a79eff%s|r, theirs on |c00a79eff%s|r.",
             GL:classHexColor(GL.Player:classByName(CommMessage.Sender.name)),
             CommMessage.Sender.name,
-            date('%Y-%m-%d %H:%M', updatedAt),
-            date('%Y-%m-%d %H:%M', MetaData.updatedAt or 0)
+            date("%Y-%m-%d %H:%M", updatedAt),
+            date("%Y-%m-%d %H:%M", MetaData.updatedAt or 0)
         );
     elseif (not GL:empty(uuid)) then -- This is a different dataset, not an update
         question = string.format(

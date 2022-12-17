@@ -3,6 +3,15 @@ local _, GL = ...;
 
 GL.ScrollingTable = GL.ScrollingTable or LibStub("ScrollingTable");
 
+local AceGUI = GL.AceGUI;
+local ScrollingTable = GL.ScrollingTable;
+
+---@type Settings
+local Settings = GL.Settings;
+
+---@type GDKPAuction
+local GDKPAuction = GL.GDKP.Auction;
+
 ---@class AwardInterface
 GL.Interface.Award = {
     ItemBoxHoldsValidItem = false,
@@ -13,16 +22,9 @@ GL.Interface.Award = {
     },
 };
 
-local AceGUI = GL.AceGUI;
-local Settings = GL.Settings; ---@type Settings
-local Award = GL.Interface.Award; ---@type AwardInterface
-local ScrollingTable = GL.ScrollingTable;
+---@type AwardInterface
+local Award = GL.Interface.Award;
 
---- This is the UI the person who rolls off an item uses to prepare everything e.g:
---- Select an item
---- Set the duration of the roll off
---- Award the item to the winner
----
 ---@param itemLink string
 ---@return void
 function Award:draw(itemLink)
@@ -195,16 +197,23 @@ function Award:draw(itemLink)
             end
 
             local GDKPPriceEditBox = GL.Interface:get(GL.Interface.Dialogs.AwardDialog, "EditBox.GDKPPrice");
+            local added = false;
             if (GDKPPriceEditBox) then
                 GDKPPrice = tonumber(GDKPPriceEditBox:GetText());
 
                 if (GL:higherThanZero(GDKPPrice)) then
-                    GL.GDKP:createAuction(GL:getItemIDFromLink(itemLink), GDKPPrice, winner);
+                    local awardChecksum = GL.AwardedLoot:addWinner(winner, itemLink, nil, nil, isOS, boostedRollCost, GDKPPrice);
+
+                    GDKPAuction:create(GL:getItemIDFromLink(itemLink), GDKPPrice, winner, nil, nil, nil, awardChecksum);
+                    added = true;
                 end
             end
 
-            -- Add the player we awarded the item to to the item's tooltip
-            GL.AwardedLoot:addWinner(winner, itemLink, nil, nil, isOS, boostedRollCost);
+            if (not added) then
+                -- Add the player we awarded the item to to the item's tooltip
+                GL.AwardedLoot:addWinner(winner, itemLink, nil, nil, isOS, boostedRollCost);
+            end
+
             GL.Interface.Award:reset();
 
             if (Settings:get("UI.Award.closeOnAward", true)) then

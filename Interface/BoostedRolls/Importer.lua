@@ -119,7 +119,7 @@ function Importer:close()
     GL.Interface:storePosition(Window, "BoostedRollsImport");
 
     -- Clear the frame and its widgets
-    AceGUI:Release(Window);
+    GL.Interface:release(Window);
     self.isVisible = false;
 end
 
