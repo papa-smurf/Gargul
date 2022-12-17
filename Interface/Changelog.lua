@@ -15,7 +15,7 @@ GL.Interface.Changelog = {
             version = "5.0.3",
             date = "December 17th, 2022",
             Changes = {
-                "Happy Holidays everyone! May your loot be plenty!",
+                "Happy Holidays everyone! Stay healthy and may your loot be plenty!",
             },
         },
         {
