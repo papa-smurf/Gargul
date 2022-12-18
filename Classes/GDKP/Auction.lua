@@ -1085,6 +1085,8 @@ function Auction:stop(CommMessage)
     if (self:startedByMe()) then
         SecondsAnnounced = {};
 
+        self:stopListeningForBids();
+
         -- Announce that the auction has ended
         if (Settings:get("GDKP.announceBidsClosed", true)) then
             GL:sendChatMessage(
@@ -1093,22 +1095,11 @@ function Auction:stop(CommMessage)
             );
         end
 
-        -- We stop listening for bids one second after the auction ends just in case there is server lag/jitter
-        ---@todo: reinstate this at some point, making sure that it also respects the anti-snipe setting
-        --GL.Ace:ScheduleTimer(function()
-            self:stopListeningForBids();
-        --end, 1);
-    end
-
-    if (self.countDownTimer) then
-        GL.Ace:CancelTimer(self.countDownTimer);
-        self.countDownTimer = nil;
-    end
-
-    -- If we're the initiatorID then we need to update our initiatorID UI
-    if (self:startedByMe()) then
         GL.Interface.GDKP.Auctioneer:updateWidgets();
     end
+
+    GL.Ace:CancelTimer(self.countDownTimer);
+    self.countDownTimer = nil;
 
     return true;
 end
