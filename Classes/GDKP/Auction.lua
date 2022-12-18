@@ -78,7 +78,7 @@ function Auction:_init()
         local outbidSound = GL.Settings:get("GDKP.outbidSound");
         if (not GL:empty(outbidSound)) then
             local sound = LibStub("LibSharedMedia-3.0"):Fetch("sound", outbidSound);
-            PlaySoundFile(sound, "SFX");
+            GL:playSound(sound);
         end
 
         -- We don't want to spam the user with alerts!
@@ -1007,7 +1007,7 @@ function Auction:start(CommMessage)
         end
 
         -- Play raid warning sound
-        GL:playSound(SOUNDKIT.RAID_WARNING, "SFX");
+        GL:playSound(SOUNDKIT.RAID_WARNING);
 
         -- Flash the game icon in case the player alt-tabbed
         FlashClientIcon();
@@ -1052,7 +1052,7 @@ function Auction:stop(CommMessage)
     self:stopAutoBid();
 
     -- Play raid warning sound
-    GL:playSound(SOUNDKIT.RAID_WARNING, "SFX");
+    GL:playSound(SOUNDKIT.RAID_WARNING);
 
     self.inProgress = false;
     GL.Ace:CancelTimer(self.timerId);

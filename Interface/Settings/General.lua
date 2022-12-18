@@ -11,7 +11,7 @@ local General = GL.Interface.Settings.General; ---@type GeneralSettings
 function General:draw(Parent)
     GL:debug("GeneralSettings:draw");
 
-    local Checkboxes = {
+    Overview:drawCheckboxes({
         {
             label = "Welcome message",
             description = "Show a message when booting Gargul",
@@ -54,9 +54,39 @@ function General:draw(Parent)
                 end
             end,
         },
+    }, Parent);
+
+    local Spacer = GL.AceGUI:Create("SimpleGroup");
+    Spacer:SetLayout("FILL");
+    Spacer:SetFullWidth(true);
+    Spacer:SetHeight(20);
+    Parent:AddChild(Spacer);
+
+    local MinimumQualityLabel = GL.AceGUI:Create("Label");
+    MinimumQualityLabel:SetColor(1, .95686, .40784);
+    MinimumQualityLabel:SetText("On which channel should Gargul output its sounds (default SFX)");
+    MinimumQualityLabel:SetHeight(20);
+    MinimumQualityLabel:SetFullWidth(true);
+    Parent:AddChild(MinimumQualityLabel);
+
+    local SoundChannels = {
+        Master = "Master",
+        Music = "Music",
+        SFX = "SFX",
+        Ambience = "Ambience",
+        Dialog = "Dialog",
     };
 
-    Overview:drawCheckboxes(Checkboxes, Parent);
+    local SoundChannelDropdown = GL.AceGUI:Create("Dropdown");
+    SoundChannelDropdown:SetValue(GL.Settings:get("soundChannel"));
+    SoundChannelDropdown:SetList(SoundChannels);
+    SoundChannelDropdown:SetText(GL.Settings:get("soundChannel"));
+    SoundChannelDropdown:SetWidth(250);
+    SoundChannelDropdown:SetCallback("OnValueChanged", function()
+        local channel = SoundChannelDropdown:GetValue();
+        GL.Settings:set("soundChannel", channel);
+    end);
+    Parent:AddChild(SoundChannelDropdown);
 end
 
 GL:debug("Interface/Settings/General.lua");

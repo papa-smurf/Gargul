@@ -79,7 +79,7 @@ function GDKP:draw(Parent)
         local sound = LibStub("LibSharedMedia-3.0"):Fetch("sound", Sounds[value]);
 
         if (type(sound) == "string" and not GL:empty(sound)) then
-            PlaySoundFile(sound);
+            GL:playSound(sound);
 
             GL.Settings:set("GDKP.outbidSound", Sounds[value]);
         end
