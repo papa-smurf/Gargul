@@ -78,6 +78,7 @@ function Bidder:draw(time, itemLink, itemIcon)
             self:hide();
         end
     end);
+    Window:SetScale(GL.Settings:get("GDKP.bidderScale", 1));
     self.Window = Window;
 
     local Texture = Window:CreateTexture(nil,"BACKGROUND");

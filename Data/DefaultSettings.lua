@@ -120,6 +120,7 @@ GL.Data.DefaultSettings = {
         announceNewBid = false,
         announcePotAfterAuction = true,
         antiSnipe = 10,
+        bidderScale = 1,
         closeAuctioneerOnAward = false,
         closeAuctioneerOnStart = false,
         defaultMinimumBid = 500,

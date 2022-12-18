@@ -232,6 +232,42 @@ function GDKP:draw(Parent)
 
     Overview:drawHeader("UI Style", Parent);
 
+    local HorizontalSpacer = GL.AceGUI:Create("SimpleGroup");
+    HorizontalSpacer:SetLayout("FILL");
+    HorizontalSpacer:SetFullWidth(true);
+    HorizontalSpacer:SetHeight(20);
+    Parent:AddChild(HorizontalSpacer);
+
+    local Scale = GL.AceGUI:Create("Slider");
+    Scale:SetLabel("Magnification scale of the bidder window");
+    Scale.label:SetTextColor(1, .95686, .40784);
+    Scale:SetFullWidth(true);
+    Scale:SetValue(GL.Settings:get("GDKP.bidderScale"));
+    Scale:SetSliderValues(.8, 1.8, .1);
+    Scale:SetCallback("OnValueChanged", function(Slider)
+        local value = tonumber(Slider:GetValue());
+
+        if (not value) then
+            return;
+        end
+
+        GL.Settings:set("GDKP.bidderScale", value);
+
+        -- Change the existing bidder window if it's active!
+        if (GL.Interface.GDKP.Bidder.Window
+            and type(GL.Interface.GDKP.Bidder.Window.SetScale == "function")
+        ) then
+            GL.Interface.GDKP.Bidder.Window:SetScale(value);
+        end
+    end);
+    Parent:AddChild(Scale);
+
+    Spacer = GL.AceGUI:Create("SimpleGroup");
+    Spacer:SetLayout("FILL");
+    Spacer:SetFullWidth(true);
+    Spacer:SetHeight(20);
+    Parent:AddChild(Spacer);
+
     local LedgerAuctionSizeExplanation = GL.AceGUI:Create("Label");
     LedgerAuctionSizeExplanation:SetText("The slider below affects how tightly auctions are packed together in the |c00967FD2/gdkp|r overview");
     LedgerAuctionSizeExplanation:SetFullWidth(true);
