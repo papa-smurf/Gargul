@@ -88,6 +88,11 @@ function Bidder:draw(time, itemLink, itemIcon)
     TopBidder:SetPoint("CENTER", Window, "CENTER", 0, 12);
     GL.Interface:set(self, "TopBidder", TopBidder);
 
+    if (GDKPAuction.Current.minimumBid > 0) then
+        local message = string.format("Min bid: %sg   Increment: %sg", GDKPAuction.Current.minimumBid, GDKPAuction.Current.minimumIncrement);
+        TopBidder:SetText(message);
+    end
+
     local NewBid = Window:CreateFontString(nil, "ARTWORK", "GameFontWhite");
     NewBid:SetPoint("TOPLEFT", Window, "TOPLEFT", 44, -51);
     NewBid:SetText("New bid");
@@ -184,29 +189,6 @@ function Bidder:draw(time, itemLink, itemIcon)
         GDKPAuction:stopAutoBid();
         self:hide();
     end);
-    --]]
-
-    --[[ WITHOUT AUTO BID:
-    BidButton = CreateFrame("Button", "GARGUL_GDKP_BIDDER_BID_BUTTON", Window, "GameMenuButtonTemplate");
-    BidButton:SetPoint("TOPLEFT", NewBid, "BOTTOMLEFT", 36, -10);
-    BidButton:SetSize(60, 20); -- Minimum width is
-    BidButton:SetText("Bid");
-    BidButton:SetNormalFontObject("GameFontNormal");
-    BidButton:SetHighlightFontObject("GameFontNormal");
-    BidButton:SetScript("OnClick", function ()
-        BidButtonClick();
-    end);
-
-    local PassButton = CreateFrame("Button", "GARGUL_GDKP_BIDDER_PASS_BUTTON", Window, "GameMenuButtonTemplate");
-    PassButton:SetPoint("TOPLEFT", BidButton, "TOPRIGHT", 8, 0);
-    PassButton:SetSize(64, 20); -- Minimum width is
-    PassButton:SetText("Pass");
-    PassButton:SetNormalFontObject("GameFontNormal");
-    PassButton:SetHighlightFontObject("GameFontNormal");
-    PassButton:SetScript("OnClick", function ()
-        self:hide();
-    end);
-    ]]
 
     self:refresh();
 
