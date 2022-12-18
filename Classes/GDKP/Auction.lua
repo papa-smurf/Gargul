@@ -23,7 +23,10 @@ local SecondsAnnounced = {};
 GDKP.Auction = {
     _initialized = false,
     autoBiddingIsActive = nil,
+    lastBidAt = nil,
+    lastBidAnnouncementAt = nil,
     maxBid = nil,
+    raidWarningThrottler = nil,
     waitingForExtension = false,
 
     AutoBidTimer = nil,
@@ -44,14 +47,15 @@ GDKP.Auction = {
     BidListenerCancelTimerId = nil,
 };
 
---[[ CONSTANTS ]]
-local stopAuctionLeewayInSeconds = 2;
-
 ---@type GDKPAuction
 local Auction = GDKP.Auction;
 
 ---@type GDKPSession
 local GDKPSession = GDKP.Session;
+
+--[[ CONSTANTS ]]
+local stopAuctionLeewayInSeconds = 2;
+local autoBidThrottle = 1.2;
 
 function Auction:_init()
     GL:debug("GDKP.Auction:_init");
@@ -1048,6 +1052,10 @@ end
 function Auction:stop(CommMessage)
     GL:debug("GDKP.Auction:stop");
 
+    if (self.waitingForExtension) then
+        return;
+    end
+
     if (CommMessage) then
         -- We already stopped, no need to stop again
         if (self.Current.initiatorID == GL.User.id) then
@@ -1231,20 +1239,13 @@ function Auction:bid(message)
         return false;
     end
 
-    -- The given bid is invalid or not higher than the highest known bid
-    if (not GL:higherThanZero(bid)
-        or bid < lowestValidBid
-    ) then
-        return false;
-    end
-
     if (GL.User.isInGroup) then
         GL:sendChatMessage(bid, "GROUP", nil, nil, false);
     else
         GL:sendChatMessage(bid, "WHISPER", nil, self.Current.initiatorName, false);
     end
 
-    self.lastBidAt = GetServerTime();
+    self.lastBidAt = GetTime();
 
     return true;
 end
@@ -1295,8 +1296,8 @@ function Auction:autoBid()
         return;
     end
 
-    -- Make sure we only bid once every 1 second (spam throttle)
-    if (GetServerTime() - self.lastBidAt < 1) then
+    -- Make sure we only bid once every 1.2s (spam throttle)
+    if (GetTime() - self.lastBidAt < autoBidThrottle) then
         GL.Ace:CancelTimer(self.AutoBidTimer);
 
         self.AutoBidTimer = GL.Ace:ScheduleTimer(function ()
@@ -1326,6 +1327,13 @@ end
 ---
 ---@return number
 function Auction:lowestValidBid()
+    GL:debug("Auction:lowestValidBid");
+
+    local currentTopBid = GL:tableGet(self.Current, "TopBid.bid", 0);
+    if (currentTopBid < self.Current.minimumBid) then
+        return self.Current.minimumBid;
+    end
+
     return math.max(
         GL:tableGet(self.Current, "TopBid.bid", 0) + (self.Current.minimumIncrement or 0),
         self.Current.minimumBid
@@ -1347,12 +1355,13 @@ function Auction:processBid(event, message, bidder)
     end
 
     -- We're no longer listening for bids
-    if (not self.listeningForBids) then
+    if (not self.listeningForBids
+        or not self.inProgress
+    ) then
         return;
     end
 
     ---@todo set to false
-    --local acceptClosedBids = false;
     local acceptClosedBids = true;
 
     -- We only accept bids in /w when we're accepting closed bids or when we're not in a group (e.g. testing)
@@ -1405,32 +1414,53 @@ function Auction:processBid(event, message, bidder)
         return;
     end
 
-    if (self.Current and self.Current.antiSnipe) then
+    -- Determine the minimum bid
+    local currentBid = GL:tableGet(self.Current, "TopBid.bid", 0)
+    local minimumBid = math.max(
+        self.Current.minimumBid,
+        currentBid + self.Current.minimumIncrement
+    );
+
+    -- The bid is not high enough for us to accept
+    local bidTooLow = bid < minimumBid;
+    if (bidTooLow and Settings:get("GDKP.notifyIfBidTooLow")) then
+        if (not Settings:get("GDKP.acceptBidsLowerThanMinimum")) then
+            GL:sendChatMessage(string.format("Bid denied, the minimum bid is %sg", minimumBid), "WHISPER", nil, bidder);
+        end
+    end
+
+    if (self.Current and self.Current.antiSnipe and (
+        not bidTooLow or Settings:get("GDKP.invalidBidsTriggerAntiSnipe")
+    )) then
         local secondsLeft = math.floor(GL.Ace:TimeLeft(self.timerId) - stopAuctionLeewayInSeconds);
         if (secondsLeft <= self.Current.antiSnipe) then
             self:announceExtension(self.Current.antiSnipe);
         end
     end
 
-    -- Determine the minimum bid
-    local minimumBid = math.max(
-        self.Current.minimumBid,
-        GL:tableGet(self.Current, "TopBid.bid", 0) + self.Current.minimumIncrement
-    );
-
-    -- The bid is not high enough for us to accept
-    if (BidEntry.bid < minimumBid and Settings:get("GDKP.notifyIfBidTooLow")) then
-        GL:sendChatMessage(string.format("Bid denied, the minimum bid is %sg", minimumBid), "WHISPER", nil, bidder);
+    -- This bid is too low and we don't accept that
+    if (bidTooLow and (
+        currentBid >= self.Current.minimumBid
+        or bid <= currentBid
+        or not Settings:get("GDKP.acceptBidsLowerThanMinimum")
+    )) then
         return;
     end
 
-    if (Settings:get("GDKP.announceNewBid")) then
-        local chatType = "GROUP";
+    if (not bidTooLow and Settings:get("GDKP.announceNewBid")) then
+        local bidApprovedMessage = string.format("%s is the highest bidder (%sg)", BidEntry.Bidder.name, bid);
         if (GL.User.isInRaid and Settings:get("GDKP.announceNewBidInRW")) then
-            chatType = "RAID_WARNING";
+            GL.Ace:CancelTimer(self.raidWarningThrottler);
+            if (GetTime() - self.lastBidAnnouncementAt < 1.2) then
+                self.raidWarningThrottler = GL.Ace:ScheduleTimer(function ()
+                    GL:sendChatMessage(bidApprovedMessage, "RAID_WARNING", nil, nil, false);
+                end, 1);
+            else
+                GL:sendChatMessage(bidApprovedMessage, "RAID_WARNING", nil, nil, false);
+            end
         end
 
-        GL:sendChatMessage(string.format("%s is the highest bidder (%sg)", BidEntry.Bidder.name, bid), chatType, nil, nil, false);
+        GL:sendChatMessage(bidApprovedMessage, "GROUP", nil, nil, false);
     end
 
     tinsert(self.Current.Bids, BidEntry);

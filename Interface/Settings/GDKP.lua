@@ -125,6 +125,17 @@ function GDKP:draw(Parent)
             label = "Announce incoming bids in raid warning",
             description = "Announce bids in /rw instead of /ra. Requires |c00967FD2Announce incoming bids|r to be enabled!|r",
             setting = "GDKP.announceNewBidInRW",
+
+        },
+        {
+            label = "Accept bids lower than minimum",
+            description = "Accept bids that don't meet the minimum, useful for identifying off spec bids",
+            setting = "GDKP.acceptBidsLowerThanMinimum",
+        },
+        {
+            label = "Allow invalid bids to trigger anti-snipe",
+            description = "Bids that are too low will still trigger the anti-snipe timer",
+            setting = "GDKP.invalidBidsTriggerAntiSnipe",
         },
         {
             label = "Remember minimum bid and increment for each item",

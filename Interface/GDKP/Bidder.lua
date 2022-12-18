@@ -113,7 +113,7 @@ function Bidder:draw(time, itemLink, itemIcon)
     end);
 
     BidButtonClick = function ()
-        self:showBidDeniedNotification(Window, BidInput);
+        GDKPAuction:bid(BidInput:GetText());
 
         BidInput:SetText("");
         BidInput:ClearFocus();
@@ -143,7 +143,7 @@ function Bidder:draw(time, itemLink, itemIcon)
             inputValue = BidInput:GetText(),
             OnYes = function (max)
                 if (not GDKPAuction:setAutoBid(max)) then
-                    self:showBidDeniedNotification(Window, BidInput);
+                    self:showBidDeniedNotification(Window);
                 else
                     BidInput:SetText("");
                     BidInput:ClearFocus();
@@ -213,24 +213,24 @@ function Bidder:draw(time, itemLink, itemIcon)
     Window:Show();
 end
 
-function Bidder:showBidDeniedNotification(Window, BidInput)
-    if (not GDKPAuction:bid(BidInput:GetText())) then
-        local BidDeniedNotification = GL.AceGUI:Create("InlineGroup");
-        BidDeniedNotification:SetLayout("Fill");
-        BidDeniedNotification:SetWidth(150);
-        BidDeniedNotification:SetHeight(50);
-        BidDeniedNotification.frame:SetParent(Window);
-        BidDeniedNotification.frame:SetPoint("BOTTOMLEFT", Window, "TOPLEFT", 0, 4);
+function Bidder:showBidDeniedNotification(Window)
+    GL:debug("Bidder:showBidDeniedNotification");
 
-        local Text = GL.AceGUI:Create("Label");
-        Text:SetText("|c00BE3333Bid denied!|r");
-        BidDeniedNotification:AddChild(Text);
-        Text:SetJustifyH("MIDDLE");
+    local BidDeniedNotification = GL.AceGUI:Create("InlineGroup");
+    BidDeniedNotification:SetLayout("Fill");
+    BidDeniedNotification:SetWidth(150);
+    BidDeniedNotification:SetHeight(50);
+    BidDeniedNotification.frame:SetParent(Window);
+    BidDeniedNotification.frame:SetPoint("BOTTOMLEFT", Window, "TOPLEFT", 0, 4);
 
-        self.RollAcceptedTimer = GL.Ace:ScheduleTimer(function ()
-            BidDeniedNotification.frame:Hide();
-        end, 2);
-    end
+    local Text = GL.AceGUI:Create("Label");
+    Text:SetText("|c00BE3333Bid denied!|r");
+    BidDeniedNotification:AddChild(Text);
+    Text:SetJustifyH("MIDDLE");
+
+    self.RollAcceptedTimer = GL.Ace:ScheduleTimer(function ()
+        BidDeniedNotification.frame:Hide();
+    end, 2);
 end
 
 function Bidder:refresh()
