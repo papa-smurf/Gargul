@@ -354,7 +354,8 @@ function User:groupMemberNames(fqn)
         if (not fqn and GL.isEra) then
             local RealmFreeNames = {};
             for _, name in pairs(self.GroupMemberNames) do
-                tinsert(RealmFreeNames, GL:stripRealm(name));
+                local realmFreeName = GL:stripRealm(name);
+                tinsert(RealmFreeNames, realmFreeName);
             end
 
             return RealmFreeNames;

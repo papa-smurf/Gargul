@@ -25,14 +25,10 @@ function Bidder:changeDuration(time)
         return false;
     end
 
-    self.TimerBar.exp = self.TimerBar.exp + time;
-    if (true) then return true; end
-
-    --self.TimerBar:SetDuration(time);
     self.TimerBar:Stop();
     self.TimerBar:Hide();
 
-    self:drawCountdownBar(time, GDKP.Auction.Current.itemLink, GDKP.Auction.Current.itemIcon, GDKP.Auction.Current.duration);
+    self:drawCountdownBar(time, GDKPAuction.Current.itemLink, GDKPAuction.Current.itemIcon, GDKPAuction.Current.duration);
 
     return true;
 end
@@ -78,6 +74,7 @@ function Bidder:draw(time, itemLink, itemIcon)
             self:hide();
         end
     end);
+    Window:SetScale(GL.Settings:get("GDKP.bidderScale", 1));
     self.Window = Window;
 
     local Texture = Window:CreateTexture(nil,"BACKGROUND");
@@ -106,42 +103,25 @@ function Bidder:draw(time, itemLink, itemIcon)
     end);
 
     local MinimumButton = CreateFrame("Button", "GARGUL_GDKP_BIDDER_MINIMUM_BUTTON", Window, "GameMenuButtonTemplate");
-    MinimumButton:SetPoint("TOPLEFT", BidInput, "TOPRIGHT", 4, 0);
+    MinimumButton:SetPoint("TOPLEFT", NewBid, "BOTTOMLEFT", -28, -10);
     MinimumButton:SetSize(78, 21); -- Minimum width is
     MinimumButton:SetText("Minimum");
     MinimumButton:SetNormalFontObject("GameFontNormal");
     MinimumButton:SetHighlightFontObject("GameFontNormal");
     MinimumButton:SetScript("OnClick", function ()
-        BidInput:SetText(GDKPAuction:lowestValidBid());
-        BidInput:SetFocus();
+        GDKPAuction:minimumBid();
     end);
 
     BidButtonClick = function ()
-        if (not GDKPAuction:bid(BidInput:GetText())) then
-            local BidDeniedNotification = GL.AceGUI:Create("InlineGroup");
-            BidDeniedNotification:SetLayout("Fill");
-            BidDeniedNotification:SetWidth(150);
-            BidDeniedNotification:SetHeight(50);
-            BidDeniedNotification.frame:SetParent(Window);
-            BidDeniedNotification.frame:SetPoint("BOTTOMLEFT", Window, "TOPLEFT", 0, 4);
-
-            local Text = GL.AceGUI:Create("Label");
-            Text:SetText("|c00BE3333Bid denied!|r");
-            BidDeniedNotification:AddChild(Text);
-            Text:SetJustifyH("MIDDLE");
-
-            self.RollAcceptedTimer = GL.Ace:ScheduleTimer(function ()
-                BidDeniedNotification.frame:Hide();
-            end, 2);
-        end
+        GDKPAuction:bid(BidInput:GetText());
 
         BidInput:SetText("");
         BidInput:ClearFocus();
     end;
 
-    --[[ ENABLE THIS INSTEAD ONCE AUTOBID IS ADDED
+    --[[ ENABLE THIS INSTEAD ONCE AUTOBID IS ADDED ]]
     BidButton = CreateFrame("Button", "GARGUL_GDKP_BIDDER_BID_BUTTON", Window, "GameMenuButtonTemplate");
-    BidButton:SetPoint("TOPLEFT", NewBid, "BOTTOMLEFT", -20, -10);
+    BidButton:SetPoint("TOPLEFT", BidInput, "TOPRIGHT", 4, 0);
     BidButton:SetSize(60, 20); -- Minimum width is
     BidButton:SetText("Bid");
     BidButton:SetNormalFontObject("GameFontNormal");
@@ -150,28 +130,63 @@ function Bidder:draw(time, itemLink, itemIcon)
         BidButtonClick();
     end);
 
-    local AutoBidButton = CreateFrame("Button", "GARGUL_GDKP_BIDDER_AUTO_BID_BUTTON", Window, "GameMenuButtonTemplate");
-    AutoBidButton:SetPoint("TOPLEFT", BidButton, "TOPRIGHT", 8, 0);
+    local AutoBidButton, StopAutoBidButton;
+    AutoBidButton = CreateFrame("Button", "GARGUL_GDKP_BIDDER_AUTO_BID_BUTTON", Window, "GameMenuButtonTemplate");
+    AutoBidButton:SetPoint("TOPLEFT", MinimumButton, "TOPRIGHT", 8, 0);
     AutoBidButton:SetSize(110, 20); -- Minimum width is
-    AutoBidButton:SetText("Stop Auto Bid");
     AutoBidButton:SetText("Auto Bid");
     AutoBidButton:SetNormalFontObject("GameFontNormal");
     AutoBidButton:SetHighlightFontObject("GameFontNormal");
     AutoBidButton:SetScript("OnClick", function ()
-        GL:dump("AUTO BID!");
+        GL.Interface.Dialogs.ConfirmWithSingleInputDialog:open({
+            question = string.format("What's your maximum bid?"),
+            inputValue = BidInput:GetText(),
+            OnYes = function (max)
+                if (not GDKPAuction:setAutoBid(max)) then
+                    self:showBidDeniedNotification(Window);
+                else
+                    BidInput:SetText("");
+                    BidInput:ClearFocus();
+                    AutoBidButton:Hide();
+                    StopAutoBidButton:Show();
+                end
+            end,
+        });
     end);
 
+    StopAutoBidButton = CreateFrame("Button", "GARGUL_GDKP_BIDDER_AUTO_BID_BUTTON", Window, "GameMenuButtonTemplate");
+    StopAutoBidButton:SetPoint("TOPLEFT", MinimumButton, "TOPRIGHT", 8, 0);
+    StopAutoBidButton:SetSize(110, 20); -- Minimum width is
+    StopAutoBidButton:SetText("Stop Auto Bid");
+    StopAutoBidButton:SetNormalFontObject("GameFontNormal");
+    StopAutoBidButton:SetHighlightFontObject("GameFontNormal");
+    StopAutoBidButton:SetScript("OnClick", function ()
+        GDKPAuction:stopAutoBid();
+        StopAutoBidButton:Hide();
+        AutoBidButton:Show();
+    end);
+
+    if (GDKPAuction.autoBiddingIsActive) then
+        AutoBidButton:Hide();
+        StopAutoBidButton:Show();
+    else
+        AutoBidButton:Show();
+        StopAutoBidButton:Hide();
+    end
+
     local PassButton = CreateFrame("Button", "GARGUL_GDKP_BIDDER_PASS_BUTTON", Window, "GameMenuButtonTemplate");
-    PassButton:SetPoint("TOPLEFT", AutoBidButton, "TOPRIGHT", 8, 0);
+    PassButton:SetPoint("TOPLEFT", StopAutoBidButton, "TOPRIGHT", 8, 0);
     PassButton:SetSize(64, 20); -- Minimum width is
     PassButton:SetText("Pass");
     PassButton:SetNormalFontObject("GameFontNormal");
     PassButton:SetHighlightFontObject("GameFontNormal");
     PassButton:SetScript("OnClick", function ()
-        GL:dump("PASS!");
+        GDKPAuction:stopAutoBid();
+        self:hide();
     end);
     --]]
 
+    --[[ WITHOUT AUTO BID:
     BidButton = CreateFrame("Button", "GARGUL_GDKP_BIDDER_BID_BUTTON", Window, "GameMenuButtonTemplate");
     BidButton:SetPoint("TOPLEFT", NewBid, "BOTTOMLEFT", 36, -10);
     BidButton:SetSize(60, 20); -- Minimum width is
@@ -191,10 +206,31 @@ function Bidder:draw(time, itemLink, itemIcon)
     PassButton:SetScript("OnClick", function ()
         self:hide();
     end);
+    ]]
 
     self:refresh();
 
     Window:Show();
+end
+
+function Bidder:showBidDeniedNotification(Window)
+    GL:debug("Bidder:showBidDeniedNotification");
+
+    local BidDeniedNotification = GL.AceGUI:Create("InlineGroup");
+    BidDeniedNotification:SetLayout("Fill");
+    BidDeniedNotification:SetWidth(150);
+    BidDeniedNotification:SetHeight(50);
+    BidDeniedNotification.frame:SetParent(Window);
+    BidDeniedNotification.frame:SetPoint("BOTTOMLEFT", Window, "TOPLEFT", 0, 4);
+
+    local Text = GL.AceGUI:Create("Label");
+    Text:SetText("|c00BE3333Bid denied!|r");
+    BidDeniedNotification:AddChild(Text);
+    Text:SetJustifyH("MIDDLE");
+
+    self.RollAcceptedTimer = GL.Ace:ScheduleTimer(function ()
+        BidDeniedNotification.frame:Hide();
+    end, 2);
 end
 
 function Bidder:refresh()
@@ -215,12 +251,18 @@ function Bidder:refresh()
 
     -- We're the highest bidder, NICE!
     if (string.lower(TopBid.Bidder.name) == string.lower(GL.User.name)) then
-        TopBidderLabel:SetText(string.format("|c001Eff00Top bidder: you with %sg|r", TopBid.bid));
+        local maxBidString = "";
+
+        if (GDKPAuction.autoBiddingIsActive and GDKPAuction.maxBid) then
+            maxBidString = string.format(" (max %sg)", GDKPAuction.maxBid);
+        end
+
+        TopBidderLabel:SetText(string.format("|c001Eff00Top bid: %sg by you%s|r", TopBid.bid, maxBidString));
     else
-        TopBidderLabel:SetText(string.format("|c00BE3333Top bidder: |c00%s%s|r with %sg|r",
+        TopBidderLabel:SetText(string.format("|c00BE3333Top bid: %sg by |c00%s%s|r|r",
+            TopBid.bid,
             GL:classHexColor(TopBid.Bidder.class),
-            TopBid.Bidder.name,
-            TopBid.bid
+            TopBid.Bidder.name
         ));
     end
 end
