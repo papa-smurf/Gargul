@@ -164,7 +164,8 @@ function Session:tradeInitiated(Details)
         return;
     end
 
-    if (Settings:get("GDKP.showGoldDetailsWindow")) then
+    -- Show the gold details window
+    do
         local Window = GL.AceGUI:Create("InlineGroup");
         Window:SetLayout("Flow");
         Window:SetWidth(190);

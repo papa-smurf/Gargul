@@ -143,7 +143,6 @@ GL.Data.DefaultSettings = {
         outbidSound = "Gargul: uh-oh",
         showBidWindow = true,
         showHistoryOnTooltip = true,
-        showGoldDetailsWindow = true,
         storeMinimumAndIncrementPerItem = true,
         time = 30,
         whisperGoldDetails = true,
