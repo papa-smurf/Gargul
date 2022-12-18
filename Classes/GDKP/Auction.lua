@@ -1068,7 +1068,7 @@ function Auction:stop(CommMessage)
     end
 
     if (not self.inProgress) then
-        return GL:warning("Can't stop auction, no auction in progress");
+        return;
     end
 
     self:stopAutoBid();
