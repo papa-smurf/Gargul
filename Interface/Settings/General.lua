@@ -1,11 +1,14 @@
 ---@type GL
 local _, GL = ...;
 
-local Overview = GL.Interface.Settings.Overview; ---@type SettingsOverview
+---@type SettingsOverview
+local Overview = GL.Interface.Settings.Overview;
 
 ---@class GeneralSettings
 GL.Interface.Settings.General = {};
-local General = GL.Interface.Settings.General; ---@type GeneralSettings
+
+---@type GeneralSettings
+local General = GL.Interface.Settings.General;
 
 ---@return void
 function General:draw(Parent)
@@ -25,34 +28,17 @@ function General:draw(Parent)
             end,
         },
         {
-            label = "No sounds",
-            setting = "noSounds",
+            label = "Show changelog",
+            description = "Enable or disable the changelog which displays important update details after updating Gargul",
+            setting = "changeLog",
         },
         {
             label = "No messages",
             setting = "noMessages",
         },
         {
-            label = "Show changelog",
-            description = "Enable or disable the changelog which displays important update details after updating Gargul",
-            setting = "changeLog",
-        },
-        {
-            label = "Experimental: debug mode",
-            description = "Enable debug mode, showing debug info in your chatbox. This is only meant for developers actively working on the Gargul add-on",
-            setting = "debugModeEnabled",
-        },
-        {
-            label = "Experimental: addon usage",
-            description = "Show add-on memory usage. Warning: may cause FPS drop!",
-            setting = "profilerEnabled",
-            callback = function ()
-                if (GL.Settings:get("profilerEnabled")) then
-                    GL.Profiler:draw();
-                else
-                    GL.Profiler:close();
-                end
-            end,
+            label = "No sounds",
+            setting = "noSounds",
         },
     }, Parent);
 
