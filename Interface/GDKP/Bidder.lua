@@ -25,14 +25,10 @@ function Bidder:changeDuration(time)
         return false;
     end
 
-    self.TimerBar.exp = self.TimerBar.exp + time;
-    if (true) then return true; end
-
-    --self.TimerBar:SetDuration(time);
     self.TimerBar:Stop();
     self.TimerBar:Hide();
 
-    self:drawCountdownBar(time, GDKP.Auction.Current.itemLink, GDKP.Auction.Current.itemIcon, GDKP.Auction.Current.duration);
+    self:drawCountdownBar(time, GDKPAuction.Current.itemLink, GDKPAuction.Current.itemIcon, GDKPAuction.Current.duration);
 
     return true;
 end

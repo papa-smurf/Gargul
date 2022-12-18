@@ -24,6 +24,7 @@ GDKP.Auction = {
     _initialized = false,
     autoBiddingIsActive = nil,
     maxBid = nil,
+    waitingForExtension = false,
 
     AutoBidTimer = nil,
     Current = {
@@ -42,6 +43,9 @@ GDKP.Auction = {
     },
     BidListenerCancelTimerId = nil,
 };
+
+--[[ CONSTANTS ]]
+local stopAuctionLeewayInSeconds = 2;
 
 ---@type GDKPAuction
 local Auction = GDKP.Auction;
@@ -803,10 +807,19 @@ end
 function Auction:announceStop()
     GL:debug("GDKP.Auction:announceStop");
 
+    -- Looks like we had a last-second bid and are awaiting an extension
+    if (self.waitingForExtension) then
+        return;
+    end
+
+    if (self.inProgress) then
+        self:stop();
+    end
+
     GL.CommMessage.new(
-            CommActions.stopGDKPAuction,
-            nil,
-            "GROUP"
+        CommActions.stopGDKPAuction,
+        nil,
+        "GROUP"
     ):send();
 end
 
@@ -817,19 +830,20 @@ end
 function Auction:announceExtension(time)
     GL:debug("GDKP.Auction:announceExtension");
 
+    self.waitingForExtension = true;
+
     time = tonumber(time) or 0
     if (time < 1) then
         GL:warning("Invalid data provided for GDKP extension!");
         return false;
     end
 
-    local secondsLeft = GL.Ace:TimeLeft(self.timerId);
-    local maximumTimeToExtend = self.Current.duration - secondsLeft;
-    local extendWith = math.min(maximumTimeToExtend, time);
+    local secondsLeft = GL.Ace:TimeLeft(self.timerId) - stopAuctionLeewayInSeconds;
+    local newDuration = math.ceil(secondsLeft + time);
 
     GL.CommMessage.new(
         CommActions.extendGDKPAuction,
-        extendWith,
+        newDuration,
         "GROUP"
     ):send();
 
@@ -846,6 +860,8 @@ function Auction:extend(CommMessage)
         return;
     end
 
+    self.waitingForExtension = false;
+
     local time = tonumber(CommMessage.content) or 0;
     if (time < 1) then
         return GL:error("Invalid time provided in Auction:extend");
@@ -856,16 +872,17 @@ function Auction:extend(CommMessage)
         return;
     end
 
-    local secondsLeft = math.ceil(GL.Ace:TimeLeft(self.timerId) + tonumber(time));
+    self.Current.duration = time;
+    GL.Interface.GDKP.Bidder:changeDuration(time);
+    SecondsAnnounced = {};
     GL.Ace:CancelTimer(self.timerId);
 
-    self.timerId = GL.Ace:ScheduleTimer(function ()
-        self:stop();
-    end, secondsLeft);
-
-    GL.Interface.GDKP.Bidder:changeDuration(time);
-
-    SecondsAnnounced = {};
+    if (self:startedByMe()) then
+        self.timerId = GL.Ace:ScheduleTimer(function ()
+            self:stop();
+            self:announceStop();
+        end, math.ceil(time + stopAuctionLeewayInSeconds));
+    end
 end
 
 --- Start an auction
@@ -942,8 +959,7 @@ function Auction:start(CommMessage)
                 TopBid = content.TopBid,
             };
         else
-            -- If we roll the same item again we do need to make
-            -- sure that we update the roll timer
+            -- If we auction the same item again we do need to make sure that we update the timer
             self.Current.time = duration;
             self.Current.minimumBid = minimumBid;
             self.Current.Bids = content.Bids;
@@ -964,10 +980,13 @@ function Auction:start(CommMessage)
             end
         end
 
-        -- Make sure the rolloff stops when time is up
-        self.timerId = GL.Ace:ScheduleTimer(function ()
-            self:stop();
-        end, duration);
+        if (self:startedByMe()) then
+            -- Make sure the auction stops when time is up
+            self.timerId = GL.Ace:ScheduleTimer(function ()
+                self:stop();
+                self:announceStop();
+            end, math.ceil(duration + stopAuctionLeewayInSeconds));
+        end
 
         -- Send a countdown in chat when enabled
         local numberOfSecondsToCountdown = Settings:get("GDKP.numberOfSecondsToCountdown", 5);
@@ -976,7 +995,7 @@ function Auction:start(CommMessage)
             and Settings:get("GDKP.doCountdown")
         ) then
             self.countDownTimer = GL.Ace:ScheduleRepeatingTimer(function ()
-                local secondsLeft = math.ceil(GL.Ace:TimeLeft(self.timerId));
+                local secondsLeft = math.ceil(GL.Ace:TimeLeft(self.timerId) - stopAuctionLeewayInSeconds);
                 if (secondsLeft <= numberOfSecondsToCountdown
                     and secondsLeft > 0
                     and not SecondsAnnounced[secondsLeft]
@@ -1003,7 +1022,7 @@ function Auction:start(CommMessage)
                         self.countDownTimer = nil;
                     end
                 end
-            end, 1);
+            end, .2);
         end
 
         -- Play raid warning sound
@@ -1017,36 +1036,39 @@ function Auction:start(CommMessage)
     end);
 end
 
---- Check whether the current rolloff was started by me (the user)
+--- Check whether the current auction was started by me (the user)
 ---
 ---@return boolean
 function Auction:startedByMe()
     return self.Current.initiatorID == GL.User.id;
 end
 
---- Stop a roll off. This method can be invoked internally when the roll
---- off time is over or when announced by the initiation of the roll off.
----
 ---@param CommMessage string|nil
 ---@return boolean
 function Auction:stop(CommMessage)
     GL:debug("GDKP.Auction:stop");
 
-    if (not self.inProgress) then
-        return GL:warning("Can't stop auction, no auction in progress");
-    end
+    if (CommMessage) then
+        -- We already stopped, no need to stop again
+        if (self.Current.initiatorID == GL.User.id) then
+            return;
+        end
 
-    if (CommMessage
-        and self.Current.initiatorID ~= GL.User.id
-        and CommMessage.Sender.id ~= self.Current.initiatorID
-    ) then
-        if (self.Current.initiatorID) then
-            GL:warning(CommMessage.Sender.name .. " is not allowed to stop auction");
-        else
-            GL:warning(CommMessage.Sender.name .. " is not allowed to stop current auction: auction is invalid");
+        if (self.Current.initiatorID ~= GL.User.id
+            and CommMessage.Sender.id ~= self.Current.initiatorID
+        ) then
+            if (self.Current.initiatorID) then
+                GL:warning(CommMessage.Sender.name .. " is not allowed to stop auction");
+            else
+                GL:warning(CommMessage.Sender.name .. " is not allowed to stop current auction: auction is invalid");
+            end
         end
 
         return false;
+    end
+
+    if (not self.inProgress) then
+        return GL:warning("Can't stop auction, no auction in progress");
     end
 
     self:stopAutoBid();
@@ -1059,11 +1081,11 @@ function Auction:stop(CommMessage)
 
     GL.Interface.GDKP.Bidder:hide();
 
-    -- If this user started the roll then we need to cancel some timers and post a message
+    -- If this user started the auction then we need to cancel some timers and post a message
     if (self:startedByMe()) then
         SecondsAnnounced = {};
 
-        -- Announce that the roll has ended
+        -- Announce that the auction has ended
         if (Settings:get("GDKP.announceBidsClosed", true)) then
             GL:sendChatMessage(
                 string.format("Stop your bids!"),
@@ -1151,8 +1173,6 @@ function Auction:reset()
     self.Current.TopBid = {};
 end
 
---- Start listening for rolls
----
 ---@return void
 function Auction:listenForBids()
     GL:debug("GDKP.Auction:listenForBids");
@@ -1161,7 +1181,7 @@ function Auction:listenForBids()
         return;
     end
 
-    -- Make sure the timer to cancel listening for rolls is cancelled
+    -- Make sure the timer to cancel listening for bids is cancelled
     GL.Ace:CancelTimer(self.bidListenerCancelTimerId);
 
     self.listeningForBids = true;
@@ -1177,7 +1197,7 @@ function Auction:listenForBids()
     end);
 end
 
---- Unregister the CHAT_MSG_SYSTEM to stop listening for rolls
+--- Unregister the CHAT_MSG_SYSTEM to stop listening for bids
 ---
 ---@return void
 function Auction:stopListeningForBids()
@@ -1395,8 +1415,7 @@ function Auction:processBid(event, message, bidder)
     end
 
     if (self.Current and self.Current.antiSnipe) then
-        local secondsLeft = math.floor(GL.Ace:TimeLeft(self.timerId));
-
+        local secondsLeft = math.floor(GL.Ace:TimeLeft(self.timerId) - stopAuctionLeewayInSeconds);
         if (secondsLeft <= self.Current.antiSnipe) then
             self:announceExtension(self.Current.antiSnipe);
         end
@@ -1424,7 +1443,7 @@ function Auction:processBid(event, message, bidder)
     end
 
     tinsert(self.Current.Bids, BidEntry);
-    GL.Interface.GDKP.Auctioneer:refreshRollsTable();
+    GL.Interface.GDKP.Auctioneer:refreshBidsTable();
 
     local OldTopBid = self.Current.TopBid;
     self.Current.TopBid = BidEntry;

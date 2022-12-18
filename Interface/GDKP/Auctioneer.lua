@@ -424,7 +424,7 @@ function Auctioneer:draw(itemLink)
 
         tinsert(GDKPAuction.Current.Bids, PreviousBid);
         GDKPAuction.Current.TopBid = PreviousBid;
-        self:refreshRollsTable();
+        self:refreshBidsTable();
     end);
     FourthRow:AddChild(DeleteLastBid);
     Interface:set(self, "DeleteLastBid", DeleteLastBid);
@@ -701,8 +701,8 @@ function Auctioneer:drawPlayersTable(parent)
     Interface:set(self, "Players", Table);
 end
 
-function Auctioneer:refreshRollsTable()
-    GL:debug("RollOff:refreshRollsTable");
+function Auctioneer:refreshBidsTable()
+    GL:debug("RollOff:refreshBidsTable");
 
     local BidTableData = {};
     local Bids = GL.GDKP.Auction.Current.Bids;
