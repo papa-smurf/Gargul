@@ -655,8 +655,10 @@ function Overview:drawHardReservesTable(Parent)
 end
 
 ---@return void
-function Overview:close(Window)
+function Overview:close()
     GL:debug("Overview:close");
+
+    local Window = GL.Interface:get(self, "SoftReserveOverview");
 
     if (not self.isVisible
         or not Window

@@ -137,18 +137,30 @@ end
 
 --- Release an item and remove it from our interface entirely
 ---
----@param scope table
+---@param Scope table
 ---@param identifier string
 ---@return boolean
-function Interface:release(scope, identifier)
-    if (type(scope) ~= "table"
-        or type(identifier) ~= "string"
-        or GL:empty(identifier)
-    ) then
+function Interface:release(Scope, identifier)
+    if (type(Scope) ~= "table") then
         return false
     end
 
-    local Item, fullIdentifier = self:get(scope, identifier);
+    if (type(Scope.type) == "string") then
+        self:releaseChildren(Scope);
+
+        if (type(Scope.Hide) == "function") then
+            Scope:Hide();
+        end
+
+        if (Scope.frame and type(Scope.frame.Hide) == "function") then
+            Scope.frame:Hide();
+        end
+
+        Scope = nil;
+        return;
+    end
+
+    local Item, fullIdentifier = self:get(Scope, identifier);
 
     if (not Item
         or type(Item) ~= "table"
@@ -156,14 +168,8 @@ function Interface:release(scope, identifier)
         return false;
     end
 
-    if (type(Item.type) == "string") then
-        self:releaseChildren(Item);
-        Item.frame:Hide();
-        Item = nil;
-    end
-
     local path = string.format("InterfaceItems.%s", fullIdentifier);
-    return GL:tableSet(scope, path, nil);
+    return GL:tableSet(Scope, path, nil);
 end
 
 --- Release the children of an element (and their children recursively)
