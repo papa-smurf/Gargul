@@ -112,7 +112,7 @@ GL.Data.DefaultSettings = {
         reserveThreshold = 180,
     },
     GDKP = {
-        acceptBidsLowerThanMinimum = false,
+        acceptBidsLowerThanMinimum = false, -- Change default? Check Auction.lua !!
         addGoldToTradeWindow = true,
         announceAuctionStart = true,
         announceCountdownInRW = true,
