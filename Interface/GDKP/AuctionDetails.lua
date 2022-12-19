@@ -95,7 +95,7 @@ function AuctionDetails:draw(sessionID, auctionID)
     ScrollFrame:SetLayout("Flow");
     ScrollFrameHolder:AddChild(ScrollFrame);
 
-    local auctionWasDeleted = not GL:higherThanZero(Auction.price);
+    local auctionWasDeleted = not Auction.price;
     local concernsManualAdjustment = Auction.itemID == Constants.GDKP.potIncreaseItemID;
     local itemLabel;
 

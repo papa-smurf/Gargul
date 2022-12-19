@@ -81,7 +81,7 @@ function Pot:total(sessionID)
 
     local pot = 0;
     for _, Auction in pairs(Session.Auctions or {}) do
-        if (not Auction.deletedAt and GL:higherThanZero(Auction.price)) then
+        if (not Auction.deletedAt and Auction.price and Auction.price ~= 0) then
             pot = pot + Auction.price;
         end
     end
@@ -277,8 +277,6 @@ function Pot:calculateCuts(sessionID)
     if (not Session) then
         return false;
     end
-
-    --GL:tableSet(Session, "Pot.DistributionDetails", {}, true);
 
     Session.Pot.Mutators = Session.Pot.Mutators or {};
     local Cuts = Session.Pot.Cuts or {};

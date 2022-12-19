@@ -384,6 +384,8 @@ end
 function Auction:sanitize(Instance)
     local SanitizedAuction = {};
 
+    Instance.price = tonumber(Instance.price);
+
     --[[ Top level Auction check ]]
     if (not Instance
         or type(Instance) ~= "table"
@@ -393,7 +395,8 @@ function Auction:sanitize(Instance)
         or date('%Y', tonumber(Instance.createdAt) or 0) == "1970"
         or not tonumber(Instance.itemID)
         or not tonumber(Instance.price)
-        or Instance.price < 1
+        or not Instance.price
+        or Instance.price == 0
     ) then
         GL:xd("Auction:sanitize step 1 failed, contact support!");
         return false;

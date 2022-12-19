@@ -160,7 +160,11 @@ function LedgerList:refresh()
             and type(Auction.itemID) == "number"
         ) then
             if (Auction.itemID == GL.Data.Constants.GDKP.potIncreaseItemID) then
-                Auction.itemLink = "Gold added to pot by";
+                local mutator = "added to";
+                if (Auction.price < 0) then
+                    mutator = "removed from"
+                end
+                Auction.itemLink = string.format("Gold %s pot by", mutator);
             end
 
             tinsert(Auctions, Auction);
