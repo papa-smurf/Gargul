@@ -728,7 +728,16 @@ function AwardedLoot:processAwardedLoot(CommMessage)
                 return;
             end
 
-            local LootAlertSystem = AlertFrame:AddQueuedAlertFrameSubSystem("LootWonAlertFrameTemplate", _G.LootWonAlertFrame_SetUp, 6, math.huge);
+            local callback = function (...)
+                _G.LootWonAlertFrame_SetUp(...);
+
+                local Notification = ...;
+
+                if (Notification and Notification.Label and Notification.Label.SetText) then
+                    Notification.Label:SetText("You won");
+                end
+            end
+            local LootAlertSystem = AlertFrame:AddQueuedAlertFrameSubSystem("LootWonAlertFrameTemplate", callback, 6, math.huge);
             LootAlertSystem:AddAlert(Result.link);
         end);
     end
