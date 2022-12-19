@@ -331,11 +331,12 @@ function Pot:calculateCuts(sessionID)
     local baseTotal = leftToDistribute - (leftToDistribute * (0 + (percentages / 100)));
 
     if (GL:higherThanZero(baseTotal) and GL:higherThanZero(numberOfPlayersWithBase)) then
-        --base = GL:round(baseTotal / numberOfPlayersWithBase, 2);
         base = baseTotal / numberOfPlayersWithBase;
     elseif (not GL:higherThanZero(baseTotal) and GL:higherThanZero(percentages)) then
         GL:error("There's not enough gold to distribute, expect some weird cut calculations!");
     end
+
+    Session.lastAvailableBase = base;
 
     local totalDistributed = 0;
     for player, Mutators in pairs(DistributionDetails or {}) do
@@ -560,8 +561,16 @@ function Pot:announce(sessionID, callback)
     GL:debug("Pot:announce");
 
     local Session = GDKPSession:byID(sessionID);
-    if (not Session) then
+    if (not Session or not Session.lastAvailableBase or not tonumber(Session.lastAvailableBase)) then
         return false;
+    end
+
+    local message = string.format("Base cut: %sg", Session.lastAvailableBase);
+    GL:sendChatMessage(message, "GROUP");
+
+    ---@todo: polish up the announcement at some point
+    if (true) then
+        return;
     end
 
     Session.Pot = Session.Pot or {};
