@@ -812,7 +812,8 @@ function Overview:showTutorial()
         {1, "|c00a79effClick the |c00FFF569New|r button below to create a GDKP session. It will show on the left when created.|r"},
         {2, "|c00a79effMake sure your session says |c00FFF569(active)|r. If that's not the case then click the |c00a79effEnable|r button below!|r"},
         {3, string.format("|c00a79effYou can now start auctioning off items. Open your inventory, |c00FFF569%s|r an item and start. Don't forget to award the item when you're done!|r", GL.Settings:get("ShortcutKeys.rollOffOrAuction"))},
-        {4, "|c00a79effIf all went well then, instead of this tutorial, you should see your freshly auctioned item(s) here!|r"},
+        {4, string.format("|c00a79effAlternatively, you can use |c00FFF569%s|r to directly award an item to anyone and manually set a price|r", GL.Settings:get("ShortcutKeys.award"))},
+        {5, "|c00a79effIf all went well then, instead of this tutorial, you should see your freshly auctioned item(s) here!|r"},
     };
 
     table.sort(Steps, function (a, b)
