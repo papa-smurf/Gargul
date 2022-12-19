@@ -146,7 +146,7 @@ function AuctionDetails:draw(sessionID, auctionID)
     AuctionEntry:SetFullWidth(true);
     ScrollFrame:AddChild(AuctionEntry);
     for key, val in pairs(Auction or {}) do
-        if (type(val) ~= "table") then
+        if (val and type(val) ~= "table") then
             AuctionEntry = AceGUI:Create("Label");
             AuctionEntry:SetText(string.format("%s: %s", key, val));
             AuctionEntry:SetFullWidth(true);
