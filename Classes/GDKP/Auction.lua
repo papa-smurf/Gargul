@@ -91,12 +91,6 @@ function Auction:userWasOutBidHandler()
         return;
     end
 
-    local outbidSound = GL.Settings:get("GDKP.outbidSound");
-    if (not GL:empty(outbidSound)) then
-        local sound = LibStub("LibSharedMedia-3.0"):Fetch("sound", outbidSound);
-        GL:playSound(sound);
-    end
-
     -- Flash the game icon in case the player alt-tabbed
     FlashClientIcon();
 
@@ -105,6 +99,12 @@ function Auction:userWasOutBidHandler()
         and GetServerTime() - self.lastOutBidNotificationShownAt <= 8
     ) then
         return;
+    end
+
+    local outbidSound = GL.Settings:get("GDKP.outbidSound");
+    if (not GL:empty(outbidSound)) then
+        local sound = LibStub("LibSharedMedia-3.0"):Fetch("sound", outbidSound);
+        GL:playSound(sound);
     end
 
     self.lastOutBidNotificationShownAt = GetServerTime();

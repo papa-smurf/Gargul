@@ -1427,11 +1427,13 @@ function GL:playSound(soundNameOrNumber, channel, forceNoDuplicates, runFinishCa
 
     local normalizedName = strtrim(string.lower(tostring(soundNameOrNumber)));
     normalizedName = string.gsub(normalizedName, "\\", "/");
-    if (GL:strContains(normalizedName, "interface/addons")) then
-        PlaySoundFile(soundNameOrNumber, channel);
-    else
-        PlaySound(soundNameOrNumber, channel, forceNoDuplicates, runFinishCallback);
-    end
+    pcall(function ()
+        if (GL:strContains(normalizedName, "interface/addons") or normalizedName == "none") then
+            PlaySoundFile(soundNameOrNumber, channel);
+        else
+            PlaySound(soundNameOrNumber, channel, forceNoDuplicates, runFinishCallback);
+        end
+    end);
 end
 
 local gaveNoMessagesWarning = false;
