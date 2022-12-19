@@ -15,7 +15,7 @@ GL.Interface.Changelog = {
             version = "5.0.4",
             date = "December 19th, 2022",
             Changes = {
-                "|c00FF0000GDKP IS HERE!|r Next level GDKP automation, bidding, tracking and pot calculation and distribution. Built on Gargul's solid core, backed by a solid and active community! Spread the word and check it out for yourself with |c00a79eff/gl gdkp|r, no need to be in a group! Coming soon: queued auctions! Happy Holidays <3",
+                "|c00FF0000GDKP IS HERE!|r Next level GDKP automation, bidding, tracking and pot calculation and distribution. Built on Gargul's solid core and backed by an active community!\n\nEncourage raid leaders to leverage it or check it out for yourself with |c00a79eff/gl gdkp|r, no need to be in a group! Coming soon: queued auctions! Happy Holidays <3",
             },
         },
         {
