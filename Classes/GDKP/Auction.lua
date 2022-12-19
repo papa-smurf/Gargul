@@ -24,7 +24,7 @@ GDKP.Auction = {
     _initialized = false,
     autoBiddingIsActive = nil,
     lastBidAt = nil,
-    lastBidAnnouncementAt = nil,
+    lastBidAnnouncementAt = 0,
     maxBid = nil,
     raidWarningThrottler = nil,
     waitingForExtension = false,
@@ -1448,10 +1448,21 @@ function Auction:processBid(message, bidder)
             GL.Ace:CancelTimer(self.raidWarningThrottler);
             if (GetTime() - self.lastBidAnnouncementAt < 1.2) then
                 self.raidWarningThrottler = GL.Ace:ScheduleTimer(function ()
+                    local currentTopBid = GL:tableGet(self.Current, "TopBid.bid");
+                    local bidder = GL:tableGet(self.Current, "TopBid.Bidder.name");
+
+                    if (not bid or not bidder) then
+                        return;
+                    end
+
+                    bidApprovedMessage = string.format(bidApprovedMessage, bidder, currentTopBid);
                     GL:sendChatMessage(bidApprovedMessage, "RAID_WARNING", nil, nil, false);
+                    self.lastBidAnnouncementAt = GetTime();
                 end, 1);
             else
+                bidApprovedMessage = string.format(bidApprovedMessage, BidEntry.Bidder.name, bid);
                 GL:sendChatMessage(bidApprovedMessage, "RAID_WARNING", nil, nil, false);
+                self.lastBidAnnouncementAt = GetTime();
             end
         end
 
