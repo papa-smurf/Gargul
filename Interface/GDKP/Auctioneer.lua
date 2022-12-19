@@ -74,7 +74,6 @@ function Auctioneer:draw(itemLink)
     Window:SetWidth(430);
     Window:SetHeight(390);
     Window:EnableResize(false);
-    Window.frame:SetFrameStrata("FULLSCREEN_DIALOG");
     Window:SetCallback("OnClose", function()
         self:close();
     end);
@@ -557,7 +556,7 @@ function Auctioneer:drawReopenAuctioneerButton()
     Button:SetMovable(true);
     Button:EnableMouse(true);
     Button:SetClampedToScreen(true);
-    Button:SetFrameStrata("HIGH");
+    Button:SetFrameStrata("FULLSCREEN_DIALOG");
     Button:RegisterForDrag("LeftButton");
     Button:SetScript("OnDragStart", Button.StartMoving);
     Button:SetScript("OnDragStop", function()

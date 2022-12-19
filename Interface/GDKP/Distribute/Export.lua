@@ -68,7 +68,6 @@ function Export:build()
     end
 
     Window = AceGUI:Create("Frame");
-    Window.frame:SetFrameStrata("FULLSCREEN_DIALOG");
     Interface:AceGUIDefaults(self, Window, "GDKPPotExport", 500, 600);
     Interface:resizeBounds(Window, 300, 300);
 

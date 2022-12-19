@@ -61,7 +61,7 @@ function Bidder:draw(time, itemLink, itemIcon)
     Window:SetMovable(true);
     Window:EnableMouse(true);
     Window:SetClampedToScreen(true);
-    Window:SetFrameStrata("HIGH");
+    Window:SetFrameStrata("FULLSCREEN_DIALOG");
     Window:RegisterForDrag("LeftButton");
     Window:SetScript("OnDragStart", Window.StartMoving);
     Window:SetScript("OnDragStop", function()
