@@ -36,7 +36,7 @@ function Exporter:draw()
 
     -- Fetch award history per date
     local AwardHistoryByDate = {};
-    for _, AwardEntry in pairs(DB:get("AwardHistory")) do
+    for _, AwardEntry in pairs(DB:get("AwardHistory") or {}) do
         local dateString = date('%Y-%m-%d', AwardEntry.timestamp);
         local Entries = GL:tableGet(AwardHistoryByDate, dateString, {});
 
@@ -52,6 +52,7 @@ function Exporter:draw()
     Window:SetLayout("Flow");
     Window:SetWidth(600);
     Window:SetHeight(450);
+    Window:EnableResize(false);
     Window:SetCallback("OnClose", function()
         self:close();
     end);
@@ -63,6 +64,13 @@ function Exporter:draw()
     -- Make sure the window can be closed by pressing the escape button
     _G["GARGUL_EXPORTER_WINDOW"] = Window.frame;
     tinsert(UISpecialFrames, "GARGUL_EXPORTER_WINDOW");
+
+    --[[ DON'T EDIT STOOPID! ]]
+    local DontEditNotification = AceGUI:Create("Label");
+    DontEditNotification:SetFullWidth(true);
+    DontEditNotification:SetJustifyH("MIDDLE");
+    DontEditNotification:SetText("|c00FF0000This is an export feature ONLY, there is no point editing any of the values: THEY WON'T BE SAVED!|r\n\n");
+    Window:AddChild(DontEditNotification);
 
     --[[
         DATES FRAME
@@ -86,8 +94,6 @@ function Exporter:draw()
     ExportBox:SetNumLines(22);
     ExportBox:SetMaxLetters(999999999);
     Window:AddChild(ExportBox);
-    GL.Interface:set(self, "Export", ExportBox);
-
     GL.Interface:set(self, "Export", ExportBox);
 
     --[[
@@ -396,7 +402,7 @@ function Exporter:drawDatesTable(Parent, Dates)
     local Table = ScrollingTable:CreateST(Columns, 21, 15, nil, Parent);
     Table:EnableSelection(true);
     Table:SetWidth(120);
-    Table.frame:SetPoint("BOTTOMLEFT", Parent, "BOTTOMLEFT", 50, 78);
+    Table.frame:SetPoint("BOTTOMLEFT", Parent, "BOTTOMLEFT", 50, 58);
 
     Table:RegisterEvents({
         ["OnClick"] = function()
