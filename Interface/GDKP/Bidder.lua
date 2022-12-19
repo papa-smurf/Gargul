@@ -88,6 +88,7 @@ function Bidder:draw(time, itemLink, itemIcon)
     TopBidder:SetPoint("CENTER", Window, "CENTER", 0, 12);
     GL.Interface:set(self, "TopBidder", TopBidder);
 
+    -- Show the minimum bid and increment if no one bid yet
     if (GDKPAuction.Current.minimumBid > 0) then
         local message = string.format("Min bid: %sg   Increment: %sg", GDKPAuction.Current.minimumBid, GDKPAuction.Current.minimumIncrement);
         TopBidder:SetText(message);
@@ -156,6 +157,7 @@ function Bidder:draw(time, itemLink, itemIcon)
                     StopAutoBidButton:Show();
                 end
             end,
+            focus = true,
         });
     end);
 
