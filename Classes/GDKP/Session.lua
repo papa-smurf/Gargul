@@ -190,12 +190,12 @@ function Session:tradeInitiated(Details)
 
         local IncludeTradeInSession = GL.AceGUI:Create("CheckBox");
         IncludeTradeInSession:SetValue(false);
-        IncludeTradeInSession:SetLabel("Exclude traded gold from ledger");
-        --IncludeTradeInSession:SetDescription(Entry.description);
+        IncludeTradeInSession:SetLabel("Exclude from GDKP");
+        IncludeTradeInSession:SetDescription("Gold traded will not be added to amount given or received");
         IncludeTradeInSession:SetFullWidth(true);
         IncludeTradeInSession.text:SetTextColor(1, .95686, .40784);
         IncludeTradeInSession:SetCallback("OnValueChanged", function()
-            self.includeTradeInSession = IncludeTradeInSession:GetValue();
+            self.includeTradeInSession = not IncludeTradeInSession:GetValue();
         end);
         Window:AddChild(IncludeTradeInSession);
     end
