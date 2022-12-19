@@ -101,7 +101,7 @@ function TradeWindow:open(playerName, callback, allwaysExecuteCallback)
         end, 1);
 
         GL.Events:register("TradeWindowTradeShowCallbackListener", "TRADE_SHOW", function ()
-            -- Remove our trade window show eventlistener, we no longer need it
+            -- Remove our trade window show event listener, we no longer need it
             GL.Events:unregister("TradeWindowTradeShowCallbackListener");
 
             -- We can cancel our timer now
