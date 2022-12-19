@@ -1293,6 +1293,8 @@ function Auction:stopAutoBid()
 
     GL.Ace:CancelTimer(self.AutoBidTimer);
     self.AutoBidTimer = nil;
+
+    GL.Interface.GDKP.Bidder:autoBidStopped();
 end
 
 ---@return boolean
@@ -1304,6 +1306,7 @@ function Auction:autoBid()
     end
 
     if (self:lowestValidBid() > self.maxBid) then
+        self:stopAutoBid();
         return false;
     end
 

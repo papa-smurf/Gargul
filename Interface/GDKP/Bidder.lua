@@ -6,6 +6,8 @@ local GDKPAuction = GL.GDKP.Auction;
 
 ---@class GDKPBidderInterface
 GL:tableSet(GL, "Interface.GDKP.Bidder", {
+    AutoBidButton = nil,
+    StopAutoBidButton = nil,
     Window = nil,
     TimerBar = nil,
 });
@@ -42,6 +44,20 @@ function Bidder:show(...)
     end
 
     self:draw(...);
+end
+
+function Bidder:autoBidStopped()
+    if (self.AutoBidButton
+        and self.AutoBidButton.Show
+    ) then
+        self.AutoBidButton:Show();
+    end
+
+    if (self.StopAutoBidButton
+        and self.StopAutoBidButton.Hide
+    ) then
+        self.StopAutoBidButton:Hide();
+    end
 end
 
 --- Note: we're not using AceGUI here since getting a SimpleGroup to move properly is a friggin nightmare
@@ -160,6 +176,7 @@ function Bidder:draw(time, itemLink, itemIcon)
             focus = true,
         });
     end);
+    self.AutoBidButton = AutoBidButton;
 
     StopAutoBidButton = CreateFrame("Button", "GARGUL_GDKP_BIDDER_AUTO_BID_BUTTON", Window, "GameMenuButtonTemplate");
     StopAutoBidButton:SetPoint("TOPLEFT", MinimumButton, "TOPRIGHT", 8, 0);
@@ -172,6 +189,7 @@ function Bidder:draw(time, itemLink, itemIcon)
         StopAutoBidButton:Hide();
         AutoBidButton:Show();
     end);
+    self.StopAutoBidButton = StopAutoBidButton;
 
     if (GDKPAuction.autoBiddingIsActive) then
         AutoBidButton:Hide();
