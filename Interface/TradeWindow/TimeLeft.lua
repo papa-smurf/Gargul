@@ -674,15 +674,6 @@ function TimeLeft:refreshBars()
             GameTooltip:Show();
         end);
 
-        -- Make sure the bars are refreshed when they run out
-        local oldStop = TimerBar.Stop;
-        TimerBar.Stop = function ()
-            pcall(function ()
-                oldStop(TimerBar);
-            end);
-            self:refreshBars();
-        end;
-
         TimerBar:Start(7200); -- Default trade duration is two hours
         tinsert(self.Bars, TimerBar);
 
