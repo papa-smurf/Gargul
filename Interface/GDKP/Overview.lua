@@ -218,7 +218,7 @@ function Overview:build()
     PotIcon:SetHeight(26);
 
     PotIconFrame:SetParent(WindowFrame);
-    PotIconFrame:SetPoint("TOPRIGHT", WindowFrame, "TOPRIGHT", -56, -24);
+    PotIconFrame:SetPoint("TOPRIGHT", WindowFrame, "TOPRIGHT", -56, GL.elvUILoaded and -14 or -20);
     PotIconFrame:Show();
 
     PotIcon:SetCallback("OnClick", function ()
@@ -324,17 +324,25 @@ function Overview:build()
             self:closeSubWindows();
             Interface.GDKP.AddGold:toggle(self.selectedSession);
         end,
-        tooltip = "Add gold to pot",
-        disabledTooltip = "You need lead or master loot to add gold.\nYou can't add gold to locked/deleted sessions",
-        normalTexture = "Interface/AddOns/Gargul/Assets/Buttons/create",
-        disabledTexture = "Interface/AddOns/Gargul/Assets/Buttons/create-disabled",
+        tooltip = "Add/Remove gold",
+        disabledTooltip = "You need lead or master loot to adjust gold.\nYou can't adjust gold on locked/deleted sessions",
+        normalTexture = "Interface/AddOns/Gargul/Assets/Buttons/bag",
+        disabledTexture = "Interface/AddOns/Gargul/Assets/Buttons/bag-disabled",
         update = function (self)
             local SelectedSession = Overview:getSelectedSession();
 
             self:SetEnabled(SelectedSession and SelectedSession.deletedAt == nil and SelectedSession.lockedAt == nil and (not GL.User.isInGroup or GL.User.isLead or GL.User.isMasterLooter));
         end,
         updateOnCreate = false,
-        updateOn = { "GROUP_ROSTER_UPDATE", "GL.GDKP_OVERVIEW_SESSION_CHANGED", "GL.GDKP_OVERVIEW_SESSION_CHANGED", "GL.GDKP_OVERVIEW_SESSIONS_REFRESHED" },
+        updateOn = {
+            "GROUP_ROSTER_UPDATE",
+            "GL.GDKP_OVERVIEW_SESSION_CHANGED",
+            "GL.GDKP_OVERVIEW_SESSION_CHANGED",
+            "GL.GDKP_OVERVIEW_SESSIONS_REFRESHED",
+            "GL.GDKP_SESSION_CHANGED",
+            "GL.GDKP_SESSION_LOCKED",
+            "GL.GDKP_SESSION_UNLOCKED",
+        },
     });
     AddGoldButton:SetPoint("TOP", ScrollFrameHolder.frame, "TOP", -9, -7);
 
@@ -605,7 +613,7 @@ function Overview:refreshLedger()
         -- Add placeholders for all the item icons and labels
         for _, Auction in pairs(Auctions) do
             local price = Auction.price or 0;
-            local auctionWasDeleted = not GL:higherThanZero(price);
+            local auctionWasDeleted = not Auction.price;
             local concernsManualAdjustment = Auction.itemID == Constants.GDKP.potIncreaseItemID;
 
             -- This entry should always exist, if it doesn't something went wrong (badly)
@@ -670,10 +678,16 @@ function Overview:refreshLedger()
             -- Item was sold
             if (not auctionWasDeleted) then
                 if (concernsManualAdjustment) then
-                    itemLabel = string.format("|cFF%s%sg|r added to pot by |c00%s%s|r\nNote: %s",
+                    local mutator = "added to";
+                    if (price < 0) then
+                        mutator = "removed from"
+                    end
+
+                    itemLabel = string.format("|cFF%s%sg|r %s pot by |c00%s%s|r\nNote: %s",
                         Constants.ClassHexColors.rogue,
                         price or "0",
-                        GL:classHexColor(GL.Player:classByName(Auction.Winner.name, 0), GL.Data.Constants.disabledTextColor),
+                        mutator,
+                        GL:classHexColor(Auction.Winner.class),
                         Auction.Winner.name,
                         Auction.note or ""
                     );
@@ -809,10 +823,10 @@ function Overview:showTutorial()
     Note:SetText("|c00a79effFollow the steps below to quickly get started with Gargul GDKP!|r");
 
     local Steps = {
-        {1, "|c00a79effGargul's GDKP module is still very new. We recommend you to record raids and to double check calculations before payout|r"},
-        {2, "|c00a79effClick the |c00FFF569New|r button below to create a GDKP session. It will show on the left when created.|r"},
-        {3, "|c00a79effMake sure your session says |c00FFF569(active)|r. If that's not the case then click the |c00a79effEnable|r button below!|r"},
-        {4, string.format("|c00a79effYou can now start auctioning off items. Open your inventory, |c00FFF569%s|r an item and start. Don't forget to award the item when you're done!|r", GL.Settings:get("ShortcutKeys.rollOffOrAuction"))},
+        {1, "|c00a79effClick the |c00FFF569New|r button below to create a GDKP session. It will show on the left when created.|r"},
+        {2, "|c00a79effMake sure your session says |c00FFF569(active)|r. If that's not the case then click the |c00a79effEnable|r button below!|r"},
+        {3, string.format("|c00a79effYou can now start auctioning off items. Open your inventory, |c00FFF569%s|r an item and start. Don't forget to award the item when you're done!|r", GL.Settings:get("ShortcutKeys.rollOffOrAuction"))},
+        {4, string.format("|c00a79effAlternatively, you can use |c00FFF569%s|r to directly award an item to anyone and manually set a price|r", GL.Settings:get("ShortcutKeys.award"))},
         {5, "|c00a79effIf all went well then, instead of this tutorial, you should see your freshly auctioned item(s) here!|r"},
     };
 
@@ -840,12 +854,6 @@ function Overview:showTutorial()
         ItemIcon:SetImageSize(Settings:get("GDKP.ledgerAuctionScale"), Settings:get("GDKP.ledgerAuctionScale"));
         ItemIcon:SetImage(iconPath);
         ItemRow:AddChild(ItemIcon);
-
-        if (order == 1) then
-            local BorderColor = {.77, .12, .23, 1};
-            local LCG = LibStub("LibCustomGlowGargul-1.0");
-            LCG.PixelGlow_Start(ItemRow.frame, BorderColor, 70, .05, 5, 3, 10);
-        end
 
         --[[
            ITEM ICON/LABEL SPACER

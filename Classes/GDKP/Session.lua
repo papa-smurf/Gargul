@@ -24,6 +24,7 @@ local GDKP = GL.GDKP;
 GDKP.Session = {
     _initialized = false,
     broadcastInProgress = false,
+    includeTradeInSession = true,
     inProgress = false,
     lastOutBidNotificationShownAt = nil,
     requestingData = false,
@@ -164,7 +165,10 @@ function Session:tradeInitiated(Details)
         return;
     end
 
-    if (Settings:get("GDKP.showGoldDetailsWindow")) then
+    -- Show the gold details window
+    do
+        self.includeTradeInSession = true;
+
         local Window = GL.AceGUI:Create("InlineGroup");
         Window:SetLayout("Flow");
         Window:SetWidth(190);
@@ -183,6 +187,17 @@ function Session:tradeInitiated(Details)
         DescriptionLabel:SetText(message);
         DescriptionLabel:SetColor(1, .95686, .40784);
         Window:AddChild(DescriptionLabel);
+
+        local IncludeTradeInSession = GL.AceGUI:Create("CheckBox");
+        IncludeTradeInSession:SetValue(false);
+        IncludeTradeInSession:SetLabel("Exclude from GDKP");
+        IncludeTradeInSession:SetDescription("Gold traded will not be added to amount given or received");
+        IncludeTradeInSession:SetFullWidth(true);
+        IncludeTradeInSession.text:SetTextColor(1, .95686, .40784);
+        IncludeTradeInSession:SetCallback("OnValueChanged", function()
+            self.includeTradeInSession = not IncludeTradeInSession:GetValue();
+        end);
+        Window:AddChild(IncludeTradeInSession);
     end
 
     -- Add the gold to the trade window
@@ -237,6 +252,11 @@ end
 ---@return void
 function Session:registerGoldTrade(Details)
     GL:debug("Session:registerTrade");
+
+    -- The player didn't want to include this trade
+    if (not self.includeTradeInSession) then
+        return;
+    end
 
     local Instance = self:getActive();
 

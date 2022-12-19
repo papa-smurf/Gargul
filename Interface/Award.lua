@@ -70,12 +70,10 @@ function Award:draw(itemLink)
     Window:SetHeight(300);
     Window:EnableResize(false);
     Window.rendered = true;
-    Window.frame:SetFrameStrata("HIGH");
     Window.statustext:GetParent():Hide(); -- Hide the statustext bar
     Window:SetCallback("OnClose", function()
         self:close();
     end);
-    Window.frame:SetFrameStrata("DIALOG");
     GL.Interface:restorePosition(Window, "Award");
     GL.Interface:set(self, "Window", Window);
 

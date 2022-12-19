@@ -79,7 +79,7 @@ function GDKP:draw(Parent)
         local sound = LibStub("LibSharedMedia-3.0"):Fetch("sound", Sounds[value]);
 
         if (type(sound) == "string" and not GL:empty(sound)) then
-            PlaySoundFile(sound);
+            GL:playSound(sound);
 
             GL.Settings:set("GDKP.outbidSound", Sounds[value]);
         end
@@ -125,6 +125,17 @@ function GDKP:draw(Parent)
             label = "Announce incoming bids in raid warning",
             description = "Announce bids in /rw instead of /ra. Requires |c00967FD2Announce incoming bids|r to be enabled!|r",
             setting = "GDKP.announceNewBidInRW",
+
+        },
+        {
+            label = "Accept bids lower than minimum",
+            description = "Accept bids that don't meet the minimum, useful for identifying off spec bids",
+            setting = "GDKP.acceptBidsLowerThanMinimum",
+        },
+        {
+            label = "Allow invalid bids to trigger anti-snipe",
+            description = "Bids that are too low will still trigger the anti-snipe timer",
+            setting = "GDKP.invalidBidsTriggerAntiSnipe",
         },
         {
             label = "Remember minimum bid and increment for each item",
@@ -232,6 +243,42 @@ function GDKP:draw(Parent)
 
     Overview:drawHeader("UI Style", Parent);
 
+    local HorizontalSpacer = GL.AceGUI:Create("SimpleGroup");
+    HorizontalSpacer:SetLayout("FILL");
+    HorizontalSpacer:SetFullWidth(true);
+    HorizontalSpacer:SetHeight(20);
+    Parent:AddChild(HorizontalSpacer);
+
+    local Scale = GL.AceGUI:Create("Slider");
+    Scale:SetLabel("Magnification scale of the bidder window");
+    Scale.label:SetTextColor(1, .95686, .40784);
+    Scale:SetFullWidth(true);
+    Scale:SetValue(GL.Settings:get("GDKP.bidderScale"));
+    Scale:SetSliderValues(.8, 1.8, .1);
+    Scale:SetCallback("OnValueChanged", function(Slider)
+        local value = tonumber(Slider:GetValue());
+
+        if (not value) then
+            return;
+        end
+
+        GL.Settings:set("GDKP.bidderScale", value);
+
+        -- Change the existing bidder window if it's active!
+        if (GL.Interface.GDKP.Bidder.Window
+            and type(GL.Interface.GDKP.Bidder.Window.SetScale == "function")
+        ) then
+            GL.Interface.GDKP.Bidder.Window:SetScale(value);
+        end
+    end);
+    Parent:AddChild(Scale);
+
+    Spacer = GL.AceGUI:Create("SimpleGroup");
+    Spacer:SetLayout("FILL");
+    Spacer:SetFullWidth(true);
+    Spacer:SetHeight(20);
+    Parent:AddChild(Spacer);
+
     local LedgerAuctionSizeExplanation = GL.AceGUI:Create("Label");
     LedgerAuctionSizeExplanation:SetText("The slider below affects how tightly auctions are packed together in the |c00967FD2/gdkp|r overview");
     LedgerAuctionSizeExplanation:SetFullWidth(true);
@@ -266,10 +313,6 @@ function GDKP:draw(Parent)
     Overview:drawHeader("Trading", Parent);
 
     Overview:drawCheckboxes({
-        {
-            label = "Show GDKP gold details window",
-            setting = "GDKP.showGoldDetailsWindow",
-        },
         {
             label = "Whisper a gold to give or receive message",
             setting = "GDKP.whisperGoldDetails",

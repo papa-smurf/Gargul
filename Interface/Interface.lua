@@ -137,33 +137,51 @@ end
 
 --- Release an item and remove it from our interface entirely
 ---
----@param scope table
+---@param Scope table
 ---@param identifier string
----@return boolean
-function Interface:release(scope, identifier)
-    if (type(scope) ~= "table"
-        or type(identifier) ~= "string"
-        or GL:empty(identifier)
-    ) then
-        return false
+---@return void
+function Interface:release(Scope, identifier)
+    GL:debug("Interface:release");
+
+    if (type(Scope) ~= "table") then
+        return;
     end
 
-    local Item, fullIdentifier = self:get(scope, identifier);
+    local fullIdentifier, path, Element;
 
-    if (not Item
-        or type(Item) ~= "table"
-    ) then
-        return false;
+    -- We're not given an element, but instead need to fetch it from our interface cache
+    if (not Scope.type and identifier) then
+        Element, fullIdentifier = self:get(Scope, identifier);
+        path = string.format("InterfaceItems.%s", fullIdentifier);
+
+        if (not Element
+            or type(Element) ~= "table"
+        ) then
+            return;
+        end
+    elseif (Scope.type) then
+        Element = Scope;
+    else
+        return;
     end
 
-    if (type(Item.type) == "string") then
-        self:releaseChildren(Item);
-        Item.frame:Hide();
-        Item = nil;
+    if (type(Element.type) == "string") then
+        self:releaseChildren(Element);
+
+        if (type(Element.Hide) == "function") then
+            Element:Hide();
+        end
+
+        if (Element.frame and type(Element.frame.Hide) == "function") then
+            Element.frame:Hide();
+        end
+
+        Element = nil;
     end
 
-    local path = string.format("InterfaceItems.%s", fullIdentifier);
-    return GL:tableSet(scope, path, nil);
+    if (path and Scope) then
+        GL:tableSet(Scope, path, nil);
+    end
 end
 
 --- Release the children of an element (and their children recursively)
@@ -381,6 +399,7 @@ function Interface:createButton(Parent, Details)
     Button:SetEnabled(true);
     Button:ClearAllPoints();
     Button:SetSize(width, height);
+    Button:SetFrameStrata("FULLSCREEN_DIALOG");
     Button.updateOn = updateOn;
 
     -- Make sure the tooltip still shows even when the button is disabled

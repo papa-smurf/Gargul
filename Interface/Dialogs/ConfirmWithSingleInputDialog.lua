@@ -38,9 +38,17 @@ function Dialog:open(Details)
         end
     end);
 
-    if (Details.inputValue and InputField) then
+    if (not InputField) then
+        return;
+    end
+
+    if (Details.inputValue) then
         --- Adjust the value of the input if a default is given
         InputField:SetText(Details.inputValue);
+    end
+
+    if (Details.focus) then
+        InputField:SetFocus();
     end
 end
 

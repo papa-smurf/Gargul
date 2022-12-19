@@ -12,11 +12,10 @@ GL.Interface.Changelog = {
 
     History = {
         {
-            version = "5.0.3",
-            date = "December 17th, 2022",
+            version = "5.0.4",
+            date = "December 19th, 2022",
             Changes = {
-                --"Happy Holidays everyone! Stay healthy and may your loot be plenty!",
-                "|c00FFFFFF|c00FF0000H|ra|c00FF0000p|rp|c00FF0000y|r H|c00FF0000o|rl|c00FF0000i|rd|c00FF0000a|ry|c00FF0000s|r e|c00FF0000v|re|c00FF0000r|ry|c00FF0000o|rn|c00FF0000e|r|r! Stay healthy and may your loot be plenty!",
+                "|c00FF0000GDKP IS HERE!|r Next level GDKP automation, bidding, tracking and pot calculation and distribution. Built on Gargul's solid core and backed by an active community!\n\nEncourage raid leaders to leverage it or check it out for yourself with |c00a79eff/gl gdkp|r, no need to be in a group! Coming soon: queued auctions! Happy Holidays <3",
             },
         },
         {
@@ -238,14 +237,20 @@ local Changelog = GL.Interface.Changelog; ---@type ChangelogInterface
 function Changelog:reportChanges()
     GL:debug("Changelog:reportChanges");
 
-    if (not GL.Version.firstBoot -- This is not this version's first boot, no need to report
-        or not GL.Settings:get("changeLog", true) -- The user is not interested in the changelog
-    ) then
+    -- This is not this version's first boot, no need to report
+    if (not GL.Version.firstBoot) then
         return;
     end
 
     local latestVersionChangesShown = GL.DB.LoadDetails.latestVersionChangesShown or 0;
     local latestChangelogVersion = self.History[1].version;
+
+    -- If changelog is disabled and there are no pressing matters, then return
+    if (not GL.Settings:get("changeLog", true)
+        and GL.Version:leftIsOlderThanRight("5.0.4", latestVersionChangesShown)
+    ) then
+        return;
+    end
 
     -- There are no changes to display between this version and the last, skip!
     if (not GL.Version:leftIsOlderThanRight(latestVersionChangesShown, latestChangelogVersion)) then
@@ -347,13 +352,11 @@ function Changelog:draw()
 
     for _, LogEntry in pairs(self.History) do
         -- Add some whitespace between this and the previous entry
-        if (not firstEntry) then
-            HorizontalSpacer = GL.AceGUI:Create("SimpleGroup");
-            HorizontalSpacer:SetLayout("FILL");
-            HorizontalSpacer:SetFullWidth(true);
-            HorizontalSpacer:SetHeight(16);
-            ScrollFrame:AddChild(HorizontalSpacer);
-        end
+        HorizontalSpacer = GL.AceGUI:Create("SimpleGroup");
+        HorizontalSpacer:SetLayout("FILL");
+        HorizontalSpacer:SetFullWidth(true);
+        HorizontalSpacer:SetHeight(16);
+        ScrollFrame:AddChild(HorizontalSpacer);
 
         -- Version label
         local VersionLabel = AceGUI:Create("Label");
@@ -373,13 +376,34 @@ function Changelog:draw()
                 ScrollFrame:AddChild(HorizontalSpacer);
             end
 
-            -- Changes
-            local ChangeLabel = AceGUI:Create("Label");
-            ChangeLabel:SetText(string.format("|c00a79eff-|r|c00FFF569 %s|r", change));
-            ChangeLabel:SetFontObject(_G["GameFontNormal"]);
-            ChangeLabel:SetHeight(20);
-            ChangeLabel:SetFullWidth(true);
-            ScrollFrame:AddChild(ChangeLabel);
+            -- Highlight GDKP update
+            if (LogEntry.version == "5.0.4") then
+                HorizontalSpacer = GL.AceGUI:Create("SimpleGroup");
+                HorizontalSpacer:SetLayout("FILL");
+                HorizontalSpacer:SetFullWidth(true);
+                HorizontalSpacer:SetHeight(6);
+                ScrollFrame:AddChild(HorizontalSpacer);
+
+                local ChangeLabel = AceGUI:Create("Label");
+                ChangeLabel:SetText(string.format("\n|c00FFF569 %s|r\n \n", change));
+                ChangeLabel:SetFontObject(_G["GameFontNormal"]);
+                ChangeLabel:SetHeight(20);
+                ChangeLabel:SetFullWidth(true);
+                ScrollFrame:AddChild(ChangeLabel);
+
+                local LCG = LibStub("LibCustomGlowGargul-1.0");
+                local BorderColor = {1, 1, 1, 1};
+                LCG.PixelGlow_Start(ChangeLabel.frame, BorderColor, 140, 0, 5, 3, 10, 2, false, 2);
+                BorderColor = {.77, .12, .23, 1};
+                LCG.PixelGlow_Start(ChangeLabel.frame, BorderColor, 70, .02, 5, 3, 10, 2, false, 1);
+            else
+                local ChangeLabel = AceGUI:Create("Label");
+                ChangeLabel:SetText(string.format("|c00a79eff-|r|c00FFF569 %s|r", change));
+                ChangeLabel:SetFontObject(_G["GameFontNormal"]);
+                ChangeLabel:SetHeight(20);
+                ChangeLabel:SetFullWidth(true);
+                ScrollFrame:AddChild(ChangeLabel);
+            end
 
             firstChange = false;
         end

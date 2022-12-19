@@ -22,7 +22,14 @@ local SecondsAnnounced = {};
 ---@class GDKPAuction
 GDKP.Auction = {
     _initialized = false,
+    autoBiddingIsActive = nil,
+    lastBidAt = nil,
+    lastBidAnnouncementAt = 0,
+    maxBid = nil,
+    raidWarningThrottler = nil,
+    waitingForExtension = false,
 
+    AutoBidTimer = nil,
     Current = {
         antiSnipe = nil, -- The anti snipe time
         duration = nil, -- The amount of time players get to bid
@@ -46,6 +53,10 @@ local Auction = GDKP.Auction;
 ---@type GDKPSession
 local GDKPSession = GDKP.Session;
 
+--[[ CONSTANTS ]]
+local stopAuctionLeewayInSeconds = 2;
+local autoBidThrottle = .8;
+
 function Auction:_init()
     GL:debug("GDKP.Auction:_init");
 
@@ -55,12 +66,6 @@ function Auction:_init()
 
     -- An event is fired whenever a bid is accepted, in which case we broadcast the latest auction details
     Events:register("GDKPBidAccepted", "GL.GDKP_BID_ACCEPTED", function (_, OldTopBid, NewTopBid)
-        GL.CommMessage.new(
-            CommActions.refreshGDKPAuction,
-            self.Current,
-            "GROUP"
-        ):send();
-
         if (GL:tableGet(OldTopBid or {}, "Bidder.name") == GL.User.name and NewTopBid.Bidder.name ~= GL.User.name) then
             Events:fire("GL.GDKP_USER_WAS_OUTBID", OldTopBid, NewTopBid);
         end
@@ -70,28 +75,42 @@ function Auction:_init()
 
     -- Whenever we were outbid we show a notification
     Events:register("GDKPGDKPUserWasOutBid", "GL.GDKP_USER_WAS_OUTBID", function ()
-        local outbidSound = GL.Settings:get("GDKP.outbidSound");
-        if (not GL:empty(outbidSound)) then
-            local Sounds = LibStub("LibSharedMedia-3.0"):List("sound");
-            local sound = LibStub("LibSharedMedia-3.0"):Fetch("sound", Sounds[outbidSound]);
-            PlaySoundFile(sound, "SFX");
-        end
-
-        -- We don't want to spam the user with alerts!
-        if (self.lastOutBidNotificationShownAt
-            and GetServerTime() - self.lastOutBidNotificationShownAt <= 8
-        ) then
-            return;
-        end
-
-        self.lastOutBidNotificationShownAt = GetServerTime();
-        GL.Interface.Alerts:fire("GargulNotification", {
-            message = string.format("|c00BE3333You were outbid!|r"),
-        });
+        self:userWasOutBidHandler();
     end);
 
     self._initialized = true;
     return true;
+end
+
+---@return void
+function Auction:userWasOutBidHandler()
+    GL:debug("Auction:userWasOutBidHandler");
+
+    -- No reason for panic, autobid was successful
+    if (self:autoBid()) then
+        return;
+    end
+
+    -- Flash the game icon in case the player alt-tabbed
+    FlashClientIcon();
+
+    -- We don't want to spam the user with alerts!
+    if (self.lastOutBidNotificationShownAt
+        and GetServerTime() - self.lastOutBidNotificationShownAt <= 8
+    ) then
+        return;
+    end
+
+    local outbidSound = GL.Settings:get("GDKP.outbidSound");
+    if (not GL:empty(outbidSound)) then
+        local sound = LibStub("LibSharedMedia-3.0"):Fetch("sound", outbidSound);
+        GL:playSound(sound);
+    end
+
+    self.lastOutBidNotificationShownAt = GetServerTime();
+    GL.Interface.Alerts:fire("GargulNotification", {
+        message = string.format("|c00BE3333You were outbid!|r"),
+    });
 end
 
 --- Create an auction
@@ -365,6 +384,8 @@ end
 function Auction:sanitize(Instance)
     local SanitizedAuction = {};
 
+    Instance.price = tonumber(Instance.price);
+
     --[[ Top level Auction check ]]
     if (not Instance
         or type(Instance) ~= "table"
@@ -374,7 +395,8 @@ function Auction:sanitize(Instance)
         or date('%Y', tonumber(Instance.createdAt) or 0) == "1970"
         or not tonumber(Instance.itemID)
         or not tonumber(Instance.price)
-        or Instance.price < 1
+        or not Instance.price
+        or Instance.price == 0
     ) then
         GL:xd("Auction:sanitize step 1 failed, contact support!");
         return false;
@@ -763,6 +785,9 @@ function Auction:announceStart(itemLink, minimumBid, minimumIncrement, duration,
             antiSnipe = antiSnipe,
             Bids = Bids,
             TopBid = TopBid,
+            Settings = {
+                acceptBidsLowerThanMinimum = Settings:get("GDKP.acceptBidsLowerThanMinimum"),
+            },
         },
         "GROUP"
     ):send();
@@ -799,19 +824,28 @@ end
 function Auction:announceStop()
     GL:debug("GDKP.Auction:announceStop");
 
+    -- Looks like we had a last-second bid and are awaiting an extension
+    if (self.waitingForExtension) then
+        return;
+    end
+
+    self:stop();
+
     GL.CommMessage.new(
-            CommActions.stopGDKPAuction,
-            nil,
-            "GROUP"
+        CommActions.stopGDKPAuction,
+        nil,
+        "GROUP"
     ):send();
 end
 
---- Anounce to everyone in the raid that were extending the current auction
+--- Anounce to everyone in the raid that we're extending the current auction
 ---
 ---@param time number
 ---@return void
 function Auction:announceExtension(time)
     GL:debug("GDKP.Auction:announceExtension");
+
+    self.waitingForExtension = true;
 
     time = tonumber(time) or 0
     if (time < 1) then
@@ -819,13 +853,12 @@ function Auction:announceExtension(time)
         return false;
     end
 
-    local secondsLeft = GL.Ace:TimeLeft(self.timerId);
-    local maximumTimeToExtend = self.Current.duration - secondsLeft;
-    local extendWith = math.min(maximumTimeToExtend, time);
+    local secondsLeft = GL.Ace:TimeLeft(self.timerId) - stopAuctionLeewayInSeconds;
+    local newDuration = math.ceil(secondsLeft + time);
 
     GL.CommMessage.new(
         CommActions.extendGDKPAuction,
-        extendWith,
+        newDuration,
         "GROUP"
     ):send();
 
@@ -842,26 +875,24 @@ function Auction:extend(CommMessage)
         return;
     end
 
+    self.waitingForExtension = false;
+
     local time = tonumber(CommMessage.content) or 0;
     if (time < 1) then
         return GL:error("Invalid time provided in Auction:extend");
     end
 
-    -- There appears to be no active auction
-    if (not self.timerId) then
-        return;
-    end
-
-    local secondsLeft = math.ceil(GL.Ace:TimeLeft(self.timerId) + tonumber(time));
+    self.Current.duration = time;
+    GL.Interface.GDKP.Bidder:changeDuration(time);
+    SecondsAnnounced = {};
     GL.Ace:CancelTimer(self.timerId);
 
-    self.timerId = GL.Ace:ScheduleTimer(function ()
-        self:stop();
-    end, secondsLeft);
-
-    GL.Interface.GDKP.Bidder:changeDuration(time);
-
-    SecondsAnnounced = {};
+    if (self:startedByMe()) then
+        self.timerId = GL.Ace:ScheduleTimer(function ()
+            self:stop();
+            self:announceStop();
+        end, math.ceil(time + stopAuctionLeewayInSeconds));
+    end
 end
 
 --- Start an auction
@@ -908,6 +939,8 @@ function Auction:start(CommMessage)
             return;
         end
 
+        self:stopAutoBid();
+
         local duration = math.floor(tonumber(content.duration));
         local antiSnipe = math.floor(tonumber(content.antiSnipe));
         local SupportedBids = content.SupportedBids or {};
@@ -932,25 +965,25 @@ function Auction:start(CommMessage)
                 minimumBid = minimumBid,
                 minimumIncrement = minimumIncrement,
 
+                Settings = content.Settings,
                 Bids = content.Bids,
                 TopBid = content.TopBid,
             };
         else
-            -- If we roll the same item again we do need to make
-            -- sure that we update the roll timer
+            -- If we auction the same item again we do need to make sure that we update the timer
             self.Current.time = duration;
             self.Current.minimumBid = minimumBid;
+            self.Current.minimumIncrement = minimumIncrement;
             self.Current.Bids = content.Bids;
             self.Current.TopBid = content.TopBid;
+            self.Current.Settings = content.Settings;
         end
 
         self.inProgress = true;
+        self:listenForBids();
 
         -- Don't show the bid UI if the user disabled it
-        -- and the current user is not the one who initiated the auction
-        if (Settings:get("GDKP.showBidWindow")
-            or self:startedByMe()
-        ) then
+        if (Settings:get("GDKP.showBidWindow")) then
             GL.Interface.GDKP.Bidder:show(duration, Entry.link, Entry.icon, content.note, SupportedBids);
 
             if (CommMessage.Sender.id == GL.User.id) then
@@ -958,10 +991,13 @@ function Auction:start(CommMessage)
             end
         end
 
-        -- Make sure the rolloff stops when time is up
-        self.timerId = GL.Ace:ScheduleTimer(function ()
-            self:stop();
-        end, duration);
+        if (self:startedByMe()) then
+            -- Make sure the auction stops when time is up
+            self.timerId = GL.Ace:ScheduleTimer(function ()
+                self:stop();
+                self:announceStop();
+            end, math.ceil(duration + stopAuctionLeewayInSeconds));
+        end
 
         -- Send a countdown in chat when enabled
         local numberOfSecondsToCountdown = Settings:get("GDKP.numberOfSecondsToCountdown", 5);
@@ -970,7 +1006,7 @@ function Auction:start(CommMessage)
             and Settings:get("GDKP.doCountdown")
         ) then
             self.countDownTimer = GL.Ace:ScheduleRepeatingTimer(function ()
-                local secondsLeft = math.ceil(GL.Ace:TimeLeft(self.timerId));
+                local secondsLeft = math.ceil(GL.Ace:TimeLeft(self.timerId) - stopAuctionLeewayInSeconds);
                 if (secondsLeft <= numberOfSecondsToCountdown
                     and secondsLeft > 0
                     and not SecondsAnnounced[secondsLeft]
@@ -997,11 +1033,11 @@ function Auction:start(CommMessage)
                         self.countDownTimer = nil;
                     end
                 end
-            end, 1);
+            end, .2);
         end
 
         -- Play raid warning sound
-        GL:playSound(SOUNDKIT.RAID_WARNING, "SFX");
+        GL:playSound(SOUNDKIT.RAID_WARNING);
 
         -- Flash the game icon in case the player alt-tabbed
         FlashClientIcon();
@@ -1011,51 +1047,60 @@ function Auction:start(CommMessage)
     end);
 end
 
---- Check whether the current rolloff was started by me (the user)
+--- Check whether the current auction was started by me (the user)
 ---
 ---@return boolean
 function Auction:startedByMe()
     return self.Current.initiatorID == GL.User.id;
 end
 
---- Stop a roll off. This method can be invoked internally when the roll
---- off time is over or when announced by the initiation of the roll off.
----
 ---@param CommMessage string|nil
 ---@return boolean
 function Auction:stop(CommMessage)
     GL:debug("GDKP.Auction:stop");
 
-    if (not self.inProgress) then
-        return GL:warning("Can't stop auction, no auction in progress");
+    if (not self.inProgress
+        or self.waitingForExtension
+    ) then
+        return;
     end
 
-    if (CommMessage
-            and self.Current.initiatorID ~= GL.User.id
-            and CommMessage.Sender.id ~= self.Current.initiatorID
-    ) then
-        if (self.Current.initiatorID) then
-            GL:warning(CommMessage.Sender.name .. " is not allowed to stop auction");
-        else
-            GL:warning(CommMessage.Sender.name .. " is not allowed to stop current auction: auction is invalid");
+    if (CommMessage) then
+        -- We already stopped, no need to stop again
+        if (self.Current.initiatorID == GL.User.id) then
+            return;
         end
 
-        return false;
+        if (CommMessage.Sender.id ~= self.Current.initiatorID) then
+            if (self.Current.initiatorID) then
+                GL:warning(CommMessage.Sender.name .. " is not allowed to stop auction");
+            else
+                GL:warning(CommMessage.Sender.name .. " is not allowed to stop current auction: auction is invalid");
+            end
+        end
     end
 
+    if (not self.inProgress) then
+        return;
+    end
+
+    self:stopAutoBid();
+
     -- Play raid warning sound
-    GL:playSound(SOUNDKIT.RAID_WARNING, "SFX");
+    GL:playSound(SOUNDKIT.RAID_WARNING);
 
     self.inProgress = false;
     GL.Ace:CancelTimer(self.timerId);
 
     GL.Interface.GDKP.Bidder:hide();
 
-    -- If this user started the roll then we need to cancel some timers and post a message
+    self:stopListeningForBids();
+
+    -- If this user started the auction then we need to cancel some timers and post a message
     if (self:startedByMe()) then
         SecondsAnnounced = {};
 
-        -- Announce that the roll has ended
+        -- Announce that the auction has ended
         if (Settings:get("GDKP.announceBidsClosed", true)) then
             GL:sendChatMessage(
                 string.format("Stop your bids!"),
@@ -1063,22 +1108,11 @@ function Auction:stop(CommMessage)
             );
         end
 
-        -- We stop listening for bids one second after the auction ends just in case there is server lag/jitter
-        ---@todo: reinstate this at some point, making sure that it also respects the anti-snipe setting
-        --GL.Ace:ScheduleTimer(function()
-            self:stopListeningForBids();
-        --end, 1);
-    end
-
-    if (self.countDownTimer) then
-        GL.Ace:CancelTimer(self.countDownTimer);
-        self.countDownTimer = nil;
-    end
-
-    -- If we're the initiatorID then we need to update our initiatorID UI
-    if (self:startedByMe()) then
         GL.Interface.GDKP.Auctioneer:updateWidgets();
     end
+
+    GL.Ace:CancelTimer(self.countDownTimer);
+    self.countDownTimer = nil;
 
     return true;
 end
@@ -1102,7 +1136,7 @@ function Auction:refresh(CommMessage)
     end
 
     -- Check if there's a new highest bid
-    local NewTopBid = GL:tableGet(CommMessage, "content.TopBid" or {});
+    local NewTopBid = CommMessage.content;
     local OldTopBid = self.Current.TopBid or {};
 
     if (GL:empty(OldTopBid.bid)) then
@@ -1143,8 +1177,6 @@ function Auction:reset()
     self.Current.TopBid = {};
 end
 
---- Start listening for rolls
----
 ---@return void
 function Auction:listenForBids()
     GL:debug("GDKP.Auction:listenForBids");
@@ -1153,23 +1185,29 @@ function Auction:listenForBids()
         return;
     end
 
-    -- Make sure the timer to cancel listening for rolls is cancelled
+    -- Make sure the timer to cancel listening for bids is cancelled
     GL.Ace:CancelTimer(self.bidListenerCancelTimerId);
 
     self.listeningForBids = true;
 
-    Events:register({
-        {"GDKPChatMsgWhisperListener", "CHAT_MSG_WHISPER"},
+    local EventsToListenTo = {
         {"GDKPChatMsgPartyListener", "CHAT_MSG_PARTY"},
         {"GDKPChatMsgPartyLeaderListener", "CHAT_MSG_PARTY_LEADER"},
         {"GDKPChatMsgRaidListener", "CHAT_MSG_RAID"},
         {"GDKPChatMsgRaidLeaderListener", "CHAT_MSG_RAID_LEADER"},
-    }, function (event, message, sender)
-        self:processBid(event, message, sender);
+    };
+
+    -- Only listen to whispers in case the user is solo and is (most likely) testing the add-on
+    if (not GL.User.isInGroup) then
+        tinsert(EventsToListenTo, {"GDKPChatMsgWhisperListener", "CHAT_MSG_WHISPER"});
+    end
+
+    Events:register(EventsToListenTo, function (event, message, sender)
+        self:processBid(message, sender);
     end);
 end
 
---- Unregister the CHAT_MSG_SYSTEM to stop listening for rolls
+--- Unregister the CHAT_MSG_SYSTEM to stop listening for bids
 ---
 ---@return void
 function Auction:stopListeningForBids()
@@ -1189,12 +1227,17 @@ function Auction:stopListeningForBids()
     });
 end
 
+---@param message string|number
 function Auction:bid(message)
     GL:debug("GDKP.Auction:bid");
 
     -- There's no auction in progress
     if (not self.inProgress) then
         return false;
+    end
+
+    if (type(message) == "number") then
+        message = tostring(message);
     end
 
     local lowestValidBid = self:lowestValidBid();
@@ -1207,26 +1250,103 @@ function Auction:bid(message)
         return false;
     end
 
-    -- The given bid is invalid or not higher than the highest known bid
-    if (not GL:higherThanZero(bid)
-        or bid < lowestValidBid
-    ) then
-        return false;
-    end
-
     if (GL.User.isInGroup) then
         GL:sendChatMessage(bid, "GROUP", nil, nil, false);
     else
         GL:sendChatMessage(bid, "WHISPER", nil, self.Current.initiatorName, false);
     end
 
+    self.lastBidAt = GetTime();
+
     return true;
+end
+
+---@param max string|number
+---@return boolean
+function Auction:setAutoBid(max)
+    GL:debug("Auction:autoBid");
+
+    max = tonumber(max) or 0;
+    local lowestMinimumBid = self:lowestValidBid();
+
+    if (max < lowestMinimumBid) then
+        return false;
+    end
+
+    self.autoBiddingIsActive = true;
+    self.maxBid = max;
+
+    -- Make sure we're the highest bidder, if not then bid
+    if (GL:tableGet(self.Current, "TopBid.Bidder.name") ~= GL.User.name) then
+        self:bid(lowestMinimumBid);
+    end
+
+    return true;
+end
+
+---@return void
+function Auction:stopAutoBid()
+    GL:debug("Auction:stopAutoBid");
+
+    self.autoBiddingIsActive = nil;
+    self.maxBid = nil;
+
+    GL.Ace:CancelTimer(self.AutoBidTimer);
+    self.AutoBidTimer = nil;
+
+    GL.Interface.GDKP.Bidder:autoBidStopped();
+end
+
+---@return boolean
+function Auction:autoBid()
+    GL:debug("Auction:autoBid");
+
+    if (not self.autoBiddingIsActive or not self.maxBid) then
+        return false;
+    end
+
+    if (self:lowestValidBid() > self.maxBid) then
+        self:stopAutoBid();
+        return false;
+    end
+
+    -- Make sure we only bid once every 1.2s (spam throttle)
+    if (GetTime() - self.lastBidAt < autoBidThrottle) then
+        GL.Ace:CancelTimer(self.AutoBidTimer);
+
+        self.AutoBidTimer = GL.Ace:ScheduleTimer(function ()
+            if (self:lowestValidBid() > self.maxBid) then
+                return;
+            end
+
+            self:minimumBid();
+        end, 1);
+
+        return true;
+    end
+
+    self:minimumBid();
+    return true;
+end
+
+---@return void
+function Auction:minimumBid()
+    GL:debug("Auction:minimumBid");
+
+    return self:bid(self:lowestValidBid());
 end
 
 --- Return the lowest possible valid bid based on the current bid or the minimum price
 ---
 ---@return number
 function Auction:lowestValidBid()
+    GL:debug("Auction:lowestValidBid");
+
+    local currentTopBid = GL:tableGet(self.Current, "TopBid.bid", 0);
+    if (currentTopBid < self.Current.minimumBid) then
+        return self.Current.minimumBid;
+    end
+
     return math.max(
         GL:tableGet(self.Current, "TopBid.bid", 0) + (self.Current.minimumIncrement or 0),
         self.Current.minimumBid
@@ -1237,9 +1357,10 @@ end
 ---@param message string
 ---@param bidder string
 ---@return void
-function Auction:processBid(event, message, bidder)
+function Auction:processBid(message, bidder)
     GL:debug("GDKP.Auction:processBid");
 
+    local auctionWasStartedByMe = self:startedByMe();
     message = string.lower(message);
 
     -- This is a message generated by gargul, skip it
@@ -1248,32 +1369,13 @@ function Auction:processBid(event, message, bidder)
     end
 
     -- We're no longer listening for bids
-    if (not self.listeningForBids) then
-        return;
-    end
-
-    ---@todo set to false
-    --local acceptClosedBids = false;
-    local acceptClosedBids = true;
-
-    -- We only accept bids in /w when we're accepting closed bids or when we're not in a group (e.g. testing)
-    if (event == "CHAT_MSG_WHISPER"
-        and not acceptClosedBids
-        and GL.User.isInGroup)
-    then
-        local response = "I'm not accepting closed bids, use the /ra channel instead!";
-
-        if (not GL.User.isInRaid) then
-            response = "I'm not accepting closed bids, use the /gr channel instead!";
-        end
-
-        GL:sendChatMessage(response, "WHISPER", nil, bidder);
-
+    if (not self.listeningForBids
+        or not self.inProgress
+    ) then
         return;
     end
 
     local bid = self:messageToBid(message, self:lowestValidBid());
-
     if (not GL:higherThanZero(bid)) then
         return;
     end
@@ -1306,37 +1408,75 @@ function Auction:processBid(event, message, bidder)
         return;
     end
 
-    if (self.Current and self.Current.antiSnipe) then
-        local secondsLeft = math.floor(GL.Ace:TimeLeft(self.timerId));
+    -- Determine the minimum bid
+    local currentBid = GL:tableGet(self.Current, "TopBid.bid", 0)
+    local minimumBid = math.max(
+        self.Current.minimumBid,
+        currentBid + self.Current.minimumIncrement
+    );
 
-        if (secondsLeft <= self.Current.antiSnipe) then
-            self:announceExtension(self.Current.antiSnipe);
+    local bidTooLow = bid < minimumBid;
+    if (auctionWasStartedByMe) then
+        -- Notify the player via whisper if their bid is too low
+        if (bidTooLow and Settings:get("GDKP.notifyIfBidTooLow")) then
+            if (not Settings:get("GDKP.acceptBidsLowerThanMinimum")) then
+                GL:sendChatMessage(string.format("Bid denied, the minimum bid is %sg", minimumBid), "WHISPER", nil, bidder);
+            end
+        end
+
+        -- We need to trigger the anti-snipe time
+        if (self.Current and self.Current.antiSnipe and (
+            not bidTooLow or Settings:get("GDKP.invalidBidsTriggerAntiSnipe")
+        )) then
+            local secondsLeft = math.floor(GL.Ace:TimeLeft(self.timerId) - stopAuctionLeewayInSeconds);
+            if (secondsLeft <= self.Current.antiSnipe) then
+                self:announceExtension(self.Current.antiSnipe);
+            end
         end
     end
 
-    -- Determine the minimum bid
-    local minimumBid = math.max(
-        self.Current.minimumBid,
-        GL:tableGet(self.Current, "TopBid.bid", 0) + self.Current.minimumIncrement
-    );
-
-    -- The bid is not high enough for us to accept
-    if (BidEntry.bid < minimumBid and Settings:get("GDKP.notifyIfBidTooLow")) then
-        GL:sendChatMessage(string.format("Bid denied, the minimum bid is %sg", minimumBid), "WHISPER", nil, bidder);
+    -- This bid is too low and we don't accept that
+    if (bidTooLow and (
+        currentBid >= self.Current.minimumBid
+        or bid <= currentBid
+        or not self.Current.Settings.acceptBidsLowerThanMinimum
+    )) then
         return;
     end
 
-    if (Settings:get("GDKP.announceNewBid")) then
-        local chatType = "GROUP";
+    -- Announce that we have a new leading bid
+    if (auctionWasStartedByMe
+        and not bidTooLow
+        and Settings:get("GDKP.announceNewBid")
+    ) then
+        local bidApprovedMessage = string.format("%s is the highest bidder (%sg)", BidEntry.Bidder.name, bid);
         if (GL.User.isInRaid and Settings:get("GDKP.announceNewBidInRW")) then
-            chatType = "RAID_WARNING";
+            GL.Ace:CancelTimer(self.raidWarningThrottler);
+            if (GetTime() - self.lastBidAnnouncementAt < 1.2) then
+                self.raidWarningThrottler = GL.Ace:ScheduleTimer(function ()
+                    local currentTopBid = GL:tableGet(self.Current, "TopBid.bid");
+                    local bidder = GL:tableGet(self.Current, "TopBid.Bidder.name");
+
+                    if (not bid or not bidder) then
+                        return;
+                    end
+
+                    bidApprovedMessage = string.format(bidApprovedMessage, bidder, currentTopBid);
+                    GL:sendChatMessage(bidApprovedMessage, "RAID_WARNING", nil, nil, false);
+                    self.lastBidAnnouncementAt = GetTime();
+                end, 1);
+            else
+                bidApprovedMessage = string.format(bidApprovedMessage, BidEntry.Bidder.name, bid);
+                GL:sendChatMessage(bidApprovedMessage, "RAID_WARNING", nil, nil, false);
+                self.lastBidAnnouncementAt = GetTime();
+            end
         end
 
-        GL:sendChatMessage(string.format("%s is the highest bidder (%sg)", BidEntry.Bidder.name, bid), chatType, nil, nil, false);
+        GL:sendChatMessage(bidApprovedMessage, "GROUP", nil, nil, false);
     end
 
     tinsert(self.Current.Bids, BidEntry);
-    GL.Interface.GDKP.Auctioneer:refreshRollsTable();
+    GL.Interface.GDKP.Auctioneer:refreshBidsTable();
 
     local OldTopBid = self.Current.TopBid;
     self.Current.TopBid = BidEntry;

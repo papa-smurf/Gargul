@@ -1422,10 +1422,18 @@ function GL:playSound(soundNameOrNumber, channel, forceNoDuplicates, runFinishCa
     if (type(channel) ~= "string"
         or GL:empty(channel)
     ) then
-        channel = "Master";
+        channel = GL.Settings:get("soundChannel", "SFX");
     end
 
-    PlaySound(soundNameOrNumber, channel, forceNoDuplicates, runFinishCallback);
+    local normalizedName = strtrim(string.lower(tostring(soundNameOrNumber)));
+    normalizedName = string.gsub(normalizedName, "\\", "/");
+    pcall(function ()
+        if (GL:strContains(normalizedName, "interface/addons") or normalizedName == "none") then
+            PlaySoundFile(soundNameOrNumber, channel);
+        else
+            PlaySound(soundNameOrNumber, channel, forceNoDuplicates, runFinishCallback);
+        end
+    end);
 end
 
 local gaveNoMessagesWarning = false;

@@ -25,7 +25,7 @@ GL.Interface.Settings.Overview = {
         {"    Item Rules", "PackMuleRules"},
         {"    Ignored Items", "PackMuleIgnores"},
         {"", ""},
-        {"|c00a79effADVANCED|r", ""},
+        {"|c00a79effADVANCED|r", "Advanced"},
         {"Master Looting", "MasterLooting"},
         {"    Roll Tracking", "RollTracking"},
         {"    Awarding Loot", "AwardingLoot"},
