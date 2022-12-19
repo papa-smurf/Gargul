@@ -47,7 +47,7 @@ function AddGold:build()
     Gold:DisableButton(true);
     Gold:SetHeight(20);
     Gold:SetFullWidth(true);
-    Gold:SetLabel("Gold");
+    Gold:SetLabel("Gold (- for removing gold)");
     Interface:set(self, "Gold", Gold);
     Window:AddChild(Gold);
 
@@ -72,8 +72,8 @@ function AddGold:build()
     Save:SetFullWidth(true);
     Save:SetCallback("OnClick", function()
         local gold = tonumber(strtrim(Gold:GetText())) or 0;
-        if (gold < 1) then
-            GL:warning("Gold needs to be higher than 0");
+        if (not gold or gold == 0) then
+            GL:warning("Gold needs to be lower/higher than 0");
             return;
         end
 
@@ -143,7 +143,7 @@ function AddGold:open()
 
     local Window = self:window();
 
-    Interface:get(self, "Label.Title"):SetText("Add gold to " .. Session.title);
+    Interface:get(self, "Label.Title"):SetText("Adjust gold in " .. Session.title);
     Interface:get(self, "EditBox.Gold"):SetText("");
     Interface:get(self, "EditBox.PaidForBy"):SetText(GL.User.name);
 

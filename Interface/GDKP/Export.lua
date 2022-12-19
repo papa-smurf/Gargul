@@ -268,6 +268,10 @@ function Export:exportAuctionsToCustomFormat(Auctions)
             local wowheadLink, iconLink;
             local icon = GL.Data.IconTexturePaths[ItemDetails.icon or 0];
 
+            if (Auction.itemID == GL.Data.Constants.GDKP.potIncreaseItemID) then
+                ItemDetails.name = "Pot changed";
+            end
+
             if (GL.isEra) then
                 wowheadLink = string.format("https://classic.wowhead.com/item=%s", Auction.itemID);
             else

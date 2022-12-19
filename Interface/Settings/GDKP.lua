@@ -314,10 +314,6 @@ function GDKP:draw(Parent)
 
     Overview:drawCheckboxes({
         {
-            label = "Show GDKP gold details window",
-            setting = "GDKP.showGoldDetailsWindow",
-        },
-        {
             label = "Whisper a gold to give or receive message",
             setting = "GDKP.whisperGoldDetails",
         },

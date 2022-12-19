@@ -6,6 +6,8 @@ local GDKPAuction = GL.GDKP.Auction;
 
 ---@class GDKPBidderInterface
 GL:tableSet(GL, "Interface.GDKP.Bidder", {
+    AutoBidButton = nil,
+    StopAutoBidButton = nil,
     Window = nil,
     TimerBar = nil,
 });
@@ -44,6 +46,20 @@ function Bidder:show(...)
     self:draw(...);
 end
 
+function Bidder:autoBidStopped()
+    if (self.AutoBidButton
+        and self.AutoBidButton.Show
+    ) then
+        self.AutoBidButton:Show();
+    end
+
+    if (self.StopAutoBidButton
+        and self.StopAutoBidButton.Hide
+    ) then
+        self.StopAutoBidButton:Hide();
+    end
+end
+
 --- Note: we're not using AceGUI here since getting a SimpleGroup to move properly is a friggin nightmare
 ---
 ---@param time number The duration of the RollOff
@@ -61,7 +77,7 @@ function Bidder:draw(time, itemLink, itemIcon)
     Window:SetMovable(true);
     Window:EnableMouse(true);
     Window:SetClampedToScreen(true);
-    Window:SetFrameStrata("HIGH");
+    Window:SetFrameStrata("FULLSCREEN_DIALOG");
     Window:RegisterForDrag("LeftButton");
     Window:SetScript("OnDragStart", Window.StartMoving);
     Window:SetScript("OnDragStop", function()
@@ -87,6 +103,12 @@ function Bidder:draw(time, itemLink, itemIcon)
     local TopBidder = Window:CreateFontString(nil, "ARTWORK", "GameFontWhite");
     TopBidder:SetPoint("CENTER", Window, "CENTER", 0, 12);
     GL.Interface:set(self, "TopBidder", TopBidder);
+
+    -- Show the minimum bid and increment if no one bid yet
+    if (GDKPAuction.Current.minimumBid > 0) then
+        local message = string.format("Min bid: %sg   Increment: %sg", GDKPAuction.Current.minimumBid, GDKPAuction.Current.minimumIncrement);
+        TopBidder:SetText(message);
+    end
 
     local NewBid = Window:CreateFontString(nil, "ARTWORK", "GameFontWhite");
     NewBid:SetPoint("TOPLEFT", Window, "TOPLEFT", 44, -51);
@@ -151,8 +173,10 @@ function Bidder:draw(time, itemLink, itemIcon)
                     StopAutoBidButton:Show();
                 end
             end,
+            focus = true,
         });
     end);
+    self.AutoBidButton = AutoBidButton;
 
     StopAutoBidButton = CreateFrame("Button", "GARGUL_GDKP_BIDDER_AUTO_BID_BUTTON", Window, "GameMenuButtonTemplate");
     StopAutoBidButton:SetPoint("TOPLEFT", MinimumButton, "TOPRIGHT", 8, 0);
@@ -165,6 +189,7 @@ function Bidder:draw(time, itemLink, itemIcon)
         StopAutoBidButton:Hide();
         AutoBidButton:Show();
     end);
+    self.StopAutoBidButton = StopAutoBidButton;
 
     if (GDKPAuction.autoBiddingIsActive) then
         AutoBidButton:Hide();
@@ -184,29 +209,6 @@ function Bidder:draw(time, itemLink, itemIcon)
         GDKPAuction:stopAutoBid();
         self:hide();
     end);
-    --]]
-
-    --[[ WITHOUT AUTO BID:
-    BidButton = CreateFrame("Button", "GARGUL_GDKP_BIDDER_BID_BUTTON", Window, "GameMenuButtonTemplate");
-    BidButton:SetPoint("TOPLEFT", NewBid, "BOTTOMLEFT", 36, -10);
-    BidButton:SetSize(60, 20); -- Minimum width is
-    BidButton:SetText("Bid");
-    BidButton:SetNormalFontObject("GameFontNormal");
-    BidButton:SetHighlightFontObject("GameFontNormal");
-    BidButton:SetScript("OnClick", function ()
-        BidButtonClick();
-    end);
-
-    local PassButton = CreateFrame("Button", "GARGUL_GDKP_BIDDER_PASS_BUTTON", Window, "GameMenuButtonTemplate");
-    PassButton:SetPoint("TOPLEFT", BidButton, "TOPRIGHT", 8, 0);
-    PassButton:SetSize(64, 20); -- Minimum width is
-    PassButton:SetText("Pass");
-    PassButton:SetNormalFontObject("GameFontNormal");
-    PassButton:SetHighlightFontObject("GameFontNormal");
-    PassButton:SetScript("OnClick", function ()
-        self:hide();
-    end);
-    ]]
 
     self:refresh();
 

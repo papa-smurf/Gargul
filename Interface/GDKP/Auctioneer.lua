@@ -74,7 +74,6 @@ function Auctioneer:draw(itemLink)
     Window:SetWidth(430);
     Window:SetHeight(390);
     Window:EnableResize(false);
-    Window.frame:SetFrameStrata("FULLSCREEN_DIALOG");
     Window:SetCallback("OnClose", function()
         self:close();
     end);
@@ -127,7 +126,7 @@ function Auctioneer:draw(itemLink)
     local MinimumBid = AceGUI:Create("EditBox");
     MinimumBid:DisableButton(true);
     MinimumBid:SetHeight(20);
-    MinimumBid:SetWidth(60);
+    MinimumBid:SetWidth(70);
     MinimumBid:SetText(GL.Settings:get("GDKP.defaultMinimumBid"));
     FirstRow:AddChild(MinimumBid);
     Interface:set(self, "MinimumBid", MinimumBid);
@@ -141,7 +140,7 @@ function Auctioneer:draw(itemLink)
     local MinimumIncrement = AceGUI:Create("EditBox");
     MinimumIncrement:DisableButton(true);
     MinimumIncrement:SetHeight(20);
-    MinimumIncrement:SetWidth(40);
+    MinimumIncrement:SetWidth(50);
     MinimumIncrement:SetText(GL.Settings:get("GDKP.defaultIncrement"));
     FirstRow:AddChild(MinimumIncrement);
     Interface:set(self, "MinimumIncrement", MinimumIncrement);
@@ -177,7 +176,7 @@ function Auctioneer:draw(itemLink)
     local AuctionTime = AceGUI:Create("EditBox");
     AuctionTime:DisableButton(true);
     AuctionTime:SetHeight(20);
-    AuctionTime:SetWidth(30);
+    AuctionTime:SetWidth(40);
     AuctionTime:SetText(Settings:get("GDKP.time"));
     SecondRow:AddChild(AuctionTime);
     Interface:set(self, "Time", AuctionTime);
@@ -191,7 +190,7 @@ function Auctioneer:draw(itemLink)
     local AntiSnipe = AceGUI:Create("EditBox");
     AntiSnipe:DisableButton(true);
     AntiSnipe:SetHeight(20);
-    AntiSnipe:SetWidth(30);
+    AntiSnipe:SetWidth(40);
     AntiSnipe:SetText(Settings:get("GDKP.antiSnipe"));
     SecondRow:AddChild(AntiSnipe);
     Interface:set(self, "AntiSnipe", AntiSnipe);
@@ -557,7 +556,7 @@ function Auctioneer:drawReopenAuctioneerButton()
     Button:SetMovable(true);
     Button:EnableMouse(true);
     Button:SetClampedToScreen(true);
-    Button:SetFrameStrata("HIGH");
+    Button:SetFrameStrata("FULLSCREEN_DIALOG");
     Button:RegisterForDrag("LeftButton");
     Button:SetScript("OnDragStart", Button.StartMoving);
     Button:SetScript("OnDragStop", function()

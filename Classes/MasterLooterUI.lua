@@ -65,7 +65,6 @@ function MasterLooterUI:draw(itemLink)
     Window:SetWidth(430);
     Window:SetHeight(350);
     Window:EnableResize(false);
-    Window.frame:SetFrameStrata("HIGH");
     Window.statustext:GetParent():Hide(); -- Hide the statustext bar
     Window:SetCallback("OnClose", function()
         self:close();
@@ -509,7 +508,7 @@ function MasterLooterUI:drawReopenMasterLooterUIButton()
     Button:SetMovable(true);
     Button:EnableMouse(true);
     Button:SetClampedToScreen(true);
-    Button:SetFrameStrata("HIGH");
+    Button:SetFrameStrata("FULLSCREEN_DIALOG");
     Button:RegisterForDrag("LeftButton");
     Button:SetScript("OnDragStart", Button.StartMoving);
     Button:SetScript("OnDragStop", function()

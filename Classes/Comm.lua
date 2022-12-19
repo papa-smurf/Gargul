@@ -146,7 +146,7 @@ function Comm:send(CommMessage, broadcastFinishedCallback, packageSentCallback)
     -- our messages are not dropped by the server, which happens A LOT ffs
     local stringLength = string.len(compressedMessage);
     GL:debug("Payload size: " .. stringLength);
-    local throttle = stringLength > 800;
+    local throttle = distribution ~= "WHISPER" and stringLength > 800;
 
     local throttleResetTimer;
     -- Stop throttling: reset the burst and max cps values

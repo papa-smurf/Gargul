@@ -52,10 +52,10 @@ function Settings:sanitizeSettings()
 
     -- Remove old roll data so it doesn't clog our SavedVariables
     local twoWeeksAgo = GetServerTime() - 1209600;
-    for key, Award in pairs(DB:get("AwardHistory")) do
+    for key, Award in pairs(DB:get("AwardHistory") or {}) do
         if (Award.timestamp < twoWeeksAgo) then
-            GL.DB.AwardHistory[key] = nil;
-            Award = nil;
+            Award.Rolls = nil;
+            DB:set("AwardHistory." .. key, Award);
         end
     end
 

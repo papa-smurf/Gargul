@@ -255,10 +255,26 @@ function Overview:build()
     Announce:SetWidth(100);
     Announce:SetHeight(20);
     Announce:SetCallback("OnClick", function()
+        GDKPPot:announce(self.sessionID);
+
+        ---@todo: polish up the announcement at some point
+        if (true) then
+            return;
+        end
+
         Announce:SetDisabled(true);
         GDKPPot:announce(self.sessionID, function ()
             Announce:SetDisabled(false);
         end);
+    end);
+    Announce:SetCallback("OnEnter", function()
+        GameTooltip:SetOwner(Announce.frame, "ANCHOR_TOP");
+        GameTooltip:AddLine("Announce the base cut in group chat");
+        GameTooltip:Show();
+    end);
+
+    Announce:SetCallback("OnLeave", function()
+        GameTooltip:Hide();
     end);
 
     local Export = AceGUI:Create("Button");
