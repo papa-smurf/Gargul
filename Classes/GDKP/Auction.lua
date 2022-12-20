@@ -1310,7 +1310,7 @@ function Auction:autoBid()
         return false;
     end
 
-    -- Make sure we only bid once every 1.2s (spam throttle)
+    -- Make sure we only bid once every Xs (spam throttle)
     if (GetTime() - self.lastBidAt < autoBidThrottle) then
         GL.Ace:CancelTimer(self.AutoBidTimer);
 

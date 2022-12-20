@@ -390,8 +390,6 @@ function Auctioneer:draw(itemLink)
                     end
                 end
 
-                ---@todo: select top bid if none is selected
-
                 local awardChecksum = GL.AwardedLoot:addWinner(winner, GDKPAuction.Current.itemLink, nil, nil, isOS, nil, bid, nil);
 
                 if (not GDKPAuction:storeCurrent(winner, bid, awardChecksum)) then
