@@ -161,7 +161,7 @@ function Bidder:draw(time, itemLink, itemIcon)
     AutoBidButton:SetHighlightFontObject("GameFontNormal");
     AutoBidButton:SetScript("OnClick", function ()
         GL.Interface.Dialogs.ConfirmWithSingleInputDialog:open({
-            question = string.format("What's your maximum bid? (The minimum is %s)", GDKPAuction:lowestValidBid()),
+            question = string.format("What's your maximum bid? (Minimum %sg)", GDKPAuction:lowestValidBid()),
             inputValue = BidInput:GetText(),
             OnYes = function (max)
                 if (not GDKPAuction:setAutoBid(max)) then
