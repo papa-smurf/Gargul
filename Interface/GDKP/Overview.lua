@@ -154,7 +154,7 @@ end
 
 ---@return void
 function Overview:open()
-    GL:debug("Interface.GDKP.Overview:draw");
+    GL:debug("Interface.GDKP.Overview:open");
 
     local Window = Interface:get(self, "GDKPOverview");
 
