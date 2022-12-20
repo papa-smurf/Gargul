@@ -372,8 +372,13 @@ function Pot:calculateCuts(sessionID)
     return Session, totalToDistribute, totalDistributed;
 end
 
-function Pot:determineDistributionDefaults(Player, Session)
+function Pot:determineDistributionDefaults(Player, Session, enforceLock)
     GL:debug("Pot:determineDistributionDefaults");
+
+    if (enforceLock == nil) then
+        enforceLock = true;
+    end
+    enforceLock = GL:toboolean(enforceLock);
 
     local PlayerRoles = {};
     local DistributionDetails = {};
@@ -382,6 +387,11 @@ function Pot:determineDistributionDefaults(Player, Session)
         DAMAGER = "DPS",
         HEALER = "HEAL",
     };
+
+    -- The session is locked and we're not taking on new customers
+    if (enforceLock and Session.lockedAt) then
+        return {};
+    end
 
     if (Player.class) then
         tinsert(PlayerRoles, strupper(Player.class));
