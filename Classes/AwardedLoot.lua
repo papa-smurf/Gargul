@@ -682,12 +682,6 @@ end
 function AwardedLoot:processAwardedLoot(CommMessage)
     GL:debug("AwardedLoot:processAwardedLoot");
 
-    -- No need to add awarded loot if we broadcasted it ourselves
-    if (CommMessage.Sender.name == GL.User.name) then
-        GL:debug("AwardedLoot:processAwardedLoot received by self, skip");
-        return;
-    end
-
     local AwardEntry = CommMessage.content;
 
     -- Make sure all values are available
@@ -700,26 +694,7 @@ function AwardedLoot:processAwardedLoot(CommMessage)
         return GL:warning("Couldn't process award result in AwardedLoot:processAwardedLoot");
     end
 
-    -- There's no point to us giving the winner the item since we don't have it
-    AwardEntry.received = true;
-
-    -- Insert the award in the more permanent AwardHistory table (for export / audit purposes)
-    -- We don't pass the actual AwardEntry object as-is here just in case there are some additional keys that we don't need
-    GL.DB.AwardHistory[AwardEntry.checksum] = {
-        checksum = AwardEntry.checksum,
-        itemLink = AwardEntry.itemLink,
-        itemID = AwardEntry.itemID,
-        awardedTo = AwardEntry.awardedTo,
-        awardedBy = CommMessage.Sender.name,
-        timestamp = AwardEntry.timestamp,
-        softresID = AwardEntry.softresID,
-        received = AwardEntry.received,
-        BRCost = AwardEntry.BRCost,
-        GDKPCost = AwardEntry.GDKPCost,
-        OS = AwardEntry.OS,
-        Rolls = AwardEntry.Rolls,
-    };
-
+    -- Show an item won alert on TBC+
     if (not GL.isEra and GL:iEquals(AwardEntry.awardedTo, GL.User.name)) then
         GL:onItemLoadDo(AwardEntry.itemID, function (Result)
             Result = Result[1];
@@ -741,6 +716,32 @@ function AwardedLoot:processAwardedLoot(CommMessage)
             LootAlertSystem:AddAlert(Result.link);
         end);
     end
+
+    -- No need to add awarded loot if we broadcasted it ourselves
+    if (CommMessage.Sender.name == GL.User.name) then
+        GL:debug("AwardedLoot:processAwardedLoot received by self, skip");
+        return;
+    end
+
+    -- There's no point to us giving the winner the item since we don't have it
+    AwardEntry.received = true;
+
+    -- Insert the award in the more permanent AwardHistory table (for export / audit purposes)
+    -- We don't pass the actual AwardEntry object as-is here just in case there are some additional keys that we don't need
+    GL.DB.AwardHistory[AwardEntry.checksum] = {
+        checksum = AwardEntry.checksum,
+        itemLink = AwardEntry.itemLink,
+        itemID = AwardEntry.itemID,
+        awardedTo = AwardEntry.awardedTo,
+        awardedBy = CommMessage.Sender.name,
+        timestamp = AwardEntry.timestamp,
+        softresID = AwardEntry.softresID,
+        received = AwardEntry.received,
+        BRCost = AwardEntry.BRCost,
+        GDKPCost = AwardEntry.GDKPCost,
+        OS = AwardEntry.OS,
+        Rolls = AwardEntry.Rolls,
+    };
 
     GL.Events:fire("GL.ITEM_AWARDED", GL.DB.AwardHistory[AwardEntry.checksum]);
 end
