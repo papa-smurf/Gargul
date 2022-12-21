@@ -13,6 +13,7 @@ Version.latest = GL.version;
 Version.releases = {};
 Version.isOutOfDate = false;
 Version.firstBoot = false;
+Version.latestPriorVersionBooted = nil;
 
 Version.GroupMembers = {};
 
@@ -40,7 +41,19 @@ function Version:_init()
                 GL.Data.Constants.addonHexColor,
                 GL.Data.Constants.addonHexColor,
                 self.current
-            ))
+            ));
+        end
+    end
+
+    self.latestPriorVersionBooted = nil;
+    for version in pairs(GL.DB.LoadDetails or {}) do
+        local major = string.sub(version, 1, 1);
+        major = tonumber(major);
+
+        if (major) then
+            if (not self.latestPriorVersionBooted or self:leftIsOlderThanRight(self.latestPriorVersionBooted, version)) then
+                self.latestPriorVersionBooted = version;
+            end
         end
     end
 
