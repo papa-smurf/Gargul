@@ -19,6 +19,9 @@ local CommActions = Constants.Comm.Actions;
 
 local SecondsAnnounced = {};
 
+---@type GDKPAuctioneerInterface
+local Auctioneer;
+
 ---@class GDKPAuction
 GDKP.Auction = {
     _initialized = false,
@@ -30,6 +33,7 @@ GDKP.Auction = {
     waitingForExtension = false,
 
     AutoBidTimer = nil,
+    BidListenerCancelTimerId = nil,
     Current = {
         antiSnipe = nil, -- The anti snipe time
         duration = nil, -- The amount of time players get to bid
@@ -44,7 +48,7 @@ GDKP.Auction = {
         Bids = {}, -- Player bids
         TopBid = {}, -- Top bid
     },
-    BidListenerCancelTimerId = nil,
+    Queue = {},
 };
 
 ---@type GDKPAuction
@@ -63,6 +67,8 @@ function Auction:_init()
     if (self._initialized) then
         return false;
     end
+
+    Auctioneer = GL.Interface.GDKP.Auctioneer or {};
 
     -- An event is fired whenever a bid is accepted, in which case we broadcast the latest auction details
     Events:register("GDKPBidAccepted", "GL.GDKP_BID_ACCEPTED", function (_, OldTopBid, NewTopBid)
@@ -891,6 +897,7 @@ function Auction:extend(CommMessage)
         self.timerId = GL.Ace:ScheduleTimer(function ()
             self:stop();
             self:announceStop();
+            Auctioneer:timeRanOut();
         end, math.ceil(time + stopAuctionLeewayInSeconds));
     end
 end
@@ -987,7 +994,7 @@ function Auction:start(CommMessage)
             GL.Interface.GDKP.Bidder:show(duration, Entry.link, Entry.icon, content.note, SupportedBids);
 
             if (CommMessage.Sender.id == GL.User.id) then
-                GL.Interface.GDKP.Auctioneer:drawReopenAuctioneerButton();
+                Auctioneer:drawReopenAuctioneerButton();
             end
         end
 
@@ -996,6 +1003,7 @@ function Auction:start(CommMessage)
             self.timerId = GL.Ace:ScheduleTimer(function ()
                 self:stop();
                 self:announceStop();
+                Auctioneer:timeRanOut();
             end, math.ceil(duration + stopAuctionLeewayInSeconds));
         end
 
@@ -1108,7 +1116,7 @@ function Auction:stop(CommMessage)
             );
         end
 
-        GL.Interface.GDKP.Auctioneer:updateWidgets();
+        Auctioneer:updateWidgets();
     end
 
     GL.Ace:CancelTimer(self.countDownTimer);
@@ -1476,7 +1484,7 @@ function Auction:processBid(message, bidder)
     end
 
     tinsert(self.Current.Bids, BidEntry);
-    GL.Interface.GDKP.Auctioneer:refreshBidsTable();
+    Auctioneer:refreshBidsTable();
 
     local OldTopBid = self.Current.TopBid;
     self.Current.TopBid = BidEntry;

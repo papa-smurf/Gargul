@@ -121,6 +121,7 @@ GL.Data.DefaultSettings = {
         announceCountdownOnce = false,
         announceNewBid = true,
         announcePotAfterAuction = true,
+        autoAwardViaAuctioneer = false,
         antiSnipe = 10,
         bidderScale = 1,
         closeAuctioneerOnAward = false,
