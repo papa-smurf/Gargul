@@ -151,7 +151,7 @@ function GDKP:draw(Parent)
     Parent:AddChild(Spacer);
 
     local DefaultMinimumBidLabel = GL.AceGUI:Create("Label");
-    DefaultMinimumBidLabel:SetText("|c00FFF569Set a default minimum bid for items that don't have a set minimum yet (only applies when |c00967FD2Remember minimum bid and increment for each item|r is enabled!|r");
+    DefaultMinimumBidLabel:SetText("|c00FFF569Set a default minimum bid for items that don't have one yet!|r");
     DefaultMinimumBidLabel:SetFullWidth(true);
     Parent:AddChild(DefaultMinimumBidLabel);
 
@@ -186,7 +186,7 @@ function GDKP:draw(Parent)
     Parent:AddChild(Spacer);
 
     local DefaultIncrementLabel = GL.AceGUI:Create("Label");
-    DefaultIncrementLabel:SetText("|c00FFF569Set a default increment for items that don't have a set increment yet (only applies when |c00967FD2Remember minimum bid and increment for each item|r is enabled!|r");
+    DefaultIncrementLabel:SetText("|c00FFF569Set a default increment for items that don't have one yet|r");
     DefaultIncrementLabel:SetFullWidth(true);
     Parent:AddChild(DefaultIncrementLabel);
 
