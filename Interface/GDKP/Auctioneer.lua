@@ -666,16 +666,16 @@ function Auctioneer:popFromQueue()
 
     local NextInLine = nil;
 
-    for addedAt, QueuedItem in pairs(GDKPAuction.Queue or {}) do
+    for _, QueuedItem in pairs(GDKPAuction.Queue or {}) do
         (function ()
             -- Looks like the item was removed in the meantime. Race condition?
-            if (not tonumber(addedAt) or (
+            if (not tonumber(QueuedItem.addedAt) or (
                 NextInLine and not tonumber(NextInLine.addedAt)
             )) then
                 return;
             end
 
-            if (not NextInLine or NextInLine.addedAt > addedAt) then
+            if (not NextInLine or NextInLine.addedAt > QueuedItem.addedAt) then
                 NextInLine = QueuedItem;
             end
         end)();
@@ -683,12 +683,12 @@ function Auctioneer:popFromQueue()
 
     if (not NextInLine
         or not NextInLine.addedAt
-        or not GDKPAuction.Queue[NextInLine.addedAt]
+        or not GDKPAuction.Queue[tostring(NextInLine.addedAt)]
     ) then
         return;
     end
 
-    GDKPAuction.Queue[NextInLine.addedAt or 1] = nil;
+    GDKPAuction.Queue[tostring(NextInLine.addedAt) or 1] = nil;
     self:refreshQueueTable();
 
     local windowWasClosed = not self.isVisible;
@@ -717,7 +717,6 @@ function Auctioneer:addToQueue(itemLink)
     end
 
     local itemID = GL:getItemIDFromLink(itemLink);
-
     if (not itemID) then
         return;
     end
@@ -731,11 +730,11 @@ function Auctioneer:addToQueue(itemLink)
         detailsPool = {
             minimumBid = GL.Settings:get("GDKP.defaultMinimumBid"),
             minimumIncrement = GL.Settings:get("GDKP.defaultIncrement"),
-        }
+        };
     end
 
     local addedAt = GetTime();
-    GDKPAuction.Queue[addedAt]= {
+    GDKPAuction.Queue[tostring(addedAt)]= {
         itemLink = itemLink,
         itemID = itemID,
         minimumBid = tonumber(detailsPool.minimumBid) or 500,
@@ -766,41 +765,42 @@ function Auctioneer:refreshQueueTable()
     end
 
     local TableData = {};
-    for _, QueuedItem in pairs(GDKPAuction.Queue or {}) do
-        if (not QueuedItem or not QueuedItem.itemLink) then
-            GL:xd(QueuedItem);
-            GL:xd(GDKPAuction.Queue);
-        end
+    for key, QueuedItem in pairs(GDKPAuction.Queue or {}) do
+        (function()
+            if (not QueuedItem or not QueuedItem.itemLink) then
+                return;
+            end
 
-        tinsert(TableData, {
-            cols = {
-                {
-                    value = "Interface/AddOns/Gargul/Assets/Buttons/delete", _OnClick = function ()
-                        GDKPAuction.Queue[QueuedItem.addedAt] = nil;
+            tinsert(TableData, {
+                cols = {
+                    {
+                        value = "Interface/AddOns/Gargul/Assets/Buttons/delete", _OnClick = function ()
+                        GDKPAuction.Queue[key] = nil;
                         self:refreshQueueTable();
                     end,
+                    },
+                    {
+                        value = " " .. QueuedItem.itemLink },
+                    {
+                        _OnTextChanged = function (Input)
+                            GDKPAuction.Queue[key] = GDKPAuction.Queue[key] or {};
+                            GDKPAuction.Queue[key].minimumBid = tonumber(Input:GetText()) or 500;
+                        end,
+                        _default = QueuedItem.minimumBid
+                    },
+                    {
+                        _OnTextChanged = function (Input)
+                            GDKPAuction.Queue[key] = GDKPAuction.Queue[key] or {};
+                            GDKPAuction.Queue[key].increment = tonumber(Input:GetText()) or 500;
+                        end,
+                        _default = QueuedItem.increment
+                    },
+                    {
+                        value = key,
+                    }
                 },
-                {
-                    value = " " .. QueuedItem.itemLink },
-                {
-                    _OnTextChanged = function (Input)
-                        GDKPAuction.Queue[QueuedItem.addedAt] = GDKPAuction.Queue[QueuedItem.addedAt] or {};
-                        GDKPAuction.Queue[QueuedItem.addedAt].minimumBid = tonumber(Input:GetText()) or 500;
-                    end,
-                    _default = QueuedItem.minimumBid
-                },
-                {
-                    _OnTextChanged = function (Input)
-                        GDKPAuction.Queue[QueuedItem.addedAt] = GDKPAuction.Queue[QueuedItem.addedAt] or {};
-                        GDKPAuction.Queue[QueuedItem.addedAt].increment = tonumber(Input:GetText()) or 500;
-                    end,
-                    _default = QueuedItem.increment
-                },
-                {
-                    value = QueuedItem.addedAt,
-                }
-            },
-        });
+            });
+        end)();
     end
 
     Table:SetData({}, true);
