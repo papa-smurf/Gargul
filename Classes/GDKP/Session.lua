@@ -20,6 +20,9 @@ GL.GDKP = GL.GDKP or {};
 ---@type GDKP
 local GDKP = GL.GDKP;
 
+---@type GDKPAuction
+local GDKPAuction;
+
 ---@class GDKPSession
 GDKP.Session = {
     _initialized = false,
@@ -44,6 +47,7 @@ function Session:_init()
         return;
     end
 
+    GDKPAuction = GL.GDKP.Auction;
     self._initialized = true;
 
     Events:register("GDKPSessionTradeCompletedListener", "GL.TRADE_COMPLETED", function (_, Details)
@@ -380,16 +384,14 @@ function Session:tooltipLines(itemLink)
         return {};
     end
 
-    local PerItemSettings = Settings:get("GDKP.SettingsPerItem", {})[itemID] or {};
-    PerItemSettings.minimumBid = PerItemSettings.minimumBid or Settings:get("GDKP.minimumBid");
-    PerItemSettings.minimumIncrement = PerItemSettings.minimumIncrement or Settings:get("GDKP.minimumIncrement");
+    local PerItemSettings = GDKPAuction:settingsForItemID(itemID);
 
     local Lines = {
         string.format("\n|c00967FD2GDKP Data (sold %sx)|r", Details.timesSold),
         string.format("Last sold for: %sg", Details.lastSoldPrice),
         string.format("Average price: %sg ", Details.averageSaleValue),
-        string.format("Minimum bid: %sg", PerItemSettings.minimumBid),
-        string.format("Increment: %sg", PerItemSettings.minimumIncrement),
+        string.format("Minimum bid: %sg", PerItemSettings.minimum),
+        string.format("Increment: %sg", PerItemSettings.increment),
     };
 
     return Lines;

@@ -391,15 +391,6 @@ function Auctioneer:draw(itemLink)
         )) then
             GDKPAuction.inProgress = true;
 
-            -- Store the bid values for this item
-            local itemID = GL:getItemIDFromLink(Interface:get(self, "EditBox.Item"):GetText());
-            if (itemID) then
-                GL.DB.Settings.GDKP.SettingsPerItem[itemID] = {
-                    minimumBid = tonumber(Interface:get(self, "EditBox.MinimumBid"):GetText()),
-                    minimumIncrement = tonumber(Interface:get(self, "EditBox.MinimumIncrement"):GetText()),
-                };
-            end
-
             if (Settings:get("GDKP.closeAuctioneerOnStart", true)) then
                 self:close();
             end
@@ -721,24 +712,13 @@ function Auctioneer:addToQueue(itemLink)
         return;
     end
 
-    local detailsPool;
-    if (Settings:get("GDKP.storeMinimumAndIncrementPerItem")) then
-        detailsPool = Settings:get("GDKP.SettingsPerItem", {})[itemID] or {};
-        detailsPool.minimumBid = detailsPool.minimumBid or Settings:get("GDKP.minimumBid");
-        detailsPool.minimumIncrement = detailsPool.minimumIncrement or Settings:get("GDKP.minimumIncrement");
-    else
-        detailsPool = {
-            minimumBid = GL.Settings:get("GDKP.defaultMinimumBid"),
-            minimumIncrement = GL.Settings:get("GDKP.defaultIncrement"),
-        };
-    end
-
     local addedAt = GetTime();
+    local PerItemSettings = GDKPAuction:settingsForItemID(GL:getItemIDFromLink(itemLink));
     GDKPAuction.Queue[tostring(addedAt)]= {
         itemLink = itemLink,
         itemID = itemID,
-        minimumBid = tonumber(detailsPool.minimumBid) or 500,
-        increment = tonumber(detailsPool.minimumIncrement) or 100,
+        minimumBid = PerItemSettings.minimum,
+        increment = PerItemSettings.increment,
         addedAt = addedAt,
     };
 
@@ -1117,14 +1097,9 @@ function Auctioneer:passItemLink(itemLink, setAsActiveItem)
         return GL:warning("Invalid item provided");
     end
 
-    if (Settings:get("GDKP.storeMinimumAndIncrementPerItem")) then
-        local PerItemSettings = Settings:get("GDKP.SettingsPerItem", {})[itemID] or {};
-        PerItemSettings.minimumBid = PerItemSettings.minimumBid or Settings:get("GDKP.minimumBid");
-        PerItemSettings.minimumIncrement = PerItemSettings.minimumIncrement or Settings:get("GDKP.minimumIncrement");
-
-        Interface:get(self, "EditBox.MinimumBid"):SetText(PerItemSettings.minimumBid);
-        Interface:get(self, "EditBox.MinimumIncrement"):SetText(PerItemSettings.minimumIncrement);
-    end
+    local PerItemSettings = GDKPAuction:settingsForItemID(GL:getItemIDFromLink(itemLink));
+    Interface:get(self, "EditBox.MinimumBid"):SetText(PerItemSettings.minimum);
+    Interface:get(self, "EditBox.MinimumIncrement"):SetText(PerItemSettings.increment);
 
     Interface:get(self, "EditBox.Item"):SetText(itemLink);
 
