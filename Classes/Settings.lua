@@ -61,9 +61,9 @@ function Settings:sanitizeSettings()
 
     -- Permanently delete soft-deleted GDKP sessions after 48 hours
     local twoDaysAgo = GetServerTime() - 172800;
-    for key, Session in pairs(GL.DB.GDKP) do
+    for key, Session in pairs(DB:get("GDKP.Ledger")) do
         if (Session.deletedAt and Session.deletedAt < twoDaysAgo) then
-            GL.DB.GDKP[key] = nil;
+            DB:set("GDKP.Ledger." .. key, nil);
         end
     end
 end
