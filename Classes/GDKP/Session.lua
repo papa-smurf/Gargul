@@ -272,7 +272,7 @@ function Session:registerGoldTrade(Details)
     local theirGold = Details.theirGold;
 
     -- No gold was involved in this trade
-    if (myGold <= 0 and theirGold <=0) then
+    if (myGold <= 0 and theirGold <= 0) then
         return;
     end
 
@@ -284,6 +284,8 @@ function Session:registerGoldTrade(Details)
 
     Instance.GoldTrades[Details.partner].from = Instance.GoldTrades[Details.partner].from + theirGold;
     Instance.GoldTrades[Details.partner].to = Instance.GoldTrades[Details.partner].to + myGold;
+
+    Events:fire("GL.GDKP_GOLD_TRADED");
 
     self:store(Instance);
 end

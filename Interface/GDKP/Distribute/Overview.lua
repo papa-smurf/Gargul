@@ -81,6 +81,7 @@ function Overview:build()
         {"DistributionOverviewGDKPCutsImportedListener", "GL.GDKP_CUTS_IMPORTED"},
         {"DistributionOverviewGDKPSessionLockedListener", "GL.GDKP_SESSION_LOCKED"},
         {"DistributionOverviewGDKPSessionUnlockedListener", "GL.GDKP_SESSION_UNLOCKED"},
+        {"DistributionOverviewGoldTradedListener", "GL.GDKP_GOLD_TRADED"},
     }, function ()
         self:throttledRefresh();
     end);
