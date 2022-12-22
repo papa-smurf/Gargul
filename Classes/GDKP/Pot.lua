@@ -575,7 +575,7 @@ function Pot:announce(sessionID, callback)
         return false;
     end
 
-    local message = string.format("Base cut: %sg", Session.lastAvailableBase);
+    local message = string.format("Base cut: %sg", math.floor(Session.lastAvailableBase));
     GL:sendChatMessage(message, "GROUP");
 
     ---@todo: polish up the announcement at some point
