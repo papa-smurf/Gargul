@@ -138,6 +138,11 @@ function GDKP:draw(Parent)
             setting = "GDKP.invalidBidsTriggerAntiSnipe",
         },
         {
+            label = "Auto award items",
+            description = "Auto award an item to the highest bidder when the timer runs out (clicking \"Stop\" during an auction will not trigger this)",
+            setting = "GDKP.autoAwardViaAuctioneer",
+        },
+        {
             label = "Remember minimum bid and increment for each item",
             description = "If enabled, minimum and increment are remembered for each item. If not, the last minimum/increment you used will remain in place",
             setting = "GDKP.storeMinimumAndIncrementPerItem",
@@ -322,6 +327,51 @@ function GDKP:draw(Parent)
             setting = "GDKP.addGoldToTradeWindow",
         },
     }, Parent);
+
+    Overview:drawHeader("|c00FF0000DANGER ZONE", Parent);
+
+    local ResetPerItemSettings = GL.AceGUI:Create("Button");
+    ResetPerItemSettings:SetText("Reset all minimum prices and increments");
+    ResetPerItemSettings:SetFullWidth(true);
+    ResetPerItemSettings:SetCallback("OnClick", function()
+        GL.Interface.Dialogs.PopupDialog:open({
+            question = "Are you sure you want to reset all individual item settings?",
+            OnYes = function ()
+                Settings:set("GDKP.SettingsPerItem", {});
+            end,
+        });
+    end);
+    Parent:AddChild(ResetPerItemSettings);
+
+    local ResetGDKPSettings = GL.AceGUI:Create("Button");
+    ResetGDKPSettings:SetText("Reset GDKP settings to default");
+    ResetGDKPSettings:SetFullWidth(true);
+    ResetGDKPSettings:SetCallback("OnClick", function()
+        GL.Interface.Dialogs.PopupDialog:open({
+            question = "Are you sure you want to reset all GDKP settings?",
+            OnYes = function ()
+                local PerItemSettings = Settings:get("GDKP.SettingsPerItem", {});
+                Settings:set("GDKP", {});
+                Settings:set("GDKP.SettingsPerItem", PerItemSettings);
+                C_UI.Reload();
+            end,
+        });
+    end);
+    Parent:AddChild(ResetGDKPSettings);
+
+    local ResetGDKPSessionData = GL.AceGUI:Create("Button");
+    ResetGDKPSessionData:SetText("Reset GDKP session data");
+    ResetGDKPSessionData:SetFullWidth(true);
+    ResetGDKPSessionData:SetCallback("OnClick", function()
+        GL.Interface.Dialogs.PopupDialog:open({
+            question = "Are you sure you want to delete all session data? You will lose ALL auction data. Use with extreme caution!",
+            OnYes = function ()
+                GL.DB:set("GDKP", {});
+                C_UI.Reload();
+            end,
+        });
+    end);
+    Parent:AddChild(ResetGDKPSessionData);
 
     Overview:drawHeader("Mutators", Parent);
 
