@@ -61,9 +61,9 @@ function Settings:sanitizeSettings()
 
     -- Permanently delete soft-deleted GDKP sessions after 48 hours
     local twoDaysAgo = GetServerTime() - 172800;
-    for key, Session in pairs(GL.DB.GDKP) do
+    for key, Session in pairs(DB:get("GDKP.Ledger", {})) do
         if (Session.deletedAt and Session.deletedAt < twoDaysAgo) then
-            GL.DB.GDKP[key] = nil;
+            DB:set("GDKP.Ledger." .. key, nil);
         end
     end
 end
@@ -84,10 +84,35 @@ function Settings:enforceTemporarySettings()
         return;
     end
 
+    --- We restructured minimum prices and increments for GDKP items in 5.0.5
+    if (GL.Version:leftIsOlderThanRight(GL.Version.latestPriorVersionBooted, "5.0.5")) then
+        local Restructured = {};
+
+        for itemID, Details in pairs(DB:get("Settings.GDKP.SettingsPerItem", {})) do
+            (function()
+                if (not itemID
+                    or not GetItemInfoInstant(itemID)
+                    or type(Details) ~= "table"
+                    or type(Details.minimumBid) ~= "number"
+                    or type(Details.minimumIncrement) ~= "number"
+                ) then
+                    return;
+                end
+
+                Restructured[tostring(itemID)] = {
+                    minimum = Details.minimumBid,
+                    increment = Details.minimumIncrement,
+                };
+            end)();
+        end
+
+        DB:set("Settings.GDKP.SettingsPerItem", Restructured);
+    end
+
     --- In the GDKP module we added extra shortcut keys forcing us to remap old ones
-    if (not GL.DB.Settings.ShortcutKeys.rollOffOrAuction) then
-        GL.DB.Settings.ShortcutKeys.rollOffOrAuction = GL.DB.Settings.ShortcutKeys.rollOff or "ALT_CLICK";
-        GL.DB.Settings.ShortcutKeys.rollOff = "DISABLED";
+    if (not DB.Settings.ShortcutKeys.rollOffOrAuction) then
+        DB.Settings.ShortcutKeys.rollOffOrAuction = DB.Settings.ShortcutKeys.rollOff or "ALT_CLICK";
+        DB.Settings.ShortcutKeys.rollOff = "DISABLED";
     end
 
     --- In 4.12.16 we split up the TMB.announceInfoWhenRolling setting into separate wishlist/priolist settings
@@ -101,8 +126,8 @@ function Settings:enforceTemporarySettings()
     --- In 4.12.1 we added a concernsOS and givesPlusOne checkbox field to the roll tracking settings
     for key, RollType in pairs(GL.Settings:get("RollTracking.Brackets", {})) do
         if (RollType[5] == nil) then
-            GL.DB.RollTracking.Brackets[key][5] = RollType[1] == "OS";
-            GL.DB.RollTracking.Brackets[key][6] = false;
+            DB.RollTracking.Brackets[key][5] = RollType[1] == "OS";
+            DB.RollTracking.Brackets[key][6] = false;
         end
     end
 
@@ -110,10 +135,10 @@ function Settings:enforceTemporarySettings()
     --- If the user is now on 4.12.0 or has not used 4.12.0 then we restructure the awarded items
     ---@todo: remove if award history structure ever changes again
     if (GL.version == "4.12.0" or (
-        not GL.firstBoot and not GL.DB.LoadDetails["4.12.0"])
+        not GL.firstBoot and not DB.LoadDetails["4.12.0"])
     ) then
         GL:notice("Rewriting Gargul's award history, this could drops FPS for a second or two!");
-        GL.DB.LoadDetails["4.12.0"] = GetServerTime();
+        DB.LoadDetails["4.12.0"] = GetServerTime();
 
         local AwardHistory = {};
         for _, AwardEntry in pairs(DB:get("AwardHistory")) do
@@ -140,7 +165,7 @@ function Settings:enforceTemporarySettings()
 
                 -- Make sure we always have a checksum
                 if (GL:empty(AwardEntry.checksum)) then
-                    AwardEntry.checksum = GL:strPadRight(GL:strLimit(GL:stringHash(AwardEntry.timestamp .. AwardEntry.itemId) .. GL:stringHash(AwardEntry.awardedTo .. GL.DB:get("SoftRes.MetaData.id", "")), 20, ""), "0", 20);
+                    AwardEntry.checksum = GL:strPadRight(GL:strLimit(GL:stringHash(AwardEntry.timestamp .. AwardEntry.itemId) .. GL:stringHash(AwardEntry.awardedTo .. DB:get("SoftRes.MetaData.id", "")), 20, ""), "0", 20);
                 end
 
                 local addEntryToTable = function (Entry)
@@ -181,7 +206,7 @@ function Settings:enforceTemporarySettings()
             end)();
         end
 
-        GL.DB.AwardHistory = AwardHistory;
+        DB.AwardHistory = AwardHistory;
 
         GL:notice("All done!");
     end
@@ -207,7 +232,7 @@ function Settings:resetToDefault()
     GL:debug("Settings:resetToDefault");
 
     self.Active = {};
-    GL.DB.Settings = {};
+    DB.Settings = {};
 
     -- Combine defaults and user settings
     self:overrideDefaultsWithUserSettings();
@@ -223,14 +248,14 @@ function Settings:overrideDefaultsWithUserSettings()
     self.Active = {};
 
     -- Combine the default and user's settings to one settings table
-    Settings = GL:tableMerge(Settings.Defaults, GL.DB.Settings);
+    Settings = GL:tableMerge(Settings.Defaults, DB.Settings);
 
     -- Set the values of the settings table directly on the GL.Settings table.
     for key, value in pairs(Settings) do
         self.Active[key] = value;
     end
 
-    GL.DB.Settings = self.Active;
+    DB.Settings = self.Active;
 end
 
 --- We use this method to make sure that the interface is only built

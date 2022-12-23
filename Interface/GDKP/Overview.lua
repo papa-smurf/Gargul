@@ -154,7 +154,7 @@ end
 
 ---@return void
 function Overview:open()
-    GL:debug("Interface.GDKP.Overview:draw");
+    GL:debug("Interface.GDKP.Overview:open");
 
     local Window = Interface:get(self, "GDKPOverview");
 
@@ -231,7 +231,7 @@ function Overview:build()
     end);
 
     PotIcon:SetCallback("OnEnter", function ()
-        if (not self.selectedSession) then
+        if (not self.selectedSession or not Session) then
             return;
         end
 
@@ -556,12 +556,10 @@ function Overview:refreshLedger()
         return self:showTutorial();
     end
 
-    self:clearDetailsFrame();
-
     local Wrapper = Interface:get(self, "Frame.SectionWrapper");
     local Details = Interface:get(self, "ScrollFrame.SessionDetails") or GL.AceGUI:Create("ScrollFrame");
-    Details:SetLayout("Flow");
     Interface:set(self, "SessionDetails", Details);
+    Details:SetLayout("Flow");
     Wrapper:AddChild(Details);
 
     local Title = Interface:get(self, "Label.Title");
@@ -596,6 +594,7 @@ function Overview:refreshLedger()
     end
 
     GL:onItemLoadDo(ItemIDs, function ()
+        self:clearDetailsFrame();
         local Auctions = {};
         local RawAuctions = Session.Auctions or {};
 
@@ -891,24 +890,9 @@ function Overview:clearDetailsFrame()
 
     self.ActionButtons = {};
 
-    local Title = Interface:get(self, "Label.Title");
-    local Note = Interface:get(self, "Label.Note");
-
-    if (Title) then
-        Title:SetText("");
-    end
-
-    if (Note) then
-        Note:SetText("");
-    end
-
     local ScrollFrame = Interface:get(self, "ScrollFrame.SessionDetails");
     if (ScrollFrame) then
-        local children = ScrollFrame.children or {};
-        for i = 1,#children do
-            children[i].frame:Hide();
-            children[i] = nil;
-        end
+        GL.Interface:releaseChildren(ScrollFrame);
     end
 end
 

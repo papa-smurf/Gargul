@@ -541,21 +541,149 @@ end
 
 --- Courtesy of Lantis and the team over at Classic Loot Manager: https://github.com/ClassicLootManager/ClassicLootManager
 function GL.LibStItemCellUpdate (rowFrame, frame, data, cols, row, realrow, column, fShow, table, ...)
-    local itemId = data[realrow].cols[column].value
-    local _, _, _, _, icon = GetItemInfoInstant(itemId or 0)
+    local itemId = data[realrow].cols[column].value;
+    local _, _, _, _, icon = GetItemInfoInstant(itemId or 0);
     if icon then
-        frame:SetNormalTexture(icon)
-        frame:Show()
+        frame:SetNormalTexture(icon);
+        frame:Show();
         frame:SetScript("OnEnter", function()
-            GameTooltip:SetOwner(rowFrame, "ANCHOR_RIGHT")
-            GameTooltip:SetHyperlink("item:" .. tostring(itemId))
-            GameTooltip:Show()
+            GameTooltip:SetOwner(rowFrame, "ANCHOR_RIGHT");
+            GameTooltip:SetHyperlink("item:" .. tostring(itemId));
+            GameTooltip:Show();
         end)
 
-        frame:SetScript("OnLeave", function() GameTooltip:Hide() end)
+        frame:SetScript("OnLeave", function() GameTooltip:Hide() end);
     else
-        frame:Hide()
+        frame:Hide();
     end
+end
+
+function GL.LibStItemLinkCellUpdate (rowFrame, frame, data, cols, row, realrow, column, fShow, table, ...)
+    local value = data[realrow].cols[column].value;
+    frame.text:SetText(value);
+
+    if (value) then
+        frame:Show();
+        frame:SetScript("OnEnter", function()
+            GameTooltip:SetOwner(rowFrame, "ANCHOR_RIGHT");
+            GameTooltip:SetHyperlink(data[realrow].cols[column].value);
+            GameTooltip:Show();
+        end)
+
+        frame:SetScript("OnLeave", function() GameTooltip:Hide() end);
+    else
+        frame:Hide();
+    end
+
+    return true;
+end
+
+function GL.LibStImageButtonCellUpdate (rowFrame, frame, data, cols, row, realrow, column, fShow, table, ...)
+    local path = data[realrow].cols[column].value
+
+    if path then
+        local tooltip = data[realrow].cols[column]._tooltip;
+        frame:SetNormalTexture(path);
+        frame:SetHighlightTexture(path);
+        frame:Show();
+        frame:SetScript("OnEnter", function()
+            GameTooltip:SetOwner(frame, "ANCHOR_TOP")
+            GameTooltip:AddDoubleLine(tooltip);
+            GameTooltip:Show();
+        end)
+
+        frame:SetScript("OnLeave", function() GameTooltip:Hide() end);
+    else
+        frame:Hide();
+    end
+
+    local callback = data[realrow].cols[column]._OnClick;
+    if (type(callback) == "function") then
+        frame:SetScript("OnClick", function(self, event, ...)
+            if (type(event) ~= "string"
+                or not GL:inTable({"LeftButton", "RightButton", "MiddleButton", "Button4", "Button5"}, event)
+            ) then
+                return;
+            end
+
+            callback(self, event, ...);
+        end);
+    end
+end
+
+function GL.LibStButtonCellUpdate (rowFrame, frame, data, cols, row, realrow, column, fShow, table, ...)
+    local buttonText = data[realrow].cols[column].value
+
+    local buttonName = "GARGUL_" .. GL:uuid() .. GetTime();
+    local Button = CreateFrame("Button", buttonName, frame, "UIPanelButtonTemplate");
+    Button:SetText(buttonText);
+    Button:SetSize(frame:GetWidth() - 6, frame:GetHeight() - 2);
+    Button:SetPoint("TOPLEFT", frame, "TOPLEFT", 0, 0);
+
+    local callback = data[realrow].cols[column]._OnClick;
+    if (type(callback) == "function") then
+        Button:SetScript("OnClick", function(self, event, ...)
+            if (type(event) ~= "string"
+                    or not GL:inTable({"LeftButton", "RightButton", "MiddleButton", "Button4", "Button5"}, event)
+            ) then
+                return;
+            end
+
+            callback(self, event, ...);
+        end);
+    end
+
+    -- Properly clean up the button after hiding it
+    local originalOnHide = frame:GetScript("OnHide");
+    frame:SetScript("OnHide", function (...)
+        if (Button and Button.Hide) then
+            Button:Hide();
+        end
+
+        Button = nil;
+        _G[buttonName] = nil;
+
+        frame.children = nil;
+        if (type(originalOnHide) == "function") then
+            originalOnHide(...);
+        end
+    end);
+end
+
+function GL.LibStInputCellUpdate (rowFrame, frame, data, cols, row, realrow, column, fShow, table, ...)
+    local inputName = "GARGUL_" .. GL:uuid() .. GetTime();
+    local BidInput = CreateFrame("EditBox", inputName, frame, "InputBoxTemplate");
+    BidInput:SetSize(frame:GetWidth() - 6, frame:GetHeight() - 2);
+    BidInput:SetPoint("TOPLEFT", frame, "TOPLEFT", 0, 0);
+    BidInput:SetAutoFocus(false);
+
+    local default = data[realrow].cols[column]._default;
+    if (default) then
+        BidInput:SetText(default);
+    end
+
+    local callback = data[realrow].cols[column]._OnTextChanged;
+    if (type(callback) == "function") then
+        BidInput:SetScript("OnTextChanged", function(self, event)
+            callback(BidInput);
+        end);
+    end
+
+    -- Properly clean up the editbox after hiding it
+    local originalOnHide = frame:GetScript("OnHide");
+    frame:SetScript("OnHide", function (...)
+        if (BidInput and BidInput.Hide) then
+            BidInput:Hide();
+        end
+
+        BidInput = nil;
+        _G[inputName] = nil;
+
+        frame.children = nil;
+        if (type(originalOnHide) == "function") then
+            originalOnHide(...);
+        end
+    end);
 end
 
 --- Clears the provided scrolling table (lib-ScrollingTable)
@@ -1075,7 +1203,7 @@ function GL:fetchCloseButtonFromAceGUIWidget(Widget)
 
     -- Try to locate the Close button and hide it
     for _, Child in pairs({Widget.frame:GetChildren()}) do
-        if (Child.GetText and Child:GetText() == "Close") then
+        if (Child.GetText and Child:GetText() == CLOSE) then
             return Child;
         end
     end

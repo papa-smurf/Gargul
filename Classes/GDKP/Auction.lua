@@ -19,6 +19,9 @@ local CommActions = Constants.Comm.Actions;
 
 local SecondsAnnounced = {};
 
+---@type GDKPAuctioneerInterface
+local Auctioneer;
+
 ---@class GDKPAuction
 GDKP.Auction = {
     _initialized = false,
@@ -30,6 +33,7 @@ GDKP.Auction = {
     waitingForExtension = false,
 
     AutoBidTimer = nil,
+    BidListenerCancelTimerId = nil,
     Current = {
         antiSnipe = nil, -- The anti snipe time
         duration = nil, -- The amount of time players get to bid
@@ -44,7 +48,7 @@ GDKP.Auction = {
         Bids = {}, -- Player bids
         TopBid = {}, -- Top bid
     },
-    BidListenerCancelTimerId = nil,
+    Queue = {},
 };
 
 ---@type GDKPAuction
@@ -63,6 +67,8 @@ function Auction:_init()
     if (self._initialized) then
         return false;
     end
+
+    Auctioneer = GL.Interface.GDKP.Auctioneer or {};
 
     -- An event is fired whenever a bid is accepted, in which case we broadcast the latest auction details
     Events:register("GDKPBidAccepted", "GL.GDKP_BID_ACCEPTED", function (_, OldTopBid, NewTopBid)
@@ -792,6 +798,14 @@ function Auction:announceStart(itemLink, minimumBid, minimumIncrement, duration,
         "GROUP"
     ):send();
 
+    -- Store min and increment for future use
+    if (Settings:get("GDKP.storeMinimumAndIncrementPerItem")) then
+        Settings:set("GDKP.SettingsPerItem." .. itemID, {
+            minimum = minimumBid,
+            increment = minimumIncrement
+        });
+    end
+
     -- The user doesn't want to announce anything in chat
     if (not Settings:get("GDKP.announceAuctionStart")) then
         return true;
@@ -816,6 +830,29 @@ function Auction:announceStart(itemLink, minimumBid, minimumIncrement, duration,
     end
 
     return true;
+end
+
+---@return table|boolean
+function Auction:settingsForItemID(itemID)
+    GL:debug("Auction:settingsForItemID");
+
+    itemID = tonumber(itemID);
+    if (not itemID) then
+        return false;
+    end
+
+    if (not Settings:get("GDKP.storeMinimumAndIncrementPerItem")) then
+        return {
+            minimum = Settings:get("GDKP.defaultMinimumBid"),
+            increment = Settings:get("GDKP.defaultIncrement"),
+        }
+    end
+
+    local PerItemSettings = Settings:get("GDKP.SettingsPerItem." .. itemID, {});
+    PerItemSettings.minimum = PerItemSettings.minimum or Settings:get("GDKP.defaultMinimumBid");
+    PerItemSettings.increment = PerItemSettings.increment or Settings:get("GDKP.defaultIncrement");
+
+    return PerItemSettings;
 end
 
 --- Anounce to everyone in the raid that the auction has ended
@@ -891,6 +928,7 @@ function Auction:extend(CommMessage)
         self.timerId = GL.Ace:ScheduleTimer(function ()
             self:stop();
             self:announceStop();
+            Auctioneer:timeRanOut();
         end, math.ceil(time + stopAuctionLeewayInSeconds));
     end
 end
@@ -987,7 +1025,7 @@ function Auction:start(CommMessage)
             GL.Interface.GDKP.Bidder:show(duration, Entry.link, Entry.icon, content.note, SupportedBids);
 
             if (CommMessage.Sender.id == GL.User.id) then
-                GL.Interface.GDKP.Auctioneer:drawReopenAuctioneerButton();
+                Auctioneer:drawReopenAuctioneerButton();
             end
         end
 
@@ -996,6 +1034,7 @@ function Auction:start(CommMessage)
             self.timerId = GL.Ace:ScheduleTimer(function ()
                 self:stop();
                 self:announceStop();
+                Auctioneer:timeRanOut();
             end, math.ceil(duration + stopAuctionLeewayInSeconds));
         end
 
@@ -1108,7 +1147,7 @@ function Auction:stop(CommMessage)
             );
         end
 
-        GL.Interface.GDKP.Auctioneer:updateWidgets();
+        Auctioneer:updateWidgets();
     end
 
     GL.Ace:CancelTimer(self.countDownTimer);
@@ -1310,7 +1349,7 @@ function Auction:autoBid()
         return false;
     end
 
-    -- Make sure we only bid once every 1.2s (spam throttle)
+    -- Make sure we only bid once every Xs (spam throttle)
     if (GetTime() - self.lastBidAt < autoBidThrottle) then
         GL.Ace:CancelTimer(self.AutoBidTimer);
 
@@ -1476,7 +1515,7 @@ function Auction:processBid(message, bidder)
     end
 
     tinsert(self.Current.Bids, BidEntry);
-    GL.Interface.GDKP.Auctioneer:refreshBidsTable();
+    Auctioneer:refreshBidsTable();
 
     local OldTopBid = self.Current.TopBid;
     self.Current.TopBid = BidEntry;

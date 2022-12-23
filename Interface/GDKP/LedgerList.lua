@@ -85,9 +85,8 @@ function LedgerList:build()
 
         Window:SetWidth(440);
         Interface:get(self, "Table.Auctions"):SetDisplayRows(math.floor(
-            Window.frame:GetHeight() / HEIGHT_PER_SESSION_ROW - (GL.elvUILoaded and 6 or 5)
-            ), HEIGHT_PER_SESSION_ROW
-        );
+        Window.frame:GetHeight() / HEIGHT_PER_SESSION_ROW - (GL.elvUILoaded and 6 or 5)
+        ), HEIGHT_PER_SESSION_ROW);
     end
 
     local columns = {

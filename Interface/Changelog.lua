@@ -13,6 +13,13 @@ GL.Interface.Changelog = {
     History = {
         {
             version = "5.0.4",
+            date = "December 23rd, 2022",
+            Changes = {
+                "GDKP auto bidding, auto awarding, queued auctions, and other QoL things just hit Gargul! Go check them out with |c00a79eff/gl gdkp|r!",
+            },
+        },
+        {
+            version = "5.0.4",
             date = "December 19th, 2022",
             Changes = {
                 "|c00FF0000GDKP IS HERE!|r Next level GDKP automation, bidding, tracking and pot calculation and distribution. Built on Gargul's solid core and backed by an active community!\n\nEncourage raid leaders to leverage it or check it out for yourself with |c00a79eff/gl gdkp|r, no need to be in a group! Coming soon: queued auctions! Happy Holidays <3",
