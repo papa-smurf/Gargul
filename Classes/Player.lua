@@ -148,9 +148,7 @@ function Player:classByName(playerName, default)
     if (type(fileName) == "string"
         and not GL:empty(fileName)
     ) then
-        fileName = string.lower(fileName);
-
-        if (GL.Data.Constants.UnitClasses[fileName]) then
+        if (GL.Data.Constants.UnitClasses[string.upper(fileName)]) then
             self.playerClassByName[playerName] = string.lower(fileName);
         end
     end

@@ -81,6 +81,7 @@ function Overview:build()
         {"DistributionOverviewGDKPCutsImportedListener", "GL.GDKP_CUTS_IMPORTED"},
         {"DistributionOverviewGDKPSessionLockedListener", "GL.GDKP_SESSION_LOCKED"},
         {"DistributionOverviewGDKPSessionUnlockedListener", "GL.GDKP_SESSION_UNLOCKED"},
+        {"DistributionOverviewGoldTradedListener", "GL.GDKP_GOLD_TRADED"},
     }, function ()
         self:throttledRefresh();
     end);
@@ -718,52 +719,6 @@ function Overview:resizeFrames()
     RaidersFrame:DoLayout();
     RaidersScrollFrame:DoLayout();
     Window:DoLayout();
-end
-
-function Overview:determineDistributionDefaults(Player)
-    GL:debug("Overview:determineDistributionDefaults");
-
-    local PlayerRoles = {};
-    local DistributionDetails = {};
-    local ClassRoleDictionary = {
-        TANK = "TANK",
-        DAMAGER = "DPS",
-        HEALER = "HEAL",
-    };
-
-    if (Player.class) then
-        tinsert(PlayerRoles, strupper(Player.class));
-    end
-
-    local classRole = UnitGroupRolesAssigned(Player.name);
-    if (classRole and ClassRoleDictionary[classRole]) then
-        tinsert(PlayerRoles, classRole);
-    end
-
-    if (Player.isLeader) then
-        tinsert(PlayerRoles, "LEAD");
-    end
-
-    if (Player.isML) then
-        tinsert(PlayerRoles, "ML");
-    end
-
-    for _, Mutator in pairs(self.Mutators or {}) do
-        local active = false;
-
-        if (type(Mutator.AutoGiveOnRolls) == "table") then
-            for _, role in pairs(PlayerRoles or {}) do
-                if (GL:inTable(Mutator.AutoGiveOnRolls, role)) then
-                    active = true;
-                    break;
-                end
-            end
-        end
-
-        DistributionDetails[Mutator.name] = active;
-    end
-
-    return DistributionDetails;
 end
 
 function Overview:calculateCuts()
