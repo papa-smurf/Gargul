@@ -78,6 +78,15 @@ Comm.Actions = {
     end,
     [Actions.broadcastBoostedRollsMutation] = function (Message)
         GL.BoostedRolls:receiveUpdate(Message);
+    end,
+    [Actions.broadcastPlusOnesData] = function (Message)
+        GL.PlusOnes:receiveBroadcast(Message);
+    end,
+    [Actions.requestPlusOnesData] = function (Message)
+        GL.PlusOnes:replyToDataRequest(Message);
+    end,
+    [Actions.broadcastPlusOnesMutation] = function (Message)
+        GL.PlusOnes:receiveUpdate(Message);
     end
 };
 

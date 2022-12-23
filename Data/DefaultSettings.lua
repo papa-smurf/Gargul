@@ -111,6 +111,13 @@ GL.Data.DefaultSettings = {
         priority = 1,
         reserveThreshold = 180,
     },
+    PlusOnes = {
+        automaticallyAcceptDataFrom = "",
+        automaticallyShareData = true,
+        enabled = false,
+        enableWhisperCommand = true,
+        identifier = "PO",
+    },
     GDKP = {
         acceptBidsLowerThanMinimum = false, -- Change default? Check Auction.lua !!
         addGoldToTradeWindow = true,
@@ -121,7 +128,6 @@ GL.Data.DefaultSettings = {
         announceCountdownOnce = false,
         announceNewBid = true,
         announcePotAfterAuction = true,
-        autoAwardViaAuctioneer = false,
         antiSnipe = 10,
         bidderScale = 1,
         closeAuctioneerOnAward = false,

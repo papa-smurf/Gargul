@@ -69,6 +69,36 @@ PopupDialog.BROADCAST_BOOSTEDROLLS_CONFIRMATION = {
     end,
 }
 
+-- Clear plus one data confirmation
+PopupDialog.CLEAR_PLUSONES_CONFIRMATION = {
+    question = "Are you sure you want to clear all plus one data?",
+    OnYes = function ()
+        GL.Interface.PlusOnes.Overview:close();
+        GL.PlusOnes:clearPlusOnes();
+        GL.PlusOnes:draw();
+   end,
+}
+
+-- Import new plus one data confirmation
+PopupDialog.NEW_PLUSONES_IMPORT_CONFIRMATION = {
+    question = "Are you sure you want to clear your existing plus one data and import new data?",
+    OnYes = function ()
+        GL.Interface.PlusOnes.Importer:import();
+    end,
+    OnNo = function ()
+        GL.Interface.PlusOnes.Importer:close();
+        GL.PlusOnes:draw();
+    end,
+}
+
+-- Broadcast plus one data confirmation
+PopupDialog.BROADCAST_PLUSONES_CONFIRMATION = {
+    question = "Are you sure you want to broadcast your plus one data to everyone in your party/raid?",
+    OnYes = function ()
+        GL.PlusOnes:broadcast();
+    end,
+}
+
 -- Broadcast soft-reserve data confirmation
 PopupDialog.BROADCAST_TMB_CONFIRMATION = {
     question = "Are you sure you want to broadcast your TMB data to everyone in your party/raid? NB: EVERYONE can see your TMB data regardless of their permissions on the TMB website!",

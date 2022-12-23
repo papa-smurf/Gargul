@@ -6,7 +6,7 @@ PopupDialog AceGUI Widget
 Simple container widget that creates a popup dialog similar to Blizzard's dialogs
 But with added checkboxes for OS and +1 markers
 -------------------------------------------------------------------------------]]
-local Type, Version = "GargulAwardDialog", 1
+local Type, Version = "GargulIncomingPlusOneDataDialog", 1
 local AceGUI = LibStub and LibStub("AceGUI-3.0", true)
 if not AceGUI or (AceGUI:GetWidgetVersion(Type) or 0) >= Version then return end
 
@@ -15,6 +15,8 @@ local pairs = pairs;
 
 -- WoW APIs
 local CreateFrame, UIParent = CreateFrame, UIParent;
+
+local sender = "";
 
 local function OnClose(Frame)
     PlaySound(799) -- SOUNDKIT.GS_TITLE_OPTION_EXIT
@@ -58,6 +60,15 @@ local Events = {
 
     SetQuestion = function(self, question)
         self.DialogLabel:SetText(question);
+    end,
+
+    SetSender = function(self, playerName)
+        sender = playerName;
+
+        self.TrustSenderLabel:SetText(string.format(
+            "Automatically accept incoming broadcasts from %s",
+                playerName
+        ));
     end,
 
     OnAcquire = function(self)
@@ -148,8 +159,13 @@ local FrameBackdrop = {
 }
 
 local function constructor()
-    local frameName = "GargulAwardDialog" .. GL:uuid();
-    local Frame = CreateFrame("Frame", frameName, UIParent, BackdropTemplateMixin and "BackdropTemplate" or nil);
+    local Frame = GL.Interface:get(GL.Interface.Dialogs.IncomingPlusOneDataDialog, "Window");
+    if (Frame) then
+        Frame:Hide();
+    end
+
+    local frameName = "GargulIncomingPlusOneDataDialog";
+    Frame = CreateFrame("Frame", frameName, UIParent, BackdropTemplateMixin and "BackdropTemplate" or nil);
     Frame:Hide();
 
     Frame:EnableMouse(true);
@@ -158,12 +174,12 @@ local function constructor()
     Frame:SetFrameStrata("FULLSCREEN_DIALOG");
     Frame:SetBackdrop(FrameBackdrop);
     Frame:SetBackdropColor(0, 0, 0, 1);
-
     Frame:SetWidth(320);
     Frame:SetToplevel(true);
     Frame:SetScript("OnHide", OnClose);
     Frame:SetScript("OnMouseDown", OnMouseDown);
     Frame:SetScript("OnMouseUp", OnMouseUp);
+    GL.Interface:set(GL.Interface.Dialogs.IncomingPlusOneDataDialog, "Window", Frame);
 
     -- Container Support
     local content = CreateFrame("Frame", nil, Frame)
@@ -187,7 +203,6 @@ local function constructor()
 
     local VerticalSpacer;
     local HorizontalSpacer;
-    local YesButton;
 
     -- Dialog
     local Dialog = AceGUI:Create("Label");
@@ -210,127 +225,49 @@ local function constructor()
 
     VerticalSpacer = AceGUI:Create("SimpleGroup");
     VerticalSpacer:SetLayout("FILL");
-    VerticalSpacer:SetWidth(57);
+    VerticalSpacer:SetWidth(40);
     VerticalSpacer:SetHeight(10);
     OptionsFrame:AddChild(VerticalSpacer);
 
-    -- Plus one checkbox
-    if (GL.PlusOnes:enabled()) then
-        local PlusOneCheckBox = AceGUI:Create("CheckBox");
-        PlusOneCheckBox:SetLabel("");
-        PlusOneCheckBox:SetDescription("");
-        PlusOneCheckBox:SetHeight(20);
-        PlusOneCheckBox:SetWidth(24);
-        OptionsFrame:AddChild(PlusOneCheckBox);
-        GL.Interface:set(GL.Interface.Dialogs.AwardDialog, "PlusOne", PlusOneCheckBox);
+    if (sender) then
+        -- Trust sender checkbox
+        local TrustSenderCheckBox = AceGUI:Create("CheckBox");
+        TrustSenderCheckBox:SetLabel("");
+        TrustSenderCheckBox:SetDescription("");
+        TrustSenderCheckBox:SetHeight(20);
+        TrustSenderCheckBox:SetWidth(24);
+        OptionsFrame:AddChild(TrustSenderCheckBox);
+        GL.Interface:set(GL.Interface.Dialogs.IncomingPlusOneDataDialog, "TrustSender", TrustSenderCheckBox);
+        Widget.TrustSenderCheckBox = TrustSenderCheckBox;
 
-        -- Plus one label
-        local PlusOneLabel = AceGUI:Create("InteractiveLabel");
-        PlusOneLabel:SetFontObject(_G["GameFontNormal"]);
-     PlusOneLabel:SetWidth(100);
-        PlusOneLabel:SetText("Add a +1");
-
-        PlusOneLabel:SetCallback("OnClick", function()
-            PlusOneCheckBox:ToggleChecked();
+        TrustSenderCheckBox:SetCallback("OnValueChanged", function (widget)
+            if (widget:GetValue()) then
+                GL.PlusOnes:markPlayerAsTrusted(sender);
+            else
+                GL.PlusOnes:removePlayerFromTrusted(sender);
+            end
         end);
 
-        OptionsFrame:AddChild(PlusOneLabel);
-    else
-        VerticalSpacer = AceGUI:Create("SimpleGroup");
-        VerticalSpacer:SetLayout("FILL");
-        VerticalSpacer:SetWidth(57);
-        VerticalSpacer:SetHeight(10);
-        OptionsFrame:AddChild(VerticalSpacer); 
+        -- Trust sender label
+        local TrustSenderLabel = AceGUI:Create("InteractiveLabel");
+        TrustSenderLabel:SetFontObject(_G["GameFontNormal"]);
+        TrustSenderLabel:SetWidth(200);
+        TrustSenderLabel:SetText("");
+        Widget.TrustSenderLabel = TrustSenderLabel;
+
+        TrustSenderLabel:SetCallback("OnClick", function()
+            TrustSenderCheckBox:ToggleChecked();
+            TrustSenderCheckBox:Fire("OnValueChanged", TrustSenderCheckBox:GetValue());
+        end);
+
+        OptionsFrame:AddChild(TrustSenderLabel);
     end
 
-    -- Plus one checkbox
-    local OffSpecCheckBox = AceGUI:Create("CheckBox");
-    OffSpecCheckBox:SetLabel("");
-    OffSpecCheckBox:SetDescription("");
-    OffSpecCheckBox:SetHeight(20);
-    OffSpecCheckBox:SetWidth(24);
-    OptionsFrame:AddChild(OffSpecCheckBox);
-    GL.Interface:set(GL.Interface.Dialogs.AwardDialog, "OffSpec", OffSpecCheckBox);
-
-    -- Plus one label
-    local OffSpecLabel = AceGUI:Create("InteractiveLabel");
-    OffSpecLabel:SetFontObject(_G["GameFontNormal"]);
-    OffSpecLabel:SetWidth(30);
-    OffSpecLabel:SetText("OS");
-
-    OffSpecLabel:SetCallback("OnClick", function()
-        OffSpecCheckBox:ToggleChecked();
-    end);
-
-    OptionsFrame:AddChild(OffSpecLabel);
-
-    if (GL.BoostedRolls:enabled()) then
-        HorizontalSpacer = AceGUI:Create("SimpleGroup");
-        HorizontalSpacer:SetLayout("FILL");
-        HorizontalSpacer:SetFullWidth(true);
-        HorizontalSpacer:SetHeight(8);
-        OptionsFrame:AddChild(HorizontalSpacer);
-
-        VerticalSpacer = AceGUI:Create("SimpleGroup");
-        VerticalSpacer:SetLayout("FILL");
-        VerticalSpacer:SetWidth(52);
-        VerticalSpacer:SetHeight(10);
-        OptionsFrame:AddChild(VerticalSpacer);
-
-        -- Boosted Roll cost label
-        local CostLabel = AceGUI:Create("Label");
-        CostLabel:SetFontObject(_G["GameFontNormal"]);
-        CostLabel:SetWidth(120);
-        CostLabel:SetText("Boosted Roll Cost:");
-        OptionsFrame:AddChild(CostLabel);
-
-        -- Boosted Roll cost
-        local BoostedRollsCostEditBox = GL.AceGUI:Create("EditBox");
-        BoostedRollsCostEditBox:DisableButton(true);
-        BoostedRollsCostEditBox:SetHeight(20);
-        BoostedRollsCostEditBox:SetWidth(60);
-        BoostedRollsCostEditBox:SetText(GL.Settings:get("BoostedRolls.defaultCost", 0));
-        BoostedRollsCostEditBox:SetLabel("");
-        OptionsFrame:AddChild(BoostedRollsCostEditBox);
-        GL.Interface:set(GL.Interface.Dialogs.AwardDialog, "Cost", BoostedRollsCostEditBox);
-    end
-
-    if (GL.GDKP.Session:activeSessionID()
-        and not GL.GDKP.Session:getActive().lockedAt
-    ) then
-        HorizontalSpacer = AceGUI:Create("SimpleGroup");
-        HorizontalSpacer:SetLayout("FILL");
-        HorizontalSpacer:SetFullWidth(true);
-        HorizontalSpacer:SetHeight(8);
-        OptionsFrame:AddChild(HorizontalSpacer);
-
-        VerticalSpacer = AceGUI:Create("SimpleGroup");
-        VerticalSpacer:SetLayout("FILL");
-        VerticalSpacer:SetWidth(52);
-        VerticalSpacer:SetHeight(10);
-        OptionsFrame:AddChild(VerticalSpacer);
-
-        -- Boosted Roll cost label
-        local PriceLabel = AceGUI:Create("Label");
-        PriceLabel:SetFontObject(_G["GameFontNormal"]);
-        PriceLabel:SetWidth(120);
-        PriceLabel:SetText("GDKP Price:");
-        OptionsFrame:AddChild(PriceLabel);
-
-        -- Boosted Roll cost
-        local GDKPPriceEditBox = GL.AceGUI:Create("EditBox");
-        GDKPPriceEditBox:DisableButton(true);
-        GDKPPriceEditBox:SetHeight(20);
-        GDKPPriceEditBox:SetWidth(60);
-        GDKPPriceEditBox:SetText("");
-        GDKPPriceEditBox:SetLabel("");
-        GDKPPriceEditBox:SetFocus();
-        OptionsFrame:AddChild(GDKPPriceEditBox);
-        GDKPPriceEditBox:SetCallback("OnEnterPressed", function ()
-            YesButton:Fire("OnClick");
-        end); -- Update item info when input value changes
-        GL.Interface:set(GL.Interface.Dialogs.AwardDialog, "GDKPPrice", GDKPPriceEditBox);
-    end
+    HorizontalSpacer = AceGUI:Create("SimpleGroup");
+    HorizontalSpacer:SetLayout("FILL");
+    HorizontalSpacer:SetFullWidth(true);
+    HorizontalSpacer:SetHeight(8);
+    OptionsFrame:AddChild(HorizontalSpacer);
 
     HorizontalSpacer = AceGUI:Create("SimpleGroup");
     HorizontalSpacer:SetLayout("FILL");
@@ -345,7 +282,7 @@ local function constructor()
     PopupDialogInstance:AddChild(VerticalSpacer);
 
     -- Yes
-    YesButton = AceGUI:Create("Button");
+    local YesButton = AceGUI:Create("Button");
     YesButton:SetText("Yes");
     YesButton:SetHeight(20);
     YesButton:SetWidth(120);
@@ -385,4 +322,4 @@ end
 
 AceGUI:RegisterWidgetType(Type, constructor, Version)
 
-GL:debug("Interface/AwardDialogWidget.lua");
+GL:debug("Interface/IncomingPlusOneDataDialogWidget.lua");

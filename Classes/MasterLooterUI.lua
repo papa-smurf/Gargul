@@ -663,6 +663,7 @@ end
 function MasterLooterUI:drawPlayersTable(parent)
     GL:debug("MasterLooterUI:drawPlayersTable");
 
+
     -- Combined width of all colums should be 340
     local columns = {
         --[[ Player name ]]

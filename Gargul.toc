@@ -73,6 +73,7 @@ Interface/Settings/Rolling.lua
 Interface/Settings/RollTracking.lua
 Interface/Settings/SoftRes.lua
 Interface/Settings/BoostedRolls.lua
+Interface/Settings/PlusOnes.lua
 Interface/Settings/Welcome.lua
 Interface/Settings/Advanced.lua
 Interface/Settings/General.lua
@@ -106,6 +107,7 @@ Interface/GDKP/AuctionDetails.lua
 Interface/TMB/Importer.lua
 Interface/TMB/Overview.lua
 Interface/PlusOnes/OverView.lua
+Interface/PlusOnes/Importer.lua
 Interface/TradeWindow/TimeLeft.lua
 Interface/PlayerSelector.lua
 Interface/Changelog.lua
@@ -120,6 +122,8 @@ Interface/Dialogs/ConfirmWithSingleInputDialog.lua
 Interface/Dialogs/ConfirmWithSingleInputDialogWidget.lua
 Interface/Dialogs/IncomingBoostedRollDataDialog.lua
 Interface/Dialogs/IncomingBoostedRollDataDialogWidget.lua
+Interface/Dialogs/IncomingPlusOneDataDialog.lua
+Interface/Dialogs/IncomingPlusOneDataDialogWidget.lua
 Interface/Dialogs/HyperlinkDialog.lua
 Interface/Dialogs/HyperlinkDialogWidget.lua
 Interface/Dialogs/MasterLooterDialog.lua

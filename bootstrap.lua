@@ -126,6 +126,7 @@ function GL:_init()
     self.TMB:_init();
     self.GDKP.Session:_init();
     self.BoostedRolls:_init();
+    self.PlusOnes:_init();
     self.DroppedLoot:_init();
     self.GroupLoot:_init();
     self.PackMule:_init();
