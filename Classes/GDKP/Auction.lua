@@ -438,7 +438,7 @@ function Auction:sanitize(Instance)
 
     if (createdByGuild) then
         if (type(createdByGuild) ~= "string"
-                or GL:empty(createdByGuild)
+            or GL:empty(createdByGuild)
         ) then
             GL:xd("Auction:sanitize step 3 failed, contact support!");
             return;
@@ -468,6 +468,12 @@ function Auction:sanitize(Instance)
             end
 
             local Bidder = Bid.Bidder;
+
+            -- Make sure the bidder always contains a valid realm (defaults to current player's realm)
+            if (not Bidder.realm or GL:empty(Bidder.realm)) then
+                Bidder.realm = GL.User.realm;
+            end
+
             if (type (Bidder.class) ~= "string"
                 ---@todo: issue here, got deathknight, constant is death_knight
                 --or not Constants.Classes[Bidder.class]
