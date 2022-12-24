@@ -89,11 +89,7 @@ function Importer:draw()
     ImportButton:SetText("Import");
     ImportButton:SetWidth(140);
     ImportButton:SetCallback("OnClick", function()
-        if (GL.PlusOnes:available()) then
-            GL.Interface.Dialogs.PopupDialog:open("NEW_PLUSONES_IMPORT_CONFIRMATION");
-        else
-            self:import();
-        end
+        GL.Interface.Dialogs.PopupDialog:open("NEW_PLUSONES_IMPORT_CONFIRMATION");
     end);
     Window:AddChild(ImportButton);
 end

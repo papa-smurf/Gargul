@@ -144,18 +144,8 @@ function PlusOnes:enabled()
     return GL.Settings:get("PlusOnes.enabled", false);
 end
 
---- Check whether there are plus ones available
----
----@return boolean
-function PlusOnes:available()
-    GL:debug("PlusOnes:available");
-
-    --return GL:higherThanZero(DB:get("PlusOnes.MetaData.updatedAt", 0)); --not sure this check is even needed for plus ones
-    return true;
-end
-
 --- Draw either the importer or overview
---- based on the current boosted roll data
+--- based on the current plus one data
 ---
 ---@return void
 function PlusOnes:draw()
@@ -187,7 +177,7 @@ function PlusOnes:handleWhisperCommand(_, message, sender)
     local args = GL:strSplit(message, " ");
 
     -- See if name is given.
-    if (#args > 1) then
+    if (args[2]) then
         local name = self:normalizedName(args[2]);
         local plusOne = self:getPlusOnes(name);
         GL:sendChatMessage(
@@ -225,10 +215,9 @@ function PlusOnes:materializeData()
 
         if (type(name) == "string"
             and not GL:empty(name)
+            and not DetailsByPlayerName[name]
         ) then
-            if (not DetailsByPlayerName[name]) then
-                GL:tableSet(DetailsByPlayerName, name .. ".total", plusOne);
-            end
+            GL:tableSet(DetailsByPlayerName, name .. ".total", plusOne);
         end
     end
 
@@ -272,30 +261,10 @@ function PlusOnes:clearPlusOnes()
     self:triggerChangeEvent();
 end
 
---[[--- Determine if a player is present in the table --- not sure if this is even called elsewhere
----
----@param name string
----@return boolean
-function PlusOnes:hasPlusOnes(name)
-    GL:debug("PlusOnes:hasPlusOnes");
-
-    if (type(name) ~= "string") then
-        return false;
-    end
-
-    local normalizedName = self:normalizedName(name);
-
-    if (self.MaterializedData.DetailsByPlayerName[normalizedName]) then
-        return true;
-    end
-
-    return false;
-end]]--
-
 --- Get a player's plus one
 ---
 ---@param name string
----@return void
+---@return number
 function PlusOnes:getPlusOnes(name)
     GL:debug("PlusOnes:getPlusOnes");
 
@@ -308,6 +277,7 @@ function PlusOnes:getPlusOnes(name)
     return GL:tableGet(self.MaterializedData or {}, "DetailsByPlayerName." .. normalizedName .. ".total", 0);
 end
 
+---@todo Is dontBroadcast even needed?  I don't think its even sent from function calls
 --- Set a player's plus one
 ---
 ---@param name string
@@ -325,7 +295,7 @@ function PlusOnes:setPlusOnes(name, plusOne, dontBroadcast)
     local normalizedName = self:normalizedName(name);
 
     if (not self.MaterializedData.DetailsByPlayerName[normalizedName]) then
-        GL:tableSet(self.MaterializedData or {}, "DetailsByPlayerName." .. normalizedName .. ".total", plusOne);
+        GL:tableSet(self.MaterializedData, "DetailsByPlayerName." .. normalizedName .. ".total", plusOne);
     else
         self.MaterializedData.DetailsByPlayerName[normalizedName].total = plusOne;
     end
@@ -340,9 +310,12 @@ function PlusOnes:setPlusOnes(name, plusOne, dontBroadcast)
     self:triggerChangeEvent();
 end
 
---- Delete an entry --- not sure where this would be needed since the player list is generated based on the group/raid members
+---@todo determine if this function is needed since the player list is generated based on the group/raid members
+---@todo Is dontBroadcast even needed?  I don't think its even sent from function calls
+--- Delete an entry
 ---
 ---@param name string
+---@param dontBroadcast boolean
 ---@return void
 function PlusOnes:deletePlusOnes(name, dontBroadcast)
     GL:debug("PlusOnes:deletePlusOnes");
@@ -369,7 +342,8 @@ function PlusOnes:deletePlusOnes(name, dontBroadcast)
     end
 end
 
---- Modify a player's plus one -- don't know if this is needed since numbers are increased or decreased and not set directly
+--- @todo: Don't know if this is needed since numbers are increased or decreased and not set directly
+--- Modify a player's plus one
 ---
 ---@param name string
 ---@param change number
@@ -504,12 +478,6 @@ function PlusOnes:broadcast()
         return false;
     end
 
-    -- Check if there's anything to share
-    if (not self:available()) then
-        GL:warning("Nothing to broadcast, import Plus Ones data first!");
-        return false;
-    end
-
     -- No need to keep any queued updates, we're doing a full broadcast now anyways
     self.QueuedUpdates = {};
 
@@ -586,8 +554,6 @@ function PlusOnes:receiveBroadcast(CommMessage)
         if (GL:empty(importString)) then
             self:clearPlusOnes();
             return;
-            --GL:warning("Couldn't process PlusOnes data received from " .. CommMessage.Sender.name);
-            --return false;
         end
 
         GL:warning("Attempting to process incoming PlusOnes data from " .. CommMessage.Sender.name);
@@ -719,11 +685,6 @@ end
 function PlusOnes:replyToDataRequest(CommMessage)
     GL:debug("PlusOnes:replyToDataRequest");
 
-    -- I don't have any data, leave me alone!
-    if (not self:available()) then
-        return;
-    end
-
     -- We're not in a group (anymore), no need to help this person out
     if (not GL.User.isInGroup) then
         return;
@@ -782,6 +743,7 @@ function PlusOnes:subtractPlusOnes(playerName)
     self:queueUpdate(playerName, max(currentPoints - 1, 0));
 end
 
+---@todo is delete parameter even needed since entries aren't deleted manually?
 --- Queue an update until broadcast is finished
 ---
 ---@param playerName string
@@ -820,11 +782,6 @@ function PlusOnes:broadcastQueuedUpdates()
         return false;
     end
 
-    --if (not self:userIsAllowedToBroadcast()) then
-    --    GL:warning("Insufficient permissions to broadcast, need ML, assist or lead!");
-    --    return false;
-    --end
-
     if (GL.Settings:get("PlusOnes.automaticallyShareData")
     and self:userIsAllowedToBroadcast()) then
         GL:message("Broadcasting PlusOnes updates...");
@@ -837,15 +794,13 @@ function PlusOnes:broadcastQueuedUpdates()
             "GROUP"
         ):send(function ()
             GL:success("PlusOnes updates finished");
-
-            --self.broadcastInProgress = false;
-            --GL.Events:fire("GL.PLUSONES_BROADCAST_ENDED");
         end);
     end
 
     self.QueuedUpdates = {};
 end
 
+---@todo Is delete parameter even required since manual deletions are not done?
 --- Process an outgoing plus one update
 ---
 ---@param playerName string
