@@ -55,8 +55,32 @@ local Events = {
         end
     end,
 
+    OnCancel = function(self, cancelCallback)
+        self.cancelCallback = function ()
+            cancelCallback();
+            self.frame:Hide();
+        end
+    end,
+
     SetQuestion = function(self, question)
         self.DialogLabel:SetText(question);
+    end,
+
+    IncludeCancel = function(self)
+        self.Yes:SetWidth(80);
+        self.No:SetWidth(80);
+
+        -- Cancel
+        local CancelButton = AceGUI:Create("Button");
+        CancelButton:SetText("Cancel");
+        CancelButton:SetHeight(20);
+        CancelButton:SetWidth(80);
+        CancelButton:SetCallback("OnClick", function()
+            if (type(self.cancelCallback) == "function") then
+                self.cancelCallback();
+            end
+        end);
+        self:AddChild(CancelButton);
     end,
 
     OnAcquire = function(self)
@@ -176,6 +200,7 @@ local function constructor()
         DialogLabel = {},
         yesCallback = function () end,
         noCallback = function () end,
+        cancelCallback = function () end,
     }
     for method, func in pairs(Events) do
         Widget[method] = func;
@@ -216,6 +241,7 @@ local function constructor()
             Widget.yesCallback();
         end
     end);
+    PopupDialogInstance.Yes = YesButton;
     PopupDialogInstance:AddChild(YesButton);
 
     VerticalSpacer = AceGUI:Create("SimpleGroup");
@@ -234,13 +260,14 @@ local function constructor()
             Widget.noCallback();
         end
     end);
+    PopupDialogInstance.No = NoButton;
     PopupDialogInstance:AddChild(NoButton);
 
-    HorizontalSpacer = AceGUI:Create("SimpleGroup");
-    HorizontalSpacer:SetLayout("FILL");
-    HorizontalSpacer:SetFullWidth(true);
-    HorizontalSpacer:SetHeight(1);
-    PopupDialogInstance:AddChild(HorizontalSpacer);
+    VerticalSpacer = AceGUI:Create("SimpleGroup");
+    VerticalSpacer:SetLayout("FILL");
+    VerticalSpacer:SetWidth(12);
+    VerticalSpacer:SetHeight(10);
+    PopupDialogInstance:AddChild(VerticalSpacer);
 
     return PopupDialogInstance;
 end
