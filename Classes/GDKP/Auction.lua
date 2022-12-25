@@ -838,29 +838,6 @@ function Auction:announceStart(itemLink, minimumBid, minimumIncrement, duration,
     return true;
 end
 
----@return table|boolean
-function Auction:settingsForItemID(itemID)
-    GL:debug("Auction:settingsForItemID");
-
-    itemID = tonumber(itemID);
-    if (not itemID) then
-        return false;
-    end
-
-    if (not Settings:get("GDKP.storeMinimumAndIncrementPerItem")) then
-        return {
-            minimum = Settings:get("GDKP.defaultMinimumBid"),
-            increment = Settings:get("GDKP.defaultIncrement"),
-        }
-    end
-
-    local PerItemSettings = Settings:get("GDKP.SettingsPerItem." .. itemID, {});
-    PerItemSettings.minimum = PerItemSettings.minimum or Settings:get("GDKP.defaultMinimumBid");
-    PerItemSettings.increment = PerItemSettings.increment or Settings:get("GDKP.defaultIncrement");
-
-    return PerItemSettings;
-end
-
 --- Anounce to everyone in the raid that the auction has ended
 ---
 ---@return void

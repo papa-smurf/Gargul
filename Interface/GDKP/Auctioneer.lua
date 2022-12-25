@@ -1,11 +1,11 @@
 ---@type GL
 local _, GL = ...;
 
----@type GDKPAuction
-local GDKPAuction = GL.GDKP.Auction;
+---@type GDKP
+local GDKP = GL.GDKP;
 
----@type GDKPPot
-local GDKPPot = GL.GDKP.Pot;
+---@type GDKPAuction
+local GDKPAuction = GDKP.Auction;
 
 ---@type Settings
 local Settings = GL.Settings;
@@ -14,7 +14,7 @@ local Settings = GL.Settings;
 local Interface = GL.Interface;
 
 ---@type GDKPSession
-local GDKPSession = GL.GDKP.Session;
+local GDKPSession = GDKP.Session;
 
 local AceGUI = GL.AceGUI;
 GL.ScrollingTable = GL.ScrollingTable or LibStub("ScrollingTable");
@@ -474,7 +474,7 @@ function Auctioneer:draw(itemLink)
 
         GL.Interface.Dialogs.PopupDialog:open({
             question = string.format("Award %s to |cff%s%s|r for %s|c00FFF569g|r?",
-                GL.GDKP.Auction.Current.itemLink,
+                GDKP.Auction.Current.itemLink,
                 GL:classHexColor(GL.Player:classByName(winner)),
                 winner,
                 bid
@@ -713,7 +713,7 @@ function Auctioneer:addToQueue(itemLink)
     end
 
     local addedAt = GetTime();
-    local PerItemSettings = GDKPAuction:settingsForItemID(GL:getItemIDFromLink(itemLink));
+    local PerItemSettings = GDKP:settingsForItemID(GL:getItemIDFromLink(itemLink));
     GDKPAuction.Queue[tostring(addedAt)]= {
         itemLink = itemLink,
         itemID = itemID,
@@ -863,12 +863,12 @@ function Auctioneer:drawReopenAuctioneerButton()
     local Button = Interface:get(self, "Frame.OpenAuctioneerButton");
 
     if (Button) then
-        Button:SetNormalTexture(GL.GDKP.Auction.Current.itemIcon or "Interface\\Icons\\INV_Misc_QuestionMark");
+        Button:SetNormalTexture(GDKP.Auction.Current.itemIcon or "Interface\\Icons\\INV_Misc_QuestionMark");
         Button:Show();
         return;
     end
 
-    local texture = GL.GDKP.Auction.Current.itemIcon or "Interface\\Icons\\INV_Misc_QuestionMark";
+    local texture = GDKP.Auction.Current.itemIcon or "Interface\\Icons\\INV_Misc_QuestionMark";
     Button = CreateFrame("Button", "GargulReopenAuctioneerButton", UIParent, Frame);
     Button:SetSize(42, 42);
     Button:SetNormalTexture(texture);
@@ -1025,7 +1025,7 @@ function Auctioneer:refreshBidsTable()
     GL:debug("RollOff:refreshBidsTable");
 
     local BidTableData = {};
-    local Bids = GL.GDKP.Auction.Current.Bids;
+    local Bids = GDKP.Auction.Current.Bids;
     local BidsTable = Interface:get(self, "Table.Players");
 
     if (not BidsTable) then
@@ -1097,7 +1097,7 @@ function Auctioneer:passItemLink(itemLink, setAsActiveItem)
         return GL:warning("Invalid item provided");
     end
 
-    local PerItemSettings = GDKPAuction:settingsForItemID(GL:getItemIDFromLink(itemLink));
+    local PerItemSettings = GDKP:settingsForItemID(GL:getItemIDFromLink(itemLink));
     Interface:get(self, "EditBox.MinimumBid"):SetText(PerItemSettings.minimum);
     Interface:get(self, "EditBox.MinimumIncrement"):SetText(PerItemSettings.increment);
 
