@@ -28,6 +28,7 @@ Classes/DB.lua
 Classes/Settings.lua
 Classes/Profiler.lua
 Classes/SoftRes.lua
+Classes/GDKP/GDKP.lua
 Classes/GDKP/Session.lua
 Classes/GDKP/Auction.lua
 Classes/GDKP/Pot.lua
