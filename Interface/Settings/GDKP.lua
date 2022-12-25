@@ -142,6 +142,46 @@ function GDKP:draw(Parent)
             description = "Auto award an item to the highest bidder when the timer runs out (clicking \"Stop\" during an auction will not trigger this)",
             setting = "GDKP.autoAwardViaAuctioneer",
         },
+    }, Parent);
+
+    Spacer = GL.AceGUI:Create("SimpleGroup");
+    Spacer:SetLayout("FILL");
+    Spacer:SetFullWidth(true);
+    Spacer:SetHeight(20);
+    Parent:AddChild(Spacer);
+
+    local NumberOfSecondsToCountdown = GL.AceGUI:Create("Slider");
+    NumberOfSecondsToCountdown:SetLabel("At how many seconds left do you want to start the countdown?");
+    NumberOfSecondsToCountdown.label:SetTextColor(1, .95686, .40784);
+    NumberOfSecondsToCountdown:SetFullWidth(true);
+    NumberOfSecondsToCountdown:SetValue(GL.Settings:get("GDKP.numberOfSecondsToCountdown", 5));
+    NumberOfSecondsToCountdown:SetSliderValues(3, 25, 1);
+    NumberOfSecondsToCountdown:SetCallback("OnValueChanged", function(Slider)
+        local value = math.floor(tonumber(Slider:GetValue()));
+
+        if (value >= 3) then
+            GL.Settings:set("GDKP.numberOfSecondsToCountdown", value);
+        end
+    end);
+    Parent:AddChild(NumberOfSecondsToCountdown);
+
+    Overview:drawHeader("Item Prices", Parent);
+
+    local ImportPerItemSettings = GL.AceGUI:Create("Button");
+    ImportPerItemSettings:SetText("Import item prices and increments");
+    ImportPerItemSettings:SetFullWidth(true);
+    ImportPerItemSettings:SetCallback("OnClick", function()
+        GL.Interface.GDKP.ImportPrices:open();
+    end);
+    Parent:AddChild(ImportPerItemSettings);
+
+    Spacer = GL.AceGUI:Create("SimpleGroup");
+    Spacer:SetLayout("FILL");
+    Spacer:SetFullWidth(true);
+    Spacer:SetHeight(20);
+    Parent:AddChild(Spacer);
+
+    Overview:drawCheckboxes({
         {
             label = "Remember minimum bid and increment for each item",
             description = "If enabled, minimum and increment are remembered for each item. If not, the last minimum/increment you used will remain in place",
@@ -184,12 +224,6 @@ function GDKP:draw(Parent)
     end);
     Parent:AddChild(DefaultMinimumBid);
 
-    Spacer = GL.AceGUI:Create("SimpleGroup");
-    Spacer:SetLayout("FILL");
-    Spacer:SetFullWidth(true);
-    Spacer:SetHeight(20);
-    Parent:AddChild(Spacer);
-
     local DefaultIncrementLabel = GL.AceGUI:Create("Label");
     DefaultIncrementLabel:SetText("|c00FFF569Set a default increment|r");
     DefaultIncrementLabel:SetFullWidth(true);
@@ -219,26 +253,7 @@ function GDKP:draw(Parent)
     end);
     Parent:AddChild(DefaultIncrement);
 
-    Spacer = GL.AceGUI:Create("SimpleGroup");
-    Spacer:SetLayout("FILL");
-    Spacer:SetFullWidth(true);
-    Spacer:SetHeight(20);
-    Parent:AddChild(Spacer);
 
-    local NumberOfSecondsToCountdown = GL.AceGUI:Create("Slider");
-    NumberOfSecondsToCountdown:SetLabel("At how many seconds left do you want to start the countdown?");
-    NumberOfSecondsToCountdown.label:SetTextColor(1, .95686, .40784);
-    NumberOfSecondsToCountdown:SetFullWidth(true);
-    NumberOfSecondsToCountdown:SetValue(GL.Settings:get("GDKP.numberOfSecondsToCountdown", 5));
-    NumberOfSecondsToCountdown:SetSliderValues(3, 25, 1);
-    NumberOfSecondsToCountdown:SetCallback("OnValueChanged", function(Slider)
-        local value = math.floor(tonumber(Slider:GetValue()));
-
-        if (value >= 3) then
-            GL.Settings:set("GDKP.numberOfSecondsToCountdown", value);
-        end
-    end);
-    Parent:AddChild(NumberOfSecondsToCountdown);
 
     Spacer = GL.AceGUI:Create("SimpleGroup");
     Spacer:SetLayout("FILL");
@@ -337,7 +352,7 @@ function GDKP:draw(Parent)
         GL.Interface.Dialogs.PopupDialog:open({
             question = "Are you sure you want to reset all individual item settings?",
             OnYes = function ()
-                Settings:set("GDKP.SettingsPerItem", {});
+                GL.GDKP:resetPerItemSettings();
             end,
         });
     end);
