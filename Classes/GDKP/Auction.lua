@@ -1495,6 +1495,7 @@ function Auction:processBid(message, bidder)
         and Settings:get("GDKP.announceNewBid")
     ) then
         local bidApprovedMessage = string.format("%s is the highest bidder (%sg)", BidEntry.Bidder.name, bid);
+
         if (GL.User.isInRaid and Settings:get("GDKP.announceNewBidInRW")) then
             GL.Ace:CancelTimer(self.raidWarningThrottler);
             if (GetTime() - self.lastBidAnnouncementAt < 1.2) then
@@ -1515,9 +1516,9 @@ function Auction:processBid(message, bidder)
                 GL:sendChatMessage(bidApprovedMessage, "RAID_WARNING", nil, nil, false);
                 self.lastBidAnnouncementAt = GetTime();
             end
+        else
+            GL:sendChatMessage(bidApprovedMessage, "GROUP", nil, nil, false);
         end
-
-        GL:sendChatMessage(bidApprovedMessage, "GROUP", nil, nil, false);
     end
 
     tinsert(self.Current.Bids, BidEntry);
