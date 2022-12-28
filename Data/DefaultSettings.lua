@@ -142,6 +142,7 @@ GL.Data.DefaultSettings = {
         notifyIfBidTooLow = true,
         numberOfSecondsToCountdown = 5,
         outbidSound = "Gargul: uh-oh",
+        queuedAuctionNoBidsAction = "NOTHING",
         showBidWindow = true,
         showHistoryOnTooltip = true,
         storeMinimumAndIncrementPerItem = true,

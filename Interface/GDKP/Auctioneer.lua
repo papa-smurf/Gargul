@@ -615,6 +615,26 @@ function Auctioneer:timeRanOut()
     end
 
     if (not GL:tableGet(GDKPAuction.Current, "TopBid.Bidder.name")) then
+        local actionWhenNoBidsArePresent = Settings:get("GDKP.queuedAuctionNoBidsAction");
+
+        if (actionWhenNoBidsArePresent == "SKIP") then
+            self:reset(); -- Reset the UI
+            GDKPAuction:reset(); -- Reset the actual auction object
+            self:closeReopenAuctioneerButton();
+            self:popFromQueue();
+            return;
+        end
+
+        if (actionWhenNoBidsArePresent == "DISENCHANT") then
+            GL.PackMule:disenchant(GDKPAuction.Current.itemLink, true);
+            self:reset(); -- Reset the UI
+            GDKPAuction:reset(); -- Reset the actual auction object
+            self:closeReopenAuctioneerButton();
+
+            self:popFromQueue();
+            return;
+        end
+
         if (not self.isVisible) then
             GL.Interface.Alerts:fire("GargulNotification", {
                 message = string.format("|c00BE3333No bids!|r"),

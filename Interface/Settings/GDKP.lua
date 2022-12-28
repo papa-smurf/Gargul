@@ -90,7 +90,7 @@ function GDKP:draw(Parent)
 
     Overview:drawCheckboxes({
         {
-            label = "Announce start of auction",
+            label = "Announce auction start",
             setting = "GDKP.announceAuctionStart",
         },
         {
@@ -164,6 +164,33 @@ function GDKP:draw(Parent)
         end
     end);
     Parent:AddChild(NumberOfSecondsToCountdown);
+
+    Spacer = GL.AceGUI:Create("SimpleGroup");
+    Spacer:SetLayout("FILL");
+    Spacer:SetFullWidth(true);
+    Spacer:SetHeight(20);
+    Parent:AddChild(Spacer);
+
+    local QueuedAuctionNoBidsActionLabel = GL.AceGUI:Create("Label");
+    QueuedAuctionNoBidsActionLabel:SetText("|c00FFF569Default action when no one bids on a queued auction|r");
+    QueuedAuctionNoBidsActionLabel:SetFullWidth(true);
+    Parent:AddChild(QueuedAuctionNoBidsActionLabel);
+
+    local Actions = GL.Data.Constants.GDKP.QueuedAuctionNoBidsActions;
+
+    local QueuedAuctionNoBidsActionDropdown = GL.AceGUI:Create("Dropdown");
+    QueuedAuctionNoBidsActionDropdown:SetValue(GL.Settings:get("GDKP.queuedAuctionNoBidsAction"));
+    QueuedAuctionNoBidsActionDropdown:SetList(Actions);
+    QueuedAuctionNoBidsActionDropdown:SetText(GL.Settings:get("GDKP.queuedAuctionNoBidsAction"));
+    QueuedAuctionNoBidsActionDropdown:SetWidth(250);
+    QueuedAuctionNoBidsActionDropdown:SetCallback("OnValueChanged", function()
+        local value = QueuedAuctionNoBidsActionDropdown:GetValue();
+
+        if (GL.Data.Constants.GDKP.QueuedAuctionNoBidsActions[value]) then
+            GL.Settings:set("GDKP.queuedAuctionNoBidsAction", value);
+        end
+    end);
+    Parent:AddChild(QueuedAuctionNoBidsActionDropdown);
 
     Overview:drawHeader("Item Prices", Parent);
 
