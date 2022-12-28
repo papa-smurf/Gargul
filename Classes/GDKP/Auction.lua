@@ -756,7 +756,7 @@ function Auction:addToQueue(itemLink)
 
     local addedAt = GetTime();
     local PerItemSettings = GDKP:settingsForItemID(GL:getItemIDFromLink(itemLink));
-    self.Queue[tostring(addedAt)]= {
+    self.Queue[tostring(addedAt)] = {
         itemLink = itemLink,
         itemID = itemID,
         minimumBid = PerItemSettings.minimum,
@@ -772,7 +772,7 @@ end
 ---@param checksum string
 ---@return void
 function Auction:removeFromQueue(checksum)
-    GL:debug("Auction:addToQueue");
+    GL:debug("Auction:removeFromQueue");
 
     checksum = tostring(checksum or 0);
 

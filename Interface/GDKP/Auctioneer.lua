@@ -596,7 +596,6 @@ function Auctioneer:draw(itemLink)
     CloseOnAward:SetWidth(116);
     FifthRow:AddChild(CloseOnAward);
 
-    ---@todo make functional
     local AutoAward = AceGUI:Create("CheckBox");
     AutoAward:SetLabel("Auto award");
     AutoAward:SetValue(Settings:get("GDKP.autoAwardViaAuctioneer"));
