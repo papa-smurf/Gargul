@@ -12,7 +12,17 @@ GL.Interface.Changelog = {
 
     History = {
         {
-            version = "5.0.4",
+            version = "5.0.7",
+            date = "December 28th, 2022",
+            Changes = {
+                "GDKP time gain: raiders using Gargul can now immediately see the loot you've queued up and can prepare and bid accordingly before the auctions have even started!",
+                "GDKP time gain 2: Added a 'what to do when no one bids' setting that allows you to automatically skip or disenchant unwanted items!",
+                "Fixed an issue where rolls would not be accepted right when / shortly after a rolloff has ended",
+                "Many QoL fixes, check the full changelog on curseforge/wago or our discord server above",
+            },
+        },
+        {
+            version = "5.0.5",
             date = "December 23rd, 2022",
             Changes = {
                 "GDKP auto bidding, auto awarding, queued auctions, and other QoL things just hit Gargul! Go check them out with |c00a79eff/gl gdkp|r!",
@@ -22,7 +32,7 @@ GL.Interface.Changelog = {
             version = "5.0.4",
             date = "December 19th, 2022",
             Changes = {
-                "|c00FF0000GDKP IS HERE!|r Next level GDKP automation, bidding, tracking and pot calculation and distribution. Built on Gargul's solid core and backed by an active community!\n\nEncourage raid leaders to leverage it or check it out for yourself with |c00a79eff/gl gdkp|r, no need to be in a group! Coming soon: queued auctions! Happy Holidays <3",
+                "GDKP IS HERE! Next level GDKP automation, bidding, tracking and pot calculation and distribution. Built on Gargul's solid core and backed by an active community!\n\nEncourage raid leaders to leverage it or check it out for yourself with |c00a79eff/gl gdkp|r, no need to be in a group! Coming soon: queued auctions! Happy Holidays <3",
             },
         },
         {
@@ -384,7 +394,8 @@ function Changelog:draw()
             end
 
             -- Highlight GDKP update
-            if (LogEntry.version == "5.0.4") then
+            --if (LogEntry.version == "5.0.7" and not GL.isRetail) then
+            if (false and not GL.isRetail) then
                 HorizontalSpacer = GL.AceGUI:Create("SimpleGroup");
                 HorizontalSpacer:SetLayout("FILL");
                 HorizontalSpacer:SetFullWidth(true);
@@ -392,7 +403,7 @@ function Changelog:draw()
                 ScrollFrame:AddChild(HorizontalSpacer);
 
                 local ChangeLabel = AceGUI:Create("Label");
-                ChangeLabel:SetText(string.format("\n|c00FFF569 %s|r\n \n", change));
+                ChangeLabel:SetText(string.format("\n|c00FFF569%s|r\n \n", change));
                 ChangeLabel:SetFontObject(_G["GameFontNormal"]);
                 ChangeLabel:SetHeight(20);
                 ChangeLabel:SetFullWidth(true);

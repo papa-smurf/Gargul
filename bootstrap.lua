@@ -115,9 +115,6 @@ function GL:_init()
         hooksecurefunc(MasterLooterFrame, 'Hide', function(self) self:ClearAllPoints() end);
     end
 
-    -- Add forwards compatibility
-    self:polyFill();
-
     self.Comm:_init();
     self.User:_init();
     self.AwardedLoot:_init();
@@ -132,6 +129,7 @@ function GL:_init()
     self.TradeWindow:_init();
     self.Interface.MasterLooterDialog:_init();
     self.Interface.TradeWindow.TimeLeft:_init();
+    self.Interface.GDKP.BidderQueue:_init();
 
     -- Hook native window events
     self:hookNativeWindowEvents();
@@ -161,30 +159,6 @@ function GL:_init()
     -- Register sounds
     local media = LibStub("LibSharedMedia-3.0")
     media:Register("sound", "Gargul: uh-oh", "Interface/AddOns/".. self.name .."/Assets/Sounds/uh-oh.ogg");
-end
-
---- Adds forwards compatibility
----
----@return void
-function GL:polyFill()
-    if (_G.GetContainerItemInfo ~= nil or not C_Container.GetContainerItemInfo) then
-        return;
-    end
-
-    -- The GetContainerNumSlots has the same return type in both classic and DF
-    _G.GetContainerNumSlots = C_Container.GetContainerNumSlots;
-
-    -- DF returns a single table instead of single values, polyFill time!
-    _G.GetContainerItemInfo = function (bagID, slot)
-        local result = C_Container.GetContainerItemInfo(bagID, slot);
-
-        if (not result) then
-            return nil;
-        end
-
-        return result.iconFileID, result.stackCount, result.isLocked, result.quality, result.isReadable,
-            result.hasLoot, result.hyperlink, result.isFiltered, result.hasNoValue, result.itemID, result.isBound;
-    end
 end
 
 -- Register the gl slash command

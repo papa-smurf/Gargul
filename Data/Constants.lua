@@ -146,6 +146,11 @@ GL.Data.Constants = {
     },
 
     GDKP = {
+        QueuedAuctionNoBidsActions = {
+            NOTHING = "NOTHING",
+            SKIP = "SKIP",
+            DISENCHANT = "DISENCHANT",
+        },
         adjustMutatorIdentifier = "+.__adjust__.+",
         baseMutatorIdentifier = "+.__base__.+",
         potIncreaseItemID = 45978,
@@ -514,6 +519,7 @@ GL.Data.Constants = {
             requestGDKPSession = 21,
             broadcastGDKPSession = 22,
             broadcastGDKPMutation = 23,
+            broadcastGDKPAuctionQueue = 24,
         },
     },
 

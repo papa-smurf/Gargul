@@ -273,6 +273,10 @@ end
 function Pot:calculateCuts(sessionID)
     GL:debug("Pot:calculateCuts");
 
+    if (not sessionID) then
+        return false;
+    end
+
     local Session = GDKPSession:byID(sessionID);
     if (not Session) then
         return false;
