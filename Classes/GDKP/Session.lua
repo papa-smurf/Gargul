@@ -16,6 +16,9 @@ local Settings = GL.Settings;
 ---@type GDKP
 local GDKP = GL.GDKP;
 
+---@type GDKPPot
+local GDKPPot;
+
 ---@type GDKPAuction
 local GDKPAuction;
 
@@ -43,6 +46,7 @@ function Session:_init()
         return;
     end
 
+    GDKPPot = GL.GDKP.Pot;
     GDKPAuction = GDKP.Auction;
     self._initialized = true;
 
@@ -65,6 +69,10 @@ function Session:_init()
 
             GL:sendChatMessage(string.format("Pot was updated, it now holds %sg", tostring(total)), "GROUP");
         end
+    end);
+
+    Events:register("GDKPSessionGroupRosterUpdatedListener", "GROUP_ROSTER_UPDATE", function ()
+        GDKPPot:calculateCuts(self:activeSessionID());
     end);
 end
 
