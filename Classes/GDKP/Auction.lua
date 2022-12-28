@@ -60,7 +60,6 @@ local Auction = GDKP.Auction;
 local GDKPSession = GDKP.Session;
 
 --[[ CONSTANTS ]]
-local STOP_AUCTION_LEEWAY_IN_SECONDS = 2;
 local AUTO_BID_THROTTLE_IN_SECONDS = .8;
 local BROADCAST_QUEUE_DELAY_IN_SECONDS = 2;
 
@@ -987,7 +986,7 @@ function Auction:announceExtension(time)
         return false;
     end
 
-    local secondsLeft = GL.Ace:TimeLeft(self.timerId) - STOP_AUCTION_LEEWAY_IN_SECONDS;
+    local secondsLeft = GL.Ace:TimeLeft(self.timerId) - GL.Settings:get("GDKP.auctionEndLeeway", 2);
     local newDuration = math.ceil(secondsLeft + time);
 
     GL.CommMessage.new(
@@ -1009,10 +1008,9 @@ function Auction:extend(CommMessage)
         return;
     end
 
-    self.waitingForExtension = false;
-
     local time = tonumber(CommMessage.content) or 0;
     if (time < 1) then
+        self.waitingForExtension = false;
         return GL:error("Invalid time provided in Auction:extend");
     end
 
@@ -1026,8 +1024,10 @@ function Auction:extend(CommMessage)
             self:stop();
             self:announceStop();
             Auctioneer:timeRanOut();
-        end, math.ceil(time + STOP_AUCTION_LEEWAY_IN_SECONDS));
+        end, math.ceil(time + GL.Settings:get("GDKP.auctionEndLeeway", 2)));
     end
+
+    self.waitingForExtension = false;
 end
 
 --- Start an auction
@@ -1132,7 +1132,7 @@ function Auction:start(CommMessage)
                 self:stop();
                 self:announceStop();
                 Auctioneer:timeRanOut();
-            end, math.ceil(duration + STOP_AUCTION_LEEWAY_IN_SECONDS));
+            end, math.ceil(duration + GL.Settings:get("GDKP.auctionEndLeeway", 2)));
         end
 
         -- Send a countdown in chat when enabled
@@ -1142,7 +1142,7 @@ function Auction:start(CommMessage)
             and Settings:get("GDKP.doCountdown")
         ) then
             self.countDownTimer = GL.Ace:ScheduleRepeatingTimer(function ()
-                local secondsLeft = math.ceil(GL.Ace:TimeLeft(self.timerId) - STOP_AUCTION_LEEWAY_IN_SECONDS);
+                local secondsLeft = math.ceil(GL.Ace:TimeLeft(self.timerId) - GL.Settings:get("GDKP.auctionEndLeeway", 2));
                 if (secondsLeft <= numberOfSecondsToCountdown
                     and secondsLeft > 0
                     and not SecondsAnnounced[secondsLeft]
@@ -1624,7 +1624,7 @@ function Auction:processBid(message, bidder)
         if (self.Current and self.Current.antiSnipe and (
             not bidTooLow or Settings:get("GDKP.invalidBidsTriggerAntiSnipe")
         )) then
-            local secondsLeft = math.floor(GL.Ace:TimeLeft(self.timerId) - STOP_AUCTION_LEEWAY_IN_SECONDS);
+            local secondsLeft = math.floor(GL.Ace:TimeLeft(self.timerId) - GL.Settings:get("GDKP.auctionEndLeeway", 2));
             if (secondsLeft <= self.Current.antiSnipe) then
                 self:announceExtension(self.Current.antiSnipe);
             end
