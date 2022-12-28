@@ -297,78 +297,80 @@ function AwardHistory:draw()
                 ActionButtonFrame:SetHeight(30);
                 ItemRow:AddChild(ActionButtonFrame);
 
-                local DeleteButton = GL.UI:createFrame("Button", "AwardHistoryActionButton" .. GL:uuid(), ActionButtonFrame.frame, "UIPanelButtonTemplate");
-                DeleteButton:SetSize(24, 24);
-                DeleteButton:SetPoint("TOPRIGHT", ActionButtonFrame.frame, "TOPRIGHT", 0, 0);
-                DeleteButton:SetMotionScriptsWhileDisabled(true); -- Make sure tooltip still shows even when button is disabled
+                if (not GL.User.isInGroup or GL.User.hasAssist) then
+                    local DeleteButton = GL.UI:createFrame("Button", "AwardHistoryActionButton" .. GL:uuid(), ActionButtonFrame.frame, "UIPanelButtonTemplate");
+                    DeleteButton:SetSize(24, 24);
+                    DeleteButton:SetPoint("TOPRIGHT", ActionButtonFrame.frame, "TOPRIGHT", 0, 0);
+                    DeleteButton:SetMotionScriptsWhileDisabled(true); -- Make sure tooltip still shows even when button is disabled
 
-                local HighlightTexture = DeleteButton:CreateTexture();
-                HighlightTexture:SetTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\delete-highlighted");
-                HighlightTexture:SetPoint("CENTER", DeleteButton, "CENTER", 0, 0);
-                HighlightTexture:SetSize(24, 24);
+                    local HighlightTexture = DeleteButton:CreateTexture();
+                    HighlightTexture:SetTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\delete-highlighted");
+                    HighlightTexture:SetPoint("CENTER", DeleteButton, "CENTER", 0, 0);
+                    HighlightTexture:SetSize(24, 24);
 
-                DeleteButton:SetNormalTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\delete");
-                DeleteButton:SetHighlightTexture(HighlightTexture);
+                    DeleteButton:SetNormalTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\delete");
+                    DeleteButton:SetHighlightTexture(HighlightTexture);
 
-                DeleteButton:SetScript("OnClick", function(_, button)
-                    if (button == 'LeftButton') then
-                        local BRString = "";
-                        if (GL:higherThanZero(Award.BRCost)) then
-                            BRString = " " .. tostring(Award.BRCost) .. " boosted roll points will be refunded!";
-                        end
+                    DeleteButton:SetScript("OnClick", function(_, button)
+                        if (button == 'LeftButton') then
+                            local BRString = "";
+                            if (GL:higherThanZero(Award.BRCost)) then
+                                BRString = " " .. tostring(Award.BRCost) .. " boosted roll points will be refunded!";
+                            end
 
-                        GL.Interface.Dialogs.PopupDialog:open({
-                            question = string.format(
-                                "Are you sure you want to undo %s awarded to %s?%s",
-                                Award.itemLink,
-                                Award.awardedTo,
-                                BRString
-                            ),
-                            OnYes = function ()
-                                GL.AwardedLoot:deleteWinner(Award.checksum);
-                            end,
-                        });
-                    end
-                end);
-
-                local EditButton = GL.UI:createFrame("Button", "AwardHistoryActionButton" .. GL:uuid(), ActionButtonFrame.frame, "UIPanelButtonTemplate");
-                EditButton:SetSize(24, 24);
-                EditButton:SetPoint("TOPRIGHT", DeleteButton, "TOPLEFT", -3, 0);
-
-                HighlightTexture = EditButton:CreateTexture();
-                HighlightTexture:SetTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\edit-highlighted");
-                HighlightTexture:SetPoint("CENTER", EditButton, "CENTER", 0, 0);
-                HighlightTexture:SetSize(24, 24);
-
-                EditButton:SetNormalTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\edit");
-                EditButton:SetHighlightTexture(HighlightTexture);
-                EditButton:SetDisabledTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\edit-disabled");
-
-                EditButton:SetScript("OnClick", function(_, button)
-                    if (button == 'LeftButton') then
-                        -- Show the player selector
-                        local question = string.format("Who should %s go to instead?", Award.itemLink);
-                        GL.Interface.PlayerSelector:draw(question, GL.User:groupMemberNames(), function (playerName)
                             GL.Interface.Dialogs.PopupDialog:open({
-                                question = string.format("Award %s to |cff%s%s|r?",
-                                    Award.itemLink,
-                                    GL:classHexColor(GL.Player:classByName(playerName)),
-                                    playerName
+                                question = string.format(
+                                        "Are you sure you want to undo %s awarded to %s?%s",
+                                        Award.itemLink,
+                                        Award.awardedTo,
+                                        BRString
                                 ),
                                 OnYes = function ()
-                                    if (not playerName or type(playerName) ~= "string") then
-                                        return;
-                                    end
-
-                                    playerName = GL:capitalize(string.trim(string.lower(GL:stripRealm(playerName))));
-                                    GL.AwardedLoot:editWinner(Award.checksum, playerName);
-
-                                    GL.Interface.PlayerSelector:close();
+                                    GL.AwardedLoot:deleteWinner(Award.checksum);
                                 end,
                             });
-                        end);
-                    end
-                end);
+                        end
+                    end);
+
+                    local EditButton = GL.UI:createFrame("Button", "AwardHistoryActionButton" .. GL:uuid(), ActionButtonFrame.frame, "UIPanelButtonTemplate");
+                    EditButton:SetSize(24, 24);
+                    EditButton:SetPoint("TOPRIGHT", DeleteButton, "TOPLEFT", -3, 0);
+
+                    HighlightTexture = EditButton:CreateTexture();
+                    HighlightTexture:SetTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\edit-highlighted");
+                    HighlightTexture:SetPoint("CENTER", EditButton, "CENTER", 0, 0);
+                    HighlightTexture:SetSize(24, 24);
+
+                    EditButton:SetNormalTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\edit");
+                    EditButton:SetHighlightTexture(HighlightTexture);
+                    EditButton:SetDisabledTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\edit-disabled");
+
+                    EditButton:SetScript("OnClick", function(_, button)
+                        if (button == 'LeftButton') then
+                            -- Show the player selector
+                            local question = string.format("Who should %s go to instead?", Award.itemLink);
+                            GL.Interface.PlayerSelector:draw(question, GL.User:groupMemberNames(), function (playerName)
+                                GL.Interface.Dialogs.PopupDialog:open({
+                                    question = string.format("Award %s to |cff%s%s|r?",
+                                            Award.itemLink,
+                                            GL:classHexColor(GL.Player:classByName(playerName)),
+                                            playerName
+                                    ),
+                                    OnYes = function ()
+                                        if (not playerName or type(playerName) ~= "string") then
+                                            return;
+                                        end
+
+                                        playerName = GL:capitalize(string.trim(string.lower(GL:stripRealm(playerName))));
+                                        GL.AwardedLoot:editWinner(Award.checksum, playerName);
+
+                                        GL.Interface.PlayerSelector:close();
+                                    end,
+                                });
+                            end);
+                        end
+                    end);
+                end
             end)();
         end
 
