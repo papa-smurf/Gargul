@@ -1119,6 +1119,36 @@ function GL:canUserUseItem(itemLinkOrID, callback)
     end);
 end
 
+---@param bagID number
+---@param slot number
+---@return any
+function GL:getContainerItemInfo(bagID, slot)
+    if (GetContainerItemInfo) then
+        return GetContainerItemInfo(bagID, slot)
+    end
+
+    if (C_Container and C_Container.GetContainerItemInfo) then
+        local Info = C_Container.GetContainerItemInfo(bagID, slot);
+
+        if (not Info) then
+            return nil;
+        end
+
+        return Info.iconFileID, Info.stackCount, Info.isLocked, Info.quality, Info.isReadable,
+        Info.hasLoot, Info.hyperlink, Info.isFiltered, Info.hasNoValue, Info.itemID, Info.isBound;
+    end
+
+    return nil;
+end
+
+---@param bagID number
+---@return number
+function GL:getContainerNumSlots(bagID)
+    local handler = GetContainerNumSlots or (C_Container and C_Container.GetContainerNumSlots);
+
+    return handler(bagID);
+end
+
 --- Find the first bag id and slot for a given item id (or false)
 ---
 ---@param itemID number
@@ -1139,8 +1169,8 @@ function GL:findBagIdAndSlotForItem(itemID, skipSoulBound, includeBankBags)
     end
 
     for bag = 0, numberOfBagsToCheck do
-        for slot = 1, GetContainerNumSlots(bag) do
-            local _, _, locked, _, _, _, _, _, _, bagItemID = GetContainerItemInfo(bag, slot);
+        for slot = 1, GL:getContainerNumSlots(bag) do
+            local _, _, locked, _, _, _, _, _, _, bagItemID = GL:getContainerItemInfo(bag, slot);
 
             if (bagItemID == itemID
                 and not locked -- The item is locked, aka it can not be put in the window
