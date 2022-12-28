@@ -175,6 +175,16 @@ function GDKP:draw(Parent)
         {
             label = "Show the GDKP bid queue that allows you to prebid on queued items",
             setting = "GDKP.enableGDKPBidderQueue",
+            callback = function()
+                local BidderQueue = GL.Interface.GDKP.BidderQueue;
+
+                if (not GL.Settings:get("GDKP.enableGDKPBidderQueue")) then
+                    BidderQueue:close();
+                else
+                    BidderQueue:open();
+                    BidderQueue:refreshTable();
+                end
+            end,
         },
     }, Parent);
 
