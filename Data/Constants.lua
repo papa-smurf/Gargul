@@ -454,6 +454,7 @@ GL.Data.Constants = {
             requestGDKPSession = 21,
             broadcastGDKPSession = 22,
             broadcastGDKPMutation = 23,
+            broadcastGDKPAuctionQueue = 24,
         },
     },
 

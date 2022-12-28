@@ -132,6 +132,7 @@ function GL:_init()
     self.TradeWindow:_init();
     self.Interface.MasterLooterDialog:_init();
     self.Interface.TradeWindow.TimeLeft:_init();
+    self.Interface.GDKP.BidderQueue:_init();
 
     -- Hook native window events
     self:hookNativeWindowEvents();

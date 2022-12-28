@@ -32,6 +32,7 @@ GL.Interface.GDKP.Auctioneer = {
         itemBoxText = "",
     },
     PlayersTable = {},
+    PopTimer = nil,
 };
 
 ---@type GDKPAuctioneerInterface
@@ -73,7 +74,9 @@ function Auctioneer:draw(itemLink)
     end
 
     self.isVisible = true;
-    local Spacer, HelpIcon;
+    self.queueModeActivated = Settings:get("GDKP.enableGDKPQueuesByDefault");
+
+    local HelpIcon;
 
     -- Create a container/parent frame
     Window = AceGUI:Create("Frame", "GARGUL_AUCTIONEER_WINDOW");
@@ -124,7 +127,7 @@ function Auctioneer:draw(itemLink)
             },
             {
                 name = "",
-                width = 1,
+                width = 0,
                 sort = GL.Data.Constants.ScrollingTable.ascending,
             },
         };
@@ -150,7 +153,7 @@ function Auctioneer:draw(itemLink)
 
         local NewQueueInfoLabel = AceGUI:Create("Label");
         NewQueueInfoLabel:SetText(string.format(
-                "You can start a new queue and queue up multiple items for auction. This allows you to auction multiple items much more efficiently!"
+            "You can start a new queue and queue up multiple items for auction. This allows you to auction multiple items much more efficiently!"
         ));
         NewQueueInfoLabel:SetWidth(Table.frame:GetWidth() - 40);
         NewQueueInfoLabel:SetJustifyH("MIDDLE");
@@ -158,14 +161,6 @@ function Auctioneer:draw(itemLink)
         NewQueueInfoLabel.frame:SetPoint("TOP", Table.frame, "TOP", -10, -40);
         NewQueueInfoLabel.frame:Show();
         Interface:set(self, "NewQueueInfoLabel", NewQueueInfoLabel);
-
-        local NextItemButton = AceGUI:Create("Button");
-        NextItemButton:SetText("Next item");
-        NextItemButton:SetFullWidth(true);
-        NextItemButton:SetHeight(20);
-        NextItemButton:SetCallback("OnClick", function()
-
-        end);
 
         local ClearOrNewQueueButton = AceGUI:Create("Button");
         ClearOrNewQueueButton:SetText("New Queue");
@@ -186,6 +181,9 @@ function Auctioneer:draw(itemLink)
             ClearOrNewQueueButton:SetText("Clear");
             self:refreshQueueTable();
         end);
+        if (self.queueModeActivated) then
+            ClearOrNewQueueButton:SetText("Clear");
+        end
         QueueWindow:AddChild(ClearOrNewQueueButton);
     end
 
@@ -414,6 +412,7 @@ function Auctioneer:draw(itemLink)
     StopButton:SetHeight(20);
     StopButton:SetDisabled(true);
     StopButton:SetCallback("OnClick", function()
+        GL.Ace:CancelTimer(self.PopTimer);
         GDKPAuction:announceStop();
     end);
     FifthRow:AddChild(StopButton);
@@ -616,28 +615,35 @@ end
 
 --- We run this method when an auction ran out "naturally", aka wasn't stopped by the auctioneer
 function Auctioneer:timeRanOut()
+    GL:debug("Auctioneer:timeRanOut");
+
     if (not Settings:get("GDKP.autoAwardViaAuctioneer")) then
         return;
     end
 
+    local delayBetweenQueuedAuctions = tonumber(Settings:get("GDKP.delayBetweenQueuedAuctions")) or 0;
+
     if (not GL:tableGet(GDKPAuction.Current, "TopBid.Bidder.name")) then
         local actionWhenNoBidsArePresent = Settings:get("GDKP.queuedAuctionNoBidsAction");
 
-        if (actionWhenNoBidsArePresent == "SKIP") then
-            self:reset(); -- Reset the UI
-            GDKPAuction:reset(); -- Reset the actual auction object
-            self:closeReopenAuctioneerButton();
-            self:popFromQueue();
-            return;
-        end
+        if (actionWhenNoBidsArePresent ~= "NONE") then
+            if (actionWhenNoBidsArePresent == "DISENCHANT") then
+                GL.PackMule:disenchant(GDKPAuction.Current.itemLink, true);
+            end
 
-        if (actionWhenNoBidsArePresent == "DISENCHANT") then
-            GL.PackMule:disenchant(GDKPAuction.Current.itemLink, true);
             self:reset(); -- Reset the UI
             GDKPAuction:reset(); -- Reset the actual auction object
             self:closeReopenAuctioneerButton();
 
-            self:popFromQueue();
+            GL.Ace:CancelTimer(self.PopTimer);
+            if (delayBetweenQueuedAuctions > 0) then
+                self.PopTimer = GL.Ace:ScheduleTimer(function ()
+                    self:popFromQueue();
+                end, delayBetweenQueuedAuctions);
+            else
+                self:popFromQueue();
+            end
+
             return;
         end
 
@@ -668,7 +674,14 @@ function Auctioneer:timeRanOut()
     GDKPAuction:reset(); -- Reset the actual auction object
     self:closeReopenAuctioneerButton();
 
-    self:popFromQueue();
+    GL.Ace:CancelTimer(self.PopTimer);
+    if (delayBetweenQueuedAuctions > 0) then
+        self.PopTimer = GL.Ace:ScheduleTimer(function ()
+            self:popFromQueue();
+        end, delayBetweenQueuedAuctions);
+    else
+        self:popFromQueue();
+    end
 end
 
 --[[
@@ -705,7 +718,7 @@ function Auctioneer:popFromQueue()
         return;
     end
 
-    GDKPAuction.Queue[tostring(NextInLine.addedAt) or 1] = nil;
+    GDKPAuction:removeFromQueue(NextInLine.addedAt);
     self:refreshQueueTable();
 
     local windowWasClosed = not self.isVisible;
@@ -730,30 +743,20 @@ function Auctioneer:addToQueue(itemLink)
         GL.Interface.Alerts:fire("GargulNotification", {
             message = string.format("|c00BE3333Max reached!|r"),
         });
+
         return;
     end
 
-    local itemID = GL:getItemIDFromLink(itemLink);
-    if (not itemID) then
-        return;
-    end
-
-    local addedAt = GetTime();
-    local PerItemSettings = GDKP:settingsForItemID(GL:getItemIDFromLink(itemLink));
-    GDKPAuction.Queue[tostring(addedAt)]= {
-        itemLink = itemLink,
-        itemID = itemID,
-        minimumBid = PerItemSettings.minimum,
-        increment = PerItemSettings.increment,
-        addedAt = addedAt,
-    };
+    GDKPAuction:addToQueue(itemLink);
 
     self:refreshQueueTable();
 end
 
+---@return void
 function Auctioneer:clearQueue()
     GL:debug("Auctioneer:clearQueue");
-    GDKPAuction.Queue = {};
+
+    GDKPAuction:clearQueue();
 
     local Table = Interface:get(self, "Table.Queue");
     if (Table) then
@@ -761,6 +764,7 @@ function Auctioneer:clearQueue()
     end
 end
 
+---@return void
 function Auctioneer:refreshQueueTable()
     GL:debug("Auctioneer:refreshQueueTable");
 
@@ -781,7 +785,7 @@ function Auctioneer:refreshQueueTable()
                 cols = {
                     {
                         value = "Interface/AddOns/Gargul/Assets/Buttons/delete", _OnClick = function ()
-                        GDKPAuction.Queue[key] = nil;
+                        GDKPAuction:removeFromQueue(key);
                         self:refreshQueueTable();
                     end,
                     },
@@ -828,6 +832,7 @@ function Auctioneer:refreshQueueTable()
     end
 end
 
+---@param Window table
 ---@return boolean
 function Auctioneer:show(Window)
     GL:debug("Auctioneer:show");
@@ -871,7 +876,7 @@ function Auctioneer:close()
     end
 end
 
---- Close the reopen auctioneer button
+---@return void
 function Auctioneer:closeReopenAuctioneerButton()
     -- Close the reopen auctioneer button if it exists
     local OpenAuctioneerButton = Interface:get(self, "Frame.OpenAuctioneerButton");
@@ -881,9 +886,10 @@ function Auctioneer:closeReopenAuctioneerButton()
     end
 end
 
--- This button allows the master looter to easily reopen the
--- auctioneer window when it's closed with a roll in progress
--- This is very common in hectic situations where the master looter has to participate in combat f.e.
+--- This button allows the master looter to easily reopen the
+--- auctioneer window when it's closed with a roll in progress
+--- This is very common in hectic situations where the master looter has to participate in combat f.e.
+---@return void
 function Auctioneer:drawReopenAuctioneerButton()
     GL:debug("Auctioneer:drawReopenAuctioneerButton");
 

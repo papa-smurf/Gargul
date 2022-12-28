@@ -49,6 +49,8 @@ GDKP.Auction = {
         TopBid = {}, -- Top bid
     },
     Queue = {},
+    QueueBroadcastTimer = nil,
+    QueuedItemAutoBids = {},
 };
 
 ---@type GDKPAuction
@@ -58,8 +60,9 @@ local Auction = GDKP.Auction;
 local GDKPSession = GDKP.Session;
 
 --[[ CONSTANTS ]]
-local stopAuctionLeewayInSeconds = 2;
-local autoBidThrottle = .8;
+local STOP_AUCTION_LEEWAY_IN_SECONDS = 2;
+local AUTO_BID_THROTTLE_IN_SECONDS = .8;
+local BROADCAST_QUEUE_DELAY_IN_SECONDS = 5;
 
 function Auction:_init()
     GL:debug("GDKP.Auction:_init");
@@ -741,6 +744,115 @@ function Auction:move(auctionID, fromSessionID, toSessionID)
     return true;
 end
 
+---@param itemLink string
+---@return void
+function Auction:addToQueue(itemLink)
+    GL:debug("Auction:addToQueue");
+
+    local itemID = GL:getItemIDFromLink(itemLink);
+    if (not itemID) then
+        return;
+    end
+
+    local addedAt = GetTime();
+    local PerItemSettings = GDKP:settingsForItemID(GL:getItemIDFromLink(itemLink));
+    self.Queue[tostring(addedAt)]= {
+        itemLink = itemLink,
+        itemID = itemID,
+        minimumBid = PerItemSettings.minimum,
+        increment = PerItemSettings.increment,
+        addedAt = addedAt,
+    };
+
+    self:broadcastQueue();
+
+    Events:fire("GL.GDKP_QUEUE_UPDATED");
+end
+
+---@param checksum string
+---@return void
+function Auction:removeFromQueue(checksum)
+    GL:debug("Auction:addToQueue");
+
+    checksum = tostring(checksum or 0);
+
+    if (self.Queue[checksum]) then
+        self.Queue[checksum] = nil;
+        self:broadcastQueue();
+    end
+
+    Events:fire("GL.GDKP_QUEUE_UPDATED");
+end
+
+---@return void
+function Auction:clearQueue()
+    GL:debug("Auction:clearQueue");
+
+    self.Queue = {};
+    self:broadcastQueue(true);
+
+    Events:fire("GL.GDKP_QUEUE_UPDATED");
+end
+
+---@return void
+function Auction:sanitizeQueue()
+    GL:debug("Auction:sanitizeQueue");
+
+    local Sanitized = {};
+
+    for checksum, QueuedItem in pairs(self.Queue or {}) do
+        if (QueuedItem) then
+            Sanitized[checksum] = QueuedItem;
+        end
+    end
+
+    self.Queue = Sanitized;
+end
+
+---@return void
+function Auction:broadcastQueue(immediately)
+    GL:debug("Auction:broadcastQueue");
+
+    GL.Ace:CancelTimer(self.QueueBroadcastTimer);
+    self:sanitizeQueue();
+
+    local broadcast = function ()
+        GL.CommMessage.new(
+            CommActions.broadcastGDKPAuctionQueue,
+            self.Queue or {},
+            "GROUP"
+        ):send();
+    end;
+
+    if (immediately) then
+        broadcast();
+        return;
+    end
+
+    self.QueueBroadcastTimer = GL.Ace:ScheduleTimer(function ()
+        broadcast();
+    end, BROADCAST_QUEUE_DELAY_IN_SECONDS);
+end
+
+---@return void
+function Auction:receiveQueue(CommMessage)
+    GL:debug("Auction:receiveQueue");
+
+    -- No need to override our own queue
+    if (CommMessage.Sender.id == GL.User.id) then
+        return;
+    end
+
+    if (type(CommMessage.content) ~= "table") then
+        return;
+    end
+
+    self.Queue = CommMessage.content;
+    self:sanitizeQueue();
+
+    Events:fire("GL.GDKP_QUEUE_UPDATED");
+end
+
 --- Anounce to everyone in the raid that an auction is starting
 ---
 ---@param itemLink string
@@ -781,6 +893,8 @@ function Auction:announceStart(itemLink, minimumBid, minimumIncrement, duration,
     Settings:set("GDKP.antiSnipe", antiSnipe);
 
     self:listenForBids();
+
+    self:broadcastQueue(true);
 
     -- This is still the same item, use the previous highest bid as the starting point
     if (itemLink == self.Current.itemLink) then
@@ -873,7 +987,7 @@ function Auction:announceExtension(time)
         return false;
     end
 
-    local secondsLeft = GL.Ace:TimeLeft(self.timerId) - stopAuctionLeewayInSeconds;
+    local secondsLeft = GL.Ace:TimeLeft(self.timerId) - STOP_AUCTION_LEEWAY_IN_SECONDS;
     local newDuration = math.ceil(secondsLeft + time);
 
     GL.CommMessage.new(
@@ -912,7 +1026,7 @@ function Auction:extend(CommMessage)
             self:stop();
             self:announceStop();
             Auctioneer:timeRanOut();
-        end, math.ceil(time + stopAuctionLeewayInSeconds));
+        end, math.ceil(time + STOP_AUCTION_LEEWAY_IN_SECONDS));
     end
 end
 
@@ -1012,13 +1126,13 @@ function Auction:start(CommMessage)
             end
         end
 
+        -- Make sure to announce the auction stop when time is up
         if (self:startedByMe()) then
-            -- Make sure the auction stops when time is up
             self.timerId = GL.Ace:ScheduleTimer(function ()
                 self:stop();
                 self:announceStop();
                 Auctioneer:timeRanOut();
-            end, math.ceil(duration + stopAuctionLeewayInSeconds));
+            end, math.ceil(duration + STOP_AUCTION_LEEWAY_IN_SECONDS));
         end
 
         -- Send a countdown in chat when enabled
@@ -1028,7 +1142,7 @@ function Auction:start(CommMessage)
             and Settings:get("GDKP.doCountdown")
         ) then
             self.countDownTimer = GL.Ace:ScheduleRepeatingTimer(function ()
-                local secondsLeft = math.ceil(GL.Ace:TimeLeft(self.timerId) - stopAuctionLeewayInSeconds);
+                local secondsLeft = math.ceil(GL.Ace:TimeLeft(self.timerId) - STOP_AUCTION_LEEWAY_IN_SECONDS);
                 if (secondsLeft <= numberOfSecondsToCountdown
                     and secondsLeft > 0
                     and not SecondsAnnounced[secondsLeft]
@@ -1063,6 +1177,12 @@ function Auction:start(CommMessage)
 
         -- Flash the game icon in case the player alt-tabbed
         FlashClientIcon();
+
+        -- Automatically auto-bid on the item if we set an auto bid max
+        if (self.QueuedItemAutoBids[Entry.id]) then
+            self:setAutoBid(self.QueuedItemAutoBids[Entry.id]);
+            self.QueuedItemAutoBids[Entry.id] = nil;
+        end
 
         -- Items should only contain 1 item but lets add a return just in case
         return;
@@ -1284,9 +1404,21 @@ function Auction:bid(message)
 end
 
 ---@param max string|number
+---@param queuedItemChecksum string|nil
 ---@return boolean
-function Auction:setAutoBid(max)
+function Auction:setAutoBid(max, queuedItemChecksum)
     GL:debug("Auction:autoBid");
+
+    -- The user wants to bid on a queued item
+    if (queuedItemChecksum) then
+        local QueuedItem = self.Queue[queuedItemChecksum];
+        if (not QueuedItem) then
+            return false;
+        end
+
+        self.QueuedItemAutoBids[QueuedItem.itemID] = max;
+        return true;
+    end
 
     max = tonumber(max) or 0;
     local lowestMinimumBid = self:lowestValidBid();
@@ -1304,6 +1436,48 @@ function Auction:setAutoBid(max)
     end
 
     return true;
+end
+
+---@return void
+function Auction:removeAutoBid(queuedItemChecksum)
+    GL:debug("Auction:removeAutoBid");
+
+    if (not queuedItemChecksum or not self.Queue[queuedItemChecksum]) then
+        return;
+    end
+
+    local QueuedItem = self.Queue[queuedItemChecksum];
+
+    self.QueuedItemAutoBids[QueuedItem.itemID] = nil;
+
+    self:sanitizeQueuedItemBids();
+end
+
+---@param itemID number
+---@return number
+function Auction:getQueuedAutoBid(itemID)
+    return self.QueuedItemAutoBids[itemID] or 0;
+end
+
+---@return void
+function Auction:sanitizeQueuedItemBids()
+    GL:debug("Auction:sanitizeQueuedItemBids");
+
+    local QueuedItemIDs = {};
+    for _, QueuedItem in pairs(self.Queue or {}) do
+        if (QueuedItem) then
+            QueuedItemIDs[QueuedItem.itemID] = true;
+        end
+    end
+
+    local Sanitized = {};
+    for itemID, max in pairs(self.QueuedItemAutoBids or {}) do
+        if (QueuedItemIDs[itemID]) then
+            Sanitized[itemID] = max;
+        end
+    end
+
+    self.QueuedItemAutoBids = Sanitized;
 end
 
 ---@return void
@@ -1333,7 +1507,7 @@ function Auction:autoBid()
     end
 
     -- Make sure we only bid once every Xs (spam throttle)
-    if (GetTime() - self.lastBidAt < autoBidThrottle) then
+    if (GetTime() - self.lastBidAt < AUTO_BID_THROTTLE_IN_SECONDS) then
         GL.Ace:CancelTimer(self.AutoBidTimer);
 
         self.AutoBidTimer = GL.Ace:ScheduleTimer(function ()
@@ -1450,7 +1624,7 @@ function Auction:processBid(message, bidder)
         if (self.Current and self.Current.antiSnipe and (
             not bidTooLow or Settings:get("GDKP.invalidBidsTriggerAntiSnipe")
         )) then
-            local secondsLeft = math.floor(GL.Ace:TimeLeft(self.timerId) - stopAuctionLeewayInSeconds);
+            local secondsLeft = math.floor(GL.Ace:TimeLeft(self.timerId) - STOP_AUCTION_LEEWAY_IN_SECONDS);
             if (secondsLeft <= self.Current.antiSnipe) then
                 self:announceExtension(self.Current.antiSnipe);
             end
