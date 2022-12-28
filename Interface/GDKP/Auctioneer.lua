@@ -189,15 +189,22 @@ function Auctioneer:draw(itemLink)
         QueueWindow:AddChild(ClearOrNewQueueButton);
     end
 
-    --[[ === QUEUE STUFF ]]
-
     --[[
         SETTINGS BUTTON
     ]]
-    GL.UI:createSettingsButton(
+    local Cogwheel = GL.UI:createSettingsButton(
         Window.frame,
         "GDKP"
     );
+    Cogwheel:SetScript("OnClick", function(_, button)
+        if (button == 'LeftButton') then
+            self:close();
+
+            GL.Settings:draw("GDKP", function ()
+                self:draw();
+            end);
+        end
+    end);
 
     --[[ ROWS ]]
 
