@@ -137,26 +137,27 @@ function Auctioneer:draw(itemLink)
         Interface:set(self, "Queue", Table);
         QueueWindow:AddChild(Table);
 
-        local NewQueueExplanation = AceGUI:Create("Label");
-        NewQueueExplanation:SetText(string.format(
+        local HowToAddToQueueLabel = AceGUI:Create("Label");
+        HowToAddToQueueLabel:SetText(string.format(
             "|c00a79eff%s|r items to add them to the queue, click start on the left when you're ready to go. While a queue is active you can keep adding items!",
             Settings:get("ShortcutKeys.rollOffOrAuction")
         ));
-        NewQueueExplanation:SetWidth(Table.frame:GetWidth() - 40);
-        NewQueueExplanation:SetJustifyH("MIDDLE");
-        NewQueueExplanation.frame:SetParent(Table.frame);
-        NewQueueExplanation.frame:SetPoint("TOP", Table.frame, "TOP", -10, -40);
-        Interface:set(self, "NewQueueExplanation", NewQueueExplanation);
+        HowToAddToQueueLabel:SetWidth(Table.frame:GetWidth() - 40);
+        HowToAddToQueueLabel:SetJustifyH("MIDDLE");
+        HowToAddToQueueLabel.frame:SetParent(Table.frame);
+        HowToAddToQueueLabel.frame:SetPoint("TOP", Table.frame, "TOP", -10, -40);
+        Interface:set(self, "HowToAddToQueueLabel", HowToAddToQueueLabel);
 
-        local ClearQueueExplanation = AceGUI:Create("Label");
-        ClearQueueExplanation:SetText(string.format(
+        local NewQueueInfoLabel = AceGUI:Create("Label");
+        NewQueueInfoLabel:SetText(string.format(
                 "You can start a new queue and queue up multiple items for auction. This allows you to auction multiple items much more efficiently!"
         ));
-        ClearQueueExplanation:SetWidth(Table.frame:GetWidth() - 40);
-        ClearQueueExplanation:SetJustifyH("MIDDLE");
-        ClearQueueExplanation.frame:SetParent(Table.frame);
-        ClearQueueExplanation.frame:SetPoint("TOP", Table.frame, "TOP", -10, -40);
-        ClearQueueExplanation.frame:Show();
+        NewQueueInfoLabel:SetWidth(Table.frame:GetWidth() - 40);
+        NewQueueInfoLabel:SetJustifyH("MIDDLE");
+        NewQueueInfoLabel.frame:SetParent(Table.frame);
+        NewQueueInfoLabel.frame:SetPoint("TOP", Table.frame, "TOP", -10, -40);
+        NewQueueInfoLabel.frame:Show();
+        Interface:set(self, "NewQueueInfoLabel", NewQueueInfoLabel);
 
         local NextItemButton = AceGUI:Create("Button");
         NextItemButton:SetText("Next item");
@@ -175,17 +176,15 @@ function Auctioneer:draw(itemLink)
             if (self.queueModeActivated) then
                 self.queueModeActivated = false;
                 ClearOrNewQueueButton:SetText("New Queue");
-                ClearQueueExplanation.frame:Show();
-                NewQueueExplanation.frame:Hide();
                 self:clearQueue();
+                self:refreshQueueTable();
 
                 return;
             end
 
             self.queueModeActivated = true;
             ClearOrNewQueueButton:SetText("Clear");
-            ClearQueueExplanation.frame:Hide();
-            NewQueueExplanation.frame:Show();
+            self:refreshQueueTable();
         end);
         QueueWindow:AddChild(ClearOrNewQueueButton);
     end
@@ -804,14 +803,21 @@ function Auctioneer:refreshQueueTable()
     end
 
     Table:SetData({}, true);
-    if (not GL:empty(TableData)) then
-        Interface:get(self, "Label.NewQueueExplanation").frame:Hide();
-        if (Table) then
-            Table:SetData(TableData);
+    if (self.queueModeActivated) then
+        Interface:get(self, "Label.NewQueueInfoLabel").frame:Hide();
+        Interface:get(self, "Label.HowToAddToQueueLabel").frame:Hide();
+
+        if (not GL:empty(TableData)) then
+            if (Table) then
+                Table:SetData(TableData);
+            end
+        else
+            self:clearQueue();
+            Interface:get(self, "Label.HowToAddToQueueLabel").frame:Show();
         end
     else
-        self:clearQueue();
-        Interface:get(self, "Label.NewQueueExplanation").frame:Show();
+        Interface:get(self, "Label.NewQueueInfoLabel").frame:Show();
+        Interface:get(self, "Label.HowToAddToQueueLabel").frame:Hide();
     end
 end
 
