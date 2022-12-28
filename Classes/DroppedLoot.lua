@@ -155,8 +155,15 @@ function DroppedLoot:lootChanged()
     return lootChanged;
 end
 
--- Remove the highlights on all loot buttons
+--- Remove the highlights on all loot buttons
+---@return void
 function DroppedLoot:removeHighlights()
+    GL:debug("DroppedLoot:removeHighlights");
+
+    if (GL.isRetail) then
+        return;
+    end
+
     for buttonIndex = 1, _G.LOOTFRAME_NUMBUTTONS do
         local Button = getglobal("LootButton" .. buttonIndex);
 
@@ -173,6 +180,7 @@ function DroppedLoot:highlightItemsOfInterest()
     -- There's no point highlighting loot if the player
     -- is not in a group or highlights are disabled
     if (not GL.Settings:get("highlightsEnabled")
+        or GL.isRetail
         or (
             not GL.Settings:get("highlightHardReservedItems")
             and not GL.Settings:get("highlightSoftReservedItems")

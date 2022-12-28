@@ -384,7 +384,7 @@ function Changelog:draw()
             end
 
             -- Highlight GDKP update
-            if (LogEntry.version == "5.0.4") then
+            if (LogEntry.version == "5.0.4" and not GL.isRetail) then
                 HorizontalSpacer = GL.AceGUI:Create("SimpleGroup");
                 HorizontalSpacer:SetLayout("FILL");
                 HorizontalSpacer:SetFullWidth(true);
