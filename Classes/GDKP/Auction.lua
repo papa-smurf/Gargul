@@ -28,6 +28,7 @@ GDKP.Auction = {
     autoBiddingIsActive = nil,
     lastBidAt = nil,
     lastBidAnnouncementAt = 0,
+    lastBidReceivedAt = 0,
     maxBid = nil,
     raidWarningThrottler = nil,
     waitingForExtension = false,
@@ -962,6 +963,16 @@ function Auction:announceStop()
         return;
     end
 
+    -- Do a final check to see if we're allowed to stop now
+    if (self.lastBidReceivedAt
+        and self.Current.antiSnipe
+        and GetTime() - self.lastBidReceivedAt <= self.Current.antiSnipe
+        and not self.waitingForExtension
+    ) then
+        self:announceExtension(self.Current.antiSnipe);
+        return;
+    end
+
     self:stop();
 
     GL.CommMessage.new(
@@ -987,7 +998,12 @@ function Auction:announceExtension(time)
     end
 
     local secondsLeft = GL.Ace:TimeLeft(self.timerId) - GL.Settings:get("GDKP.auctionEndLeeway", 2);
+
     local newDuration = math.ceil(secondsLeft + time);
+
+    if (newDuration < time) then
+        newDuration = time;
+    end
 
     GL.CommMessage.new(
         CommActions.extendGDKPAuction,
@@ -1331,6 +1347,7 @@ function Auction:listenForBids()
     GL.Ace:CancelTimer(self.bidListenerCancelTimerId);
 
     self.listeningForBids = true;
+    self.lastBidReceivedAt = 0;
 
     local EventsToListenTo = {
         {"GDKPChatMsgPartyListener", "CHAT_MSG_PARTY"},
@@ -1624,6 +1641,7 @@ function Auction:processBid(message, bidder)
         if (self.Current and self.Current.antiSnipe and (
             not bidTooLow or Settings:get("GDKP.invalidBidsTriggerAntiSnipe")
         )) then
+            self.lastBidReceivedAt = GetTime();
             local secondsLeft = math.floor(GL.Ace:TimeLeft(self.timerId) - GL.Settings:get("GDKP.auctionEndLeeway", 2));
             if (secondsLeft <= self.Current.antiSnipe) then
                 self:announceExtension(self.Current.antiSnipe);
@@ -1640,6 +1658,8 @@ function Auction:processBid(message, bidder)
         return;
     end
 
+    self.lastBidReceivedAt = GetTime();
+
     -- Announce that we have a new leading bid
     if (auctionWasStartedByMe
         and not bidTooLow
@@ -1647,6 +1667,7 @@ function Auction:processBid(message, bidder)
     ) then
         local bidApprovedMessage = string.format("%s is the highest bidder (%sg)", BidEntry.Bidder.name, bid);
 
+        -- Make sure we don't announce the top bidder in /rw too often!
         if (GL.User.isInRaid and Settings:get("GDKP.announceNewBidInRW")) then
             GL.Ace:CancelTimer(self.raidWarningThrottler);
             if (GetTime() - self.lastBidAnnouncementAt < 1.2) then
