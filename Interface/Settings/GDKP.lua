@@ -165,6 +165,27 @@ function GDKP:draw(Parent)
     end);
     Parent:AddChild(NumberOfSecondsToCountdown);
 
+    Spacer = GL.AceGUI:Create("SimpleGroup");
+    Spacer:SetLayout("FILL");
+    Spacer:SetFullWidth(true);
+    Spacer:SetHeight(20);
+    Parent:AddChild(Spacer);
+
+    local AuctionBidLeeway = GL.AceGUI:Create("Slider");
+    AuctionBidLeeway:SetLabel("Accept bids till how long after auction an auction ends?");
+    AuctionBidLeeway.label:SetTextColor(1, .95686, .40784);
+    AuctionBidLeeway:SetFullWidth(true);
+    AuctionBidLeeway:SetValue(GL.Settings:get("GDKP.auctionEndLeeway", 2));
+    AuctionBidLeeway:SetSliderValues(1, 5, .5);
+    AuctionBidLeeway:SetCallback("OnValueChanged", function(Slider)
+        local value = tonumber(Slider:GetValue()) or 0;
+
+        if (value >= 1) then
+            GL.Settings:set("GDKP.auctionEndLeeway", value);
+        end
+    end);
+    Parent:AddChild(AuctionBidLeeway);
+
     Overview:drawHeader("Queues", Parent);
 
     Overview:drawCheckboxes({
