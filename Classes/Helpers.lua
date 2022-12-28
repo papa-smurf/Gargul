@@ -1566,8 +1566,11 @@ end
 
 local gaveNoMessagesWarning = false;
 local gaveNoAssistWarning = false;
+--- Send a chat message to any given type and channel. Group defaults to raid or group depending on what you're in
+--- CURRENT will send a chat message on the currently active channel
+---
 ---@param message string The message you'd like to send
----@param chatType string The type of message (GROUP|SAY|EMOTE|YELL|PARTY|GUILD|OFFICER|RAID|RAID_WARNING|INSTANCE_CHAT|BATTLEGROUND|WHISPER|CHANNEL|AFK|DND)
+---@param chatType string The type of message (CURRENT|GROUP|SAY|EMOTE|YELL|PARTY|GUILD|OFFICER|RAID|RAID_WARNING|INSTANCE_CHAT|BATTLEGROUND|WHISPER|CHANNEL|AFK|DND)
 ---@param language string|nil The language of the message (COMMON|ORCISH|etc), if nil it's COMMON for Alliance and ORCISH for Horde
 ---@param channel string|nil The channel (numeric) or player (name string) receiving the message
 ---@param stw boolean|nil Important for throttling / spam prevention
@@ -1632,6 +1635,13 @@ function GL:sendChatMessage(message, chatType, language, channel, stw, pretend)
             end
 
             chatType = "RAID";
+        end
+    elseif (chatType == "CURRENT") then
+        chatType = DEFAULT_CHAT_FRAME.editBox:GetAttribute("chatType");
+        channel = DEFAULT_CHAT_FRAME.editBox:GetAttribute("tellTarget");
+
+        if (not GL:inTable({"BN_WHISPER", "CHANNEL", "WHISPER"}, chatType)) then
+            channel = nil;
         end
     end
 
