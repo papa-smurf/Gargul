@@ -62,7 +62,7 @@ local GDKPSession = GDKP.Session;
 --[[ CONSTANTS ]]
 local STOP_AUCTION_LEEWAY_IN_SECONDS = 2;
 local AUTO_BID_THROTTLE_IN_SECONDS = .8;
-local BROADCAST_QUEUE_DELAY_IN_SECONDS = 5;
+local BROADCAST_QUEUE_DELAY_IN_SECONDS = 2;
 
 function Auction:_init()
     GL:debug("GDKP.Auction:_init");
