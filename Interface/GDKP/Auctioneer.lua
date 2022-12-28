@@ -142,7 +142,7 @@ function Auctioneer:draw(itemLink)
 
         local HowToAddToQueueLabel = AceGUI:Create("Label");
         HowToAddToQueueLabel:SetText(string.format(
-            "|c00a79eff%s|r items to add them to the queue, click start on the left when you're ready to go. While a queue is active you can keep adding items!",
+            "|c00a79eff%s|r items to add them to the queue click start on the left when you're ready to go. While a queue is active you can keep adding items!",
             Settings:get("ShortcutKeys.rollOffOrAuction")
         ));
         HowToAddToQueueLabel:SetWidth(Table.frame:GetWidth() - 40);
@@ -153,7 +153,7 @@ function Auctioneer:draw(itemLink)
 
         local NewQueueInfoLabel = AceGUI:Create("Label");
         NewQueueInfoLabel:SetText(string.format(
-            "You can start a new queue and queue up multiple items for auction. This allows you to auction multiple items much more efficiently!"
+            "You can start a new queue and queue up multiple items for auction\n\nRaiders with Gargul can immediately see these items and bid already, making runs much faster!\n\nWant to go even faster? Enable 'Auto award' and pick a default action for unwanted items in the GDKP settings menu"
         ));
         NewQueueInfoLabel:SetWidth(Table.frame:GetWidth() - 40);
         NewQueueInfoLabel:SetJustifyH("MIDDLE");
