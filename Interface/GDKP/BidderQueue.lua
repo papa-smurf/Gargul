@@ -102,8 +102,8 @@ function BidderQueue:build()
     local minimumWindowWidth = 126;
     Window = AceGUI:Create("Frame", frameIdentifier);
     Interface:restorePosition(Window, frameIdentifier);
-    Interface:restoreDimensions(Window, frameIdentifier, defaultWindowWidth, 140);
-    Interface:resizeBounds(Window, minimumWindowWidth, 140);
+    Interface:restoreDimensions(Window, frameIdentifier, defaultWindowWidth, 145);
+    Interface:resizeBounds(Window, minimumWindowWidth, 145);
     Window.frame:SetScale(GL.Settings:get("GDKP.bidderQueueScale", 1));
 
     Window:SetTitle("Upcoming items");
