@@ -200,10 +200,19 @@ function Overview:build()
     --[[
         SETTINGS BUTTON
     ]]
-    GL.UI:createSettingsButton(
+    local Cogwheel = GL.UI:createSettingsButton(
         Window.frame,
         "GDKP"
     );
+    Cogwheel:SetScript("OnClick", function(_, button)
+        if (button == 'LeftButton') then
+            Interface:get(self, "GDKPOverview"):Hide();
+
+            GL.Settings:draw("GDKP", function ()
+                self:open();
+            end);
+        end
+    end);
 
     --[[ POT ICON AND VALUE ]]
 

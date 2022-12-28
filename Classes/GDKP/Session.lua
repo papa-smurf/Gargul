@@ -6,7 +6,6 @@ local DB = GL.DB;
 
 ---@type Data
 local Constants = GL.Data.Constants;
-local CommActions = Constants.Comm.Actions;
 
 ---@type Events
 local Events = GL.Events;
@@ -14,11 +13,11 @@ local Events = GL.Events;
 ---@type Settings
 local Settings = GL.Settings;
 
----@class GDKP
-GL.GDKP = GL.GDKP or {};
-
 ---@type GDKP
 local GDKP = GL.GDKP;
+
+---@type GDKPPot
+local GDKPPot;
 
 ---@type GDKPAuction
 local GDKPAuction;
@@ -47,7 +46,8 @@ function Session:_init()
         return;
     end
 
-    GDKPAuction = GL.GDKP.Auction;
+    GDKPPot = GL.GDKP.Pot;
+    GDKPAuction = GDKP.Auction;
     self._initialized = true;
 
     Events:register("GDKPSessionTradeCompletedListener", "GL.TRADE_COMPLETED", function (_, Details)
@@ -62,13 +62,17 @@ function Session:_init()
         if (Settings:get("GDKP.announcePotAfterAuction")
             and sessionID == self:activeSessionID()
         ) then
-            local total = tonumber(GL.GDKP.Pot:total()) or 0;
+            local total = tonumber(GDKP.Pot:total()) or 0;
             if (total < 1) then
                 return;
             end
 
             GL:sendChatMessage(string.format("Pot was updated, it now holds %sg", tostring(total)), "GROUP");
         end
+    end);
+
+    Events:register("GDKPSessionGroupRosterUpdatedListener", "GROUP_ROSTER_UPDATE", function ()
+        GDKPPot:calculateCuts(self:activeSessionID());
     end);
 end
 
@@ -386,7 +390,7 @@ function Session:tooltipLines(itemLink)
         return {};
     end
 
-    local PerItemSettings = GDKPAuction:settingsForItemID(itemID);
+    local PerItemSettings = GDKP:settingsForItemID(itemID);
 
     local Lines = {
         string.format("\n|c00967FD2GDKP Data (sold %sx)|r", Details.timesSold),

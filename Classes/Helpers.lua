@@ -1119,6 +1119,36 @@ function GL:canUserUseItem(itemLinkOrID, callback)
     end);
 end
 
+---@param bagID number
+---@param slot number
+---@return any
+function GL:getContainerItemInfo(bagID, slot)
+    if (GetContainerItemInfo) then
+        return GetContainerItemInfo(bagID, slot)
+    end
+
+    if (C_Container and C_Container.GetContainerItemInfo) then
+        local Info = C_Container.GetContainerItemInfo(bagID, slot);
+
+        if (not Info) then
+            return nil;
+        end
+
+        return Info.iconFileID, Info.stackCount, Info.isLocked, Info.quality, Info.isReadable,
+        Info.hasLoot, Info.hyperlink, Info.isFiltered, Info.hasNoValue, Info.itemID, Info.isBound;
+    end
+
+    return nil;
+end
+
+---@param bagID number
+---@return number
+function GL:getContainerNumSlots(bagID)
+    local handler = GetContainerNumSlots or (C_Container and C_Container.GetContainerNumSlots);
+
+    return handler(bagID);
+end
+
 --- Find the first bag id and slot for a given item id (or false)
 ---
 ---@param itemID number
@@ -1139,8 +1169,8 @@ function GL:findBagIdAndSlotForItem(itemID, skipSoulBound, includeBankBags)
     end
 
     for bag = 0, numberOfBagsToCheck do
-        for slot = 1, GetContainerNumSlots(bag) do
-            local _, _, locked, _, _, _, _, _, _, bagItemID = GetContainerItemInfo(bag, slot);
+        for slot = 1, GL:getContainerNumSlots(bag) do
+            local _, _, locked, _, _, _, _, _, _, bagItemID = GL:getContainerItemInfo(bag, slot);
 
             if (bagItemID == itemID
                 and not locked -- The item is locked, aka it can not be put in the window
@@ -1566,8 +1596,11 @@ end
 
 local gaveNoMessagesWarning = false;
 local gaveNoAssistWarning = false;
+--- Send a chat message to any given type and channel. Group defaults to raid or group depending on what you're in
+--- CURRENT will send a chat message on the currently active channel
+---
 ---@param message string The message you'd like to send
----@param chatType string The type of message (GROUP|SAY|EMOTE|YELL|PARTY|GUILD|OFFICER|RAID|RAID_WARNING|INSTANCE_CHAT|BATTLEGROUND|WHISPER|CHANNEL|AFK|DND)
+---@param chatType string The type of message (CURRENT|GROUP|SAY|EMOTE|YELL|PARTY|GUILD|OFFICER|RAID|RAID_WARNING|INSTANCE_CHAT|BATTLEGROUND|WHISPER|CHANNEL|AFK|DND)
 ---@param language string|nil The language of the message (COMMON|ORCISH|etc), if nil it's COMMON for Alliance and ORCISH for Horde
 ---@param channel string|nil The channel (numeric) or player (name string) receiving the message
 ---@param stw boolean|nil Important for throttling / spam prevention
@@ -1632,6 +1665,13 @@ function GL:sendChatMessage(message, chatType, language, channel, stw, pretend)
             end
 
             chatType = "RAID";
+        end
+    elseif (chatType == "CURRENT") then
+        chatType = DEFAULT_CHAT_FRAME.editBox:GetAttribute("chatType");
+        channel = DEFAULT_CHAT_FRAME.editBox:GetAttribute("tellTarget");
+
+        if (not GL:inTable({"BN_WHISPER", "CHANNEL", "WHISPER"}, chatType)) then
+            channel = nil;
         end
     end
 

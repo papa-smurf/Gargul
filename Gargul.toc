@@ -1,8 +1,8 @@
 ## Interface: 100002
-## Title: Gargul |c00967FD2v5.0.6|r
+## Title: Gargul |c00967FD2v5.0.7|r
 ## Author: Zhorax - Firemaw
 ## Notes: Loot addon that supports GDKP, softres sr, thatsmybis tmb, auto looting, plus one tracking and much more
-## Version: 5.0.6
+## Version: 5.0.7
 ## DefaultState: enabled
 ## SavedVariables: GargulDB
 
@@ -28,6 +28,7 @@ Classes/DB.lua
 Classes/Settings.lua
 Classes/Profiler.lua
 Classes/SoftRes.lua
+Classes/GDKP/GDKP.lua
 Classes/GDKP/Session.lua
 Classes/GDKP/Auction.lua
 Classes/GDKP/Pot.lua
@@ -90,6 +91,7 @@ Interface/GDKP/Bidder.lua
 Interface/GDKP/BidderQueue.lua
 Interface/GDKP/Overview.lua
 Interface/GDKP/Export.lua
+Interface/GDKP/ImportPrices.lua
 Interface/GDKP/LedgerList.lua
 Interface/GDKP/Distribute/Overview.lua
 Interface/GDKP/Distribute/Import.lua

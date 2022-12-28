@@ -215,9 +215,10 @@ end
 --- Draw a setting section
 ---
 ---@param section string|nil
+---@param param function|nil What to do after closing the settings again
 ---@return void
-function Settings:draw(section)
-    GL.Interface.Settings.Overview:draw(section);
+function Settings:draw(section, onCloseCallback)
+    GL.Interface.Settings.Overview:draw(section, onCloseCallback);
 end
 
 ---@return void
