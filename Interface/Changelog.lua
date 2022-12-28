@@ -12,7 +12,7 @@ GL.Interface.Changelog = {
 
     History = {
         {
-            version = "5.0.4",
+            version = "5.0.5",
             date = "December 23rd, 2022",
             Changes = {
                 "GDKP auto bidding, auto awarding, queued auctions, and other QoL things just hit Gargul! Go check them out with |c00a79eff/gl gdkp|r!",
