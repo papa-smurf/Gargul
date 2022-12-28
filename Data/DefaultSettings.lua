@@ -130,6 +130,7 @@ GL.Data.DefaultSettings = {
         closeAuctioneerOnStart = false,
         defaultMinimumBid = 500,
         defaultIncrement = 100,
+        delayBetweenQueuedAuctions = 1,
         doCountdown = true,
         enableGDKPBidderQueue = true,
         enableGDKPQueuesByDefault = false,
