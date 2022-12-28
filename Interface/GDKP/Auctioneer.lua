@@ -617,7 +617,9 @@ end
 function Auctioneer:timeRanOut()
     GL:debug("Auctioneer:timeRanOut");
 
-    if (not Settings:get("GDKP.autoAwardViaAuctioneer")) then
+    if (not Settings:get("GDKP.autoAwardViaAuctioneer")
+        or GDKPAuction.inProgress
+    ) then
         return;
     end
 
@@ -626,7 +628,7 @@ function Auctioneer:timeRanOut()
     if (not GL:tableGet(GDKPAuction.Current, "TopBid.Bidder.name")) then
         local actionWhenNoBidsArePresent = Settings:get("GDKP.queuedAuctionNoBidsAction");
 
-        if (actionWhenNoBidsArePresent ~= "NONE") then
+        if (actionWhenNoBidsArePresent ~= GL.Data.Constants.GDKP.QueuedAuctionNoBidsActions.NOTHING) then
             if (actionWhenNoBidsArePresent == "DISENCHANT") then
                 GL.PackMule:disenchant(GDKPAuction.Current.itemLink, true);
             end
