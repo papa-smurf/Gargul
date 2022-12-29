@@ -155,8 +155,15 @@ function DroppedLoot:lootChanged()
     return lootChanged;
 end
 
--- Remove the highlights on all loot buttons
+--- Remove the highlights on all loot buttons
+---@return void
 function DroppedLoot:removeHighlights()
+    GL:debug("DroppedLoot:removeHighlights");
+
+    if (GL.isRetail) then
+        return;
+    end
+
     for buttonIndex = 1, _G.LOOTFRAME_NUMBUTTONS do
         local Button = getglobal("LootButton" .. buttonIndex);
 
@@ -173,6 +180,7 @@ function DroppedLoot:highlightItemsOfInterest()
     -- There's no point highlighting loot if the player
     -- is not in a group or highlights are disabled
     if (not GL.Settings:get("highlightsEnabled")
+        or GL.isRetail
         or (
             not GL.Settings:get("highlightHardReservedItems")
             and not GL.Settings:get("highlightSoftReservedItems")
@@ -338,17 +346,33 @@ function DroppedLoot:hookClickEvents()
 
                 local keyPressIdentifier = GL.Events:getClickCombination();
 
-                -- Open the roll window
+                -- Open the action selection window
                 if (keyPressIdentifier == GL.Settings:get("ShortcutKeys.rollOffOrAuction")) then
+                    if (GL.GDKP.Session:activeSessionID()
+                        and not GL.GDKP.Session:getActive().lockedAt
+                    ) then
+                        GL.Interface.GDKP.Auctioneer:draw(itemLink);
+                    else
+                        GL.MasterLooterUI:draw(itemLink);
+                    end
+                -- Open the roll window
+                elseif (keyPressIdentifier == GL.Settings:get("ShortcutKeys.rollOff")) then
                     GL.MasterLooterUI:draw(itemLink);
 
-                    -- Open the award window
+                -- Open the auction window
+                elseif (keyPressIdentifier == GL.Settings:get("ShortcutKeys.auction")) then
+                    GL.Interface.GDKP.Auctioneer:draw(itemLink);
+
+                -- Open the award window
                 elseif (keyPressIdentifier == GL.Settings:get("ShortcutKeys.award")) then
                     GL.Interface.Award:draw(itemLink);
 
-                    -- Disenchant the item
                 elseif (keyPressIdentifier == GL.Settings:get("ShortcutKeys.disenchant")) then
-                    GL.PackMule:disenchant(itemLink);
+                    -- We only allow disenchanting from bags if the disenchant hotkey does not include control
+                    -- because otherwise it triggers the dressupframe which can be really annoying
+                    if (not IsControlKeyDown()) then
+                        GL.PackMule:disenchant(itemLink);
+                    end
                 end
             end);
 

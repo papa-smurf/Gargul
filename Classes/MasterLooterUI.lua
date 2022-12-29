@@ -79,6 +79,15 @@ function MasterLooterUI:draw(itemLink)
         Window.frame,
         "MasterLooting"
     );
+    SettingsButton:SetScript("OnClick", function(_, button)
+        if (button == 'LeftButton') then
+            self:close();
+
+            GL.Settings:draw("MasterLooting", function ()
+                self:draw();
+            end);
+        end
+    end);
     self.SettingsButton = SettingsButton;
 
         --[[

@@ -49,7 +49,10 @@ function GroupLoot:highlightItemsOfInterest()
 
     for itemIndex = 1, _G.NUM_GROUP_LOOT_FRAMES do
         local ItemFrame = getglobal("GroupLootFrame" .. itemIndex);
-        LCG.PixelGlow_Stop(ItemFrame);
+
+        if (not GL.isRetail) then
+            LCG.PixelGlow_Stop(ItemFrame);
+        end
 
         if (ItemFrame:IsVisible()) then
             local rollId = ItemFrame.rollID;
@@ -101,7 +104,7 @@ function GroupLoot:highlightItemsOfInterest()
                     end
                 end
 
-                if (enableHighlight) then
+                if (enableHighlight and not GL.isRetail) then
                     -- Add an animated border to indicate that this item was reserved / wishlisted
                     LCG.PixelGlow_Start(ItemFrame, BorderColor, 32, .05, 10, 4);
                 end

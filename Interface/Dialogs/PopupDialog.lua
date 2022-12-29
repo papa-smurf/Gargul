@@ -19,6 +19,11 @@ function PopupDialog:open(Dialog)
     Frame:SetQuestion(Dialog.question or "");
     Frame:OnYes(Dialog.OnYes or function () end);
     Frame:OnNo(Dialog.OnNo or function () end);
+    Frame:OnCancel(Dialog.OnCancel or function () end);
+
+    if (Dialog.withCancel) then
+        Frame:IncludeCancel();
+    end
 end
 
 -- Clear soft-reserve data confirmation

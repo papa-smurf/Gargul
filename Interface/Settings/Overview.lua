@@ -44,8 +44,9 @@ local Overview = GL.Interface.Settings.Overview; ---@type SettingsOverview
 --- Draw a setting section
 ---
 ---@param section string|nil
+---@param param function|nil What to do after closing the settings again
 ---@return void
-function Overview:draw(section)
+function Overview:draw(section, onCloseCallback)
     GL:debug("Overview:draw");
 
     local AceGUI = GL.AceGUI;
@@ -88,14 +89,14 @@ function Overview:draw(section)
     Window:SetPoint(GL.Interface:getPosition("Settings"));
 
     Window:SetCallback("OnClose", function()
-        self:close();
+        self:close(onCloseCallback);
     end);
 
     -- Override the default close button behavior
     local CloseButton = GL:fetchCloseButtonFromAceGUIWidget(Window);
     if (CloseButton) then
         CloseButton:SetScript("OnClick", function ()
-            self:close();
+            self:close(onCloseCallback);
         end);
     end
 
@@ -164,7 +165,9 @@ function Overview:draw(section)
     ChangelogButton:SetText("Changelog");
     ChangelogButton:SetCallback("OnClick", function()
         GL.Interface.Changelog:draw();
-        self:close();
+        self:close(function ()
+            self:draw(self.activeSection);
+        end);
     end);
     ChangelogButton:SetWidth(120);
     SecondColumn:AddChild(ChangelogButton);
@@ -208,7 +211,7 @@ function Overview:draw(section)
 end
 
 ---@return void
-function Overview:close()
+function Overview:close(onCloseCallback)
     local Window = GL.Interface:get(self, "Window");
 
     -- Some sections require additional cleanup, check if that's the case here
@@ -220,6 +223,12 @@ function Overview:close()
         if (result == false) then
             return;
         end
+    end
+
+    -- The user can pass along a close handler if his own
+    -- this allows us to open up a previous window after closing the settings for example
+    if (type(onCloseCallback) == "function") then
+        onCloseCallback();
     end
 
     self.isVisible = false;

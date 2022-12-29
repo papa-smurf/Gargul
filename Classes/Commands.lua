@@ -21,6 +21,7 @@ GL.Commands = GL.Commands or {
         gdkp = "Open the GDKP UI where you can manage your GDKP sessions",
         groups = "Open the group window where you can provide a roster from csv/raidhelper/wowhead so that you can: see who's missing and sort groups automatically",
         import = "Opens the general import window that includes shortcuts to the TMB, SoftRes or loot priority importers",
+        importprices = "Open an import window with which you can import per-product minimum and increment settings",
         inspect = "You can check whether players brought items (and how many), e.g. to check for consumables (requires players to have Gargul!): /gl inspect itemID1, itemID2, itemID3",
         lootpriority = "Open the loot priority editor where you can edit / clear loot priorities. These are the same priorities as imported by the TMB importer, clearing them here clears them for TMB as well",
         packmule = "Open PackMule which allows you to automatically funnel dropped gear to specific players, very helpful with green items for example",
@@ -35,50 +36,51 @@ GL.Commands = GL.Commands or {
     },
 
     ShorthandDictionary = {
+        ["+1"] = "plusones",
+        a = "award",
         ah = "awardhistory",
-        br = "boostedrolls",
+        aod = "awardondate",
+        bi = "bid",
         boosted = "boostedrolls",
         boostedroll = "boostedrolls",
-        points = "boostedrolls",
+        br = "boostedrolls",
+        bu = "buffs",
+        cd = "cleardisenchanter",
         co = "settings",
         config = "settings",
-        ro = "rolloff",
-        roll = "rolloff",
-        a = "award",
-        aod = "awardondate",
-        cd = "cleardisenchanter",
-        sd = "setdisenchanter",
-        rcsv = "raidcsv",
+        clearplusone = "clearplusones",
+        cpo = "clearplusones",
+        ex = "export",
         gd = "gdkp",
         gr = "groups",
-        roster = "groups",
-        so = "softreserves",
-        sr = "softreserves",
-        pm = "packmule",
-        tmb = "thatsmybis",
-        wl = "thatsmybis",
+        im = "import",
+        ip = "importprices",
+        ins = "inspect",
         lo = "lootpriority",
+        plusone = "plusones",
+        pm = "packmule",
+        po = "plusones",
+        points = "boostedrolls",
         pr = "lootpriority",
         priority = "lootpriority",
-        bi = "bid",
-        im = "import",
-        ex = "export",
+        rcsv = "raidcsv",
+        ro = "rolloff",
+        roll = "rolloff",
+        roster = "groups",
+        sd = "setdisenchanter",
+        so = "softreserves",
+        sr = "softreserves",
+        tmb = "thatsmybis",
         ve = "version",
-        ins = "inspect",
-        bu = "buffs",
-        ["+1"] = "plusones",
-        plusone = "plusones",
-        po = "plusones",
-        cpo = "clearplusones",
-        clearplusone = "clearplusones",
+        wl = "thatsmybis",
     },
 
     Dictionary = {
-        -- Open the settings menu
-        settings = function(...) Settings:draw(); end,
-
         -- Open the window for rolling off items
         rolloff = function(...) GL.MasterLooterUI:draw(...); end,
+
+        -- Open the settings menu
+        settings = function(...) Settings:draw(); end,
 
         -- Award an item. This either award it directly or opens the UI
         award = function(...)
@@ -116,6 +118,11 @@ GL.Commands = GL.Commands or {
 
         -- Open the raid groups window
         groups = function() GL.RaidGroups:drawImporter(); end,
+
+        -- Open the GDKP minimum price / increment importer
+        importprices = function()
+            GL.Interface.GDKP.ImportPrices:open();
+        end,
 
         -- Open the soft reserves window
         softreserves = function() GL.SoftRes:draw(); end,

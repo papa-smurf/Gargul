@@ -70,6 +70,9 @@ Comm.Actions = {
     [Actions.refreshGDKPAuction] = function (Message)
         GL.GDKP.Auction:refresh(Message);
     end,
+    [Actions.broadcastGDKPAuctionQueue] = function (Message)
+        GL.GDKP.Auction:receiveQueue(Message);
+    end,
     [Actions.broadcastBoostedRollsData] = function (Message)
         GL.BoostedRolls:receiveBroadcast(Message);
     end,

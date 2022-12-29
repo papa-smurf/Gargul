@@ -661,7 +661,7 @@ function RollOff:processRoll(message)
     GL:debug("RollOff:processRoll");
 
     -- We only track rolls when a rollof is actually in progress
-    if (not RollOff.inProgress) then
+    if (not RollOff.listeningForRolls) then
         return;
     end
 

@@ -460,9 +460,9 @@ function TimeLeft:refreshBars()
     end
 
     for bag = 0, numberOfBagsToCheck do
-        for slot = 1, GetContainerNumSlots(bag) do
+        for slot = 1, GL:getContainerNumSlots(bag) do
             (function ()
-                local icon, _, _, _, _, _, itemLink, _, _ = GetContainerItemInfo(bag, slot);
+                local icon, _, _, _, _, _, itemLink, _, _ = GL:getContainerItemInfo(bag, slot);
 
                 -- There's no eligible item in this bag slot
                 if (not icon or not itemLink) then
