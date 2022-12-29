@@ -1,5 +1,6 @@
 local _, GL = ...;
 
+---@class User
 GL.User = {
     _initialized = false,
     guildMembersCachedAt = 0,
@@ -31,6 +32,7 @@ GL.User = {
     combatRole = "",
 };
 
+---@type User
 local User = GL.User;
 
 -- Initialize the user's more "static" details that
