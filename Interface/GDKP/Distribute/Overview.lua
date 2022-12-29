@@ -733,6 +733,7 @@ function Overview:calculateCuts()
     local Cuts = GL:tableGet(Session, "Pot.Cuts", {});
 
     local numberOfRaiders = 0;
+    local numberOfRaidersWithCut = 0;
     for player, cut in pairs(Cuts or {}) do
         local CutHolder = self.CutHolders[player];
 
@@ -744,6 +745,10 @@ function Overview:calculateCuts()
                 cutPercentage = 0;
             end
 
+            if (cut > 0) then
+                numberOfRaidersWithCut = numberOfRaidersWithCut + 1;
+            end
+
             CutHolder:SetText(string.format("|c00967FD2%s|r|c00FFF569g|r  (%s%%)", GL:round(cut, 2), GL:round(cutPercentage, 2)));
         end
     end
@@ -753,7 +758,7 @@ function Overview:calculateCuts()
     end
 
     Interface:get(self, "Label.RaidersHeaderLabel"):SetText(
-        string.format("    %s Raiders | Total payout: %sg", numberOfRaiders, GL:round(totalDistributed, 2))
+        string.format("    %s Raiders | %s With cut | Total payout: %sg", numberOfRaiders, numberOfRaidersWithCut, GL:round(totalDistributed, 2))
     );
 end
 
