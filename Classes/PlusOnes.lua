@@ -231,7 +231,7 @@ end
 function PlusOnes:toPlusOne(plusOne)
     plusOne = tonumber(plusOne);
 
-    if not plusOne then
+    if (not plusOne) then
         return nil;
     end
 
