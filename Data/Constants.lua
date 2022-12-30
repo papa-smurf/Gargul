@@ -96,6 +96,7 @@ GL.Data.Constants = {
         },
         Epic = {
             "Die_Quelle",
+            "Infinïty",
             "Sapmagic",
         },
         Legendary = {
