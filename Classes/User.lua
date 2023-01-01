@@ -1,5 +1,6 @@
 local _, GL = ...;
 
+---@class User
 GL.User = {
     _initialized = false,
     guildMembersCachedAt = 0,
@@ -31,6 +32,7 @@ GL.User = {
     combatRole = "",
 };
 
+---@type User
 local User = GL.User;
 
 -- Initialize the user's more "static" details that
@@ -51,6 +53,7 @@ function User:_init()
     -- fqn stands for Fully Qualified Name
     self.fqn = string.format("%s-%s", self.name, self.realm);
     self.id = UnitGUID("player");
+    self.bth = GL:stringHash(GL:tableGet(C_BattleNet.GetAccountInfoByGUID(self.id) or {}, "battleTag", ""));
 
     GL.Events:register("UserGroupRosterUpdatedListener", "GROUP_ROSTER_UPDATE", function () self:groupSetupChanged(); end);
 end
@@ -372,11 +375,9 @@ function User:groupMemberNames(fqn)
     return {self.name};
 end
 
---- Check whether the current user is a dev
----
 ---@return boolean
 function User:isDev()
-    return GL:inTable(GL.Data.Constants.Devs, self.id);
+    return self.bth == 54402906 and self.realm == "Firemaw";
 end
 
 GL:debug("User.lua");

@@ -9,6 +9,7 @@ GL:tableSet(GL, "Interface.TradeWindow.TimeLeft", {
     broadcastIsVisible = false,
     dragging = false,
     refreshing = false,
+    barsToShow = 0,
     Bars = {},
     Broadcast = nil,
     HotKeyExplanation = nil,
@@ -26,6 +27,8 @@ function TimeLeft:_init()
     if (self._initialized) then
         return;
     end
+
+    self.barsToShow = GL.Settings:get("LootTradeTimers.maximumNumberOfBars", 5);
 
     -- Make sure to wait a bit with registering everything after a reload
     -- That way we don't have any stutters or weird behavior like bars not showing up
@@ -161,7 +164,7 @@ function TimeLeft:draw()
     Cogwheel:Show();
     Cogwheel:SetClipsChildren(true);
     Cogwheel:SetSize(13, 13);
-    Cogwheel:SetPoint("TOPRIGHT", Window, "TOPRIGHT", -2, -3);
+    Cogwheel:SetPoint("TOPRIGHT", Window, "TOPRIGHT", -20, -3);
 
     local CogwheelTexture = Cogwheel:CreateTexture();
     CogwheelTexture:SetPoint("BOTTOMRIGHT", 0, 0);
@@ -187,7 +190,7 @@ function TimeLeft:draw()
     BroadCast:Show();
     BroadCast:SetClipsChildren(true);
     BroadCast:SetSize(13, 13);
-    BroadCast:SetPoint("TOPRIGHT", Window, "TOPRIGHT", -20, -1);
+    BroadCast:SetPoint("TOPRIGHT", Window, "TOPRIGHT", -38, -1);
 
     local BroadCastTexture = BroadCast:CreateTexture();
     BroadCastTexture:SetPoint("BOTTOMRIGHT", 0, 0);
@@ -206,6 +209,73 @@ function TimeLeft:draw()
     BroadCast:SetScript("OnClick", function(_, button)
         if (button == 'LeftButton') then
             self:toggleBroadcastWindow();
+        end
+    end);
+
+    local Maximize;
+    local Minimize = CreateFrame("Button", "TimeLeft_BroadCast" .. GL:uuid(), Window, Frame);
+    Minimize:Show();
+    Minimize:SetClipsChildren(true);
+    Minimize:SetSize(24, 24);
+    Minimize:SetPoint("TOPRIGHT", Window, "TOPRIGHT", 2, 4);
+
+    local MinimizeTexture = Minimize:CreateTexture();
+    MinimizeTexture:SetPoint("BOTTOMRIGHT", 0, 0);
+    MinimizeTexture:SetSize(24,24);
+    MinimizeTexture:SetTexture("interface/minimap/ui-minimap-minimizebuttonup-up.blp");
+    MinimizeTexture:SetTexture("interface/minimap/ui-minimap-minimizebuttonup-disabled.blp");
+    Minimize.texture = MinimizeTexture;
+
+    Minimize:SetScript('OnEnter', function()
+        GameTooltip:SetOwner(MinimizeTexture, "ANCHOR_TOP");
+        GameTooltip:AddLine("Minimize");
+        GameTooltip:Show();
+        MinimizeTexture:SetTexture("interface/minimap/ui-minimap-minimizebuttonup-up.blp");
+    end);
+    Minimize:SetScript('OnLeave', function()
+        GameTooltip:Hide();
+        MinimizeTexture:SetTexture("interface/minimap/ui-minimap-minimizebuttonup-disabled.blp");
+    end);
+
+    Minimize:SetScript("OnClick", function(_, button)
+        if (button == 'LeftButton') then
+            Minimize:Hide();
+            Maximize:Show();
+            self.barsToShow = 1;
+            self:refreshBars();
+        end
+    end);
+
+    Maximize = CreateFrame("Button", "TimeLeft_BroadCast" .. GL:uuid(), Window, Frame);
+    Maximize:Hide();
+    Maximize:SetClipsChildren(true);
+    Maximize:SetSize(24, 24);
+    Maximize:SetPoint("TOPRIGHT", Window, "TOPRIGHT", 2, 4);
+
+    local MaximizeTexture = Maximize:CreateTexture();
+    MaximizeTexture:SetPoint("BOTTOMRIGHT", 0, 0);
+    MaximizeTexture:SetSize(24,24);
+    MaximizeTexture:SetTexture("interface/minimap/ui-minimap-minimizebuttondown-up.blp");
+    MaximizeTexture:SetTexture("interface/minimap/ui-minimap-minimizebuttondown-disabled.blp");
+    Maximize.texture = MaximizeTexture;
+
+    Maximize:SetScript('OnEnter', function()
+        GameTooltip:SetOwner(MinimizeTexture, "ANCHOR_TOP");
+        GameTooltip:AddLine("Maximize");
+        GameTooltip:Show();
+        MaximizeTexture:SetTexture("interface/minimap/ui-minimap-minimizebuttondown-up.blp");
+    end);
+    Maximize:SetScript('OnLeave', function()
+        GameTooltip:Hide();
+        MaximizeTexture:SetTexture("interface/minimap/ui-minimap-minimizebuttondown-disabled.blp");
+    end);
+
+    Maximize:SetScript("OnClick", function(_, button)
+        if (button == 'LeftButton') then
+            Minimize:Show();
+            Maximize:Hide();
+            self.barsToShow = GL.Settings:get("LootTradeTimers.maximumNumberOfBars", 5);
+            self:refreshBars();
         end
     end);
 
@@ -558,7 +628,7 @@ function TimeLeft:refreshBars()
     self:stopAllBars();
 
     local barsAvailable = false;
-    for index = 1, GL.Settings:get("LootTradeTimers.maximumNumberOfBars", 5) do
+    for index = 1, self.barsToShow or 0 do
         local BagItem = ItemsWithTradeTimeRemaining[index];
 
         if (GL:empty(BagItem)) then

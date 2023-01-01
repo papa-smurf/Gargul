@@ -822,6 +822,7 @@ function Auctioneer:refreshQueueTable()
         if (not GL:empty(TableData)) then
             if (Table) then
                 Table:SetData(TableData);
+                Table:SortData();
             end
         else
             self:clearQueue();
