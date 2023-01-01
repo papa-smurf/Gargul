@@ -486,16 +486,6 @@ GL.Data.Constants = {
         monk = {r = 0.00, g = 1.00, b= 0.60},
     },
 
-    Devs = {
-        "Player-4467-02A4245A",
-        "Player-4467-02AB765C",
-        "Player-4478-01BF6C3B",
-        "Player-4478-02127870",
-        "Player-4478-02127978",
-        "Player-4478-02E36E30",
-        "Player-5278-0153632E",
-    },
-
     TMBTierHexColors = {
         S = "02F3FF",
         [1] = "02F3FF",
