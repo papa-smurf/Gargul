@@ -1301,6 +1301,27 @@ function GL:getItemIDFromLink(itemLink)
     return itemID;
 end
 
+--- Return an item's quality from an item link
+---
+---@param itemLink string
+---@return number|boolean
+function GL:getItemQualityFromLink(itemLink)
+    if (not itemLink
+        or type(itemLink) ~= "string"
+        or itemLink == ""
+    ) then
+        return false;
+    end
+
+    local color = string.sub(itemLink, 5, 10);
+
+    if (not color) then
+        return false;
+    end
+
+    return GL.Data.Constants.HexColorsToItemQuality[color] or false;
+end
+
 --- Strip the realm off of a string (usually a player name)
 ---
 ---@param str string

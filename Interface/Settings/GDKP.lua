@@ -219,8 +219,8 @@ function GDKP:draw(Parent)
     DelayInSecondsBetweenQueuedAuctions:SetLabel("Add a delay in seconds between queued auctions");
     DelayInSecondsBetweenQueuedAuctions.label:SetTextColor(1, .95686, .40784);
     DelayInSecondsBetweenQueuedAuctions:SetFullWidth(true);
-    DelayInSecondsBetweenQueuedAuctions:SetValue(GL.Settings:get("GDKP.delayBetweenQueuedAuctions", 0));
-    DelayInSecondsBetweenQueuedAuctions:SetSliderValues(0, 30, 1);
+    DelayInSecondsBetweenQueuedAuctions:SetValue(GL.Settings:get("GDKP.delayBetweenQueuedAuctions", 1));
+    DelayInSecondsBetweenQueuedAuctions:SetSliderValues(1, 30, 1);
     DelayInSecondsBetweenQueuedAuctions:SetCallback("OnValueChanged", function(Slider)
         local value = math.floor(tonumber(Slider:GetValue()));
 
@@ -464,7 +464,7 @@ function GDKP:draw(Parent)
         },
     }, Parent);
 
-    Overview:drawHeader("|c00FF0000DANGER ZONE", Parent);
+    Overview:drawHeader("|c00FF0000DANGER ZONE|r", Parent);
 
     local ResetPerItemSettings = GL.AceGUI:Create("Button");
     ResetPerItemSettings:SetText("Reset all minimum prices and increments");

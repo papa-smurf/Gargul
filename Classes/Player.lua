@@ -1,10 +1,12 @@
 local _, GL = ...;
 
+---@class Player
 GL.Player = {
     playerClassByName = {},
 };
 GL.Player.__index = GL.Player;
 
+---@type Player
 local Player = GL.Player;
 
 -- This metatable allows us to have multiple instances of this object
@@ -129,11 +131,13 @@ end
 ---@param default string|nil
 ---@return string
 function Player:classByName(playerName, default)
+    GL:debug("Player:classByName");
+
     if (type(default) == "nil") then
         default = "priest";
     end
 
-    playerName = string.lower(playerName);
+    playerName = string.lower(strtrim(playerName));
 
     -- We already know this player's class name, return it
     if (self.playerClassByName[playerName]) then

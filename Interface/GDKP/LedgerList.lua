@@ -148,7 +148,7 @@ function LedgerList:refresh()
     local managementCutPercentage = tonumber(Session.managementCut) or 0;
     local managementCut = math.floor(totalPot * (0 + managementCutPercentage / 100));
     Interface:get(self, "GDKPLedgerList"):SetStatusText(string.format(
-        "To distribute: %sg",
+        "To distribute: %sg | Powered by Gargul",
         math.floor(totalPot - managementCut)
     ));
 

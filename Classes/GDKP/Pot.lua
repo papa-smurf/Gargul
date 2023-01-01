@@ -579,7 +579,16 @@ function Pot:announce(sessionID, callback)
         return false;
     end
 
-    local message = string.format("Base cut: %sg", math.floor(Session.lastAvailableBase));
+    -- If there's a management cut then we remove it from the pot first
+    local totalPot = self:total(sessionID);
+    local managementCutPercentage = tonumber(Session.managementCut) or 0;
+    local managementCut = math.floor(totalPot * (0 + managementCutPercentage / 100));
+    local totalToDistribute = math.floor(totalPot - managementCut);
+
+    local message = string.format("Total Pot: %sg", totalToDistribute);
+    GL:sendChatMessage(message, "GROUP");
+
+    message = string.format("Base cut: %sg", math.floor(Session.lastAvailableBase));
     GL:sendChatMessage(message, "GROUP");
 
     ---@todo: polish up the announcement at some point
