@@ -75,7 +75,9 @@ function Auction:_init()
 
     -- An event is fired whenever a bid is accepted, in which case we broadcast the latest auction details
     Events:register("GDKPBidAccepted", "GL.GDKP_BID_ACCEPTED", function (_, OldTopBid, NewTopBid)
-        if (GL:tableGet(OldTopBid or {}, "Bidder.name") == GL.User.name and NewTopBid.Bidder.name ~= GL.User.name) then
+        if (GL:tableGet(OldTopBid or {}, "Bidder.uuid") == GL.User.id
+            and NewTopBid.Bidder.uuid ~= GL.User.id
+        ) then
             Events:fire("GL.GDKP_USER_WAS_OUTBID", OldTopBid, NewTopBid);
         end
 
