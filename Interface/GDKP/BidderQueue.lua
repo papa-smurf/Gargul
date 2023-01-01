@@ -136,12 +136,19 @@ function BidderQueue:build()
             local currentValue = data[realrow].cols[3].value;
             local checksum = data[realrow].cols[4].value;
 
-            if (currentValue == "Bid") then
-                if (not GDKPAuction.Queue[checksum]) then
-                    return;
-                end
+            if (not GDKPAuction.Queue[checksum]) then
+                return;
+            end
 
-                local QueuedItem = GDKPAuction.Queue[checksum];
+            local QueuedItem = GDKPAuction.Queue[checksum];
+            if (type(QueuedItem.itemLink) ~= "string"
+                or not tonumber(QueuedItem.minimumBid)
+            ) then
+                return;
+            end
+
+            if (currentValue == "Bid") then
+
                 GL.Interface.Dialogs.ConfirmWithSingleInputDialog:open({
                     question = string.format("What's your maximum bid for %s? (Minimum %s|c00FFF569g|r)", QueuedItem.itemLink, QueuedItem.minimumBid),
                     OnYes = function (max)
@@ -236,6 +243,7 @@ function BidderQueue:refreshTable()
 
     if (queuedItems > 0) then
         Table:SetData(TableData);
+        Table:SortData();
         self:open();
     else
         self:close();
