@@ -224,23 +224,16 @@ function PackMuleRules:drawLowerThanQualityRule(Frame, Rule)
     beforeLowerThanRuleLabel:SetWidth(34);
     Row:AddChild(beforeLowerThanRuleLabel);
 
-    local LowerThanList;
+    local LowerThanList = {};
+    local lowestValidItemQuality = 0;
+    local highestValidItemQuality = 4;
+    if (not GL.isEra) then -- Minimum master looting levels differ between Era and TBC
+        lowestValidItemQuality = 2;
+    end
 
-    -- Minimum master looting levels differ between Era and TBC
-    if (GL.isEra) then
-        LowerThanList = {
-            [0] = "|c009d9d9dPoor|r",
-            [1] = "|c00ffffffCommon|r",
-            [2] = "|c001eff00Uncommon|r",
-            [3] = "|c000070ddRare|r",
-            [4] = "|c00a335eeEpic|r",
-        };
-    else
-        LowerThanList = {
-            [2] = "|c001eff00Uncommon|r",
-            [3] = "|c000070ddRare|r",
-            [4] = "|c00a335eeEpic|r",
-        };
+    local ItemQualityColors = GL.Data.Constants.ItemQualityColors;
+    for i = lowestValidItemQuality, highestValidItemQuality do
+        LowerThanList[i] = string.format("|c00%s%s|r", ItemQualityColors[i].hex, ItemQualityColors[i].description);
     end
 
     -- DROPDOWN
@@ -294,23 +287,16 @@ function PackMuleRules:drawHigherThanQualityRule(Frame, Rule)
     beforeHigherThanRuleLabel:SetWidth(34);
     Row:AddChild(beforeHigherThanRuleLabel);
 
-    local HigherThanList;
+    local HigherThanList = {};
+    local lowestValidItemQuality = 0;
+    local highestValidItemQuality = 4;
+    if (not GL.isEra) then -- Minimum master looting levels differ between Era and TBC
+        lowestValidItemQuality = 2;
+    end
 
-    -- Minimum master looting levels differ between Era and TBC
-    if (GL.isEra) then
-        HigherThanList = {
-            [0] = "|c009d9d9dPoor|r",
-            [1] = "|c00ffffffCommon|r",
-            [2] = "|c001eff00Uncommon|r",
-            [3] = "|c000070ddRare|r",
-            [4] = "|c00a335eeEpic|r",
-        };
-    else
-        HigherThanList = {
-            [2] = "|c001eff00Uncommon|r",
-            [3] = "|c000070ddRare|r",
-            [4] = "|c00a335eeEpic|r",
-        };
+    local ItemQualityColors = GL.Data.Constants.ItemQualityColors;
+    for i = lowestValidItemQuality, highestValidItemQuality do
+        HigherThanList[i] = string.format("|c00%s%s|r", ItemQualityColors[i].hex, ItemQualityColors[i].description);
     end
 
     -- DROPDOWN
