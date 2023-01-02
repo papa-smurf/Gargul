@@ -521,7 +521,9 @@ function Award:topPrioForItem(itemID)
             end
         end
 
-        if (not moreThanOnePersonReservedThisItem) then
+        if (lastPlayerName
+            and not moreThanOnePersonReservedThisItem
+        ) then
             return lastPlayerName;
         end
     end
@@ -596,7 +598,11 @@ function Award:populatePlayersTable(itemID)
 
     PlayersTable:ClearSelection();
 
+    -- See if there's a top player for this item that we can preselect
     local topPrioForItem = self:topPrioForItem(itemID);
+    if (topPrioForItem) then
+        topPrioForItem = string.lower(GL:stripRealm(topPrioForItem));
+    end
 
     local TableData = {};
     local row = 1;
@@ -612,7 +618,7 @@ function Award:populatePlayersTable(itemID)
             },
         });
 
-        if (topPrioForItem == string.lower(GL:stripRealm(name))) then
+        if (topPrioForItem and topPrioForItem == string.lower(GL:stripRealm(name))) then
             PlayersTable:SetSelection(row);
             local EditBox = GL.Interface:get(self, "EditBox.PlayerName");
 
