@@ -53,7 +53,11 @@ function User:_init()
     -- fqn stands for Fully Qualified Name
     self.fqn = string.format("%s-%s", self.name, self.realm);
     self.id = UnitGUID("player");
-    self.bth = GL:stringHash(GL:tableGet(C_BattleNet.GetAccountInfoByGUID(self.id) or {}, "battleTag", ""));
+    self.bth = "";
+
+    if (type(C_BattleNet) == "table" and C_BattleNet.GetAccountInfoByGUID) then
+        self.bth = GL:stringHash(GL:tableGet(C_BattleNet.GetAccountInfoByGUID(self.id) or {}, "battleTag", ""));
+    end
 
     GL.Events:register("UserGroupRosterUpdatedListener", "GROUP_ROSTER_UPDATE", function () self:groupSetupChanged(); end);
 end
