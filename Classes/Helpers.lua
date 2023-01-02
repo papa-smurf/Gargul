@@ -664,7 +664,7 @@ function GL.LibStInputCellUpdate (rowFrame, frame, data, cols, row, realrow, col
 
     local callback = data[realrow].cols[column]._OnTextChanged;
     if (type(callback) == "function") then
-        BidInput:SetScript("OnTextChanged", function(self, event)
+        BidInput:SetScript("OnTextChanged", function()
             callback(BidInput);
         end);
     end
@@ -673,11 +673,16 @@ function GL.LibStInputCellUpdate (rowFrame, frame, data, cols, row, realrow, col
     local originalOnHide = frame:GetScript("OnHide");
     frame:SetScript("OnHide", function (...)
         if (BidInput and BidInput.Hide) then
+            GL.inputsDeleted = GL.inputsDeleted + 1;
+            BidInput:SetText("");
             BidInput:Hide();
+            BidInput:SetParent(nil);
+            BidInput:ClearAllPoints()
+            BidInput.OnEvent = function() end;
         end
 
-        BidInput = nil;
         _G[inputName] = nil;
+        BidInput = nil;
 
         frame.children = nil;
         if (type(originalOnHide) == "function") then
