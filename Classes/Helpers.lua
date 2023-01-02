@@ -1966,6 +1966,26 @@ function GL:tableSet(Table, keyString, value, ignoreIfExists)
     return self:tableSet(Table, strjoin(".", unpack(keys)), value);
 end
 
+--- Add a value to a table by a given key and value. Use dot notation to traverse multiple levels e.g:
+--- Settings.UI.Auctioneer.offsetX can be set using GL:tableSet(myTable, "Settings.UI.Auctioneer.offsetX", myValue)
+--- without having to worry about tables or keys existing along the way.
+---
+---@param Table table
+---@param keyString string
+---@param value any
+---@return boolean
+function GL:tableAdd(Table, keyString, value)
+    local Destination = self:tableGet(Table, keyString, {});
+
+    if (type(Destination) ~= "table") then
+        self:warning("Invalid destination GL:tableAdd, requires table");
+        return false;
+    end
+
+    tinsert(Destination, value);
+    return self:tableSet(Table, keyString, Destination);
+end
+
 --- Apply a user supplied function to every member of a table
 ---
 ---@param Table table
