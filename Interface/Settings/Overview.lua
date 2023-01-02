@@ -17,8 +17,7 @@ GL.Interface.Settings.Overview = {
         {"SoftRes", "SoftRes"},
         {"TMB and DFT", "TMB"},
         {"GDKP", "GDKP"},
-        {"Announce Loot", "DroppedLoot"},
-        {"Shortcut Keys", "ShortcutKeys"},
+        {"Dropped Loot", "DroppedLoot"},
         {"Exporting Loot", "ExportingLoot"},
         {"Loot trade timers", "LootTradeTimers"},
         {"Autoloot with PackMule", "PackMule"},
@@ -29,6 +28,7 @@ GL.Interface.Settings.Overview = {
         {"Master Looting", "MasterLooting"},
         {"    Roll Tracking", "RollTracking"},
         {"    Awarding Loot", "AwardingLoot"},
+        {"Shortcut Keys", "ShortcutKeys"},
         {"Trade Announcements", "TradeAnnouncements"},
         {"Rolling", "Rolling"},
         {"Loot Highlighting", "LootHighlighting"},
@@ -433,6 +433,7 @@ function Overview:drawHeader(text, Parent)
     Parent:AddChild(Header);
 
     local HeaderText = GL.AceGUI:Create("Label");
+    HeaderText:SetFullWidth(true);
     HeaderText:SetHeight(20);
     HeaderText:SetText(text);
     Header:AddChild(HeaderText);

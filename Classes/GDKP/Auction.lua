@@ -75,7 +75,9 @@ function Auction:_init()
 
     -- An event is fired whenever a bid is accepted, in which case we broadcast the latest auction details
     Events:register("GDKPBidAccepted", "GL.GDKP_BID_ACCEPTED", function (_, OldTopBid, NewTopBid)
-        if (GL:tableGet(OldTopBid or {}, "Bidder.name") == GL.User.name and NewTopBid.Bidder.name ~= GL.User.name) then
+        if (GL:tableGet(OldTopBid or {}, "Bidder.uuid") == GL.User.id
+            and NewTopBid.Bidder.uuid ~= GL.User.id
+        ) then
             Events:fire("GL.GDKP_USER_WAS_OUTBID", OldTopBid, NewTopBid);
         end
 
@@ -144,14 +146,12 @@ function Auction:create(itemID, price, winner, sessionID, Bids, note, awardCheck
     end
 
     itemID = GetItemInfoInstant(itemID);
-
     if (not GL:higherThanZero(itemID)) then
         GL:warning("Unknown itemID in Auction:create: " .. tostring(itemID));
         return false;
     end
 
     sessionID = sessionID or GDKPSession:activeSessionID();
-
     local Session = GDKPSession:byID(sessionID);
     if (not Session or Session.lockedAt) then
         GL:warning("The GDKP Session is not available or locked");
@@ -801,7 +801,9 @@ function Auction:sanitizeQueue()
     local Sanitized = {};
 
     for checksum, QueuedItem in pairs(self.Queue or {}) do
-        if (QueuedItem) then
+        if (type(QueuedItem) == "table"
+            and type(QueuedItem.itemLink) == "string"
+        ) then
             Sanitized[checksum] = QueuedItem;
         end
     end
@@ -966,6 +968,7 @@ function Auction:announceStop()
     -- Do a final check to see if we're allowed to stop now
     if (self.lastBidReceivedAt
         and self.Current.antiSnipe
+        and self.Current.antiSnipe > 0
         and GetTime() - self.lastBidReceivedAt <= self.Current.antiSnipe
         and not self.waitingForExtension
     ) then
@@ -1638,7 +1641,7 @@ function Auction:processBid(message, bidder)
         end
 
         -- We need to trigger the anti-snipe time
-        if (self.Current and self.Current.antiSnipe and (
+        if (self.Current and self.Current.antiSnipe and self.Current.antiSnipe > 0 and (
             not bidTooLow or Settings:get("GDKP.invalidBidsTriggerAntiSnipe")
         )) then
             self.lastBidReceivedAt = GetTime();
@@ -1698,6 +1701,7 @@ function Auction:processBid(message, bidder)
 
     local OldTopBid = self.Current.TopBid;
     self.Current.TopBid = BidEntry;
+
     Events:fire("GL.GDKP_BID_ACCEPTED", OldTopBid, BidEntry);
 end
 

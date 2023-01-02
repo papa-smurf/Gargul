@@ -721,6 +721,7 @@ function Overview:resizeFrames()
     Window:DoLayout();
 end
 
+---@return void
 function Overview:calculateCuts()
     GL:debug("Overview:calculateCuts");
 

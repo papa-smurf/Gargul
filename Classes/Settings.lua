@@ -84,6 +84,12 @@ function Settings:enforceTemporarySettings()
         return;
     end
 
+    -- In 5.0.8 we set the minimum delayBetweenQueuedAuctions to 1 instead of 0 to help prevent race conditions
+    local delayBetweenQueuedAuctions = tonumber(GL.Settings:get("GDKP.delayBetweenQueuedAuctions"));
+    if (delayBetweenQueuedAuctions and delayBetweenQueuedAuctions < 1) then
+        GL.Settings:set("GDKP.delayBetweenQueuedAuctions", 1);
+    end
+
     --- We restructured minimum prices and increments for GDKP items in 5.0.5
     if (GL.Version:leftIsOlderThanRight(GL.Version.latestPriorVersionBooted, "5.0.5")) then
         local Restructured = {};
