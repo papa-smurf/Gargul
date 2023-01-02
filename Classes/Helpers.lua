@@ -673,7 +673,6 @@ function GL.LibStInputCellUpdate (rowFrame, frame, data, cols, row, realrow, col
     local originalOnHide = frame:GetScript("OnHide");
     frame:SetScript("OnHide", function (...)
         if (BidInput and BidInput.Hide) then
-            GL.inputsDeleted = GL.inputsDeleted + 1;
             BidInput:SetText("");
             BidInput:Hide();
             BidInput:SetParent(nil);
