@@ -96,6 +96,7 @@ function PackMule:_init()
         end
 
         ConfirmLootRoll(rollID, roll);
+        StaticPopup_Hide("CONFIRM_LOOT_ROLL");
     end);
 
     -- Make sure to auto accept BoP loot when opening containers

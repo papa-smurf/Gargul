@@ -216,7 +216,7 @@ function Session:tradeInitiated(Details)
         if (copperToGive > GetMoney()) then
             GL:error("You don't have enough money to pay " .. Details.partner);
         else
-            GL.TradeWindow:setCopper(copperToGive, function(success)
+            GL.TradeWindow:setCopper(copperToGive, Details.partner, function(success)
                 if (success) then
                     return;
                 end

@@ -297,7 +297,7 @@ function AwardHistory:draw()
                 ActionButtonFrame:SetHeight(30);
                 ItemRow:AddChild(ActionButtonFrame);
 
-                if (not GL.User.isInGroup or GL.User.hasAssist) then
+                if (not GL.User.isInGroup or GL.User.hasAssist or GL.User.isMasterLooter) then
                     local DeleteButton = GL.UI:createFrame("Button", "AwardHistoryActionButton" .. GL:uuid(), ActionButtonFrame.frame, "UIPanelButtonTemplate");
                     DeleteButton:SetSize(24, 24);
                     DeleteButton:SetPoint("TOPRIGHT", ActionButtonFrame.frame, "TOPRIGHT", 0, 0);
