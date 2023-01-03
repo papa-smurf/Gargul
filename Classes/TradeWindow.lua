@@ -144,6 +144,7 @@ function TradeWindow:handleEvents(event, message)
     -- Trade started
     if (event == "TRADE_SHOW") then
         self.ItemsToAdd = {};
+        GL.Ace:CancelTimer(self.SetCopperTimer);
 
         -- Trade window shown, show/update the announcement checkbox
         self:updateAnnouncementCheckBox();
@@ -166,6 +167,7 @@ function TradeWindow:handleEvents(event, message)
     -- Trade closed
     if (event == "TRADE_CLOSED") then
         self.ItemsToAdd = {};
+        GL.Ace:CancelTimer(self.SetCopperTimer);
 
         -- Make sure to cancel any lingering timers
         GL:debug("Cancel TradeWindow.AddItemsTimer");
@@ -317,14 +319,23 @@ function TradeWindow:addItem(itemID)
     tinsert(self.ItemsToAdd, itemID);
 end
 
---- Attempt to set a gold amount to the trade window
+--- Attempt to set a copper amount in the trade window
+--- Since we use a timer here we require a target so that we can double-check
+--- whether we're still trading the right person right before adding the copper
 ---
 ---@param amount number
+---@param target string
 ---@return void
-function TradeWindow:setCopper(amount, callback)
+function TradeWindow:setCopper(amount, target, callback)
     GL:debug("TradeWindow:setCopper");
 
-    GL.Ace:ScheduleTimer(function ()
+    GL.Ace:CancelTimer(self.SetCopperTimer);
+    self.SetCopperTimer = GL.Ace:ScheduleTimer(function ()
+        -- Looks like the target changed somewhere along the way
+        if (not GL:iEquals(GL:tableGet(self.State or {}, "partner"), target)) then
+            return;
+        end
+
         _G.MoneyInputFrame_SetCopper(_G.TradePlayerInputMoneyFrame, amount);
 
         -- Let the application know whether setting the desired amount of copper succeeded
