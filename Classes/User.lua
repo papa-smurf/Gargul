@@ -78,6 +78,7 @@ function User:groupSetupChanged()
     User.groupSetupChangedTimer = GL.Ace:ScheduleTimer(function ()
         User:refresh();
         User.groupSetupChangedTimer = false;
+        GL.Events:fire("GL.GROUP_ROSTER_UPDATE_THROTTLED");
     end, 1);
 end
 
@@ -86,6 +87,8 @@ function User:refresh()
     GL:debug("User:refresh");
 
     local userWasMasterLooter = self.isMasterLooter;
+    local userWasLead = self.isLead;
+    local userHadAssist = self.hasAssist;
     local userWasInGroup = self.isInGroup;
     local userWasInRaid = self.isInRaid;
 
@@ -184,6 +187,34 @@ function User:refresh()
         and not self.isMasterLooter
     ) then
         GL.Events:fire("GL.USER_LOST_MASTER_LOOTER");
+    end
+
+    -- The user obtained lead, fire the appropriate event
+    if (not userWasLead
+        and self.isLead
+    ) then
+        GL.Events:fire("GL.USER_OBTAINED_LEAD");
+    end
+
+    -- The user lost lead, fire the appropriate event
+    if (userWasLead
+        and not self.isLead
+    ) then
+        GL.Events:fire("GL.USER_LOST_LEAD");
+    end
+
+    -- The user obtained assist, fire the appropriate event
+    if (not userHadAssist
+        and self.hasAssist
+    ) then
+        GL.Events:fire("GL.USER_OBTAINED_ASSIST");
+    end
+
+    -- The user lost assist, fire the appropriate event
+    if (userHadAssist
+        and not self.hasAssist
+    ) then
+        GL.Events:fire("GL.USER_LOST_ASSIST");
     end
 end
 
