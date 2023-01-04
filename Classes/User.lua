@@ -111,8 +111,8 @@ function User:refresh()
     self.isMasterLooter = false;
     self.raidIndex = nil;
     self.combatRole = nil;
-    self.class, self.fileName = UnitClass("player");
-    self.class = string.lower(self.class);
+    self.fileName = UnitClassBase("player");
+    self.class = string.lower(self.fileName);
     self.localizedRace, self.race = UnitRace("player");
     self.race = string.lower(self.race);
 
@@ -120,10 +120,10 @@ function User:refresh()
         -- Check if the current user is master looting
         -- And check the user's roles in the group
         for index = 1, _G.MAX_RAID_MEMBERS do
-            local name, rank, _, _, class, _,
+            local name, rank, _, _, _, fileName,
             _, _, _, role, isMasterLooter, combatRole = GetRaidRosterInfo(index);
 
-            GL.Player:cacheClass(name, class); -- We cache player classes wherever we can
+            GL.Player:cacheClass(name, fileName); -- We cache player classes wherever we can
 
             if (name == self.name) then
                 self.role = role;
@@ -239,7 +239,7 @@ function User:guildMembers()
     self.GuildMemberNames = {};
 
     for index = 1, GetNumGuildMembers() do
-        local name, rank, rankIndex, level, classDisplayName, zone, publicNote, officerNote, isOnline, status, class = GetGuildRosterInfo(index)
+        local name, rank, rankIndex, level, classDisplayName, zone, publicNote, officerNote, isOnline, status, fileName = GetGuildRosterInfo(index)
 
         if (name) then
             local fqn = string.lower(name);
@@ -257,7 +257,7 @@ function User:guildMembers()
                 officerNote = officerNote,
                 isOnline = isOnline,
                 status = status,
-                class = string.lower(class),
+                fileName = string.lower(fileName),
             });
         end
     end
@@ -298,17 +298,17 @@ function User:groupMembers()
         end
 
         for index = 1, maximumNumberOfGroupMembers do
-            local name, rank, subgroup, level, class, fileName, zone, online, isDead, role, isML = GetRaidRosterInfo(index);
+            local name, rank, subgroup, level, _, fileName, zone, online, isDead, role, isML = GetRaidRosterInfo(index);
 
             if (name) then
-                GL.Player:cacheClass(name, class); -- We cache player classes wherever we can
+                GL.Player:cacheClass(name, fileName); -- We cache player classes wherever we can
 
                 tinsert(Roster, {
                     name = name,
                     rank = rank,
                     subgroup = subgroup,
                     level = level,
-                    class = string.lower(class),
+                    class = string.lower(fileName),
                     fileName = fileName,
                     zone = zone,
                     online = online,
