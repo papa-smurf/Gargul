@@ -103,6 +103,7 @@ function Auctioneer:draw(itemLink)
         QueueWindow:SetPoint("BOTTOMLEFT", Window.frame, "BOTTOMLEFT", 2);
         Interface:set(self, "QueueWindow", QueueWindow);
         QueueWindow.frame:SetFrameStrata("FULLSCREEN_DIALOG");
+        QueueWindow.frame:SetParent(Window.frame);
         QueueWindow.frame:Show();
 
         local columns = {
