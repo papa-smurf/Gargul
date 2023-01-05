@@ -886,11 +886,6 @@ function Auction:announceStart(itemLink, minimumBid, minimumIncrement, duration,
         return false;
     end
 
-    if (antiSnipe > 0 and math.floor(duration / antiSnipe) < 2) then
-        GL:warning("Antisnipe can be no more than half of the auction time!");
-        return false;
-    end
-
     Settings:set("GDKP.time", duration);
     Settings:set("GDKP.antiSnipe", antiSnipe);
 

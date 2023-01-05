@@ -103,6 +103,7 @@ function Auctioneer:draw(itemLink)
         QueueWindow:SetPoint("BOTTOMLEFT", Window.frame, "BOTTOMLEFT", 2);
         Interface:set(self, "QueueWindow", QueueWindow);
         QueueWindow.frame:SetFrameStrata("FULLSCREEN_DIALOG");
+        QueueWindow.frame:SetParent(Window.frame);
         QueueWindow.frame:Show();
 
         local columns = {
@@ -327,7 +328,6 @@ function Auctioneer:draw(itemLink)
         GameTooltip:AddLine("to the auction if someone bids within the last 10 seconds");
         GameTooltip:AddLine(" ");
         GameTooltip:AddLine("You can leave this empty or set to 0 to disable Anti Snipe completely");
-        GameTooltip:AddLine("The Anti Snipe can be no more than half of the auction length!");
         GameTooltip:AddLine(" ");
         GameTooltip:Show();
     end)
