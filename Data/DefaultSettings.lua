@@ -116,7 +116,7 @@ GL.Data.DefaultSettings = {
         automaticallyShareData = true,
         enabled = false,
         enableWhisperCommand = true,
-        identifier = "PO",
+        identifier = "+1",
     },
     GDKP = {
         acceptBidsLowerThanMinimum = false, -- Change default? Check Auction.lua !!

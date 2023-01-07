@@ -181,7 +181,7 @@ function PlusOnes:handleWhisperCommand(_, message, sender)
         local name = self:normalizedName(args[2]);
         local plusOne = self:getPlusOnes(name);
         GL:sendChatMessage(
-            string.format("Player %s's %s total is %d", GL:capitalize(name), GL.Settings:get("PlusOnes.identifier", "PO"), plusOne),
+            string.format("Player %s's %s total is %d", GL:capitalize(name), GL.Settings:get("PlusOnes.identifier", "+1"), plusOne),
             "WHISPER", nil, sender
         );
         return;
@@ -195,7 +195,7 @@ function PlusOnes:handleWhisperCommand(_, message, sender)
     name = self:normalizedName(name);
     local plusOne = self:getPlusOnes(name);
     GL:sendChatMessage(
-        string.format("Your %s total is %d", GL.Settings:get("PlusOnes.identifier", "PO"), plusOne),
+        string.format("Your %s total is %d", GL.Settings:get("PlusOnes.identifier", "+1"), plusOne),
         "WHISPER", nil, sender
     );
 end
