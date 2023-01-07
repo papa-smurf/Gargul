@@ -74,7 +74,7 @@ function Importer:draw()
     local StatusMessageFrame = AceGUI:Create("SimpleGroup");
     StatusMessageFrame:SetLayout("FILL");
     StatusMessageFrame:SetWidth(570);
-    StatusMessageFrame:SetHeight(56);
+    StatusMessageFrame:SetHeight(46);
     Window:AddChild(StatusMessageFrame);
 
     local StatusMessageLabel = AceGUI:Create("Label");
@@ -87,7 +87,7 @@ function Importer:draw()
     -- Import button
     local ImportButton = AceGUI:Create("Button");
     ImportButton:SetText("Import");
-    ImportButton:SetWidth(140);
+    ImportButton:SetWidth(100);
     ImportButton:SetCallback("OnClick", function()
         GL.Interface.Dialogs.PopupDialog:open("NEW_PLUSONES_IMPORT_CONFIRMATION");
     end);
