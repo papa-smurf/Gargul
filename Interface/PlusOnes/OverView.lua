@@ -148,7 +148,7 @@ function Overview:draw()
     self:updateShareButton();
 
     GL.Events:register("PlusOnesOverViewChangeListener", "GL.PLUSONES_CHANGED", function () self:update(); end);
-    GL.Events:register("PlusOnesOverViewRosterUpdatedListener","GROUP_ROSTER_UPDATE", function () GL.PlusOnes:triggerChangeEvent(); end);
+    GL.Events:register("PlusOnesOverViewRosterUpdatedListener","GL.GROUP_ROSTER_UPDATE_THROTTLED", function () self:close(); self:draw(); end);
     GL.Events:register("PlusOnesOverViewUserJoinedGroupListener", "GL.USER_JOINED_GROUP", function () self:update(); end);
     GL.Events:register("PlusOnesShareButtonRosterUpdatedListener", "GROUP_ROSTER_UPDATE", function () self:updateShareButton(); end);
     GL.Events:register("PlusOnesBroadcastStartedListener", "GL.PLUSONES_BROADCAST_STARTED", function () self:updateShareButton(); end);
