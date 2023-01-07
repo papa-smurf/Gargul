@@ -266,7 +266,7 @@ function Export:exportAuctionsToCustomFormat(Auctions)
             local exportEntry = customExportFormat;
             local ItemDetails = GL.DB.Cache.ItemsByID[tostring(Auction.itemID)];
             local wowheadLink, iconLink;
-            local icon = GL.Data.IconTexturePaths[ItemDetails.icon or 0];
+            local icon = GL.Data.IconTexturePaths:byID(ItemDetails.icon);
 
             if (Auction.itemID == GL.Data.Constants.GDKP.potIncreaseItemID) then
                 ItemDetails.name = "Pot changed";
@@ -282,6 +282,8 @@ function Export:exportAuctionsToCustomFormat(Auctions)
                 local lastForwardSlash = string.find(icon, "/[^/]*$");
                 icon = string.sub(icon, lastForwardSlash or 1);
                 iconLink = "https://wow.zamimg.com/images/wow/icons/large" .. string.lower(icon) .. ".jpg";
+            else
+                icon = "";
             end
 
             if (not GL:empty(ItemDetails)) then

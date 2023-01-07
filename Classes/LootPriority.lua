@@ -155,7 +155,7 @@ function LootPriority:save(data)
     -- The user wishes to clear the loot priorities
     if (GL:empty(data)) then
         GL:success("Loot priorities cleared successfully");
-        GL:set("LootPriority", {});
+        DB:set("LootPriority", {});
         return;
     end
 
