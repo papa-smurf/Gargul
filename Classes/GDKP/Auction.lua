@@ -886,11 +886,6 @@ function Auction:announceStart(itemLink, minimumBid, minimumIncrement, duration,
         return false;
     end
 
-    if (antiSnipe > 0 and math.floor(duration / antiSnipe) < 2) then
-        GL:warning("Antisnipe can be no more than half of the auction time!");
-        return false;
-    end
-
     Settings:set("GDKP.time", duration);
     Settings:set("GDKP.antiSnipe", antiSnipe);
 
@@ -956,9 +951,13 @@ end
 
 --- Anounce to everyone in the raid that the auction has ended
 ---
+---@param forceStop boolean|nil bypass the snipe detection check
+---
 ---@return void
-function Auction:announceStop()
+function Auction:announceStop(forceStop)
     GL:debug("GDKP.Auction:announceStop");
+
+    forceStop = GL:toboolean(forceStop);
 
     -- Looks like we had a last-second bid and are awaiting an extension
     if (self.waitingForExtension) then
@@ -966,7 +965,8 @@ function Auction:announceStop()
     end
 
     -- Do a final check to see if we're allowed to stop now
-    if (self.lastBidReceivedAt
+    if (not forceStop
+        and self.lastBidReceivedAt
         and self.Current.antiSnipe
         and self.Current.antiSnipe > 0
         and GetTime() - self.lastBidReceivedAt <= self.Current.antiSnipe
