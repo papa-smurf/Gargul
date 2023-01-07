@@ -12,6 +12,7 @@ GL:tableSet(GL, "Interface.PlusOnes.Overview", {
     plusOnes = 0,
     ShareButton = {},
     SettingsButton = {},
+    Window = nil,
 });
 
 local Overview = GL.Interface.PlusOnes.Overview; ---@type PlusOnesOverview
@@ -27,6 +28,7 @@ function Overview:draw()
 
     -- Create a container/parent frame
     local Window = AceGUI:Create("Frame");
+    self.Window = Window
     Window:SetTitle("Gargul v" .. GL.version);
     Window:SetLayout("Flow");
     Window:SetWidth(485);
@@ -223,7 +225,7 @@ function Overview:addPlayerPlusOneEntries(Parent)
         DeductButton:SetCallback("OnClick", function()
             Entry.total = max(Entry.total -1, 0);
             GL.PlusOnes:queueUpdate(Entry.name, Entry.total);
-            --self:update();
+            self:update();
         end);
         Row:AddChild(DeductButton);
 
@@ -242,7 +244,7 @@ function Overview:addPlayerPlusOneEntries(Parent)
         AddButton:SetCallback("OnClick", function()
             Entry.total = Entry.total + 1;
             GL.PlusOnes:queueUpdate(Entry.name, Entry.total);
-            --self:update();
+            self:update();
         end);
         Row:AddChild(AddButton);
 
@@ -287,6 +289,16 @@ end
 ---
 ---@return void
 function Overview:update()
+    local importedAt = GL:tableGet(DB.PlusOnes, "MetaData.importedAt", GetServerTime());
+    local updatedAt = GL:tableGet(DB.PlusOnes, "MetaData.updatedAt", GetServerTime());
+        self.Window:SetStatusText(string.format(
+            "Imported on |c00a79eff%s|r at |c00a79eff%s|r, Updated on |c00a79eff%s|r at |c00a79eff%s|r",
+            date('%Y-%m-%d', importedAt),
+            date('%H:%M', importedAt),
+            date('%Y-%m-%d', updatedAt),
+            date('%H:%M', updatedAt)
+        ));
+
     if (not IsInGroup()) then
         self:close();
         return self:draw();
@@ -295,6 +307,7 @@ function Overview:update()
     for _, Player in pairs(GL.User:groupMembers()) do
         local normalizedName = GL:normalizedName(Player.name);      
         local PlusOneLabel = GL.Interface:get(self, "Label.PlusOnesOf_" .. normalizedName);
+
         if (PlusOneLabel) then
             PlusOneLabel:SetText(GL.PlusOnes:getPlusOnes(normalizedName));
         else
