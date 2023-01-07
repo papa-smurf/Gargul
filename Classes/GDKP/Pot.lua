@@ -376,6 +376,11 @@ function Pot:calculateCuts(sessionID)
     return Session, totalToDistribute, totalDistributed;
 end
 
+--- Determine what mutators apply to someone joining the raid
+---
+---@param Player table
+---@param Session table
+---@param enforceLock boolean|nil
 function Pot:determineDistributionDefaults(Player, Session, enforceLock)
     GL:debug("Pot:determineDistributionDefaults");
 
@@ -483,6 +488,9 @@ function Pot:setPlayerMutatorValue(sessionID, player, mutator, value)
     return true;
 end
 
+---@param sessionID number
+---@param string player
+---@return boolean
 function Pot:addPlayer(sessionID, player)
     GL:debug("Pot:addPlayer");
 
@@ -565,6 +573,72 @@ function Pot:renamePlayer(sessionID, playerOld, playerNew)
     Session.Pot.DistributionDetails = PlayerDetails;
     GDKPSession:store(Session);
 
+    return true;
+end
+
+--- Remove cut details from players who are no longer in the raid and have no specific mutators set besides the base
+---
+---@param sessionID string
+---@param keepAdjusted boolean|nil By default we keep the adjusted entries (ones with more than just a base cut)
+---
+---@return boolean Did something get cleared?
+function Pot:clearUnavailablePlayerDetails(sessionID, keepAdjusted)
+    GL:debug("Pot:clearUnavailablePlayerDetails");
+
+    local Session = GDKPSession:byID(sessionID);
+    if (not Session or Session.lockedAt) then
+        return false;
+    end
+
+    local PlayerNames = GL.User:groupMemberNames();
+    local somethingChanged = false;
+    for player in pairs(Session.Pot.DistributionDetails or {}) do
+        if (not GL:inTable(PlayerNames, player)) then
+            if (self:clearPlayerDetails(sessionID, player)) then
+                somethingChanged = true;
+            end
+        end
+    end
+
+    return somethingChanged;
+end
+
+---@param sessionID string
+---@param player string
+---@param keepAdjusted boolean|nil By default we keep the adjusted entries (ones with more than just a base cut)
+---
+---@return boolean Did something get cleared?
+function Pot:clearPlayerDetails(sessionID, player, keepAdjusted)
+    GL:debug("Pot:clearPlayerDetails");
+
+    if (keepAdjusted == nil) then
+        keepAdjusted = true;
+    end
+
+    local Session = GDKPSession:byID(sessionID);
+    if (not Session or Session.lockedAt) then
+        return false;
+    end
+
+    player = GL:capitalize(strtrim(player));
+    if (GL:empty(Session.Pot.DistributionDetails[player])) then
+        return false;
+    end
+
+    if (not keepAdjusted) then
+        Session.Pot.DistributionDetails[player] = {};
+        return true;
+    end
+
+    -- Check to see if any manual adjustments were made to this player, if so: ignore and return false
+    local baseIdentifier = Constants.GDKP.baseMutatorIdentifier;
+    for mutator, value in pairs(Session.Pot.DistributionDetails[player]) do
+        if (mutator ~= baseIdentifier and not GL:empty(value)) then
+            return false;
+        end
+    end
+
+    Session.Pot.DistributionDetails[player] = {};
     return true;
 end
 

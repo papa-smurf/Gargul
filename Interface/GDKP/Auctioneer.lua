@@ -378,7 +378,6 @@ function Auctioneer:draw(itemLink)
     StartButton:SetText("Start");
     StartButton:SetWidth(72);
     StartButton:SetHeight(20);
-    --StartButton:SetDisabled(true);
     StartButton:SetCallback("OnClick", function()
         if (not self.itemBoxHoldsValidItem) then
             return self:popFromQueue();
@@ -413,7 +412,7 @@ function Auctioneer:draw(itemLink)
     StopButton:SetDisabled(true);
     StopButton:SetCallback("OnClick", function()
         GL.Ace:CancelTimer(self.PopTimer);
-        GDKPAuction:announceStop();
+        GDKPAuction:announceStop(true);
     end);
     FifthRow:AddChild(StopButton);
     Interface:set(self, "Stop", StopButton);

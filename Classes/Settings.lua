@@ -50,6 +50,13 @@ function Settings:sanitizeSettings()
 
     self:enforceTemporarySettings();
 
+    -- Remove plus one entries with a value of 0
+    for player, po in pairs(DB:get("PlusOnes") or {}) do
+        if (not tonumber(po) or po < 1) then
+            DB:set("PlusOnes." .. player, nil);
+        end
+    end
+
     -- Remove old roll data so it doesn't clog our SavedVariables
     local twoWeeksAgo = GetServerTime() - 1209600;
     for key, Award in pairs(DB:get("AwardHistory") or {}) do

@@ -71,8 +71,10 @@ function Session:_init()
         end
     end);
 
-    Events:register("GDKPSessionGroupRosterUpdatedListener", "GROUP_ROSTER_UPDATE", function ()
-        GDKPPot:calculateCuts(self:activeSessionID());
+    Events:register("GDKPSessionGroupRosterUpdatedListener", "GL.GROUP_ROSTER_UPDATE_THROTTLED", function ()
+        GDKPPot:clearUnavailablePlayerDetails(self:activeSessionID()); -- Reset raiders who left
+        GDKPPot:calculateCuts(self:activeSessionID()); -- Calculate cuts for potential new joiners
+        GL.Interface.GDKP.Distribute.Overview:refresh(); -- Refresh the distribution overview in case it's opened
     end);
 end
 
