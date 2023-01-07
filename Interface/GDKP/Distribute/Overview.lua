@@ -9,6 +9,9 @@ local Interface = GL.Interface;
 ---@type Data
 local Constants = GL.Data.Constants;
 
+---@type Player
+local Player = GL.Player;
+
 ---@type Events
 local Events = GL.Events;
 
@@ -117,9 +120,7 @@ function Overview:build()
         GameTooltip:AddLine("With mutators you can give more or less gold to players");
         GameTooltip:AddLine("Example: giving 2% extra to tanks is what mutators are for!");
         GameTooltip:AddLine(" ");
-        GameTooltip:AddLine("Notes:");
-        GameTooltip:AddLine("- Negative percentages are not allowed");
-        GameTooltip:AddLine("- Editing or deleting mutators here only changes them for this session");
+        GameTooltip:AddLine("Note: Editing or deleting mutators here only changes them for this session");
         GameTooltip:AddLine(" ");
         GameTooltip:Show();
     end);
@@ -257,16 +258,6 @@ function Overview:build()
     Announce:SetHeight(20);
     Announce:SetCallback("OnClick", function()
         GDKPPot:announce(self.sessionID);
-
-        ---@todo: polish up the announcement at some point
-        if (true) then
-            return;
-        end
-
-        Announce:SetDisabled(true);
-        GDKPPot:announce(self.sessionID, function ()
-            Announce:SetDisabled(false);
-        end);
     end);
     Announce:SetCallback("OnEnter", function()
         GameTooltip:SetOwner(Announce.frame, "ANCHOR_TOP");
@@ -548,45 +539,63 @@ function Overview:refresh()
     HeaderLabel:SetWidth(50);
     RaidersTableHeader:AddChild(HeaderLabel);
 
-    -- Make sure we sort by name (asc), otherwise names keep jumping around
-    local Players = {};
+    local PlayersInRaid = {};
+    local PlayersNotInRaid = {};
+    local GroupMemberNames = GL.User:groupMemberNames();
+
+    -- Split players into in raid and not in raid
     for player in pairs(Session.Pot.DistributionDetails or {}) do
-        tinsert(Players, player);
+        if (GL:inTable(GroupMemberNames, player)) then
+            tinsert(PlayersInRaid, player);
+        else
+            tinsert(PlayersNotInRaid, player);
+        end
     end
 
-    table.sort(Players, function(a, b)
+    -- Sort names (asc)
+    table.sort(PlayersInRaid, function(a, b)
         return a < b;
     end);
 
-    -- [[ RAIDERS ]]
-    for _, player in pairs(Players) do
-        local PlayerPotDetails = Session.Pot.DistributionDetails[player];
-        local playerIsInMyGroup = GL:iEquals(player, GL.User.name) or (GL.User.isInGroup and GL.User:unitIsInYourGroup(player));
+    table.sort(PlayersNotInRaid, function(a, b)
+        return a < b;
+    end);
 
-        ---@type AceGUISimpleGroup
-        local RaiderHolder = AceGUI:Create("SimpleGroup");
+    ---@type AceGUISimpleGroup
+    local RaiderHolder;
+
+    ---@type AceGUILabel
+    local FillerLabel = AceGUI:Create("Label");
+
+    local function addPlayer(player, playerIsInMyGroup)
+        local PlayerPotDetails = Session.Pot.DistributionDetails[player];
+        local classColor = Constants.disabledTextColor;
+
+        if (playerIsInMyGroup) then
+            classColor = Constants.ClassHexColors[Player:classByName(player)];
+        end
+
+        RaiderHolder = AceGUI:Create("SimpleGroup");
         RaiderHolder:SetLayout("FLOW");
         RaiderHolder:SetFullWidth(true);
         RaidersFrame:AddChild(RaiderHolder);
 
         local nameText;
         if (not Session.lockedAt) then
-            nameText = "    " .. player;
+            nameText = string.format("    |c00%s%s|r", classColor, player);
         else
             if (player ~= GL.User.name) then
-                do
-                    local copperToGive = GDKPSession:copperOwedToPlayer(player, Session.ID);
+                local copperToGive = GDKPSession:copperOwedToPlayer(player, Session.ID);
 
-                    if (copperToGive > 0) then
-                        nameText = string.format("    |c00F7922E(%sg)|r %s", copperToGive / 10000, player);
-                    elseif (copperToGive < 0) then
-                        nameText = string.format("    |c00BE3333(%sg)|r %s", (copperToGive * -1) / 10000, player);
-                    else
-                        nameText = "    |c0092FF00(0)|r " .. player;
-                    end
+                if (copperToGive > 0) then
+                    nameText = string.format("    |c00F7922E(%sg)|r |c00%s%s|r", copperToGive / 10000, classColor, player);
+                elseif (copperToGive < 0) then
+                    nameText = string.format("    |c00BE3333(%sg)|r |c00%s%s|r", (copperToGive * -1) / 10000, classColor, player);
+                else
+                    nameText = string.format("    |c0092FF00(0)|r |c00%s%s|r", classColor, player);
                 end
             else
-                nameText = "    |c0092FF00(0)|r " .. player;
+                nameText = string.format("    |c0092FF00(0)|r |c00%s%s|r", classColor, player);
             end
         end
 
@@ -656,7 +665,7 @@ function Overview:refresh()
         RaiderHolder:AddChild(AdjustBox);
 
         ---@type AceGUILabel
-        local FillerLabel = AceGUI:Create("Label");
+        FillerLabel = AceGUI:Create("Label");
         FillerLabel:SetText(" ");
         FillerLabel:SetWidth(10);
         RaiderHolder:AddChild(FillerLabel);
@@ -691,6 +700,30 @@ function Overview:refresh()
             });
             Delete:SetPoint("TOPLEFT", Edit, "TOPRIGHT", 2);
             tinsert(self.RaiderActionButtons, Delete);
+        end
+    end;
+
+    -- [[ RAIDERS ]]
+
+    --- In raid
+    for _, player in pairs(PlayersInRaid) do
+        addPlayer(player, true);
+    end
+
+    if (not GL:empty(PlayersNotInRaid)) then
+        FillerLabel = AceGUI:Create("Label");
+        FillerLabel:SetText(" ");
+        FillerLabel:SetFullWidth(true);
+        RaiderHolder:AddChild(FillerLabel);
+
+        local Heading = GL.AceGUI:Create("Heading");
+        Heading:SetFullWidth(true);
+        Heading:SetText("|c00FFFFFFNot in the raid|r");
+        RaiderHolder:AddChild(Heading);
+
+        --- Not in raid
+        for _, player in pairs(PlayersNotInRaid) do
+            addPlayer(player, false);
         end
     end
 
