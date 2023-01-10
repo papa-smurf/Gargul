@@ -828,7 +828,8 @@ function GL:onItemLoadDo(Items, callback, haltOnError, sorter)
         return;
     end
 
-    if (type(Items) ~= "table") then
+    local itemsWasntATable = type(Items) ~= "table";
+    if (itemsWasntATable) then
         Items = {Items};
     end;
 
@@ -926,6 +927,10 @@ function GL:onItemLoadDo(Items, callback, haltOnError, sorter)
                     table.sort(ItemData, sorter);
                 end
 
+                if (itemsWasntATable) then
+                    ItemData = ItemData[1];
+                end
+
                 callback(ItemData);
                 return;
             end
@@ -949,6 +954,12 @@ function GL:onItemLoadDo(Items, callback, haltOnError, sorter)
             and itemsLoaded >= numberOfItemsToLoad
         ) then
             callbackCalled = true;
+
+            if (itemsWasntATable) then
+                ItemData = ItemData[1];
+                callback(ItemData);
+                return;
+            end
 
             if (type(sorter) == "function") then
                 table.sort(ItemData, sorter);
@@ -1090,11 +1101,8 @@ function GL:canUserUseItem(itemLinkOrID, callback)
         itemID = GL:getItemIDFromLink(itemLinkOrID);
     end
 
-    GL:onItemLoadDo(itemID, function (Results)
-        local Item = Results[1];
-
-        -- Better safe than lua error!
-        if (GL:empty(Item.link)) then
+    GL:onItemLoadDo(itemID, function (Details)
+        if (not Details) then
             return callback(true);
         end
 

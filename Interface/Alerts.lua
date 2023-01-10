@@ -32,18 +32,18 @@ GL.Interface.Alerts = {
         Item = AlertFrame:AddQueuedAlertFrameSubSystem("GargulItem", function (self, itemID, title, message)
             local Alert = self;
 
-            GL:onItemLoadDo(itemID, function (Items)
-                local longestLength = math.max(string.len(Items[1].name), string.len(message));
-                title = title or Items[1].link;
+            GL:onItemLoadDo(itemID, function (Details)
+                local longestLength = math.max(string.len(Details.name), string.len(message));
+                title = title or Details.link;
 
                 Alert.Label:SetText(title);
 
-                Alert.Icon:SetTexture(Items[1].icon);
+                Alert.Icon:SetTexture(Details.icon);
                 Alert.Message:SetText(message);
 
                 Alert:SetScript("OnEnter", function()
                     GameTooltip:SetOwner(Alert, "ANCHOR_TOP");
-                    GameTooltip:SetHyperlink(Items[1].link);
+                    GameTooltip:SetHyperlink(Details.link);
                     GameTooltip:Show();
                 end);
 

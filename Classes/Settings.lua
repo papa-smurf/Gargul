@@ -203,15 +203,12 @@ function Settings:enforceTemporarySettings()
 
                 -- We need to fetch the itemLink first before we can process
                 else
-                    GL:onItemLoadDo(AwardEntry.itemId, function (Items)
-                        local Item = Items[1];
-
-                        -- Better safe than lua error!
-                        if (GL:empty(Item.link)) then
+                    GL:onItemLoadDo(AwardEntry.itemId, function (Details)
+                        if (not Details) then
                             return;
                         end
 
-                        AwardEntry.itemLink = Item.link;
+                        AwardEntry.itemLink = Details.link;
 
                         addEntryToTable(AwardEntry);
                     end);

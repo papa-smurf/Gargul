@@ -172,7 +172,7 @@ function LedgerList:refresh()
 
     local TableData = {};
     local Table = Interface:get(self, "Table.Auctions");
-    GL:onItemLoadDo(GL:tableColumn(Auctions, "itemID") or {}, function (Result)
+    GL:onItemLoadDo(GL:tableColumn(Auctions, "itemID") or {}, function ()
         for _, Auction in pairs(Auctions) do
             (function ()
                 tinsert(TableData, {
