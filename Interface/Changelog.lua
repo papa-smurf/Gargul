@@ -12,6 +12,14 @@ GL.Interface.Changelog = {
 
     History = {
         {
+            version = "5.0.13",
+            date = "January 11th, 2022",
+            Changes = {
+                "Added gold spent and bid to the GDKP distribution export",
+                "Restructured the GDKP countdown settings, check them out via |c00a79eff/gl|r > GDKP"
+            },
+        },
+        {
             version = "5.0.7",
             date = "December 28th, 2022",
             Changes = {
