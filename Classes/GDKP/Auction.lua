@@ -1084,10 +1084,8 @@ function Auction:start(CommMessage)
     ---
     ---@vararg Item
     ---@return void
-    GL:onItemLoadDo(content.item, function (Items)
-        local Entry = Items[1];
-
-        if (GL:empty(Entry)) then
+    GL:onItemLoadDo(content.item, function (Details)
+        if (not Details) then
             return;
         end
 
@@ -1100,7 +1098,7 @@ function Auction:start(CommMessage)
         local minimumIncrement = content.minimumIncrement or 1;
 
         -- This is a new auction so clean everything
-        if (Entry.link ~= self.Current.itemLink
+        if (Details.link ~= self.Current.itemLink
             or CommMessage.Sender.id ~= self.Current.initiatorID
         ) then
             -- This is a new item so make sure to
@@ -1110,10 +1108,10 @@ function Auction:start(CommMessage)
                 duration = duration,
                 initiatorID = CommMessage.Sender.id,
                 initiatorName = CommMessage.Sender.name,
-                itemIcon = Entry.icon,
-                itemID = Entry.id,
-                itemLink = Entry.link,
-                itemName = Entry.name,
+                itemIcon = Details.icon,
+                itemID = Details.id,
+                itemLink = Details.link,
+                itemName = Details.name,
                 minimumBid = minimumBid,
                 minimumIncrement = minimumIncrement,
 
@@ -1136,11 +1134,11 @@ function Auction:start(CommMessage)
 
         -- Don't show the bid UI if the user disabled it
         if (Settings:get("GDKP.showBidWindow")) then
-            GL.Interface.GDKP.Bidder:show(duration, Entry.link, Entry.icon, content.note, SupportedBids);
 
             if (CommMessage.Sender.id == GL.User.id) then
                 Auctioneer:drawReopenAuctioneerButton();
             end
+            GL.Interface.GDKP.Bidder:show(duration, Details.link, Details.icon, content.note, SupportedBids);
         end
 
         -- Make sure to announce the auction stop when time is up
@@ -1154,13 +1152,28 @@ function Auction:start(CommMessage)
 
         -- Send a countdown in chat when enabled
         local numberOfSecondsToCountdown = Settings:get("GDKP.numberOfSecondsToCountdown", 5);
+        local numberOfFiveSecondsToCountdown = Settings:get("GDKP.numberOfFiveSecondsToCountdown", 5);
+        local FiveSecondsToAnnounce = {};
+
+        for i = 1, math.floor(numberOfFiveSecondsToCountdown / 5) do
+            tinsert(FiveSecondsToAnnounce, i * 5);
+        end
+
         if (self:startedByMe() -- Only post a countdown if this user initiated the auction
-            and duration > numberOfSecondsToCountdown -- No point in counting down if there's hardly enough time anyways
-            and Settings:get("GDKP.doCountdown")
+            and (
+                numberOfSecondsToCountdown > 0
+                or numberOfFiveSecondsToCountdown > 0
+            )
+            and (
+                duration >= numberOfSecondsToCountdown
+                or duration >= numberOfFiveSecondsToCountdown
+            )
         ) then
             self.countDownTimer = GL.Ace:ScheduleRepeatingTimer(function ()
                 local secondsLeft = math.ceil(GL.Ace:TimeLeft(self.timerId) - GL.Settings:get("GDKP.auctionEndLeeway", 2));
-                if (secondsLeft <= numberOfSecondsToCountdown
+                if ((secondsLeft <= numberOfSecondsToCountdown
+                        or GL:inTable(FiveSecondsToAnnounce, secondsLeft)
+                    )
                     and secondsLeft > 0
                     and not SecondsAnnounced[secondsLeft]
                 ) then
@@ -1178,13 +1191,6 @@ function Auction:start(CommMessage)
                         nil,
                         false
                     );
-
-                    if (GL.Settings:get("GDKP.announceCountdownOnce")) then
-                        GL:debug("Cancel Auction.countDownTimer");
-
-                        GL.Ace:CancelTimer(self.countDownTimer);
-                        self.countDownTimer = nil;
-                    end
                 end
             end, .2);
         end
@@ -1195,10 +1201,13 @@ function Auction:start(CommMessage)
         -- Flash the game icon in case the player alt-tabbed
         FlashClientIcon();
 
+        -- Let the application know that an auction started
+        Events:fire("GL.GDKP_AUCTION_STARTED");
+
         -- Automatically auto-bid on the item if we set an auto bid max
-        if (self.QueuedItemAutoBids[Entry.id]) then
-            self:setAutoBid(self.QueuedItemAutoBids[Entry.id]);
-            self.QueuedItemAutoBids[Entry.id] = nil;
+        if (self.QueuedItemAutoBids[Details.id]) then
+            self:setAutoBid(self.QueuedItemAutoBids[Details.id]);
+            self.QueuedItemAutoBids[Details.id] = nil;
         end
 
         -- Items should only contain 1 item but lets add a return just in case
@@ -1272,6 +1281,8 @@ function Auction:stop(CommMessage)
 
     GL.Ace:CancelTimer(self.countDownTimer);
     self.countDownTimer = nil;
+
+    Events:fire("GL.GDKP_AUCTION_STOPPED");
 
     return true;
 end
