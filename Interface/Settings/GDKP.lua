@@ -102,16 +102,6 @@ function GDKP:draw(Parent)
             setting = "GDKP.notifyIfBidTooLow",
         },
         {
-            label = "Countdown on auctions",
-            description = "A countdown will be shown in chat when an auction is coming to an end (e.g: 5 seconds to bid)",
-            setting = "GDKP.doCountdown",
-        },
-        {
-            label = "Countdown ONCE",
-            description = "Announce auction countdown only once instead of every second when countdown timer is reached",
-            setting = "GDKP.announceCountdownOnce",
-        },
-        {
             label = "Announce countdown in raid warning",
             description = "Announce countdown in /rw instead of /ra",
             setting = "GDKP.announceCountdownInRW",
@@ -151,19 +141,40 @@ function GDKP:draw(Parent)
     Parent:AddChild(Spacer);
 
     local NumberOfSecondsToCountdown = GL.AceGUI:Create("Slider");
-    NumberOfSecondsToCountdown:SetLabel("At how many seconds left do you want to start the countdown?");
+    NumberOfSecondsToCountdown:SetLabel("Countdown every second starting from (0 to disable)");
     NumberOfSecondsToCountdown.label:SetTextColor(1, .95686, .40784);
     NumberOfSecondsToCountdown:SetFullWidth(true);
     NumberOfSecondsToCountdown:SetValue(GL.Settings:get("GDKP.numberOfSecondsToCountdown", 5));
-    NumberOfSecondsToCountdown:SetSliderValues(3, 25, 1);
+    NumberOfSecondsToCountdown:SetSliderValues(0, 25, 1);
     NumberOfSecondsToCountdown:SetCallback("OnValueChanged", function(Slider)
         local value = math.floor(tonumber(Slider:GetValue()));
 
-        if (value >= 3) then
+        if (value >= 0) then
             GL.Settings:set("GDKP.numberOfSecondsToCountdown", value);
         end
     end);
     Parent:AddChild(NumberOfSecondsToCountdown);
+
+    Spacer = GL.AceGUI:Create("SimpleGroup");
+    Spacer:SetLayout("FILL");
+    Spacer:SetFullWidth(true);
+    Spacer:SetHeight(20);
+    Parent:AddChild(Spacer);
+
+    local NumberOfFiveSecondsToCountdown = GL.AceGUI:Create("Slider");
+    NumberOfFiveSecondsToCountdown:SetLabel("Countdown every 5 seconds starting from (0 to disable)");
+    NumberOfFiveSecondsToCountdown.label:SetTextColor(1, .95686, .40784);
+    NumberOfFiveSecondsToCountdown:SetFullWidth(true);
+    NumberOfFiveSecondsToCountdown:SetValue(GL.Settings:get("GDKP.numberOfFiveSecondsToCountdown", 15));
+    NumberOfFiveSecondsToCountdown:SetSliderValues(0, 30, 5);
+    NumberOfFiveSecondsToCountdown:SetCallback("OnValueChanged", function(Slider)
+        local value = math.floor(tonumber(Slider:GetValue()));
+
+        if (value >= 0) then
+            GL.Settings:set("GDKP.numberOfFiveSecondsToCountdown", value);
+        end
+    end);
+    Parent:AddChild(NumberOfFiveSecondsToCountdown);
 
     Spacer = GL.AceGUI:Create("SimpleGroup");
     Spacer:SetLayout("FILL");
