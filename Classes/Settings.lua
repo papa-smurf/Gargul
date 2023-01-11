@@ -91,6 +91,10 @@ function Settings:enforceTemporarySettings()
         return;
     end
 
+    -- in 5.0.13 we remove the GDKP.doCountdown and x settings
+    DB:set("Settings.GDKP.doCountdown", nil);
+    DB:set("Settings.GDKP.announceCountdownOnce", nil);
+
     -- In 5.0.8 we set the minimum delayBetweenQueuedAuctions to 1 instead of 0 to help prevent race conditions
     local delayBetweenQueuedAuctions = tonumber(GL.Settings:get("GDKP.delayBetweenQueuedAuctions"));
     if (delayBetweenQueuedAuctions and delayBetweenQueuedAuctions < 1) then
