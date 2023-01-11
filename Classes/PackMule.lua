@@ -730,8 +730,9 @@ end
 ---
 ---@param itemLink string
 ---@param byPassConfirmationDialog boolean
+---@param callback function
 ---@return void
-function PackMule:disenchant(itemLink, byPassConfirmationDialog)
+function PackMule:disenchant(itemLink, byPassConfirmationDialog, callback)
     GL:debug("PackMule:disenchant");
 
     if (GL.User.isInGroup
@@ -740,6 +741,10 @@ function PackMule:disenchant(itemLink, byPassConfirmationDialog)
         and not GL.User.isLead
     ) then
         return GL:warning("You need to be the master looter or have lead/assist!");
+    end
+
+    if (type(callback) ~= "function") then
+        callback = function () end;
     end
 
     local itemID = GL:getItemIDFromLink(itemLink);
@@ -779,6 +784,8 @@ function PackMule:disenchant(itemLink, byPassConfirmationDialog)
                     self:disenchant(itemLink, true);
 
                     GL.Interface.PlayerSelector:close();
+
+                    callback();
                 end,
             });
         end);
@@ -791,6 +798,7 @@ function PackMule:disenchant(itemLink, byPassConfirmationDialog)
         GL.Interface.PlayerSelector:close();
         GL.AwardedLoot:addWinner(GL.Exporter.disenchantedItemIdentifier, itemLink, false);
         self:announceDisenchantment(itemLink);
+        callback();
 
         return;
     end
@@ -807,6 +815,7 @@ function PackMule:disenchant(itemLink, byPassConfirmationDialog)
             GL.Interface.PlayerSelector:close();
             GL.AwardedLoot:addWinner(GL.Exporter.disenchantedItemIdentifier, itemLink, false);
             self:announceDisenchantment(itemLink);
+            callback();
         end,
     });
 end
