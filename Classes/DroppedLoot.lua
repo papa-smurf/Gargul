@@ -726,20 +726,20 @@ function DroppedLoot:announceTest(...)
         itemIDs[key] = value;
     end
 
-    GL:onItemLoadDo(itemIDs, function (Items)
+    GL:onItemLoadDo(itemIDs, function (Details)
         self:announce({
             Functions = {
-                GetNumLootItems = function () return GL:count(Items); end,
+                GetNumLootItems = function () return GL:count(Details); end,
                 GetLootSlotInfo = function (slot)
-                    local SlotItem = Items[slot];
+                    local SlotItem = Details[slot];
 
                     return SlotItem.icon, SlotItem.name, 1, nil, SlotItem.quality, false, false, nil, true;
                 end,
                 GetLootSlotLink = function (slot)
-                    return Items[slot].link or nil;
+                    return Details[slot].link or nil;
                 end,
                 GetLootSlotType = function(slot)
-                    local itemLink = Items[slot].link or "";
+                    local itemLink = Details[slot].link or "";
 
                     if (GL:strContains(itemLink, "Hcurrency:")) then
                         return LOOT_SLOT_CURRENCY;

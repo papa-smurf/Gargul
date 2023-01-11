@@ -93,6 +93,11 @@ function DB:set(keyString, value)
     return GL:tableSet(DB, keyString, value);
 end
 
+-- Add a database value to a given table
+function DB:add(keyString, value)
+    return GL:tableAdd(DB, keyString, value);
+end
+
 -- Reset the tables
 function DB:reset()
     GL:debug("DB:reset");

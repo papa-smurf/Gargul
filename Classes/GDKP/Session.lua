@@ -258,6 +258,41 @@ function Session:goldSpentByPlayer(player, sessionID)
     return spent;
 end
 
+---@param player string
+---@param sessionID string
+---@return number
+function Session:goldBidByPlayer(player, sessionID)
+    GL:debug("Session:goldBidByPlayer");
+
+    sessionID = sessionID or self:activeSessionID();
+    local Instance = self:byID(sessionID);
+    if (not Instance) then
+        return 0;
+    end
+
+    local bid = 0;
+    for _, Sale in pairs(Instance.Auctions or {}) do
+        if (not Sale.deletedAt
+            and Sale.price
+            and Sale.Winner.name ~= player
+            and GL:higherThanZero(Sale.price)
+            and Sale.Bids
+        ) then
+            for bidder, Bid in pairs(Sale.Bids or {}) do
+                if (type(Bid) == "table"
+                    and Bid.bid
+                    and bidder == player
+                ) then
+                    bid = bid + Bid.bid;
+                    break;
+                end
+            end
+        end
+    end
+
+    return bid;
+end
+
 ---@param Details table
 ---@return void
 function Session:registerGoldTrade(Details)

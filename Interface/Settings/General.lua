@@ -34,6 +34,7 @@ function General:draw(Parent)
         },
         {
             label = "No messages",
+            description = "This will prevent Gargul from posting any messages, ANYWHERE",
             setting = "noMessages",
         },
         {

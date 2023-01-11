@@ -110,10 +110,10 @@ function SoftRes:handleWhisperCommand(_, message, sender)
         tinsert(ItemIDs, itemID);
     end
 
-    GL:onItemLoadDo(ItemIDs, function (Items)
+    GL:onItemLoadDo(ItemIDs, function (Details)
         local Entries = {};
 
-        for _, Entry in pairs(Items) do
+        for _, Entry in pairs(Details) do
             local itemIDString = tostring(Entry.id);
             local entryString = Entry.link;
 

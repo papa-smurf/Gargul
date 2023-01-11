@@ -306,8 +306,7 @@ end
 ---
 ---@return void
 function GL:hookTooltipSetItemEvents()
-    -- Bind the appendAwardedLootToTooltip method to the OnTooltipSetItem event
-    GL:onTooltipSetItem(function(Tooltip)
+    GL.onTooltipSetItemFunc = function(Tooltip)
         -- No valid item tooltip was provided
         if (not Tooltip
             or not Tooltip.GetItem
@@ -366,7 +365,10 @@ function GL:hookTooltipSetItemEvents()
         if (linesAdded) then
             Tooltip:AddLine(" ");
         end
-    end);
+    end;
+
+    -- Bind the appendAwardedLootToTooltip method to the OnTooltipSetItem event
+    GL:onTooltipSetItem(GL.onTooltipSetItemFunc);
 end
 
 --[[ CREATE NECESSARY FRAMES ]]

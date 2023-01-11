@@ -393,10 +393,8 @@ function PackMule:getTargetForItem(itemLinkOrId, callback)
     end
 
     -- Load the item details first and then call the callback with the player target (only if any)
-    GL:onItemLoadDo(itemID, function (Items)
-        local Loot = Items[1];
-
-        if (GL:empty(Loot)) then
+    GL:onItemLoadDo(itemID, function (Details)
+        if (not Details) then
             return;
         end
 
@@ -435,14 +433,14 @@ function PackMule:getTargetForItem(itemLinkOrId, callback)
             end
 
             -- Check if this is a non item-specific rule (aka quality based rule)
-            if (Loot.quality and quality and operator and target and (
-                (operator == "=" and Loot.quality == quality)
-                or (operator == ">" and Loot.quality > quality)
-                or (operator == ">=" and Loot.quality >= quality)
-                or (operator == "<" and Loot.quality < quality)
-                or (operator == "<=" and Loot.quality <= quality)
+            if (Details.quality and quality and operator and target and (
+                (operator == "=" and Details.quality == quality)
+                or (operator == ">" and Details.quality > quality)
+                or (operator == ">=" and Details.quality >= quality)
+                or (operator == "<" and Details.quality < quality)
+                or (operator == "<=" and Details.quality <= quality)
             )) then
-                local bindType = Loot.bindType or LE_ITEM_BIND_NONE;
+                local bindType = Details.bindType or LE_ITEM_BIND_NONE;
                 local bindOnPickup = GL:inTable({LE_ITEM_BIND_ON_ACQUIRE, LE_ITEM_BIND_QUEST}, bindType);
 
                 local ruleApplies = (function ()
@@ -452,21 +450,21 @@ function PackMule:getTargetForItem(itemLinkOrId, callback)
                     end
 
                     -- We ignore legendary+ loot for obvious reasons
-                    if (Loot.quality >= 5) then
+                    if (Details.quality >= 5) then
                         return false;
                     end
 
                     -- When group looting we have some additional rules
                     if (not GL.User.isMasterLooter) then
                         -- Skip companion pets in group loot even if they're BoE!
-                        if (Loot.classID == LE_ITEM_CLASS_MISCELLANEOUS
-                            and Loot.subclassID == Enum.ItemMiscellaneousSubclass.CompanionPet
+                        if (Details.classID == LE_ITEM_CLASS_MISCELLANEOUS
+                            and Details.subclassID == Enum.ItemMiscellaneousSubclass.CompanionPet
                         ) then
                             return false;
                         end
 
                         -- Always skip recipes and quest items
-                        if (GL:inTable(self.itemClassIDsToIgnore, Loot.classID)) then
+                        if (GL:inTable(self.itemClassIDsToIgnore, Details.classID)) then
                             return false;
                         end
                     end
@@ -490,7 +488,7 @@ function PackMule:getTargetForItem(itemLinkOrId, callback)
                     end
 
                     -- Recipes and Quest Items are skipped in quality rules
-                    if (GL:inTable(self.itemClassIDsToIgnore, Loot.classID)) then
+                    if (GL:inTable(self.itemClassIDsToIgnore, Details.classID)) then
                         return false;
                     end
 
@@ -509,7 +507,7 @@ function PackMule:getTargetForItem(itemLinkOrId, callback)
                 end
             elseif (item and (
                 (ruleConcernsItemID and ruleItemID == itemID) -- Item is an ID and the IDs match
-                or (self:lootMatchesSpecificRule(Loot.name, item)) -- The rule's item name matches the loot name
+                or (self:lootMatchesSpecificRule(Details.name, item)) -- The rule's item name matches the loot name
             )) then
                 -- We found an item-specific rule, we can stop checking now
                 RuleThatApplies = Rule;
@@ -732,8 +730,9 @@ end
 ---
 ---@param itemLink string
 ---@param byPassConfirmationDialog boolean
+---@param callback function
 ---@return void
-function PackMule:disenchant(itemLink, byPassConfirmationDialog)
+function PackMule:disenchant(itemLink, byPassConfirmationDialog, callback)
     GL:debug("PackMule:disenchant");
 
     if (GL.User.isInGroup
@@ -742,6 +741,10 @@ function PackMule:disenchant(itemLink, byPassConfirmationDialog)
         and not GL.User.isLead
     ) then
         return GL:warning("You need to be the master looter or have lead/assist!");
+    end
+
+    if (type(callback) ~= "function") then
+        callback = function () end;
     end
 
     local itemID = GL:getItemIDFromLink(itemLink);
@@ -781,6 +784,8 @@ function PackMule:disenchant(itemLink, byPassConfirmationDialog)
                     self:disenchant(itemLink, true);
 
                     GL.Interface.PlayerSelector:close();
+
+                    callback();
                 end,
             });
         end);
@@ -793,6 +798,7 @@ function PackMule:disenchant(itemLink, byPassConfirmationDialog)
         GL.Interface.PlayerSelector:close();
         GL.AwardedLoot:addWinner(GL.Exporter.disenchantedItemIdentifier, itemLink, false);
         self:announceDisenchantment(itemLink);
+        callback();
 
         return;
     end
@@ -809,6 +815,7 @@ function PackMule:disenchant(itemLink, byPassConfirmationDialog)
             GL.Interface.PlayerSelector:close();
             GL.AwardedLoot:addWinner(GL.Exporter.disenchantedItemIdentifier, itemLink, false);
             self:announceDisenchantment(itemLink);
+            callback();
         end,
     });
 end
