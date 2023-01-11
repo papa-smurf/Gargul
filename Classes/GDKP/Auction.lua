@@ -199,14 +199,12 @@ function Auction:create(itemID, price, winner, sessionID, Bids, note, awardCheck
         Instance.awardChecksum = awardChecksum;
     end
 
-    GL:onItemLoadDo(itemID, function (Result)
-        Result = Result[1];
-
-        if (not Result) then
+    GL:onItemLoadDo(itemID, function (Details)
+        if (not Details) then
             return;
         end
 
-        Instance.itemLink = Result.link;
+        Instance.itemLink = Details.link;
         GL:tableSet(Session, "Auctions." .. checksum, Instance);
 
         Events:fire("GL.GDKP_AUCTION_CHANGED", sessionID, checksum, {}, Instance);
