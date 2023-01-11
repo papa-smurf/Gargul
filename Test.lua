@@ -39,8 +39,8 @@ function Test.TradeState:_init(callback)
     end
 
     -- Preload items
-    GL:onItemLoadDo(ItemIDs, function (ResultSet)
-        self.Items = ResultSet;
+    GL:onItemLoadDo(ItemIDs, function (Details)
+        self.Items = Details;
 
         if (callback and type(callback) == "function") then
             callback();

@@ -160,6 +160,8 @@ function Export:build()
         GameTooltip:SetText(string.format("Available values:\n\n%s\n%s\n\n%s",
             "@PLAYER",
             "@CUT",
+            "@SPENT",
+            "@BID",
             "\\t is replaced by a tab"
         ));
         GameTooltip:Show();
@@ -240,6 +242,8 @@ function Export:exportPotToCustomFormat(Cuts)
         local Values = {
             ["@PLAYER"] = player,
             ["@CUT"] = cut,
+            ["@SPENT"] = GDKPSession:goldSpentByPlayer(player, self.sessionID),
+            ["@BID"] = GDKPSession:goldBidByPlayer(player, self.sessionID),
             ["\\t"] = "\t",
         };
 

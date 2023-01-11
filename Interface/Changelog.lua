@@ -12,6 +12,14 @@ GL.Interface.Changelog = {
 
     History = {
         {
+            version = "5.0.13",
+            date = "January 11th, 2022",
+            Changes = {
+                "Added gold spent and bid to the GDKP distribution export",
+                "Restructured the GDKP countdown settings, check them out via |c00a79eff/gl|r > GDKP"
+            },
+        },
+        {
             version = "5.0.7",
             date = "December 28th, 2022",
             Changes = {
@@ -309,13 +317,20 @@ function Changelog:draw()
     Window:SetPoint(GL.Interface:getPosition("Changelog"));
 
     --[[ CHRISTMAS HOLIDAYS SANTA HAT ]]
-    local SantaHat = GL.AceGUI:Create("Icon");
-    SantaHat:SetWidth(83);
-    SantaHat:SetHeight(81);
-    SantaHat:SetImage("Interface/AddOns/Gargul/Assets/Icons/santa_hat");
-    SantaHat.frame:SetParent(Window.frame);
-    SantaHat.frame:SetPoint("TOPLEFT", Window.frame, "TOPLEFT", -26, 36);
-    SantaHat.frame:Show();
+    local month, day = tonumber(date('%m')), tonumber(date('%d'));
+    if (month and day
+        and ((month == 12 and day >= 12)
+            or (month == 1 and day <= 12)
+        )
+    ) then
+        local SantaHat = GL.AceGUI:Create("Icon");
+        SantaHat:SetWidth(83);
+        SantaHat:SetHeight(81);
+        SantaHat:SetImage("Interface/AddOns/Gargul/Assets/Icons/santa_hat");
+        SantaHat.frame:SetParent(Window.frame);
+        SantaHat.frame:SetPoint("TOPLEFT", Window.frame, "TOPLEFT", -26, 36);
+        SantaHat.frame:Show();
+    end
 
     local ScrollFrameHolder = GL.AceGUI:Create("ScrollFrame");
     ScrollFrameHolder:SetLayout("Fill");

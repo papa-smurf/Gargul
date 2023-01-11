@@ -177,13 +177,13 @@ GL.Data.Constants = {
             "Kelziad",
             "Nambojambo",
             "Scratchd",
-            "Vejusatko",
             "WaDaFruCK",
         },
         Epic = {
             "Die_Quelle",
             "Infinïty",
             "Sapmagic",
+            "Vejusatko",
         },
         Legendary = {
             "Cuckster",
