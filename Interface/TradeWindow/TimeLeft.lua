@@ -684,54 +684,6 @@ function TimeLeft:refreshBars()
 
         TimerBar:SetScript("OnMouseUp", function(_, mouseButtonPressed)
             GL:handleItemClick(BagItem.itemLink, mouseButtonPressed);
-
-            -- The user doesnt want to use shortcut keys when solo
-            if (not GL.User.isInGroup
-                and GL.Settings:get("ShortcutKeys.onlyInGroup")
-            ) then
-                return;
-            end
-
-            local keyPressIdentifier = GL.Events:getClickCombination(mouseButtonPressed);
-
-            -- Open the action selection window
-            if (keyPressIdentifier == GL.Settings:get("ShortcutKeys.rollOffOrAuction")) then
-                if (GL.GDKP.Session:activeSessionID()
-                    and not GL.GDKP.Session:getActive().lockedAt
-                ) then
-                    GL.Interface.GDKP.Auctioneer:draw(BagItem.itemLink);
-                else
-                    GL.MasterLooterUI:draw(BagItem.itemLink);
-                end
-            -- Open the roll window
-            elseif (keyPressIdentifier == GL.Settings:get("ShortcutKeys.rollOff")) then
-                GL.MasterLooterUI:draw(BagItem.itemLink);
-
-            -- Open the award window
-            elseif (keyPressIdentifier == GL.Settings:get("ShortcutKeys.award")) then
-                GL.Interface.Award:draw(BagItem.itemLink);
-
-            elseif (keyPressIdentifier == GL.Settings:get("ShortcutKeys.disenchant")) then
-                GL.PackMule:disenchant(BagItem.itemLink);
-
-            -- Unregistered hotkey was pressed and it turns out to be SHIFT_CLICK, add item link to chat/editbox etc
-            elseif (keyPressIdentifier == "SHIFT_CLICK") then
-                if (ChatFrameEditBox and ChatFrameEditBox:IsVisible()) then
-                    ChatFrameEditBox:Insert(BagItem.itemLink);
-                else
-                    ChatEdit_InsertLink(BagItem.itemLink);
-                end
-            else
-                local currentTime = GetTime();
-
-                -- Double click behavior detected
-                if (lastClickTime and currentTime - lastClickTime <= .5) then
-                    onDoubleClick();
-                    lastClickTime = nil;
-                else
-                    lastClickTime = currentTime;
-                end
-            end
         end)
 
         TimerBar:SetScript("OnLeave", function()
