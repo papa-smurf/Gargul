@@ -140,8 +140,10 @@ function GL:_init()
     -- Hook native window events
     self:hookNativeWindowEvents();
 
-    -- Hook the bagslot events
-    self:hookBagSlotEvents();
+    -- Hook item click events
+    hooksecurefunc("HandleModifiedItemClick", function(itemLink)
+        self:handleItemClick(itemLink, "ModifiedButton");
+    end);
 
     -- Hook item tooltip events
     self:hookTooltipSetItemEvents();

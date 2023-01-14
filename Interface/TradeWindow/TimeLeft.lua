@@ -682,26 +682,9 @@ function TimeLeft:refreshBars()
             end
         end);
 
-        local onDoubleClick = function ()
-            -- Open a trade window with the targeted unit if we don't have one open yet
-            if (not TradeFrame:IsShown()) then
-                if (not UnitIsPlayer("target")) then
-                    return;
-                end
-
-                GL.TradeWindow:open("target", function ()
-                    GL.TradeWindow:addItem(GL:getItemIDFromLink(BagItem.itemLink));
-                end, true);
-
-                return;
-            end
-
-            -- A trade window is open already, just add the item
-            GL.TradeWindow:addItem(GL:getItemIDFromLink(BagItem.itemLink));
-        end;
-
-        local lastClickTime;
         TimerBar:SetScript("OnMouseUp", function(_, mouseButtonPressed)
+            GL:handleItemClick(BagItem.itemLink, mouseButtonPressed);
+
             -- The user doesnt want to use shortcut keys when solo
             if (not GL.User.isInGroup
                 and GL.Settings:get("ShortcutKeys.onlyInGroup")
