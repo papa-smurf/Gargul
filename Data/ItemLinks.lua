@@ -5157,6 +5157,22 @@ GL.Data.ItemLinks = {
     ["45567"] = {
         45087, -- Runed Orb
     },
+    -- Drape of the Skyborn
+    ["45588"] = {
+        46053, -- Reply-Code Alpha
+    },
+    -- Brann's Signet Ring
+    ["45608"] = {
+        46053, -- Reply-Code Alpha
+    },
+    -- Starshine Circle
+    ["45614"] = {
+        46053, -- Reply-Code Alpha
+    },
+    -- Sunglimmer Cloak
+    ["45618"] = {
+        46053, -- Reply-Code Alpha
+    },
     -- Breastplate of the Wayward Conqueror
     ["45632"] = {
         46137, -- Conqueror's Deathbringer Robe
@@ -5448,6 +5464,20 @@ GL.Data.ItemLinks = {
     -- Val'anyr, Hammer of Ancient Kings
     ["46017"] = {
         45038, -- Fragment of Val'anyr
+    },
+    -- Reply-Code Alpha
+    ["46052"] = {
+        46320, -- Drape of the Skyherald
+        46321, -- Sunglimmer Drape
+        46322, -- Brann's Sealing Ring
+        46323, -- Starshine Signet
+    },
+    -- Reply-Code Alpha
+    ["46053"] = {
+        45588, -- Drape of the Skyborn
+        45608, -- Brann's Signet Ring
+        45614, -- Starshine Circle
+        45618, -- Sunglimmer Cloak
     },
     -- Conqueror's Darkruned Battleplate
     ["46111"] = {
@@ -5836,6 +5866,22 @@ GL.Data.ItemLinks = {
     -- Valorous Nightsong Cover
     ["46313"] = {
         45649, -- Helm of the Wayward Vanquisher
+    },
+    -- Drape of the Skyherald
+    ["46320"] = {
+        46052, -- Reply-Code Alpha
+    },
+    -- Sunglimmer Drape
+    ["46321"] = {
+        46052, -- Reply-Code Alpha
+    },
+    -- Brann's Sealing Ring
+    ["46322"] = {
+        46052, -- Reply-Code Alpha
+    },
+    -- Starshine Signet
+    ["46323"] = {
+        46052, -- Reply-Code Alpha
     },
     -- Trophy of the Crusade
     ["47242"] = {

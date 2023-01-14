@@ -1,3 +1,5 @@
+local L = Gargul_L;
+
 ---@type GL
 local _, GL = ...;
 
@@ -173,10 +175,10 @@ function Overview:draw(section, onCloseCallback)
     SecondColumn:AddChild(ChangelogButton);
 
     local ResetUIButton = GL.AceGUI:Create("Button");
-    ResetUIButton:SetText("Reset Gargul UI");
+    ResetUIButton:SetText(L.RESET_UI);
     ResetUIButton:SetCallback("OnClick", function()
         GL.Interface.Dialogs.PopupDialog:open({
-            question = "Are you sure you want to reset all of Gargul's window sizes and locations?",
+            question = L.RESET_UI_CONFIRMATION,
             OnYes = function ()
                 GL.Commands:call("resetui");
             end,
@@ -184,6 +186,19 @@ function Overview:draw(section, onCloseCallback)
     end);
     ResetUIButton:SetWidth(136);
     SecondColumn:AddChild(ResetUIButton);
+
+    local ResetSettingsButton = GL.AceGUI:Create("Button");
+    ResetSettingsButton:SetText(L.RESET_SETTINGS);
+    ResetSettingsButton:SetCallback("OnClick", function()
+        GL.Interface.Dialogs.PopupDialog:open({
+            question = L.RESET_SETTINGS_CONFIRMATION,
+            OnYes = function ()
+                GL.Commands:call("resetsettings");
+            end,
+        });
+    end);
+    ResetSettingsButton:SetWidth(136);
+    SecondColumn:AddChild(ResetSettingsButton);
 
     local PatreonButton = GL.UI:createFrame("Button", "PatreonButton" .. GL:uuid(), Window.frame, "UIPanelButtonTemplate");
     PatreonButton:Show();

@@ -85,8 +85,16 @@ function AwardedLoot:tooltipLines(itemLink)
                 tinsert(Details, string.format("Price: %sg", Loot.GDKPCost));
             end
 
+
+            local received = Loot.received;
+            if (winner == GL.Exporter.disenchantedItemIdentifier
+                and GL:iEquals(GL.PackMule.disenchanter, GL.User.name)
+            ) then
+                received = true;
+            end
+
             local receivedString = "Given: yes";
-            if (not Loot.received) then
+            if (not received) then
                 receivedString = "Given: no";
             end
             tinsert(Details, receivedString);
@@ -371,7 +379,7 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, G
         awardedBy = GL.User.name,
         timestamp = timestamp,
         softresID = GL.DB:get("SoftRes.MetaData.id"),
-        received = string.lower(winner) == string.lower(GL.User.name),
+        received = GL:iEquals(winner, GL.User.name),
         BRCost = tonumber(BRCost),
         GDKPCost = tonumber(GDKPCost),
         OS = isOS,

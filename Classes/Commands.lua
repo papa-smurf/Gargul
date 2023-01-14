@@ -1,6 +1,5 @@
 local _, GL = ...;
 
-
 ---@type Settings
 local Settings = GL.Settings;
 
@@ -28,6 +27,7 @@ GL.Commands = GL.Commands or {
         plusones = "Open the PlusOnes window that allows you to check and manipulate all plus one values",
         raidcsv = "Output everyone currently in the group in a CSV format",
         resetui = "Reset Gargul's UI sizes and positions. Useful in case something went out of bounds!",
+        resetsettings = "Reset Gargul's settings. This can't be undone!",
         rolloff = "Open the RollOff UI where you can announce an item for players to roll on: /gl award [itemLink?]",
         settings = "Open the settings menu",
         softreserves = "Open either the SoftRes import window if there's no data available or open the SoftRes overview",
@@ -146,6 +146,11 @@ GL.Commands = GL.Commands or {
 
         resetui = function ()
             Settings:set("UI", {});
+            C_UI.Reload();
+        end,
+
+        resetsettings = function ()
+            GL.Settings.Active = {};
             C_UI.Reload();
         end,
 
