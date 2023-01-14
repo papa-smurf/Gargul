@@ -842,10 +842,6 @@ function PackMule:setDisenchanter(disenchanter)
         return;
     end
 
-    if (not GL.User.isInGroup) then
-        return GL:warning("You're not currently in a group");
-    end
-
     self.disenchanter = GL:capitalize(string.lower(disenchanter));
 
     GL:sendChatMessage(
