@@ -168,6 +168,7 @@ GL.Data.Constants = {
         },
         Uncommon = {
             "CarbonFury",
+            "Silvertungh",
             "Sneaky",
             "Snickels",
         },
