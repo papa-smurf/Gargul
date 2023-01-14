@@ -96,6 +96,12 @@ function GL:_init()
     self.Version:_init();
     self.Settings:_init();
 
+    -- Register media
+    local media = LibStub("LibSharedMedia-3.0")
+    media:Register("sound", "Gargul: uh-oh", "Interface/AddOns/".. self.name .."/Assets/Sounds/uh-oh.ogg");
+    media:Register("font", "PTSansNarrow", "Interface/AddOns/".. self.name .."/Assets/Fonts/PTSansNarrow.ttf");
+    GL.FONT = media:Fetch("font", "PTSansNarrow");
+
     -- Show a welcome message
     if (self.Settings:get("welcomeMessage")) then
         print(string.format(
