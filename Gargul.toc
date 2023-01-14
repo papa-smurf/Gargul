@@ -14,6 +14,7 @@ bootstrap.lua
 
 # Localizations
 Data/Localizations/en.lua
+
 # Data objects
 Data/Constants.lua
 Data/DefaultSettings.lua
