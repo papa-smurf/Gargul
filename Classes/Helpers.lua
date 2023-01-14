@@ -288,7 +288,7 @@ function GL:handleItemClick(itemLink, mouseButtonPressed, callback)
         if (GL.GDKP.Session:activeSessionID()
             and not GL.GDKP.Session:getActive().lockedAt
         ) then
-            GL.GDKP.Auctioneer:addItemLink(itemLink);
+            GL.Interface.GDKP.Auctioneer:draw(itemLink);
         else
             GL.MasterLooterUI:draw(itemLink);
         end
