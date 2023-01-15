@@ -316,7 +316,11 @@ function DroppedLoot:hookClickEvents()
             elseif (buttonProvider == "XLoot") then
                 Button = getglobal("XLootButton" .. buttonIndex);
             else
-                Button = getglobal("LootButton" .. buttonIndex);
+                --Button = getglobal("LootButton" .. buttonIndex);
+                -- No need to support the vanilla button since it's handled by the
+                -- HandleModifiedItemClick handler in bootstrap.lua
+
+                return;
             end
 
             --- No button with this index was found, no need to look further
@@ -325,55 +329,12 @@ function DroppedLoot:hookClickEvents()
             end
 
             Button:HookScript("OnClick", function()
-                local slot = Button.slot or buttonIndex;
-
+                local slot = tonumber(Button.slot) or buttonIndex;
                 if (not slot) then
                     return;
                 end
 
-                -- The user doesnt want to use shortcut keys when solo
-                if (not GL.User.isInGroup
-                    and GL.Settings:get("ShortcutKeys.onlyInGroup")
-                ) then
-                    return;
-                end
-
-                local itemLink = GetLootSlotLink(slot);
-
-                if (not itemLink or type(itemLink) ~= "string") then
-                    return;
-                end
-
-                local keyPressIdentifier = GL.Events:getClickCombination();
-
-                -- Open the action selection window
-                if (keyPressIdentifier == GL.Settings:get("ShortcutKeys.rollOffOrAuction")) then
-                    if (GL.GDKP.Session:activeSessionID()
-                        and not GL.GDKP.Session:getActive().lockedAt
-                    ) then
-                        GL.Interface.GDKP.Auctioneer:draw(itemLink);
-                    else
-                        GL.MasterLooterUI:draw(itemLink);
-                    end
-                -- Open the roll window
-                elseif (keyPressIdentifier == GL.Settings:get("ShortcutKeys.rollOff")) then
-                    GL.MasterLooterUI:draw(itemLink);
-
-                -- Open the auction window
-                elseif (keyPressIdentifier == GL.Settings:get("ShortcutKeys.auction")) then
-                    GL.Interface.GDKP.Auctioneer:draw(itemLink);
-
-                -- Open the award window
-                elseif (keyPressIdentifier == GL.Settings:get("ShortcutKeys.award")) then
-                    GL.Interface.Award:draw(itemLink);
-
-                elseif (keyPressIdentifier == GL.Settings:get("ShortcutKeys.disenchant")) then
-                    -- We only allow disenchanting from bags if the disenchant hotkey does not include control
-                    -- because otherwise it triggers the dressupframe which can be really annoying
-                    if (not IsControlKeyDown()) then
-                        GL.PackMule:disenchant(itemLink);
-                    end
-                end
+                GL:handleItemClick(GetLootSlotLink(slot));
             end);
 
             self.ButtonsHooked[buttonProvider][buttonIndex] = true;
@@ -726,20 +687,20 @@ function DroppedLoot:announceTest(...)
         itemIDs[key] = value;
     end
 
-    GL:onItemLoadDo(itemIDs, function (Items)
+    GL:onItemLoadDo(itemIDs, function (Details)
         self:announce({
             Functions = {
-                GetNumLootItems = function () return GL:count(Items); end,
+                GetNumLootItems = function () return GL:count(Details); end,
                 GetLootSlotInfo = function (slot)
-                    local SlotItem = Items[slot];
+                    local SlotItem = Details[slot];
 
                     return SlotItem.icon, SlotItem.name, 1, nil, SlotItem.quality, false, false, nil, true;
                 end,
                 GetLootSlotLink = function (slot)
-                    return Items[slot].link or nil;
+                    return Details[slot].link or nil;
                 end,
                 GetLootSlotType = function(slot)
-                    local itemLink = Items[slot].link or "";
+                    local itemLink = Details[slot].link or "";
 
                     if (GL:strContains(itemLink, "Hcurrency:")) then
                         return LOOT_SLOT_CURRENCY;

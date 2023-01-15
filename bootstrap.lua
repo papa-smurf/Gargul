@@ -96,6 +96,12 @@ function GL:_init()
     self.Version:_init();
     self.Settings:_init();
 
+    -- Register media
+    local media = LibStub("LibSharedMedia-3.0")
+    media:Register("sound", "Gargul: uh-oh", "Interface/AddOns/".. self.name .."/Assets/Sounds/uh-oh.ogg");
+    media:Register("font", "PTSansNarrow", "Interface/AddOns/".. self.name .."/Assets/Fonts/PTSansNarrow.ttf");
+    GL.FONT = media:Fetch("font", "PTSansNarrow");
+
     -- Show a welcome message
     if (self.Settings:get("welcomeMessage")) then
         print(string.format(
@@ -135,8 +141,10 @@ function GL:_init()
     -- Hook native window events
     self:hookNativeWindowEvents();
 
-    -- Hook the bagslot events
-    self:hookBagSlotEvents();
+    -- Hook item click events
+    hooksecurefunc("HandleModifiedItemClick", function(itemLink)
+        self:handleItemClick(itemLink, "ModifiedButton");
+    end);
 
     -- Hook item tooltip events
     self:hookTooltipSetItemEvents();
@@ -157,9 +165,6 @@ function GL:_init()
     -- Show the changelog window
     GL.Interface.Changelog:reportChanges();
 
-    -- Register sounds
-    local media = LibStub("LibSharedMedia-3.0")
-    media:Register("sound", "Gargul: uh-oh", "Interface/AddOns/".. self.name .."/Assets/Sounds/uh-oh.ogg");
 end
 
 -- Register the gl slash command
@@ -244,71 +249,11 @@ function GL:hookNativeWindowEvents()
     end);
 end
 
---- Hook into the HandleModifiedItemClick event to allow for Gargul's many hotkeys
----
----@return void
-function GL:hookBagSlotEvents()
-    hooksecurefunc("HandleModifiedItemClick", function(itemLink)
-        -- The user doesnt want to use shortcut keys when solo
-        if (not GL.User.isInGroup
-            and GL.Settings:get("ShortcutKeys.onlyInGroup")
-        ) then
-            return;
-        end
-
-        if (not itemLink or type(itemLink) ~= "string") then
-            return;
-        end
-
-        -- Make sure item interaction elements like ah/mail/shop/bank are closed
-        if (self.auctionHouseIsShown
-            or self.bankIsShown
-            or self.guildBankIsShown
-            or self.mailIsShown
-            or self.merchantIsShown
-        ) then
-            return;
-        end
-
-        local keyPressIdentifier = GL.Events:getClickCombination();
-
-        -- Open the action selection window
-        if (keyPressIdentifier == GL.Settings:get("ShortcutKeys.rollOffOrAuction")) then
-            if (GL.GDKP.Session:activeSessionID()
-                and not GL.GDKP.Session:getActive().lockedAt
-            ) then
-                GL.Interface.GDKP.Auctioneer:draw(itemLink);
-            else
-                GL.MasterLooterUI:draw(itemLink);
-            end
-        -- Open the roll window
-        elseif (keyPressIdentifier == GL.Settings:get("ShortcutKeys.rollOff")) then
-            GL.MasterLooterUI:draw(itemLink);
-
-        -- Open the auction window
-        elseif (keyPressIdentifier == GL.Settings:get("ShortcutKeys.auction")) then
-            GL.Interface.GDKP.Auctioneer:draw(itemLink);
-
-        -- Open the award window
-        elseif (keyPressIdentifier == GL.Settings:get("ShortcutKeys.award")) then
-            GL.Interface.Award:draw(itemLink);
-
-        elseif (keyPressIdentifier == GL.Settings:get("ShortcutKeys.disenchant")) then
-            -- We only allow disenchanting from bags if the disenchant hotkey does not include control
-            -- because otherwise it triggers the dressupframe which can be really annoying
-            if (not IsControlKeyDown()) then
-                GL.PackMule:disenchant(itemLink);
-            end
-        end
-    end);
-end
-
 --- We hook all the tooltip data (tmb/softres etc) to a single event to make caching easier
 ---
 ---@return void
 function GL:hookTooltipSetItemEvents()
-    -- Bind the appendAwardedLootToTooltip method to the OnTooltipSetItem event
-    GL:onTooltipSetItem(function(Tooltip)
+    GL.onTooltipSetItemFunc = function(Tooltip)
         -- No valid item tooltip was provided
         if (not Tooltip
             or not Tooltip.GetItem
@@ -367,7 +312,10 @@ function GL:hookTooltipSetItemEvents()
         if (linesAdded) then
             Tooltip:AddLine(" ");
         end
-    end);
+    end;
+
+    -- Bind the appendAwardedLootToTooltip method to the OnTooltipSetItem event
+    GL:onTooltipSetItem(GL.onTooltipSetItemFunc);
 end
 
 --[[ CREATE NECESSARY FRAMES ]]

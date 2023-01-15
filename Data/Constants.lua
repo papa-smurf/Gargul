@@ -6,6 +6,7 @@ GL.Data = GL.Data or {};
 
 GL.Data.Constants = {
     defaultFrameTitle = string.format("Gargul |c00967FD2v%s|r", GL.version),
+    discordURL = "https://discord.gg/D3mDhYPVzf",
 
     AccentedCharacterCaseMap = {
         ["á"] = "Á",
@@ -168,6 +169,7 @@ GL.Data.Constants = {
         },
         Uncommon = {
             "CarbonFury",
+            "Silvertungh",
             "Sneaky",
             "Snickels",
         },
@@ -177,13 +179,13 @@ GL.Data.Constants = {
             "Kelziad",
             "Nambojambo",
             "Scratchd",
-            "Vejusatko",
             "WaDaFruCK",
         },
         Epic = {
             "Die_Quelle",
             "Infinïty",
             "Sapmagic",
+            "Vejusatko",
         },
         Legendary = {
             "Cuckster",

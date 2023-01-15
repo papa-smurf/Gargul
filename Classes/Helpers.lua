@@ -1,3 +1,5 @@
+local L = Gargul_L;
+
 ---@class GL : Bootstrapper
 local _, GL = ...;
 
@@ -224,6 +226,108 @@ function GL:dump(mixed)
     end
 
     GL:message(encoded);
+end
+
+local lastClickTime;
+---@param itemLink string
+---@param mouseButtonPressed string|nil
+---@param callback function|nil Some actions (like award) support a callback
+---@return void
+function GL:handleItemClick(itemLink, mouseButtonPressed, callback)
+    local modifiedClick = mouseButtonPressed == "ModifiedButton";
+
+    if (not itemLink
+        or type(itemLink) ~= "string"
+        or not GL:getItemIDFromLink(itemLink)
+    ) then
+        return;
+    end
+
+    -- Make sure item interaction elements like ah/mail/shop/bank are closed
+    if (GL.auctionHouseIsShown
+        or GL.bankIsShown
+        or GL.guildBankIsShown
+        or GL.mailIsShown
+        or GL.merchantIsShown
+    ) then
+        return;
+    end
+
+    -- The user doesnt want to use shortcut keys when solo
+    if (not GL.User.isInGroup
+        and GL.Settings:get("ShortcutKeys.onlyInGroup")
+    ) then
+        return;
+    end
+
+    if (modifiedClick) then
+        mouseButtonPressed = nil;
+    end
+    local keyPressIdentifier = GL.Events:getClickCombination(mouseButtonPressed);
+
+    local onDoubleClick = function ()
+        -- Open a trade window with the targeted unit if we don't have one open yet
+        if (not TradeFrame:IsShown()) then
+            if (not UnitIsPlayer("target")) then
+                return;
+            end
+
+            GL.TradeWindow:open("target", function ()
+                GL.TradeWindow:addItem(GL:getItemIDFromLink(itemLink));
+            end, true);
+
+            return;
+        end
+
+        -- A trade window is open already, just add the item
+        GL.TradeWindow:addItem(GL:getItemIDFromLink(itemLink));
+    end;
+
+    -- Open the auction or roll window
+    if (keyPressIdentifier == GL.Settings:get("ShortcutKeys.rollOffOrAuction")) then
+        if (GL.GDKP.Session:activeSessionID()
+            and not GL.GDKP.Session:getActive().lockedAt
+        ) then
+            GL.Interface.GDKP.Auctioneer:draw(itemLink);
+        else
+            GL.MasterLooterUI:draw(itemLink);
+        end
+    -- Open the roll window
+    elseif (keyPressIdentifier == GL.Settings:get("ShortcutKeys.rollOff")) then
+        GL.MasterLooterUI:draw(itemLink);
+
+    -- Open the auction window
+    elseif (keyPressIdentifier == GL.Settings:get("ShortcutKeys.auction")) then
+        GL.Interface.GDKP.Auctioneer:draw(itemLink);
+
+    -- Open the award window
+    elseif (keyPressIdentifier == GL.Settings:get("ShortcutKeys.award")) then
+        GL.Interface.Award:draw(itemLink, callback);
+
+    -- Disenchant
+    elseif (keyPressIdentifier == GL.Settings:get("ShortcutKeys.disenchant")) then
+        GL.PackMule:disenchant(itemLink, nil, callback);
+
+    -- Link the item in chat
+    elseif (not modifiedClick and keyPressIdentifier == "SHIFT_CLICK") then
+        if (ChatFrameEditBox and ChatFrameEditBox:IsVisible()) then
+            ChatFrameEditBox:Insert(itemLink);
+        else
+            ChatEdit_InsertLink(itemLink);
+        end
+
+    -- Check for double clicks (trade)
+    else
+        local currentTime = GetTime();
+
+        -- Double click behavior detected
+        if (lastClickTime and currentTime - lastClickTime <= .5) then
+            onDoubleClick();
+            lastClickTime = nil;
+        else
+            lastClickTime = currentTime;
+        end
+    end
 end
 
 --- Check whether a given variable is empty
@@ -828,7 +932,8 @@ function GL:onItemLoadDo(Items, callback, haltOnError, sorter)
         return;
     end
 
-    if (type(Items) ~= "table") then
+    local itemsWasntATable = type(Items) ~= "table";
+    if (itemsWasntATable) then
         Items = {Items};
     end;
 
@@ -926,6 +1031,10 @@ function GL:onItemLoadDo(Items, callback, haltOnError, sorter)
                     table.sort(ItemData, sorter);
                 end
 
+                if (itemsWasntATable) then
+                    ItemData = ItemData[1];
+                end
+
                 callback(ItemData);
                 return;
             end
@@ -949,6 +1058,12 @@ function GL:onItemLoadDo(Items, callback, haltOnError, sorter)
             and itemsLoaded >= numberOfItemsToLoad
         ) then
             callbackCalled = true;
+
+            if (itemsWasntATable) then
+                ItemData = ItemData[1];
+                callback(ItemData);
+                return;
+            end
 
             if (type(sorter) == "function") then
                 table.sort(ItemData, sorter);
@@ -1090,11 +1205,8 @@ function GL:canUserUseItem(itemLinkOrID, callback)
         itemID = GL:getItemIDFromLink(itemLinkOrID);
     end
 
-    GL:onItemLoadDo(itemID, function (Results)
-        local Item = Results[1];
-
-        -- Better safe than lua error!
-        if (GL:empty(Item.link)) then
+    GL:onItemLoadDo(itemID, function (Details)
+        if (not Details) then
             return callback(true);
         end
 

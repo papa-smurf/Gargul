@@ -305,10 +305,8 @@ function RollOff:start(CommMessage)
     ---
     ---@vararg Item
     ---@return void
-    GL:onItemLoadDo(content.item, function (Items)
-        local Entry = Items[1];
-
-        if (GL:empty(Entry)) then
+    GL:onItemLoadDo(content.item, function (Details)
+        if (not Details) then
             return;
         end
 
@@ -316,7 +314,7 @@ function RollOff:start(CommMessage)
         local SupportedRolls = content.SupportedRolls or {};
 
         -- This is a new roll off so clean everything
-        if (Entry.link ~= self.CurrentRollOff.itemLink
+        if (Details.link ~= self.CurrentRollOff.itemLink
             or CommMessage.Sender.id ~= self.CurrentRollOff.initiator
         ) then
             -- This is a new item so make sure to
@@ -324,10 +322,10 @@ function RollOff:start(CommMessage)
             self.CurrentRollOff = {
                 initiator = CommMessage.Sender.id,
                 time = time,
-                itemID = Entry.id,
-                itemName = Entry.name,
-                itemLink = Entry.link,
-                itemIcon = Entry.icon,
+                itemID = Details.id,
+                itemName = Details.name,
+                itemLink = Details.link,
+                itemIcon = Details.icon,
                 SupportedRolls = SupportedRolls,
                 note = content.note,
                 Rolls = {},
@@ -345,7 +343,7 @@ function RollOff:start(CommMessage)
         if (GL.Settings:get("Rolling.showRollOffWindow")
             or self:startedByMe()
         ) then
-            GL.RollerUI:show(time, Entry.link, Entry.icon, content.note, SupportedRolls);
+            GL.RollerUI:show(time, Details.link, Details.icon, content.note, SupportedRolls);
 
             if (CommMessage.Sender.id == GL.User.id) then
                 GL.MasterLooterUI:drawReopenMasterLooterUIButton();

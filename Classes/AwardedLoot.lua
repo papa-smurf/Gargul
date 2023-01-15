@@ -85,8 +85,16 @@ function AwardedLoot:tooltipLines(itemLink)
                 tinsert(Details, string.format("Price: %sg", Loot.GDKPCost));
             end
 
+
+            local received = Loot.received;
+            if (winner == GL.Exporter.disenchantedItemIdentifier
+                and GL:iEquals(GL.PackMule.disenchanter, GL.User.name)
+            ) then
+                received = true;
+            end
+
             local receivedString = "Given: yes";
-            if (not Loot.received) then
+            if (not received) then
                 receivedString = "Given: no";
             end
             tinsert(Details, receivedString);
@@ -267,19 +275,15 @@ function AwardedLoot:editWinner(checksum, winner, announce)
         end
     end
 
-    -- If the user is not in a group then there's no need
-    -- to broadcast or attempt to auto assign loot to the winner
-    if (GL.User.isInGroup) then
-        -- Broadcast the awarded loot details to everyone in the group
-        GL.CommMessage.new(CommActions.editAwardedItem, AwardEntry, "GROUP"):send();
+    -- Broadcast the awarded loot details to everyone in the group
+    GL.CommMessage.new(CommActions.editAwardedItem, AwardEntry, "GROUP"):send();
 
-        -- The loot window is still active and the auto assign setting is enabled
-        if (not GL.DroppedLoot.lootWindowIsOpened
-            and GL.Settings:get("AwardingLoot.autoTradeAfterAwardingAnItem")
-            and GL.User.name ~= winner
-        ) then
-            self:initiateTrade(AwardEntry);
-        end
+    -- The loot window is still active and the auto assign setting is enabled
+    if (not GL.DroppedLoot.lootWindowIsOpened
+        and GL.Settings:get("AwardingLoot.autoTradeAfterAwardingAnItem")
+        and GL.User.name ~= winner
+    ) then
+        self:initiateTrade(AwardEntry);
     end
 
     -- Let the application know that an item was edited
@@ -375,7 +379,7 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, G
         awardedBy = GL.User.name,
         timestamp = timestamp,
         softresID = GL.DB:get("SoftRes.MetaData.id"),
-        received = string.lower(winner) == string.lower(GL.User.name),
+        received = GL:iEquals(winner, GL.User.name),
         BRCost = tonumber(BRCost),
         GDKPCost = tonumber(GDKPCost),
         OS = isOS,
@@ -446,27 +450,23 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, G
         end
     end
 
-    -- If the user is not in a group then there's no need
-    -- to broadcast or attempt to auto assign loot to the winner
-    if (GL.User.isInGroup) then
-        -- Broadcast the awarded loot details to everyone in the group
-        GL.CommMessage.new(CommActions.awardItem, AwardEntry, "GROUP"):send();
+    -- Broadcast the awarded loot details to everyone in the group
+    GL.CommMessage.new(CommActions.awardItem, AwardEntry, "GROUP"):send();
 
-        -- The loot window is still active and the auto assign setting is enabled
-        if (GL.DroppedLoot.lootWindowIsOpened
-            and GL.User.isMasterLooter
-            and GL.Settings:get("AwardingLoot.autoAssignAfterAwardingAnItem")
-        ) then
-            GL.PackMule:assignLootToPlayer(AwardEntry.itemID, winner);
+    -- The loot window is still active and the auto assign setting is enabled
+    if (GL.DroppedLoot.lootWindowIsOpened
+        and GL.User.isMasterLooter
+        and GL.Settings:get("AwardingLoot.autoAssignAfterAwardingAnItem")
+    ) then
+        GL.PackMule:assignLootToPlayer(AwardEntry.itemID, winner);
 
-        -- The loot window is closed and the auto trade setting is enabled
-        -- Also skip this part if you yourself won the item
-        elseif (not GL.DroppedLoot.lootWindowIsOpened
-            and GL.Settings:get("AwardingLoot.autoTradeAfterAwardingAnItem")
-            and GL.User.name ~= winner
-        ) then
-            AwardedLoot:initiateTrade(AwardEntry);
-        end
+    -- The loot window is closed and the auto trade setting is enabled
+    -- Also skip this part if you yourself won the item
+    elseif (not GL.DroppedLoot.lootWindowIsOpened
+        and GL.Settings:get("AwardingLoot.autoTradeAfterAwardingAnItem")
+        and GL.User.name ~= winner
+    ) then
+        AwardedLoot:initiateTrade(AwardEntry);
     end
 
     -- Let the application know that an item was awarded
@@ -696,10 +696,8 @@ function AwardedLoot:processAwardedLoot(CommMessage)
 
     -- Show an item won alert on TBC+
     if (not GL.isEra and GL:iEquals(AwardEntry.awardedTo, GL.User.name)) then
-        GL:onItemLoadDo(AwardEntry.itemID, function (Result)
-            Result = Result[1];
-
-            if (not Result) then
+        GL:onItemLoadDo(AwardEntry.itemID, function (Details)
+            if (not Details) then
                 return;
             end
 
@@ -713,7 +711,7 @@ function AwardedLoot:processAwardedLoot(CommMessage)
                 end
             end
             local LootAlertSystem = AlertFrame:AddQueuedAlertFrameSubSystem("LootWonAlertFrameTemplate", callback, 6, math.huge);
-            LootAlertSystem:AddAlert(Result.link);
+            LootAlertSystem:AddAlert(Details.link);
         end);
     end
 
