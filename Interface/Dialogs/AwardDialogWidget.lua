@@ -215,7 +215,6 @@ local function constructor()
     OptionsFrame:AddChild(VerticalSpacer);
 
     -- Plus one checkbox
-    if (GL.PlusOnes:enabled()) then
         local PlusOneCheckBox = AceGUI:Create("CheckBox");
         PlusOneCheckBox:SetLabel("");
         PlusOneCheckBox:SetDescription("");
@@ -227,7 +226,7 @@ local function constructor()
         -- Plus one label
         local PlusOneLabel = AceGUI:Create("InteractiveLabel");
         PlusOneLabel:SetFontObject(_G["GameFontNormal"]);
-     PlusOneLabel:SetWidth(100);
+        PlusOneLabel:SetWidth(100);
         PlusOneLabel:SetText("Add a +1");
 
         PlusOneLabel:SetCallback("OnClick", function()
@@ -235,15 +234,7 @@ local function constructor()
         end);
 
         OptionsFrame:AddChild(PlusOneLabel);
-    else
-        VerticalSpacer = AceGUI:Create("SimpleGroup");
-        VerticalSpacer:SetLayout("FILL");
-        VerticalSpacer:SetWidth(57);
-        VerticalSpacer:SetHeight(10);
-        OptionsFrame:AddChild(VerticalSpacer); 
-    end
 
-    -- Plus one checkbox
     local OffSpecCheckBox = AceGUI:Create("CheckBox");
     OffSpecCheckBox:SetLabel("");
     OffSpecCheckBox:SetDescription("");
@@ -252,7 +243,7 @@ local function constructor()
     OptionsFrame:AddChild(OffSpecCheckBox);
     GL.Interface:set(GL.Interface.Dialogs.AwardDialog, "OffSpec", OffSpecCheckBox);
 
-    -- Plus one label
+    -- Off Spec label
     local OffSpecLabel = AceGUI:Create("InteractiveLabel");
     OffSpecLabel:SetFontObject(_G["GameFontNormal"]);
     OffSpecLabel:SetWidth(30);

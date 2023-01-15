@@ -114,9 +114,8 @@ GL.Data.DefaultSettings = {
     PlusOnes = {
         automaticallyAcceptDataFrom = "",
         automaticallyShareData = true,
-        enabled = false,
+        blockShareData = false,
         enableWhisperCommand = true,
-        identifier = "+1",
     },
     GDKP = {
         acceptBidsLowerThanMinimum = false, -- Change default? Check Auction.lua !!

@@ -16,9 +16,9 @@ function PlusOnes:draw(Parent)
     local HorizontalSpacer;
     local Checkboxes = {
         {
-            label = "Enable plus ones",
-            description = "When enabled, the plus one button will be displayed in the award window and plus ones will be tracked",
-            setting = "PlusOnes.enabled",
+            label = "Block shared data",
+            description = "Block shared PlusOnes data from other players in your raid.",
+            setting = "PlusOnes.blockShareData",
         },
 
         {
@@ -63,29 +63,6 @@ function PlusOnes:draw(Parent)
         end
 
         GL.Settings:set("PlusOnes.automaticallyAcceptDataFrom", value:gsub(" ", ""));
-    end);
-    Parent:AddChild(PlusOnesIdentifier);
-
-    local PlusOnesIdentifier = GL.AceGUI:Create("EditBox");
-    PlusOnesIdentifier:DisableButton(true);
-    PlusOnesIdentifier:SetHeight(20);
-    PlusOnesIdentifier:SetFullWidth(true);
-    PlusOnesIdentifier:SetMaxLetters(3);
-    PlusOnesIdentifier:SetText(GL.Settings:get("PlusOnes.identifier", "PO"));
-    PlusOnesIdentifier:SetLabel(string.format(
-        "|cff%sThe 'Identifier' is the text shown on the button (maximum 3 characters).|r",
-        GL:classHexColor("rogue")
-    ));
-    PlusOnesIdentifier:SetCallback("OnTextChanged", function (self)
-        local value = self:GetText();
-
-        if (type(value) ~= "string"
-            or GL:empty(value)
-        ) then
-            return;
-        end
-
-        GL.Settings:set("PlusOnes.identifier", strtrim(value));
     end);
     Parent:AddChild(PlusOnesIdentifier);
 

@@ -181,7 +181,7 @@ function PlusOnes:handleWhisperCommand(_, message, sender)
         local name = self:normalizedName(args[2]);
         local plusOne = self:getPlusOnes(name);
         GL:sendChatMessage(
-            string.format("Player %s's %s total is %d", GL:capitalize(name), GL.Settings:get("PlusOnes.identifier", "+1"), plusOne),
+            string.format("Player %s's +1 total is %d", GL:capitalize(name), plusOne),
             "WHISPER", nil, sender
         );
         return;
@@ -195,7 +195,7 @@ function PlusOnes:handleWhisperCommand(_, message, sender)
     name = self:normalizedName(name);
     local plusOne = self:getPlusOnes(name);
     GL:sendChatMessage(
-        string.format("Your %s total is %d", GL.Settings:get("PlusOnes.identifier", "+1"), plusOne),
+        string.format("Your +1 total is %d", plusOne),
         "WHISPER", nil, sender
     );
 end
@@ -543,6 +543,11 @@ end
 function PlusOnes:receiveBroadcast(CommMessage)
     GL:debug("PlusOnes:receiveBroadcast");
 
+    -- If shared data is blocked then return
+    if (GL.Settings:get("PlusOnes.blockShareData")) then
+        return;
+    end
+
     -- No need to update our tables if we broadcasted them ourselves
     if (CommMessage.Sender.name == GL.User.name) then
         GL:debug("PlusOnes:receiveBroadcast received by self, skip");
@@ -617,6 +622,11 @@ end
 ---@return void
 function PlusOnes:requestData()
     GL:debug("PlusOnes:requestData");
+
+    -- If shared data is blocked then no need to request so return
+    if (GL.Settings:get("PlusOnes.blockShareData")) then
+        return;
+    end
 
     if (self.requestingData) then
         return;
@@ -848,6 +858,12 @@ end
 ---@param CommMessage CommMessage
 function PlusOnes:receiveUpdate(CommMessage)
     GL:debug("PlusOnes:receiveUpdate");
+
+    -- If shared data is blocked then no need to receive update so return
+    if (GL.Settings:get("PlusOnes.blockShareData")) then
+        return;
+    end
+
     -- No need to update our tables if we broadcasted them ourselves
     if (CommMessage.Sender.name == GL.User.name) then
         GL:debug("PlusOnes:receiveUpdate received by self, skip");
