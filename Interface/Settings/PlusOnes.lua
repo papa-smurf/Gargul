@@ -17,7 +17,7 @@ function PlusOnes:draw(Parent)
     local Checkboxes = {
         {
             label = "Block shared data",
-            description = "Block shared PlusOnes data from other players in your raid.",
+            description = "Block shared +1s data from other players in your raid.\nEnabling this also blocks players on your allowed list.",
             setting = "PlusOnes.blockShareData",
         },
 

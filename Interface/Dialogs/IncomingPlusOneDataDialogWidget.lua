@@ -269,6 +269,44 @@ local function constructor()
     HorizontalSpacer:SetHeight(8);
     OptionsFrame:AddChild(HorizontalSpacer);
 
+    VerticalSpacer = AceGUI:Create("SimpleGroup");
+    VerticalSpacer:SetLayout("FILL");
+    VerticalSpacer:SetWidth(40);
+    VerticalSpacer:SetHeight(10);
+    OptionsFrame:AddChild(VerticalSpacer);
+ 
+    -- Block shared data checkbox
+    local BlockSharedDataCheckBox = AceGUI:Create("CheckBox");
+    BlockSharedDataCheckBox:SetLabel("");
+    BlockSharedDataCheckBox:SetDescription("");
+    BlockSharedDataCheckBox:SetHeight(20);
+    BlockSharedDataCheckBox:SetWidth(24);
+    OptionsFrame:AddChild(BlockSharedDataCheckBox);
+    GL.Interface:set(GL.Interface.Dialogs.IncomingPlusOneDataDialog, "BlockSharedData", BlockSharedDataCheckBox);
+    Widget.BlockSharedDataCheckBox = BlockSharedDataCheckBox;
+
+    BlockSharedDataCheckBox:SetCallback("OnValueChanged", function (widget)
+        if (widget:GetValue()) then
+            GL.Settings:set("PlusOnes.blockShareData", true);
+        else
+            GL.Settings:set("PlusOnes.blockShareData", false);
+        end
+    end);
+
+    -- Block shared data label
+    local BlockSharedDataLabel = AceGUI:Create("InteractiveLabel");
+    BlockSharedDataLabel:SetFontObject(_G["GameFontNormal"]);
+    BlockSharedDataLabel:SetWidth(200);
+    BlockSharedDataLabel:SetText("Block all incoming +1 shared data");
+    Widget.BlockSharedDataLabel = BlockSharedDataLabel;
+
+    BlockSharedDataLabel:SetCallback("OnClick", function()
+        BlockSharedDataCheckBox:ToggleChecked();
+        BlockSharedDataCheckBox:Fire("OnValueChanged", BlockSharedDataCheckBox:GetValue());
+    end);
+
+    OptionsFrame:AddChild(BlockSharedDataLabel);   
+
     HorizontalSpacer = AceGUI:Create("SimpleGroup");
     HorizontalSpacer:SetLayout("FILL");
     HorizontalSpacer:SetFullWidth(true);

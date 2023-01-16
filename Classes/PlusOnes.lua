@@ -135,15 +135,6 @@ function PlusOnes:removePlayerFromTrusted(playerName)
     GL.Settings:set("PlusOnes.automaticallyAcceptDataFrom", table.concat(NewTrustedPlayers, ","));
 end
 
---- Check whether plus ones are enabled
----
----@return boolean
-function PlusOnes:enabled()
-    GL:debug("PlusOnes:enabled");
-
-    return GL.Settings:get("PlusOnes.enabled", false);
-end
-
 --- Draw either the importer or overview
 --- based on the current plus one data
 ---
@@ -441,7 +432,7 @@ end
 --- Export to CSV
 ---
 ---@param displayFrame boolean
----@return void
+---@return string
 function PlusOnes:export(displayFrame)
     GL:debug("PlusOnes:export");
     
@@ -502,9 +493,6 @@ function PlusOnes:broadcast()
             "GROUP"
         ):send(function ()
             GL:success("PlusOnes broadcast finished");
-
-            --- Broadcast updates before we reset the flag. Enabling this ends up calling receiveUpdate before receiveBroadcast and breaks the code
-           -- self:broadcastQueuedUpdates();
 
             self.broadcastInProgress = false;
             GL.Events:fire("GL.PLUSONES_BROADCAST_ENDED");
@@ -798,8 +786,8 @@ function PlusOnes:broadcastQueuedUpdates()
         GL.CommMessage.new(
             CommActions.broadcastPlusOnesMutation,
             {
-                updates = self.QueuedUpdates,
-                uuid = DB:get("PlusOnes.MetaData.uuid", ""),
+                importString = self:export(false),
+                MetaData = DB:get("PlusOnes.MetaData", {}),
             },
             "GROUP"
         ):send(function ()
@@ -869,62 +857,63 @@ function PlusOnes:receiveUpdate(CommMessage)
         GL:debug("PlusOnes:receiveUpdate received by self, skip");
         return true;
     end
-
-    local uuid = DB:get("PlusOnes.MetaData.uuid", '');
-
-    local importUuid = CommMessage.content.uuid or GL:uuid();
-    local importUpdatedAt = CommMessage.content.updatedAt;
-    local updates = CommMessage.content.updates or {};
-    local importBroadcast = (function (update)
-        local playerName = update.playerName or '';
-        local plusOne = update.plusOne or nil;
-        local delete = update.delete or false;
-        local dontBroadcast = true;
-
-        if (plusOne) then
-            self:setPlusOnes(playerName, plusOne, dontBroadcast);
+    local importString = CommMessage.content.importString or '';
+    local MetaData = CommMessage.content.MetaData or {};
+    local importUpdates = (function ()
+        if (GL:empty(importString)) then
+        self:clearPlusOnes();
+            return;
         end
 
-        if (delete) then
-            self:deletePlusOnes(playerName, dontBroadcast);
+        local result = self:import(importString, false, MetaData);
+        if (result) then
+            self:triggerChangeEvent();
         end
 
-    end);
-    local processUpdates = (function ()
-        for _, update in pairs(CommMessage.content.updates or {}) do
-            importBroadcast(update);
-        end
+        return result;
     end);
 
     --- Check whether we can trust this sender (and as such immediately accept the incoming broadcast)
     if (self:playerIsTrusted(CommMessage.Sender.name)
         or self:playerIsTrusted(CommMessage.senderFqn)
     ) then
-        processUpdates();
+        importUpdates();
         return;
     end
 
     --- Display different messages depending on whether it is an update of the same import or completely new data.
+    local uuid = DB:get("PlusOnes.MetaData.uuid", '');
     local updatedAt = DB:get("PlusOnes.MetaData.updatedAt", 0);
     local question;
-    if (importUuid and uuid == importUuid) then -- This is an update to our dataset
+
+    if (GL:empty(importString)) then
         question = string.format(
-            "Are you sure you want to update your existing plus one with data from |c00%s%s|r?\n\nYour latest update was on |c00a79eff%s|r, theirs on |c00a79eff%s|r.",
-            GL:classHexColor(GL.Player:classByName(CommMessage.Sender.name)),
-            CommMessage.Sender.name,
-            date("%Y-%m-%d %H:%M", updatedAt),
-            date("%Y-%m-%d %H:%M", importUpdatedAt or 0)
-        );
-    elseif (not GL:empty(uuid)) then-- This is a different dataset, not an update
-        question = string.format(
-            "Are you sure you want to clear your existing plus one data and import new data broadcasted by %s?",
+            "%s wants to clear all your plus one data. Clear all plus one data?",
             CommMessage.Sender.name
         );
-    end
+        elseif (MetaData.uuid and uuid == MetaData.uuid) then -- This is an update to our dataset
+            question = string.format(
+                "Are you sure you want to update your existing plus ones with data from |c00%s%s|r?\n\nYour latest update was on |c00a79eff%s|r, theirs on |c00a79eff%s|r.",
+                GL:classHexColor(GL.Player:classByName(CommMessage.Sender.name)),
+                CommMessage.Sender.name,
+                date("%Y-%m-%d %H:%M", updatedAt),
+                date("%Y-%m-%d %H:%M", MetaData.updatedAt or 0)
+            );
+        elseif (not GL:empty(uuid)) then -- This is a different dataset, not an update
+            question = string.format(
+                "Are you sure you want to clear your existing plus one data and import new data broadcasted by %s?",
+                CommMessage.Sender.name
+            );
+        else
+            question = string.format(
+                "Are you sure you want to import new data broadcasted by %s?",
+                CommMessage.Sender.name
+            );
+        end
 
     local Dialog = {
         question = question,
-        OnYes = processUpdates,
+        OnYes = importUpdates,
         sender = CommMessage.Sender.name,
     };
 

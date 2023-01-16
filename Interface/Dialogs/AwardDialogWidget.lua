@@ -235,6 +235,7 @@ local function constructor()
 
         OptionsFrame:AddChild(PlusOneLabel);
 
+    -- Off Spec checkbox
     local OffSpecCheckBox = AceGUI:Create("CheckBox");
     OffSpecCheckBox:SetLabel("");
     OffSpecCheckBox:SetDescription("");
