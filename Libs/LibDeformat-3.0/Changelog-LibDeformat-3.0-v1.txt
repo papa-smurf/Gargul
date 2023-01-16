@@ -1,0 +1,16 @@
+tag v1
+0cb38e41ea596a557a070cd7b8157e81d3ef2d0b
+Cameron Knight <ckknight@Cameron-Knights-MacBook-Pro.local>
+2010-01-04 14:45:16 -0600
+
+Tagging as v1
+
+
+--------------------
+
+Cameron Knight:
+	- Fix folder name in .pkgmeta
+	- Add tests to main LibDeformat-3.0.lua, accessible only in debug mode and LibDeformat.Test() must be called to run the tests. Remove other tests, as they're not really useful anymore.
+	- Add some comments and move some code around.
+	- change @example to @usage
+	- Initial commit
