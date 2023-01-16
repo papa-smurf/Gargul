@@ -25,6 +25,7 @@ GL.Data.DefaultSettings = {
         announceLootToChat = true,
         announceDroppedLootInRW = false,
         minimumQualityOfAnnouncedLoot = 4,
+        minimumQualityOfLoggedLoot = 4,
     },
     ShortcutKeys = {
         auction = "DISABLED",
@@ -113,6 +114,7 @@ GL.Data.DefaultSettings = {
     },
     GDKP = {
         acceptBidsLowerThanMinimum = false, -- Change default? Check Auction.lua !!
+        addDropsToQueue = true,
         addGoldToTradeWindow = true,
         announceAuctionStart = true,
         announceCountdownInRW = true,

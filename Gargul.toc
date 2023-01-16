@@ -57,6 +57,7 @@ Classes/BoostedRolls.lua
 Classes/Comm.lua
 Classes/CommMessage.lua
 Classes/RaidGroups.lua
+Classes/DroppedLootLedger.lua
 
 # Interface objects
 Interface/AceGUIWidget-LibScrollingTable.lua
