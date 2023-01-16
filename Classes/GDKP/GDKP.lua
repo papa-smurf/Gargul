@@ -1,6 +1,9 @@
 ---@type GL
 local _, GL = ...;
 
+---@type DB
+local DB = GL.DB;
+
 ---@type Settings
 local Settings = GL.Settings;
 
@@ -26,7 +29,7 @@ function GDKP:settingsForItemID(itemID)
         }
     end
 
-    local PerItemSettings = Settings:get("GDKP.SettingsPerItem." .. itemID, {});
+    local PerItemSettings = DB:get("GDKP.SettingsPerItem." .. itemID, {});
     PerItemSettings.minimum = PerItemSettings.minimum or Settings:get("GDKP.defaultMinimumBid");
     PerItemSettings.increment = PerItemSettings.increment or Settings:get("GDKP.defaultIncrement");
 
@@ -37,7 +40,7 @@ end
 function GDKP:resetPerItemSettings()
     GL:debug("GDKP:resetPerItemSettings");
 
-    Settings:set("GDKP.SettingsPerItem", {});
+    DB:set("GDKP.SettingsPerItem", {});
 end
 
 ---@param data string
@@ -105,7 +108,7 @@ function GDKP:importPerItemSettings(data)
                 end
 
                 -- Everything looks good, store!
-                Settings:set("GDKP.SettingsPerItem." .. itemID, {
+                DB:set("GDKP.SettingsPerItem." .. itemID, {
                     minimum = minimum,
                     increment = increment,
                 });

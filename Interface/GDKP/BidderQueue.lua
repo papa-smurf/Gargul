@@ -1,8 +1,10 @@
+local L = Gargul_L;
+
 ---@type GL
 local _, GL = ...;
 
 ---@type GDKPAuction
-local GDKPAuction = GL.GDKP.Auction;
+local Auction = GL.GDKP.Auction;
 
 ---@type Interface
 local Interface = GL.Interface;
@@ -10,41 +12,24 @@ local Interface = GL.Interface;
 ---@type Settings
 local Settings = GL.Settings;
 
-local AceGUI = GL.AceGUI;
-GL.ScrollingTable = GL.ScrollingTable or LibStub("ScrollingTable");
-
 GL.Interface.GDKP = GL.Interface.GDKP or {};
 
 ---@class GDKPBidderQueueInterface
-GL.Interface.GDKP.BidderQueue = {
-    _initialized = false,
-    isVisible = false,
-    QueueBidDetails = {},
-    TableColumns = {
-        {
-            name = "test",
-            width = 18,
-            DoCellUpdate = GL.LibStItemCellUpdate,
-        },
-        {
-            DoCellUpdate = GL.LibStItemLinkCellUpdate,
-            width = 90,
-        },
-        {
-            width = 50,
-        },
-        {
-            width = 0,
-            sort = GL.Data.Constants.ScrollingTable.ascending,
-        },
-    },
+GL.BidderQueue = {
+    deletedIdentifiers = {},
+    windowName = "Gargul.BidderQueue.Window",
+
+    ItemRows = {},
 };
 
 ---@type GDKPBidderQueueInterface
-local BidderQueue = GL.Interface.GDKP.BidderQueue;
+local BidderQueue = GL.BidderQueue;
 
 --[[ CONSTANTS ]]
-local HEIGHT_PER_ITEM_ROW = 18;
+local DEFAULT_WINDOW_WIDTH = 150;
+local DEFAULT_WINDOW_HEIGHT = 170;
+local QUEUE_ROW_HEIGHT = 20;
+local FONT;
 
 ---@return void
 function BidderQueue:_init()
@@ -63,189 +48,376 @@ function BidderQueue:_init()
     end);
 end
 
----@return void
+---@return Frame|nil
 function BidderQueue:open()
-    GL:debug("Interface.GDKP.BidderQueue:open");
+    GL:debug("BidderQueue:open");
 
-    if (not Settings:get("GDKP.enableGDKPBidderQueue")) then
-        return;
-    end
-
-    local Window = Interface:get(self, "Frame.GDKPBidderQueue");
-
-    if (not Window) then
-        Window = self:build();
-    end
-
-    if (self.isVisible) then
+    if (not Settings:get("GDKP.enableBidderQueue")) then
         return;
     end
 
     self.isVisible = true;
+    FONT = GL.FONT;
+
+    local Window = _G[self.windowName] or self:build();
+
     self:refreshTable();
     Window:Show();
-end
-
----@return void
-function BidderQueue:build()
-    GL:debug("BidderQueue:build");
-
-    local Window = Interface:get(self, "Frame.GDKPBidderQueue");
-
-    -- Looks like we already created the overview before
-    if (Window) then
-        return;
-    end
-
-    local frameIdentifier = "GDKPBidderQueue";
-    local defaultWindowWidth = GL.elvUILoaded and 205 or 221;
-    local minimumWindowWidth = 126;
-    Window = AceGUI:Create("Frame", frameIdentifier);
-    Interface:restorePosition(Window, frameIdentifier);
-    Interface:restoreDimensions(Window, frameIdentifier, defaultWindowWidth, 145);
-    Interface:resizeBounds(Window, minimumWindowWidth, 145);
-    Window.frame:SetScale(GL.Settings:get("GDKP.bidderQueueScale", 1));
-
-    Window:SetTitle("Upcoming items");
-    Window.statustext:GetParent():Hide(); -- Hide the statustext bar
-    Interface:set(self, "GDKPBidderQueue", Window);
-
-    local Table = AceGUI:Create("CLMLibScrollingTable");
-    Table:SetDisplayCols(self.TableColumns);
-    Table:SetDisplayRows(10, 18);
-    Table:EnableSelection(false);
-    Table:RegisterEvents({ ["OnClick"] = function () return true; end }); -- Override the default OnClick
-    Table.frame:SetParent(Window.frame);
-    Table.frame:SetPoint("CENTER", Window.frame, "CENTER", 0, GL.elvUILoaded and 2 or -6);
-    Table.frame:Show();
-    Table.st.head:Hide(); -- Remove the table header
-
-    Table:RegisterEvents({
-        OnClick = function (rowFrame, cellFrame, data, cols, row, realrow, column, table, button)
-            -- Make sure something is actually highlighted, better safe than lua error
-            if (not GL:higherThanZero(realrow)
-                or type(data) ~= "table"
-                or not data[realrow]
-                or not data[realrow].cols
-                or not data[realrow].cols[4]
-                or GL:empty(data[realrow].cols[4].value)
-            ) then
-                return;
-            end
-
-            local currentValue = data[realrow].cols[3].value;
-            local checksum = data[realrow].cols[4].value;
-
-            if (not GDKPAuction.Queue[checksum]) then
-                return;
-            end
-
-            local QueuedItem = GDKPAuction.Queue[checksum];
-            if (type(QueuedItem.itemLink) ~= "string"
-                or not tonumber(QueuedItem.minimumBid)
-            ) then
-                return;
-            end
-
-            if (currentValue == "Bid") then
-
-                GL.Interface.Dialogs.ConfirmWithSingleInputDialog:open({
-                    question = string.format("What's your maximum bid for %s? (Minimum %s|c00FFF569g|r)", QueuedItem.itemLink, QueuedItem.minimumBid),
-                    OnYes = function (max)
-                        GDKPAuction:setAutoBid(max, checksum);
-                        self:refreshTable();
-                    end,
-                    focus = true,
-                });
-            else
-                GDKPAuction:removeAutoBid(checksum);
-                self:refreshTable();
-            end
-        end
-    });
-
-    Interface:set(self, "Queue", Table);
-
-    -- Remove that pesky close button. We're not releasing the frame anyways
-    -- so it shouldn't affect any other frames generated afterwards (fingers crossed)
-    GL:fetchCloseButtonFromAceGUIWidget(Window):Hide();
-
-    -- Adjust the number of table rows shown when resizing the window and store the end-result
-    local originalOnHeightSet = Window.OnHeightSet;
-    local onHeightSet = function ()
-        Window:SetWidth(math.max(minimumWindowWidth, Window.frame:GetWidth()));
-        Table:SetDisplayRows(math.floor(
-                Window.frame:GetHeight() / HEIGHT_PER_ITEM_ROW - (GL.elvUILoaded and 2 or 3)
-        ), HEIGHT_PER_ITEM_ROW);
-
-        local itemLinkWidth = 90 + (Window.frame:GetWidth() - defaultWindowWidth);
-        self.TableColumns[2].width = itemLinkWidth;
-        Table:SetDisplayCols(self.TableColumns);
-
-        Interface:storePosition(Window, frameIdentifier);
-        Interface:storeDimensions(Window, frameIdentifier);
-    end;
-    Window.OnHeightSet = function (...)
-        originalOnHeightSet(...);
-        onHeightSet();
-    end
-    onHeightSet();
-
-    -- Store the frame's position after moving it around
-    local originalStopMovingOrSizing = Window.frame.StopMovingOrSizing;
-    Window.frame.StopMovingOrSizing = function (...)
-        originalStopMovingOrSizing(...);
-
-        Interface:storePosition(Window, frameIdentifier);
-    end;
-
     return Window;
 end
 
+---@return Frame
+function BidderQueue:build()
+    GL:debug("BidderQueue:build");
+
+    if (_G[self.windowName]) then
+        return _G[self.windowName];
+    end
+
+    local ItemHolder, ScrollFrame;
+    ---@type Frame
+    local Window = Interface:createWindow(self.windowName, {
+        width = DEFAULT_WINDOW_WIDTH,
+        height = DEFAULT_WINDOW_HEIGHT,
+        minWidth = 150,
+        minHeight = 100,
+        maxWidth = 500,
+        maxHeight = 700,
+    });
+
+    Window:SetScript("OnHide", function ()
+        self.isVisible = false;
+    end);
+
+    Window:HookScript("OnSizeChanged", function ()
+        ItemHolder:SetSize(ScrollFrame:GetWidth(), ( ScrollFrame:GetHeight() * 2 ));
+    end);
+
+    --[[ CUSTOM MINIMIZED FRAME ]]
+    local top, left;
+    local oldOnSizeChanged = Window:GetScript("OnSizeChanged");
+    local oldOnDragStop = Window.MoveButton:GetScript("OnDragStop");
+    Window.Minimize.MinimizeButton:SetScript("OnClick", function ()
+        top, left = Window:GetTop(), Window:GetLeft();
+        Window:SetScript("OnSizeChanged", function () end);
+        Window.MoveButton:SetScript("OnDragStop", function ()
+            Window:StopMovingOrSizing();
+            Window.MoveButton:SetButtonState("NORMAL");
+            top, left = Window:GetTop(), Window:GetLeft();
+        end);
+        Window:SetHeight(70);
+        Window:ClearAllPoints();
+        Window:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", left, top);
+        Window.Minimize.MinimizeButton:Hide();
+        Window.Minimize.MaximizeButton:Show();
+        Window.Resize:Hide();
+        Window.OptionsButton:Hide();
+
+        Settings:set("GDKP.minimizeBidderQueue", true);
+    end);
+    Window.Minimize.MaximizeButton:SetScript("OnClick", function ()
+        Window:SetScript("OnSizeChanged", oldOnSizeChanged);
+        Window.MoveButton:SetScript("OnDragStop", oldOnDragStop);
+        Interface:restoreDimensions(Window);
+        Window:ClearAllPoints();
+        Window:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", left, top);
+        Window.Minimize.MinimizeButton:Show();
+        Window.Minimize.MaximizeButton:Hide();
+        Window.Resize:Show();
+        Window.OptionsButton:Show();
+
+        Settings:set("GDKP.minimizeBidderQueue", false);
+    end);
+
+    --[[ THE SETTINGS MENU IN THE TOP LEFT OF THE WINDOW ]]
+    Interface:addWindowOptions(Window, {
+        { text = L.TUTORIAL, notCheckable = true, func = function ()
+            GL:popupMessage(L.TUTORIAL_BIDDER_QUEUE);
+            CloseMenus();
+        end },
+        "divider",
+        {text = L.GDKP_QUEUE_HIDE_UNUSABLE, setting = "GDKP.bidderQueueHideUnusable", func = function(Entry, _, _, checked)
+            Settings:set("GDKP.bidderQueueHideUnusable", checked);
+            Entry.checked = checked;
+            self:refreshTable();
+        end},
+        {text = L.GDKP_SHOW_UPCOMING, setting = "GDKP.enableBidderQueue", func = function(Entry, _, _, checked)
+            if (not checked) then
+                -- Show a confirmation dialog before clearing entries
+                GL.Interface.Dialogs.PopupDialog:open({
+                    question = L.GDKP_HIDE_UPCOMING_CONFIRMATION,
+                    OnYes = function ()
+                        Settings:set("GDKP.enableBidderQueue", checked);
+                        Entry.checked = checked;
+                        self:close();
+                    end,
+                });
+
+                return;
+            end
+
+            Settings:set("GDKP.enableBidderQueue", checked);
+            Entry.checked = checked;
+        end},
+        "divider",
+        {text = L.WINDOW, isTitle = true, notCheckable = true },
+        { text = L.SCALE, notCheckable = true, func = function ()
+            Interface:openScaler(Window);
+            CloseMenus();
+        end }
+    }, 100);
+
+    --[[ SCROLLFRAME BOILERPLATE ]]
+    ---@type ScrollFrame
+    ScrollFrame = CreateFrame("ScrollFrame", nil, Window, "UIPanelScrollFrameTemplate")
+    ScrollFrame:SetPoint("TOPLEFT", Window, "TOPLEFT", 10, -24);
+    ScrollFrame:SetPoint("BOTTOMRIGHT", Window, "BOTTOMRIGHT", -19, 24);
+
+    ---@type Frame
+    ItemHolder = CreateFrame("Frame");
+    ScrollFrame:SetScrollChild(ItemHolder);
+    ItemHolder:SetSize(ScrollFrame:GetWidth(), ( ScrollFrame:GetHeight() * 2 ));
+    ItemHolder:SetPoint("TOPLEFT", ScrollFrame, "TOPLEFT");
+    ItemHolder:SetPoint("BOTTOMRIGHT", ScrollFrame, "BOTTOMRIGHT");
+
+    ---@type Frame
+    local Items = CreateFrame("Frame", nil, ItemHolder);
+    Items:SetAllPoints(ItemHolder);
+
+    ---@type Frame
+    local ActionButtons;
+
+    do -- [[ ACTION BUTTONS ]]
+        ---@type Frame
+        ActionButtons = CreateFrame("Frame");
+        ActionButtons:SetSize(38, 18);
+        ActionButtons:Hide();
+
+        --[[ BID BUTTON ]]
+        ---@type Button
+        ActionButtons.BidButton = CreateFrame("Button", nil, ActionButtons, "UIPanelButtonTemplate");
+        ActionButtons.BidButton:SetSize(18, 18);
+        ActionButtons.BidButton:SetPoint("TOPLEFT", ActionButtons, "TOPLEFT");
+
+        ---@type Texture
+        local NormalTexture = ActionButtons.BidButton:CreateTexture();
+        NormalTexture:SetTexture("Interface/AddOns/Gargul/Assets/Buttons/bag");
+        NormalTexture:SetAllPoints(ActionButtons.BidButton);
+        ActionButtons.BidButton:SetNormalTexture(NormalTexture);
+
+        ---@type Texture
+        local HighlightTexture = ActionButtons.BidButton:CreateTexture();
+        HighlightTexture:SetTexture("Interface/AddOns/Gargul/Assets/Buttons/bag");
+        NormalTexture:SetAllPoints(ActionButtons.BidButton);
+        ActionButtons.BidButton:SetHighlightTexture(HighlightTexture);
+
+        Interface:addTooltip(ActionButtons.BidButton, L.BID, "TOP");
+
+        --[[ REMOVE BID BUTTON ]]
+        ---@type Button
+        ActionButtons.RemoveBidButton = CreateFrame("Button", nil, ActionButtons, "UIPanelButtonTemplate");
+        ActionButtons.RemoveBidButton:SetSize(18, 18);
+        ActionButtons.RemoveBidButton:SetPoint("TOPLEFT", ActionButtons.BidButton, "TOPRIGHT", 2, 0);
+
+        ---@type Texture
+        NormalTexture = ActionButtons.RemoveBidButton:CreateTexture();
+        NormalTexture:SetTexture("Interface/AddOns/Gargul/Assets/Buttons/bag");
+        NormalTexture:SetAllPoints(ActionButtons.RemoveBidButton);
+        ActionButtons.RemoveBidButton:SetNormalTexture(NormalTexture);
+
+        ---@type Texture
+        HighlightTexture = ActionButtons.RemoveBidButton:CreateTexture();
+        HighlightTexture:SetTexture("Interface/AddOns/Gargul/Assets/Buttons/bag");
+        NormalTexture:SetAllPoints(ActionButtons.RemoveBidButton);
+        ActionButtons.RemoveBidButton:SetHighlightTexture(HighlightTexture);
+
+        Interface:addTooltip(ActionButtons.RemoveBidButton, L.REMOVE_BID, "TOP");
+
+        --[[ DELETE BUTTON ]]
+        ---@type Button
+        ActionButtons.DeleteButton = CreateFrame("Button", nil, ActionButtons, "UIPanelButtonTemplate");
+        ActionButtons.DeleteButton:SetSize(18, 18);
+        ActionButtons.DeleteButton:SetPoint("TOPLEFT", ActionButtons.BidButton, "TOPRIGHT", 2, 0);
+
+        ---@type Texture
+        NormalTexture = ActionButtons.DeleteButton:CreateTexture();
+        NormalTexture:SetTexture("Interface/AddOns/Gargul/Assets/Buttons/delete");
+        NormalTexture:SetAllPoints(ActionButtons.DeleteButton);
+        ActionButtons.DeleteButton:SetNormalTexture(NormalTexture);
+
+        ---@type Texture
+        HighlightTexture = ActionButtons.DeleteButton:CreateTexture();
+        HighlightTexture:SetTexture("Interface/AddOns/Gargul/Assets/Buttons/delete");
+        NormalTexture:SetAllPoints(ActionButtons.DeleteButton);
+        ActionButtons.DeleteButton:SetHighlightTexture(HighlightTexture);
+
+        Interface:addTooltip(ActionButtons.DeleteButton, L.DELETE, "TOP");
+    end
+
+    Window.ItemHolder = ItemHolder;
+    Window.ActionButtons = ActionButtons;
+
+    if (Settings:get("GDKP.minimizeBidderQueue")) then
+        Window.Minimize.MinimizeButton:Click();
+    end
+
+    _G[self.windowName] = Window;
+    return Window;
+end
+
+---@return void
 function BidderQueue:refreshTable()
     GL:debug("BidderQueue:refreshTable");
 
-    local Table = Interface:get(self, "Table.Queue");
-    if (not Table) then
+    if (not Settings:get("GDKP.enableBidderQueue")) then
         return;
     end
 
-    Table:SetData({}, true);
-
-    local TableData = {};
-    local queuedItems = 0;
-    for checksum, QueuedItem in pairs(GDKPAuction.Queue or {}) do
-        local autoBid = tonumber(GDKPAuction:getQueuedAutoBid(QueuedItem.itemID)) or 0;
-        local text = "Bid";
-        if (autoBid > 0) then
-            text = autoBid .. "|c00FFF569g|r";
-        end
-
-        tinsert(TableData, {
-            cols = {
-                {
-                    value = QueuedItem.itemID,
-                },
-                {
-                    value = QueuedItem.itemLink,
-                },
-                {
-                    value = text,
-                },
-                {
-                    value = checksum,
-                },
-            },
-        });
-
-        queuedItems = queuedItems + 1;
+    for _, Row in pairs(self.ItemRows or {}) do
+        Interface:release(Row);
     end
 
-    if (queuedItems > 0) then
-        Table:SetData(TableData);
-        Table:SortData();
-        self:open();
-    else
+    ---@type Frame
+    local Window = _G[self.windowName] or self:build();
+
+    ---@type Frame
+    local ItemHolder = Window.ItemHolder;
+
+    ---@type Frame
+    local ActionButtons = Window.ActionButtons;
+
+    local count = 0;
+
+    local QueueCopy = {};
+    for _, Entry in pairs(Auction.Queue) do
+        tinsert(QueueCopy, Entry);
+    end
+    table.sort(QueueCopy, function (a, b)
+        return a.identifier < b.identifier;
+    end);
+
+    for _, Item in pairs(QueueCopy) do
+        local identifier = Item.identifier;
+        GL:onItemLoadDo(GL:getItemIDFromLink(Item.itemLink), function (Details)
+            if (self.deletedIdentifiers[identifier] or not Details) then
+                return;
+            end
+
+            local canUseItem = true;
+            GL:canUserUseItem(Details.id, function (canUse)
+                canUseItem = canUse;
+            end);
+
+            if (not canUseItem and Settings:get("GDKP.bidderQueueHideUnusable")) then
+                return;
+            end
+
+            local autoBid = tonumber(Auction:getQueuedAutoBid(Details.id));
+
+            count = count or 0;
+
+            ---@type Frame
+            local ItemRow = CreateFrame("Frame", nil, ItemHolder);
+            ItemRow:SetHeight(QUEUE_ROW_HEIGHT);
+            ItemRow._itemLink = Details.itemLink;
+            ItemRow._identifier = identifier;
+
+            ItemRow:SetPoint("TOPLEFT", ItemHolder, "TOPLEFT", 0, (count * 20) * -1);
+            ItemRow:SetPoint("TOPRIGHT", ItemHolder, "TOPRIGHT", not GL.elvUILoaded and 0 or -4, 0);
+
+            --[[ TOGGLE DELETE ON HOVER ]]
+            ItemRow:SetScript("OnEnter", function ()
+                ActionButtons:SetParent(ItemRow);
+                ActionButtons:ClearAllPoints();
+                ActionButtons:SetPoint("TOPRIGHT", ItemRow, "TOPRIGHT", 0, 0);
+
+                ActionButtons.BidButton:Hide();
+                ActionButtons.RemoveBidButton:Hide();
+                ActionButtons.DeleteButton:Show();
+                if (autoBid > 0) then
+                    ActionButtons.RemoveBidButton:Show();
+                    ActionButtons.DeleteButton:Hide();
+                else
+                    ActionButtons.BidButton:Show();
+                end
+
+                ActionButtons:Show();
+
+                -- Bid on this item
+                ActionButtons.BidButton:SetScript("OnClick", function ()
+                    local QueuedItem = Auction.Queue[ItemRow._identifier];
+                    if (not QueuedItem) then
+                        return;
+                    end
+
+                    GL.Interface.Dialogs.ConfirmWithSingleInputDialog:open({
+                        question = string.format("What's your maximum bid for %s? (Minimum %s|c00FFF569g|r)", QueuedItem.itemLink, QueuedItem.minimumBid),
+                        OnYes = function (max)
+                            Auction:setAutoBid(max, ItemRow._identifier);
+                            self:refreshTable();
+                        end,
+                        focus = true,
+                    });
+                end);
+
+                -- Remove this items bid
+                ActionButtons.RemoveBidButton:SetScript("OnClick", function ()
+                    Auction:removeAutoBid(ItemRow._identifier);
+                    self:refreshTable();
+                end);
+
+                ActionButtons.DeleteButton:SetScript("OnClick", function ()
+                    ActionButtons:SetParent(ItemHolder);
+                    ActionButtons:Hide();
+                    self.deletedIdentifiers[ItemRow._identifier] = true;
+                    self:refreshTable();
+                end);
+            end);
+
+            ItemRow:SetScript("OnLeave", function ()
+                if (not Interface:mouseIsOnFrame(ActionButtons)) then
+                    ActionButtons:Hide();
+                end
+            end);
+
+            ItemRow:SetScript("OnMouseUp", function (_, mouseButtonPressed)
+                GL:handleItemClick(link, mouseButtonPressed);
+            end);
+
+            --[[ ITEM ICON ]]
+            ---@type Frame
+            local Icon = CreateFrame("Frame",nil, ItemRow);
+            Icon:SetPoint("TOPLEFT", ItemRow, 2, -2);
+            Icon:SetSize(QUEUE_ROW_HEIGHT - 4, QUEUE_ROW_HEIGHT - 4);
+
+            Interface:addTooltip(Icon, Details.link);
+
+            ---@type Texture
+            local Image = Icon:CreateTexture(nil, "BACKGROUND")
+            Image:SetAllPoints(Icon);
+            Image:SetTexture(Details.icon);
+
+            if (not canUseItem) then
+                Image:SetVertexColor(1, 0, 0, 1);
+            end
+
+            --[[ ITEM LINK ]]
+            ---@type FontString
+            local Name = Interface:createFontString(ItemRow, autoBid <= 0 and Details.link or string.format(
+                "|c00FFF569%sg|r",
+                autoBid
+            ));
+            Name:SetPoint("CENTER", Icon);
+            Name:SetPoint("LEFT", Image, "RIGHT", 2, 0);
+            Name:SetPoint("RIGHT", ItemRow, "RIGHT", 4, 0);
+            Name:SetHeight(20);
+
+            tinsert(self.ItemRows, ItemRow);
+            count = count + 1;
+        end);
+    end
+
+    if (count <= 0) then
         self:close();
     end
 end
@@ -255,11 +427,13 @@ function BidderQueue:close()
     GL:debug("BidderQueue:close");
 
     self.isVisible = false;
+    return _G[self.windowName] and _G[self.windowName]:Hide();
+end
 
-    local BidderQueueWindow = Interface:get(self, "Frame.GDKPBidderQueue");
-    if (BidderQueueWindow) then
-        BidderQueueWindow.frame:Hide();
-    end
+function BidderQueue:getWindow()
+    GL:debug("AuctioneerUI:getWindow");
+
+    return _G[self.windowName];
 end
 
 GL:debug("Auctioneer.lua");

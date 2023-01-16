@@ -106,4 +106,14 @@
     LibSharedMedia-3.0: Shared handling of media data (fonts, sounds, textures, ...) between addons.
     -->
     <Include file="Libs\LibSharedMedia-3.0\lib.xml"/>
+
+    <!--
+    This library will convert a fully-formatted text string to its original arguments given a format string
+    -->
+    <Include file="Libs\LibDeformat-3.0\lib.xml"/>
+
+    <!--
+    Taint-preventing dropdown alternative
+    -->
+    <Include file="Libs\LibUIDropDownMenu\LibUIDropDownMenu.xml"/>
 </Ui>

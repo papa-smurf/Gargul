@@ -288,7 +288,7 @@ function GL:handleItemClick(itemLink, mouseButtonPressed, callback)
         if (GL.GDKP.Session:activeSessionID()
             and not GL.GDKP.Session:getActive().lockedAt
         ) then
-            GL.Interface.GDKP.Auctioneer:draw(itemLink);
+            GL.GDKP.Auctioneer:addItemLink(itemLink);
         else
             GL.MasterLooterUI:draw(itemLink);
         end
@@ -298,7 +298,7 @@ function GL:handleItemClick(itemLink, mouseButtonPressed, callback)
 
     -- Open the auction window
     elseif (keyPressIdentifier == GL.Settings:get("ShortcutKeys.auction")) then
-        GL.Interface.GDKP.Auctioneer:draw(itemLink);
+        GL.GDKP.Auctioneer:addItemLink(itemLink);
 
     -- Open the award window
     elseif (keyPressIdentifier == GL.Settings:get("ShortcutKeys.award")) then
@@ -641,6 +641,52 @@ function GL:cloneTable(Original)
     end
 
     return Copy;
+end
+
+---@param text string
+---@return void
+function GL:popupMessage(text)
+    GL:debug("GL:popupMessage");
+
+    local frameName = "Gargul.popupMessage";
+    local Window = _G[frameName];
+
+    if (not Window) then
+        ---@type Frame
+        Window = GL.Interface:createWindow(frameName, {
+            hideMinimizeButton = true,
+            hideResizeButton = true,
+            hideWatermark = true,
+        });
+
+        Window:SetFrameStrata("FULLSCREEN_DIALOG");
+        Window.MoveButton:SetPoint("TOPRIGHT", Window, "TOPRIGHT", -20, 0);
+        Window.Text = GL.Interface:createFontString(Window);
+        Window.Text:SetFont(GL.FONT, 14, "OUTLINE");
+        Window.Text:SetJustifyH("MIDDLE");
+        Window.Text:SetPoint("CENTER", Window, "CENTER");
+        Window.Text:SetPoint("BOTTOM", Window, "BOTTOM", 0, 60);
+
+        Window.DiscordURL = GL.Interface:inputBox(Window);
+        Window.DiscordURL:SetFont(GL.FONT, 14);
+        Window.DiscordURL:SetPoint("CENTER", Window, "CENTER");
+        Window.DiscordURL:SetPoint("BOTTOM", Window, "BOTTOM", 0, 40);
+        Window.DiscordURL:SetWidth(186);
+
+        _G[frameName] = Window;
+        GL.Interface:makeCloseableWithEscape(Window);
+    end
+
+    Window.DiscordURL:SetText(GL.Data.Constants.discordURL);
+    text = string.format("%s\n|c00FFF569%s|r", text, L.TUTORIAL_MORE_HELP);
+    Window.Text:SetText(text);
+
+    -- Fit the window to its contents
+    local textWidth, textHeight = Window.Text:GetUnboundedStringWidth(), Window.Text:GetStringHeight();
+    Window:SetWidth(math.max(250, textWidth + 40));
+    Window:SetHeight(textHeight + 100);
+
+    Window:Show();
 end
 
 --- Courtesy of Lantis and the team over at Classic Loot Manager: https://github.com/ClassicLootManager/ClassicLootManager

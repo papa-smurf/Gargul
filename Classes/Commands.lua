@@ -6,6 +6,7 @@ local Settings = GL.Settings;
 ---@class Commands
 GL.Commands = GL.Commands or {
     CommandDescriptions = {
+        auction = "Open the Auctioneer UI where you can auction off items for a GDKP session (requires an active GDKP session!)",
         awardondate = "In case you need to award something retroactively you can use this command: /gl awardOnDate [winnerName] [yy-mm-dd] [itemLink]",
         award = "Open the award window. Optionally accepts an ItemLink as an argument: /gl award [itemLink?]",
         awardhistory = "Open the award history window which shows recently awarded items and their rolls",
@@ -39,6 +40,7 @@ GL.Commands = GL.Commands or {
         ["+1"] = "plusones",
         a = "award",
         ah = "awardhistory",
+        au = "auction",
         aod = "awardondate",
         bi = "bid",
         boosted = "boostedrolls",
@@ -76,6 +78,9 @@ GL.Commands = GL.Commands or {
     },
 
     Dictionary = {
+        -- Open the window for auctioning off items
+        auction = function(...) GL.Interface.GDKP.Auctioneer:open(); end,
+
         -- Open the window for rolling off items
         rolloff = function(...) GL.MasterLooterUI:draw(...); end,
 

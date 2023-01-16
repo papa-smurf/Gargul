@@ -125,6 +125,114 @@ function Player.fromActor()
     return Player.fromID(playerId);
 end
 
+--- Returns true of player has lead or assist
+---
+---@param playerNameOrID string
+---@return boolean
+function Player:hasAssist(playerNameOrID)
+    if (type(playerNameOrID) ~= "string") then
+        return false;
+    end
+
+    local playerName = playerNameOrID;
+    if (GL:strStartsWith(playerNameOrID, "Player-")) then
+        playerName = select(6, GetPlayerInfoByGUID(playerNameOrID));
+    end
+
+    if (not playerName) then
+        return false;
+    end
+
+    -- If the player is not in our group then we're done checking
+    if (not GL.User:unitIsInYourGroup(playerName)) then
+        return false;
+    end
+
+    -- Check if the player has lead or assist
+    local maximumNumberOfGroupMembers = GL.User.isInRaid and _G.MEMBERS_PER_RAID_GROUP or _G.MAX_RAID_MEMBERS;
+    for index = 1, maximumNumberOfGroupMembers do
+        local name, rank = GetRaidRosterInfo(index);
+
+        -- Rank 1 = assist, 2 = lead
+        if (name == playerName) then
+            return rank > 0;
+        end
+    end
+
+    return false;
+end
+
+--- Returns true of player has lead
+---
+---@param playerNameOrID string
+---@return boolean
+function Player:hasLead(playerNameOrID)
+    if (type(playerNameOrID) ~= "string") then
+        return false;
+    end
+
+    local playerName = playerNameOrID;
+    if (GL:strStartsWith(playerNameOrID, "Player-")) then
+        playerName = select(6, GetPlayerInfoByGUID(playerNameOrID));
+    end
+
+    if (not playerName) then
+        return false;
+    end
+
+    -- If the player is not in our group then we're done checking
+    if (not GL.User:unitIsInYourGroup(playerName)) then
+        return false;
+    end
+
+    -- Check if the player has lead or assist
+    local maximumNumberOfGroupMembers = GL.User.isInRaid and _G.MEMBERS_PER_RAID_GROUP or _G.MAX_RAID_MEMBERS;
+    for index = 1, maximumNumberOfGroupMembers do
+        local name, rank = GetRaidRosterInfo(index);
+
+        -- Rank 1 = assist, 2 = lead
+        if (name == playerName) then
+            return rank == 2;
+        end
+    end
+
+    return false;
+end
+
+--- Returns true of player is the master looter
+---
+---@param playerNameOrID string
+---@return boolean
+function Player:isMasterLooter(playerNameOrID)
+    if (type(playerNameOrID) ~= "string") then
+        return false;
+    end
+
+    local playerName = playerNameOrID;
+    if (GL:strStartsWith(playerNameOrID, "Player-")) then
+        playerName = select(6, GetPlayerInfoByGUID(playerNameOrID));
+    end
+
+    if (not playerName) then
+        return false;
+    end
+
+    -- If the player is not in our group then we're done checking
+    if (not GL.User:unitIsInYourGroup(playerName)) then
+        return false;
+    end
+
+    local lootMethod, _, masterLooterRaidID = GetLootMethod();
+    -- Master looting is active and this player is the master looter
+    if (lootMethod == 'master'
+        and GL:iEquals(GetRaidRosterInfo(masterLooterRaidID), playerName)
+    ) then
+        return true;
+    end
+
+    return false;
+end
+
 --- Fetch a player's class by a given player name
 ---
 ---@param playerName string

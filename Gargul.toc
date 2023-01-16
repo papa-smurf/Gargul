@@ -35,6 +35,7 @@ Classes/GDKP/GDKP.lua
 Classes/GDKP/Session.lua
 Classes/GDKP/Auction.lua
 Classes/GDKP/Pot.lua
+Classes/GDKP/Auctioneer.lua
 Classes/PlusOnes.lua
 Classes/TMB.lua
 Classes/Exporter.lua

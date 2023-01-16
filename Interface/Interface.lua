@@ -1,9 +1,13 @@
+local L = Gargul_L;
+local LibDD = LibStub:GetLibrary("LibUIDropDownMenu-4.0");
+
 ---@type GL
 local _, GL = ...;
 
 ---@class Interface
 GL.Interface = GL.Interface or {
     _resizeBoundsMethod = nil,
+    scalerName = "Gargul.Interface.Scaler",
     FramePool = {
         Buttons = {};
     },
@@ -16,6 +20,663 @@ GL.Interface = GL.Interface or {
 
 local Settings = GL.Settings; ---@type Settings
 local Interface = GL.Interface; ---@type Interface
+
+--[[ CONSTANTS ]]
+local MENU_DIVIDER = {
+    text              = "",
+    hasArrow          = false,
+    dist              = 0,
+    isTitle           = true,
+    isUninteractable  = true,
+    notCheckable      = true,
+    iconOnly          = true,
+    icon              = "Interface/Common/UI-TooltipDivider-Transparent",
+    tCoordLeft        = 0,
+    tCoordRight       = 1,
+    tCoordTop         = 0,
+    tCoordBottom      = 1,
+    tSizeX            = 0,
+    tSizeY            = 8,
+    tFitDropDownSizeX = true,
+    iconInfo =
+    {
+        tCoordLeft        = 0,
+        tCoordRight       = 1,
+        tCoordTop         = 0,
+        tCoordBottom      = 1,
+        tSizeX            = 0,
+        tSizeY            = 8,
+        tFitDropDownSizeX = true
+    },
+};
+
+--- Create a UIPanelButtonTemplate that changes it's width dynamically based on its contents
+---
+---@param Parent Frame
+---@param text string|nil
+---@return Button
+function Interface:dynamicPanelButton(Parent, text)
+    GL:debug("Interface:dynamicPanelButton");
+
+    ---@type Button
+    local Button = CreateFrame("Button", nil, Parent, "UIPanelButtonTemplate");
+
+    ---@type FontString
+    local Text = Button:GetFontString()
+    Text:SetFont(GL.FONT, 11);
+    Text:SetText(text or "");
+    Text:ClearAllPoints()
+    Text:SetPoint("TOPLEFT", 15, -1)
+    Text:SetPoint("BOTTOMRIGHT", -15, 1)
+    Text:SetJustifyV("MIDDLE")
+    Button:SetSize(Text:GetStringWidth() + 30, 21);
+
+    -- Make sure the button changes in size whenever we change its contents
+    Button.SetText = function(_, ...)
+        Text:SetText(...);
+        Button:SetSize(Text:GetStringWidth() + 30, 21);
+    end
+
+    return Button;
+end
+
+--- Create a InputBoxTemplate
+---
+---@param Parent Frame
+---@param name string|nil
+---@return EditBox
+function Interface:inputBox(Parent, name)
+    GL:debug("Interface:inputBox");
+
+    ---@type EditBox
+    local Input = CreateFrame("EditBox", name, Parent, "InputBoxTemplate");
+    Input:SetFont(GL.FONT, 11);
+    Input:SetHeight(20);
+    Input:SetAutoFocus(false);
+    Input:SetScript("OnReceiveDrag", function ()
+        local type, id, info = GetCursorInfo();
+        local value
+
+        if (type) == "item" then
+            value = info;
+        elseif (type) == "spell" then
+            value = GetSpellInfo(id, info);
+        elseif (type) == "macro" then
+            value = GetMacroInfo(id);
+        end
+
+        if (value) then
+            Input:SetText(value)
+            ClearCursor()
+        end
+    end);
+    Input:SetScript("OnEscapePressed", function ()
+        Input:ClearFocus();
+    end);
+
+    return Input;
+end
+
+---@param Parent Frame
+---@param text string|nil
+---@param template string|nil
+---@param name string|nil
+---@param layer string|nil
+---@return FontString
+function Interface:createFontString(Parent, text, template, name, layer)
+    GL:debug("Interface:createFontString");
+
+    ---@type FontString
+    local FontString = Parent:CreateFontString(name, layer or "ARTWORK", template or "GameFontWhite");
+    FontString:SetJustifyH("LEFT");
+    FontString:SetFont(GL.FONT, 10, "OUTLINE");
+    FontString:SetText(text or "");
+
+    return FontString;
+end
+
+---@param Element Frame
+---@return void
+function Interface:addMoveButton(Element)
+    GL:debug("Interface:addMoveButton");
+
+    ---@type Button
+    local Move = CreateFrame("Button", Element:GetName() .. ".Move", Element);
+    Move:SetSize(15, 15);
+
+    Move.normalTexture = Move:CreateTexture(nil, "BACKGROUND");
+    Move.normalTexture:SetTexture("Interface/AddOns/Gargul/Assets/Buttons/panel-move-up");
+    Move.normalTexture:SetTexCoord(0.21875, 0.75, 0.234375, 0.765625);
+    Move.normalTexture:SetPoint("TOPRIGHT", Move, "TOPRIGHT", 0, -3);
+    Move.normalTexture:SetSize(15, 15);
+    Move:SetNormalTexture(Move.normalTexture);
+
+    Move.pushedTexture = Move:CreateTexture(nil, "BACKGROUND");
+    Move.pushedTexture:SetTexture("Interface/AddOns/Gargul/Assets/Buttons/panel-move-down");
+    Move.pushedTexture:SetTexCoord(0.21875, 0.75, 0.234375, 0.765625);
+    Move.pushedTexture:SetPoint("TOPRIGHT", Move, "TOPRIGHT", 0, -3);
+    Move.pushedTexture:SetSize(15, 15);
+    Move:SetPushedTexture(Move.pushedTexture);
+
+    Move.highlightTexture = Move:CreateTexture(nil, "BACKGROUND");
+    Move.highlightTexture:SetTexture("Interface/BUTTONS/UI-Panel-MinimizeButton-Highlight");
+    Move.highlightTexture:SetTexCoord(0.21875, 0.75, 0.234375, 0.765625);
+    Move.highlightTexture:SetPoint("TOPRIGHT", Move, "TOPRIGHT", 0, -3);
+    Move.highlightTexture:SetSize(15, 15);
+    Move:SetHighlightTexture(Move.highlightTexture, "ADD");
+
+    Move:SetPoint("TOPRIGHT", Element, "TOPRIGHT", -40, 0);
+    Move:SetPoint("TOPLEFT", Element, "TOPLEFT", 0, 0);
+
+    do
+        self:addTooltip(Move, L.MOVE);
+        Move:EnableMouse(true);
+        Move:RegisterForDrag("LeftButton");
+        Move:SetScript("OnDragStart", function()
+            Element:StartMoving();
+            Move:SetButtonState("PUSHED");
+        end);
+        Move:SetScript("OnDragStop", function()
+            Element:StopMovingOrSizing();
+            self:storePosition(Element);
+            Move:SetButtonState("NORMAL");
+        end);
+    end
+
+    Element.MoveButton = Move;
+end
+
+---@param Element Frame
+---@return void
+function Interface:addOptionsButton(Element)
+    GL:debug("Interface:addOptionsButton");
+
+    ---@type Button
+    local Options = CreateFrame("Button", nil, Element);
+    Options:SetPoint("TOPLEFT", Element, "TOPLEFT", 0, -2);
+    Options:SetSize(16, 16);
+    self:addTooltip(Options, L.SETTINGS);
+    Element.OptionsButton = Options;
+
+    Options.normalTexture = Options:CreateTexture(nil, "BACKGROUND");
+    Options.normalTexture:SetTexture("Interface/AddOns/Gargul/Assets/Buttons/panel-cogwheel-up");
+    Options.normalTexture:SetTexCoord(0.21875, 0.75, 0.234375, 0.765625);
+    Options.normalTexture:SetAllPoints(Options);
+    Options:SetNormalTexture(Options.normalTexture);
+
+    Options.pushedTexture = Options:CreateTexture(nil, "BACKGROUND");
+    Options.pushedTexture:SetTexture("Interface/AddOns/Gargul/Assets/Buttons/panel-cogwheel-down");
+    Options.pushedTexture:SetTexCoord(0.21875, 0.75, 0.234375, 0.765625);
+    Options.pushedTexture:SetAllPoints(Options);
+    Options:SetPushedTexture(Options.pushedTexture);
+
+    Options:SetHighlightTexture("Interface/BUTTONS/UI-Panel-MinimizeButton-Highlight", "ADD");
+
+    Element.OptionsButton = Options;
+
+    -- Make sure the movebutton doesn't overlap the options button
+    if (Element.MoveButton) then
+        Element.MoveButton:SetPoint("TOPLEFT", Element, "TOPLEFT", 20, 0);
+    end
+end
+
+---@param Element Frame
+---@return void
+function Interface:addCloseButton(Element)
+    GL:debug("Interface:addCloseButton");
+
+    ---@type Button
+    local Close = CreateFrame("Button", Element:GetName() .. ".Close", Element, "UIPanelCloseButton");
+    Close:SetPoint("TOPRIGHT", Element, "TOPRIGHT", 8, 5);
+    Close:SetSize(30, 30);
+    Interface:addTooltip(Close, L.CLOSE);
+
+    Element.CloseButton = Close;
+end
+
+---@param Element Frame
+---@param title string|nil
+---@return void
+function Interface:addMinimizeButton(Element, title)
+    GL:debug("Interface:addMinimizeButton");
+
+    local minimizedName = Element:GetName() .. ".Minimized";
+
+    ---@type Frame
+    local MinimizedWindow = CreateFrame("Frame", minimizedName, UIParent, "BackdropTemplate");
+    _G[minimizedName] = MinimizedWindow;
+    MinimizedWindow:SetMovable(true);
+    MinimizedWindow:SetClampedToScreen(true);
+    MinimizedWindow:SetSize(200, 50);
+    MinimizedWindow:SetBackdrop(_G.BACKDROP_DARK_DIALOG_32_32);
+    MinimizedWindow:Hide();
+
+    if (title) then
+        ---@type FontString
+        local Title = self:createFontString(MinimizedWindow, title);
+        Title:SetFont(GL.FONT, 15, "OUTLINE");
+        Title:SetPoint("CENTER", MinimizedWindow, "CENTER");
+        Title:SetPoint("TOPLEFT", MinimizedWindow, "TOPLEFT", 20, -16);
+        MinimizedWindow.Title = Title;
+    end
+
+    self:addMoveButton(MinimizedWindow);
+    self:addMaximizeButton(MinimizedWindow, Element);
+
+    ---@type Button
+    local Minimize = CreateFrame("Button", Element:GetName() .. ".Minimize", Element, "MaximizeMinimizeButtonFrameTemplate");
+    Minimize:SetPoint("TOPRIGHT", Element, "TOPRIGHT", -13, 4);
+    Minimize:SetSize(29, 29);
+    Interface:addTooltip(Minimize.MinimizeButton, L.MINIMIZE);
+
+    Minimize.MinimizeButton:Show();
+    Minimize.MaximizeButton:Hide();
+
+    Minimize.MinimizeButton:SetScript("OnClick", function ()
+        MinimizedWindow:ClearAllPoints();
+        if (self:getPosition(minimizedName, false)) then
+            self:restorePosition(MinimizedWindow);
+        else
+            MinimizedWindow:SetPoint("TOPRIGHT", Element, "TOPRIGHT");
+        end
+
+        MinimizedWindow:Show();
+        Element:Hide();
+    end);
+
+    Element:HookScript("OnShow", function ()
+        MinimizedWindow:Hide();
+    end);
+
+    Element.Minimize = Minimize;
+    Element.Minimized = MinimizedWindow;
+end
+
+---@param Element Frame
+---@param Opens Frame
+---@return void
+function Interface:addMaximizeButton(Element, Opens)
+    GL:debug("Interface:addMaximizeButton");
+
+    ---@type Frame
+    local Maximize = CreateFrame("Button", Element:GetName() .. ".Maximize", Element, "MaximizeMinimizeButtonFrameTemplate");
+    Maximize:SetPoint("TOPRIGHT", Element, "TOPRIGHT", -13, 4);
+    Maximize:SetSize(29, 29);
+    Interface:addTooltip(Maximize.MaximizeButton, L.MAXIMIZE, "BOTTOM");
+
+    Maximize.MinimizeButton:Hide();
+    Maximize.MaximizeButton:Show();
+
+    Maximize.MaximizeButton:SetScript("OnClick", function ()
+        Opens:Show();
+        Element:Hide();
+    end);
+
+    Element.Maximize = Maximize;
+end
+
+---@param Element Frame
+---@return void
+function Interface:addResizer(Element)
+    GL:debug("Interface:addResizer");
+
+    ---@type Button
+    local Resize = CreateFrame("Button", Element:GetName() .. ".Resize", Element);
+    Resize:SetPoint("BOTTOMRIGHT", Element, "BOTTOMRIGHT", -11, 10);
+    Resize:SetSize(16,16);
+    Resize:SetNormalTexture("Interface/ChatFrame/UI-ChatIM-SizeGrabber-Down");
+    Resize:SetHighlightTexture("Interface/ChatFrame/UI-ChatIM-SizeGrabber-Highlight");
+    Resize:SetPushedTexture("Interface/ChatFrame/UI-ChatIM-SizeGrabber-Up");
+    Resize:SetScript("OnMouseDown", function()
+        Element:StartSizing("BOTTOMRIGHT");
+    end);
+    Resize:SetScript("OnMouseUp", function()
+        Element:StopMovingOrSizing("BOTTOMRIGHT");
+    end);
+    -- Make the clickable are larger
+    Resize:SetHitRectInsets(-6, -6, -6, -6);
+
+    Element.Resize = Resize;
+end
+
+---@param name string
+---@param Details table
+---@return Frame
+function Interface:createWindow(name, Details)
+    GL:debug("Interface:createWindow");
+
+    if (not name) then
+        return GL:error("Gargul windows require a unique and descriptive name!");
+    end
+
+    ---@type Frame
+    local Window = CreateFrame("Frame", name, UIParent, "BackdropTemplate");
+    Window:SetSize(Details.width or 200, Details.height or 200);
+    Window:SetPoint("CENTER", UIParent, "CENTER");
+    Window:SetBackdrop(_G.BACKDROP_DARK_DIALOG_32_32);
+    Window:SetClampedToScreen(true);
+
+    --[[ MINIMIZE BUTTON ]]
+    if (not Details.hideMinimizeButton) then
+        self:addMinimizeButton(Window);
+    end
+
+    --[[ CLOSE BUTTON ]]
+    if (not Details.hideCloseButton) then
+        self:addCloseButton(Window);
+    end
+
+    --[[ MOVE / RESIZE BUTTONS ]]
+    if (not Details.hideResizeButton
+        or not Details.hideMoveButton
+    ) then
+        self:restorePosition(Window);
+        self:restoreDimensions(Window);
+
+        Interface:resizeBounds(Window, Details.minWidth or 0, Details.minHeight or 0);
+
+        if (not Details.hideResizeButton) then
+            Window:SetResizable(true);
+            self:addResizer(Window);
+        end
+
+        if (not Details.hideMoveButton) then
+            Window:SetMovable(true);
+            self:addMoveButton(Window);
+        end
+
+        Window:SetScript("OnSizeChanged", function ()
+            if (Details.maxWidth) then
+                local windowWidth = Window:GetWidth();
+                Window:SetWidth(math.min(windowWidth, Details.maxWidth));
+            end
+
+            if (Details.maxHeight) then
+                local windowHeight = Window:GetHeight();
+                Window:SetHeight(math.min(windowHeight, Details.maxHeight));
+            end
+
+            self:storeDimensions(Window);
+            self:storePosition(Window);
+        end);
+    end
+
+    --[[ WATERMARK ]]
+    if (not Details.hideWatermark) then
+        ---@type FontString
+        local Watermark = Interface:createFontString(Window, GL.name .. " v" .. GL.version, "GameFontDarkGraySmall");
+        Watermark:SetPoint("BOTTOMLEFT", Window, "BOTTOMLEFT", 14, 13);
+    end
+
+    _G[name] = Window;
+    return Window;
+end
+
+--- Open a scale slider for the given frame
+---
+---@param Parent Frame
+---@return Frame
+function Interface:openScaler(Parent)
+    GL:debug("Interface:openScaler");
+
+    local Scaler = _G[self.scalerName];
+    local min, max, step = .5, 2, .05;
+    local sliderName = self.scalerName .. ".Slider";
+
+    local valueToStep = function(value)
+        return floor((value - min) / step + 0.5) * step + min;
+    end
+
+    if (not Scaler) then
+        ---@type Frame
+        Scaler = self:createWindow(self.scalerName, {
+            hideMinimizeButton = true,
+            hideResizeButton = true,
+            width = 240,
+            height = 90,
+        });
+
+        Scaler.MoveButton:SetPoint("TOPRIGHT", Scaler, "TOPRIGHT", -20, 0);
+
+        local SliderBackdrop  = {
+            bgFile = "Interface\\Buttons\\UI-SliderBar-Background",
+            edgeFile = "Interface\\Buttons\\UI-SliderBar-Border",
+            tile = true, tileSize = 8, edgeSize = 8,
+            insets = { left = 3, right = 3, top = 6, bottom = 6 }
+        };
+
+        local InputBackdrop = {
+            bgFile = "Interface\\ChatFrame\\ChatFrameBackground",
+            edgeFile = "Interface\\ChatFrame\\ChatFrameBackground",
+            tile = true, edgeSize = 1, tileSize = 5,
+        };
+
+        ---@type Slider
+        local Slider = CreateFrame("Slider", sliderName, Scaler, "BackdropTemplate");
+        Slider:SetSize(200, 15);
+        Slider:SetHitRectInsets(0, 0, -10, 0);
+        Slider:SetOrientation('HORIZONTAL');
+        Slider:SetMinMaxValues(min, max);
+        Slider:SetObeyStepOnDrag(true);
+        Slider:SetValue(1);
+        Slider:SetValueStep(step);
+        Slider:SetBackdrop(SliderBackdrop)
+        Slider:SetPoint("CENTER", Scaler, "CENTER");
+        Slider:SetPoint("TOP", Scaler, "TOP", 0, -30);
+        Slider:SetThumbTexture("Interface\\Buttons\\UI-SliderBar-Button-Horizontal");
+
+        ---@type FontString
+        local TitleText = self:createFontString(Slider, L.WINDOW_SCALE);
+        TitleText:SetPoint("CENTER", Slider, "CENTER");
+        TitleText:SetPoint("BOTTOM", Slider, "TOP", 0, 2);
+
+        ---@type FontString
+        local LowText = self:createFontString(Slider, ".1");
+        LowText:SetPoint("TOPLEFT", Slider, "BOTTOMLEFT", 2, 3);
+
+        ---@type FontString
+        local HighText = self:createFontString(Slider, "2");
+        HighText:SetPoint("TOPRIGHT", Slider, "BOTTOMRIGHT", -2, 3);
+
+        ---@type EditBox
+        local Input = CreateFrame("EditBox", nil, Slider, "BackdropTemplate")
+        Input:SetFont(GL.FONT, 11);
+        Input:SetAutoFocus(false);
+        Input:SetPoint("TOP", Slider, "BOTTOM");
+        Input:SetHeight(14);
+        Input:SetWidth(70);
+        Input:SetJustifyH("CENTER");
+        Input:EnableMouse(true);
+        Input:SetBackdrop(InputBackdrop);
+        Input:SetBackdropColor(0, 0, 0, 0.5);
+        Input:SetBackdropBorderColor(0.3, 0.3, 0.30, 0.80);
+        Input:SetScript("OnEscapePressed", function ()
+            Input:ClearFocus();
+        end);
+        Input:SetScript("OnEnterPressed", function ()
+            local value = Input:GetText();
+            if (GL:empty(value)) then
+                return;
+            end
+
+            PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
+            Slider:SetValue(value);
+        end);
+        Slider.Input = Input;
+        Scaler.Slider = Slider;
+    end
+
+    Scaler.Slider:SetScript("OnValueChanged", function (_, value)
+        local currentStep = valueToStep(value);
+        Scaler.Slider.Input:SetText(currentStep);
+        Parent:SetScale(currentStep);
+    end);
+
+    if (not self:getPosition(Scaler:GetName(), false)) then
+        Scaler:ClearAllPoints();
+        Scaler:SetPoint("CENTER", UIParent, "CENTER");
+    end
+
+    local currentStep = valueToStep(Parent:GetScale());
+    Scaler:SetFrameLevel(Parent:GetFrameLevel() + 50);
+    Scaler.Slider:SetValue(currentStep);
+    Scaler.Slider.Input:SetText(currentStep);
+    Scaler:Show();
+
+    _G[self.scalerName] = Scaler;
+
+    return Scaler;
+end
+
+---@param Window Frame
+---@param Menu table
+---@param width number|nil
+---@return void
+function Interface:addWindowOptions(Window, Menu, width)
+    GL:debug("Interface:addWindowOptions");
+
+    self:addOptionsButton(Window);
+
+    local levels = 1;
+    local Sanitized = {};
+    do --[[ SANITIZE MENU ]]
+        for _, Entry in pairs(Menu) do
+            --[[ DIVIDER ]]
+            if (Entry == "divider") then
+                tinsert(Sanitized, MENU_DIVIDER);
+
+            --[[ REGULAR ]]
+            elseif (not Entry.SubMenu) then
+                tinsert(Sanitized, Entry);
+
+            --[[ MULTI-LEVEL ]]
+            else
+                levels = levels + 1;
+                local SubMenu = Entry.SubMenu;
+                Entry.SubMenu = nil;
+                Entry.menuList = levels;
+                Entry.hasArrow = true;
+                Entry.notCheckable = true;
+                tinsert(Sanitized, Entry);
+
+                for _, SubEntry in pairs(SubMenu) do
+                    SubEntry.level = levels;
+                    tinsert(Sanitized, SubEntry);
+                end
+            end
+        end
+    end
+
+    local DropDown = LibDD:Create_UIDropDownMenu(Window:GetName() .. ".OptionsDropdown", Window);
+    DropDown:SetPoint("TOPLEFT", Window.OptionsButton, "BOTTOMLEFT", 0, 24);
+
+    LibDD:UIDropDownMenu_SetWidth(DropDown, width or 200) -- Use in place of dropDown:SetWidth
+    LibDD:UIDropDownMenu_JustifyText(DropDown, "LEFT");
+    LibDD:UIDropDownMenu_Initialize(DropDown, function (_, level, menuList)
+        local addEntry = function (Entry)
+            menuList = menuList or 1;
+            Entry.level = Entry.level or 1;
+            local isSubMenu = menuList > 1;
+
+            if (not isSubMenu and Entry.level > 1) then
+                return;
+            end
+
+            if (isSubMenu and menuList ~= Entry.level) then
+                return;
+            end
+
+            if (type(Entry.checked) == "function") then
+                Entry.checkFunc = Entry.checked;
+                Entry.checked = Entry.checked();
+            elseif(Entry.checkFunc) then
+                Entry.checked = Entry.checkFunc();
+            end
+
+            -- Move text to the right if ElvUI is loaded
+            if (not Entry.notCheckable
+                and not Entry.isTitle
+                and GL.elvUILoaded
+            ) then
+                Entry.text = " " .. Entry.text;
+            end
+
+            if (Entry.setting) then
+                Entry.checked = Settings:get(Entry.setting);
+
+                if (not Entry.func) then
+                    Entry.func = function (_, _, _, checked)
+                        Settings:set(Entry.setting, checked);
+                        Entry.checked = checked;
+                    end;
+                end
+
+                Entry.isNotRadio = false;
+            end
+
+            Entry.minWidth = DropDown:GetWidth() - 40;
+
+            Entry.keepShownOnClick = true;
+            if (Entry.hideOnClick) then
+                Entry.keepShownOnClick = not Entry.hideOnClick;
+            end
+
+            LibDD:UIDropDownMenu_AddButton(Entry, level);
+        end
+
+        for _, Entry in pairs(Sanitized) do
+            addEntry(Entry);
+        end
+    end, "MENU");
+
+    Window.OptionsButton:SetScript("OnClick", function ()
+        LibDD:ToggleDropDownMenu(nil, nil, DropDown);
+    end);
+
+    -- We don't need these elements since we use
+    -- our own frame to toggle the settings dropdown
+    DropDown.Text:Hide();
+    DropDown.Button:Hide();
+end
+
+---@param Owner Frame
+---@param Lines table|string
+---@param anchor string|nil
+function Interface:addTooltip(Owner, Lines, anchor)
+    GL:debug("Interface:addTooltip");
+
+    local isItemLink = false;
+
+    if (not anchor) then
+        anchor = "CURSOR";
+    end
+
+    if (type(Lines) == "string") then
+        if (GL:getItemIDFromLink(Lines)) then
+            isItemLink = true;
+        else
+            Lines = { Lines };
+        end
+    end
+
+    Owner:HookScript("OnEnter", function()
+        GameTooltip:SetOwner(Owner, "ANCHOR_" .. anchor);
+
+        if (isItemLink) then
+            GameTooltip:SetHyperlink(Lines);
+        else
+            for _, line in pairs(Lines) do
+                GameTooltip:AddLine(line);
+            end
+        end
+
+        GameTooltip:Show();
+    end);
+
+    Owner:HookScript("OnLeave", function()
+        GameTooltip:Hide();
+    end);
+end
 
 --- Set resize bounds of given element
 ---
@@ -80,12 +741,21 @@ end
 function Interface:makeCloseableWithEscape(Item, identifier)
     GL:debug("Interface:makeCloseableWithEscape");
 
-    -- Make sure we prefix everything
-    if (not GL:strStartsWith(identifier, "GARGUL_")) then
-        identifier = "GARGUL_" .. identifier;
+    identifier = identifier or Item:GetName();
+
+    if not (identifier) then
+        return false;
     end
 
-    _G[identifier] = Item;
+    -- Frame needs to exist in global scope
+    if (not _G[identifier]) then
+        -- Make sure we prefix everything
+        if (not GL:strStartsWith(identifier, "GARGUL_")) then
+            identifier = "GARGUL_" .. identifier;
+            _G[identifier] = Item;
+        end
+    end
+
     tinsert(UISpecialFrames, identifier);
 end
 
@@ -161,6 +831,11 @@ function Interface:release(Scope, identifier)
         end
     elseif (Scope.type) then
         Element = Scope;
+    elseif (Scope.GetChildren) then
+        Scope:Hide();
+        self:releaseChildren(Scope);
+        Scope = nil;
+        return;
     else
         return;
     end
@@ -225,7 +900,7 @@ end
 
 --- Get an element's stored position (defaults to center of screen)
 ---
----@param identifier string
+---@param identifier string|nil
 ---@param default table
 ---@return table
 function Interface:getPosition(identifier, default)
@@ -250,9 +925,15 @@ end
 --- Store an element's position in the settings table
 ---
 ---@param Item Frame
----@param identifier string The name under which the settings should be stored
----@return void
+---@param identifier string|nil The name under which the settings should be stored
+---@return boolean
 function Interface:storePosition(Item, identifier)
+    identifier = identifier or Item:GetName();
+
+    if not (identifier) then
+        return false;
+    end
+
     identifier = string.format("UI.%s.Position", identifier);
 
     local point, _, relativePoint, offsetX, offsetY = Item:GetPoint();
@@ -261,58 +942,90 @@ function Interface:storePosition(Item, identifier)
     Settings:set(identifier .. ".relativePoint", relativePoint);
     Settings:set(identifier .. ".offsetX", offsetX);
     Settings:set(identifier .. ".offsetY", offsetY);
+
+    return true;
 end
 
 --- Restore an element's position from the settings table
 ---
 ---@param Item Frame
----@param identifier string The name under which the settings should be stored
----@return void
+---@param identifier string|nil The name under which the settings should be stored
+---@return boolean
 function Interface:restorePosition(Item, identifier)
+    identifier = identifier or Item:GetName();
+
+    if (not identifier) then
+        return false;
+    end
+
     Item:ClearAllPoints();
     Item:SetPoint(self:getPosition(identifier));
+
+    return true;
 end
 
 --- Get an element's stored dimensions
 ---
----@param identifier string
+---@param identifier string|nil
 ---@return number|nil, number|nil
 function Interface:getDimensions(identifier)
+    identifier = identifier or Item:GetName();
+
+    if not (identifier) then
+        return false;
+    end
+
     identifier = string.format("UI.%s.Dimensions", identifier);
 
     local Dimensions = Settings:get(identifier, {});
-    return Dimensions.width, Dimensions.height;
+    return Dimensions.width, Dimensions.height, Dimensions.scale;
 end
 
 --- Store an element's position in the settings table
 ---
 ---@param Item table
----@param identifier string The name under which the settings should be stored
+---@param identifier string|nil The name under which the settings should be stored
 ---@return void
 function Interface:storeDimensions(Item, identifier)
+    identifier = identifier or Item:GetName();
+
+    if (not identifier) then
+        return false;
+    end
+
     identifier = string.format("UI.%s.Dimensions", identifier);
 
     if (Item.frame) then
         Settings:set(identifier .. ".width", Item.frame:GetWidth());
         Settings:set(identifier .. ".height", Item.frame:GetHeight());
+        Settings:set(identifier .. ".scale", Item.frame:GetScale());
         return;
     end
 
     Settings:set(identifier .. ".width", Item:GetWidth());
     Settings:set(identifier .. ".height", Item:GetHeight());
+    Settings:set(identifier .. ".scale", Item:GetScale());
 end
 
 --- Restore an element's position from the settings table
 ---
 ---@param Item Frame
----@param identifier string The name under which the settings should be stored
----@param defaultWidth number The default width of no width is stored yet
----@param defaultHeight number The default height of no height is stored yet
+---@param identifier string|nil The name under which the settings should be stored
+---@param defaultWidth number The default width if no width is stored yet
+---@param defaultHeight number The default height if no height is stored yet
+---@param defaultScale number The default scale if no scale is stored yet
 ---@return void
-function Interface:restoreDimensions(Item, identifier, defaultWidth, defaultHeight)
-    local width, height = self:getDimensions(identifier);
+function Interface:restoreDimensions(Item, identifier, defaultWidth, defaultHeight, defaultScale)
+    identifier = identifier or Item:GetName();
+
+    if (not identifier) then
+        return false;
+    end
+
+    local width, height, scale = self:getDimensions(identifier);
     width = width or defaultWidth;
     height = height or defaultHeight;
+    scale = scale or defaultScale;
 
     if (GL:higherThanZero(width)) then
         Item:SetWidth(width or defaultWidth);
@@ -321,6 +1034,33 @@ function Interface:restoreDimensions(Item, identifier, defaultWidth, defaultHeig
     if (GL:higherThanZero(height)) then
         Item:SetHeight(height or defaultHeight);
     end
+
+    if (GL:higherThanZero(scale)) then
+        if (Item.frame) then
+            Item.frame:SetScale(scale);
+        else
+            Item:SetScale(scale);
+        end
+    end
+end
+
+--- Check if the user's mouse cursor is over the given frame
+---
+---@param Element table
+---@return boolean
+function Interface:mouseIsOnFrame(Element)
+    local x, y = GetCursorPosition();
+    local scale = Element:GetEffectiveScale();
+    x, y = x / scale,  y / scale;
+
+    local left, right, bottom, top = Element:GetLeft(), Element:GetRight(), Element:GetBottom(), Element:GetTop();
+
+    if (not left or not right or not bottom or not top) then
+        return false;
+    end
+
+    return ((x >= left) and (x <= right)
+        and (y >= bottom) and (y <= top));
 end
 
 --- Create a button

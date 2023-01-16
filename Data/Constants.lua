@@ -234,6 +234,16 @@ GL.Data.Constants = {
         "SpeedyAutoLoot",
     },
 
+    DroppedLoot = {
+        WhenToLogLoot = {
+            [1] = "When in a party or raid",
+            [2] = "When in a raid",
+            [3] = "When master loot is active",
+            [4] = "When I'm the master looter",
+            [5] = "When I'm the raid leader",
+        }
+    },
+
     GDKP = {
         QueuedAuctionNoBidsActions = {
             NOTHING = "NOTHING",
@@ -528,7 +538,7 @@ GL.Data.Constants = {
             deleteAwardedItem = 16,
             startGDKPAuction = 17,
             stopGDKPAuction = 18,
-            extendGDKPAuction = 19,
+            rescheduleGDKPAuction = 19,
             refreshGDKPAuction = 20,
             requestGDKPSession = 21,
             broadcastGDKPSession = 22,

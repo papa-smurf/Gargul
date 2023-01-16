@@ -50,6 +50,20 @@ function GDKP:draw(Parent)
             setting = "GDKP.showBidWindow",
         },
         {
+            label = "Show the GDKP bid queue that allows you to prebid on queued items",
+            setting = "GDKP.enableBidderQueue",
+            callback = function()
+                local BidderQueue = GL.Interface.GDKP.BidderQueue;
+
+                if (not GL.Settings:get("GDKP.enableBidderQueue")) then
+                    BidderQueue:close();
+                else
+                    BidderQueue:open();
+                    BidderQueue:refreshTable();
+                end
+            end,
+        },
+        {
             label = "Show GDKP data on item tooltips",
             setting = "GDKP.showHistoryOnTooltip",
         },
@@ -196,29 +210,6 @@ function GDKP:draw(Parent)
         end
     end);
     Parent:AddChild(AuctionBidLeeway);
-
-    Overview:drawHeader("Queues", Parent);
-
-    Overview:drawCheckboxes({
-        {
-            label = "Enable GDKP queues by default",
-            setting = "GDKP.enableGDKPQueuesByDefault",
-        },
-        {
-            label = "Show the GDKP bid queue that allows you to prebid on queued items",
-            setting = "GDKP.enableGDKPBidderQueue",
-            callback = function()
-                local BidderQueue = GL.Interface.GDKP.BidderQueue;
-
-                if (not GL.Settings:get("GDKP.enableGDKPBidderQueue")) then
-                    BidderQueue:close();
-                else
-                    BidderQueue:open();
-                    BidderQueue:refreshTable();
-                end
-            end,
-        },
-    }, Parent);
 
     Spacer = GL.AceGUI:Create("SimpleGroup");
     Spacer:SetLayout("FILL");

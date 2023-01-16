@@ -91,6 +91,21 @@ function Settings:enforceTemporarySettings()
         return;
     end
 
+    -- In 5.1.0 we moved GDKP item details from settings to GDKP DB
+    if (DB:get("Settings.GDKP.SettingsPerItem")) then
+        local OldSettings = DB:get("Settings.GDKP.SettingsPerItem");
+
+        if (type(OldSettings) ~= "table") then
+            OldSettings = {};
+        end
+
+        if (GL:empty(DB:get("GDKP.SettingsPerItem"))) then
+            DB:set("GDKP.SettingsPerItem", OldSettings);
+        end
+
+        DB:set("Settings.GDKP.SettingsPerItem", nil);
+    end
+
     -- in 5.0.13 we remove the GDKP.doCountdown and x settings
     DB:set("Settings.GDKP.doCountdown", nil);
     DB:set("Settings.GDKP.announceCountdownOnce", nil);

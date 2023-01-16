@@ -64,7 +64,7 @@ Comm.Actions = {
     [Actions.stopGDKPAuction] = function (Message)
         GL.GDKP.Auction:stop(Message);
     end,
-    [Actions.extendGDKPAuction] = function (Message)
+    [Actions.rescheduleGDKPAuction] = function (Message)
         GL.GDKP.Auction:extend(Message);
     end,
     [Actions.refreshGDKPAuction] = function (Message)
