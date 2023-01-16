@@ -85,7 +85,6 @@ function AwardedLoot:tooltipLines(itemLink)
                 tinsert(Details, string.format("Price: %sg", Loot.GDKPCost));
             end
 
-
             local received = Loot.received;
             if (winner == GL.Exporter.disenchantedItemIdentifier
                 and GL:iEquals(GL.PackMule.disenchanter, GL.User.name)
@@ -278,9 +277,12 @@ function AwardedLoot:editWinner(checksum, winner, announce)
     -- Broadcast the awarded loot details to everyone in the group
     GL.CommMessage.new(CommActions.editAwardedItem, AwardEntry, "GROUP"):send();
 
-    -- The loot window is still active and the auto assign setting is enabled
+    -- The loot window is not active and the auto assign setting is enabled
     if (not GL.DroppedLoot.lootWindowIsOpened
         and GL.Settings:get("AwardingLoot.autoTradeAfterAwardingAnItem")
+        and (GL.Settings:get("AwardingLoot.autoTradeInCombat") or
+            not UnitAffectingCombat("player")
+        )
         and GL.User.name ~= winner
     ) then
         self:initiateTrade(AwardEntry);
@@ -461,10 +463,23 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, G
         GL.PackMule:assignLootToPlayer(AwardEntry.itemID, winner);
 
     -- The loot window is closed and the auto trade setting is enabled
-    -- Also skip this part if you yourself won the item
     elseif (not GL.DroppedLoot.lootWindowIsOpened
-        and GL.Settings:get("AwardingLoot.autoTradeAfterAwardingAnItem")
+
+        -- No need to trade with ourselves
         and GL.User.name ~= winner
+
+        -- Auto trading is disabled
+        and GL.Settings:get("AwardingLoot.autoTradeAfterAwardingAnItem")
+
+        -- The player doesn't want to auto trade disenchanted items
+        and (GL.Settings:get("AwardingLoot.autoTradeDisenchanter") or
+            winner ~= GL.Exporter.disenchantedItemIdentifier
+        )
+
+        -- The player doesn't want to trade whilst ink combat
+        and (GL.Settings:get("AwardingLoot.autoTradeInCombat") or
+            not UnitAffectingCombat("player")
+        )
     ) then
         AwardedLoot:initiateTrade(AwardEntry);
     end

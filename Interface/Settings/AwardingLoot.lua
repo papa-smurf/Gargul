@@ -45,6 +45,14 @@ function AwardingLoot:draw(Parent)
             description = "If you award an item from your inventory then automatically trade the winner if he's within reach",
             setting = "AwardingLoot.autoTradeAfterAwardingAnItem",
         },
+        {
+            label = "Auto trade disenchanter",
+            setting = "AwardingLoot.autoTradeDisenchanter",
+        },
+        {
+            label = "Auto trade during combat",
+            setting = "AwardingLoot.autoTradeInCombat",
+        },
     };
 
     Overview:drawCheckboxes(Checkboxes, Parent);

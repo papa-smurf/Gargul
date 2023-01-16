@@ -54,6 +54,8 @@ GL.Data.DefaultSettings = {
         announceAwardMessagesInRW = false,
         autoAssignAfterAwardingAnItem = true,
         autoTradeAfterAwardingAnItem = true,
+        autoTradeDisenchanter = true,
+        autoTradeInCombat = true,
         awardMessagesEnabled = true,
     },
     ExportingLoot = {
