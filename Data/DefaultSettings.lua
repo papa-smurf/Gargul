@@ -146,6 +146,7 @@ GL.Data.DefaultSettings = {
         customPotExportFormat = "@PLAYER,@CUT",
         invalidBidsTriggerAntiSnipe = true,
         ledgerAuctionScale = 30,
+        minimizeAuctioneerOnStart = false,
         minimumBid = 100,
         minimumIncrement = 50,
         notifyIfBidTooLow = true,

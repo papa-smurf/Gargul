@@ -87,7 +87,7 @@ function GDKP:draw(Parent)
     OutbidSoundDropdown:SetValue(SoundsByName[GL.Settings:get("GDKP.outbidSound")]);
     OutbidSoundDropdown:SetList(Sounds);
     OutbidSoundDropdown:SetText(GL.Settings:get("GDKP.outbidSound"));
-    OutbidSoundDropdown:SetFullWidth(true);
+    OutbidSoundDropdown:SetWidth(250);
     OutbidSoundDropdown:SetCallback("OnValueChanged", function()
         local value = OutbidSoundDropdown:GetValue();
         local sound = LibStub("LibSharedMedia-3.0"):Fetch("sound", Sounds[value]);
@@ -278,7 +278,7 @@ function GDKP:draw(Parent)
     QueuedAuctionNoBidsActionDropdown:SetValue(GL.Settings:get("GDKP.queuedAuctionNoBidsAction"));
     QueuedAuctionNoBidsActionDropdown:SetList(Actions);
     QueuedAuctionNoBidsActionDropdown:SetText(GL.Settings:get("GDKP.queuedAuctionNoBidsAction"));
-    QueuedAuctionNoBidsActionDropdown:SetFullWidth(true);
+    QueuedAuctionNoBidsActionDropdown:SetWidth(250);
     QueuedAuctionNoBidsActionDropdown:SetCallback("OnValueChanged", function()
         local value = QueuedAuctionNoBidsActionDropdown:GetValue();
 

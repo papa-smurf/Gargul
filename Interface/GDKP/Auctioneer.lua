@@ -222,12 +222,11 @@ function AuctioneerUI:build()
         end},
         "divider",
         {text = L.WINDOW, isTitle = true, notCheckable = true },
-        {text = L.SCALE, notCheckable = true, func = function ()
+        {text = L.CHANGE_SCALE, notCheckable = true, func = function ()
             Interface:openScaler(Window);
             CloseMenus();
         end},
-        {text = L.CLOSE_ON_START, setting = "GDKP.closeAuctioneerOnStart"},
-        {text = L.CLOSE_ON_AWARD, setting = "GDKP.closeAuctioneerOnAward"},
+        {text = L.MINIMIZE_ON_START, setting = "GDKP.minimizeAuctioneerOnStart"},
     });
 
     --[[ PREPARE THE MINIMIZED VERSION OF THE WINDOW ]]
@@ -1074,7 +1073,7 @@ function AuctioneerUI:buildAuctioneerShortcut()
     Button:SetSize(42, 42);
     Button:SetNormalTexture(Auction.Current.itemIcon);
     Button:SetText("text");
-    Button:SetPoint(Interface:getPosition("ReopenAuctioneerButton"));
+    Interface:restorePosition(Button);
 
     Button:SetMovable(true);
     Button:EnableMouse(true);

@@ -87,6 +87,11 @@ function Auctioneer:_init()
 
         if (Settings:get("GDKP.closeAuctioneerOnStart")) then
             AuctioneerUI:close();
+            return;
+        end
+
+        if (Settings:get("GDKP.minimizeAuctioneerOnStart")) then
+            Window.Minimize.MinimizeButton:Click();
         end
     end);
 

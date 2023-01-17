@@ -244,7 +244,6 @@ function Interface:addMinimizeButton(Element, title)
 
     ---@type Frame
     local MinimizedWindow = CreateFrame("Frame", minimizedName, UIParent, "BackdropTemplate");
-    _G[minimizedName] = MinimizedWindow;
     MinimizedWindow:SetMovable(true);
     MinimizedWindow:SetClampedToScreen(true);
     MinimizedWindow:SetSize(200, 50);
@@ -290,6 +289,8 @@ function Interface:addMinimizeButton(Element, title)
 
     Element.Minimize = Minimize;
     Element.Minimized = MinimizedWindow;
+
+    _G[minimizedName] = MinimizedWindow;
 end
 
 ---@param Element Frame

@@ -161,7 +161,7 @@ function BidderQueue:build()
         end},
         "divider",
         {text = L.WINDOW, isTitle = true, notCheckable = true },
-        { text = L.SCALE, notCheckable = true, func = function ()
+        { text = L.CHANGE_SCALE, notCheckable = true, func = function ()
             Interface:openScaler(Window);
             CloseMenus();
         end }
