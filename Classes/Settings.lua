@@ -345,11 +345,12 @@ end
 ---
 ---@param keyString string
 ---@param value any
+---@param quiet boolean Should trigger event?
 ---@return boolean
-function Settings:set(keyString, value)
+function Settings:set(keyString, value, quiet)
     local success = GL:tableSet(self.Active, keyString, value);
 
-    if (success) then
+    if (success and not quiet) then
         GL.Events:fire("GL.SETTING_CHANGED", keyString, value);
     end
 
