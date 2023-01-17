@@ -576,6 +576,7 @@ function Interface:addWindowOptions(Window, Menu, width)
         local addEntry = function (Entry)
             menuList = menuList or 1;
             Entry.level = Entry.level or 1;
+            Entry.isNotRadio = not Entry.isRadio;
             local isSubMenu = menuList > 1;
 
             if (not isSubMenu and Entry.level > 1) then
@@ -610,8 +611,6 @@ function Interface:addWindowOptions(Window, Menu, width)
                         Entry.checked = checked;
                     end;
                 end
-
-                Entry.isNotRadio = false;
             end
 
             Entry.minWidth = DropDown:GetWidth() - 40;

@@ -151,6 +151,7 @@ function AuctioneerUI:build()
             {
                 text = L.NOTHING,
                 hideOnClick = true,
+                isRadio = true,
                 checked = function ()
                     return Settings:get("GDKP.queuedAuctionNoBidsAction") == "NOTHING";
                 end,
@@ -162,6 +163,7 @@ function AuctioneerUI:build()
             {
                 text = L.SKIP,
                 hideOnClick = true,
+                isRadio = true,
                 checked = function ()
                     return Settings:get("GDKP.queuedAuctionNoBidsAction") == "SKIP";
                 end,
@@ -173,6 +175,7 @@ function AuctioneerUI:build()
             {
                 text = L.DISENCHANT,
                 hideOnClick = true,
+                isRadio = true,
                 checked = function ()
                     return Settings:get("GDKP.queuedAuctionNoBidsAction") == "DISENCHANT";
                 end,
@@ -213,7 +216,7 @@ function AuctioneerUI:build()
         }},
         "divider",
         {text = L.QUEUE, isTitle = true, notCheckable = true },
-        {text = L.ADD_DROPS_TO_QUEUE, isNotRadio = false, setting = "GDKP.addDropsToQueue", func = function(Entry, _, _, checked)
+        {text = L.ADD_DROPS_TO_QUEUE, setting = "GDKP.addDropsToQueue", func = function(Entry, _, _, checked)
             Settings:set("GDKP.addDropsToQueue", checked);
             Entry.checked = checked;
         end},
