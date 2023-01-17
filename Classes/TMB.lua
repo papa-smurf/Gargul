@@ -3,6 +3,16 @@ local _, GL = ...;
 
 GL.AceGUI = GL.AceGUI or LibStub("AceGUI-3.0");
 
+---@type Data
+local Constants = GL.Data.Constants;
+local CommActions = Constants.Comm.Actions;
+
+---@type Settings
+local Settings = GL.Settings;
+
+---@type Events
+local Events = GL.Events;
+
 ---@class TMB
 GL.TMB = {
     _initialized = false,
@@ -14,10 +24,6 @@ GL.TMB = {
 };
 local TMB = GL.TMB; ---@type TMB
 
-local Constants = GL.Data.Constants; ---@type Data
-local CommActions = Constants.Comm.Actions;
-local Settings = GL.Settings; ---@type Settings
-
 ---@return boolean
 function TMB:_init()
     GL:debug("TMB:_init");
@@ -26,8 +32,25 @@ function TMB:_init()
         return false;
     end
 
-    GL.Events:register("TMBUserJoinedGroupListener", "GL.USER_JOINED_GROUP", function () self:requestData(); end);
+    Events:register("TMBUserJoinedGroupListener", "GL.USER_JOINED_GROUP", function () self:requestData(); end);
 
+    Events:register("TMBItemReceived", "GL.ITEM_RECEIVED", function (_, Details)
+        -- We don't want to automatically award loot
+        if (not Settings:get("TMB.awardBasedOnDrops")) then
+            return;
+        end
+
+        -- This isn't an item we should award
+        if (GL:inTable(Constants.ItemsThatSouldntBeAnnounced, Details.itemID)) then
+            return;
+        end
+
+        local autoAward = Settings:get("AwardingLoot.autoTradeAfterAwardingAnItem");
+        Settings:set("AwardingLoot.autoTradeAfterAwardingAnItem", false, true);
+        GL.AwardedLoot:addWinner(Details.playerName, Details.itemLink, false);
+        Settings:set("AwardingLoot.autoTradeAfterAwardingAnItem", autoAward, true);
+    end);
+    
     self._initialized = true;
     return true;
 end
@@ -439,7 +462,7 @@ end
 function TMB:clear()
     GL.DB.TMB = {};
 
-    GL.Events:fire("GL.TMB_CLEARED");
+    Events:fire("GL.TMB_CLEARED");
 end
 
 --- Check whether the current TMB data was imported from DFT
@@ -652,7 +675,7 @@ function TMB:import(data, triedToDecompress, source)
         hash = GL:uuid() .. GetServerTime(),
     };
 
-    GL.Events:fire("GL.TMB_IMPORTED");
+    Events:fire("GL.TMB_IMPORTED");
     GL.Interface.TMB.Importer:close();
     self:draw();
 
@@ -945,7 +968,7 @@ function TMB:broadcast()
     end
 
     self.broadcastInProgress = true;
-    GL.Events:fire("GL.TMB_BROADCAST_STARTED");
+    Events:fire("GL.TMB_BROADCAST_STARTED");
 
     local Broadcast = function ()
         GL:message("Broadcasting TMB data...");
@@ -963,7 +986,7 @@ function TMB:broadcast()
         ):send(function ()
             GL:success("TMB broadcast finished");
             self.broadcastInProgress = false;
-            GL.Events:fire("GL.TMB_BROADCAST_ENDED");
+            Events:fire("GL.TMB_BROADCAST_ENDED");
 
             Label = GL.Interface:get(GL.TMB, "Label.BroadcastProgress");
             if (Label) then
@@ -985,8 +1008,8 @@ function TMB:broadcast()
     if (UnitAffectingCombat("player")) then
         GL:message("You are currently in combat, delaying TMB broadcast");
 
-        GL.Events:register("TMBOutOfCombatListener", "PLAYER_REGEN_ENABLED", function ()
-            GL.Events:unregister("TMBOutOfCombatListener");
+        Events:register("TMBOutOfCombatListener", "PLAYER_REGEN_ENABLED", function ()
+            Events:unregister("TMBOutOfCombatListener");
             Broadcast();
         end);
     else

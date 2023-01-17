@@ -168,6 +168,7 @@ GL.Data.DefaultSettings = {
         announcePriolistInfoWhenRolling = true,
         announceWishlistInfoWhenRolling = true,
         automaticallyShareData = false,
+        awardBasedOnDrops = false,
         hideInfoOfPeopleNotInGroup = true,
         hideWishListInfoIfPriorityIsPresent = true,
         includePrioListInfoInLootAnnouncement = true,

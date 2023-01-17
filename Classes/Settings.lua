@@ -345,9 +345,15 @@ end
 ---
 ---@param keyString string
 ---@param value any
----@return void
+---@return boolean
 function Settings:set(keyString, value)
-    return GL:tableSet(self.Active, keyString, value);
+    local success = GL:tableSet(self.Active, keyString, value);
+
+    if (success) then
+        GL.Events:fire("GL.SETTING_CHANGED", keyString, value);
+    end
+
+    return success
 end
 
 GL:debug("Settings.lua");

@@ -216,9 +216,6 @@ function AuctioneerUI:build()
         {text = L.ADD_DROPS_TO_QUEUE, isNotRadio = false, setting = "GDKP.addDropsToQueue", func = function(Entry, _, _, checked)
             Settings:set("GDKP.addDropsToQueue", checked);
             Entry.checked = checked;
-
-            -- This is to make sure we start or stop logging dropped loot
-            GL.DroppedLootLedger:groupUpdated();
         end},
         "divider",
         {text = L.WINDOW, isTitle = true, notCheckable = true },

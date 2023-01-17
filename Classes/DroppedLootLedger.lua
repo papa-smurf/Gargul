@@ -28,9 +28,9 @@ local CommActions = Constants.Comm.Actions;
 ---@class DroppedLootLedger
 GL.DroppedLootLedger = {
     _initialized = false,
-    logging = false,
+    tracking = false,
     minimumQuality = nil,
-    shouldLogItems = false,
+    trackItems = false,
     ProcessedNPCIDs = {},
     BroadcastedNPCIDs = {},
     KilledBosses = {},
@@ -60,25 +60,42 @@ function DroppedLootLedger:_init()
     self._initialized = true;
     self.minimumQuality = Settings:get("DroppedLoot.minimumQualityOfLoggedLoot", 4);
 
-    Events:register(
-        "DroppedLootGroupRosterUpdateThrottled",
-        "GL.GROUP_ROSTER_UPDATE_THROTTLED",
+    Events:register({
+            {"DroppedLootGroupRosterUpdateThrottled", "GL.GROUP_ROSTER_UPDATE_THROTTLED"},
+            {"DroppedLootSettingChanged", "GL.SETTING_CHANGED"},
+        },
         function ()
-            self:groupUpdated();
+            self:startOrStopTracking();
         end
     );
 end
 
----@return boolean
-function DroppedLootLedger:_shouldLogItems()
-    GL:debug("DroppedLootLedger:_shouldLogItems");
+--- Start or stop tracking loot based on group and add-on settings
+---
+---@return void
+function DroppedLootLedger:startOrStopTracking()
+    GL:debug("DroppedLootLedger:startOrStopTracking");
 
-    if (not User.isInGroup) then
+    self.trackItems = self:_shouldTrackItems();
+    if (not self.trackItems) then
+        self:stopTracking();
+    else
+        self:startTracking();
+    end
+end
+
+---@return boolean
+function DroppedLootLedger:_shouldTrackItems()
+    if (not User.isInRaid) then
         return false;
     end
 
+    if (GL.Settings:get("TMB.awardBasedOnDrops")) then
+        return true;
+    end
+
     if (GDKPSession:activeSessionID()
-        and GL.Settings:get("GDKP.addDropsToQueue")
+            and GL.Settings:get("GDKP.addDropsToQueue")
     ) then
         return true;
     end
@@ -108,30 +125,15 @@ function DroppedLootLedger:_shouldLogItems()
     return false;
 end
 
---- The group updated in some way, check whether we need to start or stop logging
----
 ---@return void
-function DroppedLootLedger:groupUpdated()
-    GL:debug("DroppedLootLedger:groupUpdated");
+function DroppedLootLedger:startTracking()
+    GL:debug("DroppedLootLedger:startTracking");
 
-    self.shouldLogItems = self:_shouldLogItems();
-
-    if (not self.shouldLogItems) then
-        self:stopLogging();
-    else
-        self:startLogging();
-    end
-end
-
----@return void
-function DroppedLootLedger:startLogging()
-    GL:debug("DroppedLootLedger:startLogging");
-
-    if (self.logging) then
+    if (self.tracking) then
         return;
     end
 
-    self.logging = true;
+    self.tracking = true;
 
     -- Just in case the event listeners already exist we remove them
     Events:unregister({
@@ -157,8 +159,8 @@ function DroppedLootLedger:startLogging()
 end
 
 ---@return void
-function DroppedLootLedger:stopLogging()
-    GL:debug("DroppedLootLedger:stopLogging");
+function DroppedLootLedger:stopTracking()
+    GL:debug("DroppedLootLedger:stopTracking");
 
     Events:unregister({
         "DroppedLootLedgerChatMSGLootListener",
@@ -166,7 +168,7 @@ function DroppedLootLedger:stopLogging()
         "DroppedLootLedgerCombatLogEventUnfilteredListener",
     });
 
-    self.logging = false;
+    self.tracking = false;
 end
 
 ---@param quality number

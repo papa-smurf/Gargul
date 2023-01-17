@@ -40,6 +40,11 @@ function TMB:draw(Parent)
             setting = "TMB.showEntriesWhenSolo",
         },
         {
+            label = "Award based on drops without using Gargul UI",
+            description = "Want to export items won via group loot? Want to use the native UI when master looting instead of Gargul's? Then enable this option! You can still edit entries via the award history (|c00a79eff/gl ah|r)",
+            setting = "TMB.awardBasedOnDrops",
+        },
+        {
             label = "Hide wishlist info when priority is set",
             description = "You will only see an item's wishlist details if no priority (LC) is set for it",
             setting = "TMB.hideWishListInfoIfPriorityIsPresent",
