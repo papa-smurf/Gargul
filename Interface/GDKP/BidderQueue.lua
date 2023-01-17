@@ -15,7 +15,7 @@ local Settings = GL.Settings;
 GL.Interface.GDKP = GL.Interface.GDKP or {};
 
 ---@class GDKPBidderQueueInterface
-GL.BidderQueue = {
+GL.Interface.GDKP.BidderQueue = {
     deletedIdentifiers = {},
     windowName = "Gargul.BidderQueue.Window",
 
@@ -23,7 +23,7 @@ GL.BidderQueue = {
 };
 
 ---@type GDKPBidderQueueInterface
-local BidderQueue = GL.BidderQueue;
+local BidderQueue = GL.Interface.GDKP.BidderQueue;
 
 --[[ CONSTANTS ]]
 local DEFAULT_WINDOW_WIDTH = 150;
