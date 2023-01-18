@@ -382,7 +382,7 @@ function TradeWindow:processItemsToAdd()
     end
 
     -- Everything went well, put the item in the trade window!
-    C_Container.UseContainerItem(unpack(itemPositionInBag));
+    UseContainerItem(unpack(itemPositionInBag));
 end
 
 --- Check whether we should announce trade details
