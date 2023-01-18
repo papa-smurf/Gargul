@@ -157,6 +157,7 @@ function TradeWindow:handleEvents(event, message)
         -- Periodically add items to the trade window
         -- We don't do this instantly because that can bug out the UI
         GL:debug("Schedule new TradeWindow.AddItemsTimer");
+
         self.AddItemsTimer = GL.Ace:ScheduleRepeatingTimer(function ()
             GL:debug("Run TradeWindow.AddItemsTimer");
 
@@ -381,7 +382,7 @@ function TradeWindow:processItemsToAdd()
     end
 
     -- Everything went well, put the item in the trade window!
-    UseContainerItem(unpack(itemPositionInBag));
+    C_Container.UseContainerItem(unpack(itemPositionInBag));
 end
 
 --- Check whether we should announce trade details

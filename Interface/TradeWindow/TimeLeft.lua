@@ -6,10 +6,13 @@ GL.AceGUI = GL.AceGUI or LibStub("AceGUI-3.0");
 GL:tableSet(GL, "Interface.TradeWindow.TimeLeft", {
     _initialized = false,
     isVisible = false,
+    awaitingRefresh = false,
+    barsToShow = 0,
     broadcastIsVisible = false,
     dragging = false,
+    lastRefreshAt = 0,
+    minimumSecondsBetweenRefreshes = 3,
     refreshing = false,
-    barsToShow = 0,
     Bars = {},
     Broadcast = nil,
     HotKeyExplanation = nil,
@@ -35,7 +38,8 @@ function TimeLeft:_init()
     GL.Ace:ScheduleTimer(function ()
         GL.Events:register({
             {"TimeLeftPlayerEnteringWorldListener", "PLAYER_ENTERING_WORLD"},
-            {"TimeLeftBagUpdateDelayedListener", "BAG_UPDATE_DELAYED"},
+            --{"TimeLeftBagUpdateDelayedListener", "BAG_UPDATE_DELAYED"}, ---@todo reset when Blizzard fixes the event
+            {"TimeLeftBagUpdateListener", "BAG_UPDATE"}, ---@todo remove when Blizzard fixes the delayed event
             {"TimeLeftZoneChangedListener", "ZONE_CHANGED"},
             {"TimeLeftPlayerAliveListener", "PLAYER_ALIVE"},
             {"TimeLeftPlayerUnghostListener", "PLAYER_UNGHOST"},
@@ -493,11 +497,15 @@ function TimeLeft:enabled()
     return true;
 end
 
-function TimeLeft:refreshBars()
+function TimeLeft:refreshBars(byRefresh)
     GL:debug("TimeLeft:refreshBars");
 
     -- We're already busy refreshing, return so we don't refresh endlessly
-    if (self.refreshing) then
+    if (self.refreshing
+        or (self.awaitingRefresh
+            and not byRefresh
+        )
+    ) then
         return;
     end
 
@@ -507,6 +515,21 @@ function TimeLeft:refreshBars()
         return;
     end
 
+    local pcTime = GetTime();
+    local timeLeftBeforeNextRefresh = math.ceil(self.minimumSecondsBetweenRefreshes - (pcTime - self.lastRefreshAt));
+    if (timeLeftBeforeNextRefresh > 0) then
+        self.awaitingRefresh = true;
+        GL.Ace:CancelTimer(self.RefreshThrottleTimer);
+
+        self.RefreshThrottleTimer = GL.Ace:ScheduleTimer(function ()
+            self:refreshBars(true);
+        end, math.max(timeLeftBeforeNextRefresh, 1));
+
+        return;
+    end
+
+    self.lastRefreshAt = GetTime();
+    self.awaitingRefresh = false;
     self.refreshing = true;
 
     local Window = GL.Interface:get(self, "Window");
