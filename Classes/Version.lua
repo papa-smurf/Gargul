@@ -6,6 +6,7 @@ GL.Version = GL.Version or {
     checkingForUpdate = false,
     current = GL.version,
     latest = GL.version,
+    lastUpdateCheckReplyAt = 0,
     releases = {},
     isOutOfDate = false,
     firstBoot = false,
@@ -167,6 +168,14 @@ function Version:replyToUpdateCheck(Message)
     if (GL:iEquals(GL.User.name, Message.Sender.name)) then
         return;
     end
+
+    -- We don't handle too many of these messages
+    local serverTime = GetServerTime();
+    if (serverTime - self.lastUpdateCheckReplyAt < 20) then
+        return;
+    end
+
+    self.lastUpdateCheckReplyAt = serverTime;
 
     if (Message.version
         and not Version:leftIsNewerThanOrEqualToRight(Message.version, Version.latest)
