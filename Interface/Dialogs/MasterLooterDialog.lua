@@ -58,7 +58,7 @@ function MasterLooterDialog:_init()
             GL:debug("Run MasterLooterDialog.VersionCheckTimer");
 
             GL.Version:inspectQuietly();
-        end, 60);
+        end, 1800);
 
         GL.Version:inspectQuietly();
     end);
