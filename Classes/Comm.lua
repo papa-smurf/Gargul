@@ -1,14 +1,19 @@
 ---@type GL
 local _, GL = ...;
 
+---@type Version
+local Version = GL.Version;
+
+---@class Comm
 GL.Comm = {
     initialized = false,
     channel = "",
-    notifiedOfNewerVersion = false,
-    lastOutOfDateNotification = 0,
 };
 
+---@type Comm
 local Comm = GL.Comm;
+
+---@type Data
 local Actions = GL.Data.Constants.Comm.Actions or {};
 
 Comm.Actions = {
@@ -40,11 +45,14 @@ Comm.Actions = {
         GL.BagInspector:report(Message);
     end,
     [Actions.requestAppVersion] = function (Message)
-        if (GL.User.name == Message.Sender.name) then
+        if (GL:iEquals(GL.User.name, Message.Sender.name)) then
             return;
         end
 
-        Message:respond(GL.Version.current);
+        Message:respond(Version.current);
+    end,
+    [Actions.checkForUpdate] = function (Message)
+        Version:replyToUpdateCheck(Message);
     end,
     [Actions.requestSoftResData] = function (Message)
         GL.SoftRes:replyToDataRequest(Message);
@@ -244,28 +252,18 @@ function Comm:listen(payload, distribution)
     -- If that's the case then we'll notify the user that his version is out of date (max once every 5 seconds)
     if (payload.minimumVersion
         and type(payload.minimumVersion) == "string"
-        and not GL.Version:leftIsNewerThanOrEqualToRight(GL.version, payload.minimumVersion)
+        and not Version:leftIsNewerThanOrEqualToRight(Version.current, payload.minimumVersion)
     ) then
-        local serverTime = GetServerTime();
-        if (serverTime - GL.Comm.lastOutOfDateNotification >= 5) then
-            GL.Comm.lastOutOfDateNotification = serverTime;
-            GL:error("I'm out of date and won't work properly until you update me!");
-        end
+        Version:notBackwardsCompatibleNotice();
         return false;
     end
 
     -- The version includes a version, see if it's one we can work with
     if (payload.version and type(payload.version) == "string") then
-        -- The person sending us the message has a newer version. Ours is still compatible so we get off with a warning
-        if (not GL.Version:leftIsNewerThanOrEqualToRight(GL.version, payload.version)) then
-            if (not GL.Comm.notifiedOfNewerVersion) then
-                GL:warning("There's an update available. Go to https://www.curseforge.com/wow/addons/gargul to update.");
-                GL.Comm.notifiedOfNewerVersion = true;
-            end
-        end
+        Version.addRelease(payload.version);
 
         -- The person sending us the message has an old version that's not compatible with ours, let him know!
-        if (not GL.Version:leftIsNewerThanOrEqualToRight(payload.version, GL.Data.Constants.Comm.minimumAppVersion)) then
+        if (not Version:leftIsNewerThanOrEqualToRight(payload.version, GL.Data.Constants.Comm.minimumAppVersion)) then
             -- This empty message will trigger an out-of-date error on the recipient's side
             GL.CommMessage.new(
                 Actions.response,
@@ -320,7 +318,7 @@ function Comm:dispatch(CommMessage)
         return Comm.Actions[action](CommMessage);
     end
 
-    GL:warning(string.format("Unknown comm action '%s'", action));
+    GL:warning(string.format("Unknown comm action '%s', make sure to update Gargul!", action));
 end
 
 GL:debug("Comm.lua");
