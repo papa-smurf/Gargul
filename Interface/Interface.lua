@@ -1237,9 +1237,6 @@ function Interface:releaseButton(Button)
 
     -- Make sure we can release the button unto our pool for recycling purposes
     Button:SetMotionScriptsWhileDisabled(false);
-    Button:SetNormalTexture(nil,"ARTWORK");
-    Button:SetHighlightTexture(nil,"ARTWORK");
-    Button:SetDisabledTexture(nil,"ARTWORK");
     Button:SetParent(UIParent);
     Button.normalTexture = nil;
     Button.highlightTexture = nil;
