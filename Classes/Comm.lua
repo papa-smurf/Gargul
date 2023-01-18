@@ -260,7 +260,7 @@ function Comm:listen(payload, distribution)
 
     -- The version includes a version, see if it's one we can work with
     if (payload.version and type(payload.version) == "string") then
-        Version.addRelease(payload.version);
+        Version:addRelease(payload.version, true);
 
         -- The person sending us the message has an old version that's not compatible with ours, let him know!
         if (not Version:leftIsNewerThanOrEqualToRight(payload.version, GL.Data.Constants.Comm.minimumAppVersion)) then

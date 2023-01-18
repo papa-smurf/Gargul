@@ -189,14 +189,18 @@ end
 --- check whether we need to update our own addon
 ---
 ---@param versionString string
+---@param quietly boolean
 ---@return void
-function Version:addRelease(versionString)
+function Version:addRelease(versionString, quietly)
     GL:debug("Version:addRelease");
 
     if (type(versionString) ~= "string"
         or not string.match(versionString, "%d+%.%d+%.%d+")
     ) then
-        GL:warning("Invalid version string provided in Version:addRelease");
+        if (not quietly) then
+            GL:warning("Invalid version string provided in Version:addRelease");
+        end
+
         return;
     end
 
