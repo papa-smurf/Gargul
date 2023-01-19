@@ -124,6 +124,7 @@ function AuctioneerUI:build()
         maxWidth = 500,
         maxHeight = 700,
     });
+    Window:Hide();
 
     Window:HookScript("OnShow", function ()
         self:closeAuctioneerShortcut();

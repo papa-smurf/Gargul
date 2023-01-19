@@ -85,6 +85,11 @@ function Auctioneer:_init()
             Window:start();
         end
 
+        -- Make sure the reopen shortcut button is drawn
+        if (not AuctioneerUI.isVisible) then
+            AuctioneerUI:openAuctioneerShortcut();
+        end
+
         if (Settings:get("GDKP.closeAuctioneerOnStart")) then
             AuctioneerUI:close();
             return;
@@ -223,8 +228,10 @@ function Auctioneer:populateQueueFromUI()
     end
 end
 
+---@param itemLink string
+---@param fromQueue boolean
 ---@return void
-function Auctioneer:setItemByLink(itemLink)
+function Auctioneer:setItemByLink(itemLink, fromQueue)
     GL:debug("Auctioneer:setItemByLink");
 
     if (GL.User.isInGroup
@@ -235,7 +242,12 @@ function Auctioneer:setItemByLink(itemLink)
     end
 
     AuctioneerUI = AuctioneerUI or GL.Interface.GDKP.Auctioneer;
-    AuctioneerUI:open():setItemByLink(itemLink);
+
+    if (fromQueue) then
+        AuctioneerUI:build():setItemByLink(itemLink);
+    else
+        AuctioneerUI:open():setItemByLink(itemLink);
+    end
 end
 
 ---@return void
@@ -285,7 +297,7 @@ function Auctioneer:popFromQueue(force)
 
     for key, Row in pairs(AuctioneerUI.ItemRows or {}) do
         if (Row._identifier and Row._itemLink) then
-            self:setItemByLink(Row._itemLink);
+            self:setItemByLink(Row._itemLink, true);
             Auction:removeFromQueue(Row._identifier);
             AuctioneerUI:deleteRowFromQueue(Row);
             break;
