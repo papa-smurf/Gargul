@@ -85,15 +85,8 @@ function AwardedLoot:tooltipLines(itemLink)
                 tinsert(Details, string.format("Price: %sg", Loot.GDKPCost));
             end
 
-            local received = Loot.received;
-            if (winner == GL.Exporter.disenchantedItemIdentifier
-                and GL:iEquals(GL.PackMule.disenchanter, GL.User.name)
-            ) then
-                received = true;
-            end
-
             local receivedString = "Given: yes";
-            if (not received) then
+            if (not Loot.received) then
                 receivedString = "Given: no";
             end
             tinsert(Details, receivedString);

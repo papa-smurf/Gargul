@@ -545,7 +545,7 @@ function MasterLooterUI:drawReopenMasterLooterUIButton()
     RollCountLabel:SetSize(22, 22);
     RollCountLabel:SetPoint("BOTTOMLEFT", Button, "BOTTOMLEFT", 2, 2);
 
-    local RollCountText = RollCountLabel:CreateFontString(nil, "OVERLAY", GameFontNormal);
+    local RollCountText = RollCountLabel:CreateFontString(nil, "OVERLAY", "GameFontNormal");
     RollCountText:SetFont(STANDARD_TEXT_FONT, 10, "OUTLINE");
     RollCountText:SetPoint("BOTTOMLEFT", RollCountLabel, "BOTTOMLEFT");
 

@@ -1262,10 +1262,10 @@ function GL:canUserUseItem(itemLinkOrID, callback)
         local IsTooltipTextRed = function (text)
             if (text and text:GetText()) then
                 local r, g, b = text:GetTextColor();
-                return math.floor(r * 256) == 255 and math.floor(g * 256) == 32 and math.floor(b * 256) == 32;
+                return math.floor(r * 256) >= 255 and math.floor(g * 256) == 32 and math.floor(b * 256) == 32;
             end
 
-            return false
+            return false;
         end;
 
         for line = 1, GL.TooltipFrame:NumLines() do
