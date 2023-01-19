@@ -63,7 +63,7 @@ function Interface:dynamicPanelButton(Parent, text)
 
     ---@type FontString
     local Text = Button:GetFontString()
-    Text:SetFont(GL.FONT, 11);
+    Text:SetFont(GL.FONT, 11, "");
     Text:SetText(text or "");
     Text:ClearAllPoints()
     Text:SetPoint("TOPLEFT", 15, -1)
@@ -90,7 +90,7 @@ function Interface:inputBox(Parent, name)
 
     ---@type EditBox
     local Input = CreateFrame("EditBox", name, Parent, "InputBoxTemplate");
-    Input:SetFont(GL.FONT, 11);
+    Input:SetFont(GL.FONT, 11, "");
     Input:SetHeight(20);
     Input:SetAutoFocus(false);
     Input:SetScript("OnReceiveDrag", function ()
@@ -481,7 +481,7 @@ function Interface:openScaler(Parent)
 
         ---@type EditBox
         local Input = CreateFrame("EditBox", nil, Slider, "BackdropTemplate")
-        Input:SetFont(GL.FONT, 11);
+        Input:SetFont(GL.FONT, 11, "");
         Input:SetAutoFocus(false);
         Input:SetPoint("TOP", Slider, "BOTTOM");
         Input:SetHeight(14);

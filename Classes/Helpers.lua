@@ -668,7 +668,7 @@ function GL:popupMessage(text)
         Window.Text:SetPoint("BOTTOM", Window, "BOTTOM", 0, 60);
 
         Window.DiscordURL = GL.Interface:inputBox(Window);
-        Window.DiscordURL:SetFont(GL.FONT, 14);
+        Window.DiscordURL:SetFont(GL.FONT, 14, "");
         Window.DiscordURL:SetPoint("CENTER", Window, "CENTER");
         Window.DiscordURL:SetPoint("BOTTOM", Window, "BOTTOM", 0, 40);
         Window.DiscordURL:SetWidth(186);
