@@ -232,13 +232,16 @@ local lastClickTime;
 ---@param itemLink string
 ---@param mouseButtonPressed string|nil
 ---@param callback function|nil Some actions (like award) support a callback
+---@param modifiedClick boolean Is this an "official" modified click?
 ---@return void
-function GL:handleItemClick(itemLink, mouseButtonPressed, callback)
+function GL:handleItemClick(itemLink, mouseButtonPressed, callback, modifiedClick)
     GL:debug("GL:handleItemClick");
 
     if (not itemLink
         or type(itemLink) ~= "string"
-        or mouseButtonPressed ~= "LeftButton"
+        or (mouseButtonPressed
+            and mouseButtonPressed ~= "LeftButton"
+        )
         or not GL:getItemIDFromLink(itemLink)
     ) then
         return;
