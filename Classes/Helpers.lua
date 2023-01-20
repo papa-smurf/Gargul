@@ -234,10 +234,11 @@ local lastClickTime;
 ---@param callback function|nil Some actions (like award) support a callback
 ---@return void
 function GL:handleItemClick(itemLink, mouseButtonPressed, callback)
-    local modifiedClick = mouseButtonPressed == "ModifiedButton";
+    GL:debug("GL:handleItemClick");
 
     if (not itemLink
         or type(itemLink) ~= "string"
+        or mouseButtonPressed ~= "LeftButton"
         or not GL:getItemIDFromLink(itemLink)
     ) then
         return;
@@ -260,9 +261,6 @@ function GL:handleItemClick(itemLink, mouseButtonPressed, callback)
         return;
     end
 
-    if (modifiedClick) then
-        mouseButtonPressed = nil;
-    end
     local keyPressIdentifier = GL.Events:getClickCombination(mouseButtonPressed);
 
     local onDoubleClick = function ()

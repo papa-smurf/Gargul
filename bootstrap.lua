@@ -141,8 +141,8 @@ function GL:_init()
     self:hookNativeWindowEvents();
 
     -- Hook item click events
-    hooksecurefunc("HandleModifiedItemClick", function(itemLink)
-        self:handleItemClick(itemLink, "ModifiedButton");
+    hooksecurefunc("HandleModifiedItemClick", function(itemLink, itemLocation)
+        self:handleItemClick(itemLink, GetMouseButtonClicked());
     end);
 
     -- Hook item tooltip events
