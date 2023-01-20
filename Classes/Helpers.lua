@@ -1238,6 +1238,21 @@ end
 ---@param bagID number
 ---@param slot number
 ---@return any
+function GL:useContainerItem(bagID, slot)
+    if (UseContainerItem) then
+        return UseContainerItem(bagID, slot)
+    end
+
+    if (C_Container and C_Container.UseContainerItem) then
+        return C_Container.UseContainerItem(bagID, slot);
+    end
+
+    return nil;
+end
+
+---@param bagID number
+---@param slot number
+---@return any
 function GL:getContainerItemInfo(bagID, slot)
     if (GetContainerItemInfo) then
         return GetContainerItemInfo(bagID, slot)
