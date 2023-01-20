@@ -5,7 +5,7 @@ https://www.wowace.com/projects/libbuttonglow-1-0
 
 -- luacheck: globals CreateFromMixins ObjectPoolMixin CreateTexturePool CreateFramePool
 
-local MAJOR_VERSION = "LibCustomGlowGargul-1.0"
+local MAJOR_VERSION = "LibCustomGlow-1.0"
 local MINOR_VERSION = 15
 if not LibStub then error(MAJOR_VERSION .. " requires LibStub.") end
 local lib, oldversion = LibStub:NewLibrary(MAJOR_VERSION, MINOR_VERSION)
@@ -295,7 +295,6 @@ function lib.PixelGlow_Start(r,color,N,frequency,length,th,xOffset,yOffset,borde
         f.info.width = nil
         f.info.length = length
     end
-    pUpdate(f, 0)
     f:SetScript("OnUpdate",pUpdate)
 end
 
