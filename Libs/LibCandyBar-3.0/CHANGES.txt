@@ -1,14 +1,8 @@
 ------------------------------------------------------------------------
-r169 | funkehdude | 2022-09-10 19:19:50 +0000 (Sat, 10 Sep 2022) | 1 line
+r173 | funkehdude | 2022-11-14 15:22:42 +0000 (Mon, 14 Nov 2022) | 1 line
 Changed paths:
-   M /trunk/LibCandyBar-3.0/LibCandyBar-3.0.lua
+   M /trunk/LibCandyBar-3.0.toc
 
-Remove old compat code for backdrop templates
-------------------------------------------------------------------------
-r168 | funkehdude | 2022-09-10 18:59:59 +0000 (Sat, 10 Sep 2022) | 1 line
-Changed paths:
-   M /trunk/LibCandyBar-3.0/LibCandyBar-3.0.lua
-
-Fix font strings for Dragonflight
+bump toc
 ------------------------------------------------------------------------
 

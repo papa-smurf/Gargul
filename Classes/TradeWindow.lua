@@ -382,7 +382,7 @@ function TradeWindow:processItemsToAdd()
     end
 
     -- Everything went well, put the item in the trade window!
-    UseContainerItem(unpack(itemPositionInBag));
+    GL:useContainerItem(unpack(itemPositionInBag));
 end
 
 --- Check whether we should announce trade details

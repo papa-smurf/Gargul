@@ -232,12 +232,16 @@ local lastClickTime;
 ---@param itemLink string
 ---@param mouseButtonPressed string|nil
 ---@param callback function|nil Some actions (like award) support a callback
+---@param modifiedClick boolean Is this an "official" modified click?
 ---@return void
-function GL:handleItemClick(itemLink, mouseButtonPressed, callback)
-    local modifiedClick = mouseButtonPressed == "ModifiedButton";
+function GL:handleItemClick(itemLink, mouseButtonPressed, callback, modifiedClick)
+    GL:debug("GL:handleItemClick");
 
     if (not itemLink
         or type(itemLink) ~= "string"
+        or (mouseButtonPressed
+            and mouseButtonPressed ~= "LeftButton"
+        )
         or not GL:getItemIDFromLink(itemLink)
     ) then
         return;
@@ -260,12 +264,13 @@ function GL:handleItemClick(itemLink, mouseButtonPressed, callback)
         return;
     end
 
-    if (modifiedClick) then
-        mouseButtonPressed = nil;
-    end
     local keyPressIdentifier = GL.Events:getClickCombination(mouseButtonPressed);
 
     local onDoubleClick = function ()
+        if (not GL.Settings:get("ShortcutKeys.doubleClickToTrade")) then
+            return;
+        end
+
         -- Open a trade window with the targeted unit if we don't have one open yet
         if (not TradeFrame:IsShown()) then
             if (not UnitIsPlayer("target")) then
@@ -316,8 +321,11 @@ function GL:handleItemClick(itemLink, mouseButtonPressed, callback)
             ChatEdit_InsertLink(itemLink);
         end
 
-    -- Check for double clicks (trade)
-    else
+    -- Check for unmodified double clicks (trade)
+    elseif (not IsShiftKeyDown()
+        and not IsAltKeyDown()
+        and not IsControlKeyDown()
+    ) then
         local currentTime = GetTime();
 
         -- Double click behavior detected
@@ -1233,6 +1241,21 @@ function GL:canUserUseItem(itemLinkOrID, callback)
 
         return callback(true);
     end);
+end
+
+---@param bagID number
+---@param slot number
+---@return any
+function GL:useContainerItem(bagID, slot)
+    if (UseContainerItem) then
+        return UseContainerItem(bagID, slot)
+    end
+
+    if (C_Container and C_Container.UseContainerItem) then
+        return C_Container.UseContainerItem(bagID, slot);
+    end
+
+    return nil;
 end
 
 ---@param bagID number

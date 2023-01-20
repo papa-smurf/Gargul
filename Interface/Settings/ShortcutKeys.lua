@@ -46,6 +46,11 @@ function ShortcutKeys:draw(Parent)
             label = "Hotkeys should only work when I'm in a group",
             setting = "ShortcutKeys.onlyInGroup",
         },
+        {
+            label = "Double click to trade",
+            description = "When double clicking loot trade timers for example, attempt to trade with your current target or add the item to an active trade window (will not work from bags)",
+            setting = "ShortcutKeys.doubleClickToTrade",
+        },
     }
 
     Overview:drawCheckboxes(Checkboxes, Parent);
