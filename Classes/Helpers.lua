@@ -266,6 +266,10 @@ function GL:handleItemClick(itemLink, mouseButtonPressed, callback)
     local keyPressIdentifier = GL.Events:getClickCombination(mouseButtonPressed);
 
     local onDoubleClick = function ()
+        if (not GL.Settings:get("ShortcutKeys.doubleClickToTrade")) then
+            return;
+        end
+
         -- Open a trade window with the targeted unit if we don't have one open yet
         if (not TradeFrame:IsShown()) then
             if (not UnitIsPlayer("target")) then
@@ -316,8 +320,11 @@ function GL:handleItemClick(itemLink, mouseButtonPressed, callback)
             ChatEdit_InsertLink(itemLink);
         end
 
-    -- Check for double clicks (trade)
-    else
+    -- Check for unmodified double clicks (trade)
+    elseif (not IsShiftKeyDown()
+        and not IsAltKeyDown()
+        and not IsControlKeyDown()
+    ) then
         local currentTime = GetTime();
 
         -- Double click behavior detected
