@@ -154,7 +154,7 @@ function RaidGroups:drawImporter()
 
     local CheckAttendanceOutput = AceGUI:Create("Label");
     CheckAttendanceOutput:SetFullWidth(true);
-    CheckAttendanceOutput:SetText("");
+    CheckAttendanceOutput:SetText("\n\n\n\n\n\n\n ");
     OutputFrame:AddChild(CheckAttendanceOutput);
 
     --[[
@@ -410,10 +410,6 @@ end
 -- Check if everyone's in the raid or if the raid contains players who shouldn't be there
 function RaidGroups:checkAttendance(raidGroupCsv, OutPutLabel)
     GL:debug("RaidGroups:checkAttendance");
-
-    if (not GL.User.isInRaid) then
-        return GL:warning("You need to be in a raid!");
-    end
 
     if (GL:empty(raidGroupCsv)) then
         return GL:warning("Invalid group format provided!");

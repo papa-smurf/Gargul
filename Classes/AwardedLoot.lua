@@ -365,6 +365,18 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, G
         announce = true;
     end
 
+    local normalizedPlayerName = string.lower(GL:stripRealm(winner));
+    local isReserved = GL.SoftRes:itemIDIsReservedByPlayer(itemID, normalizedPlayerName);
+    local isPrioritized, isWishlisted = false, false;
+
+    for _, Entry in pairs(GL.TMB:byItemIDAndPlayer(itemID, normalizedPlayerName) or {}) do
+        if (Entry.type == GL.Data.Constants.tmbTypePrio) then
+            isPrioritized = true;
+        elseif (Entry.type == GL.Data.Constants.tmbTypeWish) then
+            isWishlisted = true;
+        end
+    end
+
     local checksum = GL:strPadRight(GL:strLimit(GL:stringHash(timestamp .. itemID) .. GL:stringHash(winner .. GL.DB:get("SoftRes.MetaData.id", "")), 20, ""), "0", 20);
     local AwardEntry = {
         checksum = checksum,
@@ -378,6 +390,10 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, G
         BRCost = tonumber(BRCost),
         GDKPCost = tonumber(GDKPCost),
         OS = isOS,
+        SR = isReserved,
+        WL = isWishlisted,
+        PL = isPrioritized,
+        TMB = isWishlisted or isPrioritized,
         Rolls = Rolls or {},
     };
 
@@ -488,17 +504,6 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, G
             return;
         end
 
-        local normalizedPlayerName = string.lower(GL:stripRealm(winner));
-        local isPrioritized, isWishlisted = false, false;
-
-        for _, Entry in pairs(GL.TMB:byItemIDAndPlayer(itemID, normalizedPlayerName) or {}) do
-            if (Entry.type == GL.Data.Constants.tmbTypePrio) then
-                isPrioritized = true;
-            elseif (Entry.type == GL.Data.Constants.tmbTypeWish) then
-                isWishlisted = true;
-            end
-        end
-
         CLMEventDispatcher.dispatchEvent("CLM_EXTERNAL_EVENT_ITEM_AWARDED", {
             source = "Gargul",
             itemLink = itemLink,
@@ -506,7 +511,7 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, G
             isOffSpec = isOS,
             isWishlisted = isWishlisted,
             isPrioritized = isPrioritized,
-            isReserved = GL.SoftRes:itemIDIsReservedByPlayer(itemID, normalizedPlayerName),
+            isReserved = isReserved,
         });
     end);
 
