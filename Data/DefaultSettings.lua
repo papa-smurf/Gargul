@@ -29,11 +29,12 @@ GL.Data.DefaultSettings = {
     ShortcutKeys = {
         auction = "DISABLED",
         award = "ALT_SHIFT_CLICK",
-        onlyInGroup = false,
-        rollOffOrAuction = "ALT_CLICK",
-        rollOff = "DISABLED",
-        showLegend = true,
         disenchant = "CTRL_SHIFT_CLICK",
+        doubleClickToTrade = true,
+        onlyInGroup = false,
+        rollOff = "DISABLED",
+        rollOffOrAuction = "ALT_CLICK",
+        showLegend = true,
     },
     MasterLooting = {
         alwaysUseDefaultNote = false,

@@ -76,6 +76,14 @@ function Session:_init()
         GDKPPot:calculateCuts(self:activeSessionID()); -- Calculate cuts for potential new joiners
         GL.Interface.GDKP.Distribute.Overview:refresh(); -- Refresh the distribution overview in case it's opened
     end);
+
+    if (self:activeSessionID()) then
+        GL.Ace:ScheduleTimer(function ()
+            GL.Interface.Alerts:fire("GargulNotification", {
+                message = string.format("|c00BE3333GDKP Activated!|r"),
+            });
+        end, 5);
+    end
 end
 
 --- Copper owed to player based on everything bought, earned, cut, etc. This is the bottom line for this session!

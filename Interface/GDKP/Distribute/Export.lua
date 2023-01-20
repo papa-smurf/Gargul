@@ -157,7 +157,7 @@ function Export:build()
 
     local showCustomFormatHelpTooltip = function ()
         GameTooltip:SetOwner(HelpIconFrame, "ANCHOR_RIGHT");
-        GameTooltip:SetText(string.format("Available values:\n\n%s\n%s\n\n%s",
+        GameTooltip:SetText(string.format("Available values:\n\n%s\n%s\n%s\n%s\n\n%s",
             "@PLAYER",
             "@CUT",
             "@SPENT",
