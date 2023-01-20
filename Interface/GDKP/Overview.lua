@@ -163,6 +163,7 @@ function Overview:open()
         Window = self:build();
     end
 
+    self:updatePot();
     self:refreshLedger();
 
     if (self.isVisible) then
