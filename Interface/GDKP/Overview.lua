@@ -61,10 +61,11 @@ function Overview:_init()
         {"GDKPOverviewGDKPAuctionChangedListener", "GL.GDKP_AUCTION_CHANGED"},
         {"GDKPOverviewGDKPSessionLockedListener", "GL.GDKP_SESSION_LOCKED"},
         {"GDKPOverviewGDKPSessionUnlockedListener", "GL.GDKP_SESSION_UNLOCKED"},
-    }, function(e)
-        if (not self.isVisible) then return; end
+    }, function()
         GL.Ace:ScheduleTimer(function()
             self:updatePot();
+
+            if (not self.isVisible) then return; end
             self:refreshLedger();
             self.styleWindowAfterResize();
         end, .1);
