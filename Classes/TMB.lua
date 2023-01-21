@@ -1003,7 +1003,7 @@ function TMB:receiveBroadcast(CommMessage)
     GL:debug("TMB:receiveBroadcast");
 
     -- No need to update our tables if we broadcasted them ourselves
-    if (CommMessage.Sender.id == GL.User.id) then
+    if (CommMessage.Sender.isSelf) then
         GL:debug("TMB:receiveBroadcast received by self, skip");
         return true;
     end
