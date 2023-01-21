@@ -713,7 +713,7 @@ function AwardedLoot:processAwardedLoot(CommMessage)
     end
 
     -- No need to add awarded loot if we broadcasted it ourselves
-    if (CommMessage.Sender.name == GL.User.name) then
+    if (CommMessage.Sender.isSelf) then
         GL:debug("AwardedLoot:processAwardedLoot received by self, skip");
         return;
     end
@@ -749,7 +749,7 @@ function AwardedLoot:processEditedLoot(CommMessage)
     GL:debug("AwardedLoot:processEditedLoot");
 
     -- No need to do anything if we broadcasted it ourselves
-    if (CommMessage.Sender.name == GL.User.name) then
+    if (CommMessage.Sender.isSelf) then
         GL:debug("AwardedLoot:processEditedLoot received by self, skip");
         return;
     end

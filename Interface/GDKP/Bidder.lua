@@ -69,7 +69,7 @@ end
 function Bidder:draw(time, itemLink, itemIcon)
     GL:debug("Bidder:draw");
 
-    local Window = CreateFrame("Frame", "GARGUL_GDKP_BIDDER_WINDOW", UIParent, Frame);
+    local Window = CreateFrame("Frame", "GARGUL_GDKP_BIDDER_WINDOW", UIParent);
     Window:Hide();
     Window:SetSize(300, 96);
     Window:SetPoint(GL.Interface:getPosition("Bidder"));
@@ -97,6 +97,23 @@ function Bidder:draw(time, itemLink, itemIcon)
     Texture:SetColorTexture(0, 0, 0, .6);
     Texture:SetAllPoints(Window)
     Window.texture = Texture;
+
+    local CountDownBarDragger = CreateFrame("Frame", nil, Window);
+    CountDownBarDragger:SetPoint("TOPLEFT", Window, "TOPLEFT", 0, 0);
+    CountDownBarDragger:SetPoint("TOPRIGHT", Window, "TOPRIGHT", 0, 0);
+    CountDownBarDragger:SetHeight(30);
+
+    CountDownBarDragger:EnableMouse(true);
+    CountDownBarDragger:RegisterForDrag("LeftButton");
+    CountDownBarDragger:SetScript("OnDragStart", function()
+        Window:StartMoving();
+    end);
+    CountDownBarDragger:SetScript("OnDragStop", function()
+        Window:StopMovingOrSizing();
+        GL.Interface:storePosition(Window, "Bidder");
+    end);
+
+    Window.CountDownBarDragger = CountDownBarDragger;
 
     self:drawCountdownBar(time, itemLink, itemIcon);
 
@@ -274,7 +291,7 @@ end
 ---@param time number
 ---@param itemLink string
 ---@param itemIcon string
----@return void
+---@return Frame
 function Bidder:drawCountdownBar(time, itemLink, itemIcon, maxValue)
     GL:debug("Bidder:drawCountdownBar");
 
@@ -334,6 +351,8 @@ function Bidder:drawCountdownBar(time, itemLink, itemIcon, maxValue)
 
     TimerBar:SetDuration(5);
     self.TimerBar = TimerBar;
+
+    return TimerBar;
 end
 
 ---@return void
