@@ -45,7 +45,7 @@ Comm.Actions = {
         GL.BagInspector:report(Message);
     end,
     [Actions.requestAppVersion] = function (Message)
-        if (GL:iEquals(GL.User.name, Message.Sender.name)) then
+        if (Message.Sender.isSelf) then
             return;
         end
 
@@ -215,7 +215,7 @@ end
 ---@param payload string
 ---@param distribution string
 ---@return boolean
-function Comm:listen(payload, distribution)
+function Comm:listen(payload, distribution, playerName)
     GL:debug(string.format("Received message on %s", GL.Comm.channel));
 
     payload = GL.CommMessage:decompress(payload);
@@ -229,13 +229,13 @@ function Comm:listen(payload, distribution)
 
     -- Let's find out who sent us this message
     if (not Sender.id) then
-        if (distribution ~= "GUILD") then
-            GL:warning("Unable to confirm identity of sender '" .. payload.senderFqn .. "'");
-            return false;
-        end
-
-        Sender.name = payload.senderName;
+        Sender.name = playerName or GL:stripRealm(payload.senderFqn);
     end
+
+    -- Was this sent by ourself?
+    Sender.isSelf = GL:iEquals(Sender.id, GL.User.id)
+        or GL:iEquals(playerName, GL.User.name)
+        or GL:iEquals(Sender.name, GL.User.name);
 
     -- We're missing a payload
     if (not payload) then

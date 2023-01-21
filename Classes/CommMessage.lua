@@ -45,7 +45,6 @@ function CommMessage.new(action, content, channel, recipient)
     self.channel = channel;
     self.version = GL.version;
     self.minimumVersion = GL.Data.Constants.Comm.minimumAppVersion;
-    self.senderName = GL.User.name;
     self.senderRealm = GL.User.realm;
     self.senderFqn = GL.User.fqn;
     self.recipient = recipient;
@@ -72,7 +71,6 @@ function CommMessage.newFromReceived(Message)
     self.version = Message.version;
     self.minimumVersion = GL.Data.Constants.Comm.minimumAppVersion;
     self.Sender = Message.Sender;
-    self.senderName = Message.Sender.name;
     self.senderFqn = Message.senderFqn;
     self.recipient = Message.recipient;
     self.correspondenceId = Message.correspondenceId or Message.id;

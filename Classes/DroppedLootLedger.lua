@@ -265,7 +265,7 @@ function DroppedLootLedger:receiveDrops(CommMessage)
     GL:debug("DroppedLootLedger:receiveDrops");
 
     -- No need to process our own findings
-    if (CommMessage.Sender.id == GL.User.id) then
+    if (CommMessage.Sender.isSelf) then
         return;
     end
 
