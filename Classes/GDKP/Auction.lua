@@ -841,7 +841,7 @@ function Auction:receiveQueue(CommMessage)
     GL:debug("Auction:receiveQueue");
 
     -- No need to override our own queue
-    if (CommMessage.Sender.id == GL.User.id) then
+    if (CommMessage.Sender.isSelf) then
         return;
     end
 

@@ -1260,7 +1260,7 @@ function SoftRes:receiveSoftRes(CommMessage)
     GL:debug("SoftRes:receiveSoftRes");
 
     -- No need to update our tables if we broadcasted them ourselves
-    if (CommMessage.Sender.name == GL.User.name) then
+    if (CommMessage.Sender.isSelf) then
         GL:debug("Sync:receiveSoftRes received by self, skip");
         return true;
     end

@@ -165,7 +165,7 @@ end
 function Version:replyToUpdateCheck(Message)
     GL:debug("Version:replyToUpdateCheck");
 
-    if (GL:iEquals(GL.User.name, Message.Sender.name)) then
+    if (Message.Sender.isSelf) then
         return;
     end
 

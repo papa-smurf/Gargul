@@ -293,7 +293,7 @@ function LootPriority:receiveBroadcast(CommMessage)
     GL:debug("LootPriority:receiveBroadcast");
 
     -- No need to update our priorities if we broadcasted them ourselves
-    if (CommMessage.Sender.id == GL.User.id) then
+    if (CommMessage.Sender.isSelf) then
         GL:debug("LootPriority:receiveBroadcast received by self, skip");
         return true;
     end
