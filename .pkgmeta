@@ -1,0 +1,6 @@
+ignore:
+  - WowApi
+  - _ide_helper.lua
+  - build.sh
+
+changelog-title: Gargul
