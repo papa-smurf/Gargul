@@ -5,6 +5,8 @@
 ## Version: 5.0.20
 ## DefaultState: enabled
 ## SavedVariables: GargulDB
+## X-Donate: https://www.patreon.com/gargul
+## X-License: ARR
 
 # Libraries
 libraries.xml
