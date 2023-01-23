@@ -232,9 +232,8 @@ local lastClickTime;
 ---@param itemLink string
 ---@param mouseButtonPressed string|nil
 ---@param callback function|nil Some actions (like award) support a callback
----@param modifiedClick boolean Is this an "official" modified click?
 ---@return void
-function GL:handleItemClick(itemLink, mouseButtonPressed, callback, modifiedClick)
+function GL:handleItemClick(itemLink, mouseButtonPressed, callback)
     GL:debug("GL:handleItemClick");
 
     if (not itemLink
@@ -312,14 +311,6 @@ function GL:handleItemClick(itemLink, mouseButtonPressed, callback, modifiedClic
     -- Disenchant
     elseif (keyPressIdentifier == GL.Settings:get("ShortcutKeys.disenchant")) then
         GL.PackMule:disenchant(itemLink, nil, callback);
-
-    -- Link the item in chat
-    elseif (not modifiedClick and keyPressIdentifier == "SHIFT_CLICK") then
-        if (ChatFrameEditBox and ChatFrameEditBox:IsVisible()) then
-            ChatFrameEditBox:Insert(itemLink);
-        else
-            ChatEdit_InsertLink(itemLink);
-        end
 
     -- Check for unmodified double clicks (trade)
     elseif (not IsShiftKeyDown()

@@ -142,7 +142,7 @@ function GL:_init()
 
     -- Hook item click events
     hooksecurefunc("HandleModifiedItemClick", function(itemLink)
-        self:handleItemClick(itemLink, GetMouseButtonClicked(), nil, true);
+        self:handleItemClick(itemLink, GetMouseButtonClicked());
     end);
 
     -- Hook item tooltip events
