@@ -708,7 +708,7 @@ function TimeLeft:refreshBars(byRefresh)
         end);
 
         TimerBar:SetScript("OnMouseUp", function(_, mouseButtonPressed)
-            GL:handleItemClick(BagItem.itemLink, mouseButtonPressed);
+            HandleModifiedItemClick(BagItem.itemLink, mouseButtonPressed);
         end)
 
         TimerBar:SetScript("OnLeave", function()

@@ -310,7 +310,9 @@ function DroppedLoot:hookClickEvents()
         if (not self.ButtonsHooked[buttonProvider][buttonIndex]) then
             local Button;
             if (buttonProvider == "ElvUI") then
-                Button = getglobal("ElvLootSlot" .. buttonIndex);
+                --Button = getglobal("ElvLootSlot" .. buttonIndex);
+                -- No need to support the ElvUI button since it's handled by the
+                -- HandleModifiedItemClick handler in bootstrap.lua
             elseif (buttonProvider == "XLoot1") then
                 Button = getglobal("XLootFrameButton" .. buttonIndex);
             elseif (buttonProvider == "XLoot") then
@@ -334,7 +336,7 @@ function DroppedLoot:hookClickEvents()
                     return;
                 end
 
-                GL:handleItemClick(GetLootSlotLink(slot));
+                HandleModifiedItemClick(GetLootSlotLink(slot));
             end);
 
             self.ButtonsHooked[buttonProvider][buttonIndex] = true;

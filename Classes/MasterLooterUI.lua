@@ -762,6 +762,9 @@ function MasterLooterUI:drawPlayersTable(parent)
     Table:EnableSelection(true);
 
     Table:RegisterEvents({
+        OnClick = function(rowFrame, cellFrame, data, cols, row, realrow, column, table, button, ...)
+            if not (row or realrow) then return true end -- Disable sort
+        end,
         -- Show a tooltip that contains the items that the roller already won so far
         OnEnter = function (rowFrame, _, data, _, _, realrow)
             -- Make sure something is actually highlighted, better safe than lua error
