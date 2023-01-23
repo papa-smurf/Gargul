@@ -12,10 +12,18 @@ GL.Interface.Changelog = {
 
     History = {
         {
+            version = "5.1.0",
+            date = "January 24th, 2022",
+            Changes = {
+                "|c00BE3333Important:|r This update changes the raid leader's experience in GDKP sessions. Please familiarize yourself with it before setting foot in a raid. Get started using |c00a79eff/gl gdkp|r or |c00a79eff/gdkp|r",
+                "Use TMB and would like to run with group loot? You can now enable the 'Award based on drops' setting in |c00a79eff/gl|r > |c00a79effTMB and DFT|r to automatically track items won via group loot for exporting to TMB/DFT"
+            },
+        },
+        {
             version = "5.0.19",
             date = "January 21st, 2022",
             Changes = {
-                "Hi everyone! Phase 2 has brought with it a lot of WoW API updates. Many add-ons have not been updated yet and using them can affect other addons, like Gargul. If something's not working, then please join the Gargul discord and read the pinned messages to hopefully figure out what add-on or action is the causing issues.",
+                "Hi everyone! Phase 2 has brought with it a lot of WoW API updates. Many add-ons have not been updated yet and using them can affect other addons, like Gargul. If something's not working, then please join the Gargul discord and read the pinned messages to hopefully figure out what add-on or action is causing issues.",
                 "Show a reminder that GDKP is active after logging in",
                 "Added SR, WL, PL and TMB placeholders to the awarded loot export, check them out in |c00a79eff/gl export|r",
                 "Fixed auto-trading for Classic Era",

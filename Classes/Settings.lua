@@ -91,11 +91,11 @@ function Settings:enforceTemporarySettings()
         return;
     end
 
-    --- In 5.0.23 we completely redid the GDKP queue flow and UI
+    --- In 5.1.0 we completely redid the GDKP queue flow and UI
     --- Make sure to re-enable so users at least get to experience it again
-    if (GL.version == "5.0.23" or (not DB.LoadDetails["5.0.23"])) then
+    if (GL.version == "5.1.0" or (not DB.LoadDetails["5.1.0"])) then
         self:set("GDKP.enableBidderQueue", true);
-        DB.LoadDetails["5.0.23"] = GetServerTime();
+        DB.LoadDetails["5.1.0"] = GetServerTime();
     end
 
     --- In 5.1.0 we moved GDKP item details from settings to GDKP DB
