@@ -349,6 +349,9 @@ function Overview:refreshDetailsFrame()
                 GameTooltip:SetHyperlink(Item.link);
                 GameTooltip:Show();
             end)
+            ItemIcon:SetCallback("OnClick", function()
+                HandleModifiedItemClick(Item.link);
+            end);
             ItemIcon.frame:Show();
         end
 
@@ -631,7 +634,23 @@ function Overview:drawHardReservesTable(Parent)
 
         OnLeave = function ()
             GameTooltip:Hide();
-        end
+        end,
+
+        OnClick = function (rowFrame, _, data, _, _, realrow)
+            -- Make sure that all data is available, better safe than lua error
+            if (not GL:higherThanZero(realrow)
+                or type(data) ~= "table"
+                or not data[realrow]
+                or not data[realrow].cols
+                or not data[realrow].cols[1]
+            ) then
+                return;
+            end
+
+            -- We always select the first column of the selected row because that contains the player name
+            local selected = data[realrow].cols[1].value;
+            HandleModifiedItemClick(selected);
+        end,
     });
 
     local TableData = {};
