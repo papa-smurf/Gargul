@@ -40,16 +40,41 @@ function TMB:draw(Parent)
             setting = "TMB.showEntriesWhenSolo",
         },
         {
-            label = "Award based on drops without using Gargul UI",
-            description = "Want to export items won via group loot? Want to use the native UI when master looting instead of Gargul's? Then enable this option! You can still edit entries via the award history (|c00a79eff/gl ah|r)",
-            setting = "TMB.awardBasedOnDrops",
-        },
-        {
             label = "Hide wishlist info when priority is set",
             description = "You will only see an item's wishlist details if no priority (LC) is set for it",
             setting = "TMB.hideWishListInfoIfPriorityIsPresent",
         },
+        {
+            label = "Award based on drops without using Gargul UI",
+            description = "Want to export items won via group loot? Want to use the native WoW UI when master looting instead of Gargul's? Then enable this option! You can still edit entries via the award history window (|c00a79eff/gl ah|r)",
+            setting = "AwardingLoot.awardOnReceive",
+        },
     }, Parent);
+
+    local MinimumQualityLabel = GL.AceGUI:Create("Label");
+    MinimumQualityLabel:SetColor(1, .95686, .40784);
+    MinimumQualityLabel:SetText("The minimum quality an item should have in order to be automatically awarded using the setting above");
+    MinimumQualityLabel:SetHeight(20);
+    MinimumQualityLabel:SetFullWidth(true);
+    Parent:AddChild(MinimumQualityLabel);
+
+    local LowerThanList = {};
+    local ItemQualityColors = GL.Data.Constants.ItemQualityColors;
+    for i = 0, #ItemQualityColors do
+        LowerThanList[i] = string.format("|c00%s%s|r", ItemQualityColors[i].hex, ItemQualityColors[i].description);
+    end
+
+    -- DROPDOWN
+    local AwardOnReceiveMinimumQuality = GL.AceGUI:Create("Dropdown");
+    AwardOnReceiveMinimumQuality:SetHeight(20);
+    AwardOnReceiveMinimumQuality:SetWidth(250);
+    AwardOnReceiveMinimumQuality:SetList(LowerThanList);
+    AwardOnReceiveMinimumQuality:SetValue(GL.Settings:get("AwardingLoot.awardOnReceiveMinimumQuality"));
+    AwardOnReceiveMinimumQuality:SetCallback("OnValueChanged", function()
+        GL.Settings:set("AwardingLoot.awardOnReceiveMinimumQuality", AwardOnReceiveMinimumQuality:GetValue());
+    end);
+
+    Parent:AddChild(AwardOnReceiveMinimumQuality);
 
     Overview:drawHeader("Tooltips", Parent);
 

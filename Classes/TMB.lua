@@ -36,7 +36,15 @@ function TMB:_init()
 
     Events:register("TMBItemReceived", "GL.ITEM_RECEIVED", function (_, Details)
         -- We don't want to automatically award loot
-        if (not Settings:get("TMB.awardBasedOnDrops")) then
+        if (not Settings:get("AwardingLoot.awardOnReceive")) then
+            return;
+        end
+
+        -- This item is of too low quality, we don't care
+        local quality = tonumber(Details.quality);
+        if (not quality
+            or quality < Settings:get("AwardingLoot.awardOnReceiveMinimumQuality")
+        ) then
             return;
         end
 

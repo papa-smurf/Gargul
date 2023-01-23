@@ -90,12 +90,12 @@ function DroppedLootLedger:_shouldTrackItems()
         return false;
     end
 
-    if (GL.Settings:get("TMB.awardBasedOnDrops")) then
+    if (GL.Settings:get("AwardingLoot.awardOnReceive")) then
         return true;
     end
 
     if (GDKPSession:activeSessionID()
-            and GL.Settings:get("GDKP.addDropsToQueue")
+        and GL.Settings:get("GDKP.addDropsToQueue")
     ) then
         return true;
     end

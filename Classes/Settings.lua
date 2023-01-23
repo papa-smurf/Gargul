@@ -81,17 +81,24 @@ end
 function Settings:enforceTemporarySettings()
     GL:debug("Settings:enforceTemporarySettings");
 
-    -- This is reserved for version-based logic (e.g. cleaning up variables, settings etc.)
+    --- This is reserved for version-based logic (e.g. cleaning up variables, settings etc.)
 
-    -- No point enforcing these temp settings if the user has never used Gargul
-    -- before or has already loaded this version before!
+    --- No point enforcing these temp settings if the user has never used Gargul
+    --- before or has already loaded this version before!
     if (GL.firstBoot
         or not GL.Version.firstBoot
     ) then
         return;
     end
 
-    -- In 5.1.0 we moved GDKP item details from settings to GDKP DB
+    --- In 5.0.23 we completely redid the GDKP queue flow and UI
+    --- Make sure to re-enable so users at least get to experience it again
+    if (GL.version == "5.0.23" or (not DB.LoadDetails["5.0.23"])) then
+        self:set("GDKP.enableBidderQueue", true);
+        DB.LoadDetails["5.0.23"] = GetServerTime();
+    end
+
+    --- In 5.1.0 we moved GDKP item details from settings to GDKP DB
     if (DB:get("Settings.GDKP.SettingsPerItem")) then
         local OldSettings = DB:get("Settings.GDKP.SettingsPerItem");
 
@@ -106,11 +113,11 @@ function Settings:enforceTemporarySettings()
         DB:set("Settings.GDKP.SettingsPerItem", nil);
     end
 
-    -- in 5.0.13 we remove the GDKP.doCountdown and x settings
+    --- in 5.0.13 we remove the GDKP.doCountdown and x settings
     DB:set("Settings.GDKP.doCountdown", nil);
     DB:set("Settings.GDKP.announceCountdownOnce", nil);
 
-    -- In 5.0.8 we set the minimum delayBetweenQueuedAuctions to 1 instead of 0 to help prevent race conditions
+    --- In 5.0.8 we set the minimum delayBetweenQueuedAuctions to 1 instead of 0 to help prevent race conditions
     local delayBetweenQueuedAuctions = tonumber(GL.Settings:get("GDKP.delayBetweenQueuedAuctions"));
     if (delayBetweenQueuedAuctions and delayBetweenQueuedAuctions < 1) then
         GL.Settings:set("GDKP.delayBetweenQueuedAuctions", 1);
