@@ -58,6 +58,7 @@ L.STOP = "Stop";
 L.MIN = "Min";
 L.MAXIMIZE = "Maximize";
 L.MINIMIZE = "Minimize";
+L.MINIMIZE_ON_AWARD = "Minimize on award";
 L.MINIMIZE_ON_START = "Minimize on start";
 L.MINIMUM = "Minimum";
 L.MINUS10 = "-10";

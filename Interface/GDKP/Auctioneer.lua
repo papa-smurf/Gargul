@@ -156,6 +156,7 @@ function AuctioneerUI:build()
             CloseMenus();
         end},
         {text = L.MINIMIZE_ON_START, setting = "GDKP.minimizeAuctioneerOnStart"},
+        {text = L.MINIMIZE_ON_AWARD, setting = "GDKP.minimizeAuctioneerOnAward"},
         "divider",
         {text = L.AUCTIONS, isTitle = true, notCheckable = true },
         {text = L.AUTO_AWARD, setting = "GDKP.autoAwardViaAuctioneer"},

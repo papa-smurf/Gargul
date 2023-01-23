@@ -90,11 +90,6 @@ function Auctioneer:_init()
             AuctioneerUI:openAuctioneerShortcut();
         end
 
-        if (Settings:get("GDKP.closeAuctioneerOnStart")) then
-            AuctioneerUI:close();
-            return;
-        end
-
         if (Settings:get("GDKP.minimizeAuctioneerOnStart")) then
             Window.Minimize.MinimizeButton:Click();
         end
@@ -273,9 +268,15 @@ function Auctioneer:disenchant(itemLink)
     GL:debug("Auctioneer:disenchant");
 
     GL.PackMule:disenchant(itemLink, true, function ()
-        if (Settings:get("GDKP.closeAuctioneerOnAward")) then
+        if (Settings:get("GDKP.minimizeAuctioneerOnAward")) then
             AuctioneerUI = AuctioneerUI or GL.Interface.GDKP.Auctioneer;
-            AuctioneerUI:close();
+            local Window = AuctioneerUI:getWindow();
+
+            if (not Window) then
+                return;
+            end
+
+            Window.Minimize.MinimizeButton:Click();
         end
 
         self:clear();
@@ -655,7 +656,17 @@ function Auctioneer:award()
     if (not selected
         or not type(selected) == "table"
     ) then
-        return GL.Interface.Award:draw(AuctioneerUI.itemLink);
+        return GL.Interface.Award:draw(AuctioneerUI.itemLink, function ()
+            if (Settings:get("GDKP.minimizeAuctioneerOnAward")) then
+                local Window = AuctioneerUI:getWindow();
+
+                if (not Window) then
+                    return;
+                end
+
+                Window.Minimize.MinimizeButton:Click();
+            end
+        end);
     end
 
     local winner = selected.cols[1].value;
@@ -696,8 +707,14 @@ function Auctioneer:award()
             self:clear();
             self:start();
 
-            if (Settings:get("GDKP.closeAuctioneerOnAward")) then
-                AuctioneerUI:close();
+            if (Settings:get("GDKP.minimizeAuctioneerOnAward")) then
+                local Window = AuctioneerUI:getWindow();
+
+                if (not Window) then
+                    return;
+                end
+
+                Window.Minimize.MinimizeButton:Click();
             end
         end,
     });
