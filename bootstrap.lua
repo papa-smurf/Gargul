@@ -207,6 +207,39 @@ end
 ---
 ---@return void
 function GL:hookNativeWindowEvents()
+    -- See https://wowpedia.fandom.com/wiki/PLAYER_INTERACTION_MANAGER_FRAME_HIDE for types
+    if (not GL.isEra) then
+        GL.Events:register("BootstrapPlayerInteractionShow", "PLAYER_INTERACTION_MANAGER_FRAME_SHOW", function(_, type)
+            if (type == 5) then
+                self.merchantIsShown = true;
+            elseif (type == 8) then
+                self.bankIsShown = true;
+            elseif (type == 10) then
+                self.guildBankIsShown = true;
+            elseif (type == 17) then
+                self.mailIsShown = true;
+            elseif (type == 21) then
+                self.auctionHouseIsShown = true;
+            end
+        end);
+
+        GL.Events:register("BootstrapPlayerInteractionHide", "PLAYER_INTERACTION_MANAGER_FRAME_HIDE", function(_, type)
+            if (type == 5) then
+                self.merchantIsShown = false;
+            elseif (type == 8) then
+                self.bankIsShown = false;
+            elseif (type == 10) then
+                self.guildBankIsShown = false;
+            elseif (type == 17) then
+                self.mailIsShown = false;
+            elseif (type == 21) then
+                self.auctionHouseIsShown = false;
+            end
+        end);
+
+        return;
+    end
+
     GL.Events:register("BootstrapAuctionHouseShowListener", "AUCTION_HOUSE_SHOW", function()
         self.auctionHouseIsShown = true;
     end);
