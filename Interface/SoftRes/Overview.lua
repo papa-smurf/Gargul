@@ -234,7 +234,7 @@ function Overview:draw()
     if (DB.SoftRes.MetaData.source == Constants.SoftReserveSources.weakaura) then
         -- Show a game tooltip that explains the question mark
         HardReservesLabel:SetCallback("OnEnter", function()
-            GameTooltip:SetOwner(HardReservesLabel.frame, "ANCHOR_TOP");
+            GameTooltip:SetOwner(HardReservesLabel.frame, "ANCHOR_CURSOR");
             GameTooltip:AddLine("Hard-reserve information is not available because the softres.it information\nprovided was not generated using the 'Gargul Data Export' button.");
             GameTooltip:Show();
         end)
@@ -345,7 +345,7 @@ function Overview:refreshDetailsFrame()
         if (ItemIcon) then
             ItemIcon:SetImage(Item.icon);
             ItemIcon:SetCallback("OnEnter", function()
-                GameTooltip:SetOwner(ItemIcon.frame, "ANCHOR_TOP");
+                GameTooltip:SetOwner(ItemIcon.frame, "ANCHOR_CURSOR");
                 GameTooltip:SetHyperlink(Item.link);
                 GameTooltip:Show();
             end)
@@ -619,16 +619,8 @@ function Overview:drawHardReservesTable(Parent)
                 return;
             end
 
-            GameTooltip:SetOwner(rowFrame, "ANCHOR_TOP");
-
-            if (not GL:empty(hardReserveDetails.reservedFor)) then
-                GameTooltip:AddLine("For: " .. hardReserveDetails.reservedFor);
-            end
-
-            if (not GL:empty(hardReserveDetails.note)) then
-                GameTooltip:AddLine("Note: " .. hardReserveDetails.note);
-            end
-
+            GameTooltip:SetOwner(rowFrame, "ANCHOR_CURSOR");
+            GameTooltip:SetHyperlink(selected);
             GameTooltip:Show();
         end,
 
