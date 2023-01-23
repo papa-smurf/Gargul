@@ -29,6 +29,7 @@ L.CLEAR = "Clear";
 L.CLOSE = "Close";
 L.CLOSE_ON_AWARD = "Close on award";
 L.CLOSE_ON_START = "Close on start";
+L.COMMUNICATION = "Communication";
 L.DELETE = "Delete";
 L.DELETE_BID_TOOLTIP = "Delete bid. Auction must be stopped first!";
 L.DISENCHANT = "Disenchant";
@@ -45,6 +46,7 @@ Gargul can also handle auto looting for you. Check it out with |c00a79eff/gl pm|
 ]];
 L.GDKP_QUEUE_HIDE_UNUSABLE = "Hide unusable items";
 L.GDKP_HIDE_UPCOMING_CONFIRMATION = "Are you sure? You won't be able to see, or bid on, upcoming items!";
+L.GDKP_SESSION = "GDKP Session";
 L.GDKP_SHOW_UPCOMING = "Show upcoming items";
 L.INFO = "Info";
 L.INC = "Inc";
@@ -89,10 +91,18 @@ Want to directly sell an item without bidding? Use |c00a79eff%s|r
 
 You can open the %s window directly by typing |c00a79eff/gl auction|r
 
+Gargul tracks |c00FF0000ALL|r gold traded. Don't want a trade to be a part of this GDKP session? Check the "Exclude from GDKP" checkbox when trading!
+
 |c00FFF569Did you know?|r
 Awarded items will automatically be added to the trade window
-Gargul keeps track of all gold traded while a GDKP session is active to make sure both you and players receive what you're owed
 Gargul can also handle auto looting for you. Check it out with |c00a79eff/gl pm|r
 ]];
 L.WINDOW = "Window";
 L.WINDOW_SCALE = "Window Scale";
+
+L.SETTINGS_ANNOUNCE_START = "Announce auction start";
+L.SETTINGS_ANNOUNCE_POT_AFTER_AWARD = "Announce pot after awarding item";
+L.SETTINGS_WHISPER_BID_TOO_LOW = "Whisper bidder if bid is too low";
+L.SETTINGS_COUNTDOWN_IN_RAID_WARNING = "Announce countdown in raid warning";
+L.SETTINGS_ANNOUNCE_INCOMING_BIDS = "Announce incoming bids";
+L.SETTINGS_INCOMING_BIDS_IN_RAID_WARNING = "Announce incoming bids in raid warning";
