@@ -119,6 +119,18 @@ end
 ---
 ---@return void
 function Auction:_initializeQueue()
+    GL:debug("Auction:_initializeQueue");
+
+    -- We're not allowed to populate the queue
+    if (not Auctioneer:allowedToBroadcast()
+        or (GL.User.isInGroup
+            and GetLootMethod() == "master"
+            and not GL.User.isMasterLooter
+        )
+    ) then
+        return;
+    end
+
     local QueueCopy = {};
     for _, Entry in pairs(self.Queue) do
         tinsert(QueueCopy, Entry);
