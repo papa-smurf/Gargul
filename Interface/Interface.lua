@@ -588,6 +588,13 @@ function Interface:addWindowOptions(Window, Menu, width)
                 return;
             end
 
+            if (type(Entry.text) == "function") then
+                Entry.textFunc = Entry.text;
+                Entry.text = Entry.text();
+            elseif(Entry.textFunc) then
+                Entry.text = Entry.textFunc();
+            end
+
             if (type(Entry.checked) == "function") then
                 Entry.checkFunc = Entry.checked;
                 Entry.checked = Entry.checked();

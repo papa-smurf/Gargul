@@ -153,6 +153,7 @@ function BidderQueue:build()
                     end,
                 });
 
+                CloseMenus();
                 return;
             end
 

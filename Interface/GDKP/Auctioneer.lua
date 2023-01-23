@@ -7,6 +7,9 @@ local _, GL = ...;
 ---@type GDKP
 local GDKP = GL.GDKP;
 
+---@type GDKPPot
+local Pot = GL.GDKP.Pot;
+
 ---@type Settings
 local Settings = GL.Settings;
 
@@ -132,19 +135,27 @@ function AuctioneerUI:build()
 
     --[[ ADD THE SETTINGS MENU IN THE TOP LEFT OF THE WINDOW ]]
     Interface:addWindowOptions(Window, {
-        { text = L.TUTORIAL, notCheckable = true, func = function ()
-            GL:popupMessage(string.format(
-                L.TUTORIAL_AUCTIONEER,
-                GL.Settings:get("ShortcutKeys.rollOffOrAuction"),
-                GL.Settings:get("ShortcutKeys.award"),
-                L.AUCTION
-            ));
+        {
+            text = function ()
+                return string.format("%s (|cFF%s%sg|r)",
+                    L.GDKP_SESSION,
+                    GL.Data.Constants.ClassHexColors.rogue,
+                    Pot:total()
+                );
+            end,
+            notCheckable = true,
+            func = function ()
+                Interface.GDKP.Overview:open();
+                CloseMenus();
+            end
+        },
+        "divider",
+        {text = L.WINDOW, isTitle = true, notCheckable = true },
+        {text = L.CHANGE_SCALE, notCheckable = true, func = function ()
+            Interface:openScaler(Window);
             CloseMenus();
-        end },
-        {text = L.ALL_SETTINGS, notCheckable = true, func = function ()
-            Settings:draw("GDKP");
-            CloseMenus();
-        end },
+        end},
+        {text = L.MINIMIZE_ON_START, setting = "GDKP.minimizeAuctioneerOnStart"},
         "divider",
         {text = L.AUCTIONS, isTitle = true, notCheckable = true },
         {text = L.AUTO_AWARD, setting = "GDKP.autoAwardViaAuctioneer"},
@@ -215,6 +226,62 @@ function AuctioneerUI:build()
                 end,
             },
         }},
+        {text = L.COMMUNICATION, notCheckable = true, SubMenu = {
+            {
+                text = L.SETTINGS_ANNOUNCE_START,
+                checked = function ()
+                    return Settings:get("GDKP.announceAuctionStart");
+                end,
+                func = function (Entry)
+                    Settings:set("GDKP.announceAuctionStart", Entry.checked);
+                end,
+            },
+            {
+                text = L.SETTINGS_ANNOUNCE_POT_AFTER_AWARD,
+                checked = function ()
+                    return Settings:get("GDKP.announcePotAfterAuction");
+                end,
+                func = function (Entry)
+                    Settings:set("GDKP.announcePotAfterAuction", Entry.checked);
+                end,
+            },
+            {
+                text = L.SETTINGS_WHISPER_BID_TOO_LOW,
+                checked = function ()
+                    return Settings:get("GDKP.notifyIfBidTooLow");
+                end,
+                func = function (Entry)
+                    Settings:set("GDKP.notifyIfBidTooLow", Entry.checked);
+                end,
+            },
+            {
+                text = L.SETTINGS_COUNTDOWN_IN_RAID_WARNING,
+                checked = function ()
+                    return Settings:get("GDKP.announceCountdownInRW");
+                end,
+                func = function (Entry)
+                    Settings:set("GDKP.announceCountdownInRW", Entry.checked);
+                end,
+            },
+            {
+                text = L.SETTINGS_ANNOUNCE_INCOMING_BIDS,
+                checked = function ()
+                    return Settings:get("GDKP.announceNewBid");
+                end,
+                func = function (Entry)
+                    Settings:set("GDKP.announceNewBid", Entry.checked);
+                end,
+            },
+            {
+                text = L.SETTINGS_INCOMING_BIDS_IN_RAID_WARNING,
+                checked = function ()
+                    return Settings:get("GDKP.announceNewBidInRW");
+                end,
+                func = function (Entry)
+                    Settings:set("GDKP.announceNewBidInRW", Entry.checked);
+                end,
+            },
+        }},
         "divider",
         {text = L.QUEUE, isTitle = true, notCheckable = true },
         {text = L.ADD_DROPS_TO_QUEUE, setting = "GDKP.addDropsToQueue", func = function(Entry, _, _, checked)
@@ -222,12 +289,19 @@ function AuctioneerUI:build()
             Entry.checked = checked;
         end},
         "divider",
-        {text = L.WINDOW, isTitle = true, notCheckable = true },
-        {text = L.CHANGE_SCALE, notCheckable = true, func = function ()
-            Interface:openScaler(Window);
+        { text = L.TUTORIAL, notCheckable = true, func = function ()
+            GL:popupMessage(string.format(
+                L.TUTORIAL_AUCTIONEER,
+                GL.Settings:get("ShortcutKeys.rollOffOrAuction"),
+                GL.Settings:get("ShortcutKeys.award"),
+                L.AUCTION
+            ));
             CloseMenus();
-        end},
-        {text = L.MINIMIZE_ON_START, setting = "GDKP.minimizeAuctioneerOnStart"},
+        end },
+        {text = L.ALL_SETTINGS, notCheckable = true, func = function ()
+            Settings:draw("GDKP");
+            CloseMenus();
+        end },
     });
 
     --[[ PREPARE THE MINIMIZED VERSION OF THE WINDOW ]]
@@ -511,7 +585,7 @@ function AuctioneerUI:build()
         ToggleQueue.texture:SetTexCoord(unpack(closedCoords));
         ToggleQueue:SetPoint("RIGHT", Queue:IsShown() and Queue or Window, "RIGHT", -10, 0);
 
-        if (Queue:IsVisible()) then
+        if (Queue:IsShown()) then
             ToggleQueue.texture:SetTexCoord(unpack(openedCoords));
         end
 
