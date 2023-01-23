@@ -2,7 +2,7 @@ Gargul_L = {};
 local L = Gargul_L;
 
 --[[ DON'T TRANSLATE! ]]
-L.GARGUL = "Gargul;"
+L.GARGUL = "Gargul";
 
 --[[ START TRANSLATING HERE! ]]
 L.ALL_SETTINGS = "All Settings";
