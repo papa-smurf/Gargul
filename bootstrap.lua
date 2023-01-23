@@ -16,11 +16,11 @@ GL.clientIsDragonFlightOrLater = false;
 GL.version = GetAddOnMetadata(GL.name, "Version");
 GL.DebugLines = {};
 GL.EventFrame = nil;
-GL.auctionHouseIsShown = false
-GL.bankIsShown = false
-GL.guildBankIsShown = false
-GL.mailIsShown = false
-GL.merchantIsShown = false
+GL.auctionHouseIsShown = false;
+GL.bankIsShown = false;
+GL.guildBankIsShown = false;
+GL.mailIsShown = false;
+GL.merchantIsShown = false;
 GL.loadedOn = 32503680000; -- Year 3000
 
 -- Register our addon with the Ace framework
@@ -207,6 +207,15 @@ end
 ---
 ---@return void
 function GL:hookNativeWindowEvents()
+    -- Make sure to reset window states when zoning
+    GL.Events:register("BootstrapPlayerEnteringWorld", "PLAYER_ENTERING_WORLD", function ()
+        GL.auctionHouseIsShown = false;
+        GL.bankIsShown = false;
+        GL.guildBankIsShown = false;
+        GL.mailIsShown = false;
+        GL.merchantIsShown = false;
+    end);
+
     -- See https://wowpedia.fandom.com/wiki/PLAYER_INTERACTION_MANAGER_FRAME_HIDE for types
     if (not GL.isEra) then
         GL.Events:register("BootstrapPlayerInteractionShow", "PLAYER_INTERACTION_MANAGER_FRAME_SHOW", function(_, type)
