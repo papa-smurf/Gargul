@@ -261,11 +261,23 @@ function Version:notifyOfUpdate()
     if (serverTime - self.lastUpdateNotice >= THIRTY_MINUTES) then
         self.lastUpdateNotice = serverTime;
 
-        GL:warning("A new version of |c00a79effGargul|r is available. Make sure to update!");
+        local notifyOfUpdate = function ()
+            GL:warning("A new version of |c00a79effGargul|r is available. Make sure to update!");
 
-        GL.Interface.Alerts:fire("GargulNotification", {
-            message = string.format("|c00BE3333Update Gargul!|r"),
-        });
+            GL.Interface.Alerts:fire("GargulNotification", {
+                message = string.format("|c00BE3333Update Gargul!|r"),
+            });
+        end
+
+        -- Make sure to not annoy Sjniekel when in combat
+        if (UnitAffectingCombat("player")) then
+            GL.Events:register("VersionOutOfCombatListener", "PLAYER_REGEN_ENABLED", function ()
+                GL.Events:unregister("VersionOutOfCombatListener");
+                notifyOfUpdate();
+            end);
+        else
+            notifyOfUpdate();
+        end
     end
 end
 
