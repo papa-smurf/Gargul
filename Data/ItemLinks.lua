@@ -9137,4 +9137,18 @@ GL.Data.ItemLinks = {
         51278, -- Sanctified Lightsworn Legplates
         51279, -- Sanctified Lightsworn Shoulderplates
     },
+    -- Heroic Archivum Data Disk (25m)
+    ["45857"] = {
+        45588, -- Drape of the Skyborn
+        45618, -- Sunglimmer Cloak
+        45608, -- Brann's Signet Ring
+        45614, -- Starshine Circle
+    },
+    -- Archivum Data Disk (10m)
+    ["45506"] = {
+        46320, -- Drape of the Skyherald
+        46321, -- Sunglimmer Drape
+        46322, -- Brann's Sealing Ring
+        46323, -- Starshine Signet
+    },
 };
