@@ -1289,54 +1289,6 @@ function Auction:stop(CommMessage)
     return true;
 end
 
---- Something changed, see if we need to change anything (UI elements, top bid etc)
----
----@param CommMessage string|nil
----@return void
-function Auction:refresh(CommMessage)
-    -- Even if the auction is over we still want to update UI elements
-    -- if needed, this is why we don't use self.inProgress here!
-    if (GL:empty(self.Current)) then
-        return;
-    end
-
-    -- The user who sent the refresh our way is not permitted to do so
-    if (CommMessage
-        and CommMessage.Sender.id ~= self.Current.initiatorID
-    ) then
-        return;
-    end
-
-    -- Check if there's a new highest bid
-    local NewTopBid = CommMessage.content;
-    local OldTopBid = self.Current.TopBid or {};
-
-    if (GL:empty(OldTopBid.bid)) then
-        OldTopBid = false;
-    end
-
-    -- Payload seems invalid, abort!
-    if (GL:empty(NewTopBid)
-        or not GL:higherThanZero(NewTopBid.bid)
-    ) then
-        return;
-    end
-
-    -- Valid bid, act accordingly!
-    if (not OldTopBid or NewTopBid.bid > OldTopBid.bid) then
-        -- It seems like we were outbid!
-        if (OldTopBid and OldTopBid.Bidder.name
-            and GL.User.name == OldTopBid.Bidder.name
-            and OldTopBid.Bidder.name ~= NewTopBid.Bidder.name
-        ) then
-            Events:fire("GL.GDKP_USER_WAS_OUTBID", OldTopBid, NewTopBid);
-        end
-
-        self.Current.TopBid = NewTopBid;
-        GL.Interface.GDKP.Bidder:refresh();
-    end
-end
-
 function Auction:reset()
     GL:debug("GDKP.Auction:reset");
 
