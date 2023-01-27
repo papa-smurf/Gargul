@@ -165,13 +165,13 @@ GL.Data.Constants = {
             "Lantis",
             "Lemmings19",
             "Schweex",
-            "Tonio",
         },
         Uncommon = {
             "CarbonFury",
             "Silvertungh",
             "Sneaky",
             "Snickels",
+            "Tonio",
         },
         Rare = {
             "Busmonstret",
@@ -179,6 +179,7 @@ GL.Data.Constants = {
             "Kelziad",
             "Nambojambo",
             "Scratchd",
+            "Sgtglimmer",
             "WaDaFruCK",
         },
         Epic = {
