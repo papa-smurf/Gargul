@@ -68,6 +68,7 @@ L.NO_BIDS_ACTION = "When no one bids do:";
 L.NOTHING = "Nothing";
 L.OPEN = "Open";
 L.PLUS10 = "+10";
+L.POT = "Pot";
 L.QUEUE = "Queue";
 L.REMOVE_BID = "Remove bid";
 L.RESET_SETTINGS = "Reset Settings"

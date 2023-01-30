@@ -13,6 +13,9 @@ local Pot = GL.GDKP.Pot;
 ---@type Settings
 local Settings = GL.Settings;
 
+---@type Constants
+local Constants = GL.Data.Constants;
+
 ---@type Interface
 local Interface = GL.Interface;
 
@@ -139,7 +142,7 @@ function AuctioneerUI:build()
             text = function ()
                 return string.format("%s (|cFF%s%sg|r)",
                     L.GDKP_SESSION,
-                    GL.Data.Constants.ClassHexColors.rogue,
+                    Constants.ClassHexColors.rogue,
                     Pot:total()
                 );
             end,
@@ -369,8 +372,36 @@ function AuctioneerUI:build()
         ItemImage:SetTexture(QUESTION_MARK_TEXTURE);
 
         ItemInput = Interface:inputBox(Window);
-        ItemInput:SetPoint("TOPLEFT", Icon, "TOPRIGHT", 18, -10);
+        ItemInput:SetPoint("TOPLEFT", Icon, "TOPRIGHT", 18, -18);
         ItemInput:SetPoint("RIGHT", Window, "RIGHT", -24, 0);
+    end
+
+    do --[[ CURRENT POT ]]
+        --[[ ICON ]]
+        ---@type Frame
+        local Icon = CreateFrame("Frame",nil, Window);
+        Icon:SetSize(12, 12);
+        Icon:SetPoint("BOTTOMLEFT", ItemInput, "TOPLEFT", -4, 4);
+
+        local PotImage = Icon:CreateTexture(nil, "BACKGROUND")
+        PotImage:SetWidth(12)
+        PotImage:SetHeight(12)
+        PotImage:SetPoint("TOP", 0, 0);
+        PotImage:SetTexture("Interface/AddOns/Gargul/Assets/Icons/achievement_guildperk_cashflow");
+
+        --[[ TEXT ]]
+        ---@type FontString
+        local CurrentPotLabel = Interface:createFontString(Window, {
+            text = function (self)
+                self:SetText(string.format("%s: |cFF%s%sg|r",
+                    L.POT,
+                    Constants.ClassHexColors.rogue,
+                    Pot:total()
+                ));
+            end,
+            updateOn = { "GL.GDKP_AUCTION_CHANGED", "GL.GDKP_SESSION_CHANGED" },
+        });
+        CurrentPotLabel:SetPoint("TOPLEFT", Icon, "TOPRIGHT", 4, 0);
     end
 
     --[[ MINIMUM BID ]]
@@ -449,7 +480,7 @@ function AuctioneerUI:build()
         highlight:SetTexCoord(0, 1, 0.23, 0.77);
         highlight:SetBlendMode("ADD");
 
-        Interface:addTooltip(Icon, L.ANTISNIPE_EXPLANATION, "LEFT");
+        Interface:addTooltip(Icon, L.ANTISNIPE_EXPLANATION);
     end
 
     ---@type Frame

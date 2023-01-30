@@ -117,8 +117,20 @@ function Interface:inputBox(Parent, name)
     return Input;
 end
 
+--- Besides static string value we also support closures with an optional "updateOn" value
+--- You can use this to automatically update a string whenever an event is fired for example
+---
+---@example
+---
+-- local CurrentPotLabel = Interface:createFontString(Window, {
+--     text = function (self)
+--         self:SetText(Pot:total());
+--     end,
+--     updateOn = "GL.GDKP_AUCTION_CHANGED",
+-- });
+---
 ---@param Parent Frame
----@param text string|nil
+---@param text string|table|nil
 ---@param template string|nil
 ---@param name string|nil
 ---@param layer string|nil
@@ -130,7 +142,24 @@ function Interface:createFontString(Parent, text, template, name, layer)
     local FontString = Parent:CreateFontString(name, layer or "ARTWORK", template or "GameFontWhite");
     FontString:SetJustifyH("LEFT");
     FontString:SetFont(GL.FONT, 10, "OUTLINE");
-    FontString:SetText(text or "");
+
+    if (type(text) == "table") then
+        FontString.update = text.text;
+
+        if (text.updateOn) then
+            if (type(text.updateOn) ~= "table") then
+                text.updateOn = { text.updateOn };
+            end
+
+            for _, event in pairs(text.updateOn) do
+                GL.Events:register(nil, event, function () FontString:update(FontString); end);
+            end
+        end
+
+        FontString:update();
+    else
+        FontString:SetText(text or "");
+    end
 
     return FontString;
 end
@@ -1223,7 +1252,7 @@ function Interface:createButton(Parent, Details)
         Button.update = update;
 
         for _, event in pairs(updateOn) do
-            GL.Events:register(name .. event .. "Listener", event, function () Button:update(); end);
+            GL.Events:register(nil, event, function () Button:update(); end);
         end
 
         if (fireUpdateOnCreation) then
