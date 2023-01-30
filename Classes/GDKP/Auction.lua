@@ -83,8 +83,12 @@ function Auction:_init()
     end);
 
     -- Whenever we were outbid we show a notification
-    Events:register("GDKPGDKPUserWasOutBid", "GL.GDKP_USER_WAS_OUTBID", function ()
+    Events:register("GDKPAuctionUserWasOutBid", "GL.GDKP_USER_WAS_OUTBID", function ()
         self:userWasOutBidHandler();
+    end);
+
+    Events:register("GDKPAuctionFirstBidAccepted", "GL.GDKP_FIRST_BID_ACCEPTED", function ()
+        self:firstBidHandler();
     end);
 
     -- Clear the queue when we don't have an active GDKP session
@@ -153,6 +157,18 @@ function Auction:_initializeQueue()
         i = i + 1;
         return Auctioneer:addToQueue(Queued.itemLink, Queued.identifier);
     end, .2);
+end
+
+---@return void
+function Auction:firstBidHandler()
+    GL:debug("Auction:firstBidHandler");
+
+    -- We're the top bidder, no need to panic
+    if (self:userIsTopBidder()) then
+        return;
+    end
+
+    self:autoBid();
 end
 
 ---@return void
@@ -1776,6 +1792,9 @@ function Auction:processBid(message, bidder)
 
     tinsert(self.Current.Bids, BidEntry);
 
+    -- We already have at least one bid
+    local auctionHasBid = not not self.Current.TopBid;
+
     -- Check if we're currently the highest bidder
     local userWasHighestBidder = self:userIsTopBidder();
 
@@ -1786,6 +1805,10 @@ function Auction:processBid(message, bidder)
     -- We're no longer the highest bidder, oh dear
     if (userWasHighestBidder and not self:userIsTopBidder()) then
         Events:fire("GL.GDKP_USER_WAS_OUTBID");
+    end
+
+    if (not auctionHasBid) then
+        Events:fire("GL.GDKP_FIRST_BID_ACCEPTED");
     end
 end
 
