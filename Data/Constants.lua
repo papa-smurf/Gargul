@@ -165,13 +165,13 @@ GL.Data.Constants = {
             "Lantis",
             "Lemmings19",
             "Schweex",
-            "Tonio",
         },
         Uncommon = {
             "CarbonFury",
             "Silvertungh",
             "Sneaky",
             "Snickels",
+            "Tonio",
         },
         Rare = {
             "Busmonstret",
@@ -179,6 +179,7 @@ GL.Data.Constants = {
             "Kelziad",
             "Nambojambo",
             "Scratchd",
+            "Sgtglimmer",
             "WaDaFruCK",
         },
         Epic = {
@@ -529,7 +530,7 @@ GL.Data.Constants = {
             startGDKPAuction = 17,
             stopGDKPAuction = 18,
             extendGDKPAuction = 19,
-            refreshGDKPAuction = 20,
+            --refreshGDKPAuction = 20, ---@todo: use or remove, unused atm
             requestGDKPSession = 21,
             broadcastGDKPSession = 22,
             broadcastGDKPMutation = 23,
