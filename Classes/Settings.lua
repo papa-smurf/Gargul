@@ -51,9 +51,9 @@ function Settings:sanitizeSettings()
     self:enforceTemporarySettings();
 
     -- Remove plus one entries with a value of 0
-    for player, po in pairs(DB:get("PlusOnes") or {}) do
+    for player, po in pairs(DB:get("PlusOnes.Totals") or {}) do
         if (not tonumber(po) or po < 1) then
-            DB:set("PlusOnes." .. player, nil);
+            DB:set("PlusOnes.Totals." .. player, nil);
         end
     end
 
