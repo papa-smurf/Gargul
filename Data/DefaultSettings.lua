@@ -114,7 +114,7 @@ GL.Data.DefaultSettings = {
     },
     PlusOnes = {
         automaticallyAcceptDataFrom = "",
-        automaticallyShareData = true,
+        automaticallyShareData = false,
         blockShareData = false,
         enableWhisperCommand = true,
     },

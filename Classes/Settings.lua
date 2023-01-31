@@ -91,6 +91,14 @@ function Settings:enforceTemporarySettings()
         return;
     end
 
+    --- In 5.1.0 we added +1 broadcasting, auto-share should be disabled by default
+    if (GL.version == "5.1.1" or (
+        not GL.firstBoot and not DB.LoadDetails["5.1.1"])
+    ) then
+        DB:set("Settings.PlusOnes.automaticallyShareData", false);
+        DB.LoadDetails["5.1.1"] = GetServerTime();
+    end
+
     -- in 5.0.13 we remove the GDKP.doCountdown and x settings
     DB:set("Settings.GDKP.doCountdown", nil);
     DB:set("Settings.GDKP.announceCountdownOnce", nil);
