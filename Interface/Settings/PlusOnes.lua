@@ -5,7 +5,7 @@ local Overview = GL.Interface.Settings.Overview; ---@type SettingsOverview
 
 ---@class PlusOnesSettings
 GL.Interface.Settings.PlusOnes = {
-    description = "With plus ones you can keep track of how many MS items have been awarded to each player by adding +1 to their plus one total for each MS item awarded. Those players with lower total plus one can be given a higher priority on rolls to help equalize loot distribution amongs all players."
+    description = "With plus ones you can keep track of how many items have been awarded to each player. Players with a lower plus one value can be given a higher priority on rolls to help equalize loot distribution amongst players"
 };
 local PlusOnes = GL.Interface.Settings.PlusOnes; ---@type PlusOnesSettings
 

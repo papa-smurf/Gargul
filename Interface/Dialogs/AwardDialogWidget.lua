@@ -215,25 +215,25 @@ local function constructor()
     OptionsFrame:AddChild(VerticalSpacer);
 
     -- Plus one checkbox
-        local PlusOneCheckBox = AceGUI:Create("CheckBox");
-        PlusOneCheckBox:SetLabel("");
-        PlusOneCheckBox:SetDescription("");
-        PlusOneCheckBox:SetHeight(20);
-        PlusOneCheckBox:SetWidth(24);
-        OptionsFrame:AddChild(PlusOneCheckBox);
-        GL.Interface:set(GL.Interface.Dialogs.AwardDialog, "PlusOne", PlusOneCheckBox);
+    local PlusOneCheckBox = AceGUI:Create("CheckBox");
+    PlusOneCheckBox:SetLabel("");
+    PlusOneCheckBox:SetDescription("");
+    PlusOneCheckBox:SetHeight(20);
+    PlusOneCheckBox:SetWidth(24);
+    OptionsFrame:AddChild(PlusOneCheckBox);
+    GL.Interface:set(GL.Interface.Dialogs.AwardDialog, "PlusOne", PlusOneCheckBox);
 
-        -- Plus one label
-        local PlusOneLabel = AceGUI:Create("InteractiveLabel");
-        PlusOneLabel:SetFontObject(_G["GameFontNormal"]);
-        PlusOneLabel:SetWidth(100);
-        PlusOneLabel:SetText("Add a +1");
+    -- Plus one label
+    local PlusOneLabel = AceGUI:Create("InteractiveLabel");
+    PlusOneLabel:SetFontObject(_G["GameFontNormal"]);
+    PlusOneLabel:SetWidth(100);
+    PlusOneLabel:SetText("Add a +1");
 
-        PlusOneLabel:SetCallback("OnClick", function()
-            PlusOneCheckBox:ToggleChecked();
-        end);
+    PlusOneLabel:SetCallback("OnClick", function()
+        PlusOneCheckBox:ToggleChecked();
+    end);
 
-        OptionsFrame:AddChild(PlusOneLabel);
+    OptionsFrame:AddChild(PlusOneLabel);
 
     -- Off Spec checkbox
     local OffSpecCheckBox = AceGUI:Create("CheckBox");
