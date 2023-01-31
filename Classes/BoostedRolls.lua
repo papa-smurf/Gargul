@@ -773,7 +773,7 @@ function BoostedRolls:receiveBroadcast(CommMessage)
     GL:debug("BoostedRolls:receiveBroadcast");
 
     -- No need to update our tables if we broadcasted them ourselves
-    if (CommMessage.Sender.name == GL.User.name) then
+    if (CommMessage.Sender.isSelf) then
         GL:debug("BoostedRolls:receiveBroadcast received by self, skip");
         return true;
     end
@@ -1103,7 +1103,7 @@ function BoostedRolls:receiveUpdate(CommMessage)
     GL:debug("BoostedRolls:receiveUpdate");
 
     -- No need to update our tables if we broadcasted them ourselves
-    if (CommMessage.Sender.name == GL.User.name) then
+    if (CommMessage.Sender.isSelf) then
         GL:debug("BoostedRolls:receiveUpdate received by self, skip");
         return true;
     end

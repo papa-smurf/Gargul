@@ -408,6 +408,24 @@ function SoftRes:draw()
     );
 end
 
+---@param itemID number|string
+---@return nil|string, nil|string
+function SoftRes:getHardReserveDetailsByID(itemID)
+    local Details = GL:tableGet(SoftRes, "MaterializedData.HardReserveDetailsByID." .. tostring(itemID));
+
+    if (not Details) then
+        return;
+    end
+
+    return Details.reservedFor, Details.note;
+end
+
+---@param itemLink string
+---@return nil|string, nil|string
+function SoftRes:getHardReserveDetailsByItemLink(itemLink)
+    return self:getHardReserveDetailsByID(GL:getItemIDFromLink(itemLink));
+end
+
 --- Get soft-reserve details for a given player
 ---
 ---@param name string The name of the player
@@ -600,9 +618,30 @@ function SoftRes:tooltipLines(itemLink)
         return {};
     end
 
+    local Lines = {};
+
     -- Check if the item is hard-reserved
-    if (self:linkIsHardReserved(itemLink)) then
-        return { string.format("|cFFcc2743%s|r", "\nThis item is hard-reserved!") };
+    local hardReservedFor, hardReservedNote = self:getHardReserveDetailsByItemLink(itemLink);
+    if (hardReservedFor or hardReservedNote) then
+        tinsert(Lines, string.format("\n|cFFcc2743%s|r", "This item is hard-reserved."));
+        if (hardReservedFor) then
+            local forString = string.format("|cFFcc2743 For:|r |cFF%s%s|r",
+                GL:classHexColor(self:getPlayerClass(hardReservedFor, false)),
+                hardReservedFor
+            );
+
+            tinsert(Lines, forString);
+        end
+
+        if (hardReservedNote) then
+            local noteString = string.format("|cFFcc2743 Note:|r %s",
+                hardReservedNote
+            );
+
+            tinsert(Lines, noteString);
+        end
+
+        return Lines;
     end
 
     local Reservations = self:byItemLink(itemLink);
@@ -623,8 +662,6 @@ function SoftRes:tooltipLines(itemLink)
     if (not itemHasActiveReservations) then
         return {};
     end
-
-    local Lines = {};
 
     -- Add the header
     tinsert(Lines, string.format("\n|cFFEFB8CD%s|r", "Reserved by"));
@@ -1260,7 +1297,7 @@ function SoftRes:receiveSoftRes(CommMessage)
     GL:debug("SoftRes:receiveSoftRes");
 
     -- No need to update our tables if we broadcasted them ourselves
-    if (CommMessage.Sender.name == GL.User.name) then
+    if (CommMessage.Sender.isSelf) then
         GL:debug("Sync:receiveSoftRes received by self, skip");
         return true;
     end

@@ -45,7 +45,10 @@ GlowMaskPool.parent =  GlowParent
 local TexPoolResetter = function(pool,tex)
     local maskNum = tex:GetNumMaskTextures()
     for i = maskNum,1 do
-        tex:RemoveMaskTexture(tex:GetMaskTexture(i))
+        local maskTexture = tex:GetMaskTexture(i)
+        if (type(maskTexture) == "table") then
+            tex:RemoveMaskTexture(tex:GetMaskTexture(i))
+        end
     end
     tex:Hide()
     tex:ClearAllPoints()
@@ -295,7 +298,6 @@ function lib.PixelGlow_Start(r,color,N,frequency,length,th,xOffset,yOffset,borde
         f.info.width = nil
         f.info.length = length
     end
-    pUpdate(f, 0)
     f:SetScript("OnUpdate",pUpdate)
 end
 

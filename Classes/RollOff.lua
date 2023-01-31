@@ -345,7 +345,7 @@ function RollOff:start(CommMessage)
         ) then
             GL.RollerUI:show(time, Details.link, Details.icon, content.note, SupportedRolls);
 
-            if (CommMessage.Sender.id == GL.User.id) then
+            if (CommMessage.Sender.isSelf) then
                 GL.MasterLooterUI:drawReopenMasterLooterUIButton();
             end
         end

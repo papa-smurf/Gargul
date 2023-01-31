@@ -319,7 +319,7 @@ function TimeLeft:createBroadcastWindow()
     GL:debug("TimeLeft:createBroadcastWindow");
 
     local BroadCast = GL.AceGUI:Create("InlineGroup");
-    self.BroadCast = BroadCast;
+    BroadCast:PauseLayout();
 
     BroadCast:SetLayout("Fill");
     BroadCast:SetWidth(210);
@@ -396,6 +396,8 @@ function TimeLeft:createBroadcastWindow()
     CancelButton:SetScript("OnClick", function ()
         self:hideBroadcastWindow();
     end);
+
+    self.BroadCast = BroadCast;
 end
 
 function TimeLeft:toggleBroadcastWindow()
@@ -706,7 +708,7 @@ function TimeLeft:refreshBars(byRefresh)
         end);
 
         TimerBar:SetScript("OnMouseUp", function(_, mouseButtonPressed)
-            GL:handleItemClick(BagItem.itemLink, mouseButtonPressed);
+            HandleModifiedItemClick(BagItem.itemLink, mouseButtonPressed);
         end)
 
         TimerBar:SetScript("OnLeave", function()

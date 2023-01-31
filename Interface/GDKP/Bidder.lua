@@ -69,7 +69,7 @@ end
 function Bidder:draw(time, itemLink, itemIcon)
     GL:debug("Bidder:draw");
 
-    local Window = CreateFrame("Frame", "GARGUL_GDKP_BIDDER_WINDOW", UIParent, Frame);
+    local Window = CreateFrame("Frame", "GARGUL_GDKP_BIDDER_WINDOW", UIParent);
     Window:Hide();
     Window:SetSize(300, 96);
     Window:SetPoint(GL.Interface:getPosition("Bidder"));
@@ -97,6 +97,76 @@ function Bidder:draw(time, itemLink, itemIcon)
     Texture:SetColorTexture(0, 0, 0, .6);
     Texture:SetAllPoints(Window)
     Window.texture = Texture;
+
+    local CountDownBarDragger = CreateFrame("Frame", nil, Window);
+    CountDownBarDragger:SetPoint("TOPLEFT", Window, "TOPLEFT", 0, 0);
+    CountDownBarDragger:SetPoint("TOPRIGHT", Window, "TOPRIGHT", 0, 0);
+    CountDownBarDragger:SetHeight(30);
+    CountDownBarDragger.ownedByGargul = true;
+
+    CountDownBarDragger:EnableMouse(true);
+    CountDownBarDragger:RegisterForDrag("LeftButton");
+    CountDownBarDragger:SetScript("OnDragStart", function()
+        Window:StartMoving();
+    end);
+    CountDownBarDragger:SetScript("OnDragStop", function()
+        Window:StopMovingOrSizing();
+        GL.Interface:storePosition(Window, "Bidder");
+    end);
+
+    -- Close the roll window on rightclick
+    CountDownBarDragger:SetScript("OnMouseDown", function(_, button)
+        if (button == "RightButton") then
+            self:hide();
+        end
+    end)
+
+    local lastShiftStatus;
+    local refreshTooltip = function ()
+        GameTooltip:Hide();
+
+        GameTooltip:SetOwner(CountDownBarDragger, "ANCHOR_TOP");
+        GameTooltip:SetHyperlink(itemLink);
+        GameTooltip:Show();
+    end;
+
+    CountDownBarDragger:SetScript("OnEnter", function()
+        lastShiftStatus = IsShiftKeyDown();
+
+        GameTooltip:SetOwner(CountDownBarDragger, "ANCHOR_TOP");
+        GameTooltip:SetHyperlink(itemLink);
+        GameTooltip:Show();
+    end);
+
+    CountDownBarDragger:SetScript("OnLeave", function()
+        GameTooltip:Hide();
+    end);
+
+    CountDownBarDragger:SetScript("OnEvent", function(self, event, ...)
+        if (event == "MODIFIER_STATE_CHANGED") then
+            return self[event] and self[event](self, ...);
+        end
+    end)
+
+    CountDownBarDragger:RegisterEvent("MODIFIER_STATE_CHANGED");
+    function CountDownBarDragger:MODIFIER_STATE_CHANGED(key, pressed)
+        if (key ~= "LSHIFT" and key ~= "RSHIFT") then
+            return;
+        end
+
+        local Owner = GameTooltip:GetOwner();
+        local gameTooltipIsShown = GameTooltip:IsShown();
+        if (pressed == 1 and (not gameTooltipIsShown or not Owner or not Owner.ownedByGargul)) then
+            return;
+        end
+
+        if (lastShiftStatus ~= pressed and gameTooltipIsShown) then
+            refreshTooltip();
+            lastShiftStatus = pressed;
+        end
+    end
+
+    Window.CountDownBarDragger = CountDownBarDragger;
 
     self:drawCountdownBar(time, itemLink, itemIcon);
 
@@ -274,7 +344,7 @@ end
 ---@param time number
 ---@param itemLink string
 ---@param itemIcon string
----@return void
+---@return Frame
 function Bidder:drawCountdownBar(time, itemLink, itemIcon, maxValue)
     GL:debug("Bidder:drawCountdownBar");
 
@@ -305,17 +375,6 @@ function Bidder:drawCountdownBar(time, itemLink, itemIcon, maxValue)
         end
     end);
 
-    -- Close the roll window on rightclick
-    TimerBar:SetScript("OnMouseDown", function(_, button)
-        if (button == "RightButton") then
-            self:hide();
-        end
-    end)
-
-    TimerBar:SetScript("OnLeave", function()
-        GameTooltip:Hide();
-    end);
-
     TimerBar:SetDuration(time);
     TimerBar:SetColor(0, 1, 0, .3); -- Reset color to green
     TimerBar:SetLabel("  " .. itemLink .. " ");
@@ -324,16 +383,10 @@ function Bidder:drawCountdownBar(time, itemLink, itemIcon, maxValue)
     TimerBar:Set("type", "ROLLER_UI_COUNTDOWN");
     TimerBar:Start(maxValue);
 
-    -- Show a gametooltip for the item up for roll
-    -- when hovering over the progress bar
-    TimerBar:SetScript("OnEnter", function()
-        GameTooltip:SetOwner(self.Window, "ANCHOR_TOP");
-        GameTooltip:SetHyperlink(itemLink);
-        GameTooltip:Show();
-    end);
-
     TimerBar:SetDuration(5);
     self.TimerBar = TimerBar;
+
+    return TimerBar;
 end
 
 ---@return void

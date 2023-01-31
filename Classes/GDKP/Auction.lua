@@ -76,18 +76,13 @@ function Auction:_init()
     Auctioneer = GL.Interface.GDKP.Auctioneer or {};
 
     -- An event is fired whenever a bid is accepted, in which case we broadcast the latest auction details
-    Events:register("GDKPBidAccepted", "GL.GDKP_BID_ACCEPTED", function (_, OldTopBid, NewTopBid)
-        if (GL:tableGet(OldTopBid or {}, "Bidder.uuid") == GL.User.id
-            and NewTopBid.Bidder.uuid ~= GL.User.id
-        ) then
-            Events:fire("GL.GDKP_USER_WAS_OUTBID", OldTopBid, NewTopBid);
-        end
-
+    Events:register("GDKPAuctionBidAccepted", "GL.GDKP_BID_ACCEPTED", function ()
+        Auctioneer:refreshBidsTable();
         GL.Interface.GDKP.Bidder:refresh();
     end);
 
     -- Whenever we were outbid we show a notification
-    Events:register("GDKPGDKPUserWasOutBid", "GL.GDKP_USER_WAS_OUTBID", function ()
+    Events:register("GDKPAuctionUserWasOutBid", "GL.GDKP_USER_WAS_OUTBID", function ()
         self:userWasOutBidHandler();
     end);
 
@@ -98,6 +93,11 @@ end
 ---@return void
 function Auction:userWasOutBidHandler()
     GL:debug("Auction:userWasOutBidHandler");
+
+    -- Looks like we got here for no good reason
+    if (self:userIsTopBidder()) then
+        return;
+    end
 
     -- No reason for panic, autobid was successful
     if (self:autoBid()) then
@@ -841,7 +841,7 @@ function Auction:receiveQueue(CommMessage)
     GL:debug("Auction:receiveQueue");
 
     -- No need to override our own queue
-    if (CommMessage.Sender.id == GL.User.id) then
+    if (CommMessage.Sender.isSelf) then
         return;
     end
 
@@ -1289,54 +1289,7 @@ function Auction:stop(CommMessage)
     return true;
 end
 
---- Something changed, see if we need to change anything (UI elements, top bid etc)
----
----@param CommMessage string|nil
 ---@return void
-function Auction:refresh(CommMessage)
-    -- Even if the auction is over we still want to update UI elements
-    -- if needed, this is why we don't use self.inProgress here!
-    if (GL:empty(self.Current)) then
-        return;
-    end
-
-    -- The user who sent the refresh our way is not permitted to do so
-    if (CommMessage
-        and CommMessage.Sender.id ~= self.Current.initiatorID
-    ) then
-        return;
-    end
-
-    -- Check if there's a new highest bid
-    local NewTopBid = CommMessage.content;
-    local OldTopBid = self.Current.TopBid or {};
-
-    if (GL:empty(OldTopBid.bid)) then
-        OldTopBid = false;
-    end
-
-    -- Payload seems invalid, abort!
-    if (GL:empty(NewTopBid)
-        or not GL:higherThanZero(NewTopBid.bid)
-    ) then
-        return;
-    end
-
-    -- Valid bid, act accordingly!
-    if (not OldTopBid or NewTopBid.bid > OldTopBid.bid) then
-        -- It seems like we were outbid!
-        if (OldTopBid and OldTopBid.Bidder.name
-            and GL.User.name == OldTopBid.Bidder.name
-            and OldTopBid.Bidder.name ~= NewTopBid.Bidder.name
-        ) then
-            Events:fire("GL.GDKP_USER_WAS_OUTBID", OldTopBid, NewTopBid);
-        end
-
-        self.Current.TopBid = NewTopBid;
-        GL.Interface.GDKP.Bidder:refresh();
-    end
-end
-
 function Auction:reset()
     GL:debug("GDKP.Auction:reset");
 
@@ -1524,9 +1477,26 @@ function Auction:stopAutoBid()
     GL.Interface.GDKP.Bidder:autoBidStopped();
 end
 
+--- Are we the highest bidder on the current auction?
+---
+---@return boolean
+function Auction:userIsTopBidder()
+    return self.Current.TopBid.bidder
+        and (
+            GL:iEquals(self.Current.TopBid.bidder, GL.User.name)
+            or self.Current.TopBid.Bidder.uuid == GL.User.id
+            or GL:iEquals(self.Current.TopBid.Bidder.name, GL.User.name)
+        );
+end
+
 ---@return boolean
 function Auction:autoBid()
     GL:debug("Auction:autoBid");
+
+    -- Looks like we got back on top in the meantime
+    if (self:userIsTopBidder()) then
+        return;
+    end
 
     if (not self.autoBiddingIsActive or not self.maxBid) then
         return false;
@@ -1542,6 +1512,11 @@ function Auction:autoBid()
         GL.Ace:CancelTimer(self.AutoBidTimer);
 
         self.AutoBidTimer = GL.Ace:ScheduleTimer(function ()
+            -- Looks like we got back on top in the meantime
+            if (self:userIsTopBidder()) then
+                return;
+            end
+
             if (self:lowestValidBid() > self.maxBid) then
                 return;
             end
@@ -1610,7 +1585,7 @@ function Auction:processBid(message, bidder)
     --- Make sure the person who bid is in our group
     local BidEntry = false;
     for _, Member in pairs(GL.User:groupMembers(true)) do
-        if (GL:stripRealm(bidder) == GL:stripRealm(Member.name)) then
+        if (GL:iEquals(GL:stripRealm(bidder), GL:stripRealm(Member.name))) then
             local Player = GL.Player:fromName(Member.name);
             local playerName, realm = GL:stripRealm(bidder);
 
@@ -1624,6 +1599,7 @@ function Auction:processBid(message, bidder)
                     uuid = Player.id,
                 },
                 bid = bid,
+                bidder = bidder,
                 createdAt = GetServerTime(),
             };
 
@@ -1708,12 +1684,18 @@ function Auction:processBid(message, bidder)
     end
 
     tinsert(self.Current.Bids, BidEntry);
-    Auctioneer:refreshBidsTable();
 
-    local OldTopBid = self.Current.TopBid;
+    -- Check if we're currently the highest bidder
+    local userWasHighestBidder = self:userIsTopBidder();
+
     self.Current.TopBid = BidEntry;
 
-    Events:fire("GL.GDKP_BID_ACCEPTED", OldTopBid, BidEntry);
+    Events:fire("GL.GDKP_BID_ACCEPTED", BidEntry);
+
+    -- We're no longer the highest bidder, oh dear
+    if (userWasHighestBidder and not self:userIsTopBidder()) then
+        Events:fire("GL.GDKP_USER_WAS_OUTBID");
+    end
 end
 
 --- Transform a given message to a bid if possible

@@ -233,6 +233,10 @@ function Exporter:getLootEntries()
                 awardedTo = awardedTo,
                 itemID = itemID,
                 OS = AwardEntry.OS and 1 or 0,
+                SR = AwardEntry.SR and 1 or 0,
+                WL = AwardEntry.WL and 1 or 0,
+                PL = AwardEntry.PL and 1 or 0,
+                TMB = AwardEntry.TMB and 1 or 0,
                 checksum = checksum,
             });
         end
@@ -270,7 +274,11 @@ function Exporter:transformEntriesToCustomFormat(Entries)
                     ["@ILVL"] = ItemDetails.level,
                     ["@QUALITY"] = ItemDetails.quality,
                     ["@WINNER"] = AwardEntry.awardedTo,
-                    ["@OS"] = tostring(AwardEntry.OS),
+                    ["@OS"] = GL:toboolean(AwardEntry.OS),
+                    ["@SR"] = GL:toboolean(AwardEntry.SR),
+                    ["@WL"] = GL:toboolean(AwardEntry.WL),
+                    ["@PL"] = GL:toboolean(AwardEntry.PL),
+                    ["@TMB"] = GL:toboolean(AwardEntry.TMB),
                     ["@CHECKSUM"] = AwardEntry.checksum,
                     ["@YEAR"] = date('%Y', AwardEntry.timestamp),
                     ["@YY"] = date('%y', AwardEntry.timestamp),
@@ -285,6 +293,11 @@ function Exporter:transformEntriesToCustomFormat(Entries)
                 };
 
                 for find, replace in pairs(Values) do
+                    -- We transform booleans to 0 or 1
+                    if (type(replace) == "boolean") then
+                        replace = replace and 1 or 0;
+                    end
+
                     exportEntry = exportEntry:gsub(find, replace);
                 end
 
