@@ -12,8 +12,15 @@ GL.Interface.Changelog = {
 
     History = {
         {
+            version = "5.1.0",
+            date = "January 31st, 2023",
+            Changes = {
+                "PlusOnes can now be imported, exported and shared with everyone in the raid. Check it out with |c00a79eff/gl po|r. Many thanks to rdobkins for making this happen!"
+            },
+        },
+        {
             version = "5.0.19",
-            date = "January 21st, 2022",
+            date = "January 21st, 2023",
             Changes = {
                 "Hi everyone! Phase 2 has brought with it a lot of WoW API updates. Many add-ons have not been updated yet and using them can affect other addons, like Gargul. If something's not working, then please join the Gargul discord and read the pinned messages to hopefully figure out what add-on or action is the causing issues.",
                 "Show a reminder that GDKP is active after logging in",
@@ -24,7 +31,7 @@ GL.Interface.Changelog = {
         },
         {
             version = "5.0.13",
-            date = "January 11th, 2022",
+            date = "January 11th, 2023",
             Changes = {
                 "Added gold spent and bid to the GDKP distribution export",
                 "Restructured the GDKP countdown settings, check them out via |c00a79eff/gl|r > GDKP"
