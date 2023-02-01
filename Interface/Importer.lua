@@ -76,6 +76,18 @@ function Importer:draw()
         GL.TMB:draw();
     end);
     Window:AddChild(TMBButton);
+
+    --[[
+        Plus Ones BUTTON
+    ]]
+    local PlusOnesButton = AceGUI:Create("Button");
+    PlusOnesButton:SetText("Import Plus Ones data");
+    PlusOnesButton:SetFullWidth(true);
+    PlusOnesButton:SetCallback("OnClick", function()
+        self:close();
+        GL.Interface.PlusOnes.Importer:draw();
+    end);
+    Window:AddChild(PlusOnesButton);
 end
 
 function Importer:close()

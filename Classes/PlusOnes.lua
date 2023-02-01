@@ -373,7 +373,7 @@ function PlusOnes:import(data, openOverview, MetaData)
     self:materializeData();
     GL.Interface.PlusOnes.Importer:close();
 
-    if (not openOverview) then
+    if (openOverview) then
         self:draw();
 
         -- The user is in charge of automatically sharing PlusOnes data
