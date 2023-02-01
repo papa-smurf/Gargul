@@ -51,9 +51,9 @@ function Settings:sanitizeSettings()
     self:enforceTemporarySettings();
 
     -- Remove plus one entries with a value of 0
-    for player, po in pairs(DB:get("PlusOnes") or {}) do
+    for player, po in pairs(DB:get("PlusOnes.Totals") or {}) do
         if (not tonumber(po) or po < 1) then
-            DB:set("PlusOnes." .. player, nil);
+            DB:set("PlusOnes.Totals." .. player, nil);
         end
     end
 
@@ -111,6 +111,14 @@ function Settings:enforceTemporarySettings()
         end
 
         DB:set("Settings.GDKP.SettingsPerItem", nil);
+    end
+
+    --- In 5.1.0 we added +1 broadcasting, auto-share should be disabled by default
+    if (GL.version == "5.1.1" or (
+        not GL.firstBoot and not DB.LoadDetails["5.1.1"])
+    ) then
+        DB:set("Settings.PlusOnes.automaticallyShareData", false);
+        DB.LoadDetails["5.1.1"] = GetServerTime();
     end
 
     --- in 5.0.13 we remove the GDKP.doCountdown and x settings

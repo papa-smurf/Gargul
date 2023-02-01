@@ -184,7 +184,7 @@ function Award:draw(itemLink, callback)
                 addPlusOne = GL:toboolean(addPlusOneCheckBox:GetValue());
 
                 if (addPlusOne) then
-                    GL.PlusOnes:add(winner);
+                    GL.PlusOnes:addPlusOnes(winner);
                 end
             end
 

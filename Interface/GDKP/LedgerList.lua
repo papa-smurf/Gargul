@@ -173,6 +173,11 @@ function LedgerList:refresh()
     local TableData = {};
     local Table = Interface:get(self, "Table.Auctions");
     GL:onItemLoadDo(GL:tableColumn(Auctions, "itemID") or {}, function ()
+        -- Sort the auctions based on date/time (highest to lowest)
+        table.sort(Auctions, function (a, b)
+            return a.createdAt < b.createdAt;
+        end);
+
         for _, Auction in pairs(Auctions) do
             (function ()
                 tinsert(TableData, {

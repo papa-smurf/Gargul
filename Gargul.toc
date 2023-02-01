@@ -4,7 +4,7 @@
 ## Title: Gargul |c00967FD2@project-version@|r
 ## Author: Zhorax - Firemaw
 ## Notes: Loot addon that supports GDKP, softres sr, thatsmybis tmb, auto looting, plus one tracking and much more
-## Version: 5.0.22
+## Version: 5.1.2
 ## DefaultState: enabled
 ## SavedVariables: GargulDB
 ## X-Donate: https://www.patreon.com/gargul
@@ -85,6 +85,7 @@ Interface/Settings/Rolling.lua
 Interface/Settings/RollTracking.lua
 Interface/Settings/SoftRes.lua
 Interface/Settings/BoostedRolls.lua
+Interface/Settings/PlusOnes.lua
 Interface/Settings/Welcome.lua
 Interface/Settings/Advanced.lua
 Interface/Settings/General.lua
@@ -119,6 +120,7 @@ Interface/GDKP/AuctionDetails.lua
 Interface/TMB/Importer.lua
 Interface/TMB/Overview.lua
 Interface/PlusOnes/OverView.lua
+Interface/PlusOnes/Importer.lua
 Interface/TradeWindow/TimeLeft.lua
 Interface/PlayerSelector.lua
 Interface/Changelog.lua
@@ -133,6 +135,8 @@ Interface/Dialogs/ConfirmWithSingleInputDialog.lua
 Interface/Dialogs/ConfirmWithSingleInputDialogWidget.lua
 Interface/Dialogs/IncomingBoostedRollDataDialog.lua
 Interface/Dialogs/IncomingBoostedRollDataDialogWidget.lua
+Interface/Dialogs/IncomingPlusOneDataDialog.lua
+Interface/Dialogs/IncomingPlusOneDataDialogWidget.lua
 Interface/Dialogs/HyperlinkDialog.lua
 Interface/Dialogs/HyperlinkDialogWidget.lua
 Interface/Dialogs/MasterLooterDialog.lua

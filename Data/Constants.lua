@@ -546,6 +546,9 @@ GL.Data.Constants = {
             broadcastGDKPMutation = 23,
             broadcastGDKPAuctionQueue = 24,
             checkForUpdate = 25,
+            broadcastPlusOnesData = 26,
+            requestPlusOnesData = 27,
+            broadcastPlusOnesMutation = 28,
         },
     },
 

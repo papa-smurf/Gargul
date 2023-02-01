@@ -35,7 +35,7 @@ GL.Interface.Settings.Overview = {
         {"Rolling", "Rolling"},
         {"Loot Highlighting", "LootHighlighting"},
         {"Boosted Rolls", "BoostedRolls"},
-        {"", ""},
+        {"Plus Ones", "PlusOnes"},
         {"", ""},
         {"Slash Commands", "SlashCommands"},
     },

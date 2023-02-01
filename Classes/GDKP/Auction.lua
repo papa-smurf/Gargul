@@ -1616,9 +1616,12 @@ end
 ---
 ---@return boolean
 function Auction:userIsTopBidder()
-    return GL:iEquals(self.Current.TopBid.bidder, GL.User.name)
-        or self.Current.TopBid.Bidder.uuid == GL.User.id
-        or GL:iEquals(self.Current.TopBid.Bidder.name, GL.User.name);
+    return self.Current.TopBid.bidder
+        and (
+            GL:iEquals(self.Current.TopBid.bidder, GL.User.name)
+            or self.Current.TopBid.Bidder.uuid == GL.User.id
+            or GL:iEquals(self.Current.TopBid.Bidder.name, GL.User.name)
+        );
 end
 
 ---@return boolean

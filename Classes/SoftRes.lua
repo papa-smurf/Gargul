@@ -977,7 +977,7 @@ function SoftRes:importGargulData(data)
                 end
             end
 
-            local currentPlusOneValue = GL.PlusOnes:get(name);
+            local currentPlusOneValue = GL.PlusOnes:getPlusOnes(name);
 
             -- We don't simply overwrite the PlusOnes if plusone data is already present
             -- If the player doesn't have any plusones yet then we set it to whatever is provided by softres
@@ -988,7 +988,7 @@ function SoftRes:importGargulData(data)
             ) then
                 differentPlusOnes = true;
             else
-                GL.PlusOnes:set(name, plusOnes);
+                GL.PlusOnes:setPlusOnes(name, plusOnes);
             end
 
             PlusOnes[name] = plusOnes;
@@ -1032,7 +1032,7 @@ function SoftRes:importGargulData(data)
             question = "The PlusOne values provided collide with the ones already present. Do you want to replace your old PlusOne values?",
             OnYes = function ()
                 GL.PlusOnes:clear();
-                GL.PlusOnes:set(PlusOnes);
+                GL.PlusOnes:setPlusOnes(PlusOnes);
                 GL.Interface.SoftRes.Overview:close();
                 self:draw();
             end,
@@ -1094,7 +1094,7 @@ function SoftRes:importCSVData(data, reportStatus)
                     };
                 end
 
-                local currentPlusOneValue = GL.PlusOnes:get(playerName);
+                local currentPlusOneValue = GL.PlusOnes:getPlusOnes(playerName);
 
                 -- We don't simply overwrite the PlusOnes if plusone data is already present
                 -- If the player doesn't have any plusones yet then we set it to whatever is provided by softres
@@ -1105,7 +1105,7 @@ function SoftRes:importCSVData(data, reportStatus)
                 ) then
                     differentPlusOnes = true;
                 else
-                    GL.PlusOnes:set(playerName, plusOnes);
+                    GL.PlusOnes:setPlusOnes(playerName, plusOnes);
                 end
 
                 PlusOnes[playerName] = plusOnes;
@@ -1154,7 +1154,7 @@ function SoftRes:importCSVData(data, reportStatus)
             question = "The PlusOne values provided collide with the ones already present. Do you want to replace your old PlusOne values?",
             OnYes = function ()
                 GL.PlusOnes:clear();
-                GL.PlusOnes:set(PlusOnes);
+                GL.PlusOnes:setPlusOnes(PlusOnes);
                 GL.Interface.SoftRes.Overview:close();
                 self:draw();
             end,

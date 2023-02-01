@@ -117,6 +117,12 @@ GL.Data.DefaultSettings = {
         priority = 1,
         reserveThreshold = 180,
     },
+    PlusOnes = {
+        automaticallyAcceptDataFrom = "",
+        automaticallyShareData = false,
+        blockShareData = false,
+        enableWhisperCommand = true,
+    },
     GDKP = {
         acceptBidsLowerThanMinimum = false, -- Change default? Check Auction.lua !!
         addDropsToQueue = true,

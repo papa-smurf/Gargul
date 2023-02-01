@@ -530,7 +530,7 @@ function RollOff:award(roller, itemLink, osRoll, boostedRoll, plusOneRoll)
                     addPlusOne = GL:toboolean(addPlusOneCheckBox:GetValue());
 
                     if (addPlusOne) then
-                        GL.PlusOnes:add(roller);
+                        GL.PlusOnes:addPlusOnes(roller);
                     end
                 end
 
@@ -583,7 +583,7 @@ function RollOff:award(roller, itemLink, osRoll, boostedRoll, plusOneRoll)
                     addPlusOne = GL:toboolean(addPlusOneCheckBox:GetValue());
 
                     if (addPlusOne) then
-                        GL.PlusOnes:add(roller);
+                        GL.PlusOnes:addPlusOnes(roller);
                     end
                 end
 
@@ -848,7 +848,7 @@ function RollOff:refreshRollsTable()
         end
 
         local class = Roll.class;
-        local plusOnes = GL.PlusOnes:get(playerName);
+        local plusOnes = GL.PlusOnes:getPlusOnes(playerName);
 
         if (GL:higherThanZero(plusOnes)) then
             plusOnes = "+" .. plusOnes;
@@ -878,7 +878,7 @@ function RollOff:refreshRollsTable()
                 },
                 {
                     value = rollPriority,
-                },
+                };
             },
         };
         tinsert(RollTableData, Row);

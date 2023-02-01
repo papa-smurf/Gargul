@@ -750,7 +750,11 @@ function AwardedLoot:processAwardedLoot(CommMessage)
         received = AwardEntry.received,
         BRCost = AwardEntry.BRCost,
         GDKPCost = AwardEntry.GDKPCost,
-        OS = AwardEntry.OS,
+        OS = GL:toboolean(AwardEntry.OS),
+        SR = GL:toboolean(AwardEntry.SR),
+        WL = GL:toboolean(AwardEntry.WL),
+        PL = GL:toboolean(AwardEntry.PL),
+        TMB = GL:toboolean(AwardEntry.TMB),
         Rolls = AwardEntry.Rolls,
     };
 
