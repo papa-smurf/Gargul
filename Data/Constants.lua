@@ -178,6 +178,7 @@ GL.Data.Constants = {
             "Coldemort",
             "Kelziad",
             "Nambojambo",
+            "Panya",
             "Scratchd",
             "Sgtglimmer",
             "WaDaFruCK",

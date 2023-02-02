@@ -702,7 +702,7 @@ function Auctioneer:award()
                 addPlusOne = GL:toboolean(addPlusOneCheckBox:GetValue());
 
                 if (addPlusOne) then
-                    GL.PlusOnes:add(winner);
+                    GL.PlusOnes:addPlusOne(winner);
                 end
             end
 

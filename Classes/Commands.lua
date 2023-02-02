@@ -142,7 +142,7 @@ GL.Commands = GL.Commands or {
         setdisenchanter = function (...) GL.PackMule:setDisenchanter(...); end,
 
         -- Clear all plus ones
-        clearplusones = function() GL.PlusOnes:clear(); end,
+        clearplusones = function() GL.PlusOnes:clearPlusOnes(); end,
 
         -- Export the current raid roster to csv
         raidcsv = function ()
