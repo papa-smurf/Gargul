@@ -54,61 +54,10 @@ function GroupLoot:highlightItemsOfInterest()
             LCG.PixelGlow_Stop(ItemFrame);
         end
 
-        if (ItemFrame:IsVisible()) then
-            local rollId = ItemFrame.rollID;
-            local itemLink = GetLootRollItemLink(rollId);
+        if (ItemFrame:IsVisible() and ItemFrame.rollID) then
+            local itemLink = GetLootRollItemLink(ItemFrame.rollID);
 
-            if (itemLink) then
-                local enableHighlight = false;
-                local BorderColor = {1, .95686, .40784, 1}; -- The default border color is rogue-yellow and applies to wishlisted items
-
-                -- The item is hard-reserved
-                if (GL.Settings:get("highlightHardReservedItems")
-                    and SoftRes:linkIsHardReserved(itemLink)
-                ) then
-                    enableHighlight = true;
-                    BorderColor = {.77, .12, .23, 1};  -- Make the border red for hard-reserved items
-
-                -- The item is soft-reserved
-                elseif (GL.Settings:get("highlightSoftReservedItems")
-                    and SoftRes:linkIsReserved(itemLink)
-                ) then
-                    enableHighlight = true;
-                    BorderColor = {.95686, .5490, .72941, 1}; -- Make the border paladin-pink for reserved items
-
-                -- Check if it's wishlisted
-                elseif (GL.Settings:get("highlightWishlistedItems")
-                    or GL.Settings:get("highlightPriolistedItems")
-                ) then
-                    local TMBInfo = GL.TMB:byItemLink(itemLink) or {};
-                    local concernsPrio = false;
-
-                    -- Check for active wishlist entries
-                    for _, Entry in pairs(TMBInfo) do
-                        BorderColor = {1, 1, 1, 1}; -- Make the border priest-white for TMB wishlisted items
-
-                        if (Entry.type == Constants.tmbTypePrio) then
-                            concernsPrio = true;
-                            BorderColor = {1, .48627, .0392, 1}; -- Make the border druid-orange for TMB character prio items
-                            break;
-                        end
-                    end
-
-                    if (not GL:empty(TMBInfo)
-                        and (
-                            (not concernsPrio and GL.Settings:get("highlightWishlistedItems"))
-                            or (concernsPrio and GL.Settings:get("highlightPriolistedItems"))
-                        )
-                    ) then
-                        enableHighlight = true;
-                    end
-                end
-
-                if (enableHighlight and not GL.isRetail) then
-                    -- Add an animated border to indicate that this item was reserved / wishlisted
-                    LCG.PixelGlow_Start(ItemFrame, BorderColor, 32, .05, 10, 4);
-                end
-            end
+            GL:highlightItem(ItemFrame, itemLink);
         end
     end
 end

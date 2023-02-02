@@ -525,7 +525,7 @@ end
 ---
 ---@return void
 function SoftRes:clear()
-    DB.SoftRes = {};
+    DB:set("SoftRes", {});
     self.MaterializedData = {
         ClassByPlayerName = {},
         DetailsByPlayerName = {},
@@ -536,6 +536,8 @@ function SoftRes:clear()
     };
 
     GL.Interface.SoftRes.Overview:close();
+
+    GL.Events:fire("GL.SOFTRES_CLEARED");
 end
 
 --- Check whether the given player reserved the given item id
@@ -780,10 +782,10 @@ function SoftRes:import(data, openOverview)
         end
     end
 
-    GL.Events:fire("GL.SOFTRES_IMPORTED");
-
     -- Materialize the data for ease of use
     self:materializeData(reportStatus);
+
+    GL.Events:fire("GL.SOFTRES_IMPORTED");
 
     if (reportStatus) then
         -- Display missing soft-reserves

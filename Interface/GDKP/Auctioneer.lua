@@ -789,6 +789,7 @@ function AuctioneerUI:buildQueue(Window)
             Icon:SetPoint("TOPLEFT", HelpFrame, "TOPLEFT");
 
             ---@type Text\
+            ---@type Texture
             local image = Icon:CreateTexture(nil, "BACKGROUND")
             image:SetWidth(12)
             image:SetHeight(12)
@@ -987,6 +988,11 @@ function AuctioneerUI:buildQueue(Window)
                 Icon:SetSize(rowHeight - 4, rowHeight - 4);
 
                 Interface:addTooltip(Icon, Details.link);
+
+                --[[ ICON HIGHLIGHT ]]
+                GL:highlightItem(Icon, Details.link);
+
+                ItemRow.Icon = Icon;
 
                 ---@type Texture
                 local Image = Icon:CreateTexture(nil, "BACKGROUND")
@@ -1217,6 +1223,8 @@ end
 ---@param Row Frame
 ---@return void
 function AuctioneerUI:deleteRowFromQueue(Row)
+    LCG.PixelGlow_Stop(Row);
+    LCG.PixelGlow_Stop(Row.Icon);
     Row:Hide();
     Row._itemLink = nil;
     Row._identifier = nil;
@@ -1237,10 +1245,18 @@ function AuctioneerUI:deleteRowFromQueue(Row)
         end
     end
 
-    --self.itemsShownInQueue = math.max(0, self.itemsShownInQueue - 1);
     self.itemsShownInQueue = count;
 
     self:reorderItems();
+end
+
+---@return void
+function AuctioneerUI:refreshIconGlows()
+    for _, ItemRow in pairs(self.ItemRows or {}) do
+        if (ItemRow and ItemRow._queueIndex) then
+            GL:highlightItem(ItemRow, ItemRow._itemLink);
+        end
+    end
 end
 
 GL:debug("Auctioneer.lua");

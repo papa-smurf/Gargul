@@ -131,6 +131,17 @@ function Auctioneer:_init()
 
         self:addToQueue(Details.itemLink);
     end);
+
+    -- Softres/TMB details changed, update the icon glows if needed
+    Events:register({
+        "GL.SOFTRES_IMPORTED",
+        "GL.SOFTRES_CLEARED",
+        "GL.TMB_IMPORTED",
+        "GL.TMB_CLEARED",
+    }, function ()
+        AuctioneerUI = AuctioneerUI or GL.Interface.GDKP.Auctioneer;
+        AuctioneerUI:refreshIconGlows();
+    end);
 end
 
 ---@return void
