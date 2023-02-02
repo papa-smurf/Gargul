@@ -1022,7 +1022,7 @@ function SoftRes:importGargulData(data)
             GL.Interface.Dialogs.PopupDialog:open({
                 question = "Do you want to clear all previous PlusOne values?",
                 OnYes = function ()
-                    GL.PlusOnes:clear();
+                    GL.PlusOnes:clearPlusOnes();
                 end,
             });
         end
@@ -1031,7 +1031,7 @@ function SoftRes:importGargulData(data)
         GL.Interface.Dialogs.PopupDialog:open({
             question = "The PlusOne values provided collide with the ones already present. Do you want to replace your old PlusOne values?",
             OnYes = function ()
-                GL.PlusOnes:clear();
+                GL.PlusOnes:clearPlusOnes();
                 GL.PlusOnes:setPlusOnes(PlusOnes);
                 GL.Interface.SoftRes.Overview:close();
                 self:draw();
@@ -1144,7 +1144,7 @@ function SoftRes:importCSVData(data, reportStatus)
             GL.Interface.Dialogs.PopupDialog:open({
                 question = "Do you want to clear all previous PlusOne values?",
                 OnYes = function ()
-                    GL.PlusOnes:clear();
+                    GL.PlusOnes:clearPlusOnes();
                 end,
             });
         end
@@ -1153,7 +1153,7 @@ function SoftRes:importCSVData(data, reportStatus)
         GL.Interface.Dialogs.PopupDialog:open({
             question = "The PlusOne values provided collide with the ones already present. Do you want to replace your old PlusOne values?",
             OnYes = function ()
-                GL.PlusOnes:clear();
+                GL.PlusOnes:clearPlusOnes();
                 GL.PlusOnes:setPlusOnes(PlusOnes);
                 GL.Interface.SoftRes.Overview:close();
                 self:draw();
