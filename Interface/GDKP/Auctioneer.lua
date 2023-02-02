@@ -788,7 +788,6 @@ function AuctioneerUI:buildQueue(Window)
             Icon:SetSize(12, 12);
             Icon:SetPoint("TOPLEFT", HelpFrame, "TOPLEFT");
 
-            ---@type Text\
             ---@type Texture
             local image = Icon:CreateTexture(nil, "BACKGROUND")
             image:SetWidth(12)
@@ -881,6 +880,8 @@ function AuctioneerUI:buildQueue(Window)
                 end
 
                 self.itemsShownInQueue = self.itemsShownInQueue or 0;
+
+                local bindOnPickup = GL:inTable({LE_ITEM_BIND_ON_ACQUIRE, LE_ITEM_BIND_QUEST}, Details.bindType);
 
                 ---@type Frame
                 local ItemRow = CreateFrame("Frame", nil, ItemHolder);
@@ -987,6 +988,12 @@ function AuctioneerUI:buildQueue(Window)
                 Icon:SetPoint("TOPLEFT", ItemRow, 0, -2);
                 Icon:SetSize(rowHeight - 4, rowHeight - 4);
 
+                Icon:SetScript("OnMouseUp", function (_, mouseButtonPressed)
+                    -- Remove the item from the queue if it was awarded/disenchanted
+                    Auction:removeFromQueue(ItemRow._identifier);
+                    self:deleteRowFromQueue(ItemRow);
+                end);
+
                 Interface:addTooltip(Icon, Details.link);
 
                 --[[ ICON HIGHLIGHT ]]
@@ -1014,8 +1021,13 @@ function AuctioneerUI:buildQueue(Window)
                 MinInput:SetPoint("TOPRIGHT", IncInput, "TOPLEFT", -8, 0);
 
                 --[[ ITEM LINK ]]
+                local BOEString = "";
+                if (not bindOnPickup) then
+                    BOEString = "BOE ";
+                end
+
                 ---@type FontString
-                local Name = Interface:createFontString(ItemRow, Details.link);
+                local Name = Interface:createFontString(ItemRow, BOEString .. Details.link);
                 Name:SetPoint("CENTER", Icon);
                 Name:SetPoint("LEFT", Icon, "RIGHT", 4, 0);
                 Name:SetPoint("RIGHT", MinInput, "LEFT", -6, 0);
