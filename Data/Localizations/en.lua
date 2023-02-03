@@ -54,6 +54,7 @@ L.IMPORT_EXPLANATION = "What kind of data would you like to import?";
 L.INFO = "Info";
 L.INC = "Inc";
 L.INCREMENT = "Increment";
+L.GDKP_ACTIVATED = "GDKP Activated";
 L.HALT = "Halt";
 L.HIGHEST_BIDDER_CONFIRMATION = "%s is the highest bidder (%sg)";
 L.START = "Start";

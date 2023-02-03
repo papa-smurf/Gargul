@@ -155,7 +155,7 @@ function Auction:_initializeQueue()
         end
 
         i = i + 1;
-        return Auctioneer:addToQueue(Queued.itemLink, Queued.identifier);
+        return Auctioneer:addToQueue(Queued.itemLink, Queued.identifier, false);
     end, .2);
 end
 

@@ -181,9 +181,14 @@ end
 
 ---@param itemLink string
 ---@param identifier string
+---@param open boolean|nil
 ---@return void
-function Auctioneer:addToQueue(itemLink, identifier)
+function Auctioneer:addToQueue(itemLink, identifier, open)
     GL:debug("Auctioneer:addToQueue");
+
+    if (open == nil) then
+        open = true;
+    end
 
     AuctioneerUI = AuctioneerUI or GL.Interface.GDKP.Auctioneer;
 
@@ -192,7 +197,9 @@ function Auctioneer:addToQueue(itemLink, identifier)
         Auction:addToQueue(itemLink, identifier or newIdentifier);
     end);
 
-    AuctioneerUI:open();
+    if (open) then
+        AuctioneerUI:open();
+    end
 end
 
 --- Check whether the given or current user is allowed to broadcast

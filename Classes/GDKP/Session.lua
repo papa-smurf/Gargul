@@ -80,9 +80,17 @@ function Session:_init()
     if (self:activeSessionID()) then
         GL.Ace:ScheduleTimer(function ()
             GL.Interface.Alerts:fire("GargulNotification", {
-                message = string.format("|c00BE3333GDKP Activated!|r"),
+                message = string.format("|c00BE3333%s!|r", L.GDKP_ACTIVATED),
             });
         end, 5);
+
+        if (self:userIsAllowedToBroadcast()) then
+            local Window = GL.Interface.GDKP.Auctioneer:open();
+
+            if (Window) then
+                Window.Minimize.MinimizeButton:Click();
+            end
+        end
     end
 end
 
@@ -733,7 +741,9 @@ end
 function Session:userIsAllowedToBroadcast()
     GL:debug("Session:userIsAllowedToBroadcast");
 
-    return GL.User.isInGroup and (GL.User.isMasterLooter or GL.User.hasAssist);
+    return not GL.User.isInGroup or (
+        GL.User.isInGroup and (GL.User.isMasterLooter or GL.User.hasAssist)
+    );
 end
 
 GL:debug("GDKP.lua");
