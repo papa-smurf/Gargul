@@ -72,6 +72,7 @@ Interface/Interface.lua
 Interface/Award.lua
 Interface/AwardHistory.lua
 Interface/Importer.lua
+Interface/BonusFeatures.lua
 Interface/Settings/Overview.lua
 Interface/Settings/DroppedLoot.lua
 Interface/Settings/TradeAnnouncements.lua
@@ -97,7 +98,6 @@ Interface/Settings/MasterLooting.lua
 Interface/Settings/SlashCommands.lua
 Interface/SoftRes/Importer.lua
 Interface/SoftRes/Overview.lua
-Interface/ActionSelector.lua
 Interface/GDKP/Auctioneer.lua
 Interface/GDKP/Bidder.lua
 Interface/GDKP/BidderQueue.lua

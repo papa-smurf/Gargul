@@ -141,7 +141,7 @@ function Interface:createFontString(Parent, text, template, name, layer)
     ---@type FontString
     local FontString = Parent:CreateFontString(name, layer or "ARTWORK", template or "GameFontWhite");
     FontString:SetJustifyH("LEFT");
-    FontString:SetFont(GL.FONT, 10, "OUTLINE");
+    FontString:SetFont(GL.FONT, 11, "OUTLINE");
 
     if (type(text) == "table") then
         FontString.update = text.text;
@@ -277,7 +277,12 @@ function Interface:addMinimizeButton(Element, title)
     MinimizedWindow:SetClampedToScreen(true);
     MinimizedWindow:SetSize(200, 50);
     MinimizedWindow:SetBackdrop(_G.BACKDROP_DARK_DIALOG_32_32);
+    MinimizedWindow:SetFrameStrata("FULLSCREEN_DIALOG");
+    MinimizedWindow:SetFrameLevel(100);
+    MinimizedWindow:EnableMouse(true);
+    MinimizedWindow:SetToplevel(true);
     MinimizedWindow:Hide();
+    MinimizedWindow:SetUserPlaced(false);
 
     --[[ THE SETTINGS MENU IN THE TOP LEFT OF THE WINDOW ]]
     Interface:addWindowOptions(MinimizedWindow, {
@@ -401,6 +406,10 @@ function Interface:createWindow(name, Details)
     Window:SetPoint("CENTER", UIParent, "CENTER");
     Window:SetBackdrop(_G.BACKDROP_DARK_DIALOG_32_32);
     Window:SetClampedToScreen(true);
+    Window:SetFrameStrata("FULLSCREEN_DIALOG");
+    Window:SetFrameLevel(100);
+    Window:EnableMouse(true);
+    Window:SetToplevel(true);
 
     --[[ MINIMIZE BUTTON ]]
     if (not Details.hideMinimizeButton) then
@@ -429,6 +438,7 @@ function Interface:createWindow(name, Details)
         if (not Details.hideMoveButton) then
             Window:SetMovable(true);
             self:addMoveButton(Window);
+            Window:SetUserPlaced(false);
         end
 
         Window:SetScript("OnSizeChanged", function ()
@@ -1210,7 +1220,6 @@ function Interface:createButton(Parent, Details)
     Button:SetEnabled(true);
     Button:ClearAllPoints();
     Button:SetSize(width, height);
-    Button:SetFrameStrata("FULLSCREEN_DIALOG");
     Button.updateOn = updateOn;
 
     -- Make sure the tooltip still shows even when the button is disabled

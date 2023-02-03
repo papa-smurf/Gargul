@@ -57,7 +57,7 @@ function Importer:build()
         width = 300,
         height = 200,
         minWidth = 220,
-        minHeight = 180,
+        minHeight = 190,
         maxWidth = 500,
         maxHeight = 200,
         hideMinimizeButton = true,
@@ -72,16 +72,15 @@ function Importer:build()
         end},
     });
 
-    --[[ MINIMUM BID ]]
     ---@type FontString
-    local MinLabel = Interface:createFontString(Window, L.IMPORT_EXPLANATION);
-    MinLabel:SetPoint("TOPLEFT", Window, "TOPLEFT", 20, -30);
-    MinLabel:SetPoint("TOPRIGHT", Window, "TOPRIGHT", -20, 0);
-    MinLabel:SetJustifyH("MIDDLE")
+    local Intro = Interface:createFontString(Window, L.IMPORT_EXPLANATION);
+    Intro:SetPoint("TOPLEFT", Window, "TOPLEFT", 20, -30);
+    Intro:SetPoint("TOPRIGHT", Window, "TOPRIGHT", -20, 0);
+    Intro:SetJustifyH("MIDDLE")
 
     ---@type Button
     local ImportSoftRes = Interface:dynamicPanelButton(Window, L.SOFTRES);
-    ImportSoftRes:SetPoint("TOPLEFT", Window, "TOPLEFT", 20, -50);
+    ImportSoftRes:SetPoint("TOPLEFT", Window, "TOPLEFT", 20, -60);
     ImportSoftRes:SetPoint("TOPRIGHT", Window, "TOPRIGHT", -20, 0);
     ImportSoftRes:SetScript("OnClick", function ()
         GL.Commands:call("softreserves");

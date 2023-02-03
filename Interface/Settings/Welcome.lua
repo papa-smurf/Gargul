@@ -77,14 +77,14 @@ function Welcome:draw(Parent)
     OpenTMB:SetWidth(129);
     Parent:AddChild(OpenTMB);
 
-    local OpenTMB = GL.AceGUI:Create("Button");
-    OpenTMB:SetText("GDKP");
-    OpenTMB:SetCallback("OnClick", function()
+    local OpenGDKP = GL.AceGUI:Create("Button");
+    OpenGDKP:SetText("GDKP");
+    OpenGDKP:SetCallback("OnClick", function()
         GL.Settings:close();
         GL.Commands:call("gdkp");
     end);
-    OpenTMB:SetWidth(129);
-    Parent:AddChild(OpenTMB);
+    OpenGDKP:SetWidth(129);
+    Parent:AddChild(OpenGDKP);
 
     local OpenPackMule = AceGUI:Create("Button");
     OpenPackMule:SetText("Autolooting");
@@ -93,6 +93,15 @@ function Welcome:draw(Parent)
     end);
     OpenPackMule:SetWidth(129);
     Parent:AddChild(OpenPackMule);
+
+    local OpenBonusFeatures = AceGUI:Create("Button");
+    OpenBonusFeatures:SetText("Bonus Features");
+    OpenBonusFeatures:SetCallback("OnClick", function()
+        GL.Settings:close();
+        GL.Interface.BonusFeatures:open();
+    end);
+    OpenBonusFeatures:SetFullWidth(true);
+    Parent:AddChild(OpenBonusFeatures);
 
     --[[ CONTRIBUTORS ]]
 
