@@ -78,6 +78,10 @@ function Auctioneer:_init()
 
     -- Close the auctioneer window on auction start
     Events:register("AuctioneerAuctionStarted", "GL.GDKP_AUCTION_STARTED", function ()
+        if (not Auction:startedByMe()) then
+            return;
+        end
+
         AuctioneerUI = AuctioneerUI or GL.Interface.GDKP.Auctioneer;
         local Window = AuctioneerUI:getWindow();
 

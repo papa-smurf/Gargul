@@ -70,6 +70,7 @@ L.NEXT = "Next";
 L.NO_BIDS_ACTION = "When no one bids do:";
 L.NOTHING = "Nothing";
 L.OPEN = "Open";
+L.OPEN_AUCTIONEER = "Open Auctioneer";
 L.PLUS10 = "+10";
 L.PLUSONES = "Plus Ones";
 L.POT = "Pot";

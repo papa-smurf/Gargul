@@ -699,7 +699,64 @@ function TMB:import(data, triedToDecompress, source)
         self:broadcast();
     end
 
+    -- Report players without any TMB entries
+    local PlayersWithoutTMBDetails = self:playersWithoutTMBDetails();
+    if (not GL:empty(PlayersWithoutTMBDetails)) then
+        local MissingPlayers = {};
+        for _, name in pairs(PlayersWithoutTMBDetails) do
+            tinsert(MissingPlayers, {GL:capitalize(name), GL:classHexColor(GL.Player:classByName(name))});
+        end
+
+        GL:warning(string.format("The following players have no %s entries:", self:source()));
+        GL:multiColoredMessage(MissingPlayers, ", ");
+    end
+
     return true;
+end
+
+--- Where did our current TMB data come from?
+---@return string
+function TMB:source()
+    if (GL.TMB:wasImportedFromDFT()) then
+        return "DFT";
+    end
+
+    if (GL.TMB:wasImportedFromCPR()) then
+        return "CPR";
+    end
+
+    if (GL.TMB:wasImportedFromCSV()) then
+        return "Item";
+    end
+
+    return "TMB";
+end
+
+--- Return the names of all players that don't have any TMB details
+---
+---@return table
+function TMB:playersWithoutTMBDetails()
+    GL:debug("TMB:playersWithoutTMBDetails");
+
+    local PlayersWithDetails = {};
+    for _, Item in pairs(GL.DB:get("TMB.Items", {})) do
+        for _, Entry in pairs(Item or {}) do
+            if (Entry.character) then
+                PlayersWithDetails[Entry.character] = true;
+            end
+        end
+    end
+
+    local PlayersWithoutTMBDetails = {};
+    for _, name in pairs(GL.User:groupMemberNames() or {}) do
+        name = string.lower(GL:stripRealm(name));
+
+        if (not PlayersWithDetails[name]) then
+            tinsert(PlayersWithoutTMBDetails, name);
+        end
+    end
+
+    return PlayersWithoutTMBDetails;
 end
 
 --- Attempt to transform the DFT format to a TMB format
