@@ -661,7 +661,6 @@ function GL:popupMessage(text)
         });
 
         Window:SetFrameStrata("FULLSCREEN_DIALOG");
-        Window.MoveButton:SetPoint("TOPRIGHT", Window, "TOPRIGHT", -20, 0);
         Window.Text = GL.Interface:createFontString(Window);
         Window.Text:SetFont(GL.FONT, 14, "OUTLINE");
         Window.Text:SetJustifyH("MIDDLE");

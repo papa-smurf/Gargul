@@ -65,7 +65,7 @@ function Interface:dynamicPanelButton(Parent, text)
     local Text = Button:GetFontString()
     Text:SetFont(GL.FONT, 11, "");
     Text:SetText(text or "");
-    Text:ClearAllPoints()
+    Text:ClearAllPoints();
     Text:SetPoint("TOPLEFT", 15, -1)
     Text:SetPoint("BOTTOMRIGHT", -15, 1)
     Text:SetJustifyV("MIDDLE")
@@ -379,6 +379,10 @@ function Interface:createWindow(name, Details)
         return GL:error("Gargul windows require a unique and descriptive name!");
     end
 
+    if (Details.closeWithEscape == nil) then
+        Details.closeWithEscape = true;
+    end
+
     ---@type Frame
     local Window = CreateFrame("Frame", name, UIParent, "BackdropTemplate");
     Window:SetSize(Details.width or 200, Details.height or 200);
@@ -438,7 +442,28 @@ function Interface:createWindow(name, Details)
         Watermark:SetPoint("BOTTOMLEFT", Window, "BOTTOMLEFT", 14, 13);
     end
 
+    --[[ POSITION ACTION BUTTONS ]]
+    if (Window.MoveButton and (
+        Details.hideMinimizeButton
+        or Details.hideCloseButton
+    )) then
+        if (Details.hideCloseButton and Details.hideMinimizeButton) then
+            Window.MoveButton:SetPoint("TOPRIGHT", Window, "TOPRIGHT", 0, 0);
+        else
+            Window.MoveButton:SetPoint("TOPRIGHT", Window, "TOPRIGHT", -18, 0);
+        end
+    end
+
+    if (Window.Minimize and Details.hideCloseButton) then
+        Window.Minimize:SetPoint("TOPRIGHT", Window, "TOPRIGHT", 8, 4);
+    end
+
     _G[name] = Window;
+
+    if (Details.closeWithEscape) then
+        tinsert(UISpecialFrames, name);
+    end
+
     return Window;
 end
 
@@ -465,8 +490,6 @@ function Interface:openScaler(Parent)
             width = 240,
             height = 90,
         });
-
-        Scaler.MoveButton:SetPoint("TOPRIGHT", Scaler, "TOPRIGHT", -20, 0);
 
         local SliderBackdrop  = {
             bgFile = "Interface\\Buttons\\UI-SliderBar-Background",

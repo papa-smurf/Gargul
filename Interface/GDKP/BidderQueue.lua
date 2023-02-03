@@ -77,6 +77,7 @@ function BidderQueue:build()
     local ItemHolder, ScrollFrame;
     ---@type Frame
     local Window = Interface:createWindow(self.windowName, {
+        closeWithEscape = false,
         width = DEFAULT_WINDOW_WIDTH,
         height = DEFAULT_WINDOW_HEIGHT,
         minWidth = 150,
