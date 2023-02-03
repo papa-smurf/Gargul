@@ -29,7 +29,7 @@ local GDKPAuction = GL.GDKP.Auction;
 
 --[[ CONSTANTS ]]
 local SESSION_ROWS = 22;
-local HEIGHT_PER_SESSION_ROW = 16;
+local HEIGHT_PER_SESSION_ROW = 18;
 
 GL:tableSet(GL, "Interface.GDKP.Overview", {
     _initialized = false,
