@@ -1,104 +1,118 @@
+local L = Gargul_L;
+
 ---@type GL
 local _, GL = ...;
 
 GL.AceGUI = GL.AceGUI or LibStub("AceGUI-3.0");
 
-local AceGUI = GL.AceGUI;
-local Settings = GL.Settings; ---@type Settings
+---@type Interface
+local Interface = GL.Interface;
 
 ---@class ImporterInterface
 GL.Interface.Importer = {
     isVisible = false,
+    windowName = "Gargul.Interface.Importer.Window",
 };
-local Importer = GL.Interface.Importer; ---@type ImporterInterface
 
-function Importer:draw()
-    GL:debug("Importer:draw");
+---@type ImporterInterface
+local Importer = GL.Interface.Importer;
 
-    -- The overview is already visible
-    if (self.isVisible) then
-        return;
-    end
+--[[ CONSTANTS ]]
+local FONT;
+
+---@return table
+function Importer:open()
+    GL:debug("Importer:open");
 
     self.isVisible = true;
+    FONT = GL.FONT;
 
-    -- Create a container/parent frame
-    local Window = AceGUI:Create("Frame");
-    Window:SetTitle("Gargul v" .. GL.version);
-    Window:SetLayout("Flow");
-    Window:SetWidth(270);
-    Window:SetHeight(150);
-    Window:EnableResize(false);
-    Window.statustext:GetParent():Hide(); -- Hide the statustext bar
-    Window:SetCallback("OnClose", function()
-       self:close();
-    end);
-    GL.Interface:set(self, "Window", Window);
+    local Window = _G[self.windowName] or self:build();
 
-    Window:SetPoint(GL.Interface:getPosition("Importer"));
-
-    -- Make sure the window can be closed by pressing the escape button
-    _G["GARGUL_IMPORT_WINDOW"] = Window.frame;
-    tinsert(UISpecialFrames, "GARGUL_IMPORT_WINDOW");
-
-    --[[
-        DESCRIPTION LABEL
-    ]]
-    local DescriptionLabel = AceGUI:Create("InteractiveLabel");
-    DescriptionLabel:SetFullWidth(true);
-    DescriptionLabel:SetText("What kind of data would you like to import?\n\n");
-    Window:AddChild(DescriptionLabel);
-
-    --[[
-        SOFTRES BUTTON
-    ]]
-    local SoftResButton = AceGUI:Create("Button");
-    SoftResButton:SetText("Import SoftRes data");
-    SoftResButton:SetFullWidth(true);
-    SoftResButton:SetCallback("OnClick", function()
-        if (not GL.SoftRes:available()) then
-            self:close();
-            return GL.SoftRes:draw();
-        end
-
-        GL.Interface.Dialogs.PopupDialog:open("CLEAR_SOFTRES_CONFIRMATION");
-    end);
-    Window:AddChild(SoftResButton);
-
-    --[[
-        TMB BUTTON
-    ]]
-    local TMBButton = AceGUI:Create("Button");
-    TMBButton:SetText("Import TMB/DFT data");
-    TMBButton:SetFullWidth(true);
-    TMBButton:SetCallback("OnClick", function()
-        self:close();
-        GL.TMB:draw();
-    end);
-    Window:AddChild(TMBButton);
+    Window:Show();
+    return Window;
 end
 
+---@return void
 function Importer:close()
     GL:debug("Importer:close");
 
-    local Window = GL.Interface:get(self, "Window");
+    self.isVisible = false;
+    return _G[self.windowName] and _G[self.windowName]:Hide();
+end
 
-    if (not self.isVisible
-        or not Window
-    ) then
-        return;
+--- Build the auctioneer UI. We only do this once per runtime
+---
+---@return table
+function Importer:build()
+    GL:debug("Importer:build");
+
+    if (_G[self.windowName]) then
+        return _G[self.windowName];
     end
 
-    -- Store the frame's last position for future play sessions
-    local point, _, relativePoint, offsetX, offsetY = Window:GetPoint();
-    Settings:set("UI.Importer.Position.point", point);
-    Settings:set("UI.Importer.Position.relativePoint", relativePoint);
-    Settings:set("UI.Importer.Position.offsetX", offsetX);
-    Settings:set("UI.Importer.Position.offsetY", offsetY);
+    --[[ THE MAIN AUCTIONEER WINDOW ]]
+    ---@type Frame
+    local Window = Interface:createWindow(self.windowName, {
+        width = 300,
+        height = 200,
+        minWidth = 220,
+        minHeight = 180,
+        maxWidth = 500,
+        maxHeight = 200,
+        hideMinimizeButton = true,
+    });
 
-    -- Clear the frame and its widgets
-    GL.Interface:release(Window);
-    self.isVisible = false;
+    --[[ ADD THE SETTINGS MENU IN THE TOP LEFT OF THE WINDOW ]]
+    Interface:addWindowOptions(Window, {
+        {text = L.WINDOW, isTitle = true, notCheckable = true },
+        {text = L.CHANGE_SCALE, notCheckable = true, func = function ()
+            Interface:openScaler(Window);
+            CloseMenus();
+        end},
+    });
+
+    --[[ MINIMUM BID ]]
+    ---@type FontString
+    local MinLabel = Interface:createFontString(Window, L.IMPORT_EXPLANATION);
+    MinLabel:SetPoint("TOPLEFT", Window, "TOPLEFT", 20, -30);
+    MinLabel:SetPoint("TOPRIGHT", Window, "TOPRIGHT", -20, 0);
+    MinLabel:SetJustifyH("MIDDLE")
+
+    ---@type Button
+    local ImportSoftRes = Interface:dynamicPanelButton(Window, L.SOFTRES);
+    ImportSoftRes:SetPoint("TOPLEFT", Window, "TOPLEFT", 20, -50);
+    ImportSoftRes:SetPoint("TOPRIGHT", Window, "TOPRIGHT", -20, 0);
+    ImportSoftRes:SetScript("OnClick", function ()
+        GL.Commands:call("softreserves");
+    end);
+
+    ---@type Button
+    local ImportTMB = Interface:dynamicPanelButton(Window, L.TMBETC);
+    ImportTMB:SetPoint("TOPLEFT", ImportSoftRes, "TOPLEFT", 0, -26);
+    ImportTMB:SetPoint("TOPRIGHT", ImportSoftRes, "TOPRIGHT", 0, 0);
+    ImportTMB:SetScript("OnClick", function ()
+        GL.Commands:call("tmb");
+    end);
+
+    ---@type Button
+    local ImportBoostedRolls = Interface:dynamicPanelButton(Window, L.BOOSTED_ROLLS);
+    ImportBoostedRolls:SetPoint("TOPLEFT", ImportTMB, "TOPLEFT", 0, -26);
+    ImportBoostedRolls:SetPoint("TOPRIGHT", ImportTMB, "TOPRIGHT", 0, 0);
+    ImportBoostedRolls:SetScript("OnClick", function ()
+        GL.Commands:call("boostedrolls");
+    end);
+
+    ---@type Button
+    local ImportPlusOnes = Interface:dynamicPanelButton(Window, L.PLUSONES);
+    ImportPlusOnes:SetPoint("TOPLEFT", ImportBoostedRolls, "TOPLEFT", 0, -26);
+    ImportPlusOnes:SetPoint("TOPRIGHT", ImportBoostedRolls, "TOPRIGHT", 0, 0);
+    ImportPlusOnes:SetScript("OnClick", function ()
+        GL.Commands:call("plusones");
+    end);
+
+    _G[self.windowName] = Window;
+    return Window;
 end
 
 GL:debug("Importer.lua");

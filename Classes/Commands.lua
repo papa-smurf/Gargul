@@ -175,7 +175,7 @@ GL.Commands = GL.Commands or {
         lootpriority = function() GL.LootPriority:drawImporter(); end,
 
         -- Import data from our website into the addon
-        import = function() GL.Interface.Importer:draw(); end,
+        import = function() GL.Interface.Importer:open(); end,
 
         -- Export data from the addon to use on our website
         export = function() GL.Exporter:draw(); end,
