@@ -493,10 +493,40 @@ function GDKP:draw(Parent)
     end);
     Parent:AddChild(ResetGDKPSessionData);
 
-    Overview:drawHeader("Mutators", Parent);
+    local MutatorHeader = Overview:drawHeader("    Mutators", Parent);
+
+    local HelpIcon = GL.AceGUI:Create("Icon");
+    HelpIcon:SetWidth(12);
+    HelpIcon:SetHeight(12);
+    HelpIcon:SetImageSize(12, 12);
+    HelpIcon:SetImage("interface/friendsframe/informationicon");
+    HelpIcon.frame:SetParent(MutatorHeader.Label.frame);
+    HelpIcon.frame:SetPoint("BOTTOMLEFT", MutatorHeader.Label.frame, "BOTTOMLEFT", -2, -5);
+    HelpIcon.frame:Show();
+
+    HelpIcon:SetCallback("OnEnter", function()
+        GameTooltip:SetOwner(HelpIcon.frame, "ANCHOR_RIGHT");
+        GameTooltip:AddLine(" ");
+        GameTooltip:AddLine("You can automatically apply this mutator to raiders using\none or multiple (comma-separated) keywords in the 'Apply to' fields below:");
+        GameTooltip:AddLine(" ");
+
+        for _, placeholder in pairs (GL.GDKP.Pot.ValidAutoApplyPlaceholders) do
+            GameTooltip:AddLine(string.format("|c00967FD2%s|r", placeholder));
+        end
+
+        GameTooltip:AddLine(" ");
+        GameTooltip:AddLine("Example:");
+        GameTooltip:AddLine("|c00967FD2SELF,RL,HEALER|r");
+        GameTooltip:AddLine(" ");
+        GameTooltip:Show();
+    end);
+
+    HelpIcon:SetCallback("OnLeave", function()
+        GameTooltip:Hide();
+    end);
 
     local MutatorExplanation = GL.AceGUI:Create("Label");
-    MutatorExplanation:SetText("The mutators shown below will automatically be added to all new GDKP sessions");
+    MutatorExplanation:SetText("The mutators shown below will automatically be added to all new GDKP sessions\n\n");
     MutatorExplanation:SetFullWidth(true);
     Parent:AddChild(MutatorExplanation);
 

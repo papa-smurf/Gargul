@@ -452,6 +452,9 @@ function Overview:drawHeader(text, Parent)
     HeaderText:SetHeight(20);
     HeaderText:SetText(text);
     Header:AddChild(HeaderText);
+    Header.Label = HeaderText;
+
+    return Header;
 end
 
 --- This is a helper method that draws a spacer
