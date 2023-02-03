@@ -309,20 +309,29 @@ function AuctioneerUI:build()
     });
 
     --[[ PREPARE THE MINIMIZED VERSION OF THE WINDOW ]]
+    Window.Minimized:SetHeight(70);
+
     ---@type Button
     local StopButton;
 
     ---@type FontString
-    local MinimizedHeader = Interface:createFontString(Window.Minimized, L.AUCTION);
-    MinimizedHeader:SetFont(GL.FONT, 12, "OUTLINE");
-    MinimizedHeader:SetPoint("CENTER", Window.Minimized, "CENTER");
-    MinimizedHeader:SetPoint("LEFT", Window.Minimized, "LEFT", 14, 0);
-    Window.MinimizedHeader = MinimizedHeader;
+    local CurrentPotLabel = Interface:createFontString(Window.Minimized, {
+        text = function (self)
+            self:SetText(string.format("%s: |cFF%s%sg|r",
+                L.POT,
+                Constants.ClassHexColors.rogue,
+                Pot:total()
+            ));
+        end,
+        updateOn = { "GL.GDKP_AUCTION_CHANGED", "GL.GDKP_SESSION_CHANGED" },
+    });
+    CurrentPotLabel:SetFont(GL.FONT, 12, "OUTLINE");
+    CurrentPotLabel:SetPoint("TOPLEFT", Window.Minimized, "TOPLEFT", 24, -18);
 
     ---@type Button
     local MinimizedStopButton = Interface:dynamicPanelButton(Window.Minimized, L.STOP);
-    MinimizedStopButton:SetPoint("CENTER", Window.Minimized, "CENTER");
-    MinimizedStopButton:SetPoint("LEFT", MinimizedHeader, "RIGHT", 2, 0);
+    MinimizedStopButton:SetPoint("TOPLEFT", Window.Minimized, "TOPLEFT", 20, -34);
+    MinimizedStopButton:SetPoint("TOPRIGHT", Window.Minimized, "TOPRIGHT", -20, 0);
     MinimizedStopButton:SetScript("OnClick", function ()
         StopButton:Click();
     end);
@@ -330,9 +339,9 @@ function AuctioneerUI:build()
     Window.Minimized.StopButton = MinimizedStopButton;
 
     ---@type Button
-    local MinimizedOpenButton = Interface:dynamicPanelButton(Window.Minimized, L.OPEN);
-    MinimizedOpenButton:SetPoint("CENTER", Window.Minimized, "CENTER");
-    MinimizedOpenButton:SetPoint("LEFT", MinimizedHeader, "RIGHT", 2, 0);
+    local MinimizedOpenButton = Interface:dynamicPanelButton(Window.Minimized, L.OPEN_AUCTIONEER);
+    MinimizedOpenButton:SetPoint("TOPLEFT", Window.Minimized, "TOPLEFT", 20, -34);
+    MinimizedOpenButton:SetPoint("TOPRIGHT", Window.Minimized, "TOPRIGHT", -20, 0);
     MinimizedOpenButton:SetScript("OnClick", function ()
         self:open();
     end);
@@ -672,7 +681,7 @@ function AuctioneerUI:build()
     Window:SetScript("OnHide", function ()
         self.isVisible = false;
 
-        if (Auction.inProgress) then
+        if (Auction.inProgress and Auction:startedByMe()) then
             self:openAuctioneerShortcut();
         end
     end);

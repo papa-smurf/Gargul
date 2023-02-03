@@ -222,7 +222,7 @@ function Interface:addOptionsButton(Element)
 
     ---@type Button
     local Options = CreateFrame("Button", nil, Element);
-    Options:SetPoint("TOPLEFT", Element, "TOPLEFT", 0, -2);
+    Options:SetPoint("TOPLEFT", Element, "TOPLEFT", 2, -2);
     Options:SetSize(16, 16);
     self:addTooltip(Options, L.SETTINGS);
     Element.OptionsButton = Options;
@@ -279,6 +279,14 @@ function Interface:addMinimizeButton(Element, title)
     MinimizedWindow:SetBackdrop(_G.BACKDROP_DARK_DIALOG_32_32);
     MinimizedWindow:Hide();
 
+    --[[ THE SETTINGS MENU IN THE TOP LEFT OF THE WINDOW ]]
+    Interface:addWindowOptions(MinimizedWindow, {
+        { text = L.CHANGE_SCALE, notCheckable = true, func = function ()
+            Interface:openScaler(MinimizedWindow);
+            CloseMenus();
+        end }
+    }, 100);
+
     if (title) then
         ---@type FontString
         local Title = self:createFontString(MinimizedWindow, title);
@@ -319,6 +327,10 @@ function Interface:addMinimizeButton(Element, title)
     Element.Minimize = Minimize;
     Element.Minimized = MinimizedWindow;
 
+    --[[ POSITION ACTION BUTTONS ]]
+    MinimizedWindow.MoveButton:SetPoint("TOPRIGHT", MinimizedWindow, "TOPRIGHT", -18, 0);
+    MinimizedWindow.Maximize:SetPoint("TOPRIGHT", MinimizedWindow, "TOPRIGHT", 8, 4);
+
     _G[minimizedName] = MinimizedWindow;
 end
 
@@ -332,7 +344,7 @@ function Interface:addMaximizeButton(Element, Opens)
     local Maximize = CreateFrame("Button", Element:GetName() .. ".Maximize", Element, "MaximizeMinimizeButtonFrameTemplate");
     Maximize:SetPoint("TOPRIGHT", Element, "TOPRIGHT", -13, 4);
     Maximize:SetSize(29, 29);
-    Interface:addTooltip(Maximize.MaximizeButton, L.MAXIMIZE, "BOTTOM");
+    Interface:addTooltip(Maximize.MaximizeButton, L.MAXIMIZE);
 
     Maximize.MinimizeButton:Hide();
     Maximize.MaximizeButton:Show();
