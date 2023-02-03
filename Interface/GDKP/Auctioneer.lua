@@ -138,6 +138,15 @@ function AuctioneerUI:build()
 
     --[[ ADD THE SETTINGS MENU IN THE TOP LEFT OF THE WINDOW ]]
     Interface:addWindowOptions(Window, {
+        { text = L.TUTORIAL, notCheckable = true, func = function ()
+            GL:popupMessage(string.format(
+                L.TUTORIAL_AUCTIONEER,
+                GL.Settings:get("ShortcutKeys.rollOffOrAuction"),
+                GL.Settings:get("ShortcutKeys.award"),
+                L.AUCTION
+            ));
+            CloseMenus();
+        end },
         {
             text = function ()
                 return string.format("%s (|cFF%s%sg|r)",
@@ -152,14 +161,6 @@ function AuctioneerUI:build()
                 CloseMenus();
             end
         },
-        "divider",
-        {text = L.WINDOW, isTitle = true, notCheckable = true },
-        {text = L.CHANGE_SCALE, notCheckable = true, func = function ()
-            Interface:openScaler(Window);
-            CloseMenus();
-        end},
-        {text = L.MINIMIZE_ON_START, setting = "GDKP.minimizeAuctioneerOnStart"},
-        {text = L.MINIMIZE_ON_AWARD, setting = "GDKP.minimizeAuctioneerOnAward"},
         "divider",
         {text = L.AUCTIONS, isTitle = true, notCheckable = true },
         {text = L.AUTO_AWARD, setting = "GDKP.autoAwardViaAuctioneer"},
@@ -293,15 +294,14 @@ function AuctioneerUI:build()
             Entry.checked = checked;
         end},
         "divider",
-        { text = L.TUTORIAL, notCheckable = true, func = function ()
-            GL:popupMessage(string.format(
-                L.TUTORIAL_AUCTIONEER,
-                GL.Settings:get("ShortcutKeys.rollOffOrAuction"),
-                GL.Settings:get("ShortcutKeys.award"),
-                L.AUCTION
-            ));
+        {text = L.WINDOW, isTitle = true, notCheckable = true },
+        {text = L.CHANGE_SCALE, notCheckable = true, func = function ()
+            Interface:openScaler(Window);
             CloseMenus();
-        end },
+        end},
+        {text = L.MINIMIZE_ON_START, setting = "GDKP.minimizeAuctioneerOnStart"},
+        {text = L.MINIMIZE_ON_AWARD, setting = "GDKP.minimizeAuctioneerOnAward"},
+        "divider",
         {text = L.ALL_SETTINGS, notCheckable = true, func = function ()
             Settings:draw("GDKP");
             CloseMenus();
