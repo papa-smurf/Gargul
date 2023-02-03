@@ -90,6 +90,7 @@ function Overview:_init()
     end);
 end
 
+---@return void
 function Overview:sessionChanged()
     GL:debug("Overview:sessionChanged");
 

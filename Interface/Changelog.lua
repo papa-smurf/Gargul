@@ -17,6 +17,7 @@ GL.Interface.Changelog = {
             Changes = {
                 "|c00BE3333Important:|r This update changes the raid leader's experience in GDKP sessions and queues. Please familiarize yourself with it before setting foot in a raid. Get started using |c00a79eff/gl gdkp|r or |c00a79eff/gdkp|r",
                 "Use TMB and would like to run with group loot? You can now enable the 'Award based on drops' setting in |c00a79eff/gl|r > |c00a79effTMB and DFT|r to automatically track items won via group loot for exporting to TMB/DFT",
+                "There's a 'Bonus Features' section in |c00a79eff/gl|r now, go check it out!",
             },
         },
         {

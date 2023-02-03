@@ -983,9 +983,35 @@ function AuctioneerUI:buildQueue(Window)
                             return;
                         end
 
-                        local RowToSwapWith = self.ItemRows[newIndex];
-                        self.ItemRows[ItemRow._queueIndex] = RowToSwapWith;
-                        self.ItemRows[newIndex] = ItemRow;
+                        -- Move the row
+                        do
+                            local NewOrder = {};
+                            local RowToMove = self.ItemRows[ItemRow._queueIndex];
+                            self.ItemRows[ItemRow._queueIndex] = nil;
+
+                            if (newIndex > ItemRow._queueIndex) then
+                                newIndex = newIndex + 1;
+                            end
+
+                            local placed = false;
+                            for index, Row in pairs (self.ItemRows or {}) do
+                                if (Row and index ~= ItemRow._queueIndex) then
+                                    if (index == newIndex) then
+                                        tinsert(NewOrder, RowToMove);
+                                        placed = true;
+                                    end
+
+                                    tinsert(NewOrder, Row);
+                                end
+                            end
+
+                            -- This can happen when moving an item all the way down the bottom
+                            if (not placed) then
+                                tinsert(NewOrder, RowToMove);
+                            end
+
+                            self.ItemRows = NewOrder;
+                        end
                     end
 
                     self:reorderItems();
