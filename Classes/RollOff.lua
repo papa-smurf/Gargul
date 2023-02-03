@@ -1,3 +1,5 @@
+local L = Gargul_L;
+
 ---@type GL
 local _, GL = ...;
 
@@ -114,6 +116,13 @@ function RollOff:announceStart(itemLink, time, note)
 
     GL.Settings:set("UI.RollOff.timer", time);
 
+    return true;
+end
+
+---@param itemLink string
+---@param time number
+---@param note string|nil
+function RollOff:postStartMessage(itemLink, time, note)
     -- The user doesn't want to announce anything in chat
     if (not GL.Settings:get("MasterLooting.announceRollStart")) then
         return true;
@@ -246,8 +255,6 @@ function RollOff:announceStart(itemLink, time, note)
             "GROUP"
         );
     end
-
-    return true;
 end
 
 --- Anounce to everyone in the raid that a roll off has ended
@@ -343,6 +350,8 @@ function RollOff:start(CommMessage)
         if (GL.Settings:get("Rolling.showRollOffWindow")
             or self:startedByMe()
         ) then
+            self:postStartMessage(Details.link, time, content.note);
+
             GL.RollerUI:show(time, Details.link, Details.icon, content.note, SupportedRolls);
 
             if (CommMessage.Sender.isSelf) then

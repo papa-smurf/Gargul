@@ -1015,29 +1015,6 @@ function Auction:announceStart(itemLink, minimumBid, minimumIncrement, duration,
         "GROUP"
     ):send();
 
-    -- The user doesn't want to announce anything in chat
-    if (not Settings:get("GDKP.announceAuctionStart")) then
-        return true;
-    end
-
-    local announceMessage = string.format("Bidding starts on %s. Minimum is %sg, increment is %sg. Use raid chat!",
-        itemLink,
-        minimumBid,
-        minimumIncrement
-    );
-
-    if (GL.User.isInRaid) then
-        GL:sendChatMessage(
-            announceMessage,
-            "RAID_WARNING"
-        );
-    else
-        GL:sendChatMessage(
-            announceMessage,
-            "PARTY"
-        );
-    end
-
     return true;
 end
 
@@ -1280,8 +1257,28 @@ function Auction:start(CommMessage)
             GL.Interface.GDKP.Bidder:show(duration, Details.link, Details.icon, content.note, SupportedBids);
         end
 
-        -- Make sure to announce the auction stop when time is up
+        -- Announce auction start and stop
         if (self:startedByMe()) then
+            if (Settings:get("GDKP.announceAuctionStart")) then
+                local announceMessage = string.format(L.BIDDING_STARTED,
+                    Details.link,
+                    minimumBid,
+                    minimumIncrement
+                );
+
+                if (GL.User.isInRaid) then
+                    GL:sendChatMessage(
+                        announceMessage,
+                        "RAID_WARNING"
+                    );
+                else
+                    GL:sendChatMessage(
+                        announceMessage,
+                        "PARTY"
+                    );
+                end
+            end
+
             self.timerId = GL.Ace:ScheduleTimer(function ()
                 self:stop();
                 self:announceStop();

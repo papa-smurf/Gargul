@@ -25,6 +25,7 @@ L.AWARD = "Award";
 L.AWARD_ITEM_CONFIRMATION = "Award %s to |cff%s%s|r for %s|c00FFF569g|r?";
 L.BID = "Bid";
 L.BID_DENIED_WHISPER = "Bid denied, the minimum bid is %sg";
+L.BIDDING_STARTED = "Bidding starts on %s. Minimum is %sg, increment is %sg. Use raid chat!";
 L.CLEAR = "Clear";
 L.CLOSE = "Close";
 L.CLOSE_ON_AWARD = "Close on award";
