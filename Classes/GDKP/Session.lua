@@ -1,4 +1,4 @@
-L = Gargul_L;
+local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -30,7 +30,7 @@ GDKP.Session = {
     broadcastInProgress = false,
     includeTradeInSession = true,
     inProgress = false,
-    lastOutBidNotificationShownAt = nil,
+    lastOutBidNotificationShownAt = 0,
     requestingData = false,
     timerId = 0, -- ID of the timer event
 
@@ -81,18 +81,20 @@ function Session:_init()
 
     if (self:activeSessionID()) then
         GL.Ace:ScheduleTimer(function ()
-            GL.Interface.Alerts:fire("GargulNotification", {
-                message = string.format("|c00BE3333%s!|r", L.GDKP_ACTIVATED),
-            });
-        end, 5);
+            if (not self:userIsAllowedToBroadcast()) then
+                return;
+            end
 
-        if (self:userIsAllowedToBroadcast()) then
             local Window = GL.Interface.GDKP.Auctioneer:open();
 
             if (Window) then
                 Window.Minimize.MinimizeButton:Click();
             end
-        end
+
+            GL.Interface.Alerts:fire("GargulNotification", {
+                message = string.format("|c00BE3333%s!|r", L.GDKP_ACTIVATED),
+            });
+        end, 5);
     end
 end
 

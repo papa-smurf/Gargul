@@ -264,7 +264,7 @@ GL.Data.Constants = {
         GREED = 2,
     },
 
-    ItemsThatSouldntBeAnnounced = {
+    ItemsThatShouldntBeAnnounced = {
         20725, -- Nexus Crystal
         22450, -- Void Crystal
         29434, -- Badge of Justice

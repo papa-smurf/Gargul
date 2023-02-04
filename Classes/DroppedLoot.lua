@@ -332,7 +332,7 @@ function DroppedLoot:announce(Modifiers)
 
             if ((
                     quality < GL.Settings:get("DroppedLoot.minimumQualityOfAnnouncedLoot", 4) -- Quality is lower than our set minimum
-                    or GL:inTable(Constants.ItemsThatSouldntBeAnnounced, itemID) -- We don't want to announce this item
+                    or GL:inTable(Constants.ItemsThatShouldntBeAnnounced, itemID) -- We don't want to announce this item
                 )
                 and GL:empty(SoftReserves) -- No one (hard)reserved it
                 and GL:empty(TMBInfo) -- No one has it on his wishlist and it's not a prio item

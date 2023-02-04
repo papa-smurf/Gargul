@@ -103,7 +103,7 @@ function BonusFeatures:build()
     BoostedRolls:SetPoint("TOPLEFT", BoostedRollsLabel, "BOTTOMLEFT", 0, -10);
     BoostedRolls:SetPoint("TOPRIGHT", BoostedRollsLabel, "BOTTOMRIGHT", 0, 0);
     BoostedRolls:SetScript("OnClick", function ()
-        GL.Commands:call("boostedrolls");
+        GL.Settings:draw("BoostedRolls");
     end);
 
     --[[ PLUS ONES ]]

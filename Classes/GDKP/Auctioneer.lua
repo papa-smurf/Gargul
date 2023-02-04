@@ -38,6 +38,10 @@ local DB = GL.DB;
 ---@type GDKP
 local GDKP = GL.GDKP;
 
+---@type GDKPSession
+local GDKPSession = GDKP.Session;
+
+
 ---@type GDKPAuction
 local Auction = GDKP.Auction;
 
@@ -45,7 +49,7 @@ local Auction = GDKP.Auction;
 GL.GDKP.Auctioneer = {
     _initialized = false,
     queueModeActivated = false,
-    lastBidAnnouncementAt= nil,
+    lastBidAnnouncementAt = 0,
 
     PopTimer = nil,
     BidAnnouncementThrottler = nil,
@@ -111,10 +115,28 @@ function Auctioneer:_init()
         end
     end);
 
+    -- Hide the auctioneer window when the session is disabled or when we lose master loot
+    GL.Events:register({
+        "GL.GDKP_ACTIVE_SESSION_CHANGED",
+        "GL.GROUP_ROSTER_UPDATE_THROTTLED",
+    }, function ()
+        if (GDKPSession:activeSessionID() and self:allowedToBroadcast()) then
+            return;
+        end
+
+        AuctioneerUI = AuctioneerUI or GL.Interface.GDKP.Auctioneer;
+        local Window = AuctioneerUI:getWindow();
+
+        if (Window) then
+            Window.Minimized:Hide();
+            Window:Hide();
+        end
+    end);
+
     -- An item dropped, add it to the queue
     Events:register("AuctioneerItemReceived", "GL.ITEM_RECEIVED", function (_, Details)
         -- We don't want to automatically add loot
-        if (not Settings:get("GKDP.addDropsToQueue")) then
+        if (not Settings:get("GDKP.addDropsToQueue")) then
             return;
         end
 
@@ -124,16 +146,16 @@ function Auctioneer:_init()
         end
 
         -- This isn't an item we should put up for display
-        if (GL:inTable(Constants.ItemsThatSouldntBeAnnounced, Details.itemID)) then
+        if (GL:inTable(Constants.ItemsThatShouldntBeAnnounced, Details.itemID)) then
             return;
         end
 
         -- Check if we want this quality
-        if (Details.quality < Settings:get("GDKP.minimumDropValue")) then
+        if (Details.quality < Settings:get("GDKP.minimumDropQuality")) then
             return;
         end
 
-        self:addToQueue(Details.itemLink);
+        self:addToQueue(Details.itemLink, nil, false);
     end);
 
     -- Softres/TMB details changed, update the icon glows if needed

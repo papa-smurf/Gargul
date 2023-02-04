@@ -156,7 +156,7 @@ function Interface:createFontString(Parent, text, template, name, layer)
             end
         end
 
-        FontString:update();
+        FontString:update(FontString);
     else
         FontString:SetText(text or "");
     end

@@ -225,6 +225,7 @@ function Player:isMasterLooter(playerNameOrID)
     local lootMethod, _, masterLooterRaidID = GetLootMethod();
     -- Master looting is active and this player is the master looter
     if (lootMethod == 'master'
+        and tonumber(masterLooterRaidID)
         and GL:iEquals(GetRaidRosterInfo(masterLooterRaidID), playerName)
     ) then
         return true;

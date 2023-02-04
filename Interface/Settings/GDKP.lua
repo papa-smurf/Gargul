@@ -220,6 +220,42 @@ function GDKP:draw(Parent)
     end);
     Parent:AddChild(DelayInSecondsBetweenQueuedAuctions);
 
+    Overview:drawHeader("Queues", Parent);
+
+    Overview:drawCheckboxes({
+        {
+            label = "Automatically add drops to queue",
+            setting = "GDKP.addDropsToQueue",
+        },
+    }, Parent);
+
+    Spacer = GL.AceGUI:Create("SimpleGroup");
+    Spacer:SetLayout("FILL");
+    Spacer:SetFullWidth(true);
+    Spacer:SetHeight(20);
+    Parent:AddChild(Spacer);
+
+    local MinimumDropQualityLabel = GL.AceGUI:Create("Label");
+    MinimumDropQualityLabel:SetText("|c00FFF569Minimum quality of items to automatically add to queue|r");
+    MinimumDropQualityLabel:SetFullWidth(true);
+    Parent:AddChild(MinimumDropQualityLabel);
+
+    local QualityList = {};
+    local ItemQualityColors = GL.Data.Constants.ItemQualityColors;
+    for i = 0, #ItemQualityColors do
+        QualityList[i] = string.format("|c00%s%s|r", ItemQualityColors[i].hex, ItemQualityColors[i].description);
+    end
+
+    local MinimumDropQuality = GL.AceGUI:Create("Dropdown");
+    MinimumDropQuality:SetHeight(20);
+    MinimumDropQuality:SetWidth(250);
+    MinimumDropQuality:SetList(QualityList);
+    MinimumDropQuality:SetValue(GL.Settings:get("GDKP.minimumDropQuality"));
+    MinimumDropQuality:SetCallback("OnValueChanged", function()
+        GL.Settings:set("GDKP.minimumDropQuality", MinimumDropQuality:GetValue());
+    end);
+    Parent:AddChild(MinimumDropQuality);
+
     Overview:drawHeader("Communication", Parent);
 
     Overview:drawCheckboxes({

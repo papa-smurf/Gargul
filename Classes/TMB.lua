@@ -49,7 +49,7 @@ function TMB:_init()
         end
 
         -- This isn't an item we should award
-        if (GL:inTable(Constants.ItemsThatSouldntBeAnnounced, Details.itemID)) then
+        if (GL:inTable(Constants.ItemsThatShouldntBeAnnounced, Details.itemID)) then
             return;
         end
 

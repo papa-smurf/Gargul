@@ -1716,7 +1716,7 @@ function Auction:processBid(message, bidder)
 
     --- Make sure the person who bid is in our group
     local BidEntry = false;
-    for _, Member in pairs(GL.User:groupMembers(true)) do
+    for _, Member in pairs(GL.User:groupMembers()) do
         if (GL:iEquals(GL:stripRealm(bidder), GL:stripRealm(Member.name))) then
             local Player = GL.Player:fromName(Member.name);
             local playerName, realm = GL:stripRealm(bidder);
