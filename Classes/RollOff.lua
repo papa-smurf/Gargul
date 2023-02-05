@@ -350,13 +350,12 @@ function RollOff:start(CommMessage)
         if (GL.Settings:get("Rolling.showRollOffWindow")
             or self:startedByMe()
         ) then
-            self:postStartMessage(Details.link, time, content.note);
-
-            GL.RollerUI:show(time, Details.link, Details.icon, content.note, SupportedRolls);
-
-            if (CommMessage.Sender.isSelf) then
+            if (self:startedByMe()) then
+                self:postStartMessage(Details.link, time, content.note);
                 GL.MasterLooterUI:drawReopenMasterLooterUIButton();
             end
+
+            GL.RollerUI:show(time, Details.link, Details.icon, content.note, SupportedRolls);
         end
 
         -- Make sure the rolloff stops when time is up
