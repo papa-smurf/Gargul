@@ -411,6 +411,10 @@ function Interface:createWindow(name, Details)
     Window:EnableMouse(true);
     Window:SetToplevel(true);
 
+    if (type(Details.OnClose) == "function") then
+        Window:SetScript("OnHide", Details.OnClose);
+    end
+
     --[[ MINIMIZE BUTTON ]]
     if (not Details.hideMinimizeButton) then
         self:addMinimizeButton(Window);
@@ -433,6 +437,10 @@ function Interface:createWindow(name, Details)
         if (not Details.hideResizeButton) then
             Window:SetResizable(true);
             self:addResizer(Window);
+        else
+            -- This is to make sure we can update dimensions between patches
+            -- without the restoreDimensions method overriding them with old SavedVariables data
+            Window:SetSize(Details.width or 200, Details.height or 200);
         end
 
         if (not Details.hideMoveButton) then
@@ -512,6 +520,7 @@ function Interface:openScaler(Parent)
             width = 240,
             height = 90,
         });
+        Scaler:Hide();
 
         local SliderBackdrop  = {
             bgFile = "Interface\\Buttons\\UI-SliderBar-Background",
@@ -593,10 +602,13 @@ function Interface:openScaler(Parent)
     end
 
     local currentStep = valueToStep(Parent:GetScale());
-    Scaler:SetFrameLevel(Parent:GetFrameLevel() + 50);
     Scaler.Slider:SetValue(currentStep);
     Scaler.Slider.Input:SetText(currentStep);
-    Scaler:Show();
+
+    GL.Ace:ScheduleTimer(function()
+        Scaler:SetFrameLevel(Parent:GetFrameLevel() + 100);
+        Scaler:Show();
+    end, .1);
 
     _G[self.scalerName] = Scaler;
 
