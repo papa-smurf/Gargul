@@ -36,6 +36,32 @@ function SoftRes:_init()
         return false;
     end
 
+    --- Connect to LootReserve
+    GL.Ace:ScheduleTimer(function()
+        if (type(_G.LootReserve) ~= "table"
+            or type(_G.LootReserve.RegisterListener) ~= "function"
+        ) then
+            return;
+        end
+
+        local success, result = pcall(function()
+            return _G.LootReserve:RegisterListener(
+                "RESERVES",
+                GL.name,
+                function(Reserves)
+                    self:importLootReserveData(Reserves);
+                end
+            );
+        end);
+
+        if (success and result) then
+            _G.LootReserve:PromptListener("RESERVES", GL.name)
+        else
+            GL:error("Failed to connect to LootReserve, contact support (include message below)");
+            DevTools_Dump({ success, result });
+        end
+    end, 5);
+
     --- Register listener for whisper command.
     GL.Events:register("SoftResWhisperListener", "CHAT_MSG_WHISPER", function (event, message, sender)
         if (self:available()
@@ -284,10 +310,9 @@ end
 --- Materialize the SoftRes data to make it more accessible during runtime
 ---
 ---@return void
-function SoftRes:materializeData(reportStatus)
+function SoftRes:materializeData()
     GL:debug("SoftRes:materializeData");
 
-    reportStatus = GL:toboolean(reportStatus);
     local ReservedItemIDs = {}; -- All reserved item ids (both soft- and hard)
     local SoftReservedItemIDs = {}; -- Soft-reserved item ids
     local DetailsByPlayerName = {}; -- Item ids per player name
@@ -757,16 +782,6 @@ function SoftRes:import(data, openOverview)
         return false;
     end
 
-    -- Reset the materialized data
-    self.MaterializedData = {
-        ClassByPlayerName = {},
-        DetailsByPlayerName = {},
-        HardReserveDetailsByID = {},
-        PlayerNamesByItemID = {},
-        ReservedItemIDs = {},
-        SoftReservedItemIDs = {},
-    };
-
     -- Attempt to "fix" player names (e.g. people misspelling their names)
     if (Settings:get("SoftRes.fixPlayerNames", true)) then
         local RewiredNames = self:fixPlayerNames();
@@ -782,8 +797,18 @@ function SoftRes:import(data, openOverview)
         end
     end
 
+    -- Reset the materialized data
+    self.MaterializedData = {
+        ClassByPlayerName = {},
+        DetailsByPlayerName = {},
+        HardReserveDetailsByID = {},
+        PlayerNamesByItemID = {},
+        ReservedItemIDs = {},
+        SoftReservedItemIDs = {},
+    };
+
     -- Materialize the data for ease of use
-    self:materializeData(reportStatus);
+    self:materializeData();
 
     GL.Events:fire("GL.SOFTRES_IMPORTED");
 
@@ -837,6 +862,60 @@ function SoftRes:import(data, openOverview)
     end
 
     return true;
+end
+
+--- Import data from LootReserve. This happens automatically via an event listener
+---
+---@param Reserves table
+---@return void
+function SoftRes:importLootReserveData(Reserves)
+    GL:debug("SoftRes:importLootReserveData");
+
+    if (GL:empty(Reserves)) then
+        return;
+    end
+
+    local SoftReserveData = {};
+    for player, Reserved in pairs(Reserves or {}) do
+        if (not GL:empty(Reserved)) then
+            SoftReserveData[player] = {
+                Items = Reserved,
+                name = string.lower(player),
+            };
+        end
+    end
+
+    if (GL:empty(SoftReserveData)) then
+        return;
+    end
+
+    -- Reset the materialized data
+    self.MaterializedData = {
+        ClassByPlayerName = {},
+        DetailsByPlayerName = {},
+        HardReserveDetailsByID = {},
+        PlayerNamesByItemID = {},
+        ReservedItemIDs = {},
+        SoftReservedItemIDs = {},
+    };
+
+    DB:set("SoftRes", {
+        SoftReserves = {},
+        HardReserves = {}, -- The weakaura format (CSV) doesn't include hard-reserves
+        MetaData = {
+            source = Constants.SoftReserveSources.lootReserve,
+            importedAt = GetServerTime(),
+            importString = "",
+        },
+    });
+
+    -- We don't care for the playerName key in our database
+    for _, Entry in pairs(SoftReserveData) do
+        DB:add("SoftRes.SoftReserves", Entry);
+    end
+
+    -- Materialize the data for ease of use
+    self:materializeData();
 end
 
 --- Import a Gargul data string
@@ -1125,7 +1204,7 @@ function SoftRes:importCSVData(data, reportStatus)
         return false;
     end
 
-    DB.SoftRes = {
+    DB:set("SoftRes", {
         SoftReserves = {},
         HardReserves = {}, -- The weakaura format (CSV) doesn't include hard-reserves
         MetaData = {
@@ -1133,11 +1212,11 @@ function SoftRes:importCSVData(data, reportStatus)
             importedAt = GetServerTime(),
             importString = data,
         },
-    };
+    });
 
     -- We don't care for the playerName key in our database
     for _, Entry in pairs(SoftReserveData) do
-        tinsert(DB.SoftRes.SoftReserves, Entry);
+        DB:add("SoftRes.SoftReserves", Entry);
     end
 
     -- At this point we don't really know anyone's plus one because SoftRes doesn't support realm tags (yet)

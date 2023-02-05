@@ -155,7 +155,6 @@ function Overview:draw()
         ItemIcon:SetWidth(30);
         ItemIcon:SetHeight(30);
         ItemIcon:SetImageSize(30, 30);
---         ItemIcon:SetImage("Interface\\Icons\\INV_Sword_39");
         Details:AddChild(ItemIcon);
         ItemIcon:SetCallback("OnLeave", function()
             GameTooltip:Hide();

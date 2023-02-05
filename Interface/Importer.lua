@@ -3,8 +3,6 @@ local L = Gargul_L;
 ---@type GL
 local _, GL = ...;
 
-GL.AceGUI = GL.AceGUI or LibStub("AceGUI-3.0");
-
 ---@type Interface
 local Interface = GL.Interface;
 
@@ -17,15 +15,11 @@ GL.Interface.Importer = {
 ---@type ImporterInterface
 local Importer = GL.Interface.Importer;
 
---[[ CONSTANTS ]]
-local FONT;
-
 ---@return table
 function Importer:open()
     GL:debug("Importer:open");
 
     self.isVisible = true;
-    FONT = GL.FONT;
 
     local Window = _G[self.windowName] or self:build();
 

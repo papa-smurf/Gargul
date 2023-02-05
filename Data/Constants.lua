@@ -221,6 +221,7 @@ GL.Data.Constants = {
     SoftReserveSources = {
         weakaura = 0,
         gargul = 1,
+        lootReserve = 2,
     },
 
     GargulConflictsWith = {

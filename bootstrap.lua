@@ -167,7 +167,6 @@ function GL:_init()
 
     -- Show the changelog window
     GL.Interface.Changelog:reportChanges();
-
 end
 
 -- Register the gl slash command
