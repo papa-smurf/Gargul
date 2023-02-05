@@ -470,6 +470,7 @@ function Interface:createWindow(name, Details)
         ---@type FontString
         local Watermark = Interface:createFontString(Window, GL.name .. " v" .. GL.version, "GameFontDarkGraySmall");
         Watermark:SetPoint("BOTTOMLEFT", Window, "BOTTOMLEFT", 14, 13);
+        Window.Watermark = Watermark;
     end
 
     --[[ POSITION ACTION BUTTONS ]]

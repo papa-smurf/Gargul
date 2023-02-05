@@ -372,7 +372,8 @@ function Overview:build()
     ----[[ LIST VIEW BUTTON ]]
     local ListViewButton = Interface:createButton(ScrollFrameHolder, {
         onClick = function()
-            GL.Interface.GDKP.LedgerList:toggle(self.selectedSession);
+            Window:Hide();
+            GL.Interface.GDKP.LedgerList:open(self.selectedSession);
         end,
         tooltip = "Show a condensed view of the ledger,\nideal for screenshotting purposes!",
         normalTexture = "Interface/AddOns/Gargul/Assets/Buttons/eye",

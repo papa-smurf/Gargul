@@ -41,7 +41,6 @@ L.CUT_MAILS_FAILED = "Multiple mail errors detected, aborting cut distribution";
 L.CUT_SENT = "Sent %sg to %s ";
 L.CUT_MAIL_BODY = "Powered by Gargul: a Master Loot Tool with support for TMB, SoftRes, GDKP and Auto-Looting!";
 L.CUT_MAIL_SUBJECT = "Gargul GDKP: %sg";
-L.CUTS_MAILED = "All cuts were mailed!";
 L.DELETE = "Delete";
 L.DELETE_BID_TOOLTIP = "Delete bid. Auction must be stopped first!";
 L.DISENCHANT = "Disenchant";

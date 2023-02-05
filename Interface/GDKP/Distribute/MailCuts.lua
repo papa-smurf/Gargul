@@ -253,8 +253,9 @@ function MailCuts:mailAllCuts()
 
                     -- Make sure to close the window when all cuts are mailed
                     if (not self:refreshPlayerCuts()) then
-                        GL:success(L.CUTS_MAILED);
+                        GL:success(L.ALL_CUTS_MAILED);
                         self:close();
+                        return;
                     end
                 end
 
@@ -267,7 +268,7 @@ function MailCuts:mailAllCuts()
         end
     end
 
-    GL:success(L.CUTS_MAILED);
+    GL:success(L.ALL_CUTS_MAILED);
 end
 
 ---@param player string

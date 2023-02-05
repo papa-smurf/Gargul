@@ -710,6 +710,22 @@ function GL.LibStItemCellUpdate (rowFrame, frame, data, cols, row, realrow, colu
     end
 end
 
+--- Remove a lib-st table's scrollbar
+---
+---@param Table table
+---@return void
+function GL:LibStRemoveScrollBar(Table)
+    local tableName = Table.frame:GetName();
+
+    if (_G[tableName .. "ScrollFrameScrollBar"]) then
+        _G[tableName .. "ScrollFrameScrollBar"]:Hide();
+    end
+
+    if (_G[tableName .. "ScrollTrough"]) then
+        _G[tableName .. "ScrollTrough"]:Hide();
+    end
+end
+
 function GL.LibStItemLinkCellUpdate (rowFrame, frame, data, cols, row, realrow, column, fShow, table, ...)
     local value = data[realrow].cols[column].value;
     frame.text:SetText(value);
