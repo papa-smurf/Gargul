@@ -157,11 +157,14 @@ function Export:build()
 
     local showCustomFormatHelpTooltip = function ()
         GameTooltip:SetOwner(HelpIconFrame, "ANCHOR_RIGHT");
-        GameTooltip:SetText(string.format("Available values:\n\n%s\n%s\n%s\n%s\n\n%s",
+        GameTooltip:SetText(string.format("Available values:\n\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n\n%s",
             "@PLAYER",
             "@CUT",
             "@SPENT",
             "@BID",
+            "@RECEIVED - gold received from the player",
+            "@GIVEN - gold given to the player",
+            "@MAILED - gold mailed to the player",
             "\\t is replaced by a tab"
         ));
         GameTooltip:Show();
@@ -212,12 +215,28 @@ function Export:refresh()
 
     local exportFormat = GL.Settings:get("GDKP.potExportFormat");
 
+    local PlayerNames = {};
+    for player in pairs(Cuts) do
+        tinsert(PlayerNames, player);
+    end
+
+    table.sort(PlayerNames, function (a, b)
+        return a < b;
+    end);
+
+    local SortedCuts = {};
+    for _, player in pairs(PlayerNames or {}) do
+        tinsert(SortedCuts, {
+            player = player,
+            cut = Cuts[player],
+        });
+    end
+
     if (exportFormat == CUSTOM_FORMAT) then
-        self:exportPotToCustomFormat(Cuts);
+        self:exportPotToCustomFormat(Session, SortedCuts);
 
     elseif (exportFormat == SOFTRES_FORMAT) then
-        local exportString = self:transformAuctionsToSoftResFormat(Auctions);
-        GL.Interface:get(self, "MultiLineEditBox.Export"):SetText(exportString);
+
     end
 end
 
@@ -227,23 +246,35 @@ function Export:transformAuctionsToSoftResFormat(Cuts)
     return GL.JSON:encode("");
 end
 
----@param Cuts
+---@param Session table
+---@param Cuts table
 ---@return string
-function Export:exportPotToCustomFormat(Cuts)
+function Export:exportPotToCustomFormat(Session, Cuts)
     GL:debug("Export:transformAuctionsToCustomFormat");
 
     local exportString = GL.Settings:get("GDKP.customPotExportHeader");
     local customExportFormat = GL.Settings:get("GDKP.customPotExportFormat");
 
     -- Make sure that all relevant item data is cached
-    for player, cut in pairs(Cuts) do
+    for _, Details in pairs(Cuts) do
+        local player, cut = Details.player, Details.cut;
         local exportEntry = customExportFormat;
+
+        local GoldTraded = GL:tableGet(Session, "GoldTrades." .. player, {
+            from = 0,
+            to = 0,
+        });
+
+        local goldMailed = GL:tableGet(Session, "GoldMails." .. player, 0);
 
         local Values = {
             ["@PLAYER"] = player,
             ["@CUT"] = cut,
             ["@SPENT"] = GDKPSession:goldSpentByPlayer(player, self.sessionID),
             ["@BID"] = GDKPSession:goldBidByPlayer(player, self.sessionID),
+            ["@RECEIVED"] = GoldTraded.from / 10000,
+            ["@GIVEN"] = GoldTraded.to / 10000,
+            ["@MAILED"] = goldMailed / 10000,
             ["\\t"] = "\t",
         };
 

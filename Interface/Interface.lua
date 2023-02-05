@@ -951,11 +951,26 @@ function Interface:releaseChildren(Element)
         return;
     end
 
-    local children = Element.children or {};
-    for i = 1,#children do
-        self:releaseChildren(children[i]);
-        children[i].frame:Hide();
-        children[i] = nil;
+    -- This is an AceGUI element
+    if (Element.frame) then
+        local Children = Element.children or {};
+        for i = 1, #Children do
+            self:releaseChildren(Children[i]);
+            Children[i].frame:Hide();
+
+            Children[i] = nil;
+        end
+
+        return;
+    end
+
+    local Children = { Element:GetChildren() };
+    for i = 1, #Children do
+        self:releaseChildren(Children[i]);
+        Children[i]:SetFrameLevel(1);
+        Children[i]:SetSize(1, 1);
+        Children[i]:Hide();
+        Children[i] = nil;
     end
 end
 

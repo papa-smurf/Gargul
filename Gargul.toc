@@ -112,6 +112,7 @@ Interface/GDKP/Distribute/CreateMutator.lua
 Interface/GDKP/Distribute/EditMutator.lua
 Interface/GDKP/Distribute/AddRaider.lua
 Interface/GDKP/Distribute/EditRaider.lua
+Interface/GDKP/Distribute/MailCuts.lua
 Interface/GDKP/CreateSession.lua
 Interface/GDKP/EditSession.lua
 Interface/GDKP/AddGold.lua

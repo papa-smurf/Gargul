@@ -112,10 +112,12 @@ function Session:copperOwedToPlayer(player, sessionID)
         return;
     end
 
-    local GoldTrades = GL:tableGet(Instance, "GoldTrades." .. player, {
+    local GoldTraded = GL:tableGet(Instance, "GoldTrades." .. player, {
         from = 0,
         to = 0,
     });
+
+    local goldMailed = GL:tableGet(Instance, "GoldMails." .. player, 0);
 
     local playerCutInCopper = 0;
     -- Only include the player cut if the current GDKP session is locked and ready for payout
@@ -123,8 +125,8 @@ function Session:copperOwedToPlayer(player, sessionID)
         playerCutInCopper = GL:tableGet(Instance, "Pot.Cuts." .. player, 0) * 10000;
     end
 
-    local copperReceived = GoldTrades.from;
-    local copperGiven = GoldTrades.to;
+    local copperReceived = GoldTraded.from;
+    local copperGiven = GoldTraded.to + goldMailed;
     local copperSpentByPlayer = self:goldSpentByPlayer(player, Instance.ID) * 10000;
     local copperToReceive = copperSpentByPlayer - copperReceived;
     local copperToGive = playerCutInCopper - copperToReceive - copperGiven;
@@ -347,6 +349,27 @@ function Session:registerGoldTrade(Details)
     Instance.GoldTrades[Details.partner].to = Instance.GoldTrades[Details.partner].to + myGold;
 
     Events:fire("GL.GDKP_GOLD_TRADED");
+
+    self:store(Instance);
+end
+
+---@param player string
+---@param copper number
+---@return void
+function Session:registerGoldMail(player, copper)
+    GL:debug("Session:registerGoldMail");
+
+    local Instance = self:getActive();
+
+    if (not Instance) then
+        return;
+    end
+
+    Instance.GoldMails = Instance.GoldMails or {};
+    Instance.GoldMails[player] = Instance.GoldMails[player] or 0;
+    Instance.GoldMails[player] = Instance.GoldMails[player] + copper;
+
+    Events:fire("GL.GDKP_GOLD_MAILED");
 
     self:store(Instance);
 end
