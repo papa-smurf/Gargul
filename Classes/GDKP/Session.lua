@@ -79,7 +79,8 @@ function Session:_init()
         GL.Interface.GDKP.Distribute.Overview:refresh(); -- Refresh the distribution overview in case it's opened
     end);
 
-    if (self:activeSessionID()) then
+    local Instance = self:getActive();
+    if (Instance and not Instance.lockedAt) then
         GL.Ace:ScheduleTimer(function ()
             if (not self:userIsAllowedToBroadcast()) then
                 return;
