@@ -673,7 +673,7 @@ function Auctioneer:announceBid(Bid)
         local currentTopBid = GL:tableGet(Auction.Current, "TopBid.bid");
         local bidder = GL:tableGet(Auction.Current, "TopBid.Bidder.name");
 
-        if (not currentTopBid.bid or not bidder) then
+        if (not currentTopBid or not bidder) then
             return;
         end
 

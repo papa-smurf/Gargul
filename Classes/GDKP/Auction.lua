@@ -1744,7 +1744,7 @@ function Auction:processBid(message, bidder)
     end
 
     -- Determine the minimum bid
-    local currentBid = GL:tableGet(self.Current, "TopBid.bid", 0)
+    local currentBid = GL:tableGet(self.Current, "TopBid.bid", 0);
     local minimumBid = math.max(
         self.Current.minimumBid,
         currentBid + self.Current.minimumIncrement

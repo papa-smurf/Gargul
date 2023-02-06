@@ -375,7 +375,7 @@ function Overview:build()
             Window:Hide();
             GL.Interface.GDKP.LedgerList:open(self.selectedSession);
         end,
-        tooltip = "Show a condensed view of the ledger,\nideal for screenshotting purposes!",
+        tooltip = "Show a full overview of the ledger,\nideal for screenshotting purposes!",
         normalTexture = "Interface/AddOns/Gargul/Assets/Buttons/eye",
         disabledTexture = "Interface/AddOns/Gargul/Assets/Buttons/eye-disabled",
         updateOn = { "GL.GDKP_OVERVIEW_SESSION_CHANGED", "GL.GDKP_OVERVIEW_SESSION_CHANGED", "GL.GDKP_OVERVIEW_SESSIONS_REFRESHED", "GL.GDKP_AUCTION_CHANGED" },
