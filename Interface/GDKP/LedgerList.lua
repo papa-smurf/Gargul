@@ -224,7 +224,7 @@ function LedgerList:build()
 
     ---@type FontString
     local Balance = Interface:createFontString(Window, string.format(
-        "Balance:   |c0092FF000|r ? You're square!  |  |c00F7922E50g|r ? you owe |c00%s%s|r 50g  |  |c00BE333330g|r ? |c00%s%s|r owes you 30g",
+        "Balance:   |c0092FF000|r ? You're square!  |  |c00BE333330g|r ? you owe |c00%s%s|r 30g  |  |c00F7922E50g|r ? |c00%s%s|r owes you 50g",
         GL:classHexColor(GL.User.class),
         GL.User.name,
         GL:classHexColor(GL.User.class),
@@ -257,6 +257,7 @@ function LedgerList:build()
     return Window;
 end
 
+---@return void
 function LedgerList:refresh()
     GL:debug("LedgerList:refresh");
 
@@ -288,7 +289,9 @@ function LedgerList:refresh()
     if (type(Cuts) == "table") then
         local PlayerNames = {};
         for player in pairs(Cuts) do
-            tinsert(PlayerNames, player);
+            if (GL:tableGet(Session, "Pot.DistributionDetails." .. player)) then
+                tinsert(PlayerNames, player);
+            end
         end
 
         table.sort(PlayerNames, function (a, b)

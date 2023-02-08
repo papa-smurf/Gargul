@@ -134,6 +134,7 @@ function Auctioneer:_init()
     end);
 
     -- An item dropped, add it to the queue
+    local firstItem = true;
     Events:register("AuctioneerItemReceived", "GL.ITEM_RECEIVED", function (_, Details)
         -- We don't want to automatically add loot
         if (not Settings:get("GDKP.addDropsToQueue")) then
@@ -155,7 +156,19 @@ function Auctioneer:_init()
             return;
         end
 
-        self:addToQueue(Details.itemLink, nil, false);
+        self:addToQueue(Details.itemLink, nil, firstItem);
+
+        -- Make sure the minimized auctioneer window shows the first time a drop is added to the queue
+        if (firstItem) then
+            AuctioneerUI = AuctioneerUI or GL.Interface.GDKP.Auctioneer;
+            local Window = AuctioneerUI:getWindow();
+
+            if (Window) then
+                Window.Minimize.MinimizeButton:Click();
+            end
+        end
+
+        firstItem = false;
     end);
 
     -- Softres/TMB details changed, update the icon glows if needed
