@@ -106,6 +106,8 @@ L.TUTORIAL_BIDDER_QUEUE = [[The items you see here are in the master looter's GD
 You can remove them, bid on them, and hide unusable items (enable 'Hide unusable items' in the settings in the top-left)
 
 You can resize the window, move it around, or minimize it. Try it out!
+
+For loot masters: removing items here will only remove them from your personal queue, not the actual GDKP queue!
 ]];
 L.TUTORIAL_MORE_HELP = "Need more help?";
 L.TUTORIAL_AUCTIONEER = [[|c00a79eff%s|r items in bags, loot windows or even on links in your chat to add them to the auction queue.

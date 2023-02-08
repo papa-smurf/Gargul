@@ -284,10 +284,12 @@ function Interface:addMinimizeButton(Element, title)
     MinimizedWindow:Hide();
     MinimizedWindow:SetUserPlaced(false);
 
+    self:resizeBounds(MinimizedWindow, 80, 60);
+
     --[[ THE SETTINGS MENU IN THE TOP LEFT OF THE WINDOW ]]
-    Interface:addWindowOptions(MinimizedWindow, {
+    self:addWindowOptions(MinimizedWindow, {
         { text = L.CHANGE_SCALE, notCheckable = true, func = function ()
-            Interface:openScaler(MinimizedWindow);
+            self:openScaler(MinimizedWindow);
             CloseMenus();
         end }
     }, 100);
@@ -303,6 +305,7 @@ function Interface:addMinimizeButton(Element, title)
 
     self:addMoveButton(MinimizedWindow);
     self:addMaximizeButton(MinimizedWindow, Element);
+    self:addResizer(MinimizedWindow);
 
     ---@type Button
     local Minimize = CreateFrame("Button", Element:GetName() .. ".Minimize", Element, "MaximizeMinimizeButtonFrameTemplate");
@@ -325,6 +328,11 @@ function Interface:addMinimizeButton(Element, title)
         Element:Hide();
     end);
 
+    MinimizedWindow:SetScript("OnSizeChanged", function ()
+        self:storeDimensions(MinimizedWindow);
+        self:storePosition(MinimizedWindow);
+    end);
+
     Element:HookScript("OnShow", function ()
         MinimizedWindow:Hide();
     end);
@@ -335,6 +343,9 @@ function Interface:addMinimizeButton(Element, title)
     --[[ POSITION ACTION BUTTONS ]]
     MinimizedWindow.MoveButton:SetPoint("TOPRIGHT", MinimizedWindow, "TOPRIGHT", -18, 0);
     MinimizedWindow.Maximize:SetPoint("TOPRIGHT", MinimizedWindow, "TOPRIGHT", 8, 4);
+
+    self:restorePosition(MinimizedWindow);
+    self:restoreDimensions(MinimizedWindow);
 
     _G[minimizedName] = MinimizedWindow;
 end
@@ -366,6 +377,8 @@ end
 ---@return void
 function Interface:addResizer(Element)
     GL:debug("Interface:addResizer");
+
+    Element:SetResizable(true);
 
     ---@type Button
     local Resize = CreateFrame("Button", Element:GetName() .. ".Resize", Element);
@@ -435,7 +448,6 @@ function Interface:createWindow(name, Details)
         Interface:resizeBounds(Window, Details.minWidth or 0, Details.minHeight or 0);
 
         if (not Details.hideResizeButton) then
-            Window:SetResizable(true);
             self:addResizer(Window);
         else
             -- This is to make sure we can update dimensions between patches
@@ -1078,7 +1090,9 @@ end
 ---@param identifier string|nil
 ---@return number|nil, number|nil
 function Interface:getDimensions(identifier)
-    identifier = identifier or Item:GetName();
+    if (type(identifier) == "table" and identifier.GetName) then
+        identifier = identifier:GetName();
+    end
 
     if not (identifier) then
         return false;

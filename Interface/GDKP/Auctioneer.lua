@@ -82,7 +82,7 @@ local BIDS_TABLE_COLUMNS = {
     },
 };
 
----@return table
+---@return table|nil
 function AuctioneerUI:open()
     GL:debug("AuctioneerUI:open");
 
@@ -310,6 +310,7 @@ function AuctioneerUI:build()
 
     --[[ PREPARE THE MINIMIZED VERSION OF THE WINDOW ]]
     Window.Minimized:SetHeight(70);
+    Window.Minimized:SetWidth(150);
 
     ---@type Button
     local StopButton;
@@ -730,6 +731,8 @@ function AuctioneerUI:build()
     return Window;
 end
 
+---@param Window Frame
+---@return Frame
 function AuctioneerUI:buildQueue(Window)
     GL:debug("AuctioneerUI:buildQueue");
 

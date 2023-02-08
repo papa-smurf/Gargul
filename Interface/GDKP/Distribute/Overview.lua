@@ -464,18 +464,26 @@ function Overview:refresh()
             --[[ DELETE BUTTON ]]
             local Delete = Interface:createButton(MutatorHolder, {
                 onClick = function()
+                    local deleteMutator = function ()
+                        if (GDKPPot:removeMutator(Mutator.name, self.sessionID)) then
+                            self:throttledRefresh();
+                        else
+                            GL:error("Unable to delete mutator " .. Mutator.name);
+                        end
+                    end
+
+                    -- Shift button was held, skip reason
+                    if (IsShiftKeyDown()) then
+                        deleteMutator();
+                        return;
+                    end
+
                     Interface.Dialogs.PopupDialog:open({
                         question = string.format("Are you sure you want to delete the %s mutator?", Mutator.name),
-                        OnYes = function ()
-                            if (GDKPPot:removeMutator(Mutator.name, self.sessionID)) then
-                                self:throttledRefresh();
-                            else
-                                GL:error("Unable to delete mutator " .. Mutator.name);
-                            end
-                        end,
+                        OnYes = function () deleteMutator(); end,
                     });
                 end,
-                tooltip = "Delete mutator",
+                tooltip = "Delete. Hold shift to bypass confirmation",
                 normalTexture = "Interface/AddOns/Gargul/Assets/Buttons/delete",
             });
             Delete:SetPoint("TOPLEFT", Edit, "TOPRIGHT", 2);
