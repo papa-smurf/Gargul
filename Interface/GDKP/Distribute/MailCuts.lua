@@ -24,6 +24,10 @@ GL.Interface.GDKP.Distribute.MailCuts = {
 ---@type MailCuts
 local MailCuts = GL.Interface.GDKP.Distribute.MailCuts;
 
+--[[ CONSTANTS ]]
+local MAIL_SEND_WAIT_TIMEOUT = 15;
+local MAIL_COST = 30; -- Sending a mail costs 30 copper
+
 --- Show the cut mailer window when certain events are triggered
 ---@return void
 function MailCuts:_init()
@@ -108,7 +112,7 @@ function MailCuts:build()
 
     ---@type Frame
     local Window = Interface:createWindow(self.windowName, {
-        width = 260,
+        width = 300,
         height = 1,
         hideMinimizeButton = true,
         hideMoveButton = true,
@@ -185,6 +189,28 @@ function MailCuts:refreshPlayerCuts()
         PlayerRow:SetPoint("TOPRIGHT", PlayerHolder, "TOPRIGHT", not GL.elvUILoaded and 0 or -4, 0);
         PlayerRow:SetHeight(20);
 
+        local hasEntries = false;
+        local Lines;
+        local MailHistory = GL:tableGet(Session, "MailHistory." .. player);
+        if (MailHistory) then
+            Lines = {
+                string.format(L.CUT_MAIL_HISTORY, player),
+                " ",
+            };
+            table.sort(MailHistory, function (a, b)
+                return a.timestamp > b.timestamp;
+            end);
+
+            for _, Entry in pairs(MailHistory or {}) do
+                hasEntries = true;
+
+                tinsert(Lines, string.format("%s: %s",
+                    date("%d-%m at %H:%M", Entry.timestamp),
+                    Entry.message
+                ));
+            end
+        end
+
         ---@type FontString
         local PlayerName = Interface:createFontString(PlayerRow, player);
         PlayerName:SetPoint("TOPLEFT", PlayerRow, "TOPLEFT", 0, 0);
@@ -199,13 +225,22 @@ function MailCuts:refreshPlayerCuts()
         local MailCut = Interface:dynamicPanelButton(PlayerRow, L.MAIL);
         MailCut:SetPoint("TOPLEFT", Gold, "TOPRIGHT", 4, 0);
         MailCut:SetScript("OnClick", function ()
-            self:mailPlayerCut(player, function (success, copper)
+            self:mailPlayerCut(player, function (success, copper, message)
+                if (type(message) == "string") then
+                    GL:tableAdd(Session, "MailHistory." .. player, {
+                        timestamp = GetServerTime(),
+                        message = message,
+                    });
+                end
+
                 if (not success) then
+                    self:refreshPlayerCuts();
                     return;
                 end
 
                 copper = tonumber(copper);
                 if (not copper or copper <= 0) then
+                    self:refreshPlayerCuts();
                     return;
                 end
 
@@ -219,6 +254,25 @@ function MailCuts:refreshPlayerCuts()
                 end
             end);
         end);
+
+        if (hasEntries) then
+            Interface:addTooltip(PlayerRow, Lines);
+
+            --[[ WARNING SIGN ]]
+            local texturePath = "interface/encounterjournal/ui-ej-warningtexticon.blp";
+
+            ---@type Frame
+            local Icon = CreateFrame("Frame",nil, PlayerRow);
+            Icon:SetSize(12, 12);
+            Icon:SetPoint("TOPLEFT", MailCut, "TOPRIGHT", 4, -2);
+
+            ---@type Texture
+            local image = Icon:CreateTexture(nil, "BACKGROUND")
+            image:SetWidth(12)
+            image:SetHeight(12)
+            image:SetAllPoints(Icon)
+            image:SetTexture(texturePath);
+        end
 
         i = i + 1;
     end
@@ -242,13 +296,20 @@ function MailCuts:mailAllCuts()
     for player in pairs(GL:tableGet(Session, "Pot.Cuts", {})) do
         local outstanding = tonumber(GDKPSession:copperOwedToPlayer(player, Session.ID));
         if (outstanding and outstanding > 0) then
-            return self:mailPlayerCut(player, function (success, copper)
+            return self:mailPlayerCut(player, function (success, copper, message)
+                if (type(message) == "string") then
+                    GL:tableAdd(Session, "MailHistory." .. player, {
+                        timestamp = GetServerTime(),
+                        message = message,
+                    });
+                end
+
                 if (not success) then
-                    self.mailErrors = self.mailErrors + 1;
+                    self:refreshPlayerCuts();
                 end
 
                 copper = tonumber(copper);
-                if (copper > 0) then
+                if (success and copper > 0) then
                     GDKPSession:registerGoldMail(player, copper);
 
                     -- Make sure to close the window when all cuts are mailed
@@ -257,9 +318,12 @@ function MailCuts:mailAllCuts()
                         self:close();
                         return;
                     end
+                elseif (success) then
+                    self:refreshPlayerCuts();
                 end
 
                 if (self.mailErrors > 1) then
+                    self.mailErrors = 0;
                     return GL:error(L.CUT_MAILS_FAILED);
                 end
 
@@ -290,18 +354,23 @@ function MailCuts:mailPlayerCut(player, callback)
     callback = callback or function () end;
 
     local Session = GDKPSession:getActive() or {};
-    if (not Session) then
+    if (not Session or not Session.lockedAt) then
+        GL:warning(L.GDKP_PAYOUT_INACTIVE);
         return callback(false);
     end
 
     local outstandingCopper = GDKPSession:copperOwedToPlayer(player, Session.ID);
-    if (not outstandingCopper) then
+    if (outstandingCopper and outstandingCopper < 1) then
+        GL:success(string.format(L.CUT_MAIL_EVEN, player));
         return callback(true);
+    elseif (not outstandingCopper) then
+        return;
     end
 
-    if (outstandingCopper > GetMoney()) then
+    local originalCopper = GetMoney();
+    local copperLeftAfterMailing = originalCopper - outstandingCopper - MAIL_COST;
+    if (copperLeftAfterMailing < 0) then
         GL:warning(string.format(L.CUT_MAIL_INSUFFICIENT_FUNDS, player));
-
         return callback(false);
     end
 
@@ -309,33 +378,67 @@ function MailCuts:mailPlayerCut(player, callback)
     local gold = outstandingCopper / 10000;
 
     self:disableSendButton();
-    local MailDisableTimer, MailTimeOutTimer;
+    local MailDisableTimer, MailTimeOutTimer, MoneyChangedTimer;
 
     Events:register({
         { "MailCutsMailSuccess", "MAIL_SUCCESS" },
         { "MailCutsMailFailed", "MAIL_FAILED" },
         { "MailCutsMailTimedOut", "GL.MAIL_TIMED_OUT" },
     }, function(event)
-        local success = false;
-        if (event == "MAIL_SUCCESS") then
-            self.mailErrors = 0;
-            success = true;
-        end
-
+        -- Remove all event listeners and scheduled timers FIRST
         GL.Ace:CancelTimer(MailDisableTimer);
         GL.Ace:CancelTimer(MailTimeOutTimer);
         Events:unregister({"MailCutsMailSuccess", "MailCutsMailFailed", "MailCutsMailTimedOut" });
-        self:enableSendButton();
+
+        local message;
+        local success = false;
+
+        -- Mail was sent according to Blizzard, wait until player gold changes
+        if (event == "MAIL_SUCCESS") then
+            success = true;
+            self.mailErrors = 0;
+
+            Events:register("MailCutsPlayerMoney", "PLAYER_MONEY", function ()
+                GL.Ace:CancelTimer(MoneyChangedTimer);
+                Events:unregister("MailCutsPlayerMoney");
+
+                local copperLeftMatchesExpectation = GetMoney() == copperLeftAfterMailing;
+                if (copperLeftMatchesExpectation) then
+                    message = string.format(L.CUT_SENT, gold, player);
+                    GL:success(message);
+                else
+                    message = L.CUT_MAIL_GOLD_MISMATCH;
+                    GL:warning(message);
+                end
+
+                self.sendingMail = false;
+                callback(success, outstandingCopper, message);
+            end);
+
+            MoneyChangedTimer = GL.Ace:ScheduleTimer(function ()
+                Events:unregister("MailCutsPlayerMoney");
+
+                message = L.CUT_MAIL_GOLD_MISMATCH;
+                GL:error(message);
+
+                callback(success, outstandingCopper, message);
+            end, 15);
+
+            return;
+        else
+            self.mailErrors = self.mailErrors + 1;
+        end
 
         -- We add a delay to further decrease chances of nasty race conditions from occurring
         GL.Ace:ScheduleTimer(function ()
-            if (success) then
-                GL:success(string.format(L.CUT_SENT, gold, player));
-            end
+            message = string.format(L.CUT_MAIL_FAILED, player);
+            GL:error(message);
 
             self.sendingMail = false;
-            callback(success, outstandingCopper);
-        end, .3);
+            callback(success, outstandingCopper, message);
+
+            self:enableSendButton();
+        end, .5);
     end);
 
     ClearSendMail();
@@ -349,7 +452,7 @@ function MailCuts:mailPlayerCut(player, callback)
 
     MailTimeOutTimer = GL.Ace:ScheduleTimer(function ()
         Events:fire("GL.MAIL_TIMED_OUT");
-    end, 5);
+    end, MAIL_SEND_WAIT_TIMEOUT);
 end
 
 ---@return void
