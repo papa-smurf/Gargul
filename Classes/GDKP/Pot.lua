@@ -93,6 +93,8 @@ end
 ---@param Data table
 ---@return boolean
 function Pot:addMutator(sessionID, Data)
+    GL:debug("Pot:addMutator");
+
     Data = {
         autoApplyTo = Data.autoApplyTo or "",
         flat = Data.flat or "",
@@ -135,13 +137,56 @@ function Pot:addMutator(sessionID, Data)
         autoApplyTo = Data.autoApplyTo,
     };
 
+    -- Make sure this new mutator gets applies to everyone eligible
+    self:applyMutator(sessionID, Data.name);
+
     return true;
+end
+
+---@param sessionID string
+---@param name string
+---@return void
+function Pot:applyMutator(sessionID, name)
+    GL:debug("Pot:applyMutator");
+
+    local Session = GDKPSession:byID(sessionID);
+    if (not Session or Session.lockedAt) then
+        return;
+    end
+
+    local Mutator = Session.Pot.Mutators[name];
+    if (not Mutator or not Mutator.autoApplyTo) then
+        return;
+    end
+
+    local AutoGiveOnRoles = GL:strSplit(Mutator.autoApplyTo, ",");
+    if (GL:empty(AutoGiveOnRoles)) then
+        return;
+    end
+
+    for playerName in pairs(Session.Pot.DistributionDetails or {}) do
+        local Player = GL.Player:fromName(playerName);
+
+        local PlayerRoles = {playerName};
+        if (Player) then
+            PlayerRoles = self:getPlayerRoles(Player);
+        end
+
+        for _, role in pairs(PlayerRoles or {}) do
+            if (GL:inTable(AutoGiveOnRoles, role)) then
+                Session.Pot.DistributionDetails[playerName][name] = true;
+                break;
+            end
+        end
+    end
 end
 
 ---@param sessionID string
 ---@param Data table
 ---@return boolean
 function Pot:editMutator(originalName, Data, sessionID)
+    GL:debug("Pot:editMutator");
+
     Data = {
         autoApplyTo = Data.autoApplyTo or "",
         flat = Data.flat or "",
@@ -376,31 +421,14 @@ function Pot:calculateCuts(sessionID)
     return Session, totalToDistribute, totalDistributed;
 end
 
---- Determine what mutators apply to someone joining the raid
----
----@param Player table
----@param Session table
----@param enforceLock boolean|nil
-function Pot:determineDistributionDefaults(Player, Session, enforceLock)
-    GL:debug("Pot:determineDistributionDefaults");
-
-    if (enforceLock == nil) then
-        enforceLock = true;
-    end
-    enforceLock = GL:toboolean(enforceLock);
-
+---@param Player Player
+function Pot:getPlayerRoles(Player)
     local PlayerRoles = {};
-    local DistributionDetails = {};
     local ClassRoleDictionary = {
         TANK = "TANK",
         DAMAGER = "DPS",
         HEALER = "HEAL",
     };
-
-    -- The session is locked and we're not taking on new customers
-    if (enforceLock and Session.lockedAt) then
-        return {};
-    end
 
     if (Player.class) then
         tinsert(PlayerRoles, strupper(Player.class));
@@ -421,12 +449,41 @@ function Pot:determineDistributionDefaults(Player, Session, enforceLock)
 
     tinsert(PlayerRoles, strupper(Player.name));
 
-    for _, Mutator in pairs(Session.Pot.Mutators or {}) do
+    if (Player.name == GL.User.name) then
+        tinsert(PlayerRoles, "SELF");
+    end
+
+    return PlayerRoles;
+end
+
+--- Determine what mutators apply to someone joining the raid
+---
+---@param Player Player
+---@param Session table
+---@param enforceLock boolean|nil
+function Pot:determineDistributionDefaults(Player, Session, enforceLock)
+    GL:debug("Pot:determineDistributionDefaults");
+
+    if (enforceLock == nil) then
+        enforceLock = true;
+    end
+    enforceLock = GL:toboolean(enforceLock);
+
+    -- The session is locked and we're not taking on new customers
+    if (enforceLock and Session.lockedAt) then
+        return {};
+    end
+
+    local DistributionDetails = {};
+    local PlayerRoles = self:getPlayerRoles(Player);
+
+    for _, Mutator in pairs(GL:tableGet(Session, "Pot.Mutators", {})) do
+        local AutoGiveOnRoles = GL:strSplit(Mutator.autoApplyTo, ",");
         local active = false;
 
-        if (type(Mutator.AutoGiveOnRolls) == "table") then
+        if (type(AutoGiveOnRoles) == "table") then
             for _, role in pairs(PlayerRoles or {}) do
-                if (GL:inTable(Mutator.AutoGiveOnRolls, role)) then
+                if (GL:inTable(AutoGiveOnRoles, role)) then
                     active = true;
                     break;
                 end
@@ -507,13 +564,17 @@ function Pot:addPlayer(sessionID, player)
     player = GL:capitalize(strtrim(player));
     local Player = GL.Player:fromName(player);
 
+    if (not Player) then
+        Player = {
+            name = player,
+       };
+    end
+
     Session.Pot = Session.Pot or {};
     Session.Pot.DistributionDetails = Session.Pot.DistributionDetails or {};
 
     Session.Pot.DistributionDetails[player] = {};
-    if (type(Player) == "table") then
-        Session.Pot.DistributionDetails[player] = self:determineDistributionDefaults(Player, sessionID);
-    end
+    Session.Pot.DistributionDetails[player] = self:determineDistributionDefaults(Player, Session);
 
     GDKPSession:store(Session);
 

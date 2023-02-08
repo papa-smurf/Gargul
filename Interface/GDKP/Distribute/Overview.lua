@@ -466,7 +466,7 @@ function Overview:refresh()
                 onClick = function()
                     local deleteMutator = function ()
                         if (GDKPPot:removeMutator(Mutator.name, self.sessionID)) then
-                            self:throttledRefresh();
+                            self:refresh();
                         else
                             GL:error("Unable to delete mutator " .. Mutator.name);
                         end
