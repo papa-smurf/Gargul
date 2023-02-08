@@ -12,6 +12,15 @@ GL.Interface.Changelog = {
 
     History = {
         {
+            version = "5.3.0",
+            date = "February 8th, 2023",
+            Changes = {
+                "Mailing GDKP cuts has arrived! Lock a GDKP session for payout and walk to a mailbox! There are many safety features in place to account for insufficient funds, mail cap reached, etc. Go check it out!",
+                "The GDKP ledger overview has received a complete rework, open your GDKP session (|c00a79eff/gdkp|r) and click the eye-shaped icon at the top of the ledger!",
+                "Gargul now listens in on reserves placed via LootReserve. Do you like LootReserve and would you like to add Gargul's soft-res features (like highlighting, auto looting etc.) on top of that? We got your covered!",
+            },
+        },
+        {
             version = "5.2.0",
             date = "February 4th, 2023",
             Changes = {

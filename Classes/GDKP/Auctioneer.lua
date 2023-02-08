@@ -282,8 +282,10 @@ end
 
 ---@param itemLink string
 ---@param fromQueue boolean
+---@param minimum number|nil
+---@param increment number|nil
 ---@return void
-function Auctioneer:setItemByLink(itemLink, fromQueue)
+function Auctioneer:setItemByLink(itemLink, fromQueue, minimum, increment)
     GL:debug("Auctioneer:setItemByLink");
 
     if (GL.User.isInGroup
@@ -296,9 +298,9 @@ function Auctioneer:setItemByLink(itemLink, fromQueue)
     AuctioneerUI = AuctioneerUI or GL.Interface.GDKP.Auctioneer;
 
     if (fromQueue) then
-        AuctioneerUI:build():setItemByLink(itemLink);
+        AuctioneerUI:build():setItemByLink(itemLink, minimum, increment);
     else
-        AuctioneerUI:open():setItemByLink(itemLink);
+        AuctioneerUI:open():setItemByLink(itemLink, minimum, increment);
     end
 end
 
@@ -355,7 +357,18 @@ function Auctioneer:popFromQueue(force)
 
     for key, Row in pairs(AuctioneerUI.ItemRows or {}) do
         if (Row._identifier and Row._itemLink) then
-            self:setItemByLink(Row._itemLink, true);
+            local minimum, increment = false, false;
+
+            if (Row.MinInput and Row.MinInput.GetText) then
+                minimum = tonumber(Row.MinInput:GetText());
+            end
+
+            if (Row.IncInput and Row.IncInput.GetText) then
+                increment = tonumber(Row.IncInput:GetText());
+            end
+
+            self:setItemByLink(Row._itemLink, true, minimum, increment);
+
             Auction:removeFromQueue(Row._identifier);
             AuctioneerUI:deleteRowFromQueue(Row);
             break;
