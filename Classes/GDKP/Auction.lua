@@ -847,8 +847,6 @@ function Auction:addToQueue(itemLink, identifier)
     };
 
     self:broadcastQueue();
-
-    Events:fire("GL.GDKP_QUEUE_UPDATED");
 end
 
 ---@param checksum string
@@ -862,8 +860,6 @@ function Auction:removeFromQueue(checksum)
         self.Queue[checksum] = nil;
         self:broadcastQueue();
     end
-
-    Events:fire("GL.GDKP_QUEUE_UPDATED");
 end
 
 ---@return void
@@ -872,8 +868,6 @@ function Auction:clearQueue()
 
     self.Queue = {};
     self:broadcastQueue(true);
-
-    Events:fire("GL.GDKP_QUEUE_UPDATED");
 end
 
 ---@return void
@@ -928,6 +922,7 @@ function Auction:receiveQueue(CommMessage)
 
     -- No need to override our own queue
     if (CommMessage.Sender.isSelf) then
+        Events:fire("GL.GDKP_QUEUE_UPDATED");
         return;
     end
 

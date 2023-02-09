@@ -191,7 +191,7 @@ function BidderQueue:build()
 
     do -- [[ ACTION BUTTONS ]]
         ---@type Frame
-        ActionButtons = CreateFrame("Frame");
+        ActionButtons = CreateFrame("Frame", nil, ItemHolder);
         ActionButtons:SetSize(38, 18);
         ActionButtons:Hide();
 
@@ -329,9 +329,9 @@ function BidderQueue:refreshTable()
 
             --[[ TOGGLE DELETE ON HOVER ]]
             ItemRow:SetScript("OnEnter", function ()
-                ActionButtons:SetParent(ItemRow);
                 ActionButtons:ClearAllPoints();
                 ActionButtons:SetPoint("TOPRIGHT", ItemRow, "TOPRIGHT", 0, 0);
+                ActionButtons:SetFrameLevel(ItemRow:GetFrameLevel() + 1);
 
                 ActionButtons.BidButton:Hide();
                 ActionButtons.RemoveBidButton:Hide();

@@ -20,15 +20,15 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Package and release Retail
-        uses: BigWigsMods/packager@master
-        with:
-          args: "-o -u -S -m .pkgmeta -g retail"
-
       - name: Package and release Wrath
         uses: BigWigsMods/packager@master
         with:
           args: "-o -u -S -m .pkgmeta -g wrath"
+
+      - name: Package and release Retail
+        uses: BigWigsMods/packager@master
+        with:
+          args: "-o -u -S -m .pkgmeta -g retail"
 
       - name: Package and release Era
         uses: BigWigsMods/packager@master
