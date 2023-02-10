@@ -68,6 +68,7 @@ L.GROUP_MANAGER = "Group Manager";
 L.IMPORT_EXPLANATION = "What kind of data would you like to import?";
 L.INFO = "Info";
 L.INC = "Inc";
+L.INCLUDE_BOES = "Include BOEs";
 L.INCREMENT = "Increment";
 L.GDKP_ACTIVATED = "GDKP Activated";
 L.HALT = "Halt";

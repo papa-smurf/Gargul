@@ -126,6 +126,7 @@ GL.Data.DefaultSettings = {
     GDKP = {
         acceptBidsLowerThanMinimum = false, -- Change default? Check Auction.lua !!
         addDropsToQueue = true,
+        addBOEDropsToQueue = true,
         minimumDropQuality = 4,
         addGoldToTradeWindow = true,
         announceAuctionStart = true,

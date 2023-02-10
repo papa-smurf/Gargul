@@ -293,6 +293,10 @@ function AuctioneerUI:build()
             Settings:set("GDKP.addDropsToQueue", checked);
             Entry.checked = checked;
         end},
+        {text = L.INCLUDE_BOES, setting = "GDKP.addBOEDropsToQueue", func = function(Entry, _, _, checked)
+            Settings:set("GDKP.addBOEDropsToQueue", checked);
+            Entry.checked = checked;
+        end},
         "divider",
         {text = L.WINDOW, isTitle = true, notCheckable = true },
         {text = L.CHANGE_SCALE, notCheckable = true, func = function ()

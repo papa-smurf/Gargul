@@ -158,16 +158,34 @@ function Auctioneer:_init()
             return;
         end
 
-        self:addToQueue(Details.itemLink, nil, firstItem);
+        local addItemToQueue = function ()
+            self:addToQueue(Details.itemLink, nil, firstItem);
 
-        -- Make sure the minimized auctioneer window shows the first time a drop is added to the queue
-        if (firstItem) then
-            AuctioneerUI = AuctioneerUI or GL.Interface.GDKP.Auctioneer;
-            local Window = AuctioneerUI:getWindow();
+            -- Make sure the minimized auctioneer window shows the first time a drop is added to the queue
+            if (firstItem) then
+                AuctioneerUI = AuctioneerUI or GL.Interface.GDKP.Auctioneer;
+                local Window = AuctioneerUI:getWindow();
 
-            if (Window) then
-                Window.Minimize.MinimizeButton:Click();
+                if (Window) then
+                    Window.Minimize.MinimizeButton:Click();
+                end
             end
+        end
+
+        -- The player wants to add all drops
+        if (Settings:get("GDKP.addBOEDropsToQueue")) then
+            addItemToQueue();
+
+        -- The player doesn't want to add BOEs
+        else
+            GL:onItemLoadDo(GL:getItemIDFromLink(Details.itemLink), function (Result)
+                local bindOnPickup = GL:inTable({LE_ITEM_BIND_ON_ACQUIRE, LE_ITEM_BIND_QUEST}, Result.bindType);
+
+                -- The item is BOP, add it
+                if (bindOnPickup) then
+                    addItemToQueue();
+                end
+            end);
         end
 
         firstItem = false;
@@ -208,7 +226,9 @@ function Auctioneer:addItemLink(itemLink)
 
     AuctioneerUI = AuctioneerUI or GL.Interface.GDKP.Auctioneer;
 
-    if (AuctioneerUI.itemLink) then
+    if (AuctioneerUI.itemLink
+        and not Settings:get("GDKP.disableQueues")
+    ) then
         self:addToQueue(itemLink);
         return;
     end
@@ -295,6 +315,12 @@ function Auctioneer:setItemByLink(itemLink, fromQueue, minimum, increment)
         and not GL.User.hasAssist
     ) then
         return GL:warning("You need to be the master looter or have an assist / lead role!");
+    end
+
+    if (Auction.inProgress
+        or not GL:empty(Auction.Current.Bids)
+    ) then
+        return AuctioneerUI:open();
     end
 
     AuctioneerUI = AuctioneerUI or GL.Interface.GDKP.Auctioneer;

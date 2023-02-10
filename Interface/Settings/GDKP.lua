@@ -270,6 +270,10 @@ function GDKP:draw(Parent)
             label = "Automatically add drops to queue",
             setting = "GDKP.addDropsToQueue",
         },
+        {
+            label = "Include BOEs",
+            setting = "GDKP.addBOEDropsToQueue",
+        }
     }, Parent);
 
     Spacer = GL.AceGUI:Create("SimpleGroup");
