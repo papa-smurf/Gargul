@@ -142,6 +142,7 @@ GL.Data.DefaultSettings = {
         defaultMinimumBid = 500,
         defaultIncrement = 100,
         delayBetweenQueuedAuctions = 1,
+        disableQueues = false,
         enableBidderQueue = true,
         exportFormat = 1,
         potExportFormat = 1,

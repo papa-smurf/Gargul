@@ -608,6 +608,11 @@ function AuctioneerUI:build()
         ToggleQueue:SetSize(14,66);
         ToggleQueue:SetPoint("CENTER", Queue);
         ToggleQueue:SetScript("OnClick", function ()
+            if (Settings:get("GDKP.disableQueues")) then
+                GL:warning(L.YOU_DISABLED_GDKP_QUEUES);
+                return;
+            end
+
             if (Queue:IsVisible()) then
                 Queue:Hide();
                 ToggleQueue.texture:SetTexCoord(unpack(closedCoords));
@@ -786,7 +791,9 @@ function AuctioneerUI:buildQueue(Window)
             ItemHolder:SetSize(ScrollFrame:GetWidth(), ( ScrollFrame:GetHeight() * 2 ));
         end);
 
-        if (not Settings:get("GDKP.showQueueWindow")) then
+        if (Settings:get("GDKP.disableQueues")
+            or not Settings:get("GDKP.showQueueWindow")
+        ) then
             Queue:Hide();
         end
 

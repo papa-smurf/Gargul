@@ -96,6 +96,7 @@ function DroppedLootLedger:_shouldTrackItems()
 
     if (GDKPSession:activeSessionID()
         and GL.Settings:get("GDKP.addDropsToQueue")
+        and not GL.Settings:get("GDKP.disableQueues")
     ) then
         return true;
     end

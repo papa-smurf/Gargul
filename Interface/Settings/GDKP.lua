@@ -224,6 +224,49 @@ function GDKP:draw(Parent)
 
     Overview:drawCheckboxes({
         {
+            label = "Completely disable queues",
+            setting = "GDKP.disableQueues",
+            callback = function (Checkbox)
+                local checked = Checkbox:GetValue();
+                GL.Settings:set("GDKP.disableQueues", checked);
+
+                if (checked) then
+                    local enableQueue = function ()
+                        GL.Settings:set("GDKP.disableQueues", true);
+                        Checkbox:SetValue(false);
+                    end;
+
+                    GL.Interface.Dialogs.PopupDialog:open({
+                        question = string.format("Are you sure? If used properly this will save you A LOT of time!"),
+                        OnYes = function ()
+                            GL.Interface.Dialogs.PopupDialog:open({
+                                question = string.format("Your raiders will no longer be able prebid without a queue!"),
+                                OnYes = function ()
+                                    GL.Interface.Dialogs.PopupDialog:open({
+                                        question = string.format("Wanting to disable queues usually points to using the add-on wrong. Are you still sure?"),
+                                        OnYes = function ()
+                                            GL.GDKP.Auctioneer:clearQueue();
+                                            C_UI.Reload();
+                                            return;
+                                        end,
+                                        OnNo = function ()
+                                            enableQueue();
+                                        end
+                                    });
+                                end,
+                                OnNo = function ()
+                                    enableQueue();
+                                end
+                            });
+                        end,
+                        OnNo = function ()
+                            enableQueue();
+                        end
+                    });
+                end
+            end
+        },
+        {
             label = "Automatically add drops to queue",
             setting = "GDKP.addDropsToQueue",
         },
