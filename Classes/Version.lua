@@ -3,6 +3,7 @@ local _, GL = ...;
 ---@class Version
 GL.Version = GL.Version or {
     _initialized = false,
+
     checkingForUpdate = false,
     current = GL.version,
     latest = GL.version,
@@ -13,6 +14,7 @@ GL.Version = GL.Version or {
     latestPriorVersionBooted = nil,
     lastNotBackwardsCompatibleNotice = 0,
     lastUpdateNotice = 0,
+    versionDifference = 0,
 
     GroupMembers = {},
     RecurringCheckTimer = nil,
@@ -101,6 +103,11 @@ function Version:_init()
 
     -- Check our version whenever there's a ready check
     GL.Events:register("VersionReadyCheck", "READY_CHECK", function ()
+        if (self.isOutOfDate) then
+            GL.Events:unregister("VersionReadyCheck");
+            return;
+        end
+
         self:checkForUpdate(true);
     end);
 
@@ -221,14 +228,20 @@ end
 function Version:checkIfNewerRelease(versionString)
     GL:debug("Version:checkIfNewerRelease");
 
-    if (not self:leftIsOlderThanRight(self.latest, versionString)) then
+    local outDated, versionDifference = self:leftIsOlderThanRight(self.latest, versionString);
+    if (not outDated) then
         return;
     end
 
     self.latest = versionString;
 
     if (self.latest ~= self.current) then
+        versionDifference = tonumber(versionDifference);
         self.isOutOfDate = true;
+
+        if (versionDifference and versionDifference > self.versionDifference) then
+            self.versionDifference = versionDifference;
+        end
 
         self:notifyOfUpdate();
     end
@@ -256,28 +269,34 @@ function Version:notifyOfUpdate()
         return;
     end
 
-    local serverTime = GetServerTime();
+    -- Only show the update alert once per session
+    if (self.lastUpdateNotice > 0) then
+        return;
+    end
 
-    if (serverTime - self.lastUpdateNotice >= THIRTY_MINUTES) then
-        self.lastUpdateNotice = serverTime;
+    self.lastUpdateNotice = GetServerTime();
 
-        local notifyOfUpdate = function ()
-            GL:warning("A new version of |c00a79effGargul|r is available. Make sure to update!");
+    local notifyOfUpdate = function ()
+        GL:warning("A new version of |c00a79effGargul|r is available. Make sure to update!");
 
-            GL.Interface.Alerts:fire("GargulNotification", {
-                message = string.format("|c00BE3333Update Gargul!|r"),
-            });
+        -- Only show if the user didn't update for at least two trivial or one minor/major version
+        if (self.versionDifference < 2) then
+            return;
         end
 
-        -- Make sure to not annoy Sjniekel when in combat
-        if (UnitAffectingCombat("player")) then
-            GL.Events:register("VersionOutOfCombatListener", "PLAYER_REGEN_ENABLED", function ()
-                GL.Events:unregister("VersionOutOfCombatListener");
-                notifyOfUpdate();
-            end);
-        else
+        GL.Interface.Alerts:fire("GargulNotification", {
+            message = string.format("|c00BE3333Update Gargul!|r"),
+        });
+    end
+
+    -- Make sure to not annoy Sjniekel when in combat
+    if (UnitAffectingCombat("player")) then
+        GL.Events:register("VersionOutOfCombatListener", "PLAYER_REGEN_ENABLED", function ()
+            GL.Events:unregister("VersionOutOfCombatListener");
             notifyOfUpdate();
-        end
+        end);
+    else
+        notifyOfUpdate();
     end
 end
 
@@ -307,7 +326,9 @@ end
 ---
 ---@param left string
 ---@param right string
----@return boolean
+---@return boolean, number
+---
+--- /script DevTools_Dump({_G.Gargul.Version:leftIsOlderThanRight("5.3.0", "5.3.3")});
 function Version:leftIsOlderThanRight(left, right)
     GL:debug("Version:leftIsOlderThanRight");
 
@@ -319,24 +340,24 @@ function Version:leftIsOlderThanRight(left, right)
     end
 
     if (rightMajor < leftMajor) then
-        return false; -- Major of addon is higher
+        return false, (leftMajor - rightMajor) * 100; -- Major of addon is higher
     elseif (rightMajor > leftMajor) then
-        return true; -- Major of versionstring is higher
+        return true, (rightMajor - leftMajor) * 100; -- Major of versionstring is higher
     end
 
     if (rightMinor < leftMinor) then
-        return false; -- Minor of addon is higher
+        return false, (leftMinor - rightMinor) * 10; -- Minor of addon is higher
     elseif (rightMinor > leftMinor) then
-        return true; -- Minor of versionstring is higher
+        return true, (rightMinor - leftMinor) * 10; -- Minor of versionstring is higher
     end
 
     if (rightTrivial < leftTrivial) then
-        return false; -- Trivial of addon is higher
+        return false, leftTrivial - rightTrivial; -- Trivial of addon is higher
     elseif (rightTrivial > leftTrivial) then
-        return true; -- Trivial of versionstring is higher
+        return true, rightTrivial - leftTrivial; -- Trivial of versionstring is higher
     end
 
-    return false;
+    return false, 0;
 end
 
 --- Check if our current app version is higher than the given one
@@ -347,7 +368,10 @@ end
 function Version:leftIsNewerThanOrEqualToRight(left, right)
     GL:debug("Version:leftIsNewerThanOrEqualToRight");
 
-    return not self:leftIsOlderThanRight(left, right);
+    local older, versionDifference = self:leftIsOlderThanRight(left, right);
+    local newerOrEqual = not older;
+
+    return newerOrEqual, versionDifference;
 end
 
 --- Inspect quietly, meaning there will be no visual feedback
