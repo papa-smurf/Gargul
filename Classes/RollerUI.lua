@@ -245,7 +245,7 @@ function RollerUI:drawCountdownBar(time, itemLink, itemIcon, note, userCanUseIte
             return self[event] and self[event](self, ...);
         end
     end)
-    TimerBar:RegisterEvent("MODIFIER_STATE_CHANGED")
+    TimerBar:RegisterEvent("MODIFIER_STATE_CHANGED");
     function TimerBar:MODIFIER_STATE_CHANGED(key, pressed)
         if (key ~= "LSHIFT" and key ~= "RSHIFT") then
             return;

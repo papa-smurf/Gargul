@@ -146,7 +146,7 @@ function Bidder:draw(time, itemLink, itemIcon)
         if (event == "MODIFIER_STATE_CHANGED") then
             return self[event] and self[event](self, ...);
         end
-    end)
+    end);
 
     CountDownBarDragger:RegisterEvent("MODIFIER_STATE_CHANGED");
     function CountDownBarDragger:MODIFIER_STATE_CHANGED(key, pressed)
@@ -397,7 +397,15 @@ function Bidder:hide()
         return;
     end
 
-    self.Window:Hide();
+    if (self.Window.CountDownBarDragger) then
+        self.Window.CountDownBarDragger:UnregisterEvent("MODIFIER_STATE_CHANGED");
+        self.Window.CountDownBarDragger.OnEvent = nil;
+        self.Window.CountDownBarDragger.OnEnter = nil;
+        self.Window.CountDownBarDragger.OnLeave = nil;
+        self.Window.CountDownBarDragger.OnMouseDown = nil;
+    end
+
+    GL.Interface:release(self.Window);
     self.Window = nil;
 end
 
