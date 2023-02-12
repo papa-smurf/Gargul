@@ -113,6 +113,11 @@ function Session:copperOwedToPlayer(player, sessionID)
         return;
     end
 
+    -- You can't owe yourself anything
+    if (GL:iEquals(player, GL.User.name)) then
+        return 0;
+    end
+
     local GoldTraded = GL:tableGet(Instance, "GoldTrades." .. player, {
         from = 0,
         to = 0,

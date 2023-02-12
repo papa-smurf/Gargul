@@ -592,16 +592,12 @@ function Overview:refresh()
         if (not Session.lockedAt) then
             nameText = string.format("    |c00%s%s|r", classColor, player);
         else
-            if (player ~= GL.User.name) then
-                local copperToGive = GDKPSession:copperOwedToPlayer(player, Session.ID);
+            local copperToGive = GDKPSession:copperOwedToPlayer(player, Session.ID);
 
-                if (copperToGive > 0) then
-                    nameText = string.format("    |c00F7922E(%sg)|r |c00%s%s|r", copperToGive / 10000, classColor, player);
-                elseif (copperToGive < 0) then
-                    nameText = string.format("    |c00BE3333(%sg)|r |c00%s%s|r", (copperToGive * -1) / 10000, classColor, player);
-                else
-                    nameText = string.format("    |c0092FF00(0)|r |c00%s%s|r", classColor, player);
-                end
+            if (copperToGive > 0) then
+                nameText = string.format("    |c00F7922E(%sg)|r |c00%s%s|r", copperToGive / 10000, classColor, player);
+            elseif (copperToGive < 0) then
+                nameText = string.format("    |c00BE3333(%sg)|r |c00%s%s|r", (copperToGive * -1) / 10000, classColor, player);
             else
                 nameText = string.format("    |c0092FF00(0)|r |c00%s%s|r", classColor, player);
             end
