@@ -2135,6 +2135,18 @@ function GL:tableSlice(Table, offset, length, preserveKeys)
     return Slice;
 end
 
+---@param Table table
+function GL:tableValues(Table)
+    GL:debug("GL:tableValues");
+
+    local Values = {};
+    for _, Value in pairs(Table or {}) do
+        tinsert(Values, Value);
+    end
+
+    return Values;
+end
+
 --- Pad a string to a certain length with another string (left side)
 ---
 ---@param str string

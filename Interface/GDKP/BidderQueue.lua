@@ -288,17 +288,13 @@ function BidderQueue:refreshTable()
     ---@type Frame
     local ActionButtons = Window.ActionButtons;
 
-    local count = 0;
-
-    local QueueCopy = {};
-    for _, Entry in pairs(Auction.Queue) do
-        tinsert(QueueCopy, Entry);
-    end
-    table.sort(QueueCopy, function (a, b)
-        return a.identifier < b.identifier;
+    local SortedQueue = GL:tableValues(Auction.Queue);
+    table.sort(SortedQueue, function (a, b)
+        return a.order < b.order;
     end);
 
-    for _, Item in pairs(QueueCopy) do
+    local itemsAdded = false;
+    for _, Item in pairs(SortedQueue or {}) do
         local identifier = Item.identifier;
         GL:onItemLoadDo(GL:getItemIDFromLink(Item.itemLink), function (Details)
             if (self.deletedIdentifiers[identifier] or not Details) then
@@ -316,15 +312,13 @@ function BidderQueue:refreshTable()
 
             local autoBid = tonumber(Auction:getQueuedAutoBid(Details.id));
 
-            count = count or 0;
-
             ---@type Frame
             local ItemRow = CreateFrame("Frame", nil, ItemHolder);
             ItemRow:SetHeight(QUEUE_ROW_HEIGHT);
             ItemRow._itemLink = Details.itemLink;
             ItemRow._identifier = identifier;
 
-            ItemRow:SetPoint("TOPLEFT", ItemHolder, "TOPLEFT", 0, (count * 20) * -1);
+            ItemRow:SetPoint("TOPLEFT", ItemHolder, "TOPLEFT", 0, ((Item.order - 1) * 20) * -1);
             ItemRow:SetPoint("TOPRIGHT", ItemHolder, "TOPRIGHT", not GL.elvUILoaded and 0 or -4, 0);
 
             --[[ TOGGLE DELETE ON HOVER ]]
@@ -415,11 +409,11 @@ function BidderQueue:refreshTable()
             Name:SetHeight(20);
 
             tinsert(self.ItemRows, ItemRow);
-            count = count + 1;
+            itemsAdded = true;
         end);
     end
 
-    if (count <= 0) then
+    if (not itemsAdded) then
         self:close();
     end
 end

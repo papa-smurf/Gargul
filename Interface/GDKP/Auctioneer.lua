@@ -39,7 +39,6 @@ Interface.GDKP.Auctioneer = {
     minimumBid = nil,
     time = nil,
 
-    itemsShownInQueue = 0,
     reorderItems = nil, -- Overwritten later
     queueWindowName = "Gargul.Interface.GDKP.Auctioneer.Queue",
     windowName = "Gargul.Interface.GDKP.Auctioneer.Window",
@@ -869,7 +868,7 @@ function AuctioneerUI:buildQueue(Window)
         local DeleteButton;
 
         do --[[ DELETE BUTTON ]]
-            DeleteButton = CreateFrame("Button", nil, nil, "UIPanelButtonTemplate");
+            DeleteButton = CreateFrame("Button", nil, ItemHolder, "UIPanelButtonTemplate");
             DeleteButton:SetSize(18, 18);
 
             ---@type Texture
@@ -889,36 +888,44 @@ function AuctioneerUI:buildQueue(Window)
 
         --[[ REORDER QUEUE ENTRIES ]]
         self.reorderItems = function()
-            local count = 0;
-
-            ---@type number, Frame
             for key, ItemRow in pairs(self.ItemRows or {}) do
-                if (ItemRow and ItemRow._queueIndex and ItemRow._itemLink) then
+                if (not ItemRow or not ItemRow._itemLink or not Auction.Queue[ItemRow._identifier]) then
+                    if (ItemRow and ItemRow.GetChildren) then
+                        Interface:release(ItemRow);
+                    end
+
+                    self.ItemRows[key] = nil;
+                end
+            end
+
+            local SortedQueue = GL:tableValues(Auction.Queue);
+            table.sort(SortedQueue, function (a, b)
+                return a.order < b.order;
+            end);
+
+            for _, QueuedItem in pairs(SortedQueue or {}) do
+                local key = QueuedItem.identifier;
+                local ItemRow = self.ItemRows[key];
+
+                if (ItemRow and ItemRow._itemLink) then
                     ItemRow:ClearAllPoints();
                     ItemRow:Show();
-                    ItemRow:SetPoint("TOPLEFT", ItemHolder, "TOPLEFT", 0, (count * 20) * -1);
+                    ItemRow:SetPoint("TOPLEFT", ItemHolder, "TOPLEFT", 0, ((QueuedItem.order - 1) * 20) * -1);
                     ItemRow:SetPoint("TOPRIGHT", ItemHolder, "TOPRIGHT", not GL.elvUILoaded and 0 or -4, 0);
-                    count = count + 1;
-                    ItemRow._queueIndex = count;
-                    ItemRow._identifier = count .. "." .. GL:stringHash(GetTime() .. ItemRow._itemLink);
                     self.ItemRows[key] = ItemRow;
                 else
                     self.ItemRows[key] = nil;
                 end
             end
-
-            Auctioneer:populateQueueFromUI();
         end
 
         --[[ ADD AN ITEM TO THE QUEUE WINDOW ]]
         local rowHeight = 20;
-        Queue.addItemByLink = function (_, link, identifier, callback)
+        Queue.addItemByLink = function (_, link, identifier)
             GL:onItemLoadDo(GL:getItemIDFromLink(link), function (Details)
-                if (not Details) then
+                if (not Details or self.ItemRows[identifier]) then
                     return;
                 end
-
-                self.itemsShownInQueue = self.itemsShownInQueue or 0;
 
                 local bindOnPickup = GL:inTable({LE_ITEM_BIND_ON_ACQUIRE, LE_ITEM_BIND_QUEST}, Details.bindType);
 
@@ -929,15 +936,14 @@ function AuctioneerUI:buildQueue(Window)
                 local PerItemSettings = GDKP:settingsForItemID(Details.id);
                 ItemRow:SetHeight(rowHeight);
                 ItemRow._itemLink = link;
-                ItemRow._queueIndex = self.itemsShownInQueue + 1;
-                ItemRow._identifier = identifier or self.itemsShownInQueue .. "." .. GL:stringHash(GetTime() .. ItemRow._itemLink); -- Count first is important for sorting later
+                ItemRow._identifier = identifier;
 
-                ItemRow:SetPoint("TOPLEFT", ItemHolder, "TOPLEFT", 0, (self.itemsShownInQueue * 20) * -1);
+                ItemRow:SetPoint("TOPLEFT", ItemHolder, "TOPLEFT", 0, (GL:count(self.ItemRows) * 20) * -1);
                 ItemRow:SetPoint("TOPRIGHT", ItemHolder, "TOPRIGHT", not GL.elvUILoaded and 0 or -4, 0);
 
                 --[[ TOGGLE DELETE ON HOVER ]]
                 ItemRow:SetScript("OnEnter", function ()
-                    DeleteButton:SetParent(ItemRow);
+                    DeleteButton:SetFrameLevel(ItemRow:GetFrameLevel() + 1);
                     DeleteButton:ClearAllPoints();
                     DeleteButton:SetPoint("TOPRIGHT", ItemRow, "TOPRIGHT", -2, 0);
                     DeleteButton:Show();
@@ -946,7 +952,7 @@ function AuctioneerUI:buildQueue(Window)
                         DeleteButton:SetParent(ItemHolder);
                         DeleteButton:Hide();
                         Auction:removeFromQueue(ItemRow._identifier);
-                        self:deleteRowFromQueue(ItemRow);
+                        self:reorderItems();
                     end);
                 end);
 
@@ -972,25 +978,35 @@ function AuctioneerUI:buildQueue(Window)
                 ItemRow:SetMovable(true);
                 ItemRow:EnableMouse(true);
                 ItemRow:RegisterForDrag("LeftButton");
-                local indexWithGlow, MoveTimer, newIndex;
+                local indexWithGlow, RowWithGlow, MoveTimer, newPosition, originalPosition;
                 ItemRow:SetScript("OnDragStart", function()
-                    local rowHeight = ItemRow:GetHeight();
+                    local numberOfRows = GL:count(self.ItemRows);
+                    originalPosition = Auction.Queue[ItemRow._identifier].order;
+                    local itemRowHeight = ItemRow:GetHeight();
                     ItemRow:StartMoving();
 
                     MoveTimer = GL.Ace:ScheduleRepeatingTimer(function ()
                         local _, newMouseY = GetCursorPosition();
 
-                        newIndex = math.ceil(ItemRow._queueIndex - ((newMouseY - mouseY) / (rowHeight * uiScale)));
-
-                        if (newIndex ~= indexWithGlow) then
-                            LCG.PixelGlow_Stop(self.ItemRows[indexWithGlow]);
+                        newPosition = math.ceil(originalPosition - ((newMouseY - mouseY) / (itemRowHeight * uiScale)));
+                        newPosition = math.max(1, newPosition);
+                        newPosition = math.min(numberOfRows, newPosition);
+                        if (newPosition == indexWithGlow
+                            or newPosition == originalPosition
+                        ) then
+                            return;
                         end
 
-                        if (newIndex ~= ItemRow._queueIndex) then
-                            if (newIndex ~= indexWithGlow) then
-                                LCG.PixelGlow_Start(self.ItemRows[newIndex], {1,1,1,1}, 20, .05, 5, 3);
-                            end
-                            indexWithGlow = newIndex;
+                        if (RowWithGlow) then
+                            LCG.PixelGlow_Stop(RowWithGlow);
+                        end
+
+                        RowWithGlow = Auction:QueuedItemByPosition(newPosition);
+                        if (RowWithGlow) then
+                            indexWithGlow = newPosition;
+                            RowWithGlow = self.ItemRows[RowWithGlow.identifier];
+
+                            LCG.PixelGlow_Start(RowWithGlow, {1,1,1,1}, 20, .05, 5, 3);
                         end
                     end, .1);
                 end);
@@ -998,49 +1014,15 @@ function AuctioneerUI:buildQueue(Window)
                     GL.Ace:CancelTimer(MoveTimer);
                     ItemRow:Hide();
 
-                    if (indexWithGlow) then
-                        LCG.PixelGlow_Stop(self.ItemRows[indexWithGlow]);
+                    if (RowWithGlow) then
+                        LCG.PixelGlow_Stop(RowWithGlow);
                     end
 
-                    if (tonumber(newIndex)) then
-                        newIndex = math.max(1, newIndex);
-                        newIndex = math.min(newIndex, #self.ItemRows);
+                    if (tonumber(newPosition)) then
+                        local MoveTo = Auction:QueuedItemByPosition(newPosition);
 
-                        if (not self.ItemRows[newIndex]
-                            or newIndex == ItemRow._queueIndex
-                        ) then
-                            self:reorderItems();
-                            return;
-                        end
-
-                        -- Move the row
-                        do
-                            local NewOrder = {};
-                            local RowToMove = self.ItemRows[ItemRow._queueIndex];
-                            self.ItemRows[ItemRow._queueIndex] = nil;
-
-                            if (newIndex > ItemRow._queueIndex) then
-                                newIndex = newIndex + 1;
-                            end
-
-                            local placed = false;
-                            for index, Row in pairs (self.ItemRows or {}) do
-                                if (Row and index ~= ItemRow._queueIndex) then
-                                    if (index == newIndex) then
-                                        tinsert(NewOrder, RowToMove);
-                                        placed = true;
-                                    end
-
-                                    tinsert(NewOrder, Row);
-                                end
-                            end
-
-                            -- This can happen when moving an item all the way down the bottom
-                            if (not placed) then
-                                tinsert(NewOrder, RowToMove);
-                            end
-
-                            self.ItemRows = NewOrder;
+                        if (MoveTo) then
+                            Auction:reorderQueueItem(ItemRow._identifier, MoveTo.identifier);
                         end
                     end
 
@@ -1100,13 +1082,10 @@ function AuctioneerUI:buildQueue(Window)
                 Name:SetPoint("RIGHT", MinInput, "LEFT", -6, 0);
                 Name:SetHeight(20);
 
-                self.itemsShownInQueue = self.itemsShownInQueue + 1;
+                ItemRow.order = GL:tableGet(Auction.Queue, identifier .. ".order", GL:count(Auction.Queue) + 1);
 
-                tinsert(self.ItemRows, ItemRow);
-
-                if (type(callback) == "function") then
-                    callback(ItemRow._identifier);
-                end
+                self.ItemRows[identifier] = ItemRow;
+                self:reorderItems();
             end);
         end;
 
@@ -1143,7 +1122,6 @@ function AuctioneerUI:buildQueue(Window)
                 self.ItemRows[key] = nil;
             end
 
-            self.itemsShownInQueue = 0;
             self.ItemRows = {};
         end);
     end
@@ -1307,24 +1285,8 @@ function AuctioneerUI:deleteRowFromQueue(Row)
     Row:Hide();
     Row._itemLink = nil;
     Row._identifier = nil;
-    Row._queueIndex = nil;
     Interface:release(Row);
     Row = nil;
-
-    local count = 0;
-    local ItemRows = self.ItemRows;
-    self.ItemRows = {};
-    for _, ItemRow in pairs(ItemRows or {}) do
-        if (ItemRow and ItemRow._queueIndex) then
-            count = count + 1;
-            ItemRow._queueIndex = count;
-            self.ItemRows[count] = ItemRow;
-        elseif (ItemRow and ItemRow.Hide) then
-            Interface:release(ItemRow);
-        end
-    end
-
-    self.itemsShownInQueue = count;
 
     self:reorderItems();
 end
@@ -1332,7 +1294,7 @@ end
 ---@return void
 function AuctioneerUI:refreshIconGlows()
     for _, ItemRow in pairs(self.ItemRows or {}) do
-        if (ItemRow and ItemRow._queueIndex) then
+        if (ItemRow and ItemRow._itemLink) then
             GL:highlightItem(ItemRow, ItemRow._itemLink);
         end
     end
