@@ -163,6 +163,7 @@ GL.Data.Constants = {
             "Arvada",
             "Codzima",
             "Curnil",
+            "DingoGDKP",
             "Jadedspirit",
             "Lantis",
             "Lemmings19",
