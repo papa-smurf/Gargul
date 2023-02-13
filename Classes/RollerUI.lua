@@ -227,6 +227,8 @@ function RollerUI:drawCountdownBar(time, itemLink, itemIcon, note, userCanUseIte
     TimerBar:Set("type", "ROLLER_UI_COUNTDOWN");
     TimerBar:Start();
 
+    local lastShiftStatus;
+    local itemTooltipIsShowing = false;
     local refreshTooltip = function ()
         GameTooltip:Hide();
 
@@ -237,31 +239,8 @@ function RollerUI:drawCountdownBar(time, itemLink, itemIcon, note, userCanUseIte
         GameTooltip:SetOwner(self.Window, "ANCHOR_TOP");
         GameTooltip:SetHyperlink(itemLink);
         GameTooltip:Show();
+        itemTooltipIsShowing = true;
     end;
-
-    local lastShiftStatus;
-    TimerBar:SetScript("OnEvent", function(self, event, ...)
-        if (event == "MODIFIER_STATE_CHANGED") then
-            return self[event] and self[event](self, ...);
-        end
-    end)
-    TimerBar:RegisterEvent("MODIFIER_STATE_CHANGED");
-    function TimerBar:MODIFIER_STATE_CHANGED(key, pressed)
-        if (key ~= "LSHIFT" and key ~= "RSHIFT") then
-            return;
-        end
-
-        local Owner = GameTooltip:GetOwner();
-        local gameTooltipIsShown = GameTooltip:IsShown();
-        if (pressed == 1 and (not gameTooltipIsShown or not Owner or not Owner.ownedByGargul)) then
-            return;
-        end
-
-        if (lastShiftStatus ~= pressed and gameTooltipIsShown) then
-            refreshTooltip();
-            lastShiftStatus = pressed;
-        end
-    end
 
     -- Show a gametooltip for the item up for roll
     -- when hovering over the progress bar
@@ -271,16 +250,33 @@ function RollerUI:drawCountdownBar(time, itemLink, itemIcon, note, userCanUseIte
         GameTooltip:SetOwner(self.Window, "ANCHOR_TOP");
         GameTooltip:SetHyperlink(itemLink);
         GameTooltip:Show();
+        itemTooltipIsShowing = true;
     end);
 
     TimerBar:SetScript("OnLeave", function()
         GameTooltip:Hide();
+        itemTooltipIsShowing = false;
+    end);
+
+    GL.Events:register("RollerUIModifierStateChanged", "MODIFIER_STATE_CHANGED", function (_, key, pressed)
+        if (not itemTooltipIsShowing
+            or (key ~= "LSHIFT" and key ~= "RSHIFT")
+        ) then
+            return;
+        end
+
+        if (lastShiftStatus ~= pressed) then
+            refreshTooltip();
+            lastShiftStatus = pressed;
+        end
     end);
 end
 
 ---@return void
 function RollerUI:hide()
     GL:debug("RollerUI:hide");
+
+    GL.Events:unregister("RollerUIModifierStateChanged");
 
     if (not self.Window) then
         return;
@@ -293,7 +289,6 @@ function RollerUI:hide()
         return;
     end
 
-    self.TimerBar:UnregisterEvent("MODIFIER_STATE_CHANGED");
     self.TimerBar.MODIFIER_STATE_CHANGED = nil;
     self.TimerBar.OnEvent = nil;
     self.TimerBar.OnEnter = nil;

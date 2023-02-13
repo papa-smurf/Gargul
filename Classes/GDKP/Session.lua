@@ -419,7 +419,7 @@ function Session:itemHistory(itemLinkOrID)
     local totalSaleValue = 0;
     local lastSoldTimestamp = 0;
     local lastSoldPrice = 0;
-    for _, Instance in pairs(DB.GDKP.Ledger or {}) do
+    for _, Instance in pairs(DB:get("GDKP.Ledger") or {}) do
         for _, Auction in pairs(Instance.Auctions or {}) do
             if (type(Auction) == "table"
                 and Auction.itemID == itemID
@@ -528,7 +528,7 @@ function Session:setActive(sessionID)
     local Instance = self:byID(sessionID);
     if (not Instance
         or Instance.deletedAt
-        or DB.GDKP.activeSession == sessionID
+        or DB:get("GDKP.activeSession") == sessionID
     ) then
         return false;
     end
@@ -552,7 +552,7 @@ end
 function Session:ownedByUser()
     GL:debug("Session:ownedByUser");
 
-    for _, Instance in pairs (DB.GDKP.Ledger or {}) do
+    for _, Instance in pairs (DB:get("GDKP.Ledger") or {}) do
         if (GL:tableGet(Instance or {}, "CreatedBy.uuid") == GL.User.id) then
             return true;
         end
@@ -565,7 +565,7 @@ end
 function Session:exists(sessionIdentifier)
     GL:debug("Session:exists");
 
-    return DB.GDKP.Ledger[sessionIdentifier] and not GL:empty(DB.GDKP.Ledger[sessionIdentifier].ID);
+    return not not DB:get("GDKP.Ledger." .. sessionIdentifier .. ".ID");
 end
 
 ---@param title string
@@ -713,7 +713,7 @@ function Session:delete(sessionID)
     end
 
     -- This session is the currently active one, clear it
-    if (DB.GDKP.activeSession == sessionID) then
+    if (DB:get("GDKP.activeSession") == sessionID) then
         self:clearActive();
     end
 
@@ -757,12 +757,12 @@ end
 function Session:clearActive()
     GL:debug("Session:clearActive");
 
-    if (not DB.GDKP.activeSession) then
+    local activeSession = DB:get("GDKP.activeSession");
+    if (not activeSession) then
         return false;
     end
 
-    local activeSession = DB.GDKP.activeSession;
-    DB.GDKP.activeSession = nil;
+    DB:set("GDKP.activeSession", nil);
 
     Events:fire("GL.GDKP_ACTIVE_SESSION_CLEARED", activeSession);
     Events:fire("GL.GDKP_ACTIVE_SESSION_CHANGED");

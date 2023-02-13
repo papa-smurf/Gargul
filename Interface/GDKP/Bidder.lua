@@ -46,6 +46,7 @@ function Bidder:show(...)
     self:draw(...);
 end
 
+---@return void
 function Bidder:autoBidStopped()
     if (self.AutoBidButton
         and self.AutoBidButton.Show
@@ -122,12 +123,14 @@ function Bidder:draw(time, itemLink, itemIcon)
     end)
 
     local lastShiftStatus;
+    local itemTooltipIsShowing = false;
     local refreshTooltip = function ()
         GameTooltip:Hide();
 
         GameTooltip:SetOwner(CountDownBarDragger, "ANCHOR_TOP");
         GameTooltip:SetHyperlink(itemLink);
         GameTooltip:Show();
+        itemTooltipIsShowing = true;
     end;
 
     CountDownBarDragger:SetScript("OnEnter", function()
@@ -136,35 +139,26 @@ function Bidder:draw(time, itemLink, itemIcon)
         GameTooltip:SetOwner(CountDownBarDragger, "ANCHOR_TOP");
         GameTooltip:SetHyperlink(itemLink);
         GameTooltip:Show();
+        itemTooltipIsShowing = true;
     end);
 
     CountDownBarDragger:SetScript("OnLeave", function()
         GameTooltip:Hide();
+        itemTooltipIsShowing = false;
     end);
 
-    CountDownBarDragger:SetScript("OnEvent", function(self, event, ...)
-        if (event == "MODIFIER_STATE_CHANGED") then
-            return self[event] and self[event](self, ...);
-        end
-    end);
-
-    CountDownBarDragger:RegisterEvent("MODIFIER_STATE_CHANGED");
-    function CountDownBarDragger:MODIFIER_STATE_CHANGED(key, pressed)
-        if (key ~= "LSHIFT" and key ~= "RSHIFT") then
+    GL.Events:register("BidderModifierStateChanged", "MODIFIER_STATE_CHANGED", function (_, key, pressed)
+        if (not itemTooltipIsShowing
+            or (key ~= "LSHIFT" and key ~= "RSHIFT")
+        ) then
             return;
         end
 
-        local Owner = GameTooltip:GetOwner();
-        local gameTooltipIsShown = GameTooltip:IsShown();
-        if (pressed == 1 and (not gameTooltipIsShown or not Owner or not Owner.ownedByGargul)) then
-            return;
-        end
-
-        if (lastShiftStatus ~= pressed and gameTooltipIsShown) then
+        if (lastShiftStatus ~= pressed) then
             refreshTooltip();
             lastShiftStatus = pressed;
         end
-    end
+    end);
 
     Window.CountDownBarDragger = CountDownBarDragger;
 
@@ -393,12 +387,13 @@ end
 function Bidder:hide()
     GL:debug("Bidder:hide");
 
+    GL.Events:unregister("BidderModifierStateChanged");
+
     if (not self.Window) then
         return;
     end
 
     if (self.Window.CountDownBarDragger) then
-        self.Window.CountDownBarDragger:UnregisterEvent("MODIFIER_STATE_CHANGED");
         self.Window.CountDownBarDragger.OnEvent = nil;
         self.Window.CountDownBarDragger.OnEnter = nil;
         self.Window.CountDownBarDragger.OnLeave = nil;

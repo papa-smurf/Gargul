@@ -137,7 +137,8 @@ function Auctioneer:_init()
     local firstItem = true;
     Events:register("AuctioneerItemReceived", "GL.ITEM_RECEIVED", function (_, Details)
         -- We don't want to automatically add loot
-        if (not Settings:get("GDKP.addDropsToQueue")
+        if (not DB:get("GDKP.activeSession", false)
+            or not Settings:get("GDKP.addDropsToQueue")
             or GL.Settings:get("GDKP.disableQueues")
         ) then
             return;
