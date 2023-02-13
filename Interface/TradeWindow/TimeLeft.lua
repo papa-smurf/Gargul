@@ -547,6 +547,8 @@ function TimeLeft:refreshBars(byRefresh)
     local tradeTimeRemainingByLink = {};
     local awardedItemCountByLink = {};
     local deItemCountByLink = {};
+    local selfAwardedItemCountByLink = {};
+    local tradedCountByLink = {};
 
     local numberOfBagsToCheck = 4;
     -- Dragon Flight introduced an extra bag slot
@@ -576,6 +578,8 @@ function TimeLeft:refreshBars(byRefresh)
                 local deUnreceived = false;
                 local unreceivedCount = 0;
                 local deUnreceivedCount = 0;
+                local selfAwardedCount = 0;
+                local tradedCount = 0;
                 for _, line in pairs(GL.AwardedLoot:tooltipLines(itemLink) or {}) do
                     line = string.lower(line);
                     if (string.match(line, "|de|") and string.match(line, "given: no")) then
@@ -584,11 +588,18 @@ function TimeLeft:refreshBars(byRefresh)
                     elseif (string.match(line, "given: no")) then
                         unreceived = true;
                         unreceivedCount = unreceivedCount + 1
+                    elseif (string.match(line, "given: yes")) then
+                        tradedCount = tradedCount + 1
+                        if (string.match(line, string.lower(GL.User.name))) then
+                            selfAwardedCount = selfAwardedCount + 1
+                        end
                     end
                 end
 
                 awardedItemCountByLink[itemLink] = unreceivedCount
                 deItemCountByLink[itemLink] = deUnreceivedCount
+                selfAwardedItemCountByLink[itemLink] = selfAwardedCount
+                tradedCountByLink[itemLink] = tradedCount
 
                 tinsert(ItemsWithTradeTimeRemaining, {
                     icon = icon,
@@ -660,82 +671,116 @@ function TimeLeft:refreshBars(byRefresh)
             break;
         end
 
-        -- Make sure the bar window has the appropriate height
-        Window:SetHeight(math.max(Window:GetHeight(), 16) + 18);
-
-        local TimerBar = LibStub("LibCandyBarGargul-3.0"):New(
-            "Interface\\AddOns\\Gargul\\Assets\\Textures\\timer-bar",
-            240,
-            18
-        );
-        TimerBar:SetParent(Window);
-        TimerBar:SetDuration(BagItem.timeRemaining);
-        TimerBar:SetColor(0, 1, 0, .3); -- Reset color to green
-        TimerBar:SetLabel(BagItem.itemLink);
-        TimerBar:SetIcon(BagItem.icon);
-        local awarded = false;
-        local disenchanted = false;
-        if (BagItem.unreceived and awardedItemCountByLink[BagItem.itemLink] > 0) then
-            TimerBar:SetIcon("Interface\\AddOns\\Gargul\\Assets\\Icons\\trophy");
-            awardedItemCountByLink[BagItem.itemLink] = awardedItemCountByLink[BagItem.itemLink] - 1;
-            awarded = true;
-        elseif (BagItem.deUnreceived and deItemCountByLink[BagItem.itemLink] > 0) then
-            TimerBar:SetIcon("Interface\\AddOns\\Gargul\\Assets\\Icons\\disenchant");
-            deItemCountByLink[BagItem.itemLink] = deItemCountByLink[BagItem.itemLink] - 1;
-            disenchanted = true;
+        local countOfTradableItemsByLink = 0
+        for _, value in pairs(ItemsWithTradeTimeRemaining) do
+            if(BagItem.itemLink == value.itemLink) then
+                countOfTradableItemsByLink = countOfTradableItemsByLink + 1
+            end
         end
 
-        TimerBar:Set("type", "TRADE_WINDOW_TIME_LEFT");
-        TimerBar.Details = BagItem;
+        -- Get the itemId from link and retrieve the count of dropped items by itemId
+        print("itemId")
+        local itemId = GL.getItemIDFromLink(BagItem.itemLink)
+        local droppedCount = #GL.DroppedLootLedger.Dropped[itemId]
 
-        local offsetY = ((index - 1) * 18) * -1 - 16;
-        TimerBar:SetPoint("TOP", Window, "TOP", 0, offsetY);
-        TimerBar.candyBarLabel:SetFont(STANDARD_TEXT_FONT, 12, "OUTLINE");
+        -- This condition check is used to determine if an item that has been SelfAwarded should be displayed or not
+        --  based on the number of same tradable items in the players bags
+        -- x : numOfTradableItem == droppedCount - (tradedCount - selfAwardedCount)
+        -- y : droppedCount == numOfTradableItem
+        -- z : selfAwardedCount > 0
+        -- i : timeRemaining > 600
+        --
+        -- If (x or y) and z and i then
+        --  decrement selfAwardedCount by 1
+        -- else
+        --  add TimerBar
+        print("if statement")
+        if (
+                (countOfTradableItemsByLink == droppedCount-(tradedCountByLink[BagItem.itemLink]-selfAwardedItemCountByLink[BagItem.itemLink])
+                        or droppedCount == countOfTradableItemsByLink
+                )
+                        and selfAwardedItemCountByLink[BagItem.itemLink] > 0
+                        and BagItem.timeRemaining > 600
+        ) then
+            selfAwardedItemCountByLink[BagItem.itemLink] = selfAwardedItemCountByLink[BagItem.itemLink] - 1;
+        else
+            -- Make sure the bar window has the appropriate height
+            Window:SetHeight(math.max(Window:GetHeight(), 16) + 18);
 
-        -- Make the bar turn green/yellow/red based on time left
-        TimerBar:AddUpdateFunction(function (Bar)
-            local percentageLeft = (BagItem.timeRemaining / 7200) * 100;
-
-            if (awarded or disenchanted) then
-                Bar:SetColor(0, 0, 0, .6);
-            elseif (percentageLeft >= 60) then
-                Bar:SetColor(0, 1, 0, .3);
-            elseif (percentageLeft >= 30) then
-                Bar:SetColor(1, 1, 0, .3);
-            else
-                Bar:SetColor(1, 0, 0, .3);
+            local TimerBar = LibStub("LibCandyBarGargul-3.0"):New(
+                    "Interface\\AddOns\\Gargul\\Assets\\Textures\\timer-bar",
+                    240,
+                    18
+            );
+            TimerBar:SetParent(Window);
+            TimerBar:SetDuration(BagItem.timeRemaining);
+            TimerBar:SetColor(0, 1, 0, .3); -- Reset color to green
+            TimerBar:SetLabel(BagItem.itemLink);
+            TimerBar:SetIcon(BagItem.icon);
+            local awarded = false;
+            local disenchanted = false;
+            if (BagItem.unreceived and awardedItemCountByLink[BagItem.itemLink] > 0) then
+                TimerBar:SetIcon("Interface\\AddOns\\Gargul\\Assets\\Icons\\trophy");
+                awardedItemCountByLink[BagItem.itemLink] = awardedItemCountByLink[BagItem.itemLink] - 1;
+                awarded = true;
+            elseif (BagItem.deUnreceived and deItemCountByLink[BagItem.itemLink] > 0) then
+                TimerBar:SetIcon("Interface\\AddOns\\Gargul\\Assets\\Icons\\disenchant");
+                deItemCountByLink[BagItem.itemLink] = deItemCountByLink[BagItem.itemLink] - 1;
+                disenchanted = true;
             end
-        end);
 
-        TimerBar:SetScript("OnMouseUp", function(_, mouseButtonPressed)
-            HandleModifiedItemClick(BagItem.itemLink, mouseButtonPressed);
-        end)
+            TimerBar:Set("type", "TRADE_WINDOW_TIME_LEFT");
+            TimerBar.Details = BagItem;
 
-        TimerBar:SetScript("OnLeave", function()
-            self:hideExplanationWindow();
-            GameTooltip:Hide();
-        end);
+            local offsetY = ((index - 1) * 18) * -1 - 16;
+            TimerBar:SetPoint("TOP", Window, "TOP", 0, offsetY);
+            TimerBar.candyBarLabel:SetFont(STANDARD_TEXT_FONT, 12, "OUTLINE");
 
-        -- Show a gametooltip for the item up for roll
-        -- when hovering over the progress bar
-        TimerBar:SetScript("OnEnter", function()
-            if (self:showExplanationWindow()) then
-                if (GL:inTable({"BOTTOM", "BOTTOMLEFT", "BOTTOMRIGHT"}, select(1, self.Window:GetPoint()))) then
-                    GameTooltip:SetOwner(self.Window, "ANCHOR_TOP");
+            -- Make the bar turn green/yellow/red based on time left
+            TimerBar:AddUpdateFunction(function (Bar)
+                local percentageLeft = (BagItem.timeRemaining / 7200) * 100;
+
+                if (awarded or disenchanted) then
+                    Bar:SetColor(0, 0, 0, .6);
+                elseif (percentageLeft >= 60) then
+                    Bar:SetColor(0, 1, 0, .3);
+                elseif (percentageLeft >= 30) then
+                    Bar:SetColor(1, 1, 0, .3);
                 else
-                    GameTooltip:SetOwner(self.HotKeyExplanation.frame, "ANCHOR_BOTTOM");
+                    Bar:SetColor(1, 0, 0, .3);
                 end
-            else
-                GameTooltip:SetOwner(Window, "ANCHOR_TOP");
-            end
-            GameTooltip:SetHyperlink(BagItem.itemLink);
-            GameTooltip:Show();
-        end);
+            end);
 
-        TimerBar:Start(7200); -- Default trade duration is two hours
-        tinsert(self.Bars, TimerBar);
+            TimerBar:SetScript("OnMouseUp", function(_, mouseButtonPressed)
+                HandleModifiedItemClick(BagItem.itemLink, mouseButtonPressed);
+            end)
 
-        barsAvailable = true;
+            TimerBar:SetScript("OnLeave", function()
+                self:hideExplanationWindow();
+                GameTooltip:Hide();
+            end);
+
+            -- Show a gametooltip for the item up for roll
+            -- when hovering over the progress bar
+            TimerBar:SetScript("OnEnter", function()
+                if (self:showExplanationWindow()) then
+                    if (GL:inTable({"BOTTOM", "BOTTOMLEFT", "BOTTOMRIGHT"}, select(1, self.Window:GetPoint()))) then
+                        GameTooltip:SetOwner(self.Window, "ANCHOR_TOP");
+                    else
+                        GameTooltip:SetOwner(self.HotKeyExplanation.frame, "ANCHOR_BOTTOM");
+                    end
+                else
+                    GameTooltip:SetOwner(Window, "ANCHOR_TOP");
+                end
+                GameTooltip:SetHyperlink(BagItem.itemLink);
+                GameTooltip:Show();
+            end);
+
+            TimerBar:Start(7200); -- Default trade duration is two hours
+            tinsert(self.Bars, TimerBar);
+
+            barsAvailable = true;
+        end
     end
 
     if (barsAvailable) then
