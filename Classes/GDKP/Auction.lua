@@ -33,7 +33,7 @@ GDKP.Auction = {
     lastBidReceivedAt = 0,
     maxBid = nil,
     raidWarningThrottler = nil,
-    waitingForReshedule = false,
+    waitingForReschedule = false,
     waitingForStart = false,
 
     AutoBidTimer = nil,
@@ -1032,15 +1032,18 @@ end
 function Auction:announceStart(itemLink, minimumBid, minimumIncrement, duration, antiSnipe)
     GL:debug("GDKP.Auction:announceStart");
 
-    if (self.waitingForStart) then
+    if (self.waitingForStart
+        and GetServerTime() - self.waitingForStart < 6
+    ) then
         return;
     end
 
     if (not Auctioneer:allowedToBroadcast()) then
+        self.waitingForStart = false;
         return;
     end
 
-    self.waitingForStart = true;
+    self.waitingForStart = GetServerTime();
     local Bids = self.Current.Bids;
     local TopBid = self.Current.TopBid;
     duration = tonumber(duration) or 0;
@@ -1056,19 +1059,19 @@ function Auction:announceStart(itemLink, minimumBid, minimumIncrement, duration,
         or minimumIncrement < 0
     ) then
         GL:warning("Invalid data provided for GDKP auction start!");
+        self.waitingForStart = false;
         return false;
     end
 
     local itemID = GL:getItemIDFromLink(itemLink) or 0;
     if (itemID < 1 or not GetItemInfoInstant(itemID)) then
         GL:warning("Invalid item provided for GDKP auction start!");
+        self.waitingForStart = false;
         return false;
     end
 
     self.inProgress = true;
-
     self:listenForBids();
-
     self:broadcastQueue(true);
 
     -- This is still the same item, use the previous highest bid as the starting point
@@ -1107,9 +1110,11 @@ function Auction:announceStop(forceStop)
     forceStop = GL:toboolean(forceStop);
 
     -- Looks like we had a last-second bid and are awaiting an extension
-    if (self.waitingForReshedule) then
+    if (self.waitingForReschedule) then
         return;
     end
+
+    self.waitingForStart = false;
 
     -- Do a final check to see if we're allowed to stop now
     if (not forceStop
@@ -1117,7 +1122,7 @@ function Auction:announceStop(forceStop)
         and self.Current.antiSnipe
         and self.Current.antiSnipe > 0
         and GetTime() - self.lastBidReceivedAt <= self.Current.antiSnipe
-        and not self.waitingForReshedule
+        and not self.waitingForReschedule
     ) then
         self:announceExtension(self.Current.antiSnipe);
         return;
@@ -1139,7 +1144,7 @@ end
 function Auction:announceExtension(time)
     GL:debug("GDKP.Auction:announceExtension");
 
-    self.waitingForReshedule = true;
+    self.waitingForReschedule = GetServerTime();
 
     time = tonumber(time) or 0
     if (time < 1) then
@@ -1171,7 +1176,7 @@ end
 function Auction:announceShortening(time)
     GL:debug("GDKP.Auction:announceShortening");
 
-    self.waitingForReshedule = true;
+    self.waitingForReschedule = GetServerTime();
 
     time = tonumber(time) or 0
     if (time < 1) then
@@ -1208,7 +1213,7 @@ function Auction:extend(CommMessage)
 
     local time = tonumber(CommMessage.content) or 0;
     if (time < 1) then
-        self.waitingForReshedule = false;
+        self.waitingForReschedule = false;
         return GL:error("Invalid time provided in Auction:extend");
     end
 
@@ -1225,7 +1230,7 @@ function Auction:extend(CommMessage)
         end, math.ceil(time + GL.Settings:get("GDKP.auctionEndLeeway", 2)));
     end
 
-    self.waitingForReshedule = false;
+    self.waitingForReschedule = false;
 end
 
 ---@return number|boolean Time remaining in seconds or false
@@ -1248,7 +1253,6 @@ function Auction:start(CommMessage)
     GL:debug("GDKP.Auction:start");
 
     local content = CommMessage.content;
-
     self.waitingForStart = false;
 
     --[[
@@ -1441,8 +1445,10 @@ end
 function Auction:stop(CommMessage)
     GL:debug("GDKP.Auction:stop");
 
+    self.waitingForStart = false;
+
     if (not self.inProgress
-        or self.waitingForReshedule
+        or self.waitingForReschedule
     ) then
         return;
     end

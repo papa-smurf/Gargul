@@ -393,11 +393,11 @@ function Bidder:hide()
         return;
     end
 
-    if (self.Window.CountDownBarDragger) then
-        self.Window.CountDownBarDragger.OnEvent = nil;
-        self.Window.CountDownBarDragger.OnEnter = nil;
-        self.Window.CountDownBarDragger.OnLeave = nil;
-        self.Window.CountDownBarDragger.OnMouseDown = nil;
+    -- We can't release the timer bar because it will be reused later
+    if (self.TimerBar and self.TimerBar.SetParent) then
+        self.TimerBar:SetParent(UIParent);
+        self.TimerBar:Stop();
+        self.TimerBar = nil;
     end
 
     GL.Interface:release(self.Window);

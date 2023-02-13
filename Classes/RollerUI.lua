@@ -282,20 +282,15 @@ function RollerUI:hide()
         return;
     end
 
-    self.Window:Hide();
-    self.Window = nil;
-
-    if (not self.TimerBar) then
-        return;
+    -- We can't release the timer bar because it will be reused later
+    if (self.TimerBar and self.TimerBar.SetParent) then
+        self.TimerBar:SetParent(UIParent);
+        self.TimerBar:Stop();
+        self.TimerBar = nil;
     end
 
-    self.TimerBar.MODIFIER_STATE_CHANGED = nil;
-    self.TimerBar.OnEvent = nil;
-    self.TimerBar.OnEnter = nil;
-    self.TimerBar.OnLeave = nil;
-    self.TimerBar.OnMouseDown = nil;
-    self.TimerBar:Hide();
-    self.TimerBar = nil;
+    GL.Interface:release(self.Window);
+    self.Window = nil;
 end
 
 GL:debug("RollerUI.lua");
