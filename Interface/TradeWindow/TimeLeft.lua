@@ -679,10 +679,11 @@ function TimeLeft:refreshBars(byRefresh)
         end
 
         -- Get the itemId from link and retrieve the count of dropped items by itemId
-        print("itemId")
         local itemId = GL.getItemIDFromLink(BagItem.itemLink)
-        local droppedCount = #GL.DroppedLootLedger.Dropped[itemId]
-
+        local droppedCount = 0
+        if (GL.DroppedLootLedger.Dropped[itemId]) then
+            droppedCount = #GL.DroppedLootLedger.Dropped[itemId]
+        end
         -- This condition check is used to determine if an item that has been SelfAwarded should be displayed or not
         --  based on the number of same tradable items in the players bags
         -- x : numOfTradableItem == droppedCount - (tradedCount - selfAwardedCount)
@@ -694,7 +695,6 @@ function TimeLeft:refreshBars(byRefresh)
         --  decrement selfAwardedCount by 1
         -- else
         --  add TimerBar
-        print("if statement")
         if (
                 (countOfTradableItemsByLink == droppedCount-(tradedCountByLink[BagItem.itemLink]-selfAwardedItemCountByLink[BagItem.itemLink])
                         or droppedCount == countOfTradableItemsByLink
