@@ -499,6 +499,13 @@ function Auctioneer:timeRanOut()
             -- This is to make sure that we only start a new auction after
             -- the item was successfully marked as disenchanted
             if (actionWhenNoBidsArePresent == "DISENCHANT") then
+                local quality = tonumber(GL:getItemQualityFromLink(Auction.Current.itemLink));
+
+                if (quality and quality >= 5) then
+                    GL:warning("No bids on Legendary+ item detected, continue manually!");
+                    return;
+                end
+
                 return GL.PackMule:disenchant(Auction.Current.itemLink, true, function ()
                     next();
                 end);
