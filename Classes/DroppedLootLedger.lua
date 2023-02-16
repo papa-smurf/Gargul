@@ -149,9 +149,9 @@ function DroppedLootLedger:startTracking()
     end);
 
     -- Loot window opened
-    --Events:register("DroppedLootLedgerLootReadyListener", "LOOT_OPENED", function()
-    --    self:lootOpened();
-    --end);
+    Events:register("DroppedLootLedgerLootReadyListener", "LOOT_OPENED", function()
+        self:lootOpened();
+    end);
 
     -- Check if a unit was killed
     --Events:register("DroppedLootLedgerCombatLogEventUnfilteredListener", "COMBAT_LOG_EVENT_UNFILTERED", function()
