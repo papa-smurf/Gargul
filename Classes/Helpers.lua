@@ -248,6 +248,27 @@ function GL:handleItemClick(itemLink, mouseButtonPressed, callback)
         return;
     end
 
+    local CLMRaidIsActive = false;
+    if (GL.Settings:get("ShortcutKeys.disableWhenCLMIsActive")) then
+        pcall(function ()
+            local CLM = LibStub("ClassicLootManager", true);
+
+            if (CLM
+                and CLM.CLM
+                and CLM.CLM.MODULES
+                and CLM.CLM.MODULES.RaidManager
+                and CLM.CLM.MODULES.RaidManager.IsInActiveRaid
+            ) then
+                CLMRaidIsActive = CLM.CLM.MODULES.RaidManager:IsInActiveRaid()
+            end
+        end);
+    end
+
+    -- There's an active CLM raid, disable hotkeys for now
+    if (CLMRaidIsActive) then
+        return;
+    end
+
     -- Make sure item interaction elements like ah/mail/shop/bank are closed
     if (GL.auctionHouseIsShown
         or GL.bankIsShown

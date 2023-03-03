@@ -73,6 +73,8 @@ function Settings:sanitizeSettings()
             DB:set("GDKP.Ledger." .. key, nil);
         end
     end
+
+    self:set("noUpdatePopup", nil);
 end
 
 --- These settings are version-specific and will be removed over time!

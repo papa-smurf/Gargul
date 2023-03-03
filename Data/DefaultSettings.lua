@@ -30,6 +30,7 @@ GL.Data.DefaultSettings = {
     ShortcutKeys = {
         auction = "DISABLED",
         award = "ALT_SHIFT_CLICK",
+        disableWhenCLMIsActive = false,
         disenchant = "CTRL_SHIFT_CLICK",
         doubleClickToTrade = true,
         onlyInGroup = false,

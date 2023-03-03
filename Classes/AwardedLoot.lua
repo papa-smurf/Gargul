@@ -498,7 +498,7 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, G
 
     -- Send the award data along to CLM if the player has it installed
     pcall(function ()
-        local CLMEventDispatcher = LibStub("EventDispatcher");
+        local CLMEventDispatcher = LibStub("EventDispatcher", true);
 
         if (not CLMEventDispatcher) then
             return;
