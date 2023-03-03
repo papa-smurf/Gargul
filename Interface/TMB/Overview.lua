@@ -155,7 +155,11 @@ function Overview:draw()
     ShareButton:SetWidth(152);
     ShareButton:SetText("Share Data");
     ShareButton:SetCallback("OnClick", function()
-        GL.Interface.Dialogs.PopupDialog:open("BROADCAST_TMB_CONFIRMATION");
+        if (not GL:empty(GL.Settings:get("TMB.shareWhitelist", ""))) then
+            GL.TMB:broadcast();
+        else
+            GL.Interface.Dialogs.PopupDialog:open("BROADCAST_TMB_CONFIRMATION");
+        end
     end);
     ShareButton:SetDisabled(true);
     Window:AddChild(ShareButton);

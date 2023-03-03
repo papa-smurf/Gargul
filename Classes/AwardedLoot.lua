@@ -500,7 +500,9 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, G
     pcall(function ()
         local CLMEventDispatcher = LibStub("EventDispatcher", true);
 
-        if (not CLMEventDispatcher) then
+        if (not CLMEventDispatcher
+            or not CLMEventDispatcher.dispatchEvent
+        ) then
             return;
         end
 

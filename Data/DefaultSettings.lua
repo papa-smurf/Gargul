@@ -183,6 +183,7 @@ GL.Data.DefaultSettings = {
         maximumNumberOfTooltipEntries = 35,
         maximumNumberOfAnnouncementEntries = 5,
         OSHasLowerPriority = true,
+        shareWhitelist = "",
         showEntriesWhenSolo = true,
         showItemInfoOnTooltips = true,
         showPrioListInfoOnTooltips = true,

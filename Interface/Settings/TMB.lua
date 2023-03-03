@@ -29,6 +29,23 @@ function TMB:draw(Parent)
             description = "Automatically share data with players who join your raid or when you import new data",
             setting = "TMB.automaticallyShareData",
         },
+    }, Parent);
+
+    local ShareWhitelist = GL.AceGUI:Create("EditBox");
+    ShareWhitelist:DisableButton(true);
+    ShareWhitelist:SetHeight(20);
+    ShareWhitelist:SetFullWidth(true);
+    ShareWhitelist:SetText(GL.Settings:get("TMB.shareWhitelist", ""));
+    ShareWhitelist:SetLabel(string.format(
+        "|cff%sAdd a comma-separated list of names to share with, only these people will receive data|r",
+        GL:classHexColor("rogue")
+    ));
+    ShareWhitelist:SetCallback("OnTextChanged", function (self)
+        GL.Settings:set("TMB.shareWhitelist", self:GetText());
+    end);
+    Parent:AddChild(ShareWhitelist);
+
+    Overview:drawCheckboxes({
         {
             label = "Show players in group only",
             description = "Makes sure you only see the names of players who are actually in your group",

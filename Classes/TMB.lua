@@ -1032,10 +1032,110 @@ function TMB:broadcast()
         return false;
     end
 
-    self.broadcastInProgress = true;
-    Events:fire("GL.TMB_BROADCAST_STARTED");
+    if (not GL:empty(GL.Settings:get("TMB.shareWhitelist", ""))) then
+        self:broadcastToWhitelist();
+    else
+        self:broadcastToGroup();
+    end
 
-    local Broadcast = function ()
+    return true;
+end
+
+---@return void
+function TMB:broadcastToWhitelist()
+    GL:debug("TMB.broadcastToGroup");
+
+    if (self.broadcastInProgress) then
+        GL:error("Broadcast still in progress");
+        return false;
+    end
+
+    self.broadcastInProgress = true;
+
+    local Whitelist = GL.Settings:get("TMB.shareWhitelist", "");
+    if (type(Whitelist) ~= "string") then
+        self.broadcastInProgress = false;
+        return;
+    end
+    Whitelist = GL:strSplit(Whitelist, ",");
+
+    local WhitelistedPlayersInGroup = {};
+    local GroupMemberNames = GL.User:groupMemberNames();
+    for _, name in pairs(Whitelist) do
+        name = string.lower(name);
+
+        if (not GL:iEquals(GL.User.name, name)
+            and GL:inTable(GroupMemberNames, name)
+        ) then
+            tinsert(WhitelistedPlayersInGroup, name);
+        end
+    end
+
+    local numberOfPlayers = #WhitelistedPlayersInGroup;
+    if (numberOfPlayers < 1) then
+        GL:warning("There's no one in your group to broadcast to");
+        self.broadcastInProgress = false;
+        return;
+    end
+
+    local broadcastsFinished = 0;
+    local broadcast = function ()
+        GL.Ace:ScheduleTimer(function ()
+            self.broadcastInProgress = false;
+        end, 10);
+
+        Events:fire("GL.TMB_BROADCAST_STARTED");
+
+        for _, player in pairs(WhitelistedPlayersInGroup) do
+            GL.CommMessage.new(
+                CommActions.broadcastTMBData,
+                GL.DB.TMB,
+                "WHISPER",
+                player
+            ):send(function ()
+                broadcastsFinished = broadcastsFinished + 1;
+
+                if (broadcastsFinished >= numberOfPlayers) then
+                    GL:success("TMB broadcast finished");
+                    self.broadcastInProgress = false;
+                    Events:fire("GL.TMB_BROADCAST_ENDED");
+                end
+            end);
+        end
+    end;
+
+    -- We're about to send a lot of data which will put strain on CTL
+    -- Make sure we're out of combat before doing so!
+    if (UnitAffectingCombat("player")) then
+        GL:message("You are currently in combat, delaying TMB broadcast");
+
+        Events:register("TMBOutOfCombatListener", "PLAYER_REGEN_ENABLED", function ()
+            Events:unregister("TMBOutOfCombatListener");
+            broadcast();
+        end);
+    else
+        broadcast();
+    end
+end
+
+---@return void
+function TMB:broadcastToGroup()
+    GL:debug("TMB.broadcastToGroup");
+
+    if (self.broadcastInProgress) then
+        GL:error("Broadcast still in progress");
+        return false;
+    end
+
+    self.broadcastInProgress = true;
+
+    local broadcast = function ()
+        GL.Ace:ScheduleTimer(function ()
+            self.broadcastInProgress = false;
+        end, 10);
+
+        Events:fire("GL.TMB_BROADCAST_STARTED");
+
         GL:message("Broadcasting TMB data...");
 
         local Label = GL.Interface:get(GL.TMB, "Label.BroadcastProgress");
@@ -1050,8 +1150,8 @@ function TMB:broadcast()
             "GROUP"
         ):send(function ()
             GL:success("TMB broadcast finished");
-            self.broadcastInProgress = false;
             Events:fire("GL.TMB_BROADCAST_ENDED");
+            self.broadcastInProgress = false;
 
             Label = GL.Interface:get(GL.TMB, "Label.BroadcastProgress");
             if (Label) then
@@ -1075,13 +1175,11 @@ function TMB:broadcast()
 
         Events:register("TMBOutOfCombatListener", "PLAYER_REGEN_ENABLED", function ()
             Events:unregister("TMBOutOfCombatListener");
-            Broadcast();
+            broadcast();
         end);
     else
-        Broadcast();
+        broadcast();
     end
-
-    return true;
 end
 
 --- Process an incoming TMB broadcast
