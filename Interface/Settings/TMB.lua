@@ -26,7 +26,7 @@ function TMB:draw(Parent)
     Overview:drawCheckboxes({
         {
             label = "Automatically share data",
-            description = "Automatically share data with players who join your raid or when you import new data",
+            description = "Automatically share data with players (all players or if specified, those listed below) who join your raid or when you import new data",
             setting = "TMB.automaticallyShareData",
         },
     }, Parent);
