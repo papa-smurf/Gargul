@@ -132,7 +132,11 @@ function Auction:_initializeQueue()
 
     local SortedQueue = GL:tableValues(Auction.Queue);
     table.sort(SortedQueue, function (a, b)
-        return a.order < b.order;
+        if (a.order and b.order) then
+            return a.order < b.order;
+        end
+
+        return false;
     end);
 
     local i = 1;
