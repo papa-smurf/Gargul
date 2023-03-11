@@ -112,6 +112,11 @@ function TMB:draw(Parent)
             setting = "TMB.showItemInfoOnTooltips",
         },
         {
+            label = "Show raid group",
+            description = "When more than one raid group is present, show a player's raid group on tooltips",
+            setting = "TMB.showRaidGroup",
+        },
+        {
             label = "Give OS items a lower priority",
             description = "Items marked as OS on wishlist or priolist will be put at the bottom of the list",
             setting = "TMB.OSHasLowerPriority",

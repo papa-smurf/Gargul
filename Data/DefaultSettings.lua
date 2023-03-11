@@ -187,6 +187,7 @@ GL.Data.DefaultSettings = {
         showEntriesWhenSolo = true,
         showItemInfoOnTooltips = true,
         showPrioListInfoOnTooltips = true,
+        showRaidGroup = true,
         showWishListInfoOnTooltips = true,
     },
     TradeAnnouncements = {
