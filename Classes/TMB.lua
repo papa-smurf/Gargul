@@ -87,6 +87,13 @@ function TMB:byItemID(itemID, inRaidOnly)
     if (type(inRaidOnly) ~= "boolean") then
         inRaidOnly = Settings:get("TMB.hideInfoOfPeopleNotInGroup");
 
+        if (inRaidOnly
+            and Settings:get("TMB.showEntriesWhenUsingPrio3")
+            and self:wasImportedFromCPR()
+        ) then
+            inRaidOnly = false;
+        end
+
         -- User is not in group and showEntriesWhenSolo is true
         if (inRaidOnly
             and not GL.User.isInGroup
@@ -408,14 +415,7 @@ function TMB:tooltipLines(itemLink)
         )
     ) then
         -- Add the header
-        local source = "TMB";
-        if (self:wasImportedFromDFT()) then
-            source = "DFT";
-        elseif (self:wasImportedFromCPR()) then
-            source = "CPR";
-        elseif (self:wasImportedFromCSV()) then
-            source = "Item";
-        end
+        local source = GL.TMB:source();
         tinsert(Lines, string.format("\n|cFFff7a0a%s|r", source .. " Prio List"));
 
         -- Sort the PrioListEntries based on prio (lowest to highest)
@@ -632,7 +632,7 @@ function TMB:import(data, triedToDecompress, source)
         for itemID, WishListEntries in pairs(WebsiteData.wishlists) do
             TMBData[itemID] = {};
             for _, characterString in pairs(WishListEntries) do
-                local stringParts = GL:strSplit(characterString, "||");
+                local stringParts = GL:strSplit(characterString, "|");
 
                 -- Check whether the format provided is the old (deprecated) format
                 if (not formatDecided) then
@@ -643,7 +643,7 @@ function TMB:import(data, triedToDecompress, source)
                             name = 1,
                             order = 3,
                             type = 5,
-                            groupID = nil, -- The old format doesn't support the groupID
+                            groupID = 7,
                         };
                     end
 

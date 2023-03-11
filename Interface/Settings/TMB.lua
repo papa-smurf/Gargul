@@ -57,6 +57,11 @@ function TMB:draw(Parent)
             setting = "TMB.showEntriesWhenSolo",
         },
         {
+            label = "Show everything when using prio3/classicpr.io",
+            description = "Show all entries when in a group and prio3/classicpr.io data is present (|c00a79eff/gl prio3|r or |c00a79eff/gl cpr|r)",
+            setting = "TMB.showEntriesWhenUsingPrio3",
+        },
+        {
             label = "Hide wishlist info when priority is set",
             description = "You will only see an item's wishlist details if no priority (LC) is set for it",
             setting = "TMB.hideWishListInfoIfPriorityIsPresent",
