@@ -612,7 +612,11 @@ function TimeLeft:refreshBars(byRefresh)
 
     -- Sort inventory items from shortest to largest trade duration left
     table.sort(ItemsWithTradeTimeRemaining, function (a, b)
-        return a.timeRemaining < b.timeRemaining;
+        if (a.timeRemaining and b.timeRemaining) then
+            return a.timeRemaining < b.timeRemaining;
+        end
+
+        return false;
     end);
 
     local barsDiffer = false;

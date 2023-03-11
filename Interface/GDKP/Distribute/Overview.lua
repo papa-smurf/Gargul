@@ -562,11 +562,19 @@ function Overview:refresh()
 
     -- Sort names (asc)
     table.sort(PlayersInRaid, function(a, b)
-        return a < b;
+        if (a and b) then
+            return a < b;
+        end
+
+        return false;
     end);
 
     table.sort(PlayersNotInRaid, function(a, b)
-        return a < b;
+        if (a and b) then
+            return a < b;
+        end
+
+        return false;
     end);
 
     ---@type AceGUISimpleGroup

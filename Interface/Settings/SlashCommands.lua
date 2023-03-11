@@ -43,7 +43,11 @@ function SlashCommands:draw(Parent)
 
     -- Sort the commands alphabetically
     table.sort(Commands, function (a, b)
-        return a.command:sub(1, 1) < b.command:sub(1, 1);
+        if (a.command and b.command) then
+            return a.command:sub(1, 1) < b.command:sub(1, 1);
+        end
+
+        return false;
     end);
 
     Overview:drawCheckboxes({

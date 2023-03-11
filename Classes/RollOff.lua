@@ -181,7 +181,11 @@ function RollOff:postStartMessage(itemLink, time, note)
         ) then
             -- Sort the PrioListEntries based on prio (lowest to highest)
             table.sort(PrioListEntries, function (a, b)
-                return a.prio < b.prio;
+                if (a.prio and b.prio) then
+                    return a.prio < b.prio;
+                end
+
+                return false;
             end);
 
             for _, Entry in pairs(PrioListEntries) do
@@ -203,7 +207,11 @@ function RollOff:postStartMessage(itemLink, time, note)
         ) then
             -- Sort the PrioListEntries based on prio (lowest to highest)
             table.sort(WishListEntries, function (a, b)
-                return a.prio < b.prio;
+                if (a.prio and b.prio) then
+                    return a.prio < b.prio;
+                end
+
+                return false;
             end);
 
             for _, Entry in pairs(WishListEntries) do

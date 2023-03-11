@@ -554,7 +554,11 @@ function Award:topPrioForItem(itemID)
 
         -- Sort the PrioListEntries based on prio (lowest to highest)
         table.sort(PrioListEntries, function (a, b)
-            return a.prio < b.prio;
+            if (a.prio and b.prio) then
+                return a.prio < b.prio;
+            end
+
+            return false;
         end);
 
         -- There's more than 1 person with top prio
@@ -579,7 +583,11 @@ function Award:topPrioForItem(itemID)
 
         -- Sort the WishListEntries based on prio (lowest to highest)
         table.sort(WishListEntries, function (a, b)
-            return a.prio < b.prio;
+            if (a.prio and b.prio) then
+                return a.prio < b.prio;
+            end
+
+            return false;
         end);
 
         -- There's more than 1 person with top prio

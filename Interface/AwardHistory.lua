@@ -35,7 +35,11 @@ function AwardHistory:populateChecksumsToShow()
 
     local sortChecksumsNewestToOldest = function ()
         table.sort(self.ChecksumsToShow, function (a, b)
-            return a[2] > b[2];
+            if (a[2] and b[2]) then
+                return a[2] > b[2];
+            end
+
+            return false;
         end);
     end;
 

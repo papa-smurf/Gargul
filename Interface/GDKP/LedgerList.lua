@@ -295,7 +295,11 @@ function LedgerList:refresh()
         end
 
         table.sort(PlayerNames, function (a, b)
-            return a < b;
+            if (a and b) then
+                return a < b;
+            end
+
+            return false;
         end);
 
         local PlayerData = {};

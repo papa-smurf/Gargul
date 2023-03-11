@@ -385,7 +385,11 @@ function TMB:tooltipLines(itemLink)
 
         -- Sort the PrioListEntries based on prio (lowest to highest)
         table.sort(PrioListEntries, function (a, b)
-            return a[1] < b[1];
+            if (a[1] and b[1]) then
+                return a[1] < b[1];
+            end
+
+            return false;
         end);
 
         -- Add the entries to the tooltip
@@ -424,7 +428,11 @@ function TMB:tooltipLines(itemLink)
 
         -- Sort the WishListEntries based on prio (lowest to highest)
         table.sort(WishListEntries, function (a, b)
-            return a[1] < b[1];
+            if (a[1] and b[1]) then
+                return a[1] < b[1];
+            end
+
+            return false;
         end);
 
         -- Add the entries to the tooltip
@@ -862,7 +870,11 @@ function TMB:DFTFormatToTMB(data)
 
         -- Sort the priorities (highest to lowest)
         table.sort(Priorities, function (a, b)
-            return a.priority > b.priority;
+            if (a.priority and b.priority) then
+                return a.priority > b.priority;
+            end
+
+            return false;
         end);
 
         for key, Priority in pairs(Priorities) do

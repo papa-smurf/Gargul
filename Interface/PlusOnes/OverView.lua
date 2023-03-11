@@ -202,7 +202,11 @@ function Overview:addPlayerPlusOneEntries(Parent)
 
     -- Sort the PlusOne entries alphabetically
     table.sort(PlusOneEntries, function (a, b)
-        return a.name < b.name;
+        if (a.name and b.name) then
+            return a.name < b.name;
+        end
+
+        return false;
     end);
 
     for _, Entry in pairs(PlusOneEntries) do
