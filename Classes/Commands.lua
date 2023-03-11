@@ -64,6 +64,7 @@ GL.Commands = GL.Commands or {
         po = "plusones",
         points = "boostedrolls",
         pr = "lootpriority",
+        prio3 = "cpr",
         priority = "lootpriority",
         rcsv = "raidcsv",
         ro = "rolloff",
