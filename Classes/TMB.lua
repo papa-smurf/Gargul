@@ -656,7 +656,7 @@ function TMB:import(data, triedToDecompress, source)
                 local type = Constants.tmbTypeWish;
 
                 if (stringParts[Keys.name] and stringParts[Keys.order]) then
-                    characterName = stringParts[Keys.name];
+                    characterName = string.lower(stringParts[Keys.name]);
                     order = tonumber(stringParts[Keys.order]) or order;
                 end
 
