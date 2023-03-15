@@ -46,8 +46,8 @@ function Overview:draw()
 
     Window:SetStatusText(string.format(
         "Imported on |c00a79eff%s|r at |c00a79eff%s|r",
-        date('%Y-%m-%d', DB:get("SoftRes.MetaData.importedAt", GetServerTime())),
-        date('%H:%M', DB:get("SoftRes.MetaData.importedAt", GetServerTime()))
+        date('%Y-%m-%d', GL:tableGet(DB.SoftRes, "MetaData.importedAt", GetServerTime())),
+        date('%H:%M', GL:tableGet(DB.SoftRes, "MetaData.importedAt", GetServerTime()))
     ));
 
     -- Make sure the window can be closed by pressing the escape button
@@ -327,8 +327,10 @@ function Overview:refreshDetailsFrame()
             break;
         end
 
+        local idString = tostring(itemID);
+
         -- This item has to exist in our cache because we ALWAYS populate it before opening the overview
-        local Item = GL:getCachedItem(itemID);
+        local Item = GL.DB.Cache.ItemsByID[idString];
 
         -- This should never be possible, but you never know what those weirdos are up to nowadays
         if (not Item) then
@@ -643,8 +645,9 @@ function Overview:drawHardReservesTable(Parent)
     });
 
     local TableData = {};
-    for _, Entry in pairs(DB:get("SoftRes.HardReserves")) do
-        local Item = GL:getCachedItem(Entry.id);
+    for _, Entry in pairs(DB.SoftRes.HardReserves) do
+        local idString = tostring(Entry.id);
+        local Item = GL.DB.Cache.ItemsByID[idString];
 
         if (Item) then
             tinsert(TableData, {
