@@ -636,7 +636,7 @@ function Overview:refreshLedger()
             local concernsManualAdjustment = Auction.itemID == Constants.GDKP.potIncreaseItemID;
 
             -- This entry should always exist, if it doesn't something went wrong (badly)
-            local ItemEntry = DB.Cache.ItemsByID[tostring(Auction.itemID)];
+            local ItemEntry = GL:getCachedItem(Auction.itemID);
 
             if (GL:empty(ItemEntry)) then
                 break;
