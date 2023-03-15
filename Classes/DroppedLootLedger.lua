@@ -75,11 +75,11 @@ function DroppedLootLedger:_init()
         local compareTime = GetServerTime() - 86400
         for itemId,droppedIdList in pairs(self.Dropped) do
             (function ()
-                for item, droppedItem in droppedIdList do
-                    if(droppedItem.at < compareTime) then
-                        tremove(self.Dropped[itemId], item)
-                    end
-                end
+                --for item, droppedItem in droppedIdList do
+                --    if(droppedItem.at < compareTime) then
+                --        tremove(self.Dropped[itemId], item)
+                --    end
+                --end
             end)();
         end
     end, 30)
