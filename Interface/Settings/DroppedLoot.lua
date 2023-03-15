@@ -17,6 +17,11 @@ function DroppedLoot:draw(Parent)
     local HorizontalSpacer;
     local AceGUI = GL.AceGUI;
 
+    HorizontalSpacer = AceGUI:Create("SimpleGroup");
+    HorizontalSpacer:SetLayout("FILL");
+    HorizontalSpacer:SetFullWidth(true);
+    HorizontalSpacer:SetHeight(10);
+
     local MinimumQualityLabel = AceGUI:Create("Label");
     MinimumQualityLabel:SetColor(1, .95686, .40784);
     MinimumQualityLabel:SetText("The minimum quality an item should have in order to be announced in chat");
@@ -43,10 +48,25 @@ function DroppedLoot:draw(Parent)
     end);
     Parent:AddChild(MinimumQuality);
 
-    HorizontalSpacer = AceGUI:Create("SimpleGroup");
-    HorizontalSpacer:SetLayout("FILL");
-    HorizontalSpacer:SetFullWidth(true);
-    HorizontalSpacer:SetHeight(10);
+    Parent:AddChild(HorizontalSpacer);
+
+    local WhenToLogLootLabel = AceGUI:Create("Label");
+    WhenToLogLootLabel:SetColor(1, .95686, .40784);
+    WhenToLogLootLabel:SetText("When to log dropped loot to be used for Loot Trade Timers");
+    WhenToLogLootLabel:SetHeight(20);
+    WhenToLogLootLabel:SetFullWidth(true);
+    Parent:AddChild(WhenToLogLootLabel);
+
+    local WhenToLogLoot = AceGUI:Create("Dropdown");
+    WhenToLogLoot:SetValue(GL.Settings:get("DroppedLoot.whenToLogLoot", 4));
+    WhenToLogLoot:SetList(GL.Data.Constants.DroppedLoot.WhenToLogLoot);
+    WhenToLogLoot:SetText(GL.Data.Constants.DroppedLoot.WhenToLogLoot[GL.Settings:get("DroppedLoot.whenToLogLoot", 4)]);
+    WhenToLogLoot:SetWidth(200);
+    WhenToLogLoot:SetCallback("OnValueChanged", function()
+        GL.Settings:set("DroppedLoot.whenToLogLoot", WhenToLogLoot:GetValue());
+    end);
+    Parent:AddChild(WhenToLogLoot);
+
     Parent:AddChild(HorizontalSpacer);
 
     local Checkboxes = {

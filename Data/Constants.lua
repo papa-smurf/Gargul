@@ -242,7 +242,7 @@ GL.Data.Constants = {
 
     DroppedLoot = {
         WhenToLogLoot = {
-            [1] = "When in a party or raid",
+            [1] = "When in a party",
             [2] = "When in a raid",
             [3] = "When master loot is active",
             [4] = "When I'm the master looter",
