@@ -761,7 +761,7 @@ function Auctioneer:award()
     if (not selected
         or not type(selected) == "table"
     ) then
-        return GL.Interface.Award:draw(AuctioneerUI.itemLink, function ()
+        return GL.Interface.Award.Award:draw(AuctioneerUI.itemLink, function ()
             if (Settings:get("GDKP.minimizeAuctioneerOnAward")) then
                 local Window = AuctioneerUI:getWindow();
 

@@ -374,7 +374,7 @@ function MasterLooterUI:draw(itemLink)
                 end);
 
                 AwardHistoryButton:SetScript("OnClick", function()
-                    GL.Interface.AwardHistory:toggle();
+                    GL.Interface.Award.Overview:open();
                 end);
 
                 --[[

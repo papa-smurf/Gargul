@@ -69,8 +69,9 @@ Classes/DroppedLootLedger.lua
 # Interface objects
 Interface/AceGUIWidget-LibScrollingTable.lua
 Interface/Interface.lua
-Interface/Award.lua
-Interface/AwardHistory.lua
+Interface/Award/Award.lua
+Interface/Award/Overview.lua
+Interface/Award/Export.lua
 Interface/Importer.lua
 Interface/BonusFeatures.lua
 Interface/Settings/Overview.lua
