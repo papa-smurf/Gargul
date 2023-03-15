@@ -1048,7 +1048,7 @@ end
 --- After all of the files are loaded execute the provided callback function
 ---
 ---@param Items table
----@param callback function
+---@param callback function|nil
 ---@param haltOnError boolean
 ---@param sorter function
 ---@return table
@@ -1107,7 +1107,6 @@ function GL:onItemLoadDo(Items, callback, haltOnError, sorter)
 
         -- The item already exists in our runtime item cache, return it
         if (ItemResult:IsItemDataCached()) then
-            local itemID = ItemResult:GetItemID();
             local Details = GL:getCachedItem(itemID);
 
             if (Details) then
@@ -1119,7 +1118,6 @@ function GL:onItemLoadDo(Items, callback, haltOnError, sorter)
         end
 
         ItemResult:ContinueOnItemLoad(function()
-            local itemID = ItemResult:GetItemID();
             itemsLoaded = itemsLoaded + 1;
 
             local itemName, itemLink, itemQuality, itemLevel, _, _, _, _, itemEquipLoc,
