@@ -329,7 +329,7 @@ function GL:handleItemClick(itemLink, mouseButtonPressed, callback)
 
     -- Open the award window
     elseif (keyPressIdentifier == GL.Settings:get("ShortcutKeys.award")) then
-        GL.Interface.Award:draw(itemLink, callback);
+        GL.Interface.Award.Award:draw(itemLink, callback);
 
     -- Disenchant
     elseif (keyPressIdentifier == GL.Settings:get("ShortcutKeys.disenchant")) then
@@ -666,8 +666,9 @@ function GL:cloneTable(Original)
 end
 
 ---@param text string
+---@Param OnTopOff Frame|nil
 ---@return void
-function GL:popupMessage(text)
+function GL:popupMessage(text, OnTopOff)
     GL:debug("GL:popupMessage");
 
     local frameName = "Gargul.popupMessage";
@@ -681,9 +682,6 @@ function GL:popupMessage(text)
             hideWatermark = true,
         });
 
-        Window:SetFrameStrata("FULLSCREEN_DIALOG");
-        Window:EnableMouse(true);
-        Window:SetToplevel(true);
         Window.Text = GL.Interface:createFontString(Window);
         Window.Text:SetFont(GL.FONT, 14, "OUTLINE");
         Window.Text:SetJustifyH("MIDDLE");
@@ -710,6 +708,10 @@ function GL:popupMessage(text)
     Window:SetHeight(textHeight + 100);
 
     Window:Show();
+
+    -- This is to make sure the tutorial window is always on top of what we're calling it from
+    Window:StartMoving();
+    Window:StopMovingOrSizing();
 end
 
 --- Courtesy of Lantis and the team over at Classic Loot Manager: https://github.com/ClassicLootManager/ClassicLootManager
@@ -2254,7 +2256,12 @@ function GL:tableGet(Table, keyString, default)
     end
 
     if (type(Table[firstKey]) == "nil") then
-        return default;
+        firstKey = tonumber(firstKey);
+
+        -- Make sure we're not looking for a numeric key instead of a string
+        if (not firstKey or type(Table[firstKey]) == "nil") then
+            return default;
+        end
     end
 
     Table = Table[firstKey];
