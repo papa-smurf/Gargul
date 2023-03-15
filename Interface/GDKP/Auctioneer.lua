@@ -25,6 +25,9 @@ local Auction = GDKP.Auction;
 ---@type GDKPAuctioneer
 local Auctioneer = GDKP.Auctioneer;
 
+---@type GDKPSession
+local Session = GDKP.Session;
+
 GL.ScrollingTable = GL.ScrollingTable or LibStub("ScrollingTable");
 Interface.GDKP = Interface.GDKP or {};
 
@@ -111,7 +114,7 @@ end
 
 --- Build the auctioneer UI. We only do this once per runtime
 ---
----@return table
+---@return Frame
 function AuctioneerUI:build()
     GL:debug("AuctioneerUI:build");
 
@@ -128,6 +131,7 @@ function AuctioneerUI:build()
         minHeight = 239,
         maxWidth = 500,
         maxHeight = 700,
+        hideCloseButton = GL.User.isInGroup and (GL.User.isLead or GL.User.isMasterLooter) and Session:activeSessionID(),
     });
     Window:Hide();
 
