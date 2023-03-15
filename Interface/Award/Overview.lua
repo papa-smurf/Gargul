@@ -453,11 +453,18 @@ function Overview:refreshItems()
                 ItemLink:SetHeight(ITEM_ROW_HEIGHT);
 
                 --[[ AWARDED TO ]]
+                local awardedToString = "";
+                if (not itemWasDisenchanted) then
+                    awardedToString = string.format("|c00%s%s|r",
+                        GL:classHexColor(GL.Player:classByName(Entry.awardedTo, 0), "5f5f5f"),
+                        Entry.awardedTo
+                    )
+                else
+                    awardedToString = "DISENCHANTED";
+                end
+
                 ---@type FontString
-                local AwardedTo = Interface:createFontString(ItemRow, string.format("|c00%s%s|r",
-                    GL:classHexColor(GL.Player:classByName(Entry.awardedTo, 0), "5f5f5f"),
-                    Entry.awardedTo
-                ));
+                local AwardedTo = Interface:createFontString(ItemRow, awardedToString);
                 AwardedTo:SetPoint("TOPLEFT", ItemLink, "TOPRIGHT", 4, 0);
                 AwardedTo:SetWidth(80);
                 AwardedTo:SetHeight(ITEM_ROW_HEIGHT);
