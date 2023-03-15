@@ -254,10 +254,16 @@ function Exporter:transformEntriesToCustomFormat(Entries)
     local exportString = "";
 
     -- Make sure that all relevant item data is cached
-    GL:onItemLoadDo(GL:tableColumn(Entries, "itemID"), function ()
+    GL:onItemLoadDo(GL:tableColumn(Entries, "itemID"), function (Result)
+        local Details = {};
+        for _, ItemDetails in pairs(Result or {}) do
+            Details[ItemDetails.id] = ItemDetails;
+        end
+        Result = nil;
+
         for _, AwardEntry in pairs(Entries) do
             local exportEntry = GL.Settings:get("ExportingLoot.customFormat");
-            local ItemDetails = GL.DB.Cache.ItemsByID[tostring(AwardEntry.itemID)];
+            local ItemDetails = Details[AwardEntry.itemID];
             local wowheadLink;
 
             if (GL.isEra) then
@@ -266,7 +272,7 @@ function Exporter:transformEntriesToCustomFormat(Entries)
                 wowheadLink = string.format("https://www.wowhead.com/wotlk/item=%s", AwardEntry.itemID );
             end
 
-            if (not GL:empty(ItemDetails)) then
+            if (ItemDetails) then
                 local Values = {
                     ["@ID"] = AwardEntry.itemID,
                     ["@LINK"] = ItemDetails.link:gsub('\124','\124\124'),
