@@ -1301,8 +1301,17 @@ function GL:inventoryItemTradeTimeRemaining(bag, slot)
     local timeRemaining = GL:tooltipItemTradeTimeRemaining();
     GL.TooltipFrame:ClearLines();
 
+    -- General purpose test mode is enabled
     if (GL.Interface.Settings.LootTradeTimers.testEnabled) then
         return math.random(5000, 7200);
+    end
+
+    -- Test mode is enabled for specific items
+    if (GL.Interface.TradeWindow.TimeLeft.TestItems) then
+        local itemID = GL:tableGet(C_Container.GetContainerItemInfo(bag, slot) or {}, "itemID");
+        if (itemID and GL:inTable(GL.Interface.TradeWindow.TimeLeft.TestItems, itemID)) then
+            return math.random(5000, 7200);
+        end
     end
 
     return timeRemaining;
@@ -2335,12 +2344,17 @@ end
 ---@param keyString string
 ---@param value any
 ---@return boolean
-function GL:tableAdd(Table, keyString, value)
+function GL:tableAdd(Table, keyString, value, createDestination)
     local Destination = self:tableGet(Table, keyString, {});
 
     if (type(Destination) ~= "table") then
-        self:warning("Invalid destination GL:tableAdd, requires table");
-        return false;
+        if (not createDestination) then
+            self:warning("Invalid destination GL:tableAdd, requires table");
+            return false;
+        end
+
+        self:tableSet(Table, keyString, {});
+        Destination = {};
     end
 
     tinsert(Destination, value);

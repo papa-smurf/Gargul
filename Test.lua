@@ -5,11 +5,14 @@ local _, GL = ...;
 GL.Test = {
     Classes = {"druid","hunter","mage","paladin","priest","rogue","shaman","warlock","warrior","death knight",},
     Names = {"Aiyana","Callum","Virginia","Laylah","Isabell","Javon","Miley","Ian","Isai","Ahmad","Campbell","Bobby","Karter","Brooklynn","Asher","Maci","Gael","Jamal","Zion","Sarahi","Kierra","Perla","Rylie","Lorelei","John","Madeleine","Jadiel","Billy","Jazmin","Keon","Stephany","George","Malcolm","Brenden","Daphne","Dane","Derek","Marcel","Madilynn","Enrique","Cindy","Amir","Melvin","Anya","Ali","Rex","Lewis","Parker","Carl","Arnav","Kamari","Jessie","Madelynn","Heath","Haleigh","Madyson","Jorden","Amya","Elisa","Marques","Ana","Miracle","Abdiel","Dale","Sincere","Marin","Karina","Clay","Caden","Eve","Rubi","Zavier","Megan","Payton","Peyton","Emmett","Diego","Joaquin","German","Tania","Miguel","Malachi","Martin","Richard","Allison","Avah","Kamora","Deborah","Esperanza","Konnor","Isla","Tess","Keely","Margaret","Rory","Jake","Averie","Ally","Craig","Gage","Oswaldo","Kaitlynn","Ashley","Davian","Mauricio","Brandon","Aryana","Douglas","Kyan","Carsen","Mikaela","Regan","Theodore","Maximillian","Luke","Dixie","Makenna","Keagan","Mallory","America",},
+
+    DroppedLootLedger = {},
+    PackMule = {},
+    TimeLeft = {},
     TradeState = {
         _initialized = false,
         Items = {},
     },
-    PackMule = {},
 };
 
 local Test = GL.Test;
@@ -479,6 +482,54 @@ function Test.PackMule:whoReceivesItem(itemID, lootMethod)
         GL.User.isInRaid = oldIsInRaid;
         GL.User.isInParty = oldIsInParty;
     end, 1);
+end
+
+--[[ Add items to the dropped loot ledger (aka simulate that they dropped)
+
+3x Steam Tonk Controller and 1x Hearthstone
+/script _G.Gargul.Test.DroppedLootLedger:addItems(22728, 22728, 22728, 6948)
+]]
+function Test.DroppedLootLedger:addItems(...)
+    local ItemIDs = {...};
+    local Units = {"Kel'Thuzad", "Anub'Rekhan", "Maexxna", "Noth the Plaguebringer", "Gothik the Harvester", "Patchwerk"};
+
+    for _, itemID in pairs(ItemIDs or {}) do
+        GL:tableAdd(GL.DroppedLootLedger, "Dropped." .. itemID, {
+            at = GetServerTime(),
+            source = string.format(
+                "Creature-%s-%s-%s-%s-%s-%sE%s",
+                math.random(1, 9),
+                math.random(1000, 9999),
+                math.random(100, 999),
+                math.random(10000, 99999),
+                math.random(10000, 99999),
+                math.random(10000000, 99999999),
+                math.random(1, 9)
+            ),
+            unitName = Units[math.random(1, #Units)],
+        }, true);
+    end
+end
+
+--[[ Enable a random trade time remaining for a specific item
+You have to move an item around in your bags after executing this command
+
+Steam Tonk Controller and Hearthstone
+/script _G.Gargul.Test.TimeLeft:testItems(22728, 6948)
+]]
+function Test.TimeLeft:testItems(...)
+    local ItemIDs = {...};
+
+    for _, itemID in pairs(ItemIDs or {}) do
+        GL:tableAdd(GL.Interface, "TradeWindow.TimeLeft.TestItems", itemID, true);
+    end
+end
+
+--[[ Stop item testing
+/script _G.Gargul.Test.TimeLeft:stopItemTest()
+]]
+function Test.TimeLeft:stopItemTest()
+    GL:tableSet(GL.Interface, "TradeWindow.TimeLeft.TestItems", nil);
 end
 
 --[[ Simulate being in an X-man group
