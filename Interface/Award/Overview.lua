@@ -37,7 +37,7 @@ local Overview = GL.Interface.Award.Overview;
 --[[ CONSTANTS ]]
 local DATE_FORMAT = "%d-%m-%Y";
 local DEFAULT_WINDOW_HEIGHT = 406;
-local DEFAULT_WINDOW_WIDTH = 640;
+local DEFAULT_WINDOW_WIDTH = 660;
 local DEFAULT_TABLE_ROWS = 18;
 local FONT;
 local HEIGHT_PER_TABLE_ROW = 18;
@@ -140,6 +140,27 @@ function Overview:build()
         self.DeleteButton = DeleteButton;
     end
 
+    do --[[ DISENCHANT BUTTON ]]
+        ---@type Frame
+        local DisenchantButton = CreateFrame("Button", nil, ItemHolder, "UIPanelButtonTemplate");
+        DisenchantButton:SetSize(18, 18);
+
+        ---@type Texture
+        local NormalTexture = DisenchantButton.normalTexture or DisenchantButton:CreateTexture();
+        NormalTexture:SetTexture("Interface/AddOns/Gargul/Assets/Buttons/disenchant");
+        NormalTexture:SetAllPoints(DisenchantButton);
+        DisenchantButton:SetNormalTexture(NormalTexture);
+
+        ---@type Texture
+        local HighlightTexture = DisenchantButton:CreateTexture();
+        HighlightTexture:SetTexture("Interface/AddOns/Gargul/Assets/Buttons/disenchant");
+        NormalTexture:SetAllPoints(DisenchantButton);
+        DisenchantButton:SetHighlightTexture(HighlightTexture);
+
+        Interface:addTooltip(DisenchantButton, L.DISENCHANT, "TOP");
+
+        self.DisenchantButton = DisenchantButton;
+    end
 
     do --[[ EDIT BUTTON ]]
         ---@type Frame
@@ -238,6 +259,7 @@ function Overview:build()
         {"AwardHistoryItemAwardedListener", "GL.ITEM_AWARDED" },
         {"AwardHistoryItemUnAwardedListener", "GL.ITEM_UNAWARDED" },
         {"AwardHistoryItemEditedListener", "GL.ITEM_AWARD_EDITED" },
+        {"AwardHistoryItemEditedListener", "GL.ITEM_UNAWARDED" },
     }, function()
         GL.Ace:CancelTimer(self.RefreshTimer);
         self.RefreshTimer = GL.Ace:ScheduleTimer(function ()
@@ -413,6 +435,7 @@ function Overview:refreshItems()
         local ItemHolder = self.ItemHolder;
         local DeleteButton = self.DeleteButton;
         local EditButton = self.EditButton;
+        local DisenchantButton = self.DisenchantButton;
         for _, Entry in pairs (Entries or {}) do
             (function ()
                 local Item = ItemDetails[Entry.itemID];
@@ -587,75 +610,116 @@ function Overview:refreshItems()
                     GameTooltip:Hide();
                 end);
 
-                --[[ EDIT / DELETE BUTTON BEHAVIOR ]]
+                --[[ DELETE / EDIT / DISENCHANT BUTTON BEHAVIOR ]]
                 ItemRow:HookScript("OnEnter", function ()
                     DeleteButton:SetFrameLevel(ItemRow:GetFrameLevel() + 1);
                     DeleteButton:ClearAllPoints();
                     DeleteButton:SetPoint("TOPRIGHT", ItemRow, "TOPRIGHT", -2, 0);
                     DeleteButton:Show();
 
+                    DisenchantButton:SetFrameLevel(ItemRow:GetFrameLevel() + 1);
+                    DisenchantButton:ClearAllPoints();
+                    DisenchantButton:SetPoint("TOPRIGHT", DeleteButton, "TOPLEFT", -2, 0);
+                    DisenchantButton:Show();
+
                     EditButton:SetFrameLevel(ItemRow:GetFrameLevel() + 1);
                     EditButton:ClearAllPoints();
-                    EditButton:SetPoint("TOPRIGHT", DeleteButton, "TOPLEFT", -2, 0);
+                    EditButton:SetPoint("TOPRIGHT", DisenchantButton, "TOPLEFT", -2, 0);
                     EditButton:Show();
 
                     DeleteButton:SetScript("OnClick", function (_, button)
+                        if (button ~= 'LeftButton') then
+                            return;
+                        end
+
                         DeleteButton:SetParent(ItemHolder);
                         DeleteButton:Hide();
 
-                        if (button == 'LeftButton') then
-                            local BRString = "";
-                            if (GL:higherThanZero(Entry.BRCost)) then
-                                BRString = " " .. tostring(Entry.BRCost) .. " boosted roll points will be refunded!";
-                            end
-
-                            GL.Interface.Dialogs.PopupDialog:open({
-                                question = string.format(
-                                    "Are you sure you want to undo %s awarded to %s?%s",
-                                    Entry.itemLink,
-                                    Entry.awardedTo,
-                                    BRString
-                                ),
-                                OnYes = function ()
-                                    GL.AwardedLoot:deleteWinner(Entry.checksum);
-                                    EditButton:Hide();
-                                    DeleteButton:Hide();
-                                end,
-                            });
+                        local BRString = "";
+                        if (GL:higherThanZero(Entry.BRCost)) then
+                            BRString = " " .. tostring(Entry.BRCost) .. " boosted roll points will be refunded!";
                         end
+
+                        GL.Interface.Dialogs.PopupDialog:open({
+                            question = string.format(
+                                "Are you sure you want to undo %s awarded to %s?%s",
+                                Entry.itemLink,
+                                Entry.awardedTo,
+                                BRString
+                            ),
+                            OnYes = function ()
+                                GL.AwardedLoot:deleteWinner(Entry.checksum);
+                                EditButton:Hide();
+                                DeleteButton:Hide();
+                            end,
+                        });
                     end);
 
                     EditButton:SetScript("OnClick", function(_, button)
-                        if (button == 'LeftButton') then
-                            -- Show the player selector
-                            local question = string.format("Who should %s go to instead?", Entry.itemLink);
-                            GL.Interface.PlayerSelector:draw(question, GL.User:groupMemberNames(), function (playerName)
-                                GL.Interface.Dialogs.PopupDialog:open({
-                                    question = string.format("Award %s to |cff%s%s|r?",
-                                        Entry.itemLink,
-                                        GL:classHexColor(GL.Player:classByName(playerName)),
-                                        playerName
-                                    ),
-                                    OnYes = function ()
-                                        if (not playerName or type(playerName) ~= "string") then
-                                            return;
-                                        end
-
-                                        playerName = GL:capitalize(string.trim(string.lower(GL:stripRealm(playerName))));
-                                        GL.AwardedLoot:editWinner(Entry.checksum, playerName);
-
-                                        GL.Interface.PlayerSelector:close();
-                                    end,
-                                });
-                            end);
+                        if (button ~= 'LeftButton') then
+                            return;
                         end
+
+                        -- Show the player selector
+                        local question = string.format("Who should %s go to instead?", Entry.itemLink);
+                        GL.Interface.PlayerSelector:draw(question, GL.User:groupMemberNames(), function (playerName)
+                            GL.Interface.Dialogs.PopupDialog:open({
+                                question = string.format("Award %s to |cff%s%s|r?",
+                                    Entry.itemLink,
+                                    GL:classHexColor(GL.Player:classByName(playerName)),
+                                    playerName
+                                ),
+                                OnYes = function ()
+                                    if (not playerName or type(playerName) ~= "string") then
+                                        return;
+                                    end
+
+                                    playerName = GL:capitalize(string.trim(string.lower(GL:stripRealm(playerName))));
+                                    GL.AwardedLoot:editWinner(Entry.checksum, playerName);
+
+                                    GL.Interface.PlayerSelector:close();
+                                end,
+                            });
+                        end);
+                    end);
+
+                    DisenchantButton:SetScript("OnClick", function(_, button)
+                        if (button ~= 'LeftButton') then
+                            return;
+                        end
+
+                        -- Show a specific dialog when boosted roll points are involved
+                        if (GL:higherThanZero(Entry.BRCost)) then
+                            GL.Interface.Dialogs.PopupDialog:open({
+                                question = string.format(
+                                    "Are you sure you want to disenchant %s? %s boosted roll points will be refunded!",
+                                    Entry.itemLink,
+                                    tostring(Entry.BRCost)
+                                ),
+                                OnYes = function ()
+                                    GL.AwardedLoot:deleteWinner(Entry.checksum);
+                                    GL.PackMule:disenchant(Entry.itemLink, true);
+                                end,
+                            });
+
+                            return;
+                        end
+
+                        -- Show the generic disenchant confirmation + selector dialog if applicable
+                        GL.PackMule:disenchant(Entry.itemLink, false, function ()
+                            GL.AwardedLoot:deleteWinner(Entry.checksum);
+                        end);
                     end);
                 end);
 
                 ItemRow:HookScript("OnLeave", function ()
-                    if (not Interface:mouseIsOnFrame(DeleteButton) and not Interface:mouseIsOnFrame(EditButton)) then
+                    if (not Interface:mouseIsOnFrame(DeleteButton)
+                        and not Interface:mouseIsOnFrame(EditButton)
+                        and not Interface:mouseIsOnFrame(DisenchantButton)
+                    ) then
                         DeleteButton:Hide();
                         EditButton:Hide();
+                        DisenchantButton:Hide();
                     end
                 end);
 
