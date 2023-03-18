@@ -5,14 +5,16 @@ GL.AceGUI = GL.AceGUI or LibStub("AceGUI-3.0");
 
 GL:tableSet(GL, "Interface.TradeWindow.TimeLeft", {
     _initialized = false,
-    isVisible = false,
+
     awaitingRefresh = false,
     barsToShow = 0,
     broadcastIsVisible = false,
     dragging = false,
+    isVisible = false,
     lastRefreshAt = 0,
     minimumSecondsBetweenRefreshes = 3,
     refreshing = false,
+
     Bars = {},
     Broadcast = nil,
     HotKeyExplanation = nil,
@@ -31,7 +33,7 @@ function TimeLeft:_init()
         return;
     end
 
-    self.barsToShow = GL.Settings:get("LootTradeTimers.maximumNumberOfBars", 5);
+    self.barsToShow = GL.Settings:get("LootTradeTimers.maximumNumberOfBars");
 
     -- Make sure to wait a bit with registering everything after a reload
     -- That way we don't have any stutters or weird behavior like bars not showing up
@@ -517,6 +519,7 @@ function TimeLeft:refreshBars(byRefresh)
         return;
     end
 
+    -- Check if we're allowed to refresh yet (throttling to keep resources in check)
     local pcTime = GetTime();
     local timeLeftBeforeNextRefresh = math.ceil(self.minimumSecondsBetweenRefreshes - (pcTime - self.lastRefreshAt));
     if (timeLeftBeforeNextRefresh > 0) then
@@ -535,7 +538,6 @@ function TimeLeft:refreshBars(byRefresh)
     self.refreshing = true;
 
     local Window = GL.Interface:get(self, "Window");
-
     if (not Window) then
         self:draw();
     end
@@ -543,18 +545,15 @@ function TimeLeft:refreshBars(byRefresh)
     Window = GL.Interface:get(self, "Window");
     Window:SetHeight(0);
 
+    local AwardedItemCountByLink = {};
+    local DeItemCountByLink = {};
     local ItemsWithTradeTimeRemaining = {};
-    local tradeTimeRemainingByLink = {};
-    local awardedItemCountByLink = {};
-    local deItemCountByLink = {};
-    local selfAwardedItemCountByLink = {};
-    local tradedCountByLink = {};
+    local SelfAwardedItemCountByLink = {};
+    local TradedCountByLink = {};
+    local TradeTimeRemainingByLink = {};
 
-    local numberOfBagsToCheck = 4;
     -- Dragon Flight introduced an extra bag slot
-    if (GL.clientIsDragonFlightOrLater) then
-        numberOfBagsToCheck = numberOfBagsToCheck + 1;
-    end
+    local numberOfBagsToCheck = not GL.clientIsDragonFlightOrLater and 4 or 5;
 
     for bag = 0, numberOfBagsToCheck do
         for slot = 1, GL:getContainerNumSlots(bag) do
@@ -572,14 +571,14 @@ function TimeLeft:refreshBars(byRefresh)
                     return;
                 end
 
-                -- Checks for "awarded but not received gear" and initialize counts of
-                --    items unreceived for both award and de
+                -- Checks for "awarded but not received gear" and
+                -- initialize counts of items unreceived for both award and de
                 local unreceived = false;
                 local deUnreceived = false;
-                local unreceivedCount = 0;
-                local deUnreceivedCount = 0;
-                local selfAwardedCount = 0;
-                local tradedCount = 0;
+                local unreceivedCount = AwardedItemCountByLink[itemLink] or 0;
+                local deUnreceivedCount = DeItemCountByLink[itemLink] or 0;
+                local selfAwardedCount = SelfAwardedItemCountByLink[itemLink] or 0;
+                local tradedCount = TradedCountByLink[itemLink] or 0;
                 for _, line in pairs(GL.AwardedLoot:tooltipLines(itemLink) or {}) do
                     line = string.lower(line);
                     if (string.match(line, "|de|") and string.match(line, "given: no")) then
@@ -596,10 +595,10 @@ function TimeLeft:refreshBars(byRefresh)
                     end
                 end
 
-                awardedItemCountByLink[itemLink] = unreceivedCount
-                deItemCountByLink[itemLink] = deUnreceivedCount
-                selfAwardedItemCountByLink[itemLink] = selfAwardedCount
-                tradedCountByLink[itemLink] = tradedCount
+                AwardedItemCountByLink[itemLink] = unreceivedCount
+                DeItemCountByLink[itemLink] = deUnreceivedCount
+                SelfAwardedItemCountByLink[itemLink] = selfAwardedCount
+                TradedCountByLink[itemLink] = tradedCount
 
                 tinsert(ItemsWithTradeTimeRemaining, {
                     icon = icon,
@@ -612,10 +611,10 @@ function TimeLeft:refreshBars(byRefresh)
                 -- We're not tracking this item yet or this version of the item has a smaller trade time window
                 -- I realize that this might not work perfectly with duplicate items in your inventory
                 -- but since we always look at the item with the lowest trade duration left it should be fine
-                if (not tradeTimeRemainingByLink[itemLink]
-                    or tradeTimeRemainingByLink[itemLink] > timeRemaining
+                if (not TradeTimeRemainingByLink[itemLink]
+                    or TradeTimeRemainingByLink[itemLink] > timeRemaining
                 ) then
-                    tradeTimeRemainingByLink[itemLink] = timeRemaining;
+                    TradeTimeRemainingByLink[itemLink] = timeRemaining;
                 end
             end)();
         end
@@ -643,9 +642,9 @@ function TimeLeft:refreshBars(byRefresh)
                 -- If there's no bar for the itemLink or the time remaining differs too much
                 if (Bar:Get("type") == "TRADE_WINDOW_TIME_LEFT" -- Ignore non-timer bars
                     and (
-                        not tradeTimeRemainingByLink[Bar.itemLink]
-                        or (tradeTimeRemainingByLink[Bar.itemLink] - Bar.remaining > 2
-                            or tradeTimeRemainingByLink[Bar.itemLink] - Bar.remaining < 2
+                        not TradeTimeRemainingByLink[Bar.itemLink]
+                        or (TradeTimeRemainingByLink[Bar.itemLink] - Bar.remaining > 2
+                            or TradeTimeRemainingByLink[Bar.itemLink] - Bar.remaining < 2
                         )
                     )
                 ) then
@@ -665,6 +664,7 @@ function TimeLeft:refreshBars(byRefresh)
         return;
     end
 
+    -- Something changed, stop all the current bars and draw new ones!
     self:stopAllBars();
 
     local barsAvailable = false;
@@ -675,18 +675,19 @@ function TimeLeft:refreshBars(byRefresh)
             break;
         end
 
+        -- How many do we have to trade of this specific item?
         local countOfTradableItemsByLink = 0
-        for _, value in pairs(ItemsWithTradeTimeRemaining) do
-            if(BagItem.itemLink == value.itemLink) then
+        for _, Value in pairs(ItemsWithTradeTimeRemaining) do
+            if (BagItem.itemLink == Value.itemLink) then
                 countOfTradableItemsByLink = countOfTradableItemsByLink + 1
             end
         end
 
-        -- Get the itemId from link and retrieve the count of dropped items by itemId
-        local itemId = GL:getItemIDFromLink(BagItem.itemLink)
-        local droppedCount = 0
-        if (GL.DroppedLootLedger.Dropped[itemId]) then
-            droppedCount = #GL.DroppedLootLedger.Dropped[itemId]
+        -- Get the itemID from link and retrieve the count of dropped items by itemID
+        local itemID = GL:getItemIDFromLink(BagItem.itemLink)
+        local timesDropped = 0
+        if (GL.DroppedLootLedger.Dropped[itemID]) then
+            timesDropped = #GL.DroppedLootLedger.Dropped[itemID]
         end
         -- This condition check is used to determine if an item that has been SelfAwarded should be displayed or not
         --  based on the number of same tradable items in the players bags
@@ -699,22 +700,21 @@ function TimeLeft:refreshBars(byRefresh)
         --  decrement selfAwardedCount by 1
         -- else
         --  add TimerBar
-        if (
-                (countOfTradableItemsByLink == droppedCount-(tradedCountByLink[BagItem.itemLink]-selfAwardedItemCountByLink[BagItem.itemLink])
-                        or droppedCount == countOfTradableItemsByLink
-                )
-                        and selfAwardedItemCountByLink[BagItem.itemLink] > 0
-                        and BagItem.timeRemaining > 600
+        if ((timesDropped == countOfTradableItemsByLink
+                or countOfTradableItemsByLink == timesDropped - (TradedCountByLink[BagItem.itemLink] - SelfAwardedItemCountByLink[BagItem.itemLink])
+            )
+            and SelfAwardedItemCountByLink[BagItem.itemLink] or 0 > 0
+            and BagItem.timeRemaining or 0 > 600
         ) then
-            selfAwardedItemCountByLink[BagItem.itemLink] = selfAwardedItemCountByLink[BagItem.itemLink] - 1;
+            SelfAwardedItemCountByLink[BagItem.itemLink] = SelfAwardedItemCountByLink[BagItem.itemLink] - 1;
         else
             -- Make sure the bar window has the appropriate height
             Window:SetHeight(math.max(Window:GetHeight(), 16) + 18);
 
             local TimerBar = LibStub("LibCandyBarGargul-3.0"):New(
-                    "Interface\\AddOns\\Gargul\\Assets\\Textures\\timer-bar",
-                    240,
-                    18
+                "Interface\\AddOns\\Gargul\\Assets\\Textures\\timer-bar",
+                240,
+                18
             );
             TimerBar:SetParent(Window);
             TimerBar:SetDuration(BagItem.timeRemaining);
@@ -723,13 +723,13 @@ function TimeLeft:refreshBars(byRefresh)
             TimerBar:SetIcon(BagItem.icon);
             local awarded = false;
             local disenchanted = false;
-            if (BagItem.unreceived and awardedItemCountByLink[BagItem.itemLink] > 0) then
+            if (BagItem.unreceived and AwardedItemCountByLink[BagItem.itemLink] > 0) then
                 TimerBar:SetIcon("Interface\\AddOns\\Gargul\\Assets\\Icons\\trophy");
-                awardedItemCountByLink[BagItem.itemLink] = awardedItemCountByLink[BagItem.itemLink] - 1;
+                AwardedItemCountByLink[BagItem.itemLink] = AwardedItemCountByLink[BagItem.itemLink] - 1;
                 awarded = true;
-            elseif (BagItem.deUnreceived and deItemCountByLink[BagItem.itemLink] > 0) then
+            elseif (BagItem.deUnreceived and DeItemCountByLink[BagItem.itemLink] > 0) then
                 TimerBar:SetIcon("Interface\\AddOns\\Gargul\\Assets\\Icons\\disenchant");
-                deItemCountByLink[BagItem.itemLink] = deItemCountByLink[BagItem.itemLink] - 1;
+                DeItemCountByLink[BagItem.itemLink] = DeItemCountByLink[BagItem.itemLink] - 1;
                 disenchanted = true;
             end
 

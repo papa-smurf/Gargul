@@ -69,20 +69,19 @@ function DroppedLootLedger:_init()
         end
     );
 
-    --Loop through items in Dropped and remove loot older than 24 hours
+    -- Loop through items in Dropped and remove loot older than 24 hours
     GL.Ace:ScheduleRepeatingTimer(function ()
-        --compareTime is ServerTime - 24 hours
+        -- compareTime is ServerTime - 24 hours
         local compareTime = GetServerTime() - 86400
-        for itemId,droppedIdList in pairs(self.Dropped) do
-            (function ()
-                --for item, droppedItem in droppedIdList do
-                --    if(droppedItem.at < compareTime) then
-                --        tremove(self.Dropped[itemId], item)
-                --    end
-                --end
-            end)();
+        for itemID, Drops in pairs(self.Dropped) do
+            for index, Drop in pairs(Drops or {}) do
+                if (tonumber(Drop.at) or 0 < compareTime) then
+                    self.Dropped[itemID][index] = nil;
+                    tremove(self.Dropped[itemID], index)
+                end
+            end
         end
-    end, 30)
+    end, 30);
 end
 
 --- Start or stop tracking loot based on group and add-on settings
