@@ -374,7 +374,7 @@ function MasterLooterUI:draw(itemLink)
                 end);
 
                 AwardHistoryButton:SetScript("OnClick", function()
-                    GL.Interface.AwardHistory:toggle();
+                    GL.Interface.Award.Overview:open();
                 end);
 
                 --[[
@@ -786,41 +786,59 @@ function MasterLooterUI:drawPlayersTable(parent)
                 roller = string.sub(roller, 1, openingBracketPosition - 1);
             end
 
-            local ItemsWonByRollerInTheLast8Hours = GL.AwardedLoot:byWinner(roller, GetServerTime() - (8 * 60 * 60));
+            local ItemsWonByRollerInTheLast8Hours = GL.AwardedLoot:byWinner(roller, GetServerTime() - (8 * 60 * 60)) or {};
+            local wonItems = not GL:empty(ItemsWonByRollerInTheLast8Hours);
+            local showPlayerGroups = GL:count(GL.DB:get("TMB.RaidGroups", {})) > 1
+                and GL.Settings:get("TMB.showRaidGroup");
 
-            if (GL:empty(ItemsWonByRollerInTheLast8Hours)) then
+            if (not wonItems and not showPlayerGroups) then
                 return;
             end
 
             GameTooltip:ClearLines();
             GameTooltip:SetOwner(rowFrame, "ANCHOR_RIGHT");
-            GameTooltip:AddLine(string.format("Items won by %s:", roller));
-            GameTooltip:AddLine(" ");
 
-            for _, Entry in pairs(ItemsWonByRollerInTheLast8Hours) do
-                local receivedString = " (item given: yes)";
-                if (not Entry.received) then
-                    receivedString = " (item given: no)";
+            if (showPlayerGroups) then
+                local _, playerGroup = GL.TMB:groupByPlayerName(string.lower(roller));
+
+                if (playerGroup) then
+                    GameTooltip:AddLine(playerGroup);
+
+                    if (wonItems) then
+                        GameTooltip:AddLine(" ");
+                    end
                 end
+            end
 
-                local OSString = "";
-                if (Entry.OS) then
-                    OSString = " (OS)"
+            if (wonItems) then
+                GameTooltip:AddLine(string.format("Items won by %s:", roller));
+                GameTooltip:AddLine(" ");
+
+                for _, Entry in pairs(ItemsWonByRollerInTheLast8Hours or {}) do
+                    local receivedString = " (item given: yes)";
+                    if (not Entry.received) then
+                        receivedString = " (item given: no)";
+                    end
+
+                    local OSString = "";
+                    if (Entry.OS) then
+                        OSString = " (OS)"
+                    end
+
+                    local BRString = "";
+                    if (GL:higherThanZero(Entry.BRCost)) then
+                        BRString = string.format(" (BR: %s)", Entry.BRCost);
+                    end
+
+                    local line = string.format("%s%s%s%s",
+                        Entry.itemLink,
+                        OSString,
+                        BRString,
+                        receivedString
+                    );
+
+                    GameTooltip:AddLine(line);
                 end
-
-                local BRString = "";
-                if (GL:higherThanZero(Entry.BRCost)) then
-                    BRString = string.format(" (BR: %s)", Entry.BRCost);
-                end
-
-                local line = string.format("%s%s%s%s",
-                    Entry.itemLink,
-                    OSString,
-                    BRString,
-                    receivedString
-                );
-
-                GameTooltip:AddLine(line);
             end
 
             GameTooltip:Show();

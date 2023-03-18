@@ -12,6 +12,13 @@ GL.Interface.Changelog = {
 
     History = {
         {
+            version = "5.3.4",
+            date = "March 3rd, 2023",
+            Changes = {
+                "You can now provide a list of players to share TMB/DFT data with in case you run a closed system (check |c00a79eff/gl|r -> TMB and DFT)",
+            },
+        },
+        {
             version = "5.3.0",
             date = "February 8th, 2023",
             Changes = {

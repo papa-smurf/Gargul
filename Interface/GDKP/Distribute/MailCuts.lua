@@ -177,7 +177,11 @@ function MailCuts:refreshPlayerCuts()
     end
 
     table.sort(PlayerNames, function (a, b)
-        return a < b;
+        if (a and b) then
+            return a < b;
+        end
+
+        return false;
     end);
 
     local i = 0;
@@ -200,7 +204,11 @@ function MailCuts:refreshPlayerCuts()
                 " ",
             };
             table.sort(MailHistory, function (a, b)
-                return a.timestamp > b.timestamp;
+                if (a.timestamp and b.timestamp) then
+                    return a.timestamp > b.timestamp;
+                end
+
+                return false;
             end);
 
             for _, Entry in pairs(MailHistory or {}) do
@@ -308,6 +316,10 @@ function MailCuts:mailAllCuts()
 
                 if (not success) then
                     self:refreshPlayerCuts();
+
+                    if (success == false) then
+                        self.mailErrors = self.mailErrors + 1;
+                    end
                 end
 
                 copper = tonumber(copper);
@@ -355,12 +367,14 @@ function MailCuts:mailPlayerCut(player, callback)
 
     callback = callback or function () end;
 
+    -- We need an active session that's locked for payout
     local Session = GDKPSession:getActive() or {};
     if (not Session or not Session.lockedAt) then
         GL:warning(L.GDKP_PAYOUT_INACTIVE);
         return callback(false);
     end
 
+    -- Check if we actually need to pay this person
     local outstandingCopper = GDKPSession:copperOwedToPlayer(player, Session.ID);
     if (outstandingCopper and outstandingCopper < 1) then
         GL:success(string.format(L.CUT_MAIL_EVEN, player));
@@ -369,6 +383,7 @@ function MailCuts:mailPlayerCut(player, callback)
         return;
     end
 
+    -- We don't have enough gold to pay this person
     local originalCopper = GetMoney();
     local copperLeftAfterMailing = originalCopper - outstandingCopper - MAIL_COST;
     if (copperLeftAfterMailing < 0) then

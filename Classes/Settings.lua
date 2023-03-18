@@ -58,9 +58,9 @@ function Settings:sanitizeSettings()
     end
 
     -- Remove old roll data so it doesn't clog our SavedVariables
-    local twoWeeksAgo = GetServerTime() - 1209600;
+    local fiveWeeksAgo = GetServerTime() - 3024000;
     for key, Award in pairs(DB:get("AwardHistory") or {}) do
-        if (Award.timestamp < twoWeeksAgo) then
+        if (Award.timestamp < fiveWeeksAgo) then
             Award.Rolls = nil;
             DB:set("AwardHistory." .. key, Award);
         end
@@ -73,6 +73,8 @@ function Settings:sanitizeSettings()
             DB:set("GDKP.Ledger." .. key, nil);
         end
     end
+
+    self:set("noUpdatePopup", nil);
 end
 
 --- These settings are version-specific and will be removed over time!

@@ -61,7 +61,7 @@ function EditAuction:draw(session, checksum)
         Auction.Winner.name or "",
         GL:classHexColor("rogue"),
         Auction.price or "0",
-        GL.DB.Cache.ItemsByID[tostring(Auction.itemID)].link
+        GL:getCachedItem(Auction.itemID).link
     ));
     Window:AddChild(ItemLink);
 
@@ -76,7 +76,11 @@ function EditAuction:draw(session, checksum)
 
     local Sessions = GL.DB:get("GDKP.Ledger");
     table.sort(Sessions, function (a, b)
-        return a.createdAt < b.createdAt;
+        if (a.createdAt and b.createdAt) then
+            return a.createdAt < b.createdAt;
+        end
+
+        return false;
     end);
     for _, Session in pairs(Sessions) do
         DropDownItems[Session.ID] = Session.title;

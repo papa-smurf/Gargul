@@ -223,7 +223,7 @@ function PackMule:isItemIDIgnored(itemID, callback)
 
     self:getTargetForItem(itemID, function(masterTarget)
         local itemIDisIgnoredForMaster = GL:empty(masterTarget);
-        local Loot = GL.DB.Cache.ItemsByID[tostring(itemID)] or {}; -- This is 100% set at this point
+        local Loot = GL:getCachedItem(itemID) or {}; -- This should be 100% set at this point
 
         -- We now test the item against PackMule in a group loot setting
         GetLootMethod = function () return "group"; end;

@@ -619,7 +619,14 @@ function Overview:refreshLedger()
 
         -- Sort the auctions based on date/time (highest to lowest)
         table.sort(Auctions, function (a, b)
-            return a.createdAt > b.createdAt;
+            local aCreatedAt = tonumber(a.createdAt);
+            local bCreatedAt = tonumber(b.createdAt);
+
+            if (aCreatedAt and bCreatedAt) then
+                return aCreatedAt > bCreatedAt;
+            end
+
+            return false;
         end);
 
         -- Add placeholders for all the item icons and labels
@@ -629,7 +636,7 @@ function Overview:refreshLedger()
             local concernsManualAdjustment = Auction.itemID == Constants.GDKP.potIncreaseItemID;
 
             -- This entry should always exist, if it doesn't something went wrong (badly)
-            local ItemEntry = DB.Cache.ItemsByID[tostring(Auction.itemID)];
+            local ItemEntry = GL:getCachedItem(Auction.itemID);
 
             if (GL:empty(ItemEntry)) then
                 break;
@@ -843,7 +850,11 @@ function Overview:showTutorial()
     };
 
     table.sort(Steps, function (a, b)
-        return a[1] < b[1];
+        if (a[1] and b[1]) then
+            return a[1] < b[1];
+        end
+
+        return false;
     end);
 
     -- Add placeholders for all the item icons and labels

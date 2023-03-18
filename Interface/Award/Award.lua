@@ -1,6 +1,7 @@
 ---@type GL
 local _, GL = ...;
 
+GL.Interface.Award = GL.Interface.Award or {};
 GL.ScrollingTable = GL.ScrollingTable or LibStub("ScrollingTable");
 
 local AceGUI = GL.AceGUI;
@@ -13,7 +14,7 @@ local Settings = GL.Settings;
 local GDKPAuction = GL.GDKP.Auction;
 
 ---@class AwardInterface
-GL.Interface.Award = {
+GL.Interface.Award.Award = {
     ItemBoxHoldsValidItem = false,
     PlayersTable = {},
     Defaults = {
@@ -23,7 +24,7 @@ GL.Interface.Award = {
 };
 
 ---@type AwardInterface
-local Award = GL.Interface.Award;
+local Award = GL.Interface.Award.Award;
 
 ---@param itemLink string
 ---@param callback function
@@ -37,7 +38,7 @@ function Award:draw(itemLink, callback)
     -- rendered already. If so then show it (if it's hidden)
     -- and pass the itemLink along in case one was provided
     if (GL.Interface:get(self, "Window")
-        and GL.Interface:get(self, "Window").rendered
+            and GL.Interface:get(self, "Window").rendered
     ) then
         local PlayerNameBox = GL.Interface:get(self, "EditBox.PlayerName");
         local Window = GL.Interface:get(self, "Window");
@@ -84,8 +85,8 @@ function Award:draw(itemLink, callback)
         SETTINGS BUTTON
     ]]
     local SettingsButton = GL.UI:createSettingsButton(
-        Window.frame,
-        "AwardingLoot"
+            Window.frame,
+            "AwardingLoot"
     );
     self.SettingsButton = SettingsButton;
 
@@ -215,7 +216,7 @@ function Award:draw(itemLink, callback)
                 GL.AwardedLoot:addWinner(winner, itemLink, nil, nil, isOS, boostedRollCost);
             end
 
-            GL.Interface.Award:reset();
+            GL.Interface.Award.Award:reset();
 
             if (Settings:get("UI.Award.closeOnAward", true)) then
                 self:close();
@@ -255,9 +256,9 @@ function Award:draw(itemLink, callback)
         -- Make sure the initiator has to confirm his choices
         GL.Interface.Dialogs.AwardDialog:open({
             question = string.format("Award %s to |cff%s%s|r?",
-                itemLink,
-                GL:classHexColor(GL.Player:classByName(winner)),
-                winner
+                    itemLink,
+                    GL:classHexColor(GL.Player:classByName(winner)),
+                    winner
             ),
             OnYes = award,
         });
@@ -269,7 +270,7 @@ function Award:draw(itemLink, callback)
         AWARD HISTORY BUTTON
     ]]
 
-    local AwardHistoryButton = GL.UI:createFrame("Button", "MasterLooterUIAwardHistoryButton" .. GL:uuid(), Window.frame, "UIPanelButtonTemplate");
+    local AwardHistoryButton = GL.UI:createFrame("Button", "MasterLooterUIAwardOverviewButton" .. GL:uuid(), Window.frame, "UIPanelButtonTemplate");
     AwardHistoryButton:SetSize(22, 20);
     AwardHistoryButton:SetPoint("TOPLEFT", AwardButton.frame, "TOPRIGHT", 0, 0);
     AwardHistoryButton:SetMotionScriptsWhileDisabled(true); -- Make sure tooltip still shows even when button is disabled
@@ -294,7 +295,7 @@ function Award:draw(itemLink, callback)
     end);
 
     AwardHistoryButton:SetScript("OnClick", function()
-        GL.Interface.AwardHistory:toggle();
+        GL.Interface.Award.Overview:open();
     end);
 
     Spacer = AceGUI:Create("SimpleGroup");
@@ -336,8 +337,8 @@ function Award:draw(itemLink, callback)
         -- No disenchanter was set yet
         GL.Interface.Dialogs.PopupDialog:open({
             question = string.format("Set |cff%s%s|r as your disenchanter?",
-                GL:classHexColor(GL.Player:classByName(disenchanter)),
-                disenchanter
+                    GL:classHexColor(GL.Player:classByName(disenchanter)),
+                    disenchanter
             ),
             OnYes = function ()
                 GL.PackMule.disenchanter = disenchanter;
@@ -484,10 +485,10 @@ function Award:drawPlayersTable()
         OnClick = function (_, _, data, _, _, realrow)
             -- Make sure something is actually selected, better safe than lua error
             if (not GL:higherThanZero(realrow)
-                or type(data) ~= "table"
-                or not data[realrow]
-                or not data[realrow].cols
-                or not data[realrow].cols[1]
+                    or type(data) ~= "table"
+                    or not data[realrow]
+                    or not data[realrow].cols
+                    or not data[realrow].cols[1]
             ) then
                 return;
             end
@@ -527,7 +528,7 @@ function Award:topPrioForItem(itemID)
         end
 
         if (lastPlayerName
-            and not moreThanOnePersonReservedThisItem
+                and not moreThanOnePersonReservedThisItem
         ) then
             return lastPlayerName;
         end
@@ -540,7 +541,7 @@ function Award:topPrioForItem(itemID)
         if (Entry.type == 1) then
             tinsert(PrioListEntries, Entry);
 
-        -- Wishlist entry
+            -- Wishlist entry
         elseif (Entry.type == 2) then
             tinsert(WishListEntries, Entry);
         end
@@ -554,7 +555,11 @@ function Award:topPrioForItem(itemID)
 
         -- Sort the PrioListEntries based on prio (lowest to highest)
         table.sort(PrioListEntries, function (a, b)
-            return a.prio < b.prio;
+            if (a.prio and b.prio) then
+                return a.prio < b.prio;
+            end
+
+            return false;
         end);
 
         -- There's more than 1 person with top prio
@@ -579,7 +584,11 @@ function Award:topPrioForItem(itemID)
 
         -- Sort the WishListEntries based on prio (lowest to highest)
         table.sort(WishListEntries, function (a, b)
-            return a.prio < b.prio;
+            if (a.prio and b.prio) then
+                return a.prio < b.prio;
+            end
+
+            return false;
         end);
 
         -- There's more than 1 person with top prio

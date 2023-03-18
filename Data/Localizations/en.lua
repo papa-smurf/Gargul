@@ -48,6 +48,8 @@ L.CUT_MAIL_SUBJECT = "Gargul GDKP: %sg";
 L.DELETE = "Delete";
 L.DELETE_BID_TOOLTIP = "Delete bid. Auction must be stopped first!";
 L.DISENCHANT = "Disenchant";
+L.EDIT = "Edit";
+L.EXPORT = "Export";
 L.GDKP_QUEUE_EXPLANATION = [[|c00a79eff%s|r items in bags, loot windows or even on links in your chat to add them to this auction queue.
 Items in the queue will automatically be auctioned off once your current auction is done. Click the '%s' button to prevent this.
 
@@ -108,6 +110,15 @@ L.TIME = "Time";
 L.TMBETC = "TMB, DFT or PRIO3";
 L.TOGGLE_QUEUE = "Show/Hide Queue";
 L.TUTORIAL = "Tutorial";
+L.TUTORIAL_AWARD_OVERVIEW = [[This window shows all the items that have been awarded on any given date (select one or more dates on the left).
+
+Items can contain the following tags:
+
+|c00A79EFFOS|r: Awarded for offspec
+|c00A79EFFSR|r: This item was soft-reserved
+|c00A79EFFWL|r: This item was wishlisted (Thatsmybis)
+|c00A79EFFPL|r: This item was priolisted (Thatsmybis, DFT, prio3)
+]];
 L.TUTORIAL_BIDDER_QUEUE = [[The items you see here are in the master looter's GDKP queue
 You can remove them, bid on them, and hide unusable items (enable 'Hide unusable items' in the settings in the top-left)
 

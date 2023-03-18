@@ -181,7 +181,11 @@ function RollOff:postStartMessage(itemLink, time, note)
         ) then
             -- Sort the PrioListEntries based on prio (lowest to highest)
             table.sort(PrioListEntries, function (a, b)
-                return a.prio < b.prio;
+                if (a.prio and b.prio) then
+                    return a.prio < b.prio;
+                end
+
+                return false;
             end);
 
             for _, Entry in pairs(PrioListEntries) do
@@ -203,7 +207,11 @@ function RollOff:postStartMessage(itemLink, time, note)
         ) then
             -- Sort the PrioListEntries based on prio (lowest to highest)
             table.sort(WishListEntries, function (a, b)
-                return a.prio < b.prio;
+                if (a.prio and b.prio) then
+                    return a.prio < b.prio;
+                end
+
+                return false;
             end);
 
             for _, Entry in pairs(WishListEntries) do
@@ -223,14 +231,7 @@ function RollOff:postStartMessage(itemLink, time, note)
         end
 
         if (not GL:empty(EligiblePlayers)) then
-            local source = "TMB";
-            if (GL.TMB:wasImportedFromDFT()) then
-                source = "DFT";
-            elseif (GL.TMB:wasImportedFromCPR()) then
-                source = "CPR";
-            elseif (GL.TMB:wasImportedFromCSV()) then
-                source = "Item";
-            end
+            local source = GL.TMB:source();
 
             local EligiblePlayerNames = table.concat(GL:tableColumn(EligiblePlayers, "character"), ", ");
             eligiblePlayersMessage = string.format("The following players have the highest %s prio: %s", source, EligiblePlayerNames);

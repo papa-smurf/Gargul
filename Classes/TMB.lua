@@ -87,6 +87,13 @@ function TMB:byItemID(itemID, inRaidOnly)
     if (type(inRaidOnly) ~= "boolean") then
         inRaidOnly = Settings:get("TMB.hideInfoOfPeopleNotInGroup");
 
+        if (inRaidOnly
+            and Settings:get("TMB.showEntriesWhenUsingPrio3")
+            and self:wasImportedFromCPR()
+        ) then
+            inRaidOnly = false;
+        end
+
         -- User is not in group and showEntriesWhenSolo is true
         if (inRaidOnly
             and not GL.User.isInGroup
@@ -257,6 +264,27 @@ function TMB:noteByItemID(itemID)
     return GL.DB:get("TMB.Notes." .. itemID, "");
 end
 
+--- Fetch a player's group id and name
+---
+---@param player string
+---@return number, string|boolean | boolean, boolean
+function TMB:groupByPlayerName(player)
+    GL:debug("TMB:groupByPlayerName");
+
+    if (not GL.DB:get("TMB.RaidGroups")) then
+        return false, false;
+    end
+
+    player = string.lower(player);
+    local groupID = GL.DB:get("TMB.PlayerGroup." .. player);
+
+    if (groupID) then
+        return groupID, GL.DB:get("TMB.RaidGroups", {})[groupID] or false;
+    end
+
+    return false, false;
+end
+
 --- Append the TMB info as defined in GL.DB.TMB.Items to an item's tooltip
 ---
 ---@param itemLink string
@@ -327,6 +355,9 @@ function TMB:tooltipLines(itemLink)
         return Lines;
     end
 
+    local showPlayerGroups = GL:count(GL.DB:get("TMB.RaidGroups", {})) > 1
+        and Settings:get("TMB.showRaidGroup");
+
     local WishListEntries = {};
     local PrioListEntries = {};
     local itemIsOnSomeonesWishlist = false;
@@ -334,6 +365,12 @@ function TMB:tooltipLines(itemLink)
     local entriesAdded = 0;
     for _, Entry in pairs(TMBInfo) do
         local playerName = string.lower(Entry.character);
+        local playerGroup = false;
+
+        if (showPlayerGroups) then
+            _, playerGroup = self:groupByPlayerName(playerName);
+        end
+
         local prio = Entry.prio;
         local entryType = Entry.type or Constants.tmbTypeWish;
         local isOffSpec = string.find(Entry.character, "%(OS%)");
@@ -355,13 +392,18 @@ function TMB:tooltipLines(itemLink)
             sortingOrder = 1000;
         end
 
+        local groupString = "";
+        if (playerGroup) then
+            groupString = " - " .. playerGroup;
+        end
+
         -- TMB is not case-sensitive so people get creative with capital letters sometimes
         playerName = GL:capitalize(playerName);
         if (entryType == Constants.tmbTypePrio) then
-            tinsert(PrioListEntries, {sortingOrder, string.format("|cFF%s    %s[%s]|r", color, playerName, prio)});
+            tinsert(PrioListEntries, {sortingOrder, string.format("|cFF%s    %s[%s]%s|r", color, playerName, prio, groupString)});
             itemIsOnSomeonesPriolist = true;
         else
-            tinsert(WishListEntries, {sortingOrder, string.format("|cFF%s    %s[%s]|r", color, playerName, prio)});
+            tinsert(WishListEntries, {sortingOrder, string.format("|cFF%s    %s[%s]%s|r", color, playerName, prio, groupString)});
             itemIsOnSomeonesWishlist = true;
         end
     end
@@ -373,19 +415,16 @@ function TMB:tooltipLines(itemLink)
         )
     ) then
         -- Add the header
-        local source = "TMB";
-        if (self:wasImportedFromDFT()) then
-            source = "DFT";
-        elseif (self:wasImportedFromCPR()) then
-            source = "CPR";
-        elseif (self:wasImportedFromCSV()) then
-            source = "Item";
-        end
+        local source = GL.TMB:source();
         tinsert(Lines, string.format("\n|cFFff7a0a%s|r", source .. " Prio List"));
 
         -- Sort the PrioListEntries based on prio (lowest to highest)
         table.sort(PrioListEntries, function (a, b)
-            return a[1] < b[1];
+            if (a[1] and b[1]) then
+                return a[1] < b[1];
+            end
+
+            return false;
         end);
 
         -- Add the entries to the tooltip
@@ -424,7 +463,11 @@ function TMB:tooltipLines(itemLink)
 
         -- Sort the WishListEntries based on prio (lowest to highest)
         table.sort(WishListEntries, function (a, b)
-            return a[1] < b[1];
+            if (a[1] and b[1]) then
+                return a[1] < b[1];
+            end
+
+            return false;
         end);
 
         -- Add the entries to the tooltip
@@ -515,7 +558,7 @@ function TMB:import(data, triedToDecompress, source)
         return false;
     end
 
-    -- Make sure to get rid of any leadin/trailing whitespaces
+    -- Make sure to get rid of any leading/trailing whitespaces
     data = strtrim(data);
 
     -- Fetch the first line
@@ -571,9 +614,11 @@ function TMB:import(data, triedToDecompress, source)
 
     -- Import the actual TMB data
     local wishlistItemsWereImported = false;
+    local RaidGroups, PlayerGroup = {}, {};
     if (type(WebsiteData.wishlists) == "table"
         and not GL:empty(WebsiteData.wishlists)
     ) then
+        local hasGroups = not not WebsiteData.groups;
         local processedEntryCheckums = {};
         local formatDecided = false;
         local TMBData = {};
@@ -598,7 +643,7 @@ function TMB:import(data, triedToDecompress, source)
                             name = 1,
                             order = 3,
                             type = 5,
-                            groupID = nil, -- The old format doesn't support the groupID
+                            groupID = 7,
                         };
                     end
 
@@ -611,7 +656,7 @@ function TMB:import(data, triedToDecompress, source)
                 local type = Constants.tmbTypeWish;
 
                 if (stringParts[Keys.name] and stringParts[Keys.order]) then
-                    characterName = stringParts[Keys.name];
+                    characterName = string.lower(stringParts[Keys.name]);
                     order = tonumber(stringParts[Keys.order]) or order;
                 end
 
@@ -623,8 +668,16 @@ function TMB:import(data, triedToDecompress, source)
                     end
                 end
 
-                if (Keys.groupID and stringParts[Keys.groupID]) then
-                    raidGroupID = tonumber(stringParts[Keys.groupID]);
+                -- Raid "group" provided, process
+                if (hasGroups and Keys.groupID) then
+                    local groupID = stringParts[Keys.groupID] or 0;
+                    local group = WebsiteData.groups[groupID];
+
+                    if (group) then
+                        groupID = tonumber(groupID);
+                        RaidGroups[groupID] = group;
+                        PlayerGroup[characterName] = groupID;
+                    end
                 end
 
                 if (characterName and order) then
@@ -636,7 +689,6 @@ function TMB:import(data, triedToDecompress, source)
                             ["character"] = characterName,
                             ["prio"] = order,
                             ["type"] = type,
-                            ['group'] = raidGroupID,
                         });
 
                         wishlistItemsWereImported = true;
@@ -646,7 +698,7 @@ function TMB:import(data, triedToDecompress, source)
             end
         end
 
-        GL.DB.TMB.Items = TMBData;
+        GL.DB:set("TMB.Items", TMBData);
     end
 
     -- There are item notes available, store them
@@ -654,6 +706,12 @@ function TMB:import(data, triedToDecompress, source)
         for itemID, note in pairs(WebsiteData.notes) do
             GL.DB:set("TMB.Notes." .. itemID, note);
         end
+    end
+
+    -- There is group data available, store!
+    if (not GL:empty(RaidGroups) and not GL:empty(PlayerGroup)) then
+        GL.DB:set("TMB.RaidGroups", RaidGroups);
+        GL.DB:set("TMB.PlayerGroup", PlayerGroup);
     end
 
     -- There are item tiers available, store them
@@ -862,7 +920,11 @@ function TMB:DFTFormatToTMB(data)
 
         -- Sort the priorities (highest to lowest)
         table.sort(Priorities, function (a, b)
-            return a.priority > b.priority;
+            if (a.priority and b.priority) then
+                return a.priority > b.priority;
+            end
+
+            return false;
         end);
 
         for key, Priority in pairs(Priorities) do
@@ -1032,10 +1094,110 @@ function TMB:broadcast()
         return false;
     end
 
-    self.broadcastInProgress = true;
-    Events:fire("GL.TMB_BROADCAST_STARTED");
+    if (not GL:empty(GL.Settings:get("TMB.shareWhitelist", ""))) then
+        self:broadcastToWhitelist();
+    else
+        self:broadcastToGroup();
+    end
 
-    local Broadcast = function ()
+    return true;
+end
+
+---@return void
+function TMB:broadcastToWhitelist()
+    GL:debug("TMB.broadcastToGroup");
+
+    if (self.broadcastInProgress) then
+        GL:error("Broadcast still in progress");
+        return false;
+    end
+
+    self.broadcastInProgress = true;
+
+    local Whitelist = GL.Settings:get("TMB.shareWhitelist", "");
+    if (type(Whitelist) ~= "string") then
+        self.broadcastInProgress = false;
+        return;
+    end
+    Whitelist = GL:strSplit(Whitelist, ",");
+
+    local WhitelistedPlayersInGroup = {};
+    local GroupMemberNames = GL.User:groupMemberNames();
+    for _, name in pairs(Whitelist) do
+        name = string.lower(name);
+
+        if (not GL:iEquals(GL.User.name, name)
+            and GL:inTable(GroupMemberNames, name)
+        ) then
+            tinsert(WhitelistedPlayersInGroup, name);
+        end
+    end
+
+    local numberOfPlayers = #WhitelistedPlayersInGroup;
+    if (numberOfPlayers < 1) then
+        GL:warning("There's no one in your group to broadcast to");
+        self.broadcastInProgress = false;
+        return;
+    end
+
+    local broadcastsFinished = 0;
+    local broadcast = function ()
+        GL.Ace:ScheduleTimer(function ()
+            self.broadcastInProgress = false;
+        end, 10);
+
+        Events:fire("GL.TMB_BROADCAST_STARTED");
+
+        for _, player in pairs(WhitelistedPlayersInGroup) do
+            GL.CommMessage.new(
+                CommActions.broadcastTMBData,
+                GL.DB.TMB,
+                "WHISPER",
+                player
+            ):send(function ()
+                broadcastsFinished = broadcastsFinished + 1;
+
+                if (broadcastsFinished >= numberOfPlayers) then
+                    GL:success("TMB broadcast finished");
+                    self.broadcastInProgress = false;
+                    Events:fire("GL.TMB_BROADCAST_ENDED");
+                end
+            end);
+        end
+    end;
+
+    -- We're about to send a lot of data which will put strain on CTL
+    -- Make sure we're out of combat before doing so!
+    if (UnitAffectingCombat("player")) then
+        GL:message("You are currently in combat, delaying TMB broadcast");
+
+        Events:register("TMBOutOfCombatListener", "PLAYER_REGEN_ENABLED", function ()
+            Events:unregister("TMBOutOfCombatListener");
+            broadcast();
+        end);
+    else
+        broadcast();
+    end
+end
+
+---@return void
+function TMB:broadcastToGroup()
+    GL:debug("TMB.broadcastToGroup");
+
+    if (self.broadcastInProgress) then
+        GL:error("Broadcast still in progress");
+        return false;
+    end
+
+    self.broadcastInProgress = true;
+
+    local broadcast = function ()
+        GL.Ace:ScheduleTimer(function ()
+            self.broadcastInProgress = false;
+        end, 10);
+
+        Events:fire("GL.TMB_BROADCAST_STARTED");
+
         GL:message("Broadcasting TMB data...");
 
         local Label = GL.Interface:get(GL.TMB, "Label.BroadcastProgress");
@@ -1050,8 +1212,8 @@ function TMB:broadcast()
             "GROUP"
         ):send(function ()
             GL:success("TMB broadcast finished");
-            self.broadcastInProgress = false;
             Events:fire("GL.TMB_BROADCAST_ENDED");
+            self.broadcastInProgress = false;
 
             Label = GL.Interface:get(GL.TMB, "Label.BroadcastProgress");
             if (Label) then
@@ -1075,13 +1237,11 @@ function TMB:broadcast()
 
         Events:register("TMBOutOfCombatListener", "PLAYER_REGEN_ENABLED", function ()
             Events:unregister("TMBOutOfCombatListener");
-            Broadcast();
+            broadcast();
         end);
     else
-        Broadcast();
+        broadcast();
     end
-
-    return true;
 end
 
 --- Process an incoming TMB broadcast

@@ -406,7 +406,11 @@ function DroppedLoot:announce(Modifiers)
             ) then
                 -- Sort the PrioListEntries based on prio (lowest to highest)
                 table.sort(ActivePrioListDetails, function (a, b)
-                    return a.order < b.order;
+                    if (a.order and b.order) then
+                        return a.order < b.order;
+                    end
+
+                    return false;
                 end);
 
                 local entries = 0;
@@ -427,17 +431,8 @@ function DroppedLoot:announce(Modifiers)
                     end
                 end
 
-                local source = "TMB";
-                if (GL.TMB:wasImportedFromDFT()) then
-                    source = "DFT";
-                elseif (GL.TMB:wasImportedFromCPR()) then
-                    source = "CPR";
-                elseif (GL.TMB:wasImportedFromCSV()) then
-                    source = "Item";
-                end
-
                 GL:sendChatMessage(
-                    source .. " Priority: " .. entryString,
+                    GL.TMB:source() .. " Priority: " .. entryString,
                     "GROUP"
                 );
             end
@@ -453,7 +448,11 @@ function DroppedLoot:announce(Modifiers)
             ) then
                 -- Sort the WishListEntries based on prio (lowest to highest)
                 table.sort(ActiveWishListDetails, function (a, b)
-                    return a.order < b.order;
+                    if (a.order and b.order) then
+                        return a.order < b.order;
+                    end
+
+                    return false;
                 end);
 
                 local entries = 0;
@@ -516,7 +515,11 @@ function DroppedLoot:getSoftResDetails(SoftReserves)
 
     -- Sort the reservations based on whoever reserved it more often (highest to lowest)
     table.sort(Reservations, function (a, b)
-        return a.reservations > b.reservations;
+        if (a.reservations and b.reservations) then
+            return a.reservations > b.reservations;
+        end
+
+        return false;
     end);
 
     -- Add the reservation details to ActiveReservations (add 2x / 3x etc when same item was reserved multiple times)
