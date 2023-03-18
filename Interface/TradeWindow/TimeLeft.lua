@@ -575,10 +575,10 @@ function TimeLeft:refreshBars(byRefresh)
                 -- initialize counts of items unreceived for both award and de
                 local unreceived = false;
                 local deUnreceived = false;
-                local unreceivedCount = AwardedItemCountByLink[itemLink] or 0;
-                local deUnreceivedCount = DeItemCountByLink[itemLink] or 0;
-                local selfAwardedCount = SelfAwardedItemCountByLink[itemLink] or 0;
-                local tradedCount = TradedCountByLink[itemLink] or 0;
+                local unreceivedCount = 0;
+                local deUnreceivedCount = 0;
+                local selfAwardedCount = 0;
+                local tradedCount = 0;
                 for _, line in pairs(GL.AwardedLoot:tooltipLines(itemLink) or {}) do
                     line = string.lower(line);
                     if (string.match(line, "|de|") and string.match(line, "given: no")) then
@@ -686,8 +686,9 @@ function TimeLeft:refreshBars(byRefresh)
         -- Get the itemID from link and retrieve the count of dropped items by itemID
         local itemID = GL:getItemIDFromLink(BagItem.itemLink)
         local timesDropped = 0
+
         if (GL.DroppedLootLedger.Dropped[itemID]) then
-            timesDropped = #GL.DroppedLootLedger.Dropped[itemID]
+            timesDropped = GL:count(GL.DroppedLootLedger.Dropped[itemID]);
         end
         -- This condition check is used to determine if an item that has been SelfAwarded should be displayed or not
         --  based on the number of same tradable items in the players bags

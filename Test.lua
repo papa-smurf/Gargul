@@ -492,9 +492,11 @@ end
 function Test.DroppedLootLedger:addItems(...)
     local ItemIDs = {...};
     local Units = {"Kel'Thuzad", "Anub'Rekhan", "Maexxna", "Noth the Plaguebringer", "Gothik the Harvester", "Patchwerk"};
+    GL.DroppedLootLedger.Dropped = GL.DroppedLootLedger.Dropped or {};
 
     for _, itemID in pairs(ItemIDs or {}) do
-        GL:tableAdd(GL.DroppedLootLedger, "Dropped." .. itemID, {
+        GL.DroppedLootLedger.Dropped[itemID] = GL.DroppedLootLedger.Dropped[itemID] or {};
+        tinsert(GL.DroppedLootLedger.Dropped[itemID], {
             at = GetServerTime(),
             source = string.format(
                 "Creature-%s-%s-%s-%s-%s-%sE%s",
@@ -507,7 +509,7 @@ function Test.DroppedLootLedger:addItems(...)
                 math.random(1, 9)
             ),
             unitName = Units[math.random(1, #Units)],
-        }, true);
+        });
     end
 end
 
