@@ -288,7 +288,13 @@ function BidderQueue:refreshTable()
     ---@type Frame
     local ActionButtons = Window.ActionButtons;
 
-    local SortedQueue = GL:tableValues(Auction.Queue);
+    local SortedQueue = {};
+    for _, Queued in pairs(Auction.Queue or {}) do
+        if (Queued.identifier and not self.deletedIdentifiers[Queued.identifier]) then
+            tinsert(SortedQueue, Queued);
+        end
+    end
+
     table.sort(SortedQueue, function (a, b)
         if (a.order and b.order) then
             return a.order < b.order;
@@ -297,14 +303,16 @@ function BidderQueue:refreshTable()
         return false;
     end);
 
+    local order = 1;
+    for _, Item in pairs(SortedQueue or {}) do
+        Item.order = order;
+        order = order + 1;
+    end
+
     local itemsAdded = false;
     for _, Item in pairs(SortedQueue or {}) do
         local identifier = Item.identifier;
         GL:onItemLoadDo(GL:getItemIDFromLink(Item.itemLink), function (Details)
-            if (self.deletedIdentifiers[identifier] or not Details) then
-                return;
-            end
-
             local canUseItem = true;
             GL:canUserUseItem(Details.id, function (canUse)
                 canUseItem = canUse;
@@ -366,6 +374,7 @@ function BidderQueue:refreshTable()
                     self:refreshTable();
                 end);
 
+                -- Hide this item from our queue
                 ActionButtons.DeleteButton:SetScript("OnClick", function ()
                     ActionButtons:SetParent(ItemHolder);
                     ActionButtons:Hide();
