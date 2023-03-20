@@ -953,15 +953,21 @@ function TMB:CSVFormatToTMB(data)
     };
 
     --[[
-        6948,zhorax[1],feth[2],arvada[3],arrafart[3],ratomir[4],tonio[99]
-        1372,ratomir[1],zhorax[2],feth[3],arvada[4],arrafart[4],vejusatko[99]
+6948,zhorax[1],feth[2],arvada[3],arrafart[3],ratomir[4],tonio[99]
+1372,ratomir[1],zhorax[2],feth[3],arvada[4],arrafart[4],vejusatko[99]
+Main:tonio,vejusatko,arvada,zhorax
+Alt:ratomir,arrafart,feth
 
         OR
 
-        6948,vejusatko,zhorax,feth,arvada,arrafart,ratomir
-        1372,ratomir,tonio|zhorax,feth,arvada,arrafart
+6948,vejusatko,zhorax,feth,arvada,arrafart,ratomir
+1372,ratomir,tonio|zhorax,feth,arvada,arrafart
+Main:tonio,vejusatko,arvada
+Alt:ratomir,zhorax,feth
     ]]
 
+    local RaidGroups, PlayerGroup = {}, {};
+    local raidGroups = 0;
     for line in data:gmatch("[^\n]+") do
         local Priorities = {};
         local itemID;
@@ -969,7 +975,37 @@ function TMB:CSVFormatToTMB(data)
         (function ()
             local priority = 1;
             local CSVParts;
+            local raidGroup = string.match(line, "^(.+):");
+
+            if (raidGroup) then
+                line = line:gsub(raidGroup .. ":", "");
+            end
+
             CSVParts = GL:strSplit(line, ",");
+
+            if (raidGroup) then
+                raidGroups = raidGroups + 1;
+                RaidGroups[raidGroups] = raidGroup;
+
+                -- We can't handle this line it seems (groups can't be empty)
+                if (not CSVParts[1]) then
+                    return;
+                end
+
+                for _, priorityEntry in pairs(CSVParts) do
+                    (function () -- Not having continue statements in LUA is getting silly at this point
+                        local player = string.lower(GL:stripRealm(priorityEntry));
+
+                        if (GL:empty(player)) then
+                            return;
+                        end
+
+                        PlayerGroup[player] = raidGroups;
+                    end)();
+                end
+
+                return;
+            end
 
             -- We can't handle this line it seems
             if (not CSVParts[2]) then
@@ -1033,6 +1069,12 @@ function TMB:CSVFormatToTMB(data)
         for key, PriorityEntry in pairs(Priorities) do
             TMBData.wishlists[itemID][key] = string.format("%s||%s||1||1", string.lower(PriorityEntry.player), PriorityEntry.priority);
         end
+    end
+
+    -- There is group data available, store!
+    if (not GL:empty(RaidGroups) and not GL:empty(PlayerGroup)) then
+        GL.DB:set("TMB.RaidGroups", RaidGroups);
+        GL.DB:set("TMB.PlayerGroup", PlayerGroup);
     end
 
     return TMBData;
