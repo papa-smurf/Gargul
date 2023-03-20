@@ -514,6 +514,11 @@ function Overview:refreshItems()
                 DetailString:SetWidth(100);
                 DetailString:SetHeight(ITEM_ROW_HEIGHT);
 
+                --[[ MAKE AWARDING / DISENCHANTING ETC POSSIBLE ON CLICK ]]
+                ItemRow:SetScript("OnMouseUp", function (_, mouseButtonPressed)
+                    GL:handleItemClick(Item.link, mouseButtonPressed);
+                end);
+
                 --[[ DETAILS TOOLTIP ]]
                 -- Show player details on hover
                 local ItemsWonByRollerInTheLastFiveHours;
