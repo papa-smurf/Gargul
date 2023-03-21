@@ -9,10 +9,10 @@ local AceGUI = GL.AceGUI;
 ---@class WelcomeSettings
 GL.Interface.Settings.Welcome = {
     description = string.format(
-            "Welcome! Almost all of Gargul's features can be tested when not in a group, so go check them out\n\nRoll: |c00a79eff%s|r. Award: |c00a79eff%s|r. Disenchant: |c00a79eff%s|r\n|c00f7922eNote: hotkeys are disabled when the AH, mailbox, shop or bank are active!|r",
-            GL.Settings:get("ShortcutKeys.rollOffOrAuction"),
-            GL.Settings:get("ShortcutKeys.award"),
-            GL.Settings:get("ShortcutKeys.disenchant")
+        "|c00FFF569Welcome, Gargul can be used and tested without being in a group or raid, try it out!\n\nRoll/Auction: |c00a79eff%s|r. Award: |c00a79eff%s|r. Disenchant: |c00a79eff%s|r|r",
+        GL.Settings:get("ShortcutKeys.rollOffOrAuction"),
+        GL.Settings:get("ShortcutKeys.award"),
+        GL.Settings:get("ShortcutKeys.disenchant")
     ),
 };
 local Welcome = GL.Interface.Settings.Welcome; ---@type WelcomeSettings
@@ -65,7 +65,7 @@ function Welcome:draw(Parent)
         GL.Settings:close();
         GL.Commands:call("softreserves");
     end);
-    OpenSoftRes:SetWidth(129);
+    OpenSoftRes:SetWidth(120);
     Parent:AddChild(OpenSoftRes);
 
     local OpenTMB = AceGUI:Create("Button");
@@ -74,7 +74,7 @@ function Welcome:draw(Parent)
         GL.Settings:close();
         GL.Commands:call("tmb");
     end);
-    OpenTMB:SetWidth(129);
+    OpenTMB:SetWidth(120);
     Parent:AddChild(OpenTMB);
 
     local OpenGDKP = GL.AceGUI:Create("Button");
@@ -83,7 +83,7 @@ function Welcome:draw(Parent)
         GL.Settings:close();
         GL.Commands:call("gdkp");
     end);
-    OpenGDKP:SetWidth(129);
+    OpenGDKP:SetWidth(120);
     Parent:AddChild(OpenGDKP);
 
     local OpenPackMule = AceGUI:Create("Button");
@@ -91,7 +91,7 @@ function Welcome:draw(Parent)
     OpenPackMule:SetCallback("OnClick", function()
         GL.Settings:draw("PackMule");
     end);
-    OpenPackMule:SetWidth(129);
+    OpenPackMule:SetWidth(120);
     Parent:AddChild(OpenPackMule);
 
     local OpenBonusFeatures = AceGUI:Create("Button");
@@ -147,6 +147,31 @@ function Welcome:draw(Parent)
     end
 
     if (not GL:empty(PatronNames)) then
+        local patronString = "";
+        local lastColor = "";
+        local first = true;
+        for _, patron in pairs (PatronNames) do
+            local color = string.sub(patron, 1, 10);
+
+            if (not first and color ~= lastColor) then
+                patronString = string.format("%s%s%s",
+                    patronString,
+                    "\n\n",
+                    patron
+                );
+            elseif (not first) then
+                patronString = string.format("%s, %s",
+                    patronString,
+                    patron
+                );
+            else
+                patronString = patron;
+            end
+
+            first = false;
+            lastColor = color;
+        end
+
         local PatronLabel = AceGUI:Create("Label");
         PatronLabel:SetText(" Patrons");
         PatronLabel:SetFontObject(_G["GameFontNormal"]);
@@ -154,7 +179,7 @@ function Welcome:draw(Parent)
         Parent:AddChild(PatronLabel);
 
         local Patrons = AceGUI:Create("Label");
-        Patrons:SetText(table.concat(PatronNames, ", "));
+        Patrons:SetText(patronString);
         Patrons:SetFontObject(_G["GameFontNormal"]);
         Patrons:SetFullWidth(true);
         Parent:AddChild(Patrons);
@@ -180,7 +205,7 @@ function Welcome:draw(Parent)
     end
 
     local Title = AceGUI:Create("Label");
-    Title:SetText("\n\n|c00ff424dGargul would not be here without these awesome people, thank you! <3|r\n");
+    Title:SetText("\n\n|c00ff424dGargul would not be here without these awesome people, thank you! <3|r\n\n");
     Title:SetFontObject(_G["GameFontNormal"]);
     Title:SetFullWidth(true);
     Parent:AddChild(Title);

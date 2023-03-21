@@ -374,7 +374,11 @@ function Auctioneer:popFromQueue(force)
 
     local SortedQueue = GL:tableValues(Auction.Queue);
     table.sort(SortedQueue, function (a, b)
-        return a.order < b.order;
+        if (a.order and b.order) then
+            return a.order < b.order;
+        end
+
+        return false;
     end);
 
     for _, QueuedItem in pairs(SortedQueue or {}) do
@@ -757,7 +761,7 @@ function Auctioneer:award()
     if (not selected
         or not type(selected) == "table"
     ) then
-        return GL.Interface.Award:draw(AuctioneerUI.itemLink, function ()
+        return GL.Interface.Award.Award:draw(AuctioneerUI.itemLink, function ()
             if (Settings:get("GDKP.minimizeAuctioneerOnAward")) then
                 local Window = AuctioneerUI:getWindow();
 

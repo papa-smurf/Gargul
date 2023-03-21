@@ -49,12 +49,7 @@ function Overview:draw()
     _G["GARGUL_TMB_OVERVIEW_WINDOW"] = Window.frame;
     tinsert(UISpecialFrames, "GARGUL_TMB_OVERVIEW_WINDOW");
 
-    local source = "TMB";
-    if (GL.TMB:wasImportedFromDFT()) then
-        source = "DFT";
-    elseif (GL.TMB:wasImportedFromCPR()) then
-        source = "CPR";
-    end
+    local source = GL.TMB:source();
 
     local VerticalSpacer = GL.AceGUI:Create("SimpleGroup");
     VerticalSpacer:SetLayout("FILL");
@@ -147,7 +142,16 @@ function Overview:draw()
     ClearButton:SetWidth(152);
     ClearButton:SetText("Clear Data");
     ClearButton:SetCallback("OnClick", function()
-        GL.Interface.Dialogs.PopupDialog:open("CLEAR_TMB_CONFIRMATION");
+        -- Show a confirmation dialog before clearing entries
+        GL.Interface.Dialogs.PopupDialog:open({
+            question = string.format("Are you sure you want to clear your %s tables?", source),
+            OnYes = function ()
+                GL.Interface.TMB.Overview:close();
+                GL.TMB:clear();
+
+                GL.TMB:draw(string.lower(source));
+            end,
+        });
     end);
     Window:AddChild(ClearButton);
 

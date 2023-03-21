@@ -329,7 +329,7 @@ function GL:handleItemClick(itemLink, mouseButtonPressed, callback)
 
     -- Open the award window
     elseif (keyPressIdentifier == GL.Settings:get("ShortcutKeys.award")) then
-        GL.Interface.Award:draw(itemLink, callback);
+        GL.Interface.Award.Award:draw(itemLink, callback);
 
     -- Disenchant
     elseif (keyPressIdentifier == GL.Settings:get("ShortcutKeys.disenchant")) then
@@ -666,8 +666,9 @@ function GL:cloneTable(Original)
 end
 
 ---@param text string
+---@Param OnTopOff Frame|nil
 ---@return void
-function GL:popupMessage(text)
+function GL:popupMessage(text, OnTopOff)
     GL:debug("GL:popupMessage");
 
     local frameName = "Gargul.popupMessage";
@@ -681,9 +682,6 @@ function GL:popupMessage(text)
             hideWatermark = true,
         });
 
-        Window:SetFrameStrata("FULLSCREEN_DIALOG");
-        Window:EnableMouse(true);
-        Window:SetToplevel(true);
         Window.Text = GL.Interface:createFontString(Window);
         Window.Text:SetFont(GL.FONT, 14, "OUTLINE");
         Window.Text:SetJustifyH("MIDDLE");
@@ -710,6 +708,10 @@ function GL:popupMessage(text)
     Window:SetHeight(textHeight + 100);
 
     Window:Show();
+
+    -- This is to make sure the tutorial window is always on top of what we're calling it from
+    Window:StartMoving();
+    Window:StopMovingOrSizing();
 end
 
 --- Courtesy of Lantis and the team over at Classic Loot Manager: https://github.com/ClassicLootManager/ClassicLootManager
@@ -997,25 +999,64 @@ function GL:count(var)
     return 0;
 end
 
+---@param itemLinkOrID string|number
+---@return table|nil
+function GL:getCachedItem(itemLinkOrID)
+    GL:debug("GL:getCachedItem");
+
+    local itemID;
+    local concernsID = GL:higherThanZero(tonumber(itemLinkOrID));
+
+    if (concernsID) then
+        itemID = math.floor(tonumber(itemLinkOrID));
+    else
+        itemID = GL:getItemIDFromLink(itemLinkOrID);
+    end
+
+    if (not itemID) then
+        return;
+    end
+
+    local itemName, itemLink, itemQuality, itemLevel, _, _, _, _, itemEquipLoc,
+    itemTexture, _, classID, subclassID, bindType, _, _, _ = GetItemInfo(itemID);
+
+    if (GL:empty(itemName)
+        or GL:empty(itemLink)
+        or type (bindType) ~= "number"
+    ) then
+        GL:debug("GetItemInfo data was not yet available for item with ID: " .. itemID);
+
+        return;
+    end
+
+    return {
+        id = itemID,
+        bindType = bindType,
+        classID = classID,
+        icon = itemTexture,
+        inventoryType = itemEquipLoc,
+        level = itemLevel,
+        link = itemLink,
+        name = itemName,
+        subclassID = subclassID,
+        quality = itemQuality,
+    };
+end
+
 --- The onItemLoadDo helper accepts one or more item ids or item links
 --- The corresponding items will be loaded using Blizzard's Item API
 --- After all of the files are loaded execute the provided callback function
 ---
 ---@param Items table
----@param callback function
+---@param callback function|nil
 ---@param haltOnError boolean
 ---@param sorter function
----@return void
+---@return table
 function GL:onItemLoadDo(Items, callback, haltOnError, sorter)
     GL:debug("GL:onItemLoadDo");
 
-    GL.DB.Cache.ItemsByID = GL.DB.Cache.ItemsByID or {};
     haltOnError = haltOnError or false;
-
-    if (type(callback) ~= "function") then
-        GL:warning("Unexpected type '" .. type(callback) .. "' in GL:onItemLoadDo, expecting type 'function'");
-        return;
-    end
+    callback = callback or function () end;
 
     local itemsWasntATable = type(Items) ~= "table";
     if (itemsWasntATable) then
@@ -1034,29 +1075,19 @@ function GL:onItemLoadDo(Items, callback, haltOnError, sorter)
     ---@return void
     local function loadOrReturnItem(itemIdentifier)
         local ItemResult = {}; ---@type Item
-        local identifierType = type(itemIdentifier);
-        local identifierIsId = GL:higherThanZero(tonumber(itemIdentifier));
-        local idString = "";
+        local itemID = tonumber(itemIdentifier);
+
+        -- A string was provided, treat it as an item link and fetch its ID
+        if (not GL:higherThanZero(itemID)
+            and type(itemIdentifier) == "string"
+        ) then
+            itemID = GL:getItemIDFromLink(itemIdentifier);
+        end
 
         -- If a number is provided we assume that it's an item ID
-        if (identifierIsId) then
-            -- This seems counterintuitive, but don't get me started on numeric table keys in LUA
-            idString = tostring(itemIdentifier);
-
-            -- The item already exists in our runtime item cache, return it
-            if (GL.DB.Cache.ItemsByID[idString] ~= nil) then
-                itemsLoaded = itemsLoaded + 1;
-                tinsert(ItemData, GL.DB.Cache.ItemsByID[idString]);
-
-                return;
-            end
-
-            -- The item doesn't exist yet, start loading it
-            ItemResult = Item:CreateFromItemID(tonumber(itemIdentifier));
-
-        -- If a string is provided we assume that it's an item link
-        elseif (identifierType == "string") then
-            ItemResult = Item:CreateFromItemLink(itemIdentifier);
+        if (itemID) then
+            -- Start loading the item
+            ItemResult = Item:CreateFromItemID(itemID);
 
         -- We can't use anything that's not an id or link so we skip it
         else
@@ -1074,12 +1105,23 @@ function GL:onItemLoadDo(Items, callback, haltOnError, sorter)
             return;
         end
 
+        -- The item already exists in our runtime item cache, return it
+        if (ItemResult:IsItemDataCached()) then
+            local Details = GL:getCachedItem(itemID);
+
+            if (Details) then
+                itemsLoaded = itemsLoaded + 1;
+                tinsert(ItemData, Details)
+
+                return;
+            end
+        end
+
         ItemResult:ContinueOnItemLoad(function()
-            local itemID = ItemResult:GetItemID();
             itemsLoaded = itemsLoaded + 1;
 
-            local itemName, itemLink, itemQuality, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount,
-            itemEquipLoc, itemTexture, sellPrice, classID, subclassID, bindType, expacID, setID, isCraftingReagent = GetItemInfo(itemID);
+            local itemName, itemLink, itemQuality, itemLevel, _, _, _, _, itemEquipLoc,
+            itemTexture, _, classID, subclassID, bindType, _, _, _ = GetItemInfo(itemID);
 
             if (GL:empty(itemName)
                 or GL:empty(itemLink)
@@ -1090,9 +1132,7 @@ function GL:onItemLoadDo(Items, callback, haltOnError, sorter)
                 return; -- Return here so we don't cache any incomplete data
             end
 
-            idString = tostring(itemID);
-
-            GL.DB.Cache.ItemsByID[idString] = {
+            tinsert(ItemData, {
                 id = itemID,
                 bindType = bindType,
                 classID = classID,
@@ -1103,9 +1143,7 @@ function GL:onItemLoadDo(Items, callback, haltOnError, sorter)
                 name = itemName,
                 subclassID = subclassID,
                 quality = itemQuality,
-            };
-
-            tinsert(ItemData, GL.DB.Cache.ItemsByID[idString]);
+            });
 
             if (not callbackCalled
                 and itemsLoaded >= numberOfItemsToLoad
@@ -1158,6 +1196,9 @@ function GL:onItemLoadDo(Items, callback, haltOnError, sorter)
             return;
         end
     end
+
+    -- The return value is only useful if you're 100% certain the item was already pre-loaded
+    return ItemData;
 end
 
 --- Make sure era names are suffixed with a realm
@@ -2213,7 +2254,12 @@ function GL:tableGet(Table, keyString, default)
     end
 
     if (type(Table[firstKey]) == "nil") then
-        return default;
+        firstKey = tonumber(firstKey);
+
+        -- Make sure we're not looking for a numeric key instead of a string
+        if (not firstKey or type(Table[firstKey]) == "nil") then
+            return default;
+        end
     end
 
     Table = Table[firstKey];

@@ -261,10 +261,16 @@ function Export:exportAuctionsToCustomFormat(Auctions)
     local customExportFormat = GL.Settings:get("GDKP.customExportFormat");
 
     -- Make sure that all relevant item data is cached
-    GL:onItemLoadDo(GL:tableColumn(Auctions, "itemID"), function ()
+    GL:onItemLoadDo(GL:tableColumn(Auctions, "itemID"), function (Result)
+        local Details = {};
+        for _, ItemDetails in pairs(Result or {}) do
+            Details[ItemDetails.id] = ItemDetails;
+        end
+        Result = nil;
+
         for _, Auction in pairs(Auctions) do
             local exportEntry = customExportFormat;
-            local ItemDetails = GL.DB.Cache.ItemsByID[tostring(Auction.itemID)];
+            local ItemDetails = Details[Auction.itemID];
             local wowheadLink, iconLink;
             local icon = GL.Data.IconTexturePaths:byID(ItemDetails.icon);
 

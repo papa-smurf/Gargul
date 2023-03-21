@@ -31,7 +31,7 @@ function PlayerSelector:draw(description, PlayerNames, callback)
     Window:SetTitle("Gargul v" .. GL.version);
     Window:SetLayout("FLOW");
     Window:SetWidth(430);
-    Window:SetHeight(282);
+    Window:SetHeight(292);
     Window:EnableResize(false);
     Window.statustext:GetParent():Hide(); -- Hide the statustext bar
     Window:SetCallback("OnClose", function()

@@ -177,7 +177,11 @@ function MailCuts:refreshPlayerCuts()
     end
 
     table.sort(PlayerNames, function (a, b)
-        return a < b;
+        if (a and b) then
+            return a < b;
+        end
+
+        return false;
     end);
 
     local i = 0;
@@ -200,7 +204,11 @@ function MailCuts:refreshPlayerCuts()
                 " ",
             };
             table.sort(MailHistory, function (a, b)
-                return a.timestamp > b.timestamp;
+                if (a.timestamp and b.timestamp) then
+                    return a.timestamp > b.timestamp;
+                end
+
+                return false;
             end);
 
             for _, Entry in pairs(MailHistory or {}) do

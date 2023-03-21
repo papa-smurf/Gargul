@@ -65,6 +65,13 @@ function LedgerList:open(sessionID)
 
     Window:SetFrameLevel(5000);
     Window:Show();
+
+    -- This is to make sure this window is always on top
+    Window:SetMovable(true);
+    Window:StartMoving();
+    Window:StopMovingOrSizing();
+    Window:SetMovable(false);
+
     return Window;
 end
 
@@ -295,7 +302,11 @@ function LedgerList:refresh()
         end
 
         table.sort(PlayerNames, function (a, b)
-            return a < b;
+            if (a and b) then
+                return a < b;
+            end
+
+            return false;
         end);
 
         local PlayerData = {};

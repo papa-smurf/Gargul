@@ -742,7 +742,11 @@ function Pot:announce(sessionID, callback)
     end
 
     table.sort(Players, function(a, b)
-        return a < b;
+        if (a and b) then
+            return a < b;
+        end
+
+        return false;
     end);
 
     local playerIndex = 1;

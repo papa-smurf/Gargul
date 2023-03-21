@@ -185,8 +185,10 @@ GL.Data.DefaultSettings = {
         OSHasLowerPriority = true,
         shareWhitelist = "",
         showEntriesWhenSolo = true,
+        showEntriesWhenUsingPrio3 = true,
         showItemInfoOnTooltips = true,
         showPrioListInfoOnTooltips = true,
+        showRaidGroup = true,
         showWishListInfoOnTooltips = true,
     },
     TradeAnnouncements = {

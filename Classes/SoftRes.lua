@@ -705,7 +705,11 @@ function SoftRes:tooltipLines(itemLink)
 
     -- Sort the reservations based on whoever reserved it more often (highest to lowest)
     table.sort(ActiveReservations, function (a, b)
-        return a.reservations > b.reservations;
+        if (a.reservations and b.reservations) then
+            return a.reservations > b.reservations;
+        end
+
+        return false;
     end);
 
     -- Add the reservation details to ActiveReservations (add 2x / 3x etc when same item was reserved multiple times)
