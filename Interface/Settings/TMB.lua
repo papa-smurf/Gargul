@@ -63,7 +63,7 @@ function TMB:draw(Parent)
         },
         {
             label = "Award based on drops without using Gargul UI",
-            description = "Want to export items won via group loot? Want to use the native WoW UI when master looting instead of Gargul's? Then enable this option! You can still edit entries via the award history window (|c00a79eff/gl ah|r)",
+            description = "Want to export items won via group loot? Want to use the native WoW UI when master looting? Enable this! Items awarded this way will only be broadcasted to others when master loot is active and you are the master looter or when group loot is active and you are the raid/party leader!",
             setting = "AwardingLoot.awardOnReceive",
         },
     }, Parent);
