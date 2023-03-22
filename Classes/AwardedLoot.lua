@@ -306,7 +306,7 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, G
             broadcast = GL.User.isLead;
         end
     else
-        broadcast = GL.User.isMasterLooter or GL.User.hasAssist;
+        broadcast = GL.User.isMasterLooter or GL.User.hasAssist or not GL.User.isInGroup;
     end
 
     -- Loot awarded automatically (when AwardingLoot.awardOnReceive is enabled)

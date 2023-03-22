@@ -322,6 +322,24 @@ function MasterLooterUI:draw(itemLink)
                         return GL:warning("You need to select a player first");
                     end
 
+                    local selectedPlayer = GL:tableGet(selected, "cols.1.value");
+                    local selectedRollAmount = GL:tableGet(selected, "cols.2.value");
+                    local selectedRollType = GL:tableGet(selected, "cols.4.value");
+
+                    if (not selectedPlayer
+                        or not selectedRollAmount
+                        or not selectedRollType
+                    ) then
+                        return GL:warning("You need to select a player first");
+                    end
+
+                    -- If the roller has a roll number suffixed to his name
+                    -- e.g. "playerName [2]" then make sure to remove that number
+                    local openingBracketPosition = string.find(selectedPlayer, " %[");
+                    if (openingBracketPosition) then
+                        selectedPlayer = string.sub(selectedPlayer, 1, openingBracketPosition - 1);
+                    end
+
                     local RollType = (function()
                         for _, RollType in pairs(GL.Settings:get("RollTracking.Brackets", {})) do
                             if (RollType[1] == selected.cols[4].value) then
@@ -331,10 +349,24 @@ function MasterLooterUI:draw(itemLink)
 
                         return {};
                     end)();
+
+                    local identicalRollDetected = false;
+                    for _, Roll in pairs(GL.RollOff.CurrentRollOff.Rolls or {}) do
+                        if (Roll
+                            and Roll.player
+                            and not GL:iEquals(Roll.player, selectedPlayer)
+                            and Roll.amount == selectedRollAmount
+                            and Roll.classification == selectedRollType
+                        ) then
+                            identicalRollDetected = true;
+                        end
+                    end
+
                     local osRoll = GL:toboolean(RollType[5]);
                     local plusOneRoll = GL:toboolean(RollType[6]);
-                    local boostedRoll = selected.cols[4].value == GL.Settings:get("BoostedRolls.identifier", "BR");
-                    return GL.RollOff:award(selected.cols[1].value, GL.Interface:get(self, "EditBox.Item"):GetText(), osRoll, boostedRoll, plusOneRoll);
+                    local boostedRoll = selectedRollType == GL.Settings:get("BoostedRolls.identifier", "BR");
+
+                    return GL.RollOff:award(selectedPlayer, GL.Interface:get(self, "EditBox.Item"):GetText(), osRoll, boostedRoll, plusOneRoll, identicalRollDetected);
                 end);
                 ThirdRow:AddChild(AwardButton);
                 GL.Interface:set(self, "Award", AwardButton);

@@ -495,16 +495,19 @@ function RollOff:stop(CommMessage)
     return true;
 end
 
--- Award the item to one of the rollers
-function RollOff:award(roller, itemLink, osRoll, boostedRoll, plusOneRoll)
+--- Award the item to one of the rollers
+---
+---@param roller string Name of the player
+---@param itemLink string
+---@param osRoll boolean
+---@param boostedRoll boolean
+---@param plusOneRoll boolean
+---@param identicalRollDetected boolean Was there another roll identical to the winning one?
+---@return void
+function RollOff:award(roller, itemLink, osRoll, boostedRoll, plusOneRoll, identicalRollDetected)
     GL:debug("RollOff:award");
 
-    -- If the roller has a roll number suffixed to his name
-    -- e.g. "playerName [2]" then make sure to remove that number
-    local openingBracketPosition = string.find(roller, " %[");
-    if (openingBracketPosition) then
-        roller = string.sub(roller, 1, openingBracketPosition - 1);
-    end
+    identicalRollDetected = GL:toboolean(identicalRollDetected);
 
     itemLink = GL:tableGet(self.CurrentRollOff, "itemLink", itemLink);
 
@@ -520,10 +523,16 @@ function RollOff:award(roller, itemLink, osRoll, boostedRoll, plusOneRoll)
         Rolls = {};
     end
 
+    local identicalRollDetectedString = "";
+    if (identicalRollDetected) then
+        identicalRollDetectedString = "|c00BE3333Warning: another identical roll was found which can point to a tie|r\n\n"
+    end
+
     if (GL:nameIsUnique(roller)) then
         -- Make sure the initiator has to confirm his choices
         GL.Interface.Dialogs.AwardDialog:open({
-            question = string.format("Award %s to |cff%s%s|r?",
+            question = string.format("%sAward %s to |cff%s%s|r?",
+                identicalRollDetectedString,
                 itemLink,
                 GL:classHexColor(GL.Player:classByName(roller)),
                 roller
@@ -576,7 +585,8 @@ function RollOff:award(roller, itemLink, osRoll, boostedRoll, plusOneRoll)
     GL.Interface.PlayerSelector:draw(description, roller, function (player)
         -- Make sure the initiator has to confirm his choices
         GL.Interface.Dialogs.AwardDialog:open({
-            question = string.format("Award %s to |cff%s%s|r?",
+            question = string.format("%sAward %s to |cff%s%s|r?",
+                identicalRollDetectedString,
                 itemLink,
                 GL:classHexColor(GL.Player:classByName(player)),
                 player
