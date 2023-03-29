@@ -109,6 +109,7 @@ L.SOFTRES = "Soft-Reserves";
 L.TIME = "Time";
 L.TMBETC = "TMB, DFT or PRIO3";
 L.TOGGLE_QUEUE = "Show/Hide Queue";
+L.TOGGLE_DATES = "Show/Hide Dates";
 L.TUTORIAL = "Tutorial";
 L.TUTORIAL_AWARD_OVERVIEW = [[This window shows all the items that have been awarded on any given date (select one or more dates on the left).
 

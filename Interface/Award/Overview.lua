@@ -76,7 +76,7 @@ function Overview:build()
     local Window = Interface:createWindow(self.windowName, {
         width = DEFAULT_WINDOW_WIDTH,
         height = DEFAULT_WINDOW_HEIGHT,
-        minWidth = DEFAULT_WINDOW_WIDTH,
+        minWidth = 500,
         minHeight = 239,
         maxWidth = DEFAULT_WINDOW_WIDTH,
         maxHeight = 700,
@@ -102,10 +102,55 @@ function Overview:build()
     Table.frame:SetPoint("TOPLEFT", Window, "TOPLEFT", 20, -20);
     self.DatesTable = Table;
 
+    do --[[ DATE TOGGLER BUTTON ]]
+        local originalTableWidth = Table.frame:GetWidth();
+        local shown = true;
+        local closedCoords = { 0.03125, 0.46875, 0.0078125, 0.9921875 };
+        local openedCoords = { 0.53125, 0.96875, 0.0078125, 0.9921875 };
+
+        ---@type Button
+        local ToggleDates = CreateFrame("Button", "Gargul.Interface.Award.Overview.ToggleQueue", Window);
+        ToggleDates:SetSize(14,66);
+        ToggleDates:SetPoint("CENTER", Table.frame);
+        ToggleDates:SetPoint("LEFT", Table.frame, "LEFT", -24, 0);
+        ToggleDates:SetScript("OnClick", function ()
+            if (shown) then
+                Table.frame:SetWidth(.1);
+                Table.frame:SetAlpha(0);
+                ToggleDates.texture:SetTexCoord(unpack(closedCoords));
+                shown = false;
+            else
+                Table.frame:SetWidth(originalTableWidth);
+                Table.frame:SetAlpha(1);
+                ToggleDates.texture:SetTexCoord(unpack(openedCoords));
+                shown = true;
+            end
+        end);
+
+        ToggleDates.texture = ToggleDates:CreateTexture();
+        ToggleDates.texture:SetAllPoints(ToggleDates)
+        ToggleDates.texture:SetTexture("interface/raidframe/raidpanel-toggle");
+        ToggleDates.texture:SetTexCoord(unpack(closedCoords));
+
+        if (Table.frame:IsShown()) then
+            ToggleDates.texture:SetTexCoord(unpack(openedCoords));
+        end
+
+        ToggleDates.highlightTexture = ToggleDates:CreateTexture(nil, "HIGHLIGHT");
+        ToggleDates.highlightTexture:SetPoint("TOPLEFT", ToggleDates, "TOPLEFT", 3, -10);
+        ToggleDates.highlightTexture:SetPoint("BOTTOMRIGHT", ToggleDates, "BOTTOMRIGHT", 2, 10);
+        ToggleDates.highlightTexture:SetTexture("Interface/PaperDollInfoFrame/UI-Character-Tab-Highlight");
+        ToggleDates.highlightTexture:SetTexCoord(0, 1, 0.23, 0.77);
+        ToggleDates.highlightTexture:SetBlendMode("ADD");
+        ToggleDates:SetHighlightTexture(ToggleDates.highlightTexture);
+
+        Interface:addTooltip(ToggleDates, L.TOGGLE_DATES, "BOTTOMRIGHT");
+    end
+
     --[[ SCROLLFRAME BOILERPLATE ]]
     local ScrollFrame = CreateFrame("ScrollFrame", nil, Window, "UIPanelScrollFrameTemplate")
     ScrollFrame:SetPoint("TOPLEFT", Table.frame, "TOPRIGHT", 16, -4);
-    ScrollFrame:SetPoint("BOTTOMRIGHT", Window, "BOTTOMRIGHT", -44, 28);
+    ScrollFrame:SetPoint("BOTTOMRIGHT", Window, "BOTTOMRIGHT", -44, 54);
 
     local ItemHolder = CreateFrame("Frame");
     ScrollFrame:SetScrollChild(ItemHolder);
