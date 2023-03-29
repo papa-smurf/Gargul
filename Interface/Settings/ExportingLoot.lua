@@ -176,6 +176,7 @@ function ExportingLoot:draw(Parent)
             "@WL |c00a79eff(tmb wish?)|r",
             "@PL |c00a79eff(tmb prio?)|r",
             "@TMB |c00a79eff(tmb wish/prio?)|r",
+            "@ROLLTYPE |c00a79eff(MS, OS etc)|r",
             "@CHECKSUM",
             "@YEAR",
             "@YY",

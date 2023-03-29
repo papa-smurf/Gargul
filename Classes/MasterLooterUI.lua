@@ -340,10 +340,21 @@ function MasterLooterUI:draw(itemLink)
                         selectedPlayer = string.sub(selectedPlayer, 1, openingBracketPosition - 1);
                     end
 
-                    local RollType = (function()
-                        for _, RollType in pairs(GL.Settings:get("RollTracking.Brackets", {})) do
-                            if (RollType[1] == selected.cols[4].value) then
-                                return RollType;
+                    local RollBracket = (function()
+                        -- Boosted rolls don't have a defined bracket (roll ranges are dynamic!)
+                        if (selected.cols[4].value == GL.Settings:get("BoostedRolls.identifier", "BR")) then
+                            return {
+                                [1] = selected.cols[4].value,
+                                [2] = false,
+                                [3] = false,
+                                [4] = false,
+                                [5] = false,
+                            };
+                        end
+
+                        for _, Bracket in pairs(GL.Settings:get("RollTracking.Brackets", {})) do
+                            if (Bracket[1] == selected.cols[4].value) then
+                                return Bracket;
                             end
                         end
 
@@ -362,11 +373,7 @@ function MasterLooterUI:draw(itemLink)
                         end
                     end
 
-                    local osRoll = GL:toboolean(RollType[5]);
-                    local plusOneRoll = GL:toboolean(RollType[6]);
-                    local boostedRoll = selectedRollType == GL.Settings:get("BoostedRolls.identifier", "BR");
-
-                    return GL.RollOff:award(selectedPlayer, GL.Interface:get(self, "EditBox.Item"):GetText(), osRoll, boostedRoll, plusOneRoll, identicalRollDetected);
+                    return GL.RollOff:award(selectedPlayer, GL.Interface:get(self, "EditBox.Item"):GetText(), RollBracket, identicalRollDetected);
                 end);
                 ThirdRow:AddChild(AwardButton);
                 GL.Interface:set(self, "Award", AwardButton);
