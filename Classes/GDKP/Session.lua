@@ -167,20 +167,19 @@ function Session:tradeInitiated(Details)
 
     local playerCutInCopper = playerCut * 10000;
     local copperReceived = GoldTrades.from;
-    local copperGiven = GoldTrades.to;
+    local copperGiven = GoldTrades.to + GL:tableGet(Instance, "GoldMails." .. Details.partner, 0);
     local copperSpentByPlayer = self:goldSpentByPlayer(Details.partner) * 10000;
-    local copperToReceive = copperSpentByPlayer - copperReceived;
-    local copperToGive = playerCutInCopper - copperToReceive - copperGiven;
+    local balance = tonumber(self:copperOwedToPlayer(Details.partner, Instance.ID) or 0);
 
     local balanceMessage = " ";
     local whisperMessage = nil;
-    if (copperToGive > 0) then
-        local due = GL:copperToMoney(copperToGive);
+    if (balance > 0) then
+        local due = GL:copperToMoney(balance);
         balanceMessage = string.format("|c00F7922ETo give: %s|r", due);
         whisperMessage = string.format("I owe you %s. Enjoy!", due);
 
-    elseif (copperToGive < 0) then
-        local owed = GL:copperToMoney(copperToGive * -1);
+    elseif (balance < 0) then
+        local owed = GL:copperToMoney(balance * -1);
         balanceMessage = string.format("|c0092FF00To receive: %s|r", owed);
         whisperMessage = string.format("You owe me %s. Thank you!", owed);
     end
@@ -240,20 +239,20 @@ function Session:tradeInitiated(Details)
 
     -- Add the gold to the trade window
     if (playerCutInCopper > 0
-        and copperToGive
+        and balance
         and Settings:get("GDKP.addGoldToTradeWindow")
     ) then
-        if (copperToGive > GetMoney()) then
+        if (balance > GetMoney()) then
             GL:error("You don't have enough money to pay " .. Details.partner);
         else
-            GL.TradeWindow:setCopper(copperToGive, Details.partner, function(success)
+            GL.TradeWindow:setCopper(balance, Details.partner, function(success)
                 if (success) then
                     return;
                 end
 
                 GL:error(string.format(
                     "Unable to add %s to the trade window. Try adding it manually!",
-                    GL:copperToMoney(copperToGive)
+                    GL:copperToMoney(balance)
                 ));
             end);
         end
