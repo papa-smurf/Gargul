@@ -125,6 +125,8 @@ GL.Data.DefaultSettings = {
         enableWhisperCommand = true,
     },
     GDKP = {
+        ItemLevelDetails = {},
+
         acceptBidsLowerThanMinimum = false, -- Change default? Check Auction.lua !!
         addDropsToQueue = true,
         addBOEDropsToQueue = true,

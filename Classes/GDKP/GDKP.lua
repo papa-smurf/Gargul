@@ -22,10 +22,25 @@ function GDKP:settingsForItemID(itemID)
         return false;
     end
 
+    local defaultMinimum = Settings:get("GDKP.defaultMinimumBid");
+    local defaultIncrement = Settings:get("GDKP.defaultIncrement");
+    if (GL:count(Settings:get("GDKP.ItemLevelDetails")) > 0) then
+        local itemLevel = tonumber(GetDetailedItemLevelInfo(itemID) or 0);
+
+        -- If there are item level specific settings and we
+        -- can't find the item level then we need to notifiy the player
+        if (itemLevel < 1) then
+            GL:warning(("Could not determine item level for item with ID %s, check minimum price and increment!"):format(itemID));
+        else
+            defaultMinimum = Settings:get(("GDKP.ItemLevelDetails.%s.minimum"):format(tostring(itemLevel)), defaultMinimum);
+            defaultIncrement = Settings:get(("GDKP.ItemLevelDetails.%s.increment"):format(tostring(itemLevel)), defaultIncrement);
+        end
+    end
+
     if (not Settings:get("GDKP.storeMinimumAndIncrementPerItem")) then
         return {
-            minimum = Settings:get("GDKP.defaultMinimumBid"),
-            increment = Settings:get("GDKP.defaultIncrement"),
+            minimum = defaultMinimum,
+            increment = defaultIncrement,
         }
     end
 

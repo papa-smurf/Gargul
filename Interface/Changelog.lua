@@ -12,6 +12,12 @@ GL.Interface.Changelog = {
 
     History = {
         {
+            version = "5.3.12",
+            date = "April 1st, 2023",
+            Changes = {
+                "You can now set a minimum price and increment per item level (check |c00a79eff/gl|r -> GDKP)",
+            },
+        },{
             version = "5.3.4",
             date = "March 3rd, 2023",
             Changes = {
