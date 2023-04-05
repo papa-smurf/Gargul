@@ -577,12 +577,13 @@ function Session:create(title, managementCut)
         return false;
     end
 
-    managementCut = strtrim(managementCut);
-    if (not GL:empty(managementCut)
-        and tonumber(managementCut)
-        and not GL:higherThanZero(tonumber(managementCut))
-    ) then
-        return false;
+    if (managementCut) then
+        managementCut = tonumber(managementCut);
+        if (managementCut
+                and managementCut < 0
+        ) then
+            return false;
+        end
     end
 
     local Instance = {

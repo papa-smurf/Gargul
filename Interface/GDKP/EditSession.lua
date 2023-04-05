@@ -66,10 +66,9 @@ function EditSession:build()
             return;
         end
 
-        local managementCut = strtrim(ManagementCut:GetText());
-        if (not GL:empty(managementCut)
-            and tonumber(managementCut)
-            and not GL:higherThanZero(tonumber(managementCut))
+        local managementCut = tonumber(strtrim(ManagementCut:GetText()));
+        if (managementCut
+            and managementCut < 0
         ) then
             GL:warning("The cut needs to be empty or between 0 and 99");
             return;
