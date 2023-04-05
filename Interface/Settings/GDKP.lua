@@ -728,7 +728,6 @@ An item's price and increment are determined in the following order:
         AutoApplyTo:SetHeight(20);
         AutoApplyTo:SetWidth(220);
         AutoApplyTo:SetText(MutatorDetails.autoApplyTo);
-        AutoApplyTo:SetMaxLetters(2);
         Parent:AddChild(AutoApplyTo);
 
         self.InputElements[i] = {
