@@ -1427,14 +1427,14 @@ function Auction:start(CommMessage)
         -- Flash the game icon in case the player alt-tabbed
         FlashClientIcon();
 
-        -- Let the application know that an auction started
-        Events:fire("GL.GDKP_AUCTION_STARTED");
-
         -- Automatically auto-bid on the item if we set an auto bid max
         if (self.QueuedItemAutoBids[Details.id]) then
             self:setAutoBid(self.QueuedItemAutoBids[Details.id]);
             self.QueuedItemAutoBids[Details.id] = nil;
         end
+
+        -- Let the application know that an auction started
+        Events:fire("GL.GDKP_AUCTION_STARTED");
 
         -- Items should only contain 1 item but lets add a return just in case
         return;
@@ -1641,6 +1641,12 @@ function Auction:setAutoBid(max, queuedItemChecksum)
     -- Make sure we're the highest bidder, if not then bid
     if (GL:tableGet(self.Current, "TopBid.Bidder.name") ~= GL.User.name) then
         self:bid(lowestMinimumBid);
+    end
+
+    -- Make sure the stop auto bid button is shown on the
+    if (GL.Interface.GDKP.Bidder.StopAutoBidButton and self.inProgress) then
+        GL.Interface.GDKP.Bidder.AutoBidButton:Hide();
+        GL.Interface.GDKP.Bidder.StopAutoBidButton:Show();
     end
 
     return true;
