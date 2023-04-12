@@ -499,7 +499,7 @@ end
 ---
 ---@param roller string Name of the player
 ---@param itemLink string
----@param RollBracket table See DefaultSettings.lua -> RollTracking.Brackets
+---@param RollBracket table See DefaultSettings.lua -> RollTracking.Brackets. Can be empty when allowing all rolls!
 ---@param identicalRollDetected boolean Was there another roll identical to the winning one?
 ---@return void
 function RollOff:award(roller, itemLink, RollBracket, identicalRollDetected)
@@ -510,14 +510,16 @@ function RollOff:award(roller, itemLink, RollBracket, identicalRollDetected)
 
     if (GL:empty(roller)
         or GL:empty(itemLink)
-        or GL:empty(RollBracket)
     ) then
-        GL:xd({
-            roller = roller,
-            itemLink = itemLink,
-            RollBracket = RollBracket,
-        });
         return;
+    end
+
+    if (GL:empty(RollBracket)) then
+        RollBracket = {
+            [1] = "",
+            [5] = false,
+            [6] = false,
+        };
     end
 
     local rollIdentifier = RollBracket[1];
