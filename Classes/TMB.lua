@@ -1435,6 +1435,30 @@ function TMB:replyToDataRequest(CommMessage)
         return;
     end
 
+    -- This player is not on our whitelist
+    local Whitelist = GL.Settings:get("TMB.shareWhitelist", "");
+    if (type(Whitelist) == "string") then
+        Whitelist = GL:strSplit(Whitelist, ",");
+
+        if (not GL:empty(Whitelist)) then
+            local WhitelistedPlayersInGroup = {};
+            local GroupMemberNames = GL.User:groupMemberNames();
+            for _, name in pairs(Whitelist) do
+                name = string.lower(name);
+
+                if (not GL:iEquals(GL.User.name, name)
+                    and GL:inTable(GroupMemberNames, name)
+                ) then
+                    tinsert(WhitelistedPlayersInGroup, name);
+                end
+            end
+
+            if (not GL:inTable(WhitelistedPlayersInGroup, CommMessage.Sender.name)) then
+                return;
+            end
+        end
+    end
+
     local playerTMBHash = CommMessage.content.currentHash or '';
     -- Your data is the same as mine, leave me alone!
     if (not GL:empty(playerTMBHash)
