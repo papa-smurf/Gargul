@@ -164,7 +164,6 @@ function GL:_init()
             end
         end
     end
-    SetCVar("scriptErrors", 1);
 
     -- Show the changelog window
     GL.Interface.Changelog:reportChanges();
