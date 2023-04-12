@@ -30,6 +30,11 @@ GL.PackMule = {
 local PackMule = GL.PackMule; ---@type PackMule
 local Settings = GL.Settings; ---@type Settings
 
+--[[ CONSTANTS ]]
+local LOOT_SLOT_MONEY = GL:tableGet(Enum or {}, "LootSlotType.Money", LOOT_SLOT_MONEY);
+local LOOT_SLOT_CURRENCY = GL:tableGet(Enum or {}, "LootSlotType.Currency", LOOT_SLOT_CURRENCY);
+local LOOT_SLOT_ITEM = GL:tableGet(Enum or {}, "LootSlotType.Item", LOOT_SLOT_ITEM);
+
 ---@return void
 function PackMule:_init()
     GL:debug("PackMule:_init");
@@ -97,6 +102,19 @@ function PackMule:_init()
 
         ConfirmLootRoll(rollID, roll);
         StaticPopup_Hide("CONFIRM_LOOT_ROLL");
+    end);
+
+    -- Always auto loot gold
+    GL.Events:register("PackMuleLootReadyListener", "LOOT_READY", function ()
+        -- Shift should disable this
+        if (IsShiftKeyDown()) then
+            return;
+        end
+
+        local slotType = GetLootSlotType(1);
+        if (slotType == LOOT_SLOT_MONEY) then
+            LootSlot(1);
+        end
     end);
 
     -- Make sure to auto accept BoP loot when opening containers
