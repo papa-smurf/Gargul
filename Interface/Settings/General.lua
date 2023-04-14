@@ -33,6 +33,11 @@ function General:draw(Parent)
             setting = "changeLog",
         },
         {
+            label = "Show update alert",
+            description = "Show an alert when there's an update. We believe in \"release early, release often\", it allows us to respond to bugs more quickly and limits the severity of issues",
+            setting = "showUpdateAlert",
+        },
+        {
             label = "No messages",
             description = "This will prevent Gargul from posting any messages, ANYWHERE",
             setting = "noMessages",

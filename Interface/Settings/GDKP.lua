@@ -238,27 +238,10 @@ function GDKP:draw(Parent)
                     end;
 
                     GL.Interface.Dialogs.PopupDialog:open({
-                        question = string.format("Are you sure? If used properly this will save you A LOT of time!"),
+                        question = string.format("If used properly queues will save you a lot of time and let your raiders see what items are coming up and bid on them\n\nIf you're looking for a way to speed up your raids then this is what you should be using, are you sure you want to disable it?"),
                         OnYes = function ()
-                            GL.Interface.Dialogs.PopupDialog:open({
-                                question = string.format("Your raiders will no longer be able prebid without a queue!"),
-                                OnYes = function ()
-                                    GL.Interface.Dialogs.PopupDialog:open({
-                                        question = string.format("Wanting to disable queues usually points to using the add-on wrong. Are you still sure?"),
-                                        OnYes = function ()
-                                            GL.GDKP.Auctioneer:clearQueue();
-                                            C_UI.Reload();
-                                            return;
-                                        end,
-                                        OnNo = function ()
-                                            enableQueue();
-                                        end
-                                    });
-                                end,
-                                OnNo = function ()
-                                    enableQueue();
-                                end
-                            });
+                            GL.GDKP.Auctioneer:clearQueue();
+                            C_UI.Reload();
                         end,
                         OnNo = function ()
                             enableQueue();

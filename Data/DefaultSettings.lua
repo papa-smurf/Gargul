@@ -18,6 +18,7 @@ GL.Data.DefaultSettings = {
     noSounds = false,
     profilerEnabled = false,
     showMinimapButton = true,
+    showUpdateAlert = false,
     soundChannel = "SFX",
     welcomeMessage = true,
 

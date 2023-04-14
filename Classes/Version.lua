@@ -77,7 +77,7 @@ function Version:_init()
 
     --[[ CHECK FOR GARGUL UPDATES ]]
 
-    -- 30 seconds after logging in we will check if Gargul is up to date
+    -- 5 seconds after logging in we will check if Gargul is up to date
     -- If it is, we'll check periodically (once every 30 minutes) if it is
     -- On top of that we also check on every ready check event
     GL.Ace:ScheduleTimer(function ()
@@ -99,7 +99,7 @@ function Version:_init()
 
             self:checkForUpdate();
         end, THIRTY_MINUTES);
-    end, 30);
+    end, 5);
 
     -- Check our version whenever there's a ready check
     GL.Events:register("VersionReadyCheck", "READY_CHECK", function ()
@@ -243,7 +243,7 @@ function Version:checkIfNewerRelease(versionString)
             self.versionDifference = versionDifference;
         end
 
-        self:notifyOfUpdate();
+        self:notifyOfLatestVersion();
     end
 end
 
@@ -262,8 +262,8 @@ function Version:notBackwardsCompatibleNotice()
 end
 
 ---@return void
-function Version:notifyOfUpdate()
-    GL:debug("Version:notifyOfUpdate");
+function Version:notifyOfLatestVersion()
+    GL:debug("Version:notifyOfLatestVersion");
 
     if (self.lastNotBackwardsCompatibleNotice > 0) then -- The user is already chewed out by the incompatibility notifier
         return;
@@ -276,11 +276,16 @@ function Version:notifyOfUpdate()
 
     self.lastUpdateNotice = GetServerTime();
 
-    local notifyOfUpdate = function ()
-        GL:warning("A new version of |c00a79effGargul|r is available. Make sure to update!");
+    local notify = function ()
+        GL:error("Your version of |c00a79effGargul|r is outdated");
+        GL:warning(("Version |c00a79effv%s|r is available on CurseForge and Wago"):format(self.latest));
 
         -- Only show if the user didn't update for at least two trivial or one minor/major version
         if (self.versionDifference < 2) then
+            return;
+        end
+
+        if (not GL.Settings:get("showUpdateAlert")) then
             return;
         end
 
@@ -293,10 +298,10 @@ function Version:notifyOfUpdate()
     if (UnitAffectingCombat("player")) then
         GL.Events:register("VersionOutOfCombatListener", "PLAYER_REGEN_ENABLED", function ()
             GL.Events:unregister("VersionOutOfCombatListener");
-            notifyOfUpdate();
+            notify();
         end);
     else
-        notifyOfUpdate();
+        notify();
     end
 end
 
