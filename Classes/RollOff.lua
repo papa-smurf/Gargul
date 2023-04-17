@@ -346,14 +346,13 @@ function RollOff:start(CommMessage)
 
         self.inProgress = true;
 
-        -- Don't show the roll UI if the user disabled it
-        -- and the current user is not the one who initiated the rolloff
-        if (GL.Settings:get("Rolling.showRollOffWindow")) then
-            if (self:startedByMe()) then
-                self:postStartMessage(Details.link, time, content.note);
-                GL.MasterLooterUI:drawReopenMasterLooterUIButton();
-            end
+        if (self:startedByMe()) then
+            self:postStartMessage(Details.link, time, content.note);
+            GL.MasterLooterUI:drawReopenMasterLooterUIButton();
+        end
 
+        -- Don't show the roll UI if the user disabled it
+        if (GL.Settings:get("Rolling.showRollOffWindow")) then
             GL.RollerUI:show(time, Details.link, Details.icon, content.note, SupportedRolls);
         end
 
