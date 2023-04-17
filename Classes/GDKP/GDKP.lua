@@ -45,8 +45,9 @@ function GDKP:settingsForItemID(itemID)
     end
 
     local PerItemSettings = DB:get("GDKP.SettingsPerItem." .. itemID, {});
-    PerItemSettings.minimum = PerItemSettings.minimum or Settings:get("GDKP.defaultMinimumBid");
-    PerItemSettings.increment = PerItemSettings.increment or Settings:get("GDKP.defaultIncrement");
+
+    PerItemSettings.minimum = PerItemSettings.minimum or defaultMinimum;
+    PerItemSettings.increment = PerItemSettings.increment or defaultIncrement;
 
     return PerItemSettings;
 end
