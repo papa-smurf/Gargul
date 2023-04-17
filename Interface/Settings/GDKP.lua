@@ -233,7 +233,7 @@ function GDKP:draw(Parent)
 
                 if (checked) then
                     local enableQueue = function ()
-                        GL.Settings:set("GDKP.disableQueues", true);
+                        GL.Settings:set("GDKP.disableQueues", false);
                         Checkbox:SetValue(false);
                     end;
 
