@@ -89,8 +89,8 @@ function GDKP:importPerItemSettings(data)
         else -- The first line includes the heading, we don't need that
             (function()
                 local itemID = tonumber(strtrim(Segments[Columns.ItemID]));
-                local minimum = defaultMinimum;
-                local increment = defaultIncrement;
+                local minimum = tonumber(defaultMinimum);
+                local increment = tonumber(defaultIncrement);
 
                 if (not itemID or not GetItemInfoInstant(itemID)) then
                     if (itemID) then
@@ -113,6 +113,16 @@ function GDKP:importPerItemSettings(data)
 
                 if (Columns.Increment) then
                     increment = tonumber(strtrim(Segments[Columns.Increment]));
+                end
+
+                if (not minimum) then
+                    GL:error(("Invalid 'Minimum' provided for item ID '%s'"):format(itemID));
+                    return;
+                end
+
+                if (not increment) then
+                    GL:error(("Invalid 'Increment' provided for item ID '%s'"):format(itemID));
+                    return;
                 end
 
                 increment = GL:round(increment);
