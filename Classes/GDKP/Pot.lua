@@ -381,7 +381,7 @@ function Pot:calculateCuts(sessionID)
 
     if (GL:higherThanZero(baseTotal) and GL:higherThanZero(numberOfPlayersWithBase)) then
         base = baseTotal / numberOfPlayersWithBase;
-    elseif (not GL:higherThanZero(baseTotal) and GL:higherThanZero(percentages)) then
+    elseif (Session.lockedAt and not GL:higherThanZero(baseTotal) and GL:higherThanZero(percentages)) then
         GL:error("There's not enough gold to distribute, expect some weird cut calculations!");
     end
 
