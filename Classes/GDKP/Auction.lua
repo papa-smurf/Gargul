@@ -415,7 +415,7 @@ function Auction:restore(sessionID, auctionID)
     GL:tableSet(Session, "Auctions." .. auctionID, Instance);
 
     Events:fire("GL.GDKP_AUCTION_CHANGED", sessionID, auctionID, Before, Instance);
-    Events:fire("GL.GDKP_AUCTION_RESTORED", sessionID, auctionID);
+    Events:fire("GL.GDKP_AUCTION_RESTORED", sessionID, auctionID, Instance);
 
     return true;
 end
