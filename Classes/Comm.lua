@@ -226,6 +226,27 @@ function Comm:listen(payload, distribution, playerName)
 
     payload = GL.CommMessage:decompress(payload);
 
+    if (not payload.senderFqn and playerName) then
+        payload.senderFqn = ("%s-%s"):format(playerName, GetRealmName());
+    end
+
+    -- The version includes a version, see if it's one we can work with
+    if (payload.version and type(payload.version) == "string") then
+        Version:addRelease(payload.version, true);
+
+        -- The person sending us the message has an old version that's not compatible with ours, let him know!
+        if (not Version:leftIsNewerThanOrEqualToRight(payload.version, GL.Data.Constants.Comm.minimumAppVersion)) then
+            -- This empty message will trigger an out-of-date error on the recipient's side
+            GL.CommMessage.new(
+                Actions.response,
+                nil,
+                "WHISPER",
+                playerName
+            ):send();
+            return;
+        end
+    end
+
     if (not payload.senderFqn or not type(payload.senderFqn) == "string") then
         GL:warning("Failed to determine sender of COMM message");
         return false;
@@ -262,23 +283,6 @@ function Comm:listen(payload, distribution, playerName)
     ) then
         Version:notBackwardsCompatibleNotice();
         return false;
-    end
-
-    -- The version includes a version, see if it's one we can work with
-    if (payload.version and type(payload.version) == "string") then
-        Version:addRelease(payload.version, true);
-
-        -- The person sending us the message has an old version that's not compatible with ours, let him know!
-        if (not Version:leftIsNewerThanOrEqualToRight(payload.version, GL.Data.Constants.Comm.minimumAppVersion)) then
-            -- This empty message will trigger an out-of-date error on the recipient's side
-            GL.CommMessage.new(
-                Actions.response,
-                nil,
-                "WHISPER",
-                Sender.name
-            ):send();
-            return;
-        end
     end
 
     if (not payload.action) then

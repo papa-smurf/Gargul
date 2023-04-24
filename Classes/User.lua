@@ -51,7 +51,7 @@ function User:_init()
     self.realm = GetRealmName();
 
     -- fqn stands for Fully Qualified Name
-    self.fqn = string.format("%s-%s", self.name, self.realm);
+    self.fqn = ("%s-%s"):format(self.name, self.realm);
     self.id = UnitGUID("player");
     self.bth = "";
 
