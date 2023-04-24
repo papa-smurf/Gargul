@@ -113,6 +113,13 @@ function PackMule:_init()
 
         local slotType = GetLootSlotType(1);
         if (slotType == LOOT_SLOT_MONEY) then
+            local guid = GetLootSourceInfo(1);
+
+            -- Exclude gold from items (lockboxes etc)
+            if (GL:strStartsWith(guid, "Item-")) then
+                return;
+            end
+
             LootSlot(1);
         end
     end);
