@@ -201,9 +201,19 @@ function RollerUI:drawCountdownBar(time, itemLink, itemIcon, note, userCanUseIte
     end);
 
     -- Close the roll window on rightclick
+    -- Preview the item in the dressing room on ctrl_click
     TimerBar:SetScript("OnMouseDown", function(_, button)
         if (button == "RightButton") then
             self:hide();
+        end
+
+        local combo = GL.Events.getClickCombination(button);
+        if (button == "LeftButton" and combo == "CTRL_CLICK") then
+          -- `Show` must be called before `TryOn`, or else the item will
+          -- not appear the first time.
+          DressUpFrame:Show();
+          DressUpFrame.DressUpModel:SetUnit("player");
+          DressUpFrame.DressUpModel:TryOn(itemLink);
         end
     end)
 
