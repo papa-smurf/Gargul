@@ -52,6 +52,10 @@ function PackMule:draw(Parent)
             description = "Auto confirm all loot when group looting, bypassing the 'looting this will bind it to you message'. Use with caution!",
             setting = "PackMule.autoConfirmGroup",
         },
+        {
+            label = "Auto loot gold",
+            setting = "PackMule.lootGold",
+        },
     };
 
     Overview:drawCheckboxes(Checkboxes, Parent);

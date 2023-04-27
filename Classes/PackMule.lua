@@ -107,7 +107,9 @@ function PackMule:_init()
     -- Always auto loot gold
     GL.Events:register("PackMuleLootReadyListener", "LOOT_READY", function ()
         -- Shift should disable this
-        if (IsShiftKeyDown()) then
+        if (IsShiftKeyDown()
+            or not Settings:get("PackMule.lootGold")
+        ) then
             return;
         end
 
