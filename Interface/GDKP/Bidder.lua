@@ -89,6 +89,12 @@ function Bidder:draw(time, itemLink, itemIcon)
         -- Close the roll window on right-click
         if (button == "RightButton") then
             self:hide();
+            return;
+        end
+
+        local combo = GL.Events.getClickCombination(button);
+        if (button == "LeftButton" and combo == "CTRL_CLICK") then
+            DressUpItemLink(itemLink);
         end
     end);
     Window:SetScale(GL.Settings:get("GDKP.bidderScale", 1));
