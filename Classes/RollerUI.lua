@@ -57,6 +57,12 @@ function RollerUI:draw(time, itemLink, itemIcon, note, SupportedRolls, userCanUs
         -- Close the roll window on right-click
         if (button == "RightButton") then
             self:hide();
+            return;
+        end
+
+        local combo = GL.Events.getClickCombination(button);
+        if (button == "LeftButton" and combo == "CTRL_CLICK") then
+            DressUpItemLink(itemLink);
         end
     end);
     Window:SetScale(GL.Settings:get("Rolling.scale", 1));

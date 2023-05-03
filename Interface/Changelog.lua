@@ -12,6 +12,15 @@ GL.Interface.Changelog = {
 
     History = {
         {
+            version = "5.3.20",
+            date = "April 30th, 2023",
+            Changes = {
+                "|c00a79effCTRL_CLICK|r the roll or bid window to preview an item",
+                "A raid leader deleting and restoring GDKP auctions is now displayed in group chat for improved transparency",
+                "Gold is now auto looted from corpses (not containers). Go to |c00a79eff/gl|r -> |c00a79effAutoloot with PackMule|r to disable",
+            },
+        },
+        {
             version = "5.3.12",
             date = "April 1st, 2023",
             Changes = {
