@@ -3,6 +3,8 @@
 local appName, GL = ...;
 _G.Gargul = GL; -- Open Gargul up to other developer integrations
 
+local GetAddOnMetadata = C_AddOns and C_AddOns.GetAddOnMetadata or GetAddOnMetadata;
+
 GL.name = appName;
 GL._initialized = false;
 GL.clientUIinterface = 0;

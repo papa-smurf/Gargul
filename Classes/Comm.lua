@@ -111,10 +111,6 @@ function Comm:_init()
     -- Register the Ace Comm channel listener
     GL.Ace:RegisterComm(self.channel, Comm.listen);
 
-    -- Store the default ChatThrottleLib burst and CPS values
-    self.defaultBurstValue = _G.ChatThrottleLib.BURST or 4000;
-    self.defaultCPSValue = _G.ChatThrottleLib.MAX_CPS or 800;
-
     self._initialized = true;
 end
 
@@ -163,36 +159,9 @@ function Comm:send(CommMessage, broadcastFinishedCallback, packageSentCallback)
     -- our messages are not dropped by the server, which happens A LOT ffs
     local stringLength = string.len(compressedMessage);
     GL:debug("Payload size: " .. stringLength);
-    local throttle = distribution ~= "WHISPER" and stringLength > 800;
-
-    local throttleResetTimer;
-    -- Stop throttling: reset the burst and max cps values
-    local stopThrottling = function()
-        GL:debug("Resetting burst value and cps");
-
-        _G.ChatThrottleLib.BURST = self.defaultBurstValue;
-        _G.ChatThrottleLib.MAX_CPS = self.defaultCPSValue;
-    end;
-
-    if (throttle) then
-        GL:debug("Throttling burst value and cps");
-
-        _G.ChatThrottleLib.BURST = 2000;
-        _G.ChatThrottleLib.MAX_CPS = 400;
-
-        -- Make sure we reset the values even if the message couldn't be sent
-        throttleResetTimer = GL.Ace:ScheduleTimer(function ()
-            stopThrottling();
-        end, 5);
-    end
 
     GL.Ace:SendCommMessage(self.channel, compressedMessage, distribution, recipient, "BULK", function (_, sent, textlen)
         GL:debug(string.format("Sent %s from %s characters", sent, textlen));
-
-        -- Cancel the throttle reset timer if it exists
-        if (throttleResetTimer) then
-            GL.Ace:CancelTimer(throttleResetTimer);
-        end
 
         -- Execute the package sent calback
         if (type(packageSentCallback) == "function") then
@@ -200,19 +169,10 @@ function Comm:send(CommMessage, broadcastFinishedCallback, packageSentCallback)
         end
 
         if (sent >= textlen) then
-            if (throttle) then
-                stopThrottling();
-            end
-
             -- Execute the broadcast finished callback
             if (type(broadcastFinishedCallback) == "function") then
                 broadcastFinishedCallback(sent, textlen);
             end
-        else
-            -- Make sure we reset the values even if the message couldn't be sent in full
-            throttleResetTimer = GL.Ace:ScheduleTimer(function ()
-                stopThrottling();
-            end, 5);
         end
     end);
 end

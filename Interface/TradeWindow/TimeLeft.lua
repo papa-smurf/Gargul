@@ -38,8 +38,7 @@ function TimeLeft:_init()
     GL.Ace:ScheduleTimer(function ()
         GL.Events:register({
             {"TimeLeftPlayerEnteringWorldListener", "PLAYER_ENTERING_WORLD"},
-            --{"TimeLeftBagUpdateDelayedListener", "BAG_UPDATE_DELAYED"}, ---@todo reset when Blizzard fixes the event
-            {"TimeLeftBagUpdateListener", "BAG_UPDATE"}, ---@todo remove when Blizzard fixes the delayed event
+            {"TimeLeftBagUpdateDelayedListener", "BAG_UPDATE_DELAYED"},
             {"TimeLeftZoneChangedListener", "ZONE_CHANGED"},
             {"TimeLeftPlayerAliveListener", "PLAYER_ALIVE"},
             {"TimeLeftPlayerUnghostListener", "PLAYER_UNGHOST"},

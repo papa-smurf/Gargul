@@ -1537,34 +1537,32 @@ end
 --- Dragonflight and future WoW releases no longer support OnTooltipSetItem
 ---
 ---@param Callback function
+---@param includeItemRefTooltip boolean
 ---@return any
 function GL:onTooltipSetItem(Callback, includeItemRefTooltip)
     GL:debug("GL:onTooltipSetItem");
 
-    if (includeItemRefTooltip == nil) then
-        includeItemRefTooltip = true;
-    end
-
+    includeItemRefTooltip = includeItemRefTooltip == nil and true or includeItemRefTooltip;
     includeItemRefTooltip = GL:toboolean(includeItemRefTooltip);
 
     -- Support native GameToolTip
     if (TooltipDataProcessor) then
-        TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Item, function (Tooltip)
+        return TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Item, function (Tooltip)
             return Callback(Tooltip);
         end);
-    else
-        GameTooltip:HookScript("OnTooltipSetItem", function(Tooltip)
+    end
+
+    GameTooltip:HookScript("OnTooltipSetItem", function(Tooltip)
+        return Callback(Tooltip);
+    end);
+
+    -- Support AceConfigDialog
+    LibStub("AceConfigDialog-3.0").tooltip:HookScript("OnTooltipSetItem", Callback);
+
+    if (includeItemRefTooltip) then
+        ItemRefTooltip:HookScript("OnTooltipSetItem", function(Tooltip)
             return Callback(Tooltip);
         end);
-
-        -- Support AceConfigDialog
-        LibStub("AceConfigDialog-3.0").tooltip:HookScript("OnTooltipSetItem", Callback);
-
-        if (includeItemRefTooltip) then
-            ItemRefTooltip:HookScript("OnTooltipSetItem", function(Tooltip)
-                return Callback(Tooltip);
-            end);
-        end
     end
 end
 
