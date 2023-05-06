@@ -51,7 +51,7 @@ function Settings:sanitizeSettings()
     self:enforceTemporarySettings();
 
     -- Remove plus one entries with a value of 0
-    for player, po in pairs(DB:get("PlusOnes.Totals") or {}) do
+    for player, po in pairs(DB:get("PlusOnes.Totals", {})) do
         if (not tonumber(po) or po < 1) then
             DB:set("PlusOnes.Totals." .. player, nil);
         end
@@ -59,7 +59,7 @@ function Settings:sanitizeSettings()
 
     -- Remove old roll data so it doesn't clog our SavedVariables
     local fiveWeeksAgo = GetServerTime() - 3024000;
-    for key, Award in pairs(DB:get("AwardHistory") or {}) do
+    for key, Award in pairs(DB:get("AwardHistory", {})) do
         if (Award.timestamp < fiveWeeksAgo) then
             Award.Rolls = nil;
             DB:set("AwardHistory." .. key, Award);
@@ -125,134 +125,10 @@ function Settings:enforceTemporarySettings()
     DB:set("Settings.GDKP.doCountdown", nil);
     DB:set("Settings.GDKP.announceCountdownOnce", nil);
 
-    --- In 5.0.8 we set the minimum delayBetweenQueuedAuctions to 1 instead of 0 to help prevent race conditions
-    local delayBetweenQueuedAuctions = tonumber(GL.Settings:get("GDKP.delayBetweenQueuedAuctions"));
-    if (delayBetweenQueuedAuctions and delayBetweenQueuedAuctions < 1) then
-        GL.Settings:set("GDKP.delayBetweenQueuedAuctions", 1);
-    end
-
-    --- We restructured minimum prices and increments for GDKP items in 5.0.5
-    if (GL.Version:leftIsOlderThanRight(GL.Version.latestPriorVersionBooted, "5.0.5")) then
-        local Restructured = {};
-
-        for itemID, Details in pairs(DB:get("Settings.GDKP.SettingsPerItem", {})) do
-            (function()
-                if (not itemID
-                    or not GetItemInfoInstant(itemID)
-                    or type(Details) ~= "table"
-                    or type(Details.minimumBid) ~= "number"
-                    or type(Details.minimumIncrement) ~= "number"
-                ) then
-                    return;
-                end
-
-                Restructured[tostring(itemID)] = {
-                    minimum = Details.minimumBid,
-                    increment = Details.minimumIncrement,
-                };
-            end)();
-        end
-
-        DB:set("Settings.GDKP.SettingsPerItem", Restructured);
-    end
-
     --- In the GDKP module we added extra shortcut keys forcing us to remap old ones
     if (not DB.Settings.ShortcutKeys.rollOffOrAuction) then
         DB.Settings.ShortcutKeys.rollOffOrAuction = DB.Settings.ShortcutKeys.rollOff or "ALT_CLICK";
         DB.Settings.ShortcutKeys.rollOff = "DISABLED";
-    end
-
-    --- In 4.12.16 we split up the TMB.announceInfoWhenRolling setting into separate wishlist/priolist settings
-    local announce = self:get("TMB.announceInfoWhenRolling");
-    if (type(announce) == "boolean") then
-        self:set("TMB.announcePriolistInfoWhenRolling", announce);
-        self:set("TMB.announceWishlistInfoWhenRolling", announce);
-        self:set("TMB.announceInfoWhenRolling", nil);
-    end
-
-    --- In 4.12.1 we added a concernsOS and givesPlusOne checkbox field to the roll tracking settings
-    for key, RollType in pairs(GL.Settings:get("RollTracking.Brackets", {})) do
-        if (RollType[5] == nil) then
-            DB.RollTracking.Brackets[key][5] = RollType[1] == "OS";
-            DB.RollTracking.Brackets[key][6] = false;
-        end
-    end
-
-    --- In 4.12.0 we completely rewrote the awarded item structure
-    --- If the user is now on 4.12.0 or has not used 4.12.0 then we restructure the awarded items
-    ---@todo: remove if award history structure ever changes again
-    if (GL.version == "4.12.0" or (
-        not GL.firstBoot and not DB.LoadDetails["4.12.0"])
-    ) then
-        GL:notice("Rewriting Gargul's award history, this could drops FPS for a second or two!");
-        DB.LoadDetails["4.12.0"] = GetServerTime();
-
-        local AwardHistory = {};
-        for _, AwardEntry in pairs(DB:get("AwardHistory")) do
-            (function ()
-                local itemIDfromItemLink = GL:getItemIDFromLink(AwardEntry.itemLink);
-
-                -- We can't work with this record
-                if (not AwardEntry.awardedTo or (
-                    not AwardEntry.itemId and not itemIDfromItemLink
-                )) then
-                    return;
-                elseif (not AwardEntry.itemId) then
-                    AwardEntry.itemId = itemIDfromItemLink;
-                end
-
-                -- Make sure we always have a timestamp
-                if (not AwardEntry.timestamp) then
-                    AwardEntry.timestamp = AwardEntry.awardedOn;
-                end
-
-                if (not GL:higherThanZero(AwardEntry.timestamp)) then
-                    AwardEntry.timestamp = 0;
-                end
-
-                -- Make sure we always have a checksum
-                if (GL:empty(AwardEntry.checksum)) then
-                    AwardEntry.checksum = GL:strPadRight(GL:strLimit(GL:stringHash(AwardEntry.timestamp .. AwardEntry.itemId) .. GL:stringHash(AwardEntry.awardedTo .. DB:get("SoftRes.MetaData.id", "")), 20, ""), "0", 20);
-                end
-
-                local addEntryToTable = function (Entry)
-                    AwardHistory[Entry.checksum] = {
-                        checksum = Entry.checksum,
-                        itemLink = Entry.itemLink,
-                        itemID = Entry.itemId,
-                        awardedTo = Entry.awardedTo,
-                        timestamp = Entry.timestamp,
-                        softresID = Entry.softresID,
-                        received = Entry.received or false,
-                        BRCost = Entry.BRCost or 0,
-                        GDKPCost = Entry.BRCost or 0,
-                        OS = GL:toboolean(Entry.OS),
-                        Rolls = Entry.Rolls or {},
-                    };
-                end;
-
-                -- We have all we need, process the entry now
-                if (AwardEntry.itemLink and GL:getItemIDFromLink(AwardEntry.itemLink)) then
-                    addEntryToTable(AwardEntry);
-
-                -- We need to fetch the itemLink first before we can process
-                else
-                    GL:onItemLoadDo(AwardEntry.itemId, function (Details)
-                        if (not Details) then
-                            return;
-                        end
-
-                        AwardEntry.itemLink = Details.link;
-
-                        addEntryToTable(AwardEntry);
-                    end);
-                end
-            end)();
-        end
-
-        DB.AwardHistory = AwardHistory;
-
-        GL:notice("All done!");
     end
 end
 
