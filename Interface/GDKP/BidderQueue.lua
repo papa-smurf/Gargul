@@ -327,7 +327,7 @@ function BidderQueue:refreshTable()
             ---@type Frame
             local ItemRow = CreateFrame("Frame", nil, ItemHolder);
             ItemRow:SetHeight(QUEUE_ROW_HEIGHT);
-            ItemRow._itemLink = Details.itemLink;
+            ItemRow._itemLink = Details.link;
             ItemRow._identifier = identifier;
 
             ItemRow:SetPoint("TOPLEFT", ItemHolder, "TOPLEFT", 0, ((Item.order - 1) * 20) * -1);
@@ -390,7 +390,7 @@ function BidderQueue:refreshTable()
             end);
 
             ItemRow:SetScript("OnMouseUp", function (_, mouseButtonPressed)
-                GL:handleItemClick(link, mouseButtonPressed);
+                GL:handleItemClick(Details.link, mouseButtonPressed);
             end);
 
             --[[ ITEM ICON ]]

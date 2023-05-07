@@ -335,11 +335,12 @@ function GL:handleItemClick(itemLink, mouseButtonPressed, callback)
     elseif (keyPressIdentifier == GL.Settings:get("ShortcutKeys.disenchant")) then
         GL.PackMule:disenchant(itemLink, nil, callback);
 
+    -- Try the item on if the user does not have a CTRL_CLICK hotkey set for Gargul
+    elseif (keyPressIdentifier == "CTRL_CLICK") then
+        DressUpItemLink(itemLink);
+
     -- Check for unmodified double clicks (trade)
-    elseif (not IsShiftKeyDown()
-        and not IsAltKeyDown()
-        and not IsControlKeyDown()
-    ) then
+    elseif (keyPressIdentifier == "CLICK") then
         local currentTime = GetTime();
 
         -- Double click behavior detected

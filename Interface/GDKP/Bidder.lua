@@ -92,10 +92,7 @@ function Bidder:draw(time, itemLink, itemIcon)
             return;
         end
 
-        local combo = GL.Events.getClickCombination(button);
-        if (button == "LeftButton" and combo == "CTRL_CLICK") then
-            DressUpItemLink(itemLink);
-        end
+        GL:handleItemClick(itemLink, button);
     end);
     Window:SetScale(GL.Settings:get("GDKP.bidderScale", 1));
     self.Window = Window;
