@@ -317,6 +317,10 @@ function GDKP:draw(Parent)
             description = "Announce bids in /rw instead of /ra. Requires |c00967FD2Announce incoming bids|r to be enabled!|r",
             setting = "GDKP.announceNewBidInRW",
         },
+        {
+            label = "Announce final call",
+            setting = "GDKP.announceFinalCall",
+        },
     }, Parent);
 
     Spacer = GL.AceGUI:Create("SimpleGroup");
@@ -360,6 +364,27 @@ function GDKP:draw(Parent)
         end
     end);
     Parent:AddChild(NumberOfFiveSecondsToCountdown);
+
+    Spacer = GL.AceGUI:Create("SimpleGroup");
+    Spacer:SetLayout("FILL");
+    Spacer:SetFullWidth(true);
+    Spacer:SetHeight(20);
+    Parent:AddChild(Spacer);
+
+    local FinalCallTime = GL.AceGUI:Create("Slider");
+    FinalCallTime:SetLabel("Final call jumps to");
+    FinalCallTime.label:SetTextColor(1, .95686, .40784);
+    FinalCallTime:SetFullWidth(true);
+    FinalCallTime:SetValue(GL.Settings:get("GDKP.finalCallTime", 15));
+    FinalCallTime:SetSliderValues(5, 30, 1);
+    FinalCallTime:SetCallback("OnValueChanged", function(Slider)
+        local value = math.floor(tonumber(Slider:GetValue()));
+
+        if (value >= 0) then
+            GL.Settings:set("GDKP.finalCallTime", value);
+        end
+    end);
+    Parent:AddChild(FinalCallTime);
 
     Spacer = GL.AceGUI:Create("SimpleGroup");
     Spacer:SetLayout("FILL");

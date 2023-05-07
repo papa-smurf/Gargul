@@ -595,6 +595,20 @@ function AuctioneerUI:build()
                 end, 2);
             end
         end);
+
+        --[[ FINAL CALL ]]
+        ---@type Button
+        local FinalCallButton = Interface:dynamicPanelButton(StartedButtonFrame, L.FINAL_CALL);
+        FinalCallButton:SetPoint("TOPLEFT", ShortenButton, "TOPRIGHT", 1, 0);
+        FinalCallButton:SetScript("OnClick", function ()
+            if (Auctioneer:finalCall()) then
+                FinalCallButton:SetEnabled(false);
+
+                GL.Ace:ScheduleTimer(function ()
+                    FinalCallButton:SetEnabled(true);
+                end, 2);
+            end
+        end);
     end
 
     --[[ BIDS TABLE ]]

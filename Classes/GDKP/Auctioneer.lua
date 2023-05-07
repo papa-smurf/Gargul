@@ -471,6 +471,22 @@ function Auctioneer:shorten()
     return Auction:announceShortening(DEFAULT_AUCTION_SHORTENING);
 end
 
+---@return boolean
+function Auctioneer:finalCall()
+    GL:debug("Auctioneer:finalCall");
+
+    local time = Settings:get("GDKP.finalCallTime");
+    if (Auction:announceReschedule(time)) then
+        if(Settings:get("GDKP.announceFinalCall")) then
+            GL:sendChatMessage((L.FINAL_CALL_ANNOUNCEMENT):format(Auction.Current.itemLink, time), "RAID_WARNING", nil, nil, false);
+        end
+
+        return true;
+    end
+
+    return false;
+end
+
 ---@return void
 function Auctioneer:timeRanOut()
     GL:debug("Auctioneer:timeRanOut");

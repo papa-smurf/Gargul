@@ -50,6 +50,8 @@ L.DELETE_BID_TOOLTIP = "Delete bid. Auction must be stopped first!";
 L.DISENCHANT = "Disenchant";
 L.EDIT = "Edit";
 L.EXPORT = "Export";
+L.FINAL_CALL = "Final Call";
+L.FINAL_CALL_ANNOUNCEMENT = "Final Call on %s: %s seconds left to bid!";
 L.GDKP_QUEUE_EXPLANATION = [[|c00a79eff%s|r items in bags, loot windows or even on links in your chat to add them to this auction queue.
 Items in the queue will automatically be auctioned off once your current auction is done. Click the '%s' button to prevent this.
 

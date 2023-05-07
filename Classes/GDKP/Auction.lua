@@ -1073,8 +1073,8 @@ function Auction:announceStart(itemLink, minimumBid, minimumIncrement, duration,
 
     local itemID = GL:getItemIDFromLink(itemLink) or 0;
     if (itemID < 1 or not GetItemInfoInstant(itemID)) then
-        GL:warning("Invalid item provided for GDKP auction start!");
         self.waitingForStart = false;
+        GL:warning("Invalid item provided for GDKP auction start!");
         return false;
     end
 
@@ -1107,7 +1107,7 @@ function Auction:announceStart(itemLink, minimumBid, minimumIncrement, duration,
     return true;
 end
 
---- Anounce to everyone in the raid that the auction has ended
+--- Announce to everyone in the raid that the auction has ended
 ---
 ---@param forceStop boolean|nil bypass the snipe detection check
 ---
@@ -1145,10 +1145,10 @@ function Auction:announceStop(forceStop)
     ):send();
 end
 
---- Anounce to everyone in the raid that we're extending the current auction
+--- Announce to everyone in the raid that we're extending the current auction
 ---
 ---@param time number
----@return void
+---@return boolean
 function Auction:announceExtension(time)
     GL:debug("GDKP.Auction:announceExtension");
 
@@ -1156,31 +1156,25 @@ function Auction:announceExtension(time)
 
     time = tonumber(time) or 0
     if (time < 1) then
+        self.waitingForReschedule = false;
         GL:warning("Invalid data provided for GDKP extension!");
         return false;
     end
 
     local secondsLeft = GL.Ace:TimeLeft(self.timerId) - GL.Settings:get("GDKP.auctionEndLeeway", 2);
-
     local newDuration = math.ceil(secondsLeft + time);
 
     if (newDuration < time) then
         newDuration = time;
     end
 
-    GL.CommMessage.new(
-        CommActions.rescheduleGDKPAuction,
-        newDuration,
-        "GROUP"
-    ):send();
-
-    return true;
+    return self:announceReschedule(newDuration);
 end
 
---- Anounce to everyone in the raid that we're extending the current auction
+--- Announce to everyone in the raid that we're extending the current auction
 ---
 ---@param time number
----@return void
+---@return boolean
 function Auction:announceShortening(time)
     GL:debug("GDKP.Auction:announceShortening");
 
@@ -1188,6 +1182,7 @@ function Auction:announceShortening(time)
 
     time = tonumber(time) or 0
     if (time < 1) then
+        self.waitingForReschedule = false;
         GL:warning("Invalid data provided for GDKP shortening!");
         return false;
     end
@@ -1200,29 +1195,55 @@ function Auction:announceShortening(time)
         newDuration = 5;
     end
 
+    return self:announceReschedule(newDuration);
+end
+
+--- Announce a new auction time remaining to everyone in the raid
+---
+---@param time number
+---@return boolean
+function Auction:announceReschedule(time)
+    GL:debug("GDKP.Auction:announceShortening");
+
+    self.waitingForReschedule = GetServerTime();
+
+    time = tonumber(time) or 0
+    if (time < 1) then
+        self.waitingForReschedule = false;
+        GL:warning("Invalid data provided for GDKP reschedule!");
+        return false;
+    end
+
+    -- In order to prevent funny business we won't allow anything lower than 5 for the new time
+    if (time <= 5) then
+        time = 5;
+    end
+
     GL.CommMessage.new(
         CommActions.rescheduleGDKPAuction,
-        newDuration,
+        time,
         "GROUP"
     ):send();
 
     return true;
 end
 
-function Auction:extend(CommMessage)
-    GL:debug("GDKP.Auction:extend");
+---@param CommMessage CommMessage
+---@return void
+function Auction:reschedule(CommMessage)
+    GL:debug("GDKP.Auction:reschedule");
 
     if (not self.Current.initiatorID
         or CommMessage.Sender.id ~= self.Current.initiatorID
     ) then
-        GL:debug("GDKP.Auction:extend received by non-initiator");
+        GL:debug("GDKP.Auction:reschedule received by non-initiator");
         return;
     end
 
     local time = tonumber(CommMessage.content) or 0;
     if (time < 1) then
         self.waitingForReschedule = false;
-        return GL:error("Invalid time provided in Auction:extend");
+        return GL:error("Invalid time provided in Auction:reschedule");
     end
 
     self.Current.duration = time;
