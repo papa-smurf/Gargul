@@ -1891,7 +1891,7 @@ function Auction:processBid(message, bidder)
     tinsert(self.Current.Bids, BidEntry);
 
     -- We already have at least one bid
-    local auctionHasBid = not not self.Current.TopBid;
+    local auctionHasBid = currentBid > 0;
 
     -- Check if we're currently the highest bidder
     local userWasHighestBidder = self:userIsTopBidder();
