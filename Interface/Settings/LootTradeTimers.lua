@@ -11,7 +11,7 @@ local AceGUI = GL.AceGUI;
 
 ---@class LootTradeTimersSettings
 Interface.Settings.LootTradeTimers = {
-    description = "When obtaining items that have time left to trade, aka items that are BoP but can still be traded with raid members, Gargul can show timer bars to let you know when an item's trade window is coming to an end.",
+    description = "When obtaining items that have time left to trade, Gargul can show timer to let you know when an item's trade window is coming to an end. You can use these bars to directly roll out or award loot!",
     testEnabled = false,
 };
 local LootTradeTimers = Interface.Settings.LootTradeTimers; ---@type LootTradeTimersSettings
@@ -20,27 +20,30 @@ local LootTradeTimers = Interface.Settings.LootTradeTimers; ---@type LootTradeTi
 function LootTradeTimers:draw(Parent)
     GL:debug("LootTradeTimers:draw");
 
-    local Scale = GL.AceGUI:Create("Slider");
-    Scale:SetLabel("Magnification scale of the loot trade timers window");
-    Scale.label:SetTextColor(1, .95686, .40784);
-    Scale:SetFullWidth(true);
-    Scale:SetValue(GL.Settings:get("LootTradeTimers.scale", 35));
-    Scale:SetSliderValues(.2, 1.8, .1);
-    Scale:SetCallback("OnValueChanged", function(Slider)
-        local value = tonumber(Slider:GetValue());
+    -- The window scale option is only available when using the old trade timer bars (classic era, pre v3.4.2)
+    if (not C_Item or not C_ItemGetItemGUID) then
+        local Scale = GL.AceGUI:Create("Slider");
+        Scale:SetLabel("Magnification scale of the loot trade timers window");
+        Scale.label:SetTextColor(1, .95686, .40784);
+        Scale:SetFullWidth(true);
+        Scale:SetValue(GL.Settings:get("LootTradeTimers.scale", 35));
+        Scale:SetSliderValues(.2, 1.8, .1);
+        Scale:SetCallback("OnValueChanged", function(Slider)
+            local value = tonumber(Slider:GetValue());
 
-        if (value) then
-            GL.Settings:set("LootTradeTimers.scale", value);
+            if (value) then
+                GL.Settings:set("LootTradeTimers.scale", value);
 
-            -- Change the loot trade timer window if it's active!
-            if (Interface.TradeWindow.TimeLeft.Window
-                and type(Interface.TradeWindow.TimeLeft.Window.SetScale == "function")
-            ) then
-                Interface.TradeWindow.TimeLeft.Window:SetScale(value);
+                -- Change the loot trade timer window if it's active!
+                if (Interface.TradeWindow.TimeLeft.Window
+                        and type(Interface.TradeWindow.TimeLeft.Window.SetScale == "function")
+                ) then
+                    Interface.TradeWindow.TimeLeft.Window:SetScale(value);
+                end
             end
-        end
-    end);
-    Parent:AddChild(Scale);
+        end);
+        Parent:AddChild(Scale);
+    end
 
     local NumberOfTimerBars = GL.AceGUI:Create("Slider");
     NumberOfTimerBars:SetLabel("Maximum number of active countdown bars");
@@ -54,6 +57,7 @@ function LootTradeTimers:draw(Parent)
         if (type(value) ~= nil) then
             GL.Settings:set("LootTradeTimers.maximumNumberOfBars", value);
             Interface.TradeWindow.TimeLeft:refreshBars();
+            GL.Interface.TradeTime.Overview:refresh();
         end
     end);
     Parent:AddChild(NumberOfTimerBars);
@@ -71,6 +75,7 @@ function LootTradeTimers:draw(Parent)
             setting = "LootTradeTimers.enabled",
             callback = function ()
                 Interface.TradeWindow.TimeLeft:refreshBars();
+                Interface.TradeTime.Overview:refresh();
             end,
         },
         {
@@ -78,6 +83,25 @@ function LootTradeTimers:draw(Parent)
             setting = "LootTradeTimers.showOnlyWhenMasterLooting",
             callback = function ()
                 Interface.TradeWindow.TimeLeft:refreshBars();
+                Interface.TradeTime.Overview:refresh();
+            end,
+        },
+        {
+            label = "Hide awarded items",
+            setting = "LootTradeTimers.hideAwarded",
+            callback = function ()
+                Interface.TradeTime.Overview:close();
+                Interface.TradeWindow.TimeLeft:refreshBars();
+                Interface.TradeTime.Overview:refresh();
+            end,
+        },
+        {
+            label = "Hide disenchanted items",
+            setting = "LootTradeTimers.hideDisenchanted",
+            callback = function ()
+                Interface.TradeTime.Overview:close();
+                Interface.TradeWindow.TimeLeft:refreshBars();
+                Interface.TradeTime.Overview:refresh();
             end,
         },
         {
@@ -85,6 +109,7 @@ function LootTradeTimers:draw(Parent)
             setting = "LootTradeTimers.showHotkeyReminder",
             callback = function ()
                 Interface.TradeWindow.TimeLeft:refreshBars();
+                Interface.TradeTime.Overview:refresh();
             end,
         },
     };
@@ -110,7 +135,7 @@ function LootTradeTimers:draw(Parent)
     Parent:AddChild(TrophyIcon);
 
     local TrophyExplanation = GL.AceGUI:Create("Label");
-    TrophyExplanation:SetText("This icon indicates that the item was already awarded. |c00a79effNOTE: items awarded to self do not have an icon (yet)!|r");
+    TrophyExplanation:SetText("This icon indicates that the item was already awarded");
     Parent:AddChild(TrophyExplanation);
 
     local DisenchantIcon = AceGUI:Create("Icon");
@@ -143,6 +168,7 @@ function LootTradeTimers:draw(Parent)
             self.testEnabled = false;
             DemoTradeTimersButton:SetText("Demo");
             Interface.TradeWindow.TimeLeft:refreshBars();
+            Interface.TradeTime.Overview:refresh();
 
             return;
         end
@@ -151,6 +177,7 @@ function LootTradeTimers:draw(Parent)
         self.testEnabled = true;
         DemoTradeTimersButton:SetText("Stop");
         Interface.TradeWindow.TimeLeft:refreshBars();
+        Interface.TradeTime.Overview:refresh();
     end);
     Parent:AddChild(DemoTradeTimersButton);
 end

@@ -1292,6 +1292,48 @@ function GL:tooltipItemTradeTimeRemaining()
     return 0;
 end
 
+---@param itemLinkOrID string|number
+---@return void
+function GL:itemTradeTimeRemaining(itemLinkOrID)
+    local concernsID = GL:higherThanZero(tonumber(itemLinkOrID));
+    local itemID = concernsID and math.floor(tonumber(itemLinkOrID)) or GL:getItemIDFromLink(itemLinkOrID);
+
+    if (not itemID) then
+        return;
+    end
+
+    -- Dragon Flight introduced an extra bag slot
+    local numberOfBagsToCheck = GL.clientIsDragonFlightOrLater and 5 or 4;
+
+    local Results = {};
+    for bag = 0, numberOfBagsToCheck do
+        for slot = 1, GL:getContainerNumSlots(bag) do
+            (function ()
+                local Location = ItemLocation:CreateFromBagAndSlot(bag, slot);
+
+                -- Item doesn't exist
+                if (not Location or not Location.slotIndex) then
+                    return;
+                end
+
+                -- Item is not soulbound or does not have any trade time remaining
+                local timeRemaining = GL:inventoryItemTradeTimeRemaining(bag, slot);
+                if (timeRemaining < 1 or timeRemaining == GL.Data.Constants.itemIsNotBound) then
+                    return;
+                end
+
+                if (C_Item.GetItemID(Location) ~= itemID) then
+                    return;
+                end
+
+                Results[C_Item.GetItemGUID(Location)] = timeRemaining;
+            end)();
+        end
+    end
+
+    return Results;
+end
+
 --- Check how much time to trade is remaining on the given item in our bags
 ---
 ---@param bag number
@@ -1304,8 +1346,17 @@ function GL:inventoryItemTradeTimeRemaining(bag, slot)
     local timeRemaining = GL:tooltipItemTradeTimeRemaining();
     GL.TooltipFrame:ClearLines();
 
+    -- General purpose test mode is enabled
     if (GL.Interface.Settings.LootTradeTimers.testEnabled) then
         return math.random(5000, 7200);
+    end
+
+    -- Test mode is enabled for specific items
+    if (GL.Interface.TradeWindow.TimeLeft.TestItems) then
+        local itemID = GL:tableGet(C_Container.GetContainerItemInfo(bag, slot) or {}, "itemID");
+        if (itemID and GL:inTable(GL.Interface.TradeWindow.TimeLeft.TestItems, itemID)) then
+            return math.random(5000, 7200);
+        end
     end
 
     return timeRemaining;
@@ -2334,14 +2385,20 @@ end
 ---
 ---@param Table table
 ---@param keyString string
----@param value any
+---@param value any|nil
+---@param createDestination boolean|nil
 ---@return boolean
-function GL:tableAdd(Table, keyString, value)
+function GL:tableAdd(Table, keyString, value, createDestination)
     local Destination = self:tableGet(Table, keyString, {});
 
     if (type(Destination) ~= "table") then
-        self:warning("Invalid destination GL:tableAdd, requires table");
-        return false;
+        if (not createDestination) then
+            self:warning("Invalid destination GL:tableAdd, requires table");
+            return false;
+        end
+
+        self:tableSet(Table, keyString, {});
+        Destination = {};
     end
 
     tinsert(Destination, value);

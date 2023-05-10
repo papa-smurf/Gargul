@@ -137,6 +137,7 @@ function GL:_init()
     self.PackMule:_init();
     self.DroppedLootLedger:_init();
     self.TradeWindow:_init();
+    self.TradeTime:_init();
     self.GDKP.Auctioneer:_init();
     self.Interface.MasterLooterDialog:_init();
     self.Interface.TradeWindow.TimeLeft:_init();

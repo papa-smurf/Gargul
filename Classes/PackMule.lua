@@ -32,8 +32,6 @@ local Settings = GL.Settings; ---@type Settings
 
 --[[ CONSTANTS ]]
 local LOOT_SLOT_MONEY = GL:tableGet(Enum or {}, "LootSlotType.Money", LOOT_SLOT_MONEY);
-local LOOT_SLOT_CURRENCY = GL:tableGet(Enum or {}, "LootSlotType.Currency", LOOT_SLOT_CURRENCY);
-local LOOT_SLOT_ITEM = GL:tableGet(Enum or {}, "LootSlotType.Item", LOOT_SLOT_ITEM);
 
 ---@return void
 function PackMule:_init()

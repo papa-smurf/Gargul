@@ -249,6 +249,7 @@ function Overview:build()
                 warning = "Are you sure you want to remove your complete reward history table? This deletes ALL loot data and cannot be undone!";
                 onConfirm = function()
                     DB:set("AwardHistory", {});
+                    GL.Events:fire("GL.ITEM_UNAWARDED");
 
                     self:open();
                 end;
@@ -266,6 +267,7 @@ function Overview:build()
                         if (SelectedDates[dateString]) then
                             AwardEntry = nil;
                             DB:set("AwardHistory." .. key, nil);
+                            GL.Events:fire("GL.ITEM_UNAWARDED");
                         end
                     end
 
@@ -301,10 +303,10 @@ function Overview:build()
 
     -- Make sure that the window is updated whenever an award changes
     GL.Events:register({
-        {"AwardHistoryItemAwardedListener", "GL.ITEM_AWARDED" },
-        {"AwardHistoryItemUnAwardedListener", "GL.ITEM_UNAWARDED" },
-        {"AwardHistoryItemEditedListener", "GL.ITEM_AWARD_EDITED" },
-        {"AwardHistoryItemEditedListener", "GL.ITEM_UNAWARDED" },
+        {"AwardOverviewItemAwardedListener", "GL.ITEM_AWARDED" },
+        {"AwardOverviewItemUnAwardedListener", "GL.ITEM_UNAWARDED" },
+        {"AwardOverviewItemEditedListener", "GL.ITEM_AWARD_EDITED" },
+        {"AwardOverviewItemEditedListener", "GL.ITEM_UNAWARDED" },
     }, function()
         GL.Ace:CancelTimer(self.RefreshTimer);
         self.RefreshTimer = GL.Ace:ScheduleTimer(function ()

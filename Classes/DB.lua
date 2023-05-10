@@ -16,10 +16,10 @@ GL.DB = {
         "LootPriority",
         "MinimapButton",
         "PlusOnes",
+        "RecentlyAwardedItems",
         "Settings",
         "SoftRes",
         "TMB",
-        "TradeTime",
         "Utility",
     },
 };

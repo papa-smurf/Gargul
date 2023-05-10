@@ -5,6 +5,7 @@ local _, GL = ...;
 GL.Test = {
     Classes = {"druid","hunter","mage","paladin","priest","rogue","shaman","warlock","warrior","death knight",},
     Names = {"Aiyana","Callum","Virginia","Laylah","Isabell","Javon","Miley","Ian","Isai","Ahmad","Campbell","Bobby","Karter","Brooklynn","Asher","Maci","Gael","Jamal","Zion","Sarahi","Kierra","Perla","Rylie","Lorelei","John","Madeleine","Jadiel","Billy","Jazmin","Keon","Stephany","George","Malcolm","Brenden","Daphne","Dane","Derek","Marcel","Madilynn","Enrique","Cindy","Amir","Melvin","Anya","Ali","Rex","Lewis","Parker","Carl","Arnav","Kamari","Jessie","Madelynn","Heath","Haleigh","Madyson","Jorden","Amya","Elisa","Marques","Ana","Miracle","Abdiel","Dale","Sincere","Marin","Karina","Clay","Caden","Eve","Rubi","Zavier","Megan","Payton","Peyton","Emmett","Diego","Joaquin","German","Tania","Miguel","Malachi","Martin","Richard","Allison","Avah","Kamora","Deborah","Esperanza","Konnor","Isla","Tess","Keely","Margaret","Rory","Jake","Averie","Ally","Craig","Gage","Oswaldo","Kaitlynn","Ashley","Davian","Mauricio","Brandon","Aryana","Douglas","Kyan","Carsen","Mikaela","Regan","Theodore","Maximillian","Luke","Dixie","Makenna","Keagan","Mallory","America",},
+    TimeLeft = {},
     TradeState = {
         _initialized = false,
         Items = {},
@@ -336,10 +337,10 @@ function Test.TradeState:iGaveGoldTheyTradedItems()
 end
 
 --[[ Show what happens if you gave and received items
-/script _G.Gargul.Test.TradeState:iTradedItemstheyTradedItems()
+/script _G.Gargul.Test.TradeState:iTradedItemsTheyTradedItems()
 ]]
-function Test.TradeState:iTradedItemstheyTradedItems()
-    GL:success("Running Test.TradeState:iTradedItemstheyTradedItems() ...");
+function Test.TradeState:iTradedItemsTheyTradedItems()
+    GL:success("Running Test.TradeState:iTradedItemsTheyTradedItems() ...");
 
     self:_init(function ()
         local State = self:defaultState();
@@ -479,6 +480,27 @@ function Test.PackMule:whoReceivesItem(itemID, lootMethod)
         GL.User.isInRaid = oldIsInRaid;
         GL.User.isInParty = oldIsInParty;
     end, 1);
+end
+
+--[[ Enable a random trade time remaining for a specific item
+You have to move an item around in your bags after executing this command
+
+Steam Tonk Controller and Hearthstone
+/script _G.Gargul.Test.TimeLeft:testItems(22728, 6948)
+]]
+function Test.TimeLeft:testItems(...)
+    local ItemIDs = {...};
+
+    for _, itemID in pairs(ItemIDs or {}) do
+        GL:tableAdd(GL.Interface, "TradeWindow.TimeLeft.TestItems", itemID, true);
+    end
+end
+
+--[[ Stop item testing
+/script _G.Gargul.Test.TimeLeft:stopItemTest()
+]]
+function Test.TimeLeft:stopItemTest()
+    GL:tableSet(GL.Interface, "TradeWindow.TimeLeft.TestItems", nil);
 end
 
 --[[ Simulate being in an X-man group

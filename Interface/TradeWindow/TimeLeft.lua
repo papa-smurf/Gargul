@@ -26,8 +26,9 @@ local TimeLeft = GL.Interface.TradeWindow.TimeLeft;
 function TimeLeft:_init()
     GL:debug("TimeLeft:_init");
 
-    -- No need to initialize this class twice
-    if (self._initialized) then
+    if ((C_Item and C_ItemGetItemGUID) -- This adaptation is only used on older game version
+        or self._initialized
+    ) then
         return;
     end
 
@@ -502,7 +503,8 @@ function TimeLeft:refreshBars(byRefresh)
     GL:debug("TimeLeft:refreshBars");
 
     -- We're already busy refreshing, return so we don't refresh endlessly
-    if (self.refreshing
+    if (not self._initialized
+        or self.refreshing
         or (self.awaitingRefresh
             and not byRefresh
         )

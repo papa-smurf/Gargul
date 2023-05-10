@@ -384,15 +384,38 @@ function Interface:addResizer(Element)
     local Resize = CreateFrame("Button", Element:GetName() .. ".Resize", Element);
     Resize:SetPoint("BOTTOMRIGHT", Element, "BOTTOMRIGHT", -11, 10);
     Resize:SetSize(16,16);
-    Resize:SetNormalTexture("Interface/ChatFrame/UI-ChatIM-SizeGrabber-Down");
-    Resize:SetHighlightTexture("Interface/ChatFrame/UI-ChatIM-SizeGrabber-Highlight");
-    Resize:SetPushedTexture("Interface/ChatFrame/UI-ChatIM-SizeGrabber-Up");
+
+    local NormalTexture = Resize:CreateTexture();
+    NormalTexture:SetTexture("Interface/ChatFrame/UI-ChatIM-SizeGrabber-Down");
+    NormalTexture:ClearAllPoints();
+    NormalTexture:SetPoint("CENTER", Resize, "CENTER", 0, 0);
+    NormalTexture:SetSize(16, 16);
+    Resize.NormalTexture = NormalTexture;
+    Resize:SetNormalTexture(NormalTexture);
+
+    local HighlightTexture = Resize:CreateTexture();
+    HighlightTexture:SetTexture("Interface/ChatFrame/UI-ChatIM-SizeGrabber-Highlight");
+    HighlightTexture:ClearAllPoints();
+    HighlightTexture:SetPoint("CENTER", Resize, "CENTER", 0, 0);
+    HighlightTexture:SetSize(16, 16);
+    Resize.HighlightTexture = HighlightTexture;
+    Resize:SetHighlightTexture(HighlightTexture);
+
+    local PushedTexture = Resize:CreateTexture();
+    PushedTexture:SetTexture("Interface/ChatFrame/UI-ChatIM-SizeGrabber-Pushed");
+    PushedTexture:ClearAllPoints();
+    PushedTexture:SetPoint("CENTER", Resize, "CENTER", 0, 0);
+    PushedTexture:SetSize(16, 16);
+    Resize.PushedTexture = PushedTexture;
+    Resize:SetPushedTexture(PushedTexture);
+
     Resize:SetScript("OnMouseDown", function()
         Element:StartSizing("BOTTOMRIGHT");
     end);
     Resize:SetScript("OnMouseUp", function()
         Element:StopMovingOrSizing("BOTTOMRIGHT");
     end);
+
     -- Make the clickable are larger
     Resize:SetHitRectInsets(-6, -6, -6, -6);
 
@@ -402,7 +425,7 @@ end
 ---@param name string
 ---@param Details table
 ---@return Frame
-function Interface:createWindow(name, Details)
+function Interface:createWindow(name, Details, template)
     GL:debug("Interface:createWindow");
 
     if (not name) then
@@ -414,10 +437,15 @@ function Interface:createWindow(name, Details)
     end
 
     ---@type Frame
-    local Window = CreateFrame("Frame", name, UIParent, "BackdropTemplate");
+    --local Window = CreateFrame("Frame", name, UIParent, "BackdropTemplate");
+    local Window = CreateFrame("Frame", name, UIParent, template == false and Frame or "BackdropTemplate");
     Window:SetSize(Details.width or 200, Details.height or 200);
     Window:SetPoint("CENTER", UIParent, "CENTER");
-    Window:SetBackdrop(_G.BACKDROP_DARK_DIALOG_32_32);
+
+    if (template ~= false) then
+        Window:SetBackdrop(_G.BACKDROP_DARK_DIALOG_32_32);
+    end
+
     Window:SetClampedToScreen(true);
     Window:SetFrameStrata("FULLSCREEN_DIALOG");
     Window:SetFrameLevel(100);

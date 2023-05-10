@@ -72,6 +72,8 @@ GL.Data.DefaultSettings = {
     },
     LootTradeTimers = {
         enabled = true,
+        hideAwarded = false,
+        hideDisenchanted = false,
         maximumNumberOfBars = 5,
         scale = 1,
         showHotkeyReminder = true,
