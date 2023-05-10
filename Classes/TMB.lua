@@ -1438,7 +1438,7 @@ function TMB:replyToDataRequest(CommMessage)
 
     -- This player is not on our whitelist
     local Whitelist = GL.Settings:get("TMB.shareWhitelist", "");
-    if (type(Whitelist) == "string") then
+    if (not GL:empty(Whitelist)) then
         Whitelist = GL:strSplit(Whitelist, ",");
 
         if (not GL:empty(Whitelist)) then
