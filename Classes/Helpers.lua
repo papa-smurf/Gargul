@@ -417,6 +417,7 @@ end
 --- StringHash method, courtesy of Mikk38024 @ Wowpedia (https://wowpedia.fandom.com/wiki/StringHash)
 ---
 ---@param text string|table
+---@return number
 function GL:stringHash(text)
     if (type(text) == "table") then
         text = GL:implode(text, ".");

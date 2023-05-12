@@ -26,6 +26,7 @@ local Auctioneer;
 
 ---@class GDKPAuction
 GDKP.Auction = {
+    _broadcastingDisabled = false,
     _initialized = false,
     autoBiddingIsActive = nil,
     lastBidAt = nil,
@@ -65,7 +66,7 @@ local GDKPSession = GDKP.Session;
 
 --[[ CONSTANTS ]]
 local AUTO_BID_THROTTLE_IN_SECONDS = .6;
-local BROADCAST_QUEUE_DELAY_IN_SECONDS = 2;
+local BROADCAST_QUEUE_DELAY_IN_SECONDS = 3;
 
 function Auction:_init()
     GL:debug("GDKP.Auction:_init");
@@ -130,6 +131,7 @@ function Auction:_initializeQueue()
         return;
     end
 
+    self._broadcastingDisabled = true;
     local SortedQueue = GL:tableValues(Auction.Queue);
     table.sort(SortedQueue, function (a, b)
         if (a.order and b.order) then
@@ -151,13 +153,21 @@ function Auction:_initializeQueue()
             GL.Ace:CancelTimer(QueueAddTimer);
             SortedQueue = nil;
 
+            self._broadcastingDisabled = false;
+
             GL.Events:fire("GL.GDKP_QUEUE_UPDATED");
+
+            -- Make sure to broadcast the queue when everything's said and done
+            if (i > 1) then
+                self:broadcastQueue();
+            end
+
             return;
         end
 
         i = i + 1;
         return Auctioneer:addToQueue(Queued.itemLink, Queued.identifier, false);
-    end, .2);
+    end, .1);
 end
 
 ---@return void
@@ -830,10 +840,8 @@ function Auction:addToQueue(itemLink, identifier)
         return;
     end
 
-    local addedAt = GetTime();
     local PerItemSettings = GDKP:settingsForItemID(GL:getItemIDFromLink(itemLink));
     self.Queue[identifier] = {
-        addedAt = addedAt,
         identifier = identifier,
         increment = PerItemSettings.increment,
         itemID = itemID,
@@ -918,8 +926,7 @@ end
 function Auction:removeFromQueue(checksum)
     GL:debug("Auction:removeFromQueue");
 
-    checksum = tostring(checksum or 0);
-    if (not self.Queue[checksum]) then
+    if (not self.Queue[checksum or 0]) then
         return false;
     end
 
@@ -978,9 +985,15 @@ function Auction:sanitizeQueue()
     end
 end
 
+--- Broadcast the first 20 items to everyone in the raid
 ---@return void
 function Auction:broadcastQueue(immediately)
     GL:debug("Auction:broadcastQueue");
+
+    -- Broadcasting is
+    if (self._broadcastingDisabled) then
+        return;
+    end
 
     GL.Ace:CancelTimer(self.QueueBroadcastTimer);
     self:sanitizeQueue();
@@ -989,10 +1002,41 @@ function Auction:broadcastQueue(immediately)
         return;
     end
 
+    -- Make sure we only broadcast the first 15 items as to not overload the system
+    local SortedQueue = GL:tableValues(Auction.Queue);
+    table.sort(SortedQueue, function (a, b)
+        if (a.order and b.order) then
+            return a.order < b.order;
+        end
+
+        return false;
+    end);
+
+    local QueueSegment = {};
+    local i = 0;
+    for _, Details in pairs(SortedQueue) do
+
+        i = i + 1;
+
+        -- Trim down the queue details in order to minimize the comm payload
+        tinsert(QueueSegment, {
+            Details.identifier,
+            Details.itemID,
+            Details.minimumBid,
+            Details.order,
+            Details.increment,
+        });
+
+        -- A queue of more than a 100 items makes no sense
+        if (i > 100) then
+            break;
+        end
+    end
+
     local broadcast = function ()
         GL.CommMessage.new(
             CommActions.broadcastGDKPAuctionQueue,
-            self.Queue or {},
+            QueueSegment or {},
             "GROUP"
         ):send();
     end;
@@ -1025,10 +1069,50 @@ function Auction:receiveQueue(CommMessage)
         return;
     end
 
-    self.Queue = CommMessage.content;
-    self:sanitizeQueue();
+    local Queue = {};
 
-    Events:fire("GL.GDKP_QUEUE_UPDATED");
+    -- Check if this is the old format including item links
+    local itemLinksArePresent = true;
+    for _, Details in pairs(CommMessage.content or {}) do
+        itemLinksArePresent = not not Details.itemLink;
+    end
+
+    -- Old format, no need to continue
+    if (itemLinksArePresent) then
+        self.Queue = Queue;
+        self:sanitizeQueue();
+
+        Events:fire("GL.GDKP_QUEUE_UPDATED");
+        return;
+    end
+
+    -- Enrich the received queue with required data
+    GL:onItemLoadDo(GL:tableColumn(CommMessage.content, 2), function (Details)
+        local ItemLinksByID = {};
+
+        for _, Entry in pairs(Details) do
+            ItemLinksByID[Entry.id] = Entry.link;
+        end
+
+        for _, Queued in pairs(CommMessage.content or {}) do
+            local itemLink = ItemLinksByID[Queued[2]];
+            if (itemLink) then
+                Queue[Queued[1]] = {
+                    identifier = Queued[1],
+                    itemID = Queued[2],
+                    minimumBid = Queued[3],
+                    order = Queued[4],
+                    increment = Queued[5],
+                    itemLink = itemLink,
+                };
+            end
+        end
+
+        self.Queue = Queue;
+        self:sanitizeQueue();
+
+        Events:fire("GL.GDKP_QUEUE_UPDATED");
+    end);
 end
 
 --- Announce to everyone in the raid that an auction is starting
@@ -1080,7 +1164,6 @@ function Auction:announceStart(itemLink, minimumBid, minimumIncrement, duration,
 
     self.inProgress = true;
     self:listenForBids();
-    self:broadcastQueue(true);
 
     -- This is still the same item, use the previous highest bid as the starting point
     if (itemLink == self.Current.itemLink) then

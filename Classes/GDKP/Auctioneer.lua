@@ -258,7 +258,7 @@ function Auctioneer:addToQueue(itemLink, identifier, open)
     AuctioneerUI = AuctioneerUI or GL.Interface.GDKP.Auctioneer;
 
     local Queue = AuctioneerUI:getQueueWindow(true);
-    identifier = identifier or GL:stringHash(GetTime() .. itemLink) .. math.random(1, 1000);
+    identifier = identifier or tonumber(GL:stringHash(GetTime() .. itemLink) .. math.random(1, 1000));
 
     Auction:addToQueue(itemLink, identifier);
     Queue:addItemByLink(itemLink, identifier);
