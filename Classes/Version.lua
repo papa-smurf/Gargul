@@ -145,6 +145,11 @@ function Version:checkForUpdate(byReadyCheck)
         ):send();
     end
 
+    -- We're not in a guild, no need to check
+    if (not GL.User.Guild.name) then
+        return;
+    end
+
     GL.Ace:ScheduleTimer(function ()
         if (self.isOutOfDate
             or UnitAffectingCombat("player") -- We don't check guild in combat, can't risk hiccups

@@ -139,7 +139,8 @@ function GL:xd(mixed)
         return;
     end
 
-    print(string.format("\n================ |c00967FD2%s|r\n|c00FF0000%s|r\n", date('%H:%M:%S'), encoded));
+    print(("\n|c00967FD2%s|r ================"):format(date('%H:%M:%S')));
+    DevTools_Dump(mixed);
 end
 
 --- Print a error message (red)
@@ -155,6 +156,57 @@ end
 ---@return string
 function GL:capitalize(value)
     return (value:gsub("^%l", string.upper));
+end
+
+---@param var string
+---@param class string
+---@return string
+function GL:classColorize(var, class)
+    local classColor = { GetClassColor(class or "PRIEST") };
+    return string.format("|c%s%s|r", classColor[4], var);
+end
+
+---@param name string The player name
+---@param classColorize boolean Return in player's class color if known
+---@param stripRealm boolean Strip the realm suffix from the name
+---@param stripSameRealm boolean Strip the realm suffix if it's the same realm as ours
+---@param forceRealm boolean Force a realm to be present, either existing or adding our own
+function GL:nameFormat(name, classColorize, stripRealm, stripSameRealm, forceRealm)
+    name = self:capitalize(name);
+    classColorize = self:toboolean(classColorize);
+    stripRealm = self:toboolean(stripRealm);
+    stripSameRealm = stripSameRealm == nil and true or self:toboolean(stripSameRealm);
+    forceRealm = self:toboolean(forceRealm);
+
+    if (not forceRealm and stripRealm) then
+        name = self:stripRealm(name);
+    end
+
+    if (not forceRealm and stripSameRealm) then
+        local stripped, realm = self:stripRealm(name);
+
+        if (self:iEquals(realm, GetNormalizedRealmName())) then
+            name = stripped;
+        end
+    end
+
+    if (forceRealm) then
+        name = self:addRealm(name);
+    end
+
+    if (classColorize) then
+        name = self:classColorize(name, UnitClassBase(name));
+    end
+
+    return strtrim(self:capitalize(name));
+end
+
+--- Return the name if it's unique in this group, or add a realm if it's not
+---
+---@param name string
+---@return string
+function GL:disambiguateName(name)
+    return GL:nameIsUnique(name) and GL:stripRealm(name) or GL:nameFormat(name);
 end
 
 ---@param constant string
@@ -1672,10 +1724,33 @@ function GL:getItemQualityFromLink(itemLink)
     return GL.Data.Constants.HexColorsToItemQuality[color] or false;
 end
 
+--- Add the realm name to a string
+---
+---@param str string
+---@param realm string
+---@return string
+function GL:addRealm(str, realm)
+    str = tostring(str);
+
+    if (self:empty(str)) then
+        return "";
+    end
+
+    -- WoW knows multiple realm separators ( - @ # * ) depending on version and locale
+    local separator = str:match("[" .. REALM_SEPARATORS .. "]");
+
+    -- A realm separator was found, return the original message
+    if (separator) then
+        return str;
+    end
+
+    return ("%s-%s"):format(str, realm or GetNormalizedRealmName());
+end
+
 --- Strip the realm off of a string (usually a player name)
 ---
 ---@param str string
----@return string
+---@return string, string str, realm
 function GL:stripRealm(str)
     str = tostring(str);
 
@@ -1703,7 +1778,7 @@ function GL:getRealmFromName(playerName)
     playerName = tostring(playerName);
 
     if (self:empty(playerName)) then
-        return "";
+        return false;
     end
 
     -- WoW knows multiple realm separators ( - @ # * ) depending on version and locale
@@ -1711,7 +1786,7 @@ function GL:getRealmFromName(playerName)
 
     -- No realm separator was found, return the original message
     if (not separator) then
-        return playerName;
+        return false;
     end
 
     local Parts = self:strSplit(playerName, separator);
@@ -1719,24 +1794,21 @@ function GL:getRealmFromName(playerName)
 end
 
 --- Check whether the given player name occurs more than once in the player's group
---- (only possible in Era because of cross-realm support)
+--- (only possible in case of cross-realm support)
 ---
 ---@param name string
 ---@return boolean
 function GL:nameIsUnique(name)
-    if (not GL.isEra) then
-        return true;
-    end
-
-    name = string.lower(GL:stripRealm(name));
+    name = GL:stripRealm(name);
     local nameEncountered = false;
     for _, playerName in pairs(GL.User:groupMemberNames()) do
-        if (playerName == name) then
-            if (not nameEncountered) then
-                nameEncountered = true;
-            else
+        if (self:iEquals(name, playerName)) then
+            -- We already encountered this name before, NOT UNIQUE!
+            if (nameEncountered) then
                 return false;
             end
+
+            nameEncountered = true;
         end
     end
 

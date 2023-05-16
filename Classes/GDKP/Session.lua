@@ -215,6 +215,10 @@ function Session:copperOwedToPlayer(player, sessionID)
     return copperToGive;
 end
 
+--- We opened a trade window
+---
+---@param Details table
+---@return void
 function Session:tradeInitiated(Details)
     GL:debug("Session:tradeInitiated");
 
@@ -669,6 +673,7 @@ function Session:create(title, managementCut)
         CreatedBy = {
             class = GL.User.class,
             name = GL.User.name,
+            realm = GL.User.realm,
             guild = GL.User.Guild.name,
             uuid = GL.User.id,
         },
