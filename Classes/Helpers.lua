@@ -373,7 +373,7 @@ function GL:empty(mixed)
 
     if (varType == "table") then
         for _, val in pairs(mixed) do
-            if (not GL:empty(val)) then
+            if (val ~= nil) then
                 return false;
             end
         end
