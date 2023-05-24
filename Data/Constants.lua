@@ -256,8 +256,8 @@ GL.Data.Constants = {
             SKIP = "SKIP",
             DISENCHANT = "DISENCHANT",
         },
-        adjustMutatorIdentifier = "+.__adjust__.+",
-        baseMutatorIdentifier = "+.__base__.+",
+        adjustMutatorIdentifier = "+___adjust___+",
+        baseMutatorIdentifier = "+___base___+",
         potIncreaseItemID = GetItemInfoInstant(45978) or 21100, -- Classic era doesn't have a solid gold coin, yikes!
     },
 

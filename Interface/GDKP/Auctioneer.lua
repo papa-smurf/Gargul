@@ -79,7 +79,7 @@ local BIDS_TABLE_COLUMNS = {
         align = "RIGHT",
         DoCellUpdate = GL.LibStImageButtonCellUpdate,
     },
-    { --[[ BID ID ]]
+    { --[[ BIDDER FQN ]]
         width = 0,
     },
 };
@@ -1066,7 +1066,12 @@ function AuctioneerUI:buildQueue(Window)
                 Interface:addTooltip(Icon, Details.link);
 
                 --[[ ICON HIGHLIGHT ]]
-                GL:highlightItem(Icon, Details.link);
+                GL:highlightItem(Icon, Details.link, {
+                    dots = 7,
+                    speed = .2,
+                    width = 1,
+                    length = 5,
+                });
 
                 ItemRow.Icon = Icon;
 
@@ -1160,7 +1165,7 @@ function AuctioneerUI:buildBidsTable(Window)
     Table:EnableSelection(true);
     Table.head:Hide(); -- Remove the table header
 
-    Table:RegisterEvents({
+    Table:RegisterEvents{
         --[[ RECENTLY WON BY BIDDER TOOLTIP ]]
         OnEnter = function (rowFrame, _, data, _, _, realrow)
             -- Make sure something is actually highlighted, better safe than lua error
@@ -1186,7 +1191,7 @@ function AuctioneerUI:buildBidsTable(Window)
                 ItemsWonByRollerInTheLast8Hours,
             });
         end,
-    });
+    };
 
     return Table;
 end

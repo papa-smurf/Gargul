@@ -350,7 +350,7 @@ function LedgerList:refresh()
         for _, Player in pairs(PlayerData or {}) do
             tinsert(TableData, {
                 cols = {
-                    { value = Player.name, },
+                    { value = GL:disambiguateName(Player.name, { colorize = true }), },
                     --{ value = Player.bid, },
                     --{ value = Player.spent, },
                     { value = Player.received, },

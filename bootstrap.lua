@@ -14,7 +14,8 @@ GL.firstBoot = false; -- Indicates whether the user is new to Gargul
 GL.isEra = false;
 GL.isRetail = false;
 GL.isClassic = false;
-GL.clientIsDragonFlightOrLater = false;
+GL.isDragonFlightOrLater = false;
+GL.isCrossRealm = nil; -- Will be set during runtime
 GL.version = GetAddOnMetadata(GL.name, "Version");
 GL.DebugLines = {};
 GL.EventFrame = nil;
@@ -86,7 +87,7 @@ function GL:_init()
         self.isClassic = true;
     else
         if (self.clientVersion >= 100000) then
-            self.clientIsDragonFlightOrLater = true;
+            self.isDragonFlightOrLater = true;
         end
 
         self.isRetail = true;
@@ -113,14 +114,6 @@ function GL:_init()
             self.Data.Constants.addonHexColor,
             self.Data.Constants.addonHexColor
         ))
-    end
-
-    if (self.Settings:get("fixMasterLootWindow")) then
-        --[[
-            This fix was discovered by Kirsia-Dalaran. More info here: https://bit.ly/3tc8nvw
-        ]]--
-
-        hooksecurefunc(MasterLooterFrame, 'Hide', function(self) self:ClearAllPoints() end);
     end
 
     self.Comm:_init();

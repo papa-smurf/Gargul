@@ -252,11 +252,12 @@ function Auction:create(itemID, price, winner, sessionID, Bids, note, awardCheck
         return;
     end
 
+    note = note and strtrim(note) or nil;
     local Instance = {
         price = price,
         itemID = itemID,
         createdAt = GetServerTime(),
-        note = strtrim(tostring(note)),
+        note = note ~= "" and note or nil,
         CreatedBy = {
             class = GL.User.class,
             guild = GL.User.Guild.name,
@@ -279,8 +280,9 @@ function Auction:create(itemID, price, winner, sessionID, Bids, note, awardCheck
         realm = Winner.realm or GL.User.realm,
         uuid = Winner.id,
     };
+    Instance.Winner.guid = GDKP:playerGUID(Instance.Winner.name, Instance.Winner.realm);
 
-    local checksum = Instance.createdAt .. GL:stringHash({ Instance.itemID, Instance.createdAt, table.concat(Instance.CreatedBy, ".") });
+    local checksum = Instance.createdAt .. GL:stringHash{ Instance.itemID, Instance.createdAt, table.concat(Instance.CreatedBy, ".") };
     Instance.ID = checksum;
 
     -- Something is wrong with the Auction. Tampering maybe? RETURN!
@@ -418,7 +420,7 @@ function Auction:restore(sessionID, auctionID)
     -- Remove the restored state from the previous states table
     Instance.PreviousStates[mostRecentStateIdentifier] = nil;
 
-    Instance.awardChecksum = GL.AwardedLoot:addWinner(Instance.Winner.name, Instance.itemLink, false, nil, nil, nil, Instance.price, nil);
+    Instance.awardChecksum = GL.AwardedLoot:addWinner(Instance.Winner.guid, Instance.itemLink, false, nil, nil, nil, Instance.price, nil);
 
     -- We don't point to Auction here, we want a copy not a pointer!
     local Before = GL:tableGet(Session, "Auctions." .. auctionID);
@@ -466,7 +468,7 @@ function Auction:storeCurrent(winner, bid, awardChecksum)
     local HighestBidPerPlayer = {};
     for _, Bid in pairs(Instance.Bids or {}) do
         (function ()
-            local bidder = strtrim(tostring(Bid.Bidder.name));
+            local bidder = GDKP:playerGUID(Bid.Bidder.name, Bid.Bidder.realm);
 
             if (not HighestBidPerPlayer[bidder]) then
                 HighestBidPerPlayer[bidder] = {};
@@ -593,6 +595,7 @@ function Auction:sanitize(Instance)
                     uuid = tostring(Bidder.uuid),
                 },
                 bid = tonumber(Bid.bid),
+                bidder = tostring(Bid.bidder),
                 createdAt = tonumber(Bid.createdAt),
             };
 
@@ -643,6 +646,7 @@ function Auction:sanitize(Instance)
             class = tostring(Winner.class);
             uuid = tostring(Winner.uuid);
             realm = tostring(Winner.realm);
+            guid = Winner.guid or GDKP:playerGUID(Winner.name, Winner.realm);
         };
 
         -- Add the winner's guild if he was part of one
@@ -663,10 +667,10 @@ function Auction:sanitize(Instance)
     SanitizedAuction.createdAt = tonumber(Instance.createdAt);
     SanitizedAuction.itemID = tonumber(Instance.itemID);
     SanitizedAuction.price = tonumber(Instance.price);
-    SanitizedAuction.note = strtrim(tostring(Instance.note));
+    SanitizedAuction.note = Instance.note;
 
     --[[ Make sure the checksum is valid ]]
-    local checksum = SanitizedAuction.createdAt .. GL:stringHash({ SanitizedAuction.itemID, SanitizedAuction.createdAt, table.concat(SanitizedAuction.CreatedBy, ".") });
+    local checksum = SanitizedAuction.createdAt .. GL:stringHash{ SanitizedAuction.itemID, SanitizedAuction.createdAt, table.concat(SanitizedAuction.CreatedBy, ".") };
 
     if (checksum ~= Instance.ID) then
         GL:xd("Auction:sanitize step 10 failed, contact support!");
@@ -694,16 +698,29 @@ function Auction:reassignAuction(sessionID, auctionID, winner)
         return;
     end
 
+    local winnerGUID = GDKP:playerGUID(winner);
+    local _, winnerRealm = GL:stripRealm(winnerGUID);
     local OldAuction = GL:tableGet(Session, "Auctions." .. auctionID);
 
     if (not OldAuction
-        or OldAuction.Winner.name == winner
+        or OldAuction.Winner.guid == winnerGUID
     ) then
         return false;
     end
 
-    winner = GL:capitalize(string.lower(winner));
-    GL:tableSet(Session, string.format("Auctions.%s.Winner.name", auctionID), winner);
+    local Winner = GL.Player:fromName(winner) or {};
+    Winner.Guild = Winner.Guild or {};
+    Winner = {
+        class = Winner.class,
+        guild = Winner.Guild.name,
+        name = Winner.name or winner,
+        race = Winner.race,
+        realm = Winner.realm or winnerRealm,
+        uuid = Winner.id,
+        guid = winnerGUID,
+    };
+
+    GL:tableSet(Session, string.format("Auctions.%s.Winner", auctionID), Winner);
 
     if (OldAuction.awardChecksum) then
         GL.AwardedLoot:editWinner(OldAuction.awardChecksum, winner);
@@ -715,7 +732,7 @@ function Auction:reassignAuction(sessionID, auctionID, winner)
         OldAuction,
         DB.GDKP.Ledger[sessionID].Auctions[auctionID]
     );
-    Events:fire("GL.GDKP_AUCTION_REASSIGNED", sessionID, OldAuction, winner);
+    Events:fire("GL.GDKP_AUCTION_REASSIGNED", sessionID, OldAuction, winnerGUID);
 
     return true;
 end
@@ -740,7 +757,8 @@ function Auction:setNote(sessionID, auctionID, note)
         return false;
     end
 
-    GL:tableSet(Session, string.format("Auctions.%s.note", auctionID), note);
+    note = note and strtrim(note) or nil;
+    GL:tableSet(Session, string.format("Auctions.%s.note", auctionID), note ~= "" and note or nil);
 
     Events:fire("GL.GDKP_AUCTION_CHANGED",
         sessionID,
@@ -1124,6 +1142,12 @@ end
 function Auction:announceStart(itemLink, minimumBid, minimumIncrement, duration, antiSnipe)
     GL:debug("GDKP.Auction:announceStart");
 
+    -- There's already an auction in progress
+    if (self.inProgress) then
+        return;
+    end
+
+    -- We're still waiting for an auction to start
     if (self.waitingForStart
         and GetServerTime() - self.waitingForStart < 6
     ) then
@@ -1162,7 +1186,6 @@ function Auction:announceStart(itemLink, minimumBid, minimumIncrement, duration,
         return false;
     end
 
-    self.inProgress = true;
     self:listenForBids();
 
     -- This is still the same item, use the previous highest bid as the starting point
@@ -1197,6 +1220,10 @@ end
 ---@return void
 function Auction:announceStop(forceStop)
     GL:debug("GDKP.Auction:announceStop");
+
+    if (not Auction:startedByMe()) then
+        return;
+    end
 
     forceStop = GL:toboolean(forceStop);
 
@@ -1288,6 +1315,10 @@ end
 function Auction:announceReschedule(time)
     GL:debug("GDKP.Auction:announceShortening");
 
+    if (not Auction:startedByMe()) then
+        return;
+    end
+
     self.waitingForReschedule = GetServerTime();
 
     time = tonumber(time) or 0
@@ -1366,6 +1397,11 @@ function Auction:start(CommMessage)
 
     local content = CommMessage.content;
     self.waitingForStart = false;
+
+    -- We already have an active auction
+    if (self.inProgress) then
+        return;
+    end
 
     --[[
         MAKE SURE THE PAYLOAD IS VALID
@@ -1656,7 +1692,7 @@ function Auction:listenForBids()
         tinsert(EventsToListenTo, {"GDKPChatMsgWhisperListener", "CHAT_MSG_WHISPER"});
     end
 
-    Events:register(EventsToListenTo, function (event, message, sender)
+    Events:register(EventsToListenTo, function (_, message, sender)
         self:processBid(message, sender);
     end);
 end
@@ -1672,13 +1708,13 @@ function Auction:stopListeningForBids()
     end
 
     self.listeningForBids = false;
-    Events:unregister({
+    Events:unregister{
         "GDKPChatMsgWhisperListener",
         "GDKPChatMsgPartyListener",
         "GDKPChatMsgPartyLeaderListener",
         "GDKPChatMsgRaidListener",
         "GDKPChatMsgRaidLeaderListener",
-    });
+    };
 end
 
 ---@param message string|number
@@ -1898,7 +1934,6 @@ function Auction:processBid(message, bidder)
 
     local auctionWasStartedByMe = self:startedByMe();
     message = string.lower(message);
-
     -- This is a message generated by gargul, skip it
     if (GL:strStartsWith(message, "{rt3} gargul :")) then
         return;
@@ -1918,32 +1953,27 @@ function Auction:processBid(message, bidder)
 
     --- Make sure the person who bid is in our group
     local BidEntry = false;
-    for _, Member in pairs(GL.User:groupMembers()) do
-        if (GL:iEquals(GL:stripRealm(bidder), GL:stripRealm(Member.name))) then
-            local Player = GL.Player:fromName(Member.name);
-            local playerName, realm = GL:stripRealm(bidder);
 
-            BidEntry = {
-                Bidder = {
-                    class = Player.class,
-                    guild = Player.Guild.name,
-                    name = playerName,
-                    race = Player.race,
-                    realm = realm,
-                    uuid = Player.id,
-                },
-                bid = bid,
-                bidder = bidder,
-                createdAt = GetServerTime(),
-            };
-
-            break;
-        end
-    end
-
-    if (not BidEntry) then
+    if (not GL.User:unitInGroup(bidder)) then
         return;
     end
+
+    local Bidder = GL:iEquals(GL:nameFormat(bidder), GL.User.name) and GL.User or GL.Player:fromName(bidder);
+    local bidderGUID = GDKP:playerGUID(Bidder.fqn);
+
+    BidEntry = {
+        Bidder = {
+            class = Bidder.class,
+            guild = Bidder.Guild.name,
+            name = Bidder.name,
+            race = Bidder.race,
+            realm = Bidder.realm,
+            uuid = Bidder.id,
+        },
+        bid = bid,
+        bidder = bidderGUID,
+        createdAt = GetServerTime(),
+    };
 
     -- Determine the minimum bid
     local currentBid = GL:tableGet(self.Current, "TopBid.bid", 0);

@@ -113,7 +113,7 @@ function Overview:draw()
     DataColumnVerticalSpacer:SetHeight(294);
     DataColumn:AddChild(DataColumnVerticalSpacer);
 
-    local HorizontalSpacer = AceGUI:Create("SimpleGroup");
+    HorizontalSpacer = AceGUI:Create("SimpleGroup");
     HorizontalSpacer:SetLayout("FILL")
     HorizontalSpacer:SetFullWidth(true);
     HorizontalSpacer:SetHeight(10);
@@ -405,7 +405,7 @@ function Overview:drawBoostedRollDataTable(Parent)
                 local selected = data[realrow].cols[1].value;
 
                 if (selected and type(selected) == "string") then
-                    self.selectedCharacter = string.lower(selected);
+                    self.selectedCharacter = string.lower(GL:addRealm(selected));
                     self:loadPlayer();
                 end
             end
@@ -451,7 +451,7 @@ function Overview:refreshTable()
         local reserve = BoostedRolls:reserve(Entry.points);
         local aliases = {};
         for _, aliasName in pairs(Entry.Aliases) do
-            tinsert(aliases, GL:capitalize(aliasName));
+            tinsert(aliases, GL:nameFormat(aliasName));
         end
         aliases = table.concat(aliases, ",");
 
@@ -460,7 +460,7 @@ function Overview:refreshTable()
         tinsert(TableData, {
             cols = {
                 {
-                    value = GL:capitalize(playerName),
+                    value = GL:nameFormat(playerName),
                     color = GL:classRGBAColor(Entry.class),
                 },
                 {
@@ -492,10 +492,9 @@ function Overview:deleteEntry()
         return;
     end
 
-    return GL.Interface.Dialogs.PopupDialog:open({
-        question = string.format("Delete |cff%s%s|r?",
-            GL:classHexColor(GL.Player:classByName(self.selectedCharacter)),
-            GL:capitalize(self.selectedCharacter)
+    return GL.Interface.Dialogs.PopupDialog:open{
+        question = string.format("Delete %s?",
+            GL:nameFormat{ name = self.selectedCharacter, colorize = true }
         ),
         OnYes = function ()
             BoostedRolls:deletePoints(self.selectedCharacter);
@@ -503,7 +502,7 @@ function Overview:deleteEntry()
             self.selectedCharacter = nil;
             self:loadPlayer();
         end,
-    });
+    };
 end
 
 ---@param points number 
@@ -547,15 +546,18 @@ function Overview:updateAliases(aliases)
     end
 
     local Segments = GL:separateValues(aliases);
+    local _, mainRealm = GL:stripRealm(self.selectedCharacter);
 
     --- Import segments as aliases (alts)
     local Aliases = {};
     for i = 1, #Segments do
         local alias = tostring(Segments[i]);
-        alias = GL:normalizedName(alias);
+
+        -- If no realm is specified assume same realm as main
+        alias = GL:addRealm(alias, mainRealm);
         --- Only set non-empty aliases
         if (not GL:empty(alias)) then
-            tinsert(Aliases, alias);
+            tinsert(Aliases, strlower(alias));
         end
     end
     BoostedRolls:setAliases(self.selectedCharacter, Aliases);
@@ -570,6 +572,7 @@ function Overview:loadPlayer()
     local class = nil;
     local name = "None";
     local Aliases = {};
+
     if (not self.selectedCharacter
         or not BoostedRolls.MaterializedData.DetailsByPlayerName[self.selectedCharacter]
     ) then
@@ -577,7 +580,7 @@ function Overview:loadPlayer()
     else
         self.points = BoostedRolls:getPoints(self.selectedCharacter);
         class = BoostedRolls.MaterializedData.DetailsByPlayerName[self.selectedCharacter].class;
-        name = GL:capitalize(GL:stripRealm(self.selectedCharacter));
+        name = GL:nameFormat{ name = self.selectedCharacter, stripRealm = true};
         Aliases = BoostedRolls.MaterializedData.DetailsByPlayerName[self.selectedCharacter].Aliases;
     end
     

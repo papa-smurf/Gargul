@@ -145,14 +145,14 @@ function BidderQueue:build()
         {text = L.GDKP_SHOW_UPCOMING, setting = "GDKP.enableBidderQueue", func = function(Entry, _, _, checked)
             if (not checked) then
                 -- Show a confirmation dialog before clearing entries
-                GL.Interface.Dialogs.PopupDialog:open({
+                GL.Interface.Dialogs.PopupDialog:open{
                     question = L.GDKP_HIDE_UPCOMING_CONFIRMATION,
                     OnYes = function ()
                         Settings:set("GDKP.enableBidderQueue", checked);
                         Entry.checked = checked;
                         self:close();
                     end,
-                });
+                };
 
                 CloseMenus();
                 return;
@@ -358,14 +358,14 @@ function BidderQueue:refreshTable()
                         return;
                     end
 
-                    GL.Interface.Dialogs.ConfirmWithSingleInputDialog:open({
+                    GL.Interface.Dialogs.ConfirmWithSingleInputDialog:open{
                         question = string.format("What's your maximum bid for %s? (Minimum %s|c00FFF569g|r)", QueuedItem.itemLink, QueuedItem.minimumBid),
                         OnYes = function (max)
                             Auction:setAutoBid(max, ItemRow._identifier);
                             self:refreshTable();
                         end,
                         focus = true,
-                    });
+                    };
                 end);
 
                 -- Remove this items bid

@@ -143,15 +143,15 @@ function Overview:draw()
     ClearButton:SetText("Clear Data");
     ClearButton:SetCallback("OnClick", function()
         -- Show a confirmation dialog before clearing entries
-        GL.Interface.Dialogs.PopupDialog:open({
-            question = string.format("Are you sure you want to clear your %s tables?", source),
+        GL.Interface.Dialogs.PopupDialog:open{
+            question = ("Are you sure you want to clear your %s tables?"):format(source),
             OnYes = function ()
                 GL.Interface.TMB.Overview:close();
                 GL.TMB:clear();
 
                 GL.TMB:draw(string.lower(source));
             end,
-        });
+        };
     end);
     Window:AddChild(ClearButton);
 

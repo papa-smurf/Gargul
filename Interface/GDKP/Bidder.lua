@@ -1,8 +1,11 @@
 ---@type GL
 local _, GL = ...;
 
+---@type GDKP
+local GDKP = GL.GDKP;
+
 ---@type GDKPAuction
-local GDKPAuction = GL.GDKP.Auction;
+local GDKPAuction = GDKP.Auction;
 
 ---@class GDKPBidderInterface
 GL:tableSet(GL, "Interface.GDKP.Bidder", {
@@ -227,7 +230,7 @@ function Bidder:draw(time, itemLink, itemIcon)
     AutoBidButton:SetNormalFontObject("GameFontNormal");
     AutoBidButton:SetHighlightFontObject("GameFontNormal");
     AutoBidButton:SetScript("OnClick", function ()
-        GL.Interface.Dialogs.ConfirmWithSingleInputDialog:open({
+        GL.Interface.Dialogs.ConfirmWithSingleInputDialog:open{
             question = string.format("What's your maximum bid? (Minimum %s|c00FFF569g|r)", GDKPAuction:lowestValidBid()),
             inputValue = BidInput:GetText(),
             OnYes = function (max)
@@ -241,7 +244,7 @@ function Bidder:draw(time, itemLink, itemIcon)
                 end
             end,
             focus = true,
-        });
+        };
     end);
     self.AutoBidButton = AutoBidButton;
 
@@ -319,7 +322,8 @@ function Bidder:refresh()
     end
 
     -- We're the highest bidder, NICE!
-    if (string.lower(TopBid.Bidder.name) == string.lower(GL.User.name)) then
+    --if (string.lower(TopBid.Bidder.name) == string.lower(GL.User.name)) then
+    if (GL:iEquals(TopBid.bidder, GDKP:myGUID())) then
         local maxBidString = "";
 
         if (GDKPAuction.autoBiddingIsActive and GDKPAuction.maxBid) then

@@ -233,7 +233,10 @@ function Comm:listen(payload, distribution, playerName)
     payload = GL.CommMessage:decompress(payload);
 
     if (not payload.senderFqn and playerName) then
-        payload.senderFqn = ("%s-%s"):format(playerName, GetRealmName());
+        payload.senderFqn = GL:nameFormat{name = playerName, forceRealm = true};
+    elseif (payload.senderFqn and not GL:strStartsWith(payload.senderFqn, playerName)) then
+        GL:warning("Potential identity tamper detected in COMM message");
+        return false;
     end
 
     -- The version includes a version, see if it's one we can work with
@@ -258,11 +261,11 @@ function Comm:listen(payload, distribution, playerName)
         return false;
     end
 
-    local Sender = GL.Player:fromFqn(payload.senderFqn) or {};
+    local Sender = GL.Player:fromName(payload.senderFqn) or {};
 
     -- Let's find out who sent us this message
     if (not Sender.id) then
-        Sender.name = playerName or GL:stripRealm(payload.senderFqn);
+        Sender.name = GL:nameFormat(payload.senderFqn);
     end
 
     -- Was this sent by ourself?

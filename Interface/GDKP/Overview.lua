@@ -556,12 +556,12 @@ function Overview:refreshLedger()
         question = "Locking a session means you can't auction items or otherwise change anything until you unlock it, are you sure?";
     end
     LockIcon:SetCallback("OnClick", function()
-        GL.Interface.Dialogs.PopupDialog:open({
+        GL.Interface.Dialogs.PopupDialog:open{
             question = question,
             OnYes = function ()
                 GDKPSession:toggleLock(self.selectedSession);
             end,
-        });
+        };
     end);
 
     if (GL:empty(Session.Auctions)) then
@@ -592,9 +592,8 @@ function Overview:refreshLedger()
     end
 
     Note:SetText(string.format(
-        "By |c00%s%s|r%s | On |c00%s%s|r%s",
-        GL:classHexColor(CreatedBy.class),
-        CreatedBy.name,
+        "By %s | On |c00%s%s|r%s",
+        GL:nameFormat{ name = CreatedBy.name, realm = CreatedBy.realm, colorize = true },
         guild,
         Constants.addonHexColor,
         date('%Y-%m-%d', Session.createdAt),

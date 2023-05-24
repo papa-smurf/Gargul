@@ -32,8 +32,6 @@ local Settings = GL.Settings; ---@type Settings
 
 --[[ CONSTANTS ]]
 local LOOT_SLOT_MONEY = GL:tableGet(Enum or {}, "LootSlotType.Money", LOOT_SLOT_MONEY);
-local LOOT_SLOT_CURRENCY = GL:tableGet(Enum or {}, "LootSlotType.Currency", LOOT_SLOT_CURRENCY);
-local LOOT_SLOT_ITEM = GL:tableGet(Enum or {}, "LootSlotType.Item", LOOT_SLOT_ITEM);
 
 ---@return void
 function PackMule:_init()
@@ -449,7 +447,7 @@ function PackMule:getTargetForItem(itemLinkOrId, callback)
                 target = target,
                 quality = quality,
                 operator = operator,
-            }
+            };
 
             -- This is to make sure we support item names, IDs and links
             local ruleConcernsItemID = false;
@@ -560,6 +558,7 @@ function PackMule:getTargetForItem(itemLinkOrId, callback)
             ruleTarget = strtrim(ruleTarget);
             ruleTarget = ruleTarget:gsub("!", "");
 
+
             if (not GL.User.isMasterLooter) then
                 if (GL:inTable({"PASS", "GREED", "NEED"}, ruleTarget)) then
                     Targets = {ruleTarget};
@@ -568,7 +567,7 @@ function PackMule:getTargetForItem(itemLinkOrId, callback)
             else
                 -- SELF serves as a placeholder for the current player name
                 if (ruleTarget == "SELF") then
-                    ruleTarget = GL.User.name;
+                    ruleTarget = GL.User.fqn;
 
                 -- DE serves as a placeholder for the registered disenchanter
                 elseif (ruleTarget == "DE") then
@@ -592,7 +591,7 @@ function PackMule:getTargetForItem(itemLinkOrId, callback)
                     for _, Player in pairs(GL.User:groupMembers()) do
                         -- No need giving items to a random who's offline
                         if (Player.online) then
-                            tinsert(Targets, string.lower(Player.name));
+                            tinsert(Targets, GL:nameFormat(Player.fqn));
                         end
                     end
 
@@ -604,6 +603,8 @@ function PackMule:getTargetForItem(itemLinkOrId, callback)
                 if (not GL:inTable({"PASS", "GREED", "NEED"}, ruleTarget)) then
                     -- GroupMemberNames are always in lowercase
                     if (GL:inTable(GroupMemberNames, string.lower(ruleTarget))) then
+                        ruleTarget = GL:nameFormat(ruleTarget);
+
                         -- This is a high prio target, return it and stop checking
                         if (targetContainsExclamationMark) then
                             Targets = {ruleTarget};
@@ -785,23 +786,16 @@ function PackMule:disenchant(itemLink, byPassConfirmationDialog, callback)
     -- We show the player selector if there is no disenchanter
     -- set yet or if the old disenchanter is not in our group
     if (GL:empty(self.disenchanter)
-        or not GL.User:unitIsInYourGroup(self.disenchanter)
+        or not GL.User:unitInGroup(self.disenchanter)
     ) then
         local PlayerNames = {};
         for _, Player in pairs(GL.User:groupMembers()) do
-            local playerName = string.lower(Player.name);
-
-            -- Make sure all player names include the player's realm on Era servers
-            if (GL.isEra and not strfind(playerName, "-")) then
-                playerName = string.format("%s-%s", playerName, GL.User.realm);
-            end
-
-            tinsert(PlayerNames, playerName);
+            tinsert(PlayerNames, Player.fqn);
         end
 
         -- Show the player selector
         GL.Interface.PlayerSelector:draw("Who is your disenchanter?", PlayerNames, function (playerName)
-            GL.Interface.Dialogs.PopupDialog:open({
+            GL.Interface.Dialogs.PopupDialog:open{
                 question = string.format("Set |cff%s%s|r as your disenchanter?",
                     GL:classHexColor(GL.Player:classByName(playerName)),
                     playerName
@@ -814,7 +808,7 @@ function PackMule:disenchant(itemLink, byPassConfirmationDialog, callback)
 
                     callback();
                 end,
-            });
+            };
         end);
 
         return;
@@ -831,7 +825,7 @@ function PackMule:disenchant(itemLink, byPassConfirmationDialog, callback)
     end
 
     -- Make sure the initiator confirms his choice
-    GL.Interface.Dialogs.PopupDialog:open({
+    GL.Interface.Dialogs.PopupDialog:open{
         question = string.format("Send %s to |cff%s%s|r? Type /gl cd to remove this disenchanter!",
             itemLink,
             GL:classHexColor(GL.Player:classByName(self.disenchanter)),
@@ -844,7 +838,7 @@ function PackMule:disenchant(itemLink, byPassConfirmationDialog, callback)
             self:announceDisenchantment(itemLink);
             callback();
         end,
-    });
+    };
 end
 
 --- Clear the disenchanter
@@ -891,7 +885,7 @@ function PackMule:announceDisenchantment(itemLink)
     GL:sendChatMessage(
         string.format("%s will be disenchanted by %s",
         itemLink,
-        self.disenchanter
+        GL:disambiguateName(self.disenchanter)
     ), "GROUP");
 end
 
@@ -903,7 +897,7 @@ function PackMule:roundRobinTargetForRule(Rule)
     GL:debug("PackMule:roundRobinTargetForRule");
 
     local ruleId = Rule.quality;
-    if (not GL.empty(Rule.item)) then
+    if (not GL:empty(Rule.item)) then
         ruleId = Rule.item;
     end
 
@@ -919,12 +913,12 @@ function PackMule:roundRobinTargetForRule(Rule)
 
     local targetPlayer = false;
     for _, Player in pairs(GL.User:groupMembers()) do
-        local playerName = string.lower(Player.name);
+        local player = string.lower(Player.fqn);
 
         -- this player hasn't received one of these items yet
-        if (Player.online and not self.RoundRobinItems[ruleId][playerName]) then
-            self.RoundRobinItems[ruleId][playerName] = 1;
-            targetPlayer = playerName;
+        if (Player.online and not self.RoundRobinItems[ruleId][player]) then
+            self.RoundRobinItems[ruleId][player] = 1;
+            targetPlayer = player;
             break;
         end
     end
@@ -969,7 +963,6 @@ function PackMule:assignLootToPlayer(itemID, playerName)
 
     -- Try to determine the index of the player who should receive it
     local playerIndex = false;
-    playerName = GL:normalizedName(playerName);
     for _, Player in pairs(GL.User:groupMembers()) do
         local candidate = GL:normalizedName(GetMasterLootCandidate(itemIndex, Player.index) or "");
 

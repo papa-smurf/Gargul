@@ -84,9 +84,9 @@ function RollOff:announceStart(itemLink, time, note)
             SupportedRolls = SupportedRolls,
         };
 
-        for _, player in pairs(Players) do
+        for _, Player in pairs(Players) do
             -- Then update for each player
-            local points = GL.BoostedRolls:getPoints(player.name);
+            local points = GL.BoostedRolls:getPoints(Player.fqn);
             local low = GL.BoostedRolls:minBoostedRoll(points);
             local high = GL.BoostedRolls:maxBoostedRoll(points);
 
@@ -98,7 +98,7 @@ function RollOff:announceStart(itemLink, time, note)
                 CommActions.startRollOff,
                 msg,
                 "WHISPER",
-                player.name
+                Player.fqn
             ):send();
         end
     else
@@ -535,8 +535,10 @@ function RollOff:award(roller, itemLink, RollBracket, identicalRollDetected)
     end
 
     if (GL:nameIsUnique(roller)) then
+        roller = GL:addRealm(roller);
+
         -- Make sure the initiator has to confirm his choices
-        GL.Interface.Dialogs.AwardDialog:open({
+        GL.Interface.Dialogs.AwardDialog:open{
             question = string.format("%sAward %s to |cff%s%s|r?",
                 identicalRollDetectedString,
                 itemLink,
@@ -569,14 +571,14 @@ function RollOff:award(roller, itemLink, RollBracket, identicalRollDetected)
                 end
 
                 -- Add the player we awarded the item to to the item's tooltip
-                GL.AwardedLoot:addWinner({
+                GL.AwardedLoot:addWinner{
                     winner = roller,
                     itemLink = itemLink,
                     isOS = isOS,
                     BRCost = BRCost,
                     Rolls = Rolls,
                     RollBracket = RollBracket,
-                });
+                };
 
                 GL.MasterLooterUI:closeReopenMasterLooterUIButton();
 
@@ -588,7 +590,7 @@ function RollOff:award(roller, itemLink, RollBracket, identicalRollDetected)
             checkPlusOne = addPlusOne,
             isBR = isBR,
             boostedRollCost = BRCost,
-        });
+        };
 
         return;
     end
@@ -597,7 +599,7 @@ function RollOff:award(roller, itemLink, RollBracket, identicalRollDetected)
 
     GL.Interface.PlayerSelector:draw(description, roller, function (player)
         -- Make sure the initiator has to confirm his choices
-        GL.Interface.Dialogs.AwardDialog:open({
+        GL.Interface.Dialogs.AwardDialog:open{
             question = string.format("%sAward %s to |cff%s%s|r?",
                 identicalRollDetectedString,
                 itemLink,
@@ -630,14 +632,14 @@ function RollOff:award(roller, itemLink, RollBracket, identicalRollDetected)
                 end
 
                 -- Add the player we awarded the item to to the item's tooltip
-                GL.AwardedLoot:addWinner({
+                GL.AwardedLoot:addWinner{
                     winner = roller,
                     itemLink = itemLink,
                     isOS = isOS,
                     BRCost = BRCost,
                     Rolls = Rolls,
                     RollBracket = RollBracket,
-                });
+                };
 
                 GL.MasterLooterUI:closeReopenMasterLooterUIButton();
 
@@ -651,7 +653,7 @@ function RollOff:award(roller, itemLink, RollBracket, identicalRollDetected)
             checkPlusOne = addPlusOne,
             isBR = isBR,
             boostedRollCost = BRCost,
-        });
+        };
     end);
 end
 
@@ -755,14 +757,14 @@ function RollOff:processRoll(message)
             RollType[4] = 10;
         end
 
-        local rollerName = GL:stripRealm(roller);
+        local rollerName = GL:nameFormat(roller);
 
         --- Make sure the person who rolled is in our group
         for _, Player in pairs(GL.User:groupMembers()) do
-            local playerName = GL:stripRealm(Player.name);
-            if (rollerName == playerName) then
+            -- Rolls don't include a realm reference of any sort sadly
+            if (GL:iEquals(rollerName, Player.name)) then
                 Roll = {
-                    player = Player.name,
+                    player = GL:nameIsUnique(Player.name) and GL:nameFormat(Player.fqn) or roller, -- Make sure to not assume the wrong realm-specific name!
                     class = Player.class,
                     amount = roll,
                     time = GetServerTime(),
@@ -779,11 +781,11 @@ function RollOff:processRoll(message)
         return;
     end
 
-    tinsert(RollOff.CurrentRollOff.Rolls, Roll);
+    tinsert(self.CurrentRollOff.Rolls, Roll);
 
     GL.Events:fire("GL.ROLLOFF_ROLL_ACCEPTED");
 
-    RollOff:refreshRollsTable();
+    self:refreshRollsTable();
 end
 
 -- Whenever a new roll comes in we need to refresh
@@ -815,7 +817,7 @@ function RollOff:refreshRollsTable()
 
         -- Check if the player reserved the current item id
         local rollNote = "";
-        local normalizedPlayerName = string.lower(GL:stripRealm(playerName));
+        local normalizedPlayerName = string.lower(GL:disambiguateName(playerName));
 
         -- The item is soft-reserved, make sure we add a note to the roll
         if (GL.SoftRes:itemIDIsReservedByPlayer(self.CurrentRollOff.itemID, normalizedPlayerName)) then
@@ -897,7 +899,7 @@ function RollOff:refreshRollsTable()
         local Row = {
             cols = {
                 {
-                    value = rollerName,
+                    value = GL:disambiguateName(rollerName),
                     color = GL:classRGBAColor(class),
                 },
                 {

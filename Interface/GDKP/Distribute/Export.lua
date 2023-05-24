@@ -157,8 +157,9 @@ function Export:build()
 
     local showCustomFormatHelpTooltip = function ()
         GameTooltip:SetOwner(HelpIconFrame, "ANCHOR_RIGHT");
-        GameTooltip:SetText(string.format("Available values:\n\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n\n%s",
+        GameTooltip:SetText(string.format("Available values:\n\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n\n%s",
             "@PLAYER",
+            "@REALM",
             "@CUT",
             "@SPENT",
             "@BID",
@@ -272,7 +273,8 @@ function Export:exportPotToCustomFormat(Session, Cuts)
         local goldMailed = GL:tableGet(Session, "GoldMails." .. player, 0);
 
         local Values = {
-            ["@PLAYER"] = player,
+            ["@PLAYER"] = GL:nameFormat{ name = player, stripRealm = true },
+            ["@REALM"] = GL:getRealmFromName(player),
             ["@CUT"] = cut,
             ["@SPENT"] = GDKPSession:goldSpentByPlayer(player, self.sessionID),
             ["@BID"] = GDKPSession:goldBidByPlayer(player, self.sessionID),

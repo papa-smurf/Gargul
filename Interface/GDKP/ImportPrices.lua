@@ -54,7 +54,7 @@ function ImportPrices:build()
     Confirm:SetText("Import");
     Confirm:SetFullWidth(true);
     Confirm:SetCallback("OnClick", function()
-        GL.Interface.Dialogs.PopupDialog:open({
+        GL.Interface.Dialogs.PopupDialog:open{
             question = "Delete existing price settings? Click yes to delete all price data, no to simply override existing ones with the data you provided here",
             OnYes = function ()
                 GDKP:resetPerItemSettings();
@@ -64,7 +64,7 @@ function ImportPrices:build()
                 GDKP:importPerItemSettings(ImportPricesBox:GetText());
             end,
             withCancel = true,
-        });
+        };
     end);
     Window:AddChild(Confirm);
 

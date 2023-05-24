@@ -53,7 +53,6 @@ local Pot = GDKP.Pot;
 function Pot:addGold(sessionID, gold, player, note)
     GL:debug("Auction:addGold");
 
-    note = strtrim(tostring(note));
     return GDKPAuction:create(Constants.GDKP.potIncreaseItemID, gold, player, sessionID, nil, note);
 end
 
@@ -122,7 +121,6 @@ function Pot:addMutator(sessionID, Data)
     end
 
     local Session = GDKPSession:byID(sessionID);
-
     if (not Session) then
         return false;
     end
@@ -137,7 +135,7 @@ function Pot:addMutator(sessionID, Data)
         autoApplyTo = Data.autoApplyTo,
     };
 
-    -- Make sure this new mutator gets applies to everyone eligible
+    -- Make sure this new mutator gets applied to everyone eligible
     self:applyMutator(sessionID, Data.name);
 
     return true;
@@ -167,7 +165,7 @@ function Pot:applyMutator(sessionID, name)
     for playerName in pairs(Session.Pot.DistributionDetails or {}) do
         local Player = GL.Player:fromName(playerName);
 
-        local PlayerRoles = {playerName};
+        local PlayerRoles = { GL:disambiguateName(playerName) };
         if (Player) then
             PlayerRoles = self:getPlayerRoles(Player);
         end
@@ -331,11 +329,10 @@ function Pot:calculateCuts(sessionID)
     local Cuts = Session.Pot.Cuts or {};
     local DistributionDetails = Session.Pot.DistributionDetails or {};
 
-    local PlayerNames = {};
     for _, Player in pairs(GL.User:groupMembers() or {}) do
-        tinsert(PlayerNames, Player.name);
-        if (GL:empty(DistributionDetails[Player.name])) then
-            DistributionDetails[Player.name] = self:determineDistributionDefaults(Player, Session);
+        local playerDetailsID = strlower(Player.fqn);
+        if (GL:empty(DistributionDetails[playerDetailsID])) then
+            DistributionDetails[playerDetailsID] = self:determineDistributionDefaults(Player, Session);
         end
     end
 
@@ -422,7 +419,9 @@ function Pot:calculateCuts(sessionID)
 end
 
 ---@param Player Player
+---@return table
 function Pot:getPlayerRoles(Player)
+    local nameFormatted = GL:nameFormat(Player.fqn);
     local PlayerRoles = {};
     local ClassRoleDictionary = {
         TANK = "TANK",
@@ -434,7 +433,7 @@ function Pot:getPlayerRoles(Player)
         tinsert(PlayerRoles, strupper(Player.class));
     end
 
-    local classRole = UnitGroupRolesAssigned(Player.name);
+    local classRole = UnitGroupRolesAssigned(nameFormatted);
     if (classRole and ClassRoleDictionary[classRole]) then
         tinsert(PlayerRoles, classRole);
     end
@@ -447,9 +446,9 @@ function Pot:getPlayerRoles(Player)
         tinsert(PlayerRoles, "ML");
     end
 
-    tinsert(PlayerRoles, strupper(Player.name));
+    tinsert(PlayerRoles, strupper(GL:disambiguateName(Player.fqn)));
 
-    if (Player.name == GL.User.name) then
+    if (GL:iEquals(Player.fqn, GL.User.fqn)) then
         tinsert(PlayerRoles, "SELF");
     end
 
@@ -527,26 +526,13 @@ function Pot:setPlayerMutatorValue(sessionID, player, mutator, value)
         return false;
     end
 
-    ---@todo Figure out why this doesn't work
-    --GL:tableSet(
-    --    Session,
-    --    "Pot.DistributionDetails." .. player,
-    --    {},
-    --    true
-    --);
+    GL:tableSet(Session, ("Pot.DistributionDetails.%s.%s"):format(player, mutator), value);
 
-    Session.Pot = Session.Pot or {};
-    Session.Pot.DistributionDetails = Session.Pot.DistributionDetails or {};
-    Session.Pot.DistributionDetails[player] = Session.Pot.DistributionDetails[player] or {};
-
-    Session.Pot.DistributionDetails[player][mutator] = value;
-
-    GDKPSession:store(Session);
     return true;
 end
 
 ---@param sessionID number
----@param string player
+---@param player string
 ---@return boolean
 function Pot:addPlayer(sessionID, player)
     GL:debug("Pot:addPlayer");
@@ -561,20 +547,21 @@ function Pot:addPlayer(sessionID, player)
         return false;
     end
 
-    player = GL:capitalize(strtrim(player));
     local Player = GL.Player:fromName(player);
 
     if (not Player) then
         Player = {
             name = player,
+            realm = GL.User.realm,
        };
     end
 
+    local playerGUID = GDKP:playerGUID(Player.name, Player.realm);
     Session.Pot = Session.Pot or {};
     Session.Pot.DistributionDetails = Session.Pot.DistributionDetails or {};
 
-    Session.Pot.DistributionDetails[player] = {};
-    Session.Pot.DistributionDetails[player] = self:determineDistributionDefaults(Player, Session);
+    Session.Pot.DistributionDetails[playerGUID] = {};
+    Session.Pot.DistributionDetails[playerGUID] = self:determineDistributionDefaults(Player, Session);
 
     GDKPSession:store(Session);
 
@@ -593,7 +580,7 @@ function Pot:deletePlayer(sessionID, player)
     end
 
     local DistributionDetails = GL:tableGet(Session, "Pot.DistributionDetails", {});
-    DistributionDetails[player] = nil;
+    DistributionDetails[playerGUID] = GDKP:playerGUID(player);
 
     local PlayerDetails = {};
     for name, Details in pairs(Session.Pot.DistributionDetails or {}) do
@@ -619,6 +606,10 @@ function Pot:renamePlayer(sessionID, playerOld, playerNew)
         return false;
     end
 
+    local _, oldRealm = GL:stripRealm(playerOld);
+    playerNew = GL:addRealm(playerNew, oldRealm); -- Add the original realm if none is provided
+    playerNew = GDKP:playerGUID(playerNew);
+
     Session.Pot = Session.Pot or {};
     Session.Pot.DistributionDetails = Session.Pot.DistributionDetails or {};
     Session.Pot.DistributionDetails[playerNew] = Session.Pot.DistributionDetails[playerOld];
@@ -640,10 +631,9 @@ end
 --- Remove cut details from players who are no longer in the raid and have no specific mutators set besides the base
 ---
 ---@param sessionID string
----@param keepAdjusted boolean|nil By default we keep the adjusted entries (ones with more than just a base cut)
 ---
 ---@return boolean Did something get cleared?
-function Pot:clearUnavailablePlayerDetails(sessionID, keepAdjusted)
+function Pot:clearUnavailablePlayerDetails(sessionID)
     GL:debug("Pot:clearUnavailablePlayerDetails");
 
     local Session = GDKPSession:byID(sessionID);
@@ -678,7 +668,7 @@ function Pot:clearPlayerDetails(sessionID, player, keepAdjusted)
         return false;
     end
 
-    player = GL:capitalize(strtrim(player));
+    player = GDKP:playerGUID(player);
     if (GL:empty(Session.Pot.DistributionDetails[player])) then
         return false;
     end
@@ -698,6 +688,20 @@ function Pot:clearPlayerDetails(sessionID, player, keepAdjusted)
 
     Session.Pot.DistributionDetails[player] = {};
     return true;
+end
+
+---@param player string
+---@param sessionID string
+---@return number
+function Pot:getCut(player, sessionID)
+    local Session = sessionID and GDKPSession:byID(sessionID) or GDKPSession:getActive();
+
+    if (not Session.lockedAt) then
+        return 0;
+    end
+
+    local playerGUID = GDKP:playerGUID(player);
+    return GL:tableGet(Session, "Pot.Cuts." .. playerGUID, 0) or 0;
 end
 
 ---@param sessionID string
@@ -823,23 +827,23 @@ function Pot:importCuts(sessionID, data)
             end
         else -- The first line includes the heading, we don't need that
             local error = false;
-            local playerName = strtrim(tostring(Segments[Columns.Player]));
+            local playerGUID = GDKP:playerGUID(tostring(Segments[Columns.Player]));
             local gold = tonumber(Segments[Columns.Gold]);
 
             if (not gold) then
                 error = true;
 
-                if (not GL:empty(playerName)) then
-                    GL:warning("Missing gold for player " .. playerName);
+                if (not GL:empty(playerGUID)) then
+                    GL:warning("Missing gold for player " .. playerGUID);
                 end
-            elseif (GL:empty(playerName) and gold) then
+            elseif (GL:empty(playerGUID) and gold) then
                 error = true;
 
                 GL:warning("Missing player name");
             end
 
             if (not error) then
-                Cuts[playerName] = GL:round(gold, 2);
+                Cuts[playerGUID] = GL:round(gold, 2);
             end
         end
     end
@@ -855,8 +859,9 @@ function Pot:importCuts(sessionID, data)
     Session.Pot.Cuts = {};
 
     for _, Player in pairs(GL.User:groupMembers() or {}) do
-        Session.Pot.DistributionDetails[Player.name] = {};
-        Session.Pot.Cuts[Player.name] = 0;
+        local playerGUID = GDKP:playerGUID(Player.fqn);
+        Session.Pot.DistributionDetails[playerGUID] = {};
+        Session.Pot.Cuts[playerGUID] = 0;
     end
 
     for player, cut in pairs(Cuts or {}) do

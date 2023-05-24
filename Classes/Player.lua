@@ -9,13 +9,13 @@ GL.Player.__index = GL.Player;
 ---@type Player
 local Player = GL.Player;
 
--- This metatable allows us to have multiple instances of this object
 setmetatable(Player, {
     __call = function (cls, ...)
         return cls.new(...)
     end,
 })
 
+---@return Player
 function Player._new()
     GL:debug("Player._new");
 
@@ -23,28 +23,34 @@ function Player._new()
     return self;
 end
 
--- Instantiate a new player object using a player's GUID
+--- Instantiate a new player object using a player's GUID
+---
+---@param GUID string
+---@return boolean|Player
 function Player.fromID(GUID)
     GL:debug("Player.fromID");
 
     if (not GUID or not type(GUID) == "string") then
-        return GL:error("Invalid GUID provided for Player.fromID");
+        GL:error("Invalid GUID provided for Player.fromID");
+        return false;
     end
 
     local self = Player._new();
 
     self.id = GUID;
-    self.localizedClass, self.class, self.localizedRace, self.race, self.gender, self.name = GetPlayerInfoByGUID(self.id);
+    self.localizedClass, self.class, self.localizedRace, self.race, self.gender, self.name, self.realm = GetPlayerInfoByGUID(self.id);
+    self.realm = not GL:empty(self.realm) and self.realm or GL.User.realm;
+    self.fqn = GL:addRealm(self.name, self.realm);
     self.race = string.lower(self.race);
 
     -- The GUID turns out to be invalid, destroy the player object
     if (not self.name or not type(self.name) == "string") then
         self = nil;
         GL:error("Invalid GUID provided for Player.fromID: " .. GUID);
-        return;
+        return false;
     end
 
-    self.class = string.lower(self.class);
+    self.classFile = string.upper(self.class);
 
     self.Guild = {};
 
@@ -73,28 +79,10 @@ function Player.fromID(GUID)
     return self;
 end
 
---- Instantiate a new player object using a player's FQN
+--- Instantiate a new player object using a player's name (also accepts FQNs)
 ---
----@param fqn string
----@return table|boolean
-function Player:fromFqn(fqn)
-    local parts = GL:strSplit(fqn, "-");
-    local partCount = #parts;
-
-    if (partCount == 1) then
-        return self:fromName(fqn)
-    elseif (partCount ~= 2) then
-        return false
-    end
-
-    if (parts[2] == GL.User.realm) then
-        return self:fromName(parts[1]);
-    end
-
-    return self:fromName(fqn);
-end
-
--- Instantiate a new player object using a player's name
+---@param name string
+---@return boolean|Player
 function Player:fromName(name)
     GL:debug("Player.fromName");
 
@@ -102,6 +90,7 @@ function Player:fromName(name)
         return false;
     end
 
+    name = GL:nameFormat(name);
     local playerId = UnitGUID(name);
 
     if (not playerId) then
@@ -111,7 +100,9 @@ function Player:fromName(name)
     return Player.fromID(playerId);
 end
 
--- Instantiate a new player object for the addon actor (current player)
+--- Instantiate a new player object for the addon actor (current player)
+---
+---@return boolean|Player
 function Player.fromActor()
     GL:debug("Player.fromActor");
 
@@ -119,7 +110,7 @@ function Player.fromActor()
 
     if (not playerId) then
         GL:warning("Unable to confirm identity of addon actor");
-        return;
+        return false;
     end
 
     return Player.fromID(playerId);
@@ -135,8 +126,10 @@ function Player:hasAssist(playerNameOrID)
     end
 
     local playerName = playerNameOrID;
+    local realm, _;
     if (GL:strStartsWith(playerNameOrID, "Player-")) then
-        playerName = select(6, GetPlayerInfoByGUID(playerNameOrID));
+        _, _, _, _, _, playerName, realm = GetPlayerInfoByGUID(playerNameOrID);
+        playerName = GL:nameFormat{ name = playerName, realm = realm };
     end
 
     if (not playerName) then
@@ -144,12 +137,12 @@ function Player:hasAssist(playerNameOrID)
     end
 
     -- If the player is not in our group then we're done checking
-    if (not GL.User:unitIsInYourGroup(playerName)) then
+    if (not GL.User:unitInGroup(playerName)) then
         return false;
     end
 
     -- Check if the player has lead or assist
-    local maximumNumberOfGroupMembers = GL.User.isInRaid and _G.MEMBERS_PER_RAID_GROUP or _G.MAX_RAID_MEMBERS;
+    local maximumNumberOfGroupMembers = GL.User.isInRaid and _G.MAX_RAID_MEMBERS or _G.MEMBERS_PER_RAID_GROUP;
     for index = 1, maximumNumberOfGroupMembers do
         local name, rank = GetRaidRosterInfo(index);
 
@@ -172,8 +165,10 @@ function Player:hasLead(playerNameOrID)
     end
 
     local playerName = playerNameOrID;
+    local realm, _;
     if (GL:strStartsWith(playerNameOrID, "Player-")) then
-        playerName = select(6, GetPlayerInfoByGUID(playerNameOrID));
+        _, _, _, _, _, playerName, realm = GetPlayerInfoByGUID(playerNameOrID);
+        playerName = GL:nameFormat{ name = playerName, realm = realm };
     end
 
     if (not playerName) then
@@ -181,17 +176,17 @@ function Player:hasLead(playerNameOrID)
     end
 
     -- If the player is not in our group then we're done checking
-    if (not GL.User:unitIsInYourGroup(playerName)) then
+    if (not GL.User:unitInGroup(playerName)) then
         return false;
     end
 
     -- Check if the player has lead or assist
-    local maximumNumberOfGroupMembers = GL.User.isInRaid and _G.MEMBERS_PER_RAID_GROUP or _G.MAX_RAID_MEMBERS;
+    local maximumNumberOfGroupMembers = GL.User.isInRaid and _G.MAX_RAID_MEMBERS or _G.MEMBERS_PER_RAID_GROUP;
     for index = 1, maximumNumberOfGroupMembers do
         local name, rank = GetRaidRosterInfo(index);
 
         -- Rank 1 = assist, 2 = lead
-        if (name == playerName) then
+        if (GL:iEquals(GL:nameFormat(name), playerName)) then
             return rank == 2;
         end
     end
@@ -209,8 +204,10 @@ function Player:isMasterLooter(playerNameOrID)
     end
 
     local playerName = playerNameOrID;
+    local realm, _;
     if (GL:strStartsWith(playerNameOrID, "Player-")) then
-        playerName = select(6, GetPlayerInfoByGUID(playerNameOrID));
+        _, _, _, _, _, playerName, realm = GetPlayerInfoByGUID(playerNameOrID);
+        playerName = GL:nameFormat{ name = playerName, realm };
     end
 
     if (not playerName) then
@@ -218,17 +215,16 @@ function Player:isMasterLooter(playerNameOrID)
     end
 
     -- If the player is not in our group then we're done checking
-    if (not GL.User:unitIsInYourGroup(playerName)) then
+    if (not GL.User:unitInGroup(playerName)) then
         return false;
     end
 
-    local lootMethod, _, masterLooterRaidID = GetLootMethod();
+    local lootMethod, masterLooterPartyID, masterLooterRaidID = GetLootMethod();
+
     -- Master looting is active and this player is the master looter
-    if (lootMethod == 'master'
-        and tonumber(masterLooterRaidID)
-        and GL:iEquals(GetRaidRosterInfo(masterLooterRaidID), playerName)
-    ) then
-        return true;
+    if (lootMethod == 'master') then
+        local ID = masterLooterPartyID or masterLooterRaidID;
+        return GL:iEquals(GetRaidRosterInfo(ID), GL:nameFormat(playerName));
     end
 
     return false;
@@ -246,7 +242,7 @@ function Player:classByName(playerName, default)
         default = "priest";
     end
 
-    playerName = string.lower(strtrim(playerName));
+    playerName = GL:nameFormat{ name = playerName, func = strlower };
 
     -- We already know this player's class name, return it
     if (self.playerClassByName[playerName]) then
@@ -254,15 +250,15 @@ function Player:classByName(playerName, default)
     end
 
     -- Attempt to fetch the player class
-    local fileName = UnitClassBase(playerName);
+    local classFile = UnitClassBase(playerName);
 
     -- Player names can be stored for the entire session since
     -- it's impossible for them to change during runtime
-    if (type(fileName) == "string"
-        and not GL:empty(fileName)
+    if (type(classFile) == "string"
+        and not GL:empty(classFile)
     ) then
-        if (GL.Data.Constants.UnitClasses[string.upper(fileName)]) then
-            self.playerClassByName[playerName] = string.lower(fileName);
+        if (GL.Data.Constants.UnitClasses[string.upper(classFile)]) then
+            self.playerClassByName[playerName] = string.lower(classFile);
         end
     end
 

@@ -183,16 +183,16 @@ function PlayerSelector:drawPlayersTable(Parent, PlayerNames)
 
     local TableRows = {};
     for _, Player in pairs(GL.User:groupMembers()) do
-        local realmFreeMemberName = string.lower(GL:stripRealm(Player.name));
+        local realmlessMemberName = GL:stripRealm(Player.name);
 
         for _, playerName in pairs(PlayerNames) do
-            local realmFreePlayerName = string.lower(GL:stripRealm(playerName));
+            local realmlessPlayerName = GL:stripRealm(playerName);
 
-            if (realmFreeMemberName == realmFreePlayerName) then
+            if (GL:iEquals(realmlessMemberName, realmlessPlayerName)) then
                 tinsert(TableRows, {
                     cols = {
                         {
-                            value = Player.name,
+                            value = GL:nameFormat(Player.fqn),
                             color = GL:classRGBAColor(Player.class),
                         },
                     },

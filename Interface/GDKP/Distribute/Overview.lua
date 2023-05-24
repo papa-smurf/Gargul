@@ -236,13 +236,13 @@ function Overview:build()
     Clear:SetWidth(90);
     Clear:SetHeight(20);
     Clear:SetCallback("OnClick", function()
-        Interface.Dialogs.PopupDialog:open({
+        Interface.Dialogs.PopupDialog:open{
             question = "Are you sure you want to reset all players and calculations? Note: all players no longer in the raid will be removed from the list!",
             OnYes = function ()
                 GDKPPot:resetCuts(self.sessionID);
                 self:throttledRefresh();
             end,
-        });
+        };
     end);
     Interface:set(self, "Clear", Clear);
 
@@ -383,12 +383,12 @@ function Overview:refresh()
         question = "Locking a session means you can't auction items or otherwise change anything until you unlock it, are you sure?";
     end
     LockToggler:SetCallback("OnClick", function()
-        Interface.Dialogs.PopupDialog:open({
+        Interface.Dialogs.PopupDialog:open{
             question = question,
             OnYes = function ()
                 GDKPSession:toggleLock(self.sessionID);
             end,
-        });
+        };
     end);
 
     local Mutators = GL:tableGet(Session, "Pot.Mutators", {});
@@ -478,10 +478,10 @@ function Overview:refresh()
                         return;
                     end
 
-                    Interface.Dialogs.PopupDialog:open({
+                    Interface.Dialogs.PopupDialog:open{
                         question = string.format("Are you sure you want to delete the %s mutator?", Mutator.name),
                         OnYes = function () deleteMutator(); end,
-                    });
+                    };
                 end,
                 tooltip = "Delete. Hold shift to bypass confirmation",
                 normalTexture = "Interface/AddOns/Gargul/Assets/Buttons/delete",
@@ -549,11 +549,10 @@ function Overview:refresh()
 
     local PlayersInRaid = {};
     local PlayersNotInRaid = {};
-    local GroupMemberNames = GL.User:groupMemberNames();
 
     -- Split players into in raid and not in raid
     for player in pairs(Session.Pot.DistributionDetails or {}) do
-        if (GL:inTable(GroupMemberNames, player)) then
+        if (GL.User:unitInGroup(player)) then
             tinsert(PlayersInRaid, player);
         else
             tinsert(PlayersNotInRaid, player);
@@ -597,17 +596,18 @@ function Overview:refresh()
         RaidersFrame:AddChild(RaiderHolder);
 
         local nameText;
+        local nameFormatted = GL:disambiguateName(player);
         if (not Session.lockedAt) then
-            nameText = string.format("    |c00%s%s|r", classColor, player);
+            nameText = string.format("    |c00%s%s|r", classColor, nameFormatted);
         else
             local copperToGive = GDKPSession:copperOwedToPlayer(player, Session.ID);
 
             if (copperToGive > 0) then
-                nameText = string.format("    |c00F7922E(%sg)|r |c00%s%s|r", copperToGive / 10000, classColor, player);
+                nameText = string.format("    |c00F7922E(%sg)|r |c00%s%s|r", copperToGive / 10000, classColor, nameFormatted);
             elseif (copperToGive < 0) then
-                nameText = string.format("    |c00BE3333(%sg)|r |c00%s%s|r", (copperToGive * -1) / 10000, classColor, player);
+                nameText = string.format("    |c00BE3333(%sg)|r |c00%s%s|r", (copperToGive * -1) / 10000, classColor, nameFormatted);
             else
-                nameText = string.format("    |c0092FF00(0)|r |c00%s%s|r", classColor, player);
+                nameText = string.format("    |c0092FF00(0)|r |c00%s%s|r", classColor, nameFormatted);
             end
         end
 

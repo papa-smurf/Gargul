@@ -87,7 +87,7 @@ function DroppedLoot:draw(Parent)
             local TMBItemFound = false;
             for itemID, ItemEntry in pairs(GL.DB:get("TMB.Items", {})) do
                 for _, Entry in pairs(ItemEntry) do
-                    local playerName = string.lower(GL:stripRealm(Entry.character));
+                    local playerName = string.lower(GL:disambiguateName(Entry.character));
 
                     --- NOTE TO SELF: it's (os) because of the string.lower, if you remove the lower then change below accordingly!
                     if (normalizedPlayerName == string.gsub(playerName, "%(os%)", "")) then

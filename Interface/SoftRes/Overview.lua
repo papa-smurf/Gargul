@@ -487,37 +487,24 @@ function Overview:drawCharacterTable(Parent)
     });
 
     local PlayerData = {};
-    local FqnNames = {};
 
     -- Go through everyone in the raid so that you can immediately tell who forgot to soft-reserve!
     if (GL.User.isInGroup) then
         for _, Player in pairs(GL.User:groupMembers()) do
-            local playerName = string.lower(Player.name);
-
-            if (GL.isEra and not strfind(playerName, "-")) then
-                playerName = string.format("%s-%s", playerName, GL.User.realm);
-            end
+            -- Soft-Res doesn't support cross-realm at this point in time
+            local playerName = string.lower(GL:stripRealm(Player.name));
 
             PlayerData[playerName] = {
                 class = Player.class,
                 note = "",
                 plusOnes = 0,
                 Items = {},
-            }
-
-            if (GL.isEra) then
-                GL:tableSet(FqnNames, GL:stripRealm(playerName) .. "." .. string.lower(Player.class), playerName);
-            end
+            };
         end
     end
 
     -- We can't do a direct assignment because we want to edit this table in a bit
     for playerName, Entry in pairs(SoftRes.MaterializedData.DetailsByPlayerName) do
-
-        if (GL.isEra) then
-            playerName = GL:tableGet(FqnNames, string.lower(playerName) .. "." .. Entry.class, playerName);
-        end
-
         PlayerData[playerName] = Entry;
     end
 

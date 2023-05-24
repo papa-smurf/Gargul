@@ -549,7 +549,7 @@ function TimeLeft:refreshBars(byRefresh)
 
     local numberOfBagsToCheck = 4;
     -- Dragon Flight introduced an extra bag slot
-    if (GL.clientIsDragonFlightOrLater) then
+    if (GL.isDragonFlightOrLater) then
         numberOfBagsToCheck = numberOfBagsToCheck + 1;
     end
 

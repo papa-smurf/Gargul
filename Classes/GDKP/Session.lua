@@ -188,27 +188,29 @@ function Session:copperOwedToPlayer(player, sessionID)
         return;
     end
 
+    local playerGUID = GDKP:playerGUID(player);
+
     -- You can't owe yourself anything
-    if (GL:iEquals(player, GL.User.name)) then
+    if (GL:iEquals(playerGUID, GL.User.fqn)) then
         return 0;
     end
 
-    local GoldTraded = GL:tableGet(Instance, "GoldTrades." .. player, {
+    local GoldTraded = GL:tableGet(Instance, "GoldTrades." .. playerGUID, {
         from = 0,
         to = 0,
     });
 
-    local goldMailed = GL:tableGet(Instance, "GoldMails." .. player, 0);
+    local goldMailed = GL:tableGet(Instance, "GoldMails." .. playerGUID, 0);
 
     local playerCutInCopper = 0;
     -- Only include the player cut if the current GDKP session is locked and ready for payout
     if (Instance.lockedAt) then
-        playerCutInCopper = GL:tableGet(Instance, "Pot.Cuts." .. player, 0) * 10000;
+        playerCutInCopper = GL:tableGet(Instance, "Pot.Cuts." .. playerGUID, 0) * 10000;
     end
 
     local copperReceived = GoldTraded.from;
     local copperGiven = GoldTraded.to + goldMailed;
-    local copperSpentByPlayer = self:goldSpentByPlayer(player, Instance.ID) * 10000;
+    local copperSpentByPlayer = self:goldSpentByPlayer(playerGUID, Instance.ID) * 10000;
     local copperToReceive = copperSpentByPlayer - copperReceived;
     local copperToGive = playerCutInCopper - copperToReceive - copperGiven;
 
@@ -234,21 +236,19 @@ function Session:tradeInitiated(Details)
     end
 
     local message = "";
-    local playerCut = 0;
-    if (Instance.lockedAt) then
-        playerCut = GL:tableGet(Instance, "Pot.Cuts." .. Details.partner, 0) or 0;
-    end
+    local partnerGUID = GDKP:playerGUID(Details.partner);
+    local playerCut = GDKPPot:getCut(partnerGUID);
 
-    local GoldTrades = GL:tableGet(Instance, "GoldTrades." .. Details.partner, {
+    local GoldTrades = GL:tableGet(Instance, "GoldTrades." .. partnerGUID, {
         from = 0,
         to = 0,
     });
 
     local playerCutInCopper = playerCut * 10000;
     local copperReceived = GoldTrades.from;
-    local copperGiven = GoldTrades.to + GL:tableGet(Instance, "GoldMails." .. Details.partner, 0);
-    local copperSpentByPlayer = self:goldSpentByPlayer(Details.partner) * 10000;
-    local balance = tonumber(self:copperOwedToPlayer(Details.partner, Instance.ID) or 0);
+    local copperGiven = GoldTrades.to + GL:tableGet(Instance, "GoldMails." .. partnerGUID, 0);
+    local copperSpentByPlayer = self:goldSpentByPlayer(partnerGUID) * 10000;
+    local balance = tonumber(self:copperOwedToPlayer(partnerGUID, Instance.ID) or 0);
 
     local balanceMessage = " ";
     local whisperMessage = nil;
@@ -350,9 +350,10 @@ function Session:goldSpentByPlayer(player, sessionID)
         return 0;
     end
 
+    local playerGUID = GDKP:playerGUID(player);
     local spent = 0;
     for _, Sale in pairs(Instance.Auctions or {}) do
-        if (not Sale.deletedAt and Sale.price and Sale.Winner.name == player and GL:higherThanZero(Sale.price)) then
+        if (not Sale.deletedAt and Sale.price and Sale.Winner.guid == playerGUID and GL:higherThanZero(Sale.price)) then
             spent = spent + Sale.price;
 
             if (Sale.paid) then
@@ -376,18 +377,19 @@ function Session:goldBidByPlayer(player, sessionID)
         return 0;
     end
 
+    local playerGUID = GDKP:playerGUID(player);
     local bid = 0;
     for _, Sale in pairs(Instance.Auctions or {}) do
         if (not Sale.deletedAt
             and Sale.price
-            and Sale.Winner.name ~= player
+            and Sale.Winner.guid ~= playerGUID
             and GL:higherThanZero(Sale.price)
             and Sale.Bids
         ) then
             for bidder, Bid in pairs(Sale.Bids or {}) do
                 if (type(Bid) == "table"
                     and Bid.bid
-                    and bidder == player
+                    and bidder == playerGUID
                 ) then
                     bid = bid + Bid.bid;
                     break;
@@ -424,13 +426,14 @@ function Session:registerGoldTrade(Details)
     end
 
     Instance.GoldTrades = Instance.GoldTrades or {};
-    Instance.GoldTrades[Details.partner] = Instance.GoldTrades[Details.partner] or {
+    local playerGUID = GDKP:playerGUID(Details.partner);
+    Instance.GoldTrades[playerGUID] = Instance.GoldTrades[playerGUID] or {
         to = 0,
         from = 0,
     };
 
-    Instance.GoldTrades[Details.partner].from = Instance.GoldTrades[Details.partner].from + theirGold;
-    Instance.GoldTrades[Details.partner].to = Instance.GoldTrades[Details.partner].to + myGold;
+    Instance.GoldTrades[playerGUID].from = Instance.GoldTrades[playerGUID].from + theirGold;
+    Instance.GoldTrades[playerGUID].to = Instance.GoldTrades[playerGUID].to + myGold;
 
     Events:fire("GL.GDKP_GOLD_TRADED");
 
@@ -449,9 +452,10 @@ function Session:registerGoldMail(player, copper)
         return;
     end
 
+    local playerGUID = GDKP:playerGUID(player);
     Instance.GoldMails = Instance.GoldMails or {};
-    Instance.GoldMails[player] = Instance.GoldMails[player] or 0;
-    Instance.GoldMails[player] = Instance.GoldMails[player] + copper;
+    Instance.GoldMails[playerGUID] = Instance.GoldMails[playerGUID] or 0;
+    Instance.GoldMails[playerGUID] = Instance.GoldMails[playerGUID] + copper;
 
     Events:fire("GL.GDKP_GOLD_MAILED");
 
@@ -676,6 +680,7 @@ function Session:create(title, managementCut)
             realm = GL.User.realm,
             guild = GL.User.Guild.name,
             uuid = GL.User.id,
+            guid = GDKP:myGUID()
         },
         Pot = {
             Mutators = Settings:get("GDKP.Mutators", {}),

@@ -91,7 +91,7 @@ function Overview:draw()
     ScrollFrame:SetLayout("Flow");
     ScrollFrameParent:AddChild(ScrollFrame);
 
-    local HorizontalSpacer = AceGUI:Create("SimpleGroup");
+    HorizontalSpacer = AceGUI:Create("SimpleGroup");
     HorizontalSpacer:SetLayout("FILL");
     HorizontalSpacer:SetFullWidth(true);
     HorizontalSpacer:SetHeight(6);
@@ -101,7 +101,7 @@ function Overview:draw()
     ButtonFrame:SetLayout("FLOW")
     ButtonFrame:SetFullWidth(true);
     Window:AddChild(ButtonFrame);
-    
+
     local ClearButton = AceGUI:Create("Button");
     ClearButton:SetText("Clear Data");
     ClearButton:SetWidth(80);
@@ -139,7 +139,7 @@ function Overview:draw()
     end);
     ButtonFrame:AddChild(ExportButton);
 
-    local HorizontalSpacer = AceGUI:Create("SimpleGroup");
+    HorizontalSpacer = AceGUI:Create("SimpleGroup");
     HorizontalSpacer:SetLayout("FILL");
     HorizontalSpacer:SetFullWidth(true);
     HorizontalSpacer:SetHeight(6);
@@ -187,16 +187,14 @@ end
 ---@param Parent table
 ---@return void
 function Overview:addPlayerPlusOneEntries(Parent)
-    local VerticalSpacer;
     local HorizontalSpacer;
     local PlusOneEntries = {};
 
     for _, Player in pairs(GL.User:groupMembers()) do
-        local normalizedName = GL:normalizedName(Player.name);
         tinsert(PlusOneEntries, {
-            name = normalizedName,
+            name = Player.fqn,
             class = Player.class,
-            total = GL.PlusOnes:getPlusOnes(normalizedName),
+            total = GL.PlusOnes:getPlusOnes(Player.fqn),
         });
     end
 
@@ -217,7 +215,7 @@ function Overview:addPlayerPlusOneEntries(Parent)
 
         local PlayerName = AceGUI:Create("Label");
         PlayerName:SetFontObject(_G["GameFontNormal"]);
-        PlayerName:SetText(GL:capitalize(Entry.name));
+        PlayerName:SetText(GL:nameFormat(Entry.name));
         PlayerName:SetColor(unpack(GL:classRGBColor(Entry.class)))
         PlayerName:SetHeight(28);
         PlayerName:SetWidth(320);
@@ -309,11 +307,10 @@ function Overview:update()
     end
 
     for _, Player in pairs(GL.User:groupMembers()) do
-        local normalizedName = GL:normalizedName(Player.name);      
-        local PlusOneLabel = GL.Interface:get(self, "Label.PlusOnesOf_" .. normalizedName);
+        local PlusOneLabel = GL.Interface:get(self, "Label.PlusOnesOf_" .. Player.fqn);
 
         if (PlusOneLabel) then
-            PlusOneLabel:SetText(GL.PlusOnes:getPlusOnes(normalizedName));
+            PlusOneLabel:SetText(GL.PlusOnes:getPlusOnes(Player.fqn));
         else
             self:close();
             return self:draw();

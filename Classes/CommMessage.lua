@@ -45,9 +45,9 @@ function CommMessage.new(action, content, channel, recipient)
     self.channel = channel;
     self.version = GL.version;
     self.minimumVersion = GL.Data.Constants.Comm.minimumAppVersion;
-    self.senderRealm = GL.User.realm or GetRealmName();
-    self.senderFqn = GL.User.fqn or ("%s-%s"):format(UnitName("player"), GetRealmName());
-    self.recipient = recipient;
+    self.senderRealm = GL.User.realm;
+    self.senderFqn = GL.User.fqn or GL:addRealm(UnitName("player"), GL.User.realm);
+    self.recipient = recipient and GL:nameFormat(recipient) or nil;
     self.Responses = {};
 
     CommMessage.Box[self.id] = self;

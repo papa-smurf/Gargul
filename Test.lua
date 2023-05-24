@@ -481,6 +481,26 @@ function Test.PackMule:whoReceivesItem(itemID, lootMethod)
     end, 1);
 end
 
+--[[ Test PackMule's RR functionality
+/script _G.Gargul.Test.PackMule:roundRobin()
+]]
+function Test.PackMule:roundRobin(itemID)
+    itemID = itemID == nil and 6948 or itemID;
+
+    local GroupMembers = GL.User:groupMembers();
+    local iterations = GL:count(GroupMembers) * 2;
+
+    local Rule = {
+        target = "RR",
+        item = itemID,
+    };
+
+    for _ = 1, iterations do
+        local target = GL.PackMule:roundRobinTargetForRule(Rule);
+        GL:xd(target);
+    end
+end
+
 --[[ Simulate being in an X-man group
 /script _G.Gargul.Test:simulateGroup(25)
 ]]
@@ -500,11 +520,13 @@ function Test:simulateGroup(numberOfPlayers, includeSelf, includeCurrentGroupMem
         numberOfPlayers = numberOfPlayers - 1;
         tinsert(Players, {
             name = GL.User.name,
+            realm = GL.User.realm,
+            fqn = GL.User.fqn,
             rank = 2,
             subgroup = 1,
             level = GL.User.level,
             class = string.lower(GL.User.class),
-            fileName = string.upper(GL.User.class),
+            classFile = GL.User.classFile,
             zone = "Development Land",
             online = true,
             isDead = false,
@@ -529,11 +551,13 @@ function Test:simulateGroup(numberOfPlayers, includeSelf, includeCurrentGroupMem
 
         tinsert(Players, {
             name = name,
+            realm = GL:getRealmFromName(name) or GL.User.realm,
+            fqn = GL:addRealm(name, GL.User.realm),
             rank = 2,
             subgroup = 1,
             level = GL.User.level,
             class = string.lower(class),
-            fileName = string.upper(class),
+            classFile = string.upper(class),
             zone = "Development Land",
             online = true,
             isDead = false,
