@@ -180,7 +180,7 @@ function GL:nameFormat(name, realm, colorize, stripRealm, stripSameRealm, forceR
     name, realm = self:stripRealm(name);
     realm = passedRealm or realm;
     name = realm and ("%s-%s"):format(self:capitalize(name), self:capitalize(realm)) or self:capitalize(name);
-    stripSameRealm = stripSameRealm == nil and true or stripSameRealm;
+    stripSameRealm = stripSameRealm ~= false;
 
     if (not forceRealm and stripRealm) then
         name = self:stripRealm(name);
@@ -1577,7 +1577,7 @@ end
 function GL:onTooltipSetItem(Callback, includeItemRefTooltip)
     GL:debug("GL:onTooltipSetItem");
 
-    includeItemRefTooltip = includeItemRefTooltip == nil and true or includeItemRefTooltip;
+    includeItemRefTooltip = includeItemRefTooltip ~= false;
     includeItemRefTooltip = GL:toboolean(includeItemRefTooltip);
 
     -- Support native GameToolTip
@@ -1710,7 +1710,7 @@ end
 ---@return string
 function GL:addRealm(name, realm, fromGroup)
     realm = not self:empty(realm) and realm or nil;
-    fromGroup = fromGroup == nil and true or fromGroup;
+    fromGroup = fromGroup ~= false;
     name = tostring(name);
 
     if (self:empty(name)) then
