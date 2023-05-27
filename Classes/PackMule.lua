@@ -863,11 +863,11 @@ function PackMule:setDisenchanter(disenchanter)
         return;
     end
 
-    self.disenchanter = GL:capitalize(string.lower(disenchanter));
+    self.disenchanter = GL:addRealm(disenchanter);
 
     GL:sendChatMessage(
         string.format("%s was set as disenchanter",
-        self.disenchanter
+        GL:nameFormat(self.disenchanter)
     ), "GROUP");
 end
 
@@ -964,11 +964,15 @@ function PackMule:assignLootToPlayer(itemID, playerName)
     -- Try to determine the index of the player who should receive it
     local playerIndex = false;
     for _, Player in pairs(GL.User:groupMembers()) do
-        local candidate = GL:normalizedName(GetMasterLootCandidate(itemIndex, Player.index) or "");
+        local candidate = GetMasterLootCandidate(itemIndex, Player.index);
 
-        if (candidate and candidate == playerName) then
-            playerIndex = Player.index;
-            break;
+        if (candidate) then
+            candidate = GL:addRealm(candidate);
+
+            if (candidate and GL:iEquals(candidate, playerName)) then
+                playerIndex = Player.index;
+                break;
+            end
         end
     end
 

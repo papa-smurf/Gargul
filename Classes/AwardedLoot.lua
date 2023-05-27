@@ -309,7 +309,8 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, G
         winner = winner.winner;
     end
 
-    winner = GL:addRealm(winner);
+    local isDisenchanted = winner == GL.Exporter.disenchantedItemIdentifier;
+    winner = not isDisenchanted and GL:addRealm(winner) or winner;
 
     local broadcast = false;
     if (automaticallyAwarded) then
@@ -359,7 +360,7 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, G
         return false;
     end
 
-    winner = GL:nameFormat{name = winner, forceRealm = true};
+    winner = not isDisenchanted and GL:nameFormat{name = winner, forceRealm = true} or winner;
 
     -- You can set the date for when this item was awarded, handy if you forgot an item for example
     if (dateProvided) then
@@ -392,14 +393,16 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, G
     end
 
     local realmLessName = string.lower(GL:stripRealm(winner));
-    local isReserved = GL.SoftRes:itemIDIsReservedByPlayer(itemID, realmLessName);
     local isPrioritized, isWishlisted = false, false;
+    local isReserved = not isDisenchanted and GL.SoftRes:itemIDIsReservedByPlayer(itemID, realmLessName) or false;
 
-    for _, Entry in pairs(GL.TMB:byItemIDAndPlayer(itemID, realmLessName) or {}) do
-        if (Entry.type == GL.Data.Constants.tmbTypePrio) then
-            isPrioritized = true;
-        elseif (Entry.type == GL.Data.Constants.tmbTypeWish) then
-            isWishlisted = true;
+    if (not isDisenchanted) then
+        for _, Entry in pairs(GL.TMB:byItemIDAndPlayer(itemID, realmLessName) or {}) do
+            if (Entry.type == GL.Data.Constants.tmbTypePrio) then
+                isPrioritized = true;
+            elseif (Entry.type == GL.Data.Constants.tmbTypeWish) then
+                isWishlisted = true;
+            end
         end
     end
 
