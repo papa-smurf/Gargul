@@ -796,12 +796,12 @@ function PackMule:disenchant(itemLink, byPassConfirmationDialog, callback)
         -- Show the player selector
         GL.Interface.PlayerSelector:draw("Who is your disenchanter?", PlayerNames, function (playerName)
             GL.Interface.Dialogs.PopupDialog:open{
-                question = string.format("Set |cff%s%s|r as your disenchanter?",
-                    GL:classHexColor(GL.Player:classByName(playerName)),
+                question = string.format("Set %s as your disenchanter?",
+                    GL:nameFormat{ name = playerName, colorize = true },
                     playerName
                 ),
                 OnYes = function ()
-                    self.disenchanter = playerName;
+                    self:setDisenchanter(playerName);
                     self:disenchant(itemLink, true);
 
                     GL.Interface.PlayerSelector:close();
@@ -826,9 +826,9 @@ function PackMule:disenchant(itemLink, byPassConfirmationDialog, callback)
 
     -- Make sure the initiator confirms his choice
     GL.Interface.Dialogs.PopupDialog:open{
-        question = string.format("Send %s to |cff%s%s|r? Type /gl cd to remove this disenchanter!",
+        question = string.format("Send %s to %s? Type /gl cd to remove this disenchanter!",
             itemLink,
-            GL:classHexColor(GL.Player:classByName(self.disenchanter)),
+            GL:nameFormat{ name = self.disenchanter, colorize = true },
             self.disenchanter
         ),
         OnYes = function ()

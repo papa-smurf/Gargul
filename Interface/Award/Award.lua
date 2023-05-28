@@ -338,12 +338,12 @@ function Award:draw(itemLink, callback)
 
         -- No disenchanter was set yet
         GL.Interface.Dialogs.PopupDialog:open{
-            question = string.format("Set |cff%s%s|r as your disenchanter?",
-                    GL:classHexColor(GL.Player:classByName(disenchanter)),
+            question = string.format("Set %s as your disenchanter?",
+                    GL:nameFormat{ name = disenchanter, colorize = true },
                     disenchanter
             ),
             OnYes = function ()
-                GL.PackMule.disenchanter = disenchanter;
+                GL.PackMule:setDisenchanter(disenchanter);
                 GL.PackMule:disenchant(itemLink, true);
 
                 if (Settings:get("UI.Award.closeOnAward", true)) then

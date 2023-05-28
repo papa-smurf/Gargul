@@ -632,6 +632,9 @@ function AwardedLoot:tradeInitiated()
         return;
     end
 
+    -- Check if we're trading the designated disenchanter
+    local tradedPlayerIsDisenchanter = GL:iEquals(GL:addRealm(tradingPartner), GL.PackMule.disenchanter);
+
     -- Check whether there are any awarded items that need to be traded to your trading partner
     local threeHoursAgo = GetServerTime() - 10800;
 
@@ -656,7 +659,7 @@ function AwardedLoot:tradeInitiated()
 
                     -- The item is marked as disenchanted and our trading partner is the designated enchanter
                     and (awardedTo ~= GL.Exporter.disenchantedItemIdentifier
-                        or tradingPartner ~= GL.PackMule.disenchanter
+                        or not tradedPlayerIsDisenchanter
                     )
                 )
             ) then
