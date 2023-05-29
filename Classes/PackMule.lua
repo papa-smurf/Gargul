@@ -353,13 +353,13 @@ function PackMule:lootReady()
                 end
 
                 -- These are group loot targets that don't apply when master looting
-                if (GL:inTable({"PASS", "GREED", "NEED"}, target)) then
+                if (GL:inTable({ "PASS", "GREED", "NEED" }, target)) then
                     return;
                 end
 
+                target = GL:nameFormat(target);
                 for playerIndex = 1, GetNumGroupMembers() do
-                    -- Make sure to do a case-insensitive check
-                    if (string.lower(GetMasterLootCandidate(itemIndex, playerIndex) or "") == target) then
+                    if (GL:iEquals(GetMasterLootCandidate(itemIndex, playerIndex) or "", target)) then
                         GiveMasterLoot(itemIndex, playerIndex);
                         return;
                     end
@@ -601,13 +601,13 @@ function PackMule:getTargetForItem(itemLinkOrId, callback)
                 end
 
                 if (not GL:inTable({"PASS", "GREED", "NEED"}, ruleTarget)) then
-                    -- GroupMemberNames are always in lowercase
-                    if (GL:inTable(GroupMemberNames, string.lower(ruleTarget))) then
-                        ruleTarget = GL:nameFormat(ruleTarget);
+                    ruleTarget = GL:addRealm(ruleTarget);
 
+                    -- GroupMemberNames are always in lowercase
+                    if (GL:inTable(GroupMemberNames, ruleTarget)) then
                         -- This is a high prio target, return it and stop checking
                         if (targetContainsExclamationMark) then
-                            Targets = {ruleTarget};
+                            Targets = { ruleTarget };
                             break;
                         end
 
