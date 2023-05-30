@@ -1999,7 +1999,7 @@ function Auction:processBid(message, bidder)
             local secondsLeft = math.floor(GL.Ace:TimeLeft(self.timerId) - GL.Settings:get("GDKP.auctionEndLeeway", 2));
             if (secondsLeft <= self.Current.antiSnipe) then
                 if(Settings:get("GDKP.simpleAntiSnipe")) then
-                    self:announceReschedule(newDuration);
+                    self:announceReschedule(self.Current.antiSnipe);
                 else
                     self:announceExtension(self.Current.antiSnipe);
                 end
