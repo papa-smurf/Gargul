@@ -355,7 +355,7 @@ function Pot:calculateCuts(sessionID)
                     numberOfPlayersWithBase = numberOfPlayersWithBase + 1;
                 end
 
-                -- This player receives a manual gold adjustment
+            -- This player receives a manual gold adjustment
             elseif (name == Constants.GDKP.adjustMutatorIdentifier) then
                 if (tonumber(value)) then
                     flat = flat + value;

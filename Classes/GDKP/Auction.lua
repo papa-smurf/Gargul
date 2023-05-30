@@ -1313,7 +1313,7 @@ end
 ---@param time number
 ---@return boolean
 function Auction:announceReschedule(time)
-    GL:debug("GDKP.Auction:announceShortening");
+    GL:debug("GDKP.Auction:announceReschedule");
 
     if (not Auction:startedByMe()) then
         return;

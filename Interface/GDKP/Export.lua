@@ -157,7 +157,7 @@ function Export:build()
 
     local showCustomFormatHelpTooltip = function ()
         GameTooltip:SetOwner(HelpIconFrame, "ANCHOR_RIGHT");
-        GameTooltip:SetText(string.format("Available values:\n\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n\n%s",
+        GameTooltip:SetText("Available values:\n\n" .. table.concat({
             "@ID",
             "@LINK",
             "@ITEM",
@@ -179,8 +179,9 @@ function Export:build()
             "@ICON",
             "@WOWHEAD",
             "@CHECKSUM",
-            "\\t is replaced by a tab"
-        ));
+            "",
+            "\\t is replaced by a tab",
+        }, "\n"));
         GameTooltip:Show();
     end;
     HelpIcon:SetCallback("OnEnter", function() showCustomFormatHelpTooltip() end);
@@ -280,9 +281,11 @@ function Export:exportAuctionsToCustomFormat(Auctions)
             end
 
             if (GL.isEra) then
-                wowheadLink = string.format("https://classic.wowhead.com/item=%s", Auction.itemID);
+                wowheadLink = ("https://classic.wowhead.com/item=%s"):format(Auction.itemID);
+            elseif (GL.isRetail) then
+                wowheadLink = ("https://www.wowhead.com/item=%s"):format(Auction.itemID);
             else
-                wowheadLink = string.format("https://www.wowhead.com/wotlk/item=%s", Auction.itemID);
+                wowheadLink = ("https://www.wowhead.com/wotlk/item=%s"):format(Auction.itemID);
             end
 
             if (icon) then

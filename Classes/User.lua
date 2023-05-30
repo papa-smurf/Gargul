@@ -94,7 +94,7 @@ function User:refresh()
     local userWasInGroup = self.isInGroup;
     local userWasInRaid = self.isInRaid;
 
-    -- Make sure the window doens't popup after /reload
+    -- Make sure the window doesn't popup after /reload
     if (userWasMasterLooter == nil) then
         userWasMasterLooter = true;
     end

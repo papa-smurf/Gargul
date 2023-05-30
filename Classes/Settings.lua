@@ -99,7 +99,7 @@ function Settings:enforceTemporarySettings()
     GL.Ace:ScheduleTimer(function ()
         --[[ REWRITE BOOSTED ROLL ENTRIES ]]
         local BoostedRollEntries = {};
-        for player, points in pairs(DB:get("BoostedRolls.Points") or {}) do
+        for player, points in pairs(DB:get("BoostedRolls.Points", {})) do
             local fqn = GL:addRealm(player);
 
             BoostedRollEntries[fqn] = points;
@@ -108,7 +108,7 @@ function Settings:enforceTemporarySettings()
 
         --[[ REWRITE BOOSTED ROLL ALIASES ]]
         local BoostedRollAliases = {};
-        for alias, main in pairs(DB:get("BoostedRolls.Aliases") or {}) do
+        for alias, main in pairs(DB:get("BoostedRolls.Aliases", {})) do
             local _, mainRealm = GL:stripRealm(main);
 
             -- If no realm is specified assume same realm as main
@@ -123,7 +123,7 @@ function Settings:enforceTemporarySettings()
 
         --[[ REWRITE PLUS ONE ENTRIES ]]
         local PlusOneEntries = {};
-        for player, points in pairs(DB:get("PlusOnes.Totals") or {}) do
+        for player, points in pairs(DB:get("PlusOnes.Totals", {})) do
             local fqn = GL:addRealm(player);
 
             PlusOneEntries[fqn] = points;

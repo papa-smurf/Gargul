@@ -1066,10 +1066,10 @@ function SoftRes:importGargulData(data)
 
             -- We don't simply overwrite the PlusOnes if plusone data is already present
             -- If the player doesn't have any plusones yet then we set it to whatever is provided by softres
-            if (GL.isEra
+            if (GL:isCrossRealm()
                 or (GL:higherThanZero(currentPlusOneValue)
-                and currentPlusOneValue ~= plusOnes
-            )
+                    and currentPlusOneValue ~= plusOnes
+                )
             ) then
                 differentPlusOnes = true;
             else
@@ -1102,8 +1102,8 @@ function SoftRes:importGargulData(data)
     DB.SoftRes.HardReserves = HardReserveEntries;
 
     -- At this point in Era we don't really know anyone's plus one because SoftRes doesn't support realm tags (yet)
-    if (GL.isEra) then
-        if (not GL:empty(DB.PlusOnes)) then
+    if (GL:isCrossRealm()) then
+        if (not GL:empty(DB:get("PlusOnes"))) then
             GL.Interface.Dialogs.PopupDialog:open{
                 question = "Do you want to clear all previous PlusOne values?",
                 OnYes = function ()
@@ -1183,7 +1183,7 @@ function SoftRes:importCSVData(data, reportStatus)
 
                 -- We don't simply overwrite the PlusOnes if plusone data is already present
                 -- If the player doesn't have any plusones yet then we set it to whatever is provided by softres
-                if (GL.isEra
+                if (GL:isCrossRealm()
                     or (GL:higherThanZero(currentPlusOneValue)
                         and currentPlusOneValue ~= plusOnes
                     )
@@ -1224,8 +1224,8 @@ function SoftRes:importCSVData(data, reportStatus)
     end
 
     -- At this point we don't really know anyone's plus one because SoftRes doesn't support realm tags (yet)
-    if (GL.isEra) then
-        if (not GL:empty(DB.PlusOnes)) then
+    if (GL:isCrossRealm()) then
+        if (not GL:empty(DB:get("PlusOnes"))) then
             GL.Interface.Dialogs.PopupDialog:open{
                 question = "Do you want to clear all previous PlusOne values?",
                 OnYes = function ()
