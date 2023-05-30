@@ -330,7 +330,7 @@ function Overview:build()
     ScrollFrameHolder:SetFullHeight(true)
     SecondColumn:AddChild(ScrollFrameHolder);
 
-    --[[ ALD GOLD BUTTON ]]
+    --[[ ADD GOLD BUTTON ]]
     local AddGoldButton = Interface:createButton(ScrollFrameHolder, {
         onClick = function()
             self:closeSubWindows();
@@ -458,16 +458,16 @@ function Overview:build()
         GL.Interface.GDKP.Export:open(self.selectedSession);
     end);
 
-    local Distribute = AceGUI:Create("Button");
-    Distribute:SetText("Distribute");
-    Distribute:SetWidth(90);
-    Distribute:SetHeight(20);
-    Distribute:SetCallback("OnClick", function()
+    local Cuts = AceGUI:Create("Button");
+    Cuts:SetText("Cuts");
+    Cuts:SetWidth(90);
+    Cuts:SetHeight(20);
+    Cuts:SetCallback("OnClick", function()
         GL.Interface.GDKP.Distribute.Overview:open(self.selectedSession, true);
         Window.frame:Hide();
     end);
 
-    ThirdColumn:AddChildren(EnableOrDisableSession, CreateSession, EditSession, DeleteOrRestoreSession, Export, Distribute);
+    ThirdColumn:AddChildren(EnableOrDisableSession, CreateSession, EditSession, DeleteOrRestoreSession, Export, Cuts);
     ThirdColumn.frame:SetParent(WindowFrame);
     ThirdColumn.frame:SetPoint("BOTTOMLEFT", WindowFrame, "BOTTOMLEFT", 20, 15);
 
@@ -592,7 +592,7 @@ function Overview:refreshLedger()
     end
 
     Note:SetText(string.format(
-        "By %s | On |c00%s%s|r%s",
+        "By %s%s | On |c00%s%s|r%s",
         GL:nameFormat{ name = CreatedBy.name, realm = CreatedBy.realm, colorize = true },
         guild,
         Constants.addonHexColor,
