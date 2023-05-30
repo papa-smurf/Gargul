@@ -9,8 +9,8 @@ L.ALL_SETTINGS = "All Settings";
 L.ANTISNIPE = "Anti Snipe";
 L.ANTISNIPE_EXPLANATION = {
     " ",
-    "An Anti Snipe value of 10 means that 10 seconds will be added",
-    "to the auction if someone bids within the last 10 seconds",
+    "An Anti Snipe value of 10 means that any bid at less than 10 seconds left",
+    "resets the time remaining to 10 seconds",
     " ",
     "You can leave this empty or set to 0 to disable Anti Snipe completely",
     " ",
