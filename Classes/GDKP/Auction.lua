@@ -1242,7 +1242,7 @@ function Auction:announceStop(forceStop)
         and GetTime() - self.lastBidReceivedAt <= self.Current.antiSnipe
         and not self.waitingForReschedule
     ) then
-        self:announceExtension(self.Current.antiSnipe);
+        self:announceReschedule(self.Current.antiSnipe);
         return;
     end
 
@@ -1998,7 +1998,11 @@ function Auction:processBid(message, bidder)
             self.lastBidReceivedAt = GetTime();
             local secondsLeft = math.floor(GL.Ace:TimeLeft(self.timerId) - GL.Settings:get("GDKP.auctionEndLeeway", 2));
             if (secondsLeft <= self.Current.antiSnipe) then
-                self:announceExtension(self.Current.antiSnipe);
+                if(Settings:get("GDKP.simpleAntiSnipe")) then
+                    self:announceReschedule(newDuration);
+                else
+                    self:announceExtension(self.Current.antiSnipe);
+                end
             end
         end
     end

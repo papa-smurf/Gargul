@@ -144,6 +144,7 @@ GL.Data.DefaultSettings = {
         auctionEndLeeway = 2,
         autoAwardViaAuctioneer = true,
         antiSnipe = 10,
+        simpleAntiSnipe = false,
         bidderScale = 1,
         bidderQueueHideUnusable = false,
         defaultMinimumBid = 500,
