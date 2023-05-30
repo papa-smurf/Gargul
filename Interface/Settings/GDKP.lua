@@ -145,6 +145,11 @@ function GDKP:draw(Parent)
             setting = "GDKP.invalidBidsTriggerAntiSnipe",
         },
         {
+            label = "Simple anti-snipe",
+            description = "Bids within the anti-snipe window will reset the timer to the anti-snipe time",
+            setting = "GDKP.simpleAntiSnipe",
+        },
+        {
             label = "Auto award items",
             description = "Auto award an item to the highest bidder when the timer runs out (clicking \"Stop\" during an auction will not trigger this)",
             setting = "GDKP.autoAwardViaAuctioneer",

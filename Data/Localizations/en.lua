@@ -15,6 +15,13 @@ L.ANTISNIPE_EXPLANATION = {
     "You can leave this empty or set to 0 to disable Anti Snipe completely",
     " ",
 };
+L.SIMPLE_ANTISNIPE = "Simple Anti Snipe";
+L.SIMPLE_ANTISNIPE_EXPLANATION = {
+    " ",
+    "Simple Anti Snipe means with Anti Snipe set to 10,",
+    "any bid at less than 10 seconds resets the time remaining to 10 seconds",
+    " ",
+};
 L.ADD_DROPS_TO_QUEUE = "Add dropped loot to queue";
 L.ALL_CUTS_MAILED = "All cuts were mailed!";
 L.AUCTIONEER = "Auctioneer";
