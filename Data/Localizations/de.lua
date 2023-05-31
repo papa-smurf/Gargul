@@ -9,10 +9,11 @@ L.ALL_SETTINGS = "Alle Einstellungen";
 L.ANTISNIPE = "Anti Snipe";
 L.ANTISNIPE_EXPLANATION = {
     " ",
-    "An Anti Snipe value of 10 means that 10 seconds will be added",
-    "to the auction if someone bids within the last 10 seconds",
+    "An Anti Snipe value of 10 means any bids with less than 10 seconds left",
+    "resets the time remaining back to 10 seconds",
     " ",
     "You can leave this empty or set to 0 to disable Anti Snipe completely",
+    "Anti Snipe values less than 5 are not supported",
     " ",
 };
 L.ADD_DROPS_TO_QUEUE = "Add dropped loot to queue";
