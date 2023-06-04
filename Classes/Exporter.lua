@@ -268,9 +268,11 @@ function Exporter:transformEntriesToCustomFormat(Entries)
             local wowheadLink;
 
             if (GL.isEra) then
-                wowheadLink = string.format("https://classic.wowhead.com/item=%s", AwardEntry.itemID );
+                wowheadLink = ("https://classic.wowhead.com/item=%s"):format(AwardEntry.itemID);
+            elseif (GL.isRetail) then
+                wowheadLink = ("https://www.wowhead.com/item=%s"):format(AwardEntry.itemID);
             else
-                wowheadLink = string.format("https://www.wowhead.com/wotlk/item=%s", AwardEntry.itemID );
+                wowheadLink = ("https://www.wowhead.com/wotlk/item=%s"):format(AwardEntry.itemID);
             end
 
             if (ItemDetails) then
@@ -331,7 +333,7 @@ function Exporter:transformEntriesToTMBFormat(Entries)
         exportString = string.format("%s\n%s,%s,%s,%s,%s",
             exportString,
             date('%Y-%m-%d', AwardEntry.timestamp),
-            GL:nameFormat(AwardEntry.awardedTo),
+            GL:nameFormat{ name = AwardEntry.awardedTo, stripRealm = true },
             AwardEntry.itemID,
             AwardEntry.OS,
             AwardEntry.checksum

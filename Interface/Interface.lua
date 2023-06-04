@@ -54,28 +54,31 @@ local MENU_DIVIDER = {
 ---
 ---@param Parent Frame
 ---@param text string|nil
+---@param template string|nil
 ---@return Button
-function Interface:dynamicPanelButton(Parent, text)
-    GL:debug("Interface:dynamicPanelButton");
+function Interface:dynamicPanelButton(Parent, text, template)
+    template = template or "UIPanelButtonTemplate";
+    local minOffset = 33;
 
     ---@type Button
-    local Button = CreateFrame("Button", nil, Parent, "UIPanelButtonTemplate");
+    local Button = CreateFrame("Button", nil, Parent, template);
 
     ---@type FontString
     local Text = Button:GetFontString()
     Text:SetFont(GL.FONT, 11, "");
-    Text:SetText(text or "");
     Text:ClearAllPoints();
     Text:SetPoint("TOPLEFT", 15, -1)
     Text:SetPoint("BOTTOMRIGHT", -15, 1)
     Text:SetJustifyV("MIDDLE")
-    Button:SetSize(Text:GetStringWidth() + 30, 21);
 
     -- Make sure the button changes in size whenever we change its contents
     Button.SetText = function(_, ...)
         Text:SetText(...);
-        Button:SetSize(Text:GetStringWidth() + 30, 21);
+        local textWidth = Text:GetUnboundedStringWidth();
+        Button:SetSize(Text:GetUnboundedStringWidth() + math.max(minOffset, textWidth * .44), 21);
     end
+
+    Button:SetText(text or "");
 
     return Button;
 end
@@ -459,6 +462,14 @@ function Interface:createWindow(name, Details)
             Window:SetMovable(true);
             self:addMoveButton(Window);
             Window:SetUserPlaced(false);
+
+            -- This sequence forces the window to be on top
+            Window._Show = Window.Show;
+            Window.Show = function ()
+                Window:_Show();
+                Window:StartMoving();
+                Window:StopMovingOrSizing();
+            end;
         end
 
         Window:SetScript("OnSizeChanged", function ()
