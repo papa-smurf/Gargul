@@ -96,10 +96,81 @@ function Settings:enforceTemporarySettings()
 
     local Version = GL.Version;
 
-    --- In 6.0.4 the way anti-snipe works changed. Multiplying the existing value by 1.5 should net a pretty decent result
+    --- Check if the last version we loaded is equal to or older than 6.0.4
     if (Version:leftIsNewerThanOrEqualToRight("6.0.4", Version.latestPriorVersionBooted)) then
+        --- In 6.0.4 the way anti-snipe works changed. Multiplying the existing value by 1.5 should net a pretty decent result
         local antiSnipe = tonumber(self:get("GDKP.antiSnipe")) or 10;
         self:set("GDKP.antiSnipe", GL:round(antiSnipe * 1.5));
+
+        --- In 6.0.4 we also completely changed the way mailed and traded gold is stored
+        --- The wait is necessary. This way we can ensure that we know if we're on a cross-realm enabled server
+        GL.Ace:ScheduleTimer(function ()
+            local serverTime = GetServerTime();
+            for key, Session in pairs(DB:get("GDKP.Ledger", {})) do
+                local somethingChanged = false;
+
+                if (Session.GoldMails) then
+                    for playerGUID, copperSent in pairs(Session.GoldMails or {}) do
+                        playerGUID = GL:nameFormat{ name = playerGUID, forceRealm = true, func = strlower };
+                        local now = Session.lockedAt or Session.createdAt or serverTime;
+                        local checksum = GL:stringHash{ Constants.GDKP.mailIdentifier, copperSent, 0, playerGUID, now };
+                        GL:tableSet(Session, ("GoldLedger.%s.%s"):format(playerGUID, checksum), {
+                            createdAt = now,
+                            type = Constants.GDKP.mailIdentifier,
+                            given = copperSent,
+                            received = 0,
+                            createdBy = GL.GDKP:myGUID(),
+                            checksum = checksum;
+                        });
+
+                        somethingChanged = true;
+                    end
+
+                    Session.GoldMails = nil;
+                end
+
+                if (Session.GoldTrades) then
+                    for playerGUID, Details in pairs(Session.GoldTrades or {}) do
+                        playerGUID = GL:nameFormat{ name = playerGUID, forceRealm = true, func = strlower };
+                        local now = Session.lockedAt or Session.createdAt or serverTime;
+
+                        if (Details.to >= 10000) then
+                            local checksum = GL:stringHash{ Constants.GDKP.tradeIdentifier, Details.to, 0, playerGUID, now };
+                            GL:tableSet(Session, ("GoldLedger.%s.%s"):format(playerGUID, checksum), {
+                                createdAt = now,
+                                type = Constants.GDKP.tradeIdentifier,
+                                given = Details.to,
+                                received = 0,
+                                createdBy = GL.GDKP:myGUID(),
+                                checksum = checksum;
+                            });
+
+                            somethingChanged = true;
+                        end
+
+                        if (Details.from >= 10000) then
+                            local checksum = GL:stringHash{ Constants.GDKP.tradeIdentifier, Details.from, 0, playerGUID, now };
+                            GL:tableSet(Session, ("GoldLedger.%s.%s"):format(playerGUID, checksum), {
+                                createdAt = now,
+                                type = Constants.GDKP.tradeIdentifier,
+                                given = 0,
+                                received = Details.from,
+                                createdBy = GL.GDKP:myGUID(),
+                                checksum = checksum;
+                            });
+
+                            somethingChanged = true;
+                        end
+                    end
+
+                    Session.GoldTrades = nil;
+                end
+
+                if (somethingChanged) then
+                    DB:set("GDKP.Ledger." .. key, Session);
+                end
+            end
+        end, 3);
     end
 
     --- In 6.0.0 we made everything FQN-first, forcing us to rewrite existing PO and BR data
