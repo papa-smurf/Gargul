@@ -59,7 +59,7 @@ function ExportingLoot:draw(Parent)
     DisenchanterIdentifier:SetFullWidth(true);
     DisenchanterIdentifier:SetText(GL.Settings:get("ExportingLoot.disenchanterIdentifier"));
     DisenchanterIdentifier:SetLabel(string.format(
-        "|cff%sUnder which name should disenchanted items be mentioned? (Default: _disenchanted)|r",
+        "|cff%sMention disenchanted items under which name? (Default: _disenchanted)|r. Note: |c00FF0000no hyhpens!|r",
         GL:classHexColor("rogue")
     ));
     DisenchanterIdentifier:SetCallback("OnTextChanged", function (self)
