@@ -125,6 +125,9 @@ function TradeWindow:handleEvents(event, message)
     if (event == "UI_INFO_MESSAGE") then
         -- Trade was successful
         if (message == ERR_TRADE_COMPLETE) then
+            -- Check the value of the "Announce trade" checkbox in the trade frame
+            self.State.announce = self.AnnouncementCheckBox and self.AnnouncementCheckBox:GetChecked();
+
             GL.Events:fire("GL.TRADE_COMPLETED", self.State);
         else
             return;
@@ -479,10 +482,8 @@ end
 function TradeWindow:announceTradeDetails(Details)
     GL:debug("TradeWindow:announceTradeDetails");
 
-    -- Check the value of the "Announce trade" checkbox in the trade frame
-    if (self.AnnouncementCheckBox
-        and not self.AnnouncementCheckBox:GetChecked()
-    ) then
+    -- Check if the user wants to announce this trade
+    if (not Details.announce) then
         return;
     end
 

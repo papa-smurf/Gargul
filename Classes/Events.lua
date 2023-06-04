@@ -176,7 +176,7 @@ function Events:massRegister(EventDetails, callback)
             event = Entry[2];
         elseif (type(Entry) == "string") then
             event = Entry;
-            identifier = Entry .. "Lister" .. GL:uuid();
+            identifier = Entry .. "Listener" .. GL:uuid();
         else
             return false;
         end

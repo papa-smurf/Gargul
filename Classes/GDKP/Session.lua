@@ -62,7 +62,7 @@ function Session:_init()
         self:tradeInitiated(Details);
     end);
 
-    -- Post a message in chat after creating an auction
+    -- Post a pot update in chat after creating an auction
     Events:register("GDKPSessionAuctionCreatedListener", "GL.GDKP_AUCTION_CREATED", function (_, sessionID)
         if (Settings:get("GDKP.announcePotAfterAuction")
             and sessionID == self:activeSessionID()
@@ -78,82 +78,37 @@ function Session:_init()
 
     -- Post a message in chat after deleting an auction
     Events:register("GDKPSessionAuctionDeletedListener", "GL.GDKP_AUCTION_DELETED", function (_, sessionID, _, Before)
-        if (sessionID ~= self:activeSessionID()) then
-            return;
-        end
-
-        local total = tonumber(GDKPPot:total()) or 0;
-        if (total < 1) then
-            total = 0;
-        end
-
-        if (Before and Before.itemLink and Before.itemID) then
-            local winner = GL:tableGet(Before, "PreviousStates.1.Winner.name");
-            local price = GL:tableGet(Before, "PreviousStates.1.price");
-
-            -- This was raw gold added to the pot
-            if (Before.itemID == Constants.GDKP.potIncreaseItemID) then
-                GL:sendChatMessage(("I removed %sg from the pot"):format(price), "GROUP");
-                GL:sendChatMessage(("The pot now holds %sg"):format(tostring(total)), "GROUP");
-                return;
-
-            -- Just in case someone has old data still
-            elseif (winner and price) then
-                GL:sendChatMessage(("I removed %s awarded to %s for %sg"):format(Before.itemLink, winner, price), "GROUP");
-                GL:sendChatMessage(("The pot now holds %sg"):format(tostring(total)), "GROUP");
-
-                return;
-            end
-
-            GL:sendChatMessage(string.format("Pot was updated after deleting an auction, it now holds %sg", tostring(total)), "GROUP");
-        else
-            -- Should not be possible, shenanigans?
-            GL:sendChatMessage(string.format("Pot was updated after deleting an auction, it now holds %sg", tostring(total)), "GROUP");
-        end
+        self:announceDeletedAuction(sessionID, Before);
     end);
 
     -- Post a message in chat after restoring an auction
     Events:register("GDKPSessionAuctionRestoredListener", "GL.GDKP_AUCTION_RESTORED", function (_, sessionID, _, Instance)
-        if (sessionID ~= self:activeSessionID()) then
-            return;
-        end
-
-        local total = tonumber(GDKPPot:total()) or 0;
-        if (total < 1) then
-            total = 0;
-        end
-
-        if (Instance and Instance.itemLink and Instance.itemID) then
-            local winner = GL:tableGet(Instance, "Winner.name");
-            local price = Instance.price;
-
-            -- This was raw gold added to the pot
-            if (Instance.itemID == Constants.GDKP.potIncreaseItemID) then
-                GL:sendChatMessage(("I added %sg back to the pot"):format(price), "GROUP");
-                GL:sendChatMessage(("The pot now holds %sg"):format(tostring(total)), "GROUP");
-                return;
-
-            -- Just in case someone has old data still
-            elseif (winner and price) then
-                GL:sendChatMessage(("I restored %s awarded to %s for %sg"):format(Instance.itemLink, winner, price), "GROUP");
-                GL:sendChatMessage(("The pot now holds %sg"):format(tostring(total)), "GROUP");
-
-                return;
-            end
-
-            GL:sendChatMessage(string.format("Pot was updated after restoring an auction, it now holds %sg", tostring(total)), "GROUP");
-        else
-            -- Should not be possible, shenanigans?
-            GL:sendChatMessage(string.format("Pot was updated after restoring an auction, it now holds %sg", tostring(total)), "GROUP");
-        end
+        self:announceRestoredAuction(sessionID, Instance);
     end);
 
+    -- Post a message in chat after creating a gold trade entry
+    Events:register("GDKPSessionGoldTradeCreatedListener", "GL.GDKP_GOLD_TRADE_CREATED", function (_, sessionID, playerGUID, given, received)
+        self:announceCreatedGoldTrade(sessionID, playerGUID, given, received);
+    end);
+
+    -- Post a message in chat after deleting a gold trade entry
+    Events:register("GDKPSessionGoldTradeDeletedListener", "GL.GDKP_GOLD_TRADE_DELETED", function (_, sessionID, playerGUID, given, received)
+        self:announceDeletedGoldTrade(sessionID, playerGUID, given, received);
+    end);
+
+    -- Post a message in chat after deleting a gold trade entry
+    Events:register("GDKPSessionGoldTradeRestoredListener", "GL.GDKP_GOLD_TRADE_RESTORED", function (_, sessionID, playerGUID, given, received)
+        self:announceRestoredGoldTrade(sessionID, playerGUID, given, received);
+    end);
+
+    -- Update cuts and other details when our group composition changes
     Events:register("GDKPSessionGroupRosterUpdatedListener", "GL.GROUP_ROSTER_UPDATE_THROTTLED", function ()
         GDKPPot:clearUnavailablePlayerDetails(self:activeSessionID()); -- Reset raiders who left
         GDKPPot:calculateCuts(self:activeSessionID()); -- Calculate cuts for potential new joiners
         GL.Interface.GDKP.Distribute.Overview:refresh(); -- Refresh the distribution overview in case it's opened
     end);
 
+    -- Make sure the user is made aware that a GDKP session is still active
     local Instance = self:getActive();
     if (Instance and not Instance.lockedAt) then
         GL.Ace:ScheduleTimer(function ()
@@ -172,6 +127,44 @@ function Session:_init()
             });
         end, 5);
     end
+end
+
+---@param playerGUID string
+---@param sessionID string
+---@return number, number, number, number Total given, Total received, Traded, Mailed
+function Session:goldTradedWithPlayer(playerGUID, sessionID)
+    local Instance;
+    if (not sessionID) then
+        Instance = self:getActive();
+    else
+        Instance = self:byID(sessionID);
+    end
+
+    if (not Instance) then
+        return;
+    end
+
+    local copperTraded = 0;
+    local copperMailed = 0;
+    local copperReceived = 0;
+    for _, Entry in pairs(GL:tableGet(Instance, "GoldLedger." .. playerGUID, {})) do
+        if (not Entry.deletedAt) then
+            Entry.given = tonumber(Entry.given) or 0;
+            Entry.received = tonumber(Entry.received) or 0;
+
+            if (Entry.type == Constants.GDKP.tradeIdentifier
+                or Entry.type == Constants.GDKP.mutationIdentifier
+            ) then
+                copperTraded = copperTraded + Entry.given;
+            elseif (Entry.type == Constants.GDKP.mailIdentifier) then
+                copperMailed = copperMailed + Entry.given;
+            end
+
+            copperReceived = copperReceived + Entry.received;
+        end
+    end
+
+    return copperTraded + copperMailed, copperReceived, copperTraded, copperMailed;
 end
 
 --- Copper owed to player based on everything bought, earned, cut, etc. This is the bottom line for this session!
@@ -195,12 +188,7 @@ function Session:copperOwedToPlayer(player, sessionID)
         return 0;
     end
 
-    local GoldTraded = GL:tableGet(Instance, "GoldTrades." .. playerGUID, {
-        from = 0,
-        to = 0,
-    });
-
-    local goldMailed = GL:tableGet(Instance, "GoldMails." .. playerGUID, 0);
+    local copperGiven, copperReceived = self:goldTradedWithPlayer(playerGUID, sessionID);
 
     local playerCutInCopper = 0;
     -- Only include the player cut if the current GDKP session is locked and ready for payout
@@ -208,8 +196,6 @@ function Session:copperOwedToPlayer(player, sessionID)
         playerCutInCopper = GL:tableGet(Instance, "Pot.Cuts." .. playerGUID, 0) * 10000;
     end
 
-    local copperReceived = GoldTraded.from;
-    local copperGiven = GoldTraded.to + goldMailed;
     local copperSpentByPlayer = self:goldSpentByPlayer(playerGUID, Instance.ID) * 10000;
     local copperToReceive = copperSpentByPlayer - copperReceived;
     local copperToGive = playerCutInCopper - copperToReceive - copperGiven;
@@ -239,14 +225,8 @@ function Session:tradeInitiated(Details)
     local partnerGUID = GDKP:playerGUID(Details.partner);
     local playerCut = GDKPPot:getCut(partnerGUID);
 
-    local GoldTrades = GL:tableGet(Instance, "GoldTrades." .. partnerGUID, {
-        from = 0,
-        to = 0,
-    });
-
+    local copperGiven, copperReceived = self:goldTradedWithPlayer(partnerGUID);
     local playerCutInCopper = playerCut * 10000;
-    local copperReceived = GoldTrades.from;
-    local copperGiven = GoldTrades.to + GL:tableGet(Instance, "GoldMails." .. partnerGUID, 0);
     local copperSpentByPlayer = self:goldSpentByPlayer(partnerGUID) * 10000;
     local balance = tonumber(self:copperOwedToPlayer(partnerGUID, Instance.ID) or 0);
 
@@ -314,6 +294,14 @@ function Session:tradeInitiated(Details)
             self.includeTradeInSession = not IncludeTradeInSession:GetValue();
         end);
         Window:AddChild(IncludeTradeInSession);
+
+        local TradeHistoryButton = GL.AceGUI:Create("Button");
+        TradeHistoryButton:SetText("Gold Trades");
+        TradeHistoryButton:SetFullWidth(true);
+        TradeHistoryButton:SetCallback("OnClick", function()
+            GL.Interface.GDKP.GoldTrades.Overview:open(self:activeSessionID(), partnerGUID);
+        end);
+        Window:AddChild(TradeHistoryButton);
     end
 
     -- Add the gold to the trade window
@@ -401,6 +389,98 @@ function Session:goldBidByPlayer(player, sessionID)
     return bid;
 end
 
+---@param sessionID string
+---@param playerGUID string
+---@param checksum
+---
+---@return boolean
+function Session:deleteGoldTrade(sessionID, playerGUID, checksum)
+    local Instance = self:byID(sessionID);
+    if (not Instance
+        or Instance.deletedAt
+    ) then
+        return false;
+    end
+
+    local Trade = GL:tableGet(Instance, ("GoldLedger.%s.%s"):format(playerGUID, checksum));
+    if (not Trade) then
+        return false;
+    end
+
+    GL:tableSet(Instance, ("GoldLedger.%s.%s.deletedAt"):format(playerGUID, checksum), GetServerTime());
+    Events:fire("GL.GDKP_GOLD_TRADE_DELETED", sessionID, playerGUID, Trade.given, Trade.received);
+
+    return self:store(Instance);
+end
+
+---@param sessionID string
+---@param playerGUID string
+---@param checksum
+---
+---@return boolean
+function Session:restoreGoldTrade(sessionID, playerGUID, checksum)
+    local Instance = self:byID(sessionID);
+    if (not Instance
+        or Instance.deletedAt
+    ) then
+        return false;
+    end
+
+    local RawTrade = GL:tableGet(Instance, ("GoldLedger.%s.%s"):format(playerGUID, checksum));
+    if (not GL:empty(RawTrade)) then
+        GL:tableSet(Instance, ("GoldLedger.%s.%s"):format(playerGUID, checksum), {
+            createdAt = RawTrade.createdAt,
+            type = RawTrade.type,
+            given = RawTrade.given,
+            received = RawTrade.received,
+            createdBy = RawTrade.createdBy,
+            checksum = RawTrade.checksum,
+        });
+    end
+
+    Events:fire("GL.GDKP_GOLD_TRADE_RESTORED", sessionID, playerGUID, RawTrade.given, RawTrade.received);
+
+    return self:store(Instance);
+end
+
+---@param sessionID string
+---@param playerGUID string
+---@param given number
+---@param received number
+---
+---@return boolean
+function Session:addGoldTrade(sessionID, playerGUID, given, received)
+    local Instance = self:byID(sessionID);
+    if (not Instance
+        or Instance.deletedAt
+    ) then
+        return false;
+    end
+
+    given = tonumber(given) or 0;
+    received = tonumber(received) or 0;
+
+    -- Nothing to add (we only accept a minimum 1 gold!)
+    if ((given >= 10000 and received >= 10000) or (given < 10000 and received <= 10000)) then
+        return false;
+    end
+
+    local now = GetServerTime();
+    local checksum = GL:stringHash{ Constants.GDKP.tradeIdentifier, given, received, playerGUID, now };
+    GL:tableSet(Instance, ("GoldLedger.%s.%s"):format(playerGUID, checksum), {
+        createdAt = now,
+        type = Constants.GDKP.mutationIdentifier,
+        given = given,
+        received = received,
+        createdBy = GDKP:myGUID(),
+        checksum = checksum;
+    });
+
+    Events:fire("GL.GDKP_GOLD_TRADE_CREATED", sessionID, playerGUID, given, received);
+
+    return self:store(Instance);
+end
+
 ---@param Details table
 ---@return void
 function Session:registerGoldTrade(Details)
@@ -412,7 +492,6 @@ function Session:registerGoldTrade(Details)
     end
 
     local Instance = self:getActive();
-
     if (not Instance) then
         return;
     end
@@ -425,17 +504,24 @@ function Session:registerGoldTrade(Details)
         return;
     end
 
-    Instance.GoldTrades = Instance.GoldTrades or {};
     local playerGUID = GDKP:playerGUID(Details.partner);
-    Instance.GoldTrades[playerGUID] = Instance.GoldTrades[playerGUID] or {
-        to = 0,
-        from = 0,
-    };
-
-    Instance.GoldTrades[playerGUID].from = Instance.GoldTrades[playerGUID].from + theirGold;
-    Instance.GoldTrades[playerGUID].to = Instance.GoldTrades[playerGUID].to + myGold;
+    local now = GetServerTime();
+    local checksum = GL:stringHash{ Constants.GDKP.tradeIdentifier, myGold, theirGold, playerGUID, now };
+    GL:tableSet(Instance, ("GoldLedger.%s.%s"):format(playerGUID, checksum), {
+        createdAt = now,
+        type = Constants.GDKP.tradeIdentifier,
+        given = myGold,
+        received = theirGold,
+        createdBy = GDKP:myGUID(),
+        checksum = checksum;
+    });
 
     Events:fire("GL.GDKP_GOLD_TRADED");
+
+    -- Trade announcement was disabled for some reason. Not on my watch mister!
+    if (not Details.announce) then
+        Events:fire("GL.GDKP_GOLD_TRADE_CREATED", Instance.ID, playerGUID, myGold, theirGold);
+    end
 
     self:store(Instance);
 end
@@ -453,9 +539,16 @@ function Session:registerGoldMail(player, copper)
     end
 
     local playerGUID = GDKP:playerGUID(player);
-    Instance.GoldMails = Instance.GoldMails or {};
-    Instance.GoldMails[playerGUID] = Instance.GoldMails[playerGUID] or 0;
-    Instance.GoldMails[playerGUID] = Instance.GoldMails[playerGUID] + copper;
+    local now = GetServerTime();
+    local checksum = GL:stringHash{ Constants.GDKP.tradeIdentifier, copper, 0, playerGUID, now };
+    GL:tableSet(Instance, ("GoldLedger.%s.%s"):format(playerGUID, checksum), {
+        createdAt = now,
+        type = Constants.GDKP.mailIdentifier,
+        given = copper,
+        received = 0,
+        createdBy = GDKP:myGUID(),
+        checksum = checksum,
+    });
 
     Events:fire("GL.GDKP_GOLD_MAILED");
 
@@ -592,7 +685,6 @@ function Session:store(SessionObj)
     if (type(SessionObj) ~= "table"
         or GL:empty(SessionObj)
         or GL:empty(SessionObj.ID)
-        or SessionObj.lockedAt
     ) then
         return false;
     end
@@ -862,6 +954,137 @@ function Session:userIsAllowedToBroadcast()
     return not GL.User.isInGroup or (
         GL.User.isInGroup and (GL.User.isMasterLooter or GL.User.hasAssist)
     );
+end
+
+---@param sessionID string
+---@param Auction table
+---@return void
+function Session:announceDeletedAuction(sessionID, Auction)
+    if (sessionID ~= self:activeSessionID()) then
+        return;
+    end
+
+    local total = tonumber(GDKPPot:total()) or 0;
+    if (total < 1) then
+        total = 0;
+    end
+
+    if (Auction and Auction.itemLink and Auction.itemID) then
+        local winner = GL:tableGet(Auction, "PreviousStates.1.Winner.name");
+        local price = GL:tableGet(Auction, "PreviousStates.1.price");
+
+        -- This was raw gold added to the pot
+        if (Auction.itemID == Constants.GDKP.potIncreaseItemID) then
+            GL:sendChatMessage((L.I_REMOVED_GOLD):format(price), "GROUP");
+            GL:sendChatMessage((L.POT_HOLDS):format(tostring(total)), "GROUP");
+
+            return;
+
+            -- Just in case someone has old data still
+        elseif (winner and price) then
+            GL:sendChatMessage((L.I_REMOVED_AWARDED):format(Auction.itemLink, winner, price), "GROUP");
+            GL:sendChatMessage((L.POT_HOLDS):format(tostring(total)), "GROUP");
+
+            return;
+        end
+
+        GL:sendChatMessage(string.format(L.POT_UPDATED_AFTER_DELETE, tostring(total)), "GROUP");
+    else
+        -- Should not be possible, shenanigans?
+        GL:sendChatMessage(string.format(L.POT_UPDATED_AFTER_DELETE, tostring(total)), "GROUP");
+    end
+end
+
+---@param sessionID string
+---@param Auction table
+---@return void
+function Session:announceRestoredAuction(sessionID, Auction)
+    if (sessionID ~= self:activeSessionID()) then
+        return;
+    end
+
+    local total = tonumber(GDKPPot:total()) or 0;
+    if (total < 1) then
+        total = 0;
+    end
+
+    if (Auction and Auction.itemLink and Auction.itemID) then
+        local winner = GL:tableGet(Auction, "Winner.name");
+        local price = Auction.price;
+
+        -- This was raw gold added to the pot
+        if (Auction.itemID == Constants.GDKP.potIncreaseItemID) then
+            GL:sendChatMessage((L.I_RESTORED_GOLD):format(price), "GROUP");
+            GL:sendChatMessage((L.POT_HOLDS):format(tostring(total)), "GROUP");
+            return;
+
+            -- Just in case someone has old data still
+        elseif (winner and price) then
+            GL:sendChatMessage((L.I_RESTORED_AWARDED):format(Auction.itemLink, winner, price), "GROUP");
+            GL:sendChatMessage((L.POT_HOLDS):format(tostring(total)), "GROUP");
+
+            return;
+        end
+
+        GL:sendChatMessage(string.format(L.POT_UPDATED_AFTER_RESTORE, tostring(total)), "GROUP");
+    else
+        -- Should not be possible, shenanigans?
+        GL:sendChatMessage(string.format(L.POT_UPDATED_AFTER_RESTORE, tostring(total)), "GROUP");
+    end
+end
+
+---@param sessionID string
+---@param playerGUID string
+---@param given number
+---@param received number
+---@return void
+function Session:announceCreatedGoldTrade(sessionID, playerGUID, given, received)
+    if (sessionID ~= self:activeSessionID()) then
+        return;
+    end
+
+    local playerName = GL:disambiguateName(playerGUID);
+    if (given > 0) then
+        GL:sendChatMessage((L.GOLD_TRADE_GIVEN):format(GL:copperToMoney(given), playerName), "GROUP");
+    else
+        GL:sendChatMessage((L.GOLD_TRADE_RECEIVED):format(GL:copperToMoney(received), playerName), "GROUP");
+    end
+end
+
+---@param sessionID string
+---@param playerGUID string
+---@param given number
+---@param received number
+---@return void
+function Session:announceDeletedGoldTrade(sessionID, playerGUID, given, received)
+    if (sessionID ~= self:activeSessionID()) then
+        return;
+    end
+
+    local playerName = GL:disambiguateName(playerGUID);
+    if (given > 0) then
+        GL:sendChatMessage((L.GOLD_TRADE_GIVEN_DELETED):format(GL:copperToMoney(given), playerName), "GROUP");
+    else
+        GL:sendChatMessage((L.GOLD_TRADE_RECEIVED_DELETED):format(GL:copperToMoney(received), playerName), "GROUP");
+    end
+end
+
+---@param sessionID string
+---@param playerGUID string
+---@param given number
+---@param received number
+---@return void
+function Session:announceRestoredGoldTrade(sessionID, playerGUID, given, received)
+    if (sessionID ~= self:activeSessionID()) then
+        return;
+    end
+
+    local playerName = GL:disambiguateName(playerGUID);
+    if (given > 0) then
+        GL:sendChatMessage((L.GOLD_TRADE_GIVEN_RESTORED):format(GL:copperToMoney(given), playerName), "GROUP");
+    else
+        GL:sendChatMessage((L.GOLD_TRADE_RECEIVED_RESTORED):format(GL:copperToMoney(received), playerName), "GROUP");
+    end
 end
 
 GL:debug("GDKP.lua");

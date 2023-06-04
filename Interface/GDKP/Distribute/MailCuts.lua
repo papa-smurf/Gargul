@@ -424,6 +424,8 @@ function MailCuts:mailPlayerCut(player, callback)
                 if (copperLeftMatchesExpectation) then
                     message = string.format(L.CUT_SENT, gold, player);
                     GL:success(message);
+
+                    GL:fire("GL.GDKP_CUT_MAILED");
                 else
                     message = L.CUT_MAIL_GOLD_MISMATCH;
                     GL:warning(message);

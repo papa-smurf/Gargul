@@ -79,12 +79,16 @@ function Overview:build()
     end
 
     Events:register({
-        {"DistributionOverviewGDKPMutatorCreatedListener", "GL.GDKP_MUTATOR_CREATED"},
-        {"DistributionOverviewGDKPMutatorCreatedListener", "GL.GDKP_MUTATOR_CHANGED"},
-        {"DistributionOverviewGDKPCutsImportedListener", "GL.GDKP_CUTS_IMPORTED"},
-        {"DistributionOverviewGDKPSessionLockedListener", "GL.GDKP_SESSION_LOCKED"},
-        {"DistributionOverviewGDKPSessionUnlockedListener", "GL.GDKP_SESSION_UNLOCKED"},
-        {"DistributionOverviewGoldTradedListener", "GL.GDKP_GOLD_TRADED"},
+        "GL.GDKP_MUTATOR_CREATED",
+        "GL.GDKP_MUTATOR_CHANGED",
+        "GL.GDKP_CUTS_IMPORTED",
+        "GL.GDKP_SESSION_LOCKED",
+        "GL.GDKP_SESSION_UNLOCKED",
+        "GL.GDKP_GOLD_TRADED",
+        "GL.GDKP_GOLD_TRADE_CREATED",
+        "GL.GDKP_GOLD_TRADE_DELETED",
+        "GL.GDKP_GOLD_TRADE_RESTORED",
+        "GL.GDKP_CUT_MAILED",
     }, function ()
         self:throttledRefresh();
     end);
@@ -595,6 +599,19 @@ function Overview:refresh()
         RaiderHolder:SetFullWidth(true);
         RaidersFrame:AddChild(RaiderHolder);
 
+        --[[ GOLD TRADE ADJUSTMENT ]]
+        local AdjustGoldTradesButton = Interface:createButton(RaiderHolder, {
+            width = 18,
+            height = 18,
+            onClick = function()
+                GL.Interface.GDKP.GoldTrades.Overview:open(Session.ID, player);
+            end,
+            tooltip = "Manage gold trades",
+            normalTexture = "Interface/AddOns/Gargul/Assets/Buttons/bag",
+        });
+        AdjustGoldTradesButton:SetPoint("CENTER", RaiderHolder.frame, "CENTER");
+        AdjustGoldTradesButton:SetPoint("LEFT", RaiderHolder.frame, "LEFT", -2, -1);
+
         local nameText;
         local nameFormatted = GL:disambiguateName(player);
         if (not Session.lockedAt) then
@@ -613,7 +630,7 @@ function Overview:refresh()
 
         ---@type AceGUILabel
         local RaiderNameLabel = AceGUI:Create("Label");
-        RaiderNameLabel:SetText(nameText);
+        RaiderNameLabel:SetText("   " .. nameText);
         RaiderNameLabel:SetWidth(150);
         RaiderHolder:AddChild(RaiderNameLabel);
 
