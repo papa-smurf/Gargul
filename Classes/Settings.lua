@@ -91,7 +91,15 @@ function Settings:enforceTemporarySettings()
     if (GL.firstBoot
         or not GL.Version.firstBoot
     ) then
-        --return;
+        return;
+    end
+
+    local Version = GL.Version;
+
+    --- In 6.0.4 the way anti-snipe works changed. Multiplying the existing value by 1.5 should net a pretty decent result
+    if (Version:leftIsNewerThanOrEqualToRight("6.0.4", Version.latestPriorVersionBooted)) then
+        local antiSnipe = tonumber(self:get("GDKP.antiSnipe")) or 10;
+        self:set("GDKP.antiSnipe", GL:round(antiSnipe * 1.5));
     end
 
     --- In 6.0.0 we made everything FQN-first, forcing us to rewrite existing PO and BR data
