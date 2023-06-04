@@ -171,7 +171,7 @@ GL.Data.DefaultSettings = {
         showQueueWindow = true,
         showHistoryOnTooltip = true,
         storeMinimumAndIncrementPerItem = true,
-        queueIsHalted = false,
+        queueIsHalted = true,
         time = 30,
         whisperGoldDetails = true,
 
