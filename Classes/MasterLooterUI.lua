@@ -365,7 +365,7 @@ function MasterLooterUI:draw(itemLink)
                     for _, Roll in pairs(GL.RollOff.CurrentRollOff.Rolls or {}) do
                         if (Roll
                             and Roll.player
-                            and not GL:iEquals(Roll.player, selectedPlayer)
+                            and not GL:iEquals(GL:stripRealm(Roll.player), selectedPlayer)
                             and Roll.amount == selectedRollAmount
                             and Roll.classification == selectedRollType
                         ) then
@@ -800,7 +800,7 @@ function MasterLooterUI:drawPlayersTable(parent)
     Table:SetWidth(340);
     Table:EnableSelection(true);
 
-    Table:RegisterEvents({
+    Table:RegisterEvents{
         OnClick = function(rowFrame, cellFrame, data, cols, row, realrow, column, table, button, ...)
             if not (row or realrow) then return true end -- Disable sort
         end,
@@ -885,7 +885,7 @@ function MasterLooterUI:drawPlayersTable(parent)
         OnLeave = function ()
             GameTooltip:Hide();
         end,
-    });
+    };
 
     Table.frame:SetPoint("BOTTOM", parent, "BOTTOM", 0, 50);
     GL.Interface:set(self, "Players", Table);

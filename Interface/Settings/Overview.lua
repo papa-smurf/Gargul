@@ -177,12 +177,12 @@ function Overview:draw(section, onCloseCallback)
     local ResetUIButton = GL.AceGUI:Create("Button");
     ResetUIButton:SetText(L.RESET_UI);
     ResetUIButton:SetCallback("OnClick", function()
-        GL.Interface.Dialogs.PopupDialog:open({
+        GL.Interface.Dialogs.PopupDialog:open{
             question = L.RESET_UI_CONFIRMATION,
             OnYes = function ()
                 GL.Commands:call("resetui");
             end,
-        });
+        };
     end);
     ResetUIButton:SetWidth(136);
     SecondColumn:AddChild(ResetUIButton);
@@ -190,12 +190,12 @@ function Overview:draw(section, onCloseCallback)
     local ResetSettingsButton = GL.AceGUI:Create("Button");
     ResetSettingsButton:SetText(L.RESET_SETTINGS);
     ResetSettingsButton:SetCallback("OnClick", function()
-        GL.Interface.Dialogs.PopupDialog:open({
+        GL.Interface.Dialogs.PopupDialog:open{
             question = L.RESET_SETTINGS_CONFIRMATION,
             OnYes = function ()
                 GL.Commands:call("resetsettings");
             end,
-        });
+        };
     end);
     ResetSettingsButton:SetWidth(136);
     SecondColumn:AddChild(ResetSettingsButton);
@@ -215,10 +215,10 @@ function Overview:draw(section, onCloseCallback)
 
     PatreonButton:SetScript("OnClick", function(_, button)
         if (button == 'LeftButton') then
-            GL.Interface.Dialogs.HyperlinkDialog:open({
+            GL.Interface.Dialogs.HyperlinkDialog:open{
                 description = "Thanks for considering becoming a Patron of Gargul, your support helps tremendously!",
                 hyperlink = "patreon.com/gargul",
-            });
+            };
         end
     end);
 
@@ -286,7 +286,7 @@ function Overview:drawSectionsTable(Parent, section)
     Table:SetWidth(145);
     Table.frame:SetPoint("TOPLEFT", Parent, "TOPLEFT", 23, -40);
 
-    Table:RegisterEvents({
+    Table:RegisterEvents{
         OnClick = function (_, _, _, _, _, realrow)
             -- Make sure something is actually selected, better safe than lua error
             if (not GL:higherThanZero(realrow)) then
@@ -295,7 +295,7 @@ function Overview:drawSectionsTable(Parent, section)
 
             self:showSection(self.Sections[realrow][2]);
         end
-    });
+    };
 
     local TableData = {};
     for _, Entry in pairs(self.Sections) do

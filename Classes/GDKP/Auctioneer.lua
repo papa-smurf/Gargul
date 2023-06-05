@@ -258,7 +258,7 @@ function Auctioneer:addToQueue(itemLink, identifier, open)
     AuctioneerUI = AuctioneerUI or GL.Interface.GDKP.Auctioneer;
 
     local Queue = AuctioneerUI:getQueueWindow(true);
-    identifier = identifier or GL:stringHash(GetTime() .. itemLink) .. math.random(1, 1000);
+    identifier = identifier or tonumber(GL:stringHash(GetTime() .. itemLink) .. math.random(1, 1000));
 
     Auction:addToQueue(itemLink, identifier);
     Queue:addItemByLink(itemLink, identifier);
@@ -439,13 +439,13 @@ function Auctioneer:start(force, triedQueue)
         AuctioneerUI.time,
         AuctioneerUI.antiSnipe
     )) then
-        self:storeDetailsForFutureAuctions({
+        self:storeDetailsForFutureAuctions{
             itemLink = AuctioneerUI.itemLink,
             minimumBid = AuctioneerUI.minimumBid,
             increment = AuctioneerUI.increment,
             time = AuctioneerUI.time,
             antiSnipe = AuctioneerUI.antiSnipe,
-        });
+        };
     end;
 end
 
@@ -476,15 +476,16 @@ function Auctioneer:finalCall()
     GL:debug("Auctioneer:finalCall");
 
     local time = Settings:get("GDKP.finalCallTime");
-    if (Auction:announceReschedule(time)) then
-        if(Settings:get("GDKP.announceFinalCall")) then
-            GL:sendChatMessage((L.FINAL_CALL_ANNOUNCEMENT):format(Auction.Current.itemLink, time), "RAID_WARNING", nil, nil, false);
-        end
 
-        return true;
+    if (not Auction:announceReschedule(time)) then
+        return false;
     end
 
-    return false;
+    if(Settings:get("GDKP.announceFinalCall")) then
+        GL:sendChatMessage((L.FINAL_CALL_ANNOUNCEMENT):format(Auction.Current.itemLink, time), "RAID_WARNING", nil, nil, false);
+    end
+
+    return true;
 end
 
 ---@return void
@@ -654,14 +655,13 @@ function Auctioneer:refreshBidsTable()
     local row = 0;
     for _, Entry in pairs(Bids) do
         row = row + 1;
-        local bidder = Entry.Bidder.name;
+        local bidder = Entry.bidder;
         local class = Entry.Bidder.class;
-        local priority = 1;
 
         local Row = {
             cols = {
                 {
-                    value = bidder,
+                    value = GL:nameFormat(bidder),
                     color = GL:classRGBAColor(class),
                 },
                 {
@@ -674,14 +674,14 @@ function Auctioneer:refreshBidsTable()
                             self:removePlayerBid(bidder, Entry.bid);
                         else
                             GL.Interface.Alerts:fire("GargulNotification", {
-                                message = string.format("|c00BE3333Stop the auction first!|r"),
+                                message = string.format("|c00BE3333%s|r", L.STOP_AUCTION),
                             });
                         end
                     end,
                     _tooltip = L.DELETE_BID_TOOLTIP,
                 },
                 {
-                    value = priority,
+                    value = Entry.bidder,
                 },
             },
         };
@@ -706,7 +706,7 @@ function Auctioneer:removePlayerBid (bidder, bid)
 
     local bidRemoved = false;
     for key, Bid in pairs(Bids) do
-        if (Bid.bid == bid and GL:iEquals(Bid.Bidder.name, bidder)) then
+        if (Bid.bid == bid and GL:iEquals(Bid.bidder, bidder)) then
             Bids[key] = nil;
             bidRemoved = true;
             break;
@@ -791,14 +791,13 @@ function Auctioneer:award()
         end);
     end
 
-    local winner = selected.cols[1].value;
+    local winner = selected.cols[4].value;
     local bid = selected.cols[2].value;
 
-    GL.Interface.Dialogs.PopupDialog:open({
+    GL.Interface.Dialogs.PopupDialog:open{
         question = string.format(L.AWARD_ITEM_CONFIRMATION,
             Auction.Current.itemLink,
-            GL:classHexColor(GL.Player:classByName(winner)),
-            winner,
+            GL:nameFormat{name = winner, colorize = true},
             bid
         ),
         OnYes = function ()
@@ -839,7 +838,7 @@ function Auctioneer:award()
                 Window.Minimize.MinimizeButton:Click();
             end
         end,
-    });
+    };
 end
 
 GL:debug("GDKP/Auctioneer.lua");

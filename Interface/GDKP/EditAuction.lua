@@ -99,8 +99,8 @@ function EditAuction:draw(session, checksum)
     PlayernameInput:DisableButton(true);
     PlayernameInput:SetHeight(20);
     PlayernameInput:SetWidth(250);
-    PlayernameInput:SetText(Auction.Winner.name);
-    PlayernameInput:SetLabel("Player name");
+    PlayernameInput:SetText(GL:nameFormat(Auction.Winner.guid));
+    PlayernameInput:SetLabel("Player");
     Window:AddChild(PlayernameInput);
 
     local NoteInput = GL.AceGUI:Create("EditBox");
@@ -160,9 +160,7 @@ function EditAuction:draw(session, checksum)
         end
 
         -- The note was changed
-        if (not GL:empty(note)
-            and Auction.note ~= note
-        ) then
+        if (Auction.note ~= note) then
             GDKPAuction:setNote(session, checksum, note);
         end
 

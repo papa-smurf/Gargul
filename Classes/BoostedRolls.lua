@@ -50,12 +50,23 @@ function BoostedRolls:_init()
     return true;
 end
 
+---@param player string
+---@return string
+function BoostedRolls:playerGUID(player, realm)
+    return strlower(GL:addRealm(player, realm));
+end
+
+---@return string
+function BoostedRolls:myGUID()
+    return strlower(GL.User.fqn);
+end
+
 --- Get the normalized player name (or alias parent if available)
 ---
 ---@param playerName string
 ---@return string
 function BoostedRolls:normalizedName(playerName)
-    local normalizedName = GL:normalizedName(playerName);
+    local normalizedName = string.lower(GL:addRealm(playerName));
 
     --- Follow alias table if present
     return GL.DB:get("BoostedRolls.Aliases." .. normalizedName, normalizedName);
@@ -72,12 +83,10 @@ function BoostedRolls:playerIsTrusted(playerName)
         return false;
     end
 
-    local normalizedName = self:normalizedName(playerName);
-
     local trustedPlayerCSV = GL.Settings:get("BoostedRolls.automaticallyAcceptDataFrom", "");
     local TrustedPlayers = GL:strSplit(trustedPlayerCSV, ",");
     for _, player in pairs(TrustedPlayers) do
-        if (GL:normalizedName(player) == normalizedName) then
+        if (GL:iEquals(player, GL:nameFormat(playerName))) then
             return true;
         end
     end
@@ -122,10 +131,13 @@ function BoostedRolls:removePlayerFromTrusted(playerName)
     local trustedPlayerCSV = GL.Settings:get("BoostedRolls.automaticallyAcceptDataFrom", "");
     local TrustedPlayers = GL:strSplit(trustedPlayerCSV, ",");
     local NewTrustedPlayers = {};
-    local normalizedName = GL:normalizedName(playerName);
+    local nameFormatted = GL:nameFormat(playerName);
+    local fqn = GL:addRealm(playerName);
 
     for _, trustedPlayer in pairs(TrustedPlayers) do
-        if (GL:normalizedName(trustedPlayer) ~= normalizedName) then
+        if (not GL:iEquals(trustedPlayer, nameFormatted)
+            and not GL:iEquals(trustedPlayer, fqn)
+        ) then
             tinsert(NewTrustedPlayers, trustedPlayer);
         end
     end
@@ -202,11 +214,7 @@ function BoostedRolls:handleWhisperCommand(_, message, sender)
         return;
     end
 
-    local name = sender;
-    if (not GL.isEra) then
-        name = GL:stripRealm(name);
-    end
-
+    local name = GL:nameFormat(sender);
     name = self:normalizedName(name);
 
     local points = self:getPoints(name);
@@ -233,24 +241,23 @@ function BoostedRolls:materializeData()
 
     --- Create entries from points data
     for name, points in pairs(DB:get("BoostedRolls.Points", {})) do
-        name = GL:normalizedName(name or "");
+        name = self:playerGUID(name);
         points = self:toPoints(points or 0);
 
         if (type(name) == "string"
             and not GL:empty(name)
+            and not DetailsByPlayerName[name]
         ) then
-            if (not DetailsByPlayerName[name]) then
-                GL:tableSet(DetailsByPlayerName, name .. ".Aliases", {});
-                DetailsByPlayerName[name].points = points;
-                DetailsByPlayerName[name].class = "";
-            end
+            GL:tableSet(DetailsByPlayerName, name .. ".Aliases", {});
+            DetailsByPlayerName[name].points = points;
+            DetailsByPlayerName[name].class = "";
         end
     end
 
     --- Add aliases
     for alias, main in pairs(DB:get("BoostedRolls.Aliases", {})) do
-        alias = GL:normalizedName(alias or "");
-        main = GL:normalizedName(main or "");
+        alias = self:playerGUID(alias or "");
+        main = self:playerGUID(main or "");
 
         if (type(alias) == "string" and type(main) == "string"
             and not GL:empty(alias) and not GL:empty(main)
@@ -369,30 +376,33 @@ function BoostedRolls:setAliases(name, aliases, dontBroadcast)
 
     dontBroadcast = GL:toboolean(dontBroadcast);
 
-    local normalizedName = self:normalizedName(name);
+    local mainGUID = self:playerGUID(name);
+    local _, mainRealm = GL:stripRealm(mainGUID);
 
-    if (self.MaterializedData.DetailsByPlayerName[normalizedName]) then
+    if (self.MaterializedData.DetailsByPlayerName[mainGUID]) then
         --- Reset old aliases
-        for _, alias in pairs(self.MaterializedData.DetailsByPlayerName[normalizedName].Aliases) do
+        for _, alias in pairs(self.MaterializedData.DetailsByPlayerName[mainGUID].Aliases) do
             DB.BoostedRolls.Aliases[alias] = nil;
         end
 
         --- Set new aliases
         local cleanAliases = {};
         for _, alias in pairs(aliases) do
+            alias = self:playerGUID(alias, mainRealm);
+
             --- Check that this alias does not yet exist, otherwise skip.
             if (not DB.BoostedRolls.Aliases[alias]) then
-                DB.BoostedRolls.Aliases[alias] = normalizedName;
+                DB.BoostedRolls.Aliases[alias] = mainGUID;
                 tinsert(cleanAliases, alias);
             end
         end
-        self.MaterializedData.DetailsByPlayerName[normalizedName].Aliases = cleanAliases;
+        self.MaterializedData.DetailsByPlayerName[mainGUID].Aliases = cleanAliases;
         DB:set("BoostedRolls.MetaData.updatedAt", GetServerTime());
 
         if (not dontBroadcast
             and GL.Settings:get("BoostedRolls.automaticallyShareData")
         ) then
-            self:broadcastUpdate(normalizedName, nil, aliases);
+            self:broadcastUpdate(mainGUID, nil, aliases);
         end
     end
 end
@@ -517,7 +527,8 @@ function BoostedRolls:modifyPoints(name, change)
 
     local points = self.MaterializedData.DetailsByPlayerName[normalizedName].points;
     points = self:toPoints(points + change);
-    self:setPoints(normalizedName, points);
+
+    self:queueUpdate(normalizedName, points);
 end
 
 --- Import a CSV or TSV data string
@@ -550,7 +561,7 @@ function BoostedRolls:import(data, openOverview, MetaData)
         local Segments = GL:separateValues(line);
         
         local playerName = tostring(Segments[1]);
-        playerName = GL:normalizedName(playerName);
+        playerName = self:playerGUID(playerName);
         local points = self:toPoints(Segments[2]);
 
         if (not GL:empty(playerName) and not Points[playerName] and points) then
@@ -559,7 +570,7 @@ function BoostedRolls:import(data, openOverview, MetaData)
             --- Import further segments as aliases (alts)
             for i = 3, #Segments do
                 local alias = tostring(Segments[i]);
-                alias = GL:normalizedName(alias);
+                alias = self:playerGUID(alias);
                 if (not GL:empty(alias) and not Points[alias] and not Aliases[alias]) then
                     Aliases[alias] = playerName;
                 end
@@ -617,17 +628,16 @@ function BoostedRolls:addMissingRaiders()
 
     -- Not in a group, add the current player
     if (not GL.User.isInGroup) then
-        local playerName = GL:normalizedName(GL.User.name);
-        if (not self:hasPoints(playerName)) then
-            DB:set("BoostedRolls.Points." .. playerName, default);
+        if (not self:hasPoints(GL.User.fqn)) then
+            DB:set("BoostedRolls.Points." .. GL.User.fqn, default);
         end
 
     -- Go through everyone in the raid
     else
         for _, Player in pairs(GL.User:groupMembers()) do
-            local playerName = GL:normalizedName(Player.name);
-            if (not self:hasPoints(playerName)) then
-                DB:set("BoostedRolls.Points." .. playerName, default);
+            local normalizedName = self:normalizedName(Player.fqn);
+            if (not self:hasPoints(normalizedName)) then
+                DB:set("BoostedRolls.Points." .. normalizedName, default);
             end
         end
     end
@@ -658,16 +668,16 @@ function BoostedRolls:export(displayFrame)
     -- Create CSV string
     local csv = "";
     for name, Entry in pairs(self.MaterializedData.DetailsByPlayerName) do
-        csv = csv..GL:capitalize(name)..","..Entry.points;
+        csv = ("%s%s,%s"):format(csv, name, Entry.points);
         
         -- Always add maximum aliases
         for i = 1,numAliases do
-            csv = csv..",";
+            csv = csv .. ",";
             if (Entry.Aliases[i]) then
-                csv = csv..GL:capitalize(Entry.Aliases[i]);
+                csv = ("%s%s"):format(csv, Entry.Aliases[i]);
             end
         end
-        csv = csv.."\n";
+        csv = csv .. "\n";
     end
 
     if (displayFrame) then
@@ -1082,12 +1092,12 @@ function BoostedRolls:broadcastUpdate(playerName, points, aliases, delete)
     GL.CommMessage.new(
         CommActions.broadcastBoostedRollsMutation,
         {
-            updates = {{
+            updates = {
                 playerName = playerName,
                 points = points or nil,
                 aliases = aliases or nil,
                 delete = delete or false,
-            }},
+            },
             uuid = DB:get("BoostedRolls.MetaData.uuid", ""),
         },
         "GROUP"

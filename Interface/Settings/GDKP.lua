@@ -237,7 +237,7 @@ function GDKP:draw(Parent)
                         Checkbox:SetValue(false);
                     end;
 
-                    GL.Interface.Dialogs.PopupDialog:open({
+                    GL.Interface.Dialogs.PopupDialog:open{
                         question = string.format("If used properly queues will save you a lot of time and let your raiders see what items are coming up and bid on them\n\nIf you're looking for a way to speed up your raids then this is what you should be using, are you sure you want to disable it?"),
                         OnYes = function ()
                             GL.GDKP.Auctioneer:clearQueue();
@@ -246,7 +246,7 @@ function GDKP:draw(Parent)
                         OnNo = function ()
                             enableQueue();
                         end
-                    });
+                    };
                 end
             end
         },
@@ -611,12 +611,12 @@ An item's price and increment are determined in the following order:
     ResetPerItemSettings:SetText("Reset all minimum prices and increments");
     ResetPerItemSettings:SetFullWidth(true);
     ResetPerItemSettings:SetCallback("OnClick", function()
-        GL.Interface.Dialogs.PopupDialog:open({
+        GL.Interface.Dialogs.PopupDialog:open{
             question = "Are you sure you want to reset all individual item settings?",
             OnYes = function ()
                 GL.GDKP:resetPerItemSettings();
             end,
-        });
+        };
     end);
     Parent:AddChild(ResetPerItemSettings);
 
@@ -624,7 +624,7 @@ An item's price and increment are determined in the following order:
     ResetGDKPSettings:SetText("Reset GDKP settings to default");
     ResetGDKPSettings:SetFullWidth(true);
     ResetGDKPSettings:SetCallback("OnClick", function()
-        GL.Interface.Dialogs.PopupDialog:open({
+        GL.Interface.Dialogs.PopupDialog:open{
             question = "Are you sure you want to reset all GDKP settings?",
             OnYes = function ()
                 local PerItemSettings = Settings:get("GDKP.SettingsPerItem", {});
@@ -632,7 +632,7 @@ An item's price and increment are determined in the following order:
                 Settings:set("GDKP.SettingsPerItem", PerItemSettings);
                 C_UI.Reload();
             end,
-        });
+        };
     end);
     Parent:AddChild(ResetGDKPSettings);
 
@@ -640,13 +640,13 @@ An item's price and increment are determined in the following order:
     ResetGDKPSessionData:SetText("Reset GDKP session data");
     ResetGDKPSessionData:SetFullWidth(true);
     ResetGDKPSessionData:SetCallback("OnClick", function()
-        GL.Interface.Dialogs.PopupDialog:open({
+        GL.Interface.Dialogs.PopupDialog:open{
             question = "Are you sure you want to delete all session data? You will lose ALL auction data. Use with extreme caution!",
             OnYes = function ()
                 GL.DB:set("GDKP", {});
                 C_UI.Reload();
             end,
-        });
+        };
     end);
     Parent:AddChild(ResetGDKPSessionData);
 

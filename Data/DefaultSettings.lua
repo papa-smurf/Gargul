@@ -145,7 +145,7 @@ GL.Data.DefaultSettings = {
         announcePotAfterAuction = true,
         auctionEndLeeway = 2,
         autoAwardViaAuctioneer = true,
-        antiSnipe = 10,
+        antiSnipe = 15,
         bidderScale = 1,
         bidderQueueHideUnusable = false,
         defaultMinimumBid = 500,
@@ -173,7 +173,7 @@ GL.Data.DefaultSettings = {
         showQueueWindow = true,
         showHistoryOnTooltip = true,
         storeMinimumAndIncrementPerItem = true,
-        queueIsHalted = false,
+        queueIsHalted = true,
         time = 30,
         whisperGoldDetails = true,
 

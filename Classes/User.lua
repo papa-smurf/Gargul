@@ -12,16 +12,16 @@ GL.User = {
     GuildMembers = {},
     playerClassByName = {},
 
-    id = 0,
-    name = "",
+    id = UnitGUID("player"),
+    name = UnitName("player"),
     level = 1,
     zone = "",
     Guild = {},
     isOfficer = false,
     isMasterLooter = false,
-    isInRaid = false,
-    isInParty = false,
-    isInGroup = false,
+    isInRaid = IsInRaid(),
+    isInParty = IsInGroup() and not IsInRaid(),
+    isInGroup = IsInGroup(),
     raidsAttended = 0,
 
     -- Group specific
@@ -47,18 +47,20 @@ function User:_init()
 
     self._initialized = true;
 
-    self.name = UnitName("player");
-    self.realm = GetRealmName();
+    -- Note: GetNormalizedRealmName is not available during boot (only have player login event)
+    self.realm = GetRealmName():gsub("-", "");
+    self.realm = self.realm:gsub("%s+", "");
 
     -- fqn stands for Fully Qualified Name
-    self.fqn = ("%s-%s"):format(self.name, self.realm);
-    self.id = UnitGUID("player");
+    self.fqn = GL:addRealm(self.name, self.realm);
     self.bth = "";
 
+    -- This is used for the isDev flag only
     if (type(C_BattleNet) == "table" and C_BattleNet.GetAccountInfoByGUID) then
         self.bth = GL:stringHash(GL:tableGet(C_BattleNet.GetAccountInfoByGUID(self.id) or {}, "battleTag", ""));
     end
 
+    -- Keep track of when our group setup changed
     GL.Events:register("UserGroupRosterUpdatedListener", "GROUP_ROSTER_UPDATE", function () self:groupSetupChanged(); end);
 end
 
@@ -92,7 +94,7 @@ function User:refresh()
     local userWasInGroup = self.isInGroup;
     local userWasInRaid = self.isInRaid;
 
-    -- Make sure the window doens't popup after /reload
+    -- Make sure the window doesn't popup after /reload
     if (userWasMasterLooter == nil) then
         userWasMasterLooter = true;
     end
@@ -103,16 +105,16 @@ function User:refresh()
     self.Guild = {};
     self.Guild.name, self.Guild.rank, self.Guild.index = GetGuildInfo("player");
     self.isOfficer = C_GuildInfo.CanEditOfficerNote();
-    self.isInRaid = IsInRaid();
-    self.isInParty = IsInGroup() and not self.isInRaid;
-    self.isInGroup = self.isInRaid or self.isInParty;
+    self.isInGroup = IsInGroup();
+    self.isInRaid = self.isInGroup and IsInRaid();
+    self.isInParty = self.isInGroup and not self.isInRaid;
     self.hasAssist = false;
     self.isLead = false;
     self.isMasterLooter = false;
     self.raidIndex = nil;
     self.combatRole = nil;
-    self.fileName = UnitClassBase("player");
-    self.class = string.lower(self.fileName);
+    self.classFile = UnitClassBase("player");
+    self.class = string.lower(self.classFile);
     self.localizedRace, self.race = UnitRace("player");
     self.race = string.lower(self.race);
 
@@ -120,10 +122,10 @@ function User:refresh()
         -- Check if the current user is master looting
         -- And check the user's roles in the group
         for index = 1, _G.MAX_RAID_MEMBERS do
-            local name, rank, _, _, _, fileName,
+            local name, rank, _, _, _, classFile,
             _, _, _, role, isMasterLooter, combatRole = GetRaidRosterInfo(index);
 
-            GL.Player:cacheClass(name, fileName); -- We cache player classes wherever we can
+            GL.Player:cacheClass(name, classFile); -- We cache player classes wherever we can
 
             if (name == self.name) then
                 self.role = role;
@@ -239,7 +241,7 @@ function User:guildMembers()
     self.GuildMemberNames = {};
 
     for index = 1, GetNumGuildMembers() do
-        local name, rank, rankIndex, level, classDisplayName, zone, publicNote, officerNote, isOnline, status, fileName = GetGuildRosterInfo(index)
+        local name, rank, rankIndex, level, classDisplayName, zone, publicNote, officerNote, isOnline, status, classFile = GetGuildRosterInfo(index)
 
         if (name) then
             local fqn = string.lower(name);
@@ -257,7 +259,7 @@ function User:guildMembers()
                 officerNote = officerNote,
                 isOnline = isOnline,
                 status = status,
-                fileName = string.lower(fileName),
+                classFile = string.lower(classFile),
             });
         end
     end
@@ -298,18 +300,22 @@ function User:groupMembers()
         end
 
         for index = 1, maximumNumberOfGroupMembers do
-            local name, rank, subgroup, level, _, fileName, zone, online, isDead, role, isML = GetRaidRosterInfo(index);
+            local name, rank, subgroup, level, _, classFile, zone, online, isDead, role, isML = GetRaidRosterInfo(index);
 
             if (name) then
-                GL.Player:cacheClass(name, fileName); -- We cache player classes wherever we can
+                GL.Player:cacheClass(name, classFile); -- We cache player classes wherever we can
+                local realmLessName, realm = GL:stripRealm(name);
+                realm = realm or self.realm;
 
                 tinsert(Roster, {
-                    name = name,
+                    name = realmLessName,
+                    realm = realm,
+                    fqn = GL:addRealm(name, realm),
                     rank = rank,
                     subgroup = subgroup,
                     level = level,
-                    class = string.lower(fileName),
-                    fileName = fileName,
+                    class = string.lower(classFile),
+                    classFile = classFile,
                     zone = zone,
                     online = online,
                     isDead = isDead,
@@ -331,11 +337,13 @@ function User:groupMembers()
     return {
         {
             name = self.name,
+            realm = self.realm,
+            fqn = self.fqn,
             rank = 2,
             subgroup = 1,
             level = self.level,
-            class = string.lower(self.class),
-            fileName = string.upper(self.class),
+            class = self.class,
+            classFile = self.classFile,
             zone = "Development Land",
             online = true,
             isDead = false,
@@ -352,17 +360,13 @@ end
 ---
 ---@param unit string
 ---@return boolean
-function User:unitIsInYourGroup(unit)
+function User:unitInGroup(unit)
     -- We're clearly trying to test something, allow it
     if (not self.isInGroup) then
         return true;
     end
 
-    if (self.isInRaid) then
-        return GL:toboolean(UnitInRaid(unit));
-    end
-
-    return GL:toboolean(UnitInParty(unit));
+    return GL:toboolean(UnitInParty(GL:nameFormat(unit)));
 end
 
 -- Return the names of everyone in your party/raid
@@ -373,14 +377,14 @@ function User:groupMemberNames(fqn)
     -- Race conditions are a pain in the butt and I've seen them happen with this event
     local timestamp = GetServerTime() - 1;
 
-    -- The group names didn't change so there's no need to fetch them all again
+    -- The group names changed
     if (self.groupMemberNamesCachedAt <= self.groupSetupChangedAt) then
         self.groupMemberNamesCachedAt = timestamp;
 
         local GroupMemberNames = {};
         -- Fetch the name of everyone currently in the raid/party
         for _, Player in pairs(self:groupMembers()) do
-            tinsert(GroupMemberNames, Player.name);
+            tinsert(GroupMemberNames, Player.fqn);
         end
 
         self.GroupMemberNames = GroupMemberNames;
@@ -389,25 +393,20 @@ function User:groupMemberNames(fqn)
     if (not GL:empty(self.GroupMemberNames)) then
         -- Remove realm tags if the FQN is not desired
         -- We build a new table here so that the original values are not affected
-        if (not fqn and GL.isEra) then
-            local RealmFreeNames = {};
+        if (not fqn) then
+            local RealmlessNames = {};
             for _, name in pairs(self.GroupMemberNames) do
-                local realmFreeName = GL:stripRealm(name);
-                tinsert(RealmFreeNames, realmFreeName);
+                name = GL:stripRealm(name);
+                tinsert(RealmlessNames, name);
             end
 
-            return RealmFreeNames;
+            return RealmlessNames;
         end
 
         return self.GroupMemberNames;
     end
 
-    --- This is purely for add-on testing purposes
-    if (not fqn and GL.isEra) then
-        return {GL:stripRealm(self.name)};
-    end
-
-    return {self.name};
+    return { self.name };
 end
 
 ---@return boolean

@@ -225,11 +225,8 @@ function PackMuleRules:drawLowerThanQualityRule(Frame, Rule)
     Row:AddChild(beforeLowerThanRuleLabel);
 
     local LowerThanList = {};
-    local lowestValidItemQuality = 0;
+    local lowestValidItemQuality = GL.isEra and 0 or 2; -- Era supports quality 0 and up, in retail it's green +
     local highestValidItemQuality = 4;
-    if (not GL.isEra) then -- Minimum master looting levels differ between Era and TBC
-        lowestValidItemQuality = 2;
-    end
 
     local ItemQualityColors = GL.Data.Constants.ItemQualityColors;
     for i = lowestValidItemQuality, highestValidItemQuality do
@@ -288,11 +285,8 @@ function PackMuleRules:drawHigherThanQualityRule(Frame, Rule)
     Row:AddChild(beforeHigherThanRuleLabel);
 
     local HigherThanList = {};
-    local lowestValidItemQuality = 0;
+    local lowestValidItemQuality = GL.isEra and 0 or 2; -- Era supports quality 0 and up, in retail it's green +
     local highestValidItemQuality = 4;
-    if (not GL.isEra) then -- Minimum master looting levels differ between Era and TBC
-        lowestValidItemQuality = 2;
-    end
 
     local ItemQualityColors = GL.Data.Constants.ItemQualityColors;
     for i = lowestValidItemQuality, highestValidItemQuality do

@@ -198,9 +198,10 @@ function MailCuts:refreshPlayerCuts()
         local hasEntries = false;
         local Lines;
         local MailHistory = GL:tableGet(Session, "MailHistory." .. player);
+        local nameFormatted = GL:nameFormat(player);
         if (MailHistory) then
             Lines = {
-                string.format(L.CUT_MAIL_HISTORY, player),
+                string.format(L.CUT_MAIL_HISTORY, nameFormatted),
                 " ",
             };
             table.sort(MailHistory, function (a, b)
@@ -222,7 +223,7 @@ function MailCuts:refreshPlayerCuts()
         end
 
         ---@type FontString
-        local PlayerName = Interface:createFontString(PlayerRow, player);
+        local PlayerName = Interface:createFontString(PlayerRow, nameFormatted);
         PlayerName:SetPoint("TOPLEFT", PlayerRow, "TOPLEFT", 0, 0);
         PlayerName:SetWidth(80);
 
@@ -305,6 +306,7 @@ function MailCuts:mailAllCuts()
     local Session = GDKPSession:getActive() or {};
     for player in pairs(GL:tableGet(Session, "Pot.Cuts", {})) do
         local outstanding = tonumber(GDKPSession:copperOwedToPlayer(player, Session.ID));
+
         if (outstanding and outstanding > 0) then
             return self:mailPlayerCut(player, function (success, copper, message)
                 if (type(message) == "string") then
@@ -405,7 +407,7 @@ function MailCuts:mailPlayerCut(player, callback)
         -- Remove all event listeners and scheduled timers FIRST
         GL.Ace:CancelTimer(MailDisableTimer);
         GL.Ace:CancelTimer(MailTimeOutTimer);
-        Events:unregister({"MailCutsMailSuccess", "MailCutsMailFailed", "MailCutsMailTimedOut" });
+        Events:unregister{"MailCutsMailSuccess", "MailCutsMailFailed", "MailCutsMailTimedOut" };
 
         local message;
         local success = false;
@@ -423,6 +425,8 @@ function MailCuts:mailPlayerCut(player, callback)
                 if (copperLeftMatchesExpectation) then
                     message = string.format(L.CUT_SENT, gold, player);
                     GL:success(message);
+
+                    Events:fire("GL.GDKP_CUT_MAILED");
                 else
                     message = L.CUT_MAIL_GOLD_MISMATCH;
                     GL:warning(message);
@@ -461,7 +465,7 @@ function MailCuts:mailPlayerCut(player, callback)
     ClearSendMail();
     SetSendMailMoney(outstandingCopper);
 
-    SendMail(player, string.format(L.CUT_MAIL_SUBJECT, gold), L.CUT_MAIL_BODY);
+    SendMail(GL:nameFormat(player), string.format(L.CUT_MAIL_SUBJECT, gold), L.CUT_MAIL_BODY);
 
     MailDisableTimer = GL.Ace:ScheduleRepeatingTimer(function ()
         self:disableSendButton();
@@ -493,5 +497,3 @@ function MailCuts:enableSendButton()
 
     _G.SendMailMailButton:SetEnabled(true);
 end
-
-GL:debug("Importer.lua");

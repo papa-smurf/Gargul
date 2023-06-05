@@ -137,11 +137,11 @@ function DroppedLootLedger:startTracking()
     self.tracking = true;
 
     -- Just in case the event listeners already exist we remove them
-    Events:unregister({
+    Events:unregister{
         "DroppedLootLedgerChatMSGLootListener",
         "DroppedLootLedgerLootReadyListener",
         "DroppedLootLedgerCombatLogEventUnfilteredListener",
-    });
+    };
 
     -- Item received message detected in chat
     Events:register("DroppedLootLedgerChatMSGLootListener", "CHAT_MSG_LOOT", function(_, message)
@@ -163,11 +163,11 @@ end
 function DroppedLootLedger:stopTracking()
     GL:debug("DroppedLootLedger:stopTracking");
 
-    Events:unregister({
+    Events:unregister{
         "DroppedLootLedgerChatMSGLootListener",
         "DroppedLootLedgerLootReadyListener",
         "DroppedLootLedgerCombatLogEventUnfilteredListener",
-    });
+    };
 
     self.tracking = false;
 end

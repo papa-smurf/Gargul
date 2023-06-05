@@ -1,6 +1,9 @@
 ---@type GL
 local _, GL = ...;
 
+---@type Constants
+local Constants = GL.Data.Constants;
+
 ---@type DB
 local DB = GL.DB;
 
@@ -101,6 +104,147 @@ function Settings:enforceTemporarySettings()
         return;
     end
 
+    local Version = GL.Version;
+
+    --- Check if the last version we loaded is equal to or older than 6.0.4
+    if (Version:leftIsNewerThanOrEqualToRight("6.0.4", Version.latestPriorVersionBooted)) then
+        --- In 6.0.4 the way anti-snipe works changed. Multiplying the existing value by 1.5 should net a pretty decent result
+        local antiSnipe = tonumber(self:get("GDKP.antiSnipe")) or 10;
+        self:set("GDKP.antiSnipe", GL:round(antiSnipe * 1.5));
+
+        --- In 6.0.4 we also completely changed the way mailed and traded gold is stored
+        --- The wait is necessary. This way we can ensure that we know if we're on a cross-realm enabled server
+        GL.Ace:ScheduleTimer(function ()
+            local serverTime = GetServerTime();
+            for key, Session in pairs(DB:get("GDKP.Ledger", {})) do
+                local somethingChanged = false;
+
+                if (Session.GoldMails) then
+                    for playerGUID, copperSent in pairs(Session.GoldMails or {}) do
+                        playerGUID = GL:nameFormat{ name = playerGUID, forceRealm = true, func = strlower };
+                        local now = Session.lockedAt or Session.createdAt or serverTime;
+                        local checksum = GL:stringHash{ Constants.GDKP.mailIdentifier, copperSent, 0, playerGUID, now };
+                        GL:tableSet(Session, ("GoldLedger.%s.%s"):format(playerGUID, checksum), {
+                            createdAt = now,
+                            type = Constants.GDKP.mailIdentifier,
+                            given = copperSent,
+                            received = 0,
+                            createdBy = GL.GDKP:myGUID(),
+                            checksum = checksum;
+                        });
+
+                        somethingChanged = true;
+                    end
+
+                    Session.GoldMails = nil;
+                end
+
+                if (Session.GoldTrades) then
+                    for playerGUID, Details in pairs(Session.GoldTrades or {}) do
+                        playerGUID = GL:nameFormat{ name = playerGUID, forceRealm = true, func = strlower };
+                        local now = Session.lockedAt or Session.createdAt or serverTime;
+
+                        if (Details.to >= 10000) then
+                            local checksum = GL:stringHash{ Constants.GDKP.tradeIdentifier, Details.to, 0, playerGUID, now };
+                            GL:tableSet(Session, ("GoldLedger.%s.%s"):format(playerGUID, checksum), {
+                                createdAt = now,
+                                type = Constants.GDKP.tradeIdentifier,
+                                given = Details.to,
+                                received = 0,
+                                createdBy = GL.GDKP:myGUID(),
+                                checksum = checksum;
+                            });
+
+                            somethingChanged = true;
+                        end
+
+                        if (Details.from >= 10000) then
+                            local checksum = GL:stringHash{ Constants.GDKP.tradeIdentifier, Details.from, 0, playerGUID, now };
+                            GL:tableSet(Session, ("GoldLedger.%s.%s"):format(playerGUID, checksum), {
+                                createdAt = now,
+                                type = Constants.GDKP.tradeIdentifier,
+                                given = 0,
+                                received = Details.from,
+                                createdBy = GL.GDKP:myGUID(),
+                                checksum = checksum;
+                            });
+
+                            somethingChanged = true;
+                        end
+                    end
+
+                    Session.GoldTrades = nil;
+                end
+
+                if (somethingChanged) then
+                    DB:set("GDKP.Ledger." .. key, Session);
+                end
+            end
+        end, 3);
+    end
+
+    --- In 6.0.0 we made everything FQN-first, forcing us to rewrite existing PO and BR data
+    --- The wait is necessary. This way we can ensure that we know if we're on a cross-realm enabled server
+    GL.Ace:ScheduleTimer(function ()
+        --[[ REWRITE BOOSTED ROLL ENTRIES ]]
+        local BoostedRollEntries = {};
+        for player, points in pairs(DB:get("BoostedRolls.Points", {})) do
+            local fqn = GL:addRealm(player);
+
+            BoostedRollEntries[fqn] = points;
+        end
+        DB:set("BoostedRolls.Points", BoostedRollEntries);
+
+        --[[ REWRITE BOOSTED ROLL ALIASES ]]
+        local BoostedRollAliases = {};
+        for alias, main in pairs(DB:get("BoostedRolls.Aliases", {})) do
+            local _, mainRealm = GL:stripRealm(main);
+
+            -- If no realm is specified assume same realm as main
+            alias = GL:addRealm(alias, mainRealm);
+
+            --- Only set non-empty aliases
+            if (not GL:empty(alias)) then
+                BoostedRollAliases[strlower(alias)] = main;
+            end
+        end
+        DB:set("BoostedRolls.Aliases", BoostedRollAliases);
+
+        --[[ REWRITE PLUS ONE ENTRIES ]]
+        local PlusOneEntries = {};
+        for player, points in pairs(DB:get("PlusOnes.Totals", {})) do
+            local fqn = GL:addRealm(player);
+
+            PlusOneEntries[fqn] = points;
+        end
+        DB:set("PlusOnes.Totals", PlusOneEntries);
+    end, 3);
+
+    --- In 6.0.0 we changed the base/adjust mutator identifiers since it collides with our table helpers
+    for key, Session in pairs(DB:get("GDKP.Ledger", {})) do
+        if (Session.Pot and Session.Pot.DistributionDetails) then
+            for player, Details in pairs(Session.Pot.DistributionDetails) do
+                local somethingChanged = false;
+
+                if (Details["+.__base__.+"]) then
+                    Details[Constants.GDKP.baseMutatorIdentifier] = Details["+.__base__.+"];
+                    Details["+.__base__.+"] = nil;
+                    somethingChanged = true;
+                end
+
+                if (Details["+.__adjust__.+"]) then
+                    Details[Constants.GDKP.adjustMutatorIdentifier] = Details["+.__adjust__.+"];
+                    Details["+.__adjust__.+"] = nil;
+                    somethingChanged = true;
+                end
+
+                if (somethingChanged) then
+                    DB:set(("GDKP.Ledger.%s.Pot.DistributionDetails.%s"):format(key, player), Details);
+                end
+            end
+        end
+    end
+
     --- In 5.2.0 we completely redid the GDKP queue flow and UI
     --- Make sure to re-enable so users at least get to experience it again
     if (GL.version == "5.2.0" or (not DB.LoadDetails["5.2.0"])) then
@@ -136,9 +280,9 @@ function Settings:enforceTemporarySettings()
     DB:set("Settings.GDKP.announceCountdownOnce", nil);
 
     --- In the GDKP module we added extra shortcut keys forcing us to remap old ones
-    if (not DB.Settings.ShortcutKeys.rollOffOrAuction) then
-        DB.Settings.ShortcutKeys.rollOffOrAuction = DB.Settings.ShortcutKeys.rollOff or "ALT_CLICK";
-        DB.Settings.ShortcutKeys.rollOff = "DISABLED";
+    if (not DB:get("Settings.ShortcutKeys.rollOffOrAuction")) then
+        DB:set("Settings.ShortcutKeys.rollOffOrAuction", DB:get("Settings.ShortcutKeys.rollOff", "ALT_CLICK"));
+        DB:set("Settings.ShortcutKeys.rollOff", "DISABLED");
     end
 end
 
@@ -163,7 +307,7 @@ function Settings:resetToDefault()
     GL:debug("Settings:resetToDefault");
 
     self.Active = {};
-    DB.Settings = {};
+    DB:set("Settings", {});
 
     -- Combine defaults and user settings
     self:overrideDefaultsWithUserSettings();
@@ -179,14 +323,14 @@ function Settings:overrideDefaultsWithUserSettings()
     self.Active = {};
 
     -- Combine the default and user's settings to one settings table
-    Settings = GL:tableMerge(Settings.Defaults, DB.Settings);
+    Settings = GL:tableMerge(Settings.Defaults, DB:get("Settings"));
 
     -- Set the values of the settings table directly on the GL.Settings table.
     for key, value in pairs(Settings) do
         self.Active[key] = value;
     end
 
-    DB.Settings = self.Active;
+    DB:set("Settings", self.Active);
 end
 
 --- We use this method to make sure that the interface is only built

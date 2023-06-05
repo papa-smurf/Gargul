@@ -12,6 +12,14 @@ GL.Interface.Changelog = {
 
     History = {
         {
+            version = "6.0.4",
+            date = "June 4th, 2023",
+            Changes = {
+                "Gargul, including its GDKP and rolling modules, are now cross-realm compatible for those playing on Era or Retail!",
+                "GDKP organizers can now check and manage gold trades in case something went wrong (|c00a79eff/gdkp|r -> |c00a79effCuts|r -> Bag icon left of player name)",
+            },
+        },
+        {
             version = "5.4.1",
             date = "May 7th, 2023",
             Changes = {
@@ -436,7 +444,7 @@ function Changelog:draw()
     ScrollFrame:AddChild(HorizontalSpacer);
 
     local DiscordLabel = GL.AceGUI:Create("Label");
-    DiscordLabel:SetText("|c00a79effGet support and involved on our Discord|r");
+    DiscordLabel:SetText("|c00a79effGet support or share ideas on our Discord|r");
     DiscordLabel:SetFontObject(_G["GameFontNormal"]);
     DiscordLabel:SetFullWidth(true);
     ScrollFrame:AddChild(DiscordLabel);

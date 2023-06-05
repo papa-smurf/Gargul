@@ -13,6 +13,17 @@ GL.GDKP = {};
 ---@type GDKP
 local GDKP = GL.GDKP;
 
+---@param player string
+---@return string
+function GDKP:playerGUID(player, realm)
+    return strlower(GL:addRealm(player, realm));
+end
+
+---@return string
+function GDKP:myGUID()
+    return strlower(GL.User.fqn);
+end
+
 ---@return table|boolean
 function GDKP:settingsForItemID(itemID)
     GL:debug("GDKP:settingsForItemID");

@@ -58,7 +58,7 @@ function SoftRes:_init()
             _G.LootReserve:PromptListener("RESERVES", GL.name)
         else
             GL:error("Failed to connect to LootReserve, contact support (include message below)");
-            DevTools_Dump({ success, result });
+            DevTools_Dump{ success, result };
         end
     end, 5);
 
@@ -112,7 +112,7 @@ function SoftRes:handleWhisperCommand(_, message, sender)
         return;
     end
 
-    local name = GL:stripRealm(sender);
+    local name = GL:disambiguateName(sender);
 
     -- Fetch everything soft-reserved by the sender
     local Reserves = GL:tableGet(self.MaterializedData.DetailsByPlayerName, string.format(
@@ -577,7 +577,7 @@ function SoftRes:itemIDIsReservedByPlayer(itemID, playerName)
 
     return GL:inTable(
         SoftResData[tostring(itemID)] or {},
-        string.lower(GL:stripRealm(playerName))
+        string.lower(GL:disambiguateName(playerName))
     );
 end
 
@@ -1066,10 +1066,10 @@ function SoftRes:importGargulData(data)
 
             -- We don't simply overwrite the PlusOnes if plusone data is already present
             -- If the player doesn't have any plusones yet then we set it to whatever is provided by softres
-            if (GL.isEra
+            if (GL:isCrossRealm()
                 or (GL:higherThanZero(currentPlusOneValue)
-                and currentPlusOneValue ~= plusOnes
-            )
+                    and currentPlusOneValue ~= plusOnes
+                )
             ) then
                 differentPlusOnes = true;
             else
@@ -1102,18 +1102,18 @@ function SoftRes:importGargulData(data)
     DB.SoftRes.HardReserves = HardReserveEntries;
 
     -- At this point in Era we don't really know anyone's plus one because SoftRes doesn't support realm tags (yet)
-    if (GL.isEra) then
-        if (not GL:empty(DB.PlusOnes)) then
-            GL.Interface.Dialogs.PopupDialog:open({
+    if (GL:isCrossRealm()) then
+        if (not GL:empty(DB:get("PlusOnes"))) then
+            GL.Interface.Dialogs.PopupDialog:open{
                 question = "Do you want to clear all previous PlusOne values?",
                 OnYes = function ()
                     GL.PlusOnes:clearPlusOnes();
                 end,
-            });
+            };
         end
     elseif (differentPlusOnes) then
         -- Show a confirmation dialog before overwriting the plusOnes
-        GL.Interface.Dialogs.PopupDialog:open({
+        GL.Interface.Dialogs.PopupDialog:open{
             question = "The PlusOne values provided collide with the ones already present. Do you want to replace your old PlusOne values?",
             OnYes = function ()
                 GL.PlusOnes:clearPlusOnes();
@@ -1121,7 +1121,7 @@ function SoftRes:importGargulData(data)
                 GL.Interface.SoftRes.Overview:close();
                 self:draw();
             end,
-        });
+        };
     end
 
     GL.Interface.SoftRes.Importer:close();
@@ -1183,7 +1183,7 @@ function SoftRes:importCSVData(data, reportStatus)
 
                 -- We don't simply overwrite the PlusOnes if plusone data is already present
                 -- If the player doesn't have any plusones yet then we set it to whatever is provided by softres
-                if (GL.isEra
+                if (GL:isCrossRealm()
                     or (GL:higherThanZero(currentPlusOneValue)
                         and currentPlusOneValue ~= plusOnes
                     )
@@ -1224,18 +1224,18 @@ function SoftRes:importCSVData(data, reportStatus)
     end
 
     -- At this point we don't really know anyone's plus one because SoftRes doesn't support realm tags (yet)
-    if (GL.isEra) then
-        if (not GL:empty(DB.PlusOnes)) then
-            GL.Interface.Dialogs.PopupDialog:open({
+    if (GL:isCrossRealm()) then
+        if (not GL:empty(DB:get("PlusOnes"))) then
+            GL.Interface.Dialogs.PopupDialog:open{
                 question = "Do you want to clear all previous PlusOne values?",
                 OnYes = function ()
                     GL.PlusOnes:clearPlusOnes();
                 end,
-            });
+            };
         end
     elseif (differentPlusOnes) then
         -- Show a confirmation dialog before overwriting the plusOnes
-        GL.Interface.Dialogs.PopupDialog:open({
+        GL.Interface.Dialogs.PopupDialog:open{
             question = "The PlusOne values provided collide with the ones already present. Do you want to replace your old PlusOne values?",
             OnYes = function ()
                 GL.PlusOnes:clearPlusOnes();
@@ -1243,7 +1243,7 @@ function SoftRes:importCSVData(data, reportStatus)
                 GL.Interface.SoftRes.Overview:close();
                 self:draw();
             end,
-        });
+        };
     end
 
     return not GL:empty(DB.SoftRes.SoftReserves);

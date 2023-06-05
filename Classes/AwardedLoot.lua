@@ -41,14 +41,14 @@ function AwardedLoot:_init()
     -- Bind a item successfully assigned (masterlooted) to the winner to the tradeCompleted method
     Events:register("AwardedLootTradeCompletedListener", "GL.ITEM_MASTER_LOOTED", function (_, player, itemID)
         -- Mimic the GL.TRADE_COMPLETED payload so we can reuse the tradeCompleted method!
-        self:tradeCompleted({
+        self:tradeCompleted{
             partner = player,
             MyItems = {
                 {
                     itemID = itemID,
                 },
             },
-        });
+        };
     end);
 
     Events:register("AwardedLootBagUpdateDelayedListener", "BAG_UPDATE_DELAYED", function ()
@@ -81,8 +81,6 @@ function AwardedLoot:tooltipLines(itemLink)
 
             local Details = {};
 
-            local winner = string.lower(GL:stripRealm(Loot.awardedTo));
-
             if (Loot.OS) then
                 tinsert(Details, "OS");
             end
@@ -101,9 +99,8 @@ function AwardedLoot:tooltipLines(itemLink)
             end
             tinsert(Details, receivedString);
 
-            local line = string.format("    |c00%s%s|r | %s",
-                GL:classHexColor(GL.Player:classByName(winner, 0), GL.Data.Constants.disabledTextColor),
-                GL:capitalize(winner),
+            local line = string.format("    %s | %s",
+                GL:nameFormat{ name = Loot.awardedTo, colorize = true },
                 table.concat(Details, " | ")
             );
             tinsert(Lines, line);
@@ -193,14 +190,10 @@ function AwardedLoot:editWinner(checksum, winner, announce)
         return;
     end
 
-    local originalWinner = string.lower(GL:stripRealm(AwardEntry.awardedTo));
-
-    if (GL.isEra and not strfind(winner, "-")) then
-        winner = string.format("%s-%s", winner, GL.User.realm);
-    end
+    winner = GL:nameFormat(winner);
 
     -- Nothing changed, silly player stuff
-    if (string.lower(GL:stripRealm(winner)) == originalWinner) then
+    if (GL:iEquals(winner, AwardEntry.awardedTo)) then
         return;
     end
 
@@ -212,10 +205,10 @@ function AwardedLoot:editWinner(checksum, winner, announce)
 
     AwardEntry.received = false;
     AwardEntry.awardedTo = winner;
-    AwardEntry.awardedBy = GL.User.name;
+    AwardEntry.awardedBy = GL.User.fqn;
 
     -- If we awarded to ourselves then we should already have the item
-    if (string.lower(winner) == string.lower(GL.User.name)) then
+    if (string.lower(winner) == string.lower(GL.User.fqn)) then
         AwardEntry.received = true;
     end
 
@@ -292,7 +285,7 @@ function AwardedLoot:editWinner(checksum, winner, announce)
         and (GL.Settings:get("AwardingLoot.autoTradeInCombat") or
             not UnitAffectingCombat("player")
         )
-        and GL.User.name ~= winner
+        and GL.User.fqn ~= winner
     ) then
         self:initiateTrade(AwardEntry);
     end
@@ -331,6 +324,9 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, G
         -- Save this for last
         winner = winner.winner;
     end
+
+    local isDisenchanted = winner == GL.Exporter.disenchantedItemIdentifier;
+    winner = not isDisenchanted and GL:addRealm(winner) or winner;
 
     local broadcast = false;
     if (automaticallyAwarded) then
@@ -380,9 +376,7 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, G
         return false;
     end
 
-    if (GL.isEra and not strfind(winner, "-")) then
-        winner = string.format("%s-%s", winner, GL.User.realm);
-    end
+    winner = not isDisenchanted and GL:nameFormat{name = winner, forceRealm = true} or winner;
 
     -- You can set the date for when this item was awarded, handy if you forgot an item for example
     if (dateProvided) then
@@ -414,15 +408,17 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, G
         announce = true;
     end
 
-    local normalizedPlayerName = string.lower(GL:stripRealm(winner));
-    local isReserved = GL.SoftRes:itemIDIsReservedByPlayer(itemID, normalizedPlayerName);
+    local realmLessName = string.lower(GL:stripRealm(winner));
     local isPrioritized, isWishlisted = false, false;
+    local isReserved = not isDisenchanted and GL.SoftRes:itemIDIsReservedByPlayer(itemID, realmLessName) or false;
 
-    for _, Entry in pairs(GL.TMB:byItemIDAndPlayer(itemID, normalizedPlayerName) or {}) do
-        if (Entry.type == GL.Data.Constants.tmbTypePrio) then
-            isPrioritized = true;
-        elseif (Entry.type == GL.Data.Constants.tmbTypeWish) then
-            isWishlisted = true;
+    if (not isDisenchanted) then
+        for _, Entry in pairs(GL.TMB:byItemIDAndPlayer(itemID, realmLessName) or {}) do
+            if (Entry.type == GL.Data.Constants.tmbTypePrio) then
+                isPrioritized = true;
+            elseif (Entry.type == GL.Data.Constants.tmbTypeWish) then
+                isWishlisted = true;
+            end
         end
     end
 
@@ -443,7 +439,7 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, G
         itemID = itemID,
         itemGUID = awardedItemGUID,
         awardedTo = winner,
-        awardedBy = GL.User.name,
+        awardedBy = GL.User.fqn,
         timestamp = timestamp,
         softresID = GL.DB:get("SoftRes.MetaData.id"),
         received = GL:iEquals(winner, GL.User.name),
@@ -480,24 +476,27 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, G
         channel = "RAID_WARNING";
     end
 
+    -- No need to mention the realm of the player unless his name is not unique
+    local awardedTo = GL:disambiguateName(winner);
+
     if (announce) then
         local awardMessage = "";
         if (GL.BoostedRolls:enabled() and GL:higherThanZero(BRCost)) then
             awardMessage = string.format("%s was awarded to %s for %s points. Congrats!",
                 itemLink,
-                winner,
+                awardedTo,
                 BRCost
             );
         elseif (GDKPCost and GDKPCost > 0) then
             awardMessage = string.format("%s was awarded to %s for %sg. Congrats!",
                 itemLink,
-                winner,
+                awardedTo,
                 GDKPCost
             );
         else
             awardMessage = string.format("%s was awarded to %s. Congrats!",
                 itemLink,
-                winner
+                awardedTo
             );
 
             if (GL.BoostedRolls:enabled()) then
@@ -706,6 +705,9 @@ function AwardedLoot:tradeInitiated()
         return;
     end
 
+    -- Check if we're trading the designated disenchanter
+    local tradedPlayerIsDisenchanter = GL:iEquals(GL:addRealm(tradingPartner), GL.PackMule.disenchanter);
+
     -- Check whether there are any awarded items that need to be traded to your trading partner
     local threeHoursAgo = GetServerTime() - 10800;
 
@@ -722,7 +724,7 @@ function AwardedLoot:tradeInitiated()
                 return;
             end
 
-            local awardedTo = GL:stripRealm(Loot.awardedTo);
+            local awardedTo = GL:nameFormat(Loot.awardedTo);
 
             -- Check whether this item is meant for our current trading partner
             if (Loot.received -- The item was already received by the winner, no need to check further
@@ -730,7 +732,7 @@ function AwardedLoot:tradeInitiated()
 
                     -- The item is marked as disenchanted and our trading partner is the designated enchanter
                     and (awardedTo ~= GL.Exporter.disenchantedItemIdentifier
-                        or tradingPartner ~= GL.PackMule.disenchanter
+                        or not tradedPlayerIsDisenchanter
                     )
                 )
             ) then
@@ -779,7 +781,7 @@ function AwardedLoot:tradeCompleted(Details)
             end
 
             -- The item is not meant for the person we traded with, skip it
-            if (string.lower(GL:stripRealm(Details.partner)) ~= string.lower(GL:stripRealm(Loot.awardedTo))
+            if (not GL:iEquals(Details.partner, Loot.awardedTo)
                 and (not tradedDisenchanter
                     or Loot.awardedTo ~= GL.Exporter.disenchantedItemIdentifier
                 )
@@ -863,7 +865,7 @@ function AwardedLoot:processAwardedLoot(CommMessage)
         itemLink = AwardEntry.itemLink,
         itemID = AwardEntry.itemID,
         awardedTo = AwardEntry.awardedTo,
-        awardedBy = CommMessage.Sender.name,
+        awardedBy = CommMessage.Sender.fqn,
         timestamp = AwardEntry.timestamp,
         softresID = AwardEntry.softresID,
         received = AwardEntry.received,

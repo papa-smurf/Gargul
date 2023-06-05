@@ -161,7 +161,7 @@ function Exporter:clearData()
     end
 
     -- Show a confirmation dialog before clearing entries
-    GL.Interface.Dialogs.PopupDialog:open({
+    GL.Interface.Dialogs.PopupDialog:open{
         question = warning,
         OnYes = function ()
             onConfirm();
@@ -169,7 +169,7 @@ function Exporter:clearData()
             -- Let the application know that an item was unawarded (deleted)
             GL.Events:fire("GL.ITEM_UNAWARDED");
         end,
-    });
+    };
 end
 
 --- Show the export data (either all or for the selected date)
@@ -268,9 +268,11 @@ function Exporter:transformEntriesToCustomFormat(Entries)
             local wowheadLink;
 
             if (GL.isEra) then
-                wowheadLink = string.format("https://classic.wowhead.com/item=%s", AwardEntry.itemID );
+                wowheadLink = ("https://classic.wowhead.com/item=%s"):format(AwardEntry.itemID);
+            elseif (GL.isRetail) then
+                wowheadLink = ("https://www.wowhead.com/item=%s"):format(AwardEntry.itemID);
             else
-                wowheadLink = string.format("https://www.wowhead.com/wotlk/item=%s", AwardEntry.itemID );
+                wowheadLink = ("https://www.wowhead.com/wotlk/item=%s"):format(AwardEntry.itemID);
             end
 
             if (ItemDetails) then
@@ -280,7 +282,8 @@ function Exporter:transformEntriesToCustomFormat(Entries)
                     ["@ITEM"] = ItemDetails.name,
                     ["@ILVL"] = ItemDetails.level,
                     ["@QUALITY"] = ItemDetails.quality,
-                    ["@WINNER"] = AwardEntry.awardedTo,
+                    ["@WINNER"] = GL:nameFormat{ name = AwardEntry.awardedTo, stripRealm = true },
+                    ["@REALM"] = GL:getRealmFromName(AwardEntry.awardedTo),
                     ["@OS"] = GL:toboolean(AwardEntry.OS),
                     ["@SR"] = GL:toboolean(AwardEntry.SR),
                     ["@WL"] = GL:toboolean(AwardEntry.WL),
@@ -330,7 +333,7 @@ function Exporter:transformEntriesToTMBFormat(Entries)
         exportString = string.format("%s\n%s,%s,%s,%s,%s",
             exportString,
             date('%Y-%m-%d', AwardEntry.timestamp),
-            GL:stripRealm(AwardEntry.awardedTo),
+            GL:nameFormat{ name = AwardEntry.awardedTo, stripRealm = true },
             AwardEntry.itemID,
             AwardEntry.OS,
             AwardEntry.checksum
@@ -351,21 +354,21 @@ function Exporter:transformEntriesToDFTFormat(Entries)
 
     -- We need to load all items first to make sure the item names are available
     local exportString = "";
-    for _, Entry in pairs(Entries) do
+    for _, AwardEntry in pairs(Entries) do
         local dateString = "";
 
         -- Check whether the player wants an EU or US date string
         if (exportFormat == Constants.ExportFormats.DFTEU) then
-            dateString = date('%d/%m/%Y', Entry.timestamp);
+            dateString = date('%d/%m/%Y', AwardEntry.timestamp);
         else
-            dateString = date('%m/%d/%Y', Entry.timestamp);
+            dateString = date('%m/%d/%Y', AwardEntry.timestamp);
         end
 
         exportString = string.format("%s%s;[%s];%s\n",
             exportString,
             dateString,
-            Entry.itemID,
-            Entry.awardedTo
+            AwardEntry.itemID,
+            GL:nameFormat(AwardEntry.awardedTo)
         );
     end;
 
@@ -425,8 +428,8 @@ function Exporter:drawDatesTable(Parent, Dates)
     Table:SetWidth(120);
     Table.frame:SetPoint("BOTTOMLEFT", Parent, "BOTTOMLEFT", 50, 58);
 
-    Table:RegisterEvents({
-        ["OnClick"] = function()
+    Table:RegisterEvents{
+        OnClick = function()
 
             -- Even if we're still missing an answer from some of the group members
             -- we still want to make sure our inspection end after a set amount of time
@@ -441,7 +444,7 @@ function Exporter:drawDatesTable(Parent, Dates)
                 Exporter:refreshExportString();
             end, .1);
         end
-    });
+    };
 
     local TableData = {};
     for _, date in pairs(Dates) do

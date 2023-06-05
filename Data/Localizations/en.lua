@@ -9,10 +9,11 @@ L.ALL_SETTINGS = "All Settings";
 L.ANTISNIPE = "Anti Snipe";
 L.ANTISNIPE_EXPLANATION = {
     " ",
-    "An Anti Snipe value of 10 means that 10 seconds will be added",
-    "to the auction if someone bids within the last 10 seconds",
+    "An Anti Snipe value of 10 means any bids with less than 10 seconds left",
+    "resets the time remaining back to 10 seconds",
     " ",
     "You can leave this empty or set to 0 to disable Anti Snipe completely",
+    "Anti Snipe values less than 5 are not supported",
     " ",
 };
 L.ADD_DROPS_TO_QUEUE = "Add dropped loot to queue";
@@ -23,7 +24,7 @@ L.AUCTIONS = "Auctions";
 L.AUTO_AWARD = "Auto award";
 L.AUTO_TRADE_OPTIONS = "Auto trade";
 L.AWARD = "Award";
-L.AWARD_ITEM_CONFIRMATION = "Award %s to |cff%s%s|r for %s|c00FFF569g|r?";
+L.AWARD_ITEM_CONFIRMATION = "Award %s to %s for %s|c00FFF569g|r?";
 L.BID = "Bid";
 L.BID_DENIED_WHISPER = "Bid denied, the minimum bid is %sg";
 L.BIDDING_STARTED = "Bidding starts on %s. Minimum is %sg, increment is %sg. Use raid chat!";
@@ -36,6 +37,7 @@ L.CLOSE_ON_AWARD = "Close on award";
 L.CLOSE_ON_START = "Close on start";
 L.COMMUNICATION = "Communication";
 L.CUT_MAIL_IN_PROGRESS = "Wait a bit, we're still processing the previous mail";
+L.CUT_MAIL_IN_PROGRESdeS = "Wait a bit, we're still processing the previous mail";
 L.CUT_MAIL_INSUFFICIENT_FUNDS = "You don't have enough gold to pay %s";
 L.CUT_MAILBOX_CLOSED = "Can't send mail when the mailbox is closed";
 L.CUT_MAIL_FAILED = "Failed to send cut to %s";
@@ -69,6 +71,12 @@ L.GDKP_HIDE_UPCOMING_CONFIRMATION = "Are you sure? You won't be able to see, or 
 L.GDKP_PAYOUT_INACTIVE = "No active GDKP session detected or session is not locked for payout!";
 L.GDKP_SESSION = "GDKP Session";
 L.GDKP_SHOW_UPCOMING = "Show upcoming items";
+L.GOLD_TRADE_GIVEN = "I gave %s to %s";
+L.GOLD_TRADE_GIVEN_DELETED = "I deleted a gold trade in which I gave %s to %s";
+L.GOLD_TRADE_GIVEN_RESTORED = "I restored a gold trade in which I gave %s to %s";
+L.GOLD_TRADE_RECEIVED = "I received %s from %s";
+L.GOLD_TRADE_RECEIVED_DELETED = "I deleted a gold trade in which I received %s from %s";
+L.GOLD_TRADE_RECEIVED_RESTORED = "I restored a gold trade in which I received %s from %s";
 L.GROUP_MANAGER = "Group Manager";
 L.IMPORT_EXPLANATION = "What kind of data would you like to import?";
 L.INFO = "Info";
@@ -79,8 +87,14 @@ L.GDKP_ACTIVATED = "GDKP Activated";
 L.HALT = "Halt";
 L.HIDE = "Hide";
 L.HIGHEST_BIDDER_CONFIRMATION = "%s is the highest bidder (%sg)";
+L.I_REMOVED_AWARDED = "I removed %s awarded to %s for %sg";
+L.I_RESTORED_AWARDED = "I restored %s awarded to %s for %sg";
+L.I_REMOVED_GOLD = "I removed %sg from the pot";
+L.I_RESTORED_GOLD = "I added %sg back to the pot";
+L.RESTORE = "Restore";
 L.START = "Start";
 L.STOP = "Stop";
+L.STOP_AUCTION = "Stop the auction first!";
 L.MIN = "Min";
 L.MAXIMIZE = "Maximize";
 L.MAIL = "Mail";
@@ -99,6 +113,9 @@ L.OPEN_AUCTIONEER = "Open Auctioneer";
 L.PLUS10 = "+10";
 L.PLUSONES = "Plus Ones";
 L.POT = "Pot";
+L.POT_HOLDS = "The pot now holds %sg";
+L.POT_UPDATED_AFTER_DELETE = "Pot was updated after deleting an auction, it now holds %sg";
+L.POT_UPDATED_AFTER_RESTORE = "Pot was updated after restoring an auction, it now holds %sg";
 L.QUEUE = "Queue";
 L.REMOVE_BID = "Remove bid";
 L.RESET_SETTINGS = "Reset Settings"

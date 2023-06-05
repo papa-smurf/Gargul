@@ -145,6 +145,11 @@ function Version:checkForUpdate(byReadyCheck)
         ):send();
     end
 
+    -- We're not in a guild, no need to check
+    if (not GL.User.Guild.name) then
+        return;
+    end
+
     GL.Ace:ScheduleTimer(function ()
         if (self.isOutOfDate
             or UnitAffectingCombat("player") -- We don't check guild in combat, can't risk hiccups
@@ -418,7 +423,7 @@ function Version:inspectGroup()
         if (Player.online) then
             -- No need to request our own version
             if (Player.name ~= GL.User.name) then
-                self.GroupMembers[GL:stripRealm(Player.name)] = "-";
+                self.GroupMembers[GL:disambiguateName(Player.fqn)] = "-";
                 numberOfActiveGroupMembers = numberOfActiveGroupMembers + 1;
             end
         end
@@ -478,7 +483,7 @@ function Version:playersUsingAddon(callback)
         or not callback
         or type(callback) ~= "function"
     ) then
-        callback({});
+        callback{};
         return;
     end
 
@@ -489,8 +494,8 @@ function Version:playersUsingAddon(callback)
     for _, Player in pairs(GL.User:groupMembers()) do
         if (Player.online) then
             -- No need to request our own version
-            if (Player.name ~= GL.User.name) then
-                GroupMembers[GL:stripRealm(Player.name)] = false;
+            if (Player.id ~= GL.User.id) then
+                GroupMembers[GL:disambiguateName(Player.fqn)] = false;
                 numberOfActiveGroupMembers = numberOfActiveGroupMembers + 1;
             end
         end

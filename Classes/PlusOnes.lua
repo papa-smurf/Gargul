@@ -50,14 +50,15 @@ function PlusOnes:_init()
     return true;
 end
 
---- Get the normalized player name (or alias parent if available)
----
----@param playerName string
+---@param player string
 ---@return string
-function PlusOnes:normalizedName(playerName)
-    GL:debug("PlusOnes:normalizedName");
+function PlusOnes:playerGUID(player, realm)
+    return strlower(GL:addRealm(player, realm));
+end
 
-    return strtrim(GL:normalizedName(playerName));
+---@return string
+function PlusOnes:myGUID()
+    return strlower(GL.User.fqn);
 end
 
 --- Check whether we trust the given player (currently used to auto-accept incoming broadcasts)
@@ -71,12 +72,11 @@ function PlusOnes:playerIsTrusted(playerName)
         return false;
     end
 
-    local normalizedName = self:normalizedName(playerName);
-
+    playerName = GL:nameFormat(playerName);
     local trustedPlayerCSV = GL.Settings:get("PlusOnes.automaticallyAcceptDataFrom", "");
     local TrustedPlayers = GL:strSplit(trustedPlayerCSV, ",");
     for _, player in pairs(TrustedPlayers) do
-        if (GL:iEquals(GL:normalizedName(player), normalizedName)) then
+        if (GL:iEquals(GL:nameFormat(player), playerName)) then
             return true;
         end
     end
@@ -171,7 +171,7 @@ function PlusOnes:handleWhisperCommand(_, message, sender)
 
     -- See if name is given.
     if (args[2]) then
-        local name = self:normalizedName(args[2]);
+        local name = GL:nameFormat(args[2]);
         local plusOne = self:getPlusOnes(name);
         GL:sendChatMessage(
             string.format("Player %s's +1 total is %d", GL:capitalize(name), plusOne),
@@ -180,12 +180,7 @@ function PlusOnes:handleWhisperCommand(_, message, sender)
         return;
     end
 
-    local name = sender;
-    if (not GL.isEra) then
-        name = GL:stripRealm(name);
-    end
-
-    name = self:normalizedName(name);
+    local name = GL:nameFormat(sender);
     local plusOne = self:getPlusOnes(name);
     GL:sendChatMessage(
         string.format("Your +1 total is %d", plusOne),
@@ -203,7 +198,7 @@ function PlusOnes:materializeData()
 
     --- Create entries from Totals data
     for name, plusOne in pairs(DB:get("PlusOnes.Totals", {})) do
-        name = GL:normalizedName(name or "");
+        name = GL:addRealm(name);
         plusOne = self:toPlusOne(plusOne or 0);
 
         if (type(name) == "string"
@@ -269,11 +264,9 @@ function PlusOnes:getPlusOnes(name)
         return 0;
     end
 
-    local normalizedName = self:normalizedName(name);
-
     return GL:tableGet(
         self.MaterializedData or {},
-        "DetailsByPlayerName." .. normalizedName .. ".total", 0
+        "DetailsByPlayerName." .. self:playerGUID(name) .. ".total", 0
     );
 end
 
@@ -292,21 +285,20 @@ function PlusOnes:setPlusOnes(name, plusOne, dontBroadcast)
 
     dontBroadcast = GL:toboolean(dontBroadcast);
 
-    local normalizedName = self:normalizedName(name);
-
-    if (not self.MaterializedData.DetailsByPlayerName[normalizedName]) then
-        GL:tableSet(self.MaterializedData, "DetailsByPlayerName." .. normalizedName .. ".total", plusOne);
+    local playerGUID = self:playerGUID(name);
+    if (not self.MaterializedData.DetailsByPlayerName[playerGUID]) then
+        GL:tableSet(self.MaterializedData, "DetailsByPlayerName." .. playerGUID .. ".total", plusOne);
     else
-        self.MaterializedData.DetailsByPlayerName[normalizedName].total = plusOne;
+        self.MaterializedData.DetailsByPlayerName[playerGUID].total = plusOne;
     end
 
-    DB:set("PlusOnes.Totals." .. normalizedName, plusOne);
+    DB:set("PlusOnes.Totals." .. playerGUID, plusOne);
     DB:set("PlusOnes.MetaData.updatedAt", GetServerTime());
 
     if (not dontBroadcast
         and GL.Settings:get("PlusOnes.automaticallyShareData")
     ) then
-        self:broadcastUpdate(normalizedName, plusOne);
+        self:broadcastUpdate(playerGUID, plusOne);
     end
 
     self:triggerChangeEvent();
@@ -343,11 +335,10 @@ function PlusOnes:import(data, openOverview, MetaData)
         local Segments = GL:separateValues(line);
         
         local playerName = tostring(Segments[1]);
-        playerName = GL:normalizedName(playerName);
         local plusOne = self:toPlusOne(Segments[2]);
 
         if (not GL:empty(playerName) and not Totals[playerName] and plusOne) then
-            Totals[playerName] = plusOne;
+            Totals[self:playerGUID(playerName)] = plusOne;
         end
     end
 
@@ -398,7 +389,7 @@ function PlusOnes:export(displayFrame)
     -- Create CSV string
     local csv = "";
     for name, Entry in pairs(self.MaterializedData.DetailsByPlayerName) do
-        csv = csv..GL:capitalize(name)..","..Entry.total;
+        csv = ("%s%s,%s"):format(csv, name, Entry.total);
         csv = csv.."\n";
     end
 

@@ -35,6 +35,10 @@ AceGUIIcon = {};
 ---@class AceGUIButton
 AceGUIButton = {};
 
+-- [[ GLOBAL ]]
+---@param mixed any
+function DevTools_Dump(mixed) end
+
 -- [[ AceGUIFrame ]]
 ---@param value string
 function AceGUIFrame:SetStatusText(value) end

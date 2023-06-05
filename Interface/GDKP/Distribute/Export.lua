@@ -157,16 +157,19 @@ function Export:build()
 
     local showCustomFormatHelpTooltip = function ()
         GameTooltip:SetOwner(HelpIconFrame, "ANCHOR_RIGHT");
-        GameTooltip:SetText(string.format("Available values:\n\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n\n%s",
+        GameTooltip:SetText("Available values:\n\n" .. table.concat({
             "@PLAYER",
+            "@REALM",
             "@CUT",
             "@SPENT",
             "@BID",
-            "@RECEIVED - gold received from the player",
-            "@GIVEN - gold given to the player",
+            "@RECEIVED - total gold received from the player",
+            "@GIVEN - total gold given to the player",
+            "@TRADED - gold traded to the player",
             "@MAILED - gold mailed to the player",
-            "\\t is replaced by a tab"
-        ));
+            "",
+            "\\t is replaced by a tab",
+        }, "\n"));
         GameTooltip:Show();
     end;
     HelpIcon:SetCallback("OnEnter", function() showCustomFormatHelpTooltip() end);
@@ -264,21 +267,18 @@ function Export:exportPotToCustomFormat(Session, Cuts)
         local player, cut = Details.player, Details.cut;
         local exportEntry = customExportFormat;
 
-        local GoldTraded = GL:tableGet(Session, "GoldTrades." .. player, {
-            from = 0,
-            to = 0,
-        });
-
-        local goldMailed = GL:tableGet(Session, "GoldMails." .. player, 0);
+        local copperGiven, copperReceived, copperTraded, copperMailed = GDKPSession:goldTradedWithPlayer(Details.player, Session.ID);
 
         local Values = {
-            ["@PLAYER"] = player,
+            ["@PLAYER"] = GL:nameFormat{ name = player, stripRealm = true },
+            ["@REALM"] = GL:getRealmFromName(player),
             ["@CUT"] = cut,
-            ["@SPENT"] = GDKPSession:goldSpentByPlayer(player, self.sessionID),
-            ["@BID"] = GDKPSession:goldBidByPlayer(player, self.sessionID),
-            ["@RECEIVED"] = GoldTraded.from / 10000,
-            ["@GIVEN"] = GoldTraded.to / 10000,
-            ["@MAILED"] = goldMailed / 10000,
+            ["@SPENT"] = GDKPSession:goldSpentByPlayer(player, Session.ID),
+            ["@BID"] = GDKPSession:goldBidByPlayer(player, Session.ID),
+            ["@RECEIVED"] = copperReceived / 10000,
+            ["@GIVEN"] = copperGiven / 10000,
+            ["@TRADED"] = copperTraded / 10000,
+            ["@MAILED"] = copperMailed / 10000,
             ["\\t"] = "\t",
         };
 

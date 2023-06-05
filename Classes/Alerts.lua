@@ -73,8 +73,6 @@ function Alerts:init()
         end);
     end;
 
-
-
     Types.Item:AddAlert(31986, nil, "Awarded to: " .. "|c00FFFFFFZhoraxasdasa|r");
 end
 

@@ -87,7 +87,7 @@ function RaidGroups:drawImporter()
     WowheadButton:SetText("Wowhead Comp Tool");
     WowheadButton:SetWidth(180);
     WowheadButton:SetCallback("OnClick", function()
-        GL.Interface.Dialogs.HyperlinkDialog:open({
+        GL.Interface.Dialogs.HyperlinkDialog:open{
             description = "You can visit the wowhead comp tool using the URL down below. After creating your comp you can paste it here or in the large edit field of the Gargul group window",
             hyperlink = "https://tbc.wowhead.com/raid-composition",
             OnConfirm = function (value)
@@ -97,7 +97,7 @@ function RaidGroups:drawImporter()
                 return true;
             end,
             closeOnConfirm = true,
-        });
+        };
     end);
     Window:AddChild(WowheadButton);
 
@@ -124,10 +124,10 @@ function RaidGroups:drawImporter()
     WikiButton:SetText("Gargul Group Wiki");
     WikiButton:SetWidth(180);
     WikiButton:SetCallback("OnClick", function()
-        GL.Interface.Dialogs.HyperlinkDialog:open({
+        GL.Interface.Dialogs.HyperlinkDialog:open{
             description = "Visit the Gargul group wiki for more info on the raid group format",
             hyperlink = "https://github.com/papa-smurf/Gargul/wiki/Sort-Groups-&-Tanks",
-        });
+        };
     end);
     Window:AddChild(WikiButton);
 

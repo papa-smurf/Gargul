@@ -256,8 +256,11 @@ GL.Data.Constants = {
             SKIP = "SKIP",
             DISENCHANT = "DISENCHANT",
         },
-        adjustMutatorIdentifier = "+.__adjust__.+",
-        baseMutatorIdentifier = "+.__base__.+",
+        tradeIdentifier = "trade",
+        mailIdentifier = "mail",
+        mutationIdentifier = "mutation",
+        adjustMutatorIdentifier = "+___adjust___+",
+        baseMutatorIdentifier = "+___base___+",
         potIncreaseItemID = GetItemInfoInstant(45978) or 21100, -- Classic era doesn't have a solid gold coin, yikes!
     },
 
@@ -524,7 +527,7 @@ GL.Data.Constants = {
     ]]
     Comm = {
         channel = "GargulComm2",
-        minimumAppVersion = "5.3.9",
+        minimumAppVersion = "5.5.0",
         Actions = {
             awardItem = 1,
             broadcastLootPriorities = 2,

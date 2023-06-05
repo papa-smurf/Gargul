@@ -58,7 +58,7 @@ function Import:build()
     Confirm:SetText("Import");
     Confirm:SetFullWidth(true);
     Confirm:SetCallback("OnClick", function()
-        GL.Interface.Dialogs.PopupDialog:open({
+        GL.Interface.Dialogs.PopupDialog:open{
             question = "This will override any changes you've made to the cut window, are you sure?",
             OnYes = function ()
                 if (GDKPPot:importCuts(self.sessionID, ImportBox:GetText())) then
@@ -66,7 +66,7 @@ function Import:build()
                     self:close();
                 end
             end,
-        });
+        };
     end);
     Window:AddChild(Confirm);
 

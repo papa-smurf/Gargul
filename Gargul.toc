@@ -4,7 +4,7 @@
 ## Title: Gargul |c00967FD2@project-version@|r
 ## Author: Zhorax - Firemaw
 ## Notes: Loot addon that supports GDKP, softres sr, thatsmybis tmb, auto looting, plus one tracking and much more
-## Version: 5.4.2
+## Version: 6.0.5
 ## DefaultState: enabled
 ## SavedVariables: GargulDB
 ## X-Donate: https://www.patreon.com/gargul
@@ -115,6 +115,8 @@ Interface/GDKP/Distribute/EditMutator.lua
 Interface/GDKP/Distribute/AddRaider.lua
 Interface/GDKP/Distribute/EditRaider.lua
 Interface/GDKP/Distribute/MailCuts.lua
+Interface/GDKP/GoldTrades/Overview.lua
+Interface/GDKP/GoldTrades/Create.lua
 Interface/GDKP/CreateSession.lua
 Interface/GDKP/EditSession.lua
 Interface/GDKP/AddGold.lua

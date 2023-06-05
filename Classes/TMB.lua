@@ -116,7 +116,7 @@ function TMB:byItemID(itemID, inRaidOnly)
     for _, id in pairs(AllLinkedItemIDs) do
         id = tostring(id);
         for _, Entry in pairs(GL.DB:get("TMB.Items." .. tostring(id), {})) do
-            local playerName = string.lower(GL:stripRealm(Entry.character));
+            local playerName = string.lower(GL:nameFormat(Entry.character));
 
             -- If inRaidOnly is true we need to make sure we only return details of people who are actually in the raid
             --- NOTE TO SELF: it's (os) because of the string.lower, if you remove the lower then change below accordingly!
@@ -160,7 +160,7 @@ function TMB:byItemIDAndPlayer(itemID, player)
     for _, id in pairs(AllLinkedItemIDs) do
         id = tostring(id);
         for _, Entry in pairs(GL.DB:get("TMB.Items." .. tostring(id), {})) do
-            local playerName = string.lower(GL:stripRealm(Entry.character));
+            local playerName = string.lower(GL:nameFormat(Entry.character));
 
             --- NOTE TO SELF: it's (os) because of the string.lower, if you remove the lower then change below accordingly!
             if (player == string.gsub(playerName, "%(os%)", "")) then
@@ -806,8 +806,8 @@ function TMB:playersWithoutTMBDetails()
     end
 
     local PlayersWithoutTMBDetails = {};
-    for _, name in pairs(GL.User:groupMemberNames() or {}) do
-        name = string.lower(GL:stripRealm(name));
+    for _, name in pairs(GL.User:groupMembers() or {}) do
+        name = string.lower(GL:nameFormat(name));
 
         if (not PlayersWithDetails[name]) then
             tinsert(PlayersWithoutTMBDetails, name);
@@ -994,7 +994,7 @@ Alt:ratomir,zhorax,feth
 
                 for _, priorityEntry in pairs(CSVParts) do
                     (function () -- Not having continue statements in LUA is getting silly at this point
-                        local player = string.lower(GL:stripRealm(priorityEntry));
+                        local player = string.lower(GL:nameFormat(priorityEntry));
 
                         if (GL:empty(player)) then
                             return;
@@ -1027,7 +1027,7 @@ Alt:ratomir,zhorax,feth
 
             for _, priorityEntry in pairs(CSVParts) do
                 (function () -- Not having continue statements in LUA is getting silly at this point
-                    local player = string.lower(GL:stripRealm(priorityEntry));
+                    local player = string.lower(GL:nameFormat(priorityEntry));
                     local playerPriority = player:match("(%[[0-9]+%])");
 
                     if (playerPriority) then

@@ -276,7 +276,7 @@ function Overview:build()
             end
 
             -- Show a confirmation dialog before clearing entries
-            GL.Interface.Dialogs.PopupDialog:open({
+            GL.Interface.Dialogs.PopupDialog:open{
                 question = warning,
                 OnYes = function ()
                     onConfirm();
@@ -284,7 +284,7 @@ function Overview:build()
                     -- Let the application know that an item was unawarded (deleted)
                     GL.Events:fire("GL.ITEM_UNAWARDED");
                 end,
-            });
+            };
         end);
     end
 
@@ -342,7 +342,7 @@ function Overview:buildDatesTable(Window)
     Table:EnableSelection(true);
     Table.head:Hide(); -- Remove the table header
 
-    Table:RegisterEvents({
+    Table:RegisterEvents{
         OnClick = function(rowFrame, cellFrame, data, cols, row, realrow, column, table, button, ...)
             -- Even if we're still missing an answer from some of the group members
             -- we still want to make sure our inspection end after a set amount of time
@@ -363,7 +363,7 @@ function Overview:buildDatesTable(Window)
                 self:refreshItems();
             end, .1);
         end
-    });
+    };
 
     return Table;
 end
@@ -525,10 +525,7 @@ function Overview:refreshItems()
                 --[[ AWARDED TO ]]
                 local awardedToString = "";
                 if (not itemWasDisenchanted) then
-                    awardedToString = string.format("|c00%s%s|r",
-                        GL:classHexColor(GL.Player:classByName(Entry.awardedTo, 0), "5f5f5f"),
-                        Entry.awardedTo
-                    )
+                    awardedToString = GL:nameFormat{ name = Entry.awardedTo, colorize = true };
                 else
                     awardedToString = "DISENCHANTED";
                 end
@@ -581,7 +578,7 @@ function Overview:refreshItems()
 
                     if (not GL:empty(ItemsWonByRollerInTheLastFiveHours)) then
                         linesAdded = true;
-                        local header = string.format("Items won by %s:", Entry.awardedTo);
+                        local header = string.format("Items won by %s:", GL:nameFormat(Entry.awardedTo));
                         if (itemWasDisenchanted) then
                             header = "Disenchanted items:"
                         end
@@ -692,7 +689,7 @@ function Overview:refreshItems()
                             BRString = " " .. tostring(Entry.BRCost) .. " boosted roll points will be refunded!";
                         end
 
-                        GL.Interface.Dialogs.PopupDialog:open({
+                        GL.Interface.Dialogs.PopupDialog:open{
                             question = string.format(
                                 "Are you sure you want to undo %s awarded to %s?%s",
                                 Entry.itemLink,
@@ -704,7 +701,7 @@ function Overview:refreshItems()
                                 EditButton:Hide();
                                 DeleteButton:Hide();
                             end,
-                        });
+                        };
                     end);
 
                     EditButton:SetScript("OnClick", function(_, button)
@@ -715,7 +712,7 @@ function Overview:refreshItems()
                         -- Show the player selector
                         local question = string.format("Who should %s go to instead?", Entry.itemLink);
                         GL.Interface.PlayerSelector:draw(question, GL.User:groupMemberNames(), function (playerName)
-                            GL.Interface.Dialogs.PopupDialog:open({
+                            GL.Interface.Dialogs.PopupDialog:open{
                                 question = string.format("Award %s to |cff%s%s|r?",
                                     Entry.itemLink,
                                     GL:classHexColor(GL.Player:classByName(playerName)),
@@ -731,7 +728,7 @@ function Overview:refreshItems()
 
                                     GL.Interface.PlayerSelector:close();
                                 end,
-                            });
+                            };
                         end);
                     end);
 
@@ -742,7 +739,7 @@ function Overview:refreshItems()
 
                         -- Show a specific dialog when boosted roll points are involved
                         if (GL:higherThanZero(Entry.BRCost)) then
-                            GL.Interface.Dialogs.PopupDialog:open({
+                            GL.Interface.Dialogs.PopupDialog:open{
                                 question = string.format(
                                     "Are you sure you want to disenchant %s? %s boosted roll points will be refunded!",
                                     Entry.itemLink,
@@ -752,7 +749,7 @@ function Overview:refreshItems()
                                     GL.AwardedLoot:deleteWinner(Entry.checksum);
                                     GL.PackMule:disenchant(Entry.itemLink, true);
                                 end,
-                            });
+                            };
 
                             return;
                         end

@@ -122,24 +122,8 @@ end
 ---
 ---@return void
 function GL:xd(mixed)
-    if (type(mixed) == "boolean") then
-        if (mixed) then
-            mixed = "true";
-        else
-            mixed = "false";
-        end
-    end
-
-    mixed = mixed or " ";
-
-    local success, encoded = pcall(function () return GL.JSON:encode(mixed); end);
-
-    if (not success) then
-        GL:error("Unable to encode payload provided in GL:dump");
-        return;
-    end
-
-    print(string.format("\n================ |c00967FD2%s|r\n|c00FF0000%s|r\n", date('%H:%M:%S'), encoded));
+    print(("\n|c00967FD2%s|r ================"):format(date('%H:%M:%S')));
+    DevTools_Dump(mixed);
 end
 
 --- Print a error message (red)
@@ -155,6 +139,86 @@ end
 ---@return string
 function GL:capitalize(value)
     return (value:gsub("^%l", string.upper));
+end
+
+---@param var string
+---@param class string
+---@return string
+function GL:classColorize(var, class)
+    local classColor = { GetClassColor(class or "PRIEST") };
+    return string.format("|c%s%s|r", classColor[4], var);
+end
+
+---@param name string|table The player name or a table including any of the arguments below
+---@param colorize boolean Return in player's class color if known
+---@param stripRealm boolean Strip the realm suffix from the name
+---@param stripSameRealm boolean Strip the realm suffix if it's the same realm as ours
+---@param forceRealm boolean Force a realm to be present, either existing or adding our own
+---@param func function|table Decorators to pass the output name through (i.e. strlower)
+---@return string
+function GL:nameFormat(name, realm, colorize, stripRealm, stripSameRealm, forceRealm, func)
+    local passedRealm;
+
+    if (realm ~= nil) then
+        GL:error("Pass a table instead of multiple arguments")
+        return false;
+    end
+
+    if (type(name) == "table") then
+        colorize = name.colorize;
+        stripRealm = name.stripRealm;
+        stripSameRealm = name.stripSameRealm;
+        forceRealm = name.forceRealm;
+        func = name.func;
+
+        passedRealm  = name.realm ~= "" and name.realm or nil;
+        name = name.name;
+    end
+
+    func = type(func) == "table" and func or { func };
+
+    name, realm = self:stripRealm(name);
+    realm = passedRealm or realm;
+    name = realm and ("%s-%s"):format(self:capitalize(name), self:capitalize(realm)) or self:capitalize(name);
+    stripSameRealm = stripSameRealm ~= false;
+
+    if (not forceRealm and stripRealm) then
+        name = self:stripRealm(name);
+    end
+
+    if (forceRealm) then
+        name = self:addRealm(name);
+    elseif (stripSameRealm) then
+        if (not self:isCrossRealm()
+            or self:iEquals(realm, GL.User.realm)
+        ) then
+            name = self:stripRealm(name);
+        end
+    end
+
+    if (colorize) then
+        name = self:classColorize(name, UnitClassBase(name));
+    end
+
+    name = strtrim(self:capitalize(name));
+    for _, strFunc in pairs(func or {}) do
+        name = strFunc(name);
+    end
+
+    return name;
+end
+
+--- Disambiguate a given name, passing optional nameFormat arguments
+---
+---@param name string
+---@param Options table nameFormat options (see GL:nameFormat)
+---@return string
+function GL:disambiguateName(name, Options)
+    Options = Options or {};
+
+    return self:nameIsUnique(name)
+        and self:nameFormat(self:tableMerge(Options, { name = name, stripRealm = true }))
+        or self:nameFormat(self:tableMerge(Options, { name = name, forceRealm = true }))
 end
 
 ---@param constant string
@@ -373,7 +437,7 @@ function GL:empty(mixed)
 
     if (varType == "table") then
         for _, val in pairs(mixed) do
-            if (not GL:empty(val)) then
+            if (val ~= nil) then
                 return false;
             end
         end
@@ -417,6 +481,7 @@ end
 --- StringHash method, courtesy of Mikk38024 @ Wowpedia (https://wowpedia.fandom.com/wiki/StringHash)
 ---
 ---@param text string|table
+---@return number
 function GL:stringHash(text)
     if (type(text) == "table") then
         text = GL:implode(text, ".");
@@ -441,8 +506,7 @@ end
 ---@param numericValue number
 ---@return boolean
 function GL:higherThanZero(numericValue)
-    return numericValue
-        and type(numericValue) == "number"
+    return type(numericValue) == "number"
         and numericValue > 0
 end
 
@@ -556,100 +620,6 @@ function GL:classHexColor(className, default)
     );
 end
 
---- Print a table to the console
----
----@param t table
----@param shouldReturn boolean|nil
----@return void|string
-function GL:printTable(t, shouldReturn)
-    local returnString = "";
-
-    local printTable_cache = {};
-
-    local segment = "";
-    local function sub_printTable( t, indent )
-        if (printTable_cache[tostring(t)]) then
-            segment = indent .. "*" .. tostring(t);
-            if (shouldReturn) then
-                returnString = "\n" .. returnString .. segment;
-            else
-                print(segment);
-            end
-        else
-            printTable_cache[tostring(t)] = true;
-
-            if (type(t) == "table") then
-                for pos,val in pairs( t ) do
-                    if (type(val)== "table") then
-                        segment = indent .. "[" .. pos .. "] => " .. tostring( t ).. " {";
-
-                        if (shouldReturn) then
-                            returnString = "\n" .. returnString .. segment;
-                        else
-                            print(segment);
-                        end
-
-                        sub_printTable(val, indent .. string.rep( " ", string.len(pos)+8 ));
-
-                        segment = indent .. string.rep( " ", string.len(pos)+6 ) .. "}";
-                        if (shouldReturn) then
-                            returnString = "\n" .. returnString .. segment;
-                        else
-                            print(segment);
-                        end
-                    elseif (type(val) == "string") then
-                        segment = indent .. "[" .. pos .. '] => "' .. val .. '"';
-                        if (shouldReturn) then
-                            returnString = "\n" .. returnString .. segment;
-                        else
-                            print(segment);
-                        end
-                    else
-                        segment = indent .. "[" .. pos .. "] => " .. tostring(val);
-                        if (shouldReturn) then
-                            returnString = "\n" .. returnString .. segment;
-                        else
-                            print(segment);
-                        end
-                    end
-                end
-            else
-                segment = indent .. tostring(t);
-                if (shouldReturn) then
-                    returnString = "\n" .. returnString .. segment;
-                else
-                    print(segment);
-                end
-            end
-        end
-    end
-
-    if (type(t) == "table") then
-        segment = tostring(t) .. " {";
-        if (shouldReturn) then
-            returnString = "\n" .. returnString .. segment .. "\n";
-        else
-            print(segment);
-            print();
-        end
-
-        sub_printTable(t, "  ");
-
-        segment = "}";
-        if (shouldReturn) then
-            returnString = "\n" .. returnString .. segment;
-        else
-            print(segment);
-        end
-    else
-        sub_printTable(t, "  ");
-    end
-
-    if (shouldReturn) then
-        return returnString;
-    end
-end
-
 --- Clone a table recursively (no metatable properties)
 ---
 ---@param Original table
@@ -669,9 +639,8 @@ function GL:cloneTable(Original)
 end
 
 ---@param text string
----@Param OnTopOff Frame|nil
 ---@return void
-function GL:popupMessage(text, OnTopOff)
+function GL:popupMessage(text)
     GL:debug("GL:popupMessage");
 
     local frameName = "Gargul.popupMessage";
@@ -1046,9 +1015,52 @@ function GL:getCachedItem(itemLinkOrID)
     };
 end
 
+GL.Timers = {};
+---@param seconds number
+---@param identifier string
+---@param func function
+---@return table
+function GL:after(seconds, identifier, func)
+    GL:debug("Schedule " .. identifier);
+
+    GL.Timers[identifier] = GL.Ace:ScheduleTimer(function ()
+        GL:debug("Run once " .. identifier);
+
+        func();
+    end, seconds);
+    return GL.Timers[identifier];
+end
+
+---@param seconds number
+---@param identifier string
+---@param func function
+---@return table
+function GL:every(seconds, identifier, func)
+    GL:cancelTimer(identifier);
+    GL:debug("Schedule recurring " .. identifier);
+
+    GL.Timers[identifier] = GL.Ace:ScheduleRepeatingTimer(function ()
+        GL:debug("Run recurring " .. identifier);
+
+        func();
+    end, seconds);
+
+    return GL.Timers[identifier];
+end
+
+---@param identifier string
+function GL:cancelTimer(identifier)
+    if (not GL.Timers[identifier]) then
+        return;
+    end
+
+    GL:debug("Cancelling " .. identifier);
+    GL.Ace:CancelTimer(GL.Timers[identifier]);
+end
+
 --- The onItemLoadDo helper accepts one or more item ids or item links
 --- The corresponding items will be loaded using Blizzard's Item API
---- After all of the files are loaded execute the provided callback function
+--- After all of the items are loaded execute the provided callback function
 ---
 ---@param Items table
 ---@param callback function|nil
@@ -1167,9 +1179,6 @@ function GL:onItemLoadDo(Items, callback, haltOnError, sorter)
         end)
     end
 
-    --- This might seem like a weird construction, but LUA
-    --- does not support continue statements in for loops.
-    ---
     ---@param itemIdentifier string|number
     for _, itemIdentifier in pairs(Items) do
         if (haltOnError and not GL:empty(lastError)) then
@@ -1202,6 +1211,15 @@ function GL:onItemLoadDo(Items, callback, haltOnError, sorter)
 
     -- The return value is only useful if you're 100% certain the item was already pre-loaded
     return ItemData;
+end
+
+--- Check whether the player's realm is cross realm
+---
+--- @return boolean
+function GL:isCrossRealm()
+    GL.isCrossRealm = GL.isCrossRealm ~= nil and GL.isCrossRealm or not not GetAutoCompleteRealms()[2];
+
+    return GL.isCrossRealm;
 end
 
 --- Make sure era names are suffixed with a realm
@@ -1365,7 +1383,7 @@ end
 ---@param Item Frame
 ---@param itemLink string
 ---@return void
-function GL:highlightItem(Item, itemLink)
+function GL:highlightItem(Item, itemLink, Details)
     GL:debug("GL:highlightItem");
 
     -- There's no point highlighting something if the player
@@ -1381,6 +1399,8 @@ function GL:highlightItem(Item, itemLink)
     ) then
         return;
     end
+
+    Details = Details or {};
 
     -- Remove any existing highlight
     LCG.PixelGlow_Stop(Item);
@@ -1450,7 +1470,19 @@ function GL:highlightItem(Item, itemLink)
     end
 
     -- Add an animated border to indicate that this item was reserved / wishlisted
-    LCG.PixelGlow_Start(Item, BorderColor, 10, .05, 5, 3);
+    -- function lib.PixelGlow_Start(r,color,N,frequency,length,th,xOffset,yOffset,border,key,frameLevel)
+    LCG.PixelGlow_Start(Item,
+        BorderColor,
+        Details.dots or 10,
+        Details.speed or .05,
+        Details.length or 5,
+        Details.width or 2,
+        Details.offsetX,
+        Details.offsetY,
+        Details.border,
+        Details.key,
+        Details.level
+    );
 end
 
 --- Check whether a user can use the given item ID or link (callback required)
@@ -1566,7 +1598,7 @@ function GL:findBagIdAndSlotForItem(itemID, skipSoulBound, includeBankBags)
     end
 
     -- Dragon Flight introduced an extra bag slot
-    if (GL.clientIsDragonFlightOrLater) then
+    if (GL.isDragonFlightOrLater) then
         numberOfBagsToCheck = numberOfBagsToCheck + 1;
     end
 
@@ -1596,7 +1628,7 @@ end
 function GL:onTooltipSetItem(Callback, includeItemRefTooltip)
     GL:debug("GL:onTooltipSetItem");
 
-    includeItemRefTooltip = includeItemRefTooltip == nil and true or includeItemRefTooltip;
+    includeItemRefTooltip = includeItemRefTooltip ~= false;
     includeItemRefTooltip = GL:toboolean(includeItemRefTooltip);
 
     -- Support native GameToolTip
@@ -1722,26 +1754,71 @@ function GL:getItemQualityFromLink(itemLink)
     return GL.Data.Constants.HexColorsToItemQuality[color] or false;
 end
 
---- Strip the realm off of a string (usually a player name)
+--- Add the realm name to a player name
 ---
----@param str string
+---@param name string
+---@param realm string
 ---@return string
-function GL:stripRealm(str)
-    str = tostring(str);
+function GL:addRealm(name, realm, fromGroup)
+    realm = not self:empty(realm) and realm or nil;
+    fromGroup = fromGroup ~= false;
+    name = tostring(name);
 
-    if (self:empty(str)) then
+    if (self:empty(name)) then
         return "";
     end
 
-    -- WoW knows multiple realm separators ( - @ # * ) depending on version and locale
-    local separator = str:match("[" .. REALM_SEPARATORS .. "]");
+    local separator = name:match("-");
+
+    -- A realm separator was found, return the original message
+    if (separator) then
+        return name;
+    end
+
+    -- This is not a cross-realm server, no need to check uniqueness etc
+    if (not self:isCrossRealm()) then
+        return ("%s-%s"):format(name, realm or GL.User.realm);
+    end
+
+    -- Fetch the realm name from a group member if possible
+    if (fromGroup
+        and not realm
+        and GL.User:unitInGroup(name)
+    ) then
+        if (GL:nameIsUnique(name)) then
+            local playerId = UnitGUID(name);
+
+            if (playerId) then
+                realm = select(7, GetPlayerInfoByGUID(playerId));
+
+                -- Realm can be an empty string on same-realm players
+                realm = realm ~= "" and realm or GL.User.realm;
+            end
+        end
+    end
+
+    return ("%s-%s"):format(name, realm or GL.User.realm);
+end
+
+--- Strip the realm off of a player name
+---
+---@param playerName string
+---@return string, string str, realm
+function GL:stripRealm(playerName)
+    playerName = tostring(playerName);
+
+    if (self:empty(playerName)) then
+        return "";
+    end
+
+    local separator = playerName:match("-");
 
     -- No realm separator was found, return the original message
     if (not separator) then
-        return str;
+        return playerName;
     end
 
-    local Parts = self:strSplit(str, separator);
+    local Parts = self:strSplit(playerName, separator);
     return Parts[1], Parts[2];
 end
 
@@ -1753,15 +1830,14 @@ function GL:getRealmFromName(playerName)
     playerName = tostring(playerName);
 
     if (self:empty(playerName)) then
-        return "";
+        return false;
     end
 
-    -- WoW knows multiple realm separators ( - @ # * ) depending on version and locale
-    local separator = playerName:match("[" .. REALM_SEPARATORS .. "]");
+    local separator = playerName:match("-");
 
     -- No realm separator was found, return the original message
     if (not separator) then
-        return playerName;
+        return false;
     end
 
     local Parts = self:strSplit(playerName, separator);
@@ -1769,24 +1845,25 @@ function GL:getRealmFromName(playerName)
 end
 
 --- Check whether the given player name occurs more than once in the player's group
---- (only possible in Era because of cross-realm support)
+--- (only possible in case of cross-realm support)
 ---
----@param name string
+---@param playerName string
 ---@return boolean
-function GL:nameIsUnique(name)
-    if (not GL.isEra) then
+function GL:nameIsUnique(playerName)
+    if (not self:isCrossRealm()) then
         return true;
     end
 
-    name = string.lower(GL:stripRealm(name));
+    playerName = GL:stripRealm(playerName);
     local nameEncountered = false;
-    for _, playerName in pairs(GL.User:groupMemberNames()) do
-        if (playerName == name) then
-            if (not nameEncountered) then
-                nameEncountered = true;
-            else
+    for _, groupMemberName in pairs(GL.User:groupMemberNames()) do
+        if (self:iEquals(playerName, groupMemberName)) then
+            -- We already encountered this name before, NOT UNIQUE!
+            if (nameEncountered) then
                 return false;
             end
+
+            nameEncountered = true;
         end
     end
 

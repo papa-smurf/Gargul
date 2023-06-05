@@ -8,6 +8,9 @@ GL.ScrollingTable = GL.ScrollingTable or LibStub("ScrollingTable");
 ---@type Interface
 local Interface = GL.Interface;
 
+---@type GDKP
+local GDKP = GL.GDKP;
+
 ---@type GDKPSession
 local GDKPSession = GL.GDKP.Session;
 
@@ -311,11 +314,8 @@ function LedgerList:refresh()
 
         local PlayerData = {};
         for _, player in pairs(PlayerNames or {}) do
-            local GoldTraded = GL:tableGet(Session, "GoldTrades." .. player, {
-                from = 0,
-                to = 0,
-            });
-            local goldMailed = GL:tableGet(Session, "GoldMails." .. player, 0);
+            local playerGUID = GDKP:playerGUID(player);
+            local _, copperReceived, copperTraded, copperMailed = GDKPSession:goldTradedWithPlayer(playerGUID, Session.ID);
             local spent = GDKPSession:goldSpentByPlayer(player, self.sessionID);
             local bid = GDKPSession:goldBidByPlayer(player, self.sessionID);
 
@@ -338,10 +338,10 @@ function LedgerList:refresh()
                 balance = balanceText,
                 bid = bid,
                 cut = Cuts[player],
-                given = GoldTraded.to / 10000,
-                mailed = goldMailed / 10000,
+                given = copperTraded / 10000,
+                mailed = copperMailed / 10000,
                 name = player,
-                received = GoldTraded.from / 10000,
+                received = copperReceived / 10000,
                 spent = spent,
             });
         end
@@ -350,7 +350,7 @@ function LedgerList:refresh()
         for _, Player in pairs(PlayerData or {}) do
             tinsert(TableData, {
                 cols = {
-                    { value = Player.name, },
+                    { value = GL:disambiguateName(Player.name, { colorize = true }), },
                     --{ value = Player.bid, },
                     --{ value = Player.spent, },
                     { value = Player.received, },

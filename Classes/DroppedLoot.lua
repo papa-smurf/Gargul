@@ -612,7 +612,7 @@ function DroppedLoot:announceTest(...)
     end
 
     GL:onItemLoadDo(itemIDs, function (Details)
-        self:announce({
+        self:announce{
             Functions = {
                 GetNumLootItems = function () return GL:count(Details); end,
                 GetLootSlotInfo = function (slot)
@@ -634,7 +634,7 @@ function DroppedLoot:announceTest(...)
                 end,
                 GetLootSourceInfo = function() return GL:uuid() end,
             }
-        });
+        };
     end);
 end
 

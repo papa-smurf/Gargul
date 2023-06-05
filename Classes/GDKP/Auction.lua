@@ -26,6 +26,7 @@ local Auctioneer;
 
 ---@class GDKPAuction
 GDKP.Auction = {
+    _broadcastingDisabled = false,
     _initialized = false,
     autoBiddingIsActive = nil,
     lastBidAt = nil,
@@ -65,7 +66,7 @@ local GDKPSession = GDKP.Session;
 
 --[[ CONSTANTS ]]
 local AUTO_BID_THROTTLE_IN_SECONDS = .6;
-local BROADCAST_QUEUE_DELAY_IN_SECONDS = 2;
+local BROADCAST_QUEUE_DELAY_IN_SECONDS = 3;
 
 function Auction:_init()
     GL:debug("GDKP.Auction:_init");
@@ -130,6 +131,7 @@ function Auction:_initializeQueue()
         return;
     end
 
+    self._broadcastingDisabled = true;
     local SortedQueue = GL:tableValues(Auction.Queue);
     table.sort(SortedQueue, function (a, b)
         if (a.order and b.order) then
@@ -151,13 +153,21 @@ function Auction:_initializeQueue()
             GL.Ace:CancelTimer(QueueAddTimer);
             SortedQueue = nil;
 
+            self._broadcastingDisabled = false;
+
             GL.Events:fire("GL.GDKP_QUEUE_UPDATED");
+
+            -- Make sure to broadcast the queue when everything's said and done
+            if (i > 1) then
+                self:broadcastQueue();
+            end
+
             return;
         end
 
         i = i + 1;
         return Auctioneer:addToQueue(Queued.itemLink, Queued.identifier, false);
-    end, .2);
+    end, .1);
 end
 
 ---@return void
@@ -242,11 +252,12 @@ function Auction:create(itemID, price, winner, sessionID, Bids, note, awardCheck
         return;
     end
 
+    note = note and strtrim(note) or nil;
     local Instance = {
         price = price,
         itemID = itemID,
         createdAt = GetServerTime(),
-        note = strtrim(tostring(note)),
+        note = note ~= "" and note or nil,
         CreatedBy = {
             class = GL.User.class,
             guild = GL.User.Guild.name,
@@ -269,8 +280,9 @@ function Auction:create(itemID, price, winner, sessionID, Bids, note, awardCheck
         realm = Winner.realm or GL.User.realm,
         uuid = Winner.id,
     };
+    Instance.Winner.guid = GDKP:playerGUID(Instance.Winner.name, Instance.Winner.realm);
 
-    local checksum = Instance.createdAt .. GL:stringHash({ Instance.itemID, Instance.createdAt, table.concat(Instance.CreatedBy, ".") });
+    local checksum = Instance.createdAt .. GL:stringHash{ Instance.itemID, Instance.createdAt, table.concat(Instance.CreatedBy, ".") };
     Instance.ID = checksum;
 
     -- Something is wrong with the Auction. Tampering maybe? RETURN!
@@ -408,7 +420,7 @@ function Auction:restore(sessionID, auctionID)
     -- Remove the restored state from the previous states table
     Instance.PreviousStates[mostRecentStateIdentifier] = nil;
 
-    Instance.awardChecksum = GL.AwardedLoot:addWinner(Instance.Winner.name, Instance.itemLink, false, nil, nil, nil, Instance.price, nil);
+    Instance.awardChecksum = GL.AwardedLoot:addWinner(Instance.Winner.guid, Instance.itemLink, false, nil, nil, nil, Instance.price, nil);
 
     -- We don't point to Auction here, we want a copy not a pointer!
     local Before = GL:tableGet(Session, "Auctions." .. auctionID);
@@ -456,7 +468,7 @@ function Auction:storeCurrent(winner, bid, awardChecksum)
     local HighestBidPerPlayer = {};
     for _, Bid in pairs(Instance.Bids or {}) do
         (function ()
-            local bidder = strtrim(tostring(Bid.Bidder.name));
+            local bidder = GDKP:playerGUID(Bid.Bidder.name, Bid.Bidder.realm);
 
             if (not HighestBidPerPlayer[bidder]) then
                 HighestBidPerPlayer[bidder] = {};
@@ -583,6 +595,7 @@ function Auction:sanitize(Instance)
                     uuid = tostring(Bidder.uuid),
                 },
                 bid = tonumber(Bid.bid),
+                bidder = tostring(Bid.bidder),
                 createdAt = tonumber(Bid.createdAt),
             };
 
@@ -633,6 +646,7 @@ function Auction:sanitize(Instance)
             class = tostring(Winner.class);
             uuid = tostring(Winner.uuid);
             realm = tostring(Winner.realm);
+            guid = Winner.guid or GDKP:playerGUID(Winner.name, Winner.realm);
         };
 
         -- Add the winner's guild if he was part of one
@@ -653,10 +667,10 @@ function Auction:sanitize(Instance)
     SanitizedAuction.createdAt = tonumber(Instance.createdAt);
     SanitizedAuction.itemID = tonumber(Instance.itemID);
     SanitizedAuction.price = tonumber(Instance.price);
-    SanitizedAuction.note = strtrim(tostring(Instance.note));
+    SanitizedAuction.note = Instance.note;
 
     --[[ Make sure the checksum is valid ]]
-    local checksum = SanitizedAuction.createdAt .. GL:stringHash({ SanitizedAuction.itemID, SanitizedAuction.createdAt, table.concat(SanitizedAuction.CreatedBy, ".") });
+    local checksum = SanitizedAuction.createdAt .. GL:stringHash{ SanitizedAuction.itemID, SanitizedAuction.createdAt, table.concat(SanitizedAuction.CreatedBy, ".") };
 
     if (checksum ~= Instance.ID) then
         GL:xd("Auction:sanitize step 10 failed, contact support!");
@@ -684,16 +698,29 @@ function Auction:reassignAuction(sessionID, auctionID, winner)
         return;
     end
 
+    local winnerGUID = GDKP:playerGUID(winner);
+    local _, winnerRealm = GL:stripRealm(winnerGUID);
     local OldAuction = GL:tableGet(Session, "Auctions." .. auctionID);
 
     if (not OldAuction
-        or OldAuction.Winner.name == winner
+        or OldAuction.Winner.guid == winnerGUID
     ) then
         return false;
     end
 
-    winner = GL:capitalize(string.lower(winner));
-    GL:tableSet(Session, string.format("Auctions.%s.Winner.name", auctionID), winner);
+    local Winner = GL.Player:fromName(winner) or {};
+    Winner.Guild = Winner.Guild or {};
+    Winner = {
+        class = Winner.class,
+        guild = Winner.Guild.name,
+        name = Winner.name or winner,
+        race = Winner.race,
+        realm = Winner.realm or winnerRealm,
+        uuid = Winner.id,
+        guid = winnerGUID,
+    };
+
+    GL:tableSet(Session, string.format("Auctions.%s.Winner", auctionID), Winner);
 
     if (OldAuction.awardChecksum) then
         GL.AwardedLoot:editWinner(OldAuction.awardChecksum, winner);
@@ -705,7 +732,7 @@ function Auction:reassignAuction(sessionID, auctionID, winner)
         OldAuction,
         DB.GDKP.Ledger[sessionID].Auctions[auctionID]
     );
-    Events:fire("GL.GDKP_AUCTION_REASSIGNED", sessionID, OldAuction, winner);
+    Events:fire("GL.GDKP_AUCTION_REASSIGNED", sessionID, OldAuction, winnerGUID);
 
     return true;
 end
@@ -730,7 +757,8 @@ function Auction:setNote(sessionID, auctionID, note)
         return false;
     end
 
-    GL:tableSet(Session, string.format("Auctions.%s.note", auctionID), note);
+    note = note and strtrim(note) or nil;
+    GL:tableSet(Session, string.format("Auctions.%s.note", auctionID), note ~= "" and note or nil);
 
     Events:fire("GL.GDKP_AUCTION_CHANGED",
         sessionID,
@@ -830,10 +858,8 @@ function Auction:addToQueue(itemLink, identifier)
         return;
     end
 
-    local addedAt = GetTime();
     local PerItemSettings = GDKP:settingsForItemID(GL:getItemIDFromLink(itemLink));
     self.Queue[identifier] = {
-        addedAt = addedAt,
         identifier = identifier,
         increment = PerItemSettings.increment,
         itemID = itemID,
@@ -918,8 +944,7 @@ end
 function Auction:removeFromQueue(checksum)
     GL:debug("Auction:removeFromQueue");
 
-    checksum = tostring(checksum or 0);
-    if (not self.Queue[checksum]) then
+    if (not self.Queue[checksum or 0]) then
         return false;
     end
 
@@ -978,9 +1003,15 @@ function Auction:sanitizeQueue()
     end
 end
 
+--- Broadcast the first 20 items to everyone in the raid
 ---@return void
 function Auction:broadcastQueue(immediately)
     GL:debug("Auction:broadcastQueue");
+
+    -- Broadcasting is
+    if (self._broadcastingDisabled) then
+        return;
+    end
 
     GL.Ace:CancelTimer(self.QueueBroadcastTimer);
     self:sanitizeQueue();
@@ -989,10 +1020,41 @@ function Auction:broadcastQueue(immediately)
         return;
     end
 
+    -- Make sure we only broadcast the first 15 items as to not overload the system
+    local SortedQueue = GL:tableValues(Auction.Queue);
+    table.sort(SortedQueue, function (a, b)
+        if (a.order and b.order) then
+            return a.order < b.order;
+        end
+
+        return false;
+    end);
+
+    local QueueSegment = {};
+    local i = 0;
+    for _, Details in pairs(SortedQueue) do
+
+        i = i + 1;
+
+        -- Trim down the queue details in order to minimize the comm payload
+        tinsert(QueueSegment, {
+            Details.identifier,
+            Details.itemID,
+            Details.minimumBid,
+            Details.order,
+            Details.increment,
+        });
+
+        -- A queue of more than a 100 items makes no sense
+        if (i > 100) then
+            break;
+        end
+    end
+
     local broadcast = function ()
         GL.CommMessage.new(
             CommActions.broadcastGDKPAuctionQueue,
-            self.Queue or {},
+            QueueSegment or {},
             "GROUP"
         ):send();
     end;
@@ -1025,10 +1087,50 @@ function Auction:receiveQueue(CommMessage)
         return;
     end
 
-    self.Queue = CommMessage.content;
-    self:sanitizeQueue();
+    local Queue = {};
 
-    Events:fire("GL.GDKP_QUEUE_UPDATED");
+    -- Check if this is the old format including item links
+    local itemLinksArePresent = true;
+    for _, Details in pairs(CommMessage.content or {}) do
+        itemLinksArePresent = not not Details.itemLink;
+    end
+
+    -- Old format, no need to continue
+    if (itemLinksArePresent) then
+        self.Queue = Queue;
+        self:sanitizeQueue();
+
+        Events:fire("GL.GDKP_QUEUE_UPDATED");
+        return;
+    end
+
+    -- Enrich the received queue with required data
+    GL:onItemLoadDo(GL:tableColumn(CommMessage.content, 2), function (Details)
+        local ItemLinksByID = {};
+
+        for _, Entry in pairs(Details) do
+            ItemLinksByID[Entry.id] = Entry.link;
+        end
+
+        for _, Queued in pairs(CommMessage.content or {}) do
+            local itemLink = ItemLinksByID[Queued[2]];
+            if (itemLink) then
+                Queue[Queued[1]] = {
+                    identifier = Queued[1],
+                    itemID = Queued[2],
+                    minimumBid = Queued[3],
+                    order = Queued[4],
+                    increment = Queued[5],
+                    itemLink = itemLink,
+                };
+            end
+        end
+
+        self.Queue = Queue;
+        self:sanitizeQueue();
+
+        Events:fire("GL.GDKP_QUEUE_UPDATED");
+    end);
 end
 
 --- Announce to everyone in the raid that an auction is starting
@@ -1040,6 +1142,12 @@ end
 function Auction:announceStart(itemLink, minimumBid, minimumIncrement, duration, antiSnipe)
     GL:debug("GDKP.Auction:announceStart");
 
+    -- There's already an auction in progress
+    if (self.inProgress) then
+        return;
+    end
+
+    -- We're still waiting for an auction to start
     if (self.waitingForStart
         and GetServerTime() - self.waitingForStart < 6
     ) then
@@ -1078,9 +1186,7 @@ function Auction:announceStart(itemLink, minimumBid, minimumIncrement, duration,
         return false;
     end
 
-    self.inProgress = true;
     self:listenForBids();
-    self:broadcastQueue(true);
 
     -- This is still the same item, use the previous highest bid as the starting point
     if (itemLink == self.Current.itemLink) then
@@ -1115,6 +1221,10 @@ end
 function Auction:announceStop(forceStop)
     GL:debug("GDKP.Auction:announceStop");
 
+    if (not Auction:startedByMe()) then
+        return;
+    end
+
     forceStop = GL:toboolean(forceStop);
 
     -- Looks like we had a last-second bid and are awaiting an extension
@@ -1132,7 +1242,7 @@ function Auction:announceStop(forceStop)
         and GetTime() - self.lastBidReceivedAt <= self.Current.antiSnipe
         and not self.waitingForReschedule
     ) then
-        self:announceExtension(self.Current.antiSnipe);
+        self:announceReschedule(self.Current.antiSnipe);
         return;
     end
 
@@ -1203,7 +1313,11 @@ end
 ---@param time number
 ---@return boolean
 function Auction:announceReschedule(time)
-    GL:debug("GDKP.Auction:announceShortening");
+    GL:debug("GDKP.Auction:announceReschedule");
+
+    if (not Auction:startedByMe()) then
+        return;
+    end
 
     self.waitingForReschedule = GetServerTime();
 
@@ -1283,6 +1397,11 @@ function Auction:start(CommMessage)
 
     local content = CommMessage.content;
     self.waitingForStart = false;
+
+    -- We already have an active auction
+    if (self.inProgress) then
+        return;
+    end
 
     --[[
         MAKE SURE THE PAYLOAD IS VALID
@@ -1573,7 +1692,7 @@ function Auction:listenForBids()
         tinsert(EventsToListenTo, {"GDKPChatMsgWhisperListener", "CHAT_MSG_WHISPER"});
     end
 
-    Events:register(EventsToListenTo, function (event, message, sender)
+    Events:register(EventsToListenTo, function (_, message, sender)
         self:processBid(message, sender);
     end);
 end
@@ -1589,13 +1708,13 @@ function Auction:stopListeningForBids()
     end
 
     self.listeningForBids = false;
-    Events:unregister({
+    Events:unregister{
         "GDKPChatMsgWhisperListener",
         "GDKPChatMsgPartyListener",
         "GDKPChatMsgPartyLeaderListener",
         "GDKPChatMsgRaidListener",
         "GDKPChatMsgRaidLeaderListener",
-    });
+    };
 end
 
 ---@param message string|number
@@ -1815,7 +1934,6 @@ function Auction:processBid(message, bidder)
 
     local auctionWasStartedByMe = self:startedByMe();
     message = string.lower(message);
-
     -- This is a message generated by gargul, skip it
     if (GL:strStartsWith(message, "{rt3} gargul :")) then
         return;
@@ -1835,32 +1953,27 @@ function Auction:processBid(message, bidder)
 
     --- Make sure the person who bid is in our group
     local BidEntry = false;
-    for _, Member in pairs(GL.User:groupMembers()) do
-        if (GL:iEquals(GL:stripRealm(bidder), GL:stripRealm(Member.name))) then
-            local Player = GL.Player:fromName(Member.name);
-            local playerName, realm = GL:stripRealm(bidder);
 
-            BidEntry = {
-                Bidder = {
-                    class = Player.class,
-                    guild = Player.Guild.name,
-                    name = playerName,
-                    race = Player.race,
-                    realm = realm,
-                    uuid = Player.id,
-                },
-                bid = bid,
-                bidder = bidder,
-                createdAt = GetServerTime(),
-            };
-
-            break;
-        end
-    end
-
-    if (not BidEntry) then
+    if (not GL.User:unitInGroup(bidder)) then
         return;
     end
+
+    local Bidder = GL:iEquals(GL:nameFormat(bidder), GL.User.name) and GL.User or GL.Player:fromName(bidder);
+    local bidderGUID = GDKP:playerGUID(Bidder.fqn);
+
+    BidEntry = {
+        Bidder = {
+            class = Bidder.class,
+            guild = Bidder.Guild.name,
+            name = Bidder.name,
+            race = Bidder.race,
+            realm = Bidder.realm,
+            uuid = Bidder.id,
+        },
+        bid = bid,
+        bidder = bidderGUID,
+        createdAt = GetServerTime(),
+    };
 
     -- Determine the minimum bid
     local currentBid = GL:tableGet(self.Current, "TopBid.bid", 0);
@@ -1884,8 +1997,8 @@ function Auction:processBid(message, bidder)
         )) then
             self.lastBidReceivedAt = GetTime();
             local secondsLeft = math.floor(GL.Ace:TimeLeft(self.timerId) - GL.Settings:get("GDKP.auctionEndLeeway", 2));
-            if (secondsLeft <= self.Current.antiSnipe) then
-                self:announceExtension(self.Current.antiSnipe);
+            if (secondsLeft < self.Current.antiSnipe) then
+                self:announceReschedule(self.Current.antiSnipe);
             end
         end
     end

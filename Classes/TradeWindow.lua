@@ -63,17 +63,7 @@ end
 function TradeWindow:open(playerName, callback, allwaysExecuteCallback)
     GL:debug("TradeWindow:open");
 
-    playerName = GL:normalizedName(playerName);
-
-    -- ERA is an odd duck. It requires a realm, but only if the trade partner's realm differs from ours
-    if (GL.isEra) then
-        local playerRealm = GL:getRealmFromName(playerName);
-
-        if (string.lower(playerRealm) == string.lower(GL.User.realm)) then
-            playerName = GL:stripRealm(playerName);
-        end
-    end
-
+    playerName = GL:nameFormat(playerName);
     allwaysExecuteCallback = GL:toboolean(allwaysExecuteCallback);
 
     -- We're already trading with someone
@@ -135,6 +125,9 @@ function TradeWindow:handleEvents(event, message)
     if (event == "UI_INFO_MESSAGE") then
         -- Trade was successful
         if (message == ERR_TRADE_COMPLETE) then
+            -- Check the value of the "Announce trade" checkbox in the trade frame
+            self.State.announce = self.AnnouncementCheckBox and self.AnnouncementCheckBox:GetChecked();
+
             GL.Events:fire("GL.TRADE_COMPLETED", self.State);
         else
             return;
@@ -208,12 +201,17 @@ end
 function TradeWindow:updateState()
     GL:debug("TradeWindow:updateState");
 
-    -- Fetch the player name of whomever we're trading with
-    self.State.partner = _G.TradeFrameRecipientNameText:GetText();
+    -- NPC is currently the player you're trading
+    local partnerName, partnerRealm = UnitName("NPC", true);
+    self.State.partner = GL:nameFormat{ name = partnerName, realm = partnerRealm };
 
-    -- If the frame doesn't hold the playername then try fetching it using less conventional methods
-    if (GL:empty(self.State.partner)) then
-        self.State.partner = UnitName("NPC");
+    -- Fetch the player name of whomever we're trading with
+    partnerName = _G.TradeFrameRecipientNameText:GetText();
+
+    -- If the frame doesn't hold the player name that we set earlier then override it
+    -- This should never happen and is nothing but a failsafe
+    if (not GL:strStartsWith(self.State.partner, partnerName)) then
+        self.State.partner = partnerName;
     end
 
     self.State.myGold = tonumber(GetPlayerTradeMoney());
@@ -484,10 +482,8 @@ end
 function TradeWindow:announceTradeDetails(Details)
     GL:debug("TradeWindow:announceTradeDetails");
 
-    -- Check the value of the "Announce trade" checkbox in the trade frame
-    if (self.AnnouncementCheckBox
-        and not self.AnnouncementCheckBox:GetChecked()
-    ) then
+    -- Check if the user wants to announce this trade
+    if (not Details.announce) then
         return;
     end
 
