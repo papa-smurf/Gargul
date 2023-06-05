@@ -306,6 +306,7 @@ function MailCuts:mailAllCuts()
     local Session = GDKPSession:getActive() or {};
     for player in pairs(GL:tableGet(Session, "Pot.Cuts", {})) do
         local outstanding = tonumber(GDKPSession:copperOwedToPlayer(player, Session.ID));
+
         if (outstanding and outstanding > 0) then
             return self:mailPlayerCut(player, function (success, copper, message)
                 if (type(message) == "string") then
@@ -425,7 +426,7 @@ function MailCuts:mailPlayerCut(player, callback)
                     message = string.format(L.CUT_SENT, gold, player);
                     GL:success(message);
 
-                    GL:fire("GL.GDKP_CUT_MAILED");
+                    Events:fire("GL.GDKP_CUT_MAILED");
                 else
                     message = L.CUT_MAIL_GOLD_MISMATCH;
                     GL:warning(message);
