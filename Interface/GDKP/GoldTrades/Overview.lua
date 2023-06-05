@@ -169,10 +169,6 @@ function Overview:build()
     Window.TradesHolder = TradesHolder;
     Window.ActionButtons = ActionButtons;
 
-    if (Settings:get("GDKP.minimizeBidderQueue")) then
-        Window.Minimize.MinimizeButton:Click();
-    end
-
     _G[self.windowName] = Window;
     return Window;
 end
