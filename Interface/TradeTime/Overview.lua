@@ -52,9 +52,9 @@ function Overview:_init()
     FONT = GL.FONT;
 
     Events:register({
-        { "AwardedLootTradeShowListener", "GL.TRADE_TIME_DURATIONS_CHANGED" },
-        { "AwardedLootItemAwardedListener", "GL.ITEM_AWARDED" },
-        { "AwardedLootItemUnAwardedListener", "GL.ITEM_UNAWARDED" },
+        { "TradeTimeTradeShowListener", "GL.TRADE_TIME_DURATIONS_CHANGED" },
+        { "TradeTimeItemAwardedListener", "GL.ITEM_AWARDED" },
+        { "TradeTimeItemUnAwardedListener", "GL.ITEM_UNAWARDED" },
     }, function (_)
         self:refresh();
     end);
@@ -217,6 +217,7 @@ function Overview:build()
         Window:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", left, top);
         Window.Minimize.MinimizeButton:Hide();
         Window.Minimize.MaximizeButton:Show();
+        Window.Resize:Hide();
 
         self.minimized = true;
         self:refresh();
@@ -230,6 +231,7 @@ function Overview:build()
         Window:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", left, top);
         Window.Minimize.MinimizeButton:Show();
         Window.Minimize.MaximizeButton:Hide();
+        Window.Resize:Show();
 
         self.minimized = false;
         self:refresh();

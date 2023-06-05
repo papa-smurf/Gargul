@@ -21,7 +21,7 @@ function LootTradeTimers:draw(Parent)
     GL:debug("LootTradeTimers:draw");
 
     -- The window scale option is only available when using the old trade timer bars (classic era, pre v3.4.2)
-    if (not C_Item or not C_ItemGetItemGUID) then
+    if (not C_Item or not C_Item.GetItemGUID) then
         local Scale = GL.AceGUI:Create("Slider");
         Scale:SetLabel("Magnification scale of the loot trade timers window");
         Scale.label:SetTextColor(1, .95686, .40784);
@@ -36,7 +36,7 @@ function LootTradeTimers:draw(Parent)
 
                 -- Change the loot trade timer window if it's active!
                 if (Interface.TradeWindow.TimeLeft.Window
-                        and type(Interface.TradeWindow.TimeLeft.Window.SetScale == "function")
+                    and type(Interface.TradeWindow.TimeLeft.Window.SetScale == "function")
                 ) then
                     Interface.TradeWindow.TimeLeft.Window:SetScale(value);
                 end

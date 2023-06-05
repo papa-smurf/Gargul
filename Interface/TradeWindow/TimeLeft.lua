@@ -26,7 +26,7 @@ local TimeLeft = GL.Interface.TradeWindow.TimeLeft;
 function TimeLeft:_init()
     GL:debug("TimeLeft:_init");
 
-    if ((C_Item and C_ItemGetItemGUID) -- This adaptation is only used on older game version
+    if ((C_Item and C_Item.GetItemGUID) -- This adaptation is only used on older game version
         or self._initialized
     ) then
         return;

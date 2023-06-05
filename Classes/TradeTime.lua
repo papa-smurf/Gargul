@@ -21,7 +21,7 @@ local TradeTime = GL.TradeTime;
 
 ---@return void
 function TradeTime:_init()
-    if ((not C_Item or not C_ItemGetItemGUID) -- This adaptation only works on newer game versions
+    if ((not C_Item or not C_Item.GetItemGUID) -- This adaptation only works on newer game versions
         or self._initialized
     ) then
         return;
