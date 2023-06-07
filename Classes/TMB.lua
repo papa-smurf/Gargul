@@ -418,10 +418,14 @@ function TMB:tooltipLines(itemLink)
         local source = GL.TMB:source();
         tinsert(Lines, string.format("\n|cFFff7a0a%s|r", source .. " Prio List"));
 
-        -- Sort the PrioListEntries based on prio (lowest to highest)
+        -- Sort the PrioListEntries based on prio
         table.sort(PrioListEntries, function (a, b)
             if (a[1] and b[1]) then
-                return a[1] < b[1];
+                if (TMB:wasImportedFromDFT()) then
+                    return a[1] > b[1];
+                else
+                    return a[1] < b[1];
+                end
             end
 
             return false;
@@ -933,7 +937,7 @@ function TMB:DFTFormatToTMB(data)
                 priorityIndex = priorityIndex + 1;
             end
 
-            TMBData.wishlists[itemID][key] = string.format("%s||%s||1||1", string.lower(Priority.player), priorityIndex);
+            TMBData.wishlists[itemID][key] = string.format("%s||%s||1||1", string.lower(Priority.player), Priority.priority);
         end
     end
 
