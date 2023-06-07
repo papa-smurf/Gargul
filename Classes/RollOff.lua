@@ -179,10 +179,14 @@ function RollOff:postStartMessage(itemLink, time, note)
         if (not GL:empty(PrioListEntries)
             and GL.Settings:get("TMB.announcePriolistInfoWhenRolling")
         ) then
-            -- Sort the PrioListEntries based on prio (lowest to highest)
+            -- Sort the PrioListEntries based on prio
             table.sort(PrioListEntries, function (a, b)
                 if (a.prio and b.prio) then
-                    return a.prio < b.prio;
+                    if (GL.TMB:wasImportedFromDFT()) then
+                        return a.prio > b.prio;
+                    else
+                        return a.prio < b.prio;
+                    end
                 end
 
                 return false;
@@ -194,7 +198,7 @@ function RollOff:postStartMessage(itemLink, time, note)
                     tinsert(EligiblePlayers, Entry);
                 else
                     -- This players prio is worse than the number one, break!
-                    if (Entry.prio > EligiblePlayers[1].prio) then
+                    if (Entry.prio ~= EligiblePlayers[1].prio) then
                         break;
                     end
 

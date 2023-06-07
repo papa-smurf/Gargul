@@ -558,7 +558,11 @@ function Award:topPrioForItem(itemID)
         -- Sort the PrioListEntries based on prio (lowest to highest)
         table.sort(PrioListEntries, function (a, b)
             if (a.prio and b.prio) then
-                return a.prio < b.prio;
+                if (GL.TMB:wasImportedFromDFT()) then
+                    return a.prio > b.prio;
+                else
+                    return a.prio < b.prio;
+                end
             end
 
             return false;

@@ -404,10 +404,14 @@ function DroppedLoot:announce(Modifiers)
             if (itemIsOnSomeonesPriolist
                 and GL.Settings:get("TMB.includePrioListInfoInLootAnnouncement")
             ) then
-                -- Sort the PrioListEntries based on prio (lowest to highest)
+                -- Sort the PrioListEntries based on prio
                 table.sort(ActivePrioListDetails, function (a, b)
                     if (a.order and b.order) then
-                        return a.order < b.order;
+                        if (GL.TMB:wasImportedFromDFT()) then
+                            return a.order > b.order;
+                        else
+                            return a.order < b.order;
+                        end
                     end
 
                     return false;

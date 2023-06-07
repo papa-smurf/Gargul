@@ -919,9 +919,6 @@ function TMB:DFTFormatToTMB(data)
 
     -- Rewrite the priorities to match DFTs behavior
     for itemID, Priorities in pairs(TMBData.wishlists) do
-        local lastPriority = 99999;
-        local priorityIndex = 0;
-
         -- Sort the priorities (highest to lowest)
         table.sort(Priorities, function (a, b)
             if (a.priority and b.priority) then
@@ -932,11 +929,6 @@ function TMB:DFTFormatToTMB(data)
         end);
 
         for key, Priority in pairs(Priorities) do
-            if (Priority.priority < lastPriority) then
-                lastPriority = Priority.priority;
-                priorityIndex = priorityIndex + 1;
-            end
-
             TMBData.wishlists[itemID][key] = string.format("%s||%s||1||1", string.lower(Priority.player), Priority.priority);
         end
     end
