@@ -64,7 +64,6 @@ function Alerts:init()
         end, 6, math.huge),
     };
 
-    ---@todo: /script _G.gargultest();
     _G.gargultest = function ()
         --GL:onItemLoadDo(18608, function (Items)
         GL:onItemLoadDo(31986, function (Benediction)

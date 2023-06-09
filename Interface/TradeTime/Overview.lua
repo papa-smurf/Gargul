@@ -39,7 +39,6 @@ local Overview = GL.Interface.TradeTime.Overview;
 
 --[[ CONSTANTS ]]
 local FONT;
-local FOOTER_HEIGHT = 16;
 local HEADER_HEIGHT = 20;
 local ROW_HEIGHT = 15;
 
@@ -60,10 +59,8 @@ function Overview:_init()
     end);
 end
 
----@return table|nil
+---@return Frame
 function Overview:open()
-    GL:debug("Overview:open");
-
     local Window = _G[self.windowName] or self:build();
 
     self:setWindowHeight();
@@ -73,8 +70,6 @@ end
 
 ---@return void
 function Overview:close()
-    GL:debug("Overview:close");
-
     for key, Row in pairs(self.ItemRows) do
         Row.CountDownBar:Stop();
         Interface:release(Row);
@@ -87,14 +82,13 @@ end
 
 ---@return Frame
 function Overview:build()
-    GL:debug("Overview:build");
-
     if (_G[self.windowName]) then
         return _G[self.windowName];
     end
 
     ---@type Frame
-    local Window = Interface:createWindow(self.windowName, {
+    local Window = Interface:createWindow{
+        name = self.windowName,
         width = 250,
         height = 100,
         minWidth = 206,
@@ -104,7 +98,8 @@ function Overview:build()
         hideCloseButton = true,
         closeWithEscape = false,
         hideWatermark = true,
-    }, false);
+        template = false,
+    };
 
     -- Position move / minimize buttons
     Window.MoveButton:SetPoint("TOPRIGHT", Window, "TOPRIGHT", -22, 0);
@@ -164,7 +159,7 @@ function Overview:build()
     --[[ ADD THE SETTINGS MENU IN THE TOP LEFT OF THE WINDOW ]]
     Interface:addWindowOptions(Window, {
         { text = L.BROADCAST, notCheckable = true, func = function ()
-            GL:popupMessage(L.TUTORIAL_AWARD_OVERVIEW, Window);
+            Interface.TradeTime.Broadcast:open();
             CloseMenus();
         end },
         "divider",
@@ -284,6 +279,7 @@ function Overview:build()
         Window.Minimize.MinimizeButton:Click();
     end
 
+    _G[self.windowName] = Window;
     return Window;
 end
 
@@ -309,6 +305,7 @@ function Overview:refresh()
     local ActionButtons = Window.ActionButtons;
 
     -- This item no longer has a trade time remaining
+    -- or the player opted to not show the item on the list
     for itemGUID, Row in pairs(self.ItemRows or {}) do
         if (not State[itemGUID] or self.HiddenItems[itemGUID]) then
             Interface:release(Row);

@@ -133,7 +133,6 @@ function GL:_init()
     self.TradeTime:_init();
     self.GDKP.Auctioneer:_init();
     self.Interface.MasterLooterDialog:_init();
-    self.Interface.TradeWindow.TimeLeft:_init();
     self.Interface.GDKP.BidderQueue:_init();
     self.Interface.GDKP.Distribute.MailCuts:_init();
 

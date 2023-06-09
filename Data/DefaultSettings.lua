@@ -78,6 +78,17 @@ GL.Data.DefaultSettings = {
         scale = 1,
         showHotkeyReminder = true,
         showOnlyWhenMasterLooting = true,
+        Broadcast = {
+            channel = 1,
+            includeAwardedItems = false,
+            includeDisenchantedItems = false,
+            includeHiddenItems = false,
+            includeTimeLeft = true,
+            maximumTradeTimeLeft = 120,
+            minimumQuality = 4,
+            numberOfItems = 20,
+            target = nil,
+        }
     },
     PackMule = {
         announceDisenchantedItems = true,

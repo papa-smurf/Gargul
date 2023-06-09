@@ -126,8 +126,8 @@ Interface/TMB/Importer.lua
 Interface/TMB/Overview.lua
 Interface/PlusOnes/OverView.lua
 Interface/PlusOnes/Importer.lua
-Interface/TradeWindow/TimeLeft.lua
 Interface/TradeTime/Overview.lua
+Interface/TradeTime/Broadcast.lua
 Interface/PlayerSelector.lua
 Interface/Changelog.lua
 Interface/BoostedRolls/Importer.lua

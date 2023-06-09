@@ -4,7 +4,6 @@ local _, GL = ...;
 GL.RollOff = GL.RollOff or {}; ---@type RollOff
 GL.ScrollingTable = GL.ScrollingTable or LibStub("ScrollingTable");
 
----@todo Refactor to interface
 ---@class MasterLooterUI
 GL.MasterLooterUI = {
     ItemBoxHoldsValidItem = false,

@@ -245,9 +245,7 @@ end
 function Auctioneer:addToQueue(itemLink, identifier, open)
     GL:debug("Auctioneer:addToQueue");
 
-    if (open == nil) then
-        open = true;
-    end
+    open = open ~= false;
 
     -- Make sure the item actually exists
     local itemID = GL:getItemIDFromLink(itemLink);

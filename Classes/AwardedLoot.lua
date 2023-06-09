@@ -143,9 +143,7 @@ function AwardedLoot:deleteWinner(checksum, adjustPoints)
         return;
     end
 
-    if (adjustPoints == nil) then
-        adjustPoints = true;
-    end
+    adjustPoints = adjustPoints ~= false;
 
     -- We don't know this entry
     if (not GL.DB.AwardHistory[checksum]) then

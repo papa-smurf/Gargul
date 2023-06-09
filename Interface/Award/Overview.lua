@@ -73,7 +73,8 @@ function Overview:build()
     end
 
     ---@type Frame
-    local Window = Interface:createWindow(self.windowName, {
+    local Window = Interface:createWindow{
+        name = self.windowName,
         width = DEFAULT_WINDOW_WIDTH,
         height = DEFAULT_WINDOW_HEIGHT,
         minWidth = 500,
@@ -81,7 +82,7 @@ function Overview:build()
         maxWidth = DEFAULT_WINDOW_WIDTH,
         maxHeight = 700,
         hideMinimizeButton = true,
-    });
+    };
 
     --[[ ADD THE SETTINGS MENU IN THE TOP LEFT OF THE WINDOW ]]
     Interface:addWindowOptions(Window, {

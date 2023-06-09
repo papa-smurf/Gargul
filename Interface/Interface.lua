@@ -139,8 +139,6 @@ end
 ---@param layer string|nil
 ---@return FontString
 function Interface:createFontString(Parent, text, template, name, layer)
-    GL:debug("Interface:createFontString");
-
     ---@type FontString
     local FontString = Parent:CreateFontString(name, layer or "ARTWORK", template or "GameFontWhite");
     FontString:SetJustifyH("LEFT");
@@ -425,24 +423,58 @@ function Interface:addResizer(Element)
     Element.Resize = Resize;
 end
 
----@param name string
----@param Details table
+---@param name string|table
+---@param width number
+---@param height number
+---@param minWidth number
+---@param minHeight number
+---@param maxWidth number
+---@param maxHeight number
+---@param closeWithEscape boolean
+---@param OnClose function
+---@param hideMinimizeButton boolean
+---@param hideCloseButton boolean
+---@param hideResizeButton boolean
+---@param hideMoveButton boolean
+---@param hideWatermark boolean
+---@param template string
 ---@return Frame
-function Interface:createWindow(name, Details, template)
-    GL:debug("Interface:createWindow");
+function Interface:createWindow(
+    name, width, height, minWidth, minHeight, maxWidth, maxHeight, closeWithEscape, OnClose,
+    hideMinimizeButton, hideCloseButton, hideResizeButton, hideMoveButton, hideWatermark, template
+)
+    if (width ~= nil or type(name) ~= "table") then
+        GL:error("Pass a table instead of multiple arguments")
+        return false;
+    end
+
+    width = name.width;
+    height = name.height;
+    minWidth = name.minWidth;
+    minHeight = name.minHeight;
+    maxWidth = name.maxWidth;
+    maxHeight = name.maxHeight;
+    closeWithEscape = name.closeWithEscape;
+    OnClose = name.OnClose;
+    hideMinimizeButton = name.hideMinimizeButton;
+    hideCloseButton = name.hideCloseButton;
+    hideResizeButton = name.hideResizeButton;
+    hideMoveButton = name.hideMoveButton;
+    template = name.template;
+    hideWatermark = name.hideWatermark;
+
+    name = name.name;
 
     if (not name) then
         return GL:error("Gargul windows require a unique and descriptive name!");
     end
 
-    if (Details.closeWithEscape == nil) then
-        Details.closeWithEscape = true;
-    end
+    closeWithEscape = closeWithEscape ~= false;
 
     ---@type Frame
     --local Window = CreateFrame("Frame", name, UIParent, "BackdropTemplate");
     local Window = CreateFrame("Frame", name, UIParent, template == false and Frame or "BackdropTemplate");
-    Window:SetSize(Details.width or 200, Details.height or 200);
+    Window:SetSize(width or 200, height or 200);
     Window:SetPoint("CENTER", UIParent, "CENTER");
 
     if (template ~= false) then
@@ -455,38 +487,38 @@ function Interface:createWindow(name, Details, template)
     Window:EnableMouse(true);
     Window:SetToplevel(true);
 
-    if (type(Details.OnClose) == "function") then
-        Window:SetScript("OnHide", Details.OnClose);
+    if (type(OnClose) == "function") then
+        Window:SetScript("OnHide", OnClose);
     end
 
     --[[ MINIMIZE BUTTON ]]
-    if (not Details.hideMinimizeButton) then
+    if (not hideMinimizeButton) then
         self:addMinimizeButton(Window);
     end
 
     --[[ CLOSE BUTTON ]]
-    if (not Details.hideCloseButton) then
+    if (not hideCloseButton) then
         self:addCloseButton(Window);
     end
 
     --[[ MOVE / RESIZE BUTTONS ]]
-    if (not Details.hideResizeButton
-        or not Details.hideMoveButton
+    if (not hideResizeButton
+        or not hideMoveButton
     ) then
         self:restorePosition(Window);
         self:restoreDimensions(Window);
 
-        Interface:resizeBounds(Window, Details.minWidth or 0, Details.minHeight or 0);
+        Interface:resizeBounds(Window, minWidth or 0, minHeight or 0);
 
-        if (not Details.hideResizeButton) then
+        if (not hideResizeButton) then
             self:addResizer(Window);
         else
             -- This is to make sure we can update dimensions between patches
             -- without the restoreDimensions method overriding them with old SavedVariables data
-            Window:SetSize(Details.width or 200, Details.height or 200);
+            Window:SetSize(width or 200, height or 200);
         end
 
-        if (not Details.hideMoveButton) then
+        if (not hideMoveButton) then
             Window:SetMovable(true);
             self:addMoveButton(Window);
             Window:SetUserPlaced(false);
@@ -501,14 +533,14 @@ function Interface:createWindow(name, Details, template)
         end
 
         Window:SetScript("OnSizeChanged", function ()
-            if (Details.maxWidth) then
+            if (maxWidth) then
                 local windowWidth = Window:GetWidth();
-                Window:SetWidth(math.min(windowWidth, Details.maxWidth));
+                Window:SetWidth(math.min(windowWidth, maxWidth));
             end
 
-            if (Details.maxHeight) then
+            if (maxHeight) then
                 local windowHeight = Window:GetHeight();
-                Window:SetHeight(math.min(windowHeight, Details.maxHeight));
+                Window:SetHeight(math.min(windowHeight, maxHeight));
             end
 
             self:storeDimensions(Window);
@@ -517,7 +549,7 @@ function Interface:createWindow(name, Details, template)
     end
 
     --[[ WATERMARK ]]
-    if (not Details.hideWatermark) then
+    if (not hideWatermark) then
         ---@type FontString
         local Watermark = Interface:createFontString(Window, GL.name .. " v" .. GL.version, "GameFontDarkGraySmall");
         Watermark:SetPoint("BOTTOMLEFT", Window, "BOTTOMLEFT", 14, 13);
@@ -526,27 +558,277 @@ function Interface:createWindow(name, Details, template)
 
     --[[ POSITION ACTION BUTTONS ]]
     if (Window.MoveButton and (
-        Details.hideMinimizeButton
-        or Details.hideCloseButton
+        hideMinimizeButton
+        or hideCloseButton
     )) then
-        if (Details.hideCloseButton and Details.hideMinimizeButton) then
+        if (hideCloseButton and hideMinimizeButton) then
             Window.MoveButton:SetPoint("TOPRIGHT", Window, "TOPRIGHT", 0, 0);
         else
             Window.MoveButton:SetPoint("TOPRIGHT", Window, "TOPRIGHT", -18, 0);
         end
     end
 
-    if (Window.Minimize and Details.hideCloseButton) then
+    if (Window.Minimize and hideCloseButton) then
         Window.Minimize:SetPoint("TOPRIGHT", Window, "TOPRIGHT", 8, 4);
     end
 
     _G[name] = Window;
 
-    if (Details.closeWithEscape) then
+    if (closeWithEscape) then
         tinsert(UISpecialFrames, name);
     end
 
     return Window;
+end
+
+---@param Parent Frame|table
+---@param name string
+---@param checked boolean
+---@param label string
+---@param tooltip string
+---@param callback function
+---@return CheckButton
+function Interface:createCheckbox(Parent, name, checked, label, tooltip, callback)
+    if (name ~= nil or type(Parent) ~= "table") then
+        GL:error("Pass a table instead of multiple arguments")
+        return false;
+    end
+
+    name = Parent.name;
+    checked = Parent.checked;
+    label = Parent.label;
+    tooltip = Parent.tooltip;
+    callback = Parent.callback or function () end;
+
+    Parent = Parent.Parent;
+
+    ---@type CheckButton
+    local Checkbox = CreateFrame("CheckButton", nil, Parent, "UICheckButtonTemplate");
+    Checkbox:SetChecked(checked);
+    Checkbox:SetSize(22, 22);
+
+    Checkbox.toggle = function ()
+        checked = not Checkbox:GetChecked();
+        Checkbox:SetChecked(checked);
+        callback(Checkbox, checked);
+    end
+
+    -- Add a label to the checkbox and make it clickable
+    if (label) then
+        local Label = self:createFontString(Parent, label);
+        Label:SetPoint("CENTER", Checkbox, "CENTER");
+        Label:SetPoint("LEFT", Checkbox, "RIGHT", 4, 0);
+
+        -- Not available in Era at time of writing
+        if (Label.EnableMouse) then
+            Label:EnableMouse(true);
+            Label:HookScript("OnMouseDown", Checkbox.toggle);
+        end
+        Checkbox.Label = Label;
+
+        if (tooltip) then
+            self:addTooltip(Label, tooltip, "TOP");
+        end
+    end
+
+    Checkbox:HookScript("OnClick", function ()
+        callback(Checkbox, Checkbox:GetChecked());
+    end);
+    return Checkbox;
+end
+
+---@param Parent table
+---@param name string
+---@param min number
+---@param max number
+---@param step number
+---@param value string|number
+---@param callback function
+---@param width number
+---@param height number
+---@return Frame
+function Interface:createSlider(Parent, name, min, max, step, value, callback, width, height)
+    if (name ~= nil or type(Parent) ~= "table") then
+        GL:error("Pass a table instead of multiple arguments")
+        return false;
+    end
+
+    min = Parent.min;
+    max = Parent.max;
+    step = Parent.step;
+    value = Parent.value;
+    width = Parent.width or 200;
+    height = Parent.height or 15;
+    callback = Parent.callback or function () end;
+
+    Parent = Parent.Parent;
+
+    local SliderBackdrop  = {
+        bgFile = "Interface/Buttons/UI-SliderBar-Background",
+        edgeFile = "Interface/Buttons/UI-SliderBar-Border",
+        tile = true, tileSize = 8, edgeSize = 8,
+        insets = { left = 3, right = 3, top = 6, bottom = 6 }
+    };
+
+    local InputBackdrop = {
+        bgFile = "Interface/ChatFrame/ChatFrameBackground",
+        edgeFile = "Interface/ChatFrame/ChatFrameBackground",
+        tile = true, edgeSize = 1, tileSize = 5,
+    };
+
+    ---@type Slider
+    local Slider = CreateFrame("Slider", name, Parent, "BackdropTemplate");
+    Slider:SetSize(width, height);
+    Slider:SetHitRectInsets(0, 0, -10, 0);
+    Slider:SetOrientation('HORIZONTAL');
+    Slider:SetMinMaxValues(min, max);
+    Slider:SetObeyStepOnDrag(true);
+    Slider:SetValue(1);
+    Slider:SetValueStep(step);
+    Slider:SetBackdrop(SliderBackdrop)
+    Slider:SetThumbTexture("Interface/Buttons/UI-SliderBar-Button-Horizontal");
+
+    ---@type FontString
+    local LowText = Interface:createFontString(Slider, tostring(min));
+    LowText:SetPoint("TOPLEFT", Slider, "BOTTOMLEFT", 2, 3);
+
+    ---@type FontString
+    local HighText = Interface:createFontString(Slider, tostring(max));
+    HighText:SetPoint("TOPRIGHT", Slider, "BOTTOMRIGHT", -2, 3);
+
+    ---@type EditBox
+    local Input = CreateFrame("EditBox", nil, Slider, "BackdropTemplate")
+    Input:SetFont(GL.FONT, 11, "");
+    Input:SetAutoFocus(false);
+    Input:SetPoint("TOP", Slider, "BOTTOM");
+    Input:SetHeight(14);
+    Input:SetWidth(70);
+    Input:SetJustifyH("CENTER");
+    Input:EnableMouse(true);
+    Input:SetBackdrop(InputBackdrop);
+    Input:SetBackdropColor(0, 0, 0, 0.5);
+    Input:SetBackdropBorderColor(0.3, 0.3, 0.30, 0.80);
+    Input:SetScript("OnEscapePressed", function ()
+        Input:ClearFocus();
+    end);
+    Input:SetScript("OnEnterPressed", function ()
+        local value = Input:GetText();
+        if (GL:empty(value)) then
+            return;
+        end
+
+        PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
+        Slider:SetValue(value);
+    end);
+    Slider.Input = Input;
+
+    Slider:SetScript("OnValueChanged", function (_, value)
+        local currentValue = Input:GetText();
+        Slider.Input:SetText(value);
+
+        if (currentValue ~= value) then
+            callback(Slider, value);
+        end
+    end);
+
+    Slider.GetValue = function ()
+        return Input:GetText();
+    end
+
+    Slider:SetValue(value);
+    Slider.Input:SetText(value);
+
+    return Slider;
+end
+
+---@param Parent table
+---@param name string
+---@param value string|number
+---@param Options table
+---@param sorter function
+---@param callback function
+---@return Frame
+function Interface:createDropdown(Parent, name, value, Options, sorter, callback)
+    if (name ~= nil or type(Parent) ~= "table") then
+        GL:error("Pass a table instead of multiple arguments")
+        return false;
+    end
+
+    name = Parent.name;
+    value = Parent.value;
+    Options = Parent.Options or {};
+    callback = Parent.callback or function () end;
+
+    Parent = Parent.Parent;
+
+    local Dropdown = CreateFrame("Frame", name, Parent, "UIDropDownMenuTemplate");
+    Dropdown.value = value;
+    Dropdown.Options = Options;
+
+    UIDropDownMenu_SetWidth(Dropdown, Parent:GetWidth() - 70); -- Use in place of dropDown:SetWidth
+    UIDropDownMenu_SetText(Dropdown, "|c00a335eeEpic|r");
+
+    UIDropDownMenu_Initialize(Dropdown, function ()
+        local Option = UIDropDownMenu_CreateInfo()
+        Option.func = function (self)
+            Dropdown:SetValue(self.value);
+        end
+
+        -- Sort our options the way we want them
+        local FauxOptions = {};
+        if (not sorter) then
+            for value, text in pairs(Dropdown.Options) do
+                tinsert(FauxOptions, { v = value, t = text });
+            end
+            table.sort(FauxOptions, function (a, b)
+                if (a.v and b.v) then
+                    return a.v < b.v;
+                end
+
+                return false;
+            end);
+        else
+            FauxOptions = sorter(FauxOptions);
+        end
+
+        for _, Details in pairs(FauxOptions) do
+            Option.text = Details.t;
+            Option.value = Details.v;
+            Option.checked = Dropdown.value == Details.v;
+            UIDropDownMenu_AddButton(Option);
+        end
+    end);
+
+    Dropdown.SetOptions = function (_, Options)
+        Dropdown.Options = Options;
+    end
+
+    Dropdown.SetWidth = function(_, width)
+        UIDropDownMenu_SetWidth(Dropdown, width);
+    end
+
+    Dropdown.SetText = function(_, text)
+        UIDropDownMenu_SetText(Dropdown, text);
+    end
+
+    Dropdown.SetValue = function (_, value)
+        Dropdown:SetText(Options[value] or "");
+
+        -- Something changed
+        if (value ~= Dropdown.value) then
+            callback(Dropdown, value);
+        end
+
+        Dropdown.value = value;
+    end
+
+    Dropdown.GetValue = function ()
+        return Dropdown.value;
+    end
+
+    Dropdown:SetValue(value);
+
+    return Dropdown;
 end
 
 --- Open a scale slider for the given frame
@@ -557,97 +839,48 @@ function Interface:openScaler(Parent)
     GL:debug("Interface:openScaler");
 
     local Scaler = _G[self.scalerName];
-    local min, max, step = .5, 2, .05;
     local sliderName = self.scalerName .. ".Slider";
 
+    local min, max, step = .5, 2, .05;
     local valueToStep = function(value)
         return floor((value - min) / step + 0.5) * step + min;
     end
 
     if (not Scaler) then
         ---@type Frame
-        Scaler = self:createWindow(self.scalerName, {
+        Scaler = self:createWindow{
+            name = self.scalerName,
             hideMinimizeButton = true,
             hideResizeButton = true,
             width = 240,
             height = 90,
-        });
+        };
         Scaler:Hide();
 
-        local SliderBackdrop  = {
-            bgFile = "Interface\\Buttons\\UI-SliderBar-Background",
-            edgeFile = "Interface\\Buttons\\UI-SliderBar-Border",
-            tile = true, tileSize = 8, edgeSize = 8,
-            insets = { left = 3, right = 3, top = 6, bottom = 6 }
+        local Slider = self:createSlider{
+            name = sliderName,
+            Parent = Scaler,
+            min = min,
+            max = max,
+            step = step,
+            value = 1,
+            callback = function (_, value)
+                local currentStep = valueToStep(value);
+                Scaler.Slider.Input:SetText(currentStep);
+                Parent:SetScale(value);
+            end,
         };
-
-        local InputBackdrop = {
-            bgFile = "Interface\\ChatFrame\\ChatFrameBackground",
-            edgeFile = "Interface\\ChatFrame\\ChatFrameBackground",
-            tile = true, edgeSize = 1, tileSize = 5,
-        };
-
-        ---@type Slider
-        local Slider = CreateFrame("Slider", sliderName, Scaler, "BackdropTemplate");
-        Slider:SetSize(200, 15);
-        Slider:SetHitRectInsets(0, 0, -10, 0);
-        Slider:SetOrientation('HORIZONTAL');
-        Slider:SetMinMaxValues(min, max);
-        Slider:SetObeyStepOnDrag(true);
-        Slider:SetValue(1);
-        Slider:SetValueStep(step);
-        Slider:SetBackdrop(SliderBackdrop)
         Slider:SetPoint("CENTER", Scaler, "CENTER");
         Slider:SetPoint("TOP", Scaler, "TOP", 0, -30);
-        Slider:SetThumbTexture("Interface\\Buttons\\UI-SliderBar-Button-Horizontal");
+        Scaler.Slider = Slider;
 
         ---@type FontString
         local TitleText = self:createFontString(Slider, L.WINDOW_SCALE);
         TitleText:SetPoint("CENTER", Slider, "CENTER");
         TitleText:SetPoint("BOTTOM", Slider, "TOP", 0, 2);
-
-        ---@type FontString
-        local LowText = self:createFontString(Slider, ".1");
-        LowText:SetPoint("TOPLEFT", Slider, "BOTTOMLEFT", 2, 3);
-
-        ---@type FontString
-        local HighText = self:createFontString(Slider, "2");
-        HighText:SetPoint("TOPRIGHT", Slider, "BOTTOMRIGHT", -2, 3);
-
-        ---@type EditBox
-        local Input = CreateFrame("EditBox", nil, Slider, "BackdropTemplate")
-        Input:SetFont(GL.FONT, 11, "");
-        Input:SetAutoFocus(false);
-        Input:SetPoint("TOP", Slider, "BOTTOM");
-        Input:SetHeight(14);
-        Input:SetWidth(70);
-        Input:SetJustifyH("CENTER");
-        Input:EnableMouse(true);
-        Input:SetBackdrop(InputBackdrop);
-        Input:SetBackdropColor(0, 0, 0, 0.5);
-        Input:SetBackdropBorderColor(0.3, 0.3, 0.30, 0.80);
-        Input:SetScript("OnEscapePressed", function ()
-            Input:ClearFocus();
-        end);
-        Input:SetScript("OnEnterPressed", function ()
-            local value = Input:GetText();
-            if (GL:empty(value)) then
-                return;
-            end
-
-            PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
-            Slider:SetValue(value);
-        end);
-        Slider.Input = Input;
-        Scaler.Slider = Slider;
     end
 
-    Scaler.Slider:SetScript("OnValueChanged", function (_, value)
-        local currentStep = valueToStep(value);
-        Scaler.Slider.Input:SetText(currentStep);
-        Parent:SetScale(currentStep);
-    end);
-
+    -- If the scaler does not have a valid position (anymore) then center it
     if (not self:getPosition(Scaler:GetName(), false)) then
         Scaler:ClearAllPoints();
         Scaler:SetPoint("CENTER", UIParent, "CENTER");
@@ -657,6 +890,7 @@ function Interface:openScaler(Parent)
     Scaler.Slider:SetValue(currentStep);
     Scaler.Slider.Input:SetText(currentStep);
 
+    -- Guarantee that the scaler window is on the foreground
     GL.Ace:ScheduleTimer(function()
         Scaler:SetFrameLevel(Parent:GetFrameLevel() + 100);
         Scaler:Show();
@@ -931,9 +1165,7 @@ end
 function Interface:set(scope, identifier, Item, prefixWithType)
     GL:debug("Interface:set");
 
-    if (prefixWithType == nil) then
-        prefixWithType = true;
-    end
+    prefixWithType = prefixWithType ~= false;
 
     local widgetType = "";
     if (prefixWithType) then
@@ -1272,9 +1504,8 @@ function Interface:createButton(Parent, Details)
     local imageWidth = Details.imageWidth or width;
     local imageHeight = Details.imageHeight or height;
 
-    if (fireUpdateOnCreation == nil) then
-        fireUpdateOnCreation = true;
-    end
+    fireUpdateOnCreation = fireUpdateOnCreation ~= false;
+
 
     if (type(updateOn) ~= "table") then
         updateOn = { updateOn };

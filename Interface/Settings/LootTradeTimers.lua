@@ -20,31 +20,6 @@ local LootTradeTimers = Interface.Settings.LootTradeTimers; ---@type LootTradeTi
 function LootTradeTimers:draw(Parent)
     GL:debug("LootTradeTimers:draw");
 
-    -- The window scale option is only available when using the old trade timer bars (classic era, pre v3.4.2)
-    if (not C_Item or not C_Item.GetItemGUID) then
-        local Scale = GL.AceGUI:Create("Slider");
-        Scale:SetLabel("Magnification scale of the loot trade timers window");
-        Scale.label:SetTextColor(1, .95686, .40784);
-        Scale:SetFullWidth(true);
-        Scale:SetValue(GL.Settings:get("LootTradeTimers.scale", 35));
-        Scale:SetSliderValues(.2, 1.8, .1);
-        Scale:SetCallback("OnValueChanged", function(Slider)
-            local value = tonumber(Slider:GetValue());
-
-            if (value) then
-                GL.Settings:set("LootTradeTimers.scale", value);
-
-                -- Change the loot trade timer window if it's active!
-                if (Interface.TradeWindow.TimeLeft.Window
-                    and type(Interface.TradeWindow.TimeLeft.Window.SetScale == "function")
-                ) then
-                    Interface.TradeWindow.TimeLeft.Window:SetScale(value);
-                end
-            end
-        end);
-        Parent:AddChild(Scale);
-    end
-
     local NumberOfTimerBars = GL.AceGUI:Create("Slider");
     NumberOfTimerBars:SetLabel("Maximum number of active countdown bars");
     NumberOfTimerBars.label:SetTextColor(1, .95686, .40784);
@@ -56,7 +31,6 @@ function LootTradeTimers:draw(Parent)
 
         if (type(value) ~= nil) then
             GL.Settings:set("LootTradeTimers.maximumNumberOfBars", value);
-            Interface.TradeWindow.TimeLeft:refreshBars();
             GL.Interface.TradeTime.Overview:refresh();
         end
     end);
@@ -74,7 +48,6 @@ function LootTradeTimers:draw(Parent)
             description = "Show timer bars for BoP items that can still be traded for a limited time",
             setting = "LootTradeTimers.enabled",
             callback = function ()
-                Interface.TradeWindow.TimeLeft:refreshBars();
                 Interface.TradeTime.Overview:refresh();
             end,
         },
@@ -82,7 +55,6 @@ function LootTradeTimers:draw(Parent)
             label = "Only show bars when I'm the master looter",
             setting = "LootTradeTimers.showOnlyWhenMasterLooting",
             callback = function ()
-                Interface.TradeWindow.TimeLeft:refreshBars();
                 Interface.TradeTime.Overview:refresh();
             end,
         },
@@ -91,7 +63,6 @@ function LootTradeTimers:draw(Parent)
             setting = "LootTradeTimers.hideAwarded",
             callback = function ()
                 Interface.TradeTime.Overview:close();
-                Interface.TradeWindow.TimeLeft:refreshBars();
                 Interface.TradeTime.Overview:refresh();
             end,
         },
@@ -100,7 +71,6 @@ function LootTradeTimers:draw(Parent)
             setting = "LootTradeTimers.hideDisenchanted",
             callback = function ()
                 Interface.TradeTime.Overview:close();
-                Interface.TradeWindow.TimeLeft:refreshBars();
                 Interface.TradeTime.Overview:refresh();
             end,
         },
@@ -108,7 +78,6 @@ function LootTradeTimers:draw(Parent)
             label = "Show hotkey reminder",
             setting = "LootTradeTimers.showHotkeyReminder",
             callback = function ()
-                Interface.TradeWindow.TimeLeft:refreshBars();
                 Interface.TradeTime.Overview:refresh();
             end,
         },
@@ -167,7 +136,6 @@ function LootTradeTimers:draw(Parent)
         if (self.testEnabled) then
             self.testEnabled = false;
             DemoTradeTimersButton:SetText("Demo");
-            Interface.TradeWindow.TimeLeft:refreshBars();
             Interface.TradeTime.Overview:refresh();
 
             return;
@@ -176,8 +144,8 @@ function LootTradeTimers:draw(Parent)
         -- Enable test mode
         self.testEnabled = true;
         DemoTradeTimersButton:SetText("Stop");
-        Interface.TradeWindow.TimeLeft:refreshBars();
         Interface.TradeTime.Overview:refresh();
+        GL.Events:fire("BAG_UPDATE_DELAYED");
     end);
     Parent:AddChild(DemoTradeTimersButton);
 end

@@ -46,12 +46,13 @@ function Create:build()
     end
 
     ---@type Frame
-    local Window = Interface:createWindow(self.windowName, {
+    local Window = Interface:createWindow{
+        name = self.windowName,
         width = WINDOW_WIDTH,
         height = WINDOW_HEIGHT,
         hideResizeButton = true,
         hideMinimizeButton = true,
-    });
+    };
 
     --[[ THE SETTINGS MENU IN THE TOP LEFT OF THE WINDOW ]]
     Interface:addWindowOptions(Window, {

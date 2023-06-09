@@ -76,7 +76,8 @@ function BidderQueue:build()
 
     local ItemHolder, ScrollFrame;
     ---@type Frame
-    local Window = Interface:createWindow(self.windowName, {
+    local Window = Interface:createWindow{
+        name = self.windowName,
         closeWithEscape = false,
         width = DEFAULT_WINDOW_WIDTH,
         height = DEFAULT_WINDOW_HEIGHT,
@@ -84,7 +85,7 @@ function BidderQueue:build()
         minHeight = 100,
         maxWidth = 500,
         maxHeight = 700,
-    });
+    };
 
     Window:SetScript("OnHide", function ()
         self.isVisible = false;

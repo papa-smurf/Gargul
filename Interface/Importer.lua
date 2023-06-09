@@ -45,7 +45,8 @@ function Importer:build()
 
     --[[ THE MAIN AUCTIONEER WINDOW ]]
     ---@type Frame
-    local Window = Interface:createWindow(self.windowName, {
+    local Window = Interface:createWindow{
+        name = self.windowName,
         width = 300,
         height = 200,
         minWidth = 220,
@@ -53,7 +54,7 @@ function Importer:build()
         maxWidth = 500,
         maxHeight = 200,
         hideMinimizeButton = true,
-    });
+    };
 
     --[[ ADD THE SETTINGS MENU IN THE TOP LEFT OF THE WINDOW ]]
     Interface:addWindowOptions(Window, {

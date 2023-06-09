@@ -492,7 +492,7 @@ function Test.TimeLeft:testItems(...)
     local ItemIDs = {...};
 
     for _, itemID in pairs(ItemIDs or {}) do
-        GL:tableAdd(GL.Interface, "TradeWindow.TimeLeft.TestItems", itemID, true);
+        GL:tableAdd(GL.TradeTime, "TestItems", itemID, true);
     end
 end
 
@@ -500,7 +500,7 @@ end
 /script _G.Gargul.Test.TimeLeft:stopItemTest()
 ]]
 function Test.TimeLeft:stopItemTest()
-    GL:tableSet(GL.Interface, "TradeWindow.TimeLeft.TestItems", nil);
+    GL:tableSet(GL.TradeTime, "TestItems", nil);
 end
 
 --[[ Test PackMule's RR functionality
@@ -530,13 +530,8 @@ function Test:simulateGroup(numberOfPlayers, includeSelf, includeCurrentGroupMem
     local Players = {};
     numberOfPlayers = numberOfPlayers or 25;
 
-    if (includeSelf == nil) then
-        includeSelf = true;
-    end
-
-    if (includeCurrentGroupMembers == nil) then
-        includeCurrentGroupMembers = true;
-    end
+    includeSelf = includeSelf ~= false;
+    includeCurrentGroupMembers = includeCurrentGroupMembers ~= false;
 
     if (includeSelf and not includeCurrentGroupMembers) then
         numberOfPlayers = numberOfPlayers - 1;

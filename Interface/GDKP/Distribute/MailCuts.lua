@@ -113,14 +113,15 @@ function MailCuts:build()
     end
 
     ---@type Frame
-    local Window = Interface:createWindow(self.windowName, {
+    local Window = Interface:createWindow{
+        name = self.windowName,
         width = 300,
         height = 1,
         hideMinimizeButton = true,
         hideMoveButton = true,
         hideResizeButton = true,
         closeWithEscape = false,
-    });
+    };
     Window:SetPoint("TOPLEFT", _G.MailFrame, "TOPRIGHT", 2, 2);
     Window:SetPoint("BOTTOMLEFT", _G.MailFrame, "BOTTOMRIGHT", 4, -2);
 

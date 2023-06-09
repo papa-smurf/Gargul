@@ -149,6 +149,34 @@ function GL:classColorize(var, class)
     return string.format("|c%s%s|r", classColor[4], var);
 end
 
+--- Transform seconds to a human readable format e.g: 01:44:23
+---@param seconds number
+---@return string
+function GL:secondsToReadable(seconds)
+    local timeFormat1 = "%d:%02d:%02d"
+    local timeFormat2 = "%d:%02d"
+    local timeFormat3 = "%.1f"
+    local timeFormat4 = "%.0f"
+    local timeString;
+
+    if (seconds > 3599.9) then -- > 1 hour
+        local h = floor(seconds /3600);
+        local m = floor((seconds - (h*3600))/60);
+        local s = (seconds - (m*60)) - (h*3600);
+        timeString = (timeFormat1):format(h, m, s);
+    elseif (seconds > 59.9) then -- 1 minute to 1 hour
+        local m = floor(seconds /60);
+        local s = seconds - (m*60);
+        timeString = (timeFormat2):format(m, s);
+    elseif (seconds < 10) then -- 0 to 10 seconds
+        timeString = (timeFormat3):format(seconds);
+    else -- 10 seconds to one minute
+        timeString = (timeFormat4):format(seconds);
+    end
+
+    return timeString;
+end
+
 ---@param name string|table The player name or a table including any of the arguments below
 ---@param colorize boolean Return in player's class color if known
 ---@param stripRealm boolean Strip the realm suffix from the name
@@ -648,11 +676,12 @@ function GL:popupMessage(text)
 
     if (not Window) then
         ---@type Frame
-        Window = GL.Interface:createWindow(frameName, {
+        Window = GL.Interface:createWindow{
+            name = frameName,
             hideMinimizeButton = true,
             hideResizeButton = true,
             hideWatermark = true,
-        });
+        };
 
         Window.Text = GL.Interface:createFontString(Window);
         Window.Text:SetFont(GL.FONT, 14, "OUTLINE");
@@ -971,6 +1000,28 @@ function GL:count(var)
     return 0;
 end
 
+---@param func function
+---@return void
+function GL:forEachItemInBags(func)
+    -- Dragon Flight introduced an extra bag slot
+    local numberOfBagsToCheck = self.clientIsDragonFlightOrLater and 5 or 4;
+
+    for bag = 0, numberOfBagsToCheck do
+        for slot = 1, self:getContainerNumSlots(bag) do
+            (function ()
+                local Location = ItemLocation:CreateFromBagAndSlot(bag, slot);
+
+                -- Item doesn't exist
+                if (not Location or not C_Item.DoesItemExist(Location)) then
+                    return;
+                end
+
+                func(Location, bag, slot);
+            end)();
+        end
+    end
+end
+
 ---@param itemLinkOrID string|number
 ---@return table|nil
 function GL:getCachedItem(itemLinkOrID)
@@ -1035,7 +1086,7 @@ end
 ---@param identifier string
 ---@param func function
 ---@return table
-function GL:every(seconds, identifier, func)
+function GL:interval(seconds, identifier, func)
     GL:cancelTimer(identifier);
     GL:debug("Schedule recurring " .. identifier);
 
@@ -1324,30 +1375,20 @@ function GL:itemTradeTimeRemaining(itemLinkOrID)
     local numberOfBagsToCheck = GL.clientIsDragonFlightOrLater and 5 or 4;
 
     local Results = {};
-    for bag = 0, numberOfBagsToCheck do
-        for slot = 1, GL:getContainerNumSlots(bag) do
-            (function ()
-                local Location = ItemLocation:CreateFromBagAndSlot(bag, slot);
-
-                -- Item doesn't exist
-                if (not Location or not Location.slotIndex) then
-                    return;
-                end
-
-                -- Item is not soulbound or does not have any trade time remaining
-                local timeRemaining = GL:inventoryItemTradeTimeRemaining(bag, slot);
-                if (timeRemaining < 1 or timeRemaining == GL.Data.Constants.itemIsNotBound) then
-                    return;
-                end
-
-                if (C_Item.GetItemID(Location) ~= itemID) then
-                    return;
-                end
-
-                Results[C_Item.GetItemGUID(Location)] = timeRemaining;
-            end)();
+    self:forEachItemInBags(function(Location, bag, slot)
+        -- This is not the item we're looking for
+        if (C_Item.GetItemID(Location) ~= itemID) then
+            return;
         end
-    end
+
+        -- Item is not soulbound or does not have any trade time remaining
+        local timeRemaining = GL:inventoryItemTradeTimeRemaining(bag, slot);
+        if (timeRemaining < 1 or timeRemaining == GL.Data.Constants.itemIsNotBound) then
+            return;
+        end
+
+        Results[C_Item.GetItemGUID(Location)] = timeRemaining;
+    end);
 
     return Results;
 end
@@ -1370,9 +1411,9 @@ function GL:inventoryItemTradeTimeRemaining(bag, slot)
     end
 
     -- Test mode is enabled for specific items
-    if (GL.Interface.TradeWindow.TimeLeft.TestItems) then
-        local itemID = GL:tableGet(C_Container.GetContainerItemInfo(bag, slot) or {}, "itemID");
-        if (itemID and GL:inTable(GL.Interface.TradeWindow.TimeLeft.TestItems, itemID)) then
+    if (GL.TradeTime) then
+        local itemID = GL:tableGet(self:getContainerItemInfo(bag, slot) or {}, 10);
+        if (itemID and GL:inTable(GL.TradeTime, itemID)) then
             return math.random(5000, 7200);
         end
     end
@@ -2106,10 +2147,7 @@ local gaveNoAssistWarning = false;
 function GL:sendChatMessage(message, chatType, language, channel, stw, pretend)
     GL:debug("GL:sendChatMessage");
 
-    if (stw == nil) then
-        stw = true;
-    end
-    stw = GL:toboolean(stw);
+    stw = stw ~= false;
 
     -- No point sending an empty message!
     if (GL:empty(message)) then
@@ -2382,16 +2420,20 @@ function GL:tableGet(Table, keyString, default)
         return default;
     end
 
-    if (type(Table[firstKey]) == "nil") then
-        firstKey = tonumber(firstKey);
+    if (type(Table) == "table") then
+        if (type(Table[firstKey]) == "nil") then
+            firstKey = tonumber(firstKey);
 
-        -- Make sure we're not looking for a numeric key instead of a string
-        if (not firstKey or type(Table[firstKey]) == "nil") then
-            return default;
+            -- Make sure we're not looking for a numeric key instead of a string
+            if (not firstKey or type(Table[firstKey]) == "nil") then
+                return default;
+            end
         end
-    end
 
-    Table = Table[firstKey];
+        Table = Table[firstKey];
+    else
+        return Table or default;
+    end
 
     -- Changed if (#keys == 1) then to below, saved this just in case we get weird behavior
     if (numberOfKeys == 1) then

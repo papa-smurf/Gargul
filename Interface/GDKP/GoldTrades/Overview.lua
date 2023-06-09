@@ -6,9 +6,6 @@ local _, GL = ...;
 ---@type Interface
 local Interface = GL.Interface;
 
----@type Settings
-local Settings = GL.Settings;
-
 ---@type Constants
 local Constants = GL.Data.Constants;
 
@@ -55,7 +52,8 @@ function Overview:build()
 
     local TradesHolder, ScrollFrame;
     ---@type Frame
-    local Window = Interface:createWindow(self.windowName, {
+    local Window = Interface:createWindow{
+        name = self.windowName,
         width = DEFAULT_WINDOW_WIDTH,
         height = DEFAULT_WINDOW_HEIGHT,
         minWidth = DEFAULT_WINDOW_WIDTH,
@@ -63,7 +61,7 @@ function Overview:build()
         maxWidth = 500,
         maxHeight = 700,
         hideMinimizeButton = true,
-    });
+    };
 
     Window:SetScript("OnHide", function ()
         self.isVisible = false;
