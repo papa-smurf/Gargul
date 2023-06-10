@@ -39,9 +39,10 @@ local Overview = GL.Interface.TradeTime.Overview;
 
 --[[ CONSTANTS ]]
 local FONT;
-local HEADER_HEIGHT = 20;
-local ROW_HEIGHT = 15;
+local HEADER_HEIGHT = 20 + GL:remOffset();
+local ROW_HEIGHT = 16 + GL:remOffset();
 
+---@return void
 function Overview:_init()
     if (self._initialized) then
         return;
@@ -50,11 +51,18 @@ function Overview:_init()
     self._initialized = true;
     FONT = GL.FONT;
 
-    Events:register({
-        { "TradeTimeTradeShowListener", "GL.TRADE_TIME_DURATIONS_CHANGED" },
-        { "TradeTimeItemAwardedListener", "GL.ITEM_AWARDED" },
-        { "TradeTimeItemUnAwardedListener", "GL.ITEM_UNAWARDED" },
-    }, function (_)
+    -- We override a lot of settings on boot
+    -- so wait a couple seconds to not overload :refresh()
+    GL:after(3, "TradeTimeOverviewInit", function ()
+        Events:register({
+            "GL.ITEM_AWARDED",
+            "GL.ITEM_UNAWARDED",
+            "GL.SETTING_CHANGED",
+            "GL.TRADE_TIME_DURATIONS_CHANGED",
+        }, function (_)
+            self:refresh();
+        end);
+
         self:refresh();
     end);
 end
@@ -165,21 +173,30 @@ function Overview:build()
         "divider",
         {text = L.HIDE, notCheckable = true, SubMenu = {
             {
-                text = "Awarded",
+                text = "Hide all awarded items",
                 checked = function ()
-                    return not Settings:get("AwardingLoot.autoTradeDisenchanter");
+                    return Settings:get("LootTradeTimers.hideAwarded");
                 end,
                 func = function (Entry)
-                    Settings:set("AwardingLoot.autoTradeDisenchanter", not Entry.checked);
+                    Settings:set("LootTradeTimers.hideAwarded", Entry.checked);
                 end,
             },
             {
-                text = "Disenchanted",
+                text = "Hide items awarded to self",
                 checked = function ()
-                    return not Settings:get("AwardingLoot.autoTradeInCombat");
+                    return Settings:get("LootTradeTimers.hideAwardedToSelf");
                 end,
                 func = function (Entry)
-                    Settings:set("AwardingLoot.autoTradeInCombat", not Entry.checked);
+                    Settings:set("LootTradeTimers.hideAwardedToSelf", Entry.checked);
+                end,
+            },
+            {
+                text = "Hide disenchanted items",
+                checked = function ()
+                    return Settings:get("LootTradeTimers.hideDisenchanted");
+                end,
+                func = function (Entry)
+                    Settings:set("LootTradeTimers.hideDisenchanted", Entry.checked);
                 end,
             },
         }},
@@ -314,29 +331,39 @@ function Overview:refresh()
     end
 
     -- Add newly acquired items to the list
-    local hideAwardedItems = Settings:get("LootTradeTimers.hideAwarded");
-    local hideDisenchantedItems = Settings:get("LootTradeTimers.hideAwarded");
+    local hideAwarded = Settings:get("LootTradeTimers.hideAwarded");
+    local hideAwardedToSelf = Settings:get("LootTradeTimers.hideAwardedToSelf");
+    local hideDisenchanted = Settings:get("LootTradeTimers.hideDisenchanted");
     for itemGUID, Details in pairs(State) do
         local AwardDetails = DB:get("RecentlyAwardedItems." .. Details.itemGUID);
+        local disenchanted = AwardDetails and AwardDetails.awardedTo == GL.Exporter.disenchantedItemIdentifier;
+        local awarded = not disenchanted and not not AwardDetails;
+        local awardedToSelf = awarded and not disenchanted and GL:iEquals(AwardDetails.awardedTo, GL.User.fqn);
 
         if (not self.ItemRows[itemGUID]
             and not self.HiddenItems[itemGUID]
-            and (not hideAwardedItems or (not AwardDetails or AwardDetails.awardedTo ~= GL.Exporter.disenchantedItemIdentifier))
-            and (not hideDisenchantedItems or (AwardDetails and AwardDetails.awardedTo ~= GL.Exporter.disenchantedItemIdentifier))
         ) then
             ---@type Frame
             local ItemRow = self:buildItemRow(Details, Window, ActionButtons);
             self.ItemRows[itemGUID] = ItemRow;
         end
+
+        if (self.ItemRows[itemGUID] and (
+            (awarded and hideAwarded)
+            or (awardedToSelf and hideAwardedToSelf)
+            or (disenchanted and hideDisenchanted)
+        )) then
+            self.ItemRows[itemGUID]:Hide();
+            Interface:release(self.ItemRows[itemGUID]);
+            self.ItemRows[itemGUID] = nil;
+        end
     end
 
     -- Sort by time remaining (low > high)
     table.sort(Values, function (a, b)
-        if (not a.secondsRemaining or not b.secondsRemaining) then
-            return false;
-        end
-
-        return a.secondsRemaining < b.secondsRemaining;
+        return a.secondsRemaining
+            and b.secondsRemaining
+            and a.secondsRemaining < b.secondsRemaining;
     end);
 
     -- Order all items based on their time remaining
@@ -395,10 +422,9 @@ end
 --- Check whether we should be showing the bars at all
 ---@return boolean
 function Overview:barsEnabled()
-    return (not GL.Settings:get("LootTradeTimers.enabled") -- The user disabled this feature
-        or ( -- The user only wants to see it when master looting and is not the master looter
-            not GL.User.isMasterLooter
-            and GL.Settings:get("LootTradeTimers.showOnlyWhenMasterLooting")
+    return (GL.Settings:get("LootTradeTimers.enabled")
+        and (GL.User.isMasterLooter
+            or not GL.Settings:get("LootTradeTimers.showOnlyWhenMasterLooting")
         )
     );
 end
@@ -423,6 +449,7 @@ function Overview:buildItemRow(Details, Window, ActionButtons)
     CountDownBar:SetParent(ItemRow);
     CountDownBar:SetDuration(Details.secondsRemaining);
     CountDownBar:SetColor(0, 1, 0, .3); -- Reset color to green
+    CountDownBar.candyBarLabel:SetFont(FONT, GL:rem(1.2), "OUTLINE");
     CountDownBar:SetLabel(" " .. Details.itemLink);
     CountDownBar:SetAllPoints(ItemRow);
     CountDownBar:SetTimeVisibility(false);

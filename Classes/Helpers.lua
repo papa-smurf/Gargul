@@ -236,6 +236,28 @@ function GL:nameFormat(name, realm, colorize, stripRealm, stripSameRealm, forceR
     return name;
 end
 
+local fontSize;
+--- rem stands for “root em”, a unit of measurement that represents the font size of the root element
+--- In our case that equals GL.Settings:get("fontSize") which defaults to 11
+---
+--- This means that rem(1) returns the default font size, whereas rem(.75) returns 8
+---
+---@param size number
+---@return number
+function GL:rem(size)
+    size = size or 1;
+    fontSize = fontSize or GL.Settings:get("fontSize");
+
+    return size == 1 and fontSize or self:round(fontSize * size);
+end
+
+--- Check to see how much the font size changed based on the default of 11
+---
+---@return number
+function GL:remOffset()
+    return GL:rem() - 11;
+end
+
 --- Disambiguate a given name, passing optional nameFormat arguments
 ---
 ---@param name string
@@ -684,13 +706,13 @@ function GL:popupMessage(text)
         };
 
         Window.Text = GL.Interface:createFontString(Window);
-        Window.Text:SetFont(GL.FONT, 14, "OUTLINE");
+        Window.Text:SetFont(1.25, "OUTLINE");
         Window.Text:SetJustifyH("MIDDLE");
         Window.Text:SetPoint("CENTER", Window, "CENTER");
         Window.Text:SetPoint("BOTTOM", Window, "BOTTOM", 0, 60);
 
         Window.DiscordURL = GL.Interface:inputBox(Window);
-        Window.DiscordURL:SetFont(GL.FONT, 14, "");
+        Window.DiscordURL:SetFont(1.5, "");
         Window.DiscordURL:SetPoint("CENTER", Window, "CENTER");
         Window.DiscordURL:SetPoint("BOTTOM", Window, "BOTTOM", 0, 40);
         Window.DiscordURL:SetWidth(186);
@@ -1412,8 +1434,10 @@ function GL:inventoryItemTradeTimeRemaining(bag, slot)
 
     -- Test mode is enabled for specific items
     if (GL.TradeTime) then
-        local itemID = GL:tableGet(self:getContainerItemInfo(bag, slot) or {}, 10);
-        if (itemID and GL:inTable(GL.TradeTime, itemID)) then
+        local itemID = select(10, GL:getContainerItemInfo(bag, slot));
+        itemID = tonumber(itemID);
+
+        if (itemID and GL:inTable(GL.TradeTime.TestItems or {}, itemID)) then
             return math.random(5000, 7200);
         end
     end

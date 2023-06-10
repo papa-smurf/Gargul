@@ -334,7 +334,7 @@ function AuctioneerUI:build()
         end,
         updateOn = { "GL.GDKP_AUCTION_CHANGED", "GL.GDKP_SESSION_CHANGED" },
     });
-    CurrentPotLabel:SetFont(GL.FONT, 12, "OUTLINE");
+    CurrentPotLabel:SetFont(1, "OUTLINE");
     CurrentPotLabel:SetPoint("TOPLEFT", Window.Minimized, "TOPLEFT", 24, -18);
 
     ---@type Button

@@ -14,6 +14,7 @@ GL.TradeTime = {
     _initialized = false,
 
     State = {},
+    TestItems = {},
 };
 
 ---@type TradeTime

@@ -48,6 +48,7 @@ function LootTradeTimers:draw(Parent)
             description = "Show timer bars for BoP items that can still be traded for a limited time",
             setting = "LootTradeTimers.enabled",
             callback = function ()
+                Interface.TradeTime.Overview:close();
                 Interface.TradeTime.Overview:refresh();
             end,
         },
@@ -55,12 +56,21 @@ function LootTradeTimers:draw(Parent)
             label = "Only show bars when I'm the master looter",
             setting = "LootTradeTimers.showOnlyWhenMasterLooting",
             callback = function ()
+                Interface.TradeTime.Overview:close();
                 Interface.TradeTime.Overview:refresh();
             end,
         },
         {
-            label = "Hide awarded items",
+            label = "Hide all awarded items",
             setting = "LootTradeTimers.hideAwarded",
+            callback = function ()
+                Interface.TradeTime.Overview:close();
+                Interface.TradeTime.Overview:refresh();
+            end,
+        },
+        {
+            label = "Hide items awarded to self",
+            setting = "LootTradeTimers.hideAwardedToSelf",
             callback = function ()
                 Interface.TradeTime.Overview:close();
                 Interface.TradeTime.Overview:refresh();
@@ -71,13 +81,6 @@ function LootTradeTimers:draw(Parent)
             setting = "LootTradeTimers.hideDisenchanted",
             callback = function ()
                 Interface.TradeTime.Overview:close();
-                Interface.TradeTime.Overview:refresh();
-            end,
-        },
-        {
-            label = "Show hotkey reminder",
-            setting = "LootTradeTimers.showHotkeyReminder",
-            callback = function ()
                 Interface.TradeTime.Overview:refresh();
             end,
         },

@@ -82,7 +82,7 @@ function Overview:build()
     --[[ CURRENT BALANCE ]]
     ---@type FontString
     local Balance = Interface:createFontString(Window, "");
-    Balance:SetFont(GL.FONT, 14, "OUTLINE");
+    Balance:SetFont(1.25, "OUTLINE");
     Balance:SetPoint("TOPLEFT", Window, "TOPLEFT", 20, -30);
     Window.Balance = Balance;
 
@@ -303,7 +303,7 @@ function Overview:refresh()
 
         ---@type FontString
         local Name = Interface:createFontString(TradeRow, description);
-        Name:SetFont(GL.FONT, 12, "OUTLINE");
+        Name:SetFont(1, "OUTLINE");
         Name:SetPoint("CENTER", TradeRow);
         Name:SetPoint("LEFT", Time, "RIGHT", 4, 0);
         Name:SetHeight(TRADE_ENTRY_HEIGHT);

@@ -494,6 +494,8 @@ function Test.TimeLeft:testItems(...)
     for _, itemID in pairs(ItemIDs or {}) do
         GL:tableAdd(GL.TradeTime, "TestItems", itemID, true);
     end
+
+    GL.Events:fire("BAG_UPDATE_DELAYED");
 end
 
 --[[ Stop item testing

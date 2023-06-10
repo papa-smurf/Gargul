@@ -65,7 +65,7 @@ function Create:build()
     --[[ TITLE ]]
     ---@type FontString
     local Title = Interface:createFontString(Window, "");
-    Title:SetFont(GL.FONT, 14, "OUTLINE");
+    Title:SetFont(1.25, "OUTLINE");
     Title:SetPoint("TOPLEFT", Window, "TOPLEFT", 20, -30);
     Window.Title = Title;
 
@@ -78,7 +78,7 @@ function Create:build()
     --[[ GOLD GIVEN ]]
     ---@type FontString
     local GivenLabel = Interface:createFontString(Window, "");
-    GivenLabel:SetFont(GL.FONT, 14, "OUTLINE");
+    GivenLabel:SetFont(1.25, "OUTLINE");
     GivenLabel:SetPoint("TOPLEFT", Balance, "BOTTOMLEFT", 0, -30);
     Window.GivenLabel = GivenLabel;
 
@@ -101,7 +101,7 @@ function Create:build()
     --[[ GOLD RECEIVED ]]
     ---@type FontString
     local ReceivedLabel = Interface:createFontString(Window, "");
-    ReceivedLabel:SetFont(GL.FONT, 14, "OUTLINE");
+    ReceivedLabel:SetFont(1.25, "OUTLINE");
     ReceivedLabel:SetPoint("TOPLEFT", GivenLabel, "BOTTOMLEFT", 0, -12);
     Window.ReceivedLabel = ReceivedLabel;
 

@@ -396,6 +396,7 @@ function Settings:set(keyString, value, quiet)
     local success = GL:tableSet(self.Active, keyString, value);
 
     if (success and not quiet) then
+        GL.Events:fire("GL.SETTING_CHANGED." .. keyString, value);
         GL.Events:fire("GL.SETTING_CHANGED", keyString, value);
     end
 

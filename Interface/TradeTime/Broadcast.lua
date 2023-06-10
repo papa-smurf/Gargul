@@ -112,7 +112,7 @@ function Broadcast:build()
     TargetPlayer:SetScript("OnTextChanged", function ()
         Settings:set("LootTradeTimers.Broadcast.target", TargetPlayer:GetText());
     end);
-    TargetPlayer:SetText(Settings:get("LootTradeTimers.Broadcast.target"));
+    TargetPlayer:SetText(Settings:get("LootTradeTimers.Broadcast.target", ""));
 
     --[[ MINIMUM QUALITY ]]
     ---@type FontString

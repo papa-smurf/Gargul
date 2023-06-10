@@ -65,11 +65,17 @@ function Interface:dynamicPanelButton(Parent, text, template)
 
     ---@type FontString
     local Text = Button:GetFontString()
-    Text:SetFont(GL.FONT, 11, "");
     Text:ClearAllPoints();
     Text:SetPoint("TOPLEFT", 15, -1)
     Text:SetPoint("BOTTOMRIGHT", -15, 1)
     Text:SetJustifyV("MIDDLE")
+
+    Text._SetFont = Text.SetFont;
+    Text.SetFont = function(_, rem, flags)
+        Text:_SetFont(GL.FONT, GL:rem(rem), flags or "");
+    end
+
+    Text:SetFont();
 
     -- Make sure the button changes in size whenever we change its contents
     Button.SetText = function(_, ...)
@@ -93,9 +99,16 @@ function Interface:inputBox(Parent, name)
 
     ---@type EditBox
     local Input = CreateFrame("EditBox", name, Parent, "InputBoxTemplate");
-    Input:SetFont(GL.FONT, 11, "");
     Input:SetHeight(20);
     Input:SetAutoFocus(false);
+
+    Input._SetFont = Input.SetFont;
+    Input.SetFont = function(_, rem, flags)
+        Input:_SetFont(GL.FONT, GL:rem(rem), flags or "");
+    end
+
+    Input:SetFont();
+
     Input:SetScript("OnReceiveDrag", function ()
         local type, id, info = GetCursorInfo();
         local value
@@ -142,7 +155,13 @@ function Interface:createFontString(Parent, text, template, name, layer)
     ---@type FontString
     local FontString = Parent:CreateFontString(name, layer or "ARTWORK", template or "GameFontWhite");
     FontString:SetJustifyH("LEFT");
-    FontString:SetFont(GL.FONT, 11, "OUTLINE");
+
+    FontString._SetFont = FontString.SetFont;
+    FontString.SetFont = function(_, rem, flags)
+        FontString:_SetFont(GL.FONT, GL:rem(rem), flags or "");
+    end
+
+    FontString:SetFont(1, "OUTLINE");
 
     if (type(text) == "table") then
         FontString.update = text.text;
@@ -298,7 +317,7 @@ function Interface:addMinimizeButton(Element, title)
     if (title) then
         ---@type FontString
         local Title = self:createFontString(MinimizedWindow, title);
-        Title:SetFont(GL.FONT, 15, "OUTLINE");
+        Title:SetFont(1.5, "OUTLINE");
         Title:SetPoint("CENTER", MinimizedWindow, "CENTER");
         Title:SetPoint("TOPLEFT", MinimizedWindow, "TOPLEFT", 20, -16);
         MinimizedWindow.Title = Title;
@@ -698,7 +717,6 @@ function Interface:createSlider(Parent, name, min, max, step, value, callback, w
 
     ---@type EditBox
     local Input = CreateFrame("EditBox", nil, Slider, "BackdropTemplate")
-    Input:SetFont(GL.FONT, 11, "");
     Input:SetAutoFocus(false);
     Input:SetPoint("TOP", Slider, "BOTTOM");
     Input:SetHeight(14);
@@ -708,6 +726,14 @@ function Interface:createSlider(Parent, name, min, max, step, value, callback, w
     Input:SetBackdrop(InputBackdrop);
     Input:SetBackdropColor(0, 0, 0, 0.5);
     Input:SetBackdropBorderColor(0.3, 0.3, 0.30, 0.80);
+
+    Input._SetFont = Input.SetFont;
+    Input.SetFont = function(_, rem, flags)
+        Input:_SetFont(GL.FONT, GL:rem(rem), flags or "");
+    end
+
+    Input:SetFont();
+
     Input:SetScript("OnEscapePressed", function ()
         Input:ClearFocus();
     end);
