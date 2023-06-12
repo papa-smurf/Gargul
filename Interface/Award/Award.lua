@@ -10,6 +10,9 @@ local ScrollingTable = GL.ScrollingTable;
 ---@type Settings
 local Settings = GL.Settings;
 
+---@type TMB
+local TMB = GL.TMB;
+
 ---@type GDKPAuction
 local GDKPAuction = GL.GDKP.Auction;
 
@@ -538,7 +541,7 @@ function Award:topPrioForItem(itemID)
 
     local PrioListEntries = {};
     local WishListEntries = {};
-    for _, Entry in pairs(GL.TMB:byItemID(itemID, true)) do
+    for _, Entry in pairs(TMB:byItemID(itemID, true)) do
         -- Priolist entry
         if (Entry.type == 1) then
             tinsert(PrioListEntries, Entry);
@@ -555,14 +558,7 @@ function Award:topPrioForItem(itemID)
             return PrioListEntries[1].character;
         end
 
-        -- Sort the PrioListEntries based on prio (lowest to highest)
-        table.sort(PrioListEntries, function (a, b)
-            if (a.prio and b.prio) then
-                return a.prio < b.prio;
-            end
-
-            return false;
-        end);
+        PrioListEntries = TMB:sortEntries(PrioListEntries);
 
         -- There's more than 1 person with top prio
         if (PrioListEntries[1].prio == PrioListEntries[2].prio) then
@@ -585,14 +581,7 @@ function Award:topPrioForItem(itemID)
             return sanitizePlayerName(WishListEntries[1].character);
         end
 
-        -- Sort the WishListEntries based on prio (lowest to highest)
-        table.sort(WishListEntries, function (a, b)
-            if (a.prio and b.prio) then
-                return a.prio < b.prio;
-            end
-
-            return false;
-        end);
+        WishListEntries = TMB:sortEntries(WishListEntries);
 
         -- There's more than 1 person with top prio
         if (WishListEntries[1].prio == WishListEntries[2].prio) then

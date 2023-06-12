@@ -3,6 +3,9 @@ local L = Gargul_L;
 ---@type GL
 local _, GL = ...;
 
+---@type TMB
+local TMB = GL.TMB;
+
 ---@class RollOff
 GL.RollOff = GL.RollOff or {
     inProgress = false,
@@ -135,7 +138,7 @@ function RollOff:postStartMessage(itemLink, time, note)
     );
     local eligiblePlayersMessage = false;
     local Reserves = GL.SoftRes:byItemLink(itemLink);
-    local TMBDetails = GL.TMB:byItemLink(itemLink);
+    local TMBDetails = TMB:byItemLink(itemLink);
 
     if (type(note) == "string"
         and not GL:empty(note)
@@ -169,7 +172,7 @@ function RollOff:postStartMessage(itemLink, time, note)
             if (Entry.type == 1) then
                 tinsert(PrioListEntries, Entry);
 
-                -- Wishlist entry
+            -- Wishlist entry
             elseif (Entry.type == 2) then
                 tinsert(WishListEntries, Entry);
             end
@@ -179,14 +182,7 @@ function RollOff:postStartMessage(itemLink, time, note)
         if (not GL:empty(PrioListEntries)
             and GL.Settings:get("TMB.announcePriolistInfoWhenRolling")
         ) then
-            -- Sort the PrioListEntries based on prio (lowest to highest)
-            table.sort(PrioListEntries, function (a, b)
-                if (a.prio and b.prio) then
-                    return a.prio < b.prio;
-                end
-
-                return false;
-            end);
+            PrioListEntries = TMB:sortEntries(PrioListEntries);
 
             for _, Entry in pairs(PrioListEntries) do
                 -- This is the first player in the list, add him
@@ -205,14 +201,7 @@ function RollOff:postStartMessage(itemLink, time, note)
         elseif (not GL:empty(WishListEntries)
             and GL.Settings:get("TMB.announceWishlistInfoWhenRolling")
         ) then
-            -- Sort the PrioListEntries based on prio (lowest to highest)
-            table.sort(WishListEntries, function (a, b)
-                if (a.prio and b.prio) then
-                    return a.prio < b.prio;
-                end
-
-                return false;
-            end);
+            WishListEntries = TMB:sortEntries(WishListEntries);
 
             for _, Entry in pairs(WishListEntries) do
                 -- This is the first player in the list, add him
@@ -231,7 +220,7 @@ function RollOff:postStartMessage(itemLink, time, note)
         end
 
         if (not GL:empty(EligiblePlayers)) then
-            local source = GL.TMB:source();
+            local source = TMB:source();
 
             local EligiblePlayerNames = table.concat(GL:tableColumn(EligiblePlayers, "character"), ", ");
             eligiblePlayersMessage = string.format("The following players have the highest %s prio: %s", source, EligiblePlayerNames);
@@ -831,7 +820,7 @@ function RollOff:refreshRollsTable()
 
         -- The item might be on a TMB list, make sure we add the appropriate note to the roll
         else
-            local TMBData = GL.TMB:byItemIDAndPlayer(self.CurrentRollOff.itemID, normalizedPlayerName);
+            local TMBData = TMB:byItemIDAndPlayer(self.CurrentRollOff.itemID, normalizedPlayerName);
             local TopEntry = false;
 
             for _, Entry in pairs(TMBData) do

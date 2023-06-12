@@ -418,14 +418,7 @@ function TMB:tooltipLines(itemLink)
         local source = GL.TMB:source();
         tinsert(Lines, string.format("\n|cFFff7a0a%s|r", source .. " Prio List"));
 
-        -- Sort the PrioListEntries based on prio (lowest to highest)
-        table.sort(PrioListEntries, function (a, b)
-            if (a[1] and b[1]) then
-                return a[1] < b[1];
-            end
-
-            return false;
-        end);
+        PrioListEntries = self:sortEntries(PrioListEntries);
 
         -- Add the entries to the tooltip
         entriesAdded = 0;
@@ -461,14 +454,7 @@ function TMB:tooltipLines(itemLink)
         -- Add the header
         tinsert(Lines, string.format("\n|cFFffffff%s|r", "TMB Wish List"));
 
-        -- Sort the WishListEntries based on prio (lowest to highest)
-        table.sort(WishListEntries, function (a, b)
-            if (a[1] and b[1]) then
-                return a[1] < b[1];
-            end
-
-            return false;
-        end);
+        WishListEntries = self:sortEntries(WishListEntries);
 
         -- Add the entries to the tooltip
         entriesAdded = 0;
@@ -806,9 +792,9 @@ function TMB:playersWithoutTMBDetails()
     end
 
     local PlayersWithoutTMBDetails = {};
-    for _, name in pairs(GL.User:groupMembers() or {}) do
-        name = string.lower(GL:nameFormat(name));
+    for _, Details in pairs(GL.User:groupMembers() or {}) do
 
+        local name = string.lower(GL:nameFormat(Details.name));
         if (not PlayersWithDetails[name]) then
             tinsert(PlayersWithoutTMBDetails, name);
         end
@@ -911,30 +897,6 @@ function TMB:DFTFormatToTMB(data)
     -- No valid data detected
     if (GL:empty(TMBData.wishlists)) then
         return false;
-    end
-
-    -- Rewrite the priorities to match DFTs behavior
-    for itemID, Priorities in pairs(TMBData.wishlists) do
-        local lastPriority = 99999;
-        local priorityIndex = 0;
-
-        -- Sort the priorities (highest to lowest)
-        table.sort(Priorities, function (a, b)
-            if (a.priority and b.priority) then
-                return a.priority > b.priority;
-            end
-
-            return false;
-        end);
-
-        for key, Priority in pairs(Priorities) do
-            if (Priority.priority < lastPriority) then
-                lastPriority = Priority.priority;
-                priorityIndex = priorityIndex + 1;
-            end
-
-            TMBData.wishlists[itemID][key] = string.format("%s||%s||1||1", string.lower(Priority.player), priorityIndex);
-        end
     end
 
     return TMBData;
@@ -1478,6 +1440,26 @@ function TMB:replyToDataRequest(CommMessage)
         -- Make sure to broadcast the loot priorities as well
         GL.LootPriority:broadcastToPlayer(CommMessage.Sender.name);
     end);
+end
+
+---@param Data table
+---@return table
+function TMB:sortEntries(Data)
+    Data = not GL:empty(Data) and Data or {};
+
+    table.sort(Data, function(a, b)
+        if (a.prio and b.prio) then
+            if (self:wasImportedFromDFT()) then
+                return a.prio > b.prio;
+            end
+
+            return a.prio < b.prio;
+        end
+
+        return false;
+    end);
+
+    return Data;
 end
 
 --- Check whether the current user is allowed to broadcast TMB data
