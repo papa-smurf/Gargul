@@ -2014,6 +2014,10 @@ function Auction:processBid(message, bidder)
 
     self.lastBidReceivedAt = GetTime();
 
+    if (GL:iEquals(Bidder.name, GL.User.name)) then
+        self.Current.iBid = true;
+    end
+
     -- Announce that we have a new leading bid
     if (auctionWasStartedByMe
         and not bidTooLow

@@ -276,6 +276,12 @@ function Bidder:draw(time, itemLink, itemIcon)
     PassButton:SetNormalFontObject("GameFontNormal");
     PassButton:SetHighlightFontObject("GameFontNormal");
     PassButton:SetScript("OnClick", function ()
+        if (GDKPAuction.Current.iBid
+            and not GDKPAuction:userIsTopBidder()
+        ) then
+            GL:sendChatMessage("Pass", "GROUP", nil, nil, false);
+        end
+
         GDKPAuction:stopAutoBid();
         self:hide();
     end);
