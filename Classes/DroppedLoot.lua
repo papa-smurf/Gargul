@@ -562,12 +562,12 @@ function DroppedLoot:getTMBDetails(TMBInfo, PlayersInRaid)
 
             if (entryType == Constants.tmbTypePrio) then
                 tinsert(ActivePrioListDetails, {
-                    order = sortingOrder,
+                    prio = sortingOrder,
                     player = string.format("%s[%s]", playerName, prio),
                 });
             else
                 tinsert(ActiveWishListDetails, {
-                    order = sortingOrder,
+                    prio = sortingOrder,
                     player = string.format("%s[%s]", playerName, prio),
                 });
             end

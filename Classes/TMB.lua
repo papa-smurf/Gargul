@@ -418,7 +418,7 @@ function TMB:tooltipLines(itemLink)
         local source = GL.TMB:source();
         tinsert(Lines, string.format("\n|cFFff7a0a%s|r", source .. " Prio List"));
 
-        PrioListEntries = self:sortEntries(PrioListEntries);
+        PrioListEntries = self:sortEntries(PrioListEntries, 1);
 
         -- Add the entries to the tooltip
         entriesAdded = 0;
@@ -454,7 +454,7 @@ function TMB:tooltipLines(itemLink)
         -- Add the header
         tinsert(Lines, string.format("\n|cFFffffff%s|r", "TMB Wish List"));
 
-        WishListEntries = self:sortEntries(WishListEntries);
+        WishListEntries = self:sortEntries(WishListEntries, 1);
 
         -- Add the entries to the tooltip
         entriesAdded = 0;
@@ -1443,17 +1443,19 @@ function TMB:replyToDataRequest(CommMessage)
 end
 
 ---@param Data table
+---@param key number The key that holds the item order
 ---@return table
-function TMB:sortEntries(Data)
+function TMB:sortEntries(Data, key)
+    key = key or "prio";
     Data = not GL:empty(Data) and Data or {};
 
     table.sort(Data, function(a, b)
-        if (a.prio and b.prio) then
+        if (a[key] and b[key]) then
             if (self:wasImportedFromDFT()) then
-                return a.prio > b.prio;
+                return a[key] > b[key];
             end
 
-            return a.prio < b.prio;
+            return a[key] < b[key];
         end
 
         return false;
