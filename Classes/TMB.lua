@@ -58,7 +58,7 @@ function TMB:_init()
         GL.AwardedLoot:addWinner(Details.playerName, Details.itemLink, false, nil, nil, nil, nil, nil, true);
         Settings:set("AwardingLoot.autoTradeAfterAwardingAnItem", autoAward, true);
     end);
-    
+
     self._initialized = true;
     return true;
 end
@@ -897,6 +897,13 @@ function TMB:DFTFormatToTMB(data)
     -- No valid data detected
     if (GL:empty(TMBData.wishlists)) then
         return false;
+    end
+
+    -- Rewrite the DFT format to TMB
+    for itemID, Priorities in pairs(TMBData.wishlists) do
+        for key, Priority in pairs(Priorities) do
+            TMBData.wishlists[itemID][key] = string.format("%s||%s||1||1", string.lower(Priority.player), Priority.priority);
+        end
     end
 
     return TMBData;
