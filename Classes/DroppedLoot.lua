@@ -1,6 +1,9 @@
 ---@type GL
 local _, GL = ...;
 
+---@type TMB
+local TMB = GL.TMB;
+
 ---@class DroppedLoot
 GL.DroppedLoot = {
     Announced = {},
@@ -34,7 +37,7 @@ function DroppedLoot:_init()
     Events:register("DroppedLootOpenMasterLooterListListener", "OPEN_MASTER_LOOT_LIST", function ()
         if (GL.User.isMasterLooter
             and GL.Settings:get("ExportingLoot.showLootAssignmentReminder")
-            and GL.TMB:available()
+            and TMB:available()
         ) then
             GL.Interface.ReminderToAssignLootUsingGargul:draw();
         end
@@ -315,7 +318,7 @@ function DroppedLoot:announce(Modifiers)
             local quality = select(5, Functions.GetLootSlotInfo(lootIndex)) or 0;
             local lootType = Functions.GetLootSlotType(lootIndex);
             local SoftReserves = SoftRes:byItemLink(itemLink);
-            local TMBInfo = GL.TMB:byItemLink(itemLink);
+            local TMBInfo = TMB:byItemLink(itemLink);
 
             -- Check if we need to announce this item
             local itemID = tonumber(GL:getItemIDFromLink(itemLink)) or 0;
@@ -404,14 +407,7 @@ function DroppedLoot:announce(Modifiers)
             if (itemIsOnSomeonesPriolist
                 and GL.Settings:get("TMB.includePrioListInfoInLootAnnouncement")
             ) then
-                -- Sort the PrioListEntries based on prio (lowest to highest)
-                table.sort(ActivePrioListDetails, function (a, b)
-                    if (a.order and b.order) then
-                        return a.order < b.order;
-                    end
-
-                    return false;
-                end);
+                ActivePrioListDetails = TMB:sortEntries(ActivePrioListDetails);
 
                 local entries = 0;
                 local entryString = "";
@@ -432,7 +428,7 @@ function DroppedLoot:announce(Modifiers)
                 end
 
                 GL:sendChatMessage(
-                    GL.TMB:source() .. " Priority: " .. entryString,
+                    TMB:source() .. " Priority: " .. entryString,
                     "GROUP"
                 );
             end
@@ -446,14 +442,7 @@ function DroppedLoot:announce(Modifiers)
                     or not GL.Settings:get("TMB.hideWishListInfoIfPriorityIsPresent")
                 )
             ) then
-                -- Sort the WishListEntries based on prio (lowest to highest)
-                table.sort(ActiveWishListDetails, function (a, b)
-                    if (a.order and b.order) then
-                        return a.order < b.order;
-                    end
-
-                    return false;
-                end);
+                ActiveWishListDetails = TMB:sortEntries(ActiveWishListDetails);
 
                 local entries = 0;
                 local entryString = "";
@@ -573,12 +562,12 @@ function DroppedLoot:getTMBDetails(TMBInfo, PlayersInRaid)
 
             if (entryType == Constants.tmbTypePrio) then
                 tinsert(ActivePrioListDetails, {
-                    order = sortingOrder,
+                    prio = sortingOrder,
                     player = string.format("%s[%s]", playerName, prio),
                 });
             else
                 tinsert(ActiveWishListDetails, {
-                    order = sortingOrder,
+                    prio = sortingOrder,
                     player = string.format("%s[%s]", playerName, prio),
                 });
             end
@@ -637,5 +626,3 @@ function DroppedLoot:announceTest(...)
         };
     end);
 end
-
-GL:debug("DroppedLoot.lua");

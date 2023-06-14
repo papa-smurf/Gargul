@@ -617,7 +617,6 @@ function Overview:refreshItems()
                     if (not GL:empty(Entry.Rolls)) then
                         local rollsPerPlayer = {};
 
-                        -- Sort the PrioListEntries based on prio (lowest to highest)
                         table.sort(Entry.Rolls, function (a, b)
                             if (a.time and b.time) then
                                 return a.time < b.time;
