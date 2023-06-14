@@ -25,6 +25,7 @@ Data/Localizations/en.lua
 Data/Constants.lua
 Data/DefaultSettings.lua
 Data/ItemLinks.lua
+Data/NormalModeHardModeLinks.lua
 Data/ArtTextureID.lua
 
 # Class objects

@@ -1650,14 +1650,24 @@ function GL:getLinkedItemsForID(itemID)
         return {};
     end
 
-    -- Gather all the item IDs that are linked to our item
     itemID = tostring(itemID);
-    local AllLinkedItemIDs = { itemID };
+    local AllLinkedItemIDs = {};
+    AllLinkedItemIDs[itemID] = 1;
+
+    local i = 2;
     for _, id in pairs(GL.Data.ItemLinks[itemID] or {}) do
-        tinsert(AllLinkedItemIDs, id);
+        AllLinkedItemIDs[id] = i;
+        i = i + 1;
     end
 
-    return AllLinkedItemIDs;
+    if (GL.Settings:get("MasterLooting.linkNormalAndHardModeItems")) then
+        for _, id in pairs(GL.Data.NormalModeHardModeLinks[itemID] or {}) do
+            AllLinkedItemIDs[id] = i;
+            i = i + 1;
+        end
+    end
+
+    return GL:tableFlip(AllLinkedItemIDs);
 end
 
 --- Return an item's ID from an item link, false if invalid itemlink is provided
