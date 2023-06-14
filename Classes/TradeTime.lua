@@ -1,12 +1,8 @@
 local _, GL = ...;
 
----@type DB
-local DB = GL.DB;
-
 ---@type Events
 local Events = GL.Events;
 
----@type Constants
 local Constants = GL.Data.Constants;
 
 ---@class TradeTime
@@ -59,7 +55,7 @@ function TradeTime:process()
     GL:forEachItemInBags(function (Location, bag, slot)
         -- Item is not soulbound or does not have any trade time remaining
         local timeRemaining = GL:inventoryItemTradeTimeRemaining(bag, slot);
-        if (timeRemaining < 1 or timeRemaining == GL.Data.Constants.itemIsNotBound) then
+        if (timeRemaining < 1 or timeRemaining == Constants.itemIsNotBound) then
             return;
         end
 

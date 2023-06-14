@@ -541,6 +541,7 @@ function Overview:buildItemRow(Details, Window, ActionButtons)
 end
 
 ---@param itemGUID string
+---@return void
 function Overview:hideItemRow(itemGUID)
     self.HiddenItems[itemGUID] = true;
 

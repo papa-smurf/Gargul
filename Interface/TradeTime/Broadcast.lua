@@ -10,9 +10,6 @@ local DB = GL.DB;
 ---@type Settings
 local Settings = GL.Settings;
 
----@type Events
-local Events = GL.Events;
-
 ---@type TradeTime
 local TradeTime = GL.TradeTime;
 

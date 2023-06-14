@@ -31,7 +31,7 @@ function LootTradeTimers:draw(Parent)
 
         if (type(value) ~= nil) then
             GL.Settings:set("LootTradeTimers.maximumNumberOfBars", value);
-            GL.Interface.TradeTime.Overview:refresh();
+            Interface.TradeTime.Overview:refresh();
         end
     end);
     Parent:AddChild(NumberOfTimerBars);

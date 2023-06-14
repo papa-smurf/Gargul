@@ -242,13 +242,13 @@ local fontSize;
 ---
 --- This means that rem(1) returns the default font size, whereas rem(.75) returns 8
 ---
----@param size number
+---@param scale number
 ---@return number
-function GL:rem(size)
-    size = size or 1;
+function GL:rem(scale)
+    scale = scale or 1;
     fontSize = fontSize or GL.Settings:get("fontSize");
 
-    return size == 1 and fontSize or self:round(fontSize * size);
+    return scale == 1 and fontSize or self:round(fontSize * scale);
 end
 
 --- Check to see how much the font size changed based on the default of 11
@@ -712,7 +712,7 @@ function GL:popupMessage(text)
         Window.Text:SetPoint("BOTTOM", Window, "BOTTOM", 0, 60);
 
         Window.DiscordURL = GL.Interface:inputBox(Window);
-        Window.DiscordURL:SetFont(1.5, "");
+        Window.DiscordURL:SetFont(1.25, "");
         Window.DiscordURL:SetPoint("CENTER", Window, "CENTER");
         Window.DiscordURL:SetPoint("BOTTOM", Window, "BOTTOM", 0, 40);
         Window.DiscordURL:SetWidth(186);
@@ -1353,7 +1353,7 @@ function GL:tooltipItemTradeTimeRemaining()
             end
 
             -- The time remaining line was found, no need to continue searching!
-            if timeRemainingLine:find(needle) then
+            if (timeRemainingLine:find(needle)) then
                 break;
             end
 
@@ -1392,9 +1392,6 @@ function GL:itemTradeTimeRemaining(itemLinkOrID)
     if (not itemID) then
         return;
     end
-
-    -- Dragon Flight introduced an extra bag slot
-    local numberOfBagsToCheck = GL.clientIsDragonFlightOrLater and 5 or 4;
 
     local Results = {};
     self:forEachItemInBags(function(Location, bag, slot)
