@@ -59,6 +59,13 @@ function Overview:_init()
             "GL.ITEM_UNAWARDED",
             "GL.SETTING_CHANGED",
             "GL.TRADE_TIME_DURATIONS_CHANGED",
+            "GL.USER_LOST_MASTER_LOOTER",
+            "GL.USER_OBTAINED_MASTER_LOOTER",
+
+            "PLAYER_ENTERING_WORLD",
+            "ZONE_CHANGED",
+            "PLAYER_ALIVE",
+            "PLAYER_UNGHOST",
         }, function (_)
             self:refresh();
         end);
@@ -303,15 +310,16 @@ end
 ---@return void
 function Overview:refresh()
     local State = TradeTime:getState() or {};
+
+    -- There's nothing to show!
+    if (GL:empty(State)) then
+        return self:close();
+    end
+
     local Values = GL:tableValues(State);
 
     -- Check if we're allowed to show bars based on settings
     if (not self:barsEnabled()) then
-        return self:close();
-    end
-
-    -- There's nothing to show!
-    if (GL:empty(State)) then
         return self:close();
     end
 

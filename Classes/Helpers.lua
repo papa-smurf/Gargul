@@ -2386,12 +2386,11 @@ function GL:tableSlice(Table, offset, length, preserveKeys)
 end
 
 ---@param Table table
+---@return table
 function GL:tableValues(Table)
-    GL:debug("GL:tableValues");
-
     local Values = {};
-    for _, Value in pairs(Table or {}) do
-        tinsert(Values, Value);
+    for _, value in pairs(Table or {}) do
+        tinsert(Values, value);
     end
 
     return Values;

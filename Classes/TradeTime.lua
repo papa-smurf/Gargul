@@ -27,15 +27,7 @@ function TradeTime:_init()
 
     self._initialized = true;
 
-    Events:register({
-        { "TradeTimeBagUpdateDelayedListener", "BAG_UPDATE_DELAYED" },
-        { "TradeTimePlayerEnteringWorldListener", "PLAYER_ENTERING_WORLD" },
-        { "TradeTimeZoneChangedListener", "ZONE_CHANGED" },
-        { "TradeTimePlayerAliveListener", "PLAYER_ALIVE" },
-        { "TradeTimePlayerUnghostListener", "PLAYER_UNGHOST" },
-        { "TradeTimeBagMasterLooterLostListener", "GL.USER_LOST_MASTER_LOOTER" },
-        { "TradeTimeBagMasterLooterObtainedListener", "GL.USER_OBTAINED_MASTER_LOOTER" },
-    }, function ()
+    Events:register("TradeTimeBagUpdateDelayedListener", "BAG_UPDATE_DELAYED", function ()
         TradeTime:process();
     end);
 
