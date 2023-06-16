@@ -1713,6 +1713,14 @@ function GL:getItemQualityFromLink(itemLink)
     return GL.Data.Constants.HexColorsToItemQuality[color] or false;
 end
 
+---@param callback function
+---@return void
+function GL:forEachGroupMember(callback)
+    for _, Member in pairs(GL.User:groupMembers() or {}) do
+        callback(Member);
+    end
+end
+
 --- Add the realm name to a player name
 ---
 ---@param name string

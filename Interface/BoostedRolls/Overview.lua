@@ -261,7 +261,7 @@ function Overview:draw()
 
     local ImportButton = AceGUI:Create("Button");
     ImportButton:SetText("Import");
-    ImportButton:SetWidth(80);
+    ImportButton:SetWidth(78);
     ImportButton:SetCallback("OnClick", function()
         self:close();
         GL.Interface.BoostedRolls.Importer:draw();
@@ -270,7 +270,7 @@ function Overview:draw()
 
     local ExportButton = AceGUI:Create("Button");
     ExportButton:SetText("Export");
-    ExportButton:SetWidth(80);
+    ExportButton:SetWidth(76);
     ExportButton:SetCallback("OnClick", function()
         BoostedRolls:export(true);
     end);
@@ -278,12 +278,42 @@ function Overview:draw()
 
     local AddRaidersButton = AceGUI:Create("Button");
     AddRaidersButton:SetText("Add missing raiders");
-    AddRaidersButton:SetWidth(165);
+    AddRaidersButton:SetWidth(156);
     AddRaidersButton:SetCallback("OnClick", function()
         BoostedRolls:addMissingRaiders();
         self:refreshTable();
     end);
     ButtonFrame:AddChild(AddRaidersButton);
+
+    local AddToRaid = AceGUI:Create("Button");
+    AddToRaid:SetText("Add points to raid");
+    AddToRaid:SetWidth(140);
+    AddToRaid:SetCallback("OnClick", function()
+        GL.Interface.Dialogs.ConfirmWithSingleInputDialog:open{
+            question = "Add how many points for everyone currently in the raid?\n\n|c00BE3333Use the \"Add missing raiders\" button first if you want everyone to get points, even those without a boosted roll entry!|r",
+            inputValue = step,
+            OnYes = function (value)
+                value = tonumber(value) or 0;
+
+                if (value < 1) then
+                    GL:error("No point value provided!");
+                    return;
+                end
+
+                GL:forEachGroupMember(function (Member)
+                    local BRGUID = BoostedRolls:playerGUID(Member.name, Member.realm);
+
+                    if (BoostedRolls:hasPoints(BRGUID)) then
+                        BoostedRolls:addPoints(BRGUID, value);
+                    end
+                end);
+
+                self:refreshTable();
+            end,
+            focus = true,
+        };
+    end);
+    ButtonFrame:AddChild(AddToRaid);
 
     self:drawBoostedRollDataTable(DataColumn.frame);
 
