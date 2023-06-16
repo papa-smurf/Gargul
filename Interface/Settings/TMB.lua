@@ -66,6 +66,20 @@ function TMB:draw(Parent)
             description = "You will only see an item's wishlist details if no priority (LC) is set for it",
             setting = "TMB.hideWishListInfoIfPriorityIsPresent",
         },
+    }, Parent);
+
+    --- WotLK only
+    if (GL.isClassic) then
+        Overview:drawCheckboxes({
+            {
+                label = "EXPERIMENTAL: Link normal and hard mode items in Trial of the Crusader",
+                description = "Enabling this makes sure that soft-reserves or TMB/DFT entries on normal mode TotC items also show up on their hardmode counterpart (and vice versa!)",
+                setting = "MasterLooting.linkNormalAndHardModeItems",
+            },
+        }, Parent);
+    end
+
+    Overview:drawCheckboxes({
         {
             label = "Award based on drops without using Gargul UI",
             description = "Want to export items won via group loot? Want to use the native WoW UI when master looting? Enable this! Items awarded this way will only be broadcasted to others when master loot is active and you are the master looter or when group loot is active and you are the raid/party leader!",

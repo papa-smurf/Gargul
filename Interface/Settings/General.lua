@@ -27,6 +27,20 @@ function General:draw(Parent)
                 GL.MinimapButton:drawOrHide();
             end,
         },
+    }, Parent);
+
+    --- WotLK only
+    if (GL.isClassic) then
+        Overview:drawCheckboxes({
+            {
+                label = "EXPERIMENTAL: Link normal and hard mode items in Trial of the Crusader",
+                description = "Enabling this makes sure that soft-reserves or TMB/DFT entries on normal mode TotC items also show up on their hardmode counterpart (and vice versa!)",
+                setting = "MasterLooting.linkNormalAndHardModeItems",
+            },
+        }, Parent);
+    end
+
+    Overview:drawCheckboxes({
         {
             label = "Show changelog",
             description = "Enable or disable the changelog which displays important update details after updating Gargul",
