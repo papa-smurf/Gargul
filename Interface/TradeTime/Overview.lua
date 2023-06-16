@@ -70,6 +70,14 @@ function Overview:_init()
     }, function (_)
         self:refresh();
     end);
+
+    -- Refresh every 10 seconds so that we can dynamically show/hide items that
+    -- don't meet the user's maximumTradeTimeLeft setting
+    GL:after(10, "TradeTimeOverviewRefreshInterval", function ()
+        GL:interval(10, "TradeTimeOverviewRefreshInterval", function ()
+            self:refresh();
+        end);
+    end);
 end
 
 ---@return Frame
@@ -101,6 +109,7 @@ function Overview:close()
         end
     end
 
+    return _G[self.windowName] and _G[self.windowName]:Hide();
 end
 
 ---@return Frame
@@ -348,11 +357,13 @@ function Overview:refresh()
     local hideAwarded = Settings:get("LootTradeTimers.hideAwarded");
     local hideAwardedToSelf = Settings:get("LootTradeTimers.hideAwardedToSelf");
     local hideDisenchanted = Settings:get("LootTradeTimers.hideDisenchanted");
+    local maximumTradeTimeLeftInSeconds = Settings:get("LootTradeTimers.maximumTradeTimeLeft") * 60;
     for itemGUID, Details in pairs(State) do
         local AwardDetails = DB:get("RecentlyAwardedItems." .. Details.itemGUID);
         local disenchanted = AwardDetails and AwardDetails.awardedTo == GL.Exporter.disenchantedItemIdentifier;
         local awarded = not disenchanted and not not AwardDetails;
         local awardedToSelf = awarded and not disenchanted and GL:iEquals(AwardDetails.awardedTo, GL.User.fqn);
+        local itemIsTooNew = Details.secondsRemaining > maximumTradeTimeLeftInSeconds;
 
         if (not self.ItemRows[itemGUID]
             and not self.HiddenItems[itemGUID]
@@ -363,7 +374,8 @@ function Overview:refresh()
         end
 
         if (self.ItemRows[itemGUID] and (
-            (awarded and hideAwarded)
+            itemIsTooNew
+            or (awarded and hideAwarded)
             or (awardedToSelf and hideAwardedToSelf)
             or (disenchanted and hideDisenchanted)
         )) then

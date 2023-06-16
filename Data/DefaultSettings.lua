@@ -78,6 +78,7 @@ GL.Data.DefaultSettings = {
         hideAwardedToSelf = false,
         hideDisenchanted = false,
         maximumNumberOfBars = 5,
+        maximumTradeTimeLeft = 120,
         scale = 1,
         showHotkeyReminder = true,
         showOnlyWhenMasterLooting = true,

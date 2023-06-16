@@ -32,6 +32,7 @@ local Broadcast = GL.Interface.TradeTime.Broadcast;
 local CHANNEL_GROUP = 1;
 local CHANNEL_RAID_WARNING = 2;
 local CHANNEL_WHISPER = 3;
+local CHANNEL_OFFICER = 4;
 local INTERVAL_IDENTIFIER = "TRADETIME_BROADCAST";
 
 ---@return Frame
@@ -86,6 +87,7 @@ function Broadcast:build()
             [CHANNEL_GROUP] = L.GROUP,
             [CHANNEL_RAID_WARNING] = L.CHANNEL_RAID_WARNING,
             [CHANNEL_WHISPER] = L.CHANNEL_WHISPER,
+            [CHANNEL_OFFICER] = L.CHANNEL_OFFICER,
         },
         value = Settings:get("LootTradeTimers.Broadcast.channel"),
         callback = function (_, value)
@@ -241,7 +243,18 @@ function Broadcast:build()
                 return;
             end
         else
-            channel = channel == CHANNEL_GROUP and "GROUP" or "RAID_WARNING";
+            if (channel == CHANNEL_GROUP) then
+                channel = "GROUP";
+            elseif (channel == CHANNEL_RAID_WARNING) then
+                channel = "RAID_WARNING";
+            elseif (channel == CHANNEL_OFFICER) then
+                if (not C_GuildInfo.CanEditOfficerNote()) then
+                    GL:error(L.NO_OFFICER_PRIVILEGES);
+                    return;
+                end
+
+                channel = "OFFICER";
+            end
         end
 
         local includeAwarded = IncludeAwardedItems:GetChecked();
@@ -255,7 +268,6 @@ function Broadcast:build()
         maximumTradeTime = maximumTradeTime and maximumTradeTime * 60 or nil;
 
         local State = self:getTradeTimeDetails(includeAwarded, includeDisenchanted, includeHidden, maximumTradeTime);
-
         if (GL:empty(State)) then
             GL:notice(L.BROADCAST_NO_DATA);
             return;

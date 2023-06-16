@@ -137,6 +137,7 @@ function Exporter:clearData()
     if (not self.dateSelected) then
         warning = "Are you sure you want to remove your complete reward history table? This deletes ALL loot data and cannot be undone!";
         onConfirm = function()
+            GL.Events:fire("GL.ITEM_UNAWARDED");
             DB:set("AwardHistory", {});
 
             Exporter:close();
