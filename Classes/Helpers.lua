@@ -1092,9 +1092,13 @@ GL.Timers = {};
 ---@param seconds number
 ---@param identifier string
 ---@param func function
+---@param cancel boolean Cancel any running existing timer with using the same identifier
 ---@return table
-function GL:after(seconds, identifier, func)
+function GL:after(seconds, identifier, func, cancel)
     GL:debug("Schedule " .. identifier);
+
+    cancel = cancel ~= false;
+    GL:cancelTimer(identifier);
 
     GL.Timers[identifier] = GL.Ace:ScheduleTimer(function ()
         GL:debug("Run once " .. identifier);

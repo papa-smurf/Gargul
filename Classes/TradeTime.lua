@@ -27,8 +27,31 @@ function TradeTime:_init()
 
     self._initialized = true;
 
-    Events:register("TradeTimeBagUpdateDelayedListener", "BAG_UPDATE_DELAYED", function ()
-        TradeTime:process();
+    -- We keep using the same timer ID (TradeTimeOverviewInit) so that whenever a
+    -- new event comes in we prolong the timer by 1 second as a way of throttling
+    Events:register("TradeTimeOverviewPlayerLogin", "PLAYER_LOGIN", function ()
+        Events:register({
+            "ZONE_CHANGED",
+            "PLAYER_ENTERING_WORLD",
+            "PLAYER_UNGHOST",
+            "LOADING_SCREEN_DISABLED",
+        }, function ()
+            GL:after(5, "TradeTimeOverviewInit", function ()
+                self:process();
+            end);
+        end);
+
+        Events:register({
+            "BAG_UPDATE_DELAYED",
+        }, function ()
+            GL:after(1, "TradeTimeOverviewInit", function ()
+                self:process();
+            end);
+        end);
+
+        GL:after(2, "TradeTimeOverviewInit", function ()
+            self:process();
+        end);
     end);
 
     -- Initialize the TradeTime UI

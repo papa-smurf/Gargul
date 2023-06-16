@@ -53,23 +53,21 @@ function Overview:_init()
 
     -- We override a lot of settings on boot
     -- so wait a couple seconds to not overload :refresh()
-    GL:after(3, "TradeTimeOverviewInit", function ()
-        Events:register({
-            "GL.ITEM_AWARDED",
-            "GL.ITEM_UNAWARDED",
-            "GL.SETTING_CHANGED",
-            "GL.TRADE_TIME_DURATIONS_CHANGED",
-            "GL.USER_LOST_MASTER_LOOTER",
-            "GL.USER_OBTAINED_MASTER_LOOTER",
-
-            "PLAYER_ENTERING_WORLD",
-            "ZONE_CHANGED",
-            "PLAYER_ALIVE",
-            "PLAYER_UNGHOST",
-        }, function (_)
+    Events:register({
+        "GL.SETTING_CHANGED",
+        "GL.USER_LOST_MASTER_LOOTER",
+        "GL.USER_OBTAINED_MASTER_LOOTER",
+    }, function (_)
+        GL:after(2, "TradeTimeOverviewInit", function ()
             self:refresh();
         end);
+    end);
 
+    Events:register({
+        "GL.ITEM_AWARDED",
+        "GL.ITEM_UNAWARDED",
+        "GL.TRADE_TIME_DURATIONS_CHANGED",
+    }, function (_)
         self:refresh();
     end);
 end
@@ -86,13 +84,23 @@ end
 ---@return void
 function Overview:close()
     for key, Row in pairs(self.ItemRows) do
-        Row.CountDownBar:Stop();
-        Interface:release(Row);
-        Row = nil;
-        self.ItemRows[key] = nil;
+        if (Row) then
+            -- Simply calling Bar:Stop() causes too many problems, resorted to duration of 1s instead
+            pcall(function()
+                local CountDownBar = Row.CountDownBar;
+                if (CountDownBar
+                    and CountDownBar:Get("type") == "TRADE_TIME_LEFT"
+                ) then
+                    Row.CountDownBar:SetDuration(1);
+                end
+            end);
+
+            Interface:release(Row);
+            Row = nil;
+            self.ItemRows[key] = nil;
+        end
     end
 
-    return _G[self.windowName] and _G[self.windowName]:Hide();
 end
 
 ---@return Frame
@@ -312,11 +320,9 @@ function Overview:refresh()
     local State = TradeTime:getState() or {};
 
     -- There's nothing to show!
-    if (GL:empty(State)) then
+    if (type(State) ~= "table" or GL:empty(State)) then
         return self:close();
     end
-
-    local Values = GL:tableValues(State);
 
     -- Check if we're allowed to show bars based on settings
     if (not self:barsEnabled()) then
@@ -326,9 +332,6 @@ function Overview:refresh()
     ---@type Frame
     local Window = _G[self.windowName] or self:build();
 
-    ---@type Frame
-    local ActionButtons = Window.ActionButtons;
-
     -- This item no longer has a trade time remaining
     -- or the player opted to not show the item on the list
     for itemGUID, Row in pairs(self.ItemRows or {}) do
@@ -337,6 +340,9 @@ function Overview:refresh()
             self.ItemRows[itemGUID] = nil;
         end
     end
+
+    ---@type Frame
+    local ActionButtons = Window.ActionButtons;
 
     -- Add newly acquired items to the list
     local hideAwarded = Settings:get("LootTradeTimers.hideAwarded");
@@ -366,6 +372,8 @@ function Overview:refresh()
             self.ItemRows[itemGUID] = nil;
         end
     end
+
+    local Values = GL:tableValues(State);
 
     -- Sort by time remaining (low > high)
     table.sort(Values, function (a, b)
@@ -512,6 +520,10 @@ function Overview:buildItemRow(Details, Window, ActionButtons)
 
         -- Hide this item
         ActionButtons.HideButton:SetScript("OnClick", function ()
+            if (IsModifierKeyDown()) then
+                return;
+            end
+
             self:hideItemRow(Details.itemGUID);
             ActionButtons:Hide();
         end);
