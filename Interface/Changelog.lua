@@ -12,6 +12,17 @@ GL.Interface.Changelog = {
 
     History = {
         {
+            version = "6.1.0",
+            date = "June 18th, 2023",
+            Changes = {
+[[With this version come all new trade timer bars:
+* Awarded / disenchanted to self is marked properly
+* Settings to filter out items based on status or time remaining
+* Bars can be resized / rescaled as desired]],
+                "An all new broadcast feature to let people know what items you still have on you is also included",
+            },
+        },
+        {
             version = "6.0.4",
             date = "June 4th, 2023",
             Changes = {
