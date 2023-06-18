@@ -258,6 +258,21 @@ function GL:remOffset()
     return GL:rem() - 11;
 end
 
+--- Perform a given function when or after the user is out of combat
+---
+---@return any
+function GL:afterCombat(func)
+    if (not UnitAffectingCombat("player")) then
+        return func();
+    end
+
+    local eventID = self:uuid() .. GetTime() .. math.random(1, 1000);
+    self.Events:register(eventID, "PLAYER_REGEN_ENABLED", function ()
+        GL.Events:unregister(eventID);
+        return func();
+    end);
+end
+
 --- Disambiguate a given name, passing optional nameFormat arguments
 ---
 ---@param name string

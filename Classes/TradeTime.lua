@@ -60,11 +60,6 @@ end
 
 ---@return void
 function TradeTime:process()
-    -- We don't do this during combat just in case it causes a hiccup
-    if (UnitAffectingCombat("player")) then
-        return;
-    end
-
     local Details = {};
     local somethingChanged = false;
     GL:forEachItemInBags(function (Location, bag, slot)
