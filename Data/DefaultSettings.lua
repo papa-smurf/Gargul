@@ -8,6 +8,7 @@ GL.Data.DefaultSettings = {
     autoOpenCommandHelp = true,
     changeLog = true,
     debugModeEnabled = false,
+    fontSize = 11,
     highlightsEnabled = true,
     highlightMyItemsOnly = false,
     highlightHardReservedItems = true,
@@ -73,10 +74,25 @@ GL.Data.DefaultSettings = {
     },
     LootTradeTimers = {
         enabled = true,
+        hideAwarded = false,
+        hideAwardedToSelf = false,
+        hideDisenchanted = false,
         maximumNumberOfBars = 5,
+        maximumTradeTimeLeft = 120,
         scale = 1,
         showHotkeyReminder = true,
         showOnlyWhenMasterLooting = true,
+        Broadcast = {
+            channel = 1,
+            includeAwardedItems = false,
+            includeDisenchantedItems = false,
+            includeHiddenItems = false,
+            includeTimeLeft = true,
+            maximumTradeTimeLeft = 120,
+            minimumQuality = 4,
+            numberOfItems = 20,
+            target = nil,
+        }
     },
     PackMule = {
         announceDisenchantedItems = true,

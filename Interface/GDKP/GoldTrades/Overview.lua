@@ -6,9 +6,6 @@ local _, GL = ...;
 ---@type Interface
 local Interface = GL.Interface;
 
----@type Settings
-local Settings = GL.Settings;
-
 ---@type Constants
 local Constants = GL.Data.Constants;
 
@@ -55,7 +52,8 @@ function Overview:build()
 
     local TradesHolder, ScrollFrame;
     ---@type Frame
-    local Window = Interface:createWindow(self.windowName, {
+    local Window = Interface:createWindow{
+        name = self.windowName,
         width = DEFAULT_WINDOW_WIDTH,
         height = DEFAULT_WINDOW_HEIGHT,
         minWidth = DEFAULT_WINDOW_WIDTH,
@@ -63,7 +61,7 @@ function Overview:build()
         maxWidth = 500,
         maxHeight = 700,
         hideMinimizeButton = true,
-    });
+    };
 
     Window:SetScript("OnHide", function ()
         self.isVisible = false;
@@ -84,7 +82,7 @@ function Overview:build()
     --[[ CURRENT BALANCE ]]
     ---@type FontString
     local Balance = Interface:createFontString(Window, "");
-    Balance:SetFont(GL.FONT, 14, "OUTLINE");
+    Balance:SetFont(1.25, "OUTLINE");
     Balance:SetPoint("TOPLEFT", Window, "TOPLEFT", 20, -30);
     Window.Balance = Balance;
 
@@ -305,7 +303,7 @@ function Overview:refresh()
 
         ---@type FontString
         local Name = Interface:createFontString(TradeRow, description);
-        Name:SetFont(GL.FONT, 12, "OUTLINE");
+        Name:SetFont(1, "OUTLINE");
         Name:SetPoint("CENTER", TradeRow);
         Name:SetPoint("LEFT", Time, "RIGHT", 4, 0);
         Name:SetHeight(TRADE_ENTRY_HEIGHT);

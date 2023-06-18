@@ -83,9 +83,7 @@ function UI:createShareButton(Parent, Details)
     local updateOn = Details.updateOn or {};
     local fireUpdateOnCreation = Details.updateOnCreate;
 
-    if (fireUpdateOnCreation == nil) then
-        fireUpdateOnCreation = true;
-    end
+    fireUpdateOnCreation = fireUpdateOnCreation ~= false;
 
     if (type(updateOn) ~= "table") then
         updateOn = { updateOn };

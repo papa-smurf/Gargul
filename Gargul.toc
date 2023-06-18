@@ -56,6 +56,7 @@ Classes/AwardedLoot.lua
 Classes/PackMule.lua
 Classes/DroppedLoot.lua
 Classes/TradeWindow.lua
+Classes/TradeTime.lua
 Classes/Version.lua
 Classes/BagInspector.lua
 Classes/BuffInspector.lua
@@ -126,7 +127,8 @@ Interface/TMB/Importer.lua
 Interface/TMB/Overview.lua
 Interface/PlusOnes/OverView.lua
 Interface/PlusOnes/Importer.lua
-Interface/TradeWindow/TimeLeft.lua
+Interface/TradeTime/Overview.lua
+Interface/TradeTime/Broadcast.lua
 Interface/PlayerSelector.lua
 Interface/Changelog.lua
 Interface/BoostedRolls/Importer.lua

@@ -53,7 +53,8 @@ function BonusFeatures:build()
 
     --[[ THE MAIN AUCTIONEER WINDOW ]]
     ---@type Frame
-    local Window = Interface:createWindow(self.windowName, {
+    local Window = Interface:createWindow{
+        name = self.windowName,
         width = 220,
         height = 325,
         minWidth = 220,
@@ -61,7 +62,7 @@ function BonusFeatures:build()
         maxWidth = 475,
         maxHeight = 400,
         hideMinimizeButton = true,
-    });
+    };
 
     --[[ ADD THE SETTINGS MENU IN THE TOP LEFT OF THE WINDOW ]]
     Interface:addWindowOptions(Window, {

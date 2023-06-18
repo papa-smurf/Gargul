@@ -98,7 +98,8 @@ function LedgerList:build()
     end
 
     ---@type Frame
-    local Window = Interface:createWindow(self.windowName, {
+    local Window = Interface:createWindow{
+        name = self.windowName,
         width = 1,
         height = 1,
         hideMinimizeButton = true,
@@ -107,12 +108,12 @@ function LedgerList:build()
         OnClose = function ()
             self:close();
         end,
-    });
+    };
 
     Window:SetClampedToScreen(false);
     Window:SetPoint("TOPLEFT", UIParent, "TOPLEFT", -2, 2);
     Window:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMRIGHT", 2, -2);
-    Window.Watermark:SetFont(GL.FONT, 18, "OUTLINE");
+    Window.Watermark:SetFont(1.75, "OUTLINE");
 
     --[[ ADD THE SETTINGS MENU IN THE TOP LEFT OF THE WINDOW ]]
     Interface:addWindowOptions(Window, {
@@ -165,7 +166,7 @@ function LedgerList:build()
     ---@type FontString
     local PotDetails = Interface:createFontString(Window, "");
     PotDetails:SetPoint("BOTTOMLEFT", PlayersTable.frame, "TOPLEFT", 0, 60);
-    PotDetails:SetFont(GL.FONT, 16, "OUTLINE");
+    PotDetails:SetFont(1.75, "OUTLINE");
     self.PotDetails = PotDetails;
 
     --[[ DRAW LEGEND ]]

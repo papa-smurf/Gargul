@@ -463,11 +463,7 @@ end
 function Pot:determineDistributionDefaults(Player, Session, enforceLock)
     GL:debug("Pot:determineDistributionDefaults");
 
-    if (enforceLock == nil) then
-        enforceLock = true;
-    end
-    enforceLock = GL:toboolean(enforceLock);
-
+    enforceLock = enforceLock ~= false;
     -- The session is locked and we're not taking on new customers
     if (enforceLock and Session.lockedAt) then
         return {};
@@ -659,10 +655,7 @@ end
 function Pot:clearPlayerDetails(sessionID, player, keepAdjusted)
     GL:debug("Pot:clearPlayerDetails");
 
-    if (keepAdjusted == nil) then
-        keepAdjusted = true;
-    end
-
+    keepAdjusted = keepAdjusted ~= false;
     local Session = GDKPSession:byID(sessionID);
     if (not Session or Session.lockedAt) then
         return false;

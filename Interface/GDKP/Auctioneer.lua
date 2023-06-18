@@ -124,7 +124,8 @@ function AuctioneerUI:build()
 
     --[[ THE MAIN AUCTIONEER WINDOW ]]
     ---@type Frame
-    local Window = Interface:createWindow(self.windowName, {
+    local Window = Interface:createWindow{
+        name = self.windowName,
         width = DEFAULT_WINDOW_WIDTH,
         height = DEFAULT_WINDOW_HEIGHT,
         minWidth = 350,
@@ -132,7 +133,7 @@ function AuctioneerUI:build()
         maxWidth = 500,
         maxHeight = 700,
         hideCloseButton = GL.User.isInGroup and (GL.User.isLead or GL.User.isMasterLooter) and Session:activeSessionID(),
-    });
+    };
     Window:Hide();
 
     Window:HookScript("OnShow", function ()
@@ -333,7 +334,7 @@ function AuctioneerUI:build()
         end,
         updateOn = { "GL.GDKP_AUCTION_CHANGED", "GL.GDKP_SESSION_CHANGED" },
     });
-    CurrentPotLabel:SetFont(GL.FONT, 12, "OUTLINE");
+    CurrentPotLabel:SetFont(1, "OUTLINE");
     CurrentPotLabel:SetPoint("TOPLEFT", Window.Minimized, "TOPLEFT", 24, -18);
 
     ---@type Button

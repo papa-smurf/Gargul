@@ -76,6 +76,16 @@ function Settings:sanitizeSettings()
             DB:set("GDKP.Ledger." .. key, nil);
         end
     end
+
+    -- Remove awarded items that are more than 5 days old
+    local fiveDaysAgo = GetServerTime() - 432000;
+    local ValidItems = {};
+    for itemGUID, Details in pairs(DB:get("RecentlyAwardedItems", {})) do
+        if (Details.timestamp > fiveDaysAgo) then
+            ValidItems[itemGUID] = Details;
+        end
+    end
+    DB:set("RecentlyAwardedItems", ValidItems);
 end
 
 --- These settings are version-specific and will be removed over time!
@@ -386,6 +396,7 @@ function Settings:set(keyString, value, quiet)
     local success = GL:tableSet(self.Active, keyString, value);
 
     if (success and not quiet) then
+        GL.Events:fire("GL.SETTING_CHANGED." .. keyString, value);
         GL.Events:fire("GL.SETTING_CHANGED", keyString, value);
     end
 
