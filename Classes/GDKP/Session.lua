@@ -668,7 +668,7 @@ end
 function Session:getActive()
     GL:debug("Session:getActive");
 
-    local activeSessionIdentifier = DB:get("GDKP.activeSession", false);
+    local activeSessionIdentifier = self:activeSessionID();
 
     if (not activeSessionIdentifier) then
         return false;

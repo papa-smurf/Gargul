@@ -443,6 +443,7 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, G
         received = GL:iEquals(winner, GL.User.name),
         BRCost = tonumber(BRCost),
         GDKPCost = tonumber(GDKPCost),
+        GDKPSession = GL.GDKP.Session:activeSessionID() or nil,
         OS = isOS,
         SR = isReserved,
         WL = isWishlisted,
