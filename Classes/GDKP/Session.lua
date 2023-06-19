@@ -777,7 +777,6 @@ function Session:create(title, managementCut)
         Pot = {
             Mutators = Settings:get("GDKP.Mutators", {}),
         },
-        Raiders = {},
     };
 
     local checksum = Instance.createdAt .. GL:stringHash(Instance);

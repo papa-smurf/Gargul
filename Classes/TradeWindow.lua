@@ -7,8 +7,8 @@ GL.TradeWindow = {
     manuallyChangedAnnounceCheckbox = false,
     AnnouncementCheckBox = nil,
 
-    AddItemsTimer = nil,
     ItemsToAdd = {},
+    ItemsAdded = {},
     State = {
         partner = "",
         MyItems = {},
@@ -34,17 +34,18 @@ function TradeWindow:_init()
     end
 
     GL.Events:register({
-        {"TradeWindowItemLockedListener", "ITEM_LOCKED"},
-        {"TradeWindowTradeAcceptUpdateListener", "TRADE_ACCEPT_UPDATE"},
-        {"TradeWindowTradeMoneyChangedListener", "TRADE_MONEY_CHANGED"},
-        {"TradeWindowTradePlayerItemChangedListener", "TRADE_PLAYER_ITEM_CHANGED"},
-        {"TradeWindowTradeTargetItemChangedListener", "TRADE_TARGET_ITEM_CHANGED"},
-        {"TradeWindowTradeShowListener", "TRADE_SHOW"},
-        {"TradeWindowTradeCloseListener", "TRADE_CLOSED"},
-        {"TradeWindowTradeRequestCancelListener", "TRADE_REQUEST_CANCEL"},
-        {"TradeWindowUIInfoMessageListener", "UI_INFO_MESSAGE"},
-    }, function (event, _, message)
-        self:handleEvents(event, message);
+        "ITEM_LOCKED",
+        "ITEM_UNLOCKED",
+        "TRADE_ACCEPT_UPDATE",
+        "TRADE_MONEY_CHANGED",
+        "TRADE_PLAYER_ITEM_CHANGED",
+        "TRADE_TARGET_ITEM_CHANGED",
+        "TRADE_SHOW",
+        "TRADE_CLOSED",
+        "TRADE_REQUEST_CANCEL",
+        "UI_INFO_MESSAGE",
+    }, function (event, ...)
+        self:handleEvents(event, ...);
     end);
 
     GL.Events:register("TradeWindowTradeCompleted", "GL.TRADE_COMPLETED", function (_, Details)
@@ -118,11 +119,13 @@ end
 ---@param event string
 ---@param message string
 ---@return void
-function TradeWindow:handleEvents(event, message)
+function TradeWindow:handleEvents(event, ...)
     GL:debug("TradeWindow:handleEvents");
 
     -- Incoming UI_INFO_MESSAGE
     if (event == "UI_INFO_MESSAGE") then
+        local _, message = ...;
+
         -- Trade was successful
         if (message == ERR_TRADE_COMPLETE) then
             -- Check the value of the "Announce trade" checkbox in the trade frame
@@ -136,37 +139,29 @@ function TradeWindow:handleEvents(event, message)
 
     -- Trade started
     if (event == "TRADE_SHOW") then
-        self.ItemsToAdd = {};
+        self.ItemsToAdd, self.ItemsAdded = {}, {};
         GL.Ace:CancelTimer(self.SetCopperTimer);
 
         -- Trade window shown, show/update the announcement checkbox
         self:updateAnnouncementCheckBox();
 
         -- Make sure to cancel any lingering timers
-        GL:debug("Cancel TradeWindow.AddItemsTimer");
-        GL.Ace:CancelTimer(self.AddItemsTimer);
-        self.AddItemsTimer = nil;
+        GL:cancelTimer("TradeWindowAddItemsInterval");
 
         -- Periodically add items to the trade window
         -- We don't do this instantly because that can bug out the UI
-        GL:debug("Schedule new TradeWindow.AddItemsTimer");
-
-        self.AddItemsTimer = GL.Ace:ScheduleRepeatingTimer(function ()
-            GL:debug("Run TradeWindow.AddItemsTimer");
-
+        GL:interval(0, "TradeWindowAddItemsInterval", function ()
             self:processItemsToAdd();
-        end, .5);
+        end);
     end
 
     -- Trade closed
     if (event == "TRADE_CLOSED") then
-        self.ItemsToAdd = {};
+        self.ItemsToAdd, self.ItemsAdded = {}, {};
         GL.Ace:CancelTimer(self.SetCopperTimer);
 
         -- Make sure to cancel any lingering timers
-        GL:debug("Cancel TradeWindow.AddItemsTimer");
-        GL.Ace:CancelTimer(self.AddItemsTimer);
-        self.AddItemsTimer = nil;
+        GL:cancelTimer("TradeWindowAddItemsInterval");
 
         -- We don't want resetState to trigger since TRADE_CLOSED is fired before TRADE_COMPLETED
         return;
@@ -192,6 +187,25 @@ function TradeWindow:handleEvents(event, message)
         return;
     end
 
+    -- The game can automatically remove items at times when they
+    -- are added to the trade window too rapidly. This counters that
+    if (event == "ITEM_UNLOCKED") then
+        local bag, slot = ...;
+        local itemGUID = GL:getItemGUID(bag, slot);
+
+        if (itemGUID
+            and type(self.ItemsAdded[itemGUID]) == "table"
+        ) then
+            if (GetTime() - self.ItemsAdded[itemGUID].timestamp <= .5) then
+                tinsert(self.ItemsToAdd, self.ItemsAdded[itemGUID].itemID);
+            end
+
+            self.ItemsAdded[itemGUID] = nil;
+        end
+
+        return;
+    end
+
     self:resetState();
 end
 
@@ -203,7 +217,7 @@ function TradeWindow:updateState()
 
     -- NPC is currently the player you're trading
     local partnerName, partnerRealm = UnitName("NPC", true);
-    self.State.partner = GL:nameFormat{ name = partnerName, realm = partnerRealm };
+    self.State.partner = GL:nameFormat{ name = partnerName, realm = partnerRealm, forceRealm = true };
 
     -- Fetch the player name of whomever we're trading with
     partnerName = _G.TradeFrameRecipientNameText:GetText();
@@ -353,9 +367,7 @@ function TradeWindow:processItemsToAdd()
     -- Make sure we don't use items if the trade window is not opened
     -- The last thing we want to do is equip an item or use a consumable by mistake!
     if (not TradeFrame:IsShown()) then
-        GL:debug("Cancel TradeWindow.AddItemsTimer");
-        GL.Ace:CancelTimer(self.AddItemsTimer);
-        self.AddItemsTimer = nil;
+        GL:cancelTimer("TradeWindowAddItemsInterval");
 
         return;
     end
@@ -379,8 +391,18 @@ function TradeWindow:processItemsToAdd()
         return;
     end
 
+    local bag, slot = unpack(itemPositionInBag);
+    local itemGUID = GL:getItemGUID(bag, slot);
+
+    if (itemGUID) then
+        self.ItemsAdded[itemGUID] = {
+            itemID = itemID,
+            timestamp = GetTime(),
+        };
+    end
+
     -- Everything went well, put the item in the trade window!
-    GL:useContainerItem(unpack(itemPositionInBag));
+    GL:useContainerItem(bag, slot);
 end
 
 --- Check whether we should announce trade details

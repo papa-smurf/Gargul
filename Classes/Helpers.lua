@@ -1634,6 +1634,20 @@ function GL:useContainerItem(bagID, slot)
     return nil;
 end
 
+---@param bag number
+---@param slot number
+---@return boolean|string
+function GL:getItemGUID(bag, slot)
+    local Location = ItemLocation:CreateFromBagAndSlot(bag, slot);
+
+    -- Item doesn't exist
+    if (not Location or not C_Item.DoesItemExist(Location)) then
+        return;
+    end
+
+    return C_Item.GetItemGUID(Location);
+end
+
 ---@param bagID number
 ---@param slot number
 ---@return any

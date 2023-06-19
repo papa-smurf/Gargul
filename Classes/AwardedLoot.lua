@@ -722,17 +722,13 @@ function AwardedLoot:tradeInitiated()
                 return;
             end
 
-            local awardedTo = GL:nameFormat(Loot.awardedTo);
-
             -- Check whether this item is meant for our current trading partner
             if (Loot.received -- The item was already received by the winner, no need to check further
-                or (awardedTo ~= tradingPartner -- The awarded item entry is not meant for this person
-
+                or (not GL:iEquals(Loot.awardedTo, tradingPartner)
                     -- The item is marked as disenchanted and our trading partner is the designated enchanter
-                    and (awardedTo ~= GL.Exporter.disenchantedItemIdentifier
-                        or not tradedPlayerIsDisenchanter
-                    )
-                )
+                    and (Loot.awardedTo ~= GL.Exporter.disenchantedItemIdentifier
+                    or not tradedPlayerIsDisenchanter
+                )) -- The awarded item entry is not meant for this person
             ) then
                 return;
             end
