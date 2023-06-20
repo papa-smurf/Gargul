@@ -242,19 +242,17 @@ function Broadcast:build()
                 GL:error(L.BROADCAST_TARGET_REQUIRED);
                 return;
             end
-        else
-            if (channel == CHANNEL_GROUP) then
-                channel = "GROUP";
-            elseif (channel == CHANNEL_RAID_WARNING) then
-                channel = "RAID_WARNING";
-            elseif (channel == CHANNEL_OFFICER) then
-                if (not C_GuildInfo.CanEditOfficerNote()) then
-                    GL:error(L.NO_OFFICER_PRIVILEGES);
-                    return;
-                end
-
-                channel = "OFFICER";
+        elseif (channel == CHANNEL_GROUP) then
+            channel = "GROUP";
+        elseif (channel == CHANNEL_RAID_WARNING) then
+            channel = "RAID_WARNING";
+        elseif (channel == CHANNEL_OFFICER) then
+            if (not C_GuildInfo.CanEditOfficerNote()) then
+                GL:error(L.NO_OFFICER_PRIVILEGES);
+                return;
             end
+
+            channel = "OFFICER";
         end
 
         local includeAwarded = IncludeAwardedItems:GetChecked();
