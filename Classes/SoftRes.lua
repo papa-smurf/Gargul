@@ -600,7 +600,7 @@ function SoftRes:byItemID(itemID, inRaidOnly)
     end
 
     -- The item linked to this id can have multiple IDs (head of Onyxia for example)
-    local AllLinkedItemIDs = GL:getLinkedItemsForID(itemID);
+    local AllLinkedItemIDs = GL:getLinkedItemsForID(itemID, true);
 
     local GroupMemberNames = {};
     if (inRaidOnly) then
