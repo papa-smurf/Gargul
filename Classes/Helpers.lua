@@ -379,7 +379,6 @@ function GL:handleItemClick(itemLink, mouseButtonPressed, callback)
         return;
     end
 
-    local IsModifierKeyDown = IsModifierKeyDown();
     local CLMRaidIsActive = false;
     if (GL.Settings:get("ShortcutKeys.disableWhenCLMIsActive")) then
         pcall(function ()
@@ -1040,9 +1039,13 @@ function GL:count(var)
     return 0;
 end
 
+--- Use `return false;` in your func if you want to break the loop early
 ---@param func function
 ---@return void
 function GL:forEachItemInBags(func)
+    -- Used to break out of our double loop
+    local finished = false;
+
     -- Dragon Flight introduced an extra bag slot
     local numberOfBagsToCheck = self.clientIsDragonFlightOrLater and 5 or 4;
 
@@ -1056,8 +1059,16 @@ function GL:forEachItemInBags(func)
                     return;
                 end
 
-                func(Location, bag, slot);
+                finished = func(Location, bag, slot) == false;
             end)();
+
+            if (finished) then
+                break;
+            end
+        end
+
+        if (finished) then
+            return;
         end
     end
 end
@@ -1434,6 +1445,25 @@ function GL:itemTradeTimeRemaining(itemLinkOrID)
     return Results;
 end
 
+---@param itemGUID string
+---@return boolean,boolean|number,number
+function GL:getBagAndSlotByGUID(itemGUID)
+    local itemBag = false;
+    local itemSlot = false;
+
+    self:forEachItemInBags(function(Location, bag, slot)
+        -- This is not the item we're looking for
+        if (C_Item.GetItemGUID(Location) ~= itemGUID) then
+            return;
+        end
+
+        itemBag, itemSlot = bag, slot;
+        return false;
+    end);
+
+    return itemBag, itemSlot;
+end
+
 --- Check how much time to trade is remaining on the given item in our bags
 ---
 ---@param bag number
@@ -1640,7 +1670,7 @@ end
 ---@param bag number
 ---@param slot number
 ---@return boolean|string
-function GL:getItemGUID(bag, slot)
+function GL:getItemGUIDByBagAndSlot(bag, slot)
     local Location = ItemLocation:CreateFromBagAndSlot(bag, slot);
 
     -- Item doesn't exist

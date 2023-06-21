@@ -191,7 +191,7 @@ function TradeWindow:handleEvents(event, ...)
     -- are added to the trade window too rapidly. This counters that
     if (event == "ITEM_UNLOCKED") then
         local bag, slot = ...;
-        local itemGUID = GL:getItemGUID(bag, slot);
+        local itemGUID = GL:getItemGUIDByBagAndSlot(bag, slot);
 
         if (itemGUID
             and type(self.ItemsAdded[itemGUID]) == "table"
@@ -392,7 +392,7 @@ function TradeWindow:processItemsToAdd()
     end
 
     local bag, slot = unpack(itemPositionInBag);
-    local itemGUID = GL:getItemGUID(bag, slot);
+    local itemGUID = GL:getItemGUIDByBagAndSlot(bag, slot);
 
     if (itemGUID) then
         self.ItemsAdded[itemGUID] = {

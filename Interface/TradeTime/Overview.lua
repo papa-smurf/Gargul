@@ -506,6 +506,19 @@ function Overview:buildItemRow(Details, Window, ActionButtons)
     CountDownBar:SetTimeVisibility(false);
 
     CountDownBar:SetScript("OnMouseUp", function (_, mouseButtonPressed)
+        -- Allow selling an item from the trade timer bars by right clicking
+        if (mouseButtonPressed == "RightButton") then
+            if (GL.merchantIsShown) then
+                local bag, slot = GL:getBagAndSlotByGUID(Details.itemGUID);
+
+                if (bag) then
+                    GL:useContainerItem(bag, slot);
+                end
+            end
+
+            return;
+        end
+
         HandleModifiedItemClick(Details.itemLink, mouseButtonPressed);
     end);
 
