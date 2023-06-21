@@ -60,7 +60,7 @@ function RollerUI:draw(time, itemLink, itemIcon, note, SupportedRolls, userCanUs
             return;
         end
 
-        GL:handleItemClick(itemLink, button);
+        HandleModifiedItemClick(itemLink, button);
     end);
     Window:SetScale(GL.Settings:get("Rolling.scale", 1));
     Window.ownedByGargul = true; -- We used this in the tooltip check later

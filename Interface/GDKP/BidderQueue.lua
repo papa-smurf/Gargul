@@ -391,7 +391,7 @@ function BidderQueue:refreshTable()
             end);
 
             ItemRow:SetScript("OnMouseUp", function (_, mouseButtonPressed)
-                GL:handleItemClick(Details.link, mouseButtonPressed);
+                HandleModifiedItemClick(Details.link, mouseButtonPressed);
             end);
 
             --[[ ITEM ICON ]]

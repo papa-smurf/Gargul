@@ -676,6 +676,9 @@ function Overview:refreshLedger()
             ItemIcon:SetCallback("OnLeave", function()
                 GameTooltip:Hide();
             end);
+            ItemIcon:SetCallback("OnClick", function (_, _, mouseButtonPressed)
+                HandleModifiedItemClick(ItemEntry.link, mouseButtonPressed);
+            end);
 
             --[[
                ITEM ICON/LABEL SPACER

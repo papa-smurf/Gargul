@@ -561,7 +561,7 @@ function Overview:refreshItems()
 
                 --[[ MAKE AWARDING / DISENCHANTING ETC POSSIBLE ON CLICK ]]
                 ItemRow:SetScript("OnMouseUp", function (_, mouseButtonPressed)
-                    GL:handleItemClick(Item.link, mouseButtonPressed);
+                    HandleModifiedItemClick(Item.link, mouseButtonPressed);
                 end);
 
                 --[[ DETAILS TOOLTIP ]]

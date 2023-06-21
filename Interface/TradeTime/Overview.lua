@@ -483,7 +483,7 @@ function Overview:buildItemRow(Details, Window, ActionButtons)
     CountDownBar:SetTimeVisibility(false);
 
     CountDownBar:SetScript("OnMouseUp", function (_, mouseButtonPressed)
-        GL:handleItemClick(Details.itemLink, mouseButtonPressed);
+        HandleModifiedItemClick(Details.itemLink, mouseButtonPressed);
     end);
 
     ItemRow.updateIcon = function ()

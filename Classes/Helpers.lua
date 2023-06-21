@@ -360,6 +360,8 @@ function GL:dump(mixed)
 end
 
 local lastClickTime;
+--- Only call this function directly if you need the callback functionality, in all other cases use
+--- the native HandleModifiedItemClick method instead so that you also have support for linking items to chat for example
 ---@param itemLink string
 ---@param mouseButtonPressed string|nil
 ---@param callback function|nil Some actions (like award) support a callback
@@ -377,6 +379,7 @@ function GL:handleItemClick(itemLink, mouseButtonPressed, callback)
         return;
     end
 
+    local IsModifierKeyDown = IsModifierKeyDown();
     local CLMRaidIsActive = false;
     if (GL.Settings:get("ShortcutKeys.disableWhenCLMIsActive")) then
         pcall(function ()

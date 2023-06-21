@@ -376,7 +376,7 @@ function AuctioneerUI:build()
         end);
 
         Icon:SetScript("OnMouseUp", function (_, mouseButtonPressed)
-            GL:handleItemClick(self.itemLink, mouseButtonPressed);
+            HandleModifiedItemClick(self.itemLink, mouseButtonPressed);
         end);
 
         Icon:SetScript("OnLeave", function()

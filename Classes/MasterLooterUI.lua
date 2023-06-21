@@ -141,6 +141,15 @@ function MasterLooterUI:draw(itemLink)
                     GameTooltip:Hide();
                 end)
 
+                ItemIcon:SetCallback("OnClick", function (_, _, mouseButtonPressed)
+                    if (not MasterLooterUI.ItemBoxHoldsValidItem) then
+                        return;
+                    end
+
+                    local itemLink = ItemBox:GetText();
+                    HandleModifiedItemClick(itemLink, mouseButtonPressed);
+                end);
+
                 --[[
                     BUTTON PADDER
                     CONTAINER FOR PADDING PURPOSES ONLY

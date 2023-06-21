@@ -88,14 +88,14 @@ function Bidder:draw(time, itemLink, itemIcon)
         Window:StopMovingOrSizing();
         GL.Interface:storePosition(Window, "Bidder");
     end);
-    Window:SetScript("OnMouseDown", function (_, button)
+    Window:SetScript("OnMouseDown", function (_, mouseButtonPressed)
         -- Close the roll window on right-click
-        if (button == "RightButton") then
+        if (mouseButtonPressed == "RightButton") then
             self:hide();
             return;
         end
 
-        GL:handleItemClick(itemLink, button);
+        HandleModifiedItemClick(itemLink, mouseButtonPressed);
     end);
     Window:SetScale(GL.Settings:get("GDKP.bidderScale", 1));
     self.Window = Window;
