@@ -1102,16 +1102,7 @@ function SoftRes:importGargulData(data)
     DB.SoftRes.HardReserves = HardReserveEntries;
 
     -- At this point in Era we don't really know anyone's plus one because SoftRes doesn't support realm tags (yet)
-    if (GL:isCrossRealm()) then
-        if (not GL:empty(DB:get("PlusOnes"))) then
-            GL.Interface.Dialogs.PopupDialog:open{
-                question = "Do you want to clear all previous PlusOne values?",
-                OnYes = function ()
-                    GL.PlusOnes:clearPlusOnes();
-                end,
-            };
-        end
-    elseif (differentPlusOnes) then
+    if (differentPlusOnes) then
         -- Show a confirmation dialog before overwriting the plusOnes
         GL.Interface.Dialogs.PopupDialog:open{
             question = "The PlusOne values provided collide with the ones already present. Do you want to replace your old PlusOne values?",
