@@ -75,6 +75,12 @@ function Events:register(identifier, event, callback)
         return self:massRegister(identifier, event);
     end
 
+    -- Events only require an identifier if the event needs to
+    -- be unregistered at some point during runtime
+    if (identifier == nil) then
+        identifier = event .. "Listener" .. GL:uuid();
+    end
+
     if (GL:empty(event)
         or type(callback) ~= "function"
     ) then
@@ -176,7 +182,6 @@ function Events:massRegister(EventDetails, callback)
             event = Entry[2];
         elseif (type(Entry) == "string") then
             event = Entry;
-            identifier = Entry .. "Listener" .. GL:uuid();
         else
             return false;
         end

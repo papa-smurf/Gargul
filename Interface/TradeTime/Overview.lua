@@ -37,10 +37,14 @@ GL.Interface.TradeTime.Overview = {
 ---@type TradeTimeOverviewInterface
 local Overview = GL.Interface.TradeTime.Overview;
 
---[[ CONSTANTS ]]
+--[[ LOCALS ]]
 local FONT;
 local HEADER_HEIGHT = 20 + GL:remOffset();
 local ROW_HEIGHT = 16 + GL:remOffset();
+local HIDE_AWARDED = false;
+local HIDE_AWARDED_TO_SELF = false;
+local HIDE_DISENCHANTED = false;
+local MAXIMUM_TRADE_TIME_LEFT = 7200; -- Two hours in seconds
 
 ---@return void
 function Overview:_init()
@@ -51,10 +55,14 @@ function Overview:_init()
     self._initialized = true;
     FONT = GL.FONT;
 
-    -- We override a lot of settings on boot
-    -- so wait a couple seconds to not overload :refresh()
+    -- We fetch these values once on boot in order to increase performance
+    HIDE_AWARDED = Settings:get("LootTradeTimers.hideAwarded");
+    HIDE_AWARDED_TO_SELF = Settings:get("LootTradeTimers.hideAwardedToSelf");
+    HIDE_DISENCHANTED = Settings:get("LootTradeTimers.hideDisenchanted");
+    MAXIMUM_TRADE_TIME_LEFT = Settings:get("LootTradeTimers.maximumTradeTimeLeft") * 60;
+
+
     Events:register({
-        "GL.SETTING_CHANGED",
         "GL.USER_LOST_MASTER_LOOTER",
         "GL.USER_OBTAINED_MASTER_LOOTER",
     }, function (_)
@@ -71,11 +79,30 @@ function Overview:_init()
         self:refresh();
     end);
 
-    -- Refresh every 10 seconds so that we can dynamically show/hide items that
-    -- don't meet the user's maximumTradeTimeLeft setting
+    -- Refresh every 60 seconds so that we can dynamically show
+    -- items that meet the user's maximumTradeTimeLeft setting
     GL:after(10, "TradeTimeOverviewRefreshInterval", function ()
-        GL:interval(10, "TradeTimeOverviewRefreshInterval", function ()
+        GL:interval(60, "TradeTimeOverviewRefreshInterval", function ()
             self:refresh();
+        end);
+    end);
+
+    -- Make sure to update setting values whenever the user changes a relevant setting
+    GL:after(2, "TradeTimeOverviewSettingChangeTimer", function ()
+        Settings:onChange("LootTradeTimers.hideAwarded", function ()
+            HIDE_AWARDED = Settings:get("LootTradeTimers.hideAwarded");
+        end);
+
+        Settings:onChange("LootTradeTimers.hideAwardedToSelf", function ()
+            HIDE_AWARDED_TO_SELF = Settings:get("LootTradeTimers.hideAwardedToSelf");
+        end);
+
+        Settings:onChange("LootTradeTimers.hideDisenchanted", function ()
+            HIDE_DISENCHANTED = Settings:get("LootTradeTimers.hideDisenchanted");
+        end);
+
+        Settings:onChange("LootTradeTimers.maximumTradeTimeLeft", function ()
+            MAXIMUM_TRADE_TIME_LEFT = Settings:get("LootTradeTimers.maximumTradeTimeLeft") * 60;
         end);
     end);
 end
@@ -354,16 +381,12 @@ function Overview:refresh()
     local ActionButtons = Window.ActionButtons;
 
     -- Add newly acquired items to the list
-    local hideAwarded = Settings:get("LootTradeTimers.hideAwarded");
-    local hideAwardedToSelf = Settings:get("LootTradeTimers.hideAwardedToSelf");
-    local hideDisenchanted = Settings:get("LootTradeTimers.hideDisenchanted");
-    local maximumTradeTimeLeftInSeconds = Settings:get("LootTradeTimers.maximumTradeTimeLeft") * 60;
     for itemGUID, Details in pairs(State) do
         local AwardDetails = DB:get("RecentlyAwardedItems." .. Details.itemGUID);
         local disenchanted = AwardDetails and AwardDetails.awardedTo == GL.Exporter.disenchantedItemIdentifier;
         local awarded = not disenchanted and not not AwardDetails;
         local awardedToSelf = awarded and not disenchanted and GL:iEquals(AwardDetails.awardedTo, GL.User.fqn);
-        local itemIsTooNew = Details.secondsRemaining > maximumTradeTimeLeftInSeconds;
+        local itemIsTooNew = Details.secondsRemaining > MAXIMUM_TRADE_TIME_LEFT;
 
         if (not self.ItemRows[itemGUID]
             and not self.HiddenItems[itemGUID]
@@ -375,9 +398,9 @@ function Overview:refresh()
 
         if (self.ItemRows[itemGUID] and (
             itemIsTooNew
-            or (awarded and hideAwarded)
-            or (awardedToSelf and hideAwardedToSelf)
-            or (disenchanted and hideDisenchanted)
+            or (awarded and HIDE_AWARDED)
+            or (awardedToSelf and HIDE_AWARDED_TO_SELF)
+            or (disenchanted and HIDE_DISENCHANTED)
         )) then
             self.ItemRows[itemGUID]:Hide();
             Interface:release(self.ItemRows[itemGUID]);
@@ -543,6 +566,14 @@ function Overview:buildItemRow(Details, Window, ActionButtons)
 
     -- Make the bar turn green/yellow/red based on time left
     CountDownBar:AddUpdateFunction(function (Bar)
+        if (CountDownBar.remaining > MAXIMUM_TRADE_TIME_LEFT) then
+            self.ItemRows[Details.itemGUID]:Hide();
+            Interface:release(self.ItemRows[Details.itemGUID]);
+            self.ItemRows[Details.itemGUID] = nil;
+
+            return;
+        end
+
         local percentageLeft = (CountDownBar.remaining / 7200) * 100;
 
         if (ItemRow.awarded or ItemRow.disenchanted) then
