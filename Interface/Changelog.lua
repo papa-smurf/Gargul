@@ -12,6 +12,14 @@ GL.Interface.Changelog = {
 
     History = {
         {
+            version = "6.1.2",
+            date = "June 21nd, 2023",
+            Changes = {
+                "Welcome, Trial of the Crusader! We've worked hard on making Gargul 3.4.2-ready, with notable changes to the Softres and TMB module, trade timer bars, auto trading and necessary item linking.",
+                "Happy looting, and as always: spot something fishy? Join our discord and be sure to report it!",
+            },
+        },
+        {
             version = "6.1.0",
             date = "June 18th, 2023",
             Changes = {
