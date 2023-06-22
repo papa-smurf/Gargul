@@ -580,9 +580,11 @@ function Overview:buildItemRow(Details, Window, ActionButtons)
     -- Make the bar turn green/yellow/red based on time left
     CountDownBar:AddUpdateFunction(function (Bar)
         if (CountDownBar.remaining > MAXIMUM_TRADE_TIME_LEFT) then
-            self.ItemRows[Details.itemGUID]:Hide();
-            Interface:release(self.ItemRows[Details.itemGUID]);
-            self.ItemRows[Details.itemGUID] = nil;
+            if (self.ItemRows[Details.itemGUID]) then
+                self.ItemRows[Details.itemGUID]:Hide();
+                Interface:release(self.ItemRows[Details.itemGUID]);
+                self.ItemRows[Details.itemGUID] = nil;
+            end
 
             return;
         end
