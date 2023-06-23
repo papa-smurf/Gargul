@@ -120,17 +120,7 @@ end
 function Overview:close()
     for key, Row in pairs(self.ItemRows) do
         if (Row) then
-            -- Simply calling Bar:Stop() causes too many problems, resorted to duration of 1s instead
-            pcall(function()
-                local CountDownBar = Row.CountDownBar;
-                if (CountDownBar
-                    and CountDownBar:Get("type") == "TRADE_TIME_LEFT"
-                ) then
-                    Row.CountDownBar:SetDuration(1);
-                end
-            end);
-
-            Interface:release(Row);
+            self:releaseItemRow(Row);
             Row = nil;
             self.ItemRows[key] = nil;
         end
@@ -372,7 +362,8 @@ function Overview:refresh()
     -- or the player opted to not show the item on the list
     for itemGUID, Row in pairs(self.ItemRows or {}) do
         if (not State[itemGUID] or self.HiddenItems[itemGUID]) then
-            Interface:release(Row);
+            self:releaseItemRow(Row);
+            Row = nil;
             self.ItemRows[itemGUID] = nil;
         end
     end
@@ -402,9 +393,10 @@ function Overview:refresh()
             or (awardedToSelf and HIDE_AWARDED_TO_SELF)
             or (disenchanted and HIDE_DISENCHANTED)
         )) then
-            self.ItemRows[itemGUID]:Hide();
-            Interface:release(self.ItemRows[itemGUID]);
+            local Row = self.ItemRows[itemGUID];
+            self:releaseItemRow(Row);
             self.ItemRows[itemGUID] = nil;
+            Row = nil;
         end
     end
 
@@ -580,11 +572,7 @@ function Overview:buildItemRow(Details, Window, ActionButtons)
     -- Make the bar turn green/yellow/red based on time left
     CountDownBar:AddUpdateFunction(function (Bar)
         if (CountDownBar.remaining > MAXIMUM_TRADE_TIME_LEFT) then
-            if (self.ItemRows[Details.itemGUID]) then
-                self.ItemRows[Details.itemGUID]:Hide();
-                Interface:release(self.ItemRows[Details.itemGUID]);
-                self.ItemRows[Details.itemGUID] = nil;
-            end
+            self:releaseItemRow(self.ItemRows[Details.itemGUID]);
 
             return;
         end
@@ -606,8 +594,10 @@ function Overview:buildItemRow(Details, Window, ActionButtons)
         if (Bar and Bar.Get and Bar:Get("type") == "TRADE_TIME_LEFT") then
             local itemGUID = Bar:Get("itemGUID");
 
-            if (not GL:empty(itemGUID)) then
-                self:hideItemRow(itemGUID);
+            if (type(itemGUID) == "string"
+                and not GL:empty(itemGUID)
+            ) then
+                self:hideItemRow(itemGUID, false);
             end
         end
     end);
@@ -624,4 +614,30 @@ function Overview:hideItemRow(itemGUID)
     self.HiddenItems[itemGUID] = true;
 
     self:refresh();
+end
+
+--- Release an ItemRow (aka remove it, hide it, take care of the countdown bar it holds)
+---
+---@param ItemRow Frame
+---@return void
+function Overview:releaseItemRow(ItemRow, stopBar)
+    stopBar = stopBar ~= false;
+
+    if (type(ItemRow) ~= "table") then
+        return;
+    end
+
+    local CountDownBar = ItemRow.CountDownBar;
+    if (type(CountDownBar) == "table"
+        and CountDownBar.Get
+        and CountDownBar:Get("type") == "TRADE_TIME_LEFT"
+    ) then
+        CountDownBar:SetParent(UIParent);
+
+        if (stopBar and CountDownBar.running) then
+            CountDownBar:Stop();
+        end
+    end
+
+    Interface:release(ItemRow);
 end
