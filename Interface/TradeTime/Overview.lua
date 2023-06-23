@@ -591,7 +591,11 @@ function Overview:buildItemRow(Details, Window, ActionButtons)
     end);
 
     CandyBar.RegisterCallback(GL.Ace, "LibCandyBar_Stop", function (_, Bar)
-        if (Bar and Bar.Get and Bar:Get("type") == "TRADE_TIME_LEFT") then
+        if (Bar
+            and Bar.Get
+            and Bar:Get("type") == "TRADE_TIME_LEFT"
+            and not Bar:Get("stopping")
+        ) then
             local itemGUID = Bar:Get("itemGUID");
 
             if (type(itemGUID) == "string"
@@ -620,9 +624,7 @@ end
 ---
 ---@param ItemRow Frame
 ---@return void
-function Overview:releaseItemRow(ItemRow, stopBar)
-    stopBar = stopBar ~= false;
-
+function Overview:releaseItemRow(ItemRow)
     if (type(ItemRow) ~= "table") then
         return;
     end
@@ -631,10 +633,12 @@ function Overview:releaseItemRow(ItemRow, stopBar)
     if (type(CountDownBar) == "table"
         and CountDownBar.Get
         and CountDownBar:Get("type") == "TRADE_TIME_LEFT"
+        and not CountDownBar:Get("stopping")
     ) then
         CountDownBar:SetParent(UIParent);
+        CountDownBar:Set("stopping", true);
 
-        if (stopBar and CountDownBar.running) then
+        if (CountDownBar.running) then
             CountDownBar:Stop();
         end
     end
