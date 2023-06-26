@@ -22,7 +22,6 @@ GL.User = {
     isInRaid = IsInRaid(),
     isInParty = IsInGroup() and not IsInRaid(),
     isInGroup = IsInGroup(),
-    raidsAttended = 0,
 
     -- Group specific
     raidIndex = nil,

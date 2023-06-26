@@ -920,6 +920,8 @@ function SoftRes:importLootReserveData(Reserves)
 
     -- Materialize the data for ease of use
     self:materializeData();
+
+    GL.Events:fire("GL.SOFTRES_IMPORTED");
 end
 
 --- Import a Gargul data string

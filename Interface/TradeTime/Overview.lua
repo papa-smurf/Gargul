@@ -5,6 +5,9 @@ local CandyBar = LibStub("LibCandyBarGargul-3.0");
 local _, GL = ...;
 GL.Interface.TradeTime = GL.Interface and GL.Interface.TradeTime or {};
 
+---@type Constants
+local Constants = GL.Data.Constants;
+
 ---@type DB
 local DB = GL.DB;
 
@@ -16,6 +19,12 @@ local Events = GL.Events;
 
 ---@type TradeTime
 local TradeTime = GL.TradeTime;
+
+---@type SoftRes
+local SoftRes = GL.SoftRes;
+
+---@type TMB
+local TMB = GL.TMB;
 
 ---@type Interface
 local Interface = GL.Interface;
@@ -569,6 +578,34 @@ function Overview:buildItemRow(Details, Window, ActionButtons)
         end);
     end);
 
+    local itemIsHardReserved, itemIsSoftReserved, itemIsWishListed, itemIsPrioritized;
+    local updateReservationDetails = function()
+        -- Check if this item is reserved
+        itemIsHardReserved = SoftRes:linkIsHardReserved(Details.itemLink);
+        itemIsSoftReserved = not itemIsHardReserved and SoftRes:linkIsReserved(Details.itemLink);
+
+        -- Check if this item is on TMB
+        itemIsWishListed, itemIsPrioritized = false, false;
+        local TMBInfo = GL.TMB:byItemLink(Details.itemLink) or {};
+        for _, Entry in pairs(TMBInfo or {}) do
+            itemIsWishListed = true;
+
+            if (Entry.type == Constants.tmbTypePrio) then
+                itemIsPrioritized = true;
+                break;
+            end
+        end
+        itemIsWishListed = not itemIsPrioritized and itemIsWishListed;
+    end
+
+    Events:register({
+        { "TradeTimeOverviewSoftresImported" .. Details.itemGUID, "GL.SOFTRES_IMPORTED" },
+        { "TradeTimeOverviewSoftresCleared" .. Details.itemGUID, "GL.SOFTRES_CLEARED" },
+        { "TradeTimeOverviewTMBImported" .. Details.itemGUID, "GL.TMB_IMPORTED" },
+        { "TradeTimeOverviewTMBCleared" .. Details.itemGUID, "GL.TMB_CLEARED" },
+    }, updateReservationDetails);
+    updateReservationDetails();
+
     -- Make the bar turn green/yellow/red based on time left
     CountDownBar:AddUpdateFunction(function (Bar)
         if (CountDownBar.remaining > MAXIMUM_TRADE_TIME_LEFT) then
@@ -579,7 +616,15 @@ function Overview:buildItemRow(Details, Window, ActionButtons)
 
         local percentageLeft = (CountDownBar.remaining / 7200) * 100;
 
-        if (ItemRow.awarded or ItemRow.disenchanted) then
+        if (itemIsHardReserved) then
+            Bar:SetColor(.77, .12, .23, 1);
+        elseif (itemIsSoftReserved) then
+            Bar:SetColor(.95686, .5490, .72941, 1);
+        elseif (itemIsPrioritized) then
+            Bar:SetColor(1, .48627, .0392, 1);
+        elseif (itemIsWishListed) then
+            Bar:SetColor(1, 1, 1, 1);
+        elseif (ItemRow.awarded or ItemRow.disenchanted) then
             Bar:SetColor(0, 0, 0, .6);
         elseif (percentageLeft >= 60) then
             Bar:SetColor(0, 1, 0, .3);

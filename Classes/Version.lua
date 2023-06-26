@@ -73,7 +73,7 @@ function Version:_init()
 
     local now = GetServerTime();
     GL.DB.LoadDetails.lastLoadedOn = now;
-    GL.DB.LoadDetails[self.current] = now;
+    GL.DB.LoadDetails[self.current] = GL.DB.LoadDetails[self.current] or now;
 
     --[[ CHECK FOR GARGUL UPDATES ]]
 

@@ -1599,6 +1599,95 @@ function GL:highlightItem(Item, itemLink, Details)
     );
 end
 
+---@return void
+function GL:bugReport()
+    local AddonData = {};
+    for i = 1, GetNumAddOns() do
+        local name = GetAddOnInfo(i);
+        local version = GetAddOnMetadata(i, "Version");
+        local loaded = GetAddOnEnableState(GL.User.name, name) == 2;
+
+        AddonData[name] = { version, loaded };
+    end
+
+    local oldestTimestamp = (function ()
+        local now = GetServerTime();
+        local oldest = now;
+
+        local brUpdatedAt = GL.DB:get("BoostedRolls.MetaData.updatedAt", now);
+        local brImportedAt = GL.DB:get("BoostedRolls.MetaData.importedAt", now);
+        local poUpdatedAt = GL.DB:get("PlusOnes.MetaData.updatedAt", now);
+        local srImportedAt = GL.DB:get("SoftRes.MetaData.importedAt", now);
+        local tmbImportedAt = GL.DB:get("TMB.MetaData.importedAt", now);
+
+        oldest = brUpdatedAt < oldest and brUpdatedAt or oldest;
+        oldest = brImportedAt < oldest and brImportedAt or oldest;
+        oldest = poUpdatedAt < oldest and poUpdatedAt or oldest;
+        oldest = srImportedAt < oldest and srImportedAt or oldest;
+        oldest = tmbImportedAt < oldest and tmbImportedAt or oldest;
+
+        -- Awarded items and rolls
+        for _, Details in pairs(GL.DB:get("AwardHistory") or {}) do
+            for _, Roll in pairs(Details.Rolls or {}) do
+                if (Roll.time and Roll.time < oldest) then
+                    oldest = Roll.time;
+                end
+            end
+
+            if (Details.timestamp < oldest) then
+                oldest = Details.timestamp;
+            end
+        end
+
+        -- GDKP Session, auctions, states and gold
+        for _, Session in pairs(GL.DB:get("GDKP.Ledger") or {}) do
+            for _, Auction in pairs(Session.Auctions or {}) do
+                if (Auction.createdAt and Auction.createdAt < oldest) then
+                    oldest = Auction.createdAt;
+                end
+
+                for _, State in pairs(Auction.PreviousStates or {}) do
+                    if (State.createdAt and State.createdAt < oldest) then
+                        oldest = State.createdAt;
+                    end
+                end
+            end
+
+            for _, Player in pairs(Session.GoldLedger or {}) do
+                for _, Details in pairs(Player or {}) do
+                    if (Details.createdAt and Details.createdAt < oldest) then
+                        oldest = Details.createdAt;
+                    end
+                end
+            end
+
+            if (Session.createdAt < oldest) then
+                oldest = Session.createdAt;
+            end
+        end
+
+        return oldest;
+    end)();
+
+    local Payload = {
+        AddonData = AddonData,
+        LoadDetails = GL.DB.LoadDetails,
+        ScriptErrors = C_CVar.GetCVar("scriptErrors"),
+        dataSince = oldestTimestamp,
+        guid = GL.User.id,
+        name = GL.User.name,
+        realm = GL.User.realm,
+    };
+
+    local LibDeflate = LibStub:GetLibrary("LibDeflate");
+    local zlibEncodeSucceeded;
+    local data = GL.JSON:encode(Payload);
+    zlibEncodeSucceeded, data = pcall(function () return LibDeflate:CompressZlib(data); end);
+    data = GL.Base64.encode(data);
+
+    self:frameMessage(data);
+end
+
 --- Check whether a user can use the given item ID or link (callback required)
 ---
 ---@param itemLinkOrID string|number
