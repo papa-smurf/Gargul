@@ -1669,9 +1669,13 @@ function GL:bugReport()
         return oldest;
     end)();
 
+    local Settings = GL.Settings:all();
+    Settings.UI = nil;
+
     local Payload = {
         AddonData = AddonData,
         LoadDetails = GL.DB.LoadDetails,
+        Settings = Settings,
         ScriptErrors = C_CVar.GetCVar("scriptErrors"),
         dataSince = oldestTimestamp,
         guid = GL.User.id,

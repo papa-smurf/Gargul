@@ -371,6 +371,11 @@ function Settings:showSettingsMenu(Frame)
     end);
 end
 
+--- Get all settings
+function Settings:all()
+    return self.Active;
+end
+
 --- Get a setting by a given key. Use dot notation to traverse multiple levels e.g:
 --- Settings.UI.Auctioneer.offsetX can be fetched using Settings:get("Settings.UI.Auctioneer.offsetX")
 --- without having to worry about tables or keys existing yes or no.

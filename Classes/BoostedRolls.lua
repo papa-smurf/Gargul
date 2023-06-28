@@ -317,7 +317,7 @@ end;
 ---@return number
 function BoostedRolls:minBoostedRoll(points)
     if (GL.Settings:get("BoostedRolls.fixedRolls", false)) then
-        return points;
+        return math.max(1, math.min(GL.Settings:get("BoostedRolls.reserveThreshold", 0), points));
     end
 
     -- /rnd 1-100 yields 100 possible numbers
