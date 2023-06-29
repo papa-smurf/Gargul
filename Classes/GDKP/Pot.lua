@@ -575,8 +575,9 @@ function Pot:deletePlayer(sessionID, player)
         return false;
     end
 
+    local playerGUID = GDKP:playerGUID(player);
     local DistributionDetails = GL:tableGet(Session, "Pot.DistributionDetails", {});
-    DistributionDetails[playerGUID] = GDKP:playerGUID(player);
+    DistributionDetails[playerGUID] = nil;
 
     local PlayerDetails = {};
     for name, Details in pairs(Session.Pot.DistributionDetails or {}) do
