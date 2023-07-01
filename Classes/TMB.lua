@@ -1078,8 +1078,10 @@ function TMB:decompress(data)
 end
 
 --- Broadcast the TMB to the RAID / PARTY
+---
+---@param sendEmptyPayload boolean used to override your raider's TMB data
 ---@return boolean
-function TMB:broadcast()
+function TMB:broadcast(sendEmptyPayload)
     GL:debug("TMB:broadcast");
 
     if (self.broadcastInProgress) then
@@ -1087,16 +1089,35 @@ function TMB:broadcast()
         return false;
     end
 
-    if (not GL.User.isInGroup) then
-        GL:warning("No one to broadcast to, you're not in a group!");
-        return false;
-    end
-
-    if (not GL.User.hasAssist
+    if (GL.User.isInGroup
+        and not GL.User.hasAssist
         and not GL.User.isMasterLooter
     ) then
         GL:warning("Insufficient permissions to broadcast, need ML, assist or lead!");
         return false;
+    end
+
+    if (sendEmptyPayload) then
+        GL.CommMessage.new(
+            CommActions.broadcastTMBData,
+            {
+                Items = {
+                    ["01"] = {
+                        {
+                            character = "_reset",
+                            prio = 1,
+                            type = 1,
+                        },
+                    },
+                },
+                MetaData = {
+                    importedAt = GetServerTime(),
+                },
+            },
+            "GROUP"
+        ):send();
+
+        return;
     end
 
     -- Check if there's anything to share

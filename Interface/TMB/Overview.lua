@@ -139,7 +139,7 @@ function Overview:draw()
     Window:AddChild(VerticalSpacer);
 
     local ClearButton = AceGUI:Create("Button");
-    ClearButton:SetWidth(152);
+    ClearButton:SetWidth(110);
     ClearButton:SetText("Clear Data");
     ClearButton:SetCallback("OnClick", function()
         -- Show a confirmation dialog before clearing entries
@@ -156,7 +156,7 @@ function Overview:draw()
     Window:AddChild(ClearButton);
 
     local ShareButton = AceGUI:Create("Button");
-    ShareButton:SetWidth(152);
+    ShareButton:SetWidth(108);
     ShareButton:SetText("Share Data");
     ShareButton:SetCallback("OnClick", function()
         if (not GL:empty(GL.Settings:get("TMB.shareWhitelist", ""))) then
@@ -171,11 +171,26 @@ function Overview:draw()
 
     local SettingsButton = AceGUI:Create("Button");
     SettingsButton:SetText("Settings");
-    SettingsButton:SetWidth(152);
+    SettingsButton:SetWidth(90);
     SettingsButton:SetCallback("OnClick", function()
         GL.Settings:draw("TMB");
     end);
     Window:AddChild(SettingsButton);
+
+    local ClearRaiderDataButton = AceGUI:Create("Button");
+    ClearRaiderDataButton:SetText("Clear Raider Data");
+    ClearRaiderDataButton:SetWidth(146);
+    ClearRaiderDataButton:SetCallback("OnClick", function()
+        -- Show a confirmation dialog before clearing entries
+        GL.Interface.Dialogs.PopupDialog:open{
+            question = "Clear TMB data for all raiders?",
+            OnYes = function ()
+                GL.TMB:broadcast(true);
+            end,
+        };
+    end);
+    Window:AddChild(ClearRaiderDataButton);
+
 
     VerticalSpacer = AceGUI:Create("SimpleGroup");
     VerticalSpacer:SetLayout("FILL");
