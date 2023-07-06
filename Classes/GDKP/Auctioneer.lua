@@ -502,6 +502,10 @@ function Auctioneer:timeRanOut()
 
         if (actionWhenNoBidsArePresent ~= GL.Data.Constants.GDKP.QueuedAuctionNoBidsActions.NOTHING) then
             local next = function ()
+                if (Auction.inProgress) then
+                    return;
+                end
+
                 self:clear();
                 Auction:reset(); -- Reset the actual auction object
                 AuctioneerUI:closeAuctioneerShortcut();
