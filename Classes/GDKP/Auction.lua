@@ -857,17 +857,23 @@ function Auction:addToQueue(itemLink, identifier)
         return;
     end
 
-    local PerItemSettings = GDKP:settingsForItemID(GL:getItemIDFromLink(itemLink));
-    self.Queue[identifier] = {
-        identifier = identifier,
-        increment = PerItemSettings.increment,
-        itemID = itemID,
-        itemLink = itemLink,
-        minimumBid = PerItemSettings.minimum,
-        order = GL:count(self.Queue) + 1,
-    };
+    GL:onItemLoadDo(itemID, function (Details)
+        if (not Details) then
+            return;
+        end
 
-    self:broadcastQueue();
+        local PerItemSettings = GDKP:settingsForItemID(Details.id);
+        self.Queue[identifier] = {
+            identifier = identifier,
+            increment = PerItemSettings.increment,
+            itemID = itemID,
+            itemLink = itemLink,
+            minimumBid = PerItemSettings.minimum,
+            order = GL:count(self.Queue) + 1,
+        };
+
+        self:broadcastQueue();
+    end);
 end
 
 ---@param checksum string
