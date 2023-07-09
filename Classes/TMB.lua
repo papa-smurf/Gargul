@@ -111,7 +111,6 @@ function TMB:byItemID(itemID, inRaidOnly)
         GroupMemberNames = GL.User:groupMemberNames();
     end
 
-    local Processed = {};
     local Wishes = {};
     for _, id in pairs(AllLinkedItemIDs) do
         id = tostring(id);
@@ -121,13 +120,7 @@ function TMB:byItemID(itemID, inRaidOnly)
             -- If inRaidOnly is true we need to make sure we only return details of people who are actually in the raid
             --- NOTE TO SELF: it's (os) because of the string.lower, if you remove the lower then change below accordingly!
             if (not inRaidOnly or GL:inTable(GroupMemberNames, string.gsub(playerName, "%(os%)", ""))) then
-                local checkSum = string.format('%s||%s||%s', Entry.character, tostring(Entry.prio), tostring(Entry.type));
-
-                -- Make sure we don't add the same player/prio combo more than once
-                if (not Processed[checkSum]) then
-                    Processed[checkSum] = true;
-                    tinsert(Wishes, Entry);
-                end
+                tinsert(Wishes, Entry);
             end
         end
     end
@@ -533,6 +526,7 @@ function TMB:import(data, triedToDecompress, source)
 
     local jsonDecodeSucceeded;
     local WebsiteData;
+    local wasImportedFromDFT = false;
     local function displayGenericException()
         GL.Interface:get("TMB.Importer", "Label.StatusMessage"):SetText("Invalid TMB data provided, make sure to click the 'Download' button in the Gargul section and paste the contents here as-is!");
     end
@@ -568,6 +562,7 @@ function TMB:import(data, triedToDecompress, source)
     -- We might have the dft format on hands, let's check it out!
     elseif (GL:strStartsWith(firstLine, '"')) then
         triedToDecompress = true;
+        wasImportedFromDFT = true;
         data = self:DFTFormatToTMB(data);
         WebsiteData = data;
 
@@ -670,7 +665,9 @@ function TMB:import(data, triedToDecompress, source)
                     local checkSum = string.format('%s||%s||%s||%s||%s', itemID, characterName, order, type, raidGroupID or 0);
 
                     -- Make sure to ignore duplicates
-                    if (not processedEntryCheckums[checkSum]) then
+                    if (wasImportedFromDFT -- DFT can have duplicates!
+                        or not processedEntryCheckums[checkSum]
+                    ) then
                         tinsert(TMBData[itemID], {
                             ["character"] = characterName,
                             ["prio"] = order,
