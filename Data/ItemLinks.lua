@@ -5,6 +5,15 @@ local _, GL = ...;
 GL.Data = GL.Data or {};
 
 GL.Data.ItemLinks = {
+    -- Head of Onyxia (Horde)
+    ["49643"] = {
+        49644, -- Head of Onyxia (Alliance)
+    },
+    -- Head of Onyxia (Alliance)
+    ["49644"] = {
+        49643, -- Head of Onyxia (Horde)
+    },
+
     -- Dragonslayer's Signet
     ["18403"] = {
         18422, -- Head of Onyxia (Horde)
