@@ -291,10 +291,7 @@ end
 function SoftRes:itemIDIsReservedByMe(itemID)
     GL:debug("SoftRes:itemIDIsReservedByMe");
 
-    return GL:tableGet(
-        self.MaterializedData,
-        string.format("DetailsByPlayerName.%s.Items.%s", string.format(GL.User.name), itemID)
-    ) == nil;
+    return self:itemIDIsReservedByPlayer(itemID, GL.User.player);
 end
 
 --- Check if an itemlink is reserved by the current player
@@ -575,10 +572,19 @@ function SoftRes:itemIDIsReservedByPlayer(itemID, playerName)
 
     local SoftResData = self.MaterializedData.PlayerNamesByItemID or {};
 
-    return GL:inTable(
-        SoftResData[tostring(itemID)] or {},
-        string.lower(GL:disambiguateName(playerName))
-    );
+    -- The item linked to this id can have multiple IDs (head of Onyxia for example)
+    local AllLinkedItemIDs = GL:getLinkedItemsForID(itemID, true);
+
+    for _, itemID in pairs(AllLinkedItemIDs or {}) do
+        if (GL:inTable(
+            SoftResData[tostring(itemID)] or {},
+            string.lower(GL:disambiguateName(playerName))
+        )) then
+            return true;
+        end
+    end
+
+    return false;
 end
 
 --- Fetch an item's reservations based on its ID
