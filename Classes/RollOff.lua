@@ -810,7 +810,10 @@ function RollOff:refreshRollsTable()
 
         -- The item is soft-reserved, make sure we add a note to the roll
         if (GL.SoftRes:itemIDIsReservedByPlayer(self.CurrentRollOff.itemID, normalizedPlayerName)) then
-            rollPriority = 1;
+            if (GL.Settings:get("RollTracking.sortBySoftRes")) then
+                rollPriority = 1;
+            end
+
             rollNote = "Reserved";
             local numberOfReserves = GL.SoftRes:playerReservesOnItem(self.CurrentRollOff.itemID, normalizedPlayerName);
 
@@ -820,6 +823,7 @@ function RollOff:refreshRollsTable()
 
         -- The item might be on a TMB list, make sure we add the appropriate note to the roll
         else
+            local sortByTMB = GL.Settings:get("RollTracking.sortByTMB");
             local TMBData = TMB:byItemIDAndPlayer(self.CurrentRollOff.itemID, normalizedPlayerName);
             local TopEntry = false;
 
@@ -859,14 +863,23 @@ function RollOff:refreshRollsTable()
 
                 -- Prio list entries are more important than wishlist ones (and therefore get sorted on top)
                 if (TopEntry.type == GL.Data.Constants.tmbTypePrio) then
-                    rollPriority = 2;
+                    if (sortByTMB) then
+                        rollPriority = 2;
+                    end
+
                     rollNote = "Priolist";
                 else
-                    rollPriority = 3;
+                    if (sortByTMB) then
+                        rollPriority = 3;
+                    end
+
                     rollNote = "Wishlist";
                 end
 
-                rollPriority = rollPriority + TopEntry.prio; -- Make sure rolls of identical list positions "clump" together
+                if (sortByTMB) then
+                    rollPriority = rollPriority + TopEntry.prio; -- Make sure rolls of identical list positions "clump" together
+                end
+
                 rollNote = string.format("%s [%s]", rollNote, TopEntry.prio);
             end
         end

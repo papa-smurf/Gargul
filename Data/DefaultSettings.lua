@@ -110,6 +110,8 @@ GL.Data.DefaultSettings = {
         scale = 1,
     },
     RollTracking = {
+        sortBySoftRes = true,
+        sortByTMB = true,
         trackAll = false,
         Brackets = {
             {"MS", 1, 100, 2, false, false},

@@ -20,6 +20,14 @@ function RollTracking:draw(Parent, Window)
             description = "By default Gargul only tracks rolls that follow the rules defined below. If you want to track all rolls then enable this option. The range in which a player rolled will be displayed in the roll tracker window",
             setting = "RollTracking.trackAll",
         },
+        {
+            label = "Sort rolls by SoftRes status",
+            setting = "RollTracking.sortBySoftRes",
+        },
+        {
+            label = "Sort rolls by TMB/DFT status",
+            setting = "RollTracking.sortByTMB",
+        },
     };
 
     Overview:drawCheckboxes(Checkboxes, Parent);
