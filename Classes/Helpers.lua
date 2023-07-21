@@ -2485,6 +2485,24 @@ function GL:tableMerge(left, right)
     return left;
 end
 
+---@param Table table
+---@return table
+function GL:tableUnique(Table)
+    local UniqueValues = {};
+
+    local i = 1;
+    for _, value in pairs(Table or {}) do
+        if (type(value) == "string"
+            and not UniqueValues[value]
+        ) then
+            UniqueValues[value] = i;
+            i = i + 1;
+        end
+    end
+
+    return self:tableFlip(UniqueValues);
+end
+
 --- Return the values from a single column in the input table
 ---
 ---@param Table table

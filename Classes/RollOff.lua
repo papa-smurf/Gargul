@@ -190,11 +190,11 @@ function RollOff:postStartMessage(itemLink, time, note)
                     tinsert(EligiblePlayers, Entry);
                 else
                     -- This players prio is worse than the number one, break!
-                    if (Entry.prio > EligiblePlayers[1].prio) then
+                    if (Entry.prio ~= EligiblePlayers[1].prio) then
                         break;
                     end
 
-                    -- This player's prio is lte to the number one
+                    -- This player's prio is the same, add it.
                     tinsert(EligiblePlayers, Entry);
                 end
             end
@@ -208,21 +208,22 @@ function RollOff:postStartMessage(itemLink, time, note)
                 if (not EligiblePlayers[1]) then
                     tinsert(EligiblePlayers, Entry);
                 else
-                    -- This players prio is worse than the number one, break!
-                    if (Entry.prio > EligiblePlayers[1].prio) then
+                    -- This players position is worse than the number one, break!
+                    if (Entry.position ~= EligiblePlayers[1].prio) then
                         break;
                     end
 
-                    -- This player's prio is lte to the number one
+                    -- This player's prio is the same, add it.
                     tinsert(EligiblePlayers, Entry);
                 end
             end
         end
 
         if (not GL:empty(EligiblePlayers)) then
+            local PlayerNames = GL:tableColumn(EligiblePlayers, "character");
             local source = TMB:source();
 
-            local EligiblePlayerNames = table.concat(GL:tableColumn(EligiblePlayers, "character"), ", ");
+            local EligiblePlayerNames = table.concat(GL:tableUnique(PlayerNames), ", ");
             eligiblePlayersMessage = string.format("The following players have the highest %s prio: %s", source, EligiblePlayerNames);
         end
     end
