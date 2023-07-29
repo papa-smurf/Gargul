@@ -3,17 +3,8 @@ local _, GL = ...;
 
 local AceGUI = LibStub("AceGUI-3.0");
 
----@type Data
-local Constants = GL.Data.Constants;
-
----@type DB
-local DB = GL.DB;
-
 ---@type Interface
 local Interface = GL.Interface;
-
----@type Events
-local Events = GL.Events;
 
 ---@type GDKPSession
 local GDKPSession = GL.GDKP.Session;
@@ -85,7 +76,6 @@ function Export:build()
 
     local DropDownItems = {
         [CUSTOM_FORMAT] = "|c00FFF569Custom (create your own format)|r",
-        --[SOFTRES_FORMAT] = "|c00FFF569SoftRes|r",
     };
 
     ---@type AceGUIEditBox
@@ -167,6 +157,8 @@ function Export:build()
             "@GIVEN - total gold given to the player",
             "@TRADED - gold traded to the player",
             "@MAILED - gold mailed to the player",
+            "@START - Date/time at which the first item was awarded",
+            "@END - Date/time at which the session was locked",
             "",
             "\\t is replaced by a tab",
         }, "\n"));
@@ -261,6 +253,14 @@ function Export:exportPotToCustomFormat(Session, Cuts)
 
     local exportString = GL.Settings:get("GDKP.customPotExportHeader");
     local customExportFormat = GL.Settings:get("GDKP.customPotExportFormat");
+    local endedAt = Session.lockedAt and date("%Y-%m-%d %H:%M", Session.lockedAt) or "";
+
+    local timestamps = {};
+    for _, Details in pairs(Session.Auctions or {}) do
+        tinsert(timestamps, Details.createdAt);
+    end
+    table.sort(timestamps);
+    local startedAt = timestamps[1] and date("%Y-%m-%d %H:%M", timestamps[1]) or "";
 
     -- Make sure that all relevant item data is cached
     for _, Details in pairs(Cuts) do
@@ -279,6 +279,8 @@ function Export:exportPotToCustomFormat(Session, Cuts)
             ["@GIVEN"] = copperGiven / 10000,
             ["@TRADED"] = copperTraded / 10000,
             ["@MAILED"] = copperMailed / 10000,
+            ["@START"] = startedAt,
+            ["@END"] = endedAt,
             ["\\t"] = "\t",
         };
 
