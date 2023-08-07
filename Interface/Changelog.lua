@@ -12,6 +12,16 @@ GL.Interface.Changelog = {
 
     History = {
         {
+            version = "6.2.0",
+            date = "August 7th, 2023",
+            Changes = {
+                "You can now add and deduct percentages to a player's cut. Want to give a half cut? Use -50 in the cuts window",
+                "Don't want rolls to be sorted on TMB/DFT status? Check the settings to disable it!",
+                "Added a button to /gl tmb that allows you to reset your raider's TMB data in case you accidentally sent it to them",
+                "Did you know that |c00BE3333multiple item bidding|r is currently in the works? Join our discord to get in on the conversation!",
+            },
+        },
+        {
             version = "6.1.6",
             date = "June 26th, 2023",
             Changes = {
