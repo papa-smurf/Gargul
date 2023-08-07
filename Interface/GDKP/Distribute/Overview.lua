@@ -1,3 +1,5 @@
+local L = Gargul_L;
+
 ---@type GL
 local _, GL = ...;
 
@@ -173,6 +175,10 @@ function Overview:build()
         GameTooltip:AddLine("|c00F7922E(2000g)|r Means you owe this person 2000g");
         GameTooltip:AddLine("|c00BE3333(3000g)|r Means this person owes you 3000g");
         GameTooltip:AddLine("|c0092FF00(0)|r Means that you're square");
+        GameTooltip:AddLine(" ");
+        GameTooltip:AddLine("Adjuster explanation:");
+        GameTooltip:AddLine("With adjust [g] you can add/deduct gold to a player (use -50 to deduct 50 gold from a player's cut)");
+        GameTooltip:AddLine("With adjust [%] you can add/deduct a percentage to a player (use -50 to give players a half cut)");
         GameTooltip:Show();
     end);
 
@@ -541,7 +547,13 @@ function Overview:refresh()
 
     ---@type AceGUILabel
     HeaderLabel = AceGUI:Create("Label");
-    HeaderLabel:SetText("adjust [g]");
+    HeaderLabel:SetText(L.GDKP_CUTS_ADJUST_G);
+    HeaderLabel:SetWidth(60);
+    RaidersTableHeader:AddChild(HeaderLabel);
+
+    ---@type AceGUILabel
+    HeaderLabel = AceGUI:Create("Label");
+    HeaderLabel:SetText(L.GDKP_CUTS_ADJUST_P);
     HeaderLabel:SetWidth(70);
     RaidersTableHeader:AddChild(HeaderLabel);
 
@@ -636,7 +648,7 @@ function Overview:refresh()
 
         local Checkbox = AceGUI:Create("CheckBox");
         Checkbox:SetValue(PlayerPotDetails[Constants.GDKP.baseMutatorIdentifier]);
-        Checkbox:SetWidth(50);
+        Checkbox:SetWidth(43);
         Checkbox:SetLabel("");
         Checkbox:SetDescription("");
         Checkbox:SetDisabled(Session.lockedAt);
@@ -675,14 +687,14 @@ function Overview:refresh()
         end
 
         ---@type AceGUIEditBox
-        local AdjustBox = AceGUI:Create("EditBox");
-        AdjustBox:SetText();
-        AdjustBox:DisableButton(true);
-        AdjustBox:SetWidth(60);
-        AdjustBox:SetHeight(18);
-        AdjustBox:SetText(PlayerPotDetails[Constants.GDKP.adjustMutatorIdentifier]);
-        AdjustBox:SetDisabled(Session.lockedAt);
-        AdjustBox:SetCallback("OnTextChanged", function(El)
+        local AdjustGoldBox = AceGUI:Create("EditBox");
+        AdjustGoldBox:SetText();
+        AdjustGoldBox:DisableButton(true);
+        AdjustGoldBox:SetWidth(62);
+        AdjustGoldBox:SetHeight(18);
+        AdjustGoldBox:SetText(PlayerPotDetails[Constants.GDKP.adjustMutatorIdentifier]);
+        AdjustGoldBox:SetDisabled(Session.lockedAt);
+        AdjustGoldBox:SetCallback("OnTextChanged", function(El)
             GDKPPot:setPlayerMutatorValue(
                 self.sessionID,
                 player,
@@ -691,7 +703,26 @@ function Overview:refresh()
             );
             self:calculateCuts();
         end);
-        RaiderHolder:AddChild(AdjustBox);
+        RaiderHolder:AddChild(AdjustGoldBox);
+
+        ---@type AceGUIEditBox
+        local AdjustPercentageBox = AceGUI:Create("EditBox");
+        AdjustPercentageBox:SetText();
+        AdjustPercentageBox:DisableButton(true);
+        AdjustPercentageBox:SetWidth(64);
+        AdjustPercentageBox:SetHeight(18);
+        AdjustPercentageBox:SetText(PlayerPotDetails[Constants.GDKP.adjustPercentageMutatorIdentifier]);
+        AdjustPercentageBox:SetDisabled(Session.lockedAt);
+        AdjustPercentageBox:SetCallback("OnTextChanged", function(El)
+            GDKPPot:setPlayerMutatorValue(
+                self.sessionID,
+                player,
+                Constants.GDKP.adjustPercentageMutatorIdentifier,
+                El:GetText()
+            );
+            self:calculateCuts();
+        end);
+        RaiderHolder:AddChild(AdjustPercentageBox);
 
         ---@type AceGUILabel
         FillerLabel = AceGUI:Create("Label");

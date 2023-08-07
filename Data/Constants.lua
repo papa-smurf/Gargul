@@ -187,12 +187,12 @@ GL.Data.Constants = {
             "WaDaFruCK",
         },
         Epic = {
-            "Die_Quelle",
             "Infinïty",
             "Sapmagic",
             "Vejusatko",
         },
         Legendary = {
+            "Therueed",
             "Cuckster",
             "Freezythree",
             "TiredReyun",
@@ -260,6 +260,7 @@ GL.Data.Constants = {
         mailIdentifier = "mail",
         mutationIdentifier = "mutation",
         adjustMutatorIdentifier = "+___adjust___+",
+        adjustPercentageMutatorIdentifier = "+__%adjust%__+",
         baseMutatorIdentifier = "+___base___+",
         potIncreaseItemID = GetItemInfoInstant(45978) or 21100, -- Classic era doesn't have a solid gold coin, yikes!
     },

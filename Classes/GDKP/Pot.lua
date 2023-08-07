@@ -329,6 +329,8 @@ function Pot:calculateCuts(sessionID)
     local Cuts = Session.Pot.Cuts or {};
     local DistributionDetails = Session.Pot.DistributionDetails or {};
 
+    -- This player hasn't had any pot or mutator calculations done for him yet
+    -- Figure out which mutators to assign to him
     for _, Player in pairs(GL.User:groupMembers() or {}) do
         local playerDetailsID = strlower(Player.fqn);
         if (GL:empty(DistributionDetails[playerDetailsID])) then
@@ -342,23 +344,30 @@ function Pot:calculateCuts(sessionID)
     local managementCut = math.floor(totalPot * (0 + managementCutPercentage / 100));
     local totalToDistribute = math.floor(totalPot - managementCut);
 
-    local base = 0;
-    local flat = 0;
-    local numberOfPlayersWithBase = 0;
+    local flat = 0; -- The total amount of gold given to a person as a flat gold rate
+    local baseParts = 0; -- The total number of bases (25 if there are 25 people all getting a base cut, none getting a cut/bonus)
     local percentages = 0;
+    local percentageMutators = {};
 
+    -- Calculate the total number of base cuts, flat gold, and mutator percentages
     for _, Mutators in pairs(DistributionDetails or {}) do
         for name, value in pairs(Mutators or {}) do
             -- This player receives the base cut
             if (name == Constants.GDKP.baseMutatorIdentifier) then
                 if (value) then
-                    numberOfPlayersWithBase = numberOfPlayersWithBase + 1;
+                    baseParts = baseParts + 1;
                 end
 
             -- This player receives a manual gold adjustment
             elseif (name == Constants.GDKP.adjustMutatorIdentifier) then
                 if (tonumber(value)) then
                     flat = flat + value;
+                end
+
+            -- This player receives a base % bonus or dock (example: 50 translates to adding .5 to the baseParts)
+            elseif (name == Constants.GDKP.adjustPercentageMutatorIdentifier) then
+                if (tonumber(value)) then
+                    baseParts = baseParts + (tonumber(value) / 100);
                 end
 
             elseif (Session.Pot.Mutators[name] and value) then
@@ -374,11 +383,13 @@ function Pot:calculateCuts(sessionID)
     end
 
     local leftToDistribute = totalToDistribute - flat;
-    local baseTotal = leftToDistribute - (leftToDistribute * (0 + (percentages / 100)));
 
-    if (GL:higherThanZero(baseTotal) and GL:higherThanZero(numberOfPlayersWithBase)) then
-        base = baseTotal / numberOfPlayersWithBase;
-    elseif (Session.lockedAt and not GL:higherThanZero(baseTotal) and GL:higherThanZero(percentages)) then
+    -- The total amount of gold that will be divided between all base parts (pot - flat - mutator percentages)
+    local base = leftToDistribute - (leftToDistribute * (0 + (percentages / 100)));
+
+    if (GL:higherThanZero(base) and GL:higherThanZero(baseParts)) then
+        base = base / baseParts;
+    elseif (Session.lockedAt and not GL:higherThanZero(base) and GL:higherThanZero(percentages)) then
         GL:error("There's not enough gold to distribute, expect some weird cut calculations!");
     end
 
@@ -392,12 +403,23 @@ function Pot:calculateCuts(sessionID)
         end
 
         for name, value in pairs(Mutators or {}) do
+            -- A value was entered in the `adjust [g]` editbox for this player
             if (name == Constants.GDKP.adjustMutatorIdentifier) then
                 if (tonumber(value)) then
                     playerPot = playerPot + value;
                 end
 
-            elseif (name ~= Constants.GDKP.baseMutatorIdentifier and Session.Pot.Mutators[name] and value) then
+            -- A value was entered in the `adjust [%]` editbox for this player
+            elseif (name == Constants.GDKP.adjustPercentageMutatorIdentifier) then
+                if (tonumber(value)) then
+                    value = tonumber(value);
+
+                    local percentage = value / 100;
+                    playerPot = playerPot + (base * percentage);
+                end
+
+            -- One of the other mutators was enabled for this user
+            elseif (Session.Pot.Mutators[name] and value) then
                 if (tonumber(Session.Pot.Mutators[name].percentage)) then
                     playerPot = playerPot + (leftToDistribute * (0 + Session.Pot.Mutators[name].percentage / 100));
                 end

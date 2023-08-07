@@ -5,6 +5,9 @@ local L = Gargul_L;
 L.GARGUL = "Gargul";
 
 --[[ START TRANSLATING HERE! ]]
+L.GDKP_CUTS_ADJUST_G = "adjust [g]";
+L.GDKP_CUTS_ADJUST_P = "adjust [%]";
+
 L.ALL_SETTINGS = "All Settings";
 L.ANTISNIPE = "Anti Snipe";
 L.ANTISNIPE_EXPLANATION = {
