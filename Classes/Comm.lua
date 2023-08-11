@@ -234,9 +234,14 @@ function Comm:listen(payload, distribution, playerName)
 
     if (not payload.senderFqn and playerName) then
         payload.senderFqn = GL:nameFormat{name = playerName, forceRealm = true};
-    elseif (payload.senderFqn and not GL:strStartsWith(payload.senderFqn, playerName)) then
-        GL:warning("Potential identity tamper detected in COMM message");
-        return false;
+    elseif (payload.senderFqn) then
+        local ciSenderFqn = strlower(strtrim(payload.senderFqn));
+        local ciPlayerName = strlower(strtrim(playerName));
+
+        -- This indicates potential source code tampering
+        if (not GL:strStartsWith(ciSenderFqn, ciPlayerName)) then
+            return false;
+        end
     end
 
     -- The version includes a version, see if it's one we can work with

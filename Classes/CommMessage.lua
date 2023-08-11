@@ -110,9 +110,9 @@ function CommMessage:respond(message)
         action = GL.Data.Constants.Comm.Actions.response,
         content = message,
         channel = "WHISPER",
-        version = GL.version;
-        minimumVersion = GL.Data.Constants.Comm.minimumAppVersion;
-        senderFqn = GL.User.fqn,
+        version = GL.version,
+        minimumVersion = GL.Data.Constants.Comm.minimumAppVersion,
+        senderFqn = GL.User.fqn or GL:addRealm(UnitName("player"), GL.User.realm),
         recipient = recipient,
         correspondenceId = self.correspondenceId or self.id,
     };
