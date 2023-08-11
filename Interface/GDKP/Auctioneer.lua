@@ -985,14 +985,6 @@ function AuctioneerUI:buildQueue(Window)
                     end
                 end);
 
-                ItemRow:SetScript("OnMouseUp", function (_, mouseButtonPressed)
-                    GL:handleItemClick(link, mouseButtonPressed, function ()
-                        -- Remove the item from the queue if it was awarded/disenchanted
-                        Auction:removeFromQueue(ItemRow._identifier);
-                        self:deleteRowFromQueue(ItemRow);
-                    end);
-                end);
-
                 local uiScale, mouseX, mouseY;
                 ItemRow:SetScript("OnMouseDown", function ()
                     uiScale, mouseX, mouseY = UIParent:GetEffectiveScale(), GetCursorPosition();
@@ -1057,12 +1049,6 @@ function AuctioneerUI:buildQueue(Window)
                 local Icon = CreateFrame("Frame",nil, ItemRow);
                 Icon:SetPoint("TOPLEFT", ItemRow, 0, -2);
                 Icon:SetSize(rowHeight - 4, rowHeight - 4);
-
-                Icon:SetScript("OnMouseUp", function (_, mouseButtonPressed)
-                    -- Remove the item from the queue if it was awarded/disenchanted
-                    Auction:removeFromQueue(ItemRow._identifier);
-                    self:deleteRowFromQueue(ItemRow);
-                end);
 
                 Interface:addTooltip(Icon, Details.link);
 
