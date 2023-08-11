@@ -331,10 +331,12 @@ function Pot:calculateCuts(sessionID)
 
     -- This player hasn't had any pot or mutator calculations done for him yet
     -- Figure out which mutators to assign to him
-    for _, Player in pairs(GL.User:groupMembers() or {}) do
-        local playerDetailsID = strlower(Player.fqn);
-        if (GL:empty(DistributionDetails[playerDetailsID])) then
-            DistributionDetails[playerDetailsID] = self:determineDistributionDefaults(Player, Session);
+    if (not Session.lockedAt) then
+        for _, Player in pairs(GL.User:groupMembers() or {}) do
+            local playerDetailsID = strlower(Player.fqn);
+            if (GL:empty(DistributionDetails[playerDetailsID])) then
+                DistributionDetails[playerDetailsID] = self:determineDistributionDefaults(Player, Session);
+            end
         end
     end
 
