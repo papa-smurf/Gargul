@@ -5,7 +5,7 @@ local Overview = GL.Interface.Settings.Overview; ---@type SettingsOverview
 
 ---@class TradeAnnouncements
 GL.Interface.Settings.TradeAnnouncements = {
-    description = "When should Gargul announce traded items and/or gold?",
+    description = "When should Gargul announce traded items and/or gold?\n\n|cffC41E3ANote: gold trades are always announced when you have an active GDKP session!|r",
 };
 local TradeAnnouncements = GL.Interface.Settings.TradeAnnouncements; ---@type TradeAnnouncements
 
