@@ -736,7 +736,10 @@ function Overview:refresh()
         RaiderHolder:AddChild(CutLabel);
         self.CutHolders[player] = CutLabel;
 
-        if (not playerIsInMyGroup and not Session.lockedAt) then
+        -- Show a edit and delete button when
+        --   The current user is not in a group or the raider is not in our group
+        --   And the session is not currently locked
+        if ((not GL.User.isInGroup or not playerIsInMyGroup) and not Session.lockedAt) then
             --[[ EDIT BUTTON ]]
             local Edit = Interface:createButton(RaiderHolder, {
                 onClick = function()
