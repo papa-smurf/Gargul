@@ -25,8 +25,12 @@ function RollTracking:draw(Parent, Window)
             setting = "RollTracking.sortBySoftRes",
         },
         {
-            label = "Sort rolls by TMB/DFT status",
-            setting = "RollTracking.sortByTMB",
+            label = "Sort rolls by TMB wishlist status",
+            setting = "RollTracking.sortByTMBWishlist",
+        },
+        {
+            label = "Sort rolls by TMB/DFT prio status",
+            setting = "RollTracking.sortByTMBPrio",
         },
     };
 

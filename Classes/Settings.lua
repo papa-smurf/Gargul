@@ -107,6 +107,16 @@ function Settings:enforceTemporarySettings()
         return;
     end
 
+    --- In 6.2.2 we split sortByTMB into sortByTMBWishlist and sortByTMBPrio
+    if (DB:get("Settings.RollTracking.sortByTMB") ~= nil) then
+        local oldSetting = DB:get("Settings.RollTracking.sortByTMB");
+
+        DB:set("Settings.RollTracking.sortByTMBWishlist", oldSetting);
+        DB:set("Settings.RollTracking.sortByTMBPrio", oldSetting);
+
+        DB:set("Settings.RollTracking.sortByTMB", nil);
+    end
+
     local Version = GL.Version;
 
     --- Check if the last version we loaded is equal to or older than 6.0.4

@@ -825,7 +825,8 @@ function RollOff:refreshRollsTable()
 
         -- The item might be on a TMB list, make sure we add the appropriate note to the roll
         if (TMBData) then
-            local sortByTMB = GL.Settings:get("RollTracking.sortByTMB");
+            local sortByTMBWishlist = GL.Settings:get("RollTracking.sortByTMBWishlist");
+            local sortByTMBPrio = GL.Settings:get("RollTracking.sortByTMBPrio");
             local TopEntry = false;
 
             for _, Entry in pairs(TMBData) do
@@ -865,21 +866,19 @@ function RollOff:refreshRollsTable()
 
                 -- Prio list entries are more important than wishlist ones (and therefore get sorted on top)
                 if (TopEntry.type == GL.Data.Constants.tmbTypePrio) then
-                    if (sortByTMB) then
+                    if (sortByTMBPrio) then
                         rollPriority = 2;
+                        rollPriority = rollPriority + TopEntry.prio; -- Make sure rolls of identical list positions "clump" together
                     end
 
                     tinsert(rollNotes, string.format("|c00FF7C0APrio [%s]|r", TopEntry.prio));
                 else
-                    if (sortByTMB) then
+                    if (sortByTMBWishlist) then
                         rollPriority = 3;
+                        rollPriority = rollPriority + TopEntry.prio; -- Make sure rolls of identical list positions "clump" together
                     end
 
                     tinsert(rollNotes, string.format("|c00FFFFFFWish [%s]|r", TopEntry.prio));
-                end
-
-                if (sortByTMB) then
-                    rollPriority = rollPriority + TopEntry.prio; -- Make sure rolls of identical list positions "clump" together
                 end
             end
         end
