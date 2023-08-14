@@ -295,7 +295,7 @@ function LedgerList:refresh()
         Table:SetData({}, true);
     end
 
-    -- We can't work with this session since there are no auction attached
+    -- We can't work with this session since there are no auctions attached
     local Cuts = GL:tableGet(Session, "Pot.Cuts", {});
     if (type(Cuts) == "table") then
         local PlayerNames = {};
@@ -371,9 +371,21 @@ function LedgerList:refresh()
         return;
     end
 
+    local Auctions = GL:tableValues(Session.Auctions);
+    table.sort(Auctions, function (a, b)
+        local aCreatedAt = tonumber(a.createdAt);
+        local bCreatedAt = tonumber(b.createdAt);
+
+        if (aCreatedAt and bCreatedAt) then
+            return aCreatedAt < bCreatedAt;
+        end
+
+        return false;
+    end);
+
     local ItemIDs, SalesData = {}, {};
     local count = 0;
-    for _, Auction in pairs(Session.Auctions) do
+    for _, Auction in pairs(Auctions) do
         if (type(Auction) == "table"
             and type(Auction.Winner) == "table"
             and type(Auction.itemID) == "number"
