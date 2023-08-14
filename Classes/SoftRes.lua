@@ -485,33 +485,32 @@ end
 ---@param inRaidOnly boolean
 ---@return boolean
 function SoftRes:idIsReserved(itemID, inRaidOnly)
-    local idString = tostring(itemID);
-
     if (type(inRaidOnly) ~= "boolean") then
         inRaidOnly = GL.User.isInGroup and Settings:get("SoftRes.hideInfoOfPeopleNotInGroup");
     end
 
     -- The item is hard-reserved
-    if (self:IDIsHardReserved(idString)) then
+    if (self:IDIsHardReserved(itemID)) then
         return true;
     end
 
-    -- The item is not reserved at all
-    if (not GL:inTable(self.MaterializedData.ReservedItemIDs, idString)) then
-        return false;
-    end
+    -- The item linked to this id can have multiple IDs (head of Onyxia for example)
+    local AllLinkedItemIDs = GL:getLinkedItemsForID(itemID, true);
 
-    -- The item is reserved and the user doesn't care about whether the people reserving it
-    if (not inRaidOnly) then
-        return true;
-    end
+    for _, itemID in pairs(AllLinkedItemIDs or {}) do
+        local idString = tostring(itemID);
+        local Reserves = self.MaterializedData.PlayerNamesByItemID[idString];
 
-    -- Check whether any of the people reserving this item are actually in the raid
-    local GroupMemberNames = GL.User:groupMemberNames();
+        if (Reserves) then
+            if (not inRaidOnly) then
+                return true;
+            end
 
-    for _, playerName in pairs(GroupMemberNames) do
-        if (GL:inTable(self.MaterializedData.PlayerNamesByItemID[idString], playerName)) then
-            return true;
+            for _, name in pairs(Reserves) do
+                if (GL.User:unitInGroup(name)) then
+                    return true;
+                end
+            end
         end
     end
 
@@ -532,7 +531,16 @@ end
 ---@param itemID number|string
 ---@return boolean
 function SoftRes:IDIsHardReserved(itemID)
-    return self.MaterializedData.HardReserveDetailsByID[tostring(itemID)] ~= nil;
+    -- The item linked to this id can have multiple IDs (head of Onyxia for example)
+    local AllLinkedItemIDs = GL:getLinkedItemsForID(itemID, true);
+
+    for _, itemID in pairs(AllLinkedItemIDs or {}) do
+        if (self.MaterializedData.HardReserveDetailsByID[tostring(itemID)] ~= nil) then
+            return true;
+        end
+    end
+
+    return false;
 end
 
 --- Check whether a given itemlink is hard-reserved
