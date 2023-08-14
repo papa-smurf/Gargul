@@ -117,7 +117,6 @@ function MailCuts:build()
         name = self.windowName,
         width = 300,
         height = 1,
-        hideMinimizeButton = true,
         hideMoveButton = true,
         hideResizeButton = true,
         closeWithEscape = false,
