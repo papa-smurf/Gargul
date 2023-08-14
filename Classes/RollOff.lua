@@ -805,27 +805,27 @@ function RollOff:refreshRollsTable()
         -- Think of it as a z-index in CSS: nasty but necessary
         rollPriority = rollPriority + 10000;
 
-        -- Check if the player reserved the current item id
-        local rollNote = "";
+        local rollNotes = {};
         local normalizedPlayerName = string.lower(GL:disambiguateName(playerName));
 
-        -- The item is soft-reserved, make sure we add a note to the roll
+        -- Check if the player reserved the current item id
         if (GL.SoftRes:itemIDIsReservedByPlayer(self.CurrentRollOff.itemID, normalizedPlayerName)) then
             if (GL.Settings:get("RollTracking.sortBySoftRes")) then
                 rollPriority = 1;
             end
 
-            rollNote = "Reserved";
-            local numberOfReserves = GL.SoftRes:playerReservesOnItem(self.CurrentRollOff.itemID, normalizedPlayerName);
+            local numberOfReserves = GL.SoftRes:playerReservesOnItem(self.CurrentRollOff.itemID, normalizedPlayerName) or 0;
 
-            if (numberOfReserves > 1) then
-                rollNote = string.format("%s (%sx)", rollNote, numberOfReserves);
+            if (numberOfReserves > 0) then
+                tinsert(rollNotes, string.format("|c00F48CBASR [%sx]|r", numberOfReserves));
             end
+        end
+
+        local TMBData = TMB:byItemIDAndPlayer(self.CurrentRollOff.itemID, normalizedPlayerName);
 
         -- The item might be on a TMB list, make sure we add the appropriate note to the roll
-        else
+        if (TMBData) then
             local sortByTMB = GL.Settings:get("RollTracking.sortByTMB");
-            local TMBData = TMB:byItemIDAndPlayer(self.CurrentRollOff.itemID, normalizedPlayerName);
             local TopEntry = false;
 
             for _, Entry in pairs(TMBData) do
@@ -861,6 +861,7 @@ function RollOff:refreshRollsTable()
 
             -- The roller has this item on one of his lists, add a note and change the roll sorting!
             if (TopEntry) then
+                local type = "";
 
                 -- Prio list entries are more important than wishlist ones (and therefore get sorted on top)
                 if (TopEntry.type == GL.Data.Constants.tmbTypePrio) then
@@ -868,26 +869,24 @@ function RollOff:refreshRollsTable()
                         rollPriority = 2;
                     end
 
-                    rollNote = "Priolist";
+                    tinsert(rollNotes, string.format("|c00FF7C0APrio [%s]|r", TopEntry.prio));
                 else
                     if (sortByTMB) then
                         rollPriority = 3;
                     end
 
-                    rollNote = "Wishlist";
+                    tinsert(rollNotes, string.format("|c00FFFFFFWish [%s]|r", TopEntry.prio));
                 end
 
                 if (sortByTMB) then
                     rollPriority = rollPriority + TopEntry.prio; -- Make sure rolls of identical list positions "clump" together
                 end
-
-                rollNote = string.format("%s [%s]", rollNote, TopEntry.prio);
             end
         end
 
         local rollerName = playerName;
-        -- If this isn't the player's first roll for the current item
-        -- then we add a number behind the players name like so: PlayerName [#]
+        -- If this isn't the player's first roll for the current item then
+        -- we add a number behind the players name like so: PlayerName [#]
         if (numberOfTimesRolledByPlayer > 1) then
             rollerName = string.format("%s [%s]", playerName, numberOfTimesRolledByPlayer);
         end
@@ -918,7 +917,7 @@ function RollOff:refreshRollsTable()
                     color = GL:classRGBAColor(class),
                 },
                 {
-                    value = rollNote,
+                    value = table.concat(rollNotes, ", "),
                     color = GL:classRGBAColor(class),
                 },
                 {

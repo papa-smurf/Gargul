@@ -61,7 +61,7 @@ function MasterLooterUI:draw(itemLink)
     Window = AceGUI:Create("Frame", "GARGUL_MASTERLOOTERUI_WINDOW");
     Window:SetTitle("Gargul v" .. GL.version);
     Window:SetLayout("Flow");
-    Window:SetWidth(430);
+    Window:SetWidth(460);
     Window:SetHeight(350);
     Window:EnableResize(false);
     Window.statustext:GetParent():Hide(); -- Hide the statustext bar
@@ -777,7 +777,7 @@ function MasterLooterUI:drawPlayersTable(parent)
         --[[ Reserved / TMB etc ]]
         {
             name = "Note",
-            width = 88,
+            width = 118,
             align = "LEFT",
             color = {
                 r = 0.5,
