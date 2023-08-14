@@ -401,7 +401,7 @@ function Overview:refresh()
         };
     end);
 
-    local Mutators = GL:tableGet(Session, "Pot.Mutators", {});
+    local Mutators = GL:tableValues(GL:tableGet(Session, "Pot.Mutators", {}));
 
     local totalPot = GDKPPot:total(self.sessionID);
     local managementCutPercentage = tonumber(Session.managementCut) or 0;
@@ -417,6 +417,15 @@ function Overview:refresh()
     -- [[ SHOW MUTATORS ]]
 
     local mutatorHeight = 210;
+
+    -- Sort mutators by name alphabetically
+    table.sort(Mutators, function (a, b)
+        if (a.name and b.name) then
+            return a.name < b.name;
+        end
+
+        return false;
+    end);
 
     for _, Mutator in pairs(Mutators or {}) do
         ---@type AceGUISimpleGroup
