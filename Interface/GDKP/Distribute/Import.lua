@@ -61,7 +61,12 @@ function Import:build()
         GL.Interface.Dialogs.PopupDialog:open{
             question = "This will override any changes you've made to the cut window, are you sure?",
             OnYes = function ()
-                if (GDKPPot:importCuts(self.sessionID, ImportBox:GetText())) then
+                local data = ImportBox:GetText();
+
+                -- If the user copy/pasted from google sheets there will be addition quotes that need to be removed
+                data = data:gsub("\"", "");
+
+                if (GDKPPot:importCuts(self.sessionID, data)) then
                     ImportBox:SetText("");
                     self:close();
                 end
