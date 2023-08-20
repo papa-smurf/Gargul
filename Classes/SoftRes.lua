@@ -762,11 +762,20 @@ function SoftRes:playerReservesOnItem(idOrLink, playerName)
         itemID = GL:getItemIDFromLink(idOrLink);
     end
 
-    return GL:tableGet(self.MaterializedData.DetailsByPlayerName, string.format(
-        "%s.Items.%s",
-        string.lower(playerName),
-        itemID
-    ), 0);
+    -- The item linked to this id can have multiple IDs (head of Onyxia for example)
+    local AllLinkedItemIDs = GL:getLinkedItemsForID(itemID, true);
+
+    local reserved = 0;
+
+    for _, itemID in pairs(AllLinkedItemIDs or {}) do
+        reserved = reserved + GL:tableGet(self.MaterializedData.DetailsByPlayerName, string.format(
+            "%s.Items.%s",
+            string.lower(playerName),
+            itemID
+        ), 0);
+    end
+
+    return reserved;
 end
 
 --- Try to import the data provided in the import window
