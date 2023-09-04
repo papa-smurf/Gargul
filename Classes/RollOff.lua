@@ -209,7 +209,7 @@ function RollOff:postStartMessage(itemLink, time, note)
                     tinsert(EligiblePlayers, Entry);
                 else
                     -- This players position is worse than the number one, break!
-                    if (Entry.position ~= EligiblePlayers[1].prio) then
+                    if (Entry.prio ~= EligiblePlayers[1].prio) then
                         break;
                     end
 
