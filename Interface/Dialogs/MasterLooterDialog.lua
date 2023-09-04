@@ -114,8 +114,8 @@ function MasterLooterDialog:draw()
     local Window = AceGUI:Create("Frame");
     Window:SetTitle("Gargul v" .. GL.version);
     Window:SetLayout("FLOW");
-    Window:SetWidth(300);
-    Window:SetHeight(180);
+    Window:SetWidth(440);
+    Window:SetHeight(160);
     Window:EnableResize(false);
     Window.statustext:GetParent():Hide(); -- Hide the statustext bar
     Window:SetCallback("OnClose", function()
@@ -146,7 +146,7 @@ function MasterLooterDialog:draw()
     local SoftResButton = AceGUI:Create("Button");
     SoftResButton:SetText(SoftResButtonText);
     SoftResButton:SetHeight(20);
-    SoftResButton:SetWidth(120);
+    SoftResButton:SetWidth(124);
     SoftResButton:SetCallback("OnClick", function()
         if (GL.SoftRes:available()) then
             GL.SoftRes:clear();
@@ -193,17 +193,26 @@ function MasterLooterDialog:draw()
         TMBButton:SetText("Clear TMB");
     end);
 
+    VerticalSpacer = AceGUI:Create("SimpleGroup");
+    VerticalSpacer:SetLayout("FILL");
+    VerticalSpacer:SetWidth(12);
+    VerticalSpacer:SetHeight(10);
+    Window:AddChild(VerticalSpacer);
+
+    local GDKPButton = AceGUI:Create("Button");
+    GDKPButton:SetText("GDKP");
+    GDKPButton:SetHeight(20);
+    GDKPButton:SetWidth(120);
+    GDKPButton:SetCallback("OnClick", function()
+        GL.Interface.GDKP.Overview:open();
+    end);
+    Window:AddChild(GDKPButton);
+
     local HorizontalSpacer = AceGUI:Create("SimpleGroup");
     HorizontalSpacer:SetLayout("FILL");
     HorizontalSpacer:SetFullWidth(true);
-    HorizontalSpacer:SetHeight(20);
+    HorizontalSpacer:SetHeight(10);
     Window:AddChild(HorizontalSpacer);
-
-    VerticalSpacer = AceGUI:Create("SimpleGroup");
-    VerticalSpacer:SetLayout("FILL");
-    VerticalSpacer:SetWidth(24);
-    VerticalSpacer:SetHeight(10);
-    Window:AddChild(VerticalSpacer);
 
     -- Auto open checkbox
     local AutoOpenCheckbox = AceGUI:Create("CheckBox");
