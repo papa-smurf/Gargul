@@ -131,11 +131,16 @@ function EditAuction:draw(session, checksum)
     HelpIcon:SetCallback("OnEnter", function()
         GameTooltip:SetOwner(HelpIcon.frame, "ANCHOR_RIGHT");
         GameTooltip:AddLine(" ");
+        GameTooltip:AddLine("Gargul automatically keeps track of gold traded. As long as players pay");
+        GameTooltip:AddLine("for what they bought then you shouldn't ever need this field");
+        GameTooltip:AddLine(" ");
+        GameTooltip:AddLine("\"Paid amount\" refers to the amount of gold the buyer already traded you.");
+        GameTooltip:AddLine("This does not change the actual price of the item!");
+        GameTooltip:AddLine(" ");
         GameTooltip:AddLine("Warning: only set a value here if the player promises to pay");
         GameTooltip:AddLine("outside of the raid or trades the gold from an alt / mail etc!");
         GameTooltip:AddLine(" ");
-        GameTooltip:AddLine("Gargul automatically keeps track of gold traded, so as long as players");
-        GameTooltip:AddLine("pay by themselves for what they bought then you shouldn't ever need this");
+
         GameTooltip:AddLine(" ");
         GameTooltip:Show();
     end);
