@@ -179,6 +179,8 @@ function Export:build()
             "@ICON",
             "@WOWHEAD",
             "@CHECKSUM",
+            "@TITLE - The title of the GDKP session",
+            "@START - Date/time at which the first item was awarded",
             "",
             "\\t is replaced by a tab",
         }, "\n"));
@@ -240,7 +242,7 @@ function Export:refresh()
     local exportFormat = GL.Settings:get("GDKP.exportFormat");
 
     if (exportFormat == CUSTOM_FORMAT) then
-        self:exportAuctionsToCustomFormat(Auctions);
+        self:exportAuctionsToCustomFormat(Session, Auctions);
 
     elseif (exportFormat == SOFTRES_FORMAT) then
         local exportString = self:transformAuctionsToSoftResFormat(Auctions);
@@ -254,13 +256,22 @@ function Export:transformAuctionsToSoftResFormat(Auctions)
     return GL.JSON:encode("");
 end
 
----@param Auctions
+---@param Auctions GDKPSession
+---@param Auctions table
 ---@return string
-function Export:exportAuctionsToCustomFormat(Auctions)
+function Export:exportAuctionsToCustomFormat(Session, Auctions)
     GL:debug("Export:transformAuctionsToCustomFormat");
 
     local exportString = GL.Settings:get("GDKP.customExportHeader");
     local customExportFormat = GL.Settings:get("GDKP.customExportFormat");
+
+    -- Determine the start of the raid, determined by the item that was awarded first
+    local timestamps = {};
+    for _, Details in pairs(Session.Auctions or {}) do
+        tinsert(timestamps, Details.createdAt);
+    end
+    table.sort(timestamps);
+    local startedAt = timestamps[1] and date("%Y-%m-%d %H:%M", timestamps[1]) or "";
 
     -- Make sure that all relevant item data is cached
     GL:onItemLoadDo(GL:tableColumn(Auctions, "itemID"), function (Result)
@@ -316,6 +327,8 @@ function Export:exportAuctionsToCustomFormat(Auctions)
                     ["@MINUTE"] = date('%M', Auction.createdAt),
                     ["@DATE"] = date('%Y-%m-%d', Auction.createdAt),
                     ["@TIME"] = date('%H:%M', Auction.createdAt),
+                    ["@TITLE"] = Session.title,
+                    ["@START"] = startedAt,
                     ["@ICON"] = iconLink or "",
                     ["@WOWHEAD"] = wowheadLink,
                     ["@CHECKSUM"] = Auction.checksum,
