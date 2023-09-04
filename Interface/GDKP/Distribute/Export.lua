@@ -255,6 +255,7 @@ function Export:exportPotToCustomFormat(Session, Cuts)
     local customExportFormat = GL.Settings:get("GDKP.customPotExportFormat");
     local endedAt = Session.lockedAt and date("%Y-%m-%d %H:%M", Session.lockedAt) or "";
 
+    -- Determine the start of the raid, determined by the item that was awarded first
     local timestamps = {};
     for _, Details in pairs(Session.Auctions or {}) do
         tinsert(timestamps, Details.createdAt);
