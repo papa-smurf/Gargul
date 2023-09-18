@@ -582,13 +582,22 @@ function Test:simulateGroup(numberOfPlayers, includeSelf, includeCurrentGroupMem
             isDead = false,
             role = "",
             isML = false,
-            isLeader = true,
+            isLeader = false,
             hasAssist = false,
             index = 1,
         });
         Names[nameIndex] = nil;
         table.remove(Names, nameIndex);
     end
+
+    local masterLooterIndex = math.random(1, #Players);
+    Players[masterLooterIndex].isML = true;
+    Players[masterLooterIndex].hasAssist = true;
+    Players[math.random(1, #Players)].isLeader = not includeSelf;
+    Players[math.random(1, #Players)].hasAssist = true;
+    Players[math.random(1, #Players)].hasAssist = true;
+    Players[math.random(1, #Players)].hasAssist = true;
+    Players[math.random(1, #Players)].online = false;
 
     GL.User.groupMembers = function ()
         return Players;
