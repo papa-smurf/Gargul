@@ -25,7 +25,7 @@ setmetatable(CommMessage, {
 ---@param content any
 ---@param channel string
 ---@param recipient string
-function CommMessage.new(action, content, channel, recipient)
+function CommMessage.new(action, content, channel, recipient, onResponse)
     GL:debug("CommMessage:new");
 
     local self = setmetatable({}, CommMessage);
@@ -48,6 +48,7 @@ function CommMessage.new(action, content, channel, recipient)
     self.senderRealm = GL.User.realm;
     self.senderFqn = GL.User.fqn or GL:addRealm(UnitName("player"), GL.User.realm);
     self.recipient = recipient and GL:nameFormat(recipient) or nil;
+    self.onResponse = onResponse or function () end;
     self.Responses = {};
 
     CommMessage.Box[self.id] = self;
@@ -140,6 +141,9 @@ function CommMessage:processResponse()
 
     local numberOfResponses = #CommMessage.Box[self.correspondenceId].Responses;
     CommMessage.Box[self.correspondenceId].Responses[numberOfResponses + 1] = self;
+
+    -- Execute the original message's onResponse handler
+    CommMessage.Box[self.correspondenceId].onResponse(self);
 end
 
 --- Compress a CommMessage so we can safely send it
