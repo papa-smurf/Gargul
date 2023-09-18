@@ -62,6 +62,7 @@ function GL:bootstrap(_, _, addonName)
     -- Mark the add-on as fully loaded
     GL.loadedOn = GetServerTime();
 
+    -- Check if ElvUI is loaded (useful for making adhoc UI changes)
     GL.Ace:ScheduleTimer(function()
         self.elvUILoaded = GetAddOnEnableState(GL.User.name,"ElvUI") == 2;
     end, 1);
