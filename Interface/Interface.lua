@@ -8,6 +8,41 @@ local _, GL = ...;
 GL.Interface = GL.Interface or {
     _resizeBoundsMethod = nil,
     scalerName = "Gargul.Interface.Scaler",
+
+    Colors = {
+        BLACK = 000000,
+        GRAY = 808080,
+        LIGHT_GRAY = "D3D3D3",
+        DIM_GRAY = 696969,
+        SILVER = "C0C0C0",
+        WHITE = "FFFFFF",
+        WHITE_SMOKE = "F5F5F5",
+
+        -- Statuses
+        ERROR = "BE3333",
+        NOTICE = "FFF569",
+        SUCCESS = "92FF00",
+        WARNING = "F7922E",
+
+        -- Classes
+        DRUID = "FF7D0A",
+        HUNTER = "ABD473",
+        MAGE = "69CCF0",
+        PALADIN = "F58CBA",
+        PRIEST = "FFFFFF",
+        ROGUE = "FFF569",
+        SHAMAN = "0070DE",
+        WARLOCK = "9482C9",
+        WARRIOR = "C79C6E",
+        DEATHKNIGHT = "C41E3A",
+        DEATH_KNIGHT = "C41E3A",
+        ["DEATH KNIGHT"] = "C41E3A",
+        DEMONHUNTER = "A330C9",
+        DEMON_HUNTER = "A330C9",
+        ["DEMON HUNTER"] = "A330C9",
+        EVOKER = "33937F",
+        MONK = "00FF98",
+    },
     FramePool = {
         Buttons = {};
     },
@@ -79,9 +114,15 @@ function Interface:dynamicPanelButton(Parent, text, template)
 
     -- Make sure the button changes in size whenever we change its contents
     Button.SetText = function(_, ...)
+        local scale = Button:GetScale();
+
+        if (scale < 1) then
+            scale = math.min(scale * 1.2, 1);
+        end
+
         Text:SetText(...);
         local textWidth = Text:GetUnboundedStringWidth();
-        Button:SetSize(Text:GetUnboundedStringWidth() + math.max(minOffset, textWidth * .44), 21);
+        Button:SetSize((Text:GetUnboundedStringWidth() + math.max(minOffset, textWidth * .44)) * scale, 21 * scale);
     end
 
     Button:SetText(text or "");
@@ -94,9 +135,7 @@ end
 ---@param Parent Frame
 ---@param name string|nil
 ---@return EditBox
-function Interface:inputBox(Parent, name)
-    GL:debug("Interface:inputBox");
-
+function Interface:inputBox(Parent, name, placeholder)
     ---@type EditBox
     local Input = CreateFrame("EditBox", name, Parent, "InputBoxTemplate");
     Input:SetHeight(20);
@@ -106,9 +145,39 @@ function Interface:inputBox(Parent, name)
     Input.SetFont = function(_, rem, flags)
         Input:_SetFont(GL.FONT, GL:rem(rem), flags or "");
     end
-
     Input:SetFont();
 
+    -- Simulate HTML's "placeholder" behavior
+    if (placeholder) then
+        Input._placeholder = ("|c00%s%s|r"):format(self.Colors["GRAY"], placeholder);
+        Input:SetText(Input._placeholder);
+
+        -- Make sure an empty value is returned when the placeholder value is still active
+        Input._GetText = Input.GetText;
+        Input.GetText = function()
+            local text = Input:_GetText();
+
+            return text ~= Input._placeholder and text or "";
+        end
+
+        Input:SetScript("OnEditFocusGained", function ()
+            if (not GL:empty(Input:GetText())) then
+                return;
+            end
+
+            Input:SetText("");
+        end);
+
+        Input:SetScript("OnEditFocusLost", function ()
+            if (not GL:empty(Input:GetText())) then
+                return;
+            end
+
+            Input:SetText(Input._placeholder);
+        end);
+    end
+
+    -- Make sure spells, macros and items can be tragged into the field
     Input:SetScript("OnReceiveDrag", function ()
         local type, id, info = GetCursorInfo();
         local value
@@ -126,6 +195,7 @@ function Interface:inputBox(Parent, name)
             ClearCursor()
         end
     end);
+
     Input:SetScript("OnEscapePressed", function ()
         Input:ClearFocus();
     end);
@@ -159,6 +229,13 @@ function Interface:createFontString(Parent, text, template, name, layer)
     FontString._SetFont = FontString.SetFont;
     FontString.SetFont = function(_, rem, flags)
         FontString:_SetFont(GL.FONT, GL:rem(rem), flags or "");
+    end
+
+    FontString.SetColor = function(_, color)
+        color = self.Colors[color] or color;
+        FontString:SetText(("|c00%s%s|r"):format(color, FontString:GetText() or ""));
+
+        FontString._lastColor = color;
     end
 
     FontString:SetFont(1, "OUTLINE");
@@ -455,12 +532,13 @@ end
 ---@param hideCloseButton boolean
 ---@param hideResizeButton boolean
 ---@param hideMoveButton boolean
+---@param hideAllButtons boolean
 ---@param hideWatermark boolean
 ---@param template string
 ---@return Frame
 function Interface:createWindow(
     name, width, height, minWidth, minHeight, maxWidth, maxHeight, closeWithEscape, OnClose,
-    hideMinimizeButton, hideCloseButton, hideResizeButton, hideMoveButton, hideWatermark, template
+    hideMinimizeButton, hideCloseButton, hideResizeButton, hideMoveButton, hideAllButtons, hideWatermark, template
 )
     if (width ~= nil or type(name) ~= "table") then
         GL:error("Pass a table instead of multiple arguments")
@@ -479,6 +557,7 @@ function Interface:createWindow(
     hideCloseButton = name.hideCloseButton;
     hideResizeButton = name.hideResizeButton;
     hideMoveButton = name.hideMoveButton;
+    hideAllButtons = name.hideAllButtons;
     template = name.template;
     hideWatermark = name.hideWatermark;
 
@@ -491,7 +570,6 @@ function Interface:createWindow(
     closeWithEscape = closeWithEscape ~= false;
 
     ---@type Frame
-    --local Window = CreateFrame("Frame", name, UIParent, "BackdropTemplate");
     local Window = CreateFrame("Frame", name, UIParent, template == false and Frame or "BackdropTemplate");
     Window:SetSize(width or 200, height or 200);
     Window:SetPoint("CENTER", UIParent, "CENTER");
@@ -511,18 +589,21 @@ function Interface:createWindow(
     end
 
     --[[ MINIMIZE BUTTON ]]
-    if (not hideMinimizeButton) then
+    if (not hideAllButtons and not hideMinimizeButton) then
         self:addMinimizeButton(Window);
     end
 
     --[[ CLOSE BUTTON ]]
-    if (not hideCloseButton) then
+    if (not hideAllButtons and not hideCloseButton) then
         self:addCloseButton(Window);
     end
 
     --[[ MOVE / RESIZE BUTTONS ]]
-    if (not hideResizeButton
-        or not hideMoveButton
+    if (not hideAllButtons and
+        (
+            not hideResizeButton
+            or not hideMoveButton
+        )
     ) then
         self:restorePosition(Window);
         self:restoreDimensions(Window);
@@ -570,7 +651,9 @@ function Interface:createWindow(
     --[[ WATERMARK ]]
     if (not hideWatermark) then
         ---@type FontString
-        local Watermark = Interface:createFontString(Window, GL.name .. " v" .. GL.version, "GameFontDarkGraySmall");
+        local Watermark = Interface:createFontString(Window, GL.name .. " v" .. GL.version);
+        Watermark:SetFont(.8, "OUTLINE");
+        Watermark:SetColor("GRAY");
         Watermark:SetPoint("BOTTOMLEFT", Window, "BOTTOMLEFT", 14, 13);
         Window.Watermark = Watermark;
     end
@@ -1062,6 +1145,11 @@ function Interface:addTooltip(Owner, Lines, anchor)
         else
             Lines = { Lines };
         end
+    end
+
+    -- Make sure mouse events are enabled
+    if (Owner.EnableMouse) then
+        Owner:EnableMouse(true);
     end
 
     Owner:HookScript("OnEnter", function()
