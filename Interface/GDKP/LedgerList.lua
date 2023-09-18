@@ -169,6 +169,11 @@ function LedgerList:build()
     PotDetails:SetFont(1.75, "OUTLINE");
     self.PotDetails = PotDetails;
 
+    ---@type FontString
+    local SessionDetails = Interface:createFontString(Window);
+    SessionDetails:SetPoint("BOTTOMLEFT", PotDetails, "TOPLEFT", 0, 5);
+    self.SessionDetails = SessionDetails;
+
     --[[ DRAW LEGEND ]]
     ---@type FontString
     local Paid = Interface:createFontString(Window, string.format("Gold paid to |c00%s%s|r",
@@ -287,6 +292,19 @@ function LedgerList:refresh()
         managementCut,
         managementCutPercentage,
         math.floor(totalPot - managementCut)
+    ));
+
+    local guild = "";
+    local CreatedBy = Session.CreatedBy or {class = "priest", name = "unknown", guild = "unknown", uuid = "unknown"};
+    if (CreatedBy.guild) then
+        guild = string.format(" |c001eff00<%s>|r", CreatedBy.guild);
+    end
+    self.SessionDetails:SetText(string.format(
+        "|c00967FD2%s|r | By %s%s | On |c00967FD2%s|r",
+        Session.title,
+        GL:nameFormat{ name = CreatedBy.name, realm = CreatedBy.realm, colorize = true },
+        guild,
+        date('%Y-%m-%d', Session.createdAt)
     ));
 
     -- Clear all table data
