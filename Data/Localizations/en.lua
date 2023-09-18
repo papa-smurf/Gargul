@@ -1,3 +1,4 @@
+local _, GL = ...;
 Gargul_L = {};
 local L = Gargul_L;
 
@@ -187,6 +188,7 @@ Gargul tracks |c00FF0000ALL|r gold traded. Don't want a trade to be a part of th
 Awarded items will automatically be added to the trade window
 Gargul can also handle auto looting for you. Check it out with |c00a79eff/gl pm|r
 ]];
+L.UPDATE_GARGUL = "Update Gargul!";
 L.WINDOW = "Window";
 L.WINDOW_SCALE = "Window Scale";
 L.YOU_DISABLED_GDKP_QUEUES = "You disabled GDKP queues";
@@ -197,3 +199,28 @@ L.SETTINGS_WHISPER_BID_TOO_LOW = "Whisper bidder if bid is too low";
 L.SETTINGS_COUNTDOWN_IN_RAID_WARNING = "Announce countdown in raid warning";
 L.SETTINGS_ANNOUNCE_INCOMING_BIDS = "Announce incoming bids";
 L.SETTINGS_INCOMING_BIDS_IN_RAID_WARNING = "Announce incoming bids in raid warning";
+
+--[[ GROUP VERSION CHECK (/gl version) ]]
+L.VERSION_CHECK_COLUMN_STATUS = "Gargul status";
+L.VERSION_CHECK_COLUMN_PLAYER = "Player";
+
+L.VERSION_CHECK_STATUS_CHECKING = "Checking version ...";
+L.VERSION_CHECK_STATUS_OFFLINE = "Offline";
+L.VERSION_CHECK_STATUS_UNRESPONSIVE = "No response";
+L.VERSION_CHECK_STATUS_EXPLANATION = ([[|c0092FF00v%s|r: the player is up-to-date
+|c00F7922Ev%s|r: the player needs to update his add-ons
+|c00BE3333%s|r: the player doesn't have Gargul or is on an unsupported version
+|c00808080%s|r: the player is offline, is on our ignore list, or is ignoring us!
+]]):format(GL.version, GL.version, L.VERSION_CHECK_STATUS_UNRESPONSIVE, L.VERSION_CHECK_STATUS_OFFLINE);
+
+L.VERSION_CHECK_SUMMARY_UP_TO_DATE = "Up-to-date:";
+L.VERSION_CHECK_SUMMARY_OUTDATED = "Outdated:";
+L.VERSION_CHECK_SUMMARY_NO_RESPONSE = "No response:";
+L.VERSION_CHECK_SUMMARY_OFFLINE = "Offline:";
+
+L.VERSION_CHECK_BUTTON_REPORT = "Report";
+L.VERSION_CHECK_BUTTON_REPORT_TOOLTIP = "Report results in group chat";
+
+L.VERSION_CHECK_CHAT_MISSING = "Gargul missing for:";
+L.VERSION_CHECK_CHAT_OUTDATED = "Gargul outdated for:";
+L.VERSION_CHECK_CHAT_OFFLINE = "The following players were offline:";
