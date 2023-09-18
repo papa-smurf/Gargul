@@ -384,6 +384,14 @@ function Version:leftIsNewerThanOrEqualToRight(left, right)
     return newerOrEqual, versionDifference;
 end
 
+--- Check if the given version string is an up-to-date version
+---
+---@param version string
+---@return boolean
+function Version:isUpToDate(version)
+    return self:leftIsNewerThanOrEqualToRight(version, self.latest);
+end
+
 --- Inspect quietly, meaning there will be no visual feedback
 --- of the version check or its results, but both send and receiver(s)
 --- will receive warnings/errors in case their addon version is outdated

@@ -72,7 +72,7 @@ function TMB:draw(Parent)
     if (GL.isClassic) then
         Overview:drawCheckboxes({
             {
-                label = "EXPERIMENTAL: Link normal and hard mode items in Trial of the Crusader",
+                label = "Link normal and hard mode items in Trial of the Crusader",
                 description = "Enabling this makes sure that soft-reserves or TMB/DFT entries on normal mode TotC items also show up on their hardmode counterpart (and vice versa!)",
                 setting = "MasterLooting.linkNormalAndHardModeItems",
             },

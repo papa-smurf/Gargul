@@ -187,7 +187,7 @@ GL.Commands = GL.Commands or {
         export = function() GL.Exporter:draw(); end,
 
         -- Check if everyone is running the most up-to-date version
-        version = function() GL.Version:inspectGroup(); end,
+        version = function() GL.Interface.GroupVersionCheck:open() end,
 
         -- Check if everyone is running the most up-to-date version
         inspect = function(...) GL.BagInspector:inspect(...); end,
