@@ -25,6 +25,7 @@ GL.Commands = GL.Commands or {
         importprices = "Open an import window with which you can import per-product minimum and increment settings",
         inspect = "You can check whether players brought items (and how many), e.g. to check for consumables (requires players to have Gargul!): /gl inspect itemID1, itemID2, itemID3",
         lootpriority = "Open the loot priority editor where you can edit / clear loot priorities. These are the same priorities as imported by the TMB importer, clearing them here clears them for TMB as well",
+        multiauction = "Auction off multiple items at once in your GDKP raids. This requires all participants to have an up-to-date version of Gargul!",
         packmule = "Open PackMule which allows you to automatically funnel dropped gear to specific players, very helpful with green items for example",
         plusones = "Open the PlusOnes window that allows you to check and manipulate all plus one values",
         raidcsv = "Output everyone currently in the group in a CSV format",
@@ -38,46 +39,102 @@ GL.Commands = GL.Commands or {
     },
 
     ShorthandDictionary = {
-        ["+1"] = "plusones",
-        a = "award",
-        ah = "awardhistory",
+        -- auction
         au = "auction",
+
+        -- awardondate
         aod = "awardondate",
-        bi = "bid",
+
+        -- award
+        a = "award",
+
+        -- awardhistory
+        ah = "awardhistory",
+
+        -- boostedrolls
         boosted = "boostedrolls",
         boostedroll = "boostedrolls",
         br = "boostedrolls",
+        points = "boostedrolls",
+
+        -- buffs
         bu = "buffs",
+
+        -- bugreport
         bug = "bugreport",
-        cd = "cleardisenchanter",
-        co = "settings",
-        config = "settings",
+
+        -- clearplusones
         clearplusone = "clearplusones",
         cpo = "clearplusones",
-        ex = "export",
-        gd = "gdkp",
-        gr = "groups",
-        im = "import",
-        ip = "importprices",
-        ins = "inspect",
-        lo = "lootpriority",
-        plusone = "plusones",
-        pm = "packmule",
-        po = "plusones",
-        points = "boostedrolls",
-        pr = "lootpriority",
+
+        -- cleardisenchanter
+        cd = "cleardisenchanter",
+
+        -- setdisenchanter
+        sd = "setdisenchanter",
+
+        -- cpr
         prio3 = "cpr",
+
+        -- export
+        ex = "export",
+
+        -- gdkp
+        gd = "gdkp",
+
+        -- groups
+        gr = "groups",
+        roster = "groups",
+
+        -- import
+        im = "import",
+
+        -- importprices
+        ip = "importprices",
+
+        -- inspect
+        ins = "inspect",
+
+        -- lootpriority
+        lo = "lootpriority",
+        pr = "lootpriority",
         priority = "lootpriority",
+
+        -- multiauction
+        ma = "multiauction",
+        ba = "multiauction",
+        batchauction = "multiauction",
+
+        -- packmule
+        pm = "packmule",
+
+        -- plusones
+        ["+1"] = "plusones",
+        plusone = "plusones",
+        po = "plusones",
+
+        -- raidcsv
         rcsv = "raidcsv",
+
+        -- rolloff
         ro = "rolloff",
         roll = "rolloff",
-        roster = "groups",
-        sd = "setdisenchanter",
+
+        -- settings
+        co = "settings",
+        config = "settings",
+
+        -- softreserves
         so = "softreserves",
+        softres = "softreserves",
         sr = "softreserves",
+
+        -- thatsmybis
         tmb = "thatsmybis",
-        ve = "version",
         wl = "thatsmybis",
+
+        -- version
+        ve = "version",
     },
 
     Dictionary = {
@@ -179,6 +236,8 @@ GL.Commands = GL.Commands or {
 
         -- Open the loot priority window
         lootpriority = function() GL.LootPriority:drawImporter(); end,
+
+        multiauction = function() GL.Interface.GDKP.MultiAuction.Auctioneer:open(); end,
 
         -- Import data from our website into the addon
         import = function() GL.Interface.Importer:open(); end,

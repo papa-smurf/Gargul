@@ -43,6 +43,7 @@ Classes/GDKP/Session.lua
 Classes/GDKP/Auction.lua
 Classes/GDKP/Pot.lua
 Classes/GDKP/Auctioneer.lua
+Classes/GDKP/MultiAuction/Auctioneer.lua
 Classes/PlusOnes.lua
 Classes/TMB.lua
 Classes/Exporter.lua
@@ -124,6 +125,9 @@ Interface/GDKP/EditSession.lua
 Interface/GDKP/AddGold.lua
 Interface/GDKP/EditAuction.lua
 Interface/GDKP/AuctionDetails.lua
+Interface/GDKP/MultiAuction/Auctioneer.lua
+Interface/GDKP/MultiAuction/Client.lua
+Interface/GDKP/MultiAuction/FillFromInventory.lua
 Interface/TMB/Importer.lua
 Interface/TMB/Overview.lua
 Interface/PlusOnes/OverView.lua

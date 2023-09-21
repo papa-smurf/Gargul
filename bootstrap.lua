@@ -65,6 +65,10 @@ function GL:bootstrap(_, _, addonName)
     -- Check if ElvUI is loaded (useful for making adhoc UI changes)
     GL.Ace:ScheduleTimer(function()
         self.elvUILoaded = GetAddOnEnableState(GL.User.name,"ElvUI") == 2;
+
+        GL.Interface.GDKP.MultiAuction.Auctioneer:open();
+        --GL.Interface.GDKP.MultiAuction.Client:open();
+        --GL.Interface.GroupVersionCheck:open();
     end, 1);
 end
 
@@ -133,6 +137,7 @@ function GL:_init()
     self.TradeWindow:_init();
     self.TradeTime:_init();
     self.GDKP.Auctioneer:_init();
+    self.GDKP.MultiAuction.Auctioneer:_init();
     self.Interface.MasterLooterDialog:_init();
     self.Interface.GDKP.BidderQueue:_init();
     self.Interface.GDKP.Distribute.MailCuts:_init();

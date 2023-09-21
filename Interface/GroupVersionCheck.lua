@@ -321,6 +321,11 @@ function GroupVersionCheck:refresh()
         self.PlayerRows[key] = nil;
     end
 
+    ---@todo: REMOVE
+    if (not GL.User.isInGroup) then
+        GL.Test:simulateGroup();
+    end
+
     local upToDate, outdated, unresponsive, offline = 0, 0, 0, 0;
 
     local addUpToDate = function(player)
@@ -451,7 +456,7 @@ function GroupVersionCheck:setActionButtons(Buttons)
         ActionButton:SetPoint("TOPLEFT", Anchor, "TOPRIGHT", 4, 0);
         ActionButton:SetScript("OnClick", function () Button.onClick(self.Results) end);
         if (Button.tooltip) then
-            Interface:addTooltip(ActionButton, Button.tooltip);
+            Interface:addTooltip(ActionButton, Button.tooltip, "TOP");
         end
 
         tinsert(self.ActionButtons, ActionButton);

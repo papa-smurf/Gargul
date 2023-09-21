@@ -42,6 +42,17 @@ GL.Interface = GL.Interface or {
         ["DEMON HUNTER"] = "A330C9",
         EVOKER = "33937F",
         MONK = "00FF98",
+
+        -- Qualities
+        POOR = "9d9d9d",
+        COMMON = "FFFFFF",
+        UNCOMMON = "1EFF00",
+        RARE = "0070DD",
+        EPIC = "A335EE",
+        LEGENDARY = "FF8000",
+        ARTIFACT = "E6CC80",
+        HEIRLOOM = "00CCFF",
+        ["WOW TOKEN"] = "00CCFF",
     },
     FramePool = {
         Buttons = {};
@@ -866,6 +877,7 @@ function Interface:createDropdown(Parent, name, value, Options, sorter, callback
     name = Parent.name;
     value = Parent.value;
     Options = Parent.Options or {};
+    sorter = Parent.sorter ~= nil and Parent.sorter or false;
     callback = Parent.callback or function () end;
 
     Parent = Parent.Parent;

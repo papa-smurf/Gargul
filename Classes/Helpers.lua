@@ -443,10 +443,17 @@ function GL:handleItemClick(itemLink, mouseButtonPressed, callback)
 
     -- Open the auction or roll window
     if (keyPressIdentifier == GL.Settings:get("ShortcutKeys.rollOffOrAuction")) then
-        if (GL.GDKP.Session:activeSessionID()
+        -- If the GDKP multi-auction window is shown then add the item there
+        if (GL.Interface.GDKP.MultiAuction.Auctioneer:isShown()) then
+            return GL.Interface.GDKP.MultiAuction.Auctioneer:addItemByLink(itemLink);
+
+        -- There's an active GDKP session, open the auction window
+        elseif (GL.GDKP.Session:activeSessionID()
             and not GL.GDKP.Session:getActive().lockedAt
         ) then
             GL.GDKP.Auctioneer:addItemLink(itemLink);
+
+        -- Open the master looter UI to roll out the item
         else
             GL.MasterLooterUI:draw(itemLink);
         end
@@ -960,7 +967,14 @@ end
 ---@param str string
 ---@param subStr string
 ---@return boolean
-function GL:strContains(str, subStr)
+function GL:strContains(str, subStr, insensitive)
+    insensitive = insensitive ~= false;
+
+    if (insensitive) then
+        str = string.lower(str);
+        subStr = string.lower(subStr);
+    end
+
     return GL:toboolean(strfind(str, subStr));
 end
 
@@ -2132,6 +2146,18 @@ function GL:getItemNameFromLink(itemLink)
     end
 
     return itemName;
+end
+
+--- Strip color tags from a string
+---
+---@param text string
+---@return string
+function GL:stripColor(text)
+    text = string.gsub(text or "", "|c%x%x%x%x%x%x%x%x", "" );
+    text = string.gsub(text, "|c%x%x %x%x%x%x%x", "" );
+    text = string.gsub(text, "|r", "" );
+
+    return text;
 end
 
 --- Transform a copper value to a money string

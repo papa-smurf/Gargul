@@ -697,7 +697,6 @@ function PlusOnes:subtractPlusOnes(playerName)
     self:queueUpdate(playerName, max(currentPoints - 1, 0));
 end
 
----@todo is delete parameter even needed since entries aren't deleted manually?
 --- Queue an update until broadcast is finished
 ---
 ---@param playerName string
@@ -756,7 +755,6 @@ function PlusOnes:broadcastQueuedUpdates()
     self.QueuedUpdates = {};
 end
 
----@todo Is delete parameter even required since manual deletions are not done?
 --- Process an outgoing plus one update
 ---
 ---@param playerName string

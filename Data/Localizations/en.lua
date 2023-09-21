@@ -45,6 +45,7 @@ L.BROADCAST_PREFIX = "I have the following items left to trade";
 L.BROADCAST_TARGET_PLAYER = "Target player (whisper only)";
 L.BROADCAST_TARGET_REQUIRED = "Whisper requires a target player";
 L.BROADCAST_TRADE_TIME_LEFT = "Max trade time left (in minutes)";
+L.CANCEL = "Cancel";
 L.CHANGE_SCALE = "Adjust Scale";
 L.CHANNEL = "Channel";
 L.CHANNEL_OFFICER = "Officer";
