@@ -188,7 +188,7 @@ function AwardedLoot:editWinner(checksum, winner, announce)
         return;
     end
 
-    winner = GL:nameFormat(winner);
+    winner = GL:addRealm(winner);
 
     -- Nothing changed, silly player stuff
     if (GL:iEquals(winner, AwardEntry.awardedTo)) then
