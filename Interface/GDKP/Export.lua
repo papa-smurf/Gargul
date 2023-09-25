@@ -107,9 +107,7 @@ function Export:build()
     CustomExportHeader:SetCallback("OnTextChanged", function ()
         local value = CustomExportHeader:GetText();
 
-        if (type(value) ~= "string"
-                or GL:empty(value)
-        ) then
+        if (type(value) ~= "string") then
             return;
         end
 
@@ -274,6 +272,7 @@ function Export:exportAuctionsToCustomFormat(Session, Auctions)
     local startedAt = timestamps[1] and date("%Y-%m-%d %H:%M", timestamps[1]) or "";
 
     -- Make sure that all relevant item data is cached
+    local first = true;
     GL:onItemLoadDo(GL:tableColumn(Auctions, "itemID"), function (Result)
         local Details = {};
         for _, ItemDetails in pairs(Result or {}) do
@@ -339,7 +338,14 @@ function Export:exportAuctionsToCustomFormat(Session, Auctions)
                     exportEntry = exportEntry:gsub(find, replace);
                 end
 
-                exportString = exportString .. "\n" .. exportEntry;
+                -- This kicks in whenever an empty header is provided
+                if (first and GL:empty(exportString)) then
+                    exportString = exportEntry;
+                else
+                    exportString = exportString .. "\n" .. exportEntry;
+                end
+
+                first = false;
             end
         end
 
