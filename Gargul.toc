@@ -1,10 +1,10 @@
-## Interface: 100105
+## Interface: 100107
 ## Interface-Wrath: 30402
 ## Interface-Classic: 11404
 ## Title: Gargul |c00967FD2@project-version@|r
 ## Author: Zhorax - Firemaw
 ## Notes: Loot addon that supports GDKP, softres sr, thatsmybis tmb, auto looting, plus one tracking and much more
-## Version: 6.2.5
+## Version: 6.2.6
 ## DefaultState: enabled
 ## SavedVariables: GargulDB
 ## X-Donate: https://www.patreon.com/gargul
