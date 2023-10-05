@@ -127,6 +127,11 @@ function CreateMutator:build()
             return;
         end
 
+        if (name:match("%.")) then
+            GL:warning("Mutator names can not contains dots (.)");
+            return;
+        end
+
         local percentage = strtrim(Percentage:GetText());
         if (not GL:empty(percentage)
             and GL:empty(tonumber(percentage))
