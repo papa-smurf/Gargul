@@ -349,7 +349,6 @@ function Pot:calculateCuts(sessionID)
     local flat = 0; -- The total amount of gold given to a person as a flat gold rate
     local baseParts = 0; -- The total number of bases (25 if there are 25 people all getting a base cut, none getting a cut/bonus)
     local percentages = 0;
-    local percentageMutators = {};
 
     -- Calculate the total number of base cuts, flat gold, and mutator percentages
     for _, Mutators in pairs(DistributionDetails or {}) do

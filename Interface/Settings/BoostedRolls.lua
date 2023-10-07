@@ -27,7 +27,7 @@ function BoostedRolls:draw(Parent)
         },
         {
             label = "Fixed rolls",
-            description = "A player with 140 points will /roll 140-140 instead of the default 1-140",
+            description = "A player with 140 points will /roll 140-140 instead of the default 41-140",
             setting = "BoostedRolls.fixedRolls",
         },
         {
