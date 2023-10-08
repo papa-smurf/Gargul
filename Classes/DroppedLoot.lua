@@ -542,7 +542,7 @@ function DroppedLoot:getTMBDetails(TMBInfo, PlayersInRaid)
         if (not GL.User.isInGroup or GL:inTable(PlayersInRaid, string.gsub(playerName, "%(os%)", ""))) then
             local prio = Entry.prio;
             local entryType = Entry.type or Constants.tmbTypeWish;
-            local isOffSpec = string.find(playerName, "%(os%)");
+            local isOffSpec = GL:strContains(playerName, "(os)");
             local prioOffset = 0;
             local sortingOrder = tonumber(prio);
 
