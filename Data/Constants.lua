@@ -302,6 +302,7 @@ GL.Data.Constants = {
     },
 
     UntradeableItems = {
+        52019, -- Precious's Ribbon
         22726, -- Splinter of Atiesh
         30183, -- Nether Vortex
         23572, -- Primal Nether
