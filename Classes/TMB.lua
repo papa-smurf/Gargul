@@ -366,7 +366,7 @@ function TMB:tooltipLines(itemLink)
 
         local prio = Entry.prio;
         local entryType = Entry.type or Constants.tmbTypeWish;
-        local isOffSpec = string.find(Entry.character, "%(OS%)");
+        local isOffSpec = GL:strContains(Entry.character, "%(os%)");
         local prioOffset = 0;
         local sortingOrder = prio;
         local color = GL:classHexColor(GL.Player:classByName(playerName:gsub("%(os%)", ""), 0), GL.Data.Constants.disabledTextColor);
