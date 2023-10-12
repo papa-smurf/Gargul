@@ -6,6 +6,9 @@ local _, GL = ...;
 ---@type Interface
 local Interface = GL.Interface;
 
+---@type Settings
+local Settings = GL.Settings;
+
 ---@type GDKP
 local GDKP = GL.GDKP;
 
@@ -36,6 +39,15 @@ function Auctioneer:open()
     FONT = GL.FONT;
 
     local Window = self:getWindow() or self:build();
+
+    -- Fill items from inventory if the window is empty
+    if (GL:empty(self.ItemRows)) then
+        GL.GDKP.MultiAuction.Auctioneer:fillFromInventory(
+            Settings:get("GDKP.MultiAuction.minimumFillQuality"),
+            Settings:set("GDKP.MultiAuction.includeBOEs"),
+            Settings:get("GDKP.MultiAuction.includeMaterials")
+        );
+    end
 
     return Window:Show() and Window;
 end
@@ -171,9 +183,6 @@ function Auctioneer:build()
             local Select = Interface:createCheckbox{
                 Parent = ItemRow,
                 checked = true,
-                callback = function (_, value)
-                    -- Do stuff
-                end,
             };
             ItemRow._Select = Select;
             Select:SetPoint("TOP", ItemRow, "TOP", 0, 2);
@@ -202,6 +211,7 @@ function Auctioneer:build()
             --[[ MINIMUM ]]
             ---@type EditBox
             local MinInput = Interface:inputBox(ItemRow);
+            MinInput:SetNumeric(true);
             MinInput:SetText(PerItemSettings.minimum);
             MinInput:SetWidth(42);
             MinInput:SetPoint("TOP", ItemRow, "TOP");
@@ -212,6 +222,7 @@ function Auctioneer:build()
             --[[ INCREMENT ]]
             ---@type EditBox
             local IncInput = Interface:inputBox(ItemRow);
+            IncInput:SetNumeric(true);
             IncInput:SetText(PerItemSettings.increment);
             IncInput:SetWidth(36);
             IncInput:SetPoint("TOP", ItemRow, "TOP");
@@ -247,6 +258,7 @@ function Auctioneer:build()
     TimeInput:SetText(600);
     TimeInput:SetWidth(30);
     TimeInput:SetPoint("TOPLEFT", TimeLabel, "TOPRIGHT", 8, 4);
+    Window._TimeInput = TimeInput;
 
     --[[ ANTI SNIPE ]]
     ---@type FontString
@@ -259,6 +271,7 @@ function Auctioneer:build()
     AntiSnipeInput:SetText(10);
     AntiSnipeInput:SetWidth(20);
     AntiSnipeInput:SetPoint("TOPLEFT", AntiSnipeLabel, "TOPRIGHT", 8, 4);
+    Window._AntiSnipeInput = AntiSnipeInput;
 
     --[[ CLEAR ]]
     ---@type Button
@@ -286,11 +299,19 @@ function Auctioneer:build()
     Next:SetScript("OnClick", function ()
         GroupVersionCheck:open({
             {
+                text = "Cancel",
+                onClick = function ()
+                    GroupVersionCheck:close();
+                    self:open();
+                end,
+                tooltip = "Go back to the item selector",
+            },
+            {
                 text = "Start",
                 onClick = function (Results)
                     -- Everyone is up-to-date on Gargul, start!
                     if (GL:empty(Results.Outdated) and GL:empty(Results.Unresponsive)) then
-                        GL.Interface.GDKP.MultiAuction.Client:open();
+                        self:start();
                         GroupVersionCheck:close();
 
                         return;
@@ -300,20 +321,12 @@ function Auctioneer:build()
                     Interface.Dialogs.PopupDialog:open{
                         question = "Not everyone is up-to-date, are you sure you want to start the auction? Not everyone will be able to bid!",
                         OnYes = function ()
-                            GL.Interface.GDKP.MultiAuction.Client:open();
+                            self:start();
                             GroupVersionCheck:close();
                         end,
                     };
                 end,
                 tooltip = "Start auctioning",
-            },
-            {
-                text = "Cancel",
-                onClick = function ()
-                    GroupVersionCheck:close();
-                    self:open();
-                end,
-                tooltip = "Go back to the item selector",
             },
         });
 
@@ -338,6 +351,54 @@ function Auctioneer:clearItems()
     end
 
     self.ItemRows = {};
+end
+
+---@return void
+function Auctioneer:start()
+    local ItemsUpForAuction = {};
+
+    ---@type Frame
+    local Window = self:getWindow();
+    if (not Window) then
+        return;
+    end
+
+    local duration = tonumber(string.trim(Window._TimeInput:GetText()));
+    local antiSnipe = tonumber(string.trim(Window._AntiSnipeInput:GetText()));
+
+    if (not GL:higherThanZero(duration) or not antiSnipe or antiSnipe < 0) then
+        GL:error("The auction time in seconds needs to be higher than 0. The anti snipe value needs to be 0 or higher!");
+
+        return;
+    end
+
+    -- Check which items were selected and get their minimum/increment
+    for key, ItemRow in pairs(self.ItemRows or {}) do
+        (function()
+            if (type(ItemRow) ~= "table" or not ItemRow._itemLink
+                or (ItemRow._Select and not ItemRow._Select:GetChecked())
+            ) then
+                return;
+            end
+
+            local itemID = GL:getItemIDFromLink(ItemRow._itemLink);
+            if (not itemID) then
+                return;
+            end
+
+            tinsert(ItemsUpForAuction, {
+                link = ItemRow._itemLink,
+                minimum = tonumber(ItemRow.MinInput:GetText()) or 0,
+                increment = tonumber(ItemRow.IncInput:GetText()) or 0,
+            });
+
+            Interface:release(ItemRow);
+            self.ItemRows[key] = nil;
+        end)();
+    end
+
+    -- Start the auction
+    GL.GDKP.MultiAuction.Auctioneer:start(ItemsUpForAuction, duration, antiSnipe);
 end
 
 ---@return Frame

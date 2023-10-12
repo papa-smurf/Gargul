@@ -550,7 +550,7 @@ GL.Data.Constants = {
             startGDKPAuction = 17,
             stopGDKPAuction = 18,
             rescheduleGDKPAuction = 19,
-            --refreshGDKPAuction = 20, ---@todo: use or remove, unused atm
+            startGDKPMultiAuction = 20,
             requestGDKPSession = 21,
             broadcastGDKPSession = 22,
             broadcastGDKPMutation = 23,
@@ -559,6 +559,8 @@ GL.Data.Constants = {
             broadcastPlusOnesData = 26,
             requestPlusOnesData = 27,
             broadcastPlusOnesMutation = 28,
+            bidOnGDKPMultiAuction = 29,
+            announceBidsForGDKPMultiAuction = 30,
         },
     },
 

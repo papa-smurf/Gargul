@@ -321,11 +321,6 @@ function GroupVersionCheck:refresh()
         self.PlayerRows[key] = nil;
     end
 
-    ---@todo: REMOVE
-    if (not GL.User.isInGroup) then
-        GL.Test:simulateGroup();
-    end
-
     local upToDate, outdated, unresponsive, offline = 0, 0, 0, 0;
 
     local addUpToDate = function(player)

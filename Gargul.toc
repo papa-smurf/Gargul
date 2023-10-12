@@ -44,6 +44,7 @@ Classes/GDKP/Auction.lua
 Classes/GDKP/Pot.lua
 Classes/GDKP/Auctioneer.lua
 Classes/GDKP/MultiAuction/Auctioneer.lua
+Classes/GDKP/MultiAuction/Client.lua
 Classes/PlusOnes.lua
 Classes/TMB.lua
 Classes/Exporter.lua

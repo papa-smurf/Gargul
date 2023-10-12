@@ -138,6 +138,7 @@ function GL:_init()
     self.TradeTime:_init();
     self.GDKP.Auctioneer:_init();
     self.GDKP.MultiAuction.Auctioneer:_init();
+    self.GDKP.MultiAuction.Client:_init();
     self.Interface.MasterLooterDialog:_init();
     self.Interface.GDKP.BidderQueue:_init();
     self.Interface.GDKP.Distribute.MailCuts:_init();

@@ -14,9 +14,11 @@ GL.Interface = GL.Interface or {
         GRAY = 808080,
         LIGHT_GRAY = "D3D3D3",
         DIM_GRAY = 696969,
+        PURPLE = "A335EE",
         SILVER = "C0C0C0",
         WHITE = "FFFFFF",
         WHITE_SMOKE = "F5F5F5",
+        YELLOW = "FFF569",
 
         -- Statuses
         ERROR = "BE3333",
@@ -166,7 +168,7 @@ function Interface:inputBox(Parent, name, placeholder)
         -- Make sure an empty value is returned when the placeholder value is still active
         Input._GetText = Input.GetText;
         Input.GetText = function()
-            local text = Input:_GetText();
+            local text = Input:IsNumeric() and Input:GetNumber() or Input:_GetText();
 
             return text ~= Input._placeholder and text or "";
         end
@@ -186,6 +188,16 @@ function Interface:inputBox(Parent, name, placeholder)
 
             Input:SetText(Input._placeholder);
         end);
+    else
+        Input._GetText = Input.GetText;
+        Input.GetText = function()
+            return Input:IsNumeric() and Input:GetNumber() or Input:_GetText();
+        end
+    end
+
+    Input.Clear = function ()
+        Input:SetText(Input._placeholder or "");
+        Input:ClearFocus();
     end
 
     -- Make sure spells, macros and items can be tragged into the field
@@ -546,15 +558,19 @@ end
 ---@param hideAllButtons boolean
 ---@param hideWatermark boolean
 ---@param template string
+---@param Parent Frame
 ---@return Frame
 function Interface:createWindow(
     name, width, height, minWidth, minHeight, maxWidth, maxHeight, closeWithEscape, OnClose,
-    hideMinimizeButton, hideCloseButton, hideResizeButton, hideMoveButton, hideAllButtons, hideWatermark, template
+    hideMinimizeButton, hideCloseButton, hideResizeButton, hideMoveButton, hideAllButtons, hideWatermark, template,
+    Parent
 )
     if (width ~= nil or type(name) ~= "table") then
         GL:error("Pass a table instead of multiple arguments")
         return false;
     end
+
+    local predefinedParent = name.Parent ~= nil;
 
     width = name.width;
     height = name.height;
@@ -572,6 +588,8 @@ function Interface:createWindow(
     template = name.template;
     hideWatermark = name.hideWatermark;
 
+    Parent = name.Parent or UIParent;
+
     name = name.name;
 
     if (not name) then
@@ -581,9 +599,12 @@ function Interface:createWindow(
     closeWithEscape = closeWithEscape ~= false;
 
     ---@type Frame
-    local Window = CreateFrame("Frame", name, UIParent, template == false and Frame or "BackdropTemplate");
+    local Window = CreateFrame("Frame", name, Parent, template == false and Frame or "BackdropTemplate");
     Window:SetSize(width or 200, height or 200);
-    Window:SetPoint("CENTER", UIParent, "CENTER");
+
+    if (not predefinedParent) then
+        Window:SetPoint("CENTER", UIParent, "CENTER");
+    end
 
     if (template ~= false) then
         Window:SetBackdrop(_G.BACKDROP_DARK_DIALOG_32_32);

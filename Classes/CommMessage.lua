@@ -158,6 +158,7 @@ function CommMessage:compress(Message)
     local Payload = {
         a = Message.action, -- Action
         c = Message.content, -- Content
+        ch = Message.channel, -- channel (WHISPER, RAID etc)
         v = Message.version, -- Version of sender
         mv = Message.minimumVersion, -- Minimum version recipient should have
         s = Message.senderFqn, -- Name of the sender
@@ -201,6 +202,7 @@ function CommMessage:decompress(encoded)
 
     return {
         action = Payload.a or nil, -- Action
+        channel = Payload.ch or nil, -- Channel
         content = Payload.c or nil, -- Content
         version = Payload.v or nil, -- Version of sender
         minimumVersion = Payload.mv or nil, -- Minimum version recipient should have

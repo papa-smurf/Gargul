@@ -75,6 +75,15 @@ Comm.Actions = {
     [Actions.rescheduleGDKPAuction] = function (Message)
         GL.GDKP.Auction:reschedule(Message);
     end,
+    [Actions.startGDKPMultiAuction] = function (Message)
+        GL.GDKP.MultiAuction.Client:start(Message);
+    end,
+    [Actions.bidOnGDKPMultiAuction] = function (Message)
+        GL.GDKP.MultiAuction.Auctioneer:processBid(Message);
+    end,
+    [Actions.announceBidsForGDKPMultiAuction] = function (Message)
+        GL.GDKP.MultiAuction.Client:updateBids(Message);
+    end,
     [Actions.broadcastGDKPAuctionQueue] = function (Message)
         GL.GDKP.Auction:receiveQueue(Message);
     end,

@@ -86,8 +86,11 @@ function FillFromInventory:build()
     local MinimumQuality = Interface:createDropdown{
         Parent = Window,
         Options = {
-            [3] = ("|c000070dd%s|r"):format(L.QUALITY_RARE),
-            [4] = ("|c00a335ee%s|r"):format(L.QUALITY_EPIC),
+            [0] = ("|c00%s%s|r"):format(Interface.Colors.POOR, L.QUALITY_POOR),
+            [1] = ("|c00%s%s|r"):format(Interface.Colors.COMMON, L.QUALITY_COMMON),
+            [2] = ("|c00%s%s|r"):format(Interface.Colors.UNCOMMON, L.QUALITY_UNCOMMON),
+            [3] = ("|c00%s%s|r"):format(Interface.Colors.RARE, L.QUALITY_RARE),
+            [4] = ("|c00%s%s|r"):format(Interface.Colors.EPIC, L.QUALITY_EPIC),
         },
         value = Settings:get("GDKP.MultiAuction.minimumFillQuality"),
         callback = function (_, value)
@@ -104,7 +107,7 @@ function FillFromInventory:build()
         checked = Settings:get("GDKP.MultiAuction.includeBOEs"),
         label = L.INCLUDE_BOES,
         callback = function (_, value)
-            Settings:set("GDKP.MultiAuction.includeBOEs", value)
+            Settings:set("GDKP.MultiAuction.includeBOEs", value);
         end,
     };
     IncludeBOE:SetPoint("TOPLEFT", MinimumQuality, "BOTTOMLEFT", 16, -6);

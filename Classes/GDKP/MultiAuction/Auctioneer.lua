@@ -5,6 +5,7 @@ local _, GL = ...;
 
 ---@type Data
 local Constants = GL.Data.Constants;
+local CommActions = Constants.Comm.Actions;
 
 ---@type Settings
 local Settings = GL.Settings;
@@ -15,12 +16,14 @@ local DB = GL.DB;
 ---@type GDKP
 local GDKP = GL.GDKP;
 
----@type GDKPAuction
-local Auction = GDKP.Auction;
+---@type GDKPMultiAuctionClient
+local Client;
 
 ---@class GDKPMultiAuctionAuctioneer
 GL:tableSet(GL, "GDKP.MultiAuction.Auctioneer", {
     _initialized = false,
+    auctionIsInProgress = false,
+    waitingForAuctionStart = false,
 });
 
 ---@type GDKPMultiAuctionAuctioneer
@@ -40,6 +43,7 @@ function Auctioneer:_init()
     end
 
     UI = GL.Interface.GDKP.MultiAuction.Auctioneer;
+    Client  = GL.GDKP.MultiAuction.Client;
 
     self._initialized = true;
 end
@@ -51,9 +55,6 @@ end
 function Auctioneer:fillFromInventory(minimumQuality, includeBOEs, includeMaterials)
     includeBOEs = includeBOEs ~= false;
     includeMaterials = includeMaterials == true;
-
-    ---@todo: REMOVE!
-    --minimumQuality = 0;
 
     GL:forEachItemInBags(function (Location, bag, slot)
         -- The item doesn't have the required minimum
@@ -90,7 +91,7 @@ end
 --- Check whether the given or current user is allowed to broadcast
 ---
 ---@return boolean
-function Auctioneer:allowedToBroadcast(playerID)
+function Auctioneer:userIsAllowedToBroadcast(playerID)
     -- If no player is given we assume self
     if (type(playerID) ~= "string"
         or playerID == GL.User.id
@@ -101,8 +102,8 @@ function Auctioneer:allowedToBroadcast(playerID)
         );
     end
 
-    if (Auction.inProgress) then
-        return Auction.Current.initiatorID == playerID;
+    if (self.inProgress) then
+        return self.initiatorID == playerID;
     end
 
     return GL.Player:isMasterLooter(playerID)
@@ -128,43 +129,270 @@ function Auctioneer:disenchant(itemLink)
     end);
 end
 
----@param force boolean
----@param triedQueue boolean
+---@param ItemDetails table table objects should contain link, minimum and increment
+---@param duration number
+---@param antiSnipe number
 ---@return void
-function Auctioneer:start(force, triedQueue)
-    UI = UI or GL.Interface.GDKP.Auctioneer;
+function Auctioneer:start(ItemDetails, duration, antiSnipe)
+    local ItemsUpForAuction = {};
+    local MinAndIncrementPerLink = {};
 
-    -- There is no active item, see if we can pop one from the queue
-    if (not UI.itemLink) then
-        if (not triedQueue) then
-            self:popFromQueue(force);
-            return self:start(force, true);
-        else
-            return;
-        end
+    for _, Item in pairs(ItemDetails or {}) do
+        MinAndIncrementPerLink[Item.link] = {
+            minimum = Item.minimum,
+            increment = Item.increment,
+        };
+
+        self:storeDetailsForFutureAuctions{
+            itemLink = Item.link,
+            minimum = Item.minimum,
+            increment = Item.increment,
+        };
     end
 
-    if (Auction:announceStart(
-            UI.itemLink,
-            UI.minimumBid,
-            UI.increment,
-            UI.time,
-            UI.antiSnipe
-    )) then
-        self:storeDetailsForFutureAuctions{
-            itemLink = UI.itemLink,
-            minimumBid = UI.minimumBid,
-            increment = UI.increment,
-            time = UI.time,
-            antiSnipe = UI.antiSnipe,
-        };
-    end;
+    -- Prepare all item data needed to start the multi-auction
+    local auctionID = 1;
+    GL:onItemLoadDo(GL:tableColumn(ItemDetails, "link"), function (Items)
+        for _, Item in pairs(Items or {}) do
+            tinsert(ItemsUpForAuction, {
+                auctionID = auctionID,
+                isBOE = GL:inTable({LE_ITEM_BIND_ON_ACQUIRE, LE_ITEM_BIND_QUEST}, Item.bindType),
+                itemLevel = Item.level,
+                name = Item.name,
+                quality = Item.quality,
+                link = Item.link,
+                minimum = MinAndIncrementPerLink[Item.link].minimum,
+                increment = MinAndIncrementPerLink[Item.link].increment,
+            });
+
+            auctionID = auctionID + 1;
+        end
+
+        self:periodicallyAnnounceBids();
+
+        if (not self:announceStart(ItemsUpForAuction, duration, antiSnipe)) then
+            return;
+        end
+    end);
+end
+
+--- Send all top bids to the group
+---
+---@return void
+function Auctioneer:periodicallyAnnounceBids()
+    GL:interval(.2, "GDKP.MultiAuction.periodicallyAnnounceBids", function ()
+        if (not self.newBidAccepted) then
+            return;
+        end
+
+        local bidsAvailable = false;
+        local Bids = {};
+        for auctionID, Details in pairs(Client.AuctionDetails.Auctions or {}) do
+            (function()
+                auctionID = math.floor(tonumber(auctionID) or 0);
+                if (auctionID < 1) then
+                    return;
+                end
+
+                local bid = tonumber(GL:tableGet(Details, "CurrentBid.amount", 0)) or 0;
+                if (bid < 1) then
+                    return;
+                end
+
+                local player = GL:tableGet(Details, "CurrentBid.player");
+                if (not player) then
+                    return;
+                end
+
+                Bids[auctionID] = { p = player, a = bid, e =  Details.endsAt };
+                bidsAvailable = true;
+            end)();
+        end
+
+        GL.CommMessage.new(
+            CommActions.announceBidsForGDKPMultiAuction,
+            Bids,
+            "GROUP"
+        ):send();
+
+        self.newBidAccepted = false;
+    end);
+end
+
+--- Announce to everyone in the raid that a MultiAuction is starting
+---
+---@param ItemDetails table
+---@param duration number
+---@param antiSnipe number
+---@return boolean
+function Auctioneer:announceStart(ItemDetails, duration, antiSnipe)
+    -- There's already a MultiAuction in progress
+    if (self.auctionIsInProgress) then
+        return false;
+    end
+
+    -- We're still waiting for a MultiAuction to start
+    if (self.waitingForAuctionStart
+        and GetServerTime() - self.waitingForAuctionStart < 6
+    ) then
+        return false;
+    end
+
+    if (not Auctioneer:userIsAllowedToBroadcast()) then
+        self.waitingForAuctionStart = false;
+        return false;
+    end
+
+    self.waitingForAuctionStart = GetServerTime();
+    duration = tonumber(duration) or 0;
+    antiSnipe = tonumber(antiSnipe) or 0;
+
+    if (duration < 1
+        or antiSnipe < 0
+    ) then
+        GL:warning("Invalid data provided for GDKP auction start!");
+        self.waitingForAuctionStart = false;
+        return false;
+    end
+
+    local endsAt = math.ceil(GetServerTime() + duration);
+    local defaultMinimumBid = DB:get("GDKP.defaultMinimumBid");
+    local defaultIncrement = DB:get("GDKP.defaultIncrement");
+    for _, Details in pairs(ItemDetails or {}) do
+        Details.minimum = Details.minimum >= 0 and Details.minimum or defaultMinimumBid;
+        Details.increment = Details.increment >= 0 and Details.increment or defaultIncrement;
+        Details.endsAt = endsAt;
+    end
+
+    GL.CommMessage.new(
+        CommActions.startGDKPMultiAuction,
+        {
+            ItemDetails = ItemDetails,
+            endsAt = endsAt,
+            antiSnipe = antiSnipe,
+        },
+        "GROUP"
+    ):send();
+
+    return true;
 end
 
 ---@return void
 function Auctioneer:stop()
     GL.Ace:CancelTimer(self.PopTimer);
     Auction:announceStop(true);
+end
+
+--- Attempt to process an incoming bid
+---
+---@param Message CommMessage
+---@return void
+function Auctioneer:processBid(Message)
+    if (Message.Sender.isSelf or not self:auctionStartedByMe()) then
+        return;
+    end
+
+    local auctionID = GL:tableGet(Message, "content.auctionID");
+
+    -- The given auction doesn't exist
+    if (not auctionID or not GL:tableGet(Client, "AuctionDetails.Auctions." .. auctionID)) then
+        ---@todo: CHECK WITH OTHER PLAYERS TO SEE IF THERE'S AN ONGOING MULTI-AUCTION
+        return;
+    end
+
+    -- Regardless of what happens make sure to extend the auction of needed
+    local serverTime = GetServerTime();
+    local secondsLeft = Client.AuctionDetails.Auctions[auctionID].endsAt - serverTime;
+
+    -- This auction as "long" ended
+    if (secondsLeft <= GL.Settings:get("GDKP.auctionEndLeeway", 2) * -1) then
+        return;
+    end
+
+    if (secondsLeft <= Client.AuctionDetails.antiSnipe) then
+        -- Make sure we spread the news about this reschedule
+        Client.AuctionDetails.Auctions[auctionID].endsAt = serverTime + Client.AuctionDetails.antiSnipe;
+
+        self.newBidAccepted = true;
+    end
+
+    local bid = tonumber(GL:tableGet(Message, "content.bid", 0)) or 0;
+
+    -- Make sure the bid is actually valid
+    if (not Client:isBidValidForAuction(auctionID, bid)) then
+        return;
+    end
+
+    Client.AuctionDetails.Auctions[auctionID].CurrentBid = {
+        amount = bid,
+        player = Message.Sender.fqn,
+    };
+
+    -- Make sure we spread the news about the new top bidder
+    self.newBidAccepted = true;
+end
+
+--- Was the given auction ID (or current multi-auction as a whole) started by us
+---
+---@return boolean
+function Auctioneer:auctionStartedByMe(auctionID)
+    if (auctionID and not GL:tableGet(Client, "AuctionDetails.Auctions." .. auctionID)) then
+        return false;
+    end
+
+    return Client.AuctionDetails and Client.AuctionDetails.initiator == GL.User.fqn;
+end
+
+--- Mark an auction as deleted
+---
+---@param auctionID string
+---@return void
+function Auctioneer:deleteAuction(auctionID)
+    if (not GL:tableGet(Client, "AuctionDetails.Auctions." .. auctionID)) then
+        return;
+    end
+
+    Client.AuctionDetails.Auctions[auctionID].endsAt = -1;
+    self.newBidAccepted = true;
+end
+
+--- Close an auction
+---
+---@param auctionID string
+---@return void
+function Auctioneer:closeAuction(auctionID)
+    if (not GL:tableGet(Client, "AuctionDetails.Auctions." .. auctionID)) then
+        return;
+    end
+
+    Client.AuctionDetails.Auctions[auctionID].endsAt = 0;
+    self.newBidAccepted = true;
+end
+
+--- Clear an auction's current bid
+---
+---@param auctionID string
+---@return void
+function Auctioneer:clearBid(auctionID)
+    if (not GL:tableGet(Client, "AuctionDetails.Auctions." .. auctionID)) then
+        return;
+    end
+
+    Client.AuctionDetails.Auctions[auctionID].CurrentBid = nil;
+    self.newBidAccepted = true;
+end
+
+--- Give a last 10 second timer for the given auction
+---
+---@param auctionID string
+---@return void
+function Auctioneer:lastCall(auctionID)
+    if (not GL:tableGet(Client, "AuctionDetails.Auctions." .. auctionID)) then
+        return;
+    end
+
+    Client.AuctionDetails.Auctions[auctionID].endsAt = GetServerTime() + 10;
+    self.newBidAccepted = true;
 end
 
 ---@return boolean
@@ -285,46 +513,24 @@ function Auctioneer:timeRanOut()
     end
 end
 
---- Store auction details for future use (time, increment, minimum bid etc)
+--- Store auction details for future use (increment, minimum)
 ---
 ---@param Details table
 ---@return void
 function Auctioneer:storeDetailsForFutureAuctions(Details)
-    local itemID = GL:getItemIDFromLink(Details.itemLink);
+    local itemID = GL:getItemIDFromLink(Details.link);
 
     if (not itemID) then
         return;
     end
 
-    do --[[ TIME ]]
-        local time = tonumber(Details.time) or 0;
-        time = math.floor(time);
-
-        if (time < 1) then
-            time = GL:tableGet(GL.Data.DefaultSettings, "GDKP.time", 30);
-        end
-
-        Settings:set("GDKP.time", time);
-    end
-
-    do --[[ ANTI SNIPE ]]
-        local antiSnipe = tonumber(Details.antiSnipe) or 0;
-        antiSnipe = math.floor(antiSnipe);
-
-        if (antiSnipe < 0) then
-            antiSnipe = GL:tableGet(GL.Data.DefaultSettings, "GDKP.antiSnipe", 30);
-        end
-
-        Settings:set("GDKP.antiSnipe", antiSnipe);
-    end
-
     -- [[ MINIMUM AND INCREMENT ]]
     if (Settings:get("GDKP.storeMinimumAndIncrementPerItem")) then
-        local minimumBid = tonumber(Details.minimumBid) or 0;
-        minimumBid = math.floor(minimumBid);
+        local minimum = tonumber(Details.minimum) or 0;
+        minimum = math.floor(minimum);
 
-        if (minimumBid < 1) then
-            minimumBid = DB:get("GDKP.defaultMinimumBid");
+        if (minimum < 1) then
+            minimum = DB:get("GDKP.defaultMinimumBid");
         end
 
         local increment = tonumber(Details.increment) or 0;
@@ -335,7 +541,7 @@ function Auctioneer:storeDetailsForFutureAuctions(Details)
         end
 
         DB:set("GDKP.SettingsPerItem." .. itemID, {
-            minimum = minimumBid,
+            minimum = minimum,
             increment = increment
         });
     end
@@ -365,41 +571,6 @@ function Auctioneer:removePlayerBid (bidder, bid)
     end
 
     self:refreshBidsTable();
-end
-
----@param Bid table
----@return void
-function Auctioneer:announceBid(Bid)
-    local bidApprovedMessage = string.format(L.HIGHEST_BIDDER_CONFIRMATION, Bid.Bidder.name, Bid.bid);
-
-    GL.Ace:CancelTimer(self.BidAnnouncementThrottler);
-
-    if (not GL.User.isInRaid or not Settings:get("GDKP.announceNewBidInRW")) then
-        return GL:sendChatMessage(bidApprovedMessage, "GROUP", nil, nil, false);
-    end
-
-    --[[ THE LAST BID ANNOUNCEMENT WAS A WHILE AGO, ANNOUNCE IMMEDIATELY ]]
-    if (GetTime() - self.lastBidAnnouncementAt >= 1.2) then
-        bidApprovedMessage = string.format(bidApprovedMessage, Bid.Bidder.name, Bid.bid);
-        GL:sendChatMessage(bidApprovedMessage, "RAID_WARNING", nil, nil, false);
-        self.lastBidAnnouncementAt = GetTime();
-
-        return;
-    end
-
-    --[[ WE NEED TO WAIT BEFORE WE CAN ANNOUNCE AGAIN ]]
-    self.BidAnnouncementThrottler = GL.Ace:ScheduleTimer(function ()
-        local currentTopBid = GL:tableGet(Auction.Current, "TopBid.bid");
-        local bidder = GL:tableGet(Auction.Current, "TopBid.Bidder.name");
-
-        if (not currentTopBid or not bidder) then
-            return;
-        end
-
-        bidApprovedMessage = string.format(bidApprovedMessage, bidder, currentTopBid);
-        GL:sendChatMessage(bidApprovedMessage, "RAID_WARNING", nil, nil, false);
-        self.lastBidAnnouncementAt = GetTime();
-    end, 1);
 end
 
 ---@return void
