@@ -302,6 +302,8 @@ GL.Data.Constants = {
     },
 
     UntradeableItems = {
+        50226, -- Festergut's Acidic Blood
+        50231, -- Rotface's Acidic Blood
         52019, -- Precious's Ribbon
         22726, -- Splinter of Atiesh
         30183, -- Nether Vortex
