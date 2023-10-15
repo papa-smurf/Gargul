@@ -1,5 +1,5 @@
 ## Interface: 100107
-## Interface-Wrath: 30402
+## Interface-Wrath: 30403
 ## Interface-Classic: 11404
 ## Title: Gargul |c00967FD2@project-version@|r
 ## Author: Zhorax - Firemaw
