@@ -302,6 +302,8 @@ GL.Data.Constants = {
     },
 
     UntradeableItems = {
+        50226, -- Festergut's Acidic Blood
+        50231, -- Rotface's Acidic Blood
         52019, -- Precious's Ribbon
         22726, -- Splinter of Atiesh
         30183, -- Nether Vortex
@@ -529,7 +531,7 @@ GL.Data.Constants = {
     ]]
     Comm = {
         channel = "GargulComm2",
-        minimumAppVersion = "6.1.12",
+        minimumAppVersion = "6.2.5",
         Actions = {
             awardItem = 1,
             broadcastLootPriorities = 2,
