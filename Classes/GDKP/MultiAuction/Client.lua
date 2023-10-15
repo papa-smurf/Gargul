@@ -4,7 +4,7 @@ local _, GL = ...;
 ---@class GDKPMultiAuctionClient
 GL:tableSet(GL, "GDKP.MultiAuction.Client", {
     _initialized = false,
-    newBidAccepted = false,
+    detailsChanged = false,
 
     AuctionDetails = {},
 });
@@ -96,10 +96,14 @@ function Client:updateBids(Message)
 
     for auctionID, Details in pairs(Message.content or {}) do
         if (GL:tableGet(self.AuctionDetails, "Auctions." .. auctionID)) then
-            self.AuctionDetails.Auctions[auctionID].CurrentBid = {
-                amount = Details.a,
-                player = Details.p,
-            };
+            if (Details.a > 0) then
+                self.AuctionDetails.Auctions[auctionID].CurrentBid = {
+                    amount = Details.a,
+                    player = Details.p,
+                };
+            else
+                self.AuctionDetails.Auctions[auctionID].CurrentBid = nil;
+            end
 
             self.AuctionDetails.Auctions[auctionID].endsAt = Details.e or self.AuctionDetails.Auctions[auctionID].endsAt;
         end

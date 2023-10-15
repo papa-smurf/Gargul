@@ -17,7 +17,7 @@ function General:draw(Parent)
     Overview:drawCheckboxes({
         {
             label = "Welcome message",
-            description = "Show a message when booting Gargul",
+            description = "Show a message when logging in",
             setting = "welcomeMessage",
         },
         {
@@ -50,11 +50,6 @@ function General:draw(Parent)
             label = "Show update alert",
             description = "Show an alert when there's an update. We believe in \"release early, release often\", it allows us to respond to bugs more quickly and limits the severity of issues. Like the add-on? Then updating is the easiest way to support.",
             setting = "showUpdateAlert",
-        },
-        {
-            label = "No messages",
-            description = "This will prevent Gargul from posting any messages, ANYWHERE",
-            setting = "noMessages",
         },
         {
             label = "No sounds",

@@ -27,6 +27,13 @@ GL.Interface.Alerts = {
 
             Alert.Icon:SetTexture(Details.icon);
             Alert.Message:SetText(Details.message);
+
+            if (type(Details.onClick) == "function") then
+                Alert:SetScript("OnClick", function ()
+                    Details.onClick();
+                    Alert:Hide();
+                end);
+            end
         end, 6, math.huge),
 
         Item = AlertFrame:AddQueuedAlertFrameSubSystem("GargulItem", function (self, itemID, title, message)

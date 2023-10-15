@@ -81,7 +81,7 @@ Comm.Actions = {
     [Actions.bidOnGDKPMultiAuction] = function (Message)
         GL.GDKP.MultiAuction.Auctioneer:processBid(Message);
     end,
-    [Actions.announceBidsForGDKPMultiAuction] = function (Message)
+    [Actions.announceChangesForGDKPMultiAuction] = function (Message)
         GL.GDKP.MultiAuction.Client:updateBids(Message);
     end,
     [Actions.broadcastGDKPAuctionQueue] = function (Message)

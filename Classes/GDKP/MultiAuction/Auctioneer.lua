@@ -29,6 +29,9 @@ GL:tableSet(GL, "GDKP.MultiAuction.Auctioneer", {
 ---@type GDKPMultiAuctionAuctioneer
 local Auctioneer = GL.GDKP.MultiAuction.Auctioneer;
 
+---@type GDKPAuction
+local GDKPAuction = GL.GDKP.Auction;
+
 ---@type GDKPMultiAuctionAuctioneerInterface
 local UI;
 
@@ -57,6 +60,11 @@ function Auctioneer:fillFromInventory(minimumQuality, includeBOEs, includeMateri
     includeMaterials = includeMaterials == true;
 
     GL:forEachItemInBags(function (Location, bag, slot)
+        local itemQuality = tonumber(C_Item.GetItemQuality(Location));
+        if (not itemQuality) then
+            return;
+        end
+
         -- The item doesn't have the required minimum
         if (C_Item.GetItemQuality(Location) < minimumQuality) then
             return;
@@ -97,7 +105,7 @@ function Auctioneer:userIsAllowedToBroadcast(playerID)
         or playerID == GL.User.id
     ) then
         return not GL.User.isInGroup or (
-            GL.User.hasAssist
+            GL.User.isLead
             or GL.User.isMasterLooter
         );
     end
@@ -168,7 +176,7 @@ function Auctioneer:start(ItemDetails, duration, antiSnipe)
             auctionID = auctionID + 1;
         end
 
-        self:periodicallyAnnounceBids();
+        self:scheduleInspection();
 
         if (not self:announceStart(ItemsUpForAuction, duration, antiSnipe)) then
             return;
@@ -179,14 +187,27 @@ end
 --- Send all top bids to the group
 ---
 ---@return void
-function Auctioneer:periodicallyAnnounceBids()
-    GL:interval(.2, "GDKP.MultiAuction.periodicallyAnnounceBids", function ()
-        if (not self.newBidAccepted) then
+function Auctioneer:scheduleInspection()
+    GL:interval(.2, "GDKP.MultiAuction.scheduleInspection", function ()
+        local serverTime = GetServerTime();
+        local signedLeeway = GL.Settings:get("GDKP.auctionEndLeeway", 2) * -1;
+
+        -- Check if there are newly closed auctions
+        for auctionID, Details in pairs(Client.AuctionDetails.Auctions or {}) do
+            if (Details.endsAt > 0
+                and Details.endsAt - serverTime <= signedLeeway
+            ) then
+                self:closeAuction(auctionID);
+            end
+        end
+
+        -- No need to broadcast if nothing changed
+        if (not self.detailsChanged) then
             return;
         end
 
         local bidsAvailable = false;
-        local Bids = {};
+        local Changes = {};
         for auctionID, Details in pairs(Client.AuctionDetails.Auctions or {}) do
             (function()
                 auctionID = math.floor(tonumber(auctionID) or 0);
@@ -194,28 +215,25 @@ function Auctioneer:periodicallyAnnounceBids()
                     return;
                 end
 
-                local bid = tonumber(GL:tableGet(Details, "CurrentBid.amount", 0)) or 0;
-                if (bid < 1) then
-                    return;
-                end
-
-                local player = GL:tableGet(Details, "CurrentBid.player");
-                if (not player) then
-                    return;
-                end
-
-                Bids[auctionID] = { p = player, a = bid, e =  Details.endsAt };
+                Changes[auctionID] = {
+                    p = GL:tableGet(Details, "CurrentBid.player"),
+                    a = tonumber(GL:tableGet(Details, "CurrentBid.amount", 0)) or 0,
+                    e = Details.endsAt,
+                };
                 bidsAvailable = true;
             end)();
         end
 
+        -- Store this multi-auction's details in case the loot master is disconnected for example
+        DB:set("GDKP.MultiAuction.Details", Client.AuctionDetails);
+
         GL.CommMessage.new(
-            CommActions.announceBidsForGDKPMultiAuction,
-            Bids,
+            CommActions.announceChangesForGDKPMultiAuction,
+            Changes,
             "GROUP"
         ):send();
 
-        self.newBidAccepted = false;
+        self.detailsChanged = false;
     end);
 end
 
@@ -313,7 +331,7 @@ function Auctioneer:processBid(Message)
         -- Make sure we spread the news about this reschedule
         Client.AuctionDetails.Auctions[auctionID].endsAt = serverTime + Client.AuctionDetails.antiSnipe;
 
-        self.newBidAccepted = true;
+        self.detailsChanged = true;
     end
 
     local bid = tonumber(GL:tableGet(Message, "content.bid", 0)) or 0;
@@ -329,7 +347,7 @@ function Auctioneer:processBid(Message)
     };
 
     -- Make sure we spread the news about the new top bidder
-    self.newBidAccepted = true;
+    self.detailsChanged = true;
 end
 
 --- Was the given auction ID (or current multi-auction as a whole) started by us
@@ -348,12 +366,17 @@ end
 ---@param auctionID string
 ---@return void
 function Auctioneer:deleteAuction(auctionID)
-    if (not GL:tableGet(Client, "AuctionDetails.Auctions." .. auctionID)) then
+    if (self:auctionIsFinalized(auctionID)) then
         return;
     end
 
     Client.AuctionDetails.Auctions[auctionID].endsAt = -1;
-    self.newBidAccepted = true;
+
+    if (Client.AuctionDetails.Auctions[auctionID].CurrentBid) then
+        Client.AuctionDetails.Auctions[auctionID].CurrentBid = nil;
+    end
+
+    self.detailsChanged = true;
 end
 
 --- Close an auction
@@ -361,12 +384,22 @@ end
 ---@param auctionID string
 ---@return void
 function Auctioneer:closeAuction(auctionID)
-    if (not GL:tableGet(Client, "AuctionDetails.Auctions." .. auctionID)) then
+    if (self:auctionIsFinalized(auctionID)) then
         return;
     end
 
+    local BidDetails = GL:tableGet(Client, ("AuctionDetails.Auctions.%s.CurrentBid"):format(auctionID));
+    if (BidDetails) then
+        local itemLink = Client.AuctionDetails.Auctions[auctionID].link;
+
+        GL:mute();
+        local awardChecksum = GL.AwardedLoot:addWinner(BidDetails.player, itemLink, nil, nil, nil, nil, BidDetails.amount);
+        GDKPAuction:create(GL:getItemIDFromLink(itemLink), BidDetails.amount, BidDetails.player, nil, nil, nil, awardChecksum);
+        GL:unmute();
+    end
+
     Client.AuctionDetails.Auctions[auctionID].endsAt = 0;
-    self.newBidAccepted = true;
+    self.detailsChanged = true;
 end
 
 --- Clear an auction's current bid
@@ -374,25 +407,42 @@ end
 ---@param auctionID string
 ---@return void
 function Auctioneer:clearBid(auctionID)
-    if (not GL:tableGet(Client, "AuctionDetails.Auctions." .. auctionID)) then
+    if (self:auctionIsFinalized(auctionID)) then
         return;
     end
 
     Client.AuctionDetails.Auctions[auctionID].CurrentBid = nil;
-    self.newBidAccepted = true;
+    self.detailsChanged = true;
+end
+
+--- Check if we're still allowed to edit this auction
+---
+---@return boolean
+function Auctioneer:auctionIsFinalized(auctionID)
+    if (not GL:tableGet(Client, "AuctionDetails.Auctions." .. auctionID) -- Auction doesn't exist
+        or Client.AuctionDetails.Auctions[auctionID].endsAt == -1 -- Auction was deleted
+        or (Client.AuctionDetails.Auctions[auctionID].endsAt == 0 -- Auction closed with winning bid
+            and Client.AuctionDetails.Auctions[auctionID].CurrentBid
+        )
+    ) then
+        return true;
+    end
+
+    return false;
 end
 
 --- Give a last 10 second timer for the given auction
 ---
 ---@param auctionID string
 ---@return void
-function Auctioneer:lastCall(auctionID)
-    if (not GL:tableGet(Client, "AuctionDetails.Auctions." .. auctionID)) then
+function Auctioneer:finalCall(auctionID, seconds)
+    if (self:auctionIsFinalized(auctionID)) then
         return;
     end
 
-    Client.AuctionDetails.Auctions[auctionID].endsAt = GetServerTime() + 10;
-    self.newBidAccepted = true;
+    seconds = seconds or GL.Settings:get("GDKP.finalCallTime");
+    Client.AuctionDetails.Auctions[auctionID].endsAt = GetServerTime() + seconds;
+    self.detailsChanged = true;
 end
 
 ---@return boolean
@@ -403,21 +453,6 @@ end
 ---@return boolean
 function Auctioneer:shorten()
     return Auction:announceShortening(DEFAULT_AUCTION_SHORTENING);
-end
-
----@return boolean
-function Auctioneer:finalCall()
-    local time = Settings:get("GDKP.finalCallTime");
-
-    if (not Auction:announceReschedule(time)) then
-        return false;
-    end
-
-    if(Settings:get("GDKP.announceFinalCall")) then
-        GL:sendChatMessage((L.FINAL_CALL_ANNOUNCEMENT):format(Auction.Current.itemLink, time), "RAID_WARNING", nil, nil, false);
-    end
-
-    return true;
 end
 
 ---@return void

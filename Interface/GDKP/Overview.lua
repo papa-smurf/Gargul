@@ -218,7 +218,6 @@ function Overview:build()
     end);
 
     --[[ POT ICON AND VALUE ]]
-
     local PotIcon = AceGUI:Create("Icon");
 
     ---@type Frame
@@ -230,7 +229,7 @@ function Overview:build()
     PotIcon:SetHeight(26);
 
     PotIconFrame:SetParent(WindowFrame);
-    PotIconFrame:SetPoint("TOPRIGHT", WindowFrame, "TOPRIGHT", -56, GL.elvUILoaded and -14 or -20);
+    PotIconFrame:SetPoint("TOPRIGHT", WindowFrame, "TOPRIGHT", -42, GL.elvUILoaded and -14 or -20);
     PotIconFrame:Show();
 
     PotIcon:SetCallback("OnClick", function ()
@@ -243,7 +242,7 @@ function Overview:build()
     end);
 
     PotIcon:SetCallback("OnEnter", function ()
-        if (not self.selectedSession or not Session) then
+        if (not self.selectedSession) then
             return;
         end
 
@@ -269,14 +268,33 @@ function Overview:build()
     Pot:SetText();
     Interface:set(self, "Pot", Pot);
 
-    ---@todo add all items icon here (with loot tracked for this session)
+    --[[ MULTI AUCTION ICON ]]
+    local MultiAuctionIcon = AceGUI:Create("Icon");
 
-    ----[[ LOCK STATUS ICON ]]
+    ---@type Frame
+    local MultiAuctionFrame = MultiAuctionIcon.frame;
 
+    MultiAuctionIcon:SetImage("Interface/icons/ACHIEVEMENT_Guildperk_Everybodysfriend");
+    MultiAuctionIcon:SetImageSize(26, 26);
+    MultiAuctionIcon:SetWidth(26);
+    MultiAuctionIcon:SetHeight(26);
+
+    MultiAuctionFrame:SetParent(WindowFrame);
+    MultiAuctionFrame:SetPoint("TOPRIGHT", Pot, "TOPLEFT", -16, 32);
+    MultiAuctionFrame:Show();
+
+    Interface:addTooltip(MultiAuctionFrame, "Multi-auction: auction multiple items at once!", "TOP")
+
+    MultiAuctionIcon:SetCallback("OnClick", function()
+        self:close();
+        Interface.GDKP.MultiAuction.Auctioneer:open();
+    end);
+
+    --[[ LOCK STATUS ICON ]]
     local LockIcon = AceGUI:Create("Icon");
 
     ---@type Frame
-    local RaiderconFrame = LockIcon.frame;
+    local LockIconFrame = LockIcon.frame;
 
     LockIcon:SetImage("Interface/AddOns/Gargul/Assets/Icons/unlocked");
     LockIcon:SetImage("Interface/AddOns/Gargul/Assets/Icons/locked");
@@ -285,13 +303,23 @@ function Overview:build()
     LockIcon:SetHeight(26);
     Interface:set(self, "LockIcon", LockIcon);
 
-    RaiderconFrame:SetParent(WindowFrame);
-    RaiderconFrame:SetPoint("TOPRIGHT", Pot, "TOPLEFT", -20, 32);
-    RaiderconFrame:Show();
+    LockIconFrame:SetParent(WindowFrame);
+    LockIconFrame:SetPoint("TOPRIGHT", MultiAuctionFrame, "TOPLEFT", -20, 0);
+    LockIconFrame:Show();
 
     LockIcon:SetCallback("OnEnter", function ()
-        GameTooltip:SetOwner(RaiderconFrame, "ANCHOR_TOP");
-        GameTooltip:AddLine("Lock or unlock the session");
+        GameTooltip:SetOwner(LockIconFrame, "ANCHOR_TOP");
+
+        local Session = self:getSelectedSession();
+
+        local tooltipText;
+        if (not Session) then
+            tooltipText = "Lock or unlock the session";
+        else
+            tooltipText = Session.lockedAt and "Unlock the session" or "Lock the session for payout";
+        end
+
+        GameTooltip:AddLine(tooltipText);
         GameTooltip:Show();
     end);
     LockIcon:SetCallback("OnLeave", function ()
@@ -497,6 +525,12 @@ end
 ---@return void
 function Overview:close()
     GL:debug("Overview:close");
+
+    local Window = Interface:get(self, "GDKPOverview");
+
+    if (Window and Window.Hide) then
+        Window:Hide();
+    end
 
     self:closeSubWindows();
     self:clearDetailsFrame();
@@ -843,13 +877,24 @@ function Overview:showTutorial()
     local Note = Interface:get(self, "Label.Note");
     Note:SetText("|c00a79effFollow the steps below to quickly get started with Gargul GDKP!|r");
 
-    local Steps = {
-        {1, "|c00a79effClick the |c00FFF569New|r button below to create a GDKP session. It will show on the left when created.|r"},
-        {2, "|c00a79effMake sure your session says |c00FFF569(active)|r. If that's not the case then click the |c00a79effEnable|r button below!|r"},
-        {3, string.format("|c00a79effYou can now start auctioning off items. Open your inventory, |c00FFF569%s|r an item and start. Don't forget to award the item when you're done!|r", GL.Settings:get("ShortcutKeys.rollOffOrAuction"))},
-        {4, string.format("|c00a79effAlternatively, you can use |c00FFF569%s|r to directly award an item to anyone and manually set a price|r", GL.Settings:get("ShortcutKeys.award"))},
-        {5, "|c00a79effIf all went well then, instead of this tutorial, you should see your freshly auctioned item(s) here!|r"},
-    };
+    local Steps;
+    if (GL:empty(DB:get("GDKP.Ledger"))) then
+        Steps = {
+            {1, "|c00a79effClick the |c00FFF569New|r button below to create your first GDKP session. It will show on the left when created.|r"},
+        };
+    elseif (not GDKPSession:activeSessionID()) then
+        Steps = {
+            {1, "|c00a79effActivate this session by clicking the |c00FFF569Enable|r button below!|r"},
+        };
+    else
+        Steps = {
+            {1, "|c00a79effYou're ready to sell items! |c00BE3333Read all the steps below carefully and test them all|r by yourself (no need to be in a raid) before starting your first GDKP raid!|r", },
+            {2, ("|c00a79eff|c00FFF569%s|r an item to auction or queue a single item|r"):format(GL.Settings:get("ShortcutKeys.rollOffOrAuction")), },
+            {3, "|c00a79effWant to auction multiple items at once instead? Run |c00FFF569/gl multiauction|r or click the multi-auction icon in the top right of this window!|r", },
+            {4, string.format("|c00a79effWant to sell an item directly without anyone bidding? Use |c00FFF569%s|r on an item, pick a winner and set a price!|r", GL.Settings:get("ShortcutKeys.award"))},
+            {5, "|c00a79effIf all went well then you will see your freshly auctioned item(s) here!|r"},
+        };
+    end
 
     table.sort(Steps, function (a, b)
         if (a[1] and b[1]) then

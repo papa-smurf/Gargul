@@ -66,7 +66,7 @@ function GL:bootstrap(_, _, addonName)
     GL.Ace:ScheduleTimer(function()
         self.elvUILoaded = GetAddOnEnableState(GL.User.name,"ElvUI") == 2;
 
-        GL.Interface.GDKP.MultiAuction.Auctioneer:open();
+        --GL.Interface.GDKP.MultiAuction.Auctioneer:open();
         --GL.Interface.GDKP.MultiAuction.Client:open();
         --GL.Interface.GroupVersionCheck:open();
     end, 1);

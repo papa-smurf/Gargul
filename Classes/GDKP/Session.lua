@@ -116,14 +116,9 @@ function Session:_init()
                 return;
             end
 
-            local Window = GL.Interface.GDKP.Auctioneer:open();
-
-            if (Window) then
-                Window.Minimize.MinimizeButton:Click();
-            end
-
             GL.Interface.Alerts:fire("GargulNotification", {
-                message = string.format("|c00BE3333%s!|r", L.GDKP_ACTIVATED),
+                message = string.format("|c00BE3333%s|r", L.GDKP_ACTIVATED),
+                onClick = function () GL.Interface.GDKP.Overview:open(); end,
             });
         end, 5);
     end

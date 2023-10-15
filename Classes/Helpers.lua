@@ -2451,6 +2451,36 @@ function GL:sendChatMessage(message, chatType, language, channel, stw, pretend)
     return message;
 end
 
+local previousNoMessagesWarningValue;
+local previousGaveNoMessagesWarningValue;
+
+--- Temporarily mute the add-on by not showing any messages
+---
+---@return void
+function GL:mute()
+    previousNoMessagesWarningValue = GL.Settings:get("noMessages");
+    previousGaveNoMessagesWarningValue = gaveNoMessagesWarning;
+
+    gaveNoMessagesWarning = true;
+    GL.Settings:set("noMessages", true);
+end
+
+--- Unmute add-on after (temporary) mute
+---
+---@return void
+function GL:unmute()
+    -- We didn't mute the application in the first place
+    if (previousGaveNoMessagesWarningValue == nil) then
+        return;
+    end
+
+    gaveNoMessagesWarning = previousGaveNoMessagesWarningValue;
+    GL.Settings:set("noMessages", previousNoMessagesWarningValue);
+
+    previousNoMessagesWarningValue = nil;
+    previousGaveNoMessagesWarningValue = nil;
+end
+
 --- Check whether a given value exists within a table
 ---
 ---@param array table

@@ -12,6 +12,9 @@ local Settings = GL.Settings;
 ---@type GDKP
 local GDKP = GL.GDKP;
 
+---@type GDKPSession
+local Session = GL.GDKP.Session;
+
 ---@type GroupVersionCheckInterface
 local GroupVersionCheck = GL.Interface.GroupVersionCheck;
 
@@ -19,20 +22,30 @@ local GroupVersionCheck = GL.Interface.GroupVersionCheck;
 GL:tableSet(GL, "Interface.GDKP.MultiAuction.Auctioneer", {
     windowName = "Gargul.Interface.GDKP.MultiAuction.Auctioneer.Window",
 
+    ItemHolder = nil,
     ItemRows = {},
+    Search = nil,
+    SelectAll = nil,
 });
 
 ---@type GDKPMultiAuctionAuctioneerInterface
 local Auctioneer = GL.Interface.GDKP.MultiAuction.Auctioneer;
 
 --[[ CONSTANTS ]]
-local WINDOW_WIDTH = 383;
+local ITEM_ROW_HEIGHT = 20;
+local WINDOW_WIDTH = 435;
 local WINDOW_HEIGHT = 333;
 local FONT;
 
 ---@return Frame|nil
 function Auctioneer:open()
     if (self:isShown()) then
+        return;
+    end
+
+    if (not Session:activeSessionID()) then
+        GL:warning("You need have an active GDKP session!");
+        Interface.GDKP.Overview:open();
         return;
     end
 
@@ -107,28 +120,66 @@ function Auctioneer:build()
     ---@type ScrollFrame
     local ScrollFrame;
 
+    --[[ GDKP SESSION DETAILS ]]
+    ---@type FontString
+    local SessionDetails = Interface:createFontString(Window);
+    SessionDetails:SetPoint("TOPLEFT", Window, "TOPLEFT", 20, -24);
+    SessionDetails:SetFont(.9);
+    self.SessionDetails = SessionDetails;
+
+    local ActiveSession = Session:getActive();
+    local guild = "";
+    local CreatedBy = ActiveSession.CreatedBy or { class = "priest", name = "unknown", guild = "unknown", uuid = "unknown"};
+    if (CreatedBy.guild) then
+        guild = string.format(" |c001eff00<%s>|r", CreatedBy.guild);
+    end
+    self.SessionDetails:SetText(string.format(
+        "Active GDKP Session: |c00967FD2%s|r | By %s%s | On |c00967FD2%s|r",
+        ActiveSession.title,
+        GL:nameFormat{ name = CreatedBy.name, realm = CreatedBy.realm, colorize = true },
+        guild,
+        date('%Y-%m-%d', ActiveSession.createdAt)
+    ));
+
     --[[ SELECT ALL ]]
     ---@type CheckButton
     local SelectAll = Interface:createCheckbox{
         Parent = Window,
-        checked = true,
+        checked = false,
         callback = function (_, value)
             for _, Row in pairs(self.ItemRows or {}) do
-                if (Row and Row._Select) then
+                if (Row and Row._Select and Row._isShown) then
                     Row._Select:SetChecked(value);
                 end
             end
         end,
     };
-    SelectAll:SetPoint("TOPLEFT", Window, "TOPLEFT", 20, -24);
-    Interface:addTooltip(SelectAll, "Select / Disable all");
+    SelectAll:SetPoint("TOPLEFT", SessionDetails, "BOTTOMLEFT", 0, -8);
+    Interface:addTooltip(SelectAll, "Select / Disable all", "TOP");
+    self.SelectAll = SelectAll;
 
     --[[ SEARCH ]]
     ---@type EditBox
     local Search = Interface:inputBox(Window, nil, "Search name or iLVL");
     Search:SetWidth(150);
     Search:SetPoint("TOPLEFT", SelectAll, "TOPRIGHT", 20, 0);
-    Interface:addTooltip(Search, "Supports item names and iLVL e.g. \"252\", \"<252\" etc");
+    self.Search = Search;
+    Interface:addTooltip(Search, "Supports item names and iLVL e.g. \"252\", \"<252\" etc", "TOP");
+
+    Search:SetScript("OnTextChanged", function ()
+        GL:after(.5, "GDKP_MULTI_AUCTION_AUCTIONEER_FILTER_CHANGED", function ()
+            self:filterAndSort();
+        end);
+    end);
+
+    ---@type Button
+    local SearchClear = CreateFrame("Button", nil, Window, "UIPanelCloseButton");
+    SearchClear:SetPoint("TOPLEFT", Search, "TOPRIGHT", -1, 2);
+    SearchClear:SetSize(26, 26);
+    SearchClear:SetScript("OnClick", function ()
+        Search:Clear();
+    end);
+    Interface:addTooltip(SearchClear, L.CLEAR, "TOP");
 
     --[[ INCREMENT ]]
     ---@type FontString
@@ -153,13 +204,13 @@ function Auctioneer:build()
     ItemHolder:SetSize(ScrollFrame:GetWidth(), ( ScrollFrame:GetHeight() * 2 ));
     ItemHolder:SetPoint("TOPLEFT", ScrollFrame, "TOPLEFT");
     ItemHolder:SetPoint("BOTTOMRIGHT", ScrollFrame, "BOTTOMRIGHT");
+    self.ItemHolder = ItemHolder;
 
     ---@type Frame
     local Items = CreateFrame("Frame", nil, ItemHolder);
     Items:SetAllPoints(ItemHolder);
 
-    --[[ ADD AN ITEM TO THE QUEUE WINDOW ]]
-    local rowHeight = 20;
+    --[[ ADD AN ITEM TO THE WINDOW ]]
     Window.addItemByLink = function (_, link)
         GL:onItemLoadDo(GL:getItemIDFromLink(link), function (Details)
             if (not Details) then
@@ -169,20 +220,21 @@ function Auctioneer:build()
             ---@type Frame
             local ItemRow = CreateFrame("Frame", nil, ItemHolder);
             ItemRow:EnableMouse(true);
+            ItemRow._Details = Details;
+            ItemRow._isShown = false;
 
             ---@type table
             local PerItemSettings = GDKP:settingsForItemID(Details.id);
-            ItemRow:SetHeight(rowHeight);
-            ItemRow._itemLink = link;
+            ItemRow:SetHeight(ITEM_ROW_HEIGHT);
 
-            ItemRow:SetPoint("TOPLEFT", ItemHolder, "TOPLEFT", 20, (GL:count(self.ItemRows) * 20) * -1);
+            ItemRow:SetPoint("TOPLEFT", ItemHolder, "TOPLEFT", 20, ((GL:count(self.ItemRows) * 20) * -1)  - 4);
             ItemRow:SetPoint("TOPRIGHT", ItemHolder, "TOPRIGHT", not GL.elvUILoaded and 0 or -4, 0);
 
             --[[ SELECT ]]
             ---@type CheckButton
             local Select = Interface:createCheckbox{
                 Parent = ItemRow,
-                checked = true,
+                checked = false,
             };
             ItemRow._Select = Select;
             Select:SetPoint("TOP", ItemRow, "TOP", 0, 2);
@@ -197,7 +249,7 @@ function Auctioneer:build()
             local Icon = CreateFrame("Frame",nil, ItemRow);
             Icon:SetPoint("TOP", ItemRow, "TOP");
             Icon:SetPoint("LEFT", Search, "LEFT", -4, 0);
-            Icon:SetSize(rowHeight - 4, rowHeight - 4);
+            Icon:SetSize(ITEM_ROW_HEIGHT - 4, ITEM_ROW_HEIGHT - 4);
 
             Interface:addTooltip(Icon, Details.link);
 
@@ -207,6 +259,24 @@ function Auctioneer:build()
             local Image = Icon:CreateTexture(nil, "BACKGROUND")
             Image:SetAllPoints(Icon);
             Image:SetTexture(Details.icon);
+
+            --[[ ITEM LEVEL ]]
+            if (Details.level) then
+                ---@type FontString
+                local ItemLevel = Interface:createFontString(Icon, Details.level);
+                ItemLevel:SetPoint("BOTTOMLEFT", Icon, "BOTTOMLEFT", -3, -1);
+                ItemLevel:SetFont(.8, "OUTLINE");
+                ItemLevel:SetColor("ROGUE");
+            end
+
+            --[[ BOE ]]
+            if (true or GL:inTable({LE_ITEM_BIND_ON_ACQUIRE, LE_ITEM_BIND_QUEST}, Details.bindType)) then
+                ---@type FontString
+                local BOE = Interface:createFontString(Icon, "BOE");
+                BOE:SetPoint("TOPLEFT", Icon, "TOPLEFT", -3, 3);
+                BOE:SetFont(.8, "OUTLINE");
+                BOE:SetColor("UNCOMMON");
+            end
 
             --[[ MINIMUM ]]
             ---@type EditBox
@@ -243,7 +313,7 @@ function Auctioneer:build()
 
     --[[ HOW TO ADD ITEMS ]]
     ---@type FontString
-    local AddItemsLabel = Interface:createFontString(Window, ("With this window open, %s items to add them to the list"):format(GL.Settings:get("ShortcutKeys.rollOffOrAuction")));
+    local AddItemsLabel = Interface:createFontString(Window, ("With this window open, %s items to add them to the list or click \"Fill from inventory\" below"):format(GL.Settings:get("ShortcutKeys.rollOffOrAuction")));
     AddItemsLabel:SetFont(.8, "OUTLINE");
     AddItemsLabel:SetColor("GRAY");
     AddItemsLabel:SetPoint("TOPLEFT", ScrollFrame, "BOTTOMLEFT", 10, -10);
@@ -255,10 +325,13 @@ function Auctioneer:build()
 
     ---@type EditBox
     local TimeInput = Interface:inputBox(Window);
+    TimeInput:SetNumeric(true);
     TimeInput:SetText(600);
     TimeInput:SetWidth(30);
     TimeInput:SetPoint("TOPLEFT", TimeLabel, "TOPRIGHT", 8, 4);
+    Interface:addTooltip(TimeInput, "How long do players have to bid on an item?", "TOP");
     Window._TimeInput = TimeInput;
+
 
     --[[ ANTI SNIPE ]]
     ---@type FontString
@@ -268,9 +341,11 @@ function Auctioneer:build()
 
     ---@type EditBox
     local AntiSnipeInput = Interface:inputBox(Window);
+    AntiSnipeInput:SetNumeric(true);
     AntiSnipeInput:SetText(10);
     AntiSnipeInput:SetWidth(20);
     AntiSnipeInput:SetPoint("TOPLEFT", AntiSnipeLabel, "TOPRIGHT", 8, 4);
+    Interface:addTooltip(AntiSnipeInput, L.ANTISNIPE_EXPLANATION, "TOP");
     Window._AntiSnipeInput = AntiSnipeInput;
 
     --[[ CLEAR ]]
@@ -297,6 +372,38 @@ function Auctioneer:build()
     Next:SetPoint("CENTER", FillFromInventory, "CENTER");
     Next:SetPoint("RIGHT", Window, "RIGHT", -20, 0);
     Next:SetScript("OnClick", function ()
+        local itemsWereChecked = (function()
+            for _, Row in pairs(self.ItemRows or {}) do
+                if (Row and Row._Select) then
+                    if (Row._Select:GetChecked()) then
+                        return true;
+                    end
+                end
+            end
+
+            return false;
+        end)();
+
+        if (not itemsWereChecked) then
+            GL:error("Select at least one item for your auction");
+
+            return;
+        end
+
+        local duration = tonumber(string.trim(Window._TimeInput:GetText())) or 0;
+        if (duration < 10) then
+            GL:error("The auction time in seconds needs to be >= 10");
+
+            return;
+        end
+
+        local antiSnipe = tonumber(string.trim(Window._AntiSnipeInput:GetText())) or 0;
+        if (antiSnipe < 0 or (antiSnipe > 0 and antiSnipe < 5)) then
+            GL:error("The anti snipe value needs to be 0 (empty) or >=5");
+
+            return;
+        end
+
         GroupVersionCheck:open({
             {
                 text = "Cancel",
@@ -326,7 +433,7 @@ function Auctioneer:build()
                         end,
                     };
                 end,
-                tooltip = "Start auctioning",
+                tooltip = "Start bids",
             },
         });
 
@@ -353,6 +460,102 @@ function Auctioneer:clearItems()
     self.ItemRows = {};
 end
 
+--- Sort auctions, filter them by all the possible filters
+---
+---@return void
+function Auctioneer:filterAndSort()
+    self.SelectAll:SetChecked(false);
+
+    local filterValue = self.Search:GetText();
+    local rowsShown = 0;
+    local ItemHolder = self.ItemHolder;
+    local RowsToShow = {};
+    local filterConcernsLevel = false;
+    local operator = filterValue:match('\>=') or nil;
+    operator = operator and operator or filterValue:match('\<=');
+    operator = operator and operator or filterValue:match('\>');
+    operator = operator and operator or filterValue:match('\<');
+
+    if (operator) then
+        filterValue = filterValue:gsub(operator, "");
+        filterValue = filterValue:gsub(" ", "");
+    end
+
+    if (GL:higherThanZero(tonumber(filterValue))) then
+        filterValue = tonumber(filterValue);
+        filterConcernsLevel = true;
+    end
+
+    ---@param ItemRow Frame
+    for _, ItemRow in pairs(self.ItemRows or {}) do
+        ItemRow:ClearAllPoints();
+        ItemRow:SetAlpha(0);
+        ItemRow:SetHeight(0);
+        ItemRow._isShown = false;
+
+        (function()
+            -- Make sure we have all the required data and the auction is still active
+            if (not ItemRow._Details
+                or not ItemRow._Details.level
+                or not ItemRow._Details.name
+                or not ItemRow._Details.quality
+            ) then
+                return;
+            end
+
+            local itemLevel = ItemRow._Details.level;
+            local name = ItemRow._Details.name;
+
+            -- An item level was provided, filter!
+            if (filterConcernsLevel) then
+                if ((not operator and itemLevel ~= filterValue)
+                    or (operator == "<=" and itemLevel > filterValue)
+                    or (operator == ">=" and itemLevel < filterValue)
+                    or (operator == ">" and itemLevel <= filterValue)
+                    or (operator == "<" and itemLevel >= filterValue)
+                ) then
+                    return;
+                end
+
+            -- A (partial) item name was provided, filter!
+            elseif (not GL:empty(filterValue)
+                and not GL:strContains(name, filterValue)
+            ) then
+                return;
+            end
+
+            tinsert(RowsToShow, ItemRow);
+        end)();
+    end
+
+    -- Sort the items by item level > quality > name
+    table.sort(RowsToShow, function (a, b)
+        if (a._Details.level == b._Details.level) then
+            if (a._Details.quality ~= b._Details.quality) then
+                return a._Details.quality > b._Details.quality;
+            end
+
+            return a._Details.name < b._Details.name;
+        end
+
+        return a._Details.level > b._Details.level;
+    end);
+
+    ---@param ItemRow Frame
+    for _, ItemRow in pairs(RowsToShow or {}) do
+        ItemRow:ClearAllPoints();
+        ItemRow:SetAlpha(1);
+        ItemRow:SetHeight(ITEM_ROW_HEIGHT);
+
+        -- The -4 is needed to accomodate for a potential "BOE" flag on an item icon!
+        ItemRow:SetPoint("TOPLEFT", ItemHolder, "TOPLEFT", 20, ((rowsShown * ITEM_ROW_HEIGHT) * -1) - 4);
+        ItemRow:SetPoint("RIGHT", ItemHolder, "RIGHT", not GL.elvUILoaded and 0 or -4, 0);
+
+        ItemRow._isShown = true;
+        rowsShown = rowsShown + 1;
+    end
+end
+
 ---@return void
 function Auctioneer:start()
     local ItemsUpForAuction = {};
@@ -363,11 +566,16 @@ function Auctioneer:start()
         return;
     end
 
-    local duration = tonumber(string.trim(Window._TimeInput:GetText()));
-    local antiSnipe = tonumber(string.trim(Window._AntiSnipeInput:GetText()));
+    local duration = tonumber(string.trim(Window._TimeInput:GetText())) or 0;
+    if (duration < 10) then
+        GL:error("The auction time in seconds needs to be >= 10");
 
-    if (not GL:higherThanZero(duration) or not antiSnipe or antiSnipe < 0) then
-        GL:error("The auction time in seconds needs to be higher than 0. The anti snipe value needs to be 0 or higher!");
+        return;
+    end
+
+    local antiSnipe = tonumber(string.trim(Window._AntiSnipeInput:GetText())) or 0;
+    if (antiSnipe < 0 or (antiSnipe > 0 and antiSnipe < 5)) then
+        GL:error("The anti snipe value needs to be 0 (empty) or >=5");
 
         return;
     end
@@ -375,19 +583,19 @@ function Auctioneer:start()
     -- Check which items were selected and get their minimum/increment
     for key, ItemRow in pairs(self.ItemRows or {}) do
         (function()
-            if (type(ItemRow) ~= "table" or not ItemRow._itemLink
+            if (type(ItemRow) ~= "table" or not ItemRow._Details.link
                 or (ItemRow._Select and not ItemRow._Select:GetChecked())
             ) then
                 return;
             end
 
-            local itemID = GL:getItemIDFromLink(ItemRow._itemLink);
+            local itemID = GL:getItemIDFromLink(ItemRow._Details.link);
             if (not itemID) then
                 return;
             end
 
             tinsert(ItemsUpForAuction, {
-                link = ItemRow._itemLink,
+                link = ItemRow._Details.link,
                 minimum = tonumber(ItemRow.MinInput:GetText()) or 0,
                 increment = tonumber(ItemRow.IncInput:GetText()) or 0,
             });

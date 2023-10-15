@@ -13,8 +13,8 @@ L.ALL_SETTINGS = "All Settings";
 L.ANTISNIPE = "Anti Snipe";
 L.ANTISNIPE_EXPLANATION = {
     " ",
-    "An Anti Snipe value of 10 means any bids with less than 10 seconds left",
-    "resets the time remaining back to 10 seconds",
+    "An Anti Snipe value of 10 means that any bid that comes in with",
+    "less than 10 seconds left will reset the timer back to 10 seconds",
     " ",
     "You can leave this empty or set to 0 to disable Anti Snipe completely",
     "Anti Snipe values less than 5 are not supported",
@@ -104,7 +104,7 @@ L.INFO = "Info";
 L.INC = "Inc";
 L.INCLUDE_BOES = "Include BOEs";
 L.INCREMENT = "Increment";
-L.GDKP_ACTIVATED = "GDKP Activated";
+L.GDKP_ACTIVATED = "GDKP Active!";
 L.HALT = "Halt";
 L.HIDE = "Hide";
 L.HIGHEST_BIDDER_CONFIRMATION = "%s is the highest bidder (%sg)";
@@ -126,6 +126,7 @@ L.MINIMIZE_ON_START = "Minimize on start";
 L.MINIMUM = "Minimum";
 L.MINIMUM_QUALITY = "Minimum Quality";
 L.MINUS10 = "-10";
+L.MULTI_AUCTION = "Multi-Auction";
 L.MOVE = "Move";
 L.NEXT = "Next";
 L.NO_BIDS_ACTION = "When no one bids do:";
@@ -133,6 +134,7 @@ L.NO_OFFICER_PRIVILEGES = "You don't have officer privileges";
 L.NOTHING = "Nothing";
 L.OPEN = "Open";
 L.OPEN_AUCTIONEER = "Open Auctioneer";
+L.OPEN_MULTI_AUCTION = "Open Multi-Auction";
 L.PLUS10 = "+10";
 L.PLUSONES = "Plus Ones";
 L.POT = "Pot";
@@ -220,7 +222,7 @@ L.VERSION_CHECK_SUMMARY_NO_RESPONSE = "No response:";
 L.VERSION_CHECK_SUMMARY_OFFLINE = "Offline:";
 
 L.VERSION_CHECK_BUTTON_REPORT = "Report";
-L.VERSION_CHECK_BUTTON_REPORT_TOOLTIP = "Report results in group chat";
+L.VERSION_CHECK_BUTTON_REPORT_TOOLTIP = "Report outdated results in group chat";
 
 L.VERSION_CHECK_CHAT_MISSING = "Gargul missing for:";
 L.VERSION_CHECK_CHAT_OUTDATED = "Gargul outdated for:";

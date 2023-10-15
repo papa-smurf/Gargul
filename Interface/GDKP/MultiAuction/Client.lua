@@ -238,14 +238,16 @@ function ClientInterface:build()
             name = self.adminWindowName,
             width = 280,
             height = 90,
-            hideAllButtons = true,
+            hideMinimizeButton = true,
+            hideResizeButton = true,
+            hideMoveButton = true,
             hideWatermark = true,
             Parent = Window,
         };
         AdminWindow:SetPoint("TOPLEFT", Window, "TOPRIGHT", 10, 0);
         AdminWindow:Hide();
 
-        local AdminExplanation = Interface:createFontString(AdminWindow, "Click the 'Admin' button next to an auction to manage it");
+        local AdminExplanation = Interface:createFontString(AdminWindow, "Click the 'Admin' button or an auction to manage it");
         AdminExplanation:SetPoint("CENTER", AdminWindow, "CENTER");
         AdminExplanation:SetPoint("TOP", AdminWindow, "TOP", 0, -30);
         AdminExplanation:SetFont(.8, "OUTLINE");
@@ -265,12 +267,22 @@ function ClientInterface:build()
         AdminButtonExplanation:SetColor("GRAY");
         AdminWindow.AdminButtonExplanation = AdminButtonExplanation;
 
-        local AdminAuctionClosedExplanation = Interface:createFontString(AdminWindow, ("This item was sold successfully\nOpen your ledger (|c00%s/gdkp|r) to make any changes"):format(Interface.Colors.PURPLE));
+        local AdminAuctionClosedExplanation = Interface:createFontString(AdminWindow, ("This item was sold. Use ledger (|c00%s/gdkp|r) to make changes!"):format(Interface.Colors.PURPLE));
         AdminAuctionClosedExplanation:SetPoint("CENTER", AdminWindowItemLink, "CENTER");
         AdminAuctionClosedExplanation:SetPoint("TOP", AdminWindowItemLink, "BOTTOM", 0, -7);
         AdminAuctionClosedExplanation:SetFont(.8, "OUTLINE");
         AdminAuctionClosedExplanation:SetColor("GRAY");
         AdminWindow.AdminAuctionClosedExplanation = AdminAuctionClosedExplanation;
+
+        local AdminOpenLedgerButton = Interface:dynamicPanelButton(AdminWindow, "Ledger");
+        AdminOpenLedgerButton:SetScale(.8);
+        AdminOpenLedgerButton:SetPoint("CENTER", AdminWindow, "CENTER");
+        AdminOpenLedgerButton:SetPoint("BOTTOM", AdminWindow, "BOTTOM", 0, 25);
+        AdminWindow.AdminOpenLedgerButton = AdminOpenLedgerButton;
+
+        AdminOpenLedgerButton:SetScript("OnClick", function ()
+            Interface.GDKP.Overview:open();
+        end);
 
         local ButtonContainer = CreateFrame("Frame", nil, AdminWindow);
         ButtonContainer:SetPoint("CENTER", AdminWindow, "CENTER");
@@ -293,23 +305,36 @@ function ClientInterface:build()
         Interface:addTooltip(CloseButton, "Close the auction. Players can no longer bid but the highest bid remains active", "TOP");
 
         ---@type Button
-        local LastCallButton = Interface:dynamicPanelButton(ButtonContainer);
-        LastCallButton:SetScale(.8);
-        LastCallButton:SetPoint("TOPLEFT", CloseButton, "TOPRIGHT", 2, 0);
-        LastCallButton:SetText("Last call");
-        LastCallButton:SetScript("OnClick", function ()
+        local FinallCallButton = Interface:dynamicPanelButton(ButtonContainer);
+        FinallCallButton:SetScale(.8);
+        FinallCallButton:SetPoint("TOPLEFT", CloseButton, "TOPRIGHT", 2, 0);
+        FinallCallButton:SetText("Last call");
+        FinallCallButton:SetScript("OnClick", function ()
             if (not AdminWindow._auctionID) then
                 return self:resetAdminWindow();
             end
 
-            Auctioneer:lastCall(AdminWindow._auctionID);
+            GL.Interface.Dialogs.ConfirmWithSingleInputDialog:open{
+                question = "Give a final call timer of how many seconds?",
+                inputValue = GL.Settings:get("GDKP.finalCallTime"),
+                OnYes = function (seconds)
+                    seconds = floor(tonumber(strtrim(seconds)) or 0);
+                    if (seconds < 5) then
+                        return GL:error("The minimum amount of seconds is 5");
+                    end
+
+                    GL.Settings:set("GDKP.finalCallTime", seconds);
+                    Auctioneer:finalCall(AdminWindow._auctionID, seconds);
+                end,
+                focus = true,
+            };
         end);
-        Interface:addTooltip(LastCallButton, "Start a last call for this auction by giving a final 10 second bid timer", "TOP");
+        Interface:addTooltip(FinallCallButton, "Start a final call for this auction by giving a (usually shorter) bid timer", "TOP");
 
         ---@type Button
         local ClearButton = Interface:dynamicPanelButton(ButtonContainer);
         ClearButton:SetScale(.8);
-        ClearButton:SetPoint("TOPLEFT", LastCallButton, "TOPRIGHT", 2, 0);
+        ClearButton:SetPoint("TOPLEFT", FinallCallButton, "TOPRIGHT", 2, 0);
         ClearButton:SetText("Clear bids");
         ClearButton:SetScript("OnClick", function ()
             if (not AdminWindow._auctionID) then
@@ -387,6 +412,11 @@ function ClientInterface:build()
             AuctionRow:EnableMouse(true);
             AuctionRow:SetHeight(0);
             AuctionRow:SetAlpha(0);
+
+            AuctionRow:EnableMouse(true);
+            AuctionRow:SetScript("OnMouseUp", function ()
+                self:showAdminWindow(AuctionRow);
+            end);
 
             AuctionRow._Details = Details;
 
@@ -528,7 +558,7 @@ function ClientInterface:build()
                     if (hasBid) then
                         statusText = ("|c00%sSOLD|r to\n%s for |c00%s%sg|r"):format(
                             Interface.Colors.SUCCESS,
-                            GL:nameFormat{ name = AuctionDetails.CurrentBid.player, colorize = true, },
+                            GL:disambiguateName(AuctionDetails.CurrentBid.player, { colorize = true, }),
                             Interface.Colors.YELLOW,
                             AuctionDetails.CurrentBid.amount
                         );
@@ -547,7 +577,7 @@ function ClientInterface:build()
                         statusText = ("Bid |c00%s%sg|r\nBy %s"):format(
                             Interface.Colors.YELLOW,
                             AuctionDetails.CurrentBid.amount,
-                            GL:nameFormat{ name = AuctionDetails.CurrentBid.player, colorize = true, }
+                            GL:disambiguateName(AuctionDetails.CurrentBid.player, { colorize = true, })
                         );
                     end
                 else
@@ -604,6 +634,7 @@ function ClientInterface:build()
         end);
     end;
 
+    self:resetAdminWindow();
     return Window;
 end
 
@@ -624,6 +655,7 @@ function ClientInterface:resetAdminWindow()
     AdminWindow.AdminButtonExplanation:Hide();
     AdminWindow.ButtonContainer:Hide();
     AdminWindow.AdminAuctionClosedExplanation:Hide();
+    AdminWindow.AdminOpenLedgerButton:Hide();
 
     if (not Auctioneer:auctionStartedByMe()) then
         AdminWindow:Hide();
@@ -668,6 +700,7 @@ function ClientInterface:showAdminWindow(AuctionRow)
         and CurrentDetails.CurrentBid.amount
     ) then
         AdminWindow.AdminAuctionClosedExplanation:Show();
+        AdminWindow.AdminOpenLedgerButton:Show();
     else
         AdminWindow.AdminButtonExplanation:Show();
         AdminWindow.ButtonContainer:Show();
@@ -831,6 +864,12 @@ function ClientInterface:refresh()
 
             --- We need to update the timer bar
             if (AuctionRow._Details.endsAt ~= Details.endsAt) then
+                if (Details.endsAt <= -1) then
+                    AuctionRow.CountDownBar:Stop();
+                    AuctionRow.CountDownBar:Hide();
+                    rowsChanged = true;
+                end
+
                 if (AuctionRow.CountDownBar
                     and AuctionRow.CountDownBar.SetDuration
                 ) then

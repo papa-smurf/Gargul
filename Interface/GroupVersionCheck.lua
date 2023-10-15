@@ -311,6 +311,12 @@ function GroupVersionCheck:refresh()
     if (Version.lastNotBackwardsCompatibleNotice > 0) then
         GL.Interface.Alerts:fire("GargulNotification", {
             message = ("|c00BE3333%s|r"):format(L.UPDATE_GARGUL),
+            onClick = function ()
+                GL.Interface.Dialogs.HyperlinkDialog:open{
+                    description = "Download on CurseForge",
+                    hyperlink = "https://www.curseforge.com/wow/addons/gargul/files",
+                };
+            end,
         });
 
         return;

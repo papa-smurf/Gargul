@@ -197,6 +197,12 @@ GL.Data.DefaultSettings = {
 
         -- This holds minimum bid and increment settings per item
         SettingsPerItem = {},
+
+        MultiAuction = {
+            minimumFillQuality = 4,
+            includeBOEs = true,
+            includeMaterials = false,
+        },
     },
     TMB = {
         announcePriolistInfoWhenRolling = true,

@@ -66,12 +66,15 @@ function EditSession:build()
             return;
         end
 
-        local managementCut = tonumber(strtrim(ManagementCut:GetText()));
-        if (managementCut
-            and managementCut < 0
-        ) then
-            GL:warning("The cut needs to be empty or between 0 and 99");
-            return;
+        local managementCut = strtrim(ManagementCut:GetText());
+        if (not GL:empty(managementCut)) then
+            managementCut = tonumber(managementCut);
+            if (not managementCut
+                    or managementCut < 0
+            ) then
+                GL:warning("Management Cut needs to be empty or between 0 and 99 (no % sign!)");
+                return;
+            end
         end
 
         GDKPSession:edit(Overview.selectedSession, title, managementCut);
