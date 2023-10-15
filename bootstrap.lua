@@ -16,6 +16,7 @@ GL.isRetail = false;
 GL.isClassic = false;
 GL.isDragonFlightOrLater = false;
 GL.isCrossRealm = nil; -- Will be set during runtime
+GL.isMuted = false;
 GL.version = GetAddOnMetadata(GL.name, "Version");
 GL.DebugLines = {};
 GL.EventFrame = nil;

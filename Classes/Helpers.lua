@@ -2403,6 +2403,11 @@ function GL:sendChatMessage(message, chatType, language, channel, stw, pretend)
     if (not GL.User.isInGroup
         and GL:inTable({"GROUP", "PARTY", "RAID", "RAID_WARNING"}, chatType)
     ) then
+        -- We never want to show this message, not even whilst solo
+        if (GL.isMuted) then
+            return;
+        end
+
         return GL:coloredMessage("FF7D0A", message); -- FF7D0A is the same color as /ra text
     end
 
@@ -2462,7 +2467,9 @@ function GL:mute()
     previousGaveNoMessagesWarningValue = gaveNoMessagesWarning;
 
     gaveNoMessagesWarning = true;
+
     GL.Settings:set("noMessages", true);
+    GL.isMuted = true;
 end
 
 --- Unmute add-on after (temporary) mute
@@ -2476,6 +2483,7 @@ function GL:unmute()
 
     gaveNoMessagesWarning = previousGaveNoMessagesWarningValue;
     GL.Settings:set("noMessages", previousNoMessagesWarningValue);
+    GL.isMuted = false;
 
     previousNoMessagesWarningValue = nil;
     previousGaveNoMessagesWarningValue = nil;

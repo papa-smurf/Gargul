@@ -10,6 +10,7 @@ GL.Commands = GL.Commands or {
         awardondate = "In case you need to award something retroactively you can use this command: /gl awardOnDate [winnerName] [yy-mm-dd] [itemLink]",
         award = "Open the award window. Optionally accepts an ItemLink as an argument: /gl award [itemLink?]",
         awardhistory = "Open the award history window which shows recently awarded items and their rolls",
+        bid = "Open the window which lets you bid during a GDKP multi-auction",
         boostedrolls = "Open the Boosted Rolls UI that allows you to easily manage roll boosts.",
         buffs = "You can instantly check player buffs like Ony, ZG, but also protection consumables like shadow protection: /gl buffs 22888, 22818, 22817, 22820, 24425, 15366, 20079",
         bugreport = "Include the output of this command when filing a bug report on the Gargul discord server",
@@ -140,6 +141,11 @@ GL.Commands = GL.Commands or {
     Dictionary = {
         -- Open the window for auctioning off items
         auction = function(...) GL.Interface.GDKP.Auctioneer:open(); end,
+
+        -- Open the multi-auction bid UI
+        bid = function ()
+            GL.Interface.GDKP.MultiAuction.Client:open();
+        end,
 
         -- Open the window for rolling off items
         rolloff = function(...) GL.MasterLooterUI:draw(...); end,

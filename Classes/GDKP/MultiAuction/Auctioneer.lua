@@ -13,8 +13,8 @@ local Settings = GL.Settings;
 ---@type DB
 local DB = GL.DB;
 
----@type GDKP
-local GDKP = GL.GDKP;
+---@type GDKPPot
+local GDKPPot = GL.GDKP.Pot;
 
 ---@type GDKPMultiAuctionClient
 local Client;
@@ -53,11 +53,13 @@ end
 
 ---@param minimumQuality number
 ---@param includeBOEs boolean
+---@param includeAwarded boolean
 ---@param includeMaterials boolean
 ---@return void
-function Auctioneer:fillFromInventory(minimumQuality, includeBOEs, includeMaterials)
+function Auctioneer:fillFromInventory(minimumQuality, includeBOEs, includeAwarded, includeMaterials)
     includeBOEs = includeBOEs ~= false;
     includeMaterials = includeMaterials == true;
+    includeAwarded = includeAwarded == true;
 
     GL:forEachItemInBags(function (Location, bag, slot)
         local itemQuality = tonumber(C_Item.GetItemQuality(Location));
@@ -89,7 +91,12 @@ function Auctioneer:fillFromInventory(minimumQuality, includeBOEs, includeMateri
             return;
         end
 
+        -- Check if we want to include previously awarded items
         local itemGUID = C_Item.GetItemGUID(Location);
+        if (itemGUID and not includeAwarded and DB:get("RecentlyAwardedItems." .. itemGUID)) then
+            return;
+        end
+
         local itemLink = C_Item.GetItemLink(Location);
 
         UI:addItemByLink(itemLink, itemGUID);
@@ -445,106 +452,24 @@ function Auctioneer:finalCall(auctionID, seconds)
     self.detailsChanged = true;
 end
 
----@return boolean
-function Auctioneer:extend()
-    return Auction:announceExtension(DEFAULT_AUCTION_EXTENSION);
-end
-
----@return boolean
-function Auctioneer:shorten()
-    return Auction:announceShortening(DEFAULT_AUCTION_SHORTENING);
-end
-
+--- Wrap up the current multi-auction session
+---
+---@param announcePot boolean
 ---@return void
-function Auctioneer:timeRanOut()
-    if (Auction.inProgress) then
+function Auctioneer:finish(announcePot)
+    announcePot = announcePot ~= false;
+
+    for auctionID in pairs(Client.AuctionDetails.Auctions or {}) do
+        Auctioneer:closeAuction(auctionID);
+    end
+
+    if (not announcePot) then
         return;
     end
 
-    UI = UI or GL.Interface.GDKP.Auctioneer;
-    local delayBetweenQueuedAuctions = tonumber(Settings:get("GDKP.delayBetweenQueuedAuctions")) or 0;
-
-    if (not GL:tableGet(Auction.Current, "TopBid.Bidder.name")) then
-        local actionWhenNoBidsArePresent = Settings:get("GDKP.queuedAuctionNoBidsAction");
-
-        if (actionWhenNoBidsArePresent ~= GL.Data.Constants.GDKP.QueuedAuctionNoBidsActions.NOTHING) then
-            local next = function ()
-                if (Auction.inProgress) then
-                    return;
-                end
-
-                self:clear();
-                Auction:reset(); -- Reset the actual auction object
-                UI:closeAuctioneerShortcut();
-
-                GL.Ace:CancelTimer(self.PopTimer);
-                if (delayBetweenQueuedAuctions > 0) then
-                    self.PopTimer = GL.Ace:ScheduleTimer(function ()
-                        self:start();
-                    end, delayBetweenQueuedAuctions);
-                else
-                    self:start();
-                end
-            end;
-
-            -- This is to make sure that we only start a new auction after
-            -- the item was successfully marked as disenchanted
-            if (actionWhenNoBidsArePresent == "DISENCHANT") then
-                local quality = tonumber(GL:getItemQualityFromLink(Auction.Current.itemLink));
-
-                if (quality and quality >= 5) then
-                    GL:warning("No bids on Legendary+ item detected, continue manually!");
-                    return;
-                end
-
-                return GL.PackMule:disenchant(Auction.Current.itemLink, true, function ()
-                    next();
-                end);
-            end
-
-            next();
-            return;
-        end
-
-        if (not UI.isVisible) then
-            GL.Interface.Alerts:fire("GargulNotification", {
-                message = string.format("|c00BE3333No bids!|r"),
-            });
-        end
-
-        return;
-    end
-
-    -- Auto awarding is disabled
-    if (not Settings:get("GDKP.autoAwardViaAuctioneer")) then
-        return;
-    end
-
-    local bid = Auction.Current.TopBid.bid;
-    local minimumBid = Auction.Current.minimumBid;
-
-    -- We don't auto-award unless the bid is equal to or higher than the minimum bid
-    if (bid < minimumBid) then
-        return;
-    end
-
-    local winner = Auction.Current.TopBid.Bidder.name;
-    local awardChecksum = GL.AwardedLoot:addWinner(winner, Auction.Current.itemLink, nil, nil, nil, nil, bid, nil);
-    if (not Auction:storeCurrent(winner, bid, awardChecksum)) then
-        return;
-    end
-
-    self:clear();
-    Auction:reset(); -- Reset the actual auction object
-    UI:closeAuctioneerShortcut();
-
-    GL.Ace:CancelTimer(self.PopTimer);
-    if (delayBetweenQueuedAuctions > 0) then
-        self.PopTimer = GL.Ace:ScheduleTimer(function ()
-            self:start();
-        end, delayBetweenQueuedAuctions);
-    else
-        self:start();
+    local totalPot = GDKPPot:total();
+    if (totalPot) then
+        GL:sendChatMessage(("Multi-auction finished. " .. L.POT_HOLDS):format(tostring(totalPot)), "GROUP");
     end
 end
 

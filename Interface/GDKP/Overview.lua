@@ -882,7 +882,9 @@ function Overview:showTutorial()
         Steps = {
             {1, "|c00a79effClick the |c00FFF569New|r button below to create your first GDKP session. It will show on the left when created.|r"},
         };
-    elseif (not GDKPSession:activeSessionID()) then
+    elseif (not GDKPSession:activeSessionID()
+        or GDKPSession:activeSessionID() ~= self.selectedSession
+    ) then
         Steps = {
             {1, "|c00a79effActivate this session by clicking the |c00FFF569Enable|r button below!|r"},
         };

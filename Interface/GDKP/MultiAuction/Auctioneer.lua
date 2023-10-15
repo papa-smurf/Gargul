@@ -12,6 +12,9 @@ local Settings = GL.Settings;
 ---@type GDKP
 local GDKP = GL.GDKP;
 
+---@type GDKPMultiAuctionClient
+local Client = GL.GDKP.MultiAuction.Client;
+
 ---@type GDKPSession
 local Session = GL.GDKP.Session;
 
@@ -46,7 +49,24 @@ function Auctioneer:open()
     if (not Session:activeSessionID()) then
         GL:warning("You need have an active GDKP session!");
         Interface.GDKP.Overview:open();
+
         return;
+    else
+        local hasActiveAuctions = false;
+
+        for _, Details in pairs(Client.AuctionDetails.Auctions or {}) do
+            if (Details.endsAt > 0) then
+                hasActiveAuctions = true;
+                break;
+            end
+        end
+
+        if (hasActiveAuctions) then
+            GL:notice("There is an active multi-auction, wrap it up before creating a new one!");
+            GL.Interface.GDKP.MultiAuction.Client:open();
+
+            return;
+        end
     end
 
     FONT = GL.FONT;
@@ -58,9 +78,25 @@ function Auctioneer:open()
         GL.GDKP.MultiAuction.Auctioneer:fillFromInventory(
             Settings:get("GDKP.MultiAuction.minimumFillQuality"),
             Settings:set("GDKP.MultiAuction.includeBOEs"),
+            Settings:get("GDKP.MultiAuction.includeAwarded"),
             Settings:get("GDKP.MultiAuction.includeMaterials")
         );
     end
+
+    -- Show the correct session details
+    local ActiveSession = Session:getActive();
+    local guild = "";
+    local CreatedBy = ActiveSession.CreatedBy or { class = "priest", name = "unknown", guild = "unknown", uuid = "unknown"};
+    if (CreatedBy.guild) then
+        guild = string.format(" |c001eff00<%s>|r", CreatedBy.guild);
+    end
+    self.SessionDetails:SetText(string.format(
+        "Active GDKP Session: |c00967FD2%s|r | By %s%s | On |c00967FD2%s|r",
+        ActiveSession.title,
+        GL:nameFormat{ name = CreatedBy.name, realm = CreatedBy.realm, colorize = true },
+        guild,
+        date('%Y-%m-%d', ActiveSession.createdAt)
+    ));
 
     return Window:Show() and Window;
 end
@@ -127,20 +163,6 @@ function Auctioneer:build()
     SessionDetails:SetFont(.9);
     self.SessionDetails = SessionDetails;
 
-    local ActiveSession = Session:getActive();
-    local guild = "";
-    local CreatedBy = ActiveSession.CreatedBy or { class = "priest", name = "unknown", guild = "unknown", uuid = "unknown"};
-    if (CreatedBy.guild) then
-        guild = string.format(" |c001eff00<%s>|r", CreatedBy.guild);
-    end
-    self.SessionDetails:SetText(string.format(
-        "Active GDKP Session: |c00967FD2%s|r | By %s%s | On |c00967FD2%s|r",
-        ActiveSession.title,
-        GL:nameFormat{ name = CreatedBy.name, realm = CreatedBy.realm, colorize = true },
-        guild,
-        date('%Y-%m-%d', ActiveSession.createdAt)
-    ));
-
     --[[ SELECT ALL ]]
     ---@type CheckButton
     local SelectAll = Interface:createCheckbox{
@@ -148,7 +170,8 @@ function Auctioneer:build()
         checked = false,
         callback = function (_, value)
             for _, Row in pairs(self.ItemRows or {}) do
-                if (Row and Row._Select and Row._isShown) then
+                local alpha = tonumber(Row.GetAlpha and Row:GetAlpha() or 0) or 0;
+                if (Row and Row._Select and alpha > 0) then
                     Row._Select:SetChecked(value);
                 end
             end
@@ -221,7 +244,6 @@ function Auctioneer:build()
             local ItemRow = CreateFrame("Frame", nil, ItemHolder);
             ItemRow:EnableMouse(true);
             ItemRow._Details = Details;
-            ItemRow._isShown = false;
 
             ---@type table
             local PerItemSettings = GDKP:settingsForItemID(Details.id);
@@ -326,7 +348,7 @@ function Auctioneer:build()
     ---@type EditBox
     local TimeInput = Interface:inputBox(Window);
     TimeInput:SetNumeric(true);
-    TimeInput:SetText(600);
+    TimeInput:SetText(Settings:get("GDKP.MultiAuction.time"));
     TimeInput:SetWidth(30);
     TimeInput:SetPoint("TOPLEFT", TimeLabel, "TOPRIGHT", 8, 4);
     Interface:addTooltip(TimeInput, "How long do players have to bid on an item?", "TOP");
@@ -342,7 +364,7 @@ function Auctioneer:build()
     ---@type EditBox
     local AntiSnipeInput = Interface:inputBox(Window);
     AntiSnipeInput:SetNumeric(true);
-    AntiSnipeInput:SetText(10);
+    AntiSnipeInput:SetText(Settings:get("GDKP.MultiAuction.antiSnipe"));
     AntiSnipeInput:SetWidth(20);
     AntiSnipeInput:SetPoint("TOPLEFT", AntiSnipeLabel, "TOPRIGHT", 8, 4);
     Interface:addTooltip(AntiSnipeInput, L.ANTISNIPE_EXPLANATION, "TOP");
@@ -491,7 +513,6 @@ function Auctioneer:filterAndSort()
         ItemRow:ClearAllPoints();
         ItemRow:SetAlpha(0);
         ItemRow:SetHeight(0);
-        ItemRow._isShown = false;
 
         (function()
             -- Make sure we have all the required data and the auction is still active
@@ -551,7 +572,6 @@ function Auctioneer:filterAndSort()
         ItemRow:SetPoint("TOPLEFT", ItemHolder, "TOPLEFT", 20, ((rowsShown * ITEM_ROW_HEIGHT) * -1) - 4);
         ItemRow:SetPoint("RIGHT", ItemHolder, "RIGHT", not GL.elvUILoaded and 0 or -4, 0);
 
-        ItemRow._isShown = true;
         rowsShown = rowsShown + 1;
     end
 end
@@ -581,7 +601,8 @@ function Auctioneer:start()
     end
 
     -- Check which items were selected and get their minimum/increment
-    for key, ItemRow in pairs(self.ItemRows or {}) do
+    local itemsWereChecked = false;
+    for _, ItemRow in pairs(self.ItemRows or {}) do
         (function()
             if (type(ItemRow) ~= "table" or not ItemRow._Details.link
                 or (ItemRow._Select and not ItemRow._Select:GetChecked())
@@ -600,13 +621,25 @@ function Auctioneer:start()
                 increment = tonumber(ItemRow.IncInput:GetText()) or 0,
             });
 
-            Interface:release(ItemRow);
-            self.ItemRows[key] = nil;
+            itemsWereChecked = true;
         end)();
     end
 
+    if (not itemsWereChecked) then
+        GL:error("Select at least one item for your auction");
+
+        return;
+    end
+
+    Settings:set("GDKP.MultiAuction.time", duration);
+    Settings:set("GDKP.MultiAuction.antiSnipe", antiSnipe);
+
     -- Start the auction
     GL.GDKP.MultiAuction.Auctioneer:start(ItemsUpForAuction, duration, antiSnipe);
+
+    -- Clear the item selection window
+    self:clearItems();
+    self.SelectAll:SetChecked(false);
 end
 
 ---@return Frame

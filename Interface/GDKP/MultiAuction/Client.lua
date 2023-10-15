@@ -6,30 +6,31 @@ local _, GL = ...;
 ---@type Interface
 local Interface = GL.Interface;
 
----@type GDKP
-local GDKP = GL.GDKP;
-
----@type GroupVersionCheckInterface
-local GroupVersionCheck = GL.Interface.GroupVersionCheck;
-
----@class GDKPMultiAuctionClientInterface
-GL:tableSet(GL, "Interface.GDKP.MultiAuction.Client", {
-    adminWindowName = "Gargul.Interface.GDKP.MultiAuction.Client.AdminWindow",
-    windowName = "Gargul.Interface.GDKP.MultiAuction.Client.Window",
-
-    ItemHolder = nil,
-    AuctionRows = {},
-    Search = nil;
-});
-
----@type GDKPMultiAuctionClientInterface
-local ClientInterface = GL.Interface.GDKP.MultiAuction.Client;
+---@type GDKPPot
+local GDKPPot = GL.GDKP.Pot;
 
 ---@type GDKPMultiAuctionAuctioneer
 local Auctioneer = GL.GDKP.MultiAuction.Auctioneer;
 
 ---@type GDKPMultiAuctionClient
 local Client = GL.GDKP.MultiAuction.Client;
+
+---@class GDKPMultiAuctionClientInterface
+GL:tableSet(GL, "Interface.GDKP.MultiAuction.Client", {
+    adminWindowName = "Gargul.Interface.GDKP.MultiAuction.Client.AdminWindow",
+    auctionAdminWindowName = "Gargul.Interface.GDKP.MultiAuction.Client.AuctionAdminWindow",
+    windowName = "Gargul.Interface.GDKP.MultiAuction.Client.Window",
+
+    showFavorites = false,
+    showUnusable = true,
+
+    AuctionHolder = nil,
+    AuctionRows = {},
+    Search = nil;
+});
+
+---@type GDKPMultiAuctionClientInterface
+local ClientInterface = GL.Interface.GDKP.MultiAuction.Client;
 
 --[[ CONSTANTS ]]
 local ITEM_ROW_HEIGHT = 30;
@@ -124,6 +125,22 @@ function ClientInterface:build()
         height = WINDOW_HEIGHT,
         minHeight = WINDOW_HEIGHT,
         hideMinimizeButton = true,
+        OnClose = function ()
+            local unfinishedBusiness = false;
+
+            for _, Details in pairs(Client.AuctionDetails.Auctions or {}) do
+                if (Details.endsAt > 0) then
+                    unfinishedBusiness = true;
+                    break;
+                end
+            end
+
+            if (not unfinishedBusiness) then
+                return;
+            end
+
+            GL:notice("Bidding window closed, use |c00a79eff/gl bid|r to reopen it!")
+        end,
     };
 
     --[[ THE SETTINGS MENU IN THE TOP LEFT OF THE WINDOW ]]
@@ -168,7 +185,7 @@ function ClientInterface:build()
     Window._Logo = Logo;
 
     ---@type Frame
-    local ItemHolder
+    local AuctionHolder
 
     ---@type ScrollFrame
     local ScrollFrame;
@@ -199,10 +216,12 @@ function ClientInterface:build()
 
     --[[ SHOW/HIDE FAVORITES ]]
     ---@type Button
-    local ToggleFavorites = Interface:dynamicPanelButton(Window, "Show favorites only");
+    local ToggleFavorites = Interface:dynamicPanelButton(Window, "Show favorites");
     ToggleFavorites:SetPoint("TOPLEFT", SearchClear, "TOPRIGHT", 6, -2);
     ToggleFavorites:SetScript("OnClick", function ()
-        ToggleFavorites:SetText("Show all");
+        self.showFavorites = not self.showFavorites;
+        ToggleFavorites:SetText(self.showFavorites and "Show all" or "Show favorites");
+        self:filterAndSort();
     end);
 
     --[[ SHOW/HIDE UNUSABLE ]]
@@ -210,79 +229,48 @@ function ClientInterface:build()
     local ToggleUnusable = Interface:dynamicPanelButton(Window, "Hide Unusable");
     ToggleUnusable:SetPoint("TOPLEFT", ToggleFavorites, "TOPRIGHT", 6, 0);
     ToggleUnusable:SetScript("OnClick", function ()
-        ToggleUnusable:SetText("Show Unusable");
+        self.showUnusable = not self.showUnusable;
+        ToggleUnusable:SetText(self.showUnusable and "Hide unusable" or "Show unusable");
+        self:filterAndSort();
     end);
 
     --[[ SCROLLFRAME BOILERPLATE ]]
     ScrollFrame = CreateFrame("ScrollFrame", nil, Window, "UIPanelScrollFrameTemplate")
     ScrollFrame:SetPoint("TOP", Search, "BOTTOM", 0, -10);
-    ScrollFrame:SetPoint("BOTTOM", Window, "BOTTOM", 0, 32);
+    ScrollFrame:SetPoint("BOTTOM", Window, "BOTTOM", 0, 40);
     ScrollFrame:SetPoint("LEFT", Window, "LEFT", 16);
     ScrollFrame:SetPoint("RIGHT", Window, "RIGHT", -44, 0);
 
-    ItemHolder = CreateFrame("Frame");
-    ScrollFrame:SetScrollChild(ItemHolder);
-    ItemHolder:SetSize(ScrollFrame:GetWidth(), ( ScrollFrame:GetHeight() * 2 ));
-    ItemHolder:SetPoint("TOPLEFT", ScrollFrame, "TOPLEFT");
-    ItemHolder:SetPoint("BOTTOMRIGHT", ScrollFrame, "BOTTOMRIGHT");
-    self.ItemHolder = ItemHolder;
+    AuctionHolder = CreateFrame("Frame");
+    ScrollFrame:SetScrollChild(AuctionHolder);
+    AuctionHolder:SetSize(ScrollFrame:GetWidth(), ( ScrollFrame:GetHeight() * 2 ));
+    AuctionHolder:SetPoint("TOPLEFT", ScrollFrame, "TOPLEFT");
+    AuctionHolder:SetPoint("BOTTOMRIGHT", ScrollFrame, "BOTTOMRIGHT");
+    self.AuctionHolder = AuctionHolder;
 
     ---@type Frame
-    local Items = CreateFrame("Frame", nil, ItemHolder);
-    Items:SetAllPoints(ItemHolder);
+    local Auctions = CreateFrame("Frame", nil, AuctionHolder);
+    Auctions:SetAllPoints(AuctionHolder);
 
-    --[[ ADMIN WINDOW ]]
+    --[[ BID DETAILS ]]
+    local BidDetails = Interface:createFontString(Window, "");
+    BidDetails:SetPoint("BOTTOMRIGHT", Window, "BOTTOMRIGHT", -30, 20);
+    self.BidDetails = BidDetails;
+
+    --[[ MAIN ADMIN WINDOW (FOOTER) ]]
     do
         ---@type Frame
         local AdminWindow = Interface:createWindow{
             name = self.adminWindowName,
-            width = 280,
-            height = 90,
-            hideMinimizeButton = true,
-            hideResizeButton = true,
-            hideMoveButton = true,
+            height = 60,
+            hideAllButtons = true,
             hideWatermark = true,
             Parent = Window,
         };
-        AdminWindow:SetPoint("TOPLEFT", Window, "TOPRIGHT", 10, 0);
+        AdminWindow:SetPoint("TOPLEFT", Window, "BOTTOMLEFT", 0, 4);
+        AdminWindow:SetPoint("RIGHT", Window, "RIGHT");
         AdminWindow:Hide();
-
-        local AdminExplanation = Interface:createFontString(AdminWindow, "Click the 'Admin' button or an auction to manage it");
-        AdminExplanation:SetPoint("CENTER", AdminWindow, "CENTER");
-        AdminExplanation:SetPoint("TOP", AdminWindow, "TOP", 0, -30);
-        AdminExplanation:SetFont(.8, "OUTLINE");
-        AdminExplanation:SetColor("GRAY");
-        AdminWindow.Explanation = AdminExplanation;
-
-        local AdminWindowItemLink = Interface:createFontString(AdminWindow, "");
-        AdminWindowItemLink:SetPoint("CENTER", AdminWindow, "CENTER");
-        AdminWindowItemLink:SetPoint("TOP", AdminWindow, "TOP", 0, -20);
-        AdminWindowItemLink:SetColor("GRAY");
-        AdminWindow.AdminWindowItemLink = AdminWindowItemLink;
-
-        local AdminButtonExplanation = Interface:createFontString(AdminWindow, "Hover over any of the buttons below for more information");
-        AdminButtonExplanation:SetPoint("CENTER", AdminWindowItemLink, "CENTER");
-        AdminButtonExplanation:SetPoint("TOP", AdminWindowItemLink, "BOTTOM", 0, -7);
-        AdminButtonExplanation:SetFont(.8, "OUTLINE");
-        AdminButtonExplanation:SetColor("GRAY");
-        AdminWindow.AdminButtonExplanation = AdminButtonExplanation;
-
-        local AdminAuctionClosedExplanation = Interface:createFontString(AdminWindow, ("This item was sold. Use ledger (|c00%s/gdkp|r) to make changes!"):format(Interface.Colors.PURPLE));
-        AdminAuctionClosedExplanation:SetPoint("CENTER", AdminWindowItemLink, "CENTER");
-        AdminAuctionClosedExplanation:SetPoint("TOP", AdminWindowItemLink, "BOTTOM", 0, -7);
-        AdminAuctionClosedExplanation:SetFont(.8, "OUTLINE");
-        AdminAuctionClosedExplanation:SetColor("GRAY");
-        AdminWindow.AdminAuctionClosedExplanation = AdminAuctionClosedExplanation;
-
-        local AdminOpenLedgerButton = Interface:dynamicPanelButton(AdminWindow, "Ledger");
-        AdminOpenLedgerButton:SetScale(.8);
-        AdminOpenLedgerButton:SetPoint("CENTER", AdminWindow, "CENTER");
-        AdminOpenLedgerButton:SetPoint("BOTTOM", AdminWindow, "BOTTOM", 0, 25);
-        AdminWindow.AdminOpenLedgerButton = AdminOpenLedgerButton;
-
-        AdminOpenLedgerButton:SetScript("OnClick", function ()
-            Interface.GDKP.Overview:open();
-        end);
+        Window.AdminWindow = AdminWindow;
 
         local ButtonContainer = CreateFrame("Frame", nil, AdminWindow);
         ButtonContainer:SetPoint("CENTER", AdminWindow, "CENTER");
@@ -291,16 +279,170 @@ function ClientInterface:build()
         AdminWindow.ButtonContainer = ButtonContainer;
 
         ---@type Button
+        local CloseAllButton = Interface:dynamicPanelButton(ButtonContainer);
+        CloseAllButton:SetPoint("BOTTOMLEFT", ButtonContainer, "BOTTOMLEFT");
+        CloseAllButton:SetText("Close all");
+        CloseAllButton:SetScript("OnClick", function ()
+            GL.Interface.Dialogs.PopupDialog:open{
+                question = "Close ALL actions?",
+                OnYes = function ()
+                    for auctionID in pairs(Client.AuctionDetails.Auctions or {}) do
+                        Auctioneer:closeAuction(auctionID);
+                    end
+                end,
+            };
+        end);
+        Interface:addTooltip(CloseAllButton, {
+            "Close ALL auctions",
+            " ",
+            "Auctions with active bids on them will be sold and can not receive new bids!",
+        }, "TOP");
+
+        ---@type Button
+        local FinalCallButton = Interface:dynamicPanelButton(ButtonContainer);
+        FinalCallButton:SetPoint("TOPLEFT", CloseAllButton, "TOPRIGHT", 4, 0);
+        FinalCallButton:SetText("Final call");
+        FinalCallButton:SetScript("OnClick", function ()
+            GL.Interface.Dialogs.ConfirmWithSingleInputDialog:open{
+                question = "Give a final call timer of how many seconds?",
+                inputValue = GL.Settings:get("GDKP.finalCallTime"),
+                OnYes = function (seconds)
+                    seconds = floor(tonumber(strtrim(seconds)) or 0);
+                    if (seconds < 5) then
+                        return GL:error("The minimum amount of seconds is 5");
+                    end
+
+                    GL.Settings:set("GDKP.finalCallTime", seconds);
+
+                    for auctionID in pairs(Client.AuctionDetails.Auctions or {}) do
+                        Auctioneer:finalCall(auctionID, seconds);
+                    end
+                end,
+                focus = true,
+            };
+        end);
+        Interface:addTooltip(FinalCallButton, {
+            "Final call on ALL auctions",
+            " ",
+            "Start a final call on all auctions that haven't sold yet!",
+        }, "TOP");
+
+        ---@type Button
+        local FinishButton = Interface:dynamicPanelButton(ButtonContainer);
+        FinishButton:SetPoint("TOPLEFT", FinalCallButton, "TOPRIGHT", 4, 0);
+        FinishButton:SetText("Finish");
+        FinishButton:SetScript("OnClick", function ()
+            local unfinishedBusiness = false;
+
+            for _, Details in pairs(Client.AuctionDetails.Auctions or {}) do
+                if (Details.endsAt > 0) then
+                    unfinishedBusiness = true;
+                    break;
+                end
+            end
+
+            -- Looks like all auctions were finalized, no need to ask anything
+            if (not unfinishedBusiness) then
+                Auctioneer:finish();
+                self:close();
+                return;
+            end
+
+            GL.Interface.Dialogs.PopupDialog:open{
+                question = "Close ALL actions and wrap up this multi-auction session?",
+                OnYes = function ()
+                    Auctioneer:finish();
+                    self:close();
+                end,
+            };
+        end);
+        Interface:addTooltip(FinishButton, {
+            "Finish Multi-Auction session",
+            " ",
+            "This will close all auctions and announce the total pot in chat",
+            "Auctions with active bids on them will be sold and can not receive new bids!",
+        }, "TOP");
+
+        -- Shadow frame used to determine the required width of the ButtonContainer
+        local ShadowFrame = CreateFrame("Frame", nil, AdminWindow);
+        ShadowFrame:SetPoint("TOPLEFT", CloseAllButton, "TOPLEFT");
+        ShadowFrame:SetPoint("TOPRIGHT", FinishButton, "TOPRIGHT");
+        ShadowFrame:SetHeight(1);
+
+        ButtonContainer:SetWidth(ShadowFrame:GetWidth());
+        Interface:release(ShadowFrame);
+    end
+
+    --[[ AUCTION ADMIN WINDOW ]]
+    do
+        ---@type Frame
+        local AuctionAdminWindow = Interface:createWindow{
+            name = self.auctionAdminWindowName,
+            width = 280,
+            height = 90,
+            hideMinimizeButton = true,
+            hideResizeButton = true,
+            hideMoveButton = true,
+            hideWatermark = true,
+            Parent = Window,
+        };
+        AuctionAdminWindow:SetPoint("TOPLEFT", Window, "TOPRIGHT", 10, 0);
+        AuctionAdminWindow:Hide();
+
+        local AdminExplanation = Interface:createFontString(AuctionAdminWindow, "Click the 'Admin' button or an auction to manage it");
+        AdminExplanation:SetPoint("CENTER", AuctionAdminWindow, "CENTER");
+        AdminExplanation:SetPoint("TOP", AuctionAdminWindow, "TOP", 0, -30);
+        AdminExplanation:SetFont(.8, "OUTLINE");
+        AdminExplanation:SetColor("GRAY");
+        AuctionAdminWindow.Explanation = AdminExplanation;
+
+        local AdminWindowItemLink = Interface:createFontString(AuctionAdminWindow, "");
+        AdminWindowItemLink:SetPoint("CENTER", AuctionAdminWindow, "CENTER");
+        AdminWindowItemLink:SetPoint("TOP", AuctionAdminWindow, "TOP", 0, -20);
+        AdminWindowItemLink:SetColor("GRAY");
+        AuctionAdminWindow.AdminWindowItemLink = AdminWindowItemLink;
+
+        local AdminButtonExplanation = Interface:createFontString(AuctionAdminWindow, "Hover over any of the buttons below for more information");
+        AdminButtonExplanation:SetPoint("CENTER", AdminWindowItemLink, "CENTER");
+        AdminButtonExplanation:SetPoint("TOP", AdminWindowItemLink, "BOTTOM", 0, -7);
+        AdminButtonExplanation:SetFont(.8, "OUTLINE");
+        AdminButtonExplanation:SetColor("GRAY");
+        AuctionAdminWindow.AdminButtonExplanation = AdminButtonExplanation;
+
+        local AdminAuctionClosedExplanation = Interface:createFontString(AuctionAdminWindow, ("This item was sold. Use ledger (|c00%s/gdkp|r) to make changes!"):format(Interface.Colors.PURPLE));
+        AdminAuctionClosedExplanation:SetPoint("CENTER", AdminWindowItemLink, "CENTER");
+        AdminAuctionClosedExplanation:SetPoint("TOP", AdminWindowItemLink, "BOTTOM", 0, -7);
+        AdminAuctionClosedExplanation:SetFont(.8, "OUTLINE");
+        AdminAuctionClosedExplanation:SetColor("GRAY");
+        AuctionAdminWindow.AdminAuctionClosedExplanation = AdminAuctionClosedExplanation;
+
+        local AdminOpenLedgerButton = Interface:dynamicPanelButton(AuctionAdminWindow, "Ledger");
+        AdminOpenLedgerButton:SetScale(.8);
+        AdminOpenLedgerButton:SetPoint("CENTER", AuctionAdminWindow, "CENTER");
+        AdminOpenLedgerButton:SetPoint("BOTTOM", AuctionAdminWindow, "BOTTOM", 0, 25);
+        AuctionAdminWindow.AdminOpenLedgerButton = AdminOpenLedgerButton;
+
+        AdminOpenLedgerButton:SetScript("OnClick", function ()
+            Interface.GDKP.Overview:open();
+        end);
+
+        local ButtonContainer = CreateFrame("Frame", nil, AuctionAdminWindow);
+        ButtonContainer:SetPoint("CENTER", AuctionAdminWindow, "CENTER");
+        ButtonContainer:SetPoint("BOTTOM", AuctionAdminWindow, "BOTTOM", 0, 20);
+        ButtonContainer:SetWidth(5000);
+        AuctionAdminWindow.ButtonContainer = ButtonContainer;
+
+        ---@type Button
         local CloseButton = Interface:dynamicPanelButton(ButtonContainer);
         CloseButton:SetScale(.8);
         CloseButton:SetPoint("BOTTOMLEFT", ButtonContainer, "BOTTOMLEFT");
         CloseButton:SetText("Close Auction");
         CloseButton:SetScript("OnClick", function ()
-            if (not AdminWindow._auctionID) then
+            if (not AuctionAdminWindow._auctionID) then
                 return self:resetAdminWindow();
             end
 
-            Auctioneer:closeAuction(AdminWindow._auctionID);
+            Auctioneer:closeAuction(AuctionAdminWindow._auctionID);
         end);
         Interface:addTooltip(CloseButton, "Close the auction. Players can no longer bid but the highest bid remains active", "TOP");
 
@@ -308,9 +450,9 @@ function ClientInterface:build()
         local FinallCallButton = Interface:dynamicPanelButton(ButtonContainer);
         FinallCallButton:SetScale(.8);
         FinallCallButton:SetPoint("TOPLEFT", CloseButton, "TOPRIGHT", 2, 0);
-        FinallCallButton:SetText("Last call");
+        FinallCallButton:SetText("Final call");
         FinallCallButton:SetScript("OnClick", function ()
-            if (not AdminWindow._auctionID) then
+            if (not AuctionAdminWindow._auctionID) then
                 return self:resetAdminWindow();
             end
 
@@ -324,7 +466,7 @@ function ClientInterface:build()
                     end
 
                     GL.Settings:set("GDKP.finalCallTime", seconds);
-                    Auctioneer:finalCall(AdminWindow._auctionID, seconds);
+                    Auctioneer:finalCall(AuctionAdminWindow._auctionID, seconds);
                 end,
                 focus = true,
             };
@@ -337,14 +479,14 @@ function ClientInterface:build()
         ClearButton:SetPoint("TOPLEFT", FinallCallButton, "TOPRIGHT", 2, 0);
         ClearButton:SetText("Clear bids");
         ClearButton:SetScript("OnClick", function ()
-            if (not AdminWindow._auctionID) then
+            if (not AuctionAdminWindow._auctionID) then
                 return self:resetAdminWindow();
             end
 
             GL.Interface.Dialogs.PopupDialog:open{
                 question = "Are you sure?",
                 OnYes = function ()
-                    Auctioneer:clearBid(AdminWindow._auctionID);
+                    Auctioneer:clearBid(AuctionAdminWindow._auctionID);
                 end,
             };
         end);
@@ -356,14 +498,14 @@ function ClientInterface:build()
         DeleteButton:SetPoint("TOPLEFT", ClearButton, "TOPRIGHT", 2, 0);
         DeleteButton:SetText("Delete");
         DeleteButton:SetScript("OnClick", function ()
-            if (not AdminWindow._auctionID) then
+            if (not AuctionAdminWindow._auctionID) then
                 return self:resetAdminWindow();
             end
 
             GL.Interface.Dialogs.PopupDialog:open{
                 question = "Are you sure?",
                 OnYes = function ()
-                    Auctioneer:deleteAuction(AdminWindow._auctionID);
+                    Auctioneer:deleteAuction(AuctionAdminWindow._auctionID);
                     self:resetAdminWindow();
                 end,
             };
@@ -371,7 +513,7 @@ function ClientInterface:build()
         Interface:addTooltip(DeleteButton, "Remove the item from the auction including its bid details. THIS CAN'T BE UNDONE!", "TOP");
 
         -- Shadow frame used to determine the required width of the ButtonContainer
-        local ShadowFrame = CreateFrame("Frame", nil, AdminWindow);
+        local ShadowFrame = CreateFrame("Frame", nil, AuctionAdminWindow);
         ShadowFrame:SetPoint("TOPLEFT", CloseButton, "TOPLEFT");
         ShadowFrame:SetPoint("TOPRIGHT", DeleteButton, "TOPRIGHT");
         ShadowFrame:SetHeight(1);
@@ -379,7 +521,7 @@ function ClientInterface:build()
         ButtonContainer:SetWidth(ShadowFrame:GetWidth());
         Interface:release(ShadowFrame);
 
-        Window.AdminWindow = AdminWindow;
+        Window.AuctionAdminWindow = AuctionAdminWindow;
     end
 
     --[[ ADD AN AUCTION TO WINDOW ]]
@@ -403,10 +545,11 @@ function ClientInterface:build()
             local canUseItem = true;
             GL:canUserUseItem(Item.id, function (canUse)
                 canUseItem = canUse;
+                Details.canUseItem = canUseItem;
             end);
 
             ---@type Frame
-            local AuctionRow = CreateFrame("Frame", nil, ItemHolder);
+            local AuctionRow = CreateFrame("Frame", nil, AuctionHolder);
             AuctionRow:SetPoint("TOPLEFT", Window, "TOPLEFT", 0, 0);
             AuctionRow:SetPoint("TOPRIGHT", Window, "TOPLEFT", 0, 0);
             AuctionRow:EnableMouse(true);
@@ -415,7 +558,7 @@ function ClientInterface:build()
 
             AuctionRow:EnableMouse(true);
             AuctionRow:SetScript("OnMouseUp", function ()
-                self:showAdminWindow(AuctionRow);
+                self:showAuctionAdminWindow(AuctionRow);
             end);
 
             AuctionRow._Details = Details;
@@ -432,10 +575,19 @@ function ClientInterface:build()
             local FavoriteImage = Favorite:CreateTexture(nil, "BACKGROUND")
             FavoriteImage:SetAllPoints(Favorite);
             FavoriteImage:SetTexture("Interface/common/friendship-heart");
-            FavoriteImage:SetVertexColor(.9, .9, .9, .3);
+            FavoriteImage:SetVertexColor(.9, .9, .9, .25);
 
+            AuctionRow.toggleFavorite = function ()
+                AuctionRow._Details.isFavorite = not AuctionRow._Details.isFavorite;
+
+                if (AuctionRow._Details.isFavorite) then
+                    FavoriteImage:SetVertexColor(1, 1, 1, 1);
+                else
+                    FavoriteImage:SetVertexColor(.9, .9, .9, .25);
+                end
+            end
             Favorite:SetScript("OnMouseUp", function ()
-                FavoriteImage:SetVertexColor(1, 1, 1, 1);
+                AuctionRow.toggleFavorite();
             end);
 
             --[[ ITEM ICON ]]
@@ -444,7 +596,7 @@ function ClientInterface:build()
             Icon:SetPoint("TOP", AuctionRow, "TOP");
             Icon:SetPoint("LEFT", Favorite, "RIGHT", 2, 0);
             Icon:SetSize(ITEM_ROW_HEIGHT, ITEM_ROW_HEIGHT);
-            Interface:addTooltip(Icon, Item.link);
+            Interface:addTooltip(Icon, Item.link, "RIGHT");
             AuctionRow.Icon = Icon;
 
             ---@type Texture
@@ -485,7 +637,7 @@ function ClientInterface:build()
                 AdminButton:SetText("Admin");
                 AdminButton:SetHeight(27);
                 AdminButton:SetScript("OnClick", function ()
-                    self:showAdminWindow(AuctionRow);
+                    self:showAuctionAdminWindow(AuctionRow);
                 end);
             end
 
@@ -512,6 +664,10 @@ function ClientInterface:build()
 
                 BidInput:SetText("");
                 GL.GDKP.MultiAuction.Client:bid(auctionID, bid);
+
+                if (not AuctionRow._Details.isFavorite) then
+                    AuctionRow.toggleFavorite();
+                end
             end);
 
             --[[ BID INPUT ]]
@@ -627,6 +783,23 @@ function ClientInterface:build()
                     end
                 end);
             end
+
+            AuctionRow.stopCountdown = function()
+                local CountDownBar = AuctionRow.CountDownBar;
+                if (type(CountDownBar) == "table"
+                    and CountDownBar.Get
+                    and CountDownBar:Get("type") == "GDKP_MULTI_AUCTION_COUNTDOWN"
+                    and not CountDownBar:Get("stopping")
+                ) then
+                    CountDownBar:SetParent(UIParent);
+                    CountDownBar:Set("stopping", true);
+
+                    if (CountDownBar.running) then
+                        CountDownBar:Stop();
+                    end
+                end
+            end
+
             AuctionRow.addCountDownBar(time);
 
             self.AuctionRows[auctionID] = AuctionRow;
@@ -635,6 +808,7 @@ function ClientInterface:build()
     end;
 
     self:resetAdminWindow();
+    self:updateBidDetails();
     return Window;
 end
 
@@ -648,26 +822,82 @@ function ClientInterface:resetAdminWindow()
         return;
     end
 
-    local AdminWindow = Window.AdminWindow;
-    AdminWindow._auctionID = nil;
-    AdminWindow.Explanation:Show();
-    AdminWindow.AdminWindowItemLink:Hide();
-    AdminWindow.AdminButtonExplanation:Hide();
-    AdminWindow.ButtonContainer:Hide();
-    AdminWindow.AdminAuctionClosedExplanation:Hide();
-    AdminWindow.AdminOpenLedgerButton:Hide();
+    local AuctionAdminWindow = Window.AuctionAdminWindow;
+    AuctionAdminWindow._auctionID = nil;
+    AuctionAdminWindow.Explanation:Show();
+    AuctionAdminWindow.AdminWindowItemLink:Hide();
+    AuctionAdminWindow.AdminButtonExplanation:Hide();
+    AuctionAdminWindow.ButtonContainer:Hide();
+    AuctionAdminWindow.AdminAuctionClosedExplanation:Hide();
+    AuctionAdminWindow.AdminOpenLedgerButton:Hide();
 
     if (not Auctioneer:auctionStartedByMe()) then
-        AdminWindow:Hide();
+        Window.AdminWindow:Hide();
+        AuctionAdminWindow:Hide();
     else
-        AdminWindow:Show();
+        Window.AdminWindow:Show();
+        AuctionAdminWindow:Show();
     end
+end
+
+--- Show bidding details in the footer
+---
+---@return void
+function ClientInterface:updateBidDetails()
+    local items, noBids, totalBid, totalSold, bidByMe, boughtByMe = 0, 0, 0, 0, 0, 0;
+
+    for _, Details in pairs(Client.AuctionDetails.Auctions or {}) do
+        local AuctionDetails = Client.AuctionDetails.Auctions[Details.auctionID or -1];
+        local endsAt = AuctionDetails.endsAt;
+        local hasBid = AuctionDetails.CurrentBid and AuctionDetails.CurrentBid.amount;
+
+        (function()
+            local byMe = hasBid and GL:iEquals(AuctionDetails.CurrentBid.player, GL.User.fqn) or false;
+
+            -- The auction was deleted by the LM
+            if (endsAt == -1) then
+                return;
+            end
+
+            items = items + 1;
+
+            if (not hasBid) then
+                noBids = noBids + 1;
+                return;
+            end
+
+            if (endsAt == 0) then
+                totalSold = totalSold + AuctionDetails.CurrentBid.amount;
+
+                if (byMe) then
+                    boughtByMe = boughtByMe + AuctionDetails.CurrentBid.amount;
+                end
+
+                return;
+            end
+
+            totalBid = totalBid + AuctionDetails.CurrentBid.amount;
+            if (byMe) then
+                bidByMe = bidByMe + AuctionDetails.CurrentBid.amount;
+            end
+        end)();
+    end
+
+    self.BidDetails:SetText(("Total sold: %sg  -  Pledged by me: %sg"):format(totalSold, boughtByMe + bidByMe));
+    self.BidDetails:SetColor("GRAY");
+    Interface:addTooltip(self.BidDetails, {
+        ("Items with bids: %s/%s"):format(items - noBids, items),
+        ("Total sold: %sg"):format(totalSold),
+        ("Bought by me: %sg"):format(boughtByMe),
+        ("Total bid (does not include sold): %sg"):format(totalBid),
+        ("Bid by me (does not include sold): %sg"):format(bidByMe),
+    }, "TOP");
 end
 
 --- Show the admin window which is used to manage individual auctions as the auctioneer
 ---
 ---@return void
-function ClientInterface:showAdminWindow(AuctionRow)
+function ClientInterface:showAuctionAdminWindow(AuctionRow)
     local Window = self:getWindow();
 
     if (not Window) then
@@ -685,13 +915,13 @@ function ClientInterface:showAdminWindow(AuctionRow)
 
     self:resetAdminWindow();
 
-    local AdminWindow = Window.AdminWindow;
-    AdminWindow._auctionID = Details.auctionID;
-    AdminWindow.Explanation:Hide();
+    local AuctionAdminWindow = Window.AuctionAdminWindow;
+    AuctionAdminWindow._auctionID = Details.auctionID;
+    AuctionAdminWindow.Explanation:Hide();
 
-    AdminWindow.AdminWindowItemLink:SetText(Details.link);
-    Interface:addTooltip(AdminWindow.AdminWindowItemLink, Details.link);
-    AdminWindow.AdminWindowItemLink:Show();
+    AuctionAdminWindow.AdminWindowItemLink:SetText(Details.link);
+    Interface:addTooltip(AuctionAdminWindow.AdminWindowItemLink, Details.link);
+    AuctionAdminWindow.AdminWindowItemLink:Show();
 
     local CurrentDetails = Client.AuctionDetails.Auctions[Details.auctionID or -1];
     if (CurrentDetails
@@ -699,11 +929,11 @@ function ClientInterface:showAdminWindow(AuctionRow)
         and CurrentDetails.CurrentBid
         and CurrentDetails.CurrentBid.amount
     ) then
-        AdminWindow.AdminAuctionClosedExplanation:Show();
-        AdminWindow.AdminOpenLedgerButton:Show();
+        AuctionAdminWindow.AdminAuctionClosedExplanation:Show();
+        AuctionAdminWindow.AdminOpenLedgerButton:Show();
     else
-        AdminWindow.AdminButtonExplanation:Show();
-        AdminWindow.ButtonContainer:Show();
+        AuctionAdminWindow.AdminButtonExplanation:Show();
+        AuctionAdminWindow.ButtonContainer:Show();
     end
 end
 
@@ -717,7 +947,7 @@ function ClientInterface:refreshAdminWindow()
         return;
     end
 
-    self:showAdminWindow(self.AuctionRows[Window.AdminWindow._auctionID]);
+    self:showAuctionAdminWindow(self.AuctionRows[Window.AuctionAdminWindow._auctionID]);
 end
 
 --- Sort auctions, filter them by all the possible filters
@@ -725,7 +955,9 @@ end
 ---@return void
 function ClientInterface:filterAndSort()
     local rowsShown = 0;
-    local ItemHolder = self.ItemHolder;
+    local showUnusable = self.showUnusable;
+    local showFavorites = self.showFavorites;
+    local AuctionHolder = self.AuctionHolder;
     local RowsToShow = {};
     local filterConcernsLevel = false;
     local filterValue = self.Search:GetText();
@@ -763,6 +995,12 @@ function ClientInterface:filterAndSort()
                 -- These mean that the auction was deleted
                 or not Client.AuctionDetails.Auctions[auctionID]
                 or Client.AuctionDetails.Auctions[auctionID].endsAt <= -1
+
+                -- Hide unusable items
+                or (not showUnusable and not ItemRow._Details.canUseItem)
+
+                -- Hide unusable items
+                or (showFavorites and not ItemRow._Details.isFavorite)
             ) then
                 return;
             end
@@ -810,8 +1048,8 @@ function ClientInterface:filterAndSort()
         ItemRow:ClearAllPoints();
         ItemRow:SetAlpha(1);
         ItemRow:SetHeight(ITEM_ROW_HEIGHT);
-        ItemRow:SetPoint("TOPLEFT", ItemHolder, "TOPLEFT", 20, (rowsShown * ITEM_ROW_HEIGHT) * -1);
-        ItemRow:SetPoint("RIGHT", ItemHolder, "RIGHT", not GL.elvUILoaded and 0 or -4, 0);
+        ItemRow:SetPoint("TOPLEFT", AuctionHolder, "TOPLEFT", 20, (rowsShown * ITEM_ROW_HEIGHT) * -1);
+        ItemRow:SetPoint("RIGHT", AuctionHolder, "RIGHT", not GL.elvUILoaded and 0 or -4, 0);
 
         rowsShown = rowsShown + 1;
     end
@@ -865,17 +1103,13 @@ function ClientInterface:refresh()
             --- We need to update the timer bar
             if (AuctionRow._Details.endsAt ~= Details.endsAt) then
                 if (Details.endsAt <= -1) then
-                    AuctionRow.CountDownBar:Stop();
-                    AuctionRow.CountDownBar:Hide();
                     rowsChanged = true;
                 end
 
                 if (AuctionRow.CountDownBar
                     and AuctionRow.CountDownBar.SetDuration
                 ) then
-                    AuctionRow.CountDownBar:Stop();
-                    AuctionRow.CountDownBar:Hide();
-
+                    AuctionRow.stopCountdown();
                     AuctionRow._Details.endsAt = Details.endsAt;
 
                     if (Details.endsAt > serverTime) then
@@ -893,6 +1127,7 @@ function ClientInterface:refresh()
     end
 
     self:refreshAdminWindow();
+    self:updateBidDetails();
 end
 
 ---@return Frame
