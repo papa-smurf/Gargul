@@ -1447,13 +1447,7 @@ function GL:itemTradeTimeRemaining(itemLinkOrID)
             return;
         end
 
-        -- Item is not soulbound or does not have any trade time remaining
-        local timeRemaining = GL:inventoryItemTradeTimeRemaining(bag, slot);
-        if (timeRemaining < 1 or timeRemaining == GL.Data.Constants.itemIsNotBound) then
-            return;
-        end
-
-        Results[C_Item.GetItemGUID(Location)] = timeRemaining;
+        Results[C_Item.GetItemGUID(Location)] = GL:inventoryItemTradeTimeRemaining(bag, slot);
     end);
 
     return Results;

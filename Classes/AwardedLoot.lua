@@ -424,7 +424,18 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, G
     local awardedItemGUID = nil;
     local lowestTradeTimeRemaining = 14400; -- 4 hours in seconds
     for itemGUID, timeRemaining in pairs(GL:itemTradeTimeRemaining(itemID) or {}) do
-        if (timeRemaining < lowestTradeTimeRemaining and not DB:get("RecentlyAwardedItems." .. itemGUID)) then
+        -- Check if the given item is soulbound
+        local itemIsBound = timeRemaining ~= GL.Data.Constants.itemIsNotBound;
+
+        -- This item is not bound, pick the first one that's not awarded yet
+        if (not itemIsBound) then
+            if (not DB:get("RecentlyAwardedItems." .. itemGUID)) then
+                awardedItemGUID = itemGUID;
+                break;
+            end
+
+        -- This item is bound, found the one with the lowest remaining trade time and award it
+        elseif (itemIsBound and timeRemaining < lowestTradeTimeRemaining and not DB:get("RecentlyAwardedItems." .. itemGUID)) then
             awardedItemGUID = itemGUID;
             lowestTradeTimeRemaining = timeRemaining;
         end
@@ -607,10 +618,22 @@ function AwardedLoot:addItemGUIDtoItemsAwardedToSelf()
                 return;
             end
 
+            --[[ DETERMINE THE ITEM'S GUID ]]
             local awardedItemGUID = nil;
             local lowestTradeTimeRemaining = 14400; -- 4 hours in seconds
-            for itemGUID, timeRemaining in pairs(GL:itemTradeTimeRemaining(Details.itemID) or {}) do
-                if (timeRemaining < lowestTradeTimeRemaining and not DB:get("RecentlyAwardedItems." .. itemGUID)) then
+            for itemGUID, timeRemaining in pairs(GL:itemTradeTimeRemaining(itemID) or {}) do
+                -- Check if the given item is soulbound
+                local itemIsBound = timeRemaining ~= GL.Data.Constants.itemIsNotBound;
+
+                -- This item is not bound, pick the first one that's not awarded yet
+                if (not itemIsBound) then
+                    if (not DB:get("RecentlyAwardedItems." .. itemGUID)) then
+                        awardedItemGUID = itemGUID;
+                        break;
+                    end
+
+                    -- This item is bound, found the one with the lowest remaining trade time and award it
+                elseif (itemIsBound and timeRemaining < lowestTradeTimeRemaining and not DB:get("RecentlyAwardedItems." .. itemGUID)) then
                     awardedItemGUID = itemGUID;
                     lowestTradeTimeRemaining = timeRemaining;
                 end

@@ -34,8 +34,8 @@ local ClientInterface = GL.Interface.GDKP.MultiAuction.Client;
 
 --[[ CONSTANTS ]]
 local ITEM_ROW_HEIGHT = 30;
-local WINDOW_WIDTH = 383;
-local WINDOW_HEIGHT = 333;
+local WINDOW_WIDTH = 575;
+local WINDOW_HEIGHT = 355;
 local FONT;
 
 ---@return Frame|nil
@@ -349,7 +349,7 @@ function ClientInterface:build()
             end
 
             GL.Interface.Dialogs.PopupDialog:open{
-                question = "Close ALL actions and wrap up this multi-auction session?",
+                question = "Close ALL auctions and wrap up this multi-auction session?",
                 OnYes = function ()
                     Auctioneer:finish();
                     self:close();
@@ -363,10 +363,28 @@ function ClientInterface:build()
             "Auctions with active bids on them will be sold and can not receive new bids!",
         }, "TOP");
 
+        ---@type Button
+        local TerminateButton = Interface:dynamicPanelButton(ButtonContainer);
+        TerminateButton:SetPoint("TOPLEFT", FinishButton, "TOPRIGHT", 4, 0);
+        TerminateButton:SetText("Terminate");
+        TerminateButton:SetScript("OnClick", function ()
+            GL.Interface.Dialogs.PopupDialog:open{
+                question = "Remove all bids and close all auctions?",
+                OnYes = function ()
+                    Auctioneer:terminate();
+                end,
+            };
+        end);
+        Interface:addTooltip(TerminateButton, {
+            "Terminate Multi-Auction session",
+            " ",
+            "This will delete all bids on items that haven't sold yet and close all auctions!",
+        }, "TOP");
+
         -- Shadow frame used to determine the required width of the ButtonContainer
         local ShadowFrame = CreateFrame("Frame", nil, AdminWindow);
         ShadowFrame:SetPoint("TOPLEFT", CloseAllButton, "TOPLEFT");
-        ShadowFrame:SetPoint("TOPRIGHT", FinishButton, "TOPRIGHT");
+        ShadowFrame:SetPoint("TOPRIGHT", TerminateButton, "TOPRIGHT");
         ShadowFrame:SetHeight(1);
 
         ButtonContainer:SetWidth(ShadowFrame:GetWidth());
@@ -1113,7 +1131,10 @@ function ClientInterface:refresh()
                     AuctionRow._Details.endsAt = Details.endsAt;
 
                     if (Details.endsAt > serverTime) then
-                        AuctionRow.addCountDownBar(Details.endsAt - serverTime);
+                        -- The .1 second delay is necessary since stopping the bar can sometimes occur after creating a new one
+                        GL:after(.1, "GDKP_MULTI_AUCTION_CLIENT_ADD_BAR_FOR_" .. Details.auctionID, function ()
+                            AuctionRow.addCountDownBar(Details.endsAt - serverTime);
+                        end);
                     end
                 end
             end

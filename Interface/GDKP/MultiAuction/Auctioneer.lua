@@ -77,7 +77,7 @@ function Auctioneer:open()
     if (GL:empty(self.ItemRows)) then
         GL.GDKP.MultiAuction.Auctioneer:fillFromInventory(
             Settings:get("GDKP.MultiAuction.minimumFillQuality"),
-            Settings:set("GDKP.MultiAuction.includeBOEs"),
+            Settings:get("GDKP.MultiAuction.includeBOEs"),
             Settings:get("GDKP.MultiAuction.includeAwarded"),
             Settings:get("GDKP.MultiAuction.includeMaterials")
         );

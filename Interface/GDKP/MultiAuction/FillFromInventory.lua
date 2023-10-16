@@ -139,7 +139,7 @@ function FillFromInventory:build()
     local FillButton = Interface:dynamicPanelButton(Window, "Fill");
     FillButton:SetPoint("BOTTOMLEFT", Window, "BOTTOMLEFT", 20, 30);
     FillButton:SetScript("OnClick", function ()
-        Auctioneer:fillFromInventory(MinimumQuality:GetValue(), IncludeBOE:GetChecked(), IncludeMaterials:GetChecked());
+        Auctioneer:fillFromInventory(MinimumQuality:GetValue(), IncludeBOE:GetChecked(), IncludeAwarded:GetChecked(), IncludeMaterials:GetChecked());
         self:close();
     end);
 

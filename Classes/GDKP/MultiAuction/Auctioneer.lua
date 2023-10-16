@@ -101,6 +101,8 @@ function Auctioneer:fillFromInventory(minimumQuality, includeBOEs, includeAwarde
 
         UI:addItemByLink(itemLink, itemGUID);
     end);
+
+    UI:filterAndSort();
 end
 
 --- Check whether the given or current user is allowed to broadcast
@@ -302,12 +304,6 @@ function Auctioneer:announceStart(ItemDetails, duration, antiSnipe)
     return true;
 end
 
----@return void
-function Auctioneer:stop()
-    GL.Ace:CancelTimer(self.PopTimer);
-    Auction:announceStop(true);
-end
-
 --- Attempt to process an incoming bid
 ---
 ---@param Message CommMessage
@@ -460,7 +456,7 @@ function Auctioneer:finish(announcePot)
     announcePot = announcePot ~= false;
 
     for auctionID in pairs(Client.AuctionDetails.Auctions or {}) do
-        Auctioneer:closeAuction(auctionID);
+        self:closeAuction(auctionID);
     end
 
     if (not announcePot) then
@@ -470,6 +466,16 @@ function Auctioneer:finish(announcePot)
     local totalPot = GDKPPot:total();
     if (totalPot) then
         GL:sendChatMessage(("Multi-auction finished. " .. L.POT_HOLDS):format(tostring(totalPot)), "GROUP");
+    end
+end
+
+--- Terminate the current multi-auction session by removing all bids and closing everything
+---
+---@return void
+function Auctioneer:terminate()
+    for auctionID in pairs(Client.AuctionDetails.Auctions or {}) do
+        self:clearBid(auctionID);
+        self:closeAuction(auctionID);
     end
 end
 
