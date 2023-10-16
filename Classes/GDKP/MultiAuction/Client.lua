@@ -40,6 +40,7 @@ function Client:start(Message)
         initiator = Message.Sender.fqn,
         endsAt = Message.content.endsAt,
         antiSnipe = Message.content.antiSnipe,
+        bth = Message.content.bth,
         Auctions = {},
     };
 

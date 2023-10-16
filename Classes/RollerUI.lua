@@ -8,7 +8,7 @@ GL.RollerUI = GL.RollerUI or {
 local RollerUI = GL.RollerUI; ---@type RollerUI
 
 ---@return boolean
-function RollerUI:show(time, itemLink, itemIcon, note, SupportedRolls)
+function RollerUI:show(time, itemLink, itemIcon, note, SupportedRolls, bth)
     GL:debug("RollerUI:show");
 
     if (self.Window and self.Window:IsShown()) then
@@ -23,7 +23,7 @@ function RollerUI:show(time, itemLink, itemIcon, note, SupportedRolls)
             return false;
         end
 
-        self:draw(time, itemLink, itemIcon, note, SupportedRolls, userCanUseItem);
+        self:draw(time, itemLink, itemIcon, note, SupportedRolls, userCanUseItem, bth);
     end);
 
     return true;
@@ -36,9 +36,7 @@ end
 ---@param itemIcon string
 ---@param note string
 ---@return boolean
-function RollerUI:draw(time, itemLink, itemIcon, note, SupportedRolls, userCanUseItem)
-    GL:debug("RollerUI:draw");
-
+function RollerUI:draw(time, itemLink, itemIcon, note, SupportedRolls, userCanUseItem, bth)
     local Window = CreateFrame("Frame", "GargulUI_RollerUI_Window", UIParent, Frame);
     Window:SetSize(350, 48);
     Window:SetPoint(GL.Interface:getPosition("Roller"));
@@ -155,6 +153,11 @@ function RollerUI:draw(time, itemLink, itemIcon, note, SupportedRolls, userCanUs
 
     rollerUIWidth = math.max(rollerUIWidth + 54, 350);
     Window:SetWidth(rollerUIWidth);
+
+    ---@type Frame
+    local IdentityWindow = GL.Interface.Identity:buildForRoller(bth);
+    IdentityWindow:SetParent(Window);
+    IdentityWindow:SetPoint("TOPRIGHT", Window, "TOPLEFT", -4, 0);
 
     self:drawCountdownBar(time, itemLink, itemIcon, note, userCanUseItem, rollerUIWidth);
 end

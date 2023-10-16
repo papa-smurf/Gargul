@@ -258,9 +258,11 @@ function Auctioneer:announceStart(ItemDetails, duration, antiSnipe)
         return false;
     end
 
+    local serverTime = GetServerTime();
+
     -- We're still waiting for a MultiAuction to start
     if (self.waitingForAuctionStart
-        and GetServerTime() - self.waitingForAuctionStart < 6
+        and serverTime - self.waitingForAuctionStart < 6
     ) then
         return false;
     end
@@ -270,7 +272,7 @@ function Auctioneer:announceStart(ItemDetails, duration, antiSnipe)
         return false;
     end
 
-    self.waitingForAuctionStart = GetServerTime();
+    self.waitingForAuctionStart = serverTime;
     duration = tonumber(duration) or 0;
     antiSnipe = tonumber(antiSnipe) or 0;
 
@@ -282,7 +284,7 @@ function Auctioneer:announceStart(ItemDetails, duration, antiSnipe)
         return false;
     end
 
-    local endsAt = math.ceil(GetServerTime() + duration);
+    local endsAt = math.ceil(serverTime + duration);
     local defaultMinimumBid = DB:get("GDKP.defaultMinimumBid");
     local defaultIncrement = DB:get("GDKP.defaultIncrement");
     for _, Details in pairs(ItemDetails or {}) do
@@ -297,6 +299,7 @@ function Auctioneer:announceStart(ItemDetails, duration, antiSnipe)
             ItemDetails = ItemDetails,
             endsAt = endsAt,
             antiSnipe = antiSnipe,
+            bth = GL.User.bth,
         },
         "GROUP"
     ):send();

@@ -7,6 +7,9 @@ local GDKP = GL.GDKP;
 ---@type GDKPAuction
 local GDKPAuction = GDKP.Auction;
 
+---@type Interface
+local Interface = GL.Interface;
+
 ---@class GDKPBidderInterface
 GL:tableSet(GL, "Interface.GDKP.Bidder", {
     AutoBidButton = nil,
@@ -69,8 +72,9 @@ end
 ---@param time number The duration of the RollOff
 ---@param itemLink string
 ---@param itemIcon string
+---@param bth string
 ---@return boolean
-function Bidder:draw(time, itemLink, itemIcon)
+function Bidder:draw(time, itemLink, itemIcon, bth)
     GL:debug("Bidder:draw");
 
     local Window = CreateFrame("Frame", "GARGUL_GDKP_BIDDER_WINDOW", UIParent);
@@ -286,6 +290,11 @@ function Bidder:draw(time, itemLink, itemIcon)
         self:hide();
     end);
 
+    ---@type Frame
+    local IdentityWindow = Interface.Identity:buildForBidder(bth);
+    IdentityWindow:SetParent(Window);
+    IdentityWindow:SetPoint("TOPRIGHT", Window, "TOPLEFT", -6, 2);
+
     self:refresh();
 
     Window:Show();
@@ -314,7 +323,7 @@ end
 function Bidder:refresh()
     GL:debug("Bidder:refresh");
 
-    local TopBidderLabel = GL.Interface:get(self, "Frame.TopBidder");
+    local TopBidderLabel = Interface:get(self, "Frame.TopBidder");
 
     if (not TopBidderLabel) then
         return;
@@ -413,7 +422,7 @@ function Bidder:hide()
         self.TimerBar = nil;
     end
 
-    GL.Interface:release(self.Window);
+    Interface:release(self.Window);
     self.Window = nil;
 end
 

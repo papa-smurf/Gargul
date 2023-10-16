@@ -147,6 +147,17 @@ GL.Commands = GL.Commands or {
             GL.Interface.GDKP.MultiAuction.Client:open();
         end,
 
+        -- Used to get a bnet ID hash for identification purposes
+        bnid = function ()
+            if (GL:stringHash("") == GL.User.bth) then
+                print("bth not set");
+
+                return;
+            end
+
+            print(GL.User.bth);
+        end,
+
         -- Open the window for rolling off items
         rolloff = function(...) GL.MasterLooterUI:draw(...); end,
 

@@ -111,6 +111,7 @@ function RollOff:announceStart(itemLink, time, note)
                 item = itemLink,
                 time = time,
                 note = note,
+                bth = GL.User.bth,
                 SupportedRolls = GL.Settings:get("RollTracking.Brackets", {}) or {},
             },
             "GROUP"
@@ -343,7 +344,7 @@ function RollOff:start(CommMessage)
 
         -- Don't show the roll UI if the user disabled it
         if (GL.Settings:get("Rolling.showRollOffWindow")) then
-            GL.RollerUI:show(time, Details.link, Details.icon, content.note, SupportedRolls);
+            GL.RollerUI:show(time, Details.link, Details.icon, content.note, SupportedRolls, Details.bth);
         end
 
         -- Make sure the rolloff stops when time is up

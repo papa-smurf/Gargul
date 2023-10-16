@@ -1,9 +1,13 @@
 local L = Gargul_L;
+local LCG = LibStub("LibCustomGlowGargul-1.0");
 
 ---@type GL
 local _, GL = ...;
 
 GL.ScrollingTable = GL.ScrollingTable or LibStub("ScrollingTable");
+
+---@type Constants
+local Constants = GL.Data.Constants;
 
 ---@type Interface
 local Interface = GL.Interface;
@@ -268,6 +272,13 @@ function LedgerList:build()
         Line:SetStartPoint("RIGHT", PreviousLine, 0, 0);
         Line:SetEndPoint("BOTTOM", Balance, 0, -4);
     end
+
+    --[[ SHOW THE IDENTITY OF THE ORGANIZER ]]
+    -- Determine which identity to activate
+    local Identity = Interface.Identity:buildForLedger(GL.User.bth);
+    Identity:SetParent(Window);
+    Identity:SetPoint("CENTER", Balance, "CENTER");
+    Identity:SetPoint("LEFT", Balance, "RIGHT", 60, 0);
 
     _G[self.windowName] = Window;
     return Window;

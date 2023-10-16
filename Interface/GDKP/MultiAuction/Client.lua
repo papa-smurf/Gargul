@@ -1,4 +1,5 @@
 local L = Gargul_L;
+local LCG = LibStub("LibCustomGlowGargul-1.0");
 
 ---@type GL
 local _, GL = ...;
@@ -6,8 +7,8 @@ local _, GL = ...;
 ---@type Interface
 local Interface = GL.Interface;
 
----@type GDKPPot
-local GDKPPot = GL.GDKP.Pot;
+---@type Constants
+local Constants = GL.Data.Constants;
 
 ---@type GDKPMultiAuctionAuctioneer
 local Auctioneer = GL.GDKP.MultiAuction.Auctioneer;
@@ -44,6 +45,8 @@ function ClientInterface:open()
 
     local Window = self:getWindow() or self:build();
 
+    self:resetAdminWindow();
+    self:refreshIdentity();
     return Window:Show() and Window;
 end
 
@@ -150,39 +153,6 @@ function ClientInterface:build()
             CloseMenus();
         end }
     }, 100);
-
-    --[[ LOGO ]]
-    ---@type Frame
-    local Logo = CreateFrame("Frame", nil, Window, "BackdropTemplate");
-    Logo:SetSize(120, 120);
-    Logo:SetBackdrop(_G.BACKDROP_DARK_DIALOG_32_32);
-    Logo:SetPoint("TOPRIGHT", Window, "TOPLEFT", 0, 0);
-    Interface:addTooltip(Logo, "Your logo here? Click for more info!", "TOP");
-
-    ---@type Texture
-    local LogoImage = Logo:CreateTexture();
-    LogoImage:SetPoint("CENTER", Logo, "CENTER", 0, 12);
-    LogoImage:SetSize(60, 60);
-    LogoImage:SetTexture("Interface/AddOns/Gargul/Assets/Icons/gargul");
-    Logo._Image = LogoImage;
-
-    ---@type FontString
-    local LogoText = Interface:createFontString(Logo, "Gargul GDKP");
-    LogoText:SetPoint("CENTER", Logo, "CENTER");
-    LogoText:SetPoint("BOTTOM", Logo, "BOTTOM", 0, 20);
-    LogoText:SetFont(.9);
-    Logo._Text = LogoText;
-
-    Logo:SetScript("OnMouseUp", function(_, button)
-        if (button == 'LeftButton') then
-            GL.Interface.Dialogs.HyperlinkDialog:open{
-                description = "Visit the URL below to learn more about personalizing Gargul GDKPs",
-                hyperlink = "https://discord.gg/D3mDhYPVzf",
-            };
-        end
-    end);
-
-    Window._Logo = Logo;
 
     ---@type Frame
     local AuctionHolder
@@ -856,6 +826,38 @@ function ClientInterface:resetAdminWindow()
         Window.AdminWindow:Show();
         AuctionAdminWindow:Show();
     end
+end
+
+--- Make sure the organizer's identity is shown for everyone
+function ClientInterface:refreshIdentity()
+    -- Determine which identity to activate
+    Client.AuctionDetails.bth = Interface.Identity:getForMethod(Client.AuctionDetails.bth, "multiAuctionClient");
+
+    -- Nothing changed since the last time we checked, return!
+    if (self.currentIdentity == Client.AuctionDetails.bth) then
+        return;
+    end
+
+    -- The client is not visible, no need to show anything now
+    if (not self:isShown()) then
+        return;
+    end
+    self.currentIdentity = Client.AuctionDetails.bth;
+
+    -- A previous (different) identity exists, release it!
+    if (self.Identity) then
+        Interface:release(self.Identity);
+    end
+
+    ---@type Frame
+    local Window = self:getWindow();
+
+    ---@type Frame
+    local IdentityWindow = Interface.Identity:buildForMultiAuctionClient(Client.AuctionDetails.bth);
+    IdentityWindow:SetParent(Window);
+    IdentityWindow:SetPoint("TOPRIGHT", Window, "TOPLEFT");
+
+    self.Identity = IdentityWindow;
 end
 
 --- Show bidding details in the footer

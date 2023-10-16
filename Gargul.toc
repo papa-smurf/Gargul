@@ -139,6 +139,7 @@ Interface/PlayerSelector.lua
 Interface/Changelog.lua
 Interface/BoostedRolls/Importer.lua
 Interface/BoostedRolls/Overview.lua
+Interface/Identity.lua
 Interface/MinimapButton.lua
 
 # Popup dialogs

@@ -1295,7 +1295,7 @@ function AuctioneerUI:buildAuctioneerShortcut()
         end
     end);
 
-    GL.Interface:addTooltip(Button, "Open auctioneer window", "ANCHOR_TOP");
+    Interface:addTooltip(Button, "Open auctioneer window", "TOP");
 
     return Button;
 end
