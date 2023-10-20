@@ -134,13 +134,14 @@ function Auctioneer:_init()
     end);
 
     -- An item dropped, add it to the queue. Can test this using:
-    -- /script _G.Gargul.Events:fire("GL.ITEM_RECEIVED", {itemID=45613,itemLink="|cffa335ee|Hitem:45613::::::::80:::::|h[Dreambinder]|h|r",quality=4,droppedOn=GetTime(), playerName="Omegachrist"});
+    -- /script _G.Gargul.Events:fire("GL.ITEM_RECEIVED", {itemID=45613,itemLink="|cffa335ee|Hitem:45613::::::::80:::::|h[Dreambinder]|h|r",quality=4,droppedOn=GetTime(), playerName="Ghyle-Mograine"});
     local firstItem = true;
     Events:register("AuctioneerItemReceived", "GL.ITEM_RECEIVED", function (_, Details)
         -- We don't want to automatically add loot
         if (not DB:get("GDKP.activeSession", false)
             or not Settings:get("GDKP.addDropsToQueue")
             or GL.Settings:get("GDKP.disableQueues")
+            or (GDKPSession:getActive().type == "multi")
         ) then
             return;
         end

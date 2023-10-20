@@ -147,8 +147,47 @@ function Auctioneer:build()
         { text = L.CHANGE_SCALE, notCheckable = true, func = function ()
             Interface:openScaler(Window);
             CloseMenus();
-        end }
+        end },
     }, 100);
+
+    local HelpFrame = CreateFrame("Frame", nil, Window);
+    HelpFrame:SetPoint("TOPRIGHT", Window, "TOPRIGHT", -34, -23);
+    HelpFrame:SetSize(50, 20);
+
+    ---@type Texture
+    local highlight = HelpFrame:CreateTexture(nil, "HIGHLIGHT")
+    highlight:SetAllPoints(HelpFrame);
+    highlight:SetTexture("Interface/PaperDollInfoFrame/UI-Character-Tab-Highlight")
+    highlight:SetBlendMode("ADD");
+
+    Interface:addTooltip(HelpFrame, {
+        "Here you determine which items to include in your multi-auction session",
+        " ",
+        "Use the |c00a79effFill from inventory|r button below to add items that can still be traded to the list",
+        "Whenever you clear and re-open this window, your last fill settings will be used to automatically add items",
+        " ",
+        ("|c00a79eff%s|r items to manually add them to the list"):format(GL.Settings:get("ShortcutKeys.rollOffOrAuction")),
+    }, "BOTTOM");
+
+    --[[ ICON ]]
+    local texturePath = "interface/friendsframe/informationicon";
+
+    ---@type Button
+    local Icon = CreateFrame("Button",nil, Window);
+    Icon:SetSize(12, 12);
+    Icon:SetPoint("TOPLEFT", HelpFrame, "TOPLEFT");
+
+    ---@type Texture
+    local image = Icon:CreateTexture(nil, "BACKGROUND")
+    image:SetWidth(12)
+    image:SetHeight(12)
+    image:SetAllPoints(Icon)
+    image:SetTexture(texturePath);
+
+    --[[ INFO ]]
+    ---@type FontString
+    local InfoLabel = Interface:createFontString(HelpFrame, L.INFO);
+    InfoLabel:SetPoint("TOPLEFT", HelpFrame, "TOPLEFT", 15, -1);
 
     ---@type Frame
     local ItemHolder

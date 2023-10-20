@@ -430,7 +430,12 @@ function ClientInterface:build()
                 return self:resetAdminWindow();
             end
 
-            Auctioneer:closeAuction(AuctionAdminWindow._auctionID);
+            GL.Interface.Dialogs.PopupDialog:open{
+                question = "Are you sure?",
+                OnYes = function ()
+                    Auctioneer:closeAuction(AuctionAdminWindow._auctionID);
+                end,
+            };
         end);
         Interface:addTooltip(CloseButton, "Close the auction. Players can no longer bid but the highest bid remains active", "TOP");
 

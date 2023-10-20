@@ -178,7 +178,7 @@ function Auctioneer:start(ItemDetails, duration, antiSnipe)
         };
 
         self:storeDetailsForFutureAuctions{
-            itemLink = Item.link,
+            link = Item.link,
             minimum = Item.minimum,
             increment = Item.increment,
         };
@@ -217,6 +217,7 @@ function Auctioneer:syncWithRunningSession()
         return;
     end
 
+    local numberOfActiveGroupMembers = 0;
     local HashOccurrences = {};
     local PlayersPerHash = {};
     local processResults = function(CommMessage)
@@ -288,9 +289,10 @@ function Auctioneer:syncWithRunningSession()
             end
         end
 
-        -- This is a failsafe to make sure a single person can't wreak havoc
-        --if (highestCount < 2) then
-        if (highestCount < 1) then ---@todo: set to 2!
+        -- This is a failsafe to make sure a single person can't wreak havoc (except when testing with a single friend)
+        if (numberOfActiveGroupMembers > 1
+            and highestCount < 2
+        ) then
             return;
         end
 
@@ -303,7 +305,7 @@ function Auctioneer:syncWithRunningSession()
             playerToFetchDataFrom = nil;
             local activeSessionID = GL.GDKP.Session:activeSessionID();
 
-            -- If there's no session then there's nothing we can do sadly
+            -- If there's no session then there's nothing we can do for now sadly
             if (not activeSessionID) then
                 return;
             end
@@ -368,11 +370,15 @@ function Auctioneer:syncWithRunningSession()
 
                     local ExtendIDs = {};
 
-                    -- See if there are auctions that need a new timer (aka weren't finished yet)
+                    -- Check if there are any auctions worth resuming
+                    local anHourAgo = GetServerTime() - 3600;
                     for auctionID, Auction in pairs(Response.Auctions) do
                         (function()
                             -- This auction was deleted or otherwise made unavailable
-                            if (Auction.endsAt < 0) then
+                            -- There's also no point in trying to continue ancient auctions
+                            if (Auction.endsAt < 0
+                                or Auction.endsAt < anHourAgo
+                            ) then
                                 return;
                             end
 
@@ -428,7 +434,6 @@ function Auctioneer:syncWithRunningSession()
     end;
 
     -- Check how many answers we're expecting on our next comm message
-    local numberOfActiveGroupMembers = 0;
     GL:forEachGroupMember(function (Member)
         if (Member.online
             and not GL:iEquals(Member.fqn, GL.User.fqn)

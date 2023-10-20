@@ -202,6 +202,7 @@ GL.Data.DefaultSettings = {
             time = 600,
             antiSnipe = 15,
             minimumFillQuality = 4,
+            includeAwarded = false,
             includeBOEs = true,
             includeMaterials = false,
         },

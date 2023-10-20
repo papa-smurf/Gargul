@@ -56,6 +56,50 @@ function EditSession:build()
     Window:AddChild(ManagementCut);
     Interface:set(self, "ManagementCut", ManagementCut);
 
+    local SessionTypeLabel = GL.AceGUI:Create("Label");
+    SessionTypeLabel:SetText("     Auction type (|c00a79effi|r for more info)");
+    SessionTypeLabel:SetColor(1, .95686, .40784);
+    SessionTypeLabel:SetHeight(20);
+    SessionTypeLabel:SetFullWidth(true);
+    Window:AddChild(SessionTypeLabel);
+
+    local MutatorHelpIcon = AceGUI:Create("Icon");
+    MutatorHelpIcon:SetWidth(12);
+    MutatorHelpIcon:SetHeight(12);
+    MutatorHelpIcon:SetImageSize(12, 12);
+    MutatorHelpIcon:SetImage("interface/friendsframe/informationicon");
+    MutatorHelpIcon.frame:SetParent(SessionTypeLabel.frame);
+    MutatorHelpIcon.frame:SetPoint("BOTTOMLEFT", SessionTypeLabel.frame, "BOTTOMLEFT", 1, -6);
+    MutatorHelpIcon.frame:Show();
+
+    MutatorHelpIcon:SetCallback("OnEnter", function()
+        GameTooltip:SetOwner(MutatorHelpIcon.frame, "ANCHOR_RIGHT");
+        GameTooltip:AddLine(" ");
+        GameTooltip:AddLine("|c00a79effMulti-Auction|r allows you to start bids on multiple items at once, speeding things up!");
+        GameTooltip:AddLine("Follow the instructions after creating this session to get started");
+        GameTooltip:AddLine(" ");
+        GameTooltip:AddLine("With |c00a79effSingle-Auction|r you choose to auction off single items instead or use the queue");
+        GameTooltip:AddLine(" ");
+        GameTooltip:AddLine("Selecting |c00a79effMulti-Auction|r prevents dropped items from being added to the queue");
+        GameTooltip:AddLine("You can mix |c00a79effMulti-Auction|r with |c00a79effSingle-Auction|r and the queue but we strongly advise against it");
+        GameTooltip:AddLine(" ");
+        GameTooltip:Show();
+    end);
+
+    MutatorHelpIcon:SetCallback("OnLeave", function()
+        GameTooltip:Hide();
+    end);
+
+    local SessionType = {
+        multi = "Multi-Auction",
+        single = "Single-Auction",
+    };
+
+    local SessionTypeDropdown = GL.AceGUI:Create("Dropdown");
+    SessionTypeDropdown:SetList(SessionType);
+    SessionTypeDropdown:SetWidth(250);
+    Window:AddChild(SessionTypeDropdown);
+
     local Save = AceGUI:Create("Button");
     Save:SetText("Save");
     Save:SetFullWidth(true);
@@ -77,7 +121,13 @@ function EditSession:build()
             end
         end
 
-        GDKPSession:edit(Overview.selectedSession, title, managementCut);
+        local type = SessionTypeDropdown:GetValue();
+        if (GL:empty(type)) then
+            GL:warning("Choose a session type!");
+            return;
+        end
+
+        GDKPSession:edit(Overview.selectedSession, title, managementCut, type);
 
         self:close();
     end);

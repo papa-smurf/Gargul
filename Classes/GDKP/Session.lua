@@ -739,8 +739,9 @@ end
 
 ---@param title string
 ---@param managementCut number
+---@param sessionType string
 ---@return table|boolean
-function Session:create(title, managementCut)
+function Session:create(title, managementCut, sessionType)
     GL:debug("Session:createSession");
 
     if (type(title) ~= "string" or GL:empty(title)) then
@@ -760,6 +761,7 @@ function Session:create(title, managementCut)
         title = GL:capitalize(string.sub(title, 0, 30)),
         createdAt = GetServerTime(),
         managementCut = managementCut,
+        type = sessionType,
         Auctions = {},
         CreatedBy = {
             class = GL.User.class,
@@ -786,8 +788,9 @@ end
 ---@param sessionID string
 ---@param title string
 ---@param managementCut number|nil
+---@param sessionType string
 ---@return boolean|table
-function Session:edit(sessionID, title, managementCut)
+function Session:edit(sessionID, title, managementCut, sessionType)
     GL:debug("Session:createSession");
 
     if (type(title) ~= "string" or GL:empty(title)) then
@@ -812,6 +815,8 @@ function Session:edit(sessionID, title, managementCut)
     else
         Instance.managementCut = 0;
     end
+
+    Instance.type = sessionType;
 
     Instance.title = GL:capitalize(string.sub(title, 0, 30));
     DB:set("GDKP.Ledger." .. Instance.ID, Instance);

@@ -892,9 +892,10 @@ function Overview:showTutorial()
         Steps = {
             {1, "|c00a79effYou're ready to sell items! |c00BE3333Read all the steps below carefully and test them all|r by yourself (no need to be in a raid) before starting your first GDKP raid!|r", },
             {2, ("|c00a79eff|c00FFF569%s|r an item to auction or queue a single item|r"):format(GL.Settings:get("ShortcutKeys.rollOffOrAuction")), },
-            {3, "|c00a79effWant to auction multiple items at once instead? Run |c00FFF569/gl multiauction|r or click the multi-auction icon in the top right of this window!|r", },
-            {4, string.format("|c00a79effWant to sell an item directly without anyone bidding? Use |c00FFF569%s|r on an item, pick a winner and set a price!|r", GL.Settings:get("ShortcutKeys.award"))},
+            {3, "|c00a79effWant to auction multiple items at once? Run |c00FFF569/gl ma|r (or |c00FFF569/gl multiauction|r) or click the multi-auction icon in the top right of this window!|r", },
+            {4, string.format("|c00a79effWant to sell an item without anyone bidding? |c00FFF569%s|r on an item, pick a winner and set a price!|r", GL.Settings:get("ShortcutKeys.award"))},
             {5, "|c00a79effIf all went well then you will see your freshly auctioned item(s) here!|r"},
+            {6, "|c00a79effHelpful commands:\n- |c00FFF569/gdkp|r to open this window\n- |c00FFF569/gl ma|r to open the multi-auction window\n- |c00FFF569/gl au|r to open the single item auctioneer / queue\n- |c00FFF569/gl pm|r to set up auto-looting\n |r"},
         };
     end
 

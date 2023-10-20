@@ -13,6 +13,8 @@ local DEFAULT = "default";
 
 ---@class IdentityInterface
 GL.Interface.Identity = {
+
+    --[[ ================== DEFAULT ================== ]]
     [DEFAULT] = {
         id = DEFAULT,
         url = "https://discord.gg/D3mDhYPVzf",
@@ -225,5 +227,7 @@ end
 ---
 ---@return string
 function Identity:getForMethod(identifier, method)
+    identifier = identifier or DEFAULT;
+
     return GL:tableGet(self, ("%s.%s"):format(identifier, method)) and identifier or DEFAULT;
 end
