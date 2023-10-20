@@ -1359,9 +1359,11 @@ end
 ---
 --- @return boolean
 function GL:isCrossRealm()
-    GL.isCrossRealm = GL.isCrossRealm ~= nil and GL.isCrossRealm or not not GetAutoCompleteRealms()[2];
+    if (GL._isCrossRealm == nil) then
+        GL._isCrossRealm = not not GetAutoCompleteRealms()[2];
+    end
 
-    return GL.isCrossRealm;
+    return GL._isCrossRealm;
 end
 
 --- Make sure era names are suffixed with a realm
@@ -2025,6 +2027,14 @@ function GL:forEachGroupMember(callback)
     for _, Member in pairs(GL.User:groupMembers() or {}) do
         callback(Member);
     end
+end
+
+--- Check if the given player is online
+---
+---@param player string
+---@return boolean
+function GL:unitIsConnected(player)
+    return not self:isCrossRealm() and UnitIsConnected(self:stripRealm(player)) or UnitIsConnected(self:nameFormat(player));
 end
 
 --- Add the realm name to a player name

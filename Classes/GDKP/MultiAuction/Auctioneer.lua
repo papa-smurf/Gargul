@@ -50,13 +50,10 @@ function Auctioneer:_init()
 
         -- Check if we need to sync up with an existing multi-auction session
         self:syncWithRunningSession();
-        GL.Events:unregister("GDKPMultiAuctionAuctioneerGroupUpdateListener");
     end);
 
     -- If the user reloads instead of a login we have to wait a couple seconds for the game to update the group setup
     GL:after(5, "GDKP.MultiAuction.syncWithRunningSession", function ()
-        GL.Events:unregister("GDKPMultiAuctionAuctioneerGroupUpdateListener");
-
         if (not synced) then
             synced = true;
 
@@ -94,7 +91,9 @@ function Auctioneer:fillFromInventory(minimumQuality, includeBOEs, includeAwarde
             local classID = select(12, GetItemInfo(C_Item.GetItemID(Location)));
 
             -- We don't need trade goods / crafting reagents
-            if (classID == Enum.ItemClass.Tradegoods) then
+            if (classID == Enum.ItemClass.Tradegoods
+                or classID == Enum.ItemClass.Gem
+            ) then
                 return;
             end
         end
@@ -260,7 +259,7 @@ function Auctioneer:syncWithRunningSession()
 
                         -- The initiator is not online so there's no point continuing
                         -- If he does come online at some point then he'll automatically share his data with us
-                        or not UnitIsConnected(initiator)
+                        or not GL:unitIsConnected(initiator)
                     )) then
                         CheckedHashed[sessionHash] = true;
                         return;
@@ -311,7 +310,7 @@ function Auctioneer:syncWithRunningSession()
             end
 
             for _, player in pairs(PlayersPerHash[mostCommonHash]) do
-                if (GL.User:unitInGroup(player) and UnitIsConnected(player)) then
+                if (GL.User:unitInGroup(player) and GL:unitIsConnected(player)) then
                     playerToFetchDataFrom = player;
                     break;
                 end

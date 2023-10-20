@@ -1157,7 +1157,7 @@ function TMB:broadcastToWhitelist()
 
         if (not GL:iEquals(GL.User.name, name)
             and GL:inTable(GroupMemberNames, name)
-            and UnitIsConnected(name) -- Only send if player is online
+            and GL:unitIsConnected(name) -- Only send if player is online
         ) then
             tinsert(WhitelistedPlayersInGroup, name);
         end

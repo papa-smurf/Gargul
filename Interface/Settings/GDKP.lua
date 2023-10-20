@@ -502,7 +502,8 @@ An item's price and increment are determined in the following order:
         return a.level < b.level;
     end);
 
-    for i = 1, 5 do
+    local numberOfItemLevelLines = 10;
+    for i = 1, numberOfItemLevelLines do
         local Details = ItemLevelSettings[i] or {};
 
         local Level = GL.AceGUI:Create("EditBox");
@@ -538,7 +539,7 @@ An item's price and increment are determined in the following order:
             Increment:SetLabel("|cffFFF569Increment|r");
         end
 
-        if (i < 5) then
+        if (i < numberOfItemLevelLines) then
             Spacer = GL.AceGUI:Create("SimpleGroup");
             Spacer:SetLayout("FILL");
             Spacer:SetFullWidth(true);

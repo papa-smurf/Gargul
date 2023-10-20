@@ -130,6 +130,8 @@ function Player:hasAssist(playerNameOrID)
     if (GL:strStartsWith(playerNameOrID, "Player-")) then
         _, _, _, _, _, playerName, realm = GetPlayerInfoByGUID(playerNameOrID);
         playerName = GL:nameFormat{ name = playerName, realm = realm };
+    else
+        playerName = GL:nameFormat(playerNameOrID);
     end
 
     if (not playerName) then
@@ -208,6 +210,8 @@ function Player:isMasterLooter(playerNameOrID)
     if (GL:strStartsWith(playerNameOrID, "Player-")) then
         _, _, _, _, _, playerName, realm = GetPlayerInfoByGUID(playerNameOrID);
         playerName = GL:nameFormat{ name = playerName, realm };
+    else
+        playerName = GL:nameFormat(playerNameOrID);
     end
 
     if (not playerName) then

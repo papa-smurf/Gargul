@@ -37,8 +37,6 @@ local User = GL.User;
 -- Initialize the user's more "static" details that
 -- shouldn't be able to change during playtime
 function User:_init()
-    GL:debug("User:_init");
-
     -- No need to initialize this class twice
     if (self._initialized) then
         return;
@@ -66,8 +64,6 @@ end
 -- Refresh the User's details after the group
 -- composition or loot method changes
 function User:groupSetupChanged()
-    GL:debug("User:groupSetupChanged");
-
     self.groupSetupChangedAt = GetServerTime();
 
     -- The timer throttle is necessary to prevent performance
@@ -85,8 +81,6 @@ end
 
 -- Refresh the user's details
 function User:refresh()
-    GL:debug("User:refresh");
-
     local userWasMasterLooter = self.isMasterLooter;
     local userWasLead = self.isLead;
     local userHadAssist = self.hasAssist;
@@ -221,8 +215,6 @@ end
 ---
 ---@return table
 function User:guildMembers()
-    GL:debug("User:guildMembers");
-
     local Roster = {};
 
     if (GL:empty(self.Guild)) then
@@ -271,8 +263,7 @@ end
 ---
 ---@return table
 function User:playerIsGuildMember(playerName)
-    GL:debug("User:guildMembers");
-
+    self:guildMembers();
     self:guildMembers();
 
     if (not strfind(playerName, "-")) then
@@ -286,8 +277,6 @@ end
 -- Get all of the people who are
 -- in the same party/raid as the current user
 function User:groupMembers()
-    GL:debug("User:groupMembers");
-
     local Roster = {};
 
     if (GL.User.isInGroup) then
@@ -368,8 +357,6 @@ end
 
 -- Return the names of everyone in your party/raid
 function User:groupMemberNames(fqn)
-    GL:debug("User:groupMemberNames");
-
     -- The -1 is used as an extra buffer to make sure we don't miss out on any names...
     -- Race conditions are a pain in the butt and I've seen them happen with this event
     local timestamp = GetServerTime() - 1;
@@ -410,5 +397,3 @@ end
 function User:isDev()
     return self.bth == 54402906 and self.realm == "Firemaw";
 end
-
-GL:debug("User.lua");

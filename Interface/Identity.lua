@@ -143,8 +143,8 @@ GL.Interface.Identity = {
             ---@type FontString
             local Text = Interface:createFontString(Window, "Gargul");
             Text:SetPoint("CENTER", Window, "CENTER");
-            Text:SetPoint("BOTTOM", Window, "BOTTOM", 0, 1);
-            Text:SetFont(.9, "OUTLINE");
+            Text:SetPoint("BOTTOM", Window, "BOTTOM", 0, -5);
+            Text:SetFont(1.1, "OUTLINE");
 
             -- Let raid leaders know that they can personalize Gargul
             if (not GL.User.isInGroup or (GL.User.isMasterLooter or GL.User.isLead)) then

@@ -7,6 +7,7 @@ local GetAddOnMetadata = C_AddOns and C_AddOns.GetAddOnMetadata or GetAddOnMetad
 
 GL.name = appName;
 GL._initialized = false;
+GL._isCrossRealm = nil; -- Will be set during runtime
 GL.clientUIinterface = 0;
 GL.clientVersion = 0;
 GL.elvUILoaded = false;
@@ -15,7 +16,6 @@ GL.isEra = false;
 GL.isRetail = false;
 GL.isClassic = false;
 GL.isDragonFlightOrLater = false;
-GL.isCrossRealm = nil; -- Will be set during runtime
 GL.isMuted = false;
 GL.version = GetAddOnMetadata(GL.name, "Version");
 GL.DebugLines = {};
@@ -66,10 +66,6 @@ function GL:bootstrap(_, _, addonName)
     -- Check if ElvUI is loaded (useful for making adhoc UI changes)
     GL.Ace:ScheduleTimer(function()
         self.elvUILoaded = GetAddOnEnableState(GL.User.name,"ElvUI") == 2;
-
-        --GL.Interface.GDKP.MultiAuction.Auctioneer:open();
-        --GL.Interface.GDKP.MultiAuction.Client:open();
-        --GL.Interface.GroupVersionCheck:open();
     end, 1);
 end
 
