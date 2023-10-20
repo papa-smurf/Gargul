@@ -427,6 +427,21 @@ function GL:handleItemClick(itemLink, mouseButtonPressed, callback)
         -- Open a trade window with the targeted unit if we don't have one open yet
         if (not TradeFrame:IsShown()) then
             if (not UnitIsPlayer("target")) then
+                local itemID = GL:getItemIDFromLink(itemLink);
+                local Winners = GL.AwardedLoot:winnersToTradeForItemID(itemID);
+
+                for _, winner in pairs(Winners or {}) do
+                    if (GL:unitIsConnected(winner)
+                        and GL.User:unitInGroup(winner)
+                    ) then
+                        GL.TradeWindow:open(winner, function ()
+                            GL.TradeWindow:addItem(itemID);
+                        end, true);
+
+                        break;
+                    end
+                end
+
                 return;
             end
 
@@ -1160,6 +1175,7 @@ GL.Timers = {};
 ---@param cancel boolean Cancel any running existing timer with using the same identifier
 ---@return table
 function GL:after(seconds, identifier, func, cancel)
+    identifier = identifier or GetTime() .. GL:uuid();
     GL:debug("Schedule " .. identifier);
 
     cancel = cancel ~= false;

@@ -189,7 +189,7 @@ function Auctioneer:start(ItemDetails, duration, antiSnipe)
         for _, Item in pairs(Items or {}) do
             tinsert(ItemsUpForAuction, {
                 auctionID = auctionID,
-                isBOE = GL:inTable({LE_ITEM_BIND_ON_ACQUIRE, LE_ITEM_BIND_QUEST}, Item.bindType),
+                isBOE = GL:inTable({LE_ITEM_BIND_ON_EQUIP, LE_ITEM_BIND_QUEST}, Item.bindType),
                 itemLevel = Item.level,
                 name = Item.name,
                 quality = Item.quality,
@@ -212,7 +212,7 @@ end
 ---
 ---@return void
 function Auctioneer:syncWithRunningSession()
-    if (not GL.User.isInGroup) then
+    if (not GL.User.isInGroup or not GL:empty(Client.AuctionDetails)) then
         return;
     end
 
@@ -601,6 +601,11 @@ function Auctioneer:processBid(Message)
 
     -- This auction as "long" ended
     if (secondsLeft <= GL.Settings:get("GDKP.auctionEndLeeway", 2) * -1) then
+        return;
+    end
+
+    -- This user is not in our group
+    if (not GL.User:unitInGroup(Message.Sender.fqn) or not GL:unitIsConnected(Message.Sender.fqn)) then
         return;
     end
 

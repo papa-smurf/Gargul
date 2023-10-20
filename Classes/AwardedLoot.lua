@@ -116,6 +116,40 @@ function AwardedLoot:tooltipLines(itemLink)
     return Lines;
 end
 
+--- Return all the players who still need to receive this item
+---
+---@param itemID number
+---@return table
+function AwardedLoot:winnersToTradeForItemID(itemID)
+    local Winners = {};
+    local fiveHoursAgo = GetServerTime() - 18000;
+    local loadItemsGTE = math.min(fiveHoursAgo, GL.loadedOn);
+    for _, Loot in pairs(DB:get("AwardHistory")) do
+        (function ()
+            -- We didn't award this item
+            if (not GL:iEquals(Loot.awardedBy, GL.User.fqn)) then
+                return;
+            end
+
+            -- loadItemsGTE will equal five hours, or however long the players
+            -- current playsession is ongoing (whichever is longest)
+            if (Loot.timestamp < loadItemsGTE
+                or Loot.itemID ~= itemID -- This is not the item we're looking for
+            ) then
+                return;
+            end
+
+            if (Loot.received) then
+                return;
+            end
+
+            tinsert(Winners, Loot.awardedTo);
+        end)();
+    end
+
+    return Winners;
+end
+
 --- Add a winner for a specific item, on a specific date
 ---
 ---@param winner string

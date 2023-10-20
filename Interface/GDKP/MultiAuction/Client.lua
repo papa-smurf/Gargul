@@ -28,6 +28,8 @@ GL:tableSet(GL, "Interface.GDKP.MultiAuction.Client", {
     AuctionHolder = nil,
     AuctionRows = {},
     Search = nil;
+    ToggleUnusable = nil,
+    ToggleFavorites = nil,
 });
 
 ---@type GDKPMultiAuctionClientInterface
@@ -101,7 +103,7 @@ function ClientInterface:addAuction(auctionID, isBOE, itemLevel, name, quality, 
             auctionID = auctionID,
             endsAt = endsAt,
             increment = increment,
-            isBOE = GL:inTable({LE_ITEM_BIND_ON_ACQUIRE, LE_ITEM_BIND_QUEST}, Item.bindType),
+            isBOE = GL:inTable({LE_ITEM_BIND_ON_EQUIP, LE_ITEM_BIND_QUEST}, Item.bindType),
             itemLevel = Item.level,
             link = Item.link,
             minimum = minimum,
@@ -193,6 +195,7 @@ function ClientInterface:build()
         ToggleFavorites:SetText(self.showFavorites and "Show all" or "Show favorites");
         self:filterAndSort();
     end);
+    self.ToggleFavorites = ToggleFavorites;
 
     --[[ SHOW/HIDE UNUSABLE ]]
     ---@type Button
@@ -203,6 +206,7 @@ function ClientInterface:build()
         ToggleUnusable:SetText(self.showUnusable and "Hide unusable" or "Show unusable");
         self:filterAndSort();
     end);
+    self.ToggleUnusable = ToggleUnusable;
 
     --[[ SCROLLFRAME BOILERPLATE ]]
     ScrollFrame = CreateFrame("ScrollFrame", nil, Window, "UIPanelScrollFrameTemplate")
@@ -366,7 +370,7 @@ function ClientInterface:build()
         ---@type Frame
         local AuctionAdminWindow = Interface:createWindow{
             name = self.auctionAdminWindowName,
-            width = 300,
+            width = 320,
             height = 90,
             hideMinimizeButton = true,
             hideResizeButton = true,
@@ -380,7 +384,7 @@ function ClientInterface:build()
         local AdminExplanation = Interface:createFontString(AuctionAdminWindow, "Click the 'Admin' button or an auction to manage it");
         AdminExplanation:SetPoint("CENTER", AuctionAdminWindow, "CENTER");
         AdminExplanation:SetPoint("TOP", AuctionAdminWindow, "TOP", 0, -30);
-        AdminExplanation:SetFont(.8, "OUTLINE");
+        AdminExplanation:SetFont(1, "OUTLINE");
         AdminExplanation:SetColor("GRAY");
         AuctionAdminWindow.Explanation = AdminExplanation;
 
@@ -393,21 +397,21 @@ function ClientInterface:build()
         local AdminButtonExplanation = Interface:createFontString(AuctionAdminWindow, "Hover over any of the buttons below for more information");
         AdminButtonExplanation:SetPoint("CENTER", AdminWindowItemLink, "CENTER");
         AdminButtonExplanation:SetPoint("TOP", AdminWindowItemLink, "BOTTOM", 0, -7);
-        AdminButtonExplanation:SetFont(.8, "OUTLINE");
+        AdminButtonExplanation:SetFont(1, "OUTLINE");
         AdminButtonExplanation:SetColor("GRAY");
         AuctionAdminWindow.AdminButtonExplanation = AdminButtonExplanation;
 
         local AdminAuctionClosedExplanation = Interface:createFontString(AuctionAdminWindow, ("This item was sold. Use ledger (|c00%s/gdkp|r) to make changes!"):format(Interface.Colors.PURPLE));
         AdminAuctionClosedExplanation:SetPoint("CENTER", AdminWindowItemLink, "CENTER");
         AdminAuctionClosedExplanation:SetPoint("TOP", AdminWindowItemLink, "BOTTOM", 0, -7);
-        AdminAuctionClosedExplanation:SetFont(.8, "OUTLINE");
+        AdminAuctionClosedExplanation:SetFont(1, "OUTLINE");
         AdminAuctionClosedExplanation:SetColor("GRAY");
         AuctionAdminWindow.AdminAuctionClosedExplanation = AdminAuctionClosedExplanation;
 
         local AdminOpenLedgerButton = Interface:dynamicPanelButton(AuctionAdminWindow, "Ledger");
-        AdminOpenLedgerButton:SetScale(.8);
+        AdminOpenLedgerButton:SetScale(.9);
         AdminOpenLedgerButton:SetPoint("CENTER", AuctionAdminWindow, "CENTER");
-        AdminOpenLedgerButton:SetPoint("BOTTOM", AuctionAdminWindow, "BOTTOM", 0, 25);
+        AdminOpenLedgerButton:SetPoint("BOTTOM", AuctionAdminWindow, "BOTTOM", 0, 18);
         AuctionAdminWindow.AdminOpenLedgerButton = AdminOpenLedgerButton;
 
         AdminOpenLedgerButton:SetScript("OnClick", function ()
@@ -422,8 +426,8 @@ function ClientInterface:build()
 
         ---@type Button
         local CloseButton = Interface:dynamicPanelButton(ButtonContainer);
-        CloseButton:SetScale(.8);
-        CloseButton:SetPoint("BOTTOMLEFT", ButtonContainer, "BOTTOMLEFT");
+        CloseButton:SetScale(.9);
+        CloseButton:SetPoint("BOTTOMLEFT", ButtonContainer, "BOTTOMLEFT", 0, -4);
         CloseButton:SetText("Close Auction");
         CloseButton:SetScript("OnClick", function ()
             if (not AuctionAdminWindow._auctionID) then
@@ -441,7 +445,7 @@ function ClientInterface:build()
 
         ---@type Button
         local FinallCallButton = Interface:dynamicPanelButton(ButtonContainer);
-        FinallCallButton:SetScale(.8);
+        FinallCallButton:SetScale(.9);
         FinallCallButton:SetPoint("TOPLEFT", CloseButton, "TOPRIGHT", 2, 0);
         FinallCallButton:SetText("Final call");
         FinallCallButton:SetScript("OnClick", function ()
@@ -468,7 +472,7 @@ function ClientInterface:build()
 
         ---@type Button
         local ClearButton = Interface:dynamicPanelButton(ButtonContainer);
-        ClearButton:SetScale(.8);
+        ClearButton:SetScale(.9);
         ClearButton:SetPoint("TOPLEFT", FinallCallButton, "TOPRIGHT", 2, 0);
         ClearButton:SetText("Clear bids");
         ClearButton:SetScript("OnClick", function ()
@@ -487,7 +491,7 @@ function ClientInterface:build()
 
         ---@type Button
         local DeleteButton = Interface:dynamicPanelButton(ButtonContainer);
-        DeleteButton:SetScale(.8);
+        DeleteButton:SetScale(.9);
         DeleteButton:SetPoint("TOPLEFT", ClearButton, "TOPRIGHT", 2, 0);
         DeleteButton:SetText("Delete");
         DeleteButton:SetScript("OnClick", function ()
@@ -591,6 +595,10 @@ function ClientInterface:build()
             Icon:SetSize(ITEM_ROW_HEIGHT, ITEM_ROW_HEIGHT);
             Interface:addTooltip(Icon, Item.link, "RIGHT");
             AuctionRow.Icon = Icon;
+
+            Icon:SetScript("OnMouseUp", function (_, mouseButtonPressed)
+                HandleModifiedItemClick(Item.link, mouseButtonPressed);
+            end);
 
             ---@type Texture
             local IconImage = Icon:CreateTexture(nil, "BACKGROUND")
@@ -1108,11 +1116,12 @@ end
 --- Update countdown bars when anti snipes hit, when the auctioneer changes something or when the auction starts
 ---
 ---@return void
-function ClientInterface:refresh()
+function ClientInterface:refresh(forceFilterAndSort)
     if (not self:getWindow()) then
         return;
     end
 
+    forceFilterAndSort = forceFilterAndSort == true;
     local rowsChanged = false;
     local serverTime = GetServerTime();
     for _, Details in pairs(Client.AuctionDetails.Auctions or {}) do
@@ -1150,7 +1159,7 @@ function ClientInterface:refresh()
         end)();
     end
 
-    if (rowsChanged) then
+    if (rowsChanged or forceFilterAndSort) then
         self:filterAndSort();
     end
 

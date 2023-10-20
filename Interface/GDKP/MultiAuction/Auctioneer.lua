@@ -46,6 +46,11 @@ function Auctioneer:open()
         return;
     end
 
+    if (not GL.GDKP.MultiAuction.Auctioneer:userIsAllowedToBroadcast()) then
+        GL:warning("You don't have permission to start an auction!")
+        return;
+    end
+
     if (not Session:activeSessionID()) then
         GL:warning("You need have an active GDKP session!");
         Interface.GDKP.Overview:open();
@@ -331,7 +336,7 @@ function Auctioneer:build()
             end
 
             --[[ BOE ]]
-            if (GL:inTable({LE_ITEM_BIND_ON_ACQUIRE, LE_ITEM_BIND_QUEST}, Details.bindType)) then
+            if (GL:inTable({LE_ITEM_BIND_ON_EQUIP, LE_ITEM_BIND_QUEST}, Details.bindType)) then
                 ---@type FontString
                 local BOE = Interface:createFontString(Icon, "BOE");
                 BOE:SetPoint("TOPLEFT", Icon, "TOPLEFT", -3, 3);
