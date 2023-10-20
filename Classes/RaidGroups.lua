@@ -271,7 +271,7 @@ function RaidGroups:normalizeRaidHelperInput(input)
 
         output = output .. group .. ":";
 
-        local Players = GL:strSplit(line, playerDelimiter);
+        local Players = GL:explode(line, playerDelimiter);
 
         local PlayerNames = {};
         for _, playerName in pairs(Players) do
@@ -331,8 +331,8 @@ function RaidGroups:normalizeWowheadInput(input)
         firstHashtagPosition + 2, -- 2 because we want to skip the leading zero
         urlLength - firstHashtagPosition - (urlLength - firstSemicolonPosition - firstHashtagPosition) - 1 -- Quick math
     );
-    local Specs = GL:strSplit(specString);
-    local Members = GL:strSplit(raiderString, ";");
+    local Specs = GL:explode(specString);
+    local Members = GL:explode(raiderString, ";");
     local Groups = {{}, {}, {}, {}, {}, {}, {}, {}, {}}; -- 9 groups, 9th is reserved for tank assignments
     local membersProcessed = 0;
     local currentGroupNumber = 1;
@@ -383,7 +383,7 @@ end
 ---@return void
 function RaidGroups:invitePlayers(raidGroupCsv)
     for line in raidGroupCsv:gmatch("[^\n]+") do
-        local Segments = GL:strSplit(line, ":");
+        local Segments = GL:explode(line, ":");
         local group = tonumber(Segments[1]);
 
         if (not group
@@ -394,7 +394,7 @@ function RaidGroups:invitePlayers(raidGroupCsv)
             return GL:warning("Invalid raid groups provided!");
         end
 
-        local Players = GL:strSplit(Segments[2], ",");
+        local Players = GL:explode(Segments[2], ",");
 
         for _, playerName in pairs(Players) do
             if (group < 9 -- group 9 is a group we reserve for specifiying the tanks
@@ -420,7 +420,7 @@ function RaidGroups:checkAttendance(raidGroupCsv, OutPutLabel)
     local UnknownPlayers = {};
 
     for line in raidGroupCsv:gmatch("[^\n]+") do
-        local Segments = GL:strSplit(line, ":");
+        local Segments = GL:explode(line, ":");
         local group = tonumber(Segments[1]);
 
         if (not group
@@ -431,7 +431,7 @@ function RaidGroups:checkAttendance(raidGroupCsv, OutPutLabel)
             return GL:warning("Invalid raid groups provided!");
         end
 
-        local Players = GL:strSplit(Segments[2], ",");
+        local Players = GL:explode(Segments[2], ",");
 
         for _, playerName in pairs(Players) do
             if (group < 9 -- group 9 is a group we reserve for specifiying the tanks
@@ -497,7 +497,7 @@ function RaidGroups:applyRaidGroups(raidGroupCsv)
     local PlayersOnTheRoster = {};
 
     for line in raidGroupCsv:gmatch("[^\n]+") do
-        local Segments = GL:strSplit(line, ":");
+        local Segments = GL:explode(line, ":");
         local group = tonumber(Segments[1]);
 
         if (not group
@@ -508,7 +508,7 @@ function RaidGroups:applyRaidGroups(raidGroupCsv)
             return GL:warning("Invalid raid groups provided!");
         end
 
-        local Players = GL:strSplit(Segments[2], ",");
+        local Players = GL:explode(Segments[2], ",");
 
         for _, playerName in pairs(Players) do
             playerName = string.lower(playerName);
@@ -657,14 +657,14 @@ function RaidGroups:updateTankAssignmentButton()
 
     local Tanks = {};
     for line in self.rosterString:gmatch("[^\n]+") do
-        local Segments = GL:strSplit(line, ":");
+        local Segments = GL:explode(line, ":");
         local group = tonumber(Segments[1]);
 
         if (group
             and type(group) == "number"
             and group == 9
         ) then
-            local Players = GL:strSplit(Segments[2], ",");
+            local Players = GL:explode(Segments[2], ",");
 
             for _, playerName in pairs(Players) do
                 tinsert(Tanks, playerName);

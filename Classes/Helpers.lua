@@ -552,6 +552,28 @@ function GL:implode(Table, delimiter)
     return table.concat(Parts, delimiter);
 end
 
+--- Split a string by a given delimiter
+--- WoWLua already has a strsplit function, but it returns multiple arguments instead of a table
+---
+---@param s string
+---@param delimiter string
+---@return table
+function GL:explode(s, delimiter)
+    local Result = {};
+
+    -- No delimiter is provided, split all characters
+    if (not delimiter) then
+        s:gsub(".",function(character) table.insert(Result, character); end);
+        return Result;
+    end
+
+    for match in (s .. delimiter):gmatch("(.-)%" .. delimiter) do
+        tinsert(Result, strtrim(match));
+    end
+
+    return Result;
+end
+
 --- StringHash method, courtesy of Mikk38024 @ Wowpedia (https://wowpedia.fandom.com/wiki/StringHash)
 ---
 ---@param text string|table
@@ -2069,7 +2091,7 @@ function GL:stripRealm(playerName)
         return playerName;
     end
 
-    local Parts = self:strSplit(playerName, separator);
+    local Parts = self:explode(playerName, separator);
     return Parts[1], Parts[2];
 end
 
@@ -2091,7 +2113,7 @@ function GL:getRealmFromName(playerName)
         return false;
     end
 
-    local Parts = self:strSplit(playerName, separator);
+    local Parts = self:explode(playerName, separator);
     return Parts[2] or "";
 end
 
@@ -2264,28 +2286,6 @@ function GL:strLimit(str, limit, append)
 
     -- Return the limited string with appendage
     return str:sub(1, limit - appendLength) .. append;
-end
-
---- Split a string by a given delimiter
---- WoWLua already has a strsplit function, but it returns multiple arguments instead of a table
----
----@param s string
----@param delimiter string
----@return table
-function GL:strSplit(s, delimiter)
-    local Result = {};
-
-    -- No delimited is provided, split all characters
-    if (not delimiter) then
-        s:gsub(".",function(character) table.insert(Result, character); end);
-        return Result;
-    end
-
-    for match in (s .. delimiter):gmatch("(.-)%" .. delimiter) do
-        tinsert(Result, strtrim(match));
-    end
-
-    return Result;
 end
 
 --- Split a string by any space characters or commas
@@ -2689,7 +2689,7 @@ function GL:tableGet(Table, keyString, default)
         return default;
     end
 
-    local keys = GL:strSplit(keyString, ".");
+    local keys = GL:explode(keyString, ".");
     local numberOfKeys = #keys;
     local firstKey = keys[1];
 
@@ -2756,7 +2756,7 @@ function GL:tableSet(Table, keyString, value, ignoreIfExists)
     end
 
     ignoreIfExists = GL:toboolean(ignoreIfExists);
-    local keys = GL:strSplit(keyString, ".");
+    local keys = GL:explode(keyString, ".");
     local firstKey = keys[1];
 
     if (#keys == 1) then

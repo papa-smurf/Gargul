@@ -29,7 +29,7 @@ BuffInspector.Widgets = {
 function BuffInspector:inspect(SpellIDs)
     GL:debug("BuffInspector:inspect");
 
-    SpellIDs = GL:strSplit(SpellIDs, ",");
+    SpellIDs = GL:explode(SpellIDs, ",");
     SpellIDs = GL:tableSlice(SpellIDs, 8); -- inspect supports up to 8 spell ids
 
     if (#SpellIDs < 1) then

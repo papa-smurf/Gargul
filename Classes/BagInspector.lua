@@ -43,7 +43,7 @@ function BagInspector:inspect(items)
 
     -- This ensures that the item exists and that
     -- all of its info is available
-    items = GL:strSplit(items, ",");
+    items = GL:explode(items, ",");
     items = GL:tableSlice(items, 8); -- inspect supports up to 8 items
     BagInspector.inspectionInProgress = true;
 

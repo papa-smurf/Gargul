@@ -613,7 +613,7 @@ function TMB:import(data, triedToDecompress, source)
         for itemID, WishListEntries in pairs(WebsiteData.wishlists) do
             TMBData[itemID] = {};
             for _, characterString in pairs(WishListEntries) do
-                local stringParts = GL:strSplit(characterString, "|");
+                local stringParts = GL:explode(characterString, "|");
 
                 -- Check whether the format provided is the old (deprecated) format
                 if (not formatDecided) then
@@ -818,7 +818,7 @@ function TMB:DFTFormatToTMB(data)
     local increaseLineNumber = function ()
         lineNumber = lineNumber + 1;
     end;
-    for _, entry in pairs(GL:strSplit(data, ";")) do
+    for _, entry in pairs(GL:explode(data, ";")) do
         local Priorities = {};
         local itemID;
 
@@ -831,7 +831,7 @@ function TMB:DFTFormatToTMB(data)
 
                 -- The first line contains the item ID we're discussing
                 if (lineNumber == 1) then
-                    lineParts = GL:strSplit(line, "^");
+                    lineParts = GL:explode(line, "^");
 
                     -- Extract the item ID from the line
                     if (lineParts[1]) then
@@ -858,7 +858,7 @@ function TMB:DFTFormatToTMB(data)
                 line = line:gsub("|r: :", "");
                 line = line:gsub("|r: ", "");
 
-                lineParts = GL:strSplit(line, "|");
+                lineParts = GL:explode(line, "|");
 
                 -- We can't handle this line it seems
                 if (not lineParts[2]) then
@@ -947,7 +947,7 @@ Alt:ratomir,zhorax,feth
                 line = line:gsub(raidGroup .. ":", "");
             end
 
-            CSVParts = GL:strSplit(line, ",");
+            CSVParts = GL:explode(line, ",");
 
             if (raidGroup) then
                 raidGroups = raidGroups + 1;
@@ -1001,7 +1001,7 @@ Alt:ratomir,zhorax,feth
                         player = string.sub(player, 1, openingBracketPosition - 1);
                         priority = playerPriority:match("([0-9]+)");
                     elseif (string.find(player, "%|")) then
-                        local Players = GL:strSplit(player, "|");
+                        local Players = GL:explode(player, "|");
 
                         for _, playerName in pairs(Players) do
                             if (not GL:empty(playerName)) then
@@ -1148,7 +1148,7 @@ function TMB:broadcastToWhitelist()
         self.broadcastInProgress = false;
         return;
     end
-    Whitelist = GL:strSplit(Whitelist, ",");
+    Whitelist = GL:explode(Whitelist, ",");
 
     local WhitelistedPlayersInGroup = {};
     local GroupMemberNames = GL.User:groupMemberNames();
@@ -1426,7 +1426,7 @@ function TMB:replyToDataRequest(CommMessage)
     -- This player is not on our whitelist
     local Whitelist = GL.Settings:get("TMB.shareWhitelist", "");
     if (not GL:empty(Whitelist)) then
-        Whitelist = GL:strSplit(Whitelist, ",");
+        Whitelist = GL:explode(Whitelist, ",");
 
         if (not GL:empty(Whitelist)) then
             local WhitelistedPlayersInGroup = {};

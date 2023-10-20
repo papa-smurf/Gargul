@@ -161,7 +161,7 @@ function LootPriority:save(data)
 
     local LootPriorityData = {};
     for line in data:gmatch("[^\n]+") do
-        local segments = GL:strSplit(line, ">");
+        local segments = GL:explode(line, ">");
         local segmentCount = #segments;
 
         if (segmentCount < 2) then

@@ -157,7 +157,7 @@ function Pot:applyMutator(sessionID, name)
         return;
     end
 
-    local AutoGiveOnRoles = GL:strSplit(Mutator.autoApplyTo, ",");
+    local AutoGiveOnRoles = GL:explode(Mutator.autoApplyTo, ",");
     if (GL:empty(AutoGiveOnRoles)) then
         return;
     end
@@ -496,7 +496,7 @@ function Pot:determineDistributionDefaults(Player, Session, enforceLock)
     local PlayerRoles = self:getPlayerRoles(Player);
 
     for _, Mutator in pairs(GL:tableGet(Session, "Pot.Mutators", {})) do
-        local AutoGiveOnRoles = GL:strSplit(Mutator.autoApplyTo, ",");
+        local AutoGiveOnRoles = GL:explode(Mutator.autoApplyTo, ",");
         local active = false;
 
         if (type(AutoGiveOnRoles) == "table") then
@@ -832,7 +832,7 @@ function Pot:importCuts(sessionID, data)
     local Columns = {};
     local Cuts = {};
     for line in data:gmatch("[^\n]+") do
-        local Segments = GL:strSplit(line, ",");
+        local Segments = GL:explode(line, ",");
 
         if (first) then
             Columns = GL:tableFlip(Segments);

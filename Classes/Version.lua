@@ -322,7 +322,7 @@ function Version:validateAndSplit(versionString)
         return false;
     end
 
-    local versionParts = GL:strSplit(versionString, ".");
+    local versionParts = GL:explode(versionString, ".");
 
     if (not versionParts[1]) then
         GL:warning("Version string split failed");

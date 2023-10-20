@@ -74,7 +74,7 @@ function PlusOnes:playerIsTrusted(playerName)
 
     playerName = GL:nameFormat(playerName);
     local trustedPlayerCSV = GL.Settings:get("PlusOnes.automaticallyAcceptDataFrom", "");
-    local TrustedPlayers = GL:strSplit(trustedPlayerCSV, ",");
+    local TrustedPlayers = GL:explode(trustedPlayerCSV, ",");
     for _, player in pairs(TrustedPlayers) do
         if (GL:iEquals(GL:nameFormat(player), playerName)) then
             return true;
@@ -103,7 +103,7 @@ function PlusOnes:markPlayerAsTrusted(playerName)
         return
     end
 
-    local TrustedPlayers = GL:strSplit(trustedPlayerCSV, ",");
+    local TrustedPlayers = GL:explode(trustedPlayerCSV, ",");
     tinsert(TrustedPlayers, playerName);
 
     GL.Settings:set("PlusOnes.automaticallyAcceptDataFrom", table.concat(TrustedPlayers, ","));
@@ -124,7 +124,7 @@ function PlusOnes:removePlayerFromTrusted(playerName)
     end
 
     local trustedPlayerCSV = GL.Settings:get("PlusOnes.automaticallyAcceptDataFrom", "");
-    local TrustedPlayers = GL:strSplit(trustedPlayerCSV, ",");
+    local TrustedPlayers = GL:explode(trustedPlayerCSV, ",");
     local NewTrustedPlayers = {};
     local normalizedName = GL:normalizedName(playerName);
 
@@ -167,7 +167,7 @@ function PlusOnes:handleWhisperCommand(_, message, sender)
         return;
     end
 
-    local args = GL:strSplit(message, " ");
+    local args = GL:explode(message, " ");
 
     -- See if name is given.
     if (args[2]) then

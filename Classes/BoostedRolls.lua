@@ -84,7 +84,7 @@ function BoostedRolls:playerIsTrusted(playerName)
     end
 
     local trustedPlayerCSV = GL.Settings:get("BoostedRolls.automaticallyAcceptDataFrom", "");
-    local TrustedPlayers = GL:strSplit(trustedPlayerCSV, ",");
+    local TrustedPlayers = GL:explode(trustedPlayerCSV, ",");
     for _, player in pairs(TrustedPlayers) do
         if (GL:iEquals(player, GL:nameFormat(playerName))) then
             return true;
@@ -108,7 +108,7 @@ function BoostedRolls:markPlayerAsTrusted(playerName)
     end
 
     local trustedPlayerCSV = GL.Settings:get("BoostedRolls.automaticallyAcceptDataFrom", "");
-    local TrustedPlayers = GL:strSplit(trustedPlayerCSV, ",");
+    local TrustedPlayers = GL:explode(trustedPlayerCSV, ",");
 
     tinsert(TrustedPlayers, playerName);
     GL.Settings:set("BoostedRolls.automaticallyAcceptDataFrom", table.concat(TrustedPlayers, ","));
@@ -129,7 +129,7 @@ function BoostedRolls:removePlayerFromTrusted(playerName)
     end
 
     local trustedPlayerCSV = GL.Settings:get("BoostedRolls.automaticallyAcceptDataFrom", "");
-    local TrustedPlayers = GL:strSplit(trustedPlayerCSV, ",");
+    local TrustedPlayers = GL:explode(trustedPlayerCSV, ",");
     local NewTrustedPlayers = {};
     local nameFormatted = GL:nameFormat(playerName);
     local fqn = GL:addRealm(playerName);
@@ -194,7 +194,7 @@ function BoostedRolls:handleWhisperCommand(_, message, sender)
         return;
     end
 
-    local args = GL:strSplit(message, " ");
+    local args = GL:explode(message, " ");
 
     -- See if name is given.
     if (#args > 1) then

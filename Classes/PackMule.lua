@@ -550,7 +550,7 @@ function PackMule:getTargetForItem(itemLinkOrId, callback)
         local ruleTarget = strtrim(RuleThatApplies.target);
         local Targets = {};
 
-        local RuleTargets = GL:strSplit(ruleTarget, " ");
+        local RuleTargets = GL:explode(ruleTarget, " ");
         local GroupMemberNames = GL.User:groupMemberNames(true);
 
         for _, ruleTarget in pairs(RuleTargets) do

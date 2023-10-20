@@ -1161,7 +1161,7 @@ function SoftRes:importCSVData(data, reportStatus)
     local first = true;
     local SoftReserveData = {};
     for line in data:gmatch("[^\n]+") do
-        local Segments = GL:strSplit(line, ",");
+        local Segments = GL:explode(line, ",");
 
         if (first) then
             Columns = GL:tableFlip(Segments);
