@@ -366,7 +366,7 @@ function ClientInterface:build()
         ---@type Frame
         local AuctionAdminWindow = Interface:createWindow{
             name = self.auctionAdminWindowName,
-            width = 280,
+            width = 300,
             height = 90,
             hideMinimizeButton = true,
             hideResizeButton = true,
@@ -1104,7 +1104,7 @@ end
 ---
 ---@return void
 function ClientInterface:refresh()
-    if (not self:isShown()) then
+    if (not self:getWindow()) then
         return;
     end
 

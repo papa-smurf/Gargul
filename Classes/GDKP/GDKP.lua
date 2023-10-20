@@ -84,7 +84,7 @@ function GDKP:importPerItemSettings(data)
     local imported = 0;
     local Columns = {};
     for line in data:gmatch("[^\n]+") do
-        local Segments = GL:strSplit(line, ",");
+        local Segments = GL:explode(line, ",");
 
         if (first) then
             Columns = GL:tableFlip(Segments);

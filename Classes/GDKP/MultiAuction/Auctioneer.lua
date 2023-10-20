@@ -22,7 +22,6 @@ local Client;
 ---@class GDKPMultiAuctionAuctioneer
 GL:tableSet(GL, "GDKP.MultiAuction.Auctioneer", {
     _initialized = false,
-    auctionIsInProgress = false,
     waitingForAuctionStart = false,
 });
 
@@ -35,10 +34,6 @@ local GDKPAuction = GL.GDKP.Auction;
 ---@type GDKPMultiAuctionAuctioneerInterface
 local UI;
 
---[[ CONSTANTS ]]
-local DEFAULT_AUCTION_EXTENSION = 10;
-local DEFAULT_AUCTION_SHORTENING = 10;
-
 ---@return void
 function Auctioneer:_init()
     if (self._initialized) then
@@ -47,6 +42,28 @@ function Auctioneer:_init()
 
     UI = GL.Interface.GDKP.MultiAuction.Auctioneer;
     Client  = GL.GDKP.MultiAuction.Client;
+
+    -- Keep track of when our group setup changed (happens on initial log in only)
+    local synced = false;
+    GL.Events:register("GDKPMultiAuctionAuctioneerGroupUpdateListener", "GL.GROUP_ROSTER_UPDATE_THROTTLED", function ()
+        synced = true;
+
+        -- Check if we need to sync up with an existing multi-auction session
+        self:syncWithRunningSession();
+        GL.Events:unregister("GDKPMultiAuctionAuctioneerGroupUpdateListener");
+    end);
+
+    -- If the user reloads instead of a login we have to wait a couple seconds for the game to update the group setup
+    GL:after(5, "GDKP.MultiAuction.syncWithRunningSession", function ()
+        GL.Events:unregister("GDKPMultiAuctionAuctioneerGroupUpdateListener");
+
+        if (not synced) then
+            synced = true;
+
+            -- Check if we need to sync up with an existing multi-auction session
+            self:syncWithRunningSession();
+        end
+    end);
 
     self._initialized = true;
 end
@@ -185,12 +202,326 @@ function Auctioneer:start(ItemDetails, duration, antiSnipe)
             auctionID = auctionID + 1;
         end
 
-        self:scheduleInspection();
-
         if (not self:announceStart(ItemsUpForAuction, duration, antiSnipe)) then
             return;
         end
     end);
+end
+
+--- We just came back online, check and see if there's an active MultiAuction session
+--- that we need to sync with or have to take over in case we were the organizer
+---
+---@return void
+function Auctioneer:syncWithRunningSession()
+    if (not GL.User.isInGroup) then
+        return;
+    end
+
+    local HashOccurrences = {};
+    local PlayersPerHash = {};
+    local processResults = function(CommMessage)
+        local CheckedHashed = {};
+        for _, response in pairs(CommMessage.Responses) do
+            (function()
+                -- No need to check our own data
+                if (response.Sender.isSelf) then
+                    return;
+                end
+
+                -- check if the given session hash is valid
+                local sessionHash = response.content;
+                if (type(sessionHash) ~= "string"
+                    or GL:empty(sessionHash)
+                ) then
+                    return;
+                end
+
+                -- This is a new hash, check if the initiator is a group member
+                if (not HashOccurrences[sessionHash]) then
+                    -- We already checked this hash and deemed it useless, skip!
+                    if (CheckedHashed[sessionHash]) then
+                        return;
+                    end
+
+                    -- Determine the session initiator, which is part of the session hash
+                    local initiator = GL:explode(sessionHash, ".")[2];
+                    if (type(initiator) ~= "string"
+                        or GL:empty(initiator)
+                    ) then
+                        return;
+                    end
+
+                    -- If we're not the initiator then make sure the initiator is in our group and online
+                    local initiatedBySelf = GL:iEquals(GL.User.fqn, initiator);
+                    if (not initiatedBySelf and (
+                        -- The organizer is not part of our group, this is probably deprecated data
+                        not GL.User:unitInGroup(initiator)
+
+                        -- The initiator is not online so there's no point continuing
+                        -- If he does come online at some point then he'll automatically share his data with us
+                        or not UnitIsConnected(initiator)
+                    )) then
+                        CheckedHashed[sessionHash] = true;
+                        return;
+                    end
+                end
+
+                CheckedHashed[sessionHash] = true;
+                HashOccurrences[sessionHash] = HashOccurrences[sessionHash] and HashOccurrences[sessionHash] + 1 or 1;
+                PlayersPerHash[sessionHash] = PlayersPerHash[sessionHash] or {};
+                tinsert(PlayersPerHash[sessionHash], response.Sender.fqn);
+            end)();
+        end
+
+        -- No data available
+        if (GL:empty(HashOccurrences)) then
+            return;
+        end
+
+        -- Check which hash is most common and therefore most likely correct
+        local mostCommonHash;
+        local highestCount = 0;
+        for hash, count in pairs(HashOccurrences or {}) do
+            if (count > highestCount) then
+                highestCount = count;
+                mostCommonHash = hash;
+            end
+        end
+
+        -- This is a failsafe to make sure a single person can't wreak havoc
+        --if (highestCount < 2) then
+        if (highestCount < 1) then ---@todo: set to 2!
+            return;
+        end
+
+        -- Request an update from the initiator
+        local playerToFetchDataFrom = GL:explode(mostCommonHash, ".")[2];
+        local initiatedBySelf = GL:iEquals(GL.User.fqn, playerToFetchDataFrom);
+
+        -- We can't fetch the data from ourselves, try and find a suitable target!
+        if (initiatedBySelf) then
+            playerToFetchDataFrom = nil;
+            local activeSessionID = GL.GDKP.Session:activeSessionID();
+
+            -- If there's no session then there's nothing we can do sadly
+            if (not activeSessionID) then
+                return;
+            end
+
+            for _, player in pairs(PlayersPerHash[mostCommonHash]) do
+                if (GL.User:unitInGroup(player) and UnitIsConnected(player)) then
+                    playerToFetchDataFrom = player;
+                    break;
+                end
+            end
+        end
+
+        -- Technically impossible, but better safe than lua error
+        if (not playerToFetchDataFrom) then
+            return;
+        end
+
+        GL.CommMessage.new(
+            CommActions.requestRunningGDKPMultiAuctionDetails,
+            nil,
+            "WHISPER",
+            playerToFetchDataFrom,
+            function (Response)
+                Response = Response.content;
+                if (type(Response) ~= "table"
+                    or type(Response.initiator) ~= "string"
+                    or GL:empty(Response.initiator)
+                    or type(Response.bth) ~= "string"
+                    or GL:empty(Response.bth)
+                    or type(Response.Auctions) ~= "table"
+                    or GL:empty(Response.Auctions)
+                ) then
+                    return;
+                end
+
+                if (not initiatedBySelf) then
+                    Client:start({
+                        Sender = {
+                            id = Response.initiator,
+                            fqn = Response.initiator,
+                        },
+                        content = {
+                            antiSnipe = Response.antiSnipe,
+                            bth = Response.bth,
+                            ItemDetails = Response.Auctions,
+                        },
+                    });
+                else
+                    local KnownAwardHashes = {};
+                    for _, Auction in pairs(GL.GDKP.Session:getActive().Auctions or {}) do
+                        if (type(Auction.Winner) == "table"
+                            and Auction.itemID
+                            and Auction.Winner.guid
+                        ) then
+                            KnownAwardHashes[GL:stringHash{
+                                Auction.itemID,
+                                Auction.Winner.guid,
+                                Auction.price
+                            }] = true;
+                        end
+                    end ;
+
+                    local ExtendIDs = {};
+
+                    -- See if there are auctions that need a new timer (aka weren't finished yet)
+                    for auctionID, Auction in pairs(Response.Auctions) do
+                        (function()
+                            -- This auction was deleted or otherwise made unavailable
+                            if (Auction.endsAt < 0) then
+                                return;
+                            end
+
+                            ---@todo: check if needed or ID is available
+                            local itemID = GL:getItemIDFromLink(Auction.link);
+                            local bid = tonumber(Auction.CurrentBid and Auction.CurrentBid.amount or 0) or 0;
+
+                            -- There weren't any bids on this auction yet so we can safely extend it
+                            if (not bid) then
+                                tinsert(ExtendIDs, auctionID);
+                                return;
+                            end
+
+                            -- It looks like this auction ran out while we were away and already had a bid
+                            -- Check to see if we can extend it or whether it was already sold
+                            if (Auction.endsAt == 0
+                                and bid > 0
+                                and KnownAwardHashes[GL:stringHash{
+                                    itemID,
+                                    strlower(Auction.CurrentBid.player),
+                                    bid,
+                                }]
+                            ) then
+                                return;
+                            end
+
+                            tinsert(ExtendIDs, auctionID);
+                        end)();
+                    end
+
+                    -- There's nothing we need to do at this point
+                    if (GL:empty(ExtendIDs)) then
+                        return;
+                    end
+
+                    GL.Interface.Dialogs.ConfirmWithSingleInputDialog:open{
+                        question = "You left during your GDKP bidding session. In order to resume it you have to provide a new bid time (in seconds) for any unsold items",
+                        inputValue = 60,
+                        OnYes = function (duration)
+                            local endsAt = GetServerTime() + duration;
+                            for _, auctionID in pairs(ExtendIDs) do
+                                Response.Auctions[auctionID].endsAt = endsAt;
+                            end
+
+                            self:announceStart(Response.Auctions, duration, Response.antiSnipe);
+                            GL:sendChatMessage("I resumed a previous bidding session, double check your bids!", "GROUP");
+                        end,
+                        focus = true,
+                    };
+                end
+            end
+        ):send();
+    end;
+
+    -- Check how many answers we're expecting on our next comm message
+    local numberOfActiveGroupMembers = 0;
+    GL:forEachGroupMember(function (Member)
+        if (Member.online
+            and not GL:iEquals(Member.fqn, GL.User.fqn)
+        ) then
+            numberOfActiveGroupMembers = numberOfActiveGroupMembers + 1;
+        end
+    end);
+
+    -- Get a current session hash from users so we can figure out which data to request
+    local CommMessage = GL.CommMessage.new(
+        CommActions.requestRunningGDKPMultiAuctionHash,
+        nil,
+        "GROUP"
+    ):send();
+
+    local cancelTimers = function()
+        GL:cancelTimer("GDKP.MultiAuction.requestRunningGDKPMultiAuctionHash");
+        GL:cancelTimer("GDKP.MultiAuction.requestRunningGDKPMultiAuctionHashInterval");
+    end;
+
+    -- Report back as soon as all the answers are in
+    self.RecurringCheckTimer = GL:interval(.2, "GDKP.MultiAuction.requestRunningGDKPMultiAuctionHashInterval", function ()
+        -- We received an answer from everyone
+        if (GL:count(CommMessage.Responses or {}) >= numberOfActiveGroupMembers) then
+            cancelTimers();
+            processResults(CommMessage);
+        end
+    end, .2);
+
+    -- Even if we're still missing an answer from some of the group members
+    -- we still want to make sure our inspection end after a set amount of time
+    GL:after(3, "GDKP.MultiAuction.requestRunningGDKPMultiAuctionHash", function ()
+        cancelTimers();
+        processResults(CommMessage);
+    end);
+end
+
+--- Announce to everyone in the raid that a MultiAuction is starting
+---
+---@param ItemDetails table
+---@param duration number
+---@param antiSnipe number
+---@return boolean
+function Auctioneer:announceStart(ItemDetails, duration, antiSnipe)
+    local serverTime = GetServerTime();
+
+    -- We're still waiting for a MultiAuction to start
+    if (self.waitingForAuctionStart
+        and serverTime - self.waitingForAuctionStart < 6
+    ) then
+        return false;
+    end
+
+    if (not Auctioneer:userIsAllowedToBroadcast()) then
+        self.waitingForAuctionStart = false;
+        return false;
+    end
+
+    self.waitingForAuctionStart = serverTime;
+    duration = tonumber(duration) or 0;
+    antiSnipe = tonumber(antiSnipe) or 0;
+
+    if (duration < 1
+        or antiSnipe < 0
+    ) then
+        GL:warning("Invalid data provided for GDKP auction start!");
+        self.waitingForAuctionStart = false;
+        return false;
+    end
+
+    local endsAt = math.ceil(serverTime + duration);
+    local defaultMinimumBid = DB:get("GDKP.defaultMinimumBid");
+    local defaultIncrement = DB:get("GDKP.defaultIncrement");
+    for _, Details in pairs(ItemDetails or {}) do
+        Details.minimum = Details.minimum >= 0 and Details.minimum or defaultMinimumBid;
+        Details.increment = Details.increment >= 0 and Details.increment or defaultIncrement;
+        Details.endsAt = Details.endsAt and Details.endsAt <= 0 and Details.endsAt or endsAt;
+    end
+
+    self:scheduleInspection();
+
+    GL.CommMessage.new(
+        CommActions.startGDKPMultiAuction,
+        {
+            ItemDetails = ItemDetails,
+            endsAt = endsAt,
+            antiSnipe = antiSnipe,
+            bth = GL.User.bth,
+        },
+        "GROUP"
+    ):send();
+
+    return true;
 end
 
 --- Send all top bids to the group
@@ -233,9 +564,6 @@ function Auctioneer:scheduleInspection()
             end)();
         end
 
-        -- Store this multi-auction's details in case the loot master is disconnected for example
-        DB:set("GDKP.MultiAuction.Details", Client.AuctionDetails);
-
         GL.CommMessage.new(
             CommActions.announceChangesForGDKPMultiAuction,
             Changes,
@@ -244,67 +572,6 @@ function Auctioneer:scheduleInspection()
 
         self.detailsChanged = false;
     end);
-end
-
---- Announce to everyone in the raid that a MultiAuction is starting
----
----@param ItemDetails table
----@param duration number
----@param antiSnipe number
----@return boolean
-function Auctioneer:announceStart(ItemDetails, duration, antiSnipe)
-    -- There's already a MultiAuction in progress
-    if (self.auctionIsInProgress) then
-        return false;
-    end
-
-    local serverTime = GetServerTime();
-
-    -- We're still waiting for a MultiAuction to start
-    if (self.waitingForAuctionStart
-        and serverTime - self.waitingForAuctionStart < 6
-    ) then
-        return false;
-    end
-
-    if (not Auctioneer:userIsAllowedToBroadcast()) then
-        self.waitingForAuctionStart = false;
-        return false;
-    end
-
-    self.waitingForAuctionStart = serverTime;
-    duration = tonumber(duration) or 0;
-    antiSnipe = tonumber(antiSnipe) or 0;
-
-    if (duration < 1
-        or antiSnipe < 0
-    ) then
-        GL:warning("Invalid data provided for GDKP auction start!");
-        self.waitingForAuctionStart = false;
-        return false;
-    end
-
-    local endsAt = math.ceil(serverTime + duration);
-    local defaultMinimumBid = DB:get("GDKP.defaultMinimumBid");
-    local defaultIncrement = DB:get("GDKP.defaultIncrement");
-    for _, Details in pairs(ItemDetails or {}) do
-        Details.minimum = Details.minimum >= 0 and Details.minimum or defaultMinimumBid;
-        Details.increment = Details.increment >= 0 and Details.increment or defaultIncrement;
-        Details.endsAt = endsAt;
-    end
-
-    GL.CommMessage.new(
-        CommActions.startGDKPMultiAuction,
-        {
-            ItemDetails = ItemDetails,
-            endsAt = endsAt,
-            antiSnipe = antiSnipe,
-            bth = GL.User.bth,
-        },
-        "GROUP"
-    ):send();
-
-    return true;
 end
 
 --- Attempt to process an incoming bid

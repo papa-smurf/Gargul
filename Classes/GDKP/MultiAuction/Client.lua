@@ -29,6 +29,39 @@ function Client:_init()
     self._initialized = true;
 end
 
+--- This is used to determine which session to take over / participate in
+--- when joining a group or logging (back) into the game
+--- /dump _G.Gargul.GDKP.MultiAuction.Client:currentSessionHash();
+---
+---@return string
+function Client:currentSessionHash()
+    if (type(self.AuctionDetails.Auctions) ~= "table"
+        or GL:empty(self.AuctionDetails.Auctions)
+    ) then
+        return;
+    end
+
+    local BidDetails = (function()
+        local Result = {};
+
+        for id, Details in pairs(self.AuctionDetails.Auctions or {}) do
+            Result[id] = GL:implode({
+                Details.link,
+                GL:tableGet(Details, "CurrentBid.amount"),
+                GL:tableGet(Details, "CurrentBid.player"),
+            }, "-");
+        end
+
+        return Result;
+    end)();
+
+    return GL:implode({
+        tonumber(self.AuctionDetails.antiSnipe) or 0,
+        strlower(self.AuctionDetails.initiator),
+        GL:stringHash(BidDetails)
+    }, ".");
+end
+
 ---@return void
 function Client:start(Message)
     -- Make sure that whoever sent us this message is actually allowed to start a multi-auction
@@ -38,25 +71,30 @@ function Client:start(Message)
 
     self.AuctionDetails = {
         initiator = Message.Sender.fqn,
-        endsAt = Message.content.endsAt,
         antiSnipe = Message.content.antiSnipe,
         bth = Message.content.bth,
         Auctions = {},
     };
 
+    local activeAuctions = false;
+    local serverTime = GetServerTime();
     for _, Item in pairs(GL:tableGet(Message, "content.ItemDetails", {})) do
         self.AuctionDetails.Auctions[Item.auctionID] = Item;
+
+        if (serverTime < Item.endsAt) then
+            activeAuctions = true;
+        end
     end
 
     UI:clear();
 
-    ---@todo: CHECK IF AUTOMATICALLY OPEN CLIENT WINDOW SETTING IS ENABLED
-    if (false) then
-        return;
-    end
-
     UI:open();
     UI:refresh();
+
+    -- Looks like there are no active auctions, this can happen when joining a new group with expired data
+    if (not activeAuctions) then
+        UI:close();
+    end
 end
 
 ---@param auctionID number

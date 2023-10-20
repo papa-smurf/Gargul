@@ -561,6 +561,8 @@ GL.Data.Constants = {
             broadcastPlusOnesMutation = 28,
             bidOnGDKPMultiAuction = 29,
             announceChangesForGDKPMultiAuction = 30,
+            requestRunningGDKPMultiAuctionHash = 31,
+            requestRunningGDKPMultiAuctionDetails = 32,
         },
     },
 
