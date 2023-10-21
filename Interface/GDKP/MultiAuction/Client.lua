@@ -1147,6 +1147,11 @@ function ClientInterface:refresh(forceFilterAndSort)
                 return self:addAuction(Details);
             end
 
+            LCG.PixelGlow_Stop(AuctionRow.Icon);
+            if (Details.iWasOutBid) then
+                LCG.PixelGlow_Start(AuctionRow.Icon, {1, 0, 0, 1}, 10, .2, 5, 3);
+            end
+
             --- We need to update the timer bar
             if (AuctionRow._Details.endsAt ~= Details.endsAt) then
                 if (Details.endsAt <= -1) then

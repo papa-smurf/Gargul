@@ -198,21 +198,31 @@ function Client:updateBids(Message)
     end
 
     for auctionID, Details in pairs(Message.content or {}) do
-        if (not Message.isSelf and Details.I) then
+        if (not Message.Sender.isSelf and Details.I) then
             self.AuctionDetails.Auctions[auctionID] = Details.I;
             self.AuctionDetails.Auctions[auctionID].CurrentBid = Details.CurrentBid or {};
 
-            GL:after(.2, "a123asdasd", function ()
+            GL:after(.2, "GDKP.MultiAuction.refreshUI", function ()
                 UI:refresh(true);
             end);
         end
 
         if (GL:tableGet(self.AuctionDetails, "Auctions." .. auctionID)) then
             if (Details.a > 0) then
+                if (not Message.Sender.isSelf) then
+                    self.AuctionDetails.Auctions[auctionID].iWasOutBid = false;
+                end
+                local previousTopBidder = GL:tableGet(self.AuctionDetails.Auctions[auctionID], "CurrentBid.player", "");
+                local iWasTopBidder = GL:iEquals(previousTopBidder, GL.User.fqn);
+
                 self.AuctionDetails.Auctions[auctionID].CurrentBid = {
                     amount = Details.a,
                     player = Details.p,
                 };
+
+                if (iWasTopBidder and not GL:iEquals(Details.p, GL.User.fqn)) then
+                    self.AuctionDetails.Auctions[auctionID].iWasOutBid = true;
+                end
             else
                 self.AuctionDetails.Auctions[auctionID].CurrentBid = nil;
             end

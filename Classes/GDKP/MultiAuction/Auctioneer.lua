@@ -641,7 +641,7 @@ function Auctioneer:processBid(Message)
     local serverTime = GetServerTime();
     local secondsLeft = Client.AuctionDetails.Auctions[auctionID].endsAt - serverTime;
 
-    -- This auction as "long" ended
+    -- This auction has "long" ended
     if (secondsLeft <= GL.Settings:get("GDKP.auctionEndLeeway", 2) * -1) then
         return;
     end
@@ -664,6 +664,9 @@ function Auctioneer:processBid(Message)
     if (not Client:isBidValidForAuction(auctionID, bid)) then
         return;
     end
+
+    local previousTopBidder = GL:tableGet(Client.AuctionDetails.Auctions[auctionID], "CurrentBid.player", "");
+    Client.AuctionDetails.Auctions[auctionID].iWasOutBid = GL:iEquals(previousTopBidder, GL.User.fqn) and not GL:iEquals(Message.Sender.fqn.p, GL.User.fqn);
 
     Client.AuctionDetails.Auctions[auctionID].CurrentBid = {
         amount = bid,

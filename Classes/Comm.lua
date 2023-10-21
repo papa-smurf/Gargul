@@ -355,6 +355,7 @@ function Comm:listen(payload, distribution, playerName)
     Comm:dispatch(GL.CommMessage.newFromReceived(payload));
 end
 
+local WarnedAboutCommAction = {};
 --- Dispatch incoming messages to their handlers
 ---
 ---@param CommMessage CommMessage
@@ -364,11 +365,20 @@ function Comm:dispatch(CommMessage)
     GL.User:refresh();
 
     local action = CommMessage.action;
+    if (not action) then
+        return;
+    end
+
     if (Comm.Actions[action]) then
         return Comm.Actions[action](CommMessage);
     end
 
+    if (WarnedAboutCommAction[action]) then
+        return;
+    end
+
     GL:warning(string.format("Unknown comm action '%s', make sure to update Gargul!", action));
+    WarnedAboutCommAction[action] = true;
 end
 
 GL:debug("Comm.lua");

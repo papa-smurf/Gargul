@@ -12,6 +12,13 @@ GL.Interface.Changelog = {
 
     History = {
         {
+            version = "7.0.0",
+            date = "October 21st, 2023",
+            Changes = {
+                "GDKP Multi-Auctions (batch auctions) are finally here! Create a new gdkp session (|c00a79eff/gdkp|r) and follow the instructions!\n\nWith multi auctions you can auction off as many items as you want at once! This speeds up your raid nights immensely and makes for a seamless experience for your raiders. Give it a shot!\n\nAs an organizer you can now also personalize your raids, show your own logo and other credentials to your raiders. Check out the Gargul discord for more info! <3",
+            },
+        },
+        {
             version = "6.2.0",
             date = "August 7th, 2023",
             Changes = {
@@ -524,8 +531,8 @@ function Changelog:draw()
             end
 
             -- Highlight GDKP update
-            --if (LogEntry.version == "5.0.7" and not GL.isRetail) then
-            if (false and not GL.isRetail) then
+            if (LogEntry.version == "7.0.0" and not GL.isRetail) then
+            --if (false and not GL.isRetail) then
                 HorizontalSpacer = GL.AceGUI:Create("SimpleGroup");
                 HorizontalSpacer:SetLayout("FILL");
                 HorizontalSpacer:SetFullWidth(true);
