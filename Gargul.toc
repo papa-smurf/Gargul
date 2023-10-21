@@ -129,6 +129,7 @@ Interface/GDKP/AuctionDetails.lua
 Interface/GDKP/MultiAuction/Auctioneer.lua
 Interface/GDKP/MultiAuction/Client.lua
 Interface/GDKP/MultiAuction/FillFromInventory.lua
+Interface/GDKP/MultiAuction/AddItem.lua
 Interface/TMB/Importer.lua
 Interface/TMB/Overview.lua
 Interface/PlusOnes/OverView.lua

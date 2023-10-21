@@ -426,7 +426,10 @@ function GL:handleItemClick(itemLink, mouseButtonPressed, callback)
 
         -- Open a trade window with the targeted unit if we don't have one open yet
         if (not TradeFrame:IsShown()) then
-            if (not UnitIsPlayer("target")) then
+            if (not UnitIsPlayer("target") or (
+                not UnitInRaid("target")
+                and not UnitInParty("target")
+            )) then
                 local itemID = GL:getItemIDFromLink(itemLink);
                 local Winners = GL.AwardedLoot:winnersToTradeForItemID(itemID);
 
@@ -461,6 +464,10 @@ function GL:handleItemClick(itemLink, mouseButtonPressed, callback)
         -- If the GDKP multi-auction window is shown then add the item there
         if (GL.Interface.GDKP.MultiAuction.Auctioneer:isShown()) then
             return GL.Interface.GDKP.MultiAuction.Auctioneer:addItemByLink(itemLink);
+
+        -- If the GDKP multi-auction bidding window is shown then add the item there
+        elseif (GL.Interface.GDKP.MultiAuction.Client:isShown()) then
+            return GL.Interface.GDKP.MultiAuction.AddItem:open(itemLink);
 
         -- There's an active GDKP session, open the auction window
         elseif (GL.GDKP.Session:activeSessionID()

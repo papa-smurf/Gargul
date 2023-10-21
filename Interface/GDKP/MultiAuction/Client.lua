@@ -99,16 +99,20 @@ function ClientInterface:addAuction(auctionID, isBOE, itemLevel, name, quality, 
     end
 
     GL:onItemLoadDo(link, function (Item)
+        if (not Item) then
+            return;
+        end
+
         local Details = {
             auctionID = auctionID,
             endsAt = endsAt,
             increment = increment,
-            isBOE = GL:inTable({LE_ITEM_BIND_ON_EQUIP, LE_ITEM_BIND_QUEST}, Item.bindType),
-            itemLevel = Item.level,
+            isBOE = GL:inTable({ LE_ITEM_BIND_ON_EQUIP, LE_ITEM_BIND_QUEST }, Item.bindType),
+            itemLevel = itemLevel,
             link = Item.link,
             minimum = minimum,
-            name = Item.name,
-            quality = Item.quality,
+            name = Item.name, -- In case of mismatching locales
+            quality = quality,
             CurrentBid = CurrentBid,
         };
 
@@ -236,7 +240,7 @@ function ClientInterface:build()
         ---@type Frame
         local AdminWindow = Interface:createWindow{
             name = self.adminWindowName,
-            height = 60,
+            height = 80,
             hideAllButtons = true,
             hideWatermark = true,
             Parent = Window,
@@ -248,7 +252,7 @@ function ClientInterface:build()
 
         local ButtonContainer = CreateFrame("Frame", nil, AdminWindow);
         ButtonContainer:SetPoint("CENTER", AdminWindow, "CENTER");
-        ButtonContainer:SetPoint("BOTTOM", AdminWindow, "BOTTOM", 0, 20);
+        ButtonContainer:SetPoint("TOP", AdminWindow, "TOP", 0, -40);
         ButtonContainer:SetWidth(5000);
         AdminWindow.ButtonContainer = ButtonContainer;
 
@@ -354,6 +358,14 @@ function ClientInterface:build()
             " ",
             "This will delete all bids on items that haven't sold yet and close all auctions!",
         }, "TOP");
+
+        --[[ HOW TO ADD ITEMS ]]
+        ---@type FontString
+        local AddItemsLabel = Interface:createFontString(AdminWindow, ("With this window open, %s items to add them to the list"):format(GL.Settings:get("ShortcutKeys.rollOffOrAuction")));
+        AddItemsLabel:SetFont(.8, "OUTLINE");
+        AddItemsLabel:SetColor("GRAY");
+        AddItemsLabel:SetPoint("CENTER", AdminWindow, "CENTER");
+        AddItemsLabel:SetPoint("BOTTOM", AdminWindow, "BOTTOM", 0, 20);
 
         -- Shadow frame used to determine the required width of the ButtonContainer
         local ShadowFrame = CreateFrame("Frame", nil, AdminWindow);
@@ -916,7 +928,7 @@ function ClientInterface:updateBidDetails()
         end)();
     end
 
-    self.BidDetails:SetText(("Total sold: %sg  -  Pledged by me: %sg"):format(totalSold, boughtByMe + bidByMe));
+    self.BidDetails:SetText(("Items: %s  -  Total sold: %sg  -  Pledged by me: %sg"):format(GL:count(Client.AuctionDetails.Auctions), totalSold, boughtByMe + bidByMe));
     self.BidDetails:SetColor("GRAY");
     Interface:addTooltip(self.BidDetails, {
         ("Items with bids: %s/%s"):format(items - noBids, items),
@@ -1014,6 +1026,7 @@ function ClientInterface:filterAndSort()
         ItemRow:ClearAllPoints();
         ItemRow:SetAlpha(0);
         ItemRow:SetHeight(0);
+        ItemRow:SetPoint("TOPLEFT", AuctionHolder, "TOPLEFT", -5000, 5000);
 
         (function()
             -- Make sure we have all the required data and the auction is still active

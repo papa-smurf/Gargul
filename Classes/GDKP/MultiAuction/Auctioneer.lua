@@ -23,6 +23,8 @@ local Client;
 GL:tableSet(GL, "GDKP.MultiAuction.Auctioneer", {
     _initialized = false,
     waitingForAuctionStart = false,
+
+    IDsToAnnounce = {},
 });
 
 ---@type GDKPMultiAuctionAuctioneer
@@ -100,7 +102,7 @@ function Auctioneer:fillFromInventory(minimumQuality, includeBOEs, includeAwarde
 
         -- Item is not soulbound or does not have any trade time remaining
         local timeRemaining = GL:inventoryItemTradeTimeRemaining(bag, slot);
-        if (timeRemaining < 1 or (
+        if (timeRemaining < 15 or ( -- 15 seconds is the absolute minimum, anything less than that simply doesn't make sense
             not includeBOEs
             and timeRemaining == Constants.itemIsNotBound)
         ) then
@@ -189,7 +191,7 @@ function Auctioneer:start(ItemDetails, duration, antiSnipe)
         for _, Item in pairs(Items or {}) do
             tinsert(ItemsUpForAuction, {
                 auctionID = auctionID,
-                isBOE = GL:inTable({LE_ITEM_BIND_ON_EQUIP, LE_ITEM_BIND_QUEST}, Item.bindType),
+                isBOE = GL:inTable({ LE_ITEM_BIND_ON_EQUIP, LE_ITEM_BIND_QUEST }, Item.bindType),
                 itemLevel = Item.level,
                 name = Item.name,
                 quality = Item.quality,
@@ -417,6 +419,8 @@ function Auctioneer:syncWithRunningSession()
                         question = "You left during your GDKP bidding session. In order to resume it you have to provide a new bid time (in seconds) for any unsold items",
                         inputValue = 60,
                         OnYes = function (duration)
+                            duration = tonumber(duration) or 5;
+
                             local endsAt = GetServerTime() + duration;
                             for _, auctionID in pairs(ExtendIDs) do
                                 Response.Auctions[auctionID].endsAt = endsAt;
@@ -512,7 +516,7 @@ function Auctioneer:announceStart(ItemDetails, duration, antiSnipe)
         Details.endsAt = Details.endsAt and Details.endsAt <= 0 and Details.endsAt or endsAt;
     end
 
-    self:scheduleInspection();
+    self:scheduleUpdater();
 
     GL.CommMessage.new(
         CommActions.startGDKPMultiAuction,
@@ -531,8 +535,8 @@ end
 --- Send all top bids to the group
 ---
 ---@return void
-function Auctioneer:scheduleInspection()
-    GL:interval(.2, "GDKP.MultiAuction.scheduleInspection", function ()
+function Auctioneer:scheduleUpdater()
+    GL:interval(.4, "GDKP.MultiAuction.auctionUpdated", function ()
         local serverTime = GetServerTime();
         local signedLeeway = GL.Settings:get("GDKP.auctionEndLeeway", 2) * -1;
 
@@ -555,7 +559,7 @@ function Auctioneer:scheduleInspection()
         for auctionID, Details in pairs(Client.AuctionDetails.Auctions or {}) do
             (function()
                 auctionID = math.floor(tonumber(auctionID) or 0);
-                if (auctionID < 1) then
+                if (auctionID < 1 or self.IDsToAnnounce[auctionID]) then
                     return;
                 end
 
@@ -564,6 +568,7 @@ function Auctioneer:scheduleInspection()
                     a = tonumber(GL:tableGet(Details, "CurrentBid.amount", 0)) or 0,
                     e = Details.endsAt,
                 };
+
                 bidsAvailable = true;
             end)();
         end
@@ -576,6 +581,44 @@ function Auctioneer:scheduleInspection()
 
         self.detailsChanged = false;
     end);
+end
+
+---@return void
+function Auctioneer:syncNewItems()
+    local Changes = {};
+    for id, announce in pairs(self.IDsToAnnounce or {}) do
+        if (announce
+            and Client.AuctionDetails.Auctions[id]
+        ) then
+            local Details = Client.AuctionDetails.Auctions[id];
+
+            Changes[id] = {
+                I = Details,
+                p = GL:tableGet(Details, "CurrentBid.player"),
+                a = tonumber(GL:tableGet(Details, "CurrentBid.amount", 0)) or 0,
+                e = Details.endsAt,
+            };
+        end
+
+        self.IDsToAnnounce[id] = nil;
+    end
+
+    self.IDsToAnnounce = {};
+    local numberOfChanges = GL:count(Changes);
+    if (numberOfChanges < 1) then
+        return;
+    end
+
+    GL.CommMessage.new(
+            CommActions.announceChangesForGDKPMultiAuction,
+            Changes,
+            "GROUP"
+    ):send();
+
+    GL:sendChatMessage(
+        ("I added %s item(s) to the auction for a total of %s"):format(numberOfChanges, GL:count(Client.AuctionDetails.Auctions)),
+        "GROUP"
+    );
 end
 
 --- Attempt to process an incoming bid
@@ -591,11 +634,10 @@ function Auctioneer:processBid(Message)
 
     -- The given auction doesn't exist
     if (not auctionID or not GL:tableGet(Client, "AuctionDetails.Auctions." .. auctionID)) then
-        ---@todo: CHECK WITH OTHER PLAYERS TO SEE IF THERE'S AN ONGOING MULTI-AUCTION
         return;
     end
 
-    -- Regardless of what happens make sure to extend the auction of needed
+    -- Regardless of what happens make sure to extend the auction if needed
     local serverTime = GetServerTime();
     local secondsLeft = Client.AuctionDetails.Auctions[auctionID].endsAt - serverTime;
 

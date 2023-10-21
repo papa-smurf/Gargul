@@ -1,5 +1,4 @@
 local L = Gargul_L;
-local LCG = LibStub("LibCustomGlowGargul-1.0");
 
 ---@type GL
 local _, GL = ...;

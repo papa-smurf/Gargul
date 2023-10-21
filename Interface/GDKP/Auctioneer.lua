@@ -44,6 +44,7 @@ Interface.GDKP.Auctioneer = {
 
     reorderItems = nil, -- Overwritten later
     queueWindowName = "Gargul.Interface.GDKP.Auctioneer.Queue",
+    multiAuctionWindowName = "Gargul.Interface.GDKP.Auctioneer.MultiAuction",
     windowName = "Gargul.Interface.GDKP.Auctioneer.Window",
     auctioneerShortcutName = "Gargul.Interface.GDKP.Auctioneer.Shortcut",
 
@@ -678,6 +679,52 @@ function AuctioneerUI:build()
         Interface:addTooltip(ToggleQueue, L.TOGGLE_QUEUE, "BOTTOMRIGHT");
     end
 
+    --[[ MULTI AUCTION INTRODUCTION WINDOW ]]
+    do
+        ---@type Frame
+        local MultiAuctionWindow = Interface:createWindow{
+            name = self.multiAuctionWindowName,
+            height = 50,
+            hideAllButtons = true,
+            hideWatermark = true,
+            template = false,
+            Parent = Window,
+        };
+        Window.MultiAuctionWindow = MultiAuctionWindow;
+        MultiAuctionWindow:SetPoint("TOPLEFT", Window, "BOTTOMLEFT", 2, -4);
+        MultiAuctionWindow:SetPoint("RIGHT", Window, "RIGHT", -2, 0);
+
+        LCG.PixelGlow_Stop(MultiAuctionWindow);
+        LCG.PixelGlow_Start(MultiAuctionWindow, {.59, .5, .82, 1}, Window:GetWidth() / 4, .02, 5, 2);
+
+        local Texture = MultiAuctionWindow:CreateTexture(nil,"BACKGROUND");
+        Texture:SetColorTexture(0, 0, 0, .6);
+        Texture:SetAllPoints(MultiAuctionWindow)
+
+        ---@type Button
+        local MultiAuctionButton = Interface:dynamicPanelButton(MultiAuctionWindow);
+        MultiAuctionButton:SetPoint("CENTER", MultiAuctionWindow, "CENTER");
+        MultiAuctionButton:SetText("Check out Multi Auctions!");
+        MultiAuctionButton:SetScript("OnClick", function ()
+            GL.Commands:call("multiauction");
+            self:close();
+        end);
+
+        local MultiAuctionExplanation = {
+            " ",
+            "With multi auctions (or batch auctions) you can auction off as many items as you want at once!",
+            "This speeds up your raid nights immensely and makes for a seamless experience for your raiders",
+            " ",
+            "All tradable items still in your inventory can automatically be auctioned with \"Fill from inventory\"",
+            "Give it a shot!",
+            " ",
+            "|c00808080There is but one con: in order for people to partake in a batch auction raiders will need Gargul!|r",
+            " ",
+        };
+        Interface:addTooltip(MultiAuctionWindow, MultiAuctionExplanation, "TOP");
+        Interface:addTooltip(MultiAuctionButton, MultiAuctionExplanation, "TOP");
+    end
+
     --[[ ADJUST TABLE ROWS AFTER WINDOW RESIZE ]]
     Window:HookScript("OnSizeChanged", function (...)
         local extraVerticalRoomForTable = Window:GetHeight() - DEFAULT_WINDOW_HEIGHT;
@@ -691,6 +738,15 @@ function AuctioneerUI:build()
         local newPlayerColumnWidth = math.floor(extraHorizontalRoomForTable + DEFAULT_PLAYER_COLUMN_WIDTH);
         BIDS_TABLE_COLUMNS[1].width = newPlayerColumnWidth
         Table:SetDisplayCols(BIDS_TABLE_COLUMNS);
+
+        --[[ ADJUST MULTI AUCTION WINDOW GLOW ]]
+        if (Window.MultiAuctionWindow) then
+            -- We use a timer to not call this too often
+            GL:after(1, "GDKP.Auctioneer.MultiAuctionWindow.Glow", function ()
+                LCG.PixelGlow_Stop(Window.MultiAuctionWindow);
+                LCG.PixelGlow_Start(Window.MultiAuctionWindow, {.59, .5, .82, 1}, Window:GetWidth() / 4, .02, 5, 2);
+            end);
+        end
     end);
     Window:GetScript("OnSizeChanged")();
 
@@ -959,7 +1015,7 @@ function AuctioneerUI:buildQueue(Window)
                     return;
                 end
 
-                local bindOnPickup = GL:inTable({LE_ITEM_BIND_ON_ACQUIRE, LE_ITEM_BIND_QUEST}, Details.bindType);
+                local bindOnPickup = GL:inTable({ LE_ITEM_BIND_ON_ACQUIRE, LE_ITEM_BIND_QUEST }, Details.bindType);
 
                 ---@type Frame
                 local ItemRow = CreateFrame("Frame", nil, ItemHolder);

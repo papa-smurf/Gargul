@@ -104,6 +104,63 @@ function Client:start(Message)
     end
 end
 
+---@param link table|string item link
+---@param duration number
+---@param minimum number
+---@param increment number
+---@return void
+function Client:addToCurrentSession(link, duration, minimum, increment)
+    if (duration ~= nil or type(link) ~= "table") then
+        GL:error("Pass a table instead of multiple arguments")
+        return;
+    end
+
+    if (not Auctioneer:auctionStartedByMe()
+        or GL:empty(self.AuctionDetails.Auctions)
+    ) then
+        return;
+    end
+
+    duration = link.duration;
+    minimum = link.minimum;
+    increment = link.increment;
+
+    link = link.link;
+
+    local lastAuctionID = 0;
+    for id in pairs(GL:tableColumn(self.AuctionDetails.Auctions, "auctionID") or {}) do
+        if (id > lastAuctionID) then
+            lastAuctionID = lastAuctionID + 1;
+        end
+    end
+    lastAuctionID = lastAuctionID + 1;
+
+    GL:onItemLoadDo(link, function (Item)
+        if (not Item) then
+            return;
+        end
+
+        self.AuctionDetails.Auctions[lastAuctionID] = {
+            auctionID = lastAuctionID,
+            isBOE = GL:inTable({ LE_ITEM_BIND_ON_EQUIP, LE_ITEM_BIND_QUEST }, Item.bindType),
+            itemLevel = Item.level,
+            name = Item.name,
+            quality = Item.quality,
+            link = Item.link,
+            minimum = minimum,
+            increment = increment,
+            endsAt = GetServerTime() + duration,
+        };
+
+        Auctioneer.IDsToAnnounce[lastAuctionID] = true;
+        Auctioneer.detailsChanged = true;
+
+        GL:after(1.15, "GDKP.MultiAuction.syncNewItems", function ()
+            Auctioneer:syncNewItems();
+        end);
+    end);
+end
+
 ---@param auctionID number
 ---@param amount number
 function Client:bid(auctionID, amount)
@@ -141,6 +198,15 @@ function Client:updateBids(Message)
     end
 
     for auctionID, Details in pairs(Message.content or {}) do
+        if (not Message.isSelf and Details.I) then
+            self.AuctionDetails.Auctions[auctionID] = Details.I;
+            self.AuctionDetails.Auctions[auctionID].CurrentBid = Details.CurrentBid or {};
+
+            GL:after(.2, "a123asdasd", function ()
+                UI:refresh(true);
+            end);
+        end
+
         if (GL:tableGet(self.AuctionDetails, "Auctions." .. auctionID)) then
             if (Details.a > 0) then
                 self.AuctionDetails.Auctions[auctionID].CurrentBid = {
@@ -175,7 +241,7 @@ function Client:isBidValidForAuction(auctionID, bid)
     end
 
     local currentBid = GL:tableGet(Auction, "CurrentBid.amount", 0);
-    return (currentBid == 0 and bid >= Auction.minimum) or bid >= Auction.minimum + Auction.increment;
+    return (currentBid == 0 and bid >= Auction.minimum) or bid >= currentBid + Auction.increment;
 end
 
 --- Return the minimum bid for the give auction

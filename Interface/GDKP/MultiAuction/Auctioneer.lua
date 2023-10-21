@@ -51,8 +51,9 @@ function Auctioneer:open()
         return;
     end
 
-    if (not Session:activeSessionID()) then
-        GL:warning("You need have an active GDKP session!");
+    local ActiveSession = Session:getActive();
+    if (not Session or Session.lockedAt) then
+        GL:warning("You need to have an active (unlocked) GDKP session!");
         Interface.GDKP.Overview:open();
 
         return;
@@ -79,17 +80,15 @@ function Auctioneer:open()
     local Window = self:getWindow() or self:build();
 
     -- Fill items from inventory if the window is empty
-    if (GL:empty(self.ItemRows)) then
-        GL.GDKP.MultiAuction.Auctioneer:fillFromInventory(
-            Settings:get("GDKP.MultiAuction.minimumFillQuality"),
-            Settings:get("GDKP.MultiAuction.includeBOEs"),
-            Settings:get("GDKP.MultiAuction.includeAwarded"),
-            Settings:get("GDKP.MultiAuction.includeMaterials")
-        );
-    end
+    self:clearItems();
+    GL.GDKP.MultiAuction.Auctioneer:fillFromInventory(
+        Settings:get("GDKP.MultiAuction.minimumFillQuality"),
+        Settings:get("GDKP.MultiAuction.includeBOEs"),
+        Settings:get("GDKP.MultiAuction.includeAwarded"),
+        Settings:get("GDKP.MultiAuction.includeMaterials")
+    );
 
     -- Show the correct session details
-    local ActiveSession = Session:getActive();
     local guild = "";
     local CreatedBy = ActiveSession.CreatedBy or { class = "priest", name = "unknown", guild = "unknown", uuid = "unknown"};
     if (CreatedBy.guild) then
@@ -336,7 +335,7 @@ function Auctioneer:build()
             end
 
             --[[ BOE ]]
-            if (GL:inTable({LE_ITEM_BIND_ON_EQUIP, LE_ITEM_BIND_QUEST}, Details.bindType)) then
+            if (GL:inTable({ LE_ITEM_BIND_ON_EQUIP, LE_ITEM_BIND_QUEST }, Details.bindType)) then
                 ---@type FontString
                 local BOE = Interface:createFontString(Icon, "BOE");
                 BOE:SetPoint("TOPLEFT", Icon, "TOPLEFT", -3, 3);

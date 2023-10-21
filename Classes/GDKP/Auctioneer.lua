@@ -182,7 +182,7 @@ function Auctioneer:_init()
         -- The player doesn't want to add BOEs
         else
             GL:onItemLoadDo(GL:getItemIDFromLink(Details.itemLink), function (Result)
-                local bindOnPickup = GL:inTable({LE_ITEM_BIND_ON_ACQUIRE, LE_ITEM_BIND_QUEST}, Result.bindType);
+                local bindOnPickup = GL:inTable({ LE_ITEM_BIND_ON_ACQUIRE, LE_ITEM_BIND_QUEST }, Result.bindType);
 
                 -- The item is BOP, add it
                 if (bindOnPickup) then

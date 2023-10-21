@@ -589,6 +589,9 @@ function Interface:createWindow(
     hideWatermark = name.hideWatermark;
 
     Parent = name.Parent or UIParent;
+    if (name.Parent and closeWithEscape == nil) then
+        closeWithEscape = false;
+    end
 
     name = name.name;
 
