@@ -665,8 +665,19 @@ function Auctioneer:processBid(Message)
         return;
     end
 
-    local previousTopBidder = GL:tableGet(Client.AuctionDetails.Auctions[auctionID], "CurrentBid.player", "");
-    Client.AuctionDetails.Auctions[auctionID].iWasOutBid = GL:iEquals(previousTopBidder, GL.User.fqn) and not GL:iEquals(Message.Sender.fqn.p, GL.User.fqn);
+    -- We're top bidder again
+    if (Client.AuctionDetails.Auctions[auctionID].iWasOutBid
+        and Message.Sender.isSelf
+    ) then
+        Client.AuctionDetails.Auctions[auctionID].iWasOutBid = false;
+
+    -- We were top bidder but not anymore
+    elseif (not Client.AuctionDetails.Auctions[auctionID].iWasOutBid
+        and not Message.Sender.isSelf
+        and GL:iEquals(GL:tableGet(Client.AuctionDetails.Auctions[auctionID], "CurrentBid.player", ""), GL.User.fqn)
+    ) then
+        Client.AuctionDetails.Auctions[auctionID].iWasOutBid = true;
+    end
 
     Client.AuctionDetails.Auctions[auctionID].CurrentBid = {
         amount = bid,
@@ -739,6 +750,7 @@ function Auctioneer:clearBid(auctionID)
     end
 
     Client.AuctionDetails.Auctions[auctionID].CurrentBid = nil;
+    Client.AuctionDetails.Auctions[auctionID].iWasOutBid = false;
     self.detailsChanged = true;
 end
 

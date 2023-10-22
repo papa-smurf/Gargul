@@ -208,21 +208,36 @@ function Client:updateBids(Message)
         end
 
         if (GL:tableGet(self.AuctionDetails, "Auctions." .. auctionID)) then
-            if (Details.a > 0) then
-                if (not Message.Sender.isSelf) then
-                    self.AuctionDetails.Auctions[auctionID].iWasOutBid = false;
-                end
-                local previousTopBidder = GL:tableGet(self.AuctionDetails.Auctions[auctionID], "CurrentBid.player", "");
-                local iWasTopBidder = GL:iEquals(previousTopBidder, GL.User.fqn);
+            local amount = Details.a;
+            local bidder = Details.p;
+            local bidderIsMe = GL:iEquals(bidder, GL.User.fqn);
 
+            -- The auctioneer already did this on his end before sending it to us
+            if (not Message.Sender.isSelf) then
+                -- There are no bids
+                if (amount < 1) then
+                    Client.AuctionDetails.Auctions[auctionID].iWasOutBid = false;
+
+                -- We're top bidder again
+                elseif (Client.AuctionDetails.Auctions[auctionID].iWasOutBid
+                    and bidderIsMe
+                ) then
+                    Client.AuctionDetails.Auctions[auctionID].iWasOutBid = false;
+
+                -- We were top bidder but not anymore
+                elseif (not Client.AuctionDetails.Auctions[auctionID].iWasOutBid
+                    and not bidderIsMe
+                    and GL:iEquals(GL:tableGet(Client.AuctionDetails.Auctions[auctionID], "CurrentBid.player", ""), GL.User.fqn)
+                ) then
+                    Client.AuctionDetails.Auctions[auctionID].iWasOutBid = true;
+                end
+            end
+
+            if (amount > 0) then
                 self.AuctionDetails.Auctions[auctionID].CurrentBid = {
-                    amount = Details.a,
-                    player = Details.p,
+                    amount = amount,
+                    player = bidder,
                 };
-
-                if (iWasTopBidder and not GL:iEquals(Details.p, GL.User.fqn)) then
-                    self.AuctionDetails.Auctions[auctionID].iWasOutBid = true;
-                end
             else
                 self.AuctionDetails.Auctions[auctionID].CurrentBid = nil;
             end

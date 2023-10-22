@@ -775,26 +775,13 @@ function ClientInterface:build()
                 CountDownBar:SetPoint("BOTTOM", AuctionRow, "BOTTOM");
                 CountDownBar:SetPoint("LEFT", Icon, "LEFT");
                 CountDownBar:SetDuration(time);
-                CountDownBar:SetColor(0, 1, 0, .3); -- Reset color to green
+                CountDownBar:SetColor(.8, .8, .8, .3); -- Reset color to gray
                 CountDownBar:Set("type", "GDKP_MULTI_AUCTION_COUNTDOWN");
                 CountDownBar:Start();
                 CountDownBar:SetFrameStrata(AuctionRow:GetFrameStrata());
                 CountDownBar:SetFrameLevel(AuctionRow:GetFrameLevel() - 1);
                 CountDownBar:SetTimeVisibility(false);
                 AuctionRow.CountDownBar = CountDownBar;
-
-                -- Make the bar turn green/yellow/red based on time left
-                CountDownBar:AddUpdateFunction(function (Bar)
-                    local percentageLeft = 100 / (time / Bar.remaining);
-
-                    if (percentageLeft >= 60) then
-                        Bar:SetColor(0, 1, 0, .3);
-                    elseif (percentageLeft >= 30) then
-                        Bar:SetColor(1, 1, 0, .3);
-                    else
-                        Bar:SetColor(1, 0, 0, .3);
-                    end
-                end);
             end
 
             AuctionRow.stopCountdown = function()
@@ -1147,9 +1134,14 @@ function ClientInterface:refresh(forceFilterAndSort)
                 return self:addAuction(Details);
             end
 
-            LCG.PixelGlow_Stop(AuctionRow.Icon);
-            if (Details.iWasOutBid) then
-                LCG.PixelGlow_Start(AuctionRow.Icon, {1, 0, 0, 1}, 10, .2, 5, 3);
+            if (AuctionRow.CountDownBar and AuctionRow.CountDownBar.SetColor) then
+                if (GL:iEquals(GL:tableGet(Details, "CurrentBid.player"), GL.User.fqn)) then
+                    AuctionRow.CountDownBar:SetColor(0, 1, 0, .5); -- Set to green
+                elseif (Details.iWasOutBid) then
+                    AuctionRow.CountDownBar:SetColor(1, 0, 0, .5); -- Set to red
+                else
+                    AuctionRow.CountDownBar:SetColor(.8, .8, .8, .3); -- Set to gray
+                end
             end
 
             --- We need to update the timer bar
