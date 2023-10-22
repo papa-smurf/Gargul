@@ -1134,16 +1134,6 @@ function ClientInterface:refresh(forceFilterAndSort)
                 return self:addAuction(Details);
             end
 
-            if (AuctionRow.CountDownBar and AuctionRow.CountDownBar.SetColor) then
-                if (GL:iEquals(GL:tableGet(Details, "CurrentBid.player"), GL.User.fqn)) then
-                    AuctionRow.CountDownBar:SetColor(0, 1, 0, .5); -- Set to green
-                elseif (Details.iWasOutBid) then
-                    AuctionRow.CountDownBar:SetColor(1, 0, 0, .5); -- Set to red
-                else
-                    AuctionRow.CountDownBar:SetColor(.8, .8, .8, .3); -- Set to gray
-                end
-            end
-
             --- We need to update the timer bar
             if (AuctionRow._Details.endsAt ~= Details.endsAt) then
                 if (Details.endsAt <= -1) then
@@ -1160,9 +1150,12 @@ function ClientInterface:refresh(forceFilterAndSort)
                         -- The .1 second delay is necessary since stopping the bar can sometimes occur after creating a new one
                         GL:after(.1, "GDKP_MULTI_AUCTION_CLIENT_ADD_BAR_FOR_" .. Details.auctionID, function ()
                             AuctionRow.addCountDownBar(Details.endsAt - serverTime);
+                            self:setAuctionBarColor(AuctionRow, Details);
                         end);
                     end
                 end
+            else
+                self:setAuctionBarColor(AuctionRow, Details);
             end
 
             AuctionRow.updateStatus();
@@ -1175,6 +1168,24 @@ function ClientInterface:refresh(forceFilterAndSort)
 
     self:refreshAdminWindow();
     self:updateBidDetails();
+end
+
+--- Update the color of the countdown bar to reflect the player's bidding status
+---
+---@param AuctionRow Frame
+---@oaram Details table
+---
+---@return void
+function ClientInterface:setAuctionBarColor(AuctionRow, Details)
+    if (AuctionRow.CountDownBar and AuctionRow.CountDownBar.SetColor) then
+        if (GL:iEquals(GL:tableGet(Details, "CurrentBid.player"), GL.User.fqn)) then
+            AuctionRow.CountDownBar:SetColor(0, 1, 0, .5); -- Set to green
+        elseif (Details.iWasOutBid) then
+            AuctionRow.CountDownBar:SetColor(1, 0, 0, .5); -- Set to red
+        else
+            AuctionRow.CountDownBar:SetColor(.8, .8, .8, .3); -- Set to gray
+        end
+    end
 end
 
 ---@return Frame

@@ -2583,8 +2583,9 @@ function GL:tableUnique(Table)
 
     local i = 1;
     for _, value in pairs(Table or {}) do
-        if (type(value) == "string"
-            and not UniqueValues[value]
+        if ((type(value) == "string"
+            or type(value) == "number"
+            ) and not UniqueValues[value]
         ) then
             UniqueValues[value] = i;
             i = i + 1;

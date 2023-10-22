@@ -24,6 +24,7 @@ GL:tableSet(GL, "GDKP.MultiAuction.Auctioneer", {
     _initialized = false,
     waitingForAuctionStart = false,
 
+    IDsChangedSinceLastSync = {},
     IDsToAnnounce = {},
 });
 
@@ -35,6 +36,9 @@ local GDKPAuction = GL.GDKP.Auction;
 
 ---@type GDKPMultiAuctionAuctioneerInterface
 local UI;
+
+--[[ CONSTANTS ]]
+local ENDS_AT_OFFSET = 1697932800;
 
 ---@return void
 function Auctioneer:_init()
@@ -550,27 +554,39 @@ function Auctioneer:scheduleUpdater()
         end
 
         -- No need to broadcast if nothing changed
-        if (not self.detailsChanged) then
+        if (GL:empty(self.IDsChangedSinceLastSync)) then
             return;
         end
 
-        local bidsAvailable = false;
+        local changesAvailable = false;
         local Changes = {};
-        for auctionID, Details in pairs(Client.AuctionDetails.Auctions or {}) do
+        local UniqueIDs = GL:tableUnique(self.IDsChangedSinceLastSync);
+        self.IDsChangedSinceLastSync = {};
+        for _, auctionID in pairs(UniqueIDs or {}) do
             (function()
+                local Details = Client.AuctionDetails.Auctions[auctionID];
+                if (not Details) then
+                    return;
+                end
+
                 auctionID = math.floor(tonumber(auctionID) or 0);
                 if (auctionID < 1 or self.IDsToAnnounce[auctionID]) then
                     return;
                 end
 
+                local bid = tonumber(GL:tableGet(Details, "CurrentBid.amount", 0)) or 0;
                 Changes[auctionID] = {
                     p = GL:tableGet(Details, "CurrentBid.player"),
-                    a = tonumber(GL:tableGet(Details, "CurrentBid.amount", 0)) or 0,
-                    e = Details.endsAt,
+                    a = bid / 1000,
+                    e = Details.endsAt > 0 and Details.endsAt - ENDS_AT_OFFSET or Details.endsAt,
                 };
 
-                bidsAvailable = true;
+                changesAvailable = true;
             end)();
+        end
+
+        if (not changesAvailable) then
+            return;
         end
 
         GL.CommMessage.new(
@@ -578,8 +594,6 @@ function Auctioneer:scheduleUpdater()
             Changes,
             "GROUP"
         ):send();
-
-        self.detailsChanged = false;
     end);
 end
 
@@ -610,9 +624,9 @@ function Auctioneer:syncNewItems()
     end
 
     GL.CommMessage.new(
-            CommActions.announceChangesForGDKPMultiAuction,
-            Changes,
-            "GROUP"
+        CommActions.announceChangesForGDKPMultiAuction,
+        Changes,
+        "GROUP"
     ):send();
 
     GL:sendChatMessage(
@@ -655,7 +669,7 @@ function Auctioneer:processBid(Message)
         -- Make sure we spread the news about this reschedule
         Client.AuctionDetails.Auctions[auctionID].endsAt = serverTime + Client.AuctionDetails.antiSnipe;
 
-        self.detailsChanged = true;
+        tinsert(self.IDsChangedSinceLastSync, auctionID);
     end
 
     local bid = tonumber(GL:tableGet(Message, "content.bid", 0)) or 0;
@@ -679,13 +693,11 @@ function Auctioneer:processBid(Message)
         Client.AuctionDetails.Auctions[auctionID].iWasOutBid = true;
     end
 
+    tinsert(self.IDsChangedSinceLastSync, auctionID);
     Client.AuctionDetails.Auctions[auctionID].CurrentBid = {
         amount = bid,
         player = Message.Sender.fqn,
     };
-
-    -- Make sure we spread the news about the new top bidder
-    self.detailsChanged = true;
 end
 
 --- Was the given auction ID (or current multi-auction as a whole) started by us
@@ -714,7 +726,7 @@ function Auctioneer:deleteAuction(auctionID)
         Client.AuctionDetails.Auctions[auctionID].CurrentBid = nil;
     end
 
-    self.detailsChanged = true;
+    tinsert(self.IDsChangedSinceLastSync, auctionID);
 end
 
 --- Close an auction
@@ -737,7 +749,7 @@ function Auctioneer:closeAuction(auctionID)
     end
 
     Client.AuctionDetails.Auctions[auctionID].endsAt = 0;
-    self.detailsChanged = true;
+    tinsert(self.IDsChangedSinceLastSync, auctionID);
 end
 
 --- Clear an auction's current bid
@@ -745,13 +757,15 @@ end
 ---@param auctionID string
 ---@return void
 function Auctioneer:clearBid(auctionID)
-    if (self:auctionIsFinalized(auctionID)) then
+    if (self:auctionIsFinalized(auctionID)
+        or GL:empty(Client.AuctionDetails.Auctions[auctionID].CurrentBid)
+    ) then
         return;
     end
 
     Client.AuctionDetails.Auctions[auctionID].CurrentBid = nil;
     Client.AuctionDetails.Auctions[auctionID].iWasOutBid = false;
-    self.detailsChanged = true;
+    tinsert(self.IDsChangedSinceLastSync, auctionID);
 end
 
 --- Check if we're still allowed to edit this auction
@@ -781,7 +795,7 @@ function Auctioneer:finalCall(auctionID, seconds)
 
     seconds = seconds or GL.Settings:get("GDKP.finalCallTime");
     Client.AuctionDetails.Auctions[auctionID].endsAt = GetServerTime() + seconds;
-    self.detailsChanged = true;
+    tinsert(self.IDsChangedSinceLastSync, auctionID);
 end
 
 --- Wrap up the current multi-auction session
@@ -847,108 +861,4 @@ function Auctioneer:storeDetailsForFutureAuctions(Details)
             increment = increment
         });
     end
-end
-
----@param bidder string
----@param bid number
----@return void
-function Auctioneer:removePlayerBid (bidder, bid)
-    local Bids = Auction.Current.Bids or {};
-
-    local bidRemoved = false;
-    for key, Bid in pairs(Bids) do
-        if (Bid.bid == bid and GL:iEquals(Bid.bidder, bidder)) then
-            Bids[key] = nil;
-            bidRemoved = true;
-            break;
-        end
-    end
-
-    local HighestBid = tremove(Auction.Current.Bids);
-    tinsert(Auction.Current.Bids, HighestBid);
-    Auction.Current.TopBid = HighestBid;
-
-    if (HighestBid and HighestBid.bid <= bid) then
-        self:announceBid(HighestBid);
-    end
-
-    self:refreshBidsTable();
-end
-
----@return void
-function Auctioneer:award()
-    UI = UI or GL.Interface.GDKP.Auctioneer;
-
-    if (not UI.itemLink) then
-        return;
-    end
-
-    local BidsTable = UI:getBidsTable();
-    local selected = BidsTable:GetRow(BidsTable:GetSelection());
-
-    -- No bid is selected, open the direct award window
-    if (not selected
-            or not type(selected) == "table"
-    ) then
-        return GL.Interface.Award.Award:draw(UI.itemLink, function ()
-            if (Settings:get("GDKP.minimizeAuctioneerOnAward")) then
-                local Window = UI:getWindow();
-
-                if (not Window) then
-                    return;
-                end
-
-                Window.Minimize.MinimizeButton:Click();
-            end
-        end);
-    end
-
-    local winner = selected.cols[4].value;
-    local bid = selected.cols[2].value;
-
-    GL.Interface.Dialogs.PopupDialog:open{
-        question = string.format(L.AWARD_ITEM_CONFIRMATION,
-                Auction.Current.itemLink,
-                GL:nameFormat{name = winner, colorize = true},
-                bid
-        ),
-        OnYes = function ()
-            local isOS, addPlusOne;
-            local OSCheckBox = GL.Interface:get(GL.Interface.Dialogs.AwardDialog, "CheckBox.OffSpec");
-            if (OSCheckBox) then
-                isOS = GL:toboolean(OSCheckBox:GetValue());
-            end
-
-            local addPlusOneCheckBox = GL.Interface:get(GL.Interface.Dialogs.AwardDialog, "CheckBox.PlusOne");
-            if (addPlusOneCheckBox) then
-                addPlusOne = GL:toboolean(addPlusOneCheckBox:GetValue());
-
-                if (addPlusOne) then
-                    GL.PlusOnes:addPlusOne(winner);
-                end
-            end
-
-            local awardChecksum = GL.AwardedLoot:addWinner(winner, Auction.Current.itemLink, nil, nil, isOS, nil, bid, nil);
-
-            if (not Auction:storeCurrent(winner, bid, awardChecksum)) then
-                return;
-            end
-
-            Auction:reset(); -- Reset the actual auction object
-            UI:closeAuctioneerShortcut();
-
-            self:clear();
-            self:start();
-
-            if (Settings:get("GDKP.minimizeAuctioneerOnAward")) then
-                local Window = UI:getWindow();
-
-                if (not Window) then
-                    return;
-                end
-
-                Window.Minimize.MinimizeButton:Click();
-            end
-        end,
-    };
 end

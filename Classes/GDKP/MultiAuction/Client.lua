@@ -18,6 +18,9 @@ local Auctioneer = GL.GDKP.MultiAuction.Auctioneer;
 ---@type GDKPMultiAuctionClientInterface
 local UI;
 
+--[[ CONSTANTS ]]
+local ENDS_AT_OFFSET = 1697932800;
+
 ---@return void
 function Client:_init()
     if (self._initialized) then
@@ -198,17 +201,21 @@ function Client:updateBids(Message)
     end
 
     for auctionID, Details in pairs(Message.content or {}) do
-        if (not Message.Sender.isSelf and Details.I) then
-            self.AuctionDetails.Auctions[auctionID] = Details.I;
-            self.AuctionDetails.Auctions[auctionID].CurrentBid = Details.CurrentBid or {};
+        (function()
+            if (not Message.Sender.isSelf and Details.I) then
+                self.AuctionDetails.Auctions[auctionID] = Details.I;
+                self.AuctionDetails.Auctions[auctionID].CurrentBid = Details.CurrentBid or {};
 
-            GL:after(.2, "GDKP.MultiAuction.refreshUI", function ()
-                UI:refresh(true);
-            end);
-        end
+                GL:after(.2, "GDKP.MultiAuction.refreshUI", function ()
+                    UI:refresh(true);
+                end);
+            end
 
-        if (GL:tableGet(self.AuctionDetails, "Auctions." .. auctionID)) then
-            local amount = Details.a;
+            if (not GL:tableGet(self.AuctionDetails, "Auctions." .. auctionID)) then
+                return;
+            end
+
+            local amount = Details.a * 1000;
             local bidder = Details.p;
             local bidderIsMe = GL:iEquals(bidder, GL.User.fqn);
 
@@ -218,13 +225,13 @@ function Client:updateBids(Message)
                 if (amount < 1) then
                     Client.AuctionDetails.Auctions[auctionID].iWasOutBid = false;
 
-                -- We're top bidder again
+                    -- We're top bidder again
                 elseif (Client.AuctionDetails.Auctions[auctionID].iWasOutBid
                     and bidderIsMe
                 ) then
                     Client.AuctionDetails.Auctions[auctionID].iWasOutBid = false;
 
-                -- We were top bidder but not anymore
+                    -- We were top bidder but not anymore
                 elseif (not Client.AuctionDetails.Auctions[auctionID].iWasOutBid
                     and not bidderIsMe
                     and GL:iEquals(GL:tableGet(Client.AuctionDetails.Auctions[auctionID], "CurrentBid.player", ""), GL.User.fqn)
@@ -242,8 +249,10 @@ function Client:updateBids(Message)
                 self.AuctionDetails.Auctions[auctionID].CurrentBid = nil;
             end
 
-            self.AuctionDetails.Auctions[auctionID].endsAt = Details.e or self.AuctionDetails.Auctions[auctionID].endsAt;
-        end
+            if (Details.e) then
+                self.AuctionDetails.Auctions[auctionID].endsAt = Details.e > 0 and Details.e + ENDS_AT_OFFSET or Details.e;
+            end
+        end)();
     end
 
     UI:refresh();

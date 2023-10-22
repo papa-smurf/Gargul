@@ -41,11 +41,12 @@ local WINDOW_HEIGHT = 333;
 local FONT;
 
 ---@return Frame|nil
-function Auctioneer:open()
+function Auctioneer:open(keepPreviousItems)
     if (self:isShown()) then
         return;
     end
 
+    keepPreviousItems = keepPreviousItems == true;
     if (not GL.GDKP.MultiAuction.Auctioneer:userIsAllowedToBroadcast()) then
         GL:warning("You don't have permission to start an auction!")
         return;
@@ -79,14 +80,15 @@ function Auctioneer:open()
 
     local Window = self:getWindow() or self:build();
 
-    -- Fill items from inventory if the window is empty
-    self:clearItems();
-    GL.GDKP.MultiAuction.Auctioneer:fillFromInventory(
-        Settings:get("GDKP.MultiAuction.minimumFillQuality"),
-        Settings:get("GDKP.MultiAuction.includeBOEs"),
-        Settings:get("GDKP.MultiAuction.includeAwarded"),
-        Settings:get("GDKP.MultiAuction.includeMaterials")
-    );
+    if (not keepPreviousItems) then
+        self:clearItems();
+        GL.GDKP.MultiAuction.Auctioneer:fillFromInventory(
+            Settings:get("GDKP.MultiAuction.minimumFillQuality"),
+            Settings:get("GDKP.MultiAuction.includeBOEs"),
+            Settings:get("GDKP.MultiAuction.includeAwarded"),
+            Settings:get("GDKP.MultiAuction.includeMaterials")
+        );
+    end
 
     -- Show the correct session details
     local guild = "";
@@ -474,7 +476,7 @@ function Auctioneer:build()
                 text = "Cancel",
                 onClick = function ()
                     GroupVersionCheck:close();
-                    self:open();
+                    self:open(true);
                 end,
                 tooltip = "Go back to the item selector",
             },
