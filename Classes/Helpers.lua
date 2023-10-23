@@ -994,7 +994,10 @@ end
 ---@param startStr string
 ---@return boolean
 function GL:strStartsWith(str, startStr)
-   return string.sub(str, 1, string.len(startStr)) == startStr;
+    str = tostring(str);
+    startStr = tostring(startStr);
+
+    return string.sub(str, 1, string.len(startStr)) == startStr;
 end
 
 --- Check whether the provided string ends with a given substring
@@ -2420,7 +2423,7 @@ function GL:sendChatMessage(message, chatType, language, channel, stw, pretend)
         pretend = true;
 
         if (not gaveNoMessagesWarning) then
-            GL:message("A message was blocked because you have the 'No messages' setting enabled.");
+            --GL:message("A message was blocked because you have the 'No messages' setting enabled.");
             gaveNoMessagesWarning = true;
         end
     end

@@ -53,7 +53,7 @@ function Auctioneer:open(keepPreviousItems)
     end
 
     local ActiveSession = Session:getActive();
-    if (not Session or Session.lockedAt) then
+    if (not ActiveSession or ActiveSession.lockedAt) then
         GL:warning("You need to have an active (unlocked) GDKP session!");
         Interface.GDKP.Overview:open();
 

@@ -133,7 +133,6 @@ function AuctioneerUI:build()
         minHeight = 239,
         maxWidth = 500,
         maxHeight = 700,
-        hideCloseButton = GL.User.isInGroup and (GL.User.isLead or GL.User.isMasterLooter) and Session:activeSessionID(),
     };
     Window:Hide();
 

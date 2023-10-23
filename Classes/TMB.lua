@@ -254,7 +254,29 @@ function TMB:noteByItemID(itemID)
         return "";
     end
 
-    return GL.DB:get("TMB.Notes." .. itemID, "");
+    -- The item linked to this id can have multiple IDs (head of Onyxia for example)
+    local AllLinkedItemIDs = GL:getLinkedItemsForID(itemID);
+
+    local hasNotes = false;
+    local Notes = {};
+    for _, id in pairs(AllLinkedItemIDs) do
+        local note = GL.DB:get("TMB.Notes." .. id);
+
+        if (note) then
+            tinsert(Notes, note);
+            hasNotes = true;
+        end
+    end
+
+    if (not hasNotes) then
+        return "";
+    end
+
+    if (GL:count(Notes) == 1) then
+        return Notes[1];
+    end
+
+    return GL:implode(Notes, "\n");
 end
 
 --- Fetch a player's group id and name

@@ -1,9 +1,7 @@
 ---@type GL
 local _, GL = ...;
+local L = Gargul_L;
 local LCG = LibStub("LibCustomGlowGargul-1.0");
-
----@type Constants
-local Constants = GL.Data.Constants;
 
 ---@type Interface
 local Interface = GL.Interface;
@@ -20,6 +18,7 @@ GL.Interface.Identity = {
         url = "https://discord.gg/D3mDhYPVzf",
         urlInfo = "Visit the URL below to learn more about personalizing Gargul GDKPs",
         tooltip = "Your logo here? Click for more info!",
+        cutMailSubject = L.CUT_MAIL_SUBJECT,
 
         ---@return Frame
         ledger = function()
@@ -206,6 +205,15 @@ function Identity:buildForBidder(identifier)
     end
 
     return self[identifier]:bidder();
+end
+
+---@param identifier string
+---
+---@return string
+function Identity:build(identifier)
+    identifier = identifier or DEFAULT;
+
+    return self[identifier] and self[identifier] or self[DEFAULT];
 end
 
 ---@param identifier string

@@ -56,6 +56,9 @@ function Settings:sanitizeSettings()
 
     self:enforceTemporarySettings();
 
+    --- In 7.0.0 we dropped the noMessages setting
+    DB:set("Settings.noMessages", false);
+
     -- Remove plus one entries with a value of 0
     for player, po in pairs(DB:get("PlusOnes.Totals", {})) do
         if (not tonumber(po) or po < 1) then

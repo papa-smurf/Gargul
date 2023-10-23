@@ -282,7 +282,7 @@ function Auction:create(itemID, price, winner, sessionID, Bids, note, awardCheck
     };
     Instance.Winner.guid = GDKP:playerGUID(Instance.Winner.name, Instance.Winner.realm);
 
-    local checksum = Instance.createdAt .. GL:stringHash{ Instance.itemID, Instance.createdAt, table.concat(Instance.CreatedBy, ".") };
+    local checksum = Instance.createdAt .. GL:stringHash{ Instance.itemID, Instance.createdAt, table.concat(Instance.CreatedBy, "."), GL:uuid() };
     Instance.ID = checksum;
 
     -- Something is wrong with the Auction. Tampering maybe? RETURN!
@@ -668,16 +668,12 @@ function Auction:sanitize(Instance)
     SanitizedAuction.price = tonumber(Instance.price);
     SanitizedAuction.note = Instance.note;
 
-    --[[ Make sure the checksum is valid ]]
-    local checksum = SanitizedAuction.createdAt .. GL:stringHash{ SanitizedAuction.itemID, SanitizedAuction.createdAt, table.concat(SanitizedAuction.CreatedBy, ".") };
-
-    if (checksum ~= Instance.ID) then
+    if (not GL:strStartsWith(Instance.ID, SanitizedAuction.createdAt)) then
         GL:xd("Auction:sanitize step 10 failed, contact support!");
         return false;
     end
 
-    SanitizedAuction.ID = checksum;
-
+    SanitizedAuction.ID = Instance.ID;
     return SanitizedAuction;
 end
 
@@ -1675,8 +1671,6 @@ end
 
 ---@return void
 function Auction:listenForBids()
-    GL:debug("GDKP.Auction:listenForBids");
-
     if (self.listeningForBids) then
         return;
     end

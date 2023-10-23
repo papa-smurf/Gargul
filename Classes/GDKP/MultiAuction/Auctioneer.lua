@@ -39,6 +39,7 @@ local UI;
 
 --[[ CONSTANTS ]]
 local ENDS_AT_OFFSET = 1697932800;
+local BIDDING_LEEWAY = 2;
 
 ---@return void
 function Auctioneer:_init()
@@ -540,9 +541,9 @@ end
 ---
 ---@return void
 function Auctioneer:scheduleUpdater()
-    GL:interval(.4, "GDKP.MultiAuction.auctionUpdated", function ()
+    GL:interval(.8, "GDKP.MultiAuction.auctionUpdated", function ()
         local serverTime = GetServerTime();
-        local signedLeeway = GL.Settings:get("GDKP.auctionEndLeeway", 2) * -1;
+        local signedLeeway = BIDDING_LEEWAY * -1;
 
         -- Check if there are newly closed auctions
         for auctionID, Details in pairs(Client.AuctionDetails.Auctions or {}) do
@@ -656,7 +657,7 @@ function Auctioneer:processBid(Message)
     local secondsLeft = Client.AuctionDetails.Auctions[auctionID].endsAt - serverTime;
 
     -- This auction has "long" ended
-    if (secondsLeft <= GL.Settings:get("GDKP.auctionEndLeeway", 2) * -1) then
+    if (secondsLeft <= BIDDING_LEEWAY * -1) then
         return;
     end
 
@@ -742,7 +743,7 @@ function Auctioneer:closeAuction(auctionID)
     if (BidDetails) then
         local itemLink = Client.AuctionDetails.Auctions[auctionID].link;
 
-        GL:mute();
+        GL:mute(); -- We don't want an announcement for every awarded item since people can see it for themselves in /gl bid
         local awardChecksum = GL.AwardedLoot:addWinner(BidDetails.player, itemLink, nil, nil, nil, nil, BidDetails.amount);
         GDKPAuction:create(GL:getItemIDFromLink(itemLink), BidDetails.amount, BidDetails.player, nil, nil, nil, awardChecksum);
         GL:unmute();

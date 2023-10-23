@@ -19,6 +19,8 @@ GL.Interface.GDKP.Distribute.MailCuts = {
     mailErrors = 0,
     sendingMail = false,
     windowName = "Gargul.Interface.GDKP.Distribute.MailCuts.Window",
+
+    cutMailSubject = nil,
 };
 
 ---@type MailCuts
@@ -38,6 +40,7 @@ function MailCuts:_init()
     end
 
     self._initialized = true;
+    self.cutMailSubject = GL.Interface.Identity:build(GL.User.bth).cutMailSubject or L.CUT_MAIL_SUBJECT;
 
     --[[ ERA HAS DIFFERENT EVENTS FOR OPENING / CLOSING THE MAILBOX ]]
     if (not GL.isEra) then
@@ -465,7 +468,7 @@ function MailCuts:mailPlayerCut(player, callback)
     ClearSendMail();
     SetSendMailMoney(outstandingCopper);
 
-    SendMail(GL:nameFormat(player), string.format(L.CUT_MAIL_SUBJECT, gold), L.CUT_MAIL_BODY);
+    SendMail(GL:nameFormat(player), string.format(self.cutMailSubject, gold), L.CUT_MAIL_BODY);
 
     MailDisableTimer = GL.Ace:ScheduleRepeatingTimer(function ()
         self:disableSendButton();
