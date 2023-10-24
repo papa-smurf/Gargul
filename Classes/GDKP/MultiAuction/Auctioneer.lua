@@ -7,8 +7,8 @@ local _, GL = ...;
 local Constants = GL.Data.Constants;
 local CommActions = Constants.Comm.Actions;
 
----@type Settings
-local Settings = GL.Settings;
+---@type GDKPMultiAuctionClient
+local Client;
 
 ---@type DB
 local DB = GL.DB;
@@ -16,13 +16,14 @@ local DB = GL.DB;
 ---@type GDKPPot
 local GDKPPot = GL.GDKP.Pot;
 
----@type GDKPMultiAuctionClient
-local Client;
+---@type Settings
+local Settings = GL.Settings;
 
 ---@class GDKPMultiAuctionAuctioneer
 GL:tableSet(GL, "GDKP.MultiAuction.Auctioneer", {
     _initialized = false,
     waitingForAuctionStart = false,
+    LastBidAt = {},
 
     IDsChangedSinceLastSync = {},
     IDsToAnnounce = {},
@@ -39,7 +40,7 @@ local UI;
 
 --[[ CONSTANTS ]]
 local ENDS_AT_OFFSET = 1697932800;
-local BIDDING_LEEWAY = 2;
+local BIDDING_LEEWAY = 3;
 
 ---@return void
 function Auctioneer:_init()
@@ -137,8 +138,11 @@ function Auctioneer:userIsAllowedToBroadcast(playerID)
         or playerID == GL.User.id
     ) then
         return not GL.User.isInGroup or (
-            GL.User.isLead
-            or GL.User.isMasterLooter
+            -- If the user is severely outdated we won't let him broadcast
+            GL.Version.lastNotBackwardsCompatibleNotice < 1 and (
+                GL.User.isLead
+                or GL.User.isMasterLooter
+            )
         );
     end
 
@@ -431,7 +435,9 @@ function Auctioneer:syncWithRunningSession()
                                 Response.Auctions[auctionID].endsAt = endsAt;
                             end
 
+                            GL:mute();
                             self:announceStart(Response.Auctions, duration, Response.antiSnipe);
+                            GL:unmute();
                             GL:sendChatMessage("I resumed a previous bidding session, double check your bids!", "GROUP");
                         end,
                         focus = true,
@@ -500,6 +506,7 @@ function Auctioneer:announceStart(ItemDetails, duration, antiSnipe)
         return false;
     end
 
+    self.LastBidAt = {};
     self.waitingForAuctionStart = serverTime;
     duration = tonumber(duration) or 0;
     antiSnipe = tonumber(antiSnipe) or 0;
@@ -534,6 +541,8 @@ function Auctioneer:announceStart(ItemDetails, duration, antiSnipe)
         "GROUP"
     ):send();
 
+    GL:sendChatMessage("I started a bidding session. Can't see it? Make sure to download/update Gargul!", "GROUP");
+
     return true;
 end
 
@@ -543,12 +552,13 @@ end
 function Auctioneer:scheduleUpdater()
     GL:interval(.8, "GDKP.MultiAuction.auctionUpdated", function ()
         local serverTime = GetServerTime();
-        local signedLeeway = BIDDING_LEEWAY * -1;
-
         -- Check if there are newly closed auctions
         for auctionID, Details in pairs(Client.AuctionDetails.Auctions or {}) do
+            local lastBidAt = self.LastBidAt[auctionID] or serverTime - BIDDING_LEEWAY - 1;
+
             if (Details.endsAt > 0
-                and Details.endsAt - serverTime <= signedLeeway
+                and serverTime - Details.endsAt > BIDDING_LEEWAY
+                and serverTime - lastBidAt > BIDDING_LEEWAY
             ) then
                 self:closeAuction(auctionID);
             end
@@ -657,7 +667,7 @@ function Auctioneer:processBid(Message)
     local secondsLeft = Client.AuctionDetails.Auctions[auctionID].endsAt - serverTime;
 
     -- This auction has "long" ended
-    if (secondsLeft <= BIDDING_LEEWAY * -1) then
+    if (secondsLeft <= (BIDDING_LEEWAY * -1)) then
         return;
     end
 
@@ -694,6 +704,8 @@ function Auctioneer:processBid(Message)
         Client.AuctionDetails.Auctions[auctionID].iWasOutBid = true;
     end
 
+    self.LastBidAt[auctionID] = GetServerTime();
+
     tinsert(self.IDsChangedSinceLastSync, auctionID);
     Client.AuctionDetails.Auctions[auctionID].CurrentBid = {
         amount = bid,
@@ -727,6 +739,7 @@ function Auctioneer:deleteAuction(auctionID)
         Client.AuctionDetails.Auctions[auctionID].CurrentBid = nil;
     end
 
+    self.LastBidAt[auctionID] = nil;
     tinsert(self.IDsChangedSinceLastSync, auctionID);
 end
 
@@ -749,6 +762,7 @@ function Auctioneer:closeAuction(auctionID)
         GL:unmute();
     end
 
+    self.LastBidAt[auctionID] = nil;
     Client.AuctionDetails.Auctions[auctionID].endsAt = 0;
     tinsert(self.IDsChangedSinceLastSync, auctionID);
 end
@@ -766,6 +780,8 @@ function Auctioneer:clearBid(auctionID)
 
     Client.AuctionDetails.Auctions[auctionID].CurrentBid = nil;
     Client.AuctionDetails.Auctions[auctionID].iWasOutBid = false;
+
+    self.LastBidAt[auctionID] = nil;
     tinsert(self.IDsChangedSinceLastSync, auctionID);
 end
 

@@ -777,6 +777,7 @@ function ClientInterface:build()
                 CountDownBar:SetDuration(time);
                 CountDownBar:SetColor(.8, .8, .8, .3); -- Reset color to gray
                 CountDownBar:Set("type", "GDKP_MULTI_AUCTION_COUNTDOWN");
+                --CountDownBar:Set("originalDuration", time);
                 CountDownBar:Start();
                 CountDownBar:SetFrameStrata(AuctionRow:GetFrameStrata());
                 CountDownBar:SetFrameLevel(AuctionRow:GetFrameLevel() - 1);
@@ -797,6 +798,8 @@ function ClientInterface:build()
                     if (CountDownBar.running) then
                         CountDownBar:Stop();
                     end
+
+                    CountDownBar = nil;
                 end
             end
 
@@ -1124,9 +1127,10 @@ function ClientInterface:refresh(forceFilterAndSort)
     forceFilterAndSort = forceFilterAndSort == true;
     local rowsChanged = false;
     local serverTime = GetServerTime();
-    for _, Details in pairs(Client.AuctionDetails.Auctions or {}) do
+    for auctionID, Details in pairs(Client.AuctionDetails.Auctions or {}) do
+        local AuctionRow = self.AuctionRows[auctionID];
+
         (function()
-            local AuctionRow = self.AuctionRows[Details.auctionID];
 
             if (not AuctionRow) then
                 rowsChanged = true;
@@ -1136,30 +1140,64 @@ function ClientInterface:refresh(forceFilterAndSort)
 
             --- We need to update the timer bar
             if (AuctionRow._Details.endsAt ~= Details.endsAt) then
+                AuctionRow._Details.endsAt = Details.endsAt;
+
+                -- The auction was deleted, stop the countdown and remove the auction row
                 if (Details.endsAt <= -1) then
                     rowsChanged = true;
+                    AuctionRow.stopCountdown();
+                    return;
                 end
 
-                if (AuctionRow.CountDownBar
-                    and AuctionRow.CountDownBar.SetDuration
-                ) then
+                -- The auction was closed, stop the countdown
+                if (Details.endsAt == 0) then
                     AuctionRow.stopCountdown();
-                    AuctionRow._Details.endsAt = Details.endsAt;
+                    return;
+                end
 
-                    if (Details.endsAt > serverTime) then
-                        -- The .1 second delay is necessary since stopping the bar can sometimes occur after creating a new one
-                        GL:after(.1, "GDKP_MULTI_AUCTION_CLIENT_ADD_BAR_FOR_" .. Details.auctionID, function ()
-                            AuctionRow.addCountDownBar(Details.endsAt - serverTime);
-                            self:setAuctionBarColor(AuctionRow, Details);
+                -- Shouldn't be possible, but still stop the countdown
+                if (Details.endsAt <= serverTime) then
+                    AuctionRow.stopCountdown();
+                    return;
+                end
+
+                local CountDownBar = AuctionRow.CountDownBar;
+
+                -- Make absolutely sure the bar is not stopped or stopping before we increase its duration
+                if (type(CountDownBar) == "table"
+                    and CountDownBar.Get
+                    and CountDownBar:Get("type") == "GDKP_MULTI_AUCTION_COUNTDOWN"
+                    and not CountDownBar:Get("stopping")
+                    and CountDownBar.running
+                    and CountDownBar.remaining > 0
+                ) then
+                    local duration = Details.endsAt - serverTime;
+                    CountDownBar:SetDuration(duration);
+                    --CountDownBar:Start(CountDownBar:Get("originalDuration") or duration);
+                    CountDownBar:Start();
+                    self:setAuctionBarColor(AuctionRow, Details);
+                elseif (not self.AuctionRows[auctionID].addingBar) then
+                    AuctionRow.stopCountdown();
+
+                    self.AuctionRows[auctionID].addingBar = true;
+                    GL:after(.5, "GDKP_MULTI_AUCTION_CLIENT_ADD_BAR_FOR_" .. auctionID, function ()
+                        AuctionRow.addCountDownBar(Client.AuctionDetails.Auctions[auctionID].endsAt - GetServerTime());
+                        self:setAuctionBarColor(AuctionRow, Details);
+
+                        GL:after(.2, "GDKP_MULTI_AUCTION_CLIENT_STOP_ADDING_BAR_FOR_" .. auctionID, function ()
+                            self.AuctionRows[auctionID].addingBar = false;
                         end);
-                    end
+                    end);
                 end
             else
                 self:setAuctionBarColor(AuctionRow, Details);
             end
 
-            AuctionRow.updateStatus();
         end)();
+
+        if (AuctionRow and AuctionRow.updateStatus) then
+            AuctionRow.updateStatus();
+        end
     end
 
     if (rowsChanged or forceFilterAndSort) then

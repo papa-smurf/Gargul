@@ -14,6 +14,7 @@ GL.Interface.GroupVersionCheck = {
     windowName = "Gargul.Interface.GroupVersionCheck",
 
     Results = {
+        Ignored = {},
         UpToDate = {},
         Outdated = {},
         Unresponsive = {},
@@ -301,6 +302,7 @@ function GroupVersionCheck:refresh()
     local Window = self:getWindow() or self:build();
 
     self.Results = {
+        Ignored = {},
         UpToDate = {},
         Outdated = {},
         Unresponsive = {},
@@ -320,6 +322,20 @@ function GroupVersionCheck:refresh()
         });
 
         return;
+    end
+
+    -- Check if there are any players in our raid that we have on our ignore list
+    if (GL.User.isInGroup) then
+        local numberOfIgnoredPlayers = C_FriendList.GetNumIgnores();
+        if (numberOfIgnoredPlayers > 0) then
+            for i = 1, numberOfIgnoredPlayers do
+                local player = C_FriendList.GetIgnoreName(i);
+
+                if (player and GL.User:unitInGroup(player)) then
+                    tinsert(self.Results.Ignored, GL:nameFormat{ name = player, forceRealm = true, func = strlower });
+                end
+            end
+        end
     end
 
     for key, ItemRow in pairs(self.PlayerRows or {}) do
@@ -365,11 +381,20 @@ function GroupVersionCheck:refresh()
 
         local Status = PlayerRow._Status;
 
+        -- This person is offline, no need to check his version
         if (not Member.online) then
             addOffline(Member.name);
 
             Status:SetText(L.VERSION_CHECK_STATUS_OFFLINE);
             Status:SetColor("GRAY");
+            return;
+
+        -- This person is on our ignore list so we can't check his version
+        elseif (GL:inTable(self.Results.Ignored, Member.fqn)) then
+            Status:SetText(L.VERSION_CHECK_STATUS_IGNORED);
+            Status:SetColor("AQUA");
+
+            addUnresponsive(Member.name);
             return;
         end
 

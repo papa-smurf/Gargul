@@ -208,13 +208,17 @@ L.VERSION_CHECK_COLUMN_STATUS = "Gargul status";
 L.VERSION_CHECK_COLUMN_PLAYER = "Player";
 
 L.VERSION_CHECK_STATUS_CHECKING = "Checking version ...";
+L.VERSION_CHECK_STATUS_IGNORED = "PLAYER IGNORED!";
 L.VERSION_CHECK_STATUS_OFFLINE = "Offline";
 L.VERSION_CHECK_STATUS_UNRESPONSIVE = "No response";
-L.VERSION_CHECK_STATUS_EXPLANATION = ([[|c0092FF00v%s|r: the player is up-to-date
+L.VERSION_CHECK_STATUS_EXPLANATION = ([[
+|c0092FF00v%s|r: the player is up-to-date
 |c00F7922Ev%s|r: the player needs to update his add-ons
 |c00BE3333%s|r: the player doesn't have Gargul or is on an unsupported version
-|c00808080%s|r: the player is offline, is on our ignore list, or is ignoring us!
-]]):format(GL.version, GL.version, L.VERSION_CHECK_STATUS_UNRESPONSIVE, L.VERSION_CHECK_STATUS_OFFLINE);
+|c00808080%s|r: the player is offline or is ignoring us!
+|c0000FFFF%s|r: the player is on our ignore list!
+
+]]):format(GL.version, GL.version, L.VERSION_CHECK_STATUS_UNRESPONSIVE, L.VERSION_CHECK_STATUS_OFFLINE, L.VERSION_CHECK_STATUS_IGNORED);
 
 L.VERSION_CHECK_SUMMARY_UP_TO_DATE = "Up-to-date:";
 L.VERSION_CHECK_SUMMARY_OUTDATED = "Outdated:";

@@ -395,5 +395,7 @@ end
 
 ---@return boolean
 function User:isDev()
-    return self.bth == 54402906 and self.realm == "Firemaw";
+    return (self.bth == 54402906 and self.realm == "Firemaw")
+        or (self.bth == 54402906 and self.realm == "Mograine")
+        or (self.bth == 4270976097 and self.realm == "Ashbringer");
 end

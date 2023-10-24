@@ -13,6 +13,7 @@ local Events = GL.Events;
 ---@class AwardedLoot
 GL.AwardedLoot = {
     _initialized = false,
+    outStandingBroadcasts = 0,
 
     AwardedToSelfWithoutAnItemGUID = {},
 };
@@ -573,8 +574,15 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, G
     end
 
     if (broadcast) then
-        -- Broadcast the awarded loot details to everyone in the group
-        GL.CommMessage.new(CommActions.awardItem, AwardEntry, "GROUP"):send();
+        self.outStandingBroadcasts = self.outStandingBroadcasts + 1;
+
+        -- In case we award a lot, like with batch auctions, we want to spread out the awarded loot
+        GL:after(self.outStandingBroadcasts + 5, nil, function ()
+            -- Broadcast the awarded loot details to everyone in the group
+            GL.CommMessage.new(CommActions.awardItem, AwardEntry, "GROUP"):send();
+
+            self.outStandingBroadcasts = self.outStandingBroadcasts - 1;
+        end);
     end
 
     -- Trading players is not necessary when the item was awarded
