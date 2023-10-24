@@ -1190,6 +1190,10 @@ function Interface:addTooltip(Owner, Lines, anchor)
     end
 
     Owner:HookScript("OnEnter", function()
+        if (Owner:GetEffectiveAlpha() == 0) then
+            return;
+        end
+
         GameTooltip:SetOwner(Owner, "ANCHOR_" .. anchor);
 
         if (isItemLink) then

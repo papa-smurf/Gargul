@@ -1013,10 +1013,11 @@ function ClientInterface:filterAndSort()
 
     ---@param ItemRow Frame
     for auctionID, ItemRow in pairs(self.AuctionRows or {}) do
-        ItemRow:ClearAllPoints();
         ItemRow:SetAlpha(0);
-        ItemRow:SetHeight(0);
-        ItemRow:SetPoint("TOPLEFT", AuctionHolder, "TOPLEFT", -5000, 5000);
+        ItemRow:SetHeight(1);
+        ItemRow.Icon:SetSize(1, 1);
+        ItemRow:ClearAllPoints();
+        ItemRow:SetPoint("BOTTOMRIGHT", AuctionHolder, "BOTTOMRIGHT");
 
         (function()
             -- Make sure we have all the required data and the auction is still active
@@ -1084,6 +1085,7 @@ function ClientInterface:filterAndSort()
         ItemRow:ClearAllPoints();
         ItemRow:SetAlpha(1);
         ItemRow:SetHeight(ITEM_ROW_HEIGHT);
+        ItemRow.Icon:SetSize(ITEM_ROW_HEIGHT, ITEM_ROW_HEIGHT);
         ItemRow:SetPoint("TOPLEFT", AuctionHolder, "TOPLEFT", 20, (rowsShown * ITEM_ROW_HEIGHT) * -1);
         ItemRow:SetPoint("RIGHT", AuctionHolder, "RIGHT", not GL.elvUILoaded and 0 or -4, 0);
 

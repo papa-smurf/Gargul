@@ -317,7 +317,7 @@ function AuctioneerUI:build()
     });
 
     --[[ PREPARE THE MINIMIZED VERSION OF THE WINDOW ]]
-    Window.Minimized:SetHeight(110);
+    Window.Minimized:SetHeight(70);
     Window.Minimized:SetWidth(150);
 
     ---@type Button
@@ -348,22 +348,13 @@ function AuctioneerUI:build()
     Window.Minimized.StopButton = MinimizedStopButton;
 
     ---@type Button
-    local OpenAuctioneerButton = Interface:dynamicPanelButton(Window.Minimized, L.AUCTIONEER);
-    OpenAuctioneerButton:SetPoint("TOPLEFT", Window.Minimized, "TOPLEFT", 20, -34);
-    OpenAuctioneerButton:SetPoint("TOPRIGHT", Window.Minimized, "TOPRIGHT", -20, 0);
-    OpenAuctioneerButton:SetScript("OnClick", function ()
+    local MinimizedOpenButton = Interface:dynamicPanelButton(Window.Minimized, L.OPEN_AUCTIONEER);
+    MinimizedOpenButton:SetPoint("TOPLEFT", Window.Minimized, "TOPLEFT", 20, -34);
+    MinimizedOpenButton:SetPoint("TOPRIGHT", Window.Minimized, "TOPRIGHT", -20, 0);
+    MinimizedOpenButton:SetScript("OnClick", function ()
         self:open();
     end);
-    Window.Minimized.OpenButton = OpenAuctioneerButton;
-
-    ---@type Button
-    local OpenMultiAuctionButton = Interface:dynamicPanelButton(Window.Minimized, L.MULTI_AUCTION);
-    OpenMultiAuctionButton:SetPoint("TOPLEFT", OpenAuctioneerButton, "BOTTOMLEFT", 0, -4);
-    OpenMultiAuctionButton:SetPoint("TOPRIGHT", OpenAuctioneerButton, "BOTTOMRIGHT", 0, -4);
-    OpenMultiAuctionButton:SetScript("OnClick", function ()
-        Interface.GDKP.MultiAuction.Auctioneer:open();
-    end);
-    Window.Minimized.OpenButton = OpenMultiAuctionButton;
+    Window.Minimized.OpenButton = MinimizedOpenButton;
 
     ---@type EditBox
     local ItemInput;
@@ -829,7 +820,7 @@ function AuctioneerUI:build()
             secondsRemaining = math.max(secondsRemaining, 0);
             StopButton:SetText(GL:strPadRight(string.format("%s %ss", L.STOP, secondsRemaining), " ", string.len(L.STOP) + 5));
             MinimizedStopButton:SetText(string.format("%s %ss", L.STOP, secondsRemaining));
-            OpenMultiAuctionButton:Hide();
+            MinimizedOpenButton:Hide();
             MinimizedStopButton:Show();
         end, .2);
     end;

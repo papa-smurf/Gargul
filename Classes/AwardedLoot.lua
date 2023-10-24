@@ -577,7 +577,7 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, G
         self.outStandingBroadcasts = self.outStandingBroadcasts + 1;
 
         -- In case we award a lot, like with batch auctions, we want to spread out the awarded loot
-        GL:after(self.outStandingBroadcasts + 5, nil, function ()
+        GL:after(self.outStandingBroadcasts + 10, nil, function ()
             -- Broadcast the awarded loot details to everyone in the group
             GL.CommMessage.new(CommActions.awardItem, AwardEntry, "GROUP"):send();
 
