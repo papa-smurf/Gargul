@@ -1190,7 +1190,9 @@ function Interface:addTooltip(Owner, Lines, anchor)
     end
 
     Owner:HookScript("OnEnter", function()
-        if (Owner:GetEffectiveAlpha() == 0) then
+        if (Owner.GetEffectiveAlpha
+            and Owner:GetEffectiveAlpha() == 0
+        ) then
             return;
         end
 
