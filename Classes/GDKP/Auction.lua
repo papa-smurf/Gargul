@@ -1202,7 +1202,7 @@ function Auction:announceStart(itemLink, minimumBid, minimumIncrement, duration,
             minimumIncrement = minimumIncrement,
             duration = duration,
             antiSnipe = antiSnipe,
-            bth = GL.User.bth,
+            bth = GL.User:bth(),
             Bids = Bids,
             TopBid = TopBid,
             Settings = {
@@ -1487,7 +1487,7 @@ function Auction:start(CommMessage)
 
         -- Don't show the bid UI if the user disabled it
         if (Settings:get("GDKP.showBidWindow")) then
-            GL.Interface.GDKP.Bidder:show(duration, Details.link, Details.icon, bth);
+            GL.Interface.GDKP.Bidder:show(duration, Details.link, Details.icon, content.bth);
         end
 
         -- Announce auction start and stop

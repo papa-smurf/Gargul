@@ -50,15 +50,26 @@ function User:_init()
 
     -- fqn stands for Fully Qualified Name
     self.fqn = GL:addRealm(self.name, self.realm);
-    self.bth = "";
-
-    -- This is used for the isDev flag only
-    if (type(C_BattleNet) == "table" and C_BattleNet.GetAccountInfoByGUID) then
-        self.bth = GL:stringHash(GL:tableGet(C_BattleNet.GetAccountInfoByGUID(self.id) or {}, "battleTag", ""));
-    end
 
     -- Keep track of when our group setup changed
     GL.Events:register("UserGroupRosterUpdatedListener", "GROUP_ROSTER_UPDATE", function () self:groupSetupChanged(); end);
+end
+
+---@return string
+function User:bth()
+    if (type(C_BattleNet) ~= "table" or not C_BattleNet.GetAccountInfoByGUID) then
+        return "";
+    end
+
+    local bTag = GL:tableGet(C_BattleNet.GetAccountInfoByGUID(self.id) or {}, "battleTag", nil);
+    if (not bTag or type(bTag) ~= "string" or GL:empty(bTag)) then
+        return "";
+    end
+
+    local firtsHalf = strsub(bTag, 1, ceil(strlen(bTag) / 2));
+    local secondHalf = strsub(bTag, ceil(strlen(bTag) / 2) * -1);
+
+    return ("%s-%s"):format(GL:stringHash(bTag), GL:stringHash(secondHalf .. firtsHalf));
 end
 
 -- Refresh the User's details after the group
@@ -395,7 +406,5 @@ end
 
 ---@return boolean
 function User:isDev()
-    return (self.bth == 54402906 and self.realm == "Firemaw")
-        or (self.bth == 54402906 and self.realm == "Mograine")
-        or (self.bth == 4270976097 and self.realm == "Ashbringer");
+    return false;
 end

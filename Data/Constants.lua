@@ -162,7 +162,6 @@ GL.Data.Constants = {
         Contributors = {
             "Arvada",
             "Codzima",
-            "Curnil",
             "DingoGDKP",
             "Jadedspirit",
             "Lantis",
@@ -192,10 +191,8 @@ GL.Data.Constants = {
             "Vejusatko",
         },
         Legendary = {
-            "Therueed",
-            "Cuckster",
-            "Freezythree",
-            "TiredReyun",
+            "JoeExoToxiC",
+            "Steel-Whitemane",
         },
     },
 

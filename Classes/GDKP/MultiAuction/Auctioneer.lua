@@ -536,7 +536,7 @@ function Auctioneer:announceStart(ItemDetails, duration, antiSnipe)
             ItemDetails = ItemDetails,
             endsAt = endsAt,
             antiSnipe = antiSnipe,
-            bth = GL.User.bth,
+            bth = GL.User:bth(),
         },
         "GROUP"
     ):send();

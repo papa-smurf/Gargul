@@ -40,7 +40,7 @@ function MailCuts:_init()
     end
 
     self._initialized = true;
-    self.cutMailSubject = GL.Interface.Identity:build(GL.User.bth).cutMailSubject or L.CUT_MAIL_SUBJECT;
+    self.cutMailSubject = GL.Interface.Identity:build(GL.User:bth()).cutMailSubject or L.CUT_MAIL_SUBJECT;
 
     --[[ ERA HAS DIFFERENT EVENTS FOR OPENING / CLOSING THE MAILBOX ]]
     if (not GL.isEra) then

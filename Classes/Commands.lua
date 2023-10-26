@@ -149,13 +149,14 @@ GL.Commands = GL.Commands or {
 
         -- Used to get a bnet ID hash for identification purposes
         bnid = function ()
-            if (GL:stringHash("") == GL.User.bth) then
-                print("bth not set");
+            local bth = GL.User:bth();
+            if (GL:empty(bth)) then
+                print("Try again in a couple seconds!");
 
                 return;
             end
 
-            print(GL.User.bth);
+            print(bth);
         end,
 
         -- Open the window for rolling off items

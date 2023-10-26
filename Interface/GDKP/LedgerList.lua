@@ -274,7 +274,7 @@ function LedgerList:build()
 
     --[[ SHOW THE IDENTITY OF THE ORGANIZER ]]
     -- Determine which identity to activate
-    local Identity = Interface.Identity:buildForLedger(GL.User.bth);
+    local Identity = Interface.Identity:buildForLedger(GL.User:bth());
     Identity:SetParent(Window);
     Identity:SetPoint("CENTER", Balance, "CENTER");
     Identity:SetPoint("LEFT", Balance, "RIGHT", 60, 0);
