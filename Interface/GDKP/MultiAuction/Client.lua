@@ -152,8 +152,44 @@ function ClientInterface:build()
         end,
     };
 
+    local Sounds = LibStub("LibSharedMedia-3.0"):List("sound");
+    local SoundOptions = {{
+        text = "None",
+        hideOnClick = true,
+        isRadio = true,
+        checked = function ()
+            return GL.Settings:get("GDKP.outbidSound") == "None";
+        end,
+        func = function (Entry)
+            Entry.checked = true;
+            GL.Settings:set("GDKP.outbidSound", "None");
+        end,
+    }};
+
+    for _, name in pairs(Sounds or {}) do
+        if (not GL:iEquals(name, "None")) then
+            tinsert(SoundOptions, {
+                text = name,
+                hideOnClick = true,
+                isRadio = true,
+                checked = function ()
+                    return GL.Settings:get("GDKP.outbidSound") == name;
+                end,
+                func = function (Entry)
+                    local sound = LibStub("LibSharedMedia-3.0"):Fetch("sound", name);
+                    GL:playSound(sound);
+
+                    Entry.checked = true;
+                    GL.Settings:set("GDKP.outbidSound", name);
+                end,
+            });
+        end
+    end
+
     --[[ THE SETTINGS MENU IN THE TOP LEFT OF THE WINDOW ]]
     Interface:addWindowOptions(Window, {
+        {text = "Play sound when outbid", notCheckable = true, SubMenu = SoundOptions, },
+        "divider",
         { text = L.CHANGE_SCALE, notCheckable = true, func = function ()
             Interface:openScaler(Window);
             CloseMenus();

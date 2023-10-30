@@ -541,7 +541,12 @@ function Auctioneer:announceStart(ItemDetails, duration, antiSnipe)
         "GROUP"
     ):send();
 
-    GL:sendChatMessage("I started a bidding session. Can't see it? Make sure to download/update Gargul!", "GROUP");
+    local channel = "GROUP";
+    if (GL.User.isInRaid and GL.User.hasAssist) then
+        channel = "RAID_WARNING";
+    end
+
+    GL:sendChatMessage("I started a bidding session. Can't see it? Make sure to download/update Gargul!", channel);
 
     return true;
 end
@@ -651,7 +656,7 @@ end
 ---@param Message CommMessage
 ---@return void
 function Auctioneer:processBid(Message)
-    if (Message.Sender.isSelf or not self:auctionStartedByMe()) then
+    if (not self:auctionStartedByMe()) then
         return;
     end
 
@@ -701,6 +706,8 @@ function Auctioneer:processBid(Message)
         and not Message.Sender.isSelf
         and GL:iEquals(GL:tableGet(Client.AuctionDetails.Auctions[auctionID], "CurrentBid.player", ""), GL.User.fqn)
     ) then
+        Client:outbidNotification();
+
         Client.AuctionDetails.Auctions[auctionID].iWasOutBid = true;
     end
 

@@ -171,6 +171,7 @@ function Client:bid(auctionID, amount)
         Auctioneer:processBid({
             Sender = {
                 fqn = GL.User.fqn,
+                isSelf = true,
             },
             content = {
                 auctionID = auctionID,
@@ -225,17 +226,19 @@ function Client:updateBids(Message)
                 if (amount < 1) then
                     Client.AuctionDetails.Auctions[auctionID].iWasOutBid = false;
 
-                    -- We're top bidder again
+                -- We're top bidder again
                 elseif (Client.AuctionDetails.Auctions[auctionID].iWasOutBid
                     and bidderIsMe
                 ) then
                     Client.AuctionDetails.Auctions[auctionID].iWasOutBid = false;
 
-                    -- We were top bidder but not anymore
+                -- We were top bidder but not anymore
                 elseif (not Client.AuctionDetails.Auctions[auctionID].iWasOutBid
                     and not bidderIsMe
                     and GL:iEquals(GL:tableGet(Client.AuctionDetails.Auctions[auctionID], "CurrentBid.player", ""), GL.User.fqn)
                 ) then
+                    Client:outbidNotification();
+
                     Client.AuctionDetails.Auctions[auctionID].iWasOutBid = true;
                 end
             end
@@ -290,4 +293,23 @@ function Client:minimumBidForAuction(auctionID)
 
     local currentBid = GL:tableGet(Auction, "CurrentBid.amount");
     return currentBid and currentBid + Auction.increment or Auction.minimum;
+end
+
+--- Let the user know that he was outbid
+---
+---@return void
+function Client:outbidNotification()
+    -- Flash the game icon in case the player alt-tabbed
+    FlashClientIcon();
+
+    -- Play a sound if the user enabled it
+    local outbidSound = GL.Settings:get("GDKP.outbidSound");
+    if (GL:empty(outbidSound)) then
+        return;
+    end
+
+    GL:after(2, "GDKP.MultiAuction.OutbidNotification", function ()
+        local sound = LibStub("LibSharedMedia-3.0"):Fetch("sound", outbidSound);
+        GL:playSound(sound);
+    end);
 end
