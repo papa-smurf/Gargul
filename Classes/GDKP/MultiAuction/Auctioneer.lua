@@ -424,6 +424,13 @@ function Auctioneer:syncWithRunningSession()
                         return;
                     end
 
+                    -- There are active auctions already, no need to resume anything
+                    for _, Details in pairs(Client.AuctionDetails.Auctions or {}) do
+                        if (Details.endsAt > 0) then
+                            return;
+                        end
+                    end
+
                     GL.Interface.Dialogs.ConfirmWithSingleInputDialog:open{
                         question = "You left during your GDKP bidding session. In order to resume it you have to provide a new bid time (in seconds) for any unsold items",
                         inputValue = 60,

@@ -15,7 +15,7 @@ GL.Interface.Identity = {
     --[[ ================== DEFAULT ================== ]]
     [DEFAULT] = {
         id = DEFAULT,
-        url = "https://discord.gg/D3mDhYPVzf",
+        url = "https://discord.gg/gX3QUWE5cq",
         urlInfo = "Visit the URL below to learn more about personalizing Gargul GDKPs",
         tooltip = "Your logo here? Click for more info!",
         cutMailSubject = L.CUT_MAIL_SUBJECT,
@@ -178,6 +178,175 @@ GL.Interface.Identity = {
                     end
                 end);
             end
+
+            return Window, function (Element, Anchor)
+                Element:SetPoint("TOPRIGHT", Anchor, "TOPLEFT", -4, 0);
+            end;
+        end,
+    },
+
+    --[[ ================== STEEL ================== ]]
+    ["2728411460-1372754882"] = {
+        id = "steel",
+        url = "https://discord.gg/928Dc9Pb",
+        urlInfo = "Follow Steel, Whitemane's most popular GDKP host!",
+        tooltip = "Follow Steel on Discord",
+        cutMailSubject = "STEEL GDKP: %sg",
+
+        ---@return Frame
+        ledger = function()
+            local Identity = GL.Interface.Identity["2728411460-1372754882"];
+
+            ---@type Frame
+            local Window = CreateFrame("Frame", nil, UIParent);
+            Window:SetSize(80, 80);
+            Interface:addTooltip(Window, Identity.tooltip, "TOP");
+
+            ---@type Texture
+            local Logo = Window:CreateTexture();
+            Logo:SetTexture("Interface/AddOns/Gargul/Assets/Identities/" .. Identity.id);
+            Logo:SetAllPoints();
+
+            Window:SetScript("OnMouseUp", function(_, button)
+                if (button == 'LeftButton') then
+                    GL.Interface.Dialogs.HyperlinkDialog:open{
+                        description = Identity.urlInfo,
+                        hyperlink = Identity.url,
+                    };
+                end
+            end);
+
+            LCG.PixelGlow_Stop(Window);
+            LCG.PixelGlow_Start(Window, {.59, .5, .82, 1}, 26, .02, 5, 2);
+
+            return Window;
+        end,
+
+        ---@return Frame
+        multiAuctionClient = function ()
+            local Identity = GL.Interface.Identity["2728411460-1372754882"];
+
+            ---@type Frame
+            local Window = CreateFrame("Frame", nil, UIParent, "BackdropTemplate");
+            Window:SetSize(110, 110);
+            Window:SetBackdrop(_G.BACKDROP_DARK_DIALOG_32_32);
+            Interface:addTooltip(Window, Identity.tooltip, "TOP");
+
+            ---@type Texture
+            local Logo = Window:CreateTexture();
+            Logo:SetPoint("CENTER", Window, "CENTER", 0, -1);
+            Logo:SetSize(74, 74);
+            Logo:SetTexture("Interface/AddOns/Gargul/Assets/Identities/" .. Identity.id);
+
+            ---@type FontString
+            local TextTop = Interface:createFontString(Window, "FOLLOW");
+            TextTop:SetPoint("CENTER", Window, "CENTER");
+            TextTop:SetPoint("TOP", Window, "TOP", 0, -13);
+            TextTop:SetFont(1.1, "OUTLINE");
+
+            ---@type FontString
+            local TextBottom = Interface:createFontString(Window, "STEEL");
+            TextBottom:SetPoint("CENTER", Window, "CENTER");
+            TextBottom:SetPoint("BOTTOM", Window, "BOTTOM", 0, 11);
+            TextBottom:SetFont(1.1, "OUTLINE");
+
+            Window:SetScript("OnMouseUp", function(_, button)
+                if (button == 'LeftButton') then
+                    GL.Interface.Dialogs.HyperlinkDialog:open{
+                        description = Identity.urlInfo,
+                        hyperlink = Identity.url,
+                    };
+                end
+            end);
+
+            return Window;
+        end,
+
+        ---@return Frame
+        bidder = function ()
+            local Identity = GL.Interface.Identity["2728411460-1372754882"];
+
+            ---@type Frame
+            local Window = CreateFrame("Frame", nil, UIParent);
+            Window:SetSize(92, 98);
+
+            local Texture = Window:CreateTexture(nil, "BACKGROUND");
+            Texture:SetColorTexture(0, 0, 0, .6);
+            Texture:SetPoint("TOPLEFT", Window, "TOPLEFT", 0, -2);
+            Texture:SetPoint("TOPRIGHT", Window, "TOPRIGHT", 0, -2);
+            Texture:SetPoint("BOTTOMLEFT", Window, "BOTTOMLEFT");
+            Texture:SetPoint("BOTTOMRIGHT", Window, "BOTTOMRIGHT");
+
+            ---@type Texture
+            local Logo = Window:CreateTexture();
+            Logo:SetPoint("CENTER", Window, "CENTER");
+            Logo:SetSize(72, 72);
+            Logo:SetTexture("Interface/AddOns/Gargul/Assets/Identities/" .. Identity.id);
+
+            ---@type FontString
+            local TextTop = Interface:createFontString(Window, "FOLLOW");
+            TextTop:SetPoint("CENTER", Window, "CENTER");
+            TextTop:SetPoint("TOP", Window, "TOP", 0, -5);
+            TextTop:SetFont(1.2, "OUTLINE");
+
+            ---@type FontString
+            local TextBottom = Interface:createFontString(Window, "STEEL");
+            TextBottom:SetPoint("CENTER", Window, "CENTER");
+            TextBottom:SetPoint("BOTTOM", Window, "BOTTOM", 0, 2);
+            TextBottom:SetFont(1.2, "OUTLINE");
+
+            -- Let raid leaders know that they can personalize Gargul
+            if (not GL.User.isInGroup or (GL.User.isMasterLooter or GL.User.isLead)) then
+                Interface:addTooltip(Window, Identity.tooltip, "TOP");
+
+                Window:SetScript("OnMouseUp", function(_, button)
+                    if (button == 'LeftButton') then
+                        GL.Interface.Dialogs.HyperlinkDialog:open{
+                            description = Identity.urlInfo,
+                            hyperlink = Identity.url,
+                        };
+                    end
+                end);
+            end
+
+            return Window;
+        end,
+
+        ---@return Frame
+        roller = function ()
+            local Identity = GL.Interface.Identity["2728411460-1372754882"];
+
+            ---@type Frame
+            local Window = CreateFrame("Frame", nil, UIParent);
+            Window:SetSize(48, 48);
+
+            local Texture = Window:CreateTexture(nil, "BACKGROUND");
+            Texture:SetColorTexture(0, 0, 0, .6);
+            Texture:SetAllPoints(Window)
+
+            ---@type Texture
+            local Logo = Window:CreateTexture();
+            Logo:SetPoint("CENTER", Window, "CENTER");
+            Logo:SetSize(48, 48);
+            Logo:SetTexture("Interface/AddOns/Gargul/Assets/Identities/" .. Identity.id);
+
+            ---@type FontString
+            local Text = Interface:createFontString(Window, "STEEL");
+            Text:SetPoint("CENTER", Window, "CENTER");
+            Text:SetPoint("BOTTOM", Window, "BOTTOM", 0, -5);
+            Text:SetFont(1.1, "OUTLINE");
+
+            -- Let raid leaders know that they can personalize Gargul
+            Interface:addTooltip(Window, Identity.tooltip, "TOP");
+
+            Window:SetScript("OnMouseUp", function(_, button)
+                if (button == 'LeftButton') then
+                    GL.Interface.Dialogs.HyperlinkDialog:open{
+                        description = Identity.urlInfo,
+                        hyperlink = Identity.url,
+                    };
+                end
+            end);
 
             return Window, function (Element, Anchor)
                 Element:SetPoint("TOPRIGHT", Anchor, "TOPLEFT", -4, 0);

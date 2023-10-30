@@ -61,6 +61,7 @@ function GroupVersionCheck:build()
         name = self.windowName,
         width = WINDOW_WIDTH,
         height = WINDOW_HEIGHT,
+        hideMinimizeButton = true,
     };
 
     --[[ THE SETTINGS MENU IN THE TOP LEFT OF THE WINDOW ]]

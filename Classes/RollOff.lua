@@ -344,7 +344,7 @@ function RollOff:start(CommMessage)
 
         -- Don't show the roll UI if the user disabled it
         if (GL.Settings:get("Rolling.showRollOffWindow")) then
-            GL.RollerUI:show(time, Details.link, Details.icon, content.note, SupportedRolls, Details.bth);
+            GL.RollerUI:show(time, Details.link, Details.icon, content.note, SupportedRolls, content.bth);
         end
 
         -- Make sure the rolloff stops when time is up

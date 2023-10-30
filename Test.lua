@@ -688,6 +688,11 @@ function Test:identity(itemLinkOrID)
             MultiAuctionClient:ClearAllPoints();
             MultiAuctionClient:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 580, -180);
 
+            local IdentityWindow = GL.Interface.GDKP.MultiAuction.Client.Identity;
+            GameTooltip:SetOwner(IdentityWindow, "ANCHOR_TOP");
+            GameTooltip:AddLine(Identity.tooltip);
+            GameTooltip:Show();
+
             ---@type Frame
             local Bidder = _G["GARGUL_GDKP_BIDDER_WINDOW"];
             Bidder:ClearAllPoints();
