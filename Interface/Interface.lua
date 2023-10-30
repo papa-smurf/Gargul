@@ -381,6 +381,11 @@ function Interface:addCloseButton(Element)
     Close:SetSize(30, 30);
     Interface:addTooltip(Close, L.CLOSE);
 
+    -- Override the default onclick since it taints in combat
+    Close:SetScript("OnClick", function ()
+        Element:Hide();
+    end);
+
     Element.CloseButton = Close;
 end
 
