@@ -95,7 +95,7 @@ GL.Interface.Identity = {
 
             ---@type Frame
             local Window = CreateFrame("Frame", nil, UIParent);
-            Window:SetSize(98, 98);
+            Window:SetSize(92, 98);
 
             local Texture = Window:CreateTexture(nil, "BACKGROUND");
             Texture:SetColorTexture(0, 0, 0, .6);
@@ -180,7 +180,7 @@ GL.Interface.Identity = {
             end
 
             return Window, function (Element, Anchor)
-                Element:SetPoint("TOPLEFT", Anchor, "TOPRIGHT", 0, 0);
+                Element:SetPoint("TOPRIGHT", Anchor, "TOPLEFT", -4, 0);
             end;
         end,
     },

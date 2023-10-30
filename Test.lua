@@ -641,14 +641,14 @@ function Test:identity(itemLinkOrID)
         end
 
         --[[ ROLLOFF ]]
-        GL.RollOff:announceStart(Item.link, 120);
+        GL.RollOff:announceStart(Item.link, 300);
 
         --[[ AUCTION ]]
         GL.GDKP.Auction:announceStart(
             Item.link,
             1000,
             500,
-            120,
+            300,
             60
         );
 
@@ -669,14 +669,42 @@ function Test:identity(itemLinkOrID)
                 minimum = 1000,
                 increment = 500,
             },
-        }, 120, 60);
+        }, 300, 60);
 
         -- Clean admin elements
         GL:after(4,nil, function ()
+            local Identity = GL.Interface.Identity:build(GL.User:bth());
+
+            ---@type Frame
+            local HyperlinkDialog = GL.Interface.Dialogs.HyperlinkDialog:open{
+                description = Identity.urlInfo,
+                hyperlink = Identity.url,
+            }.frame;
+            GL.AceGUI:ClearFocus();
+
+            -- Position elements for easy screenshotting
+            ---@type Frame
             local MultiAuctionClient = GL.Interface.GDKP.MultiAuction.Client:getWindow();
+            MultiAuctionClient:ClearAllPoints();
+            MultiAuctionClient:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 580, -180);
+
+            ---@type Frame
+            local Bidder = _G["GARGUL_GDKP_BIDDER_WINDOW"];
+            Bidder:ClearAllPoints();
+            Bidder:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", 200, 150);
+
+            ---@type Frame
+            local Roller = _G["GargulUI_RollerUI_Window"];
+            Roller:ClearAllPoints();
+            Roller:SetPoint("BOTTOMLEFT", Bidder, "TOPLEFT", -48, 50);
+
+            HyperlinkDialog:ClearAllPoints();
+            HyperlinkDialog:SetPoint("CENTER", Roller, "CENTER");
+            HyperlinkDialog:SetPoint("BOTTOM", Roller, "TOP", 0, 30);
+
+            -- Remove admin elements
             MultiAuctionClient.AdminWindow:Hide();
             MultiAuctionClient.AuctionAdminWindow:Hide();
-
             GL.MasterLooterUI:closeReopenMasterLooterUIButton();
             GL.Interface.GDKP.Auctioneer:closeAuctioneerShortcut();
         end);
