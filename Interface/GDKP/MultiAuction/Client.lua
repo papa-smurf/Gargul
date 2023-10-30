@@ -676,6 +676,7 @@ function ClientInterface:build()
                 end
 
                 BidInput:SetText("");
+                BidInput:ClearFocus();
                 GL.GDKP.MultiAuction.Client:bid(auctionID, bid);
 
                 if (not AuctionRow._Details.isFavorite) then
