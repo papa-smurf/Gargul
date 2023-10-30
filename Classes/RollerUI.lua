@@ -155,9 +155,14 @@ function RollerUI:draw(time, itemLink, itemIcon, note, SupportedRolls, userCanUs
     Window:SetWidth(rollerUIWidth);
 
     ---@type Frame
-    local IdentityWindow = GL.Interface.Identity:buildForRoller(bth);
+    local IdentityWindow, position = GL.Interface.Identity:buildForRoller(bth);
     IdentityWindow:SetParent(Window);
-    IdentityWindow:SetPoint("TOPRIGHT", Window, "TOPLEFT", -4, 0);
+
+    if (type(position) ~= "function") then
+        IdentityWindow:SetPoint("TOPLEFT", Window, "TOPRIGHT", 0, 0);
+    else
+        position(IdentityWindow, Window);
+    end
 
     self:drawCountdownBar(time, itemLink, itemIcon, note, userCanUseItem, rollerUIWidth);
 end

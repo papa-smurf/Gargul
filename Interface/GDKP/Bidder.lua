@@ -291,9 +291,14 @@ function Bidder:draw(time, itemLink, itemIcon, bth)
     end);
 
     ---@type Frame
-    local IdentityWindow = Interface.Identity:buildForBidder(bth);
+    local IdentityWindow, position = Interface.Identity:buildForBidder(bth);
     IdentityWindow:SetParent(Window);
-    IdentityWindow:SetPoint("TOPRIGHT", Window, "TOPLEFT", -6, 2);
+
+    if (type(position) ~= "function") then
+        IdentityWindow:SetPoint("TOPRIGHT", Window, "TOPLEFT", -6, 2);
+    else
+        position(IdentityWindow, Window);
+    end
 
     self:refresh();
 

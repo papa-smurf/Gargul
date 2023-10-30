@@ -61,15 +61,21 @@ GL.Interface.Identity = {
 
             ---@type Texture
             local Logo = Window:CreateTexture();
-            Logo:SetPoint("CENTER", Window, "CENTER", 0, 5);
-            Logo:SetSize(80, 80);
+            Logo:SetPoint("CENTER", Window, "CENTER", 0, -1);
+            Logo:SetSize(74, 74);
             Logo:SetTexture("Interface/AddOns/Gargul/Assets/Identities/" .. Identity.id);
 
             ---@type FontString
-            local Text = Interface:createFontString(Window, "Gargul GDKP");
-            Text:SetPoint("CENTER", Window, "CENTER");
-            Text:SetPoint("BOTTOM", Window, "BOTTOM", 0, 14);
-            Text:SetFont(1.1, "OUTLINE");
+            local TextTop = Interface:createFontString(Window, "Gargul");
+            TextTop:SetPoint("CENTER", Window, "CENTER");
+            TextTop:SetPoint("TOP", Window, "TOP", 0, -13);
+            TextTop:SetFont(1.1, "OUTLINE");
+
+            ---@type FontString
+            local TextBottom = Interface:createFontString(Window, "GDKP");
+            TextBottom:SetPoint("CENTER", Window, "CENTER");
+            TextBottom:SetPoint("BOTTOM", Window, "BOTTOM", 0, 11);
+            TextBottom:SetFont(1.1, "OUTLINE");
 
             Window:SetScript("OnMouseUp", function(_, button)
                 if (button == 'LeftButton') then
@@ -88,21 +94,33 @@ GL.Interface.Identity = {
             local Identity = GL.Interface.Identity.default;
 
             ---@type Frame
-            local Window = CreateFrame("Frame", nil, UIParent, "BackdropTemplate");
-            Window:SetSize(100, 100);
-            Window:SetBackdrop(_G.BACKDROP_DARK_DIALOG_32_32);
+            local Window = CreateFrame("Frame", nil, UIParent);
+            Window:SetSize(98, 98);
+
+            local Texture = Window:CreateTexture(nil, "BACKGROUND");
+            Texture:SetColorTexture(0, 0, 0, .6);
+            Texture:SetPoint("TOPLEFT", Window, "TOPLEFT", 0, -2);
+            Texture:SetPoint("TOPRIGHT", Window, "TOPRIGHT", 0, -2);
+            Texture:SetPoint("BOTTOMLEFT", Window, "BOTTOMLEFT");
+            Texture:SetPoint("BOTTOMRIGHT", Window, "BOTTOMRIGHT");
 
             ---@type Texture
             local Logo = Window:CreateTexture();
-            Logo:SetPoint("CENTER", Window, "CENTER", 0, 5);
-            Logo:SetSize(70, 70);
+            Logo:SetPoint("CENTER", Window, "CENTER");
+            Logo:SetSize(72, 72);
             Logo:SetTexture("Interface/AddOns/Gargul/Assets/Identities/" .. Identity.id);
 
             ---@type FontString
-            local Text = Interface:createFontString(Window, "Gargul GDKP");
-            Text:SetPoint("CENTER", Window, "CENTER");
-            Text:SetPoint("BOTTOM", Window, "BOTTOM", 0, 14);
-            Text:SetFont(1.1, "OUTLINE");
+            local TextTop = Interface:createFontString(Window, "Gargul");
+            TextTop:SetPoint("CENTER", Window, "CENTER");
+            TextTop:SetPoint("TOP", Window, "TOP", 0, -5);
+            TextTop:SetFont(1.2, "OUTLINE");
+
+            ---@type FontString
+            local TextBottom = Interface:createFontString(Window, "GDKP");
+            TextBottom:SetPoint("CENTER", Window, "CENTER");
+            TextBottom:SetPoint("BOTTOM", Window, "BOTTOM", 0, 2);
+            TextBottom:SetFont(1.2, "OUTLINE");
 
             -- Let raid leaders know that they can personalize Gargul
             if (not GL.User.isInGroup or (GL.User.isMasterLooter or GL.User.isLead)) then
@@ -118,7 +136,9 @@ GL.Interface.Identity = {
                 end);
             end
 
-            return Window;
+            return Window, function (Element, Anchor)
+                Element:SetPoint("TOPRIGHT", Anchor, "TOPLEFT", -6, 2);
+            end;
         end,
 
         ---@return Frame
@@ -135,14 +155,14 @@ GL.Interface.Identity = {
 
             ---@type Texture
             local Logo = Window:CreateTexture();
-            Logo:SetPoint("CENTER", Window, "CENTER");
-            Logo:SetSize(48, 48);
+            Logo:SetPoint("CENTER", Window, "CENTER", 0, 1);
+            Logo:SetSize(40, 40);
             Logo:SetTexture("Interface/AddOns/Gargul/Assets/Identities/" .. Identity.id);
 
             ---@type FontString
             local Text = Interface:createFontString(Window, "Gargul");
             Text:SetPoint("CENTER", Window, "CENTER");
-            Text:SetPoint("BOTTOM", Window, "BOTTOM", 0, -5);
+            Text:SetPoint("BOTTOM", Window, "BOTTOM", 1, -5);
             Text:SetFont(1.1, "OUTLINE");
 
             -- Let raid leaders know that they can personalize Gargul
@@ -159,7 +179,9 @@ GL.Interface.Identity = {
                 end);
             end
 
-            return Window;
+            return Window, function (Element, Anchor)
+                Element:SetPoint("TOPLEFT", Anchor, "TOPRIGHT", 0, 0);
+            end;
         end,
     },
 };

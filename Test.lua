@@ -606,3 +606,81 @@ function Test:simulateGroup(numberOfPlayers, includeSelf, includeCurrentGroupMem
     -- Make sure the group member names cache is cleared as well
     GL.User.groupMemberNamesCachedAt = -1;
 end
+
+--[[ Show all identity elements at once for easy screenshotting
+/script _G.Gargul.Test:identity()
+]]
+function Test:identity(itemLinkOrID)
+    itemLinkOrID = itemLinkOrID or 1433;
+
+    GL:onItemLoadDo(itemLinkOrID, function (Item)
+        --[[ GDKP LEDGER ]]
+        do
+            local LedgerList = GL.Interface.GDKP.LedgerList;
+            LedgerList.originalOpen = LedgerList.open;
+
+            ---@return table
+            LedgerList.open = function(_, sessionID)
+                GL:debug("Importer:open");
+                LedgerList.sessionID = sessionID;
+                local Window = _G[LedgerList.windowName] or LedgerList:build();
+                LedgerList:refresh();
+                Window:Show();
+                return Window;
+            end
+
+            UIParent.originalGetWidth = UIParent.GetWidth;
+            UIParent.GetWidth = function ()
+                return floor(UIParent:originalGetWidth() / 2);
+            end
+            GL.Interface.GDKP.LedgerList:open(GL.GDKP.Session:activeSessionID());
+            UIParent.GetWidth = UIParent.originalGetWidth;
+            local Ledger = _G[GL.Interface.GDKP.LedgerList.windowName];
+            Ledger:SetFrameLevel(1);
+            LedgerList.open = LedgerList.originalOpen;
+        end
+
+        --[[ ROLLOFF ]]
+        GL.RollOff:announceStart(Item.link, 120);
+
+        --[[ AUCTION ]]
+        GL.GDKP.Auction:announceStart(
+            Item.link,
+            1000,
+            500,
+            120,
+            60
+        );
+
+        --[[ MULTI-AUCTION ]]
+        GL.GDKP.MultiAuction.Auctioneer:start({
+            {
+                link = Item.link,
+                minimum = 1000,
+                increment = 500,
+            },
+            {
+                link = Item.link,
+                minimum = 1000,
+                increment = 500,
+            },
+            {
+                link = Item.link,
+                minimum = 1000,
+                increment = 500,
+            },
+        }, 120, 60);
+
+        -- Clean admin elements
+        GL:after(4,nil, function ()
+            local MultiAuctionClient = GL.Interface.GDKP.MultiAuction.Client:getWindow();
+            MultiAuctionClient.AdminWindow:Hide();
+            MultiAuctionClient.AuctionAdminWindow:Hide();
+
+            GL.MasterLooterUI:closeReopenMasterLooterUIButton();
+            GL.Interface.GDKP.Auctioneer:closeAuctioneerShortcut();
+        end);
+        --Ledger:SetWidth(floor(UIParent:GetWidth() / 2));
+        --Ledger:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT");
+    end);
+end
