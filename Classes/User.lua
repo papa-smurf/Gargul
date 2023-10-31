@@ -406,5 +406,8 @@ end
 
 ---@return boolean
 function User:isDev()
-    return false;
+    return GL:inTable({
+        "54402906-2451533554",
+        "4270976097-2384770663"
+    }, self:bth());
 end

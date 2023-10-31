@@ -140,7 +140,7 @@ function Version:checkForUpdate(byReadyCheck)
     if (GL.User.isInGroup) then
         GL.CommMessage.new(
             CommActions.checkForUpdate,
-            nil,
+            self.latest,
             "GROUP"
         ):send();
     end
@@ -189,9 +189,9 @@ function Version:replyToUpdateCheck(Message)
 
     self.lastUpdateCheckReplyAt = serverTime;
 
-    if (Message.version
-        and not Version:leftIsNewerThanOrEqualToRight(Message.version, Version.latest)
-    ) then
+    local senderVersionToCheckAgainst = Message.content or Message.version;
+    -- Only send a response if the latest known version of the sender differs from ours
+    if (senderVersionToCheckAgainst ~= Version.latest) then
         Message:respond(Version.latest);
     end
 end

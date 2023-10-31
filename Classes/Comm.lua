@@ -83,7 +83,12 @@ Comm.Actions = {
             return;
         end
 
-        Message:respond(GL.GDKP.MultiAuction.Client:currentSessionHash());
+        local sessionHash = GL.GDKP.MultiAuction.Client:currentSessionHash();
+        if (not sessionHash) then
+            return;
+        end
+
+        Message:respond(sessionHash);
     end,
     [Actions.requestRunningGDKPMultiAuctionDetails] = function (Message)
         local AuctionDetails = GL.GDKP.MultiAuction.Client.AuctionDetails or {};
@@ -214,8 +219,12 @@ function Comm:send(CommMessage, broadcastFinishedCallback, packageSentCallback)
 
     -- Make sure we can keep an eye on comm behavior
     if (GL.User:isDev()) then
-        local actionTitle = GL:tableFlip(Actions)[action] or action;
-        DevTools_Dump(("Action: %s | Payload size: %s | Throttled: %s"):format(tostring(actionTitle), stringLength, throttle and "Y" or "N"));
+        local ActionsByID = GL:tableFlip(Actions);
+        if (action == Actions.response) then
+            GL:xd(("Respond | B: %s | T: %s"):format(stringLength or 0, throttle and "Y" or "N"));
+        else
+            GL:xd(("Send: %s | B: %s | T: %s"):format(tostring(ActionsByID[action] or action), stringLength or 0, throttle and "Y" or "N"));
+        end
     end
 
     GL.Ace:SendCommMessage(self.channel, compressedMessage, distribution, recipient, "BULK", function (_, sent, textlen)
@@ -254,8 +263,7 @@ end
 ---@param distribution string
 ---@return boolean
 function Comm:listen(payload, distribution, playerName)
-    GL:debug(string.format("Received message on %s", GL.Comm.channel));
-
+    local stringLength = string.len(payload);
     payload = GL.CommMessage:decompress(payload);
 
     if (not payload.senderFqn and playerName) then
@@ -352,7 +360,7 @@ function Comm:listen(payload, distribution, playerName)
     -- Add the sender's profile to the payload
     payload.Sender = Sender;
 
-    Comm:dispatch(GL.CommMessage.newFromReceived(payload));
+    Comm:dispatch(GL.CommMessage.newFromReceived(payload), stringLength);
 end
 
 local WarnedAboutCommAction = {};
@@ -360,8 +368,7 @@ local WarnedAboutCommAction = {};
 ---
 ---@param CommMessage CommMessage
 ---@return any
-function Comm:dispatch(CommMessage)
-    GL:debug("Comm:dispatch: '" .. CommMessage.action .. "'");
+function Comm:dispatch(CommMessage, stringLength)
     GL.User:refresh();
 
     local action = CommMessage.action;
@@ -370,6 +377,17 @@ function Comm:dispatch(CommMessage)
     end
 
     if (Comm.Actions[action]) then
+        -- Make sure we can keep an eye on comm behavior
+        if (GL.User:isDev()) then
+            local ActionsByID = GL:tableFlip(Actions);
+            if (action == Actions.response) then
+                local actionID = CommMessage.Box[CommMessage.correspondenceId].action;
+                GL:xd(("Response: %s | B: %s"):format(tostring(ActionsByID[actionID] or actionID), stringLength or 0));
+            else
+                GL:xd(("Received: %s | B: %s"):format(tostring(ActionsByID[action] or action), stringLength or 0));
+            end
+        end
+
         return Comm.Actions[action](CommMessage);
     end
 
