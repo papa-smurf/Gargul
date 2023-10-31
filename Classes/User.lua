@@ -353,6 +353,31 @@ function User:groupMembers()
     };
 end
 
+--- Check if we have active (online) group members
+---
+---@return boolean
+function User:hasActiveGroupMembers()
+    local numberOfGroupMembers = 0;
+
+    for index = 1, GL.User.isInRaid and _G.MAX_RAID_MEMBERS or _G.MEMBERS_PER_RAID_GROUP do
+        if (numberOfGroupMembers >= 2) then
+            return true;
+        end
+
+        local name, _, _, _, _, _, _, online = GetRaidRosterInfo(index);
+
+        if (not name) then
+            return false;
+        end
+
+        if (online) then
+            numberOfGroupMembers = numberOfGroupMembers + 1;
+        end
+    end
+
+    return false;
+end
+
 --- Check whether a given unit is in your raid/party
 ---
 ---@param unit string

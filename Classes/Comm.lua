@@ -92,6 +92,9 @@ Comm.Actions = {
     end,
     [Actions.requestRunningGDKPMultiAuctionDetails] = function (Message)
         local AuctionDetails = GL.GDKP.MultiAuction.Client.AuctionDetails or {};
+        if (GL:empty(AuctionDetails.Auctions)) then
+            return;
+        end
 
         Message:respond{
             Auctions = AuctionDetails.Auctions,

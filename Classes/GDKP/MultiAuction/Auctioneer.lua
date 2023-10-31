@@ -62,7 +62,7 @@ function Auctioneer:_init()
 
     -- If the user reloads instead of a login we have to wait a couple seconds for the game to update the group setup
     GL:after(5, "GDKP.MultiAuction.syncWithRunningSession", function ()
-        if (not synced) then
+        if (not synced or self:auctionStartedByMe()) then
             synced = true;
 
             -- Check if we need to sync up with an existing multi-auction session
@@ -462,6 +462,11 @@ function Auctioneer:syncWithRunningSession()
             numberOfActiveGroupMembers = numberOfActiveGroupMembers + 1;
         end
     end);
+
+    -- It doesn't look like anyone is online
+    if (numberOfActiveGroupMembers < 1) then
+        return;
+    end
 
     -- Get a current session hash from users so we can figure out which data to request
     local CommMessage = GL.CommMessage.new(
