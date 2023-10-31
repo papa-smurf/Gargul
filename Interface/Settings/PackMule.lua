@@ -37,7 +37,12 @@ function PackMule:draw(Parent)
         {
             label = "Enable for Group Loot",
             setting = "PackMule.enabledForGroupLoot",
+            description = "Only works if you are group leader or loot assist"
         },
+        {
+            label = "Force Group Loot",
+            description = "Roll on items when not leader or loot assist (useful for RDF spam)",
+            setting = "PackMule.forceRoll",
         {
             label = "Disable for Group Loot when leaving group",
             setting = "PackMule.autoDisableForGroupLoot",

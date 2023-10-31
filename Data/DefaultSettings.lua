@@ -99,6 +99,7 @@ GL.Data.DefaultSettings = {
         autoConfirmSolo = false,
         autoConfirmGroup = false,
         autoDisableForGroupLoot = true,
+        forceRoll = false,
         enabledForGroupLoot = false,
         enabledForMasterLoot = false,
         lootGold = true,

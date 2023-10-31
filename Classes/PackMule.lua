@@ -504,9 +504,10 @@ function PackMule:getTargetForItem(itemLinkOrId, callback)
                         return true;
                     end
 
-                    -- When in group loot never auto need anything that's BoP unless you have lead or assist!
+                    -- When in group loot never auto need anything that's BoP unless you have lead or assist or forceRoll enabled!
                     if (not GL.User.isMasterLooter
                         and not GL.User.hasAssist
+                        and not GL.Settings:get("PackMule.forceRoll")
                         and strfind(target, "NEED")
                     ) then
                         return false;
