@@ -381,7 +381,7 @@ function Comm:dispatch(CommMessage, stringLength)
         if (GL.User:isDev()) then
             local ActionsByID = GL:tableFlip(Actions);
             if (action == Actions.response) then
-                local actionID = CommMessage.Box[CommMessage.correspondenceId].action;
+                local actionID = CommMessage.Box[CommMessage.correspondenceId] and CommMessage.Box[CommMessage.correspondenceId].action or Actions.respond;
                 GL:xd(("Response: %s | B: %s"):format(tostring(ActionsByID[actionID] or actionID), stringLength or 0));
             else
                 GL:xd(("Received: %s | B: %s"):format(tostring(ActionsByID[action] or action), stringLength or 0));
