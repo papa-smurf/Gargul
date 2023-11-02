@@ -56,6 +56,11 @@ function RollOff:announceStart(itemLink, time, note)
     ) then
         self:reset();
         GL.MasterLooterUI:reset(true);
+
+        -- This is a new item so make sure to
+        -- override all previously set properties
+        self.CurrentRollOff = self.CurrentRollOff or {};
+        self.CurrentRollOff.Rolls = {};
     end
 
     self:listenForRolls();
@@ -316,6 +321,8 @@ function RollOff:start(CommMessage)
         if (Details.link ~= self.CurrentRollOff.itemLink
             or CommMessage.Sender.id ~= self.CurrentRollOff.initiator
         ) then
+            local KnownRolls = self.CurrentRollOff.Rolls or {};
+
             -- This is a new item so make sure to
             -- override all previously set properties
             self.CurrentRollOff = {
@@ -327,8 +334,14 @@ function RollOff:start(CommMessage)
                 itemIcon = Details.icon,
                 SupportedRolls = SupportedRolls,
                 note = content.note,
-                Rolls = {},
             };
+
+            -- Note: the auctioneer already did this on his end
+            if (not CommMessage.Sender.isSelf) then
+                self.CurrentRollOff.Rolls = {};
+            else
+                self.CurrentRollOff.Rolls = KnownRolls;
+            end
         else
             -- If we roll the same item again we do need to make
             -- sure that we update the roll timer

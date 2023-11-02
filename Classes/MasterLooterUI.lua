@@ -307,6 +307,7 @@ function MasterLooterUI:draw(itemLink)
                 ClearButton:SetCallback("OnClick", function()
                     MasterLooterUI:reset();
                     GL.RollOff:reset();
+                    GL.RollOff.CurrentRollOff.Rolls = {};
                 end);
                 ThirdRow:AddChild(ClearButton);
                 GL.Interface:set(self, "Clear", ClearButton);
