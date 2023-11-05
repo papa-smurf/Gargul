@@ -209,11 +209,12 @@ function ClientInterface:build()
     Search:SetPoint("TOPLEFT", Window, "TOPLEFT", 28, -24);
     Search:SetPoint("TOPLEFT", Window, "TOPLEFT", 28, -24);
     self.Search = Search;
-    Interface:addTooltip(Search, "Supports item names and iLVL e.g. \"252\", \"<252\" etc", "TOP");
+    Interface:addTooltip(Search, "Supports item names and iLVL e.g. \"252\", \"<252\" etc");
 
     Search:SetScript("OnTextChanged", function ()
         GL:after(.5, "GDKP_MULTI_AUCTION_CLIENT_FILTER_CHANGED", function ()
             self:filterAndSort();
+            self:resetScroll();
         end);
     end);
 
@@ -234,6 +235,7 @@ function ClientInterface:build()
         self.showFavorites = not self.showFavorites;
         ToggleFavorites:SetText(self.showFavorites and "Show all" or "Show favorites");
         self:filterAndSort();
+        self:resetScroll();
     end);
     self.ToggleFavorites = ToggleFavorites;
 
@@ -245,15 +247,17 @@ function ClientInterface:build()
         self.showUnusable = not self.showUnusable;
         ToggleUnusable:SetText(self.showUnusable and "Hide unusable" or "Show unusable");
         self:filterAndSort();
+        self:resetScroll();
     end);
     self.ToggleUnusable = ToggleUnusable;
 
     --[[ SCROLLFRAME BOILERPLATE ]]
-    ScrollFrame = CreateFrame("ScrollFrame", nil, Window, "UIPanelScrollFrameTemplate")
+    ScrollFrame = CreateFrame("ScrollFrame", nil, Window, "UIPanelScrollFrameTemplate");
     ScrollFrame:SetPoint("TOP", Search, "BOTTOM", 0, -10);
     ScrollFrame:SetPoint("BOTTOM", Window, "BOTTOM", 0, 40);
     ScrollFrame:SetPoint("LEFT", Window, "LEFT", 16);
     ScrollFrame:SetPoint("RIGHT", Window, "RIGHT", -44, 0);
+    self.ScrollFrame = ScrollFrame;
 
     AuctionHolder = CreateFrame("Frame");
     ScrollFrame:SetScrollChild(AuctionHolder);
@@ -1022,6 +1026,13 @@ function ClientInterface:refreshAdminWindow()
     self:showAuctionAdminWindow(self.AuctionRows[Window.AuctionAdminWindow._auctionID]);
 end
 
+--- Reset the vertical scroll of the auction frame
+---
+---@return void
+function ClientInterface:resetScroll()
+    return self.ScrollFrame and self.ScrollFrame:SetVerticalScroll(0) or nil;
+end
+
 --- Sort auctions, filter them by all the possible filters
 ---
 ---@return void
@@ -1153,6 +1164,7 @@ function ClientInterface:clear()
     end
 
     self.AuctionRows = {};
+    self:resetScroll();
 end
 
 --- Update countdown bars when anti snipes hit, when the auctioneer changes something or when the auction starts
