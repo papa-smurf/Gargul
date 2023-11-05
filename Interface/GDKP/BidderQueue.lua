@@ -214,7 +214,7 @@ function BidderQueue:build()
         NormalTexture:SetAllPoints(ActionButtons.BidButton);
         ActionButtons.BidButton:SetHighlightTexture(HighlightTexture);
 
-        Interface:addTooltip(ActionButtons.BidButton, L.BID, "TOP");
+        Interface:addTooltip(ActionButtons.BidButton, L.BID);
 
         --[[ REMOVE BID BUTTON ]]
         ---@type Button
@@ -234,7 +234,7 @@ function BidderQueue:build()
         NormalTexture:SetAllPoints(ActionButtons.RemoveBidButton);
         ActionButtons.RemoveBidButton:SetHighlightTexture(HighlightTexture);
 
-        Interface:addTooltip(ActionButtons.RemoveBidButton, L.REMOVE_BID, "TOP");
+        Interface:addTooltip(ActionButtons.RemoveBidButton, L.REMOVE_BID);
 
         --[[ DELETE BUTTON ]]
         ---@type Button
@@ -254,7 +254,7 @@ function BidderQueue:build()
         NormalTexture:SetAllPoints(ActionButtons.DeleteButton);
         ActionButtons.DeleteButton:SetHighlightTexture(HighlightTexture);
 
-        Interface:addTooltip(ActionButtons.DeleteButton, L.DELETE, "TOP");
+        Interface:addTooltip(ActionButtons.DeleteButton, L.DELETE);
     end
 
     Window.ItemHolder = ItemHolder;

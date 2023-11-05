@@ -224,7 +224,7 @@ function ClientInterface:build()
     SearchClear:SetScript("OnClick", function ()
         Search:Clear();
     end);
-    Interface:addTooltip(SearchClear, L.CLEAR, "TOP");
+    Interface:addTooltip(SearchClear, L.CLEAR);
 
     --[[ SHOW/HIDE FAVORITES ]]
     ---@type Button
@@ -310,7 +310,7 @@ function ClientInterface:build()
             "Close ALL auctions",
             " ",
             "Auctions with active bids on them will be sold and can not receive new bids!",
-        }, "TOP");
+        });
 
         ---@type Button
         local FinalCallButton = Interface:dynamicPanelButton(ButtonContainer);
@@ -339,7 +339,7 @@ function ClientInterface:build()
             "Final call on ALL auctions",
             " ",
             "Start a final call on all auctions that haven't sold yet!",
-        }, "TOP");
+        });
 
         ---@type Button
         local FinishButton = Interface:dynamicPanelButton(ButtonContainer);
@@ -375,7 +375,7 @@ function ClientInterface:build()
             " ",
             "This will close all auctions and announce the total pot in chat",
             "Auctions with active bids on them will be sold and can not receive new bids!",
-        }, "TOP");
+        });
 
         ---@type Button
         local TerminateButton = Interface:dynamicPanelButton(ButtonContainer);
@@ -393,7 +393,7 @@ function ClientInterface:build()
             "Terminate Multi-Auction session",
             " ",
             "This will delete all bids on items that haven't sold yet and close all auctions!",
-        }, "TOP");
+        });
 
         --[[ HOW TO ADD ITEMS ]]
         ---@type FontString
@@ -489,7 +489,7 @@ function ClientInterface:build()
                 end,
             };
         end);
-        Interface:addTooltip(CloseButton, "Close the auction. Players can no longer bid but the highest bid remains active", "TOP");
+        Interface:addTooltip(CloseButton, "Close the auction. Players can no longer bid but the highest bid remains active");
 
         ---@type Button
         local FinallCallButton = Interface:dynamicPanelButton(ButtonContainer);
@@ -516,7 +516,7 @@ function ClientInterface:build()
                 focus = true,
             };
         end);
-        Interface:addTooltip(FinallCallButton, "Start a final call for this auction by giving a (usually shorter) bid timer", "TOP");
+        Interface:addTooltip(FinallCallButton, "Start a final call for this auction by giving a (usually shorter) bid timer");
 
         ---@type Button
         local ClearButton = Interface:dynamicPanelButton(ButtonContainer);
@@ -535,7 +535,7 @@ function ClientInterface:build()
                 end,
             };
         end);
-        Interface:addTooltip(ClearButton, "Remove all bids from the auction", "TOP");
+        Interface:addTooltip(ClearButton, "Remove all bids from the auction");
 
         ---@type Button
         local DeleteButton = Interface:dynamicPanelButton(ButtonContainer);
@@ -555,7 +555,7 @@ function ClientInterface:build()
                 end,
             };
         end);
-        Interface:addTooltip(DeleteButton, "Remove the item from the auction including its bid details. THIS CAN'T BE UNDONE!", "TOP");
+        Interface:addTooltip(DeleteButton, "Remove the item from the auction including its bid details. THIS CAN'T BE UNDONE!");
 
         -- Shadow frame used to determine the required width of the ButtonContainer
         local ShadowFrame = CreateFrame("Frame", nil, AuctionAdminWindow);
@@ -614,7 +614,7 @@ function ClientInterface:build()
             Favorite:SetPoint("TOP", AuctionRow, "TOP", 0, (ITEM_ROW_HEIGHT - ITEM_ROW_HEIGHT * .8) / -2);
             Favorite:SetPoint("LEFT", Window, "LEFT", ITEM_ROW_HEIGHT / 2, 0);
             Favorite:SetSize(ITEM_ROW_HEIGHT * .8, ITEM_ROW_HEIGHT * .8);
-            Interface:addTooltip(Favorite, "Favorite this item", "TOP");
+            Interface:addTooltip(Favorite, "Favorite this item");
 
             ---@type Texture
             local FavoriteImage = Favorite:CreateTexture(nil, "BACKGROUND")
@@ -963,7 +963,7 @@ function ClientInterface:updateBidDetails()
         ("Bought by me: %sg"):format(boughtByMe),
         ("Total bid (does not include sold): %sg"):format(totalBid),
         ("Bid by me (does not include sold): %sg"):format(bidByMe),
-    }, "TOP");
+    });
 end
 
 --- Show the admin window which is used to manage individual auctions as the auctioneer

@@ -291,7 +291,7 @@ function GroupVersionCheck:build()
             end
         end
     end);
-    Interface:addTooltip(ReportButton, L.VERSION_CHECK_BUTTON_REPORT_TOOLTIP, "TOP");
+    Interface:addTooltip(ReportButton, L.VERSION_CHECK_BUTTON_REPORT_TOOLTIP);
     Window._ReportButton = ReportButton;
 
     return Window;
@@ -483,7 +483,7 @@ function GroupVersionCheck:setActionButtons(Buttons)
         ActionButton:SetPoint("TOPLEFT", Anchor, "TOPRIGHT", 4, 0);
         ActionButton:SetScript("OnClick", function () Button.onClick(self.Results) end);
         if (Button.tooltip) then
-            Interface:addTooltip(ActionButton, Button.tooltip, "TOP");
+            Interface:addTooltip(ActionButton, Button.tooltip);
         end
 
         tinsert(self.ActionButtons, ActionButton);

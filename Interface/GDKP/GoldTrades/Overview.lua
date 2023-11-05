@@ -132,7 +132,7 @@ function Overview:build()
         NormalTexture:SetAllPoints(ActionButtons.DeleteButton);
         ActionButtons.DeleteButton:SetHighlightTexture(HighlightTexture);
 
-        Interface:addTooltip(ActionButtons.DeleteButton, L.DELETE, "TOP");
+        Interface:addTooltip(ActionButtons.DeleteButton, L.DELETE);
 
         --[[ RESTORE BUTTON ]]
         ---@type Button
@@ -152,7 +152,7 @@ function Overview:build()
         NormalTexture:SetAllPoints(ActionButtons.RestoreButton);
         ActionButtons.RestoreButton:SetHighlightTexture(HighlightTexture);
 
-        Interface:addTooltip(ActionButtons.RestoreButton, L.RESTORE, "TOP");
+        Interface:addTooltip(ActionButtons.RestoreButton, L.RESTORE);
     end
 
     --[[ ADD TRADE BUTTON ]]

@@ -183,7 +183,7 @@ function RollerUI:drawCountdownBar(time, itemLink, itemIcon, note, userCanUseIte
     end
 
     local TimerBar = LibStub("LibCandyBarGargul-3.0"):New(
-        "Interface\\AddOns\\Gargul\\Assets\\Textures\\timer-bar",
+        "Interface/AddOns/Gargul/Assets/Textures/timer-bar",
         width,
         24
     );

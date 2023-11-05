@@ -319,7 +319,7 @@ function Interface:addMoveButton(Element)
     Move:SetPoint("TOPLEFT", Element, "TOPLEFT", 0, 0);
 
     do
-        self:addTooltip(Move, L.MOVE);
+        self:addTooltip(Move, L.MOVE, "CURSOR");
         Move:EnableMouse(true);
         Move:RegisterForDrag("LeftButton");
         Move:SetScript("OnDragStart", function()
@@ -379,7 +379,7 @@ function Interface:addCloseButton(Element)
     local Close = CreateFrame("Button", Element:GetName() .. ".Close", Element, "UIPanelCloseButton");
     Close:SetPoint("TOPRIGHT", Element, "TOPRIGHT", 8, 5);
     Close:SetSize(30, 30);
-    Interface:addTooltip(Close, L.CLOSE);
+    self:addTooltip(Close, L.CLOSE);
 
     -- Override the default onclick since it taints in combat
     Close:SetScript("OnClick", function ()
@@ -437,7 +437,7 @@ function Interface:addMinimizeButton(Element, title)
     local Minimize = CreateFrame("Button", Element:GetName() .. ".Minimize", Element, "MaximizeMinimizeButtonFrameTemplate");
     Minimize:SetPoint("TOPRIGHT", Element, "TOPRIGHT", -13, 4);
     Minimize:SetSize(29, 29);
-    Interface:addTooltip(Minimize.MinimizeButton, L.MINIMIZE);
+    self:addTooltip(Minimize.MinimizeButton, L.MINIMIZE);
 
     Minimize.MinimizeButton:Show();
     Minimize.MaximizeButton:Hide();
@@ -486,7 +486,7 @@ function Interface:addMaximizeButton(Element, Opens)
     local Maximize = CreateFrame("Button", Element:GetName() .. ".Maximize", Element, "MaximizeMinimizeButtonFrameTemplate");
     Maximize:SetPoint("TOPRIGHT", Element, "TOPRIGHT", -13, 4);
     Maximize:SetSize(29, 29);
-    Interface:addTooltip(Maximize.MaximizeButton, L.MAXIMIZE);
+    self:addTooltip(Maximize.MaximizeButton, L.MAXIMIZE);
 
     Maximize.MinimizeButton:Hide();
     Maximize.MaximizeButton:Show();
@@ -770,7 +770,7 @@ function Interface:createCheckbox(Parent, name, checked, label, tooltip, callbac
         Checkbox.Label = Label;
 
         if (tooltip) then
-            self:addTooltip(Label, tooltip, "TOP");
+            self:addTooltip(Label, tooltip);
         end
     end
 
@@ -1173,12 +1173,10 @@ end
 ---@param Lines table|string
 ---@param anchor string|nil
 function Interface:addTooltip(Owner, Lines, anchor)
-    GL:debug("Interface:addTooltip");
-
     local isItemLink = false;
 
     if (not anchor) then
-        anchor = "CURSOR";
+        anchor = "TOP";
     end
 
     if (type(Lines) == "string") then

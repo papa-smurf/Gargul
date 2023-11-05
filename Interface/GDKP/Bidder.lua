@@ -375,12 +375,12 @@ function Bidder:drawCountdownBar(time, itemLink, itemIcon, maxValue)
     end
 
     local TimerBar = LibStub("LibCandyBarGargul-3.0"):New(
-        "Interface\\AddOns\\Gargul\\Assets\\Textures\\timer-bar",
+        "Interface/AddOns/Gargul/Assets/Textures/timer-bar",
         300,
         24
     );
     TimerBar:SetParent(self.Window);
-    TimerBar:SetPoint("TOP", self.Window, "TOP");
+    TimerBar:SetPoint("TOP", self.Window);
     TimerBar.candyBarLabel:SetFont("Fonts\\ARIALN.ttf", 13, "OUTLINE");
 
     -- Make the bar turn green/yellow/red based on time left

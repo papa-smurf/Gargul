@@ -27,7 +27,7 @@ GL.Interface.Identity = {
             ---@type Frame
             local Window = CreateFrame("Frame", nil, UIParent);
             Window:SetSize(80, 80);
-            Interface:addTooltip(Window, Identity.tooltip, "TOP");
+            Interface:addTooltip(Window, Identity.tooltip);
 
             ---@type Texture
             local Logo = Window:CreateTexture();
@@ -57,7 +57,7 @@ GL.Interface.Identity = {
             local Window = CreateFrame("Frame", nil, UIParent, "BackdropTemplate");
             Window:SetSize(110, 110);
             Window:SetBackdrop(_G.BACKDROP_DARK_DIALOG_32_32);
-            Interface:addTooltip(Window, Identity.tooltip, "TOP");
+            Interface:addTooltip(Window, Identity.tooltip);
 
             ---@type Texture
             local Logo = Window:CreateTexture();
@@ -124,7 +124,7 @@ GL.Interface.Identity = {
 
             -- Let raid leaders know that they can personalize Gargul
             if (not GL.User.isInGroup or (GL.User.isMasterLooter or GL.User.isLead)) then
-                Interface:addTooltip(Window, Identity.tooltip, "TOP");
+                Interface:addTooltip(Window, Identity.tooltip);
 
                 Window:SetScript("OnMouseUp", function(_, button)
                     if (button == 'LeftButton') then
@@ -167,7 +167,7 @@ GL.Interface.Identity = {
 
             -- Let raid leaders know that they can personalize Gargul
             if (not GL.User.isInGroup or (GL.User.isMasterLooter or GL.User.isLead)) then
-                Interface:addTooltip(Window, Identity.tooltip, "TOP");
+                Interface:addTooltip(Window, Identity.tooltip);
 
                 Window:SetScript("OnMouseUp", function(_, button)
                     if (button == 'LeftButton') then
@@ -200,7 +200,7 @@ GL.Interface.Identity = {
             ---@type Frame
             local Window = CreateFrame("Frame", nil, UIParent);
             Window:SetSize(80, 80);
-            Interface:addTooltip(Window, Identity.tooltip, "TOP");
+            Interface:addTooltip(Window, Identity.tooltip);
 
             ---@type Texture
             local Logo = Window:CreateTexture();
@@ -230,7 +230,7 @@ GL.Interface.Identity = {
             local Window = CreateFrame("Frame", nil, UIParent, "BackdropTemplate");
             Window:SetSize(110, 110);
             Window:SetBackdrop(_G.BACKDROP_DARK_DIALOG_32_32);
-            Interface:addTooltip(Window, Identity.tooltip, "TOP");
+            Interface:addTooltip(Window, Identity.tooltip);
 
             ---@type Texture
             local Logo = Window:CreateTexture();
@@ -297,7 +297,7 @@ GL.Interface.Identity = {
 
             -- Let raid leaders know that they can personalize Gargul
             if (not GL.User.isInGroup or (GL.User.isMasterLooter or GL.User.isLead)) then
-                Interface:addTooltip(Window, Identity.tooltip, "TOP");
+                Interface:addTooltip(Window, Identity.tooltip);
 
                 Window:SetScript("OnMouseUp", function(_, button)
                     if (button == 'LeftButton') then
@@ -337,7 +337,7 @@ GL.Interface.Identity = {
             Text:SetFont(1.1, "OUTLINE");
 
             -- Let raid leaders know that they can personalize Gargul
-            Interface:addTooltip(Window, Identity.tooltip, "TOP");
+            Interface:addTooltip(Window, Identity.tooltip);
 
             Window:SetScript("OnMouseUp", function(_, button)
                 if (button == 'LeftButton') then

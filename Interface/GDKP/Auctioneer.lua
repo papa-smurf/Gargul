@@ -711,8 +711,8 @@ function AuctioneerUI:build()
             "|c00808080There is but one con: in order for people to partake in a batch auction raiders will need Gargul!|r",
             " ",
         };
-        Interface:addTooltip(MultiAuctionWindow, MultiAuctionExplanation, "TOP");
-        Interface:addTooltip(MultiAuctionButton, MultiAuctionExplanation, "TOP");
+        Interface:addTooltip(MultiAuctionWindow, MultiAuctionExplanation);
+        Interface:addTooltip(MultiAuctionButton, MultiAuctionExplanation);
     end
 
     --[[ ADJUST TABLE ROWS AFTER WINDOW RESIZE ]]
@@ -957,7 +957,7 @@ function AuctioneerUI:buildQueue(Window)
             NormalTexture:SetAllPoints(DeleteButton);
             DeleteButton:SetHighlightTexture(HighlightTexture);
 
-            Interface:addTooltip(DeleteButton, L.DELETE, "TOP");
+            Interface:addTooltip(DeleteButton, L.DELETE);
         end
 
         --[[ REORDER QUEUE ENTRIES ]]
@@ -1341,7 +1341,7 @@ function AuctioneerUI:buildAuctioneerShortcut()
         end
     end);
 
-    Interface:addTooltip(Button, "Open auctioneer window", "TOP");
+    Interface:addTooltip(Button, "Open auctioneer window");
 
     return Button;
 end

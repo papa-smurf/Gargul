@@ -327,7 +327,7 @@ function Overview:build()
         NormalTexture:SetAllPoints(HideButton);
         HideButton:SetHighlightTexture(HighlightTexture);
 
-        Interface:addTooltip(HideButton, L.HIDE, "TOP");
+        Interface:addTooltip(HideButton, L.HIDE);
 
         HideButton:HookScript("OnLeave", function ()
             if (Interface:mouseIsOnFrame(Window)) then

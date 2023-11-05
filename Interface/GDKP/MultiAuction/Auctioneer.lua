@@ -223,7 +223,7 @@ function Auctioneer:build()
         end,
     };
     SelectAll:SetPoint("TOPLEFT", SessionDetails, "BOTTOMLEFT", 0, -8);
-    Interface:addTooltip(SelectAll, "Select / Disable all", "TOP");
+    Interface:addTooltip(SelectAll, "Select / Disable all");
     self.SelectAll = SelectAll;
 
     --[[ SEARCH ]]
@@ -232,7 +232,7 @@ function Auctioneer:build()
     Search:SetWidth(150);
     Search:SetPoint("TOPLEFT", SelectAll, "TOPRIGHT", 20, 0);
     self.Search = Search;
-    Interface:addTooltip(Search, "Supports item names and iLVL e.g. \"252\", \"<252\" etc", "TOP");
+    Interface:addTooltip(Search, "Supports item names and iLVL e.g. \"252\", \"<252\" etc");
 
     Search:SetScript("OnTextChanged", function ()
         GL:after(.5, "GDKP_MULTI_AUCTION_AUCTIONEER_FILTER_CHANGED", function ()
@@ -247,7 +247,7 @@ function Auctioneer:build()
     SearchClear:SetScript("OnClick", function ()
         Search:Clear();
     end);
-    Interface:addTooltip(SearchClear, L.CLEAR, "TOP");
+    Interface:addTooltip(SearchClear, L.CLEAR);
 
     --[[ INCREMENT ]]
     ---@type FontString
@@ -396,7 +396,7 @@ function Auctioneer:build()
     TimeInput:SetText(Settings:get("GDKP.MultiAuction.time"));
     TimeInput:SetWidth(30);
     TimeInput:SetPoint("TOPLEFT", TimeLabel, "TOPRIGHT", 8, 4);
-    Interface:addTooltip(TimeInput, "How long do players have to bid on an item?", "TOP");
+    Interface:addTooltip(TimeInput, "How long do players have to bid on an item?");
     Window._TimeInput = TimeInput;
 
 
@@ -412,7 +412,7 @@ function Auctioneer:build()
     AntiSnipeInput:SetText(Settings:get("GDKP.MultiAuction.antiSnipe"));
     AntiSnipeInput:SetWidth(20);
     AntiSnipeInput:SetPoint("TOPLEFT", AntiSnipeLabel, "TOPRIGHT", 8, 4);
-    Interface:addTooltip(AntiSnipeInput, L.ANTISNIPE_EXPLANATION, "TOP");
+    Interface:addTooltip(AntiSnipeInput, L.ANTISNIPE_EXPLANATION);
     Window._AntiSnipeInput = AntiSnipeInput;
 
     --[[ CLEAR ]]
@@ -422,7 +422,7 @@ function Auctioneer:build()
     Clear:SetScript("OnClick", function ()
         self:clearItems();
     end);
-    Interface:addTooltip(Clear, "Remove all items from the list", "TOP");
+    Interface:addTooltip(Clear, "Remove all items from the list");
 
     --[[ FILL FROM INVENTORY ]]
     ---@type Button
@@ -431,7 +431,7 @@ function Auctioneer:build()
     FillFromInventory:SetScript("OnClick", function ()
         GL.Interface.GDKP.MultiAuction.FillFromInventory:open();
     end);
-    Interface:addTooltip(FillFromInventory, "Add tradeable items from your inventory to the list", "TOP");
+    Interface:addTooltip(FillFromInventory, "Add tradeable items from your inventory to the list");
 
     --[[ NEXT STEP ]]
     ---@type Button
@@ -506,7 +506,7 @@ function Auctioneer:build()
 
         self:close();
     end);
-    Interface:addTooltip(Next, "Next step: check raider's add-on version for compatibility", "TOP");
+    Interface:addTooltip(Next, "Next step: check raider's add-on version for compatibility");
 
     return Window;
 end

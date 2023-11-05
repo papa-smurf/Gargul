@@ -181,7 +181,7 @@ function Overview:build()
         NormalTexture:SetAllPoints(DeleteButton);
         DeleteButton:SetHighlightTexture(HighlightTexture);
 
-        Interface:addTooltip(DeleteButton, L.DELETE, "TOP");
+        Interface:addTooltip(DeleteButton, L.DELETE);
 
         self.DeleteButton = DeleteButton;
     end
@@ -203,7 +203,7 @@ function Overview:build()
         NormalTexture:SetAllPoints(DisenchantButton);
         DisenchantButton:SetHighlightTexture(HighlightTexture);
 
-        Interface:addTooltip(DisenchantButton, L.DISENCHANT, "TOP");
+        Interface:addTooltip(DisenchantButton, L.DISENCHANT);
 
         self.DisenchantButton = DisenchantButton;
     end
@@ -225,7 +225,7 @@ function Overview:build()
         NormalTexture:SetAllPoints(EditButton);
         EditButton:SetHighlightTexture(HighlightTexture);
 
-        Interface:addTooltip(EditButton, L.EDIT, "TOP");
+        Interface:addTooltip(EditButton, L.EDIT);
 
         self.EditButton = EditButton;
     end
