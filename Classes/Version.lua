@@ -77,7 +77,7 @@ function Version:_init()
 
     --[[ CHECK FOR GARGUL UPDATES ]]
 
-    -- 5 seconds after logging in we will check if Gargul is up to date
+    -- 25 seconds after logging in we will check if Gargul is up to date
     -- If it is, we'll check periodically (once every 30 minutes) if it is
     -- On top of that we also check on every ready check event
     GL.Ace:ScheduleTimer(function ()
@@ -99,17 +99,7 @@ function Version:_init()
 
             self:checkForUpdate();
         end, THIRTY_MINUTES);
-    end, 5);
-
-    -- Check our version whenever there's a ready check
-    GL.Events:register("VersionReadyCheck", "READY_CHECK", function ()
-        if (self.isOutOfDate) then
-            GL.Events:unregister("VersionReadyCheck");
-            return;
-        end
-
-        self:checkForUpdate(true);
-    end);
+    end, 25);
 
     self._initialized = true;
 end
@@ -282,8 +272,7 @@ function Version:notifyOfLatestVersion()
     self.lastUpdateNotice = GetServerTime();
 
     local notify = function ()
-        GL:error("Your version of |c00a79effGargul|r is outdated");
-        GL:warning(("Version |c00a79effv%s|r is available on CurseForge and Wago"):format(self.latest));
+        GL:warning(("Gargul version |c00a79effv%s|r is available on CurseForge and Wago. You can update without closing your game, just be sure to /reload !"):format(self.latest));
 
         -- Only show if the user didn't update for at least two trivial or one minor/major version
         if (self.versionDifference < 2) then

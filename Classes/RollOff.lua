@@ -89,6 +89,7 @@ function RollOff:announceStart(itemLink, time, note)
             item = itemLink,
             time = time,
             note = note,
+            bth = GL.User:bth(),
             SupportedRolls = SupportedRolls,
         };
 
