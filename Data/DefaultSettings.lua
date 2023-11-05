@@ -64,6 +64,7 @@ GL.Data.DefaultSettings = {
         awardMessagesEnabled = true,
         awardOnReceive = false,
         awardOnReceiveMinimumQuality = 4,
+        skipAwardConfirmationDialog = false,
     },
     ExportingLoot = {
         includeDisenchantedItems = true,

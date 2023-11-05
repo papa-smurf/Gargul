@@ -384,6 +384,13 @@ function MasterLooterUI:draw(itemLink)
 
                     return GL.RollOff:award(selectedPlayer, GL.Interface:get(self, "EditBox.Item"):GetText(), RollBracket, identicalRollDetected);
                 end);
+                GL.Interface:addTooltip(AwardButton.frame, function ()
+                    if (GL.Settings:get("AwardingLoot.skipAwardConfirmationDialog")) then
+                        return "Hold shift to show the award confirmation";
+                    end
+
+                    return "Hold shift to bypass the award confirmation";
+                end);
                 ThirdRow:AddChild(AwardButton);
                 GL.Interface:set(self, "Award", AwardButton);
 

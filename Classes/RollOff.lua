@@ -541,6 +541,23 @@ function RollOff:award(roller, itemLink, RollBracket, identicalRollDetected)
     if (GL:nameIsUnique(roller)) then
         roller = GL:addRealm(roller);
 
+        -- Bypass the award confirmation based on shift key status and the skipAwardConfirmationDialog setting
+        if ((IsShiftKeyDown() and not GL.Settings:get("AwardingLoot.skipAwardConfirmationDialog"))
+            or (not IsShiftKeyDown() and GL.Settings:get("AwardingLoot.skipAwardConfirmationDialog"))
+        ) then
+            -- Add the player we awarded the item to to the item's tooltip
+            GL.AwardedLoot:addWinner{
+                winner = roller,
+                itemLink = itemLink,
+                isOS = isOS,
+                BRCost = BRCost,
+                Rolls = Rolls,
+                RollBracket = RollBracket,
+            };
+
+            return;
+        end
+
         -- Make sure the initiator has to confirm his choices
         GL.Interface.Dialogs.AwardDialog:open{
             question = string.format("%sAward %s to |cff%s%s|r?",

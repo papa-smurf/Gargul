@@ -1174,6 +1174,7 @@ end
 ---@param anchor string|nil
 function Interface:addTooltip(Owner, Lines, anchor)
     local isItemLink = false;
+    local isFunction = type(Lines) == "function";
 
     if (not anchor) then
         anchor = "TOP";
@@ -1203,6 +1204,19 @@ function Interface:addTooltip(Owner, Lines, anchor)
 
         if (isItemLink) then
             GameTooltip:SetHyperlink(Lines);
+        elseif (isFunction) then
+            local LineResult = Lines();
+            if (type(LineResult) == "string") then
+                LineResult = { LineResult };
+            end
+
+            for _, line in pairs(LineResult) do
+                if (GL:getItemIDFromLink(line)) then
+                    GameTooltip:SetHyperlink(line);
+                else
+                    GameTooltip:AddLine(line);
+                end
+            end
         else
             for _, line in pairs(Lines) do
                 GameTooltip:AddLine(line);

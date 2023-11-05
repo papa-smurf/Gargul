@@ -46,6 +46,10 @@ function AwardingLoot:draw(Parent)
             setting = "AwardingLoot.autoTradeAfterAwardingAnItem",
         },
         {
+            label = "Skip award confirmation dialog",
+            setting = "AwardingLoot.skipAwardConfirmationDialog",
+        },
+        {
             label = "Auto trade disenchanter",
             setting = "AwardingLoot.autoTradeDisenchanter",
         },
