@@ -30,6 +30,17 @@ function Client:_init()
     UI = GL.Interface.GDKP.MultiAuction.Client;
 
     self._initialized = true;
+
+    -- Clear any running multi auctions when leaving a group
+    GL.Events:register("GDKPMultiAuctionClientUserLeftGroupListener", "GL.USER_LEFT_GROUP", function ()
+        if (Auctioneer:auctionStartedByMe()) then
+            return;
+        end
+
+        UI:clear();
+        UI:close();
+        self.AuctionDetails = {};
+    end);
 end
 
 --- This is used to determine which session to take over / participate in
