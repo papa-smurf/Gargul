@@ -403,5 +403,16 @@ function Client:outbidNotification()
     GL:after(2, "GDKP.MultiAuction.OutbidNotification", function ()
         local sound = LibStub("LibSharedMedia-3.0"):Fetch("sound", outbidSound);
         GL:playSound(sound);
+
+        -- Provide visual feedback when you are outbid and the bidding window is closed
+        if (not UI:isShown()) then
+            if (UnitAffectingCombat("player")) then
+                GL:info("You were outbid!");
+            else
+                GL.Interface.Alerts:fire("GargulNotification", {
+                    message = string.format("|c00BE3333You were outbid!|r"),
+                });
+            end
+        end
     end);
 end
