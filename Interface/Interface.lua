@@ -174,6 +174,11 @@ function Interface:inputBox(Parent, name, placeholder)
             return text ~= Input._placeholder and text or "";
         end
 
+        Input.updatePlaceholder = function(placeholder)
+            Input._placeholder = ("|c00%s%s|r"):format(self.Colors["GRAY"], placeholder);
+            Input:GetScript("OnEditFocusLost")();
+        end
+
         Input:SetScript("OnEditFocusGained", function ()
             if (not GL:empty(Input:GetText())) then
                 return;
@@ -183,11 +188,19 @@ function Interface:inputBox(Parent, name, placeholder)
         end);
 
         Input:SetScript("OnEditFocusLost", function ()
-            if (not GL:empty(Input:GetText())) then
+            local text = Input:GetText();
+            if (not GL:empty(text) and text ~= 0) then
                 return;
             end
 
-            Input:SetText(Input._placeholder);
+            -- Placeholders (including their color string
+            if (Input:IsNumeric()) then
+                Input:SetNumeric(false);
+                Input:SetText(Input._placeholder);
+                Input:SetNumeric(true);
+            else
+                Input:SetText(Input._placeholder);
+            end
         end);
     else
         Input._GetText = Input.GetText;
@@ -1206,6 +1219,10 @@ function Interface:addTooltip(Owner, Lines, anchor)
             GameTooltip:SetHyperlink(Lines);
         elseif (isFunction) then
             local LineResult = Lines();
+            if (not LineResult) then
+                return;
+            end
+
             if (type(LineResult) == "string") then
                 LineResult = { LineResult };
             end

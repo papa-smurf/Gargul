@@ -433,7 +433,7 @@ function ClientInterface:build()
         AuctionAdminWindow:SetPoint("TOPLEFT", Window, "TOPRIGHT", 10, 0);
         AuctionAdminWindow:Hide();
 
-        local AdminExplanation = Interface:createFontString(AuctionAdminWindow, "Click the 'Admin' button or an auction to manage it");
+        local AdminExplanation = Interface:createFontString(AuctionAdminWindow, "Click the cogwheel icon to manage an auction");
         AdminExplanation:SetPoint("CENTER", AuctionAdminWindow, "CENTER");
         AdminExplanation:SetPoint("TOP", AuctionAdminWindow, "TOP", 0, -30);
         AdminExplanation:SetFont(1, "OUTLINE");
@@ -683,39 +683,108 @@ function ClientInterface:build()
             if (Auctioneer:auctionStartedByMe()) then
                 --[[ ACTION BUTTON ]]
                 ---@type Button
-                AdminButton = Interface:dynamicPanelButton(AuctionRow);
+                AdminButton = CreateFrame("Button", nil, AuctionRow);
+                AdminButton:SetNormalTexture("Interface/AddOns/Gargul/Assets/Buttons/panel-cogwheel-up");
+                AdminButton:SetHighlightTexture("Interface/BUTTONS/UI-Panel-MinimizeButton-Highlight", "ADD");
+                AdminButton:SetPushedTexture("Interface/AddOns/Gargul/Assets/Buttons/panel-cogwheel-down");
+                AdminButton:SetSize(27, 27);
                 AdminButton:SetPoint("CENTER", AuctionRow, "CENTER");
                 AdminButton:SetPoint("RIGHT", AuctionRow, "RIGHT");
-                AdminButton:SetScale(.8);
-                AdminButton:SetText("Admin");
-                AdminButton:SetHeight(27);
                 AdminButton:SetScript("OnClick", function ()
                     self:showAuctionAdminWindow(AuctionRow);
                 end);
+                Interface:addTooltip(AdminButton, "Manage Auction");
             end
 
-            --[[ BID BUTTON ]]
+            --[[ AUTO BID BUTTON ]]
             ---@type Button
-            local BidButton = Interface:dynamicPanelButton(AuctionRow);
+            local AutoBidButton = Interface:dynamicPanelButton(AuctionRow);
 
-            if (not AdminButton) then
-                BidButton:SetPoint("CENTER", AuctionRow, "CENTER");
-                BidButton:SetPoint("RIGHT", AuctionRow, "RIGHT");
-            else
-                BidButton:SetPoint("RIGHT", AdminButton, "LEFT", -2, 0);
-            end
+            AutoBidButton:SetScale(.8);
+            AutoBidButton.currentAmount = false;
 
-            BidButton:SetScale(.8);
-            BidButton:SetText("Bid");
-            BidButton:SetHeight(27);
-            BidButton:SetScript("OnClick", function ()
+            AutoBidButton.updateText = function ()
+                if (AutoBidButton.currentAmount) then
+                    AutoBidButton:SetText("Stop");
+                else
+                    AutoBidButton:SetText("Auto");
+                end
+
+                AutoBidButton:SetHeight(27);
+            end;
+            AutoBidButton.updateText();
+
+            Interface:addTooltip(AutoBidButton, function ()
+                if (AutoBidButton.currentAmount) then
+                    return ("Stop your auto bid (%sg)"):format(AutoBidButton.currentAmount);
+                end
+
                 local bid = tonumber(BidInput:GetText()) or 0;
+                if (bid < 1) then
+                    return "Auto bid up to the bid you fill in on the left";
+                end
 
+                return ("Auto bid up to a maximum of %sg"):format(bid);
+            end);
+
+            AutoBidButton:SetScript("OnClick", function ()
+                if (AutoBidButton.currentAmount) then
+                    GL.GDKP.MultiAuction.Client:stopAutobid(auctionID);
+
+                    AutoBidButton.currentAmount = false;
+                    AutoBidButton.updateText();
+                    return;
+                end
+
+                local bid = tonumber(BidInput:GetText()) or 0;
+                bid = Client:roundBidToClosestIncrement(auctionID, bid);
                 if (not Client:isBidValidForAuction(auctionID, bid)) then
                     return GL:error(("Invalid bid or bid is too low! The minimum is %sg"):format(Client:minimumBidForAuction(auctionID)));
                 end
 
-                BidInput:SetText("");
+                BidInput:Clear();
+                BidInput:ClearFocus();
+                GL.GDKP.MultiAuction.Client:autobid(auctionID, bid);
+                if (not AuctionRow._Details.isFavorite) then
+                    AuctionRow.toggleFavorite();
+                end
+
+                AutoBidButton.currentAmount = bid;
+                AutoBidButton.updateText();
+            end);
+
+            if (not AdminButton) then
+                AutoBidButton:SetPoint("CENTER", AuctionRow, "CENTER");
+                AutoBidButton:SetPoint("RIGHT", AuctionRow, "RIGHT");
+            else
+                AutoBidButton:SetPoint("RIGHT", AdminButton, "LEFT", -10, 0);
+            end
+
+            AuctionRow.AutoBidButton = AutoBidButton;
+
+            --[[ BID BUTTON ]]
+            ---@type Button
+            local BidButton = Interface:dynamicPanelButton(AuctionRow);
+            BidButton:SetScale(.8);
+            BidButton:SetText("Bid");
+            BidButton:SetHeight(27);
+            BidButton:SetPoint("RIGHT", AutoBidButton, "LEFT", -2, 0);
+
+            BidButton:SetScript("OnClick", function ()
+                local bid = tonumber(BidInput:GetText()) or 0;
+                bid = Client:roundBidToClosestIncrement(auctionID, bid);
+                if (not Client:isBidValidForAuction(auctionID, bid)) then
+                    return GL:error(("Invalid bid or bid is too low! The minimum is %sg"):format(Client:minimumBidForAuction(auctionID)));
+                end
+
+                if (AuctionRow.AutoBidButton.currentAmount
+                    and AuctionRow.AutoBidButton.currentAmount <= bid
+                ) then
+                    AutoBidButton.currentAmount = false;
+                    AutoBidButton.updateText();
+                end
+
+                BidInput:Clear();
                 BidInput:ClearFocus();
                 GL.GDKP.MultiAuction.Client:bid(auctionID, bid);
 
@@ -726,31 +795,81 @@ function ClientInterface:build()
 
             --[[ BID INPUT ]]
             ---@type EditBox
-            BidInput = Interface:inputBox(AuctionRow);
-            BidInput:SetNumeric(true)
+            BidInput = Interface:inputBox(AuctionRow, nil, minimum);
+            BidInput:SetNumeric(true);
+            BidInput:SetJustifyH("CENTER");
+            BidInput:SetMaxLetters(7);
+            BidInput:SetTextInsets(0, 14, 0, 0);
             BidInput:SetWidth(56);
             BidInput:SetPoint("CENTER", BidButton, "CENTER");
             BidInput:SetPoint("RIGHT", BidButton, "LEFT", -2, 0);
             AuctionRow.BidInput = BidInput;
 
-            --[[ MINIMUM ]]
+            -- Gold Icon
+            local BidInputGoldIcon = BidInput:CreateTexture(nil, "OVERLAY");
+            BidInputGoldIcon:SetTexture("Interface/MoneyFrame/UI-GoldIcon");
+            BidInputGoldIcon:SetPoint("RIGHT", -3, 0);
+            BidInputGoldIcon:SetSize(11, 11);
+
+            --[[ BID MINIMUM BUTTON ]]
             ---@type EditBox
-            local MinButton = Interface:dynamicPanelButton(AuctionRow);
-            MinButton:SetPoint("CENTER", BidInput, "CENTER");
-            MinButton:SetPoint("RIGHT", BidInput, "LEFT", -10, 0);
-            MinButton:SetScale(.8);
-            MinButton:SetText("Min");
-            MinButton:SetHeight(27);
-            MinButton:SetScript("OnClick", function ()
-                BidInput:SetText(Client:minimumBidForAuction(auctionID));
-           end);
+            local BidMinimumButton = Interface:dynamicPanelButton(AuctionRow);
+            BidMinimumButton:SetPoint("CENTER", BidInput, "CENTER");
+            BidMinimumButton:SetPoint("RIGHT", BidInput, "LEFT", -10, 0);
+            BidMinimumButton:SetScale(.8);
+            BidMinimumButton:SetText("Min");
+            BidMinimumButton:SetHeight(27);
+            BidMinimumButton:SetScript("OnClick", function ()
+                BidInput:Clear();
+                BidInput:ClearFocus();
+
+                -- Player is already top bidder
+                if (GL:iEquals(GL:tableGet(Client.AuctionDetails.Auctions[auctionID] or {}, "CurrentBid.player"), GL.User.fqn)) then
+                    GL:notice("You're already the top bidder on " .. Client.AuctionDetails.Auctions[auctionID].link);
+
+                    return;
+                end
+
+                GL.GDKP.MultiAuction.Client:bid(auctionID, Client:minimumBidForAuction(auctionID));
+
+                if (not AuctionRow._Details.isFavorite) then
+                    AuctionRow.toggleFavorite();
+                end
+            end);
+            Interface:addTooltip(BidMinimumButton, "Bid the minimum required amount");
 
             --[[ AUCTION STATUS HOLDER ]]
             local StatusHolder = CreateFrame("Frame", nil, AuctionRow);
             StatusHolder:SetPoint("TOP", AuctionRow, "TOP");
             StatusHolder:SetPoint("BOTTOM", AuctionRow, "BOTTOM");
-            StatusHolder:SetPoint("RIGHT", MinButton, "LEFT", -4, 0);
+            StatusHolder:SetPoint("RIGHT", BidMinimumButton, "LEFT", -4, 0);
             StatusHolder:SetWidth(100);
+
+            Interface:addTooltip(StatusHolder, function()
+                local TopBids = Client.AuctionDetails.Auctions[auctionID].BidsPerPlayer;
+                if (GL:empty(TopBids)) then
+                    return;
+                end
+
+                local Bids = {};
+                for player, bid in pairs(TopBids) do
+                    tinsert(Bids, {
+                        player = GL:disambiguateName(player, { colorize = true }),
+                        amount = bid,
+                    });
+                end
+
+                table.sort(Bids, function (a, b)
+                    return a.amount > b.amount;
+                end);
+
+                local Lines = { "Bids" };
+                for _, Bid in pairs(Bids) do
+                    tinsert(Lines, ("%s - %sg"):format(Bid.player, Bid.amount));
+                end
+
+                return Lines;
+            end);
 
             ---@type FontString
             local StatusText = Interface:createFontString(AuctionRow, "");
@@ -791,9 +910,10 @@ function ClientInterface:build()
                         );
                     end
                 else
-                    statusText = ("Minimum is |c00%s%sg|r"):format(Interface.Colors.YELLOW, minimum);
+                    statusText = ("Minimum: |c00%s%sg|r\nIncrement: |c00%s%sg|r"):format(Interface.Colors.YELLOW, minimum, Interface.Colors.YELLOW, increment);
                 end
 
+                AuctionRow.BidInput.updatePlaceholder(Client:minimumBidForAuction(auctionID));
                 AuctionRow.StatusText:SetText(statusText);
             end
 
@@ -801,12 +921,12 @@ function ClientInterface:build()
             local Name = Interface:createFontString(AuctionRow, Item.link);
             Name:SetPoint("CENTER", Icon);
             Name:SetPoint("LEFT", Icon, "RIGHT", 4, 0);
-            Name:SetPoint("RIGHT", MinButton, "LEFT", -6, 0);
+            Name:SetPoint("RIGHT", BidMinimumButton, "LEFT", -6, 0);
             Name:SetHeight(ITEM_ROW_HEIGHT);
 
             AuctionRow.addCountDownBar = function (time)
                 local CountDownBar = LibStub("LibCandyBarGargul-3.0"):New(
-                    "Interface\\AddOns\\Gargul\\Assets\\Textures\\timer-bar",
+                    "Interface/AddOns/Gargul/Assets/Textures/timer-bar",
                     AuctionRow:GetWidth(),
                     ITEM_ROW_HEIGHT
                 );
@@ -1224,8 +1344,10 @@ function ClientInterface:refresh(forceFilterAndSort)
                 ) then
                     local duration = Details.endsAt - serverTime;
                     CountDownBar:SetDuration(duration);
-                    --CountDownBar:Start(CountDownBar:Get("originalDuration") or duration);
                     CountDownBar:Start();
+
+                    -- Use this if you want to keep the original bar length as reference
+                    --CountDownBar:Start(CountDownBar:Get("originalDuration") or duration);
                     self:setAuctionBarColor(AuctionRow, Details);
                 elseif (not self.AuctionRows[auctionID].addingBar) then
                     AuctionRow.stopCountdown();
@@ -1270,10 +1392,14 @@ function ClientInterface:setAuctionBarColor(AuctionRow, Details)
         if (GL:iEquals(GL:tableGet(Details, "CurrentBid.player"), GL.User.fqn)) then
             AuctionRow.CountDownBar:SetColor(0, 1, 0, .5); -- Set to green
         elseif (Details.iWasOutBid) then
+            AuctionRow.AutoBidButton.currentAmount = false;
             AuctionRow.CountDownBar:SetColor(1, 0, 0, .5); -- Set to red
         else
+            AuctionRow.AutoBidButton.currentAmount = false;
             AuctionRow.CountDownBar:SetColor(.8, .8, .8, .3); -- Set to gray
         end
+
+        AuctionRow.AutoBidButton.updateText();
     end
 end
 

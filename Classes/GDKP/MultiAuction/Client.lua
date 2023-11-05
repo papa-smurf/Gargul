@@ -166,6 +166,61 @@ end
 
 ---@param auctionID number
 ---@param amount number
+---@return void
+function Client:autobid(auctionID, amount)
+    if (Auctioneer:auctionStartedByMe(auctionID)) then
+        Auctioneer:processBid({
+            Sender = {
+                fqn = GL.User.fqn,
+                isSelf = true,
+            },
+            content = {
+                auctionID = auctionID,
+                bid = amount,
+                auto = true,
+            }
+        });
+
+        return;
+    end
+
+    GL.CommMessage.new(
+        GL.Data.Constants.Comm.Actions.bidOnGDKPMultiAuction,
+        { auctionID = auctionID, bid = amount, auto = true, },
+        "WHISPER",
+        self.AuctionDetails.initiator
+    ):send();
+end
+
+---@param auctionID number
+---@return void
+function Client:stopAutobid(auctionID)
+    if (Auctioneer:auctionStartedByMe(auctionID)) then
+        Auctioneer:processBid({
+            Sender = {
+                fqn = GL.User.fqn,
+                isSelf = true,
+            },
+            content = {
+                auctionID = auctionID,
+                bid = -1,
+            }
+        });
+
+        return;
+    end
+
+    GL.CommMessage.new(
+        GL.Data.Constants.Comm.Actions.bidOnGDKPMultiAuction,
+        { auctionID = auctionID, bid = -1, },
+        "WHISPER",
+        self.AuctionDetails.initiator
+    ):send();
+end
+
+---@param auctionID number
+---@param amount number
+---@return void
 function Client:bid(auctionID, amount)
     if (Auctioneer:auctionStartedByMe(auctionID)) then
         Auctioneer:processBid({
@@ -203,6 +258,7 @@ function Client:updateBids(Message)
 
     for auctionID, Details in pairs(Message.content or {}) do
         (function()
+            -- This is a new item, add it to the auction
             if (not Message.Sender.isSelf and Details.I) then
                 self.AuctionDetails.Auctions[auctionID] = Details.I;
                 self.AuctionDetails.Auctions[auctionID].CurrentBid = Details.CurrentBid or {};
@@ -222,6 +278,13 @@ function Client:updateBids(Message)
 
             -- The auctioneer already did this on his end before sending it to us
             if (not Message.Sender.isSelf) then
+                ---@todo: maybe in the future when this data is available to everyone
+                -- Store the highest bid for this player to show in the bid history
+                --if (bidder) then
+                    --self.AuctionDetails.Auctions[auctionID].BidsPerPlayer = self.AuctionDetails.Auctions[auctionID].BidsPerPlayer or {};
+                    --self.AuctionDetails.Auctions[auctionID].BidsPerPlayer[bidder] = amount;
+                --end
+
                 -- There are no bids
                 if (amount < 1) then
                     Client.AuctionDetails.Auctions[auctionID].iWasOutBid = false;
@@ -259,6 +322,24 @@ function Client:updateBids(Message)
     end
 
     UI:refresh();
+end
+
+---@param auctionID number
+---@param bid number
+---@return number
+---@test /dump _G.Gargul.GDKP.MultiAuction.Client:roundBidToClosestIncrement(1, 1399);
+function Client:roundBidToClosestIncrement(auctionID, bid)
+    bid = tonumber(bid) or 0;
+    local Auction = GL:tableGet(self.AuctionDetails, "Auctions." .. auctionID);
+
+    if (not Auction
+        or bid < Auction.minimum
+    ) then
+        return bid;
+    end
+
+    return bid == Auction.minimum and bid
+        or Auction.minimum + floor((bid - Auction.minimum) / Auction.increment) * Auction.increment;
 end
 
 --- Check if the given bid is valid for the given auction ID

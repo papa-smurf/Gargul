@@ -497,6 +497,31 @@ function Auctioneer:syncWithRunningSession()
     end);
 end
 
+---@param Message CommMessage
+---@return void
+function Auctioneer:respondToDetailsRequest(Message)
+    if (Message.Sender.isSelf) then
+        return;
+    end
+
+    -- This person just got online, make sure to delete all his auto bids
+    if (self:auctionStartedByMe()) then
+        self:clearAutoBidsForPlayer(Message.Sender.fqn);
+    end
+
+    local AuctionDetails = GL.GDKP.MultiAuction.Client.AuctionDetails or {};
+    if (GL:empty(AuctionDetails.Auctions)) then
+        return;
+    end
+
+    Message:respond{
+        Auctions = AuctionDetails.Auctions,
+        antiSnipe = AuctionDetails.antiSnipe,
+        bth = AuctionDetails.bth,
+        initiator = AuctionDetails.initiator,
+    };
+end
+
 --- Announce to everyone in the raid that a MultiAuction is starting
 ---
 ---@param ItemDetails table
@@ -567,17 +592,28 @@ end
 ---
 ---@return void
 function Auctioneer:scheduleUpdater()
-    GL:interval(.8, "GDKP.MultiAuction.auctionUpdated", function ()
-        local serverTime = GetServerTime();
-        -- Check if there are newly closed auctions
-        for auctionID, Details in pairs(Client.AuctionDetails.Auctions or {}) do
-            local lastBidAt = self.LastBidAt[auctionID] or serverTime - BIDDING_LEEWAY - 1;
+    local updateEveryXSeconds = .8;
 
-            if (Details.endsAt > 0
-                and serverTime - Details.endsAt > BIDDING_LEEWAY
-                and serverTime - lastBidAt > BIDDING_LEEWAY
-            ) then
-                self:closeAuction(auctionID);
+    GL:interval(updateEveryXSeconds, "GDKP.MultiAuction.auctionUpdated", function ()
+        if (not self:auctionStartedByMe()) then
+
+            return;
+        end
+
+        -- Check if there are newly closed auctions
+        local activeAuctions = false;
+        for auctionID, Details in pairs(Client.AuctionDetails.Auctions or {}) do
+            if (Details.endsAt > 0) then
+                -- We check all this separately in order to improve performance
+                local serverTime = GetServerTime();
+                local lastBidAt = self.LastBidAt[auctionID] or serverTime - BIDDING_LEEWAY - 1;
+
+                if (serverTime - Details.endsAt > BIDDING_LEEWAY
+                    and serverTime - lastBidAt > BIDDING_LEEWAY) then
+                    return self:closeAuction(auctionID);
+                end
+
+                activeAuctions = true;
             end
         end
 
@@ -625,6 +661,20 @@ function Auctioneer:scheduleUpdater()
     end);
 end
 
+---@param player string
+---@return void
+function Auctioneer:clearAutoBidsForPlayer(player)
+    player = strlower(player);
+
+    for _, Auction in pairs(Client.AuctionDetails.Auctions) do
+        if (Auction.AutoBids
+            and Auction.AutoBids[player]
+        ) then
+            Auction.AutoBids[player] = nil;
+        end
+    end
+end
+
 ---@return void
 function Auctioneer:syncNewItems()
     local Changes = {};
@@ -663,6 +713,87 @@ function Auctioneer:syncNewItems()
     );
 end
 
+--- Process all known auto bids for the given auction
+---
+--- If a manualBid is provided as well then we'll return true or false based on whether the
+--- provided bid would be the top bid, trumping all auto bids
+---
+---@param auctionID number
+---
+---@return boolean
+function Auctioneer:processAutoBids(auctionID)
+    local ValidOutstandingAutoBids = {};
+    local AutoBids = GL:tableGet(Client, ("AuctionDetails.Auctions.%s.AutoBids"):format(auctionID));
+
+    if (not AutoBids) then
+        return true;
+    end
+
+    -- Check all auto bids for validity. If they're valid then they will contribute
+    -- to the current top bid
+    local highestAutoBid = 0;
+    for player, Details in pairs(Client.AuctionDetails.Auctions[auctionID].AutoBids) do
+        (function()
+            local bid = Details.bid or 0;
+            bid = tonumber(bid) or 0;
+
+            if (bid < 1 or not Client:isBidValidForAuction(auctionID, bid)
+                or not GL.User:unitInGroup(player)
+                or not GL:unitIsConnected(player)
+            ) then
+                Client.AuctionDetails.Auctions[auctionID].AutoBids[player] = nil;
+                return;
+            end
+
+            tinsert(ValidOutstandingAutoBids, {
+                player = player,
+                bid = bid,
+                at = Details.at,
+            });
+
+            if (bid > highestAutoBid) then
+                highestAutoBid = bid;
+            end
+        end)();
+    end
+
+    -- Sort the auto bids lowest to highest and keep the bid time in mind
+    table.sort(ValidOutstandingAutoBids, function (a, b)
+        if (a.bid ~= b.bid) then
+            return a.bid < b.bid;
+        end
+
+        return a.at > b.at;
+    end);
+
+    local numberOfValidOutstandingAutoBids = #ValidOutstandingAutoBids;
+    for index = 1, numberOfValidOutstandingAutoBids do
+        (function()
+            local minimumBid = Client:minimumBidForAuction(auctionID);
+            local Details = ValidOutstandingAutoBids[index];
+
+            -- Check if the next minimum bid is within the player's budget
+            if (Details.bid < minimumBid) then
+                Client.AuctionDetails.Auctions[auctionID].AutoBids[Details.player] = nil;
+                return;
+            end
+
+            if (index < numberOfValidOutstandingAutoBids) then
+                -- There's an earlier auto bid with the exact same max, he got here first!
+                if (Details.bid == highestAutoBid) then
+                    Details.bid = highestAutoBid - Client.AuctionDetails.Auctions[auctionID].increment;
+                end
+
+                self:setBid(auctionID, Details.player, Details.bid);
+
+            -- We've reached the last (the highest) auto bidder. Bid minimum over previous auto bidder
+            else
+                self:setBid(auctionID, Details.player, min(highestAutoBid, Client:minimumBidForAuction(auctionID)));
+            end
+        end)();
+    end
+end
+
 --- Attempt to process an incoming bid
 ---
 ---@param Message CommMessage
@@ -672,6 +803,7 @@ function Auctioneer:processBid(Message)
         return;
     end
 
+    local bid = tonumber(GL:tableGet(Message, "content.bid", 0)) or 0;
     local auctionID = GL:tableGet(Message, "content.auctionID");
 
     -- The given auction doesn't exist
@@ -689,47 +821,95 @@ function Auctioneer:processBid(Message)
     end
 
     -- This user is not in our group
-    if (not GL.User:unitInGroup(Message.Sender.fqn) or not GL:unitIsConnected(Message.Sender.fqn)) then
+    if (not GL.User:unitInGroup(Message.Sender.fqn)
+        or not GL:unitIsConnected(Message.Sender.fqn)
+    ) then
         return;
     end
 
-    if (secondsLeft <= Client.AuctionDetails.antiSnipe) then
-        -- Make sure we spread the news about this reschedule
-        Client.AuctionDetails.Auctions[auctionID].endsAt = serverTime + Client.AuctionDetails.antiSnipe;
+    -- This is a user cancelling his auto bid on a specific auction
+    if (bid == -1) then
+        Client.AuctionDetails.Auctions[auctionID].AutoBids = Client.AuctionDetails.Auctions[auctionID].AutoBids or {};
+        Client.AuctionDetails.Auctions[auctionID].AutoBids[strlower(Message.Sender.fqn)] = nil;
 
+        return;
+    end
+
+    -- The anti snipe will kick in
+    if (secondsLeft <= Client.AuctionDetails.antiSnipe) then
+        Client.AuctionDetails.Auctions[auctionID].endsAt = serverTime + Client.AuctionDetails.antiSnipe;
         tinsert(self.IDsChangedSinceLastSync, auctionID);
     end
 
-    local bid = tonumber(GL:tableGet(Message, "content.bid", 0)) or 0;
-
     -- Make sure the bid is actually valid
+    bid = Client:roundBidToClosestIncrement(auctionID, bid);
     if (not Client:isBidValidForAuction(auctionID, bid)) then
         return;
     end
 
-    -- We're top bidder again
-    if (Client.AuctionDetails.Auctions[auctionID].iWasOutBid
-        and Message.Sender.isSelf
-    ) then
-        Client.AuctionDetails.Auctions[auctionID].iWasOutBid = false;
+    local auctioneerWasTopBidder = GL:iEquals(
+        GL:tableGet(Client.AuctionDetails.Auctions[auctionID], "CurrentBid.player", ""),
+        GL.User.fqn
+    );
 
-    -- We were top bidder but not anymore
-    elseif (not Client.AuctionDetails.Auctions[auctionID].iWasOutBid
-        and not Message.Sender.isSelf
-        and GL:iEquals(GL:tableGet(Client.AuctionDetails.Auctions[auctionID], "CurrentBid.player", ""), GL.User.fqn)
-    ) then
-        Client:outbidNotification();
+    -- This is an auto bid
+    if (Message.content.auto) then
+        Client.AuctionDetails.Auctions[auctionID].AutoBids = Client.AuctionDetails.Auctions[auctionID].AutoBids or {};
+        Client.AuctionDetails.Auctions[auctionID].AutoBids[strlower(Message.Sender.fqn)] = {
+            bid = bid,
+            at = GetTime(),
+        };
 
-        Client.AuctionDetails.Auctions[auctionID].iWasOutBid = true;
+        return self:processAutoBids(auctionID);
     end
 
+    local highestAutoBid = self:highestAutoBid(auctionID);
+    if (bid == highestAutoBid) then
+        bid = highestAutoBid - Client.AuctionDetails.Auctions[auctionID].increment;
+        self:setBid(auctionID, Message.Sender.fqn, bid);
+    else
+        self:setBid(auctionID, Message.Sender.fqn, bid);
+    end
+
+    self:processAutoBids(auctionID);
+
+    -- LastBidAt functions as an extra anti-snipe failsafe
     self.LastBidAt[auctionID] = GetServerTime();
 
-    tinsert(self.IDsChangedSinceLastSync, auctionID);
+    local auctioneerIsTopBidder = GL:iEquals(
+        GL:tableGet(Client.AuctionDetails.Auctions[auctionID], "CurrentBid.player", ""),
+        GL.User.fqn
+    );
+
+    if (auctioneerWasTopBidder and not auctioneerIsTopBidder) then
+        Client.AuctionDetails.Auctions[auctionID].iWasOutBid = true;
+        Client:outbidNotification();
+    elseif (auctioneerIsTopBidder) then
+        Client.AuctionDetails.Auctions[auctionID].iWasOutBid = false;
+    end
+end
+
+function Auctioneer:setBid(auctionID, player, bid)
+    GL:tableSet(Client.AuctionDetails.Auctions[auctionID], ("BidsPerPlayer.%s"):format(player), bid);
+
     Client.AuctionDetails.Auctions[auctionID].CurrentBid = {
         amount = bid,
-        player = Message.Sender.fqn,
+        player = player,
     };
+    tinsert(self.IDsChangedSinceLastSync, auctionID);
+end
+
+---@param auctionID number
+---@return number
+function Auctioneer:highestAutoBid(auctionID)
+    local highestAutoBid = 0;
+    for _, Details in pairs(Client.AuctionDetails.Auctions[auctionID].AutoBids or {}) do
+        if (Details.bid > highestAutoBid) then
+            highestAutoBid = Details.bid;
+        end
+    end
+
+    return highestAutoBid;
 end
 
 --- Was the given auction ID (or current multi-auction as a whole) started by us
@@ -774,10 +954,32 @@ function Auctioneer:closeAuction(auctionID)
     local BidDetails = GL:tableGet(Client, ("AuctionDetails.Auctions.%s.CurrentBid"):format(auctionID));
     if (BidDetails) then
         local itemLink = Client.AuctionDetails.Auctions[auctionID].link;
+        local HighestBidPerPlayer = {};
+        local TopBids = Client.AuctionDetails.Auctions[auctionID].BidsPerPlayer;
+        for player, bid in pairs(TopBids or {}) do
+            bid = tonumber(bid) or 0;
+
+            if (bid > 0 and bid < BidDetails.amount) then
+                local Player = GL.Player:fromName(player);
+
+                HighestBidPerPlayer[player] = {
+                    bid = bid,
+                    createdAt = GetServerTime(),
+                    bidder = player,
+                    Bidder = {
+                        name = Player.name,
+                        uuid = Player.id,
+                        realm = Player.realm,
+                        race = Player.race,
+                        class = Player.class,
+                    },
+                };
+            end
+        end
 
         GL:mute(); -- We don't want an announcement for every awarded item since people can see it for themselves in /gl bid
         local awardChecksum = GL.AwardedLoot:addWinner(BidDetails.player, itemLink, nil, nil, nil, nil, BidDetails.amount);
-        GDKPAuction:create(GL:getItemIDFromLink(itemLink), BidDetails.amount, BidDetails.player, nil, nil, nil, awardChecksum);
+        GDKPAuction:create(GL:getItemIDFromLink(itemLink), BidDetails.amount, BidDetails.player, nil, HighestBidPerPlayer, nil, awardChecksum);
         GL:unmute();
     end
 
@@ -799,6 +1001,7 @@ function Auctioneer:clearBid(auctionID)
 
     Client.AuctionDetails.Auctions[auctionID].CurrentBid = nil;
     Client.AuctionDetails.Auctions[auctionID].iWasOutBid = false;
+    Client.AuctionDetails.Auctions[auctionID].BidsPerPlayer = {};
 
     self.LastBidAt[auctionID] = nil;
     tinsert(self.IDsChangedSinceLastSync, auctionID);

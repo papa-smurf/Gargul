@@ -183,6 +183,15 @@ function AuctionDetails:draw(sessionID, auctionID)
     end
 
     if (type(Auction.Bids) == "table") then
+        local SortedBids = GL:tableValues(Auction.Bids or {});
+        table.sort(SortedBids, function (a, b)
+            if (not a or not b or not a.bid or not b.bid) then
+                return false;
+            end
+
+            return a.bid > b.bid;
+        end);
+
         local BidEntry = AceGUI:Create("Label");
         BidEntry:SetText("\n|c00967FD2Bids|r");
         BidEntry:SetFullWidth(true);
@@ -190,13 +199,13 @@ function AuctionDetails:draw(sessionID, auctionID)
 
         local firstBid = true;
         local linebreak = "";
-        for player, Bid in pairs(Auction.Bids or {}) do
+        for _, Bid in pairs(SortedBids) do
             if (not firstBid) then
                 linebreak = "\n";
             end
 
             BidEntry = AceGUI:Create("Label");
-            BidEntry:SetText(string.format("%sBy: %s", linebreak, player));
+            BidEntry:SetText(string.format("%sby: %s", linebreak, GL:nameFormat(Bid.bidder)));
             BidEntry:SetFullWidth(true);
             ScrollFrame:AddChild(BidEntry);
 

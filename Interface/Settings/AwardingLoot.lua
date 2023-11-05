@@ -48,6 +48,7 @@ function AwardingLoot:draw(Parent)
         {
             label = "Skip award confirmation dialog",
             setting = "AwardingLoot.skipAwardConfirmationDialog",
+            description = "Disable the award confirmation. Hold shift while clicking award to temporarily enable/disable skipping this confirmation",
         },
         {
             label = "Auto trade disenchanter",

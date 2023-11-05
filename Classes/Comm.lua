@@ -91,17 +91,7 @@ Comm.Actions = {
         Message:respond(sessionHash);
     end,
     [Actions.requestRunningGDKPMultiAuctionDetails] = function (Message)
-        local AuctionDetails = GL.GDKP.MultiAuction.Client.AuctionDetails or {};
-        if (GL:empty(AuctionDetails.Auctions)) then
-            return;
-        end
-
-        Message:respond{
-            Auctions = AuctionDetails.Auctions,
-            antiSnipe = AuctionDetails.antiSnipe,
-            bth = AuctionDetails.bth,
-            initiator = AuctionDetails.initiator,
-        };
+        GL.GDKP.MultiAuction.Auctioneer:respondToDetailsRequest(Message);
     end,
     [Actions.bidOnGDKPMultiAuction] = function (Message)
         GL.GDKP.MultiAuction.Auctioneer:processBid(Message);
