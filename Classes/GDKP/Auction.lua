@@ -1248,6 +1248,7 @@ function Auction:announceStop(forceStop)
         return;
     end
 
+    self:stopAutoBid();
     self:stop();
 
     GL.CommMessage.new(
@@ -1695,6 +1696,7 @@ function Auction:listenForBids()
 
     Events:register(EventsToListenTo, function (_, message, sender)
         self:processBid(message, sender);
+        self:autoBid();
     end);
 end
 

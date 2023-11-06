@@ -45,9 +45,9 @@ end
 
 --- This is used to determine which session to take over / participate in
 --- when joining a group or logging (back) into the game
---- /dump _G.Gargul.GDKP.MultiAuction.Client:currentSessionHash();
 ---
 ---@return string
+---@test /dump _G.Gargul.GDKP.MultiAuction.Client:currentSessionHash();
 function Client:currentSessionHash()
     if (type(self.AuctionDetails.Auctions) ~= "table"
         or GL:empty(self.AuctionDetails.Auctions)
