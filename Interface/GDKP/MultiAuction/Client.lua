@@ -934,7 +934,7 @@ function ClientInterface:build()
                 CountDownBar:SetPoint("TOP", AuctionRow, "TOP");
                 CountDownBar:SetPoint("RIGHT", AuctionRow, "RIGHT");
                 CountDownBar:SetPoint("BOTTOM", AuctionRow, "BOTTOM");
-                CountDownBar:SetPoint("LEFT", Icon, "LEFT");
+                CountDownBar:SetPoint("LEFT", Icon, "RIGHT", 2, 0);
                 CountDownBar:SetDuration(time);
                 CountDownBar:SetColor(.8, .8, .8, .3); -- Reset color to gray
                 CountDownBar:Set("type", "GDKP_MULTI_AUCTION_COUNTDOWN");

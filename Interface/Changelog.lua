@@ -12,6 +12,14 @@ GL.Interface.Changelog = {
 
     History = {
         {
+            version = "7.1.0",
+            date = "November 7th, 2023",
+            Changes = {
+                "GDKP Multi/Batch auctions now support auto bidding",
+                "Major performance improvements across the board",
+            },
+        },
+        {
             version = "7.0.0",
             date = "October 21st, 2023",
             Changes = {

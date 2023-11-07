@@ -394,15 +394,13 @@ function Client:outbidNotification()
     -- Flash the game icon in case the player alt-tabbed
     FlashClientIcon();
 
-    -- Play a sound if the user enabled it
-    local outbidSound = GL.Settings:get("GDKP.outbidSound");
-    if (GL:empty(outbidSound)) then
-        return;
-    end
-
     GL:after(2, "GDKP.MultiAuction.OutbidNotification", function ()
-        local sound = LibStub("LibSharedMedia-3.0"):Fetch("sound", outbidSound);
-        GL:playSound(sound);
+        -- Play a sound if the user enabled it
+        local outbidSound = GL.Settings:get("GDKP.outbidSound");
+        if (not GL:empty(outbidSound)) then
+            local sound = LibStub("LibSharedMedia-3.0"):Fetch("sound", outbidSound);
+            GL:playSound(sound);
+        end
 
         -- Provide visual feedback when you are outbid and the bidding window is closed
         if (not UI:isShown()) then
