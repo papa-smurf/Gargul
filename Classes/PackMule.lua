@@ -52,7 +52,9 @@ function PackMule:_init()
     self.Rules = Settings:get("PackMule.Rules");
 
     GL.Events:register("PackMuleZoneChangeListener", "ZONE_CHANGED_NEW_AREA", function ()
-        self:zoneChanged();
+        GL:after(2, "PackMuleZoneChangeListenerWait", function ()
+            self:zoneChanged();
+        end);
     end);
 
     GL.Events:register("PackMuleUserLeftGroupListener", "GL.USER_LEFT_GROUP", function ()

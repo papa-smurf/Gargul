@@ -26,7 +26,7 @@ function PackMule:draw(Parent)
         GL.Settings:draw("PackMuleIgnores");
     end);
     Parent:AddChild(IgnoredItems);
-
+    
     Overview:drawSpacer(Parent, nil, 10);
 
     local Checkboxes = {
@@ -43,6 +43,7 @@ function PackMule:draw(Parent)
             label = "Force Group Loot",
             description = "Roll on items when not leader or loot assist (useful for RDF spam)",
             setting = "PackMule.forceRoll",
+        },
         {
             label = "Disable for Group Loot when leaving group",
             setting = "PackMule.autoDisableForGroupLoot",
