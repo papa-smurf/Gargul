@@ -51,7 +51,7 @@ function PackMule:_init()
 
     self.Rules = Settings:get("PackMule.Rules");
 
-    -- Await is needed to prevent GetInstanceInfo() from returning wrong difficulty randomly
+    -- Await is needed to prevent GetInstanceInfo() from returning wrong difficulty sometimes when using RDF
     GL.Events:register("PackMuleZoneChangeListener", "ZONE_CHANGED_NEW_AREA", function ()
         GL:after(2, "PackMuleZoneChangeListenerWait", function ()
             self:zoneChanged();
