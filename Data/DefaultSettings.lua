@@ -95,8 +95,8 @@ GL.Data.DefaultSettings = {
         }
     },
     PackMule = {
-    announceDisenchantedItems = true,
-    autoConfirmSolo = false,
+        announceDisenchantedItems = true,
+        autoConfirmSolo = false,
         autoConfirmGroup = false,
         autoDisableForGroupLoot = true,
         forceRoll = false,

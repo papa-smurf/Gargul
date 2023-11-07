@@ -26,7 +26,7 @@ function PackMule:draw(Parent)
         GL.Settings:draw("PackMuleIgnores");
     end);
     Parent:AddChild(IgnoredItems);
-    
+
     Overview:drawSpacer(Parent, nil, 10);
 
     local Checkboxes = {
