@@ -41,7 +41,7 @@ function PackMule:draw(Parent)
         },
         {
             label = "Force Group Loot",
-            description = "Roll on items when not leader or loot assist (useful for RDF spam)",
+            description = "Roll on items when not leader or loot assist (useful for RDF spam); requires Group loot to be enabled to work",
             setting = "PackMule.forceRoll",
         },
         {
