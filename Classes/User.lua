@@ -66,10 +66,10 @@ function User:bth()
         return "";
     end
 
-    local firstHalf = strsub(bTag, 1, ceil(strlen(bTag) / 2));
+    local firtsHalf = strsub(bTag, 1, ceil(strlen(bTag) / 2));
     local secondHalf = strsub(bTag, ceil(strlen(bTag) / 2) * -1);
 
-    return ("%s-%s"):format(GL:stringHash(bTag), GL:stringHash(secondHalf .. firstHalf));
+    return ("%s-%s"):format(GL:stringHash(bTag), GL:stringHash(secondHalf .. firtsHalf));
 end
 
 -- Refresh the User's details after the group
