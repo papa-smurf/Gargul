@@ -116,10 +116,10 @@ function Overview:draw()
     PriorityNotesLabel:SetFontObject(_G["GameFontNormal"]);
     Window:AddChild(PriorityNotesLabel);
 
-    local autoSharingEnabled = "no";
+    local autoSharingEnabled = "No";
 
     if (GL.Settings:get("TMB.automaticallyShareData", false)) then
-        autoSharingEnabled = "yes";
+        autoSharingEnabled = "Yes";
     end
 
     local AutoSharingStatusLabel = AceGUI:Create("Label");

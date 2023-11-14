@@ -6,6 +6,9 @@ local AceGUI = LibStub("AceGUI-3.0");
 ---@type Interface
 local Interface = GL.Interface;
 
+---@type Constants
+local Constants = GL.Data.Constants;
+
 ---@type GDKPSession
 local GDKPSession = GL.GDKP.Session;
 
@@ -151,6 +154,9 @@ function Export:build()
             "@PLAYER",
             "@REALM",
             "@CUT",
+            "@ADJUSTGOLD",
+            "@ADJUSTPERCENTAGE",
+            "@MUTATORS",
             "@SPENT",
             "@BID",
             "@RECEIVED - total gold received from the player",
@@ -265,31 +271,58 @@ function Export:exportPotToCustomFormat(Session, Cuts)
 
     -- Make sure that all relevant item data is cached
     for _, Details in pairs(Cuts) do
-        local player, cut = Details.player, Details.cut;
-        local exportEntry = customExportFormat;
+        (function()
+            local player, cut = Details.player, Details.cut;
+            if (not Session.Pot.DistributionDetails[player]) then
+                return;
+            end
 
-        local copperGiven, copperReceived, copperTraded, copperMailed = GDKPSession:goldTradedWithPlayer(Details.player, Session.ID);
+            local exportEntry = customExportFormat;
+            local adjustGold = tonumber(Session.Pot.DistributionDetails[player][Constants.GDKP.adjustMutatorIdentifier] or 0) or 0;
+            local adjustPercentage = tonumber(Session.Pot.DistributionDetails[player][Constants.GDKP.adjustPercentageMutatorIdentifier] or 0) or 0;
+            local copperGiven, copperReceived, copperTraded, copperMailed = GDKPSession:goldTradedWithPlayer(Details.player, Session.ID);
 
-        local Values = {
-            ["@PLAYER"] = GL:nameFormat{ name = player, stripRealm = true },
-            ["@REALM"] = GL:getRealmFromName(player),
-            ["@CUT"] = cut,
-            ["@SPENT"] = GDKPSession:goldSpentByPlayer(player, Session.ID),
-            ["@BID"] = GDKPSession:goldBidByPlayer(player, Session.ID),
-            ["@RECEIVED"] = copperReceived / 10000,
-            ["@GIVEN"] = copperGiven / 10000,
-            ["@TRADED"] = copperTraded / 10000,
-            ["@MAILED"] = copperMailed / 10000,
-            ["@START"] = startedAt,
-            ["@END"] = endedAt,
-            ["\\t"] = "\t",
-        };
+            local Mutators = {};
+            for mutator, value in pairs(Session.Pot.DistributionDetails[player]) do
+                (function()
+                    if (not value or
+                        GL:inTable({
+                            Constants.GDKP.adjustMutatorIdentifier,
+                            Constants.GDKP.adjustPercentageMutatorIdentifier,
+                            Constants.GDKP.baseMutatorIdentifier
+                        }, mutator)
+                    ) then
+                        return;
+                    end
 
-        for find, replace in pairs(Values) do
-            exportEntry = exportEntry:gsub(find, replace);
-        end
+                    tinsert(Mutators, mutator);
+                end)();
+            end
 
-        exportString = exportString .. "\n" .. exportEntry;
+            local Values = {
+                ["@PLAYER"] = GL:nameFormat{ name = player, stripRealm = true },
+                ["@REALM"] = GL:getRealmFromName(player),
+                ["@CUT"] = cut,
+                ["@ADJUSTGOLD"] = adjustGold,
+                ["@ADJUSTPERCENTAGE"] = adjustPercentage,
+                ["@SPENT"] = GDKPSession:goldSpentByPlayer(player, Session.ID),
+                ["@BID"] = GDKPSession:goldBidByPlayer(player, Session.ID),
+                ["@MUTATORS"] = GL:implode(Mutators, "|"),
+                ["@RECEIVED"] = copperReceived / 10000,
+                ["@GIVEN"] = copperGiven / 10000,
+                ["@TRADED"] = copperTraded / 10000,
+                ["@MAILED"] = copperMailed / 10000,
+                ["@START"] = startedAt,
+                ["@END"] = endedAt,
+                ["\\t"] = "\t",
+            };
+
+            for find, replace in pairs(Values) do
+                exportEntry = exportEntry:gsub(find, replace);
+            end
+
+            exportString = exportString .. "\n" .. exportEntry;
+        end)();
     end
 
     GL.Interface:get(self, "MultiLineEditBox.Export"):SetText(strtrim(exportString));
