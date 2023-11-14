@@ -152,8 +152,27 @@ function ClientInterface:build()
         end,
     };
 
-    local Sounds = LibStub("LibSharedMedia-3.0"):List("sound");
     local SoundOptions = {{
+        text = "Gargul: uh-oh",
+        hideOnClick = true,
+        isRadio = true,
+        checked = function ()
+            return GL.Settings:get("GDKP.outbidSound") == "Gargul: uh-oh";
+        end,
+        func = function (Entry)
+            Entry.checked = true;
+            GL.Settings:set("GDKP.outbidSound", "Gargul: uh-oh");
+        end,
+    }, {
+        text = "More sound options...",
+        hideOnClick = true,
+        isRadio = true,
+        checked = false,
+        func = function ()
+            GL.Settings:draw("GDKP");
+            CloseMenus();
+        end,
+    }, {
         text = "None",
         hideOnClick = true,
         isRadio = true,
