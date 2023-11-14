@@ -188,6 +188,7 @@ function ClientInterface:build()
 
     --[[ THE SETTINGS MENU IN THE TOP LEFT OF THE WINDOW ]]
     Interface:addWindowOptions(Window, {
+        {text = "Announce sales in chat", setting = "GDKP.MultiAuction.awardNotice" },
         {text = "Play sound when outbid", notCheckable = true, SubMenu = SoundOptions, },
         "divider",
         { text = L.CHANGE_SCALE, notCheckable = true, func = function ()

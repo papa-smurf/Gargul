@@ -200,12 +200,13 @@ GL.Data.DefaultSettings = {
         SettingsPerItem = {},
 
         MultiAuction = {
-            time = 600,
+            awardNotice = true,
             antiSnipe = 15,
-            minimumFillQuality = 4,
             includeAwarded = false,
             includeBOEs = true,
             includeMaterials = false,
+            minimumFillQuality = 4,
+            time = 600,
         },
     },
     TMB = {

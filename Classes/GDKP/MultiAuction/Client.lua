@@ -328,6 +328,17 @@ function Client:updateBids(Message)
 
             if (Details.e) then
                 self.AuctionDetails.Auctions[auctionID].endsAt = Details.e > 0 and Details.e + ENDS_AT_OFFSET or Details.e;
+
+                if (self.AuctionDetails.Auctions[auctionID].endsAt == 0
+                    and amount > 0
+                    and GL.Settings:get("GDKP.MultiAuction.awardNotice")
+                ) then
+                    print(("|c00FFF569%s bought %s for %sg|r"):format(
+                        GL:nameFormat{ name = bidder, colorize = true, },
+                        self.AuctionDetails.Auctions[auctionID].link,
+                        amount
+                    ));
+                end
             end
         end)();
     end
