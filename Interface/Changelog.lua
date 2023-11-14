@@ -449,7 +449,7 @@ function Changelog:draw()
     --[[ CHRISTMAS HOLIDAYS SANTA HAT ]]
     local month, day = tonumber(date('%m')), tonumber(date('%d'));
     if (month and day
-        and ((month == 12 and day >= 12)
+        and ((month == 12 and day >= 3)
             or (month == 1 and day <= 12)
         )
     ) then
