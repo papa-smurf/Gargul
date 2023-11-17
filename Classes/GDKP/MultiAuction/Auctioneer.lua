@@ -51,15 +51,6 @@ function Auctioneer:_init()
     UI = GL.Interface.GDKP.MultiAuction.Auctioneer;
     Client  = GL.GDKP.MultiAuction.Client;
 
-    -- Keep track of when our group setup changed (happens on initial log in only)
-    local synced = false;
-    GL.Events:register("GDKPMultiAuctionAuctioneerGroupUpdateListener", "GL.GROUP_ROSTER_UPDATE_THROTTLED", function ()
-        synced = true;
-
-        -- Check if we need to sync up with an existing multi-auction session
-        self:syncWithRunningSession();
-    end);
-
     -- If the user reloads instead of a login we have to wait a couple seconds for the game to update the group setup
     GL:after(5, "GDKP.MultiAuction.syncWithRunningSession", function ()
         if (not synced or self:auctionStartedByMe()) then
@@ -786,8 +777,11 @@ function Auctioneer:processAutoBids(auctionID)
 
                 self:setBid(auctionID, Details.player, Details.bid);
 
-            -- We've reached the last (the highest) auto bidder. Bid minimum over previous auto bidder
-            else
+            -- We've reached the last (the highest) auto bidder. Bid minimum over previous auto bidder unless we're already top bid!
+            elseif (not GL:iEquals(
+                GL:tableGet(Client.AuctionDetails.Auctions[auctionID], "CurrentBid.player", ""),
+                Details.player
+            )) then
                 self:setBid(auctionID, Details.player, min(highestAutoBid, Client:minimumBidForAuction(auctionID)));
             end
         end)();
@@ -999,6 +993,7 @@ function Auctioneer:clearBid(auctionID)
         return;
     end
 
+    Client.AuctionDetails.Auctions[auctionID].AutoBids = {};
     Client.AuctionDetails.Auctions[auctionID].CurrentBid = nil;
     Client.AuctionDetails.Auctions[auctionID].iWasOutBid = false;
     Client.AuctionDetails.Auctions[auctionID].BidsPerPlayer = {};
