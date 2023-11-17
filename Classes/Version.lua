@@ -112,8 +112,6 @@ end
 ---@param byReadyCheck boolean
 ---@return void
 function Version:checkForUpdate(byReadyCheck)
-    GL:debug("Version:checkForUpdate");
-
     if (self.checkingForUpdate -- We're already checking
         or self.isOutOfDate -- We already know we're out of date
 
@@ -128,11 +126,12 @@ function Version:checkForUpdate(byReadyCheck)
     self.checkingForUpdate = true;
 
     if (GL.User.isInGroup) then
-        GL.CommMessage.new(
-            CommActions.checkForUpdate,
-            self.latest,
-            "GROUP"
-        ):send();
+        GL.CommMessage.new{
+            action = CommActions.checkForUpdate,
+            content = self.latest,
+            channel = "GROUP",
+            acceptsResponse = true,
+        }:send();
     end
 
     -- We're not in a guild, no need to check
@@ -150,11 +149,11 @@ function Version:checkForUpdate(byReadyCheck)
             return;
         end
 
-        GL.CommMessage.new(
-            CommActions.checkForUpdate,
-            nil,
-            "GUILD"
-        ):send();
+        GL.CommMessage.new{
+            action = CommActions.checkForUpdate,
+            channel = "GUILD",
+            acceptsResponse = true,
+        }:send();
 
         GL.Ace:ScheduleTimer(function ()
             self.checkingForUpdate = false;
@@ -382,7 +381,7 @@ function Version:isUpToDate(version)
 end
 
 --- Inspect quietly, meaning there will be no visual feedback
---- of the version check or its results, but both send and receiver(s)
+--- of the version check or its results, but both sender and receiver(s)
 --- will receive warnings/errors in case their addon version is outdated
 ---
 ---@return void
@@ -393,11 +392,11 @@ function Version:inspectQuietly()
         return;
     end
 
-    GL.CommMessage.new(
-        CommActions.requestAppVersion,
-        nil,
-        "GROUP"
-    ):send();
+    GL.CommMessage.new{
+        action = CommActions.requestAppVersion,
+        channel = "GROUP",
+        acceptsResponse = true,
+    }:send();
 end
 
 --- Inspect to see if the current group members have the addon and check whether it's up-to-date
@@ -426,11 +425,11 @@ function Version:inspectGroup()
         end
     end
 
-    local CommMessage = GL.CommMessage.new(
-        CommActions.requestAppVersion,
-        nil,
-        "GROUP"
-    ):send();
+    local CommMessage = GL.CommMessage.new{
+        action = CommActions.requestAppVersion,
+        channel = "GROUP",
+        acceptsResponse = true,
+    }:send();
 
     -- Report back as soon as all the answers are in
     GL:debug("Schedule new Version.RecurringCheckTimer");
@@ -498,11 +497,11 @@ function Version:playersUsingAddon(callback)
         end
     end
 
-    local CommMessage = GL.CommMessage.new(
-        CommActions.requestAppVersion,
-        nil,
-        "GROUP"
-    ):send();
+    local CommMessage = GL.CommMessage.new{
+        action = CommActions.requestAppVersion,
+        channel = "GROUP",
+        acceptsResponse = true,
+    }:send();
 
     local function handleResponses(GroupMembers, Responses, callback)
         for _, Response in pairs(Responses) do
@@ -547,7 +546,7 @@ end
 function Version:finishInspectGroup(CommMessage)
     GL:debug("Version:finishInspectGroup");
 
-    for _, response in pairs(CommMessage.Responses) do
+    for _, response in pairs(CommMessage.Responses or {}) do
         local senderName = response.Sender.name;
         local versionString = response.content;
 

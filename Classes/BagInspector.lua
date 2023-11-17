@@ -50,11 +50,12 @@ function BagInspector:inspect(items)
     -- Send the inspection request to the correct channel
     local CommMessage = {};
     GL:success("Starting inspection...");
-    CommMessage = GL.CommMessage.new(
-        CommActions.inspectBags,
-        items,
-        "GROUP"
-    ):send();
+    CommMessage = GL.CommMessage.new{
+        action = CommActions.inspectBags,
+        content = items,
+        channel = "GROUP",
+        acceptsResponse = true,
+    }:send();
 
     -- After a period of X seconds inspect the results
     GL.Ace:ScheduleTimer(function ()
@@ -90,7 +91,7 @@ function BagInspector:processInspectionResults(CommMessage)
 
     local numberOfResponses = 0;
     local senderName = "";
-    for _, response in pairs(CommMessage.Responses) do
+    for _, response in pairs(CommMessage.Responses or {}) do
         senderName = response.Sender.name;
         local responseWasValid = false;
         local Report = response.content;

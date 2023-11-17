@@ -427,14 +427,13 @@ function GroupVersionCheck:refresh()
             Status:SetColor("ERROR");
         end);
 
-        GL.CommMessage.new(
-            GL.Data.Constants.Comm.Actions.requestAppVersion,
-            nil,
-            "WHISPER",
-            Member.fqn,
+        GL.CommMessage.new{
+            action = GL.Data.Constants.Comm.Actions.requestAppVersion,
+            channel = "WHISPER",
+            recipient = Member.fqn,
 
             -- A response came in, HANDLE IT!
-            function (Response)
+            onResponse = function (Response)
                 GL:cancelTimer(timerIdentifier);
 
                 -- An invalid version string was provided
@@ -459,8 +458,8 @@ function GroupVersionCheck:refresh()
                     addOutdated(Member.name);
                     Status:SetColor("WARNING");
                 end
-            end
-        ):send();
+            end,
+        }:send();
     end);
 
     self.ItemRows = {};

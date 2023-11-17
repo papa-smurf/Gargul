@@ -19,26 +19,43 @@ setmetatable(CommMessage, {
     end,
 });
 
---- Create a fresh new CommMessage
----
 ---@param action string See GL.Data.Constants.Comm for more info
----@param content any
----@param channel string
----@param recipient string
-function CommMessage.new(action, content, channel, recipient, onResponse)
-    GL:debug("CommMessage:new");
+---@param content any|nil The data you want to send
+---@param channel string The channel (See the CHANNELS variable)
+---@param recipient string|nil Only used in case of WHISPER
+---@param acceptsResponse boolean|nil Specify whether players are allowed to respond to your message
+---@param onResponse function|nil Callback that's fired whenever a response comes in
+---
+---@return CommMessage
+function CommMessage.new(action, content, channel, recipient, acceptsResponse, onResponse)
+    if (content ~= nil or type(action) ~= "table") then
+        GL:error("Pass a table instead of multiple arguments")
+        return;
+    end
 
     local self = setmetatable({}, CommMessage);
 
-    -- Make sure self.id is unique!
-    -- This is very important if we wish to track responses to our comm message
-    while(true) do
-        self.id = GL:uuid();
+    content = action.content;
+    channel = action.channel;
+    recipient = action.recipient;
+    onResponse = action.onResponse;
+    acceptsResponse = action.acceptsResponse == true or type(onResponse) == "function";
 
-        if (not CommMessage.Box[self.id]) then
-            break;
+    if (channel == "GROUP") then
+        channel = "PARTY";
+
+        if (GL.User.isInRaid) then
+            channel = "RAID";
+
+        --- This might seem like an odd one, but it allows us to test
+        --- most of Gargul's feature without having to be in a group
+        elseif (not GL.User.isInGroup) then
+            channel = "WHISPER";
+            recipient = GL.User.name;
         end
     end
+
+    action = action.action;
 
     self.action = action;
     self.content = content;
@@ -48,10 +65,22 @@ function CommMessage.new(action, content, channel, recipient, onResponse)
     self.senderRealm = GL.User.realm;
     self.senderFqn = GL.User.fqn or GL:addRealm(UnitName("player"), GL.User.realm);
     self.recipient = recipient and GL:nameFormat(recipient) or nil;
-    self.onResponse = onResponse or function () end;
-    self.Responses = {};
 
-    CommMessage.Box[self.id] = self;
+    -- Make sure self.id is unique!
+    -- This is very important if we wish to track responses to our comm message
+    if (acceptsResponse) then
+        while(true) do
+            self.id = GL:uuid();
+
+            if (not CommMessage.Box[self.id]) then
+                break;
+            end
+        end
+
+        self.Responses = {};
+        self.onResponse = onResponse or function () end;
+        CommMessage.Box[self.id] = self;
+    end
 
     return self;
 end
@@ -98,8 +127,6 @@ end
 ---@param message string
 ---@return self
 function CommMessage:respond(message)
-    GL:debug("CommMessage:respond");
-
     -- Support cross-realm response
     local recipient = self.senderFqn;
 
@@ -118,7 +145,10 @@ function CommMessage:respond(message)
         correspondenceId = self.correspondenceId or self.id,
     };
 
-    GL.Comm:send(Response);
+    -- Not all comm messages accept a response
+    if (Response.correspondenceId) then
+        GL.Comm:send(Response);
+    end
 
     return self;
 end
@@ -129,13 +159,10 @@ end
 function CommMessage:processResponse()
     GL:debug("CommMessage:processResponse");
 
-    if (not self.correspondenceId) then
-        GL:warning("The message has no correspondence ID so we don't know what it responds to");
-        return;
-    end
-
-    if (not CommMessage.Box[self.correspondenceId]) then
-        GL:warning("The response is valid, but doesn't belong to any of the message we've sent");
+    -- Make sure the message exists and actually accepts responses
+    if (not self.correspondenceId
+        or not CommMessage.Box[self.correspondenceId]
+    ) then
         return;
     end
 
@@ -157,12 +184,11 @@ function CommMessage:compress(Message)
 
     local Payload = {
         a = Message.action, -- Action
-        c = Message.content, -- Content
-        ch = Message.channel, -- channel (WHISPER, RAID etc)
-        v = Message.version, -- Version of sender
-        mv = Message.minimumVersion, -- Minimum version recipient should have
-        s = Message.senderFqn, -- Name of the sender
-        r = Message.correspondenceId or Message.id, -- Response ID
+        b = Message.content, -- Content
+        c = Message.version, -- Version of sender
+        d = Message.minimumVersion, -- Minimum version recipient should have
+        e = Message.senderFqn, -- Name of the sender
+        f = Message.correspondenceId or Message.id, -- Response ID
     }
 
     local success, encoded = pcall(function ()
@@ -202,12 +228,11 @@ function CommMessage:decompress(encoded)
 
     return {
         action = Payload.a or nil, -- Action
-        channel = Payload.ch or nil, -- Channel
-        content = Payload.c or nil, -- Content
-        version = Payload.v or nil, -- Version of sender
-        minimumVersion = Payload.mv or nil, -- Minimum version recipient should have
-        senderFqn = Payload.s or nil, -- Name of the sender
-        correspondenceId = Payload.r or Payload.id, -- Response ID
+        content = Payload.b or nil, -- Content
+        version = Payload.c or nil, -- Version of sender
+        minimumVersion = Payload.d or nil, -- Minimum version recipient should have
+        senderFqn = Payload.e or nil, -- Name of the sender
+        correspondenceId = Payload.f or Payload.id, -- Response ID
     };
 end
 

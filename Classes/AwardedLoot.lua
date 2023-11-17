@@ -170,8 +170,8 @@ end
 ---@param checksum string
 ---@param adjustPoints boolean|nil
 ---@return void
-function AwardedLoot:deleteWinner(checksum, adjustPoints)
-    GL:debug("AwardedLoot:deleteWinner");
+function AwardedLoot:deleteWinner(checksum, adjustPoints, broadcast)
+    broadcast = broadcast ~= false;
 
     -- This method can directly be accessed via a comm command, hence the double check
     if (type(checksum) ~= "string" or GL:empty(checksum)) then
@@ -205,9 +205,13 @@ function AwardedLoot:deleteWinner(checksum, adjustPoints)
 
     -- If the user is not in a group then there's no need
     -- to broadcast or attempt to auto assign loot to the winner
-    if (GL.User.isInGroup) then
+    if (GL.User.isInGroup and broadcast) then
         -- Broadcast the awarded loot details to everyone in the group
-        GL.CommMessage.new(CommActions.deleteAwardedItem, checksum, "GROUP"):send();
+        GL.CommMessage.new{
+            action = CommActions.deleteAwardedItem,
+            content = checksum,
+            channel = "GROUP",
+        }:send();
     end
 end
 
@@ -310,7 +314,11 @@ function AwardedLoot:editWinner(checksum, winner, announce)
     end
 
     -- Broadcast the awarded loot details to everyone in the group
-    GL.CommMessage.new(CommActions.editAwardedItem, AwardEntry, "GROUP"):send();
+    GL.CommMessage.new{
+        action = CommActions.editAwardedItem,
+        content = AwardEntry,
+        channel = "GROUP",
+    }:send();
 
     -- The loot window is not active and the auto assign setting is enabled
     if (not GL.DroppedLoot.lootWindowIsOpened
@@ -579,7 +587,11 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, G
         -- In case we award a lot, like with batch auctions, we want to spread out the awarded loot
         GL:after(self.outStandingBroadcasts + 10, nil, function ()
             -- Broadcast the awarded loot details to everyone in the group
-            GL.CommMessage.new(CommActions.awardItem, AwardEntry, "GROUP"):send();
+            GL.CommMessage.new{
+                action = CommActions.awardItem,
+                content = AwardEntry,
+                channel = "GROUP",
+            }:send();
 
             self.outStandingBroadcasts = self.outStandingBroadcasts - 1;
         end);

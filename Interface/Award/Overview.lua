@@ -681,6 +681,14 @@ function Overview:refreshItems()
                             return;
                         end
 
+                        if (GL.User.isInGroup
+                            and not GL.User.isMasterLooter
+                            and not GL.User.hasAssist
+                            and not GL.User.isLead
+                        ) then
+                            return GL:warning("You need to be the master looter or have lead/assist!");
+                        end
+
                         DeleteButton:SetParent(ItemHolder);
                         DeleteButton:Hide();
 
@@ -709,6 +717,14 @@ function Overview:refreshItems()
                             return;
                         end
 
+                        if (GL.User.isInGroup
+                            and not GL.User.isMasterLooter
+                            and not GL.User.hasAssist
+                            and not GL.User.isLead
+                        ) then
+                            return GL:warning("You need to be the master looter or have lead/assist!");
+                        end
+
                         -- Show the player selector
                         local question = string.format("Who should %s go to instead?", Entry.itemLink);
                         GL.Interface.PlayerSelector:draw(question, GL.User:groupMemberNames(), function (playerName)
@@ -735,6 +751,14 @@ function Overview:refreshItems()
                     DisenchantButton:SetScript("OnClick", function(_, button)
                         if (button ~= 'LeftButton') then
                             return;
+                        end
+
+                        if (GL.User.isInGroup
+                            and not GL.User.isMasterLooter
+                            and not GL.User.hasAssist
+                            and not GL.User.isLead
+                        ) then
+                            return GL:warning("You need to be the master looter or have lead/assist!");
                         end
 
                         -- Show a specific dialog when boosted roll points are involved

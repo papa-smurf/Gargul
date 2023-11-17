@@ -227,15 +227,15 @@ function SoftRes:requestData()
 
     -- We send a data request to the person in charge
     -- He will compare the ID and updatedAt timestamp on his end to see if we actually need his data
-    GL.CommMessage.new(
-        CommActions.requestSoftResData,
-        {
+    GL.CommMessage.new{
+        action = CommActions.requestSoftResData,
+        content = {
             currentSoftResID = GL.DB:get('SoftRes.MetaData.id'),
             softResDataUpdatedAt = GL.DB:get('SoftRes.MetaData.updatedAt'),
         },
-        "WHISPER",
-        playerToRequestFrom
-    ):send();
+        channel = "WHISPER",
+        recipient = playerToRequestFrom,
+    }:send();
 
     self.requestingData = false;
 end
@@ -276,12 +276,12 @@ function SoftRes:replyToDataRequest(CommMessage)
     end
 
     -- Looks like you need my data, here it is!
-    GL.CommMessage.new(
-        CommActions.broadcastSoftRes,
-        DB:get("SoftRes.MetaData.importString"),
-        "WHISPER",
-        playerName
-    ):send();
+    GL.CommMessage.new{
+        action = CommActions.broadcastSoftRes,
+        content = DB:get("SoftRes.MetaData.importString"),
+        channel = "WHISPER",
+        recipient = playerName,
+    }:send();
 end
 
 --- Check if an item ID is reserved by the current player
@@ -1363,11 +1363,11 @@ function SoftRes:broadcast()
 
     self.broadcastInProgress = true;
 
-    GL.CommMessage.new(
-        CommActions.broadcastSoftRes,
-        DB:get("SoftRes.MetaData.importString"),
-        "GROUP"
-    ):send();
+    GL.CommMessage.new{
+        action = CommActions.broadcastSoftRes,
+        content = DB:get("SoftRes.MetaData.importString"),
+        channel = "GROUP",
+    }:send();
 
     GL.Ace:ScheduleTimer(function ()
         GL:success("Broadcast finished");

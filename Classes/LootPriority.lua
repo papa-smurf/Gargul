@@ -228,11 +228,11 @@ function LootPriority:broadcast()
             Label:SetText("Broadcasting...");
         end
 
-        GL.CommMessage.new(
-            CommActions.broadcastLootPriorities,
-            LootPriorityCSV,
-            "GROUP"
-        ):send(function ()
+        GL.CommMessage.new{
+            action = CommActions.broadcastLootPriorities,
+            content = LootPriorityCSV,
+            channel = "GROUP",
+        }:send(function ()
             GL:success("Loot priority broadcast finished");
             self.broadcastInProgress = false;
             GL.Events:fire("GL.LOOT_PRIORITY_BROADCAST_ENDED");
@@ -278,12 +278,12 @@ function LootPriority:broadcastToPlayer(playerName)
         return false;
     end
 
-    GL.CommMessage.new(
-        CommActions.broadcastLootPriorities,
-        LootPriorityCSV,
-        "WHISPER",
-        playerName
-    ):send();
+    GL.CommMessage.new {
+        action = CommActions.broadcastLootPriorities,
+        content = LootPriorityCSV,
+        channel = "WHISPER",
+        recipient = playerName,
+    }:send();
 end
 
 --- Process an incoming loot priority broadcast

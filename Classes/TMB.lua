@@ -1117,9 +1117,9 @@ function TMB:broadcast(sendEmptyPayload)
     end
 
     if (sendEmptyPayload) then
-        GL.CommMessage.new(
-            CommActions.broadcastTMBData,
-            {
+        GL.CommMessage.new{
+            action = CommActions.broadcastTMBData,
+            content = {
                 Items = {
                     ["01"] = {
                         {
@@ -1133,8 +1133,8 @@ function TMB:broadcast(sendEmptyPayload)
                     importedAt = GetServerTime(),
                 },
             },
-            "GROUP"
-        ):send();
+            channel = "GROUP",
+        }:send();
 
         return;
     end
@@ -1201,12 +1201,12 @@ function TMB:broadcastToWhitelist()
         Events:fire("GL.TMB_BROADCAST_STARTED");
 
         for _, player in pairs(WhitelistedPlayersInGroup) do
-            GL.CommMessage.new(
-                CommActions.broadcastTMBData,
-                GL.DB.TMB,
-                "WHISPER",
-                player
-            ):send(function ()
+            GL.CommMessage.new{
+                action = CommActions.broadcastTMBData,
+                content = GL.DB.TMB,
+                channel = "WHISPER",
+                recipient = player,
+            }:send(function ()
                 broadcastsFinished = broadcastsFinished + 1;
 
                 if (broadcastsFinished >= numberOfPlayers) then
@@ -1258,11 +1258,11 @@ function TMB:broadcastToGroup()
             Label:SetText("Broadcasting...");
         end
 
-        GL.CommMessage.new(
-            CommActions.broadcastTMBData,
-            GL.DB.TMB,
-            "GROUP"
-        ):send(function ()
+        GL.CommMessage.new{
+            action = CommActions.broadcastTMBData,
+            content = GL.DB.TMB,
+            channel = "GROUP",
+        }:send(function ()
             GL:success("TMB broadcast finished");
             Events:fire("GL.TMB_BROADCAST_ENDED");
             self.broadcastInProgress = false;
@@ -1401,14 +1401,14 @@ function TMB:requestData()
 
     -- We send a data request to the person in charge
     -- He will compare the ID and importedAt timestamp on his end to see if we actually need his data
-    GL.CommMessage.new(
-        CommActions.requestTMBData,
-        {
+    GL.CommMessage.new{
+        action = CommActions.requestTMBData,
+        content = {
             currentHash = GL.DB:get('TMB.MetaData.hash', nil),
         },
-        "WHISPER",
-        playerToRequestFrom
-    ):send();
+        channel = "WHISPER",
+        recipient = playerToRequestFrom,
+    }:send();
 
     self.requestingData = false;
 end
@@ -1478,12 +1478,12 @@ function TMB:replyToDataRequest(CommMessage)
     end
 
     -- Looks like you need my data, here it is!
-    GL.CommMessage.new(
-        CommActions.broadcastTMBData,
-        GL.DB.TMB,
-        "WHISPER",
-        CommMessage.Sender.name
-    ):send(function ()
+    GL.CommMessage.new{
+        action = CommActions.broadcastTMBData,
+        content = GL.DB.TMB,
+        channel = "WHISPER",
+        recipient = CommMessage.Sender.name,
+    }:send(function ()
         -- Make sure to broadcast the loot priorities as well
         GL.LootPriority:broadcastToPlayer(CommMessage.Sender.name);
     end);

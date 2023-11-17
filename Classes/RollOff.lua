@@ -103,25 +103,25 @@ function RollOff:announceStart(itemLink, time, note)
             msg.SupportedRolls[boostedRollIndex][2] = low;
             msg.SupportedRolls[boostedRollIndex][3] = high;
 
-            GL.CommMessage.new(
-                CommActions.startRollOff,
-                msg,
-                "WHISPER",
-                Player.fqn
-            ):send();
+            GL.CommMessage.new{
+                action = CommActions.startRollOff,
+                content = msg,
+                channel = "WHISPER",
+                recipient = Player.fqn,
+            }:send();
         end
     else
-        GL.CommMessage.new(
-            CommActions.startRollOff,
-            {
+        GL.CommMessage.new{
+            action = CommActions.startRollOff,
+            content = {
                 item = itemLink,
                 time = time,
                 note = note,
                 bth = GL.User:bth(),
                 SupportedRolls = GL.Settings:get("RollTracking.Brackets", {}) or {},
             },
-            "GROUP"
-        ):send();
+            channel = "GROUP",
+        }:send();
     end
 
     GL.Settings:set("UI.RollOff.timer", time);
@@ -261,11 +261,10 @@ end
 function RollOff:announceStop()
     GL:debug("RollOff:announceStop");
 
-    GL.CommMessage.new(
-        CommActions.stopRollOff,
-        nil,
-        "GROUP"
-    ):send();
+    GL.CommMessage.new{
+        action = CommActions.stopRollOff,
+        channel = "GROUP",
+    }:send();
 
     -- We stop listening for rolls one second after the rolloff ends just in case there is server lag/jitter
     self.StopListeningForRollsTimer = GL.Ace:ScheduleTimer(function()

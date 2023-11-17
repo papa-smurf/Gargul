@@ -1053,11 +1053,11 @@ function Auction:broadcastQueue(immediately)
     end
 
     local broadcast = function ()
-        GL.CommMessage.new(
-            CommActions.broadcastGDKPAuctionQueue,
-            QueueSegment or {},
-            "GROUP"
-        ):send();
+        GL.CommMessage.new{
+            action = CommActions.broadcastGDKPAuctionQueue,
+            content = QueueSegment or {},
+            channel = "GROUP",
+        }:send();
     end;
 
     if (immediately) then
@@ -1194,9 +1194,9 @@ function Auction:announceStart(itemLink, minimumBid, minimumIncrement, duration,
         minimumBid = math.max(minimumBid, GL:tableGet(self.Current, "TopBid.bid", 0));
     end
 
-    GL.CommMessage.new(
-        CommActions.startGDKPAuction,
-        {
+    GL.CommMessage.new{
+        action = CommActions.startGDKPAuction,
+        content = {
             item = itemLink,
             minimumBid = minimumBid,
             minimumIncrement = minimumIncrement,
@@ -1209,8 +1209,8 @@ function Auction:announceStart(itemLink, minimumBid, minimumIncrement, duration,
                 acceptBidsLowerThanMinimum = Settings:get("GDKP.acceptBidsLowerThanMinimum"),
             },
         },
-        "GROUP"
-    ):send();
+        channel = "GROUP",
+    }:send();
 
     return true;
 end
@@ -1251,11 +1251,10 @@ function Auction:announceStop(forceStop)
     self:stopAutoBid();
     self:stop();
 
-    GL.CommMessage.new(
-        CommActions.stopGDKPAuction,
-        nil,
-        "GROUP"
-    ):send();
+    GL.CommMessage.new{
+        action = CommActions.stopGDKPAuction,
+        channel = "GROUP",
+    }:send();
 end
 
 --- Announce to everyone in the raid that we're extending the current auction
@@ -1336,11 +1335,11 @@ function Auction:announceReschedule(time)
         time = 5;
     end
 
-    GL.CommMessage.new(
-        CommActions.rescheduleGDKPAuction,
-        time,
-        "GROUP"
-    ):send();
+    GL.CommMessage.new{
+        action = CommActions.rescheduleGDKPAuction,
+        content = time,
+        channel = "GROUP",
+    }:send();
 
     return true;
 end

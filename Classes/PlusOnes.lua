@@ -436,14 +436,14 @@ function PlusOnes:broadcast()
             Label:SetText("Broadcasting...");
         end
 
-        GL.CommMessage.new(
-            CommActions.broadcastPlusOnesData,
-            {
+        GL.CommMessage.new{
+            action = CommActions.broadcastPlusOnesData,
+            content = {
                 importString = self:export(false),
                 MetaData = DB:get("PlusOnes.MetaData", {}),
             },
-            "GROUP"
-        ):send(function ()
+            channel = "GROUP",
+        }:send(function ()
             GL:success("PlusOnes broadcast finished");
 
             self.broadcastInProgress = false;
@@ -620,12 +620,12 @@ function PlusOnes:requestData()
 
     -- We send a data request to the person in charge
     -- He will compare the ID and importedAt timestamp on his end to see if we actually need his data
-    GL.CommMessage.new(
-        CommActions.requestPlusOnesData,
-        DB:get('PlusOnes.MetaData', {}),
-        "WHISPER",
-        playerToRequestFrom
-    ):send();
+    GL.CommMessage.new{
+        action = CommActions.requestPlusOnesData,
+        content = DB:get('PlusOnes.MetaData', {}),
+        channel = "WHISPER",
+        recipient = playerToRequestFrom,
+    }:send();
 
     self.requestingData = false;
 end
@@ -663,15 +663,15 @@ function PlusOnes:replyToDataRequest(CommMessage)
     end
 
     -- Looks like you need my data, here it is!
-    GL.CommMessage.new(
-        CommActions.broadcastPlusOnesData,
-        {
+    GL.CommMessage.new{
+        action = CommActions.broadcastPlusOnesData,
+        content = {
             importString = self:export(false),
             MetaData = DB:get("PlusOnes.MetaData", {}),
         },
-        "WHISPER",
-        CommMessage.Sender.name
-    ):send();
+        channel = "WHISPER",
+        recipient = CommMessage.Sender.name,
+    }:send();
 end
 
 --- Add points to a give user's balance
@@ -740,14 +740,14 @@ function PlusOnes:broadcastQueuedUpdates()
         and self:userIsAllowedToBroadcast()
     ) then
         GL:message("Broadcasting PlusOnes updates...");
-        GL.CommMessage.new(
-            CommActions.broadcastPlusOnesMutation,
-            {
+        GL.CommMessage.new{
+            action = CommActions.broadcastPlusOnesMutation,
+            content = {
                 importString = self:export(false),
                 MetaData = DB:get("PlusOnes.MetaData", {}),
             },
-            "GROUP"
-        ):send(function ()
+            channel = "GROUP",
+        }:send(function ()
             GL:success("PlusOnes updates finished");
         end);
     end
@@ -782,9 +782,9 @@ function PlusOnes:broadcastUpdate(playerName, plusOne, delete)
 
     GL:message("Broadcasting PlusOnes update...");
 
-    GL.CommMessage.new(
-        CommActions.broadcastPlusOnesMutation,
-        {
+    GL.CommMessage.new{
+        action = CommActions.broadcastPlusOnesMutation,
+        content = {
             updates = {{
                 playerName = playerName,
                 plusOne = plusOne or nil,
@@ -792,8 +792,8 @@ function PlusOnes:broadcastUpdate(playerName, plusOne, delete)
             }},
             uuid = DB:get("PlusOnes.MetaData.uuid", ""),
         },
-        "GROUP"
-    ):send();
+        channel = "GROUP",
+    }:send();
 
     return true;
 end

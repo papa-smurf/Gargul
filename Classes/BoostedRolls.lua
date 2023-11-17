@@ -729,14 +729,14 @@ function BoostedRolls:broadcast()
             Label:SetText("Broadcasting...");
         end
 
-        GL.CommMessage.new(
-            CommActions.broadcastBoostedRollsData,
-            {
+        GL.CommMessage.new{
+            action = CommActions.broadcastBoostedRollsData,
+            content = {
                 importString = self:export(false),
                 MetaData = DB:get("BoostedRolls.MetaData", {}),
             },
-            "GROUP"
-        ):send(function ()
+            channel = "GROUP",
+        }:send(function ()
             GL:success("BoostedRolls broadcast finished");
 
             --- Broadcast updates before we reset the flag.
@@ -901,12 +901,12 @@ function BoostedRolls:requestData()
 
     -- We send a data request to the person in charge
     -- He will compare the ID and importedAt timestamp on his end to see if we actually need his data
-    GL.CommMessage.new(
-        CommActions.requestBoostedRollsData,
-        DB:get('BoostedRolls.MetaData', {}),
-        "WHISPER",
-        playerToRequestFrom
-    ):send();
+    GL.CommMessage.new{
+        action = CommActions.requestBoostedRollsData,
+        content = DB:get('BoostedRolls.MetaData', {}),
+        channel = "WHISPER",
+        recipient = playerToRequestFrom,
+    }:send();
 
     self.requestingData = false;
 end
@@ -959,15 +959,15 @@ function BoostedRolls:replyToDataRequest(CommMessage)
     end
 
     -- Looks like you need my data, here it is!
-    GL.CommMessage.new(
-        CommActions.broadcastBoostedRollsData,
-        {
+    GL.CommMessage.new{
+        action = CommActions.broadcastBoostedRollsData,
+        content = {
             importString = self:export(false),
             MetaData = DB:get("BoostedRolls.MetaData", {}),
         },
-        "WHISPER",
-        CommMessage.Sender.name
-    ):send();
+        channel = "WHISPER",
+        recipient = CommMessage.Sender.name,
+    }:send();
 end
 
 --- Add points to a give user's balance
@@ -1050,14 +1050,14 @@ function BoostedRolls:broadcastQueuedUpdates()
         return false;
     end
 
-    GL.CommMessage.new(
-        CommActions.broadcastBoostedRollsMutation,
-        {
+    GL.CommMessage.new{
+        action = CommActions.broadcastBoostedRollsMutation,
+        content = {
             updates = self.QueuedUpdates,
             uuid = DB:get("BoostedRolls.MetaData.uuid", ""),
         },
-        "GROUP"
-    ):send();
+        channel = "GROUP",
+    }:send();
 
     self.QueuedUpdates = {};
 end
@@ -1089,9 +1089,9 @@ function BoostedRolls:broadcastUpdate(playerName, points, aliases, delete)
 
     GL:message("Broadcasting BoostedRolls update...");
 
-    GL.CommMessage.new(
-        CommActions.broadcastBoostedRollsMutation,
-        {
+    GL.CommMessage.new{
+        action = CommActions.broadcastBoostedRollsMutation,
+        content = {
             updates = {
                 playerName = playerName,
                 points = points or nil,
@@ -1100,8 +1100,8 @@ function BoostedRolls:broadcastUpdate(playerName, points, aliases, delete)
             },
             uuid = DB:get("BoostedRolls.MetaData.uuid", ""),
         },
-        "GROUP"
-    ):send();
+        channel = "GROUP",
+    }:send();
 
     return true;
 end

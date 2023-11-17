@@ -253,11 +253,11 @@ function DroppedLootLedger:broadcastDrops(sourceGUID, Drops)
         return;
     end
 
-    GL.CommMessage.new(
-        CommActions.broadcastDrops,
-        Drops,
-        "GROUP"
-    ):send();
+    GL.CommMessage.new{
+        action = CommActions.broadcastDrops,
+        content = Drops,
+        channel = "GROUP",
+    }:send();
 end
 
 ---@param CommMessage table

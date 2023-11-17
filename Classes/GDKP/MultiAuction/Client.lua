@@ -195,12 +195,12 @@ function Client:autobid(auctionID, amount)
         return;
     end
 
-    GL.CommMessage.new(
-        GL.Data.Constants.Comm.Actions.bidOnGDKPMultiAuction,
-        { auctionID = auctionID, bid = amount, auto = true, },
-        "WHISPER",
-        self.AuctionDetails.initiator
-    ):send();
+    GL.CommMessage.new{
+        action = GL.Data.Constants.Comm.Actions.bidOnGDKPMultiAuction,
+        content = { auctionID = auctionID, bid = amount, auto = true, },
+        channel = "WHISPER",
+        recipient = self.AuctionDetails.initiator,
+    }:send();
 end
 
 ---@param auctionID number
@@ -221,12 +221,12 @@ function Client:stopAutobid(auctionID)
         return;
     end
 
-    GL.CommMessage.new(
-        GL.Data.Constants.Comm.Actions.bidOnGDKPMultiAuction,
-        { auctionID = auctionID, bid = -1, },
-        "WHISPER",
-        self.AuctionDetails.initiator
-    ):send();
+    GL.CommMessage.new{
+        action = GL.Data.Constants.Comm.Actions.bidOnGDKPMultiAuction,
+        content = { auctionID = auctionID, bid = -1, },
+        channel = "WHISPER",
+        recipient = self.AuctionDetails.initiator,
+    }:send();
 end
 
 ---@param auctionID number
@@ -248,12 +248,12 @@ function Client:bid(auctionID, amount)
         return;
     end
 
-    GL.CommMessage.new(
-        GL.Data.Constants.Comm.Actions.bidOnGDKPMultiAuction,
-        { auctionID = auctionID, bid = amount, },
-        "WHISPER",
-        self.AuctionDetails.initiator
-    ):send();
+    GL.CommMessage.new{
+        action = GL.Data.Constants.Comm.Actions.bidOnGDKPMultiAuction,
+        content = { auctionID = auctionID, bid = amount, },
+        channel = "WHISPER",
+        recipient = self.AuctionDetails.initiator,
+    }:send();
 end
 
 --- The loot master sent us an update of all top bids, refresh our UI

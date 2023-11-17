@@ -24,7 +24,7 @@ Comm.Actions = {
         GL.AwardedLoot:processEditedLoot(Message);
     end,
     [Actions.deleteAwardedItem] = function (Message)
-        GL.AwardedLoot:deleteWinner(Message.content, false);
+        GL.AwardedLoot:deleteWinner(Message.content, false, false);
     end,
     [Actions.response] = function (Message)
         return Message:processResponse();
@@ -155,20 +155,6 @@ function Comm:send(CommMessage, broadcastFinishedCallback, packageSentCallback)
     local recipient = CommMessage.recipient;
     local action = CommMessage.action;
 
-    if (distribution == "GROUP") then
-        distribution = "PARTY";
-
-        if (GL.User.isInRaid) then
-            distribution = "RAID";
-
-        --- This might seem like an odd one, but it allows us to test
-        --- most of Gargul's feature without having to be in a group
-        elseif (not GL.User.isInGroup) then
-            distribution = "WHISPER";
-            recipient = GL.User.name;
-        end
-    end
-
     local compressedMessage = "";
 
     -- If this is a fresh message, not a response, then CommMessage will
@@ -258,6 +244,7 @@ end
 function Comm:listen(payload, distribution, playerName)
     local stringLength = string.len(payload);
     payload = GL.CommMessage:decompress(payload);
+    payload.channel = distribution;
 
     if (not payload.senderFqn and playerName) then
         payload.senderFqn = GL:nameFormat{name = playerName, forceRealm = true};
@@ -278,12 +265,11 @@ function Comm:listen(payload, distribution, playerName)
         -- The person sending us the message has an old version that's not compatible with ours, let him know!
         if (not Version:leftIsNewerThanOrEqualToRight(payload.version, GL.Data.Constants.Comm.minimumAppVersion)) then
             -- This empty message will trigger an out-of-date error on the recipient's side
-            GL.CommMessage.new(
-                Actions.response,
-                nil,
-                "WHISPER",
-                playerName
-            ):send();
+            GL.CommMessage.new{
+                action = Actions.response,
+                channel = "WHISPER",
+                recipient = playerName,
+            }:send();
             return;
         end
     end

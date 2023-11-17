@@ -223,7 +223,7 @@ function Auctioneer:syncWithRunningSession()
     local PlayersPerHash = {};
     local processResults = function(CommMessage)
         local CheckedHashed = {};
-        for _, response in pairs(CommMessage.Responses) do
+        for _, response in pairs(CommMessage.Responses or {}) do
             (function()
                 -- No need to check our own data
                 if (response.Sender.isSelf) then
@@ -324,12 +324,11 @@ function Auctioneer:syncWithRunningSession()
             return;
         end
 
-        GL.CommMessage.new(
-            CommActions.requestRunningGDKPMultiAuctionDetails,
-            nil,
-            "WHISPER",
-            playerToFetchDataFrom,
-            function (Response)
+        GL.CommMessage.new{
+            action = CommActions.requestRunningGDKPMultiAuctionDetails,
+            channel = "WHISPER",
+            recipient = playerToFetchDataFrom,
+            onResponse = function (Response)
                 Response = Response.content;
                 if (type(Response) ~= "table"
                     or type(Response.initiator) ~= "string"
@@ -441,8 +440,8 @@ function Auctioneer:syncWithRunningSession()
                         focus = true,
                     };
                 end
-            end
-        ):send();
+            end,
+        }:send();
     end;
 
     -- Check how many answers we're expecting on our next comm message
@@ -460,11 +459,11 @@ function Auctioneer:syncWithRunningSession()
     end
 
     -- Get a current session hash from users so we can figure out which data to request
-    local CommMessage = GL.CommMessage.new(
-        CommActions.requestRunningGDKPMultiAuctionHash,
-        nil,
-        "GROUP"
-    ):send();
+    local CommMessage = GL.CommMessage.new{
+        action = CommActions.requestRunningGDKPMultiAuctionHash,
+        channel = "GROUP",
+        acceptsResponse = true,
+    }:send();
 
     local cancelTimers = function()
         GL:cancelTimer("GDKP.MultiAuction.requestRunningGDKPMultiAuctionHash");
@@ -558,16 +557,16 @@ function Auctioneer:announceStart(ItemDetails, duration, antiSnipe)
 
     self:scheduleUpdater();
 
-    GL.CommMessage.new(
-        CommActions.startGDKPMultiAuction,
-        {
+    GL.CommMessage.new{
+        action = CommActions.startGDKPMultiAuction,
+        content = {
             ItemDetails = ItemDetails,
             endsAt = endsAt,
             antiSnipe = antiSnipe,
             bth = GL.User:bth(),
         },
-        "GROUP"
-    ):send();
+        channel = "GROUP",
+    }:send();
 
     local channel = "GROUP";
     if (GL.User.isInRaid and GL.User.hasAssist) then
@@ -644,11 +643,11 @@ function Auctioneer:scheduleUpdater()
             return;
         end
 
-        GL.CommMessage.new(
-            CommActions.announceChangesForGDKPMultiAuction,
-            Changes,
-            "GROUP"
-        ):send();
+        GL.CommMessage.new{
+            action = CommActions.announceChangesForGDKPMultiAuction,
+            content = Changes,
+            channel = "GROUP",
+        }:send();
     end);
 end
 
@@ -692,11 +691,11 @@ function Auctioneer:syncNewItems()
         return;
     end
 
-    GL.CommMessage.new(
-        CommActions.announceChangesForGDKPMultiAuction,
-        Changes,
-        "GROUP"
-    ):send();
+    GL.CommMessage.new{
+        action = CommActions.announceChangesForGDKPMultiAuction,
+        content = Changes,
+        channel = "GROUP",
+    }:send();
 
     GL:sendChatMessage(
         ("I added %s item(s) to the auction for a total of %s"):format(numberOfChanges, GL:count(Client.AuctionDetails.Auctions)),
