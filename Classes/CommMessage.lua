@@ -189,7 +189,7 @@ function CommMessage:compress(Message)
         d = Message.minimumVersion, -- Minimum version recipient should have
         e = Message.senderFqn, -- Name of the sender
         f = Message.correspondenceId or Message.id, -- Response ID
-    }
+    };
 
     local success, encoded = pcall(function ()
         local serialized = LibSerialize:Serialize(Payload);

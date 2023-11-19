@@ -193,6 +193,7 @@ GL.Data.Constants = {
         Legendary = {
             "JoeExoToxiC",
             "Steel-Whitemane",
+            "Octodruid",
         },
     },
 
@@ -297,6 +298,7 @@ GL.Data.Constants = {
     },
 
     UntradeableItems = {
+        209035, -- Hearthstone of the Flame
         50226, -- Festergut's Acidic Blood
         50231, -- Rotface's Acidic Blood
         52019, -- Precious's Ribbon
