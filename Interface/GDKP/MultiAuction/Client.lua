@@ -24,6 +24,7 @@ GL:tableSet(GL, "Interface.GDKP.MultiAuction.Client", {
 
     showFavorites = false,
     showUnusable = true,
+    showInactive = true,
 
     AuctionHolder = nil,
     AuctionRows = {},
@@ -270,6 +271,20 @@ function ClientInterface:build()
         self:resetScroll();
     end);
     self.ToggleUnusable = ToggleUnusable;
+    Interface:addTooltip(ToggleUnusable, "Show/Hide items you can't use");
+
+    --[[ SHOW/HIDE ACTIVE ]]
+    ---@type Button
+    local ToggleActive = Interface:dynamicPanelButton(Window, "Hide inactive");
+    ToggleActive:SetPoint("TOPLEFT", ToggleUnusable, "TOPRIGHT", 6, 0);
+    ToggleActive:SetScript("OnClick", function ()
+        self.showInactive = not self.showInactive;
+        ToggleActive:SetText(self.showInactive and "Hide inactive" or "Show inactive");
+        self:filterAndSort();
+        self:resetScroll();
+    end);
+    self.ToggleActive = ToggleActive;
+    Interface:addTooltip(ToggleActive, "Show/Hide finished auctions");
 
     --[[ SCROLLFRAME BOILERPLATE ]]
     ScrollFrame = CreateFrame("ScrollFrame", nil, Window, "UIPanelScrollFrameTemplate");
@@ -1179,6 +1194,7 @@ end
 function ClientInterface:filterAndSort()
     local rowsShown = 0;
     local showUnusable = self.showUnusable;
+    local showInactive = self.showInactive;
     local showFavorites = self.showFavorites;
     local AuctionHolder = self.AuctionHolder;
     local RowsToShow = {};
@@ -1224,7 +1240,10 @@ function ClientInterface:filterAndSort()
                 -- Hide unusable items
                 or (not showUnusable and not ItemRow._Details.canUseItem)
 
-                -- Hide unusable items
+                -- Hide inactive items
+                or (not showInactive and ItemRow._Details.endsAt <= 0)
+
+                -- Only show favorited items
                 or (showFavorites and not ItemRow._Details.isFavorite)
             ) then
                 return;

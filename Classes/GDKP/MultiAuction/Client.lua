@@ -108,8 +108,10 @@ function Client:start(Message)
     GL:after(.2, nil, function ()
         UI.showFavorites = true;
         UI.showUnusable = false;
+        UI.showInactive = false;
         UI.ToggleFavorites:GetScript("OnClick")();
         UI.ToggleUnusable:GetScript("OnClick")();
+        UI.ToggleActive:GetScript("OnClick")();
     end);
 
     -- Looks like there are no active auctions, this can happen when joining a new group with expired data
