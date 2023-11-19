@@ -69,8 +69,10 @@ function CommMessage.new(action, content, channel, recipient, acceptsResponse, o
     -- Make sure self.id is unique!
     -- This is very important if we wish to track responses to our comm message
     if (acceptsResponse) then
+        local i = 0;
         while(true) do
-            self.id = GL:uuid();
+            i = i + 1;
+            self.id = ("%s.%s"):format(floor(GetTime()), i);
 
             if (not CommMessage.Box[self.id]) then
                 break;
@@ -182,13 +184,19 @@ function CommMessage:compress(Message)
 
     Message = Message or self;
 
+    local FQN = Message.senderFqn;
+    if (not GL:isCrossRealm()) then
+        FQN = GL:stripRealm(FQN);
+    end
+
     local Payload = {
         a = Message.action, -- Action
         b = Message.content, -- Content
-        c = Message.version, -- Version of sender
-        d = Message.minimumVersion, -- Minimum version recipient should have
-        e = Message.senderFqn, -- Name of the sender
-        f = Message.correspondenceId or Message.id, -- Response ID
+        c = FQN, -- Name of the sender
+        d = Message.correspondenceId or Message.id, -- Response ID
+        mv = Message.minimumVersion, -- For backwards compatibility only @TODO: REMOVE IN NEXT VERSION (v7.2.1)
+        m = Message.minimumVersion, -- Minimum version recipient should have
+        v = Message.version, -- Version of sender
     };
 
     local success, encoded = pcall(function ()
@@ -226,13 +234,17 @@ function CommMessage:decompress(encoded)
         return GL:warning("Something went wrong while decoding the COMM payload");
     end
 
+    if (Payload.e and not GL:isCrossRealm()) then
+        Payload.e = GL:addRealm(Payload.e);
+    end
+
     return {
         action = Payload.a or nil, -- Action
         content = Payload.b or nil, -- Content
-        version = Payload.c or nil, -- Version of sender
-        minimumVersion = Payload.d or nil, -- Minimum version recipient should have
-        senderFqn = Payload.e or nil, -- Name of the sender
-        correspondenceId = Payload.f or Payload.id, -- Response ID
+        senderFqn = Payload.c or nil, -- Name of the sender
+        correspondenceId = Payload.d or Payload.id, -- Response ID
+        minimumVersion = Payload.m or nil, -- Minimum version recipient should have
+        version = Payload.v or nil, -- Version of sender
     };
 end
 

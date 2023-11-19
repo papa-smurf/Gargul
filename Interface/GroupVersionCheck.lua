@@ -437,8 +437,8 @@ function GroupVersionCheck:refresh()
                 GL:cancelTimer(timerIdentifier);
 
                 -- An invalid version string was provided
-                if (not Response.content
-                    or not Version:validateAndSplit(Response.content)
+                if (not Response.version
+                    or not Version:validateAndSplit(Response.version)
                 ) then
                     addUnresponsive(Member.name);
 
@@ -449,9 +449,9 @@ function GroupVersionCheck:refresh()
                 end
 
                 -- Check if the player is up-to-date or not
-                Status:SetText("v" .. Response.content);
+                Status:SetText("v" .. Response.version);
 
-                if (Version:isUpToDate(Response.content)) then
+                if (Version:isUpToDate(Response.version)) then
                     addUpToDate(Member.name);
                     Status:SetColor("SUCCESS");
                 else

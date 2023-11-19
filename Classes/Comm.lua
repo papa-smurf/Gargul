@@ -49,7 +49,7 @@ Comm.Actions = {
             return;
         end
 
-        Message:respond(Version.current);
+        Message:respond();
     end,
     [Actions.checkForUpdate] = function (Message)
         Version:replyToUpdateCheck(Message);
@@ -332,7 +332,6 @@ function Comm:listen(payload, distribution, playerName)
     if (not payload.correspondenceId
         and payload.action == Actions.response
     ) then
-        GL:warning("Payload is missing required property 'correspondenceId'");
         return false;
     end
 

@@ -128,7 +128,7 @@ function Version:checkForUpdate(byReadyCheck)
     if (GL.User.isInGroup) then
         GL.CommMessage.new{
             action = CommActions.checkForUpdate,
-            content = self.latest,
+            content = self.latest ~= self.current and self.latest or nil,
             channel = "GROUP",
             acceptsResponse = true,
         }:send();
@@ -181,7 +181,9 @@ function Version:replyToUpdateCheck(Message)
     local senderVersionToCheckAgainst = Message.content or Message.version;
     -- Only send a response if the latest known version of the sender differs from ours
     if (senderVersionToCheckAgainst ~= Version.latest) then
-        Message:respond(Version.latest);
+        -- Only include the latest known version if it differs from ours
+        -- otherwise the comm message's version will be the exact same
+        Message:respond(Version.current ~= Version.latest and Version.latest or nil);
     end
 end
 
@@ -249,9 +251,9 @@ function Version:notBackwardsCompatibleNotice()
 
     local serverTime = GetServerTime();
 
-    if (serverTime - self.lastNotBackwardsCompatibleNotice >= 30) then
+    if (not self.lastNotBackwardsCompatibleNotice) then
         self.lastNotBackwardsCompatibleNotice = serverTime;
-        GL:error("Gargul is out of date and won't work properly until you update!");
+        GL:error("Gargul is out of date and won't work until you update!");
     end
 end
 
@@ -402,6 +404,7 @@ end
 --- Inspect to see if the current group members have the addon and check whether it's up-to-date
 ---
 ---@return void
+---@test /script _G.Gargul.Version:inspectGroup()
 function Version:inspectGroup()
     GL:debug("Version:inspectGroup");
 
@@ -548,7 +551,7 @@ function Version:finishInspectGroup(CommMessage)
 
     for _, response in pairs(CommMessage.Responses or {}) do
         local senderName = response.Sender.name;
-        local versionString = response.content;
+        local versionString = response.content or response.version;
 
         if (self.GroupMembers[senderName]) then
             self.GroupMembers[senderName] = versionString;
