@@ -37,6 +37,12 @@ function PackMule:draw(Parent)
         {
             label = "Enable for Group Loot",
             setting = "PackMule.enabledForGroupLoot",
+            description = "Note: by default NEED only works when you have lead/assist (see setting below)",
+        },
+        {
+            label = "Also NEED when not lead/assist",
+            description = "NEED on group loot by default only works when you have lead/assist. This setting overrides that, use with caution!",
+            setting = "PackMule.needWithoutAssist",
         },
         {
             label = "Disable for Group Loot when leaving group",
@@ -44,12 +50,12 @@ function PackMule:draw(Parent)
         },
         {
             label = "Auto confirm loot when solo",
-            description = "Auto confirm all loot when not in a group, bypassing the 'looting this will bind it to you message'",
+            description = "Bypass the 'looting this will bind it to you message' when solo",
             setting = "PackMule.autoConfirmSolo",
         },
         {
             label = "Auto confirm loot when in group",
-            description = "Auto confirm all loot when group looting, bypassing the 'looting this will bind it to you message'. Use with caution!",
+            description = "Bypass the 'looting this will bind it to you message' when in group",
             setting = "PackMule.autoConfirmGroup",
         },
         {

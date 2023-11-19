@@ -303,8 +303,6 @@ end
 ---
 ---@return void
 function PackMule:zoneChanged()
-    GL:debug("PackMule:zoneChanged");
-
     -- Check whether the user is in a heroic instance
     -- More info about difficultyIDs: https://wowpedia.fandom.com/wiki/DifficultyID
     local _, _, difficultyID = GetInstanceInfo();
@@ -512,6 +510,7 @@ function PackMule:getTargetForItem(itemLinkOrId, callback)
                     -- When in group loot never auto need anything that's BoP unless you have lead or assist!
                     if (not GL.User.isMasterLooter
                         and not GL.User.hasAssist
+                        and not GL.Settings:get("PackMule.needWithoutAssist")
                         and strfind(target, "NEED")
                     ) then
                         return false;

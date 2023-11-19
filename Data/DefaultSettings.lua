@@ -102,6 +102,7 @@ GL.Data.DefaultSettings = {
         autoDisableForGroupLoot = true,
         enabledForGroupLoot = false,
         enabledForMasterLoot = false,
+        needWithoutAssist = false,
         lootGold = true,
         Rules = {},
     },
