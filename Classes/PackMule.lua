@@ -53,6 +53,11 @@ function PackMule:_init()
 
     GL.Events:register("PackMuleZoneChangeListener", "ZONE_CHANGED_NEW_AREA", function ()
         self:zoneChanged();
+
+        -- Race conditions can cause initial GetInstanceInfo calls to return the previous instance
+        GL:after(2, "PackMuleZoneChanged", function ()
+            self:zoneChanged();
+        end);
     end);
 
     GL.Events:register("PackMuleUserLeftGroupListener", "GL.USER_LEFT_GROUP", function ()
