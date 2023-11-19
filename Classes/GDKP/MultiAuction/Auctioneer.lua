@@ -13,6 +13,9 @@ local Client;
 ---@type DB
 local DB = GL.DB;
 
+---@type GDKP
+local GDKP = GL.GDKP;
+
 ---@type GDKPPot
 local GDKPPot = GL.GDKP.Pot;
 
@@ -41,6 +44,7 @@ local UI;
 --[[ CONSTANTS ]]
 local ENDS_AT_OFFSET = 1697932800;
 local BIDDING_LEEWAY = 3;
+local UPDATE_INTERVAL = 2;
 
 ---@return void
 function Auctioneer:_init()
@@ -53,9 +57,7 @@ function Auctioneer:_init()
 
     -- If the user reloads instead of a login we have to wait a couple seconds for the game to update the group setup
     GL:after(5, "GDKP.MultiAuction.syncWithRunningSession", function ()
-        if (not synced or self:auctionStartedByMe()) then
-            synced = true;
-
+        if (not self:auctionStartedByMe()) then
             -- Check if we need to sync up with an existing multi-auction session
             self:syncWithRunningSession();
         end
@@ -140,25 +142,6 @@ function Auctioneer:userIsAllowedToBroadcast(player)
 
     return GL.Player:isMasterLooter(player)
         or GL.Player:hasAssist(player);
-end
-
----@return void
-function Auctioneer:disenchant(itemLink)
-    GL.PackMule:disenchant(itemLink, true, function ()
-        if (Settings:get("GDKP.minimizeAuctioneerOnAward")) then
-            UI = UI or GL.Interface.GDKP.Auctioneer;
-            local Window = UI:getWindow();
-
-            if (not Window) then
-                return;
-            end
-
-            Window.Minimize.MinimizeButton:Click();
-        end
-
-        self:clear();
-        Auctioneer:start();
-    end);
 end
 
 ---@param ItemDetails table table objects should contain link, minimum and increment
@@ -579,11 +562,8 @@ end
 ---
 ---@return void
 function Auctioneer:scheduleUpdater()
-    local updateEveryXSeconds = .8;
-
-    GL:interval(updateEveryXSeconds, "GDKP.MultiAuction.auctionUpdated", function ()
+    GL:interval(UPDATE_INTERVAL, "GDKP.MultiAuction.auctionUpdated", function ()
         if (not self:auctionStartedByMe()) then
-
             return;
         end
 
@@ -651,7 +631,7 @@ end
 ---@param player string
 ---@return void
 function Auctioneer:clearAutoBidsForPlayer(player)
-    player = strlower(player);
+    player = GDKP:playerGUID(player);
 
     for _, Auction in pairs(Client.AuctionDetails.Auctions) do
         if (Auction.AutoBids
@@ -793,8 +773,11 @@ function Auctioneer:processBid(Message)
         return;
     end
 
-    local bid = tonumber(GL:tableGet(Message, "content.bid", 0)) or 0;
-    local auctionID = GL:tableGet(Message, "content.auctionID");
+    local auctionID, bid, auto = strsplit("|", Message.content or "");
+
+    auctionID = tonumber(auctionID);
+    auto = auto == "1";
+    bid = tonumber(bid or 0) or 0;
 
     -- The given auction doesn't exist
     if (not auctionID or not GL:tableGet(Client, "AuctionDetails.Auctions." .. auctionID)) then
@@ -817,10 +800,13 @@ function Auctioneer:processBid(Message)
         return;
     end
 
+    local playerGUID = GDKP:playerGUID(Message.Sender.fqn);
+    local userGUID = GDKP:myGUID();
+
     -- This is a user cancelling his auto bid on a specific auction
     if (bid == -1) then
         Client.AuctionDetails.Auctions[auctionID].AutoBids = Client.AuctionDetails.Auctions[auctionID].AutoBids or {};
-        Client.AuctionDetails.Auctions[auctionID].AutoBids[strlower(Message.Sender.fqn)] = nil;
+        Client.AuctionDetails.Auctions[auctionID].AutoBids[playerGUID] = nil;
 
         return;
     end
@@ -839,13 +825,13 @@ function Auctioneer:processBid(Message)
 
     local auctioneerWasTopBidder = GL:iEquals(
         GL:tableGet(Client.AuctionDetails.Auctions[auctionID], "CurrentBid.player", ""),
-        GL.User.fqn
+        userGUID
     );
 
     -- This is an auto bid
-    if (Message.content.auto) then
+    if (auto) then
         Client.AuctionDetails.Auctions[auctionID].AutoBids = Client.AuctionDetails.Auctions[auctionID].AutoBids or {};
-        Client.AuctionDetails.Auctions[auctionID].AutoBids[strlower(Message.Sender.fqn)] = {
+        Client.AuctionDetails.Auctions[auctionID].AutoBids[playerGUID] = {
             bid = bid,
             at = GetTime(),
         };
@@ -856,9 +842,9 @@ function Auctioneer:processBid(Message)
     local highestAutoBid = self:highestAutoBid(auctionID);
     if (bid == highestAutoBid) then
         bid = highestAutoBid - Client.AuctionDetails.Auctions[auctionID].increment;
-        self:setBid(auctionID, Message.Sender.fqn, bid);
+        self:setBid(auctionID, playerGUID, bid);
     else
-        self:setBid(auctionID, Message.Sender.fqn, bid);
+        self:setBid(auctionID, playerGUID, bid);
     end
 
     self:processAutoBids(auctionID);
@@ -868,7 +854,7 @@ function Auctioneer:processBid(Message)
 
     local auctioneerIsTopBidder = GL:iEquals(
         GL:tableGet(Client.AuctionDetails.Auctions[auctionID], "CurrentBid.player", ""),
-        GL.User.fqn
+        userGUID
     );
 
     if (auctioneerWasTopBidder and not auctioneerIsTopBidder) then
@@ -880,11 +866,12 @@ function Auctioneer:processBid(Message)
 end
 
 function Auctioneer:setBid(auctionID, player, bid)
-    GL:tableSet(Client.AuctionDetails.Auctions[auctionID], ("BidsPerPlayer.%s"):format(player), bid);
+    local playerGUID = GDKP:playerGUID(player);
+    GL:tableSet(Client.AuctionDetails.Auctions[auctionID], ("BidsPerPlayer.%s"):format(playerGUID), bid);
 
     Client.AuctionDetails.Auctions[auctionID].CurrentBid = {
         amount = bid,
-        player = player,
+        player = playerGUID,
     };
     tinsert(self.IDsChangedSinceLastSync, auctionID);
 end
@@ -910,7 +897,7 @@ function Auctioneer:auctionStartedByMe(auctionID)
         return false;
     end
 
-    return Client.AuctionDetails and Client.AuctionDetails.initiator == GL.User.fqn;
+    return Client.AuctionDetails and GL:iEquals(Client.AuctionDetails.initiator, GL.User.fqn);
 end
 
 --- Mark an auction as deleted

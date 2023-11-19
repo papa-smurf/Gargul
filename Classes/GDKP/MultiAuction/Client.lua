@@ -105,7 +105,7 @@ function Client:start(Message)
     UI:open();
     UI:refresh();
 
-    GL:after(.1, nil, function ()
+    GL:after(.2, nil, function ()
         UI.showFavorites = true;
         UI.showUnusable = false;
         UI.ToggleFavorites:GetScript("OnClick")();
@@ -185,11 +185,7 @@ function Client:autobid(auctionID, amount)
                 fqn = GL.User.fqn,
                 isSelf = true,
             },
-            content = {
-                auctionID = auctionID,
-                bid = amount,
-                auto = true,
-            }
+            content = GL:implode({ auctionID, amount, 1, }, "|"),
         });
 
         return;
@@ -197,7 +193,7 @@ function Client:autobid(auctionID, amount)
 
     GL.CommMessage.new{
         action = GL.Data.Constants.Comm.Actions.bidOnGDKPMultiAuction,
-        content = { auctionID = auctionID, bid = amount, auto = true, },
+        content = GL:implode({ auctionID, amount, 1, }, "|"),
         channel = "WHISPER",
         recipient = self.AuctionDetails.initiator,
     }:send();
@@ -212,10 +208,7 @@ function Client:stopAutobid(auctionID)
                 fqn = GL.User.fqn,
                 isSelf = true,
             },
-            content = {
-                auctionID = auctionID,
-                bid = -1,
-            }
+            content = GL:implode({ auctionID, -1, }, "|"),
         });
 
         return;
@@ -223,7 +216,7 @@ function Client:stopAutobid(auctionID)
 
     GL.CommMessage.new{
         action = GL.Data.Constants.Comm.Actions.bidOnGDKPMultiAuction,
-        content = { auctionID = auctionID, bid = -1, },
+        content = GL:implode({ auctionID, -1, }, "|"),
         channel = "WHISPER",
         recipient = self.AuctionDetails.initiator,
     }:send();
@@ -239,10 +232,7 @@ function Client:bid(auctionID, amount)
                 fqn = GL.User.fqn,
                 isSelf = true,
             },
-            content = {
-                auctionID = auctionID,
-                bid = amount,
-            }
+            content = GL:implode({ auctionID, amount, }, "|"),
         });
 
         return;
@@ -250,7 +240,7 @@ function Client:bid(auctionID, amount)
 
     GL.CommMessage.new{
         action = GL.Data.Constants.Comm.Actions.bidOnGDKPMultiAuction,
-        content = { auctionID = auctionID, bid = amount, },
+        content = GL:implode ({ auctionID, amount, }, "|"),
         channel = "WHISPER",
         recipient = self.AuctionDetails.initiator,
     }:send();
