@@ -79,7 +79,7 @@ end
 ---@return void
 function Client:start(Message)
     -- Make sure that whoever sent us this message is actually allowed to start a multi-auction
-    if (not Auctioneer:userIsAllowedToBroadcast(GL:tableGet(Message, "Sender.id", ""))) then
+    if (not Auctioneer:userIsAllowedToBroadcast(GL:tableGet(Message, "Sender.id", Message.Sender.name))) then
         return;
     end
 

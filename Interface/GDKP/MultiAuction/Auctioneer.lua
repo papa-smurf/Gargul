@@ -679,20 +679,12 @@ function Auctioneer:start()
     Settings:set("GDKP.MultiAuction.time", duration);
     Settings:set("GDKP.MultiAuction.antiSnipe", antiSnipe);
 
-    -- We're about to send a lot of data which will put strain on CTL
-    -- Make sure we're out of combat before doing so!
-    if (UnitAffectingCombat("player")) then
-        GL:notice("You are currently in combat, delaying multi auction broadcast until you're done!");
-
-        GL.Events:register("GDKPMultiAuctionOutOfCombatListener", "PLAYER_REGEN_ENABLED", function ()
-            GL.Events:unregister("GDKPMultiAuctionOutOfCombatListener");
-            -- Start the auction
-            GL.GDKP.MultiAuction.Auctioneer:start(ItemsUpForAuction, duration, antiSnipe);
-        end);
-    else
-        -- Start the auction
+    -- Make sure we're out of combat before starting the MultiAuction
+    GL:afterCombat(function ()
         GL.GDKP.MultiAuction.Auctioneer:start(ItemsUpForAuction, duration, antiSnipe);
-    end
+    end, function ()
+        GL:notice("You are currently in combat, delaying multi auction broadcast until you're done!");
+    end);
 
     -- Clear the item selection window
     self:clearItems();

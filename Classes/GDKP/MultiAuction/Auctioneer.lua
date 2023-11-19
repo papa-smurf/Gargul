@@ -122,11 +122,12 @@ end
 
 --- Check whether the given or current user is allowed to broadcast
 ---
+---@param player string Player name or GUID
 ---@return boolean
-function Auctioneer:userIsAllowedToBroadcast(playerID)
+function Auctioneer:userIsAllowedToBroadcast(player)
     -- If no player is given we assume self
-    if (type(playerID) ~= "string"
-        or playerID == GL.User.id
+    if (type(player) ~= "string"
+        or player == GL.User.id
     ) then
         return not GL.User.isInGroup or (
             -- If the user is severely outdated we won't let him broadcast
@@ -137,12 +138,8 @@ function Auctioneer:userIsAllowedToBroadcast(playerID)
         );
     end
 
-    if (self.inProgress) then
-        return self.initiatorID == playerID;
-    end
-
-    return GL.Player:isMasterLooter(playerID)
-        or GL.Player:hasAssist(playerID);
+    return GL.Player:isMasterLooter(player)
+        or GL.Player:hasAssist(player);
 end
 
 ---@return void
@@ -528,7 +525,7 @@ function Auctioneer:announceStart(ItemDetails, duration, antiSnipe)
         return false;
     end
 
-    if (not Auctioneer:userIsAllowedToBroadcast()) then
+    if (not self:userIsAllowedToBroadcast()) then
         self.waitingForAuctionStart = false;
         return false;
     end

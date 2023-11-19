@@ -261,9 +261,13 @@ end
 --- Perform a given function when or after the user is out of combat
 ---
 ---@return any
-function GL:afterCombat(func)
+function GL:afterCombat(func, whenInCombatFunc)
     if (not UnitAffectingCombat("player")) then
         return func();
+    end
+
+    if (whenInCombatFunc) then
+        whenInCombatFunc();
     end
 
     local eventID = self:uuid() .. GetTime() .. math.random(1, 1000);
