@@ -201,7 +201,7 @@ function CommMessage:compress(Message)
 
     local success, encoded = pcall(function ()
         local serialized = LibSerialize:Serialize(Payload);
-        local compressed = LibDeflate:CompressDeflate(serialized, {level = 5});
+        local compressed = LibDeflate:CompressDeflate(serialized, { level = 5, });
         local encoded = LibDeflate:EncodeForWoWAddonChannel(compressed);
 
         return encoded;

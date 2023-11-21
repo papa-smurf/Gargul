@@ -290,14 +290,9 @@ function Version:notifyOfLatestVersion()
     end
 
     -- Make sure to not annoy Sjniekel when in combat
-    if (UnitAffectingCombat("player")) then
-        GL.Events:register("VersionOutOfCombatListener", "PLAYER_REGEN_ENABLED", function ()
-            GL.Events:unregister("VersionOutOfCombatListener");
-            notify();
-        end);
-    else
+    GL:afterCombatDo(function ()
         notify();
-    end
+    end);
 end
 
 --- Validate the version string and return all parts (major/minor/trivial) individually

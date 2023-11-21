@@ -1218,18 +1218,11 @@ function TMB:broadcastToWhitelist()
         end
     end;
 
-    -- We're about to send a lot of data which will put strain on CTL
-    -- Make sure we're out of combat before doing so!
-    if (UnitAffectingCombat("player")) then
-        GL:message("You are currently in combat, delaying TMB broadcast");
-
-        Events:register("TMBOutOfCombatListener", "PLAYER_REGEN_ENABLED", function ()
-            Events:unregister("TMBOutOfCombatListener");
-            broadcast();
-        end);
-    else
+    GL:afterCombatDo(function ()
         broadcast();
-    end
+    end, function ()
+        GL:notice("You are currently in combat, delaying TMB broadcast");
+    end);
 end
 
 ---@return void
@@ -1282,18 +1275,11 @@ function TMB:broadcastToGroup()
         end);
     end
 
-    -- We're about to send a lot of data which will put strain on CTL
-    -- Make sure we're out of combat before doing so!
-    if (UnitAffectingCombat("player")) then
-        GL:message("You are currently in combat, delaying TMB broadcast");
-
-        Events:register("TMBOutOfCombatListener", "PLAYER_REGEN_ENABLED", function ()
-            Events:unregister("TMBOutOfCombatListener");
-            broadcast();
-        end);
-    else
+    GL:afterCombatDo(function ()
         broadcast();
-    end
+    end, function ()
+        GL:notice("You are currently in combat, delaying TMB broadcast");
+    end);
 end
 
 --- Process an incoming TMB broadcast

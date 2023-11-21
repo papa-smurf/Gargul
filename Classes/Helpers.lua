@@ -261,7 +261,7 @@ end
 --- Perform a given function when or after the user is out of combat
 ---
 ---@return any
-function GL:afterCombat(func, whenInCombatFunc)
+function GL:afterCombatDo(func, whenInCombatFunc)
     if (not UnitAffectingCombat("player")) then
         return func();
     end

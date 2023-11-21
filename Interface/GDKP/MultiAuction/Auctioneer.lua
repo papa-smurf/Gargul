@@ -680,7 +680,7 @@ function Auctioneer:start()
     Settings:set("GDKP.MultiAuction.antiSnipe", antiSnipe);
 
     -- Make sure we're out of combat before starting the MultiAuction
-    GL:afterCombat(function ()
+    GL:afterCombatDo(function ()
         GL.GDKP.MultiAuction.Auctioneer:start(ItemsUpForAuction, duration, antiSnipe);
     end, function ()
         GL:notice("You are currently in combat, delaying multi auction broadcast until you're done!");

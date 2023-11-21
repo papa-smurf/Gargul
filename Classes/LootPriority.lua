@@ -251,16 +251,11 @@ function LootPriority:broadcast()
 
     -- We're about to send a lot of data which will put strain on CTL
     -- Make sure we're out of combat before doing so!
-    if (UnitAffectingCombat("player")) then
-        GL:message("You are currently in combat, delaying loot priority broadcast");
-
-        GL.Events:register("LootPriorityOutOfCombatListener", "PLAYER_REGEN_ENABLED", function ()
-            GL.Events:unregister("LootPriorityOutOfCombatListener");
-            Broadcast();
-        end);
-    else
+    GL:afterCombatDo(function ()
         Broadcast();
-    end
+    end, function ()
+        GL:notice("You are currently in combat, delaying loot priority broadcast");
+    end);
 
     return true;
 end
