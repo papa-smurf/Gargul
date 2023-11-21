@@ -555,6 +555,10 @@ function RollOff:award(roller, itemLink, RollBracket, identicalRollDetected)
                 RollBracket = RollBracket,
             };
 
+            if (GL.Settings:get("UI.RollOff.closeOnAward")) then
+                GL.MasterLooterUI:close();
+            end
+
             return;
         end
 
