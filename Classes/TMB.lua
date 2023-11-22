@@ -55,7 +55,12 @@ function TMB:_init()
 
         local autoAward = Settings:get("AwardingLoot.autoTradeAfterAwardingAnItem");
         Settings:set("AwardingLoot.autoTradeAfterAwardingAnItem", false, true);
-        GL.AwardedLoot:addWinner(Details.playerName, Details.itemLink, false, nil, nil, nil, nil, nil, true);
+        GL.AwardedLoot:addWinner{
+            announce = false,
+            automaticallyAwarded = true,
+            itemLink = Details.itemLink,
+            winner = Details.playerName,
+        };
         Settings:set("AwardingLoot.autoTradeAfterAwardingAnItem", autoAward, true);
     end);
 

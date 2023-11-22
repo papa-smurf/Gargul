@@ -563,7 +563,12 @@ function Auctioneer:timeRanOut()
     end
 
     local winner = Auction.Current.TopBid.Bidder.name;
-    local awardChecksum = GL.AwardedLoot:addWinner(winner, Auction.Current.itemLink, nil, nil, nil, nil, bid, nil);
+    local awardChecksum = GL.AwardedLoot:addWinner{
+        broadcast = false,
+        gdkpCost = bid,
+        itemLink = Auction.Current.itemLink,
+        winner = winner,
+    };
     if (not Auction:storeCurrent(winner, bid, awardChecksum)) then
         return;
     end
@@ -819,7 +824,13 @@ function Auctioneer:award()
                 end
             end
 
-            local awardChecksum = GL.AwardedLoot:addWinner(winner, Auction.Current.itemLink, nil, nil, isOS, nil, bid, nil);
+            local awardChecksum = GL.AwardedLoot:addWinner{
+                broadcast = false,
+                gdkpCost = bid,
+                isOS = isOS,
+                itemLink = Auction.Current.itemLink,
+                winner = winner,
+            };
 
             if (not Auction:storeCurrent(winner, bid, awardChecksum)) then
                 return;

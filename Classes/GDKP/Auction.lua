@@ -420,7 +420,13 @@ function Auction:restore(sessionID, auctionID)
     -- Remove the restored state from the previous states table
     Instance.PreviousStates[mostRecentStateIdentifier] = nil;
 
-    Instance.awardChecksum = GL.AwardedLoot:addWinner(Instance.Winner.guid, Instance.itemLink, false, nil, nil, nil, Instance.price, nil);
+    Instance.awardChecksum = GL.AwardedLoot:addWinner{
+        announce = false,
+        broadcast = false,
+        gdkpCost = Instance.price,
+        itemLink = Instance.itemLink,
+        winner = Instance.Winner.guid,
+    };
 
     -- We don't point to Auction here, we want a copy not a pointer!
     local Before = GL:tableGet(Session, "Auctions." .. auctionID);

@@ -961,7 +961,12 @@ function Auctioneer:closeAuction(auctionID)
         end
 
         GL:mute(); -- We don't want an announcement for every awarded item since people can see it for themselves in /gl bid
-        local awardChecksum = GL.AwardedLoot:addWinner(BidDetails.player, itemLink, nil, nil, nil, nil, BidDetails.amount);
+        local awardChecksum = GL.AwardedLoot:addWinner{
+            broadcast = false,
+            gdkpCost = BidDetails.amount,
+            itemLink = itemLink,
+            winner = BidDetails.player,
+        };
         GDKPAuction:create(GL:getItemIDFromLink(itemLink), BidDetails.amount, BidDetails.player, nil, HighestBidPerPlayer, nil, awardChecksum);
         GL:unmute();
     end
