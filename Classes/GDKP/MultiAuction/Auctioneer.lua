@@ -564,24 +564,30 @@ end
 function Auctioneer:scheduleUpdater()
     GL:interval(UPDATE_INTERVAL, "GDKP.MultiAuction.auctionUpdated", function ()
         if (not self:auctionStartedByMe()) then
+            GL:cancelTimer("GDKP.MultiAuction.auctionUpdated");
             return;
         end
 
         -- Check if there are newly closed auctions
         local activeAuctions = false;
+        local serverTime = GetServerTime();
         for auctionID, Details in pairs(Client.AuctionDetails.Auctions or {}) do
-            if (Details.endsAt > 0) then
+            (function()
+                if (Details.endsAt <= 0) then
+                    return;
+                end
+
                 -- We check all this separately in order to improve performance
-                local serverTime = GetServerTime();
                 local lastBidAt = self.LastBidAt[auctionID] or serverTime - BIDDING_LEEWAY - 1;
 
                 if (serverTime - Details.endsAt > BIDDING_LEEWAY
-                    and serverTime - lastBidAt > BIDDING_LEEWAY) then
+                    and serverTime - lastBidAt > BIDDING_LEEWAY
+                ) then
                     return self:closeAuction(auctionID);
                 end
 
                 activeAuctions = true;
-            end
+            end)();
         end
 
         -- No need to broadcast if nothing changed
