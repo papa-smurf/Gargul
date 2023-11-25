@@ -412,6 +412,7 @@ end
 ---@return void
 function Overview:refreshItems()
     GL:debug("Overview:refreshItems");
+    local fiveHoursAgo = GetServerTime() - 18000;
 
     for key, ItemRow in pairs(self.ItemRows or {}) do
         Interface:release(ItemRow);
@@ -577,7 +578,44 @@ function Overview:refreshItems()
                         ItemsWonByRollerInTheLastFiveHours = GL.AwardedLoot:byWinner(Entry.awardedTo, fiveHoursAgo);
                     end
 
+                    if (not GL:empty(Entry.Rolls)) then
+                        local rollsPerPlayer = {};
+
+                        table.sort(Entry.Rolls, function (a, b)
+                            if (a.time and b.time) then
+                                return a.time < b.time;
+                            end
+
+                            return false;
+                        end);
+
+                        GameTooltip:AddLine("Rolls");
+                        linesAdded = true;
+
+                        for _, Roll in pairs (Entry.Rolls or {}) do
+                            local rollCount = "";
+                            if (not rollsPerPlayer[Roll.player]) then
+                                rollsPerPlayer[Roll.player] = 1;
+                            else
+                                rollsPerPlayer[Roll.player] = rollsPerPlayer[Roll.player] + 1;
+                                rollCount = string.format("[%s]", rollsPerPlayer[Roll.player]);
+                            end
+
+                            GameTooltip:AddLine(string.format("|c00%s%s|r: %s%s (%s)",
+                                GL:classHexColor(Roll.class),
+                                Roll.player,
+                                Roll.amount,
+                                rollCount,
+                                Roll.classification
+                            ));
+                        end
+                    end
+
                     if (not GL:empty(ItemsWonByRollerInTheLastFiveHours)) then
+                        if (linesAdded) then
+                            GameTooltip:AddLine(" ");
+                        end
+
                         linesAdded = true;
                         local header = string.format("Items won by %s:", GL:nameFormat(Entry.awardedTo));
                         if (itemWasDisenchanted) then
@@ -611,43 +649,6 @@ function Overview:refreshItems()
                             );
 
                             GameTooltip:AddLine(line);
-                        end
-                    end
-
-                    if (not GL:empty(Entry.Rolls)) then
-                        local rollsPerPlayer = {};
-
-                        table.sort(Entry.Rolls, function (a, b)
-                            if (a.time and b.time) then
-                                return a.time < b.time;
-                            end
-
-                            return false;
-                        end);
-
-                        if (linesAdded) then
-                            GameTooltip:AddLine(" ");
-                        end
-
-                        GameTooltip:AddLine("Rolls");
-                        linesAdded = true;
-
-                        for _, Roll in pairs (Entry.Rolls or {}) do
-                            local rollCount = "";
-                            if (not rollsPerPlayer[Roll.player]) then
-                                rollsPerPlayer[Roll.player] = 1;
-                            else
-                                rollsPerPlayer[Roll.player] = rollsPerPlayer[Roll.player] + 1;
-                                rollCount = string.format("[%s]", rollsPerPlayer[Roll.player]);
-                            end
-
-                            GameTooltip:AddLine(string.format("|c00%s%s|r: %s%s (%s)",
-                                    GL:classHexColor(Roll.class),
-                                    Roll.player,
-                                    Roll.amount,
-                                    rollCount,
-                                    Roll.classification
-                            ));
                         end
                     end
 
