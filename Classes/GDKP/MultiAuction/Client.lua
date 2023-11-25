@@ -179,8 +179,10 @@ end
 
 ---@param auctionID number
 ---@param amount number
+---@param onConfirm function|nil
+---
 ---@return void
-function Client:autobid(auctionID, amount)
+function Client:autobid(auctionID, amount, onConfirm)
     if (Auctioneer:auctionStartedByMe(auctionID)) then
         Auctioneer:processBid({
             Sender = {
@@ -190,7 +192,7 @@ function Client:autobid(auctionID, amount)
             content = GL:implode({ auctionID, amount, 1, }, "|"),
         });
 
-        return;
+        return onConfirm and onConfirm(true) or nil;
     end
 
     GL.CommMessage.new{
@@ -198,30 +200,16 @@ function Client:autobid(auctionID, amount)
         content = GL:implode({ auctionID, amount, 1, }, "|"),
         channel = "WHISPER",
         recipient = self.AuctionDetails.initiator,
+        onConfirm = onConfirm,
     }:send();
 end
 
 ---@param auctionID number
+---@param onConfirm function|nil
+---
 ---@return void
-function Client:stopAutobid(auctionID)
-    if (Auctioneer:auctionStartedByMe(auctionID)) then
-        Auctioneer:processBid({
-            Sender = {
-                fqn = GL.User.fqn,
-                isSelf = true,
-            },
-            content = GL:implode({ auctionID, -1, }, "|"),
-        });
-
-        return;
-    end
-
-    GL.CommMessage.new{
-        action = GL.Data.Constants.Comm.Actions.bidOnGDKPMultiAuction,
-        content = GL:implode({ auctionID, -1, }, "|"),
-        channel = "WHISPER",
-        recipient = self.AuctionDetails.initiator,
-    }:send();
+function Client:stopAutobid(auctionID, onConfirm)
+    return self:bid(auctionID, -1, onConfirm);
 end
 
 ---@param auctionID number

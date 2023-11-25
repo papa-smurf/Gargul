@@ -97,7 +97,7 @@ Comm.Actions = {
         GL.GDKP.MultiAuction.Auctioneer:respondToDetailsRequest(Message);
     end,
     [Actions.bidOnGDKPMultiAuction] = function (Message)
-        Message:respond();
+        Message:confirm();
         GL.GDKP.MultiAuction.Auctioneer:processBid(Message);
     end,
     [Actions.announceChangesForGDKPMultiAuction] = function (Message)
@@ -203,9 +203,7 @@ function Comm:send(CommMessage, broadcastFinishedCallback, packageSentCallback)
     -- Make sure we can keep an eye on comm behavior
     if (GL.User:isDev()) then
         local ActionsByID = GL:tableFlip(Actions);
-        if (not action) then
-            GL:xd(("Confirm | B: %s | T: %s"):format(stringLength or 0, throttle and "Y" or "N"));
-        elseif (action == Actions.response) then
+        if (action == Actions.response) then
             GL:xd(("Respond | B: %s | T: %s"):format(stringLength or 0, throttle and "Y" or "N"));
         else
             GL:xd(("Send: %s | B: %s | T: %s"):format(tostring(ActionsByID[action] or action), stringLength or 0, throttle and "Y" or "N"));

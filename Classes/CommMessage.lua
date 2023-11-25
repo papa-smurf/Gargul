@@ -194,12 +194,6 @@ function CommMessage:confirm()
         recipient = self.Sender.name;
     end
 
-    local Response = {
-        correspondenceId = self.correspondenceId,
-        channel = "WHISPER",
-        recipient = recipient,
-    };
-
     local success, encoded = pcall(function ()
         local serialized = LibSerialize:Serialize(self.correspondenceId);
         local compressed = LibDeflate:CompressDeflate(serialized, { level = 5, });
@@ -211,6 +205,10 @@ function CommMessage:confirm()
     if (not success or not encoded) then
         GL:error("Something went wrong trying to compress a CommMessage in CommMessage:compress");
         return false;
+    end
+
+    if (GL.User:isDev()) then
+        GL:xd(("Confirm | B: %s | T: %s"):format(strlen(self.correspondenceId) or 0, "N"));
     end
 
     GL.Ace:SendCommMessage(GL.Data.Constants.Comm.channel, encoded, "WHISPER", recipient, "ALERT");
