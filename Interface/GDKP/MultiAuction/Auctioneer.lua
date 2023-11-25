@@ -76,6 +76,10 @@ function Auctioneer:open(keepPreviousItems)
         end
     end
 
+    if (GL.Version.isOutOfDate) then
+        GL:warning("Your Gargul is outdated, we recommend updating before starting a session to prevent issues!");
+    end
+
     FONT = GL.FONT;
 
     local Window = self:getWindow() or self:build();

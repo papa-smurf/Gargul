@@ -83,6 +83,10 @@ function Client:start(Message)
         return;
     end
 
+    if (not GL.Version:leftIsNewerThanOrEqualToRight(Message.version, "7.2.2")) then
+        GL:error(("The loot master (%s) is outdated, this can cause bids to fail!"):format(GL:nameFormat(Message.Sender.fqn)));
+    end
+
     self.AuctionDetails = {
         initiator = Message.Sender.fqn,
         antiSnipe = Message.content.antiSnipe,
