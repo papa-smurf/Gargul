@@ -63,9 +63,18 @@ function GL:bootstrap(_, _, addonName)
     -- Mark the add-on as fully loaded
     GL.loadedOn = GetServerTime();
 
-    -- Check if ElvUI is loaded (useful for making adhoc UI changes)
     GL.Ace:ScheduleTimer(function()
+        -- Check if ElvUI is loaded (useful for making adhoc UI changes)
         self.elvUILoaded = GetAddOnEnableState(GL.User.name,"ElvUI") == 2;
+
+        -- Check if the user doesn't already have MuteNotInGroup loaded
+        if (self.isClassic and GetAddOnEnableState(GL.User.name, "MuteNotInGroup") ~= 2) then
+            -- Ignore "You aren't in a party" messages when you are in fact in a party (Blizzard LFD Bug)
+            ChatFrame_AddMessageEventFilter("CHAT_MSG_SYSTEM", function (_, _, msg)
+                return msg == ERR_NOT_IN_GROUP
+                    and UnitInParty("player");
+            end)
+        end
     end, 1);
 end
 
