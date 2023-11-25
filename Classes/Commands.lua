@@ -165,7 +165,7 @@ GL.Commands = GL.Commands or {
         -- Open the settings menu
         settings = function(...) Settings:draw(); end,
 
-        -- Award an item. This either award it directly or opens the UI
+        -- Award an item. This either awards it directly or opens the UI
         award = function(...)
             local winner, itemLink = ...;
 
@@ -182,7 +182,10 @@ GL.Commands = GL.Commands or {
                 return GL.Interface.Award.Award:draw(itemLink);
             end
 
-            GL.AwardedLoot:addWinner(...);
+            GL.AwardedLoot:addWinner{
+                winner = winner,
+                itemLink = itemLink,
+            };
         end,
 
         -- Toggle the award history window

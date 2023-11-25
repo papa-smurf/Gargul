@@ -162,7 +162,12 @@ function AwardedLoot:addWinnerOnDate(winner, date, itemLink, announce)
 
     announce = GL:toboolean(announce);
 
-    return AwardedLoot:addWinner(winner, itemLink, announce, date);
+    return self:addWinner{
+        winner = winner,
+        itemLink = itemLink,
+        announce = announce,
+        date = date,
+    };
 end
 
 --- Remove a winner for an item
@@ -339,45 +344,47 @@ end
 ---
 ---@param winner string
 ---@param itemLink string
----@param announce boolean|nil
+---@param announce boolean|nil Announce award details in chat
 ---@param date string|nil
 ---@param isOS boolean|nil
----@param BRCost number|nil
----@param GDKPCost number|nil
+---@param brCost number|nil
+---@param gdkpCost number|nil
 ---@param automaticallyAwarded boolean|nil Was this awarded automatically via the AwardingLoot.awardOnReceive setting?
 ---@param RollBracket table|nil See DefaultSettings.lua -> RollTracking.Brackets
+---@param broadcast boolean|nil Broadcast award details to others
 ---@return void|string
-function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, GDKPCost, Rolls, automaticallyAwarded, RollBracket)
-    GL:debug("AwardedLoot:addWinner");
-
-    -- Named parameters aren't possible, so supporting a table is the next best thing
-    if (type(winner) == "table") then
-        itemLink = winner.itemLink;
-        announce = winner.announce;
-        date = winner.date;
-        isOS = winner.isOS;
-        BRCost = winner.BRCost;
-        GDKPCost = winner.GDKPCost;
-        Rolls = winner.Rolls;
-        automaticallyAwarded = winner.automaticallyAwarded;
-        RollBracket = winner.RollBracket;
-
-        -- Save this for last
-        winner = winner.winner;
+function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, brCost, gdkpCost, Rolls, automaticallyAwarded, RollBracket, broadcast)
+    if (itemLink ~= nil or type(winner) ~= "table") then
+        GL:error("Pass a table instead of multiple arguments")
+        return;
     end
+
+    itemLink = winner.itemLink;
+    announce = winner.announce;
+    date = winner.date;
+    isOS = winner.isOS;
+    brCost = winner.brCost;
+    gdkpCost = winner.gdkpCost;
+    Rolls = winner.Rolls;
+    automaticallyAwarded = winner.automaticallyAwarded;
+    RollBracket = winner.RollBracket;
+    broadcast = winner.broadcast;
+
+    winner = winner.winner;
 
     local isDisenchanted = winner == GL.Exporter.disenchantedItemIdentifier;
     winner = not isDisenchanted and GL:addRealm(winner) or winner;
 
-    local broadcast = false;
-    if (automaticallyAwarded) then
-        if (GetLootMethod() == "master") then
-            broadcast = GL.User.isMasterLooter;
+    if (broadcast == nil) then
+        if (automaticallyAwarded) then
+            if (GetLootMethod() == "master") then
+                broadcast = GL.User.isMasterLooter;
+            else
+                broadcast = GL.User.isLead;
+            end
         else
-            broadcast = GL.User.isLead;
+            broadcast = GL.User.isMasterLooter or GL.User.hasAssist or not GL.User.isInGroup;
         end
-    else
-        broadcast = GL.User.isMasterLooter or GL.User.hasAssist or not GL.User.isInGroup;
     end
 
     -- Loot awarded automatically (when AwardingLoot.awardOnReceive is enabled)
@@ -495,8 +502,8 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, G
         timestamp = timestamp,
         softresID = GL.DB:get("SoftRes.MetaData.id"),
         received = GL:iEquals(winner, GL.User.name),
-        BRCost = tonumber(BRCost),
-        GDKPCost = tonumber(GDKPCost),
+        BRCost = tonumber(brCost),
+        GDKPCost = tonumber(gdkpCost),
         GDKPSession = GL.GDKP.Session:activeSessionID() or nil,
         OS = isOS,
         SR = isReserved,
@@ -534,17 +541,17 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, G
 
     if (announce) then
         local awardMessage = "";
-        if (GL.BoostedRolls:enabled() and GL:higherThanZero(BRCost)) then
+        if (GL.BoostedRolls:enabled() and GL:higherThanZero(brCost)) then
             awardMessage = string.format("%s was awarded to %s for %s points. Congrats!",
                 itemLink,
                 awardedTo,
-                BRCost
+                    brCost
             );
-        elseif (GDKPCost and GDKPCost > 0) then
+        elseif (gdkpCost and gdkpCost > 0) then
             awardMessage = string.format("%s was awarded to %s for %sg. Congrats!",
                 itemLink,
                 awardedTo,
-                GDKPCost
+                    gdkpCost
             );
         else
             awardMessage = string.format("%s was awarded to %s. Congrats!",
@@ -554,7 +561,7 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, G
 
             if (GL.BoostedRolls:enabled()) then
                 --- Make sure the cost is stored as the (new) default item cost
-                GL.Settings:set("BoostedRolls.defaultCost", BRCost);
+                GL.Settings:set("BoostedRolls.defaultCost", brCost);
             end
         end
 
@@ -584,7 +591,7 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, G
     if (broadcast) then
         self.outStandingBroadcasts = self.outStandingBroadcasts + 1;
 
-        -- In case we award a lot, like with batch auctions, we want to spread out the awarded loot
+        -- In case we award a lot we want to spread out the awarded loot
         GL:after((self.outStandingBroadcasts * 2.3) + 10, nil, function ()
             -- Broadcast the awarded loot details to everyone in the group
             GL.CommMessage.new{

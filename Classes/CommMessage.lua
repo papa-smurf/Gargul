@@ -194,7 +194,7 @@ function CommMessage:compress(Message)
         b = Message.content, -- Content
         c = FQN, -- Name of the sender
         d = Message.correspondenceId or Message.id, -- Response ID
-        mv = Message.minimumVersion, -- For backwards compatibility only @TODO: REMOVE IN NEXT VERSION (v7.2.1)
+        mv = Message.minimumVersion, -- For backwards compatibility only @TODO: REMOVE IN LATER VERSION
         m = Message.minimumVersion, -- Minimum version recipient should have
         v = Message.version, -- Version of sender
     };
@@ -237,6 +237,14 @@ function CommMessage:decompress(encoded)
     if (Payload.e and not GL:isCrossRealm()) then
         Payload.e = GL:addRealm(Payload.e);
     end
+
+    -- Old versions send their content under the 'c' key which can be a table as well
+    if (type(Payload.c) == "table") then
+        Payload.c = nil;
+    end
+
+    -- Old versions send their minimum version under the 'mv' key @TODO: REMOVE IN LATER VERSION
+    Payload.m = Payload.m or Payload.mv;
 
     return {
         action = Payload.a or nil, -- Action

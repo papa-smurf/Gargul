@@ -821,7 +821,11 @@ function PackMule:disenchant(itemLink, byPassConfirmationDialog, callback)
     if (byPassConfirmationDialog) then
         self:assignLootToPlayer(itemID, self.disenchanter);
         GL.Interface.PlayerSelector:close();
-        GL.AwardedLoot:addWinner(GL.Exporter.disenchantedItemIdentifier, itemLink, false);
+        GL.AwardedLoot:addWinner{
+            winner = GL.Exporter.disenchantedItemIdentifier,
+            itemLink = itemLink,
+            announce = false,
+        };
         self:announceDisenchantment(itemLink);
         callback();
 
@@ -838,7 +842,11 @@ function PackMule:disenchant(itemLink, byPassConfirmationDialog, callback)
         OnYes = function ()
             self:assignLootToPlayer(itemID, self.disenchanter);
             GL.Interface.PlayerSelector:close();
-            GL.AwardedLoot:addWinner(GL.Exporter.disenchantedItemIdentifier, itemLink, false);
+            GL.AwardedLoot:addWinner{
+                winner = GL.Exporter.disenchantedItemIdentifier,
+                itemLink = itemLink,
+                announce = false,
+            };
             self:announceDisenchantment(itemLink);
             callback();
         end,
