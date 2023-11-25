@@ -5,7 +5,8 @@ local _, GL = ...;
 GL.CommMessage = {};
 GL.CommMessage.__index = GL.CommMessage;
 
-local CommMessage = GL.CommMessage; ---@type CommMessage
+---@type CommMessage
+local CommMessage = GL.CommMessage;
 
 CommMessage.Box = {};
 
@@ -25,9 +26,10 @@ setmetatable(CommMessage, {
 ---@param recipient string|nil Only used in case of WHISPER
 ---@param acceptsResponse boolean|nil Specify whether players are allowed to respond to your message
 ---@param onResponse function|nil Callback that's fired whenever a response comes in
+---@param onConfirm function|nil Callback that's fired whenever a received confirms that they received your message
 ---
 ---@return CommMessage
-function CommMessage.new(action, content, channel, recipient, acceptsResponse, onResponse)
+function CommMessage.new(action, content, channel, recipient, acceptsResponse, onResponse, onConfirm)
     if (content ~= nil or type(action) ~= "table") then
         GL:error("Pass a table instead of multiple arguments")
         return;
@@ -38,8 +40,9 @@ function CommMessage.new(action, content, channel, recipient, acceptsResponse, o
     content = action.content;
     channel = action.channel;
     recipient = action.recipient;
+    onConfirm = action.onConfirm;
     onResponse = action.onResponse;
-    acceptsResponse = action.acceptsResponse == true or type(onResponse) == "function";
+    acceptsResponse = action.acceptsResponse == true or type(onResponse) == "function" or type(onConfirm) == "function";
 
     if (channel == "GROUP") then
         channel = "PARTY";
@@ -48,7 +51,7 @@ function CommMessage.new(action, content, channel, recipient, acceptsResponse, o
             channel = "RAID";
 
         --- This might seem like an odd one, but it allows us to test
-        --- most of Gargul's feature without having to be in a group
+        --- most of Gargul's features without having to be in a group
         elseif (not GL.User.isInGroup) then
             channel = "WHISPER";
             recipient = GL.User.name;
@@ -66,22 +69,24 @@ function CommMessage.new(action, content, channel, recipient, acceptsResponse, o
     self.senderFqn = GL.User.fqn or GL:addRealm(UnitName("player"), GL.User.realm);
     self.recipient = recipient and GL:nameFormat(recipient) or nil;
 
-    -- Make sure self.id is unique!
+    -- Make sure self.correspondenceId is unique!
     -- This is very important if we wish to track responses to our comm message
     if (acceptsResponse) then
         local i = 0;
         while(true) do
             i = i + 1;
-            self.id = ("%s.%s"):format(floor(GetTime()), i);
+            self.correspondenceId = ("%s.%s"):format(floor(GetTime()), i);
 
-            if (not CommMessage.Box[self.id]) then
+            if (not CommMessage.Box[self.correspondenceId]) then
                 break;
             end
         end
 
         self.Responses = {};
         self.onResponse = onResponse or function () end;
-        CommMessage.Box[self.id] = self;
+        self.onConfirm = onConfirm;
+        self.confirmed = false;
+        CommMessage.Box[self.correspondenceId] = self;
     end
 
     return self;
@@ -119,6 +124,24 @@ end
 function CommMessage:send(broadcastFinishedCallback, packageSentCallback)
     GL:debug("CommMessage:send");
 
+    -- Make sure to mark the message as unreceived if 3 seconds pass without receiving a confirmation
+    if (self.onConfirm and self.correspondenceId) then
+        local originalBroadcastFinishedCallback = broadcastFinishedCallback;
+        broadcastFinishedCallback = function (...)
+            GL:after(3, ("MARK_COMM_%s_AS_UNRECEIVED"):format(self.correspondenceId), function ()
+                if (self.confirmed) then
+                    return;
+                end
+
+                self.onConfirm(false);
+            end);
+
+            if (originalBroadcastFinishedCallback) then
+                originalBroadcastFinishedCallback(...);
+            end
+        end;
+    end
+
     GL.Comm:send(self, broadcastFinishedCallback, packageSentCallback);
 
     return self;
@@ -144,7 +167,7 @@ function CommMessage:respond(message)
         minimumVersion = GL.Data.Constants.Comm.minimumAppVersion,
         senderFqn = GL.User.fqn or GL:addRealm(UnitName("player"), GL.User.realm),
         recipient = recipient,
-        correspondenceId = self.correspondenceId or self.id,
+        correspondenceId = self.correspondenceId or self.correspondenceId,
     };
 
     -- Not all comm messages accept a response
@@ -152,6 +175,45 @@ function CommMessage:respond(message)
         GL.Comm:send(Response);
     end
 
+    return self;
+end
+
+--- Let the sender know that we've received their message
+---
+---@return self
+function CommMessage:confirm()
+    -- We can't confirm that we received a message without a correspondence ID
+    if (not self.correspondenceId) then
+        return;
+    end
+
+    -- Support cross-realm response
+    local recipient = self.senderFqn;
+
+    if (self.senderRealm == GL.User.realm) then
+        recipient = self.Sender.name;
+    end
+
+    local Response = {
+        correspondenceId = self.correspondenceId,
+        channel = "WHISPER",
+        recipient = recipient,
+    };
+
+    local success, encoded = pcall(function ()
+        local serialized = LibSerialize:Serialize(self.correspondenceId);
+        local compressed = LibDeflate:CompressDeflate(serialized, { level = 5, });
+        local encoded = LibDeflate:EncodeForWoWAddonChannel(compressed);
+
+        return encoded;
+    end);
+
+    if (not success or not encoded) then
+        GL:error("Something went wrong trying to compress a CommMessage in CommMessage:compress");
+        return false;
+    end
+
+    GL.Ace:SendCommMessage(GL.Data.Constants.Comm.channel, encoded, "WHISPER", recipient, "ALERT");
     return self;
 end
 
@@ -230,8 +292,12 @@ function CommMessage:decompress(encoded)
         return deserialized;
     end);
 
-    if not (success or Payload) then
+    if (not success or not Payload) then
         return GL:warning("Something went wrong while decoding the COMM payload");
+    end
+
+    if (type(Payload) == "string") then
+        return Payload;
     end
 
     if (Payload.e and not GL:isCrossRealm()) then

@@ -4,6 +4,9 @@ local _, GL = ...;
 ---@type Version
 local Version = GL.Version;
 
+---@type CommMessage
+local CommMessage = GL.CommMessage;
+
 ---@class Comm
 GL.Comm = {
     initialized = false,
@@ -94,6 +97,7 @@ Comm.Actions = {
         GL.GDKP.MultiAuction.Auctioneer:respondToDetailsRequest(Message);
     end,
     [Actions.bidOnGDKPMultiAuction] = function (Message)
+        Message:respond();
         GL.GDKP.MultiAuction.Auctioneer:processBid(Message);
     end,
     [Actions.announceChangesForGDKPMultiAuction] = function (Message)
@@ -199,7 +203,9 @@ function Comm:send(CommMessage, broadcastFinishedCallback, packageSentCallback)
     -- Make sure we can keep an eye on comm behavior
     if (GL.User:isDev()) then
         local ActionsByID = GL:tableFlip(Actions);
-        if (action == Actions.response) then
+        if (not action) then
+            GL:xd(("Confirm | B: %s | T: %s"):format(stringLength or 0, throttle and "Y" or "N"));
+        elseif (action == Actions.response) then
             GL:xd(("Respond | B: %s | T: %s"):format(stringLength or 0, throttle and "Y" or "N"));
         else
             GL:xd(("Send: %s | B: %s | T: %s"):format(tostring(ActionsByID[action] or action), stringLength or 0, throttle and "Y" or "N"));
@@ -207,8 +213,6 @@ function Comm:send(CommMessage, broadcastFinishedCallback, packageSentCallback)
     end
 
     GL.Ace:SendCommMessage(self.channel, compressedMessage, distribution, recipient, "BULK", function (_, sent, textlen)
-        GL:debug(string.format("Sent %s from %s characters", sent, textlen));
-
         -- Cancel the throttle reset timer if it exists
         if (throttleResetTimer) then
             GL.Ace:CancelTimer(throttleResetTimer);
@@ -244,6 +248,35 @@ end
 function Comm:listen(payload, distribution, playerName)
     local stringLength = string.len(payload);
     payload = GL.CommMessage:decompress(payload);
+
+    -- We're missing a payload
+    if (not payload) then
+        return false;
+    end
+
+    -- If the payload is a string then it MUST be a message received confirmation
+    if (type(payload) == "string") then
+        local correspondenceId = payload;
+
+        -- The correspondenceId doesn't exist or was already confirmed
+        if (not GL.CommMessage.Box[correspondenceId]
+            or GL.CommMessage.Box[correspondenceId].confirmed
+        ) then
+            return;
+        end
+
+        -- Mark the message as received and cancel any potential timers
+        GL.CommMessage.Box[correspondenceId].confirmed = true;
+        GL:cancelTimer(("MARK_COMM_%s_AS_UNRECEIVED"):format(correspondenceId));
+
+        return GL.CommMessage.Box[correspondenceId].onConfirm
+            and GL.CommMessage.Box[correspondenceId].onConfirm(true);
+    end
+
+    if (type(payload) ~= "table") then
+        return false;
+    end
+
     payload.channel = distribution;
 
     if (not payload.senderFqn and playerName) then
@@ -290,17 +323,6 @@ function Comm:listen(payload, distribution, playerName)
     Sender.isSelf = GL:iEquals(Sender.id, GL.User.id)
         or GL:iEquals(playerName, GL.User.name)
         or GL:iEquals(Sender.name, GL.User.name);
-
-    -- We're missing a payload
-    if (not payload) then
-        if (type(payload) == "string") then
-            GL:warning("Failed to decompress empty payload");
-            return false;
-        end
-
-        GL:warning("Failed to decompress payload: not a string");
-        return false;
-    end
 
     -- The person sending us the message has a newer version that's not backwards compatible with ours
     -- If that's the case then we'll notify the user that his version is out of date (max once every 5 seconds)

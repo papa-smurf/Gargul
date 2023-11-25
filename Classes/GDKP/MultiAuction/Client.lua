@@ -226,8 +226,11 @@ end
 
 ---@param auctionID number
 ---@param amount number
+---@param onConfirm function|nil
+---
 ---@return void
-function Client:bid(auctionID, amount)
+function Client:bid(auctionID, amount, onConfirm)
+
     if (Auctioneer:auctionStartedByMe(auctionID)) then
         Auctioneer:processBid({
             Sender = {
@@ -237,7 +240,7 @@ function Client:bid(auctionID, amount)
             content = GL:implode({ auctionID, amount, }, "|"),
         });
 
-        return;
+        return onConfirm and onConfirm(true) or nil;
     end
 
     GL.CommMessage.new{
@@ -245,6 +248,7 @@ function Client:bid(auctionID, amount)
         content = GL:implode ({ auctionID, amount, }, "|"),
         channel = "WHISPER",
         recipient = self.AuctionDetails.initiator,
+        onConfirm = onConfirm,
     }:send();
 end
 

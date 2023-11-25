@@ -812,16 +812,38 @@ function ClientInterface:build()
                     return GL:error(("Invalid bid or bid is too low! The minimum is %sg"):format(Client:minimumBidForAuction(auctionID)));
                 end
 
-                if (AuctionRow.AutoBidButton.currentAmount
-                    and AuctionRow.AutoBidButton.currentAmount <= bid
-                ) then
-                    AutoBidButton.currentAmount = false;
-                    AutoBidButton.updateText();
-                end
+                BidButton:SetEnabled(false);
+                AutoBidButton:SetEnabled(false);
 
                 BidInput:Clear();
                 BidInput:ClearFocus();
-                GL.GDKP.MultiAuction.Client:bid(auctionID, bid);
+                GL.GDKP.MultiAuction.Client:bid(
+                    auctionID,
+                    bid,
+                    function (success)
+                        GL:xd{
+                            confirmed = success,
+                        };
+
+                        BidButton:SetEnabled(true);
+                        AutoBidButton:SetEnabled(true);
+
+                        -- Apparently something went wrong whilst sending our previous bid
+                        if (not success) then
+                            GL:notice(("Bid on %s could not be confirmed"):format(Item.link));
+
+                            return;
+                        end
+
+                        -- If we currently have a autobid that's lower than the amount we just bid then our autobid is no longer valid
+                        if (AuctionRow.AutoBidButton.currentAmount
+                            and AuctionRow.AutoBidButton.currentAmount <= bid
+                        ) then
+                            AutoBidButton.currentAmount = false;
+                            AutoBidButton.updateText();
+                        end
+                    end
+                );
 
                 if (not AuctionRow._Details.isFavorite) then
                     AuctionRow.toggleFavorite();
