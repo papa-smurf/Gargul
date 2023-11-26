@@ -100,6 +100,33 @@ function AwardedLoot:tooltipLines(itemLink)
             end
             tinsert(Details, receivedString);
 
+            if (GL:higherThanZero(Loot.GDKPCost)) then
+                for _, Award in pairs(DB:get("GDKP.Ledger." .. Loot.GDKPSession .. ".Auctions", {})) do
+                    if (Award.awardChecksum == Loot.checksum) then
+                        local Bids = GL:tableValues(Award.Bids);
+                        table.sort(Bids, function (a, b)
+                            if (a.bid and b.bid) then
+                                return a.bid > b.bid;
+                            end
+
+                            return false;
+                        end);
+
+                        local SecondHighestBid = Bids[2];
+                        if (not SecondHighestBid) then
+                            break;
+                        end
+
+                        tinsert(Details, string.format("2nd bid: %sg by %s", SecondHighestBid.bid, GL:disambiguateName(
+                            SecondHighestBid.bidder,
+                            { colorize = true, }
+                        )));
+
+                        break;
+                    end
+                end
+            end
+
             local line = string.format("    %s | %s",
                 GL:nameFormat{ name = Loot.awardedTo, colorize = true },
                 table.concat(Details, " | ")
