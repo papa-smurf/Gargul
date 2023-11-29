@@ -896,12 +896,12 @@ function TMB:DFTFormatToTMB(data)
                 local priority = tonumber(lineParts[2]);
 
                 if (GL:empty(player)
-                    or not GL:higherThanZero(priority)
+                    or not priority
                 ) then
                     return;
                 end
 
-                tinsert(Priorities, {player = player, priority = priority});
+                tinsert(Priorities, { player = player, priority = priority, });
 
                 increaseLineNumber();
             end)();
