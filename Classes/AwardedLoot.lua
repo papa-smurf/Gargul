@@ -100,7 +100,7 @@ function AwardedLoot:tooltipLines(itemLink)
             end
             tinsert(Details, receivedString);
 
-            if (GL:higherThanZero(Loot.GDKPCost)) then
+            if (Loot.GDKPSession and GL:higherThanZero(Loot.GDKPCost)) then
                 for _, Award in pairs(DB:get("GDKP.Ledger." .. Loot.GDKPSession .. ".Auctions", {})) do
                     if (Award.awardChecksum == Loot.checksum) then
                         local Bids = GL:tableValues(Award.Bids);
