@@ -923,7 +923,7 @@ GL.Interface.Identity = {
 
     --[[ ================== HIGH ROLLER ================== ]]
     ["956571599-3715333585"] = {
-        id = "highroller",
+        id = "highrollerz",
         url = "https://discord.gg/k5M4PCFg7n",
         urlInfo = "Join our Discord server to learn more about High Rollerz!",
         tooltip = "High Rollerz discord",

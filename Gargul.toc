@@ -87,6 +87,10 @@ Interface/Settings/PackMuleRules.lua
 Interface/Settings/PackMuleIgnores.lua
 Interface/Settings/TMB.lua
 Interface/Settings/GDKP.lua
+Interface/Settings/GDKPCommunication.lua
+Interface/Settings/GDKPMutators.lua
+Interface/Settings/GDKPPrices.lua
+Interface/Settings/GDKPQueues.lua
 Interface/Settings/LootTradeTimers.lua
 Interface/Settings/Rolling.lua
 Interface/Settings/RollTracking.lua
