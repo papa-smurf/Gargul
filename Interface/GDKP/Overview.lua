@@ -255,7 +255,7 @@ function Overview:build()
         GameTooltip:SetOwner(PotIconFrame, "ANCHOR_TOP");
         GameTooltip:AddLine(string.format("Pot: %sg", pot));
         GameTooltip:AddLine(string.format("Management cut (%s%%): %sg", managementCut, managementPot));
-        GameTooltip:AddLine(string.format("Per player cut (1/%s): %sg", numberOfRaidMembers, math.floor((pot - managementPot) / numberOfRaidMembers)));
+        GameTooltip:AddLine(string.format("Per player cut (1/%s): %sg", numberOfRaidMembers, GL:floor((pot - managementPot) / numberOfRaidMembers, Settings:get("GDKP.precision"))));
         GameTooltip:Show();
     end);
     PotIcon:SetCallback("OnLeave", function ()

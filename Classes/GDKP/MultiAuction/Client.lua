@@ -349,7 +349,7 @@ function Client:roundBidToClosestIncrement(auctionID, bid)
     end
 
     return bid == Auction.minimum and bid
-        or Auction.minimum + floor((bid - Auction.minimum) / Auction.increment) * Auction.increment;
+        or Auction.minimum + GL:floor((bid - Auction.minimum) / Auction.increment, Settings:get("GDKP.precision")) * Auction.increment;
 end
 
 --- Check if the given bid is valid for the given auction ID

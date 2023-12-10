@@ -609,7 +609,7 @@ function Session:itemHistory(itemLinkOrID)
 
     local averageSaleValue = 0;
     if (timesSold > 0) then
-        averageSaleValue = math.floor(totalSaleValue / timesSold);
+        averageSaleValue = GL:floor(totalSaleValue / timesSold, Settings:get("GDKP.precision"));
     end
 
     self.ItemHistory[itemID] = {

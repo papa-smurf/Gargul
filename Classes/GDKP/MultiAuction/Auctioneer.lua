@@ -1071,14 +1071,14 @@ function Auctioneer:storeDetailsForFutureAuctions(Details)
     -- [[ MINIMUM AND INCREMENT ]]
     if (Settings:get("GDKP.storeMinimumAndIncrementPerItem")) then
         local minimum = tonumber(Details.minimum) or 0;
-        minimum = math.floor(minimum);
+        minimum = GL:floor(minimum, Settings:get("GDKP.precision"));
 
         if (minimum < 1) then
             minimum = DB:get("GDKP.defaultMinimumBid");
         end
 
         local increment = tonumber(Details.increment) or 0;
-        increment = math.floor(increment);
+        increment = GL:floor(increment, Settings:get("GDKP.precision"));
 
         if (increment < 1) then
             increment = DB:get("GDKP.defaultIncrement");

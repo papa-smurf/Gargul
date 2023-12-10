@@ -351,8 +351,7 @@ function Auctioneer:build()
 
             --[[ MINIMUM ]]
             ---@type EditBox
-            local MinInput = Interface:inputBox(ItemRow);
-            MinInput:SetNumeric(true);
+            local MinInput = Interface:numericInputBox(ItemRow, nil, nil, Settings:get("GDKP.precision"));
             MinInput:SetText(PerItemSettings.minimum);
             MinInput:SetWidth(42);
             MinInput:SetPoint("TOP", ItemRow, "TOP");
@@ -362,8 +361,7 @@ function Auctioneer:build()
 
             --[[ INCREMENT ]]
             ---@type EditBox
-            local IncInput = Interface:inputBox(ItemRow);
-            IncInput:SetNumeric(true);
+            local IncInput = Interface:numericInputBox(ItemRow, nil, nil, Settings:get("GDKP.precision"));
             IncInput:SetText(PerItemSettings.increment);
             IncInput:SetWidth(36);
             IncInput:SetPoint("TOP", ItemRow, "TOP");

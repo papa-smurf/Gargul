@@ -67,8 +67,6 @@ local DEFAULT_AUCTION_SHORTENING = 10;
 
 ---@return void
 function Auctioneer:_init()
-    GL:debug("Auctioneer:_init");
-
     if (self._initialized) then
         return;
     end
@@ -625,14 +623,14 @@ function Auctioneer:storeDetailsForFutureAuctions(Details)
     -- [[ MINIMUM AND INCREMENT ]]
     if (Settings:get("GDKP.storeMinimumAndIncrementPerItem")) then
         local minimumBid = tonumber(Details.minimumBid) or 0;
-        minimumBid = math.floor(minimumBid);
+        minimumBid = GL:floor(minimumBid, Settings:get("GDKP.precision"));
 
         if (minimumBid < 1) then
             minimumBid = DB:get("GDKP.defaultMinimumBid");
         end
 
         local increment = tonumber(Details.increment) or 0;
-        increment = math.floor(increment);
+        increment = GL:floor(increment, Settings:get("GDKP.precision"));
 
         if (increment < 1) then
             increment = DB:get("GDKP.defaultIncrement");

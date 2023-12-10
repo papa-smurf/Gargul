@@ -117,8 +117,7 @@ function AddItem:build()
     MinimumLabel:SetPoint("LEFT", Window, "LEFT", 30, 0);
 
     ---@type EditBox
-    local Minimum = Interface:inputBox(Window);
-    Minimum:SetNumeric(true);
+    local Minimum = Interface:numericInputBox(Window, nil, nil, Settings:get("GDKP.precision"));
     Minimum:SetWidth(42);
     Minimum:SetPoint("TOPLEFT", MinimumLabel, "TOPRIGHT", 6, 6);
     Window.Minimum = Minimum;
@@ -129,8 +128,7 @@ function AddItem:build()
     IncrementLabel:SetPoint("TOPLEFT", Minimum, "TOPRIGHT", 10, -6);
 
     ---@type EditBox
-    local Increment = Interface:inputBox(Window);
-    Increment:SetNumeric(true);
+    local Increment = Interface:numericInputBox(Window, nil, nil, Settings:get("GDKP.precision"));
     Increment:SetWidth(36);
     Increment:SetPoint("TOPLEFT", IncrementLabel, "TOPRIGHT", 6, 6);
     Window.Increment = Increment;
