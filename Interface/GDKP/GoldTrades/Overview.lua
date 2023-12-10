@@ -157,10 +157,10 @@ function Overview:build()
 
     --[[ ADD TRADE BUTTON ]]
     ---@type Button
-    local EnableQueue = Interface:dynamicPanelButton(Window, "Add Trade");
-    EnableQueue:SetPoint("BOTTOMLEFT", Window, "BOTTOMLEFT", 20, 32);
-    EnableQueue:SetPoint("RIGHT", Window, "RIGHT", -20, 0);
-    EnableQueue:SetScript("OnClick", function ()
+    local AddTrade = Interface:dynamicPanelButton(Window, "Add Trade");
+    AddTrade:SetPoint("BOTTOMLEFT", Window, "BOTTOMLEFT", 20, 32);
+    AddTrade:SetPoint("RIGHT", Window, "RIGHT", -20, 0);
+    AddTrade:SetScript("OnClick", function ()
         GL.Interface.GDKP.GoldTrades.Create:open(self.sessionID, self.playerGUID);
     end);
 

@@ -14,10 +14,37 @@ function GL:toboolean(var)
     return not GL:empty(var);
 end
 
+--- Similar to math.floor, but rounds down to a given number of decimals
+---
 ---@param var number
 ---@param precision number
 ---@return number
+---@test /dump _G.Gargul:floor(2.232323, 2);
+function GL:floor(var, precision)
+    var = tonumber(var);
+
+    if (not var) then
+        return 0;
+    end
+
+    if (not precision or precision == 0) then
+        return math.floor(var);
+    end
+
+    return tonumber(strsub(string.format("%." .. precision + 1 .. "f", var), 1, -2));
+end
+
+---@param var number
+---@param precision number
+---@return number
+---@test /dump _G.Gargul:round(10.2225, 3);
 function GL:round(var, precision)
+    var = tonumber(var);
+
+    if (not var) then
+        return 0;
+    end
+
     if (precision and precision > 0) then
         local mult = 10^ precision;
         return math.floor(var * mult + .5) / mult;
@@ -2326,6 +2353,17 @@ function GL:strLimit(str, limit, append)
 
     -- Return the limited string with appendage
     return str:sub(1, limit - appendLength) .. append;
+end
+
+--- Insert a string in another string at a given position
+---
+---@param str1 string
+---@param str2 string
+---@param pos number
+---
+---@return string
+function GL:strInsert(str1, str2, pos)
+    return str1:sub(1,pos) .. str2 .. str1:sub(pos+1);
 end
 
 --- Split a string by any space characters or commas

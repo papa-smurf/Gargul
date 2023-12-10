@@ -84,18 +84,10 @@ function Create:build()
 
     ---@type EditBox
     local ReceivedInput;
-    local GivenInput = Interface:inputBox(Window);
+    local GivenInput = Interface:numericInputBox(Window, nil, nil, 2);
     GivenInput:SetWidth(100);
     GivenInput:SetPoint("CENTER", GivenLabel, "CENTER");
     GivenInput:SetPoint("RIGHT", Window, "RIGHT", -30, 0);
-    GivenInput:SetScript("OnTextChanged", function ()
-        local text = GivenInput:GetText();
-        text = text and text:gsub("[^%d]", "") or "";
-        if (not GL:empty(text)) then
-            ReceivedInput:SetText("");
-        end
-        GivenInput:SetText(text);
-    end);
     Window.GivenInput = GivenInput;
 
     --[[ GOLD RECEIVED ]]
@@ -106,18 +98,10 @@ function Create:build()
     Window.ReceivedLabel = ReceivedLabel;
 
     ---@type EditBox
-    ReceivedInput = Interface:inputBox(Window);
+    ReceivedInput = Interface:numericInputBox(Window, nil, nil, 2);
     ReceivedInput:SetWidth(100);
     ReceivedInput:SetPoint("CENTER", ReceivedLabel, "CENTER");
     ReceivedInput:SetPoint("RIGHT", Window, "RIGHT", -30, 0);
-    ReceivedInput:SetScript("OnTextChanged", function ()
-        local text = ReceivedInput:GetText();
-        text = text and text:gsub("[^%d]", "") or "";
-        if (not GL:empty(text)) then
-            GivenInput:SetText("");
-        end
-        ReceivedInput:SetText(text);
-    end);
     Window.ReceivedInput = ReceivedInput;
 
     --[[ SAVE ]]

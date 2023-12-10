@@ -144,10 +144,61 @@ function Interface:dynamicPanelButton(Parent, text, template)
     return Button;
 end
 
+--- Create a InputBoxTemplate which only permits numeric values
+---
+---@param Parent Frame
+---@param name string|nil
+---@param placeholder string|nil
+---@param decimals number|nil
+---@return EditBox
+function Interface:numericInputBox(Parent, name, placeholder, decimals)
+    local Input = self:inputBox(Parent, name, placeholder);
+
+    -- Prevent anything but numbers and the allowed number of decimals
+    Input:HookScript("OnTextChanged", function (_, setByUser)
+        if (not Input:HasFocus() or not setByUser) then
+            return;
+        end
+
+        local text = Input:GetText();
+        local output  = "";
+
+        if (not decimals or decimals == 0) then
+            string.gsub(text,'%d[%d]*',function(e)
+                output = output .. e;
+            end);
+        else
+            string.gsub(text,'%d[%d.]*',function(e)
+                output = output .. e;
+            end);
+
+            local firstPointPosition = string.find(output, "%.");
+
+            if (firstPointPosition) then
+                local outputLength = strlen(output);
+                output = output:gsub("%.", "");
+                output = GL:strInsert(output, ".", firstPointPosition - 1);
+
+                -- Make sure we don't allow too many decimals
+                if (outputLength - firstPointPosition > decimals) then
+                    output = strsub(output, 1, firstPointPosition + decimals);
+                end
+            end
+        end
+
+        if (output ~= text) then
+            Input:SetText(output);
+        end
+    end);
+
+    return Input;
+end
+
 --- Create a InputBoxTemplate
 ---
 ---@param Parent Frame
 ---@param name string|nil
+---@param placeholder string|nil
 ---@return EditBox
 function Interface:inputBox(Parent, name, placeholder)
     ---@type EditBox
@@ -214,7 +265,7 @@ function Interface:inputBox(Parent, name, placeholder)
         Input:ClearFocus();
     end
 
-    -- Make sure spells, macros and items can be tragged into the field
+    -- Make sure spells, macros and items can be dragged into the field
     Input:SetScript("OnReceiveDrag", function ()
         local type, id, info = GetCursorInfo();
         local value
