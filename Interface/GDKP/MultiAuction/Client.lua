@@ -7,8 +7,8 @@ local _, GL = ...;
 ---@type Interface
 local Interface = GL.Interface;
 
----@type Constants
-local Constants = GL.Data.Constants;
+---@type Settings
+local Settings = GL.Settings;
 
 ---@type GDKPMultiAuctionAuctioneer
 local Auctioneer = GL.GDKP.MultiAuction.Auctioneer;
@@ -82,11 +82,11 @@ function ClientInterface:addAuction(auctionID, isBOE, itemLevel, name, quality, 
     local Window = self:getWindow();
 
     endsAt = auctionID.endsAt;
-    increment = math.floor(tonumber(auctionID.increment) or 0);
+    increment = GL:floor(tonumber(auctionID.increment) or 0, Settings:get("GDKP.precision"));
     isBOE = auctionID.isBOE;
     itemLevel = auctionID.itemLevel;
     link = auctionID.link;
-    minimum = math.floor(tonumber(auctionID.minimum) or 0);
+    minimum = GL:floor(tonumber(auctionID.minimum) or 0, Settings:get("GDKP.precision"));
     name = auctionID.name;
     quality = auctionID.quality;
     auctionID = auctionID.auctionID;
@@ -863,8 +863,7 @@ function ClientInterface:build()
 
             --[[ BID INPUT ]]
             ---@type EditBox
-            BidInput = Interface:inputBox(AuctionRow, nil, minimum);
-            BidInput:SetNumeric(true);
+            BidInput = Interface:numericInputBox(AuctionRow, nil, minimum, Settings:get("GDKP.precision"));
             BidInput:SetJustifyH("CENTER");
             BidInput:SetMaxLetters(7);
             BidInput:SetTextInsets(0, 14, 0, 0);

@@ -21,28 +21,6 @@ function GDKPQueues:draw(Parent)
         {
             label = "Completely disable queues",
             setting = "GDKP.disableQueues",
-            callback = function (Checkbox)
-                local checked = Checkbox:GetValue();
-                GL.Settings:set("GDKP.disableQueues", checked);
-
-                if (checked) then
-                    local enableQueue = function ()
-                        GL.Settings:set("GDKP.disableQueues", false);
-                        Checkbox:SetValue(false);
-                    end;
-
-                    GL.Interface.Dialogs.PopupDialog:open{
-                        question = string.format("If used properly queues will save you a lot of time and let your raiders see what items are coming up and bid on them\n\nIf you're looking for a way to speed up your raids then this is what you should be using, are you sure you want to disable it?"),
-                        OnYes = function ()
-                            GL.GDKP.Auctioneer:clearQueue();
-                            C_UI.Reload();
-                        end,
-                        OnNo = function ()
-                            enableQueue();
-                        end
-                    };
-                end
-            end
         },
         {
             label = "Automatically add drops to queue",

@@ -10,6 +10,8 @@ GL.PackMule = {
     _initialized = false,
     disenchanter = false,
     noDisenchanterSetWarningGiving = false,
+
+    ---@test /dump _G.Gargul.PackMule.processing
     processing = false,
     setupWindowIsActive = false,
 
@@ -318,7 +320,13 @@ function PackMule:lootReady()
     if (self.processing) then
         return;
     end
+
     self.processing = true;
+
+    -- Safety feature to make sure we can't end up in a locked state
+    GL:after(.5, "PackMuleResetProcessingFlag", function ()
+        self.processing = false;
+    end);
 
     if (not self.Rules
         or not GL.User.isMasterLooter
@@ -369,12 +377,9 @@ function PackMule:lootReady()
                 end
             end);
         end)();
-
-        -- Just a fail-safe to make sure processing doesn't end up in a stale mode
-        GL.Ace:ScheduleTimer(function ()
-            self.processing = false;
-        end, 1);
     end
+
+    self.processing = false;
 end
 
 --- Return all valid rules from the PackMule configuration

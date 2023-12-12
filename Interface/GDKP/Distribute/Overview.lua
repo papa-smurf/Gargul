@@ -8,6 +8,9 @@ local AceGUI = LibStub("AceGUI-3.0");
 ---@type Interface
 local Interface = GL.Interface;
 
+---@type Settings
+local Settings = GL.Settings;
+
 ---@type Data
 local Constants = GL.Data.Constants;
 
@@ -405,13 +408,13 @@ function Overview:refresh()
 
     local totalPot = GDKPPot:total(self.sessionID);
     local managementCutPercentage = tonumber(Session.managementCut) or 0;
-    local managementCut = math.floor(totalPot * (0 + managementCutPercentage / 100));
+    local managementCut = GL:floor(totalPot * (0 + managementCutPercentage / 100), Settings:get("GDKP.precision"))
     Window:SetStatusText(string.format(
         "Total pot: %sg | Management cut: %sg (%s%%) | To distribute: %sg",
         totalPot,
         managementCut,
         managementCutPercentage,
-        math.floor(totalPot - managementCut)
+        GL:floor(totalPot - managementCut, Settings:get("GDKP.precision"))
     ));
 
     -- [[ SHOW MUTATORS ]]

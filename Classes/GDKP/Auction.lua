@@ -1209,6 +1209,7 @@ function Auction:announceStart(itemLink, minimumBid, minimumIncrement, duration,
             duration = duration,
             antiSnipe = antiSnipe,
             bth = GL.User:bth(),
+            precision = Settings:get("GDKP.precision"),
             Bids = Bids,
             TopBid = TopBid,
             Settings = {
@@ -1451,7 +1452,7 @@ function Auction:start(CommMessage)
 
         local duration = math.floor(tonumber(content.duration));
         local antiSnipe = math.floor(tonumber(content.antiSnipe));
-        local SupportedBids = content.SupportedBids or {};
+        local precision = tonumber(content.precision) or 0;
         local minimumBid = content.minimumBid or 0;
         local minimumIncrement = content.minimumIncrement or 1;
 
@@ -1473,6 +1474,7 @@ function Auction:start(CommMessage)
                 itemName = Details.name,
                 minimumBid = minimumBid,
                 minimumIncrement = minimumIncrement,
+                precision = precision,
 
                 Settings = content.Settings,
                 Bids = content.Bids,
@@ -1727,8 +1729,6 @@ end
 
 ---@param message string|number
 function Auction:bid(message)
-    GL:debug("GDKP.Auction:bid");
-
     -- There's no auction in progress
     if (not self.inProgress) then
         return false;
@@ -2063,7 +2063,6 @@ end
 function Auction:messageToBid(message, minBid)
     message = message:gsub("%,", ".");
 
-    local onlyAcceptRoundNumbers = true;
     local match = message:match("(%d*%.?%d+)");
 
     if (GL:empty(match)) then
@@ -2091,9 +2090,7 @@ function Auction:messageToBid(message, minBid)
         bid = bid * 1000;
     end
 
-    if (onlyAcceptRoundNumbers) then
-        bid = GL:round(bid);
-    end
+    bid = GL:floor(bid, self.Current.precision);
 
     return bid;
 end

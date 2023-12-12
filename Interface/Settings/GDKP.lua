@@ -65,7 +65,7 @@ function GDKP:draw(Parent)
             end,
         },
         {
-            label = "Show GDKP data on item tooltips",
+            label = "Loot master only: Show GDKP data on item tooltips",
             setting = "GDKP.showHistoryOnTooltip",
         },
     }, Parent);
@@ -99,6 +99,29 @@ function GDKP:draw(Parent)
         end
     end);
     Parent:AddChild(BidderScale);
+
+    Spacer = GL.AceGUI:Create("SimpleGroup");
+    Spacer:SetLayout("FILL");
+    Spacer:SetFullWidth(true);
+    Spacer:SetHeight(20);
+    Parent:AddChild(Spacer);
+
+    local Precision = GL.AceGUI:Create("Slider");
+    Precision:SetLabel("Loot master only: decimals for bids, trades and cuts (|c00FF0000REQUIRES A /reload|r)");
+    Precision.label:SetTextColor(1, .95686, .40784);
+    Precision:SetFullWidth(true);
+    Precision:SetValue(GL.Settings:get("GDKP.precision"));
+    Precision:SetSliderValues(0, 4, 1);
+    Precision:SetCallback("OnValueChanged", function(Slider)
+        local value = GL:floor(Slider:GetValue());
+
+        if (not value) then
+            return;
+        end
+
+        GL.Settings:set("GDKP.precision", value);
+    end);
+    Parent:AddChild(Precision);
 
     local HorizontalSpacer = GL.AceGUI:Create("SimpleGroup");
     HorizontalSpacer:SetLayout("FILL");

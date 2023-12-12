@@ -8,6 +8,9 @@ GL.ScrollingTable = GL.ScrollingTable or LibStub("ScrollingTable");
 ---@type Constants
 local Constants = GL.Data.Constants;
 
+---@type Settings
+local Settings = GL.Settings;
+
 ---@type Interface
 local Interface = GL.Interface;
 
@@ -295,13 +298,13 @@ function LedgerList:refresh()
 
     local totalPot = GDKPPot:total(Session.ID);
     local managementCutPercentage = tonumber(Session.managementCut) or 0;
-    local managementCut = math.floor(totalPot * (0 + managementCutPercentage / 100));
+    local managementCut = GL:floor(totalPot * (0 + managementCutPercentage / 100), Settings:get("GDKP.precision"));
     self.PotDetails:SetText(string.format(
         "Total pot: %sg | Management cut: %sg (%s%%) | To distribute: %sg",
         totalPot,
         managementCut,
         managementCutPercentage,
-        math.floor(totalPot - managementCut)
+        GL:floor(totalPot - managementCut, Settings:get("GDKP.precision"))
     ));
 
     local guild = "";
@@ -420,7 +423,7 @@ function LedgerList:refresh()
         ) then
             count = count + 1;
 
-            if (Auction.itemID == GL.Data.Constants.GDKP.potIncreaseItemID) then
+            if (Auction.itemID == Constants.GDKP.potIncreaseItemID) then
                 local mutator = "added";
                 if (Auction.price < 0) then
                     mutator = "removed"

@@ -343,8 +343,8 @@ function Pot:calculateCuts(sessionID)
     -- If there's a management cut then we remove it from the pot first
     local totalPot = self:total(sessionID);
     local managementCutPercentage = tonumber(Session.managementCut) or 0;
-    local managementCut = math.floor(totalPot * (0 + managementCutPercentage / 100));
-    local totalToDistribute = math.floor(totalPot - managementCut);
+    local managementCut = GL:floor(totalPot * (0 + managementCutPercentage / 100), Settings:get("GDKP.precision"));
+    local totalToDistribute = GL:floor(totalPot - managementCut, Settings:get("GDKP.precision"));
 
     local flat = 0; -- The total amount of gold given to a person as a flat gold rate
     local baseParts = 0; -- The total number of bases (25 if there are 25 people all getting a base cut, none getting a cut/bonus)
@@ -431,7 +431,7 @@ function Pot:calculateCuts(sessionID)
             end
         end
 
-        Cuts[player] = math.floor(playerPot);
+        Cuts[player] = GL:floor(playerPot, Settings:get("GDKP.precision"));
         totalDistributed = totalDistributed + Cuts[player];
     end
 
@@ -735,13 +735,13 @@ function Pot:announce(sessionID, callback)
     -- If there's a management cut then we remove it from the pot first
     local totalPot = self:total(sessionID);
     local managementCutPercentage = tonumber(Session.managementCut) or 0;
-    local managementCut = math.floor(totalPot * (0 + managementCutPercentage / 100));
-    local totalToDistribute = math.floor(totalPot - managementCut);
+    local managementCut = GL:floor(totalPot * (0 + managementCutPercentage / 100), Settings:get("GDKP.precision"));
+    local totalToDistribute = GL:floor(totalPot - managementCut, Settings:get("GDKP.precision"));
 
     local message = string.format("Total Pot: %sg", totalToDistribute);
     GL:sendChatMessage(message, "GROUP");
 
-    message = string.format("Base cut: %sg", math.floor(Session.lastAvailableBase));
+    message = string.format("Base cut: %sg", GL:floor(Session.lastAvailableBase, Settings:get("GDKP.precision")));
     GL:sendChatMessage(message, "GROUP");
 
     ---@todo: polish up the announcement at some point
@@ -860,7 +860,7 @@ function Pot:importCuts(sessionID, data)
             end
 
             if (not error) then
-                Cuts[playerGUID] = GL:round(gold, 2);
+                Cuts[playerGUID] = GL:floor(gold, Settings:get("GDKP.precision"));
             end
         end
     end

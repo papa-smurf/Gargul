@@ -188,6 +188,7 @@ GL.Data.DefaultSettings = {
         numberOfSecondsToCountdown = 5,
         numberOfFiveSecondsToCountdown = 15,
         outbidSound = "Gargul: uh-oh",
+        precision = 0,
         queuedAuctionNoBidsAction = "SKIP",
         showBidWindow = true,
         showQueueWindow = true,

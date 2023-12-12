@@ -1321,9 +1321,11 @@ function TMB:receiveBroadcast(CommMessage)
             end
 
             for _, Entry in pairs(Entries) do
+                Entry.prio = tonumber(Entry.prio);
+
                 if (GL:empty(Entry.character)
-                    or GL:empty(Entry.prio)
                     or GL:empty(Entry.type)
+                    or not Entry.prio
                 ) then
                     GL:error("Invalid TMB data received from " .. CommMessage.Sender.name);
                     return;
