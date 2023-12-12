@@ -1,9 +1,6 @@
 ---@type GL
 local _, GL = ...;
 
----@type SettingsOverview
-local Overview = GL.Interface.Settings.Overview;
-
 ---@type Settings
 local Settings = GL.Settings;
 
@@ -16,6 +13,8 @@ GL.Interface.Settings.GDKPMutators = {
 ---@type GDKPMutatorsSettings
 local GDKPMutators = GL.Interface.Settings.GDKPMutators;
 
+---@param Parent Frame
+---
 ---@return void
 function GDKPMutators:draw(Parent)
     local Spacer;
@@ -130,4 +129,41 @@ function GDKPMutators:draw(Parent)
     end
 end
 
-GL:debug("Interface/Settings/GDKP.lua");
+---@return void
+function GDKPMutators:onClose()
+    GL.Settings:set("GDKP.Mutators", {});
+
+    for _, Mutator in pairs(self.InputElements or {}) do
+        (function ()
+            local name = strtrim(Mutator.Name:GetText());
+            if (GL:empty(name)) then
+                return;
+            end
+
+            local percentage = strtrim(Mutator.Percentage:GetText());
+            if (not GL:empty(percentage)
+                    and GL:empty(tonumber(percentage))
+            ) then
+                return;
+            end
+
+            local flat = strtrim(Mutator.Flat:GetText());
+            if (not GL:empty(flat)
+                    and GL:empty(tonumber(flat))
+            ) then
+                return;
+            end
+
+            local autoApplyTo = strtrim(Mutator.AutoApplyTo:GetText());
+
+            local MutatorObj = {
+                autoApplyTo = autoApplyTo,
+                flat = flat,
+                name = name,
+                percentage = percentage,
+            };
+
+            GL.Settings:set("GDKP.Mutators." .. name, MutatorObj);
+        end)();
+    end
+end
