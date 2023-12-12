@@ -12,6 +12,14 @@ GL.Interface.Changelog = {
 
     History = {
         {
+            version = "7.2.4",
+            date = "December 12th, 2023",
+            Changes = {
+                "Gargul now supports silver/copper in GDKP sessions (useful in Era/SoD). Check the |c00a79eff/gl|r -> |c00a79effGDKP|r -> |c00a79effDecimals for bids|r slider",
+                "SoD fixes to auto looting with PackMule",
+            },
+        },
+        {
             version = "7.1.0",
             date = "November 7th, 2023",
             Changes = {
