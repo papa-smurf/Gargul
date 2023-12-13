@@ -1,6 +1,9 @@
 ---@type GL
 local _, GL = ...;
 
+---@type Settings
+local Settings = GL.Settings;
+
 ---@class GDKPMultiAuctionClient
 GL:tableSet(GL, "GDKP.MultiAuction.Client", {
     _initialized = false,
