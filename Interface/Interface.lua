@@ -226,6 +226,11 @@ function Interface:inputBox(Parent, name, placeholder)
         end
 
         Input.updatePlaceholder = function(placeholder)
+            -- This ensures that the old placeholder is removed before setting a new one
+            if (GL:empty(Input:GetText())) then
+                Input:SetText("");
+            end
+
             Input._placeholder = ("|c00%s%s|r"):format(self.Colors["GRAY"], placeholder);
             Input:GetScript("OnEditFocusLost")();
         end
