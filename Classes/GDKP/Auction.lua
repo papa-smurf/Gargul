@@ -480,7 +480,7 @@ function Auction:storeCurrent(winner, bid, awardChecksum)
                 HighestBidPerPlayer[bidder] = {};
             end
 
-            if (HighestBidPerPlayer[bidder].bid or 0 < Bid.bid) then
+            if (GL:lt(HighestBidPerPlayer[bidder].bid or 0, Bid.bid)) then
                 HighestBidPerPlayer[bidder] = Bid;
             end
         end)();
@@ -561,7 +561,7 @@ function Auction:sanitize(Instance)
             if (type(Bid) ~= "table"
                 or type(Bid.Bidder) ~= "table"
                 or not tonumber(Bid.bid or 0)
-                or Bid.bid < 1
+                or GL:lt(Bid.bid, .0001)
                 or date('%Y', tonumber(Bid.createdAt) or 0) == "1970"
             ) then
                 GL:xd("Auction:sanitize step 5 failed, contact support!\n" .. GL.JSON:encode(Bid));
@@ -1178,8 +1178,8 @@ function Auction:announceStart(itemLink, minimumBid, minimumIncrement, duration,
         or GL:empty(itemLink)
         or duration < 1
         or antiSnipe < 0
-        or minimumBid < 1
-        or minimumIncrement < 0
+        or GL:lt(minimumBid, .0001)
+        or GL:lt(minimumIncrement, 0)
     ) then
         GL:warning("Invalid data provided for GDKP auction start!");
         self.waitingForStart = false;
@@ -1779,7 +1779,7 @@ function Auction:setAutoBid(max, queuedItemChecksum)
     max = tonumber(max) or 0;
     local lowestMinimumBid = self:lowestValidBid();
 
-    if (max < lowestMinimumBid) then
+    if (GL:lt(max, lowestMinimumBid)) then
         return false;
     end
 
@@ -1923,7 +1923,7 @@ function Auction:lowestValidBid()
     GL:debug("Auction:lowestValidBid");
 
     local currentTopBid = GL:tableGet(self.Current, "TopBid.bid", 0);
-    if (currentTopBid < self.Current.minimumBid) then
+    if (GL:lt(currentTopBid, self.Current.minimumBid)) then
         return self.Current.minimumBid;
     end
 
@@ -1990,7 +1990,7 @@ function Auction:processBid(message, bidder)
         currentBid + self.Current.minimumIncrement
     );
 
-    local bidTooLow = bid < minimumBid;
+    local bidTooLow = GL:lt(bid, minimumBid);
     if (auctionWasStartedByMe) then
         -- Notify the player via whisper if their bid is too low
         if (bidTooLow and Settings:get("GDKP.notifyIfBidTooLow")) then
@@ -2005,7 +2005,7 @@ function Auction:processBid(message, bidder)
         )) then
             self.lastBidReceivedAt = GetTime();
             local secondsLeft = math.floor(GL.Ace:TimeLeft(self.timerId) - GL.Settings:get("GDKP.auctionEndLeeway", 2));
-            if (secondsLeft < self.Current.antiSnipe) then
+            if (GL:lt(secondsLeft, self.Current.antiSnipe)) then
                 self:announceReschedule(self.Current.antiSnipe);
             end
         end
@@ -2014,7 +2014,7 @@ function Auction:processBid(message, bidder)
     -- This bid is too low and we don't accept that
     if (bidTooLow and (
         currentBid >= self.Current.minimumBid
-        or bid <= currentBid
+        or GL:lte(bid, currentBid)
         or not self.Current.Settings.acceptBidsLowerThanMinimum
     )) then
         return;
@@ -2077,9 +2077,9 @@ function Auction:messageToBid(message, minBid)
     -- Determine whether someone meant to add "k" after a message
     if (distance == 0
         and minBid >= 500 -- Only if the minimum bid is 500 or more
-        and bid < minBid -- Only if the bid is lower than the minimum bid
-        and bid <= 100 -- Only if the bid is 1 through 100 (if someone wants to bid 100k then he can write 101k)
-        and (bid * 1000) / minBid < 2.5 -- Only if the bid*1000 is ste (<=) the current minimum bid x 2.5
+        and GL:lt(bid, minBid) -- Only if the bid is lower than the minimum bid
+        and GL:lte(bid, 100) -- Only if the bid is 1 through 100 (if someone wants to bid 100k then he can write 101k)
+        and GL:lt((bid * 1000) / minBid, 2.5) -- Only if the bid*1000 is ste (<=) the current minimum bid x 2.5
     ) then
         kModifier = true;
     elseif (distance > 7) then
@@ -2094,5 +2094,3 @@ function Auction:messageToBid(message, minBid)
 
     return bid;
 end
-
-GL:debug("Auction.lua");

@@ -455,8 +455,8 @@ function Session:addGoldTrade(sessionID, playerGUID, given, received)
     given = tonumber(given) or 0;
     received = tonumber(received) or 0;
 
-    -- Nothing to add (we only accept a minimum 1 gold!)
-    if ((given >= 10000 and received >= 10000) or (given < 10000 and received <= 10000)) then
+    -- Nothing to add
+    if ((given > 0 and received > 0) or (given < 1 and received < 1)) then
         return false;
     end
 

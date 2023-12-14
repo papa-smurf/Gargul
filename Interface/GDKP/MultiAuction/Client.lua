@@ -1,5 +1,4 @@
 local L = Gargul_L;
-local LCG = LibStub("LibCustomGlowGargul-1.0");
 
 ---@type GL
 local _, GL = ...;
@@ -91,11 +90,11 @@ function ClientInterface:addAuction(auctionID, isBOE, itemLevel, name, quality, 
     quality = auctionID.quality;
     auctionID = auctionID.auctionID;
 
-    if (minimum < 1) then
+    if (GL:lt(minimum, .0001)) then
         return;
     end
 
-    if (increment < 1) then
+    if (GL:lt(increment, .0001)) then
         return;
     end
 
@@ -755,7 +754,7 @@ function ClientInterface:build()
                 end
 
                 local bid = tonumber(BidInput:GetText()) or 0;
-                if (bid < 1) then
+                if (GL:lt(bid, .0002)) then
                     return "Auto bid up to the bid you fill in on the left";
                 end
 
@@ -828,7 +827,7 @@ function ClientInterface:build()
                 end
 
                 -- Crude throttle
-                if (GetTime() - lastBid < 2) then
+                if (GL:lt(GetTime() - lastBid, 2)) then
                     return GL:notice("You need to wait two seconds between bids on the same item");
                 end
 
@@ -848,7 +847,7 @@ function ClientInterface:build()
 
                         -- If we currently have a autobid that's lower than the amount we just bid then our autobid is no longer valid
                         if (AuctionRow.AutoBidButton.currentAmount
-                            and AuctionRow.AutoBidButton.currentAmount <= bid
+                            and GL:lte(AuctionRow.AutoBidButton.currentAmount, bid)
                         ) then
                             AutoBidButton.currentAmount = false;
                             AutoBidButton.updateText();
@@ -898,7 +897,7 @@ function ClientInterface:build()
                 end
 
                 -- Crude throttle
-                if (GetTime() - lastBid < 2) then
+                if (GL:lt(GetTime() - lastBid, 2)) then
                     return GL:notice("You need to wait two seconds between bids on the same item");
                 end
 
@@ -919,7 +918,7 @@ function ClientInterface:build()
 
                         -- If we currently have a autobid that's lower than the amount we just bid then our autobid is no longer valid
                         if (AuctionRow.AutoBidButton.currentAmount
-                            and AuctionRow.AutoBidButton.currentAmount <= bid
+                            and GL:lte(AuctionRow.AutoBidButton.currentAmount, bid)
                         ) then
                             AutoBidButton.currentAmount = false;
                             AutoBidButton.updateText();

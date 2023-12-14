@@ -556,7 +556,7 @@ function Auctioneer:timeRanOut()
     local minimumBid = Auction.Current.minimumBid;
 
     -- We don't auto-award unless the bid is equal to or higher than the minimum bid
-    if (bid < minimumBid) then
+    if (GL:lt(bid, minimumBid)) then
         return;
     end
 
@@ -625,14 +625,14 @@ function Auctioneer:storeDetailsForFutureAuctions(Details)
         local minimumBid = tonumber(Details.minimumBid) or 0;
         minimumBid = GL:floor(minimumBid, Settings:get("GDKP.precision"));
 
-        if (minimumBid < 1) then
+        if (GL:lt(minimumBid, .0001)) then
             minimumBid = DB:get("GDKP.defaultMinimumBid");
         end
 
         local increment = tonumber(Details.increment) or 0;
         increment = GL:floor(increment, Settings:get("GDKP.precision"));
 
-        if (increment < 1) then
+        if (GL:lt(increment, .0001)) then
             increment = DB:get("GDKP.defaultIncrement");
         end
 
@@ -723,7 +723,7 @@ function Auctioneer:removePlayerBid (bidder, bid)
     tinsert(Auction.Current.Bids, HighestBid);
     Auction.Current.TopBid = HighestBid;
 
-    if (HighestBid and HighestBid.bid <= bid) then
+    if (HighestBid and GL:lte(HighestBid.bid, bid)) then
         self:announceBid(HighestBid);
     end
 
@@ -744,7 +744,7 @@ function Auctioneer:announceBid(Bid)
     end
 
     --[[ THE LAST BID ANNOUNCEMENT WAS A WHILE AGO, ANNOUNCE IMMEDIATELY ]]
-    if (GetTime() - self.lastBidAnnouncementAt >= 1.2) then
+    if (GL:gte(GetTime() - self.lastBidAnnouncementAt, 1.2)) then
         bidApprovedMessage = string.format(bidApprovedMessage, Bid.Bidder.name, Bid.bid);
         GL:sendChatMessage(bidApprovedMessage, "RAID_WARNING", nil, nil, false);
         self.lastBidAnnouncementAt = GetTime();
