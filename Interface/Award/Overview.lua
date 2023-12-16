@@ -461,7 +461,7 @@ function Overview:refreshItems()
         return;
     end
 
-    GL:onItemLoadDo(GL:tableColumn(Entries, "itemID"), function (Result)
+    GL:onItemLoadDo(GL:tableColumn(Entries, "itemLink"), function (Result)
         if (not Result) then
             return;
         end

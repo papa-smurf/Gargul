@@ -1168,45 +1168,23 @@ end
 ---@param itemLinkOrID string|number
 ---@return table|nil
 function GL:getCachedItem(itemLinkOrID)
-    GL:debug("GL:getCachedItem");
+    local ItemResult;
+    local itemID = tonumber(itemLinkOrID);
 
-    local itemID;
-    local concernsID = GL:higherThanZero(tonumber(itemLinkOrID));
-
-    if (concernsID) then
-        itemID = math.floor(tonumber(itemLinkOrID));
+    if (itemID) then
+        ItemResult = Item:CreateFromItemID(itemLinkOrID);
     else
-        itemID = GL:getItemIDFromLink(itemLinkOrID);
+        ItemResult = Item:CreateFromItemLink(itemLinkOrID);
     end
 
-    if (not itemID) then
-        return;
-    end
-
-    local itemName, itemLink, itemQuality, itemLevel, _, _, _, _, itemEquipLoc,
-    itemTexture, _, classID, subclassID, bindType, _, _, _ = GetItemInfo(itemID);
-
-    if (GL:empty(itemName)
-        or GL:empty(itemLink)
-        or type (bindType) ~= "number"
-    ) then
+    local NormalizedItem = self:normalizeItem(ItemResult);
+    if (not NormalizedItem) then
         GL:debug("GetItemInfo data was not yet available for item with ID: " .. itemID);
 
         return;
     end
 
-    return {
-        id = itemID,
-        bindType = bindType,
-        classID = classID,
-        icon = itemTexture,
-        inventoryType = itemEquipLoc,
-        level = itemLevel,
-        link = itemLink,
-        name = itemName,
-        subclassID = subclassID,
-        quality = itemQuality,
-    };
+    return NormalizedItem;
 end
 
 GL.Timers = {};
@@ -1290,10 +1268,11 @@ function GL:onItemLoadDo(Items, callback, haltOnError, sorter)
     local function loadOrReturnItem(itemIdentifier)
         local ItemResult = {}; ---@type Item
         local itemID = tonumber(itemIdentifier);
+        local identifierIsLink = type(itemIdentifier) == "string";
 
         -- A string was provided, treat it as an item link and fetch its ID
         if (not GL:higherThanZero(itemID)
-            and type(itemIdentifier) == "string"
+            and identifierIsLink
         ) then
             itemID = GL:getItemIDFromLink(itemIdentifier);
         end
@@ -1301,7 +1280,11 @@ function GL:onItemLoadDo(Items, callback, haltOnError, sorter)
         -- If a number is provided we assume that it's an item ID
         if (itemID) then
             -- Start loading the item
-            ItemResult = Item:CreateFromItemID(itemID);
+            if (identifierIsLink) then
+                ItemResult = Item:CreateFromItemLink(itemIdentifier);
+            else
+                ItemResult = Item:CreateFromItemID(itemID);
+            end
 
         -- We can't use anything that's not an id or link so we skip it
         else
@@ -1321,7 +1304,7 @@ function GL:onItemLoadDo(Items, callback, haltOnError, sorter)
 
         -- The item already exists in our runtime item cache, return it
         if (ItemResult:IsItemDataCached()) then
-            local Details = GL:getCachedItem(itemID);
+            local Details = GL:getCachedItem(itemIdentifier);
 
             if (Details) then
                 itemsLoaded = itemsLoaded + 1;
@@ -1334,30 +1317,14 @@ function GL:onItemLoadDo(Items, callback, haltOnError, sorter)
         ItemResult:ContinueOnItemLoad(function()
             itemsLoaded = itemsLoaded + 1;
 
-            local itemName, itemLink, itemQuality, itemLevel, _, _, _, _, itemEquipLoc,
-            itemTexture, _, classID, subclassID, bindType, _, _, _ = GetItemInfo(itemID);
-
-            if (GL:empty(itemName)
-                or GL:empty(itemLink)
-                or type (bindType) ~= "number"
-            ) then
+            local NormalizedItem = self:normalizeItem(ItemResult);
+            if (not NormalizedItem) then
                 GL:debug("GetItemInfo data was not yet available for item with ID: " .. itemID);
 
                 return; -- Return here so we don't cache any incomplete data
             end
 
-            tinsert(ItemData, {
-                id = itemID,
-                bindType = bindType,
-                classID = classID,
-                icon = itemTexture,
-                inventoryType = itemEquipLoc,
-                level = itemLevel,
-                link = itemLink,
-                name = itemName,
-                subclassID = subclassID,
-                quality = itemQuality,
-            });
+            tinsert(ItemData, NormalizedItem);
 
             if (not callbackCalled
                 and itemsLoaded >= numberOfItemsToLoad
@@ -1410,6 +1377,47 @@ function GL:onItemLoadDo(Items, callback, haltOnError, sorter)
 
     -- The return value is only useful if you're 100% certain the item was already pre-loaded
     return ItemData;
+end
+
+--- WARNING: THIS REQUIRES THE ITEM TO BE CACHED!
+---
+---@param ItemMixin Item
+---@return table
+function GL:normalizeItem(ItemMixin)
+    if (not ItemMixin
+        or ItemMixin:IsItemEmpty()
+    ) then
+        return false;
+    end
+
+    local itemID = ItemMixin:GetItemID();
+    if (not itemID) then
+        return false;
+    end
+
+    -- Keep in mind that this data all refers to the base version of the item since we're using an ID
+    local itemName, itemLink, itemQuality, itemLevel, _, _, _, _, itemEquipLoc,
+    itemTexture, _, classID, subclassID, bindType, _, _, _ = GetItemInfo(itemID);
+
+    if (not itemLink) then
+        return false;
+    end
+
+    return {
+        id = itemID,
+        bindType = bindType,
+        classID = classID,
+        icon = itemTexture,
+        inventoryType = itemEquipLoc,
+        level = ItemMixin:GetCurrentItemLevel(),
+        link = ItemMixin:GetItemLink(),
+        name = itemName,
+        subclassID = subclassID,
+        quality = itemQuality,
+
+        baseLevel = itemLevel,
+        baseLink = itemLink,
+    };
 end
 
 --- Check whether the player's realm is cross realm

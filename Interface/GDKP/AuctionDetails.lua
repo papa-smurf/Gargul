@@ -68,7 +68,7 @@ function AuctionDetails:draw(sessionID, auctionID)
     local GDKPOverviewFrame = Interface:get(Overview, "GDKPOverview").frame;
 
     -- This entry should always exist, if it doesn't something went wrong (badly)
-    local ItemEntry = GL:getCachedItem(Auction.itemID);
+    local ItemEntry = GL:getCachedItem(Auction.itemLink);
 
     if (GL:empty(ItemEntry)) then
         return;

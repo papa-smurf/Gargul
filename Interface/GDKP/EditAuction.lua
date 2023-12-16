@@ -61,7 +61,7 @@ function EditAuction:draw(session, checksum)
         Auction.Winner.name or "",
         GL:classHexColor("rogue"),
         Auction.price or "0",
-        GL:getCachedItem(Auction.itemID).link
+        Auction.itemLink
     ));
     Window:AddChild(ItemLink);
 

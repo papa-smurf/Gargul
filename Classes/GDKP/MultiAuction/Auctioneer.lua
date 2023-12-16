@@ -967,7 +967,7 @@ function Auctioneer:closeAuction(auctionID)
             itemLink = itemLink,
             winner = BidDetails.player,
         };
-        GDKPAuction:create(GL:getItemIDFromLink(itemLink), BidDetails.amount, BidDetails.player, nil, HighestBidPerPlayer, nil, awardChecksum);
+        GDKPAuction:create(itemLink, BidDetails.amount, BidDetails.player, nil, HighestBidPerPlayer, nil, awardChecksum);
         GL:unmute();
     end
 

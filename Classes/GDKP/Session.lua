@@ -565,19 +565,8 @@ end
 ---@param itemLinkOrID string|number
 ---@return table
 function Session:itemHistory(itemLinkOrID)
-    GL:debug("Session:itemHistory");
-
-    local itemID;
-    local concernsID = GL:higherThanZero(tonumber(itemLinkOrID));
-
-    if (concernsID) then
-        itemID = itemLinkOrID;
-    else
-        itemID = GL:getItemIDFromLink(itemLinkOrID);
-    end
-
-    itemID = tonumber(itemID) or 0;
-    if (itemID < 1) then
+    local itemID = tonumber(itemLinkOrID) or GL:getItemIDFromLink(itemLinkOrID);
+    if (not itemID) then
         return;
     end
 

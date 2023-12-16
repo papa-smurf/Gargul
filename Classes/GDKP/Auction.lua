@@ -220,7 +220,7 @@ end
 
 --- Create an auction
 ---
----@param itemID number
+---@param itemLinkOrID string|number
 ---@param price number
 ---@param winner string
 ---@param sessionID string
@@ -228,9 +228,7 @@ end
 ---@param note string
 ---
 ---@return boolean
-function Auction:create(itemID, price, winner, sessionID, Bids, note, awardChecksum)
-    GL:debug("Auction:create");
-
+function Auction:create(itemLinkOrID, price, winner, sessionID, Bids, note, awardChecksum)
     if ((not sessionID
         or (sessionID and not GDKPSession:exists(sessionID))
     ) and not GDKPSession:activeSessionID()
@@ -239,7 +237,10 @@ function Auction:create(itemID, price, winner, sessionID, Bids, note, awardCheck
         return false;
     end
 
-    itemID = GetItemInfoInstant(itemID);
+    local itemID = tonumber(itemLinkOrID);
+    local itemLink = not itemID and itemLinkOrID or nil;
+    itemID = itemID or GL:getItemIDFromLink(itemLink);
+
     if (not GL:higherThanZero(itemID)) then
         GL:warning("Unknown itemID in Auction:create: " .. tostring(itemID));
         return false;
@@ -256,6 +257,7 @@ function Auction:create(itemID, price, winner, sessionID, Bids, note, awardCheck
     local Instance = {
         price = price,
         itemID = itemID,
+        itemLink = itemLink,
         createdAt = GetServerTime(),
         note = note ~= "" and note or nil,
         CreatedBy = {
@@ -295,17 +297,23 @@ function Auction:create(itemID, price, winner, sessionID, Bids, note, awardCheck
         Instance.awardChecksum = awardChecksum;
     end
 
-    GL:onItemLoadDo(itemID, function (Details)
-        if (not Details) then
-            return;
-        end
+    if (not Instance.itemLink) then
+        GL:onItemLoadDo(itemID, function (Details)
+            if (not Details) then
+                return;
+            end
 
-        Instance.itemLink = Details.link;
+            Instance.itemLink = Details.link;
+            GL:tableSet(Session, "Auctions." .. checksum, Instance);
+
+            Events:fire("GL.GDKP_AUCTION_CHANGED", sessionID, checksum, {}, Instance);
+            Events:fire("GL.GDKP_AUCTION_CREATED", sessionID, checksum);
+        end);
+    else
         GL:tableSet(Session, "Auctions." .. checksum, Instance);
-
         Events:fire("GL.GDKP_AUCTION_CHANGED", sessionID, checksum, {}, Instance);
         Events:fire("GL.GDKP_AUCTION_CREATED", sessionID, checksum);
-    end);
+    end
 
     -- Make sure we invalidate this item's history
     GDKPSession.ItemHistory[itemID] = nil;
@@ -461,11 +469,11 @@ function Auction:storeCurrent(winner, bid, awardChecksum)
     winner = winner or Instance.TopBid.Bidder.name;
     bid = bid or Instance.TopBid.bid;
 
-    local itemID = GL:getItemIDFromLink(GL.GDKP.Auction.Current.itemLink)
+    local itemID = GL:getItemIDFromLink(GL.GDKP.Auction.Current.itemLink);
 
     -- Make sure the item is valid
     if (not GL:higherThanZero(itemID)
-        or not GL:higherThanZero(GetItemInfoInstant(itemID))
+        or not GL:higherThanZero(GetItemInfoInstant(GL.GDKP.Auction.Current.itemLink))
     ) then
         GL:warning("Unknown itemID in Auction:create: " .. tostring(itemID));
         return false;
@@ -486,7 +494,7 @@ function Auction:storeCurrent(winner, bid, awardChecksum)
         end)();
     end
 
-    return self:create(itemID, bid, winner, nil, HighestBidPerPlayer, nil, awardChecksum);
+    return self:create(GL.GDKP.Auction.Current.itemLink, bid, winner, nil, HighestBidPerPlayer, nil, awardChecksum);
 end
 
 ---@param Instance table

@@ -368,19 +368,10 @@ function AuctioneerUI:build()
         Icon:SetSize(40, 40);
         Icon:SetPoint("TOPLEFT", Window, "TOPLEFT", 28, -28);
 
-        Icon:SetScript("OnEnter", function()
-            if (not self.itemLink or not GL:getItemIDFromLink(self.itemLink)) then return; end
-            GameTooltip:SetOwner(Icon, "RIGHT");
-            GameTooltip:SetHyperlink(self.itemLink);
-            GameTooltip:Show();
-        end);
+        Interface:addTooltip(Icon, self.itemLink, "RIGHT");
 
         Icon:SetScript("OnMouseUp", function (_, mouseButtonPressed)
             HandleModifiedItemClick(self.itemLink, mouseButtonPressed);
-        end);
-
-        Icon:SetScript("OnLeave", function()
-            GameTooltip:Hide();
         end);
 
         ItemImage = Icon:CreateTexture(nil, "BACKGROUND")
@@ -748,7 +739,7 @@ function AuctioneerUI:build()
     ---@param increment number
     ---@return void
     Window.setItemByLink = function(_, itemLink, minimum, increment)
-        GL:onItemLoadDo(GL:getItemIDFromLink(itemLink), function (Details)
+        GL:onItemLoadDo(itemLink, function (Details)
             if (not Details) then
                 return;
             end
@@ -1000,7 +991,7 @@ function AuctioneerUI:buildQueue(Window)
         --[[ ADD AN ITEM TO THE QUEUE WINDOW ]]
         local rowHeight = 20;
         Queue.addItemByLink = function (_, link, identifier)
-            GL:onItemLoadDo(GL:getItemIDFromLink(link), function (Details)
+            GL:onItemLoadDo(link, function (Details)
                 if (not Details or self.ItemRows[identifier]) then
                     return;
                 end

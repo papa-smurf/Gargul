@@ -217,7 +217,7 @@ function Award:draw(itemLink, callback)
                         winner = winner,
                     };
 
-                    GDKPAuction:create(GL:getItemIDFromLink(itemLink), GDKPPrice, winner, nil, nil, nil, awardChecksum);
+                    GDKPAuction:create(itemLink, GDKPPrice, winner, nil, nil, nil, awardChecksum);
                     added = true;
                 end
             end

@@ -313,7 +313,7 @@ function BidderQueue:refreshTable()
     local itemsAdded = false;
     for _, Item in pairs(SortedQueue or {}) do
         local identifier = Item.identifier;
-        GL:onItemLoadDo(GL:getItemIDFromLink(Item.itemLink), function (Details)
+        GL:onItemLoadDo(Item.itemLink, function (Details)
             local canUseItem = true;
             GL:canUserUseItem(Details.id, function (canUse)
                 canUseItem = canUse;

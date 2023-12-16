@@ -634,12 +634,7 @@ function Overview:refreshLedger()
         managementCut
     ));
 
-    local ItemIDs = {};
-    for _, Sale in pairs(Session.Auctions or {}) do
-        tinsert(ItemIDs, Sale.itemID);
-    end
-
-    GL:onItemLoadDo(ItemIDs, function ()
+    GL:onItemLoadDo(GL:tableColumn(Session.Auctions, "itemLink"), function ()
         self:clearDetailsFrame();
         local Auctions = {};
         local RawAuctions = Session.Auctions or {};
@@ -669,7 +664,7 @@ function Overview:refreshLedger()
             local concernsManualAdjustment = Auction.itemID == Constants.GDKP.potIncreaseItemID;
 
             -- This entry should always exist, if it doesn't something went wrong (badly)
-            local ItemEntry = GL:getCachedItem(Auction.itemID);
+            local ItemEntry = GL:getCachedItem(Auction.itemLink);
 
             if (GL:empty(ItemEntry)) then
                 break;

@@ -414,7 +414,7 @@ function LedgerList:refresh()
         return false;
     end);
 
-    local ItemIDs, SalesData = {}, {};
+    local SalesData = {}, {};
     local count = 0;
     for _, Auction in pairs(Auctions) do
         if (type(Auction) == "table"
@@ -437,8 +437,6 @@ function LedgerList:refresh()
                 SalesData[jar] = SalesData[jar] or {};
                 tinsert(SalesData[jar], Auction);
             end
-
-            tinsert(ItemIDs, Auction.itemID);
         end
     end
 
