@@ -423,14 +423,6 @@ function LedgerList:refresh()
         ) then
             count = count + 1;
 
-            if (Auction.itemID == Constants.GDKP.potIncreaseItemID) then
-                local mutator = "added";
-                if (Auction.price < 0) then
-                    mutator = "removed"
-                end
-                Auction.itemLink = string.format("Gold %s by", mutator);
-            end
-
             local jar = math.ceil(count / TABLE_ROWS);
 
             if (self.SalesTables[jar]) then
@@ -443,10 +435,15 @@ function LedgerList:refresh()
     local function setTableData(Table, Data)
         local TableData = {};
         for _, Auction in pairs(Data) do
+            local mutation;
+            if (Auction.itemID == Constants.GDKP.potIncreaseItemID) then
+                mutation = string.format("Gold %s by", Auction.price < 0 and "removed" or "added");
+            end
+
             tinsert(TableData, {
                 cols = {
                     { value = Auction.itemID, },
-                    { value = Auction.itemLink, },
+                    { value = mutation and mutation or Auction.itemLink, },
                     {
                         value = string.format("|c00%s%s|r",
                             GL:classHexColor(Auction.Winner.class),

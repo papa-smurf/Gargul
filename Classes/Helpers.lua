@@ -1174,11 +1174,13 @@ function GL:getCachedItem(itemLinkOrID)
     if (itemID) then
         ItemResult = Item:CreateFromItemID(itemLinkOrID);
     else
+        itemID = GL:getItemIDFromLink(itemLinkOrID);
         ItemResult = Item:CreateFromItemLink(itemLinkOrID);
     end
 
     local NormalizedItem = self:normalizeItem(ItemResult);
     if (not NormalizedItem) then
+        itemID = itemID or itemLinkOrID or "unknown";
         GL:debug("GetItemInfo data was not yet available for item with ID: " .. itemID);
 
         return;
