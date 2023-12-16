@@ -33,15 +33,13 @@ local Award = GL.Interface.Award.Award;
 ---@param callback function
 ---@return void
 function Award:draw(itemLink, callback)
-    GL:debug("Award:draw");
-
     local itemID = GL:getItemIDFromLink(itemLink);
 
     -- First we need to check if the frame hasn't been
     -- rendered already. If so then show it (if it's hidden)
     -- and pass the itemLink along in case one was provided
     if (GL.Interface:get(self, "Window")
-            and GL.Interface:get(self, "Window").rendered
+        and GL.Interface:get(self, "Window").rendered
     ) then
         local PlayerNameBox = GL.Interface:get(self, "EditBox.PlayerName");
         local Window = GL.Interface:get(self, "Window");

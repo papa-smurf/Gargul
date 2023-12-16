@@ -1172,7 +1172,7 @@ function GL:getCachedItem(itemLinkOrID)
     local itemID = tonumber(itemLinkOrID);
 
     if (itemID) then
-        ItemResult = Item:CreateFromItemID(itemLinkOrID);
+        ItemResult = Item:CreateFromItemID(itemID);
     else
         itemID = GL:getItemIDFromLink(itemLinkOrID);
         ItemResult = Item:CreateFromItemLink(itemLinkOrID);
@@ -1273,7 +1273,7 @@ function GL:onItemLoadDo(Items, callback, haltOnError, sorter)
         local identifierIsLink = type(itemIdentifier) == "string";
 
         -- A string was provided, treat it as an item link and fetch its ID
-        if (not GL:higherThanZero(itemID)
+        if (not itemID
             and identifierIsLink
         ) then
             itemID = GL:getItemIDFromLink(itemIdentifier);

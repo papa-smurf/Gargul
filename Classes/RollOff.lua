@@ -163,7 +163,7 @@ function RollOff:postStartMessage(itemLink, time, note)
         and not GL:empty(Reserves)
     ) then
         Reserves = table.concat(Reserves, ", ");
-        eligiblePlayersMessage = "This item has been reserved by: " .. Reserves;
+        eligiblePlayersMessage = "This item was reserved by: " .. Reserves;
 
     -- Check if this item is on someone's TMB wish/prio list, if so: mention the player(s) first in line!
     elseif ((GL.Settings:get("TMB.announceWishlistInfoWhenRolling")
