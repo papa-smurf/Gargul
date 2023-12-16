@@ -942,7 +942,7 @@ function Auctioneer:closeAuction(auctionID)
         for player, bid in pairs(TopBids or {}) do
             bid = tonumber(bid) or 0;
 
-            if (bid > 0 and bid < BidDetails.amount) then
+            if (bid > 0) then
                 local Player = GL.Player:fromName(player);
 
                 HighestBidPerPlayer[player] = {
