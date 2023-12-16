@@ -9,13 +9,14 @@ local Settings = GL.Settings;
 
 ---@class GDKPPricesSettings
 GL.Interface.Settings.GDKPPrices = {
-    InputElements = {},
     ItemLevelElements = {},
 };
 
 ---@type GDKPPricesSettings
 local GDKPPrices = GL.Interface.Settings.GDKPPrices;
 
+---@param Parent Frame
+---
 ---@return void
 function GDKPPrices:draw(Parent)
     local Spacer;
@@ -175,4 +176,32 @@ An item's price and increment are determined in the following order:
     end
 end
 
-GL:debug("Interface/Settings/GDKP.lua");
+---@return void
+function GDKPPrices:onClose()
+    GL.Settings:set("GDKP.ItemLevelDetails", {});
+
+    for _, Details in pairs(self.ItemLevelElements or {}) do
+        (function ()
+            local level = tonumber(strtrim(Details.Level:GetText())) or 0;
+            if (level < 1) then
+                return;
+            end
+
+            local minimum = tonumber(strtrim(Details.Minimum:GetText())) or 0;
+            if (minimum < 0) then
+                return;
+            end
+
+            local increment = tonumber(strtrim(Details.Increment:GetText())) or 0;
+            if (increment < 1) then
+                return;
+            end
+
+            GL.Settings:set(("GDKP.ItemLevelDetails.%s"):format(level), {
+                increment = increment,
+                level = level,
+                minimum = minimum,
+            });
+        end)();
+    end
+end

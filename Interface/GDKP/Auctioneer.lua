@@ -419,10 +419,10 @@ function AuctioneerUI:build()
     MinLabel:SetPoint("TOPLEFT", Window, "TOPLEFT", 26, -82);
 
     ---@type EditBox
-    local MinInput = Interface:inputBox(Window);
+    local MinInput = Interface:numericInputBox(Window, nil, nil, Settings:get("GDKP.precision"));
     MinInput:SetWidth(42);
     MinInput:SetPoint("TOPLEFT", MinLabel, "TOPRIGHT", 8, 6);
-    MinInput:SetScript("OnTextChanged", function ()
+    MinInput:HookScript("OnTextChanged", function ()
         self.minimumBid = tonumber(MinInput:GetText());
     end);
 
@@ -432,10 +432,10 @@ function AuctioneerUI:build()
     IncLabel:SetPoint("TOPLEFT", MinLabel, "TOPRIGHT", MinInput:GetWidth() + 12, 0);
 
     ---@type EditBox
-    local IncInput = Interface:inputBox(Window);
+    local IncInput = Interface:numericInputBox(Window, nil, nil, Settings:get("GDKP.precision"));
     IncInput:SetWidth(36);
     IncInput:SetPoint("TOPLEFT", IncLabel, "TOPRIGHT", 8, 6);
-    IncInput:SetScript("OnTextChanged", function ()
+    IncInput:HookScript("OnTextChanged", function ()
         self.increment = tonumber(IncInput:GetText());
     end);
 
@@ -445,11 +445,11 @@ function AuctioneerUI:build()
     TimeLabel:SetPoint("TOPLEFT", IncLabel, "TOPRIGHT", IncInput:GetWidth() + 12, 0);
 
     ---@type EditBox
-    local TimeInput = Interface:inputBox(Window);
+    local TimeInput = Interface:numericInputBox(Window);
     TimeInput:SetText(Settings:get("GDKP.time"));
     TimeInput:SetWidth(20);
     TimeInput:SetPoint("TOPLEFT", TimeLabel, "TOPRIGHT", 8, 6);
-    TimeInput:SetScript("OnTextChanged", function ()
+    TimeInput:HookScript("OnTextChanged", function ()
         self.time = tonumber(TimeInput:GetText());
     end);
 
@@ -459,11 +459,11 @@ function AuctioneerUI:build()
     SnipeLabel:SetPoint("TOPLEFT", TimeLabel, "TOPRIGHT", TimeInput:GetWidth() + 12, 0);
 
     ---@type EditBox
-    local SnipeInput = Interface:inputBox(Window);
+    local SnipeInput = Interface:numericInputBox(Window);
     SnipeInput:SetText(Settings:get("GDKP.antiSnipe"));
     SnipeInput:SetWidth(20);
     SnipeInput:SetPoint("TOPLEFT", SnipeLabel, "TOPRIGHT", 8, 6);
-    SnipeInput:SetScript("OnTextChanged", function ()
+    SnipeInput:HookScript("OnTextChanged", function ()
         self.antiSnipe = tonumber(SnipeInput:GetText());
     end);
 
@@ -1115,7 +1115,7 @@ function AuctioneerUI:buildQueue(Window)
 
                 --[[ INCREMENT ]]
                 ---@type EditBox
-                local IncInput = Interface:inputBox(ItemRow);
+                local IncInput = Interface:numericInputBox(ItemRow, nil, nil, Settings:get("GDKP.precision"));
                 IncInput:SetText(PerItemSettings.increment);
                 IncInput:SetWidth(36);
                 IncInput:SetPoint("TOPRIGHT", ItemRow, "TOPRIGHT", -24, 0);
@@ -1123,7 +1123,7 @@ function AuctioneerUI:buildQueue(Window)
 
                 --[[ MINIMUM ]]
                 ---@type EditBox
-                local MinInput = Interface:inputBox(ItemRow);
+                local MinInput = Interface:numericInputBox(ItemRow, nil, nil, Settings:get("GDKP.precision"));
                 MinInput:SetText(PerItemSettings.minimum);
                 MinInput:SetWidth(42);
                 MinInput:SetPoint("TOPRIGHT", IncInput, "TOPLEFT", -8, 0);

@@ -375,7 +375,7 @@ function Auctioneer:syncWithRunningSession()
                             -- It looks like this auction ran out while we were away and already had a bid
                             -- Check to see if we can extend it or whether it was already sold
                             if (Auction.endsAt == 0
-                                and bid > 0
+                                and GL:gt(bid, 0)
                                 and KnownAwardHashes[GL:stringHash{
                                     itemID,
                                     strlower(Auction.CurrentBid.player),
@@ -530,8 +530,8 @@ function Auctioneer:announceStart(ItemDetails, duration, antiSnipe)
     local defaultMinimumBid = DB:get("GDKP.defaultMinimumBid");
     local defaultIncrement = DB:get("GDKP.defaultIncrement");
     for _, Details in pairs(ItemDetails or {}) do
-        Details.minimum = Details.minimum >= 0 and Details.minimum or defaultMinimumBid;
-        Details.increment = Details.increment >= 0 and Details.increment or defaultIncrement;
+        Details.minimum = GL:gte(Details.minimum, 0) and Details.minimum or defaultMinimumBid;
+        Details.increment = GL:gte(Details.increment, 0) and Details.increment or defaultIncrement;
         Details.endsAt = Details.endsAt and Details.endsAt <= 0 and Details.endsAt or endsAt;
     end
 
@@ -710,7 +710,7 @@ function Auctioneer:processAutoBids(auctionID)
             local bid = Details.bid or 0;
             bid = tonumber(bid) or 0;
 
-            if (bid < 1 or not Client:isBidValidForAuction(auctionID, bid)
+            if (GL:lt(bid, .0002) or not Client:isBidValidForAuction(auctionID, bid)
                 or not GL.User:unitInGroup(player)
                 or not GL:unitIsConnected(player)
             ) then
@@ -724,7 +724,7 @@ function Auctioneer:processAutoBids(auctionID)
                 at = Details.at,
             });
 
-            if (bid > highestAutoBid) then
+            if (GL:gt(bid, highestAutoBid)) then
                 highestAutoBid = bid;
             end
         end)();
@@ -733,7 +733,7 @@ function Auctioneer:processAutoBids(auctionID)
     -- Sort the auto bids lowest to highest and keep the bid time in mind
     table.sort(ValidOutstandingAutoBids, function (a, b)
         if (a.bid ~= b.bid) then
-            return a.bid < b.bid;
+            return GL:lt(a.bid, b.bid);
         end
 
         return a.at > b.at;
@@ -746,7 +746,7 @@ function Auctioneer:processAutoBids(auctionID)
             local Details = ValidOutstandingAutoBids[index];
 
             -- Check if the next minimum bid is within the player's budget
-            if (Details.bid < minimumBid) then
+            if (GL:lt(Details.bid, minimumBid)) then
                 Client.AuctionDetails.Auctions[auctionID].AutoBids[Details.player] = nil;
                 return;
             end
@@ -887,7 +887,7 @@ end
 function Auctioneer:highestAutoBid(auctionID)
     local highestAutoBid = 0;
     for _, Details in pairs(Client.AuctionDetails.Auctions[auctionID].AutoBids or {}) do
-        if (Details.bid > highestAutoBid) then
+        if (GL:gt(Details.bid, highestAutoBid)) then
             highestAutoBid = Details.bid;
         end
     end
@@ -942,7 +942,7 @@ function Auctioneer:closeAuction(auctionID)
         for player, bid in pairs(TopBids or {}) do
             bid = tonumber(bid) or 0;
 
-            if (bid > 0) then
+            if (GL:gt(bid, 0)) then
                 local Player = GL.Player:fromName(player);
 
                 HighestBidPerPlayer[player] = {
@@ -1073,14 +1073,14 @@ function Auctioneer:storeDetailsForFutureAuctions(Details)
         local minimum = tonumber(Details.minimum) or 0;
         minimum = GL:floor(minimum, Settings:get("GDKP.precision"));
 
-        if (minimum < 1) then
+        if (GL:lt(minimum, .0001)) then
             minimum = DB:get("GDKP.defaultMinimumBid");
         end
 
         local increment = tonumber(Details.increment) or 0;
         increment = GL:floor(increment, Settings:get("GDKP.precision"));
 
-        if (increment < 1) then
+        if (GL:lt(increment, .0001)) then
             increment = DB:get("GDKP.defaultIncrement");
         end
 

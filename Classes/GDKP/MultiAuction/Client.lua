@@ -1,6 +1,9 @@
 ---@type GL
 local _, GL = ...;
 
+---@type Settings
+local Settings = GL.Settings;
+
 ---@class GDKPMultiAuctionClient
 GL:tableSet(GL, "GDKP.MultiAuction.Client", {
     _initialized = false,
@@ -285,7 +288,7 @@ function Client:updateBids(Message)
                 --end
 
                 -- There are no bids
-                if (amount < 1) then
+                if (GL:lt(amount, .0001)) then
                     Client.AuctionDetails.Auctions[auctionID].iWasOutBid = false;
 
                 -- We're top bidder again
@@ -305,7 +308,7 @@ function Client:updateBids(Message)
                 end
             end
 
-            if (amount > 0) then
+            if (GL:gt(amount, 0)) then
                 self.AuctionDetails.Auctions[auctionID].CurrentBid = {
                     amount = amount,
                     player = bidder,
@@ -318,7 +321,7 @@ function Client:updateBids(Message)
                 self.AuctionDetails.Auctions[auctionID].endsAt = Details.e > 0 and Details.e + ENDS_AT_OFFSET or Details.e;
 
                 if (self.AuctionDetails.Auctions[auctionID].endsAt == 0
-                    and amount > 0
+                    and GL:gt(amount, 0)
                     and GL.Settings:get("GDKP.MultiAuction.awardNotice")
                 ) then
                     print(("|c00FFF569%s bought %s for %sg|r"):format(
@@ -343,7 +346,7 @@ function Client:roundBidToClosestIncrement(auctionID, bid)
     local Auction = GL:tableGet(self.AuctionDetails, "Auctions." .. auctionID);
 
     if (not Auction
-        or bid < Auction.minimum
+        or GL:lt(bid, Auction.minimum)
     ) then
         return bid;
     end
@@ -359,7 +362,7 @@ end
 ---@return boolean
 function Client:isBidValidForAuction(auctionID, bid)
     bid = tonumber(bid) or 0;
-    if (bid < 1) then
+    if (GL:lt(bid, .0001)) then
         return false;
     end
 
@@ -369,7 +372,7 @@ function Client:isBidValidForAuction(auctionID, bid)
     end
 
     local currentBid = GL:tableGet(Auction, "CurrentBid.amount", 0);
-    return (currentBid == 0 and bid >= Auction.minimum) or bid >= currentBid + Auction.increment;
+    return (GL:e(currentBid, 0) and GL:gte(bid, Auction.minimum)) or GL:gte(bid, currentBid + Auction.increment);
 end
 
 --- Return the minimum bid for the give auction

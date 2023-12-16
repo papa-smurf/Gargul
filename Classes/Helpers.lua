@@ -2899,4 +2899,42 @@ function GL:tableWalk(Table, callback, ...)
     end
 end;
 
-GL:debug("Helpers.lua");
+---@param numberA number
+---@param numberB number
+---
+---@return boolean
+function GL:lt(numberA, numberB)
+    return tonumber(tostring(numberA)) < tonumber(tostring(numberB));
+end
+
+---@param numberA number
+---@param numberB number
+---
+---@return boolean
+function GL:lte(numberA, numberB)
+    return tonumber(tostring(numberA)) <= tonumber(tostring(numberB));
+end
+
+---@param numberA number
+---@param numberB number
+---
+---@return boolean
+function GL:gt(numberA, numberB)
+    return tonumber(tostring(numberA)) > tonumber(tostring(numberB));
+end
+
+---@param numberA number
+---@param numberB number
+---
+---@return boolean
+function GL:gte(numberA, numberB)
+    return tonumber(tostring(numberA)) >= tonumber(tostring(numberB));
+end
+
+---@param numberA number
+---@param numberB number
+---
+---@return boolean
+function GL:e(numberA, numberB)
+    return tonumber(tostring(numberA)) == tonumber(tostring(numberB));
+end

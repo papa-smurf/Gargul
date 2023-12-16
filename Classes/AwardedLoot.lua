@@ -304,7 +304,7 @@ function AwardedLoot:editWinner(checksum, winner, announce)
                 winner,
                 AwardEntry.BRCost
             );
-        elseif (AwardEntry.GDKPCost and AwardEntry.GDKPCost > 0) then
+        elseif (AwardEntry.GDKPCost and GL:gt(AwardEntry.GDKPCost, 0)) then
             awardMessage = string.format("%s was awarded to %s for %sg. Congrats!",
                 AwardEntry.itemLink,
                 winner,
