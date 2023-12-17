@@ -151,11 +151,12 @@ end
 function Auctioneer:start(ItemDetails, duration, antiSnipe)
     local ItemsUpForAuction = {};
     local MinAndIncrementPerLink = {};
+    local precision = Settings:get("GDKP.precision");
 
     for _, Item in pairs(ItemDetails or {}) do
         MinAndIncrementPerLink[Item.link] = {
-            minimum = Item.minimum,
-            increment = Item.increment,
+            minimum = GL:floor(Item.minimum, precision),
+            increment = GL:floor(Item.increment, precision),
         };
 
         self:storeDetailsForFutureAuctions{
@@ -183,7 +184,7 @@ function Auctioneer:start(ItemDetails, duration, antiSnipe)
             auctionID = auctionID + 1;
         end
 
-        if (not self:announceStart(ItemsUpForAuction, duration, antiSnipe)) then
+        if (not self:announceStart(ItemsUpForAuction, duration, antiSnipe, precision)) then
             return;
         end
     end);
@@ -497,8 +498,9 @@ end
 ---@param ItemDetails table
 ---@param duration number
 ---@param antiSnipe number
+---@param precision number
 ---@return boolean
-function Auctioneer:announceStart(ItemDetails, duration, antiSnipe)
+function Auctioneer:announceStart(ItemDetails, duration, antiSnipe, precision)
     local serverTime = GetServerTime();
 
     -- We're still waiting for a MultiAuction to start
@@ -544,6 +546,7 @@ function Auctioneer:announceStart(ItemDetails, duration, antiSnipe)
             endsAt = endsAt,
             antiSnipe = antiSnipe,
             bth = GL.User:bth(),
+            precision = precision,
         },
         channel = "GROUP",
     }:send();

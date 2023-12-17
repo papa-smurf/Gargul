@@ -137,7 +137,7 @@ function GDKP:importPerItemSettings(data)
                 minimum = GL:round(minimum, Settings:get("GDKP.precision"));
 
                 if (GL:lt(increment, .0001) or GL:lt(minimum, .0001)) then
-                    GL:error("Increment or minimum can't be lower than 1!");
+                    GL:error("Increment or minimum can't be lower than .0001!");
                     return;
                 end
 

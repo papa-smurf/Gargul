@@ -94,6 +94,7 @@ function Client:start(Message)
         initiator = Message.Sender.fqn,
         antiSnipe = Message.content.antiSnipe,
         bth = Message.content.bth,
+        precision = Message.content.precision or 0,
         Auctions = {},
     };
 

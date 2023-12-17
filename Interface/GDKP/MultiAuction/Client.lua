@@ -81,11 +81,11 @@ function ClientInterface:addAuction(auctionID, isBOE, itemLevel, name, quality, 
     local Window = self:getWindow();
 
     endsAt = auctionID.endsAt;
-    increment = GL:floor(tonumber(auctionID.increment) or 0, Settings:get("GDKP.precision"));
+    increment = GL:floor(tonumber(auctionID.increment) or 0, Client.AuctionDetails.precision or 0);
     isBOE = auctionID.isBOE;
     itemLevel = auctionID.itemLevel;
     link = auctionID.link;
-    minimum = GL:floor(tonumber(auctionID.minimum) or 0, Settings:get("GDKP.precision"));
+    minimum = GL:floor(tonumber(auctionID.minimum) or 0, Client.AuctionDetails.precision or 0);
     name = auctionID.name;
     quality = auctionID.quality;
     auctionID = auctionID.auctionID;
@@ -862,7 +862,7 @@ function ClientInterface:build()
 
             --[[ BID INPUT ]]
             ---@type EditBox
-            BidInput = Interface:numericInputBox(AuctionRow, nil, minimum, Settings:get("GDKP.precision"));
+            BidInput = Interface:numericInputBox(AuctionRow, nil, minimum, Client.AuctionDetails.precision or 0);
             BidInput:SetJustifyH("CENTER");
             BidInput:SetMaxLetters(7);
             BidInput:SetTextInsets(0, 14, 0, 0);
