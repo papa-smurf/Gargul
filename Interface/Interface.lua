@@ -1245,6 +1245,10 @@ function Interface:addTooltip(Owner, Lines, anchor)
     local isItemLink = false;
     local isFunction = type(Lines) == "function";
 
+    if (GL:empty(Lines)) then
+        return;
+    end
+
     if (not anchor) then
         anchor = "TOP";
     end
