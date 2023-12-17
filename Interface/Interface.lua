@@ -232,7 +232,10 @@ function Interface:inputBox(Parent, name, placeholder)
             end
 
             Input._placeholder = ("|c00%s%s|r"):format(self.Colors["GRAY"], placeholder);
-            Input:GetScript("OnEditFocusLost")();
+
+            if (not Input:HasFocus()) then
+                Input:GetScript("OnEditFocusLost")();
+            end
         end
 
         Input:SetScript("OnEditFocusGained", function ()
