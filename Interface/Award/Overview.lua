@@ -444,6 +444,7 @@ function Overview:refreshItems()
                 BRCost = AwardEntry.BRCost,
                 itemID = AwardEntry.itemID,
                 itemLink = AwardEntry.itemLink,
+                winningRollType = AwardEntry.winningRollType,
                 OS = AwardEntry.OS and 1 or 0,
                 SR = AwardEntry.SR and 1 or 0,
                 WL = AwardEntry.WL and 1 or 0,
@@ -553,6 +554,12 @@ function Overview:refreshItems()
                 if (Entry.PL > 0) then
                     tinsert(AwardDetails, "PL");
                 end
+                if (Entry.winningRollType) then
+                    tinsert(AwardDetails, Entry.winningRollType);
+                end
+                if (Entry.OS == 0 and not Entry.winningRollType) then
+                    tinsert(AwardDetails, "MS");
+                end
 
                 ---@type FontString
                 local DetailString = Interface:createFontString(ItemRow, table.concat(AwardDetails, " | "));
@@ -642,10 +649,10 @@ function Overview:refreshItems()
                             end
 
                             local line = string.format("%s%s%s%s",
-                                    Entry.itemLink,
-                                    OSString,
-                                    BRString,
-                                    receivedString
+                                Entry.itemLink,
+                                OSString,
+                                BRString,
+                                receivedString
                             );
 
                             GameTooltip:AddLine(line);
