@@ -1015,6 +1015,35 @@ function Auctioneer:auctionIsFinalized(auctionID)
     return false;
 end
 
+--- Check if there are any running auctions
+---
+---@return boolean
+function Auctioneer:hasRunningAuctions()
+    for _, Details in pairs(Client.AuctionDetails.Auctions or {}) do
+        if (Details.endsAt > 0) then
+            return true;
+        end
+    end
+
+    return false;
+end
+
+--- Check if there are any unfinalized auctions
+---
+---@return boolean
+function Auctioneer:hasUnfinalizedAuctions()
+    for _, Details in pairs(Client.AuctionDetails.Auctions or {}) do
+        if (Details.endsAt ~= -1 -- Auction was deleted
+            and Details.endsAt == 0 -- Auction closed
+            and GL:empty(Details.CurrentBid) -- without winning bid
+        ) then
+            return true;
+        end
+    end
+
+    return false;
+end
+
 --- Give a last 10 second timer for the given auction
 ---
 ---@param auctionID string

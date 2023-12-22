@@ -58,22 +58,8 @@ function Auctioneer:open(keepPreviousItems)
         Interface.GDKP.Overview:open();
 
         return;
-    else
-        local hasActiveAuctions = false;
-
-        for _, Details in pairs(Client.AuctionDetails.Auctions or {}) do
-            if (Details.endsAt > 0) then
-                hasActiveAuctions = true;
-                break;
-            end
-        end
-
-        if (hasActiveAuctions) then
-            GL:notice("There is an active multi-auction, wrap it up before creating a new one!");
-            GL.Interface.GDKP.MultiAuction.Client:open();
-
-            return;
-        end
+    elseif (GL.GDKP.MultiAuction.Auctioneer:hasRunningAuctions()) then
+        GL:warning("There is an active multi-auction, items you add here will be added to the existing session. Be mindful of duplicate items!");
     end
 
     if (GL.Version.isOutOfDate) then
@@ -473,6 +459,14 @@ function Auctioneer:build()
             return;
         end
 
+        -- In case we already have running auctions then there's no reason to check player versions
+        if (GL.GDKP.MultiAuction.Auctioneer:hasRunningAuctions()) then
+            self:start();
+
+            self:close();
+            return Window;
+        end
+
         GroupVersionCheck:open({
             {
                 text = "Cancel",
@@ -680,6 +674,20 @@ function Auctioneer:start()
 
     Settings:set("GDKP.MultiAuction.time", duration);
     Settings:set("GDKP.MultiAuction.antiSnipe", antiSnipe);
+
+    -- We still have running auctions, add the selected items to our current session
+    if (GL.GDKP.MultiAuction.Auctioneer:hasRunningAuctions()) then
+        for _, Details in pairs(ItemsUpForAuction or {}) do
+            GL.GDKP.MultiAuction.Client:addToCurrentSession{
+                link = Details.link,
+                duration = duration,
+                minimum = Details.minimum,
+                increment = Details.increment,
+            };
+        end
+
+        return;
+    end
 
     -- Make sure we're out of combat before starting the MultiAuction
     GL:afterCombatDo(function ()

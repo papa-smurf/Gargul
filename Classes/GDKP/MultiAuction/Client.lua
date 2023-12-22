@@ -98,13 +98,13 @@ function Client:start(Message)
         Auctions = {},
     };
 
-    local activeAuctions = false;
+    local runningAuctions = false;
     local serverTime = GetServerTime();
     for _, Item in pairs(GL:tableGet(Message, "content.ItemDetails", {})) do
         self.AuctionDetails.Auctions[Item.auctionID] = Item;
 
         if (serverTime < Item.endsAt) then
-            activeAuctions = true;
+            runningAuctions = true;
         end
     end
 
@@ -123,7 +123,7 @@ function Client:start(Message)
     end);
 
     -- Looks like there are no active auctions, this can happen when joining a new group with expired data
-    if (not activeAuctions) then
+    if (not runningAuctions) then
         UI:close();
     end
 end
