@@ -310,6 +310,8 @@ GL.Data.Constants = {
         --[[ EVENT LOOT ]]
         20400, -- Pumpkin Bag (Hallow's End)
         33117, -- Jack-o'-Lantern (Hallow's End)
+        21524, -- Red Winter Hat
+        21525, -- Green Winter Hat
 
         --[[ WORLD BOSS LOOT ]]
         19132, -- Crystal Adorned Crown (Azuregos)
