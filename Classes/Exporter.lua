@@ -232,6 +232,7 @@ function Exporter:getLootEntries()
             tinsert(Entries, {
                 timestamp = AwardEntry.timestamp,
                 awardedTo = awardedTo,
+                Rolls = AwardEntry.Rolls,
                 itemID = itemID,
                 OS = AwardEntry.OS and 1 or 0,
                 SR = AwardEntry.SR and 1 or 0,
@@ -277,6 +278,13 @@ function Exporter:transformEntriesToCustomFormat(Entries)
             end
 
             if (ItemDetails) then
+                local rolls = {};
+                for _, roll in pairs(AwardEntry.Rolls) do
+                    if (roll.classification == AwardEntry.winningRollType) then
+                        tinsert(rolls, roll.player .. "[".. roll.amount .."]");
+                    end
+                end
+
                 local Values = {
                     ["@ID"] = AwardEntry.itemID,
                     ["@LINK"] = ItemDetails.link:gsub('\124','\124\124'),
@@ -284,6 +292,7 @@ function Exporter:transformEntriesToCustomFormat(Entries)
                     ["@ILVL"] = ItemDetails.level,
                     ["@QUALITY"] = ItemDetails.quality,
                     ["@WINNER"] = GL:nameFormat{ name = AwardEntry.awardedTo, stripRealm = true },
+                    ["@ROLLS"] = table.concat(rolls, " "),
                     ["@REALM"] = GL:getRealmFromName(AwardEntry.awardedTo),
                     ["@OS"] = GL:toboolean(AwardEntry.OS),
                     ["@SR"] = GL:toboolean(AwardEntry.SR),

@@ -170,6 +170,7 @@ function ExportingLoot:draw(Parent)
             "@ILVL",
             "@QUALITY",
             "@WINNER",
+            "@ROLLS",
             "@REALM",
             "@DATE",
             "@OS",
