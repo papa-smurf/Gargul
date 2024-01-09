@@ -101,6 +101,8 @@ function MasterLooterDialog:flightAttendant()
 end
 
 ---@return void
+---
+---@test /script _G.Gargul.Interface.MasterLooterDialog:draw();
 function MasterLooterDialog:draw()
     GL:debug("MasterLooterDialog:draw");
 
@@ -123,6 +125,10 @@ function MasterLooterDialog:draw()
     end);
     Window:SetPoint(GL.Interface:getPosition("MasterLooterDialog"));
     GL.Interface:set(self, "Window", Window);
+
+    -- Make sure the window can be closed by pressing the escape button
+    _G["GARGUL_MASTER_LOOTER_DIALOG_WINDOW"] = Window.frame;
+    tinsert(UISpecialFrames, "GARGUL_MASTER_LOOTER_DIALOG_WINDOW");
 
     local DescriptionFrame = AceGUI:Create("SimpleGroup");
     DescriptionFrame:SetLayout("FILL");
