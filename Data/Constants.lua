@@ -193,7 +193,6 @@ GL.Data.Constants = {
         Legendary = {
             "JoeExoToxiC",
             "Steel-Whitemane",
-            "Octodruid",
         },
     },
 
