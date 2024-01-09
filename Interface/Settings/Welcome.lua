@@ -9,7 +9,7 @@ local AceGUI = GL.AceGUI;
 ---@class WelcomeSettings
 GL.Interface.Settings.Welcome = {
     description = string.format(
-        "|c00FFF569Welcome, Gargul can be used and tested without being in a group or raid, try it out!\n\nRoll/Auction: |c00a79eff%s|r. Award: |c00a79eff%s|r. Disenchant: |c00a79eff%s|r|r",
+        "\n|c00FFF569Welcome! Gargul can be used and tested without being in a raid\n\n|c00a79effTRY IT OUT|r by using the following hotkeys on an item in your bags or an item link in chat!\n\nRoll: |c00a79eff%s|r. Award: |c00a79eff%s|r. Disenchant: |c00a79eff%s|r\n\n\nWant to host a GDKP session? Run |c00a79eff/gdkp|r to get started!|r",
         GL.Settings:get("ShortcutKeys.rollOffOrAuction"),
         GL.Settings:get("ShortcutKeys.award"),
         GL.Settings:get("ShortcutKeys.disenchant")
@@ -19,45 +19,7 @@ local Welcome = GL.Interface.Settings.Welcome; ---@type WelcomeSettings
 
 ---@return void
 function Welcome:draw(Parent)
-    GL:debug("WelcomeSettings:draw");
-
-    local MoreInfoLabel = AceGUI:Create("Label");
-    MoreInfoLabel:SetText("Need help? Join our Discord!\n");
-    MoreInfoLabel:SetFontObject(_G["GameFontNormal"]);
-    MoreInfoLabel:SetFullWidth(true);
-    Parent:AddChild(MoreInfoLabel);
-
-    local DiscordURL = AceGUI:Create("EditBox");
-    DiscordURL:DisableButton(true);
-    DiscordURL:SetHeight(20);
-    DiscordURL:SetFullWidth(true);
-    DiscordURL:SetText("https://discord.gg/D3mDhYPVzf");
-    Parent:AddChild(DiscordURL);
-
-    local HorizontalSpacer = AceGUI:Create("SimpleGroup");
-    HorizontalSpacer:SetLayout("FILL");
-    HorizontalSpacer:SetFullWidth(true);
-    HorizontalSpacer:SetHeight(10);
-    Parent:AddChild(HorizontalSpacer);
-
-    local WikiLabel = AceGUI:Create("Label");
-    WikiLabel:SetText("Gargul's wiki page\n");
-    WikiLabel:SetFontObject(_G["GameFontNormal"]);
-    WikiLabel:SetFullWidth(true);
-    Parent:AddChild(WikiLabel);
-
-    local WikiURL = AceGUI:Create("EditBox");
-    WikiURL:DisableButton(true);
-    WikiURL:SetHeight(20);
-    WikiURL:SetFullWidth(true);
-    WikiURL:SetText("https://github.com/papa-smurf/Gargul/wiki");
-    Parent:AddChild(WikiURL);
-
-    HorizontalSpacer = AceGUI:Create("SimpleGroup");
-    HorizontalSpacer:SetLayout("FILL");
-    HorizontalSpacer:SetFullWidth(true);
-    HorizontalSpacer:SetHeight(10);
-    Parent:AddChild(HorizontalSpacer);
+    local HorizontalSpacer;
 
     local OpenSoftRes = AceGUI:Create("Button");
     OpenSoftRes:SetText("SoftRes");
@@ -103,13 +65,13 @@ function Welcome:draw(Parent)
     OpenBonusFeatures:SetFullWidth(true);
     Parent:AddChild(OpenBonusFeatures);
 
-    --[[ CONTRIBUTORS ]]
+    HorizontalSpacer = AceGUI:Create("SimpleGroup");
+    HorizontalSpacer:SetLayout("FILL");
+    HorizontalSpacer:SetFullWidth(true);
+    HorizontalSpacer:SetHeight(10);
+    Parent:AddChild(HorizontalSpacer);
 
-    local Spacer = AceGUI:Create("Label");
-    Spacer:SetText("\n\n");
-    Spacer:SetFontObject(_G["GameFontNormal"]);
-    Spacer:SetFullWidth(true);
-    Parent:AddChild(Spacer);
+    --[[ CONTRIBUTORS ]]
 
     local Patreon = AceGUI:Create("Icon");
     Patreon:SetWidth(20);
@@ -209,6 +171,23 @@ function Welcome:draw(Parent)
     Title:SetFontObject(_G["GameFontNormal"]);
     Title:SetFullWidth(true);
     Parent:AddChild(Title);
-end
 
-GL:debug("Interface/Settings/Welcome.lua");
+    HorizontalSpacer = AceGUI:Create("SimpleGroup");
+    HorizontalSpacer:SetLayout("FILL");
+    HorizontalSpacer:SetFullWidth(true);
+    HorizontalSpacer:SetHeight(10);
+    Parent:AddChild(HorizontalSpacer);
+
+    local MoreInfoLabel = AceGUI:Create("Label");
+    MoreInfoLabel:SetText("Can't find something? Join our Discord!\n");
+    MoreInfoLabel:SetFontObject(_G["GameFontNormal"]);
+    MoreInfoLabel:SetFullWidth(true);
+    Parent:AddChild(MoreInfoLabel);
+
+    local DiscordURL = AceGUI:Create("EditBox");
+    DiscordURL:DisableButton(true);
+    DiscordURL:SetHeight(20);
+    DiscordURL:SetFullWidth(true);
+    DiscordURL:SetText("https://discord.gg/D3mDhYPVzf");
+    Parent:AddChild(DiscordURL);
+end
