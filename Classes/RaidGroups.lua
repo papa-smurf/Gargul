@@ -213,6 +213,28 @@ function RaidGroups:drawImporter()
     FooterFrame:AddChild(KickUnwantedButton);
     GL.Interface:addTooltip(KickUnwantedButton.frame, "Kick players that aren't on the roster");
 
+    local DisbandButton = AceGUI:Create("Button");
+    DisbandButton:SetText("Disband raid");
+    DisbandButton:SetWidth(126);
+    DisbandButton:SetCallback("OnClick", function()
+        -- Show a confirmation dialog before disbanding the raid
+        GL.Interface.Dialogs.PopupDialog:open{
+            question = "Are you sure?",
+            OnYes = function ()
+                GL:forEachGroupMember(function (Member)
+                    if (GL:iEquals(string.lower(Member.name), GL.User.name)) then
+                        return;
+                    end
+
+                    -- Kick the player!
+                    UninviteUnit(GL:iEquals(Member.realm, GL.User.realm) and Member.name or Member.fqn);
+                end);
+            end
+        };
+    end);
+    FooterFrame:AddChild(DisbandButton);
+    GL.Interface:addTooltip(DisbandButton.frame, "Disband your raid");
+
     self.UIComponents.TankAssignmentButton = SetTanksButton;
 end
 
