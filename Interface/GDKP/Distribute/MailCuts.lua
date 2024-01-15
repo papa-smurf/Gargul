@@ -21,6 +21,7 @@ GL.Interface.GDKP.Distribute.MailCuts = {
     windowName = "Gargul.Interface.GDKP.Distribute.MailCuts.Window",
 
     cutMailSubject = nil,
+    cutMailBody = nil,
 };
 
 ---@type MailCuts
@@ -40,7 +41,10 @@ function MailCuts:_init()
     end
 
     self._initialized = true;
-    self.cutMailSubject = GL.Interface.Identity:build(GL.User:bth()).cutMailSubject or L.CUT_MAIL_SUBJECT;
+
+    local Identity = GL.Interface.Identity:build(GL.User:bth());
+    self.cutMailSubject = Identity.cutMailSubject or L.CUT_MAIL_SUBJECT;
+    self.cutMailBody = Identity.cutMailBody or L.CUT_MAIL_BODY;
 
     --[[ ERA HAS DIFFERENT EVENTS FOR OPENING / CLOSING THE MAILBOX ]]
     if (not GL.isEra) then
