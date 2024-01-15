@@ -58,7 +58,7 @@ function RaidGroups:drawImporter()
     Window:SetLayout("Flow");
     Window:EnableResize(false);
     Window:SetWidth(600);
-    Window:SetHeight(450);
+    Window:SetHeight(500);
     Window.statustext:GetParent():Hide(); -- Hide the statustext bar
     Window:SetCallback("OnClose", function()
         self:close();
@@ -173,6 +173,7 @@ function RaidGroups:drawImporter()
         self:invitePlayers(RaidGroups.rosterString);
     end);
     FooterFrame:AddChild(InviteButton);
+    GL.Interface:addTooltip(InviteButton.frame, "Send invites to players on roster");
 
     local AttendanceCheckButton = AceGUI:Create("Button");
     AttendanceCheckButton:SetText("Who's Missing");
@@ -181,6 +182,7 @@ function RaidGroups:drawImporter()
         self:checkAttendance(RaidGroups.rosterString, CheckAttendanceOutput);
     end);
     FooterFrame:AddChild(AttendanceCheckButton);
+    GL.Interface:addTooltip(AttendanceCheckButton.frame, "Show missing player names");
 
     local SaveButton = AceGUI:Create("Button");
     SaveButton:SetText("Apply Groups");
@@ -189,6 +191,7 @@ function RaidGroups:drawImporter()
         self:applyRaidGroups(RaidGroups.rosterString);
     end);
     FooterFrame:AddChild(SaveButton);
+    GL.Interface:addTooltip(SaveButton.frame, "Sort groups based on roster");
 
     local SetTanksButton = CreateFrame("Button", nil, Window.frame, "SecureActionButtonTemplate, GameMenuButtonTemplate");
     SetTanksButton:SetAttribute("type", "macro");
@@ -200,6 +203,15 @@ function RaidGroups:drawImporter()
     SetTanksButton:SetScript("PreClick", function ()
         self:updateTankAssignmentButton();
     end);
+
+    local KickUnwantedButton = AceGUI:Create("Button");
+    KickUnwantedButton:SetText("Kick unwanted players");
+    KickUnwantedButton:SetWidth(170);
+    KickUnwantedButton:SetCallback("OnClick", function()
+        self:kickUnwanted(RaidGroups.rosterString);
+    end);
+    FooterFrame:AddChild(KickUnwantedButton);
+    GL.Interface:addTooltip(KickUnwantedButton.frame, "Kick players that aren't on the roster");
 
     self.UIComponents.TankAssignmentButton = SetTanksButton;
 end
@@ -378,18 +390,17 @@ function RaidGroups:normalizeWowheadInput(input)
     return input;
 end
 
---- Attempt to invite everyone who's on the roster
----
----@return void
-function RaidGroups:invitePlayers(raidGroupCsv)
+---@param raidGroupCsv string
+function RaidGroups:listPlayerNames(raidGroupCsv)
+    local PlayerNames = {};
     for line in raidGroupCsv:gmatch("[^\n]+") do
         local Segments = GL:explode(line, ":");
         local group = tonumber(Segments[1]);
 
         if (not group
-            or type(group) ~= "number"
-            or group < 1
-            or group > 9
+                or type(group) ~= "number"
+                or group < 1
+                or group > 9
         ) then
             return GL:warning("Invalid raid groups provided!");
         end
@@ -397,13 +408,24 @@ function RaidGroups:invitePlayers(raidGroupCsv)
         local Players = GL:explode(Segments[2], ",");
 
         for _, playerName in pairs(Players) do
-            if (group < 9 -- group 9 is a group we reserve for specifiying the tanks
-                and not GL:empty(playerName) -- Make sure we skip empty names
-                and string.lower(playerName) ~= string.lower(GL.User.name) -- No need to invite ourselves
+            if (group < 9 -- group 9 is a group we reserve for specifying the tanks
+                    and not GL:empty(playerName) -- Make sure we skip empty names
+                    and string.lower(playerName) ~= string.lower(GL.User.name) -- No need to invite ourselves
             ) then
-                InviteUnit(playerName); -- Attempt to invite the player
+                tinsert(PlayerNames, playerName);
             end
         end
+    end
+
+    return PlayerNames;
+end
+
+--- Attempt to invite everyone who's on the roster
+---
+---@return void
+function RaidGroups:invitePlayers(raidGroupCsv)
+    for _, playerName in pairs(self:listPlayerNames(raidGroupCsv)) do
+        InviteUnit(playerName); -- Attempt to invite the player
     end
 end
 
@@ -415,32 +437,9 @@ function RaidGroups:checkAttendance(raidGroupCsv, OutPutLabel)
         return GL:warning("Invalid group format provided!");
     end
 
-    local PlayersOnRoster = {};
+    local PlayersOnRoster = self:listPlayerNames(raidGroupCsv);
     local MissingPlayers = {};
     local UnknownPlayers = {};
-
-    for line in raidGroupCsv:gmatch("[^\n]+") do
-        local Segments = GL:explode(line, ":");
-        local group = tonumber(Segments[1]);
-
-        if (not group
-            or type(group) ~= "number"
-            or group < 1
-            or group > 9
-        ) then
-            return GL:warning("Invalid raid groups provided!");
-        end
-
-        local Players = GL:explode(Segments[2], ",");
-
-        for _, playerName in pairs(Players) do
-            if (group < 9 -- group 9 is a group we reserve for specifiying the tanks
-                and not GL:empty(playerName) -- Make sure we skip empty names
-            ) then
-                PlayersOnRoster[string.lower(playerName)] = true;
-            end
-        end
-    end
 
     -- Check who's in the raid who doesn't belong
     local PlayersInRaid = {};
@@ -472,6 +471,32 @@ The following people are in the raid but shouldn't be:
     ));
     OutPutLabel:SetFullWidth(false);
     OutPutLabel:SetWidth(500);
+end
+
+--- Kick unwanted players from the raid
+---
+---@param raidGroupCsv string
+function RaidGroups:kickUnwanted(raidGroupCsv)
+    local WantedPlayers = self:listPlayerNames(raidGroupCsv);
+    for key, name in pairs(WantedPlayers) do
+        WantedPlayers[key] = string.lower(name);
+    end
+    WantedPlayers = GL:tableFlip(WantedPlayers);
+
+    GL:forEachGroupMember(function (Member)
+        if (not GL:iEquals(string.lower(Member.name), GL.User.name)
+            and not WantedPlayers[string.lower(Member.name)]
+        ) then
+            GL:xd("kick");
+            ---@todo: REMOVE!
+            GL:xd{
+                member = Member.name,
+                user = GL.User.name,
+            };
+            -- Kick the player!
+            UninviteUnit(GL:iEquals(Member.realm, GL.User.realm) and Member.name or Member.fqn);
+        end
+    end);
 end
 
 --- Build a list of migrations based on the csv provided by the user
@@ -513,7 +538,7 @@ function RaidGroups:applyRaidGroups(raidGroupCsv)
         for _, playerName in pairs(Players) do
             playerName = string.lower(playerName);
 
-            if (group < 9 -- group 9 is a group we reserve for specifiying the tanks
+            if (group < 9 -- group 9 is a group we reserve for specifying the tanks
                 and not GL:empty(playerName) -- Make sure we skip empty names
             ) then
                 -- We can't process the same name twice!
