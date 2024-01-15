@@ -107,7 +107,7 @@ function GDKP:draw(Parent)
     Parent:AddChild(Spacer);
 
     local Precision = GL.AceGUI:Create("Slider");
-    Precision:SetLabel("Loot master only: decimals for bids, trades and cuts (|c00FF0000REQUIRES A /reload|r)");
+    Precision:SetLabel("Support decimals (2 for silver, 4 for copper), |c00FF0000Requires a /reload|r");
     Precision.label:SetTextColor(1, .95686, .40784);
     Precision:SetFullWidth(true);
     Precision:SetValue(GL.Settings:get("GDKP.precision"));
