@@ -1179,14 +1179,18 @@ function Auction:announceStart(itemLink, minimumBid, minimumIncrement, duration,
     local TopBid = self.Current.TopBid;
     duration = tonumber(duration) or 0;
     antiSnipe = tonumber(antiSnipe) or 0;
-    minimumBid = tonumber(minimumBid) or 1;
+    minimumBid = tonumber(minimumBid) or 0;
     minimumIncrement = tonumber(minimumIncrement) or 0;
+
+    if (minimumBid <= 0) then
+        minimumBid = 1 / (GL:strPadRight(1, 0, Settings:get("GDKP.precision", 0)));
+    end
 
     if (type(itemLink) ~= "string"
         or GL:empty(itemLink)
         or duration < 1
         or antiSnipe < 0
-        or GL:lt(minimumBid, .0001)
+        or (minimumBid > 0 and GL:lt(minimumBid, .0001))
         or GL:lt(minimumIncrement, 0)
     ) then
         GL:warning("Invalid data provided for GDKP auction start!");
@@ -1993,7 +1997,7 @@ function Auction:processBid(message, bidder)
     local currentBid = GL:tableGet(self.Current, "TopBid.bid", 0);
     local minimumBid = math.max(
         self.Current.minimumBid,
-        currentBid + self.Current.minimumIncrement
+        currentBid > 0 and currentBid + self.Current.minimumIncrement or 0
     );
 
     local bidTooLow = GL:lt(bid, minimumBid);
