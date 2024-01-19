@@ -420,9 +420,9 @@ function RaidGroups:listPlayerNames(raidGroupCsv)
         local group = tonumber(Segments[1]);
 
         if (not group
-                or type(group) ~= "number"
-                or group < 1
-                or group > 9
+            or type(group) ~= "number"
+            or group < 1
+            or group > 9
         ) then
             return GL:warning("Invalid raid groups provided!");
         end
@@ -431,8 +431,8 @@ function RaidGroups:listPlayerNames(raidGroupCsv)
 
         for _, playerName in pairs(Players) do
             if (group < 9 -- group 9 is a group we reserve for specifying the tanks
-                    and not GL:empty(playerName) -- Make sure we skip empty names
-                    and string.lower(playerName) ~= string.lower(GL.User.name) -- No need to invite ourselves
+                and not GL:empty(playerName) -- Make sure we skip empty names
+                and string.lower(playerName) ~= string.lower(GL.User.name) -- No need to invite ourselves
             ) then
                 tinsert(PlayerNames, playerName);
             end
@@ -453,8 +453,6 @@ end
 
 -- Check if everyone's in the raid or if the raid contains players who shouldn't be there
 function RaidGroups:checkAttendance(raidGroupCsv, OutPutLabel)
-    GL:debug("RaidGroups:checkAttendance");
-
     if (GL:empty(raidGroupCsv)) then
         return GL:warning("Invalid group format provided!");
     end
@@ -512,12 +510,6 @@ function RaidGroups:kickUnwanted(raidGroupCsv)
         if (not GL:iEquals(string.lower(Member.name), GL.User.name)
             and not WantedPlayers[string.lower(Member.name)]
         ) then
-            GL:xd("kick");
-            ---@todo: REMOVE!
-            GL:xd{
-                member = Member.name,
-                user = GL.User.name,
-            };
             -- Kick the player!
             UninviteUnit(GL:iEquals(Member.realm, GL.User.realm) and Member.name or Member.fqn);
         end
@@ -529,8 +521,6 @@ end
 ---@param raidGroupCsv string
 ---@return void
 function RaidGroups:applyRaidGroups(raidGroupCsv)
-    GL:debug("RaidGroups:applyRaidGroups");
-
     if (not GL.User.isInRaid) then
         return GL:warning("You need to be in a raid!");
     end
@@ -779,9 +769,11 @@ function RaidGroups:processMigrations(Migrations, numberOfMigrations, index)
         local leftIndex = 0;
 
         for index = 1, _G.MAX_RAID_MEMBERS do
-            local nameOnIndex = string.lower(GetRaidRosterInfo(index));
+            local nameOnIndex = GetRaidRosterInfo(index);
 
-            if (name == nameOnIndex) then
+            if (GL:iEquals(name, nameOnIndex)
+                or GL:iEquals(name, GL:disambiguateName(nameOnIndex))
+            ) then
                 leftIndex = index;
                 break;
             end
