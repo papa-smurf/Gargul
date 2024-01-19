@@ -469,15 +469,18 @@ function RaidGroups:checkAttendance(raidGroupCsv, OutPutLabel)
         Player.name = string.lower(Player.name);
         PlayersInRaid[Player.name] = true;
 
-        if (not PlayersOnRoster[Player.name]) then
+        if (not GL:iEquals(GL.User.name, Player.name)
+            and not GL:inTable(PlayersOnRoster, Player.name)
+        ) then
             tinsert(UnknownPlayers, Player.name);
         end
     end
 
     -- Check who's missing
-    for playerName in pairs(PlayersOnRoster) do
+    for _, playerName in pairs(PlayersOnRoster) do
+        playerName = string.lower(playerName);
         if (not PlayersInRaid[playerName]) then
-            tinsert(MissingPlayers, playerName);
+            tinsert(MissingPlayers, GL:capitalize(playerName));
         end
     end
 
