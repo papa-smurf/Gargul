@@ -2253,6 +2253,11 @@ function GL:stripColor(text)
     return text;
 end
 
+---@see GL:copperToMoney
+function GL:goldToMoney(copper, Separators, includeEmpty, separatorBeforeUnit)
+    return self:copperToMoney(copper * 10000, Separators, includeEmpty, separatorBeforeUnit);
+end
+
 --- Transform a copper value to a money string
 ---
 --- copperToMoney(125000)                    > 12G 50S
@@ -2273,10 +2278,12 @@ function GL:copperToMoney(copper, Separators, includeEmpty, separatorBeforeUnit)
         return "";
     end
 
+    copper = self:floor(copper, 4);
+
     if (not separatorBeforeUnit) then
-        DefaultSeparators = {"G ", "S ", "C "};
+        DefaultSeparators = {"g ", "s ", "c "};
     else
-        DefaultSeparators = {" G", " S", " C"};
+        DefaultSeparators = {" g", " s", " c"};
     end
 
     Separators = Separators or {};

@@ -67,12 +67,7 @@ function Session:_init()
         if (Settings:get("GDKP.announcePotAfterAuction")
             and sessionID == self:activeSessionID()
         ) then
-            local total = tonumber(GDKPPot:total()) or 0;
-            if (total < 1) then
-                return;
-            end
-
-            GL:sendChatMessage(string.format("Pot was updated, it now holds %sg", tostring(total)), "GROUP");
+            GL:sendChatMessage(string.format("Pot was updated, it now holds %s", GDKPPot:humanTotal()), "GROUP");
         end
     end);
 

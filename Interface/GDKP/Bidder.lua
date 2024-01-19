@@ -350,10 +350,10 @@ function Bidder:refresh()
             maxBidString = string.format(" (max %sg)", GDKPAuction.maxBid);
         end
 
-        TopBidderLabel:SetText(string.format("|c001Eff00Top bid: %sg by you%s|r", TopBid.bid, maxBidString));
+        TopBidderLabel:SetText(string.format("|c001Eff00Top bid: %s by you%s|r", GL:goldToMoney(TopBid.bid), maxBidString));
     else
-        TopBidderLabel:SetText(string.format("|c00BE3333Top bid: %sg by |c00%s%s|r|r",
-            TopBid.bid,
+        TopBidderLabel:SetText(string.format("|c00BE3333Top bid: %s by |c00%s%s|r|r",
+            GL:goldToMoney(TopBid.bid),
             GL:classHexColor(TopBid.Bidder.class),
             TopBid.Bidder.name
         ));

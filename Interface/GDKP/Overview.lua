@@ -150,8 +150,8 @@ function Overview:updatePot()
         return;
     end
 
-    local pot = GDKPPot:total(Session.ID);
-    Pot:SetText(string.format("|cFF%s%sg|r", Constants.ClassHexColors.rogue, pot));
+    local pot = GDKPPot:humanTotal(Session.ID);
+    Pot:SetText(string.format("|cFF%s%s|r", Constants.ClassHexColors.rogue, pot));
 end
 
 ---@return void
@@ -253,7 +253,7 @@ function Overview:build()
         local managementPot = math.ceil(pot * (0 + managementCut / 100));
 
         GameTooltip:SetOwner(PotIconFrame, "ANCHOR_TOP");
-        GameTooltip:AddLine(string.format("Pot: %sg", pot));
+        GameTooltip:AddLine(string.format("Pot: %s", GL:goldToMoney(pot)));
         GameTooltip:AddLine(string.format("Management cut (%s%%): %sg", managementCut, managementPot));
         GameTooltip:AddLine(string.format("Per player cut (1/%s): %sg", numberOfRaidMembers, GL:floor((pot - managementPot) / numberOfRaidMembers, Settings:get("GDKP.precision"))));
         GameTooltip:Show();
@@ -727,15 +727,16 @@ function Overview:refreshLedger()
 
             -- Item was sold
             if (not auctionWasDeleted) then
+                price = price or 0;
                 if (concernsManualAdjustment) then
                     local mutator = "added to";
                     if (price < 0) then
                         mutator = "removed from"
                     end
 
-                    itemLabel = string.format("|cFF%s%sg|r %s pot by |c00%s%s|r\nNote: %s",
+                    itemLabel = string.format("|cFF%s%s|r %s pot by |c00%s%s|r\nNote: %s",
                         Constants.ClassHexColors.rogue,
-                        price or "0",
+                        GL:goldToMoney(price),
                         mutator,
                         GL:classHexColor(Auction.Winner.class),
                         Auction.Winner.name,
@@ -743,11 +744,11 @@ function Overview:refreshLedger()
                     );
                 else
                     itemLabel = string.format(
-                        "|cFF%s%s|r paid |cFF%s%sg|r for\n%s",
+                        "|cFF%s%s|r paid |cFF%s%s|r for\n%s",
                         GL:classHexColor(Auction.Winner.class),
                         Auction.Winner.name or "",
                         Constants.ClassHexColors.rogue,
-                        price or "0",
+                        GL:goldToMoney(price),
                         ItemEntry.link
                     );
                 end

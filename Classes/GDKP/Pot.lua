@@ -88,6 +88,14 @@ function Pot:total(sessionID)
     return pot;
 end
 
+---@param sessionID string|nil If nil use currently active session
+---@return string
+function Pot:humanTotal(sessionID)
+    local pot = self:total(sessionID) or 0;
+
+    return GL:goldToMoney(pot);
+end
+
 ---@param sessionID string
 ---@param Data table
 ---@return boolean
@@ -738,7 +746,7 @@ function Pot:announce(sessionID, callback)
     local managementCut = GL:floor(totalPot * (0 + managementCutPercentage / 100), Settings:get("GDKP.precision"));
     local totalToDistribute = GL:floor(totalPot - managementCut, Settings:get("GDKP.precision"));
 
-    local message = string.format("Total Pot: %sg", totalToDistribute);
+    local message = string.format("Total Pot: %s", GL:goldToMoney(totalToDistribute));
     GL:sendChatMessage(message, "GROUP");
 
     message = string.format("Base cut: %sg", GL:floor(Session.lastAvailableBase, Settings:get("GDKP.precision")));
