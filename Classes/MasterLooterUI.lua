@@ -167,7 +167,7 @@ function MasterLooterUI:draw(itemLink)
 
                 local StartButton = AceGUI:Create("Button");
                 StartButton:SetText("Start");
-                StartButton:SetWidth(80);
+                StartButton:SetWidth(60);
                 StartButton:SetHeight(20);
                 StartButton:SetDisabled(true);
                 StartButton:SetCallback("OnClick", function()
@@ -194,7 +194,7 @@ function MasterLooterUI:draw(itemLink)
 
                 local StopButton = AceGUI:Create("Button");
                 StopButton:SetText("Stop");
-                StopButton:SetWidth(80);
+                StopButton:SetWidth(60);
                 StopButton:SetHeight(20);
                 StopButton:SetDisabled(true);
                 StopButton:SetCallback("OnClick", function()
@@ -202,6 +202,26 @@ function MasterLooterUI:draw(itemLink)
                 end);
                 FirstRow:AddChild(StopButton);
                 GL.Interface:set(self, "Stop", StopButton);
+
+                local ButtonPadder = AceGUI:Create("SimpleGroup");
+                ButtonPadder:SetLayout("Flow");
+                ButtonPadder:SetWidth(8);
+                ButtonPadder:SetHeight(30);
+                FirstRow:AddChild(ButtonPadder);
+
+
+                --[[
+                    +1 BUTTON
+                ]]
+
+                local PlusOneButton = AceGUI:Create("Button");
+                PlusOneButton:SetText("+1");
+                PlusOneButton:SetWidth(48);
+                PlusOneButton:SetHeight(20);
+                PlusOneButton:SetCallback("OnClick", function()
+                    GL.Commands:call("+1");
+                end);
+                FirstRow:AddChild(PlusOneButton);
 
         --[[
             SECOND ROW
