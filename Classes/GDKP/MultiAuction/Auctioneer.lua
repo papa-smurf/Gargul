@@ -83,14 +83,31 @@ function Auctioneer:fillFromInventory(minimumQuality, includeBOEs, includeAwarde
         end
 
         -- The item doesn't have the required minimum
-        if (C_Item.GetItemQuality(Location) < minimumQuality) then
+        if (itemQuality < minimumQuality) then
+            return;
+        end
+
+        -- Check if we consider this a sellable item
+        local itemID = C_Item.GetItemID(Location);
+        if (GL:inTable(Constants.ItemsThatShouldntBeAnnounced, itemID)) then
+            return;
+        end
+
+        -- Exclude projectiles (bullets and arrows)
+        local classID = select(12, GetItemInfo(itemID));
+        if (classID == Enum.ItemClass.Projectile) then
+            return;
+        end
+
+        -- Exclude enchantments (Eternal Belt Buckle, Frosthide Leg Armor, Greater Inscription of the Axe etc)
+        if (classID == Enum.ItemClass.Consumable
+            and itemQuality > 2
+        ) then
             return;
         end
 
         -- Check if we need to exclude reagents
         if (not includeMaterials) then
-            local classID = select(12, GetItemInfo(C_Item.GetItemID(Location)));
-
             -- We don't need trade goods / crafting reagents
             if (classID == Enum.ItemClass.Tradegoods
                 or classID == Enum.ItemClass.Gem
