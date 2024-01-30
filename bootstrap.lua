@@ -17,6 +17,7 @@ GL.isRetail = false;
 GL.isClassic = false;
 GL.isDragonFlightOrLater = false;
 GL.isMuted = false;
+GL.GDKPIsAllowed = true;
 GL.version = GetAddOnMetadata(GL.name, "Version");
 GL.DebugLines = {};
 GL.EventFrame = nil;
@@ -96,6 +97,11 @@ function GL:_init()
         self.isEra = true;
     elseif (self.clientVersion) < 90000 then
         self.isClassic = true;
+
+        -- GDKPs are not allowed in SoD Season 2
+        if (C_Seasons.GetActiveSeason() == 2) then
+            self.GDKPIsAllowed = false;
+        end
     else
         if (self.clientVersion >= 100000) then
             self.isDragonFlightOrLater = true;

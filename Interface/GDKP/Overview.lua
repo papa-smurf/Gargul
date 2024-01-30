@@ -1,3 +1,5 @@
+local L = Gargul_L;
+
 ---@type GL
 local _, GL = ...;
 
@@ -156,7 +158,9 @@ end
 
 ---@return void
 function Overview:open()
-    GL:debug("Interface.GDKP.Overview:open");
+    if (not GL.GDKPIsAllowed) then
+        return GL:error(L.GDKPS_ARE_NOT_ALLOWED);
+    end
 
     local Window = Interface:get(self, "GDKPOverview");
 

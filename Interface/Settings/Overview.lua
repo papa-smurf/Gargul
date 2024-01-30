@@ -18,11 +18,11 @@ GL.Interface.Settings.Overview = {
         {"General", "General"},
         {"SoftRes", "SoftRes"},
         {"TMB and DFT", "TMB"},
-        {"GDKP", "GDKP"},
-        {"    Communication", "GDKPCommunication"},
-        {"    Prices", "GDKPPrices"},
-        {"    Mutators", "GDKPMutators"},
-        {"    Queues", "GDKPQueues"},
+        GL.GDKPIsAllowed and {"GDKP", "GDKP"} or nil,
+        GL.GDKPIsAllowed and {"    Communication", "GDKPCommunication"} or nil,
+        GL.GDKPIsAllowed and {"    Prices", "GDKPPrices"} or nil,
+        GL.GDKPIsAllowed and {"    Mutators", "GDKPMutators"} or nil,
+        GL.GDKPIsAllowed and {"    Queues", "GDKPQueues"} or nil,
         {"Dropped Loot", "DroppedLoot"},
         {"Exporting Loot", "ExportingLoot"},
         {"Loot trade timers", "LootTradeTimers"},
@@ -47,14 +47,14 @@ GL.Interface.Settings.Overview = {
 };
 local Overview = GL.Interface.Settings.Overview; ---@type SettingsOverview
 
+GL.Interface.Settings.Overview.Sections = GL:tableValues(GL.Interface.Settings.Overview.Sections);
+
 --- Draw a setting section
 ---
 ---@param section string|nil
 ---@param param function|nil What to do after closing the settings again
 ---@return void
 function Overview:draw(section, onCloseCallback)
-    GL:debug("Overview:draw");
-
     local AceGUI = GL.AceGUI;
 
     if (self.isVisible) then
@@ -203,28 +203,6 @@ function Overview:draw(section, onCloseCallback)
     end);
     ResetSettingsButton:SetWidth(136);
     SecondColumn:AddChild(ResetSettingsButton);
-
-    local PatreonButton = GL.UI:createFrame("Button", "PatreonButton" .. GL:uuid(), Window.frame, "UIPanelButtonTemplate");
-    PatreonButton:Show();
-    PatreonButton:SetSize(170, 43);
-    PatreonButton:SetPoint("BOTTOMLEFT", Window.frame, "BOTTOMLEFT", 25, 16);
-
-    local HighlightTexture = PatreonButton:CreateTexture();
-    HighlightTexture:SetTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\patreon");
-    HighlightTexture:SetPoint("CENTER", PatreonButton, "CENTER", 0, 0);
-    HighlightTexture:SetSize(170, 43);
-
-    PatreonButton:SetNormalTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\patreon");
-    PatreonButton:SetHighlightTexture(HighlightTexture);
-
-    PatreonButton:SetScript("OnClick", function(_, button)
-        if (button == 'LeftButton') then
-            GL.Interface.Dialogs.HyperlinkDialog:open{
-                description = "Thanks for considering becoming a Patron of Gargul, your support helps tremendously!",
-                hyperlink = "patreon.com/gargul",
-            };
-        end
-    end);
 
     self:showSection(section);
 end
