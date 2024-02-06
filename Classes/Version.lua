@@ -302,8 +302,9 @@ end
 function Version:validateAndSplit(versionString)
     GL:debug("Version:validateAndSplit");
 
-    if (not type(versionString) == "string") then
-        GL:warning("Invalid version string provided in Version:validateAndSplit");
+    if (type(versionString) ~= "string"
+        or GL:empty(versionString)
+    ) then
         return false;
     end
 

@@ -2749,6 +2749,17 @@ function GL:tableValues(Table)
     return Values;
 end
 
+---@param Table table
+---@return table
+function GL:tableKeys(Table)
+    local Keys = {};
+    for key in pairs(Table or {}) do
+        tinsert(Keys, key);
+    end
+
+    return Keys;
+end
+
 --- Pad a string to a certain length with another string (left side)
 ---
 ---@param str string
