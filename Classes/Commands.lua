@@ -6,11 +6,16 @@ local Settings = GL.Settings;
 ---@class Commands
 GL.Commands = GL.Commands or {
     CommandDescriptions = {
-        auction = "Open the Auctioneer UI where you can auction off items for a GDKP session (requires an active GDKP session!)",
+        --[[ GDKP commands ]]
+            auction = GL.GDKPIsAllowed and "Open the Auctioneer UI where you can auction off items for a GDKP session (requires an active GDKP session!)" or nil,
+            bid = GL.GDKPIsAllowed and "Open the window which lets you bid during a GDKP multi-auction" or nil,
+            gdkp = GL.GDKPIsAllowed and "Open the GDKP UI where you can manage your GDKP sessions" or nil,
+            importprices = GL.GDKPIsAllowed and "Open an import window with which you can import per-product minimum and increment settings" or nil,
+            multiauction = GL.GDKPIsAllowed and "Auction off multiple items at once in your GDKP raids. This requires all participants to have an up-to-date version of Gargul!" or nil,
+
         awardondate = "In case you need to award something retroactively you can use this command: /gl awardOnDate [winnerName] [yy-mm-dd] [itemLink]",
         award = "Open the award window. Optionally accepts an ItemLink as an argument: /gl award [itemLink?]",
         awardhistory = "Open the award history window which shows recently awarded items and their rolls",
-        bid = "Open the window which lets you bid during a GDKP multi-auction",
         boostedrolls = "Open the Boosted Rolls UI that allows you to easily manage roll boosts.",
         buffs = "You can instantly check player buffs like Ony, ZG, but also protection consumables like shadow protection: /gl buffs 22888, 22818, 22817, 22820, 24425, 15366, 20079",
         bugreport = "Include the output of this command when filing a bug report on the Gargul discord server",
@@ -20,13 +25,10 @@ GL.Commands = GL.Commands or {
         dft = "Open the DFT importer. Data exported from your DFT sheet can be imported here",
         cpr = "Open the classicpr importer. Data exported from https://classicpr.io/ can be imported here",
         export = "Export dropped loot to a CSV format which is compatible with TMB for example.",
-        gdkp = "Open the GDKP UI where you can manage your GDKP sessions",
         groups = "Open the group window where you can provide a roster from csv/raidhelper/wowhead so that you can: see who's missing and sort groups automatically",
         import = "Opens the general import window that includes shortcuts to the TMB, SoftRes or loot priority importers",
-        importprices = "Open an import window with which you can import per-product minimum and increment settings",
         inspect = "You can check whether players brought items (and how many), e.g. to check for consumables (requires players to have Gargul!): /gl inspect itemID1, itemID2, itemID3",
         lootpriority = "Open the loot priority editor where you can edit / clear loot priorities. These are the same priorities as imported by the TMB importer, clearing them here clears them for TMB as well",
-        multiauction = "Auction off multiple items at once in your GDKP raids. This requires all participants to have an up-to-date version of Gargul!",
         packmule = "Open PackMule which allows you to automatically funnel dropped gear to specific players, very helpful with green items for example",
         plusones = "Open the PlusOnes window that allows you to check and manipulate all plus one values",
         raidcsv = "Output everyone currently in the group in a CSV format",
@@ -40,8 +42,17 @@ GL.Commands = GL.Commands or {
     },
 
     ShorthandDictionary = {
-        -- auction
-        au = "auction",
+        --[[ GDKP SHORTHANDS ]]
+            -- auction
+            au = GL.GDKPIsAllowed and "auction" or nil,
+
+            -- gdkp
+            gd = GL.GDKPIsAllowed and "gdkp" or nil,
+
+            -- multiauction
+            ma = GL.GDKPIsAllowed and "multiauction" or nil,
+            ba = GL.GDKPIsAllowed and "multiauction" or nil,
+            batchauction = GL.GDKPIsAllowed and "multiauction" or nil,
 
         -- awardondate
         aod = "awardondate",
@@ -80,9 +91,6 @@ GL.Commands = GL.Commands or {
         -- export
         ex = "export",
 
-        -- gdkp
-        gd = "gdkp",
-
         -- groups
         gr = "groups",
         roster = "groups",
@@ -100,11 +108,6 @@ GL.Commands = GL.Commands or {
         lo = "lootpriority",
         pr = "lootpriority",
         priority = "lootpriority",
-
-        -- multiauction
-        ma = "multiauction",
-        ba = "multiauction",
-        batchauction = "multiauction",
 
         -- packmule
         pm = "packmule",
@@ -331,8 +334,6 @@ function Commands:_dispatch(str)
     end
 
     arguments = { strsplit(" ", argumentString, numberOfArguments) };
-
-    GL:debug("Dispatching " .. str);
 
     if (command and self.Dictionary[command] and type(self.Dictionary[command]) == "function") then
         return self.Dictionary[command](unpack(arguments));

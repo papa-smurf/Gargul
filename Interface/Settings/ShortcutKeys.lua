@@ -196,24 +196,26 @@ function ShortcutKeys:draw(Parent)
     HorizontalSpacer:SetHeight(20);
     Parent:AddChild(HorizontalSpacer);
 
-    --[[ ROLLOFF ]]
+    if (GL.GDKPIsAllowed) then
+        --[[ GDKP AUCTION ]]
 
-    local AuctionLabel = AceGUI:Create("Label");
-    AuctionLabel:SetText("Dedicated auction off hotkey (default disabled)");
-    AuctionLabel:SetColor(1, .95686, .40784);
-    AuctionLabel:SetHeight(20);
-    AuctionLabel:SetFullWidth(true);
-    Parent:AddChild(AuctionLabel);
+        local AuctionLabel = AceGUI:Create("Label");
+        AuctionLabel:SetText("Dedicated auction off hotkey (default disabled)");
+        AuctionLabel:SetColor(1, .95686, .40784);
+        AuctionLabel:SetHeight(20);
+        AuctionLabel:SetFullWidth(true);
+        Parent:AddChild(AuctionLabel);
 
-    local AuctionHotkey = AceGUI:Create("Dropdown");
-    AuctionHotkey:SetValue(GL.Settings:get("ShortcutKeys.auction"));
-    AuctionHotkey:SetList(DropDownItems, ItemOrder);
-    AuctionHotkey:SetText(DropDownItems[GL.Settings:get("ShortcutKeys.auction")]);
-    AuctionHotkey:SetWidth(250);
-    AuctionHotkey:SetCallback("OnValueChanged", function()
-        GL.Settings:set("ShortcutKeys.auction", AuctionHotkey:GetValue());
-    end);
-    Parent:AddChild(AuctionHotkey);
+        local AuctionHotkey = AceGUI:Create("Dropdown");
+        AuctionHotkey:SetValue(GL.Settings:get("ShortcutKeys.auction"));
+        AuctionHotkey:SetList(DropDownItems, ItemOrder);
+        AuctionHotkey:SetText(DropDownItems[GL.Settings:get("ShortcutKeys.auction")]);
+        AuctionHotkey:SetWidth(250);
+        AuctionHotkey:SetCallback("OnValueChanged", function()
+            GL.Settings:set("ShortcutKeys.auction", AuctionHotkey:GetValue());
+        end);
+        Parent:AddChild(AuctionHotkey);
+    end
 end
 
 GL:debug("Interface/Settings/ShortcutKeys.lua");

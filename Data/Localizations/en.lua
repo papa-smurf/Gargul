@@ -91,6 +91,7 @@ L.GDKP_HIDE_UPCOMING_CONFIRMATION = "Are you sure? You won't be able to see, or 
 L.GDKP_PAYOUT_INACTIVE = "No active GDKP session detected or session is not locked for payout!";
 L.GDKP_SESSION = "GDKP Session";
 L.GDKP_SHOW_UPCOMING = "Show upcoming items";
+L.GDKPS_ARE_NOT_ALLOWED = "GDKP raids are not allowed in this version of World of Warcraft"
 L.GOLD_TRADE_GIVEN = "I gave %s to %s";
 L.GOLD_TRADE_GIVEN_DELETED = "I deleted a gold trade in which I gave %s to %s";
 L.GOLD_TRADE_GIVEN_RESTORED = "I restored a gold trade in which I gave %s to %s";

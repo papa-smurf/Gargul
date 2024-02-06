@@ -1414,7 +1414,9 @@ end
 ---
 ---@param CommMessage CommMessage
 function Auction:start(CommMessage)
-    GL:debug("GDKP.Auction:start");
+    if (not GL.GDKPIsAllowed) then
+        return;
+    end
 
     local content = CommMessage.content;
     self.waitingForStart = false;

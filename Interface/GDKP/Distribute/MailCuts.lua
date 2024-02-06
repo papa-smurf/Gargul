@@ -538,7 +538,7 @@ function MailCuts:mailPlayerCut(player, callback)
     ClearSendMail();
     SetSendMailMoney(outstandingCopper);
 
-    SendMail(GL:nameFormat(player), string.format(self.cutMailSubject, gold), L.CUT_MAIL_BODY);
+    SendMail(GL:nameFormat(player), (self.cutMailSubject):format(gold), (self.cutMailBody):format(gold));
 
     MailDisableTimer = GL.Ace:ScheduleRepeatingTimer(function ()
         self:disableSendButton();

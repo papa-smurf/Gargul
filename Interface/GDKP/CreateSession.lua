@@ -1,3 +1,5 @@
+local L = Gargul_L;
+
 ---@type GL
 local _, GL = ...;
 
@@ -23,7 +25,9 @@ local CreateSession = GL.Interface.GDKP.CreateSession;
 
 ---@return Frame
 function CreateSession:build()
-    GL:debug("Interface.GDKP.CreateSession:build");
+    if (not GL.GDKPIsAllowed) then
+        return GL:error(L.GDKPS_ARE_NOT_ALLOWED);
+    end
 
     local Window = AceGUI:Create("InlineGroup");
     Window:SetLayout("Flow");
