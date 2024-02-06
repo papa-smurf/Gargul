@@ -131,20 +131,24 @@ function RaidGroups:drawImporter()
     end);
     Window:AddChild(WikiButton);
 
+    self.rosterString = not GL:empty(self.rosterString) and self.rosterString or GL.DB:get("Utility.RaidGroupsString", "");
+
     -- Edit box
     RaidGroupsBox = AceGUI:Create("MultiLineEditBox");
     RaidGroupsBox:SetFullWidth(true);
     RaidGroupsBox:DisableButton(true);
     RaidGroupsBox:SetFocus();
     RaidGroupsBox:SetLabel("");
-    RaidGroupsBox:SetText(RaidGroups.rosterString or "");
+    RaidGroupsBox:SetText(self.rosterString);
     RaidGroupsBox:SetNumLines(10);
     RaidGroupsBox:SetMaxLetters(999999999);
     Window:AddChild(RaidGroupsBox);
 
     RaidGroupsBox:SetCallback("OnTextChanged", function(EditBox, _, text)
-        RaidGroups.rosterString = self:normalizeInput(EditBox, text);
-    end)
+        local rosterString = self:normalizeInput(EditBox, text);
+        GL.DB:set("Utility.RaidGroupsString", rosterString);
+        self.rosterString = rosterString;
+    end);
 
     local OutputFrame = AceGUI:Create("SimpleGroup");
     OutputFrame:SetLayout("FILL");
