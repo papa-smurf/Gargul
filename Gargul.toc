@@ -112,6 +112,7 @@ Interface/GDKP/Auctioneer.lua
 Interface/GDKP/Bidder.lua
 Interface/GDKP/BidderQueue.lua
 Interface/GDKP/Overview.lua
+Interface/GDKP/Import.lua
 Interface/GDKP/Export.lua
 Interface/GDKP/ImportPrices.lua
 Interface/GDKP/LedgerList.lua

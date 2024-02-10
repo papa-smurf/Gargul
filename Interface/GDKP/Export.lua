@@ -21,6 +21,7 @@ local Export = GL.Interface.GDKP.Export;
 -- [[ CONSTANTS ]]
 local CUSTOM_FORMAT = 1;
 local JSON_FORMAT = 2;
+local SHARE_FORMAT = 3;
 
 ---@return void
 function Export:open(session)
@@ -80,6 +81,7 @@ function Export:build()
     local DropDownItems = {
         [CUSTOM_FORMAT] = "|c00FFF569Custom (create your own format)|r",
         [JSON_FORMAT] = "|c00FFF569Detailed (JSON)|r",
+        [SHARE_FORMAT] = "|c00FFF569Share (can be imported by other players)|r",
     };
 
     ---@type AceGUIEditBox
@@ -245,6 +247,18 @@ function Export:refresh()
     elseif (exportFormat == JSON_FORMAT) then
         local exportString = self:transformAuctionsToJSONFormat(Session);
         GL.Interface:get(self, "MultiLineEditBox.Export"):SetText(exportString);
+    elseif (exportFormat == SHARE_FORMAT) then
+        local zlibEncodeSucceeded;
+        local LibDeflate = LibStub:GetLibrary("LibDeflate");
+        local exportString = GL.JSON:encode(Session);
+
+        zlibEncodeSucceeded, exportString = pcall(function () return LibDeflate:CompressZlib(exportString); end);
+
+        if (not zlibEncodeSucceeded) then
+            return GL:error("Something went wrong compressing your GDKP session");
+        end
+
+        exportString = GL.Base64.encode(exportString);
         GL.Interface:get(self, "MultiLineEditBox.Export"):SetText(exportString);
     end
 end

@@ -53,6 +53,12 @@ function DB:_init()
 end
 
 ---@param keyString string
+---@return boolean
+function DB:has(keyString)
+    return GL:tableGet(self, keyString) ~= nil;
+end
+
+---@param keyString string
 ---@param default any
 ---@return any
 function DB:get(keyString, default)

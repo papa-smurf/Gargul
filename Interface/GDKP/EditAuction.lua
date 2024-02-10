@@ -18,8 +18,6 @@ local EditAuction = GL.Interface.GDKP.EditAuction;
 
 ---@return void
 function EditAuction:draw(session, checksum)
-    GL:debug("GDKP.Edit:draw");
-
     local VerticalSpacer;
 
     -- Release any existing edit auction window
@@ -198,5 +196,3 @@ end
 function EditAuction:close()
     Interface:release(self, "Window");
 end
-
-GL:debug("Interfaces/GDKP/EditAuction.lua");

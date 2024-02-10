@@ -431,7 +431,7 @@ function Overview:build()
 
     local EnableOrDisableSession = AceGUI:Create("Button");
     EnableOrDisableSession:SetText("Enable");
-    EnableOrDisableSession:SetWidth(80);
+    EnableOrDisableSession:SetWidth(74);
     EnableOrDisableSession:SetHeight(20);
     EnableOrDisableSession:SetCallback("OnClick", function()
         if (EnableOrDisableSession.mode == "enable") then
@@ -444,7 +444,7 @@ function Overview:build()
 
     local CreateSession = AceGUI:Create("Button");
     CreateSession:SetText("New");
-    CreateSession:SetWidth(74);
+    CreateSession:SetWidth(58);
     CreateSession:SetHeight(20);
     CreateSession:SetCallback("OnClick", function()
         self:closeSubWindows();
@@ -453,7 +453,7 @@ function Overview:build()
 
     local EditSession = AceGUI:Create("Button");
     EditSession:SetText("Edit");
-    EditSession:SetWidth(74);
+    EditSession:SetWidth(60);
     EditSession:SetHeight(20);
     EditSession:SetCallback("OnClick", function()
         self:closeSubWindows();
@@ -462,7 +462,7 @@ function Overview:build()
 
     local DeleteOrRestoreSession = AceGUI:Create("Button");
     DeleteOrRestoreSession:SetText("Delete");
-    DeleteOrRestoreSession:SetWidth(74);
+    DeleteOrRestoreSession:SetWidth(72);
     DeleteOrRestoreSession:SetHeight(20);
     DeleteOrRestoreSession:SetCallback("OnClick", function()
         if (DeleteOrRestoreSession.mode == "delete") then
@@ -472,23 +472,25 @@ function Overview:build()
         end
     end);
     Interface:set(self, "DeleteRestore", DeleteOrRestoreSession);
+    GL.Interface:addTooltip(DeleteOrRestoreSession.frame, "Sessions with auctions attached to them will be deleted after 48 hours");
 
-    DeleteOrRestoreSession:SetCallback("OnEnter", function ()
-        GameTooltip:SetOwner(DeleteOrRestoreSession.frame, "ANCHOR_TOP");
-        GameTooltip:AddLine("Sessions with auctions attached to them will be deleted after 48 hours");
-        GameTooltip:Show();
+    local Import = AceGUI:Create("Button");
+    Import:SetText("Import");
+    Import:SetWidth(72);
+    Import:SetHeight(20);
+    Import:SetCallback("OnClick", function()
+        GL.Interface.GDKP.Import:open();
     end);
-    DeleteOrRestoreSession:SetCallback("OnLeave", function ()
-        GameTooltip:Hide();
-    end);
+    GL.Interface:addTooltip(Import.frame, "Import a session from another player or account");
 
     local Export = AceGUI:Create("Button");
     Export:SetText("Export");
-    Export:SetWidth(74);
+    Export:SetWidth(72);
     Export:SetHeight(20);
     Export:SetCallback("OnClick", function()
         GL.Interface.GDKP.Export:open(self.selectedSession);
     end);
+    GL.Interface:addTooltip(Export.frame, "Export a session so others can view session details or even replace you as a loot master");
 
     local Cuts = AceGUI:Create("Button");
     Cuts:SetText("Cuts");
@@ -499,7 +501,7 @@ function Overview:build()
         Window.frame:Hide();
     end);
 
-    ThirdColumn:AddChildren(EnableOrDisableSession, CreateSession, EditSession, DeleteOrRestoreSession, Export, Cuts);
+    ThirdColumn:AddChildren(EnableOrDisableSession, CreateSession, EditSession, DeleteOrRestoreSession, Import, Export, Cuts);
     ThirdColumn.frame:SetParent(WindowFrame);
     ThirdColumn.frame:SetPoint("BOTTOMLEFT", WindowFrame, "BOTTOMLEFT", 20, 15);
 

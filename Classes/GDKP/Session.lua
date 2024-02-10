@@ -703,8 +703,6 @@ end
 ---
 ---@return boolean
 function Session:ownedByUser()
-    GL:debug("Session:ownedByUser");
-
     for _, Instance in pairs (DB:get("GDKP.Ledger") or {}) do
         if (GL:tableGet(Instance or {}, "CreatedBy.uuid") == GL.User.id) then
             return true;
@@ -753,7 +751,8 @@ function Session:create(title, managementCut, sessionType)
             realm = GL.User.realm,
             guild = GL.User.Guild.name,
             uuid = GL.User.id,
-            guid = GDKP:myGUID()
+            guid = GDKP:myGUID(),
+            bnid = GL.User:bth(),
         },
         Pot = {
             Mutators = Settings:get("GDKP.Mutators", {}),
