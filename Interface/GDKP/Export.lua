@@ -20,7 +20,7 @@ local Export = GL.Interface.GDKP.Export;
 
 -- [[ CONSTANTS ]]
 local CUSTOM_FORMAT = 1;
-local SOFTRES_FORMAT = 2;
+local JSON_FORMAT = 2;
 
 ---@return void
 function Export:open(session)
@@ -79,7 +79,7 @@ function Export:build()
 
     local DropDownItems = {
         [CUSTOM_FORMAT] = "|c00FFF569Custom (create your own format)|r",
-        --[SOFTRES_FORMAT] = "|c00FFF569SoftRes|r",
+        [JSON_FORMAT] = "|c00FFF569Detailed (JSON)|r",
     };
 
     ---@type AceGUIEditBox
@@ -242,16 +242,17 @@ function Export:refresh()
     if (exportFormat == CUSTOM_FORMAT) then
         self:exportAuctionsToCustomFormat(Session, Auctions);
 
-    elseif (exportFormat == SOFTRES_FORMAT) then
-        local exportString = self:transformAuctionsToSoftResFormat(Auctions);
+    elseif (exportFormat == JSON_FORMAT) then
+        local exportString = self:transformAuctionsToJSONFormat(Session);
+        GL.Interface:get(self, "MultiLineEditBox.Export"):SetText(exportString);
         GL.Interface:get(self, "MultiLineEditBox.Export"):SetText(exportString);
     end
 end
 
----@param Auctions table
+---@param Session GDKPSession
 ---@return string
-function Export:transformAuctionsToSoftResFormat(Auctions)
-    return GL.JSON:encode("");
+function Export:transformAuctionsToJSONFormat(Session)
+    return GL.JSON:encode(Session);
 end
 
 ---@param Auctions GDKPSession
