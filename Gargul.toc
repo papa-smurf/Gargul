@@ -100,6 +100,7 @@ Interface/Settings/PlusOnes.lua
 Interface/Settings/Welcome.lua
 Interface/Settings/Advanced.lua
 Interface/Settings/General.lua
+Interface/Settings/MinimapButton.lua
 Interface/Settings/ShortcutKeys.lua
 Interface/Settings/LootHighlighting.lua
 Interface/Settings/AwardingLoot.lua

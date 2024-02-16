@@ -20,13 +20,6 @@ function General:draw(Parent)
             description = "Show a message when logging in",
             setting = "welcomeMessage",
         },
-        {
-            label = "Minimap Icon",
-            setting = "showMinimapButton",
-            callback = function()
-                GL.MinimapButton:drawOrHide();
-            end,
-        },
     }, Parent);
 
     --- WotLK only

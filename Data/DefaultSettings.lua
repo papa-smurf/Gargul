@@ -18,7 +18,6 @@ GL.Data.DefaultSettings = {
     noMessages = false,
     noSounds = false,
     profilerEnabled = false,
-    showMinimapButton = true,
     showUpdateAlert = false,
     soundChannel = "SFX",
     welcomeMessage = true,
@@ -28,6 +27,23 @@ GL.Data.DefaultSettings = {
         announceDroppedLootInRW = false,
         minimumQualityOfAnnouncedLoot = 4,
         minimumQualityOfLoggedLoot = 4,
+    },
+    MinimapButton = {
+        enabled = true,
+        Actions = {
+            CLICK = "GARGUL",
+            RIGHTCLICK = "IMPORT",
+            SHIFT_CLICK = "SOFTRES",
+            SHIFT_RIGHTCLICK = "EXPORT",
+            ALT_CLICK = "DISABLED",
+            ALT_RIGHTCLICK = "DISABLED",
+            CTRL_CLICK = "DISABLED",
+            CTRL_RIGHTCLICK = "DISABLED",
+            ALT_SHIFT_CLICK = "DISABLED",
+            ALT_SHIFT_RIGHTCLICK = "DISABLED",
+            CTRL_SHIFT_CLICK = "DISABLED",
+            CTRL_SHIFT_RIGHTCLICK = "DISABLED",
+        }
     },
     ShortcutKeys = {
         auction = "DISABLED",

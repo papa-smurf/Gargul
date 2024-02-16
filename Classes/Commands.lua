@@ -29,6 +29,7 @@ GL.Commands = GL.Commands or {
         import = "Opens the general import window that includes shortcuts to the TMB, SoftRes or loot priority importers",
         inspect = "You can check whether players brought items (and how many), e.g. to check for consumables (requires players to have Gargul!): /gl inspect itemID1, itemID2, itemID3",
         lootpriority = "Open the loot priority editor where you can edit / clear loot priorities. These are the same priorities as imported by the TMB importer, clearing them here clears them for TMB as well",
+        minimap = "Open the minimap icon settings",
         packmule = "Open PackMule which allows you to automatically funnel dropped gear to specific players, very helpful with green items for example",
         plusones = "Open the PlusOnes window that allows you to check and manipulate all plus one values",
         raidcsv = "Output everyone currently in the group in a CSV format",
@@ -215,6 +216,9 @@ GL.Commands = GL.Commands or {
         importprices = function()
             GL.Interface.GDKP.ImportPrices:open();
         end,
+
+        -- Open the minimap button settings
+        minimap = function() GL.Settings:draw("MinimapButton");  end,
 
         -- Open the soft reserves window
         softreserves = function() GL.SoftRes:draw(); end,

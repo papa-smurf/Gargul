@@ -16,6 +16,7 @@ GL.Interface.Settings.Overview = {
     Sections = {
         {"|c00a79effWELCOME|r", "Welcome"},
         {"General", "General"},
+        {"Minimap Icon", "MinimapButton"},
         {"SoftRes", "SoftRes"},
         {"TMB and DFT", "TMB"},
         GL.GDKPIsAllowed and {"GDKP", "GDKP"} or nil,
