@@ -91,13 +91,13 @@ function GL:_init()
 
     if (self.clientVersion) < 20000 then
         self.isEra = true;
-    elseif (self.clientVersion) < 90000 then
-        self.isClassic = true;
 
         -- GDKPs are not allowed in SoD Season 2
         if (C_Seasons.GetActiveSeason() == 2) then
             self.GDKPIsAllowed = false;
         end
+    elseif (self.clientVersion) < 90000 then
+        self.isClassic = true;
     else
         if (self.clientVersion >= 100000) then
             self.isDragonFlightOrLater = true;
