@@ -44,8 +44,6 @@ function GL:bootstrap(_, _, addonName)
         return;
     end
 
-    self:debug("GL:bootstrap");
-
     -- The addon was loaded, we no longer need the event listener now
     self.EventFrame:UnregisterEvent("ADDON_LOADED");
 
@@ -83,8 +81,6 @@ end
 ---
 ---@return void
 function GL:_init()
-    self:debug("GL:_init");
-
     do
         local version, _, _, uiVersion = GetBuildInfo();
 
