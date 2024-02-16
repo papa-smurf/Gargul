@@ -243,6 +243,7 @@ GL.Commands = GL.Commands or {
 
         resetsettings = function ()
             GL.Settings.Active = {};
+            GL.DB:set("Settings", nil);
             C_UI.Reload();
         end,
 
