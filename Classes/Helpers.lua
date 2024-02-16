@@ -1296,8 +1296,10 @@ function GL:onItemLoadDo(Items, callback, haltOnError, sorter)
             return;
         end
 
-        -- This is Blizzard's way of saying: this item don't exist fool
-        if (ItemResult:IsItemEmpty()) then
+        if (
+            not ItemResult.IsItemEmpty or ItemResult:IsItemEmpty() -- This is Blizzard's way of saying: this item don't exist fool
+            or not ItemResult:GetItemID() -- The item does exist but not in this client version
+        ) then
             itemsLoaded = itemsLoaded + 1;
             lastError = "No item found with identifier " .. itemIdentifier;
 
