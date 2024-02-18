@@ -56,6 +56,8 @@ function Events:getClickCombination(mouseButtonPressed)
         tinsert(ShortcutKeySegments, "CLICK");
     elseif (mouseButtonPressed == "RightButton") then
         tinsert(ShortcutKeySegments, "RIGHTCLICK");
+    elseif (mouseButtonPressed == "MiddleButton") then
+        tinsert(ShortcutKeySegments, "MIDDLECLICK");
     end
 
     return table.concat(ShortcutKeySegments, "_");

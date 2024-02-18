@@ -33,16 +33,22 @@ GL.Data.DefaultSettings = {
         Actions = {
             CLICK = "GARGUL",
             RIGHTCLICK = "IMPORT",
+            MIDDLECLICK = "AWARDHISTORY",
             SHIFT_CLICK = "SOFTRES",
             SHIFT_RIGHTCLICK = "EXPORT",
+            SHIFT_MIDDLECLICK = "DISABLED",
             ALT_CLICK = "DISABLED",
             ALT_RIGHTCLICK = "DISABLED",
+            ALT_MIDDLECLICK = "DISABLED",
             CTRL_CLICK = "DISABLED",
             CTRL_RIGHTCLICK = "DISABLED",
+            CTRL_MIDDLECLICK = "DISABLED",
             ALT_SHIFT_CLICK = "DISABLED",
             ALT_SHIFT_RIGHTCLICK = "DISABLED",
+            ALT_SHIFT_MIDDLECLICK = "DISABLED",
             CTRL_SHIFT_CLICK = "DISABLED",
             CTRL_SHIFT_RIGHTCLICK = "DISABLED",
+            CTRL_SHIFT_MIDDLECLICK = "DISABLED",
         }
     },
     ShortcutKeys = {

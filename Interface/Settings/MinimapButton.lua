@@ -11,16 +11,22 @@ local MinimapButton = GL.Interface.Settings.MinimapButton; ---@type MinimapSetti
 local SHORTCUTS = {
     "CLICK",
     "RIGHTCLICK",
+    "MIDDLECLICK",
     "SHIFT_CLICK",
     "SHIFT_RIGHTCLICK",
+    "SHIFT_MIDDLECLICK",
     "ALT_CLICK",
     "ALT_RIGHTCLICK",
+    "ALT_MIDDLECLICK",
     "CTRL_CLICK",
     "CTRL_RIGHTCLICK",
+    "CTRL_MIDDLECLICK",
     "ALT_SHIFT_CLICK",
     "ALT_SHIFT_RIGHTCLICK",
+    "ALT_SHIFT_MIDDLECLICK",
     "CTRL_SHIFT_CLICK",
     "CTRL_SHIFT_RIGHTCLICK",
+    "CTRL_SHIFT_MIDDLECLICK",
 };
 
 local ITEM_ORDER = {
