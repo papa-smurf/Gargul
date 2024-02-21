@@ -887,6 +887,15 @@ function RollOff:refreshRollsTable()
                         return;
                     end
 
+                    -- This entry was imported from DFT and TopEntry are of the same type, but this entry has a higher prio (aka more important)
+                    if (GL.TMB:wasImportedFromDFT()) then
+                        if (Entry.prio > TopEntry.prio) then
+                            TopEntry = Entry;
+                        end
+
+                        return;
+                    end
+
                     -- This entry and TopEntry are of the same type, but this entry has a lower prio (aka more important)
                     if (Entry.prio < TopEntry.prio) then
                         TopEntry = Entry;
@@ -899,8 +908,17 @@ function RollOff:refreshRollsTable()
             if (TopEntry) then
                 local type = "";
 
+                -- Prio list entries are imported from DFT so priority must be reversed for sorting them in right order (50 is higher than 30)
+                if (GL.TMB:wasImportedFromDFT()) then
+                    if (sortByTMBPrio) then
+                        rollPriority = 200; -- This is used to keep values positive: nasty but necessary
+                        rollPriority = rollPriority - TopEntry.prio; -- Make sure rolls of identical list positions "clump" together
+                    end
+
+                    tinsert(rollNotes, string.format("|c00FF7C0APrio [%s]|r", TopEntry.prio));
+
                 -- Prio list entries are more important than wishlist ones (and therefore get sorted on top)
-                if (TopEntry.type == GL.Data.Constants.tmbTypePrio) then
+                elseif (TopEntry.type == GL.Data.Constants.tmbTypePrio) then
                     if (sortByTMBPrio) then
                         rollPriority = 2;
                         rollPriority = rollPriority + TopEntry.prio; -- Make sure rolls of identical list positions "clump" together
