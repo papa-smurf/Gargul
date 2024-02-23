@@ -860,6 +860,7 @@ function RollOff:refreshRollsTable()
 
         -- The item might be on a TMB list, make sure we add the appropriate note to the roll
         if (TMBData) then
+            local importedFromDFT = GL.TMB:wasImportedFromDFT(); -- DFT goes high > low whereas the rest goes low > high
             local sortByTMBWishlist = GL.Settings:get("RollTracking.sortByTMBWishlist");
             local sortByTMBPrio = GL.Settings:get("RollTracking.sortByTMBPrio");
             local TopEntry = false;
@@ -887,8 +888,10 @@ function RollOff:refreshRollsTable()
                         return;
                     end
 
-                    -- This entry and TopEntry are of the same type, but this entry has a lower prio (aka more important)
-                    if (Entry.prio < TopEntry.prio) then
+                    -- This entry and TopEntry are of the same type, but this entry has better prio (aka more important)
+                    if ((importedFromDFT and Entry.prio > TopEntry.prio)
+                        or (not importedFromDFT and Entry.prio < TopEntry.prio)
+                    ) then
                         TopEntry = Entry;
                         return;
                     end
@@ -903,7 +906,13 @@ function RollOff:refreshRollsTable()
                 if (TopEntry.type == GL.Data.Constants.tmbTypePrio) then
                     if (sortByTMBPrio) then
                         rollPriority = 2;
-                        rollPriority = rollPriority + TopEntry.prio; -- Make sure rolls of identical list positions "clump" together
+
+                        -- Make sure rolls of identical list positions "clump" together
+                        if (importedFromDFT) then
+                            rollPriority = rollPriority - TopEntry.prio;
+                        else
+                            rollPriority = rollPriority + TopEntry.prio;
+                        end
                     end
 
                     tinsert(rollNotes, string.format("|c00FF7C0APrio [%s]|r", TopEntry.prio));
