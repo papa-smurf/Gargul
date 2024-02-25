@@ -13,7 +13,6 @@ GL.Data.ItemLinks = {
     ["49644"] = {
         49643, -- Head of Onyxia (Horde)
     },
-
     -- Dragonslayer's Signet
     ["18403"] = {
         18422, -- Head of Onyxia (Horde)
@@ -9145,5 +9144,175 @@ GL.Data.ItemLinks = {
         51277, -- Sanctified Lightsworn Helmet
         51278, -- Sanctified Lightsworn Legplates
         51279, -- Sanctified Lightsworn Shoulderplates
+    },
+    -- Avenger's Void Pearl
+    ["211449"] = {
+        211452, -- Perfect Blackfathom Pearl
+    },
+    -- Invoker's Void Pearl
+    ["211450"] = {
+        211452, -- Perfect Blackfathom Pearl
+    },
+    -- Acolyte's Void Pearl
+    ["211451"] = {
+        211452, -- Perfect Blackfathom Pearl
+    },
+    -- Perfect Blackfathom Pearl
+    ["211452"] = {
+        211449, -- Avenger's Void Pearl
+        211450, -- Invoker's Void Pearl
+        211451, -- Acolyte's Void Pearl
+    },
+    -- Hyperconductive Shimmershirt
+    ["213310"] = {
+        217008, -- Power Depleted Chest
+    },
+    -- Hyperconductive Robe
+    ["213311"] = {
+        217008, -- Power Depleted Chest
+    },
+    -- Insulated Apron
+    ["213312"] = {
+        217008, -- Power Depleted Chest
+    },
+    -- Insulated Chestguard
+    ["213313"] = {
+        217008, -- Power Depleted Chest
+    },
+    -- Electromantic Chainmail
+    ["213314"] = {
+        217008, -- Power Depleted Chest
+    },
+    -- Electromantic Chainshirt
+    ["213315"] = {
+        217008, -- Power Depleted Chest
+    },
+    -- H.A.Z.A.R.D. Breastplate
+    ["213316"] = {
+        217008, -- Power Depleted Chest
+    },
+    -- Hyperconductive Pantaloons
+    ["213328"] = {
+        217009, -- Power Depleted Legs
+    },
+    -- Hyperconductive Skirt
+    ["213329"] = {
+        217009, -- Power Depleted Legs
+    },
+    -- H.A.Z.A.R.D. Legplates
+    ["213330"] = {
+        217009, -- Power Depleted Legs
+    },
+    -- Insulated Leggings
+    ["213331"] = {
+        217009, -- Power Depleted Legs
+    },
+    -- Insulated Legguards
+    ["213332"] = {
+        217009, -- Power Depleted Legs
+    },
+    -- Electromantic Chausses
+    ["213333"] = {
+        217009, -- Power Depleted Legs
+    },
+    -- Electromantic Gambeson
+    ["213334"] = {
+        217009, -- Power Depleted Legs
+    },
+    -- H.A.Z.A.R.D. Boots
+    ["213335"] = {
+        217007, -- Power Depleted Boots
+    },
+    -- Hyperconductive Walkers
+    ["213336"] = {
+        217007, -- Power Depleted Boots
+    },
+    -- Hyperconductive Sandals
+    ["213337"] = {
+        217007, -- Power Depleted Boots
+    },
+    -- Electromantic Grounding Boots
+    ["213338"] = {
+        217007, -- Power Depleted Boots
+    },
+    -- Electromantic Grounding Sabatons
+    ["213339"] = {
+        217007, -- Power Depleted Boots
+    },
+    -- Insulated Workboots
+    ["213341"] = {
+        217007, -- Power Depleted Boots
+    },
+    -- Insulated Galoshes
+    ["213342"] = {
+        217007, -- Power Depleted Boots
+    },
+    -- Justice Badge
+    ["213343"] = {
+        217351, -- Thermaplugg's Engineering Notes
+    },
+    -- Gnomeregan Peace Officer's Torque
+    ["213344"] = {
+        217351, -- Thermaplugg's Engineering Notes
+    },
+    -- Piston Pendant
+    ["213345"] = {
+        217351, -- Thermaplugg's Engineering Notes
+    },
+    -- Pendant of Homecoming
+    ["213346"] = {
+        217351, -- Thermaplugg's Engineering Notes
+    },
+    -- Shockforged Battleboots
+    ["216484"] = {
+        217007, -- Power Depleted Boots
+    },
+    -- Shockforged Breastplate
+    ["216485"] = {
+        217008, -- Power Depleted Chest
+    },
+    -- Shockforged Legplates
+    ["216486"] = {
+        217009, -- Power Depleted Legs
+    },
+    -- Power Depleted Boots
+    ["217007"] = {
+        213335, -- H.A.Z.A.R.D. Boots
+        213336, -- Hyperconductive Walkers
+        213337, -- Hyperconductive Sandals
+        213338, -- Electromantic Grounding Boots
+        213339, -- Electromantic Grounding Sabatons
+        213341, -- Insulated Workboots
+        213342, -- Insulated Galoshes
+        216484, -- Shockforged Battleboots
+    },
+    -- Power Depleted Chest
+    ["217008"] = {
+        213310, -- Hyperconductive Shimmershirt
+        213311, -- Hyperconductive Robe
+        213312, -- Insulated Apron
+        213313, -- Insulated Chestguard
+        213314, -- Electromantic Chainmail
+        213315, -- Electromantic Chainshirt
+        213316, -- H.A.Z.A.R.D. Breastplate
+        216485, -- Shockforged Breastplate
+    },
+    -- Power Depleted Legs
+    ["217009"] = {
+        213328, -- Hyperconductive Pantaloons
+        213329, -- Hyperconductive Skirt
+        213330, -- H.A.Z.A.R.D. Legplates
+        213331, -- Insulated Leggings
+        213332, -- Insulated Legguards
+        213333, -- Electromantic Chausses
+        213334, -- Electromantic Gambeson
+        216486, -- Shockforged Legplates
+    },
+    -- Thermaplugg's Engineering Notes
+    ["217351"] = {
+        213343, -- Justice Badge
+        213344, -- Gnomeregan Peace Officer's Torque
+        213345, -- Piston Pendant
+        213346, -- Pendant of Homecoming
     },
 };
