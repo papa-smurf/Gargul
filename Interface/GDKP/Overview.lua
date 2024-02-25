@@ -426,7 +426,7 @@ function Overview:build()
     --[[ FOOTER BUTTONS ]]
     local ThirdColumn = AceGUI:Create("SimpleGroup");
     ThirdColumn:SetLayout("FLOW");
-    ThirdColumn:SetWidth(500);
+    ThirdColumn:SetWidth(600);
     ThirdColumn:SetHeight(40);
 
     local EnableOrDisableSession = AceGUI:Create("Button");
@@ -444,7 +444,7 @@ function Overview:build()
 
     local CreateSession = AceGUI:Create("Button");
     CreateSession:SetText("New");
-    CreateSession:SetWidth(58);
+    CreateSession:SetWidth(64);
     CreateSession:SetHeight(20);
     CreateSession:SetCallback("OnClick", function()
         self:closeSubWindows();
@@ -476,7 +476,7 @@ function Overview:build()
 
     local Import = AceGUI:Create("Button");
     Import:SetText("Import");
-    Import:SetWidth(72);
+    Import:SetWidth(76);
     Import:SetHeight(20);
     Import:SetCallback("OnClick", function()
         GL.Interface.GDKP.Import:open();
