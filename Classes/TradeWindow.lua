@@ -220,7 +220,17 @@ function TradeWindow:updateState()
     self.State.partner = GL:nameFormat{ name = partnerName, realm = partnerRealm, forceRealm = true };
 
     -- Fetch the player name of whomever we're trading with
-    partnerName = _G.TradeFrameRecipientNameText:GetText();
+    partnerName = strtrim(_G.TradeFrameRecipientNameText:GetText());
+
+    -- Retail can add (*) or similar to the trade window's partner name ie "Name (*)". Hence the explode+replace
+    partnerName = GL:explode(partnerName, " ")[1];
+    local sanitizeName = function (name)
+        name = name:gsub("%-", "");
+        name = name:gsub("%*", "");
+        name = name:gsub("%(", "");
+        return name:gsub("%)", "");
+    end;
+    partnerName = partnerName and sanitizeName(partnerName);
 
     -- If the frame doesn't hold the player name that we set earlier then override it
     -- This should never happen and is nothing but a failsafe
@@ -455,7 +465,7 @@ function TradeWindow:updateAnnouncementCheckBox()
         return;
     end
 
-    local CheckBox = CreateFrame("CheckButton", "GargulAnnounceTradeDetails", TradeFrame, "OptionsCheckButtonTemplate");
+    local CheckBox = CreateFrame("CheckButton", "GargulAnnounceTradeDetails", TradeFrame, "UICheckButtonTemplate");
     GargulAnnounceTradeDetailsText:SetText("Announce Trade");
     CheckBox:SetChecked(self:shouldAnnounce());
     CheckBox:SetPoint("BOTTOMLEFT", "TradeFrame", "BOTTOMLEFT", 8, 6);
