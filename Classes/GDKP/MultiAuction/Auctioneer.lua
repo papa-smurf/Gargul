@@ -1106,6 +1106,48 @@ function Auctioneer:terminate()
     end
 end
 
+--- Disenchant all stopped and unsold items
+---
+---@return void
+function Auctioneer:disenchant()
+    local disenchantNextItem;
+    local AuctionsToDisenchant = {};
+    local announceDisenchantedSetting = GL.Settings:get("PackMule.announceDisenchantedItems");
+
+    for _, Auction in pairs(Client.AuctionDetails.Auctions or {}) do
+        -- Auction closed without winning bid
+        if (Auction.endsAt == 0 and not Auction.CurrentBid) then
+            tinsert(AuctionsToDisenchant, Auction);
+        end
+    end
+
+    -- Recursively disenchant items (in case there is no disenchanter set yet)
+    disenchantNextItem = function ()
+        if (not AuctionsToDisenchant[1]) then
+            GL.Settings:set("PackMule.announceDisenchantedItems", announceDisenchantedSetting);
+            return;
+        end
+
+        local Auction = AuctionsToDisenchant[1];
+        tremove(AuctionsToDisenchant, 1);
+
+        -- Attempt to mark the item as disenchanted
+        GL.PackMule:disenchant(Auction.link, true, function (success)
+            -- We're done, remove the auction from the overview
+            if (success) then
+                self:deleteAuction(Auction.auctionID);
+            end
+
+            disenchantNextItem();
+        end);
+    end;
+
+    -- Make sure to not flood chat with all these items being disenchanted
+    GL.Settings:set("PackMule.announceDisenchantedItems", false);
+
+    disenchantNextItem();
+end
+
 --- Store auction details for future use (increment, minimum)
 ---
 ---@param Details table

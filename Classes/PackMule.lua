@@ -789,6 +789,7 @@ function PackMule:disenchant(itemLink, byPassConfirmationDialog, callback)
 
     -- Make sure an itemlink was provided
     if (not GL:higherThanZero(itemID)) then
+        callback(false);
         return;
     end
 
@@ -811,11 +812,9 @@ function PackMule:disenchant(itemLink, byPassConfirmationDialog, callback)
                 ),
                 OnYes = function ()
                     self:setDisenchanter(playerName);
-                    self:disenchant(itemLink, true);
+                    self:disenchant(itemLink, true, callback);
 
                     GL.Interface.PlayerSelector:close();
-
-                    callback();
                 end,
             };
         end);
@@ -832,7 +831,7 @@ function PackMule:disenchant(itemLink, byPassConfirmationDialog, callback)
             announce = false,
         };
         self:announceDisenchantment(itemLink);
-        callback();
+        callback(true);
 
         return;
     end
@@ -853,7 +852,7 @@ function PackMule:disenchant(itemLink, byPassConfirmationDialog, callback)
                 announce = false,
             };
             self:announceDisenchantment(itemLink);
-            callback();
+            callback(true);
         end,
     };
 end

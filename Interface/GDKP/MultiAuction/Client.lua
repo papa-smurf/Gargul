@@ -6,9 +6,6 @@ local _, GL = ...;
 ---@type Interface
 local Interface = GL.Interface;
 
----@type Settings
-local Settings = GL.Settings;
-
 ---@type GDKPMultiAuctionAuctioneer
 local Auctioneer = GL.GDKP.MultiAuction.Auctioneer;
 
@@ -433,6 +430,24 @@ function ClientInterface:build()
             "This will delete all bids on items that haven't sold yet and close all auctions!",
         });
 
+        ---@type Button
+        local DisenchantButton = Interface:dynamicPanelButton(ButtonContainer);
+        DisenchantButton:SetPoint("TOPLEFT", TerminateButton, "TOPRIGHT", 4, 0);
+        DisenchantButton:SetText(L.DISENCHANT);
+        DisenchantButton:SetScript("OnClick", function ()
+            GL.Interface.Dialogs.PopupDialog:open{
+                question = "Disenchant all finished but unsold items?",
+                OnYes = function ()
+                    Auctioneer:disenchant();
+                end,
+            };
+        end);
+        Interface:addTooltip(DisenchantButton, {
+            "Disenchant unsold items",
+            " ",
+            "This will mark all unsold items as disenchanted and they will not show up in a new multi-auction session",
+        });
+
         --[[ HOW TO ADD ITEMS ]]
         ---@type FontString
         local AddItemsLabel = Interface:createFontString(AdminWindow, ("With this window open, %s items to add them to the list"):format(GL.Settings:get("ShortcutKeys.rollOffOrAuction")));
@@ -444,7 +459,7 @@ function ClientInterface:build()
         -- Shadow frame used to determine the required width of the ButtonContainer
         local ShadowFrame = CreateFrame("Frame", nil, AdminWindow);
         ShadowFrame:SetPoint("TOPLEFT", CloseAllButton, "TOPLEFT");
-        ShadowFrame:SetPoint("TOPRIGHT", TerminateButton, "TOPRIGHT");
+        ShadowFrame:SetPoint("TOPRIGHT", DisenchantButton, "TOPRIGHT");
         ShadowFrame:SetHeight(1);
 
         ButtonContainer:SetWidth(ShadowFrame:GetWidth());
