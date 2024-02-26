@@ -144,7 +144,7 @@ function RollOff:postStartMessage(itemLink, time, note)
         itemLink
     );
     local eligiblePlayersMessage = false;
-    local Reserves = GL.SoftRes:byItemLink(itemLink);
+    local Reserves = GL.SoftRes:playerReserveAmountsByItemLink(itemLink);
     local TMBDetails = TMB:byItemLink(itemLink);
 
     if (type(note) == "string"

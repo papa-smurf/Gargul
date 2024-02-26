@@ -317,7 +317,7 @@ function DroppedLoot:announce(Modifiers)
 
             local quality = select(5, Functions.GetLootSlotInfo(lootIndex)) or 0;
             local lootType = Functions.GetLootSlotType(lootIndex);
-            local SoftReserves = SoftRes:byItemLink(itemLink);
+            local isReserved = SoftRes:linkIsReserved(itemLink);
             local TMBInfo = TMB:byItemLink(itemLink);
 
             -- Check if we need to announce this item
@@ -337,7 +337,7 @@ function DroppedLoot:announce(Modifiers)
                     quality < GL.Settings:get("DroppedLoot.minimumQualityOfAnnouncedLoot", 4) -- Quality is lower than our set minimum
                     or GL:inTable(Constants.ItemsThatShouldntBeAnnounced, itemID) -- We don't want to announce this item
                 )
-                and GL:empty(SoftReserves) -- No one (hard)reserved it
+                and not isReserved -- No one (hard)reserved it
                 and GL:empty(TMBInfo) -- No one has it on his wishlist and it's not a prio item
             ) then
                 return;
@@ -345,12 +345,12 @@ function DroppedLoot:announce(Modifiers)
 
             -- Fetch the applicable SoftRes data (if any)
             local ActiveSoftResDetails = {};
-            itemIsHardReserved = SoftRes:linkIsHardReserved(itemLink);
+            itemIsHardReserved = SoftRes:IDIsHardReserved(itemID);
             if (not itemIsHardReserved -- Only fetch the SoftRes data if the item isn't hard-reserved
-                and not GL:empty(SoftReserves) -- This item wasn't reserved
+                and isReserved -- This item wasn't reserved
                 and GL.Settings:get("SoftRes.announceInfoInChat") -- The player isn't interested in SoftRes data
             ) then
-                ActiveSoftResDetails = self:getSoftResDetails(SoftReserves);
+                ActiveSoftResDetails = SoftRes:playerReserveAmountsByItemID(itemID);
             end
 
             -- Determine the correct channel for announcing the loot
@@ -475,55 +475,6 @@ function DroppedLoot:announce(Modifiers)
     if (sourceGUID) then
         DroppedLoot.Announced[sourceGUID] = true;
     end
-end
-
---- Get all SoftRes details
----
----@return table
-function DroppedLoot:getSoftResDetails(SoftReserves)
-    local ActiveSoftResDetails = {};
-
-    local ReservationsByPlayerName = {};
-    for _, playerName in pairs(SoftReserves) do
-        if (not ReservationsByPlayerName[playerName]) then
-            ReservationsByPlayerName[playerName] = 1;
-        else
-            ReservationsByPlayerName[playerName] = ReservationsByPlayerName[playerName] + 1;
-        end
-    end
-
-    -- This is necessary so we can sort the table based on number of reserves per item
-    local Reservations = {};
-    for playerName, reservations in pairs(ReservationsByPlayerName) do
-        tinsert(Reservations, {
-            player = playerName,
-            reservations = reservations,
-        })
-    end
-    ReservationsByPlayerName = {}; -- We no longer need this table, clean it up!
-
-    -- Sort the reservations based on whoever reserved it more often (highest to lowest)
-    table.sort(Reservations, function (a, b)
-        if (a.reservations and b.reservations) then
-            return a.reservations > b.reservations;
-        end
-
-        return false;
-    end);
-
-    -- Add the reservation details to ActiveReservations (add 2x / 3x etc when same item was reserved multiple times)
-    for _, Entry in pairs(Reservations) do
-        local entryString = Entry.player;
-
-        -- User reserved the same item multiple times
-        if (Entry.reservations > 1) then
-            entryString = string.format("%s (%sx)", Entry.player, Entry.reservations);
-        end
-
-        tinsert(ActiveSoftResDetails, GL:capitalize(entryString));
-    end
-
-    return ActiveSoftResDetails;
 end
 
 --- Get all TMB details

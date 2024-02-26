@@ -647,6 +647,67 @@ function SoftRes:byItemLink(itemLink, inRaidOnly)
     return self:byItemID(GL:getItemIDFromLink(itemLink), inRaidOnly);
 end
 
+--- Fetch an item's soft reserve amounts in a "Playername (x3)" format
+---
+---@param itemID number
+---@param inRaidOnly boolean
+---@return table
+function SoftRes:playerReserveAmountsByItemID(itemID, inRaidOnly)
+    local SoftReserves = self:byItemID(itemID, inRaidOnly);
+    local ActiveSoftResDetails = {};
+
+    local ReservationsByPlayerName = {};
+    for _, playerName in pairs(SoftReserves) do
+        if (not ReservationsByPlayerName[playerName]) then
+            ReservationsByPlayerName[playerName] = 1;
+        else
+            ReservationsByPlayerName[playerName] = ReservationsByPlayerName[playerName] + 1;
+        end
+    end
+
+    -- This is necessary so we can sort the table based on number of reserves per item
+    local Reservations = {};
+    for playerName, reservations in pairs(ReservationsByPlayerName) do
+        tinsert(Reservations, {
+            player = playerName,
+            reservations = reservations,
+        })
+    end
+    ReservationsByPlayerName = {}; -- We no longer need this table, clean it up!
+
+    -- Sort the reservations based on whoever reserved it more often (highest to lowest)
+    table.sort(Reservations, function (a, b)
+        if (a.reservations and b.reservations) then
+            return a.reservations > b.reservations;
+        end
+
+        return false;
+    end);
+
+    -- Add the reservation details to ActiveReservations (add 2x / 3x etc when same item was reserved multiple times)
+    for _, Entry in pairs(Reservations) do
+        local entryString = Entry.player;
+
+        -- User reserved the same item multiple times
+        if (Entry.reservations > 1) then
+            entryString = string.format("%s (%sx)", GL:nameFormat{ name = Entry.player, colorize = true, }, Entry.reservations);
+        end
+
+        tinsert(ActiveSoftResDetails, GL:capitalize(entryString));
+    end
+
+    return ActiveSoftResDetails;
+end
+
+--- Fetch an item's soft reserve amounts in a "Playername (x3)" format
+---
+---@param itemID number
+---@param inRaidOnly boolean
+---@return table
+function SoftRes:playerReserveAmountsByItemLink(itemLink, inRaidOnly)
+    return self:playerReserveAmountsByItemID(GL:getItemIDFromLink(itemLink), inRaidOnly);
+end
+
 --- Append the soft reserves as defined in DB.SoftRes to an item's tooltip
 ---
 ---@param itemLink string
