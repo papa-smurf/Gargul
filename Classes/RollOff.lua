@@ -230,7 +230,12 @@ function RollOff:postStartMessage(itemLink, time, note)
             local PlayerNames = GL:tableColumn(EligiblePlayers, "character");
             local source = TMB:source();
 
-            local EligiblePlayerNames = table.concat(GL:tableUnique(PlayerNames), ", ");
+            local EligiblePlayerNames = GL:tableUnique(PlayerNames);
+            for key, name in pairs(EligiblePlayerNames or {}) do
+                EligiblePlayerNames[key] = GL:disambiguateName(name);
+            end
+
+            EligiblePlayerNames = table.concat(EligiblePlayerNames, ", ");
             eligiblePlayersMessage = string.format("The following players have the highest %s prio: %s", source, EligiblePlayerNames);
         end
     end
@@ -841,7 +846,14 @@ function RollOff:refreshRollsTable()
         rollPriority = rollPriority + 10000;
 
         local rollNotes = {};
-        local normalizedPlayerName = string.lower(GL:disambiguateName(playerName));
+
+        -- If the player name is unique in the group then use their fqn to match against TMB/Softres entries
+        local normalizedPlayerName;
+        if (GL:nameIsUnique(playerName)) then
+            normalizedPlayerName = GL:nameFormat{ name = GL:addRealm(playerName), func = strlower };
+        else
+            normalizedPlayerName = strlower(playerName);
+        end
 
         -- Check if the player reserved the current item id
         if (GL.SoftRes:itemIDIsReservedByPlayer(self.CurrentRollOff.itemID, normalizedPlayerName)) then

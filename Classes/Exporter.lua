@@ -180,9 +180,9 @@ function Exporter:refreshExportString()
     GL:debug("Exporter:refreshExportString");
 
     local LootEntries = self:getLootEntries();
-    local exportFormat = GL.Settings:get("ExportingLoot.format", Constants.ExportFormats.TMB);
+    local exportFormat = GL.Settings:get("ExportingLoot.format");
 
-    if (exportFormat == Constants.ExportFormats.TMB) then
+    if (GL:inTable({ Constants.ExportFormats.TMB, Constants.ExportFormats.TMBWithRealm }, exportFormat)) then
         local exportString = self:transformEntriesToTMBFormat(LootEntries);
         GL.Interface:get(self, "MultiLineEditBox.Export"):SetText(exportString);
 
@@ -190,7 +190,7 @@ function Exporter:refreshExportString()
         local exportString = self:transformEntriesToCustomFormat(LootEntries);
         GL.Interface:get(self, "MultiLineEditBox.Export"):SetText(exportString);
 
-    elseif (GL:inTable({Constants.ExportFormats.DFTUS, Constants.ExportFormats.DFTEU}, exportFormat)) then
+    elseif (GL:inTable({ Constants.ExportFormats.DFTUS, Constants.ExportFormats.DFTEU }, exportFormat)) then
         GL.Interface:get(self, "MultiLineEditBox.Export"):SetText(self:transformEntriesToDFTFormat(LootEntries));
     end
 end
@@ -328,13 +328,20 @@ end
 function Exporter:transformEntriesToTMBFormat(Entries)
     GL:debug("Exporter:transformEntriesToTMBFormat");
 
+    -- Get the desired export format
+    local exportFormat = GL.Settings:get("ExportingLoot.format");
+
     local exportString = "dateTime,character,itemID,offspec,id";
 
     for _, AwardEntry in pairs(Entries) do
         exportString = string.format("%s\n%s,%s,%s,%s,%s",
             exportString,
             date('%Y-%m-%d', AwardEntry.timestamp),
-            GL:nameFormat{ name = AwardEntry.awardedTo, stripRealm = true },
+            GL:nameFormat{
+                name = AwardEntry.awardedTo,
+                stripRealm = exportFormat == Constants.ExportFormats.TMB,
+                forceRealm = exportFormat == Constants.ExportFormats.TMBWithRealm
+            },
             AwardEntry.itemID,
             AwardEntry.OS,
             AwardEntry.checksum
@@ -351,7 +358,7 @@ function Exporter:transformEntriesToDFTFormat(Entries)
     GL:debug("Exporter:transformEntriesToDFTFormat");
 
     -- Get the desired export format
-    local exportFormat = GL.Settings:get("ExportingLoot.format", Constants.ExportFormats.TMB);
+    local exportFormat = GL.Settings:get("ExportingLoot.format");
 
     -- We need to load all items first to make sure the item names are available
     local exportString = "";

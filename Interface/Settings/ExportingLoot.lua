@@ -98,12 +98,17 @@ function ExportingLoot:draw(Parent)
         [2] = "DFT-Fight-Club (US date format)",
         [3] = "DFT-Fight-Club (EU date format)",
         [4] = "Custom (create your own format)",
+        [5] = "Thatsmybis TMB with player realm",
+    };
+
+    local ItemOrder = {
+        1, 5, 2, 3, 4,
     };
 
     local CustomFormatWrapper;
     local ExportFormat = GL.AceGUI:Create("Dropdown");
     ExportFormat:SetValue(GL.Settings:get("ExportingLoot.format", Constants.ExportFormats.TMB));
-    ExportFormat:SetList(DropDownItems);
+    ExportFormat:SetList(DropDownItems, ItemOrder);
     ExportFormat:SetText(DropDownItems[GL.Settings:get("ExportingLoot.format", Constants.ExportFormats.TMB)]);
     ExportFormat:SetWidth(250);
     ExportFormat:SetCallback("OnValueChanged", function()

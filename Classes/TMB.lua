@@ -111,11 +111,6 @@ function TMB:byItemID(itemID, inRaidOnly)
     -- The item linked to this id can have multiple IDs (head of Onyxia for example)
     local AllLinkedItemIDs = GL:getLinkedItemsForID(itemID);
 
-    local GroupMemberNames = {};
-    if (inRaidOnly) then
-        GroupMemberNames = GL.User:groupMemberNames();
-    end
-
     local Wishes = {};
     for _, id in pairs(AllLinkedItemIDs) do
         id = tostring(id);
@@ -124,7 +119,7 @@ function TMB:byItemID(itemID, inRaidOnly)
 
             -- If inRaidOnly is true we need to make sure we only return details of people who are actually in the raid
             --- NOTE TO SELF: it's (os) because of the string.lower, if you remove the lower then change below accordingly!
-            if (not inRaidOnly or GL:inTable(GroupMemberNames, string.gsub(playerName, "%(os%)", ""))) then
+            if (not inRaidOnly or GL.User:unitInGroup(string.gsub(playerName, "%(os%)", ""))) then
                 tinsert(Wishes, Entry);
             end
         end
@@ -143,12 +138,18 @@ function TMB:byItemIDAndPlayer(itemID, player)
 
     -- An invalid item id or name was provided
     itemID = tonumber(itemID);
-    player = string.lower(strtrim(player));
+    player = strlower(strtrim(player));
     if (not GL:higherThanZero(itemID)
         or GL:empty(player)
     ) then
         return {};
     end
+
+    local playerWithoutRealm = GL:nameFormat{
+        name = player,
+        stripRealm = true,
+        func = strlower
+    };
 
     -- The item linked to this id can have multiple IDs (head of Onyxia for example)
     local AllLinkedItemIDs = GL:getLinkedItemsForID(itemID);
@@ -158,10 +159,12 @@ function TMB:byItemIDAndPlayer(itemID, player)
     for _, id in pairs(AllLinkedItemIDs) do
         id = tostring(id);
         for _, Entry in pairs(GL.DB:get("TMB.Items." .. tostring(id), {})) do
-            local playerName = string.lower(GL:nameFormat(Entry.character));
-
             --- NOTE TO SELF: it's (os) because of the string.lower, if you remove the lower then change below accordingly!
-            if (player == string.gsub(playerName, "%(os%)", "")) then
+            local playerName = string.gsub(strlower(GL:nameFormat(Entry.character)), "%(os%)", "");
+
+            if (player == playerName
+                or playerWithoutRealm == playerName
+            ) then
                 local checkSum = string.format('%s||%s||%s', player, tostring(Entry.prio), tostring(Entry.type));
 
                 -- Make sure we don't add the same player/prio combo more than once
@@ -819,7 +822,10 @@ function TMB:playersWithoutTMBDetails()
     for _, Details in pairs(GL.User:groupMembers() or {}) do
 
         local name = string.lower(GL:nameFormat(Details.name));
-        if (not PlayersWithDetails[name]) then
+        local fqn = string.lower(GL:addRealm(Details.name));
+        if (not PlayersWithDetails[name]
+            and not PlayersWithDetails[fqn]
+        ) then
             tinsert(PlayersWithoutTMBDetails, name);
         end
     end

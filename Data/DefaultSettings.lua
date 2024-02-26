@@ -93,6 +93,7 @@ GL.Data.DefaultSettings = {
         includeOffspecItems = true,
         customFormat = "@ID;@DATE @TIME;@WINNER",
         disenchanterIdentifier = "_disenchanted",
+        format = 1,
         showLootAssignmentReminder = true,
     },
     LootTradeTimers = {
