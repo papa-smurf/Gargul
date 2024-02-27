@@ -20,11 +20,7 @@ function PackMuleIgnores:draw(Parent)
     DiscordURL:SetText("https://discord.gg/D3mDhYPVzf");
     Parent:AddChild(DiscordURL);
 
-    local HorizontalSpacer = GL.AceGUI:Create("SimpleGroup");
-    HorizontalSpacer:SetLayout("FILL");
-    HorizontalSpacer:SetFullWidth(true);
-    HorizontalSpacer:SetHeight(10);
-    Parent:AddChild(HorizontalSpacer);
+    Overview:drawSpacer(Parent, nil, 10);
 
     local Heading = GL.AceGUI:Create("Heading");
     Heading:SetFullWidth(true);
@@ -65,14 +61,13 @@ end
 function PackMuleIgnores:isItemIgnored(input)
     GL:debug("PackMuleIgnoresSettings:isItemIgnored");
 
-    local Label = GL.Interface:get(self, "Label.ItemIsIgnored");
+    local itemID = GL:getItemIDFromLink(input) or input;
 
-    -- Better safe than LUA error
+    local Label = GL.Interface:get(self, "Label.ItemIsIgnored");
     if (not Label) then
         return;
     end
 
-    local itemID = GL:getItemIDFromLink(input) or input;
     GL.PackMule:isItemIDIgnored(itemID, function (Loot, itemIDisIgnoredForMaster, itemIDisIgnoredForGroup)
         -- The given item ID doesn't exist
         if (not Loot) then
@@ -80,6 +75,7 @@ function PackMuleIgnores:isItemIgnored(input)
             return;
         end
 
+        local labelText = "";
         local textColor = "92FF00";
         local flagText = "ignored";
 
@@ -100,7 +96,24 @@ function PackMuleIgnores:isItemIgnored(input)
 
         local groupLootText = string.format("In group loot, item with ID %s ( %s ) is |c00%s%s|r", itemID, Loot.link, textColor, flagText);
 
-        Label:SetText(masterLootText .. "\n" .. groupLootText);
+        labelText = ("|c00967FD2By default|r:\n%s\n%s"):format(masterLootText, groupLootText);
+        Label:SetText(labelText);
+
+        GL.PackMule:currentTargetForItemForGroupOrMaster(itemID, function (Loot, masterTarget, groupTarget)
+            -- The given item ID doesn't exist
+            if (not Loot) then
+                return;
+            end
+
+            masterTarget = masterTarget or "-";
+            groupTarget = groupTarget or "-";
+
+            Label:SetText(("%s\n\n|c00967FD2Based on your rules and current group|r:\n%s\n%s"):format(
+                labelText,
+                ("In master loot, item ( %s ) goes to: %s"):format(Loot.link, GL:nameFormat{ name = masterTarget, colorize = true }),
+                ("In group loot, item ( %s ) goes to: %s"):format(Loot.link, GL:nameFormat{ name = masterTarget, colorize = true })
+            ));
+        end);
     end);
 end
 

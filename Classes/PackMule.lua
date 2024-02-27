@@ -290,6 +290,64 @@ function PackMule:isItemIDIgnored(itemID, callback)
     end, 2);
 end
 
+---@param itemID number
+---@param callback function
+---@return void
+function PackMule:currentTargetForItemForGroupOrMaster(itemID, callback)
+    itemID = math.floor(tonumber(itemID));
+    if (not GL:higherThanZero(itemID)) then
+        return;
+    end
+
+    if (type(callback) ~= "function") then
+        return;
+    end
+
+    local oldGetLootMethod = GetLootMethod;
+    local oldIsMasterLooter = GL:toboolean(GL.User.isMasterLooter);
+    local oldIsInGroup = GL:toboolean(GL.User.isInGroup);
+    local oldIsInParty = GL:toboolean(GL.User.isInParty);
+    local oldIsInRaid = GL:toboolean(GL.User.isInRaid);
+
+    -- We test the item against PackMule in a loot master setting first
+    GetLootMethod = function () return "master"; end;
+    GL.User.isMasterLooter = true;
+    GL.User.isInGroup = true;
+    GL.User.isInRaid = true;
+    GL.User.isInParty = false;
+
+    self:getTargetForItem(itemID, function(masterTarget)
+        local Loot = GL:getCachedItem(itemID) or {}; -- This should be 100% set at this point
+
+        -- We now test the item against PackMule in a group loot setting
+        GetLootMethod = function () return "group"; end;
+        GL.User.isMasterLooter = false;
+        GL.User.isInGroup = true;
+        GL.User.isInRaid = false;
+        GL.User.isInParty = true;
+
+        self:getTargetForItem(itemID, function(groupTarget)
+            -- Reset everything
+            GetLootMethod = oldGetLootMethod;
+            GL.User.isMasterLooter = oldIsMasterLooter;
+            GL.User.isInGroup = oldIsInGroup;
+            GL.User.isInRaid = oldIsInRaid;
+            GL.User.isInParty = oldIsInParty;
+
+            callback(Loot, masterTarget, groupTarget);
+        end);
+    end);
+
+    -- Just in case the callback fails
+    GL.Ace:ScheduleTimer(function()
+        GetLootMethod = oldGetLootMethod;
+        GL.User.isMasterLooter = oldIsMasterLooter;
+        GL.User.isInGroup = oldIsInGroup;
+        GL.User.isInRaid = oldIsInRaid;
+        GL.User.isInParty = oldIsInParty;
+    end, 2);
+end
+
 --- Disable PackMule after leaving a group
 ---
 ---@return void
