@@ -246,7 +246,7 @@ function LedgerList:build()
 
     ---@type FontString
     local Balance = Interface:createFontString(Window, string.format(
-        "Balance:   |c0092FF000|r ? You're square!  |  |c00BE333330g|r ? you owe |c00%s%s|r 30g  |  |c00F7922E50g|r ? |c00%s%s|r owes you 50g",
+        "Balance:   |c0092FF000|r ? You're square!  |  |c00BE333330|r ? you owe |c00%s%s|r 30g  |  |c00F7922E50|r ? |c00%s%s|r owes you 50g",
         GL:classHexColor(GL.User.class),
         GL.User.name,
         GL:classHexColor(GL.User.class),
@@ -356,9 +356,9 @@ function LedgerList:refresh()
             local balanceText;
             if (player ~= GL.User.name) then
                 if (copperToGive > 0) then
-                    balanceText = string.format("|c00F7922E%sg|r", copperToGive / 10000);
+                    balanceText = string.format("|c00F7922E%s|r", copperToGive / 10000);
                 elseif (copperToGive < 0) then
-                    balanceText = string.format("|c00BE3333%sg|r", (copperToGive * -1) / 10000);
+                    balanceText = string.format("|c00BE3333%s|r", (copperToGive * -1) / 10000);
                 else
                     balanceText = string.format("|c0092FF000|r");
                 end
@@ -451,7 +451,7 @@ function LedgerList:refresh()
                         ),
                     },
                     {
-                        value = string.format("|c00FFFFFF%s|r|c00FFF569g|r",
+                        value = string.format("|c00FFFFFF%s|r|c00FFF569|r",
                             Auction.price
                         ),
                     },
