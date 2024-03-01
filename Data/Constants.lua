@@ -234,6 +234,8 @@ GL.Data.Constants = {
         "LootFast2",
         "RCLootCouncil_Classic",
         "SpeedyAutoLoot",
+        "iMorph",
+        "iMorphNet",
     },
 
     DroppedLoot = {

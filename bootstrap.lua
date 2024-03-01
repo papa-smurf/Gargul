@@ -210,8 +210,8 @@ function GL:announceConflictingAddons()
         return;
     end
 
-    GL:warning(string.format(
-        "You have one or more addons installed that interact with the loot window. If you don't disable them you might experience strange behavior with Gargul's looting features. These are the potentially conflicting addons: %s",
+    GL:warning((
+        "You have one or more addons installed that can potentially cause Gargul to misfunction: %s"):format(
         table.concat(ConflictingAddons, ", ")
     ));
 end
