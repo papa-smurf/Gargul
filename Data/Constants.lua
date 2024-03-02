@@ -72,6 +72,14 @@ GL.Data.Constants = {
         INVTYPE_QUIVER = { 20, 21, 22, 23 }
     },
 
+    Regions = {
+        US = 1, -- (includes Brazil and Oceania)
+        Korea = 2,
+        Europe = 3, -- (includes Russia)
+        Taiwan = 4,
+        China = 5,
+    },
+
     ItemQualityColors = {
         [0] = {
             description = "Poor",

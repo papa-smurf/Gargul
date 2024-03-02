@@ -93,7 +93,10 @@ function GL:_init()
         self.isEra = true;
 
         -- GDKPs are not allowed in SoD Season 2
-        if (C_Seasons.GetActiveSeason() == 2) then
+        if (C_Seasons.GetActiveSeason() == 2
+            -- Taiwan is excluded apparently: https://tw.forums.blizzard.com/zh/wow/t/gdkp/12240
+            and GetCurrentRegion() ~= GL.Data.Constants.Regions.Taiwan
+        ) then
             self.GDKPIsAllowed = false;
         end
     elseif (self.clientVersion) < 90000 then
