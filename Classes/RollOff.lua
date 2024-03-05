@@ -848,12 +848,7 @@ function RollOff:refreshRollsTable()
         local rollNotes = {};
 
         -- If the player name is unique in the group then use their fqn to match against TMB/Softres entries
-        local normalizedPlayerName;
-        if (GL:nameIsUnique(playerName)) then
-            normalizedPlayerName = GL:nameFormat{ name = GL:addRealm(playerName), func = strlower };
-        else
-            normalizedPlayerName = strlower(playerName);
-        end
+        local normalizedPlayerName = string.lower(GL:disambiguateName(playerName));
 
         -- Check if the player reserved the current item id
         if (GL.SoftRes:itemIDIsReservedByPlayer(self.CurrentRollOff.itemID, normalizedPlayerName)) then
@@ -864,11 +859,15 @@ function RollOff:refreshRollsTable()
             local numberOfReserves = GL.SoftRes:playerReservesOnItem(self.CurrentRollOff.itemID, normalizedPlayerName) or 0;
 
             if (numberOfReserves > 0) then
-                tinsert(rollNotes, string.format("|c00F48CBASR [%sx]|r", numberOfReserves));
+                if (numberOfReserves > 1) then
+                    tinsert(rollNotes, string.format("|c00F48CBASR [%sx]|r", numberOfReserves));
+                else
+                    tinsert(rollNotes, "|c00F48CBASR|r");
+                end
             end
         end
 
-        local TMBData = TMB:byItemIDAndPlayer(self.CurrentRollOff.itemID, normalizedPlayerName);
+        local TMBData = TMB:byItemIDAndPlayer(self.CurrentRollOff.itemID, GL:nameFormat{ name = playerName, forceRealm = true, func = strlower, });
 
         -- The item might be on a TMB list, make sure we add the appropriate note to the roll
         if (TMBData) then

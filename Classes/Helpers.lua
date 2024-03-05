@@ -313,8 +313,8 @@ function GL:disambiguateName(name, Options)
     Options = Options or {};
 
     return self:nameIsUnique(name)
-        and self:nameFormat(self:tableMerge(Options, { name = name, stripRealm = true }))
-        or self:nameFormat(self:tableMerge(Options, { name = name, forceRealm = true }))
+        and self:nameFormat(self:tableMerge(Options, { name = name, stripRealm = true, }))
+        or self:nameFormat(self:tableMerge(Options, { name = name, forceRealm = true, }))
 end
 
 ---@param constant string
