@@ -95,7 +95,7 @@ function GL:_init()
         -- GDKPs are not allowed in SoD Season 2
         if (C_Seasons.GetActiveSeason() == 2
             -- Taiwan is excluded apparently: https://tw.forums.blizzard.com/zh/wow/t/gdkp/12240
-            and GetCurrentRegion() ~= GL.Data.Constants.Regions.Taiwan
+            and not GL:inTable({ "十字軍聖擊", "孤狼", "生命烈焰", "野性痊癒", }, GetRealmName())
         ) then
             self.GDKPIsAllowed = false;
         end
