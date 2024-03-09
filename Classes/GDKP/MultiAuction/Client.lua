@@ -196,13 +196,13 @@ end
 ---@return void
 function Client:autobid(auctionID, amount, onConfirm)
     if (Auctioneer:auctionStartedByMe(auctionID)) then
-        Auctioneer:processBid({
+        Auctioneer:processBid{
             Sender = {
                 fqn = GL.User.fqn,
                 isSelf = true,
             },
             content = GL:implode({ auctionID, amount, 1, }, "|"),
-        });
+        };
 
         return onConfirm and onConfirm(true) or nil;
     end
@@ -232,13 +232,13 @@ end
 function Client:bid(auctionID, amount, onConfirm)
 
     if (Auctioneer:auctionStartedByMe(auctionID)) then
-        Auctioneer:processBid({
+        Auctioneer:processBid{
             Sender = {
                 fqn = GL.User.fqn,
                 isSelf = true,
             },
             content = GL:implode({ auctionID, amount, }, "|"),
-        });
+        };
 
         return onConfirm and onConfirm(true) or nil;
     end

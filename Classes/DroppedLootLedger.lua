@@ -210,7 +210,7 @@ function DroppedLootLedger:lootOpened()
                 return;
             end
 
-            local itemID = GetItemInfoInstant(itemLink);
+            local itemID = GL:getItemInfoInstant(itemLink);
             if (not itemID) then
                 return;
             end

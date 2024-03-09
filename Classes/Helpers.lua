@@ -839,7 +839,7 @@ end
 --- Courtesy of Lantis and the team over at Classic Loot Manager: https://github.com/ClassicLootManager/ClassicLootManager
 function GL.LibStItemCellUpdate (rowFrame, frame, data, cols, row, realrow, column, fShow, table, ...)
     local itemId = data[realrow].cols[column].value;
-    local _, _, _, _, icon = GetItemInfoInstant(itemId or 0);
+    local _, _, _, _, icon = GL:getItemInfoInstant(itemId or 0);
     if icon then
         frame:SetNormalTexture(icon);
         frame:Show();
@@ -1401,7 +1401,7 @@ function GL:normalizeItem(ItemMixin)
 
     -- Keep in mind that this data all refers to the base version of the item since we're using an ID
     local itemName, itemLink, itemQuality, itemLevel, _, _, _, _, itemEquipLoc,
-    itemTexture, _, classID, subclassID, bindType, _, _, _ = GetItemInfo(itemID);
+    itemTexture, _, classID, subclassID, bindType, _, _, _ = GL:getItemInfo(itemID);
 
     if (not itemLink) then
         return false;
@@ -1874,6 +1874,32 @@ function GL:getItemGUIDByBagAndSlot(bag, slot)
     end
 
     return C_Item.GetItemGUID(Location);
+end
+
+---@return nil|any
+function GL:getItemInfo(...)
+    if (GetItemInfo) then
+        return GetItemInfo(...);
+    end
+
+    if (C_Item and C_Item.GetItemInfo) then
+        return C_Item.GetItemInfo(...);
+    end
+
+    return nil;
+end
+
+---@return nil|any
+function GL:getItemInfoInstant(...)
+    if (GetItemInfoInstant) then
+        return GetItemInfoInstant(...);
+    end
+
+    if (C_Item and C_Item.GetItemInfoInstant) then
+        return C_Item.GetItemInfoInstant(...);
+    end
+
+    return nil;
 end
 
 ---@param bagID number

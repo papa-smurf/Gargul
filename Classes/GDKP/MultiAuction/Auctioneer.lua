@@ -94,7 +94,7 @@ function Auctioneer:fillFromInventory(minimumQuality, includeBOEs, includeAwarde
         end
 
         -- Exclude projectiles (bullets and arrows)
-        local classID = select(12, GetItemInfo(itemID));
+        local classID = select(12, GL:getItemInfo(itemID));
         if (classID == Enum.ItemClass.Projectile) then
             return;
         end

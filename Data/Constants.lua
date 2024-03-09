@@ -268,7 +268,7 @@ GL.Data.Constants = {
         adjustMutatorIdentifier = "+___adjust___+",
         adjustPercentageMutatorIdentifier = "+__%adjust%__+",
         baseMutatorIdentifier = "+___base___+",
-        potIncreaseItemID = GetItemInfoInstant(45978) or 21100, -- Classic era doesn't have a solid gold coin, yikes!
+        potIncreaseItemID = GL.isEra and 21100 or 45978, -- Classic era doesn't have a solid gold coin, yikes!
     },
 
     GroupLootActions = {

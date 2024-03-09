@@ -100,7 +100,7 @@ function GDKP:importPerItemSettings(data)
                 local minimum = tonumber(defaultMinimum);
                 local increment = tonumber(defaultIncrement);
 
-                if (not itemID or not GetItemInfoInstant(itemID)) then
+                if (not itemID or not GL:getItemInfoInstant(itemID)) then
                     if (itemID) then
                         GL:error("Unknown item ID: " .. tostring(itemID));
                         return;

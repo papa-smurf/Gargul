@@ -695,7 +695,7 @@ function Award:update()
     end
 
     -- The item's icon is in the 10th position
-    local icon = select(10, GetItemInfo(itemLink));
+    local icon = select(10, GL:getItemInfo(itemLink));
 
     if (icon) then
         GL.Interface:get(self, "Table.Players"):ClearSelection();

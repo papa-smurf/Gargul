@@ -131,7 +131,6 @@ function GroupVersionCheck:build()
     local Items = CreateFrame("Frame", nil, PlayerHolder);
     Items:SetAllPoints(PlayerHolder);
 
-    --[[ ADD AN ITEM TO THE QUEUE WINDOW ]]
     local rowHeight = 20;
     Window.addPlayer = function (_, Player)
         ---@type Frame
@@ -333,7 +332,7 @@ function GroupVersionCheck:refresh()
                 local player = C_FriendList.GetIgnoreName(i);
 
                 if (player and GL.User:unitInGroup(player)) then
-                    tinsert(self.Results.Ignored, GL:nameFormat{ name = player, forceRealm = true, func = strlower });
+                    tinsert(self.Results.Ignored, GL:nameFormat{ name = player, forceRealm = true, func = strlower, });
                 end
             end
         end

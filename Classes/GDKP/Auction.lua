@@ -557,7 +557,7 @@ function Auction:sanitize(Instance)
     end
 
     --[[ Make sure the item ID is valid ]]
-    SanitizedAuction.itemID = GetItemInfoInstant(Instance.itemID);
+    SanitizedAuction.itemID = GL:getItemInfoInstant(Instance.itemID);
     if (not tonumber(SanitizedAuction.itemID)) then
         GL:xd("Auction:sanitize step 4 failed, contact support!");
         return false;
@@ -1199,7 +1199,7 @@ function Auction:announceStart(itemLink, minimumBid, minimumIncrement, duration,
     end
 
     local itemID = GL:getItemIDFromLink(itemLink) or 0;
-    if (itemID < 1 or not GetItemInfoInstant(itemID)) then
+    if (itemID < 1 or not GL:getItemInfoInstant(itemID)) then
         self.waitingForStart = false;
         GL:warning("Invalid item provided for GDKP auction start!");
         return false;
