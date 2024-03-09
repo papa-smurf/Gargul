@@ -4,9 +4,6 @@ local _, GL = ...;
 ---@type Version
 local Version = GL.Version;
 
----@type CommMessage
-local CommMessage = GL.CommMessage;
-
 ---@class Comm
 GL.Comm = {
     initialized = false,
@@ -146,6 +143,26 @@ function Comm:_init()
     self._initialized = true;
 end
 
+--- Sending cross-realm/cross-faction addon messages via whisper doesn't work currently
+--- This instead forces the message to be sent on a valid group chat (party/raid) if possible
+---
+---@param playerName string
+---@return string
+function Comm:whisperOrGroup(playerName)
+    local distribution = "WHISPER";
+
+    if (GL.User.isInGroup
+        and not (
+            GL:iEquals(GL.User.realm, GL:stripRealm(playerName))
+            or UnitFactionGroup(playerName) ~= UnitFactionGroup("player")
+        )
+    ) then
+        distribution = GL.User.isInRaid and "RAID" or "PARTY";
+    end
+
+    return distribution;
+end
+
 --- Send a CommMessage object
 ---
 ---@param CommMessage CommMessage
@@ -158,6 +175,10 @@ function Comm:send(CommMessage, broadcastFinishedCallback, packageSentCallback)
     local distribution = CommMessage.channel;
     local recipient = CommMessage.recipient;
     local action = CommMessage.action;
+
+    if (distribution == "WHISPER") then
+        distribution = self:whisperOrGroup(recipient);
+    end
 
     local compressedMessage = "";
 
@@ -271,7 +292,10 @@ function Comm:listen(payload, distribution, playerName)
             and GL.CommMessage.Box[correspondenceId].onConfirm(true);
     end
 
-    if (type(payload) ~= "table") then
+    if (type(payload) ~= "table"
+        -- This message is not meant for us
+        or (payload.recipient and not GL:iEquals(payload.recipient, GL.User.fqn))
+    ) then
         return false;
     end
 
@@ -298,7 +322,7 @@ function Comm:listen(payload, distribution, playerName)
             -- This empty message will trigger an out-of-date error on the recipient's side
             GL.CommMessage.new{
                 action = Actions.response,
-                channel = "WHISPER",
+                channel = self:whisperOrGroup(playerName),
                 recipient = playerName,
             }:send();
             return;

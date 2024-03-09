@@ -254,9 +254,9 @@ function CommMessage:compress(Message)
         b = Message.content, -- Content
         c = FQN, -- Name of the sender
         d = Message.correspondenceId or Message.id, -- Response ID
-        mv = Message.minimumVersion, -- For backwards compatibility only @TODO: REMOVE IN LATER VERSION
         m = Message.minimumVersion, -- Minimum version recipient should have
         v = Message.version, -- Version of sender
+        r = Message.channel ~= "WHISPER" and Message.recipient or nil;
     };
 
     local success, encoded = pcall(function ()
@@ -307,9 +307,6 @@ function CommMessage:decompress(encoded)
         Payload.c = nil;
     end
 
-    -- Old versions send their minimum version under the 'mv' key @TODO: REMOVE IN LATER VERSION
-    Payload.m = Payload.m or Payload.mv;
-
     return {
         action = Payload.a or nil, -- Action
         content = Payload.b or nil, -- Content
@@ -317,6 +314,7 @@ function CommMessage:decompress(encoded)
         correspondenceId = Payload.d or Payload.id, -- Response ID
         minimumVersion = Payload.m or nil, -- Minimum version recipient should have
         version = Payload.v or nil, -- Version of sender
+        recipient = Payload.r or nil, -- Recipient (in case we route whisper through group)
     };
 end
 
