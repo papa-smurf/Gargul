@@ -1135,17 +1135,18 @@ function GL:count(var)
     return 0;
 end
 
---- Use `return false;` in your func if you want to break the loop early
+--- Use return false; in your func if you want to break the loop early
+---
 ---@param func function
+---
 ---@return void
+---
+---@test /script _G.Gargul:forEachItemInBags(function (Location) print(C_Item.GetItemID(Location)); end);
 function GL:forEachItemInBags(func)
     -- Used to break out of our double loop
     local finished = false;
 
-    -- Dragon Flight introduced an extra bag slot
-    local numberOfBagsToCheck = self.clientIsDragonFlightOrLater and 5 or 4;
-
-    for bag = 0, numberOfBagsToCheck do
+    for bag = Enum.BagIndex.Backpack, Enum.BagIndex.Bag_4 do
         for slot = 1, self:getContainerNumSlots(bag) do
             (function ()
                 local Location = ItemLocation:CreateFromBagAndSlot(bag, slot);
@@ -1940,17 +1941,21 @@ end
 ---
 ---@param itemID number
 ---@param skipSoulBound boolean
+---@param includeBank boolean
+---
 ---@return table
-function GL:findBagIdAndSlotForItem(itemID, skipSoulBound, includeBankBags)
-    skipSoulBound = GL:toboolean(skipSoulBound);
-    includeBankBags = GL:toboolean(includeBankBags);
+---
+---@test /dump _G.Gargul:findBagIdAndSlotForItem(49577);
+function GL:findBagIdAndSlotForItem(itemID, skipSoulBound, includeBank)
+    skipSoulBound = skipSoulBound == true;
+    includeBank = includeBank == true;
 
-    local to = Enum.BagIndex.ReagentBag - 1;
-    if (includeBankBags) then
-        to = to + NUM_BANKBAGSLOTS;
+    local maxBagID = Enum.BagIndex.Bag_4;
+    if (includeBank) then
+        maxBagID = Enum.BagIndex.BankBag_7;
     end
 
-    for bag = Enum.BagIndex.Backpack, to do
+    for bag = Enum.BagIndex.Backpack, maxBagID do
         for slot = 1, GL:getContainerNumSlots(bag) do
             local _, _, locked, _, _, _, _, _, _, bagItemID = GL:getContainerItemInfo(bag, slot);
 
@@ -1960,7 +1965,7 @@ function GL:findBagIdAndSlotForItem(itemID, skipSoulBound, includeBankBags)
                     or GL:inventoryItemTradeTimeRemaining(bag, slot) > 0 -- The item is tradeable
                 )
             ) then
-                return {bag, slot};
+                return { bag, slot, };
             end
         end
     end
