@@ -26,13 +26,11 @@ local TMB = GL.TMB; ---@type TMB
 
 ---@return boolean
 function TMB:_init()
-    GL:debug("TMB:_init");
-
     if (self._initialized) then
         return false;
     end
 
-    Events:register("TMBUserJoinedGroupListener", "GL.USER_JOINED_GROUP", function () self:requestData(); end);
+    Events:register("TMBUserJoinedGroupListener", "GL.USER_JOINED_NEW_GROUP", function () self:requestData(); end);
 
     Events:register("TMBItemReceived", "GL.ITEM_RECEIVED", function (_, Details)
         -- We don't want to automatically award loot
@@ -1481,7 +1479,7 @@ function TMB:replyToDataRequest(CommMessage)
         action = CommActions.broadcastTMBData,
         content = GL.DB.TMB,
         channel = "WHISPER",
-        recipient = CommMessage.Sender.name,
+        recipient = CommMessage.senderFqn,
     }:send(function ()
         -- Make sure to broadcast the loot priorities as well
         GL.LootPriority:broadcastToPlayer(CommMessage.Sender.name);

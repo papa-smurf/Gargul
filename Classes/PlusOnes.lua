@@ -33,7 +33,7 @@ function PlusOnes:_init()
         end
     end);
 
-    GL.Events:register("PlusOnesUserJoinedGroupListener", "GL.USER_JOINED_GROUP", function () self:requestData(); end);
+    GL.Events:register("PlusOnesUserJoinedGroupListener", "GL.USER_JOINED_NEW_GROUP", function () self:requestData(); end);
 
     -- Make sure PlusOnes changes are only broadcasted once every 3 seconds
     GL.Events:register("PlusOnesUpdateQueuedListener", "GL.PLUSONES_UPDATE_QUEUED", function ()
@@ -665,7 +665,7 @@ function PlusOnes:replyToDataRequest(CommMessage)
             MetaData = DB:get("PlusOnes.MetaData", {}),
         },
         channel = "WHISPER",
-        recipient = CommMessage.Sender.name,
+        recipient = CommMessage.senderFqn,
     }:send();
 end
 

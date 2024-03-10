@@ -151,9 +151,14 @@ end
 function Comm:whisperOrGroup(playerName)
     local distribution = "WHISPER";
 
+    if (not GL:isCrossRealm()) then
+        return distribution;
+    end
+
+    local _, realm = GL:stripRealm(playerName);
     if (GL.User.isInGroup
-        and not (
-            GL:iEquals(GL.User.realm, GL:stripRealm(playerName))
+        and (
+            (realm and not GL:iEquals(GL.User.realm, realm))
             or UnitFactionGroup(playerName) ~= UnitFactionGroup("player")
         )
     ) then
@@ -170,14 +175,12 @@ end
 ---@param packageSentCallback function
 ---@return void
 function Comm:send(CommMessage, broadcastFinishedCallback, packageSentCallback)
-    GL:debug("Comm:send");
-
     local distribution = CommMessage.channel;
     local recipient = CommMessage.recipient;
     local action = CommMessage.action;
 
     if (distribution == "WHISPER") then
-        distribution = self:whisperOrGroup(recipient);
+        distribution = Comm:whisperOrGroup(recipient);
     end
 
     local compressedMessage = "";
@@ -293,8 +296,11 @@ function Comm:listen(payload, distribution, playerName)
     end
 
     if (type(payload) ~= "table"
-        -- This message is not meant for us
-        or (payload.recipient and not GL:iEquals(payload.recipient, GL.User.fqn))
+        -- This message is not meant for us (this can happen when whispers are forcefully sent on raid/group etc
+        or (payload.recipient and (
+            not GL:iEquals(payload.recipient, GL.User.fqn)
+            and not GL:iEquals(payload.recipient, GL.User.name)
+        ))
     ) then
         return false;
     end
@@ -322,7 +328,7 @@ function Comm:listen(payload, distribution, playerName)
             -- This empty message will trigger an out-of-date error on the recipient's side
             GL.CommMessage.new{
                 action = Actions.response,
-                channel = self:whisperOrGroup(playerName),
+                channel = Comm:whisperOrGroup(playerName),
                 recipient = playerName,
             }:send();
             return;

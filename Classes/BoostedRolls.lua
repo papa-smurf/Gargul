@@ -33,7 +33,7 @@ function BoostedRolls:_init()
         end
     end);
 
-    GL.Events:register("BoostedRollsUserJoinedGroupListener", "GL.USER_JOINED_GROUP", function () self:requestData(); end);
+    GL.Events:register("BoostedRollsUserJoinedGroupListener", "GL.USER_JOINED_NEW_GROUP", function () self:requestData(); end);
 
     -- Make sure BoostedRoll changes are only broadcasted once every 3 seconds
     GL.Events:register("BoostedRollsUpdateQueuedListener", "GL.BOOSTED_ROLLS_UPDATE_QUEUED", function ()
@@ -961,7 +961,7 @@ function BoostedRolls:replyToDataRequest(CommMessage)
             MetaData = DB:get("BoostedRolls.MetaData", {}),
         },
         channel = "WHISPER",
-        recipient = CommMessage.Sender.name,
+        recipient = CommMessage.senderFqn,
     }:send();
 end
 

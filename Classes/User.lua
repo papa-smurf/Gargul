@@ -34,8 +34,9 @@ GL.User = {
 ---@type User
 local User = GL.User;
 
--- Initialize the user's more "static" details that
--- shouldn't be able to change during playtime
+--- Initialize the user's more "static" details that
+--- shouldn't be able to change during playtime
+---@return void
 function User:_init()
     -- No need to initialize this class twice
     if (self._initialized) then
@@ -72,8 +73,9 @@ function User:bth()
     return ("%s-%s"):format(GL:stringHash(bTag), GL:stringHash(secondHalf .. firtsHalf));
 end
 
--- Refresh the User's details after the group
--- composition or loot method changes
+--- Refresh the User's details after the group
+--- composition or loot method changes
+---@return void
 function User:groupSetupChanged()
     self.groupSetupChangedAt = GetServerTime();
 
@@ -90,7 +92,8 @@ function User:groupSetupChanged()
     end, 1);
 end
 
--- Refresh the user's details
+--- Refresh the user's details
+---@return void
 function User:refresh()
     local userWasMasterLooter = self.isMasterLooter;
     local userWasLead = self.isLead;
@@ -147,6 +150,7 @@ function User:refresh()
         and self.isInGroup
     ) then
         GL.Events:fire("GL.USER_JOINED_GROUP");
+        GL.Events:fire("GL.USER_JOINED_NEW_GROUP");
 
         -- Fire a separate event for raid/party joined
         if (self.isInRaid) then
@@ -272,7 +276,8 @@ end
 
 --- Check whether the given player is in our guild
 ---
----@return table
+---@param playerName string
+---@return boolean
 function User:playerIsGuildMember(playerName)
     self:guildMembers();
     self:guildMembers();
@@ -285,8 +290,9 @@ function User:playerIsGuildMember(playerName)
     return GL:toboolean(self.GuildMemberNames[playerName]);
 end
 
--- Get all of the people who are
--- in the same party/raid as the current user
+--- Get all of the people who are
+--- in the same party/raid as the current user
+---@return table
 function User:groupMembers()
     local Roster = {};
 
@@ -391,7 +397,8 @@ function User:unitInGroup(unit)
     return GL:toboolean(UnitInParty(GL:nameFormat(unit)));
 end
 
--- Return the names of everyone in your party/raid
+--- Return the names of everyone in your party/raid
+---@return table
 function User:groupMemberNames(fqn)
     -- The -1 is used as an extra buffer to make sure we don't miss out on any names...
     -- Race conditions are a pain in the butt and I've seen them happen with this event
