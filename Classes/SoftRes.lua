@@ -86,7 +86,7 @@ function SoftRes:_init()
         self:clear();
     end
 
-    GL.Events:register("SoftResUserJoinedGroupListener", "GL.USER_JOINED_GROUP", function () self:requestData(); end);
+    GL.Events:register("SoftResUserJoinedGroupListener", "GL.USER_JOINED_NEW_GROUP", function () self:requestData(); end);
 
     local reportStatus = false; -- No need to notify of "fixed" names after every /reload
     self:materializeData(reportStatus);
@@ -280,7 +280,7 @@ function SoftRes:replyToDataRequest(CommMessage)
         action = CommActions.broadcastSoftRes,
         content = DB:get("SoftRes.MetaData.importString"),
         channel = "WHISPER",
-        recipient = playerName,
+        recipient = CommMessage.senderFqn,
     }:send();
 end
 

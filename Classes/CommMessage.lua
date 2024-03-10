@@ -249,6 +249,12 @@ function CommMessage:compress(Message)
         FQN = GL:stripRealm(FQN);
     end
 
+    if (Message.channel == "WHISPER"
+        and Message.recipient
+    ) then
+        Message.channel = GL.Comm:whisperOrGroup(Message.recipient);
+    end
+
     local Payload = {
         a = Message.action, -- Action
         b = Message.content, -- Content
