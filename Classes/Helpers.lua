@@ -1023,10 +1023,16 @@ end
 ---
 ---@param str string
 ---@param startStr string
+---@param insensitive boolean
 ---@return boolean
-function GL:strStartsWith(str, startStr)
+function GL:strStartsWith(str, startStr, insensitive)
     str = tostring(str);
     startStr = tostring(startStr);
+
+    if (insensitive ~= false) then
+        str = strlower(str);
+        startStr = strlower(startStr);
+    end
 
     return string.sub(str, 1, string.len(startStr)) == startStr;
 end
@@ -1046,9 +1052,7 @@ end
 ---@param subStr string
 ---@return boolean
 function GL:strContains(str, subStr, insensitive)
-    insensitive = insensitive ~= false;
-
-    if (insensitive) then
+    if (insensitive ~= false) then
         str = string.lower(str);
         subStr = string.lower(subStr);
     end
@@ -1221,7 +1225,7 @@ function GL:interval(seconds, identifier, func)
     GL.Timers[identifier] = GL.Ace:ScheduleRepeatingTimer(function ()
         GL:debug("Run recurring " .. identifier);
 
-        func();
+        func(identifier);
     end, seconds);
 
     return GL.Timers[identifier];
@@ -1941,17 +1945,12 @@ function GL:findBagIdAndSlotForItem(itemID, skipSoulBound, includeBankBags)
     skipSoulBound = GL:toboolean(skipSoulBound);
     includeBankBags = GL:toboolean(includeBankBags);
 
-    local numberOfBagsToCheck = 4;
+    local to = Enum.BagIndex.ReagentBag - 1;
     if (includeBankBags) then
-        numberOfBagsToCheck = 10;
+        to = to + NUM_BANKBAGSLOTS;
     end
 
-    -- Dragon Flight introduced an extra bag slot
-    if (GL.isDragonFlightOrLater) then
-        numberOfBagsToCheck = numberOfBagsToCheck + 1;
-    end
-
-    for bag = 0, numberOfBagsToCheck do
+    for bag = Enum.BagIndex.Backpack, to do
         for slot = 1, GL:getContainerNumSlots(bag) do
             local _, _, locked, _, _, _, _, _, _, bagItemID = GL:getContainerItemInfo(bag, slot);
 
@@ -2612,12 +2611,12 @@ end
 ---@param value any
 function GL:inTable(array, value)
     if (type(value) == "string") then
-        value = string.lower(value);
+        value = strtrim(string.lower(value));
     end
 
     for _, val in pairs(array) do
         if (type(val) == "string") then
-            val = string.lower(val);
+            val = strtrim(string.lower(val));
         end
 
         if value == val then
