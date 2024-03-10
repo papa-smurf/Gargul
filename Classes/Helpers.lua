@@ -334,7 +334,7 @@ function GL:isGameMessageID(constant, messageID)
 
     local constantID = GL.DB:get(string.format(
         "Utility.GameMessageIDs.%s.%s",
-        GL.clientVersion,
+        GL.tocVersion,
         constant
     ));
 
@@ -351,7 +351,7 @@ function GL:isGameMessageID(constant, messageID)
             if (constant == identifier) then
                 GL.DB:set(string.format(
                     "Utility.GameMessageIDs.%s.%s",
-                    GL.clientVersion,
+                    GL.tocVersion,
                     constant
                 ), i);
 
@@ -367,7 +367,7 @@ function GL:isGameMessageID(constant, messageID)
     if (constantID == nil) then
         GL.DB:set(string.format(
             "Utility.GameMessageIDs.%s.%s",
-            GL.clientVersion,
+            GL.tocVersion,
             constant
         ), -1);
     end
