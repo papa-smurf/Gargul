@@ -8,14 +8,13 @@ local GetAddOnMetadata = C_AddOns and C_AddOns.GetAddOnMetadata or GetAddOnMetad
 GL.name = appName;
 GL._initialized = false;
 GL._isCrossRealm = nil; -- Will be set during runtime
-GL.clientUIinterface = 0;
-GL.clientVersion = 0;
 GL.elvUILoaded = false;
 GL.firstBoot = false; -- Indicates whether the user is new to Gargul
-GL.isEra = false;
-GL.isRetail = false;
-GL.isClassic = false;
-GL.isDragonFlightOrLater = false;
+GL.tocVersion = select(4, GetBuildInfo());
+GL.isEra = GL.tocVersion < 20000;
+GL.isSoD = GL.isEra and C_Seasons.GetActiveSeason() == Enum.SeasonID.Placeholder;
+GL.isClassic = not GL.isEra and GL.tocVersion < 90000;
+GL.isRetail = GL.tocVersion >= 90000;
 GL.isMuted = false;
 GL.GDKPIsAllowed = true;
 GL.version = GetAddOnMetadata(GL.name, "Version");
@@ -81,32 +80,11 @@ end
 ---
 ---@return void
 function GL:_init()
-    do
-        local version, _, _, uiVersion = GetBuildInfo();
-
-        self.clientUIinterface = uiVersion;
-        local expansion,majorPatch,minorPatch = (version or "3.0.0"):match("^(%d+)%.(%d+)%.(%d+)");
-        self.clientVersion = (expansion or 0) * 10000 + (majorPatch or 0) * 100 + (minorPatch or 0);
-    end
-
-    if (self.clientVersion) < 20000 then
-        self.isEra = true;
-
-        -- GDKPs are not allowed in SoD Season 2
-        if (C_Seasons.GetActiveSeason() == 2
-            -- Taiwan is excluded apparently: https://tw.forums.blizzard.com/zh/wow/t/gdkp/12240
-            and not GL:inTable({ "十字軍聖擊", "孤狼", "生命烈焰", "野性痊癒", }, GetRealmName())
-        ) then
-            self.GDKPIsAllowed = false;
-        end
-    elseif (self.clientVersion) < 90000 then
-        self.isClassic = true;
-    else
-        if (self.clientVersion >= 100000) then
-            self.isDragonFlightOrLater = true;
-        end
-
-        self.isRetail = true;
+    if (self.isSoD
+        -- Taiwan is excluded apparently: https://tw.forums.blizzard.com/zh/wow/t/gdkp/12240
+        and not GL:inTable({ "十字軍聖擊", "孤狼", "生命烈焰", "野性痊癒", }, GetRealmName())
+    ) then
+        self.GDKPIsAllowed = false;
     end
 
     -- Initialize classes
