@@ -599,7 +599,10 @@ end
 ---
 ---@param itemID number|string
 ---@param inRaidOnly boolean
+---
 ---@return table
+---
+---@test /dump _G.Gargul.SoftRes:byItemID(52030);
 function SoftRes:byItemID(itemID, inRaidOnly)
     GL:debug("SoftRes:byItemID");
 
@@ -640,7 +643,10 @@ end
 ---
 ---@param itemLink string
 ---@param inRaidOnly boolean
+---
 ---@return table
+---
+---@test /dump _G.Gargul.SoftRes:byItemLink("|cffa335ee|Hitem:52030::::::::80:::::|h[Conqueror's Mark of Sanctification]|h|r");
 function SoftRes:byItemLink(itemLink, inRaidOnly)
     GL:debug("SoftRes:byItemLink");
 
@@ -690,7 +696,7 @@ function SoftRes:playerReserveAmountsByItemID(itemID, inRaidOnly)
 
         -- User reserved the same item multiple times
         if (Entry.reservations > 1) then
-            entryString = string.format("%s (%sx)", GL:nameFormat{ name = Entry.player, colorize = true, }, Entry.reservations);
+            entryString = string.format("%s (%sx)", GL:nameFormat{ name = Entry.player, }, Entry.reservations);
         end
 
         tinsert(ActiveSoftResDetails, GL:capitalize(entryString));
@@ -703,7 +709,10 @@ end
 ---
 ---@param itemID number
 ---@param inRaidOnly boolean
+---
 ---@return table
+---
+---@test /dump _G.Gargul.SoftRes:playerReserveAmountsByItemLink("|cffa335ee|Hitem:52030::::::::80:::::|h[Conqueror's Mark of Sanctification]|h|r");
 function SoftRes:playerReserveAmountsByItemLink(itemLink, inRaidOnly)
     return self:playerReserveAmountsByItemID(GL:getItemIDFromLink(itemLink), inRaidOnly);
 end
