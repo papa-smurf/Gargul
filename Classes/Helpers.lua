@@ -206,12 +206,13 @@ end
 
 ---@param name string|table The player name or a table including any of the arguments below
 ---@param colorize boolean Return in player's class color if known
+---@param class string Provide a classFile to use for colorizing the name (i.e. DRUID)
 ---@param stripRealm boolean Strip the realm suffix from the name
 ---@param stripSameRealm boolean Strip the realm suffix if it's the same realm as ours
 ---@param forceRealm boolean Force a realm to be present, either existing or adding our own
 ---@param func function|table Decorators to pass the output name through (i.e. strlower)
 ---@return string
-function GL:nameFormat(name, realm, colorize, stripRealm, stripSameRealm, forceRealm, func)
+function GL:nameFormat(name, realm, colorize, class, stripRealm, stripSameRealm, forceRealm, func)
     local passedRealm;
 
     if (realm ~= nil) then
@@ -221,6 +222,7 @@ function GL:nameFormat(name, realm, colorize, stripRealm, stripSameRealm, forceR
 
     if (type(name) == "table") then
         colorize = name.colorize;
+        class = name.class;
         stripRealm = name.stripRealm;
         stripSameRealm = name.stripSameRealm;
         forceRealm = name.forceRealm;
@@ -252,7 +254,7 @@ function GL:nameFormat(name, realm, colorize, stripRealm, stripSameRealm, forceR
     end
 
     if (colorize) then
-        name = self:classColorize(name, UnitClassBase(name));
+        name = self:classColorize(name, class or UnitClassBase(name));
     end
 
     name = strtrim(self:capitalize(name));
