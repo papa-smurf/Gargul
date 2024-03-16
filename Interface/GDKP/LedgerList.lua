@@ -41,14 +41,14 @@ local DEFAULT_PLAYER_COLUMN_WIDTH = 90;
 local HEIGHT_PER_ROW = 16;
 
 local PLAYERS_TABLE_COLUMNS = {
-    { name = "Player", width = DEFAULT_PLAYER_COLUMN_WIDTH, },
+    { name = L.PLAYER, width = DEFAULT_PLAYER_COLUMN_WIDTH, },
     --{ name = "Bid", width = 60, },
     --{ name = "Spent", width = 60, },
-    { name = "Paid", width = 60, },
-    { name = "Cut", width = 60, },
-    { name = "Given", width = 60, },
-    { name = "Mailed", width = 60, },
-    { name = "Balance", width = 60, },
+    { name = L.PAID, width = 60, },
+    { name = L.CUT, width = 60, },
+    { name = L.GIVEN, width = 60, },
+    { name = L.MAILED, width = 60, },
+    { name = L.BALANCE, width = 60, },
 };
 
 local SALES_TABLE_COLUMNS = {
@@ -64,8 +64,6 @@ local SALES_TABLE_COLUMNS = {
 
 ---@return table
 function LedgerList:open(sessionID)
-    GL:debug("Importer:open");
-
     self.sessionID = sessionID;
 
     local Window = _G[self.windowName] or self:build();
@@ -86,8 +84,6 @@ end
 
 ---@return void
 function LedgerList:close()
-    GL:debug("Importer:close");
-
     if (_G[self.windowName]) then
         _G[self.windowName]:Hide();
     end
@@ -97,8 +93,6 @@ end
 
 ---@return table
 function LedgerList:build()
-    GL:debug("Importer:build");
-
     if (_G[self.windowName]) then
         return _G[self.windowName];
     end
@@ -180,11 +174,12 @@ function LedgerList:build()
     SessionDetails:SetPoint("BOTTOMLEFT", PotDetails, "TOPLEFT", 0, 5);
     self.SessionDetails = SessionDetails;
 
+    local colorizedUser = GL:nameFormat{ name = GL.User.name, class = GL.User.class, colorize = true, };
+
     --[[ DRAW LEGEND ]]
     ---@type FontString
-    local Paid = Interface:createFontString(Window, string.format("Gold paid to |c00%s%s|r",
-        GL:classHexColor(GL.User.class),
-        GL.User.name
+    local Paid = Interface:createFontString(Window, (L.GDKP_LEDGER_LEGEND_PAID_TO):format(
+        colorizedUser
     ));
     Paid:SetPoint("BOTTOMLEFT", PlayersTable.frame, "TOPLEFT", 0, 40);
 
@@ -203,9 +198,8 @@ function LedgerList:build()
     end
 
     ---@type FontString
-    local Received = Interface:createFontString(Window, string.format("Gold received from |c00%s%s|r",
-        GL:classHexColor(GL.User.class),
-        GL.User.name
+    local Received = Interface:createFontString(Window, (L.GDKP_LEDGER_LEGEND_RECEIVED_FROM):format(
+        colorizedUser
     ));
     Received:SetPoint("TOPLEFT", Paid, "TOPRIGHT", 20, 0);
 
@@ -224,9 +218,8 @@ function LedgerList:build()
     end
 
     ---@type FontString
-    local Mailed = Interface:createFontString(Window, string.format("Gold mailed to you by |c00%s%s|r",
-        GL:classHexColor(GL.User.class),
-        GL.User.name
+    local Mailed = Interface:createFontString(Window, (L.GDKP_LEDGER_LEGEND_MAILED_FROM):format(
+        colorizedUser
     ));
     Mailed:SetPoint("TOPLEFT", Received, "TOPRIGHT", 20, 0);
 
@@ -245,12 +238,9 @@ function LedgerList:build()
     end
 
     ---@type FontString
-    local Balance = Interface:createFontString(Window, string.format(
-        "Balance:   |c0092FF000|r ? You're square!  |  |c00BE333330|r ? you owe |c00%s%s|r 30g  |  |c00F7922E50|r ? |c00%s%s|r owes you 50g",
-        GL:classHexColor(GL.User.class),
-        GL.User.name,
-        GL:classHexColor(GL.User.class),
-        GL.User.name
+    local Balance = Interface:createFontString(Window, (L.GDKP_LEDGER_LEGEND_BALANCE):format(
+        colorizedUser,
+        colorizedUser
     ));
     Balance:SetPoint("TOPLEFT", Mailed, "TOPRIGHT", 20, 0);
 
@@ -288,8 +278,6 @@ end
 
 ---@return void
 function LedgerList:refresh()
-    GL:debug("LedgerList:refresh");
-
     local Session = GDKPSession:byID(self.sessionID);
 
     if (type(Session) ~= "table") then
@@ -299,8 +287,7 @@ function LedgerList:refresh()
     local totalPot = GDKPPot:total(Session.ID);
     local managementCutPercentage = tonumber(Session.managementCut) or 0;
     local managementCut = GL:floor(totalPot * (0 + managementCutPercentage / 100), Settings:get("GDKP.precision"));
-    self.PotDetails:SetText(string.format(
-        "Total pot: %sg | Management cut: %sg (%s%%) | To distribute: %sg",
+    self.PotDetails:SetText((L.GDKP_LEDGER_POT):format(
         totalPot,
         managementCut,
         managementCutPercentage,
@@ -308,12 +295,12 @@ function LedgerList:refresh()
     ));
 
     local guild = "";
-    local CreatedBy = Session.CreatedBy or {class = "priest", name = "unknown", guild = "unknown", uuid = "unknown"};
+    local CreatedBy = Session.CreatedBy or { class = "priest", name = "unknown", guild = "unknown", uuid = "unknown", };
     if (CreatedBy.guild) then
-        guild = string.format(" |c001eff00<%s>|r", CreatedBy.guild);
+        guild = string.format(" |c001EFF00<%s>|r", CreatedBy.guild);
     end
     self.SessionDetails:SetText(string.format(
-        "|c00967FD2%s|r | By %s%s | On |c00967FD2%s|r",
+        L.GDKP_LEDGER_SESSION_BY,
         Session.title,
         GL:nameFormat{ name = CreatedBy.name, realm = CreatedBy.realm, colorize = true, },
         guild,
@@ -437,7 +424,7 @@ function LedgerList:refresh()
         for _, Auction in pairs(Data) do
             local mutation;
             if (Auction.itemID == Constants.GDKP.potIncreaseItemID) then
-                mutation = string.format("Gold %s by", Auction.price < 0 and "removed" or "added");
+                mutation = string.format(L.GDKP_LEDGER_MUTATION, Auction.price < 0 and "removed" or "added");
             end
 
             tinsert(TableData, {
@@ -468,7 +455,3 @@ function LedgerList:refresh()
         end
     end
 end
-
---- Table:SetDisplayCols(BIDS_TABLE_COLUMNS);
-
-GL:debug("Interfaces/GDKP/LedgerList.lua");

@@ -38,7 +38,7 @@ function EditSession:build()
     local Label = GL.AceGUI:Create("Label");
     Label:SetHeight(20);
     Label:SetFullWidth(true);
-    Label:SetText("Editing");
+    Label:SetText();
     Window:AddChild(Label);
     Interface:set(self, "Title", Label);
 
@@ -46,7 +46,7 @@ function EditSession:build()
     Title:DisableButton(true);
     Title:SetHeight(20);
     Title:SetFullWidth(true);
-    Title:SetLabel("Name");
+    Title:SetLabel(L.NAME);
     Window:AddChild(Title);
     Interface:set(self, "Title", Title);
 
@@ -54,47 +54,31 @@ function EditSession:build()
     ManagementCut:DisableButton(true);
     ManagementCut:SetHeight(20);
     ManagementCut:SetFullWidth(true);
-    ManagementCut:SetLabel("Management Cut %");
+    ManagementCut:SetLabel(L.GDKP_CREATE_MANAGEMENT_CUT);
     Window:AddChild(ManagementCut);
     Interface:set(self, "ManagementCut", ManagementCut);
 
     local SessionTypeLabel = GL.AceGUI:Create("Label");
-    SessionTypeLabel:SetText("     Auction type (|c00a79effi|r for more info)");
+    SessionTypeLabel:SetText("     " .. L.GDKP_CREATE_SESSION_TYPE_LABEL);
     SessionTypeLabel:SetColor(1, .95686, .40784);
     SessionTypeLabel:SetHeight(20);
     SessionTypeLabel:SetFullWidth(true);
     Window:AddChild(SessionTypeLabel);
 
-    local MutatorHelpIcon = AceGUI:Create("Icon");
-    MutatorHelpIcon:SetWidth(12);
-    MutatorHelpIcon:SetHeight(12);
-    MutatorHelpIcon:SetImageSize(12, 12);
-    MutatorHelpIcon:SetImage("interface/friendsframe/informationicon");
-    MutatorHelpIcon.frame:SetParent(SessionTypeLabel.frame);
-    MutatorHelpIcon.frame:SetPoint("BOTTOMLEFT", SessionTypeLabel.frame, "BOTTOMLEFT", 1, -6);
-    MutatorHelpIcon.frame:Show();
+    local SessionTypeHelpIcon = AceGUI:Create("Icon");
+    SessionTypeHelpIcon:SetWidth(12);
+    SessionTypeHelpIcon:SetHeight(12);
+    SessionTypeHelpIcon:SetImageSize(12, 12);
+    SessionTypeHelpIcon:SetImage("interface/friendsframe/informationicon");
+    SessionTypeHelpIcon.frame:SetParent(SessionTypeLabel.frame);
+    SessionTypeHelpIcon.frame:SetPoint("BOTTOMLEFT", SessionTypeLabel.frame, "BOTTOMLEFT", 1, -6);
+    SessionTypeHelpIcon.frame:Show();
 
-    MutatorHelpIcon:SetCallback("OnEnter", function()
-        GameTooltip:SetOwner(MutatorHelpIcon.frame, "ANCHOR_RIGHT");
-        GameTooltip:AddLine(" ");
-        GameTooltip:AddLine("|c00a79effMulti-Auction|r allows you to start bids on multiple items at once, speeding things up!");
-        GameTooltip:AddLine("Follow the instructions after creating this session to get started");
-        GameTooltip:AddLine(" ");
-        GameTooltip:AddLine("With |c00a79effSingle-Auction|r you choose to auction off single items instead or use the queue");
-        GameTooltip:AddLine(" ");
-        GameTooltip:AddLine("Selecting |c00a79effMulti-Auction|r prevents dropped items from being added to the queue");
-        GameTooltip:AddLine("You can mix |c00a79effMulti-Auction|r with |c00a79effSingle-Auction|r and the queue but we strongly advise against it");
-        GameTooltip:AddLine(" ");
-        GameTooltip:Show();
-    end);
-
-    MutatorHelpIcon:SetCallback("OnLeave", function()
-        GameTooltip:Hide();
-    end);
+    Interface:addTooltip(SessionTypeHelpIcon, L.GDKP_CREATE_SESSION_TYPE_INFO, "RIGHT");
 
     local SessionType = {
-        multi = "Multi-Auction",
-        single = "Single-Auction",
+        multi = L.GDKP_CREATE_SESSION_TYPE_MULTI,
+        single = L.GDKP_CREATE_SESSION_TYPE_SINGLE,
     };
 
     local SessionTypeDropdown = GL.AceGUI:Create("Dropdown");
@@ -103,12 +87,12 @@ function EditSession:build()
     Window:AddChild(SessionTypeDropdown);
 
     local Save = AceGUI:Create("Button");
-    Save:SetText("Save");
+    Save:SetText(L.SAVE);
     Save:SetFullWidth(true);
     Save:SetCallback("OnClick", function()
         local title = strtrim(Title:GetText());
         if (GL:empty(title)) then
-            GL:warning("Add a GDKP name");
+            GL:warning(L.INVALID_DATA_WARNING);
             return;
         end
 
@@ -118,14 +102,14 @@ function EditSession:build()
             if (not managementCut
                     or managementCut < 0
             ) then
-                GL:warning("Management Cut needs to be empty or between 0 and 99 (no % sign!)");
+                GL:warning(L.GDKP_CREATE_SESSION_INVALID_CUT);
                 return;
             end
         end
 
         local type = SessionTypeDropdown:GetValue();
         if (GL:empty(type)) then
-            GL:warning("Choose a session type!");
+            GL:warning(L.GDKP_CREATE_SESSION_INVALID_TYPE);
             return;
         end
 
@@ -189,7 +173,7 @@ function EditSession:open()
 
     local Window = self:window();
 
-    Interface:get(self, "Label.Title"):SetText("Editing " .. Session.title);
+    Interface:get(self, "Label.Title"):SetText((L.GDKP_SESSION_EDIT_TITLE):format(Session.title));
     Interface:get(self, "EditBox.Title"):SetText(Session.title);
     Interface:get(self, "EditBox.ManagementCut"):SetText(Session.managementCut);
 

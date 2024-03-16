@@ -85,7 +85,7 @@ function Overview:draw()
                 end,
             });
         end,
-        tooltip = "Broadcast Data",
+        tooltip = L.BROADCAST,
         disabledTooltip = L.LM_OR_ASSIST_REQUIRED,
         position = "TOPRIGHT",
     });
@@ -270,7 +270,7 @@ function Overview:draw()
     ButtonFrame:AddChild(ClearDataButton);
 
     local ImportButton = AceGUI:Create("Button");
-    ImportButton:SetText("Import");
+    ImportButton:SetText(L.IMPORT);
     ImportButton:SetWidth(78);
     ImportButton:SetCallback("OnClick", function()
         self:close();
@@ -279,7 +279,7 @@ function Overview:draw()
     ButtonFrame:AddChild(ImportButton);
 
     local ExportButton = AceGUI:Create("Button");
-    ExportButton:SetText("Export");
+    ExportButton:SetText(L.EXPORT);
     ExportButton:SetWidth(76);
     ExportButton:SetCallback("OnClick", function()
         BoostedRolls:export(true);

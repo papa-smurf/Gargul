@@ -84,7 +84,7 @@ function Auctioneer:open(keepPreviousItems)
     local guild = "";
     local CreatedBy = ActiveSession.CreatedBy or { class = "priest", name = "unknown", guild = "unknown", uuid = "unknown"};
     if (CreatedBy.guild) then
-        guild = string.format(" |c001eff00<%s>|r", CreatedBy.guild);
+        guild = string.format(" |c001EFF00<%s>|r", CreatedBy.guild);
     end
     self.SessionDetails:SetText(string.format(
         L.GDKP_MULTIAUCTION_AUCTIONEER_SESSION_DETAILS,

@@ -1,3 +1,5 @@
+local L = Gargul_L;
+
 ---@type GL
 local _, GL = ...;
 
@@ -20,8 +22,6 @@ GL:tableSet(GL, "Interface.PlusOnes.Importer", {
 local Importer = GL.Interface.PlusOnes.Importer;
 
 function Importer:draw()
-    GL:debug("Importer:draw");
-
     if (self.isVisible) then
         return;
     end
@@ -52,7 +52,7 @@ function Importer:draw()
     local Description = AceGUI:Create("Label");
     Description:SetFontObject(_G["GameFontNormal"]);
     Description:SetFullWidth(true);
-    Description:SetText("Here you can import plus one data from a table in CSV or TSV format or pasted from a Google Docs Sheet.\n\nThe table needs at least two columns: The player name followed by the amount of points. Additional columns are ignored.\n\nHere is an example line:\n\nFoobar,240");
+    Description:SetText(L.PLUSONES_IMPORT_INFO);
     Window:AddChild(Description);
 
     -- Large edit box
@@ -85,7 +85,7 @@ function Importer:draw()
 
     -- Import button
     local ImportButton = AceGUI:Create("Button");
-    ImportButton:SetText("Import");
+    ImportButton:SetText(L.IMPORT);
     ImportButton:SetWidth(100);
     ImportButton:SetCallback("OnClick", function()
         GL.Interface.Dialogs.PopupDialog:open({
@@ -109,8 +109,6 @@ end
 
 -- Close the import frame and clean up after ourselves
 function Importer:close()
-    GL:debug("Importer:close");
-
     local Window = GL.Interface:get(self, "Window");
 
     if (not self.isVisible
@@ -126,5 +124,3 @@ function Importer:close()
     GL.Interface:release(Window);
     self.isVisible = false;
 end
-
-GL:debug("Interfaces/PlusOnes/Importer.lua");

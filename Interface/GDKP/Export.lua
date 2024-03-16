@@ -1,3 +1,5 @@
+local L = Gargul_L;
+
 ---@type GL
 local _, GL = ...;
 
@@ -25,7 +27,6 @@ local SHARE_FORMAT = 3;
 
 ---@return void
 function Export:open(session)
-    GL:debug("Interface.GDKP.Export:open");
 
     local Window = Interface:get(self, "GDKPExport");
 
@@ -51,7 +52,6 @@ end
 ---
 ---@return void
 function Export:build()
-    GL:debug("Export:build");
 
     ---@type AceGUIFrame
     local Window = Interface:get(self, "GDKPExport");
@@ -73,15 +73,15 @@ function Export:build()
     ---@type AceGUILabel
     local Title = AceGUI:Create("Label");
     Title:SetFontObject(GameFontNormalLarge);
-    Title:SetText("Session title");
+    Title:SetText();
     Title:SetFullWidth(true);
     Interface:set(self, "Title", Title);
     FixedHeightContentWrapper:AddChild(Title);
 
     local DropDownItems = {
-        [CUSTOM_FORMAT] = "|c00FFF569Custom (create your own format)|r",
-        [JSON_FORMAT] = "|c00FFF569Detailed (JSON)|r",
-        [SHARE_FORMAT] = "|c00FFF569Share (can be imported by other players)|r",
+        [CUSTOM_FORMAT] = ("|c00FFF569%s|r"):format(L.GDKP_EXPORT_AUCTIONS_CUSTOM),
+        [JSON_FORMAT] = ("|c00FFF569%s|r"):format(L.GDKP_EXPORT_AUCTIONS_JSON),
+        [SHARE_FORMAT] = ("|c00FFF569%s|r"):format(L.GDKP_EXPORT_AUCTIONS_SHARE),
     };
 
     ---@type AceGUIEditBox
@@ -104,7 +104,7 @@ function Export:build()
     CustomExportHeader:SetHeight(20);
     CustomExportHeader:SetFullWidth(true);
     CustomExportHeader:SetText(GL.Settings:get("GDKP.customExportHeader"));
-    CustomExportHeader:SetLabel("|c00FFF569Your custom header|r");
+    CustomExportHeader:SetLabel(("|c00FFF569%s|r"):format(L.GDKP_EXPORT_CUSTOM_HEADER));
     CustomExportHeader:DisableButton(true);
     CustomExportHeader:SetCallback("OnTextChanged", function ()
         local value = CustomExportHeader:GetText();
@@ -124,7 +124,7 @@ function Export:build()
     CustomExportFormat:SetHeight(20);
     CustomExportFormat:SetFullWidth(true);
     CustomExportFormat:SetText(GL.Settings:get("GDKP.customExportFormat"));
-    CustomExportFormat:SetLabel("|c00FFF569      Your custom format|r");
+    CustomExportFormat:SetLabel(("|c00FFF569      %s|r"):format(L.GDKP_EXPORT_CUSTOM_FORMAT));
     CustomExportFormat:DisableButton(true);
     CustomExportFormat:SetCallback("OnTextChanged", function ()
         local value = CustomExportFormat:GetText();
@@ -157,7 +157,7 @@ function Export:build()
 
     local showCustomFormatHelpTooltip = function ()
         GameTooltip:SetOwner(HelpIconFrame, "ANCHOR_RIGHT");
-        GameTooltip:SetText("Available values:\n\n" .. table.concat({
+        GameTooltip:SetText(L.AVAILABLE_PLACEHOLDER_VALUES .. "\n\n" .. table.concat({
             "@ID",
             "@LINK",
             "@ITEM",
@@ -179,10 +179,10 @@ function Export:build()
             "@ICON",
             "@WOWHEAD",
             "@CHECKSUM",
-            "@TITLE - The title of the GDKP session",
-            "@START - Date/time at which the first item was awarded",
+            "@TITLE - " .. L.GDKP_EXPORT_FORMAT_TITLE,
+            "@START - " .. L.GDKP_EXPORT_FORMAT_START,
             "",
-            "\\t is replaced by a tab",
+            L.TAB_REPLACES_T,
         }, "\n"));
         GameTooltip:Show();
     end;
@@ -194,7 +194,7 @@ function Export:build()
     ExportBox:SetText("");
     ExportBox:SetFullWidth(true);
     ExportBox:DisableButton(true);
-    ExportBox:SetLabel("|c00FFF569Export|r");
+    ExportBox:SetLabel(("|c00FFF569%s|r"):format(L.EXPORT));
     ExportBox:SetNumLines(1);
     ExportBox:SetMaxLetters(0);
     GL.Interface:set(self, "Export", ExportBox);
@@ -208,13 +208,11 @@ end
 
 ---@return void
 function Export:close()
-    GL:debug("Export:close");
 
     self.isVisible = false;
 end
 
 function Export:refresh()
-    GL:debug("Export:refresh");
 
     local Session = GDKPSession:byID(self.session);
 
@@ -255,7 +253,7 @@ function Export:refresh()
         zlibEncodeSucceeded, exportString = pcall(function () return LibDeflate:CompressZlib(exportString); end);
 
         if (not zlibEncodeSucceeded) then
-            return GL:error("Something went wrong compressing your GDKP session");
+            return GL:error(L.ZLIB_COMPRESS_WARNING);
         end
 
         exportString = GL.Base64.encode(exportString);
@@ -273,7 +271,6 @@ end
 ---@param Auctions table
 ---@return string
 function Export:exportAuctionsToCustomFormat(Session, Auctions)
-    GL:debug("Export:transformAuctionsToCustomFormat");
 
     local exportString = GL.Settings:get("GDKP.customExportHeader");
     local customExportFormat = GL.Settings:get("GDKP.customExportFormat");
@@ -302,7 +299,7 @@ function Export:exportAuctionsToCustomFormat(Session, Auctions)
             local icon = GL.Data.IconTexturePaths:byID(ItemDetails.icon);
 
             if (Auction.itemID == GL.Data.Constants.GDKP.potIncreaseItemID) then
-                ItemDetails.name = "Pot changed";
+                ItemDetails.name = L.GDKP_EXPORT_POT_CHANGED;
             end
 
             if (GL.isEra) then
@@ -367,5 +364,3 @@ function Export:exportAuctionsToCustomFormat(Session, Auctions)
         GL.Interface:get(self, "MultiLineEditBox.Export"):SetText(exportString);
     end);
 end
-
-GL:debug("Interfaces/GDKP/Export.lua");

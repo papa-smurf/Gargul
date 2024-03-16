@@ -6,7 +6,7 @@ GL.AceGUI = GL.AceGUI or LibStub("AceGUI-3.0");
 
 ---@class ExportingLootSettings
 GL.Interface.Settings.ExportingLoot = {
-    description = "Items awarded using Gargul can be exported to TMB, DFT, or just about any other format you can think of. To export items run |c00a79eff/gl export|r.",
+    description = "Items awarded using Gargul can be exported to TMB, DFT, or just about any other format you can think of. To export items run |c00A79EFF/gl export|r.",
     wikiUrl = "https://github.com/papa-smurf/Gargul/wiki/Export-To-TMB",
 };
 local ExportingLoot = GL.Interface.Settings.ExportingLoot; ---@type ExportingLootSettings
@@ -178,11 +178,11 @@ function ExportingLoot:draw(Parent)
             "@REALM",
             "@DATE",
             "@OS",
-            "@SR  |c00a79eff(soft-reserved?)|r",
-            "@WL |c00a79eff(tmb wish?)|r",
-            "@PL |c00a79eff(tmb prio?)|r",
-            "@TMB |c00a79eff(tmb wish/prio?)|r",
-            "@ROLLTYPE |c00a79eff(MS, OS etc)|r",
+            "@SR  |c00A79EFF(soft-reserved?)|r",
+            "@WL |c00A79EFF(tmb wish?)|r",
+            "@PL |c00A79EFF(tmb prio?)|r",
+            "@TMB |c00A79EFF(tmb wish/prio?)|r",
+            "@ROLLTYPE |c00A79EFF(MS, OS etc)|r",
             "@CHECKSUM",
             "@YEAR",
             "@YY",
@@ -191,7 +191,7 @@ function ExportingLoot:draw(Parent)
             "@HOUR",
             "@MINUTE",
             "@TIME",
-            "\\t is replaced by a tab"
+            L.TAB_REPLACES_T
         ));
         GameTooltip:Show();
     end);

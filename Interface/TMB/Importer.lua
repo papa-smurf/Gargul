@@ -127,7 +127,7 @@ function Importer:draw(source)
 
     -- Import button
     local ImportButton = AceGUI:Create("Button");
-    ImportButton:SetText("Import");
+    ImportButton:SetText(L.IMPORT);
     ImportButton:SetWidth(140);
     ImportButton:SetCallback("OnClick", function()
         GL.TMB:import(TMBBoxContent, nil, source);

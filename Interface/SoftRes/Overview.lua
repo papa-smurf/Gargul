@@ -47,7 +47,7 @@ function Overview:draw()
     Window:EnableResize(false);
 
     Window:SetStatusText(string.format(
-        "Imported on |c00a79eff%s|r at |c00a79eff%s|r",
+        "Imported on |c00A79EFF%s|r at |c00A79EFF%s|r",
         date(L.DATE_FORMAT, DB:get("SoftRes.MetaData.importedAt", GetServerTime())),
         date(L.HOURS_MINUTES_FORMAT, DB:get("SoftRes.MetaData.importedAt", GetServerTime()))
     ));

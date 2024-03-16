@@ -179,7 +179,7 @@ function RaidGroups:drawImporter()
         self:invitePlayers(RaidGroups.rosterString);
     end);
     FooterFrame:AddChild(InviteButton);
-    GL.Interface:addTooltip(InviteButton.frame, L.RAIDGROUPS_INVITE_BUTTON_TOOLTIP);
+    GL.Interface:addTooltip(InviteButton, L.RAIDGROUPS_INVITE_BUTTON_TOOLTIP);
 
     local AttendanceCheckButton = AceGUI:Create("Button");
     AttendanceCheckButton:SetText(L.RAIDGROUPS_ATTENDANCE_BUTTON);
@@ -188,7 +188,7 @@ function RaidGroups:drawImporter()
         self:checkAttendance(RaidGroups.rosterString, CheckAttendanceOutput);
     end);
     FooterFrame:AddChild(AttendanceCheckButton);
-    GL.Interface:addTooltip(AttendanceCheckButton.frame, L.RAIDGROUPS_ATTENDANCE_BUTTON_TOOLTIP);
+    GL.Interface:addTooltip(AttendanceCheckButton, L.RAIDGROUPS_ATTENDANCE_BUTTON_TOOLTIP);
 
     local SaveButton = AceGUI:Create("Button");
     SaveButton:SetText(L.RAIDGROUPS_SORT_BUTTON);
@@ -197,7 +197,7 @@ function RaidGroups:drawImporter()
         self:applyRaidGroups(RaidGroups.rosterString);
     end);
     FooterFrame:AddChild(SaveButton);
-    GL.Interface:addTooltip(SaveButton.frame, L.RAIDGROUPS_SORT_BUTTON_TOOLTIP);
+    GL.Interface:addTooltip(SaveButton, L.RAIDGROUPS_SORT_BUTTON_TOOLTIP);
 
     local SetTanksButton = CreateFrame("Button", nil, Window.frame, "SecureActionButtonTemplate, GameMenuButtonTemplate");
     SetTanksButton:SetAttribute("type", "macro");
@@ -217,7 +217,7 @@ function RaidGroups:drawImporter()
         self:kickUnwanted(RaidGroups.rosterString);
     end);
     FooterFrame:AddChild(KickUnwantedButton);
-    GL.Interface:addTooltip(KickUnwantedButton.frame, L.RAIDGROUPS_PURGE_BUTTON_TOOLTIP);
+    GL.Interface:addTooltip(KickUnwantedButton, L.RAIDGROUPS_PURGE_BUTTON_TOOLTIP);
 
     local DisbandButton = AceGUI:Create("Button");
     DisbandButton:SetText(L.RAIDGROUPS_DISBAND_BUTTON);
@@ -239,7 +239,7 @@ function RaidGroups:drawImporter()
         };
     end);
     FooterFrame:AddChild(DisbandButton);
-    GL.Interface:addTooltip(DisbandButton.frame, L.RAIDGROUPS_DISBAND_BUTTON_TOOLTIP);
+    GL.Interface:addTooltip(DisbandButton, L.RAIDGROUPS_DISBAND_BUTTON_TOOLTIP);
 
     self.UIComponents.TankAssignmentButton = SetTanksButton;
 end

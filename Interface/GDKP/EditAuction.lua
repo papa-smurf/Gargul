@@ -55,12 +55,10 @@ function EditAuction:draw(session, checksum)
     local ItemLink = AceGUI:Create("Label");
     ItemLink:SetFontObject(_G["GameFontNormal"]);
     ItemLink:SetFullWidth(true);
-    ItemLink:SetText(string.format(
-        "|cFF%s%s|r paid |cFF%s%sg|r for\n%s",
-        GL:classHexColor(Auction.Winner.class),
-        Auction.Winner.name or "",
-        GL:classHexColor("rogue"),
-        Auction.price or "0",
+    ItemLink:SetText((L.GDKP_AUCTION_DETAILS_GOLD_PAID_BY):format(
+        GL:nameFormat{ name = Auction.Winner.name, colorize = true, },
+        Interface.Colors.ROGUE,
+        Auction.price or L.ZERO_SIGN,
         Auction.itemLink
     ));
     Window:AddChild(ItemLink);
@@ -108,7 +106,7 @@ function EditAuction:draw(session, checksum)
     NoteInput:SetHeight(20);
     NoteInput:SetWidth(250);
     NoteInput:SetText(Auction.note);
-    NoteInput:SetLabel("Note");
+    NoteInput:SetLabel(L.NOTE);
     Window:AddChild(NoteInput);
 
     local AdjustPaidInput = GL.AceGUI:Create("EditBox");
@@ -116,7 +114,7 @@ function EditAuction:draw(session, checksum)
     AdjustPaidInput:SetHeight(20);
     AdjustPaidInput:SetWidth(250);
     AdjustPaidInput:SetText(Auction.paid);
-    AdjustPaidInput:SetLabel("     Set paid amount (read left)");
+    AdjustPaidInput:SetLabel("     " .. L.GDKP_AUCTION_PAID_AMOUNT);
     Window:AddChild(AdjustPaidInput);
 
     local HelpIcon = AceGUI:Create("Icon");
@@ -128,29 +126,10 @@ function EditAuction:draw(session, checksum)
     HelpIcon.frame:SetPoint("BOTTOMLEFT", AdjustPaidInput.frame, "BOTTOMLEFT", 2, 22);
     HelpIcon.frame:Show();
 
-    HelpIcon:SetCallback("OnEnter", function()
-        GameTooltip:SetOwner(HelpIcon.frame, "ANCHOR_RIGHT");
-        GameTooltip:AddLine(" ");
-        GameTooltip:AddLine("Gargul automatically keeps track of gold traded. As long as players pay");
-        GameTooltip:AddLine("for what they bought then you shouldn't ever need this field");
-        GameTooltip:AddLine(" ");
-        GameTooltip:AddLine("\"Paid amount\" refers to the amount of gold the buyer already traded you.");
-        GameTooltip:AddLine("This does not change the actual price of the item!");
-        GameTooltip:AddLine(" ");
-        GameTooltip:AddLine("Warning: only set a value here if the player promises to pay");
-        GameTooltip:AddLine("outside of the raid or trades the gold from an alt / mail etc!");
-        GameTooltip:AddLine(" ");
-
-        GameTooltip:AddLine(" ");
-        GameTooltip:Show();
-    end);
-
-    HelpIcon:SetCallback("OnLeave", function()
-        GameTooltip:Hide();
-    end);
+    Interface:addTooltip(HelpIcon, L.GDKP_AUCTION_PAID_AMOUNT_INFO, "RIGHT");
 
     local SaveButton = AceGUI:Create("Button");
-    SaveButton:SetText("Save");
+    SaveButton:SetText(L.SAVE);
     SaveButton:SetFullWidth(true);
     SaveButton:SetCallback("OnClick", function()
         local newName = strtrim(PlayernameInput:GetText());

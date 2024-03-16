@@ -5,7 +5,7 @@ local Overview = GL.Interface.Settings.Overview; ---@type SettingsOverview
 
 ---@class TMBSettings
 GL.Interface.Settings.TMB = {
-    description = "|cffC41E3AThese settings affect all data imported via TMB and DFT!|r\n\nType |c00a79eff/gl tmb|r or |c00a79eff/gl dft|r or click the button below to get started!",
+    description = "|cffC41E3AThese settings affect all data imported via TMB and DFT!|r\n\nType |c00A79EFF/gl tmb|r or |c00A79EFF/gl dft|r or click the button below to get started!",
 };
 local TMB = GL.Interface.Settings.TMB; ---@type TMBSettings
 
@@ -58,7 +58,7 @@ function TMB:draw(Parent)
         },
         {
             label = "Show everything when using prio3/classicpr.io",
-            description = "Show all entries when in a group and prio3/classicpr.io data is present (|c00a79eff/gl prio3|r or |c00a79eff/gl cpr|r)",
+            description = "Show all entries when in a group and prio3/classicpr.io data is present (|c00A79EFF/gl prio3|r or |c00A79EFF/gl cpr|r)",
             setting = "TMB.showEntriesWhenUsingPrio3",
         },
         {

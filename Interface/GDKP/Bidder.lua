@@ -342,7 +342,7 @@ function Bidder:refresh()
             maxBidString = (" " .. L.GDKP_BIDDER_MY_MAX_BID):format(GDKPAuction.maxBid);
         end
 
-        TopBidderLabel:SetText(string.format("|c001Eff00" .. L.GDKP_BIDDER_YOURE_TOP_BIDDER .. "%s|r", GL:goldToMoney(TopBid.bid), maxBidString));
+        TopBidderLabel:SetText(string.format("|c001EFF00" .. L.GDKP_BIDDER_YOURE_TOP_BIDDER .. "%s|r", GL:goldToMoney(TopBid.bid), maxBidString));
     else
         TopBidderLabel:SetText(string.format("|c00BE3333" .. L.GDKP_BIDDER_THEYRE_TOP_BIDDER .. "|r",
             GL:goldToMoney(TopBid.bid),

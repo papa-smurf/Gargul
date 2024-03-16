@@ -14,7 +14,7 @@ GL.Interface.Settings.Overview = {
     previousSection = nil,
     defaultSection = "Welcome",
     Sections = {
-        {"|c00a79effWELCOME|r", "Welcome"},
+        {"|c00A79EFFWELCOME|r", "Welcome"},
         {"General", "General"},
         {"Minimap Icon", "MinimapButton"},
         {"SoftRes", "SoftRes"},
@@ -31,7 +31,7 @@ GL.Interface.Settings.Overview = {
         {"    Item Rules", "PackMuleRules"},
         {"    Ignored Items", "PackMuleIgnores"},
         {"", ""},
-        {"|c00a79effADVANCED|r", "Advanced"},
+        {"|c00A79EFFADVANCED|r", "Advanced"},
         {"Master Looting", "MasterLooting"},
         {"    Roll Tracking", "RollTracking"},
         {"    Awarding Loot", "AwardingLoot"},

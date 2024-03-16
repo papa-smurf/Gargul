@@ -4,7 +4,6 @@ local L = Gargul_L;
 local _, GL = ...;
 
 local AceGUI = GL.AceGUI;
-local Constants = GL.Data.Constants; ---@type Data
 local DB = GL.DB; ---@type DB
 local PlusOnes = GL.PlusOnes; ---@type PlusOnes
 
@@ -20,8 +19,6 @@ GL:tableSet(GL, "Interface.PlusOnes.Overview", {
 local Overview = GL.Interface.PlusOnes.Overview; ---@type PlusOnesOverview
 
 function Overview:draw()
-    GL:debug("Overview:draw");
-
     if (self.isVisible) then
         return;
     end
@@ -68,8 +65,8 @@ function Overview:draw()
                 end,
             });
         end,
-        tooltip = "Broadcast Data",
-        disabledTooltip = "To broadcast you need to be in a group and need master loot, assist or lead!",
+        tooltip = L.BROADCAST,
+        disabledTooltip = L.LM_OR_ASSIST_REQUIRED,
         position = "TOPRIGHT",
     });
     self.ShareButton = ShareButton;
@@ -112,7 +109,7 @@ function Overview:draw()
     Window:AddChild(ButtonFrame);
 
     local ClearButton = AceGUI:Create("Button");
-    ClearButton:SetText("Clear Data");
+    ClearButton:SetText(L.CLEAR);
     ClearButton:SetWidth(80);
     ClearButton:SetCallback("OnClick", function()
         GL.Interface.Dialogs.PopupDialog:open({
@@ -133,7 +130,7 @@ function Overview:draw()
     ButtonFrame:AddChild(VerticalSpacer);
 
     local ImportButton = AceGUI:Create("Button");
-    ImportButton:SetText("Import");
+    ImportButton:SetText(L.IMPORT);
     ImportButton:SetWidth(80);
     ImportButton:SetCallback("OnClick", function()
         self:close();
@@ -148,7 +145,7 @@ function Overview:draw()
     ButtonFrame:AddChild(VerticalSpacer);
 
     local ExportButton = AceGUI:Create("Button");
-    ExportButton:SetText("Export");
+    ExportButton:SetText(L.EXPORT);
     ExportButton:SetWidth(80);
     ExportButton:SetCallback("OnClick", function()
         PlusOnes:export(true);
@@ -238,7 +235,7 @@ function Overview:addPlayerPlusOneEntries(Parent)
         Row:AddChild(PlayerName);
 
         local DeductButton = AceGUI:Create("Button");
-        DeductButton:SetText("<");
+        DeductButton:SetText(L.LEFT_SYMBOL);
         DeductButton:SetWidth(38);
         DeductButton:SetCallback("OnClick", function()
             Entry.total = max(Entry.total -1, 0);
@@ -257,7 +254,7 @@ function Overview:addPlayerPlusOneEntries(Parent)
         GL.Interface:set(self, "PlusOnesOf_" .. Entry.name, PlusOneStatus);
 
         local AddButton = AceGUI:Create("Button");
-        AddButton:SetText(">");
+        AddButton:SetText(L.RIGHT_SYMBOL);
         AddButton:SetWidth(38);
         AddButton:SetCallback("OnClick", function()
             Entry.total = Entry.total + 1;
@@ -280,8 +277,6 @@ end
 ---
 ---@return void
 function Overview:close()
-    GL:debug("Overview:close");
-
     if (not self.isVisible) then
         return;
     end
@@ -333,5 +328,3 @@ function Overview:update()
         end
     end
 end
-
-GL:debug("Interfaces/PlusOnes/Overview.lua");

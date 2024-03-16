@@ -49,7 +49,7 @@ function PackMuleRules:draw(Parent)
     Overview:drawSpacer(Parent, 20, 1);
 
     local SectionDescription = GL.AceGUI:Create("Label");
-    SectionDescription:SetText("Example to send to yourself when loot master and greed when group looting:\n|c00a79effSELF GREED|r");
+    SectionDescription:SetText("Example to send to yourself when loot master and greed when group looting:\n|c00A79EFFSELF GREED|r");
     SectionDescription:SetFontObject(_G["GameFontNormal"]);
     SectionDescription:SetFullWidth(true);
     Parent:AddChild(SectionDescription);

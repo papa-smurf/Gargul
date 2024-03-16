@@ -148,7 +148,7 @@ function Export:build()
 
     local showCustomFormatHelpTooltip = function ()
         GameTooltip:SetOwner(HelpIconFrame, "ANCHOR_RIGHT");
-        GameTooltip:SetText(L.GDKP_EXPORT_CUTS_FORMAT_TOOLTIP .. "\n\n" .. table.concat({
+        GameTooltip:SetText(L.AVAILABLE_PLACEHOLDER_VALUES .. "\n\n" .. table.concat({
             "@PLAYER",
             "@REALM",
             "@CUT",

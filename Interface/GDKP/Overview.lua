@@ -51,8 +51,6 @@ local Overview = Interface.GDKP.Overview; ---@type GDKPOverview
 
 ---@return void
 function Overview:_init()
-    GL:debug("Interface.GDKP.Overview:_init");
-
     if (self._initialized) then
         return;
     end
@@ -94,22 +92,20 @@ end
 
 ---@return void
 function Overview:sessionChanged()
-    GL:debug("Overview:sessionChanged");
-
     local Session = self:getSelectedSession();
 
     if (not Session) then
-        return GL:debug(string.format("Unknown GDKP session '%s'", self.selectedSession));
+        return GL:debug(("Unknown GDKP session '%s'"):format(self.selectedSession));
     end
 
     local DeleteOrRestoreButton = Interface:get(self, "Button.DeleteRestore");
     if (DeleteOrRestoreButton) then
         if (Session.deletedAt) then
-            DeleteOrRestoreButton:SetText("Restore");
+            DeleteOrRestoreButton:SetText(L.RESTORE);
             DeleteOrRestoreButton:SetWidth(78);
             DeleteOrRestoreButton.mode = "restore";
         else
-            DeleteOrRestoreButton:SetText("Delete");
+            DeleteOrRestoreButton:SetText(L.DELETE);
             DeleteOrRestoreButton:SetWidth(74);
             DeleteOrRestoreButton.mode = "delete";
         end
@@ -124,10 +120,10 @@ function Overview:sessionChanged()
         end
 
         if (DB.GDKP.activeSession == Session.ID) then
-            EnableOrDisableButton:SetText("Disable");
+            EnableOrDisableButton:SetText(L.DISABLE);
             EnableOrDisableButton.mode = "disable";
         else
-            EnableOrDisableButton:SetText("Enable");
+            EnableOrDisableButton:SetText(L.ENABLE);
             EnableOrDisableButton.mode = "enable";
         end
     end
@@ -138,8 +134,6 @@ end
 
 ---@return void
 function Overview:updatePot()
-    GL:debug("Overview:updatePot");
-
     local Session = self:getSelectedSession();
 
     if (not Session) then
@@ -153,7 +147,7 @@ function Overview:updatePot()
     end
 
     local pot = GDKPPot:humanTotal(Session.ID);
-    Pot:SetText(string.format("|cFF%s%s|r", Constants.ClassHexColors.rogue, pot));
+    Pot:SetText(string.format("|cFF%s%s|r", Interface.Colors.ROGUE, pot));
 end
 
 ---@return void
@@ -184,8 +178,6 @@ end
 ---
 ---@return void
 function Overview:build()
-    GL:debug("Overview:build");
-
     local Window = Interface:get(self, "GDKPOverview");
 
     -- Looks like we already created the overview before
@@ -256,14 +248,13 @@ function Overview:build()
         local managementCut = tonumber(Session.managementCut or 0) or 0;
         local managementPot = math.ceil(pot * (0 + managementCut / 100));
 
-        GameTooltip:SetOwner(PotIconFrame, "ANCHOR_TOP");
-        GameTooltip:AddLine(string.format("Pot: %s", GL:goldToMoney(pot)));
-        GameTooltip:AddLine(string.format("Management cut (%s%%): %sg", managementCut, managementPot));
-        GameTooltip:AddLine(string.format("Per player cut (1/%s): %sg", numberOfRaidMembers, GL:floor((pot - managementPot) / numberOfRaidMembers, Settings:get("GDKP.precision"))));
-        GameTooltip:Show();
-    end);
-    PotIcon:SetCallback("OnLeave", function ()
-        GameTooltip:Hide();
+        Interface:addTooltip(PotIcon, (L.GDKP_OVERVIEW_POT_TOOLTIP):format(
+            GL:goldToMoney(pot),
+            managementCut,
+            managementPot,
+            numberOfRaidMembers,
+            GL:floor((pot - managementPot) / numberOfRaidMembers, Settings:get("GDKP.precision"))
+        ), "TOP");
     end);
 
     local Pot = PotIconFrame:CreateFontString(nil, "ARTWORK", "GameFontWhite");
@@ -287,7 +278,7 @@ function Overview:build()
     MultiAuctionFrame:SetPoint("TOPRIGHT", Pot, "TOPLEFT", -16, 32);
     MultiAuctionFrame:Show();
 
-    Interface:addTooltip(MultiAuctionFrame, "Multi-auction: auction multiple items at once!", "TOP")
+    Interface:addTooltip(MultiAuctionFrame, L.GDKP_OVERVIEW_MULTI_AUCTION_TOOLTIP, "TOP")
 
     MultiAuctionIcon:SetCallback("OnClick", function()
         self:close();
@@ -311,24 +302,14 @@ function Overview:build()
     LockIconFrame:SetPoint("TOPRIGHT", MultiAuctionFrame, "TOPLEFT", -20, 0);
     LockIconFrame:Show();
 
-    LockIcon:SetCallback("OnEnter", function ()
-        GameTooltip:SetOwner(LockIconFrame, "ANCHOR_TOP");
-
+    Interface:addTooltip(LockIcon, function ()
         local Session = self:getSelectedSession();
-
-        local tooltipText;
         if (not Session) then
-            tooltipText = "Lock or unlock the session";
-        else
-            tooltipText = Session.lockedAt and "Unlock the session" or "Lock the session for payout";
+            return L.GDKP_OVERVIEW_LOCK_OR_UNLOCK_TOOLTIP;
         end
 
-        GameTooltip:AddLine(tooltipText);
-        GameTooltip:Show();
-    end);
-    LockIcon:SetCallback("OnLeave", function ()
-        GameTooltip:Hide();
-    end);
+        return Session.lockedAt and L.GDKP_OVERVIEW_UNLOCK_TOOLTIP or L.GDKP_OVERVIEW_LOCK_TOOLTIP;
+    end, "TOP");
 
     --[[ FIRST COLUMN: sessions ]]
     local FirstColumn = AceGUI:Create("SimpleGroup");
@@ -368,8 +349,8 @@ function Overview:build()
             self:closeSubWindows();
             Interface.GDKP.AddGold:toggle(self.selectedSession);
         end,
-        tooltip = "Add/Remove gold",
-        disabledTooltip = "You need lead or master loot to adjust gold.\nYou can't adjust gold on locked/deleted sessions",
+        tooltip = L.GDKP_OVERVIEW_ADJUST_GOLD_TOOLTIP,
+        disabledTooltip = L.GDKP_OVERVIEW_ADJUST_GOLD_DISABLED_TOOLTIP,
         normalTexture = "Interface/AddOns/Gargul/Assets/Buttons/bag",
         update = function (self)
             local SelectedSession = Overview:getSelectedSession();
@@ -389,28 +370,17 @@ function Overview:build()
     });
     AddGoldButton:SetPoint("TOP", ScrollFrameHolder.frame, "TOP", -9, -7);
 
-    ----[[ SHARE BUTTON ]]
-    --Interface:createShareButton(ScrollFrameHolder, {
-    --    onClick = function() Interface.Dialogs.PopupDialog:open("BROADCAST_GDKP_CONFIRMATION"); end,
-    --    tooltip = "Broadcast data",
-    --    disabledTooltip = "Broadcast data: you need loot master, assist or lead!",
-    --    position = "TOPCENTER",
-    --    update = function (self) self:SetEnabled(self.selectedSession and GDKP:userIsAllowedToBroadcast()); end,
-    --    updateOn = "GROUP_ROSTER_UPDATE",
-    --    x = 16,
-    --});
-
     ----[[ LIST VIEW BUTTON ]]
     local ListViewButton = Interface:createButton(ScrollFrameHolder, {
         onClick = function()
             Window:Hide();
             GL.Interface.GDKP.LedgerList:open(self.selectedSession);
         end,
-        tooltip = "Show a full overview of the ledger,\nideal for screenshotting purposes!",
+        tooltip = L.GDKP_OVERVIEW_LEDGER_TOOLTIP,
         normalTexture = "Interface/AddOns/Gargul/Assets/Buttons/eye",
         updateOn = { "GL.GDKP_OVERVIEW_SESSION_CHANGED", "GL.GDKP_OVERVIEW_SESSION_CHANGED", "GL.GDKP_OVERVIEW_SESSIONS_REFRESHED", "GL.GDKP_AUCTION_CHANGED" },
         update = function (self)
-            self:SetEnabled(not GL:empty(GL:tableGet(Overview:getSelectedSession() or {}, "Auctions")));
+            self:SetEnabled(not GL:empty(GL:tableGet(Overview:getSelectedSession() or {}, L.GDKP_AUCTIONS)));
         end,
     });
     ListViewButton:SetPoint("TOPLEFT", AddGoldButton, "TOPRIGHT", 2, 0);
@@ -428,7 +398,7 @@ function Overview:build()
     ThirdColumn:SetHeight(40);
 
     local EnableOrDisableSession = AceGUI:Create("Button");
-    EnableOrDisableSession:SetText("Enable");
+    EnableOrDisableSession:SetText(L.ENABLE);
     EnableOrDisableSession:SetWidth(74);
     EnableOrDisableSession:SetHeight(20);
     EnableOrDisableSession:SetCallback("OnClick", function()
@@ -441,7 +411,7 @@ function Overview:build()
     Interface:set(self, "EnableDisable", EnableOrDisableSession);
 
     local CreateSession = AceGUI:Create("Button");
-    CreateSession:SetText("New");
+    CreateSession:SetText(L.NEW);
     CreateSession:SetWidth(64);
     CreateSession:SetHeight(20);
     CreateSession:SetCallback("OnClick", function()
@@ -450,7 +420,7 @@ function Overview:build()
     end);
 
     local EditSession = AceGUI:Create("Button");
-    EditSession:SetText("Edit");
+    EditSession:SetText(L.EDIT);
     EditSession:SetWidth(60);
     EditSession:SetHeight(20);
     EditSession:SetCallback("OnClick", function()
@@ -459,7 +429,7 @@ function Overview:build()
     end);
 
     local DeleteOrRestoreSession = AceGUI:Create("Button");
-    DeleteOrRestoreSession:SetText("Delete");
+    DeleteOrRestoreSession:SetText(L.DELETE);
     DeleteOrRestoreSession:SetWidth(72);
     DeleteOrRestoreSession:SetHeight(20);
     DeleteOrRestoreSession:SetCallback("OnClick", function()
@@ -470,28 +440,28 @@ function Overview:build()
         end
     end);
     Interface:set(self, "DeleteRestore", DeleteOrRestoreSession);
-    GL.Interface:addTooltip(DeleteOrRestoreSession.frame, "Sessions with auctions attached to them will be deleted after 48 hours");
+    GL.Interface:addTooltip(DeleteOrRestoreSession.frame, L.GDKP_OVERVIEW_DELETE_TOOLTIP);
 
     local Import = AceGUI:Create("Button");
-    Import:SetText("Import");
+    Import:SetText(L.IMPORT);
     Import:SetWidth(76);
     Import:SetHeight(20);
     Import:SetCallback("OnClick", function()
         GL.Interface.GDKP.Import:open();
     end);
-    GL.Interface:addTooltip(Import.frame, "Import a session from another player or account");
+    GL.Interface:addTooltip(Import, L.GDKP_OVERVIEW_IMPORT_TOOLTIP);
 
     local Export = AceGUI:Create("Button");
-    Export:SetText("Export");
+    Export:SetText(L.EXPORT);
     Export:SetWidth(72);
     Export:SetHeight(20);
     Export:SetCallback("OnClick", function()
         GL.Interface.GDKP.Export:open(self.selectedSession);
     end);
-    GL.Interface:addTooltip(Export.frame, "Export a session so others can view session details or even replace you as a loot master");
+    GL.Interface:addTooltip(Export, L.GDKP_OVERVIEW_EXPORT_TOOLTIP);
 
     local Cuts = AceGUI:Create("Button");
-    Cuts:SetText("Cuts");
+    Cuts:SetText(L.CUTS);
     Cuts:SetWidth(90);
     Cuts:SetHeight(20);
     Cuts:SetCallback("OnClick", function()
@@ -528,8 +498,6 @@ end
 
 ---@return void
 function Overview:close()
-    GL:debug("Overview:close");
-
     local Window = Interface:get(self, "GDKPOverview");
 
     if (Window and Window.Hide) then
@@ -544,8 +512,6 @@ end
 
 ---@return void
 function Overview:closeSubWindows()
-    GL:debug("Overview:closeSubWindows");
-
     Interface.GDKP.CreateSession:close();
     Interface.GDKP.EditSession:close();
     Interface.GDKP.EditAuction:close();
@@ -557,8 +523,6 @@ end
 ---
 ---@return table|nil
 function Overview:getSelectedSession()
-    GL:debug("Overview:getSelectedSession");
-
     local sessionIdentifier = self.selectedSession;
     if (not sessionIdentifier) then
         return;
@@ -569,8 +533,6 @@ end
 
 ---@return void
 function Overview:refreshLedger()
-    GL:debug("Overview:drawDetails");
-
     local LockIcon = Interface:get(self, "Icon.LockIcon");
     LockIcon.frame:Show();
 
@@ -582,16 +544,16 @@ function Overview:refreshLedger()
     local Session = self:getSelectedSession();
 
     if (not Session) then
-        return GL:warning(string.format("Unknown GDKP session '%s'", self.selectedSession));
+        return;
     end
 
     local question;
     if (Session.lockedAt) then
         LockIcon:SetImage("Interface/AddOns/Gargul/Assets/Icons/locked");
-        question = "Unlocking and changing the pot or cuts can get really messy, especially if you've already done payouts. Are you sure?";
+        question = L.GDKP_OVERVIEW_UNLOCK_CONFIRM;
     else
         LockIcon:SetImage("Interface/AddOns/Gargul/Assets/Icons/unlocked");
-        question = "Locking a session means you can't auction items or otherwise change anything until you unlock it, are you sure?";
+        question = L.GDKP_OVERVIEW_LOCK_CONFIRM;
     end
     LockIcon:SetCallback("OnClick", function()
         GL.Interface.Dialogs.PopupDialog:open{
@@ -617,20 +579,19 @@ function Overview:refreshLedger()
     Title:SetText(string.format("\n|c00%s%s|r", Constants.addonHexColor, Session.title));
 
     local Note = Interface:get(self, "Label.Note");
-    local CreatedBy = Session.CreatedBy or {class = "priest", name = "unknown", guild = "unknown", uuid = "unknown"};
+    local CreatedBy = Session.CreatedBy or { class = "priest", name = L.UNKNOWN, guild = L.UNKNOWN, uuid = L.UNKNOWN, };
     local managementCut = "";
     local guild = "";
 
     if (Session.managementCut) then
-        managementCut = string.format(" | Cut |c00%s%s%%|r", Constants.addonHexColor, Session.managementCut);
+        managementCut = (" | %s |c00%s%s%%|r"):format(L.CUT, Constants.addonHexColor, Session.managementCut);
     end
 
     if (CreatedBy.guild) then
-        guild = string.format(" |c001eff00<%s>|r", CreatedBy.guild);
+        guild = string.format(" |c001EFF00<%s>|r", CreatedBy.guild);
     end
 
-    Note:SetText(string.format(
-        "By %s%s | On |c00%s%s|r%s",
+    Note:SetText((L.GDKP_OVERVIEW_SESSION_DETAILS):format(
         GL:nameFormat{ name = CreatedBy.name, realm = CreatedBy.realm, colorize = true, },
         guild,
         Constants.addonHexColor,
@@ -733,25 +694,22 @@ function Overview:refreshLedger()
             if (not auctionWasDeleted) then
                 price = price or 0;
                 if (concernsManualAdjustment) then
-                    local mutator = "added to";
+                    local mutator = L.GDKP_OVERVIEW_MUTATION_ADDED;
                     if (price < 0) then
-                        mutator = "removed from"
+                        mutator = L.GDKP_OVERVIEW_MUTATION_REMOVED;
                     end
 
-                    itemLabel = string.format("|cFF%s%s|r %s pot by |c00%s%s|r\nNote: %s",
-                        Constants.ClassHexColors.rogue,
+                    itemLabel = (L.GDKP_OVERVIEW_MUTATION_ENTRY):format(
+                        Interface.Colors.ROGUE,
                         GL:goldToMoney(price),
                         mutator,
-                        GL:classHexColor(Auction.Winner.class),
-                        Auction.Winner.name,
+                        GL:nameFormat{ name = Auction.Winner.name, class = Auction.Winner.class, colorize = true, },
                         Auction.note or ""
                     );
                 else
-                    itemLabel = string.format(
-                        "|cFF%s%s|r paid |cFF%s%s|r for\n%s",
-                        GL:classHexColor(Auction.Winner.class),
-                        Auction.Winner.name or "",
-                        Constants.ClassHexColors.rogue,
+                    itemLabel = (L.GDKP_OVERVIEW_AUCTION_ENTRY):format(
+                        GL:nameFormat{ name = Auction.Winner.name, class = Auction.Winner.class, colorize = true, },
+                        Interface.Colors.ROGUE,
                         GL:goldToMoney(price),
                         ItemEntry.link
                     );
@@ -765,10 +723,8 @@ function Overview:refreshLedger()
                     reason = "-";
                 end
 
-                itemLabel = string.format(
-                    "|cFFbe3333Deleted by|r |cFF%s%s|r\nReason: %s",
-                    GL:classHexColor(Auction.CreatedBy.class),
-                    Auction.CreatedBy.name,
+                itemLabel = (L.GDKP_OVERVIEW_DELETED_ENTRY):format(
+                    GL:nameFormat{ name = Auction.CreatedBy.name, class = Auction.CreatedBy.class, colorize = true, },
                     reason
                 );
             end
@@ -783,7 +739,7 @@ function Overview:refreshLedger()
                 onClick = function()
                     Interface.GDKP.AuctionDetails:toggle(Session.ID, Auction.checksum);
                 end,
-                tooltip = "Details",
+                tooltip = L.DETAILS,
                 normalTexture = "Interface/AddOns/Gargul/Assets/Buttons/eye",
             });
             Eye:SetPoint("CENTER", ItemRow.frame, "CENTER");
@@ -802,14 +758,14 @@ function Overview:refreshLedger()
                         end
 
                         Interface.Dialogs.ConfirmWithSingleInputDialog:open({
-                            question = string.format("Provide a reason for deleting this entry"),
+                            question = L.GDKP_OVERVIEW_DELETE_ENTRY_REASON,
                             OnYes = function (reason)
                                 GDKPAuction:delete(Session.ID, Auction.ID, reason);
                             end,
                         });
                     end,
-                    tooltip = "Delete. Hold shift to bypass note",
-                    disabledTooltip = "You need lead or master loot to delete entries.\nYou can't delete entries on locked/deleted sessions",
+                    tooltip = L.GDKP_OVERVIEW_DELETE_ENTRY_TOOLTIP,
+                    disabledTooltip = L.GDKP_OVERVIEW_DELETE_ENTRY_DISABLED_TOOLTIP,
                     normalTexture = "Interface/AddOns/Gargul/Assets/Buttons/delete",
                     update = function (self)
                         self:SetEnabled(not auctionWasDeleted and not Session.deletedAt and not Session.lockedAt);
@@ -823,8 +779,8 @@ function Overview:refreshLedger()
             if (auctionWasDeleted) then
                 Restore = Interface:createButton(ItemRow.frame, {
                     onClick = function() GDKPAuction:restore(Session.ID, Auction.ID); end,
-                    tooltip = "Restore",
-                    disabledTooltip = "You need lead or master loot to restore entries.\nYou can't restore entries of locked/deleted sessions",
+                    tooltip = L.RESTORE,
+                    disabledTooltip = L.GDKP_OVERVIEW_RESTORE_ENTRY_DISABLED_TOOLTIP,
                     normalTexture = "Interface/AddOns/Gargul/Assets/Buttons/restore",
                     update = function (self)
                         self:SetEnabled(not Session.deletedAt and not Session.lockedAt);
@@ -840,8 +796,8 @@ function Overview:refreshLedger()
                     self:closeSubWindows();
                     Interface.GDKP.EditAuction:draw(Session.ID, Auction.checksum);
                 end,
-                tooltip = "Edit",
-                disabledTooltip = "You need lead or master loot to edit entries.\nYou can't edit deleted entries or entries on locked/deleted sessions",
+                tooltip = L.EDIT,
+                disabledTooltip = L.GDKP_OVERVIEW_EDIT_ENTRY_DISABLED_TOOLTIP,
                 normalTexture = "Interface/AddOns/Gargul/Assets/Buttons/edit",
                 update = function (self)
                     self:SetEnabled(not auctionWasDeleted and not Session.deletedAt and not Session.lockedAt);
@@ -857,8 +813,6 @@ end
 
 ---@return void
 function Overview:showTutorial()
-    GL:debug("Overview:drawDetails");
-
     self:clearDetailsFrame();
 
     local Wrapper = Interface:get(self, "Frame.SectionWrapper");
@@ -868,30 +822,30 @@ function Overview:showTutorial()
     Wrapper:AddChild(Details);
 
     local Title = Interface:get(self, "Label.Title");
-    Title:SetText("\n|c00FFF569Getting started|r");
+    Title:SetText(("\n|c00FFF569%s|r"):format(L.GDKP_TUTORIAL_TITLE));
 
     local Note = Interface:get(self, "Label.Note");
-    Note:SetText("|c00a79effFollow the steps below to quickly get started with Gargul GDKP!|r");
+    Note:SetText(("|c00A79EFF%s|r"):format(L.GDKP_TUTORIAL_INFO));
 
     local Steps;
     if (GL:empty(DB:get("GDKP.Ledger"))) then
         Steps = {
-            {1, "|c00a79effClick the |c00FFF569New|r button below to create your first GDKP session. It will show on the left when created.|r"},
+            {1, ("|c00A79EFF%s|r"):format(L.GDKP_TUTORIAL_STEP_NEW), },
         };
     elseif (not GDKPSession:activeSessionID()
         or GDKPSession:activeSessionID() ~= self.selectedSession
     ) then
         Steps = {
-            {1, "|c00a79effActivate this session by clicking the |c00FFF569Enable|r button below!|r"},
+            {1, ("|c00A79EFF%s|r"):format(L.GDKP_TUTORIAL_STEP_ACTIVATE), },
         };
     else
         Steps = {
-            {1, "|c00a79effYou're ready to sell items! |c00BE3333Read all the steps below carefully and test them all|r by yourself (no need to be in a raid) before starting your first GDKP raid!|r", },
-            {2, ("|c00a79eff|c00FFF569%s|r an item to auction or queue a single item|r"):format(GL.Settings:get("ShortcutKeys.rollOffOrAuction")), },
-            {3, "|c00a79effWant to auction multiple items at once? Run |c00FFF569/gl ma|r (or |c00FFF569/gl multiauction|r) or click the multi-auction icon in the top right of this window!|r", },
-            {4, string.format("|c00a79effWant to sell an item without anyone bidding? |c00FFF569%s|r on an item, pick a winner and set a price!|r", GL.Settings:get("ShortcutKeys.award"))},
-            {5, "|c00a79effIf all went well then you will see your freshly auctioned item(s) here!|r"},
-            {6, "|c00a79effHelpful commands:\n- |c00FFF569/gdkp|r to open this window\n- |c00FFF569/gl ma|r to open the multi-auction window\n- |c00FFF569/gl au|r to open the single item auctioneer / queue\n- |c00FFF569/gl pm|r to set up auto-looting\n |r"},
+            {1, ("|c00A79EFF%s|r"):format(L.GDKP_TUTORIAL_STEP_READY), },
+            {2, ("|c00A79EFF%s|r"):format((L.GDKP_TUTORIAL_STEP_AUCTION):format(GL.Settings:get("ShortcutKeys.rollOffOrAuction"))), },
+            {3, ("|c00A79EFF|r"):format(L.GDKP_TUTORIAL_STEP_MULTI_AUCTION), },
+            {4, ("|c00A79EFF%s|r"):format((L.GDKP_TUTORIAL_STEP_SELL):format(GL.Settings:get("ShortcutKeys.award"))), },
+            {5, ("|c00A79EFF%s|r"):format(L.GDKP_TUTORIAL_STEP_DONE), },
+            {6, ("|c00A79EFF%s|r"):format(L.GDKP_TUTORIAL_STEP_COMMANDS), },
         };
     end
 
@@ -949,8 +903,6 @@ end
 
 -- Clear the details frame
 function Overview:clearDetailsFrame()
-    GL:debug("GDKP:clearDetailsFrame");
-
     -- Release all of the action buttons into our pool so that we can reuse them later
     for _, Buttons in pairs(self.ActionButtons or {}) do
         for _, Button in pairs(Buttons) do
@@ -970,8 +922,6 @@ end
 ---
 ---@return void
 function Overview:createSessionsTable()
-    GL:debug("GDKP:createSessionsTable");
-
     local columns = {
         {
             name = "",
@@ -1031,8 +981,6 @@ end
 ---
 ---@return void
 function Overview:refreshSessions()
-    GL:debug("Overview:refreshSessions");
-
     -- If there's no sessions table then there's nothing to refresh
     if (not self.SessionsTable) then
         return;
@@ -1055,12 +1003,12 @@ function Overview:refreshSessions()
         if (Session.deletedAt) then
             priority = priority + deletedAtPriorityModifier;
             color = {r = .77, g = .12, b = .23};
-            title = title .. " (deleted)";
+            title = (L.GDKP_OVERVIEW_DELETED_SESSION):format(title);
         end
 
         if (checksum == DB.GDKP.activeSession) then
             priority = 0;
-            title = Session.title .. " (active)";
+            title = (L.GDKP_OVERVIEW_ACTIVE_SESSION):format(title);
         end
 
         -- Make sure we select the currently selected session by default
@@ -1106,5 +1054,3 @@ function Overview:refreshSessions()
 
     Events:fire("GL.GDKP_OVERVIEW_SESSIONS_REFRESHED");
 end
-
-GL:debug("Interfaces/GDKP/Overview.lua");

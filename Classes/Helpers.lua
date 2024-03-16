@@ -172,6 +172,7 @@ end
 ---@param class string
 ---@return string
 function GL:classColorize(var, class)
+    class = class and string.upper(class) or class;
     local classColor = { GetClassColor(class or "PRIEST") };
     return string.format("|c%s%s|r", classColor[4], var);
 end

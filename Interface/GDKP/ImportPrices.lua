@@ -1,3 +1,5 @@
+local L = Gargul_L;
+
 ---@type GL
 local _, GL = ...;
 
@@ -21,8 +23,6 @@ local ImportPrices = GL.Interface.GDKP.ImportPrices;
 
 ---@return Frame
 function ImportPrices:build()
-    GL:debug("Interface.GDKP.ImportPrices:build");
-
     ---@type AceGUIFrame
     local Window = Interface:get(self, "GDKPImportPrices");
 
@@ -37,25 +37,25 @@ function ImportPrices:build()
 
     ---@type AceGUILabel
     local Info = AceGUI:Create("Label");
-    Info:SetText("Import GDKP minimum prices and increments.\n\nThe format is as follows: ItemID + minimum or increment are required. (|c00BE3333REQUIRES A HEADER!!|r):\n\n|c00BE3333ItemID,Minimum,Increment|r|c00967FD2\n18608,4000,500|r");
+    Info:SetText(L.GDKP_IMPORT_PRICES_ABOUT);
     Info:SetFullWidth(true);
     Window:AddChild(Info);
 
     ---@type AceGUIMultiLineEditBox
     local ImportPricesBox = AceGUI:Create("MultiLineEditBox");
-    ImportPricesBox:SetText("");
+    ImportPricesBox:SetText("ItemID,Minimum,Increment\n");
     ImportPricesBox:SetFullWidth(true);
     ImportPricesBox:DisableButton(true);
-    ImportPricesBox:SetLabel("|c00FFF569Data|r");
+    ImportPricesBox:SetLabel(" ");
     ImportPricesBox:SetMaxLetters(0);
     Window:AddChild(ImportPricesBox);
 
     local Confirm = AceGUI:Create("Button");
-    Confirm:SetText("Import");
+    Confirm:SetText(L.IMPORT);
     Confirm:SetFullWidth(true);
     Confirm:SetCallback("OnClick", function()
         GL.Interface.Dialogs.PopupDialog:open{
-            question = "Delete existing price settings? Click yes to delete all price data, no to simply override existing ones with the data you provided here",
+            question = L.GDKP_IMPORT_PRICES_CONFIRM,
             OnYes = function ()
                 GDKP:resetPerItemSettings();
                 GDKP:importPerItemSettings(ImportPricesBox:GetText());
@@ -82,8 +82,6 @@ end
 
 ---@return Frame
 function ImportPrices:window()
-    GL:debug("Interface.GDKP.ImportPrices:window");
-
     local Window = Interface:get(self, "GDKPImportPrices");
 
     if (not Window) then
@@ -95,8 +93,6 @@ end
 
 ---@return void
 function ImportPrices:open()
-    GL:debug("Interface.GDKP.ImportPrices:open");
-
     if (self.isVisible) then
         return self:close();
     end
@@ -108,8 +104,6 @@ end
 
 ---@return void
 function ImportPrices:close()
-    GL:debug("Interface.GDKP.ImportPrices:close");
-
     local Window = self:window();
 
     if (self.isVisible) then
@@ -118,5 +112,3 @@ function ImportPrices:close()
         self.isVisible = false;
     end
 end
-
-GL:debug("Interface.GDKP.ImportPrices.lua");

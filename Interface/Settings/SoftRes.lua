@@ -5,7 +5,7 @@ local Overview = GL.Interface.Settings.Overview; ---@type SettingsOverview
 
 ---@class SoftResSettings
 GL.Interface.Settings.SoftRes = {
-    description = "Make a softreserve on softres.it and type |c00a79eff/gl sr|r in-game to get started!",
+    description = "Make a softreserve on softres.it and type |c00A79EFF/gl sr|r in-game to get started!",
     wikiUrl = "https://github.com/papa-smurf/Gargul/wiki/Importing-Soft-Reserves",
 };
 local SoftRes = GL.Interface.Settings.SoftRes; ---@type SoftResSettings

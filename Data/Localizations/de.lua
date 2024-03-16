@@ -73,16 +73,16 @@ L.SELECT_ALL = "Select / Disable all";
 L.IMPORT = "Import";
 L.EXPORT = "Export";
 L.FINAL_CALL = "Final Call";
-L.GDKP_QUEUE_EXPLANATION = [[|c00a79eff%s|r items in bags, loot windows or even on links in your chat to add them to this auction queue.
+L.GDKP_QUEUE_EXPLANATION = [[|c00A79EFF%s|r items in bags, loot windows or even on links in your chat to add them to this auction queue.
 Items in the queue will automatically be auctioned off once your current auction is done. Click the '%s' button to prevent this.
 
 Want Gargul to automatically award or disenchant auctions for you? Open the settings wheel on the left side!
 
 |c00FFF569Did you know?|r
 You can move items around with drag and drop
-Items will be remembered, even when you |c00a79eff/reload|r
+Items will be remembered, even when you |c00A79EFF/reload|r
 Queued items are automatically shown to raiders who have Gargul so they can prebid
-Gargul can also handle auto looting for you. Check it out with |c00a79eff/gl pm|r
+Gargul can also handle auto looting for you. Check it out with |c00A79EFF/gl pm|r
 ]];
 L.GDKP_QUEUE_HIDE_UNUSABLE = "Hide unusable items";
 L.GDKP_HIDE_UPCOMING_CONFIRMATION = "Are you sure? You won't be able to see, or bid on, upcoming items!";
@@ -155,16 +155,16 @@ You can resize the window, move it around, or minimize it. Try it out!
 For loot masters: removing items here will only remove them from your personal queue, not the actual GDKP queue!
 ]];
 L.TUTORIAL_MORE_HELP = "Need more help?";
-L.TUTORIAL_AUCTIONEER = [[|c00a79eff%s|r items in bags, loot windows or even on links in your chat to add them to the auction queue.
-Want to directly sell an item without bidding? Use |c00a79eff%s|r
+L.TUTORIAL_AUCTIONEER = [[|c00A79EFF%s|r items in bags, loot windows or even on links in your chat to add them to the auction queue.
+Want to directly sell an item without bidding? Use |c00A79EFF%s|r
 
-You can open the %s window directly by typing |c00a79eff/gl auction|r
+You can open the %s window directly by typing |c00A79EFF/gl auction|r
 
 Gargul tracks |c00FF0000ALL|r gold traded. Don't want a trade to be a part of this GDKP session? Check the "Exclude from GDKP" checkbox when trading!
 
 |c00FFF569Did you know?|r
 Awarded items will automatically be added to the trade window
-Gargul can also handle auto looting for you. Check it out with |c00a79eff/gl pm|r
+Gargul can also handle auto looting for you. Check it out with |c00A79EFF/gl pm|r
 ]];
 L.UPDATE_GARGUL = "Update Gargul!";
 L.WINDOW = "Window";
@@ -261,7 +261,7 @@ L.LM_OR_ASSIST_REQUIRED = "You need to be the master looter or have an assist / 
 L.COMM_PROGRESS = "Sent %s of %s bytes";
 L.BROADCAST_DELAYED_BY_COMBAT = "You are currently in combat, delaying broadcast";
 L.UNKNOWN_COMM_ACTION = "Unknown comm action '%s', make sure to update Gargul!";
-L.IMPORTED_AND_UPDATED_ON = "Imported on |c00a79eff%s|r at |c00a79eff%s|r, Updated on |c00a79eff%s|r at |c00a79eff%s|r";
+L.IMPORTED_AND_UPDATED_ON = "Imported on |c00A79EFF%s|r at |c00A79EFF%s|r, Updated on |c00A79EFF%s|r at |c00A79EFF%s|r";
 
 L.BASE64_DECODE_WARNING = "Unable to base64 decode data. Make sure you copy/paste it as-is without adding any additional characters or whitespaces!";
 L.ZLIB_DECOMPRESS_WARNING = "Unable to zlib decompress the data. Make sure you copy/paste it as-is without adding any additional characters or whitespaces!";
@@ -296,7 +296,7 @@ L.BOOSTED_ROLLS_IMPORT_ERROR = "Invalid data provided. Make sure that the conten
 L.BOOSTED_ROLLS_BROADCAST_NO_DATA_ERROR = "Nothing to broadcast, import Boosted Rolls data first!";
 L.BOOSTED_ROLLS_BROADCAST_PROCESS_FAILED = "Couldn't process BoostedRolls data received from %s";
 L.BOOSTED_ROLLS_BROADCAST_PROCESS_START = "Attempting to process incoming BoostedRolls data from %s";
-L.BOOSTED_ROLLS_UPDATE_CONFIRM = "Are you sure you want to update your existing boosted rolls with data from %s?\n\nYour latest update was on |c00a79eff%s|r, theirs on |c00a79eff%s|r.";
+L.BOOSTED_ROLLS_UPDATE_CONFIRM = "Are you sure you want to update your existing boosted rolls with data from %s?\n\nYour latest update was on |c00A79EFF%s|r, theirs on |c00A79EFF%s|r.";
 L.BOOSTED_ROLLS_IMPORT_CONFIRM = "Are you sure you want to clear your existing boosted roll data and import new data broadcasted by %s?";
 L.BOOSTED_ROLLS_IMPORT_TUTORIAL = "Here you can import boosted roll data and aliases from a table in CSV or TSV format or pasted from a Google Docs Sheet.\n\nThe table needs at least two columns: The player name followed by the amount of points. Additional columns are optional and may contain aliases for the player.\nHere is an example line:\n\nFoobar,240,Barfoo";
 L.BOOSTED_ROLLS_ALIAS_APPLY_BUTTON = "Apply aliases";
@@ -317,7 +317,7 @@ L.PLUSONES_BROADCAST_CONFIRM = "Are you sure you want to broadcast your plus one
 L.PLUSONES_IMPORT_ERROR = "Invalid data provided. Make sure that the contents follows the required format and no header row is included";
 L.PLUSONES_BROADCAST_PROCESS_START = "Attempting to process incoming PlusOnes data from %s";
 L.PLUSONES_CLEAR_CONFIRM = "%s wants to clear all your PlusOne data. Clear all data?";
-L.PLUSONES_UPDATE_CONFIRM = "Are you sure you want to update your existing PlusOne data with data from %s?\n\nYour latest update was on |c00a79eff%s|r, theirs on |c00a79eff%s|r.";
+L.PLUSONES_UPDATE_CONFIRM = "Are you sure you want to update your existing PlusOne data with data from %s?\n\nYour latest update was on |c00A79EFF%s|r, theirs on |c00A79EFF%s|r.";
 L.PLUSONES_IMPORT_CONFIRM = "Are you sure you want to import new data broadcasted by %s?";
 L.PLUSONES_IMPORT_CLEAR_CONFIRM = "Are you sure you want to clear your existing PlusOne data and import new data broadcasted by %s?";
 L.PLUSONES_AWARD_DIALOG_LABEL = "Add a +1";
@@ -395,7 +395,7 @@ L.TMB_SYNCED = "TMB data synced";
 L.VERSION_UPDATED = "|cff%sGargul|r is now updated to |cff%sv%s|r";
 L.VERSION_INVALID_WARNING = "Invalid version string provided in Version:addRelease";
 L.VERSION_INCOMPATIBLE_WARNING = "Gargul is out of date and won't work until you update!";
-L.VERSION_UPDATE_AVAILABLE = "v|c00a79effv%s|r is available on CurseForge/Wago. You can update without closing your game, just be sure to /reload !";
+L.VERSION_UPDATE_AVAILABLE = "v|c00A79EFFv%s|r is available on CurseForge/Wago. You can update without closing your game, just be sure to /reload !";
 L.VERSION_UPDATE = "Update Gargul!";
 
 --[[ PACKMULE /gl pm ]]
@@ -475,7 +475,7 @@ L.GDKP_MUTATOR_UNKNOWN = "Unknown mutator: %s";
 L.GDKP_MAIL_ALL = "Mail All";
 
 L.GDKP_EXPORT_CUTS_CUSTOM_FORMAT = "Custom (create your own format)";
-L.GDKP_EXPORT_CUTS_FORMAT_TOOLTIP = "Available values:";
+L.AVAILABLE_PLACEHOLDER_VALUES = "Available values:";
 L.GDKP_EXPORT_CUTS_FORMAT_RECEIVED_INFO = "total gold received from the player";
 L.GDKP_EXPORT_CUTS_FORMAT_GIVEN_INFO = "total gold given to the player";
 L.GDKP_EXPORT_CUTS_FORMAT_TRADED_INFO = "gold traded to the player";
@@ -516,10 +516,10 @@ L.GDKP_MULTIAUCTION_AUCTIONEER_PLAYER_OUTDATED_WARNING = "Not everyone is up-to-
 L.GDKP_MULTIAUCTION_AUCTIONEER_INFO = [[
 Here you determine which items to include in your multi-auction session
 
-Use the |c00a79effFill from inventory|r button below to add items that can still be traded to the list
+Use the |c00A79EFFFill from inventory|r button below to add items that can still be traded to the list
 Whenever you clear and re-open this window, your last fill settings will be used to automatically add items
 
-|c00a79eff%s|r items to manually add them to the list
+|c00A79EFF%s|r items to manually add them to the list
 ]];
 
 L.GDKP_UNKNOWN_ITEM = "Unknown itemID in Auction:create: %s";

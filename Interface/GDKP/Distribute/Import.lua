@@ -55,7 +55,7 @@ function Import:build()
     Window:AddChild(ImportBox);
 
     local Confirm = AceGUI:Create("Button");
-    Confirm:SetText("Import");
+    Confirm:SetText(L.IMPORT);
     Confirm:SetFullWidth(true);
     Confirm:SetCallback("OnClick", function()
         GL.Interface.Dialogs.PopupDialog:open{

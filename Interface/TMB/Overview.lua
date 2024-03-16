@@ -42,7 +42,7 @@ function Overview:draw()
     Window:SetPoint(GL.Interface:getPosition("TMBOverview"));
 
     Window:SetStatusText(string.format(
-        "Imported on |c00a79eff%s|r at |c00a79eff%s|r",
+        "Imported on |c00A79EFF%s|r at |c00A79EFF%s|r",
         date(L.DATE_FORMAT, DB:get("TMB.MetaData.importedAt", GetServerTime())),
         date(L.HOURS_MINUTES_FORMAT, DB:get("TMB.MetaData.importedAt", GetServerTime()))
     ));
@@ -82,7 +82,7 @@ function Overview:draw()
     local TimestampLabel = AceGUI:Create("Label");
     TimestampLabel:SetFullWidth(true);
     TimestampLabel:SetText(string.format(
-        "\nThis %s data was imported on |c00a79eff%s|r at |c00a79eff%s|r",
+        "\nThis %s data was imported on |c00A79EFF%s|r at |c00A79EFF%s|r",
         source,
         date(L.DATE_FORMAT, DB:get("TMB.MetaData.importedAt", GetServerTime())),
         date(L.HOURS_MINUTES_FORMAT, DB:get("TMB.MetaData.importedAt", GetServerTime()))
@@ -94,7 +94,7 @@ function Overview:draw()
     local ItemNumberLabel = AceGUI:Create("Label");
     ItemNumberLabel:SetFullWidth(true);
     ItemNumberLabel:SetText(string.format(
-        "\nNumber of items imported: |c00a79eff%s|r",
+        "\nNumber of items imported: |c00A79EFF%s|r",
         GL:count(DB:get("TMB.Items")) or 0
 
     ));
@@ -111,7 +111,7 @@ function Overview:draw()
     local PriorityNotesLabel = AceGUI:Create("Label");
     PriorityNotesLabel:SetFullWidth(true);
     PriorityNotesLabel:SetText(string.format(
-        "\nPriority notes available: |c00a79eff%s|r",
+        "\nPriority notes available: |c00A79EFF%s|r",
         notesAvailable
     ));
     PriorityNotesLabel:SetJustifyH("MIDDLE");
@@ -127,7 +127,7 @@ function Overview:draw()
     local AutoSharingStatusLabel = AceGUI:Create("Label");
     AutoSharingStatusLabel:SetFullWidth(true);
     AutoSharingStatusLabel:SetText(string.format(
-        "\nAuto-sharing enabled: |c00a79eff%s|r",
+        "\nAuto-sharing enabled: |c00A79EFF%s|r",
         autoSharingEnabled
     ));
     AutoSharingStatusLabel:SetJustifyH("MIDDLE");

@@ -32,7 +32,9 @@ L.AUTO_AWARD = "Auto award";
 L.AUTO_TRADE_OPTIONS = "Auto trade";
 L.BID = "Bid";
 L.BIDS = "Bids";
+L.UNKNOWN = "unknown";
 L.BY = "by"; -- As in "bid BY"
+L.DISCORD_URL = "https://discord.gg/D3mDhYPVzf";
 L.BONUS_FEATURE_EXPLANATION = "Gargul has a few tricks up its sleeve that you might not be aware of. Have a looksy!";
 L.BOOSTED_ROLLS = "Boosted Rolls";
 L.BROADCAST = "Broadcast";
@@ -48,6 +50,7 @@ L.BROADCAST_TARGET_REQUIRED = "Whisper requires a target player";
 L.BROADCAST_TRADE_TIME_LEFT = "Max trade time left (in minutes)";
 L.CANCEL = "Cancel";
 L.ENABLE = "Enable";
+L.NEW = "New";
 L.ABOUT = "About";
 L.NOTE = "Note";
 L.OK = "Ok";
@@ -73,22 +76,24 @@ L.CUT_MAIL_GOLD_MISMATCH = "Mail SENT according to game, but your remaining GOLD
 L.CUT_MAIL_EVEN = "You don't owe %s any gold";
 L.CUT_MAIL_SUBJECT = "Gargul GDKP: %sg";
 L.DELETE = "Delete";
+L.DISABLE = "Disable";
 L.EDIT = "Edit";
+L.DETAILS = "Details";
 L.SELECT_ALL = "Select / Disable all";
 L.IMPORT = "Import";
 L.EXPORT = "Export";
 L.FINAL_CALL = "Final Call";
 L.LEDGER = "Ledger";
-L.GDKP_QUEUE_EXPLANATION = [[|c00a79eff%s|r items in bags, loot windows or even on links in your chat to add them to this auction queue.
+L.GDKP_QUEUE_EXPLANATION = [[|c00A79EFF%s|r items in bags, loot windows or even on links in your chat to add them to this auction queue.
 Items in the queue will automatically be auctioned off once your current auction is done. Click the '%s' button to prevent this.
 
 Want Gargul to automatically award or disenchant auctions for you? Open the settings wheel on the left side!
 
 |c00FFF569Did you know?|r
 You can move items around with drag and drop
-Items will be remembered, even when you |c00a79eff/reload|r
+Items will be remembered, even when you |c00A79EFF/reload|r
 Queued items are automatically shown to raiders who have Gargul so they can prebid
-Gargul can also handle auto looting for you. Check it out with |c00a79eff/gl pm|r
+Gargul can also handle auto looting for you. Check it out with |c00A79EFF/gl pm|r
 ]];
 L.GDKP_QUEUE_HIDE_UNUSABLE = "Hide unusable items";
 L.GDKP_HIDE_UPCOMING_CONFIRMATION = "Are you sure? You won't be able to see, or bid on, upcoming items!";
@@ -164,16 +169,16 @@ You can resize the window, move it around, or minimize it. Try it out!
 For loot masters: removing items here will only remove them from your personal queue, not the actual GDKP queue!
 ]];
 L.TUTORIAL_MORE_HELP = "Need more help?";
-L.TUTORIAL_AUCTIONEER = [[|c00a79eff%s|r items in bags, loot windows or even on links in your chat to add them to the auction queue.
-Want to directly sell an item without bidding? Use |c00a79eff%s|r
+L.TUTORIAL_AUCTIONEER = [[|c00A79EFF%s|r items in bags, loot windows or even on links in your chat to add them to the auction queue.
+Want to directly sell an item without bidding? Use |c00A79EFF%s|r
 
-You can open the %s window directly by typing |c00a79eff/gl auction|r
+You can open the %s window directly by typing |c00A79EFF/gl auction|r
 
 Gargul tracks |c00FF0000ALL|r gold traded. Don't want a trade to be a part of this GDKP session? Check the "Exclude from GDKP" checkbox when trading!
 
 |c00FFF569Did you know?|r
 Awarded items will automatically be added to the trade window
-Gargul can also handle auto looting for you. Check it out with |c00a79eff/gl pm|r
+Gargul can also handle auto looting for you. Check it out with |c00A79EFF/gl pm|r
 ]];
 L.UPDATE_GARGUL = "Update Gargul!";
 L.WINDOW = "Window";
@@ -217,6 +222,8 @@ L.VERSION_CHECK_CHAT_OFFLINE = "The following players were offline:";
 
 --[[ GLOBAL ]]
 L.DFT = "DFT";
+L.LEFT_SYMBOL = "<";
+L.RIGHT_SYMBOL = ">";
 L.BIND_ON_EQUIP_ABBR = "BOE";
 L.CLASSICPRIO_ABBR = "CPR";
 L.THATSMYBIS_ABBR = "TMB";
@@ -245,6 +252,12 @@ L.SETTINGS = "Settings";
 L.PLUS1 = "+1";
 L.AWARD_HISTORY = "Award history";
 L.PLAYER = "Player";
+L.PAID = "Paid";
+L.CUT = "Cut";
+L.CUTS = "Cuts";
+L.GIVEN = "Given";
+L.MAILED = "Mailed";
+L.BALANCE = "Balance";
 L.ROLL = "Roll";
 L.NOTE = "Note";
 L.ITEM = "Item";
@@ -274,10 +287,11 @@ L.LM_OR_ASSIST_REQUIRED = "You need to be the master looter or have an assist / 
 L.COMM_PROGRESS = "Sent %s of %s bytes";
 L.BROADCAST_DELAYED_BY_COMBAT = "You are currently in combat, delaying broadcast";
 L.UNKNOWN_COMM_ACTION = "Unknown comm action '%s', make sure to update Gargul!";
-L.IMPORTED_AND_UPDATED_ON = "Imported on |c00a79eff%s|r at |c00a79eff%s|r, Updated on |c00a79eff%s|r at |c00a79eff%s|r";
+L.IMPORTED_AND_UPDATED_ON = "Imported on |c00A79EFF%s|r at |c00A79EFF%s|r, Updated on |c00A79EFF%s|r at |c00A79EFF%s|r";
 
 L.BASE64_DECODE_WARNING = "Unable to base64 decode data. Make sure you copy/paste it as-is without adding any additional characters or whitespaces!";
 L.ZLIB_DECOMPRESS_WARNING = "Unable to zlib decompress the data. Make sure you copy/paste it as-is without adding any additional characters or whitespaces!";
+L.ZLIB_COMPRESS_WARNING = ("Unable to zlib compress the data. Contact support via %s"):format(L.DISCORD_URL);
 L.JSON_DECODE_WARNING = "Unable to JSON decode data. Make sure you copy/paste it as-is without adding any additional characters or whitespaces!";
 
 L.TUTORIAL_AWARD_OVERVIEW = ([[
@@ -309,7 +323,7 @@ L.BOOSTED_ROLLS_IMPORT_ERROR = "Invalid data provided. Make sure that the conten
 L.BOOSTED_ROLLS_BROADCAST_NO_DATA_ERROR = "Nothing to broadcast, import Boosted Rolls data first!";
 L.BOOSTED_ROLLS_BROADCAST_PROCESS_FAILED = "Couldn't process BoostedRolls data received from %s";
 L.BOOSTED_ROLLS_BROADCAST_PROCESS_START = "Attempting to process incoming BoostedRolls data from %s";
-L.BOOSTED_ROLLS_UPDATE_CONFIRM = "Are you sure you want to update your existing boosted rolls with data from %s?\n\nYour latest update was on |c00a79eff%s|r, theirs on |c00a79eff%s|r.";
+L.BOOSTED_ROLLS_UPDATE_CONFIRM = "Are you sure you want to update your existing boosted rolls with data from %s?\n\nYour latest update was on |c00A79EFF%s|r, theirs on |c00A79EFF%s|r.";
 L.BOOSTED_ROLLS_IMPORT_CONFIRM = "Are you sure you want to clear your existing boosted roll data and import new data broadcasted by %s?";
 L.BOOSTED_ROLLS_IMPORT_TUTORIAL = "Here you can import boosted roll data and aliases from a table in CSV or TSV format or pasted from a Google Docs Sheet.\n\nThe table needs at least two columns: The player name followed by the amount of points. Additional columns are optional and may contain aliases for the player.\nHere is an example line:\n\nFoobar,240,Barfoo";
 L.BOOSTED_ROLLS_ALIAS_APPLY_BUTTON = "Apply aliases";
@@ -324,13 +338,24 @@ L.BOOSTED_ROLLS_ALIASES = "Aliases";
 L.BOOSTED_ROLLS_AWARD_DIALOG_LABEL = "Boosted Roll Cost:";
 
 --[[ PLUS ONES /gl +1 ]]
+L.PLUSONES_IMPORT_INFO = [[
+Here you can import plus one data from a table in CSV or TSV format or pasted from a Google Docs Sheet.
+
+The table needs at least two columns: The player name followed by the amount of points. Additional columns are ignored.
+
+Here is an example line:
+
+Foobar,240
+]];
+
+
 L.PLUSONES_WHISPER_PREFIXES = "!plusone|!po|!+1";
 L.PLUSONES_CLEAR_CONFIRM = "Are you sure you want to clear all plus one data?";
 L.PLUSONES_BROADCAST_CONFIRM = "Are you sure you want to broadcast your plus one data to everyone in your party/raid?";
 L.PLUSONES_IMPORT_ERROR = "Invalid data provided. Make sure that the contents follows the required format and no header row is included";
 L.PLUSONES_BROADCAST_PROCESS_START = "Attempting to process incoming PlusOnes data from %s";
 L.PLUSONES_CLEAR_CONFIRM = "%s wants to clear all your PlusOne data. Clear all data?";
-L.PLUSONES_UPDATE_CONFIRM = "Are you sure you want to update your existing PlusOne data with data from %s?\n\nYour latest update was on |c00a79eff%s|r, theirs on |c00a79eff%s|r.";
+L.PLUSONES_UPDATE_CONFIRM = "Are you sure you want to update your existing PlusOne data with data from %s?\n\nYour latest update was on |c00A79EFF%s|r, theirs on |c00A79EFF%s|r.";
 L.PLUSONES_IMPORT_CONFIRM = "Are you sure you want to import new data broadcasted by %s?";
 L.PLUSONES_IMPORT_CLEAR_CONFIRM = "Are you sure you want to clear your existing PlusOne data and import new data broadcasted by %s?";
 L.PLUSONES_AWARD_DIALOG_LABEL = "Add a +1";
@@ -408,7 +433,7 @@ L.TMB_SYNCED = "TMB data synced";
 L.VERSION_UPDATED = "|cff%sGargul|r is now updated to |cff%sv%s|r";
 L.VERSION_INVALID_WARNING = "Invalid version string provided in Version:addRelease";
 L.VERSION_INCOMPATIBLE_WARNING = "Gargul is out of date and won't work until you update!";
-L.VERSION_UPDATE_AVAILABLE = "v|c00a79effv%s|r is available on CurseForge/Wago. You can update without closing your game, just be sure to /reload !";
+L.VERSION_UPDATE_AVAILABLE = "v|c00A79EFFv%s|r is available on CurseForge/Wago. You can update without closing your game, just be sure to /reload !";
 L.VERSION_UPDATE = "Update Gargul!";
 
 --[[ PACKMULE /gl pm ]]
@@ -427,8 +452,122 @@ L.PACKMULE_AUTOLOOT_SELF_PLACEHOLDER = "SELF";
 
 --[[ GDKP /gl gdkp ]]
 L.GDKP = "GDKP";
+L.GDKP_AUCTIONS = "Auctions";
 L.GDKP_CREATE = "Create a new GDKP session";
-L.GDKP_MANAGEMENT_CUT = "Management Cut";
+L.GDKP_CREATE_SESSION_TYPE_LABEL = "Auction type (|c00A79EFFi|r for more info)";
+L.GDKP_CREATE_SESSION_TYPE_INFO = [[
+
+|c00A79EFFMulti-Auction|r allows you to start bids on multiple items at once, speeding things up!
+Follow the instructions after creating this session to get started
+
+With |c00A79EFFSingle-Auction|r you choose to auction off single items instead or use the queue
+
+Selecting |c00A79EFFMulti-Auction|r prevents dropped items from being added to the queue
+You can mix |c00A79EFFMulti-Auction|r with |c00A79EFFSingle-Auction|r and the queue but we strongly advise against it
+
+]];
+L.GDKP_CREATE_SESSION_TYPE_MULTI = "Multi-Auction";
+L.GDKP_CREATE_SESSION_TYPE_SINGLE = "Single-Auction";
+L.GDKP_CREATE_MANAGEMENT_CUT = "Management Cut %";
+L.GDKP_CREATE_SESSION_SWITCH = "Switch to this session";
+L.GDKP_CREATE_SESSION_INVALID_CUT = "Management Cut needs to be empty or between 0 and 99 (no % sign!)";
+L.GDKP_CREATE_SESSION_INVALID_TYPE = "Choose a session type!";
+L.GDKP_CREATE_SUCCESSFUL = "Session created. We advise you to /reload so that it's stored properly in case your game crashes!";
+L.GDKP_AUCTION_PAID_AMOUNT = "Set paid amount (read left)";
+L.GDKP_AUCTION_PAID_AMOUNT_INFO = [[
+
+Gargul automatically keeps track of gold traded. As long as players pay
+for what they bought then you shouldn't ever need this field
+
+\"Paid amount\" refers to the amount of gold the buyer already traded you.
+This does not change the actual price of the item!
+
+Warning: only set a value here if the player promises to pay
+outside of the raid or trades the gold from an alt / mail etc!
+
+
+]];
+L.GDKP_SESSION_EDIT_TITLE = "Editing %s";
+L.GDKP_EXPORT_AUCTIONS_CUSTOM = "Custom (create your own format)";
+L.GDKP_EXPORT_AUCTIONS_JSON = "Detailed (JSON)";
+L.GDKP_EXPORT_AUCTIONS_SHARE = "Share (can be imported by other players)";
+L.GDKP_EXPORT_CUSTOM_HEADER = "Your custom header";
+L.GDKP_EXPORT_CUSTOM_FORMAT = "Your custom format";
+L.GDKP_EXPORT_FORMAT_TITLE = "The title of the GDKP session";
+L.GDKP_EXPORT_FORMAT_START = "Date/time at which the first item was awarded";
+L.GDKP_EXPORT_POT_CHANGED = "Pot changed";
+L.GDKP_IMPORT_SESSION = "Import GDKP Session";
+L.GDKP_IMPORT_SESSION_ABOUT = ("Here you can import (and continue) a GDKP session. In order to get a GDKP session from someone they need to export it in |c00FFF569/gdkp|r where they select the \"%s\" format"):format(L.GDKP_EXPORT_AUCTIONS_SHARE);
+L.GDKP_IMPORT_SESSION_UPDATE_CONFIRM = "This GDKP session created by %s appears to exist already, do you wish to override it?";
+L.GDKP_IMPORT_SESSION_CREATE_CONFIRM = "You're about to import a GDKP session created by %s, are you sure?";
+
+L.GDKP_IMPORT_PRICES_ABOUT = [[
+Import GDKP minimum prices and increments.
+
+The format is as follows: ItemID + minimum or increment are required. (|c00BE3333REQUIRES A HEADER!!|r):
+
+|c00BE3333ItemID,Minimum,Increment|r|c00967FD2
+18608,4000,500|r
+]];
+L.GDKP_IMPORT_PRICES_CONFIRM = "Delete existing price settings? Click yes to delete all price data, no to simply override existing ones with the data you provided here";
+L.GDKP_LEDGER_MUTATION = "Gold %s by"; --%s = removed or added
+L.GDKP_LEDGER_LEGEND_PAID_TO = "Gold paid to %s";
+L.GDKP_LEDGER_LEGEND_RECEIVED_FROM = "Gold received from %s";
+L.GDKP_LEDGER_LEGEND_MAILED_FROM = "Gold mailed to you by %s";
+L.GDKP_LEDGER_LEGEND_BALANCE = "Balance:   |c0092FF000|r ? You're square!  |  |c00BE333330|r ? you owe %s 30g  |  |c00F7922E50|r ? %s owes you 50g";
+L.GDKP_LEDGER_POT = "Total pot: %sg | Management cut: %sg (%s%%) | To distribute: %sg";
+L.GDKP_LEDGER_SESSION_BY = "|c00967FD2%s|r | By %s%s | On |c00967FD2%s|r";
+
+L.GDKP_OVERVIEW_POT_TOOLTIP = [[
+Pot: %s
+Management cut (%s%%): %sg
+Per player cut (1/%s): %sg
+]];
+L.GDKP_OVERVIEW_MULTI_AUCTION_TOOLTIP = "Multi-auction: auction multiple items at once!";
+L.GDKP_OVERVIEW_LOCK_OR_UNLOCK_TOOLTIP = "Lock or unlock the session";
+L.GDKP_OVERVIEW_UNLOCK_TOOLTIP = "Unlock the session";
+L.GDKP_OVERVIEW_LOCK_TOOLTIP = "Lock the session for payout";
+L.GDKP_OVERVIEW_ADJUST_GOLD_TOOLTIP = "Add/Remove gold";
+L.GDKP_OVERVIEW_ADJUST_GOLD_DISABLED_TOOLTIP = "You need lead or master loot to adjust gold.\nYou can't adjust gold on locked/deleted sessions";
+L.GDKP_OVERVIEW_LEDGER_TOOLTIP = "Show a full overview of the ledger,\nideal for screenshotting purposes!";
+L.GDKP_OVERVIEW_DELETE_TOOLTIP = "Sessions with auctions attached to them will be deleted after 48 hours";
+L.GDKP_OVERVIEW_IMPORT_TOOLTIP = "Import a session from another player or account";
+L.GDKP_OVERVIEW_EXPORT_TOOLTIP = "Export a session so others can view session details or even replace you as a loot master";
+L.GDKP_OVERVIEW_UNLOCK_CONFIRM = "Unlocking and changing the pot or cuts can get really messy, especially if you've already done payouts. Are you sure?";
+L.GDKP_OVERVIEW_LOCK_CONFIRM = "Locking a session means you can't auction items or otherwise change anything until you unlock it, are you sure?";
+L.GDKP_OVERVIEW_SESSION_DETAILS = "By %s%s | On |c00%s%s|r%s"; -- By name<guild> on date
+L.GDKP_OVERVIEW_MUTATION_ADDED = "added to";
+L.GDKP_OVERVIEW_MUTATION_REMOVED = "removed from";
+L.GDKP_OVERVIEW_MUTATION_ENTRY = "|cFF%s%s|r %s pot by %s\nNote: %s"; -- i.e. 5000g added to pot by winner \n Note: I made a booboo
+L.GDKP_OVERVIEW_AUCTION_ENTRY = "%s paid |cFF%s%s|r for\n%s"; -- i.e. Player paid 5000g for \n [Benediction]
+L.GDKP_OVERVIEW_DELETED_ENTRY = "|cFFbe3333Deleted by|r %s\nReason: %s";
+L.GDKP_OVERVIEW_DELETE_ENTRY_REASON = "Provide a reason for deleting this entry";
+L.GDKP_OVERVIEW_DELETE_ENTRY_TOOLTIP = "Delete. Hold shift to bypass note";
+L.GDKP_OVERVIEW_DELETE_ENTRY_DISABLED_TOOLTIP = "You need lead or master loot to delete entries.\nYou can't delete entries on locked/deleted sessions";
+L.GDKP_OVERVIEW_RESTORE_ENTRY_DISABLED_TOOLTIP = "You need lead or master loot to restore entries.\nYou can't restore entries of locked/deleted sessions";
+L.GDKP_OVERVIEW_EDIT_ENTRY_DISABLED_TOOLTIP = "You need lead or master loot to edit entries.\nYou can't edit deleted entries or entries on locked/deleted sessions";
+L.GDKP_OVERVIEW_ACTIVE_SESSION = " (active)";
+L.GDKP_OVERVIEW_DELETED_SESSION = " (deleted)";
+
+L.GDKP_TUTORIAL_TITLE = "Getting started";
+L.GDKP_TUTORIAL_INFO = "Follow the steps below to quickly get started with Gargul GDKP!";
+L.GDKP_TUTORIAL_STEP_NEW = "Click the |c00FFF569New|r button below to create your first GDKP session. It will show on the left when created";
+L.GDKP_TUTORIAL_STEP_ACTIVATE = "Activate this session by clicking the |c00FFF569Enable|r button below!";
+L.GDKP_TUTORIAL_STEP_READY = "You're ready to sell items! |c00BE3333Read all the steps below carefully and test them all|r by yourself (no need to be in a raid) before starting your first GDKP raid!";
+L.GDKP_TUTORIAL_STEP_AUCTION = "|c00FFF569%s|r an item to auction or queue a single item"; -- %s holds the auction item hotkey (default ALT_CLICK)
+L.GDKP_TUTORIAL_STEP_MULTI_AUCTION = "Want to auction multiple items at once? Run |c00FFF569/gl ma|r (or |c00FFF569/gl multiauction|r) or click the multi-auction icon in the top right of this window!";
+L.GDKP_TUTORIAL_STEP_SELL = "Want to sell an item without anyone bidding? |c00FFF569%s|r on an item, pick a winner and set a price!";
+L.GDKP_TUTORIAL_STEP_DONE = "If all went well then you will see your freshly auctioned item(s) here!";
+L.GDKP_TUTORIAL_STEP_COMMANDS = [[
+Helpful commands:
+- |c00FFF569/gdkp|r to open this window
+- |c00FFF569/gl ma|r to open the multi-auction window
+- |c00FFF569/gl au|r to open the single item auctioneer / queue
+- |c00FFF569/gl pm|r to set up auto-looting
+
+]];
+
+
 L.GDKP_ADD_DROPS_TO_QUEUE = "Add dropped loot to queue";
 L.GDKP_ALL_CUTS_MAILED = "All cuts were mailed!";
 L.GDKP_TRY_MULTIAUCTION = "Check out Multi Auctions!";
@@ -438,8 +577,24 @@ L.GDKP_TRADE_GOLD_TO_GIVE = "To give: %s";
 L.GDKP_TRADE_GOLD_TO_RECEIVE = "To receive: %s";
 L.GDKP_TRADE_GOLD_INSUFFICIENT_FUNDS = "You don't have enough money to pay %s";
 L.GDKP_TRADE_GOLD_ADD_FAILED = "Unable to add %s to the trade window. Try adding it manually!";
-L.GDKP_TRADE_BALANCE_INFO = "|c00967FD2GDKP Session|r\nSpent by player: %s\nGiven: %s\nReceived: %s\nPlayer cut: %s\n\n%s";
-L.GDKP_ITEM_SALE_HISTORY_TOOLTIP = " \n|c00967FD2GDKP Data (sold %sx)|r\nLast sold for: %s\nAverage price: %s\nMinimum bid: %s\nIncrement: %s\n";
+L.GDKP_TRADE_BALANCE_INFO = [[
+|c00967FD2GDKP Session|r
+Spent by player: %s
+Given: %s
+Received: %s
+Player cut: %s
+
+%s
+]];
+L.GDKP_ITEM_SALE_HISTORY_TOOLTIP = [[
+
+|c00967FD2GDKP Data (sold %sx)|r
+Last sold for: %s
+Average price: %s
+Minimum bid: %s
+Increment: %s
+
+]];
 L.GDKP_ACTIVATED = "GDKP Active!";
 L.GDKP_PRICE_IMPORT_MISSING_HEADER = "Missing header, note: it's case-sensitive!";
 L.GDKP_CUT_IMPORT_MISSING_HEADER = "Missing header, note: it's case-sensitive!";
@@ -522,7 +677,7 @@ L.GDKP_MULTIAUCTION_CLIENT_HIDE_INACTIVE = "Hide inactive";
 L.GDKP_MULTIAUCTION_CLIENT_SHOW_INACTIVE = "Show inactive";
 L.GDKP_MULTIAUCTION_CLIENT_INACTIVE_TOGGLE_TOOLTIP = "Show/Hide finished auctions";
 L.GDKP_MULTIAUCTION_CLIENT_ADD_ITEM = "With this window open, %s items to add them to the list";
-L.GDKP_MULTIAUCTION_CLIENT_REOPEN_INFO = "Bidding window closed, use |c00a79eff/gl bid|r to reopen it!";
+L.GDKP_MULTIAUCTION_CLIENT_REOPEN_INFO = "Bidding window closed, use |c00A79EFF/gl bid|r to reopen it!";
 L.GDKP_MULTIAUCTION_CLIENT_CLOSE_ALL = "Close all";
 L.GDKP_MULTIAUCTION_CLIENT_CLOSE_ALL_CONFIRM = "Close ALL auctions?";
 L.GDKP_MULTIAUCTION_CLIENT_CLOSE_ALL_TOOLTIP = [[
@@ -609,7 +764,7 @@ L.GDKP_MUTATOR_UNKNOWN = "Unknown mutator: %s";
 L.GDKP_MAIL_ALL = "Mail All";
 
 L.GDKP_EXPORT_CUTS_CUSTOM_FORMAT = "Custom (create your own format)";
-L.GDKP_EXPORT_CUTS_FORMAT_TOOLTIP = "Available values:";
+L.AVAILABLE_PLACEHOLDER_VALUES = "Available values:";
 L.GDKP_EXPORT_CUTS_FORMAT_RECEIVED_INFO = "total gold received from the player";
 L.GDKP_EXPORT_CUTS_FORMAT_GIVEN_INFO = "total gold given to the player";
 L.GDKP_EXPORT_CUTS_FORMAT_TRADED_INFO = "gold traded to the player";
@@ -650,10 +805,10 @@ L.GDKP_MULTIAUCTION_AUCTIONEER_PLAYER_OUTDATED_WARNING = "Not everyone is up-to-
 L.GDKP_MULTIAUCTION_AUCTIONEER_INFO = [[
 Here you determine which items to include in your multi-auction session
 
-Use the |c00a79effFill from inventory|r button below to add items that can still be traded to the list
+Use the |c00A79EFFFill from inventory|r button below to add items that can still be traded to the list
 Whenever you clear and re-open this window, your last fill settings will be used to automatically add items
 
-|c00a79eff%s|r items to manually add them to the list
+|c00A79EFF%s|r items to manually add them to the list
 ]];
 
 L.GDKP_UNKNOWN_ITEM = "Unknown itemID in Auction:create: %s";

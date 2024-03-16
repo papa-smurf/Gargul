@@ -235,7 +235,7 @@ function Overview:build()
     Interface:set(self, "AddRaider", AddRaider);
 
     local Import = AceGUI:Create("Button");
-    Import:SetText("Import");
+    Import:SetText(L.IMPORT);
     Import:SetWidth(90);
     Import:SetHeight(20);
     Import:SetCallback("OnClick", function()
@@ -283,7 +283,7 @@ function Overview:build()
     end);
 
     local Export = AceGUI:Create("Button");
-    Export:SetText("Export");
+    Export:SetText(L.EXPORT);
     Export:SetWidth(100);
     Export:SetHeight(20);
     Export:SetCallback("OnClick", function()

@@ -54,46 +54,30 @@ function CreateSession:build()
     ManagementCut:DisableButton(true);
     ManagementCut:SetHeight(20);
     ManagementCut:SetFullWidth(true);
-    ManagementCut:SetLabel(L.GDKP_MANAGEMENT_CUT);
+    ManagementCut:SetLabel(L.GDKP_CREATE_MANAGEMENT_CUT);
     Window:AddChild(ManagementCut);
 
     local SessionTypeLabel = GL.AceGUI:Create("Label");
-    SessionTypeLabel:SetText("     Auction type (|c00a79effi|r for more info)");
+    SessionTypeLabel:SetText("     " .. L.GDKP_CREATE_SESSION_TYPE_LABEL);
     SessionTypeLabel:SetColor(1, .95686, .40784);
     SessionTypeLabel:SetHeight(20);
     SessionTypeLabel:SetFullWidth(true);
     Window:AddChild(SessionTypeLabel);
 
-    local MutatorHelpIcon = AceGUI:Create("Icon");
-    MutatorHelpIcon:SetWidth(12);
-    MutatorHelpIcon:SetHeight(12);
-    MutatorHelpIcon:SetImageSize(12, 12);
-    MutatorHelpIcon:SetImage("interface/friendsframe/informationicon");
-    MutatorHelpIcon.frame:SetParent(SessionTypeLabel.frame);
-    MutatorHelpIcon.frame:SetPoint("BOTTOMLEFT", SessionTypeLabel.frame, "BOTTOMLEFT", 1, -6);
-    MutatorHelpIcon.frame:Show();
+    local SessionTypeHelpIcon = AceGUI:Create("Icon");
+    SessionTypeHelpIcon:SetWidth(12);
+    SessionTypeHelpIcon:SetHeight(12);
+    SessionTypeHelpIcon:SetImageSize(12, 12);
+    SessionTypeHelpIcon:SetImage("interface/friendsframe/informationicon");
+    SessionTypeHelpIcon.frame:SetParent(SessionTypeLabel.frame);
+    SessionTypeHelpIcon.frame:SetPoint("BOTTOMLEFT", SessionTypeLabel.frame, "BOTTOMLEFT", 1, -6);
+    SessionTypeHelpIcon.frame:Show();
 
-    MutatorHelpIcon:SetCallback("OnEnter", function()
-        GameTooltip:SetOwner(MutatorHelpIcon.frame, "ANCHOR_RIGHT");
-        GameTooltip:AddLine(" ");
-        GameTooltip:AddLine("|c00a79effMulti-Auction|r allows you to start bids on multiple items at once, speeding things up!");
-        GameTooltip:AddLine("Follow the instructions after creating this session to get started");
-        GameTooltip:AddLine(" ");
-        GameTooltip:AddLine("With |c00a79effSingle-Auction|r you choose to auction off single items instead or use the queue");
-        GameTooltip:AddLine(" ");
-        GameTooltip:AddLine("Selecting |c00a79effMulti-Auction|r prevents dropped items from being added to the queue");
-        GameTooltip:AddLine("You can mix |c00a79effMulti-Auction|r with |c00a79effSingle-Auction|r and the queue but we strongly advise against it");
-        GameTooltip:AddLine(" ");
-        GameTooltip:Show();
-    end);
-
-    MutatorHelpIcon:SetCallback("OnLeave", function()
-        GameTooltip:Hide();
-    end);
+    Interface:addTooltip(SessionTypeHelpIcon, L.GDKP_CREATE_SESSION_TYPE_INFO, "RIGHT");
 
     local SessionType = {
-        multi = "Multi-Auction",
-        single = "Single-Auction",
+        multi = L.GDKP_CREATE_SESSION_TYPE_MULTI,
+        single = L.GDKP_CREATE_SESSION_TYPE_SINGLE,
     };
 
     local SessionTypeDropdown = GL.AceGUI:Create("Dropdown");
@@ -103,7 +87,7 @@ function CreateSession:build()
 
     local SwitchCheckbox = AceGUI:Create("CheckBox");
     SwitchCheckbox:SetValue(false);
-    SwitchCheckbox:SetLabel("Switch to this session");
+    SwitchCheckbox:SetLabel(L.GDKP_CREATE_SESSION_SWITCH);
     SwitchCheckbox:SetFullWidth(true);
     SwitchCheckbox:SetValue(GDKPSession:getActive() == false);
     SwitchCheckbox.text:SetTextColor(.99, .85, .06);
@@ -112,12 +96,12 @@ function CreateSession:build()
     Window:AddChild(SwitchCheckbox);
 
     local Save = AceGUI:Create("Button");
-    Save:SetText("Save");
+    Save:SetText(L.SAVE);
     Save:SetFullWidth(true);
     Save:SetCallback("OnClick", function()
         local title = strtrim(Title:GetText());
         if (GL:empty(title)) then
-            GL:warning("Add a GDKP name");
+            GL:warning(L.INVALID_DATA_WARNING);
             return;
         end
 
@@ -127,21 +111,21 @@ function CreateSession:build()
             if (not managementCut
                 or managementCut < 0
             ) then
-                GL:warning("Management Cut needs to be empty or between 0 and 99 (no % sign!)");
+                GL:warning(L.GDKP_CREATE_SESSION_INVALID_CUT);
                 return;
             end
         end
 
         local type = SessionTypeDropdown:GetValue();
         if (GL:empty(type)) then
-            GL:warning("Choose a session type!");
+            GL:warning(L.GDKP_CREATE_SESSION_INVALID_TYPE);
             return;
         end
 
         local Session = GDKPSession:create(title, managementCut or nil, type);
 
         if (not Session) then
-            GL:warning("Something went wrong while creating the session!");
+            GL:warning(L.SOMETHING_WENT_WRONG_WARNING);
             return;
         end
 
@@ -154,7 +138,7 @@ function CreateSession:build()
         SwitchCheckbox:SetValue(false);
         self:close();
 
-        GL:notice("Session created. We advise you to /reload so that it's stored properly in case your game crashes!");
+        GL:notice(L.GDKP_CREATE_SUCCESSFUL);
     end);
     Window:AddChild(Save);
 
@@ -171,8 +155,6 @@ end
 
 ---@return Frame
 function CreateSession:window()
-    GL:debug("Interface.GDKP.CreateSession:window");
-
     local Window = Interface:get(self, "Window");
 
     if (not Window) then
@@ -186,8 +168,6 @@ end
 ---
 ---@return void
 function CreateSession:toggle()
-    GL:debug("Interface.GDKP.CreateSession:toggle");
-
     if (self.isVisible) then
         return self:close();
     end
@@ -197,8 +177,6 @@ end
 
 ---@return void
 function CreateSession:open()
-    GL:debug("Interface.GDKP.CreateSession:open");
-
     -- It seems our GDKP overview window is not opened
     if (not Overview.isVisible) then
         return;
@@ -214,8 +192,6 @@ end
 
 ---@return void
 function CreateSession:close()
-    GL:debug("Interface.GDKP.CreateSession:close");
-
     local Window = self:window();
 
     if (self.isVisible) then
@@ -223,5 +199,3 @@ function CreateSession:close()
         self.isVisible = false;
     end
 end
-
-GL:debug("Interface.GDKP.CreateSession.lua");

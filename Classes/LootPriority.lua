@@ -91,7 +91,7 @@ function LootPriority:drawImporter()
     LootPriorityFrame:AddChild(FooterFrame);
 
     local SaveButton = AceGUI:Create("Button");
-    SaveButton:SetText("Save");
+    SaveButton:SetText(L.SAVE);
     SaveButton:SetWidth(140);
     SaveButton:SetCallback("OnClick", function()
         self:save(LootPriorityBoxContent);

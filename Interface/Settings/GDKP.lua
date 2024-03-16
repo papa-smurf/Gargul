@@ -9,7 +9,7 @@ local Settings = GL.Settings;
 
 ---@class GDKPSettings
 GL.Interface.Settings.GDKP = {
-    description = "Type |c00a79eff/gl gdkp|r or simply |c00a79eff/gdkp|r or click the button below to get started!",
+    description = "Type |c00A79EFF/gl gdkp|r or simply |c00A79EFF/gdkp|r or click the button below to get started!",
     InputElements = {},
     ItemLevelElements = {},
 };

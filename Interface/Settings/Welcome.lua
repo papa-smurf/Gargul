@@ -9,11 +9,11 @@ local AceGUI = GL.AceGUI;
 ---@class WelcomeSettings
 GL.Interface.Settings.Welcome = {
     description = string.format(
-        "\n|c00FFF569Welcome! Gargul can be used and tested without being in a raid\n\n|c00a79effTRY IT OUT|r by using the following hotkeys on an item in your bags or an item link in chat!\n\nRoll: |c00a79eff%s|r. Award: |c00a79eff%s|r. Disenchant: |c00a79eff%s|r%s|r",
+        "\n|c00FFF569Welcome! Gargul can be used and tested without being in a raid\n\n|c00A79EFFTRY IT OUT|r by using the following hotkeys on an item in your bags or an item link in chat!\n\nRoll: |c00A79EFF%s|r. Award: |c00A79EFF%s|r. Disenchant: |c00A79EFF%s|r%s|r",
         GL.Settings:get("ShortcutKeys.rollOffOrAuction"),
         GL.Settings:get("ShortcutKeys.award"),
         GL.Settings:get("ShortcutKeys.disenchant"),
-        GL.GDKPIsAllowed and "\n\n\nWant to host a GDKP session? Run |c00a79eff/gdkp|r to get started!" or ""
+        GL.GDKPIsAllowed and "\n\n\nWant to host a GDKP session? Run |c00A79EFF/gdkp|r to get started!" or ""
     ),
 };
 local Welcome = GL.Interface.Settings.Welcome; ---@type WelcomeSettings

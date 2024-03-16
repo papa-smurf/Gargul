@@ -1254,6 +1254,10 @@ function Interface:addTooltip(Owner, Lines, anchor)
         return;
     end
 
+    if (type(Owner) ~= "table") then
+        return;
+    end
+
     if (not anchor) then
         anchor = "TOP";
     end
@@ -1266,19 +1270,21 @@ function Interface:addTooltip(Owner, Lines, anchor)
         end
     end
 
+    local Target = Owner.frame and Owner.frame or Owner;
+
     -- Make sure mouse events are enabled
-    if (Owner.EnableMouse) then
-        Owner:EnableMouse(true);
+    if (Target.EnableMouse) then
+        Target:EnableMouse(true);
     end
 
-    Owner:HookScript("OnEnter", function()
-        if (Owner.GetEffectiveAlpha
-            and Owner:GetEffectiveAlpha() == 0
+    Target:HookScript("OnEnter", function()
+        if (Target.GetEffectiveAlpha
+            and Target:GetEffectiveAlpha() == 0
         ) then
             return;
         end
 
-        GameTooltip:SetOwner(Owner, "ANCHOR_" .. anchor);
+        GameTooltip:SetOwner(Target, "ANCHOR_" .. anchor);
 
         if (isItemLink) then
             GameTooltip:SetHyperlink(Lines);
@@ -1308,7 +1314,7 @@ function Interface:addTooltip(Owner, Lines, anchor)
         GameTooltip:Show();
     end);
 
-    Owner:HookScript("OnLeave", function()
+    Target:HookScript("OnLeave", function()
         GameTooltip:Hide();
     end);
 end

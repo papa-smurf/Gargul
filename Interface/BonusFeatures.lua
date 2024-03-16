@@ -81,7 +81,7 @@ function BonusFeatures:build()
 
     --[[ GROUP MANAGER ]]
     ---@type FontString
-    local GroupManagerLabel = Interface:createFontString(Window, "1. Auto invite/sort groups from raid signup! Click below or use |c00a79eff/gl gr|r");
+    local GroupManagerLabel = Interface:createFontString(Window, "1. Auto invite/sort groups from raid signup! Click below or use |c00A79EFF/gl gr|r");
     GroupManagerLabel:SetPoint("TOPLEFT", Intro, "BOTTOMLEFT", 0, -18);
     GroupManagerLabel:SetPoint("TOPRIGHT", Intro, "BOTTOMRIGHT");
 
@@ -95,7 +95,7 @@ function BonusFeatures:build()
 
     --[[ BOOSTED ROLLS ]]
     ---@type FontString
-    local BoostedRollsLabel = Interface:createFontString(Window, "2. Reward players for being regulars or going the extra mile! Click below or use |c00a79eff/gl br|r");
+    local BoostedRollsLabel = Interface:createFontString(Window, "2. Reward players for being regulars or going the extra mile! Click below or use |c00A79EFF/gl br|r");
     BoostedRollsLabel:SetPoint("TOPLEFT", GroupManager, "BOTTOMLEFT", 0, -18);
     BoostedRollsLabel:SetPoint("TOPRIGHT", GroupManager, "BOTTOMRIGHT");
 
@@ -109,7 +109,7 @@ function BonusFeatures:build()
 
     --[[ PLUS ONES ]]
     ---@type FontString
-    local PlusOnesLabel = Interface:createFontString(Window, "3. Gargul includes a plus one tracking system! Click below or use |c00a79eff/gl po|r");
+    local PlusOnesLabel = Interface:createFontString(Window, "3. Gargul includes a plus one tracking system! Click below or use |c00A79EFF/gl po|r");
     PlusOnesLabel:SetPoint("TOPLEFT", BoostedRolls, "BOTTOMLEFT", 0, -18);
     PlusOnesLabel:SetPoint("TOPRIGHT", BoostedRolls, "BOTTOMRIGHT");
 

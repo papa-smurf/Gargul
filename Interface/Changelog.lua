@@ -13,18 +13,16 @@ GL.Interface.Changelog = {
     isVisible = false,
 
     History = {
-        (GL.isEra and {
-            version = "7.3.2",
-            date = "March 12th, 2024",
-            Changes = {
-                "Cross-realm GDKP multi-auctions and other group activities should now work as expected",
-            },
-        } or nil),
+        version = "7.3.2",
+        date = "March 12th, 2024",
+        Changes = {
+            "Cross-realm GDKP multi-auctions and other group activities should now work as expected",
+        },
         {
             version = "7.2.4",
             date = "December 12th, 2023",
             Changes = {
-                "Gargul now supports silver/copper in GDKP sessions (useful in Era/SoD). Check the |c00a79eff/gl|r -> |c00a79effGDKP|r -> |c00a79effSupport decimals|r slider",
+                "Gargul now supports silver/copper in GDKP sessions (useful in Era/SoD). Check the |c00A79EFF/gl|r -> |c00A79EFFGDKP|r -> |c00A79EFFSupport decimals|r slider",
                 "SoD fixes to auto looting with PackMule",
             },
         },
@@ -40,7 +38,7 @@ GL.Interface.Changelog = {
             version = "7.0.0",
             date = "October 21st, 2023",
             Changes = {
-                "GDKP Multi-Auctions (batch auctions) are finally here! Create a new gdkp session (|c00a79eff/gdkp|r) and follow the instructions!\n\nWith multi auctions you can auction off as many items as you want at once! This speeds up your raid nights immensely and makes for a seamless experience for your raiders. Give it a shot!\n\nAs an organizer you can now also personalize your raids, show your own logo and other credentials to your raiders. Check out the Gargul discord for more info! <3",
+                "GDKP Multi-Auctions (batch auctions) are finally here! Create a new gdkp session (|c00A79EFF/gdkp|r) and follow the instructions!\n\nWith multi auctions you can auction off as many items as you want at once! This speeds up your raid nights immensely and makes for a seamless experience for your raiders. Give it a shot!\n\nAs an organizer you can now also personalize your raids, show your own logo and other credentials to your raiders. Check out the Gargul discord for more info! <3",
             },
         },
         {
@@ -61,8 +59,8 @@ GL.Interface.Changelog = {
                 "Trade timer bars will now be colorized when they are reserved or wishlisted",
                 "Greatly improved the performance of automated item trading",
                 "Soft-reserves will show up on both normal and heroic mode items (soft-reserve sheets show normal items only)",
-                "You can now link normal and heroic mode TotC items to one another for TMB and DFT. Check |c00a79eff/gl|r -> |c00a79effGeneral|r",
-                "Please include a bug report from now on when reporting bugs or odd behavior (|c00a79eff/gl bug|r)",
+                "You can now link normal and heroic mode TotC items to one another for TMB and DFT. Check |c00A79EFF/gl|r -> |c00A79EFFGeneral|r",
+                "Please include a bug report from now on when reporting bugs or odd behavior (|c00A79EFF/gl bug|r)",
             },
         },
         {
@@ -89,37 +87,37 @@ GL.Interface.Changelog = {
             date = "June 4th, 2023",
             Changes = {
                 "Gargul, including its GDKP and rolling modules, are now cross-realm compatible for those playing on Era or Retail!",
-                "GDKP organizers can now check and manage gold trades in case something went wrong (|c00a79eff/gdkp|r -> |c00a79effCuts|r -> Bag icon left of player name)",
+                "GDKP organizers can now check and manage gold trades in case something went wrong (|c00A79EFF/gdkp|r -> |c00A79EFFCuts|r -> Bag icon left of player name)",
             },
         },
         {
             version = "5.4.1",
             date = "May 7th, 2023",
             Changes = {
-                "Raid on PTR? Gargul has been updated for Trial of the Crusader (|c00a79eff3.4.2|r)",
-                "A |c00a79effFinal Call|r button was added to the GDKP auctioneer window, useful for instantly shortening auctions of less desirable items!",
+                "Raid on PTR? Gargul has been updated for Trial of the Crusader (|c00A79EFF3.4.2|r)",
+                "A |c00A79EFFFinal Call|r button was added to the GDKP auctioneer window, useful for instantly shortening auctions of less desirable items!",
             },
         },
         {
             version = "5.3.20",
             date = "April 30th, 2023",
             Changes = {
-                "|c00a79effCTRL_CLICK|r the roll, bid or queue window to preview an item",
+                "|c00A79EFFCTRL_CLICK|r the roll, bid or queue window to preview an item",
                 "A raid leader deleting and restoring GDKP auctions is now displayed in group chat for improved transparency",
-                "Gold is now auto looted from corpses (not containers). Go to |c00a79eff/gl|r -> |c00a79effAutoloot with PackMule|r to disable",
+                "Gold is now auto looted from corpses (not containers). Go to |c00A79EFF/gl|r -> |c00A79EFFAutoloot with PackMule|r to disable",
             },
         },
         {
             version = "5.3.12",
             date = "April 1st, 2023",
             Changes = {
-                "You can now set a minimum price and increment per item level (check |c00a79eff/gl|r -> GDKP)",
+                "You can now set a minimum price and increment per item level (check |c00A79EFF/gl|r -> GDKP)",
             },
         },{
             version = "5.3.4",
             date = "March 3rd, 2023",
             Changes = {
-                "You can now provide a list of players to share TMB/DFT data with in case you run a closed system (check |c00a79eff/gl|r -> TMB and DFT)",
+                "You can now provide a list of players to share TMB/DFT data with in case you run a closed system (check |c00A79EFF/gl|r -> TMB and DFT)",
             },
         },
         {
@@ -127,7 +125,7 @@ GL.Interface.Changelog = {
             date = "February 8th, 2023",
             Changes = {
                 "Mailing GDKP cuts has arrived! Lock a GDKP session for payout and walk to a mailbox! There are many safety features in place to account for insufficient funds, mail cap reached, etc. Go check it out!",
-                "The GDKP ledger overview has received a complete rework, open your GDKP session (|c00a79eff/gdkp|r) and click the eye-shaped icon at the top of the ledger!",
+                "The GDKP ledger overview has received a complete rework, open your GDKP session (|c00A79EFF/gdkp|r) and click the eye-shaped icon at the top of the ledger!",
                 "Gargul now listens in on reserves placed via LootReserve. Do you like LootReserve and would you like to add Gargul's soft-res features (like highlighting, auto looting etc.) on top of that? We got your covered!",
             },
         },
@@ -135,16 +133,16 @@ GL.Interface.Changelog = {
             version = "5.2.0",
             date = "February 4th, 2023",
             Changes = {
-                "|c00BE3333Important:|r This update changes the raid leader's experience in GDKP sessions and queues. Please familiarize yourself with it before setting foot in a raid. Get started using |c00a79eff/gl gdkp|r or |c00a79eff/gdkp|r",
-                "Use TMB and would like to run with group loot? You can now enable the 'Award based on drops' setting in |c00a79eff/gl|r > |c00a79effTMB and DFT|r to automatically track items won via group loot for exporting to TMB/DFT",
-                "There's a 'Bonus Features' section in |c00a79eff/gl|r now, go check it out!",
+                "|c00BE3333Important:|r This update changes the raid leader's experience in GDKP sessions and queues. Please familiarize yourself with it before setting foot in a raid. Get started using |c00A79EFF/gl gdkp|r or |c00A79EFF/gdkp|r",
+                "Use TMB and would like to run with group loot? You can now enable the 'Award based on drops' setting in |c00A79EFF/gl|r > |c00A79EFFTMB and DFT|r to automatically track items won via group loot for exporting to TMB/DFT",
+                "There's a 'Bonus Features' section in |c00A79EFF/gl|r now, go check it out!",
             },
         },
         {
             version = "5.1.1",
             date = "January 31st, 2023",
             Changes = {
-                "PlusOnes can now be imported, exported and shared with everyone in the raid. Check it out with |c00a79eff/gl po|r. Many thanks to rdobkins for making this happen!"
+                "PlusOnes can now be imported, exported and shared with everyone in the raid. Check it out with |c00A79EFF/gl po|r. Many thanks to rdobkins for making this happen!"
             },
         },
         {
@@ -153,7 +151,7 @@ GL.Interface.Changelog = {
             Changes = {
                 "Hi everyone! Phase 2 has brought with it a lot of WoW API updates. Many add-ons have not been updated yet and using them can affect other addons, like Gargul. If something's not working, then please join the Gargul discord and read the pinned messages to hopefully figure out what add-on or action is causing issues.",
                 "Show a reminder that GDKP is active after logging in",
-                "Added SR, WL, PL and TMB placeholders to the awarded loot export, check them out in |c00a79eff/gl export|r",
+                "Added SR, WL, PL and TMB placeholders to the awarded loot export, check them out in |c00A79EFF/gl export|r",
                 "Fixed auto-trading for Classic Era",
                 "Loot is now highlighted properly again"
             },
@@ -163,7 +161,7 @@ GL.Interface.Changelog = {
             date = "January 11th, 2023",
             Changes = {
                 "Added gold spent and bid to the GDKP distribution export",
-                "Restructured the GDKP countdown settings, check them out via |c00a79eff/gl|r > GDKP"
+                "Restructured the GDKP countdown settings, check them out via |c00A79EFF/gl|r > GDKP"
             },
         },
         {
@@ -180,29 +178,29 @@ GL.Interface.Changelog = {
             version = "5.0.5",
             date = "December 23rd, 2022",
             Changes = {
-                "GDKP auto bidding, auto awarding, queued auctions, and other QoL things just hit Gargul! Go check them out with |c00a79eff/gl gdkp|r!",
+                "GDKP auto bidding, auto awarding, queued auctions, and other QoL things just hit Gargul! Go check them out with |c00A79EFF/gl gdkp|r!",
             },
         },
         {
             version = "5.0.4",
             date = "December 19th, 2022",
             Changes = {
-                "GDKP IS HERE! Next level GDKP automation, bidding, tracking and pot calculation and distribution. Built on Gargul's solid core and backed by an active community!\n\nEncourage raid leaders to leverage it or check it out for yourself with |c00a79eff/gl gdkp|r, no need to be in a group! Coming soon: queued auctions! Happy Holidays <3",
+                "GDKP IS HERE! Next level GDKP automation, bidding, tracking and pot calculation and distribution. Built on Gargul's solid core and backed by an active community!\n\nEncourage raid leaders to leverage it or check it out for yourself with |c00A79EFF/gl gdkp|r, no need to be in a group! Coming soon: queued auctions! Happy Holidays <3",
             },
         },
         {
             version = "4.12.14",
             date = "December 1st, 2022",
             Changes = {
-                "Gargul now also supports prio3 runs using |c00a79effhttp://classicpr.io/|r. Go check them out and use the |c00a79eff/gl cpr|r command in-game to import!",
-                "PackMule's auto group loot is automatically disabled when leaving the raid/group. Check out the settings in |c00a79eff/gl pm|r!",
+                "Gargul now also supports prio3 runs using |c00A79EFFhttp://classicpr.io/|r. Go check them out and use the |c00A79EFF/gl cpr|r command in-game to import!",
+                "PackMule's auto group loot is automatically disabled when leaving the raid/group. Check out the settings in |c00A79EFF/gl pm|r!",
             },
         },
         {
             version = "4.12.13",
             date = "November 29th, 2022",
             Changes = {
-                "Auto looting now also works for group loot in raids/heroics, even on BoP items in a safe and secure way! Check it out in |c00a79eff/gl pm|r!",
+                "Auto looting now also works for group loot in raids/heroics, even on BoP items in a safe and secure way! Check it out in |c00A79EFF/gl pm|r!",
             },
         },
         {
@@ -243,7 +241,7 @@ GL.Interface.Changelog = {
             date = "October 27th, 2022",
             Changes = {
                 "Player passed on an item? Did you assign an item to the wrong player? No worries, you can edit all that now!",
-                "You can now change the size of the Loot trade timers window in |c00a79eff/gl|r -> |c00a79effLoot trade timers|r",
+                "You can now change the size of the Loot trade timers window in |c00A79EFF/gl|r -> |c00A79EFFLoot trade timers|r",
                 "Improved performance greatly and prepared Gargul for Dragonflight",
                 "Changed the Gargul master looter message and made sure it doens't spam the raid on /reload",
             },
@@ -255,7 +253,7 @@ GL.Interface.Changelog = {
                 "You can now add up to 10 roll buttons with unlimited characters!",
                 "Gargul shortcut keys no longer support the right mouse button for technical reasons",
                 "Updated the DFT loot export format to now use item IDs instead of names",
-                "You can now exclude offspec items when exporting loot via |c00a79eff/gl export|r -> |c00a79effMaster Looting|r",
+                "You can now exclude offspec items when exporting loot via |c00A79EFF/gl export|r -> |c00A79EFFMaster Looting|r",
                 "Item tooltips now include more details of (recent) winners",
             },
         },
@@ -264,17 +262,17 @@ GL.Interface.Changelog = {
             date = "October 16th, 2022",
             Changes = {
                 "When enabled, PackMule will now always stay enabled even after a zone switch/reload",
-                "Only want to announce the seconds left to roll once? Check |c00a79eff/gl|r -> |c00a79effMaster Looting|r",
-                "Accessibility: you can now increase the rolling window's size via |c00a79eff/gl|r -> |c00a79effRolling|r",
+                "Only want to announce the seconds left to roll once? Check |c00A79EFF/gl|r -> |c00A79EFFMaster Looting|r",
+                "Accessibility: you can now increase the rolling window's size via |c00A79EFF/gl|r -> |c00A79EFFRolling|r",
             },
         },
         {
             version = "4.9.0",
             date = "October 10th, 2022",
             Changes = {
-                "When your master looter rolls out an item, you can now immediately tell whether it's something your class can use or not! You can also disable the roll window entirely in such cases if you prefer, type |c00a79eff/gl|r and check out the |c00a79effRolling|r section!",
+                "When your master looter rolls out an item, you can now immediately tell whether it's something your class can use or not! You can also disable the roll window entirely in such cases if you prefer, type |c00A79EFF/gl|r and check out the |c00A79EFFRolling|r section!",
                 "Tooltips are now fully cross-item, where priorities and reservations show on both the tier/quest items, and the items they reward (and vice versa!)",
-                "The exporter now supports a 2 digit year format (@YY), check it out with |c00a79eff/gl export|r",
+                "The exporter now supports a 2 digit year format (@YY), check it out with |c00A79EFF/gl export|r",
                 "Gargul commands are no longer case sensitive"
             },
         },
@@ -282,15 +280,15 @@ GL.Interface.Changelog = {
             version = "4.8.4",
             date = "October 3rd, 2022",
             Changes = {
-                "PackMule now supports round robin! Type |c00a79eff/gl pm|r and check it out!",
+                "PackMule now supports round robin! Type |c00A79EFF/gl pm|r and check it out!",
             },
         },
         {
             version = "4.8.0",
             date = "September 26th, 2022",
             Changes = {
-                "|c00f7922eNEED|r? |c00f7922eGREED|r? |c00f7922ePASS|r?! PackMule's auto looting now also works in group loot: safe auto looting for everyone without any downtime! Type |c00a79eff/gl pm|r to speed up your raids!",
-                "Tired of those 'Are you sure you want to bind this item to you' messages when farming or raiding? We got you! Type |c00a79eff/gl pm|r and check the auto confirm settings!",
+                "|c00f7922eNEED|r? |c00f7922eGREED|r? |c00f7922ePASS|r?! PackMule's auto looting now also works in group loot: safe auto looting for everyone without any downtime! Type |c00A79EFF/gl pm|r to speed up your raids!",
+                "Tired of those 'Are you sure you want to bind this item to you' messages when farming or raiding? We got you! Type |c00A79EFF/gl pm|r and check the auto confirm settings!",
             },
         },
         {
@@ -319,16 +317,16 @@ GL.Interface.Changelog = {
             version = "4.3.1",
             date = "May 29th, 2022",
             Changes = {
-                "Having issues with players misspelling their character names on |c00a79effsoftres.it|r? Gargul now automatically attempts to \"fix\" typos in character names when importing soft-reserves",
-                "When using soft-reserves, a player can now whisper |c00a79eff!sr|r to the master looter to double check his soft-reserves",
-                "You can now set a default raid warning / group message that shows when you roll off items. Want to let players know how to roll for MS or OS? Easy: open Gargul using |c00a79eff/gl|r and go to |c00a79effMaster Looting|r to set your message!"
+                "Having issues with players misspelling their character names on |c00A79EFFsoftres.it|r? Gargul now automatically attempts to \"fix\" typos in character names when importing soft-reserves",
+                "When using soft-reserves, a player can now whisper |c00A79EFF!sr|r to the master looter to double check his soft-reserves",
+                "You can now set a default raid warning / group message that shows when you roll off items. Want to let players know how to roll for MS or OS? Easy: open Gargul using |c00A79EFF/gl|r and go to |c00A79EFFMaster Looting|r to set your message!"
             },
         },
         {
             version = "4.3.0",
             date = "May 10th, 2022",
             Changes = {
-                "Do you want to reward regulars? Give something extra to players reserving the same item(s) multiple times in a row? Awesome, that's what boosted rolls are for! Open Gargul using |c00a79eff/gl|r and go to |c00a79effBoosted Rolls|r to get started!",
+                "Do you want to reward regulars? Give something extra to players reserving the same item(s) multiple times in a row? Awesome, that's what boosted rolls are for! Open Gargul using |c00A79EFF/gl|r and go to |c00A79EFFBoosted Rolls|r to get started!",
             },
         },
         {
@@ -342,14 +340,14 @@ GL.Interface.Changelog = {
             version = "4.1.3",
             date = "February 7th, 2022",
             Changes = {
-                "Completely revamped the PackMule auto looter, go check out PackMule at |c00a79eff/gl pm|r!",
+                "Completely revamped the PackMule auto looter, go check out PackMule at |c00A79EFF/gl pm|r!",
             },
         },
         {
             version = "4.1.2",
             date = "January 26th, 2022",
             Changes = {
-                "Gargul now supports the raid roster tool of the raid-helper discord bot. Make your roster and auto-invite, sort groups and more using |c00a79eff/gl gr|r!",
+                "Gargul now supports the raid roster tool of the raid-helper discord bot. Make your roster and auto-invite, sort groups and more using |c00A79EFF/gl gr|r!",
             },
         },
         {
@@ -357,7 +355,7 @@ GL.Interface.Changelog = {
             date = "January 24th, 2022",
             Changes = {
                 string.format(
-                    "You can now award an item to a random player by not selecting a player and clicking the award button in the award window (|c00a79eff%s|r)",
+                    "You can now award an item to a random player by not selecting a player and clicking the award button in the award window (|c00A79EFF%s|r)",
                     GL.Settings:get("ShortcutKeys.award")
                 ),
                 "Hovering over a player's roll in the roll tracking window will now show you all the items they've won today",
@@ -367,22 +365,22 @@ GL.Interface.Changelog = {
             version = "4.1.0",
             date = "January 15th, 2022",
             Changes = {
-                "Gargul now supports custom roll ranges! Don't want to use |c00a79eff/rnd|r for main spec or |c00a79eff/rnd 99|r for off spec? Not a problem: you can now define your own roll types! Open Gargul using |c00a79eff/gl|r and go to |c00a79effRoll Tracking|r to set up your rolls!",
+                "Gargul now supports custom roll ranges! Don't want to use |c00A79EFF/rnd|r for main spec or |c00A79EFF/rnd 99|r for off spec? Not a problem: you can now define your own roll types! Open Gargul using |c00A79EFF/gl|r and go to |c00A79EFFRoll Tracking|r to set up your rolls!",
             },
         },
         {
             version = "4.0.0",
             date = "December 12th, 2021",
             Changes = {
-                "Added automatic |c00a79effsoftres.it|r data sharing. When a player enters your raid or when you import soft-reserves it's automatically shared",
-                "Added the same sharing feature for |c00a79effTMB|r but it's disabled by default. Open Gargul using |c00a79eff/gl|r and go to |c00a79effTMB|r to enable!",
+                "Added automatic |c00A79EFFsoftres.it|r data sharing. When a player enters your raid or when you import soft-reserves it's automatically shared",
+                "Added the same sharing feature for |c00A79EFFTMB|r but it's disabled by default. Open Gargul using |c00A79EFF/gl|r and go to |c00A79EFFTMB|r to enable!",
             },
         },
         {
             version = "3.6.0",
             date = "November 14th, 2021",
             Changes = {
-                "Loot priorities can now be shared with the raid, type |c00a79eff/gl lo|r to get started!",
+                "Loot priorities can now be shared with the raid, type |c00A79EFF/gl lo|r to get started!",
             },
         },
         {
@@ -517,7 +515,7 @@ function Changelog:draw()
     ScrollFrame:AddChild(HorizontalSpacer);
 
     local DiscordLabel = GL.AceGUI:Create("Label");
-    DiscordLabel:SetText("|c00a79effGet support or share ideas on our Discord|r");
+    DiscordLabel:SetText("|c00A79EFFGet support or share ideas on our Discord|r");
     DiscordLabel:SetFontObject(_G["GameFontNormal"]);
     DiscordLabel:SetFullWidth(true);
     ScrollFrame:AddChild(DiscordLabel);
@@ -539,7 +537,7 @@ function Changelog:draw()
 
         -- Version label
         local VersionLabel = AceGUI:Create("Label");
-        VersionLabel:SetText(string.format("|c00a79effv%s - |r%s", LogEntry.version, LogEntry.date));
+        VersionLabel:SetText(string.format("|c00A79EFFv%s - |r%s", LogEntry.version, LogEntry.date));
         VersionLabel:SetFontObject(_G["GameFontNormal"]);
         VersionLabel:SetHeight(10);
         VersionLabel:SetFullWidth(true);
@@ -578,7 +576,7 @@ function Changelog:draw()
                 LCG.PixelGlow_Start(ChangeLabel.frame, BorderColor, 70, .02, 5, 3, 10, 2, false, 1);
             else
                 local ChangeLabel = AceGUI:Create("Label");
-                ChangeLabel:SetText(string.format("|c00a79eff-|r|c00FFF569 %s|r", change));
+                ChangeLabel:SetText(string.format("|c00A79EFF-|r|c00FFF569 %s|r", change));
                 ChangeLabel:SetFontObject(_G["GameFontNormal"]);
                 ChangeLabel:SetHeight(20);
                 ChangeLabel:SetFullWidth(true);
