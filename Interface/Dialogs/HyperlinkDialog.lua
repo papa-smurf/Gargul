@@ -34,5 +34,3 @@ function HyperlinkDialog:open(Dialog)
 
     return Frame;
 end
-
-GL:debug("Interface/HyperlinkDialog.lua");

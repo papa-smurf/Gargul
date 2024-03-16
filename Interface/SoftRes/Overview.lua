@@ -1,3 +1,5 @@
+local L = Gargul_L;
+
 ---@type GL
 local _, GL = ...;
 
@@ -46,8 +48,8 @@ function Overview:draw()
 
     Window:SetStatusText(string.format(
         "Imported on |c00a79eff%s|r at |c00a79eff%s|r",
-        date('%Y-%m-%d', DB:get("SoftRes.MetaData.importedAt", GetServerTime())),
-        date('%H:%M', DB:get("SoftRes.MetaData.importedAt", GetServerTime()))
+        date(L.DATE_FORMAT, DB:get("SoftRes.MetaData.importedAt", GetServerTime())),
+        date(L.HOURS_MINUTES_FORMAT, DB:get("SoftRes.MetaData.importedAt", GetServerTime()))
     ));
 
     -- Make sure the window can be closed by pressing the escape button
@@ -58,9 +60,14 @@ function Overview:draw()
         SHARE BUTTON
     ]]
     local ShareButton = GL.Interface:createShareButton(Window, {
-        onClick = function() GL.Interface.Dialogs.PopupDialog:open("BROADCAST_SOFTRES_CONFIRMATION"); end,
+        onClick = function() GL.Interface.Dialogs.PopupDialog:open({
+            question = L.SOFTRES_BROADCAST_CONFIRM,
+            OnYes = function ()
+                GL.SoftRes:broadcast();
+            end,
+        }); end,
         tooltip = "Broadcast SoftRes Data",
-        disabledTooltip = "To broadcast you need to be in a group and need master loot, assist or lead!",
+        disabledTooltip = L.LM_OR_ASSIST_REQUIRED,
         position = "TOPRIGHT",
     });
     GL.Interface:set(self, "ShareButton", ShareButton);
@@ -212,7 +219,14 @@ function Overview:draw()
     ClearDataButton:SetText("Clear Data");
     ClearDataButton:SetWidth(100); -- Minimum is 102
     ClearDataButton:SetCallback("OnClick", function()
-        GL.Interface.Dialogs.PopupDialog:open("CLEAR_SOFTRES_CONFIRMATION");
+        GL.Interface.Dialogs.PopupDialog:open{
+            question = L.SOFTRES_CLEAR_CONFIRM,
+            OnYes = function ()
+                GL.Interface.SoftRes.Overview:close();
+                GL.SoftRes:clear();
+                GL.SoftRes:draw();
+            end,
+        };
     end);
     ButtonFrame:AddChild(ClearDataButton);
 

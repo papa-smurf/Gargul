@@ -26,5 +26,3 @@ function IncomingBoostedRollDataDialog:open(Dialog)
         TrustSenderCheckBox:SetValue(TrustSenderCheckBox);
     end
 end
-
-GL:debug("Interface/IncomingBoostedRollDataDialog.lua");

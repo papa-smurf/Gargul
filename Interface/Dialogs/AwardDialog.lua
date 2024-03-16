@@ -59,5 +59,3 @@ function AwardDialog:open(Dialog)
         BoostedRollsCostEditBox:SetText(cost);
     end
 end
-
-GL:debug("Interface/AwardDialog.lua");

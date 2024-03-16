@@ -1,3 +1,5 @@
+local L = Gargul_L;
+
 ---@type GL
 local _, GL = ...;
 
@@ -20,8 +22,6 @@ GL:tableSet(GL, "Interface.BoostedRolls.Importer", {
 local Importer = GL.Interface.BoostedRolls.Importer;
 
 function Importer:draw()
-    GL:debug("Importer:draw");
-
     if (self.isVisible) then
         return;
     end
@@ -31,7 +31,7 @@ function Importer:draw()
 
     -- Create a container/parent frame
     local Window = AceGUI:Create("Frame");
-    Window:SetTitle("Gargul v" .. GL.version);
+    Window:SetTitle((L.WINDOW_HEADER):format(GL.version));
     Window:SetLayout("Flow");
     Window:SetWidth(600);
     Window:SetHeight(550);
@@ -53,7 +53,7 @@ function Importer:draw()
     local Description = AceGUI:Create("Label");
     Description:SetFontObject(_G["GameFontNormal"]);
     Description:SetFullWidth(true);
-    Description:SetText("Here you can import boosted roll data and aliases from a table in CSV or TSV format or pasted from a Google Docs Sheet.\n\nThe table needs at least two columns: The player name followed by the amount of points. Additional columns are optional and may contain aliases for the player.\nHere is an example line:\n\nFoobar,240,Barfoo");
+    Description:SetText(L.BOOSTED_ROLLS_IMPORT_TUTORIAL);
     Window:AddChild(Description);
 
     -- Large edit box
@@ -90,7 +90,16 @@ function Importer:draw()
     ImportButton:SetWidth(140);
     ImportButton:SetCallback("OnClick", function()
         if (GL.BoostedRolls:available()) then
-            GL.Interface.Dialogs.PopupDialog:open("NEW_BOOSTEDROLLS_IMPORT_CONFIRMATION");
+            GL.Interface.Dialogs.PopupDialog:open({
+                question = L.BOOSTED_ROLLS_CLEAR_CONFIRM,
+                OnYes = function ()
+                    GL.Interface.BoostedRolls.Importer:import();
+                end,
+                OnNo = function ()
+                    GL.Interface.BoostedRolls.Importer:close();
+                    GL.BoostedRolls:draw();
+                end,
+            });
         else
             self:import();
         end
@@ -105,8 +114,6 @@ end
 
 -- Close the import frame and clean up after ourselves
 function Importer:close()
-    GL:debug("Importer:close");
-
     local Window = GL.Interface:get(self, "Window");
 
     if (not self.isVisible
@@ -122,5 +129,3 @@ function Importer:close()
     GL.Interface:release(Window);
     self.isVisible = false;
 end
-
-GL:debug("Interfaces/BoostedRolls/Importer.lua");

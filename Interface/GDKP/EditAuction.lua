@@ -1,3 +1,5 @@
+local L = Gargul_L;
+
 ---@type GL
 local _, GL = ...;
 
@@ -185,7 +187,7 @@ function EditAuction:draw(session, checksum)
     Window:AddChild(SaveButton);
 
     local CancelButton = AceGUI:Create("Button");
-    CancelButton:SetText("Cancel");
+    CancelButton:SetText(L.CANCEL);
     CancelButton:SetFullWidth(true);
     CancelButton:SetCallback("OnClick", function()
         self:close();

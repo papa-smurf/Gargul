@@ -1,3 +1,5 @@
+local L = Gargul_L;
+
 ---@type GL
 local _, GL = ...;
 
@@ -26,8 +28,6 @@ local GDKPPot = GL.GDKP.Pot;
 
 ---@return Frame
 function AddGold:build()
-    GL:debug("Interface.GDKP.AddGold:build");
-
     local Window = AceGUI:Create("InlineGroup");
     Window:SetLayout("Flow");
     Window:SetWidth(200);
@@ -47,7 +47,7 @@ function AddGold:build()
     Gold:DisableButton(true);
     Gold:SetHeight(20);
     Gold:SetFullWidth(true);
-    Gold:SetLabel("Gold (- for removing gold)");
+    Gold:SetLabel(L.GDKP_ADD_GOLD_AMOUNT_LABEL);
     Interface:set(self, "Gold", Gold);
     Window:AddChild(Gold);
 
@@ -55,7 +55,7 @@ function AddGold:build()
     PaidForBy:DisableButton(true);
     PaidForBy:SetHeight(20);
     PaidForBy:SetFullWidth(true);
-    PaidForBy:SetLabel("Paid for by");
+    PaidForBy:SetLabel(L.GDKP_ADD_GOLD_PAID_BY_LABEL);
     Interface:set(self, "PaidForBy", PaidForBy);
     Window:AddChild(PaidForBy);
 
@@ -63,23 +63,23 @@ function AddGold:build()
     Note:DisableButton(true);
     Note:SetHeight(20);
     Note:SetFullWidth(true);
-    Note:SetLabel("Note");
+    Note:SetLabel(L.NOTE);
     Interface:set(self, "Note", Note);
     Window:AddChild(Note);
 
     local Save = AceGUI:Create("Button");
-    Save:SetText("Save");
+    Save:SetText(L.OK);
     Save:SetFullWidth(true);
     Save:SetCallback("OnClick", function()
         local gold = tonumber(strtrim(Gold:GetText())) or 0;
         if (not gold or gold == 0) then
-            GL:warning("Gold needs to be lower/higher than 0");
+            GL:warning(L.GDKP_ADD_GOLD_INVALID_WARNING);
             return;
         end
 
         local paidForBy = strtrim(PaidForBy:GetText());
         if (GL:empty(paidForBy)) then
-            GL:warning("Who pays for this?");
+            GL:warning(L.GDKP_ADD_GOLD_INVALID_PAYER_WARNING);
             return;
         end
 
@@ -90,7 +90,7 @@ function AddGold:build()
     Window:AddChild(Save);
 
     local Cancel = AceGUI:Create("Button");
-    Cancel:SetText("Cancel");
+    Cancel:SetText(L.CANCEL);
     Cancel:SetFullWidth(true);
     Cancel:SetCallback("OnClick", function()
         self:close();
@@ -102,8 +102,6 @@ end
 
 ---@return Frame
 function AddGold:window()
-    GL:debug("Interface.GDKP.AddGold:window");
-
     local Window = Interface:get(self, "Window");
 
     if (not Window) then
@@ -117,8 +115,6 @@ end
 ---
 ---@return void
 function AddGold:toggle()
-    GL:debug("Interface.GDKP.AddGold:toggle");
-
     if (self.isVisible) then
         return self:close();
     end
@@ -128,8 +124,6 @@ end
 
 ---@return void
 function AddGold:open()
-    GL:debug("Interface.GDKP.AddGold:open");
-
     local Session = GDKPSession:byID(Overview.selectedSession);
 
     if (not Session) then
@@ -143,7 +137,7 @@ function AddGold:open()
 
     local Window = self:window();
 
-    Interface:get(self, "Label.Title"):SetText("Adjust gold in " .. Session.title);
+    Interface:get(self, "Label.Title"):SetText((L.GDKP_ADD_GOLD_TITLE):format(Session.title));
     Interface:get(self, "EditBox.Gold"):SetText("");
     Interface:get(self, "EditBox.PaidForBy"):SetText(GL.User.name);
 
@@ -154,8 +148,6 @@ end
 
 ---@return void
 function AddGold:close()
-    GL:debug("Interface.GDKP.AddGold:close");
-
     local Window = self:window();
 
     if (self.isVisible) then
@@ -163,5 +155,3 @@ function AddGold:close()
         self.isVisible = false;
     end
 end
-
-GL:debug("Interface.GDKP.AddGold.lua");

@@ -198,7 +198,7 @@ function Overview:refresh()
 
     --[[ SHOW THE PLAYER BALANCE ]]
     local balance = "";
-    local playerName = GL:disambiguateName(playerGUID, { colorize = true });
+    local playerName = GL:disambiguateName(playerGUID, { colorize = true, });
     local copperOwedToPLayer = GDKPSession:copperOwedToPlayer(playerGUID, sessionID);
     if (copperOwedToPLayer == 0) then
         balance = playerName;
@@ -294,7 +294,7 @@ function Overview:refresh()
         ---@type FontString
         local isToday = date("%d-%m-%Y", Trade.createdAt) == today;
         local timeString = isToday
-            and ("|c00967FD2[%s]|r"):format(date("%H:%M", Trade.createdAt))
+            and ("|c00967FD2[%s]|r"):format(date(L.HOURS_MINUTES_FORMAT, Trade.createdAt))
             or ("|c00967FD2[%s]|r"):format(date("%d-%m at %H:%M", Trade.createdAt))
         local Time = Interface:createFontString(TradeRow, timeString);
         Time:SetPoint("CENTER", TradeRow);

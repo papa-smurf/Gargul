@@ -339,6 +339,7 @@ function Auctioneer:syncWithRunningSession()
                     return;
                 end
 
+                -- We didn't initiate this running auction so just join it
                 if (not initiatedBySelf) then
                     Client:start({
                         Sender = {
@@ -351,93 +352,96 @@ function Auctioneer:syncWithRunningSession()
                             ItemDetails = Response.Auctions,
                         },
                     });
-                else
-                    local KnownAwardHashes = {};
-                    for _, Auction in pairs(GL.GDKP.Session:getActive().Auctions or {}) do
-                        if (type(Auction.Winner) == "table"
-                            and Auction.itemID
-                            and Auction.Winner.guid
+
+                    return;
+                end
+
+                -- We initiated this running auction so we'll have to take over by setting a new timer for remaining items
+                local KnownAwardHashes = {};
+                for _, Auction in pairs(GL.GDKP.Session:getActive().Auctions or {}) do
+                    if (type(Auction.Winner) == "table"
+                        and Auction.itemID
+                        and Auction.Winner.guid
+                    ) then
+                        KnownAwardHashes[GL:stringHash{
+                            Auction.itemID,
+                            Auction.Winner.guid,
+                            Auction.price
+                        }] = true;
+                    end
+                end ;
+
+                local ExtendIDs = {};
+
+                -- Check if there are any auctions worth resuming
+                local anHourAgo = GetServerTime() - 3600;
+                for auctionID, Auction in pairs(Response.Auctions) do
+                    (function()
+                        -- This auction was deleted or otherwise made unavailable
+                        -- There's also no point in trying to continue ancient auctions
+                        if (Auction.endsAt < 0
+                            or Auction.endsAt < anHourAgo
                         ) then
-                            KnownAwardHashes[GL:stringHash{
-                                Auction.itemID,
-                                Auction.Winner.guid,
-                                Auction.price
-                            }] = true;
-                        end
-                    end ;
-
-                    local ExtendIDs = {};
-
-                    -- Check if there are any auctions worth resuming
-                    local anHourAgo = GetServerTime() - 3600;
-                    for auctionID, Auction in pairs(Response.Auctions) do
-                        (function()
-                            -- This auction was deleted or otherwise made unavailable
-                            -- There's also no point in trying to continue ancient auctions
-                            if (Auction.endsAt < 0
-                                or Auction.endsAt < anHourAgo
-                            ) then
-                                return;
-                            end
-
-                            ---@todo: check if needed or ID is available
-                            local itemID = GL:getItemIDFromLink(Auction.link);
-                            local bid = tonumber(Auction.CurrentBid and Auction.CurrentBid.amount or 0) or 0;
-
-                            -- There weren't any bids on this auction yet so we can safely extend it
-                            if (not bid) then
-                                tinsert(ExtendIDs, auctionID);
-                                return;
-                            end
-
-                            -- It looks like this auction ran out while we were away and already had a bid
-                            -- Check to see if we can extend it or whether it was already sold
-                            if (Auction.endsAt == 0
-                                and GL:gt(bid, 0)
-                                and KnownAwardHashes[GL:stringHash{
-                                    itemID,
-                                    strlower(Auction.CurrentBid.player),
-                                    bid,
-                                }]
-                            ) then
-                                return;
-                            end
-
-                            tinsert(ExtendIDs, auctionID);
-                        end)();
-                    end
-
-                    -- There's nothing we need to do at this point
-                    if (GL:empty(ExtendIDs)) then
-                        return;
-                    end
-
-                    -- There are active auctions already, no need to resume anything
-                    for _, Details in pairs(Client.AuctionDetails.Auctions or {}) do
-                        if (Details.endsAt > 0) then
                             return;
                         end
-                    end
 
-                    GL.Interface.Dialogs.ConfirmWithSingleInputDialog:open{
-                        question = "You left during your GDKP bidding session. In order to resume it you have to provide a new bid time (in seconds) for any unsold items",
-                        inputValue = 60,
-                        OnYes = function (duration)
-                            duration = tonumber(duration) or 5;
+                        ---@todo: check if needed or ID is available
+                        local itemID = GL:getItemIDFromLink(Auction.link);
+                        local bid = tonumber(Auction.CurrentBid and Auction.CurrentBid.amount or 0) or 0;
 
-                            local endsAt = GetServerTime() + duration;
-                            for _, auctionID in pairs(ExtendIDs) do
-                                Response.Auctions[auctionID].endsAt = endsAt;
-                            end
+                        -- There weren't any bids on this auction yet so we can safely extend it
+                        if (not bid) then
+                            tinsert(ExtendIDs, auctionID);
+                            return;
+                        end
 
-                            GL:mute();
-                            self:announceStart(Response.Auctions, duration, Response.antiSnipe);
-                            GL:unmute();
-                            GL:sendChatMessage("I resumed a previous bidding session, double check your bids!", "GROUP");
-                        end,
-                        focus = true,
-                    };
+                        -- It looks like this auction ran out while we were away and already had a bid
+                        -- Check to see if we can extend it or whether it was already sold
+                        if (Auction.endsAt == 0
+                            and GL:gt(bid, 0)
+                            and KnownAwardHashes[GL:stringHash{
+                                itemID,
+                                strlower(Auction.CurrentBid.player),
+                                bid,
+                            }]
+                        ) then
+                            return;
+                        end
+
+                        tinsert(ExtendIDs, auctionID);
+                    end)();
                 end
+
+                -- There's nothing we need to do at this point
+                if (GL:empty(ExtendIDs)) then
+                    return;
+                end
+
+                -- There are active auctions already, no need to resume anything
+                for _, Details in pairs(Client.AuctionDetails.Auctions or {}) do
+                    if (Details.endsAt > 0) then
+                        return;
+                    end
+                end
+
+                GL.Interface.Dialogs.ConfirmWithSingleInputDialog:open{
+                    question = L.GDKP_MULTIAUCTION_CLAIM_RUNNING_SESSION,
+                    inputValue = 60,
+                    OnYes = function (duration)
+                        duration = tonumber(duration) or 5;
+
+                        local endsAt = GetServerTime() + duration;
+                        for _, auctionID in pairs(ExtendIDs) do
+                            Response.Auctions[auctionID].endsAt = endsAt;
+                        end
+
+                        GL:mute();
+                        self:announceStart(Response.Auctions, duration, Response.antiSnipe);
+                        GL:unmute();
+                        GL:sendChatMessage(L.CHAT.MULTIAUCTION_RESUMED, "GROUP");
+                    end,
+                    focus = true,
+                };
             end,
         }:send();
     end;
@@ -540,7 +544,7 @@ function Auctioneer:announceStart(ItemDetails, duration, antiSnipe, precision)
     if (duration < 1
         or antiSnipe < 0
     ) then
-        GL:warning("Invalid data provided for GDKP auction start!");
+        GL:warning(L.GDKP_MULTIAUCTION_INVALID_DATA_FOR_START);
         self.waitingForAuctionStart = false;
         return false;
     end
@@ -573,7 +577,7 @@ function Auctioneer:announceStart(ItemDetails, duration, antiSnipe, precision)
         channel = "RAID_WARNING";
     end
 
-    GL:sendChatMessage("I started a bidding session. Can't see it? Make sure to download/update Gargul!", channel);
+    GL:sendChatMessage(L.CHAT.MULTIAUCTION_STARTED, channel);
 
     return true;
 end
@@ -701,7 +705,7 @@ function Auctioneer:syncNewItems()
     }:send();
 
     GL:sendChatMessage(
-        ("I added %s item(s) to the auction for a total of %s"):format(numberOfChanges, GL:count(Client.AuctionDetails.Auctions)),
+        (L.CHAT.MULTIAUCTION_ITEMS_ADDED):format(numberOfChanges, GL:count(Client.AuctionDetails.Auctions)),
         "GROUP"
     );
 end
@@ -1092,7 +1096,7 @@ function Auctioneer:finish(announcePot)
 
     local totalPot = GDKPPot:total();
     if (totalPot) then
-        GL:sendChatMessage(("Multi-auction finished. " .. L.POT_HOLDS):format(tostring(totalPot)), "GROUP");
+        GL:sendChatMessage((L.CHAT.MULTIAUCTION_FINISHED):format(GL:goldToMoney(totalPot)), "GROUP");
     end
 end
 

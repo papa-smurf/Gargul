@@ -51,5 +51,3 @@ function Dialog:open(Details)
         InputField:SetFocus();
     end
 end
-
-GL:debug("Interface/ConfirmWithSingleInputDialog.lua");

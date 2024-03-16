@@ -17,7 +17,6 @@ GL.Commands = GL.Commands or {
         award = "Open the award window. Optionally accepts an ItemLink as an argument: /gl award [itemLink?]",
         awardhistory = "Open the award history window which shows recently awarded items and their rolls",
         boostedrolls = "Open the Boosted Rolls UI that allows you to easily manage roll boosts.",
-        buffs = "You can instantly check player buffs like Ony, ZG, but also protection consumables like shadow protection: /gl buffs 22888, 22818, 22817, 22820, 24425, 15366, 20079",
         bugreport = "Include the output of this command when filing a bug report on the Gargul discord server",
         clearplusones = "Clear all plus one values",
         cleardisenchanter = "Clear the disenchanter entry so you can pick a new one the next time around",
@@ -69,9 +68,6 @@ GL.Commands = GL.Commands or {
         boostedroll = "boostedrolls",
         br = "boostedrolls",
         points = "boostedrolls",
-
-        -- buffs
-        bu = "buffs",
 
         -- bugreport
         bug = "bugreport",
@@ -279,9 +275,6 @@ GL.Commands = GL.Commands or {
 
         -- Check if everyone is running the most up-to-date version
         inspect = function(...) GL.BagInspector:inspect(...); end,
-
-        -- Check if everyone is running the most up-to-date version
-        buffs = function(...) GL.BuffInspector:inspect(...); end,
     }
 };
 

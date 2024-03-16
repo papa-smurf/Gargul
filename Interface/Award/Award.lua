@@ -1,3 +1,5 @@
+local L = Gargul_L;
+
 ---@type GL
 local _, GL = ...;
 
@@ -21,7 +23,7 @@ GL.Interface.Award.Award = {
     ItemBoxHoldsValidItem = false,
     PlayersTable = {},
     Defaults = {
-        itemIcon = "Interface\\Icons\\INV_Misc_QuestionMark",
+        itemIcon = "Interface/Icons/INV_Misc_QuestionMark",
         itemBoxText = "",
     },
 };
@@ -68,7 +70,7 @@ function Award:draw(itemLink, callback)
 
     -- Create a container/parent frame
     local Window = AceGUI:Create("Frame");
-    Window:SetTitle("Gargul v" .. GL.version);
+    Window:SetTitle((L.WINDOW_HEADER):format(GL.version));
     Window:SetLayout("Flow");
     Window:SetWidth(430);
     Window:SetHeight(300);
@@ -86,8 +88,8 @@ function Award:draw(itemLink, callback)
         SETTINGS BUTTON
     ]]
     local SettingsButton = GL.UI:createSettingsButton(
-            Window.frame,
-            "AwardingLoot"
+        Window.frame,
+        "AwardingLoot"
     );
     self.SettingsButton = SettingsButton;
 
@@ -134,7 +136,7 @@ function Award:draw(itemLink, callback)
     ItemIcon:SetCallback("OnEnter", function()
         if (not Award.ItemBoxHoldsValidItem) then
             GameTooltip:SetOwner(ItemIcon.frame, "ANCHOR_TOP");
-            GameTooltip:AddLine("Drag and drop or shift+click an item in the box on the right");
+            GameTooltip:AddLine(L.AWARD_TOOLTIP_ADD_ITEM);
             GameTooltip:Show();
             return;
         end
@@ -246,7 +248,7 @@ function Award:draw(itemLink, callback)
             if (GL:empty(winner)) then
                 -- Show a confirmation dialog asking whether we should award this to a random person
                 return GL.Interface.Dialogs.PopupDialog:open{
-                    question = string.format("Do you want to award %s to a random player?", itemLink),
+                    question = (L.AWARD_RANDOM_CONFIRM):format(itemLink),
                     OnYes = function ()
                         local GroupMembers = GL.User:groupMembers();
 
@@ -258,7 +260,7 @@ function Award:draw(itemLink, callback)
                             return;
                         end
 
-                        GL:sendChatMessage(string.format("Random winner for %s selected (%s)", itemLink, winner), "GROUP");
+                        GL:sendChatMessage((L.CHAT.AWARD_RANDOM_WINNER):format(itemLink, winner), "GROUP");
                         award(true);
                     end,
                 };
@@ -269,11 +271,7 @@ function Award:draw(itemLink, callback)
 
         -- Make sure the initiator has to confirm his choices
         GL.Interface.Dialogs.AwardDialog:open{
-            question = string.format("Award %s to |cff%s%s|r?",
-                itemLink,
-                GL:classHexColor(GL.Player:classByName(winner)),
-                winner
-            ),
+            question = (L.AWARD_CONFIRM):format(itemLink, GL:nameFormat{ name = winner, colorize = true }),
             OnYes = award,
         };
     end);
@@ -290,17 +288,17 @@ function Award:draw(itemLink, callback)
     AwardHistoryButton:SetMotionScriptsWhileDisabled(true); -- Make sure tooltip still shows even when button is disabled
 
     local AwardHistoryButtonHighlight = AwardHistoryButton:CreateTexture();
-    AwardHistoryButtonHighlight:SetTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\award");
+    AwardHistoryButtonHighlight:SetTexture("Interface/AddOns/Gargul/Assets/Buttons/award");
     AwardHistoryButtonHighlight:SetPoint("CENTER", AwardHistoryButton, "CENTER", 0, 0);
     AwardHistoryButtonHighlight:SetSize(22, 20);
 
-    AwardHistoryButton:SetNormalTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\award");
-    AwardHistoryButton:SetDisabledTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\award-disabled");
+    AwardHistoryButton:SetNormalTexture("Interface/AddOns/Gargul/Assets/Buttons/award");
+    AwardHistoryButton:SetDisabledTexture("Interface/AddOns/Gargul/Assets/Buttons/award-disabled");
     AwardHistoryButton:SetHighlightTexture(AwardHistoryButtonHighlight);
 
     AwardHistoryButton:SetScript("OnEnter", function()
         GameTooltip:SetOwner(AwardHistoryButton, "ANCHOR_TOP");
-        GameTooltip:SetText("Award history");
+        GameTooltip:SetText(L.AWARD_HISTORY);
         GameTooltip:Show();
     end);
 
@@ -322,7 +320,7 @@ function Award:draw(itemLink, callback)
         DISENCHANT BUTTON
     ]]
     local DisenchantButton = AceGUI:Create("Button");
-    DisenchantButton:SetText("Disenchant");
+    DisenchantButton:SetText(L.DISENCHANT);
     DisenchantButton:SetWidth(100);
     DisenchantButton:SetHeight(20);
     DisenchantButton:SetDisabled(false);
@@ -343,15 +341,15 @@ function Award:draw(itemLink, callback)
         local selected = PlayersTable:GetRow(PlayersTable:GetSelection());
 
         if (not selected or type(selected) ~= "table") then
-            return GL:warning("You need to select a player first");
+            return GL:warning(L.ROLLING_SELECT_PLAYER_WARNING);
         end
 
         local disenchanter = selected.cols[1].value;
 
         -- No disenchanter was set yet
         GL.Interface.Dialogs.PopupDialog:open{
-            question = string.format("Set %s as your disenchanter?",
-                    GL:nameFormat{ name = disenchanter, colorize = true },
+            question = string.format(L.PACKMULE_CONFIRM_DISENCHANTER,
+                    GL:nameFormat{ name = disenchanter, colorize = true, },
                     disenchanter
             ),
             OnYes = function ()
@@ -384,7 +382,7 @@ function Award:draw(itemLink, callback)
     SecondRow:AddChild(Spacer);
 
     local PlayerNameLabel = AceGUI:Create("Label");
-    PlayerNameLabel:SetText("Type player name here");
+    PlayerNameLabel:SetText(L.AWARD_PLAYER_CUSTOM_NAME);
     PlayerNameLabel:SetHeight(20);
     PlayerNameLabel:SetWidth(128); -- Minimum is 122
     SecondRow:AddChild(PlayerNameLabel);
@@ -412,7 +410,7 @@ function Award:draw(itemLink, callback)
     SecondRow:AddChild(Spacer);
 
     local PlayerNameLabelSuffix = AceGUI:Create("Label");
-    PlayerNameLabelSuffix:SetText("or select one below");
+    PlayerNameLabelSuffix:SetText(L.AWARD_PLAYER_SELECT_NAME);
     PlayerNameLabelSuffix:SetHeight(20);
     PlayerNameLabelSuffix:SetWidth(104); -- Minimum is 104
     SecondRow:AddChild(PlayerNameLabelSuffix);
@@ -436,7 +434,7 @@ function Award:draw(itemLink, callback)
     Window:AddChild(FourthRow);
 
     local CloseOnAward = AceGUI:Create("CheckBox");
-    CloseOnAward:SetLabel("Close on award");
+    CloseOnAward:SetLabel(L.ROLLING_CLOSE_ON_AWARD_LABEL);
     CloseOnAward:SetValue(Settings:get("UI.Award.closeOnAward", true));
     CloseOnAward:SetCallback("OnValueChanged", function (widget)
         Settings:set("UI.Award.closeOnAward", widget:GetValue());
@@ -449,8 +447,6 @@ end
 
 ---@return void
 function Award:close()
-    GL:debug("Award:close");
-
     local Window = GL.Interface:get(self, "Window");
 
     if (not Window) then
@@ -469,14 +465,12 @@ end
 
 ---@return void
 function Award:drawPlayersTable()
-    GL:debug("Award:drawPlayersTable");
-
     local Parent = GL.Interface:get(self, "Window").frame;
 
-    -- Combined width of all colums should be 340
+    -- Combined width of all columns should be 340
     local columns = {
         {
-            name = "In Group",
+            name = L.AWARD_HEADER_IN_GROUP,
             width = 340,
             align = "LEFT",
             color = {
@@ -524,8 +518,6 @@ end
 ---@param itemID
 ---@return nil|string
 function Award:topPrioForItem(itemID)
-    GL:debug("Award:topPrioForItem");
-
     -- This item was only reserved by one player
     if (GL.SoftRes:available()) then
         local lastPlayerName = false;
@@ -603,8 +595,6 @@ end
 
 -- Populate the players table with your current group members
 function Award:populatePlayersTable(itemID)
-    GL:debug("Award:populatePlayersTable");
-
     local PlayersTable = GL.Interface:get(self, "Table.Players");
 
     if (not PlayersTable) then
@@ -649,8 +639,6 @@ end
 --- The item box contents changed
 ---@return void
 function Award:ItemBoxChanged()
-    GL:debug("Award:ItemBoxChanged");
-
     local itemLink = GL.Interface:get(self, "EditBox.Item"):GetText();
 
     Award:passItemLink(itemLink);
@@ -663,8 +651,6 @@ end
 ---@param itemLink string
 ---@return void
 function Award:passItemLink(itemLink)
-    GL:debug("Award:passItemLink");
-
     if (not GL.Interface:get(self, "Window").rendered) then
         return;
     end
@@ -677,8 +663,6 @@ end
 ---
 ---@return void
 function Award:update()
-    GL:debug("Award:update");
-
     local IconWidget = GL.Interface:get(self, "Icon.Item");
     local itemLink = GL.Interface:get(self, "EditBox.Item"):GetText();
 
@@ -714,8 +698,6 @@ end
 ---
 ---@return void
 function Award:reset()
-    GL:debug("Award:reset");
-
     GL.Interface:get(self, "Icon.Item"):SetImage(Award.Defaults.itemIcon);
     GL.Interface:get(self, "EditBox.Item"):SetText(Award.Defaults.itemText);
     Award.ItemBoxHoldsValidItem = false;
@@ -727,8 +709,6 @@ end
 ---
 ---@return void
 function Award:updateWidgets()
-    GL:debug("Award:updateWidgets");
-
     -- If the itembox doesn't hold a valid item link then:
     --   The start button should not be available
     --   The stop button should be available
@@ -741,5 +721,3 @@ function Award:updateWidgets()
         GL.Interface:get(self, "Button.Disenchant"):SetDisabled(false);
     end
 end
-
-GL:debug("Award.lua");

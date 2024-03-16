@@ -68,8 +68,6 @@ GL.Interface.Alerts = {
 local Alerts = GL.Interface.Alerts;
 
 function Alerts:fire(frameType, ...)
-    GL:debug("Alerts:fire");
-
     if (self.Types[frameType]) then
         self.Types[frameType]:AddAlert(...);
         return true;

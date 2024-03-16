@@ -1,3 +1,5 @@
+local L = Gargul_L;
+
 ---@type GL
 local _, GL = ...;
 
@@ -32,8 +34,6 @@ local Overview = GL.Interface.BoostedRolls.Overview;
 ---
 ---@return void
 function Overview:draw()
-    GL:debug("Overview:draw");
-
     -- The overview is already visible
     if (self.isVisible) then
         return;
@@ -45,7 +45,7 @@ function Overview:draw()
 
     -- Create a container/parent frame
     local Window = AceGUI:Create("Frame");
-    Window:SetTitle("Gargul v" .. GL.version);
+    Window:SetTitle((L.WINDOW_HEADER):format(GL.version));
     Window:SetLayout("Flow");
     Window:SetWidth(600);
     Window:SetHeight(540);
@@ -61,12 +61,11 @@ function Overview:draw()
     local importedAt = GL:tableGet(DB.BoostedRolls, "MetaData.importedAt", GetServerTime());
     local updatedAt = GL:tableGet(DB.BoostedRolls, "MetaData.updatedAt", GetServerTime());
     if (GL:higherThanZero(importedAt)) then
-        Window:SetStatusText(string.format(
-            "Imported on |c00a79eff%s|r at |c00a79eff%s|r, Updated on |c00a79eff%s|r at |c00a79eff%s|r",
-            date('%Y-%m-%d', importedAt),
-            date('%H:%M', importedAt),
-            date('%Y-%m-%d', updatedAt),
-            date('%H:%M', updatedAt)
+        Window:SetStatusText((L.IMPORTED_AND_UPDATED_ON):format(
+            date(L.DATE_FORMAT, importedAt),
+            date(L.HOURS_MINUTES_FORMAT, importedAt),
+            date(L.DATE_FORMAT, updatedAt),
+            date(L.HOURS_MINUTES_FORMAT, updatedAt)
         ));
     end
 
@@ -78,9 +77,16 @@ function Overview:draw()
         SHARE BUTTON
     ]]
     local ShareButton = GL.Interface:createShareButton(Window, {
-        onClick = function() GL.Interface.Dialogs.PopupDialog:open("BROADCAST_BOOSTEDROLLS_CONFIRMATION"); end,
+        onClick = function()
+            GL.Interface.Dialogs.PopupDialog:open({
+                question = L.BOOSTED_ROLLS_BROADCAST_CONFIRM,
+                OnYes = function ()
+                    GL.BoostedRolls:broadcast();
+                end,
+            });
+        end,
         tooltip = "Broadcast Data",
-        disabledTooltip = "To broadcast you need to be in a group and need master loot, assist or lead!",
+        disabledTooltip = L.LM_OR_ASSIST_REQUIRED,
         position = "TOPRIGHT",
     });
     self.ShareButton = ShareButton;
@@ -134,10 +140,7 @@ function Overview:draw()
     PlayerNameLabel:SetFontObject(_G["GameFontNormal"]);
     PlayerNameLabel:SetWidth(100);
     PlayerNameLabel:SetJustifyH("LEFT");
-    PlayerNameLabel:SetText(string.format(
-            "|cff%s%s|r",
-            GL:classHexColor(), "None"
-        ));
+    PlayerNameLabel:SetText(("|cff%s%s|r"):format(GL:classHexColor(), L.NONE));
     PlayerFrame:AddChild(PlayerNameLabel);
     GL.Interface:set(self, "PlayerName", PlayerNameLabel);
 
@@ -168,7 +171,7 @@ function Overview:draw()
     GL.Interface:set(self, "CurrentPoints", BoostedRollsCurrentPoints);
 
     local IncrementButton = AceGUI:Create("Button");
-    IncrementButton:SetText("+" .. step);
+    IncrementButton:SetText(L.PLUS_SIGN .. step);
     IncrementButton:SetWidth(60);
     IncrementButton:SetHeight(20);
     IncrementButton:SetCallback("OnClick", function()
@@ -183,7 +186,7 @@ function Overview:draw()
     PlayerFrame:AddChild(HorizontalSpacer);
 
     local DeleteButton = AceGUI:Create("Button");
-    DeleteButton:SetText("Delete entry");
+    DeleteButton:SetText(L.DELETE);
     DeleteButton:SetWidth(120);
     DeleteButton:SetCallback("OnClick", function()
         self:deleteEntry();
@@ -200,7 +203,7 @@ function Overview:draw()
     AliasesLabel:SetFontObject(_G["GameFontNormalSmall"]);
     AliasesLabel:SetWidth(46);
     AliasesLabel:SetJustifyH("RIGHT");
-    AliasesLabel:SetText("Aliases: ");
+    AliasesLabel:SetText(L.BOOSTED_ROLLS_ALIASES);
     AliasesFrame:AddChild(AliasesLabel);
 
     local AliasesEditBox = GL.AceGUI:Create("EditBox");
@@ -217,7 +220,7 @@ function Overview:draw()
     AliasesFrame:AddChild(HorizontalSpacer);
 
     local ApplyAliasesButton = AceGUI:Create("Button");
-    ApplyAliasesButton:SetText("Apply aliases");
+    ApplyAliasesButton:SetText(L.BOOSTED_ROLLS_ALIAS_APPLY_BUTTON);
     ApplyAliasesButton:SetWidth(120);
     ApplyAliasesButton:SetCallback("OnClick", function()
         local text = GL.Interface:get(self, "EditBox.Aliases"):GetText();
@@ -252,10 +255,17 @@ function Overview:draw()
     Window:AddChild(ButtonFrame);
 
     local ClearDataButton = AceGUI:Create("Button");
-    ClearDataButton:SetText("Clear Data");
+    ClearDataButton:SetText(L.CLEAR);
     ClearDataButton:SetWidth(102);
     ClearDataButton:SetCallback("OnClick", function()
-        GL.Interface.Dialogs.PopupDialog:open("CLEAR_BOOSTEDROLLS_CONFIRMATION");
+        GL.Interface.Dialogs.PopupDialog:open({
+            question = L.BOOSTED_ROLLS_CLEAR_CONFIRM,
+            OnYes = function ()
+                GL.Interface.BoostedRolls.Overview:close();
+                GL.BoostedRolls:clear();
+                GL.BoostedRolls:draw();
+            end,
+        });
     end);
     ButtonFrame:AddChild(ClearDataButton);
 
@@ -277,7 +287,7 @@ function Overview:draw()
     ButtonFrame:AddChild(ExportButton);
 
     local AddRaidersButton = AceGUI:Create("Button");
-    AddRaidersButton:SetText("Add missing raiders");
+    AddRaidersButton:SetText(L.BOOSTED_ROLLS_ADD_RAIDERS_BUTTON);
     AddRaidersButton:SetWidth(156);
     AddRaidersButton:SetCallback("OnClick", function()
         BoostedRolls:addMissingRaiders();
@@ -286,17 +296,17 @@ function Overview:draw()
     ButtonFrame:AddChild(AddRaidersButton);
 
     local AddToRaid = AceGUI:Create("Button");
-    AddToRaid:SetText("Add points to raid");
+    AddToRaid:SetText(L.BOOSTED_ROLLS_ADD_POINTS_TO_RAID_BUTTON);
     AddToRaid:SetWidth(140);
     AddToRaid:SetCallback("OnClick", function()
         GL.Interface.Dialogs.ConfirmWithSingleInputDialog:open{
-            question = "Add how many points for everyone currently in the raid?\n\n|c00BE3333Use the \"Add missing raiders\" button first if you want everyone to get points, even those without a boosted roll entry!|r",
+            question = L.BOOSTED_ROLLS_ADD_POINTS_CONFIRM,
             inputValue = step,
             OnYes = function (value)
                 value = tonumber(value) or 0;
 
                 if (value < 1) then
-                    GL:error("No point value provided!");
+                    GL:error(L.BOOSTED_ROLLS_ADD_POINTS_ERROR);
                     return;
                 end
 
@@ -350,11 +360,9 @@ function Overview:updateShareButton()
 end
 
 function Overview:drawBoostedRollDataTable(Parent)
-    GL:debug("Overview:drawBoostedRollDataTable");
-
     local columns = {
         {
-            name = "Player",
+            name = L.PLAYER,
             width = 131,
             align = "LEFT",
             color = {
@@ -367,7 +375,7 @@ function Overview:drawBoostedRollDataTable(Parent)
             defaultsort = Constants.ScrollingTable.ascending,
         },
         {
-            name = "Points",
+            name = L.BOOSTED_ROLLS_POINTS,
             width = 45,
             align = "LEFT",
             color = {
@@ -379,7 +387,7 @@ function Overview:drawBoostedRollDataTable(Parent)
             colorargs = nil,
         },
         {
-            name = "Reserve",
+            name = L.BOOSTED_ROLLS_RESERVE,
             width = 52,
             align = "LEFT",
             color = {
@@ -393,7 +401,7 @@ function Overview:drawBoostedRollDataTable(Parent)
             sortnext = 1,
         },
         {
-            name = "Aliases",
+            name = L.BOOSTED_ROLLS_ALIASES,
             width = 302,
             align = "LEFT",
             color = {
@@ -448,8 +456,6 @@ end
 
 ---@return void
 function Overview:refreshTable()
-    GL:debug("Overview:refreshTable");
-
     local Table = GL.Interface:get(self, "Table.Characters");
     if (not Table) then
         return;
@@ -515,17 +521,13 @@ end
 
 ---@return void
 function Overview:deleteEntry()
-    GL:debug("Overview:deleteEntry");
-
     if (not self.selectedCharacter) then
-        GL:warning("You need to select a player first");
+        GL:warning(L.ROLLING_SELECT_PLAYER_WARNING);
         return;
     end
 
     return GL.Interface.Dialogs.PopupDialog:open{
-        question = string.format("Delete %s?",
-            GL:nameFormat{ name = self.selectedCharacter, colorize = true }
-        ),
+        question = (L.BOOSTED_ROLLS_DELETE_CONFIRM):format(GL:nameFormat{ name = self.selectedCharacter, colorize = true, }),
         OnYes = function ()
             BoostedRolls:deletePoints(self.selectedCharacter);
             self:refreshTable();
@@ -538,10 +540,8 @@ end
 ---@param points number 
 ---@return void
 function Overview:updatePoints(points, updateEditBox)
-    GL:debug("Overview:updatePoints");
-
     if (not self.selectedCharacter) then
-        GL:warning("You need to select a player first");
+        GL:warning(L.ROLLING_SELECT_PLAYER_WARNING);
         return;
     end
 
@@ -568,10 +568,8 @@ end
 ---@param aliases string 
 ---@return void
 function Overview:updateAliases(aliases)
-    GL:debug("Overview:updateAliases");
-
     if (not self.selectedCharacter) then
-        GL:warning("You need to select a player first");
+        GL:warning(L.ROLLING_SELECT_PLAYER_WARNING);
         return;
     end
 
@@ -596,11 +594,9 @@ end
 
 ---@return void
 function Overview:loadPlayer()
-    GL:debug("Overview:loadPlayer");
-
     -- Better be safe than getting a lua error
     local class = nil;
-    local name = "None";
+    local name = L.NONE;
     local Aliases = {};
 
     if (not self.selectedCharacter
@@ -610,15 +606,12 @@ function Overview:loadPlayer()
     else
         self.points = BoostedRolls:getPoints(self.selectedCharacter);
         class = BoostedRolls.MaterializedData.DetailsByPlayerName[self.selectedCharacter].class;
-        name = GL:nameFormat{ name = self.selectedCharacter, stripRealm = true};
+        name = GL:nameFormat{ name = self.selectedCharacter, stripRealm = true };
         Aliases = BoostedRolls.MaterializedData.DetailsByPlayerName[self.selectedCharacter].Aliases;
     end
     
     GL.Interface:get(self, "EditBox.CurrentPoints"):SetText(self.points);
-    GL.Interface:get(self, "Label.PlayerName"):SetText(string.format(
-        "|cff%s%s|r",
-        GL:classHexColor(class), name
-    ));
+    GL.Interface:get(self, "Label.PlayerName"):SetText(GL:nameFormat{ name = name, colorize = true, });
 
     --- Aliases
     local aliases = {};
@@ -631,8 +624,6 @@ end
 
 ---@return void
 function Overview:close()
-    GL:debug("Overview:close");
-
     local Window = GL.Interface:get(self, "Window");
 
     if (not self.isVisible
@@ -665,5 +656,3 @@ function Overview:close()
         self.SettingsButton = nil;
     end
 end
-
-GL:debug("Interfaces/BoostedRolls/Overview.lua");

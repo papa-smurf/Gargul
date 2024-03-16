@@ -115,17 +115,17 @@ function Create:build()
         local given = tonumber(Window.GivenInput:GetText()) or 0;
 
         if (received > 0 and given > 0) then
-            GL:error("You can't give AND receive gold from the same player at the same time");
+            GL:error(L.GDKP_ADD_TRADE_GIVEN_AND_RECEIVED_WARNING);
             return false;
         end
 
         if (received <= 0 and given <= 0) then
-            GL:error("Set a numeric (positive) amount in gold traded or gold received");
+            GL:error(L.INVALID_DATA_WARNING);
             return false;
         end
 
         if (not GDKPSession:addGoldTrade(self.sessionID, self.playerGUID, given * 10000, received * 10000)) then
-            GL:error("Something went wrong, check your input and try again!");
+            GL:error(L.SOMETHING_WENT_WRONG_WARNING);
             return false;
         end
 
@@ -151,7 +151,7 @@ function Create:refresh()
     local Window = _G[self.windowName] or self:build();
 
     --[[ SET THE WINDOW TITLE ]]
-    local playerName = GL:disambiguateName(playerGUID, { colorize = true });
+    local playerName = GL:disambiguateName(playerGUID, { colorize = true, });
     Window.Title:SetText(([[GDKP Session: |c00967FD2%s|r
 Player: %s
 ]]):format(Instance.title, playerName));
@@ -162,15 +162,15 @@ Player: %s
     if (copperOwedToPLayer == 0) then
         balance = playerName;
     elseif (copperOwedToPLayer > 0) then
-        balance = ("You owe %s %s"):format(playerName, GL:copperToMoney(copperOwedToPLayer));
+        balance = (L.GDKP_YOU_OWE):format(playerName, GL:copperToMoney(copperOwedToPLayer));
     else
-        balance = ("%s owes you %s"):format(playerName, GL:copperToMoney(copperOwedToPLayer * -1));
+        balance = (L.GDKP_THEY_OWE):format(playerName, GL:copperToMoney(copperOwedToPLayer * -1));
     end
     Window.Balance:SetText(balance);
 
     --[[ UPDATE THE INPUT LABELS ]]
-    Window.GivenLabel:SetText(("Gold |c00967FD2given to|r %s"):format(playerName));
-    Window.ReceivedLabel:SetText(("Gold |c00967FD2received from|r %s"):format(playerName));
+    Window.GivenLabel:SetText((L.GDKP_TRADE_GIVEN_TO_LABEL):format(playerName));
+    Window.ReceivedLabel:SetText((L.GDKP_TRADE_RECEIVED_FROM_LABEL):format(playerName));
 
     --[[ REFRESH INPUTS ]]
     Window.GivenInput:SetText("");

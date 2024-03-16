@@ -35,15 +35,15 @@ function UI:createSettingsButton(ParentFrame, settingsSection, width, height, om
     local CogwheelTexture = Cogwheel:CreateTexture();
     CogwheelTexture:SetPoint("BOTTOMRIGHT", math.ceil(width / 6.5) * -1, math.ceil(height / 6.5));
     CogwheelTexture:SetSize(width,height);
-    CogwheelTexture:SetTexture("interface\\cursor\\interact");
-    CogwheelTexture:SetTexture("interface\\cursor\\unableinteract");
+    CogwheelTexture:SetTexture("interface/cursor/interact");
+    CogwheelTexture:SetTexture("interface/cursor/unableinteract");
     Cogwheel.texture = CogwheelTexture;
 
     Cogwheel:SetScript('OnEnter', function()
-        CogwheelTexture:SetTexture("interface\\cursor\\interact");
+        CogwheelTexture:SetTexture("interface/cursor/interact");
     end);
     Cogwheel:SetScript('OnLeave', function()
-        CogwheelTexture:SetTexture("interface\\cursor\\unableinteract");
+        CogwheelTexture:SetTexture("interface/cursor/unableinteract");
     end);
 
     Cogwheel:SetScript("OnClick", function(_, button)
@@ -58,8 +58,6 @@ end
 ---@param Parent Frame
 ---@param Details table<string,any>
 function UI:createShareButton(Parent, Details)
-    GL:debug("UI:createShareButton");
-
     -- Invalid Parent provided
     if (not Parent
         or type(Parent) ~= "table"
@@ -113,13 +111,13 @@ function UI:createShareButton(Parent, Details)
     end
 
     local HighlightTexture = ShareButton:CreateTexture();
-    HighlightTexture:SetTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\share-highlighted");
+    HighlightTexture:SetTexture("Interface/AddOns/Gargul/Assets/Buttons/share-highlighted");
     HighlightTexture:SetPoint("CENTER", ShareButton, "CENTER", 0, 0);
     HighlightTexture:SetSize(width, height);
 
-    ShareButton:SetNormalTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\share");
+    ShareButton:SetNormalTexture("Interface/AddOns/Gargul/Assets/Buttons/share");
     ShareButton:SetHighlightTexture(HighlightTexture);
-    ShareButton:SetDisabledTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\share-disabled");
+    ShareButton:SetDisabledTexture("Interface/AddOns/Gargul/Assets/Buttons/share-disabled");
 
     -- Show the tooltip on hover
     ShareButton:SetScript("OnEnter", function()
@@ -192,5 +190,3 @@ function UI:createSettingCheckbox(ParentFrame, label, description, onClick)
 
     return CheckBox
 end
-
-GL:debug("UI.lua");

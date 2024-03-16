@@ -1,3 +1,5 @@
+local L = Gargul_L;
+
 ---@type GL
 local _, GL = ...;
 
@@ -16,8 +18,6 @@ local Profiler = GL.Profiler; ---@type Profiler
 ---
 ---@return void
 function Profiler:draw()
-    GL:debug("Profiler:draw");
-
     if (self.isVisible) then
         return;
     end
@@ -25,7 +25,7 @@ function Profiler:draw()
     self.isVisible = true;
 
     local Window = GL.AceGUI:Create("Frame");
-    Window:SetTitle("Gargul v" .. GL.version);
+    Window:SetTitle((L.WINDOW_HEADER):format(GL.version));
     Window:SetLayout("Flow");
     Window:SetWidth(180);
     Window:SetHeight(60);
@@ -98,8 +98,6 @@ end
 ---
 ---@return string
 function Profiler:humanReadableNumber(number)
-    GL:debug("Profiler:humanReadableNumber");
-
     local pattern = "%.1f";
     local numberString = string.format(pattern, number);
 
@@ -117,8 +115,6 @@ end
 ---
 ---@return void
 function Profiler:close()
-    GL:debug("Profiler:close");
-
     if (not self.isVisible) then
         return;
     end
@@ -133,8 +129,6 @@ end
 ---
 ---@return void
 function Profiler:storePosition()
-    GL:debug("Profiler:storePosition");
-
     GL.Interface:storePosition(self.Window, "Profiler");
 end
 
@@ -142,13 +136,9 @@ end
 ---
 ---@return number
 function Profiler:getMemoryUsage()
-    GL:debug("Profiler:getMemoryUsage");
-
     UpdateAddOnMemoryUsage();
 
     local usage = GetAddOnMemoryUsage("Gargul");
 
     return usage;
 end
-
-GL:debug("Profiler.lua");

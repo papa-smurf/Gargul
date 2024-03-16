@@ -42,8 +42,6 @@ local Session = GDKP.Session;
 
 ---@return void
 function Session:_init()
-    GL:debug("Session:_init");
-
     if (self._initialized) then
         return;
     end
@@ -67,7 +65,7 @@ function Session:_init()
         if (Settings:get("GDKP.announcePotAfterAuction")
             and sessionID == self:activeSessionID()
         ) then
-            GL:sendChatMessage(string.format("Pot was updated, it now holds %s", GDKPPot:humanTotal()), "GROUP");
+            GL:sendChatMessage((L.CHAT.GDKP_POT_UPDATED):format(GDKPPot:humanTotal()), "GROUP");
         end
     end);
 
@@ -112,7 +110,7 @@ function Session:_init()
             end
 
             GL.Interface.Alerts:fire("GargulNotification", {
-                message = string.format("|c00BE3333%s|r", L.GDKP_ACTIVATED),
+                message = ("|c00BE3333%s|r"):format(L.GDKP_ACTIVATED),
                 onClick = function () GL.Interface.GDKP.Overview:open(); end,
             });
         end, 5);
@@ -164,8 +162,6 @@ end
 ---@param sessionID string
 ---@return number
 function Session:copperOwedToPlayer(player, sessionID)
-    GL:debug("Session:owedToPlayer");
-
     local Instance = self:byID(sessionID);
     if (not Instance) then
         return;
@@ -198,8 +194,6 @@ end
 ---@param Details table
 ---@return void
 function Session:tradeInitiated(Details)
-    GL:debug("Session:tradeInitiated");
-
     if (not Details.partner) then
         return;
     end
@@ -224,21 +218,20 @@ function Session:tradeInitiated(Details)
     local whisperMessage = nil;
     if (balance > 0) then
         local due = GL:copperToMoney(balance);
-        balanceMessage = string.format("|c00F7922ETo give: %s|r", due);
-        whisperMessage = string.format("I owe you %s. Enjoy!", due);
+        balanceMessage = ("|c00F7922E" .. L.GDKP_TRADE_GOLD_TO_GIVE .. "|r"):format(due);
+        whisperMessage = (L.CHAT.GDKP_I_OWE_YOU):format(due);
 
     elseif (balance < 0) then
         local owed = GL:copperToMoney(balance * -1);
-        balanceMessage = string.format("|c0092FF00To receive: %s|r", owed);
-        whisperMessage = string.format("You owe me %s. Thank you!", owed);
+        balanceMessage = ("|c0092FF00" .. L.GDKP_TRADE_GOLD_TO_RECEIVE .. "|r"):format(owed);
+        whisperMessage = (L.CHAT.GDKP_YOU_OWE_ME):format(owed);
     end
 
     if (whisperMessage and Settings:get("GDKP.whisperGoldDetails")) then
         GL:sendChatMessage(whisperMessage, "WHISPER", nil, Details.partner);
     end
 
-    message = string.format(
-        "|c00967FD2GDKP Session|r\nSpent by player: %s\nGiven: %s\nReceived: %s\nPlayer cut: %s\n\n%s",
+    message = (L.GDKP_TRADE_BALANCE_INFO):format(
         GL:copperToMoney(copperSpentByPlayer),
         GL:copperToMoney(copperGiven),
         GL:copperToMoney(copperReceived),
@@ -276,8 +269,8 @@ function Session:tradeInitiated(Details)
 
         local IncludeTradeInSession = GL.AceGUI:Create("CheckBox");
         IncludeTradeInSession:SetValue(false);
-        IncludeTradeInSession:SetLabel("Exclude from GDKP");
-        IncludeTradeInSession:SetDescription("Gold traded will not be added to amount given or received");
+        IncludeTradeInSession:SetLabel(L.GDKP_TRADE_EXCLUDE_GOLD);
+        IncludeTradeInSession:SetDescription(L.GDKP_TRADE_EXCLUDE_GOLD_INFO);
         IncludeTradeInSession:SetFullWidth(true);
         IncludeTradeInSession.text:SetTextColor(1, .95686, .40784);
         IncludeTradeInSession:SetCallback("OnValueChanged", function()
@@ -300,7 +293,7 @@ function Session:tradeInitiated(Details)
         and Settings:get("GDKP.addGoldToTradeWindow")
     ) then
         if (balance > GetMoney()) then
-            GL:error("You don't have enough money to pay " .. Details.partner);
+            GL:error((L.GDKP_TRADE_GOLD_INSUFFICIENT_FUNDS):format(Details.partner));
         else
             GL.TradeWindow:setCopper(balance, Details.partner, function(success)
                 if (success) then
@@ -308,7 +301,7 @@ function Session:tradeInitiated(Details)
                 end
 
                 GL:error(string.format(
-                    "Unable to add %s to the trade window. Try adding it manually!",
+                    L.GDKP_TRADE_GOLD_ADD_FAILED,
                     GL:copperToMoney(balance)
                 ));
             end);
@@ -632,15 +625,13 @@ function Session:tooltipLines(itemLink)
 
     local PerItemSettings = GDKP:settingsForItemID(itemID);
 
-    local Lines = {
-        string.format("\n|c00967FD2GDKP Data (sold %sx)|r", Details.timesSold),
-        string.format("Last sold for: %sg", Details.lastSoldPrice),
-        string.format("Average price: %sg ", Details.averageSaleValue),
-        string.format("Minimum bid: %sg", PerItemSettings.minimum),
-        string.format("Increment: %sg", PerItemSettings.increment),
-    };
-
-    return Lines;
+    return GL:explode((L.GDKP_ITEM_SALE_HISTORY_TOOLTIP):format(
+        Details.timesSold,
+        GL:goldToMoney(Details.lastSoldPrice),
+        GL:goldToMoney(Details.averageSaleValue),
+        GL:goldToMoney(PerItemSettings.minimum),
+        GL:goldToMoney(PerItemSettings.increment)
+    ), "\n");
 end
 
 ---@return table|boolean
@@ -957,23 +948,23 @@ function Session:announceDeletedAuction(sessionID, Auction)
 
         -- This was raw gold added to the pot
         if (Auction.itemID == Constants.GDKP.potIncreaseItemID) then
-            GL:sendChatMessage((L.I_REMOVED_GOLD):format(price), "GROUP");
-            GL:sendChatMessage((L.POT_HOLDS):format(tostring(total)), "GROUP");
+            GL:sendChatMessage((L.CHAT.GDKP_REMOVED_GOLD):format(GL:goldToMoney(price)), "GROUP");
+            GL:sendChatMessage((L.CHAT.GDKP_POT_HOLDS):format(GDKPPot:humanTotal()), "GROUP");
 
             return;
 
             -- Just in case someone has old data still
         elseif (winner and price) then
-            GL:sendChatMessage((L.I_REMOVED_AWARDED):format(Auction.itemLink, winner, price), "GROUP");
-            GL:sendChatMessage((L.POT_HOLDS):format(tostring(total)), "GROUP");
+            GL:sendChatMessage((L.CHAT.GDKP_REMOVED_AWARDED):format(Auction.itemLink, winner, GL:goldToMoney(price)), "GROUP");
+            GL:sendChatMessage((L.CHAT.GDKP_POT_HOLDS):format(GDKPPot:humanTotal()), "GROUP");
 
             return;
         end
 
-        GL:sendChatMessage(string.format(L.POT_UPDATED_AFTER_DELETE, tostring(total)), "GROUP");
+        GL:sendChatMessage(string.format(L.CHAT.GDKP_POT_UPDATED_AFTER_DELETE, GDKPPot:humanTotal()), "GROUP");
     else
         -- Should not be possible, shenanigans?
-        GL:sendChatMessage(string.format(L.POT_UPDATED_AFTER_DELETE, tostring(total)), "GROUP");
+        GL:sendChatMessage(string.format(L.CHAT.GDKP_POT_UPDATED_AFTER_DELETE, GDKPPot:humanTotal()), "GROUP");
     end
 end
 
@@ -996,22 +987,22 @@ function Session:announceRestoredAuction(sessionID, Auction)
 
         -- This was raw gold added to the pot
         if (Auction.itemID == Constants.GDKP.potIncreaseItemID) then
-            GL:sendChatMessage((L.I_RESTORED_GOLD):format(price), "GROUP");
-            GL:sendChatMessage((L.POT_HOLDS):format(tostring(total)), "GROUP");
+            GL:sendChatMessage((L.CHAT.GDKP_RESTORED_GOLD):format(price), "GROUP");
+            GL:sendChatMessage((L.CHAT.GDKP_POT_HOLDS):format(GDKPPot:humanTotal()), "GROUP");
             return;
 
             -- Just in case someone has old data still
         elseif (winner and price) then
-            GL:sendChatMessage((L.I_RESTORED_AWARDED):format(Auction.itemLink, winner, price), "GROUP");
-            GL:sendChatMessage((L.POT_HOLDS):format(tostring(total)), "GROUP");
+            GL:sendChatMessage((L.CHAT.GDKP_RESTORED_AWARDED):format(Auction.itemLink, winner, GL:goldToMoney(price)), "GROUP");
+            GL:sendChatMessage((L.CHAT.GDKP_POT_HOLDS):format(GDKPPot:humanTotal()), "GROUP");
 
             return;
         end
 
-        GL:sendChatMessage(string.format(L.POT_UPDATED_AFTER_RESTORE, tostring(total)), "GROUP");
+        GL:sendChatMessage(string.format(L.CHAT.GDKP_POT_UPDATED_AFTER_RESTORE, tostring(total)), "GROUP");
     else
         -- Should not be possible, shenanigans?
-        GL:sendChatMessage(string.format(L.POT_UPDATED_AFTER_RESTORE, tostring(total)), "GROUP");
+        GL:sendChatMessage(string.format(L.CHAT.GDKP_POT_UPDATED_AFTER_RESTORE, tostring(total)), "GROUP");
     end
 end
 
@@ -1027,9 +1018,9 @@ function Session:announceCreatedGoldTrade(sessionID, playerGUID, given, received
 
     local playerName = GL:disambiguateName(playerGUID);
     if (given > 0) then
-        GL:sendChatMessage((L.GOLD_TRADE_GIVEN):format(GL:copperToMoney(given), playerName), "GROUP");
+        GL:sendChatMessage((L.CHAT.GOLD_TRADE_GIVEN):format(GL:copperToMoney(given), playerName), "GROUP");
     else
-        GL:sendChatMessage((L.GOLD_TRADE_RECEIVED):format(GL:copperToMoney(received), playerName), "GROUP");
+        GL:sendChatMessage((L.CHAT.GOLD_TRADE_RECEIVED):format(GL:copperToMoney(received), playerName), "GROUP");
     end
 end
 
@@ -1045,9 +1036,9 @@ function Session:announceDeletedGoldTrade(sessionID, playerGUID, given, received
 
     local playerName = GL:disambiguateName(playerGUID);
     if (given > 0) then
-        GL:sendChatMessage((L.GOLD_TRADE_GIVEN_DELETED):format(GL:copperToMoney(given), playerName), "GROUP");
+        GL:sendChatMessage((L.CHAT.GOLD_TRADE_GIVEN_DELETED):format(GL:copperToMoney(given), playerName), "GROUP");
     else
-        GL:sendChatMessage((L.GOLD_TRADE_RECEIVED_DELETED):format(GL:copperToMoney(received), playerName), "GROUP");
+        GL:sendChatMessage((L.CHAT.GOLD_TRADE_RECEIVED_DELETED):format(GL:copperToMoney(received), playerName), "GROUP");
     end
 end
 
@@ -1063,9 +1054,9 @@ function Session:announceRestoredGoldTrade(sessionID, playerGUID, given, receive
 
     local playerName = GL:disambiguateName(playerGUID);
     if (given > 0) then
-        GL:sendChatMessage((L.GOLD_TRADE_GIVEN_RESTORED):format(GL:copperToMoney(given), playerName), "GROUP");
+        GL:sendChatMessage((L.CHAT.GOLD_TRADE_GIVEN_RESTORED):format(GL:copperToMoney(given), playerName), "GROUP");
     else
-        GL:sendChatMessage((L.GOLD_TRADE_RECEIVED_RESTORED):format(GL:copperToMoney(received), playerName), "GROUP");
+        GL:sendChatMessage((L.CHAT.GOLD_TRADE_RECEIVED_RESTORED):format(GL:copperToMoney(received), playerName), "GROUP");
     end
 end
 

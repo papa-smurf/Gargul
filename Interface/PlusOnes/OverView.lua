@@ -1,3 +1,5 @@
+local L = Gargul_L;
+
 ---@type GL
 local _, GL = ...;
 
@@ -29,7 +31,7 @@ function Overview:draw()
     -- Create a container/parent frame
     local Window = AceGUI:Create("Frame");
     self.Window = Window
-    Window:SetTitle("Gargul v" .. GL.version);
+    Window:SetTitle((L.WINDOW_HEADER):format(GL.version));
     Window:SetLayout("Flow");
     Window:SetWidth(485);
     Window:SetHeight(465);
@@ -43,11 +45,11 @@ function Overview:draw()
     local importedAt = GL:tableGet(DB.PlusOnes, "MetaData.importedAt", GetServerTime());
     local updatedAt = GL:tableGet(DB.PlusOnes, "MetaData.updatedAt", GetServerTime());
         Window:SetStatusText(string.format(
-            "Imported on |c00a79eff%s|r at |c00a79eff%s|r, Updated on |c00a79eff%s|r at |c00a79eff%s|r",
-            date('%Y-%m-%d', importedAt),
-            date('%H:%M', importedAt),
-            date('%Y-%m-%d', updatedAt),
-            date('%H:%M', updatedAt)
+            L.IMPORTED_AND_UPDATED_ON,
+            date(L.DATE_FORMAT, importedAt),
+            date(L.HOURS_MINUTES_FORMAT, importedAt),
+            date(L.DATE_FORMAT, updatedAt),
+            date(L.HOURS_MINUTES_FORMAT, updatedAt)
         ));
 
     -- Make sure the window can be closed by pressing the escape button
@@ -58,7 +60,14 @@ function Overview:draw()
         SHARE BUTTON
     ]]
     local ShareButton = GL.Interface:createShareButton(Window, {
-        onClick = function() GL.Interface.Dialogs.PopupDialog:open("BROADCAST_PLUSONES_CONFIRMATION"); end,
+        onClick = function()
+            GL.Interface.Dialogs.PopupDialog:open({
+                question = L.PLUSONES_BROADCAST_CONFIRM,
+                OnYes = function ()
+                    GL.PlusOnes:broadcast();
+                end,
+            });
+        end,
         tooltip = "Broadcast Data",
         disabledTooltip = "To broadcast you need to be in a group and need master loot, assist or lead!",
         position = "TOPRIGHT",
@@ -106,7 +115,14 @@ function Overview:draw()
     ClearButton:SetText("Clear Data");
     ClearButton:SetWidth(80);
     ClearButton:SetCallback("OnClick", function()
-        GL.Interface.Dialogs.PopupDialog:open("CLEAR_PLUSONES_CONFIRMATION");
+        GL.Interface.Dialogs.PopupDialog:open({
+            question = L.PLUSONES_CLEAR_CONFIRM,
+            OnYes = function ()
+                GL.Interface.PlusOnes.Overview:close();
+                GL.PlusOnes:clearPlusOnes();
+                GL.PlusOnes:draw();
+            end,
+        });
     end);
     ButtonFrame:AddChild(ClearButton);
 
@@ -294,11 +310,11 @@ function Overview:update()
     local importedAt = GL:tableGet(DB.PlusOnes, "MetaData.importedAt", GetServerTime());
     local updatedAt = GL:tableGet(DB.PlusOnes, "MetaData.updatedAt", GetServerTime());
         self.Window:SetStatusText(string.format(
-            "Imported on |c00a79eff%s|r at |c00a79eff%s|r, Updated on |c00a79eff%s|r at |c00a79eff%s|r",
-            date('%Y-%m-%d', importedAt),
-            date('%H:%M', importedAt),
-            date('%Y-%m-%d', updatedAt),
-            date('%H:%M', updatedAt)
+            L.IMPORTED_AND_UPDATED_ON,
+            date(L.DATE_FORMAT, importedAt),
+            date(L.HOURS_MINUTES_FORMAT, importedAt),
+            date(L.DATE_FORMAT, updatedAt),
+            date(L.HOURS_MINUTES_FORMAT, updatedAt)
         ));
 
     if (not IsInGroup()) then

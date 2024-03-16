@@ -1,3 +1,5 @@
+local L = Gargul_L;
+
 local _, GL = ...;
 
 GL.AceGUI = GL.AceGUI or LibStub("AceGUI-3.0");
@@ -26,8 +28,6 @@ local Exporter = GL.Exporter;
 ---
 ---@return void
 function Exporter:draw()
-    GL:debug("Exporter:draw");
-
     if (self.visible) then
         return;
     end
@@ -37,7 +37,7 @@ function Exporter:draw()
     -- Fetch award history per date
     local AwardHistoryByDate = {};
     for _, AwardEntry in pairs(DB:get("AwardHistory") or {}) do
-        local dateString = date('%Y-%m-%d', AwardEntry.timestamp);
+        local dateString = date(L.DATE_FORMAT, AwardEntry.timestamp);
         local Entries = GL:tableGet(AwardHistoryByDate, dateString, {});
 
         tinsert(Entries, AwardEntry);
@@ -47,8 +47,8 @@ function Exporter:draw()
 
     -- Create a container/parent frame
     local Window = AceGUI:Create("Frame");
-    Window:SetTitle("Gargul v" .. GL.version);
-    Window:SetStatusText("Addon v" .. GL.version);
+    Window:SetTitle((L.WINDOW_HEADER):format(GL.version));
+    Window:SetStatusText(L.VERSION_ABBR ..GL.version);
     Window:SetLayout("Flow");
     Window:SetWidth(600);
     Window:SetHeight(450);
@@ -69,7 +69,7 @@ function Exporter:draw()
     local DontEditNotification = AceGUI:Create("Label");
     DontEditNotification:SetFullWidth(true);
     DontEditNotification:SetJustifyH("MIDDLE");
-    DontEditNotification:SetText("|c00FF0000This is an export feature ONLY, there is no point editing any of the values: THEY WON'T BE SAVED!|r\n\n");
+    DontEditNotification:SetText(("|c00FF0000%s|r"):format(L.EXPORT_READ_ONLY_NOTICE));
     Window:AddChild(DontEditNotification);
 
     --[[
@@ -128,14 +128,12 @@ end
 ---
 ---@return void
 function Exporter:clearData()
-    GL:debug("Exporter:clearData");
-
     local warning;
     local onConfirm;
 
     -- No date is selected, delete everything!
     if (not self.dateSelected) then
-        warning = "Are you sure you want to remove your complete reward history table? This deletes ALL loot data and cannot be undone!";
+        warning = L.EXPORT_DELETE_ALL_CONFIRM;
         onConfirm = function()
             GL.Events:fire("GL.ITEM_UNAWARDED");
             DB:set("AwardHistory", {});
@@ -145,10 +143,10 @@ function Exporter:clearData()
         end;
 
     else -- Only delete entries on the selected date
-        warning = string.format("Are you sure you want to remove all data for %s? This cannot be undone!", self.dateSelected);
+        warning = (L.EXPORT_DELETE_DATE_CONFIRM):format(self.dateSelected);
         onConfirm = function()
             for key, AwardEntry in pairs(DB:get("AwardHistory")) do
-                local dateString = date('%Y-%m-%d', AwardEntry.timestamp);
+                local dateString = date(L.DATE_FORMAT, AwardEntry.timestamp);
 
                 if (dateString == self.dateSelected) then
                     AwardEntry = nil;
@@ -177,8 +175,6 @@ end
 ---
 ---@return void
 function Exporter:refreshExportString()
-    GL:debug("Exporter:refreshExportString");
-
     local LootEntries = self:getLootEntries();
     local exportFormat = GL.Settings:get("ExportingLoot.format");
 
@@ -199,13 +195,11 @@ end
 ---
 ---@return table
 function Exporter:getLootEntries()
-    GL:debug("Exporter:getLootEntries");
-
     local Entries = {};
 
     for _, AwardEntry in pairs(DB:get("AwardHistory")) do
         local concernsDisenchantedItem = AwardEntry.awardedTo == self.disenchantedItemIdentifier;
-        local dateString = date('%Y-%m-%d', AwardEntry.timestamp);
+        local dateString = date(L.DATE_FORMAT, AwardEntry.timestamp);
 
         if (
             (not concernsDisenchantedItem or GL.Settings:get("ExportingLoot.includeDisenchantedItems"))
@@ -251,8 +245,6 @@ end
 ---
 ---@return string
 function Exporter:transformEntriesToCustomFormat(Entries)
-    GL:debug("Exporter:transformEntriesToCustomFormat");
-
     local exportString = "";
 
     -- Make sure that all relevant item data is cached
@@ -298,7 +290,7 @@ function Exporter:transformEntriesToCustomFormat(Entries)
                     ["@DAY"] = date('%d', AwardEntry.timestamp),
                     ["@HOUR"] = date('%H', AwardEntry.timestamp),
                     ["@MINUTE"] = date('%M', AwardEntry.timestamp),
-                    ["@DATE"] = date('%Y-%m-%d', AwardEntry.timestamp),
+                    ["@DATE"] = date(L.DATE_FORMAT, AwardEntry.timestamp),
                     ["@TIME"] = date('%H:%M', AwardEntry.timestamp),
                     ["@WOWHEAD"] = wowheadLink,
                     ["\\t"] = "\t",
@@ -326,17 +318,13 @@ end
 ---
 ---@return string
 function Exporter:transformEntriesToTMBFormat(Entries)
-    GL:debug("Exporter:transformEntriesToTMBFormat");
-
-    -- Get the desired export format
     local exportFormat = GL.Settings:get("ExportingLoot.format");
-
     local exportString = "dateTime,character,itemID,offspec,id";
 
     for _, AwardEntry in pairs(Entries) do
         exportString = string.format("%s\n%s,%s,%s,%s,%s",
             exportString,
-            date('%Y-%m-%d', AwardEntry.timestamp),
+            date(L.DATE_FORMAT, AwardEntry.timestamp),
             GL:nameFormat{
                 name = AwardEntry.awardedTo,
                 stripRealm = exportFormat == Constants.ExportFormats.TMB,
@@ -355,8 +343,6 @@ end
 ---
 ---@return string
 function Exporter:transformEntriesToDFTFormat(Entries)
-    GL:debug("Exporter:transformEntriesToDFTFormat");
-
     -- Get the desired export format
     local exportFormat = GL.Settings:get("ExportingLoot.format");
 
@@ -387,8 +373,6 @@ end
 ---
 ---@return void
 function Exporter:close()
-    GL:debug("Exporter:close");
-
     if (not self.visible) then
         return;
     end
@@ -413,8 +397,6 @@ end
 ---
 ---@return void
 function Exporter:drawDatesTable(Parent, Dates)
-    GL:debug("Exporter:drawDatesTable");
-
     local Columns = {
         {
             name = "Date",
@@ -465,5 +447,3 @@ function Exporter:drawDatesTable(Parent, Dates)
 
     GL.Interface:set(self, "Dates", Table);
 end
-
-GL:debug("Exporter.lua");

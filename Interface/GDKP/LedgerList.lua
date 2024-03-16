@@ -315,9 +315,9 @@ function LedgerList:refresh()
     self.SessionDetails:SetText(string.format(
         "|c00967FD2%s|r | By %s%s | On |c00967FD2%s|r",
         Session.title,
-        GL:nameFormat{ name = CreatedBy.name, realm = CreatedBy.realm, colorize = true },
+        GL:nameFormat{ name = CreatedBy.name, realm = CreatedBy.realm, colorize = true, },
         guild,
-        date('%Y-%m-%d', Session.createdAt)
+        date(L.DATE_FORMAT, Session.createdAt)
     ));
 
     -- Clear all table data
@@ -382,7 +382,7 @@ function LedgerList:refresh()
         for _, Player in pairs(PlayerData or {}) do
             tinsert(TableData, {
                 cols = {
-                    { value = GL:disambiguateName(Player.name, { colorize = true }), },
+                    { value = GL:disambiguateName(Player.name, { colorize = true, }), },
                     --{ value = Player.bid, },
                     --{ value = Player.spent, },
                     { value = Player.received, },

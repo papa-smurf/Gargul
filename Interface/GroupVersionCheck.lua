@@ -80,7 +80,7 @@ function GroupVersionCheck:build()
 
     --[[ PLAYER LABEL ]]
     ---@type FontString
-    local PlayerLabel = Interface:createFontString(Window, L.VERSION_CHECK_COLUMN_PLAYER);
+    local PlayerLabel = Interface:createFontString(Window, L.PLAYER);
     PlayerLabel:SetPoint("TOPLEFT", Window, "TOPLEFT", 20, -20);
 
     --[[ STATUS / VERSION ]]

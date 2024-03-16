@@ -1,3 +1,5 @@
+local L = Gargul_L;
+
 ---@type GL
 local _, GL = ...;
 
@@ -20,8 +22,6 @@ local BoostedRolls = GL.BoostedRolls; ---@type BoostedRolls
 
 ---@return boolean
 function BoostedRolls:_init()
-    GL:debug("BoostedRolls:_init");
-
     if (self._initialized) then
         return false;
     end
@@ -77,8 +77,6 @@ end
 ---@param playerName string
 ---@return boolean
 function BoostedRolls:playerIsTrusted(playerName)
-    GL:debug("BoostedRolls:playerIsTrusted");
-
     if (not playerName) then
         return false;
     end
@@ -149,8 +147,6 @@ end
 ---
 ---@return boolean
 function BoostedRolls:enabled()
-    GL:debug("BoostedRolls:enabled");
-
     return GL.Settings:get("BoostedRolls.enabled", false);
 end
 
@@ -158,8 +154,6 @@ end
 ---
 ---@return boolean
 function BoostedRolls:available()
-    GL:debug("BoostedRolls:available");
-
     return GL:higherThanZero(DB:get("BoostedRolls.MetaData.importedAt", 0));
 end
 
@@ -168,8 +162,6 @@ end
 ---
 ---@return void
 function BoostedRolls:draw()
-    GL:debug("BoostedRolls:draw");
-
     -- Show the boosted rolls overview instead
     GL.Interface.BoostedRolls.Overview:draw();
 end
@@ -181,16 +173,15 @@ end
 ---@param sender string
 ---@return void
 function BoostedRolls:handleWhisperCommand(_, message, sender)
-    GL:debug("BoostedRolls:handleWhisperCommand");
+    local validPrefixDetected = false;
+    for _, prefix in pairs(GL:explode(L.BOOSTED_ROLLS_WHISPER_PREFIXES, "|") or {}) do
+        if (GL:strStartsWith(message, prefix)) then
+            validPrefixDetected = true;
+            break;
+        end
+    end
 
-    -- Only listen to the following messages
-    if (not GL:strStartsWith(message, "!bonus")
-        and not GL:strStartsWith(message, "!BONUS")
-        and not GL:strStartsWith(message, "!rb")
-        and not GL:strStartsWith(message, "!RB")
-        and not GL:strStartsWith(message, "!br")
-        and not GL:strStartsWith(message, "!BR")
-    ) then
+    if (not validPrefixDetected) then
         return;
     end
 
@@ -204,11 +195,10 @@ function BoostedRolls:handleWhisperCommand(_, message, sender)
         local high = self:maxBoostedRoll(points);
         local ext = "";
         if (not self:hasPoints(name)) then
-            ext = " (default)";
+            ext = L.CHAT.BOOSTED_ROLLS_BALANCE_REPLY_DEFAULT_SUFFIX;
         end
         GL:sendChatMessage(
-            string.format("Player %s's %s roll is /rnd %d-%d%s", GL:capitalize(name), low, high, ext),
-            GL.Settings:get("BoostedRolls.identifier", "BR"),
+            string.format(L.CHAT.BOOSTED_ROLLS_OTHER_BALANCE_REPLY, GL:capitalize(name), GL.Settings:get("BoostedRolls.identifier", "BR"), low, high, ext),
             "WHISPER", nil, sender
         );
         return;
@@ -222,10 +212,10 @@ function BoostedRolls:handleWhisperCommand(_, message, sender)
     local high = self:maxBoostedRoll(points);
     local ext = "";
     if (not self:hasPoints(name)) then
-        ext = " (default)";
+        ext = L.CHAT.BOOSTED_ROLLS_BALANCE_REPLY_DEFAULT_SUFFIX;
     end
     GL:sendChatMessage(
-        string.format("Your %s roll is /rnd %d-%d%s", GL.Settings:get("BoostedRolls.identifier", "BR"), low, high, ext),
+        string.format(L.CHAT.BOOSTED_ROLLS_MY_BALANCE_REPLY, GL.Settings:get("BoostedRolls.identifier", "BR"), low, high, ext),
         "WHISPER", nil, sender
     );
 end
@@ -234,8 +224,6 @@ end
 ---
 ---@return void
 function BoostedRolls:materializeData()
-    GL:debug("BoostedRolls:materializeData");
-
     local Aliases = {}; -- Direct access to aliases
     local DetailsByPlayerName = {}; -- Details including aliases by player name
 
@@ -368,8 +356,6 @@ end
 ---@param dontBroadcast boolean
 ---@return void
 function BoostedRolls:setAliases(name, aliases, dontBroadcast)
-    GL:debug("BoostedRolls:setAliases");
-
     if (type(name) ~= "string") then
         return;
     end
@@ -412,8 +398,6 @@ end
 ---@param name string
 ---@return boolean
 function BoostedRolls:hasPoints(name)
-    GL:debug("BoostedRolls:hasPoints");
-
     if (type(name) ~= "string") then
         return false;
     end
@@ -432,7 +416,6 @@ end
 ---@param name string
 ---@return void
 function BoostedRolls:getPoints(name)
-    GL:debug("BoostedRolls:getPoints");
     local default = GL.Settings:get("BoostedRolls.defaultPoints", 0);
 
     if (type(name) ~= "string") then
@@ -451,8 +434,6 @@ end
 ---@param dontBroadcast boolean
 ---@return void
 function BoostedRolls:setPoints(name, points, dontBroadcast)
-    GL:debug("BoostedRolls:setPoints");
-
     if (type(name) ~= "string") then
         return;
     end
@@ -481,7 +462,6 @@ end
 ---@param name string
 ---@return void
 function BoostedRolls:deletePoints(name, dontBroadcast)
-    GL:debug("BoostedRolls:deletePoints");
     if (type(name) ~= "string") then
         return;
     end
@@ -515,7 +495,6 @@ end
 ---@param points number
 ---@return void
 function BoostedRolls:modifyPoints(name, change)
-    GL:debug("BoostedRolls:modifyPoints");
     if (type(name) ~= "string") then
         return;
     end
@@ -538,8 +517,6 @@ end
 ---@param MetaData table (optional, default: auto generate new metadata)
 ---@return boolean
 function BoostedRolls:import(data, openOverview, MetaData)
-    GL:debug("BoostedRolls:import");
-
     -- Make sure all the required properties are available and of the correct type
     if (GL:empty(data)) then
         GL.Interface:get("BoostedRolls.Importer", "Label.StatusMessage"):SetText("Invalid boosted roll data provided");
@@ -579,7 +556,7 @@ function BoostedRolls:import(data, openOverview, MetaData)
     end
 
     if (GL:empty(Points)) then
-        local errorMessage = "Invalid data provided. Make sure that the contents follows the required format and no header row is included.";
+        local errorMessage = L.BOOSTED_ROLLS_IMPORT_ERROR;
         GL.Interface:get("BoostedRolls.Importer", "Label.StatusMessage"):SetText(errorMessage);
 
         return false;
@@ -597,7 +574,7 @@ function BoostedRolls:import(data, openOverview, MetaData)
         },
     };
 
-    GL:success("Import of boosted roll data successful");
+    GL:success(L.IMPORT_SUCCESSFUL);
     GL.Events:fire("GL.BOOSTEDROLLS_IMPORTED");
 
     self:materializeData();
@@ -622,8 +599,6 @@ end
 ---
 ---@return void
 function BoostedRolls:addMissingRaiders()
-    GL:debug("BoostedRolls:addMissingRaiders");
-
     local default = GL.Settings:get("BoostedRolls.defaultPoints", 0);
 
     -- Not in a group, add the current player
@@ -657,8 +632,6 @@ end
 ---@param displayFrame boolean
 ---@return void
 function BoostedRolls:export(displayFrame)
-    GL:debug("BoostedRolls:export");
-
     -- Calculate max aliases to output a CSV compliant string
     local numAliases = 0;
     for _, Entry in pairs(self.MaterializedData.DetailsByPlayerName) do
@@ -691,10 +664,8 @@ end
 ---
 ---@return boolean
 function BoostedRolls:broadcast()
-    GL:debug("BoostedRolls:broadcast");
-
     if (self.broadcastInProgress) then
-        GL:error("Broadcast still in progress");
+        GL:error(L.BROADCAST_IN_PROGRESS_ERROR);
         return false;
     end
 
@@ -704,13 +675,13 @@ function BoostedRolls:broadcast()
     end
 
     if (not self:userIsAllowedToBroadcast()) then
-        GL:warning("Insufficient permissions to broadcast, need ML, assist or lead!");
+        GL:warning(L.LM_OR_ASSIST_REQUIRED);
         return false;
     end
 
     -- Check if there's anything to share
     if (not self:available()) then
-        GL:warning("Nothing to broadcast, import Boosted Rolls data first!");
+        GL:warning(L.BOOSTED_ROLLS_BROADCAST_NO_DATA_ERROR);
         return false;
     end
 
@@ -721,12 +692,12 @@ function BoostedRolls:broadcast()
     GL.Events:fire("GL.BOOSTEDROLLS_BROADCAST_STARTED");
 
     local Broadcast = function ()
-        GL:message("Broadcasting BoostedRolls data...");
+        GL:message(L.BROADCASTING_NOTIFICATION);
 
         local Label = GL.Interface:get(GL.BoostedRolls, "Label.BroadcastProgress");
 
         if (Label) then
-            Label:SetText("Broadcasting...");
+            Label:SetText(L.BROADCASTING_NOTIFICATION);
         end
 
         GL.CommMessage.new{
@@ -737,7 +708,7 @@ function BoostedRolls:broadcast()
             },
             channel = "GROUP",
         }:send(function ()
-            GL:success("BoostedRolls broadcast finished");
+            GL:success(L.BROADCAST_FINISHED);
 
             --- Broadcast updates before we reset the flag.
             self:broadcastQueuedUpdates();
@@ -747,7 +718,7 @@ function BoostedRolls:broadcast()
 
             Label = GL.Interface:get(GL.BoostedRolls, "Label.BroadcastProgress");
             if (Label) then
-                Label:SetText("Broadcast finished!");
+                Label:SetText(L.BROADCAST_FINISHED);
             end
 
             -- Make sure to broadcast the loot priorities as well
@@ -755,7 +726,7 @@ function BoostedRolls:broadcast()
         end, function (sent, total)
             Label = GL.Interface:get(GL.BoostedRolls, "Label.BroadcastProgress");
             if (Label) then
-                Label:SetText(string.format("Sent %s of %s bytes", sent, total));
+                Label:SetText(string.format(L.COMM_PROGRESS, sent, total));
             end
         end);
     end
@@ -765,7 +736,7 @@ function BoostedRolls:broadcast()
     GL:afterCombatDo(function ()
         Broadcast();
     end, function ()
-        GL:notice("You are currently in combat, delaying BoostedRolls broadcast");
+        GL:notice(L.BROADCAST_DELAYED_BY_COMBAT);
     end);
 
     return true;
@@ -775,11 +746,8 @@ end
 ---
 ---@param CommMessage CommMessage
 function BoostedRolls:receiveBroadcast(CommMessage)
-    GL:debug("BoostedRolls:receiveBroadcast");
-
     -- No need to update our tables if we broadcasted them ourselves
     if (CommMessage.Sender.isSelf) then
-        GL:debug("BoostedRolls:receiveBroadcast received by self, skip");
         return true;
     end
 
@@ -787,12 +755,12 @@ function BoostedRolls:receiveBroadcast(CommMessage)
     local MetaData = CommMessage.content.MetaData or {};
     local importBroadcast = (function ()
         if (GL:empty(importString)) then
-            GL:warning("Couldn't process BoostedRolls data received from " .. CommMessage.Sender.name);
+            GL:warning((L.BOOSTED_ROLLS_BROADCAST_PROCESS_START):format(CommMessage.Sender.name));
 
             return false;
         end
 
-        GL:warning("Attempting to process incoming BoostedRolls data from " .. CommMessage.Sender.name);
+        GL:warning((L.BOOSTED_ROLLS_BROADCAST_PROCESS_FAILED):format(CommMessage.Sender.name) .. CommMessage.Sender.name);
 
         local result = self:import(importString, false, MetaData);
         if (result) then
@@ -815,18 +783,13 @@ function BoostedRolls:receiveBroadcast(CommMessage)
     local updatedAt = DB:get("BoostedRolls.MetaData.updatedAt", 0);
     local question;
     if (MetaData.uuid and uuid == MetaData.uuid) then -- This is an update to our dataset
-        question = string.format(
-            "Are you sure you want to update your existing boosted rolls with data from |c00%s%s|r?\n\nYour latest update was on |c00a79eff%s|r, theirs on |c00a79eff%s|r.",
-            GL:classHexColor(GL.Player:classByName(CommMessage.Sender.name)),
-            CommMessage.Sender.name,
-            date("%Y-%m-%d %H:%M", updatedAt),
-            date("%Y-%m-%d %H:%M", MetaData.updatedAt or 0)
+        question = (L.BOOSTED_ROLLS_UPDATE_CONFIRM):format(
+            GL:nameFormat{ name = CommMessage.Sender.name, colorize = true, },
+            date(L.DATE_HOURS_MINUTES_FORMAT, updatedAt),
+            date(L.DATE_HOURS_MINUTES_FORMAT, MetaData.updatedAt or 0)
         );
     elseif (not GL:empty(uuid)) then -- This is a different dataset, not an update
-        question = string.format(
-            "Are you sure you want to clear your existing boosted roll data and import new data broadcasted by %s?",
-            CommMessage.Sender.name
-        );
+        question = (L.BOOSTED_ROLLS_IMPORT_CONFIRM):format(CommMessage.Sender.name);
     else -- We don't have a dataset yet, import!
         return importBroadcast();
     end
@@ -844,8 +807,6 @@ end
 ---
 ---@return void
 function BoostedRolls:requestData()
-    GL:debug("BoostedRolls:requestData");
-
     if (self.requestingData) then
         return;
     end
@@ -911,8 +872,6 @@ end
 ---@param CommMessage CommMessage
 ---@return void
 function BoostedRolls:replyToDataRequest(CommMessage)
-    GL:debug("BoostedRolls:replyToDataRequest");
-
     -- I don't have boosted rolls enabled, leave me alone!
     if (not self:enabled()) then
         return;
@@ -970,8 +929,6 @@ end
 ---@param playerName string
 ---@param points number
 function BoostedRolls:addPoints(playerName, points)
-    GL:debug("BoostedRolls:addPoints");
-
     if (points <= 0) then
         return;
     end
@@ -986,8 +943,6 @@ end
 ---@param playerName string
 ---@param points number
 function BoostedRolls:subtractPoints(playerName, points)
-    GL:debug("BoostedRolls:subtractPoints");
-
     if (points <= 0) then
         return;
     end
@@ -1034,14 +989,12 @@ end
 ---
 ---@return void
 function BoostedRolls:broadcastQueuedUpdates()
-    GL:debug("BoostedRolls:broadcastQueuedUpdates");
-
     if (not GL.User.isInGroup) then
         return false;
     end
 
     if (not self:userIsAllowedToBroadcast()) then
-        GL:warning("Insufficient permissions to broadcast, need ML, assist or lead!");
+        GL:warning(L.LM_OR_ASSIST_REQUIRED);
         return false;
     end
 
@@ -1064,25 +1017,18 @@ end
 ---@param aliases table
 ---@param delete boolean
 function BoostedRolls:broadcastUpdate(playerName, points, aliases, delete)
-    GL:debug("BoostedRolls:broadcastUpdate");
-
-    if (not GL.User.isInGroup) then
-        GL:warning("No one to broadcast to, you're not in a group!");
-        return false;
-    end
-
     if (not self:userIsAllowedToBroadcast()) then
-        GL:warning("Insufficient permissions to broadcast, need ML, assist or lead!");
+        GL:warning(L.LM_OR_ASSIST_REQUIRED);
         return false;
     end
 
     if (self.broadcastInProgress) then
-        GL:error("Broadcast still in progress");
+        GL:error(L.BROADCAST_IN_PROGRESS_ERROR);
         self:queueUpdate(playerName, points, aliases, delete);
         return false;
     end
 
-    GL:message("Broadcasting BoostedRolls update...");
+    GL:message(L.BROADCASTING_NOTIFICATION);
 
     GL.CommMessage.new{
         action = CommActions.broadcastBoostedRollsMutation,
@@ -1105,11 +1051,8 @@ end
 ---
 ---@param CommMessage CommMessage
 function BoostedRolls:receiveUpdate(CommMessage)
-    GL:debug("BoostedRolls:receiveUpdate");
-
     -- No need to update our tables if we broadcasted them ourselves
     if (CommMessage.Sender.isSelf) then
-        GL:debug("BoostedRolls:receiveUpdate received by self, skip");
         return true;
     end
 
@@ -1154,6 +1097,3 @@ end
 function BoostedRolls:userIsAllowedToBroadcast()
     return GL.User.isInGroup and (GL.User.isMasterLooter or GL.User.hasAssist);
 end
-
-
-GL:debug("BoostedRolls.lua");

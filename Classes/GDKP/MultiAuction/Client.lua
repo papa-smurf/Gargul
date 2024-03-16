@@ -1,3 +1,5 @@
+local L = Gargul_L;
+
 ---@type GL
 local _, GL = ...;
 
@@ -91,7 +93,7 @@ function Client:start(Message)
     end
 
     if (not GL.Version:leftIsNewerThanOrEqualToRight(Message.version, "7.2.2")) then
-        GL:error(("The loot master (%s) is outdated, this can cause bids to fail!"):format(GL:nameFormat(Message.Sender.fqn)));
+        GL:error((L.GDKP_MULTIAUCTION_LM_OUTDATED):format(GL:nameFormat(Message.Sender.fqn)));
     end
 
     self.AuctionDetails = {
@@ -329,7 +331,7 @@ function Client:updateBids(Message)
                     and GL:gt(amount, 0)
                     and GL.Settings:get("GDKP.MultiAuction.awardNotice")
                 ) then
-                    print(("|c00FFF569%s bought %s for %sg|r"):format(
+                    print(("|c00FFF569" .. L.GDKP_MULTIAUCTION_ITEM_SOLD .. "|r"):format(
                         GL:nameFormat{ name = bidder, colorize = true, },
                         self.AuctionDetails.Auctions[auctionID].link,
                         amount
@@ -412,10 +414,10 @@ function Client:outbidNotification()
         -- Provide visual feedback when you are outbid and the bidding window is closed
         if (not UI:isShown()) then
             if (UnitAffectingCombat("player")) then
-                GL:info("You were outbid!");
+                GL:info(L.GDKP_MULTIAUCTION_OUTBID);
             else
                 GL.Interface.Alerts:fire("GargulNotification", {
-                    message = string.format("|c00BE3333You were outbid!|r"),
+                    message = "|c00BE3333" .. L.GDKP_MULTIAUCTION_OUTBID .. "|r",
                 });
             end
         end

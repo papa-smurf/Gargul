@@ -1,3 +1,5 @@
+local L = Gargul_L;
+
 ---@type GL
 local _, GL = ...;
 
@@ -24,8 +26,6 @@ local AddRaider = GL.Interface.GDKP.Distribute.AddRaider;
 
 ---@return Frame
 function AddRaider:build()
-    GL:debug("Interface.GDKP.Distribute.AddRaider:build");
-
     local Window = AceGUI:Create("InlineGroup");
     Window:SetLayout("Flow");
     Window:SetWidth(200);
@@ -37,23 +37,23 @@ function AddRaider:build()
     local Label = GL.AceGUI:Create("Label");
     Label:SetHeight(20);
     Label:SetFullWidth(true);
-    Label:SetText("Add a raider to this session");
+    Label:SetText(L.GDKP_DISTRIBUTE_ADDRAIDER);
     Window:AddChild(Label);
 
     local Name = GL.AceGUI:Create("EditBox");
     Name:DisableButton(true);
     Name:SetHeight(20);
     Name:SetFullWidth(true);
-    Name:SetLabel("Name");
+    Name:SetLabel(L.NAME);
     Window:AddChild(Name);
 
     local Save = AceGUI:Create("Button");
-    Save:SetText("Save");
+    Save:SetText(L.OK);
     Save:SetFullWidth(true);
     Save:SetCallback("OnClick", function()
         local name = strtrim(Name:GetText());
         if (GL:empty(name)) then
-            GL:warning("Enter a valid name");
+            GL:warning(L.INVALID_DATA_WARNING);
             return;
         end
 
@@ -66,7 +66,7 @@ function AddRaider:build()
     Window:AddChild(Save);
 
     local Cancel = AceGUI:Create("Button");
-    Cancel:SetText("Cancel");
+    Cancel:SetText(L.CANCEL);
     Cancel:SetFullWidth(true);
     Cancel:SetCallback("OnClick", function()
         self:close();
@@ -78,8 +78,6 @@ end
 
 ---@return Frame
 function AddRaider:window()
-    GL:debug("Interface.GDKP.Distribute.AddRaider:window");
-
     local Window = Interface:get(self, "Window");
 
     if (not Window) then
@@ -93,8 +91,6 @@ end
 ---
 ---@return void
 function AddRaider:toggle()
-    GL:debug("Interface.GDKP.Distribute.AddRaider:toggle");
-
     if (self.isVisible) then
         return self:close();
     end
@@ -104,8 +100,6 @@ end
 
 ---@return void
 function AddRaider:open(sessionID)
-    GL:debug("Interface.GDKP.Distribute.AddRaider:open");
-
     -- It seems our GDKP overview window is not opened
     if (not Overview.isVisible) then
         return;
@@ -121,8 +115,6 @@ end
 
 ---@return void
 function AddRaider:close()
-    GL:debug("Interface.GDKP.Distribute.AddRaider:close");
-
     local Window = self:window();
 
     if (self.isVisible) then
@@ -130,5 +122,3 @@ function AddRaider:close()
         self.isVisible = false;
     end
 end
-
-GL:debug("Interface.GDKP.Distribute.AddRaider.lua");

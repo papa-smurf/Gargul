@@ -1,3 +1,5 @@
+local L = Gargul_L;
+
 --[[
     This class allows us to quickly change
     raid group compositions via a predefined csv format
@@ -25,12 +27,6 @@ local RaidGroups = GL.RaidGroups;
 ---
 ---@return void
 function RaidGroups:toCSV()
-    GL:debug("RaidGroups:toCSV");
-
-    if (not GL.User.isInGroup) then
-        return GL:warning("You're not currently in a raid");
-    end
-
     local csv = "";
     for _, Player in pairs(GL.User:groupMembers()) do
         csv = csv .. Player.name .. ",";
@@ -41,8 +37,6 @@ end
 
 --- Draw the ui that allows us to import/write a raid roster
 function RaidGroups:drawImporter()
-    GL:debug("RaidGroups:drawImporter");
-
     -- Check to make sure the raid groups window isn't active already
     if (self.isVisible) then
         return;
@@ -53,8 +47,8 @@ function RaidGroups:drawImporter()
 
     -- Create a container/parent frame
     local Window = AceGUI:Create("Frame");
-    Window:SetTitle("Gargul v" .. GL.version);
-    Window:SetStatusText("Addon v" .. GL.version);
+    Window:SetTitle((L.WINDOW_HEADER):format(GL.version));
+    Window:SetStatusText(L.VERSION_ABBR ..GL.version);
     Window:SetLayout("Flow");
     Window:EnableResize(false);
     Window:SetWidth(600);
@@ -72,7 +66,7 @@ function RaidGroups:drawImporter()
     -- First part of explanation
     local Explanation = AceGUI:Create("Label");
     Explanation:SetFullWidth(true);
-    Explanation:SetText("In the large edit box below you can provide a roster and: invite everyone, check who's missing, apply groups and assign the tanks.\n\nYou can provide a |c00FFF569Wowhead raid composition|r link:");
+    Explanation:SetText(L.RAIDGROUPS_EXPLANATION_LABEL_TOP);
     Window:AddChild(Explanation);
 
     Spacer = AceGUI:Create("SimpleGroup");
@@ -81,15 +75,23 @@ function RaidGroups:drawImporter()
     Spacer:SetHeight(8);
     Window:AddChild(Spacer);
 
+    local wowheadSection = "";
+    if (GL.isEra) then
+        wowheadSection = "classic/";
+    elseif (GL.isClassic) then
+        wowheadSection = "wotlk/";
+    end
+    local wowheadURL = ("https://wowhead.com/%sraid-composition"):format(wowheadSection);
+
     -- Go to Wowhead
     local RaidGroupsBox;
     local WowheadButton = AceGUI:Create("Button");
-    WowheadButton:SetText("Wowhead Comp Tool");
+    WowheadButton:SetText(L.RAIDGROUPS_WOWHEAD_BUTTON);
     WowheadButton:SetWidth(180);
     WowheadButton:SetCallback("OnClick", function()
         GL.Interface.Dialogs.HyperlinkDialog:open{
-            description = "You can visit the wowhead comp tool using the URL down below. After creating your comp you can paste it here or in the large edit field of the Gargul group window",
-            hyperlink = "https://tbc.wowhead.com/raid-composition",
+            description = L.RAIDGROUPS_WOWHEAD_INFO,
+            hyperlink = wowheadURL,
             OnConfirm = function (value)
                 RaidGroupsBox:SetText(value);
                 self:normalizeInput(RaidGroupsBox, RaidGroupsBox:GetText());
@@ -110,7 +112,7 @@ function RaidGroups:drawImporter()
     -- Second part of explanation
     Explanation = AceGUI:Create("Label");
     Explanation:SetFullWidth(true);
-    Explanation:SetText("a |c00FFF569Raid-Helper export|r (Use the 'Groups sorted vertically' variant) or a |c00FFF569Gargul group composition|r CSV:");
+    Explanation:SetText(L.RAIDGROUPS_EXPLANATION_LABEL_BOTTOM);
     Window:AddChild(Explanation);
 
     Spacer = AceGUI:Create("SimpleGroup");
@@ -121,11 +123,11 @@ function RaidGroups:drawImporter()
 
     -- Go to Wiki
     local WikiButton = AceGUI:Create("Button");
-    WikiButton:SetText("Gargul Group Wiki");
+    WikiButton:SetText(L.RAIDGROUPS_GARGUL_BUTTON);
     WikiButton:SetWidth(180);
     WikiButton:SetCallback("OnClick", function()
         GL.Interface.Dialogs.HyperlinkDialog:open{
-            description = "Visit the Gargul group wiki for more info on the raid group format",
+            description = L.RAIDGROUPS_GARGUL_INFO,
             hyperlink = "https://github.com/papa-smurf/Gargul/wiki/Sort-Groups-&-Tanks",
         };
     end);
@@ -171,36 +173,36 @@ function RaidGroups:drawImporter()
     Window:AddChild(FooterFrame);
 
     local InviteButton = AceGUI:Create("Button");
-    InviteButton:SetText("Invite");
+    InviteButton:SetText(L.RAIDGROUPS_INVITE_BUTTON);
     InviteButton:SetWidth(76);
     InviteButton:SetCallback("OnClick", function()
         self:invitePlayers(RaidGroups.rosterString);
     end);
     FooterFrame:AddChild(InviteButton);
-    GL.Interface:addTooltip(InviteButton.frame, "Send invites to players on roster");
+    GL.Interface:addTooltip(InviteButton.frame, L.RAIDGROUPS_INVITE_BUTTON_TOOLTIP);
 
     local AttendanceCheckButton = AceGUI:Create("Button");
-    AttendanceCheckButton:SetText("Who's Missing");
+    AttendanceCheckButton:SetText(L.RAIDGROUPS_ATTENDANCE_BUTTON);
     AttendanceCheckButton:SetWidth(128);
     AttendanceCheckButton:SetCallback("OnClick", function()
         self:checkAttendance(RaidGroups.rosterString, CheckAttendanceOutput);
     end);
     FooterFrame:AddChild(AttendanceCheckButton);
-    GL.Interface:addTooltip(AttendanceCheckButton.frame, "Show missing player names");
+    GL.Interface:addTooltip(AttendanceCheckButton.frame, L.RAIDGROUPS_ATTENDANCE_BUTTON_TOOLTIP);
 
     local SaveButton = AceGUI:Create("Button");
-    SaveButton:SetText("Apply Groups");
+    SaveButton:SetText(L.RAIDGROUPS_SORT_BUTTON);
     SaveButton:SetWidth(126);
     SaveButton:SetCallback("OnClick", function()
         self:applyRaidGroups(RaidGroups.rosterString);
     end);
     FooterFrame:AddChild(SaveButton);
-    GL.Interface:addTooltip(SaveButton.frame, "Sort groups based on roster");
+    GL.Interface:addTooltip(SaveButton.frame, L.RAIDGROUPS_SORT_BUTTON_TOOLTIP);
 
     local SetTanksButton = CreateFrame("Button", nil, Window.frame, "SecureActionButtonTemplate, GameMenuButtonTemplate");
     SetTanksButton:SetAttribute("type", "macro");
     SetTanksButton:SetSize(112, 24);
-    SetTanksButton:SetText("Assign Tanks");
+    SetTanksButton:SetText(L.RAIDGROUPS_TANK_BUTTON);
     SetTanksButton:SetNormalFontObject("GameFontNormal");
     SetTanksButton:SetHighlightFontObject("GameFontNormal");
     SetTanksButton:SetPoint("TOPLEFT", SaveButton.frame, "TOPRIGHT", 10);
@@ -209,21 +211,21 @@ function RaidGroups:drawImporter()
     end);
 
     local KickUnwantedButton = AceGUI:Create("Button");
-    KickUnwantedButton:SetText("Kick unwanted players");
+    KickUnwantedButton:SetText(L.RAIDGROUPS_PURGE_BUTTON);
     KickUnwantedButton:SetWidth(170);
     KickUnwantedButton:SetCallback("OnClick", function()
         self:kickUnwanted(RaidGroups.rosterString);
     end);
     FooterFrame:AddChild(KickUnwantedButton);
-    GL.Interface:addTooltip(KickUnwantedButton.frame, "Kick players that aren't on the roster");
+    GL.Interface:addTooltip(KickUnwantedButton.frame, L.RAIDGROUPS_PURGE_BUTTON_TOOLTIP);
 
     local DisbandButton = AceGUI:Create("Button");
-    DisbandButton:SetText("Disband raid");
+    DisbandButton:SetText(L.RAIDGROUPS_DISBAND_BUTTON);
     DisbandButton:SetWidth(126);
     DisbandButton:SetCallback("OnClick", function()
         -- Show a confirmation dialog before disbanding the raid
         GL.Interface.Dialogs.PopupDialog:open{
-            question = "Are you sure?",
+            question = L.ARE_YOU_SURE,
             OnYes = function ()
                 GL:forEachGroupMember(function (Member)
                     if (GL:iEquals(string.lower(Member.name), GL.User.name)) then
@@ -237,15 +239,13 @@ function RaidGroups:drawImporter()
         };
     end);
     FooterFrame:AddChild(DisbandButton);
-    GL.Interface:addTooltip(DisbandButton.frame, "Disband your raid");
+    GL.Interface:addTooltip(DisbandButton.frame, L.RAIDGROUPS_DISBAND_BUTTON_TOOLTIP);
 
     self.UIComponents.TankAssignmentButton = SetTanksButton;
 end
 
 ---@return void
 function RaidGroups:close()
-    GL:debug("RaidGroups:close");
-
     self.isVisible = false;
 
     local Window = GL.Interface:get(self, "Window");
@@ -263,14 +263,12 @@ end
 ---@param input string
 ---@return string
 function RaidGroups:normalizeInput(EditBox, input)
-    GL:debug("RaidGroups:normalizeInput");
-
     if (GL:empty(input)) then
         return;
     end
 
     --- The user provided a wowhead URL
-    if (GL:strContains(input, "wowhead.com/raid%-composition")) then -- Escape of - is required!
+    if (GL:strContains(input, "/raid%-composition")) then -- Escape of - is required!
         input = self:normalizeWowheadInput(input);
 
     --- The user provided a non-Gargul format, most likely a raid helper export
@@ -428,7 +426,7 @@ function RaidGroups:listPlayerNames(raidGroupCsv)
             or group < 1
             or group > 9
         ) then
-            return GL:warning("Invalid raid groups provided!");
+            return GL:warning(L.RAIDGROUPS_INVALID_FORMAT_WARNING);
         end
 
         local Players = GL:explode(Segments[2], ",");
@@ -458,7 +456,7 @@ end
 -- Check if everyone's in the raid or if the raid contains players who shouldn't be there
 function RaidGroups:checkAttendance(raidGroupCsv, OutPutLabel)
     if (GL:empty(raidGroupCsv)) then
-        return GL:warning("Invalid group format provided!");
+        return GL:warning(L.RAIDGROUPS_INVALID_FORMAT_WARNING);
     end
 
     local PlayersOnRoster = self:listPlayerNames(raidGroupCsv);
@@ -526,15 +524,15 @@ end
 ---@return void
 function RaidGroups:applyRaidGroups(raidGroupCsv)
     if (not GL.User.isInRaid) then
-        return GL:warning("You need to be in a raid!");
+        return GL:warning(L.RAIDGROUPS_NO_RAID_WARNING);
     end
 
     if (not GL.User.hasAssist) then
-        return GL:warning("You need to have a lead or assist role!");
+        return GL:warning(L.LM_OR_ASSIST_REQUIRED);
     end
 
     if (self.migrationInProgress) then
-        return GL:warning("There's a migration still in progress, wait a bit!");
+        return GL:warning(L.RAIDGROUPS_SORT_IN_PROGRESS);
     end
 
     local DesiredGroupByPlayerName = {};
@@ -549,7 +547,7 @@ function RaidGroups:applyRaidGroups(raidGroupCsv)
             or group < 1
             or group > 9
         ) then
-            return GL:warning("Invalid raid groups provided!");
+            return GL:warning(L.RAIDGROUPS_INVALID_FORMAT_WARNING);
         end
 
         local Players = GL:explode(Segments[2], ",");
@@ -562,7 +560,7 @@ function RaidGroups:applyRaidGroups(raidGroupCsv)
             ) then
                 -- We can't process the same name twice!
                 if (PlayersOnTheRoster[playerName]) then
-                    return GL:warning(string.format("%s is listed twice on the roster!", playerName));
+                    return GL:warning((L.RAIDGROUPS_DUPLICATE_WARNING):format(playerName));
                 end
 
                 DesiredGroupByPlayerName[playerName] = group;
@@ -581,7 +579,7 @@ function RaidGroups:applyRaidGroups(raidGroupCsv)
         Raider.name = string.lower(Raider.name);
 
         if (UnitAffectingCombat("raid" .. Raider.index)) then
-            return GL:warning(string.format("Can't sort groups while %s is in combat!", Raider.name));
+            return GL:warning((L.RAIDGROUPS_IN_COMBAT_WARNING):format(GL:nameFormat{ name = Raider.name, colorize = true, }));
         end
 
         -- Check if there's people in the raid who are not on the roster
@@ -597,10 +595,7 @@ function RaidGroups:applyRaidGroups(raidGroupCsv)
     -- There are people in the raid who are not on the roster!
     if (UnwantedPlayers[1]) then
         -- We can't sort the groups if there's anyone in the raid who doesn't belong!
-        return GL:warning(string.format(
-            "The following players are not part of the roster: %s",
-            table.concat(UnwantedPlayers, ", ")
-        ));
+        return GL:warning((L.RAIDGROUPS_IMPOSTER_WARNING):format(table.concat(UnwantedPlayers, " ")));
     end
 
     local Migrations = {};
@@ -610,8 +605,8 @@ function RaidGroups:applyRaidGroups(raidGroupCsv)
         local raidersDesiredGroup = DesiredGroupByPlayerName[Raider.name];
 
         -- Make sure the player is stripped of his maintank/mainassist role
-        if (GL:inTable({"MAINTANK", "MAINASSIST"}, Raider.role or "")) then
-            tinsert(Migrations, {"stripRole", Raider.role, Raider.name});
+        if (GL:inTable({ "MAINTANK", "MAINASSIST" }, Raider.role or "")) then
+            tinsert(Migrations, { "stripRole", Raider.role, Raider.name });
         end
 
         if (raidersDesiredGroup
@@ -626,7 +621,7 @@ function RaidGroups:applyRaidGroups(raidGroupCsv)
                     raidersDesiredGroup
                 ));
 
-                tinsert(Migrations, {"set", Raider.name, raidersDesiredGroup});
+                tinsert(Migrations, { "set", Raider.name, raidersDesiredGroup });
 
                 NumRaidersInGroup[raidersCurrentGroup] = NumRaidersInGroup[raidersCurrentGroup] - 1;
                 NumRaidersInGroup[raidersDesiredGroup] = NumRaidersInGroup[raidersDesiredGroup] + 1;
@@ -653,16 +648,13 @@ function RaidGroups:applyRaidGroups(raidGroupCsv)
                     end
                 end
 
-                -- If there's noone in the group who doesn't belong then the user is
-                -- most likely tring to cram more than 5 people into 1 group
+                -- If there's no one in the group who doesn't belong then the user is
+                -- most likely trying to cram more than 5 people into 1 group
                 if (not MisplacedTeammate) then
-                    return GL:warning(string.format(
-                        "Can't find a place for %s, are you trying to put more than 5 people in 1 group?",
-                        Raider.name
-                    ));
+                    return GL:warning((L.RAIDGROUPS_NO_VALID_SPOT_WARNING):format(Raider.name));
                 end
 
-                tinsert(Migrations, {"swap", Raider.name, MisplacedTeammate.name});
+                tinsert(Migrations, { "swap", Raider.name, MisplacedTeammate.name });
 
                 MisplacedTeammate.subgroup = raidersCurrentGroup;
 
@@ -680,7 +672,7 @@ function RaidGroups:applyRaidGroups(raidGroupCsv)
 
     -- Move players
     if (migrationCount > 0) then
-        GL:message("Applying raid roster");
+        GL:message(L.RAIDGROUPS_SORTING_GROUPS);
         self.migrationInProgress = true;
         self:processMigrations(Migrations, migrationCount, 1);
     end
@@ -690,13 +682,11 @@ end
 -- allows you to assign the main tank role to a maximum of 2 to 3 people depending
 -- on certain circumstances that I'm not fully aware of, requiring multiple clicks by the player
 function RaidGroups:updateTankAssignmentButton()
-    GL:debug("RaidGroups:updateTankAssignmentButton");
-
     if (not self.rosterString
         or type(self.rosterString) ~= "string"
         or self.rosterString == ""
     ) then
-        return GL:warning("No roster defined");
+        return GL:warning(L.RAIDGROUPS_INVALID_FORMAT_WARNING);
     end
 
     local Tanks = {};
@@ -722,7 +712,7 @@ function RaidGroups:updateTankAssignmentButton()
 
     -- No point in doing anything if there are no tanks
     if (not Tanks) then
-        return GL:message("No tanks defined");
+        return GL:message(L.RAIDGROUPS_NO_TANKS_WARNING);
     end
 
     -- Players who are currently assigned as main tank
@@ -747,7 +737,7 @@ function RaidGroups:updateTankAssignmentButton()
     if (macros and macros ~= "") then
         Button:SetAttribute("macrotext", macros);
     else
-        GL:success("All tanks are assigned");
+        GL:success(L.RAIDGROUPS_TANKS_ASSIGNED);
     end
 end
 
@@ -757,8 +747,6 @@ end
 -- in rapid succession. The raider index also changes after moving a player
 -- which is why we have to keep fetching the current index all the time
 function RaidGroups:processMigrations(Migrations, numberOfMigrations, index)
-    GL:debug("RaidGroups:processMigrations");
-
     local Migration = Migrations[index];
     local action = Migration[1];
 
@@ -784,7 +772,7 @@ function RaidGroups:processMigrations(Migrations, numberOfMigrations, index)
         end
 
         if (not leftIndex) then
-            return GL:warning(string.format("Something went wrong while moving %s", playerName));
+            return GL:warning((L.RAIDGROUPS_SORTING_ERROR):format(GL:nameFormat{ name = name, colorize = true, }));
         end
 
         -- Move the player to his desired group
@@ -822,9 +810,7 @@ function RaidGroups:processMigrations(Migrations, numberOfMigrations, index)
     else
         GL.Ace:ScheduleTimer(function ()
             self.migrationInProgress = false;
-            GL:success("Finished applying raid roster");
+            GL:success(L.RAIDGROUPS_SORTING_FINISHED);
         end, 2);
     end
 end
-
-GL:debug("RaidGroups.lua");

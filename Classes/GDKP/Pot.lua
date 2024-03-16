@@ -1,3 +1,5 @@
+local L = Gargul_L;
+
 ---@type GL
 local _, GL = ...;
 
@@ -51,16 +53,12 @@ local Pot = GDKP.Pot;
 ---@param note string
 ---@return boolean
 function Pot:addGold(sessionID, gold, player, note)
-    GL:debug("Auction:addGold");
-
     return GDKPAuction:create(Constants.GDKP.potIncreaseItemID, gold, player, sessionID, nil, note);
 end
 
 ---@param sessionID string|nil If nil use currently active session
 ---@return number
 function Pot:total(sessionID)
-    GL:debug("Pot:total");
-
     sessionID = sessionID or GDKPSession:getActive();
 
     if (not sessionID) then
@@ -100,8 +98,6 @@ end
 ---@param Data table
 ---@return boolean
 function Pot:addMutator(sessionID, Data)
-    GL:debug("Pot:addMutator");
-
     Data = {
         autoApplyTo = Data.autoApplyTo or "",
         flat = Data.flat or "",
@@ -153,8 +149,6 @@ end
 ---@param name string
 ---@return void
 function Pot:applyMutator(sessionID, name)
-    GL:debug("Pot:applyMutator");
-
     local Session = GDKPSession:byID(sessionID);
     if (not Session or Session.lockedAt) then
         return;
@@ -191,8 +185,6 @@ end
 ---@param Data table
 ---@return boolean
 function Pot:editMutator(originalName, Data, sessionID)
-    GL:debug("Pot:editMutator");
-
     Data = {
         autoApplyTo = Data.autoApplyTo or "",
         flat = Data.flat or "",
@@ -268,8 +260,6 @@ end
 ---@param sessionID string
 ---@return boolean
 function Pot:removeMutator(name, sessionID)
-    GL:debug("Pot:removeMutator");
-
     -- If a sessionID is provided then we only want to remove it from a specific session
     if (sessionID) then
         local Session = GDKPSession:byID(sessionID);
@@ -322,8 +312,6 @@ end
 ---@param sessionID string
 ---@return table,number
 function Pot:calculateCuts(sessionID)
-    GL:debug("Pot:calculateCuts");
-
     if (not sessionID) then
         return false;
     end
@@ -399,7 +387,7 @@ function Pot:calculateCuts(sessionID)
     if (GL:higherThanZero(base) and GL:higherThanZero(baseParts)) then
         base = base / baseParts;
     elseif (Session.lockedAt and not GL:higherThanZero(base) and GL:higherThanZero(percentages)) then
-        GL:error("There's not enough gold to distribute, expect some weird cut calculations!");
+        GL:error(L.GDKP_NOT_ENOUGH_GOLD_TO_DISTRIBUTE);
     end
 
     Session.lastAvailableBase = base;
@@ -492,8 +480,6 @@ end
 ---@param Session table
 ---@param enforceLock boolean|nil
 function Pot:determineDistributionDefaults(Player, Session, enforceLock)
-    GL:debug("Pot:determineDistributionDefaults");
-
     enforceLock = enforceLock ~= false;
     -- The session is locked and we're not taking on new customers
     if (enforceLock and Session.lockedAt) then
@@ -527,8 +513,6 @@ end
 ---@param sessionID string
 ---@return boolean
 function Pot:resetCuts(sessionID)
-    GL:debug("Pot:resetDistributionDetails");
-
     local Session = GDKPSession:byID(sessionID);
     if (not Session) then
         return false;
@@ -546,8 +530,6 @@ end
 ---@param value boolean|number
 ---@return boolean
 function Pot:setPlayerMutatorValue(sessionID, player, mutator, value)
-    GL:debug("Pot:setPlayerMutatorValue");
-
     local Session = GDKPSession:byID(sessionID);
     if (not Session) then
         return false;
@@ -562,8 +544,6 @@ end
 ---@param player string
 ---@return boolean
 function Pot:addPlayer(sessionID, player)
-    GL:debug("Pot:addPlayer");
-
     local Session = GDKPSession:byID(sessionID);
     if (not Session or Session.lockedAt) then
         return false;
@@ -599,8 +579,6 @@ end
 ---@param player string
 ---@return boolean
 function Pot:deletePlayer(sessionID, player)
-    GL:debug("Pot:deletePlayer");
-
     local Session = GDKPSession:byID(sessionID);
     if (not Session or Session.lockedAt) then
         return false;
@@ -627,8 +605,6 @@ end
 ---@param playerNew string
 ---@return boolean
 function Pot:renamePlayer(sessionID, playerOld, playerNew)
-    GL:debug("Pot:renamePlayer");
-
     local Session = GDKPSession:byID(sessionID);
     if (not Session or Session.lockedAt) then
         return false;
@@ -662,8 +638,6 @@ end
 ---
 ---@return boolean Did something get cleared?
 function Pot:clearUnavailablePlayerDetails(sessionID)
-    GL:debug("Pot:clearUnavailablePlayerDetails");
-
     local Session = GDKPSession:byID(sessionID);
     if (not Session or Session.lockedAt) then
         return false;
@@ -685,8 +659,6 @@ end
 ---
 ---@return boolean Did something get cleared?
 function Pot:clearPlayerDetails(sessionID, player, keepAdjusted)
-    GL:debug("Pot:clearPlayerDetails");
-
     keepAdjusted = keepAdjusted ~= false;
     local Session = GDKPSession:byID(sessionID);
     if (not Session or Session.lockedAt) then
@@ -733,8 +705,6 @@ end
 ---@param callback function
 ---@return void
 function Pot:announce(sessionID, callback)
-    GL:debug("Pot:announce");
-
     local Session = GDKPSession:byID(sessionID);
     if (not Session or not Session.lastAvailableBase or not tonumber(Session.lastAvailableBase)) then
         return false;
@@ -746,91 +716,17 @@ function Pot:announce(sessionID, callback)
     local managementCut = GL:floor(totalPot * (0 + managementCutPercentage / 100), Settings:get("GDKP.precision"));
     local totalToDistribute = GL:floor(totalPot - managementCut, Settings:get("GDKP.precision"));
 
-    local message = string.format("Total Pot: %s", GL:goldToMoney(totalToDistribute));
+    local message = string.format(L.CHAT.GDKP_POT_TOTAL, GL:goldToMoney(totalToDistribute));
     GL:sendChatMessage(message, "GROUP");
 
-    message = string.format("Base cut: %sg", GL:floor(Session.lastAvailableBase, Settings:get("GDKP.precision")));
+    message = string.format(L.CHAT.GDKP_BASE_CUT, GL:goldToMoney(GL:floor(Session.lastAvailableBase, Settings:get("GDKP.precision"))));
     GL:sendChatMessage(message, "GROUP");
-
-    ---@todo: polish up the announcement at some point
-    if (true) then
-        return;
-    end
-
-    Session.Pot = Session.Pot or {};
-    Session.Pot.DistributionDetails = Session.Pot.DistributionDetails or {};
-    Session.Pot.Cuts = Session.Pot.Cuts or {};
-
-    -- Make sure we sort by name (asc)
-    local Players = {};
-    for player in pairs(Session.Pot.DistributionDetails or {}) do
-        tinsert(Players, player);
-    end
-
-    table.sort(Players, function(a, b)
-        if (a and b) then
-            return a < b;
-        end
-
-        return false;
-    end);
-
-    local playerIndex = 1;
-    local broadcastPlayerCut;
-    broadcastPlayerCut = function ()
-        local player = Players[playerIndex];
-
-        if (GL:empty(player)) then
-            if (type(callback) == "function") then
-                callback();
-            end
-
-            return;
-        end
-
-        local ActiveMutators = {};
-        for mutator, value in pairs(Session.Pot.DistributionDetails[player] or {}) do
-            if (value
-                and mutator ~= Constants.GDKP.baseMutatorIdentifier
-                and mutator ~= Constants.GDKP.adjustMutatorIdentifier
-            ) then
-                tinsert(ActiveMutators, mutator);
-            end
-        end
-
-        local message;
-        if (GL:empty(ActiveMutators)) then
-            message = string.format("%s: %sg",
-                player,
-                Session.Pot.Cuts[player] or 0
-            );
-        else
-            message = string.format("%s: %sg (%s)",
-                player,
-                Session.Pot.Cuts[player] or 0,
-                table.concat(ActiveMutators, ", ")
-            );
-        end
-
-        if (Session.Pot.Cuts[player] > 0) then
-            GL:sendChatMessage(message, "GROUP");
-        end
-
-        playerIndex = playerIndex + 1;
-        GL.Ace:ScheduleTimer(function ()
-            broadcastPlayerCut();
-        end, .5);
-    end;
-
-    broadcastPlayerCut();
 end
 
 ---@param sessionID string
 ---@param data string
 ---@return boolean
 function Pot:importCuts(sessionID, data)
-    GL:debug("Pot:importCuts");
-
     local Session = GDKPSession:byID(sessionID);
     if (not Session) then
         return false;
@@ -847,7 +743,7 @@ function Pot:importCuts(sessionID, data)
             first = false;
 
             if (not Columns.Player or not Columns.Gold) then
-                GL:error("Missing header, note: it's case-sensitive!");
+                GL:error(L.GDKP_CUT_IMPORT_MISSING_HEADER);
                 return;
             end
         else -- The first line includes the heading, we don't need that
@@ -859,12 +755,12 @@ function Pot:importCuts(sessionID, data)
                 error = true;
 
                 if (not GL:empty(playerGUID)) then
-                    GL:warning("Missing gold for player " .. playerGUID);
+                    GL:warning((L.GDKP_CUT_IMPORT_MISSING_GOLD):format(playerGUID));
                 end
             elseif (GL:empty(playerGUID) and gold) then
                 error = true;
 
-                GL:warning("Missing player name");
+                GL:warning(L.GDKP_CUT_IMPORT_MISSING_PLAYER);
             end
 
             if (not error) then
@@ -874,7 +770,7 @@ function Pot:importCuts(sessionID, data)
     end
 
     if (GL:empty(Cuts)) then
-        GL:warning("Nothing to import, double check your CSV");
+        GL:warning(L.GDKP_CUT_IMPORT_EMPTY);
 
         return false;
     end
@@ -898,5 +794,3 @@ function Pot:importCuts(sessionID, data)
     GL.Events:fire("GL.GDKP_CUTS_IMPORTED");
     return true;
 end
-
-GL:debug("Pot.lua");

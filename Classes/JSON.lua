@@ -933,5 +933,3 @@ function JSON:new(args)
 
     return setmetatable(new, JSON)
 end
-
-GL:debug("JSON.lua");

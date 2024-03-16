@@ -1,3 +1,5 @@
+local L = Gargul_L;
+
 ---@type GL
 local _, GL = ...;
 
@@ -20,8 +22,6 @@ local PlusOnes = GL.PlusOnes; ---@type PlusOnes
 
 ---@return boolean
 function PlusOnes:_init()
-    GL:debug("PlusOnes:_init");
-
     if (self._initialized) then
         return false;
     end
@@ -66,8 +66,6 @@ end
 ---@param playerName string
 ---@return boolean
 function PlusOnes:playerIsTrusted(playerName)
-    GL:debug("PlusOnes:playerIsTrusted");
-
     if (not playerName) then
         return false;
     end
@@ -89,8 +87,6 @@ end
 ---@param playerName string
 ---@return void
 function PlusOnes:markPlayerAsTrusted(playerName)
-    GL:debug("PlusOnes:markPlayerAsTrusted");
-
     if (GL:empty(playerName)
         or self:playerIsTrusted(playerName)
     ) then
@@ -114,8 +110,6 @@ end
 ---@param playerName string
 ---@return void
 function PlusOnes:removePlayerFromTrusted(playerName)
-    GL:debug("PlusOnes:removePlayerFromTrusted");
-
     -- No point removing the player if he's not trusted in the first place
     if (GL:empty(playerName)
         or not self:playerIsTrusted(playerName)
@@ -142,8 +136,6 @@ end
 ---
 ---@return void
 function PlusOnes:draw()
-    GL:debug("PlusOnes:draw");
-
     -- Show the plus ones overview instead
     GL.Interface.PlusOnes.Overview:draw();
 end
@@ -155,15 +147,15 @@ end
 ---@param sender string
 ---@return void
 function PlusOnes:handleWhisperCommand(_, message, sender)
-    GL:debug("PlusOnes:handleWhisperCommand");
+    local validPrefixDetected = false;
+    for _, prefix in pairs(GL:explode(L.PLUSONES_WHISPER_PREFIXES, "|") or {}) do
+        if (GL:strStartsWith(message, prefix)) then
+            validPrefixDetected = true;
+            break;
+        end
+    end
 
-    -- Only listen to the following messages
-    if (not GL:strStartsWith(message, "!plusone")
-        and not GL:strStartsWith(message, "!PLUSONE")
-        and not GL:strStartsWith(message, "!po")
-        and not GL:strStartsWith(message, "!PO")
-        and not GL:strStartsWith(message, "!+1")
-    ) then
+    if (not validPrefixDetected) then
         return;
     end
 
@@ -174,7 +166,7 @@ function PlusOnes:handleWhisperCommand(_, message, sender)
         local name = GL:nameFormat(args[2]);
         local plusOne = self:getPlusOnes(name);
         GL:sendChatMessage(
-            string.format("Player %s's +1 total is %d", GL:capitalize(name), plusOne),
+            (L.CHAT.PLUSONES_OTHER_BALANCE_REPLY):format(GL:capitalize(name), plusOne),
             "WHISPER", nil, sender
         );
         return;
@@ -183,7 +175,7 @@ function PlusOnes:handleWhisperCommand(_, message, sender)
     local name = GL:nameFormat(sender);
     local plusOne = self:getPlusOnes(name);
     GL:sendChatMessage(
-        string.format("Your +1 total is %d", plusOne),
+        (L.CHAT.PLUSONES_MY_BALANCE_REPLY):format(plusOne),
         "WHISPER", nil, sender
     );
 end
@@ -192,8 +184,6 @@ end
 ---
 ---@return void
 function PlusOnes:materializeData()
-    GL:debug("PlusOnes:materializeData");
-
     local DetailsByPlayerName = {}; -- Details including aliases by player name
 
     --- Create entries from Totals data
@@ -217,8 +207,6 @@ end
 ---@param plusOne number
 ---@return number|nil
 function PlusOnes:toPlusOne(plusOne)
-    GL:debug("PlusOnes:toPlusOne");
-
     plusOne = tonumber(plusOne);
 
     if (not plusOne) then
@@ -233,8 +221,6 @@ end;
 ---
 ---@return void
 function PlusOnes:clearPlusOnes()
-    GL:debug("PlusOnes:clearPlusOnes");
-
     DB:set("PlusOnes", {
         Totals = {},
         MetaData = {},
@@ -258,8 +244,6 @@ end
 ---@param name string
 ---@return number
 function PlusOnes:getPlusOnes(name)
-    GL:debug("PlusOnes:getPlusOnes");
-
     if (type(name) ~= "string") then
         return 0;
     end
@@ -277,8 +261,6 @@ end
 ---@param dontBroadcast boolean Important so that child receiving data from parent doesn't broadcast on
 ---@return void
 function PlusOnes:setPlusOnes(name, plusOne, dontBroadcast)
-    GL:debug("PlusOnes:setPlusOnes");
-
     if (type(name) ~= "string") then
         return;
     end
@@ -311,8 +293,6 @@ end
 ---@param MetaData table (optional, default: auto generate new metadata)
 ---@return boolean
 function PlusOnes:import(data, openOverview, MetaData)
-    GL:debug("PlusOnes:import");
-
     -- Make sure all the required properties are available and of the correct type
     if (type(data) ~= "string"
         or GL:empty(data)
@@ -343,7 +323,7 @@ function PlusOnes:import(data, openOverview, MetaData)
     end
 
     if (GL:empty(Totals)) then
-        local errorMessage = "Invalid data provided. Make sure that the contents follows the required format and no header row is included.";
+        local errorMessage = L.PLUSONES_IMPORT_ERROR;
         GL.Interface:get("PlusOnes.Importer", "Label.StatusMessage"):SetText(errorMessage);
 
         return false;
@@ -358,7 +338,7 @@ function PlusOnes:import(data, openOverview, MetaData)
         },
     });
 
-    GL:success("Import of plus one data successful");
+    GL:success(L.IMPORT_SUCCESSFUL);
     GL.Events:fire("GL.PLUSONES_IMPORTED");
 
     self:materializeData();
@@ -384,8 +364,6 @@ end
 ---@param displayFrame boolean
 ---@return string
 function PlusOnes:export(displayFrame)
-    GL:debug("PlusOnes:export");
-    
     -- Create CSV string
     local csv = "";
     for name, Entry in pairs(self.MaterializedData.DetailsByPlayerName) do
@@ -404,10 +382,8 @@ end
 ---
 ---@return boolean
 function PlusOnes:broadcast()
-    GL:debug("PlusOnes:broadcast");
-
     if (self.broadcastInProgress) then
-        GL:error("Broadcast still in progress");
+        GL:error(L.BROADCAST_IN_PROGRESS_ERROR);
         return false;
     end
 
@@ -417,7 +393,7 @@ function PlusOnes:broadcast()
     end
 
     if (not self:userIsAllowedToBroadcast()) then
-        GL:warning("Insufficient permissions to broadcast, need ML, assist or lead!");
+        GL:warning(L.LM_OR_ASSIST_REQUIRED);
         return false;
     end
 
@@ -428,12 +404,12 @@ function PlusOnes:broadcast()
     GL.Events:fire("GL.PLUSONES_BROADCAST_STARTED");
 
     local Broadcast = function ()
-        GL:message("Broadcasting PlusOnes data...");
+        GL:message(L.BROADCASTING_NOTIFICATION);
 
         local Label = GL.Interface:get(GL.PlusOnes, "Label.BroadcastProgress");
 
         if (Label) then
-            Label:SetText("Broadcasting...");
+            Label:SetText(L.BROADCASTING_NOTIFICATION);
         end
 
         GL.CommMessage.new{
@@ -444,19 +420,19 @@ function PlusOnes:broadcast()
             },
             channel = "GROUP",
         }:send(function ()
-            GL:success("PlusOnes broadcast finished");
+            GL:success(L.BROADCAST_FINISHED);
 
             self.broadcastInProgress = false;
             GL.Events:fire("GL.PLUSONES_BROADCAST_ENDED");
 
             Label = GL.Interface:get(GL.PlusOnes, "Label.BroadcastProgress");
             if (Label) then
-                Label:SetText("Broadcast finished!");
+                Label:SetText(L.BROADCAST_FINISHED);
             end
         end, function (sent, plusOne)
             Label = GL.Interface:get(GL.PlusOnes, "Label.BroadcastProgress");
             if (Label) then
-                Label:SetText(string.format("Sent %s of %s bytes", sent, plusOne));
+                Label:SetText(string.format(L.COMM_PROGRESS, sent, plusOne));
             end
         end);
     end
@@ -466,7 +442,7 @@ function PlusOnes:broadcast()
     GL:afterCombatDo(function ()
         Broadcast();
     end, function ()
-        GL:notice("You are currently in combat, delaying PlusOnes broadcast");
+        GL:notice(L.BROADCAST_DELAYED_BY_COMBAT);
     end);
 
     return true;
@@ -477,8 +453,6 @@ end
 ---@param CommMessage CommMessage
 ---@return void
 function PlusOnes:receiveBroadcast(CommMessage)
-    GL:debug("PlusOnes:receiveBroadcast");
-
     -- If shared data is blocked then return
     if (GL.Settings:get("PlusOnes.blockShareData")) then
         return;
@@ -497,7 +471,7 @@ function PlusOnes:receiveBroadcast(CommMessage)
             return self:clearPlusOnes();
         end
 
-        GL:warning("Attempting to process incoming PlusOnes data from " .. CommMessage.Sender.name);
+        GL:warning((L.PLUSONES_BROADCAST_PROCESS_START):format(CommMessage.Sender.name));
 
         local result = self:import(importString, false, MetaData);
         if (result) then
@@ -521,26 +495,18 @@ function PlusOnes:receiveBroadcast(CommMessage)
     local question;
     
     if (GL:empty(importString)) then
-        question = string.format(
-            "%s wants to clear all your plus one data. Clear all plus one data?",
-            CommMessage.Sender.name
-        );
+        question = (L.PLUSONES_CLEAR_CONFIRM):format(CommMessage.Sender.name);
     elseif (MetaData.uuid and uuid == MetaData.uuid) then -- This is an update to our dataset
-        question = string.format(
-            "Are you sure you want to update your existing plus ones with data from |c00%s%s|r?\n\nYour latest update was on |c00a79eff%s|r, theirs on |c00a79eff%s|r.",
-            GL:classHexColor(GL.Player:classByName(CommMessage.Sender.name)),
-            CommMessage.Sender.name,
-            date("%Y-%m-%d %H:%M", updatedAt),
-            date("%Y-%m-%d %H:%M", MetaData.updatedAt or 0)
+        question = (L.PLUSONES_UPDATE_CONFIRM):format(
+            GL:nameFormat{ name = CommMessage.Sender.name, colorize = true, },
+            date(L.DATE_HOURS_MINUTES_FORMAT, updatedAt),
+            date(L.DATE_HOURS_MINUTES_FORMAT, MetaData.updatedAt or 0)
         );
     elseif (not GL:empty(uuid)) then -- This is a different dataset, not an update
-        question = string.format(
-            "Are you sure you want to clear your existing plus one data and import new data broadcasted by %s?",
-            CommMessage.Sender.name
-        );
+        question = (L.PLUSONES_IMPORT_CLEAR_CONFIRM):format(CommMessage.Sender.name);
     else
         question = string.format(
-            "Are you sure you want to import new data broadcasted by %s?",
+            L.PLUSONES_IMPORT_CONFIRM,
             CommMessage.Sender.name
         );
     end
@@ -558,8 +524,6 @@ end
 ---
 ---@return void
 function PlusOnes:requestData()
-    GL:debug("PlusOnes:requestData");
-
     -- If shared data is blocked then no need to request so return
     if (GL.Settings:get("PlusOnes.blockShareData")) then
         return;
@@ -630,8 +594,6 @@ end
 ---@param CommMessage CommMessage
 ---@return void
 function PlusOnes:replyToDataRequest(CommMessage)
-    GL:debug("PlusOnes:replyToDataRequest");
-
     -- We're not in a group (anymore), no need to help this person out
     if (not GL.User.isInGroup) then
         return;
@@ -674,8 +636,6 @@ end
 ---@param playerName string
 ---@return void
 function PlusOnes:addPlusOnes(playerName)
-    GL:debug("PlusOnes:addPlusOnes")
-
     local currentPoints = self:getPlusOnes(playerName) or 0;
     self:queueUpdate(playerName, currentPoints + 1);
 end
@@ -685,8 +645,6 @@ end
 ---@param playerName string
 ---@return void
 function PlusOnes:subtractPlusOnes(playerName)
-    GL:debug("PlusOnes:subtractPlusOnes");
-
     local currentPoints = self:getPlusOnes(playerName) or 0;
 
     self:queueUpdate(playerName, max(currentPoints - 1, 0));
@@ -725,8 +683,6 @@ end
 ---
 ---@return void
 function PlusOnes:broadcastQueuedUpdates()
-    GL:debug("PlusOnes:broadcastQueuedUpdates");
-
     if (not GL.User.isInGroup) then
         return;
     end
@@ -734,7 +690,7 @@ function PlusOnes:broadcastQueuedUpdates()
     if (GL.Settings:get("PlusOnes.automaticallyShareData")
         and self:userIsAllowedToBroadcast()
     ) then
-        GL:message("Broadcasting PlusOnes updates...");
+        GL:message(L.BROADCASTING_NOTIFICATION);
         GL.CommMessage.new{
             action = CommActions.broadcastPlusOnesMutation,
             content = {
@@ -743,7 +699,7 @@ function PlusOnes:broadcastQueuedUpdates()
             },
             channel = "GROUP",
         }:send(function ()
-            GL:success("PlusOnes updates finished");
+            GL:success(L.BROADCAST_FINISHED);
         end);
     end
 
@@ -757,25 +713,18 @@ end
 ---@param delete boolean
 ---@return boolean
 function PlusOnes:broadcastUpdate(playerName, plusOne, delete)
-    GL:debug("PlusOnes:broadcastUpdate");
-
-    if (not GL.User.isInGroup) then
-        GL:warning("No one to broadcast to, you're not in a group!");
-        return false;
-    end
-
     if (not self:userIsAllowedToBroadcast()) then
-        GL:warning("Insufficient permissions to broadcast, need ML, assist or lead!");
+        GL:warning(L.LM_OR_ASSIST_REQUIRED);
         return false;
     end
 
     if (self.broadcastInProgress) then
-        GL:error("Broadcast still in progress");
+        GL:error(L.BROADCAST_IN_PROGRESS_ERROR);
         self:queueUpdate(playerName, plusOne, delete);
         return false;
     end
 
-    GL:message("Broadcasting PlusOnes update...");
+    GL:message(L.BROADCASTING_NOTIFICATION);
 
     GL.CommMessage.new{
         action = CommActions.broadcastPlusOnesMutation,
@@ -798,8 +747,6 @@ end
 ---@param CommMessage CommMessage
 ---@return void
 function PlusOnes:receiveUpdate(CommMessage)
-    GL:debug("PlusOnes:receiveUpdate");
-
     -- If shared data is blocked then no need to receive update so return
     if (GL.Settings:get("PlusOnes.blockShareData")) then
         return;
@@ -840,28 +787,17 @@ function PlusOnes:receiveUpdate(CommMessage)
     local question;
 
     if (GL:empty(importString)) then
-        question = string.format(
-            "%s wants to clear all your plus one data. Clear all plus one data?",
-            CommMessage.Sender.name
-        );
+        question = (L.PLUSONES_CLEAR_CONFIRM):format(CommMessage.Sender.name);
     elseif (MetaData.uuid and uuid == MetaData.uuid) then -- This is an update to our dataset
-        question = string.format(
-            "Are you sure you want to update your existing plus ones with data from |c00%s%s|r?\n\nYour latest update was on |c00a79eff%s|r, theirs on |c00a79eff%s|r.",
-            GL:classHexColor(GL.Player:classByName(CommMessage.Sender.name)),
-            CommMessage.Sender.name,
-            date("%Y-%m-%d %H:%M", updatedAt),
-            date("%Y-%m-%d %H:%M", MetaData.updatedAt or 0)
+        question = (L.PLUSONES_UPDATE_CONFIRM):format(
+            GL:nameFormat{ name = CommMessage.Sender.name, colorize = true, },
+            date(L.DATE_HOURS_MINUTES_FORMAT, updatedAt),
+            date(L.DATE_HOURS_MINUTES_FORMAT, MetaData.updatedAt or 0)
         );
     elseif (not GL:empty(uuid)) then -- This is a different dataset, not an update
-        question = string.format(
-            "Are you sure you want to clear your existing plus one data and import new data broadcasted by %s?",
-            CommMessage.Sender.name
-        );
+        question = (L.PLUSONES_IMPORT_CLEAR_CONFIRM):format(CommMessage.Sender.name);
     else
-        question = string.format(
-            "Are you sure you want to import new data broadcasted by %s?",
-            CommMessage.Sender.name
-        );
+        question = (L.PLUSONES_IMPORT_CONFIRM):format(CommMessage.Sender.name);
     end
 
     local Dialog = {
@@ -878,8 +814,6 @@ end
 ---
 ---@return boolean
 function PlusOnes:userIsAllowedToBroadcast()
-    GL:debug("PlusOnes:userIsAllowedToBroadcast");
-
     return GL.User.isInGroup and (GL.User.isMasterLooter or GL.User.hasAssist);
 end
 
@@ -887,9 +821,5 @@ end
 ---
 ---@return void
 function PlusOnes:triggerChangeEvent()
-    GL:debug("PlusOnes:triggerChangeEvent");
-
     GL.Events:fire("GL.PLUSONES_CHANGED");
 end
-
-GL:debug("PlusOnes.lua");

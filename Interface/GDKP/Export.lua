@@ -284,7 +284,7 @@ function Export:exportAuctionsToCustomFormat(Session, Auctions)
         tinsert(timestamps, Details.createdAt);
     end
     table.sort(timestamps);
-    local startedAt = timestamps[1] and date("%Y-%m-%d %H:%M", timestamps[1]) or "";
+    local startedAt = timestamps[1] and date(L.DATE_HOURS_MINUTES_FORMAT, timestamps[1]) or "";
 
     -- Make sure that all relevant item data is cached
     local first = true;
@@ -339,7 +339,7 @@ function Export:exportAuctionsToCustomFormat(Session, Auctions)
                     ["@DAY"] = date('%d', Auction.createdAt),
                     ["@HOUR"] = date('%H', Auction.createdAt),
                     ["@MINUTE"] = date('%M', Auction.createdAt),
-                    ["@DATE"] = date('%Y-%m-%d', Auction.createdAt),
+                    ["@DATE"] = date(L.DATE_FORMAT, Auction.createdAt),
                     ["@TIME"] = date('%H:%M', Auction.createdAt),
                     ["@TITLE"] = Session.title,
                     ["@START"] = startedAt,

@@ -1,3 +1,5 @@
+local L = Gargul_L;
+
 ---@type GL
 local _, GL = ...;
 
@@ -28,7 +30,7 @@ function PlayerSelector:draw(description, PlayerNames, callback)
 
     -- Create a container/parent frame
     local Window = AceGUI:Create("Frame");
-    Window:SetTitle("Gargul v" .. GL.version);
+    Window:SetTitle((L.WINDOW_HEADER):format(GL.version));
     Window:SetLayout("FLOW");
     Window:SetWidth(430);
     Window:SetHeight(292);

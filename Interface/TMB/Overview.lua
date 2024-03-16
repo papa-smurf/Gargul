@@ -1,3 +1,5 @@
+local L = Gargul_L;
+
 ---@type GL
 local _, GL = ...;
 
@@ -26,7 +28,7 @@ function Overview:draw()
 
     -- Create a container/parent frame
     local Window = AceGUI:Create("Frame");
-    Window:SetTitle("Gargul v" .. GL.version);
+    Window:SetTitle((L.WINDOW_HEADER):format(GL.version));
     Window:SetLayout("Flow");
     Window:SetWidth(500);
     Window:SetHeight(300);
@@ -41,8 +43,8 @@ function Overview:draw()
 
     Window:SetStatusText(string.format(
         "Imported on |c00a79eff%s|r at |c00a79eff%s|r",
-        date('%Y-%m-%d', DB:get("TMB.MetaData.importedAt", GetServerTime())),
-        date('%H:%M', DB:get("TMB.MetaData.importedAt", GetServerTime()))
+        date(L.DATE_FORMAT, DB:get("TMB.MetaData.importedAt", GetServerTime())),
+        date(L.HOURS_MINUTES_FORMAT, DB:get("TMB.MetaData.importedAt", GetServerTime()))
     ));
 
     -- Make sure the window can be closed by pressing the escape button
@@ -82,8 +84,8 @@ function Overview:draw()
     TimestampLabel:SetText(string.format(
         "\nThis %s data was imported on |c00a79eff%s|r at |c00a79eff%s|r",
         source,
-        date('%Y-%m-%d', DB:get("TMB.MetaData.importedAt", GetServerTime())),
-        date('%H:%M', DB:get("TMB.MetaData.importedAt", GetServerTime()))
+        date(L.DATE_FORMAT, DB:get("TMB.MetaData.importedAt", GetServerTime())),
+        date(L.HOURS_MINUTES_FORMAT, DB:get("TMB.MetaData.importedAt", GetServerTime()))
     ));
     TimestampLabel:SetJustifyH("MIDDLE");
     TimestampLabel:SetFontObject(_G["GameFontNormal"]);
@@ -162,7 +164,12 @@ function Overview:draw()
         if (not GL:empty(GL.Settings:get("TMB.shareWhitelist", ""))) then
             GL.TMB:broadcast();
         else
-            GL.Interface.Dialogs.PopupDialog:open("BROADCAST_TMB_CONFIRMATION");
+            GL.Interface.Dialogs.PopupDialog:open({
+                question = L.TMB_BROADCAST_CONFIRM,
+                OnYes = function ()
+                    GL.TMB:broadcast();
+                end,
+            });
         end
     end);
     ShareButton:SetDisabled(true);

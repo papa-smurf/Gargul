@@ -86,7 +86,7 @@ function Overview:draw(section, onCloseCallback)
 
     -- Create a container/parent frame
     local Window = AceGUI:Create("Frame");
-    Window:SetTitle("Gargul v" .. GL.version .. " - Settings");
+    Window:SetTitle((L.WINDOW_HEADER):format(GL.version) .. " - Settings");
     Window:SetLayout("Flow");
     Window:SetWidth(800);
     Window:SetHeight(600);

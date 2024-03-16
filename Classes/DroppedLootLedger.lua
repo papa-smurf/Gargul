@@ -51,8 +51,6 @@ local WHENRL = 5;
 
 ---@return void
 function DroppedLootLedger:_init()
-    GL:debug("DroppedLootLedger:_init");
-
     if (self._initialized) then
         return;
     end
@@ -74,8 +72,6 @@ end
 ---
 ---@return void
 function DroppedLootLedger:startOrStopTracking()
-    GL:debug("DroppedLootLedger:startOrStopTracking");
-
     self.trackItems = self:_shouldTrackItems();
     if (not self.trackItems) then
         self:stopTracking();
@@ -128,8 +124,6 @@ end
 
 ---@return void
 function DroppedLootLedger:startTracking()
-    GL:debug("DroppedLootLedger:startTracking");
-
     if (self.tracking) then
         return;
     end
@@ -161,8 +155,6 @@ end
 
 ---@return void
 function DroppedLootLedger:stopTracking()
-    GL:debug("DroppedLootLedger:stopTracking");
-
     Events:unregister{
         "DroppedLootLedgerChatMSGLootListener",
         "DroppedLootLedgerLootReadyListener",
@@ -175,15 +167,11 @@ end
 ---@param quality number
 ---@return void
 function DroppedLootLedger:setMinimumQuality(quality)
-    GL:debug("DroppedLoot:setMinimumQuality");
-
     self.minimumQuality = quality;
 end
 
 ---@return void
 function DroppedLootLedger:lootOpened()
-    GL:debug("DroppedLootLedger:lootOpened");
-
     local unitName = UnitName("target");
 
     -- Get the total number of items that dropped
@@ -246,8 +234,6 @@ end
 ---@param Drops table
 ---@return void
 function DroppedLootLedger:broadcastDrops(sourceGUID, Drops)
-    GL:debug("DroppedLootLedger:broadcastDrops");
-
     -- No need to broadcast twice for the same unit
     if (self.BroadcastedNPCIDs[sourceGUID]) then
         return;
@@ -263,8 +249,6 @@ end
 ---@param CommMessage table
 ---@return void
 function DroppedLootLedger:receiveDrops(CommMessage)
-    GL:debug("DroppedLootLedger:receiveDrops");
-
     -- No need to process our own findings
     if (CommMessage.Sender.isSelf) then
         return;
@@ -311,8 +295,6 @@ end
 ---@param GUID string
 ---@return number|boolean
 function DroppedLootLedger:getNPCIDFromSourceGUID(GUID)
-    GL:debug("DroppedLootLedger:getNPCIDFromSourceGUID");
-
     local NPCID = select(6, strsplit("-", GUID));
     NPCID = tonumber(NPCID);
 
@@ -345,8 +327,6 @@ end
 ---@param message string
 ---@return table|nil
 function DroppedLootLedger:processReceivedItem(message)
-    GL:debug("DroppedLootLedger:processReceivedItem");
-
     local itemLink, playerName = self:receivedItemDetails(message);
     if (not itemLink) then
         return;
@@ -377,8 +357,6 @@ end
 
 ---@return void
 function DroppedLootLedger:storeReceivedItem(Details)
-    GL:debug("DroppedLootLedger:storeReceivedItem");
-
     -- We don't want to keep track of this quality
     if (not Details.itemQuality
         or Details.itemQuality < self.minimumQuality
@@ -395,8 +373,6 @@ end
 
 ---@return any
 function DroppedLootLedger:receivedItemDetails(message)
-    GL:debug("DroppedLootLedger:receivedItemDetails");
-
     --- Did someone else receive multiple items?
     local playerName, itemLink, itemCount = deformat(message, LOOT_ITEM_MULTIPLE);
 

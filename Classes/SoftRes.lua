@@ -1,3 +1,5 @@
+local L = Gargul_L;
+
 ---@type GL
 local _, GL = ...;
 
@@ -30,8 +32,6 @@ local SoftRes = GL.SoftRes; ---@type SoftRes
 
 --- @return boolean
 function SoftRes:_init()
-    GL:debug("SoftRes:_init");
-
     if (self._initialized) then
         return false;
     end
@@ -57,7 +57,7 @@ function SoftRes:_init()
         if (success and result) then
             _G.LootReserve:PromptListener("RESERVES", GL.name)
         else
-            GL:error("Failed to connect to LootReserve, contact support (include message below)");
+            GL:error(L.SOFTRES_LOOTRESERVE_CONNECTION_WARNING);
             DevTools_Dump{ success, result };
         end
     end, 5);
@@ -74,8 +74,10 @@ function SoftRes:_init()
 
     --- Show an alert or a system message after sucessfully importing data
     GL.Events:register("AlertsSoftresImported", "GL.SOFTRES_IMPORTED", function ()
-        if (not GL.Alerts:fire("SoftRes", "Import successful!")) then
-            GL:success("Import of SoftRes data successful");
+        if (not GL.Interface.Alerts:fire("GargulNotification", {
+            message = "|c00BE3333" .. L.SOFTRES_IMPORT_SUCCESSFUL_ALERT .. "|r",
+        })) then
+            GL:success(L.SOFTRES_IMPORT_SUCCESSFUL);
         end
     end);
 
@@ -102,13 +104,15 @@ end
 ---@param sender string
 ---@return void
 function SoftRes:handleWhisperCommand(_, message, sender)
-    GL:debug("SoftRes:handleWhisperCommand");
+    local validPrefixDetected = false;
+    for _, prefix in pairs(GL:explode(L.SOFTRES_WHISPER_PREFIXES, "|") or {}) do
+        if (GL:strStartsWith(message, prefix)) then
+            validPrefixDetected = true;
+            break;
+        end
+    end
 
-    -- Only listen to the following messages
-    if (not GL:strStartsWith(message, "!sr")
-        and not GL:strStartsWith(message, "!softres")
-        and not GL:strStartsWith(message, "!softreserve")
-    ) then
+    if (not validPrefixDetected) then
         return;
     end
 
@@ -123,7 +127,7 @@ function SoftRes:handleWhisperCommand(_, message, sender)
     -- Nothing reserved
     if (GL:empty(Reserves)) then
         GL:sendChatMessage(
-            "It seems like you didn't soft-reserve anything yet, check the soft-res sheet or ask your loot master",
+            L.CHAT.SOFTRES_NO_RESERVES_REPLY,
             "WHISPER", nil, sender
         );
 
@@ -144,7 +148,7 @@ function SoftRes:handleWhisperCommand(_, message, sender)
             local entryString = Entry.link;
 
             if (Reserves[itemIDString] > 1) then
-                entryString = string.format("%s (%sx)", entryString, Reserves[itemIDString]);
+                entryString = (L.CHAT.SOFTRES_MY_RESERVED_ITEM_REPLY):format(entryString, Reserves[itemIDString]);
             end
 
             tinsert(Entries, entryString);
@@ -153,7 +157,7 @@ function SoftRes:handleWhisperCommand(_, message, sender)
         -- Let the sender know what he/she soft-reserved
         if (not GL:empty(Entries)) then
             GL:sendChatMessage(
-                "You reserved " .. table.concat(Entries, ", "),
+                (L.CHAT.SOFTRES_MY_RESERVES_REPLY):format(table.concat(Entries, " ")),
                 "WHISPER", nil, sender
             );
 
@@ -166,8 +170,6 @@ end
 ---
 ---@return boolean
 function SoftRes:available()
-    GL:debug("SoftRes:available");
-
     return GL:higherThanZero(DB:get("SoftRes.MetaData.importedAt", 0));
 end
 
@@ -175,8 +177,6 @@ end
 ---
 ---@return void
 function SoftRes:requestData()
-    GL:debug("SoftRes:requestData");
-
     if (self.requestingData) then
         return;
     end
@@ -245,8 +245,6 @@ end
 ---@param CommMessage CommMessage
 ---@return void
 function SoftRes:replyToDataRequest(CommMessage)
-    GL:debug("SoftRes:replyToDataRequest");
-
     -- I don't have any data, leave me alone!
     if (not self:available()) then
         return;
@@ -262,7 +260,6 @@ function SoftRes:replyToDataRequest(CommMessage)
         return;
     end
 
-    local playerName = CommMessage.Sender.name;
     local playerSoftResID = CommMessage.content.currentSoftResID or '';
     local playerSoftResUpdatedAt = tonumber(CommMessage.content.softResDataUpdatedAt) or 0;
 
@@ -289,8 +286,6 @@ end
 ---@param itemID number
 ---@return boolean
 function SoftRes:itemIDIsReservedByMe(itemID)
-    GL:debug("SoftRes:itemIDIsReservedByMe");
-
     return self:itemIDIsReservedByPlayer(itemID, GL.User.player);
 end
 
@@ -299,8 +294,6 @@ end
 ---@param itemLink string
 ---@return boolean
 function SoftRes:itemLinkIsReservedByMe(itemLink)
-    GL:debug("SoftRes:itemLinkIsReservedByMe");
-
     return self:itemIDIsReservedByMe(GL:getItemIDFromLink(itemLink));
 end
 
@@ -308,8 +301,6 @@ end
 ---
 ---@return void
 function SoftRes:materializeData()
-    GL:debug("SoftRes:materializeData");
-
     local ReservedItemIDs = {}; -- All reserved item ids (both soft- and hard)
     local SoftReservedItemIDs = {}; -- Soft-reserved item ids
     local DetailsByPlayerName = {}; -- Item ids per player name
@@ -409,8 +400,6 @@ end
 ---
 ---@return void
 function SoftRes:draw()
-    GL:debug("SoftRes:draw");
-
     -- No data available, show importer
     if (not self:available()) then
         GL.Interface.SoftRes.Importer:draw();
@@ -576,8 +565,6 @@ end
 ---@param playerName string
 ---@return boolean
 function SoftRes:itemIDIsReservedByPlayer(itemID, playerName)
-    GL:debug("SoftRes:itemIDIsReservedByPlayer");
-
     local SoftResData = self.MaterializedData.PlayerNamesByItemID or {};
 
     -- The item linked to this id can have multiple IDs (head of Onyxia for example)
@@ -604,8 +591,6 @@ end
 ---
 ---@test /dump _G.Gargul.SoftRes:byItemID(52030);
 function SoftRes:byItemID(itemID, inRaidOnly)
-    GL:debug("SoftRes:byItemID");
-
     -- An invalid item id was provided
     itemID = tonumber(itemID);
     if (not GL:higherThanZero(itemID)) then
@@ -648,8 +633,6 @@ end
 ---
 ---@test /dump _G.Gargul.SoftRes:byItemLink("|cffa335ee|Hitem:52030::::::::80:::::|h[Conqueror's Mark of Sanctification]|h|r");
 function SoftRes:byItemLink(itemLink, inRaidOnly)
-    GL:debug("SoftRes:byItemLink");
-
     return self:byItemID(GL:getItemIDFromLink(itemLink), inRaidOnly);
 end
 
@@ -722,8 +705,6 @@ end
 ---@param itemLink string
 ---@return table
 function SoftRes:tooltipLines(itemLink)
-    GL:debug("SoftRes:appendSoftReserveInfoToTooltip");
-
     -- The player doesn't want to see softres details on tooltips
     if (not Settings:get("SoftRes.enableTooltips")) then
         return {};
@@ -734,22 +715,15 @@ function SoftRes:tooltipLines(itemLink)
     -- Check if the item is hard-reserved
     local hardReservedFor, hardReservedNote = self:getHardReserveDetailsByItemLink(itemLink);
     if (hardReservedFor or hardReservedNote) then
-        tinsert(Lines, string.format("\n|cFFcc2743%s|r", "This item is hard-reserved."));
+        tinsert(Lines, ("\n|cFFcc2743%s|r"):format(L.SOFTRES_TOOLTIP_HARD_RESERVED));
         if (hardReservedFor) then
-            local forString = string.format("|cFFcc2743 For:|r |cFF%s%s|r",
-                GL:classHexColor(self:getPlayerClass(hardReservedFor, false)),
-                hardReservedFor
+            tinsert(Lines, ("|cFFcc2743 %s|r"):format(
+                (L.SOFTRES_TOOLTIP_HARD_RESERVED_FOR):format(GL:nameFormat{ name = hardReservedFor, colorize = true, }))
             );
-
-            tinsert(Lines, forString);
         end
 
         if (hardReservedNote) then
-            local noteString = string.format("|cFFcc2743 Note:|r %s",
-                hardReservedNote
-            );
-
-            tinsert(Lines, noteString);
+            tinsert(Lines, (L.SOFTRES_TOOLTIP_HARD_RESERVED_NOTE):format(hardReservedNote));
         end
 
         return Lines;
@@ -775,7 +749,7 @@ function SoftRes:tooltipLines(itemLink)
     end
 
     -- Add the header
-    tinsert(Lines, string.format("\n|cFFEFB8CD%s|r", "Reserved by"));
+    tinsert(Lines, ("\n|cFFEFB8CD%s|r"):format(L.SOFTRES_TOOLTIP_RESERVED_BY));
 
     -- This is necessary so we can sort the table based on number of reserves per item
     local ActiveReservations = {};
@@ -806,7 +780,7 @@ function SoftRes:tooltipLines(itemLink)
 
         -- User reserved the same item multiple times
         if (Entry.reservations > 1) then
-            entryString = string.format("%s (%sx)", entryString, Entry.reservations);
+            entryString = (L.SOFTRES_TOOLTIP_MULTIPLE_RESERVES):format(entryString, Entry.reservations);
         end
 
         -- Add the actual soft reserves to the tooltip
@@ -852,8 +826,6 @@ end
 ---@param data string
 ---@return boolean
 function SoftRes:import(data, openOverview)
-    GL:debug("SoftRes:import");
-
     openOverview = GL:toboolean(openOverview);
     local broadcast = openOverview; -- Automatically broadcast after importing?
     local reportStatus = openOverview; -- Notify of fixed names and other messages?
@@ -861,7 +833,7 @@ function SoftRes:import(data, openOverview)
 
     -- Make sure all the required properties are available and of the correct type
     if (GL:empty(data)) then
-        GL.Interface:get("SoftRes.Importer", "Label.StatusMessage"):SetText("Invalid soft-reserve data provided");
+        GL.Interface:get("SoftRes.Importer", "Label.StatusMessage"):SetText(L.SOFTRES_IMPORT_INVALID);
         return false;
     end
 
@@ -885,9 +857,9 @@ function SoftRes:import(data, openOverview)
         if (reportStatus) then
             for softResName, playerName in pairs(RewiredNames) do
                 GL:notice(string.format(
-                    "Auto name fix: the SR of \"%s\" is now linked to \"%s\"",
+                    L.SOFTRES_IMPORT_FIXED_NAME,
                     GL:capitalize(softResName),
-                    GL:capitalize(playerName)
+                    GL:nameFormat{ name = playerName, colorize = true, }
                 ));
             end
         end
@@ -914,11 +886,11 @@ function SoftRes:import(data, openOverview)
         if (not GL:empty(PlayersWhoDidntReserve)) then
             local MissingReservers = {};
             for _, name in pairs(PlayersWhoDidntReserve) do
-                tinsert(MissingReservers, {GL:capitalize(name), GL:classHexColor(GL.Player:classByName(name))});
+                tinsert(MissingReservers, GL:nameFormat{ name = name, colorize = true, });
             end
 
-            GL:warning("The following players did not reserve anything:");
-            GL:multiColoredMessage(MissingReservers, ", ");
+            GL:warning(L.SOFTRES_IMPORT_NO_RESERVES_WARNING);
+            GL:message(table.concat(MissingReservers, " "));
         end
     end
 
@@ -947,7 +919,7 @@ function SoftRes:import(data, openOverview)
             )
         ) then
             GL:sendChatMessage(
-                string.format("I just imported soft-reserves into Gargul. Whisper !sr to me to double-check your reserves!"),
+                string.format(L.CHAT.SOFTRES_DATA_IMPORTED),
                 "GROUP"
             );
         end
@@ -965,8 +937,6 @@ end
 ---@param Reserves table
 ---@return void
 function SoftRes:importLootReserveData(Reserves)
-    GL:debug("SoftRes:importLootReserveData");
-
     if (GL:empty(Reserves)) then
         return;
     end
@@ -1021,15 +991,13 @@ end
 ---@param data string
 ---@return boolean
 function SoftRes:importGargulData(data)
-    GL:debug("SoftRes:importGargulData");
-
     local importString = data;
     local base64DecodeSucceeded;
     base64DecodeSucceeded, data = pcall(function () return GL.Base64.decode(data); end);
 
     -- Something went wrong while base64 decoding the payload
     if (not base64DecodeSucceeded) then
-        local errorMessage = "Unable to base64 decode the data. Make sure you copy/paste it as-is from softres.it without adding any additional characters or whitespaces!";
+        local errorMessage = L.BASE64_DECODE_WARNING;
         GL.Interface:get("SoftRes.Importer", "Label.StatusMessage"):SetText(errorMessage);
 
         return false;
@@ -1041,7 +1009,7 @@ function SoftRes:importGargulData(data)
 
     -- Something went wrong while zlib decoding the payload
     if (not zlibDecodeSucceeded) then
-        local errorMessage = "Unable to zlib decode the data. Make sure you copy/paste it as-is from softres.it without adding any additional characters or whitespaces!";
+        local errorMessage = L.ZLIB_DECOMPRESS_WARNING;
         GL.Interface:get("SoftRes.Importer", "Label.StatusMessage"):SetText(errorMessage);
 
         return false;
@@ -1051,14 +1019,14 @@ function SoftRes:importGargulData(data)
     local jsonDecodeSucceeded;
     jsonDecodeSucceeded, data = pcall(function () return GL.JSON:decode(data); end);
     if (not jsonDecodeSucceeded) then
-        local errorMessage = "Unable to json decode the data. Make sure you paste the SoftRes data as-is in the box up top without adding/removing anything! If the issue persists then hop in our Discord for support!";
+        local errorMessage = L.JSON_DECODE_WARNING;
         GL.Interface:get("SoftRes.Importer", "Label.StatusMessage"):SetText(errorMessage);
 
         return false;
     end
 
     local function throwGenericInvalidDataError()
-        local errorMessage = "Invalid data provided. Make sure to click the 'Gargul Export' button on softres.it and paste the full contents here";
+        local errorMessage = L.SOFTRES_IMPORT_INVALID_INSTRUCTIONS;
         GL.Interface:get("SoftRes.Importer", "Label.StatusMessage"):SetText(errorMessage);
 
         return false;
@@ -1197,7 +1165,7 @@ function SoftRes:importGargulData(data)
     if (differentPlusOnes) then
         -- Show a confirmation dialog before overwriting the plusOnes
         GL.Interface.Dialogs.PopupDialog:open{
-            question = "The PlusOne values provided collide with the ones already present. Do you want to replace your old PlusOne values?",
+            question = L.SOFTRES_IMPORT_NEW_PLUSONES,
             OnYes = function ()
                 GL.PlusOnes:clearPlusOnes();
                 GL.PlusOnes:setPlusOnes(PlusOnes);
@@ -1218,10 +1186,8 @@ end
 ---@param reportStatus boolean
 ---@return boolean
 function SoftRes:importCSVData(data, reportStatus)
-    GL:debug("SoftRes:import");
-
     if (reportStatus) then
-        GL:warning("SoftRes Weakaura and CSV data are deprecated, use the Gargul export instead!");
+        GL:warning(L.SOFTRES_IMPORT_USE_GARGUL);
     end
 
     local PlusOnes = {};
@@ -1283,8 +1249,7 @@ function SoftRes:importCSVData(data, reportStatus)
 
     -- The user attempted to import invalid data
     if (GL:empty(SoftReserveData)) then
-        local errorMessage = "Invalid data provided. Make sure to click the 'Gargul Export' button on softres.it and paste the full contents here";
-        GL.Interface:get("SoftRes.Importer", "Label.StatusMessage"):SetText(errorMessage);
+        GL.Interface:get("SoftRes.Importer", "Label.StatusMessage"):SetText(L.SOFTRES_IMPORT_INVALID_INSTRUCTIONS);
 
         return false;
     end
@@ -1307,7 +1272,7 @@ function SoftRes:importCSVData(data, reportStatus)
     if (differentPlusOnes) then
         -- Show a confirmation dialog before overwriting the plusOnes
         GL.Interface.Dialogs.PopupDialog:open{
-            question = "The PlusOne values provided collide with the ones already present. Do you want to replace your old PlusOne values?",
+            question = L.SOFTRES_IMPORT_NEW_PLUSONES,
             OnYes = function ()
                 GL.PlusOnes:clearPlusOnes();
                 GL.PlusOnes:setPlusOnes(PlusOnes);
@@ -1324,8 +1289,6 @@ end
 ---
 ---@return table
 function SoftRes:fixPlayerNames()
-    GL:debug("SoftRes:fixPlayerNames");
-
     -- Get the names of everyone in our group and lowercase them
     local GroupMemberNames = {};
     for _, playerName in pairs(GL.User:groupMemberNames()) do
@@ -1410,15 +1373,13 @@ end
 ---
 ---@return boolean
 function SoftRes:broadcast()
-    GL:debug("SoftRes:broadcast");
-
     if (self.broadcastInProgress) then
-        GL:error("Broadcast still in progress");
+        GL:error(L.BROADCAST_IN_PROGRESS_ERROR);
         return false;
     end
 
-    if (not GL.User.isInGroup) then
-        GL:warning("No one to broadcast to, you're not in a group!");
+    if (not self:userIsAllowedToBroadcast()) then
+        GL:warning(L.LM_OR_ASSIST_REQUIRED);
         return false;
     end
 
@@ -1426,7 +1387,7 @@ function SoftRes:broadcast()
     if (not self:available()
         or GL:empty(DB:get("SoftRes.MetaData.importString"))
     ) then
-        GL:warning("Nothing to broadcast, import SoftRes data first!");
+        GL:warning(L.BROADCAST_NO_DATA);
         return false;
     end
 
@@ -1439,7 +1400,7 @@ function SoftRes:broadcast()
     }:send();
 
     GL.Ace:ScheduleTimer(function ()
-        GL:success("Broadcast finished");
+        GL:success(L.BROADCAST_FINISHED);
         self.broadcastInProgress = false;
     end, 10);
 
@@ -1450,8 +1411,6 @@ end
 ---
 ---@param CommMessage CommMessage
 function SoftRes:receiveSoftRes(CommMessage)
-    GL:debug("SoftRes:receiveSoftRes");
-
     -- No need to update our tables if we broadcasted them ourselves
     if (CommMessage.Sender.isSelf) then
         GL:debug("Sync:receiveSoftRes received by self, skip");
@@ -1460,11 +1419,11 @@ function SoftRes:receiveSoftRes(CommMessage)
 
     local importString = CommMessage.content;
     if (not GL:empty(importString)) then
-        GL:warning("Attempting to process incoming SoftRes data from " .. CommMessage.Sender.name);
+        GL:warning((L.SOFTRES_PROCESS_INCOMING):format(CommMessage.Sender.name));
         return self:import(importString);
     end
 
-    GL:warning("Couldn't process SoftRes data received from " .. CommMessage.Sender.name);
+    GL:warning((L.SOFTRES_BROADCAST_PROCESS_FAILED):format(CommMessage.Sender.name));
     return false;
 end
 
@@ -1472,12 +1431,10 @@ end
 ---
 ---@return boolean
 function SoftRes:postLink()
-    GL:debug("SoftRes:postLink");
-
     local softResLink = DB:get("SoftRes.MetaData.url", false);
 
     if (not softResLink) then
-        GL:warning("No softres.it URL available, make sure you exported using the 'Export Gargul Data' button on softres.it!");
+        GL:warning(L.SOFTRES_NO_URL_AVAILABLE);
         return false;
     end
 
@@ -1494,8 +1451,6 @@ end
 ---
 ---@return table
 function SoftRes:playersWithoutSoftReserves()
-    GL:debug("SoftRes:playersWithoutSoftReserves");
-
     local PlayerNames = {};
 
     -- Materialized data is available, use it!
@@ -1532,45 +1487,21 @@ end
 ---
 ---@return boolean
 function SoftRes:postMissingSoftReserves()
-    GL:debug("SoftRes:postMissingSoftReserves");
-
     if (not self:available()) then
-        GL:warning("No softres.it data available. Import it in the import window (type /gl softreserves)");
+        GL:warning(L.SOFTRES_IMPORT_INVALID_INSTRUCTIONS);
         return false;
     end
 
     local PlayerNames = self:playersWithoutSoftReserves();
 
     if (#PlayerNames < 1) then
-        GL:success("Everyone filled out their soft-reserves");
+        GL:success(L.SOFTRES_EVERYONE_RESERVED);
         return true;
     end
 
     -- Post the link in the chat for all group members to see
     GL:sendChatMessage(
-        "Missing soft-reserves from: " .. table.concat(PlayerNames, ", "),
-        "GROUP"
-    );
-
-    return true;
-end
-
---- Attempt to post the softres.it link in either party or raid chat
----
----@return boolean
-function SoftRes:postDiscordLink()
-    GL:debug("SoftRes:postDiscordLink");
-
-    local discordLink = DB:get("SoftRes.MetaData.discordUrl", false);
-
-    if (not discordLink) then
-        GL:warning("No discord URL available. Make sure you actually set one and that you exported using the Gargul export on softres.it!");
-        return false;
-    end
-
-    -- Post the link in the chat for all group members to see
-    GL:sendChatMessage(
-        discordLink,
+        (L.CHAT.SOFTRES_MISSING_RESERVES):format(table.concat(PlayerNames, " ")),
         "GROUP"
     );
 
@@ -1581,9 +1512,5 @@ end
 ---
 ---@return boolean
 function SoftRes:userIsAllowedToBroadcast()
-    GL:debug("SoftRes:userIsAllowedToBroadcast");
-
-    return GL.User.isInGroup and (GL.User.isMasterLooter or GL.User.hasAssist);
+    return not GL.User.isInGroup or (GL.User.isMasterLooter or GL.User.hasAssist);
 end
-
-GL:debug("SoftRes.lua");

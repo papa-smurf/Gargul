@@ -1,3 +1,5 @@
+local L = Gargul_L;
+
 ---@type GL
 local _, GL = ...;
 
@@ -11,6 +13,13 @@ GL.Interface.Changelog = {
     isVisible = false,
 
     History = {
+        (GL.isEra and {
+            version = "7.3.2",
+            date = "March 12th, 2024",
+            Changes = {
+                "Cross-realm GDKP multi-auctions and other group activities should now work as expected",
+            },
+        } or nil),
         {
             version = "7.2.4",
             date = "December 12th, 2023",
@@ -441,7 +450,7 @@ function Changelog:draw()
 
     -- Create a container/parent frame
     local Window = AceGUI:Create("Frame");
-    Window:SetTitle("Gargul v" .. GL.version);
+    Window:SetTitle((L.WINDOW_HEADER):format(GL.version));
     Window:SetLayout("Flow");
     Window:SetWidth(400);
     Window:SetHeight(500);

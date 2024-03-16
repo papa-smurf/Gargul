@@ -61,7 +61,6 @@ Classes/TradeWindow.lua
 Classes/TradeTime.lua
 Classes/Version.lua
 Classes/BagInspector.lua
-Classes/BuffInspector.lua
 Classes/User.lua
 Classes/Player.lua
 Classes/BoostedRolls.lua
@@ -75,7 +74,6 @@ Interface/AceGUIWidget-LibScrollingTable.lua
 Interface/Interface.lua
 Interface/Award/Award.lua
 Interface/Award/Overview.lua
-Interface/Award/Export.lua
 Interface/Importer.lua
 Interface/BonusFeatures.lua
 Interface/GroupVersionCheck.lua

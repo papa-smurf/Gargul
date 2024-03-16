@@ -1,3 +1,5 @@
+local L = Gargul_L;
+
 local _, GL = ...;
 
 ---@class Version
@@ -18,7 +20,6 @@ GL.Version = GL.Version or {
 
     GroupMembers = {},
     RecurringCheckTimer = nil,
-    UpdateCheckTimer = nil;
 };
 
 ---@type Version
@@ -32,8 +33,6 @@ local THIRTY_MINUTES = 1800;
 
 ---@return void
 function Version:_init()
-    GL:debug("Version:_init");
-
     -- No need to initialize this class twice
     if (self._initialized) then
         return;
@@ -50,7 +49,7 @@ function Version:_init()
 
         if (not GL.firstBoot) then
             print(string.format(
-                "|cff%sGargul|r is now updated to |cff%sv%s|r",
+                L.VERSION_UPDATED,
                 GL.Data.Constants.addonHexColor,
                 GL.Data.Constants.addonHexColor,
                 self.current
@@ -80,26 +79,22 @@ function Version:_init()
     -- 25 seconds after logging in we will check if Gargul is up to date
     -- If it is, we'll check periodically (once every 30 minutes) if it is
     -- On top of that we also check on every ready check event
-    GL.Ace:ScheduleTimer(function ()
+    GL:after(25, nil, function ()
         if (self.isOutOfDate) then
             return;
         end
 
         self:checkForUpdate();
 
-        self.UpdateCheckTimer = GL.Ace:ScheduleRepeatingTimer(function ()
-            GL:debug("Run Version.UpdateCheckTimer");
-
+        GL:interval(THIRTY_MINUTES, "VersionUpdateCheckTimer", function (timer)
             if (self.isOutOfDate) then
-                GL:debug("Cancel Version.UpdateCheckTimer");
-
-                GL.Ace:CancelTimer(self.UpdateCheckTimer);
+                GL:cancelTimer(timer);
                 return;
             end
 
             self:checkForUpdate();
-        end, THIRTY_MINUTES);
-    end, 25);
+        end);
+    end);
 
     self._initialized = true;
 end
@@ -164,8 +159,6 @@ end
 ---@param Message CommMessage
 ---@return void
 function Version:replyToUpdateCheck(Message)
-    GL:debug("Version:replyToUpdateCheck");
-
     if (Message.Sender.isSelf) then
         return;
     end
@@ -195,13 +188,11 @@ end
 ---@param quietly boolean
 ---@return void
 function Version:addRelease(versionString, quietly)
-    GL:debug("Version:addRelease");
-
     if (type(versionString) ~= "string"
         or not string.match(versionString, "%d+%.%d+%.%d+")
     ) then
         if (not quietly) then
-            GL:warning("Invalid version string provided in Version:addRelease");
+            GL:warning(L.VERSION_INVALID_WARNING);
         end
 
         return;
@@ -222,8 +213,6 @@ end
 ---@param versionString string
 ---@return void
 function Version:checkIfNewerRelease(versionString)
-    GL:debug("Version:checkIfNewerRelease");
-
     local outDated, versionDifference = self:leftIsOlderThanRight(self.latest, versionString);
     if (not outDated) then
         return;
@@ -247,20 +236,16 @@ end
 ---
 ---@return void
 function Version:notBackwardsCompatibleNotice()
-    GL:debug("Version:notBackwardsCompatibleNotice");
-
     local serverTime = GetServerTime();
 
     if (not self.lastNotBackwardsCompatibleNotice) then
         self.lastNotBackwardsCompatibleNotice = serverTime;
-        GL:error("Gargul is out of date and won't work until you update!");
+        GL:error(L.VERSION_INCOMPATIBLE_WARNING);
     end
 end
 
 ---@return void
 function Version:notifyOfLatestVersion()
-    GL:debug("Version:notifyOfLatestVersion");
-
     if (self.lastNotBackwardsCompatibleNotice > 0) then -- The user is already chewed out by the incompatibility notifier
         return;
     end
@@ -273,7 +258,7 @@ function Version:notifyOfLatestVersion()
     self.lastUpdateNotice = GetServerTime();
 
     local notify = function ()
-        GL:warning(("Gargul version |c00a79effv%s|r is available on CurseForge and Wago. You can update without closing your game, just be sure to /reload !"):format(self.latest));
+        GL:warning((L.VERSION_UPDATE_AVAILABLE):format(self.latest));
 
         -- Only show if the user didn't update for at least two trivial or one minor/major version
         if (self.versionDifference < 2) then
@@ -285,7 +270,7 @@ function Version:notifyOfLatestVersion()
         end
 
         GL.Interface.Alerts:fire("GargulNotification", {
-            message = string.format("|c00BE3333Update Gargul!|r"),
+            message = ("|c00BE3333%s|r"):format(L.VERSION_UPDATE),
         });
     end
 
@@ -300,8 +285,6 @@ end
 ---@param versionString string
 ---@return any
 function Version:validateAndSplit(versionString)
-    GL:debug("Version:validateAndSplit");
-
     if (type(versionString) ~= "string"
         or GL:empty(versionString)
     ) then
@@ -311,7 +294,7 @@ function Version:validateAndSplit(versionString)
     local versionParts = GL:explode(versionString, ".");
 
     if (not versionParts[1]) then
-        GL:warning("Version string split failed");
+        GL:debug("Version string split failed");
         return false;
     end
 
@@ -326,8 +309,6 @@ end
 ---
 --- /script DevTools_Dump({_G.Gargul.Version:leftIsOlderThanRight("5.3.0", "5.3.3")});
 function Version:leftIsOlderThanRight(left, right)
-    GL:debug("Version:leftIsOlderThanRight");
-
     local leftSuccess, leftMajor, leftMinor, leftTrivial = self:validateAndSplit(left);
     local rightSuccess, rightMajor, rightMinor, rightTrivial = self:validateAndSplit(right);
 
@@ -362,8 +343,6 @@ end
 ---@param right string
 ---@return boolean
 function Version:leftIsNewerThanOrEqualToRight(left, right)
-    GL:debug("Version:leftIsNewerThanOrEqualToRight");
-
     local older, versionDifference = self:leftIsOlderThanRight(left, right);
     local newerOrEqual = not older;
 
@@ -397,200 +376,4 @@ function Version:inspectQuietly()
     }:send();
 end
 
---- Inspect to see if the current group members have the addon and check whether it's up-to-date
----
----@return void
----@test /script _G.Gargul.Version:inspectGroup()
-function Version:inspectGroup()
-    GL:debug("Version:inspectGroup");
-
-    if (not GL.User.isInGroup) then
-        return GL:error("You're not in a group");
-    end
-
-    GL:message("Checking group member addon versions...");
-
-    self.GroupMembers = {}; -- Reset the self.GroupMembers object
-    local numberOfActiveGroupMembers = 0;
-
-    -- Loop through all members of the group (party or raid)
-    for _, Player in pairs(GL.User:groupMembers()) do
-        if (Player.online) then
-            -- No need to request our own version
-            if (Player.name ~= GL.User.name) then
-                self.GroupMembers[GL:disambiguateName(Player.fqn)] = "-";
-                numberOfActiveGroupMembers = numberOfActiveGroupMembers + 1;
-            end
-        end
-    end
-
-    local CommMessage = GL.CommMessage.new{
-        action = CommActions.requestAppVersion,
-        channel = "GROUP",
-        acceptsResponse = true,
-    }:send();
-
-    -- Report back as soon as all the answers are in
-    GL:debug("Schedule new Version.RecurringCheckTimer");
-    self.RecurringCheckTimer = GL.Ace:ScheduleRepeatingTimer(function ()
-        GL:debug("Run Version.RecurringCheckTimer");
-
-        -- We received an answer from everyone
-        if (GL:count(CommMessage.Responses or {}) >= numberOfActiveGroupMembers) then
-            self:clearTimers();
-            self:finishInspectGroup(CommMessage);
-        end
-    end, .2);
-
-    -- Even if we're still missing an answer from some of the group members
-    -- we still want to make sure our inspection end after a set amount of time
-    self.MaximumCheckTimer = GL.Ace:ScheduleTimer(function ()
-        self:clearTimers();
-        self:finishInspectGroup(CommMessage);
-    end, 5);
-end
-
---- Clear any outstanding timers
----
----@return void
-function Version:clearTimers()
-    if (self.RecurringCheckTimer) then
-        GL:debug("Cancel Version.RecurringCheckTimer");
-
-        GL.Ace:CancelTimer(self.RecurringCheckTimer);
-        self.RecurringCheckTimer = nil;
-    end
-
-    if (self.MaximumCheckTimer) then
-        GL.Ace:CancelTimer(self.MaximumCheckTimer);
-        self.MaximumCheckTimer = nil;
-    end
-end
-
---- Check which players are using the addon and send the results to a given callback
----
----@param callback function
----@return void
-function Version:playersUsingAddon(callback)
-    GL:debug("Version:inspectGroup");
-
-    if (not GL.User.isInGroup
-        or not callback
-        or type(callback) ~= "function"
-    ) then
-        callback{};
-        return;
-    end
-
-    local GroupMembers = {};
-    local numberOfActiveGroupMembers = 0;
-
-    -- Loop through all members of the group (party or raid)
-    for _, Player in pairs(GL.User:groupMembers()) do
-        if (Player.online) then
-            -- No need to request our own version
-            if (Player.id ~= GL.User.id) then
-                GroupMembers[GL:disambiguateName(Player.fqn)] = false;
-                numberOfActiveGroupMembers = numberOfActiveGroupMembers + 1;
-            end
-        end
-    end
-
-    local CommMessage = GL.CommMessage.new{
-        action = CommActions.requestAppVersion,
-        channel = "GROUP",
-        acceptsResponse = true,
-    }:send();
-
-    local function handleResponses(GroupMembers, Responses, callback)
-        for _, Response in pairs(Responses) do
-            local senderName = Response.Sender.name;
-
-            if (GroupMembers[senderName] ~= nil) then
-                GroupMembers[senderName] = true;
-            end
-        end
-
-        callback(GroupMembers);
-    end
-
-    -- Report back as soon as all the answers are in
-    if (not self.RecurringCheckTimer) then
-        GL:debug("Schedule new Version.RecurringCheckTimer");
-        self.RecurringCheckTimer = GL.Ace:ScheduleRepeatingTimer(function ()
-            GL:debug("Run Version.RecurringCheckTimer");
-
-            -- We received an answer from everyone
-            if (GL:count(CommMessage.Responses or {}) >= numberOfActiveGroupMembers) then
-                self:clearTimers();
-                handleResponses(GroupMembers, CommMessage.Responses, callback);
-                return;
-            end
-        end, .2);
-    end
-
-    -- Even if we're still missing an answer from some of the group members
-    -- we still want to make sure our inspection end after a set amount of time
-    self.MaximumCheckTimer = GL.Ace:ScheduleTimer(function ()
-        self:clearTimers();
-        handleResponses(GroupMembers, CommMessage.Responses, callback);
-        return;
-    end, 5);
-end
-
---- Inspect the raid group to see who has the addon and who doesn't and who needs to update it
----
----@param CommMessage CommMessage
----@return void
-function Version:finishInspectGroup(CommMessage)
-    GL:debug("Version:finishInspectGroup");
-
-    for _, response in pairs(CommMessage.Responses or {}) do
-        local senderName = response.Sender.name;
-        local versionString = response.content or response.version;
-
-        if (self.GroupMembers[senderName]) then
-            self.GroupMembers[senderName] = versionString;
-            self:addRelease(versionString);
-        end
-    end
-
-    local upToDate, outdated, noResponse = {}, {}, {};
-    for player, version in pairs(self.GroupMembers) do
-        if (version == "-") then
-            tinsert(noResponse, player)
-        elseif (self:leftIsOlderThanRight(version, self.latest)) then
-            tinsert(outdated, player);
-        else
-            tinsert(upToDate, player);
-        end
-    end
-
-    -- Start out with checking our own addon version
-    if (self.isOutOfDate) then
-        GL:error(string.format("Your addon (v%s) is out of date, v%s is out", self.current, self.latest));
-    else
-        GL:success(string.format("Your addon (v%s) is up-to-date", self.current));
-    end
-
-    -- List all player that are up-to-date
-    if (#upToDate >= 1) then
-        GL:message("The following players are up-to-date:");
-        GL:success(table.concat(upToDate, ", "));
-    end
-
-    -- List all player that didn't respond and most likely don't have the addon
-    if (#noResponse >= 1) then
-        GL:message("The following players did not respond:");
-        GL:error(table.concat(noResponse, ", "));
-    end
-
-    -- List all player that have an out-of-date addon
-    if (#outdated >= 1) then
-        GL:message("The following players need to update:");
-        GL:error(table.concat(outdated, ", "));
-    end
-end
-
 Version:addRelease(Version.current);
-GL:debug("Version.lua");

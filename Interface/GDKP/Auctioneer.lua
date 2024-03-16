@@ -87,13 +87,11 @@ local BIDS_TABLE_COLUMNS = {
 
 ---@return table|nil
 function AuctioneerUI:open()
-    GL:debug("AuctioneerUI:open");
-
     if (GL.User.isInGroup
         and not GL.User.isMasterLooter
         and not GL.User.hasAssist
     ) then
-        return GL:warning("You need to be the master looter or have an assist / lead role!");
+        return GL:warning(L.LM_OR_ASSIST_REQUIRED);
     end
 
     self.isVisible = true;
@@ -107,8 +105,6 @@ end
 
 ---@return void
 function AuctioneerUI:close()
-    GL:debug("AuctioneerUI:close");
-
     self.isVisible = false;
     return _G[self.windowName] and _G[self.windowName]:Hide();
 end
@@ -117,8 +113,6 @@ end
 ---
 ---@return Frame
 function AuctioneerUI:build()
-    GL:debug("AuctioneerUI:build");
-
     if (_G[self.windowName]) then
         return _G[self.windowName];
     end
@@ -153,10 +147,11 @@ function AuctioneerUI:build()
         end },
         {
             text = function ()
-                return string.format("%s (|cFF%s%sg|r)",
+                return ("%s (|cFF%s%s%s|r)"):format(
                     L.GDKP_SESSION,
-                    Constants.ClassHexColors.rogue,
-                    Pot:total()
+                    Interface.Colors.ROGUE,
+                    Pot:total(),
+                    L.GOLD_INDICATOR
                 );
             end,
             notCheckable = true,
@@ -208,7 +203,7 @@ function AuctioneerUI:build()
         }},
         {text = L.AUTO_TRADE_OPTIONS, notCheckable = true, SubMenu = {
             {
-                text = "Enable",
+                text = L.ENABLE,
                 checked = function ()
                     return Settings:get("AwardingLoot.autoTradeAfterAwardingAnItem");
                 end,
@@ -217,7 +212,7 @@ function AuctioneerUI:build()
                 end,
             },
             {
-                text = "Disable for disenchanted",
+                text = L.GDKP_AUCTIONEER_SETTINGS_DISABLE_FOR_DISENCHANTED,
                 checked = function ()
                     return not Settings:get("AwardingLoot.autoTradeDisenchanter");
                 end,
@@ -226,7 +221,7 @@ function AuctioneerUI:build()
                 end,
             },
             {
-                text = "Disable in combat",
+                text = L.GDKP_AUCTIONEER_SETTINGS_DISABLE_IN_COMBAT,
                 checked = function ()
                     return not Settings:get("AwardingLoot.autoTradeInCombat");
                 end,
@@ -293,7 +288,7 @@ function AuctioneerUI:build()
         }},
         "divider",
         {text = L.QUEUE, isTitle = true, notCheckable = true },
-        {text = L.ADD_DROPS_TO_QUEUE, setting = "GDKP.addDropsToQueue", func = function(Entry, _, _, checked)
+        {text = L.GDKP_ADD_DROPS_TO_QUEUE, setting = "GDKP.addDropsToQueue", func = function(Entry, _, _, checked)
             Settings:set("GDKP.addDropsToQueue", checked);
             Entry.checked = checked;
         end},
@@ -326,10 +321,11 @@ function AuctioneerUI:build()
     ---@type FontString
     local CurrentPotLabel = Interface:createFontString(Window.Minimized, {
         text = function (self)
-            self:SetText(string.format("%s: |cFF%s%sg|r",
+            self:SetText(("%s: |cFF%s%s%s|r"):format(
                 L.POT,
-                Constants.ClassHexColors.rogue,
-                Pot:total()
+                Interface.Colors.ROGUE,
+                Pot:total(),
+                L.GOLD_INDICATOR
             ));
         end,
         updateOn = { "GL.GDKP_AUCTION_CHANGED", "GL.GDKP_SESSION_CHANGED" },
@@ -402,10 +398,11 @@ function AuctioneerUI:build()
         ---@type FontString
         local CurrentPotLabel = Interface:createFontString(Window, {
             text = function (self)
-                self:SetText(string.format("%s: |cFF%s%sg|r",
+                self:SetText(("%s: |cFF%s%s%s|r"):format(
                     L.POT,
-                    Constants.ClassHexColors.rogue,
-                    Pot:total()
+                    Interface.Colors.ROGUE,
+                    Pot:total(),
+                    L.GOLD_INDICATOR
                 ));
             end,
             updateOn = { "GL.GDKP_AUCTION_CHANGED", "GL.GDKP_SESSION_CHANGED" },
@@ -685,25 +682,14 @@ function AuctioneerUI:build()
         ---@type Button
         local MultiAuctionButton = Interface:dynamicPanelButton(MultiAuctionWindow);
         MultiAuctionButton:SetPoint("CENTER", MultiAuctionWindow, "CENTER");
-        MultiAuctionButton:SetText("Check out Multi Auctions!");
+        MultiAuctionButton:SetText(L.GDKP_TRY_MULTIAUCTION);
         MultiAuctionButton:SetScript("OnClick", function ()
             GL.Commands:call("multiauction");
             self:close();
         end);
 
-        local MultiAuctionExplanation = {
-            " ",
-            "With multi auctions (or batch auctions) you can auction off as many items as you want at once!",
-            "This speeds up your raid nights immensely and makes for a seamless experience for your raiders",
-            " ",
-            "All tradable items still in your inventory can automatically be auctioned with \"Fill from inventory\"",
-            "Give it a shot!",
-            " ",
-            "|c00808080There is but one con: in order for people to partake in a batch auction raiders will need Gargul!|r",
-            " ",
-        };
-        Interface:addTooltip(MultiAuctionWindow, MultiAuctionExplanation);
-        Interface:addTooltip(MultiAuctionButton, MultiAuctionExplanation);
+        Interface:addTooltip(MultiAuctionWindow, L.GDKP_MULTIAUCTION_ABOUT);
+        Interface:addTooltip(MultiAuctionButton, L.GDKP_MULTIAUCTION_ABOUT);
     end
 
     --[[ ADJUST TABLE ROWS AFTER WINDOW RESIZE ]]
@@ -809,8 +795,8 @@ function AuctioneerUI:build()
             end
 
             secondsRemaining = math.max(secondsRemaining, 0);
-            StopButton:SetText(GL:strPadRight(string.format("%s %ss", L.STOP, secondsRemaining), " ", string.len(L.STOP) + 5));
-            MinimizedStopButton:SetText(string.format("%s %ss", L.STOP, secondsRemaining));
+            StopButton:SetText(GL:strPadRight(("%s %s%s"):format(L.STOP, secondsRemaining, L.SECONDS_ABBR), " ", string.len(L.STOP) + 5));
+            MinimizedStopButton:SetText(("%s %s%s"):format(L.STOP, secondsRemaining, L.SECONDS_ABBR));
             MinimizedOpenButton:Hide();
             MinimizedStopButton:Show();
         end, .2);
@@ -823,8 +809,6 @@ end
 ---@param Window Frame
 ---@return Frame
 function AuctioneerUI:buildQueue(Window)
-    GL:debug("AuctioneerUI:buildQueue");
-
     if (_G[self.queueWindowName]) then
         return _G[self.queueWindowName];
     end
@@ -877,11 +861,10 @@ function AuctioneerUI:buildQueue(Window)
             highlight:SetTexture("Interface/PaperDollInfoFrame/UI-Character-Tab-Highlight")
             highlight:SetBlendMode("ADD");
 
-            Interface:addTooltip(HelpFrame, { L.QUEUE .. " " .. L.INFO, string.format(
-                L.GDKP_QUEUE_EXPLANATION,
+            Interface:addTooltip(HelpFrame, { L.QUEUE .. " " .. L.INFO, (L.GDKP_QUEUE_EXPLANATION):format(
                 GL.Settings:get("ShortcutKeys.rollOffOrAuction"),
                 L.HALT
-            )}, "CURSOR");
+            ), }, "CURSOR");
 
             --[[ ICON ]]
             local texturePath = "interface/friendsframe/informationicon";
@@ -1132,7 +1115,7 @@ function AuctioneerUI:buildQueue(Window)
                 --[[ ITEM LINK ]]
                 local BOEString = "";
                 if (not bindOnPickup) then
-                    BOEString = "BOE ";
+                    BOEString = L.BIND_ON_EQUIP_ABBR .. " ";
                 end
 
                 ---@type FontString
@@ -1192,8 +1175,6 @@ end
 ---@param Window Frame
 ---@return table
 function AuctioneerUI:buildBidsTable(Window)
-    GL:debug("AuctioneerUI:buildBidsTable");
-
     local Table = GL.ScrollingTable:CreateST(BIDS_TABLE_COLUMNS, DEFAULT_TABLE_ROWS, HEIGHT_PER_TABLE_ROW, nil, Window);
     Table:EnableSelection(true);
     Table.head:Hide(); -- Remove the table header
@@ -1219,7 +1200,7 @@ function AuctioneerUI:buildBidsTable(Window)
             end
 
             Interface:addTooltip(rowFrame, {
-                string.format("Items won by %s:", bidder),
+                (L.PLAYER_ITEM_WON_COUNT):format(bidder),
                 " ",
                 ItemsWonByRollerInTheLast8Hours,
             });
@@ -1232,8 +1213,6 @@ end
 ---@param buildWhenMissing boolean
 ---@return table|nil
 function AuctioneerUI:getBidsTable(buildWhenMissing)
-    GL:debug("AuctioneerUI:getBidsTable");
-
     if (not self.BidsTable and buildWhenMissing) then
         self:build();
     end
@@ -1243,16 +1222,12 @@ end
 
 ---@return Frame
 function AuctioneerUI:getWindow()
-    GL:debug("AuctioneerUI:getWindow");
-
     return _G[self.windowName];
 end
 
 ---@param buildWhenMissing boolean
 ---@return Frame|nil
 function AuctioneerUI:getQueueWindow(buildWhenMissing)
-    GL:debug("AuctioneerUI:getQueueWindow");
-
     local Window = _G[self.queueWindowName];
 
     if (not Window and buildWhenMissing) then
@@ -1265,8 +1240,6 @@ end
 
 ---@return Frame
 function AuctioneerUI:openAuctioneerShortcut()
-    GL:debug("AuctioneerUI:openAuctioneerShortcut");
-
     if (self.isVisible) then
         return;
     end
@@ -1280,8 +1253,6 @@ end
 
 ---@return Frame
 function AuctioneerUI:closeAuctioneerShortcut()
-    GL:debug("AuctioneerUI:closeAuctioneerShortcut");
-
     local Shortcut = _G[self.auctioneerShortcutName];
 
     if (Shortcut) then
@@ -1293,8 +1264,6 @@ end
 
 ---@return Frame
 function AuctioneerUI:buildAuctioneerShortcut()
-    GL:debug("AuctioneerUI:buildAuctioneerShortcut");
-
     if (_G[self.auctioneerShortcutName]) then
         return _G[self.auctioneerShortcutName];
     end
@@ -1302,7 +1271,7 @@ function AuctioneerUI:buildAuctioneerShortcut()
     local Button = CreateFrame("Button", self.auctioneerShortcutName, UIParent);
     Button:SetSize(42, 42);
     Button:SetNormalTexture(Auction.Current.itemIcon);
-    Button:SetText("text");
+    Button:SetText(" ");
     Interface:restorePosition(Button);
 
     Button:SetMovable(true);
@@ -1359,5 +1328,3 @@ function AuctioneerUI:refreshIconGlows()
         end
     end
 end
-
-GL:debug("Auctioneer.lua");

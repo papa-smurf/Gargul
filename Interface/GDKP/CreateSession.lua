@@ -159,7 +159,7 @@ function CreateSession:build()
     Window:AddChild(Save);
 
     local Cancel = AceGUI:Create("Button");
-    Cancel:SetText("Cancel");
+    Cancel:SetText(L.CANCEL);
     Cancel:SetFullWidth(true);
     Cancel:SetCallback("OnClick", function()
         self:close();

@@ -1,3 +1,5 @@
+local L = Gargul_L;
+
 ---@type GL
 local _, GL = ...;
 
@@ -23,8 +25,6 @@ local AuctionDetails = GL.Interface.GDKP.AuctionDetails;
 ---@param auctionID string
 ---@return void
 function AuctionDetails:toggle(sessionID, auctionID)
-    GL:debug("GDKP.AuctionDetails:toggle");
-
     if (self.sessionID == sessionID
         and self.auctionID == auctionID
     ) then
@@ -38,8 +38,6 @@ end
 ---@param auctionID string
 ---@return void
 function AuctionDetails:draw(sessionID, auctionID)
-    GL:debug("GDKP.AuctionDetails:draw");
-
     local Spacer;
 
     ---@type GDKPOverview
@@ -101,20 +99,17 @@ function AuctionDetails:draw(sessionID, auctionID)
 
     if (not auctionWasDeleted) then
         if (concernsManualAdjustment) then
-            itemLabel = string.format("|cFF%s%sg|r added to pot by |c00%s%s|r\nNote: %s",
+            itemLabel = (L.GDKP_AUCTION_DETAILS_GOLD_ADDED):format(
                 Constants.ClassHexColors.rogue,
-                Auction.price or "0",
-                GL:classHexColor(GL.Player:classByName(Auction.Winner.name, 0), GL.Data.Constants.disabledTextColor),
-                Auction.Winner.name,
+                Auction.price or L.ZERO_SIGN,
+                GL:nameFormat{ name = Auction.Winner.name, colorize = true, },
                 Auction.note or ""
             );
         else
-            itemLabel = string.format(
-    "|cFF%s%s|r paid |cFF%s%sg|r for\n%s",
-                GL:classHexColor(Auction.Winner.class),
-                Auction.Winner.name or "",
+            itemLabel = (L.GDKP_AUCTION_DETAILS_GOLD_PAID_BY):format(
+                GL:nameFormat{ name = Auction.Winner.name, colorize = true, },
                 Constants.ClassHexColors.rogue,
-                Auction.price or "0",
+                Auction.price or L.ZERO_SIGN,
                 ItemEntry.link
             );
         end
@@ -127,10 +122,8 @@ function AuctionDetails:draw(sessionID, auctionID)
             reason = "-";
         end
 
-        itemLabel = string.format(
-            "|cFFbe3333Deleted by|r |cFF%s%s|r\nReason: %s",
-            GL:classHexColor(Auction.CreatedBy.class),
-            Auction.CreatedBy.name,
+        itemLabel = (L.GDKP_AUCTION_DETAILS_DELETED_REASON):format(
+            GL:nameFormat{ name = Auction.CreatedBy.name, colorize = true, },
             reason
         );
     end
@@ -142,7 +135,7 @@ function AuctionDetails:draw(sessionID, auctionID)
     ScrollFrame:AddChild(ItemLink);
 
     local AuctionEntry = AceGUI:Create("Label");
-    AuctionEntry:SetText("\n|c00967FD2About|r");
+    AuctionEntry:SetText(("\n|c00967FD2%s|r"):format(L.ABOUT));
     AuctionEntry:SetFullWidth(true);
     ScrollFrame:AddChild(AuctionEntry);
     for key, val in pairs(Auction or {}) do
@@ -155,7 +148,7 @@ function AuctionDetails:draw(sessionID, auctionID)
     end
 
     local WinnerEntry = AceGUI:Create("Label");
-    WinnerEntry:SetText("\n|c00967FD2Won by|r");
+    WinnerEntry:SetText("\n|c00967FD2" .. L.GDKP_AUCTION_DETAILS_WON_BY .. "|r");
     WinnerEntry:SetFullWidth(true);
     ScrollFrame:AddChild(WinnerEntry);
 
@@ -169,7 +162,7 @@ function AuctionDetails:draw(sessionID, auctionID)
     end
 
     local CreatedByEntry = AceGUI:Create("Label");
-    CreatedByEntry:SetText("\n|c00967FD2Created by|r");
+    CreatedByEntry:SetText("\n|c00967FD2" .. L.GDKP_AUCTION_DETAILS_CREATED_BY .. "|r");
     CreatedByEntry:SetFullWidth(true);
     ScrollFrame:AddChild(CreatedByEntry);
 
@@ -193,7 +186,7 @@ function AuctionDetails:draw(sessionID, auctionID)
         end);
 
         local BidEntry = AceGUI:Create("Label");
-        BidEntry:SetText("\n|c00967FD2Bids|r");
+        BidEntry:SetText("\n|c00967FD2" .. L.BIDS .. "|r");
         BidEntry:SetFullWidth(true);
         ScrollFrame:AddChild(BidEntry);
 
@@ -205,7 +198,7 @@ function AuctionDetails:draw(sessionID, auctionID)
             end
 
             BidEntry = AceGUI:Create("Label");
-            BidEntry:SetText(string.format("%sby: %s", linebreak, GL:nameFormat(Bid.bidder)));
+            BidEntry:SetText(string.format("%s%s: %s", linebreak, L.BY, GL:nameFormat(Bid.bidder)));
             BidEntry:SetFullWidth(true);
             ScrollFrame:AddChild(BidEntry);
 
@@ -236,7 +229,7 @@ function AuctionDetails:draw(sessionID, auctionID)
     ScrollFrame:AddChild(Spacer);
 
     local CloseButton = AceGUI:Create("Button");
-    CloseButton:SetText("Close");
+    CloseButton:SetText(L.CLOSE);
     CloseButton:SetFullWidth(true);
     CloseButton:SetCallback("OnClick", function()
         self:close();
@@ -259,5 +252,3 @@ function AuctionDetails:close()
     self.sessionID = nil;
     self.auctionID = nil;
 end
-
-GL:debug("Interfaces/GDKP/AuctionDetails.lua");

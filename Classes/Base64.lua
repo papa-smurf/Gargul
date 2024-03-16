@@ -135,5 +135,3 @@ function Base64.decode( b64, decoder, usecaching )
 	end
 	return concat( t )
 end
-
-GL:debug("Base64.lua");

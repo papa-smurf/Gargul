@@ -17,8 +17,6 @@ setmetatable(Player, {
 
 ---@return Player
 function Player._new()
-    GL:debug("Player._new");
-
     local self = setmetatable({}, Player);
     return self;
 end
@@ -28,10 +26,7 @@ end
 ---@param GUID string
 ---@return boolean|Player
 function Player.fromID(GUID)
-    GL:debug("Player.fromID");
-
     if (not GUID or not type(GUID) == "string") then
-        GL:error("Invalid GUID provided for Player.fromID");
         return false;
     end
 
@@ -46,7 +41,6 @@ function Player.fromID(GUID)
     -- The GUID turns out to be invalid, destroy the player object
     if (not self.name or not type(self.name) == "string") then
         self = nil;
-        GL:error("Invalid GUID provided for Player.fromID: " .. GUID);
         return false;
     end
 
@@ -84,8 +78,6 @@ end
 ---@param name string
 ---@return boolean|Player
 function Player:fromName(name)
-    GL:debug("Player.fromName");
-
     if (not name or not type(name) == "string") then
         return false;
     end
@@ -104,12 +96,9 @@ end
 ---
 ---@return boolean|Player
 function Player.fromActor()
-    GL:debug("Player.fromActor");
-
     local playerId = UnitGUID("player");
 
     if (not playerId) then
-        GL:warning("Unable to confirm identity of addon actor");
         return false;
     end
 
@@ -240,8 +229,6 @@ end
 ---@param default string|nil
 ---@return string
 function Player:classByName(playerName, default)
-    GL:debug("Player:classByName");
-
     if (type(default) == "nil") then
         default = "priest";
     end
@@ -286,5 +273,3 @@ function Player:cacheClass(playerName, class)
 
     self.playerClassByName[string.lower(playerName)] = class;
 end
-
-GL:debug("Player.lua");

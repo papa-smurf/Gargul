@@ -6,16 +6,12 @@ GL.GroupLoot = {
     _initialized = false,
 }
 
-local Constants = GL.Data.Constants; ---@type Data
 local LCG = LibStub("LibCustomGlowGargul-1.0");
-local SoftRes = GL.SoftRes; ---@type SoftRes
 
 local GroupLoot = GL.GroupLoot; ---@type GroupLoot
 
 ---@return boolean
 function GroupLoot:_init()
-    GL:debug("GroupLoot:_init");
-
     if (self._initialized) then
         return false;
     end
@@ -33,8 +29,6 @@ end
 ---
 ---@return void
 function GroupLoot:highlightItemsOfInterest()
-    GL:debug("GroupLoot:highlightItemsOfInterest");
-
     -- Check if the player disabled the highlighting of items
     if (not GL.Settings:get("highlightsEnabled")
         or (
@@ -61,5 +55,3 @@ function GroupLoot:highlightItemsOfInterest()
         end
     end
 end
-
-GL:debug("GroupLoot.lua");

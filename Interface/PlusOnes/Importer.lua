@@ -31,7 +31,7 @@ function Importer:draw()
 
     -- Create a container/parent frame
     local Window = AceGUI:Create("Frame");
-    Window:SetTitle("Gargul v" .. GL.version);
+    Window:SetTitle((L.WINDOW_HEADER):format(GL.version));
     Window:SetLayout("Flow");
     Window:SetWidth(600);
     Window:SetHeight(530);
@@ -88,7 +88,16 @@ function Importer:draw()
     ImportButton:SetText("Import");
     ImportButton:SetWidth(100);
     ImportButton:SetCallback("OnClick", function()
-        GL.Interface.Dialogs.PopupDialog:open("NEW_PLUSONES_IMPORT_CONFIRMATION");
+        GL.Interface.Dialogs.PopupDialog:open({
+            question = L.PLUSONES_CLEAR_CONFIRM,
+            OnYes = function ()
+                GL.Interface.PlusOnes.Importer:import();
+            end,
+            OnNo = function ()
+                GL.Interface.PlusOnes.Importer:close();
+                GL.PlusOnes:draw();
+            end,
+        });
     end);
     Window:AddChild(ImportButton);
 end

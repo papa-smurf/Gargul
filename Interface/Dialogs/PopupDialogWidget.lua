@@ -1,3 +1,5 @@
+local L = Gargul_L;
+
 ---@type GL
 local _, GL = ...;
 
@@ -5,9 +7,9 @@ local _, GL = ...;
 PopupDialog AceGUI Widget
 Simple container widget that creates a popup dialog similar to Blizzard's dialogs
 -------------------------------------------------------------------------------]]
-local Type, Version = "GargulPopupDialog", 1
-local AceGUI = LibStub and LibStub("AceGUI-3.0", true)
-if not AceGUI or (AceGUI:GetWidgetVersion(Type) or 0) >= Version then return end
+local Type, Version = "GargulPopupDialog", 1;
+local AceGUI = LibStub and LibStub("AceGUI-3.0", true);
+if not AceGUI or (AceGUI:GetWidgetVersion(Type) or 0) >= Version then return; end
 
 -- Lua APIs
 local pairs = pairs;
@@ -72,7 +74,7 @@ local Events = {
 
         -- Cancel
         local CancelButton = AceGUI:Create("Button");
-        CancelButton:SetText("Cancel");
+        CancelButton:SetText(L.CANCEL);
         CancelButton:SetHeight(20);
         CancelButton:SetWidth(80);
         CancelButton:SetCallback("OnClick", function()
@@ -164,8 +166,8 @@ local Events = {
 }
 
 local FrameBackdrop = {
-    bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
-    edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border",
+    bgFile = "Interface/DialogFrame/UI-DialogBox-Background",
+    edgeFile = "Interface/DialogFrame/UI-DialogBox-Border",
     tile = true, tileSize = 32, edgeSize = 32,
     insets = { left = 8, right = 8, top = 8, bottom = 8 }
 }
@@ -233,7 +235,7 @@ local function constructor()
 
     -- Yes
     local YesButton = AceGUI:Create("Button");
-    YesButton:SetText("Yes");
+    YesButton:SetText(L.YES);
     YesButton:SetHeight(20);
     YesButton:SetWidth(120);
     YesButton:SetCallback("OnClick", function()
@@ -252,7 +254,7 @@ local function constructor()
 
     -- No
     local NoButton = AceGUI:Create("Button");
-    NoButton:SetText("No");
+    NoButton:SetText(L.NO);
     NoButton:SetHeight(20);
     NoButton:SetWidth(120);
     NoButton:SetCallback("OnClick", function()

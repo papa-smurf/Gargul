@@ -1,3 +1,5 @@
+local L = Gargul_L;
+
 ---@type GL
 local _, GL = ...;
 
@@ -28,8 +30,6 @@ local Import = GL.Interface.GDKP.Distribute.Import;
 
 ---@return Frame
 function Import:build()
-    GL:debug("Interface.GDKP.Distribute.Import:build");
-
     local Window = AceGUI:Create("InlineGroup");
     Window:SetLayout("Flow");
     Window:SetWidth(200);
@@ -40,7 +40,7 @@ function Import:build()
 
     ---@type AceGUILabel
     local Info = AceGUI:Create("Label");
-    Info:SetText("You can import player cuts from your own calculations like a google sheet. softres GDKP etc.\n\nThe format is as follows (|c00BE3333INCLUDE THE HEADER!!|r):\n\n|c00BE3333Player,Gold|r|c00967FD2\nPlayer1,4000\nPlayer2,4125\nPlayer3,3998\n\n\n|r");
+    Info:SetText(L.GDKP_IMPORT_CUTS_INFO);
     Info:SetFullWidth(true);
     Window:AddChild(Info);
 
@@ -49,7 +49,7 @@ function Import:build()
     ImportBox:SetText("");
     ImportBox:SetFullWidth(true);
     ImportBox:DisableButton(true);
-    ImportBox:SetLabel("|c00FFF569Import|r");
+    ImportBox:SetLabel(("|c00FFF569%s|r"):format(L.IMPORT));
     ImportBox:SetNumLines(21);
     ImportBox:SetMaxLetters(0);
     Window:AddChild(ImportBox);
@@ -59,7 +59,7 @@ function Import:build()
     Confirm:SetFullWidth(true);
     Confirm:SetCallback("OnClick", function()
         GL.Interface.Dialogs.PopupDialog:open{
-            question = "This will override any changes you've made to the cut window, are you sure?",
+            question = L.GDKP_IMPORT_CONSEQUENCES_INFO,
             OnYes = function ()
                 local data = ImportBox:GetText();
 
@@ -76,7 +76,7 @@ function Import:build()
     Window:AddChild(Confirm);
 
     local Cancel = AceGUI:Create("Button");
-    Cancel:SetText("Cancel");
+    Cancel:SetText(L.CANCEL);
     Cancel:SetFullWidth(true);
     Cancel:SetCallback("OnClick", function()
         self:close();
@@ -88,8 +88,6 @@ end
 
 ---@return Frame
 function Import:window()
-    GL:debug("Interface.GDKP.Distribute.Import:window");
-
     local Window = Interface:get(self, "Window");
 
     if (not Window) then
@@ -103,8 +101,6 @@ end
 ---
 ---@return void
 function Import:toggle()
-    GL:debug("Interface.GDKP.Distribute.Import:toggle");
-
     if (self.isVisible) then
         return self:close();
     end
@@ -114,8 +110,6 @@ end
 
 ---@return void
 function Import:open(sessionID)
-    GL:debug("Interface.GDKP.Distribute.Import:open");
-
     local Session = GDKPSession:byID(sessionID);
 
     if (not Session) then
@@ -140,8 +134,6 @@ end
 
 ---@return void
 function Import:close()
-    GL:debug("Interface.GDKP.Distribute.Import:close");
-
     local Window = self:window();
 
     if (self.isVisible) then
@@ -149,5 +141,3 @@ function Import:close()
         self.isVisible = false;
     end
 end
-
-GL:debug("Interface.GDKP.Distribute.Import.lua");

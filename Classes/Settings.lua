@@ -1,3 +1,5 @@
+local L = Gargul_L;
+
 ---@type GL
 local _, GL = ...;
 
@@ -22,8 +24,6 @@ local Settings = GL.Settings;
 
 ---@return void
 function Settings:_init()
-    GL:debug("Settings:_init");
-
     -- No need to initialize this class twice
     if (self._initialized) then
         return;
@@ -37,7 +37,7 @@ function Settings:_init()
 
     -- Prepare the options / config frame
     local Frame = CreateFrame("Frame", nil, InterfaceOptionsFramePanelContainer);
-    Frame.name = "Gargul";
+    Frame.name = L.GARGUL;
     Frame:SetScript("OnShow", function ()
         self:showSettingsMenu(Frame);
     end);
@@ -52,8 +52,6 @@ end
 ---
 ---@return void
 function Settings:sanitizeSettings()
-    GL:debug("Settings:sanitizeSettings");
-
     self:enforceTemporarySettings();
 
     --- In 7.0.0 we dropped the noMessages setting
@@ -99,8 +97,6 @@ end
 ---
 ---@return void
 function Settings:enforceTemporarySettings()
-    GL:debug("Settings:enforceTemporarySettings");
-
     --- This is reserved for version-based logic (e.g. cleaning up variables, settings etc.)
 
     --- No point enforcing these temp settings if the user has never used Gargul
@@ -327,8 +323,6 @@ end
 ---
 ---@return void
 function Settings:resetToDefault()
-    GL:debug("Settings:resetToDefault");
-
     self.Active = {};
     DB:set("Settings", {});
 
@@ -340,8 +334,6 @@ end
 ---
 ---@return void
 function Settings:overrideDefaultsWithUserSettings()
-    GL:debug("Settings:overrideDefaultsWithUserSettings");
-
     -- Reset the currently active settings table
     self.Active = {};
 
@@ -361,15 +353,13 @@ end
 ---
 ---@return void
 function Settings:showSettingsMenu(Frame)
-    GL:debug("Settings:showSettingsMenu");
-
     -- Add the addon title to the top of the settings frame
     local Title = Frame:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge");
     Title:SetPoint("TOPLEFT", 16, -16);
-    Title:SetText(string.format("Gargul |c00967FD2(v%s)|r", GL.version));
+    Title:SetText(("%s |c00967FD2(%s%s)|r"):format(L.GARGUL, L.VERSION_ABBR, GL.version));
 
     local SettingsButton = CreateFrame("Button", nil, Frame, "UIPanelButtonTemplate");
-    SettingsButton:SetText("Settings");
+    SettingsButton:SetText(L.SETTINGS);
     SettingsButton:SetWidth(177);
     SettingsButton:SetHeight(24);
     SettingsButton:SetPoint("TOPLEFT", Title, "BOTTOMLEFT", 0, -16);
@@ -382,7 +372,7 @@ function Settings:showSettingsMenu(Frame)
     end);
 
     local ResetUIButton = CreateFrame("Button", nil, Frame, "UIPanelButtonTemplate");
-    ResetUIButton:SetText("Reset Gargul UI");
+    ResetUIButton:SetText(L.SETTINGS_RESET_UI);
     ResetUIButton:SetWidth(177);
     ResetUIButton:SetHeight(24);
     ResetUIButton:SetPoint("TOPLEFT", Title, "BOTTOMLEFT", 200, -16);
@@ -443,5 +433,3 @@ end
 function Settings:onChange(setting, func)
     Events:register(nil, "GL.SETTING_CHANGED." .. setting, func);
 end
-
-GL:debug("Settings.lua");

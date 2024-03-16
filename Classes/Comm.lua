@@ -1,3 +1,5 @@
+local L = Gargul_L;
+
 ---@type GL
 local _, GL = ...;
 
@@ -124,8 +126,6 @@ Comm.Actions = {
 };
 
 function Comm:_init()
-    GL:debug("Comm:_init");
-
     -- No need to initialize this class twice
     if (self._initialized) then
         return;
@@ -194,7 +194,6 @@ function Comm:send(CommMessage, broadcastFinishedCallback, packageSentCallback)
     end
 
     if (not compressedMessage) then
-        GL:error("Something went wrong trying to compress the payload for 'Sync.Characters'");
         return;
     end
 
@@ -206,15 +205,11 @@ function Comm:send(CommMessage, broadcastFinishedCallback, packageSentCallback)
     local throttleResetTimer;
     -- Stop throttling: reset the burst and max cps values
     local stopThrottling = function()
-        GL:debug("Resetting burst value and cps");
-
         _G.ChatThrottleLib.BURST = self.defaultBurstValue;
         _G.ChatThrottleLib.MAX_CPS = self.defaultCPSValue;
     end;
 
     if (throttle) then
-        GL:debug("Throttling burst value and cps");
-
         _G.ChatThrottleLib.BURST = 2000;
         _G.ChatThrottleLib.MAX_CPS = 400;
 
@@ -336,7 +331,6 @@ function Comm:listen(payload, distribution, playerName)
     end
 
     if (not payload.senderFqn or not type(payload.senderFqn) == "string") then
-        GL:warning("Failed to determine sender of COMM message");
         return false;
     end
 
@@ -363,19 +357,16 @@ function Comm:listen(payload, distribution, playerName)
     end
 
     if (not payload.action) then
-        GL:warning("Payload is missing required property 'action'");
         return false;
     end
 
     if (not type(payload.action) == "string") then
-        GL:warning("Payload has an invalid action: not a string");
         return false;
     end
 
     if (not payload.id
         and not payload.action == Actions.response
     ) then
-        GL:warning("Payload is missing required property 'id'");
         return false;
     end
 
@@ -423,7 +414,7 @@ function Comm:dispatch(CommMessage, stringLength)
         return;
     end
 
-    GL:warning(string.format("Unknown comm action '%s', make sure to update Gargul!", action));
+    GL:warning((L.UNKNOWN_COMM_ACTION):format(action));
     WarnedAboutCommAction[action] = true;
 end
 

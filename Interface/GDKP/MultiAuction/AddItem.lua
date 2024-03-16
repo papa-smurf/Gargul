@@ -145,7 +145,7 @@ function AddItem:build()
     Duration:SetPoint("TOPLEFT", DurationLabel, "TOPRIGHT", 6, 6);
     Window.Duration = Duration;
 
-    local OKButton = Interface:dynamicPanelButton(Window, "Add item");
+    local OKButton = Interface:dynamicPanelButton(Window, L.OK);
     OKButton:SetPoint("BOTTOMLEFT", Window, "BOTTOMLEFT", 20, 30);
     OKButton:SetScript("OnClick", function ()
         local link = Window.ItemLink:GetText();

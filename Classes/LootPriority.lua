@@ -1,3 +1,5 @@
+local L = Gargul_L;
+
 ---@type GL
 local _, GL = ...;
 
@@ -22,8 +24,6 @@ local LootPriority = GL.LootPriority;
 ---@param itemName string|nil
 ---@return string|nil
 function LootPriority:getPriority(itemLink, itemName)
-    GL:debug("LootPriority:byItemLink");
-
     local itemID = GL:getItemIDFromLink(itemLink);
     itemName = itemName or GL:getItemNameFromLink(itemLink);
 
@@ -36,8 +36,6 @@ end
 ---@param itemLink string
 ---@return table
 function LootPriority:tooltipLines(itemLink)
-    GL:debug("LootPriority:appendLootPrioToTooltip");
-
     local itemPriority = self:getPriority(itemLink, itemName);
 
     -- No prio defined for this item
@@ -46,7 +44,7 @@ function LootPriority:tooltipLines(itemLink)
     end
 
     -- Add the header
-    local Lines = { (string.format("\n|c00efb8cd%s", "Loot Prio")) };
+    local Lines = { ("\n|c00efb8cd%s|r"):format(L.LOOTPRIORITY_TOOLTIP_HEADER) };
 
     -- Add the actual item prio
     for priorityLevel, value in pairs(itemPriority) do
@@ -58,12 +56,10 @@ end
 
 ---@return void
 function LootPriority:drawImporter()
-    GL:debug("LootPriority:drawImporter");
-
     -- Create a container/parent frame
     local LootPriorityFrame = AceGUI:Create("Frame");
-    LootPriorityFrame:SetTitle("Gargul v" .. GL.version);
-    LootPriorityFrame:SetStatusText("Addon v" .. GL.version);
+    LootPriorityFrame:SetTitle((L.WINDOW_HEADER):format(GL.version));
+    LootPriorityFrame:SetStatusText(L.VERSION_ABBR ..GL.version);
     LootPriorityFrame:SetLayout("Flow");
     LootPriorityFrame:SetWidth(600);
     LootPriorityFrame:SetHeight(450);
@@ -75,7 +71,7 @@ function LootPriority:drawImporter()
     LootPriorityBox:SetFullWidth(true);
     LootPriorityBox:DisableButton(true);
     LootPriorityBox:SetFocus();
-    LootPriorityBox:SetLabel("Provide a prio CSV in the following format (1 line per item): id or name > prio1, equalprio > prio2 > etc");
+    LootPriorityBox:SetLabel(L.LOOTPRIORITY_FORMAT_EXPLANATION);
     LootPriorityBox:SetNumLines(22);
     LootPriorityBox:SetMaxLetters(999999999);
     LootPriorityFrame:AddChild(LootPriorityBox);
@@ -143,10 +139,8 @@ end
 ---@param data string
 ---@return void
 function LootPriority:save(data)
-    GL:debug("LootPriority:save");
-
     if (type(data) ~= "string") then
-        return GL:warning("Invalid data provided");
+        return GL:warning(L.LOOTPRIORITY_INVALID_DATA);
     end
 
     -- Some TMB users use newlines in their item priority notes, let's remove those!
@@ -154,7 +148,7 @@ function LootPriority:save(data)
 
     -- The user wishes to clear the loot priorities
     if (GL:empty(data)) then
-        GL:success("Loot priorities cleared successfully");
+        GL:success(L.LOOTPRIORITY_CLEAR_SUCCESSFUL);
         DB:set("LootPriority", {});
         return;
     end
@@ -165,7 +159,7 @@ function LootPriority:save(data)
         local segmentCount = #segments;
 
         if (segmentCount < 2) then
-            return GL:warning(string.format("Invalid data provided in line: '%s': missing item id or priority", line));
+            return GL:warning((L.LOOTPRIORITY_INVALID_LINE):format(line));
         end
 
         local key = strtrim(segments[1]);
@@ -185,28 +179,21 @@ function LootPriority:save(data)
 
     DB:set("LootPriority", LootPriorityData);
 
-    GL:success("Loot priorities imported successfully");
+    GL:success(L.LOOTPRIORITY_IMPORT_SUCCESSFUL);
 end
 
 --- Broadcast the loot priorities to the RAID / PARTY
 ---@return boolean
 function LootPriority:broadcast()
-    GL:debug("LootPriority:broadcast");
-
     if (self.broadcastInProgress) then
-        GL:error("Broadcast still in progress");
+        GL:error(L.BROADCAST_IN_PROGRESS_ERROR);
         return false;
     end
 
-    if (not GL.User.isInGroup) then
-        GL:warning("No one to broadcast to, you're not in a group!");
-        return false;
-    end
-
-    if (not GL.User.hasAssist
+    if (GL.User.isInGroup and not GL.User.hasAssist
         and not GL.User.isMasterLooter
     ) then
-        GL:warning("Insufficient permissions to broadcast, need ML, assist or lead!");
+        GL:warning(L.LM_OR_ASSIST_REQUIRED);
         return false;
     end
 
@@ -220,12 +207,12 @@ function LootPriority:broadcast()
     GL.Events:fire("GL.LOOT_PRIORITY_BROADCAST_STARTED");
 
     local Broadcast = function ()
-        GL:message("Broadcasting loot priorities...");
+        GL:message(L.BROADCASTING_NOTIFICATION);
 
         local Label = GL.Interface:get(GL.LootPriority, "Label.BroadcastProgress");
 
         if (Label) then
-            Label:SetText("Broadcasting...");
+            Label:SetText(L.BROADCASTING_NOTIFICATION);
         end
 
         GL.CommMessage.new{
@@ -233,18 +220,18 @@ function LootPriority:broadcast()
             content = LootPriorityCSV,
             channel = "GROUP",
         }:send(function ()
-            GL:success("Loot priority broadcast finished");
+            GL:success(L.BROADCAST_FINISHED);
             self.broadcastInProgress = false;
             GL.Events:fire("GL.LOOT_PRIORITY_BROADCAST_ENDED");
 
             Label = GL.Interface:get(GL.LootPriority, "Label.BroadcastProgress");
             if (Label) then
-                Label:SetText("Broadcast finished!");
+                Label:SetText(L.BROADCAST_FINISHED);
             end
         end, function (sent, total)
             Label = GL.Interface:get(GL.LootPriority, "Label.BroadcastProgress");
             if (Label) then
-                Label:SetText(string.format("Sent %s of %s bytes", sent, total));
+                Label:SetText(string.format(L.COMM_PROGRESS, sent, total));
             end
         end);
     end
@@ -254,7 +241,7 @@ function LootPriority:broadcast()
     GL:afterCombatDo(function ()
         Broadcast();
     end, function ()
-        GL:notice("You are currently in combat, delaying loot priority broadcast");
+        GL:notice(L.BROADCAST_DELAYED_BY_COMBAT);
     end);
 
     return true;
@@ -265,8 +252,6 @@ end
 ---@param playerName string
 ---@return boolean
 function LootPriority:broadcastToPlayer(playerName)
-    GL:debug("LootPriority:broadcastToPlayer");
-
     local LootPriorityCSV = self:toCSV();
     -- Check if there's anything to share
     if (GL:empty(LootPriorityCSV)) then
@@ -285,8 +270,6 @@ end
 ---
 ---@param CommMessage CommMessage
 function LootPriority:receiveBroadcast(CommMessage)
-    GL:debug("LootPriority:receiveBroadcast");
-
     -- No need to update our priorities if we broadcasted them ourselves
     if (CommMessage.Sender.isSelf) then
         GL:debug("LootPriority:receiveBroadcast received by self, skip");
@@ -297,10 +280,8 @@ function LootPriority:receiveBroadcast(CommMessage)
     if (type(priorities) == "string"
         and not GL:empty(priorities)
     ) then
-        GL:warning("Attempting to process incoming loot priorities from " .. CommMessage.Sender.name);
+        GL:warning((L.LOOTPRIORITY_PROCESS_INCOMING):format(CommMessage.Sender.name));
 
         self:save(priorities);
     end
 end
-
-GL:debug("LootPriority.lua");

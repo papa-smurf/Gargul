@@ -1,3 +1,5 @@
+local L = Gargul_L;
+
 ---@type GL
 local _, GL = ...;
 
@@ -65,10 +67,7 @@ local Events = {
     SetSender = function(self, playerName)
         sender = playerName;
 
-        self.TrustSenderLabel:SetText(string.format(
-            "Automatically accept incoming broadcasts from %s",
-                playerName
-        ));
+        self.TrustSenderLabel:SetText((L.PLUSONES_INCOMING_DIALOG_AUTO_LABEL):format(GL:nameFormat{ name = playerName, colorize = true, }));
     end,
 
     OnAcquire = function(self)
@@ -152,8 +151,8 @@ local Events = {
 }
 
 local FrameBackdrop = {
-    bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
-    edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border",
+    bgFile = "Interface/DialogFrame/UI-DialogBox-Background",
+    edgeFile = "Interface/DialogFrame/UI-DialogBox-Border",
     tile = true, tileSize = 32, edgeSize = 32,
     insets = { left = 8, right = 8, top = 8, bottom = 8 }
 }
@@ -297,7 +296,7 @@ local function constructor()
     local BlockSharedDataLabel = AceGUI:Create("InteractiveLabel");
     BlockSharedDataLabel:SetFontObject(_G["GameFontNormal"]);
     BlockSharedDataLabel:SetWidth(200);
-    BlockSharedDataLabel:SetText("Block all incoming +1 shared data");
+    BlockSharedDataLabel:SetText(L.PLUSONES_INCOMING_DIALOG_BLOCK_LABEL);
     Widget.BlockSharedDataLabel = BlockSharedDataLabel;
 
     BlockSharedDataLabel:SetCallback("OnClick", function()
@@ -321,7 +320,7 @@ local function constructor()
 
     -- Yes
     local YesButton = AceGUI:Create("Button");
-    YesButton:SetText("Yes");
+    YesButton:SetText(L.YES);
     YesButton:SetHeight(20);
     YesButton:SetWidth(120);
     YesButton:SetCallback("OnClick", function()
@@ -339,7 +338,7 @@ local function constructor()
 
     -- No
     local NoButton = AceGUI:Create("Button");
-    NoButton:SetText("No");
+    NoButton:SetText(L.NO);
     NoButton:SetHeight(20);
     NoButton:SetWidth(120);
     NoButton:SetCallback("OnClick", function()
@@ -359,5 +358,3 @@ local function constructor()
 end
 
 AceGUI:RegisterWidgetType(Type, constructor, Version)
-
-GL:debug("Interface/IncomingPlusOneDataDialogWidget.lua");

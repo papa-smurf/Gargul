@@ -1094,7 +1094,7 @@ function GL:frameMessage(message)
     -- Create a container/parent frame
     local MessageFrame = AceGUI:Create("Frame");
     MessageFrame:SetCallback("OnClose", function(widget) GL.Interface:release(widget); end);
-    MessageFrame:SetTitle("Gargul v" .. GL.version);
+    MessageFrame:SetTitle((L.WINDOW_HEADER):format(GL.version));
     MessageFrame:SetStatusText("");
     MessageFrame:SetLayout("Flow");
     MessageFrame:SetWidth(600);
@@ -2301,8 +2301,6 @@ end
 ---
 ---@param copper number
 ---@param Separators table|nil
----@param includeEmpty boolean|nil
----@param separatorBeforeUnit boolean|nil
 ---
 ---@return string
 function GL:copperToMoney(copper, Separators, includeEmpty, separatorBeforeUnit)
@@ -2315,9 +2313,9 @@ function GL:copperToMoney(copper, Separators, includeEmpty, separatorBeforeUnit)
     copper = self:floor(copper, 4);
 
     if (not separatorBeforeUnit) then
-        DefaultSeparators = {"g ", "s ", "c "};
+        DefaultSeparators = {L.GOLD_INDICATOR .. " ", L.SILVER_INDICATOR .. " ", L.COPPER_INDICATOR .. " "};
     else
-        DefaultSeparators = {" g", " s", " c"};
+        DefaultSeparators = {" " .. L.GOLD_INDICATOR, " " .. L.SILVER_INDICATOR, " " .. L.COPPER_INDICATOR};
     end
 
     Separators = Separators or {};

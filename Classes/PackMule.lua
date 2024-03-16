@@ -1,3 +1,5 @@
+local L = Gargul_L;
+
 --[[
     This class lets the master looter appoint "pack mules"
     The pack mules (player) will automatically receive all items
@@ -37,8 +39,6 @@ local LOOT_SLOT_MONEY = GL:tableGet(Enum or {}, "LootSlotType.Money", LOOT_SLOT_
 
 ---@return void
 function PackMule:_init()
-    GL:debug("PackMule:_init");
-
     -- No need to initialize this class twice
     if (self._initialized) then
         return;
@@ -170,8 +170,6 @@ end
 ---@param rollID number
 ---@return void
 function PackMule:processGroupLootItems(rollID)
-    GL:debug("PackMule:processGroupLootItems");
-
     if (not rollID) then
         return;
     end
@@ -212,8 +210,6 @@ end
 ---@param callback function
 ---@return void
 function PackMule:isItemIDIgnored(itemID, callback)
-    GL:debug("PackMule:isItemIDIgnored");
-
     itemID = math.floor(tonumber(itemID));
     if (not GL:higherThanZero(itemID)) then
         return;
@@ -233,7 +229,7 @@ function PackMule:isItemIDIgnored(itemID, callback)
     self.getValidRules = function ()
         return {
             {
-                target = "SELF NEED",
+                target = L.PACKMULE_AUTOLOOT_SELF_PLACEHOLDER .. " " .. L.PACKMULE_AUTOLOOT_NEED_PLACEHOLDER,
                 quality = 1,
                 operator = ">=",
             }
@@ -352,8 +348,6 @@ end
 ---
 ---@return void
 function PackMule:leftGroup()
-    GL:debug("PackMule:leftGroup");
-
     if (Settings:get("PackMule.autoDisableForGroupLoot")) then
         Settings:set("PackMule.enabledForGroupLoot", false);
     end
@@ -373,8 +367,6 @@ end
 ---
 ---@return void
 function PackMule:lootReady()
-    GL:debug("PackMule:lootReady");
-
     if (self.processing) then
         return;
     end
@@ -422,7 +414,7 @@ function PackMule:lootReady()
                 end
 
                 -- These are group loot targets that don't apply when master looting
-                if (GL:inTable({ "PASS", "GREED", "NEED" }, target)) then
+                if (GL:inTable({ L.PACKMULE_AUTOLOOT_PASS_PLACEHOLDER, L.PACKMULE_AUTOLOOT_GREED_PLACEHOLDER, L.PACKMULE_AUTOLOOT_NEED_PLACEHOLDER }, target)) then
                     return;
                 end
 
@@ -444,8 +436,6 @@ end
 ---
 ---@return table
 function PackMule:getValidRules()
-    GL:debug("PackMule:getValidRules");
-
     local ValidRules = {};
     for _, Rule in pairs(self.Rules) do
         if (self:ruleIsValid(Rule)) then
@@ -462,8 +452,6 @@ end
 ---@param callback function
 ---@return void
 function PackMule:getTargetForItem(itemLinkOrId, callback)
-    GL:debug("PackMule:getTargetForItem");
-
     -- This method has no value without a callback
     if (type(callback) ~= "function") then
         return;
@@ -574,7 +562,7 @@ function PackMule:getTargetForItem(itemLinkOrId, callback)
                     if (not GL.User.isMasterLooter
                         and not GL.User.hasAssist
                         and not GL.Settings:get("PackMule.needWithoutAssist")
-                        and strfind(target, "NEED")
+                        and strfind(target, L.PACKMULE_AUTOLOOT_NEED_PLACEHOLDER)
                     ) then
                         return false;
                     end
@@ -609,7 +597,7 @@ function PackMule:getTargetForItem(itemLinkOrId, callback)
 
         -- There is no rule or we specifically want to ignore it
         if (not RuleThatApplies
-            or RuleThatApplies.target == "IGNORE"
+            or RuleThatApplies.target == L.PACKMULE_AUTOLOOT_IGNORE_PLACEHOLDER
         ) then
             return callback(false);
         end
@@ -627,22 +615,22 @@ function PackMule:getTargetForItem(itemLinkOrId, callback)
 
 
             if (not GL.User.isMasterLooter) then
-                if (GL:inTable({"PASS", "GREED", "NEED"}, ruleTarget)) then
+                if (GL:inTable({ L.PACKMULE_AUTOLOOT_PASS_PLACEHOLDER, L.PACKMULE_AUTOLOOT_GREED_PLACEHOLDER, L.PACKMULE_AUTOLOOT_NEED_PLACEHOLDER }, ruleTarget)) then
                     Targets = {ruleTarget};
                     break;
                 end
             else
                 -- SELF serves as a placeholder for the current player name
-                if (ruleTarget == "SELF") then
+                if (ruleTarget == L.PACKMULE_AUTOLOOT_SELF_PLACEHOLDER) then
                     ruleTarget = GL.User.fqn;
 
                 -- DE serves as a placeholder for the registered disenchanter
-                elseif (ruleTarget == "DE") then
+                elseif (ruleTarget == L.PACKMULE_AUTOLOOT_DISENCHANT_PLACEHOLDER) then
                     ruleTarget = self.disenchanter;
 
                     if (GL:empty(self.disenchanter)) then
                         if (not self.noDisenchanterSetWarningGiving) then
-                            GL:warning("No disenchanter set, use /gl sd [mydisenchanter] to set one");
+                            GL:warning(L.PACKMULE_NO_DISENCHANTER_WARNING);
                             self.noDisenchanterSetWarningGiving = true;
                         end
 
@@ -650,11 +638,11 @@ function PackMule:getTargetForItem(itemLinkOrId, callback)
                     end
 
                 -- RR placeholder represents the next player in a round robin scheme for this rule
-                elseif (ruleTarget == "RR") then
+                elseif (ruleTarget == L.PACKMULE_AUTOLOOT_ROUND_ROBIN_PLACEHOLDER) then
                     ruleTarget = self:roundRobinTargetForRule(RuleThatApplies);
 
                 -- Check whether we need to give the item to a random player
-                elseif (ruleTarget == "RANDOM") then
+                elseif (ruleTarget == L.PACKMULE_AUTOLOOT_RANDOM_PLACEHOLDER) then
                     for _, Player in pairs(GL.User:groupMembers()) do
                         -- No need giving items to a random who's offline
                         if (Player.online) then
@@ -667,7 +655,7 @@ function PackMule:getTargetForItem(itemLinkOrId, callback)
                     break;
                 end
 
-                if (not GL:inTable({"PASS", "GREED", "NEED"}, ruleTarget)) then
+                if (not GL:inTable({ L.PACKMULE_AUTOLOOT_PASS_PLACEHOLDER, L.PACKMULE_AUTOLOOT_GREED_PLACEHOLDER, L.PACKMULE_AUTOLOOT_NEED_PLACEHOLDER }, ruleTarget)) then
                     ruleTarget = GL:addRealm(ruleTarget);
 
                     -- GroupMemberNames are always in lowercase
@@ -713,8 +701,6 @@ end
 ---@param ruleItemName string
 ---@return boolean
 function PackMule:lootMatchesSpecificRule(lootName, ruleItemName)
-    GL:debug("PackMule:lootMatchesSpecificRule");
-
     if (type(lootName) ~= "string")
         or type(ruleItemName) ~= "string"
     then
@@ -764,8 +750,6 @@ end
 ---
 ---@return void
 function PackMule:resetRules()
-    GL:debug("PackMule:resetRules");
-
     self.Rules = {};
     Settings:set("PackMule.Rules", self.Rules);
 end
@@ -775,8 +759,6 @@ end
 ---@param Rule table
 ---@return void
 function PackMule:addRule(Rule)
-    GL:debug("PackMule:addRule");
-
     if (self:ruleIsValid(Rule)) then
         tinsert(self.Rules, Rule);
         Settings:set("PackMule.Rules", self.Rules);
@@ -788,8 +770,6 @@ end
 ---@param Rule table
 ---@return boolean
 function PackMule:ruleIsValid(Rule)
-    GL:debug("PackMule:ruleIsValid");
-
     -- Every rule must have a target (who to give the item to)
     if (type(Rule.target) ~= "string"
         or GL:empty(Rule.target)
@@ -828,14 +808,12 @@ end
 ---@param callback function
 ---@return void
 function PackMule:disenchant(itemLink, byPassConfirmationDialog, callback)
-    GL:debug("PackMule:disenchant");
-
     if (GL.User.isInGroup
         and not GL.User.isMasterLooter
         and not GL.User.hasAssist
         and not GL.User.isLead
     ) then
-        return GL:warning("You need to be the master looter or have lead/assist!");
+        return GL:warning(L.LM_OR_ASSIST_REQUIRED);
     end
 
     if (type(callback) ~= "function") then
@@ -862,12 +840,9 @@ function PackMule:disenchant(itemLink, byPassConfirmationDialog, callback)
         end
 
         -- Show the player selector
-        GL.Interface.PlayerSelector:draw("Who is your disenchanter?", PlayerNames, function (playerName)
+        GL.Interface.PlayerSelector:draw(L.PACKMULE_WHO_IS_DISENCHANTER, PlayerNames, function (playerName)
             GL.Interface.Dialogs.PopupDialog:open{
-                question = string.format("Set %s as your disenchanter?",
-                    GL:nameFormat{ name = playerName, colorize = true },
-                    playerName
-                ),
+                question = (L.PACKMULE_CONFIRM_DISENCHANTER):format(GL:nameFormat{ name = playerName, colorize = true, }),
                 OnYes = function ()
                     self:setDisenchanter(playerName);
                     self:disenchant(itemLink, true, callback);
@@ -896,10 +871,9 @@ function PackMule:disenchant(itemLink, byPassConfirmationDialog, callback)
 
     -- Make sure the initiator confirms his choice
     GL.Interface.Dialogs.PopupDialog:open{
-        question = string.format("Send %s to %s? Type /gl cd to remove this disenchanter!",
+        question = (L.PACKMULE_CONFIRM_DISENCHANTMENT):format(
             itemLink,
-            GL:nameFormat{ name = self.disenchanter, colorize = true },
-            self.disenchanter
+            GL:nameFormat{ name = self.disenchanter, colorize = true, }
         ),
         OnYes = function ()
             self:assignLootToPlayer(itemID, self.disenchanter);
@@ -919,8 +893,6 @@ end
 ---
 ---@return void
 function PackMule:clearDisenchanter()
-    GL:debug("PackMule:clearDisenchanter");
-
     self.disenchanter = nil;
 end
 
@@ -929,8 +901,6 @@ end
 ---@param disenchanter string
 ---@return void
 function PackMule:setDisenchanter(disenchanter)
-    GL:debug("PackMule:setDisenchanter");
-
     -- Better safe than lua error
     disenchanter = tostring(disenchanter);
     if (GL:empty(disenchanter)) then
@@ -940,9 +910,9 @@ function PackMule:setDisenchanter(disenchanter)
     self.disenchanter = GL:addRealm(disenchanter);
 
     GL:sendChatMessage(
-        string.format("%s was set as disenchanter",
-        GL:nameFormat(self.disenchanter)
-    ), "GROUP");
+        (L.CHAT.PACKMULE_DISENCHANTER_SET):format(GL:nameFormat(self.disenchanter)),
+        "GROUP"
+    );
 end
 
 --- Announce the disenchantment of an item in the group chat
@@ -950,17 +920,14 @@ end
 ---@param itemLink string
 ---@return void
 function PackMule:announceDisenchantment(itemLink)
-    GL:debug("PackMule:announceDisenchantment");
-
     if (not GL.Settings:get("PackMule.announceDisenchantedItems")) then
         return
     end
 
     GL:sendChatMessage(
-        string.format("%s will be disenchanted by %s",
-        itemLink,
-        GL:disambiguateName(self.disenchanter)
-    ), "GROUP");
+        (L.CHAT.PACKMULE_DISENCHANTMENT_NOTICE):format(itemLink, GL:disambiguateName(self.disenchanter)),
+        "GROUP"
+    );
 end
 
 --- Returns next target player in a round robin fashion for a particular rule item
@@ -968,8 +935,6 @@ end
 ---@param Rule string
 ---@return string
 function PackMule:roundRobinTargetForRule(Rule)
-    GL:debug("PackMule:roundRobinTargetForRule");
-
     local ruleId = Rule.quality;
     if (not GL:empty(Rule.item)) then
         ruleId = Rule.item;
@@ -1013,8 +978,6 @@ end
 ---@param playerName string
 ---@return void
 function PackMule:assignLootToPlayer(itemID, playerName)
-    GL:debug("PackMule:assignLootToPlayer");
-
     -- Try to determine the loot index of the item
     local itemIndex = false;
     local itemCount = GetNumLootItems();
@@ -1075,5 +1038,3 @@ function PackMule:assignLootToPlayer(itemID, playerName)
         GL.Events:unregister(eventID);
     end, 1);
 end
-
-GL:debug("PackMule.lua");

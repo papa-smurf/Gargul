@@ -35,7 +35,6 @@ GL.Interface.Award.Overview = {
 local Overview = GL.Interface.Award.Overview;
 
 --[[ CONSTANTS ]]
-local DATE_FORMAT = "%d-%m-%Y";
 local DEFAULT_WINDOW_HEIGHT = 406;
 local DEFAULT_WINDOW_WIDTH = 660;
 local DEFAULT_TABLE_ROWS = 18;
@@ -45,8 +44,6 @@ local ITEM_ROW_HEIGHT = 24;
 
 ---@return table|nil
 function Overview:open()
-    GL:debug("Overview:open");
-
     FONT = GL.FONT;
 
     local Window = _G[self.windowName] or self:build();
@@ -59,15 +56,11 @@ end
 
 ---@return void
 function Overview:close()
-    GL:debug("Overview:close");
-
     return _G[self.windowName] and _G[self.windowName]:Hide();
 end
 
 ---@return Frame
 function Overview:build()
-    GL:debug("Overview:build");
-
     if (_G[self.windowName]) then
         return _G[self.windowName];
     end
@@ -247,7 +240,7 @@ function Overview:build()
             -- No date is selected, delete everything!
             local warning, onConfirm;
             if (GL:empty(self.SelectedDates)) then
-                warning = "Are you sure you want to remove your complete reward history table? This deletes ALL loot data and cannot be undone!";
+                warning = L.EXPORT_DELETE_ALL_CONFIRM;
                 onConfirm = function()
                     DB:set("AwardHistory", {});
                     GL.Events:fire("GL.ITEM_UNAWARDED");
@@ -256,14 +249,14 @@ function Overview:build()
                 end;
 
             else -- Only delete entries on the selected date(s)
-                warning = string.format("Are you sure you want to remove all data for |c00A79EFF%s|r? This cannot be undone!",
+                warning = (L.EXPORT_DELETE_DATE_CONFIRM):format(
                     table.concat(self.SelectedDates, "|c00FFFFFF, |r")
                 );
                 onConfirm = function()
                     local SelectedDates = GL:tableFlip(self.SelectedDates);
 
                     for key, AwardEntry in pairs(DB:get("AwardHistory")) do
-                        local dateString = date(DATE_FORMAT, AwardEntry.timestamp);
+                        local dateString = date(L.DATE_FORMAT, AwardEntry.timestamp);
 
                         if (SelectedDates[dateString]) then
                             AwardEntry = nil;
@@ -321,8 +314,6 @@ end
 ---@param Window Frame
 ---@return table
 function Overview:buildDatesTable(Window)
-    GL:debug("Overview:buildDatesTable");
-
     local Table = GL.ScrollingTable:CreateST({
         {
             width = 90,
@@ -371,12 +362,10 @@ end
 
 ---@return void
 function Overview:refreshDatesTable()
-    GL:debug("Overview:refreshDatesTable");
-
     -- Fetch award history per date
     local AwardHistoryByDate = {};
     for _, AwardEntry in pairs(DB:get("AwardHistory") or {}) do
-        local dateString = date(DATE_FORMAT, AwardEntry.timestamp);
+        local dateString = date(L.DATE_FORMAT, AwardEntry.timestamp);
         AwardHistoryByDate[dateString] = AwardEntry.timestamp;
     end
 
@@ -411,7 +400,6 @@ end
 
 ---@return void
 function Overview:refreshItems()
-    GL:debug("Overview:refreshItems");
     local fiveHoursAgo = GetServerTime() - 18000;
 
     for key, ItemRow in pairs(self.ItemRows or {}) do
@@ -429,7 +417,7 @@ function Overview:refreshItems()
     local SelectedDates = GL:tableFlip(self.SelectedDates);
     local Entries = {};
     for _, AwardEntry in pairs(DB:get("AwardHistory")) do
-        local dateString = date(DATE_FORMAT, AwardEntry.timestamp);
+        local dateString = date(L.DATE_FORMAT, AwardEntry.timestamp);
 
         if (SelectedDates[dateString]) then
             local checksum = AwardEntry.checksum; -- Old entries may not possess a checksum yet
@@ -528,7 +516,7 @@ function Overview:refreshItems()
                 --[[ AWARDED TO ]]
                 local awardedToString = "";
                 if (not itemWasDisenchanted) then
-                    awardedToString = GL:nameFormat{ name = Entry.awardedTo, colorize = true };
+                    awardedToString = GL:nameFormat{ name = Entry.awardedTo, colorize = true, };
                 else
                     awardedToString = "DISENCHANTED";
                 end
@@ -543,22 +531,22 @@ function Overview:refreshItems()
                 local AwardDetails = {};
 
                 if (Entry.OS > 0) then
-                    tinsert(AwardDetails, "OS");
+                    tinsert(AwardDetails, L.OFFSPEC_ABBR);
                 end
                 if (Entry.SR > 0) then
-                    tinsert(AwardDetails, "SR");
+                    tinsert(AwardDetails, L.SOFTRES_ABBR);
                 end
                 if (Entry.WL > 0) then
-                    tinsert(AwardDetails, "WL");
+                    tinsert(AwardDetails, L.WISHLIST_ABBR);
                 end
                 if (Entry.PL > 0) then
-                    tinsert(AwardDetails, "PL");
+                    tinsert(AwardDetails, L.PRIOLIST_ABBR);
                 end
                 if (Entry.winningRollType) then
                     tinsert(AwardDetails, Entry.winningRollType);
                 end
                 if (Entry.OS == 0 and not Entry.winningRollType) then
-                    tinsert(AwardDetails, "MS");
+                    tinsert(AwardDetails, L.MAINSPEC_ABBR);
                 end
 
                 ---@type FontString
@@ -624,28 +612,28 @@ function Overview:refreshItems()
                         end
 
                         linesAdded = true;
-                        local header = string.format("Items won by %s:", GL:nameFormat(Entry.awardedTo));
+                        local header = string.format(L.PLAYER_ITEM_WON_COUNT, GL:nameFormat(Entry.awardedTo));
                         if (itemWasDisenchanted) then
-                            header = "Disenchanted items:"
+                            header = L.AWARD_TOOLTIP_DISENCHANTED_ITEMS
                         end
 
                         GameTooltip:AddLine(header);
                         GameTooltip:AddLine(" ");
 
                         for _, Entry in pairs(ItemsWonByRollerInTheLastFiveHours) do
-                            local receivedString = " (Given: yes)";
+                            local receivedString = L.AWARD_TOOLTIP_GIVEN;
                             if (not Entry.received) then
-                                receivedString = " (Given: no)";
+                                receivedString = L.AWARD_TOOLTIP_NOT_GIVEN;
                             end
 
                             local OSString = "";
                             if (Entry.OS) then
-                                OSString = " (OS)"
+                                OSString = L.AWARD_TOOLTIP_OFFSPEC_INDICATION;
                             end
 
                             local BRString = "";
                             if (GL:higherThanZero(Entry.BRCost)) then
-                                BRString = string.format(" (BR: %s)", Entry.BRCost);
+                                BRString = string.format(L.AWARD_TOOLTIP_BR_INDICATION, Entry.BRCost);
                             end
 
                             local line = string.format("%s%s%s%s",
@@ -694,7 +682,7 @@ function Overview:refreshItems()
                             and not GL.User.hasAssist
                             and not GL.User.isLead
                         ) then
-                            return GL:warning("You need to be the master looter or have lead/assist!");
+                            return GL:warning(L.LM_OR_ASSIST_REQUIRED);
                         end
 
                         DeleteButton:SetParent(ItemHolder);
@@ -702,12 +690,12 @@ function Overview:refreshItems()
 
                         local BRString = "";
                         if (GL:higherThanZero(Entry.BRCost)) then
-                            BRString = " " .. tostring(Entry.BRCost) .. " boosted roll points will be refunded!";
+                            BRString = (L.AWARD_UNDO_BR_REFUND):format(tostring(Entry.BRCost));
                         end
 
                         GL.Interface.Dialogs.PopupDialog:open{
                             question = string.format(
-                                "Are you sure you want to undo %s awarded to %s?%s",
+                                L.AWARD_UNDO_CONFIRM,
                                 Entry.itemLink,
                                 Entry.awardedTo,
                                 BRString
@@ -730,17 +718,16 @@ function Overview:refreshItems()
                             and not GL.User.hasAssist
                             and not GL.User.isLead
                         ) then
-                            return GL:warning("You need to be the master looter or have lead/assist!");
+                            return GL:warning(L.LM_OR_ASSIST_REQUIRED);
                         end
 
                         -- Show the player selector
-                        local question = string.format("Who should %s go to instead?", Entry.itemLink);
+                        local question = (L.AWARD_NEW_WINNER_CONFIRMATION):format(Entry.itemLink);
                         GL.Interface.PlayerSelector:draw(question, GL.User:groupMemberNames(), function (playerName)
                             GL.Interface.Dialogs.PopupDialog:open{
-                                question = string.format("Award %s to |cff%s%s|r?",
+                                question = (L.ROLLING_AWARD_CONFIRM):format(
                                     Entry.itemLink,
-                                    GL:classHexColor(GL.Player:classByName(playerName)),
-                                    playerName
+                                    GL:nameFormat{ name = playerName, colorize = true }
                                 ),
                                 OnYes = function ()
                                     if (not playerName or type(playerName) ~= "string") then
@@ -766,17 +753,13 @@ function Overview:refreshItems()
                             and not GL.User.hasAssist
                             and not GL.User.isLead
                         ) then
-                            return GL:warning("You need to be the master looter or have lead/assist!");
+                            return GL:warning(L.LM_OR_ASSIST_REQUIRED);
                         end
 
                         -- Show a specific dialog when boosted roll points are involved
                         if (GL:higherThanZero(Entry.BRCost)) then
                             GL.Interface.Dialogs.PopupDialog:open{
-                                question = string.format(
-                                    "Are you sure you want to disenchant %s? %s boosted roll points will be refunded!",
-                                    Entry.itemLink,
-                                    tostring(Entry.BRCost)
-                                ),
+                                question = (L.AWARD_DISENCHANT_BR_CONFIRMATION):format(Entry.itemLink, tostring(Entry.BRCost)),
                                 OnYes = function ()
                                     GL.AwardedLoot:deleteWinner(Entry.checksum);
                                     GL.PackMule:disenchant(Entry.itemLink, true);

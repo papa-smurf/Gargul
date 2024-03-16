@@ -1,3 +1,5 @@
+local L = Gargul_L;
+
 local _, GL = ...;
 
 GL.AceGUI = GL.AceGUI or LibStub("AceGUI-3.0");
@@ -30,15 +32,13 @@ BagInspector.Widgets = {
 -- Inspect the raid group's bag contents for the
 -- availability of specific items (max 8)
 function BagInspector:inspect(items)
-    GL:debug("BagInspector:inspect");
-
     -- Only raid leader/assists or master
     -- looters can use this functionality
     if (GL.User.isInGroup
         and not GL.User.hasAssist
         and not GL.User.isMasterLooter
     ) then
-        return GL:error("You need lead, assist or master looter privileges to use this functionality");
+        return GL:error(L.LM_OR_ASSIST_REQUIRED);
     end
 
     -- This ensures that the item exists and that
@@ -49,7 +49,7 @@ function BagInspector:inspect(items)
 
     -- Send the inspection request to the correct channel
     local CommMessage = {};
-    GL:success("Starting inspection...");
+    GL:success(L.BAGINSPECTOR_START);
     CommMessage = GL.CommMessage.new{
         action = CommActions.inspectBags,
         content = items,
@@ -59,7 +59,7 @@ function BagInspector:inspect(items)
 
     -- After a period of X seconds inspect the results
     GL.Ace:ScheduleTimer(function ()
-        GL:success("Inspection finished");
+        GL:success(L.BAGINSPECTOR_FINISHED);
         BagInspector.inspectionInProgress = false;
 
         BagInspector:processInspectionResults(CommMessage);
@@ -68,8 +68,6 @@ end
 
 -- Someone requested an item count, report back!
 function BagInspector:report(CommMessage)
-    GL:debug("BagInspector:report");
-
     local Items = CommMessage.content;
     local Report = {};
 
@@ -84,8 +82,6 @@ end
 -- Loop through all the inspection
 -- responses and process them
 function BagInspector:processInspectionResults(CommMessage)
-    GL:debug("BagInspector:processInspectionResults");
-
     local ItemIDs = {};
     local ItemLinksByID = {};
 
@@ -119,7 +115,7 @@ function BagInspector:processInspectionResults(CommMessage)
     -- their item links have been successfully loaded by the API
     local displayInspectionReport = function ()
         if (numberOfResponses < 1) then
-            return GL:error("Bag inspection failed: no reports received");
+            return GL:error(L.BAGINSPECTOR_FAILED);
         end
 
         BagInspector:displayInspectionResults(ItemIDs, ItemLinksByID);
@@ -153,8 +149,6 @@ end
 
 -- Display the report results from a group-wide bag inspection
 function BagInspector:displayInspectionResults()
-    GL:debug("BagInspector:displayInspectionResults");
-
     if (self.Window) then
         GL.Interface:release(self.Window);
     end
@@ -171,8 +165,8 @@ function BagInspector:displayInspectionResults()
 
         GL.Interface:release(widget);
     end);
-    ResultFrame:SetTitle("Gargul v" .. GL.version);
-    ResultFrame:SetStatusText("Addon v" .. GL.version);
+    ResultFrame:SetTitle((L.WINDOW_HEADER):format(GL.version));
+    ResultFrame:SetStatusText(L.VERSION_ABBR .. GL.version);
     ResultFrame:SetLayout("Flow");
     ResultFrame:SetWidth(600);
     ResultFrame:SetHeight(450);
@@ -313,5 +307,3 @@ function BagInspector:displayInspectionResults()
 
     BagInspector.Widgets.Tables.InspectionReport = table;
 end
-
-GL:debug("BagInspector.lua");

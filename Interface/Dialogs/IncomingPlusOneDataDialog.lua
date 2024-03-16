@@ -26,5 +26,3 @@ function IncomingPlusOneDataDialog:open(Dialog)
         TrustSenderCheckBox:SetValue(TrustSenderCheckBox);
     end
 end
-
-GL:debug("Interface/IncomingPlusOneDataDialog.lua");

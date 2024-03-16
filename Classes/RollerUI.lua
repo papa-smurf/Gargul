@@ -1,3 +1,5 @@
+local L = Gargul_L;
+
 ---@type GL
 local _, GL = ...;
 
@@ -9,8 +11,6 @@ local RollerUI = GL.RollerUI; ---@type RollerUI
 
 ---@return boolean
 function RollerUI:show(time, itemLink, itemIcon, note, SupportedRolls, bth)
-    GL:debug("RollerUI:show");
-
     if (self.Window and self.Window:IsShown()) then
         return false;
     end
@@ -122,7 +122,7 @@ function RollerUI:draw(time, itemLink, itemIcon, note, SupportedRolls, userCanUs
                 RollAcceptedNotification.frame:SetPoint("BOTTOMLEFT", Window, "TOPLEFT", 0, 4);
 
                 local Text = GL.AceGUI:Create("Label");
-                Text:SetText("Roll accepted!");
+                Text:SetText(L.ROLLING_ROLL_ACCEPTED);
                 RollAcceptedNotification:AddChild(Text);
                 Text:SetJustifyH("MIDDLE");
 
@@ -144,7 +144,7 @@ function RollerUI:draw(time, itemLink, itemIcon, note, SupportedRolls, userCanUs
     local PassButton = CreateFrame("Button", "GargulUI_RollerUI_Pass", Window, "GameMenuButtonTemplate");
     PassButton:SetPoint("TOPRIGHT", Window, "TOPRIGHT", -3, -1);
     PassButton:SetSize(50, 20);
-    PassButton:SetText("Pass");
+    PassButton:SetText(L.ROLLING_PASS_BUTTON);
     PassButton:SetNormalFontObject("GameFontNormal");
     PassButton:SetHighlightFontObject("GameFontNormal");
     PassButton:SetScript("OnClick", function ()
@@ -175,8 +175,6 @@ end
 ---@param note string
 ---@return void
 function RollerUI:drawCountdownBar(time, itemLink, itemIcon, note, userCanUseItem, width)
-    GL:debug("RollerUI:drawCountdownBar");
-
     -- This shouldn't be possible but you never know!
     if (not self.Window) then
         return false;
@@ -231,7 +229,7 @@ function RollerUI:drawCountdownBar(time, itemLink, itemIcon, note, userCanUseIte
     TimerBar:SetLabel("  " .. itemLink);
 
     if (not userCanUseItem) then
-        TimerBar:SetLabel("  |c00FFFFFFYou can't use this item!|r");
+        TimerBar:SetLabel(("  |c00FFFFFF%s|r"):format(L.ROLLING_UNUSABLE_ITEM));
     end
 
     TimerBar:SetIcon(itemIcon);
@@ -285,8 +283,6 @@ end
 
 ---@return void
 function RollerUI:hide()
-    GL:debug("RollerUI:hide");
-
     GL.Events:unregister("RollerUIModifierStateChanged");
 
     if (not self.Window) then
@@ -303,5 +299,3 @@ function RollerUI:hide()
     GL.Interface:release(self.Window);
     self.Window = nil;
 end
-
-GL:debug("RollerUI.lua");

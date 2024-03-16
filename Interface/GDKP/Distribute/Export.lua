@@ -1,3 +1,5 @@
+local L = Gargul_L;
+
 ---@type GL
 local _, GL = ...;
 
@@ -27,8 +29,6 @@ local SOFTRES_FORMAT = 2;
 
 ---@return void
 function Export:open(sessionID)
-    GL:debug("Interface.GDKP.Distribute.Export:open");
-
     local Window = Interface:get(self, "GDKPPotExport");
 
     if (not Window) then
@@ -51,8 +51,6 @@ end
 
 ---@return void
 function Export:build()
-    GL:debug("Export:build");
-
     ---@type AceGUIFrame
     local Window = Interface:get(self, "GDKPPotExport");
 
@@ -72,13 +70,13 @@ function Export:build()
     ---@type AceGUILabel
     local Title = AceGUI:Create("Label");
     Title:SetFontObject(GameFontNormalLarge);
-    Title:SetText("Session title");
+    Title:SetText(L.TITLE);
     Title:SetFullWidth(true);
     Interface:set(self, "Title", Title);
     FixedHeightContentWrapper:AddChild(Title);
 
     local DropDownItems = {
-        [CUSTOM_FORMAT] = "|c00FFF569Custom (create your own format)|r",
+        [CUSTOM_FORMAT] = ("|c00FFF569%s|r"):format(L.GDKP_EXPORT_CUTS_CUSTOM_FORMAT),
     };
 
     ---@type AceGUIEditBox
@@ -101,7 +99,7 @@ function Export:build()
     CustomExportHeader:SetHeight(20);
     CustomExportHeader:SetFullWidth(true);
     CustomExportHeader:SetText(GL.Settings:get("GDKP.customPotExportHeader"));
-    CustomExportHeader:SetLabel("|c00FFF569Your custom header|r");
+    CustomExportHeader:SetLabel(("|c00FFF569%s|r"):format(L.HEADER));
     CustomExportHeader:DisableButton(true);
     CustomExportHeader:SetCallback("OnTextChanged", function ()
         local value = CustomExportHeader:GetText();
@@ -117,7 +115,7 @@ function Export:build()
     CustomExportFormat:SetHeight(20);
     CustomExportFormat:SetFullWidth(true);
     CustomExportFormat:SetText(GL.Settings:get("GDKP.customPotExportFormat"));
-    CustomExportFormat:SetLabel("|c00FFF569      Your custom format|r");
+    CustomExportFormat:SetLabel(("|c00FFF569      %s|r"):format(L.FORMAT));
     CustomExportFormat:DisableButton(true);
     CustomExportFormat:SetCallback("OnTextChanged", function ()
         local value = CustomExportFormat:GetText();
@@ -150,7 +148,7 @@ function Export:build()
 
     local showCustomFormatHelpTooltip = function ()
         GameTooltip:SetOwner(HelpIconFrame, "ANCHOR_RIGHT");
-        GameTooltip:SetText("Available values:\n\n" .. table.concat({
+        GameTooltip:SetText(L.GDKP_EXPORT_CUTS_FORMAT_TOOLTIP .. "\n\n" .. table.concat({
             "@PLAYER",
             "@REALM",
             "@CUT",
@@ -159,14 +157,14 @@ function Export:build()
             "@MUTATORS",
             "@SPENT",
             "@BID",
-            "@RECEIVED - total gold received from the player",
-            "@GIVEN - total gold given to the player",
-            "@TRADED - gold traded to the player",
-            "@MAILED - gold mailed to the player",
-            "@START - Date/time at which the first item was awarded",
-            "@END - Date/time at which the session was locked",
+            "@RECEIVED - " .. L.GDKP_EXPORT_CUTS_FORMAT_RECEIVED_INFO,
+            "@GIVEN - " .. L.GDKP_EXPORT_CUTS_FORMAT_GIVEN_INFO,
+            "@TRADED - " .. L.GDKP_EXPORT_CUTS_FORMAT_TRADED_INFO,
+            "@MAILED - " .. L.GDKP_EXPORT_CUTS_FORMAT_MAILED_INFO,
+            "@START - " .. L.GDKP_EXPORT_CUTS_FORMAT_START_INFO,
+            "@END - " .. L.GDKP_EXPORT_CUTS_FORMAT_END_INFO,
             "",
-            "\\t is replaced by a tab",
+            L.TAB_REPLACES_T,
         }, "\n"));
         GameTooltip:Show();
     end;
@@ -178,7 +176,7 @@ function Export:build()
     ExportBox:SetText("");
     ExportBox:SetFullWidth(true);
     ExportBox:DisableButton(true);
-    ExportBox:SetLabel("|c00FFF569Export|r");
+    ExportBox:SetLabel(("|c00FFF569%s|r"):format(L.EXPORT));
     ExportBox:SetNumLines(1);
     ExportBox:SetMaxLetters(0);
     GL.Interface:set(self, "Export", ExportBox);
@@ -192,14 +190,10 @@ end
 
 ---@return void
 function Export:close()
-    GL:debug("Export:close");
-
     self.isVisible = false;
 end
 
 function Export:refresh()
-    GL:debug("Export:refresh");
-
     local Session = GDKPSession:byID(self.sessionID);
 
     if (type(Session) ~= "table") then
@@ -255,11 +249,9 @@ end
 ---@param Cuts table
 ---@return string
 function Export:exportPotToCustomFormat(Session, Cuts)
-    GL:debug("Export:transformAuctionsToCustomFormat");
-
     local exportString = GL.Settings:get("GDKP.customPotExportHeader");
     local customExportFormat = GL.Settings:get("GDKP.customPotExportFormat");
-    local endedAt = Session.lockedAt and date("%Y-%m-%d %H:%M", Session.lockedAt) or "";
+    local endedAt = Session.lockedAt and date(L.DATE_HOURS_MINUTES_FORMAT, Session.lockedAt) or "";
 
     -- Determine the start of the raid, determined by the item that was awarded first
     local timestamps = {};
@@ -267,7 +259,7 @@ function Export:exportPotToCustomFormat(Session, Cuts)
         tinsert(timestamps, Details.createdAt);
     end
     table.sort(timestamps);
-    local startedAt = timestamps[1] and date("%Y-%m-%d %H:%M", timestamps[1]) or "";
+    local startedAt = timestamps[1] and date(L.DATE_HOURS_MINUTES_FORMAT, timestamps[1]) or "";
 
     -- Make sure that all relevant item data is cached
     for _, Details in pairs(Cuts) do
@@ -327,5 +319,3 @@ function Export:exportPotToCustomFormat(Session, Cuts)
 
     GL.Interface:get(self, "MultiLineEditBox.Export"):SetText(strtrim(exportString));
 end
-
-GL:debug("Interfaces/GDKP/Export.lua");

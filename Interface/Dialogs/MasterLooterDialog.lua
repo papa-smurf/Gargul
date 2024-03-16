@@ -1,3 +1,5 @@
+local L = Gargul_L;
+
 ---@type GL
 local _, GL = ...;
 
@@ -78,8 +80,8 @@ end
 ---@return void
 function MasterLooterDialog:flightAttendant()
     local function announce()
-        local message = "I'm using Gargul to distribute loot. It makes rolling easier so be sure to try it out!"
-        local stw = not GL:strContains(string.lower(message), "gargul");
+        local message = L.LOOTMASTER_FLIGHT_ATTENDANT;
+        local stw = not GL:strContains(string.lower(message), L.GARGUL);
 
         GL:sendChatMessage(
             message,
@@ -104,8 +106,6 @@ end
 ---
 ---@test /script _G.Gargul.Interface.MasterLooterDialog:draw();
 function MasterLooterDialog:draw()
-    GL:debug("MasterLooterDialog:draw");
-
     if (self.isVisible) then
         return;
     end
@@ -114,7 +114,7 @@ function MasterLooterDialog:draw()
 
     -- Create a container/parent frame
     local Window = AceGUI:Create("Frame");
-    Window:SetTitle("Gargul v" .. GL.version);
+    Window:SetTitle((L.WINDOW_HEADER):format(GL.version));
     Window:SetLayout("FLOW");
     Window:SetWidth(440);
     Window:SetHeight(160);
@@ -140,13 +140,13 @@ function MasterLooterDialog:draw()
     Description:SetFontObject(_G["GameFontNormal"]);
     Description:SetFullWidth(true);
     Description:SetJustifyH("CENTER");
-    Description:SetText("You were given the role of Master Looter");
+    Description:SetText(L.LOOTMASTER_NOTICE_LABEL);
     DescriptionFrame:AddChild(Description);
 
     -- SoftRes
-    local SoftResButtonText = "Clear SoftRes";
+    local SoftResButtonText = L.LOOTMASTER_CLEAR_SR_BUTTON;
     if (not GL.SoftRes:available()) then
-        SoftResButtonText = "Import SoftRes";
+        SoftResButtonText = L.LOOTMASTER_IMPORT_SR_BUTTON;
     end
 
     local SoftResButton = AceGUI:Create("Button");
@@ -156,7 +156,7 @@ function MasterLooterDialog:draw()
     SoftResButton:SetCallback("OnClick", function()
         if (GL.SoftRes:available()) then
             GL.SoftRes:clear();
-            SoftResButton:SetText("Import SoftRes");
+            SoftResButton:SetText(L.LOOTMASTER_IMPORT_SR_BUTTON);
             return;
         end
 
@@ -165,7 +165,7 @@ function MasterLooterDialog:draw()
     Window:AddChild(SoftResButton);
 
     GL.Events:register("MasterLooterSoftResImportedListener", "GL.SOFTRES_IMPORTED", function ()
-        SoftResButton:SetText("Clear SoftRes");
+        SoftResButton:SetText(L.LOOTMASTER_CLEAR_SR_BUTTON);
     end);
 
     local VerticalSpacer = AceGUI:Create("SimpleGroup");
@@ -175,9 +175,9 @@ function MasterLooterDialog:draw()
     Window:AddChild(VerticalSpacer);
 
     -- TMB
-    local TMBButtonText = "Clear TMB";
+    local TMBButtonText = L.LOOTMASTER_CLEAR_TMB_BUTTON;
     if (not GL.TMB:available()) then
-        TMBButtonText = "Import TMB";
+        TMBButtonText = L.LOOTMASTER_IMPORT_TMB_BUTTON;
     end
 
     local TMBButton = AceGUI:Create("Button");
@@ -186,7 +186,7 @@ function MasterLooterDialog:draw()
     TMBButton:SetWidth(120);
     TMBButton:SetCallback("OnClick", function()
         if (GL.TMB:available()) then
-            TMBButton:SetText("Import TMB");
+            TMBButton:SetText(L.LOOTMASTER_IMPORT_TMB_BUTTON);
             GL.TMB:clear();
             return;
         end
@@ -196,7 +196,7 @@ function MasterLooterDialog:draw()
     Window:AddChild(TMBButton);
 
     GL.Events:register("MasterLooterTMBImportedListener", "GL.TMB_IMPORTED", function ()
-        TMBButton:SetText("Clear TMB");
+        TMBButton:SetText(L.LOOTMASTER_CLEAR_TMB_BUTTON);
     end);
 
     VerticalSpacer = AceGUI:Create("SimpleGroup");
@@ -206,7 +206,7 @@ function MasterLooterDialog:draw()
     Window:AddChild(VerticalSpacer);
 
     local GDKPButton = AceGUI:Create("Button");
-    GDKPButton:SetText("GDKP");
+    GDKPButton:SetText(L.GDKP);
     GDKPButton:SetHeight(20);
     GDKPButton:SetWidth(120);
     GDKPButton:SetCallback("OnClick", function()
@@ -236,7 +236,7 @@ function MasterLooterDialog:draw()
     local CheckBoxLabel = AceGUI:Create("InteractiveLabel");
     CheckBoxLabel:SetFontObject(_G["GameFontNormal"]);
     CheckBoxLabel:SetWidth(200);
-    CheckBoxLabel:SetText("Open this window automatically");
+    CheckBoxLabel:SetText(L.LOOTMASTER_OPEN_LABEL);
 
     CheckBoxLabel:SetCallback("OnClick", function()
         AutoOpenCheckbox:ToggleChecked();
@@ -248,8 +248,6 @@ end
 
 ---@return void
 function MasterLooterDialog:close()
-    GL:debug("MasterLooterDialog:close");
-
     local Window = GL.Interface:get(self, "Window");
 
     if (not Window) then
@@ -261,5 +259,3 @@ function MasterLooterDialog:close()
 
     self.isVisible = false;
 end
-
-GL:debug("Interfaces/MasterLooterDialog.lua");

@@ -371,7 +371,6 @@ function Overview:build()
         tooltip = "Add/Remove gold",
         disabledTooltip = "You need lead or master loot to adjust gold.\nYou can't adjust gold on locked/deleted sessions",
         normalTexture = "Interface/AddOns/Gargul/Assets/Buttons/bag",
-        disabledTexture = "Interface/AddOns/Gargul/Assets/Buttons/bag-disabled",
         update = function (self)
             local SelectedSession = Overview:getSelectedSession();
 
@@ -409,7 +408,6 @@ function Overview:build()
         end,
         tooltip = "Show a full overview of the ledger,\nideal for screenshotting purposes!",
         normalTexture = "Interface/AddOns/Gargul/Assets/Buttons/eye",
-        disabledTexture = "Interface/AddOns/Gargul/Assets/Buttons/eye-disabled",
         updateOn = { "GL.GDKP_OVERVIEW_SESSION_CHANGED", "GL.GDKP_OVERVIEW_SESSION_CHANGED", "GL.GDKP_OVERVIEW_SESSIONS_REFRESHED", "GL.GDKP_AUCTION_CHANGED" },
         update = function (self)
             self:SetEnabled(not GL:empty(GL:tableGet(Overview:getSelectedSession() or {}, "Auctions")));
@@ -633,10 +631,10 @@ function Overview:refreshLedger()
 
     Note:SetText(string.format(
         "By %s%s | On |c00%s%s|r%s",
-        GL:nameFormat{ name = CreatedBy.name, realm = CreatedBy.realm, colorize = true },
+        GL:nameFormat{ name = CreatedBy.name, realm = CreatedBy.realm, colorize = true, },
         guild,
         Constants.addonHexColor,
-        date('%Y-%m-%d', Session.createdAt),
+        date(L.DATE_FORMAT, Session.createdAt),
         managementCut
     ));
 
@@ -787,7 +785,6 @@ function Overview:refreshLedger()
                 end,
                 tooltip = "Details",
                 normalTexture = "Interface/AddOns/Gargul/Assets/Buttons/eye",
-                disabledTexture = "Interface/AddOns/Gargul/Assets/Buttons/eye-disabled",
             });
             Eye:SetPoint("CENTER", ItemRow.frame, "CENTER");
             Eye:SetPoint("RIGHT", ItemRow.frame, "RIGHT", 0, 0);
@@ -814,7 +811,6 @@ function Overview:refreshLedger()
                     tooltip = "Delete. Hold shift to bypass note",
                     disabledTooltip = "You need lead or master loot to delete entries.\nYou can't delete entries on locked/deleted sessions",
                     normalTexture = "Interface/AddOns/Gargul/Assets/Buttons/delete",
-                    disabledTexture = "Interface/AddOns/Gargul/Assets/Buttons/delete-disabled",
                     update = function (self)
                         self:SetEnabled(not auctionWasDeleted and not Session.deletedAt and not Session.lockedAt);
                     end,
@@ -830,7 +826,6 @@ function Overview:refreshLedger()
                     tooltip = "Restore",
                     disabledTooltip = "You need lead or master loot to restore entries.\nYou can't restore entries of locked/deleted sessions",
                     normalTexture = "Interface/AddOns/Gargul/Assets/Buttons/restore",
-                    disabledTexture = "Interface/AddOns/Gargul/Assets/Buttons/restore-disabled",
                     update = function (self)
                         self:SetEnabled(not Session.deletedAt and not Session.lockedAt);
                     end,
@@ -848,7 +843,6 @@ function Overview:refreshLedger()
                 tooltip = "Edit",
                 disabledTooltip = "You need lead or master loot to edit entries.\nYou can't edit deleted entries or entries on locked/deleted sessions",
                 normalTexture = "Interface/AddOns/Gargul/Assets/Buttons/edit",
-                disabledTexture = "Interface/AddOns/Gargul/Assets/Buttons/edit-disabled",
                 update = function (self)
                     self:SetEnabled(not auctionWasDeleted and not Session.deletedAt and not Session.lockedAt);
                 end,

@@ -80,7 +80,7 @@ function DB:add(keyString, value)
     return GL:tableAdd(self, keyString, value);
 end
 
---- Make extra(?) sure the database persists between sessions
+--- Make sure the database persists between sessions
 --- This is just a safety precaution and should strictly
 --- speaking not be necessary at all, but hey you never know!
 ---

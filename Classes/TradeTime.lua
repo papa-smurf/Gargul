@@ -29,7 +29,7 @@ function TradeTime:_init()
 
     -- We keep using the same timer ID (TradeTimeOverviewInit) so that whenever a
     -- new event comes in we prolong the timer by 1 second as a way of throttling
-    GL:after(5, "TradeTimerEventInitiator", function ()
+    GL:after(5, "TradeTimeEventInitiator", function ()
         Events:register({
             "ZONE_CHANGED",
             "PLAYER_ENTERING_WORLD",

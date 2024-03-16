@@ -34,8 +34,6 @@ local MAIL_COST = 30; -- Sending a mail costs 30 copper
 --- Show the cut mailer window when certain events are triggered
 ---@return void
 function MailCuts:_init()
-    GL:debug("MailCuts:_init");
-
     if (self._initialized) then
         return;
     end
@@ -140,8 +138,6 @@ end
 
 ---@return void
 function MailCuts:openIfCutsToMail()
-    GL:debug("MailCuts:openIfCutsToMail");
-
     local Instance = GDKPSession:getActive();
 
     -- Check if the GDKP session exists and is locked for payout
@@ -154,8 +150,6 @@ end
 
 ---@return table
 function MailCuts:open()
-    GL:debug("MailCuts:open");
-
     self.isVisible = true;
 
     local Window = _G[self.windowName] or self:build();
@@ -171,16 +165,12 @@ end
 
 ---@return void
 function MailCuts:close()
-    GL:debug("MailCuts:close");
-
     self.isVisible = false;
     return _G[self.windowName] and _G[self.windowName]:Hide();
 end
 
 ---@return table
 function MailCuts:build()
-    GL:debug("MailCuts:build");
-
     if (_G[self.windowName]) then
         return _G[self.windowName];
     end
@@ -218,7 +208,7 @@ function MailCuts:build()
     PlayerHolder:SetPoint("BOTTOMRIGHT", ScrollFrame, "BOTTOMRIGHT");
 
     ---@type Button
-    local MailAllCuts = Interface:dynamicPanelButton(Window, "Mail All");
+    local MailAllCuts = Interface:dynamicPanelButton(Window, L.GDKP_MAIL_ALL);
     MailAllCuts:SetPoint("BOTTOMLEFT", Window, "BOTTOMLEFT", 20, 30);
     MailAllCuts:SetPoint("RIGHT", Window, "RIGHT", -20, 0);
     MailAllCuts:SetScript("OnClick", function ()
@@ -232,8 +222,6 @@ end
 
 ---@return boolean Any players added?
 function MailCuts:refreshPlayerCuts()
-    GL:debug("MailCuts:refreshPlayerCuts");
-
     local PlayerHolder = _G[self.windowName].PlayerHolder;
     Interface:releaseChildren(PlayerHolder);
 
@@ -289,7 +277,7 @@ function MailCuts:refreshPlayerCuts()
                 hasEntries = true;
 
                 tinsert(Lines, string.format("%s: %s",
-                    date("%d-%m at %H:%M", Entry.timestamp),
+                    date(L.DAY_MONTH_HOURS_MINUTES, Entry.timestamp),
                     Entry.message
                 ));
             end
@@ -301,7 +289,7 @@ function MailCuts:refreshPlayerCuts()
         PlayerName:SetWidth(80);
 
         ---@type FontString
-        local Gold = Interface:createFontString(PlayerRow, goldOwed .. "g");
+        local Gold = Interface:createFontString(PlayerRow, goldOwed .. L.GOLD_INDICATOR);
         Gold:SetPoint("TOPLEFT", PlayerName, "TOPRIGHT", 4, 0);
         Gold:SetWidth(60);
 
@@ -333,7 +321,7 @@ function MailCuts:refreshPlayerCuts()
 
                 -- Make sure to close the window when all cuts are mailed
                 if (not cutsLeft) then
-                    GL:success(L.ALL_CUTS_MAILED);
+                    GL:success(L.GDKP_ALL_CUTS_MAILED);
                     self:close();
                 end
             end);
@@ -368,8 +356,6 @@ end
 
 ---@return void
 function MailCuts:mailAllCuts()
-    GL:debug("MailCuts:mailingAllCuts");
-
     if (self.sendingMail) then
         GL:error(L.CUT_MAIL_IN_PROGRESS);
 
@@ -403,7 +389,7 @@ function MailCuts:mailAllCuts()
 
                     -- Make sure to close the window when all cuts are mailed
                     if (not self:refreshPlayerCuts()) then
-                        GL:success(L.ALL_CUTS_MAILED);
+                        GL:success(L.GDKP_ALL_CUTS_MAILED);
                         self:close();
                         return;
                     end
@@ -421,14 +407,12 @@ function MailCuts:mailAllCuts()
         end
     end
 
-    GL:success(L.ALL_CUTS_MAILED);
+    GL:success(L.GDKP_ALL_CUTS_MAILED);
 end
 
 ---@param player string
 ---@param callback function|nil
 function MailCuts:mailPlayerCut(player, callback)
-    GL:debug("MailCuts:mailPlayerCut");
-
     if (self.sendingMail) then
         GL:error(L.CUT_MAIL_IN_PROGRESS);
 
@@ -551,8 +535,6 @@ end
 
 ---@return void
 function MailCuts:disableSendButton()
-    GL:debug("MailCuts:disableSendButton");
-
     if (not _G.SendMailMailButton or not _G.SendMailMailButton.SetEnabled) then
         return;
     end
@@ -562,8 +544,6 @@ end
 
 ---@return void
 function MailCuts:enableSendButton()
-    GL:debug("MailCuts:enableSendButton");
-
     if (not _G.SendMailMailButton or not _G.SendMailMailButton.SetEnabled) then
         return;
     end

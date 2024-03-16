@@ -18,8 +18,6 @@ local Events = GL.Events; ---@type Events
 ---@param EventFrame table
 ---@return void
 function Events:_init(EventFrame)
-    GL:debug("Events:_init");
-
     -- No need to initialize this class twice
     if (self._initialized) then
         return;
@@ -70,8 +68,6 @@ end
 ---@param callback function
 ---@return boolean
 function Events:register(identifier, event, callback)
-    GL:debug("Events:register");
-
     -- The user is attempting a mass assignment, pass it on!
     if (type(identifier) == "table") then
         return self:massRegister(identifier, event);
@@ -200,5 +196,3 @@ end
 function Events:fire(event, ...)
     self:listen(event, ...);
 end
-
-GL:debug("Events.lua");

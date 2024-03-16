@@ -1826,6 +1826,16 @@ function Interface:createButton(Parent, Details)
         Button:SetDisabledTexture(DisabledTexture);
 
         Button.disabledTexture = DisabledTexture;
+    elseif (normalTexture) then
+        local DisabledTexture = Button.disabledTexture or Button:CreateTexture();
+        DisabledTexture:SetTexture(normalTexture);
+        DisabledTexture:SetDesaturated(true);
+        DisabledTexture:ClearAllPoints();
+        DisabledTexture:SetPoint("CENTER", Button, "CENTER", 0, 0);
+        DisabledTexture:SetSize(width, height);
+        Button:SetDisabledTexture(DisabledTexture);
+
+        Button.disabledTexture = DisabledTexture;
     end
 
     -- Show the tooltip on hover
@@ -1928,7 +1938,6 @@ function Interface:createShareButton(Parent, Details)
     Details = Details or {};
     Details.normalTexture = "Interface/AddOns/Gargul/Assets/Buttons/share";
     Details.highlightTexture = "Interface/AddOns/Gargul/Assets/Buttons/share-highlighted";
-    Details.disabledTexture = "Interface/AddOns/Gargul/Assets/Buttons/share-disabled";
 
     local Button = self:createButton(Parent, Details);
     local position = Details.position;

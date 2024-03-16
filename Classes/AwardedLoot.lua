@@ -1,3 +1,5 @@
+local L = Gargul_L;
+
 local _, GL = ...;
 
 ---@type Data
@@ -23,8 +25,6 @@ local AwardedLoot = GL.AwardedLoot;
 
 ---@return void
 function AwardedLoot:_init()
-    GL:debug("AwardedLoot:_init");
-
     if (self._initialized) then
         return;
     end
@@ -69,7 +69,7 @@ function AwardedLoot:tooltipLines(itemLink)
     local fiveHoursAgo = GetServerTime() - 18000;
     local loadItemsGTE = math.min(fiveHoursAgo, GL.loadedOn);
     local winnersAvailable = false;
-    local Lines = { string.format("\n|c00efb8cd%s|r", "Awarded To") };
+    local Lines = { string.format("\n|c00efb8cd%s|r", L.AWARDED_TO) };
     for _, Loot in pairs(DB:get("AwardHistory")) do
         (function ()
             -- loadItemsGTE will equal five hours, or however long the players
@@ -83,20 +83,20 @@ function AwardedLoot:tooltipLines(itemLink)
             local Details = {};
 
             if (Loot.OS) then
-                tinsert(Details, "OS");
+                tinsert(Details, L.OFFSPEC_ABBR);
             end
 
             if (GL:higherThanZero(Loot.BRCost)) then
-                tinsert(Details, string.format("BR: %s", Loot.BRCost));
+                tinsert(Details, string.format(L.AWARDED_TOOLTIP_BOOSTED_ROLL_COST, Loot.BRCost));
             end
 
             if (GL:higherThanZero(Loot.GDKPCost)) then
-                tinsert(Details, string.format("Price: %sg", Loot.GDKPCost));
+                tinsert(Details, string.format(L.AWARDED_TOOLTIP_GDKP_COST, GL:goldToMoney(Loot.GDKPCost)));
             end
 
-            local receivedString = "Given: yes";
+            local receivedString = L.AWARDED_TOOLTIP_GIVEN;
             if (not Loot.received) then
-                receivedString = "Given: no";
+                receivedString = L.AWARDED_TOOLTIP_NOT_GIVEN;
             end
             tinsert(Details, receivedString);
 
@@ -117,7 +117,7 @@ function AwardedLoot:tooltipLines(itemLink)
                             break;
                         end
 
-                        tinsert(Details, string.format("2nd bid: %sg by %s", SecondHighestBid.bid, GL:disambiguateName(
+                        tinsert(Details, string.format(L.AWARDED_TOOLTIP_SECOND_BID, GL:goldToMoney(SecondHighestBid.bid), GL:disambiguateName(
                             SecondHighestBid.bidder,
                             { colorize = true, }
                         )));
@@ -128,7 +128,7 @@ function AwardedLoot:tooltipLines(itemLink)
             end
 
             local line = string.format("    %s | %s",
-                GL:nameFormat{ name = Loot.awardedTo, colorize = true },
+                GL:nameFormat{ name = Loot.awardedTo, colorize = true, },
                 table.concat(Details, " | ")
             );
             tinsert(Lines, line);
@@ -299,19 +299,19 @@ function AwardedLoot:editWinner(checksum, winner, announce)
 
         local awardMessage = "";
         if (GL.BoostedRolls:enabled() and GL:higherThanZero(AwardEntry.BRCost)) then
-            awardMessage = string.format("%s was awarded to %s for %s points. Congrats!",
+            awardMessage = string.format(L.CHAT.ITEM_AWARDED_BR,
                 AwardEntry.itemLink,
                 winner,
                 AwardEntry.BRCost
             );
         elseif (AwardEntry.GDKPCost and GL:gt(AwardEntry.GDKPCost, 0)) then
-            awardMessage = string.format("%s was awarded to %s for %s. Congrats!",
+            awardMessage = string.format(L.CHAT.ITEM_AWARDED_GDKP,
                 AwardEntry.itemLink,
                 winner,
                 GL:goldToMoney(AwardEntry.GDKPCost)
             );
         else
-            awardMessage = string.format("%s was awarded to %s. Congrats!",
+            awardMessage = string.format(L.CHAT.ITEM_AWARDED,
                 AwardEntry.itemLink,
                 winner
             );
@@ -569,19 +569,19 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, brCost, g
     if (announce) then
         local awardMessage = "";
         if (GL.BoostedRolls:enabled() and GL:higherThanZero(brCost)) then
-            awardMessage = string.format("%s was awarded to %s for %s points. Congrats!",
+            awardMessage = string.format(L.CHAT.ITEM_AWARDED_BR,
                 itemLink,
                 awardedTo,
                     brCost
             );
         elseif (gdkpCost and gdkpCost > 0) then
-            awardMessage = string.format("%s was awarded to %s for %s. Congrats!",
+            awardMessage = string.format(L.CHAT.ITEM_AWARDED_GDKP,
                 itemLink,
                 awardedTo,
                 GL:goldToMoney(gdkpCost)
             );
         else
-            awardMessage = string.format("%s was awarded to %s. Congrats!",
+            awardMessage = string.format(L.CHAT.ITEM_AWARDED,
                 itemLink,
                 awardedTo
             );
@@ -947,7 +947,7 @@ function AwardedLoot:processAwardedLoot(CommMessage)
                 local Notification = ...;
 
                 if (Notification and Notification.Label and Notification.Label.SetText) then
-                    Notification.Label:SetText("You won");
+                    Notification.Label:SetText(L.AWARDED_YOU_WON);
                 end
             end
             local LootAlertSystem = AlertFrame:AddQueuedAlertFrameSubSystem("LootWonAlertFrameTemplate", callback, 6, math.huge);
@@ -1046,5 +1046,3 @@ function AwardedLoot:processEditedLoot(CommMessage)
         Rolls = AwardEntry.Rolls,
     };
 end
-
-GL:debug("AwardedLoot.lua");

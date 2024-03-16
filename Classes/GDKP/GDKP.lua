@@ -1,3 +1,5 @@
+local L = Gargul_L;
+
 ---@type GL
 local _, GL = ...;
 
@@ -26,8 +28,6 @@ end
 
 ---@return table|boolean
 function GDKP:settingsForItemID(itemID)
-    GL:debug("GDKP:settingsForItemID");
-
     itemID = tonumber(itemID);
     if (not itemID) then
         return false;
@@ -62,16 +62,12 @@ end
 
 ---@return void
 function GDKP:resetPerItemSettings()
-    GL:debug("GDKP:resetPerItemSettings");
-
     DB:set("GDKP.SettingsPerItem", {});
 end
 
 ---@param data string
 ---@return void
 function GDKP:importPerItemSettings(data)
-    GL:debug("GDKP:importItemSettings");
-
     if (type(data) ~= "string" or GL:empty(data)) then
         GL:error("Nothing to import!");
         return;
@@ -91,7 +87,7 @@ function GDKP:importPerItemSettings(data)
             first = false;
 
             if (not Columns.ItemID or (not Columns.Minimum and not Columns.Increment)) then
-                GL:error("Missing header, note: it's case-sensitive!");
+                GL:error(L.GDKP_PRICE_IMPORT_MISSING_HEADER);
                 return;
             end
         else -- The first line includes the heading, we don't need that
@@ -101,17 +97,12 @@ function GDKP:importPerItemSettings(data)
                 local increment = tonumber(defaultIncrement);
 
                 if (not itemID or not GL:getItemInfoInstant(itemID)) then
-                    if (itemID) then
-                        GL:error("Unknown item ID: " .. tostring(itemID));
-                        return;
-                    end
-
-                    GL:error("Unknown item ID");
+                    GL:error((L.GDKP_PRICE_IMPORT_UNKNOWN_ITEM):format(tostring(itemID or "")));
                     return;
                 end
 
                 if (not Segments[Columns.Minimum] and not Segments[Columns.Increment]) then
-                    GL:error("Either minimum or increment is required for item ID: " .. tostring(itemID));
+                    GL:error((L.GDKP_PRICE_IMPORT_MIN_OR_INC_REQUIRED):format(tostring(itemID)));
                     return;
                 end
 
@@ -124,12 +115,12 @@ function GDKP:importPerItemSettings(data)
                 end
 
                 if (not minimum) then
-                    GL:error(("Invalid 'Minimum' provided for item ID '%s'"):format(itemID));
+                    GL:error((L.GDKP_PRICE_IMPORT_INVALID_MIN):format(itemID));
                     return;
                 end
 
                 if (not increment) then
-                    GL:error(("Invalid 'Increment' provided for item ID '%s'"):format(itemID));
+                    GL:error((L.GDKP_PRICE_IMPORT_INVALID_INC):format(itemID));
                     return;
                 end
 
@@ -137,7 +128,7 @@ function GDKP:importPerItemSettings(data)
                 minimum = GL:round(minimum, Settings:get("GDKP.precision"));
 
                 if (GL:lt(increment, .0001) or GL:lt(minimum, .0001)) then
-                    GL:error("Increment or minimum can't be lower than .0001!");
+                    GL:error(L.GDKP_PRICE_IMPORT_INC_OR_MIN_TOO_LOW);
                     return;
                 end
 
@@ -153,8 +144,6 @@ function GDKP:importPerItemSettings(data)
     end
 
     if (imported > 0) then
-        GL:success(string.format("Successfully imported data for %s items", tostring(imported)));
+        GL:success(string.format(L.GDKP_PRICE_IMPORT_SUCCESSFUL, tostring(imported)));
     end
 end
-
-GL:debug("GDKP.lua");

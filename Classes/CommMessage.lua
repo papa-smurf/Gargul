@@ -98,8 +98,6 @@ end
 ---@param Message table
 ---@return self
 function CommMessage.newFromReceived(Message)
-    GL:debug("CommMessage:newFromReceived");
-
     local self = setmetatable({}, CommMessage);
 
     self.action = Message.action;
@@ -122,8 +120,6 @@ end
 ---@param packageSentCallback function that gets executed every time (part of) the message is sent
 ---@return self
 function CommMessage:send(broadcastFinishedCallback, packageSentCallback)
-    GL:debug("CommMessage:send");
-
     -- Make sure to mark the message as unreceived if 3 seconds pass without receiving a confirmation
     if (self.onConfirm and self.correspondenceId) then
         local originalBroadcastFinishedCallback = broadcastFinishedCallback;
@@ -203,7 +199,6 @@ function CommMessage:confirm()
     end);
 
     if (not success or not encoded) then
-        GL:error("Something went wrong trying to compress a CommMessage in CommMessage:compress");
         return false;
     end
 
@@ -219,8 +214,6 @@ end
 ---
 ---@return void
 function CommMessage:processResponse()
-    GL:debug("CommMessage:processResponse");
-
     -- Make sure the message exists and actually accepts responses
     if (not self.correspondenceId
         or not CommMessage.Box[self.correspondenceId]
@@ -240,8 +233,6 @@ end
 ---@param Message CommMessage
 ---@return string
 function CommMessage:compress(Message)
-    GL:debug("CommMessage:compress");
-
     Message = Message or self;
 
     local FQN = Message.senderFqn;
@@ -274,7 +265,6 @@ function CommMessage:compress(Message)
     end);
 
     if (not success or not encoded) then
-        GL:error("Something went wrong trying to compress a CommMessage in CommMessage:compress");
         return false;
     end
 
@@ -286,8 +276,6 @@ end
 ---@param encoded string
 ---@return table
 function CommMessage:decompress(encoded)
-    GL:debug("CommMessage:compress");
-
     local success, Payload = pcall(function ()
         local compressed = LibDeflate:DecodeForWoWAddonChannel(encoded);
         local decompressed = LibDeflate:DecompressDeflate(compressed);
@@ -297,7 +285,7 @@ function CommMessage:decompress(encoded)
     end);
 
     if (not success or not Payload) then
-        return GL:warning("Something went wrong while decoding the COMM payload");
+        return;
     end
 
     if (type(Payload) == "string") then
@@ -323,5 +311,3 @@ function CommMessage:decompress(encoded)
         recipient = Payload.r or nil, -- Recipient (in case we route whisper through group)
     };
 end
-
-GL:debug("CommMessage.lua");

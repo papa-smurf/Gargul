@@ -31,22 +31,20 @@ local RollOff = GL.RollOff; ---@type RollOff
 local CommActions = GL.Data.Constants.Comm.Actions;
 local Events = GL.Events; ---@type Events
 
---- Anounce to everyone in the raid that a roll off is starting
+--- Announce to everyone in the raid that a roll off is starting
 ---
 ---@param itemLink string
 ---@param time number
 ---@param note string|nil
 ---@return void
 function RollOff:announceStart(itemLink, time, note)
-    GL:debug("RollOff:announceStart");
-
     time = tonumber(time);
 
     if (type(itemLink) ~= "string"
         or GL:empty(itemLink)
         or not GL:higherThanZero(time)
     ) then
-        GL:warning("Invalid data provided for roll of start!");
+        GL:warning(L.ROLLING_INVALID_START_DATA_WARNING);
         return false;
     end
 
@@ -138,8 +136,7 @@ function RollOff:postStartMessage(itemLink, time, note)
         return true;
     end
 
-    local announceMessage = string.format(
-        "You have %s seconds to roll on %s",
+    local announceMessage = (L.CHAT.ROLLING_START):format(
         time,
         itemLink
     );
@@ -150,11 +147,9 @@ function RollOff:postStartMessage(itemLink, time, note)
     if (type(note) == "string"
         and not GL:empty(note)
     ) then
-        announceMessage = string.format(
-            "You have %s seconds to roll on %s - %s",
+        announceMessage = (L.CHAT.ROLLING_START .. " - " .. note):format(
             time,
-            itemLink,
-            note
+            itemLink
         );
     end
 
@@ -163,7 +158,7 @@ function RollOff:postStartMessage(itemLink, time, note)
         and not GL:empty(Reserves)
     ) then
         Reserves = table.concat(Reserves, ", ");
-        eligiblePlayersMessage = "This item was reserved by: " .. Reserves;
+        eligiblePlayersMessage = (L.CHAT.ROLLING_SOFTRES_INFO):format(Reserves);
 
     -- Check if this item is on someone's TMB wish/prio list, if so: mention the player(s) first in line!
     elseif ((GL.Settings:get("TMB.announceWishlistInfoWhenRolling")
@@ -236,7 +231,7 @@ function RollOff:postStartMessage(itemLink, time, note)
             end
 
             EligiblePlayerNames = table.concat(EligiblePlayerNames, ", ");
-            eligiblePlayersMessage = string.format("The following players have the highest %s prio: %s", source, EligiblePlayerNames);
+            eligiblePlayersMessage = (L.CHAT.ROLLING_TMB_INFO):format(source, EligiblePlayerNames);
         end
     end
 
@@ -264,8 +259,6 @@ end
 ---
 ---@return void
 function RollOff:announceStop()
-    GL:debug("RollOff:announceStop");
-
     GL.CommMessage.new{
         action = CommActions.stopRollOff,
         channel = "GROUP",
@@ -283,8 +276,6 @@ end
 ---
 ---@param CommMessage CommMessage
 function RollOff:start(CommMessage)
-    GL:debug("RollOff:start");
-
     local content = CommMessage.content;
 
     --[[
@@ -292,21 +283,21 @@ function RollOff:start(CommMessage)
         PROVIDE VERY SPECIFIC ERROR MESSAGE IF IT'S NOT
     ]]
     if (not content) then
-        return GL:error("Missing content in RollOff:start");
+        return GL:debug("Missing content in RollOff:start");
     end
 
     if (type(content) ~= "table") then
-        return GL:error("Content is not a table in RollOff:start");
+        return GL:debug("Content is not a table in RollOff:start");
     end
 
     if (not content.time
         or type(content.time) ~= "number"
     ) then
-        return GL:error("No time provided in RollOff:start");
+        return GL:debug("No time provided in RollOff:start");
     end
 
     if (not content.item) then
-        return GL:error("No item provided in RollOff:start");
+        return GL:debug("No item provided in RollOff:start");
     end
 
     --- We have to wait with starting the actual roll off process until
@@ -389,10 +380,7 @@ function RollOff:start(CommMessage)
                     ) then
                         SecondsAnnounced[secondsLeft] = true;
 
-                        GL:sendChatMessage(
-                            string.format("%s seconds to roll", secondsLeft),
-                            "GROUP"
-                        );
+                        GL:sendChatMessage((L.CHAT.ROLLING_TIME_LEFT):format(secondsLeft), "GROUP");
 
                         if (GL.Settings:get("MasterLooting.announceCountdownOnce")) then
                             GL:debug("Cancel RollOff.CountDownTimer");
@@ -435,10 +423,8 @@ end
 ---@param CommMessage string|nil
 ---@return boolean
 function RollOff:stop(CommMessage)
-    GL:debug("RollOff:stop");
-
     if (not RollOff.inProgress) then
-        return GL:warning("Can't stop roll off, no roll off in progress");
+        return GL:warning(L.ROLLING_NO_ROLLOFF_WARNING);
     end
 
     if (CommMessage
@@ -446,9 +432,9 @@ function RollOff:stop(CommMessage)
         and CommMessage.Sender.id ~= self.CurrentRollOff.initiator
     ) then
         if (self.CurrentRollOff.initiator) then
-            GL:warning(CommMessage.Sender.name .. " is not allowed to stop roll off");
+            GL:debug(CommMessage.Sender.name .. " is not allowed to stop roll off");
         else
-            GL:warning(CommMessage.Sender.name .. " is not allowed to stop current roll off: roll off is invalid");
+            GL:debug(CommMessage.Sender.name .. " is not allowed to stop current roll off: roll off is invalid");
         end
 
         return false;
@@ -458,10 +444,7 @@ function RollOff:stop(CommMessage)
     if (self:startedByMe()) then
         -- Announce that the roll has ended
         if (GL.Settings:get("MasterLooting.announceRollEnd", true)) then
-            GL:sendChatMessage(
-                string.format("Stop your rolls!"),
-                "RAID_WARNING"
-            );
+            GL:sendChatMessage(L.CHAT.ROLLING_STOP, "RAID_WARNING");
         end
 
         -- We stop listening for rolls one second after the rolloff ends just in case there is server lag/jitter
@@ -509,8 +492,6 @@ end
 ---@param identicalRollDetected boolean Was there another roll identical to the winning one?
 ---@return void
 function RollOff:award(roller, itemLink, RollBracket, identicalRollDetected)
-    GL:debug("RollOff:award");
-
     identicalRollDetected = GL:toboolean(identicalRollDetected);
     itemLink = itemLink or GL:tableGet(self.CurrentRollOff, "itemLink");
 
@@ -540,7 +521,7 @@ function RollOff:award(roller, itemLink, RollBracket, identicalRollDetected)
 
     local identicalRollDetectedString = "";
     if (identicalRollDetected) then
-        identicalRollDetectedString = "|c00BE3333Warning: another identical roll was found which can point to a tie|r\n\n"
+        identicalRollDetectedString = ("|c00BE3333%s|r"):format(L.ROLLING_IDENTICAL_ROLL_WARNING);
     end
 
     if (GL:nameIsUnique(roller)) then
@@ -569,11 +550,10 @@ function RollOff:award(roller, itemLink, RollBracket, identicalRollDetected)
 
         -- Make sure the initiator has to confirm his choices
         GL.Interface.Dialogs.AwardDialog:open{
-            question = string.format("%sAward %s to |cff%s%s|r?",
+            question = string.format("%s" .. L.ROLLING_AWARD_CONFIRM,
                 identicalRollDetectedString,
                 itemLink,
-                GL:classHexColor(GL.Player:classByName(roller)),
-                roller
+                GL:nameFormat{ name = roller, colorize = true, }
             ),
             OnYes = function ()
                 local OSCheckBox = GL.Interface:get(GL.Interface.Dialogs.AwardDialog, "CheckBox.OffSpec");
@@ -625,16 +605,15 @@ function RollOff:award(roller, itemLink, RollBracket, identicalRollDetected)
         return;
     end
 
-    local description = string.format("The winner's name is not unique, select the player you'd like to award %s to", itemLink);
+    local description = (L.ROLLING_WINNER_NOT_UNIQUE):format(itemLink);
 
     GL.Interface.PlayerSelector:draw(description, roller, function (player)
         -- Make sure the initiator has to confirm his choices
         GL.Interface.Dialogs.AwardDialog:open{
-            question = string.format("%sAward %s to |cff%s%s|r?",
+            question = string.format("%s" .. L.ROLLING_AWARD_CONFIRM,
                 identicalRollDetectedString,
                 itemLink,
-                GL:classHexColor(GL.Player:classByName(player)),
-                player
+                GL:nameFormat{ name = player, colorize = true, }
             ),
             OnYes = function ()
                 local OSCheckBox = GL.Interface:get(GL.Interface.Dialogs.AwardDialog, "CheckBox.OffSpec");
@@ -691,8 +670,6 @@ end
 ---
 ---@return void
 function RollOff:listenForRolls()
-    GL:debug("RollOff:listenForRolls");
-
     -- Make sure the timer to cancel listening for rolls is cancelled
     if (self.StopListeningForRollsTimer) then
         GL.Ace:CancelTimer(self.StopListeningForRollsTimer);
@@ -713,8 +690,6 @@ end
 ---
 ---@return void
 function RollOff:stopListeningForRolls()
-    GL:debug("RollOff:stopListeningForRolls");
-
     if (self.StopListeningForRollsTimer) then
         GL.Ace:CancelTimer(self.StopListeningForRollsTimer);
     end
@@ -728,8 +703,6 @@ end
 ---@param message string
 ---@return void
 function RollOff:processRoll(message)
-    GL:debug("RollOff:processRoll");
-
     -- We only track rolls when a rollof is actually in progress
     if (not RollOff.listeningForRolls) then
         return;
@@ -783,7 +756,7 @@ function RollOff:processRoll(message)
         --- the master looter allows any kind of roll we need to make sure he can tell what range was used
         elseif (not RollType) then
             RollType = {};
-            RollType[1] = string.format("%s-%s", low, high);
+            RollType[1] = ("%s-%s"):format(low, high);
             RollType[4] = 10;
         end
 
@@ -821,8 +794,6 @@ end
 -- Whenever a new roll comes in we need to refresh
 -- the rolls table to make sure it actually shows up
 function RollOff:refreshRollsTable()
-    GL:debug("RollOff:refreshRollsTable");
-
     local RollTableData = {};
     local Rolls = self.CurrentRollOff.Rolls;
     local RollsTable = GL.Interface:get(GL.MasterLooterUI, "Table.Players");
@@ -860,9 +831,9 @@ function RollOff:refreshRollsTable()
 
             if (numberOfReserves > 0) then
                 if (numberOfReserves > 1) then
-                    tinsert(rollNotes, string.format("|c00F48CBASR [%sx]|r", numberOfReserves));
+                    tinsert(rollNotes, ("|c00F48CBA" .. L.ROLLING_ROLL_SR_COUNT .. "|r"):format(numberOfReserves));
                 else
-                    tinsert(rollNotes, "|c00F48CBASR|r");
+                    tinsert(rollNotes, ("|c00F48CBA%s|r"):format(L.SOFTRES_ABBR ));
                 end
             end
         end
@@ -926,14 +897,14 @@ function RollOff:refreshRollsTable()
                         end
                     end
 
-                    tinsert(rollNotes, string.format("|c00FF7C0APrio [%s]|r", TopEntry.prio));
+                    tinsert(rollNotes, string.format("|c00FF7C0A" .. L.ROLLING_ROLL_PRIOLIST .. "|r", TopEntry.prio));
                 else
                     if (sortByTMBWishlist) then
                         rollPriority = 3;
                         rollPriority = rollPriority + TopEntry.prio; -- Make sure rolls of identical list positions "clump" together
                     end
 
-                    tinsert(rollNotes, string.format("|c00FFFFFFWish [%s]|r", TopEntry.prio));
+                    tinsert(rollNotes, string.format("|c00FFFFFF" .. L.ROLLING_ROLL_WISHLIST .. "|r", TopEntry.prio));
                 end
             end
         end
@@ -949,7 +920,7 @@ function RollOff:refreshRollsTable()
         local plusOnes = GL.PlusOnes:getPlusOnes(playerName);
 
         if (GL:higherThanZero(plusOnes)) then
-            plusOnes = "+" .. plusOnes;
+            plusOnes = L.PLUSONES_PLUS_SIGN .. plusOnes;
         end
 
         local Row = {
@@ -989,10 +960,6 @@ end
 -- Reset the last rolloff. This happens when the master looter
 -- awards an item or when he clicks the "clear" button in the UI
 function RollOff:reset()
-    GL:debug("RollOff:reset");
-
     -- All we need to do is reset the itemLink and let self:start() take care of the rest
     self.CurrentRollOff.itemLink = "";
 end
-
-GL:debug("RollOff.lua");

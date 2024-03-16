@@ -117,7 +117,7 @@ function FillFromInventory:build()
     local IncludeAwarded = Interface:createCheckbox{
         Parent = Window,
         checked = Settings:get("GDKP.MultiAuction.includeAwarded"),
-        label = "Include previously awarded items",
+        label = L.INCLUDE_AWARDED,
         callback = function (_, value)
             Settings:set("GDKP.MultiAuction.includeAwarded", value);
         end,
@@ -129,7 +129,7 @@ function FillFromInventory:build()
     local IncludeMaterials = Interface:createCheckbox{
         Parent = Window,
         checked = Settings:get("GDKP.MultiAuction.includeMaterials"),
-        label = "Include materials (like Abyss Crystals)",
+        label = L.INCLUDE_MATERIALS,
         callback = function (_, value)
             Settings:set("GDKP.MultiAuction.includeMaterials", value);
         end,

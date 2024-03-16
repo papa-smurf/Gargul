@@ -1,3 +1,5 @@
+local L = Gargul_L;
+
 ---@type GL
 local _, GL = ...;
 
@@ -11,7 +13,6 @@ GL.DroppedLoot = {
     ButtonsHooked = {},
     allButtonsHooked = false,
     LootButtonItemLinkCache = {},
-    LootChangedTimer = nil,
     lootWindowIsOpened = false,
 };
 
@@ -23,8 +24,6 @@ local LCG = LibStub("LibCustomGlowGargul-1.0");
 
 ---@return boolean
 function DroppedLoot:_init()
-    GL:debug("DroppedLoot:_init");
-
     -- No need to initialize this class twice
     if (self._initialized) then
         return false;
@@ -73,8 +72,6 @@ end
 ---
 ---@return void
 function DroppedLoot:lootReady()
-    GL:debug("DroppedLoot:lootReady");
-
     self.lootWindowIsOpened = true;
 
     self:lootChanged();
@@ -82,23 +79,15 @@ function DroppedLoot:lootReady()
 
     -- Periodically check if the loot changed because the internal WoW events are not
     -- comprehensive enough to detect things like the player moving to the next page of items.
-    if (not self.LootChangedTimer) then
-        GL:debug("Schedule new DroppedLoot.LootChangedTimer");
-        self.LootChangedTimer = GL.Ace:ScheduleRepeatingTimer(function ()
-            GL:debug("Run DroppedLoot.LootChangedTimer");
-            if (self:lootChanged()) then
-                Events:fire("GL.LOOT_CHANGED");
-            end
+    GL:interval(.1, "DroppedLootLootChanged", function ()
+        if (self:lootChanged()) then
+            Events:fire("GL.LOOT_CHANGED");
+        end
 
-            if (not self.lootWindowIsOpened
-                and self.LootChangedTimer
-            ) then
-                GL:debug("Cancel DroppedLoot.LootChangedTimer");
-                GL.Ace:CancelTimer(self.LootChangedTimer);
-                self.LootChangedTimer = nil;
-            end
-        end, .1);
-    end
+        if (not self.lootWindowIsOpened) then
+            GL:cancelTimer("DroppedLootLootChanged");
+        end
+    end);
 
     -- Only announce loot in chat if the setting is enabled
     if (GL.User.isMasterLooter
@@ -110,11 +99,11 @@ function DroppedLoot:lootReady()
     if (GL.User.isMasterLooter
         and GL.Settings:get("ShortcutKeys.showLegend", true)
     ) then
-        GL.Ace:ScheduleTimer(function ()
+        GL:after(1, "DroppedLootShowLegend", function ()
             if (self.lootWindowIsOpened) then
                 GL.Interface.ShortcutKeysLegend:draw();
             end
-        end, 1);
+        end);
     end
 
     -- Let the rest of the application know we're done announcing the items
@@ -122,9 +111,11 @@ function DroppedLoot:lootReady()
 
     -- We need to delay the hooking of click events because some add-ons
     -- are slow when it comes to adding their custom buttons (looking at you XLoot)
-    GL.Ace:ScheduleTimer(function ()
-        self:hookClickEvents();
-    end, .4);
+    GL:after(.4, "DroppedLootHookEvents", function ()
+        if (self.lootWindowIsOpened) then
+            self:hookClickEvents();
+        end
+    end);
 end
 
 -- Check whether the loot in the loot window changed in any way e.g:
@@ -200,8 +191,6 @@ end
 -- Only 4 buttons will be used regardless of number of drops
 -- Alt click opens the roll window, alt + shift opens the auctioneer window
 function DroppedLoot:hookClickEvents()
-    GL:debug("DroppedLoot:hookClickEvents");
-
     -- The first loot button should always exist,
     -- that way we can determine the button provider for all future buttons
     local buttonProvider = (function ()
@@ -268,8 +257,6 @@ end
 
 -- Announce the loot that dropped in the party or raid chat
 function DroppedLoot:announce(Modifiers)
-    GL:debug("DroppedLoot:announce");
-
     Modifiers = Modifiers or {};
     local Functions = Modifiers.Functions or {
         GetNumLootItems = GetNumLootItems,
@@ -365,7 +352,7 @@ function DroppedLoot:announce(Modifiers)
                 and GL.Settings:get("SoftRes.announceInfoInChat")
             ) then
                 GL:sendChatMessage(
-                    itemLink .. " (This item is hard-reserved!)",
+                    (L.CHAT.SOFTRES_HARDRESERVED_NOTICE):format(itemLink),
                     channel
                 );
             else
@@ -383,7 +370,7 @@ function DroppedLoot:announce(Modifiers)
             -- * This data is only available if the user has the announce SoftRes setting enabled
             if (not GL:empty(ActiveSoftResDetails)) then
                 GL:sendChatMessage(
-                    "Reserved by: " .. table.concat(ActiveSoftResDetails, ", "),
+                    (L.CHAT.SOFTRES_DETAILS):format(table.concat(ActiveSoftResDetails, ", ")),
                     "GROUP"
                 );
             end
@@ -428,7 +415,7 @@ function DroppedLoot:announce(Modifiers)
                 end
 
                 GL:sendChatMessage(
-                    TMB:source() .. " Priority: " .. entryString,
+                    (L.CHAT.TMB_PRIORITY_DETAILS):format(TMB:source(), entryString),
                     "GROUP"
                 );
             end
@@ -463,7 +450,7 @@ function DroppedLoot:announce(Modifiers)
                 end
 
                 GL:sendChatMessage(
-                    "TMB Wishlist: " .. entryString,
+                    (L.CHAT.TMB_WISHLIST_DETAILS):format(entryString),
                     "GROUP"
                 );
             end
