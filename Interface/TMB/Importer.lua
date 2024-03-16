@@ -14,8 +14,6 @@ GL:tableSet(GL, "Interface.TMB.Importer", {
 local Importer = GL.Interface.TMB.Importer;
 
 function Importer:draw(source)
-    GL:debug("Importer:draw");
-
     if (self.isVisible) then
         return;
     end
@@ -47,7 +45,7 @@ function Importer:draw(source)
         local Description = AceGUI:Create("Label");
         Description:SetFontObject(_G["GameFontNormal"]);
         Description:SetFullWidth(true);
-        Description:SetText("Export your DFT data as per the sheet's instructions. Afterwards paste the contents as-is in the box below and click 'Import'. That's it!");
+        Description:SetText(L.TMB_IMPORT_DFT_INFO);
         Window:AddChild(Description);
     elseif (source == "cpr") then
         Window:SetHeight(480);
@@ -56,7 +54,7 @@ function Importer:draw(source)
         local Description = AceGUI:Create("Label");
         Description:SetFontObject(_G["GameFontNormal"]);
         Description:SetFullWidth(true);
-        Description:SetText("On your classicpr.io run click on the 'Gargul Export' button and copy the contents. Afterwards paste the contents as-is in the box below and click 'Import'. That's it!");
+        Description:SetText(L.TMB_IMPORT_CPO_INFO);
         Window:AddChild(Description);
     else
         Window:SetHeight(520);
@@ -68,7 +66,7 @@ function Importer:draw(source)
         Window:AddChild(VerticalSpacer);
 
         local MoreInfoLabel = GL.AceGUI:Create("Label");
-        MoreInfoLabel:SetText(string.format("|c00FFF569How to use Gargul with TMB|r"));
+        MoreInfoLabel:SetText(("|c00FFF569%s|r"):format(L.TMB_IMPORT_TMB_GARGUL_INFO));
         MoreInfoLabel:SetFontObject(_G["GameFontGreenLarge"]);
         MoreInfoLabel:SetFullWidth(true);
         MoreInfoLabel:SetJustifyH("MIDDLE");
@@ -78,7 +76,7 @@ function Importer:draw(source)
         DiscordURL:DisableButton(true);
         DiscordURL:SetHeight(20);
         DiscordURL:SetFullWidth(true);
-        DiscordURL:SetText("https://github.com/papa-smurf/Gargul/wiki/Gargul-and-ThatsMyBIS");
+        DiscordURL:SetText(L.TMB_IMPORT_TMB_GARGUL_INFO_URL);
         Window:AddChild(DiscordURL);
 
         VerticalSpacer = GL.AceGUI:Create("SimpleGroup");
@@ -91,7 +89,7 @@ function Importer:draw(source)
         local Description = AceGUI:Create("Label");
         Description:SetFontObject(_G["GameFontNormal"]);
         Description:SetFullWidth(true);
-        Description:SetText("Paste your TMB export contents as-is in the box below and click 'Import'");
+        Description:SetText(L.TMB_IMPORT_TMB_INFO);
         Window:AddChild(Description);
     end
 
@@ -137,8 +135,6 @@ end
 
 -- Close the import frame and clean up after ourselves
 function Importer:close()
-    GL:debug("Importer:close");
-
     local Window = GL.Interface:get(self, "Window");
 
     if (not self.isVisible
@@ -154,5 +150,3 @@ function Importer:close()
     GL.Interface:release(Window);
     self.isVisible = false;
 end
-
-GL:debug("Interfaces/TMB/Importer.lua");

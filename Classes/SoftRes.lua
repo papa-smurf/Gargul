@@ -780,7 +780,7 @@ function SoftRes:tooltipLines(itemLink)
 
         -- User reserved the same item multiple times
         if (Entry.reservations > 1) then
-            entryString = (L.SOFTRES_TOOLTIP_MULTIPLE_RESERVES):format(entryString, Entry.reservations);
+            entryString = (L.SOFTRES_MULTIPLE_RESERVES):format(entryString, Entry.reservations);
         end
 
         -- Add the actual soft reserves to the tooltip
@@ -919,7 +919,7 @@ function SoftRes:import(data, openOverview)
             )
         ) then
             GL:sendChatMessage(
-                string.format(L.CHAT.SOFTRES_DATA_IMPORTED),
+                L.CHAT.SOFTRES_DATA_IMPORTED,
                 "GROUP"
             );
         end

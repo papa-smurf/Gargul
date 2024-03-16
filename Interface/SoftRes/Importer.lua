@@ -21,8 +21,6 @@ GL:tableSet(GL, "Interface.SoftRes.Importer", {
 local Importer = GL.Interface.SoftRes.Importer;
 
 function Importer:draw()
-    GL:debug("Importer:draw");
-
     if (self.isVisible) then
         return;
     end
@@ -52,7 +50,7 @@ function Importer:draw()
     local Description = AceGUI:Create("Label");
     Description:SetFontObject(_G["GameFontNormal"]);
     Description:SetFullWidth(true);
-    Description:SetText("In order to get started you first need to create a raid on softres.it. Afterwards click on 'Addon Export', select 'Gargul', copy the data and paste it in the form below.");
+    Description:SetText(L.SOFTRES_IMPORT_INFO);
     Window:AddChild(Description);
 
     -- Large edit box
@@ -96,8 +94,6 @@ end
 
 -- Close the import frame and clean up after ourselves
 function Importer:close()
-    GL:debug("Importer:close");
-
     local Window = GL.Interface:get(self, "Window");
 
     if (not self.isVisible
@@ -113,5 +109,3 @@ function Importer:close()
     GL.Interface:release(Window);
     self.isVisible = false;
 end
-
-GL:debug("Interfaces/SoftRes/Importer.lua");

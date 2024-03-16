@@ -1,3 +1,5 @@
+local L = Gargul_L;
+
 ---@type GL
 local _, GL = ...;
 
@@ -60,24 +62,24 @@ local SHORTCUT_ORDER = {
 
 local EXPLANATIONS = {
     DISABLED = "--",
-    GARGUL = "Open Gargul",
-    SOFTRES = "Softres",
-    GDKP = "GDKP",
-    MULTIAUCTION = "Multiauction",
-    GDKP_LEDGER = "GDKP Ledger",
-    GDKP_CUTS = "GDKP Cuts",
-    IMPORT = "Import data",
-    EXPORT = "Export data",
-    AWARDHISTORY = "Awarded loot history",
-    PLUS_ONE = "+1",
-    BOOSTED_ROLLS = "Boosted rolls",
+    GARGUL = L.MINIMAP_BUTTON_GARGUL,
+    SOFTRES = L.SOFTRES,
+    GDKP = L.GDKP,
+    MULTIAUCTION = L.MINIMAP_BUTTON_MULTIAUCTION,
+    GDKP_LEDGER = L.MINIMAP_BUTTON_LEDGER,
+    GDKP_CUTS = L.MINIMAP_BUTTON_CUTS,
+    IMPORT = L.MINIMAP_BUTTON_IMPORT,
+    EXPORT = L.MINIMAP_BUTTON_EXPORT,
+    AWARDHISTORY = L.MINIMAP_BUTTON_AWARDED,
+    PLUS_ONE = L.PLUS1,
+    BOOSTED_ROLLS = L.BOOSTED_ROLLS,
 };
 
 ---@return void
 function MinimapButton:_init()
     local GLDataBroker = LibDataBroker:NewDataObject("Gargul", {
         type = "data source",
-        text = "Gargul",
+        text = L.GARGUL,
         icon = "Interface/AddOns/Gargul/Assets/Buttons/minimap",
         OnClick = function(_, mouseButtonPressed)
             local ButtonActions = GL.Settings:get("MinimapButton.Actions");
@@ -87,7 +89,7 @@ function MinimapButton:_init()
         OnTooltipShow = function(tooltip)
             local ButtonActions = GL.Settings:get("MinimapButton.Actions");
 
-            tooltip:AddLine(string.format("|cff%sGargul v%s|r", GL.Data.Constants.addonHexColor, GL.version));
+            tooltip:AddLine(("|cff%s%s %s%s|r"):format(GL.Data.Constants.addonHexColor, L.GARGUL, L.VERSION_ABBR, GL.version));
 
             for _, shortcut in pairs(SHORTCUT_ORDER) do
                 (function()
@@ -96,12 +98,12 @@ function MinimapButton:_init()
                         return;
                     end
 
-                    tooltip:AddLine(("|cffffffff%s:|r %s"):format(shortcut, EXPLANATIONS[action]));
+                    tooltip:AddLine(("|c00FFFFFF%s:|r %s"):format(shortcut, EXPLANATIONS[action]));
                 end)();
             end
 
             tooltip:AddLine(" ");
-            tooltip:AddLine("|cffffffffChange settings in|r /gl minimap");
+            tooltip:AddLine(("|c00FFFFFF%s"):format(L.MINIMAP_BUTTON_SETTING_INFO));
         end,
     });
 

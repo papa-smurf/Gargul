@@ -1,3 +1,5 @@
+local L;
+
 -- arg1 is the name of the addon, arg2 is the addon namespace
 ---@class Bootstrapper
 local appName, GL = ...;
@@ -88,6 +90,7 @@ function GL:_init()
     end
 
     -- Initialize classes
+    L = Gargul_L;
     self.Events:_init(self.EventFrame);
     self.DB:_init();
     self.Version:_init();
@@ -101,8 +104,7 @@ function GL:_init()
 
     -- Show a welcome message
     if (self.Settings:get("welcomeMessage")) then
-        print(string.format(
-            "|cff%sGargul v%s|r by Zhorax@Firemaw. Type |cff%s/gl|r or |cff%s/gargul|r to get started!",
+        print((L.HELLO):format(
             self.Data.Constants.addonHexColor,
             self.version,
             self.Data.Constants.addonHexColor,
@@ -191,8 +193,7 @@ function GL:announceConflictingAddons()
         return;
     end
 
-    GL:warning((
-        "You have one or more addons installed that can potentially cause Gargul to misfunction: %s"):format(
+    GL:warning((L.LOOTMASTER_BAD_ADDONS):format(
         table.concat(ConflictingAddons, ", ")
     ));
 end

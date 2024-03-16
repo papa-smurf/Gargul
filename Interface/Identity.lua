@@ -1,6 +1,7 @@
+local L = Gargul_L;
+
 ---@type GL
 local _, GL = ...;
-local L = Gargul_L;
 local LCG = LibStub("LibCustomGlowGargul-1.0");
 
 ---@type Interface
@@ -15,9 +16,9 @@ GL.Interface.Identity = {
     --[[ ================== DEFAULT ================== ]]
     [DEFAULT] = {
         id = DEFAULT,
-        url = "https://discord.gg/gX3QUWE5cq",
-        urlInfo = "Visit the URL below to learn more about personalizing Gargul GDKPs",
-        tooltip = "Your logo here? Click for more info!",
+        url = L.DISCORD_URL,
+        urlInfo = L.IDENTITY_INFO,
+        tooltip = L.IDENTITY_TOOLTIP,
         cutMailSubject = L.CUT_MAIL_SUBJECT,
 
         ---@return Frame

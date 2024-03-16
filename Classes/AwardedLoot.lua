@@ -299,19 +299,19 @@ function AwardedLoot:editWinner(checksum, winner, announce)
 
         local awardMessage = "";
         if (GL.BoostedRolls:enabled() and GL:higherThanZero(AwardEntry.BRCost)) then
-            awardMessage = string.format(L.CHAT.ITEM_AWARDED_BR,
+            awardMessage = (L.CHAT.ITEM_AWARDED_BR):format(
                 AwardEntry.itemLink,
                 winner,
                 AwardEntry.BRCost
             );
         elseif (AwardEntry.GDKPCost and GL:gt(AwardEntry.GDKPCost, 0)) then
-            awardMessage = string.format(L.CHAT.ITEM_AWARDED_GDKP,
+            awardMessage = (L.CHAT.ITEM_AWARDED_GDKP):format(
                 AwardEntry.itemLink,
                 winner,
                 GL:goldToMoney(AwardEntry.GDKPCost)
             );
         else
-            awardMessage = string.format(L.CHAT.ITEM_AWARDED,
+            awardMessage = (L.CHAT.ITEM_AWARDED):format(
                 AwardEntry.itemLink,
                 winner
             );

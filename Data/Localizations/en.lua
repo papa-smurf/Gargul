@@ -13,6 +13,7 @@ L.COPPER_INDICATOR = "c";
 L.GDKP_CUTS_ADJUST_G = "adjust [g]";
 L.GDKP_CUTS_ADJUST_P = "adjust [%]";
 
+L.HELLO = "|cff%sGargul v%s|r by Zhorax@Firemaw. Type |cff%s/gl|r or |cff%s/gargul|r to get started!";
 L.ALL_SETTINGS = "All Settings";
 L.ANTISNIPE = "Anti Snipe";
 L.ANTISNIPE_EXPLANATION = {
@@ -44,7 +45,6 @@ L.BROADCAST_INC_HIDDEN = "Include hidden items";
 L.BROADCAST_INC_TIME_LEFT = "Include time left";
 L.BROADCAST_NO_DATA = "There is nothing to broadcast";
 L.BROADCAST_NUMBER_OF_ITEMS = "Number of items";
-L.BROADCAST_PREFIX = "I have the following items left to trade";
 L.BROADCAST_TARGET_PLAYER = "Target player (whisper only)";
 L.BROADCAST_TARGET_REQUIRED = "Whisper requires a target player";
 L.BROADCAST_TRADE_TIME_LEFT = "Max trade time left (in minutes)";
@@ -216,10 +216,6 @@ L.VERSION_CHECK_SUMMARY_OFFLINE = "Offline:";
 L.VERSION_CHECK_BUTTON_REPORT = "Report";
 L.VERSION_CHECK_BUTTON_REPORT_TOOLTIP = "Report outdated results in group chat";
 
-L.VERSION_CHECK_CHAT_MISSING = "Gargul missing for:";
-L.VERSION_CHECK_CHAT_OUTDATED = "Gargul outdated for:";
-L.VERSION_CHECK_CHAT_OFFLINE = "The following players were offline:";
-
 --[[ GLOBAL ]]
 L.DFT = "DFT";
 L.LEFT_SYMBOL = "<";
@@ -347,8 +343,6 @@ Here is an example line:
 
 Foobar,240
 ]];
-
-
 L.PLUSONES_WHISPER_PREFIXES = "!plusone|!po|!+1";
 L.PLUSONES_CLEAR_CONFIRM = "Are you sure you want to clear all plus one data?";
 L.PLUSONES_BROADCAST_CONFIRM = "Are you sure you want to broadcast your plus one data to everyone in your party/raid?";
@@ -376,6 +370,17 @@ L.SOFTRES_CLEAR_CONFIRM = "Are you sure you want to clear all existing soft-rese
 L.SOFTRES_BROADCAST_CONFIRM = "Are you sure you want to broadcast your softres data to everyone in your party/raid?";
 L.SOFTRES_WHISPER_PREFIXES = "!sr|!softres|!softreserve";
 L.SOFTRES_PLAYER_RESERVE_COUNT = "%s (%sx)";
+L.SOFTRES_OVERVIEW_HARDRESERVES_LABEL = "Click here to see hard-reserve info";
+L.SOFTRES_OVERVIEW_NO_HARDRESERVE_INFO = "No hard-reserve info available";
+L.SOFTRES_OVERVIEW_NO_HARDRESERVES = "No items are hard-reserved";
+L.SOFTRES_OVERVIEW_POST_URL_BUTTON = "Post SR URL";
+L.SOFTRES_OVERVIEW_POST_MISSING_BUTTON = "Post missing SRs";
+L.SOFTRES_FEATURE_MISSING = "Hard-reserve information is not available because the soft-reserves\nprovided were not generated using the 'Gargul Export' button on softres.it";
+L.SOFTRES_PLAYER_DIDNT_RESERVE = "This player did not reserve anything!";
+L.SOFTRES_MULTIPLE_RESERVES = "%s (%sx)";
+
+L.SOFTRES_IMPORT_INFO = "In order to get started you first need to create a raid on softres.it. Afterwards click on 'Addon Export', select 'Gargul', copy the data and paste it in the form below.";
+L.SOFTRES_IMPORT_DETAILS = "Imported on |c00A79EFF%s|r at |c00A79EFF%s|r";
 L.SOFTRES_IMPORT_INVALID = "Invalid soft-reserve data provided";
 L.SOFTRES_IMPORT_INVALID_INSTRUCTIONS = "Invalid data provided. Make sure to click the 'Gargul Export' button on softres.it and paste the full contents here";
 L.SOFTRES_IMPORT_SUCCESSFUL = "Soft-reserves imported successfully";
@@ -388,7 +393,6 @@ L.SOFTRES_TOOLTIP_HARD_RESERVED = "This item is hard-reserved";
 L.SOFTRES_TOOLTIP_HARD_RESERVED_FOR = "For: %s";
 L.SOFTRES_TOOLTIP_HARD_RESERVED_NOTE = "|c00CC2743 Note:|r %s";
 L.SOFTRES_TOOLTIP_RESERVED_BY = "Reserved by";
-L.SOFTRES_TOOLTIP_MULTIPLE_RESERVES = "%s (%sx)";
 L.SOFTRES_LOOTRESERVE_CONNECTION_WARNING = "Failed to connect to LootReserve, contact support (include message below)";
 L.SOFTRES_PROCESS_INCOMING = "Attempting to process incoming SoftRes data from %s";
 L.SOFTRES_BROADCAST_PROCESS_FAILED = "Couldn't process SoftRes data received from %s";
@@ -415,6 +419,11 @@ L.AWARD_DISENCHANT_BR_CONFIRMATION = "Are you sure you want to disenchant %s? %s
 --[[ THATSMYBIS /gl tmb ]]
 L.TMB_CLEAR_CONFIRM = "Are you sure you want to clear all plus one data?";
 L.TMB_BROADCAST_CONFIRM = "Are you sure you want to broadcast your TMB data to everyone in your party/raid? NB: EVERYONE can see your TMB data regardless of their permissions on the TMB website!";
+L.TMB_IMPORT_DFT_INFO = "Export your DFT data as per the sheet's instructions. Afterwards paste the contents as-is in the box below and click 'Import'. That's it!";
+L.TMB_IMPORT_CPO_INFO = "On your classicpr.io run click on the 'Gargul Export' button and copy the contents. Afterwards paste the contents as-is in the box below and click 'Import'. That's it!";
+L.TMB_IMPORT_TMB_INFO = "Paste your TMB export contents as-is in the box below and click 'Import'";
+L.TMB_IMPORT_TMB_GARGUL_INFO = "How to use Gargul with TMB";
+L.TMB_IMPORT_TMB_GARGUL_INFO_URL = "https://github.com/papa-smurf/Gargul/wiki/Gargul-and-ThatsMyBIS";
 L.TMB_IMPORT_INVALID_INSTRUCTIONS = "Invalid TMB data provided, make sure to click the 'Download' button in the Gargul section and paste the contents here as-is!";
 L.TMB_IMPORT_INVALID_UNKNOWN_INSTRUCTIONS = "Invalid TMB or DFT data provided, make sure to paste the export contents here as-is!";
 L.TMB_IMPORT_INVALID_CSV = "Invalid CSV provided, the format is: 6948,player1,player2";
@@ -423,8 +432,8 @@ L.TMB_IMPORT_PLAYER_NO_DATA = "The following players have no %s entries:"; -- %s
 L.TMB_TOOLTIP_PRIO_HEADER = "%s Prio List"; -- %s can be TMB/DFT/CPR
 L.TMB_TOOLTIP_WISHLIST_HEADER = "TMB Wish List";
 L.TMB_TOOLTIP_OFFSPEC_INDICATION = " (" .. L.OFFSPEC_ABBR .. ")";
-L.TMB_TOOLTIP_TIER = "|cFFFFFFFF    Tier:|r %s";
-L.TMB_TOOLTIP_NOTE = "|cFFFFFFFF    Note:|r |cFFFFF569%s|r";
+L.TMB_TOOLTIP_TIER = "|c00FFFFFF    Tier:|r %s";
+L.TMB_TOOLTIP_NOTE = "|c00FFFFFF    Note:|r |cFFFFF569%s|r";
 L.TMB_NO_BROADCAST_TARGETS = "There's no one in your group to broadcast to";
 L.TMB_BROADCAST_PROCESS_START = "Attempting to process incoming TMB data from %s";
 L.TMB_SYNCED = "TMB data synced";
@@ -488,6 +497,8 @@ outside of the raid or trades the gold from an alt / mail etc!
 
 ]];
 L.GDKP_SESSION_EDIT_TITLE = "Editing %s";
+L.GDKP_EXPORT_DEFAULT_HEADER = "Item,Player,Gold,Wowheadlink";
+L.GDKP_EXPORT_DEFAULT_FORMAT = "@ITEM,@WINNER,@GOLD,@WOWHEAD";
 L.GDKP_EXPORT_AUCTIONS_CUSTOM = "Custom (create your own format)";
 L.GDKP_EXPORT_AUCTIONS_JSON = "Detailed (JSON)";
 L.GDKP_EXPORT_AUCTIONS_SHARE = "Share (can be imported by other players)";
@@ -763,6 +774,8 @@ L.GDKP_MUTATOR_FLAT_RATE_NUMBER_WARNING = "The flat rate needs to be a number";
 L.GDKP_MUTATOR_UNKNOWN = "Unknown mutator: %s";
 L.GDKP_MAIL_ALL = "Mail All";
 
+L.GDKP_EXPORT_CUTS_DEFAULT_HEADER = "Player,Cut";
+L.GDKP_EXPORT_CUTS_DEFAULT_FORMAT = "@PLAYER,@CUT";
 L.GDKP_EXPORT_CUTS_CUSTOM_FORMAT = "Custom (create your own format)";
 L.AVAILABLE_PLACEHOLDER_VALUES = "Available values:";
 L.GDKP_EXPORT_CUTS_FORMAT_RECEIVED_INFO = "total gold received from the player";
@@ -813,13 +826,27 @@ Whenever you clear and re-open this window, your last fill settings will be used
 
 L.GDKP_UNKNOWN_ITEM = "Unknown itemID in Auction:create: %s";
 
-L.LOOTMASTER_FLIGHT_ATTENDANT = "I'm using Gargul to distribute loot. It makes rolling easier so be sure to try it out!";
+--[[ LOOT MASTER ]]
+L.LOOTMASTER_DEFAULT_NOTE = "/roll for MS or /roll 99 for OS";
+L.LOOTMASTER_BAD_ADDONS = "You have one or more addons installed that can potentially cause Gargul to misfunction: %s";
 L.LOOTMASTER_NOTICE_LABEL = "You were given the role of Master Looter";
 L.LOOTMASTER_OPEN_LABEL = "Open this window automatically";
 L.LOOTMASTER_CLEAR_SR_BUTTON = "Clear SoftRes";
 L.LOOTMASTER_IMPORT_SR_BUTTON = "Import SoftRes";
 L.LOOTMASTER_CLEAR_TMB_BUTTON = "Clear TMB";
 L.LOOTMASTER_IMPORT_TMB_BUTTON = "Import TMB";
+
+--[[ TRADE TIME ]]
+L.TRADETIME_ROLL_HOWTO = "%s to roll out loot!";
+L.TRADETIME_AWARD_HOWTO = "%s to award loot!";
+L.TRADETIME_SETTINGS_HIDE_AWARDED = "Hide all awarded items";
+L.TRADETIME_SETTINGS_HIDE_SELF_AWARDED = "Hide items awarded to self";
+L.TRADETIME_SETTINGS_HIDE_DISENCHANTED = "Hide disenchanted items";
+
+--[[ BONUS FEATURES ]]
+L.BONUS_AUTO_INVITE = "1. Auto invite/sort groups from raid signup! Click below or use |c00A79EFF/gl gr|r";
+L.BONUS_BOOSTED_ROLLS = "2. Reward players for being regulars or going the extra mile! Click below or use |c00A79EFF/gl br|r";
+L.BONUS_PLUSONES = "3. Gargul includes a plus one tracking system! Click below or use |c00A79EFF/gl po|r";
 
 --[[ RAID GROUPS /gl gr ]]
 L.RAIDGROUPS_EXPLANATION_LABEL_TOP = "In the large edit box below you can provide a roster and: invite everyone, check who's missing, apply groups and assign the tanks.\n\nYou can provide a |c00FFF569Wowhead raid composition|r link:";
@@ -879,20 +906,67 @@ L.ROLLING_ROLL_SR_COUNT = L.SOFTRES_ABBR .. " [%sx]";
 L.ROLLING_ROLL_PRIOLIST = "Prio [%s]";
 L.ROLLING_ROLL_WISHLIST = "Wish [%s]";
 
---[[ TradeWindow / Trade ]]
+--[[ TRADE WINDOW / TRADE ]]
 L.TRADE_ANNOUNCE = "Announce Trade";
 L.TRADE_ANNOUNCE_INFO = "Announce trade details to group or in /say when not in a group";
 
 L.SETTINGS_RESET_UI = "Reset Gargul UI";
 
+--[[ CHANGELOG ]]
+L.CHANGELOG_GETTING_STARTED = "Gargul makes handing out loot super easy, click the button below to get started!";
+L.CHANGELOG_OPEN_GARGUL = "Open Gargul";
+L.CHANGELOG_CONTRIBUTE = "Get support or share ideas on our Discord";
+L.CHANGELOG_ENABLE_LABEL = "Enable changelog";
+
+--[[ GROUP VERSION CHECK ]]
+L.GROUP_VERSION_CHECK_NOTIFICATION_DESCRIPTION = "Download on CurseForge";
+L.GROUP_VERSION_CHECK_NOTIFICATION_URL = "https://addons.wago.io/addons/gargul/versions?stability=stable";
+
+--[[ IDENTITY ]]
+L.IDENTITY_INFO = "Visit the URL below to learn more about personalizing Gargul GDKPs";
+L.IDENTITY_TOOLTIP = "Your logo here? Click for more info!";
+
+--[[ IDENTITY ]]
+L.MINIMAP_BUTTON_GARGUL = "Open Gargul";
+L.MINIMAP_BUTTON_MULTIAUCTION = "Multiauction";
+L.MINIMAP_BUTTON_LEDGER = "GDKP Ledger";
+L.MINIMAP_BUTTON_CUTS = "GDKP Cuts";
+L.MINIMAP_BUTTON_IMPORT = "Import data";
+L.MINIMAP_BUTTON_EXPORT = "Export data";
+L.MINIMAP_BUTTON_AWARDED = "Awarded loot history";
+L.MINIMAP_BUTTON_SETTING_INFO = "Change settings in|r /gl minimap";
+
+--[[ ASSIGN WITH GARGUL ]]
+L.ASSIGN_GARGUL_INFO = "Don't forget to use Gargul instead\nif you wish to export loot later\n\n\n-- Right-click to disable this window --";
+
+--[[ SHORTCUT KEYS ]]
+L.KEYS_INFO = [[
+Gargul Item Hotkeys
+
+Roll out: |c00A79EFF%s|r
+Award: |c00A79EFF%s|r
+Disenchant: |c00A79EFF%s|r
+
+
+-- Right-click to disable this window --
+]];
+
 --[[ CHAT MESSAGES ]]
 L.CHAT = {
     PASS = "Pass",
+    FLIGHT_ATTENDANT = "I'm using Gargul to distribute loot. It makes rolling easier so be sure to try it out!",
 
+    --[[ VERSION CHECK ]]
+    VERSION_CHECK_MISSING = "Gargul missing for:",
+    VERSION_CHECK_OUTDATED = "Gargul outdated for:",
+    VERSION_CHECK_OFFLINE = "The following players were offline:",
+
+    --[[ ITEM AWARDED ]]
     ITEM_AWARDED = "%s was awarded to %s. Congrats!",
     ITEM_AWARDED_BR = "%s was awarded to %s for %s points. Congrats!",
     ITEM_AWARDED_GDKP = "%s was awarded to %s for %s. Congrats!",
 
+    --[[ TRADE DETAILS ]]
     GOLD_TRADE_GIVEN = "I gave %s to %s",
     GOLD_TRADE_GIVEN_DELETED = "I deleted a gold trade in which I gave %s to %s",
     GOLD_TRADE_GIVEN_RESTORED = "I restored a gold trade in which I gave %s to %s",
@@ -900,13 +974,16 @@ L.CHAT = {
     GOLD_TRADE_RECEIVED_DELETED = "I deleted a gold trade in which I received %s from %s",
     GOLD_TRADE_RECEIVED_RESTORED = "I restored a gold trade in which I received %s from %s",
 
+    --[[ TRADE TIME ]]
+    TRADETIME_BROADCAST_PREFIX = "I have the following items left to trade",
+
     --[[ BOOSTED ROLLS ]]
     BOOSTED_ROLLS_MY_BALANCE_REPLY = "Your %s roll is /rnd %d-%d%s",
     BOOSTED_ROLLS_OTHER_BALANCE_REPLY = "Player %s's %s roll is /rnd %d-%d%s",
     BOOSTED_ROLLS_BALANCE_REPLY_DEFAULT_SUFFIX = " (default)",
 
     --[[ PLUS ONES ]]
-    PLUSONES_PLUS_SIGN = "+";
+    PLUSONES_PLUS_SIGN = "+",
     PLUSONES_MY_BALANCE_REPLY = "Your +1 total is %d",
     PLUSONES_OTHER_BALANCE_REPLY = "Player %s's +1 total is %d",
 
@@ -915,7 +992,7 @@ L.CHAT = {
     GDKP_YOU_OWE_ME = "You owe me %s. Thank you!",
     GDKP_POT_UPDATED = "Pot was updated, it now holds %s",
     GDKP_POT_UPDATED_AFTER_DELETE = "Pot was updated after deleting an auction, it now holds %s",
-    GDKP_POT_UPDATED_AFTER_RESTORE = "Pot was updated after restoring an auction, it now holds %s";
+    GDKP_POT_UPDATED_AFTER_RESTORE = "Pot was updated after restoring an auction, it now holds %s",
     GDKP_REMOVED_AWARDED = "I removed %s awarded to %s for %s",
     GDKP_RESTORED_AWARDED = "I restored %s awarded to %s for %s",
     GDKP_REMOVED_GOLD = "I removed %sg from the pot",
@@ -924,7 +1001,7 @@ L.CHAT = {
     GDKP_CONFIRM_TOP_BID = "%s is the highest bidder (%s)",
     GDKP_FINAL_CALL = "Final Call on %s: %s seconds left to bid!",
     GDKP_BID_DENIED = "Bid denied, the minimum bid is %s",
-    GDKP_START_BIDDING = "Bid on %s. Minimum is %s, increment is %s. Use raid chat!";
+    GDKP_START_BIDDING = "Bid on %s. Minimum is %s, increment is %s. Use raid chat!",
     GDKP_STOP_BIDDING = "Stop your bids!",
     GDKP_SECONDS_TO_BID = "%s seconds to bid",
     GDKP_POT_TOTAL = "Total Pot: %s",
@@ -940,7 +1017,7 @@ L.CHAT = {
     SOFTRES_MY_RESERVES_REPLY = "You reserved %s", -- %s is a summary of all items or the SOFTRES_MY_RESERVED_ITEM_REPLY format (if more than 1 reserve)
     SOFTRES_MY_RESERVED_ITEM_REPLY = "%s (%sx)", -- First %s = item, second %s is times reserved if higher than 1
     SOFTRES_NO_RESERVES_REPLY = "It seems like you didn't soft-reserve anything yet, check the soft-res sheet or ask your loot master",
-    SOFTRES_HARDRESERVED_NOTICE = "%s (This item is hard-reserved!)";
+    SOFTRES_HARDRESERVED_NOTICE = "%s (This item is hard-reserved!)",
     SOFTRES_DETAILS = "Reserved by: %s",
     SOFTRES_MISSING_RESERVES = "Missing soft-reserves from: %s",
     SOFTRES_DATA_IMPORTED = "I just imported soft-reserves into Gargul. Whisper !sr to double-check your reserves!",
@@ -965,7 +1042,7 @@ L.CHAT = {
     TRADE_TO_PART = "to %s",
     TRADE_GAVE = "I gave %s",
     TRADE_GAVE_GOLD = "I gave %s to %s",
-    TRADE_GAVE_MULTIPLE_OF_ITEM = "I gave %sx%s"; -- I gave [item]x3
+    TRADE_GAVE_MULTIPLE_OF_ITEM = "I gave %sx%s", -- I gave [item]x3
     TRADE_GAVE_ENCHANTMENT = "I enchanted %s with %s for %s",
     TRADE_GAVE_ENCHANTMENT_AND_GOLD = "I enchanted %s with %s for %s and gave %s",
     TRADE_GAVE_ENCHANTMENT_FOR_GOLD = "I enchanted %s with %s for %s and received %s",
@@ -981,7 +1058,7 @@ L.CHAT = {
     TRADE_FROM_PART = "from %s",
     TRADE_RECEIVED = "I received %s",
     TRADE_RECEIVED_GOLD = "I received %s from %s",
-    TRADE_RECEIVED_MULTIPLE_OF_ITEM = "I received %sx%s"; -- I gave [item]x3
+    TRADE_RECEIVED_MULTIPLE_OF_ITEM = "I received %sx%s", -- I gave [item]x3
     TRADE_RECEIVED_ENCHANTMENT_AFTER_ITEMS_PART = "from %s and got my %s enchanted with %s",
     TRADE_RECEIVED_ENCHANTMENT_AFTER_ITEMS = "%s from %s and got my %s enchanted with %s",
 

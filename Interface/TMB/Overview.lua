@@ -142,7 +142,7 @@ function Overview:draw()
 
     local ClearButton = AceGUI:Create("Button");
     ClearButton:SetWidth(110);
-    ClearButton:SetText("Clear Data");
+    ClearButton:SetText(L.CLEAR);
     ClearButton:SetCallback("OnClick", function()
         -- Show a confirmation dialog before clearing entries
         GL.Interface.Dialogs.PopupDialog:open{
@@ -177,7 +177,7 @@ function Overview:draw()
     GL.Interface:set(self, "Share", ShareButton);
 
     local SettingsButton = AceGUI:Create("Button");
-    SettingsButton:SetText("Settings");
+    SettingsButton:SetText(L.SETTINGS);
     SettingsButton:SetWidth(90);
     SettingsButton:SetCallback("OnClick", function()
         GL.Settings:draw("TMB");

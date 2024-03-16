@@ -114,7 +114,7 @@ function Exporter:draw()
     FooterFrame:AddChild(ClearButton);
 
     local SettingsButton = AceGUI:Create("Button");
-    SettingsButton:SetText("Settings");
+    SettingsButton:SetText(L.SETTINGS);
     SettingsButton:SetWidth(140);
     SettingsButton:SetCallback("OnClick", function()
         GL.Settings:draw("ExportingLoot");

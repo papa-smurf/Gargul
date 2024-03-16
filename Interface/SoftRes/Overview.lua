@@ -30,8 +30,6 @@ local Overview = GL.Interface.SoftRes.Overview;
 ---
 ---@return void
 function Overview:draw()
-    GL:debug("Overview:draw");
-
     -- The overview is already visible
     if (self.isVisible) then
         return;
@@ -47,7 +45,7 @@ function Overview:draw()
     Window:EnableResize(false);
 
     Window:SetStatusText(string.format(
-        "Imported on |c00A79EFF%s|r at |c00A79EFF%s|r",
+        L.SOFTRES_IMPORT_DETAILS,
         date(L.DATE_FORMAT, DB:get("SoftRes.MetaData.importedAt", GetServerTime())),
         date(L.HOURS_MINUTES_FORMAT, DB:get("SoftRes.MetaData.importedAt", GetServerTime()))
     ));
@@ -66,7 +64,7 @@ function Overview:draw()
                 GL.SoftRes:broadcast();
             end,
         }); end,
-        tooltip = "Broadcast SoftRes Data",
+        tooltip = L.BROADCAST,
         disabledTooltip = L.LM_OR_ASSIST_REQUIRED,
         position = "TOPRIGHT",
     });
@@ -107,7 +105,7 @@ function Overview:draw()
         HR LABEL
     ]]
     local HardReservesLabel = AceGUI:Create("InteractiveLabel");
-    HardReservesLabel:SetText("         No hard-reserve info available");
+    HardReservesLabel:SetText("         " .. L.SOFTRES_OVERVIEW_NO_HARDRESERVE_INFO);
     HardReservesLabel:SetFontObject(_G["GameFontNormalSmall"]);
     GL.Interface:set(self, "HardReserves", HardReservesLabel);
     HardReserveFrame:AddChild(HardReservesLabel);
@@ -199,7 +197,7 @@ function Overview:draw()
     Window:AddChild(ButtonFrame);
 
     local PostSoftReserveLinkButton = AceGUI:Create("Button");
-    PostSoftReserveLinkButton:SetText("Post SR URL");
+    PostSoftReserveLinkButton:SetText(L.SOFTRES_OVERVIEW_POST_URL_BUTTON);
     PostSoftReserveLinkButton:SetWidth(104); -- Minimum is 104
     PostSoftReserveLinkButton:SetCallback("OnClick", function()
         SoftRes:postLink();
@@ -208,7 +206,7 @@ function Overview:draw()
     PostSoftReserveLinkButton:ClearAllPoints();
 
     local PostMissingSoftReserveInfoButton = AceGUI:Create("Button");
-    PostMissingSoftReserveInfoButton:SetText("Post missing SRs");
+    PostMissingSoftReserveInfoButton:SetText(L.SOFTRES_OVERVIEW_POST_MISSING_BUTTON);
     PostMissingSoftReserveInfoButton:SetWidth(130); -- Minimum is 130
     PostMissingSoftReserveInfoButton:SetCallback("OnClick", function()
         SoftRes:postMissingSoftReserves();
@@ -216,7 +214,7 @@ function Overview:draw()
     ButtonFrame:AddChild(PostMissingSoftReserveInfoButton);
 
     local ClearDataButton = AceGUI:Create("Button");
-    ClearDataButton:SetText("Clear Data");
+    ClearDataButton:SetText(L.CLEAR);
     ClearDataButton:SetWidth(100); -- Minimum is 102
     ClearDataButton:SetCallback("OnClick", function()
         GL.Interface.Dialogs.PopupDialog:open{
@@ -231,7 +229,7 @@ function Overview:draw()
     ButtonFrame:AddChild(ClearDataButton);
 
     local SettingsButton = AceGUI:Create("Button");
-    SettingsButton:SetText("Settings");
+    SettingsButton:SetText(L.SETTINGS);
     SettingsButton:SetWidth(84); -- Minimum is 102
     SettingsButton:SetCallback("OnClick", function()
         GL.Settings:draw("SoftRes");
@@ -248,7 +246,7 @@ function Overview:draw()
         -- Show a game tooltip that explains the question mark
         HardReservesLabel:SetCallback("OnEnter", function()
             GameTooltip:SetOwner(HardReservesLabel.frame, "ANCHOR_CURSOR");
-            GameTooltip:AddLine("Hard-reserve information is not available because the softres.it information\nprovided was not generated using the 'Gargul Data Export' button.");
+            GameTooltip:AddLine(L.SOFTRES_FEATURE_MISSING);
             GameTooltip:Show();
         end)
 
@@ -263,7 +261,7 @@ function Overview:draw()
         -- Add interface items to the Overview class so we can manipulate them later
         for _ in pairs(SoftRes.MaterializedData.HardReserveDetailsByID or {}) do
             somethingWasHardReserved = true;
-            HardReservesLabel:SetText("     Click here to see hard-reserve info");
+            HardReservesLabel:SetText("     " .. L.SOFTRES_OVERVIEW_HARDRESERVES_LABEL);
             HardReservesLabel:SetCallback("OnClick", function()
                 self:showHardReserves();
             end);
@@ -271,7 +269,7 @@ function Overview:draw()
         end
 
         if (not somethingWasHardReserved) then
-            HardReservesLabel:SetText("         No items are hard-reserved");
+            HardReservesLabel:SetText("         " .. L.SOFTRES_OVERVIEW_NO_HARDRESERVES);
         end
     end
 end
@@ -297,8 +295,6 @@ end
 ---
 ---@return void
 function Overview:refreshDetailsFrame()
-    GL:debug("SoftRes:refreshDetailsFrame");
-
     -- Clear the details frame first
     self:clearDetailsFrame();
 
@@ -315,20 +311,20 @@ function Overview:refreshDetailsFrame()
     local class = GL:tableGet(SoftResDetails, "class", SoftRes:getPlayerClass(self.selectedCharacter));
 
     if (GL:higherThanZero(plusOnes)) then
-        titleText = string.format("%s (+%s)", titleText, plusOnes);
+        titleText = string.format("%s (%s%s)", titleText, L.PLUS_SIGN, plusOnes);
     end
 
     Title:SetText(titleText);
     Title:SetColor(unpack(GL:classRGBColor(class)));
 
     if (GL:empty(SoftResDetails)) then
-        Note:SetText("This player did not reserve anything!");
+        Note:SetText(L.SOFTRES_PLAYER_DIDNT_RESERVE);
         Note:SetColor(1, 0, 0);
 
         return;
     end
 
-    local note = GL:tableGet(SoftResDetails, "note", "This player didn't set a note");
+    local note = GL:tableGet(SoftResDetails, "note", "-");
     local Items = GL:tableGet(SoftResDetails, "Items", {});
     Note:SetText(note);
 
@@ -346,7 +342,7 @@ function Overview:refreshDetailsFrame()
 
         -- This should never be possible, but you never know what those weirdos are up to nowadays
         if (not Item) then
-            GL:error("Something went wrong while parsing your SoftRes data. Please perform a fresh import from SoftRes.it");
+            GL:error(L.SOMETHING_WENT_WRONG_WARNING);
             return false;
         end
 
@@ -371,7 +367,7 @@ function Overview:refreshDetailsFrame()
 
             -- The user reserved this item multiple times
             if (numberOfReservations > 1) then
-                labelString = string.format("%s (%sx)", Item.link, numberOfReservations);
+                labelString = string.format(L.SOFTRES_MULTIPLE_RESERVES, Item.link, numberOfReservations);
             end
 
             ItemLabel:SetText(labelString);
@@ -384,8 +380,6 @@ end
 
 -- Clear the details frame
 function Overview:clearDetailsFrame()
-    GL:debug("SoftRes:clearDetailsFrame");
-
     local Title = GL.Interface:get(self, "Label.Title");
     local Note = GL.Interface:get(self, "Label.Note");
 
@@ -428,11 +422,9 @@ function Overview:showHardReserves()
 end
 
 function Overview:drawCharacterTable(Parent)
-    GL:debug("SoftRes:drawCharacterTable");
-
     local columns = {
         {
-            name = "Player",
+            name = L.PLAYER,
             width = 131,
             align = "LEFT",
             color = {
@@ -445,7 +437,7 @@ function Overview:drawCharacterTable(Parent)
             defaultsort = Constants.ScrollingTable.ascending,
         },
         {
-            name = "Rolls",
+            name = L.PLUS1,
             width = 37,
             align = "LEFT",
             color = {
@@ -457,7 +449,7 @@ function Overview:drawCharacterTable(Parent)
             colorargs = nil,
         },
         {
-            name = "#SR",
+            name = L.SOFTRES_ABBR,
             width = 37,
             align = "LEFT",
             color = {
@@ -532,14 +524,14 @@ function Overview:drawCharacterTable(Parent)
             numberOfSoftReservedItems = numberOfSoftReservedItems + numberOfReserves;
         end
 
-        local SoftReserveColor = {r=0,g=1,b=0,a=1};
+        local SoftReserveColor = { r = 0, g = 1, b = 0, a = 1, };
 
         if (numberOfSoftReservedItems < 1) then
-            SoftReserveColor = {r=1,g=0,b=0,a=1};
+            SoftReserveColor = {r = 1, g = 0, b = 0, a = 1, };
         end
 
         if (GL:higherThanZero(plusOnes)) then
-            plusOnes = "+" .. plusOnes;
+            plusOnes = L.PLUS_SIGN .. plusOnes;
         end
 
         tinsert(TableData, {
@@ -567,8 +559,6 @@ end
 ---@param Parent table
 ---@return void
 function Overview:drawHardReservesTable(Parent)
-    GL:debug("SoftRes:drawHardReservesTable");
-
     local columns = {
         {
             name = " ",
@@ -664,8 +654,6 @@ end
 
 ---@return void
 function Overview:close()
-    GL:debug("Overview:close");
-
     local Window = GL.Interface:get(self, "SoftReserveOverview");
 
     if (not self.isVisible
@@ -692,5 +680,3 @@ function Overview:close()
         CharacterTable:Hide();
     end
 end
-
-GL:debug("Interfaces/SoftRes/Overview.lua");

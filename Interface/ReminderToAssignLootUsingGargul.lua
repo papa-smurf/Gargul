@@ -1,3 +1,5 @@
+local L = Gargul_L;
+
 ---@type GL
 local _, GL = ...;
 
@@ -13,8 +15,6 @@ local ReminderToAssignLootUsingGargul = GL.Interface.ReminderToAssignLootUsingGa
 
 ---@return void
 function ReminderToAssignLootUsingGargul:draw()
-    GL:debug("ReminderToAssignLootUsingGargul:draw");
-
     -- The reminder is already visible
     if (self.isVisible) then
         return;
@@ -47,7 +47,7 @@ function ReminderToAssignLootUsingGargul:draw()
     local DescriptionLabel = AceGUI:Create("Label");
     DescriptionLabel:SetFullWidth(true);
     DescriptionLabel:SetFontObject(_G["GameFontNormalSmall"]);
-    DescriptionLabel:SetText("Don't forget to use Gargul instead\nif you wish to export loot later\n\n\n-- Right-click to disable this window --");
+    DescriptionLabel:SetText(L.ASSIGN_GARGUL_INFO);
     DescriptionLabel:SetColor(1, .95686, .40784);
     DescriptionLabel:SetJustifyH("CENTER")
     Window:AddChild(DescriptionLabel);
@@ -55,8 +55,6 @@ end
 
 ---@return void
 function ReminderToAssignLootUsingGargul:close()
-    GL:debug("ReminderToAssignLootUsingGargul:close");
-
     local Window = GL.Interface:get(self, "Window");
 
     if (not self.isVisible
@@ -68,5 +66,3 @@ function ReminderToAssignLootUsingGargul:close()
     Window.frame:Hide();
     self.isVisible = false;
 end
-
-GL:debug("ReminderToAssignLootUsingGargul.lua");

@@ -1,3 +1,5 @@
+local L = Gargul_L;
+
 ---@type GL
 local _, GL = ...;
 
@@ -67,11 +69,10 @@ GL.Data.DefaultSettings = {
         announceCountdownOnce = false,
         announceMasterLooter = false,
         autoOpenMasterLooterDialog = true,
-        announceMasterLooterMessage = "I'm using the Gargul addon to distribute loot. Download it if you don't want to miss out on rolls!",
         announceRollEnd = true,
         announceRollStart = true,
         linkNormalAndHardModeItems = false,
-        defaultRollOffNote = "/roll for MS or /roll 99 for OS",
+        defaultRollOffNote = L.LOOTMASTER_DEFAULT_NOTE,
         doCountdown = true,
         numberOfSecondsToCountdown = 5,
         preferredMasterLootingThreshold = 2,
@@ -140,8 +141,8 @@ GL.Data.DefaultSettings = {
         sortByTMBPrio = true,
         trackAll = false,
         Brackets = {
-            {"MS", 1, 100, 2, false, false},
-            {"OS", 1, 99, 3, true, false},
+            {L.MAINSPEC_ABBR, 1, 100, 2, false, false},
+            {L.OFFSPEC_ABBR, 1, 99, 3, true, false},
         },
     },
     SoftRes = {
@@ -161,7 +162,7 @@ GL.Data.DefaultSettings = {
         enabled = false,
         enableWhisperCommand = true,
         fixedRolls = false,
-        identifier = "BR",
+        identifier = L.BOOSTED_ROLLS_ABBR,
         priority = 1,
         reserveThreshold = 180,
     },
@@ -199,10 +200,10 @@ GL.Data.DefaultSettings = {
         exportFormat = 1,
         finalCallTime = 10,
         potExportFormat = 1,
-        customExportHeader = "Item,Player,Gold,Wowheadlink",
-        customExportFormat = "@ITEM,@WINNER,@GOLD,@WOWHEAD",
-        customPotExportHeader = "Player,Cut",
-        customPotExportFormat = "@PLAYER,@CUT",
+        customExportHeader = L.GDKP_EXPORT_DEFAULT_HEADER,
+        customExportFormat = L.GDKP_EXPORT_DEFAULT_FORMAT,
+        customPotExportHeader = L.GDKP_EXPORT_CUTS_DEFAULT_HEADER,
+        customPotExportFormat = L.GDKP_EXPORT_CUTS_DEFAULT_FORMAT,
         invalidBidsTriggerAntiSnipe = true,
         ledgerAuctionScale = 30,
         closeAuctioneerOnAward = false,

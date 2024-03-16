@@ -716,10 +716,10 @@ function Pot:announce(sessionID, callback)
     local managementCut = GL:floor(totalPot * (0 + managementCutPercentage / 100), Settings:get("GDKP.precision"));
     local totalToDistribute = GL:floor(totalPot - managementCut, Settings:get("GDKP.precision"));
 
-    local message = string.format(L.CHAT.GDKP_POT_TOTAL, GL:goldToMoney(totalToDistribute));
+    local message = (L.CHAT.GDKP_POT_TOTAL):format(GL:goldToMoney(totalToDistribute));
     GL:sendChatMessage(message, "GROUP");
 
-    message = string.format(L.CHAT.GDKP_BASE_CUT, GL:goldToMoney(GL:floor(Session.lastAvailableBase, Settings:get("GDKP.precision"))));
+    message = (L.CHAT.GDKP_BASE_CUT):format(GL:goldToMoney(GL:floor(Session.lastAvailableBase, Settings:get("GDKP.precision"))));
     GL:sendChatMessage(message, "GROUP");
 end
 

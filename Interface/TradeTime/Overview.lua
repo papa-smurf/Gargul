@@ -23,9 +23,6 @@ local TradeTime = GL.TradeTime;
 ---@type SoftRes
 local SoftRes = GL.SoftRes;
 
----@type TMB
-local TMB = GL.TMB;
-
 ---@type Interface
 local Interface = GL.Interface;
 
@@ -182,8 +179,8 @@ function Overview:build()
     Window.texture = WindowBackgroundTexture;
     GL.Interface:set(self, "Window", Window);
 
-    local howToRollText = string.format("%s to roll out loot!", GL.Settings:get("ShortcutKeys.rollOffOrAuction"));
-    local howToAwardText = string.format("%s to award loot!", GL.Settings:get("ShortcutKeys.award"));
+    local howToRollText = (L.TRADETIME_ROLL_HOWTO):format(GL.Settings:get("ShortcutKeys.rollOffOrAuction"));
+    local howToAwardText =(L.TRADETIME_AWARD_HOWTO):format(GL.Settings:get("ShortcutKeys.award"));
 
     local Title = Interface:createFontString(Window, howToRollText);
     Title:SetPoint("TOPLEFT", 22, -5);
@@ -223,7 +220,7 @@ function Overview:build()
         "divider",
         {text = L.HIDE, notCheckable = true, SubMenu = {
             {
-                text = "Hide all awarded items",
+                text = L.TRADETIME_SETTINGS_HIDE_AWARDED,
                 checked = function ()
                     return Settings:get("LootTradeTimers.hideAwarded");
                 end,
@@ -232,7 +229,7 @@ function Overview:build()
                 end,
             },
             {
-                text = "Hide items awarded to self",
+                text = L.TRADETIME_SETTINGS_HIDE_SELF_AWARDED,
                 checked = function ()
                     return Settings:get("LootTradeTimers.hideAwardedToSelf");
                 end,
@@ -241,7 +238,7 @@ function Overview:build()
                 end,
             },
             {
-                text = "Hide disenchanted items",
+                text = L.TRADETIME_SETTINGS_HIDE_DISENCHANTED,
                 checked = function ()
                     return Settings:get("LootTradeTimers.hideDisenchanted");
                 end,

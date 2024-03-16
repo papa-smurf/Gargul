@@ -1,3 +1,6 @@
+
+---@TODO: TRANSLATE SETTINGS!
+
 local L = Gargul_L;
 
 ---@type GL

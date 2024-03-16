@@ -362,8 +362,6 @@ end
 ---@param Element Frame
 ---@return void
 function Interface:addMoveButton(Element)
-    GL:debug("Interface:addMoveButton");
-
     ---@type Button
     local Move = CreateFrame("Button", Element:GetName() .. ".Move", Element);
     Move:SetSize(15, 15);
@@ -413,8 +411,6 @@ end
 ---@param Element Frame
 ---@return void
 function Interface:addOptionsButton(Element)
-    GL:debug("Interface:addOptionsButton");
-
     ---@type Button
     local Options = CreateFrame("Button", nil, Element);
     Options:SetPoint("TOPLEFT", Element, "TOPLEFT", 2, -2);
@@ -447,8 +443,6 @@ end
 ---@param Element Frame
 ---@return void
 function Interface:addCloseButton(Element)
-    GL:debug("Interface:addCloseButton");
-
     ---@type Button
     local Close = CreateFrame("Button", Element:GetName() .. ".Close", Element, "UIPanelCloseButton");
     Close:SetPoint("TOPRIGHT", Element, "TOPRIGHT", 8, 5);
@@ -467,8 +461,6 @@ end
 ---@param title string|nil
 ---@return void
 function Interface:addMinimizeButton(Element, title)
-    GL:debug("Interface:addMinimizeButton");
-
     local minimizedName = Element:GetName() .. ".Minimized";
 
     ---@type Frame
@@ -554,8 +546,6 @@ end
 ---@param Opens Frame
 ---@return void
 function Interface:addMaximizeButton(Element, Opens)
-    GL:debug("Interface:addMaximizeButton");
-
     ---@type Frame
     local Maximize = CreateFrame("Button", Element:GetName() .. ".Maximize", Element, "MaximizeMinimizeButtonFrameTemplate");
     Maximize:SetPoint("TOPRIGHT", Element, "TOPRIGHT", -13, 4);
@@ -576,8 +566,6 @@ end
 ---@param Element Frame
 ---@return void
 function Interface:addResizer(Element)
-    GL:debug("Interface:addResizer");
-
     Element:SetResizable(true);
 
     ---@type Button
@@ -991,7 +979,7 @@ function Interface:createDropdown(Parent, name, value, Options, sorter, callback
     Dropdown.Options = Options;
 
     UIDropDownMenu_SetWidth(Dropdown, Parent:GetWidth() - 70); -- Use in place of dropDown:SetWidth
-    UIDropDownMenu_SetText(Dropdown, "|c00a335eeEpic|r");
+    UIDropDownMenu_SetText(Dropdown, " ");
 
     UIDropDownMenu_Initialize(Dropdown, function ()
         local Option = UIDropDownMenu_CreateInfo()
@@ -1061,8 +1049,6 @@ end
 ---@param Parent Frame
 ---@return Frame
 function Interface:openScaler(Parent)
-    GL:debug("Interface:openScaler");
-
     local Scaler = _G[self.scalerName];
     local sliderName = self.scalerName .. ".Slider";
 
@@ -1131,8 +1117,6 @@ end
 ---@param width number|nil
 ---@return void
 function Interface:addWindowOptions(Window, Menu, width)
-    GL:debug("Interface:addWindowOptions");
-
     self:addOptionsButton(Window);
 
     local levels = 1;
@@ -1324,8 +1308,6 @@ end
 ---@param Element Frame
 ---@return any
 function Interface:resizeBounds(Element, ...)
-    GL:debug("Interface:resizeBounds");
-
     if (not self._resizeBoundsMethod) then
         if (GL.EventFrame.SetResizeBounds) then
             self._resizeBoundsMethod = "SetResizeBounds";
@@ -1350,8 +1332,6 @@ end
 ---@param height number|nil
 ---@return void
 function Interface:AceGUIDefaults(Scope, Item, identifier, width, height)
-    GL:debug("Interface:AceGUIDefaults");
-
     local itemType = self:determineItemType(Item);
 
     if (itemType == "Frame") then
@@ -1380,8 +1360,6 @@ end
 ---@param identifier string
 ---@return void
 function Interface:makeCloseableWithEscape(Item, identifier)
-    GL:debug("Interface:makeCloseableWithEscape");
-
     identifier = identifier or Item:GetName();
 
     if not (identifier) then
@@ -1425,8 +1403,6 @@ end
 ---@param prefixWithType boolean Defaults to true
 ---@return boolean
 function Interface:set(scope, identifier, Item, prefixWithType)
-    GL:debug("Interface:set");
-
     prefixWithType = prefixWithType ~= false;
 
     local widgetType = "";
@@ -1450,8 +1426,6 @@ end
 ---@param identifier string
 ---@return void
 function Interface:release(Scope, identifier)
-    GL:debug("Interface:release");
-
     if (type(Scope) ~= "table") then
         return;
     end
@@ -1503,8 +1477,6 @@ end
 ---@param Element table
 ---@return void
 function Interface:releaseChildren(Element)
-    GL:debug("Interface:releaseChildren");
-
     if (type(Element) ~= "table") then
         return;
     end
@@ -1537,8 +1509,6 @@ end
 ---@param Item Frame
 ---@return string
 function Interface:determineItemType(Item)
-    GL:debug("Interface:determineItemType");
-
     if (type(Item.GetCell) == "function") then
         return "Table";
     end
@@ -1738,8 +1708,6 @@ end
 ---     width, height
 ---@return Frame
 function Interface:createButton(Parent, Details)
-    GL:debug("Interface:createButton");
-
     -- Invalid Parent provided
     if (not Parent
         or type(Parent) ~= "table"
@@ -1939,8 +1907,6 @@ end
 ---     x, y, width, height
 ---@return Frame
 function Interface:createShareButton(Parent, Details)
-    GL:debug("Interface:createShareButton");
-
     Details = Details or {};
     Details.normalTexture = "Interface/AddOns/Gargul/Assets/Buttons/share";
     Details.highlightTexture = "Interface/AddOns/Gargul/Assets/Buttons/share-highlighted";
@@ -1965,5 +1931,3 @@ function Interface:createShareButton(Parent, Details)
 
     return Button;
 end
-
-GL:debug("Interface/Interface.lua");

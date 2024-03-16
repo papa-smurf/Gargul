@@ -1,3 +1,5 @@
+local L = Gargul_L;
+
 ---@type GL
 local _, GL = ...;
 
@@ -13,8 +15,6 @@ local ShortcutKeysLegend = GL.Interface.ShortcutKeysLegend; ---@type ShortcutKey
 
 ---@return void
 function ShortcutKeysLegend:draw()
-    GL:debug("ShortcutKeysLegend:draw");
-
     -- The reminder is already visible
     if (self.isVisible) then
         return;
@@ -57,8 +57,7 @@ function ShortcutKeysLegend:draw()
     local DescriptionLabel = AceGUI:Create("Label");
     DescriptionLabel:SetFullWidth(true);
     DescriptionLabel:SetFontObject(_G["GameFontNormalSmall"]);
-    DescriptionLabel:SetText(string.format(
-        "Gargul Item Hotkeys\n\nRoll out: |c00A79EFF%s|r\nAward: |c00A79EFF%s|r\nDisenchant: |c00A79EFF%s|r\n\n\n-- Right-click to disable this window --",
+    DescriptionLabel:SetText((L.KEYS_INFO):format(
         GL.Settings:get("ShortcutKeys.rollOffOrAuction"),
         GL.Settings:get("ShortcutKeys.award"),
         GL.Settings:get("ShortcutKeys.disenchant")
@@ -70,8 +69,6 @@ end
 
 ---@return void
 function ShortcutKeysLegend:close()
-    GL:debug("ShortcutKeysLegend:close");
-
     local Window = GL.Interface:get(self, "Window");
 
     if (not self.isVisible
@@ -83,5 +80,3 @@ function ShortcutKeysLegend:close()
     Window.frame:Hide();
     self.isVisible = false;
 end
-
-GL:debug("ShortcutKeysLegend.lua");

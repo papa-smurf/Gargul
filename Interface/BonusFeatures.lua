@@ -22,8 +22,6 @@ local FONT;
 
 ---@return table
 function BonusFeatures:open()
-    GL:debug("BonusFeatures:open");
-
     self.isVisible = true;
     FONT = GL.FONT;
 
@@ -35,8 +33,6 @@ end
 
 ---@return void
 function BonusFeatures:close()
-    GL:debug("BonusFeatures:close");
-
     self.isVisible = false;
     return _G[self.windowName] and _G[self.windowName]:Hide();
 end
@@ -45,8 +41,6 @@ end
 ---
 ---@return table
 function BonusFeatures:build()
-    GL:debug("BonusFeatures:build");
-
     if (_G[self.windowName]) then
         return _G[self.windowName];
     end
@@ -81,7 +75,7 @@ function BonusFeatures:build()
 
     --[[ GROUP MANAGER ]]
     ---@type FontString
-    local GroupManagerLabel = Interface:createFontString(Window, "1. Auto invite/sort groups from raid signup! Click below or use |c00A79EFF/gl gr|r");
+    local GroupManagerLabel = Interface:createFontString(Window, L.BONUS_AUTO_INVITE);
     GroupManagerLabel:SetPoint("TOPLEFT", Intro, "BOTTOMLEFT", 0, -18);
     GroupManagerLabel:SetPoint("TOPRIGHT", Intro, "BOTTOMRIGHT");
 
@@ -95,7 +89,7 @@ function BonusFeatures:build()
 
     --[[ BOOSTED ROLLS ]]
     ---@type FontString
-    local BoostedRollsLabel = Interface:createFontString(Window, "2. Reward players for being regulars or going the extra mile! Click below or use |c00A79EFF/gl br|r");
+    local BoostedRollsLabel = Interface:createFontString(Window, L.BONUS_BOOSTED_ROLLS);
     BoostedRollsLabel:SetPoint("TOPLEFT", GroupManager, "BOTTOMLEFT", 0, -18);
     BoostedRollsLabel:SetPoint("TOPRIGHT", GroupManager, "BOTTOMRIGHT");
 
@@ -109,7 +103,7 @@ function BonusFeatures:build()
 
     --[[ PLUS ONES ]]
     ---@type FontString
-    local PlusOnesLabel = Interface:createFontString(Window, "3. Gargul includes a plus one tracking system! Click below or use |c00A79EFF/gl po|r");
+    local PlusOnesLabel = Interface:createFontString(Window, L.BONUS_PLUSONES);
     PlusOnesLabel:SetPoint("TOPLEFT", BoostedRolls, "BOTTOMLEFT", 0, -18);
     PlusOnesLabel:SetPoint("TOPRIGHT", BoostedRolls, "BOTTOMRIGHT");
 
@@ -124,5 +118,3 @@ function BonusFeatures:build()
     _G[self.windowName] = Window;
     return Window;
 end
-
-GL:debug("BonusFeatures.lua");

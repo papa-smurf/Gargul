@@ -80,7 +80,7 @@ end
 ---@return void
 function MasterLooterDialog:flightAttendant()
     local function announce()
-        local message = L.LOOTMASTER_FLIGHT_ATTENDANT;
+        local message = L.CHAT.FLIGHT_ATTENDANT;
         local stw = not GL:strContains(string.lower(message), L.GARGUL);
 
         GL:sendChatMessage(

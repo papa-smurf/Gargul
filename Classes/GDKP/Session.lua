@@ -961,10 +961,10 @@ function Session:announceDeletedAuction(sessionID, Auction)
             return;
         end
 
-        GL:sendChatMessage(string.format(L.CHAT.GDKP_POT_UPDATED_AFTER_DELETE, GDKPPot:humanTotal()), "GROUP");
+        GL:sendChatMessage((L.CHAT.GDKP_POT_UPDATED_AFTER_DELETE):format(GDKPPot:humanTotal()), "GROUP");
     else
         -- Should not be possible, shenanigans?
-        GL:sendChatMessage(string.format(L.CHAT.GDKP_POT_UPDATED_AFTER_DELETE, GDKPPot:humanTotal()), "GROUP");
+        GL:sendChatMessage((L.CHAT.GDKP_POT_UPDATED_AFTER_DELETE):format(GDKPPot:humanTotal()), "GROUP");
     end
 end
 

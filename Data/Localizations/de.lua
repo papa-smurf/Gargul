@@ -202,9 +202,9 @@ L.VERSION_CHECK_SUMMARY_OFFLINE = "Offline:";
 L.VERSION_CHECK_BUTTON_REPORT = "Report";
 L.VERSION_CHECK_BUTTON_REPORT_TOOLTIP = "Report outdated results in group chat";
 
-L.VERSION_CHECK_CHAT_MISSING = "Gargul missing for:";
-L.VERSION_CHECK_CHAT_OUTDATED = "Gargul outdated for:";
-L.VERSION_CHECK_CHAT_OFFLINE = "The following players were offline:";
+L.CHAT.VERSION_CHECK_MISSING = "Gargul missing for:";
+L.CHAT.VERSION_CHECK_CHAT_OUTDATED = "Gargul outdated for:";
+L.CHAT.VERSION_CHECK_OFFLINE = "The following players were offline:";
 
 --[[ GLOBAL ]]
 L.DFT = "DFT";
@@ -350,7 +350,7 @@ L.SOFTRES_TOOLTIP_HARD_RESERVED = "This item is hard-reserved";
 L.SOFTRES_TOOLTIP_HARD_RESERVED_FOR = "For: %s";
 L.SOFTRES_TOOLTIP_HARD_RESERVED_NOTE = "|c00CC2743 Note:|r %s";
 L.SOFTRES_TOOLTIP_RESERVED_BY = "Reserved by";
-L.SOFTRES_TOOLTIP_MULTIPLE_RESERVES = "%s (%sx)";
+L.SOFTRES_MULTIPLE_RESERVES = "%s (%sx)";
 L.SOFTRES_LOOTRESERVE_CONNECTION_WARNING = "Failed to connect to LootReserve, contact support (include message below)";
 L.SOFTRES_PROCESS_INCOMING = "Attempting to process incoming SoftRes data from %s";
 L.SOFTRES_BROADCAST_PROCESS_FAILED = "Couldn't process SoftRes data received from %s";
@@ -385,8 +385,8 @@ L.TMB_IMPORT_PLAYER_NO_DATA = "The following players have no %s entries:"; -- %s
 L.TMB_TOOLTIP_PRIO_HEADER = "%s Prio List"; -- %s can be TMB/DFT/CPR
 L.TMB_TOOLTIP_WISHLIST_HEADER = "TMB Wish List";
 L.TMB_TOOLTIP_OFFSPEC_INDICATION = " (" .. L.OFFSPEC_ABBR .. ")";
-L.TMB_TOOLTIP_TIER = "|cFFFFFFFF    Tier:|r %s";
-L.TMB_TOOLTIP_NOTE = "|cFFFFFFFF    Note:|r |cFFFFF569%s|r";
+L.TMB_TOOLTIP_TIER = "|c00FFFFFF    Tier:|r %s";
+L.TMB_TOOLTIP_NOTE = "|c00FFFFFF    Note:|r |cFFFFF569%s|r";
 L.TMB_NO_BROADCAST_TARGETS = "There's no one in your group to broadcast to";
 L.TMB_BROADCAST_PROCESS_START = "Attempting to process incoming TMB data from %s";
 L.TMB_SYNCED = "TMB data synced";

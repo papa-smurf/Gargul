@@ -2495,8 +2495,6 @@ local gaveNoAssistWarning = false;
 ---@param stw boolean|nil Important for throttling / spam prevention
 ---@return string
 function GL:sendChatMessage(message, chatType, language, channel, stw, pretend)
-    GL:debug("GL:sendChatMessage");
-
     stw = stw ~= false;
 
     -- No point sending an empty message!
@@ -2567,7 +2565,7 @@ function GL:sendChatMessage(message, chatType, language, channel, stw, pretend)
     end
 
     if (not pretend) then
-        SendChatMessage (
+        SendChatMessage(
             message,
             chatType,
             language,

@@ -1,4 +1,3 @@
-
 --- Necessary workaround to make sure alerts use a non-secure mixin. Will otherwise freeze UI in ERA/TBC
 Gargul_ContainedAlertFrameMixin = {};
 Gargul_ContainedAlertFrameMixin.OnPostShow = ContainedAlertFrameMixin.OnPostShow;
@@ -15,7 +14,6 @@ local _, GL = ...;
 ---@class AlertInterface
 GL.Interface.Alerts = {
     Types = {
-
         GargulNotification = AlertFrame:AddQueuedAlertFrameSubSystem("GargulNotification", function (self, Details)
             -- Override the defaults with whatever the user wants to show
             Details = GL:tableMerge({
@@ -62,7 +60,6 @@ GL.Interface.Alerts = {
             end);
         end, 6, math.huge),
     },
-
 };
 
 local Alerts = GL.Interface.Alerts;

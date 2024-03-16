@@ -20,8 +20,6 @@ local ScrollingTable = GL.ScrollingTable;
 ---@param callback function
 ---@return void
 function PlayerSelector:draw(description, PlayerNames, callback)
-    GL:debug("PlayerSelector:draw");
-
     if (self.isVisible) then
         return;
     end
@@ -76,7 +74,7 @@ function PlayerSelector:draw(description, PlayerNames, callback)
     SecondRow:AddChild(Spacer);
 
     local PlayerNameLabel = AceGUI:Create("Label");
-    PlayerNameLabel:SetText("Type player name here");
+    PlayerNameLabel:SetText(L.AWARD_PLAYER_CUSTOM_NAME);
     PlayerNameLabel:SetHeight(20);
     PlayerNameLabel:SetWidth(128); -- Minimum is 122
     SecondRow:AddChild(PlayerNameLabel);
@@ -103,7 +101,7 @@ function PlayerSelector:draw(description, PlayerNames, callback)
     SecondRow:AddChild(Spacer);
 
     local PlayerNameLabelSuffix = AceGUI:Create("Label");
-    PlayerNameLabelSuffix:SetText("or select one below");
+    PlayerNameLabelSuffix:SetText(L.AWARD_PLAYER_SELECT_NAME);
     PlayerNameLabelSuffix:SetHeight(20);
     PlayerNameLabelSuffix:SetWidth(104); -- Minimum is 104
     SecondRow:AddChild(PlayerNameLabelSuffix);
@@ -115,7 +113,7 @@ function PlayerSelector:draw(description, PlayerNames, callback)
     Window:AddChild(TableFrame);
 
     ConfirmButton = AceGUI:Create("Button");
-    ConfirmButton:SetText("Confirm");
+    ConfirmButton:SetText(L.OK);
     ConfirmButton:SetWidth(140);
     ConfirmButton:SetHeight(20);
     ConfirmButton:SetCallback("OnClick", function()
@@ -142,8 +140,6 @@ end
 
 ---@return void
 function PlayerSelector:close()
-    GL:debug("PlayerSelector:close");
-
     local Window = GL.Interface:get(self, "Window");
 
     if (not Window) then
@@ -164,8 +160,6 @@ end
 ---@param PlayerNames table
 ---@return void
 function PlayerSelector:drawPlayersTable(Parent, PlayerNames)
-    GL:debug("PlayerSelector:drawPlayersTable");
-
     -- Combined width of all colums should be 340
     local columns = {
         {
@@ -230,5 +224,3 @@ function PlayerSelector:drawPlayersTable(Parent, PlayerNames)
         end
     });
 end
-
-GL:debug("Interfaces/PlayerSelector.lua");

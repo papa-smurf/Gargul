@@ -708,7 +708,7 @@ function Auctioneer:announceBid(Bid)
 
     --[[ THE LAST BID ANNOUNCEMENT WAS A WHILE AGO, ANNOUNCE IMMEDIATELY ]]
     if (GL:gte(GetTime() - self.lastBidAnnouncementAt, 1.2)) then
-        bidApprovedMessage = string.format(bidApprovedMessage, Bid.Bidder.name, Bid.bid);
+        bidApprovedMessage = (bidApprovedMessage):format(Bid.Bidder.name, Bid.bid);
         GL:sendChatMessage(bidApprovedMessage, "RAID_WARNING", nil, nil, false);
         self.lastBidAnnouncementAt = GetTime();
 
@@ -724,7 +724,7 @@ function Auctioneer:announceBid(Bid)
             return;
         end
 
-        bidApprovedMessage = string.format(bidApprovedMessage, bidder, currentTopBid);
+        bidApprovedMessage = (bidApprovedMessage):format(bidder, currentTopBid);
         GL:sendChatMessage(bidApprovedMessage, "RAID_WARNING", nil, nil, false);
         self.lastBidAnnouncementAt = GetTime();
     end, 1);

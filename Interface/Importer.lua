@@ -17,8 +17,6 @@ local Importer = GL.Interface.Importer;
 
 ---@return table
 function Importer:open()
-    GL:debug("Importer:open");
-
     self.isVisible = true;
 
     local Window = _G[self.windowName] or self:build();
@@ -29,16 +27,12 @@ end
 
 ---@return void
 function Importer:close()
-    GL:debug("Importer:close");
-
     self.isVisible = false;
     return _G[self.windowName] and _G[self.windowName]:Hide();
 end
 
 ---@return table
 function Importer:build()
-    GL:debug("Importer:build");
-
     if (_G[self.windowName]) then
         return _G[self.windowName];
     end
@@ -106,5 +100,3 @@ function Importer:build()
     _G[self.windowName] = Window;
     return Window;
 end
-
-GL:debug("Importer.lua");
