@@ -40,21 +40,21 @@ function CreateSession:build()
     local Label = GL.AceGUI:Create("Label");
     Label:SetHeight(20);
     Label:SetFullWidth(true);
-    Label:SetText("Create a new GDKP session");
+    Label:SetText(L.GDKP_CREATE);
     Window:AddChild(Label);
 
     local Title = GL.AceGUI:Create("EditBox");
     Title:DisableButton(true);
     Title:SetHeight(20);
     Title:SetFullWidth(true);
-    Title:SetLabel("Name");
+    Title:SetLabel(L.NAME);
     Window:AddChild(Title);
 
     local ManagementCut = GL.AceGUI:Create("EditBox");
     ManagementCut:DisableButton(true);
     ManagementCut:SetHeight(20);
     ManagementCut:SetFullWidth(true);
-    ManagementCut:SetLabel("Management Cut %");
+    ManagementCut:SetLabel(L.GDKP_MANAGEMENT_CUT);
     Window:AddChild(ManagementCut);
 
     local SessionTypeLabel = GL.AceGUI:Create("Label");

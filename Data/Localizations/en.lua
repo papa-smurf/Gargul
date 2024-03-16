@@ -427,6 +427,8 @@ L.PACKMULE_AUTOLOOT_SELF_PLACEHOLDER = "SELF";
 
 --[[ GDKP /gl gdkp ]]
 L.GDKP = "GDKP";
+L.GDKP_CREATE = "Create a new GDKP session";
+L.GDKP_MANAGEMENT_CUT = "Management Cut";
 L.GDKP_ADD_DROPS_TO_QUEUE = "Add dropped loot to queue";
 L.GDKP_ALL_CUTS_MAILED = "All cuts were mailed!";
 L.GDKP_TRY_MULTIAUCTION = "Check out Multi Auctions!";

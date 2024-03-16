@@ -33,8 +33,6 @@ local FONT;
 
 ---@return void
 function BidderQueue:_init()
-    GL:debug("BidderQueue:_init");
-
     if (self._initialized) then
         return;
     end
@@ -50,8 +48,6 @@ end
 
 ---@return Frame|nil
 function BidderQueue:open()
-    GL:debug("BidderQueue:open");
-
     if (not Settings:get("GDKP.enableBidderQueue")) then
         return;
     end
@@ -68,8 +64,6 @@ end
 
 ---@return Frame
 function BidderQueue:build()
-    GL:debug("BidderQueue:build");
-
     if (_G[self.windowName]) then
         return _G[self.windowName];
     end
@@ -270,8 +264,6 @@ end
 
 ---@return void
 function BidderQueue:refreshTable()
-    GL:debug("BidderQueue:refreshTable");
-
     if (not Settings:get("GDKP.enableBidderQueue")) then
         return;
     end
@@ -360,7 +352,7 @@ function BidderQueue:refreshTable()
                     end
 
                     GL.Interface.Dialogs.ConfirmWithSingleInputDialog:open{
-                        question = string.format("What's your maximum bid for %s? (Minimum %s|c00FFF569g|r)", QueuedItem.itemLink, QueuedItem.minimumBid),
+                        question = (L.GDKP_BIDDER_AUTO_BID_CONFIRM):format(QueuedItem.minimumBid),
                         OnYes = function (max)
                             Auction:setAutoBid(max, ItemRow._identifier);
                             self:refreshTable();
@@ -413,9 +405,9 @@ function BidderQueue:refreshTable()
 
             --[[ ITEM LINK ]]
             ---@type FontString
-            local Name = Interface:createFontString(ItemRow, autoBid <= 0 and Details.link or string.format(
-                "|c00FFF569%sg|r",
-                autoBid
+            local Name = Interface:createFontString(ItemRow, autoBid <= 0 and Details.link or ("|c00FFF569%s%s|r"):format(
+                autoBid,
+                L.GOLD_INDICATOR
             ));
             Name:SetPoint("CENTER", Icon);
             Name:SetPoint("LEFT", Image, "RIGHT", 2, 0);
@@ -434,16 +426,10 @@ end
 
 ---@return void
 function BidderQueue:close()
-    GL:debug("BidderQueue:close");
-
     self.isVisible = false;
     return _G[self.windowName] and _G[self.windowName]:Hide();
 end
 
 function BidderQueue:getWindow()
-    GL:debug("AuctioneerUI:getWindow");
-
     return _G[self.windowName];
 end
-
-GL:debug("Auctioneer.lua");
