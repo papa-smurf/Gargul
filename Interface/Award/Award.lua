@@ -171,7 +171,7 @@ function Award:draw(itemLink, callback)
         itemLink = GL.Interface:get(self, "EditBox.Item"):GetText();
         local winner = false;
 
-        local award = function ()
+        local award = function (random)
             winner = GL:addRealm(winner);
 
             local isOS, addPlusOne = false;
@@ -184,7 +184,7 @@ function Award:draw(itemLink, callback)
             end
 
             local addPlusOneCheckBox = GL.Interface:get(GL.Interface.Dialogs.AwardDialog, "CheckBox.PlusOne");
-            if (addPlusOneCheckBox) then
+            if (not random and addPlusOneCheckBox) then
                 addPlusOne = GL:toboolean(addPlusOneCheckBox:GetValue());
 
                 if (addPlusOne) then
@@ -259,7 +259,7 @@ function Award:draw(itemLink, callback)
                         end
 
                         GL:sendChatMessage(string.format("Random winner for %s selected (%s)", itemLink, winner), "GROUP");
-                        award();
+                        award(true);
                     end,
                 };
             end

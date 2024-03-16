@@ -599,7 +599,10 @@ end
 ---
 ---@param itemID number|string
 ---@param inRaidOnly boolean
+---
 ---@return table
+---
+---@test /dump _G.Gargul.SoftRes:byItemID(52030);
 function SoftRes:byItemID(itemID, inRaidOnly)
     GL:debug("SoftRes:byItemID");
 
@@ -640,7 +643,10 @@ end
 ---
 ---@param itemLink string
 ---@param inRaidOnly boolean
+---
 ---@return table
+---
+---@test /dump _G.Gargul.SoftRes:byItemLink("|cffa335ee|Hitem:52030::::::::80:::::|h[Conqueror's Mark of Sanctification]|h|r");
 function SoftRes:byItemLink(itemLink, inRaidOnly)
     GL:debug("SoftRes:byItemLink");
 
@@ -690,7 +696,7 @@ function SoftRes:playerReserveAmountsByItemID(itemID, inRaidOnly)
 
         -- User reserved the same item multiple times
         if (Entry.reservations > 1) then
-            entryString = string.format("%s (%sx)", GL:nameFormat{ name = Entry.player, colorize = true, }, Entry.reservations);
+            entryString = string.format("%s (%sx)", GL:nameFormat{ name = Entry.player, }, Entry.reservations);
         end
 
         tinsert(ActiveSoftResDetails, GL:capitalize(entryString));
@@ -703,7 +709,10 @@ end
 ---
 ---@param itemID number
 ---@param inRaidOnly boolean
+---
 ---@return table
+---
+---@test /dump _G.Gargul.SoftRes:playerReserveAmountsByItemLink("|cffa335ee|Hitem:52030::::::::80:::::|h[Conqueror's Mark of Sanctification]|h|r");
 function SoftRes:playerReserveAmountsByItemLink(itemLink, inRaidOnly)
     return self:playerReserveAmountsByItemID(GL:getItemIDFromLink(itemLink), inRaidOnly);
 end
@@ -790,19 +799,18 @@ function SoftRes:tooltipLines(itemLink)
     -- Add the reservation details to ActiveReservations (add 2x / 3x etc when same item was reserved multiple times)
     for _, Entry in pairs(ActiveReservations) do
         local class = self:getPlayerClass(Entry.player, 0);
-        local entryString = Entry.player;
+        local entryString = ("|c00%s%s"):format(
+            GL:classHexColor(class, GL.Data.Constants.disabledTextColor),
+            GL:capitalize(Entry.player)
+        );
 
         -- User reserved the same item multiple times
         if (Entry.reservations > 1) then
-            entryString = string.format("%s (%sx)", Entry.player, Entry.reservations);
+            entryString = string.format("%s (%sx)", entryString, Entry.reservations);
         end
 
         -- Add the actual soft reserves to the tooltip
-        tinsert(Lines, string.format(
-            "|cFF%s    %s|r",
-            GL:classHexColor(class, GL.Data.Constants.disabledTextColor),
-            GL:capitalize(entryString)
-        ));
+        tinsert(Lines, entryString);
     end
 
     return Lines;
