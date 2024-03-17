@@ -621,19 +621,19 @@ function Overview:refreshItems()
                         GameTooltip:AddLine(" ");
 
                         for _, Entry in pairs(ItemsWonByRollerInTheLastFiveHours) do
-                            local receivedString = L.AWARD_TOOLTIP_GIVEN;
+                            local receivedString = " " .. L.AWARD_TOOLTIP_GIVEN;
                             if (not Entry.received) then
-                                receivedString = L.AWARD_TOOLTIP_NOT_GIVEN;
+                                receivedString = " " .. L.AWARD_TOOLTIP_NOT_GIVEN;
                             end
 
                             local OSString = "";
                             if (Entry.OS) then
-                                OSString = L.AWARD_TOOLTIP_OFFSPEC_INDICATION;
+                                OSString = " " .. L.AWARD_TOOLTIP_OFFSPEC_INDICATION;
                             end
 
                             local BRString = "";
                             if (GL:higherThanZero(Entry.BRCost)) then
-                                BRString = string.format(L.AWARD_TOOLTIP_BR_INDICATION, Entry.BRCost);
+                                BRString = (" " .. L.AWARD_TOOLTIP_BR_INDICATION):format(Entry.BRCost);
                             end
 
                             local line = string.format("%s%s%s%s",
@@ -690,7 +690,7 @@ function Overview:refreshItems()
 
                         local BRString = "";
                         if (GL:higherThanZero(Entry.BRCost)) then
-                            BRString = (L.AWARD_UNDO_BR_REFUND):format(tostring(Entry.BRCost));
+                            BRString = (" " .. L.AWARD_UNDO_BR_REFUND):format(tostring(Entry.BRCost));
                         end
 
                         GL.Interface.Dialogs.PopupDialog:open{

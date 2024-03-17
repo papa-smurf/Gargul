@@ -83,7 +83,7 @@ function CreateMutator:build()
     AutoApplyTo:DisableButton(true);
     AutoApplyTo:SetHeight(20);
     AutoApplyTo:SetFullWidth(true);
-    AutoApplyTo:SetLabel(L.GDKP_MUTATOR_APPLY_LABEL);
+    AutoApplyTo:SetLabel("     " .. L.GDKP_MUTATOR_APPLY_LABEL);
     Interface:set(self, "AutoApplyTo", AutoApplyTo);
     Window:AddChild(AutoApplyTo);
 

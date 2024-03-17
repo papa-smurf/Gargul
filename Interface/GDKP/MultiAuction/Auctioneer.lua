@@ -406,7 +406,7 @@ function Auctioneer:build()
 
     --[[ FILL FROM INVENTORY ]]
     ---@type Button
-    local FillFromInventory = Interface:dynamicPanelButton(Window, "Fill from inventory");
+    local FillFromInventory = Interface:dynamicPanelButton(Window, L.GDKP_MULTIAUCTION_AUCTIONEER_FILL_BUTTON);
     FillFromInventory:SetPoint("TOPLEFT", Clear, "TOPRIGHT", 2, 0);
     FillFromInventory:SetScript("OnClick", function ()
         GL.Interface.GDKP.MultiAuction.FillFromInventory:open();

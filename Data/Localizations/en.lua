@@ -11,15 +11,15 @@ L.COPPER_INDICATOR = "c";
 L.HELLO = "|cff%sGargul v%s|r by Zhorax@Firemaw. Type |cff%s/gl|r or |cff%s/gargul|r to get started!";
 L.ALL_SETTINGS = "All Settings";
 L.ANTISNIPE = "Anti Snipe";
-L.ANTISNIPE_EXPLANATION = {
-    " ",
-    "An Anti Snipe value of 10 means that any bid that comes in with",
-    "less than 10 seconds left will reset the timer back to 10 seconds",
-    " ",
-    "You can leave this empty or set to 0 to disable Anti Snipe completely",
-    "Anti Snipe values less than 5 are not supported",
-    " ",
-};
+L.ANTISNIPE_EXPLANATION = [[
+
+An Anti Snipe value of 10 means that any bid that comes in with
+less than 10 seconds left will reset the timer back to 10 seconds
+
+You can leave this empty or set to 0 to disable Anti Snipe completely.
+Anti Snipe values less than 5 are not supported
+
+]];
 L.ZERO_SIGN = "0";
 L.AUCTIONEER = "Auctioneer";
 L.AUCTION = "Auction";
@@ -43,6 +43,7 @@ L.BROADCAST_NUMBER_OF_ITEMS = "Number of items";
 L.BROADCAST_TARGET_PLAYER = "Target player (whisper only)";
 L.BROADCAST_TARGET_REQUIRED = "Whisper requires a target player";
 L.BROADCAST_TRADE_TIME_LEFT = "Max trade time left (in minutes)";
+L.FILL = "Fill";
 L.CANCEL = "Cancel";
 L.ENABLE = "Enable";
 L.NEW = "New";
@@ -59,13 +60,12 @@ L.CLOSE_ON_AWARD = "Close on award";
 L.CLOSE_ON_START = "Close on start";
 L.COMMUNICATION = "Communication";
 L.CUT_MAIL_IN_PROGRESS = "Wait a bit, we're still processing the previous mail";
-L.CUT_MAIL_IN_PROGRESdeS = "Wait a bit, we're still processing the previous mail";
 L.CUT_MAIL_INSUFFICIENT_FUNDS = "You don't have enough gold to pay %s";
 L.CUT_MAILBOX_CLOSED = "Can't send mail when the mailbox is closed";
 L.CUT_MAIL_FAILED = "Failed to send cut to %s";
 L.CUT_MAILS_FAILED = "Multiple mail errors detected, aborting cut distribution";
 L.CUT_MAIL_HISTORY = "Mail History for |c00967FD2%s|r";
-L.CUT_SENT = "Sent %sg to %s ";
+L.CUT_SENT = "Sent %sg to %s";
 L.CUT_MAIL_BODY = "Powered by Gargul: a Master Loot Tool with support for TMB, SoftRes, GDKP and Auto-Looting!";
 L.CUT_MAIL_GOLD_MISMATCH = "Mail SENT according to game, but your remaining GOLD DOESN'T MATCH, did something go wrong?";
 L.CUT_MAIL_EVEN = "You don't owe %s any gold";
@@ -79,7 +79,8 @@ L.IMPORT = "Import";
 L.EXPORT = "Export";
 L.FINAL_CALL = "Final Call";
 L.LEDGER = "Ledger";
-L.GDKP_QUEUE_EXPLANATION = [[|c00A79EFF%s|r items in bags, loot windows or even on links in your chat to add them to this auction queue.
+L.GDKP_QUEUE_EXPLANATION = [[
+|c00A79EFF%s|r items in bags, loot windows or even on links in your chat to add them to this auction queue.
 Items in the queue will automatically be auctioned off once your current auction is done. Click the '%s' button to prevent this.
 
 Want Gargul to automatically award or disenchant auctions for you? Open the settings wheel on the left side!
@@ -156,7 +157,8 @@ L.TMBETC = "TMB, DFT or PRIO3";
 L.TOGGLE_QUEUE = "Show/Hide Queue";
 L.TOGGLE_DATES = "Show/Hide Dates";
 L.TUTORIAL = "Tutorial";
-L.TUTORIAL_BIDDER_QUEUE = [[The items you see here are in the master looter's GDKP queue
+L.TUTORIAL_BIDDER_QUEUE = [[
+The items you see here are in the master looter's GDKP queue
 You can remove them, bid on them, and hide unusable items (enable 'Hide unusable items' in the settings in the top-left)
 
 You can resize the window, move it around, or minimize it. Try it out!
@@ -164,7 +166,8 @@ You can resize the window, move it around, or minimize it. Try it out!
 For loot masters: removing items here will only remove them from your personal queue, not the actual GDKP queue!
 ]];
 L.TUTORIAL_MORE_HELP = "Need more help?";
-L.TUTORIAL_AUCTIONEER = [[|c00A79EFF%s|r items in bags, loot windows or even on links in your chat to add them to the auction queue.
+L.TUTORIAL_AUCTIONEER = [[
+|c00A79EFF%s|r items in bags, loot windows or even on links in your chat to add them to the auction queue.
 Want to directly sell an item without bidding? Use |c00A79EFF%s|r
 
 You can open the %s window directly by typing |c00A79EFF/gl auction|r
@@ -320,7 +323,7 @@ L.BOOSTED_ROLLS_IMPORT_TUTORIAL = "Here you can import boosted roll data and ali
 L.BOOSTED_ROLLS_ALIAS_APPLY_BUTTON = "Apply aliases";
 L.BOOSTED_ROLLS_ADD_RAIDERS_BUTTON = "Add missing raiders";
 L.BOOSTED_ROLLS_ADD_POINTS_TO_RAID_BUTTON = "Add points to raid";
-L.BOOSTED_ROLLS_ADD_POINTS_CONFIRM = "Add how many points for everyone currently in the raid?\n\n|c00BE3333Use the \"Add missing raiders\" button first if you want everyone to get points, even those without a boosted roll entry!|r";
+L.BOOSTED_ROLLS_ADD_POINTS_CONFIRM = "Add how many points for everyone currently in the raid?\n\n|c00BE3333Use the 'Add missing raiders' button first if you want everyone to get points, even those without a boosted roll entry!|r";
 L.BOOSTED_ROLLS_DELETE_CONFIRM = "Delete %s?";
 L.BOOSTED_ROLLS_ADD_POINTS_ERROR = "No point value provided!";
 L.BOOSTED_ROLLS_POINTS = "Points";
@@ -380,7 +383,7 @@ L.SOFTRES_IMPORT_INVALID = "Invalid soft-reserve data provided";
 L.SOFTRES_IMPORT_INVALID_INSTRUCTIONS = "Invalid data provided. Make sure to click the 'Gargul Export' button on softres.it and paste the full contents here";
 L.SOFTRES_IMPORT_SUCCESSFUL = "Soft-reserves imported successfully";
 L.SOFTRES_IMPORT_SUCCESSFUL_ALERT = "Import successful!";
-L.SOFTRES_IMPORT_FIXED_NAME = "Auto name fix: the SR of \"%s\" is now linked to \"%s\"";
+L.SOFTRES_IMPORT_FIXED_NAME = "Auto name fix: the SR of '%s' is now linked to '%s'";
 L.SOFTRES_IMPORT_NO_RESERVES_WARNING = "The following players did not reserve anything:";
 L.SOFTRES_IMPORT_NEW_PLUSONES = "The PlusOne values provided collide with the ones already present. Do you want to replace your old PlusOne values?";
 L.SOFTRES_IMPORT_USE_GARGUL = "SoftRes Weakaura and CSV data are deprecated, use the Gargul export instead!";
@@ -402,12 +405,12 @@ L.AWARD_PLAYER_CUSTOM_NAME = "Type player name here";
 L.AWARD_PLAYER_SELECT_NAME = "or select one below";
 L.AWARD_HEADER_IN_GROUP = "In Group";
 L.AWARD_UNDO_CONFIRM = "Are you sure you want to undo %s awarded to %s?%s"; -- The last %s is the content of L.AWARD_UNDO_BR_REFUND
-L.AWARD_UNDO_BR_REFUND = " %s boosted roll points will be refunded!";
+L.AWARD_UNDO_BR_REFUND = "%s boosted roll points will be refunded!";
 L.AWARD_TOOLTIP_DISENCHANTED_ITEMS = "Disenchanted items:";
-L.AWARD_TOOLTIP_GIVEN = " (Given: yes)";
-L.AWARD_TOOLTIP_NOT_GIVEN = " (Given: no)";
-L.AWARD_TOOLTIP_OFFSPEC_INDICATION = " (" .. L.OFFSPEC_ABBR .. ")";
-L.AWARD_TOOLTIP_BR_INDICATION = " (BR: %s)";
+L.AWARD_TOOLTIP_GIVEN = "(Given: yes)";
+L.AWARD_TOOLTIP_NOT_GIVEN = "(Given: no)";
+L.AWARD_TOOLTIP_OFFSPEC_INDICATION = "(" .. L.OFFSPEC_ABBR .. ")";
+L.AWARD_TOOLTIP_BR_INDICATION = "(BR: %s)";
 L.AWARD_NEW_WINNER_CONFIRMATION = "Who should %s go to instead?";
 L.AWARD_DISENCHANT_BR_CONFIRMATION = "Are you sure you want to disenchant %s? %s boosted roll points will be refunded!";
 
@@ -426,7 +429,7 @@ L.TMB_IMPORT_INVALID_DFT = "Invalid DFT data provided, Export your DFT data as p
 L.TMB_IMPORT_PLAYER_NO_DATA = "The following players have no %s entries:"; -- %s can be TMB/DFT/CPR
 L.TMB_TOOLTIP_PRIO_HEADER = "%s Prio List"; -- %s can be TMB/DFT/CPR
 L.TMB_TOOLTIP_WISHLIST_HEADER = "TMB Wish List";
-L.TMB_TOOLTIP_OFFSPEC_INDICATION = " (" .. L.OFFSPEC_ABBR .. ")";
+L.TMB_TOOLTIP_OFFSPEC_INDICATION = "(" .. L.OFFSPEC_ABBR .. ")";
 L.TMB_TOOLTIP_TIER = "|c00FFFFFF    Tier:|r %s";
 L.TMB_TOOLTIP_NOTE = "|c00FFFFFF    Note:|r |cFFFFF569%s|r";
 L.TMB_NO_BROADCAST_TARGETS = "There's no one in your group to broadcast to";
@@ -485,7 +488,7 @@ L.GDKP_AUCTION_PAID_AMOUNT_INFO = [[
 Gargul automatically keeps track of gold traded. As long as players pay
 for what they bought then you shouldn't ever need this field
 
-\"Paid amount\" refers to the amount of gold the buyer already traded you.
+'Paid amount' refers to the amount of gold the buyer already traded you.
 This does not change the actual price of the item!
 
 Warning: only set a value here if the player promises to pay
@@ -505,7 +508,7 @@ L.GDKP_EXPORT_FORMAT_TITLE = "The title of the GDKP session";
 L.GDKP_EXPORT_FORMAT_START = "Date/time at which the first item was awarded";
 L.GDKP_EXPORT_POT_CHANGED = "Pot changed";
 L.GDKP_IMPORT_SESSION = "Import GDKP Session";
-L.GDKP_IMPORT_SESSION_ABOUT = ("Here you can import (and continue) a GDKP session. In order to get a GDKP session from someone they need to export it in |c00FFF569/gdkp|r where they select the \"%s\" format"):format(L.GDKP_EXPORT_AUCTIONS_SHARE);
+L.GDKP_IMPORT_SESSION_ABOUT = ("Here you can import (and continue) a GDKP session. In order to get a GDKP session from someone they need to export it in |c00FFF569/gdkp|r where they select the '%s' format"):format(L.GDKP_EXPORT_AUCTIONS_SHARE);
 L.GDKP_IMPORT_SESSION_UPDATE_CONFIRM = "This GDKP session created by %s appears to exist already, do you wish to override it?";
 L.GDKP_IMPORT_SESSION_CREATE_CONFIRM = "You're about to import a GDKP session created by %s, are you sure?";
 
@@ -554,8 +557,8 @@ L.GDKP_OVERVIEW_DELETE_ENTRY_TOOLTIP = "Delete. Hold shift to bypass note";
 L.GDKP_OVERVIEW_DELETE_ENTRY_DISABLED_TOOLTIP = "You need lead or master loot to delete entries.\nYou can't delete entries on locked/deleted sessions";
 L.GDKP_OVERVIEW_RESTORE_ENTRY_DISABLED_TOOLTIP = "You need lead or master loot to restore entries.\nYou can't restore entries of locked/deleted sessions";
 L.GDKP_OVERVIEW_EDIT_ENTRY_DISABLED_TOOLTIP = "You need lead or master loot to edit entries.\nYou can't edit deleted entries or entries on locked/deleted sessions";
-L.GDKP_OVERVIEW_ACTIVE_SESSION = " (active)";
-L.GDKP_OVERVIEW_DELETED_SESSION = " (deleted)";
+L.GDKP_OVERVIEW_ACTIVE_SESSION = "(active)";
+L.GDKP_OVERVIEW_DELETED_SESSION = "(deleted)";
 
 L.GDKP_TUTORIAL_TITLE = "Getting started";
 L.GDKP_TUTORIAL_INFO = "Follow the steps below to quickly get started with Gargul GDKP!";
@@ -761,7 +764,7 @@ L.GDKP_MUTATOR_STORE_PERMANENTLY = "Store for future sessions";
 L.GDKP_MUTATOR_NAME_LABEL = "Name [example: Tanks]";
 L.GDKP_MUTATOR_PERCENTAGE_LABEL = "Percentage [example: 10]";
 L.GDKP_MUTATOR_FLAT_LABEL = "Flat gold rate [example: 250]";
-L.GDKP_MUTATOR_APPLY_LABEL = "     Auto apply to";
+L.GDKP_MUTATOR_APPLY_LABEL = "Auto apply to";
 L.GDKP_MUTATOR_HELP_TOOLTIP_TOP = "You can automatically apply this mutator to raiders using keywords:";
 L.GDKP_MUTATOR_HELP_TOOLTIP_BOTTOM = "Example:\n|c00967FD2SELF,RL,HEALER|r";
 L.GDKP_MUTATOR_NO_DOTS_WARNING = "Mutator names can not contains dots (.)";
@@ -805,6 +808,7 @@ L.GDKP_MULTIAUCTION_AUCTIONEER_TIME_LABEL = "Auction time in seconds";
 L.GDKP_MULTIAUCTION_AUCTIONEER_ANTI_SNIPE_LABEL = "Anti snipe in seconds";
 L.GDKP_MULTIAUCTION_AUCTIONEER_CLEAR_TOOLTIP = "Remove all items from the list";
 L.GDKP_MULTIAUCTION_AUCTIONEER_FILL_TOOLTIP = "Add tradeable items from your inventory to the list";
+L.GDKP_MULTIAUCTION_AUCTIONEER_FILL_BUTTON = "Fill from inventory";
 L.GDKP_MULTIAUCTION_AUCTIONEER_NEXT_VERSION_CHECK_TOOLTIP = "Next step: check raider's add-on version for compatibility";
 L.GDKP_MULTIAUCTION_AUCTIONEER_NO_ITEMS_WARNING = "Select at least one item for your auction";
 L.GDKP_MULTIAUCTION_AUCTIONEER_TIME_WARNING = "The auction time in seconds needs to be >= 10";
@@ -886,8 +890,8 @@ L.ROLLING_HOLD_SHIFT_TO_SHOW_CONFIRMATION = "Hold shift to show the award confir
 L.ROLLING_HOLD_SHIFT_TO_BYPASS_CONFIRMATION = "Hold shift to bypass the award confirmation";
 L.ROLLING_REOPEN_TOOLTIP = "Open master looter window";
 L.ROLLING_REOPEN_ROLL_COUNT = "rolls: %s";
-L.ROLLING_ITEM_WON_GIVEN = " (item given: yes)";
-L.ROLLING_ITEM_WON_NOT_GIVEN = " (item given: no)";
+L.ROLLING_ITEM_WON_GIVEN = "(item given: yes)";
+L.ROLLING_ITEM_WON_NOT_GIVEN = "(item given: no)";
 L.ROLLING_ITEM_WON_OS = "(" .. L.OFFSPEC_ABBR .. ")";
 L.ROLLING_ITEM_WON_BR_COST = "(" .. L.BOOSTED_ROLLS_ABBR .. ": %s)";
 L.ROLLING_ROLL_IN_PROGRESS_WARNING = "A roll is currently in progress";

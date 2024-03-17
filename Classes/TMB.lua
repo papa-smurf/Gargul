@@ -425,7 +425,7 @@ function TMB:tooltipLines(itemLink)
             tinsert(Lines, string.format(
                 "|cFF%s%s|r",
                 GL:classHexColor(GL.Player:classByName(Entry[2], 0), GL.Data.Constants.disabledTextColor),
-                GL:capitalize(Entry[2]):gsub("%(os%)", L.TMB_TOOLTIP_OFFSPEC_INDICATION)
+                GL:capitalize(Entry[2]):gsub("%(os%)", " " .. L.TMB_TOOLTIP_OFFSPEC_INDICATION)
             ));
 
             -- Make sure we don't add more names to the tooltip than the user allowed
@@ -461,7 +461,7 @@ function TMB:tooltipLines(itemLink)
             tinsert(Lines, string.format(
                 "|cFF%s%s|r",
                 GL:classHexColor(GL.Player:classByName(Entry[2], 0), GL.Data.Constants.disabledTextColor),
-                GL:capitalize(Entry[2]):gsub("%(os%)", L.TMB_TOOLTIP_OFFSPEC_INDICATION)
+                GL:capitalize(Entry[2]):gsub("%(os%)", " " .. L.TMB_TOOLTIP_OFFSPEC_INDICATION)
             ));
 
             -- Make sure we don't add more names to the tooltip than the user allowed

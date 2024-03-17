@@ -195,7 +195,7 @@ function BoostedRolls:handleWhisperCommand(_, message, sender)
         local high = self:maxBoostedRoll(points);
         local ext = "";
         if (not self:hasPoints(name)) then
-            ext = L.CHAT.BOOSTED_ROLLS_BALANCE_REPLY_DEFAULT_SUFFIX;
+            ext = " " .. L.CHAT.BOOSTED_ROLLS_BALANCE_REPLY_DEFAULT_SUFFIX;
         end
         GL:sendChatMessage(
             (L.CHAT.BOOSTED_ROLLS_OTHER_BALANCE_REPLY):format(GL:capitalize(name), GL.Settings:get("BoostedRolls.identifier", "BR"), low, high, ext),
@@ -212,7 +212,7 @@ function BoostedRolls:handleWhisperCommand(_, message, sender)
     local high = self:maxBoostedRoll(points);
     local ext = "";
     if (not self:hasPoints(name)) then
-        ext = L.CHAT.BOOSTED_ROLLS_BALANCE_REPLY_DEFAULT_SUFFIX;
+        ext = " " .. L.CHAT.BOOSTED_ROLLS_BALANCE_REPLY_DEFAULT_SUFFIX;
     end
     GL:sendChatMessage(
         (L.CHAT.BOOSTED_ROLLS_MY_BALANCE_REPLY):format(GL.Settings:get("BoostedRolls.identifier", "BR"), low, high, ext),

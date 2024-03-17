@@ -136,7 +136,7 @@ function FillFromInventory:build()
     };
     IncludeMaterials:SetPoint("TOPLEFT", IncludeAwarded, "BOTTOMLEFT", 0, -6);
 
-    local FillButton = Interface:dynamicPanelButton(Window, "Fill");
+    local FillButton = Interface:dynamicPanelButton(Window, L.FILL);
     FillButton:SetPoint("BOTTOMLEFT", Window, "BOTTOMLEFT", 20, 30);
     FillButton:SetScript("OnClick", function ()
         Auctioneer:fillFromInventory(MinimumQuality:GetValue(), IncludeBOE:GetChecked(), IncludeAwarded:GetChecked(), IncludeMaterials:GetChecked());

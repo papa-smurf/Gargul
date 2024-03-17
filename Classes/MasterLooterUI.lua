@@ -884,9 +884,9 @@ function MasterLooterUI:drawPlayersTable(parent)
                 GameTooltip:AddLine(" ");
 
                 for _, Entry in pairs(ItemsWonByRollerInTheLast8Hours or {}) do
-                    local receivedString = L.ROLLING_ITEM_WON_GIVEN;
+                    local receivedString = " " .. L.ROLLING_ITEM_WON_GIVEN;
                     if (not Entry.received) then
-                        receivedString = L.ROLLING_ITEM_WON_NOT_GIVEN;
+                        receivedString = " " .. L.ROLLING_ITEM_WON_NOT_GIVEN;
                     end
 
                     local OSString = "";

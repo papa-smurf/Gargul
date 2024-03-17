@@ -1003,12 +1003,12 @@ function Overview:refreshSessions()
         if (Session.deletedAt) then
             priority = priority + deletedAtPriorityModifier;
             color = {r = .77, g = .12, b = .23};
-            title = (L.GDKP_OVERVIEW_DELETED_SESSION):format(title);
+            title = (" " .. L.GDKP_OVERVIEW_DELETED_SESSION):format(title);
         end
 
         if (checksum == DB.GDKP.activeSession) then
             priority = 0;
-            title = (L.GDKP_OVERVIEW_ACTIVE_SESSION):format(title);
+            title = (" " .. L.GDKP_OVERVIEW_ACTIVE_SESSION):format(title);
         end
 
         -- Make sure we select the currently selected session by default
