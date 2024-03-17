@@ -20,6 +20,16 @@ bootstrap.lua
 
 # Localizations
 Data/Localizations/en.lua
+Data/Localizations/cn.lua
+Data/Localizations/de.lua
+Data/Localizations/es.lua
+Data/Localizations/fr.lua
+Data/Localizations/it.lua
+Data/Localizations/ko.lua
+Data/Localizations/pt.lua
+Data/Localizations/ru.lua
+Data/Localizations/tw.lua
+Data/Localizations/chat.lua
 
 # Data objects
 Data/Constants.lua

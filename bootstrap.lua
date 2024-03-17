@@ -89,8 +89,27 @@ function GL:_init()
         self.GDKPIsAllowed = false;
     end
 
-    -- Initialize classes
+    -- Determine which chat messages to use
     L = Gargul_L;
+    local langMatch = false;
+    local chatLocale = GL.Settings:get("chatLocale", GetLocale());
+    for lang, Translations in pairs(L.CHAT or {}) do
+        if (lang == chatLocale) then
+            L.CHAT = Translations;
+            langMatch = true;
+            break;
+
+        -- No need to keep unwanted translations in runtime
+        elseif (lang ~= "enUS") then
+            Translations = nil;
+            L.CHAT.lang = nil;
+        end
+    end
+    if (not langMatch) then
+        L.CHAT = L.CHAT.enUS;
+    end
+
+    -- Initialize classes
     self.Events:_init(self.EventFrame);
     self.DB:_init();
     self.Version:_init();

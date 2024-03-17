@@ -1,6 +1,9 @@
-local _, GL = ...;
-Gargul_L = {};
-local L = Gargul_L;
+--[[
+    You can test this locally by removing line 5:
+    if (GetLocale() ~= "deDE") then return; end
+]]
+if (GetLocale() ~= "ptBR") then return; end
+local L = Gargul_L or {};
 
 L.GARGUL = "Gargul";
 

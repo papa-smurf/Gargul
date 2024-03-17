@@ -23,6 +23,7 @@ GL.Data.DefaultSettings = {
     showUpdateAlert = false,
     soundChannel = "SFX",
     welcomeMessage = true,
+    chatLocale = nil,
 
     DroppedLoot = {
         announceLootToChat = true,
