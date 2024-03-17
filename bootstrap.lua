@@ -89,23 +89,23 @@ function GL:_init()
         self.GDKPIsAllowed = false;
     end
 
-    -- Determine which chat messages to use
+    -- Determine which chat message locale to use
     L = Gargul_L;
     local langMatch = false;
-    local chatLocale = GL.Settings:get("chatLocale", GetLocale());
-    for lang, Translations in pairs(L.CHAT or {}) do
-        if (lang == chatLocale) then
-            L.CHAT = Translations;
-            langMatch = true;
-            break;
+    local chatLocale = GL.Settings:get("chatLocale");
 
-        -- No need to keep unwanted translations in runtime
-        elseif (lang ~= "enUS") then
-            Translations = nil;
-            L.CHAT.lang = nil;
+    -- The user previously selected a chatLocale
+    if (chatLocale) then
+        for lang, Translations in pairs(L.CHAT or {}) do
+            if (lang == chatLocale) then
+                L.CHAT = Translations;
+                langMatch = true;
+                break;
+            end
         end
     end
-    if (not langMatch) then
+
+    if (not chatLocale or not langMatch) then
         L.CHAT = L.CHAT.enUS;
     end
 
@@ -118,8 +118,14 @@ function GL:_init()
     -- Register media
     local media = LibStub("LibSharedMedia-3.0")
     media:Register("sound", "Gargul: uh-oh", "Interface/AddOns/".. self.name .."/Assets/Sounds/uh-oh.ogg");
-    media:Register("font", "PTSansNarrow", "Interface/AddOns/".. self.name .."/Assets/Fonts/PTSansNarrow.ttf");
-    GL.FONT = media:Fetch("font", "PTSansNarrow");
+
+    -- PTSansNarrow doesn't support al character sets
+    if (GL:inTable({ "koKR", "zhCN", "zhTW", }, GetLocale())) then
+        GL.FONT = STANDARD_TEXT_FONT;
+    else
+        media:Register("font", "PTSansNarrow", "Interface/AddOns/".. self.name .."/Assets/Fonts/PTSansNarrow.ttf");
+        GL.FONT = media:Fetch("font", "PTSansNarrow");
+    end
 
     -- Show a welcome message
     if (self.Settings:get("welcomeMessage")) then
