@@ -100,7 +100,7 @@ L.GDKP_HIDE_UPCOMING_CONFIRMATION = "확실합니까? 앞으로 나올 항목을
 L.GDKP_PAYOUT_INACTIVE = "활성 GDKP 세션이 감지되지 않거나 지급을 위해 세션이 잠겨 있지 않습니다!";
 L.GDKP_SESSION = "GDKP 세션";
 L.GDKP_SHOW_UPCOMING = "예정된 항목 표시";
-L.GDKPS_ARE_NOT_ALLOWED = "GDKP raids are not allowed in this version of World of Warcraft"
+L.GDKPS_ARE_NOT_ALLOWED = "이 버전의 월드 오브 워크래프트에서는 GDKP 공격대가 허용되지 않습니다.";
 L.GROUP = "그룹";
 L.GROUP_MANAGER = "그룹 관리자";
 L.IMPORT_EXPLANATION = "어떤 종류의 데이터를 가져오시겠습니까?";
@@ -149,7 +149,7 @@ L.QUALITY_LEGENDARY = "전설적인";
 L.QUALITY_HEIRLOOM = "법정 상속 동산";
 L.QUEUE = "대기줄";
 L.REMOVE_BID = "입찰 삭제";
-L.RESET_SETTINGS = "Reset Settings"
+L.RESET_SETTINGS = "설정 재설정";
 L.RESET_SETTINGS_CONFIRMATION = "Gargul의 모든 설정을 재설정하시겠습니까? 이 작업은 취소할 수 없습니다!";
 L.RESET_UI = "가르굴 UI 재설정";
 L.RESET_UI_CONFIRMATION = "Gargul의 모든 창 크기, 위치 및 배율을 재설정하시겠습니까? 이 작업은 취소할 수 없습니다!";
@@ -955,3 +955,24 @@ L.KEYS_INFO = [[
 
 -- 이 창을 비활성화하려면 마우스 오른쪽 버튼을 클릭하세요 --
 ]];
+
+L.LOCALE_NONE_TITLE = "Gargul의 채팅 언어를 선택하세요";
+L.LOCALE_NONE_EXPLANATION = [[
+Gargul은 채팅 메시지를 영어로 게시합니다(기본값)
+아래 드롭다운에서 다른 언어를 선택할 수 있습니다.
+
+현재 게임 언어는 '%s'입니다.
+]];
+L.LOCALE_CHANGE_NOTE = "참고: 언제든지 설정에서 또는 |cff%s/gl locale|r을 통해 로케일을 변경할 수 있습니다.";
+
+L.LOCALE_ENUS = "enUS"; -- English (United States)
+L.LOCALE_KOKR = "koKR"; -- Korean (Korea)
+L.LOCALE_FRFR = "frFR"; -- French (France)
+L.LOCALE_DEDE = "deDE"; -- German (Germany)
+L.LOCALE_ZHCN = "zhCN"; -- Chinese (Simplified, PRC)
+L.LOCALE_ESES = "esES"; -- Spanish (Spain)
+L.LOCALE_ZHTW = "zhTW"; -- Chinese (Traditional, Taiwan)
+L.LOCALE_ESMX = "esMX"; -- Spanish (Mexico)
+L.LOCALE_RURU = "ruRU"; -- Russian (Russia)
+L.LOCALE_PTBR = "ptBR"; -- Portuguese (Brazil)
+L.LOCALE_ITIT = "itIT"; -- Italian (Italy)

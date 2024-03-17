@@ -27,6 +27,7 @@ GL.Commands = GL.Commands or {
         groups = "Open the group window where you can provide a roster from csv/raidhelper/wowhead so that you can: see who's missing and sort groups automatically",
         import = "Opens the general import window that includes shortcuts to the TMB, SoftRes or loot priority importers",
         inspect = "You can check whether players brought items (and how many), e.g. to check for consumables (requires players to have Gargul!): /gl inspect itemID1, itemID2, itemID3",
+        locale = "Open the (chat) language selection window",
         lootpriority = "Open the loot priority editor where you can edit / clear loot priorities. These are the same priorities as imported by the TMB importer, clearing them here clears them for TMB as well",
         minimap = "Open the minimap icon settings",
         packmule = "Open PackMule which allows you to automatically funnel dropped gear to specific players, very helpful with green items for example",
@@ -197,30 +198,35 @@ GL.Commands = GL.Commands or {
         awardondate = function(...) GL.AwardedLoot:addWinnerOnDate(...); end,
 
         -- Open the boosted rolls window
-        boostedrolls = function() GL.BoostedRolls:draw(); end,
+        boostedrolls = function () GL.BoostedRolls:draw(); end,
 
         -- Generate a bug report
-        bugreport = function() GL:bugReport(); end,
+        bugreport = function () GL:bugReport(); end,
 
         -- Open the GDKP overview
         gdkp = function () GL.Interface.GDKP.Overview:open(); end,
 
         -- Open the raid groups window
-        groups = function() GL.RaidGroups:drawImporter(); end,
+        groups = function () GL.RaidGroups:drawImporter(); end,
 
         -- Open the GDKP minimum price / increment importer
-        importprices = function()
+        importprices = function ()
             GL.Interface.GDKP.ImportPrices:open();
         end,
 
+        -- Open the locale selector
+        locale = function ()
+            GL.Interface.Locale:open();
+        end,
+
         -- Open the minimap button settings
-        minimap = function() GL.Settings:draw("MinimapButton");  end,
+        minimap = function () GL.Settings:draw("MinimapButton");  end,
 
         -- Open the soft reserves window
-        softreserves = function() GL.SoftRes:draw(); end,
+        softreserves = function () GL.SoftRes:draw(); end,
 
         -- Open the plus ones window
-        plusones = function() GL.Interface.PlusOnes.Overview:draw(); end,
+        plusones = function () GL.Interface.PlusOnes.Overview:draw(); end,
 
         -- Clear the disenchanter
         cleardisenchanter = function () GL.PackMule:clearDisenchanter(); end,
@@ -229,7 +235,7 @@ GL.Commands = GL.Commands or {
         setdisenchanter = function (...) GL.PackMule:setDisenchanter(...); end,
 
         -- Clear all plus ones
-        clearplusones = function() GL.PlusOnes:clearPlusOnes(); end,
+        clearplusones = function () GL.PlusOnes:clearPlusOnes(); end,
 
         -- Export the current raid roster to csv
         raidcsv = function ()
@@ -248,30 +254,30 @@ GL.Commands = GL.Commands or {
         end,
 
         -- Open the TMB window
-        thatsmybis = function() GL.TMB:draw(); end,
+        thatsmybis = function () GL.TMB:draw(); end,
 
         -- Open the TMB window with DFT skin
-        dft = function() GL.TMB:draw("dft"); end,
+        dft = function () GL.TMB:draw("dft"); end,
 
         -- Open the TMB window with CPR skin
-        cpr = function() GL.TMB:draw("cpr"); end,
+        cpr = function () GL.TMB:draw("cpr"); end,
 
         -- Open the pack mule window
-        packmule = function() Settings:draw("PackMule"); end,
+        packmule = function () Settings:draw("PackMule"); end,
 
         -- Open the loot priority window
-        lootpriority = function() GL.LootPriority:drawImporter(); end,
+        lootpriority = function () GL.LootPriority:drawImporter(); end,
 
-        multiauction = function() GL.Interface.GDKP.MultiAuction.Auctioneer:open(); end,
+        multiauction = function () GL.Interface.GDKP.MultiAuction.Auctioneer:open(); end,
 
         -- Import data from our website into the addon
-        import = function() GL.Interface.Importer:open(); end,
+        import = function () GL.Interface.Importer:open(); end,
 
         -- Export data from the addon to use on our website
-        export = function() GL.Exporter:draw(); end,
+        export = function () GL.Exporter:draw(); end,
 
         -- Check if everyone is running the most up-to-date version
-        version = function() GL.Interface.GroupVersionCheck:open() end,
+        version = function () GL.Interface.GroupVersionCheck:open() end,
 
         -- Check if everyone is running the most up-to-date version
         inspect = function(...) GL.BagInspector:inspect(...); end,
@@ -306,9 +312,9 @@ function Commands:_dispatch(str)
         argumentString = strsub(str, strlen(command) + 2);
     end
 
+    -- User entered "/gl" with no additional arguments, open localization or settings window
     if (not str or #str < 1) then
-        -- User entered "/gl" with no additional arguments
-        command = "settings";
+        command = GL.Settings:get("chatLocale") and "settings" or "locale";
     end
 
     -- Make sure commands are case insensitive (Busmonstret = dumdum)

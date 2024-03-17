@@ -12,7 +12,26 @@ local General = GL.Interface.Settings.General;
 
 ---@return void
 function General:draw(Parent)
-    GL:debug("GeneralSettings:draw");
+    local Spacer = GL.AceGUI:Create("SimpleGroup");
+    Spacer:SetLayout("FILL");
+    Spacer:SetFullWidth(true);
+    Spacer:SetHeight(20);
+    Parent:AddChild(Spacer);
+
+    local ChatMessageLanguage = GL.AceGUI:Create("Button");
+    ChatMessageLanguage:SetText("Change chat message language");
+    ChatMessageLanguage:SetFullWidth(true);
+    ChatMessageLanguage:SetCallback("OnClick", function()
+        GL.Settings:close();
+        GL.Interface.Locale:open();
+    end);
+    Parent:AddChild(ChatMessageLanguage);
+
+    Spacer = GL.AceGUI:Create("SimpleGroup");
+    Spacer:SetLayout("FILL");
+    Spacer:SetFullWidth(true);
+    Spacer:SetHeight(20);
+    Parent:AddChild(Spacer);
 
     Overview:drawCheckboxes({
         {
@@ -50,18 +69,18 @@ function General:draw(Parent)
         },
     }, Parent);
 
-    local Spacer = GL.AceGUI:Create("SimpleGroup");
+    Spacer = GL.AceGUI:Create("SimpleGroup");
     Spacer:SetLayout("FILL");
     Spacer:SetFullWidth(true);
     Spacer:SetHeight(20);
     Parent:AddChild(Spacer);
 
-    local MinimumQualityLabel = GL.AceGUI:Create("Label");
-    MinimumQualityLabel:SetColor(1, .95686, .40784);
-    MinimumQualityLabel:SetText("On which channel should Gargul output its sounds (default SFX)");
-    MinimumQualityLabel:SetHeight(20);
-    MinimumQualityLabel:SetFullWidth(true);
-    Parent:AddChild(MinimumQualityLabel);
+    local SoundChannelLabel = GL.AceGUI:Create("Label");
+    SoundChannelLabel:SetColor(1, .95686, .40784);
+    SoundChannelLabel:SetText("On which channel should Gargul output its sounds (default SFX)");
+    SoundChannelLabel:SetHeight(20);
+    SoundChannelLabel:SetFullWidth(true);
+    Parent:AddChild(SoundChannelLabel);
 
     local SoundChannels = {
         Master = "Master",

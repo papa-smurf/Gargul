@@ -100,7 +100,7 @@ L.GDKP_HIDE_UPCOMING_CONFIRMATION = "你确定吗？您将无法查看或竞价�
 L.GDKP_PAYOUT_INACTIVE = "未检测到活动的 GDKP 会话或会话未锁定支付！";
 L.GDKP_SESSION = "GDKP 会议";
 L.GDKP_SHOW_UPCOMING = "显示即将推出的商品";
-L.GDKPS_ARE_NOT_ALLOWED = "GDKP raids are not allowed in this version of World of Warcraft"
+L.GDKPS_ARE_NOT_ALLOWED = "此版本的魔兽世界不允许 GDKP 突袭";
 L.GROUP = "团体";
 L.GROUP_MANAGER = "集团经理";
 L.IMPORT_EXPLANATION = "您想导入什么类型的数据？";
@@ -149,7 +149,7 @@ L.QUALITY_LEGENDARY = "传奇的";
 L.QUALITY_HEIRLOOM = "传家宝";
 L.QUEUE = "队列";
 L.REMOVE_BID = "删除出价";
-L.RESET_SETTINGS = "Reset Settings"
+L.RESET_SETTINGS = "重新设置";
 L.RESET_SETTINGS_CONFIRMATION = "您确定要重置 Gargul 的所有设置吗？这无法挽回！";
 L.RESET_UI = "重置 Gargul UI";
 L.RESET_UI_CONFIRMATION = "您确定要重置 Gargul 的所有窗口大小、位置和比例吗？这无法挽回！";
@@ -955,3 +955,24 @@ Gargul 物品热键
 
 -- 右键单击​​禁用该窗口 --
 ]];
+
+L.LOCALE_NONE_TITLE = "选择 Gargul 的聊天语言";
+L.LOCALE_NONE_EXPLANATION = [[
+Gargul 用英语发布聊天消息（默认）
+您可以在下面的下拉列表中选择不同的语言
+
+您当前的游戏语言是“%s”
+]];
+L.LOCALE_CHANGE_NOTE = "注意：您可以随时在设置中或通过 |cff%s/gl locale|r 更改区域设置";
+
+L.LOCALE_ENUS = "enUS"; -- English (United States)
+L.LOCALE_KOKR = "koKR"; -- Korean (Korea)
+L.LOCALE_FRFR = "frFR"; -- French (France)
+L.LOCALE_DEDE = "deDE"; -- German (Germany)
+L.LOCALE_ZHCN = "zhCN"; -- Chinese (Simplified, PRC)
+L.LOCALE_ESES = "esES"; -- Spanish (Spain)
+L.LOCALE_ZHTW = "zhTW"; -- Chinese (Traditional, Taiwan)
+L.LOCALE_ESMX = "esMX"; -- Spanish (Mexico)
+L.LOCALE_RURU = "ruRU"; -- Russian (Russia)
+L.LOCALE_PTBR = "ptBR"; -- Portuguese (Brazil)
+L.LOCALE_ITIT = "itIT"; -- Italian (Italy)

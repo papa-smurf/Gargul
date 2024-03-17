@@ -100,7 +100,7 @@ L.GDKP_HIDE_UPCOMING_CONFIRMATION = "¿Está seguro? ¡No podrás ver ni pujar p
 L.GDKP_PAYOUT_INACTIVE = "¡No se detectó ninguna sesión activa de GDKP o la sesión no está bloqueada para el pago!";
 L.GDKP_SESSION = "Sesión GDKP";
 L.GDKP_SHOW_UPCOMING = "Mostrar próximos artículos";
-L.GDKPS_ARE_NOT_ALLOWED = "GDKP raids are not allowed in this version of World of Warcraft"
+L.GDKPS_ARE_NOT_ALLOWED = "Las incursiones de GDKP no están permitidas en esta versión de World of Warcraft.";
 L.GROUP = "Grupo";
 L.GROUP_MANAGER = "Administrador de grupo";
 L.IMPORT_EXPLANATION = "¿Qué tipo de datos le gustaría importar?";
@@ -149,7 +149,7 @@ L.QUALITY_LEGENDARY = "Legendario";
 L.QUALITY_HEIRLOOM = "Reliquia de familia";
 L.QUEUE = "Cola";
 L.REMOVE_BID = "Eliminar oferta";
-L.RESET_SETTINGS = "Reset Settings"
+L.RESET_SETTINGS = "Reiniciar ajustes";
 L.RESET_SETTINGS_CONFIRMATION = "¿Estás seguro de que quieres restablecer todas las configuraciones de Gargul? ¡Esto no se puede deshacer!";
 L.RESET_UI = "Restablecer la interfaz de usuario de Gargul";
 L.RESET_UI_CONFIRMATION = "¿Está seguro de que desea restablecer todos los tamaños, posiciones y escalas de las ventanas de Gargul? ¡Esto no se puede deshacer!";
@@ -955,3 +955,24 @@ Desencantar: |c00A79EFF%s|r
 
 -- Haga clic derecho para desactivar esta ventana --
 ]];
+
+L.LOCALE_NONE_TITLE = "Elige un idioma de chat para Gargul";
+L.LOCALE_NONE_EXPLANATION = [[
+Gargul publica mensajes de chat en inglés (predeterminado)
+Puede seleccionar un idioma diferente en el menú desplegable a continuación
+
+El idioma actual de tu juego es '%s'
+]];
+L.LOCALE_CHANGE_NOTE = "Nota: puede cambiar la configuración regional en cualquier momento en la configuración o mediante |cff%s/gl locale|r";
+
+L.LOCALE_ENUS = "enUS"; -- English (United States)
+L.LOCALE_KOKR = "koKR"; -- Korean (Korea)
+L.LOCALE_FRFR = "frFR"; -- French (France)
+L.LOCALE_DEDE = "deDE"; -- German (Germany)
+L.LOCALE_ZHCN = "zhCN"; -- Chinese (Simplified, PRC)
+L.LOCALE_ESES = "esES"; -- Spanish (Spain)
+L.LOCALE_ZHTW = "zhTW"; -- Chinese (Traditional, Taiwan)
+L.LOCALE_ESMX = "esMX"; -- Spanish (Mexico)
+L.LOCALE_RURU = "ruRU"; -- Russian (Russia)
+L.LOCALE_PTBR = "ptBR"; -- Portuguese (Brazil)
+L.LOCALE_ITIT = "itIT"; -- Italian (Italy)

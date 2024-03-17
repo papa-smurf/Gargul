@@ -100,7 +100,7 @@ L.GDKP_HIDE_UPCOMING_CONFIRMATION = "Вы уверены? Вы не сможет
 L.GDKP_PAYOUT_INACTIVE = "Активная сессия GDKP не обнаружена или сессия не заблокирована для выплаты!";
 L.GDKP_SESSION = "Сессия ГДКП";
 L.GDKP_SHOW_UPCOMING = "Показать предстоящие товары";
-L.GDKPS_ARE_NOT_ALLOWED = "GDKP raids are not allowed in this version of World of Warcraft"
+L.GDKPS_ARE_NOT_ALLOWED = "Рейды ГДКП не разрешены в этой версии World of Warcraft.";
 L.GROUP = "Группа";
 L.GROUP_MANAGER = "Менеджер группы";
 L.IMPORT_EXPLANATION = "Какие данные вы хотите импортировать?";
@@ -149,7 +149,7 @@ L.QUALITY_LEGENDARY = "Легендарный";
 L.QUALITY_HEIRLOOM = "Семейная реликвия";
 L.QUEUE = "Очередь";
 L.REMOVE_BID = "Удалить ставку";
-L.RESET_SETTINGS = "Reset Settings"
+L.RESET_SETTINGS = "Сбросить настройки";
 L.RESET_SETTINGS_CONFIRMATION = "Вы уверены, что хотите сбросить все настройки Гаргула? Этого нельзя отменить!";
 L.RESET_UI = "Сбросить пользовательский интерфейс Гаргула";
 L.RESET_UI_CONFIRMATION = "Вы уверены, что хотите сбросить все размеры, положения и масштаб окон Гаргула? Этого нельзя отменить!";
@@ -955,3 +955,24 @@ L.KEYS_INFO = [[
 
 -- Щелкните правой кнопкой мыши, чтобы отключить это окно --
 ]];
+
+L.LOCALE_NONE_TITLE = "Выберите язык чата для Гаргула";
+L.LOCALE_NONE_EXPLANATION = [[
+Гаргул публикует сообщения в чате на английском языке (по умолчанию).
+Вы можете выбрать другой язык в раскрывающемся списке ниже.
+
+Ваш текущий язык игры — «%s».
+]];
+L.LOCALE_CHANGE_NOTE = "Примечание: вы можете изменить локаль в любой момент в настройках или через |cff%s/gl locale|r.";
+
+L.LOCALE_ENUS = "enUS"; -- English (United States)
+L.LOCALE_KOKR = "koKR"; -- Korean (Korea)
+L.LOCALE_FRFR = "frFR"; -- French (France)
+L.LOCALE_DEDE = "deDE"; -- German (Germany)
+L.LOCALE_ZHCN = "zhCN"; -- Chinese (Simplified, PRC)
+L.LOCALE_ESES = "esES"; -- Spanish (Spain)
+L.LOCALE_ZHTW = "zhTW"; -- Chinese (Traditional, Taiwan)
+L.LOCALE_ESMX = "esMX"; -- Spanish (Mexico)
+L.LOCALE_RURU = "ruRU"; -- Russian (Russia)
+L.LOCALE_PTBR = "ptBR"; -- Portuguese (Brazil)
+L.LOCALE_ITIT = "itIT"; -- Italian (Italy)

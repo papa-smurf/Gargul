@@ -100,7 +100,7 @@ L.GDKP_HIDE_UPCOMING_CONFIRMATION = "Tem certeza? Você não poderá ver ou dar 
 L.GDKP_PAYOUT_INACTIVE = "Nenhuma sessão ativa do GDKP detectada ou a sessão não está bloqueada para pagamento!";
 L.GDKP_SESSION = "Sessão GDKP";
 L.GDKP_SHOW_UPCOMING = "Mostrar próximos itens";
-L.GDKPS_ARE_NOT_ALLOWED = "GDKP raids are not allowed in this version of World of Warcraft"
+L.GDKPS_ARE_NOT_ALLOWED = "Os ataques GDKP não são permitidos nesta versão do World of Warcraft";
 L.GROUP = "Grupo";
 L.GROUP_MANAGER = "Gerente de grupo";
 L.IMPORT_EXPLANATION = "Que tipo de dados você gostaria de importar?";
@@ -149,7 +149,7 @@ L.QUALITY_LEGENDARY = "Lendário";
 L.QUALITY_HEIRLOOM = "Herança";
 L.QUEUE = "Fila";
 L.REMOVE_BID = "Remover lance";
-L.RESET_SETTINGS = "Reset Settings"
+L.RESET_SETTINGS = "Redefinir as configurações";
 L.RESET_SETTINGS_CONFIRMATION = "Tem certeza de que deseja redefinir todas as configurações do Gargul? Isso não pode ser desfeito!";
 L.RESET_UI = "Redefinir interface do Gargul";
 L.RESET_UI_CONFIRMATION = "Tem certeza de que deseja redefinir todos os tamanhos, posições e escala das janelas do Gargul? Isso não pode ser desfeito!";
@@ -955,3 +955,24 @@ Desencantar: |c00A79EFF%s|r
 
 -- Clique com o botão direito para desativar esta janela --
 ]];
+
+L.LOCALE_NONE_TITLE = "Escolha um idioma de bate-papo para Gargul";
+L.LOCALE_NONE_EXPLANATION = [[
+Gargul posta mensagens de bate-papo em inglês (padrão)
+Você pode selecionar um idioma diferente no menu suspenso abaixo
+
+O idioma atual do seu jogo é '%s'
+]];
+L.LOCALE_CHANGE_NOTE = "Nota: você pode alterar a localidade a qualquer momento nas configurações ou via |cff%s/gl locale|r";
+
+L.LOCALE_ENUS = "enUS"; -- English (United States)
+L.LOCALE_KOKR = "koKR"; -- Korean (Korea)
+L.LOCALE_FRFR = "frFR"; -- French (France)
+L.LOCALE_DEDE = "deDE"; -- German (Germany)
+L.LOCALE_ZHCN = "zhCN"; -- Chinese (Simplified, PRC)
+L.LOCALE_ESES = "esES"; -- Spanish (Spain)
+L.LOCALE_ZHTW = "zhTW"; -- Chinese (Traditional, Taiwan)
+L.LOCALE_ESMX = "esMX"; -- Spanish (Mexico)
+L.LOCALE_RURU = "ruRU"; -- Russian (Russia)
+L.LOCALE_PTBR = "ptBR"; -- Portuguese (Brazil)
+L.LOCALE_ITIT = "itIT"; -- Italian (Italy)

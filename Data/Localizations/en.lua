@@ -96,7 +96,7 @@ L.GDKP_HIDE_UPCOMING_CONFIRMATION = "Are you sure? You won't be able to see, or 
 L.GDKP_PAYOUT_INACTIVE = "No active GDKP session detected or session is not locked for payout!";
 L.GDKP_SESSION = "GDKP Session";
 L.GDKP_SHOW_UPCOMING = "Show upcoming items";
-L.GDKPS_ARE_NOT_ALLOWED = "GDKP raids are not allowed in this version of World of Warcraft"
+L.GDKPS_ARE_NOT_ALLOWED = "GDKP raids are not allowed in this version of World of Warcraft";
 L.GROUP = "Group";
 L.GROUP_MANAGER = "Group Manager";
 L.IMPORT_EXPLANATION = "What kind of data would you like to import?";
@@ -145,7 +145,7 @@ L.QUALITY_LEGENDARY = "Legendary";
 L.QUALITY_HEIRLOOM = "Heirloom";
 L.QUEUE = "Queue";
 L.REMOVE_BID = "Remove bid";
-L.RESET_SETTINGS = "Reset Settings"
+L.RESET_SETTINGS = "Reset Settings";
 L.RESET_SETTINGS_CONFIRMATION = "Are you sure you want to reset all of Gargul's settings? This can't be undone!";
 L.RESET_UI = "Reset Gargul UI";
 L.RESET_UI_CONFIRMATION = "Are you sure you want to reset all of Gargul's window sizes, positions and scale? This can't be undone!";
@@ -951,3 +951,24 @@ Disenchant: |c00A79EFF%s|r
 
 -- Right-click to disable this window --
 ]];
+
+L.LOCALE_NONE_TITLE = "Choose a chat language for Gargul";
+L.LOCALE_NONE_EXPLANATION = [[
+Gargul posts chat messages in English (default)
+You can select a different language in the dropdown below
+
+Your current game language is '%s'
+]];
+L.LOCALE_CHANGE_NOTE = "Note: you can change the locale at any time in the settings or via |cff%s/gl locale|r";
+
+L.LOCALE_ENUS = "enUS"; -- English (United States)
+L.LOCALE_KOKR = "koKR"; -- Korean (Korea)
+L.LOCALE_FRFR = "frFR"; -- French (France)
+L.LOCALE_DEDE = "deDE"; -- German (Germany)
+L.LOCALE_ZHCN = "zhCN"; -- Chinese (Simplified, PRC)
+L.LOCALE_ESES = "esES"; -- Spanish (Spain)
+L.LOCALE_ZHTW = "zhTW"; -- Chinese (Traditional, Taiwan)
+L.LOCALE_ESMX = "esMX"; -- Spanish (Mexico)
+L.LOCALE_RURU = "ruRU"; -- Russian (Russia)
+L.LOCALE_PTBR = "ptBR"; -- Portuguese (Brazil)
+L.LOCALE_ITIT = "itIT"; -- Italian (Italy)

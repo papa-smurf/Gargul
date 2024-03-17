@@ -84,6 +84,7 @@ Interface/AceGUIWidget-LibScrollingTable.lua
 Interface/Interface.lua
 Interface/Award/Award.lua
 Interface/Award/Overview.lua
+Interface/Locale.lua
 Interface/Importer.lua
 Interface/BonusFeatures.lua
 Interface/GroupVersionCheck.lua
