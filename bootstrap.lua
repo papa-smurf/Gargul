@@ -63,7 +63,7 @@ function GL:bootstrap(_, _, addonName)
     -- Mark the add-on as fully loaded
     GL.loadedOn = GetServerTime();
 
-    GL.Ace:ScheduleTimer(function()
+    GL:after(1, nil, function()
         -- Check if ElvUI is loaded (useful for making adhoc UI changes)
         self.elvUILoaded = GetAddOnEnableState(GL.User.name,"ElvUI") == 2;
 
@@ -75,7 +75,7 @@ function GL:bootstrap(_, _, addonName)
                     and UnitInParty("player");
             end)
         end
-    end, 1);
+    end);
 end
 
 --- Callback to be fired when the addon is completely loaded
@@ -88,6 +88,12 @@ function GL:_init()
     ) then
         self.GDKPIsAllowed = false;
     end
+
+    -- Initialize classes
+    self.Events:_init(self.EventFrame);
+    self.DB:_init();
+    self.Version:_init();
+    self.Settings:_init();
 
     -- Determine which chat message locale to use
     L = Gargul_L;
@@ -106,14 +112,15 @@ function GL:_init()
     end
 
     if (not chatLocale or not langMatch) then
+        chatLocale = "enUS";
         L.CHAT = L.CHAT.enUS;
     end
 
-    -- Initialize classes
-    self.Events:_init(self.EventFrame);
-    self.DB:_init();
-    self.Version:_init();
-    self.Settings:_init();
+    GL.Settings:onChange("chatLocale", function ()
+        if (GL.Settings:get("chatLocale") ~= chatLocale) then
+            C_UI.Reload();
+        end
+    end);
 
     -- Register media
     local media = LibStub("LibSharedMedia-3.0")
