@@ -717,3 +717,77 @@ function Test:identity(itemLinkOrID)
         --Ledger:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT");
     end);
 end
+
+--[[
+Sort all translations in L. (except for L.CHAT entries) and output them
+/script _G.Gargul.Test:sortTranslations()
+]]
+function Test:sortTranslations()
+    local FauxTrans = {};
+    for label, trans in pairs(Gargul_L) do
+        (function()
+            if (type(trans) ~= "string"
+                or GL:empty(trans)
+            ) then
+                print (("Non string / empty label: %s"):format(label));
+                return;
+            end
+
+            tinsert(FauxTrans, {
+                label = label,
+                value = trans,
+            });
+        end)();
+    end
+
+    table.sort(FauxTrans, function (a, b)
+        return a.label < b.label;
+    end);
+
+    local TranslationNotes = {
+        AWARD_UNDO_CONFIRM = "The last %s is the content of L.AWARD_UNDO_BR_REFUND",
+        BY = "As in 'bid BY'",
+        CLEAR = "As in clearing a window or data",
+        GDKP_LEDGER_MUTATION = "%s = removed or added",
+        GDKP_MULTIAUCTION_AUCTIONEER_ADD_ITEM = "%s holds the add item hotkey (default ALT_CLICK)",
+        GDKP_OVERVIEW_AUCTION_ENTRY = "Player paid 5000g for [Benediction]",
+        GDKP_OVERVIEW_MUTATION_ENTRY = "i.e. 5000g added to pot by winner Note: I made a booboo",
+        GDKP_OVERVIEW_SESSION_DETAILS = "By name<guild> on date",
+        GDKP_TUTORIAL_STEP_AUCTION = "%s holds the auction item hotkey (default ALT_CLICK)",
+        LOCALE_DEDE = "German (Germany)";
+        LOCALE_ENUS = "English (United States)";
+        LOCALE_ESES = "Spanish (Spain)";
+        LOCALE_ESMX = "Spanish (Mexico)";
+        LOCALE_FRFR = "French (France)";
+        LOCALE_ITIT = "Italian (Italy)";
+        LOCALE_KOKR = "Korean (Korea)";
+        LOCALE_PTBR = "Portuguese (Brazil)";
+        LOCALE_RURU = "Russian (Russia)";
+        LOCALE_ZHCN = "Chinese (Simplified, PRC)";
+        LOCALE_ZHTW = "Chinese (Traditional, Taiwan)";
+        RAIDGROUPS_IN_COMBAT_WARNING = "%s holds a player name",
+        TMB_IMPORT_PLAYER_NO_DATA = "%s can be TMB/DFT/CPR",
+        TMB_TOOLTIP_PRIO_HEADER = "%s can be TMB/DFT/CPR",
+        TYPE = "As in type of roll or type of item",
+    };
+
+    local exportString = "";
+    for _, Trans in pairs(FauxTrans) do
+        -- Make sure to preserve coloring
+        local value = Trans.value:gsub("|c00", "\\c00");
+
+        -- Check if string contains newlines
+        if (string.find(value, "\n")) then
+            value = ('[[\n%s]]'):format(value);
+        else
+            value = ('"%s"'):format(value);
+        end
+
+        -- Add a note to the translation if applicable
+        local note = TranslationNotes[Trans.label] and (" -- %s"):format(TranslationNotes[Trans.label]) or "";
+
+        exportString = ("%s\nL.%s = %s;%s"):format(exportString, Trans.label, value, note);
+    end
+
+    GL:frameMessage(exportString);
+end
