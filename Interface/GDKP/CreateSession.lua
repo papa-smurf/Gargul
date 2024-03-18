@@ -96,7 +96,7 @@ function CreateSession:build()
     Window:AddChild(SwitchCheckbox);
 
     local Save = AceGUI:Create("Button");
-    Save:SetText(L.SAVE);
+    Save:SetText(L.OK);
     Save:SetFullWidth(true);
     Save:SetCallback("OnClick", function()
         local title = strtrim(Title:GetText());

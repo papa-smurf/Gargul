@@ -654,15 +654,7 @@ function MasterLooterUI:drawReopenMasterLooterUIButton()
     PlayStopButton:SetNormalTexture("Interface/AddOns/Gargul/Assets/Buttons/stop");
     PlayStopButton:SetHighlightTexture(PlayStopButtonHighlight);
 
-    PlayStopButton:SetScript("OnEnter", function()
-        GameTooltip:SetOwner(PlayStopButton, "ANCHOR_TOP");
-        GameTooltip:SetText("Start/Stop");
-        GameTooltip:Show();
-    end);
-
-    PlayStopButton:SetScript("OnLeave", function()
-        GameTooltip:Hide();
-    end);
+    GL.Interface:addTooltip(PlayStopButton, ("%s / %s"):format(L.START, L.STOP), "TOP");
 
     PlayStopButton:SetScript("OnClick", function()
         local StartButton = GL.Interface:get(self, "Button.Start");
@@ -980,7 +972,7 @@ end
 
 -- Update the item priority string
 function MasterLooterUI:updateItemNote()
-    local defaultNote = GL.Settings:get("MasterLooting.defaultRollOffNote", "/roll 100 for MS or /roll 99 for OS");
+    local defaultNote = GL.Settings:get("MasterLooting.defaultRollOffNote", "");
     local ItemNote = GL.Interface:get(self, "EditBox.ItemNote");
     local itemLink = GL.Interface:get(self, "EditBox.Item"):GetText();
 

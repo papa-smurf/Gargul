@@ -279,7 +279,7 @@ function Session:tradeInitiated(Details)
         Window:AddChild(IncludeTradeInSession);
 
         local TradeHistoryButton = GL.AceGUI:Create("Button");
-        TradeHistoryButton:SetText("Gold Trades");
+        TradeHistoryButton:SetText(L.GDKP_GOLD_TRADES);
         TradeHistoryButton:SetFullWidth(true);
         TradeHistoryButton:SetCallback("OnClick", function()
             GL.Interface.GDKP.GoldTrades.Overview:open(self:activeSessionID(), partnerGUID);
@@ -313,8 +313,6 @@ end
 ---@param sessionID string
 ---@return number
 function Session:goldSpentByPlayer(player, sessionID)
-    GL:debug("Session:goldSpentByPlayer");
-
     sessionID = sessionID or self:activeSessionID();
     local Instance = self:byID(sessionID);
     if (not Instance) then
@@ -340,8 +338,6 @@ end
 ---@param sessionID string
 ---@return number
 function Session:goldBidByPlayer(player, sessionID)
-    GL:debug("Session:goldBidByPlayer");
-
     sessionID = sessionID or self:activeSessionID();
     local Instance = self:byID(sessionID);
     if (not Instance) then
@@ -467,8 +463,6 @@ end
 ---@param Details table
 ---@return void
 function Session:registerGoldTrade(Details)
-    GL:debug("Session:registerTrade");
-
     -- The player didn't want to include this trade
     if (not self.includeTradeInSession) then
         return;
@@ -513,8 +507,6 @@ end
 ---@param copper number
 ---@return void
 function Session:registerGoldMail(player, copper)
-    GL:debug("Session:registerGoldMail");
-
     local Instance = self:getActive();
 
     if (not Instance) then
@@ -541,8 +533,6 @@ end
 ---@param ID string
 ---@return table|nil
 function Session:byID(ID)
-    GL:debug("Session:sessionByID");
-
     if (not ID) then
         return;
     end
@@ -603,8 +593,6 @@ end
 ---@param itemLink string
 ---@return table
 function Session:tooltipLines(itemLink)
-    GL:debug("Session:tooltipLines");
-
     if (not Settings:get("GDKP.showHistoryOnTooltip")) then
         return {};
     end
@@ -636,8 +624,6 @@ end
 
 ---@return table|boolean
 function Session:getActive()
-    GL:debug("Session:getActive");
-
     local activeSessionIdentifier = self:activeSessionID();
 
     if (not activeSessionIdentifier) then
@@ -650,8 +636,6 @@ end
 ---@param SessionObj table
 ---@return boolean
 function Session:store(SessionObj)
-    GL:debug("Session:store");
-
     if (type(SessionObj) ~= "table"
         or GL:empty(SessionObj)
         or GL:empty(SessionObj.ID)
@@ -667,8 +651,6 @@ end
 ---@param sessionID string
 ---@return boolean
 function Session:setActive(sessionID)
-    GL:debug("Session:setActive");
-
     local Instance = self:byID(sessionID);
     if (not Instance
         or Instance.deletedAt
@@ -705,8 +687,6 @@ end
 
 ---@return boolean
 function Session:exists(sessionIdentifier)
-    GL:debug("Session:exists");
-
     return not not DB:get("GDKP.Ledger." .. sessionIdentifier .. ".ID");
 end
 
@@ -715,8 +695,6 @@ end
 ---@param sessionType string
 ---@return table|boolean
 function Session:create(title, managementCut, sessionType)
-    GL:debug("Session:createSession");
-
     if (type(title) ~= "string" or GL:empty(title)) then
         return false;
     end
@@ -765,8 +743,6 @@ end
 ---@param sessionType string
 ---@return boolean|table
 function Session:edit(sessionID, title, managementCut, sessionType)
-    GL:debug("Session:createSession");
-
     if (type(title) ~= "string" or GL:empty(title)) then
         return false;
     end
@@ -802,8 +778,6 @@ end
 ---@param sessionID string
 ---@return boolean
 function Session:lock(sessionID)
-    GL:debug("Session:lock");
-
     local Instance = self:byID(sessionID);
 
     if (not Instance or Instance.lockedAt) then
@@ -820,8 +794,6 @@ end
 ---@param sessionID string
 ---@return boolean
 function Session:unlock(sessionID)
-    GL:debug("Session:lock");
-
     local Instance = self:byID(sessionID);
     if (not Instance or not Instance.lockedAt) then
         return false;
@@ -837,8 +809,6 @@ end
 ---@param sessionID string
 ---@return boolean
 function Session:toggleLock(sessionID)
-    GL:debug("Session:toggleLock");
-
     local Instance = self:byID(sessionID);
     if (not Instance) then
         return false;
@@ -854,8 +824,6 @@ end
 ---@param sessionID string
 ---@return boolean
 function Session:delete(sessionID)
-    GL:debug("Session:delete");
-
     local Instance = self:byID(sessionID);
 
     if (not Instance) then
@@ -885,8 +853,6 @@ end
 ---@param sessionID string
 ---@return boolean
 function Session:restore(sessionID)
-    GL:debug("Session:restore");
-
     local Instance = self:byID(sessionID);
 
     if (not Instance or not Instance.deletedAt) then
@@ -905,8 +871,6 @@ end
 ---
 ---@return void
 function Session:clearActive()
-    GL:debug("Session:clearActive");
-
     local activeSession = DB:get("GDKP.activeSession");
     if (not activeSession) then
         return false;
@@ -922,8 +886,6 @@ end
 
 ---@return boolean
 function Session:userIsAllowedToBroadcast()
-    GL:debug("Session:userIsAllowedToBroadcast");
-
     return not GL.User.isInGroup or (
         GL.User.isInGroup and (GL.User.isMasterLooter or GL.User.hasAssist)
     );
@@ -1059,5 +1021,3 @@ function Session:announceRestoredGoldTrade(sessionID, playerGUID, given, receive
         GL:sendChatMessage((L.CHAT.GOLD_TRADE_RECEIVED_RESTORED):format(GL:copperToMoney(received), playerName), "GROUP");
     end
 end
-
-GL:debug("GDKP.lua");

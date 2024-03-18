@@ -297,7 +297,7 @@ function PlusOnes:import(data, openOverview, MetaData)
     if (type(data) ~= "string"
         or GL:empty(data)
     ) then
-        GL.Interface:get("PlusOnes.Importer", "Label.StatusMessage"):SetText("Invalid plus one data provided");
+        GL.Interface:get("PlusOnes.Importer", "Label.StatusMessage"):SetText(L.INVALID_DATA_WARNING);
         return false;
     end
 

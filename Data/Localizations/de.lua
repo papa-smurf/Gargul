@@ -202,11 +202,11 @@ L.VERSION_CHECK_STATUS_IGNORED = "SPIELER IGNORIERT!";
 L.VERSION_CHECK_STATUS_OFFLINE = "Offline";
 L.VERSION_CHECK_STATUS_UNRESPONSIVE = "Keine Antwort";
 L.VERSION_CHECK_STATUS_EXPLANATION = ([[
-|c0092FF00v%s|r: the player is up-to-date
-|c00F7922Ev%s|r: the player needs to update his add-ons
-|c00BE3333%s|r: the player doesn't have Gargul or is on an unsupported version
-|c00808080%s|r: the player is offline or is ignoring us!
-|c0000FFFF%s|r: the player is on our ignore list!
+|c0092FF00v%s|r: Der Player ist auf dem neuesten Stand
+|c00F7922Ev%s|r: Der Spieler muss seine Add-ons aktualisieren
+|c00BE3333%s|r: Der Player verfügt nicht über Gargul oder nutzt eine nicht unterstützte Version
+|c00808080%s|r: Der Spieler ist offline oder ignoriert uns!
+|c0000FFFF%s|r: Der Spieler steht auf unserer Ignorierliste!
 
 ]]):format(GL.version, GL.version, L.VERSION_CHECK_STATUS_UNRESPONSIVE, L.VERSION_CHECK_STATUS_OFFLINE, L.VERSION_CHECK_STATUS_IGNORED);
 
@@ -293,14 +293,14 @@ L.ZLIB_COMPRESS_WARNING = ("Unable to zlib compress the data. Contact support vi
 L.JSON_DECODE_WARNING = "JSON-Dekodierung der Daten ist nicht möglich. Stellen Sie sicher, dass Sie es unverändert kopieren/einfügen, ohne zusätzliche Zeichen oder Leerzeichen hinzuzufügen!";
 
 L.TUTORIAL_AWARD_OVERVIEW = ([[
-This window shows all the items that have been awarded on any given date (select one or more dates on the left).
+In diesem Fenster werden alle Gegenstände angezeigt, die an einem bestimmten Datum vergeben wurden (wählen Sie links ein oder mehrere Daten aus).
 
-Items can contain the following tags:
+Elemente können die folgenden Tags enthalten:
 
-|c00A79EFF%s|r: Awarded for offspec
-|c00A79EFF%s|r: This item was soft-reserved
-|c00A79EFF%s|r: This item was wishlisted (Thatsmybis)
-|c00A79EFF%s|r: This item was priolisted (Thatsmybis, DFT, prio3)
+|c00A79EFF%s|r: Ausgezeichnet für Offspec
+|c00A79EFF%s|r: Dieses Element wurde vorläufig reserviert
+|c00A79EFF%s|r: Dieser Artikel wurde auf die Wunschliste gesetzt (Thatsmybis)
+|c00A79EFF%s|r: Dieser Artikel wurde priorisiert (Thatsmybis, DFT, prio3)
 ]]):format(L.OFFSPEC_ABBR, L.SOFTRES_ABBR, L.WISHLIST_ABBR, L.PRIOLIST_ABBR);
 
 --[[ AWARDED LOOT EXPORTER /gl ah ]]
@@ -961,7 +961,7 @@ L.LOCALE_NONE_EXPLANATION = [[
 Gargul postet Chatnachrichten auf Englisch (Standard)
 Sie können im Dropdown-Menü unten eine andere Sprache auswählen
 
-Ihre aktuelle Spielsprache ist „%s“.
+Ihre aktuelle Chat-Sprache ist „%s“. Das Aktivieren einer anderen Sprache führt zu einem /reload!
 ]];
 L.LOCALE_CHANGE_NOTE = "Hinweis: Sie können das Gebietsschema jederzeit in den Einstellungen oder über |cff%s/gl locale|r ändern";
 

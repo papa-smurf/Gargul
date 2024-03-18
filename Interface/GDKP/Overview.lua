@@ -378,9 +378,9 @@ function Overview:build()
         end,
         tooltip = L.GDKP_OVERVIEW_LEDGER_TOOLTIP,
         normalTexture = "Interface/AddOns/Gargul/Assets/Buttons/eye",
-        updateOn = { "GL.GDKP_OVERVIEW_SESSION_CHANGED", "GL.GDKP_OVERVIEW_SESSION_CHANGED", "GL.GDKP_OVERVIEW_SESSIONS_REFRESHED", "GL.GDKP_AUCTION_CHANGED" },
+        updateOn = { "GL.GDKP_OVERVIEW_SESSION_CHANGED", "GL.GDKP_OVERVIEW_SESSION_CHANGED", "GL.GDKP_OVERVIEW_SESSIONS_REFRESHED", "GL.GDKP_AUCTION_CHANGED", },
         update = function (self)
-            self:SetEnabled(not GL:empty(GL:tableGet(Overview:getSelectedSession() or {}, L.GDKP_AUCTIONS)));
+            self:SetEnabled(not GL:empty(GL:tableGet(Overview:getSelectedSession() or {}, "Auctions")));
         end,
     });
     ListViewButton:SetPoint("TOPLEFT", AddGoldButton, "TOPRIGHT", 2, 0);
@@ -842,7 +842,7 @@ function Overview:showTutorial()
         Steps = {
             {1, ("|c00A79EFF%s|r"):format(L.GDKP_TUTORIAL_STEP_READY), },
             {2, ("|c00A79EFF%s|r"):format((L.GDKP_TUTORIAL_STEP_AUCTION):format(GL.Settings:get("ShortcutKeys.rollOffOrAuction"))), },
-            {3, ("|c00A79EFF|r"):format(L.GDKP_TUTORIAL_STEP_MULTI_AUCTION), },
+            {3, ("|c00A79EFF%s|r"):format(L.GDKP_TUTORIAL_STEP_MULTI_AUCTION), },
             {4, ("|c00A79EFF%s|r"):format((L.GDKP_TUTORIAL_STEP_SELL):format(GL.Settings:get("ShortcutKeys.award"))), },
             {5, ("|c00A79EFF%s|r"):format(L.GDKP_TUTORIAL_STEP_DONE), },
             {6, ("|c00A79EFF%s|r"):format(L.GDKP_TUTORIAL_STEP_COMMANDS), },
@@ -1003,12 +1003,12 @@ function Overview:refreshSessions()
         if (Session.deletedAt) then
             priority = priority + deletedAtPriorityModifier;
             color = {r = .77, g = .12, b = .23};
-            title = (" " .. L.GDKP_OVERVIEW_DELETED_SESSION):format(title);
+            title = ("%s " .. L.GDKP_OVERVIEW_DELETED_SESSION):format(title);
         end
 
         if (checksum == DB.GDKP.activeSession) then
             priority = 0;
-            title = (" " .. L.GDKP_OVERVIEW_ACTIVE_SESSION):format(title);
+            title = ("%s " .. L.GDKP_OVERVIEW_ACTIVE_SESSION):format(title);
         end
 
         -- Make sure we select the currently selected session by default

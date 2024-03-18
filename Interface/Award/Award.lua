@@ -163,7 +163,7 @@ function Award:draw(itemLink, callback)
 
     local PlayerNameBox;
     local AwardButton = AceGUI:Create("Button");
-    AwardButton:SetText("Award");
+    AwardButton:SetText(L.AWARD);
     AwardButton:SetWidth(70);
     AwardButton:SetHeight(20);
     AwardButton:SetDisabled(true);

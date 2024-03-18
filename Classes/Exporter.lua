@@ -106,7 +106,7 @@ function Exporter:draw()
     Window:AddChild(FooterFrame);
 
     local ClearButton = AceGUI:Create("Button");
-    ClearButton:SetText("Clear");
+    ClearButton:SetText(L.CLEAR);
     ClearButton:SetWidth(140);
     ClearButton:SetCallback("OnClick", function()
         Exporter:clearData();

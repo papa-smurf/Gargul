@@ -129,7 +129,7 @@ function EditAuction:draw(session, checksum)
     Interface:addTooltip(HelpIcon, L.GDKP_AUCTION_PAID_AMOUNT_INFO, "RIGHT");
 
     local SaveButton = AceGUI:Create("Button");
-    SaveButton:SetText(L.SAVE);
+    SaveButton:SetText(L.OK);
     SaveButton:SetFullWidth(true);
     SaveButton:SetCallback("OnClick", function()
         local newName = strtrim(PlayernameInput:GetText());

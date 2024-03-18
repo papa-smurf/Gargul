@@ -39,7 +39,7 @@ function AddGold:build()
     local Label = GL.AceGUI:Create("Label");
     Label:SetHeight(20);
     Label:SetFullWidth(true);
-    Label:SetText("Add to");
+    Label:SetText(" ");
     Window:AddChild(Label);
     Interface:set(self, "Title", Label);
 

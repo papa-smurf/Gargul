@@ -44,11 +44,11 @@ function LootPriority:tooltipLines(itemLink)
     end
 
     -- Add the header
-    local Lines = { ("\n|c00efb8cd%s|r"):format(L.LOOTPRIORITY_TOOLTIP_HEADER) };
+    local Lines = { ("\n|c00EFB8CD%s|r"):format(L.LOOTPRIORITY_TOOLTIP_HEADER) };
 
     -- Add the actual item prio
     for priorityLevel, value in pairs(itemPriority) do
-        tinsert(Lines, string.format("|c008aecff    %s: %s", priorityLevel, value));
+        tinsert(Lines, string.format("|c008AECFF    %s: %s", priorityLevel, value));
     end
 
     return Lines;
@@ -91,7 +91,7 @@ function LootPriority:drawImporter()
     LootPriorityFrame:AddChild(FooterFrame);
 
     local SaveButton = AceGUI:Create("Button");
-    SaveButton:SetText(L.SAVE);
+    SaveButton:SetText(L.OK);
     SaveButton:SetWidth(140);
     SaveButton:SetCallback("OnClick", function()
         self:save(LootPriorityBoxContent);
@@ -99,7 +99,7 @@ function LootPriority:drawImporter()
     FooterFrame:AddChild(SaveButton);
 
     local ClearButton = AceGUI:Create("Button");
-    ClearButton:SetText("Clear");
+    ClearButton:SetText(L.CLEAR);
     ClearButton:SetWidth(140);
     ClearButton:SetCallback("OnClick", function()
         LootPriorityBox:SetText("");
@@ -107,7 +107,7 @@ function LootPriority:drawImporter()
     FooterFrame:AddChild(ClearButton);
 
     local ShareButton = AceGUI:Create("Button");
-    ShareButton:SetText("Share");
+    ShareButton:SetText(L.BROADCAST);
     ShareButton:SetWidth(140);
     ShareButton:SetCallback("OnClick", function()
         self:broadcast();
@@ -125,10 +125,10 @@ function LootPriority:toCSV()
         local priorityString = "";
 
         for index = 1, #priority do
-            priorityString = string.format("%s > %s", priorityString, priority[index]);
+            priorityString = ("%s > %s"):format(priorityString, priority[index]);
         end
 
-        LootPriorityCSV = string.format("%s%s %s\n", LootPriorityCSV, item, priorityString);
+        LootPriorityCSV = ("%s%s %s\n"):format(LootPriorityCSV, item, priorityString);
     end
 
     return LootPriorityCSV;

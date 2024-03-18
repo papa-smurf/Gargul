@@ -351,7 +351,7 @@ function ClientInterface:build()
         ---@type Button
         local FinishButton = Interface:dynamicPanelButton(ButtonContainer);
         FinishButton:SetPoint("TOPLEFT", FinalCallButton, "TOPRIGHT", 4, 0);
-        FinishButton:SetText("Finish");
+        FinishButton:SetText(L.FINISH);
         FinishButton:SetScript("OnClick", function ()
             local unfinishedBusiness = false;
 

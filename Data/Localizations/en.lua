@@ -8,7 +8,7 @@ L.GOLD_INDICATOR = "g";
 L.SILVER_INDICATOR = "s";
 L.COPPER_INDICATOR = "c";
 
-L.HELLO = "|cff%sGargul v%s|r by Zhorax@Firemaw. Type |cff%s/gl|r or |cff%s/gargul|r to get started!";
+L.HELLO = "|c00%sGargul v%s|r by Zhorax@Firemaw. Type |c00%s/gl|r or |c00%s/gargul|r to get started!";
 L.ALL_SETTINGS = "All Settings";
 L.ANTISNIPE = "Anti Snipe";
 L.ANTISNIPE_EXPLANATION = [[
@@ -21,6 +21,8 @@ Anti Snipe values less than 5 are not supported
 
 ]];
 L.ZERO_SIGN = "0";
+L.MINUS_SIGN = "-";
+L.PERCENTAGE_SIGN = "%";
 L.AUCTIONEER = "Auctioneer";
 L.AUCTION = "Auction";
 L.AUCTIONS = "Auctions";
@@ -78,6 +80,10 @@ L.SELECT_ALL = "Select / Disable all";
 L.IMPORT = "Import";
 L.EXPORT = "Export";
 L.FINAL_CALL = "Final Call";
+L.RAIDERS = "Raiders";
+L.UNLOCK = "Unlock";
+L.BASE = "Base";
+L.ANNOUNCE = "Announce";
 L.LEDGER = "Ledger";
 L.GDKP_QUEUE_EXPLANATION = [[
 |c00A79EFF%s|r items in bags, loot windows or even on links in your chat to add them to this auction queue.
@@ -197,14 +203,14 @@ L.VERSION_CHECK_STATUS_CHECKING = "Checking version ...";
 L.VERSION_CHECK_STATUS_IGNORED = "PLAYER IGNORED!";
 L.VERSION_CHECK_STATUS_OFFLINE = "Offline";
 L.VERSION_CHECK_STATUS_UNRESPONSIVE = "No response";
-L.VERSION_CHECK_STATUS_EXPLANATION = ([[
+L.VERSION_CHECK_STATUS_EXPLANATION = [[
 |c0092FF00v%s|r: the player is up-to-date
 |c00F7922Ev%s|r: the player needs to update his add-ons
 |c00BE3333%s|r: the player doesn't have Gargul or is on an unsupported version
 |c00808080%s|r: the player is offline or is ignoring us!
 |c0000FFFF%s|r: the player is on our ignore list!
 
-]]):format(GL.version, GL.version, L.VERSION_CHECK_STATUS_UNRESPONSIVE, L.VERSION_CHECK_STATUS_OFFLINE, L.VERSION_CHECK_STATUS_IGNORED);
+]];
 
 L.VERSION_CHECK_SUMMARY_UP_TO_DATE = "Up-to-date:";
 L.VERSION_CHECK_SUMMARY_OUTDATED = "Outdated:";
@@ -262,7 +268,7 @@ L.DATE_FORMAT = "%Y-%m-%d";
 L.DATE_HOURS_MINUTES_FORMAT = "%Y-%m-%d %H:%M";
 L.DAY_MONTH_HOURS_MINUTES = "%d-%m %H:%M";
 L.HOURS_MINUTES_FORMAT = "%H:%M";
-L.TYPE = "Type"; -- As in type of roll or type of item*
+L.TYPE = "Type"; -- As in type of roll or type of item
 L.PLAYER_ITEM_WON_COUNT = "Items won by %s:";
 L.ARE_YOU_SURE = "Are you sure?";
 L.IMPORT_SUCCESSFUL = "Import of boosted roll data successful";
@@ -415,6 +421,8 @@ L.AWARD_NEW_WINNER_CONFIRMATION = "Who should %s go to instead?";
 L.AWARD_DISENCHANT_BR_CONFIRMATION = "Are you sure you want to disenchant %s? %s boosted roll points will be refunded!";
 
 --[[ THATSMYBIS /gl tmb ]]
+L.TMB_CLEAR_RAIDER_DATA = "Clear Raider Data";
+L.TMB_CLEAR_RAIDER_DATA_CONFIRM = "Clear TMB data for all raiders?";
 L.TMB_CLEAR_CONFIRM = "Are you sure you want to clear all plus one data?";
 L.TMB_BROADCAST_CONFIRM = "Are you sure you want to broadcast your TMB data to everyone in your party/raid? NB: EVERYONE can see your TMB data regardless of their permissions on the TMB website!";
 L.TMB_IMPORT_DFT_INFO = "Export your DFT data as per the sheet's instructions. Afterwards paste the contents as-is in the box below and click 'Import'. That's it!";
@@ -431,13 +439,13 @@ L.TMB_TOOLTIP_PRIO_HEADER = "%s Prio List"; -- %s can be TMB/DFT/CPR
 L.TMB_TOOLTIP_WISHLIST_HEADER = "TMB Wish List";
 L.TMB_TOOLTIP_OFFSPEC_INDICATION = "(" .. L.OFFSPEC_ABBR .. ")";
 L.TMB_TOOLTIP_TIER = "|c00FFFFFF    Tier:|r %s";
-L.TMB_TOOLTIP_NOTE = "|c00FFFFFF    Note:|r |cFFFFF569%s|r";
+L.TMB_TOOLTIP_NOTE = "|c00FFFFFF    Note:|r |c00FFF569%s|r";
 L.TMB_NO_BROADCAST_TARGETS = "There's no one in your group to broadcast to";
 L.TMB_BROADCAST_PROCESS_START = "Attempting to process incoming TMB data from %s";
 L.TMB_SYNCED = "TMB data synced";
 
 --[[ VERSION /gl version ]]
-L.VERSION_UPDATED = "|cff%sGargul|r is now updated to |cff%sv%s|r";
+L.VERSION_UPDATED = "|c00%sGargul|r is now updated to |c00%sv%s|r";
 L.VERSION_INVALID_WARNING = "Invalid version string provided in Version:addRelease";
 L.VERSION_INCOMPATIBLE_WARNING = "Gargul is out of date and won't work until you update!";
 L.VERSION_UPDATE_AVAILABLE = "v|c00A79EFFv%s|r is available on CurseForge/Wago. You can update without closing your game, just be sure to /reload !";
@@ -549,9 +557,9 @@ L.GDKP_OVERVIEW_LOCK_CONFIRM = "Locking a session means you can't auction items 
 L.GDKP_OVERVIEW_SESSION_DETAILS = "By %s%s | On |c00%s%s|r%s"; -- By name<guild> on date
 L.GDKP_OVERVIEW_MUTATION_ADDED = "added to";
 L.GDKP_OVERVIEW_MUTATION_REMOVED = "removed from";
-L.GDKP_OVERVIEW_MUTATION_ENTRY = "|cFF%s%s|r %s pot by %s\nNote: %s"; -- i.e. 5000g added to pot by winner \n Note: I made a booboo
-L.GDKP_OVERVIEW_AUCTION_ENTRY = "%s paid |cFF%s%s|r for\n%s"; -- i.e. Player paid 5000g for \n [Benediction]
-L.GDKP_OVERVIEW_DELETED_ENTRY = "|cFFbe3333Deleted by|r %s\nReason: %s";
+L.GDKP_OVERVIEW_MUTATION_ENTRY = "|c00%s%s|r %s pot by %s\nNote: %s"; -- i.e. 5000g added to pot by winner \n Note: I made a booboo
+L.GDKP_OVERVIEW_AUCTION_ENTRY = "%s paid |c00%s%s|r for\n%s"; -- i.e. Player paid 5000g for \n [Benediction]
+L.GDKP_OVERVIEW_DELETED_ENTRY = "|c00be3333Deleted by|r %s\nReason: %s";
 L.GDKP_OVERVIEW_DELETE_ENTRY_REASON = "Provide a reason for deleting this entry";
 L.GDKP_OVERVIEW_DELETE_ENTRY_TOOLTIP = "Delete. Hold shift to bypass note";
 L.GDKP_OVERVIEW_DELETE_ENTRY_DISABLED_TOOLTIP = "You need lead or master loot to delete entries.\nYou can't delete entries on locked/deleted sessions";
@@ -617,9 +625,9 @@ L.GDKP_ADD_GOLD_AMOUNT_LABEL = "Gold (- for removing gold)";
 L.GDKP_ADD_GOLD_PAID_BY_LABEL = "Paid for by";
 L.GDKP_ADD_GOLD_INVALID_WARNING = "Gold needs to be lower/higher than 0";
 L.GDKP_ADD_GOLD_INVALID_PAYER_WARNING = "Who pays for this?";
-L.GDKP_AUCTION_DETAILS_GOLD_ADDED = "|cFF%s%sg|r added to pot by %s\nNote: %s";
-L.GDKP_AUCTION_DETAILS_GOLD_PAID_BY = "%s paid |cFF%s%sg|r for\n%s";
-L.GDKP_AUCTION_DETAILS_DELETED_REASON = "|cFFbe3333Deleted by|r %s\nReason: %s";
+L.GDKP_AUCTION_DETAILS_GOLD_ADDED = "|c00%s%sg|r added to pot by %s\nNote: %s";
+L.GDKP_AUCTION_DETAILS_GOLD_PAID_BY = "%s paid |c00%s%sg|r for\n%s";
+L.GDKP_AUCTION_DETAILS_DELETED_REASON = "|c00be3333Deleted by|r %s\nReason: %s";
 L.GDKP_AUCTION_DETAILS_WON_BY = "Won by";
 L.GDKP_AUCTION_DETAILS_CREATED_BY = "Created by";
 L.GDKP_AUCTIONEER_SETTINGS_DISABLE_FOR_DISENCHANTED = "Disable for disenchanted";
@@ -759,6 +767,41 @@ Bid by me (does not include sold): %s
 L.GDKP_MULTIAUCTION_CLIENT_CLOSE_AUCTION = "Close Auction";
 
 L.GDKP_DISTRIBUTE_ADDRAIDER = "Add a raider to this session";
+L.GDKP_MUTATORS = "Mutators";
+L.GDKP_MUTATOR_ADD = "Add Mutator";
+L.GDKP_MUTATOR_EDIT = "Edit mutator";
+L.GDKP_MUTATOR_DELETE_BYPASS = "Delete. Hold shift to bypass confirmation";
+L.GDKP_CUTS_MUTATORS_EXPLANATION = [[
+
+With mutators you can give more or less gold to players
+Example: giving 2% extra to tanks is what mutators are for!
+
+Note: Editing or deleting mutators here only changes them for this session
+
+]];
+L.GDKP_CUTS_POT_EXPLANATION = [[
+
+The total payout can differ slightly from the pot due to rounding differences!
+Players currently in the raid can not be edited or removed!
+
+Color explanation:
+|c00F7922E(2000g)|r Means you owe this person 2000g
+|c00BE3333(3000g)|r Means this person owes you 3000g
+|c0092FF00(0)|r Means that you're square
+
+Adjuster explanation:
+With adjust [g] you can add/deduct gold to a player (use -50 to deduct 50 gold from a player's cut)
+With adjust [%] you can add/deduct a percentage to a player (use -50 to give players a half cut)
+]];
+L.GDKP_CUTS_ADD_RAIDER = "Add Raider";
+L.GDKP_CUTS_EDIT_RAIDER = "Edit Raider";
+L.GDKP_CUTS_DELETE_RAIDER = "Delete Raider";
+L.GDKP_CUTS_NOT_IN_RAID_HEADER = "Not in the raid";
+L.GDKP_CUTS_SUMMARY = "%s Raiders | %s With cut | Total payout: %sg";
+L.GDKP_CUTS_ANNOUNCE_TOOLTIP = "Announce the base cut in group chat";
+L.GDKP_CUTS_CLEAR_CONFIRMATION = "Are you sure you want to reset all players and calculations? Note: all players no longer in the raid will be removed from the list!";
+L.GDKP_CUTS_LOCK_TOOLTIP = "Lock and Pay";
+L.GDKP_CUTS_MANAGE_TRADES_TOOLTIP = "Manage gold trades";
 L.GDKP_MUTATOR_CREATE_NEW = "Create a new GDKP mutator";
 L.GDKP_MUTATOR_STORE_PERMANENTLY = "Store for future sessions";
 L.GDKP_MUTATOR_NAME_LABEL = "Name [example: Tanks]";
@@ -957,9 +1000,9 @@ L.LOCALE_NONE_EXPLANATION = [[
 Gargul posts chat messages in English (default)
 You can select a different language in the dropdown below
 
-Your current game language is '%s'
+Your current chat language is '%s', enabling a different language will cause a /reload!
 ]];
-L.LOCALE_CHANGE_NOTE = "Note: you can change the locale at any time in the settings or via |cff%s/gl locale|r";
+L.LOCALE_CHANGE_NOTE = "Note: you can change the locale at any time in the settings or via |c00%s/gl locale|r";
 
 L.LOCALE_ENUS = "enUS"; -- English (United States)
 L.LOCALE_KOKR = "koKR"; -- Korean (Korea)

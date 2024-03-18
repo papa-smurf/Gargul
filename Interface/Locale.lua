@@ -69,7 +69,7 @@ function Locale:build()
     Title:SetJustifyH("MIDDLE");
 
     ---@type FontString
-    local Intro = Interface:createFontString(Window, (L.LOCALE_NONE_EXPLANATION):format(("|c00%s%s|r"):format(GL.Data.Constants.addonHexColor, GetLocale())));
+    local Intro = Interface:createFontString(Window, (L.LOCALE_NONE_EXPLANATION):format(("|c00%s%s|r"):format(GL.Data.Constants.addonHexColor, GL.Settings:get("chatLocale", "enUS"))));
     Intro:SetPoint("TOP", Title, "BOTTOM", 0, -6);
     Intro:SetPoint("LEFT", Window, "LEFT", 20, -30);
     Intro:SetPoint("RIGHT", Window, "RIGHT", -20, 0);

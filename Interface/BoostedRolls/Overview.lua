@@ -50,7 +50,7 @@ function Overview:draw()
     Window:SetWidth(600);
     Window:SetHeight(540);
     Window:EnableResize(false);
-    Window.statustext:GetParent():Show(); -- Explicitely show the statustext bar
+    Window.statustext:GetParent():Show(); -- Explicitly show the statustext bar
     Window:SetCallback("OnClose", function()
        self:close();
     end);
@@ -145,7 +145,7 @@ function Overview:draw()
     GL.Interface:set(self, "PlayerName", PlayerNameLabel);
 
     local DecrementButton = AceGUI:Create("Button");
-    DecrementButton:SetText("-" .. step);
+    DecrementButton:SetText(L.MINUS_SIGN .. step);
     DecrementButton:SetWidth(60);
     DecrementButton:SetHeight(20);
     DecrementButton:SetCallback("OnClick", function()

@@ -33,7 +33,7 @@ function Overview:draw()
     Window:SetWidth(500);
     Window:SetHeight(300);
     Window:EnableResize(false);
-    Window.statustext:GetParent():Show(); -- Explicitely show the statustext bar
+    Window.statustext:GetParent():Show(); -- Explicitly show the statustext bar
     Window:SetCallback("OnClose", function()
        self:close();
     end);
@@ -159,7 +159,7 @@ function Overview:draw()
 
     local ShareButton = AceGUI:Create("Button");
     ShareButton:SetWidth(108);
-    ShareButton:SetText("Share Data");
+    ShareButton:SetText(L.BROADCAST);
     ShareButton:SetCallback("OnClick", function()
         if (not GL:empty(GL.Settings:get("TMB.shareWhitelist", ""))) then
             GL.TMB:broadcast();
@@ -185,12 +185,12 @@ function Overview:draw()
     Window:AddChild(SettingsButton);
 
     local ClearRaiderDataButton = AceGUI:Create("Button");
-    ClearRaiderDataButton:SetText("Clear Raider Data");
+    ClearRaiderDataButton:SetText(L.TMB_CLEAR_RAIDER_DATA);
     ClearRaiderDataButton:SetWidth(146);
     ClearRaiderDataButton:SetCallback("OnClick", function()
         -- Show a confirmation dialog before clearing entries
         GL.Interface.Dialogs.PopupDialog:open{
-            question = "Clear TMB data for all raiders?",
+            question = L.TMB_CLEAR_RAIDER_DATA_CONFIRM,
             OnYes = function ()
                 GL.TMB:broadcast(true);
             end,

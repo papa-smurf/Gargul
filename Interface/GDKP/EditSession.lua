@@ -87,7 +87,7 @@ function EditSession:build()
     Window:AddChild(SessionTypeDropdown);
 
     local Save = AceGUI:Create("Button");
-    Save:SetText(L.SAVE);
+    Save:SetText(L.OK);
     Save:SetFullWidth(true);
     Save:SetCallback("OnClick", function()
         local title = strtrim(Title:GetText());

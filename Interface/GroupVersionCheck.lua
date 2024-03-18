@@ -110,8 +110,8 @@ function GroupVersionCheck:build()
         highlight:SetTexCoord(0, 1, 0.23, 0.77);
         highlight:SetBlendMode("ADD");
 
-        Interface:addTooltip(Icon, L.VERSION_CHECK_STATUS_EXPLANATION);
-        Interface:addTooltip(StatusLabel, L.VERSION_CHECK_STATUS_EXPLANATION);
+        Interface:addTooltip(Icon, (L.VERSION_CHECK_STATUS_EXPLANATION):format(GL.version, GL.version, L.VERSION_CHECK_STATUS_UNRESPONSIVE, L.VERSION_CHECK_STATUS_OFFLINE, L.VERSION_CHECK_STATUS_IGNORED));
+        Interface:addTooltip(StatusLabel, (L.VERSION_CHECK_STATUS_EXPLANATION):format(GL.version, GL.version, L.VERSION_CHECK_STATUS_UNRESPONSIVE, L.VERSION_CHECK_STATUS_OFFLINE, L.VERSION_CHECK_STATUS_IGNORED));
     end
 
     --[[ SCROLLFRAME BOILERPLATE ]]
@@ -399,7 +399,7 @@ function GroupVersionCheck:refresh()
         end
 
         if (Member.name == GL.User.name) then
-            Status:SetText("v" .. GL.version);
+            Status:SetText(L.VERSION_ABBR .. GL.version);
 
             if (Version.isOutOfDate) then
                 addOutdated(Member.name);
@@ -448,7 +448,7 @@ function GroupVersionCheck:refresh()
                 end
 
                 -- Check if the player is up-to-date or not
-                Status:SetText("v" .. Response.version);
+                Status:SetText(L.VERSION_ABBR .. Response.version);
 
                 if (Version:isUpToDate(Response.version)) then
                     addUpToDate(Member.name);

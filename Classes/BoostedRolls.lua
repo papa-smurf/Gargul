@@ -519,7 +519,7 @@ end
 function BoostedRolls:import(data, openOverview, MetaData)
     -- Make sure all the required properties are available and of the correct type
     if (GL:empty(data)) then
-        GL.Interface:get("BoostedRolls.Importer", "Label.StatusMessage"):SetText("Invalid boosted roll data provided");
+        GL.Interface:get("BoostedRolls.Importer", "Label.StatusMessage"):SetText(L.INVALID_DATA_WARNING);
         return false;
     end
 
