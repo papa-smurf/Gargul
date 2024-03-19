@@ -723,18 +723,14 @@ function Pot:announce(sessionID, callback)
     GL:sendChatMessage(message, "GROUP");
 end
 
----@param sessionID string
----@param data string
----@return boolean
-function Pot:importCuts(sessionID, data)
-    local Session = GDKPSession:byID(sessionID);
-    if (not Session) then
-        return false;
-    end
-
+---@param csv string
+---@return table, boolean
+function Pot:csvToCuts(csv)
+    local includeRealms = false;
     local first = true;
     local Columns = {};
     local Cuts = {};
+
     for line in data:gmatch("[^\n]+") do
         local Segments = GL:explode(line, ",");
 
@@ -744,7 +740,7 @@ function Pot:importCuts(sessionID, data)
 
             if (not Columns.Player or not Columns.Gold) then
                 GL:error(L.GDKP_CUT_IMPORT_MISSING_HEADER);
-                return;
+                return {};
             end
         else -- The first line includes the heading, we don't need that
             local error = false;
@@ -769,6 +765,19 @@ function Pot:importCuts(sessionID, data)
         end
     end
 
+    return Cuts, includeRealms;
+end
+
+---@param sessionID string
+---@param data string|table
+---@return boolean
+function Pot:importCuts(sessionID, data)
+    local Session = GDKPSession:byID(sessionID);
+    if (not Session) then
+        return false;
+    end
+
+    local Cuts = type(data) == "table" and data or self:csvToCuts(data);
     if (GL:empty(Cuts)) then
         GL:warning(L.GDKP_CUT_IMPORT_EMPTY);
 
