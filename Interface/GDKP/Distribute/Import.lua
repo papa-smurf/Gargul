@@ -74,7 +74,7 @@ function Import:build()
                     and not GL:empty(Cuts)
                 ) then
                     GL.Interface.Dialogs.PopupDialog:open{
-                        question = L.GDKP_IMPORT_CONSEQUENCES_CROSS_REALM,
+                        question = (L.GDKP_IMPORT_CONSEQUENCES_CROSS_REALM):format(GL:nameFormat{ name = GL.User.name, forceRealm = true, colorize = true, }),
                         OnYes = function ()
                             if (GDKPPot:importCuts(self.sessionID, Cuts)) then
                                 ImportBox:SetText("");

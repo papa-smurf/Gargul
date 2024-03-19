@@ -731,7 +731,7 @@ function Pot:csvToCuts(csv)
     local Columns = {};
     local Cuts = {};
 
-    for line in data:gmatch("[^\n]+") do
+    for line in csv:gmatch("[^\n]+") do
         local Segments = GL:explode(line, ",");
 
         if (first) then

@@ -236,6 +236,7 @@ function GL:nameFormat(name, realm, colorize, class, stripRealm, stripSameRealm,
     func = type(func) == "table" and func or { func };
 
     name, realm = self:stripRealm(name);
+    local nameWithoutRealm = name;
     realm = passedRealm or realm;
     name = realm and ("%s-%s"):format(self:capitalize(name), self:capitalize(realm)) or self:capitalize(name);
     stripSameRealm = stripSameRealm ~= false;
@@ -245,7 +246,8 @@ function GL:nameFormat(name, realm, colorize, class, stripRealm, stripSameRealm,
     end
 
     if (forceRealm) then
-        name = self:addRealm(name);
+        name, realm = self:addRealm(name);
+
     elseif (stripSameRealm) then
         if (not self:isCrossRealm()
             or self:iEquals(realm, GL.User.realm)
@@ -255,7 +257,13 @@ function GL:nameFormat(name, realm, colorize, class, stripRealm, stripSameRealm,
     end
 
     if (colorize) then
-        name = self:classColorize(name, class or UnitClassBase(name));
+        class = class or UnitClassBase(name);
+
+        -- UnitClassBase doesn't work on FQNs on the same realm
+        if (not class and realm and self:iEquals(realm, GL.User.realm)) then
+            class = UnitClassBase(nameWithoutRealm);
+        end
+        name = self:classColorize(name, class);
     end
 
     name = strtrim(self:capitalize(name));
@@ -2143,7 +2151,7 @@ end
 ---
 ---@param name string
 ---@param realm string
----@return string
+---@return string, string
 function GL:addRealm(name, realm, fromGroup)
     realm = not self:empty(realm) and realm or nil;
     fromGroup = fromGroup ~= false;
@@ -2182,7 +2190,8 @@ function GL:addRealm(name, realm, fromGroup)
         end
     end
 
-    return ("%s-%s"):format(name, realm or GL.User.realm);
+    realm = realm or GL.User.realm;
+    return ("%s-%s"):format(name, realm), realm;
 end
 
 --- Strip the realm off of a player name
