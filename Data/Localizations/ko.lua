@@ -2,7 +2,7 @@
     You can test this locally by removing line 5:
     if (GetLocale() ~= "deDE") then return; end
 ]]
-if (GetLocale() ~= "koKR") then return; end
+if (true or GetLocale() ~= "koKR") then return; end
 local L = Gargul_L or {};
 
 L.ABOUT = "에 대한";

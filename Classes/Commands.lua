@@ -216,6 +216,9 @@ GL.Commands = GL.Commands or {
 
         -- Open the locale selector
         locale = function ()
+            ---@todo: REMOVE!
+            if (true) then return false; end
+
             GL.Interface.Locale:open();
         end,
 
@@ -314,7 +317,9 @@ function Commands:_dispatch(str)
 
     -- User entered "/gl" with no additional arguments, open localization or settings window
     if (not str or #str < 1) then
-        command = GL.Settings:get("chatLocale") and "settings" or "locale";
+        ---@TODO:ENABLE WHEN TRANSLATED!
+        --command = GL.Settings:get("chatLocale") and "settings" or "locale";
+        command = "settings";
     end
 
     -- Make sure commands are case insensitive (Busmonstret = dumdum)
