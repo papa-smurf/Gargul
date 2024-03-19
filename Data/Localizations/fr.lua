@@ -300,6 +300,17 @@ L.GDKP_EXPORT_FORMAT_START = "Date/heure à laquelle le premier article a été 
 L.GDKP_EXPORT_FORMAT_TITLE = "Le titre de la session du GDKP";
 L.GDKP_EXPORT_POT_CHANGED = "Pot changé";
 L.GDKP_HIDE_UPCOMING_CONFIRMATION = "Es-tu sûr? Vous ne pourrez pas voir ni enchérir sur les articles à venir !";
+L.GDKP_IMPORT_CONSEQUENCES_CROSS_REALM = [[
+|c00BE3333!! ATTENTION !!|r
+
+Vous êtes sur un royaume connecté et importez des noms de joueurs sans
+un suffixe de domaine, '%s' par exemple. Cela peut vous amener à envoyer
+coupe et coupe les mails au mauvais joueur.
+
+Lorsque vous êtes sur un royaume connecté, essayez toujours d'inclure le nom du royaume des joueurs !
+
+Continuer l'importation ?
+]];
 L.GDKP_IMPORT_CONSEQUENCES_INFO = "Cela annulera toutes les modifications que vous avez apportées à la fenêtre coupée, en êtes-vous sûr ?";
 L.GDKP_IMPORT_CUTS_INFO = [[
 Vous pouvez importer des coupes de joueurs à partir de vos propres calculs comme une feuille Google. softres GDKP etc.

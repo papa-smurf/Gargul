@@ -300,6 +300,17 @@ L.GDKP_EXPORT_FORMAT_START = "첫 번째 항목이 수여된 날짜/시간";
 L.GDKP_EXPORT_FORMAT_TITLE = "GDKP 세션 제목";
 L.GDKP_EXPORT_POT_CHANGED = "냄비가 바뀌었다";
 L.GDKP_HIDE_UPCOMING_CONFIRMATION = "확실합니까? 앞으로 나올 항목을 보거나 입찰할 수 없습니다!";
+L.GDKP_IMPORT_CONSEQUENCES_CROSS_REALM = [[
+|c00BE3333!! 경고 !!|r
+
+연결된 영역에 있고 플레이어 이름을 가져오는 중입니다.
+예를 들어 영역 접미사 '%s'입니다. 이로 인해 전송이 발생할 수 있습니다.
+잘못된 플레이어에게 메일을 자르고 잘라냅니다.
+
+연결된 영역에 있을 때는 항상 플레이어의 영역 이름을 포함하도록 노력하세요!
+
+계속 가져오시겠습니까?
+]];
 L.GDKP_IMPORT_CONSEQUENCES_INFO = "이렇게 하면 잘라내기 창에 대한 모든 변경 사항이 무시됩니다. 계속하시겠습니까?";
 L.GDKP_IMPORT_CUTS_INFO = [[
 Google 시트처럼 자신의 계산에서 선수 컷을 가져올 수 있습니다. 소프트레스 GDKP 등

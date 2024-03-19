@@ -300,6 +300,17 @@ L.GDKP_EXPORT_FORMAT_START = "Data/ora in cui è stato assegnato il primo item";
 L.GDKP_EXPORT_FORMAT_TITLE = "Il titolo della sessione del GDKP";
 L.GDKP_EXPORT_POT_CHANGED = "La pentola è cambiata";
 L.GDKP_HIDE_UPCOMING_CONFIRMATION = "Sei sicuro? Non sarai in grado di vedere o fare offerte sui prossimi articoli!";
+L.GDKP_IMPORT_CONSEQUENCES_CROSS_REALM = [[
+|c00BE3333!! ATTENZIONE!!!|r
+
+Sei su un reame connesso e stai importando i nomi dei giocatori senza
+un suffisso di regno, '%s' per esempio. Ciò può causare l'invio
+taglia e taglia le mail al giocatore sbagliato.
+
+Quando sei su un reame connesso, cerca sempre di includere il nome del reame dei giocatori!
+
+Continuare l'importazione?
+]];
 L.GDKP_IMPORT_CONSEQUENCES_INFO = "Ciò sovrascriverà qualsiasi modifica apportata alla finestra di taglio, sei sicuro?";
 L.GDKP_IMPORT_CUTS_INFO = [[
 Puoi importare i tagli dei giocatori dai tuoi calcoli come un foglio di Google. softres GDKP ecc.
