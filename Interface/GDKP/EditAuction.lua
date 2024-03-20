@@ -89,7 +89,7 @@ function EditAuction:draw(session, checksum)
     SessionDropdown:SetValue(session);
     SessionDropdown:SetList(DropDownItems, ItemOrder);
     SessionDropdown:SetText(DropDownItems[session]);
-    SessionDropdown:SetLabel("Session");
+    SessionDropdown:SetLabel("Session"); --TODO:TRANSLATE
     SessionDropdown:SetWidth(250);
     Window:AddChild(SessionDropdown);
 
@@ -98,7 +98,7 @@ function EditAuction:draw(session, checksum)
     PlayernameInput:SetHeight(20);
     PlayernameInput:SetWidth(250);
     PlayernameInput:SetText(GL:nameFormat(Auction.Winner.guid));
-    PlayernameInput:SetLabel("Player");
+    PlayernameInput:SetLabel("Player"); --TODO:TRANSLATE
     Window:AddChild(PlayernameInput);
 
     local NoteInput = GL.AceGUI:Create("EditBox");
