@@ -75,6 +75,9 @@ function GL:bootstrap(_, _, addonName)
                     and UnitInParty("player");
             end)
         end
+
+        ---@todo: REMOVE
+        GL.Interface.Settings:open(L.SETTINGS_SECTION_GETTING_STARTED);
     end);
 end
 

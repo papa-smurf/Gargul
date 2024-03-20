@@ -1013,3 +1013,81 @@ L.YOU_DISABLED_GDKP_QUEUES = "You disabled GDKP queues";
 L.ZERO_SIGN = "0";
 L.ZLIB_COMPRESS_WARNING = "Unable to zlib compress the data. Contact support via https://discord.gg/D3mDhYPVzf";
 L.ZLIB_DECOMPRESS_WARNING = "Unable to zlib decompress the data. Make sure you copy/paste it as-is without adding any additional characters or whitespaces!";
+
+--[[ SETTINGS ]]
+L.SETTINGS_SECTION_GETTING_STARTED = "Getting Started";
+L.SETTINGS_SECTION_GENERAL = "General";
+L.SETTINGS_SECTION_SOFTRES = "SoftRes";
+
+L.SETTINGS_SECTION_GETTING_STARTED_INTRO_BONUS_FEATURES = "Bonus Features";
+L.SETTINGS_SECTION_GETTING_STARTED_INTRO = [[
+Gargul can be used and tested without being in a raid,
+|c00A79EFFtry it out|r by using the most common actions:
+
+Auto Looting: |c00A79EFF/gl pm|r
+GDKP: |c00A79EFF/gdkp|r
+SoftRes: |c00A79EFF/gl sr|r
+TMB: |c00A79EFF/gl tmb|r
+
+Roll/Auction: |c00A79EFF%s|r on an item
+Award/Sell: |c00A79EFF%s|r on an item
+
+]];
+L.SETTINGS_SECTION_GETTING_STARTED_MORE_INFO = "More info";
+L.SETTINGS_SECTION_GETTING_STARTED_MORE_INFO_DIALOG = "Show your support by joining our cause!";
+L.SETTINGS_SECTION_GETTING_STARTED_PATRONS = "Patrons";
+
+L.SETTINGS_WELCOME_MESSAGE_LABEL = "Welcome message";
+L.SETTINGS_WELCOME_MESSAGE_DESCRIPTION = "Show a message including current version when logging in";
+L.SETTINGS_MASTER_LOOTING_LINK_NORMAL_AND_HARD_MODE_ITEMS_LABEL = "Link heroic mode items in TOGC and later and ICC";
+L.SETTINGS_MASTER_LOOTING_LINK_NORMAL_AND_HARD_MODE_ITEMS_DESCRIPTION = "Ensures that TMB/DFT entries on normal mode items also show up on their heroic counterpart (and vice versa!)";
+L.SETTINGS_SHOW_UPDATE_ALERT_LABEL = "Show update alert";
+L.SETTINGS_SHOW_UPDATE_ALERT_DESCRIPTION = [[
+Show an alert when there's an update. We believe in 'release early, release often',
+it allows us to respond to bugs more quickly and limits the severity of issues
+]];
+L.SETTINGS_CHANGE_LOG_LABEL = "Show changelog";
+L.SETTINGS_CHANGE_LOG_DESCRIPTION = "Show important changes after updating Gargul";
+L.SETTINGS_OPEN_CHAT_LOCALE_LABEL = "Chat message language";
+L.SETTINGS_OPEN_CHAT_LOCALE_DESCRIPTION = "Change the language";
+L.SETTINGS_NO_SOUNDS_LABEL = "No sounds";
+L.SETTINGS_NO_SOUNDS_DESCRIPTION = "When a roll starts or when you're outbid, Gargul will notify you";
+L.SETTINGS_SOUND_CHANNEL_LABEL = "On which channel should Gargul play sounds (default SFX)";
+L.SETTINGS_SOFT_RES_ENABLE_TOOLTIPS_LABEL = "Enable tooltip data";
+L.SETTINGS_SOFT_RES_ENABLE_TOOLTIPS_DESCRIPTION = "Show SoftRes data on tooltips";
+L.SETTINGS_SOFT_RES_HIDE_INFO_OF_PEOPLE_NOT_IN_GROUP_LABEL = "Show players in group only";
+L.SETTINGS_SOFT_RES_HIDE_INFO_OF_PEOPLE_NOT_IN_GROUP_DESCRIPTION = "When in a group you only see players who are there with you on item tooltips and dropped loot announcements";
+
+L.HOTKEYS_CLICK = "CLICK";
+L.HOTKEYS_RIGHTCLICK = "RIGHTCLICK";
+L.HOTKEYS_MIDDLECLICK = "MIDDLECLICK";
+L.HOTKEYS_SHIFT_CLICK = "SHIFT_CLICK";
+L.HOTKEYS_SHIFT_RIGHTCLICK = "SHIFT_RIGHTCLICK";
+L.HOTKEYS_SHIFT_MIDDLECLICK = "SHIFT_MIDDLECLICK";
+L.HOTKEYS_ALT_CLICK = "ALT_CLICK";
+L.HOTKEYS_ALT_RIGHTCLICK = "ALT_RIGHTCLICK";
+L.HOTKEYS_ALT_MIDDLECLICK = "ALT_MIDDLECLICK";
+L.HOTKEYS_CTRL_CLICK = "CTRL_CLICK";
+L.HOTKEYS_CTRL_RIGHTCLICK = "CTRL_RIGHTCLICK";
+L.HOTKEYS_CTRL_MIDDLECLICK = "CTRL_MIDDLECLICK";
+L.HOTKEYS_ALT_SHIFT_CLICK = "ALT_SHIFT_CLICK";
+L.HOTKEYS_ALT_SHIFT_RIGHTCLICK = "ALT_SHIFT_RIGHTCLICK";
+L.HOTKEYS_ALT_SHIFT_MIDDLECLICK = "ALT_SHIFT_MIDDLECLICK";
+L.HOTKEYS_CTRL_SHIFT_CLICK = "CTRL_SHIFT_CLICK";
+L.HOTKEYS_CTRL_SHIFT_RIGHTCLICK = "CTRL_SHIFT_RIGHTCLICK";
+L.HOTKEYS_CTRL_SHIFT_MIDDLECLICK = "CTRL_SHIFT_MIDDLECLICK";
+
+L.SETTINGS_MINIMAP_BUTTON_ENABLED_LABEL = "Enable minimap Icon";
+
+L.SETTINGS_MINIMAP_BUTTON_ACTION_DISABLED = "Do nothing";
+L.SETTINGS_MINIMAP_BUTTON_ACTION_GARGUL = "Open Gargul";
+L.SETTINGS_MINIMAP_BUTTON_ACTION_SOFTRES = "Softres";
+L.SETTINGS_MINIMAP_BUTTON_ACTION_GDKP = "GDKP";
+L.SETTINGS_MINIMAP_BUTTON_ACTION_GDKP_LEDGER = "GDKP Ledger";
+L.SETTINGS_MINIMAP_BUTTON_ACTION_GDKP_CUTS = "GDKP Cuts";
+L.SETTINGS_MINIMAP_BUTTON_ACTION_MULTIAUCTION = "GDKP Multiauction";
+L.SETTINGS_MINIMAP_BUTTON_ACTION_IMPORT = "Import data";
+L.SETTINGS_MINIMAP_BUTTON_ACTION_EXPORT = "Export data";
+L.SETTINGS_MINIMAP_BUTTON_ACTION_AWARDHISTORY = "Loot history";
+L.SETTINGS_MINIMAP_BUTTON_ACTION_PLUS_ONE = "Manage +1";
+L.SETTINGS_MINIMAP_BUTTON_ACTION_BOOSTED_ROLLS = "Boosted rolls";

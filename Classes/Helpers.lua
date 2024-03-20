@@ -1071,6 +1071,18 @@ function GL:strContains(str, subStr, insensitive)
     return GL:toboolean(strfind(str, subStr));
 end
 
+--- Provides a (PHP-style) named alternative to string.format
+---
+---@param str string
+---@param Tab table
+---
+---@return string
+function GL:printfn(str, Tab)
+    return Tab
+        and str:gsub("($%b{})", function(match) return Tab[match:sub(3, -2)] or match; end)
+        or str;
+end
+
 --- URL Decode a given url string
 ---
 ---@param url string
@@ -1579,6 +1591,22 @@ function GL:getBagAndSlotByGUID(itemGUID)
     end);
 
     return itemBag, itemSlot;
+end
+
+--- Transform a given camel case string to snake case (stopItNow => STOP_IT_NOW)
+---
+---@param str string
+---
+---@return string
+function GL:camelToSnake(str)
+    for match in string.gmatch(str, "%l+%u") do
+        local original = match;
+        match = match:gsub("%u", function (upperCase) return "_" .. upperCase; end);
+
+        str = str:gsub(original, match);
+    end
+
+    return string.upper(str:gsub("%p", "_"));
 end
 
 --- Check how much time to trade is remaining on the given item in our bags

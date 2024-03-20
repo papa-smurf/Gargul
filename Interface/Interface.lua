@@ -216,7 +216,7 @@ function Interface:inputBox(Parent, name, placeholder)
 
     -- Simulate HTML's "placeholder" behavior
     if (placeholder) then
-        Input._placeholder = ("|c00%s%s|r"):format(self.Colors["GRAY"], placeholder);
+        Input._placeholder = ("|c00%s%s|r"):format(self.Colors.GRAY, placeholder);
         Input:SetText(Input._placeholder);
 
         -- Make sure an empty value is returned when the placeholder value is still active
@@ -233,7 +233,7 @@ function Interface:inputBox(Parent, name, placeholder)
                 Input:SetText("");
             end
 
-            Input._placeholder = ("|c00%s%s|r"):format(self.Colors["GRAY"], placeholder);
+            Input._placeholder = ("|c00%s%s|r"):format(self.Colors.GRAY, placeholder);
 
             if (not Input:HasFocus()) then
                 Input:GetScript("OnEditFocusLost")();
@@ -820,7 +820,7 @@ function Interface:createCheckbox(Parent, name, checked, label, tooltip, callbac
 
     -- Add a label to the checkbox and make it clickable
     if (label) then
-        local Label = self:createFontString(Parent, label);
+        local Label = self:createFontString(Checkbox, label);
         Label:SetPoint("CENTER", Checkbox, "CENTER");
         Label:SetPoint("LEFT", Checkbox, "RIGHT", 4, 0);
 
