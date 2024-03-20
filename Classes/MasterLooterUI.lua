@@ -167,7 +167,7 @@ function MasterLooterUI:draw(itemLink)
 
                 local StartButton = AceGUI:Create("Button");
                 StartButton:SetText(L.START);
-                StartButton:SetWidth(60);
+                StartButton:SetWidth(60); --TODO:TOO SHORT FOR FR
                 StartButton:SetHeight(20);
                 StartButton:SetDisabled(true);
                 StartButton:SetCallback("OnClick", function()
@@ -338,7 +338,7 @@ function MasterLooterUI:draw(itemLink)
 
                 local AwardButton = AceGUI:Create("Button");
                 AwardButton:SetText(L.AWARD);
-                AwardButton:SetWidth(70);
+                AwardButton:SetWidth(70); --TODO:TOO SHORT FOR FR
                 AwardButton:SetHeight(20);
                 AwardButton:SetDisabled(true);
                 AwardButton:SetCallback("OnClick", function()
