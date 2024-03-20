@@ -2,7 +2,7 @@
     You can test this locally by removing line 5:
     if (GetLocale() ~= "deDE") then return; end
 ]]
-if (GetLocale() ~= "deDE") then return; end
+if (true or GetLocale() ~= "deDE") then return; end
 local L = Gargul_L or {};
 
 L.ABOUT = "Über";
@@ -300,6 +300,17 @@ L.GDKP_EXPORT_FORMAT_START = "Datum/Uhrzeit der Verleihung des ersten Artikels";
 L.GDKP_EXPORT_FORMAT_TITLE = "Der Titel der GDKP-Sitzung";
 L.GDKP_EXPORT_POT_CHANGED = "Topf gewechselt";
 L.GDKP_HIDE_UPCOMING_CONFIRMATION = "Bist du sicher? Sie können kommende Artikel nicht sehen oder darauf bieten!";
+L.GDKP_IMPORT_CONSEQUENCES_CROSS_REALM = [[
+|c00BE3333!! ACHTUNG !!|r
+
+Sie befinden sich auf einem verbundenen Realm und importieren Spielernamen ohne
+ein Bereichssuffix, zum Beispiel „%s“. Dies kann dazu führen, dass Sie senden
+schneidet und schneidet E-Mails an den falschen Spieler.
+
+Wenn Sie sich auf einem verbundenen Realm befinden, versuchen Sie immer, den Realmnamen der Spieler anzugeben!
+
+Mit dem Import fortfahren?
+]];
 L.GDKP_IMPORT_CONSEQUENCES_INFO = "Dadurch werden alle Änderungen überschrieben, die Sie am Schnittfenster vorgenommen haben. Sind Sie sicher?";
 L.GDKP_IMPORT_CUTS_INFO = [[
 Sie können Spielerschnitte aus Ihren eigenen Berechnungen wie einem Google Sheet importieren. Softres GDKP usw.

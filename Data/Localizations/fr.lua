@@ -2,7 +2,7 @@
     You can test this locally by removing line 5:
     if (GetLocale() ~= "deDE") then return; end
 ]]
---if (GetLocale() ~= "frFR") then return; end
+if (true or GetLocale() ~= "frFR") then return; end
 local L = Gargul_L or {};
 
 L.ABOUT = "À propos";
@@ -301,6 +301,17 @@ L.GDKP_EXPORT_FORMAT_START = "Date/heure à laquelle le premier objet a été at
 L.GDKP_EXPORT_FORMAT_TITLE = "Titre de la session du GDKP";
 L.GDKP_EXPORT_POT_CHANGED = "Pot changé";
 L.GDKP_HIDE_UPCOMING_CONFIRMATION = "Êtes-vous sûr? Vous ne pourrez ni voir ni enchérir sur les objets à venir !";
+L.GDKP_IMPORT_CONSEQUENCES_CROSS_REALM = [[
+|c00BE3333!! ATTENTION !!|r
+
+Vous êtes sur un royaume connecté et importez des noms de joueurs sans
+un suffixe de domaine, '%s' par exemple. Cela peut vous amener à envoyer
+des parts et poster des parts au mauvais joueur.
+
+Lorsque vous êtes sur un royaume connecté, essayez toujours d'inclure le nom du royaume des joueurs !
+
+Continuer l'importation ?
+]];
 L.GDKP_IMPORT_CONSEQUENCES_INFO = "Cela annulera toutes les modifications que vous avez apportées à la fenêtre de parts, en êtes-vous sûr ?";
 L.GDKP_IMPORT_CUTS_INFO = [[
 Vous pouvez importer les parts de joueurs à partir de vos propres calculs comme une feuille Google. softres GDKP etc.

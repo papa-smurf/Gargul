@@ -2,7 +2,7 @@
     You can test this locally by removing line 5:
     if (GetLocale() ~= "deDE") then return; end
 ]]
-if (GetLocale() ~= "zhTW") then return; end
+if (true or GetLocale() ~= "zhTW") then return; end
 local L = Gargul_L or {};
 
 L.ABOUT = "關於";
@@ -300,6 +300,17 @@ L.GDKP_EXPORT_FORMAT_START = "第一個項目被授予的日期/時間";
 L.GDKP_EXPORT_FORMAT_TITLE = "GDKP 會議的標題";
 L.GDKP_EXPORT_POT_CHANGED = "鍋換了";
 L.GDKP_HIDE_UPCOMING_CONFIRMATION = "你確定嗎？您將無法查看或競價即將推出的商品！";
+L.GDKP_IMPORT_CONSEQUENCES_CROSS_REALM = [[
+|c00BE3333!!警告！！|r
+
+您位於一個連接的領域，並且正在導入玩家姓名，而無需
+領域後綴，例如“%s”。這可能會導致您發送
+將郵件剪切並剪切給錯誤的玩家。
+
+當處於連接的領域時，請始終嘗試包含玩家的領域名稱！
+
+繼續導入嗎？
+]];
 L.GDKP_IMPORT_CONSEQUENCES_INFO = "這將覆蓋您對剪切視窗所做的任何更改，您確定嗎？";
 L.GDKP_IMPORT_CUTS_INFO = [[
 您可以從自己的計算中匯入球員剪輯，例如Google表格。軟體 GDKP 等

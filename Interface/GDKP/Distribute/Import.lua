@@ -63,10 +63,30 @@ function Import:build()
             OnYes = function ()
                 local data = ImportBox:GetText();
 
-                -- If the user copy/pasted from google sheets there will be addition quotes that need to be removed
+                -- If the user copy/pasted from google sheets there will be additional quotes that need to be removed
                 data = data:gsub("\"", "");
 
-                if (GDKPPot:importCuts(self.sessionID, data)) then
+                local Cuts, includedRealms = GDKPPot:csvToCuts(data);
+
+                -- This is a connected realm but the user didn't include realm names in his import
+                if (not includedRealms
+                    and GL:isCrossRealm()
+                    and not GL:empty(Cuts)
+                ) then
+                    GL.Interface.Dialogs.PopupDialog:open{
+                        question = (L.GDKP_IMPORT_CONSEQUENCES_CROSS_REALM):format(GL:nameFormat{ name = GL.User.name, forceRealm = true, colorize = true, }),
+                        OnYes = function ()
+                            if (GDKPPot:importCuts(self.sessionID, Cuts)) then
+                                ImportBox:SetText("");
+                                self:close();
+                            end
+                        end,
+                    };
+                    
+                    return;
+                end
+
+                if (GDKPPot:importCuts(self.sessionID, Cuts)) then
                     ImportBox:SetText("");
                     self:close();
                 end

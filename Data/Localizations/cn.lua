@@ -2,7 +2,7 @@
     You can test this locally by removing line 5:
     if (GetLocale() ~= "deDE") then return; end
 ]]
-if (GetLocale() ~= "zhCN") then return; end
+if (true or GetLocale() ~= "zhCN") then return; end
 local L = Gargul_L or {};
 
 L.ABOUT = "关于";
@@ -300,6 +300,17 @@ L.GDKP_EXPORT_FORMAT_START = "第一个项目被授予的日期/时间";
 L.GDKP_EXPORT_FORMAT_TITLE = "GDKP 会议的标题";
 L.GDKP_EXPORT_POT_CHANGED = "锅换了";
 L.GDKP_HIDE_UPCOMING_CONFIRMATION = "你确定吗？您将无法查看或竞价即将推出的商品！";
+L.GDKP_IMPORT_CONSEQUENCES_CROSS_REALM = [[
+|c00BE3333!!警告！！|r
+
+您位于一个连接的领域，并且正在导入玩家姓名，而无需
+领域后缀，例如“%s”。这可能会导致您发送
+将邮件剪切并剪切给错误的玩家。
+
+当处于连接的领域时，请始终尝试包含玩家的领域名称！
+
+继续导入吗？
+]];
 L.GDKP_IMPORT_CONSEQUENCES_INFO = "这将覆盖您对剪切窗口所做的任何更改，您确定吗？";
 L.GDKP_IMPORT_CUTS_INFO = [[
 您可以从自己的计算中导入球员剪辑，例如谷歌表格。软件 GDKP 等

@@ -296,6 +296,17 @@ L.GDKP_EXPORT_FORMAT_START = "Date/time at which the first item was awarded";
 L.GDKP_EXPORT_FORMAT_TITLE = "The title of the GDKP session";
 L.GDKP_EXPORT_POT_CHANGED = "Pot changed";
 L.GDKP_HIDE_UPCOMING_CONFIRMATION = "Are you sure? You won't be able to see, or bid on, upcoming items!";
+L.GDKP_IMPORT_CONSEQUENCES_CROSS_REALM = [[
+|c00BE3333!! WARNING !!|r
+
+You're on a connected realm and are importing player names without
+a realm suffix, '%s' for example. This can cause you to send
+cuts and cut mails to the wrong player.
+
+When on a connected realm always try to include the realm name of players!
+
+Continue importing?
+]];
 L.GDKP_IMPORT_CONSEQUENCES_INFO = "This will override any changes you've made to the cut window, are you sure?";
 L.GDKP_IMPORT_CUTS_INFO = [[
 You can import player cuts from your own calculations like a google sheet. softres GDKP etc.

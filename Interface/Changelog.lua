@@ -14,6 +14,12 @@ GL.Interface.Changelog = {
 
     History = {
         {
+            version = "7.4.0",
+            date = "March 19th, 2024",
+            Changes = {
+                "We're in the process of translating Gargul, check the welcome channel in our discord for more info if you'd like to help out!",
+            },
+        },{
             version = "7.3.2",
             date = "March 12th, 2024",
             Changes = {

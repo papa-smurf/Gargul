@@ -2,7 +2,7 @@
     You can test this locally by removing line 5:
     if (GetLocale() ~= "deDE") then return; end
 ]]
-if (GetLocale() ~= "esES" and GetLocale() ~= "esMX") then return; end
+if (true or GetLocale() ~= "esES" and GetLocale() ~= "esMX") then return; end
 local L = Gargul_L or {};
 
 L.ABOUT = "Acerca de";
@@ -300,6 +300,17 @@ L.GDKP_EXPORT_FORMAT_START = "Fecha/hora en la que se adjudicó el primer artíc
 L.GDKP_EXPORT_FORMAT_TITLE = "El título de la sesión del GDKP";
 L.GDKP_EXPORT_POT_CHANGED = "Olla cambiada";
 L.GDKP_HIDE_UPCOMING_CONFIRMATION = "¿Está seguro? ¡No podrás ver ni pujar por los próximos artículos!";
+L.GDKP_IMPORT_CONSEQUENCES_CROSS_REALM = [[
+|c00BE3333!! ¡¡ADVERTENCIA!!|r
+
+Estás en un reino conectado y estás importando nombres de jugadores sin
+un sufijo de reino, '%s' por ejemplo. Esto puede hacer que envíes
+corta y corta correos al jugador equivocado.
+
+Cuando estés en un reino conectado, intenta siempre incluir el nombre del reino de los jugadores.
+
+¿Continuar importando?
+]];
 L.GDKP_IMPORT_CONSEQUENCES_INFO = "Esto anulará cualquier cambio que hayas realizado en la ventana de corte, ¿estás seguro?";
 L.GDKP_IMPORT_CUTS_INFO = [[
 Puedes importar cortes de jugadores desde tus propios cálculos como una hoja de Google. software GDKP, etc.
