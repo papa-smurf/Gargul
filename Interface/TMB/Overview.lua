@@ -42,7 +42,7 @@ function Overview:draw()
     Window:SetPoint(GL.Interface:getPosition("TMBOverview"));
 
     Window:SetStatusText(string.format(
-        "Imported on |c00A79EFF%s|r at |c00A79EFF%s|r",
+        "Imported on |c00A79EFF%s|r at |c00A79EFF%s|r", --TODO:Translate
         date(L.DATE_FORMAT, DB:get("TMB.MetaData.importedAt", GetServerTime())),
         date(L.HOURS_MINUTES_FORMAT, DB:get("TMB.MetaData.importedAt", GetServerTime()))
     ));
@@ -60,7 +60,7 @@ function Overview:draw()
     Window:AddChild(VerticalSpacer);
 
     local MoreInfoLabel = GL.AceGUI:Create("Label");
-    MoreInfoLabel:SetText(string.format("|c00FFF569How to use Gargul with %s|r", source));
+    MoreInfoLabel:SetText(string.format("|c00FFF569How to use Gargul with %s|r", source)); --TODO:Translate
     MoreInfoLabel:SetFontObject(_G["GameFontGreenLarge"]);
     MoreInfoLabel:SetFullWidth(true);
     MoreInfoLabel:SetJustifyH("MIDDLE");
@@ -82,7 +82,7 @@ function Overview:draw()
     local TimestampLabel = AceGUI:Create("Label");
     TimestampLabel:SetFullWidth(true);
     TimestampLabel:SetText(string.format(
-        "\nThis %s data was imported on |c00A79EFF%s|r at |c00A79EFF%s|r",
+        "\nThis %s data was imported on |c00A79EFF%s|r at |c00A79EFF%s|r", --TODO:Translate
         source,
         date(L.DATE_FORMAT, DB:get("TMB.MetaData.importedAt", GetServerTime())),
         date(L.HOURS_MINUTES_FORMAT, DB:get("TMB.MetaData.importedAt", GetServerTime()))
@@ -94,7 +94,7 @@ function Overview:draw()
     local ItemNumberLabel = AceGUI:Create("Label");
     ItemNumberLabel:SetFullWidth(true);
     ItemNumberLabel:SetText(string.format(
-        "\nNumber of items imported: |c00A79EFF%s|r",
+        "\nNumber of items imported: |c00A79EFF%s|r", --TODO:Translate
         GL:count(DB:get("TMB.Items")) or 0
 
     ));
@@ -111,7 +111,7 @@ function Overview:draw()
     local PriorityNotesLabel = AceGUI:Create("Label");
     PriorityNotesLabel:SetFullWidth(true);
     PriorityNotesLabel:SetText(string.format(
-        "\nPriority notes available: |c00A79EFF%s|r",
+        "\nPriority notes available: |c00A79EFF%s|r", --TODO:Translate
         notesAvailable
     ));
     PriorityNotesLabel:SetJustifyH("MIDDLE");
@@ -127,7 +127,7 @@ function Overview:draw()
     local AutoSharingStatusLabel = AceGUI:Create("Label");
     AutoSharingStatusLabel:SetFullWidth(true);
     AutoSharingStatusLabel:SetText(string.format(
-        "\nAuto-sharing enabled: |c00A79EFF%s|r",
+        "\nAuto-sharing enabled: |c00A79EFF%s|r", --TODO:Translate
         autoSharingEnabled
     ));
     AutoSharingStatusLabel:SetJustifyH("MIDDLE");
@@ -146,7 +146,7 @@ function Overview:draw()
     ClearButton:SetCallback("OnClick", function()
         -- Show a confirmation dialog before clearing entries
         GL.Interface.Dialogs.PopupDialog:open{
-            question = ("Are you sure you want to clear your %s tables?"):format(source),
+            question = ("Are you sure you want to clear your %s tables?"):format(source), --TODO:Translate
             OnYes = function ()
                 GL.Interface.TMB.Overview:close();
                 GL.TMB:clear();
@@ -186,7 +186,7 @@ function Overview:draw()
 
     local ClearRaiderDataButton = AceGUI:Create("Button");
     ClearRaiderDataButton:SetText(L.TMB_CLEAR_RAIDER_DATA);
-    ClearRaiderDataButton:SetWidth(146);
+    ClearRaiderDataButton:SetWidth(146); --TODO:TOO SHORT FOR FRENCH
     ClearRaiderDataButton:SetCallback("OnClick", function()
         -- Show a confirmation dialog before clearing entries
         GL.Interface.Dialogs.PopupDialog:open{
