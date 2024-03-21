@@ -399,7 +399,7 @@ function Overview:build()
 
     local EnableOrDisableSession = AceGUI:Create("Button");
     EnableOrDisableSession:SetText(L.ENABLE);
-    EnableOrDisableSession:SetWidth(74);
+    EnableOrDisableSession:SetWidth(74); --TODO:TOO SHORT FOR FR
     EnableOrDisableSession:SetHeight(20);
     EnableOrDisableSession:SetCallback("OnClick", function()
         if (EnableOrDisableSession.mode == "enable") then
@@ -411,8 +411,8 @@ function Overview:build()
     Interface:set(self, "EnableDisable", EnableOrDisableSession);
 
     local CreateSession = AceGUI:Create("Button");
-    CreateSession:SetText(L.NEW);
-    CreateSession:SetWidth(64);
+    CreateSession:SetText(L.NEW); 
+    CreateSession:SetWidth(64); --TODO:TOO SHORT FOR FR
     CreateSession:SetHeight(20);
     CreateSession:SetCallback("OnClick", function()
         self:closeSubWindows();
@@ -420,8 +420,8 @@ function Overview:build()
     end);
 
     local EditSession = AceGUI:Create("Button");
-    EditSession:SetText(L.EDIT);
-    EditSession:SetWidth(60);
+    EditSession:SetText(L.EDIT); 
+    EditSession:SetWidth(60); --TODO:TOO SHORT FOR FR
     EditSession:SetHeight(20);
     EditSession:SetCallback("OnClick", function()
         self:closeSubWindows();
@@ -430,7 +430,7 @@ function Overview:build()
 
     local DeleteOrRestoreSession = AceGUI:Create("Button");
     DeleteOrRestoreSession:SetText(L.DELETE);
-    DeleteOrRestoreSession:SetWidth(72);
+    DeleteOrRestoreSession:SetWidth(72); --TODO:TOO SHORT FOR FR
     DeleteOrRestoreSession:SetHeight(20);
     DeleteOrRestoreSession:SetCallback("OnClick", function()
         if (DeleteOrRestoreSession.mode == "delete") then
@@ -453,7 +453,7 @@ function Overview:build()
 
     local Export = AceGUI:Create("Button");
     Export:SetText(L.EXPORT);
-    Export:SetWidth(72);
+    Export:SetWidth(72); --TODO:TOO SHORT FOR FR
     Export:SetHeight(20);
     Export:SetCallback("OnClick", function()
         GL.Interface.GDKP.Export:open(self.selectedSession);

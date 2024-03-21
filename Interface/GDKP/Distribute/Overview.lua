@@ -190,7 +190,7 @@ function Overview:build()
 
     local AddRaider = AceGUI:Create("Button");
     AddRaider:SetText(L.GDKP_CUTS_ADD_RAIDER);
-    AddRaider:SetWidth(110);
+    AddRaider:SetWidth(110); --TODO:TOO SHORT IN FR
     AddRaider:SetHeight(20);
     AddRaider:SetCallback("OnClick", function()
         self:closeSubWindows();
@@ -471,7 +471,7 @@ function Overview:refresh()
 
     local AddMutator = AceGUI:Create("Button");
     AddMutator:SetText(L.GDKP_MUTATOR_ADD);
-    AddMutator:SetWidth(110);
+    AddMutator:SetWidth(110); --TODO:TOO SHORT FOR FR
     AddMutator:SetHeight(20);
     AddMutator:SetCallback("OnClick", function()
         self:closeSubWindows();

@@ -164,7 +164,7 @@ function Award:draw(itemLink, callback)
     local PlayerNameBox;
     local AwardButton = AceGUI:Create("Button");
     AwardButton:SetText(L.AWARD);
-    AwardButton:SetWidth(70);
+    AwardButton:SetWidth(70); --TODO:TOO SHORT FOR FR
     AwardButton:SetHeight(20);
     AwardButton:SetDisabled(true);
     AwardButton:SetCallback("OnClick", function()
