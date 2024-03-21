@@ -1030,11 +1030,15 @@ L.ZLIB_DECOMPRESS_WARNING = "Unable to zlib decompress the data. Make sure you c
 L.SETTINGS_SECTION_GETTING_STARTED = "Getting Started";
 L.SETTINGS_SECTION_GENERAL = "General";
 L.SETTINGS_SECTION_SOFTRES = "SoftRes";
+L.SETTINGS_SECTION_TMB = "Thatsmybis / DFT";
+
+L.SETTINGS_SUBSECTION_MINIMAP = "Minimap";
+L.SETTINGS_SUBSECTION_SOFTRES_SUPPORTED_SERVICES = "Supported services";
 
 L.SETTINGS_SECTION_GETTING_STARTED_INTRO_BONUS_FEATURES = "Bonus Features";
 L.SETTINGS_SECTION_GETTING_STARTED_INTRO = [[
 Gargul can be used and tested without being in a raid,
-|c00A79EFFtry it out|r by using the most common actions:
+|c00A79EFFtry it out|r by using these common actions:
 
 Auto Looting: |c00A79EFF/gl pm|r
 GDKP: |c00A79EFF/gdkp|r
@@ -1046,7 +1050,7 @@ Award/Sell: |c00A79EFF%s|r on an item
 
 ]];
 L.SETTINGS_SECTION_GETTING_STARTED_MORE_INFO = "More info";
-L.SETTINGS_SECTION_GETTING_STARTED_MORE_INFO_DIALOG = "Show your support by joining our cause!";
+L.SETTINGS_SECTION_GETTING_STARTED_MORE_INFO_DIALOG = "Join our Discord if you'd like to contribute!";
 L.SETTINGS_SECTION_GETTING_STARTED_PATRONS = "Patrons";
 
 L.SETTINGS_WELCOME_MESSAGE_LABEL = "Welcome message";
@@ -1065,10 +1069,39 @@ L.SETTINGS_OPEN_CHAT_LOCALE_DESCRIPTION = "Change the language";
 L.SETTINGS_NO_SOUNDS_LABEL = "No sounds";
 L.SETTINGS_NO_SOUNDS_DESCRIPTION = "When a roll starts or when you're outbid, Gargul will notify you";
 L.SETTINGS_SOUND_CHANNEL_LABEL = "On which channel should Gargul play sounds (default SFX)";
+
+L.SETTINGS_SECTION_SOFTRES_EXPLANATION = [[
+Create a softreserve session on softres.it or classicpr.io (see below)
+and type |c00A79EFF/gl sr|r in-game to get started!
+]];
 L.SETTINGS_SOFT_RES_ENABLE_TOOLTIPS_LABEL = "Enable tooltip data";
 L.SETTINGS_SOFT_RES_ENABLE_TOOLTIPS_DESCRIPTION = "Show SoftRes data on tooltips";
 L.SETTINGS_SOFT_RES_HIDE_INFO_OF_PEOPLE_NOT_IN_GROUP_LABEL = "Show players in group only";
 L.SETTINGS_SOFT_RES_HIDE_INFO_OF_PEOPLE_NOT_IN_GROUP_DESCRIPTION = "When in a group you only see players who are there with you on item tooltips and dropped loot announcements";
+L.SETTINGS_SOFT_RES_ANNOUNCE_INFO_IN_CHAT_LABEL = "Announce details of dropped loot";
+L.SETTINGS_SOFT_RES_ANNOUNCE_INFO_IN_CHAT_DESCRIPTION = "SoftRes details of dropped loot are also announced in chat";
+L.SETTINGS_SOFT_RES_ANNOUNCE_INFO_WHEN_ROLLING_LABEL = "Announce details when rolling out loot";
+L.SETTINGS_SOFT_RES_ANNOUNCE_INFO_WHEN_ROLLING_DESCRIPTION = "SoftRes details will also be included whenever you roll out an item";
+L.SETTINGS_SOFT_RES_ENABLE_WHISPER_COMMAND_LABEL = "Whisper command";
+L.SETTINGS_SOFT_RES_ENABLE_WHISPER_COMMAND_DESCRIPTION = "Players can whisper '|c00A79EFF!sr|r' or '|c00A79EFF!softres|r' to you to double-check their soft-reserves";
+L.SETTINGS_SOFT_RES_FIX_PLAYER_NAMES_LABEL = "Fix character names";
+L.SETTINGS_SOFT_RES_FIX_PLAYER_NAMES_DESCRIPTION = "Players tend to misspell their character names on SoftRes. Gargul will attempt to fix those when importing soft-reserves";
+L.SETTINGS_SOFT_RES_OPEN_LABEL = "Softres.it";
+L.SETTINGS_SOFT_RES_OPEN_DESCRIPTION = "Softres.it provides a traditional soft-reserve platform";
+L.SETTINGS_SOFT_RES_OPEN_CPR_LABEL = "Classicpr.io";
+L.SETTINGS_SOFT_RES_OPEN_CPR_DESCRIPTION = "Classicpr.io provides a 'prio3' soft-reserve system that allows for prioritizing soft-reserves";
+
+L.SETTINGS_TMB_AUTOMATICALLY_SHARE_DATA_LABEL = "Automatically share data";
+L.SETTINGS_TMB_AUTOMATICALLY_SHARE_DATA_DESCRIPTION = "Automatically share data with players (all players or if specified, those listed below) who join your raid or when you import new data";
+L.SETTINGS_TMB_SHARE_WHITELIST_LABEL = "Share data with specific players only";
+L.SETTINGS_TMB_SHARE_WHITELIST_DESCRIPTION = [[
+Add a comma-separated list of players to share data with, only these
+people will receive data even when 'Automatically share data' is enabled
+]]
+
+L.SETTINGS_SECTION_TMB_EXPLANATION = [[
+Type |c00A79EFF/gl tmb|r or |c00A79EFF/gl dft|r or click the button below to get started!
+]];
 
 L.HOTKEYS_CLICK = "CLICK";
 L.HOTKEYS_RIGHTCLICK = "RIGHTCLICK";

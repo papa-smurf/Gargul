@@ -6,9 +6,6 @@ local _, GL = ...;
 ---@type Interface
 local Interface = GL.Interface;
 
----@type function
-local printfn = GL.printfn;
-
 --[[ CONSTANTS ]]
 local DEFAULT_SECTION = L.SETTINGS_SECTION_GENERAL;
 local MENU_ROW_HEIGHT = 22;
@@ -31,6 +28,7 @@ local DROPDOWN = 3;
 local MINIMAP_HOTKEY_DROPDOWN = 4;
 local CUSTOM = 5;
 local LABEL = 6;
+local INPUT = 7;
 
 local MINIMAP_HOTKEY_ACTIONS = {
     "DISABLED",
@@ -51,6 +49,7 @@ local SECTION_ORDER = {
     [1] = L.SETTINGS_SECTION_GETTING_STARTED,
     [2] = L.SETTINGS_SECTION_GENERAL,
     [3] = L.SETTINGS_SECTION_SOFTRES,
+    [4] = L.SETTINGS_SECTION_TMB,
 };
 local SECTION_INDEXES = GL:tableFlip(SECTION_ORDER);
 
@@ -201,7 +200,7 @@ local SettingEntries = {
                     }
                 },
                 {
-                    ID = L.SETTINGS_SUBSECTION_MINIMAL,
+                    ID = L.SETTINGS_SUBSECTION_MINIMAP,
                     type = SUB_SECTION,
                 },{
                     ID = "MinimapButton.enabled",
@@ -231,12 +230,72 @@ local SettingEntries = {
     ,
     [L.SETTINGS_SECTION_SOFTRES] = {
         {
+            ID = "settingsSectionSoftresExplanation",
+            type = LABEL,
+        },
+        {
             ID = "SoftRes.enableTooltips",
             type = CHECKBOX,
         },
         {
             ID = "SoftRes.hideInfoOfPeopleNotInGroup",
             type = CHECKBOX,
+        },
+        {
+            ID = "SoftRes.announceInfoInChat",
+            type = CHECKBOX,
+        },
+        {
+            ID = "SoftRes.announceInfoWhenRolling",
+            type = CHECKBOX,
+        },
+        {
+            ID = "SoftRes.enableWhisperCommand",
+            type = CHECKBOX,
+        },
+        {
+            ID = "SoftRes.fixPlayerNames",
+            type = CHECKBOX,
+        },
+        {
+            ID = L.SETTINGS_SUBSECTION_SOFTRES_SUPPORTED_SERVICES,
+            type = SUB_SECTION,
+        },
+        {
+            ID = "softResOpen",
+            type = BUTTON,
+            action = function ()
+                GL.Interface.Dialogs.HyperlinkDialog:open{
+                    description = L.SETTINGS_OPEN_SOFT_RES_DESCRIPTION,
+                    hyperlink = "https://softres.it/",
+                };
+            end,
+        },
+        {
+            ID = "softResOpenCPR",
+            label = L.CLASSICPRIO_ABBR,
+            type = BUTTON,
+            action = function ()
+                GL.Interface.Dialogs.HyperlinkDialog:open{
+                    description = L.SETTINGS_OPEN_CPR_DESCRIPTION,
+                    hyperlink = "https://classicpr.io/",
+                };
+            end,
+        },
+    },
+    [L.SETTINGS_SECTION_TMB] = {
+        {
+            ID = "settingsSectionTMbExplanation",
+            type = LABEL,
+        },
+        {
+            ID = "TMB.automaticallyShareData",
+            type = CHECKBOX,
+        },
+        {
+            ID = "TMB.shareWhitelist",
+            type = INPUT,
+            placeholder = ("%s, %s"):format(GL.User.name, L.GARGUL),
         },
     },
 };
@@ -352,7 +411,7 @@ function Settings:injectSectionsMenu(Parent)
             Item.Hover:Hide();
         end);
 
-        tinsert(self.MenuFrames, Item);
+        self.MenuFrames[position] = Item;
     end
 
     return Parent;
@@ -374,9 +433,9 @@ function Settings:showSection(section)
     local Window = self:build();
     self:disableMenuHighlights();
 
-    local SectionFrame = self.MenuFrames[SECTION_INDEXES[section]];
-    SectionFrame.Hover:Hide();
-    SectionFrame.Highlight:Show();
+    local MenuEntry = self.MenuFrames[SECTION_INDEXES[section]];
+    MenuEntry.Hover:Hide();
+    MenuEntry.Highlight:Show();
 
     self:injectSettingsForSection(Window.SettingsFrame, section);
 
@@ -505,11 +564,40 @@ function Settings:buildFrameForSetting(Parent, Details)
 
     if (Details.type == CUSTOM) then
         SettingFrame = Details.build(Parent);
+
     elseif (Details.type == SUB_SECTION) then
         ---@type FontString
         SettingFrame = Interface:createFontString(Parent, Details.ID);
         SettingFrame:SetFont(SUBJECT_FONT_SIZE, "OUTLINE");
         SettingFrame.type = SUB_SECTION;
+
+    elseif (Details.type == LABEL) then
+        ---@type FontString
+        SettingFrame = Interface:createFontString(Parent, L[GL:camelToSnake(Details.ID)]);
+        SettingFrame:SetColor(SETTING_COLOR);
+
+    elseif (Details.type == INPUT) then
+        local label = self:getLabel(settingID);
+        local tooltip = self:getDescription(settingID);
+
+        ---@type Frame
+        SettingFrame = CreateFrame("Frame", nil, Parent);
+        SettingFrame:SetWidth(300);
+        SettingFrame:SetHeight(40);
+
+        ---@type FontString
+        local InputLabel = Interface:createFontString(SettingFrame, label);
+        InputLabel:SetColor(SETTING_COLOR);
+        InputLabel:SetPoint("TOPLEFT", SettingFrame, "TOPLEFT");
+
+        local Input = Interface:inputBox(SettingFrame, nil, Details.placeholder);
+        Input:SetPoint("TOPLEFT", InputLabel, "BOTTOMLEFT", 2, -2);
+        Input:SetWidth(200);
+
+        if (tooltip) then
+            Interface:addTooltip(SettingFrame, ("|c00FFFFFF%s|r\n%s"):format(label, tooltip));
+            Interface:addTooltip(Input, ("|c00FFFFFF%s|r\n%s"):format(label, tooltip));
+        end
 
     elseif (Details.type == CHECKBOX) then
         local label = self:getLabel(settingID);
@@ -536,17 +624,20 @@ function Settings:buildFrameForSetting(Parent, Details)
         GL.Settings:onChange(settingID, function ()
             SettingFrame:SetChecked(GL.Settings:get(settingID));
         end);
+
     elseif (Details.type == BUTTON) then
         local label = self:getLabel(settingID);
         local tooltip = self:getDescription(settingID);
 
         ---@type Frame
         SettingFrame = Interface:dynamicPanelButton(Parent, label);
+        SettingFrame:SetWidth(200);
         SettingFrame:SetScript("OnClick", Details.action);
 
         if (tooltip) then
             Interface:addTooltip(SettingFrame, ("|c00FFFFFF%s|r\n%s"):format(label, tooltip));
         end
+
     elseif (Details.type == DROPDOWN) then
         local label = self:getLabel(settingID);
         local tooltip = self:getDescription(settingID);
@@ -575,6 +666,7 @@ function Settings:buildFrameForSetting(Parent, Details)
         if (tooltip) then
             Interface:addTooltip(DropDown, ("|c00FFFFFF%s|r\n%s"):format(label, tooltip));
         end
+
     elseif (Details.type == MINIMAP_HOTKEY_DROPDOWN) then
         local hotkey = GL:explode(Details.ID, ".")[3];
         local label = L["HOTKEYS_" .. hotkey];

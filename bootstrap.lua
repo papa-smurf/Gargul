@@ -77,7 +77,7 @@ function GL:bootstrap(_, _, addonName)
         end
 
         ---@todo: REMOVE
-        GL.Interface.Settings:open(L.SETTINGS_SECTION_GETTING_STARTED);
+        GL.Interface.Settings:open(L.SETTINGS_SECTION_TMB);
     end);
 end
 
