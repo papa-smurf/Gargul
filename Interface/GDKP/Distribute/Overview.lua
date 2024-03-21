@@ -190,7 +190,7 @@ function Overview:build()
 
     local AddRaider = AceGUI:Create("Button");
     AddRaider:SetText(L.GDKP_CUTS_ADD_RAIDER);
-    AddRaider:SetWidth(110);
+    AddRaider:SetWidth(110); ---@TODO: TOO SHORT IN FR
     AddRaider:SetHeight(20);
     AddRaider:SetCallback("OnClick", function()
         self:closeSubWindows();
@@ -471,7 +471,7 @@ function Overview:refresh()
 
     local AddMutator = AceGUI:Create("Button");
     AddMutator:SetText(L.GDKP_MUTATOR_ADD);
-    AddMutator:SetWidth(110);
+    AddMutator:SetWidth(110); ---@TODO: TOO SHORT FOR FR
     AddMutator:SetHeight(20);
     AddMutator:SetCallback("OnClick", function()
         self:closeSubWindows();
@@ -592,9 +592,9 @@ function Overview:refresh()
             local copperToGive = GDKPSession:copperOwedToPlayer(player, Session.ID);
 
             if (copperToGive > 0) then
-                nameText = ("    |c00F7922E(%s%s)|r |c00%s%s|r"):format(copperToGive / 10000, L.ZERO_SIGN, classColor, nameFormatted);
+                nameText = ("    |c00F7922E(%s%s)|r |c00%s%s|r"):format(copperToGive / 10000, L.GOLD_INDICATOR, classColor, nameFormatted);
             elseif (copperToGive < 0) then
-                nameText = ("    |c00BE3333(%s%s)|r |c00%s%s|r"):format((copperToGive * -1) / 10000, L.ZERO_SIGN, classColor, nameFormatted);
+                nameText = ("    |c00BE3333(%s%s)|r |c00%s%s|r"):format((copperToGive * -1) / 10000, L.GOLD_INDICATOR, classColor, nameFormatted);
             else
                 nameText = ("    |c0092FF00(%s)|r |c00%s%s|r"):format(L.ZERO_SIGN, classColor, nameFormatted);
             end

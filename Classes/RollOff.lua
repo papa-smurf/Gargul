@@ -920,7 +920,7 @@ function RollOff:refreshRollsTable()
         local plusOnes = GL.PlusOnes:getPlusOnes(playerName);
 
         if (GL:higherThanZero(plusOnes)) then
-            plusOnes = L.PLUSONES_PLUS_SIGN .. plusOnes;
+            plusOnes = L.PLUS_SIGN .. plusOnes;
         end
 
         local Row = {
