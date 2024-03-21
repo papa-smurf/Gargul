@@ -69,8 +69,18 @@ end
 ---@param color string
 ---@vararg string
 ---@return void
-function GL:coloredMessage (color, ...)
+function GL:coloredMessage(color, ...)
     GL:message(string.format("|c00%s%s", color, string.join(" ", ...)));
+end
+
+--- Wrap a string in a color segment
+---
+---@param str string
+---@param color string
+---
+---@return string
+function GL:colorize(str, color)
+    return ("|c00%s%s|r"):format(color, str);
 end
 
 --- Print a multicolored message
@@ -81,7 +91,7 @@ end
 ---@vararg table
 ---@param delimiter string
 ---@return void
-function GL:multiColoredMessage (ColoredMessages, delimiter)
+function GL:multiColoredMessage(ColoredMessages, delimiter)
     local multiColoredMessage = "";
     delimiter = delimiter or " ";
 
@@ -1055,6 +1065,16 @@ end
 ---@return boolean
 function GL:strEndsWith(str, endStr)
     return string.sub(str,-(string.len(endStr))) == endStr;
+end
+
+---@param str string
+---@param Tab table
+---
+---@return string
+function GL:printfn(str, Tab)
+    return Tab
+        and str:gsub("($%b{})", function(match) return Tab[match:sub(3, -2)] or match; end)
+        or str;
 end
 
 --- Check whether the provided string contains a given substring

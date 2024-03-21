@@ -41,11 +41,10 @@ function Overview:draw()
 
     Window:SetPoint(GL.Interface:getPosition("TMBOverview"));
 
-    Window:SetStatusText(string.format(
-        "Imported on |c00A79EFF%s|r at |c00A79EFF%s|r", ---@TODO: Translate
-        date(L.DATE_FORMAT, DB:get("TMB.MetaData.importedAt", GetServerTime())),
-        date(L.HOURS_MINUTES_FORMAT, DB:get("TMB.MetaData.importedAt", GetServerTime()))
-    ));
+    Window:SetStatusText(GL:printfn(L.TMB_IMPORT_DETAILS, {
+        date = GL:colorize(date(L.DATE_FORMAT, DB:get("TMB.MetaData.importedAt", GetServerTime())), GL.Interface.Colors.WARLOCK),
+        time = GL:colorize(date(L.HOURS_MINUTES_FORMAT, DB:get("TMB.MetaData.importedAt", GetServerTime())), GL.Interface.Colors.WARLOCK),
+    }));
 
     -- Make sure the window can be closed by pressing the escape button
     _G["GARGUL_TMB_OVERVIEW_WINDOW"] = Window.frame;
@@ -60,7 +59,7 @@ function Overview:draw()
     Window:AddChild(VerticalSpacer);
 
     local MoreInfoLabel = GL.AceGUI:Create("Label");
-    MoreInfoLabel:SetText(string.format("|c00FFF569How to use Gargul with %s|r", source)); ---@TODO: Translate
+    MoreInfoLabel:SetText(L.TMB_IMPORT_TMB_GARGUL_INFO);
     MoreInfoLabel:SetFontObject(_G["GameFontGreenLarge"]);
     MoreInfoLabel:SetFullWidth(true);
     MoreInfoLabel:SetJustifyH("MIDDLE");
@@ -81,22 +80,18 @@ function Overview:draw()
 
     local TimestampLabel = AceGUI:Create("Label");
     TimestampLabel:SetFullWidth(true);
-    TimestampLabel:SetText(string.format(
-        "\nThis %s data was imported on |c00A79EFF%s|r at |c00A79EFF%s|r", ---@TODO: Translate
-        source,
-        date(L.DATE_FORMAT, DB:get("TMB.MetaData.importedAt", GetServerTime())),
-        date(L.HOURS_MINUTES_FORMAT, DB:get("TMB.MetaData.importedAt", GetServerTime()))
-    ));
+    TimestampLabel:SetText(GL:printfn("\n" .. L.TMB_IMPORT_DETAILS, {
+        date = GL:colorize(date(L.DATE_FORMAT, DB:get("TMB.MetaData.importedAt", GetServerTime())), GL.Interface.Colors.WARLOCK),
+        time = GL:colorize(date(L.HOURS_MINUTES_FORMAT, DB:get("TMB.MetaData.importedAt", GetServerTime())), GL.Interface.Colors.WARLOCK),
+    }));
     TimestampLabel:SetJustifyH("MIDDLE");
     TimestampLabel:SetFontObject(_G["GameFontNormal"]);
     Window:AddChild(TimestampLabel);
 
     local ItemNumberLabel = AceGUI:Create("Label");
     ItemNumberLabel:SetFullWidth(true);
-    ItemNumberLabel:SetText(string.format(
-        "\nNumber of items imported: |c00A79EFF%s|r", ---@TODO: Translate
-        GL:count(DB:get("TMB.Items")) or 0
-
+    ItemNumberLabel:SetText(("\n" .. L.TMB_IMPORT_NUMBER):format(
+        GL:colorize(GL:count(DB:get("TMB.Items")) or 0, GL.Interface.Colors.WARLOCK)
     ));
     ItemNumberLabel:SetJustifyH("MIDDLE");
     ItemNumberLabel:SetFontObject(_G["GameFontNormal"]);
@@ -110,9 +105,8 @@ function Overview:draw()
 
     local PriorityNotesLabel = AceGUI:Create("Label");
     PriorityNotesLabel:SetFullWidth(true);
-    PriorityNotesLabel:SetText(string.format(
-        "\nPriority notes available: |c00A79EFF%s|r", ---@TODO: Translate
-        notesAvailable
+    PriorityNotesLabel:SetText(("\n" .. L.TMB_IMPORT_NOTES_AVAILABLE):format(
+        GL:colorize(notesAvailable, GL.Interface.Colors.WARLOCK)
     ));
     PriorityNotesLabel:SetJustifyH("MIDDLE");
     PriorityNotesLabel:SetFontObject(_G["GameFontNormal"]);
@@ -126,9 +120,8 @@ function Overview:draw()
 
     local AutoSharingStatusLabel = AceGUI:Create("Label");
     AutoSharingStatusLabel:SetFullWidth(true);
-    AutoSharingStatusLabel:SetText(string.format(
-        "\nAuto-sharing enabled: |c00A79EFF%s|r", ---@TODO: Translate
-        autoSharingEnabled
+    AutoSharingStatusLabel:SetText(("\n" .. L.TMB_IMPORT_AUTO_SHARING_ENABLED):format(
+        GL:colorize(autoSharingEnabled, GL.Interface.Colors.WARLOCK)
     ));
     AutoSharingStatusLabel:SetJustifyH("MIDDLE");
     AutoSharingStatusLabel:SetFontObject(_G["GameFontNormal"]);
@@ -146,7 +139,7 @@ function Overview:draw()
     ClearButton:SetCallback("OnClick", function()
         -- Show a confirmation dialog before clearing entries
         GL.Interface.Dialogs.PopupDialog:open{
-            question = ("Are you sure you want to clear your %s tables?"):format(source), ---@TODO: Translate
+            question = L.ARE_YOU_SURE,
             OnYes = function ()
                 GL.Interface.TMB.Overview:close();
                 GL.TMB:clear();
