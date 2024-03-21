@@ -592,9 +592,9 @@ function Overview:refresh()
             local copperToGive = GDKPSession:copperOwedToPlayer(player, Session.ID);
 
             if (copperToGive > 0) then
-                nameText = ("    |c00F7922E(%s%s)|r |c00%s%s|r"):format(copperToGive / 10000, L.ZERO_SIGN, classColor, nameFormatted);
+                nameText = ("    |c00F7922E(%s%s)|r |c00%s%s|r"):format(copperToGive / 10000, L.GOLD_INDICATOR, classColor, nameFormatted);
             elseif (copperToGive < 0) then
-                nameText = ("    |c00BE3333(%s%s)|r |c00%s%s|r"):format((copperToGive * -1) / 10000, L.ZERO_SIGN, classColor, nameFormatted);
+                nameText = ("    |c00BE3333(%s%s)|r |c00%s%s|r"):format((copperToGive * -1) / 10000, L.GOLD_INDICATOR, classColor, nameFormatted);
             else
                 nameText = ("    |c0092FF00(%s)|r |c00%s%s|r"):format(L.ZERO_SIGN, classColor, nameFormatted);
             end
