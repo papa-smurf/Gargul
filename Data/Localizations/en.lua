@@ -1,6 +1,12 @@
 Gargul_L = {};
 local L = Gargul_L;
 
+setmetatable(L, {
+    __index = function (_, key)
+        return tostring(key)
+    end,
+});
+
 L.ABOUT = "About";
 L.ALL_SETTINGS = "All Settings";
 L.ANNOUNCE = "Announce";
