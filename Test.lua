@@ -5,6 +5,7 @@ local _, GL = ...;
 GL.Test = {
     Classes = {"druid","hunter","mage","paladin","priest","rogue","shaman","warlock","warrior","death knight",},
     Names = {"Aiyana","Callum","Virginia","Laylah","Isabell","Javon","Miley","Ian","Isai","Ahmad","Campbell","Bobby","Karter","Brooklynn","Asher","Maci","Gael","Jamal","Zion","Sarahi","Kierra","Perla","Rylie","Lorelei","John","Madeleine","Jadiel","Billy","Jazmin","Keon","Stephany","George","Malcolm","Brenden","Daphne","Dane","Derek","Marcel","Madilynn","Enrique","Cindy","Amir","Melvin","Anya","Ali","Rex","Lewis","Parker","Carl","Arnav","Kamari","Jessie","Madelynn","Heath","Haleigh","Madyson","Jorden","Amya","Elisa","Marques","Ana","Miracle","Abdiel","Dale","Sincere","Marin","Karina","Clay","Caden","Eve","Rubi","Zavier","Megan","Payton","Peyton","Emmett","Diego","Joaquin","German","Tania","Miguel","Malachi","Martin","Richard","Allison","Avah","Kamora","Deborah","Esperanza","Konnor","Isla","Tess","Keely","Margaret","Rory","Jake","Averie","Ally","Craig","Gage","Oswaldo","Kaitlynn","Ashley","Davian","Mauricio","Brandon","Aryana","Douglas","Kyan","Carsen","Mikaela","Regan","Theodore","Maximillian","Luke","Dixie","Makenna","Keagan","Mallory","America",},
+    Locale = {},
     TimeLeft = {},
     TradeState = {
         _initialized = false,
@@ -719,10 +720,27 @@ function Test:identity(itemLinkOrID)
 end
 
 --[[
-Sort all translations in L. (except for L.CHAT entries) and output them
-/script _G.Gargul.Test:sortTranslations()
+Sort and output all labels, useful for checking if all labels are present in a file
+/script _G.Gargul.Test.Locale:labels()
 ]]
-function Test:sortTranslations()
+function Test.Locale:labels()
+    local Labels = {};
+    for label in pairs(Gargul_L) do
+        tinsert(Labels, label);
+    end
+
+    table.sort(Labels, function (a, b)
+        return a < b;
+    end);
+
+    GL:frameMessage(Labels);
+end
+
+--[[
+Sort all translations in L. (except for L.CHAT entries) and output them
+/script _G.Gargul.Test.Locale:sortTranslations()
+]]
+function Test.Locale:sortTranslations()
     local FauxTrans = {};
     for label, trans in pairs(Gargul_L) do
         (function()

@@ -465,88 +465,88 @@ L.CHAT = {
     --[[ frFR ]]
     frFR = {
         PASS = "Passer",
-        FLIGHT_ATTENDANT = "J'utilise Gargul pour distribuer le butin. Cela facilite le roulage, alors n'hésitez pas à l'essayer !",
+        FLIGHT_ATTENDANT = "J'utilise Gargul pour distribuer le butin. Cela rend les lancers de dés plus faciles, donc essayez-le !",
 
         --[[ VERSION CHECK ]]
         VERSION_CHECK_MISSING = "Gargul manquant pour :",
         VERSION_CHECK_OUTDATED = "Gargul obsolète pour :",
-        VERSION_CHECK_OFFLINE = "Les joueurs suivants étaient hors ligne :",
+        VERSION_CHECK_OFFLINE = "Les joueurs suivants étaient hors-ligne :",
 
         --[[ ITEM AWARDED ]]
-        ITEM_AWARDED = "%s a été attribué à %s. Bravo!",
-        ITEM_AWARDED_BR = "%s a été attribué à %s pour %s points. Bravo!",
-        ITEM_AWARDED_GDKP = "%s a été attribué à %s pour %s. Bravo!",
+        ITEM_AWARDED = "%s a été attribué à %s. Bravo !",
+        ITEM_AWARDED_BR = "%s a été attribué à %s pour %s points. Bravo !",
+        ITEM_AWARDED_GDKP = "%s a été attribué à %s pour %s. Bravo !",
 
         --[[ TRADE DETAILS ]]
         GOLD_TRADE_GIVEN = "J'ai donné %s à %s",
-        GOLD_TRADE_GIVEN_DELETED = "J'ai supprimé une transaction d'or dans laquelle j'avais donné %s à %s",
-        GOLD_TRADE_GIVEN_RESTORED = "J'ai restauré un échange d'or dans lequel j'ai donné %s à %s",
+        GOLD_TRADE_GIVEN_DELETED = "J'ai supprimé un échange d'or dans lequel j'avais donné %s à %s",
+        GOLD_TRADE_GIVEN_RESTORED = "J'ai restauré un échange d'or dans lequel j'avais donné %s à %s",
         GOLD_TRADE_RECEIVED = "J'ai reçu %s de %s",
-        GOLD_TRADE_RECEIVED_DELETED = "J'ai supprimé une transaction d'or dans laquelle j'ai reçu %s de %s",
-        GOLD_TRADE_RECEIVED_RESTORED = "J'ai restauré un échange d'or dans lequel j'ai reçu %s de %s",
+        GOLD_TRADE_RECEIVED_DELETED = "J'ai supprimé un échange d'or dans lequel j'avais reçu %s de %s",
+        GOLD_TRADE_RECEIVED_RESTORED = "J'ai restauré un échange d'or dans lequel j'avais reçu %s de %s",
 
         --[[ TRADE TIME ]]
         TRADETIME_BROADCAST_PREFIX = "Il me reste les objets suivants à échanger",
 
         --[[ BOOSTED ROLLS ]]
-        BOOSTED_ROLLS_MY_BALANCE_REPLY = "Votre jet %s est /rnd %d-%d%s",
-        BOOSTED_ROLLS_OTHER_BALANCE_REPLY = "Le jet %s du joueur %s est /rnd %d-%d%s",
-        BOOSTED_ROLLS_BALANCE_REPLY_DEFAULT_SUFFIX = "(défaut)",
+        BOOSTED_ROLLS_MY_BALANCE_REPLY = "Votre lancer %s est /rnd %d-%d%s",
+        BOOSTED_ROLLS_OTHER_BALANCE_REPLY = "Le lancer %s du joueur %s est /rnd %d-%d%s", --TODO:PLACEHOLDER POSITION CHANGE (2<->1)
+        BOOSTED_ROLLS_BALANCE_REPLY_DEFAULT_SUFFIX = "(par défaut)",
 
         --[[ PLUS ONES ]]
         PLUSONES_PLUS_SIGN = "+",
-        PLUSONES_MY_BALANCE_REPLY = "Votre total +1 est %d",
-        PLUSONES_OTHER_BALANCE_REPLY = "Le total +1 du joueur %s est %d",
+        PLUSONES_MY_BALANCE_REPLY = "Votre total de +1 est %d",
+        PLUSONES_OTHER_BALANCE_REPLY = "Le total de +1 du joueur %s est %d",
 
         --[[ GDKP ]]
-        GDKP_I_OWE_YOU = "Je te dois %s. Apprécier!",
-        GDKP_YOU_OWE_ME = "Vous me devez %a. Merci!",
-        GDKP_POT_UPDATED = "Pot a été mis à jour, il contient désormais %s",
-        GDKP_POT_UPDATED_AFTER_DELETE = "Le pot a été mis à jour après la suppression d'une enchère, il contient désormais %s",
-        GDKP_POT_UPDATED_AFTER_RESTORE = "Le pot a été mis à jour après la restauration d'une enchère, il contient désormais %s",
-        GDKP_REMOVED_AWARDED = "J'ai supprimé %s attribué à %s pour %s",
-        GDKP_RESTORED_AWARDED = "J'ai restauré %s attribué à %s pour %s",
-        GDKP_REMOVED_GOLD = "J'ai retiré %sg du pot",
-        GDKP_RESTORED_GOLD = "J'ai ajouté %sg au pot",
-        GDKP_POT_HOLDS = "Le pot contient désormais %s",
-        GDKP_CONFIRM_TOP_BID = "%s est le plus offrant (%s)",
-        GDKP_FINAL_CALL = "Dernier appel le %s : %s secondes restantes pour enchérir !",
-        GDKP_BID_DENIED = "Offre refusée, l'enchère minimum est de %s",
-        GDKP_START_BIDDING = "Enchérissez sur %s. Le minimum est %s, l'incrément est %s. Utilisez le chat de raid !",
+        GDKP_I_OWE_YOU = "Je vous dois %s. Profitez-en !",
+        GDKP_YOU_OWE_ME = "Vous me devez %s. Merci !",
+        GDKP_POT_UPDATED = "Le pot a été mis à jour, il contient maintenant %s",
+        GDKP_POT_UPDATED_AFTER_DELETE = "Le pot a  été mis à jour après la suppression d'une enchère, il contient maintenant %s",
+        GDKP_POT_UPDATED_AFTER_RESTORE = "Le pot a été mis à jour après la restauration d'une enchère, il contient maintenant %s",
+        GDKP_REMOVED_AWARDED = "J'ai supprimé l'attribution de %s à %s pour %s",
+        GDKP_RESTORED_AWARDED = "J'ai restauré l'attribution de %s à %s pour %s",
+        GDKP_REMOVED_GOLD = "J'ai supprimé %spo du pot",
+        GDKP_RESTORED_GOLD = "J'ai rajouté %spo au pot",
+        GDKP_POT_HOLDS = "Le pot contient maintenant %s",
+        GDKP_CONFIRM_TOP_BID = "%s est le plus gros enchérisseur (%s)",
+        GDKP_FINAL_CALL = "Dernier appel sur %s: %s secondes restantes pour enchérir !",
+        GDKP_BID_DENIED = "Enchère refusée, l'enchère minimum est de %s",
+        GDKP_START_BIDDING = "Enchère sur %s. Le minimum est de %s, l'incrément est de %s. Utilisez la discussion de raid !",
         GDKP_STOP_BIDDING = "Arrêtez vos enchères !",
-        GDKP_SECONDS_TO_BID = "%s secondes pour enchérir",
+        GDKP_SECONDS_TO_BID = "%s restantes pour enchérir",
         GDKP_POT_TOTAL = "Pot total : %s",
         GDKP_BASE_CUT = "Coupe de base : %s",
 
         --[[ MULTIAUCTION ]]
-        MULTIAUCTION_STARTED = "J'ai lancé une séance d'enchères. Vous ne le voyez pas ? Assurez-vous de télécharger/mettre à jour Gargul !",
-        MULTIAUCTION_RESUMED = "J'ai repris une session d'enchères précédente, vérifiez vos enchères !",
-        MULTIAUCTION_ITEMS_ADDED = "J'ai ajouté %s article(s) à l'enchère pour un total de %s",
-        MULTIAUCTION_FINISHED = "Multi-enchères terminées. Le pot contient désormais %s",
+        MULTIAUCTION_STARTED = "J'ai démarré une session d'enchères. Vous ne la voyez pas ? Assurez-vous de télécharger/mettre à jour Gargul !",
+        MULTIAUCTION_RESUMED = "J'ai redémarré une session d'enchères précédente, revérifiez vos enchères !",
+        MULTIAUCTION_ITEMS_ADDED = "J'ai ajouté %s objet(s) à l'enchère pour un total de %s",
+        MULTIAUCTION_FINISHED = "Multi-enchère terminée. Le pot contient maintenant %s",
 
         --[[ SOFTRES ]]
         SOFTRES_MY_RESERVES_REPLY = "Vous avez réservé %s", -- %s is a summary of all items or the SOFTRES_MY_RESERVED_ITEM_REPLY format (if more than 1 reserve)
         SOFTRES_MY_RESERVED_ITEM_REPLY = "%s (%sx)", -- First %s = item, second %s is times reserved if higher than 1
-        SOFTRES_NO_RESERVES_REPLY = "Il semble que vous n'ayez encore rien réservé en douceur, vérifiez la feuille de résolution logicielle ou demandez à votre maître du butin",
-        SOFTRES_HARDRESERVED_NOTICE = "%s (Cet article est réservé en dur !)",
-        SOFTRES_DETAILS = "Réservé par : %s",
-        SOFTRES_MISSING_RESERVES = "Réserves logicielles manquantes pour : %s",
-        SOFTRES_DATA_IMPORTED = "Je viens d'importer des réserves logicielles dans Gargul. Whisper !sr pour revérifier vos réserves !",
+        SOFTRES_NO_RESERVES_REPLY = "Il semble que vous n'ayez pas encore fait de soft-reserve, vérifiez la feuille de soft-res ou demandez à votre maître du butin",
+        SOFTRES_HARDRESERVED_NOTICE = "%s (Cet objet est hard-reserved !)",
+        SOFTRES_DETAILS = "Reservé par : %s",
+        SOFTRES_MISSING_RESERVES = "Soft-reserves manquants pour : %s",
+        SOFTRES_DATA_IMPORTED = "Je viens d'importer les soft-reserves dans Gargul. Chuchotez !sr pour revérifier vos réservations !",
 
         --[[ THATSMYBIS ]]
-        TMB_WISHLIST_DETAILS = "Liste de souhaits TMB : %s",
-        TMB_PRIORITY_DETAILS = "%s Priorité : %s", -- First %s can be TMB/DFT/CPR
+        TMB_WISHLIST_DETAILS = "List de souhaits TMB : %s",
+        TMB_PRIORITY_DETAILS = "Priorité %s : %s", -- First %s can be TMB/DFT/CPR
 
         --[[ PACKMULE ]]
         PACKMULE_DISENCHANTER_SET = "%s a été défini comme désenchanteur",
         PACKMULE_DISENCHANTMENT_NOTICE = "%s sera désenchanté par %s",
 
         --[[ ROLLING ]]
-        ROLLING_START = "Vous avez %s secondes pour rouler sur %s",
-        ROLLING_STOP = "Arrêtez vos rouleaux !",
+        ROLLING_START = "Vous avez %s secondes pour to lancer sur %s",
+        ROLLING_STOP = "Arrêtez vos lancers !",
         ROLLING_TIME_LEFT = "%s secondes pour lancer",
-        ROLLING_SOFTRES_INFO = "Cet élément a été réservé par : %s",
-        ROLLING_TMB_INFO = "Les joueurs suivants ont la priorité %s la plus élevée : %s", -- First %s can be TMB/DFT/CPR
+        ROLLING_SOFTRES_INFO = "Cet objet a été reservé par : %s",
+        ROLLING_TMB_INFO = "Les joueurs suivants ont la plus haute prio %s : %s", -- First %s can be TMB/DFT/CPR
 
         --[[ TradeWindow / Trade ]]
         TRADE_TO = "%s à %s",
@@ -557,24 +557,24 @@ L.CHAT = {
         TRADE_GAVE_ENCHANTMENT = "J'ai enchanté %s avec %s pour %s",
         TRADE_GAVE_ENCHANTMENT_AND_GOLD = "J'ai enchanté %s avec %s pour %s et j'ai donné %s",
         TRADE_GAVE_ENCHANTMENT_FOR_GOLD = "J'ai enchanté %s avec %s pour %s et j'ai reçu %s",
-        TRADE_GAVE_ENCHANTMENT_AFTER_ITEMS_PART = "à %s et a enchanté leur %s avec %s",
-        TRADE_GAVE_ENCHANTMENT_AFTER_ITEMS = "%s à %s et a enchanté leur %s avec %s",
+        TRADE_GAVE_ENCHANTMENT_AFTER_ITEMS_PART = "à %s et enchanté son %s avec %s",
+        TRADE_GAVE_ENCHANTMENT_AFTER_ITEMS = "%s à %s et enchanté son %s avec %s",
         TRADE_GOT_ENCHANTMENT = "%s a enchanté mon %s avec %s",
-        TRADE_GOT_ENCHANTMENT_AND_GOLD = "%s a enchanté mon %s avec %s et m'a donné %s",
-        TRADE_GOT_ENCHANTMENT_FOR_GOLD = "%s a enchanté mon %s avec %s pour %s",
-        TRADE_GOT_ENCHANTMENT_AND_GAVE_ENCHANTMENT = "%s a enchanté mon %s avec %s et j'ai enchanté leur %s avec %s",
-        TRADE_GOT_ENCHANTMENT_AND_GAVE_ENCHANTMENT_AND_GAVE_GOLD = "%s a enchanté mon %s avec %s et j'ai enchanté leur %s avec %s. Je lui ai aussi donné %s",
-        TRADE_GOT_ENCHANTMENT_AND_GOLD_AND_GAVE_ENCHANTMENT = "%s a enchanté mon %s avec %s et m'a donné %s. J'ai enchanté leur %s avec %s",
+        TRADE_GOT_ENCHANTMENT_AND_GOLD = "%s a enchanté %s avec %s et m'a donné %s",
+        TRADE_GOT_ENCHANTMENT_FOR_GOLD = "%s a enchanté %s avec %s pour %s",
+        TRADE_GOT_ENCHANTMENT_AND_GAVE_ENCHANTMENT = "%s a enchanté %s avec %s et j'ai enchanté son %s avec %s",
+        TRADE_GOT_ENCHANTMENT_AND_GAVE_ENCHANTMENT_AND_GAVE_GOLD = "%s a enchanté %s avec %s et j'ai enchanté son %s avec %s. Je lui ai aussi donné %s",
+        TRADE_GOT_ENCHANTMENT_AND_GOLD_AND_GAVE_ENCHANTMENT = "%s a enchanté %s avec %s et m'a donné %s. J'ai enchanté son %s avec %s",
         TRADE_FROM = "%s de %s",
         TRADE_FROM_PART = "de %s",
         TRADE_RECEIVED = "J'ai reçu %s",
         TRADE_RECEIVED_GOLD = "J'ai reçu %s de %s",
         TRADE_RECEIVED_MULTIPLE_OF_ITEM = "J'ai reçu %sx%s", -- I gave [item]x3
-        TRADE_RECEIVED_ENCHANTMENT_AFTER_ITEMS_PART = "de %s et j'ai enchanté mon %s avec %s",
-        TRADE_RECEIVED_ENCHANTMENT_AFTER_ITEMS = "%s de %s et j'ai enchanté mon %s avec %s",
+        TRADE_RECEIVED_ENCHANTMENT_AFTER_ITEMS_PART = "de %s et ai eu mon %s enchanté avec %s",
+        TRADE_RECEIVED_ENCHANTMENT_AFTER_ITEMS = "%s de %s et ai eu mon %s enchanté avec %s",
 
         --[[ AWARD ]]
-        AWARD_RANDOM_WINNER = "Gagnant aléatoire pour %s sélectionné (%s)", -- First %s is item, second %s is player,
+        AWARD_RANDOM_WINNER = "Gagant aléatoire pour %s sélectionné (%s)", -- First %s is item, second %s is player,
     },
 
     --[[ itIT ]]
