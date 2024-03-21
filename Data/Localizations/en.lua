@@ -165,6 +165,7 @@ This is an export feature ONLY, there is no point editing any of the values: THE
 ]];
 L.FILL = "Fill";
 L.FINAL_CALL = "Final Call";
+L.FINISH = "Finish";
 L.FORMAT = "Format";
 L.GARGUL = "Gargul";
 L.GDKP = "GDKP";

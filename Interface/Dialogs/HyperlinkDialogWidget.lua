@@ -1,6 +1,7 @@
+local L = Gargul_L;
+
 ---@type GL
 local _, GL = ...;
-local L = Gargul_L;
 
 --[[-----------------------------------------------------------------------------
 PopupDialog AceGUI Widget
