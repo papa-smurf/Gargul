@@ -11,24 +11,34 @@ local DEFAULT_SECTION = L.SETTINGS_SECTION_GENERAL;
 local MENU_ROW_HEIGHT = 22;
 local MENU_FONT_SIZE = 1.1;
 local SUBJECT_FONT_SIZE = 1.5;
-local HEADER_MARGIN_LEFT = 30;
-local HEADER_MARGIN_TOP = -40;
-local HEADER_PADDING_BOTTOM = 20;
-local SUB_SECTION_MARGIN_LEFT = -10;
-local SUB_SECTION_MARGIN_TOP = -20;
+local SECTION_MARGIN_LEFT = 10;
+local SECTION_MARGIN_TOP = 40;
+local SECTION_MARGIN_BOTTOM = 30;
+local SECTION_HOVER_PADDING_TOP = 5;
+local SUB_SECTION_MARGIN_LEFT = 20;
+local SUB_SECTION_MARGIN_TOP = 30;
+local SUB_SECTION_MARGIN_BOTTOM = 10;
 local SETTING_COLOR = "EDC507";
-local SETTING_MARGIN_LEFT = 20;
-local SETTING_MARGIN_TOP = -10;
+local SETTING_MARGIN_BOTTOM = 10;
+local SETTING_MARGIN_LEFT = 30;
+local SLIDER_MARGIN_BOTTOM = 20;
+
+local RESET_CONFIRMATION_DIALOG_NAME = "GL.Interface.Settings.ResetToDefaults";
+local ALL_SETTINGS = 0;
+local SHOWN_SETTINGS = 1;
 
 --- Section types
-local SUB_SECTION = 0;
-local CHECKBOX = 1;
-local BUTTON = 2;
-local DROPDOWN = 3;
-local MINIMAP_HOTKEY_DROPDOWN = 4;
-local CUSTOM = 5;
-local LABEL = 6;
-local INPUT = 7;
+local SECTION = 0;
+local SUB_SECTION = 1;
+local CHECKBOX = 2;
+local BUTTON = 3;
+local DROPDOWN = 4;
+local MINIMAP_HOTKEY_DROPDOWN = 5;
+local CUSTOM = 6;
+local LABEL = 7;
+local INPUT = 8;
+local LOOT_QUALITY_DROPDOWN = 9;
+local SLIDER = 10;
 
 local MINIMAP_HOTKEY_ACTIONS = {
     "DISABLED",
@@ -50,6 +60,7 @@ local SECTION_ORDER = {
     [2] = L.SETTINGS_SECTION_GENERAL,
     [3] = L.SETTINGS_SECTION_SOFTRES,
     [4] = L.SETTINGS_SECTION_TMB,
+    [5] = L.SETTINGS_SECTION_GDKP,
 };
 local SECTION_INDEXES = GL:tableFlip(SECTION_ORDER);
 
@@ -57,6 +68,8 @@ GL.Interface.Settings = GL.Interface.Settings or {
     FramePool = {},
     MenuFrames = {},
 
+    activeSection = nil,
+    inSearchMode = false,
     windowName = "GL.Interface.Settings",
 };
 local Settings = GL.Interface.Settings;
@@ -79,12 +92,13 @@ local SettingEntries = {
                 Intro:SetColor(SETTING_COLOR);
                 Intro:SetPoint("TOPLEFT", SettingFrame, "TOPLEFT");
 
-                ---@type Frame
+                ---@type Button
                 local OpenBonusFeatures = Interface:dynamicPanelButton(SettingFrame, L.SETTINGS_SECTION_GETTING_STARTED_INTRO_BONUS_FEATURES);
                 OpenBonusFeatures:SetScript("OnClick", function ()
                     GL.Interface.BonusFeatures:open();
                 end);
-                OpenBonusFeatures:SetPoint("TOPLEFT", Intro, "BOTTOMLEFT", 0, 5);
+                OpenBonusFeatures:SetPoint("LEFT", Parent, "LEFT", SUB_SECTION_MARGIN_LEFT, 0);
+                OpenBonusFeatures:SetPoint("TOP", Intro, "BOTTOM", 0, SUB_SECTION_MARGIN_BOTTOM);
 
                 ---[[ PATRONS ]]
                 local Colors = {
@@ -139,13 +153,15 @@ local SettingEntries = {
                 end
 
                 local PatronsTitle = Interface:createFontString(SettingFrame, L.SETTINGS_SECTION_GETTING_STARTED_PATRONS);
+                PatronsTitle:SetPoint("LEFT", Parent, "LEFT", SUB_SECTION_MARGIN_LEFT, 0);
+                PatronsTitle:SetPoint("TOP", OpenBonusFeatures, "BOTTOM", 0, SUB_SECTION_MARGIN_TOP * -1);
                 PatronsTitle:SetFont(SUBJECT_FONT_SIZE);
-                PatronsTitle:SetPoint("TOPLEFT", OpenBonusFeatures, "BOTTOMLEFT", SUB_SECTION_MARGIN_LEFT, SUB_SECTION_MARGIN_TOP);
-
+                
                 local Patrons = Interface:createFontString(SettingFrame, patronString);
-                Patrons:SetPoint("TOPLEFT", PatronsTitle, "BOTTOMLEFT", 10, SETTING_MARGIN_TOP);
+                Patrons:SetPoint("LEFT", Parent, "Left", SETTING_MARGIN_LEFT, 0);
+                Patrons:SetPoint("TOP", PatronsTitle, "BOTTOM", 0, SETTING_MARGIN_BOTTOM * -1);
 
-                ---@type Frame
+                ---@type Button
                 local MoreInfo = Interface:dynamicPanelButton(SettingFrame, L.SETTINGS_SECTION_GETTING_STARTED_MORE_INFO);
                 MoreInfo:SetScript("OnClick", function ()
                     GL.Interface.Dialogs.HyperlinkDialog:open{
@@ -153,8 +169,10 @@ local SettingEntries = {
                         hyperlink = L.DISCORD_URL,
                     };
                 end);
-                MoreInfo:SetPoint("TOPLEFT", Patrons, "BOTTOMLEFT", 0, SETTING_MARGIN_TOP * 2);
+                MoreInfo:SetPoint("LEFT", Parent, "LEFT", SUB_SECTION_MARGIN_LEFT, 0);
+                MoreInfo:SetPoint("TOP", Patrons, "BOTTOM", 0, SUB_SECTION_MARGIN_BOTTOM * -1);
 
+                SettingFrame.type = CUSTOM;
                 return SettingFrame;
             end,
         },
@@ -297,6 +315,322 @@ local SettingEntries = {
             type = INPUT,
             placeholder = ("%s, %s"):format(GL.User.name, L.GARGUL),
         },
+        {
+            ID = "TMB.hideInfoOfPeopleNotInGroup",
+            type = CHECKBOX,
+        },
+        {
+            ID = "TMB.showEntriesWhenSolo",
+            type = CHECKBOX,
+        },
+        {
+            ID = "TMB.showEntriesWhenUsingPrio3",
+            type = CHECKBOX,
+        },
+        {
+            ID = "TMB.hideWishListInfoIfPriorityIsPresent",
+            type = CHECKBOX,
+        },
+        --- WotLK only
+        GL.isClassic and {
+            ID = "MasterLooting.linkNormalAndHardModeItems",
+            type = CHECKBOX,
+        } or nil,
+        {
+            ID = "AwardingLoot.awardOnReceive",
+            type = CHECKBOX,
+        },
+        {
+            ID = "AwardingLoot.awardOnReceiveMinimumQuality",
+            type = LOOT_QUALITY_DROPDOWN,
+        },
+        {
+            ID = L.SETTINGS_SUBSECTION_TMB_TOOLTIPS,
+            type = SUB_SECTION,
+        },
+        {
+            type = CHECKBOX,
+            ID = "TMB.showWishListInfoOnTooltips",
+        },
+        {
+            type = CHECKBOX,
+            ID = "TMB.showPrioListInfoOnTooltips",
+        },
+        {
+            type = CHECKBOX,
+            ID = "TMB.showItemInfoOnTooltips",
+        },
+        {
+            type = CHECKBOX,
+            ID = "TMB.showRaidGroup",
+        },
+        {
+            type = CHECKBOX,
+            ID = "TMB.OSHasLowerPriority",
+        },
+        {
+            type = SLIDER,
+            ID = "TMB.maximumNumberOfTooltipEntries",
+            min = 1,
+            max = 50,
+            step = 1,
+        },
+        {
+            ID = L.SETTINGS_SUBSECTION_TMB_DROPPED_LOOT,
+            type = SUB_SECTION,
+        },
+        {
+            type = CHECKBOX,
+            ID = "TMB.includeWishListInfoInLootAnnouncement",
+        },
+        {
+            type = CHECKBOX,
+            ID = "TMB.includePrioListInfoInLootAnnouncement",
+        },
+        {
+            type = SLIDER,
+            ID = "TMB.maximumNumberOfAnnouncementEntries",
+            min = 1,
+            max = 15,
+            step = 1,
+        },
+        {
+            ID = L.SETTINGS_SUBSECTION_TMB_ROLLING_LOOT,
+            type = SUB_SECTION,
+        },
+        {
+            type = CHECKBOX,
+            ID = "TMB.announceWishlistInfoWhenRolling",
+        },
+        {
+            type = CHECKBOX,
+            ID = "TMB.announcePriolistInfoWhenRolling",
+        },
+    },
+    [L.SETTINGS_SECTION_GDKP] = {
+        {
+            ID = "settingsSectionGDKpExplanation",
+            type = LABEL,
+        },
+        {
+            ID = L.SETTINGS_SUBSECTION_GDKP_RAIDERS,
+            type = SUB_SECTION,
+        },
+        {
+            ID = "GDKP.showBidWindow",
+            type = CHECKBOX,
+        },
+        {
+            ID = "GDKP.enableBidderQueue",
+            type = CHECKBOX,
+            callback = function(enableBidderQueue)
+                local BidderQueue = GL.Interface.GDKP.BidderQueue;
+
+                if (enableBidderQueue) then
+                    BidderQueue:close();
+                else
+                    BidderQueue:open();
+                    BidderQueue:refreshTable();
+                end
+            end,
+        },
+        {
+            type = SLIDER,
+            ID = "GDKP.bidderScale",
+            min = .8,
+            max = 1.8,
+            step = .1,
+            callback = function(scale)
+                -- Change the existing bidder window if it's active!
+                if (GL.Interface.GDKP.Bidder.Window
+                    and type(GL.Interface.GDKP.Bidder.Window.SetScale == "function")
+                ) then
+                    GL.Interface.GDKP.Bidder.Window:SetScale(scale);
+                end
+            end,
+        },
+        {
+            ID = "GDKP.outbidSound",
+            type = DROPDOWN,
+            Options = LibStub("LibSharedMedia-3.0"):List("sound")
+        },
+        {
+            ID = L.SETTINGS_SUBSECTION_GDKP_ORGANIZER,
+            type = SUB_SECTION,
+        },
+        {
+            type = SLIDER,
+            ID = "GDKP.precision",
+            min = 0,
+            max = 4,
+            step = 2,
+        },
+        {
+            ID = "GDKP.showHistoryOnTooltip",
+            type = CHECKBOX,
+        },
+        {
+            type = CHECKBOX,
+            ID = "GDKP.acceptBidsLowerThanMinimum",
+        },
+        {
+            type = CHECKBOX,
+            ID = "GDKP.invalidBidsTriggerAntiSnipe",
+        },
+        {
+            type = CHECKBOX,
+            ID = "GDKP.autoAwardViaAuctioneer",
+        },
+        {
+            type = SLIDER,
+            ID = "GDKP.auctionEndLeeway",
+            min = 1,
+            max = 5,
+            step = .5,
+        },
+        {
+            type = SLIDER,
+            ID = "GDKP.ledgerAuctionScale",
+            min = 11,
+            max = 50,
+            step = 1,
+            callback = function (value, valueChanged)
+                if (not valueChanged
+                    or not GL.Interface.GDKP.Overview.isVisible
+                ) then
+                    return;
+                end
+
+                GL.Interface.GDKP.Overview:refreshLedger();
+            end,
+        },
+        {
+            ID = L.SETTINGS_SUBSECTION_GDKP_ANNOUNCEMENTS,
+            type = SUB_SECTION,
+        },
+        {
+            ID = "GDKP.announceAuctionStart",
+            type = CHECKBOX,
+        },
+        {
+            ID = "GDKP.announcePotAfterAuction",
+            type = CHECKBOX,
+        },
+        {
+            ID = "GDKP.notifyIfBidTooLow",
+            type = CHECKBOX,
+        },
+        {
+            ID = "GDKP.announceCountdownInRW",
+            type = CHECKBOX,
+        },
+        {
+            ID = "GDKP.announceNewBid",
+            type = CHECKBOX,
+        },
+        {
+            ID = "GDKP.announceNewBidInRW",
+            type = CHECKBOX,
+        },
+        {
+            ID = "GDKP.announceFinalCall",
+            type = CHECKBOX,
+        },
+        {
+            type = SLIDER,
+            ID = "GDKP.numberOfSecondsToCountdown",
+            min = 0,
+            max = 25,
+            step = 1,
+        },
+        {
+            type = SLIDER,
+            ID = "GDKP.numberOfFiveSecondsToCountdown",
+            min = 0,
+            max = 30,
+            step = 5,
+        },
+        {
+            type = SLIDER,
+            ID = "GDKP.finalCallTime",
+            min = 5,
+            max = 30,
+            step = 1,
+        },
+        {
+            ID = L.SETTINGS_SUBSECTION_GDKP_PRICES,
+            type = SUB_SECTION,
+        },
+        {
+            ID = "settingsSectionGDKpPricesExplanation",
+            type = LABEL,
+        },
+        {
+            type = CHECKBOX,
+            ID = "GDKP.storeMinimumAndIncrementPerItem",
+        },
+        {
+            ID = "GDKP.defaultMinimumBid",
+            type = INPUT,
+        },
+        {
+            ID = "GDKP.defaultIncrement",
+            type = INPUT,
+        },
+        {
+            ID = "openPriceImporter",
+            type = BUTTON,
+            action = function () GL.Commands:call("locale"); end,
+        },
+        {
+            ID = "openLevelRangePrices",
+            type = BUTTON,
+            action = function () GL.Commands:call("locale"); end,
+        },
+        {
+            ID = L.SETTINGS_SUBSECTION_GDKP_TRADING,
+            type = SUB_SECTION,
+        },
+        {
+            ID = "GDKP.whisperGoldDetails",
+            type = CHECKBOX,
+        },
+        {
+            ID = "GDKP.addGoldToTradeWindow",
+            type = CHECKBOX,
+        },
+        {
+            ID = L.SETTINGS_SUBSECTION_GDKP_QUEUES,
+            type = SUB_SECTION,
+        },
+        {
+            ID = "GDKP.disableQueues",
+            type = CHECKBOX,
+        },
+        {
+            ID = "GDKP.addDropsToQueue",
+            type = CHECKBOX,
+        },
+        {
+            ID = "GDKP.addBOEDropsToQueue",
+            type = CHECKBOX,
+        },
+        {
+            ID = "GDKP.minimumDropQuality",
+            type = LOOT_QUALITY_DROPDOWN,
+        },
+        {
+            ID = "GDKP.queuedAuctionNoBidsAction",
+            type = DROPDOWN,
+            Options = GL.Data.Constants.GDKP.QueuedAuctionNoBidsActions,
+        },
+        {
+            type = SLIDER,
+            ID = "GDKP.delayBetweenQueuedAuctions",
+            min = 1,
+            max = 30,
+            step = 1,
+        },
     },
 };
 
@@ -312,11 +646,94 @@ function Settings:open(section)
     return Window;
 end
 
+---@return void
+function Settings:lock()
+    local Window = _G[self.windowName];
+
+    if (not Window or not Window:IsShown()) then
+        return;
+    end
+
+    -- Just a fail-safe so we don't end up with multiple lockscreens
+    if (Window.Lock) then
+        Interface:release(Window.Lock);
+        Window.Lock = nil;
+    end
+
+    -- local Lock = CreateFrame("Frame", nil, UIParent);
+    local Lock = CreateFrame("Frame", nil, UIParent, BackdropTemplateMixin and "BackdropTemplate");
+    Lock:SetBackdrop{
+        bgFile = "Interface/DialogFrame/UI-DialogBox-Background",
+     };
+    Lock:SetAllPoints(UIParent);
+
+    -- This is to make sure this window is shown on top
+    Lock:SetFrameStrata("FULLSCREEN_DIALOG");
+    Lock:EnableMouse(true);
+    Lock:SetToplevel(true);
+    Lock:SetFrameLevel(5000);
+    Lock:SetMovable(true);
+    Lock:StartMoving();
+    Lock:StopMovingOrSizing();
+    Lock:SetMovable(false);
+    Lock:SetToplevel(false);
+
+    Window.Lock = Lock;
+end
+
+---@return void
+function Settings:unlock()
+    local Window = _G[self.windowName];
+
+    if (not Window or not Window:IsShown()) then
+        return;
+    end
+
+    if (Window.Lock) then
+        Interface:release(Window.Lock);
+        Window.Lock = nil;
+    end
+end
+
 ---@return Frame
 function Settings:build()
     if (_G[self.windowName]) then
         return _G[self.windowName];
     end
+
+    StaticPopupDialogs[RESET_CONFIRMATION_DIALOG_NAME] = {
+        text = L.SETTINGS_DEFAULTS_CONFIRM,
+        button1 = L.SETTINGS_DEFAULTS_ALL,
+        button2 = L.CANCEL,
+        button3 = L.SETTINGS_DEFAULTS_SHOWN,
+        cancels = RESET_CONFIRMATION_DIALOG_NAME,
+        exclusive = true,
+        OnButton1 = function ()
+            self:resetToDefaults(ALL_SETTINGS);
+        end,
+        OnAlt = function ()
+            self:resetToDefaults(SHOWN_SETTINGS);
+        end,
+        timeout = 0,
+        whileDead = true,
+        hideOnEscape = true,
+        OnShow = function (Window)
+            self:lock();
+
+            -- This is to make sure this window is always on top
+            Window:SetFrameStrata("FULLSCREEN_DIALOG");
+            Window:EnableMouse(true);
+            Window:SetToplevel(true);
+            Window:SetFrameLevel(5000);
+            Window:SetMovable(true);
+            Window:StartMoving();
+            Window:StopMovingOrSizing();
+            Window:SetMovable(false);
+        end,
+        OnHide = function ()
+            self:unlock();
+        end,
+    };
 
     ---@type Frame
     local Window = Interface:createWindow({
@@ -337,9 +754,61 @@ function Settings:build()
         end},
     });
 
-    Window.Search = Interface:inputBox(Window, nil, SEARCH);
-    Window.Search:SetWidth(250);
-    Window.Search:SetPoint("TOPLEFT", Window, "TOPLEFT", 70, -26);
+    ---@type EditBox
+    local Search = Interface:inputBox(Window, nil, SEARCH);
+    Search:SetWidth(400);
+    Search:SetPoint("TOPLEFT", Window, "TOPLEFT", 70, -26);
+    Window.Search = Search;
+
+    local phraseBefore = "";
+    Search:SetScript("OnTextChanged", function ()
+        GL:after(.5, "SETTINGS_SEARCH_CHANGED", function ()
+            local phrase = Search:GetText();
+
+            if (phrase == phraseBefore) then
+                return;
+            end
+            phraseBefore = phrase;
+
+            local phraseLength = strlen(phrase);
+            if (phraseLength > 0 and phraseLength < 2) then
+                return;
+            end
+
+            local Entries = self:search(phrase);
+
+            if (not Entries) then
+                self:showSection(self.activeSection);
+
+                return;
+            end
+
+            self.inSearchMode = true;
+            self:hideAllSettings();
+            self:showSettings(Window.SettingsFrame, Entries);
+            self:resetScroll();
+        end);
+    end);
+
+    ---@type Button
+    local SearchClear = CreateFrame("Button", nil, Window, "UIPanelCloseButton");
+    SearchClear:SetPoint("TOPLEFT", Search, "TOPRIGHT", -1, 2);
+    SearchClear:SetSize(26, 26);
+    SearchClear:SetScript("OnClick", function ()
+        GL:cancelTimer("SETTINGS_SEARCH_CHANGED");
+        Search:Clear();
+        self:showSection(self.activeSection);
+    end);
+    Interface:addTooltip(SearchClear, L.CLEAR);
+
+    ---@type Button
+    local Defaults = Interface:dynamicPanelButton(Window, L.SETTINGS_DEFAULTS);
+    Defaults:SetPoint("TOPRIGHT", Window, "TOPRIGHT", -44, -26);
+    Defaults:SetPoint("LEFT", SearchClear, "RIGHT", 30, 0);
+    Defaults:SetScript("OnClick", function ()
+        StaticPopup_Show(RESET_CONFIRMATION_DIALOG_NAME);
+    end);
+
 
     Window.Logo = Window:CreateTexture(nil, "ARTWORK")
     Window.Logo:SetTexture("Interface/AddOns/Gargul/Assets/Icons/Gargul");
@@ -351,7 +820,7 @@ function Settings:build()
     --[[ SCROLLFRAME BOILERPLATE ]]
     ---@type ScrollFrame
     local ScrollFrame = CreateFrame("ScrollFrame", nil, Window, "UIPanelScrollFrameTemplate");
-    ScrollFrame:SetPoint("TOPLEFT", Window, "TOPLEFT", 166, -30);
+    ScrollFrame:SetPoint("TOPLEFT", Window, "TOPLEFT", 166, -70);
     ScrollFrame:SetPoint("BOTTOMRIGHT", Window, "BOTTOMRIGHT", -40, 30);
     Window.ScrollFrame = ScrollFrame;
 
@@ -420,26 +889,46 @@ end
 ---@param section string
 ---@return void
 function Settings:showSection(section)
+    self.inSearchMode = false;
+
     if (not SettingEntries[section]) then
         return;
     end
 
-    for _, SettingFrame in pairs(self.FramePool or {}) do
-        if (SettingFrame:IsVisible()) then
-            SettingFrame:Hide();
-        end
-    end
+    self:hideAllSettings();
 
     local Window = self:build();
+    local Parent = Window.SettingsFrame;
     self:disableMenuHighlights();
 
     local MenuEntry = self.MenuFrames[SECTION_INDEXES[section]];
     MenuEntry.Hover:Hide();
     MenuEntry.Highlight:Show();
 
-    self:injectSettingsForSection(Window.SettingsFrame, section);
+    local order = 2;
+    local Results = {
+        [1] = self:buildHeaderForSection(Parent, section),
+    };
+    for _, Details in pairs(SettingEntries[section] or {}) do
+        Results[order] = self:buildFrameForSetting(Parent, Details);
+        order = order + 1;
+    end
 
+    self:showSettings(Parent, Results);
     self:resetScroll();
+
+    Window.Search:Clear();
+
+    self.activeSection = section;
+end
+
+---@return void
+function Settings:hideAllSettings()
+    for _, SettingFrame in pairs(self.FramePool or {}) do
+        if (SettingFrame:IsVisible()) then
+            SettingFrame:Hide();
+        end
+    end
 end
 
 ---@return void
@@ -450,135 +939,158 @@ function Settings:disableMenuHighlights()
 end
 
 ---@param Parent Frame
+---@param SettingFrames Frame[]
 ---
----@return Frame
-function Settings:injectSettingsForSection(Parent, section)
-    local Entries = SettingEntries[section];
-
-    if (not Entries) then
-        return Parent;
+---@return void
+function Settings:showSettings(Parent, SettingFrames)
+    if (not SettingFrames) then
+        return;
     end
 
-    ---[[ Add the header + horizontal ruler ]]
-
-    local SectionFrame = self.FramePool[section];
-    if (not SectionFrame) then
-        ---@type Frame
-        SectionFrame = CreateFrame("Frame", nil, Parent);
-        SectionFrame:SetWidth(300);
-        SectionFrame:SetHeight(20);
-
-        ---@type FontString
-        local SectionHeader = Interface:createFontString(SectionFrame, section);
-        SectionHeader:SetFont(1.8, "OUTLINE");
-        SectionHeader:SetPoint("TOPLEFT", SectionFrame, "TOPLEFT");
-
-        ---@type Line
-        local Line = SectionFrame:CreateLine();
-        Line:SetThickness(1);
-        Line:SetColorTexture(.9, .9, .9, .5);
-        Line:SetStartPoint("TOPLEFT", SectionFrame, 0, -30);
-        Line:SetEndPoint("TOPRIGHT", SectionFrame, 20, -30);
-
-        self.FramePool[section] = SectionFrame;
-    else
-        self.FramePool[section]:Show();
-        self.FramePool[section]:ClearAllPoints();
-    end
-
-    SectionFrame:SetPoint("TOPLEFT", Parent, "TOPLEFT", HEADER_MARGIN_LEFT, HEADER_MARGIN_TOP);
-
-    ---[[ Add the setting entries ]]
-
-    local Anchor = SectionFrame;
-    local first = true
+    local anchorIsParent = true;
+    local Anchor = Parent;
     local xOffset = 0;
-    for _, Details in pairs(Entries or {}) do
-        if (not self.FramePool[Details.ID]) then
-            self.FramePool[Details.ID] = self:buildFrameForSetting(Parent, Details);
-        else
-            self.FramePool[Details.ID]:Show();
-            self.FramePool[Details.ID]:ClearAllPoints();
-        end
+    local yOffset = 0;
+    local IDsHandled = {};
+    for _, Entry in pairs(SettingFrames or {}) do
+        (function ()
+            -- In case we have the same setting in multiple sections we only want to render it once
+            if (IDsHandled[Entry.ID]) then
+                return;
+            end
 
-        if (first) then
-            self.FramePool[Details.ID]:SetPoint("TOPLEFT", Anchor, "BOTTOMLEFT", SETTING_MARGIN_LEFT, SETTING_MARGIN_TOP - HEADER_PADDING_BOTTOM);
-        elseif (self.FramePool[Details.ID].type == SUB_SECTION) then
-            self.FramePool[Details.ID]:SetPoint("TOPLEFT", Anchor, "BOTTOMLEFT", SUB_SECTION_MARGIN_LEFT, SUB_SECTION_MARGIN_TOP);
-            xOffset = SUB_SECTION_MARGIN_LEFT * -1;
-        else
-            self.FramePool[Details.ID]:SetPoint("TOPLEFT", Anchor, "BOTTOMLEFT", xOffset, SETTING_MARGIN_TOP);
-            xOffset = 0;
-        end
+            Entry:ClearAllPoints();
+            Entry:Show();
 
-        Anchor = self.FramePool[Details.ID];
-        first = false;
+            if (Entry.type == SECTION) then
+                Entry:SetPoint("LEFT", Parent, "LEFT", SECTION_MARGIN_LEFT, 0);
+                Entry:SetPoint("TOP", Anchor, anchorIsParent and "TOP" or "BOTTOM", 0, anchorIsParent and SECTION_HOVER_PADDING_TOP * -1 or SECTION_MARGIN_TOP * -1);
+
+                yOffset = SECTION_MARGIN_BOTTOM;
+            elseif (Entry.type == SUB_SECTION) then
+                Entry:SetPoint("LEFT", Parent, "LEFT", SUB_SECTION_MARGIN_LEFT, 0);
+                Entry:SetPoint("TOP", Anchor, "BOTTOM", 0, SUB_SECTION_MARGIN_TOP * -1);
+
+                yOffset = SUB_SECTION_MARGIN_BOTTOM;
+            elseif (Entry.type == SLIDER) then
+                Entry:SetPoint("LEFT", Parent, "LEFT", SETTING_MARGIN_LEFT, 0);
+                Entry:SetPoint("TOP", Anchor, "BOTTOM", 0, yOffset * -1);
+
+                yOffset = SLIDER_MARGIN_BOTTOM;
+            else
+                Entry:SetPoint("LEFT", Parent, "LEFT", SETTING_MARGIN_LEFT, 0);
+                Entry:SetPoint("TOP", Anchor, "BOTTOM", 0, yOffset * -1);
+
+                yOffset = SETTING_MARGIN_BOTTOM;
+            end
+
+            Anchor = Entry;
+            anchorIsParent = false;
+            IDsHandled[Entry.ID] = true;
+        end)();
     end
 end
 
 ---@param Parent Frame
+---@param section string
 ---
 ---@return Frame
-function Settings:injectSettingsForSearch(Parent, search)
-    local Entries = (function()
-        ---@todo: SEARCH FOR SETTINGS
-        if (true) then return ; end
+function Settings:buildHeaderForSection(Parent, section)
+    local SectionFrame = self.FramePool[section];
+    if (SectionFrame) then
+        return SectionFrame;
+    end
+
+    ---@type Frame
+    SectionFrame = CreateFrame("Frame", nil, Parent);
+    SectionFrame:SetWidth(300);
+    SectionFrame:SetHeight(20);
+    SectionFrame:EnableMouse(true);
+
+    ---@type FontString
+    local SectionHeader = Interface:createFontString(SectionFrame, section);
+    SectionHeader:SetFont(1.8, "OUTLINE");
+    SectionHeader:SetPoint("TOPLEFT", SectionFrame, "TOPLEFT");
+
+    ---@type Line
+    local Line = SectionFrame:CreateLine();
+    Line:SetThickness(1);
+    Line:SetColorTexture(.9, .9, .9, .5);
+    Line:SetStartPoint("TOPLEFT", SectionFrame, 0, -30);
+    Line:SetEndPoint("TOPRIGHT", SectionFrame, 20, -30);
+
+    SectionFrame.Hover = SectionFrame:CreateTexture(nil, "BACKGROUND");
+    SectionFrame.Hover:SetTexture("interface/buttons/ui-listbox-highlight2.blp");
+    SectionFrame.Hover:SetPoint("BOTTOMLEFT", Line, "TOPLEFT");
+    SectionFrame.Hover:SetPoint("RIGHT", Line, "RIGHT");
+    SectionFrame.Hover:SetPoint("TOP", SectionFrame, "TOP", 0, SECTION_HOVER_PADDING_TOP);
+    SectionFrame.Hover:Hide();
+
+    SectionFrame:SetScript("OnMouseUp", function ()
+        self:showSection(section);
     end);
 
-    if (not Entries) then
-        return Parent;
-    end
-
-    local Anchor = Parent;
-    local first = true;
-    for _, Details in pairs(Entries or {}) do
-        if (not self.FramePool[Details.ID]) then
-            self.FramePool[Details.ID] = self:buildFrameForSetting(Parent, Details);
-        else
-            self.FramePool[Details.ID]:Show();
-            self.FramePool[Details.ID]:ClearAllPoints();
+    SectionFrame:SetScript("OnEnter", function ()
+        if (not self.inSearchMode) then
+            return;
         end
 
-        if (first) then
-            self.FramePool[Details.ID]:SetPoint("TOPLEFT", Anchor, "TOPLEFT", SETTING_MARGIN_LEFT, SETTING_MARGIN_TOP);
-        elseif (self.FramePool[Details.ID].type == SUB_SECTION) then
-            self.FramePool[Details.ID]:SetPoint("TOPLEFT", Anchor, "BOTTOMLEFT", 0, SETTING_MARGIN_TOP);
-        else
-            self.FramePool[Details.ID]:SetPoint("TOPLEFT", Anchor, "BOTTOMLEFT", 0, SETTING_MARGIN_TOP);
-        end
+        SectionFrame.Hover:Show();
+    end);
 
-        Anchor = self.FramePool[Details.ID];
-        first = false;
-    end
+    SectionFrame:SetScript("OnLeave", function ()
+        SectionFrame.Hover:Hide();
+    end);
+
+    SectionFrame.type = SECTION;
+    SectionFrame.label = section;
+    SectionFrame.ID = section;
+
+    self.FramePool[SectionFrame.ID] = SectionFrame;
+    return SectionFrame;
 end
 
 ---@param Parent Frame
 ---@param Details table
 ---
----@return string
+---@return Frame
 function Settings:buildFrameForSetting(Parent, Details)
     local settingID = Details.ID;
+
+    if (self.FramePool[settingID]) then
+        return self.FramePool[settingID];
+    end
 
     ---@type Frame
     local SettingFrame;
 
+    ---@type string
+    local label;
+
+    ---@type string
+    local description;
+
     if (Details.type == CUSTOM) then
+        label = settingID;
         SettingFrame = Details.build(Parent);
 
     elseif (Details.type == SUB_SECTION) then
+        label = settingID;
+
         ---@type FontString
         SettingFrame = Interface:createFontString(Parent, Details.ID);
         SettingFrame:SetFont(SUBJECT_FONT_SIZE, "OUTLINE");
-        SettingFrame.type = SUB_SECTION;
 
     elseif (Details.type == LABEL) then
+        label = L[GL:camelToSnake(Details.ID)];
+
         ---@type FontString
-        SettingFrame = Interface:createFontString(Parent, L[GL:camelToSnake(Details.ID)]);
+        SettingFrame = Interface:createFontString(Parent, label);
         SettingFrame:SetColor(SETTING_COLOR);
 
     elseif (Details.type == INPUT) then
-        local label = self:getLabel(settingID);
-        local tooltip = self:getDescription(settingID);
+        label = self:getLabel(settingID);
+        description = self:getDescription(settingID);
 
         ---@type Frame
         SettingFrame = CreateFrame("Frame", nil, Parent);
@@ -594,14 +1106,23 @@ function Settings:buildFrameForSetting(Parent, Details)
         Input:SetPoint("TOPLEFT", InputLabel, "BOTTOMLEFT", 2, -2);
         Input:SetWidth(200);
 
-        if (tooltip) then
-            Interface:addTooltip(SettingFrame, ("|c00FFFFFF%s|r\n%s"):format(label, tooltip));
-            Interface:addTooltip(Input, ("|c00FFFFFF%s|r\n%s"):format(label, tooltip));
+        Input:SetScript("OnTextChanged", function ()
+            GL.Settings:set(Details.ID, Input:GetText());
+        end);
+
+        if (description) then
+            local tooltip = ("|c00FFFFFF%s|r\n\n%s"):format(label, description);
+
+            Interface:addTooltip(SettingFrame, tooltip);
+            Interface:addTooltip(Input, tooltip, "TOP", SettingFrame);
         end
 
     elseif (Details.type == CHECKBOX) then
-        local label = self:getLabel(settingID);
-        local tooltip = self:getDescription(settingID);
+        label = self:getLabel(settingID);
+        description = self:getDescription(settingID);
+
+        ---@type string
+        local tooltip = description and ("|c00FFFFFF%s|r\n\n%s"):format(label, description) or nil;
 
         ---@type Frame
         SettingFrame = Interface:createCheckbox{
@@ -609,38 +1130,45 @@ function Settings:buildFrameForSetting(Parent, Details)
             name = ("GL.Interface.Settings.Wrappers.%s"):format(settingID),
             checked = GL.Settings:get(settingID),
             label = label,
-            tooltip = tooltip and ("|c00FFFFFF%s|r\n%s"):format(label, tooltip) or nil,
+            tooltip = tooltip,
             callback = function (_, value)
                 GL.Settings:set(settingID, value);
 
                 if (Details.callback) then
-                    Details.callback();
+                    Details.callback(value);
                 end
             end,
         };
 
         SettingFrame.Label:SetColor(SETTING_COLOR);
 
+        if (tooltip) then
+            Interface:addTooltip(SettingFrame, tooltip, "TOP", SettingFrame.Label);
+        end
+
         GL.Settings:onChange(settingID, function ()
             SettingFrame:SetChecked(GL.Settings:get(settingID));
         end);
 
     elseif (Details.type == BUTTON) then
-        local label = self:getLabel(settingID);
-        local tooltip = self:getDescription(settingID);
+        label = self:getLabel(settingID);
+        description = self:getDescription(settingID);
 
-        ---@type Frame
+        ---@type Button
         SettingFrame = Interface:dynamicPanelButton(Parent, label);
         SettingFrame:SetWidth(200);
         SettingFrame:SetScript("OnClick", Details.action);
 
-        if (tooltip) then
-            Interface:addTooltip(SettingFrame, ("|c00FFFFFF%s|r\n%s"):format(label, tooltip));
+        if (description) then
+            Interface:addTooltip(SettingFrame, ("|c00FFFFFF%s|r\n\n%s"):format(label, description));
         end
 
     elseif (Details.type == DROPDOWN) then
-        local label = self:getLabel(settingID);
-        local tooltip = self:getDescription(settingID);
+        label = self:getLabel(settingID);
+        description = self:getDescription(settingID);
+
+        ---@type string
+        local tooltip = description and ("|c00FFFFFF%s|r\n\n%s"):format(label, description) or nil;
 
         ---@type Frame
         SettingFrame = CreateFrame("Frame", nil, Parent);
@@ -648,9 +1176,9 @@ function Settings:buildFrameForSetting(Parent, Details)
         SettingFrame:SetHeight(40);
 
         ---@type FontString
-        local ChannelLabel = Interface:createFontString(SettingFrame, label);
-        ChannelLabel:SetColor(SETTING_COLOR);
-        ChannelLabel:SetPoint("TOPLEFT", SettingFrame, "TOPLEFT");
+        local Label = Interface:createFontString(SettingFrame, label);
+        Label:SetColor(SETTING_COLOR);
+        Label:SetPoint("TOPLEFT", SettingFrame, "TOPLEFT");
 
         ---@type Frame
         local DropDown = Interface:createDropdown{
@@ -661,16 +1189,19 @@ function Settings:buildFrameForSetting(Parent, Details)
                 GL.Settings:set(settingID, value);
             end
         };
-        DropDown:SetPoint("TOPLEFT", ChannelLabel, "BOTTOMLEFT", -20, -2);
+        DropDown:SetPoint("TOPLEFT", Label, "BOTTOMLEFT", -20, -2);
 
         if (tooltip) then
-            Interface:addTooltip(DropDown, ("|c00FFFFFF%s|r\n%s"):format(label, tooltip));
+            Interface:addTooltip(Label, tooltip);
+            Interface:addTooltip(DropDown, tooltip, "TOP", Label);
         end
 
     elseif (Details.type == MINIMAP_HOTKEY_DROPDOWN) then
+        ---@type string
         local hotkey = GL:explode(Details.ID, ".")[3];
-        local label = L["HOTKEYS_" .. hotkey];
 
+        label = L["HOTKEYS_" .. hotkey];
+        
         ---@type Frame
         SettingFrame = CreateFrame("Frame", nil, Parent);
         SettingFrame:SetWidth(300);
@@ -680,7 +1211,7 @@ function Settings:buildFrameForSetting(Parent, Details)
         local ChannelLabel = Interface:createFontString(SettingFrame, label);
         ChannelLabel:SetColor(SETTING_COLOR);
         ChannelLabel:SetPoint("TOPLEFT", SettingFrame, "TOPLEFT");
-
+  
         ---@type Frame
         local DropDown = Interface:createDropdown{
             Parent = SettingFrame,
@@ -692,12 +1223,93 @@ function Settings:buildFrameForSetting(Parent, Details)
         };
         DropDown:SetPoint("TOPLEFT", ChannelLabel, "BOTTOMLEFT", -20, -2);
 
+    elseif (Details.type == LOOT_QUALITY_DROPDOWN) then
+        label = self:getLabel(settingID);
+        description = self:getDescription(settingID);
+
+        ---@type string
+        local tooltip = description and ("|c00FFFFFF%s|r\n\n%s"):format(label, description) or nil;
+
+        local Options = {};
+        local ItemQualityColors = GL.Data.Constants.ItemQualityColors;
+        for i = 0, #ItemQualityColors do
+            Options[i] = ("|c00%s%s|r"):format(ItemQualityColors[i].hex, ItemQualityColors[i].description);
+        end
+
+        ---@type Frame
+        SettingFrame = CreateFrame("Frame", nil, Parent);
+        SettingFrame:SetWidth(300);
+        SettingFrame:SetHeight(40);
+
+        ---@type FontString
+        local Label = Interface:createFontString(SettingFrame, label);
+        Label:SetColor(SETTING_COLOR);
+        Label:SetPoint("TOPLEFT", SettingFrame, "TOPLEFT");
+
+        ---@type Frame
+        local DropDown = Interface:createDropdown{
+            Parent = SettingFrame,
+            Options = Options,
+            value = GL.Settings:get(settingID),
+            callback = function (_, value)
+                GL.Settings:set(settingID, value);
+            end
+        };
+        DropDown:SetPoint("TOPLEFT", Label, "BOTTOMLEFT", -20, -2);
+
         if (tooltip) then
-            Interface:addTooltip(DropDown, ("|c00FFFFFF%s|r\n%s"):format(label, tooltip));
+            Interface:addTooltip(Label, tooltip);
+            Interface:addTooltip(DropDown, tooltip, "TOP", Label);
+        end
+
+    elseif (Details.type == SLIDER) then
+        label = self:getLabel(settingID);
+        description = self:getDescription(settingID);
+
+        ---@type string
+        local tooltip = description and ("|c00FFFFFF%s|r\n\n%s"):format(label, description) or nil;
+
+        ---@type Frame
+        SettingFrame = CreateFrame("Frame", nil, Parent);
+        SettingFrame:SetWidth(300);
+        SettingFrame:SetHeight(40);
+
+        ---@type FontString
+        local Label = Interface:createFontString(SettingFrame, label);
+        Label:SetColor(SETTING_COLOR);
+        Label:SetPoint("TOPLEFT", SettingFrame, "TOPLEFT");
+
+        ---@type Frame
+        local Slider = Interface:createSlider{
+            Parent = SettingFrame,
+            min = Details.min,
+            max = Details.max,
+            step = Details.step,
+            value = GL.Settings:get(settingID),
+            callback = function (_, value)
+                local currentValue = GL.Settings:get(settingID);
+                GL.Settings:set(settingID, value);
+
+                if (Details.callback) then
+                    Details.callback(value, currentValue ~= value);
+                end
+            end
+        };
+        Slider:SetPoint("TOPLEFT", Label, "BOTTOMLEFT", 0, -6);
+
+        if (tooltip) then
+            Interface:addTooltip(Label, tooltip);
+            Interface:addTooltip(Slider, tooltip, "TOP", Label);
         end
     end
 
-    return SettingFrame;
+    SettingFrame.label = label;
+    SettingFrame.description = description;
+    SettingFrame.type = Details.type;
+    SettingFrame.ID = Details.ID;
+
+    self.FramePool[settingID] = SettingFrame;
+    return self.FramePool[settingID];
 end
 
 ---@param settingID string
@@ -709,9 +1321,151 @@ end
 
 ---@param settingID string
 ---
----@return string|nil
+---@return string|false
 function Settings:getDescription(settingID)
-    return L["SETTINGS_" .. GL:camelToSnake(settingID) .. "_DESCRIPTION"];
+    local translationID = "SETTINGS_" .. GL:camelToSnake(settingID) .. "_DESCRIPTION";
+    local value = L[translationID];
+
+    return translationID ~= value and value or false;
+end
+
+---@param settingID string
+---
+---@return string|false
+function Settings:getTags(settingID)
+    local translationID = "SETTINGS_" .. GL:camelToSnake(settingID) .. "_TAGS";
+    local value = L[translationID];
+
+    return translationID ~= value and value or false;
+end
+
+---@param phrase string
+---
+---@return table|false
+function Settings:search(phrase)
+    if (GL:empty(phrase)) then
+        return false;
+    end
+
+    ---@type Frame
+    local Parent = self:build().SettingsFrame;
+    local TypesToSkip = {
+        CUSTOM,
+        LABEL,
+    };
+
+    local Results = {};
+
+    local order = 1;
+    local addResult = function (Result)
+        Results[order] = Result;
+        order = order + 1;
+    end;
+
+    local potentiallyIrrelevant = nil;
+    local removeThePotentiallyIrrelevant = function ()
+        if (potentiallyIrrelevant == nil) then
+            return;
+        end
+
+        for i = order, 1, -1 do
+            Results[i] = nil;
+
+            if (i <= potentiallyIrrelevant) then
+                order = i;
+                break;
+            end
+        end
+
+        potentiallyIrrelevant = nil;
+    end;
+
+    local addEntireSection = false;
+    local addEntireSubSection = false;
+    for _, section in pairs(SECTION_ORDER) do
+        removeThePotentiallyIrrelevant();
+
+        addEntireSection = GL:strContains(section, phrase);
+        potentiallyIrrelevant = not addEntireSection and order or nil;
+
+        addResult(self:buildHeaderForSection(Parent, section));
+
+        for _, Setting in pairs(SettingEntries[section] or {}) do
+            (function ()
+                if (not Setting or GL:inTable(TypesToSkip, Setting.type)) then
+                    return;
+                end
+
+                local SettingFrame = self:buildFrameForSetting(Parent, Setting);
+
+                -- We're adding this entire section, no need to do any further checks
+                if (addEntireSection) then
+                    addResult(SettingFrame);
+                    return;
+                end
+
+                if (Setting.type == SUB_SECTION) then
+                    -- Don't remove the parent section since we might still have relevant entries to add
+                    if (potentiallyIrrelevant and Results[potentiallyIrrelevant].type ~= SECTION) then
+                        -- The last entry could be an empty sub section
+                        removeThePotentiallyIrrelevant();
+                    end
+
+                    addEntireSubSection = GL:strContains(Setting.ID, phrase);
+                    addResult(SettingFrame);
+
+                    -- If we only add relevant settings within this subsection then we might
+                    -- be dealing with an empty subsection here that will need removing later
+                    if (not addEntireSubSection) then
+                        potentiallyIrrelevant = potentiallyIrrelevant or order - 1; -- -1 because we already created the Frame at this point
+                    else
+                        potentiallyIrrelevant = nil;
+                    end
+
+                    return;
+                end
+
+                -- We're adding this entire subsection, no need to do any further checks
+                if (addEntireSubSection) then
+                    addResult(SettingFrame);
+                    return;
+                end
+
+                -- There's nothing to match the phrase against
+                if (not SettingFrame.label
+                    and not SettingFrame.description
+                ) then
+                    return;
+                end
+
+                local tags = self:getTags(Setting.ID) or "";
+
+                -- The setting doesn't have anything to do with the search phrase
+                if ((not SettingFrame.label or not GL:strContains(SettingFrame.label .. " " .. tags, phrase))
+                    and (not SettingFrame.description or not GL:strContains(SettingFrame.description .. " " .. tags, phrase))
+                ) then
+                    return;
+                end
+
+                addResult(SettingFrame);
+
+                -- There was a match within the subsection so it's not irrelevant
+                potentiallyIrrelevant = nil;
+            end)();
+        end
+    end
+
+    -- Remove potentially lingering irrelevant subsection
+    removeThePotentiallyIrrelevant();
+
+    return Results;
+end
+
+---@return void
+function Settings:resetToDefaults(mode)
+    GL:xd{
+        mode = mode,
+    };
 end
 
 --- Reset the vertical scroll of the settings frame
@@ -723,5 +1477,6 @@ function Settings:resetScroll()
         return;
     end
 
-    return Window.ScrollFrame and Window.ScrollFrame:SetVerticalScroll(0) or nil;
+    Window.ScrollFrame:SetVerticalScroll(0);
+    Window.ScrollFrame:SetHorizontalScroll(0);
 end

@@ -1,3 +1,5 @@
+local L = Gargul_L;
+
 ---@type GL
 local _, GL = ...;
 
@@ -82,7 +84,7 @@ GL.Data.Constants = {
 
     ItemQualityColors = {
         [0] = {
-            description = "Poor",
+            description = L.ITEM_QUALITY_POOR,
             rgb255 = "157,157,157",
             RGB255 = { 157, 157, 157 },
             rgb = "0.62,0.62,0.62",
@@ -90,7 +92,7 @@ GL.Data.Constants = {
             hex = "9d9d9d"
         },
         [1] = {
-            description = "Common",
+            description = L.ITEM_QUALITY_COMMON,
             rgb255 = "255,255,255",
             RGB255 = { 255, 255, 255 },
             rgb = "1.00,1.00,1.00",
@@ -98,7 +100,7 @@ GL.Data.Constants = {
             hex = "ffffff"
         },
         [2] = {
-            description = "Uncommon",
+            description = L.ITEM_QUALITY_UNCOMMON,
             rgb255 = "30,255,0",
             RGB255 = { 30, 255, 0 },
             rgb = "0.12,1.00,0.00",
@@ -106,7 +108,7 @@ GL.Data.Constants = {
             hex = "1eff00"
         },
         [3] = {
-            description = "Rare",
+            description = L.ITEM_QUALITY_RARE,
             rgb255 = "0,112,221",
             RGB255 = { 0, 112, 221 },
             rgb = "0.00,0.44,0.87",
@@ -114,7 +116,7 @@ GL.Data.Constants = {
             hex = "0070dd"
         },
         [4] = {
-            description = "Epic",
+            description = L.ITEM_QUALITY_EPIC,
             rgb255 = "163,53,238",
             RGB255 = { 163, 53, 238 },
             rgb = "0.64,0.21,0.93",
@@ -122,7 +124,7 @@ GL.Data.Constants = {
             hex = "a335ee"
         },
         [5] = {
-            description = "Legendary",
+            description = L.ITEM_QUALITY_LEGENDARY,
             rgb255 = "255,128,0",
             RGB255 = { 255, 128, 0 },
             rgb = "1.00,0.50,0.00",
@@ -130,7 +132,7 @@ GL.Data.Constants = {
             hex = "ff8000"
         },
         [6] = {
-            description = "Artifact",
+            description = L.ITEM_QUALITY_ARTIFACT,
             rgb255 = "230,204,128",
             RGB255 = { 230, 204, 128 },
             rgb = "0.90,0.80,0.50",
@@ -138,7 +140,7 @@ GL.Data.Constants = {
             hex = "e6cc80"
         },
         [7] = {
-            description = "Heirloom",
+            description = L.ITEM_QUALITY_HEIRLOOM,
             rgb255 = "0,204,255",
             RGB255 = { 0, 204, 255 },
             rgb = "0.00,0.8,1.0",
@@ -146,7 +148,7 @@ GL.Data.Constants = {
             hex = "00ccff"
         },
         [8] = {
-            description = "WoW Token",
+            description = L.ITEM_QUALITY_WOW_TOKEN,
             rgb255 = "0,204,255",
             RGB255 = { 0, 204, 255 },
             rgb = "0.00,0.8,1.0",

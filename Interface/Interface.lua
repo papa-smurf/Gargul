@@ -1230,7 +1230,10 @@ end
 ---@param Owner Frame
 ---@param Lines table|string
 ---@param anchor string|nil
-function Interface:addTooltip(Owner, Lines, anchor)
+---@param SurrogateOwner Frame|nil
+---
+---@return void
+function Interface:addTooltip(Owner, Lines, anchor, SurrogateOwner)
     local isItemLink = false;
     local isFunction = type(Lines) == "function";
 
@@ -1268,7 +1271,7 @@ function Interface:addTooltip(Owner, Lines, anchor)
             return;
         end
 
-        GameTooltip:SetOwner(Target, "ANCHOR_" .. anchor);
+        GameTooltip:SetOwner(SurrogateOwner or Target, "ANCHOR_" .. anchor);
 
         if (isItemLink) then
             GameTooltip:SetHyperlink(Lines);

@@ -3,7 +3,7 @@ local L = Gargul_L;
 
 setmetatable(L, {
     __index = function (_, key)
-        return tostring(key)
+        return tostring(key);
     end,
 });
 
@@ -1027,13 +1027,30 @@ L.ZLIB_COMPRESS_WARNING = "Unable to zlib compress the data. Contact support via
 L.ZLIB_DECOMPRESS_WARNING = "Unable to zlib decompress the data. Make sure you copy/paste it as-is without adding any additional characters or whitespaces!";
 
 --[[ SETTINGS ]]
+L.SETTINGS_DEFAULTS = "Defaults";
+L.SETTINGS_DEFAULTS_CONFIRM = [[
+Do you want to reset all of Gargul's settings to their defaults, or only the settings shown for this category / search query?
+]];
+L.SETTINGS_DEFAULTS_ALL = "All Settings";
+L.SETTINGS_DEFAULTS_SHOWN = "Shown Settings";
+
 L.SETTINGS_SECTION_GETTING_STARTED = "Getting Started";
 L.SETTINGS_SECTION_GENERAL = "General";
 L.SETTINGS_SECTION_SOFTRES = "SoftRes";
 L.SETTINGS_SECTION_TMB = "Thatsmybis / DFT";
+L.SETTINGS_SECTION_GDKP = "GDKP";
 
 L.SETTINGS_SUBSECTION_MINIMAP = "Minimap";
+L.SETTINGS_SUBSECTION_TMB_TOOLTIPS = "TMB Tooltips";
+L.SETTINGS_SUBSECTION_TMB_DROPPED_LOOT = "TMB Loot Drops";
+L.SETTINGS_SUBSECTION_TMB_ROLLING_LOOT = "TMB Rolling Loot";
 L.SETTINGS_SUBSECTION_SOFTRES_SUPPORTED_SERVICES = "Supported services";
+L.SETTINGS_SUBSECTION_GDKP_RAIDERS = "For Raiders";
+L.SETTINGS_SUBSECTION_GDKP_ORGANIZER = "Organizer - General";
+L.SETTINGS_SUBSECTION_GDKP_ANNOUNCEMENTS = "Organizer - Communication";
+L.SETTINGS_SUBSECTION_GDKP_PRICES = "Organizer - Prices";
+L.SETTINGS_SUBSECTION_GDKP_TRADING = "Organizer - Trading";
+L.SETTINGS_SUBSECTION_GDKP_QUEUES = "Organizer - Queues";
 
 L.SETTINGS_SECTION_GETTING_STARTED_INTRO_BONUS_FEATURES = "Bonus Features";
 L.SETTINGS_SECTION_GETTING_STARTED_INTRO = [[
@@ -1065,10 +1082,14 @@ it allows us to respond to bugs more quickly and limits the severity of issues
 L.SETTINGS_CHANGE_LOG_LABEL = "Show changelog";
 L.SETTINGS_CHANGE_LOG_DESCRIPTION = "Show important changes after updating Gargul";
 L.SETTINGS_OPEN_CHAT_LOCALE_LABEL = "Chat message language";
-L.SETTINGS_OPEN_CHAT_LOCALE_DESCRIPTION = "Change the language";
+L.SETTINGS_OPEN_CHAT_LOCALE_DESCRIPTION = "Change the language Gargul uses when posting messages on chat channels like /ra or /whisper";
 L.SETTINGS_NO_SOUNDS_LABEL = "No sounds";
 L.SETTINGS_NO_SOUNDS_DESCRIPTION = "When a roll starts or when you're outbid, Gargul will notify you";
 L.SETTINGS_SOUND_CHANNEL_LABEL = "On which channel should Gargul play sounds (default SFX)";
+L.SETTINGS_SOUND_CHANNEL_DESCRIPTION = [[
+In the native in-game settings you can adjust the volume per sound channel. Using a specific channel here,
+'Music' for example, ensures Gargul's sounds are played at the volume you desire
+]];
 
 L.SETTINGS_SECTION_SOFTRES_EXPLANATION = [[
 Create a softreserve session on softres.it or classicpr.io (see below)
@@ -1100,8 +1121,143 @@ people will receive data even when 'Automatically share data' is enabled
 ]]
 
 L.SETTINGS_SECTION_TMB_EXPLANATION = [[
-Type |c00A79EFF/gl tmb|r or |c00A79EFF/gl dft|r or click the button below to get started!
+Type |c00A79EFF/gl tmb|r or |c00A79EFF/gl dft|r to get started!
+For more info and a demo on thatsmybis you can visit https://thatsmybis.com
 ]];
+
+L.SETTINGS_TMB_HIDE_INFO_OF_PEOPLE_NOT_IN_GROUP_LABEL = "Show players in group only";
+L.SETTINGS_TMB_HIDE_INFO_OF_PEOPLE_NOT_IN_GROUP_DESCRIPTION = "Makes sure you only see the names of players who are actually in your group";
+L.SETTINGS_TMB_SHOW_ENTRIES_WHEN_SOLO_LABEL = "Show everything when solo";
+L.SETTINGS_TMB_SHOW_ENTRIES_WHEN_SOLO_DESCRIPTION = "Make sure that you see all TMB/DFT data when not in a group, perfect for testing!";
+
+L.SETTINGS_TMB_SHOW_ENTRIES_WHEN_USING_PRIO3_LABEL = "Show everything when using prio3/classicpr.io";
+L.SETTINGS_TMB_SHOW_ENTRIES_WHEN_USING_PRIO3_DESCRIPTION = "Show all entries when in a group and prio3/classicpr.io data is present (|c00A79EFF/gl prio3|r or |c00A79EFF/gl cpr|r)";
+
+L.SETTINGS_TMB_HIDE_WISH_LIST_INFO_IF_PRIORITY_IS_PRESENT_LABEL = "Hide wishlist info when priority is set";
+L.SETTINGS_TMB_HIDE_WISH_LIST_INFO_IF_PRIORITY_IS_PRESENT_DESCRIPTION = "You will only see an item's wishlist details if no priority (LC) is set for it";
+
+L.SETTINGS_AWARDING_LOOT_AWARD_ON_RECEIVE_LABEL = "Award via group or master loot without using Gargul's UI";
+L.SETTINGS_AWARDING_LOOT_AWARD_ON_RECEIVE_DESCRIPTION = [[
+Want to export items won via group loot? Want to use the native WoW UI when master looting?
+Enable this! Items awarded this way will only be broadcasted to others when master loot is active
+and you are the master looter or when group loot is active and you are the raid/party leader!
+]];
+
+L.SETTINGS_AWARDING_LOOT_AWARD_ON_RECEIVE_MINIMUM_QUALITY_LABEL = "Minimum loot quality for the previous setting";
+L.SETTINGS_AWARDING_LOOT_AWARD_ON_RECEIVE_MINIMUM_QUALITY_DESCRIPTION = "The minimum quality an item should have in order to be automatically awarded using the setting above";
+
+L.SETTINGS_TMB_SHOW_WISH_LIST_INFO_ON_TOOLTIPS_LABEL = "Show wishlist details";
+L.SETTINGS_TMB_SHOW_WISH_LIST_INFO_ON_TOOLTIPS_DESCRIPTION = "See the names of those who have an item on their list on tooltips";
+
+L.SETTINGS_TMB_SHOW_PRIO_LIST_INFO_ON_TOOLTIPS_LABEL = "Show item priority details";
+L.SETTINGS_TMB_SHOW_PRIO_LIST_INFO_ON_TOOLTIPS_DESCRIPTION = "See the names of those who have an item prioritized to them (LC) on tooltips";
+L.SETTINGS_TMB_SHOW_ITEM_INFO_ON_TOOLTIPS_LABEL = "Show item tier and note";
+L.SETTINGS_TMB_SHOW_ITEM_INFO_ON_TOOLTIPS_DESCRIPTION = "An item's guild note and item tier are shown on its tooltip";
+L.SETTINGS_TMB_SHOW_RAID_GROUP_LABEL = "Show raid group";
+L.SETTINGS_TMB_SHOW_RAID_GROUP_DESCRIPTION = "When more than one raid group is present, show a player's raid group on tooltips";
+L.SETTINGS_TMB_OSHAS_LOWER_PRIORITY_LABEL = "Give OS items a lower priority";
+L.SETTINGS_TMB_OSHAS_LOWER_PRIORITY_DESCRIPTION = "Items marked as OS on wishlist or priolist will be put at the bottom of the list";
+L.SETTINGS_TMB_MAXIMUM_NUMBER_OF_TOOLTIP_ENTRIES_LABEL = "Maximum number of tooltip entries";
+L.SETTINGS_TMB_MAXIMUM_NUMBER_OF_ANNOUNCEMENT_ENTRIES_LABEL = "Maximum number of TMB entries to announce";
+L.SETTINGS_TMB_MAXIMUM_NUMBER_OF_ANNOUNCEMENT_ENTRIES_DESCRIPTION = "Example: if above setting is set to 10 then Gargul will announce up to 10 TMB entries per items in chat";
+L.SETTINGS_TMB_INCLUDE_WISH_LIST_INFO_IN_LOOT_ANNOUNCEMENT_LABEL = "Announce wishlist details of dropped loot";
+L.SETTINGS_TMB_INCLUDE_WISH_LIST_INFO_IN_LOOT_ANNOUNCEMENT_DESCRIPTION = "Wishlist details of dropped loot are announced in the chat";
+L.SETTINGS_TMB_INCLUDE_PRIO_LIST_INFO_IN_LOOT_ANNOUNCEMENT_LABEL = "Announce priolist details of dropped loot";
+L.SETTINGS_TMB_INCLUDE_PRIO_LIST_INFO_IN_LOOT_ANNOUNCEMENT_DESCRIPTION = "Item priolist details (LC) of dropped loot are announced in the chat";
+L.SETTINGS_TMB_ANNOUNCE_WISHLIST_INFO_WHEN_ROLLING_LABEL = "Announce wishlist details when rolling out loot";
+L.SETTINGS_TMB_ANNOUNCE_WISHLIST_INFO_WHEN_ROLLING_DESCRIPTION = "TMB wishlist details will also be included whenever you roll out an item";
+L.SETTINGS_TMB_ANNOUNCE_PRIOLIST_INFO_WHEN_ROLLING_LABEL = "Announce priolist details when rolling out loot";
+L.SETTINGS_TMB_ANNOUNCE_PRIOLIST_INFO_WHEN_ROLLING_DESCRIPTION = "TMB/DFT priolist details will also be included whenever you roll out an item";
+
+L.SETTINGS_SECTION_GDKP_EXPLANATION = "Type |c00A79EFF/gdkp|r to learn more about running GDKPs with Gargul!"
+L.SETTINGS_GDKP_SHOW_BID_WINDOW_LABEL = "Bid window";
+L.SETTINGS_GDKP_SHOW_BID_WINDOW_DESCRIPTION = "Show the bid window whenever the master looter starts an auction. This only works if the master looter uses Gargul!";
+L.SETTINGS_GDKP_ENABLE_BIDDER_QUEUE_LABEL = "Upcoming item window";
+L.SETTINGS_GDKP_ENABLE_BIDDER_QUEUE_DESCRIPTION = "Show the GDKP bid queue that allows you to prebid on queued items";
+L.SETTINGS_GDKP_BIDDER_SCALE_LABEL = "Magnification scale of the bidder window";
+L.SETTINGS_GDKP_OUTBID_SOUND_LABEL = "Choose a sound that plays when you're outbid";
+
+L.SETTINGS_GDKP_ANNOUNCE_AUCTION_START_LABEL = "Announce auction start";
+L.SETTINGS_GDKP_ANNOUNCE_POT_AFTER_AUCTION_LABEL = "Announce pot after awarding item";
+L.SETTINGS_GDKP_NOTIFY_IF_BID_TOO_LOW_LABEL = "Whisper bidder if bid is too low";
+L.SETTINGS_GDKP_ANNOUNCE_COUNTDOWN_IN_RW_LABEL = "Announce countdown in raid warning";
+L.SETTINGS_GDKP_ANNOUNCE_COUNTDOWN_IN_RW_DESCRIPTION = "Announce countdown in /rw instead of /ra";
+L.SETTINGS_GDKP_ANNOUNCE_NEW_BID_LABEL = "Announce incoming bids";
+L.SETTINGS_GDKP_ANNOUNCE_NEW_BID_DESCRIPTION = "Announce all accepted bids in group chat";
+L.SETTINGS_GDKP_ANNOUNCE_NEW_BID_IN_RW_LABEL = "Announce incoming bids in raid warning";
+L.SETTINGS_GDKP_ANNOUNCE_NEW_BID_IN_RW_DESCRIPTION = "Announce bids in /rw instead of /ra. Requires |c00967FD2Announce incoming bids|r to be enabled!|r";
+L.SETTINGS_GDKP_ANNOUNCE_FINAL_CALL_LABEL = "Announce final call";
+L.SETTINGS_GDKP_NUMBER_OF_SECONDS_TO_COUNTDOWN_LABEL = "Countdown every second starting from (0 to disable)";
+L.SETTINGS_GDKP_NUMBER_OF_FIVE_SECONDS_TO_COUNTDOWN_LABEL = "Countdown every 5 seconds starting from (0 to disable)";
+L.SETTINGS_GDKP_FINAL_CALL_TIME_LABEL = "Final call jumps to";
+L.SETTINGS_GDKP_DISABLE_QUEUES_LABEL = "Completely disable queues";
+L.SETTINGS_GDKP_ADD_DROPS_TO_QUEUE_LABEL = "Automatically add dropped items to queue";
+L.SETTINGS_GDKP_ADD_BOEDROPS_TO_QUEUE_LABEL = "Include BOEs";
+L.SETTINGS_SECTION_GDKP_PRICES_EXPLANATION = [[
+An item's price and increment are determined in the following order:
+
+1 - Item specific via '|c00A79EFFImport Item Prices|r' or '|c00A79EFFStore minimum bid and increment for each item|r' or 
+2 - Item level specific settings via '|c00A79EFFItem Level Prices|r'
+3 - Default minimum bid and increment]];
+L.SETTINGS_GDKP_STORE_MINIMUM_AND_INCREMENT_PER_ITEM_LABEL = "Store minimum bid and increment for each item";
+L.SETTINGS_GDKP_STORE_MINIMUM_AND_INCREMENT_PER_ITEM_DESCRIPTION = "If enabled, the minimum and increment are remembered for each item you auction off";
+L.SETTINGS_GDKP_DEFAULT_MINIMUM_BID_LABEL = "Set a default minimum bid";
+L.SETTINGS_GDKP_DEFAULT_INCREMENT_LABEL = "Set a default increment";
+
+L.SETTINGS_OPEN_PRICE_IMPORTER_LABEL = "Import Item Prices";
+L.SETTINGS_OPEN_PRICE_IMPORTER_DESCRIPTION = [[
+The price importer is meant for setting minimum prices and increments
+for a lot of items at once. Useful if you have a sheet of items and prices for example.
+
+In most other cases, setting the price and increment per auction makes more sense,
+especially when the '|c00A79EFFStore minimum bid and increment for each item|r' is enabled!]];
+
+L.SETTINGS_OPEN_LEVEL_RANGE_PRICES_LABEL = "Item Level Prices";
+L.SETTINGS_OPEN_LEVEL_RANGE_PRICES_DESCRIPTION = [[
+You can set item prices and increments based on item level (range).
+This can serve as a solid base of defaults for your raids]];
+
+L.SETTINGS_GDKP_SHOW_HISTORY_ON_TOOLTIP_LABEL = "Show GDKP history on item tooltips";
+L.SETTINGS_GDKP_PRECISION_LABEL = "Number of decimals (|c00FF0000Requires a /reload|r to become effective)"
+L.SETTINGS_GDKP_PRECISION_DESCRIPTION = [[
+Set the number of decimals used when dealing with gold, this includes but is not limited to
+
+- Bidding
+- Trading and tracking trades
+- Cuts and payouts
+
+Set to 0 for gold, 2 for silver or 4 for copper]]
+
+L.SETTINGS_GDKP_ACCEPT_BIDS_LOWER_THAN_MINIMUM_LABEL = "Accept bids lower than minimum";
+L.SETTINGS_GDKP_ACCEPT_BIDS_LOWER_THAN_MINIMUM_DESCRIPTION = "Accept bids that don't meet the minimum price, useful for identifying off-spec bids";
+L.SETTINGS_GDKP_INVALID_BIDS_TRIGGER_ANTI_SNIPE_LABEL = "Allow invalid bids to trigger anti-snipe";
+L.SETTINGS_GDKP_INVALID_BIDS_TRIGGER_ANTI_SNIPE_DESCRIPTION = "Bids that are too low will still trigger the anti-snipe timer";
+L.SETTINGS_GDKP_AUTO_AWARD_VIA_AUCTIONEER_LABEL = "Auto award items";
+L.SETTINGS_GDKP_AUTO_AWARD_VIA_AUCTIONEER_DESCRIPTION = "Auto award an item to the highest bidder when the timer runs out (clicking \"Stop\" during an auction will not trigger this)";
+L.SETTINGS_GDKP_AUCTION_END_LEEWAY_LABEL = "Accept bids till how long after auction an ends?";
+L.SETTINGS_GDKP_LEDGER_AUCTION_SCALE_LABEL = "Auction scale in |c00967FD2/gdkp|r";
+L.SETTINGS_GDKP_LEDGER_AUCTION_SCALE_DESCRIPTION = [[
+The slider affects how tightly auctions are packed together in the |c00967FD2/gdkp|r overview.
+If you type |c00967FD2/gdkp|r you can see the changes in real time]];
+
+L.SETTINGS_GDKP_WHISPER_GOLD_DETAILS_LABEL = "Whisper a gold to give or receive message";
+L.SETTINGS_GDKP_WHISPER_GOLD_DETAILS_DESCRIPTION = "When the person you're trading with still owes you gold, you will send them a whisper stating the exact amount";
+L.SETTINGS_GDKP_ADD_GOLD_TO_TRADE_WINDOW_LABEL = "Automatically add gold you owe";
+L.SETTINGS_GDKP_ADD_GOLD_TO_TRADE_WINDOW_DESCRIPTION = "This will not trade the gold automatically, you will still have to accept the trade manually";
+
+L.SETTINGS_GDKP_MINIMUM_DROP_QUALITY_LABEL = "Minimum quality of items to automatically add to queue";
+L.SETTINGS_GDKP_QUEUED_AUCTION_NO_BIDS_ACTION_LABEL = "Default action when no one bids on a queued auction";
+L.SETTINGS_GDKP_DELAY_BETWEEN_QUEUED_AUCTIONS_LABEL = "Delay in seconds between queued auctions";
+
+L.ITEM_QUALITY_POOR = "Poor";
+L.ITEM_QUALITY_COMMON = "Common";
+L.ITEM_QUALITY_UNCOMMON = "Uncommon";
+L.ITEM_QUALITY_RARE = "Rare";
+L.ITEM_QUALITY_EPIC = "Epic";
+L.ITEM_QUALITY_LEGENDARY = "Legendary";
+L.ITEM_QUALITY_ARTIFACT = "Artifact";
+L.ITEM_QUALITY_HEIRLOOM = "Heirloom";
+L.ITEM_QUALITY_WOW_TOKEN = "WoW Token";
 
 L.HOTKEYS_CLICK = "CLICK";
 L.HOTKEYS_RIGHTCLICK = "RIGHTCLICK";
