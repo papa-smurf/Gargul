@@ -2,7 +2,7 @@
     You can test this locally by removing line 5:
     if (GetLocale() ~= "deDE") then return; end
 ]]
-if (true or GetLocale() ~= "frFR") then return; end
+if (GetLocale() ~= "frFR") then return; end
 local L = Gargul_L or {};
 
 L.ABOUT = "À propos";
@@ -300,6 +300,7 @@ L.GDKP_EXPORT_DEFAULT_HEADER = "Objet, Joueur, Or, Wowheadlink";
 L.GDKP_EXPORT_FORMAT_START = "Date/heure à laquelle le premier objet a été attribué";
 L.GDKP_EXPORT_FORMAT_TITLE = "Titre de la session du GDKP";
 L.GDKP_EXPORT_POT_CHANGED = "Pot changé";
+L.GDKP_GOLD_TRADES = "Métiers de l'or";
 L.GDKP_HIDE_UPCOMING_CONFIRMATION = "Êtes-vous sûr? Vous ne pourrez ni voir ni enchérir sur les objets à venir !";
 L.GDKP_IMPORT_CONSEQUENCES_CROSS_REALM = [[
 |c00BE3333!! ATTENTION !!|r

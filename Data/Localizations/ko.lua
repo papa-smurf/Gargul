@@ -169,6 +169,7 @@ L.EXPORT_READ_ONLY_NOTICE = [[
 ]];
 L.FILL = "채우다";
 L.FINAL_CALL = "최종 호출";
+L.FINISH = "마치다";
 L.FORMAT = "체재";
 L.GARGUL = "가르굴";
 L.GDKP = "GDKP";
@@ -299,6 +300,7 @@ L.GDKP_EXPORT_DEFAULT_HEADER = "아이템,플레이어,골드,와우헤드링크
 L.GDKP_EXPORT_FORMAT_START = "첫 번째 항목이 수여된 날짜/시간";
 L.GDKP_EXPORT_FORMAT_TITLE = "GDKP 세션 제목";
 L.GDKP_EXPORT_POT_CHANGED = "냄비가 바뀌었다";
+L.GDKP_GOLD_TRADES = "금 거래";
 L.GDKP_HIDE_UPCOMING_CONFIRMATION = "확실합니까? 앞으로 나올 항목을 보거나 입찰할 수 없습니다!";
 L.GDKP_IMPORT_CONSEQUENCES_CROSS_REALM = [[
 |c00BE3333!! 경고 !!|r

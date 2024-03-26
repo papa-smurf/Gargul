@@ -169,6 +169,7 @@ L.EXPORT_READ_ONLY_NOTICE = [[
 ]];
 L.FILL = "充滿";
 L.FINAL_CALL = "最後呼叫";
+L.FINISH = "結束";
 L.FORMAT = "格式";
 L.GARGUL = "加爾古爾";
 L.GDKP = "GDKP";
@@ -299,6 +300,7 @@ L.GDKP_EXPORT_DEFAULT_HEADER = "物品、玩家、金幣、Wowheadlink";
 L.GDKP_EXPORT_FORMAT_START = "第一個項目被授予的日期/時間";
 L.GDKP_EXPORT_FORMAT_TITLE = "GDKP 會議的標題";
 L.GDKP_EXPORT_POT_CHANGED = "鍋換了";
+L.GDKP_GOLD_TRADES = "黃金交易";
 L.GDKP_HIDE_UPCOMING_CONFIRMATION = "你確定嗎？您將無法查看或競價即將推出的商品！";
 L.GDKP_IMPORT_CONSEQUENCES_CROSS_REALM = [[
 |c00BE3333!!警告！！|r

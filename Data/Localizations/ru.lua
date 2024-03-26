@@ -169,6 +169,7 @@ L.EXPORT_READ_ONLY_NOTICE = [[
 ]];
 L.FILL = "Наполнять";
 L.FINAL_CALL = "Последний вызов";
+L.FINISH = "Заканчивать";
 L.FORMAT = "Формат";
 L.GARGUL = "Гаргул";
 L.GDKP = "ГДКП";
@@ -299,6 +300,7 @@ L.GDKP_EXPORT_DEFAULT_HEADER = "Предмет, Игрок, Золото, Wowhea
 L.GDKP_EXPORT_FORMAT_START = "Дата/время получения первого предмета";
 L.GDKP_EXPORT_FORMAT_TITLE = "Название сессии ГДКП";
 L.GDKP_EXPORT_POT_CHANGED = "Горшок изменен";
+L.GDKP_GOLD_TRADES = "Золотые сделки";
 L.GDKP_HIDE_UPCOMING_CONFIRMATION = "Вы уверены? Вы не сможете видеть предстоящие товары или делать ставки на них!";
 L.GDKP_IMPORT_CONSEQUENCES_CROSS_REALM = [[
 |c00BE3333!! ВНИМАНИЕ !!|р

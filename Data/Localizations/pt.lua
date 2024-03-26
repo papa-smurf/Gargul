@@ -169,6 +169,7 @@ Este é APENAS um recurso de exportação, não faz sentido editar nenhum dos va
 ]];
 L.FILL = "Preencher";
 L.FINAL_CALL = "Última chamada";
+L.FINISH = "Terminar";
 L.FORMAT = "Formatar";
 L.GARGUL = "Gárgula";
 L.GDKP = "RGPD";
@@ -299,6 +300,7 @@ L.GDKP_EXPORT_DEFAULT_HEADER = "Item, Jogador, Ouro, Wowheadlink";
 L.GDKP_EXPORT_FORMAT_START = "Data/hora em que o primeiro item foi concedido";
 L.GDKP_EXPORT_FORMAT_TITLE = "O título da sessão GDKP";
 L.GDKP_EXPORT_POT_CHANGED = "Pote alterado";
+L.GDKP_GOLD_TRADES = "Negociações de Ouro";
 L.GDKP_HIDE_UPCOMING_CONFIRMATION = "Tem certeza? Você não poderá ver ou dar lances em itens futuros!";
 L.GDKP_IMPORT_CONSEQUENCES_CROSS_REALM = [[
 |c00BE3333!! AVISO!!|r
