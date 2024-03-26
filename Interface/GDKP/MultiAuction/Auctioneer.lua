@@ -415,7 +415,7 @@ function Auctioneer:build()
 
     --[[ NEXT STEP ]]
     ---@type Button
-    local Next = Interface:dynamicPanelButton(Window, "Next"); ---@TODO: TRANSLATION NEXT
+    local Next = Interface:dynamicPanelButton(Window, L.NEXT);
     Next:SetPoint("CENTER", FillFromInventory, "CENTER");
     Next:SetPoint("RIGHT", Window, "RIGHT", -20, 0);
     Next:SetScript("OnClick", function ()
