@@ -620,6 +620,7 @@ function Auctioneer:start()
     ---@type Frame
     local Window = self:getWindow();
     if (not Window) then
+        GL:error(L.SOMETHING_WENT_WRONG_WARNING);
         return;
     end
 

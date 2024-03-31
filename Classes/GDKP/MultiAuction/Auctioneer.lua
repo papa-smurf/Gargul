@@ -164,6 +164,7 @@ end
 ---@param ItemDetails table table objects should contain link, minimum and increment
 ---@param duration number
 ---@param antiSnipe number
+---
 ---@return void
 function Auctioneer:start(ItemDetails, duration, antiSnipe)
     local ItemsUpForAuction = {};
@@ -526,12 +527,14 @@ function Auctioneer:announceStart(ItemDetails, duration, antiSnipe, precision)
 
     -- We're still waiting for a MultiAuction to start
     if (self.waitingForAuctionStart
-        and serverTime - self.waitingForAuctionStart < 6
+        and serverTime - self.waitingForAuctionStart < 10
     ) then
+        GL:error((L.WAIT_SECONDS_BEFORE_RETRY):format(10 - (serverTime - self.waitingForAuctionStart)));
         return false;
     end
 
     if (not self:userIsAllowedToBroadcast()) then
+        GL:error(L.LM_OR_ASSIST_REQUIRED);
         self.waitingForAuctionStart = false;
         return false;
     end
@@ -558,7 +561,22 @@ function Auctioneer:announceStart(ItemDetails, duration, antiSnipe, precision)
         Details.endsAt = Details.endsAt and Details.endsAt <= 0 and Details.endsAt or endsAt;
     end
 
-    self:scheduleUpdater();
+    self.waitingForAuctionStart = serverTime;
+
+    ProgressBar = LibStub("LibCandyBarGargul-3.0"):New(
+        "Interface/AddOns/Gargul/Assets/Textures/timer-bar",
+        max(UIParent:GetWidth() / 4, 250),
+        30
+    );
+    ProgressBar:SetParent(UIParent);
+    ProgressBar:SetPoint("CENTER", UIParent, "CENTER");
+    ProgressBar:SetPoint("BOTTOM", UIParent, "BOTTOM", 0, 100);
+    ProgressBar:SetDuration(100 * 1000000);
+    ProgressBar:SetColor(0, 1, 0, .3);
+    ProgressBar:SetTimeVisibility(false);
+    ProgressBar:SetFill(true);
+    ProgressBar:Start();
+    ProgressBar:SetLabel(GL:printfn(L.BROADCAST_PROGRESS, { percentage = 0, }));
 
     GL.CommMessage.new{
         action = CommActions.startGDKPMultiAuction,
@@ -570,14 +588,22 @@ function Auctioneer:announceStart(ItemDetails, duration, antiSnipe, precision)
             precision = precision,
         },
         channel = "GROUP",
-    }:send();
+    }:send(function ()
+        ProgressBar:Stop();
 
-    local channel = "GROUP";
-    if (GL.User.isInRaid and GL.User.hasAssist) then
-        channel = "RAID_WARNING";
-    end
+        self:scheduleUpdater();
 
-    GL:sendChatMessage(L.CHAT.MULTIAUCTION_STARTED, channel);
+        -- Let people know that we've started a multi-auction
+        GL:sendChatMessage(L.CHAT.MULTIAUCTION_STARTED, "RAID_WARNING");
+
+        self.waitingForAuctionStart = false;
+    end, function (sent, total)
+        local progressPercentage = ceil(100 / (total / sent));
+
+        ProgressBar:SetLabel(GL:printfn(L.BROADCAST_PROGRESS, { percentage = progressPercentage, }));
+        ProgressBar:SetDuration((100 * 1000000) - (progressPercentage * 1000000));
+        ProgressBar:Start(100 * 1000000);
+    end);
 
     return true;
 end
