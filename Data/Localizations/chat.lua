@@ -234,32 +234,32 @@ L.CHAT = {
 
     --[[ zhCN ]]
     zhCN = {
-        PASS = "经过",
-        FLIGHT_ATTENDANT = "我正在使用 Gargul 来分发战利品。它使滚动变得更容易，所以一定要尝试一下！",
+        PASS = "放弃",
+        FLIGHT_ATTENDANT = "我正在使用 Gargul 来分发战利品。它使分发变得更容易，所以一定要尝试一下！",
 
         --[[ VERSION CHECK ]]
-        VERSION_CHECK_MISSING = "加古尔失踪原因：",
+        VERSION_CHECK_MISSING = "Gargul 未安装：",
         VERSION_CHECK_OUTDATED = "Gargul 已过时：",
         VERSION_CHECK_OFFLINE = "以下玩家离线：",
 
         --[[ ITEM AWARDED ]]
-        ITEM_AWARDED = "%s 被授予 %s。恭喜！",
-        ITEM_AWARDED_BR = "%s 被授予 %s %s 积分。恭喜！",
-        ITEM_AWARDED_GDKP = "%s 因 %s 而被授予 %s。恭喜！",
+        ITEM_AWARDED = "%s 被授予了 %s。恭喜！",
+        ITEM_AWARDED_BR = "%s 被授予了 %s %s 积分。恭喜！",
+        ITEM_AWARDED_GDKP = "%s 因 %s 而被授予了 %s。恭喜！",
 
         --[[ TRADE DETAILS ]]
         GOLD_TRADE_GIVEN = "我把 %s 给了 %s",
-        GOLD_TRADE_GIVEN_DELETED = "我删除了一笔黄金交易，其中我向 %s 提供了 %s",
-        GOLD_TRADE_GIVEN_RESTORED = "我恢复了一笔黄金交易，其中我将 %s 给予 %s",
+        GOLD_TRADE_GIVEN_DELETED = "我删除了一笔金币交易，其中我向 %s 提供了 %s",
+        GOLD_TRADE_GIVEN_RESTORED = "我恢复了一笔金币交易，其中我将 %s 给予 %s",
         GOLD_TRADE_RECEIVED = "我收到了来自 %s 的 %s",
-        GOLD_TRADE_RECEIVED_DELETED = "我删除了一笔黄金交易，其中我从 %s 收到了 %s",
-        GOLD_TRADE_RECEIVED_RESTORED = "我恢复了一笔黄金交易，其中我从 %s 收到了 %s",
+        GOLD_TRADE_RECEIVED_DELETED = "我删除了一笔金币交易，其中我从 %s 收到了 %s",
+        GOLD_TRADE_RECEIVED_RESTORED = "我恢复了一笔金币交易，其中我从 %s 收到了 %s",
 
         --[[ TRADE TIME ]]
         TRADETIME_BROADCAST_PREFIX = "我还有以下物品需要交易",
 
         --[[ BOOSTED ROLLS ]]
-        BOOSTED_ROLLS_MY_BALANCE_REPLY = "你的 %s 卷是 /rnd %d-%d%s",
+        BOOSTED_ROLLS_MY_BALANCE_REPLY = "你的 %s 点数是 /rnd %d-%d%s",
         BOOSTED_ROLLS_OTHER_BALANCE_REPLY = "玩家 %s 的 %s 掷骰结果为 /rnd %d-%d%s",
         BOOSTED_ROLLS_BALANCE_REPLY_DEFAULT_SUFFIX = "（默认）",
 
@@ -269,30 +269,30 @@ L.CHAT = {
         PLUSONES_OTHER_BALANCE_REPLY = "玩家 %s 的 +1 总数为 %d",
 
         --[[ GDKP ]]
-        GDKP_I_OWE_YOU = "我欠你%s。享受！",
-        GDKP_YOU_OWE_ME = "你欠我%a。谢谢你！",
-        GDKP_POT_UPDATED = "罐子已更新，现在容纳 %s",
-        GDKP_POT_UPDATED_AFTER_DELETE = "删除拍卖后，锅已更新，现在持有 %s",
-        GDKP_POT_UPDATED_AFTER_RESTORE = "恢复拍卖后，底池已更新，现在持有 %s",
+        GDKP_I_OWE_YOU = "我欠你 %s。享受！",
+        GDKP_YOU_OWE_ME = "你欠我 %a。谢谢你！",
+        GDKP_POT_UPDATED = "奖池已更新，现在共有 %s",
+        GDKP_POT_UPDATED_AFTER_DELETE = "删除拍卖后，奖池已更新，现在共有 %s",
+        GDKP_POT_UPDATED_AFTER_RESTORE = "恢复拍卖后，奖池已更新，现在共有 %s",
         GDKP_REMOVED_AWARDED = "我删除了为 %s 授予 %s 的 %s",
         GDKP_RESTORED_AWARDED = "我恢复了为 %s 授予 %s 的 %s",
-        GDKP_REMOVED_GOLD = "我从锅中取出%sg",
-        GDKP_RESTORED_GOLD = "我将 %sg 添加回锅中",
-        GDKP_POT_HOLDS = "底池现在有 %s",
+        GDKP_REMOVED_GOLD = "我从奖池中取出%sg",
+        GDKP_RESTORED_GOLD = "我将 %sg 添加回奖池中",
+        GDKP_POT_HOLDS = "奖池现在有 %s",
         GDKP_CONFIRM_TOP_BID = "%s 是最高出价者 (%s)",
-        GDKP_FINAL_CALL = "%s 的最终召集：还剩 %s 秒出价！",
+        GDKP_FINAL_CALL = "%s 的最后通知：还剩 %s 秒出价！",
         GDKP_BID_DENIED = "出价被拒绝，最低出价为 %s",
-        GDKP_START_BIDDING = "对 %s 出价。最小值为 %s，增量为 %s。使用突袭聊天！",
+        GDKP_START_BIDDING = "对 %s 出价。底价为 %s，每次加价 %s 起。使用团队聊天！",
         GDKP_STOP_BIDDING = "停止出价！",
-        GDKP_SECONDS_TO_BID = "%s 秒出价",
-        GDKP_POT_TOTAL = "总底池：%s",
-        GDKP_BASE_CUT = "基础切割：%s",
+        GDKP_SECONDS_TO_BID = "在 %s 秒内出价",
+        GDKP_POT_TOTAL = "总奖池：%s",
+        GDKP_BASE_CUT = "基础分成：%s",
 
         --[[ MULTIAUCTION ]]
-        MULTIAUCTION_STARTED = "我开始了投标会议。看不到吗？请务必下载/更新 Gargul！",
-        MULTIAUCTION_RESUMED = "我恢复了之前的竞价，请仔细检查您的出价！",
+        MULTIAUCTION_STARTED = "多重拍卖已经开始。看不到吗？请务必下载/更新 Gargul！",
+        MULTIAUCTION_RESUMED = "我恢复了之前的出价，请仔细检查您的出价！",
         MULTIAUCTION_ITEMS_ADDED = "我将 %s 件物品添加到拍卖中，总共 %s 件",
-        MULTIAUCTION_FINISHED = "多重拍卖结束。底池现在有 %s",
+        MULTIAUCTION_FINISHED = "多重拍卖已结束。奖池现在有 %s",
 
         --[[ SOFTRES ]]
         SOFTRES_MY_RESERVES_REPLY = "您已预订 %s", -- %s is a summary of all items or the SOFTRES_MY_RESERVED_ITEM_REPLY format (if more than 1 reserve)
@@ -301,7 +301,7 @@ L.CHAT = {
         SOFTRES_HARDRESERVED_NOTICE = "%s（该商品是硬性保留的！）",
         SOFTRES_DETAILS = "保留者：%s",
         SOFTRES_MISSING_RESERVES = "缺少软储备：%s",
-        SOFTRES_DATA_IMPORTED = "我刚刚将软储备导入 Gargul。轻声细语 !sr 仔细检查您的储备！",
+        SOFTRES_DATA_IMPORTED = "我刚刚将软储备导入 Gargul。私聊输入 !sr 仔细检查您的储备！",
 
         --[[ THATSMYBIS ]]
         TMB_WISHLIST_DETAILS = "TMB 愿望清单：%s",
@@ -309,39 +309,39 @@ L.CHAT = {
 
         --[[ PACKMULE ]]
         PACKMULE_DISENCHANTER_SET = "%s 被设置为分解者",
-        PACKMULE_DISENCHANTMENT_NOTICE = "%s将会因%s而不再抱有幻想",
+        PACKMULE_DISENCHANTMENT_NOTICE = "%s会被%s分解",
 
         --[[ ROLLING ]]
         ROLLING_START = "您还有 %s 秒时间继续 %s",
-        ROLLING_STOP = "停止你的卷！",
-        ROLLING_TIME_LEFT = "%s 秒滚动",
+        ROLLING_STOP = "停止你的Roll点！",
+        ROLLING_TIME_LEFT = "还剩 %s 秒结束Roll点",
         ROLLING_SOFTRES_INFO = "该项目已被保留：%s",
         ROLLING_TMB_INFO = "以下玩家的 %s 优先级最高：%s", -- First %s can be TMB/DFT/CPR
 
         --[[ TradeWindow / Trade ]]
-        TRADE_TO = "%s 至 %s",
-        TRADE_TO_PART = "至 %s",
+        TRADE_TO = "%s 给 %s",
+        TRADE_TO_PART = "给 %s",
         TRADE_GAVE = "我给了%s",
-        TRADE_GAVE_GOLD = "我把 %s 给了 %s",
+        TRADE_GAVE_GOLD = "我将 %s 给了 %s",
         TRADE_GAVE_MULTIPLE_OF_ITEM = "我给了 %sx%s", -- I gave [item]x3
-        TRADE_GAVE_ENCHANTMENT = "我为 %s 对 %s 施了魔法",
-        TRADE_GAVE_ENCHANTMENT_AND_GOLD = "我为 %s 用 %s 对 %s 施了魔法，并给了 %s",
-        TRADE_GAVE_ENCHANTMENT_FOR_GOLD = "我为 %s 用 %s 对 %s 施了魔法，并收到了 %s",
-        TRADE_GAVE_ENCHANTMENT_AFTER_ITEMS_PART = "给 %s 并用 %s 迷住了他们的 %s",
-        TRADE_GAVE_ENCHANTMENT_AFTER_ITEMS = "%s 给 %s 并用 %s 迷住了他们的 %s",
-        TRADE_GOT_ENCHANTMENT = "%s 用 %s 迷惑了我的 %s",
-        TRADE_GOT_ENCHANTMENT_AND_GOLD = "%s 用 %s 对我的 %s 施了魔法，并给了我 %s",
-        TRADE_GOT_ENCHANTMENT_FOR_GOLD = "%s 用 %s 为我的 %s 施了魔法，让 %s",
+        TRADE_GAVE_ENCHANTMENT = "我为 %s 对 %s 附魔",
+        TRADE_GAVE_ENCHANTMENT_AND_GOLD = "我为 %s 用 %s 对 %s 附魔，并给了 %s",
+        TRADE_GAVE_ENCHANTMENT_FOR_GOLD = "我为 %s 用 %s 对 %s 附魔，并收到了 %s",
+        TRADE_GAVE_ENCHANTMENT_AFTER_ITEMS_PART = "给 %s 附魔了 %s 用的是他的 %s",
+        TRADE_GAVE_ENCHANTMENT_AFTER_ITEMS = "%s 给 %s 附魔了 %s 用的是他的 %s",
+        TRADE_GOT_ENCHANTMENT = "%s 附魔了我的 %s 用的是 %s",
+        TRADE_GOT_ENCHANTMENT_AND_GOLD = "%s 附魔了 %s 用的是 %s 并给了我 %s",
+        TRADE_GOT_ENCHANTMENT_FOR_GOLD = "%s 附魔了 %s 用的是 %s 并给了 %s",
         TRADE_GOT_ENCHANTMENT_AND_GAVE_ENCHANTMENT = "%s 用 %s 对我的 %s 施了魔法，我用 %s 对他们的 %s 施了魔法",
-        TRADE_GOT_ENCHANTMENT_AND_GAVE_ENCHANTMENT_AND_GAVE_GOLD = "%s 用 %s 对我的 %s 施了魔法，我用 %s 对他们的 %s 施了魔法。我也给了他%s",
-        TRADE_GOT_ENCHANTMENT_AND_GOLD_AND_GAVE_ENCHANTMENT = "%s 用 %s 对我的 %s 施了魔法，并给了我 %s。我用 %s 迷住了他们的 %s",
+        TRADE_GOT_ENCHANTMENT_AND_GAVE_ENCHANTMENT_AND_GAVE_GOLD = "%s 附魔了我的 %s 用的是 %s 而且我附魔了他的 %s 用的是 %s. 我还给了他 %s",
+        TRADE_GOT_ENCHANTMENT_AND_GOLD_AND_GAVE_ENCHANTMENT = "%s 附魔了我的 %s 用的是 %s 并且给了我 %s. 我附魔了他的 %s 用的是 %s",
         TRADE_FROM = "%s 来自 %s",
         TRADE_FROM_PART = "来自 %s",
         TRADE_RECEIVED = "我收到%s",
         TRADE_RECEIVED_GOLD = "我收到了来自 %s 的 %s",
         TRADE_RECEIVED_MULTIPLE_OF_ITEM = "我收到了 %sx%s", -- I gave [item]x3
-        TRADE_RECEIVED_ENCHANTMENT_AFTER_ITEMS_PART = "来自 %s 并让我的 %s 着迷于 %s",
-        TRADE_RECEIVED_ENCHANTMENT_AFTER_ITEMS = "来自 %s 的 %s 让我的 %s 为 %s 着迷",
+        TRADE_RECEIVED_ENCHANTMENT_AFTER_ITEMS_PART = "来自 %s 并让我的 %s 附魔了 %s",
+        TRADE_RECEIVED_ENCHANTMENT_AFTER_ITEMS = " %s 来自 %s 并让我的 %s 附魔了 %s",
 
         --[[ AWARD ]]
         AWARD_RANDOM_WINNER = "已选择 %s 的随机获胜者 (%s)", -- First %s is item, second %s is player,
