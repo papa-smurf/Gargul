@@ -316,7 +316,7 @@ function Commands:_dispatch(str)
     if (not str or #str < 1) then
         command = "settings";
 
-        if (not GL.Settings:get("chatLocale") and GL:inTable({ "frFR", "zhCN", }, GetLocale())) then
+        if (not GL.Settings:get("chatLocale") and GL:inTable({ "frFR", "zhCN", "ruRU", }, GetLocale())) then
             command = "locale";
         end
     end

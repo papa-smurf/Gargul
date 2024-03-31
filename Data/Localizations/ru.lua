@@ -2,7 +2,7 @@
     You can test this locally by removing line 5:
     if (GetLocale() ~= "deDE") then return; end
 ]]
-if (true or GetLocale() ~= "zhTW") then return; end
+if (GetLocale() ~= "ruRU") then return; end
 local L = Gargul_L or {};
 
 L.ABOUT = "О";
@@ -114,6 +114,7 @@ L.BROADCAST_INC_TIME_LEFT = "Включить оставшееся время";
 L.BROADCAST_IN_PROGRESS_ERROR = "Трансляция еще продолжается";
 L.BROADCAST_NO_DATA = "Нечего транслировать";
 L.BROADCAST_NUMBER_OF_ITEMS = "Количество предметов";
+L.BROADCAST_PROGRESS = "Трансляция ${percentage}%";
 L.BROADCAST_TARGET_PLAYER = "Целевой игрок (только шепотом)";
 L.BROADCAST_TARGET_REQUIRED = "Whisper требует целевого игрока";
 L.BROADCAST_TRADE_TIME_LEFT = "Оставшееся максимальное время сделки (в минутах)";
@@ -1015,6 +1016,7 @@ L.VERSION_INVALID_WARNING = "В Version:addRelease указана неверна
 L.VERSION_UPDATE = "Обновите Гаргул!";
 L.VERSION_UPDATED = "|c00%sGargul теперь обновлен до |c00%sv%s";
 L.VERSION_UPDATE_AVAILABLE = "v|c00A79EFFv%s доступен на CurseForge/Wago. Вы можете обновиться, не закрывая игру, просто обязательно /reload!";
+L.WAIT_SECONDS_BEFORE_RETRY = "Подождите еще %s секунд, прежде чем повторить попытку.";
 L.WINDOW = "Окно";
 L.WINDOW_HEADER = "Гаргул против %s";
 L.WINDOW_SCALE = "Масштаб окна";
