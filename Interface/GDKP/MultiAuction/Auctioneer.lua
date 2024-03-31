@@ -472,25 +472,25 @@ function Auctioneer:build()
                 text = L.START,
                 onClick = function (Results)
                     -- Everyone is up-to-date on Gargul, start!
-                    if (GL:empty(Results.Outdated) and GL:empty(Results.Unresponsive)) then
+                    if (GL:empty(Results.Unresponsive)) then
                         self:start();
                         GroupVersionCheck:close();
+
+                        if (not GL:empty(Results.Outdated)) then
+                            GL:warning(L.GDKP_MULTIAUCTION_AUCTIONEER_PLAYER_OUTDATED_WARNING);
+                        end
 
                         return;
                     end
 
-                    if (not GL:empty(Results.Unresponsive)) then
-                        -- Start after double-checking if the user is OK with people missing out
-                        Interface.Dialogs.PopupDialog:open{
-                            question = L.GDKP_MULTIAUCTION_AUCTIONEER_NO_GARGUL_WARNING,
-                            OnYes = function ()
-                                self:start();
-                                GroupVersionCheck:close();
-                            end,
-                        };
-                    else
-                        GL:warning(L.GDKP_MULTIAUCTION_AUCTIONEER_PLAYER_OUTDATED_WARNING);
-                    end
+                    -- Start after double-checking if the user is OK with people missing out
+                    Interface.Dialogs.PopupDialog:open{
+                        question = L.GDKP_MULTIAUCTION_AUCTIONEER_NO_GARGUL_WARNING,
+                        OnYes = function ()
+                            self:start();
+                            GroupVersionCheck:close();
+                        end,
+                    };
                 end,
                 tooltip = L.START,
             },
