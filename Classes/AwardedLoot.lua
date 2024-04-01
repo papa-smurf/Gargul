@@ -69,7 +69,7 @@ function AwardedLoot:tooltipLines(itemLink)
     local fiveHoursAgo = GetServerTime() - 18000;
     local loadItemsGTE = math.min(fiveHoursAgo, GL.loadedOn);
     local winnersAvailable = false;
-    local Lines = { string.format("\n|c00efb8cd%s|r", L.AWARDED_TO) };
+    local Lines = { ("\n|c00efb8cd%s|r"):format(L.AWARDED_TO) };
     for _, Loot in pairs(DB:get("AwardHistory")) do
         (function ()
             -- loadItemsGTE will equal five hours, or however long the players
@@ -87,11 +87,11 @@ function AwardedLoot:tooltipLines(itemLink)
             end
 
             if (GL:higherThanZero(Loot.BRCost)) then
-                tinsert(Details, string.format(L.AWARDED_TOOLTIP_BOOSTED_ROLL_COST, Loot.BRCost));
+                tinsert(Details, (L.AWARDED_TOOLTIP_BOOSTED_ROLL_COST):format(Loot.BRCost));
             end
 
             if (GL:higherThanZero(Loot.GDKPCost)) then
-                tinsert(Details, string.format(L.AWARDED_TOOLTIP_GDKP_COST, GL:goldToMoney(Loot.GDKPCost)));
+                tinsert(Details, (L.AWARDED_TOOLTIP_GDKP_COST):format(GL:goldToMoney(Loot.GDKPCost)));
             end
 
             local receivedString = L.AWARDED_TOOLTIP_GIVEN;
@@ -117,7 +117,7 @@ function AwardedLoot:tooltipLines(itemLink)
                             break;
                         end
 
-                        tinsert(Details, string.format(L.AWARDED_TOOLTIP_SECOND_BID, GL:goldToMoney(SecondHighestBid.bid), GL:disambiguateName(
+                        tinsert(Details, (L.AWARDED_TOOLTIP_SECOND_BID):format(GL:goldToMoney(SecondHighestBid.bid), GL:disambiguateName(
                             SecondHighestBid.bidder,
                             { colorize = true, }
                         )));
@@ -127,7 +127,7 @@ function AwardedLoot:tooltipLines(itemLink)
                 end
             end
 
-            local line = string.format("    %s | %s",
+            local line = ("    %s | %s"):format(
                 GL:nameFormat{ name = Loot.awardedTo, colorize = true, },
                 table.concat(Details, " | ")
             );
@@ -461,7 +461,7 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, brCost, g
             or type(month) ~= "string" or GL:empty(month)
             or type(day) ~= "string" or GL:empty(day)
         ) then
-            GL:error(string.format("Unknown date format '%s' expecting yy-m-d", date));
+            GL:error(("Unknown date format '%s' expecting yy-m-d"):format(date));
             return false;
         end
 
@@ -569,19 +569,19 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, brCost, g
     if (announce) then
         local awardMessage = "";
         if (GL.BoostedRolls:enabled() and GL:higherThanZero(brCost)) then
-            awardMessage = string.format(L.CHAT.ITEM_AWARDED_BR,
+            awardMessage = (L.CHAT.ITEM_AWARDED_BR):format(
                 itemLink,
                 awardedTo,
-                    brCost
+                brCost
             );
         elseif (gdkpCost and gdkpCost > 0) then
-            awardMessage = string.format(L.CHAT.ITEM_AWARDED_GDKP,
+            awardMessage = (L.CHAT.ITEM_AWARDED_GDKP):format(
                 itemLink,
                 awardedTo,
                 GL:goldToMoney(gdkpCost)
             );
         else
-            awardMessage = string.format(L.CHAT.ITEM_AWARDED,
+            awardMessage = (L.CHAT.ITEM_AWARDED):format(
                 itemLink,
                 awardedTo
             );
