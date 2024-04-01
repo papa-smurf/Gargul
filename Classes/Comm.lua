@@ -200,7 +200,7 @@ function Comm:send(CommMessage, broadcastFinishedCallback, packageSentCallback)
     -- We lower the burst value and cps on large payloads to make sure
     -- our messages are not dropped by the server. ChatThrottleLib is not accurate enough sadly
     local stringLength = string.len(compressedMessage);
-    local throttle = distribution ~= "WHISPER" and stringLength > 1900;
+    local throttle = stringLength > 1000;
 
     local throttleResetTimer;
     -- Stop throttling: reset the burst and max cps values
@@ -210,13 +210,13 @@ function Comm:send(CommMessage, broadcastFinishedCallback, packageSentCallback)
     end;
 
     if (throttle) then
-        _G.ChatThrottleLib.BURST = 2000;
-        _G.ChatThrottleLib.MAX_CPS = 400;
+        _G.ChatThrottleLib.BURST = 1000;
+        _G.ChatThrottleLib.MAX_CPS = 200;
 
         -- Make sure we reset the values even if the message couldn't be sent
         throttleResetTimer = GL.Ace:ScheduleTimer(function ()
             stopThrottling();
-        end, 5);
+        end, 20);
     end
 
     -- Make sure we can keep an eye on comm behavior

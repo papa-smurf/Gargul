@@ -90,6 +90,7 @@ function GL:_init()
         and not GL:inTable({ "十字軍聖擊", "孤狼", "生命烈焰", "野性痊癒", }, GetRealmName())
     ) then
         self.GDKPIsAllowed = false;
+        GL.GDKP.Session:clearActive();
     end
 
     -- Initialize classes

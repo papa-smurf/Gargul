@@ -114,6 +114,7 @@ L.BROADCAST_INC_TIME_LEFT = "Includi il tempo rimasto";
 L.BROADCAST_IN_PROGRESS_ERROR = "Trasmissione ancora in corso";
 L.BROADCAST_NO_DATA = "Non c'è niente da trasmettere";
 L.BROADCAST_NUMBER_OF_ITEMS = "Numero di articoli";
+L.BROADCAST_PROGRESS = "Trasmetti ${percentage}%";
 L.BROADCAST_TARGET_PLAYER = "Giocatore bersaglio (solo sussurro)";
 L.BROADCAST_TARGET_REQUIRED = "Whisper richiede un giocatore bersaglio";
 L.BROADCAST_TRADE_TIME_LEFT = "Tempo massimo di scambio rimasto (in minuti)";
@@ -169,6 +170,7 @@ Questa è SOLO una funzione di esportazione, non ha senso modificare nessuno dei
 ]];
 L.FILL = "Riempire";
 L.FINAL_CALL = "Chiamata finale";
+L.FINISH = "Fine";
 L.FORMAT = "Formato";
 L.GARGUL = "Gargul";
 L.GDKP = "GDKP";
@@ -299,6 +301,7 @@ L.GDKP_EXPORT_DEFAULT_HEADER = "Oggetto, Giocatore, Oro, Wowheadlink";
 L.GDKP_EXPORT_FORMAT_START = "Data/ora in cui è stato assegnato il primo item";
 L.GDKP_EXPORT_FORMAT_TITLE = "Il titolo della sessione del GDKP";
 L.GDKP_EXPORT_POT_CHANGED = "La pentola è cambiata";
+L.GDKP_GOLD_TRADES = "Commerci d'oro";
 L.GDKP_HIDE_UPCOMING_CONFIRMATION = "Sei sicuro? Non sarai in grado di vedere o fare offerte sui prossimi articoli!";
 L.GDKP_IMPORT_CONSEQUENCES_CROSS_REALM = [[
 |c00BE3333!! ATTENZIONE!!!|r
@@ -1013,6 +1016,7 @@ L.VERSION_INVALID_WARNING = "Stringa di versione non valida fornita in Version:a
 L.VERSION_UPDATE = "Aggiorna Gargul!";
 L.VERSION_UPDATED = "|c00%sGargul è ora aggiornato a |c00%sv%s";
 L.VERSION_UPDATE_AVAILABLE = "v|c00A79EFFv%s è disponibile su CurseForge/Wago. Puoi aggiornare senza chiudere il gioco, assicurati solo di /reload!";
+L.WAIT_SECONDS_BEFORE_RETRY = "Attendi altri %s secondi prima di riprovare";
 L.WINDOW = "Finestra";
 L.WINDOW_HEADER = "Gargul v%s";
 L.WINDOW_SCALE = "Scala della finestra";

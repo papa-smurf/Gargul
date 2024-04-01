@@ -2,7 +2,7 @@
     You can test this locally by removing line 5:
     if (GetLocale() ~= "deDE") then return; end
 ]]
-if (true or GetLocale() ~= "frFR") then return; end
+if (GetLocale() ~= "frFR") then return; end
 local L = Gargul_L or {};
 
 L.ABOUT = "À propos";
@@ -114,6 +114,7 @@ L.BROADCAST_INC_TIME_LEFT = "Inclure le temps restant";
 L.BROADCAST_IN_PROGRESS_ERROR = "Diffusion toujours en cours";
 L.BROADCAST_NO_DATA = "Il n'y a rien à diffuser";
 L.BROADCAST_NUMBER_OF_ITEMS = "Nombre d'objets";
+L.BROADCAST_PROGRESS = "Diffusion ${percentage} %";
 L.BROADCAST_TARGET_PLAYER = "Joueur ciblé (chuchotement uniquement)";
 L.BROADCAST_TARGET_REQUIRED = "Chuchoter nécessite un joueur ciblé";
 L.BROADCAST_TRADE_TIME_LEFT = "Temps de transaction maximum restant (en minutes)";
@@ -300,6 +301,7 @@ L.GDKP_EXPORT_DEFAULT_HEADER = "Objet, Joueur, Or, Wowheadlink";
 L.GDKP_EXPORT_FORMAT_START = "Date/heure à laquelle le premier objet a été attribué";
 L.GDKP_EXPORT_FORMAT_TITLE = "Titre de la session du GDKP";
 L.GDKP_EXPORT_POT_CHANGED = "Pot changé";
+L.GDKP_GOLD_TRADES = "Métiers de l'or";
 L.GDKP_HIDE_UPCOMING_CONFIRMATION = "Êtes-vous sûr? Vous ne pourrez ni voir ni enchérir sur les objets à venir !";
 L.GDKP_IMPORT_CONSEQUENCES_CROSS_REALM = [[
 |c00BE3333!! ATTENTION !!|r
@@ -1014,6 +1016,7 @@ L.VERSION_INVALID_WARNING = "Chaîne de version non valide fournie dans Version 
 L.VERSION_UPDATE = "Mettez à jour Gargul !";
 L.VERSION_UPDATED = "|c00%sGargul est maintenant mis à jour vers |c00%sv%s";
 L.VERSION_UPDATE_AVAILABLE = "v|c00A79EFFv%s est disponible sur CurseForge/Wago. Vous pouvez mettre à jour sans fermer votre jeu, assurez-vous simplement de /reload !";
+L.WAIT_SECONDS_BEFORE_RETRY = "Attendez %s secondes supplémentaires avant de réessayer";
 L.WINDOW = "Fenêtre";
 L.WINDOW_HEADER = "Gargul v%s";
 L.WINDOW_SCALE = "Échelle de la fenêtre";

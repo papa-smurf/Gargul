@@ -2578,7 +2578,7 @@ function GL:sendChatMessage(message, chatType, language, channel, stw, pretend)
     -- The user is not in a group of any kind but still wants to
     -- post a message on group or raid. Let's assume he's testing stuff
     if (not GL.User.isInGroup
-        and GL:inTable({"GROUP", "PARTY", "RAID", "RAID_WARNING"}, chatType)
+        and GL:inTable({"GROUP", "PARTY", "RAID", "RAID_WARNING", }, chatType)
     ) then
         -- We never want to show this message, not even whilst solo
         if (GL.isMuted) then
