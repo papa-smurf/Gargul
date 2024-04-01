@@ -7,6 +7,7 @@ local _, GL = ...;
 local Interface = GL.Interface;
 
 --[[ CONSTANTS ]]
+local BUTTON_WIDTH = 200;
 local DEFAULT_SECTION = L.SETTINGS_SECTION_GENERAL;
 local MENU_ROW_HEIGHT = 22;
 local MENU_FONT_SIZE = 1.1;
@@ -56,11 +57,15 @@ local MINIMAP_HOTKEY_ACTIONS = {
 };
 
 local SECTION_ORDER = {
-    [1] = L.SETTINGS_SECTION_GETTING_STARTED,
-    [2] = L.SETTINGS_SECTION_GENERAL,
-    [3] = L.SETTINGS_SECTION_SOFTRES,
-    [4] = L.SETTINGS_SECTION_TMB,
-    [5] = L.SETTINGS_SECTION_GDKP,
+    L.SETTINGS_SECTION_GETTING_STARTED,
+    L.SETTINGS_SECTION_GENERAL,
+    L.SETTINGS_SECTION_SOFTRES,
+    L.SETTINGS_SECTION_TMB,
+    L.SETTINGS_SECTION_GDKP,
+    L.SETTINGS_SECTION_PACKMULE,
+    L.SETTINGS_SECTION_ANNOUNCE_LOOT,
+    L.SETTINGS_SECTION_EXPORT_LOOT,
+    L.SETTINGS_SECTION_LOOT_TRADE_TIMERS,
 };
 local SECTION_INDEXES = GL:tableFlip(SECTION_ORDER);
 
@@ -631,6 +636,321 @@ local SettingEntries = {
             max = 30,
             step = 1,
         },
+        {
+            ID = ("|c00%s%s|r"):format(Interface.Colors.ERROR, L.SETTINGS_SUBSECTION_GDKP_DANGER),
+            type = SUB_SECTION,
+        },
+        {
+            ID = "gdkpResetPrices",
+            type = BUTTON,
+            action = function ()
+                GL.Interface.Dialogs.PopupDialog:open{
+                    question = L.SETTINGS_GDKP_RESET_PRICES_CONFIRMATION,
+                    OnYes = function ()
+                        GL.GDKP:resetPerItemSettings();
+                    end,
+                };
+            end,
+        },
+        {
+            ID = "gdkpResetSessions",
+            type = BUTTON,
+            action = function ()
+                GL.Interface.Dialogs.PopupDialog:open{
+                    question = L.SETTINGS_GDKP_RESET_SESSIONS_CONFIRMATION,
+                    OnYes = function ()
+                        GL.DB:set("GDKP", {});
+                        C_UI.Reload();
+                    end,
+                };
+            end,
+        },
+    },
+    [L.SETTINGS_SECTION_ANNOUNCE_LOOT] = {
+        {
+            ID = "settingsSectionAnnounceLootExplanation",
+            type = LABEL,
+        },
+        {
+            ID = "DroppedLoot.announceLootToChat",
+            type = CHECKBOX,
+        },
+        {
+            ID = "DroppedLoot.announceDroppedLootInRW",
+            type = CHECKBOX,
+        },
+        {
+            ID = "DroppedLoot.minimumQualityOfAnnouncedLoot",
+            type = LOOT_QUALITY_DROPDOWN,
+        },
+        {
+            ID = "DroppedLootTestAnnouncementInput",
+            type = INPUT,
+            label = (L.SETTINGS_DROPPED_LOOT_TEST_ANNOUNCEMENT_INPUT_LABEL):format(L.SETTINGS_DROPPED_LOOT_TEST_ANNOUNCEMENT_BUTTON_LABEL)
+        },
+        {
+            ID = "DroppedLootTestAnnouncementButton",
+            type = BUTTON,
+            action = function ()
+                local Input = Settings.FramePool["DroppedLootTestAnnouncementInput"].Input;
+                GL.DroppedLoot:announceTest(GL:explode(Input:GetText(), ","));
+            end,
+        },
+    },
+    [L.SETTINGS_SECTION_EXPORT_LOOT] = {
+        {
+            ID = "settingsSectionExportLootExplanation",
+            type = LABEL,
+        },
+        {
+            ID = "ExportingLoot.includeDisenchantedItems",
+            type = CHECKBOX,
+            callback = function ()
+                -- Refresh the export window if it's open
+                if (GL.Exporter.visible) then
+                    GL.Exporter:refreshExportString();
+                end
+            end,
+        },
+        {
+            ID = "ExportingLoot.includeOffspecItems",
+            type = CHECKBOX,
+            callback = function ()
+                -- Refresh the export window if it's open
+                if (GL.Exporter.visible) then
+                    GL.Exporter:refreshExportString();
+                end
+            end,
+        },
+        {
+            ID = "ExportingLoot.showLootAssignmentReminder",
+            type = CHECKBOX,
+        },
+        {
+            ID = "ExportingLoot.format",
+            type = DROPDOWN,
+            Options = {
+                [1] = "Thatsmybis TMB (default)",
+                [2] = "DFT-Fight-Club (US date format)",
+                [3] = "DFT-Fight-Club (EU date format)",
+                [4] = "Custom (create your own format)",
+                [5] = "Thatsmybis TMB with player realm",
+            },
+            Order = { 1, 5, 2, 3, 4, },
+            callback = function ()
+                -- Refresh the export window if it's open
+                if (GL.Exporter.visible) then
+                    GL.Exporter:refreshExportString();
+                end
+            end,
+        },
+        {
+            ID = "ExportingLoot.customFormat",
+            type = INPUT,
+            placeholder = GL.Data.DefaultSettings.ExportingLoot.customFormat,
+        },
+    },
+    [L.SETTINGS_SECTION_LOOT_TRADE_TIMERS] = {
+        {
+            ID = "settingsSectionLootTradeTimersExplanation",
+            type = LABEL,
+            label = GL:printfn(L.SETTINGS_SECTION_LOOT_TRADE_TIMERS_EXPLANATION, {
+                roll = "|c00A79EFF" .. GL.Settings:get("ShortcutKeys.rollOffOrAuction") .. "|r",
+                award = "|c00A79EFF" .. GL.Settings:get("ShortcutKeys.award") .. "|r",
+            }),
+        },
+        {
+            ID = "LootTradeTimers.enabled",
+            type = CHECKBOX,
+            callback = function ()
+                Interface.TradeTime.Overview:close();
+                Interface.TradeTime.Overview:refresh();
+            end,
+        },
+        {
+            ID = "LootTradeTimers.showOnlyWhenMasterLooting",
+            type = CHECKBOX,
+            callback = function ()
+                Interface.TradeTime.Overview:close();
+                Interface.TradeTime.Overview:refresh();
+            end,
+        },
+        {
+            ID = "LootTradeTimers.hideAwarded",
+            type = CHECKBOX,
+            callback = function ()
+                Interface.TradeTime.Overview:close();
+                Interface.TradeTime.Overview:refresh();
+            end,
+        },
+        {
+            ID = "LootTradeTimers.hideAwardedToSelf",
+            type = CHECKBOX,
+            callback = function ()
+                Interface.TradeTime.Overview:close();
+                Interface.TradeTime.Overview:refresh();
+            end,
+        },
+        {
+            ID = "LootTradeTimers.hideDisenchanted",
+            type = CHECKBOX,
+            callback = function ()
+                Interface.TradeTime.Overview:close();
+                Interface.TradeTime.Overview:refresh();
+            end,
+        },
+        {
+            ID = "LootTradeTimersDemo",
+            type = BUTTON,
+            label = L.DEMO,
+            action = function (self)
+                GL.lootTradeTimersDemoEnabled = not GL.lootTradeTimersDemoEnabled;
+
+                if (GL.lootTradeTimersDemoEnabled) then
+                    self:SetText(L.CANCEL);
+                else
+                    self:SetText(L.DEMO);
+                end
+
+                self:SetWidth(BUTTON_WIDTH);
+                Interface.TradeTime.Overview:refresh();
+                GL.Events:fire("BAG_UPDATE_DELAYED");
+            end,
+        },
+        {
+            ID = "LootTradeTimersIconLegend",
+            type = CUSTOM,
+            build = function (Parent)
+                local SettingFrame = CreateFrame("Frame", nil, Parent);
+                SettingFrame:SetWidth(1);
+                SettingFrame:SetHeight(1);
+
+                AwardedIcon = SettingFrame:CreateTexture(nil, "ARTWORK");
+                AwardedIcon:SetTexture("Interface/AddOns/Gargul/Assets/Icons/trophy");
+                AwardedIcon:SetPoint("TOPLEFT", SettingFrame, "TOPLEFT", 0, -20);
+                AwardedIcon:SetSize(20, 20);
+
+                AwardedIconLabel = Interface:createFontString(SettingFrame, L.SETTINGS_LOOT_TRADE_TIMERS_AWARDED_ICON_LABEL);
+                AwardedIconLabel:SetColor(SETTING_COLOR);
+                AwardedIconLabel:SetPoint("TOPLEFT", AwardedIcon, "TOPRIGHT", 10, -5);
+
+                DisenchantedIcon = SettingFrame:CreateTexture(nil, "ARTWORK");
+                DisenchantedIcon:SetTexture("Interface/AddOns/Gargul/Assets/Icons/disenchant");
+                DisenchantedIcon:SetPoint("TOPLEFT", AwardedIcon, "BOTTOMLEFT", 0, -10);
+                DisenchantedIcon:SetSize(20, 20);
+
+                DisenchantedIconLabel = Interface:createFontString(SettingFrame, L.SETTINGS_LOOT_TRADE_TIMERS_DISENCHANTED_ICON_LABEL);
+                DisenchantedIconLabel:SetColor(SETTING_COLOR);
+                DisenchantedIconLabel:SetPoint("TOPLEFT", DisenchantedIcon, "TOPRIGHT", 10, -5);
+
+                return SettingFrame;
+            end
+        }
+    },
+    [L.SETTINGS_SECTION_PACKMULE] = {
+        {
+            ID = "settingsSectionPackMuleExplanation",
+            type = LABEL,
+            label = (L.SETTINGS_SECTION_PACK_MULE_EXPLANATION):format(L.SETTINGS_PACK_MULE_OPEN_ITEM_RULES_LABEL);
+        },
+        {
+            ID = "packMuleOpenItemRules",
+            type = BUTTON,
+            action = function () GL.Commands:call("locale"); end,
+        },
+        {
+            ID = "PackMule.enabledForMasterLoot",
+            type = CHECKBOX,
+        },
+        {
+            ID = "PackMule.enabledForGroupLoot",
+            type = CHECKBOX,
+        },
+        {
+            ID = "PackMule.needWithoutAssist",
+            type = CHECKBOX,
+        },
+        {
+            ID = "PackMule.autoDisableForGroupLoot",
+            type = CHECKBOX,
+        },
+        {
+            ID = "PackMule.autoConfirmSolo",
+            type = CHECKBOX,
+        },
+        {
+            ID = "PackMule.autoConfirmGroup",
+            type = CHECKBOX,
+        },
+        {
+            ID = "PackMule.lootGold",
+            type = CHECKBOX,
+        },
+        {
+            ID = "SettingsSectionPackMuleTestExplanation",
+            type = LABEL,
+        },
+        {
+            ID = "SettingsSectionPackMuleTestInput",
+            type = INPUT,
+            label = (L.SETTINGS_SECTION_PACK_MULE_TEST_INPUT_LABEL):format(L.DEMO),
+        },
+        {
+            ID = "SettingsSectionPackMuleTestButton",
+            type = BUTTON,
+            label = L.DEMO,
+            action = function ()
+                ---@type EditBox
+                local Input = Settings.FramePool["SettingsSectionPackMuleTestInput"].Input;
+                Input:ClearFocus();
+
+                GL.Events:fire("GL.SETTING_PACKMULE_TEST_UPDATE_RESULTS", Input:GetText());
+            end,
+        },
+        {
+            ID = "SettingsSectionPackMuleTestResult",
+            type = CUSTOM,
+            build = function (Parent)
+                local SettingFrame = CreateFrame("Frame", nil, Parent);
+                SettingFrame:SetWidth(1);
+                SettingFrame:SetHeight(1);
+
+                ResultLabel = Interface:createFontString(SettingFrame, "");
+                ResultLabel:SetPoint("TOPLEFT", SettingFrame, "TOPLEFT");
+
+                GL.Events:register(nil, "GL.SETTING_PACKMULE_TEST_UPDATE_RESULTS", function (_, value)
+                    ResultLabel:SetText("");
+                    if (GL:empty(value)) then
+                        return;
+                    end
+
+                    local itemID = GL:getItemIDFromLink(value) or tonumber(value);
+                    if (not itemID) then
+                        return;
+                    end
+
+                    GL.PackMule:isItemIDIgnored(itemID, function (Loot, itemIDisIgnoredForMaster, itemIDisIgnoredForGroup)
+                        if (not Loot) then
+                            return;
+                        end
+
+                        GL.PackMule:currentTargetForItemForGroupOrMaster(itemID, function (_, masterTarget, groupTarget)
+                            ResultLabel:SetText(GL:printfn(L.SETTINGS_SECTION_PACK_MULE_TEST_RESULT_LABEL, {
+                                item = Loot.link,
+                                item_id = Loot.id,
+                                ignored_in_master_loot = itemIDisIgnoredForMaster and GL:colorize(L.YES, "92FF00") or GL:colorize(L.NO, "F7922E"),
+                                ignored_in_group_loot = itemIDisIgnoredForGroup and GL:colorize(L.YES, "92FF00") or GL:colorize(L.NO, "F7922E"),
+                                master_loot_target = name and GL:nameFormat{ name = masterTarget, colorize = true, } or "-",
+                                group_loot_target = name and GL:nameFormat{ name = groupTarget, colorize = true, } or "-",
+                            }));
+                            ResultLabel:SetColor(SETTING_COLOR);
+                        end);
+                    end);
+                end);
+
+                return SettingFrame;
+            end
+        },
     },
 };
 
@@ -814,6 +1134,14 @@ function Settings:build()
     Window.Logo:SetTexture("Interface/AddOns/Gargul/Assets/Icons/Gargul");
     Window.Logo:SetPoint("TOPLEFT", Window, "TOPLEFT", 20, -20);
     Window.Logo:SetSize(32, 32);
+
+    Interface:addTooltip(Window.Logo, L.SETTINGS_SECTION_GETTING_STARTED_MORE_INFO);
+    Window.Logo:SetScript("OnMouseUp", function ()
+        GL.Interface.Dialogs.HyperlinkDialog:open{
+            description = L.SETTINGS_SECTION_GETTING_STARTED_MORE_INFO_DIALOG,
+            hyperlink = L.DISCORD_URL,
+        };
+    end);
 
     self:injectSectionsMenu(Window);
 
@@ -1082,14 +1410,14 @@ function Settings:buildFrameForSetting(Parent, Details)
         SettingFrame:SetFont(SUBJECT_FONT_SIZE, "OUTLINE");
 
     elseif (Details.type == LABEL) then
-        label = L[GL:camelToSnake(Details.ID)];
+        label = Details.label or L[GL:camelToSnake(Details.ID)];
 
         ---@type FontString
         SettingFrame = Interface:createFontString(Parent, label);
         SettingFrame:SetColor(SETTING_COLOR);
 
     elseif (Details.type == INPUT) then
-        label = self:getLabel(settingID);
+        label = Details.label or self:getLabel(settingID);
         description = self:getDescription(settingID);
 
         ---@type Frame
@@ -1116,6 +1444,8 @@ function Settings:buildFrameForSetting(Parent, Details)
             Interface:addTooltip(SettingFrame, tooltip);
             Interface:addTooltip(Input, tooltip, "TOP", SettingFrame);
         end
+
+        SettingFrame.Input = Input;
 
     elseif (Details.type == CHECKBOX) then
         label = self:getLabel(settingID);
@@ -1151,12 +1481,12 @@ function Settings:buildFrameForSetting(Parent, Details)
         end);
 
     elseif (Details.type == BUTTON) then
-        label = self:getLabel(settingID);
+        label = Details.label or self:getLabel(settingID);
         description = self:getDescription(settingID);
 
         ---@type Button
         SettingFrame = Interface:dynamicPanelButton(Parent, label);
-        SettingFrame:SetWidth(200);
+        SettingFrame:SetWidth(BUTTON_WIDTH);
         SettingFrame:SetScript("OnClick", Details.action);
 
         if (description) then
@@ -1184,6 +1514,7 @@ function Settings:buildFrameForSetting(Parent, Details)
         local DropDown = Interface:createDropdown{
             Parent = SettingFrame,
             Options = Details.Options,
+            Order = Details.Order,
             value = GL.Settings:get(settingID),
             callback = function (_, value)
                 GL.Settings:set(settingID, value);

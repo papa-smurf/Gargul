@@ -1098,6 +1098,8 @@ end
 ---
 ---@return string
 function GL:printfn(str, Tab)
+    str = tostring(str);
+
     return Tab
         and str:gsub("($%b{})", function(match) return Tab[match:sub(3, -2)] or match; end)
         or str;
@@ -1642,7 +1644,7 @@ function GL:inventoryItemTradeTimeRemaining(bag, slot)
     GL.TooltipFrame:ClearLines();
 
     -- General purpose test mode is enabled
-    if (GL.Interface.Settings.LootTradeTimers.testEnabled) then
+    if (GL.lootTradeTimersDemoEnabled) then
         return math.random(5000, 7200);
     end
 

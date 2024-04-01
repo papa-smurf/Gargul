@@ -67,7 +67,7 @@ L.BASE64_DECODE_WARNING = "Unable to base64 decode data. Make sure you copy/past
 L.BID = "Bid";
 L.BIDS = "Bids";
 L.BIND_ON_EQUIP_ABBR = "BOE";
-L.BONUS_AUTO_INVITE = "1. Auto invite/sort groups from raid signup! Click below or use |c00A79EFF/gl gr";
+L.BONUS_AUTO_INVITE = "1. Auto invite/sort groups from raid signup! Click below or use |c00A79EFF/gl gr|r";
 L.BONUS_BOOSTED_ROLLS = "2. Reward players for being regulars or going the extra mile! Click below or use |c00A79EFF/gl br";
 L.BONUS_FEATURE_EXPLANATION = "Gargul has a few tricks up its sleeve that you might not be aware of. Have a looksy!";
 L.BONUS_PLUSONES = "3. Gargul includes a plus one tracking system! Click below or use |c00A79EFF/gl po";
@@ -482,7 +482,7 @@ L.GDKP_MULTIAUCTION_CLIENT_SHOW_ALL = "Show all";
 L.GDKP_MULTIAUCTION_CLIENT_SHOW_FAVORITES = "Show favorites";
 L.GDKP_MULTIAUCTION_CLIENT_SHOW_INACTIVE = "Show inactive";
 L.GDKP_MULTIAUCTION_CLIENT_SHOW_UNUSABLE = "Show unusable";
-L.GDKP_MULTIAUCTION_CLIENT_SOLD_INFO = "This item was sold. Use ledger (|c00%s/gdkp) to make changes!";
+L.GDKP_MULTIAUCTION_CLIENT_SOLD_INFO = "This item was sold. Use ledger (|c00%s/gdkp|r) to make changes!";
 L.GDKP_MULTIAUCTION_CLIENT_TERMINATE = "Terminate";
 L.GDKP_MULTIAUCTION_CLIENT_TERMINATE_CONFIRM = "Remove all bidsl bids and close all auctions?";
 L.GDKP_MULTIAUCTION_CLIENT_TERMINATE_TOOLTIP = [[
@@ -1042,6 +1042,10 @@ L.SETTINGS_SECTION_GENERAL = "General";
 L.SETTINGS_SECTION_SOFTRES = "SoftRes";
 L.SETTINGS_SECTION_TMB = "Thatsmybis / DFT";
 L.SETTINGS_SECTION_GDKP = "GDKP";
+L.SETTINGS_SECTION_ANNOUNCE_LOOT = "Announce Loot";
+L.SETTINGS_SECTION_EXPORT_LOOT = "Export Awarded Loot";
+L.SETTINGS_SECTION_LOOT_TRADE_TIMERS = "Loot Trade Timers";
+L.SETTINGS_SECTION_PACKMULE = "Packmule Auto Looting";
 
 L.SETTINGS_SUBSECTION_MINIMAP = "Minimap";
 L.SETTINGS_SUBSECTION_TMB_TOOLTIPS = "TMB Tooltips";
@@ -1054,6 +1058,7 @@ L.SETTINGS_SUBSECTION_GDKP_ANNOUNCEMENTS = "Organizer - Communication";
 L.SETTINGS_SUBSECTION_GDKP_PRICES = "Organizer - Prices";
 L.SETTINGS_SUBSECTION_GDKP_TRADING = "Organizer - Trading";
 L.SETTINGS_SUBSECTION_GDKP_QUEUES = "Organizer - Queues";
+L.SETTINGS_SUBSECTION_GDKP_DANGER = "Danger zone";
 
 L.SETTINGS_SECTION_GETTING_STARTED_INTRO_BONUS_FEATURES = "Bonus Features";
 L.SETTINGS_SECTION_GETTING_STARTED_INTRO = [[
@@ -1229,7 +1234,7 @@ Set the number of decimals used when dealing with gold, this includes but is not
 - Trading and tracking trades
 - Cuts and payouts
 
-Set to 0 for gold, 2 for silver or 4 for copper]]
+Set to 0 for gold, 2 for silver or 4 for copper]];
 
 L.SETTINGS_GDKP_ACCEPT_BIDS_LOWER_THAN_MINIMUM_LABEL = "Accept bids lower than minimum";
 L.SETTINGS_GDKP_ACCEPT_BIDS_LOWER_THAN_MINIMUM_DESCRIPTION = "Accept bids that don't meet the minimum price, useful for identifying off-spec bids";
@@ -1251,6 +1256,116 @@ L.SETTINGS_GDKP_ADD_GOLD_TO_TRADE_WINDOW_DESCRIPTION = "This will not trade the 
 L.SETTINGS_GDKP_MINIMUM_DROP_QUALITY_LABEL = "Minimum quality of items to automatically add to queue";
 L.SETTINGS_GDKP_QUEUED_AUCTION_NO_BIDS_ACTION_LABEL = "Default action when no one bids on a queued auction";
 L.SETTINGS_GDKP_DELAY_BETWEEN_QUEUED_AUCTIONS_LABEL = "Delay in seconds between queued auctions";
+
+L.SETTINGS_GDKP_RESET_PRICES_LABEL = "Reset prices and increments";
+L.SETTINGS_GDKP_RESET_PRICES_CONFIRMATION = "Are you sure you want to reset all individual item settings including minimum prices and increments?";
+
+L.SETTINGS_GDKP_RESET_SESSIONS_LABEL = "Permanently delete all sessions";
+L.SETTINGS_GDKP_RESET_SESSIONS_DESCRIPTION = "This PERMANENTLY deletes all GDKP sessions listen in your GDKP overview";
+L.SETTINGS_GDKP_RESET_SESSIONS_CONFIRMATION = "Are you sure you want to delete all session data? You will lose ALL auction data. Use with extreme caution!";
+
+L.SETTINGS_SECTION_ANNOUNCE_LOOT_EXPLANATION = "Announce dropped loot in group chat when you're the loot master";
+L.SETTINGS_DROPPED_LOOT_ANNOUNCE_LOOT_TO_CHAT_LABEL = "Announce loot to chat";
+L.SETTINGS_DROPPED_LOOT_ANNOUNCE_DROPPED_LOOT_IN_RW_LABEL = "Announce in raid warning (/rw)";
+L.SETTINGS_DROPPED_LOOT_ANNOUNCE_DROPPED_LOOT_IN_RW_DESCRIPTION = "Use /rw instead of /ra or /pa when announcing dropped loot";
+L.SETTINGS_DROPPED_LOOT_MINIMUM_QUALITY_OF_ANNOUNCED_LOOT_LABEL = "The minimum quality an item should have in order to be announced in chat";
+L.SETTINGS_DROPPED_LOOT_TEST_ANNOUNCEMENT_INPUT_LABEL = "Drop item or enter IDs separated by , (comma) and click '%s'";
+L.SETTINGS_DROPPED_LOOT_TEST_ANNOUNCEMENT_BUTTON_LABEL = "Test Announcements";
+
+L.SETTINGS_SECTION_EXPORT_LOOT_EXPLANATION = [[
+You can export items awarded through Gargul with |c00A79EFF/gl export|r.
+This way you can connect loot data to thatsmybis / DFT or create your own format!
+]];
+
+L.SETTINGS_EXPORTING_LOOT_INCLUDE_DISENCHANTED_ITEMS_LABEL = "Include disenchanted items";
+L.SETTINGS_EXPORTING_LOOT_INCLUDE_OFFSPEC_ITEMS_LABEL = "Include offspec items";
+L.SETTINGS_EXPORTING_LOOT_SHOW_LOOT_ASSIGNMENT_REMINDER_LABEL = "Show award reminder";
+L.SETTINGS_EXPORTING_LOOT_SHOW_LOOT_ASSIGNMENT_REMINDER_DESCRIPTION = "When assigning loot without using Gargul a reminder is shown to use Gargul instead in order to make exporting loot possible";
+L.SETTINGS_EXPORTING_LOOT_FORMAT_LABEL = "Choose a format or create your own";
+L.SETTINGS_EXPORTING_LOOT_CUSTOM_FORMAT_LABEL = "Specificy your custom format here";
+L.SETTINGS_EXPORTING_LOOT_CUSTOM_FORMAT_DESCRIPTION = [[
+Available values:
+
+@ID
+@LINK
+@WOWHEAD
+@ITEM
+@ILVL
+@QUALITY
+@WINNER
+@REALM
+@DATE
+@OS
+@SR  |c00A79EFF(soft-reserved?)|r
+@WL |c00A79EFF(tmb wish?)|r
+@PL |c00A79EFF(tmb prio?)|r
+@TMB |c00A79EFF(tmb wish/prio?)|r
+@ROLLTYPE |c00A79EFF(MS, OS etc)|r
+@CHECKSUM
+@YEAR
+@YY
+@MONTH
+@DAY
+@HOUR
+@MINUTE
+@TIME]];
+
+L.SETTINGS_SECTION_LOOT_TRADE_TIMERS_EXPLANATION = [[
+Show timers When obtaining BoP loot that has time left to trade.
+You can even use these bars to directly roll out or award loot:
+
+${roll} to roll/auction and ${award} to award loot
+]];
+
+L.SETTINGS_LOOT_TRADE_TIMERS_ENABLED_LABEL = "Enable";
+L.SETTINGS_LOOT_TRADE_TIMERS_ENABLED_DESCRIPTION = "Enable window which shows trade time remaining on loot";
+L.SETTINGS_LOOT_TRADE_TIMERS_SHOW_ONLY_WHEN_MASTER_LOOTING_LABEL = "Only enable when I'm the loot master";
+L.SETTINGS_LOOT_TRADE_TIMERS_HIDE_AWARDED_LABEL = "Excluded awarded loot";
+L.SETTINGS_LOOT_TRADE_TIMERS_HIDE_AWARDED_DESCRIPTION = "Exclude loot that you've awarded, even if you didn't trade them yet";
+L.SETTINGS_LOOT_TRADE_TIMERS_HIDE_AWARDED_TO_SELF_LABEL = "Exclude loot awarded to self";
+L.SETTINGS_LOOT_TRADE_TIMERS_HIDE_AWARDED_TO_SELF_DESCRIPTION = "Exclude loot that you've awarded to yourself, even if you didn't trade them yet";
+L.SETTINGS_LOOT_TRADE_TIMERS_HIDE_DISENCHANTED_LABEL = "Exclude disenchanted loot";
+L.SETTINGS_LOOT_TRADE_TIMERS_AWARDED_ICON_LABEL = "This icon indicates that the item was awarded";
+L.SETTINGS_LOOT_TRADE_TIMERS_DISENCHANTED_ICON_LABEL = "This icon indicates that the item was marked for disenchantment";
+
+L.SETTINGS_SECTION_PACK_MULE_EXPLANATION = [[
+PackMule can auto loot items to any player in your raid when master looting.
+With group loot you can also auto-need/greed/pass.
+
+For PackMule to work you have to set rules in '%s' below.
+Hold shift before looting a mob to temporarily disable PackMule.
+]];
+
+L.SETTINGS_PACK_MULE_ENABLED_FOR_GROUP_LOOT_LABEL = "Enable when Group-Looting";
+L.SETTINGS_PACK_MULE_ENABLED_FOR_GROUP_LOOT_DESCRIPTION = "By default, NEED only works when you have lead/assist";
+L.SETTINGS_PACK_MULE_NEED_WITHOUT_ASSIST_LABEL = "Also NEED when not lead/assist";
+L.SETTINGS_PACK_MULE_NEED_WITHOUT_ASSIST_DESCRIPTION = "NEED on group loot by default only works when you have lead/assist. This setting overrides that, use with caution!";
+L.SETTINGS_PACK_MULE_AUTO_CONFIRM_SOLO_LABEL = "Auto confirm loot when solo";
+L.SETTINGS_PACK_MULE_AUTO_CONFIRM_SOLO_DESCRIPTION = "Bypass the 'looting this will bind it to you message' when solo";
+L.SETTINGS_PACK_MULE_AUTO_CONFIRM_GROUP_LABEL = "Auto confirm loot when in group";
+L.SETTINGS_PACK_MULE_AUTO_CONFIRM_GROUP_DESCRIPTION = "Bypass the 'looting this will bind it to you message' when in group";
+L.SETTINGS_PACK_MULE_ENABLED_FOR_MASTER_LOOT_LABEL = "Enable when Master-Looting";
+L.SETTINGS_PACK_MULE_ENABLED_FOR_MASTER_LOOT_DESCRIPTION = "Only works when you're the loot master";
+L.SETTINGS_PACK_MULE_AUTO_DISABLE_FOR_GROUP_LOOT_LABEL = "Disable for Group Loot when leaving group";
+L.SETTINGS_PACK_MULE_LOOT_GOLD_LABEL = "Auto loot gold";
+L.SETTINGS_PACK_MULE_OPEN_ITEM_RULES_LABEL = "Item Rules";
+
+L.SETTINGS_SECTION_PACK_MULE_TEST_EXPLANATION = "Here you can test and see which player an item would be sent to based on your item rules";
+L.SETTINGS_SECTION_PACK_MULE_TEST_INPUT_LABEL = "You can fill out an item ID or item link and press '%s'";
+
+L.SETTINGS_SECTION_PACK_MULE_TEST_RESULT_LABEL = [[
+${item} (#${item_id})
+
+|c00A79EFFBy default|r
+Ignored in master loot: ${ignored_in_master_loot}
+Ignored in group loot: ${ignored_in_group_loot}
+
+|c00A79EFFBased on your item rules|r
+In master loot item goes to: ${master_loot_target}
+In group loot item goes to: ${group_loot_target}
+]];
+
+L.DEMO = "Demo";
 
 L.ITEM_QUALITY_POOR = "Poor";
 L.ITEM_QUALITY_COMMON = "Common";

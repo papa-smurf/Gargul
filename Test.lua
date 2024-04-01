@@ -784,6 +784,7 @@ function Test.Locale:sortTranslations()
         LOCALE_ZHCN = "Chinese (Simplified, PRC)";
         LOCALE_ZHTW = "Chinese (Traditional, Taiwan)";
         RAIDGROUPS_IN_COMBAT_WARNING = "%s holds a player name",
+        SETTINGS_DROPPED_LOOT_TEST_ANNOUNCEMENT_INPUT_LABEL = "%s refers to L.SETTINGS_DROPPED_LOOT_TEST_ANNOUNCEMENT_BUTTON_LABEL",
         TMB_IMPORT_PLAYER_NO_DATA = "%s can be TMB/DFT/CPR",
         TMB_TOOLTIP_PRIO_HEADER = "%s can be TMB/DFT/CPR",
         TYPE = "As in type of roll or type of item",

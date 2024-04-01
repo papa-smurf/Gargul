@@ -957,10 +957,11 @@ end
 ---@param name string
 ---@param value string|number
 ---@param Options table
+---@param Order table -- Used to pass a list of keys to order the Options in
 ---@param sorter function
 ---@param callback function
 ---@return Frame
-function Interface:createDropdown(Parent, name, value, Options, sorter, callback)
+function Interface:createDropdown(Parent, name, value, Options, Order, sorter, callback)
     if (name ~= nil or type(Parent) ~= "table") then
         GL:error("Pass a table instead of multiple arguments")
         return false;
@@ -969,6 +970,7 @@ function Interface:createDropdown(Parent, name, value, Options, sorter, callback
     name = Parent.name;
     value = Parent.value;
     Options = Parent.Options or {};
+    Order = Parent.Order;
     sorter = Parent.sorter ~= nil and Parent.sorter or false;
     callback = Parent.callback or function () end;
 
@@ -987,12 +989,24 @@ function Interface:createDropdown(Parent, name, value, Options, sorter, callback
             Dropdown:SetValue(self.value);
         end
 
+        if (Order) then
+            for _, key in pairs(Order) do
+                Option.text = Options[key];
+                Option.value = key;
+                Option.checked = Dropdown.value == key;
+                UIDropDownMenu_AddButton(Option);
+            end
+
+            return;
+        end
+
         -- Sort our options the way we want them
         local FauxOptions = {};
+        for value, text in pairs(Dropdown.Options) do
+            tinsert(FauxOptions, { v = value, t = text });
+        end
+
         if (not sorter) then
-            for value, text in pairs(Dropdown.Options) do
-                tinsert(FauxOptions, { v = value, t = text });
-            end
             table.sort(FauxOptions, function (a, b)
                 if (a.v and b.v) then
                     return a.v < b.v;
