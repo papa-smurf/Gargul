@@ -2319,6 +2319,7 @@ end
 
 ---@see GL:copperToMoney
 function GL:goldToMoney(copper, Separators, includeEmpty, separatorBeforeUnit)
+    copper = tonumber(copper) or 0;
     return self:copperToMoney(copper * 10000, Separators, includeEmpty, separatorBeforeUnit);
 end
 

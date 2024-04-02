@@ -612,7 +612,6 @@ function Session:tooltipLines(itemLink)
     end
 
     local PerItemSettings = GDKP:settingsForItemID(itemID);
-
     return GL:explode((L.GDKP_ITEM_SALE_HISTORY_TOOLTIP):format(
         Details.timesSold,
         GL:goldToMoney(Details.lastSoldPrice),

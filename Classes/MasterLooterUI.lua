@@ -312,7 +312,7 @@ function MasterLooterUI:draw(itemLink)
 
                 VerticalSpacer = AceGUI:Create("SimpleGroup");
                 VerticalSpacer:SetLayout("Flow");
-                VerticalSpacer:SetWidth(20);
+                VerticalSpacer:SetWidth(10);
                 VerticalSpacer:SetHeight(30);
                 ThirdRow:AddChild(VerticalSpacer);
 
@@ -321,7 +321,7 @@ function MasterLooterUI:draw(itemLink)
                 ]]
                 local ClearButton = AceGUI:Create("Button");
                 ClearButton:SetText(L.CLEAR);
-                ClearButton:SetWidth(66);
+                ClearButton:SetWidth(80);
                 ClearButton:SetHeight(20);
                 ClearButton:SetDisabled(false);
                 ClearButton:SetCallback("OnClick", function()
@@ -338,7 +338,7 @@ function MasterLooterUI:draw(itemLink)
 
                 local AwardButton = AceGUI:Create("Button");
                 AwardButton:SetText(L.AWARD);
-                AwardButton:SetWidth(70); ---@TODO: TOO SHORT FOR FR
+                AwardButton:SetWidth(90); ---@TODO: TOO SHORT FOR FR
                 AwardButton:SetHeight(20);
                 AwardButton:SetDisabled(true);
                 AwardButton:SetCallback("OnClick", function()
