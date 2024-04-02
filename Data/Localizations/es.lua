@@ -2,7 +2,7 @@
     You can test this locally by removing line 5:
     if (GetLocale() ~= "deDE") then return; end
 ]]
-if (true or GetLocale() ~= "esES" and GetLocale() ~= "esMX") then return; end
+if (GetLocale() ~= "esES" and GetLocale() ~= "esMX") then return; end
 local L = Gargul_L or {};
 
 L.ABOUT = "Acerca de";
