@@ -542,9 +542,9 @@ L.CHAT = {
         PACKMULE_DISENCHANTMENT_NOTICE = "%s sera désenchanté par %s",
 
         --[[ ROLLING ]]
-        ROLLING_START = "Vous avez %s secondes pour to lancer sur %s",
+        ROLLING_START = "Vous avez %s secondes pour lancer les dés sur %s",
         ROLLING_STOP = "Arrêtez vos lancers !",
-        ROLLING_TIME_LEFT = "%s secondes pour lancer",
+        ROLLING_TIME_LEFT = "%s secondes pour lancer les dés",
         ROLLING_SOFTRES_INFO = "Cet objet a été reservé par : %s",
         ROLLING_TMB_INFO = "Les joueurs suivants ont la plus haute prio %s : %s", -- First %s can be TMB/DFT/CPR
 
