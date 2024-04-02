@@ -14,12 +14,21 @@ GL.Interface.Changelog = {
 
     History = {
         {
+            version = "7.4.3",
+            date = "April 2nd, 2024",
+            Changes = {
+                "Gargul now includes translations for all the locales supported by Blizzard. A significant number of translations were done by AI and are not perfect. Check the discord link up top if you want to help improve any translations",
+                "You can specify in which language Gargul should communicate with others, check it out with |c00A79EFF/gl locale|r",
+            },
+        },
+        {
             version = "7.4.0",
             date = "March 19th, 2024",
             Changes = {
                 "We're in the process of translating Gargul, check the welcome channel in our discord for more info if you'd like to help out!",
             },
-        },{
+        },
+        {
             version = "7.3.2",
             date = "March 12th, 2024",
             Changes = {
