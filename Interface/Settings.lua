@@ -23,6 +23,7 @@ local SETTING_COLOR = "EDC507";
 local SETTING_MARGIN_BOTTOM = 10;
 local SETTING_MARGIN_LEFT = 30;
 local SLIDER_MARGIN_BOTTOM = 20;
+local SLIDER_MARGIN_TOP = 10;
 
 local RESET_CONFIRMATION_DIALOG_NAME = "GL.Interface.Settings.ResetToDefaults";
 local ALL_SETTINGS = 0;
@@ -40,6 +41,7 @@ local LABEL = 7;
 local INPUT = 8;
 local LOOT_QUALITY_DROPDOWN = 9;
 local SLIDER = 10;
+local INDIRECT_INPUT = 11; -- This input is not directly linked to a setting
 
 local MINIMAP_HOTKEY_ACTIONS = {
     "DISABLED",
@@ -63,9 +65,10 @@ local SECTION_ORDER = {
     L.SETTINGS_SECTION_TMB,
     L.SETTINGS_SECTION_GDKP,
     L.SETTINGS_SECTION_PACKMULE,
-    L.SETTINGS_SECTION_ANNOUNCE_LOOT,
+    -- L.SETTINGS_SECTION_ANNOUNCE_LOOT,
     L.SETTINGS_SECTION_EXPORT_LOOT,
     L.SETTINGS_SECTION_LOOT_TRADE_TIMERS,
+    L.SETTINGS_SECTION_MASTER_LOOTING,
 };
 local SECTION_INDEXES = GL:tableFlip(SECTION_ORDER);
 
@@ -184,12 +187,33 @@ local SettingEntries = {
     },
     [L.SETTINGS_SECTION_GENERAL] =
         (function ()
+            local userIsDev = GL.User:isDev();
+
             local Entries = {
                 {
                     ID = "openChatLocale",
                     type = BUTTON,
                     action = function () GL.Commands:call("locale"); end,
                 },
+                --- Dev only
+                userIsDev and {
+                    ID = "debugModeEnabled",
+                    type = CHECKBOX,
+                    label = "|c00F7922EDev only: debug mode|r",
+                } or nil,
+                --- Dev only
+                userIsDev and {
+                    ID = "profilerEnabled",
+                    type = CHECKBOX,
+                    label = "|c00F7922EDev only: addon usage|r",
+                    callback = function ()
+                        if (GL.Settings:get("profilerEnabled")) then
+                            GL.Profiler:draw();
+                        else
+                            GL.Profiler:close();
+                        end
+                    end,
+                } or nil,
                 {
                     ID = "welcomeMessage",
                     type = CHECKBOX,
@@ -666,37 +690,37 @@ local SettingEntries = {
             end,
         },
     },
-    [L.SETTINGS_SECTION_ANNOUNCE_LOOT] = {
-        {
-            ID = "settingsSectionAnnounceLootExplanation",
-            type = LABEL,
-        },
-        {
-            ID = "DroppedLoot.announceLootToChat",
-            type = CHECKBOX,
-        },
-        {
-            ID = "DroppedLoot.announceDroppedLootInRW",
-            type = CHECKBOX,
-        },
-        {
-            ID = "DroppedLoot.minimumQualityOfAnnouncedLoot",
-            type = LOOT_QUALITY_DROPDOWN,
-        },
-        {
-            ID = "DroppedLootTestAnnouncementInput",
-            type = INPUT,
-            label = (L.SETTINGS_DROPPED_LOOT_TEST_ANNOUNCEMENT_INPUT_LABEL):format(L.SETTINGS_DROPPED_LOOT_TEST_ANNOUNCEMENT_BUTTON_LABEL)
-        },
-        {
-            ID = "DroppedLootTestAnnouncementButton",
-            type = BUTTON,
-            action = function ()
-                local Input = Settings.FramePool["DroppedLootTestAnnouncementInput"].Input;
-                GL.DroppedLoot:announceTest(GL:explode(Input:GetText(), ","));
-            end,
-        },
-    },
+    -- [L.SETTINGS_SECTION_ANNOUNCE_LOOT] = {
+    --     {
+    --         ID = "settingsSectionAnnounceLootExplanation",
+    --         type = LABEL,
+    --     },
+    --     {
+    --         ID = "DroppedLoot.announceLootToChat",
+    --         type = CHECKBOX,
+    --     },
+    --     {
+    --         ID = "DroppedLoot.announceDroppedLootInRW",
+    --         type = CHECKBOX,
+    --     },
+    --     {
+    --         ID = "DroppedLoot.minimumQualityOfAnnouncedLoot",
+    --         type = LOOT_QUALITY_DROPDOWN,
+    --     },
+    --     {
+    --         ID = "DroppedLootTestAnnouncementInput",
+    --         type = INPUT,
+    --         label = (L.SETTINGS_DROPPED_LOOT_TEST_ANNOUNCEMENT_INPUT_LABEL):format(L.SETTINGS_DROPPED_LOOT_TEST_ANNOUNCEMENT_BUTTON_LABEL)
+    --     },
+    --     {
+    --         ID = "DroppedLootTestAnnouncementButton",
+    --         type = BUTTON,
+    --         action = function ()
+    --             local Input = Settings.FramePool["DroppedLootTestAnnouncementInput"].Input;
+    --             GL.DroppedLoot:announceTest(GL:explode(Input:GetText(), ","));
+    --         end,
+    --     },
+    -- },
     [L.SETTINGS_SECTION_EXPORT_LOOT] = {
         {
             ID = "settingsSectionExportLootExplanation",
@@ -800,6 +824,26 @@ local SettingEntries = {
             end,
         },
         {
+            type = SLIDER,
+            ID = "LootTradeTimers.maximumNumberOfBars",
+            min = 1,
+            max = 100,
+            step = 1,
+            callback = function ()
+                Interface.TradeTime.Overview:refresh();
+            end,
+        },
+        {
+            type = SLIDER,
+            ID = "LootTradeTimers.maximumTradeTimeLeft",
+            min = 1,
+            max = 120,
+            step = 1,
+            callback = function ()
+                Interface.TradeTime.Overview:refresh();
+            end,
+        },
+        {
             ID = "LootTradeTimersDemo",
             type = BUTTON,
             label = L.DEMO,
@@ -892,7 +936,7 @@ local SettingEntries = {
         },
         {
             ID = "SettingsSectionPackMuleTestInput",
-            type = INPUT,
+            type = INDIRECT_INPUT,
             label = (L.SETTINGS_SECTION_PACK_MULE_TEST_INPUT_LABEL):format(L.DEMO),
         },
         {
@@ -949,7 +993,126 @@ local SettingEntries = {
                 end);
 
                 return SettingFrame;
+            end,
+        },
+    },
+    [L.SETTINGS_SECTION_MASTER_LOOTING] = {
+        {
+            ID = L.SETTINGS_SUBSECTION_MASTER_LOOTING,
+            type = SUB_SECTION,
+        },
+        --- GL.isEra
+        GL.isEra and {
+            ID = "MasterLooting.preferredMasterLootingThreshold",
+            type = LOOT_QUALITY_DROPDOWN,
+            description = (L.SETTINGS_MASTER_LOOTING_PREFERRED_MASTER_LOOTING_THRESHOLD_DESCRIPTION):format(GL:colorize(L.ITEM_QUALITY_UNCOMMON, Interface.Colors.UNCOMMON)),
+        } or nil,
+        GL.isEra and {
+            ID = "MasterLootingApplyMasterLootingThreshold",
+            type = BUTTON,
+            action = function ()
+                SetLootMethod('Master', GL.User.name, GL.Settings:get("MasterLooting.preferredMasterLootingThreshold", ""));
             end
+        } or nil,
+        {
+            ID = "MasterLooting.autoOpenMasterLooterDialog",
+            type = CHECKBOX,
+        },
+        {
+            ID = "MasterLooting.announceMasterLooter",
+            type = CHECKBOX,
+        },
+        {
+            ID = L.SETTINGS_SUBSECTION_ROLLING_LOOT,
+            type = SUB_SECTION,
+        },
+        {
+            ID = "MasterLooting.announceRollStart",
+            type = CHECKBOX,
+        },
+        {
+            ID = "MasterLooting.doCountdown",
+            type = CHECKBOX,
+        },
+        {
+            ID = "MasterLooting.announceCountdownOnce",
+            type = CHECKBOX,
+        },
+        {
+            ID = "MasterLooting.announceRollEnd",
+            type = CHECKBOX,
+        },
+        {
+            type = SLIDER,
+            ID = "MasterLooting.numberOfSecondsToCountdown",
+            min = 3,
+            max = 25,
+            step = 1,
+        },
+        {
+            ID = "MasterLooting.defaultRollOffNote",
+            type = INPUT,
+            placeholder = L.LOOTMASTER_DEFAULT_NOTE,
+        },
+        {
+            ID = "MasterLooting.alwaysUseDefaultNote",
+            type = CHECKBOX,
+            callback = function ()
+                if (GL.MasterLooterUI:isShown()) then
+                    GL.MasterLooterUI:updateItemNote();
+                end
+            end,
+        },
+        {
+            ID = "RollTracking.trackAll",
+            type = CHECKBOX,
+        },
+        {
+            ID = "RollTracking.sortBySoftRes",
+            type = CHECKBOX,
+        },
+        {
+            ID = "RollTracking.sortByTMBWishlist",
+            type = CHECKBOX,
+        },
+        {
+            ID = "RollTracking.sortByTMBPrio",
+            type = CHECKBOX,
+        },
+        {
+            ID = L.SETTINGS_SUBSECTION_ANNOUNCING_LOOT,
+            type = SUB_SECTION,
+        },
+        {
+            ID = "settingsSectionAnnounceLootExplanation",
+            type = LABEL,
+        },
+        {
+            ID = "DroppedLoot.announceLootToChat",
+            type = CHECKBOX,
+        },
+        {
+            ID = "DroppedLoot.announceDroppedLootInRW",
+            type = CHECKBOX,
+        },
+        {
+            ID = "DroppedLoot.minimumQualityOfAnnouncedLoot",
+            type = LOOT_QUALITY_DROPDOWN,
+        },
+        {
+            ID = "DroppedLootTestAnnouncementInput",
+            type = INDIRECT_INPUT,
+            label = (L.SETTINGS_DROPPED_LOOT_TEST_ANNOUNCEMENT_INPUT_LABEL):format(L.SETTINGS_DROPPED_LOOT_TEST_ANNOUNCEMENT_BUTTON_LABEL),
+            placeholder = "6948",
+            value = "6948",
+        },
+        {
+            ID = "DroppedLootTestAnnouncementButton",
+            type = BUTTON,
+            action = function ()
+                local Input = Settings.FramePool["DroppedLootTestAnnouncementInput"].Input;
+                GL.DroppedLoot:announceTest(GL:explode(Input:GetText(), ","));
+            end,
         },
     },
 };
@@ -1277,7 +1440,6 @@ function Settings:showSettings(Parent, SettingFrames)
 
     local anchorIsParent = true;
     local Anchor = Parent;
-    local xOffset = 0;
     local yOffset = 0;
     local IDsHandled = {};
     for _, Entry in pairs(SettingFrames or {}) do
@@ -1302,7 +1464,7 @@ function Settings:showSettings(Parent, SettingFrames)
                 yOffset = SUB_SECTION_MARGIN_BOTTOM;
             elseif (Entry.type == SLIDER) then
                 Entry:SetPoint("LEFT", Parent, "LEFT", SETTING_MARGIN_LEFT, 0);
-                Entry:SetPoint("TOP", Anchor, "BOTTOM", 0, yOffset * -1);
+                Entry:SetPoint("TOP", Anchor, "BOTTOM", 0, yOffset * -1 - SLIDER_MARGIN_TOP);
 
                 yOffset = SLIDER_MARGIN_BOTTOM;
             else
@@ -1434,9 +1596,44 @@ function Settings:buildFrameForSetting(Parent, Details)
         Input:SetPoint("TOPLEFT", InputLabel, "BOTTOMLEFT", 2, -2);
         Input:SetWidth(200);
 
+        local value = GL.Settings:get(settingID);
+        if (value) then
+            Input:SetText(value);
+        end
+
         Input:SetScript("OnTextChanged", function ()
-            GL.Settings:set(Details.ID, Input:GetText());
+            GL.Settings:set(settingID, Input:GetText());
         end);
+
+        if (description) then
+            local tooltip = ("|c00FFFFFF%s|r\n\n%s"):format(label, description);
+
+            Interface:addTooltip(SettingFrame, tooltip);
+            Interface:addTooltip(Input, tooltip, "TOP", SettingFrame);
+        end
+
+        SettingFrame.Input = Input;
+    elseif (Details.type == INDIRECT_INPUT) then
+        label = Details.label or self:getLabel(settingID);
+        description = self:getDescription(settingID);
+
+        ---@type Frame
+        SettingFrame = CreateFrame("Frame", nil, Parent);
+        SettingFrame:SetWidth(300);
+        SettingFrame:SetHeight(40);
+
+        ---@type FontString
+        local InputLabel = Interface:createFontString(SettingFrame, label);
+        InputLabel:SetColor(SETTING_COLOR);
+        InputLabel:SetPoint("TOPLEFT", SettingFrame, "TOPLEFT");
+
+        local Input = Interface:inputBox(SettingFrame, nil, Details.placeholder);
+        Input:SetPoint("TOPLEFT", InputLabel, "BOTTOMLEFT", 2, -2);
+        Input:SetWidth(200);
+        
+        if (Details.value) then
+            Input:SetText(Details.value);
+        end
 
         if (description) then
             local tooltip = ("|c00FFFFFF%s|r\n\n%s"):format(label, description);
@@ -1448,7 +1645,7 @@ function Settings:buildFrameForSetting(Parent, Details)
         SettingFrame.Input = Input;
 
     elseif (Details.type == CHECKBOX) then
-        label = self:getLabel(settingID);
+        label = Details.label or self:getLabel(settingID);
         description = self:getDescription(settingID);
 
         ---@type string
@@ -1555,8 +1752,8 @@ function Settings:buildFrameForSetting(Parent, Details)
         DropDown:SetPoint("TOPLEFT", ChannelLabel, "BOTTOMLEFT", -20, -2);
 
     elseif (Details.type == LOOT_QUALITY_DROPDOWN) then
-        label = self:getLabel(settingID);
-        description = self:getDescription(settingID);
+        label = Details.label or self:getLabel(settingID);
+        description = Details.description or self:getDescription(settingID);
 
         ---@type string
         local tooltip = description and ("|c00FFFFFF%s|r\n\n%s"):format(label, description) or nil;

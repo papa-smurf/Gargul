@@ -970,6 +970,13 @@ function MasterLooterUI:update()
     MasterLooterUI:updateWidgets();
 end
 
+---@return boolean
+function MasterLooterUI:isShown()
+    local Window = GL.Interface:get(self, "Window");
+
+    return Window and Window:IsShown() or false;
+end
+
 -- Update the item priority string
 function MasterLooterUI:updateItemNote()
     local defaultNote = GL.Settings:get("MasterLooting.defaultRollOffNote", "");

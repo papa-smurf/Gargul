@@ -1046,6 +1046,7 @@ L.SETTINGS_SECTION_ANNOUNCE_LOOT = "Announce Loot";
 L.SETTINGS_SECTION_EXPORT_LOOT = "Export Awarded Loot";
 L.SETTINGS_SECTION_LOOT_TRADE_TIMERS = "Loot Trade Timers";
 L.SETTINGS_SECTION_PACKMULE = "Packmule Auto Looting";
+L.SETTINGS_SECTION_MASTER_LOOTING = "Master Looting";
 
 L.SETTINGS_SUBSECTION_MINIMAP = "Minimap";
 L.SETTINGS_SUBSECTION_TMB_TOOLTIPS = "TMB Tooltips";
@@ -1062,7 +1063,7 @@ L.SETTINGS_SUBSECTION_GDKP_DANGER = "Danger zone";
 
 L.SETTINGS_SECTION_GETTING_STARTED_INTRO_BONUS_FEATURES = "Bonus Features";
 L.SETTINGS_SECTION_GETTING_STARTED_INTRO = [[
-Gargul can be used and tested without being in a raid,
+Gargul can be used and tested without being in a raid or changing any settings!
 |c00A79EFFtry it out|r by using these common actions:
 
 Auto Looting: |c00A79EFF/gl pm|r
@@ -1327,6 +1328,8 @@ L.SETTINGS_LOOT_TRADE_TIMERS_HIDE_AWARDED_TO_SELF_DESCRIPTION = "Exclude loot th
 L.SETTINGS_LOOT_TRADE_TIMERS_HIDE_DISENCHANTED_LABEL = "Exclude disenchanted loot";
 L.SETTINGS_LOOT_TRADE_TIMERS_AWARDED_ICON_LABEL = "This icon indicates that the item was awarded";
 L.SETTINGS_LOOT_TRADE_TIMERS_DISENCHANTED_ICON_LABEL = "This icon indicates that the item was marked for disenchantment";
+L.SETTINGS_LOOT_TRADE_TIMERS_MAXIMUM_NUMBER_OF_BARS_LABEL = "Maximum number of items shown";
+L.SETTINGS_LOOT_TRADE_TIMERS_MAXIMUM_TRADE_TIME_LEFT_LABEL = "Maximum trade time left, in minutes, before showing";
 
 L.SETTINGS_SECTION_PACK_MULE_EXPLANATION = [[
 PackMule can auto loot items to any player in your raid when master looting.
@@ -1364,6 +1367,43 @@ Ignored in group loot: ${ignored_in_group_loot}
 In master loot item goes to: ${master_loot_target}
 In group loot item goes to: ${group_loot_target}
 ]];
+
+L.SETTINGS_MASTER_LOOTING_PREFERRED_MASTER_LOOTING_THRESHOLD_LABEL= "Set the loot quality threshold for master loot";
+L.SETTINGS_MASTER_LOOTING_PREFERRED_MASTER_LOOTING_THRESHOLD_DESCRIPTION = [[
+Using the UI you can not lower the master looting threshold further than '%s'.
+Use this setting to bypass that restriction]];
+L.SETTINGS_MASTER_LOOTING_APPLY_MASTER_LOOTING_THRESHOLD_LABEL = "Apply threshold";
+
+L.SETTINGS_SUBSECTION_MASTER_LOOTING = "Master Looting";
+L.SETTINGS_SUBSECTION_ROLLING_LOOT = "Rolling Loot";
+L.SETTINGS_MASTER_LOOTING_AUTO_OPEN_MASTER_LOOTER_DIALOG_LABEL = "Master Looter Popup";
+L.SETTINGS_MASTER_LOOTING_AUTO_OPEN_MASTER_LOOTER_DIALOG_DESCRIPTION = [[
+Enable the master looter window which automatically pops up when you are given the role of master looter.
+It provides easy access to importing and clearing data]];
+L.SETTINGS_MASTER_LOOTING_ANNOUNCE_MASTER_LOOTER_LABEL = "Announce Master Looter";
+L.SETTINGS_MASTER_LOOTING_ANNOUNCE_MASTER_LOOTER_DESCRIPTION = "Post a message in chat when you are given the role of master looter";
+L.SETTINGS_MASTER_LOOTING_ANNOUNCE_ROLL_START_LABEL = "Announce start of roll";
+L.SETTINGS_MASTER_LOOTING_ANNOUNCE_ROLL_START_DESCRIPTION = "Post an announcement in /rw when a roll starts";
+L.SETTINGS_MASTER_LOOTING_DO_COUNTDOWN_LABEL = "Countdown on rolls";
+L.SETTINGS_MASTER_LOOTING_DO_COUNTDOWN_DESCRIPTION = "A countdown will be shown in chat when a roll is coming to an end (e.g: you have 5 seconds to roll)";
+L.SETTINGS_MASTER_LOOTING_ANNOUNCE_COUNTDOWN_ONCE_LABEL = "Countdown ONCE";
+L.SETTINGS_MASTER_LOOTING_ANNOUNCE_COUNTDOWN_ONCE_DESCRIPTION = "Announce countdown only once at the desired seconds before end of roll";
+L.SETTINGS_MASTER_LOOTING_ANNOUNCE_ROLL_END_LABEL = "Announce end of roll";
+L.SETTINGS_MASTER_LOOTING_ANNOUNCE_ROLL_END_DESCRIPTION = "When enabled you post an announcement in /rw when a roll has ended";
+L.SETTINGS_MASTER_LOOTING_NUMBER_OF_SECONDS_TO_COUNTDOWN_LABEL = "Countdown from how many seconds?";
+L.SETTINGS_MASTER_LOOTING_NUMBER_OF_SECONDS_TO_COUNTDOWN_DESCRIPTION = "Gargul will start counting down in chat when this threshold is reached";
+L.SETTINGS_MASTER_LOOTING_ALWAYS_USE_DEFAULT_NOTE_LABEL = "Always show default note instead of item priority";
+L.SETTINGS_MASTER_LOOTING_ALWAYS_USE_DEFAULT_NOTE_DESCRIPTION = [[
+Gargul uses item priorities (if imported by you) when rolling out items, see |c00A79EFF/gl lo|r.
+Enabling this means Gargul will always use your custom default note instead]]
+L.SETTINGS_MASTER_LOOTING_DEFAULT_ROLL_OFF_NOTE_LABEL = "Set a default note that's shown when rolling out items, pipes ( |c00F7922E|||r ) are not allowed!";
+L.SETTINGS_SUBSECTION_ANNOUNCING_LOOT = "Announcing Dropped Loot";
+
+L.SETTINGS_ROLL_TRACKING_TRACK_ALL_LABEL = "Track all rolls";
+L.SETTINGS_ROLL_TRACKING_TRACK_ALL_DESCRIPTION = "By default Gargul only tracks rolls that follow the rules defined below. If you want to track all rolls then enable this option. The range in which a player rolled will be displayed in the roll tracker window";
+L.SETTINGS_ROLL_TRACKING_SORT_BY_SOFT_RES_LABEL = "Sort rolls by SoftRes status";
+L.SETTINGS_ROLL_TRACKING_SORT_BY_TMBWISHLIST_LABEL = "Sort rolls by TMB wishlist status";
+L.SETTINGS_ROLL_TRACKING_SORT_BY_TMBPRIO_LABEL = "Sort rolls by TMB/DFT prio status";
 
 L.DEMO = "Demo";
 
