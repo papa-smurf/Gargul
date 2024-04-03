@@ -197,7 +197,7 @@ L.CHAT = {
         PACKMULE_DISENCHANTMENT_NOTICE = "%s wird von %s entzaubert",
 
         --[[ ROLLING ]]
-        ROLLING_START = "Du hast %s Sekunden Zeit, um auf %s zu würfeln",
+        ROLLING_START = "Du hast %s Sekunden um auf %s zu würfeln",
         ROLLING_STOP = "Stopp deine Würfe!",
         ROLLING_TIME_LEFT = "Noch %s Sekunden übrig",
         ROLLING_SOFTRES_INFO = "Dieser Gegenstand wurde reserviert von: %s",

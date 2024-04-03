@@ -314,11 +314,7 @@ function Commands:_dispatch(str)
 
     -- User entered "/gl" with no additional arguments, open localization or settings window
     if (not str or #str < 1) then
-        command = "settings";
-
-        if (not GL.Settings:get("chatLocale") and GL:inTable({ "frFR", "zhCN", "ruRU", }, GetLocale())) then
-            command = "locale";
-        end
+        command = GL.Settings:get("chatLocale") and "settings" or "locale";
     end
 
     -- Make sure commands are case insensitive (Busmonstret = dumdum)
