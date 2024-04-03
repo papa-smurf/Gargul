@@ -846,7 +846,7 @@ L.ROLLING_IDENTICAL_ROLL_WARNING = [[
 Warning: another identical roll was found which can point to a tie
 
 ]];
-L.ROLLING_INVALID_START_DATA_WARNING = "Invalid data provided for roll of start!";
+L.ROLLING_INVALID_START_DATA_WARNING = "Invalid data provided for roll start!";
 L.ROLLING_ITEM_WON_BR_COST = "(BR: %s)";
 L.ROLLING_ITEM_WON_GIVEN = "(item given: yes)";
 L.ROLLING_ITEM_WON_NOT_GIVEN = "(item given: no)";
