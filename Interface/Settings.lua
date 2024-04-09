@@ -244,7 +244,7 @@ local SettingEntries = {
                         SFX = "SFX",
                         Ambience = "Ambience",
                         Dialog = "Dialog",
-                    }
+                    },
                 },
                 {
                     ID = L.SETTINGS_SUBSECTION_MINIMAP,
@@ -481,7 +481,7 @@ local SettingEntries = {
         {
             ID = "GDKP.outbidSound",
             type = DROPDOWN,
-            Options = LibStub("LibSharedMedia-3.0"):List("sound")
+            Options = LibStub("LibSharedMedia-3.0"):List("sound"),
         },
         {
             ID = L.SETTINGS_SUBSECTION_GDKP_ORGANIZER,
@@ -779,8 +779,8 @@ local SettingEntries = {
             ID = "settingsSectionLootTradeTimersExplanation",
             type = LABEL,
             label = GL:printfn(L.SETTINGS_SECTION_LOOT_TRADE_TIMERS_EXPLANATION, {
-                roll = "|c00A79EFF" .. GL.Settings:get("ShortcutKeys.rollOffOrAuction") .. "|r",
-                award = "|c00A79EFF" .. GL.Settings:get("ShortcutKeys.award") .. "|r",
+                roll = GL:colorize(GL.Settings:get("ShortcutKeys.rollOffOrAuction"), "A79EFF"),
+                award = GL:colorize(GL.Settings:get("ShortcutKeys.award"), "A79EFF"),
             }),
         },
         {
@@ -888,7 +888,7 @@ local SettingEntries = {
                 DisenchantedIconLabel:SetPoint("TOPLEFT", DisenchantedIcon, "TOPRIGHT", 10, -5);
 
                 return SettingFrame;
-            end
+            end,
         }
     },
     [L.SETTINGS_SECTION_PACKMULE] = {
@@ -1027,6 +1027,11 @@ local SettingEntries = {
             type = SUB_SECTION,
         },
         {
+            ID = L.SETTINGS_SECTION_ROLLING_LOOT_EXPLANATION,
+            type = LABEL,
+            label = (L.SETTINGS_SECTION_ROLLING_LOOT_EXPLANATION):format(GL:colorize(GL.Settings:get("ShortcutKeys.rollOffOrAuction"), "A79EFF")),
+        },
+        {
             ID = "MasterLooting.announceRollStart",
             type = CHECKBOX,
         },
@@ -1103,8 +1108,8 @@ local SettingEntries = {
             ID = "DroppedLootTestAnnouncementInput",
             type = INDIRECT_INPUT,
             label = (L.SETTINGS_DROPPED_LOOT_TEST_ANNOUNCEMENT_INPUT_LABEL):format(L.SETTINGS_DROPPED_LOOT_TEST_ANNOUNCEMENT_BUTTON_LABEL),
-            placeholder = "6948",
-            value = "6948",
+            placeholder = "18244",
+            value = "18244",
         },
         {
             ID = "DroppedLootTestAnnouncementButton",
@@ -1114,6 +1119,143 @@ local SettingEntries = {
                 GL.DroppedLoot:announceTest(GL:explode(Input:GetText(), ","));
             end,
         },
+        {
+            ID = L.SETTINGS_SUBSECTION_AWARDING_LOOT,
+            type = SUB_SECTION,
+        },
+        {
+            ID = "SettingsSectionAwardingLootExplanation",
+            type = LABEL,
+            label = (L.SETTINGS_SECTION_AWARDING_LOOT_EXPLANATION):format(GL:colorize(GL.Settings:get("ShortcutKeys.award"), "A79EFF")),
+        },
+        {
+            ID = "AwardingLoot.awardMessagesEnabled",
+            type = CHECKBOX,
+        },
+        {
+            ID = "AwardingLoot.announceAwardMessagesInRW",
+            type = CHECKBOX,
+        },
+        {
+            ID = "AwardingLoot.announceAwardMessagesInGuildChat",
+            type = CHECKBOX,
+        },
+        {
+            ID = "PackMule.announceDisenchantedItems",
+            type = CHECKBOX,
+        },
+        {
+            ID = "AwardingLoot.autoAssignAfterAwardingAnItem",
+            type = CHECKBOX,
+        },
+        {
+            ID = "AwardingLoot.skipAwardConfirmationDialog",
+            type = CHECKBOX,
+        },
+        {
+            ID = "AwardingLoot.autoTradeAfterAwardingAnItem",
+            type = CHECKBOX,
+        },
+        {
+            ID = "AwardingLoot.autoTradeDisenchanter",
+            type = CHECKBOX,
+        },
+        {
+            ID = "AwardingLoot.autoTradeInCombat",
+            type = CHECKBOX,
+        },
+        {
+            ID = L.SETTINGS_SUBSECTION_HOTKEYS,
+            type = SUB_SECTION,
+        },
+        {
+            ID = "SettingsSubsectionHotkeysExplanation",
+            type = LABEL,
+        },
+        {
+            ID = "ShortcutKeys.onlyInGroup",
+            type = CHECKBOX,
+        },
+        {
+            ID = "ShortcutKeys.doubleClickToTrade",
+            type = CHECKBOX,
+        },
+        (function()
+            local _, setting = pcall(function ()
+                if (LibStub("ClassicLootManager", true)) then
+                    return {
+                        ID = "ShortcutKeys.disableWhenCLMIsActive",
+                        type = CHECKBOX,
+                    };
+                end
+
+                return nil;
+            end);
+
+            return setting;
+        end)(),
+        {
+            ID = "ShortcutKeys.showLegend",
+            type = CHECKBOX,
+        },
+        (function ()
+            local Options = {
+                DISABLED = "Disable",
+                SHIFT_CLICK = "Shift + Click",
+                ALT_CLICK = "Alt + Click",
+                ALT_SHIFT_CLICK = "Alt + Shift + Click",
+                CTRL_CLICK = "Control + Click",
+                CTRL_SHIFT_CLICK = "Control + Shift + Click",
+                CTRL_ALT_CLICK = "Control + Alt + Click",
+                CTRL_ALT_SHIFT_CLICK = "Control + Alt + Shift + Click",
+            };
+            local Order = {
+                "DISABLED",
+                "SHIFT_CLICK",
+                "ALT_CLICK",
+                "ALT_SHIFT_CLICK",
+                "CTRL_CLICK",
+                "CTRL_SHIFT_CLICK",
+                "CTRL_ALT_CLICK",
+                "CTRL_ALT_SHIFT_CLICK",
+            };
+
+            return {
+                ID = "ShortcutKeys.rollOffOrAuction",
+                type = DROPDOWN,
+                Options = Options,
+                Order = Order,
+                description = (L.SETTINGS_SHORTCUT_KEYS_ROLL_OFF_OR_AUCTION_DESCRIPTION):format(GL:colorize(GL.Data.DefaultSettings.ShortcutKeys.rollOffOrAuction, "A79EFF")),
+            },
+            {
+                ID = "ShortcutKeys.award",
+                type = DROPDOWN,
+                Options = Options,
+                Order = Order,
+                description = (L.SETTINGS_SHORTCUT_KEYS_AWARD_DESCRIPTION):format(GL:colorize(GL.Data.DefaultSettings.ShortcutKeys.award, "A79EFF")),
+            },
+            {
+                ID = "ShortcutKeys.disenchant",
+                type = DROPDOWN,
+                Options = Options,
+                Order = Order,
+                description = (L.SETTINGS_SHORTCUT_KEYS_DISENCHANT_DESCRIPTION):format(GL:colorize(GL.Data.DefaultSettings.ShortcutKeys.disenchant, "A79EFF")),
+            },
+            {
+                ID = "ShortcutKeys.rollOff",
+                type = DROPDOWN,
+                Options = Options,
+                Order = Order,
+                description = (L.SETTINGS_SHORTCUT_KEYS_ROLL_OFF_DESCRIPTION):format(GL:colorize(GL.Data.DefaultSettings.ShortcutKeys.rollOff, "A79EFF")),
+            },
+            {
+                ID = "ShortcutKeys.auction",
+                type = DROPDOWN,
+                Options = Options,
+                Order = Order,
+                description = (L.SETTINGS_SHORTCUT_KEYS_AUCTION_DESCRIPTION):format(GL:colorize(GL.Data.DefaultSettings.ShortcutKeys.auction, "A79EFF")),
+            };
+        end)()
     },
 };
 
@@ -1691,8 +1833,8 @@ function Settings:buildFrameForSetting(Parent, Details)
         end
 
     elseif (Details.type == DROPDOWN) then
-        label = self:getLabel(settingID);
-        description = self:getDescription(settingID);
+        label = Details.label or self:getLabel(settingID);
+        description = Details.description or self:getDescription(settingID);
 
         ---@type string
         local tooltip = description and ("|c00FFFFFF%s|r\n\n%s"):format(label, description) or nil;

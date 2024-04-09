@@ -1312,7 +1312,7 @@ Available values:
 @TIME]];
 
 L.SETTINGS_SECTION_LOOT_TRADE_TIMERS_EXPLANATION = [[
-Show timers When obtaining BoP loot that has time left to trade.
+Show timers when obtaining BoP loot that has time left to trade.
 You can even use these bars to directly roll out or award loot:
 
 ${roll} to roll/auction and ${award} to award loot
@@ -1375,7 +1375,12 @@ Use this setting to bypass that restriction]];
 L.SETTINGS_MASTER_LOOTING_APPLY_MASTER_LOOTING_THRESHOLD_LABEL = "Apply threshold";
 
 L.SETTINGS_SUBSECTION_MASTER_LOOTING = "Master Looting";
-L.SETTINGS_SUBSECTION_ROLLING_LOOT = "Rolling Loot";
+L.SETTINGS_SUBSECTION_ROLLING_LOOT = "Rolling Out Loot";
+L.SETTINGS_SECTION_ROLLING_LOOT_EXPLANATION = [[
+To roll out loot and start tracking rolls, you can %s an item
+in your inventory, chat, enemy loot window or trade timer bar
+]];
+
 L.SETTINGS_MASTER_LOOTING_AUTO_OPEN_MASTER_LOOTER_DIALOG_LABEL = "Master Looter Popup";
 L.SETTINGS_MASTER_LOOTING_AUTO_OPEN_MASTER_LOOTER_DIALOG_DESCRIPTION = [[
 Enable the master looter window which automatically pops up when you are given the role of master looter.
@@ -1404,6 +1409,84 @@ L.SETTINGS_ROLL_TRACKING_TRACK_ALL_DESCRIPTION = "By default Gargul only tracks 
 L.SETTINGS_ROLL_TRACKING_SORT_BY_SOFT_RES_LABEL = "Sort rolls by SoftRes status";
 L.SETTINGS_ROLL_TRACKING_SORT_BY_TMBWISHLIST_LABEL = "Sort rolls by TMB wishlist status";
 L.SETTINGS_ROLL_TRACKING_SORT_BY_TMBPRIO_LABEL = "Sort rolls by TMB/DFT prio status";
+
+L.SETTINGS_SUBSECTION_AWARDING_LOOT = "Awarding Loot";
+L.SETTINGS_SECTION_AWARDING_LOOT_EXPLANATION = [[
+Gargul can help with trading loot to the winner and
+posting messages in the appropriate chat channels.
+
+To award items directly without rolling, you can %s an item
+in your inventory, enemy loot window or trade timer bar
+
+Want to see a history of all the loot you awarded? Use |c00A79EFF/gl ah|r!
+]];
+L.SETTINGS_AWARDING_LOOT_AWARD_MESSAGES_ENABLED_LABEL = "Post award messages";
+L.SETTINGS_AWARDING_LOOT_AWARD_MESSAGES_ENABLED_DESCRIPTION = "Gargul will anounce awarded loot in raid/party chat";
+L.SETTINGS_AWARDING_LOOT_ANNOUNCE_AWARD_MESSAGES_IN_RW_LABEL = "Use raid warning for awards";
+L.SETTINGS_AWARDING_LOOT_ANNOUNCE_AWARD_MESSAGES_IN_RW_DESCRIPTION = "Announce winners in /rw instead of /ra";
+L.SETTINGS_AWARDING_LOOT_ANNOUNCE_AWARD_MESSAGES_IN_GUILD_CHAT_LABEL = "Announce awards in Guild chat";
+L.SETTINGS_AWARDING_LOOT_ANNOUNCE_AWARD_MESSAGES_IN_GUILD_CHAT_DESCRIPTION = "Announce loot awarded to guildies in your guild chat";
+L.SETTINGS_PACK_MULE_ANNOUNCE_DISENCHANTED_ITEMS_LABEL = "Announce disenchanted loot";
+L.SETTINGS_PACK_MULE_ANNOUNCE_DISENCHANTED_ITEMS_DESCRIPTION = "Post a message whenever loot is marked as disenchanted";
+L.SETTINGS_AWARDING_LOOT_AUTO_ASSIGN_AFTER_AWARDING_AN_ITEM_LABEL = "Auto assign master loot items";
+L.SETTINGS_AWARDING_LOOT_AUTO_ASSIGN_AFTER_AWARDING_AN_ITEM_DESCRIPTION = [[
+Auto assign loot to the winner after awarding it using Gargul
+This only works if the boss loot window is still open and you're the loot master]];
+L.SETTINGS_AWARDING_LOOT_AUTO_TRADE_AFTER_AWARDING_AN_ITEM_LABEL = "Auto trade winner";
+L.SETTINGS_AWARDING_LOOT_AUTO_TRADE_AFTER_AWARDING_AN_ITEM_DESCRIPTION = "If you award loot from your inventory, automatically trade the winner if he's within reach";
+L.SETTINGS_AWARDING_LOOT_SKIP_AWARD_CONFIRMATION_DIALOG_LABEL = "Skip award confirmation dialog";
+L.SETTINGS_AWARDING_LOOT_SKIP_AWARD_CONFIRMATION_DIALOG_DESCRIPTION = [[
+When awarding loot to a player, Gargul will ask if you're certain.
+Enabling this setting will bypass that confirmation and immediately award the loot
+]];
+L.SETTINGS_AWARDING_LOOT_AUTO_TRADE_DISENCHANTER_LABEL = "Auto trade disenchanter";
+L.SETTINGS_AWARDING_LOOT_AUTO_TRADE_DISENCHANTER_DESCRIPTION = [[
+Automatically trade the disenchanter after marking loot as disenchanted.
+This only works if the disenchanter is in range]];
+L.SETTINGS_AWARDING_LOOT_AUTO_TRADE_IN_COMBAT_LABEL = "Auto trade during combat";
+
+L.SETTINGS_SUBSECTION_HOTKEYS = "Item Hotkeys";
+L.SETTINGS_SUBSECTION_HOTKEYS_EXPLANATION = [[
+These item hotkeys can be used on a lot of elements. Some examples:
+
+- On items in your bags
+- On item links in chat
+- On items in Gargul, like the loot trade timers
+- On items in other add-ons like AtlasLoot
+
+Item Hotkeys are disabled when the auction house, mail, shop or bank windows are active!
+]];
+L.SETTINGS_SUBSECTION_HOTKEYS_TAGS = "key shortcut click";
+L.SETTINGS_SHORTCUT_KEYS_SHOW_LEGEND_LABEL = "Shortcut Keys reminder";
+L.SETTINGS_SHORTCUT_KEYS_SHOW_LEGEND_DESCRIPTION = "Show a reminder when looting an enemy that shows all available hotkeys";
+L.SETTINGS_SHORTCUT_KEYS_DOUBLE_CLICK_TO_TRADE_LABEL = "Double click to trade";
+L.SETTINGS_SHORTCUT_KEYS_DOUBLE_CLICK_TO_TRADE_DESCRIPTION = [[
+When double clicking loot trade timers for example, attempt to trade with your current target
+or add the item to an active trade window (will not work from bags)]];
+L.SETTINGS_SHORTCUT_KEYS_ONLY_IN_GROUP_LABEL = "Hotkeys should only work when I'm in a group";
+L.SETTINGS_SHORTCUT_KEYS_DISABLE_WHEN_CLMIS_ACTIVE_LABEL = "Disable when CLM raid is active";
+
+L.SETTINGS_SHORTCUT_KEYS_ROLL_OFF_OR_AUCTION_LABEL = "Roll out or auction off an item";
+L.SETTINGS_SHORTCUT_KEYS_ROLL_OFF_OR_AUCTION_DESCRIPTION = [[
+If you're not using GDKP then this will open the roll window.
+If you have an active GDKP session then this will open the auction window.
+
+Default: %s
+]];
+L.SETTINGS_SHORTCUT_KEYS_AWARD_LABEL = "Award an item without rolling";
+L.SETTINGS_SHORTCUT_KEYS_AWARD_DESCRIPTION = "Default: %s";
+L.SETTINGS_SHORTCUT_KEYS_DISENCHANT_LABEL = "Mark an item for disenchanting";
+L.SETTINGS_SHORTCUT_KEYS_DISENCHANT_DESCRIPTION = "Default: %s";
+L.SETTINGS_SHORTCUT_KEYS_ROLL_OFF_LABEL = "Dedicated hotkey for rolling";
+L.SETTINGS_SHORTCUT_KEYS_ROLL_OFF_DESCRIPTION = [[
+This is only useful if you want to roll out and auction items in the same raid
+
+Default: %s]];
+L.SETTINGS_SHORTCUT_KEYS_AUCTION_LABEL = "Dedicated hotkey for auctioning";
+L.SETTINGS_SHORTCUT_KEYS_AUCTION_DESCRIPTION = [[
+This is only useful if you want to roll out and auction items in the same raid
+
+Default: %s]];
 
 L.DEMO = "Demo";
 
