@@ -1,11 +1,22 @@
 ## Interface: 100206
 ## Interface-Wrath: 30403
-## Interface-Classic: 11501
+## Interface-Classic: 11502
 ## Interface-Cata: 40400
 ## Title: Gargul |c00967FD2@project-version@|r
-## Author: Zhorax - Firemaw
+## Title-deDE: Gargul |c00967FD2@project-version@|r
+## Title-esES: Gargul |c00967FD2@project-version@|r
+## Title-esMX: Gargul |c00967FD2@project-version@|r
+## Title-frFR: Gargul |c00967FD2@project-version@|r
+## Title-itIT: Gargul |c00967FD2@project-version@|r
+## Title-koKR: Gargul |c00967FD2@project-version@|r
+## Title-ptBR: Gargul |c00967FD2@project-version@|r
+## Title-ruRU: Gargul |c00967FD2@project-version@|r
+## Title-zhCN: Gargul |c00967FD2@project-version@|r
+## Title-zhTW: Gargul |c00967FD2@project-version@|r
 ## Notes: Loot addon that supports GDKP, softres sr, thatsmybis tmb, auto looting, plus one tracking and much more
-## Version: 7.4.3
+## IconTexture: Interface\AddOns\Gargul\Assets\Buttons\minimap
+## Author: Zhorax - Firemaw
+## Version: 7.4.4
 ## DefaultState: enabled
 ## SavedVariables: GargulDB
 ## X-Donate: https://www.patreon.com/gargul
