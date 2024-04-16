@@ -528,7 +528,7 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, brCost, g
         awardedBy = GL.User.fqn,
         timestamp = timestamp,
         softresID = GL.DB:get("SoftRes.MetaData.id"),
-        received = GL:iEquals(winner, GL.User.name),
+        received = GL:iEquals(winner, GL.User.name) or GL:iEquals(winner, GL.User.fqn),
         BRCost = tonumber(brCost),
         GDKPCost = tonumber(gdkpCost),
         GDKPSession = GL.GDKP.Session:activeSessionID() or nil,
