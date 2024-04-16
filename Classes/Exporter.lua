@@ -318,6 +318,16 @@ end
 ---
 ---@return string
 function Exporter:transformEntriesToTMBFormat(Entries)
+    local ItemIDConversions = {
+        [18423] = 18422, -- Head of Onyxia
+        [19003] = 19002, -- Head of Nefarian
+        [32386] = 32385, -- Magtheridon's Head
+        [43959] = 44083, -- Reins of the Grand Black War Mammoth
+        [209693] = 211452, -- Perfect Blackfathom Pearl
+        [217350] = 217351, -- Thermaplugg's Engineering Notes
+        [221346] = 221363, -- Scapula of the Fallen Avatar
+    };
+
     local exportFormat = GL.Settings:get("ExportingLoot.format");
     local exportString = "dateTime,character,itemID,offspec,id";
 
@@ -330,7 +340,7 @@ function Exporter:transformEntriesToTMBFormat(Entries)
                 stripRealm = exportFormat == Constants.ExportFormats.TMB,
                 forceRealm = exportFormat == Constants.ExportFormats.TMBWithRealm
             },
-            AwardEntry.itemID,
+            ItemIDConversions[AwardEntry.itemID] and ItemIDConversions[AwardEntry.itemID] or AwardEntry.itemID, -- Convert specific item IDs for TMB compatibility
             AwardEntry.OS,
             AwardEntry.checksum
         );
