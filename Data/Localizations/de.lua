@@ -524,7 +524,7 @@ Du kannst Gold für gesperrte/gelöschte Sitzungen nicht anpassen]];
 L.GDKP_OVERVIEW_ADJUST_GOLD_TOOLTIP = "Gold hinzufügen/entfernen";
 L.GDKP_OVERVIEW_AUCTION_ENTRY = [[
 %s hat |c00%s%s bezahlt für
-%S]]; -- Player paid 5000g for [Benediction]
+%s]]; -- Player paid 5000g for [Benediction]
 L.GDKP_OVERVIEW_DELETED_ENTRY = [[
 |c00be3333Gelöscht von %s
 Gründe dafür]];
