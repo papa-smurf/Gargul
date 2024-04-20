@@ -1062,6 +1062,10 @@ function BoostedRolls:receiveUpdate(CommMessage)
     local updates = CommMessage.content.updates or {};
 
     local importBroadcast = (function (update)
+        if (type(update) ~= "table") then
+            return;
+        end
+
         local playerName = update.playerName or '';
         local aliases = update.aliases or nil;
         local points = update.points or nil;
