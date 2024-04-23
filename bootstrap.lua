@@ -75,6 +75,11 @@ function GL:bootstrap(_, _, addonName)
                     and UnitInParty("player");
             end)
         end
+
+        -- Disable any active GDKP session
+        if (not self.GDKPIsAllowed) then
+            GL.GDKP.Session:clearActive();
+        end
     end);
 end
 
@@ -87,7 +92,6 @@ function GL:_init()
         and not GL:inTable({ "十字軍聖擊", "孤狼", "生命烈焰", "野性痊癒", }, GetRealmName())
     ) then
         self.GDKPIsAllowed = false;
-        GL.GDKP.Session:clearActive();
     end
 
     -- Initialize classes

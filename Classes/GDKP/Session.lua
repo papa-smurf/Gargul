@@ -50,6 +50,10 @@ function Session:_init()
     GDKPAuction = GDKP.Auction;
     self._initialized = true;
 
+    if (not GL.GDKPIsAllowed) then
+        return;
+    end
+
     -- Make sure trades involving gold are logged
     Events:register("GDKPSessionTradeCompletedListener", "GL.TRADE_COMPLETED", function (_, Details)
         self:registerGoldTrade(Details);
