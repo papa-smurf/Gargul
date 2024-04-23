@@ -617,6 +617,159 @@ GL.Interface.Identity = {
             end;
         end,
     },
+
+    --[[ ================== UNHINGED  ================== ]]
+    ["4120152845-1402702386"] = {
+        id = "unhinged",
+        url = "https://unhinged.gg/",
+        urlInfo = "Visit us to learn more about Unhinged!",
+        tooltip = nil,
+        cutMailSubject = L.CUT_MAIL_SUBJECT,
+
+        ---@return Frame
+        ledger = function()
+            local Identity = GL.Interface.Identity["4120152845-1402702386"];
+
+            ---@type Frame
+            local Window = CreateFrame("Frame", nil, UIParent);
+            Window:SetSize(80, 80);
+            Interface:addTooltip(Window, Identity.tooltip);
+
+            ---@type Texture
+            local Logo = Window:CreateTexture();
+            Logo:SetTexture("Interface/AddOns/Gargul/Assets/Identities/" .. Identity.id);
+            Logo:SetAllPoints();
+
+            Window:SetScript("OnMouseUp", function(_, button)
+                if (button == 'LeftButton') then
+                    GL.Interface.Dialogs.HyperlinkDialog:open{
+                        description = Identity.urlInfo,
+                        hyperlink = Identity.url,
+                    };
+                end
+            end);
+
+            LCG.PixelGlow_Stop(Window);
+            LCG.PixelGlow_Start(Window, {.59, .5, .82, 1}, 26, .02, 5, 2);
+
+            return Window;
+        end,
+
+        ---@return Frame
+        multiAuctionClient = function ()
+            local Identity = GL.Interface.Identity["4120152845-1402702386"];
+
+            ---@type Frame
+            local Window = CreateFrame("Frame", nil, UIParent, "BackdropTemplate");
+            Window:SetSize(110, 110);
+            Window:SetBackdrop(_G.BACKDROP_DARK_DIALOG_32_32);
+            Interface:addTooltip(Window, Identity.tooltip);
+
+            ---@type Texture
+            local Logo = Window:CreateTexture();
+            Logo:SetPoint("CENTER", Window, "CENTER");
+            Logo:SetSize(74, 74);
+            Logo:SetTexture("Interface/AddOns/Gargul/Assets/Identities/" .. Identity.id);
+
+            ---@type FontString
+            local Text = Interface:createFontString(Window, "Unhinged");
+            Text:SetPoint("CENTER", Window, "CENTER");
+            Text:SetPoint("BOTTOM", Window, "BOTTOM", 0, 11);
+            Text:SetFont(1.4, "OUTLINE");
+
+            Window:SetScript("OnMouseUp", function(_, button)
+                if (button == 'LeftButton') then
+                    GL.Interface.Dialogs.HyperlinkDialog:open{
+                        description = Identity.urlInfo,
+                        hyperlink = Identity.url,
+                    };
+                end
+            end);
+
+            return Window;
+        end,
+
+        ---@return Frame, function
+        bidder = function ()
+            local Identity = GL.Interface.Identity["4120152845-1402702386"];
+
+            ---@type Frame
+            local Window = CreateFrame("Frame", nil, UIParent);
+            Window:SetSize(92, 98);
+
+            local Texture = Window:CreateTexture(nil, "BACKGROUND");
+            Texture:SetColorTexture(0, 0, 0, .6);
+            Texture:SetPoint("TOPLEFT", Window, "TOPLEFT", 0, -2);
+            Texture:SetPoint("TOPRIGHT", Window, "TOPRIGHT", 0, -2);
+            Texture:SetPoint("BOTTOMLEFT", Window, "BOTTOMLEFT");
+            Texture:SetPoint("BOTTOMRIGHT", Window, "BOTTOMRIGHT");
+
+            ---@type Texture
+            local Logo = Window:CreateTexture();
+            Logo:SetPoint("CENTER", Window, "CENTER", 0, 2);
+            Logo:SetSize(76, 76);
+            Logo:SetTexture("Interface/AddOns/Gargul/Assets/Identities/" .. Identity.id);
+
+            ---@type FontString
+            local Text = Interface:createFontString(Window, "Unhinged");
+            Text:SetPoint("CENTER", Window, "CENTER");
+            Text:SetPoint("BOTTOM", Window, "BOTTOM", 0, 2);
+            Text:SetFont(1.4, "OUTLINE");
+
+            Interface:addTooltip(Window, Identity.tooltip);
+            Window:SetScript("OnMouseUp", function(_, button)
+                if (button == 'LeftButton') then
+                    GL.Interface.Dialogs.HyperlinkDialog:open{
+                        description = Identity.urlInfo,
+                        hyperlink = Identity.url,
+                    };
+                end
+            end);
+
+            return Window, function (Element, Anchor)
+                Element:SetPoint("TOPRIGHT", Anchor, "TOPLEFT", -6, 2);
+            end;
+        end,
+
+        ---@return Frame, function
+        roller = function ()
+            local Identity = GL.Interface.Identity["4120152845-1402702386"];
+
+            ---@type Frame
+            local Window = CreateFrame("Frame", nil, UIParent);
+            Window:SetSize(48, 48);
+
+            local Texture = Window:CreateTexture(nil, "BACKGROUND");
+            Texture:SetColorTexture(0, 0, 0, .6);
+            Texture:SetAllPoints(Window);
+
+            ---@type Texture
+            local Logo = Window:CreateTexture();
+            Logo:SetPoint("CENTER", Window, "CENTER");
+            Logo:SetSize(44, 44);
+            Logo:SetTexture("Interface/AddOns/Gargul/Assets/Identities/" .. Identity.id);
+
+            ---@type FontString
+            local Text = Interface:createFontString(Window, "Unhinged");
+            Text:SetPoint("CENTER", Window, "CENTER");
+            Text:SetPoint("BOTTOM", Window, "BOTTOM", 1, -4);
+            Text:SetFont(1.2, "OUTLINE");
+
+            Interface:addTooltip(Window, Identity.tooltip);
+            Window:SetScript("OnMouseUp", function(_, button)
+                if (button == 'LeftButton') then
+                    GL.Interface.Dialogs.HyperlinkDialog:open{
+                        description = Identity.urlInfo,
+                        hyperlink = Identity.url,
+                    };
+                end
+            end);
+
+            return Window, function (Element, Anchor)
+                Element:SetPoint("TOPRIGHT", Anchor, "TOPLEFT", -4, 0);
+            end;
+        end,
+    },
 };
 local Identity = GL.Interface.Identity;
 
@@ -648,6 +801,9 @@ Identity["2644832658-2651387317"] = Identity["54402906-2451533554"];
 Identity["1890643919-4143577729"] = Identity["2118133100-1868759167"];
 Identity["3628029066-969996875"] = Identity["2118133100-1868759167"];
 
+--[[ UNHINGED ]]
+Identity["524810767-3114103717"] = Identity["4120152845-1402702386"];
+Identity["2261728042-2605682897"] = Identity["4120152845-1402702386"];
 
 ---@param identifier string
 ---

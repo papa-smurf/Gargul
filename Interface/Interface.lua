@@ -301,6 +301,71 @@ function Interface:inputBox(Parent, name, placeholder)
     return Input;
 end
 
+---@param Parent Frame
+---@param name? string
+---@param width? number
+---@param height? number
+---
+---@return ScrollFrame
+function Interface:textArea(Parent, name, width, height)
+    if (name ~= nil or type(Parent) ~= "table") then
+        GL:error("Pass a table instead of multiple arguments");
+        return false;
+    end
+
+    name = Parent.name;
+    width = Parent.width;
+    height = Parent.height;
+    Parent = Parent.Parent;
+
+    local ScrollFrame = CreateFrame("ScrollFrame", nil, Parent, "UIPanelScrollFrameTemplate")
+    ScrollFrame:SetPoint("LEFT", Parent, "LEFT", 30, 0);
+    ScrollFrame:SetPoint("RIGHT", Parent, "RIGHT", -60, 0);
+
+    ScrollFrame:SetHeight(height or 200);
+
+    if (width) then
+        ScrollFrame:SetWidth(height or 200);
+    end
+
+    local Background = CreateFrame("Frame", nil, Parent, "BackdropTemplate");
+    Background:SetBackdrop({
+        bgFile = "Interface/Tooltips/UI-Tooltip-Background",
+        edgeFile = "Interface/Tooltips/UI-Tooltip-Border",
+        edgeSize = 16,
+        insets = { left = 4, right = 3, top = 4, bottom = 3 },
+    });
+    Background:SetBackdropColor(0, 0, 0);
+    Background:SetBackdropBorderColor(0.4, 0.4, 0.4);
+    Background:SetPoint("TOPLEFT", ScrollFrame, "TOPLEFT", -10, 10);
+    Background:SetPoint("BOTTOMRIGHT", ScrollFrame, "BOTTOMRIGHT", 2, -10);
+
+    local TextArea = CreateFrame("EditBox", nil, ScrollFrame);
+    TextArea:SetAutoFocus(false);
+    TextArea:SetFontObject(ChatFontNormal);
+    TextArea:SetMultiLine(true);
+    TextArea:SetWidth(ScrollFrame:GetWidth());
+    TextArea:SetPoint("LEFT", ScrollFrame, "LEFT", 50, 0);
+
+    TextArea:SetScript("OnEscapePressed", function(self)
+        self:ClearFocus();
+    end)
+
+    ScrollFrame:SetScript("OnMouseUp", function ()
+        TextArea:SetFocus()
+    end);
+
+    ScrollFrame:SetScrollChild(TextArea)
+
+    ScrollFrame:SetScript("OnSizeChanged", function ()
+        TextArea:SetWidth(ScrollFrame:GetWidth())
+    end);
+
+    ScrollFrame.GetText = TextArea.GetText;
+
+    return ScrollFrame;
+end
+
 --- Besides static string value we also support closures with an optional "updateOn" value
 --- You can use this to automatically update a string whenever an event is fired for example
 ---
@@ -634,7 +699,7 @@ function Interface:createWindow(
     Parent
 )
     if (width ~= nil or type(name) ~= "table") then
-        GL:error("Pass a table instead of multiple arguments")
+        GL:error("Pass a table instead of multiple arguments");
         return false;
     end
 
@@ -795,7 +860,7 @@ end
 ---@return CheckButton
 function Interface:createCheckbox(Parent, name, checked, label, tooltip, callback)
     if (name ~= nil or type(Parent) ~= "table") then
-        GL:error("Pass a table instead of multiple arguments")
+        GL:error("Pass a table instead of multiple arguments");
         return false;
     end
 
@@ -854,7 +919,7 @@ end
 ---@return Frame
 function Interface:createSlider(Parent, name, min, max, step, value, callback, width, height)
     if (name ~= nil or type(Parent) ~= "table") then
-        GL:error("Pass a table instead of multiple arguments")
+        GL:error("Pass a table instead of multiple arguments");
         return false;
     end
 
@@ -962,7 +1027,7 @@ end
 ---@return Frame
 function Interface:createDropdown(Parent, name, value, Options, sorter, callback)
     if (name ~= nil or type(Parent) ~= "table") then
-        GL:error("Pass a table instead of multiple arguments")
+        GL:error("Pass a table instead of multiple arguments");
         return false;
     end
 

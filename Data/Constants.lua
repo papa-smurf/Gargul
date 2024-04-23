@@ -200,7 +200,7 @@ GL.Data.Constants = {
         },
         Legendary = {
             "JoeExoToxiC",
-            "Steel-Whitemane",
+            "Grolol",
         },
     },
 
@@ -303,6 +303,15 @@ GL.Data.Constants = {
         19722, -- Primal Hakkari Tabard
         19723, -- Primal Hakkari Kossack
         19724, -- Primal Hakkari Aegis
+
+        20926, -- Vek'nilash's Circlet
+        20927, -- Ouro's Intact Hide
+        20928, -- Qiraji Bindings of Command
+        20929, -- Carapace of the Old God
+        20930, -- Vek'lor's Diadem
+        20931, -- Skin of the Great Sandworm
+        20932, -- Qiraji Bindings of Dominance
+        20933, -- Husk of the Old God
 
         --750, -- Tough wolf meat (For testing purposes)
     },
