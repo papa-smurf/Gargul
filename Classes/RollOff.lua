@@ -267,7 +267,7 @@ function RollOff:announceStop()
     -- We stop listening for rolls one second after the rolloff ends just in case there is server lag/jitter
     self.StopListeningForRollsTimer = GL.Ace:ScheduleTimer(function()
         self:stopListeningForRolls();
-    end, 1);
+    end, GL.Settings:get("RollTracking.rollOffEndLeeway", 1));
 end
 
 --- Start a roll off
@@ -450,7 +450,7 @@ function RollOff:stop(CommMessage)
         -- We stop listening for rolls one second after the rolloff ends just in case there is server lag/jitter
         self.rollListenerCancelTimerId = GL.Ace:ScheduleTimer(function()
             self:stopListeningForRolls();
-        end, 1);
+        end, GL.Settings:get("RollTracking.rollOffEndLeeway", 1));
     end
 
     if (self.InitiateCountDownTimer) then

@@ -137,6 +137,7 @@ GL.Data.DefaultSettings = {
         scale = 1,
     },
     RollTracking = {
+        rollOffEndLeeway = 1,
         sortBySoftRes = true,
         sortByTMBWishlist = true,
         sortByTMBPrio = true,

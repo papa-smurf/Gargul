@@ -13,7 +13,7 @@
 ## Title-ruRU: Gargul |c00967FD2@project-version@|r
 ## Title-zhCN: Gargul |c00967FD2@project-version@|r
 ## Title-zhTW: Gargul |c00967FD2@project-version@|r
-## Notes: Loot addon that supports GDKP, softres sr, thatsmybis tmb, auto looting, plus one tracking and much more
+## Notes: Loot addon that supports GDKP, softres sr, thatsmybis tmb, auto looting, +1 tracking and much more
 ## IconTexture: Interface\AddOns\Gargul\Assets\Buttons\minimap
 ## Author: Zhorax - Firemaw
 ## Version: 7.4.7

@@ -36,6 +36,27 @@ function RollTracking:draw(Parent, Window)
 
     Overview:drawCheckboxes(Checkboxes, Parent);
 
+    local HorizontalSpacer = GL.AceGUI:Create("SimpleGroup");
+    HorizontalSpacer:SetLayout("FILL");
+    HorizontalSpacer:SetFullWidth(true);
+    HorizontalSpacer:SetHeight(20);
+    Parent:AddChild(HorizontalSpacer);
+
+    local NumberOfSecondsToCountdown = GL.AceGUI:Create("Slider");
+    NumberOfSecondsToCountdown:SetLabel("Accept rolls till how long after a rolloff ends?");
+    NumberOfSecondsToCountdown.label:SetTextColor(1, .95686, .40784);
+    NumberOfSecondsToCountdown:SetFullWidth(true);
+    NumberOfSecondsToCountdown:SetValue(GL.Settings:get("RollTracking.rollOffEndLeeway", 1));
+    NumberOfSecondsToCountdown:SetSliderValues(1, 20, 1);
+    NumberOfSecondsToCountdown:SetCallback("OnValueChanged", function(Slider)
+        local value = math.floor(tonumber(Slider:GetValue()));
+
+        if (value >= 1) then
+            GL.Settings:set("RollTracking.rollOffEndLeeway", value);
+        end
+    end);
+    Parent:AddChild(NumberOfSecondsToCountdown);
+
     local StatusMessageLabel;
     self.onClose = function()
         local TempNewRollSettings = GL.Settings:get("RollTracking.Brackets");
