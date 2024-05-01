@@ -399,8 +399,11 @@ function Exporter:close()
     Window:Hide();
 
     -- Clean up the Dates table separately
-    GL.Interface:get(self, "Table.Dates"):SetData({}, true);
-    GL.Interface:get(self, "Table.Dates"):Hide();
+    local Dates = GL.Interface:get(self, "Table.Dates");
+    if (Dates) then
+        GL.Interface:get(self, "Table.Dates"):SetData({}, true);
+        GL.Interface:get(self, "Table.Dates"):Hide();
+    end
 end
 
 --- Draw the dates table shown on the left hand side of the window
