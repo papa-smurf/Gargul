@@ -827,7 +827,7 @@ function GL:popupMessage(text)
 
         Window.Text = GL.Interface:createFontString(Window);
         Window.Text:SetFont(1.25, "OUTLINE");
-        Window.Text:SetJustifyH("MIDDLE");
+        Window.Text:SetJustifyH("CENTER");
         Window.Text:SetPoint("CENTER", Window, "CENTER");
         Window.Text:SetPoint("BOTTOM", Window, "BOTTOM", 0, 60);
 

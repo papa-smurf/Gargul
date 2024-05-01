@@ -69,7 +69,7 @@ function Importer:draw(source)
         MoreInfoLabel:SetText(("|c00FFF569%s|r"):format(L.TMB_IMPORT_TMB_GARGUL_INFO));
         MoreInfoLabel:SetFontObject(_G["GameFontGreenLarge"]);
         MoreInfoLabel:SetFullWidth(true);
-        MoreInfoLabel:SetJustifyH("MIDDLE");
+        MoreInfoLabel:SetJustifyH("CENTER");
         Window:AddChild(MoreInfoLabel);
 
         local DiscordURL = GL.AceGUI:Create("EditBox");

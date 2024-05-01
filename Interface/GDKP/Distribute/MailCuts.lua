@@ -191,7 +191,7 @@ function MailCuts:build()
     local Intro = Interface:createFontString(Window, L.MAIL_CUTS_EXPLANATION);
     Intro:SetPoint("TOPLEFT", Window, "TOPLEFT", 20, -24);
     Intro:SetPoint("TOPRIGHT", Window, "TOPRIGHT", -20, 0);
-    Intro:SetJustifyH("MIDDLE");
+    Intro:SetJustifyH("CENTER");
 
     --[[ SCROLLFRAME BOILERPLATE ]]
     ---@type ScrollFrame

@@ -71,7 +71,7 @@ function BonusFeatures:build()
     local Intro = Interface:createFontString(Window, L.BONUS_FEATURE_EXPLANATION);
     Intro:SetPoint("TOPLEFT", Window, "TOPLEFT", 20, -30);
     Intro:SetPoint("TOPRIGHT", Window, "TOPRIGHT", -20, 0);
-    Intro:SetJustifyH("MIDDLE");
+    Intro:SetJustifyH("CENTER");
 
     --[[ GROUP MANAGER ]]
     ---@type FontString

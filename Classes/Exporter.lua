@@ -68,7 +68,7 @@ function Exporter:draw()
     --[[ DON'T EDIT STOOPID! ]]
     local DontEditNotification = AceGUI:Create("Label");
     DontEditNotification:SetFullWidth(true);
-    DontEditNotification:SetJustifyH("MIDDLE");
+    DontEditNotification:SetJustifyH("CENTER");
     DontEditNotification:SetText(("|c00FF0000%s|r"):format(L.EXPORT_READ_ONLY_NOTICE));
     Window:AddChild(DontEditNotification);
 

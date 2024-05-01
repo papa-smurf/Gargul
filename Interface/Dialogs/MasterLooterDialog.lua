@@ -78,6 +78,8 @@ end
 --- Announce the use of Gargul to the rest of the raid
 ---
 ---@return void
+---
+--- /script _G.Gargul.Interface.MasterLooterDialog:flightAttendant();
 function MasterLooterDialog:flightAttendant()
     local function announce()
         local message = L.CHAT.FLIGHT_ATTENDANT;
