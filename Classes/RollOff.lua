@@ -541,6 +541,11 @@ function RollOff:award(roller, itemLink, RollBracket, identicalRollDetected)
                 RollBracket = RollBracket,
             };
 
+            -- Add a +1 if that's expected for this roll bracket
+            if (addPlusOne) then
+                GL.PlusOnes:addPlusOnes(roller);
+            end
+
             if (GL.Settings:get("UI.RollOff.closeOnAward")) then
                 GL.MasterLooterUI:close();
             end
