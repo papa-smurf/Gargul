@@ -2010,13 +2010,11 @@ end
 ---@param includeItemRefTooltip boolean
 ---@return any
 function GL:onTooltipSetItem(Callback, includeItemRefTooltip)
-    GL:debug("GL:onTooltipSetItem");
-
     includeItemRefTooltip = includeItemRefTooltip ~= false;
     includeItemRefTooltip = GL:toboolean(includeItemRefTooltip);
 
     -- Support native GameToolTip
-    if (TooltipDataProcessor) then
+    if (C_TooltipInfo and TooltipDataProcessor) then
         return TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Item, function (Tooltip)
             return Callback(Tooltip);
         end);
