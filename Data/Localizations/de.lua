@@ -196,7 +196,7 @@ L.GDKP_AUCTION_DETAILS_GOLD_ADDED = [[
 Anmerkungen]];
 L.GDKP_AUCTION_DETAILS_GOLD_PAID_BY = [[
 %s hat |c00%s%sg dafür bezahlt
-%S]];
+%s]];
 L.GDKP_AUCTION_DETAILS_WON_BY = "Gewonnen von";
 L.GDKP_AUCTION_PAID_AMOUNT = "Bezahlten Betrag festlegen (siehe links)";
 L.GDKP_AUCTION_PAID_AMOUNT_INFO = [[
@@ -596,7 +596,7 @@ Gegeben: %s
 Empfangen: %s
 Spieleranteil: %s
 
-%S
+%s
 ]];
 L.GDKP_TRADE_EXCLUDE_GOLD = "Aus GDKP ausschließen";
 L.GDKP_TRADE_EXCLUDE_GOLD_INFO = "Das gehandelte Gold wird nicht zum gegebenen oder erhaltenen Betrag addiert";

@@ -196,7 +196,7 @@ L.GDKP_AUCTION_DETAILS_GOLD_ADDED = [[
 Appunti]];
 L.GDKP_AUCTION_DETAILS_GOLD_PAID_BY = [[
 %s pagato |c00%s%sg per
-%S]];
+%s]];
 L.GDKP_AUCTION_DETAILS_WON_BY = "Vinto da";
 L.GDKP_AUCTION_PAID_AMOUNT = "Imposta l'importo pagato (leggi a sinistra)";
 L.GDKP_AUCTION_PAID_AMOUNT_INFO = [[
@@ -525,7 +525,7 @@ Non è possibile modificare l'oro nelle sessioni bloccate/eliminate]];
 L.GDKP_OVERVIEW_ADJUST_GOLD_TOOLTIP = "Aggiungi/Rimuovi oro";
 L.GDKP_OVERVIEW_AUCTION_ENTRY = [[
 %s pagato |c00%s%s per
-%S]]; -- Player paid 5000g for [Benediction]
+%s]]; -- Player paid 5000g for [Benediction]
 L.GDKP_OVERVIEW_DELETED_ENTRY = [[
 |c00be3333Eliminato da %s
 Motivi]];
@@ -597,7 +597,7 @@ Dati: %s
 Ricevuto: %s
 Taglio del giocatore: %s
 
-%S
+%s
 ]];
 L.GDKP_TRADE_EXCLUDE_GOLD = "Escludi dal GDKP";
 L.GDKP_TRADE_EXCLUDE_GOLD_INFO = "L'oro scambiato non verrà aggiunto all'importo dato o ricevuto";
