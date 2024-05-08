@@ -101,10 +101,11 @@ function ExportingLoot:draw(Parent)
         [3] = "DFT-Fight-Club (EU date format)",
         [4] = "Custom (create your own format)",
         [5] = "Thatsmybis TMB with player realm",
+        [6] = "Detailed (JSON)",
     };
 
     local ItemOrder = {
-        1, 5, 2, 3, 4,
+        1, 5, 2, 3, 4, 6,
     };
 
     local CustomFormatWrapper;

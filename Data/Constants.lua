@@ -222,6 +222,7 @@ GL.Data.Constants = {
         DFTEU = 3,
         Custom = 4,
         TMBWithRealm = 5,
+        JSON = 6,
     },
 
     SoftReserveSources = {
