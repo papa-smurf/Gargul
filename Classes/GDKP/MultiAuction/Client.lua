@@ -379,7 +379,9 @@ function Client:isBidValidForAuction(auctionID, bid)
     end
 
     local currentBid = GL:tableGet(Auction, "CurrentBid.amount", 0);
-    return (GL:e(currentBid, 0) and GL:gte(bid, Auction.minimum)) or GL:gte(bid, currentBid + Auction.increment);
+    local hasCurrentBid = not GL:e(currentBid, 0);
+
+    return (not hasCurrentBid and GL:gte(bid, Auction.minimum)) or (hasCurrentBid and GL:gte(bid, currentBid + Auction.increment));
 end
 
 --- Return the minimum bid for the give auction
