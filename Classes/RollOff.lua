@@ -546,6 +546,13 @@ function RollOff:award(roller, itemLink, RollBracket, identicalRollDetected)
                 GL.PlusOnes:addPlusOnes(roller);
             end
 
+            -- Deduct Boosted Roll points if needed
+            BRCost = tonumber(BRCost);
+            if (BRCost and GL:gt(BRCost, 0)) then
+                GL.BoostedRolls:modifyPoints(roller, -BRCost);
+                GL.Interface.BoostedRolls.Overview:refreshTable();
+            end
+
             if (GL.Settings:get("UI.RollOff.closeOnAward")) then
                 GL.MasterLooterUI:close();
             end

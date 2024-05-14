@@ -66,7 +66,7 @@ end
 ---@param playerName string
 ---@return string
 function BoostedRolls:normalizedName(playerName)
-    local normalizedName = string.lower(GL:addRealm(playerName));
+    local normalizedName = strlower(GL:addRealm(playerName));
 
     --- Follow alias table if present
     return GL.DB:get("BoostedRolls.Aliases." .. normalizedName, normalizedName);
@@ -603,8 +603,8 @@ function BoostedRolls:addMissingRaiders()
 
     -- Not in a group, add the current player
     if (not GL.User.isInGroup) then
-        if (not self:hasPoints(GL.User.fqn)) then
-            DB:set("BoostedRolls.Points." .. GL.User.fqn, default);
+        if (not self:hasPoints(BoostedRolls:myGUID())) then
+            DB:set("BoostedRolls.Points." .. BoostedRolls:myGUID(), default);
         end
 
     -- Go through everyone in the raid
@@ -933,6 +933,7 @@ function BoostedRolls:addPoints(playerName, points)
         return;
     end
 
+    playerName = self:normalizedName(playerName);
     local currentPoints = self:getPoints(playerName) or 0;
 
     self:queueUpdate(playerName, currentPoints + points);
@@ -947,6 +948,7 @@ function BoostedRolls:subtractPoints(playerName, points)
         return;
     end
 
+    playerName = self:normalizedName(playerName);
     local currentPoints = self:getPoints(playerName) or 0;
 
     self:queueUpdate(playerName, currentPoints - points);

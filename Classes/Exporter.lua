@@ -175,15 +175,22 @@ end
 ---
 ---@return void
 function Exporter:refreshExportString()
-    local LootEntries = self:getLootEntries();
     local exportFormat = GL.Settings:get("ExportingLoot.format");
 
-    if (GL:inTable({ Constants.ExportFormats.TMB, Constants.ExportFormats.TMBWithRealm }, exportFormat)) then
-        local exportString = self:transformEntriesToTMBFormat(LootEntries);
+    if (exportFormat == Constants.ExportFormats.JSON) then
+        local exportString = GL.JSON:encode(self:getLootEntries(true));
         GL.Interface:get(self, "MultiLineEditBox.Export"):SetText(exportString);
 
-    elseif (exportFormat == Constants.ExportFormats.Custom) then
+        return;
+    end
+
+    local LootEntries = self:getLootEntries();
+    if (exportFormat == Constants.ExportFormats.Custom) then
         local exportString = self:transformEntriesToCustomFormat(LootEntries);
+        GL.Interface:get(self, "MultiLineEditBox.Export"):SetText(exportString);
+
+    elseif (GL:inTable({ Constants.ExportFormats.TMB, Constants.ExportFormats.TMBWithRealm }, exportFormat)) then
+        local exportString = self:transformEntriesToTMBFormat(LootEntries);
         GL.Interface:get(self, "MultiLineEditBox.Export"):SetText(exportString);
 
     elseif (GL:inTable({ Constants.ExportFormats.DFTUS, Constants.ExportFormats.DFTEU }, exportFormat)) then
@@ -194,48 +201,55 @@ end
 --- Fetch export entries (either all or for the selected date)
 ---
 ---@return table
-function Exporter:getLootEntries()
+function Exporter:getLootEntries(raw)
     local Entries = {};
+    raw = raw == true;
 
     for _, AwardEntry in pairs(DB:get("AwardHistory")) do
-        local concernsDisenchantedItem = AwardEntry.awardedTo == self.disenchantedItemIdentifier;
-        local dateString = date(L.DATE_FORMAT, AwardEntry.timestamp);
+        (function()
+            local concernsDisenchantedItem = AwardEntry.awardedTo == self.disenchantedItemIdentifier;
+            local dateString = date(L.DATE_FORMAT, AwardEntry.timestamp);
+            if (
+                (not concernsDisenchantedItem or GL.Settings:get("ExportingLoot.includeDisenchantedItems"))
+                and (not AwardEntry.OS or GL.Settings:get("ExportingLoot.includeOffspecItems"))
+                and (not self.dateSelected or dateString == self.dateSelected)
+                and not GL:empty(AwardEntry.timestamp)
+                and not GL:empty(AwardEntry.itemLink)
+                and not GL:empty(AwardEntry.awardedTo)
+            ) then
+                if (raw) then
+                    tinsert(Entries, AwardEntry);
+                    return;
+                end
 
-        if (
-            (not concernsDisenchantedItem or GL.Settings:get("ExportingLoot.includeDisenchantedItems"))
-            and (not AwardEntry.OS or GL.Settings:get("ExportingLoot.includeOffspecItems"))
-            and (not self.dateSelected or dateString == self.dateSelected)
-            and not GL:empty(AwardEntry.timestamp)
-            and not GL:empty(AwardEntry.itemLink)
-            and not GL:empty(AwardEntry.awardedTo)
-        ) then
-            local awardedTo = AwardEntry.awardedTo;
+                local awardedTo = AwardEntry.awardedTo;
 
-            if (concernsDisenchantedItem) then
-                awardedTo = GL.Settings:get("ExportingLoot.disenchanterIdentifier");
+                if (concernsDisenchantedItem) then
+                    awardedTo = GL.Settings:get("ExportingLoot.disenchanterIdentifier");
+                end
+
+                -- Just in case an itemID is not available we will extract it from the item link
+                local itemID = AwardEntry.itemID or GL:getItemIDFromLink(AwardEntry.itemLink);
+
+                local checksum = AwardEntry.checksum; -- Old entries may not possess a checksum yet
+                if (not checksum) then
+                    checksum = GL:strPadRight(GL:strLimit(GL:stringHash(AwardEntry.timestamp .. itemID) .. GL:stringHash(awardedTo), 20, ""), "0", 20);
+                end
+
+                tinsert(Entries, {
+                    timestamp = AwardEntry.timestamp,
+                    awardedTo = awardedTo,
+                    itemID = itemID,
+                    OS = AwardEntry.OS and 1 or 0,
+                    SR = AwardEntry.SR and 1 or 0,
+                    WL = AwardEntry.WL and 1 or 0,
+                    PL = AwardEntry.PL and 1 or 0,
+                    TMB = AwardEntry.TMB and 1 or 0,
+                    winningRollType = AwardEntry.winningRollType or "-",
+                    checksum = checksum,
+                });
             end
-
-            -- Just in case an itemID is not available we will extract it from the item link
-            local itemID = AwardEntry.itemID or GL:getItemIDFromLink(AwardEntry.itemLink);
-
-            local checksum = AwardEntry.checksum; -- Old entries may not possess a checksum yet
-            if (not checksum) then
-                checksum = GL:strPadRight(GL:strLimit(GL:stringHash(AwardEntry.timestamp .. itemID) .. GL:stringHash(awardedTo), 20, ""), "0", 20);
-            end
-
-            tinsert(Entries, {
-                timestamp = AwardEntry.timestamp,
-                awardedTo = awardedTo,
-                itemID = itemID,
-                OS = AwardEntry.OS and 1 or 0,
-                SR = AwardEntry.SR and 1 or 0,
-                WL = AwardEntry.WL and 1 or 0,
-                PL = AwardEntry.PL and 1 or 0,
-                TMB = AwardEntry.TMB and 1 or 0,
-                winningRollType = AwardEntry.winningRollType or "-",
-                checksum = checksum,
-            });
-        end
+        end)();
     end
 
     return Entries;
