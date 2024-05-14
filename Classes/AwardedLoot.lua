@@ -304,22 +304,19 @@ function AwardedLoot:editWinner(checksum, winner, announce)
                 winner,
                 AwardEntry.BRCost
             );
+
         elseif (AwardEntry.GDKPCost and GL:gt(AwardEntry.GDKPCost, 0)) then
             awardMessage = (L.CHAT.ITEM_AWARDED_GDKP):format(
                 AwardEntry.itemLink,
                 winner,
                 GL:goldToMoney(AwardEntry.GDKPCost)
             );
+
         else
             awardMessage = (L.CHAT.ITEM_AWARDED):format(
                 AwardEntry.itemLink,
                 winner
             );
-
-            if (GL.BoostedRolls:enabled()) then
-                --- Make sure the cost is stored as the (new) default item cost
-                GL.Settings:set("BoostedRolls.defaultCost", AwardEntry.BRCost);
-            end
         end
 
         -- Announce awarded item on RAID or RAID_WARNING
@@ -374,13 +371,13 @@ end
 ---@param announce boolean|nil Announce award details in chat
 ---@param date string|nil
 ---@param isOS boolean|nil
----@param brCost number|nil
+---@param BRCost number|nil
 ---@param gdkpCost number|nil
 ---@param automaticallyAwarded boolean|nil Was this awarded automatically via the AwardingLoot.awardOnReceive setting?
 ---@param RollBracket table|nil See DefaultSettings.lua -> RollTracking.Brackets
 ---@param broadcast boolean|nil Broadcast award details to others
 ---@return void|string
-function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, brCost, gdkpCost, Rolls, automaticallyAwarded, RollBracket, broadcast)
+function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, gdkpCost, Rolls, automaticallyAwarded, RollBracket, broadcast)
     if (itemLink ~= nil or type(winner) ~= "table") then
         GL:error("Pass a table instead of multiple arguments")
         return;
@@ -390,7 +387,7 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, brCost, g
     announce = winner.announce;
     date = winner.date;
     isOS = winner.isOS;
-    brCost = winner.brCost;
+    BRCost = winner.BRCost;
     gdkpCost = winner.gdkpCost;
     Rolls = winner.Rolls;
     automaticallyAwarded = winner.automaticallyAwarded;
@@ -451,7 +448,7 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, brCost, g
         return false;
     end
 
-    winner = not isDisenchanted and GL:nameFormat{name = winner, forceRealm = true} or winner;
+    winner = not isDisenchanted and GL:nameFormat{ name = winner, forceRealm = true } or winner;
 
     -- You can set the date for when this item was awarded, handy if you forgot an item for example
     if (dateProvided) then
@@ -529,7 +526,7 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, brCost, g
         timestamp = timestamp,
         softresID = GL.DB:get("SoftRes.MetaData.id"),
         received = GL:iEquals(winner, GL.User.name) or GL:iEquals(winner, GL.User.fqn),
-        BRCost = tonumber(brCost),
+        BRCost = tonumber(BRCost),
         GDKPCost = tonumber(gdkpCost),
         GDKPSession = GL.GDKP.Session:activeSessionID() or nil,
         OS = isOS,
@@ -540,6 +537,11 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, brCost, g
         winningRollType = RollBracket and RollBracket[1],
         Rolls = Rolls or {},
     };
+
+    if (AwardEntry.BRCost and GL:gt(AwardEntry.BRCost, 0)) then
+        --- Make sure the cost is stored as the (new) default item cost
+        GL.Settings:set("BoostedRolls.defaultCost", AwardEntry.BRCost);
+    end
 
     -- Insert the award in the more permanent AwardHistory table (for export / audit purposes)
     DB:set("AwardHistory." .. AwardEntry.checksum, AwardEntry);
@@ -568,28 +570,26 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, brCost, g
 
     if (announce) then
         local awardMessage = "";
-        if (GL.BoostedRolls:enabled() and GL:higherThanZero(brCost)) then
+        if (GL.BoostedRolls:enabled() and GL:higherThanZero(BRCost)) then
             awardMessage = (L.CHAT.ITEM_AWARDED_BR):format(
                 itemLink,
                 awardedTo,
-                brCost
+                BRCost
             );
+
         elseif (gdkpCost and gdkpCost > 0) then
             awardMessage = (L.CHAT.ITEM_AWARDED_GDKP):format(
                 itemLink,
                 awardedTo,
                 GL:goldToMoney(gdkpCost)
             );
+
         else
             awardMessage = (L.CHAT.ITEM_AWARDED):format(
                 itemLink,
                 awardedTo
             );
 
-            if (GL.BoostedRolls:enabled()) then
-                --- Make sure the cost is stored as the (new) default item cost
-                GL.Settings:set("BoostedRolls.defaultCost", brCost);
-            end
         end
 
         -- Announce awarded item on RAID or RAID_WARNING
