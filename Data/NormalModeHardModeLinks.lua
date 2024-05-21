@@ -5,6 +5,1125 @@ local _, GL = ...;
 GL.Data = GL.Data or {};
 
 GL.Data.NormalModeHardModeLinks = {
+    -- Blackwing Descent
+    -- Power Generator Hood
+    ["59219"] = {
+        65077,
+    },
+    ["65077"] = {
+        59219,
+    },
+    -- X-Tron Duct Tape
+    ["59217"] = {
+        65079,
+    },
+    ["65079"] = {
+        59217,
+    },
+    -- Passive Resistor Spaulders
+    ["59218"] = {
+        65078,
+    },
+    ["65078"] = {
+        59218,
+    },
+    -- Poison Protocol Pauldrons
+    ["59120"] = {
+        65083,
+    },
+    ["65083"] = {
+        59120,
+    },
+    -- Circuit Design Breastplate
+    ["63540"] = {
+        65004,
+    },
+    ["65004"] = {
+        63540,
+    },
+    -- Voltage Source Chestguard
+    ["59119"] = {
+        65084,
+    },
+    ["65084"] = {
+        59119,
+    },
+    -- Life Force Chargers
+    ["59216"] = {
+        65080,
+    },
+    ["65080"] = {
+        59216,
+    },
+    -- Electron Inductor Coils
+    ["59118"] = {
+        65085,
+    },
+    ["65085"] = {
+        59118,
+    },
+    -- Jumbotron Power Belt
+    ["59117"] = {
+        65086,
+    },
+    ["65086"] = {
+        59117,
+    },
+    -- Security Measure Alpha
+    ["59220"] = {
+        65076,
+    },
+    ["65076"] = {
+        59220,
+    },
+    -- Lightning Conductor Band
+    ["59121"] = {
+        65082,
+    },
+    ["65082"] = {
+        59121,
+    },
+    -- Organic Lifeform Inverter
+    ["59122"] = {
+        65081,
+    },
+    ["65081"] = {
+        59122,
+    },
+    -- Flame Pillar Leggings
+    ["59336"] = {
+        65044,
+    },
+    ["65044"] = {
+        59336,
+    },
+    -- Crown of Burning Waters
+    ["59452"] = {
+        65020,
+    },
+    ["65020"] = {
+        59452,
+    },
+    -- Scorched Wormling Vest
+    ["59335"] = {
+        65045,
+    },
+    ["65045"] = {
+        59335,
+    },
+    -- Parasitic Bands
+    ["59329"] = {
+        65050,
+    },
+    ["65050"] = {
+        59329,
+    },
+    -- Lifecycle Waistguard
+    ["59334"] = {
+        65046,
+    },
+    ["65046"] = {
+        59334,
+    },
+    -- Leggings of Lethal Force
+    ["59331"] = {
+        65049,
+    },
+    ["65049"] = {
+        59331,
+    },
+    -- Breastplate of Avenging Flame
+    ["59340"] = {
+        65042,
+    },
+    ["65042"] = {
+        59340,
+    },
+    -- Molten Tantrum Boots
+    ["59328"] = {
+        65051,
+    },
+    ["65051"] = {
+        59328,
+    },
+    -- Symbiotic Worm
+    ["59332"] = {
+        65048,
+    },
+    ["65048"] = {
+        59332,
+    },
+    -- Incineratus
+    ["59341"] = {
+        65041,
+    },
+    ["65041"] = {
+        59341,
+    },
+    -- Lava Spine
+    ["59333"] = {
+        65047,
+    },
+    ["65047"] = {
+        59333,
+    },
+    -- Akirus the Worm-Breaker
+    ["59492"] = {
+        65007,
+    },
+    ["65007"] = {
+        59492,
+    },
+    -- Mantle of Roaring Flames
+    ["59325"] = {
+        65054,
+    },
+    ["65054"] = {
+        59325,
+    },
+    -- Bracers of the Burningeye
+    ["59322"] = {
+        65056,
+    },
+    ["65056"] = {
+        59322,
+    },
+    -- Helm of the Blind Seer
+    ["59312"] = {
+        65066,
+    },
+    ["65066"] = {
+        59312,
+    },
+    -- Sark of the Unwatched
+    ["59318"] = {
+        65060,
+    },
+    ["65060"] = {
+        59318,
+    },
+    -- Gloves of Cacophony
+    ["59324"] = {
+        65055,
+    },
+    ["65055"] = {
+        59324,
+    },
+    -- Boots of Vertigo
+    ["59315"] = {
+        65063,
+    },
+    ["65063"] = {
+        59315,
+    },
+    -- Battleplate of Ancient Kings
+    ["59316"] = {
+        65062,
+    },
+    ["65062"] = {
+        59316,
+    },
+    -- Legguards of the Unseeing
+    ["59317"] = {
+        65061,
+    },
+    ["65061"] = {
+        59317,
+    },
+    -- Bell of Enraging Resonance
+    ["59326"] = {
+        65053,
+    },
+    ["65053"] = {
+        59326,
+    },
+    -- Ironstar Amulet
+    ["59319"] = {
+        65059,
+    },
+    ["65059"] = {
+        59319,
+    },
+    -- Kingdom's Heart
+    ["59327"] = {
+        65052,
+    },
+    ["65052"] = {
+        59327,
+    },
+    -- Themios the Darkbringer
+    ["59320"] = {
+        65058,
+    },
+    ["65058"] = {
+        59320,
+    },
+    -- Einhorn's Galoshes
+    ["59234"] = {
+        65069,
+    },
+    ["65069"] = {
+        59234,
+    },
+    -- Brackish Gloves
+    ["59313"] = {
+        65065,
+    },
+    ["65065"] = {
+        59313,
+    },
+    -- Manacles of the Sleeping Beast
+    ["59451"] = {
+        65021,
+    },
+    ["65021"] = {
+        59451,
+    },
+    -- Double Attack Handguards
+    ["59223"] = {
+        65073,
+    },
+    ["65073"] = {
+        59223,
+    },
+    -- Chaos Beast Bracers
+    ["59310"] = {
+        65068,
+    },
+    ["65068"] = {
+        59310,
+    },
+    -- Chimaeron Armguards
+    ["59355"] = {
+        65028,
+    },
+    ["65028"] = {
+        59355,
+    },
+    -- Burden of Mortality
+    ["59311"] = {
+        65067,
+    },
+    ["65067"] = {
+        59311,
+    },
+    -- Plated Fists of Provocation
+    ["59225"] = {
+        65071,
+    },
+    ["65071"] = {
+        59225,
+    },
+    -- Massacre Treads
+    ["59221"] = {
+        65075,
+    },
+    ["65075"] = {
+        59221,
+    },
+    -- Heart of Rage
+    ["59224"] = {
+        65072,
+    },
+    ["65072"] = {
+        59224,
+    },
+    -- Bile-O-Tron Nut
+    ["59233"] = {
+        65070,
+    },
+    ["65070"] = {
+        59233,
+    },
+    -- Finkle's Mixer Upper
+    ["59314"] = {
+        65064,
+    },
+    ["65064"] = {
+        59314,
+    },
+    -- Belt of Arcane Storms
+    ["59349"] = {
+        65034,
+    },
+    ["65034"] = {
+        59349,
+    },
+    -- Legwraps of the Greatest Son
+    ["59351"] = {
+        65032,
+    },
+    ["65032"] = {
+        59351,
+    },
+    -- Leggings of Consuming Flames
+    ["59353"] = {
+        65030,
+    },
+    ["65030"] = {
+        59353,
+    },
+    -- Aberration's Leggings
+    ["59343"] = {
+        65039,
+    },
+    ["65039"] = {
+        59343,
+    },
+    -- Treads of Flawless Creation
+    ["59350"] = {
+        65033,
+    },
+    ["65033"] = {
+        59350,
+    },
+    -- Tunic of Failed Experiments
+    ["59346"] = {
+        65037,
+    },
+    ["65037"] = {
+        59346,
+    },
+    -- Flash Freeze Gauntlets
+    ["59352"] = {
+        65031,
+    },
+    ["65031"] = {
+        59352,
+    },
+    -- Belt of Absolute Zero
+    ["59342"] = {
+        65040,
+    },
+    ["65040"] = {
+        59342,
+    },
+    -- Dragon Bone Warhelm
+    ["59344"] = {
+        65038,
+    },
+    ["65038"] = {
+        59344,
+    },
+    -- Cloak of Biting Chill
+    ["59348"] = {
+        65035,
+    },
+    ["65035"] = {
+        59348,
+    },
+    -- Jar of Ancient Remedies
+    ["59354"] = {
+        65029,
+    },
+    ["65029"] = {
+        59354,
+    },
+    -- Mace of Acrid Death
+    ["59347"] = {
+        65036,
+    },
+    ["65036"] = {
+        59347,
+    },
+    -- Helm of the Forlorn Conqueror, Crown of the Forlorn Conqueror
+    ["63683"] = {
+        65001,
+    },
+    ["65001"] = {
+        63683,
+    },
+    -- Helm of the Forlorn Protector, Crown of the Forlorn Protector
+    ["63684"] = {
+        65000,
+    },
+    ["65000"] = {
+        63684,
+    },
+    -- Helm of the Forlorn Vanquisher, Crown of the Forlorn Vanquisher
+    ["63682"] = {
+        65002,
+    },
+    ["65002"] = {
+        63682,
+    },
+    -- Shadowblaze Robes
+    ["59454"] = {
+        65019,
+    },
+    ["65019"] = {
+        59454,
+    },
+    -- Mantle of Nefarius
+    ["59337"] = {
+        65043,
+    },
+    ["65043"] = {
+        59337,
+    },
+    -- Belt of the Nightmare
+    ["59321"] = {
+        65057,
+    },
+    ["65057"] = {
+        59321,
+    },
+    -- Spaulders of the Scarred Lady
+    ["59222"] = {
+        65074,
+    },
+    ["65074"] = {
+        59222,
+    },
+    -- Belt of the Blackhand
+    ["59450"] = {
+        65022,
+    },
+    ["65022"] = {
+        59450,
+    },
+    -- Pauldrons of the Apocalypse
+    ["59356"] = {
+        65027,
+    },
+    ["65027"] = {
+        59356,
+    },
+    -- Shadow of Dread
+    ["59457"] = {
+        65018,
+    },
+    ["65018"] = {
+        59457,
+    },
+    -- Rage of Ages
+    ["59442"] = {
+        65025,
+    },
+    ["65025"] = {
+        59442,
+    },
+    -- Prestor's Talisman of Machination
+    ["59441"] = {
+        65026,
+    },
+    ["65026"] = {
+        59441,
+    },
+    -- Andoros, Fist of the Dragon King
+    ["59459"] = {
+        65017,
+    },
+    ["65017"] = {
+        59459,
+    },
+    -- Crul'korak, the Lightning's Arc
+    ["59443"] = {
+        65024,
+    },
+    ["65024"] = {
+        59443,
+    },
+    -- Reclaimed Ashkandi, Greatsword of the Brotherhood
+    ["63679"] = {
+        65003,
+    },
+    ["65003"] = {
+        63679,
+    },
+    -- Akmin-Kurai, Dominion's Shield
+    ["59444"] = {
+        65023,
+    },
+    ["65023"] = {
+        59444,
+    },
+
+    -- Bastion of Twilight
+    -- Bracers of the Bronze Flight
+    ["59475"] = {
+        65138,
+    },
+    ["65138"] = {
+        59475,
+    },
+    -- Robes of the Burning Acolyte
+    ["59482"] = {
+        65135,
+    },
+    ["65135"] = {
+        59482,
+    },
+    -- Storm Rider's Boots
+    ["59469"] = {
+        65144,
+    },
+    ["65144"] = {
+        59469,
+    },
+    -- Helm of the Nether Scion
+    ["59481"] = {
+        65136,
+    },
+    ["65136"] = {
+        59481,
+    },
+    -- Proto-Handler's Gauntlets
+    ["59472"] = {
+        65141,
+    },
+    ["65141"] = {
+        59472,
+    },
+    -- Legguards of the Emerald Brood
+    ["59476"] = {
+        65137,
+    },
+    ["65137"] = {
+        59476,
+    },
+    -- Pauldrons of the Great Ettin
+    ["59471"] = {
+        65142,
+    },
+    ["65142"] = {
+        59471,
+    },
+    -- Bracers of Impossible Strength
+    ["59470"] = {
+        65143,
+    },
+    ["65143"] = {
+        59470,
+    },
+    -- Wyrmbreaker's Amulet
+    ["59483"] = {
+        65134,
+    },
+    ["65134"] = {
+        59483,
+    },
+    -- Essence of the Cyclone
+    ["59473"] = {
+        65140,
+    },
+    ["65140"] = {
+        59473,
+    },
+    -- Book of Binding Will
+    ["59484"] = {
+        65133,
+    },
+    ["65133"] = {
+        59484,
+    },
+    -- Malevolence
+    ["59474"] = {
+        65139,
+    },
+    ["65139"] = {
+        59474,
+    },
+    -- Helm of Eldritch Authority
+    ["63534"] = {
+        65093,
+    },
+    ["65093"] = {
+        63534,
+    },
+    -- Waistguard of Hatred
+    ["63535"] = {
+        65092,
+    },
+    ["65092"] = {
+        63535,
+    },
+    -- Daybreaker Helm
+    ["63531"] = {
+        65096,
+    },
+    ["65096"] = {
+        63531,
+    },
+    -- Drape of the Twins
+    ["59516"] = {
+        65108,
+    },
+    ["65108"] = {
+        59516,
+    },
+    -- Valiona's Medallion
+    ["59512"] = {
+        65112,
+    },
+    ["65112"] = {
+        59512,
+    },
+    -- Necklace of Strife
+    ["59517"] = {
+        65107,
+    },
+    ["65107"] = {
+        59517,
+    },
+    -- Ring of Rivalry
+    ["59518"] = {
+        65106,
+    },
+    ["65106"] = {
+        59518,
+    },
+    -- Theralion's Mirror
+    ["59519"] = {
+        65105,
+    },
+    ["65105"] = {
+        59519,
+    },
+    -- Vial of Stolen Memories
+    ["59515"] = {
+        65109,
+    },
+    ["65109"] = {
+        59515,
+    },
+    -- Blade of the Witching Hour
+    ["63536"] = {
+        65091,
+    },
+    ["65091"] = {
+        63536,
+    },
+    -- Fang of Twilight
+    ["63533"] = {
+        65094,
+    },
+    ["65094"] = {
+        63533,
+    },
+    -- Dragonheart Piercer
+    ["63532"] = {
+        65095,
+    },
+    ["65095"] = {
+        63532,
+    },
+    -- Treads of Liquid Ice
+    ["59508"] = {
+        65116,
+    },
+    ["65116"] = {
+        59508,
+    },
+    -- Hydrolance Gloves
+    ["59511"] = {
+        65113,
+    },
+    ["65113"] = {
+        59511,
+    },
+    -- Dispersing Belt
+    ["59502"] = {
+        65122,
+    },
+    ["65122"] = {
+        59502,
+    },
+    -- Feludius' Mantle
+    ["59510"] = {
+        65114,
+    },
+    ["65114"] = {
+        59510,
+    },
+    -- Arion's Crown
+    ["59504"] = {
+        65120,
+    },
+    ["65120"] = {
+        59504,
+    },
+    -- Glaciated Helm
+    ["59509"] = {
+        65115,
+    },
+    ["65115"] = {
+        59509,
+    },
+    -- Terrastra's Legguards
+    ["59503"] = {
+        65121,
+    },
+    ["65121"] = {
+        59503,
+    },
+    -- Gravitational Pull
+    ["59505"] = {
+        65119,
+    },
+    ["65119"] = {
+        59505,
+    },
+    -- Glittering Epidermis
+    ["59507"] = {
+        65117,
+    },
+    ["65117"] = {
+        59507,
+    },
+    -- Heart of Ignacious
+    ["59514"] = {
+        65110,
+    },
+    ["65110"] = {
+        59514,
+    },
+    -- Crushing Weight
+    ["59506"] = {
+        65118,
+    },
+    ["65118"] = {
+        59506,
+    },
+    -- Scepter of Ice
+    ["59513"] = {
+        65111,
+    },
+    ["65111"] = {
+        59513,
+    },
+    -- Mantle of the Forlorn Conqueror, Shoulders of the Forlorn Conqueror
+    ["64315"] = {
+        65088,
+    },
+    ["65088"] = {
+        64315,
+    },
+    -- Mantle of the Forlorn Protector, Shoulders of the Forlorn Protector
+    ["64316"] = {
+        65087,
+    },
+    ["65087"] = {
+        64316,
+    },
+    -- Mantle of the Forlorn Vanquisher, Shoulders of the Forlorn Vanquisher
+    ["64314"] = {
+        65089,
+    },
+    ["65089"] = {
+        64314,
+    },
+    -- Hands of the Twilight Council
+    ["59498"] = {
+        65126,
+    },
+    ["65126"] = {
+        59498,
+    },
+    -- Treads of Hideous Transformation
+    ["59495"] = {
+        65128,
+    },
+    ["65128"] = {
+        59495,
+    },
+    -- Membrane of C'Thun
+    ["59490"] = {
+        65129,
+    },
+    ["65129"] = {
+        59490,
+    },
+    -- Kilt of the Forgotten Battle
+    ["59499"] = {
+        65125,
+    },
+    ["65125"] = {
+        59499,
+    },
+    -- Coil of Ten-Thousand Screams
+    ["59485"] = {
+        65132,
+    },
+    ["65132"] = {
+        59485,
+    },
+    -- Shackles of the End of Days
+    ["59497"] = {
+        65127,
+    },
+    ["65127"] = {
+        59497,
+    },
+    -- Helm of Maddening Whispers
+    ["59487"] = {
+        65130,
+    },
+    ["65130"] = {
+        59487,
+    },
+    -- Battleplate of the Apocalypse
+    ["59486"] = {
+        65131,
+    },
+    ["65131"] = {
+        59486,
+    },
+    -- Signet of the Fifth Circle
+    ["59501"] = {
+        65123,
+    },
+    ["65123"] = {
+        59501,
+    },
+    -- Fall of Mortality
+    ["59500"] = {
+        65124,
+    },
+    ["65124"] = {
+        59500,
+    },
+    -- Twilight's Hammer
+    ["63680"] = {
+        65090,
+    },
+    ["65090"] = {
+        63680,
+    },
+    -- Uhn'agh Fash, the Darkest Betrayal
+    ["59494"] = {
+        68600,
+    },
+    ["68600"] = {
+        59494,
+    },
+    -- Shalug'doom, the Axe of Unmaking
+    ["59330"] = {
+        65145,
+    },
+    ["65145"] = {
+        59330,
+    },
+
+    -- Throne of the Four Winds
+    -- Soul Breath Belt
+    ["63498"] = {
+        65376,
+    },
+    ["65376"] = {
+        63498,
+    },
+    -- Gale Rouser Belt
+    ["63497"] = {
+        65374,
+    },
+    ["65374"] = {
+        63497,
+    },
+    -- Wind Stalker Belt
+    ["63493"] = {
+        65371,
+    },
+    ["65371"] = {
+        63493,
+    },
+    -- Lightning Well Belt
+    ["63496"] = {
+        65377,
+    },
+    ["65377"] = {
+        63496,
+    },
+    -- Star Chaser Belt
+    ["63492"] = {
+        65368,
+    },
+    ["65368"] = {
+        63492,
+    },
+    -- Tempest Keeper Belt
+    ["63495"] = {
+        65375,
+    },
+    ["65375"] = {
+        63495,
+    },
+    -- Sky Strider Belt
+    ["63490"] = {
+        65369,
+    },
+    ["65369"] = {
+        63490,
+    },
+    -- Thunder Wall Belt
+    ["63491"] = {
+        65370,
+    },
+    ["65370"] = {
+        63491,
+    },
+    -- Planetary Band
+    ["63494"] = {
+        65373,
+    },
+    ["65373"] = {
+        63494,
+    },
+    -- Mistral Circle
+    ["63488"] = {
+        65367,
+    },
+    ["65367"] = {
+        63488,
+    },
+    -- Permafrost Signet
+    ["63489"] = {
+        65372,
+    },
+    ["65372"] = {
+        63489,
+    },
+    -- Soul Breath Leggings
+    ["63507"] = {
+        65383,
+    },
+    ["65383"] = {
+        63507,
+    },
+    -- Gale Rouser Leggings
+    ["63506"] = {
+        65384,
+    },
+    ["65384"] = {
+        63506,
+    },
+    -- Wind Stalker Leggings
+    ["63503"] = {
+        65381,
+    },
+    ["65381"] = {
+        63503,
+    },
+    -- Lightning Well Legguards
+    ["63505"] = {
+        65386,
+    },
+    ["65386"] = {
+        63505,
+    },
+    -- Star Chaser Legguards
+    ["63502"] = {
+        65378,
+    },
+    ["65378"] = {
+        63502,
+    },
+    -- Tempest Keeper Leggings
+    ["63504"] = {
+        65385,
+    },
+    ["65385"] = {
+        63504,
+    },
+    -- Sky Strider Greaves
+    ["63500"] = {
+        65379,
+    },
+    ["65379"] = {
+        63500,
+    },
+    -- Thunder Wall Greaves
+    ["63501"] = {
+        65380,
+    },
+    ["65380"] = {
+        63501,
+    },
+    -- Planetary Drape
+    ["69835"] = {
+        69881,
+    },
+    ["69881"] = {
+        69835,
+    },
+    -- Mistral Drape
+    ["69831"] = {
+        69884,
+    },
+    ["69884"] = {
+        69831,
+    },
+    -- Cloudburst Cloak
+    ["69834"] = {
+        69879,
+    },
+    ["69879"] = {
+        69834,
+    },
+    -- Permafrost Cape
+    ["69833"] = {
+        69878,
+    },
+    ["69878"] = {
+        69833,
+    },
+    -- Planetary Amulet
+    ["69830"] = {
+        69882,
+    },
+    ["69882"] = {
+        69830,
+    },
+    -- Mistral Pendant
+    ["69827"] = {
+        69880,
+    },
+    ["69880"] = {
+        69827,
+    },
+    -- Cloudburst Necklace
+    ["69829"] = {
+        69885,
+    },
+    ["69885"] = {
+        69829,
+    },
+    -- Permafrost Choker
+    ["69828"] = {
+        69883,
+    },
+    ["69883"] = {
+        69828,
+    },
+    -- Cloudburst Ring
+    ["63499"] = {
+        65382,
+    },
+    ["65382"] = {
+        63499,
+    },
+    -- Stormwake, the Tempest's Reach
+    ["68127"] = {
+        68132,
+    },
+    ["68132"] = {
+        68127,
+    },
+    -- Stormwake, the Tempest's Reach
+    ["68129"] = {
+        68130,
+    },
+    ["68130"] = {
+        68129,
+    },
+    -- Stormwake, the Tempest's Reach
+    ["68128"] = {
+        68131,
+    },
+    ["68131"] = {
+        68128,
+    },
+
     -- ToC 10
     -- Icehowl Cinch
     ["47617"] = {
