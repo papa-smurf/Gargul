@@ -97,15 +97,16 @@ function ExportingLoot:draw(Parent)
 
     local DropDownItems = {
         [1] = "Thatsmybis TMB (default)",
+        [5] = "Thatsmybis TMB with player realm",
         [2] = "DFT-Fight-Club (US date format)",
         [3] = "DFT-Fight-Club (EU date format)",
+        [7] = "RRobin",
         [4] = "Custom (create your own format)",
-        [5] = "Thatsmybis TMB with player realm",
         [6] = "Detailed (JSON)",
     };
 
     local ItemOrder = {
-        1, 5, 2, 3, 4, 6,
+        1, 5, 2, 3, 7, 4, 6,
     };
 
     local CustomFormatWrapper;

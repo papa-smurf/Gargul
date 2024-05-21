@@ -189,6 +189,10 @@ function Exporter:refreshExportString()
         local exportString = self:transformEntriesToCustomFormat(LootEntries);
         GL.Interface:get(self, "MultiLineEditBox.Export"):SetText(exportString);
 
+    elseif (exportFormat == Constants.ExportFormats.RRobin) then
+        local exportString = self:transformEntriesToCustomFormat(LootEntries, "@ID,@DATE @TIME,@WINNER-@REALM");
+        GL.Interface:get(self, "MultiLineEditBox.Export"):SetText(exportString);
+
     elseif (GL:inTable({ Constants.ExportFormats.TMB, Constants.ExportFormats.TMBWithRealm }, exportFormat)) then
         local exportString = self:transformEntriesToTMBFormat(LootEntries);
         GL.Interface:get(self, "MultiLineEditBox.Export"):SetText(exportString);
@@ -258,7 +262,8 @@ end
 --- Transform the table of entries to the user specified (custom) format
 ---
 ---@return string
-function Exporter:transformEntriesToCustomFormat(Entries)
+function Exporter:transformEntriesToCustomFormat(Entries, format)
+    format = format or GL.Settings:get("ExportingLoot.customFormat");
     local exportString = "";
 
     -- Make sure that all relevant item data is cached
@@ -270,7 +275,7 @@ function Exporter:transformEntriesToCustomFormat(Entries)
         Result = nil;
 
         for _, AwardEntry in pairs(Entries) do
-            local exportEntry = GL.Settings:get("ExportingLoot.customFormat");
+            local exportEntry = format;
             local ItemDetails = Details[AwardEntry.itemID];
             local wowheadLink;
 
