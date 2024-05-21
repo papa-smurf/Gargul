@@ -200,7 +200,8 @@ function Comm:send(CommMessage, broadcastFinishedCallback, packageSentCallback)
     -- We lower the burst value and cps on large payloads to make sure
     -- our messages are not dropped by the server. ChatThrottleLib is not accurate enough sadly
     local stringLength = string.len(compressedMessage);
-    local throttle = stringLength > 1000;
+    -- local throttle = stringLength > 1000;
+    local throttle = false;
 
     local throttleResetTimer;
     -- Stop throttling: reset the burst and max cps values
