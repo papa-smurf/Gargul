@@ -184,7 +184,7 @@ end
 function GL:classColorize(var, class)
     class = class and string.upper(class) or class;
     local classColor = { GetClassColor(class or "PRIEST") };
-    return string.format("|c%s%s|r", classColor[4], var);
+    return ("|c%s%s|r"):format(classColor[4], var);
 end
 
 --- Transform seconds to a human readable format e.g: 01:44:23
@@ -217,13 +217,14 @@ end
 
 ---@param name string|table The player name or a table including any of the arguments below
 ---@param colorize boolean Return in player's class color if known
+---@param defaultColor? string The default colorize color in case class is unknown
 ---@param class string Provide a classFile to use for colorizing the name (i.e. DRUID)
 ---@param stripRealm boolean Strip the realm suffix from the name
 ---@param stripSameRealm boolean Strip the realm suffix if it's the same realm as ours
 ---@param forceRealm boolean Force a realm to be present, either existing or adding our own
 ---@param func function|table Decorators to pass the output name through (i.e. strlower)
 ---@return string
-function GL:nameFormat(name, realm, colorize, class, stripRealm, stripSameRealm, forceRealm, func)
+function GL:nameFormat(name, realm, colorize, defaultColor, class, stripRealm, stripSameRealm, forceRealm, func)
     local passedRealm;
 
     if (realm ~= nil) then
@@ -237,6 +238,7 @@ function GL:nameFormat(name, realm, colorize, class, stripRealm, stripSameRealm,
         stripRealm = name.stripRealm;
         stripSameRealm = name.stripSameRealm;
         forceRealm = name.forceRealm;
+        defaultColor = name.defaultColor;
         func = name.func;
 
         passedRealm  = name.realm ~= "" and name.realm or nil;
@@ -273,7 +275,12 @@ function GL:nameFormat(name, realm, colorize, class, stripRealm, stripSameRealm,
         if (not class and realm and self:iEquals(realm, GL.User.realm)) then
             class = UnitClassBase(nameWithoutRealm);
         end
-        name = self:classColorize(name, class);
+
+        if (not class) then
+            name = ("|c00%s%s|r"):format(defaultColor or "FFFFFF", name);
+        else
+            name = self:classColorize(name, class);
+        end
     end
 
     name = strtrim(self:capitalize(name));
