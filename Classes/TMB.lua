@@ -31,41 +31,9 @@ function TMB:_init()
     if (self._initialized) then
         return false;
     end
+    self._initialized = true;
 
     Events:register("TMBUserJoinedGroupListener", "GL.USER_JOINED_NEW_GROUP", function () self:requestData(); end);
-
-    Events:register("TMBItemReceived", "GL.ITEM_RECEIVED", function (_, Details)
-        -- We don't want to automatically award loot
-        if (not Settings:get("AwardingLoot.awardOnReceive")) then
-            return;
-        end
-
-        -- This item is of too low quality, we don't care
-        local quality = tonumber(Details.quality);
-        if (not quality
-            or quality < Settings:get("AwardingLoot.awardOnReceiveMinimumQuality")
-        ) then
-            return;
-        end
-
-        -- This isn't an item we should award
-        if (GL:inTable(Constants.ItemsThatShouldntBeAnnounced, Details.itemID)) then
-            return;
-        end
-
-        local autoAward = Settings:get("AwardingLoot.autoTradeAfterAwardingAnItem");
-        Settings:set("AwardingLoot.autoTradeAfterAwardingAnItem", false, true);
-        GL.AwardedLoot:addWinner{
-            announce = false,
-            automaticallyAwarded = true,
-            itemLink = Details.itemLink,
-            winner = Details.playerName,
-        };
-        Settings:set("AwardingLoot.autoTradeAfterAwardingAnItem", autoAward, true);
-    end);
-
-    self._initialized = true;
-    return true;
 end
 
 --- Check whether there is TMB data available

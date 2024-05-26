@@ -52,10 +52,45 @@ function AwardedLoot:_init()
         };
     end);
 
+    -- Add item GUIDs to previously awarded items that don't have a GUID linked yet
     Events:register("AwardedLootBagUpdateDelayedListener", "BAG_UPDATE_DELAYED", function ()
         self:addItemGUIDtoItemsAwardedToSelf();
     end);
 
+    -- Automatically mark an item as awarded when someone receives it
+    Events:register("AwardedLootItemReceived", "GL.ITEM_RECEIVED", function (_, Details)
+        -- We don't want to automatically award loot
+        if (not Settings:get("AwardingLoot.awardOnReceive")) then
+            return;
+        end
+
+        -- This item is of too low quality, we don't care
+        local quality = tonumber(Details.quality);
+        if (not quality
+            or quality < Settings:get("AwardingLoot.awardOnReceiveMinimumQuality")
+        ) then
+            return;
+        end
+
+        -- This isn't an item we should award
+        if (GL:inTable(Constants.ItemsThatShouldntBeAnnounced, Details.itemID)) then
+            return;
+        end
+
+        -- We set auto trading to false for a split second since there's nothing to auto-trade for automatically awarded items
+        local autoAward = Settings:get("AwardingLoot.autoTradeAfterAwardingAnItem");
+        Settings:set("AwardingLoot.autoTradeAfterAwardingAnItem", false, true);
+
+        GL.AwardedLoot:addWinner{
+            announce = false,
+            automaticallyAwarded = true,
+            itemLink = Details.itemLink,
+            winner = Details.playerName,
+        };
+
+        Settings:set("AwardingLoot.autoTradeAfterAwardingAnItem", autoAward, true);
+    end);
+    
     self._initialized = true;
 end
 
