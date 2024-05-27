@@ -862,7 +862,7 @@ function RollOff:refreshRollsTable()
 
         -- The item might be on a TMB list, make sure we add the appropriate note to the roll
         if (TMBData) then
-            local importedFromDFT = GL.TMB:wasImportedFromDFT(); -- DFT goes high > low whereas the rest goes low > high
+            local importedFromDFTOrRRobin = GL.TMB:wasImportedFromDFT() or GL.TMB:wasImportedFromRRobin(); -- These two go high > low whereas the rest goes low > high
             local sortByTMBWishlist = GL.Settings:get("RollTracking.sortByTMBWishlist");
             local sortByTMBPrio = GL.Settings:get("RollTracking.sortByTMBPrio");
             local TopEntry = false;
@@ -891,8 +891,8 @@ function RollOff:refreshRollsTable()
                     end
 
                     -- This entry and TopEntry are of the same type, but this entry has better prio (aka more important)
-                    if ((importedFromDFT and Entry.prio > TopEntry.prio)
-                        or (not importedFromDFT and Entry.prio < TopEntry.prio)
+                    if ((importedFromDFTOrRRobin and Entry.prio > TopEntry.prio)
+                        or (not importedFromDFTOrRRobin and Entry.prio < TopEntry.prio)
                     ) then
                         TopEntry = Entry;
                         return;
@@ -902,15 +902,13 @@ function RollOff:refreshRollsTable()
 
             -- The roller has this item on one of his lists, add a note and change the roll sorting!
             if (TopEntry) then
-                local type = "";
-
                 -- Prio list entries are more important than wishlist ones (and therefore get sorted on top)
                 if (TopEntry.type == GL.Data.Constants.tmbTypePrio) then
                     if (sortByTMBPrio) then
                         rollPriority = 2;
 
                         -- Make sure rolls of identical list positions "clump" together
-                        if (importedFromDFT) then
+                        if (importedFromDFTOrRRobin) then
                             rollPriority = rollPriority - TopEntry.prio;
                         else
                             rollPriority = rollPriority + TopEntry.prio;
