@@ -2,35 +2,38 @@
 local _, GL = ...;
 
 ---@class Events
-GL.Events = {
+local Events = {
+    ---@type boolean
     _initialized = false,
+
+    ---@type Frame
     Frame = nil,
+
+    ---@type table
     Registry = {
+        ---@type table
         EventListeners = {},
+
+        ---@type table
         EventByIdentifier = {},
     },
 };
-
-local Events = GL.Events; ---@type Events
+GL.Events = Events;
 
 --- Prepare the event frame for future use
----
----@param EventFrame table
----@return void
+---@param EventFrame Frame
 function Events:_init(EventFrame)
     -- No need to initialize this class twice
     if (self._initialized) then
         return;
     end
+    self._initialized = true;
 
     self.Frame = EventFrame;
     self.Frame:SetScript("OnEvent", self.listen);
-
-    self._initialized = true;
 end
 
 --- Helper function that turns the mouse button pressed and modifier keys held into a identifier string
----
 ---@param mouseButtonPressed string
 ---@return string
 function Events:getClickCombination(mouseButtonPressed)
@@ -62,7 +65,6 @@ function Events:getClickCombination(mouseButtonPressed)
 end
 
 --- Register an event listener
----
 ---@param identifier string|nil
 ---@param event string
 ---@param callback function
@@ -109,9 +111,7 @@ function Events:register(identifier, event, callback)
 end
 
 --- Unregister a listener based on its identifier
----
 ---@param identifier string
----@return void
 function Events:unregister(identifier)
     if (type(identifier) == "table") then
         for _, event in pairs(identifier) do
@@ -154,10 +154,8 @@ function Events:unregister(identifier)
 end
 
 --- Fire the event listeners whenever a registered event comes in
----
 ---@param event string
----@param . any
----@return void
+---@param ... any
 function Events:listen(event, ...)
     local args = {...};
 
@@ -167,7 +165,6 @@ function Events:listen(event, ...)
 end
 
 --- Register multiple event listeners
----
 ---@param EventDetails table
 ---@param callback function
 ---@return boolean
@@ -189,10 +186,8 @@ function Events:massRegister(EventDetails, callback)
 end
 
 --- Fire an event manually (assuming there's a listener for it)
----
 ---@param event string
----@param . any
----@return void
+---@param ... any
 function Events:fire(event, ...)
     self:listen(event, ...);
 end

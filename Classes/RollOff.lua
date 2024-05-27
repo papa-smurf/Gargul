@@ -181,18 +181,25 @@ function RollOff:postStartMessage(itemLink, time, note)
         end
 
         local EligiblePlayers = {};
+        local wasImportedFromRRobin = TMB:wasImportedFromRRobin();
         if (not GL:empty(PrioListEntries)
             and GL.Settings:get("TMB.announcePriolistInfoWhenRolling")
         ) then
             PrioListEntries = TMB:sortEntries(PrioListEntries);
+            local topPrio = PrioListEntries[1].prio;
 
             for _, Entry in pairs(PrioListEntries) do
                 -- This is the first player in the list, add him
                 if (not EligiblePlayers[1]) then
                     tinsert(EligiblePlayers, Entry);
                 else
-                    -- This players prio is worse than the number one, break!
-                    if (Entry.prio ~= EligiblePlayers[1].prio) then
+                    -- RRobin works slightly differently from normal TMB-compatible loot systems
+                    if (wasImportedFromRRobin and topPrio - Entry.prio > 1) then
+                        break;
+                    end
+
+                    -- This player's prio is worse than the number one, break!
+                    if (not wasImportedFromRRobin and Entry.prio ~= topPrio) then
                         break;
                     end
 
@@ -204,6 +211,7 @@ function RollOff:postStartMessage(itemLink, time, note)
             and GL.Settings:get("TMB.announceWishlistInfoWhenRolling")
         ) then
             WishListEntries = TMB:sortEntries(WishListEntries);
+            local topPrio = WishListEntries[1].prio;
 
             for _, Entry in pairs(WishListEntries) do
                 -- This is the first player in the list, add him
@@ -211,7 +219,7 @@ function RollOff:postStartMessage(itemLink, time, note)
                     tinsert(EligiblePlayers, Entry);
                 else
                     -- This players position is worse than the number one, break!
-                    if (Entry.prio ~= EligiblePlayers[1].prio) then
+                    if (Entry.prio ~= topPrio) then
                         break;
                     end
 

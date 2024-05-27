@@ -3,8 +3,20 @@ local L = Gargul_L;
 ---@type GL
 local _, GL = ...;
 
+---@type DB
+local DB = GL.DB;
+
+---@type Constants
+local Constants = GL.Data.Constants;
+
+---@type CommActions
+local CommActions = Constants.Comm.Actions;
+
+---@type Settings
+local Settings = GL.Settings; ---@type Settings
+
 ---@class SoftRes
-GL.SoftRes = {
+local SoftRes = {
     _initialized = false,
     announcedImportSoftResAt = false,
     broadcastInProgress = false,
@@ -23,12 +35,7 @@ GL.SoftRes = {
         SoftReservedItemIDs = {},
     },
 };
-
-local DB = GL.DB; ---@type DB
-local Constants = GL.Data.Constants; ---@type Data
-local CommActions = Constants.Comm.Actions;
-local Settings = GL.Settings; ---@type Settings
-local SoftRes = GL.SoftRes; ---@type SoftRes
+GL.SoftRes = SoftRes;
 
 --- @return boolean
 function SoftRes:_init()
@@ -471,7 +478,7 @@ end
 --- Check whether a given item id is reserved (either soft or hard)
 ---
 ---@param itemID number|string
----@param inRaidOnly boolean
+---@param inRaidOnly? boolean
 ---@return boolean
 function SoftRes:idIsReserved(itemID, inRaidOnly)
     if (type(inRaidOnly) ~= "boolean") then
@@ -585,7 +592,7 @@ end
 --- Fetch an item's reservations based on its ID
 ---
 ---@param itemID number|string
----@param inRaidOnly boolean
+---@param inRaidOnly? boolean
 ---
 ---@return table
 ---
@@ -639,7 +646,7 @@ end
 --- Fetch an item's soft reserve amounts in a "Playername (x3)" format
 ---
 ---@param itemID number
----@param inRaidOnly boolean
+---@param inRaidOnly? boolean
 ---@return table
 function SoftRes:playerReserveAmountsByItemID(itemID, inRaidOnly)
     local SoftReserves = self:byItemID(itemID, inRaidOnly);

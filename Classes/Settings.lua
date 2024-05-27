@@ -13,16 +13,19 @@ local DB = GL.DB;
 local Events = GL.Events;
 
 ---@class Settings
-GL.Settings = {
+local Settings = {
+
+    ---@type boolean
     _initialized = false,
-    Defaults = GL.Data.DefaultSettings,
+
+    ---@type table
     Active = {}, -- This object holds the actual setting values applicable to this runtime
+
+    ---@type table
+    Defaults = GL.Data.DefaultSettings,
 };
+GL.Settings = Settings;
 
----@type Settings
-local Settings = GL.Settings;
-
----@return void
 function Settings:_init()
     -- No need to initialize this class twice
     if (self._initialized) then
@@ -49,8 +52,6 @@ function Settings:_init()
 end
 
 --- Make sure the settings adhere to our rules
----
----@return void
 function Settings:sanitizeSettings()
     self:enforceTemporarySettings();
 
@@ -94,8 +95,6 @@ end
 
 --- These settings are version-specific and will be removed over time!
 --- IMPORTANT: don't use self:get/set/has since defaults have not be overwritten yet and .Active is not available
----
----@return void
 function Settings:enforceTemporarySettings()
     --- This is reserved for version-based logic (e.g. cleaning up variables, settings etc.)
 
@@ -306,22 +305,17 @@ function Settings:enforceTemporarySettings()
 end
 
 --- Draw a setting section
----
 ---@param section string|nil
 ---@param onCloseCallback function|nil What to do after closing the settings again
----@return void
 function Settings:draw(section, onCloseCallback)
     GL.Interface.Settings.Overview:draw(section, onCloseCallback);
 end
 
----@return void
 function Settings:close()
     GL.Interface.Settings.Overview:close();
 end
 
 --- Reset the addon to its default settings
----
----@return void
 function Settings:resetToDefault()
     self.Active = {};
     DB:set("Settings", {});
@@ -331,8 +325,6 @@ function Settings:resetToDefault()
 end
 
 --- Override the addon's default settings with the user's custom settings
----
----@return void
 function Settings:overrideDefaultsWithUserSettings()
     -- Reset the currently active settings table
     self.Active = {};
@@ -350,8 +342,6 @@ end
 
 --- We use this method to make sure that the interface is only built
 --- when the user has actually accessed the settings menu, which doesn't happen every session
----
----@return void
 function Settings:showSettingsMenu(Frame)
     -- Add the addon title to the top of the settings frame
     local Title = Frame:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge");
@@ -395,7 +385,6 @@ end
 --- Get a setting by a given key. Use dot notation to traverse multiple levels e.g:
 --- Settings.UI.Auctioneer.offsetX can be fetched using Settings:get("Settings.UI.Auctioneer.offsetX")
 --- without having to worry about tables or keys existing yes or no.
----
 ---@param keyString string
 ---@param default any
 ---@return any
@@ -411,7 +400,6 @@ end
 --- Set a setting by a given key and value. Use dot notation to traverse multiple levels e.g:
 --- Settings.UI.Auctioneer.offsetX can be set using Settings:set("Settings.UI.Auctioneer.offsetX", myValue)
 --- without having to worry about tables or keys existing yes or no.
----
 ---@param keyString string
 ---@param value any
 ---@param quiet boolean Should trigger event?
@@ -429,7 +417,6 @@ end
 
 ---@param setting string
 ---@param func function
----@return void
 function Settings:onChange(setting, func)
     Events:register(nil, "GL.SETTING_CHANGED." .. setting, func);
 end

@@ -86,7 +86,7 @@ L.CHAT = {
         ROLLING_STOP = "Stop your rolls!",
         ROLLING_TIME_LEFT = "%s seconds to roll",
         ROLLING_SOFTRES_INFO = "This item was reserved by: %s",
-        ROLLING_TMB_INFO = "The following players have the highest %s prio: %s", -- First %s can be TMB/DFT/CPR
+        ROLLING_TMB_INFO = "These players have the highest %s prio: %s", -- First %s can be TMB/DFT/CPR
 
         --[[ TradeWindow / Trade ]]
         TRADE_TO = "%s to %s",

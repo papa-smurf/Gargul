@@ -5,7 +5,7 @@ local _, GL = ...;
 GL.Data = GL.Data or {};
 
 ---@class Constants
-GL.Data.Constants = {
+local Constants = {
     defaultFrameTitle = string.format("Gargul |c00967FD2v%s|r", GL.version),
     discordURL = "https://discord.gg/D3mDhYPVzf",
 
@@ -553,6 +553,8 @@ GL.Data.Constants = {
         channel = "GargulComm2",
         -- Due to a Blizzard issue with whisper comms, era requires a higher min version
         minimumAppVersion = GL.isEra and "7.3.2" or "7.2.16",
+
+        ---@class CommActions
         Actions = {
             awardItem = 1,
             broadcastLootPriorities = 2,
@@ -597,3 +599,4 @@ GL.Data.Constants = {
         descending = 2,
     },
 };
+GL.Data.Constants = Constants;

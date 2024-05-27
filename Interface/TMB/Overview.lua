@@ -59,7 +59,7 @@ function Overview:draw()
     Window:AddChild(VerticalSpacer);
 
     local MoreInfoLabel = GL.AceGUI:Create("Label");
-    MoreInfoLabel:SetText(L.TMB_IMPORT_TMB_GARGUL_INFO);
+    MoreInfoLabel:SetText(GL:printfn(L.TMB_IMPORT_TMB_GARGUL_INFO, { source = GL.TMB:source(), }));
     MoreInfoLabel:SetFontObject(_G["GameFontGreenLarge"]);
     MoreInfoLabel:SetFullWidth(true);
     MoreInfoLabel:SetJustifyH("CENTER");
