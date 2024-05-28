@@ -271,7 +271,7 @@ function TMB:RRobinTooltipLines(Lines, Entries)
     end
 
     -- Add the header
-    tinsert(Lines, ("\n|c00FF7A0A%s|r"):format((L.TMB_TOOLTIP_PRIO_HEADER):format(self:source())));
+    tinsert(Lines, ("\n|c00FF7A0A%s|r"):format(self:source()));
 
     local topPrio = Entries[1].prio;
     entriesAdded = 0;
