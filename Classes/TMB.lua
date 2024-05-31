@@ -274,7 +274,7 @@ function TMB:RRobinTooltipLines(Lines, Entries)
     tinsert(Lines, ("\n|c00FF7A0A%s|r"):format(self:source()));
 
     local topPrio = Entries[1].prio;
-    entriesAdded = 0;
+    local entriesAdded = 0;
     for _, Entry in pairs(Entries) do
         local priorityColor;
         if (entriesAdded == 0) then
@@ -319,8 +319,9 @@ function TMB:DFTTooltipLines(Lines, Entries)
     Entries = self:sortEntries(Entries, 1);
 
     -- Add the entries to the tooltip
-    entriesAdded = 0;
+    local entriesAdded = 0;
     for _, Entry in pairs(Entries) do
+        local playerName = Entry.character:lower();
         entriesAdded = entriesAdded + 1;
 
         local color = GL:classHexColor(GL.Player:classByName(playerName:gsub(OFFSPEC_IDENTIFIER, ""), 0), Constants.disabledTextColor);
@@ -725,7 +726,7 @@ function TMB:import(data, triedToDecompress, source)
 
                 local characterName = "";
                 local order = "?";
-                local raidGroupID = nil;
+                local raidGroupID;
                 local type = Constants.tmbTypeWish;
 
                 if (stringParts[Keys.name] and stringParts[Keys.order]) then
@@ -1528,7 +1529,7 @@ function TMB:replyToDataRequest(CommMessage)
     end);
 end
 
----@param Data table
+---@param Entries table
 ---@param key number The key that holds the item order
 ---@return table
 function TMB:sortEntries(Entries, key)
