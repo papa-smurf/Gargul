@@ -256,6 +256,15 @@ function Exporter:getLootEntries(raw)
         end)();
     end
 
+    -- Sort the entries by award time
+    table.sort(Entries, function (a, b)
+        if (not a.timestamp or not b.timestamp) then
+            return false;
+        end
+
+        return a.timestamp < b.timestamp;
+    end);
+
     return Entries;
 end
 
