@@ -971,7 +971,7 @@ function AwardedLoot:processAwardedLoot(CommMessage)
 
     -- Show an item won alert on TBC+
     if (not GL.isEra and GL:iEquals(AwardEntry.awardedTo, GL.User.name)) then
-        GL:onItemLoadDo(AwardEntry.itemID, function (Details)
+        GL:onItemLoadDo(AwardEntry.itemLink, function (Details)
             if (not Details) then
                 return;
             end

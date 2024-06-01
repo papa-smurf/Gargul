@@ -664,14 +664,14 @@ function Overview:refreshLedger()
                 end
 
                 GameTooltip:SetOwner(ItemIcon.frame, "ANCHOR_TOP");
-                GameTooltip:SetHyperlink(ItemEntry.link);
+                GameTooltip:SetHyperlink(Auction.itemLink);
                 GameTooltip:Show();
             end);
             ItemIcon:SetCallback("OnLeave", function()
                 GameTooltip:Hide();
             end);
             ItemIcon:SetCallback("OnClick", function (_, _, mouseButtonPressed)
-                HandleModifiedItemClick(ItemEntry.link, mouseButtonPressed);
+                HandleModifiedItemClick(Auction.itemLink, mouseButtonPressed);
             end);
 
             --[[
@@ -711,7 +711,7 @@ function Overview:refreshLedger()
                         GL:nameFormat{ name = Auction.Winner.name, class = Auction.Winner.class, colorize = true, },
                         Interface.Colors.ROGUE,
                         GL:goldToMoney(price),
-                        ItemEntry.link
+                        Auction.itemLink
                     );
                 end
 

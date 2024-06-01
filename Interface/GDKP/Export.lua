@@ -271,7 +271,6 @@ end
 ---@param Auctions table
 ---@return string
 function Export:exportAuctionsToCustomFormat(Session, Auctions)
-
     local exportString = GL.Settings:get("GDKP.customExportHeader");
     local customExportFormat = GL.Settings:get("GDKP.customExportFormat");
 
@@ -285,7 +284,7 @@ function Export:exportAuctionsToCustomFormat(Session, Auctions)
 
     -- Make sure that all relevant item data is cached
     local first = true;
-    GL:onItemLoadDo(GL:tableColumn(Auctions, "itemID"), function (Result)
+    GL:onItemLoadDo(GL:tableColumn(Auctions, "itemLink"), function (Result)
         local Details = {};
         for _, ItemDetails in pairs(Result or {}) do
             Details[ItemDetails.id] = ItemDetails;

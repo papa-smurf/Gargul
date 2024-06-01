@@ -244,6 +244,7 @@ function Exporter:getLootEntries(raw)
                     timestamp = AwardEntry.timestamp,
                     awardedTo = awardedTo,
                     itemID = itemID,
+                    itemLink = AwardEntry.itemLink,
                     OS = AwardEntry.OS and 1 or 0,
                     SR = AwardEntry.SR and 1 or 0,
                     WL = AwardEntry.WL and 1 or 0,
@@ -276,7 +277,7 @@ function Exporter:transformEntriesToCustomFormat(Entries, format)
     local exportString = "";
 
     -- Make sure that all relevant item data is cached
-    GL:onItemLoadDo(GL:tableColumn(Entries, "itemID"), function (Result)
+    GL:onItemLoadDo(GL:tableColumn(Entries, "itemLink"), function (Result)
         local Details = {};
         for _, ItemDetails in pairs(Result or {}) do
             Details[ItemDetails.id] = ItemDetails;

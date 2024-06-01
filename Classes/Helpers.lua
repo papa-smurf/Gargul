@@ -1457,7 +1457,7 @@ function GL:normalizeItem(ItemMixin)
         icon = itemTexture,
         inventoryType = itemEquipLoc,
         level = ItemMixin:GetCurrentItemLevel(),
-        link = ItemMixin:GetItemLink(),
+        link = ItemMixin.itemLink or ItemMixin:GetItemLink(),
         name = itemName,
         subclassID = subclassID,
         quality = itemQuality,
@@ -1844,29 +1844,18 @@ end
 ---
 ---@return void
 function GL:canUserUseItem(itemLinkOrID, callback)
-    GL:debug("GL:canUserUseItem");
-
     if (type(callback) ~= "function") then
         GL:warning("Unexpected type '" .. type(callback) .. "' in GL:canUserUseItem, expecting type 'function'");
         return;
     end
 
-    local itemID;
-    local concernsID = GL:higherThanZero(tonumber(itemLinkOrID));
-
-    if (concernsID) then
-        itemID = math.floor(tonumber(itemLinkOrID));
-    else
-        itemID = GL:getItemIDFromLink(itemLinkOrID);
-    end
-
-    GL:onItemLoadDo(itemID, function (Details)
+    GL:onItemLoadDo(itemLinkOrID, function (Details)
         if (not Details) then
             return callback(true);
         end
 
         GL.TooltipFrame:ClearLines();
-        GL.TooltipFrame:SetHyperlink("item:" .. itemID);
+        GL.TooltipFrame:SetHyperlink(Details.link);
 
         local IsTooltipTextRed = function (text)
             if (text and text:GetText()) then

@@ -263,7 +263,7 @@ function Auctioneer:build()
 
     --[[ ADD AN ITEM TO THE WINDOW ]]
     Window.addItemByLink = function (_, link)
-        GL:onItemLoadDo(GL:getItemIDFromLink(link), function (Details)
+        GL:onItemLoadDo(link, function (Details)
             if (not Details) then
                 return;
             end

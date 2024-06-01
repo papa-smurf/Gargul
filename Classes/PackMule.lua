@@ -472,7 +472,7 @@ function PackMule:getTargetForItem(itemLinkOrId, callback)
     end
 
     -- Load the item details first and then call the callback with the player target (only if any)
-    GL:onItemLoadDo(itemID, function (Details)
+    GL:onItemLoadDo(itemLinkOrId, function (Details)
         if (not Details) then
             return;
         end

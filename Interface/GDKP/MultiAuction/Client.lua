@@ -106,7 +106,7 @@ function ClientInterface:addAuction(auctionID, isBOE, itemLevel, name, quality, 
             increment = increment,
             isBOE = GL:inTable({ LE_ITEM_BIND_ON_EQUIP, LE_ITEM_BIND_QUEST }, Item.bindType),
             itemLevel = itemLevel,
-            link = Item.link,
+            link = link,
             minimum = minimum,
             name = Item.name, -- In case of mismatching locales
             quality = quality,
@@ -594,7 +594,7 @@ function ClientInterface:build()
         local auctionID = Details.auctionID;
         local time = Details.endsAt - GetServerTime();
 
-        GL:onItemLoadDo(GL:getItemIDFromLink(link), function (Item)
+        GL:onItemLoadDo(link, function (Item)
             if (not Item) then
                 return;
             end
