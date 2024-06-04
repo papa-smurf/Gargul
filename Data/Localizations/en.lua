@@ -470,6 +470,8 @@ This will close all auctions and announce the total pot in chat
 Auctions with active bids on them will be sold and can not receive new bids!
 ]];
 L.GDKP_MULTIAUCTION_CLIENT_HIDE_INACTIVE = "Hide inactive";
+L.GDKP_MULTIAUCTION_CLIENT_HIDE_ITEMS = "Hide items";
+L.GDKP_MULTIAUCTION_CLIENT_HIDE_ITEMS_TOOLTIP = "Enable / Disable the hidden items filter";
 L.GDKP_MULTIAUCTION_CLIENT_HIDE_UNUSABLE = "Hide unusable";
 L.GDKP_MULTIAUCTION_CLIENT_INACTIVE_TOGGLE_TOOLTIP = "Show/Hide finished auctions";
 L.GDKP_MULTIAUCTION_CLIENT_MANAGE_AUCTION = "Manage Auction";

@@ -21,6 +21,7 @@ GL:tableSet(GL, "Interface.GDKP.MultiAuction.Client", {
     auctionAdminWindowName = "Gargul.Interface.GDKP.MultiAuction.Client.AuctionAdminWindow",
     windowName = "Gargul.Interface.GDKP.MultiAuction.Client.Window",
 
+    enableFilters = true,
     showFavorites = false,
     showInactive = true,
 
@@ -35,7 +36,7 @@ local ClientInterface = GL.Interface.GDKP.MultiAuction.Client;
 
 --[[ CONSTANTS ]]
 local ITEM_ROW_HEIGHT = 30;
-local WINDOW_WIDTH = 575;
+local WINDOW_WIDTH = 625;
 local WINDOW_HEIGHT = 355;
 local FONT;
 
@@ -249,7 +250,7 @@ function ClientInterface:build()
     Interface:addTooltip(ToggleActive, L.GDKP_MULTIAUCTION_CLIENT_INACTIVE_TOGGLE_TOOLTIP);
 
     --[[ FILTER ]]
-    local Filters = Interface:multiSelect(Window, "Hide items", {
+    local Filters = Interface:multiSelect(Window, L.GDKP_MULTIAUCTION_CLIENT_HIDE_ITEMS, {
         {
             text = "Unusable",
             checked = function ()
@@ -314,7 +315,20 @@ function ClientInterface:build()
             end,
         },
     }, 120);
-    Filters:SetPoint("TOPLEFT", ToggleActive, "TOPRIGHT", 2, 2);
+    Filters:SetPoint("TOPLEFT", ToggleActive, "TOPRIGHT", -10, 2);
+
+    --[[ SELECT ALL ]]
+    ---@type CheckButton
+    local ToggleFilters = Interface:createCheckbox{
+        Parent = Window,
+        checked = ClientInterface.enableFilters,
+        callback = function (_, value)
+            ClientInterface.enableFilters = value;
+            filter();
+        end,
+    };
+    ToggleFilters:SetPoint("TOPLEFT", Filters, "TOPRIGHT", -12, -4);
+    Interface:addTooltip(ToggleFilters, L.GDKP_MULTIAUCTION_CLIENT_HIDE_ITEMS_TOOLTIP);
 
     --[[ SCROLLFRAME BOILERPLATE ]]
     ScrollFrame = CreateFrame("ScrollFrame", nil, Window, "UIPanelScrollFrameTemplate");
@@ -1293,8 +1307,6 @@ end
 ---
 ---@return void
 function ClientInterface:filterAndSort()
-    -- Settings:get(("GDKP.MultiAuction.Filters.%s-%s"):format(Enum.ItemClass.Armor, Enum.ItemArmorSubclass.Cloth)
-
     local rowsShown = 0;
     local showInactive = self.showInactive;
     local showFavorites = self.showFavorites;
@@ -1349,7 +1361,8 @@ function ClientInterface:filterAndSort()
                 or (showFavorites and not ItemRow._Details.isFavorite)
 
                 -- Hide unwanted armor types
-                or (ItemRow._Details.classID == Enum.ItemClass.Armor
+                or (self.enableFilters
+                    and ItemRow._Details.classID == Enum.ItemClass.Armor
                     and Settings:get(("GDKP.MultiAuction.Filters.%s-%s"):format(Enum.ItemClass.Armor, ItemRow._Details.subclassID)) == true
                 )
             ) then
