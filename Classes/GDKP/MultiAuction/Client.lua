@@ -381,7 +381,9 @@ function Client:isBidValidForAuction(auctionID, bid)
     local hasCurrentBid = not GL:e(currentBid, 0);
 
     -- We accept bids lower than minimum, but never lower than the minimum increment
-    if (Settings:get("GDKP.acceptBidsLowerThanMinimum")) then
+    -- The client does not know about the auctioneer's setup so for clients we assume that lowballing is allowed
+    -- If it's not then they'll get a whisper from the auctioneer telling them it's not ok to bid lower
+    if (Settings:get("GDKP.acceptBidsLowerThanMinimum") or not Auctioneer:auctionStartedByMe()) then
         return (not hasCurrentBid and GL:gte(bid, Auction.minimum)) or GL:gte(bid, currentBid + Auction.increment);
     end
 
