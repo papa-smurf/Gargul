@@ -235,6 +235,8 @@ GL.Data.DefaultSettings = {
             includeMaterials = false,
             minimumFillQuality = 4,
             time = 600,
+
+            Filters = {},
         },
     },
     TMB = {

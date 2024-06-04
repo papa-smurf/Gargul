@@ -124,7 +124,6 @@ function Client:start(Message)
         UI.showUnusable = false;
         UI.showInactive = false;
         UI.ToggleFavorites:GetScript("OnClick")();
-        UI.ToggleUnusable:GetScript("OnClick")();
         UI.ToggleActive:GetScript("OnClick")();
     end);
 

@@ -1018,6 +1018,108 @@ function Interface:createSlider(Parent, name, min, max, step, value, callback, w
     return Slider;
 end
 
+function Interface:multiSelect(Parent, title, Menu, width)
+    local levels = 1;
+    local Sanitized = {};
+    do --[[ SANITIZE MENU ]]
+        for _, Entry in pairs(Menu) do
+            --[[ DIVIDER ]]
+            if (Entry == "divider") then
+                tinsert(Sanitized, MENU_DIVIDER);
+
+            --[[ REGULAR ]]
+            elseif (not Entry.SubMenu) then
+                tinsert(Sanitized, Entry);
+
+            --[[ MULTI-LEVEL ]]
+            else
+                levels = levels + 1;
+                local SubMenu = Entry.SubMenu;
+                Entry.SubMenu = nil;
+                Entry.menuList = levels;
+                Entry.hasArrow = true;
+                Entry.notCheckable = true;
+                tinsert(Sanitized, Entry);
+
+                for _, SubEntry in pairs(SubMenu) do
+                    SubEntry.level = levels;
+                    tinsert(Sanitized, SubEntry);
+                end
+            end
+        end
+    end
+
+    local DropDown = LibDD:Create_UIDropDownMenu(Parent:GetName() .. ".OptionsDropdown", Parent);
+
+    LibDD:UIDropDownMenu_SetWidth(DropDown, width or 200) -- Use in place of dropDown:SetWidth
+    LibDD:UIDropDownMenu_JustifyText(DropDown, "LEFT");
+    LibDD:UIDropDownMenu_Initialize(DropDown, function (_, level, menuList)
+        local addEntry = function (Entry)
+            menuList = menuList or 1;
+            Entry.level = Entry.level or 1;
+            Entry.isNotRadio = not Entry.isRadio;
+            local isSubMenu = menuList > 1;
+
+            if (not isSubMenu and Entry.level > 1) then
+                return;
+            end
+
+            if (isSubMenu and menuList ~= Entry.level) then
+                return;
+            end
+
+            if (type(Entry.text) == "function") then
+                Entry.textFunc = Entry.text;
+                Entry.text = Entry.text();
+            elseif(Entry.textFunc) then
+                Entry.text = Entry.textFunc();
+            end
+
+            if (type(Entry.checked) == "function") then
+                Entry.checkFunc = Entry.checked;
+                Entry.checked = Entry.checked();
+            elseif(Entry.checkFunc) then
+                Entry.checked = Entry.checkFunc();
+            end
+
+            -- Move text to the right if ElvUI is loaded
+            if (not Entry.notCheckable
+                and not Entry.isTitle
+                and GL.elvUILoaded
+            ) then
+                Entry.text = " " .. Entry.text;
+            end
+
+            if (Entry.setting) then
+                Entry.checked = Settings:get(Entry.setting);
+
+                if (not Entry.func) then
+                    Entry.func = function (_, _, _, checked)
+                        Settings:set(Entry.setting, checked);
+                        Entry.checked = checked;
+                    end;
+                end
+            end
+
+            Entry.minWidth = DropDown:GetWidth() - 40;
+
+            Entry.keepShownOnClick = true;
+            if (Entry.hideOnClick) then
+                Entry.keepShownOnClick = not Entry.hideOnClick;
+            end
+
+            LibDD:UIDropDownMenu_AddButton(Entry, level);
+        end
+
+        for _, Entry in pairs(Sanitized) do
+            addEntry(Entry);
+        end
+    end);
+
+    DropDown.Text:SetText(title);
+    return DropDown;
+end
+
 ---@param Parent table
 ---@param name string
 ---@param value string|number
