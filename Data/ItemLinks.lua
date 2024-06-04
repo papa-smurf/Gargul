@@ -9145,6 +9145,3310 @@ GL.Data.ItemLinks = {
         51278, -- Sanctified Lightsworn Legplates
         51279, -- Sanctified Lightsworn Shoulderplates
     },
+    -- Firelord's Hood
+    ["60243"] = {
+        63682, -- Helm of the Forlorn Vanquisher
+    },
+    -- Firelord's Mantle
+    ["60246"] = {
+        64314, -- Mantle of the Forlorn Vanquisher
+    },
+    -- Shadowflame Hood
+    ["60249"] = {
+        63683, -- Helm of the Forlorn Conqueror
+    },
+    -- Shadowflame Mantle
+    ["60252"] = {
+        64315, -- Mantle of the Forlorn Conqueror
+    },
+    -- Mercurial Shoulderwraps
+    ["60253"] = {
+        64315, -- Mantle of the Forlorn Conqueror
+    },
+    -- Mercurial Hood
+    ["60256"] = {
+        63683, -- Helm of the Forlorn Conqueror
+    },
+    -- Mercurial Cowl
+    ["60258"] = {
+        63683, -- Helm of the Forlorn Conqueror
+    },
+    -- Mercurial Mantle
+    ["60262"] = {
+        64315, -- Mantle of the Forlorn Conqueror
+    },
+    -- Stormrider's Helm
+    ["60277"] = {
+        63682, -- Helm of the Forlorn Vanquisher
+    },
+    -- Stormrider's Mantle
+    ["60279"] = {
+        64314, -- Mantle of the Forlorn Vanquisher
+    },
+    -- Stormrider's Cover
+    ["60282"] = {
+        63682, -- Helm of the Forlorn Vanquisher
+    },
+    -- Stormrider's Shoulderwraps
+    ["60284"] = {
+        64314, -- Mantle of the Forlorn Vanquisher
+    },
+    -- Stormrider's Headpiece
+    ["60286"] = {
+        63682, -- Helm of the Forlorn Vanquisher
+    },
+    -- Stormrider's Spaulders
+    ["60289"] = {
+        64314, -- Mantle of the Forlorn Vanquisher
+    },
+    -- Wind Dancer's Helmet
+    ["60299"] = {
+        63682, -- Helm of the Forlorn Vanquisher
+    },
+    -- Wind Dancer's Spaulders
+    ["60302"] = {
+        64314, -- Mantle of the Forlorn Vanquisher
+    },
+    -- Lightning-Charged Headguard
+    ["60303"] = {
+        63684, -- Helm of the Forlorn Protector
+    },
+    -- Lightning-Charged Spaulders
+    ["60306"] = {
+        64316, -- Mantle of the Forlorn Protector
+    },
+    -- Faceguard of the Raging Elements
+    ["60308"] = {
+        63684, -- Helm of the Forlorn Protector
+    },
+    -- Mantle of the Raging Elements
+    ["60311"] = {
+        64316, -- Mantle of the Forlorn Protector
+    },
+    -- Headpiece of the Raging Elements
+    ["60315"] = {
+        63684, -- Helm of the Forlorn Protector
+    },
+    -- Shoulderwraps of the Raging Elements
+    ["60317"] = {
+        64316, -- Mantle of the Forlorn Protector
+    },
+    -- Helmet of the Raging Elements
+    ["60320"] = {
+        63684, -- Helm of the Forlorn Protector
+    },
+    -- Spaulders of the Raging Elements
+    ["60322"] = {
+        64316, -- Mantle of the Forlorn Protector
+    },
+    -- Earthen Helmet
+    ["60325"] = {
+        63684, -- Helm of the Forlorn Protector
+    },
+    -- Earthen Pauldrons
+    ["60327"] = {
+        64316, -- Mantle of the Forlorn Protector
+    },
+    -- Earthen Faceguard
+    ["60328"] = {
+        63684, -- Helm of the Forlorn Protector
+    },
+    -- Earthen Shoulderguards
+    ["60331"] = {
+        64316, -- Mantle of the Forlorn Protector
+    },
+    -- Magma Plated Helmet
+    ["60341"] = {
+        63682, -- Helm of the Forlorn Vanquisher
+    },
+    -- Magma Plated Pauldrons
+    ["60343"] = {
+        64314, -- Mantle of the Forlorn Vanquisher
+    },
+    -- Reinforced Sapphirium Helmet
+    ["60346"] = {
+        63683, -- Helm of the Forlorn Conqueror
+    },
+    -- Reinforced Sapphirium Pauldrons
+    ["60348"] = {
+        64315, -- Mantle of the Forlorn Conqueror
+    },
+    -- Magma Plated Faceguard
+    ["60351"] = {
+        63682, -- Helm of the Forlorn Vanquisher
+    },
+    -- Magma Plated Shoulderguards
+    ["60353"] = {
+        64314, -- Mantle of the Forlorn Vanquisher
+    },
+    -- Reinforced Sapphirium Faceguard
+    ["60356"] = {
+        63683, -- Helm of the Forlorn Conqueror
+    },
+    -- Reinforced Sapphirium Shoulderguards
+    ["60358"] = {
+        64315, -- Mantle of the Forlorn Conqueror
+    },
+    -- Reinforced Sapphirium Headguard
+    ["60359"] = {
+        63683, -- Helm of the Forlorn Conqueror
+    },
+    -- Reinforced Sapphirium Mantle
+    ["60362"] = {
+        64315, -- Mantle of the Forlorn Conqueror
+    },
+    -- Helm of the Forlorn Vanquisher
+    ["63682"] = {
+        60243, -- Firelord's Hood
+        60277, -- Stormrider's Helm
+        60282, -- Stormrider's Cover
+        60286, -- Stormrider's Headpiece
+        60299, -- Wind Dancer's Helmet
+        60341, -- Magma Plated Helmet
+        60351, -- Magma Plated Faceguard
+    },
+    -- Helm of the Forlorn Conqueror
+    ["63683"] = {
+        60249, -- Shadowflame Hood
+        60256, -- Mercurial Hood
+        60258, -- Mercurial Cowl
+        60346, -- Reinforced Sapphirium Helmet
+        60356, -- Reinforced Sapphirium Faceguard
+        60359, -- Reinforced Sapphirium Headguard
+    },
+    -- Helm of the Forlorn Protector
+    ["63684"] = {
+        60303, -- Lightning-Charged Headguard
+        60308, -- Faceguard of the Raging Elements
+        60315, -- Headpiece of the Raging Elements
+        60320, -- Helmet of the Raging Elements
+        60325, -- Earthen Helmet
+        60328, -- Earthen Faceguard
+    },
+    -- Mantle of the Forlorn Vanquisher
+    ["64314"] = {
+        60246, -- Firelord's Mantle
+        60279, -- Stormrider's Mantle
+        60284, -- Stormrider's Shoulderwraps
+        60289, -- Stormrider's Spaulders
+        60302, -- Wind Dancer's Spaulders
+        60343, -- Magma Plated Pauldrons
+        60353, -- Magma Plated Shoulderguards
+    },
+    -- Mantle of the Forlorn Conqueror
+    ["64315"] = {
+        60252, -- Shadowflame Mantle
+        60253, -- Mercurial Shoulderwraps
+        60262, -- Mercurial Mantle
+        60348, -- Reinforced Sapphirium Pauldrons
+        60358, -- Reinforced Sapphirium Shoulderguards
+        60362, -- Reinforced Sapphirium Mantle
+    },
+    -- Mantle of the Forlorn Protector
+    ["64316"] = {
+        60306, -- Lightning-Charged Spaulders
+        60311, -- Mantle of the Raging Elements
+        60317, -- Shoulderwraps of the Raging Elements
+        60322, -- Spaulders of the Raging Elements
+        60327, -- Earthen Pauldrons
+        60331, -- Earthen Shoulderguards
+    },
+    -- Crown of the Forlorn Protector
+    ["65000"] = {
+        65206, -- Lightning-Charged Headguard
+        65246, -- Faceguard of the Raging Elements
+        65251, -- Helmet of the Raging Elements
+        65256, -- Headpiece of the Raging Elements
+        65266, -- Earthen Helmet
+        65271, -- Earthen Faceguard
+    },
+    -- Crown of the Forlorn Conqueror
+    ["65001"] = {
+        65216, -- Reinforced Sapphirium Helmet
+        65221, -- Reinforced Sapphirium Headguard
+        65226, -- Reinforced Sapphirium Faceguard
+        65230, -- Mercurial Cowl
+        65235, -- Mercurial Hood
+        65260, -- Shadowflame Hood
+    },
+    -- Crown of the Forlorn Vanquisher
+    ["65002"] = {
+        65181, -- Magma Plated Helmet
+        65186, -- Magma Plated Faceguard
+        65190, -- Stormrider's Headpiece
+        65195, -- Stormrider's Helm
+        65200, -- Stormrider's Cover
+        65210, -- Firelord's Hood
+        65241, -- Wind Dancer's Helmet
+    },
+    -- Shoulders of the Forlorn Protector
+    ["65087"] = {
+        65208, -- Lightning-Charged Spaulders
+        65248, -- Mantle of the Raging Elements
+        65253, -- Spaulders of the Raging Elements
+        65258, -- Shoulderwraps of the Raging Elements
+        65268, -- Earthen Pauldrons
+        65273, -- Earthen Shoulderguards
+    },
+    -- Shoulders of the Forlorn Conqueror
+    ["65088"] = {
+        65218, -- Reinforced Sapphirium Pauldrons
+        65223, -- Reinforced Sapphirium Mantle
+        65228, -- Reinforced Sapphirium Shoulderguards
+        65233, -- Mercurial Mantle
+        65238, -- Mercurial Shoulderwraps
+        65263, -- Shadowflame Mantle
+    },
+    -- Shoulders of the Forlorn Vanquisher
+    ["65089"] = {
+        65183, -- Magma Plated Pauldrons
+        65188, -- Magma Plated Shoulderguards
+        65193, -- Stormrider's Spaulders
+        65198, -- Stormrider's Mantle
+        65203, -- Stormrider's Shoulderwraps
+        65213, -- Firelord's Mantle
+        65243, -- Wind Dancer's Spaulders
+    },
+    -- Magma Plated Battleplate
+    ["65179"] = {
+        67425, -- Chest of the Forlorn Vanquisher
+    },
+    -- Magma Plated Gauntlets
+    ["65180"] = {
+        67431, -- Gauntlets of the Forlorn Vanquisher
+    },
+    -- Magma Plated Helmet
+    ["65181"] = {
+        65002, -- Crown of the Forlorn Vanquisher
+    },
+    -- Magma Plated Legplates
+    ["65182"] = {
+        67426, -- Leggings of the Forlorn Vanquisher
+    },
+    -- Magma Plated Pauldrons
+    ["65183"] = {
+        65089, -- Shoulders of the Forlorn Vanquisher
+    },
+    -- Magma Plated Chestguard
+    ["65184"] = {
+        67425, -- Chest of the Forlorn Vanquisher
+    },
+    -- Magma Plated Handguards
+    ["65185"] = {
+        67431, -- Gauntlets of the Forlorn Vanquisher
+    },
+    -- Magma Plated Faceguard
+    ["65186"] = {
+        65002, -- Crown of the Forlorn Vanquisher
+    },
+    -- Magma Plated Legguards
+    ["65187"] = {
+        67426, -- Leggings of the Forlorn Vanquisher
+    },
+    -- Magma Plated Shoulderguards
+    ["65188"] = {
+        65089, -- Shoulders of the Forlorn Vanquisher
+    },
+    -- Stormrider's Grips
+    ["65189"] = {
+        67431, -- Gauntlets of the Forlorn Vanquisher
+    },
+    -- Stormrider's Headpiece
+    ["65190"] = {
+        65002, -- Crown of the Forlorn Vanquisher
+    },
+    -- Stormrider's Legguards
+    ["65191"] = {
+        67426, -- Leggings of the Forlorn Vanquisher
+    },
+    -- Stormrider's Raiment
+    ["65192"] = {
+        67425, -- Chest of the Forlorn Vanquisher
+    },
+    -- Stormrider's Spaulders
+    ["65193"] = {
+        65089, -- Shoulders of the Forlorn Vanquisher
+    },
+    -- Stormrider's Handwraps
+    ["65194"] = {
+        67431, -- Gauntlets of the Forlorn Vanquisher
+    },
+    -- Stormrider's Helm
+    ["65195"] = {
+        65002, -- Crown of the Forlorn Vanquisher
+    },
+    -- Stormrider's Legwraps
+    ["65196"] = {
+        67426, -- Leggings of the Forlorn Vanquisher
+    },
+    -- Stormrider's Robes
+    ["65197"] = {
+        67425, -- Chest of the Forlorn Vanquisher
+    },
+    -- Stormrider's Mantle
+    ["65198"] = {
+        65089, -- Shoulders of the Forlorn Vanquisher
+    },
+    -- Stormrider's Gloves
+    ["65199"] = {
+        67431, -- Gauntlets of the Forlorn Vanquisher
+    },
+    -- Stormrider's Cover
+    ["65200"] = {
+        65002, -- Crown of the Forlorn Vanquisher
+    },
+    -- Stormrider's Leggings
+    ["65201"] = {
+        67426, -- Leggings of the Forlorn Vanquisher
+    },
+    -- Stormrider's Vestment
+    ["65202"] = {
+        67425, -- Chest of the Forlorn Vanquisher
+    },
+    -- Stormrider's Shoulderwraps
+    ["65203"] = {
+        65089, -- Shoulders of the Forlorn Vanquisher
+    },
+    -- Lightning-Charged Tunic
+    ["65204"] = {
+        67424, -- Chest of the Forlorn Protector
+    },
+    -- Lightning-Charged Gloves
+    ["65205"] = {
+        67430, -- Gauntlets of the Forlorn Protector
+    },
+    -- Lightning-Charged Headguard
+    ["65206"] = {
+        65000, -- Crown of the Forlorn Protector
+    },
+    -- Lightning-Charged Legguards
+    ["65207"] = {
+        67427, -- Leggings of the Forlorn Protector
+    },
+    -- Lightning-Charged Spaulders
+    ["65208"] = {
+        65087, -- Shoulders of the Forlorn Protector
+    },
+    -- Firelord's Gloves
+    ["65209"] = {
+        67431, -- Gauntlets of the Forlorn Vanquisher
+    },
+    -- Firelord's Hood
+    ["65210"] = {
+        65002, -- Crown of the Forlorn Vanquisher
+    },
+    -- Firelord's Leggings
+    ["65211"] = {
+        67426, -- Leggings of the Forlorn Vanquisher
+    },
+    -- Firelord's Robes
+    ["65212"] = {
+        67425, -- Chest of the Forlorn Vanquisher
+    },
+    -- Firelord's Mantle
+    ["65213"] = {
+        65089, -- Shoulders of the Forlorn Vanquisher
+    },
+    -- Reinforced Sapphirium Battleplate
+    ["65214"] = {
+        67423, -- Chest of the Forlorn Conqueror
+    },
+    -- Reinforced Sapphirium Gauntlets
+    ["65215"] = {
+        67429, -- Gauntlets of the Forlorn Conqueror
+    },
+    -- Reinforced Sapphirium Helmet
+    ["65216"] = {
+        65001, -- Crown of the Forlorn Conqueror
+    },
+    -- Reinforced Sapphirium Legplates
+    ["65217"] = {
+        67428, -- Leggings of the Forlorn Conqueror
+    },
+    -- Reinforced Sapphirium Pauldrons
+    ["65218"] = {
+        65088, -- Shoulders of the Forlorn Conqueror
+    },
+    -- Reinforced Sapphirium Breastplate
+    ["65219"] = {
+        67423, -- Chest of the Forlorn Conqueror
+    },
+    -- Reinforced Sapphirium Gloves
+    ["65220"] = {
+        67429, -- Gauntlets of the Forlorn Conqueror
+    },
+    -- Reinforced Sapphirium Headguard
+    ["65221"] = {
+        65001, -- Crown of the Forlorn Conqueror
+    },
+    -- Reinforced Sapphirium Greaves
+    ["65222"] = {
+        67428, -- Leggings of the Forlorn Conqueror
+    },
+    -- Reinforced Sapphirium Mantle
+    ["65223"] = {
+        65088, -- Shoulders of the Forlorn Conqueror
+    },
+    -- Reinforced Sapphirium Chestguard
+    ["65224"] = {
+        67423, -- Chest of the Forlorn Conqueror
+    },
+    -- Reinforced Sapphirium Handguards
+    ["65225"] = {
+        67429, -- Gauntlets of the Forlorn Conqueror
+    },
+    -- Reinforced Sapphirium Faceguard
+    ["65226"] = {
+        65001, -- Crown of the Forlorn Conqueror
+    },
+    -- Reinforced Sapphirium Legguards
+    ["65227"] = {
+        67428, -- Leggings of the Forlorn Conqueror
+    },
+    -- Reinforced Sapphirium Shoulderguards
+    ["65228"] = {
+        65088, -- Shoulders of the Forlorn Conqueror
+    },
+    -- Mercurial Handwraps
+    ["65229"] = {
+        67429, -- Gauntlets of the Forlorn Conqueror
+    },
+    -- Mercurial Cowl
+    ["65230"] = {
+        65001, -- Crown of the Forlorn Conqueror
+    },
+    -- Mercurial Legwraps
+    ["65231"] = {
+        67428, -- Leggings of the Forlorn Conqueror
+    },
+    -- Mercurial Robes
+    ["65232"] = {
+        67423, -- Chest of the Forlorn Conqueror
+    },
+    -- Mercurial Mantle
+    ["65233"] = {
+        65088, -- Shoulders of the Forlorn Conqueror
+    },
+    -- Mercurial Gloves
+    ["65234"] = {
+        67429, -- Gauntlets of the Forlorn Conqueror
+    },
+    -- Mercurial Hood
+    ["65235"] = {
+        65001, -- Crown of the Forlorn Conqueror
+    },
+    -- Mercurial Leggings
+    ["65236"] = {
+        67428, -- Leggings of the Forlorn Conqueror
+    },
+    -- Mercurial Vestment
+    ["65237"] = {
+        67423, -- Chest of the Forlorn Conqueror
+    },
+    -- Mercurial Shoulderwraps
+    ["65238"] = {
+        65088, -- Shoulders of the Forlorn Conqueror
+    },
+    -- Wind Dancer's Tunic
+    ["65239"] = {
+        67425, -- Chest of the Forlorn Vanquisher
+    },
+    -- Wind Dancer's Gloves
+    ["65240"] = {
+        67431, -- Gauntlets of the Forlorn Vanquisher
+    },
+    -- Wind Dancer's Helmet
+    ["65241"] = {
+        65002, -- Crown of the Forlorn Vanquisher
+    },
+    -- Wind Dancer's Legguards
+    ["65242"] = {
+        67426, -- Leggings of the Forlorn Vanquisher
+    },
+    -- Wind Dancer's Spaulders
+    ["65243"] = {
+        65089, -- Shoulders of the Forlorn Vanquisher
+    },
+    -- Tunic of the Raging Elements
+    ["65244"] = {
+        67424, -- Chest of the Forlorn Protector
+    },
+    -- Handwraps of the Raging Elements
+    ["65245"] = {
+        67430, -- Gauntlets of the Forlorn Protector
+    },
+    -- Faceguard of the Raging Elements
+    ["65246"] = {
+        65000, -- Crown of the Forlorn Protector
+    },
+    -- Legwraps of the Raging Elements
+    ["65247"] = {
+        67427, -- Leggings of the Forlorn Protector
+    },
+    -- Mantle of the Raging Elements
+    ["65248"] = {
+        65087, -- Shoulders of the Forlorn Protector
+    },
+    -- Cuirass of the Raging Elements
+    ["65249"] = {
+        67424, -- Chest of the Forlorn Protector
+    },
+    -- Grips of the Raging Elements
+    ["65250"] = {
+        67430, -- Gauntlets of the Forlorn Protector
+    },
+    -- Helmet of the Raging Elements
+    ["65251"] = {
+        65000, -- Crown of the Forlorn Protector
+    },
+    -- Legguards of the Raging Elements
+    ["65252"] = {
+        67427, -- Leggings of the Forlorn Protector
+    },
+    -- Spaulders of the Raging Elements
+    ["65253"] = {
+        65087, -- Shoulders of the Forlorn Protector
+    },
+    -- Hauberk of the Raging Elements
+    ["65254"] = {
+        67424, -- Chest of the Forlorn Protector
+    },
+    -- Gloves of the Raging Elements
+    ["65255"] = {
+        67430, -- Gauntlets of the Forlorn Protector
+    },
+    -- Headpiece of the Raging Elements
+    ["65256"] = {
+        65000, -- Crown of the Forlorn Protector
+    },
+    -- Kilt of the Raging Elements
+    ["65257"] = {
+        67427, -- Leggings of the Forlorn Protector
+    },
+    -- Shoulderwraps of the Raging Elements
+    ["65258"] = {
+        65087, -- Shoulders of the Forlorn Protector
+    },
+    -- Shadowflame Handwraps
+    ["65259"] = {
+        67429, -- Gauntlets of the Forlorn Conqueror
+    },
+    -- Shadowflame Hood
+    ["65260"] = {
+        65001, -- Crown of the Forlorn Conqueror
+    },
+    -- Shadowflame Leggings
+    ["65261"] = {
+        67428, -- Leggings of the Forlorn Conqueror
+    },
+    -- Shadowflame Robes
+    ["65262"] = {
+        67423, -- Chest of the Forlorn Conqueror
+    },
+    -- Shadowflame Mantle
+    ["65263"] = {
+        65088, -- Shoulders of the Forlorn Conqueror
+    },
+    -- Earthen Battleplate
+    ["65264"] = {
+        67424, -- Chest of the Forlorn Protector
+    },
+    -- Earthen Gauntlets
+    ["65265"] = {
+        67430, -- Gauntlets of the Forlorn Protector
+    },
+    -- Earthen Helmet
+    ["65266"] = {
+        65000, -- Crown of the Forlorn Protector
+    },
+    -- Earthen Legplates
+    ["65267"] = {
+        67427, -- Leggings of the Forlorn Protector
+    },
+    -- Earthen Pauldrons
+    ["65268"] = {
+        65087, -- Shoulders of the Forlorn Protector
+    },
+    -- Earthen Chestguard
+    ["65269"] = {
+        67424, -- Chest of the Forlorn Protector
+    },
+    -- Earthen Handguards
+    ["65270"] = {
+        67430, -- Gauntlets of the Forlorn Protector
+    },
+    -- Earthen Faceguard
+    ["65271"] = {
+        65000, -- Crown of the Forlorn Protector
+    },
+    -- Earthen Legguards
+    ["65272"] = {
+        67427, -- Leggings of the Forlorn Protector
+    },
+    -- Earthen Shoulderguards
+    ["65273"] = {
+        65087, -- Shoulders of the Forlorn Protector
+    },
+    -- Chest of the Forlorn Conqueror
+    ["67423"] = {
+        65214, -- Reinforced Sapphirium Battleplate
+        65219, -- Reinforced Sapphirium Breastplate
+        65224, -- Reinforced Sapphirium Chestguard
+        65232, -- Mercurial Robes
+        65237, -- Mercurial Vestment
+        65262, -- Shadowflame Robes
+    },
+    -- Chest of the Forlorn Protector
+    ["67424"] = {
+        65204, -- Lightning-Charged Tunic
+        65244, -- Tunic of the Raging Elements
+        65249, -- Cuirass of the Raging Elements
+        65254, -- Hauberk of the Raging Elements
+        65264, -- Earthen Battleplate
+        65269, -- Earthen Chestguard
+    },
+    -- Chest of the Forlorn Vanquisher
+    ["67425"] = {
+        65179, -- Magma Plated Battleplate
+        65184, -- Magma Plated Chestguard
+        65192, -- Stormrider's Raiment
+        65197, -- Stormrider's Robes
+        65202, -- Stormrider's Vestment
+        65212, -- Firelord's Robes
+        65239, -- Wind Dancer's Tunic
+    },
+    -- Leggings of the Forlorn Vanquisher
+    ["67426"] = {
+        65182, -- Magma Plated Legplates
+        65187, -- Magma Plated Legguards
+        65191, -- Stormrider's Legguards
+        65196, -- Stormrider's Legwraps
+        65201, -- Stormrider's Leggings
+        65211, -- Firelord's Leggings
+        65242, -- Wind Dancer's Legguards
+    },
+    -- Leggings of the Forlorn Protector
+    ["67427"] = {
+        65207, -- Lightning-Charged Legguards
+        65247, -- Legwraps of the Raging Elements
+        65252, -- Legguards of the Raging Elements
+        65257, -- Kilt of the Raging Elements
+        65267, -- Earthen Legplates
+        65272, -- Earthen Legguards
+    },
+    -- Leggings of the Forlorn Conqueror
+    ["67428"] = {
+        65217, -- Reinforced Sapphirium Legplates
+        65222, -- Reinforced Sapphirium Greaves
+        65227, -- Reinforced Sapphirium Legguards
+        65231, -- Mercurial Legwraps
+        65236, -- Mercurial Leggings
+        65261, -- Shadowflame Leggings
+    },
+    -- Gauntlets of the Forlorn Conqueror
+    ["67429"] = {
+        65215, -- Reinforced Sapphirium Gauntlets
+        65220, -- Reinforced Sapphirium Gloves
+        65225, -- Reinforced Sapphirium Handguards
+        65229, -- Mercurial Handwraps
+        65234, -- Mercurial Gloves
+        65259, -- Shadowflame Handwraps
+    },
+    -- Gauntlets of the Forlorn Protector
+    ["67430"] = {
+        65205, -- Lightning-Charged Gloves
+        65245, -- Handwraps of the Raging Elements
+        65250, -- Grips of the Raging Elements
+        65255, -- Gloves of the Raging Elements
+        65265, -- Earthen Gauntlets
+        65270, -- Earthen Handguards
+    },
+    -- Gauntlets of the Forlorn Vanquisher
+    ["67431"] = {
+        65180, -- Magma Plated Gauntlets
+        65185, -- Magma Plated Handguards
+        65189, -- Stormrider's Grips
+        65194, -- Stormrider's Handwraps
+        65199, -- Stormrider's Gloves
+        65209, -- Firelord's Gloves
+        65240, -- Wind Dancer's Gloves
+    },
+    -- Scales of Life
+    ["69109"] = {
+        71617, -- Crystallized Firestone
+    },
+    -- Apparatus of Khaz'goroth
+    ["69113"] = {
+        71617, -- Crystallized Firestone
+    },
+    -- Living Ember
+    ["69237"] = {
+        69936, -- Fists of Fury
+        69937, -- Eternal Elementium Handguards
+        69938, -- Holy Flame Gauntlets
+        69939, -- Dragonfire Gloves
+        69941, -- Gloves of Unforgiving Flame
+        69942, -- Clutches of Evil
+        69943, -- Heavenly Gloves of the Moon
+        69944, -- Grips of Altered Reality
+        69945, -- Don Tayo's Inferno Mittens
+        69946, -- Warboots of Mighty Lords
+        69947, -- Mirrored Boots
+        69948, -- Emberforged Elementium Boots
+        69949, -- Earthen Scale Sabatons
+        69950, -- Footwraps of Quenched Fire
+        69951, -- Treads of the Craft
+        69952, -- Ethereal Footfalls
+        69953, -- Endless Dream Walkers
+        69954, -- Boots of the Black Flame
+    },
+    -- Branch of Nordrassil
+    ["69646"] = {
+        71141, -- Eternal Ember
+    },
+    -- Seething Cinder
+    ["69815"] = {
+        71085, -- Runestaff of Nordrassil
+        71086, -- Dragonwrath, Tarecgosa's Rest
+    },
+    -- Fists of Fury
+    ["69936"] = {
+        69237, -- Living Ember
+    },
+    -- Eternal Elementium Handguards
+    ["69937"] = {
+        69237, -- Living Ember
+    },
+    -- Holy Flame Gauntlets
+    ["69938"] = {
+        69237, -- Living Ember
+    },
+    -- Dragonfire Gloves
+    ["69939"] = {
+        69237, -- Living Ember
+    },
+    -- Gloves of Unforgiving Flame
+    ["69941"] = {
+        69237, -- Living Ember
+    },
+    -- Clutches of Evil
+    ["69942"] = {
+        69237, -- Living Ember
+    },
+    -- Heavenly Gloves of the Moon
+    ["69943"] = {
+        69237, -- Living Ember
+    },
+    -- Grips of Altered Reality
+    ["69944"] = {
+        69237, -- Living Ember
+    },
+    -- Don Tayo's Inferno Mittens
+    ["69945"] = {
+        69237, -- Living Ember
+    },
+    -- Warboots of Mighty Lords
+    ["69946"] = {
+        69237, -- Living Ember
+    },
+    -- Mirrored Boots
+    ["69947"] = {
+        69237, -- Living Ember
+    },
+    -- Emberforged Elementium Boots
+    ["69948"] = {
+        69237, -- Living Ember
+    },
+    -- Earthen Scale Sabatons
+    ["69949"] = {
+        69237, -- Living Ember
+    },
+    -- Footwraps of Quenched Fire
+    ["69950"] = {
+        69237, -- Living Ember
+    },
+    -- Treads of the Craft
+    ["69951"] = {
+        69237, -- Living Ember
+    },
+    -- Ethereal Footfalls
+    ["69952"] = {
+        69237, -- Living Ember
+    },
+    -- Endless Dream Walkers
+    ["69953"] = {
+        69237, -- Living Ember
+    },
+    -- Boots of the Black Flame
+    ["69954"] = {
+        69237, -- Living Ember
+    },
+    -- Shoulderguards of the Molten Giant
+    ["70941"] = {
+        71688, -- Mantle of the Fiery Protector
+    },
+    -- Faceguard of the Molten Giant
+    ["70944"] = {
+        71682, -- Helm of the Fiery Protector
+    },
+    -- Immolation Shoulderguards
+    ["70946"] = {
+        71681, -- Mantle of the Fiery Conqueror
+    },
+    -- Immolation Faceguard
+    ["70948"] = {
+        71675, -- Helm of the Fiery Conqueror
+    },
+    -- Elementium Deathplate Shoulderguards
+    ["70951"] = {
+        71674, -- Mantle of the Fiery Vanquisher
+    },
+    -- Elementium Deathplate Faceguard
+    ["70954"] = {
+        71668, -- Helm of the Fiery Vanquisher
+    },
+    -- Dark Phoenix Helmet
+    ["71047"] = {
+        71668, -- Helm of the Fiery Vanquisher
+    },
+    -- Dark Phoenix Spaulders
+    ["71049"] = {
+        71674, -- Mantle of the Fiery Vanquisher
+    },
+    -- Flamewaker's Headguard
+    ["71051"] = {
+        71682, -- Helm of the Fiery Protector
+    },
+    -- Flamewaker's Spaulders
+    ["71053"] = {
+        71688, -- Mantle of the Fiery Protector
+    },
+    -- Elementium Deathplate Helmet
+    ["71060"] = {
+        71668, -- Helm of the Fiery Vanquisher
+    },
+    -- Elementium Deathplate Pauldrons
+    ["71062"] = {
+        71674, -- Mantle of the Fiery Vanquisher
+    },
+    -- Immolation Helmet
+    ["71065"] = {
+        71675, -- Helm of the Fiery Conqueror
+    },
+    -- Immolation Pauldrons
+    ["71067"] = {
+        71681, -- Mantle of the Fiery Conqueror
+    },
+    -- Helmet of the Molten Giant
+    ["71070"] = {
+        71682, -- Helm of the Fiery Protector
+    },
+    -- Pauldrons of the Molten Giant
+    ["71072"] = {
+        71688, -- Mantle of the Fiery Protector
+    },
+    -- Branch of Nordrassil
+    ["71084"] = {
+        71141, -- Eternal Ember
+    },
+    -- Runestaff of Nordrassil
+    ["71085"] = {
+        69815, -- Seething Cinder
+    },
+    -- Dragonwrath, Tarecgosa's Rest
+    ["71086"] = {
+        69815, -- Seething Cinder
+    },
+    -- Immolation Headguard
+    ["71093"] = {
+        71675, -- Helm of the Fiery Conqueror
+    },
+    -- Immolation Mantle
+    ["71095"] = {
+        71681, -- Mantle of the Fiery Conqueror
+    },
+    -- Obsidian Arborweave Headpiece
+    ["71098"] = {
+        71668, -- Helm of the Fiery Vanquisher
+    },
+    -- Obsidian Arborweave Spaulders
+    ["71101"] = {
+        71674, -- Mantle of the Fiery Vanquisher
+    },
+    -- Obsidian Arborweave Helm
+    ["71103"] = {
+        71668, -- Helm of the Fiery Vanquisher
+    },
+    -- Obsidian Arborweave Mantle
+    ["71106"] = {
+        71674, -- Mantle of the Fiery Vanquisher
+    },
+    -- Obsidian Arborweave Cover
+    ["71108"] = {
+        71668, -- Helm of the Fiery Vanquisher
+    },
+    -- Obsidian Arborweave Shoulderwraps
+    ["71111"] = {
+        71674, -- Mantle of the Fiery Vanquisher
+    },
+    -- Eternal Ember
+    ["71141"] = {
+        69646, -- Branch of Nordrassil
+        71084, -- Branch of Nordrassil
+    },
+    -- Cowl of the Cleansing Flame
+    ["71272"] = {
+        71675, -- Helm of the Fiery Conqueror
+    },
+    -- Mantle of the Cleansing Flame
+    ["71275"] = {
+        71681, -- Mantle of the Fiery Conqueror
+    },
+    -- Hood of the Cleansing Flame
+    ["71277"] = {
+        71675, -- Helm of the Fiery Conqueror
+    },
+    -- Shoulderwraps of the Cleansing Flame
+    ["71280"] = {
+        71681, -- Mantle of the Fiery Conqueror
+    },
+    -- Balespider's Hood
+    ["71282"] = {
+        71675, -- Helm of the Fiery Conqueror
+    },
+    -- Balespider's Mantle
+    ["71285"] = {
+        71681, -- Mantle of the Fiery Conqueror
+    },
+    -- Firehawk Hood
+    ["71287"] = {
+        71668, -- Helm of the Fiery Vanquisher
+    },
+    -- Firehawk Mantle
+    ["71290"] = {
+        71674, -- Mantle of the Fiery Vanquisher
+    },
+    -- Erupting Volcanic Headpiece
+    ["71293"] = {
+        71682, -- Helm of the Fiery Protector
+    },
+    -- Erupting Volcanic Shoulderwraps
+    ["71295"] = {
+        71688, -- Mantle of the Fiery Protector
+    },
+    -- Erupting Volcanic Faceguard
+    ["71298"] = {
+        71682, -- Helm of the Fiery Protector
+    },
+    -- Erupting Volcanic Mantle
+    ["71300"] = {
+        71688, -- Mantle of the Fiery Protector
+    },
+    -- Erupting Volcanic Helmet
+    ["71303"] = {
+        71682, -- Helm of the Fiery Protector
+    },
+    -- Erupting Volcanic Spaulders
+    ["71305"] = {
+        71688, -- Mantle of the Fiery Protector
+    },
+    -- Elementium Deathplate Breastplate
+    ["71476"] = {
+        71672, -- Chest of the Fiery Vanquisher
+    },
+    -- Elementium Deathplate Gauntlets
+    ["71477"] = {
+        71669, -- Gauntlets of the Fiery Vanquisher
+    },
+    -- Elementium Deathplate Helmet
+    ["71478"] = {
+        71670, -- Crown of the Fiery Vanquisher
+    },
+    -- Elementium Deathplate Greaves
+    ["71479"] = {
+        71671, -- Leggings of the Fiery Vanquisher
+    },
+    -- Elementium Deathplate Pauldrons
+    ["71480"] = {
+        71673, -- Shoulders of the Fiery Vanquisher
+    },
+    -- Elementium Deathplate Chestguard
+    ["71481"] = {
+        71672, -- Chest of the Fiery Vanquisher
+    },
+    -- Elementium Deathplate Handguards
+    ["71482"] = {
+        71669, -- Gauntlets of the Fiery Vanquisher
+    },
+    -- Elementium Deathplate Faceguard
+    ["71483"] = {
+        71670, -- Crown of the Fiery Vanquisher
+    },
+    -- Elementium Deathplate Legguards
+    ["71484"] = {
+        71671, -- Leggings of the Fiery Vanquisher
+    },
+    -- Elementium Deathplate Shoulderguards
+    ["71485"] = {
+        71673, -- Shoulders of the Fiery Vanquisher
+    },
+    -- Obsidian Arborweave Raiment
+    ["71486"] = {
+        71672, -- Chest of the Fiery Vanquisher
+    },
+    -- Obsidian Arborweave Grips
+    ["71487"] = {
+        71669, -- Gauntlets of the Fiery Vanquisher
+    },
+    -- Obsidian Arborweave Headpiece
+    ["71488"] = {
+        71670, -- Crown of the Fiery Vanquisher
+    },
+    -- Obsidian Arborweave Legguards
+    ["71489"] = {
+        71671, -- Leggings of the Fiery Vanquisher
+    },
+    -- Obsidian Arborweave Spaulders
+    ["71490"] = {
+        71673, -- Shoulders of the Fiery Vanquisher
+    },
+    -- Obsidian Arborweave Handwraps
+    ["71491"] = {
+        71669, -- Gauntlets of the Fiery Vanquisher
+    },
+    -- Obsidian Arborweave Helm
+    ["71492"] = {
+        71670, -- Crown of the Fiery Vanquisher
+    },
+    -- Obsidian Arborweave Legwraps
+    ["71493"] = {
+        71671, -- Leggings of the Fiery Vanquisher
+    },
+    -- Obsidian Arborweave Mantle
+    ["71495"] = {
+        71673, -- Shoulders of the Fiery Vanquisher
+    },
+    -- Obsidian Arborweave Gloves
+    ["71496"] = {
+        71669, -- Gauntlets of the Fiery Vanquisher
+    },
+    -- Obsidian Arborweave Cover
+    ["71497"] = {
+        71670, -- Crown of the Fiery Vanquisher
+    },
+    -- Obsidian Arborweave Leggings
+    ["71498"] = {
+        71671, -- Leggings of the Fiery Vanquisher
+    },
+    -- Obsidian Arborweave Vestment
+    ["71499"] = {
+        71672, -- Chest of the Fiery Vanquisher
+    },
+    -- Obsidian Arborweave Shoulderwraps
+    ["71500"] = {
+        71673, -- Shoulders of the Fiery Vanquisher
+    },
+    -- Flamewaker's Tunic
+    ["71501"] = {
+        71686, -- Chest of the Fiery Protector
+    },
+    -- Flamewaker's Gloves
+    ["71502"] = {
+        71683, -- Gauntlets of the Fiery Protector
+    },
+    -- Flamewaker's Headguard
+    ["71503"] = {
+        71684, -- Crown of the Fiery Protector
+    },
+    -- Flamewaker's Legguards
+    ["71504"] = {
+        71685, -- Leggings of the Fiery Protector
+    },
+    -- Flamewaker's Spaulders
+    ["71505"] = {
+        71687, -- Shoulders of the Fiery Protector
+    },
+    -- Firehawk Gloves
+    ["71507"] = {
+        71669, -- Gauntlets of the Fiery Vanquisher
+    },
+    -- Firehawk Hood
+    ["71508"] = {
+        71670, -- Crown of the Fiery Vanquisher
+    },
+    -- Firehawk Leggings
+    ["71509"] = {
+        71671, -- Leggings of the Fiery Vanquisher
+    },
+    -- Firehawk Robes
+    ["71510"] = {
+        71672, -- Chest of the Fiery Vanquisher
+    },
+    -- Firehawk Mantle
+    ["71511"] = {
+        71673, -- Shoulders of the Fiery Vanquisher
+    },
+    -- Immolation Battleplate
+    ["71512"] = {
+        71679, -- Chest of the Fiery Conqueror
+    },
+    -- Immolation Gauntlets
+    ["71513"] = {
+        71676, -- Gauntlets of the Fiery Conqueror
+    },
+    -- Immolation Helmet
+    ["71514"] = {
+        71677, -- Crown of the Fiery Conqueror
+    },
+    -- Immolation Legplates
+    ["71515"] = {
+        71678, -- Leggings of the Fiery Conqueror
+    },
+    -- Immolation Pauldrons
+    ["71516"] = {
+        71680, -- Shoulders of the Fiery Conqueror
+    },
+    -- Immolation Breastplate
+    ["71517"] = {
+        71679, -- Chest of the Fiery Conqueror
+    },
+    -- Immolation Gloves
+    ["71518"] = {
+        71676, -- Gauntlets of the Fiery Conqueror
+    },
+    -- Immolation Headguard
+    ["71519"] = {
+        71677, -- Crown of the Fiery Conqueror
+    },
+    -- Immolation Greaves
+    ["71520"] = {
+        71678, -- Leggings of the Fiery Conqueror
+    },
+    -- Immolation Mantle
+    ["71521"] = {
+        71680, -- Shoulders of the Fiery Conqueror
+    },
+    -- Immolation Chestguard
+    ["71522"] = {
+        71679, -- Chest of the Fiery Conqueror
+    },
+    -- Immolation Handguards
+    ["71523"] = {
+        71676, -- Gauntlets of the Fiery Conqueror
+    },
+    -- Immolation Faceguard
+    ["71524"] = {
+        71677, -- Crown of the Fiery Conqueror
+    },
+    -- Immolation Legguards
+    ["71525"] = {
+        71678, -- Leggings of the Fiery Conqueror
+    },
+    -- Immolation Shoulderguards
+    ["71526"] = {
+        71680, -- Shoulders of the Fiery Conqueror
+    },
+    -- Handwraps of the Cleansing Flame
+    ["71527"] = {
+        71676, -- Gauntlets of the Fiery Conqueror
+    },
+    -- Cowl of the Cleansing Flame
+    ["71528"] = {
+        71677, -- Crown of the Fiery Conqueror
+    },
+    -- Legwraps of the Cleansing Flame
+    ["71529"] = {
+        71678, -- Leggings of the Fiery Conqueror
+    },
+    -- Robes of the Cleansing Flame
+    ["71530"] = {
+        71679, -- Chest of the Fiery Conqueror
+    },
+    -- Mantle of the Cleansing Flame
+    ["71531"] = {
+        71680, -- Shoulders of the Fiery Conqueror
+    },
+    -- Gloves of the Cleansing Flame
+    ["71532"] = {
+        71676, -- Gauntlets of the Fiery Conqueror
+    },
+    -- Hood of the Cleansing Flame
+    ["71533"] = {
+        71677, -- Crown of the Fiery Conqueror
+    },
+    -- Leggings of the Cleansing Flame
+    ["71534"] = {
+        71678, -- Leggings of the Fiery Conqueror
+    },
+    -- Vestment of the Cleansing Flame
+    ["71535"] = {
+        71679, -- Chest of the Fiery Conqueror
+    },
+    -- Shoulderwraps of the Cleansing Flame
+    ["71536"] = {
+        71680, -- Shoulders of the Fiery Conqueror
+    },
+    -- Dark Phoenix Tunic
+    ["71537"] = {
+        71672, -- Chest of the Fiery Vanquisher
+    },
+    -- Dark Phoenix Gloves
+    ["71538"] = {
+        71669, -- Gauntlets of the Fiery Vanquisher
+    },
+    -- Dark Phoenix Helmet
+    ["71539"] = {
+        71670, -- Crown of the Fiery Vanquisher
+    },
+    -- Dark Phoenix Legguards
+    ["71540"] = {
+        71671, -- Leggings of the Fiery Vanquisher
+    },
+    -- Dark Phoenix Spaulders
+    ["71541"] = {
+        71673, -- Shoulders of the Fiery Vanquisher
+    },
+    -- Erupting Volcanic Tunic
+    ["71542"] = {
+        71686, -- Chest of the Fiery Protector
+    },
+    -- Erupting Volcanic Handwraps
+    ["71543"] = {
+        71683, -- Gauntlets of the Fiery Protector
+    },
+    -- Erupting Volcanic Faceguard
+    ["71544"] = {
+        71684, -- Crown of the Fiery Protector
+    },
+    -- Erupting Volcanic Legwraps
+    ["71545"] = {
+        71685, -- Leggings of the Fiery Protector
+    },
+    -- Erupting Volcanic Mantle
+    ["71546"] = {
+        71687, -- Shoulders of the Fiery Protector
+    },
+    -- Erupting Volcanic Cuirass
+    ["71547"] = {
+        71686, -- Chest of the Fiery Protector
+    },
+    -- Erupting Volcanic Grips
+    ["71548"] = {
+        71683, -- Gauntlets of the Fiery Protector
+    },
+    -- Erupting Volcanic Helmet
+    ["71549"] = {
+        71684, -- Crown of the Fiery Protector
+    },
+    -- Erupting Volcanic Legguards
+    ["71550"] = {
+        71685, -- Leggings of the Fiery Protector
+    },
+    -- Erupting Volcanic Spaulders
+    ["71551"] = {
+        71687, -- Shoulders of the Fiery Protector
+    },
+    -- Erupting Volcanic Hauberk
+    ["71552"] = {
+        71686, -- Chest of the Fiery Protector
+    },
+    -- Erupting Volcanic Gloves
+    ["71553"] = {
+        71683, -- Gauntlets of the Fiery Protector
+    },
+    -- Erupting Volcanic Headpiece
+    ["71554"] = {
+        71684, -- Crown of the Fiery Protector
+    },
+    -- Erupting Volcanic Kilt
+    ["71555"] = {
+        71685, -- Leggings of the Fiery Protector
+    },
+    -- Erupting Volcanic Shoulderwraps
+    ["71556"] = {
+        71687, -- Shoulders of the Fiery Protector
+    },
+    -- Ranseur of Hatred
+    ["71557"] = {
+        71617, -- Crystallized Firestone
+    },
+    -- Lava Bolt Crossbow
+    ["71558"] = {
+        71617, -- Crystallized Firestone
+    },
+    -- Spire of Scarlet Pain
+    ["71559"] = {
+        71617, -- Crystallized Firestone
+    },
+    -- Chelley's Sterilized Scalpel
+    ["71560"] = {
+        71617, -- Crystallized Firestone
+    },
+    -- Hide-Bound Chains
+    ["71561"] = {
+        71617, -- Crystallized Firestone
+    },
+    -- Obsidium Cleaver
+    ["71562"] = {
+        71617, -- Crystallized Firestone
+    },
+    -- Firebound Gorget
+    ["71563"] = {
+        71617, -- Crystallized Firestone
+    },
+    -- Theck's Emberseal
+    ["71564"] = {
+        71617, -- Crystallized Firestone
+    },
+    -- Trail of Embers
+    ["71575"] = {
+        71617, -- Crystallized Firestone
+    },
+    -- Scorchvine Wand
+    ["71579"] = {
+        71617, -- Crystallized Firestone
+    },
+    -- Balespider's Handwraps
+    ["71594"] = {
+        71676, -- Gauntlets of the Fiery Conqueror
+    },
+    -- Balespider's Hood
+    ["71595"] = {
+        71677, -- Crown of the Fiery Conqueror
+    },
+    -- Balespider's Leggings
+    ["71596"] = {
+        71678, -- Leggings of the Fiery Conqueror
+    },
+    -- Balespider's Robes
+    ["71597"] = {
+        71679, -- Chest of the Fiery Conqueror
+    },
+    -- Balespider's Mantle
+    ["71598"] = {
+        71680, -- Shoulders of the Fiery Conqueror
+    },
+    -- Helmet of the Molten Giant
+    ["71599"] = {
+        71684, -- Crown of the Fiery Protector
+    },
+    -- Battleplate of the Molten Giant
+    ["71600"] = {
+        71686, -- Chest of the Fiery Protector
+    },
+    -- Gauntlets of the Molten Giant
+    ["71601"] = {
+        71683, -- Gauntlets of the Fiery Protector
+    },
+    -- Legplates of the Molten Giant
+    ["71602"] = {
+        71685, -- Leggings of the Fiery Protector
+    },
+    -- Pauldrons of the Molten Giant
+    ["71603"] = {
+        71687, -- Shoulders of the Fiery Protector
+    },
+    -- Chestguard of the Molten Giant
+    ["71604"] = {
+        71686, -- Chest of the Fiery Protector
+    },
+    -- Handguards of the Molten Giant
+    ["71605"] = {
+        71683, -- Gauntlets of the Fiery Protector
+    },
+    -- Faceguard of the Molten Giant
+    ["71606"] = {
+        71684, -- Crown of the Fiery Protector
+    },
+    -- Legguards of the Molten Giant
+    ["71607"] = {
+        71685, -- Leggings of the Fiery Protector
+    },
+    -- Shoulderguards of the Molten Giant
+    ["71608"] = {
+        71687, -- Shoulders of the Fiery Protector
+    },
+    -- Crystallized Firestone
+    ["71617"] = {
+        69109, -- Scales of Life
+        69113, -- Apparatus of Khaz'goroth
+        71557, -- Ranseur of Hatred
+        71558, -- Lava Bolt Crossbow
+        71559, -- Spire of Scarlet Pain
+        71560, -- Chelley's Sterilized Scalpel
+        71561, -- Hide-Bound Chains
+        71562, -- Obsidium Cleaver
+        71563, -- Firebound Gorget
+        71564, -- Theck's Emberseal
+        71575, -- Trail of Embers
+        71579, -- Scorchvine Wand
+        71641, -- Riplimb's Lost Collar
+    },
+    -- Riplimb's Lost Collar
+    ["71641"] = {
+        71617, -- Crystallized Firestone
+    },
+    -- Helm of the Fiery Vanquisher
+    ["71668"] = {
+        70954, -- Elementium Deathplate Faceguard
+        71047, -- Dark Phoenix Helmet
+        71060, -- Elementium Deathplate Helmet
+        71098, -- Obsidian Arborweave Headpiece
+        71103, -- Obsidian Arborweave Helm
+        71108, -- Obsidian Arborweave Cover
+        71287, -- Firehawk Hood
+    },
+    -- Gauntlets of the Fiery Vanquisher
+    ["71669"] = {
+        71477, -- Elementium Deathplate Gauntlets
+        71482, -- Elementium Deathplate Handguards
+        71487, -- Obsidian Arborweave Grips
+        71491, -- Obsidian Arborweave Handwraps
+        71496, -- Obsidian Arborweave Gloves
+        71507, -- Firehawk Gloves
+        71538, -- Dark Phoenix Gloves
+    },
+    -- Crown of the Fiery Vanquisher
+    ["71670"] = {
+        71478, -- Elementium Deathplate Helmet
+        71483, -- Elementium Deathplate Faceguard
+        71488, -- Obsidian Arborweave Headpiece
+        71492, -- Obsidian Arborweave Helm
+        71497, -- Obsidian Arborweave Cover
+        71508, -- Firehawk Hood
+        71539, -- Dark Phoenix Helmet
+    },
+    -- Leggings of the Fiery Vanquisher
+    ["71671"] = {
+        71479, -- Elementium Deathplate Greaves
+        71484, -- Elementium Deathplate Legguards
+        71489, -- Obsidian Arborweave Legguards
+        71493, -- Obsidian Arborweave Legwraps
+        71498, -- Obsidian Arborweave Leggings
+        71509, -- Firehawk Leggings
+        71540, -- Dark Phoenix Legguards
+    },
+    -- Chest of the Fiery Vanquisher
+    ["71672"] = {
+        71476, -- Elementium Deathplate Breastplate
+        71481, -- Elementium Deathplate Chestguard
+        71486, -- Obsidian Arborweave Raiment
+        71499, -- Obsidian Arborweave Vestment
+        71510, -- Firehawk Robes
+        71537, -- Dark Phoenix Tunic
+    },
+    -- Shoulders of the Fiery Vanquisher
+    ["71673"] = {
+        71480, -- Elementium Deathplate Pauldrons
+        71485, -- Elementium Deathplate Shoulderguards
+        71490, -- Obsidian Arborweave Spaulders
+        71495, -- Obsidian Arborweave Mantle
+        71500, -- Obsidian Arborweave Shoulderwraps
+        71511, -- Firehawk Mantle
+        71541, -- Dark Phoenix Spaulders
+    },
+    -- Mantle of the Fiery Vanquisher
+    ["71674"] = {
+        70951, -- Elementium Deathplate Shoulderguards
+        71049, -- Dark Phoenix Spaulders
+        71062, -- Elementium Deathplate Pauldrons
+        71101, -- Obsidian Arborweave Spaulders
+        71106, -- Obsidian Arborweave Mantle
+        71111, -- Obsidian Arborweave Shoulderwraps
+        71290, -- Firehawk Mantle
+    },
+    -- Helm of the Fiery Conqueror
+    ["71675"] = {
+        70948, -- Immolation Faceguard
+        71065, -- Immolation Helmet
+        71093, -- Immolation Headguard
+        71272, -- Cowl of the Cleansing Flame
+        71277, -- Hood of the Cleansing Flame
+        71282, -- Balespider's Hood
+    },
+    -- Gauntlets of the Fiery Conqueror
+    ["71676"] = {
+        71513, -- Immolation Gauntlets
+        71518, -- Immolation Gloves
+        71523, -- Immolation Handguards
+        71527, -- Handwraps of the Cleansing Flame
+        71532, -- Gloves of the Cleansing Flame
+        71594, -- Balespider's Handwraps
+    },
+    -- Crown of the Fiery Conqueror
+    ["71677"] = {
+        71514, -- Immolation Helmet
+        71519, -- Immolation Headguard
+        71524, -- Immolation Faceguard
+        71528, -- Cowl of the Cleansing Flame
+        71533, -- Hood of the Cleansing Flame
+        71595, -- Balespider's Hood
+    },
+    -- Leggings of the Fiery Conqueror
+    ["71678"] = {
+        71515, -- Immolation Legplates
+        71520, -- Immolation Greaves
+        71525, -- Immolation Legguards
+        71529, -- Legwraps of the Cleansing Flame
+        71534, -- Leggings of the Cleansing Flame
+        71596, -- Balespider's Leggings
+    },
+    -- Chest of the Fiery Conqueror
+    ["71679"] = {
+        71512, -- Immolation Battleplate
+        71517, -- Immolation Breastplate
+        71522, -- Immolation Chestguard
+        71530, -- Robes of the Cleansing Flame
+        71535, -- Vestment of the Cleansing Flame
+        71597, -- Balespider's Robes
+    },
+    -- Shoulders of the Fiery Conqueror
+    ["71680"] = {
+        71516, -- Immolation Pauldrons
+        71521, -- Immolation Mantle
+        71526, -- Immolation Shoulderguards
+        71531, -- Mantle of the Cleansing Flame
+        71536, -- Shoulderwraps of the Cleansing Flame
+        71598, -- Balespider's Mantle
+    },
+    -- Mantle of the Fiery Conqueror
+    ["71681"] = {
+        70946, -- Immolation Shoulderguards
+        71067, -- Immolation Pauldrons
+        71095, -- Immolation Mantle
+        71275, -- Mantle of the Cleansing Flame
+        71280, -- Shoulderwraps of the Cleansing Flame
+        71285, -- Balespider's Mantle
+    },
+    -- Helm of the Fiery Protector
+    ["71682"] = {
+        70944, -- Faceguard of the Molten Giant
+        71051, -- Flamewaker's Headguard
+        71070, -- Helmet of the Molten Giant
+        71293, -- Erupting Volcanic Headpiece
+        71298, -- Erupting Volcanic Faceguard
+        71303, -- Erupting Volcanic Helmet
+    },
+    -- Gauntlets of the Fiery Protector
+    ["71683"] = {
+        71502, -- Flamewaker's Gloves
+        71543, -- Erupting Volcanic Handwraps
+        71548, -- Erupting Volcanic Grips
+        71553, -- Erupting Volcanic Gloves
+        71601, -- Gauntlets of the Molten Giant
+        71605, -- Handguards of the Molten Giant
+    },
+    -- Crown of the Fiery Protector
+    ["71684"] = {
+        71503, -- Flamewaker's Headguard
+        71544, -- Erupting Volcanic Faceguard
+        71549, -- Erupting Volcanic Helmet
+        71554, -- Erupting Volcanic Headpiece
+        71599, -- Helmet of the Molten Giant
+        71606, -- Faceguard of the Molten Giant
+    },
+    -- Leggings of the Fiery Protector
+    ["71685"] = {
+        71504, -- Flamewaker's Legguards
+        71545, -- Erupting Volcanic Legwraps
+        71550, -- Erupting Volcanic Legguards
+        71555, -- Erupting Volcanic Kilt
+        71602, -- Legplates of the Molten Giant
+        71607, -- Legguards of the Molten Giant
+    },
+    -- Chest of the Fiery Protector
+    ["71686"] = {
+        71501, -- Flamewaker's Tunic
+        71542, -- Erupting Volcanic Tunic
+        71547, -- Erupting Volcanic Cuirass
+        71552, -- Erupting Volcanic Hauberk
+        71600, -- Battleplate of the Molten Giant
+        71604, -- Chestguard of the Molten Giant
+    },
+    -- Shoulders of the Fiery Protector
+    ["71687"] = {
+        71505, -- Flamewaker's Spaulders
+        71546, -- Erupting Volcanic Mantle
+        71551, -- Erupting Volcanic Spaulders
+        71556, -- Erupting Volcanic Shoulderwraps
+        71603, -- Pauldrons of the Molten Giant
+        71608, -- Shoulderguards of the Molten Giant
+    },
+    -- Mantle of the Fiery Protector
+    ["71688"] = {
+        70941, -- Shoulderguards of the Molten Giant
+        71053, -- Flamewaker's Spaulders
+        71072, -- Pauldrons of the Molten Giant
+        71295, -- Erupting Volcanic Shoulderwraps
+        71300, -- Erupting Volcanic Mantle
+        71305, -- Erupting Volcanic Spaulders
+    },
+    -- Lavaquake Legwraps
+    ["71980"] = {
+        71998, -- Essence of Destruction
+    },
+    -- World Mender's Pants
+    ["71981"] = {
+        71998, -- Essence of Destruction
+    },
+    -- Pyrium Legplates of Purified Evil
+    ["71982"] = {
+        71998, -- Essence of Destruction
+    },
+    -- Unstoppable Destroyer's Legplates
+    ["71983"] = {
+        71998, -- Essence of Destruction
+    },
+    -- Foundations of Courage
+    ["71984"] = {
+        71998, -- Essence of Destruction
+    },
+    -- Bladeshadow Leggings
+    ["71985"] = {
+        71998, -- Essence of Destruction
+    },
+    -- Leggings of Nature's Champion
+    ["71986"] = {
+        71998, -- Essence of Destruction
+    },
+    -- Rended Earth Leggings
+    ["71987"] = {
+        71998, -- Essence of Destruction
+    },
+    -- Deathscale Leggings
+    ["71988"] = {
+        71998, -- Essence of Destruction
+    },
+    -- Bracers of Unconquered Power
+    ["71989"] = {
+        71998, -- Essence of Destruction
+    },
+    -- Dreamwraps of the Light
+    ["71990"] = {
+        71998, -- Essence of Destruction
+    },
+    -- Soul Redeemer Bracers
+    ["71991"] = {
+        71998, -- Essence of Destruction
+    },
+    -- Bracers of Destructive Strength
+    ["71992"] = {
+        71998, -- Essence of Destruction
+    },
+    -- Titanguard Wristplates
+    ["71993"] = {
+        71998, -- Essence of Destruction
+    },
+    -- Bladeshadow Wristguards
+    ["71994"] = {
+        71998, -- Essence of Destruction
+    },
+    -- Bracers of Flowing Serenity
+    ["71995"] = {
+        71998, -- Essence of Destruction
+    },
+    -- Bracers of the Hunter-Killer
+    ["71996"] = {
+        71998, -- Essence of Destruction
+    },
+    -- Thundering Deathscale Wristguards
+    ["71997"] = {
+        71998, -- Essence of Destruction
+    },
+    -- Essence of Destruction
+    ["71998"] = {
+        71980, -- Lavaquake Legwraps
+        71981, -- World Mender's Pants
+        71982, -- Pyrium Legplates of Purified Evil
+        71983, -- Unstoppable Destroyer's Legplates
+        71984, -- Foundations of Courage
+        71985, -- Bladeshadow Leggings
+        71986, -- Leggings of Nature's Champion
+        71987, -- Rended Earth Leggings
+        71988, -- Deathscale Leggings
+        71989, -- Bracers of Unconquered Power
+        71990, -- Dreamwraps of the Light
+        71991, -- Soul Redeemer Bracers
+        71992, -- Bracers of Destructive Strength
+        71993, -- Titanguard Wristplates
+        71994, -- Bladeshadow Wristguards
+        71995, -- Bracers of Flowing Serenity
+        71996, -- Bracers of the Hunter-Killer
+        71997, -- Thundering Deathscale Wristguards
+    },
+    -- Time Lord's Gloves
+    ["76212"] = {
+        78173, -- Gauntlets of the Corrupted Vanquisher
+    },
+    -- Time Lord's Hood
+    ["76213"] = {
+        78172, -- Crown of the Corrupted Vanquisher
+    },
+    -- Time Lord's Leggings
+    ["76214"] = {
+        78171, -- Leggings of the Corrupted Vanquisher
+    },
+    -- Time Lord's Robes
+    ["76215"] = {
+        78174, -- Chest of the Corrupted Vanquisher
+    },
+    -- Time Lord's Mantle
+    ["76216"] = {
+        78170, -- Shoulders of the Corrupted Vanquisher
+    },
+    -- Mantle of the Faceless Shroud
+    ["76339"] = {
+        78180, -- Shoulders of the Corrupted Conqueror
+    },
+    -- Robes of the Faceless Shroud
+    ["76340"] = {
+        78184, -- Chest of the Corrupted Conqueror
+    },
+    -- Leggings of the Faceless Shroud
+    ["76341"] = {
+        78181, -- Leggings of the Corrupted Conqueror
+    },
+    -- Hood of the Faceless Shroud
+    ["76342"] = {
+        78182, -- Crown of the Corrupted Conqueror
+    },
+    -- Gloves of the Faceless Shroud
+    ["76343"] = {
+        78183, -- Gauntlets of the Corrupted Conqueror
+    },
+    -- Mantle of Dying Light
+    ["76344"] = {
+        78180, -- Shoulders of the Corrupted Conqueror
+    },
+    -- Robes of Dying Light
+    ["76345"] = {
+        78184, -- Chest of the Corrupted Conqueror
+    },
+    -- Leggings of Dying Light
+    ["76346"] = {
+        78181, -- Leggings of the Corrupted Conqueror
+    },
+    -- Hood of Dying Light
+    ["76347"] = {
+        78182, -- Crown of the Corrupted Conqueror
+    },
+    -- Gloves of Dying Light
+    ["76348"] = {
+        78183, -- Gauntlets of the Corrupted Conqueror
+    },
+    -- Handwraps of Dying Light
+    ["76357"] = {
+        78183, -- Gauntlets of the Corrupted Conqueror
+    },
+    -- Cowl of Dying Light
+    ["76358"] = {
+        78182, -- Crown of the Corrupted Conqueror
+    },
+    -- Legwraps of Dying Light
+    ["76359"] = {
+        78181, -- Leggings of the Corrupted Conqueror
+    },
+    -- Robes of Dying Light
+    ["76360"] = {
+        78184, -- Chest of the Corrupted Conqueror
+    },
+    -- Mantle of Dying Light
+    ["76361"] = {
+        78180, -- Shoulders of the Corrupted Conqueror
+    },
+    -- Deep Earth Handwraps
+    ["76749"] = {
+        78173, -- Gauntlets of the Corrupted Vanquisher
+    },
+    -- Deep Earth Helm
+    ["76750"] = {
+        78172, -- Crown of the Corrupted Vanquisher
+    },
+    -- Deep Earth Legwraps
+    ["76751"] = {
+        78171, -- Leggings of the Corrupted Vanquisher
+    },
+    -- Deep Earth Robes
+    ["76752"] = {
+        78174, -- Chest of the Corrupted Vanquisher
+    },
+    -- Deep Earth Mantle
+    ["76753"] = {
+        78170, -- Shoulders of the Corrupted Vanquisher
+    },
+    -- Spiritwalker's Tunic
+    ["76756"] = {
+        78179, -- Chest of the Corrupted Protector
+    },
+    -- Spiritwalker's Handwraps
+    ["76757"] = {
+        78178, -- Gauntlets of the Corrupted Protector
+    },
+    -- Spiritwalker's Faceguard
+    ["76758"] = {
+        78177, -- Crown of the Corrupted Protector
+    },
+    -- Spiritwalker's Legwraps
+    ["76759"] = {
+        78176, -- Leggings of the Corrupted Protector
+    },
+    -- Spiritwalker's Mantle
+    ["76760"] = {
+        78175, -- Shoulders of the Corrupted Protector
+    },
+    -- Breastplate of Radiant Glory
+    ["76765"] = {
+        78184, -- Chest of the Corrupted Conqueror
+    },
+    -- Gloves of Radiant Glory
+    ["76766"] = {
+        78183, -- Gauntlets of the Corrupted Conqueror
+    },
+    -- Headguard of Radiant Glory
+    ["76767"] = {
+        78182, -- Crown of the Corrupted Conqueror
+    },
+    -- Greaves of Radiant Glory
+    ["76768"] = {
+        78181, -- Leggings of the Corrupted Conqueror
+    },
+    -- Mantle of Radiant Glory
+    ["76769"] = {
+        78180, -- Shoulders of the Corrupted Conqueror
+    },
+    -- Battleplate of Radiant Glory
+    ["76874"] = {
+        78184, -- Chest of the Corrupted Conqueror
+    },
+    -- Gauntlets of Radiant Glory
+    ["76875"] = {
+        78183, -- Gauntlets of the Corrupted Conqueror
+    },
+    -- Helmet of Radiant Glory
+    ["76876"] = {
+        78182, -- Crown of the Corrupted Conqueror
+    },
+    -- Legplates of Radiant Glory
+    ["76877"] = {
+        78181, -- Leggings of the Corrupted Conqueror
+    },
+    -- Pauldrons of Radiant Glory
+    ["76878"] = {
+        78180, -- Shoulders of the Corrupted Conqueror
+    },
+    -- Necrotic Boneplate Breastplate
+    ["76974"] = {
+        78174, -- Chest of the Corrupted Vanquisher
+    },
+    -- Necrotic Boneplate Gauntlets
+    ["76975"] = {
+        78173, -- Gauntlets of the Corrupted Vanquisher
+    },
+    -- Necrotic Boneplate Helmet
+    ["76976"] = {
+        78172, -- Crown of the Corrupted Vanquisher
+    },
+    -- Necrotic Boneplate Greaves
+    ["76977"] = {
+        78171, -- Leggings of the Corrupted Vanquisher
+    },
+    -- Necrotic Boneplate Pauldrons
+    ["76978"] = {
+        78170, -- Shoulders of the Corrupted Vanquisher
+    },
+    -- Colossal Dragonplate Helmet
+    ["76983"] = {
+        78177, -- Crown of the Corrupted Protector
+    },
+    -- Colossal Dragonplate Battleplate
+    ["76984"] = {
+        78179, -- Chest of the Corrupted Protector
+    },
+    -- Colossal Dragonplate Gauntlets
+    ["76985"] = {
+        78178, -- Gauntlets of the Corrupted Protector
+    },
+    -- Colossal Dragonplate Legplates
+    ["76986"] = {
+        78176, -- Leggings of the Corrupted Protector
+    },
+    -- Colossal Dragonplate Pauldrons
+    ["76987"] = {
+        78175, -- Shoulders of the Corrupted Protector
+    },
+    -- Colossal Dragonplate Chestguard
+    ["76988"] = {
+        78179, -- Chest of the Corrupted Protector
+    },
+    -- Colossal Dragonplate Handguards
+    ["76989"] = {
+        78178, -- Gauntlets of the Corrupted Protector
+    },
+    -- Colossal Dragonplate Faceguard
+    ["76990"] = {
+        78177, -- Crown of the Corrupted Protector
+    },
+    -- Colossal Dragonplate Legguards
+    ["76991"] = {
+        78176, -- Leggings of the Corrupted Protector
+    },
+    -- Colossal Dragonplate Shoulderguards
+    ["76992"] = {
+        78175, -- Shoulders of the Corrupted Protector
+    },
+    -- Chestguard of Radiant Glory
+    ["77003"] = {
+        78184, -- Chest of the Corrupted Conqueror
+    },
+    -- Handguards of Radiant Glory
+    ["77004"] = {
+        78183, -- Gauntlets of the Corrupted Conqueror
+    },
+    -- Faceguard of Radiant Glory
+    ["77005"] = {
+        78182, -- Crown of the Corrupted Conqueror
+    },
+    -- Legguards of Radiant Glory
+    ["77006"] = {
+        78181, -- Leggings of the Corrupted Conqueror
+    },
+    -- Shoulderguards of Radiant Glory
+    ["77007"] = {
+        78180, -- Shoulders of the Corrupted Conqueror
+    },
+    -- Necrotic Boneplate Chestguard
+    ["77008"] = {
+        78174, -- Chest of the Corrupted Vanquisher
+    },
+    -- Necrotic Boneplate Handguards
+    ["77009"] = {
+        78173, -- Gauntlets of the Corrupted Vanquisher
+    },
+    -- Necrotic Boneplate Faceguard
+    ["77010"] = {
+        78172, -- Crown of the Corrupted Vanquisher
+    },
+    -- Necrotic Boneplate Legguards
+    ["77011"] = {
+        78171, -- Leggings of the Corrupted Vanquisher
+    },
+    -- Necrotic Boneplate Shoulderguards
+    ["77012"] = {
+        78170, -- Shoulders of the Corrupted Vanquisher
+    },
+    -- Deep Earth Raiment
+    ["77013"] = {
+        78174, -- Chest of the Corrupted Vanquisher
+    },
+    -- Deep Earth Grips
+    ["77014"] = {
+        78173, -- Gauntlets of the Corrupted Vanquisher
+    },
+    -- Deep Earth Headpiece
+    ["77015"] = {
+        78172, -- Crown of the Corrupted Vanquisher
+    },
+    -- Deep Earth Legguards
+    ["77016"] = {
+        78171, -- Leggings of the Corrupted Vanquisher
+    },
+    -- Deep Earth Spaulders
+    ["77017"] = {
+        78170, -- Shoulders of the Corrupted Vanquisher
+    },
+    -- Deep Earth Gloves
+    ["77018"] = {
+        78173, -- Gauntlets of the Corrupted Vanquisher
+    },
+    -- Deep Earth Cover
+    ["77019"] = {
+        78172, -- Crown of the Corrupted Vanquisher
+    },
+    -- Deep Earth Leggings
+    ["77020"] = {
+        78171, -- Leggings of the Corrupted Vanquisher
+    },
+    -- Deep Earth Vestment
+    ["77021"] = {
+        78174, -- Chest of the Corrupted Vanquisher
+    },
+    -- Deep Earth Shoulderwraps
+    ["77022"] = {
+        78170, -- Shoulders of the Corrupted Vanquisher
+    },
+    -- Blackfang Battleweave Tunic
+    ["77023"] = {
+        78174, -- Chest of the Corrupted Vanquisher
+    },
+    -- Blackfang Battleweave Gloves
+    ["77024"] = {
+        78173, -- Gauntlets of the Corrupted Vanquisher
+    },
+    -- Blackfang Battleweave Helmet
+    ["77025"] = {
+        78172, -- Crown of the Corrupted Vanquisher
+    },
+    -- Blackfang Battleweave Legguards
+    ["77026"] = {
+        78171, -- Leggings of the Corrupted Vanquisher
+    },
+    -- Blackfang Battleweave Spaulders
+    ["77027"] = {
+        78170, -- Shoulders of the Corrupted Vanquisher
+    },
+    -- Wyrmstalker's Tunic
+    ["77028"] = {
+        78179, -- Chest of the Corrupted Protector
+    },
+    -- Wyrmstalker's Gloves
+    ["77029"] = {
+        78178, -- Gauntlets of the Corrupted Protector
+    },
+    -- Wyrmstalker's Headguard
+    ["77030"] = {
+        78177, -- Crown of the Corrupted Protector
+    },
+    -- Wyrmstalker's Legguards
+    ["77031"] = {
+        78176, -- Leggings of the Corrupted Protector
+    },
+    -- Wyrmstalker's Spaulders
+    ["77032"] = {
+        78175, -- Shoulders of the Corrupted Protector
+    },
+    -- Spiritwalker's Shoulderwraps
+    ["77035"] = {
+        78175, -- Shoulders of the Corrupted Protector
+    },
+    -- Spiritwalker's Kilt
+    ["77036"] = {
+        78176, -- Leggings of the Corrupted Protector
+    },
+    -- Spiritwalker's Headpiece
+    ["77037"] = {
+        78177, -- Crown of the Corrupted Protector
+    },
+    -- Spiritwalker's Gloves
+    ["77038"] = {
+        78178, -- Gauntlets of the Corrupted Protector
+    },
+    -- Spiritwalker's Hauberk
+    ["77039"] = {
+        78179, -- Chest of the Corrupted Protector
+    },
+    -- Spiritwalker's Cuirass
+    ["77040"] = {
+        78179, -- Chest of the Corrupted Protector
+    },
+    -- Spiritwalker's Grips
+    ["77041"] = {
+        78178, -- Gauntlets of the Corrupted Protector
+    },
+    -- Spiritwalker's Helmet
+    ["77042"] = {
+        78177, -- Crown of the Corrupted Protector
+    },
+    -- Spiritwalker's Legguards
+    ["77043"] = {
+        78176, -- Leggings of the Corrupted Protector
+    },
+    -- Spiritwalker's Spaulders
+    ["77044"] = {
+        78175, -- Shoulders of the Corrupted Protector
+    },
+    -- Golad, Twilight of Aspects
+    ["77949"] = {
+        77952, -- Elementium Gem Cluster
+    },
+    -- Tiriosh, Nightmare of Ages
+    ["77950"] = {
+        77952, -- Elementium Gem Cluster
+    },
+    -- Elementium Gem Cluster
+    ["77952"] = {
+        77949, -- Golad, Twilight of Aspects
+        77950, -- Tiriosh, Nightmare of Ages
+    },
+    -- Shoulders of the Corrupted Vanquisher
+    ["78170"] = {
+        76216, -- Time Lord's Mantle
+        76753, -- Deep Earth Mantle
+        76978, -- Necrotic Boneplate Pauldrons
+        77012, -- Necrotic Boneplate Shoulderguards
+        77017, -- Deep Earth Spaulders
+        77022, -- Deep Earth Shoulderwraps
+        77027, -- Blackfang Battleweave Spaulders
+    },
+    -- Leggings of the Corrupted Vanquisher
+    ["78171"] = {
+        76214, -- Time Lord's Leggings
+        76751, -- Deep Earth Legwraps
+        76977, -- Necrotic Boneplate Greaves
+        77011, -- Necrotic Boneplate Legguards
+        77016, -- Deep Earth Legguards
+        77020, -- Deep Earth Leggings
+        77026, -- Blackfang Battleweave Legguards
+    },
+    -- Crown of the Corrupted Vanquisher
+    ["78172"] = {
+        76213, -- Time Lord's Hood
+        76750, -- Deep Earth Helm
+        76976, -- Necrotic Boneplate Helmet
+        77010, -- Necrotic Boneplate Faceguard
+        77015, -- Deep Earth Headpiece
+        77019, -- Deep Earth Cover
+        77025, -- Blackfang Battleweave Helmet
+    },
+    -- Gauntlets of the Corrupted Vanquisher
+    ["78173"] = {
+        76212, -- Time Lord's Gloves
+        76749, -- Deep Earth Handwraps
+        76975, -- Necrotic Boneplate Gauntlets
+        77009, -- Necrotic Boneplate Handguards
+        77014, -- Deep Earth Grips
+        77018, -- Deep Earth Gloves
+        77024, -- Blackfang Battleweave Gloves
+    },
+    -- Chest of the Corrupted Vanquisher
+    ["78174"] = {
+        76215, -- Time Lord's Robes
+        76752, -- Deep Earth Robes
+        76974, -- Necrotic Boneplate Breastplate
+        77008, -- Necrotic Boneplate Chestguard
+        77013, -- Deep Earth Raiment
+        77021, -- Deep Earth Vestment
+        77023, -- Blackfang Battleweave Tunic
+    },
+    -- Shoulders of the Corrupted Protector
+    ["78175"] = {
+        76760, -- Spiritwalker's Mantle
+        76987, -- Colossal Dragonplate Pauldrons
+        76992, -- Colossal Dragonplate Shoulderguards
+        77032, -- Wyrmstalker's Spaulders
+        77035, -- Spiritwalker's Shoulderwraps
+        77044, -- Spiritwalker's Spaulders
+    },
+    -- Leggings of the Corrupted Protector
+    ["78176"] = {
+        76759, -- Spiritwalker's Legwraps
+        76986, -- Colossal Dragonplate Legplates
+        76991, -- Colossal Dragonplate Legguards
+        77031, -- Wyrmstalker's Legguards
+        77036, -- Spiritwalker's Kilt
+        77043, -- Spiritwalker's Legguards
+    },
+    -- Crown of the Corrupted Protector
+    ["78177"] = {
+        76758, -- Spiritwalker's Faceguard
+        76983, -- Colossal Dragonplate Helmet
+        76990, -- Colossal Dragonplate Faceguard
+        77030, -- Wyrmstalker's Headguard
+        77037, -- Spiritwalker's Headpiece
+        77042, -- Spiritwalker's Helmet
+    },
+    -- Gauntlets of the Corrupted Protector
+    ["78178"] = {
+        76757, -- Spiritwalker's Handwraps
+        76985, -- Colossal Dragonplate Gauntlets
+        76989, -- Colossal Dragonplate Handguards
+        77029, -- Wyrmstalker's Gloves
+        77038, -- Spiritwalker's Gloves
+        77041, -- Spiritwalker's Grips
+    },
+    -- Chest of the Corrupted Protector
+    ["78179"] = {
+        76756, -- Spiritwalker's Tunic
+        76984, -- Colossal Dragonplate Battleplate
+        76988, -- Colossal Dragonplate Chestguard
+        77028, -- Wyrmstalker's Tunic
+        77039, -- Spiritwalker's Hauberk
+        77040, -- Spiritwalker's Cuirass
+    },
+    -- Shoulders of the Corrupted Conqueror
+    ["78180"] = {
+        76339, -- Mantle of the Faceless Shroud
+        76344, -- Mantle of Dying Light
+        76361, -- Mantle of Dying Light
+        76769, -- Mantle of Radiant Glory
+        76878, -- Pauldrons of Radiant Glory
+        77007, -- Shoulderguards of Radiant Glory
+    },
+    -- Leggings of the Corrupted Conqueror
+    ["78181"] = {
+        76341, -- Leggings of the Faceless Shroud
+        76346, -- Leggings of Dying Light
+        76359, -- Legwraps of Dying Light
+        76768, -- Greaves of Radiant Glory
+        76877, -- Legplates of Radiant Glory
+        77006, -- Legguards of Radiant Glory
+    },
+    -- Crown of the Corrupted Conqueror
+    ["78182"] = {
+        76342, -- Hood of the Faceless Shroud
+        76347, -- Hood of Dying Light
+        76358, -- Cowl of Dying Light
+        76767, -- Headguard of Radiant Glory
+        76876, -- Helmet of Radiant Glory
+        77005, -- Faceguard of Radiant Glory
+    },
+    -- Gauntlets of the Corrupted Conqueror
+    ["78183"] = {
+        76343, -- Gloves of the Faceless Shroud
+        76348, -- Gloves of Dying Light
+        76357, -- Handwraps of Dying Light
+        76766, -- Gloves of Radiant Glory
+        76875, -- Gauntlets of Radiant Glory
+        77004, -- Handguards of Radiant Glory
+    },
+    -- Chest of the Corrupted Conqueror
+    ["78184"] = {
+        76340, -- Robes of the Faceless Shroud
+        76345, -- Robes of Dying Light
+        76360, -- Robes of Dying Light
+        76765, -- Breastplate of Radiant Glory
+        76874, -- Battleplate of Radiant Glory
+        77003, -- Chestguard of Radiant Glory
+    },
+    -- Colossal Dragonplate Battleplate
+    ["78657"] = {
+        78848, -- Chest of the Corrupted Protector
+    },
+    -- Colossal Dragonplate Chestguard
+    ["78658"] = {
+        78848, -- Chest of the Corrupted Protector
+    },
+    -- Necrotic Boneplate Breastplate
+    ["78659"] = {
+        78849, -- Chest of the Corrupted Vanquisher
+    },
+    -- Deep Earth Robes
+    ["78660"] = {
+        78849, -- Chest of the Corrupted Vanquisher
+    },
+    -- Wyrmstalker's Tunic
+    ["78661"] = {
+        78848, -- Chest of the Corrupted Protector
+    },
+    -- Deep Earth Vestment
+    ["78662"] = {
+        78849, -- Chest of the Corrupted Vanquisher
+    },
+    -- Necrotic Boneplate Chestguard
+    ["78663"] = {
+        78849, -- Chest of the Corrupted Vanquisher
+    },
+    -- Blackfang Battleweave Tunic
+    ["78664"] = {
+        78849, -- Chest of the Corrupted Vanquisher
+    },
+    -- Deep Earth Raiment
+    ["78665"] = {
+        78849, -- Chest of the Corrupted Vanquisher
+    },
+    -- Spiritwalker's Gloves
+    ["78666"] = {
+        78854, -- Gauntlets of the Corrupted Protector
+    },
+    -- Spiritwalker's Grips
+    ["78667"] = {
+        78854, -- Gauntlets of the Corrupted Protector
+    },
+    -- Colossal Dragonplate Gauntlets
+    ["78668"] = {
+        78854, -- Gauntlets of the Corrupted Protector
+    },
+    -- Colossal Dragonplate Handguards
+    ["78669"] = {
+        78854, -- Gauntlets of the Corrupted Protector
+    },
+    -- Necrotic Boneplate Gauntlets
+    ["78670"] = {
+        78855, -- Gauntlets of the Corrupted Vanquisher
+    },
+    -- Time Lord's Gloves
+    ["78671"] = {
+        78855, -- Gauntlets of the Corrupted Vanquisher
+    },
+    -- Spiritwalker's Handwraps
+    ["78672"] = {
+        78854, -- Gauntlets of the Corrupted Protector
+    },
+    -- Gloves of Radiant Glory
+    ["78673"] = {
+        78853, -- Gauntlets of the Corrupted Conqueror
+    },
+    -- Wyrmstalker's Gloves
+    ["78674"] = {
+        78854, -- Gauntlets of the Corrupted Protector
+    },
+    -- Gauntlets of Radiant Glory
+    ["78675"] = {
+        78853, -- Gauntlets of the Corrupted Conqueror
+    },
+    -- Deep Earth Gloves
+    ["78676"] = {
+        78855, -- Gauntlets of the Corrupted Vanquisher
+    },
+    -- Handguards of Radiant Glory
+    ["78677"] = {
+        78853, -- Gauntlets of the Corrupted Conqueror
+    },
+    -- Necrotic Boneplate Handguards
+    ["78678"] = {
+        78855, -- Gauntlets of the Corrupted Vanquisher
+    },
+    -- Blackfang Battleweave Gloves
+    ["78679"] = {
+        78855, -- Gauntlets of the Corrupted Vanquisher
+    },
+    -- Deep Earth Handwraps
+    ["78680"] = {
+        78855, -- Gauntlets of the Corrupted Vanquisher
+    },
+    -- Gloves of the Faceless Shroud
+    ["78681"] = {
+        78853, -- Gauntlets of the Corrupted Conqueror
+    },
+    -- Gloves of Dying Light
+    ["78682"] = {
+        78853, -- Gauntlets of the Corrupted Conqueror
+    },
+    -- Handwraps of Dying Light
+    ["78683"] = {
+        78853, -- Gauntlets of the Corrupted Conqueror
+    },
+    -- Deep Earth Grips
+    ["78684"] = {
+        78855, -- Gauntlets of the Corrupted Vanquisher
+    },
+    -- Spiritwalker's Headpiece
+    ["78685"] = {
+        78851, -- Crown of the Corrupted Protector
+    },
+    -- Spiritwalker's Helmet
+    ["78686"] = {
+        78851, -- Crown of the Corrupted Protector
+    },
+    -- Necrotic Boneplate Helmet
+    ["78687"] = {
+        78852, -- Crown of the Corrupted Vanquisher
+    },
+    -- Colossal Dragonplate Helmet
+    ["78688"] = {
+        78851, -- Crown of the Corrupted Protector
+    },
+    -- Colossal Dragonplate Faceguard
+    ["78689"] = {
+        78851, -- Crown of the Corrupted Protector
+    },
+    -- Deep Earth Helm
+    ["78690"] = {
+        78852, -- Crown of the Corrupted Vanquisher
+    },
+    -- Spiritwalker's Faceguard
+    ["78691"] = {
+        78851, -- Crown of the Corrupted Protector
+    },
+    -- Headguard of Radiant Glory
+    ["78692"] = {
+        78850, -- Crown of the Corrupted Conqueror
+    },
+    -- Helmet of Radiant Glory
+    ["78693"] = {
+        78850, -- Crown of the Corrupted Conqueror
+    },
+    -- Deep Earth Headpiece
+    ["78694"] = {
+        78852, -- Crown of the Corrupted Vanquisher
+    },
+    -- Faceguard of Radiant Glory
+    ["78695"] = {
+        78850, -- Crown of the Corrupted Conqueror
+    },
+    -- Deep Earth Cover
+    ["78696"] = {
+        78852, -- Crown of the Corrupted Vanquisher
+    },
+    -- Necrotic Boneplate Faceguard
+    ["78697"] = {
+        78852, -- Crown of the Corrupted Vanquisher
+    },
+    -- Wyrmstalker's Headguard
+    ["78698"] = {
+        78851, -- Crown of the Corrupted Protector
+    },
+    -- Blackfang Battleweave Helmet
+    ["78699"] = {
+        78852, -- Crown of the Corrupted Vanquisher
+    },
+    -- Cowl of Dying Light
+    ["78700"] = {
+        78850, -- Crown of the Corrupted Conqueror
+    },
+    -- Time Lord's Hood
+    ["78701"] = {
+        78852, -- Crown of the Corrupted Vanquisher
+    },
+    -- Hood of the Faceless Shroud
+    ["78702"] = {
+        78850, -- Crown of the Corrupted Conqueror
+    },
+    -- Hood of Dying Light
+    ["78703"] = {
+        78850, -- Crown of the Corrupted Conqueror
+    },
+    -- Spiritwalker's Legguards
+    ["78704"] = {
+        78857, -- Leggings of the Corrupted Protector
+    },
+    -- Colossal Dragonplate Legguards
+    ["78705"] = {
+        78857, -- Leggings of the Corrupted Protector
+    },
+    -- Colossal Dragonplate Legplates
+    ["78706"] = {
+        78857, -- Leggings of the Corrupted Protector
+    },
+    -- Necrotic Boneplate Greaves
+    ["78707"] = {
+        78858, -- Leggings of the Corrupted Vanquisher
+    },
+    -- Blackfang Battleweave Legguards
+    ["78708"] = {
+        78858, -- Leggings of the Corrupted Vanquisher
+    },
+    -- Wyrmstalker's Legguards
+    ["78709"] = {
+        78857, -- Leggings of the Corrupted Protector
+    },
+    -- Deep Earth Legwraps
+    ["78710"] = {
+        78858, -- Leggings of the Corrupted Vanquisher
+    },
+    -- Spiritwalker's Kilt
+    ["78711"] = {
+        78857, -- Leggings of the Corrupted Protector
+    },
+    -- Legplates of Radiant Glory
+    ["78712"] = {
+        78856, -- Leggings of the Corrupted Conqueror
+    },
+    -- Deep Earth Legguards
+    ["78713"] = {
+        78858, -- Leggings of the Corrupted Vanquisher
+    },
+    -- Deep Earth Leggings
+    ["78714"] = {
+        78858, -- Leggings of the Corrupted Vanquisher
+    },
+    -- Legguards of Radiant Glory
+    ["78715"] = {
+        78856, -- Leggings of the Corrupted Conqueror
+    },
+    -- Necrotic Boneplate Legguards
+    ["78716"] = {
+        78858, -- Leggings of the Corrupted Vanquisher
+    },
+    -- Greaves of Radiant Glory
+    ["78717"] = {
+        78856, -- Leggings of the Corrupted Conqueror
+    },
+    -- Spiritwalker's Legwraps
+    ["78718"] = {
+        78857, -- Leggings of the Corrupted Protector
+    },
+    -- Legwraps of Dying Light
+    ["78719"] = {
+        78856, -- Leggings of the Corrupted Conqueror
+    },
+    -- Time Lord's Leggings
+    ["78720"] = {
+        78858, -- Leggings of the Corrupted Vanquisher
+    },
+    -- Leggings of the Faceless Shroud
+    ["78721"] = {
+        78856, -- Leggings of the Corrupted Conqueror
+    },
+    -- Leggings of Dying Light
+    ["78722"] = {
+        78856, -- Leggings of the Corrupted Conqueror
+    },
+    -- Spiritwalker's Hauberk
+    ["78723"] = {
+        78848, -- Chest of the Corrupted Protector
+    },
+    -- Spiritwalker's Cuirass
+    ["78724"] = {
+        78848, -- Chest of the Corrupted Protector
+    },
+    -- Spiritwalker's Tunic
+    ["78725"] = {
+        78848, -- Chest of the Corrupted Protector
+    },
+    -- Breastplate of Radiant Glory
+    ["78726"] = {
+        78847, -- Chest of the Corrupted Conqueror
+    },
+    -- Battleplate of Radiant Glory
+    ["78727"] = {
+        78847, -- Chest of the Corrupted Conqueror
+    },
+    -- Robes of Dying Light
+    ["78728"] = {
+        78847, -- Chest of the Corrupted Conqueror
+    },
+    -- Time Lord's Robes
+    ["78729"] = {
+        78849, -- Chest of the Corrupted Vanquisher
+    },
+    -- Robes of the Faceless Shroud
+    ["78730"] = {
+        78847, -- Chest of the Corrupted Conqueror
+    },
+    -- Robes of Dying Light
+    ["78731"] = {
+        78847, -- Chest of the Corrupted Conqueror
+    },
+    -- Chestguard of Radiant Glory
+    ["78732"] = {
+        78847, -- Chest of the Corrupted Conqueror
+    },
+    -- Spiritwalker's Spaulders
+    ["78733"] = {
+        78860, -- Shoulders of the Corrupted Protector
+    },
+    -- Colossal Dragonplate Shoulderguards
+    ["78734"] = {
+        78860, -- Shoulders of the Corrupted Protector
+    },
+    -- Colossal Dragonplate Pauldrons
+    ["78735"] = {
+        78860, -- Shoulders of the Corrupted Protector
+    },
+    -- Necrotic Boneplate Pauldrons
+    ["78736"] = {
+        78861, -- Shoulders of the Corrupted Vanquisher
+    },
+    -- Wyrmstalker's Spaulders
+    ["78737"] = {
+        78860, -- Shoulders of the Corrupted Protector
+    },
+    -- Blackfang Battleweave Spaulders
+    ["78738"] = {
+        78861, -- Shoulders of the Corrupted Vanquisher
+    },
+    -- Spiritwalker's Mantle
+    ["78739"] = {
+        78860, -- Shoulders of the Corrupted Protector
+    },
+    -- Deep Earth Mantle
+    ["78740"] = {
+        78861, -- Shoulders of the Corrupted Vanquisher
+    },
+    -- Spiritwalker's Shoulderwraps
+    ["78741"] = {
+        78860, -- Shoulders of the Corrupted Protector
+    },
+    -- Pauldrons of Radiant Glory
+    ["78742"] = {
+        78859, -- Shoulders of the Corrupted Conqueror
+    },
+    -- Deep Earth Spaulders
+    ["78743"] = {
+        78861, -- Shoulders of the Corrupted Vanquisher
+    },
+    -- Deep Earth Shoulderwraps
+    ["78744"] = {
+        78861, -- Shoulders of the Corrupted Vanquisher
+    },
+    -- Shoulderguards of Radiant Glory
+    ["78745"] = {
+        78859, -- Shoulders of the Corrupted Conqueror
+    },
+    -- Mantle of Radiant Glory
+    ["78746"] = {
+        78859, -- Shoulders of the Corrupted Conqueror
+    },
+    -- Mantle of Dying Light
+    ["78747"] = {
+        78859, -- Shoulders of the Corrupted Conqueror
+    },
+    -- Time Lord's Mantle
+    ["78748"] = {
+        78861, -- Shoulders of the Corrupted Vanquisher
+    },
+    -- Mantle of the Faceless Shroud
+    ["78749"] = {
+        78859, -- Shoulders of the Corrupted Conqueror
+    },
+    -- Mantle of Dying Light
+    ["78750"] = {
+        78859, -- Shoulders of the Corrupted Conqueror
+    },
+    -- Necrotic Boneplate Shoulderguards
+    ["78751"] = {
+        78861, -- Shoulders of the Corrupted Vanquisher
+    },
+    -- Colossal Dragonplate Battleplate
+    ["78752"] = {
+        78864, -- Chest of the Corrupted Protector
+    },
+    -- Colossal Dragonplate Chestguard
+    ["78753"] = {
+        78864, -- Chest of the Corrupted Protector
+    },
+    -- Necrotic Boneplate Breastplate
+    ["78754"] = {
+        78862, -- Chest of the Corrupted Vanquisher
+    },
+    -- Deep Earth Robes
+    ["78755"] = {
+        78862, -- Chest of the Corrupted Vanquisher
+    },
+    -- Wyrmstalker's Tunic
+    ["78756"] = {
+        78864, -- Chest of the Corrupted Protector
+    },
+    -- Deep Earth Vestment
+    ["78757"] = {
+        78862, -- Chest of the Corrupted Vanquisher
+    },
+    -- Necrotic Boneplate Chestguard
+    ["78758"] = {
+        78862, -- Chest of the Corrupted Vanquisher
+    },
+    -- Blackfang Battleweave Tunic
+    ["78759"] = {
+        78862, -- Chest of the Corrupted Vanquisher
+    },
+    -- Deep Earth Raiment
+    ["78760"] = {
+        78862, -- Chest of the Corrupted Vanquisher
+    },
+    -- Spiritwalker's Gloves
+    ["78761"] = {
+        78867, -- Gauntlets of the Corrupted Protector
+    },
+    -- Spiritwalker's Grips
+    ["78762"] = {
+        78867, -- Gauntlets of the Corrupted Protector
+    },
+    -- Colossal Dragonplate Gauntlets
+    ["78763"] = {
+        78867, -- Gauntlets of the Corrupted Protector
+    },
+    -- Colossal Dragonplate Handguards
+    ["78764"] = {
+        78867, -- Gauntlets of the Corrupted Protector
+    },
+    -- Necrotic Boneplate Gauntlets
+    ["78765"] = {
+        78865, -- Gauntlets of the Corrupted Vanquisher
+    },
+    -- Time Lord's Gloves
+    ["78766"] = {
+        78865, -- Gauntlets of the Corrupted Vanquisher
+    },
+    -- Spiritwalker's Handwraps
+    ["78767"] = {
+        78867, -- Gauntlets of the Corrupted Protector
+    },
+    -- Gloves of Radiant Glory
+    ["78768"] = {
+        78866, -- Gauntlets of the Corrupted Conqueror
+    },
+    -- Wyrmstalker's Gloves
+    ["78769"] = {
+        78867, -- Gauntlets of the Corrupted Protector
+    },
+    -- Gauntlets of Radiant Glory
+    ["78770"] = {
+        78866, -- Gauntlets of the Corrupted Conqueror
+    },
+    -- Deep Earth Gloves
+    ["78771"] = {
+        78865, -- Gauntlets of the Corrupted Vanquisher
+    },
+    -- Handguards of Radiant Glory
+    ["78772"] = {
+        78866, -- Gauntlets of the Corrupted Conqueror
+    },
+    -- Necrotic Boneplate Handguards
+    ["78773"] = {
+        78865, -- Gauntlets of the Corrupted Vanquisher
+    },
+    -- Blackfang Battleweave Gloves
+    ["78774"] = {
+        78865, -- Gauntlets of the Corrupted Vanquisher
+    },
+    -- Deep Earth Handwraps
+    ["78775"] = {
+        78865, -- Gauntlets of the Corrupted Vanquisher
+    },
+    -- Gloves of the Faceless Shroud
+    ["78776"] = {
+        78866, -- Gauntlets of the Corrupted Conqueror
+    },
+    -- Gloves of Dying Light
+    ["78777"] = {
+        78866, -- Gauntlets of the Corrupted Conqueror
+    },
+    -- Handwraps of Dying Light
+    ["78778"] = {
+        78866, -- Gauntlets of the Corrupted Conqueror
+    },
+    -- Deep Earth Grips
+    ["78779"] = {
+        78865, -- Gauntlets of the Corrupted Vanquisher
+    },
+    -- Spiritwalker's Headpiece
+    ["78780"] = {
+        78870, -- Crown of the Corrupted Protector
+    },
+    -- Spiritwalker's Helmet
+    ["78781"] = {
+        78870, -- Crown of the Corrupted Protector
+    },
+    -- Necrotic Boneplate Helmet
+    ["78782"] = {
+        78868, -- Crown of the Corrupted Vanquisher
+    },
+    -- Colossal Dragonplate Helmet
+    ["78783"] = {
+        78870, -- Crown of the Corrupted Protector
+    },
+    -- Colossal Dragonplate Faceguard
+    ["78784"] = {
+        78870, -- Crown of the Corrupted Protector
+    },
+    -- Deep Earth Helm
+    ["78785"] = {
+        78868, -- Crown of the Corrupted Vanquisher
+    },
+    -- Spiritwalker's Faceguard
+    ["78786"] = {
+        78870, -- Crown of the Corrupted Protector
+    },
+    -- Headguard of Radiant Glory
+    ["78787"] = {
+        78869, -- Crown of the Corrupted Conqueror
+    },
+    -- Helmet of Radiant Glory
+    ["78788"] = {
+        78869, -- Crown of the Corrupted Conqueror
+    },
+    -- Deep Earth Headpiece
+    ["78789"] = {
+        78868, -- Crown of the Corrupted Vanquisher
+    },
+    -- Faceguard of Radiant Glory
+    ["78790"] = {
+        78869, -- Crown of the Corrupted Conqueror
+    },
+    -- Deep Earth Cover
+    ["78791"] = {
+        78868, -- Crown of the Corrupted Vanquisher
+    },
+    -- Necrotic Boneplate Faceguard
+    ["78792"] = {
+        78868, -- Crown of the Corrupted Vanquisher
+    },
+    -- Wyrmstalker's Headguard
+    ["78793"] = {
+        78870, -- Crown of the Corrupted Protector
+    },
+    -- Blackfang Battleweave Helmet
+    ["78794"] = {
+        78868, -- Crown of the Corrupted Vanquisher
+    },
+    -- Cowl of Dying Light
+    ["78795"] = {
+        78869, -- Crown of the Corrupted Conqueror
+    },
+    -- Time Lord's Hood
+    ["78796"] = {
+        78868, -- Crown of the Corrupted Vanquisher
+    },
+    -- Hood of the Faceless Shroud
+    ["78797"] = {
+        78869, -- Crown of the Corrupted Conqueror
+    },
+    -- Hood of Dying Light
+    ["78798"] = {
+        78869, -- Crown of the Corrupted Conqueror
+    },
+    -- Spiritwalker's Legguards
+    ["78799"] = {
+        78873, -- Leggings of the Corrupted Protector
+    },
+    -- Colossal Dragonplate Legguards
+    ["78800"] = {
+        78873, -- Leggings of the Corrupted Protector
+    },
+    -- Colossal Dragonplate Legplates
+    ["78801"] = {
+        78873, -- Leggings of the Corrupted Protector
+    },
+    -- Necrotic Boneplate Greaves
+    ["78802"] = {
+        78871, -- Leggings of the Corrupted Vanquisher
+    },
+    -- Blackfang Battleweave Legguards
+    ["78803"] = {
+        78871, -- Leggings of the Corrupted Vanquisher
+    },
+    -- Wyrmstalker's Legguards
+    ["78804"] = {
+        78873, -- Leggings of the Corrupted Protector
+    },
+    -- Deep Earth Legwraps
+    ["78805"] = {
+        78871, -- Leggings of the Corrupted Vanquisher
+    },
+    -- Spiritwalker's Kilt
+    ["78806"] = {
+        78873, -- Leggings of the Corrupted Protector
+    },
+    -- Legplates of Radiant Glory
+    ["78807"] = {
+        78872, -- Leggings of the Corrupted Conqueror
+    },
+    -- Deep Earth Legguards
+    ["78808"] = {
+        78871, -- Leggings of the Corrupted Vanquisher
+    },
+    -- Deep Earth Leggings
+    ["78809"] = {
+        78871, -- Leggings of the Corrupted Vanquisher
+    },
+    -- Legguards of Radiant Glory
+    ["78810"] = {
+        78872, -- Leggings of the Corrupted Conqueror
+    },
+    -- Necrotic Boneplate Legguards
+    ["78811"] = {
+        78871, -- Leggings of the Corrupted Vanquisher
+    },
+    -- Greaves of Radiant Glory
+    ["78812"] = {
+        78872, -- Leggings of the Corrupted Conqueror
+    },
+    -- Spiritwalker's Legwraps
+    ["78813"] = {
+        78873, -- Leggings of the Corrupted Protector
+    },
+    -- Legwraps of Dying Light
+    ["78814"] = {
+        78872, -- Leggings of the Corrupted Conqueror
+    },
+    -- Time Lord's Leggings
+    ["78815"] = {
+        78871, -- Leggings of the Corrupted Vanquisher
+    },
+    -- Leggings of the Faceless Shroud
+    ["78816"] = {
+        78872, -- Leggings of the Corrupted Conqueror
+    },
+    -- Leggings of Dying Light
+    ["78817"] = {
+        78872, -- Leggings of the Corrupted Conqueror
+    },
+    -- Spiritwalker's Hauberk
+    ["78818"] = {
+        78864, -- Chest of the Corrupted Protector
+    },
+    -- Spiritwalker's Cuirass
+    ["78819"] = {
+        78864, -- Chest of the Corrupted Protector
+    },
+    -- Spiritwalker's Tunic
+    ["78820"] = {
+        78864, -- Chest of the Corrupted Protector
+    },
+    -- Breastplate of Radiant Glory
+    ["78821"] = {
+        78863, -- Chest of the Corrupted Conqueror
+    },
+    -- Battleplate of Radiant Glory
+    ["78822"] = {
+        78863, -- Chest of the Corrupted Conqueror
+    },
+    -- Robes of Dying Light
+    ["78823"] = {
+        78863, -- Chest of the Corrupted Conqueror
+    },
+    -- Time Lord's Robes
+    ["78824"] = {
+        78862, -- Chest of the Corrupted Vanquisher
+    },
+    -- Robes of the Faceless Shroud
+    ["78825"] = {
+        78863, -- Chest of the Corrupted Conqueror
+    },
+    -- Robes of Dying Light
+    ["78826"] = {
+        78863, -- Chest of the Corrupted Conqueror
+    },
+    -- Chestguard of Radiant Glory
+    ["78827"] = {
+        78863, -- Chest of the Corrupted Conqueror
+    },
+    -- Spiritwalker's Spaulders
+    ["78828"] = {
+        78876, -- Shoulders of the Corrupted Protector
+    },
+    -- Colossal Dragonplate Shoulderguards
+    ["78829"] = {
+        78876, -- Shoulders of the Corrupted Protector
+    },
+    -- Colossal Dragonplate Pauldrons
+    ["78830"] = {
+        78876, -- Shoulders of the Corrupted Protector
+    },
+    -- Necrotic Boneplate Pauldrons
+    ["78831"] = {
+        78874, -- Shoulders of the Corrupted Vanquisher
+    },
+    -- Wyrmstalker's Spaulders
+    ["78832"] = {
+        78876, -- Shoulders of the Corrupted Protector
+    },
+    -- Blackfang Battleweave Spaulders
+    ["78833"] = {
+        78874, -- Shoulders of the Corrupted Vanquisher
+    },
+    -- Spiritwalker's Mantle
+    ["78834"] = {
+        78876, -- Shoulders of the Corrupted Protector
+    },
+    -- Deep Earth Mantle
+    ["78835"] = {
+        78874, -- Shoulders of the Corrupted Vanquisher
+    },
+    -- Spiritwalker's Shoulderwraps
+    ["78836"] = {
+        78876, -- Shoulders of the Corrupted Protector
+    },
+    -- Pauldrons of Radiant Glory
+    ["78837"] = {
+        78875, -- Shoulders of the Corrupted Conqueror
+    },
+    -- Deep Earth Spaulders
+    ["78838"] = {
+        78874, -- Shoulders of the Corrupted Vanquisher
+    },
+    -- Deep Earth Shoulderwraps
+    ["78839"] = {
+        78874, -- Shoulders of the Corrupted Vanquisher
+    },
+    -- Shoulderguards of Radiant Glory
+    ["78840"] = {
+        78875, -- Shoulders of the Corrupted Conqueror
+    },
+    -- Mantle of Radiant Glory
+    ["78841"] = {
+        78875, -- Shoulders of the Corrupted Conqueror
+    },
+    -- Mantle of Dying Light
+    ["78842"] = {
+        78875, -- Shoulders of the Corrupted Conqueror
+    },
+    -- Time Lord's Mantle
+    ["78843"] = {
+        78874, -- Shoulders of the Corrupted Vanquisher
+    },
+    -- Mantle of the Faceless Shroud
+    ["78844"] = {
+        78875, -- Shoulders of the Corrupted Conqueror
+    },
+    -- Mantle of Dying Light
+    ["78845"] = {
+        78875, -- Shoulders of the Corrupted Conqueror
+    },
+    -- Necrotic Boneplate Shoulderguards
+    ["78846"] = {
+        78874, -- Shoulders of the Corrupted Vanquisher
+    },
+    -- Chest of the Corrupted Conqueror
+    ["78847"] = {
+        78726, -- Breastplate of Radiant Glory
+        78727, -- Battleplate of Radiant Glory
+        78728, -- Robes of Dying Light
+        78730, -- Robes of the Faceless Shroud
+        78731, -- Robes of Dying Light
+        78732, -- Chestguard of Radiant Glory
+    },
+    -- Chest of the Corrupted Protector
+    ["78848"] = {
+        78657, -- Colossal Dragonplate Battleplate
+        78658, -- Colossal Dragonplate Chestguard
+        78661, -- Wyrmstalker's Tunic
+        78723, -- Spiritwalker's Hauberk
+        78724, -- Spiritwalker's Cuirass
+        78725, -- Spiritwalker's Tunic
+    },
+    -- Chest of the Corrupted Vanquisher
+    ["78849"] = {
+        78659, -- Necrotic Boneplate Breastplate
+        78660, -- Deep Earth Robes
+        78662, -- Deep Earth Vestment
+        78663, -- Necrotic Boneplate Chestguard
+        78664, -- Blackfang Battleweave Tunic
+        78665, -- Deep Earth Raiment
+        78729, -- Time Lord's Robes
+    },
+    -- Crown of the Corrupted Conqueror
+    ["78850"] = {
+        78692, -- Headguard of Radiant Glory
+        78693, -- Helmet of Radiant Glory
+        78695, -- Faceguard of Radiant Glory
+        78700, -- Cowl of Dying Light
+        78702, -- Hood of the Faceless Shroud
+        78703, -- Hood of Dying Light
+    },
+    -- Crown of the Corrupted Protector
+    ["78851"] = {
+        78685, -- Spiritwalker's Headpiece
+        78686, -- Spiritwalker's Helmet
+        78688, -- Colossal Dragonplate Helmet
+        78689, -- Colossal Dragonplate Faceguard
+        78691, -- Spiritwalker's Faceguard
+        78698, -- Wyrmstalker's Headguard
+    },
+    -- Crown of the Corrupted Vanquisher
+    ["78852"] = {
+        78687, -- Necrotic Boneplate Helmet
+        78690, -- Deep Earth Helm
+        78694, -- Deep Earth Headpiece
+        78696, -- Deep Earth Cover
+        78697, -- Necrotic Boneplate Faceguard
+        78699, -- Blackfang Battleweave Helmet
+        78701, -- Time Lord's Hood
+    },
+    -- Gauntlets of the Corrupted Conqueror
+    ["78853"] = {
+        78673, -- Gloves of Radiant Glory
+        78675, -- Gauntlets of Radiant Glory
+        78677, -- Handguards of Radiant Glory
+        78681, -- Gloves of the Faceless Shroud
+        78682, -- Gloves of Dying Light
+        78683, -- Handwraps of Dying Light
+    },
+    -- Gauntlets of the Corrupted Protector
+    ["78854"] = {
+        78666, -- Spiritwalker's Gloves
+        78667, -- Spiritwalker's Grips
+        78668, -- Colossal Dragonplate Gauntlets
+        78669, -- Colossal Dragonplate Handguards
+        78672, -- Spiritwalker's Handwraps
+        78674, -- Wyrmstalker's Gloves
+    },
+    -- Gauntlets of the Corrupted Vanquisher
+    ["78855"] = {
+        78670, -- Necrotic Boneplate Gauntlets
+        78671, -- Time Lord's Gloves
+        78676, -- Deep Earth Gloves
+        78678, -- Necrotic Boneplate Handguards
+        78679, -- Blackfang Battleweave Gloves
+        78680, -- Deep Earth Handwraps
+        78684, -- Deep Earth Grips
+    },
+    -- Leggings of the Corrupted Conqueror
+    ["78856"] = {
+        78712, -- Legplates of Radiant Glory
+        78715, -- Legguards of Radiant Glory
+        78717, -- Greaves of Radiant Glory
+        78719, -- Legwraps of Dying Light
+        78721, -- Leggings of the Faceless Shroud
+        78722, -- Leggings of Dying Light
+    },
+    -- Leggings of the Corrupted Protector
+    ["78857"] = {
+        78704, -- Spiritwalker's Legguards
+        78705, -- Colossal Dragonplate Legguards
+        78706, -- Colossal Dragonplate Legplates
+        78709, -- Wyrmstalker's Legguards
+        78711, -- Spiritwalker's Kilt
+        78718, -- Spiritwalker's Legwraps
+    },
+    -- Leggings of the Corrupted Vanquisher
+    ["78858"] = {
+        78707, -- Necrotic Boneplate Greaves
+        78708, -- Blackfang Battleweave Legguards
+        78710, -- Deep Earth Legwraps
+        78713, -- Deep Earth Legguards
+        78714, -- Deep Earth Leggings
+        78716, -- Necrotic Boneplate Legguards
+        78720, -- Time Lord's Leggings
+    },
+    -- Shoulders of the Corrupted Conqueror
+    ["78859"] = {
+        78742, -- Pauldrons of Radiant Glory
+        78745, -- Shoulderguards of Radiant Glory
+        78746, -- Mantle of Radiant Glory
+        78747, -- Mantle of Dying Light
+        78749, -- Mantle of the Faceless Shroud
+        78750, -- Mantle of Dying Light
+    },
+    -- Shoulders of the Corrupted Protector
+    ["78860"] = {
+        78733, -- Spiritwalker's Spaulders
+        78734, -- Colossal Dragonplate Shoulderguards
+        78735, -- Colossal Dragonplate Pauldrons
+        78737, -- Wyrmstalker's Spaulders
+        78739, -- Spiritwalker's Mantle
+        78741, -- Spiritwalker's Shoulderwraps
+    },
+    -- Shoulders of the Corrupted Vanquisher
+    ["78861"] = {
+        78736, -- Necrotic Boneplate Pauldrons
+        78738, -- Blackfang Battleweave Spaulders
+        78740, -- Deep Earth Mantle
+        78743, -- Deep Earth Spaulders
+        78744, -- Deep Earth Shoulderwraps
+        78748, -- Time Lord's Mantle
+        78751, -- Necrotic Boneplate Shoulderguards
+    },
+    -- Chest of the Corrupted Vanquisher
+    ["78862"] = {
+        78754, -- Necrotic Boneplate Breastplate
+        78755, -- Deep Earth Robes
+        78757, -- Deep Earth Vestment
+        78758, -- Necrotic Boneplate Chestguard
+        78759, -- Blackfang Battleweave Tunic
+        78760, -- Deep Earth Raiment
+        78824, -- Time Lord's Robes
+    },
+    -- Chest of the Corrupted Conqueror
+    ["78863"] = {
+        78821, -- Breastplate of Radiant Glory
+        78822, -- Battleplate of Radiant Glory
+        78823, -- Robes of Dying Light
+        78825, -- Robes of the Faceless Shroud
+        78826, -- Robes of Dying Light
+        78827, -- Chestguard of Radiant Glory
+    },
+    -- Chest of the Corrupted Protector
+    ["78864"] = {
+        78752, -- Colossal Dragonplate Battleplate
+        78753, -- Colossal Dragonplate Chestguard
+        78756, -- Wyrmstalker's Tunic
+        78818, -- Spiritwalker's Hauberk
+        78819, -- Spiritwalker's Cuirass
+        78820, -- Spiritwalker's Tunic
+    },
+    -- Gauntlets of the Corrupted Vanquisher
+    ["78865"] = {
+        78765, -- Necrotic Boneplate Gauntlets
+        78766, -- Time Lord's Gloves
+        78771, -- Deep Earth Gloves
+        78773, -- Necrotic Boneplate Handguards
+        78774, -- Blackfang Battleweave Gloves
+        78775, -- Deep Earth Handwraps
+        78779, -- Deep Earth Grips
+    },
+    -- Gauntlets of the Corrupted Conqueror
+    ["78866"] = {
+        78768, -- Gloves of Radiant Glory
+        78770, -- Gauntlets of Radiant Glory
+        78772, -- Handguards of Radiant Glory
+        78776, -- Gloves of the Faceless Shroud
+        78777, -- Gloves of Dying Light
+        78778, -- Handwraps of Dying Light
+    },
+    -- Gauntlets of the Corrupted Protector
+    ["78867"] = {
+        78761, -- Spiritwalker's Gloves
+        78762, -- Spiritwalker's Grips
+        78763, -- Colossal Dragonplate Gauntlets
+        78764, -- Colossal Dragonplate Handguards
+        78767, -- Spiritwalker's Handwraps
+        78769, -- Wyrmstalker's Gloves
+    },
+    -- Crown of the Corrupted Vanquisher
+    ["78868"] = {
+        78782, -- Necrotic Boneplate Helmet
+        78785, -- Deep Earth Helm
+        78789, -- Deep Earth Headpiece
+        78791, -- Deep Earth Cover
+        78792, -- Necrotic Boneplate Faceguard
+        78794, -- Blackfang Battleweave Helmet
+        78796, -- Time Lord's Hood
+    },
+    -- Crown of the Corrupted Conqueror
+    ["78869"] = {
+        78787, -- Headguard of Radiant Glory
+        78788, -- Helmet of Radiant Glory
+        78790, -- Faceguard of Radiant Glory
+        78795, -- Cowl of Dying Light
+        78797, -- Hood of the Faceless Shroud
+        78798, -- Hood of Dying Light
+    },
+    -- Crown of the Corrupted Protector
+    ["78870"] = {
+        78780, -- Spiritwalker's Headpiece
+        78781, -- Spiritwalker's Helmet
+        78783, -- Colossal Dragonplate Helmet
+        78784, -- Colossal Dragonplate Faceguard
+        78786, -- Spiritwalker's Faceguard
+        78793, -- Wyrmstalker's Headguard
+    },
+    -- Leggings of the Corrupted Vanquisher
+    ["78871"] = {
+        78802, -- Necrotic Boneplate Greaves
+        78803, -- Blackfang Battleweave Legguards
+        78805, -- Deep Earth Legwraps
+        78808, -- Deep Earth Legguards
+        78809, -- Deep Earth Leggings
+        78811, -- Necrotic Boneplate Legguards
+        78815, -- Time Lord's Leggings
+    },
+    -- Leggings of the Corrupted Conqueror
+    ["78872"] = {
+        78807, -- Legplates of Radiant Glory
+        78810, -- Legguards of Radiant Glory
+        78812, -- Greaves of Radiant Glory
+        78814, -- Legwraps of Dying Light
+        78816, -- Leggings of the Faceless Shroud
+        78817, -- Leggings of Dying Light
+    },
+    -- Leggings of the Corrupted Protector
+    ["78873"] = {
+        78799, -- Spiritwalker's Legguards
+        78800, -- Colossal Dragonplate Legguards
+        78801, -- Colossal Dragonplate Legplates
+        78804, -- Wyrmstalker's Legguards
+        78806, -- Spiritwalker's Kilt
+        78813, -- Spiritwalker's Legwraps
+    },
+    -- Shoulders of the Corrupted Vanquisher
+    ["78874"] = {
+        78831, -- Necrotic Boneplate Pauldrons
+        78833, -- Blackfang Battleweave Spaulders
+        78835, -- Deep Earth Mantle
+        78838, -- Deep Earth Spaulders
+        78839, -- Deep Earth Shoulderwraps
+        78843, -- Time Lord's Mantle
+        78846, -- Necrotic Boneplate Shoulderguards
+    },
+    -- Shoulders of the Corrupted Conqueror
+    ["78875"] = {
+        78837, -- Pauldrons of Radiant Glory
+        78840, -- Shoulderguards of Radiant Glory
+        78841, -- Mantle of Radiant Glory
+        78842, -- Mantle of Dying Light
+        78844, -- Mantle of the Faceless Shroud
+        78845, -- Mantle of Dying Light
+    },
+    -- Shoulders of the Corrupted Protector
+    ["78876"] = {
+        78828, -- Spiritwalker's Spaulders
+        78829, -- Colossal Dragonplate Shoulderguards
+        78830, -- Colossal Dragonplate Pauldrons
+        78832, -- Wyrmstalker's Spaulders
+        78834, -- Spiritwalker's Mantle
+        78836, -- Spiritwalker's Shoulderwraps
+    },
     -- Avenger's Void Pearl
     ["211449"] = {
         211452, -- Perfect Blackfathom Pearl
@@ -9314,5 +12618,249 @@ GL.Data.ItemLinks = {
         213344, -- Gnomeregan Peace Officer's Torque
         213345, -- Piston Pendant
         213346, -- Pendant of Homecoming
+    },
+    -- Drakeclaw Band of the Berserker
+    ["220626"] = {
+        221363, -- Scapula of the Fallen Avatar
+    },
+    -- Drakeclaw Band of the Stalker
+    ["220627"] = {
+        221363, -- Scapula of the Fallen Avatar
+    },
+    -- Drakeclaw Band of the Harbinger
+    ["220628"] = {
+        221363, -- Scapula of the Fallen Avatar
+    },
+    -- Drakeclaw Band of the Blood Prophet
+    ["220629"] = {
+        221363, -- Scapula of the Fallen Avatar
+    },
+    -- Drakeclaw Band of the Juggernaut
+    ["220630"] = {
+        221363, -- Scapula of the Fallen Avatar
+    },
+    -- Atal'ai Blood Icon
+    ["220636"] = {
+        220642, -- Banished Martyr's Plate Armor
+        220643, -- Banished Martyr's Plate Legguards
+        220648, -- Banished Martyr's Plate Boots
+        220650, -- Obsessed Prophet's Chestplate
+        220651, -- Obsessed Prophet's Legguards
+        220652, -- Obsessed Prophet's Ornate Boots
+        220653, -- Wailing Berserker's Chestplate
+        220654, -- Wailing Berserker's Legplates
+        220656, -- Wailing Berserker's Battleboots
+        220657, -- Ostracized Berserker's Hauberk
+        220658, -- Ostracized Berserker's Legplates
+        220659, -- Ostracized Berserker's Chain Greaves
+        220660, -- Shunned Devotee's Chainshirt
+        220661, -- Shunned Devotee's Legguards
+        220662, -- Shunned Devotee's Scale Boots
+        220663, -- Corrupted Spiritweaver's Leggings
+        220664, -- Corrupted Spiritweaver's Sabatons
+        220665, -- Corrupted Spiritweaver's Breastplate
+        220666, -- Dread Hunter's Chainmail
+        220667, -- Dread Hunter's Chausses
+        220668, -- Dread Hunter's Greaves
+        220676, -- Blood Corrupted Tunic
+        220677, -- Blood Corrupted Boots
+        220678, -- Blood Corrupted Pants
+    },
+    -- Atal'ai Ritual Token
+    ["220637"] = {
+        220669, -- Exiled Prophet's Jerkin
+        220670, -- Exiled Prophet's Slippers
+        220671, -- Exiled Prophet's Leather Pants
+        220672, -- Lost Worshipper's Harness
+        220673, -- Lost Worshipper's Leggings
+        220675, -- Lost Worshipper's Treads
+        220679, -- Malevolent Prophet's Leggings
+        220680, -- Malevolent Prophet's Vest
+        220681, -- Malevolent Prophet's Sandals
+        220683, -- Benevolent Prophet's Vest
+        220684, -- Benevolent Prophet's Leggings
+        220685, -- Benevolent Prophet's Sandals
+        220778, -- Coagulated Bloodguard Pants
+        220779, -- Coagulated Bloodguard Tunic
+        220780, -- Coagulated Bloodguard Boots
+        220781, -- Nightmare Prophet's Leggings
+        220783, -- Nightmare Prophet's Vestments
+        220784, -- Nightmare Prophet's Sandals
+    },
+    -- Banished Martyr's Plate Armor
+    ["220642"] = {
+        220636, -- Atal'ai Blood Icon
+    },
+    -- Banished Martyr's Plate Legguards
+    ["220643"] = {
+        220636, -- Atal'ai Blood Icon
+    },
+    -- Banished Martyr's Plate Boots
+    ["220648"] = {
+        220636, -- Atal'ai Blood Icon
+    },
+    -- Obsessed Prophet's Chestplate
+    ["220650"] = {
+        220636, -- Atal'ai Blood Icon
+    },
+    -- Obsessed Prophet's Legguards
+    ["220651"] = {
+        220636, -- Atal'ai Blood Icon
+    },
+    -- Obsessed Prophet's Ornate Boots
+    ["220652"] = {
+        220636, -- Atal'ai Blood Icon
+    },
+    -- Wailing Berserker's Chestplate
+    ["220653"] = {
+        220636, -- Atal'ai Blood Icon
+    },
+    -- Wailing Berserker's Legplates
+    ["220654"] = {
+        220636, -- Atal'ai Blood Icon
+    },
+    -- Wailing Berserker's Battleboots
+    ["220656"] = {
+        220636, -- Atal'ai Blood Icon
+    },
+    -- Ostracized Berserker's Hauberk
+    ["220657"] = {
+        220636, -- Atal'ai Blood Icon
+    },
+    -- Ostracized Berserker's Legplates
+    ["220658"] = {
+        220636, -- Atal'ai Blood Icon
+    },
+    -- Ostracized Berserker's Chain Greaves
+    ["220659"] = {
+        220636, -- Atal'ai Blood Icon
+    },
+    -- Shunned Devotee's Chainshirt
+    ["220660"] = {
+        220636, -- Atal'ai Blood Icon
+    },
+    -- Shunned Devotee's Legguards
+    ["220661"] = {
+        220636, -- Atal'ai Blood Icon
+    },
+    -- Shunned Devotee's Scale Boots
+    ["220662"] = {
+        220636, -- Atal'ai Blood Icon
+    },
+    -- Corrupted Spiritweaver's Leggings
+    ["220663"] = {
+        220636, -- Atal'ai Blood Icon
+    },
+    -- Corrupted Spiritweaver's Sabatons
+    ["220664"] = {
+        220636, -- Atal'ai Blood Icon
+    },
+    -- Corrupted Spiritweaver's Breastplate
+    ["220665"] = {
+        220636, -- Atal'ai Blood Icon
+    },
+    -- Dread Hunter's Chainmail
+    ["220666"] = {
+        220636, -- Atal'ai Blood Icon
+    },
+    -- Dread Hunter's Chausses
+    ["220667"] = {
+        220636, -- Atal'ai Blood Icon
+    },
+    -- Dread Hunter's Greaves
+    ["220668"] = {
+        220636, -- Atal'ai Blood Icon
+    },
+    -- Exiled Prophet's Jerkin
+    ["220669"] = {
+        220637, -- Atal'ai Ritual Token
+    },
+    -- Exiled Prophet's Slippers
+    ["220670"] = {
+        220637, -- Atal'ai Ritual Token
+    },
+    -- Exiled Prophet's Leather Pants
+    ["220671"] = {
+        220637, -- Atal'ai Ritual Token
+    },
+    -- Lost Worshipper's Harness
+    ["220672"] = {
+        220637, -- Atal'ai Ritual Token
+    },
+    -- Lost Worshipper's Leggings
+    ["220673"] = {
+        220637, -- Atal'ai Ritual Token
+    },
+    -- Lost Worshipper's Treads
+    ["220675"] = {
+        220637, -- Atal'ai Ritual Token
+    },
+    -- Blood Corrupted Tunic
+    ["220676"] = {
+        220636, -- Atal'ai Blood Icon
+    },
+    -- Blood Corrupted Boots
+    ["220677"] = {
+        220636, -- Atal'ai Blood Icon
+    },
+    -- Blood Corrupted Pants
+    ["220678"] = {
+        220636, -- Atal'ai Blood Icon
+    },
+    -- Malevolent Prophet's Leggings
+    ["220679"] = {
+        220637, -- Atal'ai Ritual Token
+    },
+    -- Malevolent Prophet's Vest
+    ["220680"] = {
+        220637, -- Atal'ai Ritual Token
+    },
+    -- Malevolent Prophet's Sandals
+    ["220681"] = {
+        220637, -- Atal'ai Ritual Token
+    },
+    -- Benevolent Prophet's Vest
+    ["220683"] = {
+        220637, -- Atal'ai Ritual Token
+    },
+    -- Benevolent Prophet's Leggings
+    ["220684"] = {
+        220637, -- Atal'ai Ritual Token
+    },
+    -- Benevolent Prophet's Sandals
+    ["220685"] = {
+        220637, -- Atal'ai Ritual Token
+    },
+    -- Coagulated Bloodguard Pants
+    ["220778"] = {
+        220637, -- Atal'ai Ritual Token
+    },
+    -- Coagulated Bloodguard Tunic
+    ["220779"] = {
+        220637, -- Atal'ai Ritual Token
+    },
+    -- Coagulated Bloodguard Boots
+    ["220780"] = {
+        220637, -- Atal'ai Ritual Token
+    },
+    -- Nightmare Prophet's Leggings
+    ["220781"] = {
+        220637, -- Atal'ai Ritual Token
+    },
+    -- Nightmare Prophet's Vestments
+    ["220783"] = {
+        220637, -- Atal'ai Ritual Token
+    },
+    -- Nightmare Prophet's Sandals
+    ["220784"] = {
+        220637, -- Atal'ai Ritual Token
+    },
+    -- Scapula of the Fallen Avatar
+    ["221363"] = {
+        220626, -- Drakeclaw Band of the Berserker
+        220627, -- Drakeclaw Band of the Stalker
+        220628, -- Drakeclaw Band of the Harbinger
+        220629, -- Drakeclaw Band of the Blood Prophet
+        220630, -- Drakeclaw Band of the Juggernaut
     },
 };
