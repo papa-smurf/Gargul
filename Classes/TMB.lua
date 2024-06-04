@@ -36,6 +36,16 @@ function TMB:_init()
     self._initialized = true;
 
     Events:register("TMBUserJoinedGroupListener", "GL.USER_JOINED_NEW_GROUP", function () self:requestData(); end);
+
+    -- If the user reloads instead of a login we have to wait a couple seconds for the game to update the group setup
+    GL:after(5, "TMBRequestDataAfterReload", function ()
+        if (not GL.User.isInGroup) then
+            return;
+        end
+
+        -- Check if we need to sync up with an existing multi-auction session
+        self:requestData();
+    end);
 end
 
 --- Check whether TMB data is available

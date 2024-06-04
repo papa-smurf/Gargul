@@ -97,6 +97,16 @@ function SoftRes:_init()
 
     GL.Events:register("SoftResUserJoinedGroupListener", "GL.USER_JOINED_NEW_GROUP", function () self:requestData(); end);
 
+    -- If the user reloads instead of a login we have to wait a couple seconds for the game to update the group setup
+    GL:after(5, "SoftResRequestDataAfterReload", function ()
+        if (not GL.User.isInGroup) then
+            return;
+        end
+
+        -- Check if we need to sync up with an existing multi-auction session
+        self:requestData();
+    end);
+    
     local reportStatus = false; -- No need to notify of "fixed" names after every /reload
     self:materializeData(reportStatus);
 
