@@ -11,6 +11,9 @@ local DB = GL.DB;
 ---@type Events
 local Events = GL.Events;
 
+---@type Constants
+local Constants = GL.Data.Constants;
+
 -- /script DevTools_Dump(_G.Gargul.AwardedLoot.AwardedToSelfWithoutAnItemGUID);
 ---@class AwardedLoot
 GL.AwardedLoot = {
@@ -81,7 +84,7 @@ function AwardedLoot:_init()
         local autoAward = Settings:get("AwardingLoot.autoTradeAfterAwardingAnItem");
         Settings:set("AwardingLoot.autoTradeAfterAwardingAnItem", false, true);
 
-        GL.AwardedLoot:addWinner{
+        self:addWinner{
             announce = false,
             automaticallyAwarded = true,
             itemLink = Details.itemLink,
@@ -521,9 +524,9 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, g
 
     if (not isDisenchanted) then
         for _, Entry in pairs(GL.TMB:byItemIDAndPlayer(itemID, realmLessName) or {}) do
-            if (Entry.type == GL.Data.Constants.tmbTypePrio) then
+            if (Entry.type == Constants.tmbTypePrio) then
                 isPrioritized = true;
-            elseif (Entry.type == GL.Data.Constants.tmbTypeWish) then
+            elseif (Entry.type == Constants.tmbTypeWish) then
                 isWishlisted = true;
             end
         end
@@ -534,7 +537,7 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, g
     local lowestTradeTimeRemaining = 14400; -- 4 hours in seconds
     for itemGUID, timeRemaining in pairs(GL:itemTradeTimeRemaining(itemID) or {}) do
         -- Check if the given item is soulbound
-        local itemIsBound = timeRemaining ~= GL.Data.Constants.itemIsNotBound;
+        local itemIsBound = timeRemaining ~= Constants.itemIsNotBound;
 
         -- This item is not bound, pick the first one that's not awarded yet
         if (not itemIsBound) then
@@ -550,6 +553,17 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, g
         end
     end
 
+    -- Determine winner class
+    local class = UnitClassBase(winner);
+    -- UnitClassBase doesn't work on FQNs on the same realm
+    if (not class) then
+        local nameWithoutRealm, realm = GL:stripRealm(winner);
+
+        if (realm and GL:iEquals(realm, GL.User.realm)) then
+            class = UnitClassBase(nameWithoutRealm);
+        end
+    end
+
     local checksum = GL:strPadRight(GL:strLimit(GL:stringHash(timestamp .. itemID .. GL:uuid()) .. GL:stringHash(winner .. GL.DB:get("SoftRes.MetaData.id", "")), 20, ""), "0", 20);
     local AwardEntry = {
         checksum = checksum,
@@ -561,6 +575,7 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, g
         timestamp = timestamp,
         softresID = GL.DB:get("SoftRes.MetaData.id"),
         received = GL:iEquals(winner, GL.User.name) or GL:iEquals(winner, GL.User.fqn),
+        winnerClass = Constants.UnitClasses[class],
         BRCost = tonumber(BRCost),
         GDKPCost = tonumber(gdkpCost),
         GDKPSession = GL.GDKP.Session:activeSessionID() or nil,
@@ -746,7 +761,7 @@ function AwardedLoot:addItemGUIDtoItemsAwardedToSelf()
             local lowestTradeTimeRemaining = 14400; -- 4 hours in seconds
             for itemGUID, timeRemaining in pairs(GL:itemTradeTimeRemaining(itemID) or {}) do
                 -- Check if the given item is soulbound
-                local itemIsBound = timeRemaining ~= GL.Data.Constants.itemIsNotBound;
+                local itemIsBound = timeRemaining ~= Constants.itemIsNotBound;
 
                 -- This item is not bound, pick the first one that's not awarded yet
                 if (not itemIsBound) then
@@ -1010,6 +1025,7 @@ function AwardedLoot:processAwardedLoot(CommMessage)
         timestamp = AwardEntry.timestamp,
         softresID = AwardEntry.softresID,
         received = AwardEntry.received,
+        winnerClass = AwardEntry.winnerClass,
         BRCost = AwardEntry.BRCost,
         GDKPCost = AwardEntry.GDKPCost,
         OS = GL:toboolean(AwardEntry.OS),

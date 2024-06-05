@@ -9,6 +9,9 @@ local DB = GL.DB;
 ---@type Interface
 local Interface = GL.Interface;
 
+---@type Constants
+local Constants = GL.Data.Constants;
+
 GL.Interface.Award = GL.Interface.Award or {};
 GL.ScrollingTable = GL.ScrollingTable or LibStub("ScrollingTable");
 
@@ -328,7 +331,7 @@ function Overview:buildDatesTable(Window)
         },
         {
             width = 0,
-            sort = GL.Data.Constants.ScrollingTable.descending,
+            sort = Constants.ScrollingTable.descending,
         }
     }, DEFAULT_TABLE_ROWS, HEIGHT_PER_TABLE_ROW, nil, Window, true);
     Table:EnableSelection(true);
@@ -432,6 +435,7 @@ function Overview:refreshItems()
                 BRCost = AwardEntry.BRCost,
                 itemID = AwardEntry.itemID,
                 itemLink = AwardEntry.itemLink,
+                winnerClass = AwardEntry.winnerClass,
                 winningRollType = AwardEntry.winningRollType,
                 OS = AwardEntry.OS and 1 or 0,
                 SR = AwardEntry.SR and 1 or 0,
@@ -474,6 +478,7 @@ function Overview:refreshItems()
         local DeleteButton = self.DeleteButton;
         local EditButton = self.EditButton;
         local DisenchantButton = self.DisenchantButton;
+        local classFilesByID = GL:tableFlip(Constants.UnitClasses);
         for _, Entry in pairs (Entries or {}) do
             (function ()
                 local Item = ItemDetails[Entry.itemID];
@@ -516,7 +521,7 @@ function Overview:refreshItems()
                 --[[ AWARDED TO ]]
                 local awardedToString = "";
                 if (not itemWasDisenchanted) then
-                    awardedToString = GL:nameFormat{ name = Entry.awardedTo, colorize = true, };
+                    awardedToString = GL:nameFormat{ name = Entry.awardedTo, colorize = true, class = Entry.winnerClass and classFilesByID[Entry.winnerClass] or nil, };
                 else
                     awardedToString = "DISENCHANTED";
                 end
