@@ -37,6 +37,7 @@ function BoostedRolls:_init()
 
     -- Make sure BoostedRoll changes are only broadcasted once every 3 seconds
     GL.Events:register("BoostedRollsUpdateQueuedListener", "GL.BOOSTED_ROLLS_UPDATE_QUEUED", function ()
+        GL.Interface.BoostedRolls.Overview:refreshTable();
         GL.Ace:CancelTimer(self.QueuedUpdateBroadcastTimer);
 
         self.QueuedUpdateBroadcastTimer = GL.Ace:ScheduleTimer(function ()
@@ -446,6 +447,7 @@ function BoostedRolls:setPoints(name, points, dontBroadcast)
         return;
     end
 
+    points = min(GL.Settings:get("BoostedRolls.maxmimumPoints", points), points);
     self.MaterializedData.DetailsByPlayerName[normalizedName].points = points;
     DB:set("BoostedRolls.Points." .. normalizedName, points);
     DB:set("BoostedRolls.MetaData.updatedAt", GetServerTime());
@@ -455,6 +457,8 @@ function BoostedRolls:setPoints(name, points, dontBroadcast)
     ) then
         self:broadcastUpdate(normalizedName, points);
     end
+
+    return points;
 end
 
 --- Delete an entry
@@ -928,15 +932,13 @@ end
 ---
 ---@param playerName string
 ---@param points number
+---
+---@return number
 function BoostedRolls:addPoints(playerName, points)
-    if (points <= 0) then
-        return;
-    end
-
     playerName = self:normalizedName(playerName);
     local currentPoints = self:getPoints(playerName) or 0;
 
-    self:queueUpdate(playerName, currentPoints + points);
+    return self:queueUpdate(playerName, currentPoints + points);
 end
 
 --- Subtract points from a give user's balance
@@ -985,6 +987,9 @@ function BoostedRolls:queueUpdate(playerName, points, aliases, delete)
 
     -- Fire an event to let the application know that an update was queued
     GL.Events:fire("GL.BOOSTED_ROLLS_UPDATE_QUEUED");
+
+    -- Return the BR points after sanitation
+    return self:getPoints(playerName);
 end
 
 --- Send out the queued updates
@@ -1055,6 +1060,7 @@ end
 function BoostedRolls:receiveUpdate(CommMessage)
     -- No need to update our tables if we broadcasted them ourselves
     if (CommMessage.Sender.isSelf) then
+        GL.Interface.BoostedRolls.Overview:refreshTable();
         return true;
     end
 

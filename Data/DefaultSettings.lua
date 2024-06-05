@@ -165,6 +165,7 @@ GL.Data.DefaultSettings = {
         enableWhisperCommand = true,
         fixedRolls = false,
         identifier = L.BOOSTED_ROLLS_ABBR,
+        maxmimumPoints = nil,
         priority = 1,
         reserveThreshold = 180,
     },

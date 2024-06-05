@@ -32,7 +32,6 @@ local Overview = GL.Interface.BoostedRolls.Overview;
 ---     | Button Frame    |
 ---     +-----------------+
 ---
----@return void
 function Overview:draw()
     -- The overview is already visible
     if (self.isVisible) then
@@ -41,7 +40,6 @@ function Overview:draw()
 
     self.isVisible = true;
     self.selectedCharacter = nil;
-    self.points = 0;
 
     -- Create a container/parent frame
     local Window = AceGUI:Create("Frame");
@@ -149,7 +147,7 @@ function Overview:draw()
     DecrementButton:SetWidth(60);
     DecrementButton:SetHeight(20);
     DecrementButton:SetCallback("OnClick", function()
-        self:updatePoints(self.points - step, true);
+        self:adjustPoints(step * -1, true);
     end);
     PlayerFrame:AddChild(DecrementButton);
 
@@ -165,7 +163,7 @@ function Overview:draw()
         end
 
         -- Update
-        self:updatePoints(value, false);
+        self:setPoints(value, false);
     end);
     PlayerFrame:AddChild(BoostedRollsCurrentPoints);
     GL.Interface:set(self, "CurrentPoints", BoostedRollsCurrentPoints);
@@ -175,7 +173,7 @@ function Overview:draw()
     IncrementButton:SetWidth(60);
     IncrementButton:SetHeight(20);
     IncrementButton:SetCallback("OnClick", function()
-        self:updatePoints(self.points + step, true);
+        self:adjustPoints(step, true);
     end);
     PlayerFrame:AddChild(IncrementButton);
 
@@ -337,7 +335,6 @@ end
 
 --- Update the share button when the group setup changes
 ---
----@return void
 function Overview:updateShareButton()
     local ShareButton = self.ShareButton;
 
@@ -454,7 +451,6 @@ function Overview:drawBoostedRollDataTable(Parent)
     self:refreshTable();
 end
 
----@return void
 function Overview:refreshTable()
     local Table = GL.Interface:get(self, "Table.Characters");
     if (not Table) then
@@ -519,7 +515,6 @@ function Overview:refreshTable()
     Table:SortData();
 end
 
----@return void
 function Overview:deleteEntry()
     if (not self.selectedCharacter) then
         GL:warning(L.ROLLING_SELECT_PLAYER_WARNING);
@@ -537,36 +532,39 @@ function Overview:deleteEntry()
     };
 end
 
----@param points number 
----@return void
-function Overview:updatePoints(points, updateEditBox)
+---@param points number
+---@param updateEditBox? boolean
+function Overview:setPoints(points, updateEditBox)
     if (not self.selectedCharacter) then
         GL:warning(L.ROLLING_SELECT_PLAYER_WARNING);
         return;
     end
 
-    self.points = points;
+    points = BoostedRolls:setPoints(self.selectedCharacter, points, not GL.User.isIngroup);
 
-    -- Update points locally.
-    BoostedRolls:queueUpdate(self.selectedCharacter, points);
-
-    -- Update interface.
     if (updateEditBox) then
         GL.Interface:get(self, "EditBox.CurrentPoints"):SetText(points);
     end
 
-    local Table = GL.Interface:get(self, "Table.Characters");
-    if (Table) then
-        local rollPoints = BoostedRolls:rollPoints(points);
-        local reserve = BoostedRolls:reserve(points);
-        Table:GetRow(Table:GetSelection()).cols[2].value = tostring(rollPoints);
-        Table:GetRow(Table:GetSelection()).cols[3].value = tostring(reserve);
-        Table:Refresh();
+    self:refreshTable();
+end
+
+---@param points number
+---@param updateEditBox? boolean
+function Overview:adjustPoints(points, updateEditBox)
+    if (not self.selectedCharacter) then
+        GL:warning(L.ROLLING_SELECT_PLAYER_WARNING);
+        return;
+    end
+
+    points = BoostedRolls:addPoints(self.selectedCharacter, points);
+
+    if (updateEditBox) then
+        GL.Interface:get(self, "EditBox.CurrentPoints"):SetText(points);
     end
 end
 
----@param aliases string 
----@return void
+---@param aliases string
 function Overview:updateAliases(aliases)
     if (not self.selectedCharacter) then
         GL:warning(L.ROLLING_SELECT_PLAYER_WARNING);
@@ -592,25 +590,21 @@ function Overview:updateAliases(aliases)
     self:refreshTable();
 end
 
----@return void
 function Overview:loadPlayer()
     -- Better be safe than getting a lua error
     local class = nil;
     local name = L.NONE;
     local Aliases = {};
 
-    if (not self.selectedCharacter
-        or not BoostedRolls.MaterializedData.DetailsByPlayerName[self.selectedCharacter]
+    if (self.selectedCharacter
+        and BoostedRolls.MaterializedData.DetailsByPlayerName[self.selectedCharacter]
     ) then
-        self.points = 0;
-    else
-        self.points = BoostedRolls:getPoints(self.selectedCharacter);
         class = BoostedRolls.MaterializedData.DetailsByPlayerName[self.selectedCharacter].class;
         name = GL:nameFormat{ name = self.selectedCharacter, stripRealm = true };
         Aliases = BoostedRolls.MaterializedData.DetailsByPlayerName[self.selectedCharacter].Aliases;
     end
     
-    GL.Interface:get(self, "EditBox.CurrentPoints"):SetText(self.points);
+    GL.Interface:get(self, "EditBox.CurrentPoints"):SetText(BoostedRolls:getPoints(self.selectedCharacter));
     GL.Interface:get(self, "Label.PlayerName"):SetText(GL:nameFormat{ name = name, colorize = true, });
 
     --- Aliases
@@ -622,7 +616,6 @@ function Overview:loadPlayer()
     GL.Interface:get(self, "EditBox.Aliases"):SetText(aliases);
 end
 
----@return void
 function Overview:close()
     local Window = GL.Interface:get(self, "Window");
 

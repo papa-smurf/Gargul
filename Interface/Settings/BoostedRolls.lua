@@ -156,6 +156,26 @@ function BoostedRolls:draw(Parent)
     end);
     Parent:AddChild(BoostedRollsDefaultPoints);
 
+    local BoostedRollsMaximumPoints = GL.AceGUI:Create("EditBox");
+    BoostedRollsMaximumPoints:DisableButton(true);
+    BoostedRollsMaximumPoints:SetHeight(20);
+    BoostedRollsMaximumPoints:SetFullWidth(true);
+    BoostedRollsMaximumPoints:SetText(GL.Settings:get("BoostedRolls.maxmimumPoints"));
+    BoostedRollsMaximumPoints:SetLabel(string.format(
+        "|cff%sThe maximum points a player can have. Anything above this number is discarded!|r",
+        GL:classHexColor("rogue")
+    ));
+    BoostedRollsMaximumPoints:SetCallback("OnTextChanged", function (self)
+        local value = GL.BoostedRolls:toPoints(strtrim(self:GetText()));
+
+        if not value then
+            value = nil;
+        end
+
+        GL.Settings:set("BoostedRolls.maxmimumPoints", value);
+    end);
+    Parent:AddChild(BoostedRollsMaximumPoints);
+
     local BoostedRollsDefaultCost = GL.AceGUI:Create("EditBox");
     BoostedRollsDefaultCost:DisableButton(true);
     BoostedRollsDefaultCost:SetHeight(20);
