@@ -326,7 +326,7 @@ function TMB:DFTTooltipLines(Lines, Entries)
     -- Add the header
     tinsert(Lines, ("\n|c00FF7A0A%s|r"):format((L.TMB_TOOLTIP_PRIO_HEADER):format(self:source())));
 
-    Entries = self:sortEntries(Entries, 1);
+    Entries = self:sortEntries(Entries, "prio");
 
     -- Add the entries to the tooltip
     local entriesAdded = 0;
