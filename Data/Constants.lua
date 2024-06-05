@@ -551,8 +551,7 @@ local Constants = {
     ]]
     Comm = {
         channel = "GargulComm2",
-        -- Due to a Blizzard issue with whisper comms, era requires a higher min version
-        minimumAppVersion = GL.isEra and "7.3.2" or "7.2.16",
+        minimumAppVersion = "7.4.11",
 
         ---@class CommActions
         Actions = {
