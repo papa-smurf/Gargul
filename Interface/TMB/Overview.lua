@@ -139,10 +139,11 @@ function Overview:draw()
         GL.Interface.Dialogs.PopupDialog:open{
             question = L.ARE_YOU_SURE,
             OnYes = function ()
+                local source = GL.TMB:source();
                 GL.Interface.TMB.Overview:close();
                 GL.TMB:clear();
 
-                GL.TMB:draw(string.lower(GL.TMB:source()));
+                GL.TMB:draw(string.lower(source));
             end,
         };
     end);
