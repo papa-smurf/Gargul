@@ -228,8 +228,7 @@ function Overview:addPlayerPlusOneEntries(Parent)
 
         local PlayerName = AceGUI:Create("Label");
         PlayerName:SetFontObject(_G["GameFontNormal"]);
-        PlayerName:SetText(GL:nameFormat(Entry.name));
-        PlayerName:SetColor(unpack(GL:classRGBColor(Entry.class)))
+        PlayerName:SetText(GL:nameFormat{ name = Entry.name, colorize = true, });
         PlayerName:SetHeight(28);
         PlayerName:SetWidth(320);
         Row:AddChild(PlayerName);
