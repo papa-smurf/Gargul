@@ -50,8 +50,6 @@ function Overview:draw()
     _G["GARGUL_TMB_OVERVIEW_WINDOW"] = Window.frame;
     tinsert(UISpecialFrames, "GARGUL_TMB_OVERVIEW_WINDOW");
 
-    local source = GL.TMB:source();
-
     local VerticalSpacer = GL.AceGUI:Create("SimpleGroup");
     VerticalSpacer:SetLayout("FILL");
     VerticalSpacer:SetFullWidth(true);
@@ -144,7 +142,7 @@ function Overview:draw()
                 GL.Interface.TMB.Overview:close();
                 GL.TMB:clear();
 
-                GL.TMB:draw(string.lower(source));
+                GL.TMB:draw(string.lower(GL.TMB:source()));
             end,
         };
     end);
