@@ -1058,25 +1058,12 @@ function SoftRes:importGargulData(data)
     end
 
     -- Store softres meta data (id, url etc)
-    local createdAt = data.metadata.createdAt or 0;
-    local updatedAt = data.metadata.updatedAt or 0;
-    local discordUrl = data.metadata.discordUrl or "";
+    local createdAt = tonumber(data.metadata.createdAt) or 0;
+    local updatedAt = tonumber(data.metadata.updatedAt) or 0;
+    local discordUrl = tostring(data.metadata.discordUrl) or "";
     local hidden = GL:toboolean(data.metadata.hidden or false);
     local id = tostring(data.metadata.id) or "";
-    local instance = data.metadata.instance or "";
-    local raidNote = data.metadata.note or "";
     local raidStartsAt = data.metadata.raidStartsAt or 0;
-
-    -- Check the provided meta data to prevent any weird tampering
-    if (GL:empty(id)
-        or GL:empty(instance)
-        or type(createdAt) ~= "number"
-        or type(discordUrl) ~= "string"
-        or type(raidNote) ~= "string"
-        or type(raidStartsAt) ~= "number"
-    ) then
-        return throwGenericInvalidDataError();
-    end
 
     DB.SoftRes.MetaData = {
         createdAt = createdAt,
@@ -1085,8 +1072,6 @@ function SoftRes:importGargulData(data)
         id = id,
         importedAt = GetServerTime(),
         importString = importString,
-        instance = instance,
-        note = raidNote,
         raidStartsAt = raidStartsAt,
         updatedAt = updatedAt,
         url = "https://softres.it/raid/" .. id,
