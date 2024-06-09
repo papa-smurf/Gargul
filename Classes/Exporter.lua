@@ -16,9 +16,14 @@ local DB = GL.DB;
 
 ---@class Exporter
 GL.Exporter = {
+    ---@type boolean
     visible = false,
-    dateSelected = nil,
+
+    ---@type string
     disenchantedItemIdentifier = "||de||",
+
+    ---@type table
+    SelectedDates = {},
 };
 
 ---@type Exporter
@@ -36,6 +41,7 @@ function Exporter:draw()
 
     -- Fetch award history per date
     local AwardHistoryByDate = {};
+    local latestEntry = 0;
     for _, AwardEntry in pairs(DB:get("AwardHistory") or {}) do
         local dateString = date(L.DATE_FORMAT, AwardEntry.timestamp);
         local Entries = GL:tableGet(AwardHistoryByDate, dateString, {});
@@ -43,6 +49,14 @@ function Exporter:draw()
         tinsert(Entries, AwardEntry);
 
         AwardHistoryByDate[dateString] = Entries;
+
+        if (AwardEntry.timestamp > latestEntry) then
+            latestEntry = AwardEntry.timestamp;
+        end
+    end
+
+    if (GL:gt(latestEntry, 0)) then
+        tinsert(self.SelectedDates, date(L.DATE_FORMAT, latestEntry));
     end
 
     -- Create a container/parent frame
@@ -51,7 +65,7 @@ function Exporter:draw()
     Window:SetStatusText(L.VERSION_ABBR ..GL.version);
     Window:SetLayout("Flow");
     Window:SetWidth(600);
-    Window:SetHeight(450);
+    Window:SetHeight(500);
     Window:EnableResize(false);
     Window:SetCallback("OnClose", function()
         self:close();
@@ -132,7 +146,7 @@ function Exporter:clearData()
     local onConfirm;
 
     -- No date is selected, delete everything!
-    if (not self.dateSelected) then
+    if (GL:empty(self.SelectedDates)) then
         warning = L.EXPORT_DELETE_ALL_CONFIRM;
         onConfirm = function()
             GL.Events:fire("GL.ITEM_UNAWARDED");
@@ -143,12 +157,12 @@ function Exporter:clearData()
         end;
 
     else -- Only delete entries on the selected date
-        warning = (L.EXPORT_DELETE_DATE_CONFIRM):format(self.dateSelected);
+        warning = (L.EXPORT_DELETE_DATE_CONFIRM):format(table.concat(self.SelectedDates, ", "));
         onConfirm = function()
             for key, AwardEntry in pairs(DB:get("AwardHistory")) do
                 local dateString = date(L.DATE_FORMAT, AwardEntry.timestamp);
 
-                if (dateString == self.dateSelected) then
+                if (GL:inTable(self.SelectedDates, dateString)) then
                     AwardEntry = nil;
                     DB:set("AwardHistory." .. key, nil);
                 end
@@ -206,6 +220,7 @@ end
 ---
 ---@return table
 function Exporter:getLootEntries(raw)
+    local noDatesSelected = GL:empty(self.SelectedDates);
     local Entries = {};
     raw = raw == true;
 
@@ -216,7 +231,7 @@ function Exporter:getLootEntries(raw)
             if (
                 (not concernsDisenchantedItem or GL.Settings:get("ExportingLoot.includeDisenchantedItems"))
                 and (not AwardEntry.OS or GL.Settings:get("ExportingLoot.includeOffspecItems"))
-                and (not self.dateSelected or dateString == self.dateSelected)
+                and (noDatesSelected or GL:inTable(self.SelectedDates, dateString))
                 and not GL:empty(AwardEntry.timestamp)
                 and not GL:empty(AwardEntry.itemLink)
                 and not GL:empty(AwardEntry.awardedTo)
@@ -455,37 +470,63 @@ function Exporter:drawDatesTable(Parent, Dates)
         },
     };
 
-    local Table = ScrollingTable:CreateST(Columns, 21, 15, nil, Parent);
+    local Table = ScrollingTable:CreateST(Columns, 21, 15, nil, Parent, true);
     Table:EnableSelection(true);
     Table:SetWidth(120);
-    Table.frame:SetPoint("BOTTOMLEFT", Parent, "BOTTOMLEFT", 50, 58);
+    Table.frame:SetPoint("TOPLEFT", Parent, "TOPLEFT", 50, -80);
 
     Table:RegisterEvents{
-        OnClick = function()
-
+        OnClick = function(rowFrame, cellFrame, data, cols, row, realrow, column, table, button, ...)
             -- Even if we're still missing an answer from some of the group members
             -- we still want to make sure our inspection end after a set amount of time
             GL.Ace:ScheduleTimer(function()
-                self.dateSelected = nil;
-                local Selected = Table:GetRow(Table:GetSelection());
+                self.SelectedDates = {};
+                for _, row in pairs(Table:GetSelection() or {}) do
+                    local Row = Table:GetRow(row) or {};
 
-                if (Selected and Selected[1]) then
-                    self.dateSelected = Selected[1];
+                    if (Row["cols"]) then
+                        local date = GL:tableGet(Row, "cols.1.value");
+
+                        if (date) then
+                            tinsert(self.SelectedDates, date);
+                        end
+                    end
                 end
 
-                Exporter:refreshExportString();
+                self:refreshExportString();
             end, .1);
         end
     };
 
     local TableData = {};
+    local selectedRow = nil;
+    local i = 1;
     for _, date in pairs(Dates) do
-        tinsert(TableData, { date });
+        local Row = {
+            cols = {
+                {
+                    value = date,
+                },
+            },
+        };
+
+        if (date == self.SelectedDates[1]) then
+            selectedRow = i;
+        end
+
+        --- Can't use simple format because it's not supported by multiselection
+        tinsert(TableData, Row);
+
+        i = i + 1;
     end
 
     -- The second argument refers to "isMinimalDataformat"
     -- For the full format see https://www.wowace.com/projects/lib-st/pages/set-data
-    Table:SetData(TableData, true);
+    Table:SetData(TableData);
+
+    if (selectedRow) then
+        Table:SetSelection(selectedRow);
+    end
 
     GL.Interface:set(self, "Dates", Table);
 end
