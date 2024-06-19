@@ -76,7 +76,7 @@ function TMB:byItemID(itemID, raidersOnly)
         for _, Entry in pairs(GL.DB:get("TMB.Items." .. tostring(id), {})) do
             local checksum = ("%s|%s|%s|%s"):format(id, Entry.character, Entry.prio, Entry.type or Constants.tmbTypeWish);
 
-            if (not Checksums[checksum]) then
+            if (not Checksums[checksum] and Entry.prio ~= nil) then
                 tinsert(Entries, Entry);
                 Checksums[checksum] = true;
             end
