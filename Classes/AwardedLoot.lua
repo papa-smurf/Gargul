@@ -854,8 +854,6 @@ function AwardedLoot:initiateTrade(AwardDetails)
 end
 
 --- When a trade is initiated we attempt to automatically add items that should be given to the tradee
----
----@return void
 function AwardedLoot:tradeInitiated()
     -- Fetch the player name of whomever we're trading with
     local tradingPartner = GL:tableGet(GL.TradeWindow, "State.partner");
@@ -896,7 +894,7 @@ function AwardedLoot:tradeInitiated()
             end
 
             -- Attempt to add the item to the trade window
-            GL.TradeWindow:addItem(Loot.itemID);
+            GL.TradeWindow:addItem(Loot.itemLink or Loot.itemID);
 
             thereAreItemsToAdd = true;
         end)();

@@ -1967,14 +1967,15 @@ end
 
 --- Find the first bag id and slot for a given item id (or false)
 ---
----@param itemID number
+---@param itemIdentifier number
 ---@param skipSoulBound boolean
 ---@param includeBank boolean
 ---
 ---@return table
 ---
 ---@test /dump _G.Gargul:findBagIdAndSlotForItem(49577);
-function GL:findBagIdAndSlotForItem(itemID, skipSoulBound, includeBank)
+function GL:findBagIdAndSlotForItem(itemIdentifier, skipSoulBound, includeBank)
+    local identifierIsLink = type(itemIdentifier) == "string";
     skipSoulBound = skipSoulBound == true;
     includeBank = includeBank == true;
 
@@ -1985,10 +1986,17 @@ function GL:findBagIdAndSlotForItem(itemID, skipSoulBound, includeBank)
 
     for bag = Enum.BagIndex.Backpack, maxBagID do
         for slot = 1, GL:getContainerNumSlots(bag) do
-            local _, _, locked, _, _, _, _, _, _, bagItemID = GL:getContainerItemInfo(bag, slot);
+            GL:xd{
+                linkMatch = identifierIsLink and GL:iEquals(itemIdentifier, itemLink),
+            }
+            local _, _, locked, _, _, _, itemLink, _, _, bagItemID = GL:getContainerItemInfo(bag, slot);
 
-            if (bagItemID == itemID
-                and not locked -- The item is locked, aka it can not be put in the window
+            if (not locked -- The item is locked, aka it can not be put in the window
+                and (
+                    -- Match the item based on itemlink or ID
+                    (identifierIsLink and GL:iEquals(itemIdentifier, itemLink))
+                    or (not identifierIsLink and GL:e(itemIdentifier, bagItemID))
+                )
                 and (not skipSoulBound -- We don't care about the soulbound status of the item, return the bag/slot!
                     or GL:inventoryItemTradeTimeRemaining(bag, slot) > 0 -- The item is tradeable
                 )

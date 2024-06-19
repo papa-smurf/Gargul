@@ -373,12 +373,15 @@ function TradeWindow:processItemsToAdd()
         return;
     end
 
-    local itemID = self.ItemsToAdd[1];
+    local itemToAdd = self.ItemsToAdd[1];
+    local addItemByLink = GL:getItemIDFromLink(itemToAdd);
+    local itemID = addItemByLink or itemToAdd;
+    local itemLink = addItemByLink and itemToAdd or nil;
     table.remove(self.ItemsToAdd, 1);
 
     -- Try to find the item in our bag, make sure to skip soulbound items
     local skipSoulbound = true;
-    local itemPositionInBag = GL:findBagIdAndSlotForItem(itemID, skipSoulbound);
+    local itemPositionInBag = GL:findBagIdAndSlotForItem(itemLink or itemID, skipSoulbound);
 
     -- The item was not found or the trade window is not open anymore
     if (GL:empty(itemPositionInBag)

@@ -402,7 +402,7 @@ end
 --- without having to worry about tables or keys existing yes or no.
 ---@param keyString string
 ---@param value any
----@param quiet boolean Should trigger event?
+---@param quiet? boolean Should trigger event?
 ---@return boolean
 function Settings:set(keyString, value, quiet)
     local success = GL:tableSet(self.Active, keyString, value);
