@@ -30,8 +30,8 @@ function Test.TradeState:_init(callback)
 
     local ItemIDSources = {
         GL.Data.Constants.ItemsThatShouldntBeAnnounced,
-        GL.Data.Constants.TradeableItems,
-        GL.Data.Constants.UntradeableItems,
+        GL.Data.Constants.TradableItems,
+        GL.Data.Constants.UntradableItems,
     };
 
     for _, itemIDSource in pairs(ItemIDSources) do

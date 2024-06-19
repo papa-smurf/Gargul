@@ -524,7 +524,7 @@ function PackMule:getTargetForItem(itemLinkOrId, callback)
 
                 local ruleApplies = (function ()
                     -- Check whether the item is whitelisted
-                    if (GL:inTable(GL.Data.Constants.TradeableItems, itemID)) then
+                    if (GL:inTable(GL.Data.Constants.TradableItems, itemID)) then
                         return true;
                     end
 
@@ -549,7 +549,7 @@ function PackMule:getTargetForItem(itemLinkOrId, callback)
                     end
 
                     -- Untradable items are skipped in quality rules whether they're BoP or not!
-                    if (GL:inTable(GL.Data.Constants.UntradeableItems, itemID)) then
+                    if (GL:inTable(GL.Data.Constants.UntradableItems, itemID)) then
                         return false;
                     end
 
