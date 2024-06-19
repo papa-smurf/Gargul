@@ -535,7 +535,7 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, g
     --[[ DETERMINE THE ITEM'S GUID ]]
     local awardedItemGUID = nil;
     local lowestTradeTimeRemaining = 14400; -- 4 hours in seconds
-    for itemGUID, timeRemaining in pairs(GL:itemTradeTimeRemaining(itemID) or {}) do
+    for itemGUID, timeRemaining in pairs(GL:itemTradeTimeRemaining(itemLink or itemID) or {}) do
         -- Check if the given item is soulbound
         local itemIsBound = timeRemaining ~= Constants.itemIsNotBound;
 
@@ -759,7 +759,7 @@ function AwardedLoot:addItemGUIDtoItemsAwardedToSelf()
             --[[ DETERMINE THE ITEM'S GUID ]]
             local awardedItemGUID = nil;
             local lowestTradeTimeRemaining = 14400; -- 4 hours in seconds
-            for itemGUID, timeRemaining in pairs(GL:itemTradeTimeRemaining(itemID) or {}) do
+            for itemGUID, timeRemaining in pairs(GL:itemTradeTimeRemaining(Details.itemLink or Details.itemID) or {}) do
                 -- Check if the given item is soulbound
                 local itemIsBound = timeRemaining ~= Constants.itemIsNotBound;
 
@@ -828,7 +828,7 @@ function AwardedLoot:initiateTrade(AwardDetails)
     local tradingPartner = AwardDetails.awardedTo;
 
     -- Check whether we have the item in our inventory, no point opening a trade window if not
-    local itemPositionInBag = GL:findBagIdAndSlotForItem(AwardDetails.itemID);
+    local itemPositionInBag = GL:findBagIdAndSlotForItem(AwardDetails.itemLink or AwardDetails.itemID);
     if (GL:empty(itemPositionInBag)) then
         return;
     end
@@ -849,7 +849,7 @@ function AwardedLoot:initiateTrade(AwardDetails)
     -- We're already trading with the winner
     elseif (GL:tableGet(GL.TradeWindow, "State.partner") == tradingPartner) then
         -- Attempt to add the item to the trade window
-        GL.TradeWindow:addItem(AwardDetails.itemID);
+        GL.TradeWindow:addItem(AwardDetails.itemLink or AwardDetails.itemID);
     end
 end
 

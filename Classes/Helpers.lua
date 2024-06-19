@@ -1289,15 +1289,15 @@ end
 ---@param haltOnError boolean
 ---@param sorter function
 ---@return table
+---
+--- /script _G.Gargul:onItemLoadDo(45613, function (Result) _G.Gargul:xd(Result); end);
 function GL:onItemLoadDo(Items, callback, haltOnError, sorter)
-    GL:debug("GL:onItemLoadDo");
-
     haltOnError = haltOnError or false;
     callback = callback or function () end;
 
-    local itemsWasntATable = type(Items) ~= "table";
-    if (itemsWasntATable) then
-        Items = {Items};
+    local singleItemProvided = type(Items) ~= "table";
+    if (singleItemProvided) then
+        Items = { Items };
     end;
 
     local itemsLoaded = 0;
@@ -1382,7 +1382,7 @@ function GL:onItemLoadDo(Items, callback, haltOnError, sorter)
                     table.sort(ItemData, sorter);
                 end
 
-                if (itemsWasntATable) then
+                if (singleItemProvided) then
                     ItemData = ItemData[1];
                 end
 
@@ -1392,14 +1392,14 @@ function GL:onItemLoadDo(Items, callback, haltOnError, sorter)
         end)
     end
 
-    ---@param itemIdentifier string|number
-    for _, itemIdentifier in pairs(Items) do
+    ---@param itemLinkOrID string|number
+    for _, itemLinkOrID in pairs(Items) do
         if (haltOnError and not GL:empty(lastError)) then
             GL:warning(lastError);
             return;
         end
 
-        loadOrReturnItem(itemIdentifier);
+        loadOrReturnItem(itemLinkOrID);
 
         -- Make sure the callback has not yet been executed in the async onload method
         if (not callbackCalled
@@ -1407,7 +1407,7 @@ function GL:onItemLoadDo(Items, callback, haltOnError, sorter)
         ) then
             callbackCalled = true;
 
-            if (itemsWasntATable) then
+            if (singleItemProvided) then
                 ItemData = ItemData[1];
                 callback(ItemData);
                 return;
@@ -1570,8 +1570,8 @@ end
 ---@param itemLinkOrID string|number
 ---@return void
 function GL:itemTradeTimeRemaining(itemLinkOrID)
-    local concernsID = GL:higherThanZero(tonumber(itemLinkOrID));
-    local itemID = concernsID and math.floor(tonumber(itemLinkOrID)) or GL:getItemIDFromLink(itemLinkOrID);
+    local concernsLink = type(itemLinkOrID) == "string";
+    local itemID = concernsLink and GL:getItemIDFromLink(itemLinkOrID) or itemLinkOrID;
 
     if (not itemID) then
         return;
@@ -1581,6 +1581,11 @@ function GL:itemTradeTimeRemaining(itemLinkOrID)
     self:forEachItemInBags(function(Location, bag, slot)
         -- This is not the item we're looking for
         if (C_Item.GetItemID(Location) ~= itemID) then
+            return;
+        end
+
+        -- This is not the item variant we're looking for
+        if (concernsLink and not GL:iEquals(C_Item.GetItemLink(Location), itemLinkOrID)) then
             return;
         end
 
@@ -1967,15 +1972,18 @@ end
 
 --- Find the first bag id and slot for a given item id (or false)
 ---
----@param itemIdentifier number
----@param skipSoulBound boolean
----@param includeBank boolean
+---@param itemLinkOrID number|string
+---@param skipSoulBound? boolean
+---@param includeBank? boolean
+---@param includeLocked? boolean
 ---
 ---@return table
 ---
 ---@test /dump _G.Gargul:findBagIdAndSlotForItem(49577);
-function GL:findBagIdAndSlotForItem(itemIdentifier, skipSoulBound, includeBank)
-    local identifierIsLink = type(itemIdentifier) == "string";
+function GL:findBagIdAndSlotForItem(itemLinkOrID, skipSoulBound, includeBank, includeLocked)
+    local identifierIsLink = type(itemLinkOrID) == "string";
+
+    includeLocked = includeLocked == true;
     skipSoulBound = skipSoulBound == true;
     includeBank = includeBank == true;
 
@@ -1984,24 +1992,26 @@ function GL:findBagIdAndSlotForItem(itemIdentifier, skipSoulBound, includeBank)
         maxBagID = Enum.BagIndex.BankBag_7;
     end
 
+    local itemID = identifierIsLink and GL:getItemIDFromLink(itemLinkOrID) or itemLinkOrID;
     for bag = Enum.BagIndex.Backpack, maxBagID do
         for slot = 1, GL:getContainerNumSlots(bag) do
-            GL:xd{
-                linkMatch = identifierIsLink and GL:iEquals(itemIdentifier, itemLink),
-            }
-            local _, _, locked, _, _, _, itemLink, _, _, bagItemID = GL:getContainerItemInfo(bag, slot);
+            local Result = (function()
+                local _, _, locked, _, _, _, itemLink, _, _, bagItemID = GL:getContainerItemInfo(bag, slot);
 
-            if (not locked -- The item is locked, aka it can not be put in the window
-                and (
-                    -- Match the item based on itemlink or ID
-                    (identifierIsLink and GL:iEquals(itemIdentifier, itemLink))
-                    or (not identifierIsLink and GL:e(itemIdentifier, bagItemID))
-                )
-                and (not skipSoulBound -- We don't care about the soulbound status of the item, return the bag/slot!
-                    or GL:inventoryItemTradeTimeRemaining(bag, slot) > 0 -- The item is tradeable
-                )
-            ) then
+                if ((not includeLocked and locked) -- The item is locked and can not be used
+                    or bagItemID ~= itemID -- This isn't the item we're looking for
+                    or (identifierIsLink and not GL:iEquals(itemLinkOrID, itemLink)) -- This is not the variant we're looking for
+                    or (not skipSoulBound and GL:inventoryItemTradeTimeRemaining(bag, slot) <= 0) -- This item is no longer tradable
+                ) then
+                    return;
+                end
+
                 return { bag, slot, };
+            end)();
+
+            -- We've got a hit, return it
+            if (Result) then
+                return Result;
             end
         end
     end

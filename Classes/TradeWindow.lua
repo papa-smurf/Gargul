@@ -193,7 +193,7 @@ function TradeWindow:handleEvents(event, ...)
             and type(self.ItemsAdded[itemGUID]) == "table"
         ) then
             if (GetTime() - self.ItemsAdded[itemGUID].timestamp <= .5) then
-                tinsert(self.ItemsToAdd, self.ItemsAdded[itemGUID].itemID);
+                tinsert(self.ItemsToAdd, self.ItemsAdded[itemGUID].itemLink or self.ItemsAdded[itemGUID].itemID);
             end
 
             self.ItemsAdded[itemGUID] = nil;
@@ -324,12 +324,12 @@ function TradeWindow:resetState()
     };
 end
 
---- Attempt to add a given itemID to the trade window
+--- Attempt to add a given itemID or itemLink to the trade window
 ---
----@param itemID number
+---@param itemLinkOrID number|string
 ---@return void
-function TradeWindow:addItem(itemID)
-    tinsert(self.ItemsToAdd, itemID);
+function TradeWindow:addItem(itemLinkOrID)
+    tinsert(self.ItemsToAdd, itemLinkOrID);
 end
 
 --- Attempt to set a copper amount in the trade window
@@ -357,8 +357,6 @@ function TradeWindow:setCopper(amount, target, callback)
 end
 
 --- Process the ItemsToAdd table
----
----@return void
 function TradeWindow:processItemsToAdd()
     -- Make sure we don't use items if the trade window is not opened
     -- The last thing we want to do is equip an item or use a consumable by mistake!
@@ -396,6 +394,7 @@ function TradeWindow:processItemsToAdd()
     if (itemGUID) then
         self.ItemsAdded[itemGUID] = {
             itemID = itemID,
+            itemLink = itemLink,
             timestamp = GetTime(),
         };
     end
