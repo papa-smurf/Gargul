@@ -1599,9 +1599,11 @@ function TMB:announceDetailsOfItemInChat(itemID, Entries)
     local WishListDetails = {};
     local PrioListDetails = {};
     for _, Entry in pairs(Entries) do
+        local playerName = Entry.character:gsub(OFFSPEC_IDENTIFIER, "");
+        playerName = GL:disambiguateName(playerName);
         local prio = Entry.prio;
         local entryType = Entry.type or Constants.tmbTypeWish;
-        local isOffSpec = GL:strContains(playerName, OFFSPEC_IDENTIFIER);
+        local isOffSpec = GL:strContains(Entry.character, OFFSPEC_IDENTIFIER);
         local sortingOffset = 0;
         local sortingOrder = tonumber(prio);
 
