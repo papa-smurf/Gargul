@@ -1363,6 +1363,7 @@ function ClientInterface:filterAndSort()
                 -- Hide unwanted armor types
                 or (self.enableFilters
                     and ItemRow._Details.classID == Enum.ItemClass.Armor
+                    and ItemRow._Details.inventoryType ~= "INVTYPE_CLOAK"
                     and Settings:get(("GDKP.MultiAuction.Filters.%s-%s"):format(Enum.ItemClass.Armor, ItemRow._Details.subclassID)) == true
                 )
             ) then
