@@ -1461,6 +1461,7 @@ function GL:normalizeItem(ItemMixin)
         name = itemName,
         subclassID = subclassID,
         quality = itemQuality,
+        isBOE = GL:inTable({ LE_ITEM_BIND_ON_EQUIP, LE_ITEM_BIND_QUEST, }, bindType),
 
         baseLevel = itemLevel,
         baseLink = itemLink,

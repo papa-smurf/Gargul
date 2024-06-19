@@ -108,7 +108,6 @@ function ClientInterface:addAuction(auctionID, isBOE, itemLevel, name, quality, 
         Details.CurrentBid = CurrentBid;
         Details.endsAt = endsAt;
         Details.increment = increment;
-        Details.isBOE = GL:inTable({ LE_ITEM_BIND_ON_EQUIP, LE_ITEM_BIND_QUEST, }, Item.bindType);
         Details.minimum = minimum;
 
         Window:addAuction(Details);
@@ -304,6 +303,16 @@ function ClientInterface:build()
             end,
         },
         "divider",
+        {
+            text = L.BIND_ON_EQUIP_ABBR,
+            checked = function ()
+                return Settings:get("GDKP.MultiAuction.Filters.BOE");
+            end,
+            func = function (Entry)
+                Settings:set("GDKP.MultiAuction.Filters.BOE", Entry.checked);
+                filter();
+            end,
+        },
         {
             text = "Shields",
             checked = function ()
@@ -1351,14 +1360,19 @@ function ClientInterface:filterAndSort()
                 or not Client.AuctionDetails.Auctions[auctionID]
                 or Client.AuctionDetails.Auctions[auctionID].endsAt <= -1
 
-                -- Hide unusable items
-                or (not ItemRow._Details.canUseItem and Settings:get("GDKP.MultiAuction.Filters.unusable") == true)
-
                 -- Hide inactive items
                 or (not showInactive and ItemRow._Details.endsAt <= 0)
 
                 -- Only show favorited items
                 or (showFavorites and not ItemRow._Details.isFavorite)
+
+                --[[ FILTERS ]]
+
+                -- Hide unusable items
+                or (self.enableFilters and not ItemRow._Details.canUseItem and Settings:get("GDKP.MultiAuction.Filters.unusable") == true)
+
+                -- Hide BOEs
+                or (self.enableFilters and ItemRow._Details.isBOE and Settings:get("GDKP.MultiAuction.Filters.BOE") == true)
 
                 -- Hide unwanted armor types
                 or (self.enableFilters
