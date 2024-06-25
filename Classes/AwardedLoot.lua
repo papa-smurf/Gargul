@@ -8,6 +8,9 @@ local CommActions = GL.Data.Constants.Comm.Actions;
 ---@type DB
 local DB = GL.DB;
 
+---@type Settings
+local Settings = GL.Settings;
+
 ---@type Events
 local Events = GL.Events;
 
@@ -823,8 +826,6 @@ end
 ---@param AwardDetails table
 ---@return void
 function AwardedLoot:initiateTrade(AwardDetails)
-    GL:debug("AwardedLoot:initiateTrade");
-
     local tradingPartner = AwardDetails.awardedTo;
 
     -- Check whether we have the item in our inventory, no point opening a trade window if not
