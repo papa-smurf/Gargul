@@ -70,7 +70,7 @@ function TradeWindow:open(playerName, callback, allwaysExecuteCallback)
         if (type(callback) == "function"
             and (allwaysExecuteCallback or self.Sate.partner == playerName)
         ) then
-            callback();
+            callback(GL:iEquals(self.Sate.partner, playerName));
         end
 
         return;
@@ -85,7 +85,7 @@ function TradeWindow:open(playerName, callback, allwaysExecuteCallback)
             GL.Events:unregister("TradeWindowTradeShowCallbackListener");
 
             if (allwaysExecuteCallback) then
-                callback();
+                callback(false);
             end
         end, 1);
 
@@ -100,10 +100,10 @@ function TradeWindow:open(playerName, callback, allwaysExecuteCallback)
             if (allwaysExecuteCallback
                 or (
                     TradeFrame:IsShown()
-                    and self.Sate.partner == playerName
+                    and GL:iEquals(self.Sate.partner, playerName)
                 )
             ) then
-                callback();
+                callback(true);
             end
         end);
     end
