@@ -300,6 +300,7 @@ L.GDKP_EXPORT_DEFAULT_FORMAT = "@ITEM,@WINNER,@GOLD,@WOWHEAD";
 L.GDKP_EXPORT_DEFAULT_HEADER = "Предмет, Игрок, Золото, Wowheadlink";
 L.GDKP_EXPORT_FORMAT_START = "Дата/время получения первого предмета";
 L.GDKP_EXPORT_FORMAT_TITLE = "Название сессии ГДКП";
+L.GDKP_EXPORT_INCLUDE_DISENCHANTED = "Включить разочарованные предметы";
 L.GDKP_EXPORT_POT_CHANGED = "Горшок изменен";
 L.GDKP_GOLD_TRADES = "Золотые сделки";
 L.GDKP_HIDE_UPCOMING_CONFIRMATION = "Вы уверены? Вы не сможете видеть предстоящие товары или делать ставки на них!";

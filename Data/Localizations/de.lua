@@ -299,6 +299,7 @@ L.GDKP_EXPORT_DEFAULT_FORMAT = "@ITEM,@WINNER,@GOLD,@WOWHEAD";
 L.GDKP_EXPORT_DEFAULT_HEADER = "Gegenstand, Spieler, Gold, Wowheadlink";
 L.GDKP_EXPORT_FORMAT_START = "Datum/Uhrzeit der Verleihung des ersten Gegenstandes";
 L.GDKP_EXPORT_FORMAT_TITLE = "Der Titel der GDKP-Sitzung";
+L.GDKP_EXPORT_INCLUDE_DISENCHANTED = "Schließe entzauberte Gegenstände mit ein";
 L.GDKP_EXPORT_POT_CHANGED = "Pott gewechselt";
 L.GDKP_GOLD_TRADES = "Goldhandel";
 L.GDKP_HIDE_UPCOMING_CONFIRMATION = "Bist du sicher? Du kannst kommende Gegenstände nicht sehen oder darauf bieten!";

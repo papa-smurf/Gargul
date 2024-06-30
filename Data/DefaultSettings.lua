@@ -225,6 +225,10 @@ GL.Data.DefaultSettings = {
         time = 30,
         whisperGoldDetails = true,
 
+        ExportAuctions = {
+            includeDisenchantedItems = false
+        },
+
         -- This holds minimum bid and increment settings per item
         SettingsPerItem = {},
 

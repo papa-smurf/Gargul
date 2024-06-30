@@ -302,6 +302,7 @@ L.GDKP_EXPORT_DEFAULT_FORMAT = "@ITEM,@WINNER,@GOLD,@WOWHEAD";
 L.GDKP_EXPORT_DEFAULT_HEADER = "Item,Player,Gold,Wowheadlink";
 L.GDKP_EXPORT_FORMAT_START = "Date/time at which the first item was awarded";
 L.GDKP_EXPORT_FORMAT_TITLE = "The title of the GDKP session";
+L.GDKP_EXPORT_INCLUDE_DISENCHANTED = "Include disenchanted items";
 L.GDKP_EXPORT_POT_CHANGED = "Pot changed";
 L.GDKP_GOLD_TRADES = "Gold Trades";
 L.GDKP_HIDE_UPCOMING_CONFIRMATION = "Are you sure? You won't be able to see, or bid on, upcoming items!";

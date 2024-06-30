@@ -300,6 +300,7 @@ L.GDKP_EXPORT_DEFAULT_FORMAT = "@ARTÍCULO,@GANADOR,@ORO,@WOWHEAD";
 L.GDKP_EXPORT_DEFAULT_HEADER = "Artículo, Jugador, Oro, Wowheadlink";
 L.GDKP_EXPORT_FORMAT_START = "Fecha/hora en la que se adjudicó el primer artículo";
 L.GDKP_EXPORT_FORMAT_TITLE = "El título de la sesión del GDKP";
+L.GDKP_EXPORT_INCLUDE_DISENCHANTED = "Incluir elementos desencantados";
 L.GDKP_EXPORT_POT_CHANGED = "Olla cambiada";
 L.GDKP_GOLD_TRADES = "Comercio de oro";
 L.GDKP_HIDE_UPCOMING_CONFIRMATION = "¿Está seguro? ¡No podrás ver ni pujar por los próximos artículos!";

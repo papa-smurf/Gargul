@@ -5,6 +5,12 @@ local _, GL = ...;
 
 local AceGUI = LibStub("AceGUI-3.0");
 
+---@type DB
+local DB = GL.DB;
+
+---@type Settings
+local Settings = GL.Settings;
+
 ---@type Interface
 local Interface = GL.Interface;
 
@@ -12,20 +18,21 @@ local Interface = GL.Interface;
 local GDKPSession = GL.GDKP.Session;
 
 ---@class GDKPExport
-GL.Interface.GDKP.Export = {
+local Export = {
     isVisible = false,
     session = nil,
+
+    ---@type string
+    disenchantedItemIdentifier = "||de||",
 };
 
 ---@type GDKPExport
-local Export = GL.Interface.GDKP.Export;
+GL.Interface.GDKP.Export = Export;
 
 -- [[ CONSTANTS ]]
 local CUSTOM_FORMAT = 1;
 local JSON_FORMAT = 2;
 local SHARE_FORMAT = 3;
-
----@return void
 function Export:open(session)
 
     local Window = Interface:get(self, "GDKPExport");
@@ -49,9 +56,9 @@ function Export:open(session)
 end
 
 --- Build the GDKP export. We only do this once and reuse it when reopened
----
----@return void
 function Export:build()
+    ---@type Frame
+    local Spacer;
 
     ---@type AceGUIFrame
     local Window = Interface:get(self, "GDKPExport");
@@ -89,9 +96,9 @@ function Export:build()
 
     ---@type AceGUIDropdown
     local ExportFormat = GL.AceGUI:Create("Dropdown");
-    ExportFormat:SetValue(1);
+    ExportFormat:SetValue(GL.Settings:get("GDKP.exportFormat", 1));
     ExportFormat:SetList(DropDownItems);
-    ExportFormat:SetText(DropDownItems[1]);
+    ExportFormat:SetText(DropDownItems[GL.Settings:get("GDKP.exportFormat", 1)]);
     ExportFormat:SetFullWidth(true);
     ExportFormat:SetCallback("OnValueChanged", function()
         GL.Settings:set("GDKP.exportFormat", ExportFormat:GetValue());
@@ -189,12 +196,30 @@ function Export:build()
     HelpIcon:SetCallback("OnEnter", function() showCustomFormatHelpTooltip() end);
     HelpIcon:SetCallback("OnLeave", function() GameTooltip:Hide(); end);
 
+    Spacer = GL.AceGUI:Create("SimpleGroup");
+    Spacer:SetLayout("FILL");
+    Spacer:SetFullWidth(true);
+    Spacer:SetHeight(20);
+    Window:AddChild(Spacer);
+
+    -- Include disenchanted items
+    local Checkbox = AceGUI:Create("CheckBox");
+    Checkbox:SetValue(Settings:get("GDKP.ExportAuctions.includeDisenchantedItems"));
+    Checkbox:SetLabel(L.GDKP_EXPORT_INCLUDE_DISENCHANTED);
+    Checkbox:SetFullWidth(true);
+    Checkbox.text:SetTextColor(1, .95686, .40784);
+    Checkbox:SetCallback("OnValueChanged", function()
+        Settings:set("GDKP.ExportAuctions.includeDisenchantedItems", Checkbox:GetValue());
+        self:refresh();
+    end);
+    Window:AddChild(Checkbox);
+
     ---@type AceGUIMultiLineEditBox
     local ExportBox = AceGUI:Create("MultiLineEditBox");
     ExportBox:SetText("");
     ExportBox:SetFullWidth(true);
     ExportBox:DisableButton(true);
-    ExportBox:SetLabel(("|c00FFF569%s|r"):format(L.EXPORT));
+    ExportBox:SetLabel("");
     ExportBox:SetNumLines(1);
     ExportBox:SetMaxLetters(0);
     GL.Interface:set(self, "Export", ExportBox);
@@ -206,14 +231,12 @@ function Export:build()
     return Window;
 end
 
----@return void
 function Export:close()
 
     self.isVisible = false;
 end
 
 function Export:refresh()
-
     local Session = GDKPSession:byID(self.session);
 
     if (type(Session) ~= "table") then
@@ -233,17 +256,52 @@ function Export:refresh()
             and type(Auction.Winner) == "table"
             and type(Auction.itemID) == "number"
         ) then
-            tinsert(Auctions, Auction);
+            -- We use cloneTable to tie any table references
+            tinsert(Auctions, GL:cloneTable(Auction));
         end
     end
 
-    local exportFormat = GL.Settings:get("GDKP.exportFormat");
+    -- Add items that were disenchanted during this session
+    local DisenchantedItems = {};
+    if (Settings:get("GDKP.ExportAuctions.includeDisenchantedItems")) then
+        local disenchanterIdentifier = Settings:get("ExportingLoot.disenchanterIdentifier");
+        for checksum, AwardEntry in pairs(DB:get("AwardHistory") or {}) do
+            (function ()
+                local itemID = GL:getItemIDFromLink(AwardEntry.itemLink);
+
+                -- This item is not tied to this GDKP session or is not disenchanted
+                if (not AwardEntry.GDKPSession
+                    or AwardEntry.GDKPSession ~= Session.ID
+                    or AwardEntry.awardedTo ~= self.disenchantedItemIdentifier
+                    or type(itemID) ~= "number"
+                ) then
+                    return;
+                end
+
+                tinsert(DisenchantedItems, {
+                    checksum = checksum,
+                    ID = checksum,
+                    itemLink = AwardEntry.itemLink,
+                    price = 0,
+                    itemID = itemID,
+                    createdAt = AwardEntry.timestamp,
+                    Winner = {
+                        name = disenchanterIdentifier,
+                        class = "PRIEST",
+                        realm = GL.User.realm,
+                    },
+                });
+            end)();
+        end
+    end
+
+    local exportFormat = Settings:get("GDKP.exportFormat");
 
     if (exportFormat == CUSTOM_FORMAT) then
-        self:exportAuctionsToCustomFormat(Session, Auctions);
+        self:exportAuctionsToCustomFormat(Session, GL:tableMerge(Auctions, DisenchantedItems));
 
     elseif (exportFormat == JSON_FORMAT) then
-        local exportString = self:transformAuctionsToJSONFormat(Session);
+        local exportString = self:transformAuctionsToJSONFormat(Session, DisenchantedItems);
         GL.Interface:get(self, "MultiLineEditBox.Export"):SetText(exportString);
     elseif (exportFormat == SHARE_FORMAT) then
         local zlibEncodeSucceeded;
@@ -262,9 +320,15 @@ function Export:refresh()
 end
 
 ---@param Session GDKPSession
+---@param DisenchantedItems table
 ---@return string
-function Export:transformAuctionsToJSONFormat(Session)
-    return GL.JSON:encode(Session);
+function Export:transformAuctionsToJSONFormat(Session, DisenchantedItems)
+    local Details = GL:cloneTable(Session);
+    if (not GL:empty(DisenchantedItems)) then
+        Details.DisenchantedItems = DisenchantedItems;
+    end
+
+    return GL.JSON:encode(Details);
 end
 
 ---@param Auctions GDKPSession
@@ -276,7 +340,7 @@ function Export:exportAuctionsToCustomFormat(Session, Auctions)
 
     -- Determine the start of the raid, determined by the item that was awarded first
     local timestamps = {};
-    for _, Details in pairs(Session.Auctions or {}) do
+    for _, Details in pairs(Auctions or {}) do
         tinsert(timestamps, Details.createdAt);
     end
     table.sort(timestamps);
