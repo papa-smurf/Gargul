@@ -46,6 +46,11 @@ function AwardingLoot:draw(Parent)
             setting = "AwardingLoot.autoTradeAfterAwardingAnItem",
         },
         {
+            label = "Notify in case trade fails",
+            description = "Send a whisper to the winner if you couldn't open a trade window with them",
+            setting = "AwardingLoot.notifyOfFailedTradeStart",
+        },
+        {
             label = "Skip award confirmation dialog",
             setting = "AwardingLoot.skipAwardConfirmationDialog",
             description = "Disable the award confirmation. Hold shift while clicking award to temporarily enable/disable skipping this confirmation",

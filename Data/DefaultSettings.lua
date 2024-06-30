@@ -88,6 +88,7 @@ GL.Data.DefaultSettings = {
         awardMessagesEnabled = true,
         awardOnReceive = false,
         awardOnReceiveMinimumQuality = 4,
+        notifyOfFailedTradeStart = true,
         skipAwardConfirmationDialog = false,
     },
     ExportingLoot = {

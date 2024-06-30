@@ -295,7 +295,7 @@ local Constants = {
         30314, -- Phaseshift Bulwark
     },
 
-    TradeableItems = {
+    TradableItems = {
         19716, -- Primal Hakkari Bindings
         19717, -- Primal Hakkari Armsplint
         19718, -- Primal Hakkari Stanchion
@@ -315,10 +315,13 @@ local Constants = {
         20932, -- Qiraji Bindings of Dominance
         20933, -- Husk of the Old God
 
+        220636, -- Atal'ai Blood Icon
+        220637, -- Atal'ai Ritual Token
+
         --750, -- Tough wolf meat (For testing purposes)
     },
 
-    UntradeableItems = {
+    UntradableItems = {
         209035, -- Hearthstone of the Flame
         50226, -- Festergut's Acidic Blood
         50231, -- Rotface's Acidic Blood
@@ -551,7 +554,7 @@ local Constants = {
     ]]
     Comm = {
         channel = "GargulComm2",
-        minimumAppVersion = "7.4.11",
+        minimumAppVersion = "7.4.13",
 
         ---@class CommActions
         Actions = {

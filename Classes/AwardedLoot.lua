@@ -8,6 +8,9 @@ local CommActions = GL.Data.Constants.Comm.Actions;
 ---@type DB
 local DB = GL.DB;
 
+---@type Settings
+local Settings = GL.Settings;
+
 ---@type Events
 local Events = GL.Events;
 
@@ -535,7 +538,7 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, g
     --[[ DETERMINE THE ITEM'S GUID ]]
     local awardedItemGUID = nil;
     local lowestTradeTimeRemaining = 14400; -- 4 hours in seconds
-    for itemGUID, timeRemaining in pairs(GL:itemTradeTimeRemaining(itemID) or {}) do
+    for itemGUID, timeRemaining in pairs(GL:itemTradeTimeRemaining(itemLink or itemID) or {}) do
         -- Check if the given item is soulbound
         local itemIsBound = timeRemaining ~= Constants.itemIsNotBound;
 
@@ -759,7 +762,7 @@ function AwardedLoot:addItemGUIDtoItemsAwardedToSelf()
             --[[ DETERMINE THE ITEM'S GUID ]]
             local awardedItemGUID = nil;
             local lowestTradeTimeRemaining = 14400; -- 4 hours in seconds
-            for itemGUID, timeRemaining in pairs(GL:itemTradeTimeRemaining(itemID) or {}) do
+            for itemGUID, timeRemaining in pairs(GL:itemTradeTimeRemaining(Details.itemLink or Details.itemID) or {}) do
                 -- Check if the given item is soulbound
                 local itemIsBound = timeRemaining ~= Constants.itemIsNotBound;
 
@@ -823,12 +826,15 @@ end
 ---@param AwardDetails table
 ---@return void
 function AwardedLoot:initiateTrade(AwardDetails)
-    GL:debug("AwardedLoot:initiateTrade");
-
     local tradingPartner = AwardDetails.awardedTo;
 
+    -- No need to trade with yourself
+    if (GL:iEquals(tradingPartner, GL.User.fqn)) then
+        return;
+    end
+
     -- Check whether we have the item in our inventory, no point opening a trade window if not
-    local itemPositionInBag = GL:findBagIdAndSlotForItem(AwardDetails.itemID);
+    local itemPositionInBag = GL:findBagIdAndSlotForItem(AwardDetails.itemLink or AwardDetails.itemID);
     if (GL:empty(itemPositionInBag)) then
         return;
     end
@@ -842,14 +848,27 @@ function AwardedLoot:initiateTrade(AwardDetails)
 
     if (not TradeFrame:IsShown()) then
         -- Open a trade window with the winner
-        GL.TradeWindow:open(tradingPartner, function ()
+        GL.TradeWindow:open(tradingPartner, function (success)
+            if (not success) then
+                if (Settings:get("AwardingLoot.notifyOfFailedTradeStart")) then
+                    GL:sendChatMessage(
+                        GL:printfn(L.CHAT.TRADE_START_FAILED, {
+                            item = AwardDetails.itemLink or "?",
+                        }),
+                        "WHISPER", nil, tradingPartner
+                    );
+                end
+
+                return;
+            end
+
             self:tradeInitiated();
-        end);
+        end, true);
 
     -- We're already trading with the winner
     elseif (GL:tableGet(GL.TradeWindow, "State.partner") == tradingPartner) then
         -- Attempt to add the item to the trade window
-        GL.TradeWindow:addItem(AwardDetails.itemID);
+        GL.TradeWindow:addItem(AwardDetails.itemLink or AwardDetails.itemID);
     end
 end
 

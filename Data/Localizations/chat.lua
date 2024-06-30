@@ -89,6 +89,7 @@ L.CHAT = {
         ROLLING_TMB_INFO = "These players have the highest %s prio: %s", -- First %s can be TMB/DFT/CPR
 
         --[[ TradeWindow / Trade ]]
+        TRADE_START_FAILED = "I tried to trade you, but was unsuccessful - trade me for ${item} asap!",
         TRADE_TO = "%s to %s",
         TRADE_TO_PART = "to %s",
         TRADE_GAVE = "I gave %s",
@@ -204,6 +205,7 @@ L.CHAT = {
         ROLLING_TMB_INFO = "Die folgenden Spieler haben die höchste %s-Prio: %s", -- First %s can be TMB/DFT/CPR
 
         --[[ TradeWindow / Trade ]]
+        TRADE_START_FAILED = "I tried to trade you, but was unsuccessful - trade me for ${item} asap!",
         TRADE_TO = "%s an %s",
         TRADE_TO_PART = "an %s",
         TRADE_GAVE = "Ich habe %s gegeben",
@@ -319,6 +321,7 @@ L.CHAT = {
         ROLLING_TMB_INFO = "以下玩家的 %s 优先级最高：%s", -- First %s can be TMB/DFT/CPR
 
         --[[ TradeWindow / Trade ]]
+        TRADE_START_FAILED = "I tried to trade you, but was unsuccessful - trade me for ${item} asap!",
         TRADE_TO = "%s 给 %s",
         TRADE_TO_PART = "给 %s",
         TRADE_GAVE = "我给了%s",
@@ -434,6 +437,7 @@ L.CHAT = {
         ROLLING_TMB_INFO = "Los siguientes jugadores tienen el %s prio más alto: %s", -- First %s can be TMB/DFT/CPR
 
         --[[ TradeWindow / Trade ]]
+        TRADE_START_FAILED = "I tried to trade you, but was unsuccessful - trade me for ${item} asap!",
         TRADE_TO = "%s a %s",
         TRADE_TO_PART = "a %s",
         TRADE_GAVE = "Le di %s",
@@ -549,6 +553,7 @@ L.CHAT = {
         ROLLING_TMB_INFO = "Les joueurs suivants ont la plus haute prio %s : %s", -- First %s can be TMB/DFT/CPR
 
         --[[ TradeWindow / Trade ]]
+        TRADE_START_FAILED = "I tried to trade you, but was unsuccessful - trade me for ${item} asap!",
         TRADE_TO = "%s à %s",
         TRADE_TO_PART = "à %s",
         TRADE_GAVE = "J'ai donné %s",
@@ -664,6 +669,7 @@ L.CHAT = {
         ROLLING_TMB_INFO = "I seguenti giocatori hanno il vantaggio di %s più alto: %s", -- First %s can be TMB/DFT/CPR
 
         --[[ TradeWindow / Trade ]]
+        TRADE_START_FAILED = "I tried to trade you, but was unsuccessful - trade me for ${item} asap!",
         TRADE_TO = "Da %s a %s",
         TRADE_TO_PART = "a %s",
         TRADE_GAVE = "Ho dato %s",
@@ -779,6 +785,7 @@ L.CHAT = {
         ROLLING_TMB_INFO = "다음 플레이어의 %s 우선 순위가 가장 높습니다: %s", -- First %s can be TMB/DFT/CPR
 
         --[[ TradeWindow / Trade ]]
+        TRADE_START_FAILED = "I tried to trade you, but was unsuccessful - trade me for ${item} asap!",
         TRADE_TO = "%s ~ %s",
         TRADE_TO_PART = "%s에게",
         TRADE_GAVE = "%s을(를) 줬습니다",
@@ -894,6 +901,7 @@ L.CHAT = {
         ROLLING_TMB_INFO = "Os seguintes jogadores têm o maior %s prio: %s", -- First %s can be TMB/DFT/CPR
 
         --[[ TradeWindow / Trade ]]
+        TRADE_START_FAILED = "I tried to trade you, but was unsuccessful - trade me for ${item} asap!",
         TRADE_TO = "%s para %s",
         TRADE_TO_PART = "para% s",
         TRADE_GAVE = "Eu dei %s",
@@ -1009,6 +1017,7 @@ L.CHAT = {
         ROLLING_TMB_INFO = "Следующие игроки имеют самый высокий процент %s: %s", -- First %s can be TMB/DFT/CPR
 
         --[[ TradeWindow / Trade ]]
+        TRADE_START_FAILED = "I tried to trade you, but was unsuccessful - trade me for ${item} asap!",
         TRADE_TO = "от %s до %s",
         TRADE_TO_PART = "до %s",
         TRADE_GAVE = "я дал %s",
@@ -1124,6 +1133,7 @@ L.CHAT = {
         ROLLING_TMB_INFO = "以下玩家的 %s 優先順序最高：%s", -- First %s can be TMB/DFT/CPR
 
         --[[ TradeWindow / Trade ]]
+        TRADE_START_FAILED = "I tried to trade you, but was unsuccessful - trade me for ${item} asap!",
         TRADE_TO = "%s 至 %s",
         TRADE_TO_PART = "至 %s",
         TRADE_GAVE = "我給了%s",
