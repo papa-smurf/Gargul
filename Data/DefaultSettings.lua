@@ -239,6 +239,7 @@ GL.Data.DefaultSettings = {
             includeAwarded = false,
             includeBOEs = true,
             includeMaterials = false,
+            minimumFillItemLevel = nil,
             minimumFillQuality = 4,
             time = 600,
 

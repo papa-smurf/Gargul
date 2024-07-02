@@ -720,6 +720,7 @@ L.MINIMIZE = "最小化";
 L.MINIMIZE_ON_AWARD = "盡量減少獎勵";
 L.MINIMIZE_ON_START = "啟動時最小化";
 L.MINIMUM = "最低限度";
+L.MINIMUM_ITEM_LEVEL = "最低物品等級";
 L.MINIMUM_QUALITY = "最低品質";
 L.MINUS10 = "-10";
 L.MINUS_SIGN = "-";

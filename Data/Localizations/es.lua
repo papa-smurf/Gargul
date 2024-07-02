@@ -720,6 +720,7 @@ L.MINIMIZE = "Minimizar";
 L.MINIMIZE_ON_AWARD = "Minimizar el premio";
 L.MINIMIZE_ON_START = "Minimizar al inicio";
 L.MINIMUM = "Mínimo";
+L.MINIMUM_ITEM_LEVEL = "Nivel mínimo de artículo";
 L.MINIMUM_QUALITY = "Calidad mínima";
 L.MINUS10 = "-10";
 L.MINUS_SIGN = "-";

@@ -720,6 +720,7 @@ L.MINIMIZE = "Minimiser";
 L.MINIMIZE_ON_AWARD = "Réduire lors de l'attribution";
 L.MINIMIZE_ON_START = "Réduire au démarrage";
 L.MINIMUM = "Minimum";
+L.MINIMUM_ITEM_LEVEL = "Niveau d'objet minimum";
 L.MINIMUM_QUALITY = "Qualité minimale";
 L.MINUS10 = "-dix";
 L.MINUS_SIGN = "-";

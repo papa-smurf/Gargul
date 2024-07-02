@@ -714,6 +714,7 @@ L.MINIMIZE = "最小";
 L.MINIMIZE_ON_AWARD = "以底价分配";
 L.MINIMIZE_ON_START = "以底价开始";
 L.MINIMUM = "底价";
+L.MINIMUM_ITEM_LEVEL = "最低物品等级";
 L.MINIMUM_QUALITY = "最低品质";
 L.MINUS10 = "-10";
 L.MINUS_SIGN = "-";

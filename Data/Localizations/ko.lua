@@ -720,6 +720,7 @@ L.MINIMIZE = "최소화";
 L.MINIMIZE_ON_AWARD = "수상 시 최소화";
 L.MINIMIZE_ON_START = "시작 시 최소화";
 L.MINIMUM = "최저한의";
+L.MINIMUM_ITEM_LEVEL = "최소 아이템 레벨";
 L.MINIMUM_QUALITY = "최소 품질";
 L.MINUS10 = "-10";
 L.MINUS_SIGN = "-";

@@ -720,6 +720,7 @@ L.MINIMIZE = "Минимизировать";
 L.MINIMIZE_ON_AWARD = "Минимизировать награду";
 L.MINIMIZE_ON_START = "Свернуть при запуске";
 L.MINIMUM = "Минимум";
+L.MINIMUM_ITEM_LEVEL = "Минимальный уровень предмета";
 L.MINIMUM_QUALITY = "Минимальное качество";
 L.MINUS10 = "-10";
 L.MINUS_SIGN = "-";

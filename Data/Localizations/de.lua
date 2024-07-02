@@ -719,6 +719,7 @@ L.MINIMIZE = "Minimieren";
 L.MINIMIZE_ON_AWARD = "Bei Verleihung minimieren";
 L.MINIMIZE_ON_START = "Beim Start minimieren";
 L.MINIMUM = "Minimum";
+L.MINIMUM_ITEM_LEVEL = "Mindestartikelstufe";
 L.MINIMUM_QUALITY = "Mindestqualität";
 L.MINUS10 = "-10";
 L.MINUS_SIGN = "-";

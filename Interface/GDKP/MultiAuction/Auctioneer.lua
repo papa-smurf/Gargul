@@ -74,6 +74,7 @@ function Auctioneer:open(keepPreviousItems)
         self:clearItems();
         GL.GDKP.MultiAuction.Auctioneer:fillFromInventory(
             Settings:get("GDKP.MultiAuction.minimumFillQuality"),
+            Settings:get("GDKP.MultiAuction.minimumFillItemLevel"),
             Settings:get("GDKP.MultiAuction.includeBOEs"),
             Settings:get("GDKP.MultiAuction.includeAwarded"),
             Settings:get("GDKP.MultiAuction.includeMaterials")

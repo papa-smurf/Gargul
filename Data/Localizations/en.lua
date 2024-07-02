@@ -724,6 +724,7 @@ L.MINIMIZE = "Minimize";
 L.MINIMIZE_ON_AWARD = "Minimize on award";
 L.MINIMIZE_ON_START = "Minimize on start";
 L.MINIMUM = "Minimum";
+L.MINIMUM_ITEM_LEVEL = "Minimum item level";
 L.MINIMUM_QUALITY = "Minimum Quality";
 L.MINUS10 = "-10";
 L.MINUS_SIGN = "-";

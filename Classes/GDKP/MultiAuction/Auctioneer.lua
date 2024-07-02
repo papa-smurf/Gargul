@@ -67,14 +67,17 @@ function Auctioneer:_init()
 end
 
 ---@param minimumQuality number
+---@param minimumItemLevel number|nil
 ---@param includeBOEs boolean
 ---@param includeAwarded boolean
 ---@param includeMaterials boolean
 ---@return void
-function Auctioneer:fillFromInventory(minimumQuality, includeBOEs, includeAwarded, includeMaterials)
+function Auctioneer:fillFromInventory(minimumQuality, minimumItemLevel, includeBOEs, includeAwarded, includeMaterials)
     includeBOEs = includeBOEs ~= false;
     includeMaterials = includeMaterials == true;
     includeAwarded = includeAwarded == true;
+    minimumItemLevel = tonumber(minimumItemLevel);
+    minimumItemLevel = minimumItemLevel or -1;
 
     GL:forEachItemInBags(function (Location, bag, slot)
         local itemQuality = tonumber(C_Item.GetItemQuality(Location));
@@ -82,8 +85,16 @@ function Auctioneer:fillFromInventory(minimumQuality, includeBOEs, includeAwarde
             return;
         end
 
-        -- The item doesn't have the required minimum
+        -- The item doesn't have the required minimum quality
         if (itemQuality < minimumQuality) then
+            return;
+        end
+
+        -- Check if the minimum item level is met
+        local itemLink = C_Item.GetItemLink(Location);
+        if (minimumItemLevel > -1
+            and C_Item.GetDetailedItemLevelInfo(itemLink) < minimumItemLevel
+        ) then
             return;
         end
 
@@ -130,8 +141,6 @@ function Auctioneer:fillFromInventory(minimumQuality, includeBOEs, includeAwarde
         if (itemGUID and not includeAwarded and DB:get("RecentlyAwardedItems." .. itemGUID)) then
             return;
         end
-
-        local itemLink = C_Item.GetItemLink(Location);
 
         UI:addItemByLink(itemLink, itemGUID);
     end);
