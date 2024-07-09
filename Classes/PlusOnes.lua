@@ -525,7 +525,9 @@ end
 ---@return void
 function PlusOnes:requestData()
     -- If shared data is blocked then no need to request so return
-    if (GL.Settings:get("PlusOnes.blockShareData")) then
+    if (GL.Settings:get("PlusOnes.blockShareData")
+        or (_G.UnitInBattleground and UnitInBattleground("player"))
+    ) then
         return;
     end
 

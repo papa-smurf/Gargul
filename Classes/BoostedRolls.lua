@@ -811,7 +811,9 @@ end
 ---
 ---@return void
 function BoostedRolls:requestData()
-    if (self.requestingData) then
+    if (self.requestingData
+        or (_G.UnitInBattleground and UnitInBattleground("player"))
+    ) then
         return;
     end
 

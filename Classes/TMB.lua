@@ -1439,7 +1439,9 @@ end
 
 --- Request TMB data from the person in charge (ML or Leader)
 function TMB:requestData()
-    if (self.requestingData) then
+    if (self.requestingData
+        or (_G.UnitInBattleground and UnitInBattleground("player"))
+    ) then
         return;
     end
 

@@ -194,7 +194,9 @@ end
 ---
 ---@return void
 function SoftRes:requestData()
-    if (self.requestingData) then
+    if (self.requestingData
+        or (_G.UnitInBattleground and UnitInBattleground("player"))
+    ) then
         return;
     end
 
