@@ -309,6 +309,11 @@ function GroupVersionCheck:refresh()
         Offline = {},
     };
 
+    Window._UpToDateCountLabel:SetText(0);
+    Window._OutdatedCountLabel:SetText(0);
+    Window._UnresponsiveCountLabel:SetText(0);
+    Window._OfflineCountLabel:SetText(0);
+
     -- No point checking anyone else if we're negligent ourselves
     if (Version.lastNotBackwardsCompatibleNotice > 0) then
         GL.Interface.Alerts:fire("GargulNotification", {
