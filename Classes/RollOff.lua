@@ -24,7 +24,7 @@ GL.RollOff = GL.RollOff or {
     },
     InitiateCountDownTimer = nil;
     StopRollOffTimer = nil,
-    StopListeningForRollsTimer = nil,
+    rollListenerCancelTimerId = nil,
 };
 local RollOff = GL.RollOff; ---@type RollOff
 
@@ -61,6 +61,7 @@ function RollOff:announceStart(itemLink, time, note)
         self.CurrentRollOff.Rolls = {};
     end
 
+    self:stopListeningForRolls();
     self:listenForRolls();
 
     --- If boosted rolls are enabled, send individually instead.
@@ -264,18 +265,11 @@ function RollOff:postStartMessage(itemLink, time, note)
 end
 
 --- Anounce to everyone in the raid that a roll off has ended
----
----@return void
 function RollOff:announceStop()
     GL.CommMessage.new{
         action = CommActions.stopRollOff,
         channel = "GROUP",
     }:send();
-
-    -- We stop listening for rolls one second after the rolloff ends just in case there is server lag/jitter
-    self.StopListeningForRollsTimer = GL.Ace:ScheduleTimer(function()
-        self:stopListeningForRolls();
-    end, GL.Settings:get("RollTracking.rollOffEndLeeway", 1));
 end
 
 --- Start a roll off
@@ -691,8 +685,8 @@ end
 ---@return void
 function RollOff:listenForRolls()
     -- Make sure the timer to cancel listening for rolls is cancelled
-    if (self.StopListeningForRollsTimer) then
-        GL.Ace:CancelTimer(self.StopListeningForRollsTimer);
+    if (self.rollListenerCancelTimerId) then
+        GL.Ace:CancelTimer(self.rollListenerCancelTimerId);
     end
 
     if (self.listeningForRolls) then
@@ -710,8 +704,8 @@ end
 ---
 ---@return void
 function RollOff:stopListeningForRolls()
-    if (self.StopListeningForRollsTimer) then
-        GL.Ace:CancelTimer(self.StopListeningForRollsTimer);
+    if (self.rollListenerCancelTimerId) then
+        GL.Ace:CancelTimer(self.rollListenerCancelTimerId);
     end
 
     self.listeningForRolls = false;
