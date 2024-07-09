@@ -156,7 +156,7 @@ L.CHAT = {
 
         --[[ GDKP ]]
         GDKP_I_OWE_YOU = "Ich schulde dir %s",
-        GDKP_YOU_OWE_ME = "Du schuldest mir %a. Danke!",
+        GDKP_YOU_OWE_ME = "Du schuldest mir %s. Danke!",
         GDKP_POT_UPDATED = "Der Pott wurde aktualisiert, er enthält jetzt %s",
         GDKP_POT_UPDATED_AFTER_DELETE = "Der Pott wurde nach dem Löschen einer Auktion aktualisiert und enthält jetzt %s",
         GDKP_POT_UPDATED_AFTER_RESTORE = "Der Pott wurde nach der Wiederherstellung einer Auktion aktualisiert und enthält jetzt %s",
@@ -272,7 +272,7 @@ L.CHAT = {
 
         --[[ GDKP ]]
         GDKP_I_OWE_YOU = "我欠你 %s。享受！",
-        GDKP_YOU_OWE_ME = "你欠我 %a。谢谢你！",
+        GDKP_YOU_OWE_ME = "你欠我 %s。谢谢你！",
         GDKP_POT_UPDATED = "奖池已更新，现在共有 %s",
         GDKP_POT_UPDATED_AFTER_DELETE = "删除拍卖后，奖池已更新，现在共有 %s",
         GDKP_POT_UPDATED_AFTER_RESTORE = "恢复拍卖后，奖池已更新，现在共有 %s",
@@ -388,7 +388,7 @@ L.CHAT = {
 
         --[[ GDKP ]]
         GDKP_I_OWE_YOU = "Te debo %s. ¡Disfrutar!",
-        GDKP_YOU_OWE_ME = "Me debes %a. ¡Gracias!",
+        GDKP_YOU_OWE_ME = "Me debes %s. ¡Gracias!",
         GDKP_POT_UPDATED = "El bote fue actualizado, ahora contiene %s",
         GDKP_POT_UPDATED_AFTER_DELETE = "El bote se actualizó después de eliminar una subasta, ahora tiene %s",
         GDKP_POT_UPDATED_AFTER_RESTORE = "El bote se actualizó después de restaurar una subasta, ahora tiene %s",
@@ -620,7 +620,7 @@ L.CHAT = {
 
         --[[ GDKP ]]
         GDKP_I_OWE_YOU = "Ti devo %s. Godere!",
-        GDKP_YOU_OWE_ME = "Mi devi %a. Grazie!",
+        GDKP_YOU_OWE_ME = "Mi devi %s. Grazie!",
         GDKP_POT_UPDATED = "Il piatto è stato aggiornato, ora contiene %s",
         GDKP_POT_UPDATED_AFTER_DELETE = "Il piatto è stato aggiornato dopo aver eliminato un'asta, ora contiene %s",
         GDKP_POT_UPDATED_AFTER_RESTORE = "Il piatto è stato aggiornato dopo aver ripristinato un'asta, ora contiene %s",
@@ -736,7 +736,7 @@ L.CHAT = {
 
         --[[ GDKP ]]
         GDKP_I_OWE_YOU = "당신에게 빚진 게 있어요 %s. 즐기다!",
-        GDKP_YOU_OWE_ME = "나한테 빚진 게 있어 %a. 감사합니다!",
+        GDKP_YOU_OWE_ME = "나한테 빚진 게 있어 %s. 감사합니다!",
         GDKP_POT_UPDATED = "냄비가 업데이트되어 이제 %s을(를) 보유하고 있습니다.",
         GDKP_POT_UPDATED_AFTER_DELETE = "경매를 삭제한 후 냄비가 업데이트되어 현재 %s을(를) 보유하고 있습니다.",
         GDKP_POT_UPDATED_AFTER_RESTORE = "경매를 복원한 후 냄비가 업데이트되어 이제 %s을(를) 보유하고 있습니다.",
@@ -852,7 +852,7 @@ L.CHAT = {
 
         --[[ GDKP ]]
         GDKP_I_OWE_YOU = "Eu devo a você %s. Aproveitar!",
-        GDKP_YOU_OWE_ME = "Você me deve %a. Obrigado!",
+        GDKP_YOU_OWE_ME = "Você me deve %s. Obrigado!",
         GDKP_POT_UPDATED = "O pote foi atualizado, agora contém %s",
         GDKP_POT_UPDATED_AFTER_DELETE = "O pote foi atualizado após a exclusão de um leilão, agora contém %s",
         GDKP_POT_UPDATED_AFTER_RESTORE = "O pote foi atualizado após restaurar um leilão, agora contém %s",
@@ -903,7 +903,7 @@ L.CHAT = {
         --[[ TradeWindow / Trade ]]
         TRADE_START_FAILED = "I tried to trade you, but was unsuccessful - trade me for ${item} asap!",
         TRADE_TO = "%s para %s",
-        TRADE_TO_PART = "para% s",
+        TRADE_TO_PART = "para %s",
         TRADE_GAVE = "Eu dei %s",
         TRADE_GAVE_GOLD = "Eu dei %s para %s",
         TRADE_GAVE_MULTIPLE_OF_ITEM = "Eu dei %sx%s", -- I gave [item]x3
@@ -968,7 +968,7 @@ L.CHAT = {
 
         --[[ GDKP ]]
         GDKP_I_OWE_YOU = "Я должен тебе %s. Наслаждаться!",
-        GDKP_YOU_OWE_ME = "Ты мне должен, %a. Спасибо!",
+        GDKP_YOU_OWE_ME = "Ты мне должен, %s. Спасибо!",
         GDKP_POT_UPDATED = "Банк был обновлен, теперь он содержит %s",
         GDKP_POT_UPDATED_AFTER_DELETE = "Банк был обновлен после удаления аукциона, теперь в нем находится %s.",
         GDKP_POT_UPDATED_AFTER_RESTORE = "Банк был обновлен после восстановления аукциона, теперь он содержит %s.",
@@ -1084,7 +1084,7 @@ L.CHAT = {
 
         --[[ GDKP ]]
         GDKP_I_OWE_YOU = "我欠你%s。享受！",
-        GDKP_YOU_OWE_ME = "你欠我%a。謝謝你！",
+        GDKP_YOU_OWE_ME = "你欠我%s。謝謝你！",
         GDKP_POT_UPDATED = "罐子已更新，現在容納 %s",
         GDKP_POT_UPDATED_AFTER_DELETE = "刪除拍賣後，鍋子已更新，現在持有 %s",
         GDKP_POT_UPDATED_AFTER_RESTORE = "恢復拍賣後，底池已更新，現在持有 %s",
