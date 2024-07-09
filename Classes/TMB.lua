@@ -449,7 +449,7 @@ function TMB:tooltipLines(itemLink)
     end
 
     -- CPR
-    if (self:wasImportedFromDFT()) then
+    if (self:wasImportedFromCPR()) then
         return self:CPRTooltipLines(Lines, Entries);
     end
 
@@ -662,7 +662,7 @@ function TMB:import(data, triedToDecompress, source)
             return GL.Interface:get("TMB.Importer", "Label.StatusMessage"):SetText(L.TMB_IMPORT_INVALID_CSV);
         end
 
-    -- We might have the dft format on hands, let's check it out!
+    -- Handle the DFT format
     elseif (GL:strStartsWith(firstLine, '"')) then
         triedToDecompress = true;
         wasImportedFromDFT = true;
@@ -671,6 +671,22 @@ function TMB:import(data, triedToDecompress, source)
 
         if (not data) then
             return GL.Interface:get("TMB.Importer", "Label.StatusMessage"):SetText(L.TMB_IMPORT_INVALID_UNKNOWN_INSTRUCTIONS);
+        end
+    -- Handle the RRobin format
+    elseif (firstLine == "{") then
+        jsonDecodeSucceeded, data = pcall(function () return GL.JSON:decode(data); end);
+        if (jsonDecodeSucceeded
+            and data
+            and type(data) == "table"
+            and data.reserves
+        ) then
+            triedToDecompress = true;
+            data = self:RRobinFormatToTMB(data);
+            WebsiteData = data;
+
+            if (not data) then
+                return GL.Interface:get("TMB.Importer", "Label.StatusMessage"):SetText(L.TMB_IMPORT_INVALID_UNKNOWN_INSTRUCTIONS);
+            end
         end
     end
 
@@ -682,7 +698,7 @@ function TMB:import(data, triedToDecompress, source)
         return TMB:import(data, true, source);
     end
 
-    -- In case of a DFT format, data will already be a table
+    -- In case of a DFT or RRobin import, data will already be a table
     if (type(data) ~= "table") then
         jsonDecodeSucceeded, WebsiteData = pcall(function () return GL.JSON:decode(data); end);
 
@@ -823,7 +839,7 @@ function TMB:import(data, triedToDecompress, source)
         importedFromDFT = GL:toboolean(WebsiteData.importedFromDFT),
         importedFromCSV = GL:toboolean(WebsiteData.importedFromCSV),
         importedFromCPR = source == "cpr",
-        importedFromRRobin = source == "rrobin",
+        importedFromRRobin = source == "rrobin" or GL:toboolean(WebsiteData.importedFromRRobin),
         importedAt = GetServerTime(),
         hash = GL:uuid() .. GetServerTime(),
     };
@@ -908,7 +924,25 @@ function TMB:playersWithoutEntries()
     return PlayersWithoutEntries;
 end
 
---- Attempt to transform the DFT format to a TMB format
+--- Transform the RRobin format to a TMB format
+---@param data table
+---@return table
+function TMB:RRobinFormatToTMB(data)
+    local TMBData = {
+        importedFromRRobin = true,
+        wishlists = {},
+    };
+
+    for _, Entry in pairs(data.reserves or {}) do
+        local WishlistData = TMBData.wishlists[tostring(Entry.itemid)] or {};
+        tinsert(WishlistData, string.format("%s||%s||1||1", string.lower(Entry.character), Entry.priority));
+        TMBData.wishlists[tostring(Entry.itemid)] = WishlistData;
+    end
+
+    return TMBData;
+end
+
+--- Transform the DFT format to a TMB format
 ---@param data string
 ---@return boolean|table Returns false when invalid data is provided
 function TMB:DFTFormatToTMB(data)
