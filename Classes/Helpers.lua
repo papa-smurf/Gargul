@@ -2687,6 +2687,24 @@ function GL:uuid()
     end)
 end
 
+--- Concat two non-associative tables to one another
+---
+---@param Table table
+---@param Concat table
+---@return table
+function GL:tableConcat(Table, Concat)
+    if (type(Table) ~= "table" or type(Concat) ~= "table") then
+        return {};
+    end
+
+    for i = 1, #Concat do
+        Table[#Table+1] = Concat[i];
+    end
+
+    return Table
+end
+    
+
 --- Overwrite/compliment the original table (left) with the values from the right table
 ---
 ---@param left table
@@ -2694,7 +2712,7 @@ end
 ---@return table
 function GL:tableMerge(left, right)
     if (type(left) ~= "table" or type(right) ~= "table") then
-        return false;
+        return {};
     end
 
     for key,value in pairs(right) do

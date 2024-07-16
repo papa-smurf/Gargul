@@ -298,7 +298,7 @@ function Export:refresh()
     local exportFormat = Settings:get("GDKP.exportFormat");
 
     if (exportFormat == CUSTOM_FORMAT) then
-        self:exportAuctionsToCustomFormat(Session, GL:tableMerge(Auctions, DisenchantedItems));
+        self:exportAuctionsToCustomFormat(Session, GL:tableConcat(Auctions, DisenchantedItems));
 
     elseif (exportFormat == JSON_FORMAT) then
         local exportString = self:transformAuctionsToJSONFormat(Session, DisenchantedItems);
