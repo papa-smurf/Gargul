@@ -10,9 +10,11 @@ local Interface = GL.Interface;
 local Version = GL.Version;
 
 ---@class GroupVersionCheckInterface
-GL.Interface.GroupVersionCheck = {
+local GroupVersionCheck = {
     windowName = "Gargul.Interface.GroupVersionCheck",
 
+    ActionButtons = {},
+    PlayerRows = {},
     Results = {
         Ignored = {},
         UpToDate = {},
@@ -20,22 +22,18 @@ GL.Interface.GroupVersionCheck = {
         Unresponsive = {},
         Offline = {},
     },
-    ActionButtons = {},
-    PlayerRows = {},
+    Timers = {},
 };
 
----@type GDKPMultiAuctionAuctioneerInterface
-local GroupVersionCheck = GL.Interface.GroupVersionCheck;
+---@type GroupVersionCheckInterface
+GL.Interface.GroupVersionCheck = GroupVersionCheck;
 
 --[[ CONSTANTS ]]
 local WINDOW_WIDTH = 360;
 local WINDOW_HEIGHT = 401;
-local FONT;
 
 ---@return Frame|nil
 function GroupVersionCheck:open(ActionButtons)
-    FONT = GL.FONT;
-
     local Window = self:getWindow() or self:build();
 
     self:refresh();
@@ -44,7 +42,6 @@ function GroupVersionCheck:open(ActionButtons)
     return Window:Show() and Window;
 end
 
----@return void
 function GroupVersionCheck:close()
     local Window = self:getWindow() or self:build();
     Window:Hide();
@@ -296,7 +293,6 @@ function GroupVersionCheck:build()
     return Window;
 end
 
----@return void
 function GroupVersionCheck:refresh()
     ---@type Frame
     local Window = self:getWindow() or self:build();
@@ -327,6 +323,11 @@ function GroupVersionCheck:refresh()
         });
 
         return;
+    end
+
+    -- Cancel all running timers
+    for _, timer in pairs(self.Timers or {}) do
+        GL:cancelTimer(timer);
     end
 
     -- Check if there are any players in our raid that we have on our ignore list
@@ -430,6 +431,7 @@ function GroupVersionCheck:refresh()
             Status:SetText(L.VERSION_CHECK_STATUS_UNRESPONSIVE);
             Status:SetColor("ERROR");
         end);
+        tinsert(self.Timers, timerIdentifier);
 
         GL.CommMessage.new{
             action = GL.Data.Constants.Comm.Actions.requestAppVersion,

@@ -2,7 +2,7 @@
 local _, GL = ...;
 
 ---@class Test
-GL.Test = {
+local Test = {
     Classes = {"druid","hunter","mage","paladin","priest","rogue","shaman","warlock","warrior","death knight",},
     Names = {"Aiyana","Callum","Virginia","Laylah","Isabell","Javon","Miley","Ian","Isai","Ahmad","Campbell","Bobby","Karter","Brooklynn","Asher","Maci","Gael","Jamal","Zion","Sarahi","Kierra","Perla","Rylie","Lorelei","John","Madeleine","Jadiel","Billy","Jazmin","Keon","Stephany","George","Malcolm","Brenden","Daphne","Dane","Derek","Marcel","Madilynn","Enrique","Cindy","Amir","Melvin","Anya","Ali","Rex","Lewis","Parker","Carl","Arnav","Kamari","Jessie","Madelynn","Heath","Haleigh","Madyson","Jorden","Amya","Elisa","Marques","Ana","Miracle","Abdiel","Dale","Sincere","Marin","Karina","Clay","Caden","Eve","Rubi","Zavier","Megan","Payton","Peyton","Emmett","Diego","Joaquin","German","Tania","Miguel","Malachi","Martin","Richard","Allison","Avah","Kamora","Deborah","Esperanza","Konnor","Isla","Tess","Keely","Margaret","Rory","Jake","Averie","Ally","Craig","Gage","Oswaldo","Kaitlynn","Ashley","Davian","Mauricio","Brandon","Aryana","Douglas","Kyan","Carsen","Mikaela","Regan","Theodore","Maximillian","Luke","Dixie","Makenna","Keagan","Mallory","America",},
     Locale = {},
@@ -14,7 +14,7 @@ GL.Test = {
     PackMule = {},
 };
 
-local Test = GL.Test;
+GL.Test = Test;
 
 function Test.TradeState:_init(callback)
     if (self._initialized) then
@@ -529,6 +529,8 @@ end
 --[[ Simulate being in an X-man group
 /script _G.Gargul.Test:simulateGroup(25)
 ]]
+local groupMembersOverridden = false;
+local groupMembersFunction = nil;
 function Test:simulateGroup(numberOfPlayers, includeSelf, includeCurrentGroupMembers)
     local Players = {};
     numberOfPlayers = numberOfPlayers or 25;
@@ -600,12 +602,29 @@ function Test:simulateGroup(numberOfPlayers, includeSelf, includeCurrentGroupMem
     Players[math.random(1, #Players)].hasAssist = true;
     Players[math.random(1, #Players)].online = false;
 
+    if (not groupMembersOverridden) then
+        groupMembersFunction = GL.User.groupMembers;
+        groupMembersOverridden = true;
+    end
+
     GL.User.groupMembers = function ()
         return Players;
     end;
 
     -- Make sure the group member names cache is cleared as well
     GL.User.groupMemberNamesCachedAt = -1;
+end
+
+--[[ Stop group simulation
+/script _G.Gargul.Test:stopGroupSimulation()
+]]
+function Test:stopGroupSimulation()
+    if (not groupMembersOverridden) then
+        return;
+    end
+
+    GL.User.groupMembers = groupMembersFunction;
+    groupMembersOverridden = false;
 end
 
 --[[ Show all identity elements at once for easy screenshotting
