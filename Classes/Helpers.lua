@@ -406,7 +406,6 @@ end
 --- Dump a variable (functions won't work!)
 ---
 ---@param mixed any
----@return void
 function GL:dump(mixed)
     local success, encoded = pcall(function () return GL.JSON:encode(mixed); end);
 
@@ -424,7 +423,6 @@ local lastClickTime;
 ---@param itemLink string
 ---@param mouseButtonPressed string|nil
 ---@param callback function|nil Some actions (like award) support a callback
----@return void
 function GL:handleItemClick(itemLink, mouseButtonPressed, callback)
     GL:debug("GL:handleItemClick");
 
@@ -816,7 +814,6 @@ function GL:cloneTable(Original)
 end
 
 ---@param text string
----@return void
 function GL:popupMessage(text)
     GL:debug("GL:popupMessage");
 
@@ -886,7 +883,6 @@ end
 --- Remove a lib-st table's scrollbar
 ---
 ---@param Table table
----@return void
 function GL:LibStRemoveScrollBar(Table)
     local tableName = Table.frame:GetName();
 
@@ -1034,7 +1030,6 @@ end
 --- Clears the provided scrolling table (lib-ScrollingTable)
 ---
 ---@param ScrollingTable table
----@return void
 function GL:clearScrollTable(ScrollingTable)
     if (type(ScrollingTable) ~= "table") then
         return;
@@ -1119,7 +1114,6 @@ end
 --- Very useful for debugging purposes, should not be used for anything else
 ---
 ---@param message string|table
----@return void
 function GL:frameMessage(message)
     if (type(message) == "table") then
         message = GL.JSON:encode(message);
@@ -1176,9 +1170,6 @@ end
 --- Use return false; in your func if you want to break the loop early
 ---
 ---@param func function
----
----@return void
----
 ---@test /script _G.Gargul:forEachItemInBags(function (Location) print(C_Item.GetItemID(Location)); end);
 function GL:forEachItemInBags(func)
     -- Used to break out of our double loop
@@ -1285,9 +1276,9 @@ end
 --- After all of the items are loaded execute the provided callback function
 ---
 ---@param Items table
----@param callback function|nil
----@param haltOnError boolean
----@param sorter function
+---@param callback? function
+---@param haltOnError? boolean
+---@param sorter? function
 ---@return table
 ---
 --- /script _G.Gargul:onItemLoadDo(45613, function (Result) _G.Gargul:xd(Result); end);
@@ -1568,7 +1559,6 @@ function GL:tooltipItemTradeTimeRemaining()
 end
 
 ---@param itemLinkOrID string|number
----@return void
 function GL:itemTradeTimeRemaining(itemLinkOrID)
     local concernsLink = type(itemLinkOrID) == "string";
     local itemID = concernsLink and GL:getItemIDFromLink(itemLinkOrID) or itemLinkOrID;
@@ -1596,7 +1586,7 @@ function GL:itemTradeTimeRemaining(itemLinkOrID)
 end
 
 ---@param itemGUID string
----@return boolean,boolean|number,number
+---@return boolean|number,boolean|number
 function GL:getBagAndSlotByGUID(itemGUID)
     local itemBag = false;
     local itemSlot = false;
@@ -1612,6 +1602,92 @@ function GL:getBagAndSlotByGUID(itemGUID)
     end);
 
     return itemBag, itemSlot;
+end
+
+---@param itemLinkOrID string|number
+---@return table
+---@test /dump _G.Gargul:itemModifiers(18608); -- Benediction
+function GL:itemModifiers(itemLinkOrID)
+    GL.TooltipFrame:ClearLines();
+
+    local ItemModPatterns = {
+        agility = ITEM_MOD_AGILITY,
+        armor_penetration_rating = ITEM_MOD_ARMOR_PENETRATION_RATING,
+        attack_power = ITEM_MOD_ATTACK_POWER,
+        block_rating = ITEM_MOD_BLOCK_RATING,
+        crit_melee_rating = ITEM_MOD_CRIT_MELEE_RATING,
+        crit_ranged_rating = ITEM_MOD_CRIT_RANGED_RATING,
+        crit_rating = ITEM_MOD_CRIT_RATING,
+        crit_spell_rating = ITEM_MOD_CRIT_SPELL_RATING,
+        crit_taken_melee_rating = ITEM_MOD_CRIT_TAKEN_MELEE_RATING,
+        crit_taken_ranged_rating = ITEM_MOD_CRIT_TAKEN_RANGED_RATING,
+        crit_taken_rating = ITEM_MOD_CRIT_TAKEN_RATING,
+        crit_taken_spell_rating = ITEM_MOD_CRIT_TAKEN_SPELL_RATING,
+        defense_skill_rating = ITEM_MOD_DEFENSE_SKILL_RATING,
+        dodge_rating = ITEM_MOD_DODGE_RATING,
+        expertise_rating = ITEM_MOD_EXPERTISE_RATING,
+        feral_attack_power = ITEM_MOD_FERAL_ATTACK_POWER,
+        haste_melee_rating = ITEM_MOD_HASTE_MELEE_RATING,
+        haste_ranged_rating = ITEM_MOD_HASTE_RANGED_RATING,
+        haste_rating = ITEM_MOD_HASTE_RATING,
+        haste_spell_rating = ITEM_MOD_HASTE_SPELL_RATING,
+        health = ITEM_MOD_HEALTH,
+        hit_melee_rating = ITEM_MOD_HIT_MELEE_RATING,
+        hit_ranged_rating = ITEM_MOD_HIT_RANGED_RATING,
+        hit_rating = ITEM_MOD_HIT_RATING,
+        hit_spell_rating = ITEM_MOD_HIT_SPELL_RATING,
+        hit_taken_melee_rating = ITEM_MOD_HIT_TAKEN_MELEE_RATING,
+        hit_taken_ranged_rating = ITEM_MOD_HIT_TAKEN_RANGED_RATING,
+        hit_taken_rating = ITEM_MOD_HIT_TAKEN_RATING,
+        hit_taken_spell_rating = ITEM_MOD_HIT_TAKEN_SPELL_RATING,
+        intellect = ITEM_MOD_INTELLECT,
+        mana = ITEM_MOD_MANA,
+        mana_regeneration = ITEM_MOD_MANA_REGENERATION,
+        parry_rating = ITEM_MOD_PARRY_RATING,
+        ranged_attack_power = ITEM_MOD_RANGED_ATTACK_POWER,
+        resilience_rating = ITEM_MOD_RESILIENCE_RATING,
+        spell_damage_done = ITEM_MOD_SPELL_DAMAGE_DONE,
+        spell_healing_done = ITEM_MOD_SPELL_HEALING_DONE,
+        spell_power = ITEM_MOD_SPELL_POWER,
+        spirit = ITEM_MOD_SPIRIT,
+        stamina = ITEM_MOD_STAMINA,
+        strength = ITEM_MOD_STRENGTH,
+    }
+
+    local Patterns = {};
+    for identifier, pattern in pairs(ItemModPatterns or {}) do
+        if (pattern) then
+            Patterns[identifier] = self:createPattern(pattern);
+        end
+    end
+
+    if (type(itemLinkOrID) == "string") then
+        GL.TooltipFrame:SetHyperlink(itemLinkOrID);
+    else
+        GL.TooltipFrame:SetItemByID(itemLinkOrID);
+    end
+
+    -- Attempt to find a matching item modifier
+    local ModsDetected = {};
+    for i = 1, GL.TooltipFrame:NumLines() do
+        local line = _G["GargulTooltipFrameTextLeft" .. i];
+
+        if (line) then
+            local text = line:GetText();
+
+            -- One line can't match more than one mod
+            for mod, pattern in pairs(Patterns or {}) do
+                if (string.match(text, pattern)) then
+                    ModsDetected[mod] = true;
+                    break;
+                end
+            end
+        end
+    end
+
+    GL.TooltipFrame:ClearLines();
+
+    return ModsDetected;
 end
 
 --- Check how much time to trade is remaining on the given item in our bags
@@ -1646,7 +1722,6 @@ end
 
 ---@param Item Frame
 ---@param itemLink string
----@return void
 function GL:highlightItem(Item, itemLink, Details)
     GL:debug("GL:highlightItem");
 
@@ -1749,7 +1824,6 @@ function GL:highlightItem(Item, itemLink, Details)
     );
 end
 
----@return void
 function GL:bugReport()
     local AddonData = {};
     for i = 1, GetNumAddOns() do
@@ -1847,8 +1921,6 @@ end
 ---
 ---@param itemLinkOrID string|number
 ---@param callback function
----
----@return void
 function GL:canUserUseItem(itemLinkOrID, callback)
     if (type(callback) ~= "function") then
         GL:warning("Unexpected type '" .. type(callback) .. "' in GL:canUserUseItem, expecting type 'function'");
@@ -2052,7 +2124,7 @@ end
 --- In some very rare cases we need to manipulate the close button on AceGUI elements
 ---
 ---@param Widget table
----@return void|table
+---@return table?
 function GL:fetchCloseButtonFromAceGUIWidget(Widget)
     GL:debug("GL:fetchCloseButtonFromAceGUIWidget");
 
@@ -2071,7 +2143,7 @@ end
 --- In some very rare cases we need to manipulate the border on AceGUI Inline Group elements
 ---
 ---@param Widget table
----@return void|table
+---@return table?
 function GL:fetchBorderFromAceGUIInlineGroup(Widget)
     GL:debug("GL:fetchBorderFromAceGUIInlineGroup");
 
@@ -2165,7 +2237,6 @@ function GL:getItemQualityFromLink(itemLink)
 end
 
 ---@param callback function
----@return void
 function GL:forEachGroupMember(callback)
     for _, Member in pairs(GL.User:groupMembers() or {}) do
         callback(Member);
@@ -2184,7 +2255,7 @@ end
 ---
 ---@param name string
 ---@param realm string
----@return string, string
+---@return string, string?
 function GL:addRealm(name, realm, fromGroup)
     realm = not self:empty(realm) and realm or nil;
     fromGroup = fromGroup ~= false;
@@ -2230,7 +2301,7 @@ end
 --- Strip the realm off of a player name
 ---
 ---@param playerName string
----@return string, string str, realm
+---@return string, string?
 function GL:stripRealm(playerName)
     playerName = tostring(playerName);
 
@@ -2252,7 +2323,7 @@ end
 --- Get the realm from a given player name
 ---
 ---@param playerName string
----@return string
+---@return string|boolean
 function GL:getRealmFromName(playerName)
     playerName = tostring(playerName);
 
@@ -2482,7 +2553,9 @@ end
 function GL:createPattern(pattern, maximize)
     pattern = string.gsub(pattern, "[%(%)%-%+%[%]]", "%%%1");
 
-    if not maximize then
+    pattern = string.gsub(pattern, "%%c", "%+");
+
+    if (not maximize) then
         pattern = string.gsub(pattern, "%%s", "(.-)");
     else
         pattern = string.gsub(pattern, "%%s", "(.+)");
@@ -2490,7 +2563,7 @@ function GL:createPattern(pattern, maximize)
 
     pattern = string.gsub(pattern, "%%d", "%(%%d-%)");
 
-    if not maximize then
+    if (not maximize) then
         pattern = string.gsub(pattern, "%%%d%$s", "(.-)");
     else
         pattern = string.gsub(pattern, "%%%d%$s", "(.+)");

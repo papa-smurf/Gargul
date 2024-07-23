@@ -303,6 +303,52 @@ function ClientInterface:build()
             end,
         },
         "divider",
+        {text = string.sub(MODIFIERS_COLON or "Modifiers:", 1, -2), isTitle = true, notCheckable = true },
+        {
+            text = ITEM_MOD_AGILITY_SHORT,
+            checked = function ()
+                return Settings:get("GDKP.MultiAuction.Filters.Mods.agility");
+            end,
+            func = function (Entry)
+                Settings:set("GDKP.MultiAuction.Filters.Mods.agility", Entry.checked or nil);
+
+                filter();
+            end,
+        },
+        {
+            text = ITEM_MOD_INTELLECT_SHORT,
+            checked = function ()
+                return Settings:get("GDKP.MultiAuction.Filters.Mods.intellect");
+            end,
+            func = function (Entry)
+                Settings:set("GDKP.MultiAuction.Filters.Mods.intellect", Entry.checked or nil);
+
+                filter();
+            end,
+        },
+        {
+            text = ITEM_MOD_SPIRIT_SHORT,
+            checked = function ()
+                return Settings:get("GDKP.MultiAuction.Filters.Mods.spirit");
+            end,
+            func = function (Entry)
+                Settings:set("GDKP.MultiAuction.Filters.Mods.spirit", Entry.checked or nil);
+
+                filter();
+            end,
+        },
+        {
+            text = ITEM_MOD_STRENGTH_SHORT,
+            checked = function ()
+                return Settings:get("GDKP.MultiAuction.Filters.Mods.strength");
+            end,
+            func = function (Entry)
+                Settings:set("GDKP.MultiAuction.Filters.Mods.strength", Entry.checked or nil);
+
+                filter();
+            end,
+        },
+        "divider",
         {
             text = L.BIND_ON_EQUIP_ABBR,
             checked = function ()
@@ -1365,23 +1411,47 @@ function ClientInterface:filterAndSort()
 
                 -- Only show favorited items
                 or (showFavorites and not ItemRow._Details.isFavorite)
-
-                --[[ FILTERS ]]
-
-                -- Hide unusable items
-                or (self.enableFilters and not ItemRow._Details.canUseItem and Settings:get("GDKP.MultiAuction.Filters.unusable") == true)
-
-                -- Hide BOEs
-                or (self.enableFilters and ItemRow._Details.isBOE and Settings:get("GDKP.MultiAuction.Filters.BOE") == true)
-
-                -- Hide unwanted armor types
-                or (self.enableFilters
-                    and ItemRow._Details.classID == Enum.ItemClass.Armor
-                    and ItemRow._Details.inventoryType ~= "INVTYPE_CLOAK"
-                    and Settings:get(("GDKP.MultiAuction.Filters.%s-%s"):format(Enum.ItemClass.Armor, ItemRow._Details.subclassID)) == true
-                )
             ) then
                 return;
+            end
+
+            -- Item filters
+            if (self.enableFilters) then
+                -- Hide unusable items
+                if (not ItemRow._Details.canUseItem
+                    and Settings:get("GDKP.MultiAuction.Filters.unusable") == true
+                ) then
+                    return;
+                end
+
+                -- Hide BOEs
+                if (ItemRow._Details.isBOE
+                    and Settings:get("GDKP.MultiAuction.Filters.BOE") == true
+                ) then
+                    return;
+                end
+
+                -- Hide unwanted armor types
+                if (ItemRow._Details.classID == Enum.ItemClass.Armor
+                    and ItemRow._Details.inventoryType ~= "INVTYPE_CLOAK"
+                    and Settings:get(("GDKP.MultiAuction.Filters.%s-%s"):format(Enum.ItemClass.Armor, ItemRow._Details.subclassID)) == true
+                ) then
+                    return;
+                end
+
+                -- Hide unwanted item modifiers
+                local FilteredMods = Settings:get("GDKP.MultiAuction.Filters.Mods");
+                if (not GL:empty(FilteredMods)) then
+                    local ItemMods = GL:itemModifiers(ItemRow._Details.link);
+
+                    if (ItemMods) then
+                        for filteredMod in pairs(FilteredMods or {}) do
+                            if (ItemMods[filteredMod]) then
+                                return;
+                            end
+                        end
+                    end
+                end
             end
 
             local itemLevel = ItemRow._Details.itemLevel;

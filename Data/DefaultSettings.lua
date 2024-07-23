@@ -243,7 +243,14 @@ GL.Data.DefaultSettings = {
             minimumFillQuality = 4,
             time = 600,
 
-            Filters = {},
+            Filters = {
+                Mods = {
+                    agility = nil,
+                    intellect = nil,
+                    spirit = nil,
+                    strength = nil,
+                },
+            },
         },
     },
     TMB = {
