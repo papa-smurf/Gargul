@@ -13,6 +13,14 @@ GL.Data.ItemLinks = {
     ["49644"] = {
         49643, -- Head of Onyxia (Horde)
     },
+    -- SoD Head of Onyxia (Horde)
+    ["228689"] = {
+        228688, -- SoD Head of Onyxia (Alliance)
+    },
+    -- Head of Onyxia (Alliance)
+    ["228688"] = {
+        228689, -- Head of Onyxia (Horde)
+    },
     -- Dragonslayer's Signet
     ["18403"] = {
         18422, -- Head of Onyxia (Horde)
