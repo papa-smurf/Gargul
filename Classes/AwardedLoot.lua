@@ -698,7 +698,7 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, g
         elseif (not GL.DroppedLoot.lootWindowIsOpened
 
             -- No need to trade with ourselves
-            and GL.User.name ~= winner
+            and not GL:iEquals(GL.User.fqn, winner)
 
             -- Auto trading is disabled
             and GL.Settings:get("AwardingLoot.autoTradeAfterAwardingAnItem")
@@ -824,7 +824,6 @@ end
 --- Attempt to initiate a trade with whomever won the item and add the items
 ---
 ---@param AwardDetails table
----@return void
 function AwardedLoot:initiateTrade(AwardDetails)
     local tradingPartner = AwardDetails.awardedTo;
 
@@ -861,8 +860,6 @@ function AwardedLoot:initiateTrade(AwardDetails)
 
                 return;
             end
-
-            self:tradeInitiated();
         end, true);
 
     -- We're already trading with the winner
@@ -889,10 +886,9 @@ function AwardedLoot:tradeInitiated()
     local threeHoursAgo = GetServerTime() - 10800;
 
     -- Loop through our awarded loot table in reverse
-    local thereAreItemsToAdd = false;
     for _, Loot in pairs(DB:get("AwardHistory")) do
         -- Our trading partner changed in the meantime, stop!
-        if (tradingPartner ~= GL:tableGet(GL.TradeWindow, "State.partner")) then
+        if (not GL:iEquals(tradingPartner, GL:tableGet(GL.TradeWindow, "State.partner", ""))) then
             break;
         end
 
@@ -914,8 +910,6 @@ function AwardedLoot:tradeInitiated()
 
             -- Attempt to add the item to the trade window
             GL.TradeWindow:addItem(Loot.itemLink or Loot.itemID);
-
-            thereAreItemsToAdd = true;
         end)();
     end
 end

@@ -25,8 +25,6 @@ GL.TradeWindow = {
 local TradeWindow = GL.TradeWindow; ---@type TradeWindow
 
 --- Register all events needed to keep track of the trade window state
----
----@return void
 function TradeWindow:_init()
     -- No need to initialize this class twice
     if (self._initialized) then
@@ -60,17 +58,18 @@ end
 ---@param playerName string
 ---@param callback function
 ---@param allwaysExecuteCallback boolean
----@return void
 function TradeWindow:open(playerName, callback, allwaysExecuteCallback)
     playerName = GL:nameFormat(playerName);
     allwaysExecuteCallback = GL:toboolean(allwaysExecuteCallback);
 
     -- We're already trading with someone
     if (TradeFrame:IsShown()) then
+        local playerNameMatches = GL:iEquals(self.State.partner, playerName);
+
         if (type(callback) == "function"
-            and (allwaysExecuteCallback or self.Sate.partner == playerName)
+            and (allwaysExecuteCallback or playerNameMatches)
         ) then
-            callback(GL:iEquals(self.Sate.partner, playerName));
+            callback(playerNameMatches);
         end
 
         return;
@@ -89,7 +88,7 @@ function TradeWindow:open(playerName, callback, allwaysExecuteCallback)
             end
         end, 1);
 
-        GL.Events:register("TradeWindowTradeShowCallbackListener", "TRADE_SHOW", function ()
+        GL.Events:register("TradeWindowTradeShowCallbackListener", "GL.TRADE_SHOW", function ()
             -- Remove our trade window show event listener, we no longer need it
             GL.Events:unregister("TradeWindowTradeShowCallbackListener");
 
@@ -97,13 +96,14 @@ function TradeWindow:open(playerName, callback, allwaysExecuteCallback)
             GL.Ace:CancelTimer(timerID);
 
             -- Perform the callback
+            local playerNameMatches = GL:iEquals(self.State.partner, playerName);
+
             if (allwaysExecuteCallback
-                or (
-                    TradeFrame:IsShown()
-                    and GL:iEquals(self.Sate.partner, playerName)
+                or (TradeFrame:IsShown()
+                    and playerNameMatches
                 )
             ) then
-                callback(true);
+                callback(playerNameMatches);
             end
         end);
     end
@@ -116,7 +116,6 @@ end
 ---
 ---@param event string
 ---@param message string
----@return void
 function TradeWindow:handleEvents(event, ...)
     -- Incoming UI_INFO_MESSAGE
     if (event == "UI_INFO_MESSAGE") then
@@ -206,8 +205,6 @@ function TradeWindow:handleEvents(event, ...)
 end
 
 --- Keep track of the trade window's state (e.g. which items, how much money etc)
----
----@return void
 function TradeWindow:updateState()
     -- NPC is currently the player you're trading
     local partnerName, partnerRealm = UnitName("NPC", true);
@@ -308,8 +305,6 @@ function TradeWindow:updateState()
 end
 
 --- Reset the trade state object
----
----@return void
 function TradeWindow:resetState()
     self.manuallyChangedAnnounceCheckbox = false;
 
@@ -327,7 +322,6 @@ end
 --- Attempt to add a given itemID or itemLink to the trade window
 ---
 ---@param itemLinkOrID number|string
----@return void
 function TradeWindow:addItem(itemLinkOrID)
     tinsert(self.ItemsToAdd, itemLinkOrID);
 end
@@ -338,7 +332,6 @@ end
 ---
 ---@param amount number
 ---@param target string
----@return void
 function TradeWindow:setCopper(amount, target, callback)
     GL.Ace:CancelTimer(self.SetCopperTimer);
     self.SetCopperTimer = GL.Ace:ScheduleTimer(function ()
@@ -442,8 +435,6 @@ function TradeWindow:shouldAnnounce()
 end
 
 --- Draw/Update the checkbox and settings cogwheel
----
----@return void
 function TradeWindow:updateAnnouncementCheckBox()
     -- Only create the checbox / cogwheel once
     if (not GL:empty(self.AnnouncementCheckBox)) then
@@ -496,7 +487,6 @@ end
 --- This method is huge, huge, I'm aware. I might have gone a bit overboard, but this at least keeps chat clean~ish
 ---
 ---@param Details table
----@return void
 function TradeWindow:announceTradeDetails(Details)
     -- Check if the user wants to announce this trade
     if (not Details.announce) then
