@@ -13,14 +13,6 @@ GL.Data.ItemLinks = {
     ["49644"] = {
         49643, -- Head of Onyxia (Horde)
     },
-    -- SoD Head of Onyxia (Horde)
-    ["228689"] = {
-        228688, -- SoD Head of Onyxia (Alliance)
-    },
-    -- Head of Onyxia (Alliance)
-    ["228688"] = {
-        228689, -- Head of Onyxia (Horde)
-    },
     -- Dragonslayer's Signet
     ["18403"] = {
         18422, -- Head of Onyxia (Horde)
@@ -12870,5 +12862,23 @@ GL.Data.ItemLinks = {
         220628, -- Drakeclaw Band of the Harbinger
         220629, -- Drakeclaw Band of the Blood Prophet
         220630, -- Drakeclaw Band of the Juggernaut
+    },
+    -- Onyxia Tooth Pendant
+    ["228685"] = {
+        228689, -- Head of Onyxia
+    },
+    -- Onyxia Blood Talisman
+    ["228686"] = {
+        228689, -- Head of Onyxia
+    },
+    -- Dragonslayer's Signet
+    ["228687"] = {
+        228689, -- Head of Onyxia
+    },
+    -- Head of Onyxia
+    ["228689"] = {
+        228685, -- Onyxia Tooth Pendant
+        228686, -- Onyxia Blood Talisman
+        228687, -- Dragonslayer's Signet
     },
 };
