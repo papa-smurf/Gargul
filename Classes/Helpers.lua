@@ -2162,9 +2162,11 @@ end
 --- Some items have items linked to them. Example: t4 tokens have their quest reward counterpart linked to them.
 ---
 ---@param itemID number
----@param linkNormalAndHardModeItems boolean
+---@param forSoftRes? boolean
 ---@return table
-function GL:getLinkedItemsForID(itemID, linkNormalAndHardModeItems)
+function GL:getLinkedItemsForID(itemID, forSoftRes)
+    forSoftRes = forSoftRes == true;
+
     -- An invalid item id was provided
     itemID = tonumber(itemID);
     if (not GL:higherThanZero(itemID)) then
@@ -2181,7 +2183,7 @@ function GL:getLinkedItemsForID(itemID, linkNormalAndHardModeItems)
         i = i + 1;
     end
 
-    if (linkNormalAndHardModeItems
+    if (forSoftRes
         or GL.Settings:get("MasterLooting.linkNormalAndHardModeItems")
     ) then
         for _, id in pairs(GL.Data.NormalModeHardModeLinks[itemID] or {}) do
@@ -2190,6 +2192,14 @@ function GL:getLinkedItemsForID(itemID, linkNormalAndHardModeItems)
         end
     end
 
+    if (forSoftRes) then
+        for _, id in pairs(GL.Data.SoftResSpecificNormalModeHardModeLinks[itemID] or {}) do
+            AllLinkedItemIDs[id] = i;
+            i = i + 1;
+        end
+    end
+
+    GL:xd{ forSoftRes = forSoftRes, };
     return GL:tableFlip(AllLinkedItemIDs);
 end
 
