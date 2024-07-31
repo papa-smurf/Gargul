@@ -2199,7 +2199,6 @@ function GL:getLinkedItemsForID(itemID, forSoftRes)
         end
     end
 
-    GL:xd{ forSoftRes = forSoftRes, };
     return GL:tableFlip(AllLinkedItemIDs);
 end
 
