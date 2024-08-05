@@ -84,8 +84,6 @@ function GL:bootstrap(_, _, addonName)
 end
 
 --- Callback to be fired when the addon is completely loaded
----
----@return void
 function GL:_init()
     if (self.isSoD
         -- Taiwan is excluded apparently: https://tw.forums.blizzard.com/zh/wow/t/gdkp/12240
@@ -215,12 +213,12 @@ GL.Ace:RegisterChatCommand("gdkp", function (...)
 end);
 
 --- Announce conflicting addons, if any
----
----@return void
 function GL:announceConflictingAddons()
     local ConflictingAddons = {};
+    local addonLoadedFunction = IsAddOnLoaded or C_AddOns.IsAddOnLoaded;
+
     for _, addon in pairs(GL.Data.Constants.GargulConflictsWith) do
-        if (IsAddOnLoaded(addon)) then
+        if (addonLoadedFunction(addon)) then
             tinsert(ConflictingAddons, addon);
         end
     end
@@ -236,8 +234,6 @@ function GL:announceConflictingAddons()
 end
 
 --- Keep track of when native UI elements (like AH/mailbox) are active
----
----@return void
 function GL:hookNativeWindowEvents()
     -- Make sure to reset window states when zoning
     GL.Events:register("BootstrapPlayerEnteringWorld", "PLAYER_ENTERING_WORLD", function ()
@@ -323,8 +319,6 @@ function GL:hookNativeWindowEvents()
 end
 
 --- We hook all the tooltip data (tmb/softres etc) to a single event to make caching easier
----
----@return void
 function GL:hookTooltipSetItemEvents()
     GL.onTooltipSetItemFunc = function(Tooltip)
         -- No valid item tooltip was provided
