@@ -11,6 +11,7 @@ local Settings = GL.Settings;
 
 ---@class LocaleInterface
 GL.Interface.Locale = {
+    forwardToSettings = false,
     isVisible = false,
     windowName = "Gargul.Interface.Locale.Window",
 };
@@ -19,7 +20,8 @@ GL.Interface.Locale = {
 local Locale = GL.Interface.Locale;
 
 ---@return table
-function Locale:open()
+function Locale:open(forwardToSettings)
+    self.forwardToSettings = forwardToSettings ~= nil;
     self.isVisible = true;
 
     local Window = _G[self.windowName] or self:build();
@@ -108,6 +110,11 @@ function Locale:build()
     OkButton:SetScript("OnClick", function ()
         Settings:set("chatLocale", Locales:GetValue() or "enUS");
         self:close();
+
+        if (self.forwardToSettings) then
+            self.forwardToSettings = false;
+            GL.Settings:draw();
+        end
     end);
 
     local CancelButton = Interface:dynamicPanelButton(Window, L.CANCEL);
