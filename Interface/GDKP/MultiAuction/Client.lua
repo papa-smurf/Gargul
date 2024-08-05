@@ -253,10 +253,10 @@ function ClientInterface:build()
         {
             text = "Unusable",
             checked = function ()
-                return Settings:get("GDKP.MultiAuction.Filters.unusable", false);
+                return Settings:get("GDKP.MultiAuction." .. GL.User.id .. ".Filters.unusable", false);
             end,
             func = function (Entry)
-                Settings:set("GDKP.MultiAuction.Filters.unusable", Entry.checked);
+                Settings:set("GDKP.MultiAuction." .. GL.User.id .. ".Filters.unusable", Entry.checked);
                 filter();
             end,
         },
@@ -265,40 +265,40 @@ function ClientInterface:build()
         {
             text = "Cloth",
             checked = function ()
-                return Settings:get(("GDKP.MultiAuction.Filters.%s-%s"):format(Enum.ItemClass.Armor, Enum.ItemArmorSubclass.Cloth));
+                return Settings:get(("GDKP.MultiAuction." .. GL.User.id .. ".Filters.%s-%s"):format(Enum.ItemClass.Armor, Enum.ItemArmorSubclass.Cloth));
             end,
             func = function (Entry)
-                Settings:set(("GDKP.MultiAuction.Filters.%s-%s"):format(Enum.ItemClass.Armor, Enum.ItemArmorSubclass.Cloth), Entry.checked);
+                Settings:set(("GDKP.MultiAuction." .. GL.User.id .. ".Filters.%s-%s"):format(Enum.ItemClass.Armor, Enum.ItemArmorSubclass.Cloth), Entry.checked);
                 filter();
             end,
         },
         {
             text = "Leather",
             checked = function ()
-                return Settings:get(("GDKP.MultiAuction.Filters.%s-%s"):format(Enum.ItemClass.Armor, Enum.ItemArmorSubclass.Leather));
+                return Settings:get(("GDKP.MultiAuction." .. GL.User.id .. ".Filters.%s-%s"):format(Enum.ItemClass.Armor, Enum.ItemArmorSubclass.Leather));
             end,
             func = function (Entry)
-                Settings:set(("GDKP.MultiAuction.Filters.%s-%s"):format(Enum.ItemClass.Armor, Enum.ItemArmorSubclass.Leather), Entry.checked);
+                Settings:set(("GDKP.MultiAuction." .. GL.User.id .. ".Filters.%s-%s"):format(Enum.ItemClass.Armor, Enum.ItemArmorSubclass.Leather), Entry.checked);
                 filter();
             end,
         },
         {
             text = "Mail",
             checked = function ()
-                return Settings:get(("GDKP.MultiAuction.Filters.%s-%s"):format(Enum.ItemClass.Armor, Enum.ItemArmorSubclass.Mail));
+                return Settings:get(("GDKP.MultiAuction." .. GL.User.id .. ".Filters.%s-%s"):format(Enum.ItemClass.Armor, Enum.ItemArmorSubclass.Mail));
             end,
             func = function (Entry)
-                Settings:set(("GDKP.MultiAuction.Filters.%s-%s"):format(Enum.ItemClass.Armor, Enum.ItemArmorSubclass.Mail), Entry.checked);
+                Settings:set(("GDKP.MultiAuction." .. GL.User.id .. ".Filters.%s-%s"):format(Enum.ItemClass.Armor, Enum.ItemArmorSubclass.Mail), Entry.checked);
                 filter();
             end,
         },
         {
             text = "Plate",
             checked = function ()
-                return Settings:get(("GDKP.MultiAuction.Filters.%s-%s"):format(Enum.ItemClass.Armor, Enum.ItemArmorSubclass.Plate));
+                return Settings:get(("GDKP.MultiAuction." .. GL.User.id .. ".Filters.%s-%s"):format(Enum.ItemClass.Armor, Enum.ItemArmorSubclass.Plate));
             end,
             func = function (Entry)
-                Settings:set(("GDKP.MultiAuction.Filters.%s-%s"):format(Enum.ItemClass.Armor, Enum.ItemArmorSubclass.Plate), Entry.checked);
+                Settings:set(("GDKP.MultiAuction." .. GL.User.id .. ".Filters.%s-%s"):format(Enum.ItemClass.Armor, Enum.ItemArmorSubclass.Plate), Entry.checked);
                 filter();
             end,
         },
@@ -307,10 +307,10 @@ function ClientInterface:build()
         {
             text = ITEM_MOD_AGILITY_SHORT,
             checked = function ()
-                return Settings:get("GDKP.MultiAuction.Filters.Mods.agility");
+                return Settings:get("GDKP.MultiAuction." .. GL.User.id .. ".Filters.Mods.agility");
             end,
             func = function (Entry)
-                Settings:set("GDKP.MultiAuction.Filters.Mods.agility", Entry.checked or nil);
+                Settings:set("GDKP.MultiAuction." .. GL.User.id .. ".Filters.Mods.agility", Entry.checked or nil);
 
                 filter();
             end,
@@ -318,10 +318,10 @@ function ClientInterface:build()
         {
             text = ITEM_MOD_INTELLECT_SHORT,
             checked = function ()
-                return Settings:get("GDKP.MultiAuction.Filters.Mods.intellect");
+                return Settings:get("GDKP.MultiAuction." .. GL.User.id .. ".Filters.Mods.intellect");
             end,
             func = function (Entry)
-                Settings:set("GDKP.MultiAuction.Filters.Mods.intellect", Entry.checked or nil);
+                Settings:set("GDKP.MultiAuction." .. GL.User.id .. ".Filters.Mods.intellect", Entry.checked or nil);
 
                 filter();
             end,
@@ -329,10 +329,10 @@ function ClientInterface:build()
         {
             text = ITEM_MOD_SPIRIT_SHORT,
             checked = function ()
-                return Settings:get("GDKP.MultiAuction.Filters.Mods.spirit");
+                return Settings:get("GDKP.MultiAuction." .. GL.User.id .. ".Filters.Mods.spirit");
             end,
             func = function (Entry)
-                Settings:set("GDKP.MultiAuction.Filters.Mods.spirit", Entry.checked or nil);
+                Settings:set("GDKP.MultiAuction." .. GL.User.id .. ".Filters.Mods.spirit", Entry.checked or nil);
 
                 filter();
             end,
@@ -340,10 +340,10 @@ function ClientInterface:build()
         {
             text = ITEM_MOD_STRENGTH_SHORT,
             checked = function ()
-                return Settings:get("GDKP.MultiAuction.Filters.Mods.strength");
+                return Settings:get("GDKP.MultiAuction." .. GL.User.id .. ".Filters.Mods.strength");
             end,
             func = function (Entry)
-                Settings:set("GDKP.MultiAuction.Filters.Mods.strength", Entry.checked or nil);
+                Settings:set("GDKP.MultiAuction." .. GL.User.id .. ".Filters.Mods.strength", Entry.checked or nil);
 
                 filter();
             end,
@@ -352,20 +352,20 @@ function ClientInterface:build()
         {
             text = L.BIND_ON_EQUIP_ABBR,
             checked = function ()
-                return Settings:get("GDKP.MultiAuction.Filters.BOE");
+                return Settings:get("GDKP.MultiAuction." .. GL.User.id .. ".Filters.BOE");
             end,
             func = function (Entry)
-                Settings:set("GDKP.MultiAuction.Filters.BOE", Entry.checked);
+                Settings:set("GDKP.MultiAuction." .. GL.User.id .. ".Filters.BOE", Entry.checked);
                 filter();
             end,
         },
         {
             text = "Shields",
             checked = function ()
-                return Settings:get(("GDKP.MultiAuction.Filters.%s-%s"):format(Enum.ItemClass.Armor, Enum.ItemArmorSubclass.Shield));
+                return Settings:get(("GDKP.MultiAuction." .. GL.User.id .. ".Filters.%s-%s"):format(Enum.ItemClass.Armor, Enum.ItemArmorSubclass.Shield));
             end,
             func = function (Entry)
-                Settings:set(("GDKP.MultiAuction.Filters.%s-%s"):format(Enum.ItemClass.Armor, Enum.ItemArmorSubclass.Shield), Entry.checked);
+                Settings:set(("GDKP.MultiAuction." .. GL.User.id .. ".Filters.%s-%s"):format(Enum.ItemClass.Armor, Enum.ItemArmorSubclass.Shield), Entry.checked);
                 filter();
             end,
         },
@@ -1419,14 +1419,14 @@ function ClientInterface:filterAndSort()
             if (self.enableFilters) then
                 -- Hide unusable items
                 if (not ItemRow._Details.canUseItem
-                    and Settings:get("GDKP.MultiAuction.Filters.unusable") == true
+                    and Settings:get("GDKP.MultiAuction." .. GL.User.id .. ".Filters.unusable") == true
                 ) then
                     return;
                 end
 
                 -- Hide BOEs
                 if (ItemRow._Details.isBOE
-                    and Settings:get("GDKP.MultiAuction.Filters.BOE") == true
+                    and Settings:get("GDKP.MultiAuction." .. GL.User.id .. ".Filters.BOE") == true
                 ) then
                     return;
                 end
@@ -1434,13 +1434,13 @@ function ClientInterface:filterAndSort()
                 -- Hide unwanted armor types
                 if (ItemRow._Details.classID == Enum.ItemClass.Armor
                     and ItemRow._Details.inventoryType ~= "INVTYPE_CLOAK"
-                    and Settings:get(("GDKP.MultiAuction.Filters.%s-%s"):format(Enum.ItemClass.Armor, ItemRow._Details.subclassID)) == true
+                    and Settings:get(("GDKP.MultiAuction." .. GL.User.id .. ".Filters.%s-%s"):format(Enum.ItemClass.Armor, ItemRow._Details.subclassID)) == true
                 ) then
                     return;
                 end
 
                 -- Hide unwanted item modifiers
-                local FilteredMods = Settings:get("GDKP.MultiAuction.Filters.Mods");
+                local FilteredMods = Settings:get("GDKP.MultiAuction." .. GL.User.id .. ".Filters.Mods");
                 if (not GL:empty(FilteredMods)) then
                     local ItemMods = GL:itemModifiers(ItemRow._Details.link);
 
