@@ -104,6 +104,21 @@ end
 function Settings:enforceTemporarySettings()
     --- This is reserved for version-based logic (e.g. cleaning up variables, settings etc.)
 
+    --- People found a way to add mutators containing a dot, throwing a wrench in GDKP cut matters
+    for key, Mutator in pairs (DB:get("Settings.GDKP.Mutators", {})) do
+        if (not Mutator or not Mutator.name) then
+            DB:set("Settings.GDKP.Mutators." .. key, nil);
+        end
+
+        for sessionID, GDKPSession in pairs(DB:get("GDKP.Ledger", {})) do
+            for key, Mutator in pairs(GL:tableGet(GDKPSession, "Pot.Mutators", {})) do
+                if (not Mutator or not Mutator.name) then
+                    DB:set("GDKP.Ledger." .. sessionID .. ".Pot.Mutators." .. key, nil);
+                end
+            end
+        end
+    end
+
     --- No point enforcing these temp settings if the user has never used Gargul
     --- before or has already loaded this version before!
     if (GL.firstBoot
