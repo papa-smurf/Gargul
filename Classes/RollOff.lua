@@ -817,6 +817,10 @@ function RollOff:refreshRollsTable()
         return;
     end
 
+    local importedFromDFTOrRRobin = GL.TMB:wasImportedFromDFT() or GL.TMB:wasImportedFromRRobin(); -- These two go high > low whereas the rest goes low > high
+    local sortByTMBWishlist = GL.Settings:get("RollTracking.sortByTMBWishlist");
+    local sortByTMBPrio = GL.Settings:get("RollTracking.sortByTMBPrio");
+
     for _, Roll in pairs(Rolls) do
         -- Determine how many times this player rolled during the current rolloff
         NumberOfRollsPerPlayer[Roll.player] = NumberOfRollsPerPlayer[Roll.player] or 0;
@@ -856,9 +860,6 @@ function RollOff:refreshRollsTable()
 
         -- The item might be on a TMB list, make sure we add the appropriate note to the roll
         if (TMBData) then
-            local importedFromDFTOrRRobin = GL.TMB:wasImportedFromDFT() or GL.TMB:wasImportedFromRRobin(); -- These two go high > low whereas the rest goes low > high
-            local sortByTMBWishlist = GL.Settings:get("RollTracking.sortByTMBWishlist");
-            local sortByTMBPrio = GL.Settings:get("RollTracking.sortByTMBPrio");
             local TopEntry = false;
 
             for _, Entry in pairs(TMBData) do
@@ -931,10 +932,6 @@ function RollOff:refreshRollsTable()
         local class = Roll.class;
         local plusOnes = GL.PlusOnes:getPlusOnes(playerName);
 
-        if (GL:higherThanZero(plusOnes)) then
-            plusOnes = L.PLUS_SIGN .. plusOnes;
-        end
-
         local Row = {
             cols = {
                 {
@@ -946,7 +943,7 @@ function RollOff:refreshRollsTable()
                     color = GL:classRGBAColor(class),
                 },
                 {
-                    value = plusOnes,
+                    value = GL:higherThanZero(plusOnes) and L.PLUS_SIGN .. plusOnes or "",
                     color = GL:classRGBAColor(class),
                 },
                 {
@@ -959,7 +956,10 @@ function RollOff:refreshRollsTable()
                 },
                 {
                     value = rollPriority,
-                };
+                },
+                {
+                    value = plusOnes or 0,
+                },
             },
         };
         tinsert(RollTableData, Row);

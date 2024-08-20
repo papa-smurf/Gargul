@@ -55,6 +55,19 @@ function MasterLooterUI:draw(itemLink)
         return;
     end
 
+    -- Make sure the table sorting details get updated
+    -- when the user changes their settings
+    GL.Events:register("MasterLooterUISortByPlusOneChanged", "GL.SETTING_CHANGED.RollTracking.sortByPlusOne", function ()
+        local PlayersTable = GL.Interface:get(self, "Table.Players");
+
+        if (not PlayersTable) then
+            return;
+        end
+
+        PlayersTable:SetDisplayCols(self:tableColumns());
+        PlayersTable:SortData();
+    end);
+
     local HorizonalSpacer, VerticalSpacer;
 
     -- Create a container/parent frame
@@ -733,92 +746,9 @@ function MasterLooterUI:drawReopenMasterLooterUIButton()
 end
 
 function MasterLooterUI:drawPlayersTable(parent)
-    -- Combined width of all columns should be 340
-    local columns = {
-        --[[ Player name ]]
-        {
-            name = L.PLAYER,
-            width = 120,
-            align = "LEFT",
-            color = {
-                r = 0.5,
-                g = 0.5,
-                b = 1.0,
-                a = 1.0
-            },
-            colorargs = nil,
-        },
-        --[[ Roll ]]
-        {
-            name = L.ROLL,
-            width = 35,
-            align = "LEFT",
-            color = {
-                r = 0.5,
-                g = 0.5,
-                b = 1.0,
-                a = 1.0
-            },
-            colorargs = nil,
-            defaultsort = GL.Data.Constants.ScrollingTable.descending,
-        },
-        --[[ +1 ]]
-        {
-            name = L.PLUS1,
-            width = 35,
-            align = "LEFT",
-            color = {
-                r = 0.5,
-                g = 0.5,
-                b = 1.0,
-                a = 1.0
-            },
-            colorargs = nil,
-        },
-        --[[ ROLL TYPE: MS/OS etc ]]
-        {
-            name = L.TYPE,
-            width = 63,
-            align = "LEFT",
-            color = {
-                r = 0.5,
-                g = 0.5,
-                b = 1.0,
-                a = 1.0
-            },
-            colorargs = nil,
-        },
-        --[[ Reserved / TMB etc ]]
-        {
-            name = L.NOTE,
-            width = 118,
-            align = "LEFT",
-            color = {
-                r = 0.5,
-                g = 0.5,
-                b = 1.0,
-                a = 1.0
-            },
-            colorargs = nil,
-        },
-        --[[ PRIORITY (NOT VISIBLE, FOR SORTING ONLY! ]]
-        {
-            name = "",
-            width = 1,
-            align = "LEFT",
-            color = {
-                r = 0,
-                g = 0,
-                b = 0,
-                a = 0
-            },
-            colorargs = nil,
-            sort = GL.Data.Constants.ScrollingTable.ascending,
-            sortnext = 2,
-        },
-    };
+    local Columns = self:tableColumns();
 
-    local Table = ScrollingTable:CreateST(columns, 8, 15, nil, parent);
+    local Table = ScrollingTable:CreateST(Columns, 8, 15, nil, parent);
     Table:SetWidth(340);
     Table:EnableSelection(true);
 
@@ -911,6 +841,114 @@ function MasterLooterUI:drawPlayersTable(parent)
 
     Table.frame:SetPoint("BOTTOM", parent, "BOTTOM", 0, 50);
     GL.Interface:set(self, "Players", Table);
+end
+
+function MasterLooterUI:tableColumns()
+    local sortByPlusOne = GL.Settings:get("RollTracking.sortByPlusOne");
+
+    if (sortByPlusOne ~= 0) then
+        sortByPlusOne = sortByPlusOne == "ASC" and "ASC" or "DESC";
+    end
+
+    -- Combined width of all columns should be 340
+    return {
+        --[[ 1. Player name ]]
+        {
+            name = L.PLAYER,
+            width = 120,
+            align = "LEFT",
+            color = {
+                r = 0.5,
+                g = 0.5,
+                b = 1.0,
+                a = 1.0
+            },
+            colorargs = nil,
+        },
+        --[[ 2. Roll ]]
+        {
+            name = L.ROLL,
+            width = 35,
+            align = "LEFT",
+            color = {
+                r = 0.5,
+                g = 0.5,
+                b = 1.0,
+                a = 1.0
+            },
+            colorargs = nil,
+            defaultsort = GL.Data.Constants.ScrollingTable.descending,
+        },
+        --[[ 3. +1 ]]
+        {
+            name = L.PLUS1,
+            width = 35,
+            align = "LEFT",
+            color = {
+                r = 0.5,
+                g = 0.5,
+                b = 1.0,
+                a = 1.0
+            },
+            colorargs = nil,
+        },
+        --[[ 4. ROLL TYPE: MS/OS etc ]]
+        {
+            name = L.TYPE,
+            width = 63,
+            align = "LEFT",
+            color = {
+                r = 0.5,
+                g = 0.5,
+                b = 1.0,
+                a = 1.0
+            },
+            colorargs = nil,
+        },
+        --[[ 5. Reserved / TMB etc ]]
+        {
+            name = L.NOTE,
+            width = 118,
+            align = "LEFT",
+            color = {
+                r = 0.5,
+                g = 0.5,
+                b = 1.0,
+                a = 1.0
+            },
+            colorargs = nil,
+        },
+        --[[ 6. PRIORITY (NOT VISIBLE, FOR SORTING ONLY! ]]
+        {
+            name = "",
+            width = 1,
+            align = "LEFT",
+            color = {
+                r = 0,
+                g = 0,
+                b = 0,
+                a = 0
+            },
+            colorargs = nil,
+            sort = GL.Data.Constants.ScrollingTable.ascending,
+            sortnext = sortByPlusOne ~= 0 and 7 or 2,
+        },
+        --[[ 7. PLUSONES (NOT VISIBLE, FOR SORTING ONLY! ]]
+        {
+            name = "",
+            width = 1,
+            align = "LEFT",
+            color = {
+                r = 0,
+                g = 0,
+                b = 0,
+                a = 0
+            },
+            colorargs = nil,
+            defaultsort = sortByPlusOne == "ASC" and GL.Data.Constants.ScrollingTable.ascending or GL.Data.Constants.ScrollingTable.descending,
+            sortnext = 2,
+        },
+    };
 end
 
 -- The item box contents changed

@@ -139,6 +139,7 @@ GL.Data.DefaultSettings = {
     },
     RollTracking = {
         rollOffEndLeeway = 1,
+        sortByPlusOne = "ASC",
         sortBySoftRes = true,
         sortByTMBWishlist = true,
         sortByTMBPrio = true,
