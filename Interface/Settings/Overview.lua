@@ -208,6 +208,28 @@ function Overview:draw(section, onCloseCallback)
     ResetSettingsButton:SetWidth(136);
     SecondColumn:AddChild(ResetSettingsButton);
 
+    local PatreonButton = GL.UI:createFrame("Button", "PatreonButton" .. GL:uuid(), Window.frame, "UIPanelButtonTemplate");
+    PatreonButton:Show();
+    PatreonButton:SetSize(170, 43);
+    PatreonButton:SetPoint("BOTTOMLEFT", Window.frame, "BOTTOMLEFT", 25, 16);
+
+    local HighlightTexture = PatreonButton:CreateTexture();
+    HighlightTexture:SetTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\patreon");
+    HighlightTexture:SetPoint("CENTER", PatreonButton, "CENTER", 0, 0);
+    HighlightTexture:SetSize(170, 43);
+
+    PatreonButton:SetNormalTexture("Interface\\AddOns\\Gargul\\Assets\\Buttons\\patreon");
+    PatreonButton:SetHighlightTexture(HighlightTexture);
+
+    PatreonButton:SetScript("OnClick", function(_, button)
+        if (button == 'LeftButton') then
+            GL.Interface.Dialogs.HyperlinkDialog:open{
+                description = "Thanks for considering becoming a Patron of Gargul, your support helps tremendously!",
+                hyperlink = "patreon.com/gargul",
+            };
+        end
+    end);
+
     self:showSection(section);
 end
 

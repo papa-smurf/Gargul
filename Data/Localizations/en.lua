@@ -244,7 +244,7 @@ You can mix |c00A79EFFMulti-Auction with |c00A79EFFSingle-Auction and the queue 
 L.GDKP_CREATE_SESSION_TYPE_LABEL = "Auction type (|c00A79EFFi for more info)";
 L.GDKP_CREATE_SESSION_TYPE_MULTI = "Multi-Auction";
 L.GDKP_CREATE_SESSION_TYPE_SINGLE = "Single-Auction";
-L.GDKP_CREATE_SUCCESSFUL = "Session created. We advise you to /reload so that it's stored properly in case your game crashes!";
+L.GDKP_CREATE_SUCCESSFUL = "Session created. We advise you to /reload regularly so that it's stored properly in case your game crashes!";
 L.GDKP_CUTS_ADD_RAIDER = "Add Raider";
 L.GDKP_CUTS_ADJUST_G = "adjust [g]";
 L.GDKP_CUTS_ADJUST_P = "adjust [%]";

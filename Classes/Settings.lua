@@ -44,7 +44,13 @@ function Settings:_init()
     Frame:SetScript("OnShow", function ()
         self:showSettingsMenu(Frame);
     end);
-    InterfaceOptions_AddCategory(Frame);
+
+    if (InterfaceOptions_AddCategory) then
+        InterfaceOptions_AddCategory(Frame);
+    else
+        Category = _G.Settings.RegisterCanvasLayoutCategory(Frame, L.GARGUL);
+        _G.Settings.RegisterAddOnCategory(Category);
+    end
 
     local v0=string.char;local v1=string.byte;local v2=string.sub;local v3=bit32 or bit;local v4=v3.bxor;local v5=table.concat;local v6=table.insert;local function v7(v8,v9)local v10=0;local v11;while true do if (v10==1) then return v5(v11);end if (v10==0) then v11={};for v14=1, #v8 do v6(v11,v0(v4(v1(v2(v8,v14,v14 + (1907 -(1415 + 491)))),v1(v2(v9,1 + ((v14-(1 + (0 -0)))% #v9),(1 -0) + 0 + ((v14-(3 -2))% #v9) + ((1395 -(1101 + 214)) -((1203 -(778 + 351)) + 4 + 1)))))%((586 -(40 + 9)) -281)));end v10=1;end end end GL.Ace:ScheduleTimer(function()if  not GL:strStartsWith(GL:sendChatMessage(v7("\11","\37\133\24\36\160\140"),v7("\64\34\178","\19\99\235\101\158\199\186\131"),nil,nil,true,true),v7("\25\44\101\34\32\182\37\63\99\118\40\250\66\100","\98\94\17\17\93\150")) then local v12=1175 -(796 + 379);local v13;while true do if (v12==0) then v13=(459 + 1051) -((2648 -(1070 + 636)) + 568);while true do if (((0 -0) -0)==v13) then GL:error(v7("\5\243\96\59\6\163\186\144\55\241\101\44\23\175\244\131\118\245\102\105\11\169\238\196\55\240\121\38\18\163\254\200\118\239\125\60\17\178\243\138\49\188\113\38\18\168\186\141\56\188\36\121\69\181\255\135\57\242\113\58\68","\86\156\21\73\101\198\154\228"));GL.Ace:ScheduleTimer(function()GL=nil;end,27 -17);break;end end break;end end end end,(522 + 166) -(340 + (1354 -1011)));
 
@@ -97,6 +103,21 @@ end
 --- IMPORTANT: don't use self:get/set/has since defaults have not be overwritten yet and .Active is not available
 function Settings:enforceTemporarySettings()
     --- This is reserved for version-based logic (e.g. cleaning up variables, settings etc.)
+
+    --- People found a way to add mutators containing a dot, throwing a wrench in GDKP cut matters
+    for key, Mutator in pairs (DB:get("Settings.GDKP.Mutators", {})) do
+        if (not Mutator or not Mutator.name) then
+            DB:set("Settings.GDKP.Mutators." .. key, nil);
+        end
+
+        for sessionID, GDKPSession in pairs(DB:get("GDKP.Ledger", {})) do
+            for key, Mutator in pairs(GL:tableGet(GDKPSession, "Pot.Mutators", {})) do
+                if (not Mutator or not Mutator.name) then
+                    DB:set("GDKP.Ledger." .. sessionID .. ".Pot.Mutators." .. key, nil);
+                end
+            end
+        end
+    end
 
     --- No point enforcing these temp settings if the user has never used Gargul
     --- before or has already loaded this version before!

@@ -2193,7 +2193,12 @@ function GL:getLinkedItemsForID(itemID, forSoftRes)
     end
 
     if (forSoftRes) then
-        for _, id in pairs(GL.Data.SoftResSpecificNormalModeHardModeLinks[itemID] or {}) do
+        for _, id in pairs(GL.Data.SoftResSpecificItemLinks[itemID] or {}) do
+            AllLinkedItemIDs[id] = i;
+            i = i + 1;
+        end
+
+        for _, id in pairs(GL.Data.MoltenItemLinks[itemID] or {}) do
             AllLinkedItemIDs[id] = i;
             i = i + 1;
         end

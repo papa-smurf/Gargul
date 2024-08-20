@@ -54,6 +54,16 @@ function GDKPMutators:draw(Parent)
         Name:SetText(MutatorDetails.name);
         Parent:AddChild(Name);
 
+        Name:SetCallback("OnTextChanged", function ()
+            local name = Name:GetText() or "";
+
+            if (name:match("%.")) then
+                GL:warning(L.GDKP_MUTATOR_NO_DOTS_WARNING);
+                Name:SetText("");
+                return;
+            end
+        end);
+
         local Percentage = GL.AceGUI:Create("EditBox");
         Percentage:DisableButton(true);
         Percentage:SetHeight(20);

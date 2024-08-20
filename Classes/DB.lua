@@ -5,7 +5,7 @@ local _, GL = ...;
 local Events = GL.Events;
 
 ---@class DB
-GL.DB = {
+local DB = {
     _initialized = false,
 
     Tables = {
@@ -25,9 +25,8 @@ GL.DB = {
 };
 
 ---@type DB
-local DB = GL.DB;
+GL.DB = DB;
 
----@return void
 function DB:_init()
     if (self._initialized) then
         return;
@@ -67,7 +66,7 @@ end
 
 ---@param keyString string
 ---@param value any
----@param ignoreIfExists boolean If the given final key exists then it will not be overwritten
+---@param ignoreIfExists ?boolean If the given final key exists then it will not be overwritten
 ---@return boolean
 function DB:set(keyString, value, ignoreIfExists)
     return GL:tableSet(self, keyString, value, ignoreIfExists);
@@ -84,7 +83,6 @@ end
 --- This is just a safety precaution and should strictly
 --- speaking not be necessary at all, but hey you never know!
 ---
----@return void
 function DB:store()
     for _, identifier in pairs(self.Tables or {}) do
         GargulDB[identifier] = self[identifier];
