@@ -754,13 +754,38 @@ function ClientInterface:build()
             FavoriteImage:SetTexture("Interface/common/friendship-heart");
             FavoriteImage:SetVertexColor(.9, .9, .9, .25);
 
-            AuctionRow.toggleFavorite = function ()
-                AuctionRow._Details.isFavorite = not AuctionRow._Details.isFavorite;
+            AuctionRow.toggleFavorite = function (favorite, bubble)
+                bubble = bubble ~= false;
+
+                if (favorite ~= nil) then
+                    AuctionRow._Details.isFavorite = favorite;
+                else
+                    AuctionRow._Details.isFavorite = not AuctionRow._Details.isFavorite;
+                end
 
                 if (AuctionRow._Details.isFavorite) then
                     FavoriteImage:SetVertexColor(1, 1, 1, 1);
                 else
                     FavoriteImage:SetVertexColor(.9, .9, .9, .25);
+                end
+
+                if (not bubble) then
+                    return;
+                end
+
+                ---@param ItemRow Frame
+                for _, ItemRow in pairs(self.AuctionRows or {}) do
+                    (function()
+                        if (type(ItemRow) ~= "table"
+                            or not ItemRow._Details
+                            or not ItemRow._Details.link
+                            or ItemRow._Details.link ~= AuctionRow._Details.link
+                        ) then
+                            return
+                        end
+
+                        ItemRow.toggleFavorite(AuctionRow._Details.isFavorite, false);
+                    end)();
                 end
             end
             Favorite:SetScript("OnMouseUp", function ()
