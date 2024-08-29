@@ -306,6 +306,7 @@ function User:groupMembers()
             local name, rank, subgroup, level, _, classFile, zone, online, isDead, role, isML = GetRaidRosterInfo(index);
 
             if (name) then
+                classFile = classFile or "PRIEST";
                 GL.Player:cacheClass(name, classFile); -- We cache player classes wherever we can
                 local realmLessName, realm = GL:stripRealm(name);
                 realm = realm or self.realm;
