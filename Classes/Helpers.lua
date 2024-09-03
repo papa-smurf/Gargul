@@ -2442,9 +2442,9 @@ function GL:copperToMoney(copper, Separators, includeEmpty, separatorBeforeUnit)
     copper = self:floor(copper, 4);
 
     if (not separatorBeforeUnit) then
-        DefaultSeparators = {L.GOLD_INDICATOR .. " ", L.SILVER_INDICATOR .. " ", L.COPPER_INDICATOR .. " "};
+        DefaultSeparators = { L.GOLD_INDICATOR .. " ", L.SILVER_INDICATOR .. " ", L.COPPER_INDICATOR .. " " };
     else
-        DefaultSeparators = {" " .. L.GOLD_INDICATOR, " " .. L.SILVER_INDICATOR, " " .. L.COPPER_INDICATOR};
+        DefaultSeparators = { " " .. L.GOLD_INDICATOR, " " .. L.SILVER_INDICATOR, " " .. L.COPPER_INDICATOR };
     end
 
     Separators = Separators or {};
