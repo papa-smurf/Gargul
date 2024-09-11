@@ -933,7 +933,7 @@ end
 --- Returns next target player in a round robin fashion for a particular rule item
 ---
 ---@param Rule string
----@return string
+---@return string?
 function PackMule:roundRobinTargetForRule(Rule)
     local ruleId = Rule.quality;
     if (not GL:empty(Rule.item)) then
@@ -950,25 +950,36 @@ function PackMule:roundRobinTargetForRule(Rule)
         self.RoundRobinItems[ruleId] = {};
     end
 
-    local targetPlayer = false;
+    local EligiblePlayers = {};
     for _, Player in pairs(GL.User:groupMembers()) do
         local player = string.lower(Player.fqn);
 
         -- this player hasn't received one of these items yet
         if (Player.online and not self.RoundRobinItems[ruleId][player]) then
-            self.RoundRobinItems[ruleId][player] = 1;
-            targetPlayer = player;
-            break;
+            tinsert(EligiblePlayers, player);
         end
     end
 
-    if (not targetPlayer) then
+    -- Count the number of potential targets
+    local numberOfTargets = #EligiblePlayers;
+
+    if (numberOfTargets < 1) then
         -- everyone has received one of these, start over
         GL:debug("PackMule:roundRobinTargetForRule - starting over");
         self.RoundRobinItems[ruleId] = {};
+
         return self:roundRobinTargetForRule(Rule);
     end
 
+    -- Fetch a (random) target from the eligible target pool
+    local targetPlayer = EligiblePlayers[math.random(numberOfTargets)] or false;
+
+    -- Something else went wrong, this shouldn't be possible!
+    if (not targetPlayer) then
+        return GL:error("Something went wrong determining a target in 'roundRobinTargetForRule'. Contact support!");
+    end
+
+    self.RoundRobinItems[ruleId][targetPlayer] = 1;
     return targetPlayer;
 end
 
