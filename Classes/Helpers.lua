@@ -260,12 +260,10 @@ function GL:nameFormat(name, realm, colorize, defaultColor, class, stripRealm, s
     if (forceRealm) then
         name, realm = self:addRealm(name);
 
-    elseif (stripSameRealm) then
-        if (not self:isCrossRealm()
-            or self:iEquals(realm, GL.User.realm)
-        ) then
-            name = self:stripRealm(name);
-        end
+    elseif (stripSameRealm
+        and self:iEquals(realm, GL.User.realm)
+    ) then
+        name = self:stripRealm(name);
     end
 
     if (colorize) then
@@ -1464,7 +1462,7 @@ end
 --- @return boolean
 function GL:isCrossRealm()
     if (GL._isCrossRealm == nil) then
-        GL._isCrossRealm = not not GetAutoCompleteRealms()[2];
+        GL._isCrossRealm = GL.isRetail or not not GetAutoCompleteRealms()[2];
     end
 
     return GL._isCrossRealm;
@@ -2262,7 +2260,14 @@ end
 ---@param player string
 ---@return boolean
 function GL:unitIsConnected(player)
-    return not self:isCrossRealm() and UnitIsConnected(self:stripRealm(player)) or UnitIsConnected(self:nameFormat(player));
+    local FQN = self:addRealm(player);
+    local player, realm = self:stripRealm(FQN);
+
+    if (self:iEquals(realm, GL.User.realm)) then
+        return UnitIsConnected(player);
+    end
+
+    return UnitIsConnected(FQN);
 end
 
 --- Add the realm name to a player name
@@ -2284,11 +2289,6 @@ function GL:addRealm(name, realm, fromGroup)
     -- A realm separator was found, return the original message
     if (separator) then
         return name;
-    end
-
-    -- This is not a cross-realm server, no need to check uniqueness etc
-    if (not self:isCrossRealm()) then
-        return ("%s-%s"):format(name, realm or GL.User.realm);
     end
 
     -- Fetch the realm name from a group member if possible
@@ -2362,10 +2362,6 @@ end
 ---@param playerName string
 ---@return boolean
 function GL:nameIsUnique(playerName)
-    if (not self:isCrossRealm()) then
-        return true;
-    end
-
     playerName = GL:stripRealm(playerName);
     local nameEncountered = false;
     for _, groupMemberName in pairs(GL.User:groupMemberNames()) do
