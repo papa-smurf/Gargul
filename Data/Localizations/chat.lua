@@ -234,7 +234,10 @@ L.CHAT = {
         AWARD_RANDOM_WINNER = "Zufälliger Gewinner für %s ausgewählt (%s)", -- First %s is item, second %s is player,
     },
 
-    --[[ zhCN ]]
+    --[[ zhCN
+        These translations where provided by
+        - Takaqiao
+    ]]
     zhCN = {
         PASS = "放弃",
         FLIGHT_ATTENDANT = "我正在使用 Gargul 来分发战利品。它使分发变得更容易，所以一定要尝试一下！",
@@ -466,7 +469,10 @@ L.CHAT = {
         AWARD_RANDOM_WINNER = "Ganador aleatorio para %s seleccionados (%s)", -- First %s is item, second %s is player,
     },
 
-    --[[ frFR ]]
+    --[[ frFR
+        These translations where provided by
+        - Bhahlou
+    ]]
     frFR = {
         PASS = "Passer",
         FLIGHT_ATTENDANT = "J'utilise Gargul pour distribuer le butin. Cela rend les lancers de dés plus faciles, donc essayez-le !",
@@ -930,28 +936,31 @@ L.CHAT = {
         AWARD_RANDOM_WINNER = "Vencedor aleatório para %s selecionados (%s)", -- First %s is item, second %s is player,
     },
 
-    --[[ ruRU ]]
+    --[[ ruRU
+        These translations where provided by
+        - KartonArmadon
+    ]]
     ruRU = {
-        PASS = "Пас", -- KartonArmadon
-        FLIGHT_ATTENDANT = "Я использую Gargul! Аддон облегчает раздачу добычи, поэтому обязательно попробуйте!", -- KartonArmadon
+        PASS = "Пас",
+        FLIGHT_ATTENDANT = "Я использую Gargul! Аддон облегчает раздачу добычи, поэтому обязательно попробуйте!",
 
         --[[ VERSION CHECK ]]
-        VERSION_CHECK_MISSING = "Gargul не найден:", -- KartonArmadon
-        VERSION_CHECK_OUTDATED = "Gargul устарел:", -- KartonArmadon
-        VERSION_CHECK_OFFLINE = "Следующие игроки были оффлайн:", -- KartonArmadon
+        VERSION_CHECK_MISSING = "Gargul не найден:",
+        VERSION_CHECK_OUTDATED = "Gargul устарел:",
+        VERSION_CHECK_OFFLINE = "Следующие игроки были оффлайн:",
 
         --[[ ITEM AWARDED ]]
-        ITEM_AWARDED = "%s выиграл %s. Поздравляю!", -- KartonArmadon
-        ITEM_AWARDED_BR = "%s выиграл %s за %s баллов. Поздравляю!", -- KartonArmadon
-        ITEM_AWARDED_GDKP = "%s выиграл %s за %s. Поздравляю!", -- KartonArmadon
+        ITEM_AWARDED = "%s выиграл %s. Поздравляю!",
+        ITEM_AWARDED_BR = "%s выиграл %s за %s баллов. Поздравляю!",
+        ITEM_AWARDED_GDKP = "%s выиграл %s за %s. Поздравляю!",
 
         --[[ TRADE DETAILS ]]
         GOLD_TRADE_GIVEN = "Я отдал %s %s",
-        GOLD_TRADE_GIVEN_DELETED = "Я удалил обмен золотом, в котором я отдал %s %s", -- KartonArmadon
-        GOLD_TRADE_GIVEN_RESTORED = "Я восстановил обмен золотом, в котором я отдал %s %s", -- KartonArmadon
+        GOLD_TRADE_GIVEN_DELETED = "Я удалил обмен золотом, в котором я отдал %s %s",
+        GOLD_TRADE_GIVEN_RESTORED = "Я восстановил обмен золотом, в котором я отдал %s %s",
         GOLD_TRADE_RECEIVED = "Я получил %s от %s",
-        GOLD_TRADE_RECEIVED_DELETED = "Я удалил обмен золотом, в котором я получил %s от %s", -- KartonArmadon
-        GOLD_TRADE_RECEIVED_RESTORED = "Я восстановил обмен золотом, в котором получил %s от %s", -- KartonArmadon
+        GOLD_TRADE_RECEIVED_DELETED = "Я удалил обмен золотом, в котором я получил %s от %s",
+        GOLD_TRADE_RECEIVED_RESTORED = "Я восстановил обмен золотом, в котором получил %s от %s",
 
         --[[ TRADE TIME ]]
         TRADETIME_BROADCAST_PREFIX = "У меня остались следующие предметы для обмена",
@@ -959,7 +968,7 @@ L.CHAT = {
         --[[ BOOSTED ROLLS ]]
         BOOSTED_ROLLS_MY_BALANCE_REPLY = "Ваш результат %s: /rnd %d-%d%s.",
         BOOSTED_ROLLS_OTHER_BALANCE_REPLY = "Бросок %s игрока %s: /rnd %d-%d%s.",
-        BOOSTED_ROLLS_BALANCE_REPLY_DEFAULT_SUFFIX = "(по умолчанию)", 
+        BOOSTED_ROLLS_BALANCE_REPLY_DEFAULT_SUFFIX = "(по умолчанию)",
 
         --[[ PLUS ONES ]]
         PLUSONES_PLUS_SIGN = "+",
@@ -967,83 +976,83 @@ L.CHAT = {
         PLUSONES_OTHER_BALANCE_REPLY = "Сумма +1 игрока %s составляет %d",
 
         --[[ GDKP ]]
-        GDKP_I_OWE_YOU = "Я должен тебе %s", -- KartonArmadon
-        GDKP_YOU_OWE_ME = "Ты мне должен, %s", -- KartonArmadon
-        GDKP_POT_UPDATED = "Банк обновлен. Общая сумма %s", -- KartonArmadon
-        GDKP_POT_UPDATED_AFTER_DELETE = "Банк обновлен после удаления аукциона. Общая сумма %s.", -- KartonArmadon
-        GDKP_POT_UPDATED_AFTER_RESTORE = "Банк обновлен после восстановления аукциона. Общая сумма %s.", -- KartonArmadon
-        GDKP_REMOVED_AWARDED = "Я удалил %s игрока %s за %s", -- KartonArmadon
-        GDKP_RESTORED_AWARDED = "Я восстановил %s игрока %s за %s", -- KartonArmadon
-        GDKP_REMOVED_GOLD = "Я удалил %sg из банка", -- KartonArmadon
-        GDKP_RESTORED_GOLD = "Я восстановил %sg в банке", -- KartonArmadon
-        GDKP_POT_HOLDS = "В банке сейчас %s", -- KartonArmadon
-        GDKP_CONFIRM_TOP_BID = "Высшая ставка %s (%s)", -- KartonArmadon
-        GDKP_FINAL_CALL = "Аукион на %s завершается: осталось %sсек.!", -- KartonArmadon
-        GDKP_BID_DENIED = "Ставка отклонена, мин. ставка %s.", -- KartonArmadon
-        GDKP_START_BIDDING = "Ставка на %s. Старт %s, шаг %s!", -- KartonArmadon
-        GDKP_STOP_BIDDING = "Аукцион завершён!", -- KartonArmadon
-        GDKP_SECONDS_TO_BID = "%s сек. осталось", -- KartonArmadon
-        GDKP_POT_TOTAL = "Общий банк: %s",	
-        GDKP_BASE_CUT = "Базовая доля: %s", -- KartonArmadon
+        GDKP_I_OWE_YOU = "Я должен тебе %s",
+        GDKP_YOU_OWE_ME = "Ты мне должен, %s",
+        GDKP_POT_UPDATED = "Банк обновлен. Общая сумма %s",
+        GDKP_POT_UPDATED_AFTER_DELETE = "Банк обновлен после удаления аукциона. Общая сумма %s.",
+        GDKP_POT_UPDATED_AFTER_RESTORE = "Банк обновлен после восстановления аукциона. Общая сумма %s.",
+        GDKP_REMOVED_AWARDED = "Я удалил %s игрока %s за %s",
+        GDKP_RESTORED_AWARDED = "Я восстановил %s игрока %s за %s",
+        GDKP_REMOVED_GOLD = "Я удалил %sg из банка",
+        GDKP_RESTORED_GOLD = "Я восстановил %sg в банке",
+        GDKP_POT_HOLDS = "В банке сейчас %s",
+        GDKP_CONFIRM_TOP_BID = "Высшая ставка %s (%s)",
+        GDKP_FINAL_CALL = "Аукион на %s завершается: осталось %sсек.!",
+        GDKP_BID_DENIED = "Ставка отклонена, мин. ставка %s.",
+        GDKP_START_BIDDING = "Ставка на %s. Старт %s, шаг %s!",
+        GDKP_STOP_BIDDING = "Аукцион завершён!",
+        GDKP_SECONDS_TO_BID = "%s сек. осталось",
+        GDKP_POT_TOTAL = "Общий банк: %s",
+        GDKP_BASE_CUT = "Базовая доля: %s",
 
         --[[ MULTIAUCTION ]]
-        MULTIAUCTION_STARTED = "Я начал мультиаукцион. Если не отображается, то скачайте/обновите Gargul!", -- KartonArmadon
-        MULTIAUCTION_RESUMED = "Я возобновил предыдущий мультиаукцион. Проверьте свои ставки!", -- KartonArmadon
-        MULTIAUCTION_ITEMS_ADDED = "Я добавил %s товар(ов) на мультиаукцион на %s", -- KartonArmadon
-        MULTIAUCTION_FINISHED = "Мультиаукцион завершен. В банке теперь %s", -- KartonArmadon
+        MULTIAUCTION_STARTED = "Я начал мультиаукцион. Если не отображается, то скачайте/обновите Gargul!",
+        MULTIAUCTION_RESUMED = "Я возобновил предыдущий мультиаукцион. Проверьте свои ставки!",
+        MULTIAUCTION_ITEMS_ADDED = "Я добавил %s товар(ов) на мультиаукцион на %s",
+        MULTIAUCTION_FINISHED = "Мультиаукцион завершен. В банке теперь %s",
 
         --[[ SOFTRES ]]
-        SOFTRES_MY_RESERVES_REPLY = "Ваш софтрезерв %s", -- %s is a summary of all items or the SOFTRES_MY_RESERVED_ITEM_REPLY format (if more than 1 reserve) -- KartonArmadon
-        SOFTRES_MY_RESERVED_ITEM_REPLY = "%s (%sx)", -- First %s = item, second %s is times reserved if higher than 1 -- KartonArmadon
-        SOFTRES_NO_RESERVES_REPLY = "Похоже, вы еще ничего не резервировали, проверьте таблицу софтрезерва или спросите ответственного за добычу.", -- KartonArmadon
-        SOFTRES_HARDRESERVED_NOTICE = "%s (Этот предмет в хардрезерве!)", -- KartonArmadon
-        SOFTRES_DETAILS = "Софтрезерв: %s", -- KartonArmadon
-        SOFTRES_MISSING_RESERVES = "Отсутствуют софтрезервы от: %s", -- KartonArmadon
-        SOFTRES_DATA_IMPORTED = "Я только что импортировал софтрезервы в Gargul. Шепните мне !sr, чтобы перепроверить резервы!", -- KartonArmadon
+        SOFTRES_MY_RESERVES_REPLY = "Ваш софтрезерв %s", -- %s is a summary of all items or the SOFTRES_MY_RESERVED_ITEM_REPLY format (if more than 1 reserve)
+        SOFTRES_MY_RESERVED_ITEM_REPLY = "%s (%sx)", -- First %s = item, second %s is times reserved if higher than 1
+        SOFTRES_NO_RESERVES_REPLY = "Похоже, вы еще ничего не резервировали, проверьте таблицу софтрезерва или спросите ответственного за добычу.",
+        SOFTRES_HARDRESERVED_NOTICE = "%s (Этот предмет в хардрезерве!)",
+        SOFTRES_DETAILS = "Софтрезерв: %s",
+        SOFTRES_MISSING_RESERVES = "Отсутствуют софтрезервы от: %s",
+        SOFTRES_DATA_IMPORTED = "Я только что импортировал софтрезервы в Gargul. Шепните мне !sr, чтобы перепроверить резервы!",
 
         --[[ THATSMYBIS ]]
-        TMB_WISHLIST_DETAILS = "Список ThatsMyBis: %s", -- KartonArmadon
+        TMB_WISHLIST_DETAILS = "Список ThatsMyBis: %s",
         TMB_PRIORITY_DETAILS = "%s Приоритет: %s", -- First %s can be TMB/DFT/CPR
 
         --[[ PACKMULE ]]
-        PACKMULE_DISENCHANTER_SET = "%s был назначен дизэнчантером", -- KartonArmadon
-        PACKMULE_DISENCHANTMENT_NOTICE = "%s будет распылён %s", -- KartonArmadon
+        PACKMULE_DISENCHANTER_SET = "%s был назначен дизэнчантером",
+        PACKMULE_DISENCHANTMENT_NOTICE = "%s будет распылён %s",
 
         --[[ ROLLING ]]
-        ROLLING_START = "У вас есть %sсек., чтобы разроллить %s", -- KartonArmadon
-        ROLLING_STOP = "Остановите разролл!", -- KartonArmadon
-        ROLLING_TIME_LEFT = "%sсек. осталось", -- KartonArmadon
+        ROLLING_START = "У вас есть %sсек., чтобы разроллить %s",
+        ROLLING_STOP = "Остановите разролл!",
+        ROLLING_TIME_LEFT = "%sсек. осталось",
         ROLLING_SOFTRES_INFO = "Этот товар зарезервировал: %s",
-        ROLLING_TMB_INFO = "Следующие игроки имеют самый высокий ролл %s приоритет: %s", -- First %s can be TMB/DFT/CPR -- KartonArmadon
+        ROLLING_TMB_INFO = "Следующие игроки имеют самый высокий ролл %s приоритет: %s", -- First %s can be TMB/DFT/CPR
 
         --[[ TradeWindow / Trade ]]
-        TRADE_START_FAILED = "Не получилось передать предмет - кинь мне обмен за ${item}!",  -- KartonArmadon
-        TRADE_TO = "от кого: %s кому: %s",  -- KartonArmadon
-        TRADE_TO_PART = "кому: %s", -- KartonArmadon
-        TRADE_GAVE = "Я отдал %s", -- KartonArmadon
+        TRADE_START_FAILED = "Не получилось передать предмет - кинь мне обмен за ${item}!", 
+        TRADE_TO = "от кого: %s кому: %s", 
+        TRADE_TO_PART = "кому: %s",
+        TRADE_GAVE = "Я отдал %s",
         TRADE_GAVE_GOLD = "Я отдал %s %s",
-        TRADE_GAVE_MULTIPLE_OF_ITEM = "Я отдал %sx%s", -- I gave [item]x3 -- KartonArmadon
+        TRADE_GAVE_MULTIPLE_OF_ITEM = "Я отдал %sx%s", -- I gave [item]x3
         TRADE_GAVE_ENCHANTMENT = "Я зачаровал %s за %s для %s",
-        TRADE_GAVE_ENCHANTMENT_AND_GOLD = "Я зачаровал %s за %s для %s и передал %s", -- KartonArmadon
+        TRADE_GAVE_ENCHANTMENT_AND_GOLD = "Я зачаровал %s за %s для %s и передал %s",
         TRADE_GAVE_ENCHANTMENT_FOR_GOLD = "Я зачаровал %s за %s для %s и получил %s",
-        TRADE_GAVE_ENCHANTMENT_AFTER_ITEMS_PART = "%s и зачаровал его %s за %s", -- KartonArmadon
-        TRADE_GAVE_ENCHANTMENT_AFTER_ITEMS = "Передал %s %s и зачаровал его %s за %s", -- KartonArmadon
-        TRADE_GOT_ENCHANTMENT = "%s зачаровал мой %s за %s", -- KartonArmadon
-        TRADE_GOT_ENCHANTMENT_AND_GOLD = "%s зачаровал мой %s за %s и передал мне %s", -- KartonArmadon
-        TRADE_GOT_ENCHANTMENT_FOR_GOLD = "%s зачаровал мой %s за %s и %s", -- KartonArmadon
-        TRADE_GOT_ENCHANTMENT_AND_GAVE_ENCHANTMENT = "%s зачаровал мой %s за %s, а я зачаровал его %s за %s", -- KartonArmadon
-        TRADE_GOT_ENCHANTMENT_AND_GAVE_ENCHANTMENT_AND_GAVE_GOLD = "%s зачаровал мой %s за %s, а я зачаровал его %s за %s и дал ему %s", -- KartonArmadon
-        TRADE_GOT_ENCHANTMENT_AND_GOLD_AND_GAVE_ENCHANTMENT = "%s зачаровал мой %s за %s и дал мне %s. Я зачаровал его %s за %s",  -- KartonArmadon
-        TRADE_FROM = "%s от %s", -- KartonArmadon
+        TRADE_GAVE_ENCHANTMENT_AFTER_ITEMS_PART = "%s и зачаровал его %s за %s",
+        TRADE_GAVE_ENCHANTMENT_AFTER_ITEMS = "Передал %s %s и зачаровал его %s за %s",
+        TRADE_GOT_ENCHANTMENT = "%s зачаровал мой %s за %s",
+        TRADE_GOT_ENCHANTMENT_AND_GOLD = "%s зачаровал мой %s за %s и передал мне %s",
+        TRADE_GOT_ENCHANTMENT_FOR_GOLD = "%s зачаровал мой %s за %s и %s",
+        TRADE_GOT_ENCHANTMENT_AND_GAVE_ENCHANTMENT = "%s зачаровал мой %s за %s, а я зачаровал его %s за %s",
+        TRADE_GOT_ENCHANTMENT_AND_GAVE_ENCHANTMENT_AND_GAVE_GOLD = "%s зачаровал мой %s за %s, а я зачаровал его %s за %s и дал ему %s",
+        TRADE_GOT_ENCHANTMENT_AND_GOLD_AND_GAVE_ENCHANTMENT = "%s зачаровал мой %s за %s и дал мне %s. Я зачаровал его %s за %s", 
+        TRADE_FROM = "%s от %s",
         TRADE_FROM_PART = "от %s",
         TRADE_RECEIVED = "Я получил %s",
         TRADE_RECEIVED_GOLD = "Я получил %s от %s",
         TRADE_RECEIVED_MULTIPLE_OF_ITEM = "Я получил %sx%s", -- I gave [item]x3
-        TRADE_RECEIVED_ENCHANTMENT_AFTER_ITEMS_PART = "от %s и получил мой %s зачарованный за %s", -- KartonArmadon
-        TRADE_RECEIVED_ENCHANTMENT_AFTER_ITEMS = "%s от %s и получил мой %s зачарованный за %s", -- KartonArmadon
+        TRADE_RECEIVED_ENCHANTMENT_AFTER_ITEMS_PART = "от %s и получил мой %s зачарованный за %s",
+        TRADE_RECEIVED_ENCHANTMENT_AFTER_ITEMS = "%s от %s и получил мой %s зачарованный за %s",
 
         --[[ AWARD ]]
-        AWARD_RANDOM_WINNER = "Случайный победитель на %s выбран (%s)", -- First %s is item, second %s is player, -- KartonArmadon
+        AWARD_RANDOM_WINNER = "Случайный победитель на %s выбран (%s)", -- First %s is item, second %s is player,
     },
 
     --[[ zhTW ]]
