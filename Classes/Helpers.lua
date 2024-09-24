@@ -1461,6 +1461,13 @@ end
 ---
 --- @return boolean
 function GL:isCrossRealm()
+    -- With almost everything being connected nowadays we're doing a trial
+    -- run with always assuming that we're on a connected realm
+    ---@TODO: REMOVE IN >= 7.6.1
+    if (true) then
+        return true;
+    end
+
     if (GL._isCrossRealm == nil) then
         GL._isCrossRealm = GL.isRetail or not not GetAutoCompleteRealms()[2];
     end
