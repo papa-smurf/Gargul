@@ -822,12 +822,13 @@ function RollOff:refreshRollsTable()
     local sortByTMBPrio = GL.Settings:get("RollTracking.sortByTMBPrio");
 
     for _, Roll in pairs(Rolls) do
-        -- Determine how many times this player rolled during the current rolloff
-        NumberOfRollsPerPlayer[Roll.player] = NumberOfRollsPerPlayer[Roll.player] or 0;
-        NumberOfRollsPerPlayer[Roll.player] = NumberOfRollsPerPlayer[Roll.player] + 1;
+        local playerName = GL:disambiguateName(Roll.player);
 
-        local playerName = Roll.player;
-        local numberOfTimesRolledByPlayer = NumberOfRollsPerPlayer[Roll.player];
+        -- Determine how many times this player rolled during the current rolloff
+        NumberOfRollsPerPlayer[playerName] = NumberOfRollsPerPlayer[playerName] or 0;
+        NumberOfRollsPerPlayer[playerName] = NumberOfRollsPerPlayer[playerName] + 1;
+
+        local numberOfTimesRolledByPlayer = NumberOfRollsPerPlayer[playerName];
         local rollPriority = Roll.priority or 1;
 
         -- This is used to free up priority slots for soft-reserved/wishlisted etc. items
@@ -935,7 +936,7 @@ function RollOff:refreshRollsTable()
         local Row = {
             cols = {
                 {
-                    value = GL:disambiguateName(rollerName),
+                    value = rollerName,
                     color = GL:classRGBAColor(class),
                 },
                 {
