@@ -1,6 +1,3 @@
--- I marked every line I edit with *-- KartonArmadon* sign. This is for easier work in the future
--- Для облегчения работы в будущем, я отмечаю каждую строку, которую отредактировал, подписью *-- KartonArmadon*
-
 --[[
     You can test this locally by removing line 5:
     if (GetLocale() ~= "deDE") then return; end
@@ -11,14 +8,14 @@ local L = Gargul_L or {};
 L.ABOUT = "О";
 L.ALL_SETTINGS = "Все настройки";
 L.ANNOUNCE = "Объявить";
-L.ANTISNIPE = "Анти-cнайпер"; -- KartonArmadon
+L.ANTISNIPE = "Анти-cнайпер"; 
 L.ANTISNIPE_EXPLANATION = [[
 Значение Анти-cнайпера, равное 10, означает, что любая ставка, которая поступает менее,
 чем за 10 секунд до конца таймера сбросит таймер обратно на 10 секунд.
 
 Вы можете оставить это поле пустым или установить значение 0, чтобы полностью отключить Анти-cнайпер.
 Значения Анти-cнайпера меньше 5 не поддерживаются.
-]]; -- KartonArmadon
+]]; 
 L.ARE_YOU_SURE = "Вы уверены?";
 L.ASSIGN_GARGUL_INFO = [[
 Не забудьте вместо этого использовать Гаргул.
@@ -33,7 +30,7 @@ L.AUTO = "Авто";
 L.AUTO_AWARD = "Авто награда";
 L.AUTO_TRADE_OPTIONS = "Авто обмен";
 L.AVAILABLE_PLACEHOLDER_VALUES = "Доступные значения:";
-L.AWARD = "   Отдать   "; -- KartonArmadon
+L.AWARD = "Отдать"; 
 L.AWARDED_TO = "Награждены";
 L.AWARDED_TOOLTIP_BOOSTED_ROLL_COST = "БР: %s";
 L.AWARDED_TOOLTIP_GDKP_COST = "Цена: %s";
@@ -104,7 +101,7 @@ L.BOOSTED_ROLLS_UPDATE_CONFIRM = [[
 
 Ваше последнее обновление было |c00A79EFF%s, их — |c00A79EFF%s.]];
 L.BOOSTED_ROLLS_WHISPER_PREFIXES = "!бонус|!рб|!бр";
-L.BROADCAST = "Транслировать";
+L.BROADCAST = "Объявить"; 
 L.BROADCASTING_NOTIFICATION = "Трансляция...";
 L.BROADCAST_DELAYED_BY_COMBAT = "Вы сейчас в бою, трансляция задерживается.";
 L.BROADCAST_FINISHED = "Трансляция завершена!";
@@ -131,15 +128,15 @@ L.CHANNEL_OFFICER = "Офицер";
 L.CHANNEL_RAID_WARNING = "Предупреждение о рейде";
 L.CHANNEL_WHISPER = "Шепот";
 L.CLASSICPRIO_ABBR = "CPR";
-L.CLEAR = " Очистить "; -- As in clearing a window or data -- KartonArmadon
-L.CLOSE = "Закрыть"; -- KartonArmadon
+L.CLEAR = "Очистить"; -- As in clearing a window or data 
+L.CLOSE = "Закрыть"; 
 L.CLOSE_ON_AWARD = "Близко к награде";
 L.CLOSE_ON_START = "Закрыть при запуске";
 L.COMMUNICATION = "Коммуникация";
 L.COMM_PROGRESS = "Отправлено %s из %s байт";
 L.COPPER_INDICATOR = "с";
-L.CUT = "Доля"; -- KartonArmadon
-L.CUTS = "ДОЛИ"; -- KartonArmadon
+L.CUT = "Доля"; 
+L.CUTS = "ДОЛИ"; 
 L.CUT_MAILBOX_CLOSED = "Невозможно отправить письмо, когда почтовый ящик закрыт";
 L.CUT_MAILS_FAILED = "Обнаружены многочисленные почтовые ошибки, что приводит к прерыванию рассылки.";
 L.CUT_MAIL_BODY = "Создано Gargul: мастер-инструмент добычи с поддержкой TMB, SoftRes, GDKP и автоматического сбора информации!";
@@ -157,12 +154,12 @@ L.DAY_MONTH_HOURS_MINUTES = "%d-%m %H:%M";
 L.DELETE = "УДАЛ";
 L.DETAILS = "Подробности";
 L.DFT = "DFT";
-L.DISABLE = "ВЫКЛ"; -- KartonArmadon
+L.DISABLE = "ВЫКЛ"; 
 L.DISCORD_URL = "https://discord.gg/D3mDhYPVzf";
-L.DISENCHANT = " Распылить ";
-L.EDIT = "ИЗМ";
+L.DISENCHANT = "Распылить"; 
+L.EDIT = "Изменить";
 L.ENABLE = "ВКЛ";
-L.EXPORT = "ЭКСП"; -- KartonArmadon
+L.EXPORT = "ЭКСП"; 
 L.EXPORT_DELETE_ALL_CONFIRM = "Вы уверены, что хотите удалить всю таблицу истории вознаграждений? Это удалит ВСЕ данные о добыче и не может быть отменено!";
 L.EXPORT_DELETE_DATE_CONFIRM = "Вы уверены, что хотите удалить все данные для %s? Это не может быть отменено!";
 L.EXPORT_READ_ONLY_NOTICE = [[
@@ -182,7 +179,7 @@ L.GDKP_ADD_GOLD_AMOUNT_LABEL = "Золото (- для удаления золо
 L.GDKP_ADD_GOLD_INVALID_PAYER_WARNING = "Кто за это платит?";
 L.GDKP_ADD_GOLD_INVALID_WARNING = "Золото должно быть ниже/выше 0";
 L.GDKP_ADD_GOLD_PAID_BY_LABEL = "Оплачено";
-L.GDKP_ADD_GOLD_TITLE = "Изменить золото в %s";
+L.GDKP_ADD_GOLD_TITLE = "Изменить банк для сессии %s"; 
 L.GDKP_ADD_TRADE_GIVEN_AND_RECEIVED_WARNING = "Вы не можете одновременно отдавать и получать золото от одного и того же игрока.";
 L.GDKP_ALL_CUTS_MAILED = "Все вырезки были отправлены по почте!";
 L.GDKP_AUCTIONEER_SETTINGS_DISABLE_FOR_DISENCHANTED = "Отключить для распыления";
@@ -196,10 +193,10 @@ L.GDKP_AUCTION_DETAILS_GOLD_ADDED = [[
 |c00%s%sg добавлен в банк пользователем %s
 Примечания]];
 L.GDKP_AUCTION_DETAILS_GOLD_PAID_BY = [[
-%s заплатил |c00%s%sg за
-%s]];
+%s |cFFFFFFFFзаплатил |c00%s%sg |cFFFFFFFFза
+%s]]; 
 L.GDKP_AUCTION_DETAILS_WON_BY = "Выиграл";
-L.GDKP_AUCTION_PAID_AMOUNT = "Оплата вручную (см. подсказку)"; -- KartonArmadon
+L.GDKP_AUCTION_PAID_AMOUNT = "Оплата вручную (см. подсказку)"; 
 L.GDKP_AUCTION_PAID_AMOUNT_INFO = [[
 Gargul автоматически отслеживает переданное золото. Если игроки сразу
 оплачивают то, что они купили, то вам никогда не понадобится это поле.
@@ -209,7 +206,7 @@ Gargul автоматически отслеживает переданное з
 
 Внимание: устанавливайте здесь значение только в том случае, если игрок обещает 
 заплатить вне рейда или передаёт золото через другого персонажа, почту и т.д.!
-]]; -- KartonArmadon
+]]; 
 L.GDKP_AWARD_DIALOG_LABEL = "Цена GDKP:";
 L.GDKP_AWARD_ITEM_CONFIRMATION = "Наградить %s %s за %s?";
 L.GDKP_BIDDER_AUTO_BID = "Автоматическая ставка";
@@ -221,58 +218,58 @@ L.GDKP_BIDDER_NEW_BID_LABEL = "Новая ставка";
 L.GDKP_BIDDER_STOP_AUTO_BID = "Остановить автоматическую ставку";
 L.GDKP_BIDDER_THEYRE_TOP_BIDDER = "Максимальная ставка: %s от %s";
 L.GDKP_BIDDER_YOURE_TOP_BIDDER = "Максимальная ставка: %s от вас";
-L.GDKP_CREATE = "Создать сессию GDKP."; -- KartonArmadon
-L.GDKP_CREATE_MANAGEMENT_CUT = "Доля РЛа%"; -- KartonArmadon
+L.GDKP_CREATE = "Создать сессию GDKP."; 
+L.GDKP_CREATE_MANAGEMENT_CUT = "Доля РЛа%"; 
 L.GDKP_CREATE_SESSION_INVALID_CUT = "Management Cut должно быть пустым или иметь значение от 0 до 99 (без знака %!)";
-L.GDKP_CREATE_SESSION_INVALID_TYPE = "Выберите тип сессии!"; -- KartonArmadon
-L.GDKP_CREATE_SESSION_SWITCH = "Переключиться на эту сессию"; -- KartonArmadon
-L.GDKP_CREATE_SESSION_TYPE_INFO = [[
+L.GDKP_CREATE_SESSION_INVALID_TYPE = "Выберите тип сессии!"; 
+L.GDKP_CREATE_SESSION_SWITCH = "Сделать активной"; 
+L.GDKP_CREATE_SESSION_TYPE_INFO = [[|c00E7BB00Мультиаукцион позволяет вам делать ставки 
+на несколько предметов одновременно, ускоряя продажу!
 
-|c00A79EFFМульти-аукцион позволяет вам делать ставки на несколько предметов одновременно, ускоряя тем самым процесс!
-Следуйте инструкциям после создания этого сеанса, чтобы начать работу.
+Следуйте инструкциям в центральной части этого окна 
+после создания сеанса, чтобы начать работу.
 
-С помощью |c00A79EFFSingle-Auction вы выбираете продажу отдельных предметов с аукциона или использование очереди.
+С помощью |c00A79EFFОдиночного аукциона|c00E7BB00 вы будете
+продавать предметы по-отдельности или использовать очередь.
 
-Выбор |c00A79EFFMulti-Auction предотвращает добавление выброшенных предметов в очередь.
-Вы можете смешивать |c00A79EFFMulti-Auction с |c00A79EFFSingle-Auction и очередью, но мы настоятельно не рекомендуем этого делать.
+Выбор |c00A79EFFМультиаукциона|c00E7BB00 отключает функцию
+добавления выпавших предметов в очередь.
 
-]];
-L.GDKP_CREATE_SESSION_TYPE_LABEL = "Тип аукциона (|c00A79EFFi для получения дополнительной информации)";
+Вы можете комбинировать |c00A79EFFМультиаукцион |c00E7BB00с |c00A79EFFОдиночным аукционом|c00E7BB00 
+и очередью, но мы настоятельно рекомендуем этого не делать!]]; 
+L.GDKP_CREATE_SESSION_TYPE_LABEL = "Тип аукциона"; 
 L.GDKP_CREATE_SESSION_TYPE_MULTI = "Мультиаукцион";
 L.GDKP_CREATE_SESSION_TYPE_SINGLE = "Одиночный аукцион";
 L.GDKP_CREATE_SUCCESSFUL = "Сессия создана. Мы советуем вам /reload, чтобы он сохранялся правильно на случай сбоя игры!";
-L.GDKP_CUTS_ADD_RAIDER = "Добавить рейдера";
-L.GDKP_CUTS_ADJUST_G = "отрегулировать [г]";
-L.GDKP_CUTS_ADJUST_P = "регулировать [%]";
-L.GDKP_CUTS_ANNOUNCE_TOOLTIP = "Анонсируйте сокращение базы в групповом чате";
-L.GDKP_CUTS_CLEAR_CONFIRMATION = "Вы уверены, что хотите сбросить всех игроков и расчеты? Внимание: все игроки, вышедшие из рейда, будут удалены из списка!";
-L.GDKP_CUTS_DELETE_RAIDER = "Удалить Рейдера";
-L.GDKP_CUTS_EDIT_RAIDER = "Править Рейдер";
-L.GDKP_CUTS_LOCK_TOOLTIP = "Блокируй и плати";
-L.GDKP_CUTS_MANAGE_TRADES_TOOLTIP = "Управляйте сделками с золотом";
+L.GDKP_CUTS_ADD_RAIDER = "Добавить"; 
+L.GDKP_CUTS_ADJUST_G = "Изменить [золото]"; 
+L.GDKP_CUTS_ADJUST_P = "Изменить [процент]"; 
+L.GDKP_CUTS_ANNOUNCE_TOOLTIP = "Анонсировать базовую долю в групповой чат"; 
+L.GDKP_CUTS_CLEAR_CONFIRMATION = "Вы уверены, что хотите сбросить всех игроков и расчёты? Внимание: все игроки, вышедшие из рейда, будут удалены из списка!";
+L.GDKP_CUTS_DELETE_RAIDER = "Удалить"; 
+L.GDKP_CUTS_EDIT_RAIDER = "Изменить"; 
+L.GDKP_CUTS_LOCK_TOOLTIP = "Блокировать"; 
+L.GDKP_CUTS_MANAGE_TRADES_TOOLTIP = "Управлять сделками";
 L.GDKP_CUTS_MUTATORS_EXPLANATION = [[
-
 С помощью мутаторов вы можете давать игрокам больше или меньше золота.
 Пример: прибавка танкам 2% — вот для чего это нужно!
 
 Примечание. Редактирование или удаление мутаторов изменяет их только для этой сессии.
-
-]]; -- KartonArmadonы
+]]; 
 L.GDKP_CUTS_NOT_IN_RAID_HEADER = "Не в рейде";
-L.GDKP_CUTS_POT_EXPLANATION = [[
+L.GDKP_CUTS_POT_EXPLANATION = [[|c00E7BB00Общая выплата может немного отличаться от банка из-за округления чисел!
+Игроки, которые в данный момент находятся в рейде, не могут быть отредактированы или удалены!
 
-The total payout can differ slightly from the pot due to rounding differences!
-Players currently in the raid can not be edited or removed!
-
-Color explanation:
-|c00F7922E(2000g) Means you owe this person 2000g
-|c00BE3333(3000g) Means this person owes you 3000g
-|c0092FF00(0) Means that you're square
-
-Adjuster explanation:
-With adjust [g] you can add/deduct gold to a player (use -50 to deduct 50 gold from a player's cut)
-With adjust [%] you can add/deduct a percentage to a player (use -50 to give players a half cut)
-]];
+Цвета:
+|c00F7922E(2000г) вы должны этому игроку 2000g;
+|c00BE3333(3000г) этот игрок должен вам 3000g;
+|c0092FF00(0) означает, что вы в расчёте!
+|c00E7BB00
+Изменение:
+С помощью изменения [золото] вы можете добавить/вычесть золото игроку
+(используйте -322, чтобы вычесть 322 золотых из доли игрока);
+С помощью изменения [процент] вы можете добавить/вычесть процент игроку
+(используйте -50, чтобы снять игроку половину доли).]]; 
 L.GDKP_CUTS_SUMMARY = "%s рейдеров | %s С разрезом | Общая выплата: %sg";
 L.GDKP_CUT_IMPORT_EMPTY = "Импортировать нечего. Проверьте CSV-файл.";
 L.GDKP_CUT_IMPORT_MISSING_GOLD = "Не хватает золота игроку %s";
@@ -282,13 +279,13 @@ L.GDKP_DELETE_BID_INFO = "Удалить ставку. Аукцион долже
 L.GDKP_DISTRIBUTE_ADDRAIDER = "Добавить рейдера в эту сессию";
 L.GDKP_EXPORT_AUCTIONS_CUSTOM = "Пользовательский (создайте свой собственный формат)";
 L.GDKP_EXPORT_AUCTIONS_JSON = "Подробно (JSON)";
-L.GDKP_EXPORT_AUCTIONS_SHARE = "Поделиться (может быть импортирован другими игроками)"; -- KartonArmadon
+L.GDKP_EXPORT_AUCTIONS_SHARE = "Поделиться (может быть импортирован другими игроками)"; 
 L.GDKP_EXPORT_CUSTOM_FORMAT = "Ваш индивидуальный формат";
 L.GDKP_EXPORT_CUSTOM_HEADER = "Ваш индивидуальный заголовок";
 L.GDKP_EXPORT_CUTS_CUSTOM_FORMAT = "Пользовательский (создайте свой собственный формат)";
 L.GDKP_EXPORT_CUTS_DEFAULT_FORMAT = "@ИГРОК,@CUT";
-L.GDKP_EXPORT_CUTS_DEFAULT_HEADER = "Игрок,Вырезать";
-L.GDKP_EXPORT_CUTS_FORMAT_END_INFO = "дата/время блокировки сессии"; -- KartonArmadon
+L.GDKP_EXPORT_CUTS_DEFAULT_HEADER = "Игрок,Доля"; 
+L.GDKP_EXPORT_CUTS_FORMAT_END_INFO = "дата/время блокировки сессии"; 
 L.GDKP_EXPORT_CUTS_FORMAT_GIVEN_INFO = "общее количество золота, полученного игроком";
 L.GDKP_EXPORT_CUTS_FORMAT_MAILED_INFO = "золото отправлено игроку";
 L.GDKP_EXPORT_CUTS_FORMAT_RECEIVED_INFO = "общее количество золота, полученного от игрока";
@@ -298,7 +295,7 @@ L.GDKP_EXPORT_DEFAULT_FORMAT = "@ITEM,@WINNER,@GOLD,@WOWHEAD";
 L.GDKP_EXPORT_DEFAULT_HEADER = "Предмет, Игрок, Золото, Wowheadlink";
 L.GDKP_EXPORT_FORMAT_START = "Дата/время получения первого предмета";
 L.GDKP_EXPORT_FORMAT_TITLE = "Название сессии GDKP";
-L.GDKP_EXPORT_INCLUDE_DISENCHANTED = "Включить разочарованные предметы";
+L.GDKP_EXPORT_INCLUDE_DISENCHANTED = "Включить распылённые предметы"; 
 L.GDKP_EXPORT_POT_CHANGED = "Горшок изменен";
 L.GDKP_GOLD_TRADES = "Золотые сделки";
 L.GDKP_HIDE_UPCOMING_CONFIRMATION = "Вы уверены? Вы не сможете видеть предстоящие товары или делать ставки на них!";
@@ -313,19 +310,19 @@ L.GDKP_IMPORT_CONSEQUENCES_CROSS_REALM = [[
 
 Продолжить импорт?
 ]];
-L.GDKP_IMPORT_CONSEQUENCES_INFO = "Это отменит любые изменения, внесенные вами в вырезанное окно, вы уверены?";
+L.GDKP_IMPORT_CONSEQUENCES_INFO = "Это действие отменит любые изменения, внесенные вами в окно распределения доли. Вы уверены? "; 
 L.GDKP_IMPORT_CUTS_INFO = [[
-Вы можете импортировать вырезы игроков из собственных расчетов, например, из таблицы Google. софтрес, GDKP и т.д.
+Вы можете импортировать доли игроков из собственных расчётов, например Google Таблицы, softres GDKP и т.д.
 
-Формат следующий (|c00BE3333INCLUDE THE HEADER!!):
+Формат следующий
+|c00BE3333ВКЛЮЧАЯ ЗАГОЛОВОК:
 
-|c00BE3333Плеер,золотой|c00967FD2
+|c00BE3333Player,Gold|c00967FD2
 Игрок1,4000
 Игрок2,4125
 Игрок3,3998
 
-
-]];
+]]; 
 L.GDKP_IMPORT_PRICES_ABOUT = [[
 Импортируйте минимальные цены и приращения GDKP.
 
@@ -335,10 +332,10 @@ L.GDKP_IMPORT_PRICES_ABOUT = [[
 186084000500
 ]];
 L.GDKP_IMPORT_PRICES_CONFIRM = "Удалить существующие настройки цен? Нажмите «Да», чтобы удалить все данные о ценах, или «Нет», чтобы просто заменить существующие данными, которые вы предоставили здесь.";
-L.GDKP_IMPORT_SESSION = "Импортировать сессию GDKP"; -- KartonArmadon
-L.GDKP_IMPORT_SESSION_ABOUT = "Здесь вы можете импортировать (и продолжить) сессию GDKP, которую экспортировал другой игрок в формате «Поделиться (может быть импортирован другими игроками)»."; -- KartonArmadon
-L.GDKP_IMPORT_SESSION_CREATE_CONFIRM = "Вы собираетесь импортировать сессию GDKP, созданную %s, вы уверены?"; -- KartonArmadon
-L.GDKP_IMPORT_SESSION_UPDATE_CONFIRM = "Кажется, эта сессия GDKP, созданная %s, уже существует. Вы хотите его переопределить?"; -- KartonArmadon
+L.GDKP_IMPORT_SESSION = "Импортировать сессию GDKP"; 
+L.GDKP_IMPORT_SESSION_ABOUT = "Здесь вы можете импортировать (и продолжить) сессию GDKP, которую экспортировал другой игрок в формате «Поделиться (может быть импортирован другими игроками)»."; 
+L.GDKP_IMPORT_SESSION_CREATE_CONFIRM = "Вы собираетесь импортировать сессию GDKP, созданную %s, вы уверены?"; 
+L.GDKP_IMPORT_SESSION_UPDATE_CONFIRM = "Кажется, эта сессия GDKP, созданная %s, уже существует. Вы хотите его переопределить?"; 
 L.GDKP_INVALID_DATA_FOR_EXTENSION = "Для расширения GDKP предоставлены неверные данные!";
 L.GDKP_INVALID_DATA_FOR_RESHEDULE = "Для переноса графика GDKP предоставлены неверные данные!";
 L.GDKP_INVALID_DATA_FOR_SHORTENING = "Для сокращения GDKP предоставлены неверные данные!";
@@ -354,14 +351,14 @@ L.GDKP_ITEM_SALE_HISTORY_TOOLTIP = [[
 Приращение: %s
 
 ]];
-L.GDKP_LEDGER_LEGEND_BALANCE = "Баланс: |c0092FF000? Всё сошлось!  |cFFFFFFFF||  |c00BE3333X? вы должны %s Xг  |cFFFFFFFF|  |c00F7922EY? %s должен вам Yг"; -- KartonArmadon
-L.GDKP_LEDGER_LEGEND_MAILED_FROM = "Золото по почте от <- %s"; -- KartonArmadon
-L.GDKP_LEDGER_LEGEND_PAID_TO = "Золота передал -> %s"; -- KartonArmadon
-L.GDKP_LEDGER_LEGEND_RECEIVED_FROM = "Золота получил от <- %s"; -- KartonArmadon
+L.GDKP_LEDGER_LEGEND_BALANCE = "Баланс: |c0092FF000? Вы в расчёте!  |cFFFFFFFF||  |c00BE3333X? вы должны %s Xг  |cFFFFFFFF|  |c00F7922EY? %s должен вам Yг"; 
+L.GDKP_LEDGER_LEGEND_MAILED_FROM = "Золото по почте от < %s"; 
+L.GDKP_LEDGER_LEGEND_PAID_TO = "Золота передал > %s"; 
+L.GDKP_LEDGER_LEGEND_RECEIVED_FROM = "Золота получил от < %s"; 
 L.GDKP_LEDGER_MUTATION = "Золото %s от"; -- %s = removed or added
-L.GDKP_LEDGER_POT = "Общий банк: %sg | Доля РЛа: %sg (%s%%) | Банк: %sg"; -- KartonArmadon
-L.GDKP_LEDGER_SESSION_BY = "|c00967FD2Сессия: |cFFFFFFFF%s  |  |c00967FD2Автор: %s%s  |cFFFFFFFF|  |c00967FD2Дата: |cFFFFFFFF%s"; -- KartonArmadon
-L.GDKP_LOCKED_SESSION = "Сессия GDKP недоступна или заблокирована."; -- KartonArmadon
+L.GDKP_LEDGER_POT = "Общий банк: %sg | Доля РЛа: %sg (%s%%) | Банк: %sg"; 
+L.GDKP_LEDGER_SESSION_BY = "|c00967FD2Сессия: |cFFFFFFFF%s  |  |c00967FD2Автор: %s%s  |cFFFFFFFF|  |c00967FD2Дата: |cFFFFFFFF%s"; 
+L.GDKP_LOCKED_SESSION = "Сессия GDKP недоступна или заблокирована."; 
 L.GDKP_MAIL_ALL = "Почта всем";
 L.GDKP_MANUAL_ACTION_ON_LEGENDARY = "Ставок на предмет Legendary+ не обнаружено, продолжите вручную!";
 L.GDKP_MISSING_CONTENT_FOR_START = "Отсутствует контент на аукционе:начать";
@@ -377,8 +374,8 @@ L.GDKP_MULTIAUCTION_ABOUT = [[
 
 ]];
 L.GDKP_MULTIAUCTION_AUCTIONEER_ACTIVE_SESSION_WARNING = "Вам необходимо иметь активную (разблокированную) сессию GDKP!";
-L.GDKP_MULTIAUCTION_AUCTIONEER_ADD_ITEM = "Пока это окно открыто: %s, чтобы добавить предметы в список или нажмите «Заполнить из инвентаря» ниже."; -- %s holds the add item hotkey (default ALT_CLICK) -- KartonArmadon
-L.GDKP_MULTIAUCTION_AUCTIONEER_ANTI_SNIPE_LABEL = "Анти-снайпер"; -- KartonArmadon
+L.GDKP_MULTIAUCTION_AUCTIONEER_ADD_ITEM = "Пока это окно открыто: %s, чтобы добавить предметы в список или нажмите «Заполнить из инвентаря» ниже."; -- %s holds the add item hotkey (default ALT_CLICK) 
+L.GDKP_MULTIAUCTION_AUCTIONEER_ANTI_SNIPE_LABEL = "Анти-снайпер"; 
 L.GDKP_MULTIAUCTION_AUCTIONEER_ANTI_SNIPE_WARNING = "Значение анти-снайпа должно быть 0 (пусто) или >=5.";
 L.GDKP_MULTIAUCTION_AUCTIONEER_CANCEL_TOOLTIP = "Вернитесь к выбору элементов";
 L.GDKP_MULTIAUCTION_AUCTIONEER_CLEAR_TOOLTIP = "Удалить все элементы из списка";
@@ -391,16 +388,16 @@ L.GDKP_MULTIAUCTION_AUCTIONEER_INFO = [[
 Всякий раз, когда вы очищаете и снова открываете это окно, последние настройки заполнения будут использоваться автоматически для добавления предметов.
 
 Чтобы добавить предметы вручную используйте |c00A79EFF%s
-]]; -- KartonArmadon
-L.GDKP_MULTIAUCTION_AUCTIONEER_NEXT_VERSION_CHECK_TOOLTIP = "Следующий шаг: проверка версии Gargul у других участников рейда на совместимость"; -- KartonArmadon
+]]; 
+L.GDKP_MULTIAUCTION_AUCTIONEER_NEXT_VERSION_CHECK_TOOLTIP = "Следующий шаг: проверка версии Gargul у других участников рейда на совместимость"; 
 L.GDKP_MULTIAUCTION_AUCTIONEER_NO_GARGUL_WARNING = "Не все используют Гаргул. Вы уверены, что хотите начать аукцион?";
 L.GDKP_MULTIAUCTION_AUCTIONEER_NO_ITEMS_WARNING = "Выберите хотя бы один предмет для своего аукциона";
-L.GDKP_MULTIAUCTION_AUCTIONEER_OUTDATED = "Ваш Gargul устарел. Мы рекомендуем обновить его перед началом сессии, чтобы предотвратить ошибки!"; -- KartonArmadon
+L.GDKP_MULTIAUCTION_AUCTIONEER_OUTDATED = "Ваш Gargul устарел. Мы рекомендуем обновить его перед началом сессии, чтобы предотвратить ошибки!"; 
 L.GDKP_MULTIAUCTION_AUCTIONEER_PLAYER_OUTDATED_WARNING = "Не все в курсе. Если у вас возникли проблемы, попросите своих рейдеров обновиться!";
 L.GDKP_MULTIAUCTION_AUCTIONEER_RUNNING_SESSION_WARNING = "Существует активный мультиаукцион, предметы, которые вы сюда добавляете, будут добавлены в существующую сессию. Будьте осторожны с дублирующими товарами!";
 L.GDKP_MULTIAUCTION_AUCTIONEER_SEARCH_LABEL = "Поиск по имени или iLVL";
 L.GDKP_MULTIAUCTION_AUCTIONEER_SEARCH_TOOLTIP = "Поддерживает названия предметов и их iLVL, например. «252», «<252» и т. д.";
-L.GDKP_MULTIAUCTION_AUCTIONEER_SESSION_DETAILS = "Активная сессия GDKP: |c00967FD2%s | Автор: %s%s | На |c00967FD2%s"; -- KartonArmadon
+L.GDKP_MULTIAUCTION_AUCTIONEER_SESSION_DETAILS = "Активная сессия GDKP: |c00967FD2%s | Автор: %s%s | На |c00967FD2%s"; 
 L.GDKP_MULTIAUCTION_AUCTIONEER_TIME_LABEL = "Время аукциона в сек.";
 L.GDKP_MULTIAUCTION_AUCTIONEER_TIME_WARNING = "Время аукциона в секундах должно быть >= 10.";
 L.GDKP_MULTIAUCTION_CLAIM_RUNNING_SESSION = "Вы ушли во время сессии торгов GDKP. Чтобы возобновить его, вам необходимо указать новое время ставки (в секундах) для любых непроданных товаров.";
@@ -494,22 +491,23 @@ L.GDKP_MULTIAUCTION_ITEM_SOLD = "%s купил %s за %sg";
 L.GDKP_MULTIAUCTION_LM_OUTDATED = "Мастер добычи (%s) устарел, это может привести к провалу ставок!";
 L.GDKP_MULTIAUCTION_OUTBID = "Ваша ставка была перебита!";
 L.GDKP_MUTATORS = "Мутаторы";
-L.GDKP_MUTATOR_ADD = "Добавить мутатор";
-L.GDKP_MUTATOR_APPLY_LABEL = "Автоматически применять к";
-L.GDKP_MUTATOR_CREATE_NEW = "Создайте новый мутатор GDKP.";
-L.GDKP_MUTATOR_DELETE_BYPASS = "Удалить. Удерживайте Shift, чтобы обойти подтверждение";
+L.GDKP_MUTATOR_ADD = "Добавить"; 
+L.GDKP_MUTATOR_APPLY_LABEL = "Автоматически применять к"; 
+L.GDKP_MUTATOR_CREATE_NEW = "Добавить новый GDKP мутатор"; 
+L.GDKP_MUTATOR_DELETE_BYPASS = [[Удалить мутатор.
+Удерживайте Shift, чтобы удалить без подтверждения]]; 
 L.GDKP_MUTATOR_EDIT = "Редактировать мутатор";
-L.GDKP_MUTATOR_FLAT_LABEL = "Фиксированная ставка золота [пример: 250]";
+L.GDKP_MUTATOR_FLAT_LABEL = "Фикс. ставка золота [пример: 322]"; 
 L.GDKP_MUTATOR_FLAT_RATE_NUMBER_WARNING = "Фиксированная ставка должна быть числом";
 L.GDKP_MUTATOR_HELP_TOOLTIP_BOTTOM = [[
 Пример:
 |c00967FD2SELF,RL,ЦЕЛИТЕЛЬ]];
-L.GDKP_MUTATOR_HELP_TOOLTIP_TOP = "Вы можете автоматически применить этот мутатор к рейдерам, используя ключевые слова:";
+L.GDKP_MUTATOR_HELP_TOOLTIP_TOP = "Автоматически применить этот мутатор к рейдерам, по ключевым словам:";
 L.GDKP_MUTATOR_NAME_LABEL = "Название [пример: Танки]";
 L.GDKP_MUTATOR_NO_DOTS_WARNING = "Имена мутаторов не могут содержать точки (.)";
 L.GDKP_MUTATOR_PERCENTAGE_LABEL = "Процент [пример: 10]";
 L.GDKP_MUTATOR_PERCENTAGE_NUMBER_WARNING = "Процент должен быть числом";
-L.GDKP_MUTATOR_STORE_PERMANENTLY = "Сохраните для будущих сессий"; -- KartonArmadon
+L.GDKP_MUTATOR_STORE_PERMANENTLY = "Сохранить на будущее"; 
 L.GDKP_MUTATOR_UNKNOWN = "Неизвестный мутатор: %s";
 L.GDKP_NOT_ALLOWED_TO_START_AUCTION = "Пользователю «%s» не разрешено начинать аукционы.";
 L.GDKP_NOT_ALLOWED_TO_STOP_AUCTION = "Пользователю «%s» не разрешено останавливать аукционы.";
@@ -517,35 +515,35 @@ L.GDKP_NOT_ALLOWED_TO_STOP_INVALID_AUCTION = "Пользователю «%s» н
 L.GDKP_NOT_ENOUGH_GOLD_TO_DISTRIBUTE = "Недостаточно золота для распределения, ожидайте странных расчетов!";
 L.GDKP_NO_BIDS = "Никаких ставок!";
 L.GDKP_OUTBID = "Ваша ставка была перебита!";
-L.GDKP_OVERVIEW_ACTIVE_SESSION = "(активный)";
+L.GDKP_OVERVIEW_ACTIVE_SESSION = "(активная)";
 L.GDKP_OVERVIEW_ADJUST_GOLD_DISABLED_TOOLTIP = [[
 Чтобы отрегулировать золото, вам понадобится свинец или мастер-лут.
 Вы не можете регулировать золото в заблокированных/удалённых сессиях.]];
 L.GDKP_OVERVIEW_ADJUST_GOLD_TOOLTIP = "Добавить/удалить золото";
 L.GDKP_OVERVIEW_AUCTION_ENTRY = [[
-%s заплатил |c00%s%s за
-%s]]; -- Player paid 5000g for [Benediction]
+%s |cFFFFFFFFзаплатил |c00%s%s |cFFFFFFFFза
+%s]]; -- Player paid 5000g for [Benediction] 
 L.GDKP_OVERVIEW_DELETED_ENTRY = [[
 |c00be3333Удален %s
 Причина: %s]];
 L.GDKP_OVERVIEW_DELETED_SESSION = "(удалено)";
 L.GDKP_OVERVIEW_DELETE_ENTRY_DISABLED_TOOLTIP = [[
 Для удаления записей вам понадобится ведущий или мастер-лут.
-Вы не можете удалять записи в заблокированных/удалённых сессиях.]]; -- KartonArmadon
+Вы не можете удалять записи в заблокированных/удалённых сессиях.]]; 
 L.GDKP_OVERVIEW_DELETE_ENTRY_REASON = "Укажите причину удаления этой записи";
 L.GDKP_OVERVIEW_DELETE_ENTRY_TOOLTIP = "Удалить. Удерживайте Shift, чтобы пропустить заметку";
 L.GDKP_OVERVIEW_DELETE_TOOLTIP = "Сессии с прикрепленными к ним аукционами будут удалены через 48 часов.";
 L.GDKP_OVERVIEW_EDIT_ENTRY_DISABLED_TOOLTIP = [[
 Для редактирования записей вам понадобится ведущий или мастер-лут.
-Вы не можете редактировать удаленные записи или записи в заблокированных/удаленных сессиях.]]; -- KartonArmadon
-L.GDKP_OVERVIEW_EXPORT_TOOLTIP = "Экспортируйте сессию, чтобы другие могли просмотреть детали или заменить вас в качестве ответственного за добычу"; -- KartonArmadon
-L.GDKP_OVERVIEW_IMPORT_TOOLTIP = "Импортируйте сессию другого игрока или с другой учётной записи"; -- KartonArmadon
+Вы не можете редактировать удаленные записи или записи в заблокированных/удаленных сессиях.]]; 
+L.GDKP_OVERVIEW_EXPORT_TOOLTIP = "Экспортируйте сессию, чтобы другие могли просмотреть детали или заменить вас в качестве ответственного за добычу"; 
+L.GDKP_OVERVIEW_IMPORT_TOOLTIP = "Импортируйте сессию другого игрока или с другой учётной записи"; 
 L.GDKP_OVERVIEW_LEDGER_TOOLTIP = [[Показать полный обзор сессии,
 идеально подходит для создания скриншотов!]];
 L.GDKP_OVERVIEW_LOCK_CONFIRM = [[Блокировка сессии означает, что вы не сможете продавать предметы на аукционе или изменять что-либо, пока не разблокируете её обратно.
-Вы уверены?]]; -- KartonArmadon
+Вы уверены?]]; 
 L.GDKP_OVERVIEW_LOCK_OR_UNLOCK_TOOLTIP = "Заблокировать или разблокировать сессию";
-L.GDKP_OVERVIEW_LOCK_TOOLTIP = "Заблокировать сессию"; -- KartonArmadon
+L.GDKP_OVERVIEW_LOCK_TOOLTIP = "Заблокировать сессию"; 
 L.GDKP_OVERVIEW_MULTI_AUCTION_TOOLTIP = "Мультиаукцион: выставляйте на аукцион несколько предметов одновременно!";
 L.GDKP_OVERVIEW_MUTATION_ADDED = "Добавлено в";
 L.GDKP_OVERVIEW_MUTATION_ENTRY = [[
@@ -597,7 +595,7 @@ L.GDKP_TRADE_BALANCE_INFO = [[
 Удаление игрока: %s
 
 %s
-]]; -- KartonArmadon
+]]; 
 L.GDKP_TRADE_EXCLUDE_GOLD = "Исключить из GDKP";
 L.GDKP_TRADE_EXCLUDE_GOLD_INFO = "Проданное золото не будет добавлено к отданной или полученной сумме.";
 L.GDKP_TRADE_GIVEN_TO_LABEL = "Золото |c00967FD2 передано %s";
@@ -608,34 +606,34 @@ L.GDKP_TRADE_GOLD_TO_RECEIVE = "Чтобы получить: %s";
 L.GDKP_TRADE_RECEIVED_FROM_LABEL = "Золото |c00967FD2 получено от %s";
 L.GDKP_TRY_MULTIAUCTION = "Посетите мультиаукционы!";
 L.GDKP_TUTORIAL_INFO = "Следуйте инструкциям ниже, чтобы быстро начать работу с Gargul GDKP!";
-L.GDKP_TUTORIAL_STEP_ACTIVATE = "Активируйте эту сессию, нажав кнопку |c00FFF569Включить ниже!"; -- KartonArmadon
+L.GDKP_TUTORIAL_STEP_ACTIVATE = "|c00967FD2Активируйте эту сессию, нажав кнопку |c00FFF569ВКЛ |c00967FD2ниже!"; 
 L.GDKP_TUTORIAL_STEP_AUCTION = [[%s 
 |c00FFF569Выставить предмет на аукцион или поместить его в очередь.
-]]; -- %s holds the auction item hotkey (default ALT_CLICK) -- KartonArmadon
+]]; -- %s holds the auction item hotkey (default ALT_CLICK) 
 L.GDKP_TUTORIAL_STEP_COMMANDS = [[Полезные команды:
 |c00FFF569- /gdkp, чтобы открыть это окно
 |c00FFF569- /gl ma, чтобы открыть мультиаукциона
 |c00FFF569- /gl au, чтобы открыть аукцион/очередь с одним предметом
 |c00FFF569- /gl pm для настройки автоматического лута
-]]; -- KartonArmadon
+]]; 
 L.GDKP_TUTORIAL_STEP_DONE = [[Если всё хорошо
 |c00FFF569Вы увидите только что выставленные на аукцион предметы!
-]]; -- KartonArmadon
+]]; 
 L.GDKP_TUTORIAL_STEP_MULTI_AUCTION = [[Мультиаукцион:
 |c00FFF569/gl ma или нажмите на значок в правом верхнем углу этого окна!
-]] -- KartonArmadon
-L.GDKP_TUTORIAL_STEP_NEW = "Нажмите кнопку |c00FFF569НОВ ниже, чтобы создать первую сессию GDKP. Она будет отображаться в списке слева."; -- KartonArmadon
+]] 
+L.GDKP_TUTORIAL_STEP_NEW = "Нажмите кнопку |c00FFF569НОВ ниже, чтобы создать первую сессию GDKP. Она будет отображаться в списке слева."; 
 L.GDKP_TUTORIAL_STEP_READY = [[Вы готовы продавать предметы!
 |c00BE3333Внимательно прочитайте шаги ниже и выполните их (не обязательно участвовать в рейде), прежде чем начинать свой первый рейд GDKP!
-]]; -- KartonArmadon
+]]; 
 L.GDKP_TUTORIAL_STEP_SELL = [[%s
 |c00FFF569Продать товар без торгов. Выберите победителя и установите цену!
-]]; -- KartonArmadon
-L.GDKP_TUTORIAL_TITLE = "Первые шаги!"; -- KartonArmadon
+]]; 
+L.GDKP_TUTORIAL_TITLE = "Первые шаги!"; 
 L.GDKP_UNKNOWN_ITEM = "Неизвестный идентификатор предмета на аукционе: создать: %s";
 L.GDKP_UNKNOWN_SESSION = "Неизвестный идентификатор сессии на аукционе: создать: %s";
 L.GDKP_YOU_OWE = "Вы должны %s %s";
-L.GIVEN = "Отдал"; -- KartonArmadon
+L.GIVEN = "Отдал"; 
 L.GOLD_INDICATOR = "г";
 L.GROUP = "Группа";
 L.GROUP_MANAGER = "Менеджер группы";
@@ -648,7 +646,7 @@ L.HIDE = "Скрывать";
 L.HOURS_MINUTES_FORMAT = "%H:%M";
 L.IDENTITY_INFO = "Посетите URL-адрес ниже, чтобы узнать больше о персонализации Gargul GDKP.";
 L.IDENTITY_TOOLTIP = "Ваш логотип здесь? Нажмите, чтобы получить дополнительную информацию!";
-L.IMPORT = "ИМП"; -- KartonArmadon
+L.IMPORT = "ИМП"; 
 L.IMPORTED_AND_UPDATED_ON = "Импортировано |c00A79EFF%s по адресу |c00A79EFF%s, обновлено |c00A79EFF%s по адресу |c00A79EFF%s";
 L.IMPORT_EXPLANATION = "Какие данные вы хотите импортировать?";
 L.IMPORT_SUCCESSFUL = "Импорт данных ускоренного вращения успешен.";
@@ -673,7 +671,7 @@ L.KEYS_INFO = [[
 ]];
 L.LEDGER = "Бух. книга";
 L.LEFT_SYMBOL = "<";
-L.LM_OR_ASSIST_REQUIRED = "Вам нужно быть ответственынм за добычу или быть помощником/лидером!"; -- KartonArmadon
+L.LM_OR_ASSIST_REQUIRED = "Вам нужно быть ответственынм за добычу или быть помощником/лидером!"; 
 L.LOCALE_CHANGE_NOTE = "Примечание. Вы можете изменить локаль в любой момент в настройках или через |c00%s/gl locale.";
 L.LOCALE_DEDE = "deDE"; -- German (Germany)
 L.LOCALE_ENUS = "enUS"; -- English (United States)
@@ -719,10 +717,10 @@ L.MINIMAP_BUTTON_CUTS = "GDKP срезы";
 L.MINIMAP_BUTTON_EXPORT = "Экспорт данных";
 L.MINIMAP_BUTTON_GARGUL = "Открыть Гаргул";
 L.MINIMAP_BUTTON_IMPORT = "Импортировать данные";
-L.MINIMAP_BUTTON_LEDGER = "Бух. книга GDKP"; -- KartonArmadon
+L.MINIMAP_BUTTON_LEDGER = "Бух. книга GDKP"; 
 L.MINIMAP_BUTTON_MULTIAUCTION = "Мультиаукцион";
 L.MINIMAP_BUTTON_SETTING_INFO = "Измените настройки в мини-карте /gl.";
-L.MINIMIZE = "Свернуть"; -- KartonArmadon
+L.MINIMIZE = "Свернуть"; 
 L.MINIMIZE_ON_AWARD = "Минимизировать награду";
 L.MINIMIZE_ON_START = "Свернуть при запуске";
 L.MINIMUM = "Минимум";
@@ -730,11 +728,11 @@ L.MINIMUM_ITEM_LEVEL = "Минимальный уровень предмета";
 L.MINIMUM_QUALITY = "Минимальное качество";
 L.MINUS10 = "-10";
 L.MINUS_SIGN = "-";
-L.MOVE = "Передвинуть"; -- KartonArmadon
+L.MOVE = "Передвинуть"; 
 L.MULTI_AUCTION = "Мультиаукцион";
 L.NAME = "Имя";
 L.NEW = "НОВ";
-L.NEXT = "Далее"; -- KartonArmadon
+L.NEXT = "Далее"; 
 L.NO = "Нет";
 L.NONE = "Никто";
 L.NOTE = "Примечание";
@@ -742,7 +740,7 @@ L.NOTHING = "Ничего";
 L.NO_BIDS_ACTION = "Когда никто не делает ставок:";
 L.NO_OFFICER_PRIVILEGES = "У вас нет офицерских привилегий";
 L.OFFSPEC_ABBR = "OS";
-L.OK = "Хорошо";
+L.OK = "ОК"; 
 L.OPEN = "Открыть";
 L.OPEN_AUCTIONEER = "Открытый аукционист";
 L.OPEN_MULTI_AUCTION = "Открытый мультиаукцион";
@@ -758,8 +756,8 @@ L.PACKMULE_CONFIRM_DISENCHANTER = "Назначить %s своим распыл
 L.PACKMULE_CONFIRM_DISENCHANTMENT = "Отправить %s %s? Введите /gl cd, чтобы удалить этот дисчантер!";
 L.PACKMULE_NO_DISENCHANTER_WARNING = "Нет набора распылителей, используйте /gl sd [mydisenchanter], чтобы установить его.";
 L.PACKMULE_WHO_IS_DISENCHANTER = "Кто твой распылитель?";
-L.PAID = "Потратил"; -- KartonArmadon
-L.PASS = "Пас"; -- KartonArmadon
+L.PAID = "Потратил"; 
+L.PASS = "Пас"; 
 L.PERCENTAGE_SIGN = "%";
 L.PLAYER = "Игрок";
 L.PLAYER_ITEM_WON_COUNT = "Предметы, выигранные %s:";
@@ -790,7 +788,7 @@ L.PLUSONES_UPDATE_CONFIRM = [[
 Ваше последнее обновление было |c00A79EFF%s, их — |c00A79EFF%s.]];
 L.PLUSONES_WHISPER_PREFIXES = "!plusone|!po|!+1";
 L.PLUS_SIGN = "+";
-L.POT = "Общий банк"; -- KartonArmadon
+L.POT = "Общий банк"; 
 L.PRICE = "Цена";
 L.PRIOLIST_ABBR = "ПЛ";
 L.QUALITY_COMMON = "Общий";
@@ -842,7 +840,7 @@ L.RESET_UI_CONFIRMATION = "Вы уверены, что хотите сброси
 L.RESTORE = "Восстановить";
 L.RESUME = "Резюме";
 L.RIGHT_SYMBOL = ">";
-L.ROLL = "roll"; -- KartonArmadon
+L.ROLL = "roll"; 
 L.ROLLING_AWARD_CONFIRM = "Наградить %s %s?";
 L.ROLLING_CLOSE_ON_AWARD_LABEL = "Близко к награде";
 L.ROLLING_CLOSE_ON_START_LABEL = "Закрыть при запуске";
@@ -872,7 +870,7 @@ L.ROLLING_TIMER_LABEL = "ТАЙМЕР (с)";
 L.ROLLING_UNUSABLE_ITEM = "Вы не можете использовать этот предмет!";
 L.ROLLING_WINNER_NOT_UNIQUE = "Имя победителя не уникально. Выберите игрока, которому вы хотите наградить %s.";
 L.SECONDS_ABBR = "с";
-L.SELECT_ALL = "Выбрать/снять выбор"; -- KartonArmadon
+L.SELECT_ALL = "Выбрать/снять выбор"; 
 L.SESSION = "Сессия";
 L.SETTINGS = "Настройки";
 L.SETTINGS_ANNOUNCE_INCOMING_BIDS = "Объявить о поступивших ставках";
@@ -920,8 +918,8 @@ L.SOFTRES_TOOLTIP_HARD_RESERVED_NOTE = "|c00CC2743 Примечание: %s";
 L.SOFTRES_TOOLTIP_RESERVED_BY = "Зарезервировано";
 L.SOFTRES_WHISPER_PREFIXES = "!sr|!softres|!softreserve";
 L.SOMETHING_WENT_WRONG_WARNING = "Что-то пошло не так!";
-L.START = "   Старт   "; -- KartonArmadon
-L.STOP = "   Стоп   "; -- KartonArmadon
+L.START = "Старт"; 
+L.STOP = "Стоп"; 
 L.TAB_REPLACES_T = "\\t  is replaced by a tab";
 L.THATSMYBIS_ABBR = "ТМБ";
 L.TIME = "Время";
