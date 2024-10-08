@@ -55,6 +55,7 @@ end
 ---@return table
 function Test.TradeState:defaultState()
     local Details = {
+        announce = true,
         partner = GL.User.name,
         myGold = math.random(9999999),
         theirGold = math.random(9999999),

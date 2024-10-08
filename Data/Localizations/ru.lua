@@ -5,6 +5,7 @@
     These translations where provided by
         - KartonArmadon
 ]]
+if (GetLocale() ~= "ruRU") then return; end
 local L = Gargul_L or {};
 
 L.ABOUT = "О";
