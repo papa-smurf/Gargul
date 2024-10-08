@@ -2203,7 +2203,7 @@ function GL:getLinkedItemsForID(itemID, forSoftRes)
             i = i + 1;
         end
 
-        for _, id in pairs(GL.Data.MoltenItemLinks[itemID] or {}) do
+        for _, id in pairs(GL.Data.SkinnedItemLinks[itemID] or {}) do
             AllLinkedItemIDs[id] = i;
             i = i + 1;
         end

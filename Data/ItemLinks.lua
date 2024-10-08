@@ -6,97 +6,197 @@ GL.Data = GL.Data or {};
 
 GL.Data.SoftResSpecificItemLinks = {
     -- Obsidian Edged Blade
-    ["18822"] = { 228229 },
-    ["228229"] = { 18822 },
+    ["18822"] = { 228229, },
+    ["228229"] = { 18822, },
     -- Aurastone Hammer
-    ["17105"] = { 228264 },
-    ["228264"] = { 17105 },
+    ["17105"] = { 228264, },
+    ["228264"] = { 17105, },
     -- Drillborer Disk
-    ["17066"] = { 228266 },
-    ["228266"] = { 17066 },
+    ["17066"] = { 228266, },
+    ["228266"] = { 17066, },
     -- Hyperthermically Insulated Lava Dredger
-    ["18803"] = { 228278 },
-    ["228278"] = { 18803 },
+    ["18803"] = { 228278, },
+    ["228278"] = { 18803, },
     -- Bonereaver's Edge
-    ["17076"] = { 228288 },
-    ["228288"] = { 17076 },
+    ["17076"] = { 228288, },
+    ["228288"] = { 17076, },
     -- Head of Onyxia
-    ["18423"] = { 228688 },
-    ["228688"] = { 18423 },
+    ["18423"] = { 228688, },
+    ["228688"] = { 18423, },
     -- Eskhandar's Collar
-    ["18205"] = { 228759 },
-    ["228759"] = { 18205 },
+    ["18205"] = { 228759, },
+    ["228759"] = { 18205, },
 };
 
--- [[ MOLTEN ITEMS (TMB Doesn't link these currently) ]]
+-- [[ MOLTEN/SHADOWFLAME/BLOODIED ITEMS (TMB Doesn't link these currently) ]]
 ---@type table
-GL.Data.MoltenItemLinks = {
+GL.Data.SkinnedItemLinks = {
+    --[[ MOLTEN ]]
+
     -- Obsidian Edged Blade
-    ["228459"] = { 228229 },
-    ["228229"] = { 228459 },
+    ["228459"] = { 228229, },
+    ["228229"] = { 228459, },
     -- Earthshaker
-    ["228463"] = { 228248 },
-    ["228248"] = { 228463 },
+    ["228463"] = { 228248, },
+    ["228248"] = { 228463, },
     -- Striker's Mark
-    ["228519"] = { 228252 },
-    ["228252"] = { 228519 },
+    ["228519"] = { 228252, },
+    ["228252"] = { 228519, },
     -- Aurastone Hammer
-    ["228462"] = { 228264 },
-    ["228264"] = { 228462 },
+    ["228462"] = { 228264, },
+    ["228264"] = { 228462, },
     -- Brutality Blade
-    ["228506"] = { 228265 },
-    ["228265"] = { 228506 },
+    ["228506"] = { 228265, },
+    ["228265"] = { 228506, },
     -- Drillborer Disk
-    ["228702"] = { 228266 },
-    ["228266"] = { 228702 },
+    ["228702"] = { 228266, },
+    ["228266"] = { 228702, },
     -- Azuresong Mageblade
-    ["228517"] = { 228269 },
-    ["228269"] = { 228517 },
+    ["228517"] = { 228269, },
+    ["228269"] = { 228517, },
     -- Staff of Dominance
-    ["228922"] = { 228271 },
-    ["228271"] = { 228922 },
+    ["228922"] = { 228271, },
+    ["228271"] = { 228922, },
     -- Core Hound Tooth
-    ["228701"] = { 228277 },
-    ["228277"] = { 228701 },
+    ["228701"] = { 228277, },
+    ["228277"] = { 228701, },
     -- Perdition's Blade
-    ["228511"] = { 228296 },
-    ["228296"] = { 228511 },
+    ["228511"] = { 228296, },
+    ["228296"] = { 228511, },
     -- Spinal Reaper
-    ["228460"] = { 228299 },
-    ["228299"] = { 228460 },
+    ["228460"] = { 228299, },
+    ["228299"] = { 228460, },
     -- Bonereaver's Edge
-    ["228461"] = { 228288 },
-    ["228288"] = { 228461 },
+    ["228461"] = { 228288, },
+    ["228288"] = { 228461, },
     -- Hyperthermically Insulated Lava Dredger
-    ["228278"] = { 229382 },
-    ["229382"] = { 228278 },
+    ["228278"] = { 229382, },
+    ["229382"] = { 228278, },
     -- Faithbringer
-    ["228160"] = { 229373 },
-    ["229373"] = { 228160 },
+    ["228160"] = { 229373, },
+    ["229373"] = { 228160, },
     -- Shadowstrike
-    ["228272"] = { 229380 },
-    ["229380"] = { 228272 },
+    ["228272"] = { 229380, },
+    ["229380"] = { 228272, },
     -- Gutgore Ripper
-    ["228267"] = { 229372 },
-    ["229372"] = { 228267 },
+    ["228267"] = { 229372, },
+    ["229372"] = { 228267, },
     -- Fist of the Firesworn
-    ["228139"] = { 229374 },
-    ["229374"] = { 228139 },
+    ["228139"] = { 229374, },
+    ["229374"] = { 228139, },
     -- Hammer of The Black Anvil
-    ["228128"] = { 228508 },
-    ["228508"] = { 228128 },
+    ["228128"] = { 228508, },
+    ["228508"] = { 228128, },
     -- Eskhandar's Right Claw
-    ["228350"] = { 229379 },
-    ["229379"] = { 228350 },
+    ["228350"] = { 229379, },
+    ["229379"] = { 228350, },
     -- Magmadar's Right Claw
-    ["228145"] = { 229378 },
-    ["229378"] = { 228145 },
+    ["228145"] = { 229378, },
+    ["229378"] = { 228145, },
     -- Sorcerous Dagger
-    ["228263"] = { 229376 },
-    ["229376"] = { 228263 },
+    ["228263"] = { 229376, },
+    ["229376"] = { 228263, },
     -- Magmadar's Left Claw
-    ["228146"] = { 229377 },
-    ["229377"] = { 228146 },
+    ["228146"] = { 229377, },
+    ["229377"] = { 228146, },
+
+    --[[ SHADOWFLAME ]]
+    ["232566"] = { 230242, }, -- The Untamed Blade
+    ["230242"] = { 232566, }, -- The Untamed Blade
+    ["232567"] = { 230241, }, -- Spineshatter
+    ["230241"] = { 232567, }, -- Spineshatter
+    ["232565"] = { 230247, }, -- Dragonfang Blade
+    ["230247"] = { 232565, }, -- Dragonfang Blade
+    ["232557"] = { 230794, }, -- Claw of Chromaggus
+    ["230794"] = { 232557, }, -- Claw of Chromaggus
+    ["232564"] = { 230254, }, -- Maladath, Runed Blade of the Black Flight
+    ["230254"] = { 232564, }, -- Maladath, Runed Blade of the Black Flight
+    ["232558"] = { 230747, }, -- Chromatically Tempered Sword
+    ["230747"] = { 232558, }, -- Chromatically Tempered Sword
+    ["232562"] = { 230271, }, -- Drake Talon Cleaver
+    ["230271"] = { 232562, }, -- Drake Talon Cleaver
+    ["232563"] = { 230270, }, -- Shadow Wing Focus Staff
+    ["230270"] = { 232563, }, -- Shadow Wing Focus Staff
+    ["232556"] = { 230813, }, -- Staff of the Shadow Flame
+    ["230813"] = { 232556, }, -- Staff of the Shadow Flame
+    ["232559"] = { 230738, }, -- Herald of Woe
+    ["230738"] = { 232559, }, -- Herald of Woe
+    ["232551"] = { 230844, }, -- Draconic Maul
+    ["230844"] = { 232551, }, -- Draconic Maul
+    ["232552"] = { 230838, }, -- Lok'amir il Romathis
+    ["230838"] = { 232552, }, -- Lok'amir il Romathis
+    ["232555"] = { 230837, }, -- Crul'shorukh, Edge of Chaos
+    ["230837"] = { 232555, }, -- Crul'shorukh, Edge of Chaos
+    ["232550"] = { 230818, }, -- Ashkandi, Greatsword of the Brotherhood
+    ["230818"] = { 232550, }, -- Ashkandi, Greatsword of the Brotherhood
+    ["232561"] = { 230276, }, -- Claw of the Black Drake
+    ["230276"] = { 232561, }, -- Claw of the Black Drake
+
+    --[[ BLOODIED ]]
+    ["231856"] = { 231293, }, -- Ancient Hakkari Manslayer
+    ["231293"] = { 231856, }, -- Ancient Hakkari Manslayer
+    ["231852"] = { 231302, }, -- Gurubashi Dwarf Destroyer
+    ["231302"] = { 231852, }, -- Gurubashi Dwarf Destroyer
+    ["231854"] = { 231315, }, -- Zin'rokh, Destroyer of Worlds
+    ["231315"] = { 231854, }, -- Zin'rokh, Destroyer of Worlds
+    ["231855"] = { 231301, }, -- Fang of the Faceless
+    ["231301"] = { 231855, }, -- Fang of the Faceless
+    ["231857"] = { 231308, }, -- Touch of Chaos
+    ["231308"] = { 231857, }, -- Touch of Chaos
+    ["231858"] = { 231296, }, -- Bloodcaller
+    ["231296"] = { 231858, }, -- Bloodcaller
+    ["231853"] = { 231309, }, -- Warblade of the Hakkari
+    ["231309"] = { 231853, }, -- Warblade of the Hakkari
+    ["231869"] = { 230992, }, -- Warblade of the Hakkari
+    ["230992"] = { 231869, }, -- Warblade of the Hakkari
+    ["231867"] = { 230989, }, -- Bloodlord's Defender
+    ["230989"] = { 231867, }, -- Bloodlord's Defender
+    ["231870"] = { 230991, }, -- Halberd of Smiting
+    ["230991"] = { 231870, }, -- Halberd of Smiting
+    ["231860"] = { 231004, }, -- Jin'do's Judgement
+    ["231004"] = { 231860, }, -- Jin'do's Judgement
+    ["231859"] = { 231002, }, -- Jin'do's Hexxer
+    ["231002"] = { 231859, }, -- Jin'do's Hexxer
+    ["231875"] = { 230925, }, -- Thekal's Grasp
+    ["230925"] = { 231875, }, -- Thekal's Grasp
+    ["231873"] = { 230868, }, -- Zulian Stone Axe
+    ["230868"] = { 231873, }, -- Zulian Stone Axe
+    ["231876"] = { 230930, }, -- Zulian Slicer
+    ["230930"] = { 231876, }, -- Zulian Slicer
+    ["231874"] = { 230865, }, -- Fang of Venoxis
+    ["230865"] = { 231874, }, -- Fang of Venoxis
+    ["231850"] = { 230939, }, -- Will of Arlokk
+    ["230939"] = { 231850, }, -- Will of Arlokk
+    ["231851"] = { 230934, }, -- Arlokk's Grasp
+    ["230934"] = { 231851, }, -- Arlokk's Grasp
+    ["231861"] = { 230911, }, -- Jeklik's Crusher
+    ["230911"] = { 231861, }, -- Jeklik's Crusher
+    ["231866"] = { 230918, }, -- Mar'li's Touch
+    ["230918"] = { 231866, }, -- Mar'li's Touch
+    ["231848"] = { 231016, }, -- Nat Pagle's Fish Terminator
+    ["231016"] = { 231848, }, -- Nat Pagle's Fish Terminator
+    ["231849"] = { 231272, }, -- Tigule's Harpoon
+    ["231272"] = { 231849, }, -- Tigule's Harpoon
+    ["231847"] = { 231274, }, -- Gri'lek's Grinder
+    ["231274"] = { 231847, }, -- Gri'lek's Grinder
+    ["231846"] = { 231273, }, -- Gri'lek's Carver
+    ["231273"] = { 231846, }, -- Gri'lek's Carver
+    ["231863"] = { 231276, }, -- Thoughtblighter
+    ["231276"] = { 231863, }, -- Thoughtblighter
+    ["231862"] = { 231275, }, -- Blazefury Retributer
+    ["231275"] = { 231862, }, -- Blazefury Retributer
+    ["231864"] = { 231277, }, -- Pitchfork of Madness
+    ["231277"] = { 231864, }, -- Pitchfork of Madness
+    ["232310"] = { 232309, }, -- Renataki's Soul Conduit
+    ["232309"] = { 232310, }, -- Renataki's Soul Conduit
+    ["231871"] = { 231279, }, -- Wushoolay's Poker
+    ["231279"] = { 231871, }, -- Wushoolay's Poker
+    ["231872"] = { 231278, }, -- Hoodoo Hunting Bow
+    ["231278"] = { 231872, }, -- Hoodoo Hunting Bow
+    ["231868"] = { 230993, }, -- Mandokir's Sting
+    ["230993"] = { 231868, }, -- Mandokir's Sting
+    ["231865"] = { 230863, }, -- Zulian Scepter of Rites
+    ["230863"] = { 231865, }, -- Zulian Scepter of Rites
 };
 
 GL.Data.ItemLinks = {
