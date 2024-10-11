@@ -1,6 +1,6 @@
 --[[
     You can test this locally by removing line 5:
-    if (GetLocale() ~= "deDE") then return; end
+    if (GetLocale() ~= "koKR") then return; end
 ]]
 if (GetLocale() ~= "koKR") then return; end
 local L = Gargul_L or {};
@@ -525,8 +525,8 @@ L.GDKP_OVERVIEW_ADJUST_GOLD_DISABLED_TOOLTIP = [[
 잠긴/삭제된 세션에서는 골드를 조정할 수 없습니다.]];
 L.GDKP_OVERVIEW_ADJUST_GOLD_TOOLTIP = "금 추가/제거";
 L.GDKP_OVERVIEW_AUCTION_ENTRY = [[
-%s님이 |c00%s%s에 대해 지불했습니다.
-%에스]]; -- Player paid 5000g for [Benediction]
+%s 유급의 |c00%s%s ~을 위한
+%s]]; -- Player paid 5000g for [Benediction]
 L.GDKP_OVERVIEW_DELETED_ENTRY = [[
 |c00be3333%s에 의해 삭제됨
 원인]];
