@@ -1460,7 +1460,7 @@ end
 function GL:isCrossRealm()
     -- With almost everything being connected nowadays we're doing a trial
     -- run with always assuming that we're on a connected realm
-    ---@TODO: REMOVE IN >= 7.6.1
+    ---@TODO: REMOVE IN >= 7.7.0
     if (true) then
         return true;
     end
