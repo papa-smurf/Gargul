@@ -1435,7 +1435,7 @@ function GL:normalizeItem(ItemMixin)
 
     -- Keep in mind that this data all refers to the base version of the item since we're using an ID
     local itemName, itemLink, itemQuality, itemLevel, _, _, _, _, itemEquipLoc,
-    itemTexture, _, classID, subclassID, bindType, _, _, _ = GL:getItemInfo(itemID);
+    itemTexture, _, classID, subclassID, bindType, _, _, _ = GL:getItemInfo(ItemMixin:GetItemLink());
 
     if (not itemLink) then
         return false;
@@ -1448,14 +1448,11 @@ function GL:normalizeItem(ItemMixin)
         icon = itemTexture,
         inventoryType = itemEquipLoc,
         level = ItemMixin:GetCurrentItemLevel(),
-        link = ItemMixin.itemLink or ItemMixin:GetItemLink(),
+        link = itemLink,
         name = itemName,
         subclassID = subclassID,
         quality = itemQuality,
         isBOE = GL:inTable({ LE_ITEM_BIND_ON_EQUIP, LE_ITEM_BIND_QUEST, }, bindType),
-
-        baseLevel = itemLevel,
-        baseLink = itemLink,
     };
 end
 
@@ -1961,12 +1958,12 @@ end
 ---@param slot number
 ---@return any
 function GL:useContainerItem(bagID, slot)
-    if (UseContainerItem) then
-        return UseContainerItem(bagID, slot)
-    end
-
     if (C_Container and C_Container.UseContainerItem) then
         return C_Container.UseContainerItem(bagID, slot);
+    end
+
+    if (UseContainerItem) then
+        return UseContainerItem(bagID, slot)
     end
 
     return nil;
@@ -1988,12 +1985,12 @@ end
 
 ---@return nil|any
 function GL:getItemInfo(...)
-    if (GetItemInfo) then
-        return GetItemInfo(...);
-    end
-
     if (C_Item and C_Item.GetItemInfo) then
         return C_Item.GetItemInfo(...);
+    end
+
+    if (GetItemInfo) then
+        return GetItemInfo(...);
     end
 
     return nil;
@@ -2001,12 +1998,12 @@ end
 
 ---@return nil|any
 function GL:getItemInfoInstant(...)
-    if (GetItemInfoInstant) then
-        return GetItemInfoInstant(...);
-    end
-
     if (C_Item and C_Item.GetItemInfoInstant) then
         return C_Item.GetItemInfoInstant(...);
+    end
+
+    if (GetItemInfoInstant) then
+        return GetItemInfoInstant(...);
     end
 
     return nil;
@@ -2016,10 +2013,6 @@ end
 ---@param slot number
 ---@return any
 function GL:getContainerItemInfo(bagID, slot)
-    if (GetContainerItemInfo) then
-        return GetContainerItemInfo(bagID, slot)
-    end
-
     if (C_Container and C_Container.GetContainerItemInfo) then
         local Info = C_Container.GetContainerItemInfo(bagID, slot);
 
@@ -2029,6 +2022,10 @@ function GL:getContainerItemInfo(bagID, slot)
 
         return Info.iconFileID, Info.stackCount, Info.isLocked, Info.quality, Info.isReadable,
         Info.hasLoot, Info.hyperlink, Info.isFiltered, Info.hasNoValue, Info.itemID, Info.isBound;
+    end
+
+    if (GetContainerItemInfo) then
+        return GetContainerItemInfo(bagID, slot)
     end
 
     return nil;
