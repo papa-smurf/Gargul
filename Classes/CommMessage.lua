@@ -236,9 +236,6 @@ function CommMessage:compress(Message)
     Message = Message or self;
 
     local FQN = Message.senderFqn;
-    if (not GL:isCrossRealm()) then
-        FQN = GL:stripRealm(FQN);
-    end
 
     if (Message.channel == "WHISPER"
         and Message.recipient
@@ -290,15 +287,6 @@ function CommMessage:decompress(encoded)
 
     if (type(Payload) == "string") then
         return Payload;
-    end
-
-    if (Payload.e and not GL:isCrossRealm()) then
-        Payload.e = GL:addRealm(Payload.e);
-    end
-
-    -- Old versions send their content under the 'c' key which can be a table as well
-    if (type(Payload.c) == "table") then
-        Payload.c = nil;
     end
 
     return {

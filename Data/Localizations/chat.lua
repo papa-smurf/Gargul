@@ -234,7 +234,10 @@ L.CHAT = {
         AWARD_RANDOM_WINNER = "Zufälliger Gewinner für %s ausgewählt (%s)", -- First %s is item, second %s is player,
     },
 
-    --[[ zhCN ]]
+    --[[ zhCN
+        These translations where provided by
+        - Takaqiao
+    ]]
     zhCN = {
         PASS = "放弃",
         FLIGHT_ATTENDANT = "我正在使用 Gargul 来分发战利品。它使分发变得更容易，所以一定要尝试一下！",
@@ -466,7 +469,10 @@ L.CHAT = {
         AWARD_RANDOM_WINNER = "Ganador aleatorio para %s seleccionados (%s)", -- First %s is item, second %s is player,
     },
 
-    --[[ frFR ]]
+    --[[ frFR
+        These translations where provided by
+        - Bhahlou
+    ]]
     frFR = {
         PASS = "Passer",
         FLIGHT_ATTENDANT = "J'utilise Gargul pour distribuer le butin. Cela rend les lancers de dés plus faciles, donc essayez-le !",
@@ -930,28 +936,31 @@ L.CHAT = {
         AWARD_RANDOM_WINNER = "Vencedor aleatório para %s selecionados (%s)", -- First %s is item, second %s is player,
     },
 
-    --[[ ruRU ]]
+    --[[ ruRU
+        These translations where provided by
+        - KartonArmadon
+    ]]
     ruRU = {
-        PASS = "Проходить",
-        FLIGHT_ATTENDANT = "Я использую Гаргул для раздачи добычи. Это облегчает катание, поэтому обязательно попробуйте!",
+        PASS = "Пас",
+        FLIGHT_ATTENDANT = "Я использую Gargul! Аддон облегчает раздачу добычи, поэтому обязательно попробуйте!",
 
         --[[ VERSION CHECK ]]
-        VERSION_CHECK_MISSING = "Гаргул пропал из-за:",
-        VERSION_CHECK_OUTDATED = "Гаргул устарел для:",
+        VERSION_CHECK_MISSING = "Gargul не найден:",
+        VERSION_CHECK_OUTDATED = "Gargul устарел:",
         VERSION_CHECK_OFFLINE = "Следующие игроки были оффлайн:",
 
         --[[ ITEM AWARDED ]]
-        ITEM_AWARDED = "%s был присужден %s. Поздравляю!",
-        ITEM_AWARDED_BR = "%s был присужден %s за %s баллов. Поздравляю!",
-        ITEM_AWARDED_GDKP = "%s был присужден %s за %s. Поздравляю!",
+        ITEM_AWARDED = "%s выиграл %s. Поздравляю!",
+        ITEM_AWARDED_BR = "%s выиграл %s за %s баллов. Поздравляю!",
+        ITEM_AWARDED_GDKP = "%s выиграл %s за %s. Поздравляю!",
 
         --[[ TRADE DETAILS ]]
         GOLD_TRADE_GIVEN = "Я отдал %s %s",
-        GOLD_TRADE_GIVEN_DELETED = "Я удалил сделку по золоту, в которой я отдал %s %s",
-        GOLD_TRADE_GIVEN_RESTORED = "Я восстановил сделку по золоту, в которой я отдал %s %s",
+        GOLD_TRADE_GIVEN_DELETED = "Я удалил обмен золотом, в котором я отдал %s %s",
+        GOLD_TRADE_GIVEN_RESTORED = "Я восстановил обмен золотом, в котором я отдал %s %s",
         GOLD_TRADE_RECEIVED = "Я получил %s от %s",
-        GOLD_TRADE_RECEIVED_DELETED = "Я удалил сделку по золоту, в которой я получил %s от %s",
-        GOLD_TRADE_RECEIVED_RESTORED = "Я восстановил сделку по золоту, в которой получил %s от %s",
+        GOLD_TRADE_RECEIVED_DELETED = "Я удалил обмен золотом, в котором я получил %s от %s",
+        GOLD_TRADE_RECEIVED_RESTORED = "Я восстановил обмен золотом, в котором получил %s от %s",
 
         --[[ TRADE TIME ]]
         TRADETIME_BROADCAST_PREFIX = "У меня остались следующие предметы для обмена",
@@ -967,83 +976,83 @@ L.CHAT = {
         PLUSONES_OTHER_BALANCE_REPLY = "Сумма +1 игрока %s составляет %d",
 
         --[[ GDKP ]]
-        GDKP_I_OWE_YOU = "Я должен тебе %s. Наслаждаться!",
-        GDKP_YOU_OWE_ME = "Ты мне должен, %s. Спасибо!",
-        GDKP_POT_UPDATED = "Банк был обновлен, теперь он содержит %s",
-        GDKP_POT_UPDATED_AFTER_DELETE = "Банк был обновлен после удаления аукциона, теперь в нем находится %s.",
-        GDKP_POT_UPDATED_AFTER_RESTORE = "Банк был обновлен после восстановления аукциона, теперь он содержит %s.",
-        GDKP_REMOVED_AWARDED = "Я удалил %s, присужденный %s за %s",
-        GDKP_RESTORED_AWARDED = "Я восстановил %s, присужденный %s за %s",
-        GDKP_REMOVED_GOLD = "Я удалил %sg из горшка",
-        GDKP_RESTORED_GOLD = "Я добавил %sg обратно в банк",
-        GDKP_POT_HOLDS = "В банке теперь %s",
-        GDKP_CONFIRM_TOP_BID = "%s предлагает самую высокую цену (%s)",
-        GDKP_FINAL_CALL = "Последний звонок для %s: до ставки осталось %s секунд!",
-        GDKP_BID_DENIED = "Ставка отклонена, минимальная ставка — %s.",
-        GDKP_START_BIDDING = "Ставка на %s. Минимум — %s, приращение — %s. Используйте рейдовый чат!",
-        GDKP_STOP_BIDDING = "Прекратите свои ставки!",
-        GDKP_SECONDS_TO_BID = "%s секунд, чтобы сделать ставку",
+        GDKP_I_OWE_YOU = "Я должен тебе %s",
+        GDKP_YOU_OWE_ME = "Ты мне должен, %s",
+        GDKP_POT_UPDATED = "Банк обновлен. Общая сумма %s",
+        GDKP_POT_UPDATED_AFTER_DELETE = "Банк обновлен после удаления аукциона. Общая сумма %s.",
+        GDKP_POT_UPDATED_AFTER_RESTORE = "Банк обновлен после восстановления аукциона. Общая сумма %s.",
+        GDKP_REMOVED_AWARDED = "Я удалил %s игрока %s за %s",
+        GDKP_RESTORED_AWARDED = "Я восстановил %s игрока %s за %s",
+        GDKP_REMOVED_GOLD = "Я удалил %sg из банка",
+        GDKP_RESTORED_GOLD = "Я восстановил %sg в банке",
+        GDKP_POT_HOLDS = "В банке сейчас %s",
+        GDKP_CONFIRM_TOP_BID = "Высшая ставка %s (%s)",
+        GDKP_FINAL_CALL = "Аукион на %s завершается: осталось %sсек.!",
+        GDKP_BID_DENIED = "Ставка отклонена, мин. ставка %s.",
+        GDKP_START_BIDDING = "Ставка на %s. Старт %s, шаг %s!",
+        GDKP_STOP_BIDDING = "Аукцион завершён!",
+        GDKP_SECONDS_TO_BID = "%s сек. осталось",
         GDKP_POT_TOTAL = "Общий банк: %s",
-        GDKP_BASE_CUT = "Базовый разрез: %s",
+        GDKP_BASE_CUT = "Базовая доля: %s",
 
         --[[ MULTIAUCTION ]]
-        MULTIAUCTION_STARTED = "Я начал торги. Не можете этого увидеть? Обязательно скачайте/обновите Gargul!",
-        MULTIAUCTION_RESUMED = "Я возобновил предыдущую сессию торгов. Проверьте свои ставки еще раз!",
-        MULTIAUCTION_ITEMS_ADDED = "Я добавил %s товара на аукцион на общую сумму %s",
+        MULTIAUCTION_STARTED = "Я начал мультиаукцион. Если не отображается, то скачайте/обновите Gargul!",
+        MULTIAUCTION_RESUMED = "Я возобновил предыдущий мультиаукцион. Проверьте свои ставки!",
+        MULTIAUCTION_ITEMS_ADDED = "Я добавил %s товар(ов) на мультиаукцион на %s",
         MULTIAUCTION_FINISHED = "Мультиаукцион завершен. В банке теперь %s",
 
         --[[ SOFTRES ]]
-        SOFTRES_MY_RESERVES_REPLY = "Вы зарезервировали %s", -- %s is a summary of all items or the SOFTRES_MY_RESERVED_ITEM_REPLY format (if more than 1 reserve)
+        SOFTRES_MY_RESERVES_REPLY = "Ваш софтрезерв %s", -- %s is a summary of all items or the SOFTRES_MY_RESERVED_ITEM_REPLY format (if more than 1 reserve)
         SOFTRES_MY_RESERVED_ITEM_REPLY = "%s (%sx)", -- First %s = item, second %s is times reserved if higher than 1
-        SOFTRES_NO_RESERVES_REPLY = "Похоже, вы еще ничего не зарезервировали, проверьте таблицу мягкого разрешения или спросите своего мастера добычи.",
-        SOFTRES_HARDRESERVED_NOTICE = "%s (Этот предмет жестко зарезервирован!)",
-        SOFTRES_DETAILS = "Зарезервировано: %s",
-        SOFTRES_MISSING_RESERVES = "Отсутствуют мягкие резервы от: %s",
-        SOFTRES_DATA_IMPORTED = "Я только что импортировал мягкие резервы в Гаргул. Шепните !sr, чтобы перепроверить свои резервы!",
+        SOFTRES_NO_RESERVES_REPLY = "Похоже, вы еще ничего не резервировали, проверьте таблицу софтрезерва или спросите ответственного за добычу.",
+        SOFTRES_HARDRESERVED_NOTICE = "%s (Этот предмет в хардрезерве!)",
+        SOFTRES_DETAILS = "Софтрезерв: %s",
+        SOFTRES_MISSING_RESERVES = "Отсутствуют софтрезервы от: %s",
+        SOFTRES_DATA_IMPORTED = "Я только что импортировал софтрезервы в Gargul. Шепните мне !sr, чтобы перепроверить резервы!",
 
         --[[ THATSMYBIS ]]
-        TMB_WISHLIST_DETAILS = "Список желаний ТМБ: %s",
+        TMB_WISHLIST_DETAILS = "Список ThatsMyBis: %s",
         TMB_PRIORITY_DETAILS = "%s Приоритет: %s", -- First %s can be TMB/DFT/CPR
 
         --[[ PACKMULE ]]
-        PACKMULE_DISENCHANTER_SET = "%s был назначен распылителем",
-        PACKMULE_DISENCHANTMENT_NOTICE = "%s будет разочарован %s",
+        PACKMULE_DISENCHANTER_SET = "%s был назначен дизэнчантером",
+        PACKMULE_DISENCHANTMENT_NOTICE = "%s будет распылён %s",
 
         --[[ ROLLING ]]
-        ROLLING_START = "У вас есть %s секунд, чтобы броситься на %s",
-        ROLLING_STOP = "Прекратите свои роллы!",
-        ROLLING_TIME_LEFT = "%s секунд до переката",
+        ROLLING_START = "У вас есть %sсек., чтобы разроллить %s",
+        ROLLING_STOP = "Остановите разролл!",
+        ROLLING_TIME_LEFT = "%sсек. осталось",
         ROLLING_SOFTRES_INFO = "Этот товар зарезервировал: %s",
-        ROLLING_TMB_INFO = "Следующие игроки имеют самый высокий процент %s: %s", -- First %s can be TMB/DFT/CPR
+        ROLLING_TMB_INFO = "Следующие игроки имеют самый высокий ролл %s приоритет: %s", -- First %s can be TMB/DFT/CPR
 
         --[[ TradeWindow / Trade ]]
-        TRADE_START_FAILED = "I tried to trade you, but was unsuccessful - trade me for ${item} asap!",
-        TRADE_TO = "от %s до %s",
-        TRADE_TO_PART = "до %s",
-        TRADE_GAVE = "я дал %s",
+        TRADE_START_FAILED = "Не получилось передать предмет - кинь мне обмен за ${item}!", 
+        TRADE_TO = "от кого: %s кому: %s", 
+        TRADE_TO_PART = "кому: %s",
+        TRADE_GAVE = "Я отдал %s",
         TRADE_GAVE_GOLD = "Я отдал %s %s",
-        TRADE_GAVE_MULTIPLE_OF_ITEM = "Я дал %sx%s", -- I gave [item]x3
-        TRADE_GAVE_ENCHANTMENT = "Я зачаровал %s с помощью %s для %s",
-        TRADE_GAVE_ENCHANTMENT_AND_GOLD = "Я зачаровал %s с помощью %s для %s и подарил %s",
-        TRADE_GAVE_ENCHANTMENT_FOR_GOLD = "Я зачаровал %s с помощью %s для %s и получил %s",
-        TRADE_GAVE_ENCHANTMENT_AFTER_ITEMS_PART = "%s и зачаровал их %s %s",
-        TRADE_GAVE_ENCHANTMENT_AFTER_ITEMS = "%s к %s и зачаровали своего %s %s",
-        TRADE_GOT_ENCHANTMENT = "%s очаровал моего %s %s",
-        TRADE_GOT_ENCHANTMENT_AND_GOLD = "%s очаровал моего %s %s и подарил мне %s",
-        TRADE_GOT_ENCHANTMENT_FOR_GOLD = "%s очаровал моего %s с помощью %s для %s",
-        TRADE_GOT_ENCHANTMENT_AND_GAVE_ENCHANTMENT = "%s зачаровал моего %s с помощью %s, а я зачаровал их %s с помощью %s",
-        TRADE_GOT_ENCHANTMENT_AND_GAVE_ENCHANTMENT_AND_GAVE_GOLD = "%s зачаровал моего %s с помощью %s, а я зачаровал их %s с помощью %s. Я также дал ему %s",
-        TRADE_GOT_ENCHANTMENT_AND_GOLD_AND_GAVE_ENCHANTMENT = "%s зачаровал моего %s %s и подарил мне %s. Я зачаровал их %s с помощью %s",
-        TRADE_FROM = "%s из %s",
+        TRADE_GAVE_MULTIPLE_OF_ITEM = "Я отдал %sx%s", -- I gave [item]x3
+        TRADE_GAVE_ENCHANTMENT = "Я зачаровал %s за %s для %s",
+        TRADE_GAVE_ENCHANTMENT_AND_GOLD = "Я зачаровал %s за %s для %s и передал %s",
+        TRADE_GAVE_ENCHANTMENT_FOR_GOLD = "Я зачаровал %s за %s для %s и получил %s",
+        TRADE_GAVE_ENCHANTMENT_AFTER_ITEMS_PART = "%s и зачаровал его %s за %s",
+        TRADE_GAVE_ENCHANTMENT_AFTER_ITEMS = "Передал %s %s и зачаровал его %s за %s",
+        TRADE_GOT_ENCHANTMENT = "%s зачаровал мой %s за %s",
+        TRADE_GOT_ENCHANTMENT_AND_GOLD = "%s зачаровал мой %s за %s и передал мне %s",
+        TRADE_GOT_ENCHANTMENT_FOR_GOLD = "%s зачаровал мой %s за %s и %s",
+        TRADE_GOT_ENCHANTMENT_AND_GAVE_ENCHANTMENT = "%s зачаровал мой %s за %s, а я зачаровал его %s за %s",
+        TRADE_GOT_ENCHANTMENT_AND_GAVE_ENCHANTMENT_AND_GAVE_GOLD = "%s зачаровал мой %s за %s, а я зачаровал его %s за %s и дал ему %s",
+        TRADE_GOT_ENCHANTMENT_AND_GOLD_AND_GAVE_ENCHANTMENT = "%s зачаровал мой %s за %s и дал мне %s. Я зачаровал его %s за %s", 
+        TRADE_FROM = "%s от %s",
         TRADE_FROM_PART = "от %s",
         TRADE_RECEIVED = "Я получил %s",
         TRADE_RECEIVED_GOLD = "Я получил %s от %s",
         TRADE_RECEIVED_MULTIPLE_OF_ITEM = "Я получил %sx%s", -- I gave [item]x3
-        TRADE_RECEIVED_ENCHANTMENT_AFTER_ITEMS_PART = "от %s и зачаровал моего %s %s",
-        TRADE_RECEIVED_ENCHANTMENT_AFTER_ITEMS = "%s от %s и мой %s был зачарован %s",
+        TRADE_RECEIVED_ENCHANTMENT_AFTER_ITEMS_PART = "от %s и получил мой %s зачарованный за %s",
+        TRADE_RECEIVED_ENCHANTMENT_AFTER_ITEMS = "%s от %s и получил мой %s зачарованный за %s",
 
         --[[ AWARD ]]
-        AWARD_RANDOM_WINNER = "Случайный победитель выбран для %s (%s)", -- First %s is item, second %s is player,
+        AWARD_RANDOM_WINNER = "Случайный победитель на %s выбран (%s)", -- First %s is item, second %s is player,
     },
 
     --[[ zhTW ]]

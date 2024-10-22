@@ -522,24 +522,17 @@ function TradeWindow:announceTradeDetails(Details)
             ) then
                 iTradedItems = true;
 
-                if (Entry.quantity > 1) then
-                    local quantity = Entry.quantity;
-                    local itemIDString = tostring(Entry.itemID); -- Should already be a string, but need to make sure
+                local quantity = Entry.quantity > 1 and Entry.quantity or 1;
+                local itemIDString = tostring(Entry.itemID); -- Should already be a string, but need to make sure
 
-                    -- Check to see if we already have a quantity of the same item available (multiple stacks?)
-                    if (ItemsTradedByMe[itemIDString]) then
-                        quantity = quantity + ItemsTradedByMe[itemIDString].quantity;
-                    end
-                    ItemsTradedByMe[itemIDString] = {
-                        itemLink = Entry.itemLink,
-                        quantity = quantity,
-                    };
-                else
-                    tinsert(ItemsTradedByMe, {
-                        itemLink = Entry.itemLink,
-                        quantity = 1,
-                    });
+                -- Check to see if we already have a quantity of the same item available (multiple stacks?)
+                if (ItemsTradedByMe[itemIDString]) then
+                    quantity = quantity + ItemsTradedByMe[itemIDString].quantity;
                 end
+                ItemsTradedByMe[itemIDString] = {
+                    itemLink = Entry.itemLink,
+                    quantity = quantity,
+                };
             end
         end
     end
@@ -553,24 +546,17 @@ function TradeWindow:announceTradeDetails(Details)
             ) then
                 theyTradedItems = true;
 
-                if (Entry.quantity > 1) then
-                    local quantity = Entry.quantity;
-                    local itemIDString = tostring(Entry.itemID); -- Should already be a string, but need to make sure
+                local quantity = Entry.quantity > 1 and Entry.quantity or 1;
+                local itemIDString = tostring(Entry.itemID); -- Should already be a string, but need to make sure
 
-                    -- Check to see if we already have a quantity of the same item available (multiple stacks?)
-                    if (ItemsTradedByThem[itemIDString]) then
-                        quantity = quantity + ItemsTradedByThem[itemIDString].quantity;
-                    end
-                    ItemsTradedByThem[itemIDString] = {
-                        itemLink = Entry.itemLink,
-                        quantity = quantity,
-                    };
-                else
-                    tinsert(ItemsTradedByThem, {
-                        itemLink = Entry.itemLink,
-                        quantity = 1,
-                    });
+                -- Check to see if we already have a quantity of the same item available (multiple stacks?)
+                if (ItemsTradedByThem[itemIDString]) then
+                    quantity = quantity + ItemsTradedByThem[itemIDString].quantity;
                 end
+                ItemsTradedByThem[itemIDString] = {
+                    itemLink = Entry.itemLink,
+                    quantity = quantity,
+                };
             end
         end
     end

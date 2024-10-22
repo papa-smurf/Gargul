@@ -149,6 +149,11 @@ end
 ---@param playerName string
 ---@return string
 function Comm:whisperOrGroup(playerName)
+    -- According to Meorawr, this was fixed in 10.2.7, see https://github.com/Stanzilla/WoWUIBugs/issues/535
+    if (true) then
+        return "WHISPER";
+    end
+
     local distribution = "WHISPER";
 
     if (not GL:isCrossRealm()) then

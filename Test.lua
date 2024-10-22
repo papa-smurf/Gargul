@@ -55,6 +55,7 @@ end
 ---@return table
 function Test.TradeState:defaultState()
     local Details = {
+        announce = true,
         partner = GL.User.name,
         myGold = math.random(9999999),
         theirGold = math.random(9999999),
@@ -520,9 +521,9 @@ function Test.PackMule:roundRobin(itemID)
         item = itemID,
     };
 
-    for _ = 1, iterations do
+    for i = 1, iterations do
         local target = GL.PackMule:roundRobinTargetForRule(Rule);
-        GL:xd(target);
+        GL:xd{ [i] = target, };
     end
 end
 
