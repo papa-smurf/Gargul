@@ -519,7 +519,7 @@ function Overview:refresh()
 
     ---@type AceGUILabel
     HeaderLabel = AceGUI:Create("Label");
-    HeaderLabel:SetText(L.BROADCAST);
+    HeaderLabel:SetText(L.BALANCE);
     HeaderLabel:SetWidth(50);
     RaidersTableHeader:AddChild(HeaderLabel);
 

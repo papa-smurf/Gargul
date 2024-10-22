@@ -136,7 +136,7 @@ L.CLOSE_ON_AWARD = "수상 마감";
 L.CLOSE_ON_START = "시작 시 닫기";
 L.COMMUNICATION = "의사소통";
 L.COMM_PROGRESS = "%s/%s바이트를 보냈습니다.";
-L.COPPER_INDICATOR = "씨";
+L.COPPER_INDICATOR = "c";
 L.CUT = "자르다";
 L.CUTS = "컷";
 L.CUT_MAILBOX_CLOSED = "사서함이 닫혀 있으면 메일을 보낼 수 없습니다";
@@ -593,12 +593,12 @@ L.GDKP_STOP_AUCTION_FIRST = "먼저 경매를 중단하세요!";
 L.GDKP_THEY_OWE = "%s이(가) 당신에게 빚을 졌습니다 %s";
 L.GDKP_TRADE_BALANCE_INFO = [[
 |c00967FD2GDKP 세션
-플레이어가 소비함: %s
-제공됨: %s
-수신됨: %s
+플레이어가 소비한 금액: %s
+주어진: %s
+받았다: %s
 플레이어 컷: %s
 
-%에스
+%s
 ]];
 L.GDKP_TRADE_EXCLUDE_GOLD = "GDKP에서 제외";
 L.GDKP_TRADE_EXCLUDE_GOLD_INFO = "거래된 금은 주고받는 금액에 추가되지 않습니다.";
@@ -876,7 +876,7 @@ L.SETTINGS_COUNTDOWN_IN_RAID_WARNING = "레이드 경고에서 카운트다운 �
 L.SETTINGS_INCOMING_BIDS_IN_RAID_WARNING = "습격 경고를 통해 들어오는 입찰을 알립니다.";
 L.SETTINGS_RESET_UI = "가르굴 UI 재설정";
 L.SETTINGS_WHISPER_BID_TOO_LOW = "입찰가가 너무 낮으면 입찰자에게 귓속말을 보내세요.";
-L.SILVER_INDICATOR = "에스";
+L.SILVER_INDICATOR = "s";
 L.SKIP = "건너뛰다";
 L.SOFTRES = "소프트 리저브";
 L.SOFTRES_ABBR = "SR";
