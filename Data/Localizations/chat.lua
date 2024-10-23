@@ -302,8 +302,8 @@ L.CHAT = {
         --[[ SOFTRES ]]
         SOFTRES_MY_RESERVES_REPLY = "您已预订 %s", -- %s is a summary of all items or the SOFTRES_MY_RESERVED_ITEM_REPLY format (if more than 1 reserve)
         SOFTRES_MY_RESERVED_ITEM_REPLY = "%s (%sx)", -- First %s = item, second %s is times reserved if higher than 1
-        SOFTRES_NO_RESERVES_REPLY = "您似乎还没有软保留任何东西，请检查软资源表或询问您的战利品分配者",
-        SOFTRES_HARDRESERVED_NOTICE = "%s（该商品是硬性保留的！）",
+        SOFTRES_NO_RESERVES_REPLY = "您似乎还没有软保留任何东西，请检查软保留表或询问您的战利品分配者",
+        SOFTRES_HARDRESERVED_NOTICE = "%s（该物品是硬保留的！）",
         SOFTRES_DETAILS = "保留者：%s",
         SOFTRES_MISSING_RESERVES = "缺少软保留：%s",
         SOFTRES_DATA_IMPORTED = "我刚刚将软保留导入 Gargul。私聊输入 !sr 仔细检查您的保留！",
