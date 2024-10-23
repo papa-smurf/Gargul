@@ -302,11 +302,11 @@ L.CHAT = {
         --[[ SOFTRES ]]
         SOFTRES_MY_RESERVES_REPLY = "您已预订 %s", -- %s is a summary of all items or the SOFTRES_MY_RESERVED_ITEM_REPLY format (if more than 1 reserve)
         SOFTRES_MY_RESERVED_ITEM_REPLY = "%s (%sx)", -- First %s = item, second %s is times reserved if higher than 1
-        SOFTRES_NO_RESERVES_REPLY = "您似乎还没有软保留任何东西，请检查软资源表或询问您的战利品大师",
-        SOFTRES_HARDRESERVED_NOTICE = "%s（该商品是硬性保留的！）",
+        SOFTRES_NO_RESERVES_REPLY = "您似乎还没有软保留任何东西，请检查软保留表或询问您的战利品分配者",
+        SOFTRES_HARDRESERVED_NOTICE = "%s（该物品是硬保留的！）",
         SOFTRES_DETAILS = "保留者：%s",
-        SOFTRES_MISSING_RESERVES = "缺少软储备：%s",
-        SOFTRES_DATA_IMPORTED = "我刚刚将软储备导入 Gargul。私聊输入 !sr 仔细检查您的储备！",
+        SOFTRES_MISSING_RESERVES = "缺少软保留：%s",
+        SOFTRES_DATA_IMPORTED = "我刚刚将软保留导入 Gargul。私聊输入 !sr 仔细检查您的保留！",
 
         --[[ THATSMYBIS ]]
         TMB_WISHLIST_DETAILS = "TMB 愿望清单：%s",
@@ -317,9 +317,9 @@ L.CHAT = {
         PACKMULE_DISENCHANTMENT_NOTICE = "%s会被%s分解",
 
         --[[ ROLLING ]]
-        ROLLING_START = "您还有 %s 秒时间继续 %s",
-        ROLLING_STOP = "停止你的Roll点！",
-        ROLLING_TIME_LEFT = "还剩 %s 秒结束Roll点",
+        ROLLING_START = "您还有 %s 秒时间 Roll %s",
+        ROLLING_STOP = "停止你的 Roll 点！",
+        ROLLING_TIME_LEFT = "还剩 %s 秒结束 Roll 点",
         ROLLING_SOFTRES_INFO = "该项目已被保留：%s",
         ROLLING_TMB_INFO = "以下玩家的 %s 优先级最高：%s", -- First %s can be TMB/DFT/CPR
 
@@ -327,23 +327,23 @@ L.CHAT = {
         TRADE_START_FAILED = "I tried to trade you, but was unsuccessful - trade me for ${item} asap!",
         TRADE_TO = "%s 给 %s",
         TRADE_TO_PART = "给 %s",
-        TRADE_GAVE = "我给了%s",
+        TRADE_GAVE = "我给了 %s",
         TRADE_GAVE_GOLD = "我将 %s 给了 %s",
         TRADE_GAVE_MULTIPLE_OF_ITEM = "我给了 %sx%s", -- I gave [item]x3
-        TRADE_GAVE_ENCHANTMENT = "我为 %s 对 %s 附魔",
+        TRADE_GAVE_ENCHANTMENT = "我给 %s 的 %s 附魔了",
         TRADE_GAVE_ENCHANTMENT_AND_GOLD = "我为 %s 用 %s 对 %s 附魔，并给了 %s",
         TRADE_GAVE_ENCHANTMENT_FOR_GOLD = "我为 %s 用 %s 对 %s 附魔，并收到了 %s",
-        TRADE_GAVE_ENCHANTMENT_AFTER_ITEMS_PART = "给 %s 附魔了 %s 用的是他的 %s",
-        TRADE_GAVE_ENCHANTMENT_AFTER_ITEMS = "%s 给 %s 附魔了 %s 用的是他的 %s",
-        TRADE_GOT_ENCHANTMENT = "%s 附魔了我的 %s 用的是 %s",
+        TRADE_GAVE_ENCHANTMENT_AFTER_ITEMS_PART = "给 %s 附魔了 %s，用的是他的 %s",
+        TRADE_GAVE_ENCHANTMENT_AFTER_ITEMS = "%s 给 %s 附魔了 %s，用的是他的 %s",
+        TRADE_GOT_ENCHANTMENT = "%s 附魔了我的 %s （用了 %s）",
         TRADE_GOT_ENCHANTMENT_AND_GOLD = "%s 附魔了 %s 用的是 %s 并给了我 %s",
         TRADE_GOT_ENCHANTMENT_FOR_GOLD = "%s 附魔了 %s 用的是 %s 并给了 %s",
-        TRADE_GOT_ENCHANTMENT_AND_GAVE_ENCHANTMENT = "%s 用 %s 对我的 %s 施了魔法，我用 %s 对他们的 %s 施了魔法",
-        TRADE_GOT_ENCHANTMENT_AND_GAVE_ENCHANTMENT_AND_GAVE_GOLD = "%s 附魔了我的 %s 用的是 %s 而且我附魔了他的 %s 用的是 %s. 我还给了他 %s",
-        TRADE_GOT_ENCHANTMENT_AND_GOLD_AND_GAVE_ENCHANTMENT = "%s 附魔了我的 %s 用的是 %s 并且给了我 %s. 我附魔了他的 %s 用的是 %s",
+        TRADE_GOT_ENCHANTMENT_AND_GAVE_ENCHANTMENT = "%s 用 %s 附魔了我的 %s ，我用 %s 附魔了他的 %s ",
+        TRADE_GOT_ENCHANTMENT_AND_GAVE_ENCHANTMENT_AND_GAVE_GOLD = "%s 用 %s 附魔了我的 %s，而且我附魔了他的 %s（用了 %s），我还给了他 %s",
+        TRADE_GOT_ENCHANTMENT_AND_GOLD_AND_GAVE_ENCHANTMENT = "%s 附魔了我的 %s（用了 %s）并且给了我 %s， 我附魔了他的 %s （用了 %s）",
         TRADE_FROM = "%s 来自 %s",
         TRADE_FROM_PART = "来自 %s",
-        TRADE_RECEIVED = "我收到%s",
+        TRADE_RECEIVED = "我收到 %s",
         TRADE_RECEIVED_GOLD = "我收到了来自 %s 的 %s",
         TRADE_RECEIVED_MULTIPLE_OF_ITEM = "我收到了 %sx%s", -- I gave [item]x3
         TRADE_RECEIVED_ENCHANTMENT_AFTER_ITEMS_PART = "来自 %s 并让我的 %s 附魔了 %s",
@@ -1026,8 +1026,8 @@ L.CHAT = {
         ROLLING_TMB_INFO = "Следующие игроки имеют самый высокий ролл %s приоритет: %s", -- First %s can be TMB/DFT/CPR
 
         --[[ TradeWindow / Trade ]]
-        TRADE_START_FAILED = "Не получилось передать предмет - кинь мне обмен за ${item}!", 
-        TRADE_TO = "от кого: %s кому: %s", 
+        TRADE_START_FAILED = "Не получилось передать предмет - кинь мне обмен за ${item}!",
+        TRADE_TO = "от кого: %s кому: %s",
         TRADE_TO_PART = "кому: %s",
         TRADE_GAVE = "Я отдал %s",
         TRADE_GAVE_GOLD = "Я отдал %s %s",
@@ -1042,7 +1042,7 @@ L.CHAT = {
         TRADE_GOT_ENCHANTMENT_FOR_GOLD = "%s зачаровал мой %s за %s и %s",
         TRADE_GOT_ENCHANTMENT_AND_GAVE_ENCHANTMENT = "%s зачаровал мой %s за %s, а я зачаровал его %s за %s",
         TRADE_GOT_ENCHANTMENT_AND_GAVE_ENCHANTMENT_AND_GAVE_GOLD = "%s зачаровал мой %s за %s, а я зачаровал его %s за %s и дал ему %s",
-        TRADE_GOT_ENCHANTMENT_AND_GOLD_AND_GAVE_ENCHANTMENT = "%s зачаровал мой %s за %s и дал мне %s. Я зачаровал его %s за %s", 
+        TRADE_GOT_ENCHANTMENT_AND_GOLD_AND_GAVE_ENCHANTMENT = "%s зачаровал мой %s за %s и дал мне %s. Я зачаровал его %s за %s",
         TRADE_FROM = "%s от %s",
         TRADE_FROM_PART = "от %s",
         TRADE_RECEIVED = "Я получил %s",
