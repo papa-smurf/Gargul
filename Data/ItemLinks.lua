@@ -26,6 +26,428 @@ GL.Data.SoftResSpecificItemLinks = {
     -- Eskhandar's Collar
     ["18205"] = { 228759, },
     ["228759"] = { 18205, },
+
+    -- Not in TMB yet!
+
+    -- Helm of the Fiery Conqueror | Crown of the Fiery Conqueror
+    ["71675"] = { 71677, },
+    ["71677"] = { 71675, },
+
+    -- Helm of the Fiery Protector | Crown of the Fiery Protector
+    ["71682"] = { 71684, },
+    ["71684"] = { 71682, },
+
+    -- Helm of the Fiery Vanquisher | Crown of the Fiery Vanquisher
+    ["71668"] = { 71670, },
+    ["71670"] = { 71668, },
+
+    -- Mantle of the Fiery Conqueror | Shoulders of the Fiery Conqueror
+    ["71681"] = { 71680, },
+    ["71680"] = { 71681, },
+
+    -- Mantle of the Fiery Protector | Shoulders of the Fiery Protector
+    ["71688"] = { 71687, },
+    ["71687"] = { 71688, },
+
+    -- Mantle of the Fiery Vanquisher | Shoulders of the Fiery Vanquisher
+    ["71674"] = { 71673, },
+    ["71673"] = { 71674, },
+
+    -- Robes of Smoldering Devastation
+    ["71041"] = { 71407, },
+    ["71407"] = { 71041, },
+
+    -- Cowl of the Clicking Menace
+    ["71040"] = { 71411, },
+    ["71411"] = { 71040, },
+
+    -- Cindersilk Gloves
+    ["71044"] = { 71410, },
+    ["71410"] = { 71044, },
+
+    -- Cinderweb Leggings
+    ["71031"] = { 71402, },
+    ["71402"] = { 71031, },
+
+    -- Thoracic Flame Kilt
+    ["71042"] = { 71412, },
+    ["71412"] = { 71042, },
+
+    -- Flickering Shoulders
+    ["71030"] = { 71403, },
+    ["71403"] = { 71030, },
+
+    -- Spaulders of Manifold Eyes
+    ["71043"] = { 71413, },
+    ["71413"] = { 71043, },
+
+    -- Arachnaflame Treads
+    ["71029"] = { 71404, },
+    ["71404"] = { 71029, },
+
+    -- Carapace of Imbibed Flame
+    ["70914"] = { 71405, },
+    ["71405"] = { 70914, },
+
+    -- Widow's Kiss
+    ["71032"] = { 71401, },
+    ["71401"] = { 71032, },
+
+    -- Spidersilk Spindle
+    ["68981"] = { 69138, },
+    ["69138"] = { 68981, },
+
+    -- Ward of the Red Widow
+    ["71038"] = { 71408, },
+    ["71408"] = { 71038, },
+
+    -- Funeral Pyre
+    ["71039"] = { 71409, },
+    ["71409"] = { 71039, },
+
+    -- Mandible of Beth'tilac
+    ["70922"] = { 71406, },
+    ["71406"] = { 70922, },
+
+    -- Flickering Cowl
+    ["71011"] = { 71421, },
+    ["71421"] = { 71011, },
+
+    -- Incendic Chestguard
+    ["71010"] = { 71424, },
+    ["71424"] = { 71010, },
+
+    -- Hood of Rampant Disdain
+    ["71003"] = { 71416, },
+    ["71416"] = { 71003, },
+
+    -- Flaming Core Chestguard
+    ["71005"] = { 71417, },
+    ["71417"] = { 71005, },
+
+    -- Lava Line Wristbands
+    ["71009"] = { 71425, },
+    ["71425"] = { 71009, },
+
+    -- Grips of the Raging Giant
+    ["71007"] = { 71426, },
+    ["71426"] = { 71007, },
+
+    -- Earthcrack Bracers
+    ["71004"] = { 71418, },
+    ["71418"] = { 71004, },
+
+    -- Fireskin Gauntlets
+    ["70993"] = { 71419, },
+    ["71419"] = { 70993, },
+
+    -- Cracked Obsidian Stompers
+    ["70912"] = { 71420, },
+    ["71420"] = { 70912, },
+
+    -- Heartstone of Rhyolith
+    ["71012"] = { 71423, },
+    ["71423"] = { 71012, },
+
+    -- Dreadfire Drape
+    ["70992"] = { 71415, },
+    ["71415"] = { 70992, },
+
+    -- Volcanospike
+    ["71006"] = { 71422, },
+    ["71422"] = { 71006, },
+
+    -- Arbalest of Erupting Fury
+    ["70991"] = { 71414, },
+    ["71414"] = { 70991, },
+
+    -- Leggings of Billowing Fire
+    ["70989"] = { 71435, },
+    ["71435"] = { 70989, },
+
+    -- Phoenix-Down Treads
+    ["70987"] = { 71436, },
+    ["71436"] = { 70987, },
+
+    -- Flickering Wristbands
+    ["70735"] = { 71428, },
+    ["71428"] = { 70735, },
+
+    -- Craterflame Spaulders
+    ["70985"] = { 71438, },
+    ["71438"] = { 70985, },
+
+    -- Clawshaper Gauntlets
+    ["70986"] = { 71437, },
+    ["71437"] = { 70986, },
+
+    -- Moltenfeather Leggings
+    ["70736"] = { 71429, },
+    ["71429"] = { 70736, },
+
+    -- Clutch of the Firemother
+    ["70988"] = { 71439, },
+    ["71439"] = { 70988, },
+
+    -- Greathelm of the Voracious Maw
+    ["70734"] = { 71430, },
+    ["71430"] = { 70734, },
+
+    -- Lavaworm Legplates
+    ["70739"] = { 71431, },
+    ["71431"] = { 70739, },
+
+    -- Spaulders of Recurring Flame
+    ["70737"] = { 71432, },
+    ["71432"] = { 70737, },
+
+    -- Eye of Blazing Power
+    ["68983"] = { 69149, },
+    ["69149"] = { 68983, },
+
+    -- Wings of Flame
+    ["70990"] = { 71434, },
+    ["71434"] = { 70990, },
+
+    -- Alysrazor's Band
+    ["70738"] = { 71433, },
+    ["71433"] = { 70738, },
+
+    -- Alysra's Razor
+    ["70733"] = { 71427, },
+    ["71427"] = { 70733, },
+
+    -- Coalwalker Sandals
+    ["71023"] = { 71447, },
+    ["71447"] = { 71023, },
+
+    -- Flickering Shoulderpads
+    ["71025"] = { 71450, },
+    ["71450"] = { 71025, },
+
+    -- Gloves of Dissolving Smoke
+    ["71020"] = { 71440, },
+    ["71440"] = { 71020, },
+
+    -- Treads of Implicit Obedience
+    ["71027"] = { 71451, },
+    ["71451"] = { 71027, },
+
+    -- Scalp of the Bandit Prince
+    ["71018"] = { 71442, },
+    ["71442"] = { 71018, },
+
+    -- Bracers of the Dread Hunter
+    ["71026"] = { 71452, },
+    ["71452"] = { 71026, },
+
+    -- Legplates of Absolute Control
+    ["71028"] = { 71453, },
+    ["71453"] = { 71028, },
+
+    -- Uncrushable Belt of Fury
+    ["71021"] = { 71443, },
+    ["71443"] = { 71021, },
+
+    -- Legplates of Frenzied Devotion
+    ["70913"] = { 71444, },
+    ["71444"] = { 70913, },
+
+    -- Crystal Prison Band
+    ["71024"] = { 71449, },
+    ["71449"] = { 71024, },
+
+    -- Necklace of Fetishes
+    ["71019"] = { 71446, },
+    ["71446"] = { 71019, },
+
+    -- Goblet of Anger
+    ["71022"] = { 71448, },
+    ["71448"] = { 71022, },
+
+    -- Feeding Frenzy
+    ["71013"] = { 71441, },
+    ["71441"] = { 71013, },
+
+    -- Skullstealer Greataxe
+    ["71014"] = { 71445, },
+    ["71445"] = { 71014, },
+
+    -- Mantle of Closed Doors
+    ["71343"] = { 71461, },
+    ["71461"] = { 71343, },
+
+    -- Glowing Wing Bracers
+    ["71341"] = { 71463, },
+    ["71463"] = { 71341, },
+
+    -- Shoulderpads of the Forgotten Gate
+    ["71345"] = { 71456, },
+    ["71456"] = { 71345, },
+
+    -- Breastplate of the Incendiary Soul
+    ["71314"] = { 71455, },
+    ["71455"] = { 71314, },
+
+    -- Gatekeeper's Embrace
+    ["71340"] = { 71464, },
+    ["71464"] = { 71340, },
+
+    -- Decimation Treads
+    ["71315"] = { 71457, },
+    ["71457"] = { 71315, },
+
+    -- Casque of Flame
+    ["71342"] = { 71465, },
+    ["71465"] = { 71342, },
+
+    -- Flickering Handguards
+    ["70917"] = { 71458, },
+    ["71458"] = { 70917, },
+
+    -- Helm of Blazing Glory
+    ["70916"] = { 71459, },
+    ["71459"] = { 70916, },
+
+    -- Necromantic Focus
+    ["68982"] = { 69139, },
+    ["69139"] = { 68982, },
+
+    -- Molten Scream
+    ["71323"] = { 71462, },
+    ["71462"] = { 71323, },
+
+    -- Gatecrasher
+    ["71312"] = { 71454, },
+    ["71454"] = { 71312, },
+
+    -- Shard of Torment
+    ["70915"] = { 71460, },
+    ["71460"] = { 70915, },
+
+    -- Wristwraps of Arrogant Doom
+    ["71350"] = { 71471, },
+    ["71471"] = { 71350, },
+
+    -- Firecat Leggings
+    ["71349"] = { 71474, },
+    ["71474"] = { 71349, },
+
+    -- Sandals of Leaping Coals
+    ["71313"] = { 71467, },
+    ["71467"] = { 71313, },
+
+    -- Grips of Unerring Precision
+    ["71346"] = { 71468, },
+    ["71468"] = { 71346, },
+
+    -- Treads of the Penitent Man
+    ["71351"] = { 71475, },
+    ["71475"] = { 71351, },
+
+    -- Breastplate of Shifting Visions
+    ["71344"] = { 71469, },
+    ["71469"] = { 71344, },
+
+    -- Bracers of the Fiery Path
+    ["70920"] = { 71470, },
+    ["71470"] = { 70920, },
+
+    -- Flowform Choker
+    ["71348"] = { 71472, },
+    ["71472"] = { 71348, },
+
+    -- Jaws of Defeat
+    ["68926"] = { 69111, },
+    ["69111"] = { 68926, },
+
+    -- The Hungerer
+    ["68927"] = { 69112, },
+    ["69112"] = { 68927, },
+
+    -- Stinger of the Flaming Scorpion
+    ["71347"] = { 71473, },
+    ["71473"] = { 71347, },
+
+    -- Fandral's Flamescythe
+    ["69897"] = { 71466, },
+    ["71466"] = { 69897, },
+
+    -- Fingers of Incineration
+    ["71358"] = { 71614, },
+    ["71614"] = { 71358, },
+
+    -- Majordomo's Chain of Office
+    ["71357"] = { 71613, },
+    ["71613"] = { 71357, },
+
+    -- Crown of Flame
+    ["71356"] = { 71616, },
+    ["71616"] = { 71356, },
+
+    -- Pauldrons of Roaring Flame
+    ["70921"] = { 71612, },
+    ["71612"] = { 70921, },
+
+    -- Variable Pulse Lightning Capacitor
+    ["68925"] = { 69110, },
+    ["69110"] = { 68925, },
+
+    -- Matrix Restabilizer
+    ["68994"] = { 69150, },
+    ["69150"] = { 68994, },
+
+    -- Vessel of Acceleration
+    ["68995"] = { 69167, },
+    ["69167"] = { 68995, },
+
+    -- Choker of the Vanquished Lord
+    ["71354"] = { 71610, },
+    ["71610"] = { 71354, },
+
+    -- Sho'ravon, Greatstaff of Annihilation
+    ["71798"] = { 71797, },
+    ["71797"] = { 71798, },
+
+    -- Ko'gun, Hammer of the Firelord
+    ["71355"] = { 71615, },
+    ["71615"] = { 71355, },
+
+    -- Sulfuras, the Extinguished Hand
+    ["71352"] = { 70723, },
+    ["70723"] = { 71352, },
+
+    -- Arathar, the Eye of Flame
+    ["71353"] = { 71611, },
+    ["71611"] = { 71353, },
+
+    -- Smoldering Censer of Purity
+    ["71775"] = { 71774, },
+    ["71774"] = { 71775, },
+
+    -- Firethorn Mindslicer
+    ["71785"] = { 71784, },
+    ["71784"] = { 71785, },
+
+    -- Eye of Purification
+    ["71776"] = { 71777, },
+    ["71777"] = { 71776, },
+
+    -- Avool's Incendiary Shanker
+    ["71779"] = { 71778, },
+    ["71778"] = { 71779, },
+
+    -- Entrail Disgorger
+    ["71787"] = { 71786, },
+    ["71786"] = { 71787, },
+
+    -- Shatterskull Bonecrusher
+    ["71782"] = { 71783, },
+    ["71783"] = { 71782, },
+
+    -- Zoid's Firelit Greatsword
+    ["71780"] = { 71781, },
+    ["71781"] = { 71780, },
 };
 
 -- [[ MOLTEN/SHADOWFLAME/BLOODIED ITEMS THAT ARE NOT PROVIDED BY TMB
