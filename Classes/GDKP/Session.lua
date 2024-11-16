@@ -292,8 +292,8 @@ function Session:tradeInitiated(Details)
     end
 
     -- Add the gold to the trade window
-    if (playerCutInCopper > 0
-        and balance
+    if (balance
+        and GL:gt(balance, 0)
         and Settings:get("GDKP.addGoldToTradeWindow")
     ) then
         if (balance > GetMoney()) then
