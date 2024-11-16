@@ -15827,6 +15827,10 @@ GL.Data.ItemLinks = {
     ["71493"] = {
         71671, -- Leggings of the Fiery Vanquisher
     },
+    -- Obsidian Arborweave Robes
+    ["71494"] = {
+        71672, -- Chest of the Fiery Vanquisher
+    },
     -- Obsidian Arborweave Mantle
     ["71495"] = {
         71673, -- Shoulders of the Fiery Vanquisher
@@ -16275,6 +16279,7 @@ GL.Data.ItemLinks = {
         71476, -- Elementium Deathplate Breastplate
         71481, -- Elementium Deathplate Chestguard
         71486, -- Obsidian Arborweave Raiment
+        71494, -- Obsidian Arborweave Robes
         71499, -- Obsidian Arborweave Vestment
         71510, -- Firehawk Robes
         71537, -- Dark Phoenix Tunic
@@ -22061,6 +22066,7 @@ GL.Data.ItemLinks = {
     -- Obsidian Edged Blade
     ["228459"] = {
         18822, -- Obsidian Edged Blade
+        228229, -- Obsidian Edged Blade
     },
     -- Spinal Reaper
     ["228460"] = {
@@ -22069,10 +22075,12 @@ GL.Data.ItemLinks = {
     -- Bonereaver's Edge
     ["228461"] = {
         17076, -- Bonereaver's Edge
+        228288, -- Bonereaver's Edge
     },
     -- Aurastone Hammer
     ["228462"] = {
         17105, -- Aurastone Hammer
+        228264, -- Aurastone Hammer
     },
     -- Earthshaker
     ["228463"] = {
@@ -22681,6 +22689,7 @@ GL.Data.ItemLinks = {
     -- Drillborer Disk
     ["228702"] = {
         17066, -- Drillborer Disk
+        228266, -- Drillborer Disk
     },
     -- Coldstone Slippers
     ["228703"] = {
@@ -25386,6 +25395,7 @@ GL.Data.ItemLinks = {
     -- Arlokk's Grasp
     ["231851"] = {
         19910, -- Arlokk's Grasp
+        230934, -- Arlokk's Grasp
     },
     -- Gurubashi Dwarf Destroyer
     ["231852"] = {
@@ -25398,10 +25408,12 @@ GL.Data.ItemLinks = {
     -- Zin'rokh, Destroyer of Worlds
     ["231854"] = {
         19854, -- Zin'rokh, Destroyer of Worlds
+        231315, -- Zin'rokh, Destroyer of Worlds
     },
     -- Fang of the Faceless
     ["231855"] = {
         19859, -- Fang of the Faceless
+        231301, -- Fang of the Faceless
     },
     -- Ancient Hakkari Manslayer
     ["231856"] = {
@@ -25434,6 +25446,7 @@ GL.Data.ItemLinks = {
     -- Thoughtblighter
     ["231863"] = {
         19967, -- Thoughtblighter
+        231276, -- Thoughtblighter
     },
     -- Pitchfork of Madness
     ["231864"] = {
@@ -25446,6 +25459,7 @@ GL.Data.ItemLinks = {
     -- Mar'li's Touch
     ["231866"] = {
         19927, -- Mar'li's Touch
+        230918, -- Mar'li's Touch
     },
     -- Bloodlord's Defender
     ["231867"] = {
@@ -25454,6 +25468,7 @@ GL.Data.ItemLinks = {
     -- Mandokir's Sting
     ["231868"] = {
         20038, -- Mandokir's Sting
+        230993, -- Mandokir's Sting
     },
     -- Warblade of the Hakkari
     ["231869"] = {
@@ -25466,6 +25481,7 @@ GL.Data.ItemLinks = {
     -- Wushoolay's Poker
     ["231871"] = {
         19965, -- Wushoolay's Poker
+        231279, -- Wushoolay's Poker
     },
     -- Hoodoo Hunting Bow
     ["231872"] = {
