@@ -354,7 +354,6 @@ function MailCuts:refreshPlayerCuts()
     return i > 0;
 end
 
----@return void
 function MailCuts:mailAllCuts()
     if (self.sendingMail) then
         GL:error(L.CUT_MAIL_IN_PROGRESS);
@@ -464,7 +463,7 @@ function MailCuts:mailPlayerCut(player, callback)
         -- Remove all event listeners and scheduled timers FIRST
         GL.Ace:CancelTimer(MailDisableTimer);
         GL.Ace:CancelTimer(MailTimeOutTimer);
-        Events:unregister{"MailCutsMailSuccess", "MailCutsMailFailed", "MailCutsMailTimedOut" };
+        Events:unregister{"MailCutsMailSuccess", "MailCutsMailFailed", "MailCutsMailTimedOut", };
 
         local message;
         local success = false;

@@ -65,9 +65,9 @@ function Events:getClickCombination(mouseButtonPressed)
 end
 
 --- Register an event listener
----@param identifier string|nil
----@param event string
----@param callback function
+---@param identifier? string|table
+---@param event string|function
+---@param callback? function
 ---@return boolean
 function Events:register(identifier, event, callback)
     -- The user is attempting a mass assignment, pass it on!
@@ -111,7 +111,7 @@ function Events:register(identifier, event, callback)
 end
 
 --- Unregister a listener based on its identifier
----@param identifier string
+---@param identifier string|table
 function Events:unregister(identifier)
     if (type(identifier) == "table") then
         for _, event in pairs(identifier) do

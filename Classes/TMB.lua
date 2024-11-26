@@ -28,6 +28,28 @@ GL.TMB = TMB;
 
 local OFFSPEC_IDENTIFIER = "%(os%)";
 
+-- Character names can include realm names, which can contain spaces and hyphens
+---@param name string
+---@return string
+function TMB:normalizePlayerName(name)
+    name = name:lower();
+
+    -- Remove whitespaces
+    name = name:gsub("%s+", "");
+
+    -- Remove consecutive hyphens, leaving the first intact
+    local firstHypenPosition = name:find("-");
+
+    if (not firstHypenPosition) then
+        return name;
+    end
+
+    local namePart = name:sub(1, firstHypenPosition);
+    local realmPart = name:sub(namePart:len() + 1, name:len());
+
+    return namePart .. realmPart:gsub("-", "");
+end
+
 ---@return boolean
 function TMB:_init()
     if (self._initialized) then
@@ -935,7 +957,7 @@ function TMB:RRobinFormatToTMB(data)
 
     for _, Entry in pairs(data.reserves or {}) do
         local WishlistData = TMBData.wishlists[tostring(Entry.itemid)] or {};
-        tinsert(WishlistData, string.format("%s||%s||1||1", string.lower(Entry.character), Entry.priority));
+        tinsert(WishlistData, string.format("%s||%s||1||1", self:normalizePlayerName(Entry.character), Entry.priority));
         TMBData.wishlists[tostring(Entry.itemid)] = WishlistData;
     end
 
@@ -1038,7 +1060,7 @@ function TMB:DFTFormatToTMB(data)
     -- Rewrite the DFT format to TMB
     for itemID, Priorities in pairs(TMBData.wishlists) do
         for key, Priority in pairs(Priorities) do
-            TMBData.wishlists[itemID][key] = string.format("%s||%s||1||1", string.lower(Priority.player), Priority.priority);
+            TMBData.wishlists[itemID][key] = string.format("%s||%s||1||1", self:normalizePlayerName(Priority.player), Priority.priority);
         end
     end
 
@@ -1095,8 +1117,8 @@ Alt:ratomir,zhorax,feth
                 end
 
                 for _, priorityEntry in pairs(CSVParts) do
-                    (function () -- Not having continue statements in LUA is getting silly at this point
-                        local player = string.lower(GL:nameFormat(priorityEntry));
+                    (function ()
+                        local player = self:normalizePlayerName(priorityEntry);
 
                         if (GL:empty(player)) then
                             return;
@@ -1141,7 +1163,7 @@ Alt:ratomir,zhorax,feth
 
                         for _, playerName in pairs(Players) do
                             if (not GL:empty(playerName)) then
-                                tinsert(Priorities, {player = playerName, priority = priority});
+                                tinsert(Priorities, { player = playerName, priority = priority, });
                             end
                         end
 
@@ -1169,7 +1191,7 @@ Alt:ratomir,zhorax,feth
     -- Rewrite the priorities to match TMBs format
     for itemID, Priorities in pairs(TMBData.wishlists) do
         for key, PriorityEntry in pairs(Priorities) do
-            TMBData.wishlists[itemID][key] = string.format("%s||%s||1||1", string.lower(PriorityEntry.player), PriorityEntry.priority);
+            TMBData.wishlists[itemID][key] = string.format("%s||%s||1||1", self:normalizePlayerName(PriorityEntry.player), PriorityEntry.priority);
         end
     end
 
