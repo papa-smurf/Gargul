@@ -157,450 +157,6 @@ GL.Data.ItemLinks = {
         71148, -- Soulflame Vial
     },
 
-    -- Obsidian Edged Blade
-    ["18822"] = { 228229, },
-    ["228229"] = { 18822, },
-    -- Aurastone Hammer
-    ["17105"] = { 228264, },
-    ["228264"] = { 17105, },
-    -- Drillborer Disk
-    ["17066"] = { 228266, },
-    ["228266"] = { 17066, },
-    -- Hyperthermically Insulated Lava Dredger
-    ["18803"] = { 228278, },
-    ["228278"] = { 18803, },
-    -- Bonereaver's Edge
-    ["17076"] = { 228288, },
-    ["228288"] = { 17076, },
-    -- Head of Onyxia
-    ["18423"] = { 228688, },
-    ["228688"] = { 18423, },
-    -- Eskhandar's Collar
-    ["18205"] = { 228759, },
-    ["228759"] = { 18205, },
-
-    -- Not in TMB yet!
-
-    -- Helm of the Fiery Conqueror | Crown of the Fiery Conqueror
-    ["71675"] = { 71677, },
-    ["71677"] = { 71675, },
-
-    -- Helm of the Fiery Protector | Crown of the Fiery Protector
-    ["71682"] = { 71684, },
-    ["71684"] = { 71682, },
-
-    -- Helm of the Fiery Vanquisher | Crown of the Fiery Vanquisher
-    ["71668"] = { 71670, },
-    ["71670"] = { 71668, },
-
-    -- Mantle of the Fiery Conqueror | Shoulders of the Fiery Conqueror
-    ["71681"] = { 71680, },
-    ["71680"] = { 71681, },
-
-    -- Mantle of the Fiery Protector | Shoulders of the Fiery Protector
-    ["71688"] = { 71687, },
-    ["71687"] = { 71688, },
-
-    -- Mantle of the Fiery Vanquisher | Shoulders of the Fiery Vanquisher
-    ["71674"] = { 71673, },
-    ["71673"] = { 71674, },
-
-    -- Robes of Smoldering Devastation
-    ["71041"] = { 71407, },
-    ["71407"] = { 71041, },
-
-    -- Cowl of the Clicking Menace
-    ["71040"] = { 71411, },
-    ["71411"] = { 71040, },
-
-    -- Cindersilk Gloves
-    ["71044"] = { 71410, },
-    ["71410"] = { 71044, },
-
-    -- Cinderweb Leggings
-    ["71031"] = { 71402, },
-    ["71402"] = { 71031, },
-
-    -- Thoracic Flame Kilt
-    ["71042"] = { 71412, },
-    ["71412"] = { 71042, },
-
-    -- Flickering Shoulders
-    ["71030"] = { 71403, },
-    ["71403"] = { 71030, },
-
-    -- Spaulders of Manifold Eyes
-    ["71043"] = { 71413, },
-    ["71413"] = { 71043, },
-
-    -- Arachnaflame Treads
-    ["71029"] = { 71404, },
-    ["71404"] = { 71029, },
-
-    -- Carapace of Imbibed Flame
-    ["70914"] = { 71405, },
-    ["71405"] = { 70914, },
-
-    -- Widow's Kiss
-    ["71032"] = { 71401, },
-    ["71401"] = { 71032, },
-
-    -- Spidersilk Spindle
-    ["68981"] = { 69138, },
-    ["69138"] = { 68981, },
-
-    -- Ward of the Red Widow
-    ["71038"] = { 71408, },
-    ["71408"] = { 71038, },
-
-    -- Funeral Pyre
-    ["71039"] = { 71409, },
-    ["71409"] = { 71039, },
-
-    -- Mandible of Beth'tilac
-    ["70922"] = { 71406, },
-    ["71406"] = { 70922, },
-
-    -- Flickering Cowl
-    ["71011"] = { 71421, },
-    ["71421"] = { 71011, },
-
-    -- Incendic Chestguard
-    ["71010"] = { 71424, },
-    ["71424"] = { 71010, },
-
-    -- Hood of Rampant Disdain
-    ["71003"] = { 71416, },
-    ["71416"] = { 71003, },
-
-    -- Flaming Core Chestguard
-    ["71005"] = { 71417, },
-    ["71417"] = { 71005, },
-
-    -- Lava Line Wristbands
-    ["71009"] = { 71425, },
-    ["71425"] = { 71009, },
-
-    -- Grips of the Raging Giant
-    ["71007"] = { 71426, },
-    ["71426"] = { 71007, },
-
-    -- Earthcrack Bracers
-    ["71004"] = { 71418, },
-    ["71418"] = { 71004, },
-
-    -- Fireskin Gauntlets
-    ["70993"] = { 71419, },
-    ["71419"] = { 70993, },
-
-    -- Cracked Obsidian Stompers
-    ["70912"] = { 71420, },
-    ["71420"] = { 70912, },
-
-    -- Heartstone of Rhyolith
-    ["71012"] = { 71423, },
-    ["71423"] = { 71012, },
-
-    -- Dreadfire Drape
-    ["70992"] = { 71415, },
-    ["71415"] = { 70992, },
-
-    -- Volcanospike
-    ["71006"] = { 71422, },
-    ["71422"] = { 71006, },
-
-    -- Arbalest of Erupting Fury
-    ["70991"] = { 71414, },
-    ["71414"] = { 70991, },
-
-    -- Leggings of Billowing Fire
-    ["70989"] = { 71435, },
-    ["71435"] = { 70989, },
-
-    -- Phoenix-Down Treads
-    ["70987"] = { 71436, },
-    ["71436"] = { 70987, },
-
-    -- Flickering Wristbands
-    ["70735"] = { 71428, },
-    ["71428"] = { 70735, },
-
-    -- Craterflame Spaulders
-    ["70985"] = { 71438, },
-    ["71438"] = { 70985, },
-
-    -- Clawshaper Gauntlets
-    ["70986"] = { 71437, },
-    ["71437"] = { 70986, },
-
-    -- Moltenfeather Leggings
-    ["70736"] = { 71429, },
-    ["71429"] = { 70736, },
-
-    -- Clutch of the Firemother
-    ["70988"] = { 71439, },
-    ["71439"] = { 70988, },
-
-    -- Greathelm of the Voracious Maw
-    ["70734"] = { 71430, },
-    ["71430"] = { 70734, },
-
-    -- Lavaworm Legplates
-    ["70739"] = { 71431, },
-    ["71431"] = { 70739, },
-
-    -- Spaulders of Recurring Flame
-    ["70737"] = { 71432, },
-    ["71432"] = { 70737, },
-
-    -- Eye of Blazing Power
-    ["68983"] = { 69149, },
-    ["69149"] = { 68983, },
-
-    -- Wings of Flame
-    ["70990"] = { 71434, },
-    ["71434"] = { 70990, },
-
-    -- Alysrazor's Band
-    ["70738"] = { 71433, },
-    ["71433"] = { 70738, },
-
-    -- Alysra's Razor
-    ["70733"] = { 71427, },
-    ["71427"] = { 70733, },
-
-    -- Coalwalker Sandals
-    ["71023"] = { 71447, },
-    ["71447"] = { 71023, },
-
-    -- Flickering Shoulderpads
-    ["71025"] = { 71450, },
-    ["71450"] = { 71025, },
-
-    -- Gloves of Dissolving Smoke
-    ["71020"] = { 71440, },
-    ["71440"] = { 71020, },
-
-    -- Treads of Implicit Obedience
-    ["71027"] = { 71451, },
-    ["71451"] = { 71027, },
-
-    -- Scalp of the Bandit Prince
-    ["71018"] = { 71442, },
-    ["71442"] = { 71018, },
-
-    -- Bracers of the Dread Hunter
-    ["71026"] = { 71452, },
-    ["71452"] = { 71026, },
-
-    -- Legplates of Absolute Control
-    ["71028"] = { 71453, },
-    ["71453"] = { 71028, },
-
-    -- Uncrushable Belt of Fury
-    ["71021"] = { 71443, },
-    ["71443"] = { 71021, },
-
-    -- Legplates of Frenzied Devotion
-    ["70913"] = { 71444, },
-    ["71444"] = { 70913, },
-
-    -- Crystal Prison Band
-    ["71024"] = { 71449, },
-    ["71449"] = { 71024, },
-
-    -- Necklace of Fetishes
-    ["71019"] = { 71446, },
-    ["71446"] = { 71019, },
-
-    -- Goblet of Anger
-    ["71022"] = { 71448, },
-    ["71448"] = { 71022, },
-
-    -- Feeding Frenzy
-    ["71013"] = { 71441, },
-    ["71441"] = { 71013, },
-
-    -- Skullstealer Greataxe
-    ["71014"] = { 71445, },
-    ["71445"] = { 71014, },
-
-    -- Mantle of Closed Doors
-    ["71343"] = { 71461, },
-    ["71461"] = { 71343, },
-
-    -- Glowing Wing Bracers
-    ["71341"] = { 71463, },
-    ["71463"] = { 71341, },
-
-    -- Shoulderpads of the Forgotten Gate
-    ["71345"] = { 71456, },
-    ["71456"] = { 71345, },
-
-    -- Breastplate of the Incendiary Soul
-    ["71314"] = { 71455, },
-    ["71455"] = { 71314, },
-
-    -- Gatekeeper's Embrace
-    ["71340"] = { 71464, },
-    ["71464"] = { 71340, },
-
-    -- Decimation Treads
-    ["71315"] = { 71457, },
-    ["71457"] = { 71315, },
-
-    -- Casque of Flame
-    ["71342"] = { 71465, },
-    ["71465"] = { 71342, },
-
-    -- Flickering Handguards
-    ["70917"] = { 71458, },
-    ["71458"] = { 70917, },
-
-    -- Helm of Blazing Glory
-    ["70916"] = { 71459, },
-    ["71459"] = { 70916, },
-
-    -- Necromantic Focus
-    ["68982"] = { 69139, },
-    ["69139"] = { 68982, },
-
-    -- Molten Scream
-    ["71323"] = { 71462, },
-    ["71462"] = { 71323, },
-
-    -- Gatecrasher
-    ["71312"] = { 71454, },
-    ["71454"] = { 71312, },
-
-    -- Shard of Torment
-    ["70915"] = { 71460, },
-    ["71460"] = { 70915, },
-
-    -- Wristwraps of Arrogant Doom
-    ["71350"] = { 71471, },
-    ["71471"] = { 71350, },
-
-    -- Firecat Leggings
-    ["71349"] = { 71474, },
-    ["71474"] = { 71349, },
-
-    -- Sandals of Leaping Coals
-    ["71313"] = { 71467, },
-    ["71467"] = { 71313, },
-
-    -- Grips of Unerring Precision
-    ["71346"] = { 71468, },
-    ["71468"] = { 71346, },
-
-    -- Treads of the Penitent Man
-    ["71351"] = { 71475, },
-    ["71475"] = { 71351, },
-
-    -- Breastplate of Shifting Visions
-    ["71344"] = { 71469, },
-    ["71469"] = { 71344, },
-
-    -- Bracers of the Fiery Path
-    ["70920"] = { 71470, },
-    ["71470"] = { 70920, },
-
-    -- Flowform Choker
-    ["71348"] = { 71472, },
-    ["71472"] = { 71348, },
-
-    -- Jaws of Defeat
-    ["68926"] = { 69111, },
-    ["69111"] = { 68926, },
-
-    -- The Hungerer
-    ["68927"] = { 69112, },
-    ["69112"] = { 68927, },
-
-    -- Stinger of the Flaming Scorpion
-    ["71347"] = { 71473, },
-    ["71473"] = { 71347, },
-
-    -- Fandral's Flamescythe
-    ["69897"] = { 71466, },
-    ["71466"] = { 69897, },
-
-    -- Fingers of Incineration
-    ["71358"] = { 71614, },
-    ["71614"] = { 71358, },
-
-    -- Majordomo's Chain of Office
-    ["71357"] = { 71613, },
-    ["71613"] = { 71357, },
-
-    -- Crown of Flame
-    ["71356"] = { 71616, },
-    ["71616"] = { 71356, },
-
-    -- Pauldrons of Roaring Flame
-    ["70921"] = { 71612, },
-    ["71612"] = { 70921, },
-
-    -- Variable Pulse Lightning Capacitor
-    ["68925"] = { 69110, },
-    ["69110"] = { 68925, },
-
-    -- Matrix Restabilizer
-    ["68994"] = { 69150, },
-    ["69150"] = { 68994, },
-
-    -- Vessel of Acceleration
-    ["68995"] = { 69167, },
-    ["69167"] = { 68995, },
-
-    -- Choker of the Vanquished Lord
-    ["71354"] = { 71610, },
-    ["71610"] = { 71354, },
-
-    -- Sho'ravon, Greatstaff of Annihilation
-    ["71798"] = { 71797, },
-    ["71797"] = { 71798, },
-
-    -- Ko'gun, Hammer of the Firelord
-    ["71355"] = { 71615, },
-    ["71615"] = { 71355, },
-
-    -- Sulfuras, the Extinguished Hand
-    ["71352"] = { 70723, },
-    ["70723"] = { 71352, },
-
-    -- Arathar, the Eye of Flame
-    ["71353"] = { 71611, },
-    ["71611"] = { 71353, },
-
-    -- Smoldering Censer of Purity
-    ["71775"] = { 71774, },
-    ["71774"] = { 71775, },
-
-    -- Firethorn Mindslicer
-    ["71785"] = { 71784, },
-    ["71784"] = { 71785, },
-
-    -- Eye of Purification
-    ["71776"] = { 71777, },
-    ["71777"] = { 71776, },
-
-    -- Avool's Incendiary Shanker
-    ["71779"] = { 71778, },
-    ["71778"] = { 71779, },
-
-    -- Entrail Disgorger
-    ["71787"] = { 71786, },
-    ["71786"] = { 71787, },
-
-    -- Shatterskull Bonecrusher
-    ["71782"] = { 71783, },
-    ["71783"] = { 71782, },
-
-    -- Zoid's Firelit Greatsword
-    ["71780"] = { 71781, },
-    ["71781"] = { 71780, },
-
     --[[ NOT INCLUDED BY TMB >>> ]]
 
     -- Sturdy Lunchbox
@@ -1223,6 +779,10 @@ GL.Data.ItemLinks = {
     ["12583"] = {
         228603, -- Blackhand Doomsaw
     },
+    -- Grand Marshal's Longsword
+    ["12584"] = {
+        234578, -- Grand Marshal's Longsword
+    },
     -- Eye of Rend
     ["12587"] = {
         228604, -- Eye of Rend
@@ -1770,6 +1330,14 @@ GL.Data.ItemLinks = {
     -- Mortar and Pestle
     ["15454"] = {
         206176, -- Mortar and Pestle
+    },
+    -- Ancient Belt
+    ["15606"] = {
+        231725, -- Ancient Belt
+    },
+    -- High Warlord's Blade
+    ["16345"] = {
+        234552, -- High Warlord's Blade
     },
     -- Knight-Lieutenant's Silk Gloves
     ["16391"] = {
@@ -2549,7 +2117,7 @@ GL.Data.ItemLinks = {
     },
     -- Bloodfang Spaulders
     ["16832"] = {
-        231717, -- Primeval Shoulderpads
+        231039, -- Bloodfang Spaulders
     },
     -- Cenarion Vestments
     ["16833"] = {
@@ -2697,63 +2265,63 @@ GL.Data.ItemLinks = {
     },
     -- Stormrage Chestguard
     ["16897"] = {
-        231723, -- Primeval Chest
+        231230, -- Stormrage Chestguard
     },
     -- Stormrage Boots
     ["16898"] = {
-        231721, -- Primeval Boots
+        231231, -- Stormrage Boots
     },
     -- Stormrage Handguards
     ["16899"] = {
-        231720, -- Primeval Gloves
+        231232, -- Stormrage Handguards
     },
     -- Stormrage Cover
     ["16900"] = {
-        231719, -- Primeval Helm
+        231233, -- Stormrage Cover
     },
     -- Stormrage Legguards
     ["16901"] = {
-        231718, -- Primeval Leggings
+        231234, -- Stormrage Legguards
     },
     -- Stormrage Pauldrons
     ["16902"] = {
-        231717, -- Primeval Shoulderpads
+        231235, -- Stormrage Pauldrons
     },
     -- Stormrage Belt
     ["16903"] = {
-        231716, -- Primeval Belt
+        231236, -- Stormrage Belt
     },
     -- Stormrage Bracers
     ["16904"] = {
-        231715, -- Primeval Bindings
+        231237, -- Stormrage Bracers
     },
     -- Bloodfang Chestpiece
     ["16905"] = {
-        231723, -- Primeval Chest
+        231040, -- Bloodfang Chestpiece
     },
     -- Bloodfang Boots
     ["16906"] = {
-        231721, -- Primeval Boots
+        231041, -- Bloodfang Boots
     },
     -- Bloodfang Gloves
     ["16907"] = {
-        231720, -- Primeval Gloves
+        231042, -- Bloodfang Gloves
     },
     -- Bloodfang Hood
     ["16908"] = {
-        231719, -- Primeval Helm
+        231043, -- Bloodfang Hood
     },
     -- Bloodfang Pants
     ["16909"] = {
-        231718, -- Primeval Leggings
+        231044, -- Bloodfang Pants
     },
     -- Bloodfang Belt
     ["16910"] = {
-        231716, -- Primeval Belt
+        231045, -- Bloodfang Belt
     },
     -- Bloodfang Bracers
     ["16911"] = {
-        231715, -- Primeval Bindings
+        231046, -- Bloodfang Bracers
     },
     -- Netherwind Boots
     ["16912"] = {
@@ -2785,163 +2353,163 @@ GL.Data.ItemLinks = {
     },
     -- Boots of Transcendence
     ["16919"] = {
-        231713, -- Draconian Boots
+        231155, -- Boots of Transcendence
     },
     -- Handguards of Transcendence
     ["16920"] = {
-        231712, -- Draconian Gloves
+        231156, -- Handguards of Transcendence
     },
     -- Halo of Transcendence
     ["16921"] = {
-        231711, -- Draconian Hood
+        231157, -- Halo of Transcendence
     },
     -- Leggings of Transcendence
     ["16922"] = {
-        231710, -- Draconian Leggings
+        231158, -- Leggings of Transcendence
     },
     -- Robes of Transcendence
     ["16923"] = {
-        231714, -- Draconian Robe
+        231159, -- Robes of Transcendence
     },
     -- Pauldrons of Transcendence
     ["16924"] = {
-        231709, -- Draconian Shoulderpads
+        231160, -- Pauldrons of Transcendence
     },
     -- Belt of Transcendence
     ["16925"] = {
-        231708, -- Draconian Belt
+        231161, -- Belt of Transcendence
     },
     -- Bindings of Transcendence
     ["16926"] = {
-        231707, -- Draconian Bindings
+        231162, -- Bindings of Transcendence
     },
     -- Nemesis Boots
     ["16927"] = {
-        231713, -- Draconian Boots
+        231072, -- Nemesis Boots
     },
     -- Nemesis Gloves
     ["16928"] = {
-        231712, -- Draconian Gloves
+        231073, -- Nemesis Gloves
     },
     -- Nemesis Skullcap
     ["16929"] = {
-        231711, -- Draconian Hood
+        231074, -- Nemesis Skullcap
     },
     -- Nemesis Leggings
     ["16930"] = {
-        231710, -- Draconian Leggings
+        231075, -- Nemesis Leggings
     },
     -- Nemesis Robes
     ["16931"] = {
-        231714, -- Draconian Robe
+        231076, -- Nemesis Robes
     },
     -- Nemesis Spaulders
     ["16932"] = {
-        231709, -- Draconian Shoulderpads
+        231077, -- Nemesis Spaulders
     },
     -- Nemesis Belt
     ["16933"] = {
-        231708, -- Draconian Belt
+        231078, -- Nemesis Belt
     },
     -- Nemesis Bracers
     ["16934"] = {
-        231707, -- Draconian Bindings
+        231079, -- Nemesis Bracers
     },
     -- Dragonstalker's Bracers
     ["16935"] = {
-        231724, -- Ancient Bindings
+        231055, -- Dragonstalker's Bracers
     },
     -- Dragonstalker's Belt
     ["16936"] = {
-        231725, -- Ancient Belt
+        231056, -- Dragonstalker's Belt
     },
     -- Dragonstalker's Spaulders
     ["16937"] = {
-        231726, -- Ancient Shoulderpads
+        231057, -- Dragonstalker's Spaulders
     },
     -- Dragonstalker's Legguards
     ["16938"] = {
-        231727, -- Ancient Leggings
+        231058, -- Dragonstalker's Legguards
     },
     -- Dragonstalker's Helm
     ["16939"] = {
-        231728, -- Ancient Helm
+        231059, -- Dragonstalker's Helm
     },
     -- Dragonstalker's Gauntlets
     ["16940"] = {
-        231729, -- Ancient Gloves
+        231060, -- Dragonstalker's Gauntlets
     },
     -- Dragonstalker's Greaves
     ["16941"] = {
-        231730, -- Ancient Boots
+        231061, -- Dragonstalker's Greaves
     },
     -- Dragonstalker's Breastplate
     ["16942"] = {
-        231731, -- Ancient Chest
+        231062, -- Dragonstalker's Breastplate
     },
     -- Bracers of Ten Storms
     ["16943"] = {
-        231724, -- Ancient Bindings
+        231199, -- Bracers of Ten Storms
     },
     -- Belt of Ten Storms
     ["16944"] = {
-        231725, -- Ancient Belt
+        231200, -- Belt of Ten Storms
     },
     -- Epaulets of Ten Storms
     ["16945"] = {
-        231726, -- Ancient Shoulderpads
+        231201, -- Epaulets of Ten Storms
     },
     -- Legplates of Ten Storms
     ["16946"] = {
-        231727, -- Ancient Leggings
+        231202, -- Legplates of Ten Storms
     },
     -- Helmet of Ten Storms
     ["16947"] = {
-        231728, -- Ancient Helm
+        231203, -- Helmet of Ten Storms
     },
     -- Gauntlets of Ten Storms
     ["16948"] = {
-        231729, -- Ancient Gloves
+        231198, -- Gauntlets of Ten Storms
     },
     -- Greaves of Ten Storms
     ["16949"] = {
-        231730, -- Ancient Boots
+        232213, -- Greaves of Ten Storms
     },
     -- Breastplate of Ten Storms
     ["16950"] = {
-        231731, -- Ancient Chest
+        231205, -- Breastplate of Ten Storms
     },
     -- Judgement Bindings
     ["16951"] = {
-        231724, -- Ancient Bindings
+        231174, -- Judgement Bindings
     },
     -- Judgement Belt
     ["16952"] = {
-        231725, -- Ancient Belt
+        231175, -- Judgement Belt
     },
     -- Judgement Spaulders
     ["16953"] = {
-        231726, -- Ancient Shoulderpads
+        231176, -- Judgement Spaulders
     },
     -- Judgement Legplates
     ["16954"] = {
-        231727, -- Ancient Leggings
+        231177, -- Judgement Legplates
     },
     -- Judgement Crown
     ["16955"] = {
-        231728, -- Ancient Helm
+        231178, -- Judgement Crown
     },
     -- Judgement Gauntlets
     ["16956"] = {
-        231729, -- Ancient Gloves
+        231179, -- Judgement Gauntlets
     },
     -- Judgement Sabatons
     ["16957"] = {
-        231730, -- Ancient Boots
+        231180, -- Judgement Sabatons
     },
     -- Judgement Breastplate
     ["16958"] = {
-        231731, -- Ancient Chest
+        231181, -- Judgement Breastplate
     },
     -- Bracelets of Wrath
     ["16959"] = {
@@ -2953,27 +2521,27 @@ GL.Data.ItemLinks = {
     },
     -- Pauldrons of Wrath
     ["16961"] = {
-        231717, -- Primeval Shoulderpads
+        231025, -- Pauldrons of Wrath
     },
     -- Legplates of Wrath
     ["16962"] = {
-        231718, -- Primeval Leggings
+        231034, -- Legplates of Wrath
     },
     -- Helm of Wrath
     ["16963"] = {
-        231719, -- Primeval Helm
+        231035, -- Helm of Wrath
     },
     -- Gauntlets of Wrath
     ["16964"] = {
-        231720, -- Primeval Gloves
+        231036, -- Gauntlets of Wrath
     },
     -- Sabatons of Wrath
     ["16965"] = {
-        231721, -- Primeval Boots
+        231029, -- Sabatons of Wrath
     },
     -- Breastplate of Wrath
     ["16966"] = {
-        231723, -- Primeval Chest
+        231038, -- Breastplate of Wrath
     },
     -- Band of Accuria
     ["17063"] = {
@@ -3800,33 +3368,145 @@ GL.Data.ItemLinks = {
     ["18824"] = {
         228254, -- Magma Tempered Boots
     },
+    -- Grand Marshal's Aegis
+    ["18825"] = {
+        234588, -- Grand Marshal's Aegis
+    },
+    -- High Warlord's Shield Wall
+    ["18826"] = {
+        234562, -- High Warlord's Shield Wall
+    },
+    -- Grand Marshal's Handaxe
+    ["18827"] = {
+        234580, -- Grand Marshal's Handaxe
+    },
+    -- High Warlord's Cleaver
+    ["18828"] = {
+        234554, -- High Warlord's Cleaver
+    },
     -- Deep Earth Spaulders
     ["18829"] = {
         228258, -- Deep Earth Spaulders
+    },
+    -- Grand Marshal's Sunderer
+    ["18830"] = {
+        234566, -- Grand Marshal's Sunderer
+    },
+    -- High Warlord's Battle Axe
+    ["18831"] = {
+        234543, -- High Warlord's Battle Axe
     },
     -- Brutality Blade
     ["18832"] = {
         228265, -- Brutality Blade
     },
+    -- Grand Marshal's Bullseye
+    ["18833"] = {
+        234585, -- Grand Marshal's Bullseye
+    },
+    -- High Warlord's Recurve
+    ["18835"] = {
+        234559, -- High Warlord's Recurve
+    },
+    -- Grand Marshal's Repeater
+    ["18836"] = {
+        234586, -- Grand Marshal's Repeater
+    },
+    -- High Warlord's Crossbow
+    ["18837"] = {
+        234560, -- High Warlord's Crossbow
+    },
+    -- Grand Marshal's Dirk
+    ["18838"] = {
+        234582, -- Grand Marshal's Dirk
+    },
+    -- High Warlord's Razor
+    ["18840"] = {
+        234556, -- High Warlord's Razor
+    },
     -- Staff of Dominance
     ["18842"] = {
         228271, -- Staff of Dominance
+    },
+    -- Grand Marshal's Right Hand Blade
+    ["18843"] = {
+        234583, -- Grand Marshal's Right Hand Blade
+    },
+    -- High Warlord's Right Claw
+    ["18844"] = {
+        234557, -- High Warlord's Right Claw
+    },
+    -- Grand Marshal's Left Hand Blade
+    ["18847"] = {
+        234584, -- Grand Marshal's Left Hand Blade
+    },
+    -- High Warlord's Left Claw
+    ["18848"] = {
+        234558, -- High Warlord's Left Claw
+    },
+    -- Grand Marshal's Hand Cannon
+    ["18855"] = {
+        234587, -- Grand Marshal's Hand Cannon
+    },
+    -- High Warlord's Street Sweeper
+    ["18860"] = {
+        234561, -- High Warlord's Street Sweeper
     },
     -- Flamewaker Legplates
     ["18861"] = {
         228240, -- Flamewaker Legplates
     },
+    -- Grand Marshal's Punisher
+    ["18865"] = {
+        234581, -- Grand Marshal's Punisher
+    },
+    -- High Warlord's Bludgeon
+    ["18866"] = {
+        234555, -- High Warlord's Bludgeon
+    },
+    -- Grand Marshal's Battle Hammer
+    ["18867"] = {
+        234567, -- Grand Marshal's Battle Hammer
+    },
+    -- High Warlord's Pulverizer
+    ["18868"] = {
+        234545, -- High Warlord's Pulverizer
+    },
+    -- Grand Marshal's Glaive
+    ["18869"] = {
+        234569, -- Grand Marshal's Glaive
+    },
     -- Helm of the Lifegiver
     ["18870"] = {
         228285, -- Helm of the Lifegiver
+    },
+    -- High Warlord's Pig Sticker
+    ["18871"] = {
+        234547, -- High Warlord's Pig Sticker
     },
     -- Manastorm Leggings
     ["18872"] = {
         228244, -- Manastorm Leggings
     },
+    -- Grand Marshal's Stave
+    ["18873"] = {
+        234571, -- Grand Marshal's Stave
+    },
+    -- High Warlord's War Staff
+    ["18874"] = {
+        234549, -- High Warlord's War Staff
+    },
     -- Salamander Scale Pants
     ["18875"] = {
         228245, -- Salamander Scale Pants
+    },
+    -- Grand Marshal's Claymore
+    ["18876"] = {
+        234565, -- Grand Marshal's Claymore
+    },
+    -- High Warlord's Greatsword
+    ["18877"] = {
+        234542, -- High Warlord's Greatsword
     },
     -- Sorcerous Dagger
     ["18878"] = {
@@ -3863,7 +3543,7 @@ GL.Data.ItemLinks = {
     },
     -- Thunderfury, Blessed Blade of the Windseeker
     ["19019"] = {
-        232018, -- Dormant Wind Kissed Blade
+        18564, -- Bindings of the Windseeker
     },
     -- Wisdom of the Timbermaw
     ["19047"] = {
@@ -3945,6 +3625,38 @@ GL.Data.ItemLinks = {
     ["19217"] = {
         227897, -- Pattern: Argent Shoulders
     },
+    -- Beasts Deck
+    ["19228"] = {
+        235278, -- Beasts Deck
+    },
+    -- Warlords Deck
+    ["19257"] = {
+        235277, -- Warlords Deck
+    },
+    -- Elementals Deck
+    ["19267"] = {
+        235276, -- Elementals Deck
+    },
+    -- Portals Deck
+    ["19277"] = {
+        235275, -- Portals Deck
+    },
+    -- Darkmoon Card: Heroism
+    ["19287"] = {
+        234176, -- Darkmoon Card: Heroism
+    },
+    -- Darkmoon Card: Blue Dragon
+    ["19288"] = {
+        234177, -- Darkmoon Card: Blue Dragon
+    },
+    -- Darkmoon Card: Maelstrom
+    ["19289"] = {
+        234178, -- Darkmoon Card: Maelstrom
+    },
+    -- Darkmoon Card: Twisting Nether
+    ["19290"] = {
+        234179, -- Darkmoon Card: Twisting Nether
+    },
     -- Pattern: Golden Mantle of the Dawn
     ["19329"] = {
         227895, -- Pattern: Golden Mantle of the Dawn
@@ -3971,7 +3683,7 @@ GL.Data.ItemLinks = {
     },
     -- Rune of Metamorphosis
     ["19340"] = {
-        230244, -- Shapeshifter's Sigil
+        210980, -- Rune of Metamorphosis
     },
     -- Lifegiving Gem
     ["19341"] = {
@@ -4618,7 +4330,7 @@ GL.Data.ItemLinks = {
     },
     -- Warblade of the Hakkari
     ["19866"] = {
-        230992, -- Warblade of the Hakkari
+        231309, -- Warblade of the Hakkari
     },
     -- Bloodlord's Defender
     ["19867"] = {
@@ -4952,6 +4664,62 @@ GL.Data.ItemLinks = {
     ["20266"] = {
         230926, -- Peacekeeper Leggings
     },
+    -- Dreamscale Breastplate
+    ["20380"] = {
+        234324, -- Dreamscale Breastplate
+    },
+    -- Pattern: Dreamscale Breastplate
+    ["20382"] = {
+        234325, -- Pattern: Dreamscale Breastplate
+    },
+    -- Sandstalker Bracers
+    ["20476"] = {
+        234294, -- Sandstalker Bracers
+    },
+    -- Sandstalker Gauntlets
+    ["20477"] = {
+        234296, -- Sandstalker Gauntlets
+    },
+    -- Sandstalker Breastplate
+    ["20478"] = {
+        234298, -- Sandstalker Breastplate
+    },
+    -- Spitfire Breastplate
+    ["20479"] = {
+        234304, -- Spitfire Breastplate
+    },
+    -- Spitfire Gauntlets
+    ["20480"] = {
+        234302, -- Spitfire Gauntlets
+    },
+    -- Spitfire Bracers
+    ["20481"] = {
+        234300, -- Spitfire Bracers
+    },
+    -- Pattern: Spitfire Bracers
+    ["20506"] = {
+        234301, -- Pattern: Spitfire Bracers
+    },
+    -- Pattern: Spitfire Gauntlets
+    ["20507"] = {
+        234303, -- Pattern: Spitfire Gauntlets
+    },
+    -- Pattern: Spitfire Breastplate
+    ["20508"] = {
+        234305, -- Pattern: Spitfire Breastplate
+    },
+    -- Pattern: Sandstalker Bracers
+    ["20509"] = {
+        234295, -- Pattern: Sandstalker Bracers
+    },
+    -- Pattern: Sandstalker Gauntlets
+    ["20510"] = {
+        234297, -- Pattern: Sandstalker Gauntlets
+    },
+    -- Pattern: Sandstalker Breastplate
+    ["20511"] = {
+        234299, -- Pattern: Sandstalker Breastplate
+    },
     -- Scroll: Create Signet of Beckoning
     ["20531"] = {
         229897, -- Scroll: Create Signet of Beckoning
@@ -4968,6 +4736,138 @@ GL.Data.ItemLinks = {
     ["20535"] = {
         229897, -- Scroll: Create Signet of Beckoning
     },
+    -- Nightmare Blade
+    ["20577"] = {
+        234170, -- Nightmare Blade
+    },
+    -- Emerald Dragonfang
+    ["20578"] = {
+        234172, -- Emerald Dragonfang
+    },
+    -- Green Dragonskin Cloak
+    ["20579"] = {
+        234151, -- Green Dragonskin Cloak
+    },
+    -- Hammer of Bestial Fury
+    ["20580"] = {
+        234152, -- Hammer of Bestial Fury
+    },
+    -- Staff of Rampant Growth
+    ["20581"] = {
+        234153, -- Staff of Rampant Growth
+    },
+    -- Trance Stone
+    ["20582"] = {
+        234154, -- Trance Stone
+    },
+    -- Polished Ironwood Crossbow
+    ["20599"] = {
+        234159, -- Polished Ironwood Crossbow
+    },
+    -- Malfurion's Signet Ring
+    ["20600"] = {
+        234155, -- Malfurion's Signet Ring
+    },
+    -- Dragonspur Wraps
+    ["20615"] = {
+        234149, -- Dragonspur Wraps
+    },
+    -- Dragonbone Wristguards
+    ["20616"] = {
+        234148, -- Dragonbone Wristguards
+    },
+    -- Ancient Corroded Leggings
+    ["20617"] = {
+        234147, -- Ancient Corroded Leggings
+    },
+    -- Gloves of Delusional Power
+    ["20618"] = {
+        234150, -- Gloves of Delusional Power
+    },
+    -- Acid Inscribed Greaves
+    ["20619"] = {
+        234146, -- Acid Inscribed Greaves
+    },
+    -- Boots of the Endless Moor
+    ["20621"] = {
+        234156, -- Boots of the Endless Moor
+    },
+    -- Dragonheart Necklace
+    ["20622"] = {
+        234158, -- Dragonheart Necklace
+    },
+    -- Circlet of Restless Dreams
+    ["20623"] = {
+        234157, -- Circlet of Restless Dreams
+    },
+    -- Ring of the Unliving
+    ["20624"] = {
+        234160, -- Ring of the Unliving
+    },
+    -- Belt of the Dark Bog
+    ["20625"] = {
+        234161, -- Belt of the Dark Bog
+    },
+    -- Black Bark Wristbands
+    ["20626"] = {
+        234162, -- Black Bark Wristbands
+    },
+    -- Dark Heart Pants
+    ["20627"] = {
+        234163, -- Dark Heart Pants
+    },
+    -- Deviate Growth Cap
+    ["20628"] = {
+        234164, -- Deviate Growth Cap
+    },
+    -- Malignant Footguards
+    ["20629"] = {
+        234166, -- Malignant Footguards
+    },
+    -- Gauntlets of the Shining Light
+    ["20630"] = {
+        234165, -- Gauntlets of the Shining Light
+    },
+    -- Mendicant's Slippers
+    ["20631"] = {
+        234168, -- Mendicant's Slippers
+    },
+    -- Mindtear Band
+    ["20632"] = {
+        234169, -- Mindtear Band
+    },
+    -- Unnatural Leather Spaulders
+    ["20633"] = {
+        234171, -- Unnatural Leather Spaulders
+    },
+    -- Boots of Fright
+    ["20634"] = {
+        234167, -- Boots of Fright
+    },
+    -- Jade Inlaid Vestments
+    ["20635"] = {
+        234962, -- Jade Inlaid Vestments
+    },
+    -- Hibernation Crystal
+    ["20636"] = {
+        234175, -- Hibernation Crystal
+    },
+    -- Acid Inscribed Pauldrons
+    ["20637"] = {
+        234174, -- Acid Inscribed Pauldrons
+    },
+    -- Leggings of the Demented Mind
+    ["20638"] = {
+        234173, -- Leggings of the Demented Mind
+    },
+    -- Strangely Glyphed Legplates
+    ["20639"] = {
+        234963, -- Strangely Glyphed Legplates
+    },
+    -- Nightmare Engulfed Object
+    ["20644"] = {
+        235049, -- Nightmare Engulfed Object
+    },
     -- Formula: Enchant Cloak - Greater Fire Resistance
     ["20732"] = {
         229008, -- Formula: Enchant Cloak - Greater Fire Resistance
@@ -4975,6 +4875,18 @@ GL.Data.ItemLinks = {
     -- Formula: Enchant Cloak - Greater Nature Resistance
     ["20733"] = {
         229009, -- Formula: Enchant Cloak - Greater Nature Resistance
+    },
+    -- Qiraji Glyphed Jewel
+    ["20883"] = {
+        20926, -- Vek'nilash's Circlet
+        233375, -- Conqueror's Crown
+        233381, -- Doomcaller's Circlet
+        233393, -- Tiara of the Oracle
+        233404, -- Enigma Circlet
+        233653, -- Conqueror's Helm
+        233669, -- Doomcaller's Headguard
+        233676, -- Enigma Diadem
+        233682, -- Crown of the Oracle
     },
     -- Qiraji Magisterial Ring
     ["20884"] = {
@@ -4998,6 +4910,25 @@ GL.Data.ItemLinks = {
         21398, -- Hammer of the Gathering Storm
         21401, -- Scythe of the Unseen Path
         21404, -- Dagger of Veiled Shadows
+    },
+    -- Qiraji Engraved Jewel
+    ["20887"] = {
+        20930, -- Vek'lor's Diadem
+        233385, -- Stormcaller's Diadem
+        233388, -- Deathdealer's Helm
+        233398, -- Avenger's Crown
+        233410, -- Striker's Diadem
+        233412, -- Genesis Helm
+        233661, -- Deathdealer's Visor
+        233666, -- Striker's Visor
+        233687, -- Avenger's Helm
+        233692, -- Avenger's Great Helm
+        233695, -- Stormcaller's Faceguard
+        233700, -- Stormcaller's Crown
+        233705, -- Stormcaller's Headdress
+        233709, -- Genesis Cowl
+        233718, -- Genesis Headdress
+        233723, -- Genesis Mask
     },
     -- Qiraji Ceremonial Ring
     ["20888"] = {
@@ -5090,6 +5021,130 @@ GL.Data.ItemLinks = {
         21351, -- Vestments of the Oracle
         21357, -- Genesis Vest
     },
+    -- Death's Sting
+    ["21126"] = {
+        234984, -- Death's Sting
+    },
+    -- Staff of the Qiraji Prophets
+    ["21128"] = {
+        233509, -- Staff of the Qiraji Prophets
+    },
+    -- Dark Edge of Insanity
+    ["21134"] = {
+        234985, -- Dark Edge of Insanity
+    },
+    -- Gloves of Earthen Power
+    ["21178"] = {
+        234785, -- Gloves of Earthen Power
+    },
+    -- Band of Earthen Wrath
+    ["21179"] = {
+        234786, -- Band of Earthen Wrath
+    },
+    -- Earthstrike
+    ["21180"] = {
+        234462, -- Earthstrike
+    },
+    -- Grace of Earth
+    ["21181"] = {
+        234779, -- Grace of Earth
+    },
+    -- Band of Earthen Might
+    ["21182"] = {
+        234780, -- Band of Earthen Might
+    },
+    -- Earthpower Vest
+    ["21183"] = {
+        234782, -- Earthpower Vest
+    },
+    -- Deeprock Bracers
+    ["21184"] = {
+        234748, -- Deeprock Bracers
+    },
+    -- Earthcalm Orb
+    ["21185"] = {
+        234749, -- Earthcalm Orb
+    },
+    -- Rockfury Bracers
+    ["21186"] = {
+        234760, -- Rockfury Bracers
+    },
+    -- Earthweave Cloak
+    ["21187"] = {
+        234788, -- Earthweave Cloak
+    },
+    -- Fist of Cenarius
+    ["21188"] = {
+        234747, -- Fist of Cenarius
+    },
+    -- Might of Cenarius
+    ["21189"] = {
+        234761, -- Might of Cenarius
+    },
+    -- Wrath of Cenarius
+    ["21190"] = {
+        234463, -- Wrath of Cenarius
+    },
+    -- Signet Ring of the Bronze Dragonflight
+    ["21196"] = {
+        234034, -- Signet Ring of the Bronze Dragonflight
+    },
+    -- Signet Ring of the Bronze Dragonflight
+    ["21197"] = {
+        234034, -- Signet Ring of the Bronze Dragonflight
+    },
+    -- Signet Ring of the Bronze Dragonflight
+    ["21198"] = {
+        234034, -- Signet Ring of the Bronze Dragonflight
+    },
+    -- Signet Ring of the Bronze Dragonflight
+    ["21199"] = {
+        234034, -- Signet Ring of the Bronze Dragonflight
+    },
+    -- Signet Ring of the Bronze Dragonflight
+    ["21200"] = {
+        234034, -- Signet Ring of the Bronze Dragonflight
+    },
+    -- Signet Ring of the Bronze Dragonflight
+    ["21201"] = {
+        234034, -- Signet Ring of the Bronze Dragonflight
+    },
+    -- Signet Ring of the Bronze Dragonflight
+    ["21202"] = {
+        234034, -- Signet Ring of the Bronze Dragonflight
+    },
+    -- Signet Ring of the Bronze Dragonflight
+    ["21203"] = {
+        234034, -- Signet Ring of the Bronze Dragonflight
+    },
+    -- Signet Ring of the Bronze Dragonflight
+    ["21204"] = {
+        234034, -- Signet Ring of the Bronze Dragonflight
+    },
+    -- Signet Ring of the Bronze Dragonflight
+    ["21205"] = {
+        234034, -- Signet Ring of the Bronze Dragonflight
+    },
+    -- Signet Ring of the Bronze Dragonflight
+    ["21206"] = {
+        234034, -- Signet Ring of the Bronze Dragonflight
+    },
+    -- Signet Ring of the Bronze Dragonflight
+    ["21207"] = {
+        234034, -- Signet Ring of the Bronze Dragonflight
+    },
+    -- Signet Ring of the Bronze Dragonflight
+    ["21208"] = {
+        234034, -- Signet Ring of the Bronze Dragonflight
+    },
+    -- Signet Ring of the Bronze Dragonflight
+    ["21209"] = {
+        234034, -- Signet Ring of the Bronze Dragonflight
+    },
+    -- Signet Ring of the Bronze Dragonflight
+    ["21210"] = {
+        234034, -- Signet Ring of the Bronze Dragonflight
+    },
     -- Head of Ossirian the Unscarred
     ["21220"] = {
         21504, -- Charm of the Shifting Sands
@@ -5102,6 +5157,53 @@ GL.Data.ItemLinks = {
         21709, -- Ring of the Fallen God
         21710, -- Cloak of the Fallen God
         21712, -- Amulet of the Fallen God
+        234801, -- Amulet of the Fallen God
+        234802, -- Cloak of the Fallen God
+        234803, -- Ring of the Fallen God
+    },
+    -- Imperial Qiraji Armaments
+    ["21232"] = {
+        235046, -- Imperial Qiraji Armaments
+    },
+    -- Imperial Qiraji Regalia
+    ["21237"] = {
+        235045, -- Imperial Qiraji Regalia
+    },
+    -- Blessed Qiraji War Axe
+    ["21242"] = {
+        235003, -- Blessed Qiraji War Axe
+    },
+    -- Blessed Qiraji Pugio
+    ["21244"] = {
+        235002, -- Blessed Qiraji Pugio
+    },
+    -- Logistics Task Briefing VI
+    ["21260"] = {
+        232549, -- Logistics Task Briefing VI
+    },
+    -- Logistics Task Briefing VI
+    ["21261"] = {
+        232549, -- Logistics Task Briefing VI
+    },
+    -- Blessed Qiraji War Hammer
+    ["21268"] = {
+        234999, -- Blessed Qiraji War Hammer
+    },
+    -- Blessed Qiraji Bulwark
+    ["21269"] = {
+        234807, -- Blessed Qiraji Bulwark
+    },
+    -- Blessed Qiraji Musket
+    ["21272"] = {
+        235004, -- Blessed Qiraji Musket
+    },
+    -- Blessed Qiraji Acolyte Staff
+    ["21273"] = {
+        234808, -- Blessed Qiraji Acolyte Staff
+    },
+    -- Blessed Qiraji Augur Staff
+    ["21275"] = {
+        235000, -- Blessed Qiraji Augur Staff
     },
     -- Defender of the Timbermaw
     ["21326"] = {
@@ -5289,15 +5391,15 @@ GL.Data.ItemLinks = {
     },
     -- Sickle of Unyielding Strength
     ["21392"] = {
-        20886, -- Qiraji Spiked Hilt
+        233442, -- Sickle of Unyielding Strength
     },
     -- Signet of Unyielding Strength
     ["21393"] = {
-        20884, -- Qiraji Magisterial Ring
+        233443, -- Signet of Unyielding Strength
     },
     -- Drape of Unyielding Strength
     ["21394"] = {
-        20885, -- Qiraji Martial Drape
+        233441, -- Drape of Unyielding Strength
     },
     -- Blade of Eternal Justice
     ["21395"] = {
@@ -5309,7 +5411,7 @@ GL.Data.ItemLinks = {
     },
     -- Cape of Eternal Justice
     ["21397"] = {
-        20889, -- Qiraji Regal Drape
+        233427, -- Cape of Eternal Justice
     },
     -- Hammer of the Gathering Storm
     ["21398"] = {
@@ -5329,7 +5431,7 @@ GL.Data.ItemLinks = {
     },
     -- Signet of the Unseen Path
     ["21402"] = {
-        20888, -- Qiraji Ceremonial Ring
+        233422, -- Signet of the Unseen Path
     },
     -- Cloak of the Unseen Path
     ["21403"] = {
@@ -5395,6 +5497,210 @@ GL.Data.ItemLinks = {
     ["21418"] = {
         20889, -- Qiraji Regal Drape
     },
+    -- Staff of the Ruins
+    ["21452"] = {
+        234115, -- Staff of the Ruins
+    },
+    -- Mantle of the Horusath
+    ["21453"] = {
+        234109, -- Mantle of the Horusath
+    },
+    -- Runic Stone Shoulders
+    ["21454"] = {
+        234111, -- Runic Stone Shoulders
+    },
+    -- Southwind Helm
+    ["21455"] = {
+        234084, -- Southwind Helm
+    },
+    -- Sandstorm Cloak
+    ["21456"] = {
+        234113, -- Sandstorm Cloak
+    },
+    -- Bracers of Brutality
+    ["21457"] = {
+        234103, -- Bracers of Brutality
+    },
+    -- Gauntlets of New Life
+    ["21458"] = {
+        234105, -- Gauntlets of New Life
+    },
+    -- Crossbow of Imminent Doom
+    ["21459"] = {
+        234104, -- Crossbow of Imminent Doom
+    },
+    -- Helm of Domination
+    ["21460"] = {
+        234107, -- Helm of Domination
+    },
+    -- Leggings of the Black Blizzard
+    ["21461"] = {
+        234108, -- Leggings of the Black Blizzard
+    },
+    -- Gloves of Dark Wisdom
+    ["21462"] = {
+        234106, -- Gloves of Dark Wisdom
+    },
+    -- Ossirian's Binding
+    ["21463"] = {
+        234110, -- Ossirian's Binding
+    },
+    -- Shackles of the Unscarred
+    ["21464"] = {
+        234114, -- Shackles of the Unscarred
+    },
+    -- Stinger of Ayamiss
+    ["21466"] = {
+        234097, -- Stinger of Ayamiss
+    },
+    -- Thick Silithid Chestguard
+    ["21467"] = {
+        234077, -- Thick Silithid Chestguard
+    },
+    -- Mantle of Maz'Nadir
+    ["21468"] = {
+        234082, -- Mantle of Maz'Nadir
+    },
+    -- Gauntlets of Southwind
+    ["21469"] = {
+        234081, -- Gauntlets of Southwind
+    },
+    -- Cloak of the Savior
+    ["21470"] = {
+        234079, -- Cloak of the Savior
+    },
+    -- Talon of Furious Concentration
+    ["21471"] = {
+        234076, -- Talon of Furious Concentration
+    },
+    -- Dustwind Turban
+    ["21472"] = {
+        234073, -- Dustwind Turban
+    },
+    -- Eye of Moam
+    ["21473"] = {
+        234080, -- Eye of Moam
+    },
+    -- Chitinous Shoulderguards
+    ["21474"] = {
+        234078, -- Chitinous Shoulderguards
+    },
+    -- Legplates of the Destroyer
+    ["21475"] = {
+        234088, -- Legplates of the Destroyer
+    },
+    -- Obsidian Scaled Leggings
+    ["21476"] = {
+        234087, -- Obsidian Scaled Leggings
+    },
+    -- Ring of Fury
+    ["21477"] = {
+        234083, -- Ring of Fury
+    },
+    -- Bow of Taut Sinew
+    ["21478"] = {
+        234096, -- Bow of Taut Sinew
+    },
+    -- Gauntlets of the Immovable
+    ["21479"] = {
+        234075, -- Gauntlets of the Immovable
+    },
+    -- Scaled Silithid Gauntlets
+    ["21480"] = {
+        234102, -- Scaled Silithid Gauntlets
+    },
+    -- Boots of the Desert Protector
+    ["21481"] = {
+        234098, -- Boots of the Desert Protector
+    },
+    -- Boots of the Fiery Sands
+    ["21482"] = {
+        234099, -- Boots of the Fiery Sands
+    },
+    -- Ring of the Desert Winds
+    ["21483"] = {
+        234101, -- Ring of the Desert Winds
+    },
+    -- Helm of Regrowth
+    ["21484"] = {
+        234100, -- Helm of Regrowth
+    },
+    -- Buru's Skull Fragment
+    ["21485"] = {
+        234089, -- Buru's Skull Fragment
+    },
+    -- Gloves of the Swarm
+    ["21486"] = {
+        234090, -- Gloves of the Swarm
+    },
+    -- Slimy Scaled Gauntlets
+    ["21487"] = {
+        234091, -- Slimy Scaled Gauntlets
+    },
+    -- Fetish of Chitinous Spikes
+    ["21488"] = {
+        234092, -- Fetish of Chitinous Spikes
+    },
+    -- Quicksand Waders
+    ["21489"] = {
+        234093, -- Quicksand Waders
+    },
+    -- Slime Kickers
+    ["21490"] = {
+        234095, -- Slime Kickers
+    },
+    -- Scaled Bracers of the Gorger
+    ["21491"] = {
+        234094, -- Scaled Bracers of the Gorger
+    },
+    -- Manslayer of the Qiraji
+    ["21492"] = {
+        234067, -- Manslayer of the Qiraji
+    },
+    -- Boots of the Vanguard
+    ["21493"] = {
+        234068, -- Boots of the Vanguard
+    },
+    -- Southwind's Grasp
+    ["21494"] = {
+        234072, -- Southwind's Grasp
+    },
+    -- Legplates of the Qiraji Command
+    ["21495"] = {
+        234071, -- Legplates of the Qiraji Command
+    },
+    -- Bracers of Qiraji Command
+    ["21496"] = {
+        234070, -- Bracers of Qiraji Command
+    },
+    -- Boots of the Qiraji General
+    ["21497"] = {
+        234069, -- Boots of the Qiraji General
+    },
+    -- Qiraji Sacrificial Dagger
+    ["21498"] = {
+        234061, -- Qiraji Sacrificial Dagger
+    },
+    -- Vestments of the Shifting Sands
+    ["21499"] = {
+        234062, -- Vestments of the Shifting Sands
+    },
+    -- Belt of the Inquisition
+    ["21500"] = {
+        234064, -- Belt of the Inquisition
+    },
+    -- Toughened Silithid Hide Gloves
+    ["21501"] = {
+        234066, -- Toughened Silithid Hide Gloves
+    },
+    -- Sand Reaver Wristguards
+    ["21502"] = {
+        234065, -- Sand Reaver Wristguards
+    },
+    -- Belt of the Sand Reaver
+    ["21503"] = {
+        234063, -- Belt of the Sand Reaver
+    },
     -- Charm of the Shifting Sands
     ["21504"] = {
         21220, -- Head of Ossirian the Unscarred
@@ -5411,9 +5717,405 @@ GL.Data.ItemLinks = {
     ["21507"] = {
         21220, -- Head of Ossirian the Unscarred
     },
+    -- Gnomish Turban of Psychic Might
+    ["21517"] = {
+        234134, -- Gnomish Turban of Psychic Might
+    },
+    -- Ravencrest's Legacy
+    ["21520"] = {
+        234139, -- Ravencrest's Legacy
+    },
+    -- Runesword of the Red
+    ["21521"] = {
+        234141, -- Runesword of the Red
+    },
+    -- Shadowsong's Sorrow
+    ["21522"] = {
+        234138, -- Shadowsong's Sorrow
+    },
+    -- Fang of Korialstrasz
+    ["21523"] = {
+        234137, -- Fang of Korialstrasz
+    },
+    -- Band of Icy Depths
+    ["21526"] = {
+        234135, -- Band of Icy Depths
+    },
+    -- Darkwater Robes
+    ["21527"] = {
+        234136, -- Darkwater Robes
+    },
+    -- Amulet of Shadow Shielding
+    ["21529"] = {
+        234130, -- Amulet of Shadow Shielding
+    },
+    -- Onyx Embedded Leggings
+    ["21530"] = {
+        234129, -- Onyx Embedded Leggings
+    },
+    -- Drake Tooth Necklace
+    ["21531"] = {
+        234132, -- Drake Tooth Necklace
+    },
+    -- Drudge Boots
+    ["21532"] = {
+        234133, -- Drudge Boots
+    },
+    -- Vanquished Tentacle of C'Thun
+    ["21579"] = {
+        233639, -- Vanquished Tentacle of C'Thun
+    },
+    -- Gauntlets of Annihilation
+    ["21581"] = {
+        233637, -- Gauntlets of Annihilation
+    },
+    -- Grasp of the Old God
+    ["21582"] = {
+        233632, -- Grasp of the Old God
+    },
+    -- Cloak of Clarity
+    ["21583"] = {
+        233641, -- Cloak of Clarity
+    },
+    -- Dark Storm Gauntlets
+    ["21585"] = {
+        233631, -- Dark Storm Gauntlets
+    },
+    -- Belt of Never-ending Agony
+    ["21586"] = {
+        233635, -- Belt of Never-ending Agony
+    },
+    -- Ring of the Godslayer
+    ["21596"] = {
+        233638, -- Ring of the Godslayer
+    },
+    -- Royal Scepter of Vek'lor
+    ["21597"] = {
+        233616, -- Royal Scepter of Vek'lor
+    },
+    -- Royal Qiraji Belt
+    ["21598"] = {
+        233614, -- Royal Qiraji Belt
+    },
+    -- Vek'lor's Gloves of Devastation
+    ["21599"] = {
+        233613, -- Vek'lor's Gloves of Devastation
+    },
+    -- Boots of Epiphany
+    ["21600"] = {
+        233611, -- Boots of Epiphany
+    },
+    -- Ring of Emperor Vek'lor
+    ["21601"] = {
+        233615, -- Ring of Emperor Vek'lor
+    },
+    -- Qiraji Execution Bracers
+    ["21602"] = {
+        233612, -- Qiraji Execution Bracers
+    },
+    -- Wand of Qiraji Nobility
+    ["21603"] = {
+        234976, -- Wand of Qiraji Nobility
+    },
+    -- Bracelets of Royal Redemption
+    ["21604"] = {
+        233617, -- Bracelets of Royal Redemption
+    },
+    -- Gloves of the Hidden Temple
+    ["21605"] = {
+        233618, -- Gloves of the Hidden Temple
+    },
+    -- Belt of the Fallen Emperor
+    ["21606"] = {
+        233623, -- Belt of the Fallen Emperor
+    },
+    -- Grasp of the Fallen Emperor
+    ["21607"] = {
+        233622, -- Grasp of the Fallen Emperor
+    },
+    -- Amulet of Vek'nilash
+    ["21608"] = {
+        233620, -- Amulet of Vek'nilash
+    },
+    -- Regenerating Belt of Vek'nilash
+    ["21609"] = {
+        233619, -- Regenerating Belt of Vek'nilash
+    },
+    -- Wormscale Blocker
+    ["21610"] = {
+        233629, -- Wormscale Blocker
+    },
+    -- Burrower Bracers
+    ["21611"] = {
+        233625, -- Burrower Bracers
+    },
+    -- Don Rigoberto's Lost Hat
+    ["21615"] = {
+        233624, -- Don Rigoberto's Lost Hat
+    },
+    -- Huhuran's Stinger
+    ["21616"] = {
+        233605, -- Huhuran's Stinger
+    },
+    -- Wasphide Gauntlets
+    ["21617"] = {
+        233608, -- Wasphide Gauntlets
+    },
+    -- Hive Defiler Wristguards
+    ["21618"] = {
+        233610, -- Hive Defiler Wristguards
+    },
+    -- Gloves of the Messiah
+    ["21619"] = {
+        233607, -- Gloves of the Messiah
+    },
+    -- Ring of the Martyr
+    ["21620"] = {
+        233609, -- Ring of the Martyr
+    },
+    -- Cloak of the Golden Hive
+    ["21621"] = {
+        233606, -- Cloak of the Golden Hive
+    },
+    -- Sharpened Silithid Femur
+    ["21622"] = {
+        233599, -- Sharpened Silithid Femur
+    },
+    -- Gauntlets of the Righteous Champion
+    ["21623"] = {
+        233603, -- Gauntlets of the Righteous Champion
+    },
+    -- Gauntlets of Kalimdor
+    ["21624"] = {
+        233604, -- Gauntlets of Kalimdor
+    },
+    -- Scarab Brooch
+    ["21625"] = {
+        233601, -- Scarab Brooch
+    },
+    -- Slime-coated Leggings
+    ["21626"] = {
+        233598, -- Slime-coated Leggings
+    },
+    -- Cloak of Untold Secrets
+    ["21627"] = {
+        233588, -- Cloak of Untold Secrets
+    },
+    -- Pauldrons of the Unrelenting
+    ["21639"] = {
+        233593, -- Pauldrons of the Unrelenting
+    },
+    -- Hive Tunneler's Boots
+    ["21645"] = {
+        233590, -- Hive Tunneler's Boots
+    },
+    -- Fetish of the Sand Reaver
+    ["21647"] = {
+        233589, -- Fetish of the Sand Reaver
+    },
+    -- Recomposed Boots
+    ["21648"] = {
+        233573, -- Recomposed Boots
+    },
+    -- Ancient Qiraji Ripper
+    ["21650"] = {
+        234650, -- Ancient Qiraji Ripper
+    },
+    -- Scaled Sand Reaver Leggings
+    ["21651"] = {
+        233595, -- Scaled Sand Reaver Leggings
+    },
+    -- Silithid Carapace Chestguard
+    ["21652"] = {
+        233591, -- Silithid Carapace Chestguard
+    },
+    -- Robes of the Guardian Saint
+    ["21663"] = {
+        233594, -- Robes of the Guardian Saint
+    },
+    -- Barbed Choker
+    ["21664"] = {
+        233587, -- Barbed Choker
+    },
+    -- Mantle of Wicked Revenge
+    ["21665"] = {
+        233592, -- Mantle of Wicked Revenge
+    },
+    -- Sartura's Might
+    ["21666"] = {
+        233581, -- Sartura's Might
+    },
+    -- Legplates of Blazing Light
+    ["21667"] = {
+        233583, -- Legplates of Blazing Light
+    },
+    -- Scaled Leggings of Qiraji Fury
+    ["21668"] = {
+        233584, -- Scaled Leggings of Qiraji Fury
+    },
+    -- Creeping Vine Helm
+    ["21669"] = {
+        233578, -- Creeping Vine Helm
+    },
+    -- Badge of the Swarmguard
+    ["21670"] = {
+        233580, -- Badge of the Swarmguard
+    },
+    -- Robes of the Battleguard
+    ["21671"] = {
+        233575, -- Robes of the Battleguard
+    },
+    -- Gloves of Enforcement
+    ["21672"] = {
+        233579, -- Gloves of Enforcement
+    },
+    -- Silithid Claw
+    ["21673"] = {
+        233576, -- Silithid Claw
+    },
+    -- Gauntlets of Steadfast Determination
+    ["21674"] = {
+        233582, -- Gauntlets of Steadfast Determination
+    },
+    -- Thick Qirajihide Belt
+    ["21675"] = {
+        233577, -- Thick Qirajihide Belt
+    },
+    -- Leggings of the Festering Swarm
+    ["21676"] = {
+        233574, -- Leggings of the Festering Swarm
+    },
+    -- Ring of the Qiraji Fury
+    ["21677"] = {
+        233600, -- Ring of the Qiraji Fury
+    },
+    -- Necklace of Purity
+    ["21678"] = {
+        233572, -- Necklace of Purity
+    },
+    -- Kalimdor's Revenge
+    ["21679"] = {
+        233621, -- Kalimdor's Revenge
+    },
+    -- Vest of Swift Execution
+    ["21680"] = {
+        233568, -- Vest of Swift Execution
+    },
+    -- Ring of the Devoured
+    ["21681"] = {
+        233569, -- Ring of the Devoured
+    },
+    -- Bile-Covered Gauntlets
+    ["21682"] = {
+        233564, -- Bile-Covered Gauntlets
+    },
+    -- Mantle of the Desert Crusade
+    ["21683"] = {
+        233567, -- Mantle of the Desert Crusade
+    },
+    -- Mantle of the Desert's Fury
+    ["21684"] = {
+        233566, -- Mantle of the Desert's Fury
+    },
+    -- Petrified Scarab
+    ["21685"] = {
+        233570, -- Petrified Scarab
+    },
+    -- Mantle of Phrenic Power
+    ["21686"] = {
+        233563, -- Mantle of Phrenic Power
+    },
+    -- Ukko's Ring of Darkness
+    ["21687"] = {
+        233565, -- Ukko's Ring of Darkness
+    },
+    -- Boots of the Fallen Hero
+    ["21688"] = {
+        233561, -- Boots of the Fallen Hero
+    },
+    -- Gloves of Ebru
+    ["21689"] = {
+        233559, -- Gloves of Ebru
+    },
+    -- Angelista's Charm
+    ["21690"] = {
+        233562, -- Angelista's Charm
+    },
+    -- Ooze-ridden Gauntlets
+    ["21691"] = {
+        233560, -- Ooze-ridden Gauntlets
+    },
+    -- Triad Girdle
+    ["21692"] = {
+        233523, -- Triad Girdle
+    },
+    -- Guise of the Devourer
+    ["21693"] = {
+        233522, -- Guise of the Devourer
+    },
+    -- Ternary Mantle
+    ["21694"] = {
+        233521, -- Ternary Mantle
+    },
+    -- Angelista's Touch
+    ["21695"] = {
+        233524, -- Angelista's Touch
+    },
+    -- Robes of the Triumvirate
+    ["21696"] = {
+        233520, -- Robes of the Triumvirate
+    },
+    -- Cape of the Trinity
+    ["21697"] = {
+        233519, -- Cape of the Trinity
+    },
+    -- Leggings of Immersion
+    ["21698"] = {
+        233505, -- Leggings of Immersion
+    },
+    -- Barrage Shoulders
+    ["21699"] = {
+        233496, -- Barrage Shoulders
+    },
+    -- Pendant of the Qiraji Guardian
+    ["21700"] = {
+        233503, -- Pendant of the Qiraji Guardian
+    },
+    -- Cloak of Concentrated Hatred
+    ["21701"] = {
+        233504, -- Cloak of Concentrated Hatred
+    },
+    -- Amulet of Foul Warding
+    ["21702"] = {
+        233502, -- Amulet of Foul Warding
+    },
+    -- Hammer of Ji'zhi
+    ["21703"] = {
+        233515, -- Hammer of Ji'zhi
+    },
+    -- Boots of the Redeemed Prophecy
+    ["21704"] = {
+        233517, -- Boots of the Redeemed Prophecy
+    },
+    -- Boots of the Fallen Prophet
+    ["21705"] = {
+        233518, -- Boots of the Fallen Prophet
+    },
+    -- Boots of the Unwavering Will
+    ["21706"] = {
+        233514, -- Boots of the Unwavering Will
+    },
+    -- Ring of Swarming Thought
+    ["21707"] = {
+        233507, -- Ring of Swarming Thought
+    },
+    -- Beetle Scaled Wristguards
+    ["21708"] = {
+        233506, -- Beetle Scaled Wristguards
+    },
     -- Ring of the Fallen God
     ["21709"] = {
-        21221, -- Eye of C'Thun
+        234803, -- Ring of the Fallen God
     },
     -- Cloak of the Fallen God
     ["21710"] = {
@@ -5422,6 +6124,82 @@ GL.Data.ItemLinks = {
     -- Amulet of the Fallen God
     ["21712"] = {
         21221, -- Eye of C'Thun
+    },
+    -- Sand Polished Hammer
+    ["21715"] = {
+        234112, -- Sand Polished Hammer
+    },
+    -- Silithid Husked Launcher
+    ["21800"] = {
+        234121, -- Silithid Husked Launcher
+    },
+    -- Antenna of Invigoration
+    ["21801"] = {
+        234119, -- Antenna of Invigoration
+    },
+    -- The Lost Kris of Zedd
+    ["21802"] = {
+        234122, -- The Lost Kris of Zedd
+    },
+    -- Helm of the Holy Avenger
+    ["21803"] = {
+        234120, -- Helm of the Holy Avenger
+    },
+    -- Coif of Elemental Fury
+    ["21804"] = {
+        234123, -- Coif of Elemental Fury
+    },
+    -- Gavel of Qiraji Authority
+    ["21806"] = {
+        234118, -- Gavel of Qiraji Authority
+    },
+    -- Fury of the Forgotten Swarm
+    ["21809"] = {
+        234116, -- Fury of the Forgotten Swarm
+    },
+    -- Treads of the Wandering Nomad
+    ["21810"] = {
+        234117, -- Treads of the Wandering Nomad
+    },
+    -- Breastplate of Annihilation
+    ["21814"] = {
+        233516, -- Breastplate of Annihilation
+    },
+    -- Ritssyn's Ring of Chaos
+    ["21836"] = {
+        233648, -- Ritssyn's Ring of Chaos
+    },
+    -- Anubisath Warhammer
+    ["21837"] = {
+        234986, -- Anubisath Warhammer
+    },
+    -- Garb of Royal Ascension
+    ["21838"] = {
+        233644, -- Garb of Royal Ascension
+    },
+    -- Scepter of the False Prophet
+    ["21839"] = {
+        233636, -- Scepter of the False Prophet
+    },
+    -- Neretzek, The Blood Drinker
+    ["21856"] = {
+        234987, -- Neretzek, The Blood Drinker
+    },
+    -- Gloves of the Immortal
+    ["21888"] = {
+        233645, -- Gloves of the Immortal
+    },
+    -- Gloves of the Redeemed Prophecy
+    ["21889"] = {
+        233646, -- Gloves of the Redeemed Prophecy
+    },
+    -- Gloves of the Fallen Prophet
+    ["21890"] = {
+        235047, -- Gloves of the Fallen Prophet
+    },
+    -- Shard of the Fallen Star
+    ["21891"] = {
+        233649, -- Shard of the Fallen Star
     },
     -- Belt of Heroism
     ["21994"] = {
@@ -5703,6 +6481,30 @@ GL.Data.ItemLinks = {
     ["22113"] = {
         226776, -- Feralheart Vest
     },
+    -- Obsidian Mail Tunic
+    ["22191"] = {
+        234460, -- Obsidian Mail Tunic
+    },
+    -- Black Grasp of the Destroyer
+    ["22194"] = {
+        234086, -- Black Grasp of the Destroyer
+    },
+    -- Light Obsidian Belt
+    ["22195"] = {
+        234321, -- Light Obsidian Belt
+    },
+    -- Thick Obsidian Breastplate
+    ["22196"] = {
+        235040, -- Thick Obsidian Breastplate
+    },
+    -- Heavy Obsidian Belt
+    ["22197"] = {
+        234319, -- Heavy Obsidian Belt
+    },
+    -- Jagged Obsidian Shield
+    ["22198"] = {
+        234459, -- Jagged Obsidian Shield
+    },
     -- Wristguards of Renown
     ["22204"] = {
         227986, -- Wristguards of Renown
@@ -5715,9 +6517,33 @@ GL.Data.ItemLinks = {
     ["22208"] = {
         227974, -- Lavastone Hammer
     },
+    -- Plans: Heavy Obsidian Belt
+    ["22209"] = {
+        234320, -- Plans: Heavy Obsidian Belt
+    },
     -- Golem Fitted Pauldrons
     ["22212"] = {
         227947, -- Golem Fitted Pauldrons
+    },
+    -- Plans: Light Obsidian Belt
+    ["22214"] = {
+        234322, -- Plans: Light Obsidian Belt
+    },
+    -- Plans: Jagged Obsidian Shield
+    ["22219"] = {
+        234458, -- Plans: Jagged Obsidian Shield
+    },
+    -- Plans: Black Grasp of the Destroyer
+    ["22220"] = {
+        234085, -- Plans: Black Grasp of the Destroyer
+    },
+    -- Plans: Obsidian Mail Tunic
+    ["22221"] = {
+        234461, -- Plans: Obsidian Mail Tunic
+    },
+    -- Plans: Thick Obsidian Breastplate
+    ["22222"] = {
+        235039, -- Plans: Thick Obsidian Breastplate
     },
     -- Kayser's Boots of Precision
     ["22231"] = {
@@ -5814,6 +6640,14 @@ GL.Data.ItemLinks = {
     -- Pendant of Celerity
     ["22340"] = {
         228684, -- Pendant of Celerity
+    },
+    -- Fahrad's Reloading Repeater
+    ["22347"] = {
+        234799, -- Fahrad's Reloading Repeater
+    },
+    -- Doomulus Prime
+    ["22348"] = {
+        234798, -- Doomulus Prime
     },
     -- Desecrated Breastplate
     ["22349"] = {
@@ -5959,9 +6793,33 @@ GL.Data.ItemLinks = {
         22508, -- Plagueheart Sandals
         22516, -- Sandals of Faith
     },
+    -- The Thunderwood Poker
+    ["22377"] = {
+        234797, -- The Thunderwood Poker
+    },
+    -- Ravenholdt Slicer
+    ["22378"] = {
+        234792, -- Ravenholdt Slicer
+    },
+    -- Shivsprocket's Shiv
+    ["22379"] = {
+        234793, -- Shivsprocket's Shiv
+    },
+    -- Simone's Cultivating Hammer
+    ["22380"] = {
+        234800, -- Simone's Cultivating Hammer
+    },
     -- Totem of Rage
     ["22395"] = {
         227977, -- Totem of Rage
+    },
+    -- Totem of Life
+    ["22396"] = {
+        233597, -- Totem of Life
+    },
+    -- Idol of Health
+    ["22399"] = {
+        233602, -- Idol of Health
     },
     -- Libram of Truth
     ["22400"] = {
@@ -6350,6 +7208,90 @@ GL.Data.ItemLinks = {
         22630, -- Atiesh, Greatstaff of the Guardian (warlock)
         22631, -- Atiesh, Greatstaff of the Guardian (priest)
         22632, -- Atiesh, Greatstaff of the Guardian (druid)
+    },
+    -- Eyestalk Waist Cord
+    ["22730"] = {
+        233633, -- Eyestalk Waist Cord
+    },
+    -- Cloak of the Devoured
+    ["22731"] = {
+        233630, -- Cloak of the Devoured
+    },
+    -- Mark of C'Thun
+    ["22732"] = {
+        233642, -- Mark of C'Thun
+    },
+    -- Sylvan Vest
+    ["22756"] = {
+        234317, -- Sylvan Vest
+    },
+    -- Sylvan Crown
+    ["22757"] = {
+        234315, -- Sylvan Crown
+    },
+    -- Sylvan Shoulders
+    ["22758"] = {
+        234312, -- Sylvan Shoulders
+    },
+    -- Bramblewood Helm
+    ["22759"] = {
+        234310, -- Bramblewood Helm
+    },
+    -- Bramblewood Boots
+    ["22760"] = {
+        234308, -- Bramblewood Boots
+    },
+    -- Bramblewood Belt
+    ["22761"] = {
+        234306, -- Bramblewood Belt
+    },
+    -- Ironvine Breastplate
+    ["22762"] = {
+        234292, -- Ironvine Breastplate
+    },
+    -- Ironvine Gloves
+    ["22763"] = {
+        234290, -- Ironvine Gloves
+    },
+    -- Ironvine Belt
+    ["22764"] = {
+        234288, -- Ironvine Belt
+    },
+    -- Plans: Ironvine Breastplate
+    ["22766"] = {
+        234293, -- Plans: Ironvine Breastplate
+    },
+    -- Plans: Ironvine Gloves
+    ["22767"] = {
+        234291, -- Plans: Ironvine Gloves
+    },
+    -- Plans: Ironvine Belt
+    ["22768"] = {
+        234289, -- Plans: Ironvine Belt
+    },
+    -- Pattern: Bramblewood Belt
+    ["22769"] = {
+        234307, -- Pattern: Bramblewood Belt
+    },
+    -- Pattern: Bramblewood Boots
+    ["22770"] = {
+        234309, -- Pattern: Bramblewood Boots
+    },
+    -- Pattern: Bramblewood Helm
+    ["22771"] = {
+        234311, -- Pattern: Bramblewood Helm
+    },
+    -- Pattern: Sylvan Shoulders
+    ["22772"] = {
+        234314, -- Pattern: Sylvan Shoulders
+    },
+    -- Pattern: Sylvan Crown
+    ["22773"] = {
+        234316, -- Pattern: Sylvan Crown
+    },
+    -- Pattern: Sylvan Vest
+    ["22774"] = {
+        234318, -- Pattern: Sylvan Vest
     },
     -- Blood Guard's Chain Greaves
     ["22843"] = {
@@ -6755,9 +7697,69 @@ GL.Data.ItemLinks = {
     ["23319"] = {
         227102, -- Lieutenant Commander's Silk Mantle
     },
+    -- Grand Marshal's Mageblade
+    ["23451"] = {
+        234574, -- Grand Marshal's Mageblade
+    },
+    -- Grand Marshal's Tome of Power
+    ["23452"] = {
+        234589, -- Grand Marshal's Tome of Power
+    },
+    -- Grand Marshal's Tome of Restoration
+    ["23453"] = {
+        234590, -- Grand Marshal's Tome of Restoration
+    },
+    -- Grand Marshal's Warhammer
+    ["23454"] = {
+        234576, -- Grand Marshal's Warhammer
+    },
+    -- Grand Marshal's Demolisher
+    ["23455"] = {
+        234568, -- Grand Marshal's Demolisher
+    },
+    -- Grand Marshal's Swiftblade
+    ["23456"] = {
+        234579, -- Grand Marshal's Swiftblade
+    },
+    -- High Warlord's Battle Mace
+    ["23464"] = {
+        234551, -- High Warlord's Battle Mace
+    },
+    -- High Warlord's Destroyer
+    ["23465"] = {
+        234546, -- High Warlord's Destroyer
+    },
+    -- High Warlord's Spellblade
+    ["23466"] = {
+        234550, -- High Warlord's Spellblade
+    },
+    -- High Warlord's Quickblade
+    ["23467"] = {
+        234553, -- High Warlord's Quickblade
+    },
+    -- High Warlord's Tome of Destruction
+    ["23468"] = {
+        234563, -- High Warlord's Tome of Destruction
+    },
+    -- High Warlord's Tome of Mending
+    ["23469"] = {
+        234564, -- High Warlord's Tome of Mending
+    },
     -- Fel Edged Battleaxe
     ["23542"] = {
         23631, -- Plans: Fel Edged Battleaxe
+    },
+    -- Larvae of the Great Worm
+    ["23557"] = {
+        233626, -- Larvae of the Great Worm
+    },
+    -- The Burrower's Shell
+    ["23558"] = {
+        233628, -- The Burrower's Shell
+    },
+    -- Jom Gabbar
+    ["23570"] = {
+        233627, -- Jom Gabbar
     },
     -- Plans: Fel Edged Battleaxe
     ["23631"] = {
@@ -18104,6 +19106,10 @@ GL.Data.ItemLinks = {
     ["206176"] = {
         15454, -- Mortar and Pestle
     },
+    -- Rune of Metamorphosis
+    ["210980"] = {
+        19340, -- Rune of Metamorphosis
+    },
     -- Avenger's Void Pearl
     ["211449"] = {
         211452, -- Perfect Blackfathom Pearl
@@ -22824,7 +23830,7 @@ GL.Data.ItemLinks = {
     },
     -- Thunderfury, Blessed Blade of the Windseeker
     ["230224"] = {
-        232018, -- Dormant Wind Kissed Blade
+        19019, -- Thunderfury, Blessed Blade of the Windseeker
     },
     -- Arcane Infused Gem
     ["230237"] = {
@@ -22855,10 +23861,6 @@ GL.Data.ItemLinks = {
     -- Mind Quickening Gem
     ["230243"] = {
         19339, -- Mind Quickening Gem
-    },
-    -- Shapeshifter's Sigil
-    ["230244"] = {
-        19340, -- Rune of Metamorphosis
     },
     -- Pendant of the Fallen Dragon
     ["230245"] = {
@@ -23117,15 +24119,16 @@ GL.Data.ItemLinks = {
     },
     -- Master Dragonslayer's Ring
     ["230839"] = {
-        19002, -- Head of Nefarian
+        19384, -- Master Dragonslayer's Ring
     },
     -- Master Dragonslayer's Medallion
     ["230840"] = {
-        19002, -- Head of Nefarian
+        19383, -- Master Dragonslayer's Medallion
     },
     -- Master Dragonslayer's Orb
     ["230841"] = {
-        19002, -- Head of Nefarian
+        19003, -- Head of Nefarian (Alliance)
+        19366, -- Master Dragonslayer's Orb
     },
     -- Cloak of Draconic Might
     ["230842"] = {
@@ -23346,7 +24349,6 @@ GL.Data.ItemLinks = {
     },
     -- Warblade of the Hakkari
     ["230992"] = {
-        19866, -- Warblade of the Hakkari
         231869, -- Warblade of the Hakkari
     },
     -- Mandokir's Sting
@@ -23450,7 +24452,7 @@ GL.Data.ItemLinks = {
     },
     -- Pauldrons of Wrath
     ["231025"] = {
-        231717, -- Primeval Shoulderpads
+        16961, -- Pauldrons of Wrath
     },
     -- Legguards of Wrath
     ["231026"] = {
@@ -23466,7 +24468,7 @@ GL.Data.ItemLinks = {
     },
     -- Sabatons of Wrath
     ["231029"] = {
-        231721, -- Primeval Boots
+        16965, -- Sabatons of Wrath
     },
     -- Chestguard of Wrath
     ["231030"] = {
@@ -23486,15 +24488,15 @@ GL.Data.ItemLinks = {
     },
     -- Legplates of Wrath
     ["231034"] = {
-        231718, -- Primeval Leggings
+        16962, -- Legplates of Wrath
     },
     -- Helm of Wrath
     ["231035"] = {
-        231719, -- Primeval Helm
+        16963, -- Helm of Wrath
     },
     -- Gauntlets of Wrath
     ["231036"] = {
-        231720, -- Primeval Gloves
+        16964, -- Gauntlets of Wrath
     },
     -- Greaves of Wrath
     ["231037"] = {
@@ -23502,39 +24504,39 @@ GL.Data.ItemLinks = {
     },
     -- Breastplate of Wrath
     ["231038"] = {
-        231723, -- Primeval Chest
+        16966, -- Breastplate of Wrath
     },
     -- Bloodfang Spaulders
     ["231039"] = {
-        231717, -- Primeval Shoulderpads
+        16832, -- Bloodfang Spaulders
     },
     -- Bloodfang Chestpiece
     ["231040"] = {
-        231723, -- Primeval Chest
+        16905, -- Bloodfang Chestpiece
     },
     -- Bloodfang Boots
     ["231041"] = {
-        231721, -- Primeval Boots
+        16906, -- Bloodfang Boots
     },
     -- Bloodfang Gloves
     ["231042"] = {
-        231720, -- Primeval Gloves
+        16907, -- Bloodfang Gloves
     },
     -- Bloodfang Hood
     ["231043"] = {
-        231719, -- Primeval Helm
+        16908, -- Bloodfang Hood
     },
     -- Bloodfang Pants
     ["231044"] = {
-        231718, -- Primeval Leggings
+        16909, -- Bloodfang Pants
     },
     -- Bloodfang Belt
     ["231045"] = {
-        231716, -- Primeval Belt
+        16910, -- Bloodfang Belt
     },
     -- Bloodfang Bracers
     ["231046"] = {
-        231715, -- Primeval Bindings
+        16911, -- Bloodfang Bracers
     },
     -- Bloodfang Shoulderpads
     ["231047"] = {
@@ -23570,35 +24572,35 @@ GL.Data.ItemLinks = {
     },
     -- Dragonstalker's Bracers
     ["231055"] = {
-        231724, -- Ancient Bindings
+        16935, -- Dragonstalker's Bracers
     },
     -- Dragonstalker's Belt
     ["231056"] = {
-        231725, -- Ancient Belt
+        16936, -- Dragonstalker's Belt
     },
     -- Dragonstalker's Spaulders
     ["231057"] = {
-        231726, -- Ancient Shoulderpads
+        16937, -- Dragonstalker's Spaulders
     },
     -- Dragonstalker's Legguards
     ["231058"] = {
-        231727, -- Ancient Leggings
+        16938, -- Dragonstalker's Legguards
     },
     -- Dragonstalker's Helm
     ["231059"] = {
-        231728, -- Ancient Helm
+        16939, -- Dragonstalker's Helm
     },
     -- Dragonstalker's Gauntlets
     ["231060"] = {
-        231729, -- Ancient Gloves
+        16940, -- Dragonstalker's Gauntlets
     },
     -- Dragonstalker's Greaves
     ["231061"] = {
-        231730, -- Ancient Boots
+        16941, -- Dragonstalker's Greaves
     },
     -- Dragonstalker's Breastplate
     ["231062"] = {
-        231731, -- Ancient Chest
+        16942, -- Dragonstalker's Breastplate
     },
     -- Dragonstalker's Vambraces
     ["231063"] = {
@@ -23634,35 +24636,35 @@ GL.Data.ItemLinks = {
     },
     -- Nemesis Boots
     ["231072"] = {
-        231713, -- Draconian Boots
+        16927, -- Nemesis Boots
     },
     -- Nemesis Gloves
     ["231073"] = {
-        231712, -- Draconian Gloves
+        16928, -- Nemesis Gloves
     },
     -- Nemesis Skullcap
     ["231074"] = {
-        231711, -- Draconian Hood
+        16929, -- Nemesis Skullcap
     },
     -- Nemesis Leggings
     ["231075"] = {
-        231710, -- Draconian Leggings
+        16930, -- Nemesis Leggings
     },
     -- Nemesis Robes
     ["231076"] = {
-        231714, -- Draconian Robe
+        16931, -- Nemesis Robes
     },
     -- Nemesis Spaulders
     ["231077"] = {
-        231709, -- Draconian Shoulderpads
+        16932, -- Nemesis Spaulders
     },
     -- Nemesis Belt
     ["231078"] = {
-        231708, -- Draconian Belt
+        16933, -- Nemesis Belt
     },
     -- Nemesis Bracers
     ["231079"] = {
-        231707, -- Draconian Bindings
+        16934, -- Nemesis Bracers
     },
     -- Nemesis Treads
     ["231090"] = {
@@ -23762,35 +24764,35 @@ GL.Data.ItemLinks = {
     },
     -- Boots of Transcendence
     ["231155"] = {
-        231713, -- Draconian Boots
+        16919, -- Boots of Transcendence
     },
     -- Handguards of Transcendence
     ["231156"] = {
-        231712, -- Draconian Gloves
+        16920, -- Handguards of Transcendence
     },
     -- Halo of Transcendence
     ["231157"] = {
-        231711, -- Draconian Hood
+        16921, -- Halo of Transcendence
     },
     -- Leggings of Transcendence
     ["231158"] = {
-        231710, -- Draconian Leggings
+        16922, -- Leggings of Transcendence
     },
     -- Robes of Transcendence
     ["231159"] = {
-        231714, -- Draconian Robe
+        16923, -- Robes of Transcendence
     },
     -- Pauldrons of Transcendence
     ["231160"] = {
-        231709, -- Draconian Shoulderpads
+        16924, -- Pauldrons of Transcendence
     },
     -- Belt of Transcendence
     ["231161"] = {
-        231708, -- Draconian Belt
+        16925, -- Belt of Transcendence
     },
     -- Bindings of Transcendence
     ["231162"] = {
-        231707, -- Draconian Bindings
+        16926, -- Bindings of Transcendence
     },
     -- Treads of Transcendence
     ["231165"] = {
@@ -23826,35 +24828,35 @@ GL.Data.ItemLinks = {
     },
     -- Judgement Bindings
     ["231174"] = {
-        231724, -- Ancient Bindings
+        16951, -- Judgement Bindings
     },
     -- Judgement Belt
     ["231175"] = {
-        231725, -- Ancient Belt
+        16952, -- Judgement Belt
     },
     -- Judgement Spaulders
     ["231176"] = {
-        231726, -- Ancient Shoulderpads
+        16953, -- Judgement Spaulders
     },
     -- Judgement Legplates
     ["231177"] = {
-        231727, -- Ancient Leggings
+        16954, -- Judgement Legplates
     },
     -- Judgement Crown
     ["231178"] = {
-        231728, -- Ancient Helm
+        16955, -- Judgement Crown
     },
     -- Judgement Gauntlets
     ["231179"] = {
-        231729, -- Ancient Gloves
+        16956, -- Judgement Gauntlets
     },
     -- Judgement Sabatons
     ["231180"] = {
-        231730, -- Ancient Boots
+        16957, -- Judgement Sabatons
     },
     -- Judgement Breastplate
     ["231181"] = {
-        231731, -- Ancient Chest
+        16958, -- Judgement Breastplate
     },
     -- Judgement Vambraces
     ["231182"] = {
@@ -23922,27 +24924,27 @@ GL.Data.ItemLinks = {
     },
     -- Gauntlets of Ten Storms
     ["231198"] = {
-        231729, -- Ancient Gloves
+        16948, -- Gauntlets of Ten Storms
     },
     -- Bracers of Ten Storms
     ["231199"] = {
-        231724, -- Ancient Bindings
+        16943, -- Bracers of Ten Storms
     },
     -- Belt of Ten Storms
     ["231200"] = {
-        231725, -- Ancient Belt
+        16944, -- Belt of Ten Storms
     },
     -- Epaulets of Ten Storms
     ["231201"] = {
-        231726, -- Ancient Shoulderpads
+        16945, -- Epaulets of Ten Storms
     },
     -- Legplates of Ten Storms
     ["231202"] = {
-        231727, -- Ancient Leggings
+        16946, -- Legplates of Ten Storms
     },
     -- Helmet of Ten Storms
     ["231203"] = {
-        231728, -- Ancient Helm
+        16947, -- Helmet of Ten Storms
     },
     -- Greaves of Ten Storms
     ["231204"] = {
@@ -23950,7 +24952,7 @@ GL.Data.ItemLinks = {
     },
     -- Breastplate of Ten Storms
     ["231205"] = {
-        231731, -- Ancient Chest
+        16950, -- Breastplate of Ten Storms
     },
     -- Handguards of Ten Storms
     ["231206"] = {
@@ -24050,35 +25052,35 @@ GL.Data.ItemLinks = {
     },
     -- Stormrage Chestguard
     ["231230"] = {
-        231723, -- Primeval Chest
+        16897, -- Stormrage Chestguard
     },
     -- Stormrage Boots
     ["231231"] = {
-        231721, -- Primeval Boots
+        16898, -- Stormrage Boots
     },
     -- Stormrage Handguards
     ["231232"] = {
-        231720, -- Primeval Gloves
+        16899, -- Stormrage Handguards
     },
     -- Stormrage Cover
     ["231233"] = {
-        231719, -- Primeval Helm
+        16900, -- Stormrage Cover
     },
     -- Stormrage Legguards
     ["231234"] = {
-        231718, -- Primeval Leggings
+        16901, -- Stormrage Legguards
     },
     -- Stormrage Pauldrons
     ["231235"] = {
-        231717, -- Primeval Shoulderpads
+        16902, -- Stormrage Pauldrons
     },
     -- Stormrage Belt
     ["231236"] = {
-        231716, -- Primeval Belt
+        16903, -- Stormrage Belt
     },
     -- Stormrage Bracers
     ["231237"] = {
-        231715, -- Primeval Bindings
+        16904, -- Stormrage Bracers
     },
     -- Stormrage Armor
     ["231238"] = {
@@ -24308,6 +25310,7 @@ GL.Data.ItemLinks = {
     -- Warblade of the Hakkari
     ["231309"] = {
         19865, -- Warblade of the Hakkari
+        19866, -- Warblade of the Hakkari
         231853, -- Warblade of the Hakkari
     },
     -- Zin'rokh, Destroyer of Worlds
@@ -24849,8 +25852,6 @@ GL.Data.ItemLinks = {
     },
     -- Draconian Bindings
     ["231707"] = {
-        16926, -- Bindings of Transcendence
-        16934, -- Nemesis Bracers
         231079, -- Nemesis Bracers
         231098, -- Nemesis Wraps
         231107, -- Netherwind Bindings
@@ -24866,8 +25867,6 @@ GL.Data.ItemLinks = {
     },
     -- Draconian Belt
     ["231708"] = {
-        16925, -- Belt of Transcendence
-        16933, -- Nemesis Belt
         231078, -- Nemesis Belt
         231097, -- Nemesis Cord
         231100, -- Netherwind Belt
@@ -24883,8 +25882,6 @@ GL.Data.ItemLinks = {
     },
     -- Draconian Shoulderpads
     ["231709"] = {
-        16924, -- Pauldrons of Transcendence
-        16932, -- Nemesis Spaulders
         231077, -- Nemesis Spaulders
         231096, -- Nemesis Shoulderpads
         231106, -- Netherwind Mantle
@@ -24900,8 +25897,6 @@ GL.Data.ItemLinks = {
     },
     -- Draconian Leggings
     ["231710"] = {
-        16922, -- Leggings of Transcendence
-        16930, -- Nemesis Leggings
         231075, -- Nemesis Leggings
         231093, -- Nemesis Pants
         231104, -- Netherwind Pants
@@ -24917,8 +25912,6 @@ GL.Data.ItemLinks = {
     },
     -- Draconian Hood
     ["231711"] = {
-        16921, -- Halo of Transcendence
-        16929, -- Nemesis Skullcap
         231074, -- Nemesis Skullcap
         231092, -- Nemesis Cowl
         231103, -- Netherwind Crown
@@ -24934,8 +25927,6 @@ GL.Data.ItemLinks = {
     },
     -- Draconian Gloves
     ["231712"] = {
-        16920, -- Handguards of Transcendence
-        16928, -- Nemesis Gloves
         231073, -- Nemesis Gloves
         231091, -- Nemesis Handguards
         231102, -- Netherwind Gloves
@@ -24951,8 +25942,6 @@ GL.Data.ItemLinks = {
     },
     -- Draconian Boots
     ["231713"] = {
-        16919, -- Boots of Transcendence
-        16927, -- Nemesis Boots
         231072, -- Nemesis Boots
         231090, -- Nemesis Treads
         231101, -- Netherwind Boots
@@ -24968,8 +25957,6 @@ GL.Data.ItemLinks = {
     },
     -- Draconian Robe
     ["231714"] = {
-        16923, -- Robes of Transcendence
-        16931, -- Nemesis Robes
         231076, -- Nemesis Robes
         231095, -- Nemesis Garb
         231105, -- Netherwind Robes
@@ -24985,8 +25972,6 @@ GL.Data.ItemLinks = {
     },
     -- Primeval Bindings
     ["231715"] = {
-        16904, -- Stormrage Bracers
-        16911, -- Bloodfang Bracers
         16959, -- Bracelets of Wrath
         231023, -- Wristguards of Wrath
         231031, -- Bracers of Wrath
@@ -25007,8 +25992,6 @@ GL.Data.ItemLinks = {
     },
     -- Primeval Belt
     ["231716"] = {
-        16903, -- Stormrage Belt
-        16910, -- Bloodfang Belt
         16960, -- Waistband of Wrath
         231024, -- Waistguard of Wrath
         231032, -- Belt of Wrath
@@ -25029,9 +26012,6 @@ GL.Data.ItemLinks = {
     },
     -- Primeval Shoulderpads
     ["231717"] = {
-        16832, -- Bloodfang Spaulders
-        16902, -- Stormrage Pauldrons
-        16961, -- Pauldrons of Wrath
         231025, -- Pauldrons of Wrath
         231033, -- Shoulders of Wrath
         231039, -- Bloodfang Spaulders
@@ -25051,9 +26031,6 @@ GL.Data.ItemLinks = {
     },
     -- Primeval Leggings
     ["231718"] = {
-        16901, -- Stormrage Legguards
-        16909, -- Bloodfang Pants
-        16962, -- Legplates of Wrath
         231026, -- Legguards of Wrath
         231034, -- Legplates of Wrath
         231044, -- Bloodfang Pants
@@ -25073,9 +26050,6 @@ GL.Data.ItemLinks = {
     },
     -- Primeval Helm
     ["231719"] = {
-        16900, -- Stormrage Cover
-        16908, -- Bloodfang Hood
-        16963, -- Helm of Wrath
         231027, -- Faceguard of Wrath
         231035, -- Helm of Wrath
         231043, -- Bloodfang Hood
@@ -25095,9 +26069,6 @@ GL.Data.ItemLinks = {
     },
     -- Primeval Gloves
     ["231720"] = {
-        16899, -- Stormrage Handguards
-        16907, -- Bloodfang Gloves
-        16964, -- Gauntlets of Wrath
         231028, -- Handguards of Wrath
         231036, -- Gauntlets of Wrath
         231042, -- Bloodfang Gloves
@@ -25117,9 +26088,6 @@ GL.Data.ItemLinks = {
     },
     -- Primeval Boots
     ["231721"] = {
-        16898, -- Stormrage Boots
-        16906, -- Bloodfang Boots
-        16965, -- Sabatons of Wrath
         231029, -- Sabatons of Wrath
         231037, -- Greaves of Wrath
         231041, -- Bloodfang Boots
@@ -25143,9 +26111,6 @@ GL.Data.ItemLinks = {
     },
     -- Primeval Chest
     ["231723"] = {
-        16897, -- Stormrage Chestguard
-        16905, -- Bloodfang Chestpiece
-        16966, -- Breastplate of Wrath
         231030, -- Chestguard of Wrath
         231038, -- Breastplate of Wrath
         231040, -- Bloodfang Chestpiece
@@ -25165,9 +26130,6 @@ GL.Data.ItemLinks = {
     },
     -- Ancient Bindings
     ["231724"] = {
-        16935, -- Dragonstalker's Bracers
-        16943, -- Bracers of Ten Storms
-        16951, -- Judgement Bindings
         231055, -- Dragonstalker's Bracers
         231063, -- Dragonstalker's Vambraces
         231174, -- Judgement Bindings
@@ -25189,9 +26151,7 @@ GL.Data.ItemLinks = {
     },
     -- Ancient Belt
     ["231725"] = {
-        16936, -- Dragonstalker's Belt
-        16944, -- Belt of Ten Storms
-        16952, -- Judgement Belt
+        15606, -- Ancient Belt
         231056, -- Dragonstalker's Belt
         231065, -- Dragonstalker's Girdle
         231175, -- Judgement Belt
@@ -25213,9 +26173,6 @@ GL.Data.ItemLinks = {
     },
     -- Ancient Shoulderpads
     ["231726"] = {
-        16937, -- Dragonstalker's Spaulders
-        16945, -- Epaulets of Ten Storms
-        16953, -- Judgement Spaulders
         231057, -- Dragonstalker's Spaulders
         231066, -- Dragonstalker's Pauldrons
         231176, -- Judgement Spaulders
@@ -25237,9 +26194,6 @@ GL.Data.ItemLinks = {
     },
     -- Ancient Leggings
     ["231727"] = {
-        16938, -- Dragonstalker's Legguards
-        16946, -- Legplates of Ten Storms
-        16954, -- Judgement Legplates
         231058, -- Dragonstalker's Legguards
         231067, -- Dragonstalker's Pants
         231177, -- Judgement Legplates
@@ -25261,9 +26215,6 @@ GL.Data.ItemLinks = {
     },
     -- Ancient Helm
     ["231728"] = {
-        16939, -- Dragonstalker's Helm
-        16947, -- Helmet of Ten Storms
-        16955, -- Judgement Crown
         231059, -- Dragonstalker's Helm
         231068, -- Dragonstalker's Skullcap
         231178, -- Judgement Crown
@@ -25285,9 +26236,6 @@ GL.Data.ItemLinks = {
     },
     -- Ancient Gloves
     ["231729"] = {
-        16940, -- Dragonstalker's Gauntlets
-        16948, -- Gauntlets of Ten Storms
-        16956, -- Judgement Gauntlets
         231060, -- Dragonstalker's Gauntlets
         231069, -- Dragonstalker's Grips
         231179, -- Judgement Gauntlets
@@ -25309,9 +26257,6 @@ GL.Data.ItemLinks = {
     },
     -- Ancient Boots
     ["231730"] = {
-        16941, -- Dragonstalker's Greaves
-        16949, -- Greaves of Ten Storms
-        16957, -- Judgement Sabatons
         231061, -- Dragonstalker's Greaves
         231070, -- Dragonstalker's Sabatons
         231180, -- Judgement Sabatons
@@ -25333,9 +26278,6 @@ GL.Data.ItemLinks = {
     },
     -- Ancient Chest
     ["231731"] = {
-        16942, -- Dragonstalker's Breastplate
-        16950, -- Breastplate of Ten Storms
-        16958, -- Judgement Breastplate
         231062, -- Dragonstalker's Breastplate
         231071, -- Dragonstalker's Armor
         231181, -- Judgement Breastplate
@@ -25523,7 +26465,6 @@ GL.Data.ItemLinks = {
     -- Dormant Wind Kissed Blade
     ["232018"] = {
         19018, -- Dormant Wind Kissed Blade
-        19019, -- Thunderfury, Blessed Blade of the Windseeker
         230224, -- Thunderfury, Blessed Blade of the Windseeker
     },
     -- Stormrage Bindings
@@ -26064,7 +27005,7 @@ GL.Data.ItemLinks = {
     },
     -- Greaves of Ten Storms
     ["232213"] = {
-        231730, -- Ancient Boots
+        16949, -- Greaves of Ten Storms
     },
     -- Breastplate of Ten Storms
     ["232214"] = {
@@ -26284,6 +27225,11 @@ GL.Data.ItemLinks = {
         19354, -- Draconic Avenger
         232576, -- Draconic Avenger
     },
+    -- Logistics Task Briefing VI
+    ["232549"] = {
+        21260, -- Logistics Task Briefing VI
+        21261, -- Logistics Task Briefing VI
+    },
     -- Ashkandi, Greatsword of the Brotherhood
     ["232550"] = {
         230818, -- Ashkandi, Greatsword of the Brotherhood
@@ -26363,5 +27309,2244 @@ GL.Data.ItemLinks = {
     -- Dragonbreath Hand Cannon
     ["232608"] = {
         230726, -- Dragonbreath Hand Cannon
+    },
+    -- Husk of the Old God
+    ["233362"] = {
+        20933, -- Husk of the Old God
+        233386, -- Stormcaller's Hauberk
+        233397, -- Avenger's Breastplate
+        233415, -- Genesis Vest
+        233688, -- Avenger's Cuirass
+        233693, -- Avenger's Chestguard
+        233694, -- Stormcaller's Chestguard
+        233699, -- Stormcaller's Breastplate
+        233704, -- Stormcaller's Embrace
+        233711, -- Genesis Armor
+        233715, -- Genesis Leathers
+        233720, -- Genesis Chestguard
+    },
+    -- Carapace of the Old God
+    ["233363"] = {
+        20929, -- Carapace of the Old God
+        233373, -- Conqueror's Breastplate
+        233402, -- Enigma Robes
+        233411, -- Striker's Hauberk
+        233651, -- Conqueror's Cuirass
+        233664, -- Striker's Ringmail
+        233678, -- Enigma Garb
+    },
+    -- Skin of the Old God
+    ["233364"] = {
+        233380, -- Doomcaller's Robes
+        233389, -- Deathdealer's Vest
+        233395, -- Vestments of the Oracle
+        233659, -- Deathdealer's Chestguard
+        233670, -- Doomcaller's Garb
+        233680, -- Robes of the Oracle
+    },
+    -- Intact Viscera
+    ["233365"] = {
+        20927, -- Ouro's Intact Hide
+        233382, -- Stormcaller's Leggings
+        233400, -- Avenger's Legguards
+        233416, -- Genesis Trousers
+        233685, -- Avenger's Plate Pants
+        233690, -- Avenger's Tassets
+        233698, -- Stormcaller's Legplates
+        233703, -- Stormcaller's Chain Leggings
+        233708, -- Stormcaller's Mail Leggings
+        233710, -- Genesis Leather Pants
+        233714, -- Genesis Leggings
+        233719, -- Genesis Breeches
+    },
+    -- Intact Peritoneum
+    ["233367"] = {
+        20931, -- Skin of the Great Sandworm
+        233374, -- Conqueror's Legguards
+        233406, -- Enigma Leggings
+        233408, -- Striker's Leggings
+        233654, -- Conqueror's Tassets
+        233667, -- Striker's Chain Legplates
+        233674, -- Enigma Pant
+    },
+    -- Intact Entrails
+    ["233368"] = {
+        233378, -- Doomcaller's Trousers
+        233390, -- Deathdealer's Leggings
+        233396, -- Trousers of the Oracle
+        233662, -- Deathdealer's Pants
+        233672, -- Doomcaller's Pants
+        233679, -- Leggings of the Oracle
+    },
+    -- Qiraji Bindings of Dominance
+    ["233369"] = {
+        20932, -- Qiraji Bindings of Dominance
+        233383, -- Stormcaller's Pauldrons
+        233384, -- Stormcaller's Footguards
+        233399, -- Avenger's Greaves
+        233401, -- Avenger's Pauldrons
+        233413, -- Genesis Shoulderpads
+        233414, -- Genesis Boots
+        233684, -- Avenger's Mantle
+        233686, -- Avenger's Treads
+        233689, -- Avenger's Spaulders
+        233691, -- Avenger's Sabatons
+        233696, -- Stormcaller's Sabatons
+        233697, -- Stormcaller's Spaulders
+        233701, -- Stormcaller's Treads
+        233702, -- Stormcaller's Mantle
+        233706, -- Stormcaller's Greaves
+        233707, -- Stormcaller's Epaulets
+        233712, -- Genesis Stompers
+        233713, -- Genesis Spaulders
+        233716, -- Genesis Treads
+        233717, -- Genesis Mantle
+        233721, -- Genesis Greaves
+        233722, -- Genesis Pauldrons
+    },
+    -- Qiraji Bindings of Command
+    ["233370"] = {
+        20928, -- Qiraji Bindings of Command
+        233372, -- Conqueror's Greaves
+        233376, -- Conqueror's Spaulders
+        233403, -- Enigma Shoulderpads
+        233405, -- Enigma Boots
+        233407, -- Striker's Footguards
+        233409, -- Striker's Pauldrons
+        233652, -- Conqueror's Sabatons
+        233658, -- Conqueror's Pauldrons
+        233665, -- Striker's Treads
+        233668, -- Striker's Spaulders
+        233675, -- Enigma Slippers
+        233677, -- Enigma Mantle
+    },
+    -- Qiraji Bindings of Sovereignty
+    ["233371"] = {
+        233377, -- Doomcaller's Footwraps
+        233379, -- Doomcaller's Mantle
+        233387, -- Deathdealer's Spaulders
+        233391, -- Deathdealer's Boots
+        233392, -- Footwraps of the Oracle
+        233394, -- Mantle of the Oracle
+        233660, -- Deathdealer's Treads
+        233663, -- Deathdealer's Pauldrons
+        233671, -- Doomcaller's Shoulderpads
+        233673, -- Doomcaller's Treads
+        233681, -- Shoulderpads of the Oracle
+        233683, -- Slippers of the Oracle
+    },
+    -- Conqueror's Greaves
+    ["233372"] = {
+        21333, -- Conqueror's Greaves
+    },
+    -- Conqueror's Breastplate
+    ["233373"] = {
+        21331, -- Conqueror's Breastplate
+    },
+    -- Conqueror's Legguards
+    ["233374"] = {
+        21332, -- Conqueror's Legguards
+    },
+    -- Conqueror's Crown
+    ["233375"] = {
+        21329, -- Conqueror's Crown
+    },
+    -- Conqueror's Spaulders
+    ["233376"] = {
+        21330, -- Conqueror's Spaulders
+    },
+    -- Doomcaller's Footwraps
+    ["233377"] = {
+        21338, -- Doomcaller's Footwraps
+    },
+    -- Doomcaller's Trousers
+    ["233378"] = {
+        21336, -- Doomcaller's Trousers
+    },
+    -- Doomcaller's Mantle
+    ["233379"] = {
+        21335, -- Doomcaller's Mantle
+    },
+    -- Doomcaller's Robes
+    ["233380"] = {
+        21334, -- Doomcaller's Robes
+    },
+    -- Doomcaller's Circlet
+    ["233381"] = {
+        21337, -- Doomcaller's Circlet
+    },
+    -- Stormcaller's Leggings
+    ["233382"] = {
+        21375, -- Stormcaller's Leggings
+    },
+    -- Stormcaller's Pauldrons
+    ["233383"] = {
+        21376, -- Stormcaller's Pauldrons
+    },
+    -- Stormcaller's Footguards
+    ["233384"] = {
+        21373, -- Stormcaller's Footguards
+    },
+    -- Stormcaller's Diadem
+    ["233385"] = {
+        21372, -- Stormcaller's Diadem
+    },
+    -- Stormcaller's Hauberk
+    ["233386"] = {
+        21374, -- Stormcaller's Hauberk
+    },
+    -- Deathdealer's Spaulders
+    ["233387"] = {
+        21361, -- Deathdealer's Spaulders
+    },
+    -- Deathdealer's Helm
+    ["233388"] = {
+        21360, -- Deathdealer's Helm
+    },
+    -- Deathdealer's Vest
+    ["233389"] = {
+        21364, -- Deathdealer's Vest
+    },
+    -- Deathdealer's Leggings
+    ["233390"] = {
+        21362, -- Deathdealer's Leggings
+    },
+    -- Deathdealer's Boots
+    ["233391"] = {
+        21359, -- Deathdealer's Boots
+    },
+    -- Footwraps of the Oracle
+    ["233392"] = {
+        21349, -- Footwraps of the Oracle
+    },
+    -- Tiara of the Oracle
+    ["233393"] = {
+        21348, -- Tiara of the Oracle
+    },
+    -- Mantle of the Oracle
+    ["233394"] = {
+        21350, -- Mantle of the Oracle
+    },
+    -- Vestments of the Oracle
+    ["233395"] = {
+        21351, -- Vestments of the Oracle
+    },
+    -- Trousers of the Oracle
+    ["233396"] = {
+        21352, -- Trousers of the Oracle
+    },
+    -- Avenger's Breastplate
+    ["233397"] = {
+        21389, -- Avenger's Breastplate
+    },
+    -- Avenger's Crown
+    ["233398"] = {
+        21387, -- Avenger's Crown
+    },
+    -- Avenger's Greaves
+    ["233399"] = {
+        21388, -- Avenger's Greaves
+    },
+    -- Avenger's Legguards
+    ["233400"] = {
+        21390, -- Avenger's Legguards
+    },
+    -- Avenger's Pauldrons
+    ["233401"] = {
+        21391, -- Avenger's Pauldrons
+    },
+    -- Enigma Robes
+    ["233402"] = {
+        21343, -- Enigma Robes
+    },
+    -- Enigma Shoulderpads
+    ["233403"] = {
+        21345, -- Enigma Shoulderpads
+    },
+    -- Enigma Circlet
+    ["233404"] = {
+        21347, -- Enigma Circlet
+    },
+    -- Enigma Boots
+    ["233405"] = {
+        21344, -- Enigma Boots
+    },
+    -- Enigma Leggings
+    ["233406"] = {
+        21346, -- Enigma Leggings
+    },
+    -- Striker's Footguards
+    ["233407"] = {
+        21365, -- Striker's Footguards
+    },
+    -- Striker's Leggings
+    ["233408"] = {
+        21368, -- Striker's Leggings
+    },
+    -- Striker's Pauldrons
+    ["233409"] = {
+        21367, -- Striker's Pauldrons
+    },
+    -- Striker's Diadem
+    ["233410"] = {
+        21366, -- Striker's Diadem
+    },
+    -- Striker's Hauberk
+    ["233411"] = {
+        21370, -- Striker's Hauberk
+    },
+    -- Genesis Helm
+    ["233412"] = {
+        21353, -- Genesis Helm
+    },
+    -- Genesis Shoulderpads
+    ["233413"] = {
+        21354, -- Genesis Shoulderpads
+    },
+    -- Genesis Boots
+    ["233414"] = {
+        21355, -- Genesis Boots
+    },
+    -- Genesis Vest
+    ["233415"] = {
+        21357, -- Genesis Vest
+    },
+    -- Genesis Trousers
+    ["233416"] = {
+        21356, -- Genesis Trousers
+    },
+    -- Mace of Unending Life
+    ["233417"] = {
+        21407, -- Mace of Unending Life
+    },
+    -- Cloak of Unending Life
+    ["233418"] = {
+        21409, -- Cloak of Unending Life
+    },
+    -- Band of Unending Life
+    ["233419"] = {
+        21408, -- Band of Unending Life
+    },
+    -- Cloak of the Unseen Path
+    ["233420"] = {
+        21403, -- Cloak of the Unseen Path
+    },
+    -- Scythe of the Unseen Path
+    ["233421"] = {
+        21401, -- Scythe of the Unseen Path
+    },
+    -- Signet of the Unseen Path
+    ["233422"] = {
+        21402, -- Signet of the Unseen Path
+    },
+    -- Blade of Vaulted Secrets
+    ["233423"] = {
+        21413, -- Blade of Vaulted Secrets
+    },
+    -- Drape of Vaulted Secrets
+    ["233424"] = {
+        21415, -- Drape of Vaulted Secrets
+    },
+    -- Band of Vaulted Secrets
+    ["233425"] = {
+        21414, -- Band of Vaulted Secrets
+    },
+    -- Blade of Eternal Justice
+    ["233426"] = {
+        21395, -- Blade of Eternal Justice
+    },
+    -- Cape of Eternal Justice
+    ["233427"] = {
+        21397, -- Cape of Eternal Justice
+    },
+    -- Ring of Eternal Justice
+    ["233428"] = {
+        21396, -- Ring of Eternal Justice
+    },
+    -- Gavel of Infinite Wisdom
+    ["233429"] = {
+        21410, -- Gavel of Infinite Wisdom
+    },
+    -- Shroud of Infinite Wisdom
+    ["233430"] = {
+        21412, -- Shroud of Infinite Wisdom
+    },
+    -- Ring of Infinite Wisdom
+    ["233431"] = {
+        21411, -- Ring of Infinite Wisdom
+    },
+    -- Cloak of Veiled Shadows
+    ["233432"] = {
+        21406, -- Cloak of Veiled Shadows
+    },
+    -- Dagger of Veiled Shadows
+    ["233433"] = {
+        21404, -- Dagger of Veiled Shadows
+    },
+    -- Band of Veiled Shadows
+    ["233434"] = {
+        21405, -- Band of Veiled Shadows
+    },
+    -- Hammer of the Gathering Storm
+    ["233435"] = {
+        21398, -- Hammer of the Gathering Storm
+    },
+    -- Cloak of the Gathering Storm
+    ["233436"] = {
+        21400, -- Cloak of the Gathering Storm
+    },
+    -- Ring of the Gathering Storm
+    ["233437"] = {
+        21399, -- Ring of the Gathering Storm
+    },
+    -- Shroud of Unspoken Names
+    ["233438"] = {
+        21418, -- Shroud of Unspoken Names
+    },
+    -- Kris of Unspoken Names
+    ["233439"] = {
+        21416, -- Kris of Unspoken Names
+    },
+    -- Ring of Unspoken Names
+    ["233440"] = {
+        21417, -- Ring of Unspoken Names
+    },
+    -- Drape of Unyielding Strength
+    ["233441"] = {
+        21394, -- Drape of Unyielding Strength
+    },
+    -- Sickle of Unyielding Strength
+    ["233442"] = {
+        21392, -- Sickle of Unyielding Strength
+    },
+    -- Signet of Unyielding Strength
+    ["233443"] = {
+        21393, -- Signet of Unyielding Strength
+    },
+    -- Barrage Shoulders
+    ["233496"] = {
+        21699, -- Barrage Shoulders
+    },
+    -- Amulet of Foul Warding
+    ["233502"] = {
+        21702, -- Amulet of Foul Warding
+    },
+    -- Pendant of the Qiraji Guardian
+    ["233503"] = {
+        21700, -- Pendant of the Qiraji Guardian
+    },
+    -- Cloak of Concentrated Hatred
+    ["233504"] = {
+        21701, -- Cloak of Concentrated Hatred
+    },
+    -- Leggings of Immersion
+    ["233505"] = {
+        21698, -- Leggings of Immersion
+    },
+    -- Beetle Scaled Wristguards
+    ["233506"] = {
+        21708, -- Beetle Scaled Wristguards
+    },
+    -- Ring of Swarming Thought
+    ["233507"] = {
+        21707, -- Ring of Swarming Thought
+    },
+    -- Staff of the Qiraji Prophets
+    ["233509"] = {
+        21128, -- Staff of the Qiraji Prophets
+        234974, -- Staff of the Qiraji Prophets
+    },
+    -- Boots of the Unwavering Will
+    ["233514"] = {
+        21706, -- Boots of the Unwavering Will
+    },
+    -- Hammer of Ji'zhi
+    ["233515"] = {
+        21703, -- Hammer of Ji'zhi
+        234975, -- Hammer of Ji'zhi
+    },
+    -- Breastplate of Annihilation
+    ["233516"] = {
+        21814, -- Breastplate of Annihilation
+    },
+    -- Boots of the Redeemed Prophecy
+    ["233517"] = {
+        21704, -- Boots of the Redeemed Prophecy
+    },
+    -- Boots of the Fallen Prophet
+    ["233518"] = {
+        21705, -- Boots of the Fallen Prophet
+    },
+    -- Cape of the Trinity
+    ["233519"] = {
+        21697, -- Cape of the Trinity
+    },
+    -- Robes of the Triumvirate
+    ["233520"] = {
+        21696, -- Robes of the Triumvirate
+    },
+    -- Ternary Mantle
+    ["233521"] = {
+        21694, -- Ternary Mantle
+    },
+    -- Guise of the Devourer
+    ["233522"] = {
+        21693, -- Guise of the Devourer
+    },
+    -- Triad Girdle
+    ["233523"] = {
+        21692, -- Triad Girdle
+    },
+    -- Angelista's Touch
+    ["233524"] = {
+        21695, -- Angelista's Touch
+    },
+    -- Gloves of Ebru
+    ["233559"] = {
+        21689, -- Gloves of Ebru
+    },
+    -- Ooze-ridden Gauntlets
+    ["233560"] = {
+        21691, -- Ooze-ridden Gauntlets
+    },
+    -- Boots of the Fallen Hero
+    ["233561"] = {
+        21688, -- Boots of the Fallen Hero
+    },
+    -- Angelista's Charm
+    ["233562"] = {
+        21690, -- Angelista's Charm
+    },
+    -- Mantle of Phrenic Power
+    ["233563"] = {
+        21686, -- Mantle of Phrenic Power
+    },
+    -- Bile-Covered Gauntlets
+    ["233564"] = {
+        21682, -- Bile-Covered Gauntlets
+    },
+    -- Ukko's Ring of Darkness
+    ["233565"] = {
+        21687, -- Ukko's Ring of Darkness
+    },
+    -- Mantle of the Desert's Fury
+    ["233566"] = {
+        21684, -- Mantle of the Desert's Fury
+    },
+    -- Mantle of the Desert Crusade
+    ["233567"] = {
+        21683, -- Mantle of the Desert Crusade
+    },
+    -- Vest of Swift Execution
+    ["233568"] = {
+        21680, -- Vest of Swift Execution
+    },
+    -- Ring of the Devoured
+    ["233569"] = {
+        21681, -- Ring of the Devoured
+    },
+    -- Petrified Scarab
+    ["233570"] = {
+        21685, -- Petrified Scarab
+    },
+    -- Wand of Qiraji Nobility
+    ["233571"] = {
+        234976, -- Wand of Qiraji Nobility
+    },
+    -- Necklace of Purity
+    ["233572"] = {
+        21678, -- Necklace of Purity
+    },
+    -- Recomposed Boots
+    ["233573"] = {
+        21648, -- Recomposed Boots
+    },
+    -- Leggings of the Festering Swarm
+    ["233574"] = {
+        21676, -- Leggings of the Festering Swarm
+    },
+    -- Robes of the Battleguard
+    ["233575"] = {
+        21671, -- Robes of the Battleguard
+    },
+    -- Silithid Claw
+    ["233576"] = {
+        21673, -- Silithid Claw
+        234977, -- Silithid Claw
+    },
+    -- Thick Qirajihide Belt
+    ["233577"] = {
+        21675, -- Thick Qirajihide Belt
+    },
+    -- Creeping Vine Helm
+    ["233578"] = {
+        21669, -- Creeping Vine Helm
+    },
+    -- Gloves of Enforcement
+    ["233579"] = {
+        21672, -- Gloves of Enforcement
+    },
+    -- Badge of the Swarmguard
+    ["233580"] = {
+        21670, -- Badge of the Swarmguard
+    },
+    -- Sartura's Might
+    ["233581"] = {
+        21666, -- Sartura's Might
+    },
+    -- Gauntlets of Steadfast Determination
+    ["233582"] = {
+        21674, -- Gauntlets of Steadfast Determination
+    },
+    -- Legplates of Blazing Light
+    ["233583"] = {
+        21667, -- Legplates of Blazing Light
+    },
+    -- Scaled Leggings of Qiraji Fury
+    ["233584"] = {
+        21668, -- Scaled Leggings of Qiraji Fury
+    },
+    -- Ancient Qiraji Ripper
+    ["233585"] = {
+        234650, -- Ancient Qiraji Ripper
+    },
+    -- Barbed Choker
+    ["233587"] = {
+        21664, -- Barbed Choker
+    },
+    -- Cloak of Untold Secrets
+    ["233588"] = {
+        21627, -- Cloak of Untold Secrets
+    },
+    -- Fetish of the Sand Reaver
+    ["233589"] = {
+        21647, -- Fetish of the Sand Reaver
+    },
+    -- Hive Tunneler's Boots
+    ["233590"] = {
+        21645, -- Hive Tunneler's Boots
+    },
+    -- Silithid Carapace Chestguard
+    ["233591"] = {
+        21652, -- Silithid Carapace Chestguard
+    },
+    -- Mantle of Wicked Revenge
+    ["233592"] = {
+        21665, -- Mantle of Wicked Revenge
+    },
+    -- Pauldrons of the Unrelenting
+    ["233593"] = {
+        21639, -- Pauldrons of the Unrelenting
+    },
+    -- Robes of the Guardian Saint
+    ["233594"] = {
+        21663, -- Robes of the Guardian Saint
+    },
+    -- Scaled Sand Reaver Leggings
+    ["233595"] = {
+        21651, -- Scaled Sand Reaver Leggings
+    },
+    -- Totem of Life
+    ["233597"] = {
+        22396, -- Totem of Life
+    },
+    -- Slime-coated Leggings
+    ["233598"] = {
+        21626, -- Slime-coated Leggings
+    },
+    -- Sharpened Silithid Femur
+    ["233599"] = {
+        21622, -- Sharpened Silithid Femur
+        234979, -- Sharpened Silithid Femur
+    },
+    -- Ring of the Qiraji Fury
+    ["233600"] = {
+        21677, -- Ring of the Qiraji Fury
+    },
+    -- Scarab Brooch
+    ["233601"] = {
+        21625, -- Scarab Brooch
+    },
+    -- Idol of Health
+    ["233602"] = {
+        22399, -- Idol of Health
+    },
+    -- Gauntlets of the Righteous Champion
+    ["233603"] = {
+        21623, -- Gauntlets of the Righteous Champion
+    },
+    -- Gauntlets of Kalimdor
+    ["233604"] = {
+        21624, -- Gauntlets of Kalimdor
+    },
+    -- Huhuran's Stinger
+    ["233605"] = {
+        21616, -- Huhuran's Stinger
+        234980, -- Huhuran's Stinger
+    },
+    -- Cloak of the Golden Hive
+    ["233606"] = {
+        21621, -- Cloak of the Golden Hive
+    },
+    -- Gloves of the Messiah
+    ["233607"] = {
+        21619, -- Gloves of the Messiah
+    },
+    -- Wasphide Gauntlets
+    ["233608"] = {
+        21617, -- Wasphide Gauntlets
+    },
+    -- Ring of the Martyr
+    ["233609"] = {
+        21620, -- Ring of the Martyr
+    },
+    -- Hive Defiler Wristguards
+    ["233610"] = {
+        21618, -- Hive Defiler Wristguards
+    },
+    -- Boots of Epiphany
+    ["233611"] = {
+        21600, -- Boots of Epiphany
+    },
+    -- Qiraji Execution Bracers
+    ["233612"] = {
+        21602, -- Qiraji Execution Bracers
+    },
+    -- Vek'lor's Gloves of Devastation
+    ["233613"] = {
+        21599, -- Vek'lor's Gloves of Devastation
+    },
+    -- Royal Qiraji Belt
+    ["233614"] = {
+        21598, -- Royal Qiraji Belt
+    },
+    -- Ring of Emperor Vek'lor
+    ["233615"] = {
+        21601, -- Ring of Emperor Vek'lor
+    },
+    -- Royal Scepter of Vek'lor
+    ["233616"] = {
+        21597, -- Royal Scepter of Vek'lor
+    },
+    -- Bracelets of Royal Redemption
+    ["233617"] = {
+        21604, -- Bracelets of Royal Redemption
+    },
+    -- Gloves of the Hidden Temple
+    ["233618"] = {
+        21605, -- Gloves of the Hidden Temple
+    },
+    -- Regenerating Belt of Vek'nilash
+    ["233619"] = {
+        21609, -- Regenerating Belt of Vek'nilash
+    },
+    -- Amulet of Vek'nilash
+    ["233620"] = {
+        21608, -- Amulet of Vek'nilash
+    },
+    -- Kalimdor's Revenge
+    ["233621"] = {
+        21679, -- Kalimdor's Revenge
+        234981, -- Kalimdor's Revenge
+    },
+    -- Grasp of the Fallen Emperor
+    ["233622"] = {
+        21607, -- Grasp of the Fallen Emperor
+    },
+    -- Belt of the Fallen Emperor
+    ["233623"] = {
+        21606, -- Belt of the Fallen Emperor
+    },
+    -- Don Rigoberto's Lost Hat
+    ["233624"] = {
+        21615, -- Don Rigoberto's Lost Hat
+    },
+    -- Burrower Bracers
+    ["233625"] = {
+        21611, -- Burrower Bracers
+    },
+    -- Larvae of the Great Worm
+    ["233626"] = {
+        23557, -- Larvae of the Great Worm
+        234983, -- Larvae of the Great Worm
+    },
+    -- Jom Gabbar
+    ["233627"] = {
+        23570, -- Jom Gabbar
+    },
+    -- The Burrower's Shell
+    ["233628"] = {
+        23558, -- The Burrower's Shell
+    },
+    -- Wormscale Blocker
+    ["233629"] = {
+        21610, -- Wormscale Blocker
+    },
+    -- Cloak of the Devoured
+    ["233630"] = {
+        22731, -- Cloak of the Devoured
+    },
+    -- Dark Storm Gauntlets
+    ["233631"] = {
+        21585, -- Dark Storm Gauntlets
+    },
+    -- Grasp of the Old God
+    ["233632"] = {
+        21582, -- Grasp of the Old God
+    },
+    -- Eyestalk Waist Cord
+    ["233633"] = {
+        22730, -- Eyestalk Waist Cord
+    },
+    -- Death's Sting
+    ["233634"] = {
+        234984, -- Death's Sting
+    },
+    -- Belt of Never-ending Agony
+    ["233635"] = {
+        21586, -- Belt of Never-ending Agony
+    },
+    -- Scepter of the False Prophet
+    ["233636"] = {
+        21839, -- Scepter of the False Prophet
+        235014, -- Scepter of the False Prophet
+    },
+    -- Gauntlets of Annihilation
+    ["233637"] = {
+        21581, -- Gauntlets of Annihilation
+    },
+    -- Ring of the Godslayer
+    ["233638"] = {
+        21596, -- Ring of the Godslayer
+    },
+    -- Vanquished Tentacle of C'Thun
+    ["233639"] = {
+        21579, -- Vanquished Tentacle of C'Thun
+    },
+    -- Dark Edge of Insanity
+    ["233640"] = {
+        234985, -- Dark Edge of Insanity
+    },
+    -- Cloak of Clarity
+    ["233641"] = {
+        21583, -- Cloak of Clarity
+    },
+    -- Mark of C'Thun
+    ["233642"] = {
+        22732, -- Mark of C'Thun
+    },
+    -- Anubisath Warhammer
+    ["233643"] = {
+        234986, -- Anubisath Warhammer
+    },
+    -- Garb of Royal Ascension
+    ["233644"] = {
+        21838, -- Garb of Royal Ascension
+    },
+    -- Gloves of the Immortal
+    ["233645"] = {
+        21888, -- Gloves of the Immortal
+    },
+    -- Gloves of the Redeemed Prophecy
+    ["233646"] = {
+        21889, -- Gloves of the Redeemed Prophecy
+    },
+    -- Neretzek, The Blood Drinker
+    ["233647"] = {
+        234987, -- Neretzek, The Blood Drinker
+    },
+    -- Ritssyn's Ring of Chaos
+    ["233648"] = {
+        21836, -- Ritssyn's Ring of Chaos
+    },
+    -- Shard of the Fallen Star
+    ["233649"] = {
+        21891, -- Shard of the Fallen Star
+    },
+    -- Conqueror's Cuirass
+    ["233651"] = {
+        233363, -- Carapace of the Old God
+    },
+    -- Conqueror's Sabatons
+    ["233652"] = {
+        233370, -- Qiraji Bindings of Command
+    },
+    -- Conqueror's Helm
+    ["233653"] = {
+        20883, -- Qiraji Glyphed Jewel
+    },
+    -- Conqueror's Tassets
+    ["233654"] = {
+        233367, -- Intact Peritoneum
+    },
+    -- Conqueror's Pauldrons
+    ["233658"] = {
+        233370, -- Qiraji Bindings of Command
+    },
+    -- Deathdealer's Chestguard
+    ["233659"] = {
+        233364, -- Skin of the Old God
+    },
+    -- Deathdealer's Treads
+    ["233660"] = {
+        233371, -- Qiraji Bindings of Sovereignty
+    },
+    -- Deathdealer's Visor
+    ["233661"] = {
+        20887, -- Qiraji Engraved Jewel
+    },
+    -- Deathdealer's Pants
+    ["233662"] = {
+        233368, -- Intact Entrails
+    },
+    -- Deathdealer's Pauldrons
+    ["233663"] = {
+        233371, -- Qiraji Bindings of Sovereignty
+    },
+    -- Striker's Ringmail
+    ["233664"] = {
+        233363, -- Carapace of the Old God
+    },
+    -- Striker's Treads
+    ["233665"] = {
+        233370, -- Qiraji Bindings of Command
+    },
+    -- Striker's Visor
+    ["233666"] = {
+        20887, -- Qiraji Engraved Jewel
+    },
+    -- Striker's Chain Legplates
+    ["233667"] = {
+        233367, -- Intact Peritoneum
+    },
+    -- Striker's Spaulders
+    ["233668"] = {
+        233370, -- Qiraji Bindings of Command
+    },
+    -- Doomcaller's Headguard
+    ["233669"] = {
+        20883, -- Qiraji Glyphed Jewel
+    },
+    -- Doomcaller's Garb
+    ["233670"] = {
+        233364, -- Skin of the Old God
+    },
+    -- Doomcaller's Shoulderpads
+    ["233671"] = {
+        233371, -- Qiraji Bindings of Sovereignty
+    },
+    -- Doomcaller's Pants
+    ["233672"] = {
+        233368, -- Intact Entrails
+    },
+    -- Doomcaller's Treads
+    ["233673"] = {
+        233371, -- Qiraji Bindings of Sovereignty
+    },
+    -- Enigma Pant
+    ["233674"] = {
+        233367, -- Intact Peritoneum
+    },
+    -- Enigma Slippers
+    ["233675"] = {
+        233370, -- Qiraji Bindings of Command
+    },
+    -- Enigma Diadem
+    ["233676"] = {
+        20883, -- Qiraji Glyphed Jewel
+    },
+    -- Enigma Mantle
+    ["233677"] = {
+        233370, -- Qiraji Bindings of Command
+    },
+    -- Enigma Garb
+    ["233678"] = {
+        233363, -- Carapace of the Old God
+    },
+    -- Leggings of the Oracle
+    ["233679"] = {
+        233368, -- Intact Entrails
+    },
+    -- Robes of the Oracle
+    ["233680"] = {
+        233364, -- Skin of the Old God
+    },
+    -- Shoulderpads of the Oracle
+    ["233681"] = {
+        233371, -- Qiraji Bindings of Sovereignty
+    },
+    -- Crown of the Oracle
+    ["233682"] = {
+        20883, -- Qiraji Glyphed Jewel
+    },
+    -- Slippers of the Oracle
+    ["233683"] = {
+        233371, -- Qiraji Bindings of Sovereignty
+    },
+    -- Avenger's Mantle
+    ["233684"] = {
+        233369, -- Qiraji Bindings of Dominance
+    },
+    -- Avenger's Plate Pants
+    ["233685"] = {
+        233365, -- Intact Viscera
+    },
+    -- Avenger's Treads
+    ["233686"] = {
+        233369, -- Qiraji Bindings of Dominance
+    },
+    -- Avenger's Helm
+    ["233687"] = {
+        20887, -- Qiraji Engraved Jewel
+    },
+    -- Avenger's Cuirass
+    ["233688"] = {
+        233362, -- Husk of the Old God
+    },
+    -- Avenger's Spaulders
+    ["233689"] = {
+        233369, -- Qiraji Bindings of Dominance
+    },
+    -- Avenger's Tassets
+    ["233690"] = {
+        233365, -- Intact Viscera
+    },
+    -- Avenger's Sabatons
+    ["233691"] = {
+        233369, -- Qiraji Bindings of Dominance
+    },
+    -- Avenger's Great Helm
+    ["233692"] = {
+        20887, -- Qiraji Engraved Jewel
+    },
+    -- Avenger's Chestguard
+    ["233693"] = {
+        233362, -- Husk of the Old God
+    },
+    -- Stormcaller's Chestguard
+    ["233694"] = {
+        233362, -- Husk of the Old God
+    },
+    -- Stormcaller's Faceguard
+    ["233695"] = {
+        20887, -- Qiraji Engraved Jewel
+    },
+    -- Stormcaller's Sabatons
+    ["233696"] = {
+        233369, -- Qiraji Bindings of Dominance
+    },
+    -- Stormcaller's Spaulders
+    ["233697"] = {
+        233369, -- Qiraji Bindings of Dominance
+    },
+    -- Stormcaller's Legplates
+    ["233698"] = {
+        233365, -- Intact Viscera
+    },
+    -- Stormcaller's Breastplate
+    ["233699"] = {
+        233362, -- Husk of the Old God
+    },
+    -- Stormcaller's Crown
+    ["233700"] = {
+        20887, -- Qiraji Engraved Jewel
+    },
+    -- Stormcaller's Treads
+    ["233701"] = {
+        233369, -- Qiraji Bindings of Dominance
+    },
+    -- Stormcaller's Mantle
+    ["233702"] = {
+        233369, -- Qiraji Bindings of Dominance
+    },
+    -- Stormcaller's Chain Leggings
+    ["233703"] = {
+        233365, -- Intact Viscera
+    },
+    -- Stormcaller's Embrace
+    ["233704"] = {
+        233362, -- Husk of the Old God
+    },
+    -- Stormcaller's Headdress
+    ["233705"] = {
+        20887, -- Qiraji Engraved Jewel
+    },
+    -- Stormcaller's Greaves
+    ["233706"] = {
+        233369, -- Qiraji Bindings of Dominance
+    },
+    -- Stormcaller's Epaulets
+    ["233707"] = {
+        233369, -- Qiraji Bindings of Dominance
+    },
+    -- Stormcaller's Mail Leggings
+    ["233708"] = {
+        233365, -- Intact Viscera
+    },
+    -- Genesis Cowl
+    ["233709"] = {
+        20887, -- Qiraji Engraved Jewel
+    },
+    -- Genesis Leather Pants
+    ["233710"] = {
+        233365, -- Intact Viscera
+    },
+    -- Genesis Armor
+    ["233711"] = {
+        233362, -- Husk of the Old God
+    },
+    -- Genesis Stompers
+    ["233712"] = {
+        233369, -- Qiraji Bindings of Dominance
+    },
+    -- Genesis Spaulders
+    ["233713"] = {
+        233369, -- Qiraji Bindings of Dominance
+    },
+    -- Genesis Leggings
+    ["233714"] = {
+        233365, -- Intact Viscera
+    },
+    -- Genesis Leathers
+    ["233715"] = {
+        233362, -- Husk of the Old God
+    },
+    -- Genesis Treads
+    ["233716"] = {
+        233369, -- Qiraji Bindings of Dominance
+    },
+    -- Genesis Mantle
+    ["233717"] = {
+        233369, -- Qiraji Bindings of Dominance
+    },
+    -- Genesis Headdress
+    ["233718"] = {
+        20887, -- Qiraji Engraved Jewel
+    },
+    -- Genesis Breeches
+    ["233719"] = {
+        233365, -- Intact Viscera
+    },
+    -- Genesis Chestguard
+    ["233720"] = {
+        233362, -- Husk of the Old God
+    },
+    -- Genesis Greaves
+    ["233721"] = {
+        233369, -- Qiraji Bindings of Dominance
+    },
+    -- Genesis Pauldrons
+    ["233722"] = {
+        233369, -- Qiraji Bindings of Dominance
+    },
+    -- Genesis Mask
+    ["233723"] = {
+        20887, -- Qiraji Engraved Jewel
+    },
+    -- Signet Ring of the Bronze Dragonflight
+    ["234034"] = {
+        21196, -- Signet Ring of the Bronze Dragonflight
+        21197, -- Signet Ring of the Bronze Dragonflight
+        21198, -- Signet Ring of the Bronze Dragonflight
+        21199, -- Signet Ring of the Bronze Dragonflight
+        21200, -- Signet Ring of the Bronze Dragonflight
+        21201, -- Signet Ring of the Bronze Dragonflight
+        21202, -- Signet Ring of the Bronze Dragonflight
+        21203, -- Signet Ring of the Bronze Dragonflight
+        21204, -- Signet Ring of the Bronze Dragonflight
+        21205, -- Signet Ring of the Bronze Dragonflight
+        21206, -- Signet Ring of the Bronze Dragonflight
+        21207, -- Signet Ring of the Bronze Dragonflight
+        21208, -- Signet Ring of the Bronze Dragonflight
+        21209, -- Signet Ring of the Bronze Dragonflight
+        21210, -- Signet Ring of the Bronze Dragonflight
+    },
+    -- Qiraji Sacrificial Dagger
+    ["234061"] = {
+        21498, -- Qiraji Sacrificial Dagger
+        234989, -- Qiraji Sacrificial Dagger
+    },
+    -- Vestments of the Shifting Sands
+    ["234062"] = {
+        21499, -- Vestments of the Shifting Sands
+    },
+    -- Belt of the Sand Reaver
+    ["234063"] = {
+        21503, -- Belt of the Sand Reaver
+    },
+    -- Belt of the Inquisition
+    ["234064"] = {
+        21500, -- Belt of the Inquisition
+    },
+    -- Sand Reaver Wristguards
+    ["234065"] = {
+        21502, -- Sand Reaver Wristguards
+    },
+    -- Toughened Silithid Hide Gloves
+    ["234066"] = {
+        21501, -- Toughened Silithid Hide Gloves
+    },
+    -- Manslayer of the Qiraji
+    ["234067"] = {
+        21492, -- Manslayer of the Qiraji
+        234990, -- Manslayer of the Qiraji
+    },
+    -- Boots of the Vanguard
+    ["234068"] = {
+        21493, -- Boots of the Vanguard
+    },
+    -- Boots of the Qiraji General
+    ["234069"] = {
+        21497, -- Boots of the Qiraji General
+    },
+    -- Bracers of Qiraji Command
+    ["234070"] = {
+        21496, -- Bracers of Qiraji Command
+    },
+    -- Legplates of the Qiraji Command
+    ["234071"] = {
+        21495, -- Legplates of the Qiraji Command
+    },
+    -- Southwind's Grasp
+    ["234072"] = {
+        21494, -- Southwind's Grasp
+    },
+    -- Dustwind Turban
+    ["234073"] = {
+        21472, -- Dustwind Turban
+    },
+    -- Gauntlets of the Immovable
+    ["234075"] = {
+        21479, -- Gauntlets of the Immovable
+    },
+    -- Talon of Furious Concentration
+    ["234076"] = {
+        21471, -- Talon of Furious Concentration
+    },
+    -- Thick Silithid Chestguard
+    ["234077"] = {
+        21467, -- Thick Silithid Chestguard
+    },
+    -- Chitinous Shoulderguards
+    ["234078"] = {
+        21474, -- Chitinous Shoulderguards
+    },
+    -- Cloak of the Savior
+    ["234079"] = {
+        21470, -- Cloak of the Savior
+    },
+    -- Eye of Moam
+    ["234080"] = {
+        21473, -- Eye of Moam
+    },
+    -- Gauntlets of Southwind
+    ["234081"] = {
+        21469, -- Gauntlets of Southwind
+    },
+    -- Mantle of Maz'Nadir
+    ["234082"] = {
+        21468, -- Mantle of Maz'Nadir
+    },
+    -- Ring of Fury
+    ["234083"] = {
+        21477, -- Ring of Fury
+    },
+    -- Southwind Helm
+    ["234084"] = {
+        21455, -- Southwind Helm
+    },
+    -- Plans: Black Grasp of the Destroyer
+    ["234085"] = {
+        22220, -- Plans: Black Grasp of the Destroyer
+    },
+    -- Black Grasp of the Destroyer
+    ["234086"] = {
+        22194, -- Black Grasp of the Destroyer
+    },
+    -- Obsidian Scaled Leggings
+    ["234087"] = {
+        21476, -- Obsidian Scaled Leggings
+    },
+    -- Legplates of the Destroyer
+    ["234088"] = {
+        21475, -- Legplates of the Destroyer
+    },
+    -- Buru's Skull Fragment
+    ["234089"] = {
+        21485, -- Buru's Skull Fragment
+    },
+    -- Gloves of the Swarm
+    ["234090"] = {
+        21486, -- Gloves of the Swarm
+    },
+    -- Slimy Scaled Gauntlets
+    ["234091"] = {
+        21487, -- Slimy Scaled Gauntlets
+    },
+    -- Fetish of Chitinous Spikes
+    ["234092"] = {
+        21488, -- Fetish of Chitinous Spikes
+    },
+    -- Quicksand Waders
+    ["234093"] = {
+        21489, -- Quicksand Waders
+    },
+    -- Scaled Bracers of the Gorger
+    ["234094"] = {
+        21491, -- Scaled Bracers of the Gorger
+    },
+    -- Slime Kickers
+    ["234095"] = {
+        21490, -- Slime Kickers
+    },
+    -- Bow of Taut Sinew
+    ["234096"] = {
+        21478, -- Bow of Taut Sinew
+        234991, -- Bow of Taut Sinew
+    },
+    -- Stinger of Ayamiss
+    ["234097"] = {
+        21466, -- Stinger of Ayamiss
+        234992, -- Stinger of Ayamiss
+    },
+    -- Boots of the Desert Protector
+    ["234098"] = {
+        21481, -- Boots of the Desert Protector
+    },
+    -- Boots of the Fiery Sands
+    ["234099"] = {
+        21482, -- Boots of the Fiery Sands
+    },
+    -- Helm of Regrowth
+    ["234100"] = {
+        21484, -- Helm of Regrowth
+    },
+    -- Ring of the Desert Winds
+    ["234101"] = {
+        21483, -- Ring of the Desert Winds
+    },
+    -- Scaled Silithid Gauntlets
+    ["234102"] = {
+        21480, -- Scaled Silithid Gauntlets
+    },
+    -- Bracers of Brutality
+    ["234103"] = {
+        21457, -- Bracers of Brutality
+    },
+    -- Crossbow of Imminent Doom
+    ["234104"] = {
+        21459, -- Crossbow of Imminent Doom
+        234993, -- Crossbow of Imminent Doom
+    },
+    -- Gauntlets of New Life
+    ["234105"] = {
+        21458, -- Gauntlets of New Life
+    },
+    -- Gloves of Dark Wisdom
+    ["234106"] = {
+        21462, -- Gloves of Dark Wisdom
+    },
+    -- Helm of Domination
+    ["234107"] = {
+        21460, -- Helm of Domination
+    },
+    -- Leggings of the Black Blizzard
+    ["234108"] = {
+        21461, -- Leggings of the Black Blizzard
+    },
+    -- Mantle of the Horusath
+    ["234109"] = {
+        21453, -- Mantle of the Horusath
+    },
+    -- Ossirian's Binding
+    ["234110"] = {
+        21463, -- Ossirian's Binding
+    },
+    -- Runic Stone Shoulders
+    ["234111"] = {
+        21454, -- Runic Stone Shoulders
+    },
+    -- Sand Polished Hammer
+    ["234112"] = {
+        21715, -- Sand Polished Hammer
+        234994, -- Sand Polished Hammer
+    },
+    -- Sandstorm Cloak
+    ["234113"] = {
+        21456, -- Sandstorm Cloak
+    },
+    -- Shackles of the Unscarred
+    ["234114"] = {
+        21464, -- Shackles of the Unscarred
+    },
+    -- Staff of the Ruins
+    ["234115"] = {
+        21452, -- Staff of the Ruins
+        234995, -- Staff of the Ruins
+    },
+    -- Fury of the Forgotten Swarm
+    ["234116"] = {
+        21809, -- Fury of the Forgotten Swarm
+    },
+    -- Treads of the Wandering Nomad
+    ["234117"] = {
+        21810, -- Treads of the Wandering Nomad
+    },
+    -- Gavel of Qiraji Authority
+    ["234118"] = {
+        21806, -- Gavel of Qiraji Authority
+        234996, -- Gavel of Qiraji Authority
+    },
+    -- Antenna of Invigoration
+    ["234119"] = {
+        21801, -- Antenna of Invigoration
+        235282, -- Antenna of Invigoration
+    },
+    -- Helm of the Holy Avenger
+    ["234120"] = {
+        21803, -- Helm of the Holy Avenger
+    },
+    -- Silithid Husked Launcher
+    ["234121"] = {
+        21800, -- Silithid Husked Launcher
+        234997, -- Silithid Husked Launcher
+    },
+    -- The Lost Kris of Zedd
+    ["234122"] = {
+        21802, -- The Lost Kris of Zedd
+        234998, -- The Lost Kris of Zedd
+    },
+    -- Coif of Elemental Fury
+    ["234123"] = {
+        21804, -- Coif of Elemental Fury
+    },
+    -- Onyx Embedded Leggings
+    ["234129"] = {
+        21530, -- Onyx Embedded Leggings
+    },
+    -- Amulet of Shadow Shielding
+    ["234130"] = {
+        21529, -- Amulet of Shadow Shielding
+    },
+    -- Drake Tooth Necklace
+    ["234132"] = {
+        21531, -- Drake Tooth Necklace
+    },
+    -- Drudge Boots
+    ["234133"] = {
+        21532, -- Drudge Boots
+    },
+    -- Gnomish Turban of Psychic Might
+    ["234134"] = {
+        21517, -- Gnomish Turban of Psychic Might
+    },
+    -- Band of Icy Depths
+    ["234135"] = {
+        21526, -- Band of Icy Depths
+    },
+    -- Darkwater Robes
+    ["234136"] = {
+        21527, -- Darkwater Robes
+    },
+    -- Fang of Korialstrasz
+    ["234137"] = {
+        21523, -- Fang of Korialstrasz
+    },
+    -- Shadowsong's Sorrow
+    ["234138"] = {
+        21522, -- Shadowsong's Sorrow
+    },
+    -- Ravencrest's Legacy
+    ["234139"] = {
+        21520, -- Ravencrest's Legacy
+    },
+    -- Runesword of the Red
+    ["234141"] = {
+        21521, -- Runesword of the Red
+    },
+    -- Acid Inscribed Greaves
+    ["234146"] = {
+        20619, -- Acid Inscribed Greaves
+    },
+    -- Ancient Corroded Leggings
+    ["234147"] = {
+        20617, -- Ancient Corroded Leggings
+    },
+    -- Dragonbone Wristguards
+    ["234148"] = {
+        20616, -- Dragonbone Wristguards
+    },
+    -- Dragonspur Wraps
+    ["234149"] = {
+        20615, -- Dragonspur Wraps
+    },
+    -- Gloves of Delusional Power
+    ["234150"] = {
+        20618, -- Gloves of Delusional Power
+    },
+    -- Green Dragonskin Cloak
+    ["234151"] = {
+        20579, -- Green Dragonskin Cloak
+    },
+    -- Hammer of Bestial Fury
+    ["234152"] = {
+        20580, -- Hammer of Bestial Fury
+    },
+    -- Staff of Rampant Growth
+    ["234153"] = {
+        20581, -- Staff of Rampant Growth
+    },
+    -- Trance Stone
+    ["234154"] = {
+        20582, -- Trance Stone
+    },
+    -- Malfurion's Signet Ring
+    ["234155"] = {
+        20600, -- Malfurion's Signet Ring
+    },
+    -- Boots of the Endless Moor
+    ["234156"] = {
+        20621, -- Boots of the Endless Moor
+    },
+    -- Circlet of Restless Dreams
+    ["234157"] = {
+        20623, -- Circlet of Restless Dreams
+    },
+    -- Dragonheart Necklace
+    ["234158"] = {
+        20622, -- Dragonheart Necklace
+    },
+    -- Polished Ironwood Crossbow
+    ["234159"] = {
+        20599, -- Polished Ironwood Crossbow
+    },
+    -- Ring of the Unliving
+    ["234160"] = {
+        20624, -- Ring of the Unliving
+    },
+    -- Belt of the Dark Bog
+    ["234161"] = {
+        20625, -- Belt of the Dark Bog
+    },
+    -- Black Bark Wristbands
+    ["234162"] = {
+        20626, -- Black Bark Wristbands
+    },
+    -- Dark Heart Pants
+    ["234163"] = {
+        20627, -- Dark Heart Pants
+    },
+    -- Deviate Growth Cap
+    ["234164"] = {
+        20628, -- Deviate Growth Cap
+    },
+    -- Gauntlets of the Shining Light
+    ["234165"] = {
+        20630, -- Gauntlets of the Shining Light
+    },
+    -- Malignant Footguards
+    ["234166"] = {
+        20629, -- Malignant Footguards
+    },
+    -- Boots of Fright
+    ["234167"] = {
+        20634, -- Boots of Fright
+    },
+    -- Mendicant's Slippers
+    ["234168"] = {
+        20631, -- Mendicant's Slippers
+    },
+    -- Mindtear Band
+    ["234169"] = {
+        20632, -- Mindtear Band
+    },
+    -- Nightmare Blade
+    ["234170"] = {
+        20577, -- Nightmare Blade
+    },
+    -- Unnatural Leather Spaulders
+    ["234171"] = {
+        20633, -- Unnatural Leather Spaulders
+    },
+    -- Emerald Dragonfang
+    ["234172"] = {
+        20578, -- Emerald Dragonfang
+    },
+    -- Leggings of the Demented Mind
+    ["234173"] = {
+        20638, -- Leggings of the Demented Mind
+    },
+    -- Acid Inscribed Pauldrons
+    ["234174"] = {
+        20637, -- Acid Inscribed Pauldrons
+    },
+    -- Hibernation Crystal
+    ["234175"] = {
+        20636, -- Hibernation Crystal
+    },
+    -- Darkmoon Card: Heroism
+    ["234176"] = {
+        19287, -- Darkmoon Card: Heroism
+    },
+    -- Darkmoon Card: Blue Dragon
+    ["234177"] = {
+        19288, -- Darkmoon Card: Blue Dragon
+    },
+    -- Darkmoon Card: Maelstrom
+    ["234178"] = {
+        19289, -- Darkmoon Card: Maelstrom
+    },
+    -- Darkmoon Card: Twisting Nether
+    ["234179"] = {
+        19290, -- Darkmoon Card: Twisting Nether
+    },
+    -- Ironvine Belt
+    ["234288"] = {
+        22764, -- Ironvine Belt
+    },
+    -- Plans: Ironvine Belt
+    ["234289"] = {
+        22768, -- Plans: Ironvine Belt
+    },
+    -- Ironvine Gloves
+    ["234290"] = {
+        22763, -- Ironvine Gloves
+    },
+    -- Plans: Ironvine Gloves
+    ["234291"] = {
+        22767, -- Plans: Ironvine Gloves
+    },
+    -- Ironvine Breastplate
+    ["234292"] = {
+        22762, -- Ironvine Breastplate
+    },
+    -- Plans: Ironvine Breastplate
+    ["234293"] = {
+        22766, -- Plans: Ironvine Breastplate
+    },
+    -- Sandstalker Bracers
+    ["234294"] = {
+        20476, -- Sandstalker Bracers
+    },
+    -- Pattern: Sandstalker Bracers
+    ["234295"] = {
+        20509, -- Pattern: Sandstalker Bracers
+    },
+    -- Sandstalker Gauntlets
+    ["234296"] = {
+        20477, -- Sandstalker Gauntlets
+    },
+    -- Pattern: Sandstalker Gauntlets
+    ["234297"] = {
+        20510, -- Pattern: Sandstalker Gauntlets
+    },
+    -- Sandstalker Breastplate
+    ["234298"] = {
+        20478, -- Sandstalker Breastplate
+    },
+    -- Pattern: Sandstalker Breastplate
+    ["234299"] = {
+        20511, -- Pattern: Sandstalker Breastplate
+    },
+    -- Spitfire Bracers
+    ["234300"] = {
+        20481, -- Spitfire Bracers
+    },
+    -- Pattern: Spitfire Bracers
+    ["234301"] = {
+        20506, -- Pattern: Spitfire Bracers
+    },
+    -- Spitfire Gauntlets
+    ["234302"] = {
+        20480, -- Spitfire Gauntlets
+    },
+    -- Pattern: Spitfire Gauntlets
+    ["234303"] = {
+        20507, -- Pattern: Spitfire Gauntlets
+    },
+    -- Spitfire Breastplate
+    ["234304"] = {
+        20479, -- Spitfire Breastplate
+    },
+    -- Pattern: Spitfire Breastplate
+    ["234305"] = {
+        20508, -- Pattern: Spitfire Breastplate
+    },
+    -- Bramblewood Belt
+    ["234306"] = {
+        22761, -- Bramblewood Belt
+    },
+    -- Pattern: Bramblewood Belt
+    ["234307"] = {
+        22769, -- Pattern: Bramblewood Belt
+    },
+    -- Bramblewood Boots
+    ["234308"] = {
+        22760, -- Bramblewood Boots
+    },
+    -- Pattern: Bramblewood Boots
+    ["234309"] = {
+        22770, -- Pattern: Bramblewood Boots
+    },
+    -- Bramblewood Helm
+    ["234310"] = {
+        22759, -- Bramblewood Helm
+    },
+    -- Pattern: Bramblewood Helm
+    ["234311"] = {
+        22771, -- Pattern: Bramblewood Helm
+    },
+    -- Sylvan Shoulders
+    ["234312"] = {
+        22758, -- Sylvan Shoulders
+    },
+    -- Pattern: Sylvan Shoulders
+    ["234314"] = {
+        22772, -- Pattern: Sylvan Shoulders
+    },
+    -- Sylvan Crown
+    ["234315"] = {
+        22757, -- Sylvan Crown
+    },
+    -- Pattern: Sylvan Crown
+    ["234316"] = {
+        22773, -- Pattern: Sylvan Crown
+    },
+    -- Sylvan Vest
+    ["234317"] = {
+        22756, -- Sylvan Vest
+    },
+    -- Pattern: Sylvan Vest
+    ["234318"] = {
+        22774, -- Pattern: Sylvan Vest
+    },
+    -- Heavy Obsidian Belt
+    ["234319"] = {
+        22197, -- Heavy Obsidian Belt
+    },
+    -- Plans: Heavy Obsidian Belt
+    ["234320"] = {
+        22209, -- Plans: Heavy Obsidian Belt
+    },
+    -- Light Obsidian Belt
+    ["234321"] = {
+        22195, -- Light Obsidian Belt
+    },
+    -- Plans: Light Obsidian Belt
+    ["234322"] = {
+        22214, -- Plans: Light Obsidian Belt
+    },
+    -- Dreamscale Breastplate
+    ["234324"] = {
+        20380, -- Dreamscale Breastplate
+    },
+    -- Pattern: Dreamscale Breastplate
+    ["234325"] = {
+        20382, -- Pattern: Dreamscale Breastplate
+    },
+    -- Plans: Jagged Obsidian Shield
+    ["234458"] = {
+        22219, -- Plans: Jagged Obsidian Shield
+    },
+    -- Jagged Obsidian Shield
+    ["234459"] = {
+        22198, -- Jagged Obsidian Shield
+    },
+    -- Obsidian Mail Tunic
+    ["234460"] = {
+        22191, -- Obsidian Mail Tunic
+    },
+    -- Plans: Obsidian Mail Tunic
+    ["234461"] = {
+        22221, -- Plans: Obsidian Mail Tunic
+    },
+    -- Earthstrike
+    ["234462"] = {
+        21180, -- Earthstrike
+    },
+    -- Wrath of Cenarius
+    ["234463"] = {
+        21190, -- Wrath of Cenarius
+    },
+    -- High Warlord's Greatsword
+    ["234542"] = {
+        18877, -- High Warlord's Greatsword
+    },
+    -- High Warlord's Battle Axe
+    ["234543"] = {
+        18831, -- High Warlord's Battle Axe
+    },
+    -- High Warlord's Pulverizer
+    ["234545"] = {
+        18868, -- High Warlord's Pulverizer
+    },
+    -- High Warlord's Destroyer
+    ["234546"] = {
+        23465, -- High Warlord's Destroyer
+    },
+    -- High Warlord's Pig Sticker
+    ["234547"] = {
+        18871, -- High Warlord's Pig Sticker
+    },
+    -- High Warlord's War Staff
+    ["234549"] = {
+        18874, -- High Warlord's War Staff
+    },
+    -- High Warlord's Spellblade
+    ["234550"] = {
+        23466, -- High Warlord's Spellblade
+    },
+    -- High Warlord's Battle Mace
+    ["234551"] = {
+        23464, -- High Warlord's Battle Mace
+    },
+    -- High Warlord's Blade
+    ["234552"] = {
+        16345, -- High Warlord's Blade
+    },
+    -- High Warlord's Quickblade
+    ["234553"] = {
+        23467, -- High Warlord's Quickblade
+    },
+    -- High Warlord's Cleaver
+    ["234554"] = {
+        18828, -- High Warlord's Cleaver
+    },
+    -- High Warlord's Bludgeon
+    ["234555"] = {
+        18866, -- High Warlord's Bludgeon
+    },
+    -- High Warlord's Razor
+    ["234556"] = {
+        18840, -- High Warlord's Razor
+    },
+    -- High Warlord's Right Claw
+    ["234557"] = {
+        18844, -- High Warlord's Right Claw
+    },
+    -- High Warlord's Left Claw
+    ["234558"] = {
+        18848, -- High Warlord's Left Claw
+    },
+    -- High Warlord's Recurve
+    ["234559"] = {
+        18835, -- High Warlord's Recurve
+    },
+    -- High Warlord's Crossbow
+    ["234560"] = {
+        18837, -- High Warlord's Crossbow
+    },
+    -- High Warlord's Street Sweeper
+    ["234561"] = {
+        18860, -- High Warlord's Street Sweeper
+    },
+    -- High Warlord's Shield Wall
+    ["234562"] = {
+        18826, -- High Warlord's Shield Wall
+    },
+    -- High Warlord's Tome of Destruction
+    ["234563"] = {
+        23468, -- High Warlord's Tome of Destruction
+    },
+    -- High Warlord's Tome of Mending
+    ["234564"] = {
+        23469, -- High Warlord's Tome of Mending
+    },
+    -- Grand Marshal's Claymore
+    ["234565"] = {
+        18876, -- Grand Marshal's Claymore
+    },
+    -- Grand Marshal's Sunderer
+    ["234566"] = {
+        18830, -- Grand Marshal's Sunderer
+    },
+    -- Grand Marshal's Battle Hammer
+    ["234567"] = {
+        18867, -- Grand Marshal's Battle Hammer
+    },
+    -- Grand Marshal's Demolisher
+    ["234568"] = {
+        23455, -- Grand Marshal's Demolisher
+    },
+    -- Grand Marshal's Glaive
+    ["234569"] = {
+        18869, -- Grand Marshal's Glaive
+    },
+    -- Grand Marshal's Stave
+    ["234571"] = {
+        18873, -- Grand Marshal's Stave
+    },
+    -- Grand Marshal's Mageblade
+    ["234574"] = {
+        23451, -- Grand Marshal's Mageblade
+    },
+    -- Grand Marshal's Warhammer
+    ["234576"] = {
+        23454, -- Grand Marshal's Warhammer
+    },
+    -- Grand Marshal's Longsword
+    ["234578"] = {
+        12584, -- Grand Marshal's Longsword
+    },
+    -- Grand Marshal's Swiftblade
+    ["234579"] = {
+        23456, -- Grand Marshal's Swiftblade
+    },
+    -- Grand Marshal's Handaxe
+    ["234580"] = {
+        18827, -- Grand Marshal's Handaxe
+    },
+    -- Grand Marshal's Punisher
+    ["234581"] = {
+        18865, -- Grand Marshal's Punisher
+    },
+    -- Grand Marshal's Dirk
+    ["234582"] = {
+        18838, -- Grand Marshal's Dirk
+    },
+    -- Grand Marshal's Right Hand Blade
+    ["234583"] = {
+        18843, -- Grand Marshal's Right Hand Blade
+    },
+    -- Grand Marshal's Left Hand Blade
+    ["234584"] = {
+        18847, -- Grand Marshal's Left Hand Blade
+    },
+    -- Grand Marshal's Bullseye
+    ["234585"] = {
+        18833, -- Grand Marshal's Bullseye
+    },
+    -- Grand Marshal's Repeater
+    ["234586"] = {
+        18836, -- Grand Marshal's Repeater
+    },
+    -- Grand Marshal's Hand Cannon
+    ["234587"] = {
+        18855, -- Grand Marshal's Hand Cannon
+    },
+    -- Grand Marshal's Aegis
+    ["234588"] = {
+        18825, -- Grand Marshal's Aegis
+    },
+    -- Grand Marshal's Tome of Power
+    ["234589"] = {
+        23452, -- Grand Marshal's Tome of Power
+    },
+    -- Grand Marshal's Tome of Restoration
+    ["234590"] = {
+        23453, -- Grand Marshal's Tome of Restoration
+    },
+    -- Ancient Qiraji Ripper
+    ["234650"] = {
+        21650, -- Ancient Qiraji Ripper
+        233585, -- Ancient Qiraji Ripper
+    },
+    -- Fist of Cenarius
+    ["234747"] = {
+        21188, -- Fist of Cenarius
+    },
+    -- Deeprock Bracers
+    ["234748"] = {
+        21184, -- Deeprock Bracers
+    },
+    -- Earthcalm Orb
+    ["234749"] = {
+        21185, -- Earthcalm Orb
+    },
+    -- Rockfury Bracers
+    ["234760"] = {
+        21186, -- Rockfury Bracers
+    },
+    -- Might of Cenarius
+    ["234761"] = {
+        21189, -- Might of Cenarius
+    },
+    -- Grace of Earth
+    ["234779"] = {
+        21181, -- Grace of Earth
+    },
+    -- Band of Earthen Might
+    ["234780"] = {
+        21182, -- Band of Earthen Might
+    },
+    -- Earthpower Vest
+    ["234782"] = {
+        21183, -- Earthpower Vest
+    },
+    -- Gloves of Earthen Power
+    ["234785"] = {
+        21178, -- Gloves of Earthen Power
+    },
+    -- Band of Earthen Wrath
+    ["234786"] = {
+        21179, -- Band of Earthen Wrath
+    },
+    -- Earthweave Cloak
+    ["234788"] = {
+        21187, -- Earthweave Cloak
+    },
+    -- Ravenholdt Slicer
+    ["234792"] = {
+        22378, -- Ravenholdt Slicer
+    },
+    -- Shivsprocket's Shiv
+    ["234793"] = {
+        22379, -- Shivsprocket's Shiv
+    },
+    -- The Thunderwood Poker
+    ["234797"] = {
+        22377, -- The Thunderwood Poker
+    },
+    -- Doomulus Prime
+    ["234798"] = {
+        22348, -- Doomulus Prime
+    },
+    -- Fahrad's Reloading Repeater
+    ["234799"] = {
+        22347, -- Fahrad's Reloading Repeater
+    },
+    -- Simone's Cultivating Hammer
+    ["234800"] = {
+        22380, -- Simone's Cultivating Hammer
+    },
+    -- Amulet of the Fallen God
+    ["234801"] = {
+        21712, -- Amulet of the Fallen God
+    },
+    -- Cloak of the Fallen God
+    ["234802"] = {
+        21710, -- Cloak of the Fallen God
+    },
+    -- Ring of the Fallen God
+    ["234803"] = {
+        21709, -- Ring of the Fallen God
+    },
+    -- Blessed Qiraji War Axe
+    ["234804"] = {
+        235046, -- Imperial Qiraji Armaments
+    },
+    -- Blessed Qiraji Musket
+    ["234805"] = {
+        235046, -- Imperial Qiraji Armaments
+    },
+    -- Blessed Qiraji Pugio
+    ["234806"] = {
+        235046, -- Imperial Qiraji Armaments
+    },
+    -- Blessed Qiraji Bulwark
+    ["234807"] = {
+        21269, -- Blessed Qiraji Bulwark
+    },
+    -- Blessed Qiraji Acolyte Staff
+    ["234808"] = {
+        21273, -- Blessed Qiraji Acolyte Staff
+    },
+    -- Blessed Qiraji Augur Staff
+    ["234809"] = {
+        235045, -- Imperial Qiraji Regalia
+    },
+    -- Blessed Qiraji War Hammer
+    ["234810"] = {
+        235045, -- Imperial Qiraji Regalia
+    },
+    -- Charm of the Shifting Sands
+    ["234811"] = {
+        21504, -- Charm of the Shifting Sands
+    },
+    -- Amulet of the Shifting Sands
+    ["234812"] = {
+        21507, -- Amulet of the Shifting Sands
+    },
+    -- Choker of the Shifting Sands
+    ["234813"] = {
+        21505, -- Choker of the Shifting Sands
+    },
+    -- Pendant of the Shifting Sands
+    ["234814"] = {
+        21506, -- Pendant of the Shifting Sands
+    },
+    -- Jade Inlaid Vestments
+    ["234962"] = {
+        20635, -- Jade Inlaid Vestments
+    },
+    -- Strangely Glyphed Legplates
+    ["234963"] = {
+        20639, -- Strangely Glyphed Legplates
+    },
+    -- Staff of the Qiraji Prophets
+    ["234974"] = {
+        233509, -- Staff of the Qiraji Prophets
+    },
+    -- Hammer of Ji'zhi
+    ["234975"] = {
+        233515, -- Hammer of Ji'zhi
+    },
+    -- Wand of Qiraji Nobility
+    ["234976"] = {
+        21603, -- Wand of Qiraji Nobility
+        233571, -- Wand of Qiraji Nobility
+    },
+    -- Silithid Claw
+    ["234977"] = {
+        233576, -- Silithid Claw
+    },
+    -- Sharpened Silithid Femur
+    ["234979"] = {
+        233599, -- Sharpened Silithid Femur
+    },
+    -- Huhuran's Stinger
+    ["234980"] = {
+        233605, -- Huhuran's Stinger
+    },
+    -- Kalimdor's Revenge
+    ["234981"] = {
+        233621, -- Kalimdor's Revenge
+    },
+    -- Larvae of the Great Worm
+    ["234983"] = {
+        233626, -- Larvae of the Great Worm
+    },
+    -- Death's Sting
+    ["234984"] = {
+        21126, -- Death's Sting
+        233634, -- Death's Sting
+    },
+    -- Dark Edge of Insanity
+    ["234985"] = {
+        21134, -- Dark Edge of Insanity
+        233640, -- Dark Edge of Insanity
+    },
+    -- Anubisath Warhammer
+    ["234986"] = {
+        21837, -- Anubisath Warhammer
+        233643, -- Anubisath Warhammer
+    },
+    -- Neretzek, The Blood Drinker
+    ["234987"] = {
+        21856, -- Neretzek, The Blood Drinker
+        233647, -- Neretzek, The Blood Drinker
+    },
+    -- Qiraji Sacrificial Dagger
+    ["234989"] = {
+        234061, -- Qiraji Sacrificial Dagger
+    },
+    -- Manslayer of the Qiraji
+    ["234990"] = {
+        234067, -- Manslayer of the Qiraji
+    },
+    -- Bow of Taut Sinew
+    ["234991"] = {
+        234096, -- Bow of Taut Sinew
+    },
+    -- Stinger of Ayamiss
+    ["234992"] = {
+        234097, -- Stinger of Ayamiss
+    },
+    -- Crossbow of Imminent Doom
+    ["234993"] = {
+        234104, -- Crossbow of Imminent Doom
+    },
+    -- Sand Polished Hammer
+    ["234994"] = {
+        234112, -- Sand Polished Hammer
+    },
+    -- Staff of the Ruins
+    ["234995"] = {
+        234115, -- Staff of the Ruins
+    },
+    -- Gavel of Qiraji Authority
+    ["234996"] = {
+        234118, -- Gavel of Qiraji Authority
+    },
+    -- Silithid Husked Launcher
+    ["234997"] = {
+        234121, -- Silithid Husked Launcher
+    },
+    -- The Lost Kris of Zedd
+    ["234998"] = {
+        234122, -- The Lost Kris of Zedd
+    },
+    -- Blessed Qiraji War Hammer
+    ["234999"] = {
+        21268, -- Blessed Qiraji War Hammer
+    },
+    -- Blessed Qiraji Augur Staff
+    ["235000"] = {
+        21275, -- Blessed Qiraji Augur Staff
+    },
+    -- Blessed Qiraji Pugio
+    ["235002"] = {
+        21244, -- Blessed Qiraji Pugio
+    },
+    -- Blessed Qiraji War Axe
+    ["235003"] = {
+        21242, -- Blessed Qiraji War Axe
+    },
+    -- Blessed Qiraji Musket
+    ["235004"] = {
+        21272, -- Blessed Qiraji Musket
+    },
+    -- Scepter of the False Prophet
+    ["235014"] = {
+        233636, -- Scepter of the False Prophet
+    },
+    -- Plans: Thick Obsidian Breastplate
+    ["235039"] = {
+        22222, -- Plans: Thick Obsidian Breastplate
+    },
+    -- Thick Obsidian Breastplate
+    ["235040"] = {
+        22196, -- Thick Obsidian Breastplate
+    },
+    -- Imperial Qiraji Regalia
+    ["235045"] = {
+        21237, -- Imperial Qiraji Regalia
+        234808, -- Blessed Qiraji Acolyte Staff
+        234809, -- Blessed Qiraji Augur Staff
+        234810, -- Blessed Qiraji War Hammer
+    },
+    -- Imperial Qiraji Armaments
+    ["235046"] = {
+        21232, -- Imperial Qiraji Armaments
+        234804, -- Blessed Qiraji War Axe
+        234805, -- Blessed Qiraji Musket
+        234806, -- Blessed Qiraji Pugio
+        234807, -- Blessed Qiraji Bulwark
+    },
+    -- Gloves of the Fallen Prophet
+    ["235047"] = {
+        21890, -- Gloves of the Fallen Prophet
+    },
+    -- Head of Ossirian the Unscarred
+    ["235048"] = {
+        21220, -- Head of Ossirian the Unscarred
+        234811, -- Charm of the Shifting Sands
+        234812, -- Amulet of the Shifting Sands
+        234813, -- Choker of the Shifting Sands
+        234814, -- Pendant of the Shifting Sands
+    },
+    -- Nightmare Engulfed Object
+    ["235049"] = {
+        20644, -- Nightmare Engulfed Object
+    },
+    -- Portals Deck
+    ["235275"] = {
+        19277, -- Portals Deck
+    },
+    -- Elementals Deck
+    ["235276"] = {
+        19267, -- Elementals Deck
+    },
+    -- Warlords Deck
+    ["235277"] = {
+        19257, -- Warlords Deck
+    },
+    -- Beasts Deck
+    ["235278"] = {
+        19228, -- Beasts Deck
+    },
+    -- Antenna of Invigoration
+    ["235282"] = {
+        234119, -- Antenna of Invigoration
     },
 };
