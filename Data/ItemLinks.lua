@@ -4,7 +4,159 @@ local _, GL = ...;
 ---@class ItemLinks : Data
 GL.Data = GL.Data or {};
 
-GL.Data.SoftResSpecificItemLinks = {
+GL.Data.SoftResSpecificItemLinks = {};
+
+-- [[ MOLTEN/SHADOWFLAME/BLOODIED ITEMS THAT ARE NOT PROVIDED BY TMB
+---@type table
+GL.Data.SkinnedItemLinks = {
+    --[[ MOLTEN ]]
+    -- Included in TMB now    
+
+    --[[ SHADOWFLAME ]]
+    -- Included in TMB now
+
+    --[[ BLOODIED ]]
+    -- Included in TMB now
+};
+
+GL.Data.ItemLinks = {
+    --[[ <<< NOT INCLUDED BY TMB ]]
+
+    -- Head of Onyxia (Horde)
+    ["49643"] = {
+        49644, -- Head of Onyxia (Alliance)
+    },
+    -- Head of Onyxia (Alliance)
+    ["49644"] = {
+        49643, -- Head of Onyxia (Horde)
+    },
+    ["68915"] = {
+        69109, -- Scales of Life
+    },
+    ["69109"] = {
+        68915, -- Scales of Life
+    },
+    ["68972"] = {
+        69113, -- Apparatus of Khaz'goroth
+    },
+    ["69113"] = {
+        68972, -- Apparatus of Khaz'goroth
+    },
+    ["71361"] = {
+        71557, -- Ranseur of Hatred
+    },
+    ["71557"] = {
+        71361, -- Ranseur of Hatred
+    },
+    ["71366"] = {
+        71558, -- Lava Bolt Crossbow
+    },
+    ["71558"] = {
+        71366, -- Lava Bolt Crossbow
+    },
+    ["71360"] = {
+        71559, -- Spire of Scarlet Pain
+    },
+    ["71559"] = {
+        71360, -- Spire of Scarlet Pain
+    },
+    ["71359"] = {
+        71560, -- Chelley's Sterilized Scalpel
+    },
+    ["71560"] = {
+        71359, -- Chelley's Sterilized Scalpel
+    },
+    ["71365"] = {
+        71561, -- Hide-Bound Chains
+    },
+    ["71561"] = {
+        71365, -- Hide-Bound Chains
+    },
+    ["71362"] = {
+        71562, -- Obsidium Cleaver
+    },
+    ["71562"] = {
+        71362, -- Obsidium Cleaver
+    },
+    ["70929"] = {
+        71563, -- Firebound Gorget
+    },
+    ["71563"] = {
+        70929, -- Firebound Gorget
+    },
+    ["71367"] = {
+        71564, -- Theck's Emberseal
+    },
+    ["71564"] = {
+        71367, -- Theck's Emberseal
+    },
+    ["71640"] = {
+        71641, -- Riplimb's Lost Collar
+    },
+    ["71641"] = {
+        71640, -- Riplimb's Lost Collar
+    },
+    ["71147"] = {
+        71587, -- Relic of the Elemental Lords
+    },
+    ["71587"] = {
+        71147, -- Relic of the Elemental Lords
+    },
+    ["71151"] = {
+        71575, -- Trail of Embers
+    },
+    ["71575"] = {
+        71151, -- Trail of Embers
+    },
+    ["71150"] = {
+        71579, -- Scorchvine Wand
+    },
+    ["71579"] = {
+        71150, -- Scorchvine Wand
+    },
+    ["71146"] = {
+        71567, -- Covenant of the Flame
+    },
+    ["71567"] = {
+        71146, -- Covenant of the Flame
+    },
+    ["70939"] = {
+        71590, -- Deathclutch Figurine
+    },
+    ["71590"] = {
+        70939, -- Deathclutch Figurine
+    },
+    ["71152"] = {
+        71568, -- Morningstar Shard
+    },
+    ["71568"] = {
+        71152, -- Morningstar Shard
+    },
+    ["71218"] = {
+        71592, -- Deflecting Star
+    },
+    ["71592"] = {
+        71218, -- Deflecting Star
+    },
+    ["71154"] = {
+        71593, -- Giantslicer
+    },
+    ["71593"] = {
+        71154, -- Giantslicer
+    },
+    ["71149"] = {
+        71577, -- Singed Plume of Aviana
+    },
+    ["71577"] = {
+        71149, -- Singed Plume of Aviana
+    },
+    ["71148"] = {
+        71580, -- Soulflame Vial
+    },
+    ["71580"] = {
+        71148, -- Soulflame Vial
+    },
+
     -- Obsidian Edged Blade
     ["18822"] = { 228229, },
     ["228229"] = { 18822, },
@@ -448,158 +600,6 @@ GL.Data.SoftResSpecificItemLinks = {
     -- Zoid's Firelit Greatsword
     ["71780"] = { 71781, },
     ["71781"] = { 71780, },
-};
-
--- [[ MOLTEN/SHADOWFLAME/BLOODIED ITEMS THAT ARE NOT PROVIDED BY TMB
----@type table
-GL.Data.SkinnedItemLinks = {
-    --[[ MOLTEN ]]
-    -- Included in TMB now    
-
-    --[[ SHADOWFLAME ]]
-    -- Included in TMB now
-
-    --[[ BLOODIED ]]
-    -- Included in TMB now
-};
-
-GL.Data.ItemLinks = {
-    --[[ <<< NOT INCLUDED BY TMB ]]
-
-    -- Head of Onyxia (Horde)
-    ["49643"] = {
-        49644, -- Head of Onyxia (Alliance)
-    },
-    -- Head of Onyxia (Alliance)
-    ["49644"] = {
-        49643, -- Head of Onyxia (Horde)
-    },
-    ["68915"] = {
-        69109, -- Scales of Life
-    },
-    ["69109"] = {
-        68915, -- Scales of Life
-    },
-    ["68972"] = {
-        69113, -- Apparatus of Khaz'goroth
-    },
-    ["69113"] = {
-        68972, -- Apparatus of Khaz'goroth
-    },
-    ["71361"] = {
-        71557, -- Ranseur of Hatred
-    },
-    ["71557"] = {
-        71361, -- Ranseur of Hatred
-    },
-    ["71366"] = {
-        71558, -- Lava Bolt Crossbow
-    },
-    ["71558"] = {
-        71366, -- Lava Bolt Crossbow
-    },
-    ["71360"] = {
-        71559, -- Spire of Scarlet Pain
-    },
-    ["71559"] = {
-        71360, -- Spire of Scarlet Pain
-    },
-    ["71359"] = {
-        71560, -- Chelley's Sterilized Scalpel
-    },
-    ["71560"] = {
-        71359, -- Chelley's Sterilized Scalpel
-    },
-    ["71365"] = {
-        71561, -- Hide-Bound Chains
-    },
-    ["71561"] = {
-        71365, -- Hide-Bound Chains
-    },
-    ["71362"] = {
-        71562, -- Obsidium Cleaver
-    },
-    ["71562"] = {
-        71362, -- Obsidium Cleaver
-    },
-    ["70929"] = {
-        71563, -- Firebound Gorget
-    },
-    ["71563"] = {
-        70929, -- Firebound Gorget
-    },
-    ["71367"] = {
-        71564, -- Theck's Emberseal
-    },
-    ["71564"] = {
-        71367, -- Theck's Emberseal
-    },
-    ["71640"] = {
-        71641, -- Riplimb's Lost Collar
-    },
-    ["71641"] = {
-        71640, -- Riplimb's Lost Collar
-    },
-    ["71147"] = {
-        71587, -- Relic of the Elemental Lords
-    },
-    ["71587"] = {
-        71147, -- Relic of the Elemental Lords
-    },
-    ["71151"] = {
-        71575, -- Trail of Embers
-    },
-    ["71575"] = {
-        71151, -- Trail of Embers
-    },
-    ["71150"] = {
-        71579, -- Scorchvine Wand
-    },
-    ["71579"] = {
-        71150, -- Scorchvine Wand
-    },
-    ["71146"] = {
-        71567, -- Covenant of the Flame
-    },
-    ["71567"] = {
-        71146, -- Covenant of the Flame
-    },
-    ["70939"] = {
-        71590, -- Deathclutch Figurine
-    },
-    ["71590"] = {
-        70939, -- Deathclutch Figurine
-    },
-    ["71152"] = {
-        71568, -- Morningstar Shard
-    },
-    ["71568"] = {
-        71152, -- Morningstar Shard
-    },
-    ["71218"] = {
-        71592, -- Deflecting Star
-    },
-    ["71592"] = {
-        71218, -- Deflecting Star
-    },
-    ["71154"] = {
-        71593, -- Giantslicer
-    },
-    ["71593"] = {
-        71154, -- Giantslicer
-    },
-    ["71149"] = {
-        71577, -- Singed Plume of Aviana
-    },
-    ["71577"] = {
-        71149, -- Singed Plume of Aviana
-    },
-    ["71148"] = {
-        71580, -- Soulflame Vial
-    },
-    ["71580"] = {
-        71148, -- Soulflame Vial
-    },
 
     --[[ NOT INCLUDED BY TMB >>> ]]
 
