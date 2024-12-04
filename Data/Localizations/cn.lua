@@ -3,6 +3,7 @@
     if (GetLocale() ~= "zhCN") then return; end
 
     These translations where provided by
+        - Skywardpixel
         - Takaqiao
 ]]
 if (GetLocale() ~= "zhCN") then return; end

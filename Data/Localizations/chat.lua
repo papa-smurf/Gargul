@@ -236,6 +236,7 @@ L.CHAT = {
 
     --[[ zhCN
         These translations where provided by
+        - Skywardpixel
         - Takaqiao
     ]]
     zhCN = {
