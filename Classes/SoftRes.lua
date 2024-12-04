@@ -318,7 +318,7 @@ end
 
 --- Materialize the SoftRes data to make it more accessible during runtime
 ---
----@return void
+---@return boolean
 function SoftRes:materializeData()
     local ReservedItemIDs = {}; -- All reserved item ids (both soft- and hard)
     local SoftReservedItemIDs = {}; -- Soft-reserved item ids
@@ -356,6 +356,12 @@ function SoftRes:materializeData()
 
             for _, itemID in pairs(SoftResEntry.Items or {}) do
                 if (GL:higherThanZero(itemID)) then
+                    local _, itemType = GL:getItemInfoInstant(itemID);
+                    if (not itemType) then
+                        self:clearCorrupted();
+                        return false;
+                    end
+
                     -- This seems very counterintuitive, but using numeric keys
                     -- in a lua tables has some insanely annoying drawbacks
                     local idString = tostring(itemID);
@@ -412,12 +418,12 @@ function SoftRes:materializeData()
     self.MaterializedData.PlayerNamesByItemID = PlayerNamesByItemID;
     self.MaterializedData.ReservedItemIDs = GL:tableFlip(ReservedItemIDs);
     self.MaterializedData.SoftReservedItemIDs = SoftReservedItemIDs;
+
+    return true;
 end
 
 --- Draw either the importer or overview
 --- based on the current soft-reserve data
----
----@return void
 function SoftRes:draw()
     -- No data available, show importer
     if (not self:available()) then
@@ -434,7 +440,13 @@ function SoftRes:draw()
     -- This is to ensure that all item data is available before we draw the UI
     GL:onItemLoadDo(
         self.MaterializedData.ReservedItemIDs or {},
-        function () GL.Interface.SoftRes.Overview:draw(); end
+        function (_, error)
+            if (not error) then
+                return GL.Interface.SoftRes.Overview:draw();
+            end
+
+            self:clearCorrupted();
+        end
     );
 end
 
@@ -576,6 +588,13 @@ function SoftRes:clear()
     GL.Interface.SoftRes.Overview:close();
 
     GL.Events:fire("GL.SOFTRES_CLEARED");
+end
+
+--- Clear our data and let the user know that we encountered corruped data
+function SoftRes:clearCorrupted()
+    self:clear();
+    self:draw();
+    GL:error("One or more items could not be found. SoftRes was cleared. Make sure you import items that exist for this game version ( classic / SoD / retail )!");
 end
 
 --- Check whether the given player reserved the given item id
@@ -895,7 +914,9 @@ function SoftRes:import(data, openOverview)
     };
 
     -- Materialize the data for ease of use
-    self:materializeData();
+    if (not self:materializeData()) then
+        return;
+    end
 
     GL.Events:fire("GL.SOFTRES_IMPORTED");
 
