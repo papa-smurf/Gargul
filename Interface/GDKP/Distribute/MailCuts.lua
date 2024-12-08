@@ -456,20 +456,20 @@ function MailCuts:mailPlayerCut(player, callback)
     local MailDisableTimer, MailTimeOutTimer, MoneyChangedTimer;
 
     Events:register({
-        { "MailCutsMailSuccess", "MAIL_SUCCESS" },
+        { "MailCutsMailSendSuccess", "MAIL_SEND_SUCCESS" },
         { "MailCutsMailFailed", "MAIL_FAILED" },
         { "MailCutsMailTimedOut", "GL.MAIL_TIMED_OUT" },
     }, function(event)
         -- Remove all event listeners and scheduled timers FIRST
         GL.Ace:CancelTimer(MailDisableTimer);
         GL.Ace:CancelTimer(MailTimeOutTimer);
-        Events:unregister{"MailCutsMailSuccess", "MailCutsMailFailed", "MailCutsMailTimedOut", };
+        Events:unregister{"MailCutsMailSendSuccess", "MailCutsMailFailed", "MailCutsMailTimedOut", "MailCutsPlayerMoney", };
 
         local message;
         local success = false;
 
         -- Mail was sent according to Blizzard, wait until player gold changes
-        if (event == "MAIL_SUCCESS") then
+        if (event == "MAIL_SEND_SUCCESS") then
             success = true;
             self.mailErrors = 0;
 
@@ -508,7 +508,11 @@ function MailCuts:mailPlayerCut(player, callback)
 
         -- We add a delay to further decrease chances of nasty race conditions from occurring
         GL.Ace:ScheduleTimer(function ()
-            message = string.format(L.CUT_MAIL_FAILED, player);
+            message = event == "GL.MAIL_TIMED_OUT"
+                and L["Failed to send cut to %s within %s seconds. Please check your remaining gold or Blizzard mail return to determine whether it went through."]
+                or L["Failed to send cut to %s"];
+
+            message = message:format(player, MAIL_SEND_WAIT_TIMEOUT);
             GL:error(message);
 
             self.sendingMail = false;
