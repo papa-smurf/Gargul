@@ -199,7 +199,7 @@ function Auctioneer:start(ItemDetails, duration, antiSnipe)
         for _, Item in pairs(Items or {}) do
             tinsert(ItemsUpForAuction, {
                 auctionID = auctionID,
-                isBOE = GL:inTable({ LE_ITEM_BIND_ON_EQUIP, LE_ITEM_BIND_QUEST, }, Item.bindType),
+                isBOE = GL:inTable({ Enum.ItemBind.OnEquip, Enum.ItemBind.Quest, }, Item.bindType),
                 itemLevel = Item.level,
                 name = Item.name,
                 quality = Item.quality,

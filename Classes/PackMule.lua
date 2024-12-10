@@ -519,8 +519,8 @@ function PackMule:getTargetForItem(itemLinkOrId, callback)
                 or (operator == "<" and Details.quality < quality)
                 or (operator == "<=" and Details.quality <= quality)
             )) then
-                local bindType = Details.bindType or LE_ITEM_BIND_NONE;
-                local bindOnPickup = GL:inTable({ LE_ITEM_BIND_ON_ACQUIRE, LE_ITEM_BIND_QUEST }, bindType);
+                local bindType = Details.bindType or Enum.ItemBind.None;
+                local bindOnPickup = GL:inTable({ Enum.ItemBind.OnAcquire, Enum.ItemBind.Quest }, bindType);
 
                 local ruleApplies = (function ()
                     -- Check whether the item is whitelisted

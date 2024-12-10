@@ -979,7 +979,7 @@ function AuctioneerUI:buildQueue(Window)
                     return;
                 end
 
-                local bindOnPickup = GL:inTable({ LE_ITEM_BIND_ON_ACQUIRE, LE_ITEM_BIND_QUEST }, Details.bindType);
+                local bindOnPickup = GL:inTable({ Enum.ItemBind.OnAcquire, Enum.ItemBind.Quest }, Details.bindType);
 
                 ---@type Frame
                 local ItemRow = CreateFrame("Frame", nil, ItemHolder);

@@ -171,7 +171,7 @@ function Client:addToCurrentSession(link, duration, minimum, increment)
 
         self.AuctionDetails.Auctions[lastAuctionID] = {
             auctionID = lastAuctionID,
-            isBOE = GL:inTable({ LE_ITEM_BIND_ON_EQUIP, LE_ITEM_BIND_QUEST }, Item.bindType),
+            isBOE = GL:inTable({ Enum.ItemBind.OnEquip, Enum.ItemBind.Quest }, Item.bindType),
             itemLevel = Item.level,
             name = Item.name,
             quality = Item.quality,

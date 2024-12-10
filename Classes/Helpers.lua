@@ -1280,6 +1280,7 @@ end
 ---@return table, string
 ---
 --- /script _G.Gargul:onItemLoadDo(45613, function (Result) _G.Gargul:xd(Result); end);
+--- /script _G.Gargul:onItemLoadDo("|cffa335ee|Hitem:68915::::::::85:::::|h[Scales of Life]|h|r", function (Result) _G.Gargul:xd(Result); end);
 function GL:onItemLoadDo(Items, callback, haltOnError, sorter)
     haltOnError = haltOnError or false;
     callback = callback or function () end;
@@ -1454,7 +1455,7 @@ function GL:normalizeItem(ItemMixin)
         name = itemName,
         subclassID = subclassID,
         quality = itemQuality,
-        isBOE = GL:inTable({ LE_ITEM_BIND_ON_EQUIP, LE_ITEM_BIND_QUEST, }, bindType),
+        isBOE = GL:inTable({ Enum.ItemBind.OnEquip, Enum.ItemBind.Quest, }, bindType),
     };
 end
 
