@@ -443,6 +443,19 @@ function PackMule:getValidRules()
         end
     end
 
+    -- Sort the rules, item ID specific rules first
+    table.sort(ValidRules, function (a)
+        -- This is to make sure we support item names, IDs and links
+        local ruleConcernsItemID = false;
+        local ruleItemID = tonumber(a.item) or GL:getItemIDFromLink(a.item);
+        if (ruleItemID) then
+            ruleItemID = math.floor(ruleItemID);
+            ruleConcernsItemID = GL:higherThanZero(ruleItemID);
+        end
+
+        return ruleConcernsItemID;
+    end);
+
     return ValidRules;
 end
 
@@ -472,6 +485,7 @@ function PackMule:getTargetForItem(itemLinkOrId, callback)
     end
 
     -- Load the item details first and then call the callback with the player target (only if any)
+    local ValidRules = self:getValidRules();
     GL:onItemLoadDo(itemLinkOrId, function (Details)
         if (not Details) then
             return;
@@ -479,7 +493,7 @@ function PackMule:getTargetForItem(itemLinkOrId, callback)
 
         local RuleThatApplies = false;
 
-        for _, Entry in pairs(self:getValidRules()) do
+        for _, Entry in pairs(ValidRules) do
             -- This is useful to see in which order rules are being handled
             GL:debug(string.format(
                 "Item: %s\nOperator: %s\nQuality: %s\nTarget: %s",
