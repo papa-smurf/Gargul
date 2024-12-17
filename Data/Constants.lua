@@ -295,6 +295,7 @@ local Constants = {
         30314, -- Phaseshift Bulwark
     },
 
+    -- Items that can be traded / are safe to trade
     TradableItems = {
         19716, -- Primal Hakkari Bindings
         19717, -- Primal Hakkari Armsplint
@@ -314,11 +315,32 @@ local Constants = {
         20931, -- Skin of the Great Sandworm
         20932, -- Qiraji Bindings of Dominance
         20933, -- Husk of the Old God
+        20887, -- Qiraji Engraved Jewel
+        20883, -- Qiraji Glyphed Jewel
 
+        20884, -- Qiraji Magisterial Ring
+        20889, -- Qiraji Regal Drape
+        20886, -- Qiraji Spiked Hilt
+        21220, -- Head of Ossirian the Unscarred
+
+        -- SoD
         220636, -- Atal'ai Blood Icon
         220637, -- Atal'ai Ritual Token
+        233367, -- Intact Peritoneum
+        233365, -- Intact Viscera
+        233368, -- Intact Entrails
+        233370, -- Qiraji Bindings of Command
+        233363, -- Carapace of the Old God
+        233369, -- Qiraji Bindings of Dominance
+        233371, -- Qiraji Bindings of Sovereignty
+        233362, -- Husk of the Old God
+        234435, -- Schematic: Obsidian Shotgun
+        234239, -- Pattern: Razorbramble Leathers
+        234241, -- Pattern: Vampiric Shawl
+        235049, -- Nightmare Engulfed Object
 
-        --750, -- Tough wolf meat (For testing purposes)
+        -- For testing purposes
+        --750, -- Tough wolf meat
     },
 
     UntradableItems = {
