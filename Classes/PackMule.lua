@@ -435,6 +435,7 @@ end
 --- Return all valid rules from the PackMule configuration
 ---
 ---@return table
+---@test /dump _G.Gargul.PackMule:getValidRules();
 function PackMule:getValidRules()
     local ValidRules = {};
     for _, Rule in pairs(self.Rules) do
@@ -444,16 +445,29 @@ function PackMule:getValidRules()
     end
 
     -- Sort the rules, item ID specific rules first
-    table.sort(ValidRules, function (a)
+    table.sort(ValidRules, function (a, b)
+        aItem = a and a.item or false;
+        bItem = b and b.item or false;
+
         -- This is to make sure we support item names, IDs and links
-        local ruleConcernsItemID = false;
-        local ruleItemID = tonumber(a.item) or GL:getItemIDFromLink(a.item);
-        if (ruleItemID) then
-            ruleItemID = math.floor(ruleItemID);
-            ruleConcernsItemID = GL:higherThanZero(ruleItemID);
+        local ruleAConcernsItemID = false;
+        local ruleAItemID = tonumber(aItem) or GL:getItemIDFromLink(aItem);
+        if (ruleAItemID) then
+            ruleAItemID = math.floor(ruleAItemID);
+            ruleAConcernsItemID = GL:higherThanZero(ruleAItemID);
         end
 
-        return ruleConcernsItemID;
+        local ruleBConcernsItemID = false;
+        local ruleBItemID = tonumber(bItem) or GL:getItemIDFromLink(bItem);
+        if (ruleBItemID) then
+            ruleBItemID = math.floor(ruleBItemID);
+            ruleBConcernsItemID = GL:higherThanZero(ruleBItemID);
+        end
+
+        aNum = ruleAConcernsItemID and ruleAItemID or 999999999999;
+        bNum = ruleBConcernsItemID and ruleBItemID or 999999999999;
+
+        return aNum < bNum;
     end);
 
     return ValidRules;
