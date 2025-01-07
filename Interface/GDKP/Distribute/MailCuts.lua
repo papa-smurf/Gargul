@@ -456,20 +456,20 @@ function MailCuts:mailPlayerCut(player, callback)
     local MailDisableTimer, MailTimeOutTimer, MoneyChangedTimer;
 
     Events:register({
-        { "MailCutsMailSendSuccess", "MAIL_SEND_SUCCESS" },
+        { "MailCutsMailSuccess", "MAIL_SUCCESS" },
         { "MailCutsMailFailed", "MAIL_FAILED" },
         { "MailCutsMailTimedOut", "GL.MAIL_TIMED_OUT" },
     }, function(event)
         -- Remove all event listeners and scheduled timers FIRST
         GL.Ace:CancelTimer(MailDisableTimer);
         GL.Ace:CancelTimer(MailTimeOutTimer);
-        Events:unregister{"MailCutsMailSendSuccess", "MailCutsMailFailed", "MailCutsMailTimedOut", "MailCutsPlayerMoney", };
+        Events:unregister{"MailCutsMailSuccess", "MailCutsMailFailed", "MailCutsMailTimedOut", "MailCutsPlayerMoney", };
 
         local message;
         local success = false;
 
         -- Mail was sent according to Blizzard, wait until player gold changes
-        if (event == "MAIL_SEND_SUCCESS") then
+        if (event == "MAIL_SUCCESS") then
             success = true;
             self.mailErrors = 0;
 

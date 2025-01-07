@@ -1,9 +1,12 @@
 ---@type GL
 local _, GL = ...;
 
+local Events = GL.Events;
+
 ---@class Test
 local Test = {
     Classes = {"druid","hunter","mage","paladin","priest","rogue","shaman","warlock","warrior","death knight",},
+    Mail = {},
     Names = {"Aiyana","Callum","Virginia","Laylah","Isabell","Javon","Miley","Ian","Isai","Ahmad","Campbell","Bobby","Karter","Brooklynn","Asher","Maci","Gael","Jamal","Zion","Sarahi","Kierra","Perla","Rylie","Lorelei","John","Madeleine","Jadiel","Billy","Jazmin","Keon","Stephany","George","Malcolm","Brenden","Daphne","Dane","Derek","Marcel","Madilynn","Enrique","Cindy","Amir","Melvin","Anya","Ali","Rex","Lewis","Parker","Carl","Arnav","Kamari","Jessie","Madelynn","Heath","Haleigh","Madyson","Jorden","Amya","Elisa","Marques","Ana","Miracle","Abdiel","Dale","Sincere","Marin","Karina","Clay","Caden","Eve","Rubi","Zavier","Megan","Payton","Peyton","Emmett","Diego","Joaquin","German","Tania","Miguel","Malachi","Martin","Richard","Allison","Avah","Kamora","Deborah","Esperanza","Konnor","Isla","Tess","Keely","Margaret","Rory","Jake","Averie","Ally","Craig","Gage","Oswaldo","Kaitlynn","Ashley","Davian","Mauricio","Brandon","Aryana","Douglas","Kyan","Carsen","Mikaela","Regan","Theodore","Maximillian","Luke","Dixie","Makenna","Keagan","Mallory","America",},
     Locale = {},
     TimeLeft = {},
@@ -15,6 +18,30 @@ local Test = {
 };
 
 GL.Test = Test;
+
+---@test /script _G.Gargul.Test.Mail:triggerMailCap()
+function Test.Mail:triggerMailCap()
+    Events:register("Test.Mail.UI_ERROR_MESSAGE", "UI_ERROR_MESSAGE", function (_, code, message)
+        if (message ~= ERR_MAIL_REACHED_CAP) then
+            return;
+        end
+    end);
+
+    local mailsSent = 0;
+    for _, player in ipairs(Test.Names) do
+        for i = 1, 2 do
+            local recipient = player .. i;
+
+            ClearSendMail();
+            SendMail(recipient, 'GargulTest', 'This is just a test mail in order to reach the mail cap');
+            mailsSent = mailsSent + 1;
+
+            if (true) then return end
+        end
+    end
+
+    GL:xd({ mailsSent = mailsSent, });
+end
 
 function Test.TradeState:_init(callback)
     if (self._initialized) then
