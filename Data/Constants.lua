@@ -419,7 +419,6 @@ local Constants = {
         20644, -- Nightmare Engulfed Object (Ysondre, Taerar, Lethon, Emeriss)
 
         71141, -- Eternal Ember
-        71617, -- Crystallized Firestone
     },
 
     -- Locked Items
