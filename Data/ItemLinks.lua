@@ -7310,6 +7310,18 @@ GL.Data.ItemLinks = {
         22630, -- Atiesh, Greatstaff of the Guardian (warlock)
         22631, -- Atiesh, Greatstaff of the Guardian (priest)
         22632, -- Atiesh, Greatstaff of the Guardian (druid)
+        22727, -- Frame of Atiesh
+        22733, -- Staff Head of Atiesh
+        22734, -- Base of Atiesh
+        22737, -- Atiesh, Greatstaff of the Guardian
+        236398, -- Atiesh, Greatstaff of the Guardian (Warlock)
+        236399, -- Atiesh, Greatstaff of the Guardian (Priest)
+        236400, -- Atiesh, Greatstaff of the Guardian (Mage)
+        236401, -- Atiesh, Greatstaff of the Guardian (Druid)
+    },
+    -- Frame of Atiesh
+    ["22727"] = {
+        22726, -- Splinter of Atiesh
     },
     -- Eyestalk Waist Cord
     ["22730"] = {
@@ -7322,6 +7334,18 @@ GL.Data.ItemLinks = {
     -- Mark of C'Thun
     ["22732"] = {
         233642, -- Mark of C'Thun
+    },
+    -- Staff Head of Atiesh
+    ["22733"] = {
+        22726, -- Splinter of Atiesh
+    },
+    -- Base of Atiesh
+    ["22734"] = {
+        22726, -- Splinter of Atiesh
+    },
+    -- Atiesh, Greatstaff of the Guardian
+    ["22737"] = {
+        22726, -- Splinter of Atiesh
     },
     -- Sylvan Vest
     ["22756"] = {
@@ -30231,6 +30255,42 @@ GL.Data.ItemLinks = {
     ["236013"] = {
         23059, -- Ring of the Dreadnaught
     },
+    -- Dreadnaught Cuirass
+    ["236014"] = {
+        236231, -- Desecrated Breastplate
+    },
+    -- Dreadnaught Tassets
+    ["236015"] = {
+        236238, -- Desecrated Legplates
+    },
+    -- Dreadnaught Horns
+    ["236016"] = {
+        236236, -- Desecrated Helmet
+    },
+    -- Dreadnaught Shoulders
+    ["236017"] = {
+        236237, -- Desecrated Pauldrons
+    },
+    -- Dreadnaught Greaves
+    ["236018"] = {
+        236234, -- Desecrated Sabatons
+    },
+    -- Dreadnaught Grips
+    ["236019"] = {
+        236233, -- Desecrated Gauntlets
+    },
+    -- Dreadnaught Belt
+    ["236020"] = {
+        236232, -- Desecrated Waistguard
+    },
+    -- Dreadnaught Wrists
+    ["236021"] = {
+        236235, -- Desecrated Bracers
+    },
+    -- Band of the Dreadnaught
+    ["236022"] = {
+        237381, -- Desecrated Ring
+    },
     -- Bonescythe Breastplate
     ["236023"] = {
         22476, -- Bonescythe Breastplate
@@ -30266,6 +30326,42 @@ GL.Data.ItemLinks = {
     -- Bonescythe Ring
     ["236031"] = {
         23060, -- Bonescythe Ring
+    },
+    -- Bonescythe Belt
+    ["236032"] = {
+        236244, -- Desecrated Belt
+    },
+    -- Bonescythe Treads
+    ["236033"] = {
+        236239, -- Desecrated Sandals
+    },
+    -- Bonescythe Band
+    ["236034"] = {
+        237381, -- Desecrated Ring
+    },
+    -- Bonescythe Mantle
+    ["236035"] = {
+        236240, -- Desecrated Shoulderpads
+    },
+    -- Bonescythe Leggings
+    ["236036"] = {
+        236246, -- Desecrated Leggings
+    },
+    -- Bonescythe Mask
+    ["236037"] = {
+        236241, -- Desecrated Circlet
+    },
+    -- Bonescythe Grips
+    ["236038"] = {
+        236243, -- Desecrated Gloves
+    },
+    -- Bonescythe Chestguard
+    ["236039"] = {
+        236242, -- Desecrated Robe
+    },
+    -- Bonescythe Wristguards
+    ["236040"] = {
+        236245, -- Desecrated Bindings
     },
     -- Ring of the Cryptstalker
     ["236041"] = {
@@ -30303,6 +30399,42 @@ GL.Data.ItemLinks = {
     ["236049"] = {
         22440, -- Cryptstalker Boots
     },
+    -- Cryptstalker Vambraces
+    ["236050"] = {
+        236235, -- Desecrated Bracers
+    },
+    -- Cryptstalker Belt
+    ["236051"] = {
+        236232, -- Desecrated Waistguard
+    },
+    -- Cryptstalker Pauldrons
+    ["236052"] = {
+        236237, -- Desecrated Pauldrons
+    },
+    -- Cryptstalker Leggings
+    ["236053"] = {
+        236238, -- Desecrated Legplates
+    },
+    -- Cryptstalker Visor
+    ["236054"] = {
+        236236, -- Desecrated Helmet
+    },
+    -- Cryptstalker Gauntlets
+    ["236055"] = {
+        236233, -- Desecrated Gauntlets
+    },
+    -- Band of the Cryptstalker
+    ["236056"] = {
+        237381, -- Desecrated Ring
+    },
+    -- Cryptstalker Greaves
+    ["236057"] = {
+        236234, -- Desecrated Sabatons
+    },
+    -- Cryptstalker Breastplate
+    ["236058"] = {
+        236231, -- Desecrated Breastplate
+    },
     -- Plagueheart Sandals
     ["236059"] = {
         22508, -- Plagueheart Sandals
@@ -30338,6 +30470,42 @@ GL.Data.ItemLinks = {
     -- Plagueheart Ring
     ["236067"] = {
         23063, -- Plagueheart Ring
+    },
+    -- Plagueheart Wristguards
+    ["236068"] = {
+        236245, -- Desecrated Bindings
+    },
+    -- Plagueheart Waistguard
+    ["236069"] = {
+        236244, -- Desecrated Belt
+    },
+    -- Plagueheart Mantle
+    ["236070"] = {
+        236240, -- Desecrated Shoulderpads
+    },
+    -- Plagueheart Pants
+    ["236071"] = {
+        236246, -- Desecrated Leggings
+    },
+    -- Plagueheart Crown
+    ["236072"] = {
+        236241, -- Desecrated Circlet
+    },
+    -- Plagueheart Handguards
+    ["236073"] = {
+        236243, -- Desecrated Gloves
+    },
+    -- Plagueheart Loop
+    ["236074"] = {
+        237381, -- Desecrated Ring
+    },
+    -- Plagueheart Boots
+    ["236075"] = {
+        236239, -- Desecrated Sandals
+    },
+    -- Plagueheart Garb
+    ["236076"] = {
+        236242, -- Desecrated Robe
     },
     -- Frostfire Bindings
     ["236077"] = {
@@ -30375,6 +30543,42 @@ GL.Data.ItemLinks = {
     ["236085"] = {
         23062, -- Frostfire Ring
     },
+    -- Frostfire Wristwraps
+    ["236087"] = {
+        236235, -- Desecrated Bracers
+    },
+    -- Frostfire Waistguard
+    ["236088"] = {
+        236232, -- Desecrated Waistguard
+    },
+    -- Frostfire Mantle
+    ["236089"] = {
+        236237, -- Desecrated Pauldrons
+    },
+    -- Frostfire Pants
+    ["236090"] = {
+        236238, -- Desecrated Legplates
+    },
+    -- Frostfire Hood
+    ["236091"] = {
+        236236, -- Desecrated Helmet
+    },
+    -- Frostfire Mitts
+    ["236092"] = {
+        236233, -- Desecrated Gauntlets
+    },
+    -- Frostfire Band
+    ["236093"] = {
+        237381, -- Desecrated Ring
+    },
+    -- Frostfire Boots
+    ["236094"] = {
+        236234, -- Desecrated Sabatons
+    },
+    -- Frostfire Garb
+    ["236095"] = {
+        236231, -- Desecrated Breastplate
+    },
     -- Robe of Faith
     ["236097"] = {
         22512, -- Robe of Faith
@@ -30410,6 +30614,38 @@ GL.Data.ItemLinks = {
     -- Ring of Faith
     ["236105"] = {
         23061, -- Ring of Faith
+    },
+    -- Wrists of Faith
+    ["236106"] = {
+        236245, -- Desecrated Bindings
+    },
+    -- Girdle of Faith
+    ["236107"] = {
+        236244, -- Desecrated Belt
+    },
+    -- Mantle of Faith
+    ["236108"] = {
+        236240, -- Desecrated Shoulderpads
+    },
+    -- Pants of Faith
+    ["236109"] = {
+        236246, -- Desecrated Leggings
+    },
+    -- Hands of Faith
+    ["236111"] = {
+        236243, -- Desecrated Gloves
+    },
+    -- Band of Faith
+    ["236112"] = {
+        237381, -- Desecrated Ring
+    },
+    -- Boots of Faith
+    ["236113"] = {
+        236239, -- Desecrated Sandals
+    },
+    -- Garb of Faith
+    ["236114"] = {
+        236242, -- Desecrated Robe
     },
     -- Redemption Tunic
     ["236115"] = {
@@ -30447,6 +30683,78 @@ GL.Data.ItemLinks = {
     ["236123"] = {
         22430, -- Redemption Boots
     },
+    -- Redemption Vambraces
+    ["236124"] = {
+        236247, -- Desecrated Wristguards
+    },
+    -- Redemption Belt
+    ["236125"] = {
+        236252, -- Desecrated Girdle
+    },
+    -- Redemption Shoulderplates
+    ["236126"] = {
+        236254, -- Desecrated Spaulders
+    },
+    -- Redemption Leggings
+    ["236127"] = {
+        236253, -- Desecrated Legguards
+    },
+    -- Redemption Helmet
+    ["236128"] = {
+        236249, -- Desecrated Headpiece
+    },
+    -- Redemption Gloves
+    ["236129"] = {
+        236250, -- Desecrated Handguards
+    },
+    -- Band of Redemption
+    ["236130"] = {
+        237381, -- Desecrated Ring
+    },
+    -- Redemption Greaves
+    ["236131"] = {
+        236248, -- Desecrated Boots
+    },
+    -- Redemption Breastplate
+    ["236132"] = {
+        236251, -- Desecrated Tunic
+    },
+    -- Redemption Bracers
+    ["236133"] = {
+        236247, -- Desecrated Wristguards
+    },
+    -- Redemption Waistguard
+    ["236134"] = {
+        236252, -- Desecrated Girdle
+    },
+    -- Redemption Pauldrons
+    ["236135"] = {
+        236254, -- Desecrated Spaulders
+    },
+    -- Redemption Legplates
+    ["236136"] = {
+        236253, -- Desecrated Legguards
+    },
+    -- Redemption Crown
+    ["236137"] = {
+        236249, -- Desecrated Headpiece
+    },
+    -- Redemption Gauntlets
+    ["236138"] = {
+        236250, -- Desecrated Handguards
+    },
+    -- Loop of Redemption
+    ["236139"] = {
+        237381, -- Desecrated Ring
+    },
+    -- Redemption Sabatons
+    ["236140"] = {
+        236248, -- Desecrated Boots
+    },
+    -- Redemption Chestguard
+    ["236141"] = {
+        236251, -- Desecrated Tunic
+    },
     -- Earthshatter Handguards
     ["236142"] = {
         22469, -- Earthshatter Handguards
@@ -30482,6 +30790,102 @@ GL.Data.ItemLinks = {
     -- Ring of the Earthshatterer
     ["236150"] = {
         23065, -- Ring of the Earthshatterer
+    },
+    -- Earthshatter Bindings
+    ["236151"] = {
+        236247, -- Desecrated Wristguards
+    },
+    -- Earthshatter Cord
+    ["236152"] = {
+        236252, -- Desecrated Girdle
+    },
+    -- Earthshatter Mantle
+    ["236153"] = {
+        236254, -- Desecrated Spaulders
+    },
+    -- Earthshatter Kilt
+    ["236154"] = {
+        236253, -- Desecrated Legguards
+    },
+    -- Earthshatter Crown
+    ["236155"] = {
+        236249, -- Desecrated Headpiece
+    },
+    -- Earthshatter Mitts
+    ["236156"] = {
+        236250, -- Desecrated Handguards
+    },
+    -- Earthshatter Greaves
+    ["236158"] = {
+        236248, -- Desecrated Boots
+    },
+    -- Earthshatter Embrace
+    ["236159"] = {
+        236251, -- Desecrated Tunic
+    },
+    -- Earthshatter Bracers
+    ["236160"] = {
+        236247, -- Desecrated Wristguards
+    },
+    -- Earthshatter Waistguard
+    ["236162"] = {
+        236252, -- Desecrated Girdle
+    },
+    -- Earthshatter Pauldrons
+    ["236163"] = {
+        236254, -- Desecrated Spaulders
+    },
+    -- Earthshatter Legplates
+    ["236164"] = {
+        236253, -- Desecrated Legguards
+    },
+    -- Earthshatter Faceguard
+    ["236165"] = {
+        236249, -- Desecrated Headpiece
+    },
+    -- Earthshatter Gloves
+    ["236166"] = {
+        236250, -- Desecrated Handguards
+    },
+    -- Earthshatter Sabatons
+    ["236168"] = {
+        236248, -- Desecrated Boots
+    },
+    -- Earthshatter Chestguard
+    ["236169"] = {
+        236251, -- Desecrated Tunic
+    },
+    -- Earthshatter Vambraces
+    ["236170"] = {
+        236247, -- Desecrated Wristguards
+    },
+    -- Earthshatter Belt
+    ["236171"] = {
+        236252, -- Desecrated Girdle
+    },
+    -- Earthshatter Epaulets
+    ["236172"] = {
+        236254, -- Desecrated Spaulders
+    },
+    -- Earthshatter Leggings
+    ["236173"] = {
+        236253, -- Desecrated Legguards
+    },
+    -- Earthshatter Helmet
+    ["236174"] = {
+        236249, -- Desecrated Headpiece
+    },
+    -- Earthshatter Grips
+    ["236175"] = {
+        236250, -- Desecrated Handguards
+    },
+    -- Earthshatter Treads
+    ["236177"] = {
+        236248, -- Desecrated Boots
+    },
+    -- Earthshatter Armor
+    ["236179"] = {
+        236251, -- Desecrated Tunic
     },
     -- Dreamwalker Headpiece
     ["236182"] = {
@@ -30519,9 +30923,109 @@ GL.Data.ItemLinks = {
     ["236190"] = {
         23064, -- Ring of The Dreamwalker
     },
+    -- Dreamwalker Bindings
+    ["236192"] = {
+        236247, -- Desecrated Wristguards
+    },
+    -- Dreamwalker Cord
+    ["236193"] = {
+        236252, -- Desecrated Girdle
+    },
+    -- Dreamwalker Mantle
+    ["236194"] = {
+        236254, -- Desecrated Spaulders
+    },
+    -- Dreamwalker Kilt
+    ["236195"] = {
+        236253, -- Desecrated Legguards
+    },
+    -- Dreamwalker Mitts
+    ["236197"] = {
+        236250, -- Desecrated Handguards
+    },
+    -- Band of the Dreamwalker
+    ["236198"] = {
+        237381, -- Desecrated Ring
+    },
+    -- Dreamwalker Sandals
+    ["236199"] = {
+        236248, -- Desecrated Boots
+    },
+    -- Dreamwalker Leathers
+    ["236200"] = {
+        236251, -- Desecrated Tunic
+    },
+    -- Dreamwalker Bracers
+    ["236201"] = {
+        236247, -- Desecrated Wristguards
+    },
+    -- Dreamwalker Waistguard
+    ["236202"] = {
+        236252, -- Desecrated Girdle
+    },
+    -- Dreamwalker Pauldrons
+    ["236203"] = {
+        236254, -- Desecrated Spaulders
+    },
+    -- Dreamwalker Leggings
+    ["236204"] = {
+        236253, -- Desecrated Legguards
+    },
+    -- Dreamwalker Headdress
+    ["236205"] = {
+        236249, -- Desecrated Headpiece
+    },
+    -- Dreamwalker Gauntlets
+    ["236206"] = {
+        236250, -- Desecrated Handguards
+    },
+    -- Loop of the Dreamwalker
+    ["236207"] = {
+        237381, -- Desecrated Ring
+    },
+    -- Dreamwalker Sabatons
+    ["236208"] = {
+        236248, -- Desecrated Boots
+    },
     -- Dreamwalker Armor
     ["236209"] = {
         13123, -- Dreamwalker Armor
+    },
+    -- Dreamwalker Wraps
+    ["236210"] = {
+        236247, -- Desecrated Wristguards
+    },
+    -- Dreamwalker Sash
+    ["236211"] = {
+        236252, -- Desecrated Girdle
+    },
+    -- Dreamwalker Shoulderpads
+    ["236212"] = {
+        236254, -- Desecrated Spaulders
+    },
+    -- Dreamwalker Trousers
+    ["236213"] = {
+        236253, -- Desecrated Legguards
+    },
+    -- Dreamwalker Cowl
+    ["236214"] = {
+        236249, -- Desecrated Headpiece
+    },
+    -- Dreamwalker Grips
+    ["236215"] = {
+        236250, -- Desecrated Handguards
+    },
+    -- Signet of the Dreamwalker
+    ["236216"] = {
+        237381, -- Desecrated Ring
+    },
+    -- Dreamwalker Stompers
+    ["236217"] = {
+        236248, -- Desecrated Boots
+    },
+    -- Dreamwalker Vest
+    ["236218"] = {
+        236251, -- Desecrated Tunic
     },
     -- Harbinger of Doom
     ["236219"] = {
@@ -30574,98 +31078,280 @@ GL.Data.ItemLinks = {
     -- Desecrated Breastplate
     ["236231"] = {
         22349, -- Desecrated Breastplate
+        236005, -- Dreadnaught Breastplate
+        236014, -- Dreadnaught Cuirass
+        236043, -- Cryptstalker Tunic
+        236058, -- Cryptstalker Breastplate
+        236081, -- Frostfire Robe
+        236095, -- Frostfire Garb
     },
     -- Desecrated Waistguard
     ["236232"] = {
         22356, -- Desecrated Waistguard
+        236011, -- Dreadnaught Waistguard
+        236020, -- Dreadnaught Belt
+        236048, -- Cryptstalker Girdle
+        236051, -- Cryptstalker Belt
+        236078, -- Frostfire Belt
+        236088, -- Frostfire Waistguard
     },
     -- Desecrated Gauntlets
     ["236233"] = {
         22357, -- Desecrated Gauntlets
+        236010, -- Dreadnaught Gauntlets
+        236019, -- Dreadnaught Grips
+        236047, -- Cryptstalker Handguards
+        236055, -- Cryptstalker Gauntlets
+        236082, -- Frostfire Gloves
+        236092, -- Frostfire Mitts
     },
     -- Desecrated Sabatons
     ["236234"] = {
         22358, -- Desecrated Sabatons
+        236009, -- Dreadnaught Sabatons
+        236018, -- Dreadnaught Greaves
+        236049, -- Cryptstalker Boots
+        236057, -- Cryptstalker Greaves
+        236080, -- Frostfire Sandals
+        236094, -- Frostfire Boots
     },
     -- Desecrated Bracers
     ["236235"] = {
         22355, -- Desecrated Bracers
+        236012, -- Dreadnaught Bracers
+        236021, -- Dreadnaught Wrists
+        236042, -- Cryptstalker Wristguards
+        236050, -- Cryptstalker Vambraces
+        236077, -- Frostfire Bindings
+        236087, -- Frostfire Wristwraps
     },
     -- Desecrated Helmet
     ["236236"] = {
         22353, -- Desecrated Helmet
+        236007, -- Dreadnaught Helmet
+        236016, -- Dreadnaught Horns
+        236046, -- Cryptstalker Headpiece
+        236054, -- Cryptstalker Visor
+        236083, -- Frostfire Circlet
+        236091, -- Frostfire Hood
     },
     -- Desecrated Pauldrons
     ["236237"] = {
         22354, -- Desecrated Pauldrons
+        236008, -- Dreadnaught Pauldrons
+        236017, -- Dreadnaught Shoulders
+        236044, -- Cryptstalker Spaulders
+        236052, -- Cryptstalker Pauldrons
+        236084, -- Frostfire Shoulderpads
+        236089, -- Frostfire Mantle
     },
     -- Desecrated Legplates
     ["236238"] = {
         22352, -- Desecrated Legplates
+        236006, -- Dreadnaught Legplates
+        236015, -- Dreadnaught Tassets
+        236045, -- Cryptstalker Legguards
+        236053, -- Cryptstalker Leggings
+        236079, -- Frostfire Leggings
+        236090, -- Frostfire Pants
     },
     -- Desecrated Sandals
     ["236239"] = {
         22372, -- Desecrated Sandals
+        236027, -- Bonescythe Sabatons
+        236033, -- Bonescythe Treads
+        236059, -- Plagueheart Sandals
+        236075, -- Plagueheart Boots
+        236099, -- Sandals of Faith
+        236113, -- Boots of Faith
     },
     -- Desecrated Shoulderpads
     ["236240"] = {
         22368, -- Desecrated Shoulderpads
+        236026, -- Bonescythe Pauldrons
+        236035, -- Bonescythe Mantle
+        236065, -- Plagueheart Shoulderpads
+        236070, -- Plagueheart Mantle
+        236102, -- Shoulderpads of Faith
+        236108, -- Mantle of Faith
     },
     -- Desecrated Circlet
     ["236241"] = {
         22367, -- Desecrated Circlet
+        236025, -- Bonescythe Helmet
+        236037, -- Bonescythe Mask
+        236064, -- Plagueheart Circlet
+        236072, -- Plagueheart Crown
+        236103, -- Circlet of Faith
     },
     -- Desecrated Robe
     ["236242"] = {
         22351, -- Desecrated Robe
+        236023, -- Bonescythe Breastplate
+        236039, -- Bonescythe Chestguard
+        236062, -- Plagueheart Robe
+        236076, -- Plagueheart Garb
+        236097, -- Robe of Faith
+        236114, -- Garb of Faith
     },
     -- Desecrated Gloves
     ["236243"] = {
         22371, -- Desecrated Gloves
+        236028, -- Bonescythe Gauntlets
+        236038, -- Bonescythe Grips
+        236063, -- Plagueheart Gloves
+        236073, -- Plagueheart Handguards
+        236104, -- Gloves of Faith
+        236111, -- Hands of Faith
     },
     -- Desecrated Belt
     ["236244"] = {
         22370, -- Desecrated Belt
+        236029, -- Bonescythe Waistguard
+        236032, -- Bonescythe Belt
+        236066, -- Plagueheart Belt
+        236069, -- Plagueheart Waistguard
+        236098, -- Belt of Faith
+        236107, -- Girdle of Faith
     },
     -- Desecrated Bindings
     ["236245"] = {
         22369, -- Desecrated Bindings
+        236030, -- Bonescythe Bracers
+        236040, -- Bonescythe Wristguards
+        236061, -- Plagueheart Bindings
+        236068, -- Plagueheart Wristguards
+        236100, -- Bindings of Faith
+        236106, -- Wrists of Faith
     },
     -- Desecrated Leggings
     ["236246"] = {
         22366, -- Desecrated Leggings
+        236024, -- Bonescythe Legplates
+        236036, -- Bonescythe Leggings
+        236060, -- Plagueheart Leggings
+        236071, -- Plagueheart Pants
+        236101, -- Leggings of Faith
+        236109, -- Pants of Faith
     },
     -- Desecrated Wristguards
     ["236247"] = {
         22362, -- Desecrated Wristguards
+        236119, -- Redemption Wristguards
+        236124, -- Redemption Vambraces
+        236133, -- Redemption Bracers
+        236149, -- Earthshatter Wristguards
+        236151, -- Earthshatter Bindings
+        236160, -- Earthshatter Bracers
+        236170, -- Earthshatter Vambraces
+        236183, -- Dreamwalker Wristguards
+        236192, -- Dreamwalker Bindings
+        236201, -- Dreamwalker Bracers
+        236210, -- Dreamwalker Wraps
     },
     -- Desecrated Boots
     ["236248"] = {
         22365, -- Desecrated Boots
+        236123, -- Redemption Boots
+        236131, -- Redemption Greaves
+        236140, -- Redemption Sabatons
+        236146, -- Earthshatter Boots
+        236158, -- Earthshatter Greaves
+        236168, -- Earthshatter Sabatons
+        236177, -- Earthshatter Treads
+        236185, -- Dreamwalker Boots
+        236199, -- Dreamwalker Sandals
+        236208, -- Dreamwalker Sabatons
+        236217, -- Dreamwalker Stompers
     },
     -- Desecrated Headpiece
     ["236249"] = {
         22360, -- Desecrated Headpiece
+        236117, -- Redemption Headpiece
+        236128, -- Redemption Helmet
+        236137, -- Redemption Crown
+        236144, -- Earthshatter Headpiece
+        236155, -- Earthshatter Crown
+        236165, -- Earthshatter Faceguard
+        236174, -- Earthshatter Helmet
+        236182, -- Dreamwalker Headpiece
+        236205, -- Dreamwalker Headdress
+        236214, -- Dreamwalker Cowl
     },
     -- Desecrated Handguards
     ["236250"] = {
         22364, -- Desecrated Handguards
+        236118, -- Redemption Handguards
+        236129, -- Redemption Gloves
+        236138, -- Redemption Gauntlets
+        236142, -- Earthshatter Handguards
+        236156, -- Earthshatter Mitts
+        236166, -- Earthshatter Gloves
+        236175, -- Earthshatter Grips
+        236184, -- Dreamwalker Handguards
+        236197, -- Dreamwalker Mitts
+        236206, -- Dreamwalker Gauntlets
+        236215, -- Dreamwalker Grips
     },
     -- Desecrated Tunic
     ["236251"] = {
         22350, -- Desecrated Tunic
+        236115, -- Redemption Tunic
+        236132, -- Redemption Breastplate
+        236141, -- Redemption Chestguard
+        236147, -- Earthshatter Tunic
+        236159, -- Earthshatter Embrace
+        236169, -- Earthshatter Chestguard
+        236179, -- Earthshatter Armor
+        236186, -- Dreamwalker Tunic
+        236200, -- Dreamwalker Leathers
+        236209, -- Dreamwalker Armor
+        236218, -- Dreamwalker Vest
     },
     -- Desecrated Girdle
     ["236252"] = {
         22363, -- Desecrated Girdle
+        236120, -- Redemption Girdle
+        236125, -- Redemption Belt
+        236134, -- Redemption Waistguard
+        236148, -- Earthshatter Girdle
+        236152, -- Earthshatter Cord
+        236162, -- Earthshatter Waistguard
+        236171, -- Earthshatter Belt
+        236187, -- Dreamwalker Girdle
+        236193, -- Dreamwalker Cord
+        236202, -- Dreamwalker Waistguard
+        236211, -- Dreamwalker Sash
     },
     -- Desecrated Legguards
     ["236253"] = {
         22359, -- Desecrated Legguards
+        236121, -- Redemption Legguards
+        236127, -- Redemption Leggings
+        236136, -- Redemption Legplates
+        236143, -- Earthshatter Legguards
+        236154, -- Earthshatter Kilt
+        236164, -- Earthshatter Legplates
+        236173, -- Earthshatter Leggings
+        236188, -- Dreamwalker Legguards
+        236195, -- Dreamwalker Kilt
+        236204, -- Dreamwalker Leggings
+        236213, -- Dreamwalker Trousers
     },
     -- Desecrated Spaulders
     ["236254"] = {
         22361, -- Desecrated Spaulders
+        236122, -- Redemption Spaulders
+        236126, -- Redemption Shoulderplates
+        236135, -- Redemption Pauldrons
+        236145, -- Earthshatter Spaulders
+        236153, -- Earthshatter Mantle
+        236163, -- Earthshatter Pauldrons
+        236172, -- Earthshatter Epaulets
+        236189, -- Dreamwalker Spaulders
+        236194, -- Dreamwalker Mantle
+        236203, -- Dreamwalker Pauldrons
+        236212, -- Dreamwalker Shoulderpads
     },
     -- Wristguards of Vengeance
     ["236255"] = {
@@ -31046,27 +31732,33 @@ GL.Data.ItemLinks = {
     -- The Phylactery of Kel'Thuzad
     ["236350"] = {
         22520, -- The Phylactery of Kel'Thuzad
+        236351, -- Mark of the Champion
+        236352, -- Mark of the Champion
     },
     -- Mark of the Champion
     ["236351"] = {
         23206, -- Mark of the Champion
         23207, -- Mark of the Champion
     },
+    -- Mark of the Champion
+    ["236352"] = {
+        236350, -- The Phylactery of Kel'Thuzad
+    },
     -- Atiesh, Greatstaff of the Guardian (Warlock)
     ["236398"] = {
-        22630, -- Atiesh, Greatstaff of the Guardian (warlock)
+        22726, -- Splinter of Atiesh
     },
     -- Atiesh, Greatstaff of the Guardian (Priest)
     ["236399"] = {
-        22631, -- Atiesh, Greatstaff of the Guardian (priest)
+        22726, -- Splinter of Atiesh
     },
     -- Atiesh, Greatstaff of the Guardian (Mage)
     ["236400"] = {
-        22589, -- Atiesh, Greatstaff of the Guardian (mage)
+        22726, -- Splinter of Atiesh
     },
     -- Atiesh, Greatstaff of the Guardian (Druid)
     ["236401"] = {
-        22632, -- Atiesh, Greatstaff of the Guardian (druid)
+        22726, -- Splinter of Atiesh
     },
     -- Frozen Rune
     ["236656"] = {
@@ -31239,5 +31931,27 @@ GL.Data.ItemLinks = {
     -- Ramaladni's Icy Grasp
     ["237294"] = {
         22707, -- Ramaladni's Icy Grasp
+    },
+    -- Desecrated Ring
+    ["237381"] = {
+        236013, -- Ring of the Dreadnaught
+        236022, -- Band of the Dreadnaught
+        236031, -- Bonescythe Ring
+        236034, -- Bonescythe Band
+        236041, -- Ring of the Cryptstalker
+        236056, -- Band of the Cryptstalker
+        236067, -- Plagueheart Ring
+        236074, -- Plagueheart Loop
+        236085, -- Frostfire Ring
+        236093, -- Frostfire Band
+        236105, -- Ring of Faith
+        236112, -- Band of Faith
+        236116, -- Ring of Redemption
+        236130, -- Band of Redemption
+        236139, -- Loop of Redemption
+        236190, -- Ring of the Dreamwalker
+        236198, -- Band of the Dreamwalker
+        236207, -- Loop of the Dreamwalker
+        236216, -- Signet of the Dreamwalker
     },
 };
