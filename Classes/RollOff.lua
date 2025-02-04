@@ -42,9 +42,13 @@ function RollOff:announceStart(itemLink, time, note)
 
     if (type(itemLink) ~= "string"
         or GL:empty(itemLink)
-        or not GL:higherThanZero(time)
     ) then
         GL:warning(L.ROLLING_INVALID_START_DATA_WARNING);
+        return false;
+    end
+
+    if (not GL:gte(time, 5)) then
+        GL:warning(L["Timer needs to be 5 seconds or more"]);
         return false;
     end
 
