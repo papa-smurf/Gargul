@@ -557,15 +557,7 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, g
     end
 
     -- Determine winner class
-    local class = UnitClassBase(winner);
-    -- UnitClassBase doesn't work on FQNs on the same realm
-    if (not class) then
-        local nameWithoutRealm, realm = GL:stripRealm(winner);
-
-        if (realm and GL:iEquals(realm, GL.User.realm)) then
-            class = UnitClassBase(nameWithoutRealm);
-        end
-    end
+    local class = GL:playerClassByName(winner);
 
     local checksum = GL:strPadRight(GL:strLimit(GL:stringHash(timestamp .. itemID .. GL:uuid()) .. GL:stringHash(winner .. GL.DB:get("SoftRes.MetaData.id", "")), 20, ""), "0", 20);
     local AwardEntry = {

@@ -568,6 +568,31 @@ function GL:handleItemClick(itemLink, mouseButtonPressed, callback)
     end
 end
 
+---@param name string
+---@param default string?
+---@return any
+function GL:playerClassByName(name, default)
+    local class = UnitClassBase(name);
+
+    if (class) then
+        return class;
+    end
+
+    -- UnitClassBase doesn't work on same-realm FQNs
+    local nameWithoutRealm, realm = GL:stripRealm(name);
+
+    if (realm and GL:iEquals(realm, GL.User.realm)) then
+        class = UnitClassBase(nameWithoutRealm);
+    end
+
+    if (class) then
+        return class;
+    end
+
+    -- The player's class could not be determined, return default
+    return default ~= nil and default or "PRIEST";
+end
+
 --- Check whether a given variable is empty
 ---
 ---@param mixed any

@@ -239,6 +239,14 @@ function PlusOnes:clearPlusOnes()
     self:triggerChangeEvent();
 end
 
+---@return table
+function PlusOnes:all()
+    return GL:tableGet(
+        self.MaterializedData or {},
+        "DetailsByPlayerName", {}
+    );
+end
+
 --- Get a player's plus one
 ---
 ---@param name string
