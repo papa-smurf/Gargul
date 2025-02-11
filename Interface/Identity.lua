@@ -347,7 +347,7 @@ GL.Interface.Identity = {
         urlInfo = "Join our Discord server to learn more about GG GDKP!",
         tooltip = "GG GDKP discord",
         cutMailSubject = L.CUT_MAIL_SUBJECT,
-        cutMailBody = "Hey Bigbuyer,\n\nThanks for pumping so hard in the GDKP last night.\n\nHere is your %s cut from the run!\n\nPlease sign-up for the next run at https://discord.gg/gg-gdkp\n\nLot's of Love,\nYour Friends at <GG>",
+        cutMailBody = "Hey Bigbuyer,\n\nThanks for pumping so hard in the GDKP last night.\n\nHere is your ${cut} cut from the run!\n\nPlease sign-up for the next run at https://discord.gg/gg-gdkp\n\nLot's of Love,\nYour Friends at <GG>",
 
         ---@return Frame
         ledger = function()

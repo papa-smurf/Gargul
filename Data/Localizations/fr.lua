@@ -144,7 +144,6 @@ L.CUT = "Part";
 L.CUTS = "Parts";
 L.CUT_MAILBOX_CLOSED = "Impossible d'envoyer du courrier lorsque la boîte aux lettres est fermée";
 L.CUT_MAILS_FAILED = "Plusieurs erreurs de courrier détectées, abandonnant la distribution des parts";
-L.CUT_MAIL_BODY = "Propulsé par Gargul : un outil de maître du butin prenant en charge TMB, SoftRes, GDKP et Auto-Looting !";
 L.CUT_MAIL_EVEN = "Vous ne devez pas d'or à %s";
 L["Failed to send cut to %s"] = "Échec de l'envoi de la part à %s";
 L.CUT_MAIL_GOLD_MISMATCH = "Mail ENVOYÉ selon le jeu, mais votre OR restant NE CORRESPOND PAS, quelque chose s'est mal passé ?";

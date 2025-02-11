@@ -42,7 +42,7 @@ function MailCuts:_init()
 
     local Identity = GL.Interface.Identity:build(GL.User:bth());
     self.cutMailSubject = Identity.cutMailSubject or L.CUT_MAIL_SUBJECT;
-    self.cutMailBody = Identity.cutMailBody or L.CUT_MAIL_BODY;
+    self.cutMailBody = Identity.cutMailBody or L.CHAT["Hi ${player}, your ${cut} cut has arrived! - Gargul"];
 
     --[[ ERA HAS DIFFERENT EVENTS FOR OPENING / CLOSING THE MAILBOX ]]
     if (not GL.isEra) then
@@ -525,7 +525,11 @@ function MailCuts:mailPlayerCut(player, callback)
     ClearSendMail();
     SetSendMailMoney(outstandingCopper);
 
-    SendMail(GL:nameFormat(player), (self.cutMailSubject):format(gold), (self.cutMailBody):format(gold));
+    player = GL:nameFormat(player);
+    SendMail(player, (self.cutMailSubject):format(gold), GL:printfn(self.cutMailBody, {
+        cut = gold,
+        player = player,
+    }));
 
     MailDisableTimer = GL.Ace:ScheduleRepeatingTimer(function ()
         self:disableSendButton();

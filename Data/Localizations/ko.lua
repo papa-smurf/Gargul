@@ -141,7 +141,6 @@ L.CUT = "자르다";
 L.CUTS = "컷";
 L.CUT_MAILBOX_CLOSED = "사서함이 닫혀 있으면 메일을 보낼 수 없습니다";
 L.CUT_MAILS_FAILED = "다수의 메일 오류가 감지되어 컷 배포가 중단되었습니다.";
-L.CUT_MAIL_BODY = "Gargul 제공: TMB, SoftRes, GDKP 및 자동 루팅을 지원하는 마스터 전리품 도구입니다!";
 L.CUT_MAIL_EVEN = "%s의 금이 없습니다.";
 L["Failed to send cut to %s"] = "%s에 컷을 보내지 못했습니다.";
 L.CUT_MAIL_GOLD_MISMATCH = "게임에 따라 메일이 전송되었지만 남은 GOLD가 일치하지 않습니다. 문제가 발생했나요?";

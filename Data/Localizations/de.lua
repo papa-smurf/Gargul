@@ -141,7 +141,6 @@ L.CUT = "Anteil";
 L.CUTS = "Anteile";
 L.CUT_MAILBOX_CLOSED = "Es kann keine Post gesendet werden, wenn der Briefkasten geschlossen ist";
 L.CUT_MAILS_FAILED = "Es wurden mehrere Post-Fehler festgestellt, wodurch die Verteilung der Anteile abgebrochen wurde";
-L.CUT_MAIL_BODY = "Powered by Gargul: ein Master-Loot-Tool mit Unterstützung für TMB, SoftRes, GDKP und Auto-Looting!";
 L.CUT_MAIL_EVEN = "Du schuldest %s kein Gold";
 L["Failed to send cut to %s"] = "Der Anteil konnte nicht an %s gesendet werden";
 L.CUT_MAIL_GOLD_MISMATCH = "Die Post wurde laut Spiel GESENDET, aber dein verbleibendes Gold stimmt nicht überein. Ist etwas schief gelaufen?";

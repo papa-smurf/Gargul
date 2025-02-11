@@ -141,7 +141,6 @@ L.CUT = "Taglio";
 L.CUTS = "Tagli";
 L.CUT_MAILBOX_CLOSED = "Impossibile inviare posta quando la casella di posta è chiusa";
 L.CUT_MAILS_FAILED = "Rilevati più errori di posta, interruzione della distribuzione tagliata";
-L.CUT_MAIL_BODY = "Realizzato da Gargul: uno strumento di bottino eccezionale con supporto per TMB, SoftRes, GDKP e auto-looting!";
 L.CUT_MAIL_EVEN = "Non devi oro a %s";
 L["Failed to send cut to %s"] = "Impossibile inviare il taglio a %s";
 L.CUT_MAIL_GOLD_MISMATCH = "Mail INVIATA in base al gioco, ma i tuoi ORO rimanenti NON CORRISPONDONO, qualcosa è andato storto?";

@@ -141,7 +141,6 @@ L.CUT = "Corte";
 L.CUTS = "Cortes";
 L.CUT_MAILBOX_CLOSED = "Não é possível enviar e-mails quando a caixa de correio está fechada";
 L.CUT_MAILS_FAILED = "Vários erros de e-mail detectados, abortando a distribuição cortada";
-L.CUT_MAIL_BODY = "Desenvolvido por Gargul: uma ferramenta Master Loot com suporte para TMB, SoftRes, GDKP e Auto-Looting!";
 L.CUT_MAIL_EVEN = "Você não deve ouro a %s";
 L["Failed to send cut to %s"] = "Falha ao enviar corte para %s";
 L.CUT_MAIL_GOLD_MISMATCH = "Correio ENVIADO de acordo com o jogo, mas o OURO restante NÃO CORRESPONDE, algo deu errado?";

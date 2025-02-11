@@ -143,7 +143,6 @@ L.CUT = "Cut";
 L.CUTS = "Cuts";
 L.CUT_MAILBOX_CLOSED = "Can't send mail when the mailbox is closed";
 L.CUT_MAILS_FAILED = "Multiple mail errors detected, aborting cut distribution";
-L.CUT_MAIL_BODY = "Powered by Gargul: a Master Loot Tool with support for TMB, SoftRes, GDKP and Auto-Looting!";
 L.CUT_MAIL_EVEN = "You don't owe %s any gold";
 L["Failed to send cut to %s"] = "Failed to send cut to %s";
 L.CUT_MAIL_GOLD_MISMATCH = "Mail SENT according to game, but your remaining GOLD DOESN'T MATCH, did something go wrong?";

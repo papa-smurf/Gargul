@@ -144,7 +144,6 @@ L.CUT = "工资";
 L.CUTS = "结账";
 L.CUT_MAILBOX_CLOSED = "邮箱关闭后无法发送邮件";
 L.CUT_MAILS_FAILED = "检测到多个邮件错误，中止工资分发";
-L.CUT_MAIL_BODY = "由 Gargul 提供支持：一款队长分配工具，支持 TMB、SoftRes、GDKP 和自动拾取战利品！";
 L.CUT_MAIL_EVEN = "你不欠%s任何金币";
 L["Failed to send cut to %s"] = "无法将工资发送至 %s";
 L.CUT_MAIL_GOLD_MISMATCH = "邮件已根据分配结果发送，但您剩余的金币！不匹配！，是不是出了什么问题？";
