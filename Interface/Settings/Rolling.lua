@@ -30,11 +30,50 @@ function Rolling:draw(Parent)
             description = "Don't show the window if you can't use the item (lvl / class restriction etc.)",
             setting = "Rolling.dontShowOnUnusableItems",
         },
+        {
+            label = L["Notify with chat and alert when item of interest drops"],
+            description = L["When an item drops that you reserved or have otherwise marked, a chat message and alert pop up"],
+            setting = "Rolling.notifyOnItemOfInterest",
+        },
     };
 
     Overview:drawCheckboxes(Checkboxes, Parent);
 
     local HorizontalSpacer = GL.AceGUI:Create("SimpleGroup");
+    HorizontalSpacer:SetLayout("FILL");
+    HorizontalSpacer:SetFullWidth(true);
+    HorizontalSpacer:SetHeight(20);
+    Parent:AddChild(HorizontalSpacer);
+
+    local PlaySoundOnItemOfInterestLabel = GL.AceGUI:Create("Label");
+    PlaySoundOnItemOfInterestLabel:SetText(("|c00FFF569%s|r"):format(L["Play a sound when an item of interest is rolled out"]));
+    PlaySoundOnItemOfInterestLabel:SetFullWidth(true);
+    Parent:AddChild(PlaySoundOnItemOfInterestLabel);
+
+    local Sounds = LibStub("LibSharedMedia-3.0"):List("sound");
+    local SoundsByName = GL:tableFlip(Sounds);
+
+    local ItemOfInterestSoundDropdown = GL.AceGUI:Create("Dropdown");
+    ItemOfInterestSoundDropdown:SetValue(SoundsByName[GL.Settings:get("Rolling.itemOfInterestSound")]);
+    ItemOfInterestSoundDropdown:SetList(Sounds);
+    ItemOfInterestSoundDropdown:SetText(GL.Settings:get("Rolling.itemOfInterestSound"));
+    ItemOfInterestSoundDropdown:SetWidth(250);
+    ItemOfInterestSoundDropdown:SetCallback("OnValueChanged", function()
+        local value = ItemOfInterestSoundDropdown:GetValue();
+
+        if (value ~= "None") then
+            local sound = LibStub("LibSharedMedia-3.0"):Fetch("sound", Sounds[value]);
+
+            if (type(sound) == "string" and not GL:empty(sound)) then
+                GL:playSound(sound);
+            end
+        end
+
+        GL.Settings:set("Rolling.itemOfInterestSound", Sounds[value]);
+    end);
+    Parent:AddChild(ItemOfInterestSoundDropdown);
+
+    HorizontalSpacer = GL.AceGUI:Create("SimpleGroup");
     HorizontalSpacer:SetLayout("FILL");
     HorizontalSpacer:SetFullWidth(true);
     HorizontalSpacer:SetHeight(20);

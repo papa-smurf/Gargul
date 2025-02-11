@@ -1294,6 +1294,37 @@ function GL:cancelTimer(identifier)
     GL.Ace:CancelTimer(GL.Timers[identifier]);
 end
 
+--- Check if the item could interest the current player based on SoftRes / TMB data
+--- 
+---@param itemIdentifier number|string
+---@return boolean, number?
+function GL:isItemOfInterest(itemIdentifier)
+    local ItemOfInterestReasons = GL.Data.Constants.ItemOfInterestReasons;
+
+    -- We reserved the item
+    if (GL.SoftRes:itemIsReservedByMe(itemIdentifier)) then
+        return true, ItemOfInterestReasons.RESERVE;
+    end
+
+    -- Check if there is relevant TMB data
+    local TMBData = GL.TMB:byItemIdentifierAndPlayer(itemIdentifier, GL.User.fqn)
+    if (GL:empty(TMBData)) then
+        return false;
+    end
+
+    for _, Entry in pairs(TMBData) do
+        -- We have the item on prio
+        if (Entry.type == Constants.tmbTypePrio) then
+            return true, ItemOfInterestReasons.PRIOLIST
+        end
+
+        -- We have the item on wishlist
+        return true, ItemOfInterestReasons.WISHLIST;
+    end
+
+    return false;
+end
+
 --- The onItemLoadDo helper accepts one or more item ids or item links
 --- The corresponding items will be loaded using Blizzard's Item API
 --- After all of the items are loaded execute the provided callback function

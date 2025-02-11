@@ -300,12 +300,34 @@ function SoftRes:replyToDataRequest(CommMessage)
     }:send();
 end
 
+--- Check if an item is reserved by the current player
+---
+---@param itemIdentifier number|string
+---@return boolean
+function SoftRes:itemIsReservedByMe(itemIdentifier)
+    local itemID = tonumber(itemIdentifier);
+    local identifierIsLink = type(itemIdentifier) == "string";
+
+    -- A string was provided, treat it as an item link and fetch its ID
+    if (not itemID
+        and identifierIsLink
+    ) then
+        itemID = GL:getItemIDFromLink(itemIdentifier);
+    end
+
+    if (not itemID) then
+        return false;
+    end
+
+    return self:itemIDIsReservedByPlayer(itemID, GL.User.fqn);
+end
+
 --- Check if an item ID is reserved by the current player
 ---
 ---@param itemID number
 ---@return boolean
 function SoftRes:itemIDIsReservedByMe(itemID)
-    return self:itemIDIsReservedByPlayer(itemID, GL.User.player);
+    return self:itemIDIsReservedByPlayer(itemID, GL.User.fqn);
 end
 
 --- Check if an itemlink is reserved by the current player

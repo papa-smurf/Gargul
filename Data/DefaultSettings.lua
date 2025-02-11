@@ -133,9 +133,11 @@ GL.Data.DefaultSettings = {
         Rules = {},
     },
     Rolling = {
-        showRollOffWindow = true,
         closeAfterRoll = false,
+        itemOfInterestSound = "Gargul: cheer",
+        notifyOnItemOfInterest = true,
         scale = 1,
+        showRollOffWindow = true,
     },
     RollTracking = {
         rollOffEndLeeway = 1,

@@ -127,13 +127,16 @@ function GL:_init()
 
     -- Register media
     local media = LibStub("LibSharedMedia-3.0")
-    media:Register("sound", "Gargul: uh-oh", "Interface/AddOns/".. self.name .."/Assets/Sounds/uh-oh.ogg");
+    media:Register("sound", "Gargul: uh-oh", "Interface/AddOns/Gargul/Assets/Sounds/uh-oh.ogg");
+    media:Register("sound", "Gargul: cheer", "Interface/AddOns/Gargul/Assets/Sounds/cheer.ogg");
+    media:Register("sound", "Gargul: waow", "Interface/AddOns/Gargul/Assets/Sounds/waow.ogg");
+    media:Register("sound", "Gargul: yay", "Interface/AddOns/Gargul/Assets/Sounds/yay.ogg");
 
     -- PTSansNarrow doesn't support al character sets
     if (GL:inTable({ "koKR", "zhCN", "zhTW", }, GetLocale())) then
         GL.FONT = STANDARD_TEXT_FONT;
     else
-        media:Register("font", "PTSansNarrow", "Interface/AddOns/".. self.name .."/Assets/Fonts/PTSansNarrow.ttf");
+        media:Register("font", "PTSansNarrow", "Interface/AddOns/Gargul/Assets/Fonts/PTSansNarrow.ttf");
         GL.FONT = media:Fetch("font", "PTSansNarrow");
     end
 

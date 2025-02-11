@@ -399,8 +399,47 @@ function RollOff:start(CommMessage)
             end, time - numberOfSecondsToCountdown - 2);
         end
 
-        -- Play raid warning sound
-        GL:playSound(SOUNDKIT.RAID_WARNING, "SFX");
+        local notifyOnItemOfInterest = GL.Settings:get("Rolling.notifyOnItemOfInterest");
+        local itemOfInterestSound = GL.Settings:get("Rolling.itemOfInterestSound");
+        
+        -- Play a raid warning sound
+        GL:playSound(SOUNDKIT.RAID_WARNING);
+
+        -- If this is an item of interest, play a different sound and post a message
+        local isItemOfInterest, reason = GL:isItemOfInterest(Details.id);
+        if (isItemOfInterest) then
+            local message = "";
+            local ItemOfInterestReasons = GL.Data.Constants.ItemOfInterestReasons;
+            local sound = LibStub("LibSharedMedia-3.0"):Fetch("sound", itemOfInterestSound);
+
+            -- We reserved there item
+            if (reason == ItemOfInterestReasons.RESERVE) then
+                message = L["You reserved %s!"];
+            end
+
+            -- We have the item on prio
+            if (reason == ItemOfInterestReasons.PRIOLIST) then
+                message = L["You have %s on prio!"];
+            end
+
+            -- We have the item on wishlist
+            if (reason == ItemOfInterestReasons.WISHLIST) then
+                message = L["You have %s on wishlist!"];
+            end
+
+            if (notifyOnItemOfInterest) then
+                GL:success((message):format(Details.link));
+            end
+
+            -- Play the notification sound after the raid warning has ended
+            GL:after(.8, nil, function ()
+                GL:playSound(sound);
+            end);
+
+            GL.Interface.Alerts:fire("GargulNotification", {
+                message = ("|c00BE3333%s|r"):format(L["Item of interest!"]),
+            });
+        end
 
         -- Flash the game icon in case the player alt-tabbed
         FlashClientIcon();

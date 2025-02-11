@@ -166,6 +166,29 @@ function TMB:filterNonRaiders(Entries)
     return GL:tableValues(Entries);
 end
 
+--- Fetch TMB info for a specific item and player
+--- 
+---@param itemIdentifier number|string
+---@param player string
+---@return table
+function TMB:byItemIdentifierAndPlayer(itemIdentifier, player)
+    local itemID = tonumber(itemIdentifier);
+    local identifierIsLink = type(itemIdentifier) == "string";
+
+    -- A string was provided, treat it as an item link and fetch its ID
+    if (not itemID
+        and identifierIsLink
+    ) then
+        itemID = GL:getItemIDFromLink(itemIdentifier);
+    end
+
+    if (not itemID) then
+        return {};
+    end
+
+    return self:byItemIDAndPlayer(itemIdentifier, player);
+end
+
 --- Fetch TMB info for a specific item ID and player
 ---@param itemID number
 ---@param player string

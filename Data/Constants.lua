@@ -6,6 +6,12 @@ GL.Data = GL.Data or {};
 
 ---@class Constants
 local Constants = {
+    ItemOfInterestReasons = {
+        RESERVE = 1,
+        WISHLIST = 2,
+        PRIOLIST = 3,
+    },
+
     defaultFrameTitle = string.format("Gargul |c00967FD2v%s|r", GL.version),
     discordURL = "https://discord.gg/D3mDhYPVzf",
 
