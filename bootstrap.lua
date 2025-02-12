@@ -119,6 +119,13 @@ function GL:_init()
         L.CHAT = L.CHAT.enUS;
     end
 
+    -- Make sure enUS fallbacks are available
+    setmetatable(L.CHAT, {
+        __index = function (_, key)
+            return tostring(key)
+        end,
+    });
+
     GL.Settings:onChange("chatLocale", function ()
         if (GL.Settings:get("chatLocale") ~= chatLocale) then
             C_UI.Reload();
