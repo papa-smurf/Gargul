@@ -55,6 +55,7 @@ function CreateSession:build()
     ManagementCut:SetHeight(20);
     ManagementCut:SetFullWidth(true);
     ManagementCut:SetLabel(L.GDKP_CREATE_MANAGEMENT_CUT);
+    ManagementCut:SetText(GL.Settings:get("UI.GDKP.Create.managementCut", ""));
     Window:AddChild(ManagementCut);
 
     local SessionTypeLabel = GL.AceGUI:Create("Label");
@@ -84,6 +85,18 @@ function CreateSession:build()
     SessionTypeDropdown:SetList(SessionType);
     SessionTypeDropdown:SetWidth(250);
     Window:AddChild(SessionTypeDropdown);
+
+    -- Prefill previously selected session type
+    local previousSessionType = GL.Settings:get("UI.GDKP.Create.sessionType");
+    if (previousSessionType) then
+        if (previousSessionType == "single") then
+            SessionTypeDropdown:SetText(L.GDKP_CREATE_SESSION_TYPE_SINGLE);
+            SessionTypeDropdown:SetValue("single");
+        elseif (previousSessionType == "multi") then
+            SessionTypeDropdown:SetValue("multi");
+            SessionTypeDropdown:SetText(L.GDKP_CREATE_SESSION_TYPE_MULTI);
+        end
+    end
 
     local SwitchCheckbox = AceGUI:Create("CheckBox");
     SwitchCheckbox:SetValue(false);
@@ -128,6 +141,10 @@ function CreateSession:build()
             GL:warning(L.SOMETHING_WENT_WRONG_WARNING);
             return;
         end
+
+        -- Store session creation details so we can prefill next time
+        GL.Settings:set("UI.GDKP.Create.managementCut", managementCut);
+        GL.Settings:set("UI.GDKP.Create.sessionType", type);
 
         if (SwitchCheckbox:GetValue()) then
             GDKPSession:setActive(Session.ID);
