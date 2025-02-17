@@ -166,7 +166,7 @@ function PlusOnes:handleWhisperCommand(_, message, sender)
         local name = GL:nameFormat(args[2]);
         local plusOne = self:getPlusOnes(name);
         GL:sendChatMessage(
-            (L.CHAT.PLUSONES_OTHER_BALANCE_REPLY):format(GL:capitalize(name), plusOne),
+            (L.CHAT["Player %s's +1 total is %d"]):format(GL:capitalize(name), plusOne),
             "WHISPER", nil, sender
         );
         return;
@@ -175,7 +175,7 @@ function PlusOnes:handleWhisperCommand(_, message, sender)
     local name = GL:nameFormat(sender);
     local plusOne = self:getPlusOnes(name);
     GL:sendChatMessage(
-        (L.CHAT.PLUSONES_MY_BALANCE_REPLY):format(plusOne),
+        (L.CHAT["Your +1 total is %d"]):format(plusOne),
         "WHISPER", nil, sender
     );
 end

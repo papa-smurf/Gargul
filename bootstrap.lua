@@ -115,8 +115,7 @@ function GL:_init()
     end
 
     if (not chatLocale or not langMatch) then
-        chatLocale = "enUS";
-        L.CHAT = L.CHAT.enUS;
+        L.CHAT = {};
     end
 
     -- Make sure enUS fallbacks are available

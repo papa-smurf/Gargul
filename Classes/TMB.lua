@@ -1745,7 +1745,7 @@ function TMB:announceDetailsOfItemInChat(itemID, Entries)
         end
 
         GL:sendChatMessage(
-            (L.CHAT.TMB_PRIORITY_DETAILS):format(TMB:source(), entryString),
+            (L.CHAT["%s Priority: %s"]):format(TMB:source(), entryString),
             "GROUP"
         );
     end
@@ -1780,7 +1780,7 @@ function TMB:announceDetailsOfItemInChat(itemID, Entries)
         end
 
         GL:sendChatMessage(
-            (L.CHAT.TMB_WISHLIST_DETAILS):format(entryString),
+            (L.CHAT["TMB Wishlist: %s"]):format(entryString),
             "GROUP"
         );
     end
@@ -1817,7 +1817,7 @@ function TMB:RRobinAnnounceDetailsOfItemInChat(itemID, Entries)
 
     local entryString = table.concat(EligibleEntries, ",");
     GL:sendChatMessage(
-        (L.CHAT.TMB_PRIORITY_DETAILS):format(self:source(), entryString),
+        (L.CHAT["%s Priority: %s"]):format(self:source(), entryString),
         "GROUP"
     );
 end

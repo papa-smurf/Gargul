@@ -141,7 +141,7 @@ function RollOff:postStartMessage(itemLink, time, note)
         return true;
     end
 
-    local announceMessage = (L.CHAT.ROLLING_START):format(
+    local announceMessage = (L.CHAT["You have %s seconds to roll on %s"]):format(
         time,
         itemLink
     );
@@ -152,7 +152,7 @@ function RollOff:postStartMessage(itemLink, time, note)
     if (type(note) == "string"
         and not GL:empty(note)
     ) then
-        announceMessage = (L.CHAT.ROLLING_START .. " - " .. note):format(
+        announceMessage = (L.CHAT["You have %s seconds to roll on %s"] .. " - " .. note):format(
             time,
             itemLink
         );
@@ -163,7 +163,7 @@ function RollOff:postStartMessage(itemLink, time, note)
         and not GL:empty(Reserves)
     ) then
         Reserves = table.concat(Reserves, ", ");
-        eligiblePlayersMessage = (L.CHAT.ROLLING_SOFTRES_INFO):format(Reserves);
+        eligiblePlayersMessage = (L.CHAT["This item was reserved by: %s"]):format(Reserves);
 
     -- Check if this item is on someone's TMB wish/prio list, if so: mention the player(s) first in line!
     elseif ((GL.Settings:get("TMB.announceWishlistInfoWhenRolling")
@@ -244,7 +244,7 @@ function RollOff:postStartMessage(itemLink, time, note)
             end
 
             EligiblePlayerNames = table.concat(EligiblePlayerNames, ", ");
-            eligiblePlayersMessage = (L.CHAT.ROLLING_TMB_INFO):format(source, EligiblePlayerNames);
+            eligiblePlayersMessage = (L.CHAT["These players have the highest %s prio: %s"]):format(source, EligiblePlayerNames);
         end
     end
 
@@ -386,7 +386,7 @@ function RollOff:start(CommMessage)
                     ) then
                         SecondsAnnounced[secondsLeft] = true;
 
-                        GL:sendChatMessage((L.CHAT.ROLLING_TIME_LEFT):format(secondsLeft), "GROUP");
+                        GL:sendChatMessage((L.CHAT["%s seconds to roll"]):format(secondsLeft), "GROUP");
 
                         if (GL.Settings:get("MasterLooting.announceCountdownOnce")) then
                             GL:debug("Cancel RollOff.CountDownTimer");
@@ -489,7 +489,7 @@ function RollOff:stop(CommMessage)
     if (self:startedByMe()) then
         -- Announce that the roll has ended
         if (GL.Settings:get("MasterLooting.announceRollEnd", true)) then
-            GL:sendChatMessage(L.CHAT.ROLLING_STOP, "RAID_WARNING");
+            GL:sendChatMessage(L.CHAT["Stop your rolls!"], "RAID_WARNING");
         end
 
         -- We stop listening for rolls one second after the rolloff ends just in case there is server lag/jitter

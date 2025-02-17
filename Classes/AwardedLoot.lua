@@ -340,21 +340,21 @@ function AwardedLoot:editWinner(checksum, winner, announce)
 
         local awardMessage = "";
         if (GL.BoostedRolls:enabled() and GL:higherThanZero(AwardEntry.BRCost)) then
-            awardMessage = (L.CHAT.ITEM_AWARDED_BR):format(
+            awardMessage = (L.CHAT["%s was awarded to %s for %s points. Congrats!"]):format(
                 AwardEntry.itemLink,
                 winner,
                 AwardEntry.BRCost
             );
 
         elseif (AwardEntry.GDKPCost and GL:gt(AwardEntry.GDKPCost, 0)) then
-            awardMessage = (L.CHAT.ITEM_AWARDED_GDKP):format(
+            awardMessage = (L.CHAT["%s was awarded to %s for %s. Congrats!"]):format(
                 AwardEntry.itemLink,
                 winner,
                 GL:goldToMoney(AwardEntry.GDKPCost)
             );
 
         else
-            awardMessage = (L.CHAT.ITEM_AWARDED):format(
+            awardMessage = (L.CHAT["%s was awarded to %s. Congrats!"]):format(
                 AwardEntry.itemLink,
                 winner
             );
@@ -616,21 +616,21 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, g
     if (announce) then
         local awardMessage = "";
         if (GL.BoostedRolls:enabled() and GL:higherThanZero(BRCost)) then
-            awardMessage = (L.CHAT.ITEM_AWARDED_BR):format(
+            awardMessage = (L.CHAT["%s was awarded to %s for %s points. Congrats!"]):format(
                 itemLink,
                 awardedTo,
                 BRCost
             );
 
         elseif (gdkpCost and gdkpCost > 0) then
-            awardMessage = (L.CHAT.ITEM_AWARDED_GDKP):format(
+            awardMessage = (L.CHAT["%s was awarded to %s for %s. Congrats!"]):format(
                 itemLink,
                 awardedTo,
                 GL:goldToMoney(gdkpCost)
             );
 
         else
-            awardMessage = (L.CHAT.ITEM_AWARDED):format(
+            awardMessage = (L.CHAT["%s was awarded to %s. Congrats!"]):format(
                 itemLink,
                 awardedTo
             );
@@ -843,7 +843,7 @@ function AwardedLoot:initiateTrade(AwardDetails)
             if (not success) then
                 if (Settings:get("AwardingLoot.notifyOfFailedTradeStart")) then
                     GL:sendChatMessage(
-                        GL:printfn(L.CHAT.TRADE_START_FAILED, {
+                        GL:printfn(L.CHAT["I tried to trade you, but was unsuccessful - trade me for ${item} asap!"], {
                             item = AwardDetails.itemLink or "?",
                         }),
                         "WHISPER", nil, tradingPartner

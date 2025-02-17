@@ -267,21 +267,21 @@ function GroupVersionCheck:build()
     ReportButton:SetPoint("BOTTOMLEFT", Window, "BOTTOMLEFT", 20, 30);
     ReportButton:SetScript("OnClick", function ()
         if (not GL:empty(self.Results.Unresponsive)) then
-            GL:sendChatMessage(L.CHAT.VERSION_CHECK_MISSING, "GROUP", nil, nil, false);
+            GL:sendChatMessage(L.CHAT["Gargul missing for:"], "GROUP", nil, nil, false);
             for _, player in pairs(self.Results.Unresponsive) do
                 GL:sendChatMessage(player, "GROUP", nil, nil, false);
             end
         end
 
         if (not GL:empty(self.Results.Outdated)) then
-            GL:sendChatMessage(L.CHAT.VERSION_CHECK_OUTDATED, "GROUP", nil, nil, false);
+            GL:sendChatMessage(L.CHAT["Gargul outdated for:"], "GROUP", nil, nil, false);
             for _, player in pairs(self.Results.Outdated) do
                 GL:sendChatMessage(player, "GROUP", nil, nil, false);
             end
         end
 
         if (not GL:empty(self.Results.Offline)) then
-            GL:sendChatMessage(L.CHAT.VERSION_CHECK_OFFLINE, "GROUP");
+            GL:sendChatMessage(L.CHAT["The following players were offline:"], "GROUP");
             for _, player in pairs(self.Results.Offline) do
                 GL:sendChatMessage(player, "GROUP", nil, nil, false);
             end

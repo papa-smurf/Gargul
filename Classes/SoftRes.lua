@@ -144,7 +144,7 @@ function SoftRes:handleWhisperCommand(_, message, sender)
     -- Nothing reserved
     if (GL:empty(Reserves)) then
         GL:sendChatMessage(
-            L.CHAT.SOFTRES_NO_RESERVES_REPLY,
+            L.CHAT["It seems like you didn't soft-reserve anything yet, check the soft-res sheet or ask your loot master"],
             "WHISPER", nil, sender
         );
 
@@ -165,7 +165,7 @@ function SoftRes:handleWhisperCommand(_, message, sender)
             local entryString = Entry.link;
 
             if (Reserves[itemIDString] > 1) then
-                entryString = (L.CHAT.SOFTRES_MY_RESERVED_ITEM_REPLY):format(entryString, Reserves[itemIDString]);
+                entryString = (L.CHAT["%s (%sx)"]):format(entryString, Reserves[itemIDString]);
             end
 
             tinsert(Entries, entryString);
@@ -174,7 +174,7 @@ function SoftRes:handleWhisperCommand(_, message, sender)
         -- Let the sender know what he/she soft-reserved
         if (not GL:empty(Entries)) then
             GL:sendChatMessage(
-                (L.CHAT.SOFTRES_MY_RESERVES_REPLY):format(table.concat(Entries, " ")),
+                (L.CHAT["You reserved %s"]):format(table.concat(Entries, " ")),
                 "WHISPER", nil, sender
             );
 
@@ -981,7 +981,7 @@ function SoftRes:import(data, openOverview)
             )
         ) then
             GL:sendChatMessage(
-                L.CHAT.SOFTRES_DATA_IMPORTED,
+                L.CHAT["I just imported soft-reserves into Gargul. Whisper !sr to double-check your reserves!"],
                 "GROUP"
             );
         end
@@ -1548,7 +1548,7 @@ function SoftRes:postMissingSoftReserves()
 
     -- Post the link in the chat for all group members to see
     GL:sendChatMessage(
-        (L.CHAT.SOFTRES_MISSING_RESERVES):format(table.concat(PlayerNames, " ")),
+        (L.CHAT["Missing soft-reserves from: %s"]):format(table.concat(PlayerNames, " ")),
         "GROUP"
     );
 

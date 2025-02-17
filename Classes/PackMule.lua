@@ -938,7 +938,7 @@ function PackMule:setDisenchanter(disenchanter)
     self.disenchanter = GL:addRealm(disenchanter);
 
     GL:sendChatMessage(
-        (L.CHAT.PACKMULE_DISENCHANTER_SET):format(GL:nameFormat(self.disenchanter)),
+        (L.CHAT["%s was set as disenchanter"]):format(GL:nameFormat(self.disenchanter)),
         "GROUP"
     );
 end
@@ -953,7 +953,7 @@ function PackMule:announceDisenchantment(itemLink)
     end
 
     GL:sendChatMessage(
-        (L.CHAT.PACKMULE_DISENCHANTMENT_NOTICE):format(itemLink, GL:disambiguateName(self.disenchanter)),
+        (L.CHAT["%s will be disenchanted by %s"]):format(itemLink, GL:disambiguateName(self.disenchanter)),
         "GROUP"
     );
 end
