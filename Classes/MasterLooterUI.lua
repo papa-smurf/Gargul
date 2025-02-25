@@ -6,19 +6,22 @@ local _, GL = ...;
 GL.RollOff = GL.RollOff or {}; ---@type RollOff
 GL.ScrollingTable = GL.ScrollingTable or LibStub("ScrollingTable");
 
+local AceGUI = GL.AceGUI;
+local ScrollingTable = GL.ScrollingTable;
+
 ---@class MasterLooterUI
-GL.MasterLooterUI = {
+local MasterLooterUI = {
     ItemBoxHoldsValidItem = false,
     PlayersTable = {},
     Defaults = {
         itemIcon = "Interface/Icons/INV_Misc_QuestionMark",
         itemBoxText = "",
     },
+    awardedCurrentItem = true,
 };
 
-local AceGUI = GL.AceGUI;
-local MasterLooterUI = GL.MasterLooterUI; ---@type MasterLooterUI
-local ScrollingTable = GL.ScrollingTable;
+---@type MasterLooterUI
+GL.MasterLooterUI = MasterLooterUI;
 
 --- This is the UI the person who rolls off an item uses to prepare everything e.g:
 --- Select an item
@@ -26,7 +29,6 @@ local ScrollingTable = GL.ScrollingTable;
 --- Award the item to the winner
 ---
 ---@param itemLink string|nil
----@return void
 function MasterLooterUI:draw(itemLink)
     if (GL.User.isInGroup
         and not GL.User.isMasterLooter
@@ -415,7 +417,8 @@ function MasterLooterUI:draw(itemLink)
                         end
                     end
 
-                    return GL.RollOff:award(selectedPlayer, GL.Interface:get(self, "EditBox.Item"):GetText(), RollBracket, identicalRollDetected);
+                    self.awardedCurrentItem = true;
+                    GL.RollOff:award(selectedPlayer, GL.Interface:get(self, "EditBox.Item"):GetText(), RollBracket, identicalRollDetected);
                 end);
                 GL.Interface:addTooltip(AwardButton, function ()
                     if (GL.Settings:get("AwardingLoot.skipAwardConfirmationDialog")) then
@@ -547,7 +550,6 @@ function MasterLooterUI:draw(itemLink)
     end
 end
 
----@return void
 function MasterLooterUI:close()
     -- When the master looter closes the master loot window with a master
     -- loot still in progress we show the reopen master looter button
@@ -970,8 +972,56 @@ function MasterLooterUI:passItemLink(itemLink)
         return GL:warning(L.ROLLING_ROLL_IN_PROGRESS_WARNING);
     end
 
-    GL.Interface:get(self, "EditBox.Item"):SetText(itemLink);
-    return MasterLooterUI:update();
+    local ItemBox = GL.Interface:get(self, "EditBox.Item");
+    local currentItemLink = ItemBox:GetText();
+    if (currentItemLink == itemLink) then
+        return;
+    end
+
+    local onConfirm = function ()
+        self.awardedCurrentItem = false;
+
+        GL.Interface:get(self, "EditBox.Item"):SetText(itemLink);
+        return MasterLooterUI:update();
+    end
+
+    -- Show a warning when a player forgets to award an item
+    if (not GL:empty(GL.RollOff.CurrentRollOff.Rolls)
+        and not self.awardedCurrentItem
+        and GL.Settings:get("UI.RollOff.warnWhenNotAwarded", true)
+    ) then
+        StaticPopupDialogs["NEW_ROLL_WITHOUT_AWARDING_PREVIOUS_DIALOG"] = {
+            text = "\n" .. L["Are you sure you want to start a new roll?\n\nYou still need to award %s by selecting a roll and clicking the 'Award' button."]:format(currentItemLink) .. "\n\n\n\n\n",
+            button1 = L["New roll"],
+            button2 = L.CANCEL,
+            OnAccept = function(self)
+                GL.Settings:set("UI.RollOff.warnWhenNotAwarded", self.Checkbox:GetChecked());
+                onConfirm();
+            end,
+            OnCancel = function(self)
+                GL.Settings:set("UI.RollOff.warnWhenNotAwarded", self.Checkbox:GetChecked());
+            end,
+            OnShow = function(self)
+                if (self.Checkbox) then
+                    return;
+                end
+
+                local Checkbox = CreateFrame("CheckButton", "GARGUL_NEW_ROLL_WITHOUT_AWARDING_PREVIOUS_DIALOG_CHECKBOX", self, "UICheckButtonTemplate");
+                Checkbox:SetChecked(true);
+                _G[Checkbox:GetName() .. "Text"]:SetText(L["Remind me to award"]);
+                Checkbox:SetPoint("BOTTOMLEFT", self.text, "BOTTOMLEFT", 0, -4);
+                self.Checkbox = Checkbox;
+            end,
+            timeout = 0,
+            whileDead = true,
+            hideOnEscape = true,
+            showAlert = true,
+        }
+
+        StaticPopup_Show("NEW_ROLL_WITHOUT_AWARDING_PREVIOUS_DIALOG");
+    else
+        onConfirm();
+    end
 end
 
 -- Update the master looter UI based on the value of the ItemBox input
@@ -1038,6 +1088,7 @@ function MasterLooterUI:reset(keepItem)
     keepItem = GL:toboolean(keepItem);
 
     if (not keepItem) then
+        self.awardedCurrentItem = true;
         GL.Interface:get(self, "Icon.Item"):SetImage(MasterLooterUI.Defaults.itemIcon);
         GL.Interface:get(self, "EditBox.Item"):SetText(MasterLooterUI.Defaults.itemText);
         GL.Interface:get(self, "EditBox.Duration"):SetText(GL.Settings:get("UI.RollOff.timer"));
