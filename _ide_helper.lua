@@ -57,6 +57,18 @@ AceGUIFrame.frame = Frame;
 ---@type AceGUISimpleGroup
 AceGUIFrame.statustext = {};
 
+---@type table
+StaticPopupDialogs = {};
+
+---@type function
+StaticPopup_Show = function() end;
+
+---@type function
+StaticPopup_Hide = function() end;
+
+---@type function
+MoneyFrame_Update = function() end;
+
 -- [[ AceGUISimpleGroup ]]
 ---@param Child table
 function AceGUISimpleGroup:AddChild(Child) end

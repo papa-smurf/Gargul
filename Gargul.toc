@@ -57,6 +57,7 @@ Classes/JSON.lua
 Classes/Base64.lua
 Classes/UI.lua
 Classes/DB.lua
+Classes/Dialog.lua
 Classes/Settings.lua
 Classes/Profiler.lua
 Classes/SoftRes.lua

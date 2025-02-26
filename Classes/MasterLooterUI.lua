@@ -9,6 +9,9 @@ GL.ScrollingTable = GL.ScrollingTable or LibStub("ScrollingTable");
 local AceGUI = GL.AceGUI;
 local ScrollingTable = GL.ScrollingTable;
 
+---@type Dialog
+local Dialog = GL.Dialog;
+
 ---@class MasterLooterUI
 local MasterLooterUI = {
     ItemBoxHoldsValidItem = false,
@@ -22,6 +25,37 @@ local MasterLooterUI = {
 
 ---@type MasterLooterUI
 GL.MasterLooterUI = MasterLooterUI;
+
+GL.Dialog:register("NEW_ROLL_WITHOUT_AWARDING_PREVIOUS", {
+    message = L["Are you sure you want to start a new roll?\n\nYou still need to award ${item} by selecting a roll and clicking the 'Award' button."],
+    paddingBottom = 2,
+    Buttons = {
+        {
+            label = L["New roll"],
+            onClick = function (_, Data)
+                GL.Settings:set("UI.RollOff.warnWhenNotAwarded", Data.AppendedFrame:GetChecked());
+                Data.onAccept();
+            end
+        },
+        {
+            label = L.CANCEL,
+            onClick = function (_, Data)
+                GL.Settings:set("UI.RollOff.warnWhenNotAwarded", Data.AppendedFrame:GetChecked());
+            end
+        },
+    },
+    AppendFrame = (function()
+        local checkBoxName = "GARGUL_NEW_ROLL_WITHOUT_AWARDING_PREVIOUS_DIALOG_CHECKBOX";
+        local Checkbox = _G[checkBoxName] or CreateFrame("CheckButton", "GARGUL_NEW_ROLL_WITHOUT_AWARDING_PREVIOUS_DIALOG_CHECKBOX", nil, "UICheckButtonTemplate");
+        Checkbox:SetChecked(true);
+        _G[checkBoxName .. "Text"]:SetText(L["Remind me to award"]);
+
+        return Checkbox;
+    end)(),
+    onShow = function(self, Data)
+        Data.AppendedFrame:SetPoint("LEFT", _G[self:GetName().."Button1"], "LEFT", 0, 0); -- Align with leftmost button
+    end,
+});
 
 --- This is the UI the person who rolls off an item uses to prepare everything e.g:
 --- Select an item
@@ -978,7 +1012,7 @@ function MasterLooterUI:passItemLink(itemLink)
         return;
     end
 
-    local onConfirm = function ()
+    local award = function ()
         self.awardedCurrentItem = false;
 
         GL.Interface:get(self, "EditBox.Item"):SetText(itemLink);
@@ -990,37 +1024,15 @@ function MasterLooterUI:passItemLink(itemLink)
         and not self.awardedCurrentItem
         and GL.Settings:get("UI.RollOff.warnWhenNotAwarded", true)
     ) then
-        StaticPopupDialogs["NEW_ROLL_WITHOUT_AWARDING_PREVIOUS_DIALOG"] = {
-            text = "\n" .. L["Are you sure you want to start a new roll?\n\nYou still need to award %s by selecting a roll and clicking the 'Award' button."]:format(currentItemLink) .. "\n\n\n\n\n",
-            button1 = L["New roll"],
-            button2 = L.CANCEL,
-            OnAccept = function(self)
-                GL.Settings:set("UI.RollOff.warnWhenNotAwarded", self.Checkbox:GetChecked());
-                onConfirm();
-            end,
-            OnCancel = function(self)
-                GL.Settings:set("UI.RollOff.warnWhenNotAwarded", self.Checkbox:GetChecked());
-            end,
-            OnShow = function(self)
-                if (self.Checkbox) then
-                    return;
-                end
-
-                local Checkbox = CreateFrame("CheckButton", "GARGUL_NEW_ROLL_WITHOUT_AWARDING_PREVIOUS_DIALOG_CHECKBOX", self, "UICheckButtonTemplate");
-                Checkbox:SetChecked(true);
-                _G[Checkbox:GetName() .. "Text"]:SetText(L["Remind me to award"]);
-                Checkbox:SetPoint("BOTTOMLEFT", self.text, "BOTTOMLEFT", 0, -4);
-                self.Checkbox = Checkbox;
-            end,
-            timeout = 0,
-            whileDead = true,
-            hideOnEscape = true,
-            showAlert = true,
-        }
-
-        StaticPopup_Show("NEW_ROLL_WITHOUT_AWARDING_PREVIOUS_DIALOG");
+        GL.Dialog:show("NEW_ROLL_WITHOUT_AWARDING_PREVIOUS", {
+            itemLink = currentItemLink,
+            Replace = {
+                item = currentItemLink,
+            },
+            onAccept = award
+        });
     else
-        onConfirm();
+        award();
     end
 end
 
