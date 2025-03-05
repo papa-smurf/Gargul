@@ -1,5 +1,5 @@
-## Interface: 110005, 110007
-## Interface-Wrath: 30403, 30404
+## Interface: 110007, 110100
+## Interface-Wrath: 30403
 ## Interface-Classic: 11505, 11506
 ## Interface-Cata: 40401, 40402
 ## Title: Gargul |c00967FD2@project-version@|r
@@ -16,7 +16,7 @@
 ## Notes: Loot addon that supports GDKP, softres sr, thatsmybis tmb, auto looting, +1 tracking and much more
 ## IconTexture: Interface\AddOns\Gargul\Assets\Buttons\minimap
 ## Author: Zhorax - Firemaw
-## Version: 7.6.17
+## Version: 7.6.18
 ## DefaultState: enabled
 ## SavedVariables: GargulDB
 ## X-Donate: https://www.patreon.com/gargul
