@@ -18,6 +18,11 @@ local Dialog = {};
 ---@type Dialog
 GL.Dialog = Dialog;
 
+local MoneyFrame_Update = _G.MoneyFrame_Update;
+local StaticPopupDialogs = _G.StaticPopupDialogs;
+local StaticPopup_Hide = _G.StaticPopup_Hide;
+local StaticPopup_Show = _G.StaticPopup_Show;
+
 ---@param identifier string
 ---@return string
 function Dialog:normalizeIdentifier(identifier)
@@ -27,8 +32,6 @@ function Dialog:normalizeIdentifier(identifier)
 
     return strupper(identifier);
 end
-
-local StaticPopupDialogs = _G.StaticPopupDialogs;
 
 ---@param identifier string
 ---@return boolean
@@ -64,15 +67,6 @@ function Dialog:normalizeRegistrationDetails(Details)
         useLinkForItemInfo = Details.itemLink,
         whileDead = Details.showWhileDead ~= false,
     };
-
-    -- Displays the money frame, such as when sending money through in-game mail
-    if (Details.showMoney) then
-        Details.hasMoneyFrame = true;
-        Details.onShow = function (self, Data)
-            _G.MoneyFrame_Update(self.moneyFrame, Data.copper);
-            Details.onShow(self);
-        end;
-    end
 
     -- Add top padding to the dialog label
     local paddingTop = Details.paddingTop == nil and 1 or Details.paddingTop;
@@ -111,7 +105,7 @@ function Dialog:hide(identifier)
         return;
     end
 
-    _G.StaticPopup_Hide(identifier);
+    StaticPopup_Hide(identifier);
 end
 
 ---@param identifier string
@@ -140,7 +134,7 @@ function Dialog:show(identifier, Details)
     if (Details.copper) then
         Dialog.hasMoneyFrame = true;
         Dialog.OnShow = function (self)
-            _G.MoneyFrame_Update(self.moneyFrame, Details.copper);
+            MoneyFrame_Update(self.moneyFrame, Details.copper);
             return Dialog.originalOnShow and Dialog.originalOnShow(self, Details) or nil;
         end;
     end
@@ -156,11 +150,11 @@ function Dialog:show(identifier, Details)
         Details.link = Details.itemLink;
 
         GL:onItemLoadDo(Details.itemLink, function ()
-            _G.StaticPopup_Show(identifier, "", "", Details, AppendFrame);
+            StaticPopup_Show(identifier, "", "", Details, AppendFrame);
         end);
 
         return;
     end
 
-    return _G.StaticPopup_Show(identifier, "", "", Details, AppendFrame);
+    return StaticPopup_Show(identifier, "", "", Details, AppendFrame);
 end
