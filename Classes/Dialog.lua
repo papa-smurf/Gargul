@@ -12,20 +12,72 @@ selectCallbackByIndex needs to be enabled in order to use OnButton3 etc
 ---@type GL
 local _, GL = ...;
 
----@class Dialog
-local Dialog = {};
-
----@type Dialog
-GL.Dialog = Dialog;
-
+local Item = _G.Item;
 local MoneyFrame_Update = _G.MoneyFrame_Update;
 local StaticPopupDialogs = _G.StaticPopupDialogs;
 local StaticPopup_Hide = _G.StaticPopup_Hide;
 local StaticPopup_Show = _G.StaticPopup_Show;
 
+local Defaults = {
+    Details = {},
+
+    hideOnEscape = false,
+    selectCallbackByIndex = true,
+    whileDead = true,
+};
+
+---@class Dialog
+---@field AppendFrame Frame
+---@field AppendedFrame Frame
+---@field OnHide? function
+---@field OnShow? function
+---@field Replace? table
+---
+---@field copper? number
+---@field dialogType string
+---@field hasItemFrame? boolean
+---@field hasMoneyFrame? boolean
+---@field hideOnEscape boolean
+---@field itemLink? string
+---@field link? string
+---@field normalizedType string
+---@field onHide? function
+---@field onShow? function
+---@field originalText? string
+---@field paddingBottom? number
+---@field paddingTop? number
+---@field text? string
+---@field useLinkForItemInfo? string
+---@field whileDead boolean
+---@field originalOnShow? function
+---
+---@field button1? boolean
+---@field OnButton1? function
+---@field DisplayButton1? function
+---@field button2? boolean
+---@field OnButton2? function
+---@field DisplayButton2? function
+---@field button3? boolean
+---@field OnButton3? function
+---@field DisplayButton3? function
+---@field button4? boolean
+---@field OnButton4? function
+---@field DisplayButton4? function
+local Dialog = {};
+Dialog.__index = Dialog;
+
+---@type Dialog
+GL.Dialog = Dialog;
+
+setmetatable(Dialog, {
+    __call = function (self, ...)
+        return self.new(...);
+    end,
+});
+
 ---@param identifier string
 ---@return string
-function Dialog:normalizeIdentifier(identifier)
+local function normalizeType(identifier)
     if (not GL:strStartsWith(identifier, "gargul")) then
         identifier = "GARGUL_" .. identifier .. "_DIALOG";
     end
@@ -33,128 +85,226 @@ function Dialog:normalizeIdentifier(identifier)
     return strupper(identifier);
 end
 
----@param identifier string
----@return boolean
-function Dialog:exists(identifier)
-    identifier = self:normalizeIdentifier(identifier);
-    return StaticPopupDialogs[identifier] ~= nil;
+---@param dialogType string
+---@return Dialog
+function Dialog.new(dialogType)
+    local self = setmetatable(Defaults, Dialog);
+    self.dialogType = dialogType;
+    self.normalizedType = normalizeType(dialogType);
+
+    StaticPopupDialogs[self.normalizedType] = self;
+
+    return self;
 end
 
----@param identifier string
----@param Details { message: string, paddingTop?: number, paddingBottom?: number, hideOnEscape?: boolean, whileDead?: boolean, Buttons?: [{ label: string, onclick?: function, display?: fun(Data?: any): boolean }], onShow?:function, AppendFrame?: Frame }
-function Dialog:register(identifier, Details)
-    identifier = self:normalizeIdentifier(identifier);
-    Details = self:normalizeRegistrationDetails(Details);
+---@param message string
+---@return Dialog
+function Dialog:setMessage(message)
+    self.originalText = message;
+    self.text = message;
 
-    StaticPopupDialogs[identifier] = Details;
+    return self;
 end
 
----@param Details table
----@return table
-function Dialog:normalizeRegistrationDetails(Details)
-    if (not Details or GL:empty(Details)) then
-        return {};
+---@param padding integer
+---@return Dialog
+function Dialog:setPaddingTop(padding)
+    self.paddingTop = padding;
+    return self;
+end
+
+---@param padding integer
+---@return Dialog
+function Dialog:setPaddingBottom(padding)
+    self.paddingBottom = padding;
+    return self;
+end
+
+---@param closeOnEscape boolean
+---@return Dialog
+function Dialog:setCloseOnEscape(closeOnEscape)
+    self.hideOnEscape = closeOnEscape;
+    return self;
+end
+
+---@param showWhileDead boolean
+---@return Dialog
+function Dialog:setShowWhileDead(showWhileDead)
+    self.whileDead = showWhileDead;
+    return self;
+end
+
+---@param isAlert? boolean
+---@return Dialog
+function Dialog:isAlert(isAlert)
+    self.showAlert = isAlert ~= false;
+    return self;
+end
+
+--- Accepts 4 buttons
+---@param Buttons [{ label: string, onclick?: function, display?: fun(Data?: any): boolean }]
+---@return Dialog
+function Dialog:setButtons(Buttons)
+    for i = 1, 4 do
+        local Button = Buttons[i] or {
+            label = nil,
+            onClick = nil,
+            display = nil,
+        };
+
+        self["button" .. i] = Button.label;
+        self["OnButton" .. i] = Button.onClick and function ()
+            Button.onClick(self, self.Details);
+        end or nil;
+        self["DisplayButton" .. i] = Button.display;
     end
 
-    local Normalized = {
-        AppendFrame = Details.AppendFrame,
-        OnShow = Details.onShow,
+    return self;
+end
 
-        hideOnEscape = Details.hideOnEscape == true,
-        originalOnShow = Details.onShow,
-        selectCallbackByIndex = true,
-        text = Details.message,
-        useLinkForItemInfo = Details.itemLink,
-        whileDead = Details.showWhileDead ~= false,
-    };
+---@param AppendFrame Frame
+---@return Dialog
+function Dialog:appendFrame(AppendFrame)
+    self.AppendFrame = AppendFrame;
+    self.AppendedFrame = AppendFrame;
 
-    -- Add top padding to the dialog label
-    local paddingTop = Details.paddingTop == nil and 1 or Details.paddingTop;
+    return self;
+end
+
+---@param itemLink? string
+---@return Dialog
+function Dialog:setItemLink(itemLink)
+    if (not itemLink) then
+        self.hasItemFrame = false;
+        self.useLinkForItemInfo = nil;
+        self.itemLink = nil;
+        self.link = nil;
+
+        return self;
+    end
+
+    self.hasItemFrame = true;
+    self.useLinkForItemInfo = itemLink;
+    self.itemLink = itemLink;
+    self.link = itemLink;
+
+    return self;
+end
+
+---@param copper? number
+---@return Dialog
+function Dialog:setCopper(copper)
+    if (not copper) then
+        self.hasMoneyFrame  = false;
+        self.copper = nil;
+
+        return self;
+    end
+
+    self.hasMoneyFrame = true;
+    self.copper = copper;
+
+    return self;
+end
+
+---@param Replacements table
+---@return Dialog
+function Dialog:replace(Replacements)
+    self.Replace = Replacements;
+    return self;
+end
+
+---@param onShow? function
+---@return Dialog
+function Dialog:setOnShow(onShow)
+    self.OnShow = onShow;
+    self.originalOnShow = onShow;
+
+    return self;
+end
+
+---@param onHide? function
+---@return Dialog
+function Dialog:setOnHide(onHide)
+    self.onHide = onHide;
+    self.OnHide = onHide;
+
+    return self;
+end
+
+---@param Details? any
+---@param callback? function
+---@return Dialog
+function Dialog:show(Details, callback)
+    ---@type Frame
+    local ResultFrame;
+    callback = callback or function () end;
+
+    -- Reset the text, removing any previous padding
+    self.text = self.originalText;
+
+    --- Reset details
+    self.Details = Details;
+
+    --- Replace text placeholders
+    if (self.Replace) then
+        self.text = GL:printfn(self.text, self.Replace);
+    end
+
+    local paddingTop = self.paddingTop == nil and 1 or self.paddingTop;
     if (paddingTop > 0) then
-        Normalized.text = string.rep("\n", paddingTop) .. Normalized.text;
+        self.text = string.rep("\n", paddingTop) .. self.text;
     end
 
-    -- Add bottom padding to the dialog label
-    local paddingBottom = Details.paddingBottom == nil and 1 or Details.paddingBottom;
-    if (paddingBottom > 0) then
-        Normalized.text = Normalized.text .. string.rep("\n", paddingBottom);
+    if (self.paddingBottom and self.paddingBottom > 0) then
+        self.text = self.text .. string.rep("\n", self.paddingBottom);
     end
 
-    local i = 1;
-    for _, Button in pairs(Details.Buttons or {}) do
-        Normalized["button" .. i] = Button.label;
-        Normalized["OnButton" .. i] = Button.onClick;
-        Normalized["DisplayButton" .. i] = Button.display;
-        i = i + 1;
+    -- Make sure the correct amount of gold is shown
+    if (self.copper) then
+        self.OnShow = function (DialogFrame)
+            MoneyFrame_Update(DialogFrame.moneyFrame, self.copper);
+            return self.originalOnShow and self.originalOnShow(self, DialogFrame) or nil;
+        end;
+    else
+        self.OnShow = function (DialogFrame)
+            return self.originalOnShow and self.originalOnShow(self, DialogFrame) or nil;
+        end;
     end
 
-    Normalized.originalText = Normalized.text;
-    return Normalized;
+    -- Make sure the correct item is shown
+    if (self.itemLink) then
+        -- Check if we can immediately show the dialog or whether
+        -- we have to fetch the item details first
+        local ItemResult = Item:CreateFromItemLink(self.itemLink);
+        if (not ItemResult:IsItemDataCached()) then
+            GL:onItemLoadDo(self.itemLink, function ()
+                ResultFrame = StaticPopup_Show(self.normalizedType, "", "", self, self.AppendFrame);
+                callback(ResultFrame);
+            end);
+
+            return self;
+        end
+    end
+
+    ResultFrame = StaticPopup_Show(self.normalizedType, "", "", self, self.AppendFrame);
+    callback(ResultFrame);
+
+    return self;
 end
 
----@param identifier string
-function Dialog:unregister(identifier)
-    identifier = self:normalizeIdentifier(identifier);
-    StaticPopupDialogs[identifier] = nil;
+---@return Dialog
+function Dialog:unregister()
+    StaticPopupDialogs[self.normalizedType] = nil;
+    return self;
 end
 
 ---@param identifier string
 function Dialog:hide(identifier)
-    identifier = self:normalizeIdentifier(identifier);
+    identifier = identifier and normalizeType(identifier) or self.normalizedType;
     if (not StaticPopupDialogs[identifier]) then
         return;
     end
 
     StaticPopup_Hide(identifier);
-end
-
----@param identifier string
----@param Details { copper?: number, itemLink?: string, Replace?: table<string, string> }
----
---- Reserved:
---- useLinkForItemInfo - When using hasItemFrame = true in register
---- Replace - Replaces dialog message placholders using printfn
---- 
---- Note:
---- Will return nil when dialog doesn't exist or when itemLink is provided
----
----@return boolean?
-function Dialog:show(identifier, Details)
-    Details = Details or {};
-    identifier = self:normalizeIdentifier(identifier);
-    local Dialog = StaticPopupDialogs[identifier];
-    if (not Dialog) then
-        return;
-    end
-
-    local AppendFrame = Details.AppendFrame or Dialog.AppendFrame;
-    Details.AppendedFrame = AppendFrame;
-
-    -- Make sure the correct amount of gold is shown
-    if (Details.copper) then
-        Dialog.hasMoneyFrame = true;
-        Dialog.OnShow = function (self)
-            MoneyFrame_Update(self.moneyFrame, Details.copper);
-            return Dialog.originalOnShow and Dialog.originalOnShow(self, Details) or nil;
-        end;
-    end
-
-    if (Details.Replace) then
-        Dialog.text = GL:printfn(Dialog.originalText, Details.Replace);
-    end
-
-    -- Make sure the correct item is shown
-    if (Details.itemLink) then
-        Dialog.hasItemFrame = true;
-        Details.useLinkForItemInfo = Details.itemLink;
-        Details.link = Details.itemLink;
-
-        GL:onItemLoadDo(Details.itemLink, function ()
-            StaticPopup_Show(identifier, "", "", Details, AppendFrame);
-        end);
-
-        return;
-    end
-
-    return StaticPopup_Show(identifier, "", "", Details, AppendFrame);
 end
