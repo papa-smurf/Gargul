@@ -1058,16 +1058,16 @@ L.CHAT = {
 
     --[[ zhTW ]]
     zhTW = {
-        PASS = "經過",
-        FLIGHT_ATTENDANT = "我正在使用 Gargul 來分發戰利品。它使滾動變得更容易，所以一定要嘗試！",
+        PASS = "放棄",
+        FLIGHT_ATTENDANT = "我正在使用 Gargul 來分裝。它使分裝變得更容易，值得一試！",
 
         --[[ VERSION CHECK ]]
-        VERSION_CHECK_MISSING = "加古爾失蹤原因：",
-        VERSION_CHECK_OUTDATED = "Gargul 已過時：",
+        VERSION_CHECK_MISSING = "未安裝 Gargul：",
+        VERSION_CHECK_OUTDATED = "Gargul 版本過舊：",
         VERSION_CHECK_OFFLINE = "以下玩家離線：",
 
         --[[ ITEM AWARDED ]]
-        ITEM_AWARDED = "%s 被授予 %s。恭喜！",
+        ITEM_AWARDED = "%s 的幸運得主為 %s 。恭喜！",
         ITEM_AWARDED_BR = "%s 被授予 %s %s 積分。恭喜！",
         ITEM_AWARDED_GDKP = "%s 因 %s 而被授予 %s。恭喜！",
 
@@ -1080,7 +1080,7 @@ L.CHAT = {
         GOLD_TRADE_RECEIVED_RESTORED = "我恢復了一筆黃金交易，其中我從 %s 收到了 %s",
 
         --[[ TRADE TIME ]]
-        TRADETIME_BROADCAST_PREFIX = "我還有以下物品需要交易",
+        TRADETIME_BROADCAST_PREFIX = "我還有以下物品尚未交易",
 
         --[[ BOOSTED ROLLS ]]
         BOOSTED_ROLLS_MY_BALANCE_REPLY = "你的 %s 卷是 /rnd %d-%d%s",
@@ -1089,8 +1089,8 @@ L.CHAT = {
 
         --[[ PLUS ONES ]]
         PLUSONES_PLUS_SIGN = "+",
-        PLUSONES_MY_BALANCE_REPLY = "您的 +1 總數為 %d",
-        PLUSONES_OTHER_BALANCE_REPLY = "玩家 %s 的 +1 總數為 %d",
+        PLUSONES_MY_BALANCE_REPLY = "您的拿裝總數為 %d",
+        PLUSONES_OTHER_BALANCE_REPLY = "玩家 %s 的拿裝總數為 %d",
 
         --[[ GDKP ]]
         GDKP_I_OWE_YOU = "我欠你%s。享受！",
@@ -1136,17 +1136,17 @@ L.CHAT = {
         PACKMULE_DISENCHANTMENT_NOTICE = "%s將會因%s而不再抱持幻想",
 
         --[[ ROLLING ]]
-        ROLLING_START = "您還有 %s 秒時間繼續 %s",
-        ROLLING_STOP = "停止你的捲！",
-        ROLLING_TIME_LEFT = "%s 秒滾動",
+        ROLLING_START = "倒數 %s 秒，裝備為 %s",
+        ROLLING_STOP = "停！",
+        ROLLING_TIME_LEFT = "倒數 %s 秒",
         ROLLING_SOFTRES_INFO = "此項目已保留：%s",
         ROLLING_TMB_INFO = "以下玩家的 %s 優先順序最高：%s", -- First %s can be TMB/DFT/CPR
 
         --[[ TradeWindow / Trade ]]
-        TRADE_START_FAILED = "I tried to trade you, but was unsuccessful - trade me for ${item} asap!",
+        TRADE_START_FAILED = "我嘗試與你交易，但失敗了。麻煩盡速與我交易 ${item} !",
         TRADE_TO = "%s 至 %s",
         TRADE_TO_PART = "至 %s",
-        TRADE_GAVE = "我給了%s",
+        TRADE_GAVE = "我給出了 %s",
         TRADE_GAVE_GOLD = "我把 %s 給了 %s",
         TRADE_GAVE_MULTIPLE_OF_ITEM = "我給了 %sx%s", -- I gave [item]x3
         TRADE_GAVE_ENCHANTMENT = "我為 %s 對 %s 施了魔法",
@@ -1162,7 +1162,7 @@ L.CHAT = {
         TRADE_GOT_ENCHANTMENT_AND_GOLD_AND_GAVE_ENCHANTMENT = "%s 用 %s 對我的 %s 施了魔法，並給了我 %s。我用 %s 迷住了他們的 %s",
         TRADE_FROM = "%s 來自 %s",
         TRADE_FROM_PART = "來自 %s",
-        TRADE_RECEIVED = "我收到%s",
+        TRADE_RECEIVED = "我收到了 %s",
         TRADE_RECEIVED_GOLD = "我收到了來自 %s 的 %s",
         TRADE_RECEIVED_MULTIPLE_OF_ITEM = "我收到了 %sx%s", -- I gave [item]x3
         TRADE_RECEIVED_ENCHANTMENT_AFTER_ITEMS_PART = "來自 %s 並讓我的 %s 著迷於 %s",
