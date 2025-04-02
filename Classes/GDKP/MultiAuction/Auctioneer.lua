@@ -999,10 +999,19 @@ function Auctioneer:closeAuction(auctionID)
         local HighestBidPerPlayer = {};
         local TopBids = Client.AuctionDetails.Auctions[auctionID].BidsPerPlayer;
         for player, bid in pairs(TopBids or {}) do
-            bid = tonumber(bid) or 0;
+            (function ()
+                bid = tonumber(bid) or 0;
 
-            if (GL:gt(bid, 0)) then
+                if (not GL:gt(bid, 0)) then
+                    return;
+                end
+
                 local Player = GL.Player:fromName(player);
+
+                -- In case the player left in the meantime
+                if (not Player) then
+                    return;
+                end
 
                 HighestBidPerPlayer[player] = {
                     bid = bid,
@@ -1016,7 +1025,7 @@ function Auctioneer:closeAuction(auctionID)
                         class = Player.class,
                     },
                 };
-            end
+            end)();
         end
 
         GL:mute(); -- We don't want an announcement for every awarded item since people can see it for themselves in /gl bid
