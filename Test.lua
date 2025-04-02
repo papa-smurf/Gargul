@@ -44,7 +44,7 @@ function Test.Mail:triggerMailCap()
 end
 
 function Test.TradeState:_init(callback)
-    if (self._initialized) then
+    if (Test.TradeState._initialized) then
         if (callback and type(callback) == "function") then
             return callback();
         end
@@ -52,24 +52,31 @@ function Test.TradeState:_init(callback)
         return;
     end
 
-    self._initialized = true;
+    Test.TradeState._initialized = true;
     local ItemIDs = {};
-
+    
     local ItemIDSources = {
         GL.Data.Constants.ItemsThatShouldntBeAnnounced,
         GL.Data.Constants.TradableItems,
         GL.Data.Constants.UntradableItems,
     };
 
+    local itemsAdded = 0;
     for _, itemIDSource in pairs(ItemIDSources) do
         for _, itemID in pairs(itemIDSource) do
+            itemsAdded = itemsAdded + 1;
+
             tinsert(ItemIDs, itemID);
+
+            if (itemsAdded >= 15) then
+                break;
+            end
         end
     end
 
     -- Preload items
     GL:onItemLoadDo(ItemIDs, function (Details)
-        self.Items = Details;
+        Test.TradeState.Items = Details;
 
         if (callback and type(callback) == "function") then
             callback();
@@ -81,6 +88,8 @@ end
 ---
 ---@return table
 function Test.TradeState:defaultState()
+    Test.TradeState:_init();
+
     local Details = {
         announce = true,
         partner = GL.User.name,
@@ -114,7 +123,7 @@ function Test.TradeState:defaultState()
         isUsable = true,
     };
 
-    for i = 1, 6 do
+    for i = 1, 7 do
         local ItemEntry = self.Items[math.random(#self.Items)];
 
         Details.MyItems[i] = {
@@ -126,7 +135,7 @@ function Test.TradeState:defaultState()
         };
     end
 
-    for i = 1, 6 do
+    for i = 1, 7 do
         local ItemEntry = self.Items[math.random(#self.Items)];
 
         Details.TheirItems[i] = {
@@ -234,9 +243,9 @@ function Test.TradeState:theyEnchantedForFree()
 end
 
 --[[ Show what happens if you give an enchant and get a fee
-/script _G.Gargul.Test.TradeState:iEnchantedForFee()
+/script _G.Gargul.Test.TradeState:iEnchantedForGold()
 ]]
-function Test.TradeState:iEnchantedForFee(feeInCopper)
+function Test.TradeState:iEnchantedForGold(feeInCopper)
     GL:success("Running Test.TradeState:iEnchantedForFee() ...");
 
     self:_init(function ()
@@ -253,9 +262,9 @@ function Test.TradeState:iEnchantedForFee(feeInCopper)
 end
 
 --[[ Show what happens if you give an enchant and get a fee
-/script _G.Gargul.Test.TradeState:theyEnchantedForFee()
+/script _G.Gargul.Test.TradeState:theyEnchantedForGold()
 ]]
-function Test.TradeState:theyEnchantedForFee(feeInCopper)
+function Test.TradeState:theyEnchantedForGold(feeInCopper)
     GL:success("Running Test.TradeState:theyEnchantedForFee() ...");
 
     self:_init(function ()

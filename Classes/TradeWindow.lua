@@ -761,8 +761,8 @@ function TradeWindow:announceTradeDetails(Details)
                             if (newMessageLength >= 255 or itemsProcessed > 5) then
                                 GL:sendChatMessage(message, channel, nil, recipient, firstOutput);
                                 firstOutput = false;
-                                message = Entry.itemLink;
-                                messageLength = itemLinkLength;
+                                message = string.format("%sx%s", Entry.itemLink, Entry.quantity);
+                                messageLength = itemLinkLength + 1 + string.len(Entry.quantity); -- +1 for the x
                                 itemsProcessed = 1;
                             else
                                 message = string.format("%s, %sx%s", message, Entry.itemLink, Entry.quantity);
@@ -779,7 +779,7 @@ function TradeWindow:announceTradeDetails(Details)
                 -- We enchanted something so we need to take that into account
                 if (iEnchantedSomething) then
                     local itemLinkLength = string.len(GL:getItemNameFromLink(EnchantedByMe.itemLink)) + 2;
-                    newMessageLength = messageLength + string.len(L.CHAT.TRADE_GAVE_ENCHANTMENT_AFTER_ITEMS_PART - 6) -- 6 for 3x%s
+                    newMessageLength = messageLength + string.len(L.CHAT.TRADE_GAVE_ENCHANTMENT_AFTER_ITEMS_PART) - 6 -- 6 for 3x%s
                         + string.len(Details.partner)
                         + itemLinkLength
                         + string.len(EnchantedByMe.enchantment);
