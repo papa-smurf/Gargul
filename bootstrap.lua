@@ -99,7 +99,7 @@ function GL:_init()
     self.Settings:_init();
 
     -- Determine which chat message locale to use
-    L = Gargul_L;
+    local L = Gargul_L;
     local langMatch = false;
     local chatLocale = GL.Settings:get("chatLocale");
 

@@ -246,7 +246,7 @@ function Dialog:show(Details, callback)
     --- Reset details
     self.Details = Details;
 
-    --- Replace text placeholders
+    -- Replace text placeholders
     if (self.Replace) then
         self.text = GL:printfn(self.text, self.Replace);
     end

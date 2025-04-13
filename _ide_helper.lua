@@ -289,7 +289,6 @@ function SendChatMessage(message, chatType, language, channel)  end
 
 ---@param Table table
 ---@param value any
----@return void
 function tinsert(Table, value) end
 
 ---@param str string
@@ -299,7 +298,6 @@ function strtrim(str, chars) end
 
 ---@param Table table
 ---@param key string|number
----@return void
 function tremove(Table, key) end
 
 ---@param delimiter string
@@ -322,7 +320,6 @@ function LibStub(major, silent) end
 --- Play one of a set of built-in sounds. Other players will not hear the sound.
 ---@param soundName string
 ---@param channel string
----@return void
 function PlaySound(soundName, channel)  end
 
 --[[
@@ -344,7 +341,6 @@ function Item:CreateFromItemLink(link) end
 function Item:IsItemEmpty() end
 
 ---@param callback function
----@return void
 function Item:ContinueOnItemLoad(callback) end
 
 --[[
@@ -370,28 +366,21 @@ function GameTooltip:GetItem() end
 
 ---@param event string
 ---@param callback function
----@return void
 function GameTooltip:HookScript(event, callback) end
 
 ---@param frame table
 ---@param point string
----@return void
 function GameTooltip:SetOwner(frame, point) end
 
 ---@param itemLink string
----@return void
 function GameTooltip:SetHyperlink(itemLink) end
 
----@return void
 function GameTooltip:Show() end
 
----@return void
 function GameTooltip:Hide() end
 
 ---@param text string
----@return void
 function GameTooltip:SetText(text) end
 
 ---@param line string
----@return void
 function GameTooltip:AddLine(line) end
