@@ -36,13 +36,11 @@ local Events = GL.Events; ---@type Events
 ---@param itemLink string
 ---@param time number
 ---@param note string|nil
----@return void
+---@return boolean
 function RollOff:announceStart(itemLink, time, note)
     time = tonumber(time);
 
-    if (type(itemLink) ~= "string"
-        or GL:empty(itemLink)
-    ) then
+    if (not GL:isValidItemLink(itemLink)) then
         GL:warning(L.ROLLING_INVALID_START_DATA_WARNING);
         return false;
     end
@@ -68,64 +66,41 @@ function RollOff:announceStart(itemLink, time, note)
     self:stopListeningForRolls();
     self:listenForRolls();
 
-    --- If boosted rolls are enabled, send individually instead.
+    --- If boosted rolls are enabled, sending additional data is required
+    local BoostedRolls;
+
     if (GL.BoostedRolls:enabled()
         and GL.BoostedRolls:available()
     ) then
-        --- Generate generic part of message first
-        local Players = GL.User:groupMembers();
+        BoostedRolls = {};
+        BoostedRolls.identifier = string.sub(GL.Settings:get("BoostedRolls.identifier", "BR"), 1, 3);
+        BoostedRolls.RangePerPlayer = {};
 
-        --- Create a copy of the supported rolls data
-        local SupportedRolls = {};
-        for _, Entry in pairs(GL.Settings:get("RollTracking.Brackets", {}) or {}) do
-            tinsert(SupportedRolls, Entry);
+        for _, Player in pairs(GL.User:groupMembers()) do
+            (function()
+                local normalizedName = GL.BoostedRolls:normalizedName(Player.fqn);
+                if (not GL.BoostedRolls:hasPoints(normalizedName)) then
+                    return;
+                end
+
+                local points = GL.BoostedRolls:getPoints(normalizedName);
+                BoostedRolls.RangePerPlayer[normalizedName] = ("%d-%d"):format(GL.BoostedRolls:minBoostedRoll(points), GL.BoostedRolls:maxBoostedRoll(points));
+            end)();
         end
+    end
 
-        --- Add boosted rolls
-        local BoostedRollsIdentifier = string.sub(GL.Settings:get("BoostedRolls.identifier", "BR"), 1, 3);
-
-        local boostedRollsSettings = { BoostedRollsIdentifier, 1, 1, GL.Settings:get("BoostedRolls.priority", 1) };
-        tinsert(SupportedRolls, boostedRollsSettings);
-        local boostedRollIndex = #SupportedRolls;
-
-        local msg = {
+    GL.CommMessage.new{
+        action = CommActions.startRollOff,
+        content = {
             item = itemLink,
             time = time,
             note = note,
             bth = GL.User:bth(),
-            SupportedRolls = SupportedRolls,
-        };
-
-        for _, Player in pairs(Players) do
-            -- Then update for each player
-            local points = GL.BoostedRolls:getPoints(Player.fqn);
-            local low = GL.BoostedRolls:minBoostedRoll(points);
-            local high = GL.BoostedRolls:maxBoostedRoll(points);
-
-            --- Users always roll their current boosted roll value (/rnd 150-150 instead of 1-150)
-            msg.SupportedRolls[boostedRollIndex][2] = low;
-            msg.SupportedRolls[boostedRollIndex][3] = high;
-
-            GL.CommMessage.new{
-                action = CommActions.startRollOff,
-                content = msg,
-                channel = "WHISPER",
-                recipient = Player.fqn,
-            }:send();
-        end
-    else
-        GL.CommMessage.new{
-            action = CommActions.startRollOff,
-            content = {
-                item = itemLink,
-                time = time,
-                note = note,
-                bth = GL.User:bth(),
-                SupportedRolls = GL.Settings:get("RollTracking.Brackets", {}) or {},
-            },
-            channel = "GROUP",
-        }:send();
-    end
+            SupportedRolls = GL.Settings:get("RollTracking.Brackets", {}) or {},
+            BoostedRollData = BoostedRolls,
+        },
+        channel = "GROUP",
+    }:send();
 
     GL.Settings:set("UI.RollOff.timer", time);
 
@@ -318,6 +293,24 @@ function RollOff:start(CommMessage)
 
         local time = math.floor(tonumber(content.time));
         local SupportedRolls = content.SupportedRolls or {};
+
+        -- Add BoostedRolls to the list of SupportedRolls if data is available
+        if (type(content.BoostedRollData) == 'table'
+            and not GL:empty(content.BoostedRollData.identifier)
+            and not GL:empty(content.BoostedRollData.RangePerPlayer)
+        ) then
+            local myNormalizedName = GL.BoostedRolls:normalizedName(GL.User.fqn);
+            local myRange = content.BoostedRollData.RangePerPlayer[myNormalizedName];
+
+            if (myRange) then
+                local low, high = myRange:match("^(%d+)-(%d+)$");
+                table.insert(SupportedRolls, {
+                    content.BoostedRollData.identifier,
+                    low,
+                    high,
+                });
+            end
+        end
 
         -- This is a new roll off so clean everything
         if (Details.link ~= self.CurrentRollOff.itemLink

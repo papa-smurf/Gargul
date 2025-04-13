@@ -305,8 +305,17 @@ end;
 ---@param points number
 ---@return number
 function BoostedRolls:minBoostedRoll(points)
-    if (GL.Settings:get("BoostedRolls.fixedRolls", false)) then
+    local Systems = GL.Data.Constants.BoostedRollSystems;
+    local system = GL.Settings:get("BoostedRolls.system", Systems.INCREASED_BOTH);
+
+    -- Fixed will result in player with 140 points rolling /rnd 140-140
+    if (system == Systems.FIXED) then
         return math.max(1, math.min(GL.Settings:get("BoostedRolls.reserveThreshold", 0), points));
+    end
+
+    -- Increased max will result in player with 140 points rolling /rnd 1-140
+    if (system == Systems.INCREASED_MAX) then
+        return 1;
     end
 
     -- /rnd 1-100 yields 100 possible numbers
