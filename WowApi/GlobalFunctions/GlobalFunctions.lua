@@ -14553,7 +14553,7 @@ end
 --- Make all the lower case characters in a string upper case.
 --- [https://wowpedia.fandom.com/wiki/API_strupper]
 --- @param s unknown
---- @return void
+--- @return string
 function strupper(s)
 end
 

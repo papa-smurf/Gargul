@@ -147,6 +147,7 @@ function Overview:draw()
             end,
         };
     end);
+    GL.Interface:addTooltip(ClearButton, L["Clear TMB / DFT data. This doesn't affect any data on your raider's machines"]);
     Window:AddChild(ClearButton);
 
     local ShareButton = AceGUI:Create("Button");
@@ -188,6 +189,7 @@ function Overview:draw()
             end,
         };
     end);
+    GL.Interface:addTooltip(ClearRaiderDataButton, L["Remove TMB / DFT data on your raider's machines, useful if you broadcasted data accidentally"]);
     Window:AddChild(ClearRaiderDataButton);
 
 

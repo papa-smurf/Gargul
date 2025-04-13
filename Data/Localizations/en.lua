@@ -661,9 +661,9 @@ L.JSON_DECODE_WARNING = "Unable to JSON decode data. Make sure you copy/paste it
 L.KEYS_INFO = [[
 Gargul Item Hotkeys
 
-Roll out: |c00A79EFF%s
-Award: |c00A79EFF%s
-Disenchant: |c00A79EFF%s
+Roll out: |c00A79EFF%s|r
+Award: |c00A79EFF%s|r
+Disenchant: |c00A79EFF%s|r
 
 
 -- Right-click to disable this window --

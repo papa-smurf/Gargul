@@ -29,7 +29,6 @@ GL.AwardedLoot = {
 ---@type AwardedLoot
 local AwardedLoot = GL.AwardedLoot;
 
----@return void
 function AwardedLoot:_init()
     if (self._initialized) then
         return;
@@ -224,7 +223,6 @@ end
 ---@param winner string
 ---@param date string
 ---@param itemLink string
----@return void
 function AwardedLoot:addWinnerOnDate(winner, date, itemLink, announce)
     GL:debug("AwardedLoot:addWinnerOnDate");
 
@@ -242,7 +240,6 @@ end
 ---
 ---@param checksum string
 ---@param adjustPoints boolean|nil
----@return void
 function AwardedLoot:deleteWinner(checksum, adjustPoints, broadcast)
     broadcast = broadcast ~= false;
 
@@ -291,7 +288,6 @@ end
 --- Edit the winner of an item
 ---
 ---@param checksum string
----@return void
 function AwardedLoot:editWinner(checksum, winner, announce)
     GL:debug("AwardedLoot:editWinner");
 
@@ -740,7 +736,6 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, g
     return checksum;
 end
 
----@return void
 function AwardedLoot:addItemGUIDtoItemsAwardedToSelf()
     for checksum, Details in pairs (self.AwardedToSelfWithoutAnItemGUID or {}) do
         (function ()
@@ -909,7 +904,6 @@ end
 --- Whenever a successful trade is completed we need to check whether we need to mark awarded loot as "received"
 ---
 ---@param Details table
----@return void
 function AwardedLoot:tradeCompleted(Details)
     GL:debug("AwardedLoot:tradeCompleted");
 
@@ -971,7 +965,6 @@ end
 --- The loot master awarded an item to someone, add it to our list as well
 ---
 ---@param CommMessage table
----@return void
 function AwardedLoot:processAwardedLoot(CommMessage)
     GL:debug("AwardedLoot:processAwardedLoot");
 
@@ -1045,7 +1038,6 @@ end
 --- The loot master edited an item award, make sure our list reflect those changes
 ---
 ---@param CommMessage table
----@return void
 function AwardedLoot:processEditedLoot(CommMessage)
     GL:debug("AwardedLoot:processEditedLoot");
 

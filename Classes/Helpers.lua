@@ -61,7 +61,7 @@ end)();
 ---@vararg string
 ---@return void
 function GL:message(...)
-    print("|TInterface/TARGETINGFRAME/UI-RaidTargetingIcon_3:12|t|cff8aecff Gargul : |r" .. string.join(" ", ...));
+    print("|TInterface/TARGETINGFRAME/UI-RaidTargetingIcon_3:12|t|cff8aecff Gargul : |r" .. table.concat({ ... }, " "));
 end
 
 --- Print a colored message
@@ -1325,6 +1325,17 @@ function GL:isItemOfInterest(itemIdentifier)
     return false;
 end
 
+--- Checks if a given string is a properly formatted WoW item link.
+---
+--- A valid item link follows the standard WoW format, for example:
+--- `|cffa335ee|Hitem:19019:::::::::::::|h[Thunderfury, Blessed Blade of the Windseeker]|h|r`
+---
+--- @param itemLink string The string to validate as an item link.
+--- @return boolean isValid
+function GL:isValidItemLink(itemLink)
+    return type(itemLink) == "string" and itemLink:match("^|c[%x]+|Hitem:%d+:.-|h%[.-%]|h|r$") ~= nil
+end
+
 --- The onItemLoadDo helper accepts one or more item ids or item links
 --- The corresponding items will be loaded using Blizzard's Item API
 --- After all of the items are loaded execute the provided callback function
@@ -1785,6 +1796,7 @@ end
 
 ---@param Item Frame
 ---@param itemLink string
+---@param Details? table
 function GL:highlightItem(Item, itemLink, Details)
     GL:debug("GL:highlightItem");
 

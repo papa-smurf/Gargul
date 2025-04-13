@@ -93,6 +93,7 @@ L.CHAT = {
         ["%s to %s"] = "%s an %s",
         ["to %s"] = "an %s",
         ["I gave %s"] = "Ich habe %s gegeben",
+        ["I gave %s to %s"] = "Ich habe %s an %s gegeben",
         ["I gave %sx%s"] = "Ich habe %sx%s gegeben", -- I gave [item]x3
         ["I enchanted %s with %s for %s"] = "Ich habe %s mit %s für %s verzaubert",
         ["I enchanted %s with %s for %s and gave %s"] = "Ich habe %s mit %s für %s verzaubert und %s gegeben",
@@ -108,6 +109,7 @@ L.CHAT = {
         ["%s from %s"] = "%s von %s",
         ["from %s"] = "von %s",
         ["I received %s"] = "Ich habe %s erhalten",
+        ["I received %s from %s"] = "Ich habe %s von %s erhalten",
         ["I received %sx%s"] = "Ich habe %sx%s erhalten", -- I gave [item]x3
         ["from %s and got my %s enchanted with %s"] = "von %s und habe meinen %s mit %s verzaubert",
         ["%s from %s and got my %s enchanted with %s"] = "%s von %s und habe meinen %s mit %s verzaubert",
@@ -211,6 +213,7 @@ L.CHAT = {
         ["%s to %s"] = "%s 给 %s",
         ["to %s"] = "给 %s",
         ["I gave %s"] = "我给了 %s",
+        ["I gave %s to %s"] = "我将 %s 给了 %s",
         ["I gave %sx%s"] = "我给了 %sx%s", -- I gave [item]x3
         ["I enchanted %s with %s for %s"] = "我给 %s 的 %s 附魔了",
         ["I enchanted %s with %s for %s and gave %s"] = "我为 %s 用 %s 对 %s 附魔，并给了 %s",
@@ -226,6 +229,7 @@ L.CHAT = {
         ["%s from %s"] = "%s 来自 %s",
         ["from %s"] = "来自 %s",
         ["I received %s"] = "我收到 %s",
+        ["I received %s from %s"] = "我收到了来自 %s 的 %s",
         ["I received %sx%s"] = "我收到了 %sx%s", -- I gave [item]x3
         ["from %s and got my %s enchanted with %s"] = "来自 %s 并让我的 %s 附魔了 %s",
         ["%s from %s and got my %s enchanted with %s"] = " %s 来自 %s 并让我的 %s 附魔了 %s",
@@ -250,8 +254,10 @@ L.CHAT = {
         ["%s was awarded to %s for %s. Congrats!"] = "%s fue otorgado a %s por %s. ¡Felicitaciones!",
 
         --[[ TRADE DETAILS ]]
+        ["I gave %s to %s"] = "Le di %s a %s",
         ["I deleted a gold trade in which I gave %s to %s"] = "Eliminé una operación de oro en la que le di %s a %s",
         ["I restored a gold trade in which I gave %s to %s"] = "Restablecí un intercambio de oro en el que le di %s a %s",
+        ["I received %s from %s"] = "Recibí %s de %s",
         ["I deleted a gold trade in which I received %s from %s"] = "Eliminé una operación de oro en la que recibí %s de %s",
         ["I restored a gold trade in which I received %s from %s"] = "Restablecí un comercio de oro en el que recibí %s de %s",
 
@@ -367,8 +373,10 @@ L.CHAT = {
         ["%s was awarded to %s for %s. Congrats!"] = "%s a été attribué à %s pour %s. Bravo !",
 
         --[[ TRADE DETAILS ]]
+        ["I gave %s to %s"] = "J'ai donné %s à %s",
         ["I deleted a gold trade in which I gave %s to %s"] = "J'ai supprimé un échange d'or dans lequel j'avais donné %s à %s",
         ["I restored a gold trade in which I gave %s to %s"] = "J'ai restauré un échange d'or dans lequel j'avais donné %s à %s",
+        ["I received %s from %s"] = "J'ai reçu %s de %s",
         ["I deleted a gold trade in which I received %s from %s"] = "J'ai supprimé un échange d'or dans lequel j'avais reçu %s de %s",
         ["I restored a gold trade in which I received %s from %s"] = "J'ai restauré un échange d'or dans lequel j'avais reçu %s de %s",
 
@@ -556,6 +564,7 @@ L.CHAT = {
         ["%s to %s"] = "Da %s a %s",
         ["to %s"] = "a %s",
         ["I gave %s"] = "Ho dato %s",
+        ["I gave %s to %s"] = "Ho dato %s a %s",
         ["I gave %sx%s"] = "Ho dato %sx%s", -- I gave [item]x3
         ["I enchanted %s with %s for %s"] = "Ho incantato %s con %s per %s",
         ["I enchanted %s with %s for %s and gave %s"] = "Ho incantato %s con %s per %s e ho dato %s",
@@ -571,6 +580,7 @@ L.CHAT = {
         ["%s from %s"] = "%s da %s",
         ["from %s"] = "da %s",
         ["I received %s"] = "Ho ricevuto %s",
+        ["I received %s from %s"] = "Ho ricevuto %s da %s",
         ["I received %sx%s"] = "Ho ricevuto %sx%s", -- I gave [item]x3
         ["from %s and got my %s enchanted with %s"] = "da %s e ho incantato il mio %s con %s",
         ["%s from %s and got my %s enchanted with %s"] = "%s da %s e ho fatto incantare il mio %s con %s",
@@ -670,6 +680,7 @@ L.CHAT = {
         ["%s to %s"] = "%s ~ %s",
         ["to %s"] = "%s에게",
         ["I gave %s"] = "%s을(를) 줬습니다",
+        ["I gave %s to %s"] = "%s을(를) %s에게 주었습니다.",
         ["I gave %sx%s"] = "%sx%s을(를) 줬습니다", -- I gave [item]x3
         ["I enchanted %s with %s for %s"] = "%s에 %s을(를) 사용하여 %s에 마법을 부여했습니다.",
         ["I enchanted %s with %s for %s and gave %s"] = "%s에 %s로 %s 마법을 부여하고 %s을(를) 주었습니다.",
@@ -685,6 +696,7 @@ L.CHAT = {
         ["%s from %s"] = "%s(%s에서)",
         ["from %s"] = "%s에서",
         ["I received %s"] = "%s을(를) 받았습니다",
+        ["I received %s from %s"] = "%s로부터 %s을(를) 받았습니다",
         ["I received %sx%s"] = "%sx%s을(를) 받았습니다", -- I gave [item]x3
         ["from %s and got my %s enchanted with %s"] = "%s에서 내 %s을(를) %s에 매혹시켰습니다.",
         ["%s from %s and got my %s enchanted with %s"] = "%s의 %s이(가) %s에 마법을 부여했습니다.",
@@ -784,6 +796,7 @@ L.CHAT = {
         ["%s to %s"] = "%s para %s",
         ["to %s"] = "para %s",
         ["I gave %s"] = "Eu dei %s",
+        ["I gave %s to %s"] = "Eu dei %s para %s",
         ["I gave %sx%s"] = "Eu dei %sx%s", -- I gave [item]x3
         ["I enchanted %s with %s for %s"] = "Encantei %s com %s para %s",
         ["I enchanted %s with %s for %s and gave %s"] = "Encantei %s com %s para %s e dei %s",
@@ -799,6 +812,7 @@ L.CHAT = {
         ["%s from %s"] = "%s de %s",
         ["from %s"] = "de %s",
         ["I received %s"] = "Eu recebi %s",
+        ["I received %s from %s"] = "Recebi %s de %s",
         ["I received %sx%s"] = "Recebi %sx%s", -- I gave [item]x3
         ["from %s and got my %s enchanted with %s"] = "de %s e deixei meu %s encantado com %s",
         ["%s from %s and got my %s enchanted with %s"] = "%s de %s e encantei meu %s com %s",
@@ -901,6 +915,7 @@ L.CHAT = {
         ["%s to %s"] = "от кого: %s кому: %s",
         ["to %s"] = "кому: %s",
         ["I gave %s"] = "Я отдал %s",
+        ["I gave %s to %s"] = "Я отдал %s %s",
         ["I gave %sx%s"] = "Я отдал %sx%s", -- I gave [item]x3
         ["I enchanted %s with %s for %s"] = "Я зачаровал %s за %s для %s",
         ["I enchanted %s with %s for %s and gave %s"] = "Я зачаровал %s за %s для %s и передал %s",
@@ -916,6 +931,7 @@ L.CHAT = {
         ["%s from %s"] = "%s от %s",
         ["from %s"] = "от %s",
         ["I received %s"] = "Я получил %s",
+        ["I received %s from %s"] = "Я получил %s от %s",
         ["I received %sx%s"] = "Я получил %sx%s", -- I gave [item]x3
         ["from %s and got my %s enchanted with %s"] = "от %s и получил мой %s зачарованный за %s",
         ["%s from %s and got my %s enchanted with %s"] = "%s от %s и получил мой %s зачарованный за %s",
@@ -926,16 +942,16 @@ L.CHAT = {
 
     --[[ zhTW ]]
     zhTW = {
-        ["Pass"] = "經過",
-        ["I'm using Gargul to distribute loot. It makes rolling easier so be sure to try it out!"] = "我正在使用 Gargul 來分發戰利品。它使滾動變得更容易，所以一定要嘗試！",
+        ["Pass"] = "放棄",
+        ["I'm using Gargul to distribute loot. It makes rolling easier so be sure to try it out!"] = "我正在使用 Gargul 來分裝。它使分裝變得更容易，值得一試！",
 
         --[[ VERSION CHECK ]]
-        ["Gargul missing for:"] = "加古爾失蹤原因：",
-        ["Gargul outdated for:"] = "Gargul 已過時：",
+        ["Gargul missing for:"] = "未安裝 Gargul：",
+        ["Gargul outdated for:"] = "Gargul 版本過舊：",
         ["The following players were offline:"] = "以下玩家離線：",
 
         --[[ ITEM AWARDED ]]
-        ["%s was awarded to %s. Congrats!"] = "%s 被授予 %s。恭喜！",
+        ["%s was awarded to %s. Congrats!"] = "%s 的幸運得主為 %s 。恭喜！",
         ["%s was awarded to %s for %s points. Congrats!"] = "%s 被授予 %s %s 積分。恭喜！",
         ["%s was awarded to %s for %s. Congrats!"] = "%s 因 %s 而被授予 %s。恭喜！",
 
@@ -948,7 +964,7 @@ L.CHAT = {
         ["I restored a gold trade in which I received %s from %s"] = "我恢復了一筆黃金交易，其中我從 %s 收到了 %s",
 
         --[[ TRADE TIME ]]
-        ["I have the following items left to trade"] = "我還有以下物品需要交易",
+        ["I have the following items left to trade"] = "我還有以下物品尚未交易",
 
         --[[ BOOSTED ROLLS ]]
         ["Your %s roll is /rnd %d-%d%s"] = "你的 %s 卷是 /rnd %d-%d%s",
@@ -957,8 +973,8 @@ L.CHAT = {
 
         --[[ PLUS ONES ]]
         ["+"] = "+",
-        ["Your +1 total is %d"] = "您的 +1 總數為 %d",
-        ["Player %s's +1 total is %d"] = "玩家 %s 的 +1 總數為 %d",
+        ["Your +1 total is %d"] = "您的拿裝總數為 %d",
+        ["Player %s's +1 total is %d"] = "玩家 %s 的拿裝總數為 %d",
 
         --[[ GDKP ]]
         ["I owe you %s. Enjoy!"] = "我欠你%s。享受！",
@@ -1004,17 +1020,18 @@ L.CHAT = {
         ["%s will be disenchanted by %s"] = "%s將會因%s而不再抱持幻想",
 
         --[[ ROLLING ]]
-        ["You have %s seconds to roll on %s"] = "您還有 %s 秒時間繼續 %s",
-        ["Stop your rolls!"] = "停止你的捲！",
-        ["%s seconds to roll"] = "%s 秒滾動",
+        ["You have %s seconds to roll on %s"] = "倒數 %s 秒，裝備為 %s",
+        ["Stop your rolls!"] = "停！",
+        ["%s seconds to roll"] = "倒數 %s 秒",
         ["This item was reserved by: %s"] = "此項目已保留：%s",
         ["These players have the highest %s prio: %s"] = "以下玩家的 %s 優先順序最高：%s", -- First %s can be TMB/DFT/CPR
 
         --[[ TradeWindow / Trade ]]
-        ["I tried to trade you, but was unsuccessful - trade me for ${item} asap!"] = "I tried to trade you, but was unsuccessful - trade me for ${item} asap!",
+        ["I tried to trade you, but was unsuccessful - trade me for ${item} asap!"] = "我嘗試與你交易，但失敗了。麻煩盡速與我交易 ${item} !",
         ["%s to %s"] = "%s 至 %s",
         ["to %s"] = "至 %s",
-        ["I gave %s"] = "我給了%s",
+        ["I gave %s"] = "我給出了 %s",
+        ["I gave %s to %s"] = "我把 %s 給了 %s",
         ["I gave %sx%s"] = "我給了 %sx%s", -- I gave [item]x3
         ["I enchanted %s with %s for %s"] = "我為 %s 對 %s 施了魔法",
         ["I enchanted %s with %s for %s and gave %s"] = "我為 %s 用 %s 對 %s 施了魔法，並給了 %s",
@@ -1029,7 +1046,8 @@ L.CHAT = {
         ["%s enchanted my %s with %s and gave me %s. I enchanted their %s with %s"] = "%s 用 %s 對我的 %s 施了魔法，並給了我 %s。我用 %s 迷住了他們的 %s",
         ["%s from %s"] = "%s 來自 %s",
         ["from %s"] = "來自 %s",
-        ["I received %s"] = "我收到%s",
+        ["I received %s"] = "我收到了 %s",
+        ["I received %s from %s"] = "我收到了來自 %s 的 %s",
         ["I received %sx%s"] = "我收到了 %sx%s", -- I gave [item]x3
         ["from %s and got my %s enchanted with %s"] = "來自 %s 並讓我的 %s 著迷於 %s",
         ["%s from %s and got my %s enchanted with %s"] = "來自 %s 的 %s 讓我的 %s 為 %s 著迷",

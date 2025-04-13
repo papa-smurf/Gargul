@@ -232,6 +232,12 @@ local Constants = {
         RRobin = 7,
     },
 
+    BoostedRollSystems = {
+        INCREASED_BOTH = 0,
+        INCREASED_MAX = 1,
+        FIXED = 2,
+    },
+
     SoftReserveSources = {
         weakaura = 0,
         gargul = 1,
@@ -584,7 +590,7 @@ local Constants = {
     ]]
     Comm = {
         channel = "GargulComm2",
-        minimumAppVersion = "7.6.9",
+        minimumAppVersion = "7.6.20",
 
         ---@class CommActions
         Actions = {

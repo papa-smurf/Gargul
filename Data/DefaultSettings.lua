@@ -167,11 +167,11 @@ GL.Data.DefaultSettings = {
         defaultStep = 10,
         enabled = false,
         enableWhisperCommand = true,
-        fixedRolls = false,
         identifier = L.BOOSTED_ROLLS_ABBR,
         maxmimumPoints = nil,
         priority = 1,
         reserveThreshold = 180,
+        system = 0, -- See Constants.BoostedRollSystems.INCREASED_BOTH
     },
     PlusOnes = {
         automaticallyAcceptDataFrom = "",

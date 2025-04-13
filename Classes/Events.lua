@@ -18,6 +18,8 @@ local Events = {
         EventByIdentifier = {},
     },
 };
+
+---@type Events
 GL.Events = Events;
 
 --- Prepare the event frame for future use
