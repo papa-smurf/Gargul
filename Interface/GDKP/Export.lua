@@ -86,9 +86,9 @@ function Export:build()
     FixedHeightContentWrapper:AddChild(Title);
 
     local DropDownItems = {
-        [CUSTOM_FORMAT] = ("|c00FFF569%s|r"):format(L.GDKP_EXPORT_AUCTIONS_CUSTOM),
-        [JSON_FORMAT] = ("|c00FFF569%s|r"):format(L.GDKP_EXPORT_AUCTIONS_JSON),
-        [SHARE_FORMAT] = ("|c00FFF569%s|r"):format(L.GDKP_EXPORT_AUCTIONS_SHARE),
+        [CUSTOM_FORMAT] = ("|c00FFF569%s|r"):format(L["Custom (create your own format)"]),
+        [JSON_FORMAT] = ("|c00FFF569%s|r"):format(L["Detailed (JSON)"]),
+        [SHARE_FORMAT] = ("|c00FFF569%s|r"):format(L["Share (can be imported by other players)"]),
     };
 
     ---@type AceGUIEditBox
@@ -111,7 +111,7 @@ function Export:build()
     CustomExportHeader:SetHeight(20);
     CustomExportHeader:SetFullWidth(true);
     CustomExportHeader:SetText(GL.Settings:get("GDKP.customExportHeader"));
-    CustomExportHeader:SetLabel(("|c00FFF569%s|r"):format(L.GDKP_EXPORT_CUSTOM_HEADER));
+    CustomExportHeader:SetLabel(("|c00FFF569%s|r"):format(L["Your custom header"]));
     CustomExportHeader:DisableButton(true);
     CustomExportHeader:SetCallback("OnTextChanged", function ()
         local value = CustomExportHeader:GetText();
@@ -131,7 +131,7 @@ function Export:build()
     CustomExportFormat:SetHeight(20);
     CustomExportFormat:SetFullWidth(true);
     CustomExportFormat:SetText(GL.Settings:get("GDKP.customExportFormat"));
-    CustomExportFormat:SetLabel(("|c00FFF569      %s|r"):format(L.GDKP_EXPORT_CUSTOM_FORMAT));
+    CustomExportFormat:SetLabel(("|c00FFF569      %s|r"):format(L["Your custom format"]));
     CustomExportFormat:DisableButton(true);
     CustomExportFormat:SetCallback("OnTextChanged", function ()
         local value = CustomExportFormat:GetText();
@@ -164,7 +164,7 @@ function Export:build()
 
     local showCustomFormatHelpTooltip = function ()
         GameTooltip:SetOwner(HelpIconFrame, "ANCHOR_RIGHT");
-        GameTooltip:SetText(L.AVAILABLE_PLACEHOLDER_VALUES .. "\n\n" .. table.concat({
+        GameTooltip:SetText(L["Available values:"] .. "\n\n" .. table.concat({
             "@ID",
             "@LINK",
             "@ITEM",
@@ -186,10 +186,10 @@ function Export:build()
             "@ICON",
             "@WOWHEAD",
             "@CHECKSUM",
-            "@TITLE - " .. L.GDKP_EXPORT_FORMAT_TITLE,
-            "@START - " .. L.GDKP_EXPORT_FORMAT_START,
+            "@TITLE - " .. L["The title of the GDKP session"],
+            "@START - " .. L["Date/time at which the first item was awarded"],
             "",
-            L.TAB_REPLACES_T,
+            L["\\t is replaced by a tab"],
         }, "\n"));
         GameTooltip:Show();
     end;
@@ -205,7 +205,7 @@ function Export:build()
     -- Include disenchanted items
     local Checkbox = AceGUI:Create("CheckBox");
     Checkbox:SetValue(Settings:get("GDKP.ExportAuctions.includeDisenchantedItems"));
-    Checkbox:SetLabel(L.GDKP_EXPORT_INCLUDE_DISENCHANTED);
+    Checkbox:SetLabel(L["Include disenchanted items"]);
     Checkbox:SetFullWidth(true);
     Checkbox.text:SetTextColor(1, .95686, .40784);
     Checkbox:SetCallback("OnValueChanged", function()
@@ -311,7 +311,7 @@ function Export:refresh()
         zlibEncodeSucceeded, exportString = pcall(function () return LibDeflate:CompressZlib(exportString); end);
 
         if (not zlibEncodeSucceeded) then
-            return GL:error(L.ZLIB_COMPRESS_WARNING);
+            return GL:error(L["Unable to zlib compress the data. Contact support via https://discord.gg/D3mDhYPVzf"]);
         end
 
         exportString = GL.Base64.encode(exportString);
@@ -344,7 +344,7 @@ function Export:exportAuctionsToCustomFormat(Session, Auctions)
         tinsert(timestamps, Details.createdAt);
     end
     table.sort(timestamps);
-    local startedAt = timestamps[1] and date(L.DATE_HOURS_MINUTES_FORMAT, timestamps[1]) or "";
+    local startedAt = timestamps[1] and date(L["%Y-%m-%d %H:%M"], timestamps[1]) or "";
 
     -- Make sure that all relevant item data is cached
     local first = true;
@@ -362,7 +362,7 @@ function Export:exportAuctionsToCustomFormat(Session, Auctions)
             local icon = GL.Data.IconTexturePaths:byID(ItemDetails.icon);
 
             if (Auction.itemID == GL.Data.Constants.GDKP.potIncreaseItemID) then
-                ItemDetails.name = L.GDKP_EXPORT_POT_CHANGED;
+                ItemDetails.name = L["Pot changed"];
             end
 
             if (GL.isEra) then
@@ -399,7 +399,7 @@ function Export:exportAuctionsToCustomFormat(Session, Auctions)
                     ["@DAY"] = date('%d', Auction.createdAt),
                     ["@HOUR"] = date('%H', Auction.createdAt),
                     ["@MINUTE"] = date('%M', Auction.createdAt),
-                    ["@DATE"] = date(L.DATE_FORMAT, Auction.createdAt),
+                    ["@DATE"] = date(L["%Y-%m-%d"], Auction.createdAt),
                     ["@TIME"] = date('%H:%M', Auction.createdAt),
                     ["@TITLE"] = Session.title,
                     ["@START"] = startedAt,

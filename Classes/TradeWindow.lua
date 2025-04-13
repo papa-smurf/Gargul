@@ -443,7 +443,7 @@ function TradeWindow:updateAnnouncementCheckBox()
     end
 
     local CheckBox = CreateFrame("CheckButton", "GargulAnnounceTradeDetails", TradeFrame, "UICheckButtonTemplate");
-    GargulAnnounceTradeDetailsText:SetText(L.TRADE_ANNOUNCE);
+    GargulAnnounceTradeDetailsText:SetText(L["Announce Trade"]);
     CheckBox:SetChecked(self:shouldAnnounce());
     CheckBox:SetPoint("BOTTOMLEFT", "TradeFrame", "BOTTOMLEFT", 8, 6);
     CheckBox:SetWidth(20);
@@ -451,7 +451,7 @@ function TradeWindow:updateAnnouncementCheckBox()
     CheckBox:SetScript("OnClick", function ()
         self.manuallyChangedAnnounceCheckbox = true;
     end);
-    CheckBox.tooltipText = L.TRADE_ANNOUNCE_INFO;
+    CheckBox.tooltipText = L["Announce trade details to group or in /say when not in a group"];
     self.AnnouncementCheckBox = CheckBox;
 
     -- Create the cogwheel that links to the announcement settings

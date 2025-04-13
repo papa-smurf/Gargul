@@ -43,12 +43,12 @@ function CreateMutator:build()
     local Label = GL.AceGUI:Create("Label");
     Label:SetHeight(20);
     Label:SetFullWidth(true);
-    Label:SetText(L.GDKP_MUTATOR_CREATE_NEW);
+    Label:SetText(L["Create a new GDKP mutator"]);
     Window:AddChild(Label);
 
     local StorePermanently = AceGUI:Create("CheckBox");
     StorePermanently:SetValue(false);
-    StorePermanently:SetLabel(L.GDKP_MUTATOR_STORE_PERMANENTLY);
+    StorePermanently:SetLabel(L["Store for future sessions"]);
     StorePermanently:SetFullWidth(true);
     StorePermanently.text:SetTextColor(.99, .85, .06);
     StorePermanently.text:SetFontObject(_G["GameFontHighlightSmall"]);
@@ -59,7 +59,7 @@ function CreateMutator:build()
     Name:DisableButton(true);
     Name:SetHeight(20);
     Name:SetFullWidth(true);
-    Name:SetLabel(L.GDKP_MUTATOR_NAME_LABEL);
+    Name:SetLabel(L["Name [example: Tanks]"]);
     Interface:set(self, "Name", Name);
     Window:AddChild(Name);
 
@@ -67,7 +67,7 @@ function CreateMutator:build()
     Percentage:DisableButton(true);
     Percentage:SetHeight(20);
     Percentage:SetFullWidth(true);
-    Percentage:SetLabel(L.GDKP_MUTATOR_PERCENTAGE_LABEL);
+    Percentage:SetLabel(L["Percentage [example: 10]"]);
     Interface:set(self, "Percentage", Percentage);
     Window:AddChild(Percentage);
 
@@ -75,7 +75,7 @@ function CreateMutator:build()
     Flat:DisableButton(true);
     Flat:SetHeight(20);
     Flat:SetFullWidth(true);
-    Flat:SetLabel(L.GDKP_MUTATOR_FLAT_LABEL);
+    Flat:SetLabel(L["Flat gold rate [example: 250]"]);
     Interface:set(self, "Flat", Flat);
     Window:AddChild(Flat);
 
@@ -83,7 +83,7 @@ function CreateMutator:build()
     AutoApplyTo:DisableButton(true);
     AutoApplyTo:SetHeight(20);
     AutoApplyTo:SetFullWidth(true);
-    AutoApplyTo:SetLabel("     " .. L.GDKP_MUTATOR_APPLY_LABEL);
+    AutoApplyTo:SetLabel("     " .. L["Auto apply to"]);
     Interface:set(self, "AutoApplyTo", AutoApplyTo);
     Window:AddChild(AutoApplyTo);
 
@@ -98,13 +98,13 @@ function CreateMutator:build()
 
     HelpIcon:SetCallback("OnEnter", function()
         GameTooltip:SetOwner(HelpIcon.frame, "ANCHOR_RIGHT");
-        GameTooltip:AddLine(" \n" .. L.GDKP_MUTATOR_HELP_TOOLTIP_TOP .. "\n ");
+        GameTooltip:AddLine(" \n" .. L["You can automatically apply this mutator to raiders using keywords:"] .. "\n ");
 
         for _, placeholder in pairs (GDKPPot.ValidAutoApplyPlaceholders) do
             GameTooltip:AddLine(string.format("|c00967FD2%s|r", placeholder));
         end
 
-        GameTooltip:AddLine(" \n" .. L.GDKP_MUTATOR_HELP_TOOLTIP_BOTTOM .. "\n ");
+        GameTooltip:AddLine(" \n" .. L["\nExample:\n|c00967FD2SELF,RL,HEALER"] .. "\n ");
         GameTooltip:Show();
     end);
 
@@ -113,17 +113,17 @@ function CreateMutator:build()
     end);
 
     local Save = AceGUI:Create("Button");
-    Save:SetText(L.OK);
+    Save:SetText(L["Ok"]);
     Save:SetFullWidth(true);
     Save:SetCallback("OnClick", function()
         local name = strtrim(Name:GetText());
         if (GL:empty(name)) then
-            GL:warning(L.INVALID_DATA_WARNING);
+            GL:warning(L["Invalid data supplied"]);
             return;
         end
 
         if (name:match("%.")) then
-            GL:warning(L.GDKP_MUTATOR_NO_DOTS_WARNING);
+            GL:warning(L["Mutator names can not contains dots (.)"]);
             return;
         end
 
@@ -131,7 +131,7 @@ function CreateMutator:build()
         if (not GL:empty(percentage)
             and GL:empty(tonumber(percentage))
         ) then
-            GL:warning(L.GDKP_MUTATOR_PERCENTAGE_NUMBER_WARNING);
+            GL:warning(L["The percentage needs to be a number"]);
             return;
         end
 
@@ -139,7 +139,7 @@ function CreateMutator:build()
         if (not GL:empty(flat)
                 and GL:empty(tonumber(flat))
         ) then
-            GL:warning(L.GDKP_MUTATOR_FLAT_RATE_NUMBER_WARNING);
+            GL:warning(L["The flat rate needs to be a number"]);
             return;
         end
 
@@ -147,7 +147,7 @@ function CreateMutator:build()
         local Session = GDKPSession:byID(self.sessionID);
 
         if (not Session) then
-            GL:warning(L.SOMETHING_WENT_WRONG_WARNING);
+            GL:warning(L["Something went wrong!"]);
             return;
         end
 
@@ -162,7 +162,7 @@ function CreateMutator:build()
 
         -- Something went wrong, no need to close the window
         if (not mutatorAdded) then
-            GL:error(L.SOMETHING_WENT_WRONG_WARNING);
+            GL:error(L["Something went wrong!"]);
             return;
         end
 
@@ -178,7 +178,7 @@ function CreateMutator:build()
     Window:AddChild(Save);
 
     local Cancel = AceGUI:Create("Button");
-    Cancel:SetText(L.CANCEL);
+    Cancel:SetText(L["Cancel"]);
     Cancel:SetFullWidth(true);
     Cancel:SetCallback("OnClick", function()
         self:close();

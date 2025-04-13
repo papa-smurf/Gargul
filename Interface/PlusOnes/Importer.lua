@@ -31,7 +31,7 @@ function Importer:draw()
 
     -- Create a container/parent frame
     local Window = AceGUI:Create("Frame");
-    Window:SetTitle((L.WINDOW_HEADER):format(GL.version));
+    Window:SetTitle((L["Gargul v%s"]):format(GL.version));
     Window:SetLayout("Flow");
     Window:SetWidth(600);
     Window:SetHeight(530);
@@ -52,7 +52,7 @@ function Importer:draw()
     local Description = AceGUI:Create("Label");
     Description:SetFontObject(_G["GameFontNormal"]);
     Description:SetFullWidth(true);
-    Description:SetText(L.PLUSONES_IMPORT_INFO);
+    Description:SetText(L["\nHere you can import plus one data from a table in CSV or TSV format or pasted from a Google Docs Sheet.\n\nThe table needs at least two columns: The player name followed by the amount of points. Additional columns are ignored.\n\nHere is an example line:\n\nFoobar,240\n"]);
     Window:AddChild(Description);
 
     -- Large edit box
@@ -85,7 +85,7 @@ function Importer:draw()
 
     -- Import button
     local ImportButton = AceGUI:Create("Button");
-    ImportButton:SetText(L.IMPORT);
+    ImportButton:SetText(L["Import"]);
     ImportButton:SetWidth(100);
     ImportButton:SetCallback("OnClick", function()
         GL.Interface.Dialogs.PopupDialog:open({

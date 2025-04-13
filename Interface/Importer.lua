@@ -52,21 +52,21 @@ function Importer:build()
 
     --[[ ADD THE SETTINGS MENU IN THE TOP LEFT OF THE WINDOW ]]
     Interface:addWindowOptions(Window, {
-        {text = L.WINDOW, isTitle = true, notCheckable = true },
-        {text = L.CHANGE_SCALE, notCheckable = true, func = function ()
+        {text = L["Window"], isTitle = true, notCheckable = true },
+        {text = L["Adjust Scale"], notCheckable = true, func = function ()
             Interface:openScaler(Window);
             CloseMenus();
         end},
     });
 
     ---@type FontString
-    local Intro = Interface:createFontString(Window, L.IMPORT_EXPLANATION);
+    local Intro = Interface:createFontString(Window, L["What kind of data would you like to import?"]);
     Intro:SetPoint("TOPLEFT", Window, "TOPLEFT", 20, -30);
     Intro:SetPoint("TOPRIGHT", Window, "TOPRIGHT", -20, 0);
     Intro:SetJustifyH("CENTER");
 
     ---@type Button
-    local ImportSoftRes = Interface:dynamicPanelButton(Window, L.SOFTRES);
+    local ImportSoftRes = Interface:dynamicPanelButton(Window, L["Soft-Reserves"]);
     ImportSoftRes:SetPoint("TOPLEFT", Window, "TOPLEFT", 20, -60);
     ImportSoftRes:SetPoint("TOPRIGHT", Window, "TOPRIGHT", -20, 0);
     ImportSoftRes:SetScript("OnClick", function ()
@@ -74,7 +74,7 @@ function Importer:build()
     end);
 
     ---@type Button
-    local ImportTMB = Interface:dynamicPanelButton(Window, L.TMBETC);
+    local ImportTMB = Interface:dynamicPanelButton(Window, L["TMB, DFT or PRIO3"]);
     ImportTMB:SetPoint("TOPLEFT", ImportSoftRes, "TOPLEFT", 0, -26);
     ImportTMB:SetPoint("TOPRIGHT", ImportSoftRes, "TOPRIGHT", 0, 0);
     ImportTMB:SetScript("OnClick", function ()
@@ -82,7 +82,7 @@ function Importer:build()
     end);
 
     ---@type Button
-    local ImportBoostedRolls = Interface:dynamicPanelButton(Window, L.BOOSTED_ROLLS);
+    local ImportBoostedRolls = Interface:dynamicPanelButton(Window, L["Boosted Rolls"]);
     ImportBoostedRolls:SetPoint("TOPLEFT", ImportTMB, "TOPLEFT", 0, -26);
     ImportBoostedRolls:SetPoint("TOPRIGHT", ImportTMB, "TOPRIGHT", 0, 0);
     ImportBoostedRolls:SetScript("OnClick", function ()
@@ -90,7 +90,7 @@ function Importer:build()
     end);
 
     ---@type Button
-    local ImportPlusOnes = Interface:dynamicPanelButton(Window, L.PLUSONES);
+    local ImportPlusOnes = Interface:dynamicPanelButton(Window, L["Plus Ones"]);
     ImportPlusOnes:SetPoint("TOPLEFT", ImportBoostedRolls, "TOPLEFT", 0, -26);
     ImportPlusOnes:SetPoint("TOPRIGHT", ImportBoostedRolls, "TOPRIGHT", 0, 0);
     ImportPlusOnes:SetScript("OnClick", function ()

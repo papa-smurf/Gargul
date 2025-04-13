@@ -47,7 +47,7 @@ function ReminderToAssignLootUsingGargul:draw()
     local DescriptionLabel = AceGUI:Create("Label");
     DescriptionLabel:SetFullWidth(true);
     DescriptionLabel:SetFontObject(_G["GameFontNormalSmall"]);
-    DescriptionLabel:SetText(L.ASSIGN_GARGUL_INFO);
+    DescriptionLabel:SetText(L["\nDon't forget to use Gargul instead\nif you wish to export loot later\n\n\n-- Right-click to disable this window --"]);
     DescriptionLabel:SetColor(1, .95686, .40784);
     DescriptionLabel:SetJustifyH("CENTER")
     Window:AddChild(DescriptionLabel);

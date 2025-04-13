@@ -40,7 +40,7 @@ function Settings:_init()
 
     -- Prepare the options / config frame
     local Frame = CreateFrame("Frame", nil, InterfaceOptionsFramePanelContainer);
-    Frame.name = L.GARGUL;
+    Frame.name = L["Gargul"];
     Frame:SetScript("OnShow", function ()
         self:showSettingsMenu(Frame);
     end);
@@ -48,7 +48,7 @@ function Settings:_init()
     if (InterfaceOptions_AddCategory) then
         InterfaceOptions_AddCategory(Frame);
     else
-        Category = _G.Settings.RegisterCanvasLayoutCategory(Frame, L.GARGUL);
+        Category = _G.Settings.RegisterCanvasLayoutCategory(Frame, L["Gargul"]);
         _G.Settings.RegisterAddOnCategory(Category);
     end
 
@@ -164,10 +164,10 @@ function Settings:showSettingsMenu(Frame)
     -- Add the addon title to the top of the settings frame
     local Title = Frame:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge");
     Title:SetPoint("TOPLEFT", 16, -16);
-    Title:SetText(("%s |c00967FD2(%s%s)|r"):format(L.GARGUL, L.VERSION_ABBR, GL.version));
+    Title:SetText(("%s |c00967FD2(%s%s)|r"):format(L["Gargul"], L["v"], GL.version));
 
     local SettingsButton = CreateFrame("Button", nil, Frame, "UIPanelButtonTemplate");
-    SettingsButton:SetText(L.SETTINGS);
+    SettingsButton:SetText(L["Settings"]);
     SettingsButton:SetWidth(177);
     SettingsButton:SetHeight(24);
     SettingsButton:SetPoint("TOPLEFT", Title, "BOTTOMLEFT", 0, -16);
@@ -180,7 +180,7 @@ function Settings:showSettingsMenu(Frame)
     end);
 
     local ResetUIButton = CreateFrame("Button", nil, Frame, "UIPanelButtonTemplate");
-    ResetUIButton:SetText(L.SETTINGS_RESET_UI);
+    ResetUIButton:SetText(L["Reset Gargul UI"]);
     ResetUIButton:SetWidth(177);
     ResetUIButton:SetHeight(24);
     ResetUIButton:SetPoint("TOPLEFT", Title, "BOTTOMLEFT", 200, -16);

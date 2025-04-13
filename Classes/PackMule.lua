@@ -229,7 +229,7 @@ function PackMule:isItemIDIgnored(itemID, callback)
     self.getValidRules = function ()
         return {
             {
-                target = L.PACKMULE_AUTOLOOT_SELF_PLACEHOLDER .. " " .. L.PACKMULE_AUTOLOOT_NEED_PLACEHOLDER,
+                target = L["SELF"] .. " " .. L["NEED"],
                 quality = 1,
                 operator = ">=",
             }
@@ -414,7 +414,7 @@ function PackMule:lootReady()
                 end
 
                 -- These are group loot targets that don't apply when master looting
-                if (GL:inTable({ L.PACKMULE_AUTOLOOT_PASS_PLACEHOLDER, L.PACKMULE_AUTOLOOT_GREED_PLACEHOLDER, L.PACKMULE_AUTOLOOT_NEED_PLACEHOLDER }, target)) then
+                if (GL:inTable({ L["PASS"], L["GREED"], L["NEED"] }, target)) then
                     return;
                 end
 
@@ -590,7 +590,7 @@ function PackMule:getTargetForItem(itemLinkOrId, callback)
                     if (not GL.User.isMasterLooter
                         and not GL.User.hasAssist
                         and not GL.Settings:get("PackMule.needWithoutAssist")
-                        and strfind(target, L.PACKMULE_AUTOLOOT_NEED_PLACEHOLDER)
+                        and strfind(target, L["NEED"])
                     ) then
                         return false;
                     end
@@ -625,7 +625,7 @@ function PackMule:getTargetForItem(itemLinkOrId, callback)
 
         -- There is no rule or we specifically want to ignore it
         if (not RuleThatApplies
-            or RuleThatApplies.target == L.PACKMULE_AUTOLOOT_IGNORE_PLACEHOLDER
+            or RuleThatApplies.target == L["IGNORE"]
         ) then
             return callback(false);
         end
@@ -643,22 +643,22 @@ function PackMule:getTargetForItem(itemLinkOrId, callback)
 
 
             if (not GL.User.isMasterLooter) then
-                if (GL:inTable({ L.PACKMULE_AUTOLOOT_PASS_PLACEHOLDER, L.PACKMULE_AUTOLOOT_GREED_PLACEHOLDER, L.PACKMULE_AUTOLOOT_NEED_PLACEHOLDER }, ruleTarget)) then
+                if (GL:inTable({ L["PASS"], L["GREED"], L["NEED"] }, ruleTarget)) then
                     Targets = {ruleTarget};
                     break;
                 end
             else
                 -- SELF serves as a placeholder for the current player name
-                if (ruleTarget == L.PACKMULE_AUTOLOOT_SELF_PLACEHOLDER) then
+                if (ruleTarget == L["SELF"]) then
                     ruleTarget = GL.User.fqn;
 
                 -- DE serves as a placeholder for the registered disenchanter
-                elseif (ruleTarget == L.PACKMULE_AUTOLOOT_DISENCHANT_PLACEHOLDER) then
+                elseif (ruleTarget == L["DE"]) then
                     ruleTarget = self.disenchanter;
 
                     if (GL:empty(self.disenchanter)) then
                         if (not self.noDisenchanterSetWarningGiving) then
-                            GL:warning(L.PACKMULE_NO_DISENCHANTER_WARNING);
+                            GL:warning(L["No disenchanter set, use /gl sd [mydisenchanter] to set one"]);
                             self.noDisenchanterSetWarningGiving = true;
                         end
 
@@ -666,11 +666,11 @@ function PackMule:getTargetForItem(itemLinkOrId, callback)
                     end
 
                 -- RR placeholder represents the next player in a round robin scheme for this rule
-                elseif (ruleTarget == L.PACKMULE_AUTOLOOT_ROUND_ROBIN_PLACEHOLDER) then
+                elseif (ruleTarget == L["RR"]) then
                     ruleTarget = self:roundRobinTargetForRule(RuleThatApplies);
 
                 -- Check whether we need to give the item to a random player
-                elseif (ruleTarget == L.PACKMULE_AUTOLOOT_RANDOM_PLACEHOLDER) then
+                elseif (ruleTarget == L["RANDOM"]) then
                     for _, Player in pairs(GL.User:groupMembers()) do
                         -- No need giving items to a random who's offline
                         if (Player.online) then
@@ -683,7 +683,7 @@ function PackMule:getTargetForItem(itemLinkOrId, callback)
                     break;
                 end
 
-                if (not GL:inTable({ L.PACKMULE_AUTOLOOT_PASS_PLACEHOLDER, L.PACKMULE_AUTOLOOT_GREED_PLACEHOLDER, L.PACKMULE_AUTOLOOT_NEED_PLACEHOLDER }, ruleTarget)) then
+                if (not GL:inTable({ L["PASS"], L["GREED"], L["NEED"] }, ruleTarget)) then
                     ruleTarget = GL:addRealm(ruleTarget);
 
                     -- GroupMemberNames are always in lowercase
@@ -841,7 +841,7 @@ function PackMule:disenchant(itemLink, byPassConfirmationDialog, callback)
         and not GL.User.hasAssist
         and not GL.User.isLead
     ) then
-        return GL:warning(L.LM_OR_ASSIST_REQUIRED);
+        return GL:warning(L["You need to be the master looter or have an assist / lead role!"]);
     end
 
     if (type(callback) ~= "function") then
@@ -868,9 +868,9 @@ function PackMule:disenchant(itemLink, byPassConfirmationDialog, callback)
         end
 
         -- Show the player selector
-        GL.Interface.PlayerSelector:draw(L.PACKMULE_WHO_IS_DISENCHANTER, PlayerNames, function (playerName)
+        GL.Interface.PlayerSelector:draw(L["Who is your disenchanter?"], PlayerNames, function (playerName)
             GL.Interface.Dialogs.PopupDialog:open{
-                question = (L.PACKMULE_CONFIRM_DISENCHANTER):format(GL:nameFormat{ name = playerName, colorize = true, }),
+                question = (L["Set %s as your disenchanter?"]):format(GL:nameFormat{ name = playerName, colorize = true, }),
                 OnYes = function ()
                     self:setDisenchanter(playerName);
                     self:disenchant(itemLink, true, callback);
@@ -899,7 +899,7 @@ function PackMule:disenchant(itemLink, byPassConfirmationDialog, callback)
 
     -- Make sure the initiator confirms his choice
     GL.Interface.Dialogs.PopupDialog:open{
-        question = (L.PACKMULE_CONFIRM_DISENCHANTMENT):format(
+        question = (L["Send %s to %s? Type /gl cd to remove this disenchanter!"]):format(
             itemLink,
             GL:nameFormat{ name = self.disenchanter, colorize = true, }
         ),

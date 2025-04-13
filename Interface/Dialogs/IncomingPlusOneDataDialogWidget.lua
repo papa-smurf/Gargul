@@ -67,7 +67,7 @@ local Events = {
     SetSender = function(self, playerName)
         sender = playerName;
 
-        self.TrustSenderLabel:SetText((L.PLUSONES_INCOMING_DIALOG_AUTO_LABEL):format(GL:nameFormat{ name = playerName, colorize = true, }));
+        self.TrustSenderLabel:SetText((L["Automatically accept incoming broadcasts from %s"]):format(GL:nameFormat{ name = playerName, colorize = true, }));
     end,
 
     OnAcquire = function(self)
@@ -296,7 +296,7 @@ local function constructor()
     local BlockSharedDataLabel = AceGUI:Create("InteractiveLabel");
     BlockSharedDataLabel:SetFontObject(_G["GameFontNormal"]);
     BlockSharedDataLabel:SetWidth(200);
-    BlockSharedDataLabel:SetText(L.PLUSONES_INCOMING_DIALOG_BLOCK_LABEL);
+    BlockSharedDataLabel:SetText(L["Block all incoming +1 shared data"]);
     Widget.BlockSharedDataLabel = BlockSharedDataLabel;
 
     BlockSharedDataLabel:SetCallback("OnClick", function()
@@ -320,7 +320,7 @@ local function constructor()
 
     -- Yes
     local YesButton = AceGUI:Create("Button");
-    YesButton:SetText(L.YES);
+    YesButton:SetText(L["Yes"]);
     YesButton:SetHeight(20);
     YesButton:SetWidth(120);
     YesButton:SetCallback("OnClick", function()
@@ -338,7 +338,7 @@ local function constructor()
 
     -- No
     local NoButton = AceGUI:Create("Button");
-    NoButton:SetText(L.NO);
+    NoButton:SetText(L["No"]);
     NoButton:SetHeight(20);
     NoButton:SetWidth(120);
     NoButton:SetCallback("OnClick", function()

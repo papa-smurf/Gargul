@@ -70,13 +70,13 @@ function Export:build()
     ---@type AceGUILabel
     local Title = AceGUI:Create("Label");
     Title:SetFontObject(GameFontNormalLarge);
-    Title:SetText(L.TITLE);
+    Title:SetText(L["Title"]);
     Title:SetFullWidth(true);
     Interface:set(self, "Title", Title);
     FixedHeightContentWrapper:AddChild(Title);
 
     local DropDownItems = {
-        [CUSTOM_FORMAT] = ("|c00FFF569%s|r"):format(L.GDKP_EXPORT_CUTS_CUSTOM_FORMAT),
+        [CUSTOM_FORMAT] = ("|c00FFF569%s|r"):format(L["Custom (create your own format)"]),
     };
 
     ---@type AceGUIEditBox
@@ -99,7 +99,7 @@ function Export:build()
     CustomExportHeader:SetHeight(20);
     CustomExportHeader:SetFullWidth(true);
     CustomExportHeader:SetText(GL.Settings:get("GDKP.customPotExportHeader"));
-    CustomExportHeader:SetLabel(("|c00FFF569%s|r"):format(L.HEADER));
+    CustomExportHeader:SetLabel(("|c00FFF569%s|r"):format(L["Header"]));
     CustomExportHeader:DisableButton(true);
     CustomExportHeader:SetCallback("OnTextChanged", function ()
         local value = CustomExportHeader:GetText();
@@ -115,7 +115,7 @@ function Export:build()
     CustomExportFormat:SetHeight(20);
     CustomExportFormat:SetFullWidth(true);
     CustomExportFormat:SetText(GL.Settings:get("GDKP.customPotExportFormat"));
-    CustomExportFormat:SetLabel(("|c00FFF569      %s|r"):format(L.FORMAT));
+    CustomExportFormat:SetLabel(("|c00FFF569      %s|r"):format(L["Format"]));
     CustomExportFormat:DisableButton(true);
     CustomExportFormat:SetCallback("OnTextChanged", function ()
         local value = CustomExportFormat:GetText();
@@ -148,7 +148,7 @@ function Export:build()
 
     local showCustomFormatHelpTooltip = function ()
         GameTooltip:SetOwner(HelpIconFrame, "ANCHOR_RIGHT");
-        GameTooltip:SetText(L.AVAILABLE_PLACEHOLDER_VALUES .. "\n\n" .. table.concat({
+        GameTooltip:SetText(L["Available values:"] .. "\n\n" .. table.concat({
             "@PLAYER",
             "@REALM",
             "@CUT",
@@ -157,14 +157,14 @@ function Export:build()
             "@MUTATORS",
             "@SPENT",
             "@BID",
-            "@RECEIVED - " .. L.GDKP_EXPORT_CUTS_FORMAT_RECEIVED_INFO,
-            "@GIVEN - " .. L.GDKP_EXPORT_CUTS_FORMAT_GIVEN_INFO,
-            "@TRADED - " .. L.GDKP_EXPORT_CUTS_FORMAT_TRADED_INFO,
-            "@MAILED - " .. L.GDKP_EXPORT_CUTS_FORMAT_MAILED_INFO,
-            "@START - " .. L.GDKP_EXPORT_CUTS_FORMAT_START_INFO,
-            "@END - " .. L.GDKP_EXPORT_CUTS_FORMAT_END_INFO,
+            "@RECEIVED - " .. L["total gold received from the player"],
+            "@GIVEN - " .. L["total gold given to the player"],
+            "@TRADED - " .. L["gold traded to the player"],
+            "@MAILED - " .. L["gold mailed to the player"],
+            "@START - " .. L["date/time at which the first item was awarded"],
+            "@END - " .. L["date/time at which the session was locked"],
             "",
-            L.TAB_REPLACES_T,
+            L["\\t is replaced by a tab"],
         }, "\n"));
         GameTooltip:Show();
     end;
@@ -176,7 +176,7 @@ function Export:build()
     ExportBox:SetText("");
     ExportBox:SetFullWidth(true);
     ExportBox:DisableButton(true);
-    ExportBox:SetLabel(("|c00FFF569%s|r"):format(L.EXPORT));
+    ExportBox:SetLabel(("|c00FFF569%s|r"):format(L["Export"]));
     ExportBox:SetNumLines(1);
     ExportBox:SetMaxLetters(0);
     GL.Interface:set(self, "Export", ExportBox);
@@ -251,7 +251,7 @@ end
 function Export:exportPotToCustomFormat(Session, Cuts)
     local exportString = GL.Settings:get("GDKP.customPotExportHeader");
     local customExportFormat = GL.Settings:get("GDKP.customPotExportFormat");
-    local endedAt = Session.lockedAt and date(L.DATE_HOURS_MINUTES_FORMAT, Session.lockedAt) or "";
+    local endedAt = Session.lockedAt and date(L["%Y-%m-%d %H:%M"], Session.lockedAt) or "";
 
     -- Determine the start of the raid, determined by the item that was awarded first
     local timestamps = {};
@@ -259,7 +259,7 @@ function Export:exportPotToCustomFormat(Session, Cuts)
         tinsert(timestamps, Details.createdAt);
     end
     table.sort(timestamps);
-    local startedAt = timestamps[1] and date(L.DATE_HOURS_MINUTES_FORMAT, timestamps[1]) or "";
+    local startedAt = timestamps[1] and date(L["%Y-%m-%d %H:%M"], timestamps[1]) or "";
 
     -- Make sure that all relevant item data is cached
     for _, Details in pairs(Cuts) do

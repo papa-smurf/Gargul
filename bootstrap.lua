@@ -4,6 +4,13 @@ local L;
 ---@class Bootstrapper
 local appName, GL = ...;
 _G.Gargul = GL; -- Open Gargul up to other developer integrations
+_G.Gargul_L = {};
+
+setmetatable(_G.Gargul_L, {
+    __index = function (_, key)
+        return tostring(key)
+    end,
+});
 
 local GetAddOnMetadata = C_AddOns and C_AddOns.GetAddOnMetadata or GetAddOnMetadata;
 
@@ -148,7 +155,7 @@ function GL:_init()
 
     -- Show a welcome message
     if (self.Settings:get("welcomeMessage")) then
-        print((L.HELLO):format(
+        print((L["|c00%sGargul v%s by Zhorax@Firemaw. Type |c00%s/gl or |c00%s/gargul to get started!"]):format(
             self.Data.Constants.addonHexColor,
             self.version,
             self.Data.Constants.addonHexColor,
@@ -237,7 +244,7 @@ function GL:announceConflictingAddons()
         return;
     end
 
-    GL:warning((L.LOOTMASTER_BAD_ADDONS):format(
+    GL:warning((L["You have one or more addons installed that can potentially cause Gargul to misfunction: %s"]):format(
         table.concat(ConflictingAddons, ", ")
     ));
 end

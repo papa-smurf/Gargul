@@ -46,7 +46,7 @@ function EditSession:build()
     Title:DisableButton(true);
     Title:SetHeight(20);
     Title:SetFullWidth(true);
-    Title:SetLabel(L.NAME);
+    Title:SetLabel(L["Name"]);
     Window:AddChild(Title);
     Interface:set(self, "Title", Title);
 
@@ -54,12 +54,12 @@ function EditSession:build()
     ManagementCut:DisableButton(true);
     ManagementCut:SetHeight(20);
     ManagementCut:SetFullWidth(true);
-    ManagementCut:SetLabel(L.GDKP_CREATE_MANAGEMENT_CUT);
+    ManagementCut:SetLabel(L["Management Cut %"]);
     Window:AddChild(ManagementCut);
     Interface:set(self, "ManagementCut", ManagementCut);
 
     local SessionTypeLabel = GL.AceGUI:Create("Label");
-    SessionTypeLabel:SetText("     " .. L.GDKP_CREATE_SESSION_TYPE_LABEL);
+    SessionTypeLabel:SetText("     " .. L["Auction type (|c00A79EFFi for more info)"]);
     SessionTypeLabel:SetColor(1, .95686, .40784);
     SessionTypeLabel:SetHeight(20);
     SessionTypeLabel:SetFullWidth(true);
@@ -74,11 +74,11 @@ function EditSession:build()
     SessionTypeHelpIcon.frame:SetPoint("BOTTOMLEFT", SessionTypeLabel.frame, "BOTTOMLEFT", 1, -6);
     SessionTypeHelpIcon.frame:Show();
 
-    Interface:addTooltip(SessionTypeHelpIcon, L.GDKP_CREATE_SESSION_TYPE_INFO, "RIGHT");
+    Interface:addTooltip(SessionTypeHelpIcon, L["\n\n|c00A79EFFMulti-Auction allows you to start bids on multiple items at once, speeding things up!\nFollow the instructions after creating this session to get started\n\nWith |c00A79EFFSingle-Auction you choose to auction off single items instead or use the queue\n\nSelecting |c00A79EFFMulti-Auction prevents dropped items from being added to the queue\nYou can mix |c00A79EFFMulti-Auction with |c00A79EFFSingle-Auction and the queue but we strongly advise against it\n\n"], "RIGHT");
 
     local SessionType = {
-        multi = L.GDKP_CREATE_SESSION_TYPE_MULTI,
-        single = L.GDKP_CREATE_SESSION_TYPE_SINGLE,
+        multi = L["Multi-Auction"],
+        single = L["Single-Auction"],
     };
 
     local SessionTypeDropdown = GL.AceGUI:Create("Dropdown");
@@ -87,12 +87,12 @@ function EditSession:build()
     Window:AddChild(SessionTypeDropdown);
 
     local Save = AceGUI:Create("Button");
-    Save:SetText(L.OK);
+    Save:SetText(L["Ok"]);
     Save:SetFullWidth(true);
     Save:SetCallback("OnClick", function()
         local title = strtrim(Title:GetText());
         if (GL:empty(title)) then
-            GL:warning(L.INVALID_DATA_WARNING);
+            GL:warning(L["Invalid data supplied"]);
             return;
         end
 
@@ -102,14 +102,14 @@ function EditSession:build()
             if (not managementCut
                     or managementCut < 0
             ) then
-                GL:warning(L.GDKP_CREATE_SESSION_INVALID_CUT);
+                GL:warning(L["Management Cut needs to be empty or between 0 and 99 (no % sign!)"]);
                 return;
             end
         end
 
         local type = SessionTypeDropdown:GetValue();
         if (GL:empty(type)) then
-            GL:warning(L.GDKP_CREATE_SESSION_INVALID_TYPE);
+            GL:warning(L["Choose a session type!"]);
             return;
         end
 
@@ -120,7 +120,7 @@ function EditSession:build()
     Window:AddChild(Save);
 
     local Cancel = AceGUI:Create("Button");
-    Cancel:SetText(L.CANCEL);
+    Cancel:SetText(L["Cancel"]);
     Cancel:SetFullWidth(true);
     Cancel:SetCallback("OnClick", function()
         self:close();
@@ -173,7 +173,7 @@ function EditSession:open()
 
     local Window = self:window();
 
-    Interface:get(self, "Label.Title"):SetText((L.GDKP_SESSION_EDIT_TITLE):format(Session.title));
+    Interface:get(self, "Label.Title"):SetText((L["Editing %s"]):format(Session.title));
     Interface:get(self, "EditBox.Title"):SetText(Session.title);
     Interface:get(self, "EditBox.ManagementCut"):SetText(Session.managementCut);
 

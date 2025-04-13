@@ -97,7 +97,7 @@ function AddItem:build()
 
     --[[ THE SETTINGS MENU IN THE TOP LEFT OF THE WINDOW ]]
     Interface:addWindowOptions(Window, {
-        { text = L.CHANGE_SCALE, notCheckable = true, func = function ()
+        { text = L["Adjust Scale"], notCheckable = true, func = function ()
             Interface:openScaler(Window);
             CloseMenus();
         end }
@@ -112,7 +112,7 @@ function AddItem:build()
 
     --[[ MINIMUM ]]
     ---@type FontString
-    local MinimumLabel = Interface:createFontString(Window, L.MIN);
+    local MinimumLabel = Interface:createFontString(Window, L["Min"]);
     MinimumLabel:SetPoint("TOP", ItemLink, "BOTTOM", 0, -18);
     MinimumLabel:SetPoint("LEFT", Window, "LEFT", 30, 0);
 
@@ -124,7 +124,7 @@ function AddItem:build()
 
     --[[ INCREMENT ]]
     ---@type FontString
-    local IncrementLabel = Interface:createFontString(Window, L.INCREMENT);
+    local IncrementLabel = Interface:createFontString(Window, L["Increment"]);
     IncrementLabel:SetPoint("TOPLEFT", Minimum, "TOPRIGHT", 10, -6);
 
     ---@type EditBox
@@ -135,7 +135,7 @@ function AddItem:build()
 
     --[[ DURATION ]]
     ---@type FontString
-    local DurationLabel = Interface:createFontString(Window, L.TIME);
+    local DurationLabel = Interface:createFontString(Window, L["Time"]);
     DurationLabel:SetPoint("TOPLEFT", Increment, "TOPRIGHT", 10, -6);
 
     ---@type EditBox
@@ -145,7 +145,7 @@ function AddItem:build()
     Duration:SetPoint("TOPLEFT", DurationLabel, "TOPRIGHT", 6, 6);
     Window.Duration = Duration;
 
-    local OKButton = Interface:dynamicPanelButton(Window, L.OK);
+    local OKButton = Interface:dynamicPanelButton(Window, L["Ok"]);
     OKButton:SetPoint("BOTTOMLEFT", Window, "BOTTOMLEFT", 20, 30);
     OKButton:SetScript("OnClick", function ()
         local link = Window.ItemLink:GetText();
@@ -172,7 +172,7 @@ function AddItem:build()
         self:close();
     end);
 
-    local CancelButton = Interface:dynamicPanelButton(Window, L.CANCEL);
+    local CancelButton = Interface:dynamicPanelButton(Window, L["Cancel"]);
     CancelButton:SetPoint("BOTTOMRIGHT", Window, "BOTTOMRIGHT", -20, 30);
     CancelButton:SetScript("OnClick", function ()
         self:close();

@@ -114,7 +114,7 @@ function Session:_init()
             end
 
             GL.Interface.Alerts:fire("GargulNotification", {
-                message = ("|c00BE3333%s|r"):format(L.GDKP_ACTIVATED),
+                message = ("|c00BE3333%s|r"):format(L["GDKP Active!"]),
                 onClick = function () GL.Interface.GDKP.Overview:open(); end,
             });
         end, 5);
@@ -222,12 +222,12 @@ function Session:tradeInitiated(Details)
     local whisperMessage = nil;
     if (balance > 0) then
         local due = GL:copperToMoney(balance);
-        balanceMessage = ("|c00F7922E" .. L.GDKP_TRADE_GOLD_TO_GIVE .. "|r"):format(due);
+        balanceMessage = ("|c00F7922E" .. L["To give: %s"] .. "|r"):format(due);
         whisperMessage = (L.CHAT["I owe you %s. Enjoy!"]):format(due);
 
     elseif (balance < 0) then
         local owed = GL:copperToMoney(balance * -1);
-        balanceMessage = ("|c0092FF00" .. L.GDKP_TRADE_GOLD_TO_RECEIVE .. "|r"):format(owed);
+        balanceMessage = ("|c0092FF00" .. L["To receive: %s"] .. "|r"):format(owed);
         whisperMessage = (L.CHAT["You owe me %s. Thank you!"]):format(owed);
     end
 
@@ -235,7 +235,7 @@ function Session:tradeInitiated(Details)
         GL:sendChatMessage(whisperMessage, "WHISPER", nil, Details.partner);
     end
 
-    message = (L.GDKP_TRADE_BALANCE_INFO):format(
+    message = (L["\n|c00967FD2GDKP Session\nSpent by player: %s\nGiven: %s\nReceived: %s\nPlayer cut: %s\n\n%s\n"]):format(
         GL:copperToMoney(copperSpentByPlayer),
         GL:copperToMoney(copperGiven),
         GL:copperToMoney(copperReceived),
@@ -273,8 +273,8 @@ function Session:tradeInitiated(Details)
 
         local IncludeTradeInSession = GL.AceGUI:Create("CheckBox");
         IncludeTradeInSession:SetValue(false);
-        IncludeTradeInSession:SetLabel(L.GDKP_TRADE_EXCLUDE_GOLD);
-        IncludeTradeInSession:SetDescription(L.GDKP_TRADE_EXCLUDE_GOLD_INFO);
+        IncludeTradeInSession:SetLabel(L["Exclude from GDKP"]);
+        IncludeTradeInSession:SetDescription(L["Gold traded will not be added to amount given or received"]);
         IncludeTradeInSession:SetFullWidth(true);
         IncludeTradeInSession.text:SetTextColor(1, .95686, .40784);
         IncludeTradeInSession:SetCallback("OnValueChanged", function()
@@ -283,7 +283,7 @@ function Session:tradeInitiated(Details)
         Window:AddChild(IncludeTradeInSession);
 
         local TradeHistoryButton = GL.AceGUI:Create("Button");
-        TradeHistoryButton:SetText(L.GDKP_GOLD_TRADES);
+        TradeHistoryButton:SetText(L["Gold Trades"]);
         TradeHistoryButton:SetFullWidth(true);
         TradeHistoryButton:SetCallback("OnClick", function()
             GL.Interface.GDKP.GoldTrades.Overview:open(self:activeSessionID(), partnerGUID);
@@ -297,7 +297,7 @@ function Session:tradeInitiated(Details)
         and Settings:get("GDKP.addGoldToTradeWindow")
     ) then
         if (balance > GetMoney()) then
-            GL:error((L.GDKP_TRADE_GOLD_INSUFFICIENT_FUNDS):format(Details.partner));
+            GL:error((L["You don't have enough money to pay %s"]):format(Details.partner));
         else
             GL.TradeWindow:setCopper(balance, Details.partner, function(success)
                 if (success) then
@@ -305,7 +305,7 @@ function Session:tradeInitiated(Details)
                 end
 
                 GL:error(string.format(
-                    L.GDKP_TRADE_GOLD_ADD_FAILED,
+                    L["Unable to add %s to the trade window. Try adding it manually!"],
                     GL:copperToMoney(balance)
                 ));
             end);
@@ -616,7 +616,7 @@ function Session:tooltipLines(itemLink)
     end
 
     local PerItemSettings = GDKP:settingsForItemID(itemID);
-    return GL:explode((L.GDKP_ITEM_SALE_HISTORY_TOOLTIP):format(
+    return GL:explode((L["\n\n|c00967FD2GDKP Data (sold %sx)\nLast sold for: %s\nAverage price: %s\nMinimum bid: %s\nIncrement: %s\n\n"]):format(
         Details.timesSold,
         GL:goldToMoney(Details.lastSoldPrice),
         GL:goldToMoney(Details.averageSaleValue),

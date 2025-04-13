@@ -122,7 +122,7 @@ function RollerUI:draw(time, itemLink, itemIcon, note, SupportedRolls, userCanUs
                 RollAcceptedNotification.frame:SetPoint("BOTTOMLEFT", Window, "TOPLEFT", 0, 4);
 
                 local Text = GL.AceGUI:Create("Label");
-                Text:SetText(L.ROLLING_ROLL_ACCEPTED);
+                Text:SetText(L["Roll accepted!"]);
                 RollAcceptedNotification:AddChild(Text);
                 Text:SetJustifyH("CENTER");
 
@@ -144,7 +144,7 @@ function RollerUI:draw(time, itemLink, itemIcon, note, SupportedRolls, userCanUs
     local PassButton = CreateFrame("Button", "GargulUI_RollerUI_Pass", Window, "GameMenuButtonTemplate");
     PassButton:SetPoint("TOPRIGHT", Window, "TOPRIGHT", -3, -1);
     PassButton:SetSize(50, 20);
-    PassButton:SetText(L.ROLLING_PASS_BUTTON);
+    PassButton:SetText(L["Pass"]);
     PassButton:SetNormalFontObject("GameFontNormal");
     PassButton:SetHighlightFontObject("GameFontNormal");
     PassButton:SetScript("OnClick", function ()
@@ -229,7 +229,7 @@ function RollerUI:drawCountdownBar(time, itemLink, itemIcon, note, userCanUseIte
     TimerBar:SetLabel("  " .. itemLink);
 
     if (not userCanUseItem) then
-        TimerBar:SetLabel(("  |c00FFFFFF%s|r"):format(L.ROLLING_UNUSABLE_ITEM));
+        TimerBar:SetLabel(("  |c00FFFFFF%s|r"):format(L["You can't use this item!"]));
     end
 
     TimerBar:SetIcon(itemIcon);

@@ -202,7 +202,7 @@ function Changelog:draw()
 
     -- Create a container/parent frame
     local Window = AceGUI:Create("Frame");
-    Window:SetTitle((L.WINDOW_HEADER):format(GL.version));
+    Window:SetTitle((L["Gargul v%s"]):format(GL.version));
     Window:SetLayout("Flow");
     Window:SetWidth(400);
     Window:SetHeight(500);
@@ -242,7 +242,7 @@ function Changelog:draw()
     ScrollFrameHolder:AddChild(ScrollFrame);
 
     local WhatIsGargul = GL.AceGUI:Create("Label");
-    WhatIsGargul:SetText(L.CHANGELOG_GETTING_STARTED);
+    WhatIsGargul:SetText(L["Gargul makes handing out loot super easy, click the button below to get started!"]);
     WhatIsGargul:SetFontObject(_G["GameFontNormal"]);
     WhatIsGargul:SetFullWidth(true);
     ScrollFrame:AddChild(WhatIsGargul);
@@ -254,7 +254,7 @@ function Changelog:draw()
     ScrollFrame:AddChild(HorizontalSpacer);
 
     local OpenGargul = GL.AceGUI:Create("Button");
-    OpenGargul:SetText(L.CHANGELOG_OPEN_GARGUL);
+    OpenGargul:SetText(L["Open Gargul"]);
     OpenGargul:SetCallback("OnClick", function()
         self:close();
         return GL.Commands:call("settings");
@@ -269,7 +269,7 @@ function Changelog:draw()
     ScrollFrame:AddChild(HorizontalSpacer);
 
     local DiscordLabel = GL.AceGUI:Create("Label");
-    DiscordLabel:SetText(("|c00A79EFF%s|r"):format(L.CHANGELOG_CONTRIBUTE));
+    DiscordLabel:SetText(("|c00A79EFF%s|r"):format(L["Get support or share ideas on our Discord"]));
     DiscordLabel:SetFontObject(_G["GameFontNormal"]);
     DiscordLabel:SetFullWidth(true);
     ScrollFrame:AddChild(DiscordLabel);
@@ -278,7 +278,7 @@ function Changelog:draw()
     DiscordBox:DisableButton(true);
     DiscordBox:SetHeight(20);
     DiscordBox:SetFullWidth(true);
-    DiscordBox:SetText(L.DISCORD_URL);
+    DiscordBox:SetText(L["https://discord.gg/D3mDhYPVzf"]);
     ScrollFrame:AddChild(DiscordBox);
 
     for _, LogEntry in pairs(self.History) do
@@ -343,7 +343,7 @@ function Changelog:draw()
 
     local Checkbox = AceGUI:Create("CheckBox");
     Checkbox:SetValue(GL.Settings:get("changeLog"));
-    Checkbox:SetLabel(L.CHANGELOG_ENABLE_LABEL);
+    Checkbox:SetLabel(L["Enable changelog"]);
     Checkbox:SetDescription("");
     Checkbox:SetWidth(220);
     Checkbox:SetCallback("OnValueChanged", function()

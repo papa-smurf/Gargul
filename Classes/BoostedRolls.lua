@@ -175,7 +175,7 @@ end
 ---@return void
 function BoostedRolls:handleWhisperCommand(_, message, sender)
     local validPrefixDetected = false;
-    for _, prefix in pairs(GL:explode(L.BOOSTED_ROLLS_WHISPER_PREFIXES, "|") or {}) do
+    for _, prefix in pairs(GL:explode(L["!bonus|!rb|!br"], "|") or {}) do
         if (GL:strStartsWith(message, prefix)) then
             validPrefixDetected = true;
             break;
@@ -532,7 +532,7 @@ end
 function BoostedRolls:import(data, openOverview, MetaData)
     -- Make sure all the required properties are available and of the correct type
     if (GL:empty(data)) then
-        GL.Interface:get("BoostedRolls.Importer", "Label.StatusMessage"):SetText(L.INVALID_DATA_WARNING);
+        GL.Interface:get("BoostedRolls.Importer", "Label.StatusMessage"):SetText(L["Invalid data supplied"]);
         return false;
     end
 
@@ -569,7 +569,7 @@ function BoostedRolls:import(data, openOverview, MetaData)
     end
 
     if (GL:empty(Points)) then
-        local errorMessage = L.BOOSTED_ROLLS_IMPORT_ERROR;
+        local errorMessage = L["Invalid data provided. Make sure that the contents follows the required format and no header row is included"];
         GL.Interface:get("BoostedRolls.Importer", "Label.StatusMessage"):SetText(errorMessage);
 
         return false;
@@ -587,7 +587,7 @@ function BoostedRolls:import(data, openOverview, MetaData)
         },
     };
 
-    GL:success(L.IMPORT_SUCCESSFUL);
+    GL:success(L["Import of boosted roll data successful"]);
     GL.Events:fire("GL.BOOSTEDROLLS_IMPORTED");
 
     self:materializeData();
@@ -678,7 +678,7 @@ end
 ---@return boolean
 function BoostedRolls:broadcast()
     if (self.broadcastInProgress) then
-        GL:error(L.BROADCAST_IN_PROGRESS_ERROR);
+        GL:error(L["Broadcast still in progress"]);
         return false;
     end
 
@@ -688,13 +688,13 @@ function BoostedRolls:broadcast()
     end
 
     if (not self:userIsAllowedToBroadcast()) then
-        GL:warning(L.LM_OR_ASSIST_REQUIRED);
+        GL:warning(L["You need to be the master looter or have an assist / lead role!"]);
         return false;
     end
 
     -- Check if there's anything to share
     if (not self:available()) then
-        GL:warning(L.BOOSTED_ROLLS_BROADCAST_NO_DATA_ERROR);
+        GL:warning(L["Nothing to broadcast, import Boosted Rolls data first!"]);
         return false;
     end
 
@@ -705,12 +705,12 @@ function BoostedRolls:broadcast()
     GL.Events:fire("GL.BOOSTEDROLLS_BROADCAST_STARTED");
 
     local Broadcast = function ()
-        GL:message(L.BROADCASTING_NOTIFICATION);
+        GL:message(L["Broadcasting..."]);
 
         local Label = GL.Interface:get(GL.BoostedRolls, "Label.BroadcastProgress");
 
         if (Label) then
-            Label:SetText(L.BROADCASTING_NOTIFICATION);
+            Label:SetText(L["Broadcasting..."]);
         end
 
         GL.CommMessage.new{
@@ -721,7 +721,7 @@ function BoostedRolls:broadcast()
             },
             channel = "GROUP",
         }:send(function ()
-            GL:success(L.BROADCAST_FINISHED);
+            GL:success(L["Broadcast finished!"]);
 
             --- Broadcast updates before we reset the flag.
             self:broadcastQueuedUpdates();
@@ -731,7 +731,7 @@ function BoostedRolls:broadcast()
 
             Label = GL.Interface:get(GL.BoostedRolls, "Label.BroadcastProgress");
             if (Label) then
-                Label:SetText(L.BROADCAST_FINISHED);
+                Label:SetText(L["Broadcast finished!"]);
             end
 
             -- Make sure to broadcast the loot priorities as well
@@ -739,7 +739,7 @@ function BoostedRolls:broadcast()
         end, function (sent, total)
             Label = GL.Interface:get(GL.BoostedRolls, "Label.BroadcastProgress");
             if (Label) then
-                Label:SetText(string.format(L.COMM_PROGRESS, sent, total));
+                Label:SetText(string.format(L["Sent %s of %s bytes"], sent, total));
             end
         end);
     end
@@ -749,7 +749,7 @@ function BoostedRolls:broadcast()
     GL:afterCombatDo(function ()
         Broadcast();
     end, function ()
-        GL:notice(L.BROADCAST_DELAYED_BY_COMBAT);
+        GL:notice(L["You are currently in combat, delaying broadcast"]);
     end);
 
     return true;
@@ -768,12 +768,12 @@ function BoostedRolls:receiveBroadcast(CommMessage)
     local MetaData = CommMessage.content.MetaData or {};
     local importBroadcast = (function ()
         if (GL:empty(importString)) then
-            GL:warning((L.BOOSTED_ROLLS_BROADCAST_PROCESS_START):format(CommMessage.Sender.name));
+            GL:warning((L["Attempting to process incoming BoostedRolls data from %s"]):format(CommMessage.Sender.name));
 
             return false;
         end
 
-        GL:warning((L.BOOSTED_ROLLS_BROADCAST_PROCESS_FAILED):format(CommMessage.Sender.name) .. CommMessage.Sender.name);
+        GL:warning((L["Couldn't process BoostedRolls data received from %s"]):format(CommMessage.Sender.name) .. CommMessage.Sender.name);
 
         local result = self:import(importString, false, MetaData);
         if (result) then
@@ -796,13 +796,16 @@ function BoostedRolls:receiveBroadcast(CommMessage)
     local updatedAt = DB:get("BoostedRolls.MetaData.updatedAt", 0);
     local question;
     if (MetaData.uuid and uuid == MetaData.uuid) then -- This is an update to our dataset
-        question = (L.BOOSTED_ROLLS_UPDATE_CONFIRM):format(
+        question = (L[ [[
+Are you sure you want to update your existing boosted rolls with data from %s?
+
+Your latest update was on |c00A79EFF%s, theirs on |c00A79EFF%s.]]]):format(
             GL:nameFormat{ name = CommMessage.Sender.name, colorize = true, },
-            date(L.DATE_HOURS_MINUTES_FORMAT, updatedAt),
-            date(L.DATE_HOURS_MINUTES_FORMAT, MetaData.updatedAt or 0)
+            date(L["%Y-%m-%d %H:%M"], updatedAt),
+            date(L["%Y-%m-%d %H:%M"], MetaData.updatedAt or 0)
         );
     elseif (not GL:empty(uuid)) then -- This is a different dataset, not an update
-        question = (L.BOOSTED_ROLLS_IMPORT_CONFIRM):format(CommMessage.Sender.name);
+        question = (L["Are you sure you want to clear your existing boosted roll data and import new data broadcasted by %s?"]):format(CommMessage.Sender.name);
     else -- We don't have a dataset yet, import!
         return importBroadcast();
     end
@@ -1012,7 +1015,7 @@ function BoostedRolls:broadcastQueuedUpdates()
     end
 
     if (not self:userIsAllowedToBroadcast()) then
-        GL:warning(L.LM_OR_ASSIST_REQUIRED);
+        GL:warning(L["You need to be the master looter or have an assist / lead role!"]);
         return false;
     end
 
@@ -1036,17 +1039,17 @@ end
 ---@param delete boolean
 function BoostedRolls:broadcastUpdate(playerName, points, aliases, delete)
     if (not self:userIsAllowedToBroadcast()) then
-        GL:warning(L.LM_OR_ASSIST_REQUIRED);
+        GL:warning(L["You need to be the master looter or have an assist / lead role!"]);
         return false;
     end
 
     if (self.broadcastInProgress) then
-        GL:error(L.BROADCAST_IN_PROGRESS_ERROR);
+        GL:error(L["Broadcast still in progress"]);
         self:queueUpdate(playerName, points, aliases, delete);
         return false;
     end
 
-    GL:message(L.BROADCASTING_NOTIFICATION);
+    GL:message(L["Broadcasting..."]);
 
     GL.CommMessage.new{
         action = CommActions.broadcastBoostedRollsMutation,

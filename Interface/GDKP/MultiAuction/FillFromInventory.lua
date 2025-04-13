@@ -70,7 +70,7 @@ function FillFromInventory:build()
 
     --[[ THE SETTINGS MENU IN THE TOP LEFT OF THE WINDOW ]]
     Interface:addWindowOptions(Window, {
-        { text = L.CHANGE_SCALE, notCheckable = true, func = function ()
+        { text = L["Adjust Scale"], notCheckable = true, func = function ()
             Interface:openScaler(Window);
             CloseMenus();
         end }
@@ -78,7 +78,7 @@ function FillFromInventory:build()
 
     --[[ CHANNEL ]]
     ---@type FontString
-    local MinimumQualityLabel = Interface:createFontString(Window, L.MINIMUM_QUALITY);
+    local MinimumQualityLabel = Interface:createFontString(Window, L["Minimum Quality"]);
     MinimumQualityLabel:SetPoint("TOP", Window, "TOP", 20, -30);
     MinimumQualityLabel:SetPoint("LEFT", Window, "LEFT", 20, 0);
 
@@ -86,11 +86,11 @@ function FillFromInventory:build()
     local MinimumQuality = Interface:createDropdown{
         Parent = Window,
         Options = {
-            [0] = ("|c00%s%s|r"):format(Interface.Colors.POOR, L.QUALITY_POOR),
-            [1] = ("|c00%s%s|r"):format(Interface.Colors.COMMON, L.QUALITY_COMMON),
-            [2] = ("|c00%s%s|r"):format(Interface.Colors.UNCOMMON, L.QUALITY_UNCOMMON),
-            [3] = ("|c00%s%s|r"):format(Interface.Colors.RARE, L.QUALITY_RARE),
-            [4] = ("|c00%s%s|r"):format(Interface.Colors.EPIC, L.QUALITY_EPIC),
+            [0] = ("|c00%s%s|r"):format(Interface.Colors.POOR, L["Poor"]),
+            [1] = ("|c00%s%s|r"):format(Interface.Colors.COMMON, L["Common"]),
+            [2] = ("|c00%s%s|r"):format(Interface.Colors.UNCOMMON, L["Uncommon"]),
+            [3] = ("|c00%s%s|r"):format(Interface.Colors.RARE, L["Rare"]),
+            [4] = ("|c00%s%s|r"):format(Interface.Colors.EPIC, L["Epic"]),
         },
         value = Settings:get("GDKP.MultiAuction.minimumFillQuality"),
         callback = function (_, value)
@@ -102,7 +102,7 @@ function FillFromInventory:build()
 
     --[[ ITEM LEVEL ]]
     ---@type FontString
-    local ItemLevelLabel = Interface:createFontString(Window, L.MINIMUM_ITEM_LEVEL);
+    local ItemLevelLabel = Interface:createFontString(Window, L["Minimum item level"]);
     ItemLevelLabel:SetHeight(20);
     ItemLevelLabel:SetPoint("TOPLEFT", MinimumQuality, "BOTTOMLEFT", 22, 0);
 
@@ -117,7 +117,7 @@ function FillFromInventory:build()
     local IncludeBOE = Interface:createCheckbox{
         Parent = Window,
         checked = Settings:get("GDKP.MultiAuction.includeBOEs"),
-        label = L.INCLUDE_BOES,
+        label = L["Include BOEs"],
         callback = function (_, value)
             Settings:set("GDKP.MultiAuction.includeBOEs", value);
         end,
@@ -129,7 +129,7 @@ function FillFromInventory:build()
     local IncludeAwarded = Interface:createCheckbox{
         Parent = Window,
         checked = Settings:get("GDKP.MultiAuction.includeAwarded"),
-        label = L.INCLUDE_AWARDED,
+        label = L["Include previously awarded items"],
         callback = function (_, value)
             Settings:set("GDKP.MultiAuction.includeAwarded", value);
         end,
@@ -141,14 +141,14 @@ function FillFromInventory:build()
     local IncludeMaterials = Interface:createCheckbox{
         Parent = Window,
         checked = Settings:get("GDKP.MultiAuction.includeMaterials"),
-        label = L.INCLUDE_MATERIALS,
+        label = L["Include materials (like Abyss Crystals)"],
         callback = function (_, value)
             Settings:set("GDKP.MultiAuction.includeMaterials", value);
         end,
     };
     IncludeMaterials:SetPoint("TOPLEFT", IncludeAwarded, "BOTTOMLEFT", 0, -6);
 
-    local FillButton = Interface:dynamicPanelButton(Window, L.FILL);
+    local FillButton = Interface:dynamicPanelButton(Window, L["Fill"]);
     FillButton:SetPoint("BOTTOMLEFT", Window, "BOTTOMLEFT", 20, 30);
     FillButton:SetScript("OnClick", function ()
         local itemLevel = ItemLevel:GetText();
@@ -157,7 +157,7 @@ function FillFromInventory:build()
         self:close();
     end);
 
-    local CancelButton = Interface:dynamicPanelButton(Window, L.CANCEL);
+    local CancelButton = Interface:dynamicPanelButton(Window, L["Cancel"]);
     CancelButton:SetPoint("TOPLEFT", FillButton, "TOPRIGHT", 2, 0);
     CancelButton:SetScript("OnClick", function ()
         self:close();

@@ -292,7 +292,7 @@ function Auctioneer:setItemByLink(itemLink, fromQueue, minimum, increment)
         and not GL.User.isMasterLooter
         and not GL.User.hasAssist
     ) then
-        return GL:warning(L.LM_OR_ASSIST_REQUIRED);
+        return GL:warning(L["You need to be the master looter or have an assist / lead role!"]);
     end
 
     if (Auction.inProgress
@@ -496,7 +496,7 @@ function Auctioneer:timeRanOut()
                 local quality = tonumber(GL:getItemQualityFromLink(Auction.Current.itemLink));
 
                 if (quality and quality >= 5) then
-                    GL:warning(L.GDKP_MANUAL_ACTION_ON_LEGENDARY);
+                    GL:warning(L["No bids on Legendary+ item detected, continue manually!"]);
                     return;
                 end
 
@@ -511,7 +511,7 @@ function Auctioneer:timeRanOut()
 
         if (not AuctioneerUI.isVisible) then
             GL.Interface.Alerts:fire("GargulNotification", {
-                message = "|c00BE3333" .. L.GDKP_NO_BIDS .. "|r",
+                message = "|c00BE3333" .. L["No bids!"] .. "|r",
             });
         end
 
@@ -647,11 +647,11 @@ function Auctioneer:refreshBidsTable()
                             self:removePlayerBid(bidder, Entry.bid);
                         else
                             GL.Interface.Alerts:fire("GargulNotification", {
-                                message = "|c00BE3333" .. L.GDKP_STOP_AUCTION_FIRST .. "|r",
+                                message = "|c00BE3333" .. L["Stop the auction first!"] .. "|r",
                             });
                         end
                     end,
-                    _tooltip = L.GDKP_DELETE_BID_INFO,
+                    _tooltip = L["Delete bid. Auction must be stopped first!"],
                 },
                 {
                     value = Entry.bidder,
@@ -762,7 +762,7 @@ function Auctioneer:award()
     local bid = selected.cols[2].value;
 
     GL.Interface.Dialogs.PopupDialog:open{
-        question = (L.GDKP_AWARD_ITEM_CONFIRMATION):format(
+        question = (L["Award %s to %s for %s?"]):format(
             Auction.Current.itemLink,
             GL:nameFormat{name = winner, colorize = true},
             "|c00FFF569" .. bid .. "|r"

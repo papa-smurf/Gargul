@@ -206,7 +206,7 @@ function Auction:userWasOutBidHandler()
 
     self.lastOutBidNotificationShownAt = GetServerTime();
     GL.Interface.Alerts:fire("GargulNotification", {
-        message = "|c00BE3333" .. L.GDKP_OUTBID .. "|r",
+        message = "|c00BE3333" .. L["You were outbid!"] .. "|r",
     });
 end
 
@@ -225,7 +225,7 @@ function Auction:create(itemLinkOrID, price, winner, sessionID, Bids, note, awar
         or (sessionID and not GDKPSession:exists(sessionID))
     ) and not GDKPSession:activeSessionID()
     ) then
-        GL:warning((L.GDKP_UNKNOWN_SESSION):format(tostring(sessionID)));
+        GL:warning((L["Unknown sessionIdentifier in Auction:create: %s"]):format(tostring(sessionID)));
         return false;
     end
 
@@ -234,14 +234,14 @@ function Auction:create(itemLinkOrID, price, winner, sessionID, Bids, note, awar
     itemID = itemID or GL:getItemIDFromLink(itemLink);
 
     if (not GL:higherThanZero(itemID)) then
-        GL:warning((L.GDKP_UNKNOWN_ITEM):format(tostring(itemID)));
+        GL:warning((L["Unknown itemID in Auction:create: %s"]):format(tostring(itemID)));
         return false;
     end
 
     sessionID = sessionID or GDKPSession:activeSessionID();
     local Session = GDKPSession:byID(sessionID);
     if (not Session or Session.lockedAt) then
-        GL:warning(L.GDKP_LOCKED_SESSION);
+        GL:warning(L["The GDKP Session is not available or locked"]);
         return;
     end
 
@@ -320,7 +320,7 @@ end
 function Auction:delete(sessionID, auctionID, reason)
     local Session = GDKPSession:byID(sessionID);
     if (not Session or Session.lockedAt) then
-        GL:warning(L.GDKP_LOCKED_SESSION);
+        GL:warning(L["The GDKP Session is not available or locked"]);
         return;
     end
 
@@ -373,7 +373,7 @@ end
 function Auction:restore(sessionID, auctionID)
     local Session = GDKPSession:byID(sessionID);
     if (not Session or Session.lockedAt) then
-        GL:warning(L.GDKP_LOCKED_SESSION);
+        GL:warning(L["The GDKP Session is not available or locked"]);
         return;
     end
 
@@ -461,7 +461,7 @@ function Auction:storeCurrent(winner, bid, awardChecksum)
     if (not GL:higherThanZero(itemID)
         or not GL:higherThanZero(GetItemInfoInstant(GL.GDKP.Auction.Current.itemLink))
     ) then
-        GL:warning((L.GDKP_UNKNOWN_ITEM):format(tostring(itemID)));
+        GL:warning((L["Unknown itemID in Auction:create: %s"]):format(tostring(itemID)));
         return false;
     end
 
@@ -689,7 +689,7 @@ end
 function Auction:reassignAuction(sessionID, auctionID, winner)
     local Session = GDKPSession:byID(sessionID);
     if (not Session or Session.lockedAt) then
-        GL:warning(L.GDKP_LOCKED_SESSION);
+        GL:warning(L["The GDKP Session is not available or locked"]);
         return;
     end
 
@@ -738,7 +738,7 @@ end
 function Auction:setNote(sessionID, auctionID, note)
     local Session = GDKPSession:byID(sessionID);
     if (not Session or Session.lockedAt) then
-        GL:warning(L.GDKP_LOCKED_SESSION);
+        GL:warning(L["The GDKP Session is not available or locked"]);
         return;
     end
 
@@ -769,14 +769,14 @@ end
 function Auction:setPaid(sessionID, auctionID, paid)
     local Session = GDKPSession:byID(sessionID);
     if (not Session or Session.lockedAt) then
-        GL:warning(L.GDKP_LOCKED_SESSION);
+        GL:warning(L["The GDKP Session is not available or locked"]);
         return;
     end
 
     paid = tonumber(paid);
 
     if (not paid) then
-        GL:warning(L.GDKP_INVALID_PAID_AMOUNT);
+        GL:warning(L["Invalid number provided for 'paid'"]);
         return;
     end
 
@@ -813,13 +813,13 @@ function Auction:move(auctionID, fromSessionID, toSessionID)
 
     local FromSession = GDKPSession:byID(fromSessionID);
     if (not FromSession or FromSession.lockedAt) then
-        GL:warning(L.GDKP_LOCKED_SESSION);
+        GL:warning(L["The GDKP Session is not available or locked"]);
         return false;
     end
 
     local ToSession = GDKPSession:byID(toSessionID);
     if (not ToSession or ToSession.lockedAt) then
-        GL:warning(L.GDKP_LOCKED_SESSION);
+        GL:warning(L["The GDKP Session is not available or locked"]);
         return false;
     end
 
@@ -1150,7 +1150,7 @@ function Auction:announceStart(itemLink, minimumBid, minimumIncrement, duration,
         or (minimumBid > 0 and GL:lt(minimumBid, .0001))
         or GL:lt(minimumIncrement, 0)
     ) then
-        GL:warning(L.GDKP_INVALID_DATA_FOR_START);
+        GL:warning(L["Invalid data provided for GDKP auction start!"]);
         self.waitingForStart = false;
         return false;
     end
@@ -1158,7 +1158,7 @@ function Auction:announceStart(itemLink, minimumBid, minimumIncrement, duration,
     local itemID = GL:getItemIDFromLink(itemLink) or 0;
     if (itemID < 1 or not GL:getItemInfoInstant(itemID)) then
         self.waitingForStart = false;
-        GL:warning(L.GDKP_INVALID_DATA_FOR_START);
+        GL:warning(L["Invalid data provided for GDKP auction start!"]);
         return false;
     end
 
@@ -1241,7 +1241,7 @@ function Auction:announceExtension(time)
     time = tonumber(time) or 0
     if (time < 1) then
         self.waitingForReschedule = false;
-        GL:warning(L.GDKP_INVALID_DATA_FOR_EXTENSION);
+        GL:warning(L["Invalid data provided for GDKP extension!"]);
         return false;
     end
 
@@ -1265,7 +1265,7 @@ function Auction:announceShortening(time)
     time = tonumber(time) or 0
     if (time < 1) then
         self.waitingForReschedule = false;
-        GL:warning(L.GDKP_INVALID_DATA_FOR_SHORTENING);
+        GL:warning(L["Invalid data provided for GDKP shortening!"]);
         return false;
     end
 
@@ -1294,7 +1294,7 @@ function Auction:announceReschedule(time)
     time = tonumber(time) or 0
     if (time < 1) then
         self.waitingForReschedule = false;
-        GL:warning(L.GDKP_INVALID_DATA_FOR_RESHEDULE);
+        GL:warning(L["Invalid data provided for GDKP reschedule!"]);
         return false;
     end
 
@@ -1325,7 +1325,7 @@ function Auction:reschedule(CommMessage)
     local time = tonumber(CommMessage.content) or 0;
     if (time < 1) then
         self.waitingForReschedule = false;
-        return GL:error(L.GDKP_INVALID_TIME_IN_RESHEDULE);
+        return GL:error(L["Invalid time provided in Auction:reschedule"]);
     end
 
     self.Current.duration = time;
@@ -1396,7 +1396,7 @@ function Auction:start(CommMessage)
     end
 
     if (not Auctioneer:allowedToBroadcast(CommMessage.Sender.id)) then
-        return GL:error(string.format(L.GDKP_NOT_ALLOWED_TO_START_AUCTION, CommMessage.Sender.name));
+        return GL:error(string.format(L["User '%s' is not allowed to start auctions"], CommMessage.Sender.name));
     end
 
     --- We have to wait with starting the actual auction until
@@ -1579,9 +1579,9 @@ function Auction:stop(CommMessage)
 
         if (CommMessage.Sender.id ~= self.Current.initiatorID) then
             if (self.Current.initiatorID) then
-                GL:warning((L.GDKP_NOT_ALLOWED_TO_STOP_AUCTION):format(CommMessage.Sender.name));
+                GL:warning((L["User '%s' is not allowed to stop auctions"]):format(CommMessage.Sender.name));
             else
-                GL:warning((L.GDKP_NOT_ALLOWED_TO_STOP_INVALID_AUCTION):format(CommMessage.Sender.name));
+                GL:warning((L["User '%s' is not allowed to stop auction: auction invalid"]):format(CommMessage.Sender.name));
             end
         end
     end

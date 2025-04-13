@@ -45,7 +45,7 @@ function EditMutator:build()
     Name:DisableButton(true);
     Name:SetHeight(20);
     Name:SetFullWidth(true);
-    Name:SetLabel(L.GDKP_MUTATOR_NAME_LABEL);
+    Name:SetLabel(L["Name [example: Tanks]"]);
     Interface:set(self, "Name", Name);
     Window:AddChild(Name);
 
@@ -53,7 +53,7 @@ function EditMutator:build()
     Percentage:DisableButton(true);
     Percentage:SetHeight(20);
     Percentage:SetFullWidth(true);
-    Percentage:SetLabel(L.GDKP_MUTATOR_PERCENTAGE_LABEL);
+    Percentage:SetLabel(L["Percentage [example: 10]"]);
     Interface:set(self, "Percentage", Percentage);
     Window:AddChild(Percentage);
 
@@ -61,7 +61,7 @@ function EditMutator:build()
     Flat:DisableButton(true);
     Flat:SetHeight(20);
     Flat:SetFullWidth(true);
-    Flat:SetLabel(L.GDKP_MUTATOR_FLAT_LABEL);
+    Flat:SetLabel(L["Flat gold rate [example: 250]"]);
     Interface:set(self, "Flat", Flat);
     Window:AddChild(Flat);
 
@@ -69,7 +69,7 @@ function EditMutator:build()
     AutoApplyTo:DisableButton(true);
     AutoApplyTo:SetHeight(20);
     AutoApplyTo:SetFullWidth(true);
-    AutoApplyTo:SetLabel(L.GDKP_MUTATOR_APPLY_LABEL);
+    AutoApplyTo:SetLabel(L["Auto apply to"]);
     Interface:set(self, "AutoApplyTo", AutoApplyTo);
     Window:AddChild(AutoApplyTo);
 
@@ -84,13 +84,13 @@ function EditMutator:build()
 
     HelpIcon:SetCallback("OnEnter", function()
         GameTooltip:SetOwner(HelpIcon.frame, "ANCHOR_RIGHT");
-        GameTooltip:AddLine(" \n" .. L.GDKP_MUTATOR_HELP_TOOLTIP_TOP .. "\n ");
+        GameTooltip:AddLine(" \n" .. L["You can automatically apply this mutator to raiders using keywords:"] .. "\n ");
 
         for _, placeholder in pairs (GDKPPot.ValidAutoApplyPlaceholders) do
             GameTooltip:AddLine(string.format("|c00967FD2%s|r", placeholder));
         end
 
-        GameTooltip:AddLine(" \n" .. L.GDKP_MUTATOR_HELP_TOOLTIP_BOTTOM .. "\n ");
+        GameTooltip:AddLine(" \n" .. L["\nExample:\n|c00967FD2SELF,RL,HEALER"] .. "\n ");
         GameTooltip:Show();
     end);
 
@@ -99,17 +99,17 @@ function EditMutator:build()
     end);
 
     local Save = AceGUI:Create("Button");
-    Save:SetText(L.OK);
+    Save:SetText(L["Ok"]);
     Save:SetFullWidth(true);
     Save:SetCallback("OnClick", function()
         local name = strtrim(Name:GetText());
         if (GL:empty(name)) then
-            GL:warning(L.INVALID_DATA_WARNING);
+            GL:warning(L["Invalid data supplied"]);
             return;
         end
 
         if (name:match("%.")) then
-            GL:warning(L.GDKP_MUTATOR_NO_DOTS_WARNING);
+            GL:warning(L["Mutator names can not contains dots (.)"]);
             return;
         end
 
@@ -117,7 +117,7 @@ function EditMutator:build()
         if (not GL:empty(percentage)
             and GL:empty(tonumber(percentage))
         ) then
-            GL:warning(L.GDKP_MUTATOR_PERCENTAGE_NUMBER_WARNING);
+            GL:warning(L["The percentage needs to be a number"]);
             return;
         end
 
@@ -125,7 +125,7 @@ function EditMutator:build()
         if (not GL:empty(flat)
                 and GL:empty(tonumber(flat))
         ) then
-            GL:warning(L.GDKP_MUTATOR_FLAT_RATE_NUMBER_WARNING);
+            GL:warning(L["The flat rate needs to be a number"]);
             return;
         end
 
@@ -133,7 +133,7 @@ function EditMutator:build()
         local Session = GDKPSession:byID(self.sessionID);
 
         if (not Session) then
-            GL:warning(L.SOMETHING_WENT_WRONG_WARNING);
+            GL:warning(L["Something went wrong!"]);
             return;
         end
 
@@ -145,7 +145,7 @@ function EditMutator:build()
         };
 
         if (not GDKPPot:editMutator(self.originalMutatorName, MutatorObj, self.sessionID)) then
-            GL:error(L.SOMETHING_WENT_WRONG_WARNING);
+            GL:error(L["Something went wrong!"]);
             return;
         end
 
@@ -156,7 +156,7 @@ function EditMutator:build()
     Window:AddChild(Save);
 
     local Cancel = AceGUI:Create("Button");
-    Cancel:SetText(L.CANCEL);
+    Cancel:SetText(L["Cancel"]);
     Cancel:SetFullWidth(true);
     Cancel:SetCallback("OnClick", function()
         self:close();
@@ -206,7 +206,7 @@ function EditMutator:open(sessionID, mutator)
 
     local Mutator = GL:tableGet(Session, "Pot.Mutators." .. mutator);
     if (not Mutator) then
-        GL:error((L.GDKP_MUTATOR_UNKNOWN):format(mutator));
+        GL:error((L["Unknown mutator: %s"]):format(mutator));
 
         return;
     end

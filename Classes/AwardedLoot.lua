@@ -109,7 +109,7 @@ function AwardedLoot:tooltipLines(itemLink)
     local fiveHoursAgo = GetServerTime() - 18000;
     local loadItemsGTE = math.min(fiveHoursAgo, GL.loadedOn);
     local winnersAvailable = false;
-    local Lines = { ("\n|c00efb8cd%s|r"):format(L.AWARDED_TO) };
+    local Lines = { ("\n|c00efb8cd%s|r"):format(L["Awarded To"]) };
     for _, Loot in pairs(DB:get("AwardHistory")) do
         (function ()
             -- loadItemsGTE will equal five hours, or however long the players
@@ -123,20 +123,20 @@ function AwardedLoot:tooltipLines(itemLink)
             local Details = {};
 
             if (Loot.OS) then
-                tinsert(Details, L.OFFSPEC_ABBR);
+                tinsert(Details, L["OS"]);
             end
 
             if (GL:higherThanZero(Loot.BRCost)) then
-                tinsert(Details, (L.AWARDED_TOOLTIP_BOOSTED_ROLL_COST):format(Loot.BRCost));
+                tinsert(Details, (L["BR: %s"]):format(Loot.BRCost));
             end
 
             if (GL:higherThanZero(Loot.GDKPCost)) then
-                tinsert(Details, (L.AWARDED_TOOLTIP_GDKP_COST):format(GL:goldToMoney(Loot.GDKPCost)));
+                tinsert(Details, (L["Price: %s"]):format(GL:goldToMoney(Loot.GDKPCost)));
             end
 
-            local receivedString = L.AWARDED_TOOLTIP_GIVEN;
+            local receivedString = L["Given: yes"];
             if (not Loot.received) then
-                receivedString = L.AWARDED_TOOLTIP_NOT_GIVEN;
+                receivedString = L["Given: no"];
             end
             tinsert(Details, receivedString);
 
@@ -157,7 +157,7 @@ function AwardedLoot:tooltipLines(itemLink)
                             break;
                         end
 
-                        tinsert(Details, (L.AWARDED_TOOLTIP_SECOND_BID):format(GL:goldToMoney(SecondHighestBid.bid), GL:disambiguateName(
+                        tinsert(Details, (L["2nd bid: %s by %s"]):format(GL:goldToMoney(SecondHighestBid.bid), GL:disambiguateName(
                             SecondHighestBid.bidder,
                             { colorize = true, }
                         )));
@@ -993,7 +993,7 @@ function AwardedLoot:processAwardedLoot(CommMessage)
                 local Notification = ...;
 
                 if (Notification and Notification.Label and Notification.Label.SetText) then
-                    Notification.Label:SetText(L.AWARDED_YOU_WON);
+                    Notification.Label:SetText(L["You won"]);
                 end
             end
             local LootAlertSystem = AlertFrame:AddQueuedAlertFrameSubSystem("LootWonAlertFrameTemplate", callback, 6, math.huge);

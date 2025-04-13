@@ -456,7 +456,7 @@ function Interface:addMoveButton(Element)
     Move:SetPoint("TOPLEFT", Element, "TOPLEFT", 0, 0);
 
     do
-        self:addTooltip(Move, L.MOVE, "CURSOR");
+        self:addTooltip(Move, L["Move"], "CURSOR");
         Move:EnableMouse(true);
         Move:RegisterForDrag("LeftButton");
         Move:SetScript("OnDragStart", function()
@@ -480,7 +480,7 @@ function Interface:addOptionsButton(Element)
     local Options = CreateFrame("Button", nil, Element);
     Options:SetPoint("TOPLEFT", Element, "TOPLEFT", 2, -2);
     Options:SetSize(16, 16);
-    self:addTooltip(Options, L.SETTINGS);
+    self:addTooltip(Options, L["Settings"]);
     Element.OptionsButton = Options;
 
     Options.normalTexture = Options:CreateTexture(nil, "BACKGROUND");
@@ -512,7 +512,7 @@ function Interface:addCloseButton(Element)
     local Close = CreateFrame("Button", Element:GetName() .. ".Close", Element, "UIPanelCloseButton");
     Close:SetPoint("TOPRIGHT", Element, "TOPRIGHT", 8, 5);
     Close:SetSize(30, 30);
-    self:addTooltip(Close, L.CLOSE);
+    self:addTooltip(Close, L["Close"]);
 
     -- Override the default onclick since it taints in combat
     Close:SetScript("OnClick", function ()
@@ -545,7 +545,7 @@ function Interface:addMinimizeButton(Element, title)
 
     --[[ THE SETTINGS MENU IN THE TOP LEFT OF THE WINDOW ]]
     self:addWindowOptions(MinimizedWindow, {
-        { text = L.CHANGE_SCALE, notCheckable = true, func = function ()
+        { text = L["Adjust Scale"], notCheckable = true, func = function ()
             self:openScaler(MinimizedWindow);
             CloseMenus();
         end }
@@ -568,7 +568,7 @@ function Interface:addMinimizeButton(Element, title)
     local Minimize = CreateFrame("Button", Element:GetName() .. ".Minimize", Element, "MaximizeMinimizeButtonFrameTemplate");
     Minimize:SetPoint("TOPRIGHT", Element, "TOPRIGHT", -13, 4);
     Minimize:SetSize(29, 29);
-    self:addTooltip(Minimize.MinimizeButton, L.MINIMIZE);
+    self:addTooltip(Minimize.MinimizeButton, L["Minimize"]);
 
     Minimize.MinimizeButton:Show();
     Minimize.MaximizeButton:Hide();
@@ -615,7 +615,7 @@ function Interface:addMaximizeButton(Element, Opens)
     local Maximize = CreateFrame("Button", Element:GetName() .. ".Maximize", Element, "MaximizeMinimizeButtonFrameTemplate");
     Maximize:SetPoint("TOPRIGHT", Element, "TOPRIGHT", -13, 4);
     Maximize:SetSize(29, 29);
-    self:addTooltip(Maximize.MaximizeButton, L.MAXIMIZE);
+    self:addTooltip(Maximize.MaximizeButton, L["Maximize"]);
 
     Maximize.MinimizeButton:Hide();
     Maximize.MaximizeButton:Show();
@@ -1253,7 +1253,7 @@ function Interface:openScaler(Parent)
         Scaler.Slider = Slider;
 
         ---@type FontString
-        local TitleText = self:createFontString(Slider, L.WINDOW_SCALE);
+        local TitleText = self:createFontString(Slider, L["Window Scale"]);
         TitleText:SetPoint("CENTER", Slider, "CENTER");
         TitleText:SetPoint("BOTTOM", Slider, "TOP", 0, 2);
     end

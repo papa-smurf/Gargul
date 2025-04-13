@@ -70,7 +70,7 @@ function Award:draw(itemLink, callback)
 
     -- Create a container/parent frame
     local Window = AceGUI:Create("Frame");
-    Window:SetTitle((L.WINDOW_HEADER):format(GL.version));
+    Window:SetTitle((L["Gargul v%s"]):format(GL.version));
     Window:SetLayout("Flow");
     Window:SetWidth(430);
     Window:SetHeight(300);
@@ -136,7 +136,7 @@ function Award:draw(itemLink, callback)
     ItemIcon:SetCallback("OnEnter", function()
         if (not Award.ItemBoxHoldsValidItem) then
             GameTooltip:SetOwner(ItemIcon.frame, "ANCHOR_TOP");
-            GameTooltip:AddLine(L.AWARD_TOOLTIP_ADD_ITEM);
+            GameTooltip:AddLine(L["Drag and drop or shift+click an item in the box on the right"]);
             GameTooltip:Show();
             return;
         end
@@ -163,7 +163,7 @@ function Award:draw(itemLink, callback)
 
     local PlayerNameBox;
     local AwardButton = AceGUI:Create("Button");
-    AwardButton:SetText(L.AWARD);
+    AwardButton:SetText(L["Award"]);
     AwardButton:SetWidth(70); ---@TODO: TOO SHORT FOR FR
     AwardButton:SetHeight(20);
     AwardButton:SetDisabled(true);
@@ -248,7 +248,7 @@ function Award:draw(itemLink, callback)
             if (GL:empty(winner)) then
                 -- Show a confirmation dialog asking whether we should award this to a random person
                 return GL.Interface.Dialogs.PopupDialog:open{
-                    question = (L.AWARD_RANDOM_CONFIRM):format(itemLink),
+                    question = (L["Do you want to award %s to a random player?"]):format(itemLink),
                     OnYes = function ()
                         local GroupMembers = GL.User:groupMembers();
 
@@ -271,7 +271,7 @@ function Award:draw(itemLink, callback)
 
         -- Make sure the initiator has to confirm his choices
         GL.Interface.Dialogs.AwardDialog:open{
-            question = (L.AWARD_CONFIRM):format(itemLink, GL:nameFormat{ name = winner, colorize = true }),
+            question = (L["Award %s to %s?"]):format(itemLink, GL:nameFormat{ name = winner, colorize = true }),
             OnYes = award,
         };
     end);
@@ -298,7 +298,7 @@ function Award:draw(itemLink, callback)
 
     AwardHistoryButton:SetScript("OnEnter", function()
         GameTooltip:SetOwner(AwardHistoryButton, "ANCHOR_TOP");
-        GameTooltip:SetText(L.AWARD_HISTORY);
+        GameTooltip:SetText(L["Award history"]);
         GameTooltip:Show();
     end);
 
@@ -320,7 +320,7 @@ function Award:draw(itemLink, callback)
         DISENCHANT BUTTON
     ]]
     local DisenchantButton = AceGUI:Create("Button");
-    DisenchantButton:SetText(L.DISENCHANT);
+    DisenchantButton:SetText(L["Disenchant"]);
     DisenchantButton:SetWidth(100);
     DisenchantButton:SetHeight(20);
     DisenchantButton:SetDisabled(false);
@@ -341,14 +341,14 @@ function Award:draw(itemLink, callback)
         local selected = PlayersTable:GetRow(PlayersTable:GetSelection());
 
         if (not selected or type(selected) ~= "table") then
-            return GL:warning(L.ROLLING_SELECT_PLAYER_WARNING);
+            return GL:warning(L["You need to select a player first"]);
         end
 
         local disenchanter = selected.cols[1].value;
 
         -- No disenchanter was set yet
         GL.Interface.Dialogs.PopupDialog:open{
-            question = string.format(L.PACKMULE_CONFIRM_DISENCHANTER,
+            question = string.format(L["Set %s as your disenchanter?"],
                     GL:nameFormat{ name = disenchanter, colorize = true, },
                     disenchanter
             ),
@@ -382,7 +382,7 @@ function Award:draw(itemLink, callback)
     SecondRow:AddChild(Spacer);
 
     local PlayerNameLabel = AceGUI:Create("Label");
-    PlayerNameLabel:SetText(L.AWARD_PLAYER_CUSTOM_NAME);
+    PlayerNameLabel:SetText(L["Type player name here"]);
     PlayerNameLabel:SetHeight(20);
     PlayerNameLabel:SetWidth(128); -- Minimum is 122
     SecondRow:AddChild(PlayerNameLabel);
@@ -410,7 +410,7 @@ function Award:draw(itemLink, callback)
     SecondRow:AddChild(Spacer);
 
     local PlayerNameLabelSuffix = AceGUI:Create("Label");
-    PlayerNameLabelSuffix:SetText(L.AWARD_PLAYER_SELECT_NAME);
+    PlayerNameLabelSuffix:SetText(L["or select one below"]);
     PlayerNameLabelSuffix:SetHeight(20);
     PlayerNameLabelSuffix:SetWidth(104); -- Minimum is 104
     SecondRow:AddChild(PlayerNameLabelSuffix);
@@ -434,7 +434,7 @@ function Award:draw(itemLink, callback)
     Window:AddChild(FourthRow);
 
     local CloseOnAward = AceGUI:Create("CheckBox");
-    CloseOnAward:SetLabel(L.ROLLING_CLOSE_ON_AWARD_LABEL);
+    CloseOnAward:SetLabel(L["Close on award"]);
     CloseOnAward:SetValue(Settings:get("UI.Award.closeOnAward", true));
     CloseOnAward:SetCallback("OnValueChanged", function (widget)
         Settings:set("UI.Award.closeOnAward", widget:GetValue());
@@ -470,7 +470,7 @@ function Award:drawPlayersTable()
     -- Combined width of all columns should be 340
     local columns = {
         {
-            name = L.AWARD_HEADER_IN_GROUP,
+            name = L["In Group"],
             width = 340,
             align = "LEFT",
             color = {

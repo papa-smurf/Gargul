@@ -89,7 +89,7 @@ function Overview:draw(section, onCloseCallback)
 
     -- Create a container/parent frame
     local Window = AceGUI:Create("Frame");
-    Window:SetTitle((L.WINDOW_HEADER):format(GL.version) .. " - Settings");
+    Window:SetTitle((L["Gargul v%s"]):format(GL.version) .. " - Settings");
     Window:SetLayout("Flow");
     Window:SetWidth(800);
     Window:SetHeight(600);
@@ -183,10 +183,10 @@ function Overview:draw(section, onCloseCallback)
     SecondColumn:AddChild(ChangelogButton);
 
     local ResetUIButton = GL.AceGUI:Create("Button");
-    ResetUIButton:SetText(L.RESET_UI);
+    ResetUIButton:SetText(L["Reset Gargul UI"]);
     ResetUIButton:SetCallback("OnClick", function()
         GL.Interface.Dialogs.PopupDialog:open{
-            question = L.RESET_UI_CONFIRMATION,
+            question = L["Are you sure you want to reset all of Gargul's window sizes, positions and scale? This can't be undone!"],
             OnYes = function ()
                 GL.Commands:call("resetui");
             end,
@@ -196,10 +196,10 @@ function Overview:draw(section, onCloseCallback)
     SecondColumn:AddChild(ResetUIButton);
 
     local ResetSettingsButton = GL.AceGUI:Create("Button");
-    ResetSettingsButton:SetText(L.RESET_SETTINGS);
+    ResetSettingsButton:SetText(L["Reset Settings"]);
     ResetSettingsButton:SetCallback("OnClick", function()
         GL.Interface.Dialogs.PopupDialog:open{
-            question = L.RESET_SETTINGS_CONFIRMATION,
+            question = L["Are you sure you want to reset all of Gargul's settings? This can't be undone!"],
             OnYes = function ()
                 GL.Commands:call("resetsettings");
             end,

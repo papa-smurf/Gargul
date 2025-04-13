@@ -195,7 +195,7 @@ function ExportingLoot:draw(Parent)
             "@HOUR",
             "@MINUTE",
             "@TIME",
-            L.TAB_REPLACES_T
+            L["\\t is replaced by a tab"]
         ));
         GameTooltip:Show();
     end);

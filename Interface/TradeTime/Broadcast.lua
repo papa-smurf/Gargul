@@ -68,7 +68,7 @@ function Broadcast:build()
 
     --[[ THE SETTINGS MENU IN THE TOP LEFT OF THE WINDOW ]]
     Interface:addWindowOptions(Window, {
-        { text = L.CHANGE_SCALE, notCheckable = true, func = function ()
+        { text = L["Adjust Scale"], notCheckable = true, func = function ()
             Interface:openScaler(Window);
             CloseMenus();
         end }
@@ -76,7 +76,7 @@ function Broadcast:build()
 
     --[[ CHANNEL ]]
     ---@type FontString
-    local ChannelLabel = Interface:createFontString(Window, L.CHANNEL);
+    local ChannelLabel = Interface:createFontString(Window, L["Channel"]);
     ChannelLabel:SetPoint("TOP", Window, "TOP", 20, -30);
     ChannelLabel:SetPoint("LEFT", Window, "LEFT", 20, 0);
 
@@ -84,10 +84,10 @@ function Broadcast:build()
     local Channel = Interface:createDropdown{
         Parent = Window,
         Options = {
-            [CHANNEL_GROUP] = L.GROUP,
-            [CHANNEL_RAID_WARNING] = L.CHANNEL_RAID_WARNING,
-            [CHANNEL_WHISPER] = L.CHANNEL_WHISPER,
-            [CHANNEL_OFFICER] = L.CHANNEL_OFFICER,
+            [CHANNEL_GROUP] = L["Group"],
+            [CHANNEL_RAID_WARNING] = L["Raid Warning"],
+            [CHANNEL_WHISPER] = L["Whisper"],
+            [CHANNEL_OFFICER] = L["Officer"],
         },
         value = Settings:get("LootTradeTimers.Broadcast.channel"),
         callback = function (_, value)
@@ -99,7 +99,7 @@ function Broadcast:build()
 
     --[[ TARGET PLAYER ]]
     ---@type FontString
-    local TargetPlayerLabel = Interface:createFontString(Window, L.BROADCAST_TARGET_PLAYER);
+    local TargetPlayerLabel = Interface:createFontString(Window, L["Target player (whisper only)"]);
     TargetPlayerLabel:SetPoint("TOP", Channel, "BOTTOM", 20, -6);
     TargetPlayerLabel:SetPoint("LEFT", Window, "LEFT", 20, 0);
 
@@ -115,7 +115,7 @@ function Broadcast:build()
 
     --[[ MINIMUM QUALITY ]]
     ---@type FontString
-    local MinimumQualityLabel = Interface:createFontString(Window, L.MINIMUM_QUALITY);
+    local MinimumQualityLabel = Interface:createFontString(Window, L["Minimum Quality"]);
     MinimumQualityLabel:SetPoint("TOP", TargetPlayer, "BOTTOM", 0, -10);
     MinimumQualityLabel:SetPoint("LEFT", Window, "LEFT", 20, 0);
 
@@ -123,8 +123,8 @@ function Broadcast:build()
     local MinimumQuality = Interface:createDropdown{
         Parent = Window,
         Options = {
-            [3] = ("|c000070dd%s|r"):format(L.QUALITY_RARE),
-            [4] = ("|c00a335ee%s|r"):format(L.QUALITY_EPIC),
+            [3] = ("|c000070dd%s|r"):format(L["Rare"]),
+            [4] = ("|c00a335ee%s|r"):format(L["Epic"]),
         },
         value = Settings:get("LootTradeTimers.Broadcast.minimumQuality"),
         callback = function (_, value)
@@ -136,7 +136,7 @@ function Broadcast:build()
 
     --[[ MAXIMUM TRADE TIME LEFT ]]
     ---@type FontString
-    local MaximumTradeTimeLeftLabel = Interface:createFontString(Window, L.BROADCAST_TRADE_TIME_LEFT);
+    local MaximumTradeTimeLeftLabel = Interface:createFontString(Window, L["Max trade time left (in minutes)"]);
     MaximumTradeTimeLeftLabel:SetPoint("TOP", MinimumQuality, "BOTTOM", 0, -10);
     MaximumTradeTimeLeftLabel:SetPoint("LEFT", Window, "LEFT", 20, 0);
 
@@ -155,7 +155,7 @@ function Broadcast:build()
 
     --[[ NUMBER OF ITEMS ]]
     ---@type FontString
-    local NumberOfItemsLabel = Interface:createFontString(Window, L.BROADCAST_NUMBER_OF_ITEMS);
+    local NumberOfItemsLabel = Interface:createFontString(Window, L["Number of items"]);
     NumberOfItemsLabel:SetPoint("TOP", MaximumTradeTimeLeft, "BOTTOM", 0, -30);
     NumberOfItemsLabel:SetPoint("LEFT", Window, "LEFT", 20, 0);
 
@@ -177,7 +177,7 @@ function Broadcast:build()
     local IncludeTimeLeft = Interface:createCheckbox{
         Parent = Window,
         checked = Settings:get("LootTradeTimers.Broadcast.includeTimeLeft"),
-        label = L.BROADCAST_INC_TIME_LEFT,
+        label = L["Include time left"],
         callback = function (_, value)
             Settings:set("LootTradeTimers.Broadcast.includeTimeLeft", value)
         end,
@@ -190,7 +190,7 @@ function Broadcast:build()
     local IncludeAwardedItems = Interface:createCheckbox{
         Parent = Window,
         checked = Settings:get("LootTradeTimers.Broadcast.includeAwardedItems"),
-        label = L.BROADCAST_INC_AWARDED,
+        label = L["Include awarded items"],
         callback = function (_, value)
             Settings:set("LootTradeTimers.Broadcast.includeAwardedItems", value)
         end,
@@ -203,7 +203,7 @@ function Broadcast:build()
     local IncludeDisenchantedItems = Interface:createCheckbox{
         Parent = Window,
         checked = Settings:get("LootTradeTimers.Broadcast.includeDisenchantedItems"),
-        label = L.BROADCAST_INC_DISENCHANTED,
+        label = L["Include disenchanted items"],
         callback = function (_, value)
             Settings:set("LootTradeTimers.Broadcast.includeDisenchantedItems", value)
         end,
@@ -216,7 +216,7 @@ function Broadcast:build()
     local IncludeHiddenItems = Interface:createCheckbox{
         Parent = Window,
         checked = Settings:get("LootTradeTimers.Broadcast.includeHiddenItems"),
-        label = L.BROADCAST_INC_HIDDEN,
+        label = L["Include hidden items"],
         callback = function (_, value)
             Settings:set("LootTradeTimers.Broadcast.includeHiddenItems", value)
         end,
@@ -226,7 +226,7 @@ function Broadcast:build()
 
     --[[ BROADCAST BUTTON ]]
     ---@type Button
-    local BroadcastButton = Interface:dynamicPanelButton(Window, L.BROADCAST);
+    local BroadcastButton = Interface:dynamicPanelButton(Window, L["Broadcast"]);
     BroadcastButton:SetPoint("TOP", IncludeHiddenItems, "BOTTOM", 0, -10);
     BroadcastButton:SetPoint("LEFT", Window, "LEFT", 20, 0);
     BroadcastButton:SetPoint("RIGHT", Window, "RIGHT", -20, 0);
@@ -239,7 +239,7 @@ function Broadcast:build()
             target = Settings:get("LootTradeTimers.Broadcast.target");
 
             if (GL:empty(target)) then
-                GL:error(L.BROADCAST_TARGET_REQUIRED);
+                GL:error(L["Whisper requires a target player"]);
                 return;
             end
         elseif (channel == CHANNEL_GROUP) then
@@ -248,7 +248,7 @@ function Broadcast:build()
             channel = "RAID_WARNING";
         elseif (channel == CHANNEL_OFFICER) then
             if (not C_GuildInfo.CanEditOfficerNote()) then
-                GL:error(L.NO_OFFICER_PRIVILEGES);
+                GL:error(L["You don't have officer privileges"]);
                 return;
             end
 
@@ -267,7 +267,7 @@ function Broadcast:build()
 
         local State = self:getTradeTimeDetails(includeAwarded, includeDisenchanted, includeHidden, maximumTradeTime);
         if (GL:empty(State)) then
-            GL:notice(L.BROADCAST_NO_DATA);
+            GL:notice(L["There is nothing to broadcast"]);
             return;
         end
 

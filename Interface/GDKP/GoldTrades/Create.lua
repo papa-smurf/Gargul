@@ -56,7 +56,7 @@ function Create:build()
 
     --[[ THE SETTINGS MENU IN THE TOP LEFT OF THE WINDOW ]]
     Interface:addWindowOptions(Window, {
-        { text = L.CHANGE_SCALE, notCheckable = true, func = function ()
+        { text = L["Adjust Scale"], notCheckable = true, func = function ()
             Interface:openScaler(Window);
             CloseMenus();
         end }
@@ -115,17 +115,17 @@ function Create:build()
         local given = tonumber(Window.GivenInput:GetText()) or 0;
 
         if (received > 0 and given > 0) then
-            GL:error(L.GDKP_ADD_TRADE_GIVEN_AND_RECEIVED_WARNING);
+            GL:error(L["You can't give AND receive gold from the same player at the same time"]);
             return false;
         end
 
         if (received <= 0 and given <= 0) then
-            GL:error(L.INVALID_DATA_WARNING);
+            GL:error(L["Invalid data supplied"]);
             return false;
         end
 
         if (not GDKPSession:addGoldTrade(self.sessionID, self.playerGUID, given * 10000, received * 10000)) then
-            GL:error(L.SOMETHING_WENT_WRONG_WARNING);
+            GL:error(L["Something went wrong!"]);
             return false;
         end
 
@@ -162,15 +162,15 @@ Player: %s
     if (copperOwedToPLayer == 0) then
         balance = playerName;
     elseif (copperOwedToPLayer > 0) then
-        balance = (L.GDKP_YOU_OWE):format(playerName, GL:copperToMoney(copperOwedToPLayer));
+        balance = (L["You owe %s %s"]):format(playerName, GL:copperToMoney(copperOwedToPLayer));
     else
-        balance = (L.GDKP_THEY_OWE):format(playerName, GL:copperToMoney(copperOwedToPLayer * -1));
+        balance = (L["%s owes you %s"]):format(playerName, GL:copperToMoney(copperOwedToPLayer * -1));
     end
     Window.Balance:SetText(balance);
 
     --[[ UPDATE THE INPUT LABELS ]]
-    Window.GivenLabel:SetText((L.GDKP_TRADE_GIVEN_TO_LABEL):format(playerName));
-    Window.ReceivedLabel:SetText((L.GDKP_TRADE_RECEIVED_FROM_LABEL):format(playerName));
+    Window.GivenLabel:SetText((L["Gold |c00967FD2given to %s"]):format(playerName));
+    Window.ReceivedLabel:SetText((L["Gold |c00967FD2received from %s"]):format(playerName));
 
     --[[ REFRESH INPUTS ]]
     Window.GivenInput:SetText("");

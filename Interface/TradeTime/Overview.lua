@@ -179,8 +179,8 @@ function Overview:build()
     Window.texture = WindowBackgroundTexture;
     GL.Interface:set(self, "Window", Window);
 
-    local howToRollText = (L.TRADETIME_ROLL_HOWTO):format(GL.Settings:get("ShortcutKeys.rollOffOrAuction"));
-    local howToAwardText =(L.TRADETIME_AWARD_HOWTO):format(GL.Settings:get("ShortcutKeys.award"));
+    local howToRollText = (L["%s to roll out loot!"]):format(GL.Settings:get("ShortcutKeys.rollOffOrAuction"));
+    local howToAwardText =(L["%s to award loot!"]):format(GL.Settings:get("ShortcutKeys.award"));
 
     local Title = Interface:createFontString(Window, howToRollText);
     Title:SetPoint("TOPLEFT", 22, -5);
@@ -213,14 +213,14 @@ function Overview:build()
 
     --[[ ADD THE SETTINGS MENU IN THE TOP LEFT OF THE WINDOW ]]
     Interface:addWindowOptions(Window, {
-        { text = L.BROADCAST, notCheckable = true, func = function ()
+        { text = L["Broadcast"], notCheckable = true, func = function ()
             Interface.TradeTime.Broadcast:open();
             CloseMenus();
         end },
         "divider",
-        {text = L.HIDE, notCheckable = true, SubMenu = {
+        {text = L["Hide"], notCheckable = true, SubMenu = {
             {
-                text = L.TRADETIME_SETTINGS_HIDE_AWARDED,
+                text = L["Hide all awarded items"],
                 checked = function ()
                     return Settings:get("LootTradeTimers.hideAwarded");
                 end,
@@ -229,7 +229,7 @@ function Overview:build()
                 end,
             },
             {
-                text = L.TRADETIME_SETTINGS_HIDE_SELF_AWARDED,
+                text = L["Hide items awarded to self"],
                 checked = function ()
                     return Settings:get("LootTradeTimers.hideAwardedToSelf");
                 end,
@@ -238,7 +238,7 @@ function Overview:build()
                 end,
             },
             {
-                text = L.TRADETIME_SETTINGS_HIDE_DISENCHANTED,
+                text = L["Hide disenchanted items"],
                 checked = function ()
                     return Settings:get("LootTradeTimers.hideDisenchanted");
                 end,
@@ -248,13 +248,13 @@ function Overview:build()
             },
         }},
         "divider",
-        {text = L.WINDOW, isTitle = true, notCheckable = true },
-        {text = L.CHANGE_SCALE, notCheckable = true, func = function ()
+        {text = L["Window"], isTitle = true, notCheckable = true },
+        {text = L["Adjust Scale"], notCheckable = true, func = function ()
             Interface:openScaler(Window);
             CloseMenus();
         end},
         "divider",
-        {text = L.ALL_SETTINGS, notCheckable = true, func = function ()
+        {text = L["All Settings"], notCheckable = true, func = function ()
             Settings:draw("LootTradeTimers");
             CloseMenus();
         end },
@@ -324,7 +324,7 @@ function Overview:build()
         NormalTexture:SetAllPoints(HideButton);
         HideButton:SetHighlightTexture(HighlightTexture);
 
-        Interface:addTooltip(HideButton, L.HIDE);
+        Interface:addTooltip(HideButton, L["Hide"]);
 
         HideButton:HookScript("OnLeave", function ()
             if (Interface:mouseIsOnFrame(Window)) then

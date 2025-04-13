@@ -28,7 +28,7 @@ function Overview:draw()
 
     -- Create a container/parent frame
     local Window = AceGUI:Create("Frame");
-    Window:SetTitle((L.WINDOW_HEADER):format(GL.version));
+    Window:SetTitle((L["Gargul v%s"]):format(GL.version));
     Window:SetLayout("Flow");
     Window:SetWidth(500);
     Window:SetHeight(300);
@@ -41,9 +41,9 @@ function Overview:draw()
 
     Window:SetPoint(GL.Interface:getPosition("TMBOverview"));
 
-    Window:SetStatusText(GL:printfn(L.TMB_IMPORT_DETAILS, {
-        date = GL:colorize(date(L.DATE_FORMAT, DB:get("TMB.MetaData.importedAt", GetServerTime())), GL.Interface.Colors.WARLOCK),
-        time = GL:colorize(date(L.HOURS_MINUTES_FORMAT, DB:get("TMB.MetaData.importedAt", GetServerTime())), GL.Interface.Colors.WARLOCK),
+    Window:SetStatusText(GL:printfn(L["Imported on ${date} at ${time}"], {
+        date = GL:colorize(date(L["%Y-%m-%d"], DB:get("TMB.MetaData.importedAt", GetServerTime())), GL.Interface.Colors.WARLOCK),
+        time = GL:colorize(date(L["%H:%M"], DB:get("TMB.MetaData.importedAt", GetServerTime())), GL.Interface.Colors.WARLOCK),
     }));
 
     -- Make sure the window can be closed by pressing the escape button
@@ -57,7 +57,7 @@ function Overview:draw()
     Window:AddChild(VerticalSpacer);
 
     local MoreInfoLabel = GL.AceGUI:Create("Label");
-    MoreInfoLabel:SetText(GL:printfn(L.TMB_IMPORT_TMB_GARGUL_INFO, { source = GL.TMB:source(), }));
+    MoreInfoLabel:SetText(GL:printfn(L["How to use Gargul with ${source}"], { source = GL.TMB:source(), }));
     MoreInfoLabel:SetFontObject(_G["GameFontGreenLarge"]);
     MoreInfoLabel:SetFullWidth(true);
     MoreInfoLabel:SetJustifyH("CENTER");
@@ -78,9 +78,9 @@ function Overview:draw()
 
     local TimestampLabel = AceGUI:Create("Label");
     TimestampLabel:SetFullWidth(true);
-    TimestampLabel:SetText(GL:printfn("\n" .. L.TMB_IMPORT_DETAILS, {
-        date = GL:colorize(date(L.DATE_FORMAT, DB:get("TMB.MetaData.importedAt", GetServerTime())), GL.Interface.Colors.WARLOCK),
-        time = GL:colorize(date(L.HOURS_MINUTES_FORMAT, DB:get("TMB.MetaData.importedAt", GetServerTime())), GL.Interface.Colors.WARLOCK),
+    TimestampLabel:SetText(GL:printfn("\n" .. L["Imported on ${date} at ${time}"], {
+        date = GL:colorize(date(L["%Y-%m-%d"], DB:get("TMB.MetaData.importedAt", GetServerTime())), GL.Interface.Colors.WARLOCK),
+        time = GL:colorize(date(L["%H:%M"], DB:get("TMB.MetaData.importedAt", GetServerTime())), GL.Interface.Colors.WARLOCK),
     }));
     TimestampLabel:SetJustifyH("CENTER");
     TimestampLabel:SetFontObject(_G["GameFontNormal"]);
@@ -88,7 +88,7 @@ function Overview:draw()
 
     local ItemNumberLabel = AceGUI:Create("Label");
     ItemNumberLabel:SetFullWidth(true);
-    ItemNumberLabel:SetText(("\n" .. L.TMB_IMPORT_NUMBER):format(
+    ItemNumberLabel:SetText(("\n" .. L["Number of items imported: %s"]):format(
         GL:colorize(GL:count(DB:get("TMB.Items")) or 0, GL.Interface.Colors.WARLOCK)
     ));
     ItemNumberLabel:SetJustifyH("CENTER");
@@ -103,7 +103,7 @@ function Overview:draw()
 
     local PriorityNotesLabel = AceGUI:Create("Label");
     PriorityNotesLabel:SetFullWidth(true);
-    PriorityNotesLabel:SetText(("\n" .. L.TMB_IMPORT_NOTES_AVAILABLE):format(
+    PriorityNotesLabel:SetText(("\n" .. L["Priority notes available: %s"]):format(
         GL:colorize(notesAvailable, GL.Interface.Colors.WARLOCK)
     ));
     PriorityNotesLabel:SetJustifyH("CENTER");
@@ -118,7 +118,7 @@ function Overview:draw()
 
     local AutoSharingStatusLabel = AceGUI:Create("Label");
     AutoSharingStatusLabel:SetFullWidth(true);
-    AutoSharingStatusLabel:SetText(("\n" .. L.TMB_IMPORT_AUTO_SHARING_ENABLED):format(
+    AutoSharingStatusLabel:SetText(("\n" .. L["Auto-sharing enabled: %s"]):format(
         GL:colorize(autoSharingEnabled, GL.Interface.Colors.WARLOCK)
     ));
     AutoSharingStatusLabel:SetJustifyH("CENTER");
@@ -133,11 +133,11 @@ function Overview:draw()
 
     local ClearButton = AceGUI:Create("Button");
     ClearButton:SetWidth(110);
-    ClearButton:SetText(L.CLEAR);
+    ClearButton:SetText(L["Clear"]);
     ClearButton:SetCallback("OnClick", function()
         -- Show a confirmation dialog before clearing entries
         GL.Interface.Dialogs.PopupDialog:open{
-            question = L.ARE_YOU_SURE,
+            question = L["Are you sure?"],
             OnYes = function ()
                 local source = GL.TMB:source();
                 GL.Interface.TMB.Overview:close();
@@ -152,13 +152,13 @@ function Overview:draw()
 
     local ShareButton = AceGUI:Create("Button");
     ShareButton:SetWidth(108);
-    ShareButton:SetText(L.BROADCAST);
+    ShareButton:SetText(L["Broadcast"]);
     ShareButton:SetCallback("OnClick", function()
         if (not GL:empty(GL.Settings:get("TMB.shareWhitelist", ""))) then
             GL.TMB:broadcast();
         else
             GL.Interface.Dialogs.PopupDialog:open({
-                question = L.TMB_BROADCAST_CONFIRM,
+                question = L["Are you sure you want to broadcast your TMB data to everyone in your party/raid? NB: EVERYONE can see your TMB data regardless of their permissions on the TMB website!"],
                 OnYes = function ()
                     GL.TMB:broadcast();
                 end,
@@ -170,7 +170,7 @@ function Overview:draw()
     GL.Interface:set(self, "Share", ShareButton);
 
     local SettingsButton = AceGUI:Create("Button");
-    SettingsButton:SetText(L.SETTINGS);
+    SettingsButton:SetText(L["Settings"]);
     SettingsButton:SetWidth(90);
     SettingsButton:SetCallback("OnClick", function()
         GL.Settings:draw("TMB");
@@ -178,12 +178,12 @@ function Overview:draw()
     Window:AddChild(SettingsButton);
 
     local ClearRaiderDataButton = AceGUI:Create("Button");
-    ClearRaiderDataButton:SetText(L.TMB_CLEAR_RAIDER_DATA);
+    ClearRaiderDataButton:SetText(L["Clear Raider Data"]);
     ClearRaiderDataButton:SetWidth(146); ---@TODO: TOO SHORT FOR FRENCH
     ClearRaiderDataButton:SetCallback("OnClick", function()
         -- Show a confirmation dialog before clearing entries
         GL.Interface.Dialogs.PopupDialog:open{
-            question = L.TMB_CLEAR_RAIDER_DATA_CONFIRM,
+            question = L["Clear TMB data for all raiders?"],
             OnYes = function ()
                 GL.TMB:broadcast(true);
             end,

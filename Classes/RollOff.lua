@@ -41,7 +41,7 @@ function RollOff:announceStart(itemLink, time, note)
     time = tonumber(time);
 
     if (not GL:isValidItemLink(itemLink)) then
-        GL:warning(L.ROLLING_INVALID_START_DATA_WARNING);
+        GL:warning(L["Invalid data provided for roll start!"]);
         return false;
     end
 
@@ -462,7 +462,7 @@ end
 ---@return boolean
 function RollOff:stop(CommMessage)
     if (not RollOff.inProgress) then
-        return GL:warning(L.ROLLING_NO_ROLLOFF_WARNING);
+        return GL:warning(L["Can't stop roll off, no roll off in progress"]);
     end
 
     if (CommMessage
@@ -559,7 +559,7 @@ function RollOff:award(roller, itemLink, RollBracket, identicalRollDetected)
 
     local identicalRollDetectedString = "";
     if (identicalRollDetected) then
-        identicalRollDetectedString = ("|c00BE3333%s|r"):format(L.ROLLING_IDENTICAL_ROLL_WARNING);
+        identicalRollDetectedString = ("|c00BE3333%s|r"):format(L["\nWarning: another identical roll was found which can point to a tie\n\n"]);
     end
 
     if (GL:nameIsUnique(roller)) then
@@ -600,7 +600,7 @@ function RollOff:award(roller, itemLink, RollBracket, identicalRollDetected)
 
         -- Make sure the initiator has to confirm his choices
         GL.Interface.Dialogs.AwardDialog:open{
-            question = string.format("%s" .. L.ROLLING_AWARD_CONFIRM,
+            question = string.format("%s" .. L["Award %s to %s?"],
                 identicalRollDetectedString,
                 itemLink,
                 GL:nameFormat{ name = roller, colorize = true, }
@@ -655,12 +655,12 @@ function RollOff:award(roller, itemLink, RollBracket, identicalRollDetected)
         return;
     end
 
-    local description = (L.ROLLING_WINNER_NOT_UNIQUE):format(itemLink);
+    local description = (L["The winner's name is not unique, select the player you'd like to award %s to"]):format(itemLink);
 
     GL.Interface.PlayerSelector:draw(description, roller, function (player)
         -- Make sure the initiator has to confirm his choices
         GL.Interface.Dialogs.AwardDialog:open{
-            question = string.format("%s" .. L.ROLLING_AWARD_CONFIRM,
+            question = string.format("%s" .. L["Award %s to %s?"],
                 identicalRollDetectedString,
                 itemLink,
                 GL:nameFormat{ name = player, colorize = true, }
@@ -886,9 +886,9 @@ function RollOff:refreshRollsTable()
 
             if (numberOfReserves > 0) then
                 if (numberOfReserves > 1) then
-                    tinsert(rollNotes, ("|c00F48CBA" .. L.ROLLING_ROLL_SR_COUNT .. "|r"):format(numberOfReserves));
+                    tinsert(rollNotes, ("|c00F48CBA" .. L["SR [%sx]"] .. "|r"):format(numberOfReserves));
                 else
-                    tinsert(rollNotes, ("|c00F48CBA%s|r"):format(L.SOFTRES_ABBR ));
+                    tinsert(rollNotes, ("|c00F48CBA%s|r"):format(L["SR"] ));
                 end
             end
         end
@@ -947,14 +947,14 @@ function RollOff:refreshRollsTable()
                         end
                     end
 
-                    tinsert(rollNotes, string.format("|c00FF7C0A" .. L.ROLLING_ROLL_PRIOLIST .. "|r", TopEntry.prio));
+                    tinsert(rollNotes, string.format("|c00FF7C0A" .. L["Prio [%s]"] .. "|r", TopEntry.prio));
                 else
                     if (sortByTMBWishlist) then
                         rollPriority = 3;
                         rollPriority = rollPriority + TopEntry.prio; -- Make sure rolls of identical list positions "clump" together
                     end
 
-                    tinsert(rollNotes, string.format("|c00FFFFFF" .. L.ROLLING_ROLL_WISHLIST .. "|r", TopEntry.prio));
+                    tinsert(rollNotes, string.format("|c00FFFFFF" .. L["Wish [%s]"] .. "|r", TopEntry.prio));
                 end
             end
         end
@@ -980,7 +980,7 @@ function RollOff:refreshRollsTable()
                     color = GL:classRGBAColor(class),
                 },
                 {
-                    value = GL:higherThanZero(plusOnes) and L.PLUS_SIGN .. plusOnes or "",
+                    value = GL:higherThanZero(plusOnes) and L["+"] .. plusOnes or "",
                     color = GL:classRGBAColor(class),
                 },
                 {

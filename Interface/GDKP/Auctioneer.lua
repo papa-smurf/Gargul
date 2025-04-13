@@ -91,7 +91,7 @@ function AuctioneerUI:open()
         and not GL.User.isMasterLooter
         and not GL.User.hasAssist
     ) then
-        return GL:warning(L.LM_OR_ASSIST_REQUIRED);
+        return GL:warning(L["You need to be the master looter or have an assist / lead role!"]);
     end
 
     self.isVisible = true;
@@ -136,22 +136,22 @@ function AuctioneerUI:build()
 
     --[[ ADD THE SETTINGS MENU IN THE TOP LEFT OF THE WINDOW ]]
     Interface:addWindowOptions(Window, {
-        { text = L.TUTORIAL, notCheckable = true, func = function ()
+        { text = L["Tutorial"], notCheckable = true, func = function ()
             GL:popupMessage(string.format(
-                L.TUTORIAL_AUCTIONEER,
+                L["\n|c00A79EFF%s items in bags, loot windows or even on links in your chat to add them to the auction queue.\nWant to directly sell an item without bidding? Use |c00A79EFF%s\n\nYou can open the %s window directly by typing |c00A79EFF/gl auction\n\nGargul tracks |c00FF0000ALL gold traded. Don't want a trade to be a part of this GDKP session? Check the \"Exclude from GDKP\" checkbox when trading!\n\n|c00FFF569Did you know?\nAwarded items will automatically be added to the trade window\nGargul can also handle auto looting for you. Check it out with |c00A79EFF/gl pm\n"],
                 GL.Settings:get("ShortcutKeys.rollOffOrAuction"),
                 GL.Settings:get("ShortcutKeys.award"),
-                L.AUCTION
+                L["Auction"]
             ));
             CloseMenus();
         end },
         {
             text = function ()
                 return ("%s (|cFF%s%s%s|r)"):format(
-                    L.GDKP_SESSION,
+                    L["GDKP Session"],
                     Interface.Colors.ROGUE,
                     Pot:total(),
-                    L.GOLD_INDICATOR
+                    L["g"]
                 );
             end,
             notCheckable = true,
@@ -161,11 +161,11 @@ function AuctioneerUI:build()
             end
         },
         "divider",
-        {text = L.AUCTIONS, isTitle = true, notCheckable = true },
-        {text = L.AUTO_AWARD, setting = "GDKP.autoAwardViaAuctioneer"},
-        {text = L.NO_BIDS_ACTION, notCheckable = true, SubMenu = {
+        {text = L["Auctions"], isTitle = true, notCheckable = true },
+        {text = L["Auto award"], setting = "GDKP.autoAwardViaAuctioneer"},
+        {text = L["When no one bids do:"], notCheckable = true, SubMenu = {
             {
-                text = L.NOTHING,
+                text = L["Nothing"],
                 hideOnClick = true,
                 isRadio = true,
                 checked = function ()
@@ -177,7 +177,7 @@ function AuctioneerUI:build()
                 end,
             },
             {
-                text = L.SKIP,
+                text = L["Skip"],
                 hideOnClick = true,
                 isRadio = true,
                 checked = function ()
@@ -189,7 +189,7 @@ function AuctioneerUI:build()
                 end,
             },
             {
-                text = L.DISENCHANT,
+                text = L["Disenchant"],
                 hideOnClick = true,
                 isRadio = true,
                 checked = function ()
@@ -201,9 +201,9 @@ function AuctioneerUI:build()
                 end,
             },
         }},
-        {text = L.AUTO_TRADE_OPTIONS, notCheckable = true, SubMenu = {
+        {text = L["Auto trade"], notCheckable = true, SubMenu = {
             {
-                text = L.ENABLE,
+                text = L["Enable"],
                 checked = function ()
                     return Settings:get("AwardingLoot.autoTradeAfterAwardingAnItem");
                 end,
@@ -212,7 +212,7 @@ function AuctioneerUI:build()
                 end,
             },
             {
-                text = L.GDKP_AUCTIONEER_SETTINGS_DISABLE_FOR_DISENCHANTED,
+                text = L["Disable for disenchanted"],
                 checked = function ()
                     return not Settings:get("AwardingLoot.autoTradeDisenchanter");
                 end,
@@ -221,7 +221,7 @@ function AuctioneerUI:build()
                 end,
             },
             {
-                text = L.GDKP_AUCTIONEER_SETTINGS_DISABLE_IN_COMBAT,
+                text = L["Disable in combat"],
                 checked = function ()
                     return not Settings:get("AwardingLoot.autoTradeInCombat");
                 end,
@@ -230,9 +230,9 @@ function AuctioneerUI:build()
                 end,
             },
         }},
-        {text = L.COMMUNICATION, notCheckable = true, SubMenu = {
+        {text = L["Communication"], notCheckable = true, SubMenu = {
             {
-                text = L.SETTINGS_ANNOUNCE_START,
+                text = L["Announce auction start"],
                 checked = function ()
                     return Settings:get("GDKP.announceAuctionStart");
                 end,
@@ -241,7 +241,7 @@ function AuctioneerUI:build()
                 end,
             },
             {
-                text = L.SETTINGS_ANNOUNCE_POT_AFTER_AWARD,
+                text = L["Announce pot after awarding item"],
                 checked = function ()
                     return Settings:get("GDKP.announcePotAfterAuction");
                 end,
@@ -250,7 +250,7 @@ function AuctioneerUI:build()
                 end,
             },
             {
-                text = L.SETTINGS_WHISPER_BID_TOO_LOW,
+                text = L["Whisper bidder if bid is too low"],
                 checked = function ()
                     return Settings:get("GDKP.notifyIfBidTooLow");
                 end,
@@ -259,7 +259,7 @@ function AuctioneerUI:build()
                 end,
             },
             {
-                text = L.SETTINGS_COUNTDOWN_IN_RAID_WARNING,
+                text = L["Announce countdown in raid warning"],
                 checked = function ()
                     return Settings:get("GDKP.announceCountdownInRW");
                 end,
@@ -268,7 +268,7 @@ function AuctioneerUI:build()
                 end,
             },
             {
-                text = L.SETTINGS_ANNOUNCE_INCOMING_BIDS,
+                text = L["Announce incoming bids"],
                 checked = function ()
                     return Settings:get("GDKP.announceNewBid");
                 end,
@@ -277,7 +277,7 @@ function AuctioneerUI:build()
                 end,
             },
             {
-                text = L.SETTINGS_INCOMING_BIDS_IN_RAID_WARNING,
+                text = L["Announce incoming bids in raid warning"],
                 checked = function ()
                     return Settings:get("GDKP.announceNewBidInRW");
                 end,
@@ -287,25 +287,25 @@ function AuctioneerUI:build()
             },
         }},
         "divider",
-        {text = L.QUEUE, isTitle = true, notCheckable = true },
-        {text = L.GDKP_ADD_DROPS_TO_QUEUE, setting = "GDKP.addDropsToQueue", func = function(Entry, _, _, checked)
+        {text = L["Queue"], isTitle = true, notCheckable = true },
+        {text = L["Add dropped loot to queue"], setting = "GDKP.addDropsToQueue", func = function(Entry, _, _, checked)
             Settings:set("GDKP.addDropsToQueue", checked);
             Entry.checked = checked;
         end},
-        {text = L.INCLUDE_BOES, setting = "GDKP.addBOEDropsToQueue", func = function(Entry, _, _, checked)
+        {text = L["Include BOEs"], setting = "GDKP.addBOEDropsToQueue", func = function(Entry, _, _, checked)
             Settings:set("GDKP.addBOEDropsToQueue", checked);
             Entry.checked = checked;
         end},
         "divider",
-        {text = L.WINDOW, isTitle = true, notCheckable = true },
-        {text = L.CHANGE_SCALE, notCheckable = true, func = function ()
+        {text = L["Window"], isTitle = true, notCheckable = true },
+        {text = L["Adjust Scale"], notCheckable = true, func = function ()
             Interface:openScaler(Window);
             CloseMenus();
         end},
-        {text = L.MINIMIZE_ON_START, setting = "GDKP.minimizeAuctioneerOnStart"},
-        {text = L.MINIMIZE_ON_AWARD, setting = "GDKP.minimizeAuctioneerOnAward"},
+        {text = L["Minimize on start"], setting = "GDKP.minimizeAuctioneerOnStart"},
+        {text = L["Minimize on award"], setting = "GDKP.minimizeAuctioneerOnAward"},
         "divider",
-        {text = L.ALL_SETTINGS, notCheckable = true, func = function ()
+        {text = L["All Settings"], notCheckable = true, func = function ()
             Settings:draw("GDKP");
             CloseMenus();
         end },
@@ -322,10 +322,10 @@ function AuctioneerUI:build()
     local CurrentPotLabel = Interface:createFontString(Window.Minimized, {
         text = function (self)
             self:SetText(("%s: |cFF%s%s%s|r"):format(
-                L.POT,
+                L["Pot"],
                 Interface.Colors.ROGUE,
                 Pot:total(),
-                L.GOLD_INDICATOR
+                L["g"]
             ));
         end,
         updateOn = { "GL.GDKP_AUCTION_CHANGED", "GL.GDKP_SESSION_CHANGED" },
@@ -334,7 +334,7 @@ function AuctioneerUI:build()
     CurrentPotLabel:SetPoint("TOPLEFT", Window.Minimized, "TOPLEFT", 24, -18);
 
     ---@type Button
-    local MinimizedStopButton = Interface:dynamicPanelButton(Window.Minimized, L.STOP);
+    local MinimizedStopButton = Interface:dynamicPanelButton(Window.Minimized, L["Stop"]);
     MinimizedStopButton:SetPoint("TOPLEFT", Window.Minimized, "TOPLEFT", 20, -34);
     MinimizedStopButton:SetPoint("TOPRIGHT", Window.Minimized, "TOPRIGHT", -20, 0);
     MinimizedStopButton:SetScript("OnClick", function ()
@@ -344,7 +344,7 @@ function AuctioneerUI:build()
     Window.Minimized.StopButton = MinimizedStopButton;
 
     ---@type Button
-    local MinimizedOpenButton = Interface:dynamicPanelButton(Window.Minimized, L.OPEN_AUCTIONEER);
+    local MinimizedOpenButton = Interface:dynamicPanelButton(Window.Minimized, L["Open Auctioneer"]);
     MinimizedOpenButton:SetPoint("TOPLEFT", Window.Minimized, "TOPLEFT", 20, -34);
     MinimizedOpenButton:SetPoint("TOPRIGHT", Window.Minimized, "TOPRIGHT", -20, 0);
     MinimizedOpenButton:SetScript("OnClick", function ()
@@ -399,10 +399,10 @@ function AuctioneerUI:build()
         local CurrentPotLabel = Interface:createFontString(Window, {
             text = function (self)
                 self:SetText(("%s: |cFF%s%s%s|r"):format(
-                    L.POT,
+                    L["Pot"],
                     Interface.Colors.ROGUE,
                     Pot:total(),
-                    L.GOLD_INDICATOR
+                    L["g"]
                 ));
             end,
             updateOn = { "GL.GDKP_AUCTION_CHANGED", "GL.GDKP_SESSION_CHANGED" },
@@ -412,7 +412,7 @@ function AuctioneerUI:build()
 
     --[[ MINIMUM BID ]]
     ---@type FontString
-    local MinLabel = Interface:createFontString(Window, L.MIN);
+    local MinLabel = Interface:createFontString(Window, L["Min"]);
     MinLabel:SetPoint("TOPLEFT", Window, "TOPLEFT", 26, -82);
 
     ---@type EditBox
@@ -425,7 +425,7 @@ function AuctioneerUI:build()
 
     --[[ INCREMENT ]]
     ---@type FontString
-    local IncLabel = Interface:createFontString(Window, L.INC);
+    local IncLabel = Interface:createFontString(Window, L["Inc"]);
     IncLabel:SetPoint("TOPLEFT", MinLabel, "TOPRIGHT", MinInput:GetWidth() + 12, 0);
 
     ---@type EditBox
@@ -438,7 +438,7 @@ function AuctioneerUI:build()
 
     --[[ TIME ]]
     ---@type FontString
-    local TimeLabel = Interface:createFontString(Window, L.TIME);
+    local TimeLabel = Interface:createFontString(Window, L["Time"]);
     TimeLabel:SetPoint("TOPLEFT", IncLabel, "TOPRIGHT", IncInput:GetWidth() + 12, 0);
 
     ---@type EditBox
@@ -452,7 +452,7 @@ function AuctioneerUI:build()
 
     --[[ ANTI SNIPE ]]
     ---@type FontString
-    local SnipeLabel = Interface:createFontString(Window, L.ANTISNIPE);
+    local SnipeLabel = Interface:createFontString(Window, L["Anti Snipe"]);
     SnipeLabel:SetPoint("TOPLEFT", TimeLabel, "TOPRIGHT", TimeInput:GetWidth() + 12, 0);
 
     ---@type EditBox
@@ -486,7 +486,7 @@ function AuctioneerUI:build()
         highlight:SetTexCoord(0, 1, 0.23, 0.77);
         highlight:SetBlendMode("ADD");
 
-        Interface:addTooltip(Icon, L.ANTISNIPE_EXPLANATION);
+        Interface:addTooltip(Icon, L["\n\nAn Anti Snipe value of 10 means that any bid that comes in with\nless than 10 seconds left will reset the timer back to 10 seconds\n\nYou can leave this empty or set to 0 to disable Anti Snipe completely.\nAnti Snipe values less than 5 are not supported\n\n"]);
     end
 
     ---@type Frame
@@ -500,7 +500,7 @@ function AuctioneerUI:build()
 
         --[[ START ]]
         ---@type Button
-        local StartButton = Interface:dynamicPanelButton(StoppedButtonFrame, L.START);
+        local StartButton = Interface:dynamicPanelButton(StoppedButtonFrame, L["Start"]);
         StartButton:SetPoint("TOPLEFT", StoppedButtonFrame, "TOPLEFT", 26, 0);
         StartButton:SetScript("OnClick", function ()
             Auctioneer:start(true);
@@ -508,7 +508,7 @@ function AuctioneerUI:build()
 
         --[[ DISENCHANT ]]
         ---@type Button
-        local DisenchantButton = Interface:dynamicPanelButton(StoppedButtonFrame, L.DISENCHANT);
+        local DisenchantButton = Interface:dynamicPanelButton(StoppedButtonFrame, L["Disenchant"]);
         DisenchantButton:SetPoint("TOPLEFT", StartButton, "TOPRIGHT", 1, 0);
         DisenchantButton:SetScript("OnClick", function ()
             Auctioneer:disenchant(self.itemLink);
@@ -516,7 +516,7 @@ function AuctioneerUI:build()
 
         --[[ CLEAR ]]
         ---@type Button
-        local ClearButton = Interface:dynamicPanelButton(StoppedButtonFrame, L.CLEAR);
+        local ClearButton = Interface:dynamicPanelButton(StoppedButtonFrame, L["Clear"]);
         ClearButton:SetPoint("TOPLEFT", DisenchantButton, "TOPRIGHT", 1, 0);
         ClearButton:SetScript("OnClick", function ()
             Auctioneer:clear();
@@ -524,7 +524,7 @@ function AuctioneerUI:build()
 
         --[[ NEXT ]]
         ---@type Button
-        local NextButton = Interface:dynamicPanelButton(StoppedButtonFrame, L.NEXT);
+        local NextButton = Interface:dynamicPanelButton(StoppedButtonFrame, L["Next"]);
         NextButton:SetPoint("TOPLEFT", ClearButton, "TOPRIGHT", 1, 0);
         NextButton:SetScript("OnClick", function ()
             Auctioneer:popFromQueue(true);
@@ -532,7 +532,7 @@ function AuctioneerUI:build()
 
         --[[ AWARD ]]
         ---@type Button
-        local AwardButton = Interface:dynamicPanelButton(StoppedButtonFrame, L.AWARD);
+        local AwardButton = Interface:dynamicPanelButton(StoppedButtonFrame, L["Award"]);
         AwardButton:SetPoint("TOPLEFT", NextButton, "TOPRIGHT", 1, 0);
         AwardButton:SetScript("OnClick", function ()
             Auctioneer:award();
@@ -551,7 +551,7 @@ function AuctioneerUI:build()
 
         --[[ START ]]
         ---@type Button
-        StopButton = Interface:dynamicPanelButton(StartedButtonFrame, L.STOP);
+        StopButton = Interface:dynamicPanelButton(StartedButtonFrame, L["Stop"]);
         StopButton:SetPoint("TOPLEFT", StartedButtonFrame, "TOPLEFT", 26, 0);
         StopButton:SetScript("OnClick", function ()
             Auctioneer:stop();
@@ -559,7 +559,7 @@ function AuctioneerUI:build()
 
         --[[ +10 ]]
         ---@type Button
-        local ExtendButton = Interface:dynamicPanelButton(StartedButtonFrame, L.PLUS10);
+        local ExtendButton = Interface:dynamicPanelButton(StartedButtonFrame, L["+1"]);
         ExtendButton:SetPoint("TOPLEFT", StopButton, "TOPRIGHT", 1, 0);
         ExtendButton:SetScript("OnClick", function ()
             if (Auctioneer:extend()) then
@@ -573,7 +573,7 @@ function AuctioneerUI:build()
 
         --[[ -10 ]]
         ---@type Button
-        local ShortenButton = Interface:dynamicPanelButton(StartedButtonFrame, L.MINUS10);
+        local ShortenButton = Interface:dynamicPanelButton(StartedButtonFrame, L["-10"]);
         ShortenButton:SetPoint("TOPLEFT", ExtendButton, "TOPRIGHT", 1, 0);
         ShortenButton:SetScript("OnClick", function ()
             if (Auctioneer:shorten()) then
@@ -587,7 +587,7 @@ function AuctioneerUI:build()
 
         --[[ FINAL CALL ]]
         ---@type Button
-        local FinalCallButton = Interface:dynamicPanelButton(StartedButtonFrame, L.FINAL_CALL);
+        local FinalCallButton = Interface:dynamicPanelButton(StartedButtonFrame, L["Final Call"]);
         FinalCallButton:SetPoint("TOPLEFT", ShortenButton, "TOPRIGHT", 1, 0);
         FinalCallButton:SetScript("OnClick", function ()
             if (Auctioneer:finalCall()) then
@@ -619,7 +619,7 @@ function AuctioneerUI:build()
         ToggleQueue:SetPoint("CENTER", Queue);
         ToggleQueue:SetScript("OnClick", function ()
             if (Settings:get("GDKP.disableQueues")) then
-                GL:warning(L.YOU_DISABLED_GDKP_QUEUES);
+                GL:warning(L["You disabled GDKP queues"]);
                 return;
             end
 
@@ -654,7 +654,7 @@ function AuctioneerUI:build()
         ToggleQueue.highlightTexture:SetBlendMode("ADD");
         ToggleQueue:SetHighlightTexture(ToggleQueue.highlightTexture);
 
-        Interface:addTooltip(ToggleQueue, L.TOGGLE_QUEUE, "BOTTOMRIGHT");
+        Interface:addTooltip(ToggleQueue, L["Show/Hide Queue"], "BOTTOMRIGHT");
     end
 
     --[[ MULTI AUCTION INTRODUCTION WINDOW ]]
@@ -682,14 +682,14 @@ function AuctioneerUI:build()
         ---@type Button
         local MultiAuctionButton = Interface:dynamicPanelButton(MultiAuctionWindow);
         MultiAuctionButton:SetPoint("CENTER", MultiAuctionWindow, "CENTER");
-        MultiAuctionButton:SetText(L.GDKP_TRY_MULTIAUCTION);
+        MultiAuctionButton:SetText(L["Check out Multi Auctions!"]);
         MultiAuctionButton:SetScript("OnClick", function ()
             GL.Commands:call("multiauction");
             self:close();
         end);
 
-        Interface:addTooltip(MultiAuctionWindow, L.GDKP_MULTIAUCTION_ABOUT);
-        Interface:addTooltip(MultiAuctionButton, L.GDKP_MULTIAUCTION_ABOUT);
+        Interface:addTooltip(MultiAuctionWindow, L["\n\nWith multi auctions (or batch auctions) you can auction off as many items as you want at once!\nThis speeds up your raid nights immensely and makes for a seamless experience for your raiders\n\nAll tradable items still in your inventory can automatically be auctioned with 'Fill from inventory'\nGive it a shot!\n\n|c00808080There is but one con: in order for people to partake in a batch auction raiders will need Gargul!\n\n"]);
+        Interface:addTooltip(MultiAuctionButton, L["\n\nWith multi auctions (or batch auctions) you can auction off as many items as you want at once!\nThis speeds up your raid nights immensely and makes for a seamless experience for your raiders\n\nAll tradable items still in your inventory can automatically be auctioned with 'Fill from inventory'\nGive it a shot!\n\n|c00808080There is but one con: in order for people to partake in a batch auction raiders will need Gargul!\n\n"]);
     end
 
     --[[ ADJUST TABLE ROWS AFTER WINDOW RESIZE ]]
@@ -790,13 +790,13 @@ function AuctioneerUI:build()
                 or not Auction.inProgress
             ) then
                 GL.Ace:CancelTimer(self.CountdownTimer);
-                StopButton:SetText(L.STOP);
+                StopButton:SetText(L["Stop"]);
                 return;
             end
 
             secondsRemaining = math.max(secondsRemaining, 0);
-            StopButton:SetText(GL:strPadRight(("%s %s%s"):format(L.STOP, secondsRemaining, L.SECONDS_ABBR), " ", string.len(L.STOP) + 5));
-            MinimizedStopButton:SetText(("%s %s%s"):format(L.STOP, secondsRemaining, L.SECONDS_ABBR));
+            StopButton:SetText(GL:strPadRight(("%s %s%s"):format(L["Stop"], secondsRemaining, L["s"]), " ", string.len(L["Stop"]) + 5));
+            MinimizedStopButton:SetText(("%s %s%s"):format(L["Stop"], secondsRemaining, L["s"]));
             MinimizedOpenButton:Hide();
             MinimizedStopButton:Show();
         end, .2);
@@ -861,9 +861,9 @@ function AuctioneerUI:buildQueue(Window)
             highlight:SetTexture("Interface/PaperDollInfoFrame/UI-Character-Tab-Highlight")
             highlight:SetBlendMode("ADD");
 
-            Interface:addTooltip(HelpFrame, { L.QUEUE .. " " .. L.INFO, (L.GDKP_QUEUE_EXPLANATION):format(
+            Interface:addTooltip(HelpFrame, { L["Queue"] .. " " .. L["Info"], (L["\n|c00A79EFF%s items in bags, loot windows or even on links in your chat to add them to this auction queue.\nItems in the queue will automatically be auctioned off once your current auction is done. Click the '%s' button to prevent this.\n\nWant Gargul to automatically award or disenchant auctions for you? Open the settings wheel on the left side!\n\n|c00FFF569Did you know?\nYou can move items around with drag and drop\nItems will be remembered, even when you |c00A79EFF/reload\nQueued items are automatically shown to raiders who have Gargul so they can prebid\nGargul can also handle auto looting for you. Check it out with |c00A79EFF/gl pm\n"]):format(
                 GL.Settings:get("ShortcutKeys.rollOffOrAuction"),
-                L.HALT
+                L["Halt"]
             ), }, "CURSOR");
 
             --[[ ICON ]]
@@ -883,18 +883,18 @@ function AuctioneerUI:buildQueue(Window)
 
             --[[ INFO ]]
             ---@type FontString
-            local InfoLabel = Interface:createFontString(HelpFrame, L.INFO);
+            local InfoLabel = Interface:createFontString(HelpFrame, L["Info"]);
             InfoLabel:SetPoint("TOPLEFT", HelpFrame, "TOPLEFT", 13, -1);
         end
 
         --[[ MINIMUM BID ]]
         ---@type FontString
-        local MinLabel = Interface:createFontString(Queue, L.MINIMUM);
+        local MinLabel = Interface:createFontString(Queue, L["Minimum"]);
         MinLabel:SetPoint("TOPRIGHT", Queue, "TOPRIGHT", -118, -18);
 
         --[[ INCREMENT ]]
         ---@type FontString
-        local IncLabel = Interface:createFontString(Queue, L.INCREMENT);
+        local IncLabel = Interface:createFontString(Queue, L["Increment"]);
         IncLabel:SetPoint("TOPLEFT", MinLabel, "TOPRIGHT", 6, 0);
 
         --[[ SCROLLFRAME BOILERPLATE ]]
@@ -931,7 +931,7 @@ function AuctioneerUI:buildQueue(Window)
             NormalTexture:SetAllPoints(DeleteButton);
             DeleteButton:SetHighlightTexture(HighlightTexture);
 
-            Interface:addTooltip(DeleteButton, L.DELETE);
+            Interface:addTooltip(DeleteButton, L["Delete"]);
         end
 
         --[[ REORDER QUEUE ENTRIES ]]
@@ -1115,7 +1115,7 @@ function AuctioneerUI:buildQueue(Window)
                 --[[ ITEM LINK ]]
                 local BOEString = "";
                 if (not bindOnPickup) then
-                    BOEString = L.BIND_ON_EQUIP_ABBR .. " ";
+                    BOEString = L["BOE"] .. " ";
                 end
 
                 ---@type FontString
@@ -1134,27 +1134,27 @@ function AuctioneerUI:buildQueue(Window)
 
         --[[ HALT/RESUME QUEUE BUTTON ]]
         ---@type Button
-        local EnableQueue = Interface:dynamicPanelButton(Queue, L.HALT);
+        local EnableQueue = Interface:dynamicPanelButton(Queue, L["Halt"]);
         EnableQueue:SetPoint("BOTTOMLEFT", Queue, "BOTTOMLEFT", 20, 16);
         EnableQueue:SetPoint("RIGHT", Queue, "CENTER", -2, 0);
 
         if (Settings:get("GDKP.queueIsHalted")) then
-            EnableQueue:SetText(L.RESUME);
+            EnableQueue:SetText(L["Resume"]);
         end
 
         EnableQueue:SetScript("OnClick", function ()
             Auctioneer:toggleQueueStatus();
 
             if (Settings:get("GDKP.queueIsHalted")) then
-                EnableQueue:SetText(L.RESUME);
+                EnableQueue:SetText(L["Resume"]);
             else
-                EnableQueue:SetText(L.HALT);
+                EnableQueue:SetText(L["Halt"]);
             end
         end);
 
         --[[ CLEAR QUEUE ]]
         ---@type Button
-        local ClearQueue = Interface:dynamicPanelButton(Queue, L.CLEAR);
+        local ClearQueue = Interface:dynamicPanelButton(Queue, L["Clear"]);
         ClearQueue:SetPoint("BOTTOMRIGHT", Queue, "BOTTOMRIGHT", -20, 16);
         ClearQueue:SetPoint("LEFT", Queue, "CENTER", 2, 0);
         ClearQueue:SetScript("OnClick", function ()
@@ -1200,7 +1200,7 @@ function AuctioneerUI:buildBidsTable(Window)
             end
 
             Interface:addTooltip(rowFrame, {
-                (L.PLAYER_ITEM_WON_COUNT):format(bidder),
+                (L["Items won by %s:"]):format(bidder),
                 " ",
                 ItemsWonByRollerInTheLast8Hours,
             });
