@@ -590,7 +590,7 @@ local Constants = {
     ]]
     Comm = {
         channel = "GargulComm2",
-        minimumAppVersion = "7.6.17",
+        minimumAppVersion = "7.6.20",
 
         ---@class CommActions
         Actions = {
