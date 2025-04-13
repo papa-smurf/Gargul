@@ -279,7 +279,7 @@ function Bidder:draw(time, itemLink, itemIcon, bth)
         if (GDKPAuction.Current.iBid
             and not GDKPAuction:userIsTopBidder()
         ) then
-            GL:sendChatMessage(L.CHAT.PASS, "GROUP", nil, nil, false);
+            GL:sendChatMessage(L.CHAT["Pass"], "GROUP", nil, nil, false);
         end
 
         GDKPAuction:stopAutoBid();

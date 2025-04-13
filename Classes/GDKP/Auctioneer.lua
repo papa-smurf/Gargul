@@ -452,7 +452,7 @@ function Auctioneer:finalCall()
     end
 
     if(Settings:get("GDKP.announceFinalCall")) then
-        GL:sendChatMessage((L.CHAT.GDKP_FINAL_CALL):format(Auction.Current.itemLink, time), "RAID_WARNING", nil, nil, false);
+        GL:sendChatMessage((L.CHAT["Final Call on %s: %s seconds left to bid!"]):format(Auction.Current.itemLink, time), "RAID_WARNING", nil, nil, false);
     end
 
     return true;
@@ -698,7 +698,7 @@ end
 ---@param Bid table
 ---@return void
 function Auctioneer:announceBid(Bid)
-    local bidApprovedMessage = (L.CHAT.GDKP_CONFIRM_TOP_BID):format(Bid.Bidder.name, GL:goldToMoney(Bid.bid));
+    local bidApprovedMessage = (L.CHAT["%s is the highest bidder (%s)"]):format(Bid.Bidder.name, GL:goldToMoney(Bid.bid));
 
     GL.Ace:CancelTimer(self.BidAnnouncementThrottler);
 

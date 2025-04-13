@@ -271,7 +271,7 @@ function Broadcast:build()
             return;
         end
 
-        GL:sendChatMessage(L.CHAT.TRADETIME_BROADCAST_PREFIX, channel, nil, target);
+        GL:sendChatMessage(L.CHAT["I have the following items left to trade"], channel, nil, target);
 
         table.sort(State, function (a, b)
             if (a.secondsRemaining and b.secondsRemaining) then

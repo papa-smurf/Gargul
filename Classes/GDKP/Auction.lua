@@ -1462,7 +1462,7 @@ function Auction:start(CommMessage)
         -- Announce auction start and stop
         if (self:startedByMe()) then
             if (Settings:get("GDKP.announceAuctionStart")) then
-                local announceMessage = (L.CHAT.GDKP_START_BIDDING):format(
+                local announceMessage = (L.CHAT["Bid on %s. Minimum is %s, increment is %s. Use raid chat!"]):format(
                     Details.link,
                     GL:goldToMoney(minimumBid),
                     GL:goldToMoney(minimumIncrement)
@@ -1523,7 +1523,7 @@ function Auction:start(CommMessage)
                     end
 
                     GL:sendChatMessage(
-                        (L.CHAT.GDKP_SECONDS_TO_BID):format(secondsLeft),
+                        (L.CHAT["%s seconds to bid"]):format(secondsLeft),
                         chatType,
                         nil,
                         nil,
@@ -1609,7 +1609,7 @@ function Auction:stop(CommMessage)
         -- Announce that the auction has ended
         if (Settings:get("GDKP.announceBidsClosed", true)) then
             GL:sendChatMessage(
-                L.CHAT.GDKP_STOP_BIDDING,
+                L.CHAT["Stop your bids!"],
                 "RAID_WARNING"
             );
         end
@@ -1934,7 +1934,7 @@ function Auction:processBid(message, bidder)
         -- Notify the player via whisper if their bid is too low
         if (bidTooLow and Settings:get("GDKP.notifyIfBidTooLow")) then
             if (not Settings:get("GDKP.acceptBidsLowerThanMinimum")) then
-                GL:sendChatMessage((L.CHAT.GDKP_BID_DENIED):format(GL:goldToMoney(minimumBid)), "WHISPER", nil, bidder);
+                GL:sendChatMessage((L.CHAT["Bid denied, the minimum bid is %s"]):format(GL:goldToMoney(minimumBid)), "WHISPER", nil, bidder);
             end
         end
 

@@ -82,7 +82,7 @@ end
 --- /script _G.Gargul.Interface.MasterLooterDialog:flightAttendant();
 function MasterLooterDialog:flightAttendant()
     local function announce()
-        local message = L.CHAT.FLIGHT_ATTENDANT;
+        local message = L.CHAT["I'm using Gargul to distribute loot. It makes rolling easier so be sure to try it out!"];
         local stw = not GL:strContains(string.lower(message), L.GARGUL);
 
         GL:sendChatMessage(

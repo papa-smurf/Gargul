@@ -1,9 +1,28 @@
 <?php
 
+const TESTMODE = false;
+
+const REPLACE_CHAT_TRANSLATIONS = true;
+const REPLACE_TRANSLATIONS = true;
+
 $gargulDIR = __DIR__ . '/../../';
 
+$allLuaFiles = iterator_to_array(
+    new RegexIterator(
+        new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator($gargulDIR)
+        ),
+        '/\.lua$/i'
+    )
+);
+$allLuaFiles = array_map(fn($f) => $f->getPathname(), iterator_to_array($allLuaFiles));
+
 // Replace all chat translation data
-(function($gargulDIR){
+(function($gargulDIR, $allLuaFiles){
+    if (!REPLACE_CHAT_TRANSLATIONS) {
+        return;
+    }
+
     // Fetch enUS chat enTranslations
     $chatTranslations = (function ($gargulDIR){
         $chatTranslations = file_get_contents($gargulDIR . '/Data/Localizations/chat.lua');
@@ -18,17 +37,15 @@ $gargulDIR = __DIR__ . '/../../';
     uksort($chatTranslations, "sortLongestToShortest");
 
     // Replace translation usages
-    $sources = [ 'Classes', 'Interface' ];
-    foreach ($sources as $source) {
-        foreach(glob($gargulDIR . $source . '/*.lua', GLOB_BRACE) as $file) {
-            $fileContent = file_get_contents($file);
-    
-            foreach ($chatTranslations as $label => $translation) {
-                $fileContent = str_replace("L.CHAT.{$label}", "L.CHAT[{$translation}]", $fileContent);
-            }
+    foreach ($allLuaFiles as $file) {
+        echo $file . "\n";
+        $fileContent = file_get_contents($file);
 
-            file_put_contents($file, $fileContent);
+        foreach ($chatTranslations as $label => $translation) {
+            $fileContent = str_replace("L.CHAT.{$label}", "L.CHAT[{$translation}]", $fileContent);
         }
+
+        file_put_contents($file, $fileContent);
     }
 
     // Update chat file
@@ -38,7 +55,7 @@ $gargulDIR = __DIR__ . '/../../';
         $fileContent = str_replace($label, "[{$translation}]", $fileContent);
     }
     file_put_contents($chatFile, $fileContent);
-})($gargulDIR);
+})($gargulDIR, $allLuaFiles);
 
 // Extract labels and enTranslations from en.lua
 // $enTranslations = file_get_contents($gargulDIR . '/Data/Localizations/en.lua');

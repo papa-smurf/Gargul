@@ -260,7 +260,7 @@ function Award:draw(itemLink, callback)
                             return;
                         end
 
-                        GL:sendChatMessage((L.CHAT.AWARD_RANDOM_WINNER):format(itemLink, winner), "GROUP");
+                        GL:sendChatMessage((L.CHAT["Random winner for %s selected (%s)"]):format(itemLink, winner), "GROUP");
                         award(true);
                     end,
                 };

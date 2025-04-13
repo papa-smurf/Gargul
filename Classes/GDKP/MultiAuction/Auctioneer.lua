@@ -448,7 +448,7 @@ function Auctioneer:syncWithRunningSession()
                         GL:mute();
                         self:announceStart(Response.Auctions, duration, Response.antiSnipe);
                         GL:unmute();
-                        GL:sendChatMessage(L.CHAT.MULTIAUCTION_RESUMED, "GROUP");
+                        GL:sendChatMessage(L.CHAT["I resumed a previous bidding session, double check your bids!"], "GROUP");
                     end,
                     focus = true,
                 };
@@ -603,7 +603,7 @@ function Auctioneer:announceStart(ItemDetails, duration, antiSnipe, precision)
         self:scheduleUpdater();
 
         -- Let people know that we've started a multi-auction
-        GL:sendChatMessage(L.CHAT.MULTIAUCTION_STARTED, "RAID_WARNING");
+        GL:sendChatMessage(L.CHAT["I started a bidding session. Can't see it? Make sure to download/update Gargul!"], "RAID_WARNING");
 
         self.waitingForAuctionStart = false;
     end, function (sent, total)
@@ -740,7 +740,7 @@ function Auctioneer:syncNewItems()
     }:send();
 
     GL:sendChatMessage(
-        (L.CHAT.MULTIAUCTION_ITEMS_ADDED):format(numberOfChanges, GL:count(Client.AuctionDetails.Auctions)),
+        (L.CHAT["I added %s item(s) to the auction for a total of %s"]):format(numberOfChanges, GL:count(Client.AuctionDetails.Auctions)),
         "GROUP"
     );
 end
@@ -1140,7 +1140,7 @@ function Auctioneer:finish(announcePot)
 
     local totalPot = GDKPPot:total();
     if (totalPot) then
-        GL:sendChatMessage((L.CHAT.MULTIAUCTION_FINISHED):format(GL:goldToMoney(totalPot)), "GROUP");
+        GL:sendChatMessage((L.CHAT["Multi-auction finished. The pot now holds %s"]):format(GL:goldToMoney(totalPot)), "GROUP");
     end
 end
 
