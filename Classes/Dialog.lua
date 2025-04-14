@@ -4,7 +4,7 @@ https://warcraft.wiki.gg/wiki/Creating_simple_pop-up_dialog_boxes
 https://wowpedia.fandom.com/wiki/Creating_simple_pop-up_dialog_boxes
 https://www.townlong-yak.com/framexml/era/Blizzard_StaticPopup/StaticPopup.lua
 
-Missing information:
+Additional information:
 Dialogs support up to 4 buttons
 selectCallbackByIndex needs to be enabled in order to use OnButton3 etc
 ]]
@@ -75,6 +75,8 @@ setmetatable(Dialog, {
     end,
 });
 
+--- Local helper function to streamline dialog identifiers
+---
 ---@param identifier string
 ---@return string
 local function normalizeType(identifier)
@@ -136,7 +138,7 @@ end
 
 ---@param isAlert? boolean
 ---@return Dialog
-function Dialog:isAlert(isAlert)
+function Dialog:setIsAlert(isAlert)
     self.showAlert = isAlert ~= false;
     return self;
 end
@@ -174,7 +176,7 @@ end
 ---@param itemLink? string
 ---@return Dialog
 function Dialog:setItemLink(itemLink)
-    if (not itemLink) then
+    if (not GL:isValidItemLink(itemLink)) then
         self.hasItemFrame = false;
         self.useLinkForItemInfo = nil;
         self.itemLink = nil;
