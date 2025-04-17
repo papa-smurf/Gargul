@@ -39,17 +39,17 @@ function EditRaider:build()
     Name:DisableButton(true);
     Name:SetHeight(20);
     Name:SetFullWidth(true);
-    Name:SetLabel(L.NAME);
+    Name:SetLabel(L["Name"]);
     Window:AddChild(Name);
     Interface:set(self, "Name", Name);
 
     local Save = AceGUI:Create("Button");
-    Save:SetText(L.OK);
+    Save:SetText(L["Ok"]);
     Save:SetFullWidth(true);
     Save:SetCallback("OnClick", function()
         local name = strtrim(Name:GetText());
         if (GL:empty(name)) then
-            GL:warning(L.INVALID_DATA_WARNING);
+            GL:warning(L["Invalid data supplied"]);
             return;
         end
 
@@ -62,7 +62,7 @@ function EditRaider:build()
     Window:AddChild(Save);
 
     local Cancel = AceGUI:Create("Button");
-    Cancel:SetText(L.CANCEL);
+    Cancel:SetText(L["Cancel"]);
     Cancel:SetFullWidth(true);
     Cancel:SetCallback("OnClick", function()
         self:close();

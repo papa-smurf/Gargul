@@ -41,7 +41,7 @@ function MailCuts:_init()
     self._initialized = true;
 
     local Identity = GL.Interface.Identity:build(GL.User:bth());
-    self.cutMailSubject = Identity.cutMailSubject or L.CUT_MAIL_SUBJECT;
+    self.cutMailSubject = Identity.cutMailSubject or L["Gargul GDKP: %sg"];
     self.cutMailBody = Identity.cutMailBody or L.CHAT["Hi ${player}, your ${cut} cut has arrived! - Gargul"];
 
     --[[ ERA HAS DIFFERENT EVENTS FOR OPENING / CLOSING THE MAILBOX ]]
@@ -122,7 +122,7 @@ function MailCuts:build()
     Window:SetPoint("BOTTOMLEFT", _G.MailFrame, "BOTTOMRIGHT", 4, -2);
 
     ---@type FontString
-    local Intro = Interface:createFontString(Window, L.MAIL_CUTS_EXPLANATION);
+    local Intro = Interface:createFontString(Window, L["Mail cut to players"]);
     Intro:SetPoint("TOPLEFT", Window, "TOPLEFT", 20, -24);
     Intro:SetPoint("TOPRIGHT", Window, "TOPRIGHT", -20, 0);
     Intro:SetJustifyH("CENTER");
@@ -142,7 +142,7 @@ function MailCuts:build()
     PlayerHolder:SetPoint("BOTTOMRIGHT", ScrollFrame, "BOTTOMRIGHT");
 
     ---@type Button
-    local MailAllCuts = Interface:dynamicPanelButton(Window, L.GDKP_MAIL_ALL);
+    local MailAllCuts = Interface:dynamicPanelButton(Window, L["Mail All"]);
     MailAllCuts:SetPoint("BOTTOMLEFT", Window, "BOTTOMLEFT", 20, 30);
     MailAllCuts:SetPoint("RIGHT", Window, "RIGHT", -20, 0);
     MailAllCuts:SetScript("OnClick", function ()
@@ -196,7 +196,7 @@ function MailCuts:refreshPlayerCuts()
         local nameFormatted = GL:nameFormat(player);
         if (MailHistory) then
             Lines = {
-                string.format(L.CUT_MAIL_HISTORY, nameFormatted),
+                string.format(L["Mail History for |c00967FD2%s"], nameFormatted),
                 " ",
             };
             table.sort(MailHistory, function (a, b)
@@ -211,7 +211,7 @@ function MailCuts:refreshPlayerCuts()
                 hasEntries = true;
 
                 tinsert(Lines, string.format("%s: %s",
-                    date(L.DAY_MONTH_HOURS_MINUTES, Entry.timestamp),
+                    date(L["%d-%m %H:%M"], Entry.timestamp),
                     Entry.message
                 ));
             end
@@ -223,12 +223,12 @@ function MailCuts:refreshPlayerCuts()
         PlayerName:SetWidth(80);
 
         ---@type FontString
-        local Gold = Interface:createFontString(PlayerRow, goldOwed .. L.GOLD_INDICATOR);
+        local Gold = Interface:createFontString(PlayerRow, goldOwed .. L["g"]);
         Gold:SetPoint("TOPLEFT", PlayerName, "TOPRIGHT", 4, 0);
         Gold:SetWidth(60);
 
         ---@type Button
-        local MailCut = Interface:dynamicPanelButton(PlayerRow, L.MAIL);
+        local MailCut = Interface:dynamicPanelButton(PlayerRow, L["Mail"]);
         MailCut:SetPoint("TOPLEFT", Gold, "TOPRIGHT", 4, 0);
         MailCut:SetScript("OnClick", function ()
             self:mailPlayerCut(player, function (success, copper, message)
@@ -255,7 +255,7 @@ function MailCuts:refreshPlayerCuts()
 
                 -- Make sure to close the window when all cuts are mailed
                 if (not cutsLeft) then
-                    GL:success(L.GDKP_ALL_CUTS_MAILED);
+                    GL:success(L["All cuts were mailed!"]);
                     self:close();
                 end
             end);
@@ -290,7 +290,7 @@ end
 
 function MailCuts:mailAllCuts()
     if (self.sendingMail) then
-        GL:error(L.CUT_MAIL_IN_PROGRESS);
+        GL:error(L["Wait a bit, we're still processing the previous mail"]);
 
         return;
     end
@@ -322,7 +322,7 @@ function MailCuts:mailAllCuts()
 
                     -- Make sure to close the window when all cuts are mailed
                     if (not self:refreshPlayerCuts()) then
-                        GL:success(L.GDKP_ALL_CUTS_MAILED);
+                        GL:success(L["All cuts were mailed!"]);
                         self:close();
                         return;
                     end
@@ -332,7 +332,7 @@ function MailCuts:mailAllCuts()
 
                 if (self.mailErrors > 1) then
                     self.mailErrors = 0;
-                    return GL:error(L.CUT_MAILS_FAILED);
+                    return GL:error(L["Multiple mail errors detected, aborting cut distribution"]);
                 end
 
                 self:mailAllCuts();
@@ -340,21 +340,21 @@ function MailCuts:mailAllCuts()
         end
     end
 
-    GL:success(L.GDKP_ALL_CUTS_MAILED);
+    GL:success(L["All cuts were mailed!"]);
 end
 
 ---@param player string
 ---@param callback function|nil
 function MailCuts:mailPlayerCut(player, callback)
     if (self.sendingMail) then
-        GL:error(L.CUT_MAIL_IN_PROGRESS);
+        GL:error(L["Wait a bit, we're still processing the previous mail"]);
 
         return;
     end
 
     -- Looks like the player closed his mailbox in the meantime
     if (not GL.mailIsShown) then
-        GL:error(L.CUT_MAILBOX_CLOSED);
+        GL:error(L["Can't send mail when the mailbox is closed"]);
     end
 
     callback = callback or function () end;
@@ -362,14 +362,14 @@ function MailCuts:mailPlayerCut(player, callback)
     -- We need an active session that's locked for payout
     local Session = GDKPSession:getActive() or {};
     if (not Session or not Session.lockedAt) then
-        GL:warning(L.GDKP_PAYOUT_INACTIVE);
+        GL:warning(L["No active GDKP session detected or session is not locked for payout!"]);
         return callback(false);
     end
 
     -- Check if we actually need to pay this person
     local outstandingCopper = GDKPSession:copperOwedToPlayer(player, Session.ID);
     if (outstandingCopper and outstandingCopper < 1) then
-        GL:success(string.format(L.CUT_MAIL_EVEN, player));
+        GL:success(string.format(L["You don't owe %s any gold"], player));
         return callback(true);
     elseif (not outstandingCopper) then
         return;
@@ -379,7 +379,7 @@ function MailCuts:mailPlayerCut(player, callback)
     local originalCopper = GetMoney();
     local copperLeftAfterMailing = originalCopper - outstandingCopper - MAIL_COST;
     if (copperLeftAfterMailing < 0) then
-        GL:warning(string.format(L.CUT_MAIL_INSUFFICIENT_FUNDS, player));
+        GL:warning(string.format(L["You don't have enough gold to pay %s"], player));
         return callback(false);
     end
 
@@ -413,12 +413,12 @@ function MailCuts:mailPlayerCut(player, callback)
 
                 local copperLeftMatchesExpectation = GetMoney() == copperLeftAfterMailing;
                 if (copperLeftMatchesExpectation) then
-                    message = string.format(L.CUT_SENT, gold, player);
+                    message = string.format(L["Sent %sg to %s"], gold, player);
                     GL:success(message);
 
                     Events:fire("GL.GDKP_CUT_MAILED");
                 else
-                    message = L.CUT_MAIL_GOLD_MISMATCH;
+                    message = L["Mail SENT according to game, but your remaining GOLD DOESN'T MATCH, did something go wrong?"];
                     GL:warning(message);
                 end
 
@@ -429,7 +429,7 @@ function MailCuts:mailPlayerCut(player, callback)
             MoneyChangedTimer = GL.Ace:ScheduleTimer(function ()
                 Events:unregister("MailCutsPlayerMoney");
 
-                message = L.CUT_MAIL_GOLD_MISMATCH;
+                message = L["Mail SENT according to game, but your remaining GOLD DOESN'T MATCH, did something go wrong?"];
                 GL:error(message);
 
                 callback(success, outstandingCopper, message);

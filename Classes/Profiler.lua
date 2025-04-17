@@ -25,7 +25,7 @@ function Profiler:draw()
     self.isVisible = true;
 
     local Window = GL.AceGUI:Create("Frame");
-    Window:SetTitle((L.WINDOW_HEADER):format(GL.version));
+    Window:SetTitle((L["Gargul v%s"]):format(GL.version));
     Window:SetLayout("Flow");
     Window:SetWidth(180);
     Window:SetHeight(60);

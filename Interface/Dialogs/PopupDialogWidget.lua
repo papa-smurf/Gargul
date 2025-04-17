@@ -74,7 +74,7 @@ local Events = {
 
         -- Cancel
         local CancelButton = AceGUI:Create("Button");
-        CancelButton:SetText(L.CANCEL);
+        CancelButton:SetText(L["Cancel"]);
         CancelButton:SetHeight(20);
         CancelButton:SetWidth(80);
         CancelButton:SetCallback("OnClick", function()
@@ -235,7 +235,7 @@ local function constructor()
 
     -- Yes
     local YesButton = AceGUI:Create("Button");
-    YesButton:SetText(L.YES);
+    YesButton:SetText(L["Yes"]);
     YesButton:SetHeight(20);
     YesButton:SetWidth(120);
     YesButton:SetCallback("OnClick", function()
@@ -254,7 +254,7 @@ local function constructor()
 
     -- No
     local NoButton = AceGUI:Create("Button");
-    NoButton:SetText(L.NO);
+    NoButton:SetText(L["No"]);
     NoButton:SetHeight(20);
     NoButton:SetWidth(120);
     NoButton:SetCallback("OnClick", function()

@@ -147,7 +147,7 @@ function ClientInterface:build()
                 return;
             end
 
-            GL:notice(L.GDKP_MULTIAUCTION_CLIENT_REOPEN_INFO)
+            GL:notice(L["Bidding window closed, use |c00A79EFF/gl bid to reopen it!"])
         end,
     };
 
@@ -163,7 +163,7 @@ function ClientInterface:build()
             GL.Settings:set("GDKP.outbidSound", "Gargul: uh-oh");
         end,
     }, {
-        text = L.GDKP_MULTIAUCTION_CLIENT_SETTING_SOUND_OPTIONS,
+        text = L["More sound options..."],
         hideOnClick = true,
         isRadio = true,
         checked = false,
@@ -172,11 +172,11 @@ function ClientInterface:build()
             CloseMenus();
         end,
     }, {
-        text = L.NONE,
+        text = L["None"],
         hideOnClick = true,
         isRadio = true,
         checked = function ()
-            return GL.Settings:get("GDKP.outbidSound") == L.NONE;
+            return GL.Settings:get("GDKP.outbidSound") == L["None"];
         end,
         func = function (Entry)
             Entry.checked = true;
@@ -186,10 +186,10 @@ function ClientInterface:build()
 
     --[[ THE SETTINGS MENU IN THE TOP LEFT OF THE WINDOW ]]
     Interface:addWindowOptions(Window, {
-        {text = L.GDKP_MULTIAUCTION_CLIENT_SETTING_ANNOUNCE_SALES, setting = "GDKP.MultiAuction.awardNotice" },
-        {text = L.GDKP_MULTIAUCTION_CLIENT_SETTING_OUTBID_SOUND, notCheckable = true, SubMenu = SoundOptions, },
+        {text = L["Announce sales in chat"], setting = "GDKP.MultiAuction.awardNotice" },
+        {text = L["Play sound when outbid"], notCheckable = true, SubMenu = SoundOptions, },
         "divider",
-        { text = L.CHANGE_SCALE, notCheckable = true, func = function ()
+        { text = L["Adjust Scale"], notCheckable = true, func = function ()
             Interface:openScaler(Window);
             CloseMenus();
         end }
@@ -203,12 +203,12 @@ function ClientInterface:build()
 
     --[[ SEARCH ]]
     ---@type EditBox
-    local Search = Interface:inputBox(Window, nil, L.GDKP_MULTIAUCTION_AUCTIONEER_SEARCH_LABEL);
+    local Search = Interface:inputBox(Window, nil, L["Search name or iLVL"]);
     Search:SetWidth(150);
     Search:SetPoint("TOPLEFT", Window, "TOPLEFT", 28, -24);
     Search:SetPoint("TOPLEFT", Window, "TOPLEFT", 28, -24);
     self.Search = Search;
-    Interface:addTooltip(Search, L.GDKP_MULTIAUCTION_AUCTIONEER_SEARCH_TOOLTIP);
+    Interface:addTooltip(Search, L["Supports item names and iLVL e.g. '252', '<252' etc"]);
 
     Search:SetScript("OnTextChanged", function ()
         GL:after(.5, "GDKP_MULTI_AUCTION_CLIENT_FILTER_CHANGED", function ()
@@ -223,33 +223,33 @@ function ClientInterface:build()
     SearchClear:SetScript("OnClick", function ()
         Search:Clear();
     end);
-    Interface:addTooltip(SearchClear, L.CLEAR);
+    Interface:addTooltip(SearchClear, L["Clear"]);
 
     --[[ SHOW/HIDE FAVORITES ]]
     ---@type Button
-    local ToggleFavorites = Interface:dynamicPanelButton(Window, L.GDKP_MULTIAUCTION_CLIENT_SHOW_FAVORITES);
+    local ToggleFavorites = Interface:dynamicPanelButton(Window, L["Show favorites"]);
     ToggleFavorites:SetPoint("TOPLEFT", SearchClear, "TOPRIGHT", 6, -2);
     ToggleFavorites:SetScript("OnClick", function ()
         self.showFavorites = not self.showFavorites;
-        ToggleFavorites:SetText(self.showFavorites and L.GDKP_MULTIAUCTION_CLIENT_SHOW_ALL or L.GDKP_MULTIAUCTION_CLIENT_SHOW_FAVORITES);
+        ToggleFavorites:SetText(self.showFavorites and L["Show all"] or L["Show favorites"]);
         filter();
     end);
     self.ToggleFavorites = ToggleFavorites;
 
     --[[ SHOW/HIDE ACTIVE ]]
     ---@type Button
-    local ToggleActive = Interface:dynamicPanelButton(Window, L.GDKP_MULTIAUCTION_CLIENT_HIDE_INACTIVE);
+    local ToggleActive = Interface:dynamicPanelButton(Window, L["Hide inactive"]);
     ToggleActive:SetPoint("TOPLEFT", ToggleFavorites, "TOPRIGHT", 6, 0);
     ToggleActive:SetScript("OnClick", function ()
         self.showInactive = not self.showInactive;
-        ToggleActive:SetText(self.showInactive and L.GDKP_MULTIAUCTION_CLIENT_HIDE_INACTIVE or L.GDKP_MULTIAUCTION_CLIENT_SHOW_INACTIVE);
+        ToggleActive:SetText(self.showInactive and L["Hide inactive"] or L["Show inactive"]);
         filter();
     end);
     self.ToggleActive = ToggleActive;
-    Interface:addTooltip(ToggleActive, L.GDKP_MULTIAUCTION_CLIENT_INACTIVE_TOGGLE_TOOLTIP);
+    Interface:addTooltip(ToggleActive, L["Show/Hide finished auctions"]);
 
     --[[ FILTER ]]
-    local Filters = Interface:multiSelect(Window, L.GDKP_MULTIAUCTION_CLIENT_HIDE_ITEMS, {
+    local Filters = Interface:multiSelect(Window, L["Hide items"], {
         {
             text = "Unusable",
             checked = function ()
@@ -350,7 +350,7 @@ function ClientInterface:build()
         },
         "divider",
         {
-            text = L.BIND_ON_EQUIP_ABBR,
+            text = L["BOE"],
             checked = function ()
                 return Settings:get("GDKP.MultiAuction." .. GL.User.id .. ".Filters.BOE");
             end,
@@ -383,7 +383,7 @@ function ClientInterface:build()
         end,
     };
     ToggleFilters:SetPoint("TOPLEFT", Filters, "TOPRIGHT", -12, -4);
-    Interface:addTooltip(ToggleFilters, L.GDKP_MULTIAUCTION_CLIENT_HIDE_ITEMS_TOOLTIP);
+    Interface:addTooltip(ToggleFilters, L["Enable / Disable the hidden items filter"]);
 
     --[[ SCROLLFRAME BOILERPLATE ]]
     ScrollFrame = CreateFrame("ScrollFrame", nil, Window, "UIPanelScrollFrameTemplate");
@@ -433,10 +433,10 @@ function ClientInterface:build()
         ---@type Button
         local CloseAllButton = Interface:dynamicPanelButton(ButtonContainer);
         CloseAllButton:SetPoint("BOTTOMLEFT", ButtonContainer, "BOTTOMLEFT");
-        CloseAllButton:SetText(L.GDKP_MULTIAUCTION_CLIENT_CLOSE_ALL);
+        CloseAllButton:SetText(L["Close all"]);
         CloseAllButton:SetScript("OnClick", function ()
             GL.Interface.Dialogs.PopupDialog:open{
-                question = L.GDKP_MULTIAUCTION_CLIENT_CLOSE_ALL_CONFIRM,
+                question = L["Close ALL auctions?"],
                 OnYes = function ()
                     for auctionID in pairs(Client.AuctionDetails.Auctions or {}) do
                         Auctioneer:closeAuction(auctionID);
@@ -444,20 +444,20 @@ function ClientInterface:build()
                 end,
             };
         end);
-        Interface:addTooltip(CloseAllButton, L.GDKP_MULTIAUCTION_CLIENT_CLOSE_ALL_TOOLTIP);
+        Interface:addTooltip(CloseAllButton, L["\nClose ALL auctions\n\nAuctions with active bids on them will be sold and can not receive new bids!\n"]);
 
         ---@type Button
         local FinalCallButton = Interface:dynamicPanelButton(ButtonContainer);
         FinalCallButton:SetPoint("TOPLEFT", CloseAllButton, "TOPRIGHT", 4, 0);
-        FinalCallButton:SetText(L.FINAL_CALL);
+        FinalCallButton:SetText(L["Final Call"]);
         FinalCallButton:SetScript("OnClick", function ()
             GL.Interface.Dialogs.ConfirmWithSingleInputDialog:open{
-                question = L.GDKP_MULTIAUCTION_CLIENT_FINAL_CALL_DIALOG,
+                question = L["Give a final call timer of how many seconds?"],
                 inputValue = GL.Settings:get("GDKP.finalCallTime"),
                 OnYes = function (seconds)
                     seconds = floor(tonumber(strtrim(seconds)) or 0);
                     if (seconds < 5) then
-                        return GL:error(L.GDKP_MULTIAUCTION_CLIENT_FINAL_CALL_MIN_5);
+                        return GL:error(L["The minimum amount of seconds is 5"]);
                     end
 
                     GL.Settings:set("GDKP.finalCallTime", seconds);
@@ -469,12 +469,12 @@ function ClientInterface:build()
                 focus = true,
             };
         end);
-        Interface:addTooltip(FinalCallButton, L.GDKP_MULTIAUCTION_CLIENT_FINAL_CALL_TOOLTIP);
+        Interface:addTooltip(FinalCallButton, L["Start a final call for this auction by giving a (usually shorter) bid timer"]);
 
         ---@type Button
         local FinishButton = Interface:dynamicPanelButton(ButtonContainer);
         FinishButton:SetPoint("TOPLEFT", FinalCallButton, "TOPRIGHT", 4, 0);
-        FinishButton:SetText(L.FINISH);
+        FinishButton:SetText(L["Finish"]);
         FinishButton:SetScript("OnClick", function ()
             local unfinishedBusiness = false;
 
@@ -493,46 +493,46 @@ function ClientInterface:build()
             end
 
             GL.Interface.Dialogs.PopupDialog:open{
-                question = L.GDKP_MULTIAUCTION_CLIENT_FINISH_CONFIRM,
+                question = L["Close ALL auctions and wrap up this multi-auction session?"],
                 OnYes = function ()
                     Auctioneer:finish();
                     self:close();
                 end,
             };
         end);
-        Interface:addTooltip(FinishButton, L.GDKP_MULTIAUCTION_CLIENT_FINISH_TOOLTIP);
+        Interface:addTooltip(FinishButton, L["\nFinish Multi-Auction session\n\nThis will close all auctions and announce the total pot in chat\nAuctions with active bids on them will be sold and can not receive new bids!\n"]);
 
         ---@type Button
         local TerminateButton = Interface:dynamicPanelButton(ButtonContainer);
         TerminateButton:SetPoint("TOPLEFT", FinishButton, "TOPRIGHT", 4, 0);
-        TerminateButton:SetText(L.GDKP_MULTIAUCTION_CLIENT_TERMINATE);
+        TerminateButton:SetText(L["Terminate"]);
         TerminateButton:SetScript("OnClick", function ()
             GL.Interface.Dialogs.PopupDialog:open{
-                question = L.GDKP_MULTIAUCTION_CLIENT_TERMINATE_CONFIRM,
+                question = L["Remove all bidsl bids and close all auctions?"],
                 OnYes = function ()
                     Auctioneer:terminate();
                 end,
             };
         end);
-        Interface:addTooltip(TerminateButton, L.GDKP_MULTIAUCTION_CLIENT_TERMINATE_TOOLTIP);
+        Interface:addTooltip(TerminateButton, L["\nTerminate Multi-Auction session\n\nThis will delete all bids on items that haven't sold yet and close all auctions!\n"]);
 
         ---@type Button
         local DisenchantButton = Interface:dynamicPanelButton(ButtonContainer);
         DisenchantButton:SetPoint("TOPLEFT", TerminateButton, "TOPRIGHT", 4, 0);
-        DisenchantButton:SetText(L.DISENCHANT);
+        DisenchantButton:SetText(L["Disenchant"]);
         DisenchantButton:SetScript("OnClick", function ()
             GL.Interface.Dialogs.PopupDialog:open{
-                question = L.GDKP_MULTIAUCTION_CLIENT_DISENCHANT_CONFIRM,
+                question = L["Disenchant all finished but unsold items?"],
                 OnYes = function ()
                     Auctioneer:disenchant();
                 end,
             };
         end);
-        Interface:addTooltip(DisenchantButton, L.GDKP_MULTIAUCTION_CLIENT_DISENCHANT_TOOLTIP);
+        Interface:addTooltip(DisenchantButton, L["\nDisenchant unsold items\n\nThis will mark all unsold items as disenchanted and they will not show up in a new multi-auction session\n"]);
 
         --[[ HOW TO ADD ITEMS ]]
         ---@type FontString
-        local AddItemsLabel = Interface:createFontString(AdminWindow, (L.GDKP_MULTIAUCTION_CLIENT_ADD_ITEM):format(GL.Settings:get("ShortcutKeys.rollOffOrAuction")));
+        local AddItemsLabel = Interface:createFontString(AdminWindow, (L["With this window open, %s items to add them to the list"]):format(GL.Settings:get("ShortcutKeys.rollOffOrAuction")));
         AddItemsLabel:SetFont(.8, "OUTLINE");
         AddItemsLabel:SetColor("GRAY");
         AddItemsLabel:SetPoint("CENTER", AdminWindow, "CENTER");
@@ -564,7 +564,7 @@ function ClientInterface:build()
         AuctionAdminWindow:SetPoint("TOPLEFT", Window, "TOPRIGHT", 10, 0);
         AuctionAdminWindow:Hide();
 
-        local AdminExplanation = Interface:createFontString(AuctionAdminWindow, L.GDKP_MULTIAUCTION_CLIENT_ADMIN_INFO);
+        local AdminExplanation = Interface:createFontString(AuctionAdminWindow, L["Click the cogwheel icon to manage an auction"]);
         AdminExplanation:SetPoint("CENTER", AuctionAdminWindow, "CENTER");
         AdminExplanation:SetPoint("TOP", AuctionAdminWindow, "TOP", 0, -30);
         AdminExplanation:SetFont(1, "OUTLINE");
@@ -577,21 +577,21 @@ function ClientInterface:build()
         AdminWindowItemLink:SetColor("GRAY");
         AuctionAdminWindow.AdminWindowItemLink = AdminWindowItemLink;
 
-        local AdminButtonExplanation = Interface:createFontString(AuctionAdminWindow, L.GDKP_MULTIAUCTION_CLIENT_TOOLTIP_INFO);
+        local AdminButtonExplanation = Interface:createFontString(AuctionAdminWindow, L["Hover over any of the buttons below for more information"]);
         AdminButtonExplanation:SetPoint("CENTER", AdminWindowItemLink, "CENTER");
         AdminButtonExplanation:SetPoint("TOP", AdminWindowItemLink, "BOTTOM", 0, -7);
         AdminButtonExplanation:SetFont(1, "OUTLINE");
         AdminButtonExplanation:SetColor("GRAY");
         AuctionAdminWindow.AdminButtonExplanation = AdminButtonExplanation;
 
-        local AdminAuctionClosedExplanation = Interface:createFontString(AuctionAdminWindow, (L.GDKP_MULTIAUCTION_CLIENT_SOLD_INFO):format(Interface.Colors.PURPLE));
+        local AdminAuctionClosedExplanation = Interface:createFontString(AuctionAdminWindow, (L["This item was sold. Use ledger (|c00%s/gdkp) to make changes!"]):format(Interface.Colors.PURPLE));
         AdminAuctionClosedExplanation:SetPoint("CENTER", AdminWindowItemLink, "CENTER");
         AdminAuctionClosedExplanation:SetPoint("TOP", AdminWindowItemLink, "BOTTOM", 0, -7);
         AdminAuctionClosedExplanation:SetFont(1, "OUTLINE");
         AdminAuctionClosedExplanation:SetColor("GRAY");
         AuctionAdminWindow.AdminAuctionClosedExplanation = AdminAuctionClosedExplanation;
 
-        local AdminOpenLedgerButton = Interface:dynamicPanelButton(AuctionAdminWindow, L.LEDGER);
+        local AdminOpenLedgerButton = Interface:dynamicPanelButton(AuctionAdminWindow, L["Ledger"]);
         AdminOpenLedgerButton:SetScale(.9);
         AdminOpenLedgerButton:SetPoint("CENTER", AuctionAdminWindow, "CENTER");
         AdminOpenLedgerButton:SetPoint("BOTTOM", AuctionAdminWindow, "BOTTOM", 0, 18);
@@ -611,38 +611,38 @@ function ClientInterface:build()
         local CloseButton = Interface:dynamicPanelButton(ButtonContainer);
         CloseButton:SetScale(.9);
         CloseButton:SetPoint("BOTTOMLEFT", ButtonContainer, "BOTTOMLEFT", 0, -4);
-        CloseButton:SetText(L.GDKP_MULTIAUCTION_CLIENT_CLOSE_AUCTION);
+        CloseButton:SetText(L["Close Auction"]);
         CloseButton:SetScript("OnClick", function ()
             if (not AuctionAdminWindow._auctionID) then
                 return self:resetAdminWindow();
             end
 
             GL.Interface.Dialogs.PopupDialog:open{
-                question = L.ARE_YOU_SURE,
+                question = L["Are you sure?"],
                 OnYes = function ()
                     Auctioneer:closeAuction(AuctionAdminWindow._auctionID);
                 end,
             };
         end);
-        Interface:addTooltip(CloseButton, L.GDKP_MULTIAUCTION_CLIENT_CLOSE_AUCTION_TOOLTIP);
+        Interface:addTooltip(CloseButton, L["Close the auction. Players can no longer bid but the highest bid remains active"]);
 
         ---@type Button
         local FinallCallButton = Interface:dynamicPanelButton(ButtonContainer);
         FinallCallButton:SetScale(.9);
         FinallCallButton:SetPoint("TOPLEFT", CloseButton, "TOPRIGHT", 2, 0);
-        FinallCallButton:SetText(L.FINAL_CALL);
+        FinallCallButton:SetText(L["Final Call"]);
         FinallCallButton:SetScript("OnClick", function ()
             if (not AuctionAdminWindow._auctionID) then
                 return self:resetAdminWindow();
             end
 
             GL.Interface.Dialogs.ConfirmWithSingleInputDialog:open{
-                question = L.GDKP_MULTIAUCTION_CLIENT_FINAL_CALL_DIALOG,
+                question = L["Give a final call timer of how many seconds?"],
                 inputValue = GL.Settings:get("GDKP.finalCallTime"),
                 OnYes = function (seconds)
                     seconds = floor(tonumber(strtrim(seconds)) or 0);
                     if (seconds < 5) then
-                        return GL:error(L.GDKP_MULTIAUCTION_CLIENT_FINAL_CALL_MIN_5);
+                        return GL:error(L["The minimum amount of seconds is 5"]);
                     end
 
                     GL.Settings:set("GDKP.finalCallTime", seconds);
@@ -651,46 +651,46 @@ function ClientInterface:build()
                 focus = true,
             };
         end);
-        Interface:addTooltip(FinallCallButton, L.GDKP_MULTIAUCTION_CLIENT_FINAL_CALL_TOOLTIP);
+        Interface:addTooltip(FinallCallButton, L["Start a final call for this auction by giving a (usually shorter) bid timer"]);
 
         ---@type Button
         local ClearButton = Interface:dynamicPanelButton(ButtonContainer);
         ClearButton:SetScale(.9);
         ClearButton:SetPoint("TOPLEFT", FinallCallButton, "TOPRIGHT", 2, 0);
-        ClearButton:SetText(L.GDKP_MULTIAUCTION_CLIENT_CLEAR_BIDS);
+        ClearButton:SetText(L["Clear bids"]);
         ClearButton:SetScript("OnClick", function ()
             if (not AuctionAdminWindow._auctionID) then
                 return self:resetAdminWindow();
             end
 
             GL.Interface.Dialogs.PopupDialog:open{
-                question = L.ARE_YOU_SURE,
+                question = L["Are you sure?"],
                 OnYes = function ()
                     Auctioneer:clearBid(AuctionAdminWindow._auctionID);
                 end,
             };
         end);
-        Interface:addTooltip(ClearButton, L.GDKP_MULTIAUCTION_CLIENT_CLEAR_BIDS_TOOLTIP);
+        Interface:addTooltip(ClearButton, L["Remove all bids from the auction"]);
 
         ---@type Button
         local DeleteButton = Interface:dynamicPanelButton(ButtonContainer);
         DeleteButton:SetScale(.9);
         DeleteButton:SetPoint("TOPLEFT", ClearButton, "TOPRIGHT", 2, 0);
-        DeleteButton:SetText(L.DELETE);
+        DeleteButton:SetText(L["Delete"]);
         DeleteButton:SetScript("OnClick", function ()
             if (not AuctionAdminWindow._auctionID) then
                 return self:resetAdminWindow();
             end
 
             GL.Interface.Dialogs.PopupDialog:open{
-                question = L.ARE_YOU_SURE,
+                question = L["Are you sure?"],
                 OnYes = function ()
                     Auctioneer:deleteAuction(AuctionAdminWindow._auctionID);
                     self:resetAdminWindow();
                 end,
             };
         end);
-        Interface:addTooltip(DeleteButton, L.GDKP_MULTIAUCTION_CLIENT_DELETE_TOOLTIP);
+        Interface:addTooltip(DeleteButton, L["Remove the item from the auction including its bid details. THIS CAN'T BE UNDONE!"]);
 
         -- Shadow frame used to determine the required width of the ButtonContainer
         local ShadowFrame = CreateFrame("Frame", nil, AuctionAdminWindow);
@@ -746,7 +746,7 @@ function ClientInterface:build()
             Favorite:SetPoint("TOP", AuctionRow, "TOP", 0, (ITEM_ROW_HEIGHT - ITEM_ROW_HEIGHT * .8) / -2);
             Favorite:SetPoint("LEFT", Window, "LEFT", ITEM_ROW_HEIGHT / 2, 0);
             Favorite:SetSize(ITEM_ROW_HEIGHT * .8, ITEM_ROW_HEIGHT * .8);
-            Interface:addTooltip(Favorite, L.GDKP_MULTIAUCTION_CLIENT_FAVORITE_TOOLTIP);
+            Interface:addTooltip(Favorite, L["Favorite this item"]);
 
             ---@type Texture
             local FavoriteImage = Favorite:CreateTexture(nil, "BACKGROUND")
@@ -826,7 +826,7 @@ function ClientInterface:build()
             --[[ BOE ]]
             if (isBOE) then
                 ---@type FontString
-                local BOE = Interface:createFontString(Icon, L.BIND_ON_EQUIP_ABBR);
+                local BOE = Interface:createFontString(Icon, L["BOE"]);
                 BOE:SetPoint("TOPLEFT", Icon, "TOPLEFT", -3, -2);
                 BOE:SetFont(.8, "OUTLINE");
                 BOE:SetColor("UNCOMMON");
@@ -846,7 +846,7 @@ function ClientInterface:build()
                 AdminButton:SetScript("OnClick", function ()
                     self:showAuctionAdminWindow(AuctionRow);
                 end);
-                Interface:addTooltip(AdminButton, L.GDKP_MULTIAUCTION_CLIENT_MANAGE_AUCTION);
+                Interface:addTooltip(AdminButton, L["Manage Auction"]);
             end
 
             --[[ AUTO BID BUTTON ]]
@@ -858,9 +858,9 @@ function ClientInterface:build()
 
             AutoBidButton.updateText = function ()
                 if (AutoBidButton.currentAmount) then
-                    AutoBidButton:SetText(L.STOP);
+                    AutoBidButton:SetText(L["Stop"]);
                 else
-                    AutoBidButton:SetText(L.AUTO);
+                    AutoBidButton:SetText(L["Auto"]);
                 end
 
                 AutoBidButton:SetHeight(27);
@@ -869,15 +869,15 @@ function ClientInterface:build()
 
             Interface:addTooltip(AutoBidButton, function ()
                 if (AutoBidButton.currentAmount) then
-                    return (L.GDKP_MULTIAUCTION_CLIENT_AUTOBID_TOOLTIP_STOP):format(AutoBidButton.currentAmount);
+                    return (L["Stop your auto bid (%sg)"]):format(AutoBidButton.currentAmount);
                 end
 
                 local bid = tonumber(BidInput:GetText()) or 0;
                 if (GL:lt(bid, .0002)) then
-                    return L.GDKP_MULTIAUCTION_CLIENT_AUTOBID_TOOLTIP_NONE;
+                    return L["Auto bid up to the bid you fill in on the left"];
                 end
 
-                return (L.GDKP_MULTIAUCTION_CLIENT_AUTOBID_TOOLTIP_GIVEN):format(bid);
+                return (L["Auto bid up to a maximum of %sg"]):format(bid);
             end);
 
             local lockRow, unlockRow, lastBid = nil, nil, 0;
@@ -888,7 +888,7 @@ function ClientInterface:build()
                         unlockRow();
 
                         if (not confirmed) then
-                            return GL:notice((L.GDKP_MULTIAUCTION_CLIENT_AUTOBID_STOP_FAILED):format(Item.link));
+                            return GL:notice((L["Could not stop auto bidding on %s, try again or /reload!"]):format(Item.link));
                         end
 
                         AutoBidButton.currentAmount = false;
@@ -901,7 +901,7 @@ function ClientInterface:build()
                 local bid = tonumber(BidInput:GetText()) or 0;
                 bid = Client:roundBidToClosestIncrement(auctionID, bid);
                 if (not Client:isBidValidForAuction(auctionID, bid)) then
-                    return GL:error((L.GDKP_MULTIAUCTION_CLIENT_BID_INVALID):format(Client:minimumBidForAuction(auctionID)));
+                    return GL:error((L["Invalid bid or bid is too low! The minimum is %sg"]):format(Client:minimumBidForAuction(auctionID)));
                 end
 
                 lockRow();
@@ -910,7 +910,7 @@ function ClientInterface:build()
 
                     -- Apparently something went wrong whilst sending our previous bid
                     if (not success) then
-                        GL:notice((L.GDKP_MULTIAUCTION_CLIENT_BID_FAILED):format(Item.link));
+                        GL:notice((L["Bid on %s could not be confirmed"]):format(Item.link));
                     end
                 end);
                 if (not AuctionRow._Details.isFavorite) then
@@ -934,7 +934,7 @@ function ClientInterface:build()
             ---@type Button
             local BidButton = Interface:dynamicPanelButton(AuctionRow);
             BidButton:SetScale(.8);
-            BidButton:SetText(L.BID);
+            BidButton:SetText(L["Bid"]);
             BidButton:SetHeight(27);
             BidButton:SetPoint("RIGHT", AutoBidButton, "LEFT", -2, 0);
 
@@ -942,12 +942,12 @@ function ClientInterface:build()
                 local bid = tonumber(BidInput:GetText()) or 0;
                 bid = Client:roundBidToClosestIncrement(auctionID, bid);
                 if (not Client:isBidValidForAuction(auctionID, bid)) then
-                    return GL:error((L.GDKP_MULTIAUCTION_CLIENT_BID_INVALID):format(Client:minimumBidForAuction(auctionID)));
+                    return GL:error((L["Invalid bid or bid is too low! The minimum is %sg"]):format(Client:minimumBidForAuction(auctionID)));
                 end
 
                 -- Crude throttle
                 if (GL:lt(GetTime() - lastBid, 2)) then
-                    return GL:notice(L.GDKP_MULTIAUCTION_CLIENT_BID_THROTTLE);
+                    return GL:notice(L["You need to wait two seconds between bids on the same item"]);
                 end
 
                 lockRow();
@@ -959,7 +959,7 @@ function ClientInterface:build()
 
                         -- Apparently something went wrong whilst sending our previous bid
                         if (not success) then
-                            GL:notice((L.GDKP_MULTIAUCTION_CLIENT_BID_FAILED):format(Item.link));
+                            GL:notice((L["Bid on %s could not be confirmed"]):format(Item.link));
 
                             return;
                         end
@@ -1002,7 +1002,7 @@ function ClientInterface:build()
             BidMinimumButton:SetPoint("CENTER", BidInput, "CENTER");
             BidMinimumButton:SetPoint("RIGHT", BidInput, "LEFT", -10, 0);
             BidMinimumButton:SetScale(.8);
-            BidMinimumButton:SetText(L.MIN);
+            BidMinimumButton:SetText(L["Min"]);
             BidMinimumButton:SetHeight(27);
             BidMinimumButton:SetScript("OnClick", function ()
                 BidInput:Clear();
@@ -1010,14 +1010,14 @@ function ClientInterface:build()
 
                 -- Player is already top bidder
                 if (GL:iEquals(GL:tableGet(Client.AuctionDetails.Auctions[auctionID] or {}, "CurrentBid.player"), GL.User.fqn)) then
-                    GL:notice((L.GDKP_MULTIAUCTION_CLIENT_ALREADY_TOP):format(Client.AuctionDetails.Auctions[auctionID].link));
+                    GL:notice((L["You're already the top bidder on %s"]):format(Client.AuctionDetails.Auctions[auctionID].link));
 
                     return;
                 end
 
                 -- Crude throttle
                 if (GL:lt(GetTime() - lastBid, 2)) then
-                    return GL:notice(L.GDKP_MULTIAUCTION_CLIENT_BID_THROTTLE);
+                    return GL:notice(L["You need to wait two seconds between bids on the same item"]);
                 end
 
                 lockRow();
@@ -1030,7 +1030,7 @@ function ClientInterface:build()
 
                         -- Apparently something went wrong whilst sending our previous bid
                         if (not success) then
-                            GL:notice((L.GDKP_MULTIAUCTION_CLIENT_BID_FAILED):format(Item.link));
+                            GL:notice((L["Bid on %s could not be confirmed"]):format(Item.link));
 
                             return;
                         end
@@ -1049,7 +1049,7 @@ function ClientInterface:build()
                     AuctionRow.toggleFavorite();
                 end
             end);
-            Interface:addTooltip(BidMinimumButton, L.GDKP_MULTIAUCTION_CLIENT_MINBID_TOOLTIP);
+            Interface:addTooltip(BidMinimumButton, L["Bid the minimum required amount"]);
 
             lockRow = function ()
                 lastBid = GetTime();
@@ -1092,9 +1092,9 @@ function ClientInterface:build()
                     return a.amount > b.amount;
                 end);
 
-                local Lines = { L.BIDS };
+                local Lines = { L["Bids"] };
                 for _, Bid in pairs(Bids) do
-                    tinsert(Lines, ("%s - %s%s"):format(Bid.player, Bid.amount, L.GOLD_INDICATOR));
+                    tinsert(Lines, ("%s - %s%s"):format(Bid.player, Bid.amount, L["g"]));
                 end
 
                 return Lines;
@@ -1114,32 +1114,32 @@ function ClientInterface:build()
 
                 if (AuctionDetails.endsAt == 0) then
                     if (hasBid) then
-                        statusText = (L.GDKP_MULTIAUCTION_CLIENT_AUCTION_STATUS_SOLD):format(
+                        statusText = (L["\n|c00%sSOLD to\n%s for |c00%s%sg"]):format(
                             Interface.Colors.SUCCESS,
                             GL:disambiguateName(AuctionDetails.CurrentBid.player, { colorize = true, }),
                             Interface.Colors.YELLOW,
                             AuctionDetails.CurrentBid.amount
                         );
                     else
-                        statusText = (L.GDKP_MULTIAUCTION_CLIENT_AUCTION_STATUS_CLOSED):format(Interface.Colors.GRAY);
+                        statusText = (L["\n|c00%sCLOSED\nNo bids"]):format(Interface.Colors.GRAY);
                     end
                 elseif (hasBid) then
                     local bidByMe = GL:iEquals(AuctionDetails.CurrentBid.player, GL.User.fqn);
 
                     if (bidByMe) then
-                        statusText = (L.GDKP_MULTIAUCTION_CLIENT_AUCTION_STATUS_YOUR_BID):format(
+                        statusText = (L["\nBid |c00%s%sg\nBy |c0092FF00YOU!"]):format(
                             Interface.Colors.YELLOW,
                             AuctionDetails.CurrentBid.amount
                         );
                     else
-                        statusText = (L.GDKP_MULTIAUCTION_CLIENT_AUCTION_STATUS_BID):format(
+                        statusText = (L["\nBid |c00%s%sg\nBy %s"]):format(
                             Interface.Colors.YELLOW,
                             AuctionDetails.CurrentBid.amount,
                             GL:disambiguateName(AuctionDetails.CurrentBid.player, { colorize = true, })
                         );
                     end
                 else
-                    statusText = (L.GDKP_MULTIAUCTION_CLIENT_AUCTION_STATUS_NO_BID):format(Interface.Colors.YELLOW, minimum, Interface.Colors.YELLOW, increment);
+                    statusText = (L["\nMinimum: |c00%s%sg\nIncrement: |c00%s%sg"]):format(Interface.Colors.YELLOW, minimum, Interface.Colors.YELLOW, increment);
                 end
 
                 AuctionRow.BidInput.updatePlaceholder(Client:minimumBidForAuction(auctionID));
@@ -1308,9 +1308,9 @@ function ClientInterface:updateBidDetails()
         end)();
     end
 
-    self.BidDetails:SetText((L.GDKP_MULTIAUCTION_CLIENT_AUCTION_STATUS_OVERALL):format(GL:count(Client.AuctionDetails.Auctions), totalSold, boughtByMe + bidByMe));
+    self.BidDetails:SetText((L["Items: %s  -  Total sold: %sg  -  Pledged by me: %sg"]):format(GL:count(Client.AuctionDetails.Auctions), totalSold, boughtByMe + bidByMe));
     self.BidDetails:SetColor("GRAY");
-    Interface:addTooltip(self.BidDetails, (L.GDKP_MULTIAUCTION_CLIENT_AUCTION_STATUS_OVERALL_TOOLTIP):format(
+    Interface:addTooltip(self.BidDetails, (L["\nItems with bids: %s/%s\nTotal sold: %s\nBought by me: %s\nTotal bid (does not include sold): %s\nBid by me (does not include sold): %s\n"]):format(
         items - noBids,
         items,
         totalSold,

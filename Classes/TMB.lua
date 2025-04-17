@@ -369,7 +369,7 @@ function TMB:DFTTooltipLines(Lines, Entries)
     end
 
     -- Add the header
-    tinsert(Lines, ("\n|c00FF7A0A%s|r"):format((L.TMB_TOOLTIP_PRIO_HEADER):format(self:source())));
+    tinsert(Lines, ("\n|c00FF7A0A%s|r"):format((L["%s Prio List"]):format(self:source())));
 
     Entries = self:sortEntries(Entries, "prio");
 
@@ -462,7 +462,7 @@ function TMB:tooltipLines(itemLink)
             addSourceHeader();
 
             -- Add the tier string
-            tinsert(Lines, (L.TMB_TOOLTIP_TIER):format(tierString));
+            tinsert(Lines, (L["|c00FFFFFF    Tier: %s"]):format(tierString));
         end
 
         -- This item has a note, show it!
@@ -471,7 +471,7 @@ function TMB:tooltipLines(itemLink)
             addSourceHeader();
 
             -- Add the note
-            tinsert(Lines, (L.TMB_TOOLTIP_NOTE):format(note));
+            tinsert(Lines, (L["|c00FFFFFF    Note: |c00FFF569%s"]):format(note));
         end
     end
 
@@ -558,7 +558,7 @@ function TMB:tooltipLines(itemLink)
     ) then
         -- Add the header
         local source = self:source();
-        tinsert(Lines, ("\n|c00FF7A0A%s|r"):format((L.TMB_TOOLTIP_PRIO_HEADER):format(source)));
+        tinsert(Lines, ("\n|c00FF7A0A%s|r"):format((L["%s Prio List"]):format(source)));
 
         PrioListEntries = self:sortEntries(PrioListEntries, 1);
 
@@ -570,7 +570,7 @@ function TMB:tooltipLines(itemLink)
             tinsert(Lines, string.format(
                 "|c00%s%s|r",
                 GL:classHexColor(GL.Player:classByName(Entry[2], 0), Constants.disabledTextColor),
-                GL:capitalize(Entry[2]):gsub(OFFSPEC_IDENTIFIER, " " .. L.TMB_TOOLTIP_OFFSPEC_INDICATION)
+                GL:capitalize(Entry[2]):gsub(OFFSPEC_IDENTIFIER, " " .. L["(OS)"])
             ));
 
             -- Make sure we don't add more names to the tooltip than the user allowed
@@ -594,7 +594,7 @@ function TMB:tooltipLines(itemLink)
         )
     ) then
         -- Add the header
-        tinsert(Lines, string.format("\n|c00FFFFFF%s|r", L.TMB_TOOLTIP_WISHLIST_HEADER));
+        tinsert(Lines, string.format("\n|c00FFFFFF%s|r", L["TMB Wish List"]));
 
         WishListEntries = self:sortEntries(WishListEntries, 1);
 
@@ -606,7 +606,7 @@ function TMB:tooltipLines(itemLink)
             tinsert(Lines, string.format(
                 "|c00%s%s|r",
                 GL:classHexColor(GL.Player:classByName(Entry[2], 0), Constants.disabledTextColor),
-                GL:capitalize(Entry[2]):gsub(OFFSPEC_IDENTIFIER, " " .. L.TMB_TOOLTIP_OFFSPEC_INDICATION)
+                GL:capitalize(Entry[2]):gsub(OFFSPEC_IDENTIFIER, " " .. L["(OS)"])
             ));
 
             -- Make sure we don't add more names to the tooltip than the user allowed
@@ -676,7 +676,7 @@ function TMB:import(data, triedToDecompress, source)
     local WebsiteData;
     local wasImportedFromDFT = false;
     local function displayGenericException()
-        GL.Interface:get("TMB.Importer", "Label.StatusMessage"):SetText(L.TMB_IMPORT_INVALID_INSTRUCTIONS);
+        GL.Interface:get("TMB.Importer", "Label.StatusMessage"):SetText(L["Invalid TMB data provided, make sure to click the 'Download' button in the Gargul section and paste the contents here as-is!"]);
     end
 
     if (type(data) ~= "string"
@@ -704,7 +704,7 @@ function TMB:import(data, triedToDecompress, source)
         WebsiteData = data;
 
         if (not data) then
-            return GL.Interface:get("TMB.Importer", "Label.StatusMessage"):SetText(L.TMB_IMPORT_INVALID_CSV);
+            return GL.Interface:get("TMB.Importer", "Label.StatusMessage"):SetText(L["Invalid CSV provided, the format is: 6948,player1,player2"]);
         end
 
     -- Handle the DFT format
@@ -715,7 +715,7 @@ function TMB:import(data, triedToDecompress, source)
         WebsiteData = data;
 
         if (not data) then
-            return GL.Interface:get("TMB.Importer", "Label.StatusMessage"):SetText(L.TMB_IMPORT_INVALID_UNKNOWN_INSTRUCTIONS);
+            return GL.Interface:get("TMB.Importer", "Label.StatusMessage"):SetText(L["Invalid TMB or DFT data provided, make sure to paste the export contents here as-is!"]);
         end
     -- Handle the RRobin format
     elseif (firstLine == "{") then
@@ -730,7 +730,7 @@ function TMB:import(data, triedToDecompress, source)
             WebsiteData = data;
 
             if (not data) then
-                return GL.Interface:get("TMB.Importer", "Label.StatusMessage"):SetText(L.TMB_IMPORT_INVALID_UNKNOWN_INSTRUCTIONS);
+                return GL.Interface:get("TMB.Importer", "Label.StatusMessage"):SetText(L["Invalid TMB or DFT data provided, make sure to paste the export contents here as-is!"]);
             end
         end
     end
@@ -752,7 +752,7 @@ function TMB:import(data, triedToDecompress, source)
             or not WebsiteData
             or type(WebsiteData) ~= "table"
         ) then
-            GL.Interface:get("TMB.Importer", "Label.StatusMessage"):SetText(L.TMB_IMPORT_INVALID_DFT);
+            GL.Interface:get("TMB.Importer", "Label.StatusMessage"):SetText(L["Invalid DFT data provided, Export your DFT data as per the sheet's instructions and paste the contents here as-is!"]);
             return false;
         end
     end
@@ -913,7 +913,7 @@ function TMB:import(data, triedToDecompress, source)
             tinsert(MissingPlayers, GL:nameFormat{ name = name, colorize = true, });
         end
 
-        GL:warning((L.TMB_IMPORT_PLAYER_NO_DATA):format(self:source()));
+        GL:warning((L["The following players have no %s entries:"]):format(self:source()));
         GL:message(table.concat(MissingPlayers, " "));
     end
 
@@ -924,7 +924,7 @@ end
 ---@return string
 function TMB:source()
     if (self:wasImportedFromDFT()) then
-        return L.DFT;
+        return L["DFT"];
     end
 
     if (self:wasImportedFromRRobin()) then
@@ -932,14 +932,14 @@ function TMB:source()
     end
 
     if (self:wasImportedFromCPR()) then
-        return L.CLASSICPRIO_ABBR;
+        return L["CPR"];
     end
 
     if (self:wasImportedFromCSV()) then
-        return L.ITEM;
+        return L["Item"];
     end
 
-    return L.THATSMYBIS_ABBR;
+    return L["TMB"];
 end
 
 --- Return the names of all players that don't have any TMB details
@@ -1235,7 +1235,7 @@ function TMB:decompress(data)
 
     -- Something went wrong while base64 decoding the payload
     if (not base64DecodeSucceeded) then
-        local errorMessage = L.BASE64_DECODE_WARNING;
+        local errorMessage = L["Unable to base64 decode data. Make sure you copy/paste it as-is without adding any additional characters or whitespaces!"];
         GL.Interface:get("TMB.Importer", "Label.StatusMessage"):SetText(errorMessage);
 
         return "";
@@ -1247,7 +1247,7 @@ function TMB:decompress(data)
 
     -- Something went wrong while zlib decoding the payload
     if (not zlibDecodeSucceeded) then
-        local errorMessage = L.ZLIB_DECOMPRESS_WARNING;
+        local errorMessage = L["Unable to zlib decompress the data. Make sure you copy/paste it as-is without adding any additional characters or whitespaces!"];
         GL.Interface:get("TMB.Importer", "Label.StatusMessage"):SetText(errorMessage);
         return "";
     end
@@ -1260,7 +1260,7 @@ end
 ---@return boolean
 function TMB:broadcast(sendEmptyPayload)
     if (self.broadcastInProgress) then
-        GL:error(L.BROADCAST_IN_PROGRESS_ERROR);
+        GL:error(L["Broadcast still in progress"]);
         return false;
     end
 
@@ -1268,7 +1268,7 @@ function TMB:broadcast(sendEmptyPayload)
         and not GL.User.hasAssist
         and not GL.User.isMasterLooter
     ) then
-        GL:warning(L.LM_OR_ASSIST_REQUIRED);
+        GL:warning(L["You need to be the master looter or have an assist / lead role!"]);
         return false;
     end
 
@@ -1297,7 +1297,7 @@ function TMB:broadcast(sendEmptyPayload)
 
     -- Check if there's anything to share
     if (not self:available()) then
-        GL:warning(L.BROADCAST_NO_DATA);
+        GL:warning(L["There is nothing to broadcast"]);
         return false;
     end
 
@@ -1313,7 +1313,7 @@ end
 --- Broadcast the available data to whitelisted players only
 function TMB:broadcastToWhitelist()
     if (self.broadcastInProgress) then
-        GL:error(L.BROADCAST_IN_PROGRESS_ERROR);
+        GL:error(L["Broadcast still in progress"]);
         return false;
     end
 
@@ -1341,7 +1341,7 @@ function TMB:broadcastToWhitelist()
 
     local numberOfPlayers = #WhitelistedPlayersInGroup;
     if (numberOfPlayers < 1) then
-        GL:warning(L.TMB_NO_BROADCAST_TARGETS);
+        GL:warning(L["There's no one in your group to broadcast to"]);
         self.broadcastInProgress = false;
         return;
     end
@@ -1364,7 +1364,7 @@ function TMB:broadcastToWhitelist()
                 broadcastsFinished = broadcastsFinished + 1;
 
                 if (broadcastsFinished >= numberOfPlayers) then
-                    GL:success(L.BROADCAST_FINISHED);
+                    GL:success(L["Broadcast finished!"]);
                     self.broadcastInProgress = false;
                     Events:fire("GL.TMB_BROADCAST_ENDED");
                 end
@@ -1375,14 +1375,14 @@ function TMB:broadcastToWhitelist()
     GL:afterCombatDo(function ()
         broadcast();
     end, function ()
-        GL:notice(L.BROADCAST_DELAYED_BY_COMBAT);
+        GL:notice(L["You are currently in combat, delaying broadcast"]);
     end);
 end
 
 --- Broadcast the available data to everyone in your raid/party
 function TMB:broadcastToGroup()
     if (self.broadcastInProgress) then
-        GL:error(L.BROADCAST_IN_PROGRESS_ERROR);
+        GL:error(L["Broadcast still in progress"]);
         return false;
     end
 
@@ -1395,12 +1395,12 @@ function TMB:broadcastToGroup()
 
         Events:fire("GL.TMB_BROADCAST_STARTED");
 
-        GL:message(L.BROADCASTING_NOTIFICATION);
+        GL:message(L["Broadcasting..."]);
 
         local Label = GL.Interface:get(GL.TMB, "Label.BroadcastProgress");
 
         if (Label) then
-            Label:SetText(L.BROADCASTING_NOTIFICATION);
+            Label:SetText(L["Broadcasting..."]);
         end
 
         GL.CommMessage.new{
@@ -1408,13 +1408,13 @@ function TMB:broadcastToGroup()
             content = GL.DB.TMB,
             channel = "GROUP",
         }:send(function ()
-            GL:success(L.BROADCAST_FINISHED);
+            GL:success(L["Broadcast finished!"]);
             Events:fire("GL.TMB_BROADCAST_ENDED");
             self.broadcastInProgress = false;
 
             Label = GL.Interface:get(GL.TMB, "Label.BroadcastProgress");
             if (Label) then
-                Label:SetText(L.BROADCAST_FINISHED);
+                Label:SetText(L["Broadcast finished!"]);
             end
 
             -- Make sure to broadcast the loot priorities as well
@@ -1422,7 +1422,7 @@ function TMB:broadcastToGroup()
         end, function (sent, total)
             Label = GL.Interface:get(GL.TMB, "Label.BroadcastProgress");
             if (Label) then
-                Label:SetText(string.format(L.COMM_PROGRESS, sent, total));
+                Label:SetText(string.format(L["Sent %s of %s bytes"], sent, total));
             end
         end);
     end
@@ -1430,7 +1430,7 @@ function TMB:broadcastToGroup()
     GL:afterCombatDo(function ()
         broadcast();
     end, function ()
-        GL:notice(L.BROADCAST_DELAYED_BY_COMBAT);
+        GL:notice(L["You are currently in combat, delaying broadcast"]);
     end);
 end
 
@@ -1445,7 +1445,7 @@ function TMB:receiveBroadcast(CommMessage)
 
     local Data = CommMessage.content;
     if (not GL:empty(Data)) then
-        GL:warning((L.TMB_BROADCAST_PROCESS_START):format(CommMessage.Sender.name));
+        GL:warning((L["Attempting to process incoming TMB data from %s"]):format(CommMessage.Sender.name));
 
         if (type(Data) ~= "table" or GL:empty(Data)
             or type(Data.Items) ~= "table" or GL:empty(Data.Items)
@@ -1477,7 +1477,7 @@ function TMB:receiveBroadcast(CommMessage)
             end
         end
 
-        GL:success(L.TMB_SYNCED);
+        GL:success(L["TMB data synced"]);
         GL.DB.TMB = Data;
     end
 end
@@ -1745,7 +1745,7 @@ function TMB:announceDetailsOfItemInChat(itemID, Entries)
         end
 
         GL:sendChatMessage(
-            (L.CHAT.TMB_PRIORITY_DETAILS):format(TMB:source(), entryString),
+            (L.CHAT["%s Priority: %s"]):format(TMB:source(), entryString),
             "GROUP"
         );
     end
@@ -1780,7 +1780,7 @@ function TMB:announceDetailsOfItemInChat(itemID, Entries)
         end
 
         GL:sendChatMessage(
-            (L.CHAT.TMB_WISHLIST_DETAILS):format(entryString),
+            (L.CHAT["TMB Wishlist: %s"]):format(entryString),
             "GROUP"
         );
     end
@@ -1817,7 +1817,7 @@ function TMB:RRobinAnnounceDetailsOfItemInChat(itemID, Entries)
 
     local entryString = table.concat(EligibleEntries, ",");
     GL:sendChatMessage(
-        (L.CHAT.TMB_PRIORITY_DETAILS):format(self:source(), entryString),
+        (L.CHAT["%s Priority: %s"]):format(self:source(), entryString),
         "GROUP"
     );
 end

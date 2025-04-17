@@ -40,7 +40,7 @@ function Import:build()
 
     ---@type AceGUILabel
     local Info = AceGUI:Create("Label");
-    Info:SetText(L.GDKP_IMPORT_CUTS_INFO);
+    Info:SetText(L["\nYou can import player cuts from your own calculations like a google sheet. softres GDKP etc.\n\nThe format is as follows (|c00BE3333INCLUDE THE HEADER!!):\n\n|c00BE3333Player,Gold|c00967FD2\nPlayer1,4000\nPlayer2,4125\nPlayer3,3998\n\n\n"]);
     Info:SetFullWidth(true);
     Window:AddChild(Info);
 
@@ -49,17 +49,17 @@ function Import:build()
     ImportBox:SetText("");
     ImportBox:SetFullWidth(true);
     ImportBox:DisableButton(true);
-    ImportBox:SetLabel(("|c00FFF569%s|r"):format(L.IMPORT));
+    ImportBox:SetLabel(("|c00FFF569%s|r"):format(L["Import"]));
     ImportBox:SetNumLines(21);
     ImportBox:SetMaxLetters(0);
     Window:AddChild(ImportBox);
 
     local Confirm = AceGUI:Create("Button");
-    Confirm:SetText(L.IMPORT);
+    Confirm:SetText(L["Import"]);
     Confirm:SetFullWidth(true);
     Confirm:SetCallback("OnClick", function()
         GL.Interface.Dialogs.PopupDialog:open{
-            question = L.GDKP_IMPORT_CONSEQUENCES_INFO,
+            question = L["This will override any changes you've made to the cut window, are you sure?"],
             OnYes = function ()
                 local data = ImportBox:GetText();
 
@@ -74,7 +74,7 @@ function Import:build()
                     and not GL:empty(Cuts)
                 ) then
                     GL.Interface.Dialogs.PopupDialog:open{
-                        question = (L.GDKP_IMPORT_CONSEQUENCES_CROSS_REALM):format(GL:nameFormat{ name = GL.User.name, forceRealm = true, colorize = true, }),
+                        question = (L["\n|c00BE3333!! WARNING !!|r\n\nYou're on a connected realm and are importing player names without\na realm suffix, '%s' for example. This can cause you to send\ncuts and cut mails to the wrong player.\n\nWhen on a connected realm always try to include the realm name of players!\n\nContinue importing?\n"]):format(GL:nameFormat{ name = GL.User.name, forceRealm = true, colorize = true, }),
                         OnYes = function ()
                             if (GDKPPot:importCuts(self.sessionID, Cuts)) then
                                 ImportBox:SetText("");
@@ -96,7 +96,7 @@ function Import:build()
     Window:AddChild(Confirm);
 
     local Cancel = AceGUI:Create("Button");
-    Cancel:SetText(L.CANCEL);
+    Cancel:SetText(L["Cancel"]);
     Cancel:SetFullWidth(true);
     Cancel:SetCallback("OnClick", function()
         self:close();

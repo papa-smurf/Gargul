@@ -82,13 +82,13 @@ function Overview:build()
 
     --[[ ADD THE SETTINGS MENU IN THE TOP LEFT OF THE WINDOW ]]
     Interface:addWindowOptions(Window, {
-        { text = L.TUTORIAL, notCheckable = true, func = function ()
-            GL:popupMessage(L.TUTORIAL_AWARD_OVERVIEW, Window);
+        { text = L["Tutorial"], notCheckable = true, func = function ()
+            GL:popupMessage(L["\nThis window shows all the items that have been awarded on any given date (select one or more dates on the left).\n\nItems can contain the following tags:\n\n|c00A79EFFOS: Awarded for offspec\n|c00A79EFFSR: This item was soft-reserved\n|c00A79EFFWL: This item was wishlisted (Thatsmybis)\n|c00A79EFFPL: This item was priolisted (Thatsmybis, DFT, prio3)\n"], Window);
             CloseMenus();
         end },
         "divider",
-        { text = L.WINDOW, isTitle = true, notCheckable = true },
-        { text = L.CHANGE_SCALE, notCheckable = true, func = function ()
+        { text = L["Window"], isTitle = true, notCheckable = true },
+        { text = L["Adjust Scale"], notCheckable = true, func = function ()
             Interface:openScaler(Window);
             CloseMenus();
         end },
@@ -141,7 +141,7 @@ function Overview:build()
         ToggleDates.highlightTexture:SetBlendMode("ADD");
         ToggleDates:SetHighlightTexture(ToggleDates.highlightTexture);
 
-        Interface:addTooltip(ToggleDates, L.TOGGLE_DATES, "BOTTOMRIGHT");
+        Interface:addTooltip(ToggleDates, L["Show/Hide Dates"], "BOTTOMRIGHT");
     end
 
     --[[ SEARCH ]]
@@ -165,7 +165,7 @@ function Overview:build()
     SearchClear:SetScript("OnClick", function ()
         Search:Clear();
     end);
-    Interface:addTooltip(SearchClear, L.CLEAR);
+    Interface:addTooltip(SearchClear, L["Clear"]);
 
 
     --[[ SCROLLFRAME BOILERPLATE ]]
@@ -201,7 +201,7 @@ function Overview:build()
         NormalTexture:SetAllPoints(DeleteButton);
         DeleteButton:SetHighlightTexture(HighlightTexture);
 
-        Interface:addTooltip(DeleteButton, L.DELETE);
+        Interface:addTooltip(DeleteButton, L["Delete"]);
 
         self.DeleteButton = DeleteButton;
     end
@@ -223,7 +223,7 @@ function Overview:build()
         NormalTexture:SetAllPoints(DisenchantButton);
         DisenchantButton:SetHighlightTexture(HighlightTexture);
 
-        Interface:addTooltip(DisenchantButton, L.DISENCHANT);
+        Interface:addTooltip(DisenchantButton, L["Disenchant"]);
 
         self.DisenchantButton = DisenchantButton;
     end
@@ -245,14 +245,14 @@ function Overview:build()
         NormalTexture:SetAllPoints(EditButton);
         EditButton:SetHighlightTexture(HighlightTexture);
 
-        Interface:addTooltip(EditButton, L.EDIT);
+        Interface:addTooltip(EditButton, L["Edit"]);
 
         self.EditButton = EditButton;
     end
 
     --[[ FOOTER BUTTONS ]]
     do
-        local Export = Interface:dynamicPanelButton(Window, L.EXPORT);
+        local Export = Interface:dynamicPanelButton(Window, L["Export"]);
         Export:SetPoint("BOTTOMLEFT", Window, "BOTTOMLEFT", 20, 28);
 
         Export:SetScript("OnClick", function ()
@@ -260,14 +260,14 @@ function Overview:build()
             GL.Exporter:draw();
         end);
 
-        local Clear = Interface:dynamicPanelButton(Window, L.CLEAR);
+        local Clear = Interface:dynamicPanelButton(Window, L["Clear"]);
         Clear:SetPoint("TOPLEFT", Export, "TOPRIGHT", 2, 0);
 
         Clear:SetScript("OnClick", function()
             -- No date is selected, delete everything!
             local warning, onConfirm;
             if (GL:empty(self.SelectedDates)) then
-                warning = L.EXPORT_DELETE_ALL_CONFIRM;
+                warning = L["Are you sure you want to remove your complete reward history table? This deletes ALL loot data and cannot be undone!"];
                 onConfirm = function()
                     DB:set("AwardHistory", {});
                     GL.Events:fire("GL.ITEM_UNAWARDED");
@@ -276,14 +276,14 @@ function Overview:build()
                 end;
 
             else -- Only delete entries on the selected date(s)
-                warning = (L.EXPORT_DELETE_DATE_CONFIRM):format(
+                warning = (L["Are you sure you want to remove all data for %s? This cannot be undone!"]):format(
                     table.concat(self.SelectedDates, "|c00FFFFFF, |r")
                 );
                 onConfirm = function()
                     local SelectedDates = GL:tableFlip(self.SelectedDates);
 
                     for key, AwardEntry in pairs(DB:get("AwardHistory")) do
-                        local dateString = date(L.DATE_FORMAT, AwardEntry.timestamp);
+                        local dateString = date(L["%Y-%m-%d"], AwardEntry.timestamp);
 
                         if (SelectedDates[dateString]) then
                             AwardEntry = nil;
@@ -392,7 +392,7 @@ function Overview:refreshDatesTable()
     -- Fetch award history per date
     local AwardHistoryByDate = {};
     for _, AwardEntry in pairs(DB:get("AwardHistory") or {}) do
-        local dateString = date(L.DATE_FORMAT, AwardEntry.timestamp);
+        local dateString = date(L["%Y-%m-%d"], AwardEntry.timestamp);
         AwardHistoryByDate[dateString] = AwardEntry.timestamp;
     end
 
@@ -444,7 +444,7 @@ function Overview:refreshItems()
     local SelectedDates = GL:tableFlip(self.SelectedDates);
     local Entries = {};
     for _, AwardEntry in pairs(DB:get("AwardHistory")) do
-        local dateString = date(L.DATE_FORMAT, AwardEntry.timestamp);
+        local dateString = date(L["%Y-%m-%d"], AwardEntry.timestamp);
 
         if (SelectedDates[dateString]
             and (not phraseDefined or (
@@ -565,22 +565,22 @@ function Overview:refreshItems()
                 local AwardDetails = {};
 
                 if (Entry.OS > 0) then
-                    tinsert(AwardDetails, L.OFFSPEC_ABBR);
+                    tinsert(AwardDetails, L["OS"]);
                 end
                 if (Entry.SR > 0) then
-                    tinsert(AwardDetails, L.SOFTRES_ABBR);
+                    tinsert(AwardDetails, L["SR"]);
                 end
                 if (Entry.WL > 0) then
-                    tinsert(AwardDetails, L.WISHLIST_ABBR);
+                    tinsert(AwardDetails, L["WL"]);
                 end
                 if (Entry.PL > 0) then
-                    tinsert(AwardDetails, L.PRIOLIST_ABBR);
+                    tinsert(AwardDetails, L["PL"]);
                 end
                 if (Entry.winningRollType) then
                     tinsert(AwardDetails, Entry.winningRollType);
                 end
                 if (Entry.OS == 0 and not Entry.winningRollType) then
-                    tinsert(AwardDetails, L.MAINSPEC_ABBR);
+                    tinsert(AwardDetails, L["MS"]);
                 end
 
                 ---@type FontString
@@ -646,28 +646,28 @@ function Overview:refreshItems()
                         end
 
                         linesAdded = true;
-                        local header = string.format(L.PLAYER_ITEM_WON_COUNT, GL:nameFormat(Entry.awardedTo));
+                        local header = string.format(L["Items won by %s:"], GL:nameFormat(Entry.awardedTo));
                         if (itemWasDisenchanted) then
-                            header = L.AWARD_TOOLTIP_DISENCHANTED_ITEMS
+                            header = L["Disenchanted items:"]
                         end
 
                         GameTooltip:AddLine(header);
                         GameTooltip:AddLine(" ");
 
                         for _, Entry in pairs(ItemsWonByRollerInTheLastFiveHours) do
-                            local receivedString = " " .. L.AWARD_TOOLTIP_GIVEN;
+                            local receivedString = " " .. L["(Given: yes)"];
                             if (not Entry.received) then
-                                receivedString = " " .. L.AWARD_TOOLTIP_NOT_GIVEN;
+                                receivedString = " " .. L["(Given: no)"];
                             end
 
                             local OSString = "";
                             if (Entry.OS) then
-                                OSString = " " .. L.AWARD_TOOLTIP_OFFSPEC_INDICATION;
+                                OSString = " " .. L["(OS)"];
                             end
 
                             local BRString = "";
                             if (GL:higherThanZero(Entry.BRCost)) then
-                                BRString = (" " .. L.AWARD_TOOLTIP_BR_INDICATION):format(Entry.BRCost);
+                                BRString = (" " .. L["(BR: %s)"]):format(Entry.BRCost);
                             end
 
                             local line = string.format("%s%s%s%s",
@@ -716,7 +716,7 @@ function Overview:refreshItems()
                             and not GL.User.hasAssist
                             and not GL.User.isLead
                         ) then
-                            return GL:warning(L.LM_OR_ASSIST_REQUIRED);
+                            return GL:warning(L["You need to be the master looter or have an assist / lead role!"]);
                         end
 
                         DeleteButton:SetParent(ItemHolder);
@@ -724,12 +724,12 @@ function Overview:refreshItems()
 
                         local BRString = "";
                         if (GL:higherThanZero(Entry.BRCost)) then
-                            BRString = (" " .. L.AWARD_UNDO_BR_REFUND):format(tostring(Entry.BRCost));
+                            BRString = (" " .. L["%s boosted roll points will be refunded!"]):format(tostring(Entry.BRCost));
                         end
 
                         GL.Interface.Dialogs.PopupDialog:open{
                             question = string.format(
-                                L.AWARD_UNDO_CONFIRM,
+                                L["Are you sure you want to undo %s awarded to %s?%s"],
                                 Entry.itemLink,
                                 Entry.awardedTo,
                                 BRString
@@ -752,14 +752,14 @@ function Overview:refreshItems()
                             and not GL.User.hasAssist
                             and not GL.User.isLead
                         ) then
-                            return GL:warning(L.LM_OR_ASSIST_REQUIRED);
+                            return GL:warning(L["You need to be the master looter or have an assist / lead role!"]);
                         end
 
                         -- Show the player selector
-                        local question = (L.AWARD_NEW_WINNER_CONFIRMATION):format(Entry.itemLink);
+                        local question = (L["Who should %s go to instead?"]):format(Entry.itemLink);
                         GL.Interface.PlayerSelector:draw(question, GL.User:groupMemberNames(), function (playerName)
                             GL.Interface.Dialogs.PopupDialog:open{
-                                question = (L.ROLLING_AWARD_CONFIRM):format(
+                                question = (L["Award %s to %s?"]):format(
                                     Entry.itemLink,
                                     GL:nameFormat{ name = playerName, colorize = true }
                                 ),
@@ -787,13 +787,13 @@ function Overview:refreshItems()
                             and not GL.User.hasAssist
                             and not GL.User.isLead
                         ) then
-                            return GL:warning(L.LM_OR_ASSIST_REQUIRED);
+                            return GL:warning(L["You need to be the master looter or have an assist / lead role!"]);
                         end
 
                         -- Show a specific dialog when boosted roll points are involved
                         if (GL:higherThanZero(Entry.BRCost)) then
                             GL.Interface.Dialogs.PopupDialog:open{
-                                question = (L.AWARD_DISENCHANT_BR_CONFIRMATION):format(Entry.itemLink, tostring(Entry.BRCost)),
+                                question = (L["Are you sure you want to disenchant %s? %s boosted roll points will be refunded!"]):format(Entry.itemLink, tostring(Entry.BRCost)),
                                 OnYes = function ()
                                     GL.AwardedLoot:deleteWinner(Entry.checksum);
                                     GL.PackMule:disenchant(Entry.itemLink, true);

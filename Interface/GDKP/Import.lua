@@ -60,7 +60,7 @@ function Import:build()
     ---@type AceGUILabel
     local Title = AceGUI:Create("Label");
     Title:SetFontObject(GameFontNormalLarge);
-    Title:SetText(L.GDKP_IMPORT_SESSION);
+    Title:SetText(L["Import GDKP Session"]);
     Title:SetFullWidth(true);
     Interface:set(self, "Title", Title);
     FixedHeightContentWrapper:AddChild(Title);
@@ -72,7 +72,7 @@ function Import:build()
     FixedHeightContentWrapper:AddChild(HorizontalSpacer);
 
     local MoreInfoLabel = AceGUI:Create("Label");
-    MoreInfoLabel:SetText(L.GDKP_IMPORT_SESSION_ABOUT);
+    MoreInfoLabel:SetText(L["Here you can import (and continue) a GDKP session. In order to get a GDKP session from someone they need to export it in |c00FFF569/gdkp where they select the 'Share (can be imported by other players)' format"]);
     MoreInfoLabel:SetFontObject(_G["GameFontNormal"]);
     MoreInfoLabel:SetFullWidth(true);
     FixedHeightContentWrapper:AddChild(MoreInfoLabel);
@@ -94,7 +94,7 @@ function Import:build()
     GL.Interface:set(self, "Import", ImportBox);
 
     local Import = AceGUI:Create("Button");
-    Import:SetText(L.IMPORT);
+    Import:SetText(L["Import"]);
     Import:SetWidth(72);
     Import:SetHeight(20);
     Import:SetCallback("OnClick", function()
@@ -115,7 +115,7 @@ function Import:build()
         if (GL.DB:has("GDKP.Ledger." .. data.ID)) then
             -- Show a confirmation dialog before overriding the existing session
             GL.Interface.Dialogs.PopupDialog:open{
-                question = (L.GDKP_IMPORT_SESSION_UPDATE_CONFIRM):format(GL:nameFormat(data.CreatedBy.guid)),
+                question = (L["This GDKP session created by %s appears to exist already, do you wish to override it?"]):format(GL:nameFormat(data.CreatedBy.guid)),
                 OnYes = function ()
                     import(data);
                     self:close();
@@ -126,7 +126,7 @@ function Import:build()
         else
             -- Show a confirmation dialog before import a new session
             GL.Interface.Dialogs.PopupDialog:open{
-                question = (L.GDKP_IMPORT_SESSION_CREATE_CONFIRM):format(GL:nameFormat(data.CreatedBy.guid)),
+                question = (L["You're about to import a GDKP session created by %s, are you sure?"]):format(GL:nameFormat(data.CreatedBy.guid)),
                 OnYes = function ()
                     import(data);
                     self:close();
@@ -168,7 +168,7 @@ function Import:decompress(data)
 
     -- Something went wrong while base64 decoding the payload
     if (not base64DecodeSucceeded) then
-        return GL:error(L.BASE64_DECODE_WARNING);
+        return GL:error(L["Unable to base64 decode data. Make sure you copy/paste it as-is without adding any additional characters or whitespaces!"]);
     end
 
     local LibDeflate = LibStub:GetLibrary("LibDeflate");
@@ -177,14 +177,14 @@ function Import:decompress(data)
 
     -- Something went wrong while zlib decoding the payload
     if (not zlibDecodeSucceeded) then
-        return GL:error(L.ZLIB_DECOMPRESS_WARNING);
+        return GL:error(L["Unable to zlib decompress the data. Make sure you copy/paste it as-is without adding any additional characters or whitespaces!"]);
     end
 
     -- Something went wrong while json decoding the payload
     local jsonDecodeSucceeded;
     jsonDecodeSucceeded, data = pcall(function () return GL.JSON:decode(data); end);
     if (not jsonDecodeSucceeded) then
-        return GL:error(L.JSON_DECODE_WARNING);
+        return GL:error(L["Unable to JSON decode data. Make sure you copy/paste it as-is without adding any additional characters or whitespaces!"]);
     end
 
     return data;

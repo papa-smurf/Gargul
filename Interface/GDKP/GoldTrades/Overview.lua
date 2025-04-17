@@ -73,7 +73,7 @@ function Overview:build()
 
     --[[ THE SETTINGS MENU IN THE TOP LEFT OF THE WINDOW ]]
     Interface:addWindowOptions(Window, {
-        { text = L.CHANGE_SCALE, notCheckable = true, func = function ()
+        { text = L["Adjust Scale"], notCheckable = true, func = function ()
             Interface:openScaler(Window);
             CloseMenus();
         end }
@@ -132,7 +132,7 @@ function Overview:build()
         NormalTexture:SetAllPoints(ActionButtons.DeleteButton);
         ActionButtons.DeleteButton:SetHighlightTexture(HighlightTexture);
 
-        Interface:addTooltip(ActionButtons.DeleteButton, L.DELETE);
+        Interface:addTooltip(ActionButtons.DeleteButton, L["Delete"]);
 
         --[[ RESTORE BUTTON ]]
         ---@type Button
@@ -152,7 +152,7 @@ function Overview:build()
         NormalTexture:SetAllPoints(ActionButtons.RestoreButton);
         ActionButtons.RestoreButton:SetHighlightTexture(HighlightTexture);
 
-        Interface:addTooltip(ActionButtons.RestoreButton, L.RESTORE);
+        Interface:addTooltip(ActionButtons.RestoreButton, L["Restore"]);
     end
 
     --[[ ADD TRADE BUTTON ]]
@@ -294,7 +294,7 @@ function Overview:refresh()
         ---@type FontString
         local isToday = date("%d-%m-%Y", Trade.createdAt) == today;
         local timeString = isToday
-            and ("|c00967FD2[%s]|r"):format(date(L.HOURS_MINUTES_FORMAT, Trade.createdAt))
+            and ("|c00967FD2[%s]|r"):format(date(L["%H:%M"], Trade.createdAt))
             or ("|c00967FD2[%s]|r"):format(date("%d-%m at %H:%M", Trade.createdAt))
         local Time = Interface:createFontString(TradeRow, timeString);
         Time:SetPoint("CENTER", TradeRow);

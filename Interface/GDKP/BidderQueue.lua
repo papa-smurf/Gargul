@@ -127,21 +127,21 @@ function BidderQueue:build()
 
     --[[ THE SETTINGS MENU IN THE TOP LEFT OF THE WINDOW ]]
     Interface:addWindowOptions(Window, {
-        { text = L.TUTORIAL, notCheckable = true, func = function ()
-            GL:popupMessage(L.TUTORIAL_BIDDER_QUEUE);
+        { text = L["Tutorial"], notCheckable = true, func = function ()
+            GL:popupMessage(L["\nThe items you see here are in the master looter's GDKP queue\nYou can remove them, bid on them, and hide unusable items (enable 'Hide unusable items' in the settings in the top-left)\n\nYou can resize the window, move it around, or minimize it. Try it out!\n\nFor loot masters: removing items here will only remove them from your personal queue, not the actual GDKP queue!\n"]);
             CloseMenus();
         end },
         "divider",
-        {text = L.GDKP_QUEUE_HIDE_UNUSABLE, setting = "GDKP.bidderQueueHideUnusable", func = function(Entry, _, _, checked)
+        {text = L["Hide unusable items"], setting = "GDKP.bidderQueueHideUnusable", func = function(Entry, _, _, checked)
             Settings:set("GDKP.bidderQueueHideUnusable", checked);
             Entry.checked = checked;
             self:refreshTable();
         end},
-        {text = L.GDKP_SHOW_UPCOMING, setting = "GDKP.enableBidderQueue", func = function(Entry, _, _, checked)
+        {text = L["Show upcoming items"], setting = "GDKP.enableBidderQueue", func = function(Entry, _, _, checked)
             if (not checked) then
                 -- Show a confirmation dialog before clearing entries
                 GL.Interface.Dialogs.PopupDialog:open{
-                    question = L.GDKP_HIDE_UPCOMING_CONFIRMATION,
+                    question = L["Are you sure? You won't be able to see, or bid on, upcoming items!"],
                     OnYes = function ()
                         Settings:set("GDKP.enableBidderQueue", checked);
                         Entry.checked = checked;
@@ -157,8 +157,8 @@ function BidderQueue:build()
             Entry.checked = checked;
         end},
         "divider",
-        {text = L.WINDOW, isTitle = true, notCheckable = true },
-        { text = L.CHANGE_SCALE, notCheckable = true, func = function ()
+        {text = L["Window"], isTitle = true, notCheckable = true },
+        { text = L["Adjust Scale"], notCheckable = true, func = function ()
             Interface:openScaler(Window);
             CloseMenus();
         end }
@@ -208,7 +208,7 @@ function BidderQueue:build()
         NormalTexture:SetAllPoints(ActionButtons.BidButton);
         ActionButtons.BidButton:SetHighlightTexture(HighlightTexture);
 
-        Interface:addTooltip(ActionButtons.BidButton, L.BID);
+        Interface:addTooltip(ActionButtons.BidButton, L["Bid"]);
 
         --[[ REMOVE BID BUTTON ]]
         ---@type Button
@@ -228,7 +228,7 @@ function BidderQueue:build()
         NormalTexture:SetAllPoints(ActionButtons.RemoveBidButton);
         ActionButtons.RemoveBidButton:SetHighlightTexture(HighlightTexture);
 
-        Interface:addTooltip(ActionButtons.RemoveBidButton, L.REMOVE_BID);
+        Interface:addTooltip(ActionButtons.RemoveBidButton, L["Remove bid"]);
 
         --[[ DELETE BUTTON ]]
         ---@type Button
@@ -248,7 +248,7 @@ function BidderQueue:build()
         NormalTexture:SetAllPoints(ActionButtons.DeleteButton);
         ActionButtons.DeleteButton:SetHighlightTexture(HighlightTexture);
 
-        Interface:addTooltip(ActionButtons.DeleteButton, L.DELETE);
+        Interface:addTooltip(ActionButtons.DeleteButton, L["Delete"]);
     end
 
     Window.ItemHolder = ItemHolder;
@@ -352,7 +352,7 @@ function BidderQueue:refreshTable()
                     end
 
                     GL.Interface.Dialogs.ConfirmWithSingleInputDialog:open{
-                        question = (L.GDKP_BIDDER_AUTO_BID_CONFIRM):format(QueuedItem.minimumBid),
+                        question = (L["What's your maximum bid? (Minimum %s|c00FFF569g)"]):format(QueuedItem.minimumBid),
                         OnYes = function (max)
                             Auction:setAutoBid(max, ItemRow._identifier);
                             self:refreshTable();
@@ -407,7 +407,7 @@ function BidderQueue:refreshTable()
             ---@type FontString
             local Name = Interface:createFontString(ItemRow, autoBid <= 0 and Details.link or ("|c00FFF569%s%s|r"):format(
                 autoBid,
-                L.GOLD_INDICATOR
+                L["g"]
             ));
             Name:SetPoint("CENTER", Icon);
             Name:SetPoint("LEFT", Image, "RIGHT", 2, 0);

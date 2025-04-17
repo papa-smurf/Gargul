@@ -60,27 +60,27 @@ function BonusFeatures:build()
 
     --[[ ADD THE SETTINGS MENU IN THE TOP LEFT OF THE WINDOW ]]
     Interface:addWindowOptions(Window, {
-        {text = L.WINDOW, isTitle = true, notCheckable = true },
-        {text = L.CHANGE_SCALE, notCheckable = true, func = function ()
+        {text = L["Window"], isTitle = true, notCheckable = true },
+        {text = L["Adjust Scale"], notCheckable = true, func = function ()
             Interface:openScaler(Window);
             CloseMenus();
         end},
     });
 
     ---@type FontString
-    local Intro = Interface:createFontString(Window, L.BONUS_FEATURE_EXPLANATION);
+    local Intro = Interface:createFontString(Window, L["Gargul has a few tricks up its sleeve that you might not be aware of. Have a looksy!"]);
     Intro:SetPoint("TOPLEFT", Window, "TOPLEFT", 20, -30);
     Intro:SetPoint("TOPRIGHT", Window, "TOPRIGHT", -20, 0);
     Intro:SetJustifyH("CENTER");
 
     --[[ GROUP MANAGER ]]
     ---@type FontString
-    local GroupManagerLabel = Interface:createFontString(Window, L.BONUS_AUTO_INVITE);
+    local GroupManagerLabel = Interface:createFontString(Window, L["1. Auto invite/sort groups from raid signup! Click below or use |c00A79EFF/gl gr"]);
     GroupManagerLabel:SetPoint("TOPLEFT", Intro, "BOTTOMLEFT", 0, -18);
     GroupManagerLabel:SetPoint("TOPRIGHT", Intro, "BOTTOMRIGHT");
 
     ---@type Button
-    local GroupManager = Interface:dynamicPanelButton(Window, L.GROUP_MANAGER);
+    local GroupManager = Interface:dynamicPanelButton(Window, L["Group Manager"]);
     GroupManager:SetPoint("TOPLEFT", GroupManagerLabel, "BOTTOMLEFT", 0, -10);
     GroupManager:SetPoint("TOPRIGHT", GroupManagerLabel, "BOTTOMRIGHT", 0, 0);
     GroupManager:SetScript("OnClick", function ()
@@ -89,12 +89,12 @@ function BonusFeatures:build()
 
     --[[ BOOSTED ROLLS ]]
     ---@type FontString
-    local BoostedRollsLabel = Interface:createFontString(Window, L.BONUS_BOOSTED_ROLLS);
+    local BoostedRollsLabel = Interface:createFontString(Window, L["2. Reward players for being regulars or going the extra mile! Click below or use |c00A79EFF/gl br"]);
     BoostedRollsLabel:SetPoint("TOPLEFT", GroupManager, "BOTTOMLEFT", 0, -18);
     BoostedRollsLabel:SetPoint("TOPRIGHT", GroupManager, "BOTTOMRIGHT");
 
     ---@type Button
-    local BoostedRolls = Interface:dynamicPanelButton(Window, L.BOOSTED_ROLLS);
+    local BoostedRolls = Interface:dynamicPanelButton(Window, L["Boosted Rolls"]);
     BoostedRolls:SetPoint("TOPLEFT", BoostedRollsLabel, "BOTTOMLEFT", 0, -10);
     BoostedRolls:SetPoint("TOPRIGHT", BoostedRollsLabel, "BOTTOMRIGHT", 0, 0);
     BoostedRolls:SetScript("OnClick", function ()
@@ -103,12 +103,12 @@ function BonusFeatures:build()
 
     --[[ PLUS ONES ]]
     ---@type FontString
-    local PlusOnesLabel = Interface:createFontString(Window, L.BONUS_PLUSONES);
+    local PlusOnesLabel = Interface:createFontString(Window, L["3. Gargul includes a plus one tracking system! Click below or use |c00A79EFF/gl po"]);
     PlusOnesLabel:SetPoint("TOPLEFT", BoostedRolls, "BOTTOMLEFT", 0, -18);
     PlusOnesLabel:SetPoint("TOPRIGHT", BoostedRolls, "BOTTOMRIGHT");
 
     ---@type Button
-    local PlusOnes = Interface:dynamicPanelButton(Window, L.PLUSONES);
+    local PlusOnes = Interface:dynamicPanelButton(Window, L["Plus Ones"]);
     PlusOnes:SetPoint("TOPLEFT", PlusOnesLabel, "BOTTOMLEFT", 0, -10);
     PlusOnes:SetPoint("TOPRIGHT", PlusOnesLabel, "BOTTOMRIGHT", 0, 0);
     PlusOnes:SetScript("OnClick", function ()

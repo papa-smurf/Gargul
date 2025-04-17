@@ -41,14 +41,14 @@ local DEFAULT_PLAYER_COLUMN_WIDTH = 90;
 local HEIGHT_PER_ROW = 16;
 
 local PLAYERS_TABLE_COLUMNS = {
-    { name = L.PLAYER, width = DEFAULT_PLAYER_COLUMN_WIDTH, },
+    { name = L["Player"], width = DEFAULT_PLAYER_COLUMN_WIDTH, },
     --{ name = "Bid", width = 60, },
     --{ name = "Spent", width = 60, },
-    { name = L.PAID, width = 60, },
-    { name = L.CUT, width = 60, },
-    { name = L.GIVEN, width = 60, },
-    { name = L.MAILED, width = 60, },
-    { name = L.BALANCE, width = 60, },
+    { name = L["Paid"], width = 60, },
+    { name = L["Cut"], width = 60, },
+    { name = L["Given"], width = 60, },
+    { name = L["Mailed"], width = 60, },
+    { name = L["Balance"], width = 60, },
 };
 
 local SALES_TABLE_COLUMNS = {
@@ -117,8 +117,8 @@ function LedgerList:build()
 
     --[[ ADD THE SETTINGS MENU IN THE TOP LEFT OF THE WINDOW ]]
     Interface:addWindowOptions(Window, {
-        {text = L.WINDOW, isTitle = true, notCheckable = true },
-        {text = L.CHANGE_SCALE, notCheckable = true, func = function ()
+        {text = L["Window"], isTitle = true, notCheckable = true },
+        {text = L["Adjust Scale"], notCheckable = true, func = function ()
             Interface:openScaler(Window);
             CloseMenus();
         end},
@@ -178,7 +178,7 @@ function LedgerList:build()
 
     --[[ DRAW LEGEND ]]
     ---@type FontString
-    local Paid = Interface:createFontString(Window, (L.GDKP_LEDGER_LEGEND_PAID_TO):format(
+    local Paid = Interface:createFontString(Window, (L["Gold paid to %s"]):format(
         colorizedUser
     ));
     Paid:SetPoint("BOTTOMLEFT", PlayersTable.frame, "TOPLEFT", 0, 40);
@@ -198,7 +198,7 @@ function LedgerList:build()
     end
 
     ---@type FontString
-    local Received = Interface:createFontString(Window, (L.GDKP_LEDGER_LEGEND_RECEIVED_FROM):format(
+    local Received = Interface:createFontString(Window, (L["Gold received from %s"]):format(
         colorizedUser
     ));
     Received:SetPoint("TOPLEFT", Paid, "TOPRIGHT", 20, 0);
@@ -218,7 +218,7 @@ function LedgerList:build()
     end
 
     ---@type FontString
-    local Mailed = Interface:createFontString(Window, (L.GDKP_LEDGER_LEGEND_MAILED_FROM):format(
+    local Mailed = Interface:createFontString(Window, (L["Gold mailed to you by %s"]):format(
         colorizedUser
     ));
     Mailed:SetPoint("TOPLEFT", Received, "TOPRIGHT", 20, 0);
@@ -238,7 +238,7 @@ function LedgerList:build()
     end
 
     ---@type FontString
-    local Balance = Interface:createFontString(Window, (L.GDKP_LEDGER_LEGEND_BALANCE):format(
+    local Balance = Interface:createFontString(Window, (L["Balance:   |c0092FF000 ? You're square!  |  |c00BE333330 ? you owe %s 30g  |  |c00F7922E50 ? %s owes you 50g"]):format(
         colorizedUser,
         colorizedUser
     ));
@@ -287,7 +287,7 @@ function LedgerList:refresh()
     local totalPot = GDKPPot:total(Session.ID);
     local managementCutPercentage = tonumber(Session.managementCut) or 0;
     local managementCut = GL:floor(totalPot * (0 + managementCutPercentage / 100), Settings:get("GDKP.precision"));
-    self.PotDetails:SetText((L.GDKP_LEDGER_POT):format(
+    self.PotDetails:SetText((L["Total pot: %sg | Management cut: %sg (%s%%) | To distribute: %sg"]):format(
         totalPot,
         managementCut,
         managementCutPercentage,
@@ -300,11 +300,11 @@ function LedgerList:refresh()
         guild = string.format(" |c001EFF00<%s>|r", CreatedBy.guild);
     end
     self.SessionDetails:SetText(string.format(
-        L.GDKP_LEDGER_SESSION_BY,
+        L["|c00967FD2%s | By %s%s | On |c00967FD2%s"],
         Session.title,
         GL:nameFormat{ name = CreatedBy.name, realm = CreatedBy.realm, colorize = true, },
         guild,
-        date(L.DATE_FORMAT, Session.createdAt)
+        date(L["%Y-%m-%d"], Session.createdAt)
     ));
 
     -- Clear all table data
@@ -424,7 +424,7 @@ function LedgerList:refresh()
         for _, Auction in pairs(Data) do
             local mutation;
             if (Auction.itemID == Constants.GDKP.potIncreaseItemID) then
-                mutation = string.format(L.GDKP_LEDGER_MUTATION, Auction.price < 0 and "removed" or "added");
+                mutation = string.format(L["Gold %s by"], Auction.price < 0 and "removed" or "added");
             end
 
             tinsert(TableData, {

@@ -57,21 +57,21 @@ function Locale:build()
 
     --[[ ADD THE SETTINGS MENU IN THE TOP LEFT OF THE WINDOW ]]
     Interface:addWindowOptions(Window, {
-        {text = L.WINDOW, isTitle = true, notCheckable = true },
-        {text = L.CHANGE_SCALE, notCheckable = true, func = function ()
+        {text = L["Window"], isTitle = true, notCheckable = true },
+        {text = L["Adjust Scale"], notCheckable = true, func = function ()
             Interface:openScaler(Window);
             CloseMenus();
         end},
     });
 
     ---@type FontString
-    local Title = Interface:createFontString(Window, ("|c00%s%s|r"):format(GL.Data.Constants.addonHexColor, L.LOCALE_NONE_TITLE));
+    local Title = Interface:createFontString(Window, ("|c00%s%s|r"):format(GL.Data.Constants.addonHexColor, L["Choose a chat language for Gargul"]));
     Title:SetPoint("TOPLEFT", Window, "TOPLEFT", 20, -30);
     Title:SetPoint("TOPRIGHT", Window, "TOPRIGHT", -20, 0);
     Title:SetJustifyH("CENTER");
 
     ---@type FontString
-    local Intro = Interface:createFontString(Window, (L.LOCALE_NONE_EXPLANATION):format(("|c00%s%s|r"):format(GL.Data.Constants.addonHexColor, GL.Settings:get("chatLocale", "enUS"))));
+    local Intro = Interface:createFontString(Window, (L["\nGargul posts chat messages in English (default)\nYou can select a different language in the dropdown below\n\nYour current chat language is '%s', enabling a different language will cause a /reload!\n"]):format(("|c00%s%s|r"):format(GL.Data.Constants.addonHexColor, GL.Settings:get("chatLocale", "enUS"))));
     Intro:SetPoint("TOP", Title, "BOTTOM", 0, -6);
     Intro:SetPoint("LEFT", Window, "LEFT", 20, -30);
     Intro:SetPoint("RIGHT", Window, "RIGHT", -20, 0);
@@ -81,17 +81,17 @@ function Locale:build()
     local Locales = Interface:createDropdown{
         Parent = Window,
         Options = {
-            enUS = L.LOCALE_ENUS, -- English (United States)
-            koKR = L.LOCALE_KOKR, -- Korean (Korea)
-            frFR = L.LOCALE_FRFR, -- French (France)
-            deDE = L.LOCALE_DEDE, -- German (Germany)
-            zhCN = L.LOCALE_ZHCN, -- Chinese (Simplified, PRC)
-            esES = L.LOCALE_ESES, -- Spanish (Spain)
-            zhTW = L.LOCALE_ZHTW, -- Chinese (Traditional, Taiwan)
-            esMX = L.LOCALE_ESMX, -- Spanish (Mexico)
-            ruRU = L.LOCALE_RURU, -- Russian (Russia)
-            ptBR = L.LOCALE_PTBR, -- Portuguese (Brazil)
-            itIT = L.LOCALE_ITIT, -- Italian (Italy)
+            enUS = L["enUS"], -- English (United States)
+            koKR = L["koKR"], -- Korean (Korea)
+            frFR = L["frFR"], -- French (France)
+            deDE = L["deDE"], -- German (Germany)
+            zhCN = L["zhCN"], -- Chinese (Simplified, PRC)
+            esES = L["esES"], -- Spanish (Spain)
+            zhTW = L["zhTW"], -- Chinese (Traditional, Taiwan)
+            esMX = L["esMX"], -- Spanish (Mexico)
+            ruRU = L["ruRU"], -- Russian (Russia)
+            ptBR = L["ptBR"], -- Portuguese (Brazil)
+            itIT = L["itIT"], -- Italian (Italy)
         },
         value = Settings:get("chatLocale", "enUS"),
     };
@@ -99,13 +99,13 @@ function Locale:build()
     Locales:SetPoint("CENTER", Window, "CENTER");
 
     ---@type FontString
-    local Note = Interface:createFontString(Window, (L.LOCALE_CHANGE_NOTE):format(GL.Data.Constants.addonHexColor));
+    local Note = Interface:createFontString(Window, (L["Note: you can change the locale at any time in the settings or via |c00%s/gl locale"]):format(GL.Data.Constants.addonHexColor));
     Note:SetPoint("TOP", Locales, "BOTTOM", 0, -6);
     Note:SetPoint("LEFT", Window, "LEFT", 20, -30);
     Note:SetPoint("RIGHT", Window, "RIGHT", -20, 0);
     Note:SetJustifyH("CENTER");
 
-    local OkButton = Interface:dynamicPanelButton(Window, L.OK);
+    local OkButton = Interface:dynamicPanelButton(Window, L["Ok"]);
     OkButton:SetPoint("BOTTOMLEFT", Window, "BOTTOMLEFT", 20, 30);
     OkButton:SetScript("OnClick", function ()
         Settings:set("chatLocale", Locales:GetValue() or "enUS");
@@ -117,7 +117,7 @@ function Locale:build()
         end
     end);
 
-    local CancelButton = Interface:dynamicPanelButton(Window, L.CANCEL);
+    local CancelButton = Interface:dynamicPanelButton(Window, L["Cancel"]);
     CancelButton:SetPoint("TOPLEFT", OkButton, "TOPRIGHT", 2, 0);
     CancelButton:SetScript("OnClick", function ()
         self:close();

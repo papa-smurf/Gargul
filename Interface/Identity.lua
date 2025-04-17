@@ -16,10 +16,10 @@ GL.Interface.Identity = {
     --[[ ================== DEFAULT ================== ]]
     [DEFAULT] = {
         id = DEFAULT,
-        url = L.DISCORD_URL,
-        urlInfo = L.IDENTITY_INFO,
-        tooltip = L.IDENTITY_TOOLTIP,
-        cutMailSubject = L.CUT_MAIL_SUBJECT,
+        url = L["https://discord.gg/D3mDhYPVzf"],
+        urlInfo = L["Visit the URL below to learn more about personalizing Gargul GDKPs"],
+        tooltip = L["Your logo here? Click for more info!"],
+        cutMailSubject = L["Gargul GDKP: %sg"],
 
         ---@return Frame
         ledger = function()
@@ -192,7 +192,7 @@ GL.Interface.Identity = {
         url = "https://discord.com/invite/5Nvcrt4u",
         urlInfo = "Join our Discord server to learn more about our guild and joining our ranks!",
         tooltip = "Gargul is recruiting, click for more info!",
-        cutMailSubject = L.CUT_MAIL_SUBJECT,
+        cutMailSubject = L["Gargul GDKP: %sg"],
         Realms = { "firemaw", },
 
         ---@return Frame
@@ -346,7 +346,7 @@ GL.Interface.Identity = {
         url = "https://discord.gg/gg-gdkp",
         urlInfo = "Join our Discord server to learn more about GG GDKP!",
         tooltip = "GG GDKP discord",
-        cutMailSubject = L.CUT_MAIL_SUBJECT,
+        cutMailSubject = L["Gargul GDKP: %sg"],
         cutMailBody = "Hey Bigbuyer,\n\nThanks for pumping so hard in the GDKP last night.\n\nHere is your ${cut} cut from the run!\n\nPlease sign-up for the next run at https://discord.gg/gg-gdkp\n\nLot's of Love,\nYour Friends at <GG>",
 
         ---@return Frame
@@ -471,7 +471,7 @@ GL.Interface.Identity = {
         url = "https://unhinged.gg/",
         urlInfo = "Visit us to learn more about Unhinged!",
         tooltip = nil,
-        cutMailSubject = L.CUT_MAIL_SUBJECT,
+        cutMailSubject = L["Gargul GDKP: %sg"],
 
         ---@return Frame
         ledger = function()

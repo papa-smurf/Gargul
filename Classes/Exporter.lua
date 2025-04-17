@@ -43,7 +43,7 @@ function Exporter:draw()
     local AwardHistoryByDate = {};
     local latestEntry = 0;
     for _, AwardEntry in pairs(DB:get("AwardHistory") or {}) do
-        local dateString = date(L.DATE_FORMAT, AwardEntry.timestamp);
+        local dateString = date(L["%Y-%m-%d"], AwardEntry.timestamp);
         local Entries = GL:tableGet(AwardHistoryByDate, dateString, {});
 
         tinsert(Entries, AwardEntry);
@@ -56,13 +56,13 @@ function Exporter:draw()
     end
 
     if (GL:gt(latestEntry, 0)) then
-        tinsert(self.SelectedDates, date(L.DATE_FORMAT, latestEntry));
+        tinsert(self.SelectedDates, date(L["%Y-%m-%d"], latestEntry));
     end
 
     -- Create a container/parent frame
     local Window = AceGUI:Create("Frame");
-    Window:SetTitle((L.WINDOW_HEADER):format(GL.version));
-    Window:SetStatusText(L.VERSION_ABBR ..GL.version);
+    Window:SetTitle((L["Gargul v%s"]):format(GL.version));
+    Window:SetStatusText(L["v"] ..GL.version);
     Window:SetLayout("Flow");
     Window:SetWidth(600);
     Window:SetHeight(500);
@@ -83,7 +83,10 @@ function Exporter:draw()
     local DontEditNotification = AceGUI:Create("Label");
     DontEditNotification:SetFullWidth(true);
     DontEditNotification:SetJustifyH("CENTER");
-    DontEditNotification:SetText(("|c00FF0000%s|r"):format(L.EXPORT_READ_ONLY_NOTICE));
+    DontEditNotification:SetText(("|c00FF0000%s|r"):format(L[ [[
+This is an export feature ONLY, there is no point editing any of the values: THEY WON'T BE SAVED!
+
+]]]));
     Window:AddChild(DontEditNotification);
 
     --[[
@@ -120,7 +123,7 @@ function Exporter:draw()
     Window:AddChild(FooterFrame);
 
     local ClearButton = AceGUI:Create("Button");
-    ClearButton:SetText(L.CLEAR);
+    ClearButton:SetText(L["Clear"]);
     ClearButton:SetWidth(140);
     ClearButton:SetCallback("OnClick", function()
         Exporter:clearData();
@@ -128,7 +131,7 @@ function Exporter:draw()
     FooterFrame:AddChild(ClearButton);
 
     local SettingsButton = AceGUI:Create("Button");
-    SettingsButton:SetText(L.SETTINGS);
+    SettingsButton:SetText(L["Settings"]);
     SettingsButton:SetWidth(140);
     SettingsButton:SetCallback("OnClick", function()
         GL.Settings:draw("ExportingLoot");
@@ -147,7 +150,7 @@ function Exporter:clearData()
 
     -- No date is selected, delete everything!
     if (GL:empty(self.SelectedDates)) then
-        warning = L.EXPORT_DELETE_ALL_CONFIRM;
+        warning = L["Are you sure you want to remove your complete reward history table? This deletes ALL loot data and cannot be undone!"];
         onConfirm = function()
             GL.Events:fire("GL.ITEM_UNAWARDED");
             DB:set("AwardHistory", {});
@@ -157,10 +160,10 @@ function Exporter:clearData()
         end;
 
     else -- Only delete entries on the selected date
-        warning = (L.EXPORT_DELETE_DATE_CONFIRM):format(table.concat(self.SelectedDates, ", "));
+        warning = (L["Are you sure you want to remove all data for %s? This cannot be undone!"]):format(table.concat(self.SelectedDates, ", "));
         onConfirm = function()
             for key, AwardEntry in pairs(DB:get("AwardHistory")) do
-                local dateString = date(L.DATE_FORMAT, AwardEntry.timestamp);
+                local dateString = date(L["%Y-%m-%d"], AwardEntry.timestamp);
 
                 if (GL:inTable(self.SelectedDates, dateString)) then
                     AwardEntry = nil;
@@ -227,7 +230,7 @@ function Exporter:getLootEntries(raw)
     for _, AwardEntry in pairs(DB:get("AwardHistory")) do
         (function()
             local concernsDisenchantedItem = AwardEntry.awardedTo == self.disenchantedItemIdentifier;
-            local dateString = date(L.DATE_FORMAT, AwardEntry.timestamp);
+            local dateString = date(L["%Y-%m-%d"], AwardEntry.timestamp);
             if (
                 (not concernsDisenchantedItem or GL.Settings:get("ExportingLoot.includeDisenchantedItems"))
                 and (not AwardEntry.OS or GL.Settings:get("ExportingLoot.includeOffspecItems"))
@@ -334,7 +337,7 @@ function Exporter:transformEntriesToCustomFormat(Entries, format)
                     ["@DAY"] = date('%d', AwardEntry.timestamp),
                     ["@HOUR"] = date('%H', AwardEntry.timestamp),
                     ["@MINUTE"] = date('%M', AwardEntry.timestamp),
-                    ["@DATE"] = date(L.DATE_FORMAT, AwardEntry.timestamp),
+                    ["@DATE"] = date(L["%Y-%m-%d"], AwardEntry.timestamp),
                     ["@TIME"] = date('%H:%M', AwardEntry.timestamp),
                     ["@WOWHEAD"] = wowheadLink,
                     ["\\t"] = "\t",
@@ -378,7 +381,7 @@ function Exporter:transformEntriesToTMBFormat(Entries)
     for _, AwardEntry in pairs(Entries) do
         exportString = string.format("%s\n%s,%s,%s,%s,%s",
             exportString,
-            date(L.DATE_FORMAT, AwardEntry.timestamp),
+            date(L["%Y-%m-%d"], AwardEntry.timestamp),
             GL:nameFormat{
                 name = AwardEntry.awardedTo,
                 stripRealm = exportFormat == Constants.ExportFormats.TMB,

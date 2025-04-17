@@ -5,11 +5,11 @@
 if (GetLocale() ~= "deDE") then return; end
 local L = Gargul_L or {};
 
-L.ABOUT = "Über";
-L.ALL_SETTINGS = "Alle Einstellungen";
-L.ANNOUNCE = "Bekannt geben";
-L.ANTISNIPE = "Anti-Snipe";
-L.ANTISNIPE_EXPLANATION = [[
+L["About"] = "Über";
+L["All Settings"] = "Alle Einstellungen";
+L["Announce"] = "Bekannt geben";
+L["Anti Snipe"] = "Anti-Snipe";
+L["\n\nAn Anti Snipe value of 10 means that any bid that comes in with\nless than 10 seconds left will reset the timer back to 10 seconds\n\nYou can leave this empty or set to 0 to disable Anti Snipe completely.\nAnti Snipe values less than 5 are not supported\n\n"] = [[
 
 Ein Anti-Snipe-Wert von 10 bedeutet, dass jedes eingehende Gebot mit
 weniger als 10 Sekunden verbleibend auf einen Timer von 10 Sekunden zurückgesetzt wird.
@@ -18,187 +18,187 @@ Du kannst dieses Feld leer lassen oder auf 0 setzen, um Anti-Snipe vollständig 
 Anti-Snipe-Werte unter 5 werden nicht unterstützt
 
 ]];
-L.ARE_YOU_SURE = "Bist du sicher?";
-L.ASSIGN_GARGUL_INFO = [[
+L["Are you sure?"] = "Bist du sicher?";
+L["\nDon't forget to use Gargul instead\nif you wish to export loot later\n\n\n-- Right-click to disable this window --"] = [[
 Vergiss nicht, stattdessen Gargul zu verwenden
 wenn du die Beute später exportieren möchtest
 
 
 -- Klick mit der rechten Maustaste, um dieses Fenster zu deaktivieren --]];
-L.AUCTION = "Auktion";
-L.AUCTIONEER = "Auktionator";
-L.AUCTIONS = "Auktionen";
-L.AUTO = "Auto";
-L.AUTO_AWARD = "Auto-Verleihung";
-L.AUTO_TRADE_OPTIONS = "Autohandel";
-L.AVAILABLE_PLACEHOLDER_VALUES = "Verfügbare Werte:";
-L.AWARD = "Verleihen";
-L.AWARDED_TO = "Ausgezeichnet für";
-L.AWARDED_TOOLTIP_BOOSTED_ROLL_COST = "BR: %s";
-L.AWARDED_TOOLTIP_GDKP_COST = "Preise";
-L.AWARDED_TOOLTIP_GIVEN = "Gegeben: ja";
-L.AWARDED_TOOLTIP_NOT_GIVEN = "Gegeben: nein";
-L.AWARDED_TOOLTIP_SECOND_BID = "2. Gebot: %s von %s";
-L.AWARDED_YOU_WON = "Du hast gewonnen";
-L.AWARD_CONFIRM = "%s an %s verleihen?";
-L.AWARD_DISENCHANT_BR_CONFIRMATION = "Bist du sicher, dass du %s entzaubern möchtest? %s geboostete Rollpunkte werden zurückerstattet!";
-L.AWARD_HEADER_IN_GROUP = "In einer Gruppe";
-L.AWARD_HISTORY = "Verleihungsverlauf";
-L.AWARD_NEW_WINNER_CONFIRMATION = "Zu wem sollte %s stattdessen gehen?";
-L.AWARD_PLAYER_CUSTOM_NAME = "Gib hier den Namen des Spielers ein";
-L.AWARD_PLAYER_SELECT_NAME = "oder wähle unten einen aus";
-L.AWARD_RANDOM_CONFIRM = "Möchtest du %s an einen zufälligen Spieler verleihen?";
-L.AWARD_TOOLTIP_ADD_ITEM = "Zieh ein Element per Drag-and-Drop oder bei gedrückter Umschalttaste in das Feld rechts";
-L.AWARD_TOOLTIP_BR_INDICATION = "(BR: %s)";
-L.AWARD_TOOLTIP_DISENCHANTED_ITEMS = "Entzauberte Gegenstände:";
-L.AWARD_TOOLTIP_GIVEN = "(Gegeben: ja)";
-L.AWARD_TOOLTIP_NOT_GIVEN = "(Gegeben: nein)";
-L.AWARD_TOOLTIP_OFFSPEC_INDICATION = "(Betriebssystem)";
-L.AWARD_UNDO_BR_REFUND = "%s geboostete Rollpunkte werden zurückerstattet!";
-L.AWARD_UNDO_CONFIRM = "Bist du sicher, dass du %s, das %s zugeteilt wurde, rückgängig machen möchtest?%s"; -- The last %s is the content of L.AWARD_UNDO_BR_REFUND
-L.BAGINSPECTOR_FAILED = "Tascheninspektion fehlgeschlagen: Keine Berichte erhalten";
-L.BAGINSPECTOR_FINISHED = "Inspektion beendet";
-L.BAGINSPECTOR_START = "Inspektion beginnt...";
-L.BALANCE = "Saldo";
-L.BASE = "Basis";
-L.BASE64_DECODE_WARNING = "Die Base64-Dekodierung der Daten ist nicht möglich. Stell sicher, dass du es unverändert kopiert/eingefügt hast, ohne zusätzliche Zeichen oder Leerzeichen hinzuzufügen!";
-L.BID = "Bieten";
-L.BIDS = "Gebote";
-L.BIND_ON_EQUIP_ABBR = "BOE";
-L.BONUS_AUTO_INVITE = "1. Gruppen automatisch aus der Raid-Anmeldung einladen/sortieren! Klick unten oder verwende |c00A79EFF/gl gr";
-L.BONUS_BOOSTED_ROLLS = "2. Belohne Spieler dafür, dass sie Stammspieler sind oder die Extrameile gehen! Klick unten oder verwende |c00A79EFF/gl br";
-L.BONUS_FEATURE_EXPLANATION = "Gargul hat ein paar Tricks auf Lager, die dir vielleicht nicht bewusst sind. Schau mal rein!";
-L.BONUS_PLUSONES = "3. Gargul beinhaltet ein Plus-One-Tracking-System! Klick unten oder verwende |c00A79EFF/gl po";
-L.BOOSTED_ROLLS = "Boosted Rolls";
-L.BOOSTED_ROLLS_ABBR = "BR";
-L.BOOSTED_ROLLS_ADD_POINTS_CONFIRM = [[
+L["Auction"] = "Auktion";
+L["Auctioneer"] = "Auktionator";
+L["Auctions"] = "Auktionen";
+L["Auto"] = "Auto";
+L["Auto award"] = "Auto-Verleihung";
+L["Auto trade"] = "Autohandel";
+L["Available values:"] = "Verfügbare Werte:";
+L["Award"] = "Verleihen";
+L["Awarded To"] = "Ausgezeichnet für";
+L["BR: %s"] = "BR: %s";
+L["Price: %s"] = "Preise";
+L["Given: yes"] = "Gegeben: ja";
+L["Given: no"] = "Gegeben: nein";
+L["2nd bid: %s by %s"] = "2. Gebot: %s von %s";
+L["You won"] = "Du hast gewonnen";
+L["Award %s to %s?"] = "%s an %s verleihen?";
+L["Are you sure you want to disenchant %s? %s boosted roll points will be refunded!"] = "Bist du sicher, dass du %s entzaubern möchtest? %s geboostete Rollpunkte werden zurückerstattet!";
+L["In Group"] = "In einer Gruppe";
+L["Award history"] = "Verleihungsverlauf";
+L["Who should %s go to instead?"] = "Zu wem sollte %s stattdessen gehen?";
+L["Type player name here"] = "Gib hier den Namen des Spielers ein";
+L["or select one below"] = "oder wähle unten einen aus";
+L["Do you want to award %s to a random player?"] = "Möchtest du %s an einen zufälligen Spieler verleihen?";
+L["Drag and drop or shift+click an item in the box on the right"] = "Zieh ein Element per Drag-and-Drop oder bei gedrückter Umschalttaste in das Feld rechts";
+L["(BR: %s)"] = "(BR: %s)";
+L["Disenchanted items:"] = "Entzauberte Gegenstände:";
+L["(Given: yes)"] = "(Gegeben: ja)";
+L["(Given: no)"] = "(Gegeben: nein)";
+L["(OS)"] = "(Betriebssystem)";
+L["%s boosted roll points will be refunded!"] = "%s geboostete Rollpunkte werden zurückerstattet!";
+L["Are you sure you want to undo %s awarded to %s?%s"] = "Bist du sicher, dass du %s, das %s zugeteilt wurde, rückgängig machen möchtest?%s"; -- The last %s is the content of L["%s boosted roll points will be refunded!"]
+L["Bag inspection failed: no reports received"] = "Tascheninspektion fehlgeschlagen: Keine Berichte erhalten";
+L["Inspection finished"] = "Inspektion beendet";
+L["Starting inspection..."] = "Inspektion beginnt...";
+L["Balance"] = "Saldo";
+L["Base"] = "Basis";
+L["Unable to base64 decode data. Make sure you copy/paste it as-is without adding any additional characters or whitespaces!"] = "Die Base64-Dekodierung der Daten ist nicht möglich. Stell sicher, dass du es unverändert kopiert/eingefügt hast, ohne zusätzliche Zeichen oder Leerzeichen hinzuzufügen!";
+L["Bid"] = "Bieten";
+L["Bids"] = "Gebote";
+L["BOE"] = "BOE";
+L["1. Auto invite/sort groups from raid signup! Click below or use |c00A79EFF/gl gr"] = "1. Gruppen automatisch aus der Raid-Anmeldung einladen/sortieren! Klick unten oder verwende |c00A79EFF/gl gr";
+L["2. Reward players for being regulars or going the extra mile! Click below or use |c00A79EFF/gl br"] = "2. Belohne Spieler dafür, dass sie Stammspieler sind oder die Extrameile gehen! Klick unten oder verwende |c00A79EFF/gl br";
+L["Gargul has a few tricks up its sleeve that you might not be aware of. Have a looksy!"] = "Gargul hat ein paar Tricks auf Lager, die dir vielleicht nicht bewusst sind. Schau mal rein!";
+L["3. Gargul includes a plus one tracking system! Click below or use |c00A79EFF/gl po"] = "3. Gargul beinhaltet ein Plus-One-Tracking-System! Klick unten oder verwende |c00A79EFF/gl po";
+L["Boosted Rolls"] = "Boosted Rolls";
+L["BR"] = "BR";
+L["\nAdd how many points for everyone currently in the raid?\n\n|c00BE3333Use the 'Add missing raiders' button first if you want everyone to get points, even those without a boosted roll entry!"] = [[
 Wie viele Punkte addierst du für alle, die derzeit am Raid teilnehmen?
 
 |c00BE3333Verwende zuerst die Schaltfläche „Fehlende Raider hinzufügen“, wenn du möchtest, dass jeder Punkte erhält, auch diejenigen ohne einen Boosted-Rolls-Eintrag!]];
-L.BOOSTED_ROLLS_ADD_POINTS_ERROR = "Kein Punktewert angegeben!";
-L.BOOSTED_ROLLS_ADD_POINTS_TO_RAID_BUTTON = "Füge dem Raid Punkte hinzu";
-L.BOOSTED_ROLLS_ADD_RAIDERS_BUTTON = "Fehlende Raider hinzufügen";
-L.BOOSTED_ROLLS_ALIASES = "Aliase";
-L.BOOSTED_ROLLS_ALIAS_APPLY_BUTTON = "Aliase anwenden";
-L.BOOSTED_ROLLS_AWARD_DIALOG_LABEL = "Erhöhte Rollkosten:";
-L.BOOSTED_ROLLS_BROADCAST_CONFIRM = "Bist du sicher, dass du deine Boosted-Rolls-Daten an alle in deiner Gruppe/deinem Raid übertragen möchtest?";
-L.BOOSTED_ROLLS_BROADCAST_NO_DATA_ERROR = "Nichts zum Senden, importiere zuerst die Boosted-Rolls-Daten!";
-L.BOOSTED_ROLLS_BROADCAST_PROCESS_FAILED = "Die von %s empfangenen Boosted-Rolls-Daten konnten nicht verarbeitet werden";
-L.BOOSTED_ROLLS_BROADCAST_PROCESS_START = "Es wird versucht, eingehende Boosted-Rolls-Daten von %s zu verarbeiten";
-L.BOOSTED_ROLLS_CLEAR_CONFIRM = "Bist du sicher, dass du alle Boosted-Roll-Daten löschen möchtest?";
-L.BOOSTED_ROLLS_DELETE_CONFIRM = "%s löschen?";
-L.BOOSTED_ROLLS_IMPORT_CONFIRM = "Bist du sicher, dass du deine bestehenden Boosted-Roll-Daten löschen und neue, von %s gesendete Daten importieren möchtest?";
-L.BOOSTED_ROLLS_IMPORT_ERROR = "Ungültige Daten angegeben. Stell sicher, dass der Inhalt dem erforderlichen Format entspricht und keine Kopfzeile enthalten ist";
-L.BOOSTED_ROLLS_IMPORT_TUTORIAL = [[
+L["No point value provided!"] = "Kein Punktewert angegeben!";
+L["Add points to raid"] = "Füge dem Raid Punkte hinzu";
+L["Add missing raiders"] = "Fehlende Raider hinzufügen";
+L["Aliases"] = "Aliase";
+L["Apply aliases"] = "Aliase anwenden";
+L["Boosted Roll Cost:"] = "Erhöhte Rollkosten:";
+L["Are you sure you want to broadcast your boosted roll data to everyone in your party/raid?"] = "Bist du sicher, dass du deine Boosted-Rolls-Daten an alle in deiner Gruppe/deinem Raid übertragen möchtest?";
+L["Nothing to broadcast, import Boosted Rolls data first!"] = "Nichts zum Senden, importiere zuerst die Boosted-Rolls-Daten!";
+L["Couldn't process BoostedRolls data received from %s"] = "Die von %s empfangenen Boosted-Rolls-Daten konnten nicht verarbeitet werden";
+L["Attempting to process incoming BoostedRolls data from %s"] = "Es wird versucht, eingehende Boosted-Rolls-Daten von %s zu verarbeiten";
+L["Are you sure you want to clear all boosted roll data?"] = "Bist du sicher, dass du alle Boosted-Roll-Daten löschen möchtest?";
+L["Delete %s?"] = "%s löschen?";
+L["Are you sure you want to clear your existing boosted roll data and import new data broadcasted by %s?"] = "Bist du sicher, dass du deine bestehenden Boosted-Roll-Daten löschen und neue, von %s gesendete Daten importieren möchtest?";
+L["Invalid data provided. Make sure that the contents follows the required format and no header row is included"] = "Ungültige Daten angegeben. Stell sicher, dass der Inhalt dem erforderlichen Format entspricht und keine Kopfzeile enthalten ist";
+L["\nHere you can import boosted roll data and aliases from a table in CSV or TSV format or pasted from a Google Docs Sheet.\n\nThe table needs at least two columns: The player name followed by the amount of points. Additional columns are optional and may contain aliases for the player.\nHere is an example line:\n\nFoobar,240,Barfoo"] = [[
 Hier kannst du Boosted-Roll-Daten und Aliase aus einer Tabelle im CSV- oder TSV-Format importieren oder aus einem Google Docs-Blatt einfügen.
 
 Die Tabelle benötigt mindestens zwei Spalten: Den Spielernamen gefolgt von der Punktzahl. Zusätzliche Spalten sind optional und können Aliase für den Player enthalten.
 Hier ist eine Beispielzeile:
 
 Foobar,240,Barfoo]];
-L.BOOSTED_ROLLS_POINTS = "Punkte";
-L.BOOSTED_ROLLS_RESERVE = "Reserviert";
-L.BOOSTED_ROLLS_UPDATE_CONFIRM = [[
+L["Points"] = "Punkte";
+L["Reserve"] = "Reserviert";
+L["\nAre you sure you want to update your existing boosted rolls with data from %s?\n\nYour latest update was on |c00A79EFF%s, theirs on |c00A79EFF%s."] = [[
 Bist du sicher, dass du deine bestehenden Boosted-Rolls-Daten von %s aktualisieren möchten?
 
 Dein letztes Update war |c00A79EFF%s, ihres |c00A79EFF%s.]];
-L.BOOSTED_ROLLS_WHISPER_PREFIXES = "!bonus|!rb|!br";
-L.BROADCAST = "Übertragung";
-L.BROADCASTING_NOTIFICATION = "Sende Übertragung...";
-L.BROADCAST_DELAYED_BY_COMBAT = "Du befindest dich derzeit im Kampf und verzögerst die Übertragung";
-L.BROADCAST_FINISHED = "Übertragung beendet!";
-L.BROADCAST_INC_AWARDED = "Beziehe verliehene Gegenstände mit ein";
-L.BROADCAST_INC_DISENCHANTED = "Schließe entzauberte Gegenstände ein";
-L.BROADCAST_INC_HIDDEN = "Schließe ausgeblendete Gegenstände ein";
-L.BROADCAST_INC_TIME_LEFT = "Berücksichtige die verbleibende Zeit";
-L.BROADCAST_IN_PROGRESS_ERROR = "Die Übertragung läuft noch";
-L.BROADCAST_NO_DATA = "Es gibt nichts zu senden";
-L.BROADCAST_NUMBER_OF_ITEMS = "Anzahl der Gegenstände";
-L.BROADCAST_PROGRESS = "Übertragung ${percentage}%";
-L.BROADCAST_TARGET_PLAYER = "Zielspieler (nur Flüstern)";
-L.BROADCAST_TARGET_REQUIRED = "Flüstern erfordert einen Zielspieler";
-L.BROADCAST_TRADE_TIME_LEFT = "Maximal verbleibende Handelszeit (in Minuten)";
-L.BY = "von"; -- As in 'bid BY'
-L.CANCEL = "Abbrechen";
-L.CHANGELOG_CONTRIBUTE = "Suche dir Hilfe oder teile deine Ideen auf unserem Discord";
-L.CHANGELOG_ENABLE_LABEL = "Änderungsprotokoll aktivieren";
-L.CHANGELOG_GETTING_STARTED = "Gargul macht das Verteilen von Beute ganz einfach. Klick auf die Schaltfläche unten, um loszulegen!";
-L.CHANGELOG_OPEN_GARGUL = "Öffne Gargul";
-L.CHANGE_SCALE = "Maßstab anpassen";
-L.CHANNEL = "Kanal";
-L.CHANNEL_OFFICER = "Offizier";
-L.CHANNEL_RAID_WARNING = "Raid-Warnung";
-L.CHANNEL_WHISPER = "Flüstern";
-L.CLASSICPRIO_ABBR = "CPR";
-L.CLEAR = "Leeren"; -- As in clearing a window or data
-L.CLOSE = "Schließen";
-L.CLOSE_ON_AWARD = "Bei Verleihung schließen";
-L.CLOSE_ON_START = "Beim Starten schließen";
-L.COMMUNICATION = "Kommunikation";
-L.COMM_PROGRESS = "%s von %s Bytes wurden gesendet";
-L.COPPER_INDICATOR = "C";
-L.CUT = "Anteil";
-L.CUTS = "Anteile";
-L.CUT_MAILBOX_CLOSED = "Es kann keine Post gesendet werden, wenn der Briefkasten geschlossen ist";
-L.CUT_MAILS_FAILED = "Es wurden mehrere Post-Fehler festgestellt, wodurch die Verteilung der Anteile abgebrochen wurde";
-L.CUT_MAIL_EVEN = "Du schuldest %s kein Gold";
+L["!bonus|!rb|!br"] = "!bonus|!rb|!br";
+L["Broadcast"] = "Übertragung";
+L["Broadcasting..."] = "Sende Übertragung...";
+L["You are currently in combat, delaying broadcast"] = "Du befindest dich derzeit im Kampf und verzögerst die Übertragung";
+L["Broadcast finished!"] = "Übertragung beendet!";
+L["Include awarded items"] = "Beziehe verliehene Gegenstände mit ein";
+L["Include disenchanted items"] = "Schließe entzauberte Gegenstände ein";
+L["Include hidden items"] = "Schließe ausgeblendete Gegenstände ein";
+L["Include time left"] = "Berücksichtige die verbleibende Zeit";
+L["Broadcast still in progress"] = "Die Übertragung läuft noch";
+L["There is nothing to broadcast"] = "Es gibt nichts zu senden";
+L["Number of items"] = "Anzahl der Gegenstände";
+L["Broadcast ${percentage}%"] = "Übertragung ${percentage}%";
+L["Target player (whisper only)"] = "Zielspieler (nur Flüstern)";
+L["Whisper requires a target player"] = "Flüstern erfordert einen Zielspieler";
+L["Max trade time left (in minutes)"] = "Maximal verbleibende Handelszeit (in Minuten)";
+L["by"] = "von"; -- As in 'bid BY'
+L["Cancel"] = "Abbrechen";
+L["Get support or share ideas on our Discord"] = "Suche dir Hilfe oder teile deine Ideen auf unserem Discord";
+L["Enable changelog"] = "Änderungsprotokoll aktivieren";
+L["Gargul makes handing out loot super easy, click the button below to get started!"] = "Gargul macht das Verteilen von Beute ganz einfach. Klick auf die Schaltfläche unten, um loszulegen!";
+L["Open Gargul"] = "Öffne Gargul";
+L["Adjust Scale"] = "Maßstab anpassen";
+L["Channel"] = "Kanal";
+L["Officer"] = "Offizier";
+L["Raid Warning"] = "Raid-Warnung";
+L["Whisper"] = "Flüstern";
+L["CPR"] = "CPR";
+L["Clear"] = "Leeren"; -- As in clearing a window or data
+L["Close"] = "Schließen";
+L["Close on award"] = "Bei Verleihung schließen";
+L["Close on start"] = "Beim Starten schließen";
+L["Communication"] = "Kommunikation";
+L["Sent %s of %s bytes"] = "%s von %s Bytes wurden gesendet";
+L["c"] = "C";
+L["Cut"] = "Anteil";
+L["Cuts"] = "Anteile";
+L["Can't send mail when the mailbox is closed"] = "Es kann keine Post gesendet werden, wenn der Briefkasten geschlossen ist";
+L["Multiple mail errors detected, aborting cut distribution"] = "Es wurden mehrere Post-Fehler festgestellt, wodurch die Verteilung der Anteile abgebrochen wurde";
+L["You don't owe %s any gold"] = "Du schuldest %s kein Gold";
 L["Failed to send cut to %s"] = "Der Anteil konnte nicht an %s gesendet werden";
-L.CUT_MAIL_GOLD_MISMATCH = "Die Post wurde laut Spiel GESENDET, aber dein verbleibendes Gold stimmt nicht überein. Ist etwas schief gelaufen?";
-L.CUT_MAIL_HISTORY = "Post-Verlauf für |c00967FD2%s";
-L.CUT_MAIL_INSUFFICIENT_FUNDS = "Du hast nicht genug Gold, um %s zu bezahlen";
-L.CUT_MAIL_IN_PROGRESS = "Warte etwas, wir bearbeiten noch die vorherige Post";
-L.CUT_MAIL_SUBJECT = "Gargul GDKP: %sg";
-L.CUT_SENT = "%sg an %s gesendet";
-L.DATE_FORMAT = "%Y-%m-%d";
-L.DATE_HOURS_MINUTES_FORMAT = "%Y-%m-%d %H:%M";
-L.DAY_MONTH_HOURS_MINUTES = "%d-%m %H:%M";
-L.DELETE = "Löschen";
-L.DETAILS = "Details";
-L.DFT = "DFT";
-L.DISABLE = "Deaktivieren";
-L.DISCORD_URL = "https://discord.gg/D3mDhYPVzf";
-L.DISENCHANT = "Entzaubern";
-L.EDIT = "Bearbeiten";
-L.ENABLE = "Aktivieren";
-L.EXPORT = "Export";
-L.EXPORT_DELETE_ALL_CONFIRM = "Bist du sicher, dass du deinen vollständigen Verleihungsverlauf entfernen möchtest? Dadurch werden ALLE Beutedaten gelöscht und können nicht rückgängig gemacht werden!";
-L.EXPORT_DELETE_DATE_CONFIRM = "Bist du sicher, dass du alle Daten für %s entfernen möchtest? Das kann nicht rückgängig gemacht werden!";
-L.EXPORT_READ_ONLY_NOTICE = [[
+L["Mail SENT according to game, but your remaining GOLD DOESN'T MATCH, did something go wrong?"] = "Die Post wurde laut Spiel GESENDET, aber dein verbleibendes Gold stimmt nicht überein. Ist etwas schief gelaufen?";
+L["Mail History for |c00967FD2%s"] = "Post-Verlauf für |c00967FD2%s";
+L["You don't have enough gold to pay %s"] = "Du hast nicht genug Gold, um %s zu bezahlen";
+L["Wait a bit, we're still processing the previous mail"] = "Warte etwas, wir bearbeiten noch die vorherige Post";
+L["Gargul GDKP: %sg"] = "Gargul GDKP: %sg";
+L["Sent %sg to %s"] = "%sg an %s gesendet";
+L["%Y-%m-%d"] = "%Y-%m-%d";
+L["%Y-%m-%d %H:%M"] = "%Y-%m-%d %H:%M";
+L["%d-%m %H:%M"] = "%d-%m %H:%M";
+L["Delete"] = "Löschen";
+L["Details"] = "Details";
+L["DFT"] = "DFT";
+L["Disable"] = "Deaktivieren";
+L["https://discord.gg/D3mDhYPVzf"] = "https://discord.gg/D3mDhYPVzf";
+L["Disenchant"] = "Entzaubern";
+L["Edit"] = "Bearbeiten";
+L["Enable"] = "Aktivieren";
+L["Export"] = "Export";
+L["Are you sure you want to remove your complete reward history table? This deletes ALL loot data and cannot be undone!"] = "Bist du sicher, dass du deinen vollständigen Verleihungsverlauf entfernen möchtest? Dadurch werden ALLE Beutedaten gelöscht und können nicht rückgängig gemacht werden!";
+L["Are you sure you want to remove all data for %s? This cannot be undone!"] = "Bist du sicher, dass du alle Daten für %s entfernen möchtest? Das kann nicht rückgängig gemacht werden!";
+L["\nThis is an export feature ONLY, there is no point editing any of the values: THEY WON'T BE SAVED!\n\n"] = [[
 Dies ist NUR eine Exportfunktion. Es macht keinen Sinn, die Werte zu bearbeiten: SIE WERDEN NICHT GESPEICHERT!
 
 ]];
-L.FILL = "Füllen";
-L.FINAL_CALL = "Letzter Aufruf";
-L.FINISH = "Beenden";
-L.FORMAT = "Format";
-L.GARGUL = "Gargul";
-L.GDKP = "GDKP";
-L.GDKPS_ARE_NOT_ALLOWED = "GDKP-Raids sind in dieser Version von World of Warcraft nicht erlaubt";
-L.GDKP_ACTIVATED = "GDKP Aktiv!";
-L.GDKP_ADD_DROPS_TO_QUEUE = "Füge neu gedroppte Beute zur Warteschlange hinzu";
-L.GDKP_ADD_GOLD_AMOUNT_LABEL = "Gold (- zum Entfernen von Gold)";
-L.GDKP_ADD_GOLD_INVALID_PAYER_WARNING = "Wer bezahlt das?";
-L.GDKP_ADD_GOLD_INVALID_WARNING = "Gold muss niedriger/höher als 0 sein";
-L.GDKP_ADD_GOLD_PAID_BY_LABEL = "Bezahlt von";
-L.GDKP_ADD_GOLD_TITLE = "Gold in %s anpassen";
-L.GDKP_ADD_TRADE_GIVEN_AND_RECEIVED_WARNING = "Du kannst nicht gleichzeitig demselben Spieler Gold geben UND erhalten";
-L.GDKP_ALL_CUTS_MAILED = "Alle Anteile wurden per Post verschickt!";
-L.GDKP_AUCTIONEER_SETTINGS_DISABLE_FOR_DISENCHANTED = "Deaktivieren für entzauberte Gegenstände";
-L.GDKP_AUCTIONEER_SETTINGS_DISABLE_IN_COMBAT = "Im Kampf deaktivieren";
-L.GDKP_AUCTIONS = "Auktionen";
-L.GDKP_AUCTION_DETAILS_CREATED_BY = "Erstellt von";
-L.GDKP_AUCTION_DETAILS_DELETED_REASON = [[
+L["Fill"] = "Füllen";
+L["Final Call"] = "Letzter Aufruf";
+L["Finish"] = "Beenden";
+L["Format"] = "Format";
+L["Gargul"] = "Gargul";
+L["GDKP"] = "GDKP";
+L["GDKP raids are not allowed in this version of World of Warcraft"] = "GDKP-Raids sind in dieser Version von World of Warcraft nicht erlaubt";
+L["GDKP Active!"] = "GDKP Aktiv!";
+L["Add dropped loot to queue"] = "Füge neu gedroppte Beute zur Warteschlange hinzu";
+L["Gold (- for removing gold)"] = "Gold (- zum Entfernen von Gold)";
+L["Who pays for this?"] = "Wer bezahlt das?";
+L["Gold needs to be lower/higher than 0"] = "Gold muss niedriger/höher als 0 sein";
+L["Paid for by"] = "Bezahlt von";
+L["Adjust gold in %s"] = "Gold in %s anpassen";
+L["You can't give AND receive gold from the same player at the same time"] = "Du kannst nicht gleichzeitig demselben Spieler Gold geben UND erhalten";
+L["All cuts were mailed!"] = "Alle Anteile wurden per Post verschickt!";
+L["Disable for disenchanted"] = "Deaktivieren für entzauberte Gegenstände";
+L["Disable in combat"] = "Im Kampf deaktivieren";
+L["Auctions"] = "Auktionen";
+L["Created by"] = "Erstellt von";
+L["\n|c00be3333Deleted by %s\nReason: %s"] = [[
 |c00be3333Gelöscht von %s
 Gründe dafür]];
-L.GDKP_AUCTION_DETAILS_GOLD_ADDED = [[
+L["\n|c00%s%sg added to pot by %s\nNote: %s"] = [[
 |c00%s%sg von %s zum Pott hinzugefügt
 Anmerkungen]];
-L.GDKP_AUCTION_DETAILS_GOLD_PAID_BY = [[
+L["\n%s paid |c00%s%sg for\n%s"] = [[
 %s hat |c00%s%sg dafür bezahlt
 %s]];
-L.GDKP_AUCTION_DETAILS_WON_BY = "Gewonnen von";
-L.GDKP_AUCTION_PAID_AMOUNT = "Bezahlten Betrag festlegen (siehe links)";
-L.GDKP_AUCTION_PAID_AMOUNT_INFO = [[
+L["Won by"] = "Gewonnen von";
+L["Set paid amount (read left)"] = "Bezahlten Betrag festlegen (siehe links)";
+L["\n\nGargul automatically keeps track of gold traded. As long as players pay\nfor what they bought then you shouldn't ever need this field\n\n'Paid amount' refers to the amount of gold the buyer already traded you.\nThis does not change the actual price of the item!\n\nWarning: only set a value here if the player promises to pay\noutside of the raid or trades the gold from an alt / mail etc!\n\n\n"] = [[
 
 Gargul behält automatisch den Überblick über das gehandelte Gold. Solange die Spieler für das zahlen, was sie gekauft haben, solltest du dieses Feld niemals benötigen
 
@@ -210,23 +210,23 @@ oder das Gold von einem Alt / per Post usw. handelt!
 
 
 ]];
-L.GDKP_AWARD_DIALOG_LABEL = "GDKP-Preis:";
-L.GDKP_AWARD_ITEM_CONFIRMATION = "%s an %s für %s verleihen?";
-L.GDKP_BIDDER_AUTO_BID = "Auto Bieten";
-L.GDKP_BIDDER_AUTO_BID_CONFIRM = "Wie hoch ist dein Höchstgebot? (Minimum %s|c00FFF569g)";
-L.GDKP_BIDDER_BID_DENIED = "Gebot abgelehnt!";
-L.GDKP_BIDDER_ITEM_PRICING = "Mindestgebot: %sg Inkrement: %sg";
-L.GDKP_BIDDER_MY_MAX_BID = "(maximal %sg)";
-L.GDKP_BIDDER_NEW_BID_LABEL = "Neues Gebot";
-L.GDKP_BIDDER_STOP_AUTO_BID = "Stop Auto";
-L.GDKP_BIDDER_THEYRE_TOP_BIDDER = "Höchstgebot: %s von %s";
-L.GDKP_BIDDER_YOURE_TOP_BIDDER = "Höchstgebot: %s von Dir";
-L.GDKP_CREATE = "Erstell eine neue GDKP-Sitzung";
-L.GDKP_CREATE_MANAGEMENT_CUT = "Managementanteil %";
-L.GDKP_CREATE_SESSION_INVALID_CUT = "Managementanteil muss leer sein oder zwischen 0 und 99 liegen (kein %-Zeichen!)";
-L.GDKP_CREATE_SESSION_INVALID_TYPE = "Wähl einen Sitzungstyp!";
-L.GDKP_CREATE_SESSION_SWITCH = "Wechsel zu dieser Sitzung";
-L.GDKP_CREATE_SESSION_TYPE_INFO = [[
+L["GDKP Price:"] = "GDKP-Preis:";
+L["Award %s to %s for %s?"] = "%s an %s für %s verleihen?";
+L["Auto Bid"] = "Auto Bieten";
+L["What's your maximum bid? (Minimum %s|c00FFF569g)"] = "Wie hoch ist dein Höchstgebot? (Minimum %s|c00FFF569g)";
+L["Bid denied!"] = "Gebot abgelehnt!";
+L["Min bid: %sg   Increment: %sg"] = "Mindestgebot: %sg Inkrement: %sg";
+L["(max %sg)"] = "(maximal %sg)";
+L["New bid"] = "Neues Gebot";
+L["Stop Auto Bid"] = "Stop Auto";
+L["Top bid: %s by %s"] = "Höchstgebot: %s von %s";
+L["Top bid: %s by you"] = "Höchstgebot: %s von Dir";
+L["Create a new GDKP session"] = "Erstell eine neue GDKP-Sitzung";
+L["Management Cut %"] = "Managementanteil %";
+L["Management Cut needs to be empty or between 0 and 99 (no % sign!)"] = "Managementanteil muss leer sein oder zwischen 0 und 99 liegen (kein %-Zeichen!)";
+L["Choose a session type!"] = "Wähl einen Sitzungstyp!";
+L["Switch to this session"] = "Wechsel zu dieser Sitzung";
+L["\n\n|c00A79EFFMulti-Auction allows you to start bids on multiple items at once, speeding things up!\nFollow the instructions after creating this session to get started\n\nWith |c00A79EFFSingle-Auction you choose to auction off single items instead or use the queue\n\nSelecting |c00A79EFFMulti-Auction prevents dropped items from being added to the queue\nYou can mix |c00A79EFFMulti-Auction with |c00A79EFFSingle-Auction and the queue but we strongly advise against it\n\n"] = [[
 
 |c00A79EFFMehrfachauktion ermöglicht es dir, Gebote für mehrere Gegenstände gleichzeitig abzugeben, was die Sache beschleunigt!
 Befolge die Anweisungen nach dem Erstellen dieser Sitzung, um zu beginnen
@@ -237,20 +237,20 @@ Durch die Auswahl von |c00A79EFFMehrfachauktion wird verhindert, dass gedroppte 
 Du kannst |c00A79EFFMehrfachauktion mit |c00A79EFFEinzelauktion und der Warteschlange kombinieren, wir raten jedoch dringend davon ab
 
 ]];
-L.GDKP_CREATE_SESSION_TYPE_LABEL = "Auktionstyp (|c00A79EFFi für weitere Informationen)";
-L.GDKP_CREATE_SESSION_TYPE_MULTI = "Mehrfachauktion";
-L.GDKP_CREATE_SESSION_TYPE_SINGLE = "Einzelauktion";
-L.GDKP_CREATE_SUCCESSFUL = "Sitzung erstellt. Wir empfehlen dir, /reload zu verwenden, damit es vernünfitg gespeichert wird, falls dein Spiel abstürzt!";
-L.GDKP_CUTS_ADD_RAIDER = "Raider hinzufügen";
-L.GDKP_CUTS_ADJUST_G = "anpassen [g]";
-L.GDKP_CUTS_ADJUST_P = "anpassen [%]";
-L.GDKP_CUTS_ANNOUNCE_TOOLTIP = "Kündige den Basisanteil im Gruppenchat an";
-L.GDKP_CUTS_CLEAR_CONFIRMATION = "Bist du sicher, dass du alle Spieler und Berechnungen zurücksetzen möchtest? Hinweis: Alle Spieler, die nicht mehr am Raid teilnehmen, werden aus der Liste entfernt!";
-L.GDKP_CUTS_DELETE_RAIDER = "Raider löschen";
-L.GDKP_CUTS_EDIT_RAIDER = "Raider bearbeiten";
-L.GDKP_CUTS_LOCK_TOOLTIP = "Abschließen und bezahlen";
-L.GDKP_CUTS_MANAGE_TRADES_TOOLTIP = "Verwalte Goldhandel";
-L.GDKP_CUTS_MUTATORS_EXPLANATION = [[
+L["Auction type (|c00A79EFFi for more info)"] = "Auktionstyp (|c00A79EFFi für weitere Informationen)";
+L["Multi-Auction"] = "Mehrfachauktion";
+L["Single-Auction"] = "Einzelauktion";
+L["Session created. We advise you to /reload regularly so that it's stored properly in case your game crashes!"] = "Sitzung erstellt. Wir empfehlen dir, /reload zu verwenden, damit es vernünfitg gespeichert wird, falls dein Spiel abstürzt!";
+L["Add Raider"] = "Raider hinzufügen";
+L["adjust [g]"] = "anpassen [g]";
+L["adjust [%]"] = "anpassen [%]";
+L["Announce the base cut in group chat"] = "Kündige den Basisanteil im Gruppenchat an";
+L["Are you sure you want to reset all players and calculations? Note: all players no longer in the raid will be removed from the list!"] = "Bist du sicher, dass du alle Spieler und Berechnungen zurücksetzen möchtest? Hinweis: Alle Spieler, die nicht mehr am Raid teilnehmen, werden aus der Liste entfernt!";
+L["Delete Raider"] = "Raider löschen";
+L["Edit Raider"] = "Raider bearbeiten";
+L["Lock and Pay"] = "Abschließen und bezahlen";
+L["Manage gold trades"] = "Verwalte Goldhandel";
+L["\n\nWith mutators you can give more or less gold to players\nExample: giving 2% extra to tanks is what mutators are for!\n\nNote: Editing or deleting mutators here only changes them for this session\n\n"] = [[
 
 Mit Mutatoren kannst du den Spielern mehr oder weniger Gold geben
 Beispiel: Mutatoren sind dafür gedacht, Tanks 2 % mehr zu geben!
@@ -258,8 +258,8 @@ Beispiel: Mutatoren sind dafür gedacht, Tanks 2 % mehr zu geben!
 Hinweis: Wenn Sie Mutatoren hier bearbeiten oder löschen, werden sie nur für diese Sitzung geändert
 
 ]];
-L.GDKP_CUTS_NOT_IN_RAID_HEADER = "Nicht im Raid";
-L.GDKP_CUTS_POT_EXPLANATION = [[
+L["Not in the raid"] = "Nicht im Raid";
+L["\n\nThe total payout can differ slightly from the pot due to rounding differences!\nPlayers currently in the raid can not be edited or removed!\n\nColor explanation:\n|c00F7922E(2000g) Means you owe this person 2000g\n|c00BE3333(3000g) Means this person owes you 3000g\n|c0092FF00(0) Means that you're square\n\nAdjuster explanation:\nWith adjust [g] you can add/deduct gold to a player (use -50 to deduct 50 gold from a player's cut)\nWith adjust [%] you can add/deduct a percentage to a player (use -50 to give players a half cut)\n"] = [[
 
 Die Gesamtauszahlung kann aufgrund von Rundungsdifferenzen geringfügig vom Pott abweichen!
 Spieler, die sich derzeit im Raid befinden, können nicht bearbeitet oder entfernt werden!
@@ -273,36 +273,36 @@ Erklärung der Anpassungen:
 Mit Anpassen [g] kannst du einem Spieler Gold hinzufügen/abziehen (verwende -50, um 50 Gold vom Anteil eines Spielers abzuziehen).
 Mit Anpassen [%] kannst du einem Spieler einen Prozentsatz hinzufügen/abziehen (verwende -50, um den Spielern einen halben Anteil zu geben).
 ]];
-L.GDKP_CUTS_SUMMARY = "%s Raiders | %s Mit Anteil | Gesamtauszahlung: %sg";
-L.GDKP_CUT_IMPORT_EMPTY = "Es gibt nichts zu importieren. Überprüfe deine CSV-Datei noch einmal";
-L.GDKP_CUT_IMPORT_MISSING_GOLD = "Es fehlt Gold für Spieler %s";
-L.GDKP_CUT_IMPORT_MISSING_HEADER = "Fehlender Header, Hinweis: Groß-/Kleinschreibung wird beachtet!";
-L.GDKP_CUT_IMPORT_MISSING_PLAYER = "Fehlender Spielername";
-L.GDKP_DELETE_BID_INFO = "Gebot löschen. Die Auktion muss zuerst gestoppt werden!";
-L.GDKP_DISTRIBUTE_ADDRAIDER = "Füge dieser Sitzung einen Raider hinzu";
-L.GDKP_EXPORT_AUCTIONS_CUSTOM = "Benutzerdefiniert (erstell dein eigenes Format)";
-L.GDKP_EXPORT_AUCTIONS_JSON = "Detailliert (JSON)";
-L.GDKP_EXPORT_AUCTIONS_SHARE = "Teilen (kann von anderen Spielern importiert werden)";
-L.GDKP_EXPORT_CUSTOM_FORMAT = "Dein individuelles Format";
-L.GDKP_EXPORT_CUSTOM_HEADER = "Dein benutzerdefinierter Header";
-L.GDKP_EXPORT_CUTS_CUSTOM_FORMAT = "Benutzerdefiniert (erstell dein eigenes Format)";
-L.GDKP_EXPORT_CUTS_DEFAULT_FORMAT = "@PLAYER,@CUT";
-L.GDKP_EXPORT_CUTS_DEFAULT_HEADER = "Spieler, Anteil";
-L.GDKP_EXPORT_CUTS_FORMAT_END_INFO = "Datum/Uhrzeit, zu der die Sitzung gesperrt wurde";
-L.GDKP_EXPORT_CUTS_FORMAT_GIVEN_INFO = "Gesamtgold, das dem Spieler gegeben wurde";
-L.GDKP_EXPORT_CUTS_FORMAT_MAILED_INFO = "Gold wird dem Spieler per Post zugesandt";
-L.GDKP_EXPORT_CUTS_FORMAT_RECEIVED_INFO = "Gesamtgold, das der Spieler erhalten hat";
-L.GDKP_EXPORT_CUTS_FORMAT_START_INFO = "Datum/Uhrzeit der Verleihung des ersten Gegenstandes";
-L.GDKP_EXPORT_CUTS_FORMAT_TRADED_INFO = "Gold wird an den Spieler gehandelt";
-L.GDKP_EXPORT_DEFAULT_FORMAT = "@ITEM,@WINNER,@GOLD,@WOWHEAD";
-L.GDKP_EXPORT_DEFAULT_HEADER = "Gegenstand, Spieler, Gold, Wowheadlink";
-L.GDKP_EXPORT_FORMAT_START = "Datum/Uhrzeit der Verleihung des ersten Gegenstandes";
-L.GDKP_EXPORT_FORMAT_TITLE = "Der Titel der GDKP-Sitzung";
-L.GDKP_EXPORT_INCLUDE_DISENCHANTED = "Schließe entzauberte Gegenstände mit ein";
-L.GDKP_EXPORT_POT_CHANGED = "Pott gewechselt";
-L.GDKP_GOLD_TRADES = "Goldhandel";
-L.GDKP_HIDE_UPCOMING_CONFIRMATION = "Bist du sicher? Du kannst kommende Gegenstände nicht sehen oder darauf bieten!";
-L.GDKP_IMPORT_CONSEQUENCES_CROSS_REALM = [[
+L["%s Raiders | %s With cut | Total payout: %sg"] = "%s Raiders | %s Mit Anteil | Gesamtauszahlung: %sg";
+L["Nothing to import, double check your CSV"] = "Es gibt nichts zu importieren. Überprüfe deine CSV-Datei noch einmal";
+L["Missing gold for player %s"] = "Es fehlt Gold für Spieler %s";
+L["Missing header, note: it's case-sensitive!"] = "Fehlender Header, Hinweis: Groß-/Kleinschreibung wird beachtet!";
+L["Missing player name"] = "Fehlender Spielername";
+L["Delete bid. Auction must be stopped first!"] = "Gebot löschen. Die Auktion muss zuerst gestoppt werden!";
+L["Add a raider to this session"] = "Füge dieser Sitzung einen Raider hinzu";
+L["Custom (create your own format)"] = "Benutzerdefiniert (erstell dein eigenes Format)";
+L["Detailed (JSON)"] = "Detailliert (JSON)";
+L["Share (can be imported by other players)"] = "Teilen (kann von anderen Spielern importiert werden)";
+L["Your custom format"] = "Dein individuelles Format";
+L["Your custom header"] = "Dein benutzerdefinierter Header";
+L["Custom (create your own format)"] = "Benutzerdefiniert (erstell dein eigenes Format)";
+L["@PLAYER,@CUT"] = "@PLAYER,@CUT";
+L["Player,Cut"] = "Spieler, Anteil";
+L["date/time at which the session was locked"] = "Datum/Uhrzeit, zu der die Sitzung gesperrt wurde";
+L["total gold given to the player"] = "Gesamtgold, das dem Spieler gegeben wurde";
+L["gold mailed to the player"] = "Gold wird dem Spieler per Post zugesandt";
+L["total gold received from the player"] = "Gesamtgold, das der Spieler erhalten hat";
+L["date/time at which the first item was awarded"] = "Datum/Uhrzeit der Verleihung des ersten Gegenstandes";
+L["gold traded to the player"] = "Gold wird an den Spieler gehandelt";
+L["@ITEM,@WINNER,@GOLD,@WOWHEAD"] = "@ITEM,@WINNER,@GOLD,@WOWHEAD";
+L["Item,Player,Gold,Wowheadlink"] = "Gegenstand, Spieler, Gold, Wowheadlink";
+L["Date/time at which the first item was awarded"] = "Datum/Uhrzeit der Verleihung des ersten Gegenstandes";
+L["The title of the GDKP session"] = "Der Titel der GDKP-Sitzung";
+L["Include disenchanted items"] = "Schließe entzauberte Gegenstände mit ein";
+L["Pot changed"] = "Pott gewechselt";
+L["Gold Trades"] = "Goldhandel";
+L["Are you sure? You won't be able to see, or bid on, upcoming items!"] = "Bist du sicher? Du kannst kommende Gegenstände nicht sehen oder darauf bieten!";
+L["\n|c00BE3333!! WARNING !!|r\n\nYou're on a connected realm and are importing player names without\na realm suffix, '%s' for example. This can cause you to send\ncuts and cut mails to the wrong player.\n\nWhen on a connected realm always try to include the realm name of players!\n\nContinue importing?\n"] = [[
 |c00BE3333!! ACHTUNG !!|r
 
 Du befindest dich auf einem verbundenen Realm und importierst Spielernamen ohne
@@ -313,8 +313,8 @@ Wenn du dich auf einem verbundenen Realm befindest, versuch immer, den Realmname
 
 Mit dem Import fortfahren?
 ]];
-L.GDKP_IMPORT_CONSEQUENCES_INFO = "Dadurch werden alle Änderungen überschrieben, die du am Anteilfenster vorgenommen hast. Bist du sicher?";
-L.GDKP_IMPORT_CUTS_INFO = [[
+L["This will override any changes you've made to the cut window, are you sure?"] = "Dadurch werden alle Änderungen überschrieben, die du am Anteilfenster vorgenommen hast. Bist du sicher?";
+L["\nYou can import player cuts from your own calculations like a google sheet. softres GDKP etc.\n\nThe format is as follows (|c00BE3333INCLUDE THE HEADER!!):\n\n|c00BE3333Player,Gold|c00967FD2\nPlayer1,4000\nPlayer2,4125\nPlayer3,3998\n\n\n"] = [[
 Du kannst Spieleranteile aus deinen eigenen Berechnungen wie einem Google Sheet importieren. Softres GDKP usw.
 
 Das Format ist wie folgt (|c00BE3333INCLUDE THE HEADER!!):
@@ -326,7 +326,7 @@ Spieler3.3998
 
 
 ]];
-L.GDKP_IMPORT_PRICES_ABOUT = [[
+L["\nImport GDKP minimum prices and increments.\n\nThe format is as follows: ItemID + minimum or increment are required. (|c00BE3333REQUIRES A HEADER!!):\n\n|c00BE3333ItemID,Minimum,Increment|c00967FD2\n18608,4000,500\n"] = [[
 Importiere GDKP-Mindestpreise und -inkremente.
 
 Das Format ist wie folgt: ItemID + Minimum oder Inkrement sind erforderlich. (|c00BE3333ERFORDERT EINEN HEADER!!):
@@ -334,18 +334,18 @@ Das Format ist wie folgt: ItemID + Minimum oder Inkrement sind erforderlich. (|c
 |c00BE3333ItemID,Minimum,Inkrement|c00967FD2
 18608.4000.500
 ]];
-L.GDKP_IMPORT_PRICES_CONFIRM = "Vorhandene Preiseinstellungen löschen? Klick auf „Ja“, um alle Preisdaten zu löschen, und auf „Nein“, um vorhandene einfach mit den von dir hier angegebenen Daten zu überschreiben";
-L.GDKP_IMPORT_SESSION = "GDKP-Sitzung importieren";
-L.GDKP_IMPORT_SESSION_ABOUT = "Hier kannst du eine GDKP-Sitzung importieren (und fortsetzen). Um eine GDKP-Sitzung von jemandem zu erhalten, muss er sie in |c00FFF569/gdkp exportieren und dort das Format „Teilen (kann von anderen Spielern importiert werden)“ auswählen";
-L.GDKP_IMPORT_SESSION_CREATE_CONFIRM = "Du bist dabei, eine von %s erstellte GDKP-Sitzung zu importieren. Bist du sicher?";
-L.GDKP_IMPORT_SESSION_UPDATE_CONFIRM = "Diese von %s erstellte GDKP-Sitzung scheint bereits zu existieren. Möchtest du sie überschreiben?";
-L.GDKP_INVALID_DATA_FOR_EXTENSION = "Ungültige Daten für die GDKP-Erweiterung angegeben!";
-L.GDKP_INVALID_DATA_FOR_RESHEDULE = "Ungültige Daten für GDKP-Umplanung angegeben!";
-L.GDKP_INVALID_DATA_FOR_SHORTENING = "Ungültige Daten zur GDKP-Verkürzung angegeben!";
-L.GDKP_INVALID_DATA_FOR_START = "Ungültige Daten für GDKP-Auktionsstart angegeben!";
-L.GDKP_INVALID_PAID_AMOUNT = "Ungültige Nummer für „bezahlt“ angegeben";
-L.GDKP_INVALID_TIME_IN_RESHEDULE = "In „Auktion: Umplanung“ wurde eine ungültige Zeit angegeben";
-L.GDKP_ITEM_SALE_HISTORY_TOOLTIP = [[
+L["Delete existing price settings? Click yes to delete all price data, no to simply override existing ones with the data you provided here"] = "Vorhandene Preiseinstellungen löschen? Klick auf „Ja“, um alle Preisdaten zu löschen, und auf „Nein“, um vorhandene einfach mit den von dir hier angegebenen Daten zu überschreiben";
+L["Import GDKP Session"] = "GDKP-Sitzung importieren";
+L["Here you can import (and continue) a GDKP session. In order to get a GDKP session from someone they need to export it in |c00FFF569/gdkp where they select the 'Share (can be imported by other players)' format"] = "Hier kannst du eine GDKP-Sitzung importieren (und fortsetzen). Um eine GDKP-Sitzung von jemandem zu erhalten, muss er sie in |c00FFF569/gdkp exportieren und dort das Format „Teilen (kann von anderen Spielern importiert werden)“ auswählen";
+L["You're about to import a GDKP session created by %s, are you sure?"] = "Du bist dabei, eine von %s erstellte GDKP-Sitzung zu importieren. Bist du sicher?";
+L["This GDKP session created by %s appears to exist already, do you wish to override it?"] = "Diese von %s erstellte GDKP-Sitzung scheint bereits zu existieren. Möchtest du sie überschreiben?";
+L["Invalid data provided for GDKP extension!"] = "Ungültige Daten für die GDKP-Erweiterung angegeben!";
+L["Invalid data provided for GDKP reschedule!"] = "Ungültige Daten für GDKP-Umplanung angegeben!";
+L["Invalid data provided for GDKP shortening!"] = "Ungültige Daten zur GDKP-Verkürzung angegeben!";
+L["Invalid data provided for GDKP auction start!"] = "Ungültige Daten für GDKP-Auktionsstart angegeben!";
+L["Invalid number provided for 'paid'"] = "Ungültige Nummer für „bezahlt“ angegeben";
+L["Invalid time provided in Auction:reschedule"] = "In „Auktion: Umplanung“ wurde eine ungültige Zeit angegeben";
+L["\n\n|c00967FD2GDKP Data (sold %sx)\nLast sold for: %s\nAverage price: %s\nMinimum bid: %s\nIncrement: %s\n\n"] = [[
 
 |c00967FD2GDKP Daten (verkauft %sx)
 Zuletzt verkauft für: %s
@@ -354,18 +354,18 @@ Mindestgebot: %s
 Anteile
 
 ]];
-L.GDKP_LEDGER_LEGEND_BALANCE = "Saldo: |c0092FF000 ? Du bist quitt! | |c00BE333330 ? Du schuldest %s 30g | |c00F7922E50 ? %s schuldet dir 50g";
-L.GDKP_LEDGER_LEGEND_MAILED_FROM = "Gold wurde dir von %s zugesandt";
-L.GDKP_LEDGER_LEGEND_PAID_TO = "Gold wurde an %s gezahlt";
-L.GDKP_LEDGER_LEGEND_RECEIVED_FROM = "Gold von %s erhalten";
-L.GDKP_LEDGER_MUTATION = "Gold %s von"; -- %s = removed or added
-L.GDKP_LEDGER_POT = "Gesamtpott: %sg | Managementanteil: %sg (%s%%) | Zu verteilen: %sg";
-L.GDKP_LEDGER_SESSION_BY = "|c00967FD2%s | Von %s%s | Am |c00967FD2%s";
-L.GDKP_LOCKED_SESSION = "Die GDKP-Sitzung ist nicht verfügbar oder gesperrt";
-L.GDKP_MAIL_ALL = "Sende Post an alle";
-L.GDKP_MANUAL_ACTION_ON_LEGENDARY = "Keine Gebote für Legendary+-Artikel gefunden, manuell fortfahren!";
-L.GDKP_MISSING_CONTENT_FOR_START = "Fehlender Inhalt in Auktion:Start";
-L.GDKP_MULTIAUCTION_ABOUT = [[
+L["Balance:   |c0092FF000 ? You're square!  |  |c00BE333330 ? you owe %s 30g  |  |c00F7922E50 ? %s owes you 50g"] = "Saldo: |c0092FF000 ? Du bist quitt! | |c00BE333330 ? Du schuldest %s 30g | |c00F7922E50 ? %s schuldet dir 50g";
+L["Gold mailed to you by %s"] = "Gold wurde dir von %s zugesandt";
+L["Gold paid to %s"] = "Gold wurde an %s gezahlt";
+L["Gold received from %s"] = "Gold von %s erhalten";
+L["Gold %s by"] = "Gold %s von"; -- %s = removed or added
+L["Total pot: %sg | Management cut: %sg (%s%%) | To distribute: %sg"] = "Gesamtpott: %sg | Managementanteil: %sg (%s%%) | Zu verteilen: %sg";
+L["|c00967FD2%s | By %s%s | On |c00967FD2%s"] = "|c00967FD2%s | Von %s%s | Am |c00967FD2%s";
+L["The GDKP Session is not available or locked"] = "Die GDKP-Sitzung ist nicht verfügbar oder gesperrt";
+L["Mail All"] = "Sende Post an alle";
+L["No bids on Legendary+ item detected, continue manually!"] = "Keine Gebote für Legendary+-Artikel gefunden, manuell fortfahren!";
+L["Missing content in Auction:start"] = "Fehlender Inhalt in Auktion:Start";
+L["\n\nWith multi auctions (or batch auctions) you can auction off as many items as you want at once!\nThis speeds up your raid nights immensely and makes for a seamless experience for your raiders\n\nAll tradable items still in your inventory can automatically be auctioned with 'Fill from inventory'\nGive it a shot!\n\n|c00808080There is but one con: in order for people to partake in a batch auction raiders will need Gargul!\n\n"] = [[
 
 Mit Mehrfachauktionen (oder Batch-Auktionen) kannst du so viele Gegenstände auf einmal versteigern, wie du möchtest!
 Dies beschleunigt deine Raidabende enorm und sorgt für ein nahtloses Erlebnis für deine Raider
@@ -376,15 +376,15 @@ Versuch es einmal!
 |c00808080Es gibt nur einen Nachteil: Damit Raider an einer Mehrfachauktion teilnehmen können, brauchen sie Gargul!
 
 ]];
-L.GDKP_MULTIAUCTION_AUCTIONEER_ACTIVE_SESSION_WARNING = "Du benötigst eine aktive (entsperrte) GDKP-Sitzung!";
-L.GDKP_MULTIAUCTION_AUCTIONEER_ADD_ITEM = "Wenn dieses Fenster geöffnet ist, füge %s Gegenstände zur Liste hinzu oder klick unten auf „Aus Inventar füllen“."; -- %s holds the add item hotkey (default ALT_CLICK)
-L.GDKP_MULTIAUCTION_AUCTIONEER_ANTI_SNIPE_LABEL = "Anti-Snipe in Sekunden";
-L.GDKP_MULTIAUCTION_AUCTIONEER_ANTI_SNIPE_WARNING = "Der Anti-Snipe-Wert muss 0 (leer) oder >=5 sein";
-L.GDKP_MULTIAUCTION_AUCTIONEER_CANCEL_TOOLTIP = "Geh zurück zur Gegenstandsauswahl";
-L.GDKP_MULTIAUCTION_AUCTIONEER_CLEAR_TOOLTIP = "Entferne alle Elemente aus der Liste";
-L.GDKP_MULTIAUCTION_AUCTIONEER_FILL_BUTTON = "Aus Inventar füllen";
-L.GDKP_MULTIAUCTION_AUCTIONEER_FILL_TOOLTIP = "Füge handelbare Gegenstände aus deinem Inventar zur Liste hinzu";
-L.GDKP_MULTIAUCTION_AUCTIONEER_INFO = [[
+L["You need to have an active (unlocked) GDKP session!"] = "Du benötigst eine aktive (entsperrte) GDKP-Sitzung!";
+L["With this window open, %s items to add them to the list or click 'Fill from inventory' below"] = "Wenn dieses Fenster geöffnet ist, füge %s Gegenstände zur Liste hinzu oder klick unten auf „Aus Inventar füllen“."; -- %s holds the add item hotkey (default ALT_CLICK)
+L["Anti snipe in seconds"] = "Anti-Snipe in Sekunden";
+L["The anti snipe value needs to be 0 (empty) or >=5"] = "Der Anti-Snipe-Wert muss 0 (leer) oder >=5 sein";
+L["Go back to the item selector"] = "Geh zurück zur Gegenstandsauswahl";
+L["Remove all items from the list"] = "Entferne alle Elemente aus der Liste";
+L["Fill from inventory"] = "Aus Inventar füllen";
+L["Add tradeable items from your inventory to the list"] = "Füge handelbare Gegenstände aus deinem Inventar zur Liste hinzu";
+L["\nHere you determine which items to include in your multi-auction session\n\nUse the |c00A79EFFFill from inventory button below to add items that can still be traded to the list\nWhenever you clear and re-open this window, your last fill settings will be used to automatically add items\n\n|c00A79EFF%s items to manually add them to the list\n"] = [[
 Hier legst du fest, welche Artikel du in deine Multiauktionssitzung aufnehmen möchtest
 
 Benutze die Schaltfläche |c00A79EFFAus Inventar füllen unten, um Gegenstände, die noch gehandelt werden können, zur Liste hinzuzufügen
@@ -392,186 +392,186 @@ Wenn du dieses Fenster löschst und erneut öffnest, werden deine letzten Fülle
 
 |c00A79EFF%s Gegenstände um sie manuell zur Liste hinzuzufügen
 ]];
-L.GDKP_MULTIAUCTION_AUCTIONEER_NEXT_VERSION_CHECK_TOOLTIP = "Nächster Schritt: Überprüfe die Add-on-Version der Raider auf Kompatibilität";
-L.GDKP_MULTIAUCTION_AUCTIONEER_NO_GARGUL_WARNING = "Nicht jeder nutzt Gargul. Bist du sicher, dass du die Auktion starten möchtest?";
-L.GDKP_MULTIAUCTION_AUCTIONEER_NO_ITEMS_WARNING = "Wähle mindestens einen Gegenstand für deine Auktion aus";
-L.GDKP_MULTIAUCTION_AUCTIONEER_OUTDATED = "Dein Gargul ist veraltet. Wir empfehlen dir das Addon vor Beginn einer Sitzung zu aktualisieren, um Probleme zu vermeiden!";
-L.GDKP_MULTIAUCTION_AUCTIONEER_PLAYER_OUTDATED_WARNING = "Nicht jeder ist auf dem neuesten Stand. Wenn bei dir Probleme auftreten, forde deine Raider auf, ein Update durchzuführen!";
-L.GDKP_MULTIAUCTION_AUCTIONEER_RUNNING_SESSION_WARNING = "Es gibt eine aktive Mehrfachauktion. Die hier hinzugefügten Gegenstände werden der bestehenden Sitzung hinzugefügt. Achte auf doppelte Artikel!";
-L.GDKP_MULTIAUCTION_AUCTIONEER_SEARCH_LABEL = "Suche Name oder iLVL";
-L.GDKP_MULTIAUCTION_AUCTIONEER_SEARCH_TOOLTIP = "Unterstützt Gegenstandsnamen und iLVL, z. B. '252', '<252' usw";
-L.GDKP_MULTIAUCTION_AUCTIONEER_SESSION_DETAILS = "Aktive GDKP-Sitzung: |c00967FD2%s | Von %s%s | Am |c00967FD2%s";
-L.GDKP_MULTIAUCTION_AUCTIONEER_TIME_LABEL = "Auktionszeit in Sekunden";
-L.GDKP_MULTIAUCTION_AUCTIONEER_TIME_WARNING = "Die Auktionszeit in Sekunden muss >= 10 sein";
-L.GDKP_MULTIAUCTION_CLAIM_RUNNING_SESSION = "Du bist während deiner GDKP-Gebotssitzung gegangen. Um sie fortzusetzen, musst du für alle nicht verkauften Gegenstände eine neue Gebotszeit (in Sekunden) angeben";
-L.GDKP_MULTIAUCTION_CLIENT_ADD_ITEM = "Wenn dieses Fenster geöffnet ist, füge %s Gegenstände der Liste hinzu";
-L.GDKP_MULTIAUCTION_CLIENT_ADMIN_INFO = "Klick auf das Zahnradsymbol, um eine Auktion zu verwalten";
-L.GDKP_MULTIAUCTION_CLIENT_ALREADY_TOP = "Du bist bereits der Höchstbietende für %s";
-L.GDKP_MULTIAUCTION_CLIENT_AUCTION_STATUS_BID = [[
+L["Next step: check raider's add-on version for compatibility"] = "Nächster Schritt: Überprüfe die Add-on-Version der Raider auf Kompatibilität";
+L["Not everyone is using Gargul, are you sure you want to start the auction?"] = "Nicht jeder nutzt Gargul. Bist du sicher, dass du die Auktion starten möchtest?";
+L["Select at least one item for your auction"] = "Wähle mindestens einen Gegenstand für deine Auktion aus";
+L["Your Gargul is outdated, we recommend updating before starting a session to prevent issues!"] = "Dein Gargul ist veraltet. Wir empfehlen dir das Addon vor Beginn einer Sitzung zu aktualisieren, um Probleme zu vermeiden!";
+L["Not everyone is up-to-date. If you're experiencing issues, tell your raiders to update!"] = "Nicht jeder ist auf dem neuesten Stand. Wenn bei dir Probleme auftreten, forde deine Raider auf, ein Update durchzuführen!";
+L["There is an active multi-auction, items you add here will be added to the existing session. Be mindful of duplicate items!"] = "Es gibt eine aktive Mehrfachauktion. Die hier hinzugefügten Gegenstände werden der bestehenden Sitzung hinzugefügt. Achte auf doppelte Artikel!";
+L["Search name or iLVL"] = "Suche Name oder iLVL";
+L["Supports item names and iLVL e.g. '252', '<252' etc"] = "Unterstützt Gegenstandsnamen und iLVL, z. B. '252', '<252' usw";
+L["Active GDKP Session: |c00967FD2%s | By %s%s | On |c00967FD2%s"] = "Aktive GDKP-Sitzung: |c00967FD2%s | Von %s%s | Am |c00967FD2%s";
+L["Auction time in seconds"] = "Auktionszeit in Sekunden";
+L["The auction time in seconds needs to be >= 10"] = "Die Auktionszeit in Sekunden muss >= 10 sein";
+L["You left during your GDKP bidding session. In order to resume it you have to provide a new bid time (in seconds) for any unsold items"] = "Du bist während deiner GDKP-Gebotssitzung gegangen. Um sie fortzusetzen, musst du für alle nicht verkauften Gegenstände eine neue Gebotszeit (in Sekunden) angeben";
+L["With this window open, %s items to add them to the list"] = "Wenn dieses Fenster geöffnet ist, füge %s Gegenstände der Liste hinzu";
+L["Click the cogwheel icon to manage an auction"] = "Klick auf das Zahnradsymbol, um eine Auktion zu verwalten";
+L["You're already the top bidder on %s"] = "Du bist bereits der Höchstbietende für %s";
+L["\nBid |c00%s%sg\nBy %s"] = [[
 Gebot |c00%s%sg
 Von %s]];
-L.GDKP_MULTIAUCTION_CLIENT_AUCTION_STATUS_CLOSED = [[
+L["\n|c00%sCLOSED\nNo bids"] = [[
 |c00%sGESCHLOSSEN
 Keine Gebote]];
-L.GDKP_MULTIAUCTION_CLIENT_AUCTION_STATUS_NO_BID = [[
+L["\nMinimum: |c00%s%sg\nIncrement: |c00%s%sg"] = [[
 Minimum: |c00%s%sg
 Inkrement: |c00%s%sg]];
-L.GDKP_MULTIAUCTION_CLIENT_AUCTION_STATUS_OVERALL = "Gegenstände: %s – Insgesamt verkauft: %sg – Von mir zugesichert: %sg";
-L.GDKP_MULTIAUCTION_CLIENT_AUCTION_STATUS_OVERALL_TOOLTIP = [[
+L["Items: %s  -  Total sold: %sg  -  Pledged by me: %sg"] = "Gegenstände: %s – Insgesamt verkauft: %sg – Von mir zugesichert: %sg";
+L["\nItems with bids: %s/%s\nTotal sold: %s\nBought by me: %s\nTotal bid (does not include sold): %s\nBid by me (does not include sold): %s\n"] = [[
 Gegenstände mit Geboten: %s/%s
 Insgesamt verkauft: %s
 Von mir gekauft: %s
 Gesamtgebot (ohne Verkauf): %s
 Von mir geboten (ohne Verkauf): %s
 ]];
-L.GDKP_MULTIAUCTION_CLIENT_AUCTION_STATUS_SOLD = [[
+L["\n|c00%sSOLD to\n%s for |c00%s%sg"] = [[
 |c00%sVERKAUFT an
 %s für |c00%s%sg]];
-L.GDKP_MULTIAUCTION_CLIENT_AUCTION_STATUS_YOUR_BID = [[
+L["\nBid |c00%s%sg\nBy |c0092FF00YOU!"] = [[
 Gebot |c00%s%sg
 Von |c0092FF00DIR!]];
-L.GDKP_MULTIAUCTION_CLIENT_AUTOBID_STOP_FAILED = "Das automatische Bieten für %s konnte nicht gestoppt werden. Versuche es erneut oder /reload!";
-L.GDKP_MULTIAUCTION_CLIENT_AUTOBID_TOOLTIP_GIVEN = "Automatisches Gebot bis maximal %sg";
-L.GDKP_MULTIAUCTION_CLIENT_AUTOBID_TOOLTIP_NONE = "Automatisches Gebot bis zu dem Gebot, das du links eingibst";
-L.GDKP_MULTIAUCTION_CLIENT_AUTOBID_TOOLTIP_STOP = "Stoppe dein automatisches Gebot (%sg)";
-L.GDKP_MULTIAUCTION_CLIENT_BID_FAILED = "Das Gebot für %s konnte nicht bestätigt werden";
-L.GDKP_MULTIAUCTION_CLIENT_BID_INVALID = "Ungültiges oder zu niedriges Gebot! Das Minimum ist %sg";
-L.GDKP_MULTIAUCTION_CLIENT_BID_THROTTLE = "Zwischen Geboten für denselben Gegenstand musst du zwei Sekunden warten";
-L.GDKP_MULTIAUCTION_CLIENT_CLEAR_BIDS = "Leere Gebote";
-L.GDKP_MULTIAUCTION_CLIENT_CLEAR_BIDS_TOOLTIP = "Entferne alle Gebote aus der Auktion";
-L.GDKP_MULTIAUCTION_CLIENT_CLOSE_ALL = "Alle abschließen";
-L.GDKP_MULTIAUCTION_CLIENT_CLOSE_ALL_CONFIRM = "ALLE Auktionen abschließen?";
-L.GDKP_MULTIAUCTION_CLIENT_CLOSE_ALL_TOOLTIP = [[
+L["Could not stop auto bidding on %s, try again or /reload!"] = "Das automatische Bieten für %s konnte nicht gestoppt werden. Versuche es erneut oder /reload!";
+L["Auto bid up to a maximum of %sg"] = "Automatisches Gebot bis maximal %sg";
+L["Auto bid up to the bid you fill in on the left"] = "Automatisches Gebot bis zu dem Gebot, das du links eingibst";
+L["Stop your auto bid (%sg)"] = "Stoppe dein automatisches Gebot (%sg)";
+L["Bid on %s could not be confirmed"] = "Das Gebot für %s konnte nicht bestätigt werden";
+L["Invalid bid or bid is too low! The minimum is %sg"] = "Ungültiges oder zu niedriges Gebot! Das Minimum ist %sg";
+L["You need to wait two seconds between bids on the same item"] = "Zwischen Geboten für denselben Gegenstand musst du zwei Sekunden warten";
+L["Clear bids"] = "Leere Gebote";
+L["Remove all bids from the auction"] = "Entferne alle Gebote aus der Auktion";
+L["Close all"] = "Alle abschließen";
+L["Close ALL auctions?"] = "ALLE Auktionen abschließen?";
+L["\nClose ALL auctions\n\nAuctions with active bids on them will be sold and can not receive new bids!\n"] = [[
 Schließen Sie ALLE Auktionen ab
 
 Auktionen mit aktiven Geboten werden verkauft und können keine neuen Gebote erhalten!
 ]];
-L.GDKP_MULTIAUCTION_CLIENT_CLOSE_AUCTION = "Auktion abschließen";
-L.GDKP_MULTIAUCTION_CLIENT_CLOSE_AUCTION_TOOLTIP = "Schließe die Auktion ab. Spieler können nicht mehr bieten, aber das Höchstgebot bleibt aktiv";
-L.GDKP_MULTIAUCTION_CLIENT_DELETE_TOOLTIP = "Entferne den Gegenstand einschließlich seiner Gebotsdetails aus der Auktion. DAS KANN NICHT RÜCKGÄNGIG GEMACHT WERDEN!";
-L.GDKP_MULTIAUCTION_CLIENT_DISENCHANT_CONFIRM = "Alle fertigen, aber nicht verkauften Gegenstände entzaubern?";
-L.GDKP_MULTIAUCTION_CLIENT_DISENCHANT_TOOLTIP = [[
+L["Close Auction"] = "Auktion abschließen";
+L["Close the auction. Players can no longer bid but the highest bid remains active"] = "Schließe die Auktion ab. Spieler können nicht mehr bieten, aber das Höchstgebot bleibt aktiv";
+L["Remove the item from the auction including its bid details. THIS CAN'T BE UNDONE!"] = "Entferne den Gegenstand einschließlich seiner Gebotsdetails aus der Auktion. DAS KANN NICHT RÜCKGÄNGIG GEMACHT WERDEN!";
+L["Disenchant all finished but unsold items?"] = "Alle fertigen, aber nicht verkauften Gegenstände entzaubern?";
+L["\nDisenchant unsold items\n\nThis will mark all unsold items as disenchanted and they will not show up in a new multi-auction session\n"] = [[
 Entzaubere nicht verkaufte Gegenstände
 
 Dadurch werden alle nicht verkauften Gegenstände als entzaubert markiert und in einer neuen Mehrfachauktionssitzung nicht angezeigt
 ]];
-L.GDKP_MULTIAUCTION_CLIENT_FAVORITE_TOOLTIP = "Favorisiere diesen Gegenstand";
-L.GDKP_MULTIAUCTION_CLIENT_FINAL_CALL_DIALOG = "Gib einen letzten Aufruf- Timer von wie vielen Sekunden an?";
-L.GDKP_MULTIAUCTION_CLIENT_FINAL_CALL_MIN_5 = "Die Mindestanzahl an Sekunden beträgt 5";
-L.GDKP_MULTIAUCTION_CLIENT_FINAL_CALL_TOOLTIP = "Starte einen letzten Aufruf für diese Auktion, indem du einen (normalerweise kürzeren) Gebotstimer angibst";
-L.GDKP_MULTIAUCTION_CLIENT_FINISH_CONFIRM = "ALLE Auktionen abschließen und diese Mehrfachauktionssitzung abschließen?";
-L.GDKP_MULTIAUCTION_CLIENT_FINISH_TOOLTIP = [[
+L["Favorite this item"] = "Favorisiere diesen Gegenstand";
+L["Give a final call timer of how many seconds?"] = "Gib einen letzten Aufruf- Timer von wie vielen Sekunden an?";
+L["The minimum amount of seconds is 5"] = "Die Mindestanzahl an Sekunden beträgt 5";
+L["Start a final call for this auction by giving a (usually shorter) bid timer"] = "Starte einen letzten Aufruf für diese Auktion, indem du einen (normalerweise kürzeren) Gebotstimer angibst";
+L["Close ALL auctions and wrap up this multi-auction session?"] = "ALLE Auktionen abschließen und diese Mehrfachauktionssitzung abschließen?";
+L["\nFinish Multi-Auction session\n\nThis will close all auctions and announce the total pot in chat\nAuctions with active bids on them will be sold and can not receive new bids!\n"] = [[
 Beende die Mehrfachauktionssitzung
 
 Dadurch werden alle Auktionen abgeschlossen und der gesamte Pott im Chat bekannt gegeben
 Auktionen mit aktiven Geboten werden verkauft und können keine neuen Gebote erhalten!
 ]];
-L.GDKP_MULTIAUCTION_CLIENT_HIDE_INACTIVE = "Inaktive ausblenden";
-L.GDKP_MULTIAUCTION_CLIENT_HIDE_UNUSABLE = "Unbrauchbare ausblenden";
-L.GDKP_MULTIAUCTION_CLIENT_INACTIVE_TOGGLE_TOOLTIP = "Abgeschlossene Auktionen ein-/ausblenden";
-L.GDKP_MULTIAUCTION_CLIENT_MANAGE_AUCTION = "Auktion verwalten";
-L.GDKP_MULTIAUCTION_CLIENT_MINBID_TOOLTIP = "Biete den erforderlichen Mindestbetrag";
-L.GDKP_MULTIAUCTION_CLIENT_REOPEN_INFO = "Gebotsfenster geschlossen, mit |c00A79EFF/gl-Gebot wieder öffnen!";
-L.GDKP_MULTIAUCTION_CLIENT_SETTING_ANNOUNCE_SALES = "Kündige verkaufte Gegenstände im Chat an";
-L.GDKP_MULTIAUCTION_CLIENT_SETTING_OUTBID_SOUND = "Ton abgespielen wenn überboten";
-L.GDKP_MULTIAUCTION_CLIENT_SETTING_SOUND_OPTIONS = "Weitere Tonoptionen...";
-L.GDKP_MULTIAUCTION_CLIENT_SHOW_ALL = "Zeige alles";
-L.GDKP_MULTIAUCTION_CLIENT_SHOW_FAVORITES = "Favoriten anzeigen";
-L.GDKP_MULTIAUCTION_CLIENT_SHOW_INACTIVE = "Inaktive anzeigen";
-L.GDKP_MULTIAUCTION_CLIENT_SHOW_UNUSABLE = "Unbrauchbare anzeigen";
-L.GDKP_MULTIAUCTION_CLIENT_SOLD_INFO = "Dieser Artikel wurde verkauft. Verwende das Register (|c00%s/gdkp), um Änderungen vorzunehmen!";
-L.GDKP_MULTIAUCTION_CLIENT_TERMINATE = "Abbrechen";
-L.GDKP_MULTIAUCTION_CLIENT_TERMINATE_CONFIRM = "Alle Gebote/Gebote entfernen und alle Auktionen schließen?";
-L.GDKP_MULTIAUCTION_CLIENT_TERMINATE_TOOLTIP = [[
+L["Hide inactive"] = "Inaktive ausblenden";
+L["Hide unusable"] = "Unbrauchbare ausblenden";
+L["Show/Hide finished auctions"] = "Abgeschlossene Auktionen ein-/ausblenden";
+L["Manage Auction"] = "Auktion verwalten";
+L["Bid the minimum required amount"] = "Biete den erforderlichen Mindestbetrag";
+L["Bidding window closed, use |c00A79EFF/gl bid to reopen it!"] = "Gebotsfenster geschlossen, mit |c00A79EFF/gl-Gebot wieder öffnen!";
+L["Announce sales in chat"] = "Kündige verkaufte Gegenstände im Chat an";
+L["Play sound when outbid"] = "Ton abgespielen wenn überboten";
+L["More sound options..."] = "Weitere Tonoptionen...";
+L["Show all"] = "Zeige alles";
+L["Show favorites"] = "Favoriten anzeigen";
+L["Show inactive"] = "Inaktive anzeigen";
+L["Show unusable"] = "Unbrauchbare anzeigen";
+L["This item was sold. Use ledger (|c00%s/gdkp) to make changes!"] = "Dieser Artikel wurde verkauft. Verwende das Register (|c00%s/gdkp), um Änderungen vorzunehmen!";
+L["Terminate"] = "Abbrechen";
+L["Remove all bidsl bids and close all auctions?"] = "Alle Gebote/Gebote entfernen und alle Auktionen schließen?";
+L["\nTerminate Multi-Auction session\n\nThis will delete all bids on items that haven't sold yet and close all auctions!\n"] = [[
 Brich die Mehrfachauktionssitzung ab
 
 Dadurch werden alle Gebote auf Gegenstände, die noch nicht verkauft wurden, gelöscht und alle Auktionen geschlossen!
 ]];
-L.GDKP_MULTIAUCTION_CLIENT_TOOLTIP_INFO = "Bewege den Mauszeiger über die Knöpfe für weitere Informationen";
-L.GDKP_MULTIAUCTION_CLIENT_UNUSABLE_TOGGLE_TOOLTIP = "Gegenstände anzeigen/ausblenden, die du nicht verwenden kannst";
-L.GDKP_MULTIAUCTION_INVALID_DATA_FOR_START = "Ungültige Daten für GDKP-Auktionsstart angegeben!";
-L.GDKP_MULTIAUCTION_ITEM_SOLD = "%s hat %s für %sg gekauft";
-L.GDKP_MULTIAUCTION_LM_OUTDATED = "Der Plündermeister (%s) ist veraltet, dies kann dazu führen, dass Gebote fehlschlagen!";
-L.GDKP_MULTIAUCTION_OUTBID = "Du wurdest überboten!";
-L.GDKP_MUTATORS = "Mutatoren";
-L.GDKP_MUTATOR_ADD = "Mutator hinzufügen";
-L.GDKP_MUTATOR_APPLY_LABEL = "Automatisch anwenden auf";
-L.GDKP_MUTATOR_CREATE_NEW = "Erstelle einen neuen GDKP-Mutator";
-L.GDKP_MUTATOR_DELETE_BYPASS = "Löschen. Halte die Umschalttaste gedrückt, um die Bestätigung zu umgehen";
-L.GDKP_MUTATOR_EDIT = "Mutator bearbeiten";
-L.GDKP_MUTATOR_FLAT_LABEL = "Pauschaler Goldpreis [Beispiel: 250]";
-L.GDKP_MUTATOR_FLAT_RATE_NUMBER_WARNING = "Bei der Pauschale muss es sich um eine Zahl handeln";
-L.GDKP_MUTATOR_HELP_TOOLTIP_BOTTOM = [[
+L["Hover over any of the buttons below for more information"] = "Bewege den Mauszeiger über die Knöpfe für weitere Informationen";
+L["Show/Hide items you can't use"] = "Gegenstände anzeigen/ausblenden, die du nicht verwenden kannst";
+L["Invalid data provided for GDKP auction start!"] = "Ungültige Daten für GDKP-Auktionsstart angegeben!";
+L["%s bought %s for %sg"] = "%s hat %s für %sg gekauft";
+L["The loot master (%s) is outdated, this can cause bids to fail!"] = "Der Plündermeister (%s) ist veraltet, dies kann dazu führen, dass Gebote fehlschlagen!";
+L["You were outbid!"] = "Du wurdest überboten!";
+L["Mutators"] = "Mutatoren";
+L["Add Mutator"] = "Mutator hinzufügen";
+L["Auto apply to"] = "Automatisch anwenden auf";
+L["Create a new GDKP mutator"] = "Erstelle einen neuen GDKP-Mutator";
+L["Delete. Hold shift to bypass confirmation"] = "Löschen. Halte die Umschalttaste gedrückt, um die Bestätigung zu umgehen";
+L["Edit mutator"] = "Mutator bearbeiten";
+L["Flat gold rate [example: 250]"] = "Pauschaler Goldpreis [Beispiel: 250]";
+L["The flat rate needs to be a number"] = "Bei der Pauschale muss es sich um eine Zahl handeln";
+L["\nExample:\n|c00967FD2SELF,RL,HEALER"] = [[
 Beispiel:
 |c00967FD2SELF,RL,HEALER]];
-L.GDKP_MUTATOR_HELP_TOOLTIP_TOP = "Du kannst diesen Mutator mithilfe von Schlüsselwörtern automatisch auf Raider anwenden:";
-L.GDKP_MUTATOR_NAME_LABEL = "Name [Beispiel: Heiler]";
-L.GDKP_MUTATOR_NO_DOTS_WARNING = "Mutatornamen dürfen keine Punkte (.) enthalten.";
-L.GDKP_MUTATOR_PERCENTAGE_LABEL = "Prozentsatz [Beispiel: 10]";
-L.GDKP_MUTATOR_PERCENTAGE_NUMBER_WARNING = "Der Prozentsatz muss eine Zahl sein";
-L.GDKP_MUTATOR_STORE_PERMANENTLY = "Für zukünftige Sitzungen speichern";
-L.GDKP_MUTATOR_UNKNOWN = "Unbekannter Mutator: %s";
-L.GDKP_NOT_ALLOWED_TO_START_AUCTION = "Benutzer „%s“ ist nicht berechtigt, Auktionen zu starten";
-L.GDKP_NOT_ALLOWED_TO_STOP_AUCTION = "Benutzer „%s“ ist nicht berechtigt, Auktionen zu stoppen";
-L.GDKP_NOT_ALLOWED_TO_STOP_INVALID_AUCTION = "Benutzer „%s“ darf die Auktion nicht stoppen: Auktion ungültig";
-L.GDKP_NOT_ENOUGH_GOLD_TO_DISTRIBUTE = "Es gibt nicht genug Gold zum Verteilen, rechne mit seltsamen Anteilsberechnungen!";
-L.GDKP_NO_BIDS = "Keine Gebote!";
-L.GDKP_OUTBID = "Du wurdest überboten!";
-L.GDKP_OVERVIEW_ACTIVE_SESSION = "(aktiv)";
-L.GDKP_OVERVIEW_ADJUST_GOLD_DISABLED_TOOLTIP = [[
+L["You can automatically apply this mutator to raiders using keywords:"] = "Du kannst diesen Mutator mithilfe von Schlüsselwörtern automatisch auf Raider anwenden:";
+L["Name [example: Tanks]"] = "Name [Beispiel: Heiler]";
+L["Mutator names can not contains dots (.)"] = "Mutatornamen dürfen keine Punkte (.) enthalten.";
+L["Percentage [example: 10]"] = "Prozentsatz [Beispiel: 10]";
+L["The percentage needs to be a number"] = "Der Prozentsatz muss eine Zahl sein";
+L["Store for future sessions"] = "Für zukünftige Sitzungen speichern";
+L["Unknown mutator: %s"] = "Unbekannter Mutator: %s";
+L["User '%s' is not allowed to start auctions"] = "Benutzer „%s“ ist nicht berechtigt, Auktionen zu starten";
+L["User '%s' is not allowed to stop auctions"] = "Benutzer „%s“ ist nicht berechtigt, Auktionen zu stoppen";
+L["User '%s' is not allowed to stop auction: auction invalid"] = "Benutzer „%s“ darf die Auktion nicht stoppen: Auktion ungültig";
+L["There's not enough gold to distribute, expect some weird cut calculations!"] = "Es gibt nicht genug Gold zum Verteilen, rechne mit seltsamen Anteilsberechnungen!";
+L["No bids!"] = "Keine Gebote!";
+L["You were outbid!"] = "Du wurdest überboten!";
+L["(active)"] = "(aktiv)";
+L["\nYou need lead or master loot to adjust gold.\nYou can't adjust gold on locked/deleted sessions"] = [[
 Zum Anpassen von Gold musst du Anführer oder Plündermeister sein.
 Du kannst Gold für gesperrte/gelöschte Sitzungen nicht anpassen]];
-L.GDKP_OVERVIEW_ADJUST_GOLD_TOOLTIP = "Gold hinzufügen/entfernen";
-L.GDKP_OVERVIEW_AUCTION_ENTRY = [[
+L["Add/Remove gold"] = "Gold hinzufügen/entfernen";
+L["\n%s paid |c00%s%s for\n%s"] = [[
 %s hat |c00%s%s bezahlt für
 %s]]; -- Player paid 5000g for [Benediction]
-L.GDKP_OVERVIEW_DELETED_ENTRY = [[
+L["\n|c00be3333Deleted by %s\nReason: %s"] = [[
 |c00be3333Gelöscht von %s
 Gründe dafür]];
-L.GDKP_OVERVIEW_DELETED_SESSION = "(gelöscht)";
-L.GDKP_OVERVIEW_DELETE_ENTRY_DISABLED_TOOLTIP = [[
+L["(deleted)"] = "(gelöscht)";
+L["\nYou need lead or master loot to delete entries.\nYou can't delete entries on locked/deleted sessions"] = [[
 Zum Löschen von Einträgen musst du Anführer oder Plündermeister sein.
 Du kannst keine Einträge in gesperrten/gelöschten Sitzungen löschen]];
-L.GDKP_OVERVIEW_DELETE_ENTRY_REASON = "Gib einen Grund für das Löschen dieses Eintrags an";
-L.GDKP_OVERVIEW_DELETE_ENTRY_TOOLTIP = "Löschen. Halte die Umschalttaste gedrückt, um die Notiz zu umgehen";
-L.GDKP_OVERVIEW_DELETE_TOOLTIP = "Sitzungen mit angehängten Auktionen werden nach 48 Stunden gelöscht";
-L.GDKP_OVERVIEW_EDIT_ENTRY_DISABLED_TOOLTIP = [[
+L["Provide a reason for deleting this entry"] = "Gib einen Grund für das Löschen dieses Eintrags an";
+L["Delete. Hold shift to bypass note"] = "Löschen. Halte die Umschalttaste gedrückt, um die Notiz zu umgehen";
+L["Sessions with auctions attached to them will be deleted after 48 hours"] = "Sitzungen mit angehängten Auktionen werden nach 48 Stunden gelöscht";
+L["\nYou need lead or master loot to edit entries.\nYou can't edit deleted entries or entries on locked/deleted sessions"] = [[
 Um Einträge zu bearbeiten musst du Anführer oder Plündermeister sein.
 Du kannst gelöschte Einträge oder Einträge in gesperrten/gelöschten Sitzungen nicht bearbeiten]];
-L.GDKP_OVERVIEW_EXPORT_TOOLTIP = "Exportiere eine Sitzung, damit andere Spieler Sitzungsdetails sehen oder dich sogar als Plündermeister ersetzen können";
-L.GDKP_OVERVIEW_IMPORT_TOOLTIP = "Importiere eine Sitzung von einem anderen Spieler oder Konto";
-L.GDKP_OVERVIEW_LEDGER_TOOLTIP = [[
+L["Export a session so others can view session details or even replace you as a loot master"] = "Exportiere eine Sitzung, damit andere Spieler Sitzungsdetails sehen oder dich sogar als Plündermeister ersetzen können";
+L["Import a session from another player or account"] = "Importiere eine Sitzung von einem anderen Spieler oder Konto";
+L["\nShow a full overview of the ledger,\nideal for screenshotting purposes!"] = [[
 Zeige eine vollständige Übersicht über das Register an.
 Ideal für Screenshotzwecke!]];
-L.GDKP_OVERVIEW_LOCK_CONFIRM = "Wenn du eine Sitzung sperrst, kannst du keine Gegenstände versteigern oder auf andere Weise etwas ändern, bis du die Sitzung entsperrst. Bist du sicher?";
-L.GDKP_OVERVIEW_LOCK_OR_UNLOCK_TOOLTIP = "Sperre oder entsperre die Sitzung";
-L.GDKP_OVERVIEW_LOCK_TOOLTIP = "Sperre die Sitzung für die Auszahlung";
-L.GDKP_OVERVIEW_MULTI_AUCTION_TOOLTIP = "Mehrfachauktion: Versteigere mehrere Gegenstände gleichzeitig!";
-L.GDKP_OVERVIEW_MUTATION_ADDED = "hinzugefügt zu";
-L.GDKP_OVERVIEW_MUTATION_ENTRY = [[
+L["Locking a session means you can't auction items or otherwise change anything until you unlock it, are you sure?"] = "Wenn du eine Sitzung sperrst, kannst du keine Gegenstände versteigern oder auf andere Weise etwas ändern, bis du die Sitzung entsperrst. Bist du sicher?";
+L["Lock or unlock the session"] = "Sperre oder entsperre die Sitzung";
+L["Lock the session for payout"] = "Sperre die Sitzung für die Auszahlung";
+L["Multi-auction: auction multiple items at once!"] = "Mehrfachauktion: Versteigere mehrere Gegenstände gleichzeitig!";
+L["added to"] = "hinzugefügt zu";
+L["\n|c00%s%s %s pot by %s\nNote: %s"] = [[
 |c00%s%s %s Pott von %s
 Anmerkungen]]; -- i.e. 5000g added to pot by winner Note: I made a booboo
-L.GDKP_OVERVIEW_MUTATION_REMOVED = "entfernt von";
-L.GDKP_OVERVIEW_POT_TOOLTIP = [[
+L["removed from"] = "entfernt von";
+L["\nPot: %s\nManagement cut (%s%%): %sg\nPer player cut (1/%s): %sg\n"] = [[
 Pott: %s
 Managementanteil (%s%%): %sg
 Pro Spieleranteil (1/%s): %sg
 ]];
-L.GDKP_OVERVIEW_RESTORE_ENTRY_DISABLED_TOOLTIP = [[
+L["\nYou need lead or master loot to restore entries.\nYou can't restore entries of locked/deleted sessions"] = [[
 Um Einträge wiederherzustellen musst du Anführer oder Plündermeister sein.
 Einträge gesperrter/gelöschter Sitzungen können nicht wiederhergestellt werden]];
-L.GDKP_OVERVIEW_SESSION_DETAILS = "Von %s%s | Am |c00%s%s%s"; -- By name<guild> on date
-L.GDKP_OVERVIEW_UNLOCK_CONFIRM = "Das Freischalten und Ändern des Potts oder der Anteile kann sehr chaotisch werden, insbesondere wenn du bereits Auszahlungen vorgenommen hast. Bist du sicher?";
-L.GDKP_OVERVIEW_UNLOCK_TOOLTIP = "Entsperre die Sitzung";
-L.GDKP_PAYOUT_INACTIVE = "Keine aktive GDKP-Sitzung erkannt oder Sitzung ist nicht für die Auszahlung gesperrt!";
-L.GDKP_PRICE_IMPORT_INC_OR_MIN_TOO_LOW = "Inkrement bzw. Minimum darf nicht kleiner als .0001 sein!";
-L.GDKP_PRICE_IMPORT_INVALID_INC = "Ungültiges „Inkrement“ für Gegenstand-ID „%s“ angegeben";
-L.GDKP_PRICE_IMPORT_INVALID_MIN = "Ungültiges „Minimum“ für Gegenstand-ID „%s“ angegeben";
-L.GDKP_PRICE_IMPORT_MIN_OR_INC_REQUIRED = "Für die Gegenstand-ID %s ist entweder ein Minimum oder ein Inkrement erforderlich";
-L.GDKP_PRICE_IMPORT_MISSING_HEADER = "Fehlender Header, Hinweis: Groß-/Kleinschreibung wird beachtet!";
-L.GDKP_PRICE_IMPORT_SUCCESSFUL = "Daten für %s Gegenstand erfolgreich importiert";
-L.GDKP_PRICE_IMPORT_UNKNOWN_ITEM = "Unbekannte Gegenstand-ID: %s";
-L.GDKP_QUEUE_EXPLANATION = [[
+L["By %s%s | On |c00%s%s%s"] = "Von %s%s | Am |c00%s%s%s"; -- By name<guild> on date
+L["Unlocking and changing the pot or cuts can get really messy, especially if you've already done payouts. Are you sure?"] = "Das Freischalten und Ändern des Potts oder der Anteile kann sehr chaotisch werden, insbesondere wenn du bereits Auszahlungen vorgenommen hast. Bist du sicher?";
+L["Unlock the session"] = "Entsperre die Sitzung";
+L["No active GDKP session detected or session is not locked for payout!"] = "Keine aktive GDKP-Sitzung erkannt oder Sitzung ist nicht für die Auszahlung gesperrt!";
+L["Increment or minimum can't be lower than .0001!"] = "Inkrement bzw. Minimum darf nicht kleiner als .0001 sein!";
+L["Invalid 'Increment' provided for item ID '%s'"] = "Ungültiges „Inkrement“ für Gegenstand-ID „%s“ angegeben";
+L["Invalid 'Minimum' provided for item ID '%s'"] = "Ungültiges „Minimum“ für Gegenstand-ID „%s“ angegeben";
+L["Either minimum or increment is required for item ID: %s"] = "Für die Gegenstand-ID %s ist entweder ein Minimum oder ein Inkrement erforderlich";
+L["Missing header, note: it's case-sensitive!"] = "Fehlender Header, Hinweis: Groß-/Kleinschreibung wird beachtet!";
+L["Successfully imported data for %s items"] = "Daten für %s Gegenstand erfolgreich importiert";
+L["Unknown item ID: %s"] = "Unbekannte Gegenstand-ID: %s";
+L["\n|c00A79EFF%s items in bags, loot windows or even on links in your chat to add them to this auction queue.\nItems in the queue will automatically be auctioned off once your current auction is done. Click the '%s' button to prevent this.\n\nWant Gargul to automatically award or disenchant auctions for you? Open the settings wheel on the left side!\n\n|c00FFF569Did you know?\nYou can move items around with drag and drop\nItems will be remembered, even when you |c00A79EFF/reload\nQueued items are automatically shown to raiders who have Gargul so they can prebid\nGargul can also handle auto looting for you. Check it out with |c00A79EFF/gl pm\n"] = [[
 |c00A79EFF%s Gegenstände in Taschen, Beutefenstern oder sogar auf Links in deinem Chat, um sie dieser Auktionswarteschlange hinzuzufügen.
 Gegenstände in der Warteschlange werden automatisch versteigert, sobald deine aktuelle Auktion abgeschlossen ist. Klick auf die Schaltfläche „%s“, um dies zu verhindern.
 
@@ -583,13 +583,13 @@ Gegenstände werden gespeichert, auch wenn du |c00A79EFF/neu lädst
 In der Warteschlange befindliche Gegenstände werden Raidern, die über Gargul verfügen, automatisch angezeigt, damit sie vorab bieten können
 Gargul kann auch das automatische Plündern für dich übernehmen. Probier es mit |c00A79EFF/gl pm aus
 ]];
-L.GDKP_QUEUE_HIDE_UNUSABLE = "Blende unbrauchbare Gegenstände aus";
-L.GDKP_SESSION = "GDKP-Sitzung";
-L.GDKP_SESSION_EDIT_TITLE = "%s wird bearbeitet";
-L.GDKP_SHOW_UPCOMING = "Kommende Gegenstände anzeigen";
-L.GDKP_STOP_AUCTION_FIRST = "Stoppe zuerst die Auktion!";
-L.GDKP_THEY_OWE = "%s schuldet dir %s";
-L.GDKP_TRADE_BALANCE_INFO = [[
+L["Hide unusable items"] = "Blende unbrauchbare Gegenstände aus";
+L["GDKP Session"] = "GDKP-Sitzung";
+L["Editing %s"] = "%s wird bearbeitet";
+L["Show upcoming items"] = "Kommende Gegenstände anzeigen";
+L["Stop the auction first!"] = "Stoppe zuerst die Auktion!";
+L["%s owes you %s"] = "%s schuldet dir %s";
+L["\n|c00967FD2GDKP Session\nSpent by player: %s\nGiven: %s\nReceived: %s\nPlayer cut: %s\n\n%s\n"] = [[
 |c00967FD2GDKP Sitzung
 Von Spieler ausgegeben: %s
 Gegeben: %s
@@ -598,19 +598,19 @@ Spieleranteil: %s
 
 %s
 ]];
-L.GDKP_TRADE_EXCLUDE_GOLD = "Aus GDKP ausschließen";
-L.GDKP_TRADE_EXCLUDE_GOLD_INFO = "Das gehandelte Gold wird nicht zum gegebenen oder erhaltenen Betrag addiert";
-L.GDKP_TRADE_GIVEN_TO_LABEL = "Gold |c00967FD2an %s übergeben";
-L.GDKP_TRADE_GOLD_ADD_FAILED = "%s konnte nicht zum Handelsfenster hinzugefügt werden. Versuch es manuell hinzuzufügen!";
-L.GDKP_TRADE_GOLD_INSUFFICIENT_FUNDS = "Du hast nicht genug Geld, um %s zu bezahlen";
-L.GDKP_TRADE_GOLD_TO_GIVE = "Zu geben: %s";
-L.GDKP_TRADE_GOLD_TO_RECEIVE = "Zu empfangen: %s";
-L.GDKP_TRADE_RECEIVED_FROM_LABEL = "Gold |c00967FD2erhalten von %s";
-L.GDKP_TRY_MULTIAUCTION = "Schau dir sich Mehrfachauktionen an!";
-L.GDKP_TUTORIAL_INFO = "Befolge die folgenden Schritte, um schnell mit Gargul GDKP zu beginnen!";
-L.GDKP_TUTORIAL_STEP_ACTIVATE = "Aktiviere diese Sitzung, indem du unten auf die Schaltfläche |c00FFF569Enable klickst!";
-L.GDKP_TUTORIAL_STEP_AUCTION = "|c00FFF569%s einen Gegenstand, um einen einzelnen Gegenstand zu versteigern oder in die Warteschlange zu stellen"; -- %s holds the auction item hotkey (default ALT_CLICK)
-L.GDKP_TUTORIAL_STEP_COMMANDS = [[
+L["Exclude from GDKP"] = "Aus GDKP ausschließen";
+L["Gold traded will not be added to amount given or received"] = "Das gehandelte Gold wird nicht zum gegebenen oder erhaltenen Betrag addiert";
+L["Gold |c00967FD2given to %s"] = "Gold |c00967FD2an %s übergeben";
+L["Unable to add %s to the trade window. Try adding it manually!"] = "%s konnte nicht zum Handelsfenster hinzugefügt werden. Versuch es manuell hinzuzufügen!";
+L["You don't have enough money to pay %s"] = "Du hast nicht genug Geld, um %s zu bezahlen";
+L["To give: %s"] = "Zu geben: %s";
+L["To receive: %s"] = "Zu empfangen: %s";
+L["Gold |c00967FD2received from %s"] = "Gold |c00967FD2erhalten von %s";
+L["Check out Multi Auctions!"] = "Schau dir sich Mehrfachauktionen an!";
+L["Follow the steps below to quickly get started with Gargul GDKP!"] = "Befolge die folgenden Schritte, um schnell mit Gargul GDKP zu beginnen!";
+L["Activate this session by clicking the |c00FFF569Enable button below!"] = "Aktiviere diese Sitzung, indem du unten auf die Schaltfläche |c00FFF569Enable klickst!";
+L["|c00FFF569%s an item to auction or queue a single item"] = "|c00FFF569%s einen Gegenstand, um einen einzelnen Gegenstand zu versteigern oder in die Warteschlange zu stellen"; -- %s holds the auction item hotkey (default ALT_CLICK)
+L["\nHelpful commands:\n- |c00FFF569/gdkp to open this window\n- |c00FFF569/gl ma to open the multi-auction window\n- |c00FFF569/gl au to open the single item auctioneer / queue\n- |c00FFF569/gl pm to set up auto-looting\n\n"] = [[
 Hilfreiche Befehle:
 - |c00FFF569/gdkp, um dieses Fenster zu öffnen
 - |c00FFF569/gl ma, um das Fenster für mehrere Auktionen zu öffnen
@@ -618,42 +618,42 @@ Hilfreiche Befehle:
 - |c00FFF569/gl pm, um automatisches Plündern einzurichten
 
 ]];
-L.GDKP_TUTORIAL_STEP_DONE = "Wenn alles gut gelaufen ist, siehst du hier deine frisch versteigerten Gegenstände!";
-L.GDKP_TUTORIAL_STEP_MULTI_AUCTION = "Möchtest du mehrere Artikel gleichzeitig versteigern? Führe |c00FFF569/gl ma (oder |c00FFF569/gl Multiauction) aus oder klick auf das Mehrfachauktionssymbol oben rechts in diesem Fenster!";
-L.GDKP_TUTORIAL_STEP_NEW = "Klick unten auf die Schaltfläche |c00FFF569Neu, um deine erste GDKP-Sitzung zu erstellen. Nach der Erstellung wird es links angezeigt";
-L.GDKP_TUTORIAL_STEP_READY = "Du bist bereit Gegenstände zu verkaufen! |c00BE3333Lies alle Schritte unten sorgfältig durch und teste sie alle selbst (Du musst nicht an einem Raid teilnehmen), bevor du deinen ersten GDKP-Raid startest!";
-L.GDKP_TUTORIAL_STEP_SELL = "Möchtest du einen Gegenstand verkaufen, ohne dass jemand bietet? |c00FFF569%s auf einen Gegenstand, wähle einen Gewinner aus und lege einen Preis fest!";
-L.GDKP_TUTORIAL_TITLE = "Erste Schritte";
-L.GDKP_UNKNOWN_ITEM = "Unbekannte Gegenstand-ID in Auktion:create: %s";
-L.GDKP_UNKNOWN_SESSION = "Unbekannter SessionIdentifier in Auction:create: %s";
-L.GDKP_YOU_OWE = "Du schuldest %s %s";
-L.GIVEN = "Gegeben";
-L.GOLD_INDICATOR = "G";
-L.GROUP = "Gruppe";
-L.GROUP_MANAGER = "Gruppenleiter";
-L.GROUP_VERSION_CHECK_NOTIFICATION_DESCRIPTION = "Auf CurseForge herunterladen";
-L.GROUP_VERSION_CHECK_NOTIFICATION_URL = "https://addons.wago.io/addons/gargul/versions?stability=stable";
-L.HALT = "Halten";
-L.HEADER = "Header";
-L.HELLO = "|c00%sGargul v%s von Zhorax@Firemaw. Gib |c00%s/gl oder |c00%s/gargul ein, um loszulegen!";
-L.HIDE = "Ausblenden";
-L.HOURS_MINUTES_FORMAT = "%HM";
-L.IDENTITY_INFO = "Besuche die URL unten, um mehr über die Personalisierung von Gargul GDKPs zu erfahren";
-L.IDENTITY_TOOLTIP = "Dein Logo hier? Klick für weitere Informationen!";
-L.IMPORT = "Importieren";
-L.IMPORTED_AND_UPDATED_ON = "Importiert am |c00A79EFF%s um |c00A79EFF%s, Aktualisiert am |c00A79EFF%s um |c00A79EFF%s";
-L.IMPORT_EXPLANATION = "Welche Art von Daten möchtest du importieren?";
-L.IMPORT_SUCCESSFUL = "Import der Boosted-Rolls-Daten erfolgreich";
-L.INC = "Inc";
-L.INCLUDE_AWARDED = "Beziehe zuvor verliehene Gegenstände mit ein";
-L.INCLUDE_BOES = "BOE einbeziehen";
-L.INCLUDE_MATERIALS = "Materialien einschließen (wie Kristalle der Leere)";
-L.INCREMENT = "Inkrement";
-L.INFO = "Info";
-L.INVALID_DATA_WARNING = "Ungültige Daten angegeben";
-L.ITEM = "Gegenstand";
-L.JSON_DECODE_WARNING = "JSON-Dekodierung der Daten ist nicht möglich. Stell sicher, dass du es unverändert kopiert/eingefügt hast, ohne zusätzliche Zeichen oder Leerzeichen hinzuzufügen!";
-L.KEYS_INFO = [[
+L["If all went well then you will see your freshly auctioned item(s) here!"] = "Wenn alles gut gelaufen ist, siehst du hier deine frisch versteigerten Gegenstände!";
+L["Want to auction multiple items at once? Run |c00FFF569/gl ma (or |c00FFF569/gl multiauction) or click the multi-auction icon in the top right of this window!"] = "Möchtest du mehrere Artikel gleichzeitig versteigern? Führe |c00FFF569/gl ma (oder |c00FFF569/gl Multiauction) aus oder klick auf das Mehrfachauktionssymbol oben rechts in diesem Fenster!";
+L["Click the |c00FFF569New button below to create your first GDKP session. It will show on the left when created"] = "Klick unten auf die Schaltfläche |c00FFF569Neu, um deine erste GDKP-Sitzung zu erstellen. Nach der Erstellung wird es links angezeigt";
+L["You're ready to sell items! |c00BE3333Read all the steps below carefully and test them all by yourself (no need to be in a raid) before starting your first GDKP raid!"] = "Du bist bereit Gegenstände zu verkaufen! |c00BE3333Lies alle Schritte unten sorgfältig durch und teste sie alle selbst (Du musst nicht an einem Raid teilnehmen), bevor du deinen ersten GDKP-Raid startest!";
+L["Want to sell an item without anyone bidding? |c00FFF569%s on an item, pick a winner and set a price!"] = "Möchtest du einen Gegenstand verkaufen, ohne dass jemand bietet? |c00FFF569%s auf einen Gegenstand, wähle einen Gewinner aus und lege einen Preis fest!";
+L["Getting started"] = "Erste Schritte";
+L["Unknown itemID in Auction:create: %s"] = "Unbekannte Gegenstand-ID in Auktion:create: %s";
+L["Unknown sessionIdentifier in Auction:create: %s"] = "Unbekannter SessionIdentifier in Auction:create: %s";
+L["You owe %s %s"] = "Du schuldest %s %s";
+L["Given"] = "Gegeben";
+L["g"] = "G";
+L["Group"] = "Gruppe";
+L["Group Manager"] = "Gruppenleiter";
+L["Download on CurseForge"] = "Auf CurseForge herunterladen";
+L["https://addons.wago.io/addons/gargul/versions?stability=stable"] = "https://addons.wago.io/addons/gargul/versions?stability=stable";
+L["Halt"] = "Halten";
+L["Header"] = "Header";
+L["|c00%sGargul v%s by Zhorax@Firemaw. Type |c00%s/gl or |c00%s/gargul to get started!"] = "|c00%sGargul v%s von Zhorax@Firemaw. Gib |c00%s/gl oder |c00%s/gargul ein, um loszulegen!";
+L["Hide"] = "Ausblenden";
+L["%H:%M"] = "%HM";
+L["Visit the URL below to learn more about personalizing Gargul GDKPs"] = "Besuche die URL unten, um mehr über die Personalisierung von Gargul GDKPs zu erfahren";
+L["Your logo here? Click for more info!"] = "Dein Logo hier? Klick für weitere Informationen!";
+L["Import"] = "Importieren";
+L["Imported on |c00A79EFF%s at |c00A79EFF%s, Updated on |c00A79EFF%s at |c00A79EFF%s"] = "Importiert am |c00A79EFF%s um |c00A79EFF%s, Aktualisiert am |c00A79EFF%s um |c00A79EFF%s";
+L["What kind of data would you like to import?"] = "Welche Art von Daten möchtest du importieren?";
+L["Import of boosted roll data successful"] = "Import der Boosted-Rolls-Daten erfolgreich";
+L["Inc"] = "Inc";
+L["Include previously awarded items"] = "Beziehe zuvor verliehene Gegenstände mit ein";
+L["Include BOEs"] = "BOE einbeziehen";
+L["Include materials (like Abyss Crystals)"] = "Materialien einschließen (wie Kristalle der Leere)";
+L["Increment"] = "Inkrement";
+L["Info"] = "Info";
+L["Invalid data supplied"] = "Ungültige Daten angegeben";
+L["Item"] = "Gegenstand";
+L["Unable to JSON decode data. Make sure you copy/paste it as-is without adding any additional characters or whitespaces!"] = "JSON-Dekodierung der Daten ist nicht möglich. Stell sicher, dass du es unverändert kopiert/eingefügt hast, ohne zusätzliche Zeichen oder Leerzeichen hinzuzufügen!";
+L["\nGargul Item Hotkeys\n\nRoll out: |c00A79EFF%s|r\nAward: |c00A79EFF%s|r\nDisenchant: |c00A79EFF%s|r\n\n\n-- Right-click to disable this window --\n"] = [[
 Gargul-Hotkeys für Gegenstände
 
 Rollen: |c00A79EFF%s
@@ -663,109 +663,109 @@ Entzaubern: |c00A79EFF%s
 
 -- Klick mit der rechten Maustaste, um dieses Fenster zu deaktivieren --
 ]];
-L.LEDGER = "Register";
-L.LEFT_SYMBOL = "<";
-L.LM_OR_ASSIST_REQUIRED = "Du musst der Plündermeister sein oder eine Assistenz-/Anführerrolle übernehmen!";
-L.LOCALE_CHANGE_NOTE = "Hinweis: Du kannst deine Region jederzeit in den Einstellungen oder über |c00%s/gl Region ändern";
-L.LOCALE_DEDE = "deDE"; -- German (Germany)
-L.LOCALE_ENUS = "enUS"; -- English (United States)
-L.LOCALE_ESES = "esES"; -- Spanish (Spain)
-L.LOCALE_ESMX = "esMX"; -- Spanish (Mexico)
-L.LOCALE_FRFR = "frFR"; -- French (France)
-L.LOCALE_ITIT = "itIT"; -- Italian (Italy)
-L.LOCALE_KOKR = "koKR"; -- Korean (Korea)
-L.LOCALE_NONE_EXPLANATION = [[
+L["Ledger"] = "Register";
+L["<"] = "<";
+L["You need to be the master looter or have an assist / lead role!"] = "Du musst der Plündermeister sein oder eine Assistenz-/Anführerrolle übernehmen!";
+L["Note: you can change the locale at any time in the settings or via |c00%s/gl locale"] = "Hinweis: Du kannst deine Region jederzeit in den Einstellungen oder über |c00%s/gl Region ändern";
+L["deDE"] = "deDE"; -- German (Germany)
+L["enUS"] = "enUS"; -- English (United States)
+L["esES"] = "esES"; -- Spanish (Spain)
+L["esMX"] = "esMX"; -- Spanish (Mexico)
+L["frFR"] = "frFR"; -- French (France)
+L["itIT"] = "itIT"; -- Italian (Italy)
+L["koKR"] = "koKR"; -- Korean (Korea)
+L["\nGargul posts chat messages in English (default)\nYou can select a different language in the dropdown below\n\nYour current chat language is '%s', enabling a different language will cause a /reload!\n"] = [[
 Gargul postet Chatnachrichten auf Englisch (Standard)
 Du kannst im Dropdown-Menü unten eine andere Sprache auswählen
 
 Deine aktuelle Chat-Sprache ist „%s“. Das Aktivieren einer anderen Sprache führt zu einem /reload!
 ]];
-L.LOCALE_NONE_TITLE = "Wähle eine Chat-Sprache für Gargul";
-L.LOCALE_PTBR = "ptBR"; -- Portuguese (Brazil)
-L.LOCALE_RURU = "ruRU"; -- Russian (Russia)
-L.LOCALE_ZHCN = "zhCN"; -- Chinese (Simplified, PRC)
-L.LOCALE_ZHTW = "zhTW"; -- Chinese (Traditional, Taiwan)
-L.LOOTMASTER_BAD_ADDONS = "Du hast ein oder mehrere Add-ons installiert, die möglicherweise zu Fehlfunktionen von Gargul führen können: %s";
-L.LOOTMASTER_CLEAR_SR_BUTTON = "SoftRes löschen";
-L.LOOTMASTER_CLEAR_TMB_BUTTON = "TMB löschen";
-L.LOOTMASTER_DEFAULT_NOTE = "/roll für MS oder /roll 99 für OS";
-L.LOOTMASTER_IMPORT_SR_BUTTON = "SoftRes importieren";
-L.LOOTMASTER_IMPORT_TMB_BUTTON = "TMB importieren";
-L.LOOTMASTER_NOTICE_LABEL = "Dir wurde die Rolle des Plündermeisterd übertragen";
-L.LOOTMASTER_OPEN_LABEL = "Dieses Fenster automatisch öffnen";
-L.LOOTPRIORITY_CLEAR_SUCCESSFUL = "Beuteprioritäten erfolgreich gelöscht";
-L.LOOTPRIORITY_FORMAT_EXPLANATION = "Gib eine Prio-CSV im folgenden Format an (1 Zeile pro Element): id or name > prio1, equalprio > prio2 > usw";
-L.LOOTPRIORITY_IMPORT_SUCCESSFUL = "Beuteprioritäten erfolgreich importiert";
-L.LOOTPRIORITY_INVALID_DATA = "Ungültige Daten angegeben";
-L.LOOTPRIORITY_INVALID_LINE = "Ungültige Daten in Zeile: „%s“: Gegenstand-ID oder Priorität fehlt";
-L.LOOTPRIORITY_PROCESS_INCOMING = "Es wird versucht, eingehende Beuteprioritäten von %s zu verarbeiten";
-L.LOOTPRIORITY_TOOLTIP_HEADER = "Beuteprioritäten";
-L.MAIL = "Post";
-L.MAILED = "Per Post verschickt";
-L.MAIL_CUTS_EXPLANATION = "Post mit Anteilen an Spieler";
-L.MAINSPEC_ABBR = "MS";
-L.MAXIMIZE = "Maximieren";
-L.MIN = "Minimum";
-L.MINIMAP_BUTTON_AWARDED = "Verliehener Beuteverlauf";
-L.MINIMAP_BUTTON_CUTS = "GDKP-Anteile";
-L.MINIMAP_BUTTON_EXPORT = "Daten exportieren";
-L.MINIMAP_BUTTON_GARGUL = "Öffne Gargul";
-L.MINIMAP_BUTTON_IMPORT = "Daten importieren";
-L.MINIMAP_BUTTON_LEDGER = "GDKP-Register";
-L.MINIMAP_BUTTON_MULTIAUCTION = "Mehrfachauktion";
-L.MINIMAP_BUTTON_SETTING_INFO = "Ändere die Einstellungen in der /gl-Minikarte";
-L.MINIMIZE = "Minimieren";
-L.MINIMIZE_ON_AWARD = "Bei Verleihung minimieren";
-L.MINIMIZE_ON_START = "Beim Start minimieren";
-L.MINIMUM = "Minimum";
-L.MINIMUM_ITEM_LEVEL = "Mindestartikelstufe";
-L.MINIMUM_QUALITY = "Mindestqualität";
-L.MINUS10 = "-10";
-L.MINUS_SIGN = "-";
-L.MOVE = "Bewegen";
-L.MULTI_AUCTION = "Mehrfachauktion";
-L.NAME = "Name";
-L.NEW = "Neu";
-L.NEXT = "Nächste";
-L.NO = "Nein";
-L.NONE = "Kein";
-L.NOTE = "Notiz";
-L.NOTHING = "Nichts";
-L.NO_BIDS_ACTION = "Wenn niemand bietet, tue Folgendes:";
-L.NO_OFFICER_PRIVILEGES = "Du hast keine Offiziersprivilegien";
-L.OFFSPEC_ABBR = "OS";
-L.OK = "OK";
-L.OPEN = "Offen";
-L.OPEN_AUCTIONEER = "Auktionator öffnen";
-L.OPEN_MULTI_AUCTION = "Öffne eine Mehrfachauktion";
-L.PACKMULE_AUTOLOOT_DISENCHANT_PLACEHOLDER = "DE";
-L.PACKMULE_AUTOLOOT_GREED_PLACEHOLDER = "GREED";
-L.PACKMULE_AUTOLOOT_IGNORE_PLACEHOLDER = "IGNORE";
-L.PACKMULE_AUTOLOOT_NEED_PLACEHOLDER = "NEED";
-L.PACKMULE_AUTOLOOT_PASS_PLACEHOLDER = "PASS";
-L.PACKMULE_AUTOLOOT_RANDOM_PLACEHOLDER = "RANDOM";
-L.PACKMULE_AUTOLOOT_ROUND_ROBIN_PLACEHOLDER = "RR";
-L.PACKMULE_AUTOLOOT_SELF_PLACEHOLDER = "SELF";
-L.PACKMULE_CONFIRM_DISENCHANTER = "%s als Entzauberer festlegen?";
-L.PACKMULE_CONFIRM_DISENCHANTMENT = "%s an %s senden? Gib /gl cd ein, um diesen Entzauberer zu entfernen!";
-L.PACKMULE_NO_DISENCHANTER_WARNING = "Kein Entzauberer festgelegt, verwende /gl sd [mydisenchanter], um einen festzulegen";
-L.PACKMULE_WHO_IS_DISENCHANTER = "Wer ist dein Entzauberer?";
-L.PAID = "Bezahlt";
-L.PASS = "Passen";
-L.PERCENTAGE_SIGN = "%";
-L.PLAYER = "Spieler";
-L.PLAYER_ITEM_WON_COUNT = "Von %s gewonnene Gegenstände:";
+L["Choose a chat language for Gargul"] = "Wähle eine Chat-Sprache für Gargul";
+L["ptBR"] = "ptBR"; -- Portuguese (Brazil)
+L["ruRU"] = "ruRU"; -- Russian (Russia)
+L["zhCN"] = "zhCN"; -- Chinese (Simplified, PRC)
+L["zhTW"] = "zhTW"; -- Chinese (Traditional, Taiwan)
+L["You have one or more addons installed that can potentially cause Gargul to misfunction: %s"] = "Du hast ein oder mehrere Add-ons installiert, die möglicherweise zu Fehlfunktionen von Gargul führen können: %s";
+L["Clear SoftRes"] = "SoftRes löschen";
+L["Clear TMB"] = "TMB löschen";
+L["/roll for MS or /roll 99 for OS"] = "/roll für MS oder /roll 99 für OS";
+L["Import SoftRes"] = "SoftRes importieren";
+L["Import TMB"] = "TMB importieren";
+L["You were given the role of Master Looter"] = "Dir wurde die Rolle des Plündermeisterd übertragen";
+L["Open this window automatically"] = "Dieses Fenster automatisch öffnen";
+L["Loot priorities cleared successfully"] = "Beuteprioritäten erfolgreich gelöscht";
+L["Provide a prio CSV in the following format (1 line per item): id or name > prio1, equalprio > prio2 > etc"] = "Gib eine Prio-CSV im folgenden Format an (1 Zeile pro Element): id or name > prio1, equalprio > prio2 > usw";
+L["Loot priorities imported successfully"] = "Beuteprioritäten erfolgreich importiert";
+L["Invalid data provided"] = "Ungültige Daten angegeben";
+L["Invalid data provided in line: '%s': missing item id or priority"] = "Ungültige Daten in Zeile: „%s“: Gegenstand-ID oder Priorität fehlt";
+L["Attempting to process incoming loot priorities from %s"] = "Es wird versucht, eingehende Beuteprioritäten von %s zu verarbeiten";
+L["Loot Prio"] = "Beuteprioritäten";
+L["Mail"] = "Post";
+L["Mailed"] = "Per Post verschickt";
+L["Mail cut to players"] = "Post mit Anteilen an Spieler";
+L["MS"] = "MS";
+L["Maximize"] = "Maximieren";
+L["Min"] = "Minimum";
+L["Awarded loot history"] = "Verliehener Beuteverlauf";
+L["GDKP Cuts"] = "GDKP-Anteile";
+L["Export data"] = "Daten exportieren";
+L["Open Gargul"] = "Öffne Gargul";
+L["Import data"] = "Daten importieren";
+L["GDKP Ledger"] = "GDKP-Register";
+L["Multiauction"] = "Mehrfachauktion";
+L["Change settings in /gl minimap"] = "Ändere die Einstellungen in der /gl-Minikarte";
+L["Minimize"] = "Minimieren";
+L["Minimize on award"] = "Bei Verleihung minimieren";
+L["Minimize on start"] = "Beim Start minimieren";
+L["Minimum"] = "Minimum";
+L["Minimum item level"] = "Mindestartikelstufe";
+L["Minimum Quality"] = "Mindestqualität";
+L["-10"] = "-10";
+L["-"] = "-";
+L["Move"] = "Bewegen";
+L["Multi-Auction"] = "Mehrfachauktion";
+L["Name"] = "Name";
+L["New"] = "Neu";
+L["Next"] = "Nächste";
+L["No"] = "Nein";
+L["None"] = "Kein";
+L["Note"] = "Notiz";
+L["Nothing"] = "Nichts";
+L["When no one bids do:"] = "Wenn niemand bietet, tue Folgendes:";
+L["You don't have officer privileges"] = "Du hast keine Offiziersprivilegien";
+L["OS"] = "OS";
+L["Ok"] = "OK";
+L["Open"] = "Offen";
+L["Open Auctioneer"] = "Auktionator öffnen";
+L["Open Multi-Auction"] = "Öffne eine Mehrfachauktion";
+L["DE"] = "DE";
+L["GREED"] = "GREED";
+L["IGNORE"] = "IGNORE";
+L["NEED"] = "NEED";
+L["PASS"] = "PASS";
+L["RANDOM"] = "RANDOM";
+L["RR"] = "RR";
+L["SELF"] = "SELF";
+L["Set %s as your disenchanter?"] = "%s als Entzauberer festlegen?";
+L["Send %s to %s? Type /gl cd to remove this disenchanter!"] = "%s an %s senden? Gib /gl cd ein, um diesen Entzauberer zu entfernen!";
+L["No disenchanter set, use /gl sd [mydisenchanter] to set one"] = "Kein Entzauberer festgelegt, verwende /gl sd [mydisenchanter], um einen festzulegen";
+L["Who is your disenchanter?"] = "Wer ist dein Entzauberer?";
+L["Paid"] = "Bezahlt";
+L["Pass"] = "Passen";
+L["%"] = "%";
+L["Player"] = "Spieler";
+L["Items won by %s:"] = "Von %s gewonnene Gegenstände:";
 L.PLUS1 = "+1";
 L.PLUS10 = "+10";
-L.PLUSONES = "PlusOne Punkte";
-L.PLUSONES_AWARD_DIALOG_LABEL = "Füge +1 hinzu";
-L.PLUSONES_BROADCAST_CONFIRM = "Bist du sicher, dass du deine PlusOne-Daten an alle in deiner Gruppe/deinem Raid übertragen möchtest?";
-L.PLUSONES_BROADCAST_PROCESS_START = "Es wird versucht, eingehende PlusOne-Daten von %s zu verarbeiten";
-L.PLUSONES_CLEAR_CONFIRM = "%s möchte alle deine PlusOne-Daten löschen. Alle Daten löschen?";
-L.PLUSONES_IMPORT_CLEAR_CONFIRM = "Bist du sicher, dass du deine vorhandenen PlusOne-Daten löschen und neue, von %s gesendete Daten importieren möchtest?";
-L.PLUSONES_IMPORT_CONFIRM = "Bist du sicher, dass du neue, von %s gesendete Daten importieren möchtest?";
-L.PLUSONES_IMPORT_ERROR = "Ungültige Daten angegeben. Stell sicher, dass der Inhalt dem erforderlichen Format entspricht und keine Kopfzeile enthalten ist";
-L.PLUSONES_IMPORT_INFO = [[
+L["Plus Ones"] = "PlusOne Punkte";
+L["Add a +1"] = "Füge +1 hinzu";
+L["Are you sure you want to broadcast your plus one data to everyone in your party/raid?"] = "Bist du sicher, dass du deine PlusOne-Daten an alle in deiner Gruppe/deinem Raid übertragen möchtest?";
+L["Attempting to process incoming PlusOnes data from %s"] = "Es wird versucht, eingehende PlusOne-Daten von %s zu verarbeiten";
+L["%s wants to clear all your PlusOne data. Clear all data?"] = "%s möchte alle deine PlusOne-Daten löschen. Alle Daten löschen?";
+L["Are you sure you want to clear your existing PlusOne data and import new data broadcasted by %s?"] = "Bist du sicher, dass du deine vorhandenen PlusOne-Daten löschen und neue, von %s gesendete Daten importieren möchtest?";
+L["Are you sure you want to import new data broadcasted by %s?"] = "Bist du sicher, dass du neue, von %s gesendete Daten importieren möchtest?";
+L["Invalid data provided. Make sure that the contents follows the required format and no header row is included"] = "Ungültige Daten angegeben. Stell sicher, dass der Inhalt dem erforderlichen Format entspricht und keine Kopfzeile enthalten ist";
+L["\nHere you can import plus one data from a table in CSV or TSV format or pasted from a Google Docs Sheet.\n\nThe table needs at least two columns: The player name followed by the amount of points. Additional columns are ignored.\n\nHere is an example line:\n\nFoobar,240\n"] = [[
 Hier kansst du PlusOne-Daten aus einer Tabelle im CSV- oder TSV-Format importieren oder aus einem Google Docs-Blatt einfügen.
 
 Die Tabelle benötigt mindestens zwei Spalten: Den Spielernamen gefolgt von der Punktzahl. Zusätzliche Spalten werden ignoriert.
@@ -774,188 +774,188 @@ Hier ist eine Beispielzeile:
 
 Foobar,240
 ]];
-L.PLUSONES_INCOMING_DIALOG_AUTO_LABEL = "Eingehende Broadcasts von %s automatisch akzeptieren";
-L.PLUSONES_INCOMING_DIALOG_BLOCK_LABEL = "Blockiere alle eingehenden +1 geteilten Daten";
-L.PLUSONES_UPDATE_CONFIRM = [[
+L["Automatically accept incoming broadcasts from %s"] = "Eingehende Broadcasts von %s automatisch akzeptieren";
+L["Block all incoming +1 shared data"] = "Blockiere alle eingehenden +1 geteilten Daten";
+L["\nAre you sure you want to update your existing PlusOne data with data from %s?\n\nYour latest update was on |c00A79EFF%s, theirs on |c00A79EFF%s."] = [[
 Bist du sicher, dass du deine vorhandenen PlusOne-Daten mit Daten von %s aktualisieren möchten?
 
 Dein letztes Update war auf |c00A79EFF%s, ihres auf |c00A79EFF%s.]];
-L.PLUSONES_WHISPER_PREFIXES = "!plusone|!po|!+1";
-L.PLUS_SIGN = "+";
-L.POT = "Pott";
-L.PRICE = "Preis";
-L.PRIOLIST_ABBR = "PL";
-L.QUALITY_COMMON = "Gewöhnlich";
-L.QUALITY_EPIC = "Episch";
-L.QUALITY_HEIRLOOM = "Erbstück";
-L.QUALITY_LEGENDARY = "Legendär";
-L.QUALITY_POOR = "Schlecht";
-L.QUALITY_RARE = "Selten";
-L.QUALITY_UNCOMMON = "Außergewöhnlich";
-L.QUEUE = "Warteschlange";
-L.RAIDERS = "Raiders";
-L.RAIDGROUPS_ATTENDANCE_BUTTON = "Wer fehlt";
-L.RAIDGROUPS_ATTENDANCE_BUTTON_TOOLTIP = "Fehlende Spielernamen anzeigen";
-L.RAIDGROUPS_DISBAND_BUTTON = "Raid auflösen";
-L.RAIDGROUPS_DISBAND_BUTTON_TOOLTIP = "Löse deinen Raid auf";
-L.RAIDGROUPS_DUPLICATE_WARNING = "%s ist zweimal im Kader aufgeführt!";
-L.RAIDGROUPS_EXPLANATION_LABEL_BOTTOM = "ein |c00FFF569Raid-Helper-Export (Verwende die Variante „Vertikal sortierte Gruppen“) oder eine |c00FFF569Gargul-Gruppenzusammensetzungs-CSV:";
-L.RAIDGROUPS_EXPLANATION_LABEL_TOP = [[
+L["!plusone|!po|!+1"] = "!plusone|!po|!+1";
+L["+"] = "+";
+L["Pot"] = "Pott";
+L["Price"] = "Preis";
+L["PL"] = "PL";
+L["Common"] = "Gewöhnlich";
+L["Epic"] = "Episch";
+L["Heirloom"] = "Erbstück";
+L["Legendary"] = "Legendär";
+L["Poor"] = "Schlecht";
+L["Rare"] = "Selten";
+L["Uncommon"] = "Außergewöhnlich";
+L["Queue"] = "Warteschlange";
+L["Raiders"] = "Raiders";
+L["Who's Missing"] = "Wer fehlt";
+L["Show missing player names"] = "Fehlende Spielernamen anzeigen";
+L["Disband raid"] = "Raid auflösen";
+L["Disband your raid"] = "Löse deinen Raid auf";
+L["%s is listed twice on the roster!"] = "%s ist zweimal im Kader aufgeführt!";
+L["a |c00FFF569Raid-Helper export (Use the 'Groups sorted vertically' variant) or a |c00FFF569Gargul group composition CSV:"] = "ein |c00FFF569Raid-Helper-Export (Verwende die Variante „Vertikal sortierte Gruppen“) oder eine |c00FFF569Gargul-Gruppenzusammensetzungs-CSV:";
+L["\nIn the large edit box below you can provide a roster and: invite everyone, check who's missing, apply groups and assign the tanks.\n\nYou can provide a |c00FFF569Wowhead raid composition link:"] = [[
 Im großen Bearbeitungsfeld unten kannst du ein Kader erstellen und: alle einladen, überprüfen, wer fehlt, Gruppen erstellen und die Tanks zuweisen.
 
 Du kannst einen Link zur |c00FFF569Wowhead-Raid-Zusammensetzung bereitstellen:]];
-L.RAIDGROUPS_GARGUL_BUTTON = "Wiki der Gargul-Gruppe";
-L.RAIDGROUPS_GARGUL_INFO = "Weitere Informationen zum Raid-Gruppenformat finden Sie im Gargul-Gruppen-Wiki";
-L.RAIDGROUPS_IMPOSTER_WARNING = "Die folgenden Spieler sind nicht Teil des Kaders: %s";
-L.RAIDGROUPS_INVALID_FORMAT_WARNING = "Ungültige Gruppendaten angegeben. Überprüfe dein Format!";
-L.RAIDGROUPS_INVITE_BUTTON = "Einladen";
-L.RAIDGROUPS_INVITE_BUTTON_TOOLTIP = "Sende Einladungen an Spieler im Kader";
-L.RAIDGROUPS_IN_COMBAT_WARNING = "Gruppen können nicht sortiert werden, während %s im Kampf ist!"; -- %s holds a player name
-L.RAIDGROUPS_NO_RAID_WARNING = "Du musst in einem Raid sein!";
-L.RAIDGROUPS_NO_TANKS_WARNING = "Keine Tanks definiert";
-L.RAIDGROUPS_NO_VALID_SPOT_WARNING = "Du kannst keinen Platz für %s finden. Versuchst du mehr als 5 Personen in eine Gruppe einzuteilen?";
-L.RAIDGROUPS_PURGE_BUTTON = "Kicke unerwünschte Spieler";
-L.RAIDGROUPS_PURGE_BUTTON_TOOLTIP = "Kicke Spieler, die nicht im Kader stehen";
-L.RAIDGROUPS_SORTING_ERROR = "Beim Verschieben von %s ist ein Fehler aufgetreten";
-L.RAIDGROUPS_SORTING_FINISHED = "Die Anwendung des Raid-Kaders ist abgeschlossen";
-L.RAIDGROUPS_SORTING_GROUPS = "Gruppen sortieren";
-L.RAIDGROUPS_SORT_BUTTON = "Gruppen anwenden";
-L.RAIDGROUPS_SORT_BUTTON_TOOLTIP = "Sortiere Gruppen nach Kader";
-L.RAIDGROUPS_SORT_IN_PROGRESS = "Die Sortierung ist noch im Gange, warte noch ein wenig!";
-L.RAIDGROUPS_TANKS_ASSIGNED = "Alle Tanks sind zugewiesen";
-L.RAIDGROUPS_TANK_BUTTON = "Weise Tanks zu";
-L.RAIDGROUPS_WOWHEAD_BUTTON = "Wowhead Comp-Tool";
-L.RAIDGROUPS_WOWHEAD_INFO = "Du kannst das Wowhead-Comp-Tool über die unten stehende URL besuchen. Nachdem du deine Komposition erstellt hast, kannst du sie hier oder in das große Bearbeitungsfeld des Gargul-Gruppenfensters einfügen";
-L.REMOVE_BID = "Gebot entfernen";
-L.RESET_SETTINGS = "Einstellungen zurücksetzen";
-L.RESET_SETTINGS_CONFIRMATION = "Bist du sicher, dass du alle Einstellungen von Gargul zurücksetzen möchtest? Es kann nicht rückgängig gemacht werden!";
-L.RESET_UI = "Gargul-Benutzeroberfläche zurücksetzen";
-L.RESET_UI_CONFIRMATION = "Bist du sicher, dass du alle Fenstergrößen, -positionen und -skalen von Gargul zurücksetzen möchten? Es kann nicht rückgängig gemacht werden!";
-L.RESTORE = "Wiederherstellen";
-L.RESUME = "Fortsetzen";
-L.RIGHT_SYMBOL = ">";
-L.ROLL = "Rollen";
-L.ROLLING_AWARD_CONFIRM = "%s an %s verleihen?";
-L.ROLLING_CLOSE_ON_AWARD_LABEL = "Bei Verleihung schließen";
-L.ROLLING_CLOSE_ON_START_LABEL = "Beim Start schließen";
-L.ROLLING_HOLD_SHIFT_TO_BYPASS_CONFIRMATION = "Halte die Umschalttaste gedrückt, um die Verleihungsbestätigung zu umgehen";
-L.ROLLING_HOLD_SHIFT_TO_SHOW_CONFIRMATION = "Halte die Umschalttaste gedrückt, um die Verleihungsbestätigung anzuzeigen";
-L.ROLLING_IDENTICAL_ROLL_WARNING = [[
+L["Gargul Group Wiki"] = "Wiki der Gargul-Gruppe";
+L["Visit the Gargul group wiki for more info on the raid group format"] = "Weitere Informationen zum Raid-Gruppenformat finden Sie im Gargul-Gruppen-Wiki";
+L["The following players are not part of the roster: %s"] = "Die folgenden Spieler sind nicht Teil des Kaders: %s";
+L["Invalid group data provided, check your format!"] = "Ungültige Gruppendaten angegeben. Überprüfe dein Format!";
+L["Invite"] = "Einladen";
+L["Send invites to players on roster"] = "Sende Einladungen an Spieler im Kader";
+L["Can't sort groups while %s is in combat!"] = "Gruppen können nicht sortiert werden, während %s im Kampf ist!"; -- %s holds a player name
+L["You need to be in a raid!"] = "Du musst in einem Raid sein!";
+L["No tanks defined"] = "Keine Tanks definiert";
+L["Can't find a place for %s, are you trying to put more than 5 people in 1 group?"] = "Du kannst keinen Platz für %s finden. Versuchst du mehr als 5 Personen in eine Gruppe einzuteilen?";
+L["Kick unwanted players"] = "Kicke unerwünschte Spieler";
+L["Kick players that aren't on the roster"] = "Kicke Spieler, die nicht im Kader stehen";
+L["Something went wrong while moving %s"] = "Beim Verschieben von %s ist ein Fehler aufgetreten";
+L["Finished applying raid roster"] = "Die Anwendung des Raid-Kaders ist abgeschlossen";
+L["Sorting groups"] = "Gruppen sortieren";
+L["Apply Groups"] = "Gruppen anwenden";
+L["Sort groups based on roster"] = "Sortiere Gruppen nach Kader";
+L["Sorting is still in progress, wait a bit!"] = "Die Sortierung ist noch im Gange, warte noch ein wenig!";
+L["All tanks are assigned"] = "Alle Tanks sind zugewiesen";
+L["Assign Tanks"] = "Weise Tanks zu";
+L["Wowhead Comp Tool"] = "Wowhead Comp-Tool";
+L["You can visit the wowhead comp tool using the URL down below. After creating your comp you can paste it here or in the large edit field of the Gargul group window"] = "Du kannst das Wowhead-Comp-Tool über die unten stehende URL besuchen. Nachdem du deine Komposition erstellt hast, kannst du sie hier oder in das große Bearbeitungsfeld des Gargul-Gruppenfensters einfügen";
+L["Remove bid"] = "Gebot entfernen";
+L["Reset Settings"] = "Einstellungen zurücksetzen";
+L["Are you sure you want to reset all of Gargul's settings? This can't be undone!"] = "Bist du sicher, dass du alle Einstellungen von Gargul zurücksetzen möchtest? Es kann nicht rückgängig gemacht werden!";
+L["Reset Gargul UI"] = "Gargul-Benutzeroberfläche zurücksetzen";
+L["Are you sure you want to reset all of Gargul's window sizes, positions and scale? This can't be undone!"] = "Bist du sicher, dass du alle Fenstergrößen, -positionen und -skalen von Gargul zurücksetzen möchten? Es kann nicht rückgängig gemacht werden!";
+L["Restore"] = "Wiederherstellen";
+L["Resume"] = "Fortsetzen";
+L[">"] = ">";
+L["Roll"] = "Rollen";
+L["Award %s to %s?"] = "%s an %s verleihen?";
+L["Close on award"] = "Bei Verleihung schließen";
+L["Close on start"] = "Beim Start schließen";
+L["Hold shift to bypass the award confirmation"] = "Halte die Umschalttaste gedrückt, um die Verleihungsbestätigung zu umgehen";
+L["Hold shift to show the award confirmation"] = "Halte die Umschalttaste gedrückt, um die Verleihungsbestätigung anzuzeigen";
+L["\nWarning: another identical roll was found which can point to a tie\n\n"] = [[
 Warnung: Es wurde ein weiterer identischer Wurf gefunden, der auf ein Unentschieden hinweisen kann
 
 ]];
-L.ROLLING_INVALID_START_DATA_WARNING = "Ungültige Daten für Würfelstart angegeben!";
-L.ROLLING_ITEM_WON_BR_COST = "(BR: %s)";
-L.ROLLING_ITEM_WON_GIVEN = "(Gegenstand gegeben: ja)";
-L.ROLLING_ITEM_WON_NOT_GIVEN = "(Gegenstand gegeben: nein)";
-L.ROLLING_ITEM_WON_OS = "(OS)";
-L.ROLLING_NOTE_LABEL = "NOTIZ";
-L.ROLLING_NO_ROLLOFF_WARNING = "Das Würfeln kann nicht gestoppt werden, da kein Würfeln im Gange ist";
-L.ROLLING_PASS_BUTTON = "Passen";
-L.ROLLING_REOPEN_ROLL_COUNT = "rollt: %s";
-L.ROLLING_REOPEN_TOOLTIP = "Öffne das Plündermeisterfenster";
-L.ROLLING_ROLL_ACCEPTED = "Wurf angenommen!";
-L.ROLLING_ROLL_IN_PROGRESS_WARNING = "Derzeit wird gewürfelt";
-L.ROLLING_ROLL_PRIOLIST = "Priorität [%s]";
-L.ROLLING_ROLL_SR_COUNT = "SR [%sx]";
-L.ROLLING_ROLL_WISHLIST = "Wunschliste [%s]";
-L.ROLLING_SELECT_PLAYER_WARNING = "Du musst zuerst einen Spieler auswählen";
-L.ROLLING_TIMER_LABEL = "TIMER (s)";
-L.ROLLING_UNUSABLE_ITEM = "Du kannst diesen Gegenstand nicht verwenden!";
-L.ROLLING_WINNER_NOT_UNIQUE = "Der Name des Gewinners ist nicht eindeutig. Wähle den Spieler aus, dem du %s verleihen möchtest";
-L.SECONDS_ABBR = "S";
-L.SELECT_ALL = "Alle auswählen/deaktivieren";
-L.SESSION = "Sitzung";
-L.SETTINGS = "Einstellungen";
-L.SETTINGS_ANNOUNCE_INCOMING_BIDS = "Gib eingehende Gebote bekannt";
-L.SETTINGS_ANNOUNCE_POT_AFTER_AWARD = "Gib den Pott nach der Vergabe des Gegenstands bekannt";
-L.SETTINGS_ANNOUNCE_START = "Auktionsstart bekannt geben";
-L.SETTINGS_COUNTDOWN_IN_RAID_WARNING = "Countdown in der Raid-Warnung ankündigen";
-L.SETTINGS_INCOMING_BIDS_IN_RAID_WARNING = "Kündige eingehende Gebote in der Raid-Warnung an";
-L.SETTINGS_RESET_UI = "Gargul-Benutzeroberfläche zurücksetzen";
-L.SETTINGS_WHISPER_BID_TOO_LOW = "Flüster Bieter, wenn das Gebot zu niedrig ist";
-L.SILVER_INDICATOR = "S";
-L.SKIP = "Überspringen";
-L.SOFTRES = "Soft-Reserve";
-L.SOFTRES_ABBR = "SR";
-L.SOFTRES_BROADCAST_CONFIRM = "bist du sicher, dass du deine Softres-Daten an alle Mitglieder deiner Gruppe/deines Raids übertragen möchtest?";
-L.SOFTRES_BROADCAST_PROCESS_FAILED = "Die von %s empfangenen SoftRes-Daten konnten nicht verarbeitet werden";
-L.SOFTRES_CLEAR_CONFIRM = "Bist du sicher, dass du alle vorhandenen Soft-Reserv-Daten löschen möchtest?";
-L.SOFTRES_EVERYONE_RESERVED = "Jeder hat sein Soft-Reserve eingefüllt";
-L.SOFTRES_FEATURE_MISSING = [[
+L["Invalid data provided for roll start!"] = "Ungültige Daten für Würfelstart angegeben!";
+L["(BR: %s)"] = "(BR: %s)";
+L["(item given: yes)"] = "(Gegenstand gegeben: ja)";
+L["(item given: no)"] = "(Gegenstand gegeben: nein)";
+L["(OS)"] = "(OS)";
+L["NOTE"] = "NOTIZ";
+L["Can't stop roll off, no roll off in progress"] = "Das Würfeln kann nicht gestoppt werden, da kein Würfeln im Gange ist";
+L["Pass"] = "Passen";
+L["rolls: %s"] = "rollt: %s";
+L["Open master looter window"] = "Öffne das Plündermeisterfenster";
+L["Roll accepted!"] = "Wurf angenommen!";
+L["A roll is currently in progress"] = "Derzeit wird gewürfelt";
+L["Prio [%s]"] = "Priorität [%s]";
+L["SR [%sx]"] = "SR [%sx]";
+L["Wish [%s]"] = "Wunschliste [%s]";
+L["You need to select a player first"] = "Du musst zuerst einen Spieler auswählen";
+L["TIMER (s)"] = "TIMER (s)";
+L["You can't use this item!"] = "Du kannst diesen Gegenstand nicht verwenden!";
+L["The winner's name is not unique, select the player you'd like to award %s to"] = "Der Name des Gewinners ist nicht eindeutig. Wähle den Spieler aus, dem du %s verleihen möchtest";
+L["s"] = "S";
+L["Select / Disable all"] = "Alle auswählen/deaktivieren";
+L["Session"] = "Sitzung";
+L["Settings"] = "Einstellungen";
+L["Announce incoming bids"] = "Gib eingehende Gebote bekannt";
+L["Announce pot after awarding item"] = "Gib den Pott nach der Vergabe des Gegenstands bekannt";
+L["Announce auction start"] = "Auktionsstart bekannt geben";
+L["Announce countdown in raid warning"] = "Countdown in der Raid-Warnung ankündigen";
+L["Announce incoming bids in raid warning"] = "Kündige eingehende Gebote in der Raid-Warnung an";
+L["Reset Gargul UI"] = "Gargul-Benutzeroberfläche zurücksetzen";
+L["Whisper bidder if bid is too low"] = "Flüster Bieter, wenn das Gebot zu niedrig ist";
+L["s"] = "S";
+L["Skip"] = "Überspringen";
+L["Soft-Reserves"] = "Soft-Reserve";
+L["SR"] = "SR";
+L["Are you sure you want to broadcast your softres data to everyone in your party/raid?"] = "bist du sicher, dass du deine Softres-Daten an alle Mitglieder deiner Gruppe/deines Raids übertragen möchtest?";
+L["Couldn't process SoftRes data received from %s"] = "Die von %s empfangenen SoftRes-Daten konnten nicht verarbeitet werden";
+L["Are you sure you want to clear all existing soft-reserve data?"] = "Bist du sicher, dass du alle vorhandenen Soft-Reserv-Daten löschen möchtest?";
+L["Everyone filled out their soft-reserves"] = "Jeder hat sein Soft-Reserve eingefüllt";
+L["\nHard-reserve information is not available because the soft-reserves\nprovided were not generated using the 'Gargul Export' button on softres.it"] = [[
 Informationen zu Hard-Reserves sind aufgrund der Soft-Reserves nicht verfügbar
 Die bereitgestellten Dateien wurden nicht über die Schaltfläche „Gargul Export“ auf softres.it generiert]];
-L.SOFTRES_IMPORT_DETAILS = "Importiert am |c00A79EFF%s um |c00A79EFF%s";
-L.SOFTRES_IMPORT_FIXED_NAME = "Automatische Namenskorrektur: Die SR von „%s“ ist jetzt mit „%s“ verknüpft.";
-L.SOFTRES_IMPORT_INFO = "Um zu beginnen, musst du zunächst einen Raid auf softres.it erstellen. Klick anschließend auf „Addon Export“, wähle „Gargul“, kopiere die Daten und füge sie in das untenstehende Formular ein.";
-L.SOFTRES_IMPORT_INVALID = "Es wurden ungültige Soft-Reserve-Daten bereitgestellt";
-L.SOFTRES_IMPORT_INVALID_INSTRUCTIONS = "Ungültige Daten angegeben. Klick auf die Schaltfläche „Gargul Export“ auf softres.it und füge den gesamten Inhalt hier ein";
-L.SOFTRES_IMPORT_NEW_PLUSONES = "Die bereitgestellten PlusOne-Werte kollidieren mit den bereits vorhandenen. Möchtest du deine alten PlusOne-Werte ersetzen?";
-L.SOFTRES_IMPORT_NO_RESERVES_WARNING = "Die folgenden Spieler haben nichts reserviert:";
-L.SOFTRES_IMPORT_SUCCESSFUL = "Soft-Reserves erfolgreich importiert";
-L.SOFTRES_IMPORT_SUCCESSFUL_ALERT = "Import erfolgreich!";
-L.SOFTRES_IMPORT_USE_GARGUL = "SoftRes Weakaura- und CSV-Daten sind veraltet. Verwende stattdessen den Gargul-Export!";
-L.SOFTRES_LOOTRESERVE_CONNECTION_WARNING = "Verbindung zu LootReserve konnte nicht hergestellt werden. Wende dich an den Support (füge die Nachricht unten ein).";
-L.SOFTRES_MULTIPLE_RESERVES = "%s (%sx)";
-L.SOFTRES_NO_URL_AVAILABLE = "Keine softres.it-URL verfügbar. Stell sicher, dass du den Export über die Schaltfläche „Gargul Export“ auf softres.it durchgeführt hast!";
-L.SOFTRES_OVERVIEW_HARDRESERVES_LABEL = "Klick hier, um Informationen zur Festreserve anzuzeigen";
-L.SOFTRES_OVERVIEW_NO_HARDRESERVES = "Es sind keine Gegenstände hard-reserved";
-L.SOFTRES_OVERVIEW_NO_HARDRESERVE_INFO = "Keine Informationen zu hard-reserve verfügbar";
-L.SOFTRES_OVERVIEW_POST_MISSING_BUTTON = "Poste fehlende SRs";
-L.SOFTRES_OVERVIEW_POST_URL_BUTTON = "SR-URL posten";
-L.SOFTRES_PLAYER_DIDNT_RESERVE = "Dieser Spieler hat nichts reserviert!";
-L.SOFTRES_PLAYER_RESERVE_COUNT = "%s (%sx)";
-L.SOFTRES_PROCESS_INCOMING = "Es wird versucht, eingehende SoftRes-Daten von %s zu verarbeiten";
-L.SOFTRES_TOOLTIP_HARD_RESERVED = "Dieser Artikel ist hard-reserved";
-L.SOFTRES_TOOLTIP_HARD_RESERVED_FOR = "Für: %s";
-L.SOFTRES_TOOLTIP_HARD_RESERVED_NOTE = "|c00CC2743 Hinweis: %s";
-L.SOFTRES_TOOLTIP_RESERVED_BY = "Reserviert von";
-L.SOFTRES_WHISPER_PREFIXES = "!sr|!softres|!softreserve";
-L.SOMETHING_WENT_WRONG_WARNING = "Etwas ist schief gelaufen!";
-L.START = "Start";
-L.STOP = "Stoppen";
-L.TAB_REPLACES_T = "\\t wird ersetzt durch Tabulatortaste";
-L.THATSMYBIS_ABBR = "TMB";
-L.TIME = "Zeit";
-L.TITLE = "Titel";
-L.TMBETC = "TMB, DFT oder PRIO3";
-L.TMB_BROADCAST_CONFIRM = "Bist du sicher, dass du deine TMB-Daten an alle Mitglieder deiner Gruppe/deines Raids übertragen möchtest? Hinweis: JEDER kann deine TMB-Daten sehen, unabhängig von seinen Berechtigungen auf der TMB-Website!";
-L.TMB_BROADCAST_PROCESS_START = "Es wird versucht, eingehende TMB-Daten von %s zu verarbeiten";
-L.TMB_CLEAR_CONFIRM = "Bist du sicher, dass du alle PlusOne-Daten löschen möchtest?";
-L.TMB_CLEAR_RAIDER_DATA = "Raider-Daten löschen";
-L.TMB_CLEAR_RAIDER_DATA_CONFIRM = "TMB-Daten für alle Raider löschen?";
-L.TMB_IMPORT_AUTO_SHARING_ENABLED = "Automatisches Teilen aktiviert: %s";
-L.TMB_IMPORT_CPO_INFO = "Klick bei deinem classicpr.io-Lauf auf die Schaltfläche „Gargul Export“ und kopiere den Inhalt. Füge anschließend den Inhalt unverändert in das Feld unten ein und klick auf „Importieren“. Das ist es!";
-L.TMB_IMPORT_DETAILS = "Importiert am ${date} um ${time}";
-L.TMB_IMPORT_DFT_INFO = "Exportiere deine DFT-Daten gemäß den Anweisungen auf dem Sheet. Füge anschließend den Inhalt unverändert in das Feld unten ein und klick auf „Importieren“. Das ist es!";
-L.TMB_IMPORT_INVALID_CSV = "Es wurde eine ungültige CSV-Datei bereitgestellt. Das Format lautet: 6948,Spieler1,Spieler2";
-L.TMB_IMPORT_INVALID_DFT = "Es wurden ungültige DFT-Daten bereitgestellt. Exportiere deine DFT-Daten gemäß den Anweisungen auf dem Sheet und füge den Inhalt unverändert hier ein!";
-L.TMB_IMPORT_INVALID_INSTRUCTIONS = "Es wurden ungültige TMB-Daten bereitgestellt. Klick auf die Schaltfläche „Herunterladen“ im Gargul-Bereich und füge den Inhalt unverändert hier ein!";
-L.TMB_IMPORT_INVALID_UNKNOWN_INSTRUCTIONS = "Es wurden ungültige TMB- oder DFT-Daten bereitgestellt. Stell sicher, dass du die Exportinhalte unverändert hier einfügst!";
-L.TMB_IMPORT_NOTES_AVAILABLE = "Prioritätsnotizen verfügbar: %s";
-L.TMB_IMPORT_NUMBER = "Anzahl der importierten Gegenstände: %s";
-L.TMB_IMPORT_PLAYER_NO_DATA = "Die folgenden Spieler haben keine %s Einträge:"; -- %s can be TMB/DFT/CPR
-L.TMB_IMPORT_TMB_GARGUL_INFO = "So verwendest du Gargul mit ${source}";
-L.TMB_IMPORT_TMB_GARGUL_INFO_URL = "https://github.com/papa-smurf/Gargul/wiki/Gargul-and-ThatsMyBIS";
-L.TMB_IMPORT_TMB_INFO = "Füge den Inhalt deines TMB-Exports unverändert in das Feld unten ein und klick auf „Importieren“.";
-L.TMB_NO_BROADCAST_TARGETS = "Es gibt niemanden in deiner Gruppe, an den du senden können";
-L.TMB_SYNCED = "TMB-Daten synchronisiert";
-L.TMB_TOOLTIP_NOTE = "|c00FFFFFF Hinweis: |c00FFF569%s";
-L.TMB_TOOLTIP_OFFSPEC_INDICATION = "(OS)";
-L.TMB_TOOLTIP_PRIO_HEADER = "%s Prio-Liste"; -- %s can be TMB/DFT/CPR
-L.TMB_TOOLTIP_TIER = "|c00FFFFFF Tier: %s";
-L.TMB_TOOLTIP_WISHLIST_HEADER = "TMB-Wunschliste";
-L.TOGGLE_DATES = "Daten ein-/ausblenden";
-L.TOGGLE_QUEUE = "Warteschlange ein-/ausblenden";
-L.TRADETIME_AWARD_HOWTO = "%s, um Beute zu verleihen!";
-L.TRADETIME_ROLL_HOWTO = "%s um um Beute zu würfeln!";
-L.TRADETIME_SETTINGS_HIDE_AWARDED = "Alle verliehenen Gegenstände ausblenden";
-L.TRADETIME_SETTINGS_HIDE_DISENCHANTED = "Blende entzauberte Gegenstände aus";
-L.TRADETIME_SETTINGS_HIDE_SELF_AWARDED = "Selbst verliehene Gegenstände ausblenden";
-L.TRADE_ANNOUNCE = "Handel ankündigen";
-L.TRADE_ANNOUNCE_INFO = "Gib Handelsdetails der Gruppe oder in /say bekannt, wenn du nicht in einer Gruppe bist";
-L.TUTORIAL = "Tutorial";
-L.TUTORIAL_AUCTIONEER = [[
+L["Imported on |c00A79EFF%s at |c00A79EFF%s"] = "Importiert am |c00A79EFF%s um |c00A79EFF%s";
+L["Auto name fix: the SR of '%s' is now linked to '%s'"] = "Automatische Namenskorrektur: Die SR von „%s“ ist jetzt mit „%s“ verknüpft.";
+L["In order to get started you first need to create a raid on softres.it. Afterwards click on 'Addon Export', select 'Gargul', copy the data and paste it in the form below."] = "Um zu beginnen, musst du zunächst einen Raid auf softres.it erstellen. Klick anschließend auf „Addon Export“, wähle „Gargul“, kopiere die Daten und füge sie in das untenstehende Formular ein.";
+L["Invalid soft-reserve data provided"] = "Es wurden ungültige Soft-Reserve-Daten bereitgestellt";
+L["Invalid data provided. Make sure to click the 'Gargul Export' button on softres.it and paste the full contents here"] = "Ungültige Daten angegeben. Klick auf die Schaltfläche „Gargul Export“ auf softres.it und füge den gesamten Inhalt hier ein";
+L["The PlusOne values provided collide with the ones already present. Do you want to replace your old PlusOne values?"] = "Die bereitgestellten PlusOne-Werte kollidieren mit den bereits vorhandenen. Möchtest du deine alten PlusOne-Werte ersetzen?";
+L["The following players did not reserve anything:"] = "Die folgenden Spieler haben nichts reserviert:";
+L["Soft-reserves imported successfully"] = "Soft-Reserves erfolgreich importiert";
+L["Import successful!"] = "Import erfolgreich!";
+L["SoftRes Weakaura and CSV data are deprecated, use the Gargul export instead!"] = "SoftRes Weakaura- und CSV-Daten sind veraltet. Verwende stattdessen den Gargul-Export!";
+L["Failed to connect to LootReserve, contact support (include message below)"] = "Verbindung zu LootReserve konnte nicht hergestellt werden. Wende dich an den Support (füge die Nachricht unten ein).";
+L["%s (%sx)"] = "%s (%sx)";
+L["No softres.it URL available, make sure you exported using the 'Gargul Export' button on softres.it!"] = "Keine softres.it-URL verfügbar. Stell sicher, dass du den Export über die Schaltfläche „Gargul Export“ auf softres.it durchgeführt hast!";
+L["Click here to see hard-reserve info"] = "Klick hier, um Informationen zur Festreserve anzuzeigen";
+L["No items are hard-reserved"] = "Es sind keine Gegenstände hard-reserved";
+L["No hard-reserve info available"] = "Keine Informationen zu hard-reserve verfügbar";
+L["Post missing SRs"] = "Poste fehlende SRs";
+L["Post SR URL"] = "SR-URL posten";
+L["This player did not reserve anything!"] = "Dieser Spieler hat nichts reserviert!";
+L["%s (%sx)"] = "%s (%sx)";
+L["Attempting to process incoming SoftRes data from %s"] = "Es wird versucht, eingehende SoftRes-Daten von %s zu verarbeiten";
+L["This item is hard-reserved"] = "Dieser Artikel ist hard-reserved";
+L["For: %s"] = "Für: %s";
+L["|c00CC2743 Note: %s"] = "|c00CC2743 Hinweis: %s";
+L["Reserved by"] = "Reserviert von";
+L["!sr|!softres|!softreserve"] = "!sr|!softres|!softreserve";
+L["Something went wrong!"] = "Etwas ist schief gelaufen!";
+L["Start"] = "Start";
+L["Stop"] = "Stoppen";
+L["\\t is replaced by a tab"] = "\\t wird ersetzt durch Tabulatortaste";
+L["TMB"] = "TMB";
+L["Time"] = "Zeit";
+L["Title"] = "Titel";
+L["TMB, DFT or PRIO3"] = "TMB, DFT oder PRIO3";
+L["Are you sure you want to broadcast your TMB data to everyone in your party/raid? NB: EVERYONE can see your TMB data regardless of their permissions on the TMB website!"] = "Bist du sicher, dass du deine TMB-Daten an alle Mitglieder deiner Gruppe/deines Raids übertragen möchtest? Hinweis: JEDER kann deine TMB-Daten sehen, unabhängig von seinen Berechtigungen auf der TMB-Website!";
+L["Attempting to process incoming TMB data from %s"] = "Es wird versucht, eingehende TMB-Daten von %s zu verarbeiten";
+L["Are you sure you want to clear all plus one data?"] = "Bist du sicher, dass du alle PlusOne-Daten löschen möchtest?";
+L["Clear Raider Data"] = "Raider-Daten löschen";
+L["Clear TMB data for all raiders?"] = "TMB-Daten für alle Raider löschen?";
+L["Auto-sharing enabled: %s"] = "Automatisches Teilen aktiviert: %s";
+L["On your classicpr.io run click on the 'Gargul Export' button and copy the contents. Afterwards paste the contents as-is in the box below and click 'Import'. That's it!"] = "Klick bei deinem classicpr.io-Lauf auf die Schaltfläche „Gargul Export“ und kopiere den Inhalt. Füge anschließend den Inhalt unverändert in das Feld unten ein und klick auf „Importieren“. Das ist es!";
+L["Imported on ${date} at ${time}"] = "Importiert am ${date} um ${time}";
+L["Export your DFT data as per the sheet's instructions. Afterwards paste the contents as-is in the box below and click 'Import'. That's it!"] = "Exportiere deine DFT-Daten gemäß den Anweisungen auf dem Sheet. Füge anschließend den Inhalt unverändert in das Feld unten ein und klick auf „Importieren“. Das ist es!";
+L["Invalid CSV provided, the format is: 6948,player1,player2"] = "Es wurde eine ungültige CSV-Datei bereitgestellt. Das Format lautet: 6948,Spieler1,Spieler2";
+L["Invalid DFT data provided, Export your DFT data as per the sheet's instructions and paste the contents here as-is!"] = "Es wurden ungültige DFT-Daten bereitgestellt. Exportiere deine DFT-Daten gemäß den Anweisungen auf dem Sheet und füge den Inhalt unverändert hier ein!";
+L["Invalid TMB data provided, make sure to click the 'Download' button in the Gargul section and paste the contents here as-is!"] = "Es wurden ungültige TMB-Daten bereitgestellt. Klick auf die Schaltfläche „Herunterladen“ im Gargul-Bereich und füge den Inhalt unverändert hier ein!";
+L["Invalid TMB or DFT data provided, make sure to paste the export contents here as-is!"] = "Es wurden ungültige TMB- oder DFT-Daten bereitgestellt. Stell sicher, dass du die Exportinhalte unverändert hier einfügst!";
+L["Priority notes available: %s"] = "Prioritätsnotizen verfügbar: %s";
+L["Number of items imported: %s"] = "Anzahl der importierten Gegenstände: %s";
+L["The following players have no %s entries:"] = "Die folgenden Spieler haben keine %s Einträge:"; -- %s can be TMB/DFT/CPR
+L["How to use Gargul with ${source}"] = "So verwendest du Gargul mit ${source}";
+L["https://github.com/papa-smurf/Gargul/wiki/Gargul-and-ThatsMyBIS"] = "https://github.com/papa-smurf/Gargul/wiki/Gargul-and-ThatsMyBIS";
+L["Paste your TMB export contents as-is in the box below and click 'Import'"] = "Füge den Inhalt deines TMB-Exports unverändert in das Feld unten ein und klick auf „Importieren“.";
+L["There's no one in your group to broadcast to"] = "Es gibt niemanden in deiner Gruppe, an den du senden können";
+L["TMB data synced"] = "TMB-Daten synchronisiert";
+L["|c00FFFFFF    Note: |c00FFF569%s"] = "|c00FFFFFF Hinweis: |c00FFF569%s";
+L["(OS)"] = "(OS)";
+L["%s Prio List"] = "%s Prio-Liste"; -- %s can be TMB/DFT/CPR
+L["|c00FFFFFF    Tier: %s"] = "|c00FFFFFF Tier: %s";
+L["TMB Wish List"] = "TMB-Wunschliste";
+L["Show/Hide Dates"] = "Daten ein-/ausblenden";
+L["Show/Hide Queue"] = "Warteschlange ein-/ausblenden";
+L["%s to award loot!"] = "%s, um Beute zu verleihen!";
+L["%s to roll out loot!"] = "%s um um Beute zu würfeln!";
+L["Hide all awarded items"] = "Alle verliehenen Gegenstände ausblenden";
+L["Hide disenchanted items"] = "Blende entzauberte Gegenstände aus";
+L["Hide items awarded to self"] = "Selbst verliehene Gegenstände ausblenden";
+L["Announce Trade"] = "Handel ankündigen";
+L["Announce trade details to group or in /say when not in a group"] = "Gib Handelsdetails der Gruppe oder in /say bekannt, wenn du nicht in einer Gruppe bist";
+L["Tutorial"] = "Tutorial";
+L["\n|c00A79EFF%s items in bags, loot windows or even on links in your chat to add them to the auction queue.\nWant to directly sell an item without bidding? Use |c00A79EFF%s\n\nYou can open the %s window directly by typing |c00A79EFF/gl auction\n\nGargul tracks |c00FF0000ALL gold traded. Don't want a trade to be a part of this GDKP session? Check the \"Exclude from GDKP\" checkbox when trading!\n\n|c00FFF569Did you know?\nAwarded items will automatically be added to the trade window\nGargul can also handle auto looting for you. Check it out with |c00A79EFF/gl pm\n"] = [[
 |c00A79EFF%s Gegenstände in Taschen, Beutefenstern oder sogar auf Links in deinem Chat, um sie zur Auktionswarteschlange hinzuzufügen.
 Möchtest du einen Gegenstand direkt verkaufen, ohne zu bieten? Verwende |c00A79EFF%s
 
@@ -967,7 +967,7 @@ Gargul verfolgt |c00FF0000ALL gehandeltes Gold. Möchtest du nicht, dass ein Han
 Verliehene Gegenstände werden automatisch zum Handelsfenster hinzugefügt
 Gargul kann auch das automatische Plündern für dich übernehmen. Probier es mit |c00A79EFF/gl pm aus
 ]];
-L.TUTORIAL_AWARD_OVERVIEW = [[
+L["\nThis window shows all the items that have been awarded on any given date (select one or more dates on the left).\n\nItems can contain the following tags:\n\n|c00A79EFFOS: Awarded for offspec\n|c00A79EFFSR: This item was soft-reserved\n|c00A79EFFWL: This item was wishlisted (Thatsmybis)\n|c00A79EFFPL: This item was priolisted (Thatsmybis, DFT, prio3)\n"] = [[
 In diesem Fenster werden alle Gegenstände angezeigt, die an einem bestimmten Datum verliehen wurden (wähle links ein oder mehrere Daten aus).
 
 Gegenstände können die folgenden Tags enthalten:
@@ -977,7 +977,7 @@ Gegenstände können die folgenden Tags enthalten:
 |c00A79EFFWL: Dieser Gegenstand war auf einer Wunschliste (Thatsmybis)
 |c00A79EFFPL: Dieser Gegenstand war auf einer Prio-Liste (Thatsmybis, DFT, prio3)
 ]];
-L.TUTORIAL_BIDDER_QUEUE = [[
+L["\nThe items you see here are in the master looter's GDKP queue\nYou can remove them, bid on them, and hide unusable items (enable 'Hide unusable items' in the settings in the top-left)\n\nYou can resize the window, move it around, or minimize it. Try it out!\n\nFor loot masters: removing items here will only remove them from your personal queue, not the actual GDKP queue!\n"] = [[
 Die Gegenstände, die du hier siehst, befinden sich in der GDKP-Warteschlange des Plündermeisters
 Du kannst sie entfernen, darauf bieten und unbrauchbare Gegenstände ausblenden (aktiviere „Unbrauchbare Gegenstände ausblenden“ in den Einstellungen oben links).
 
@@ -985,18 +985,18 @@ Du kannst die Größe des Fensters ändern, es verschieben oder minimieren. Vers
 
 Für Plündermeister: Wenn du Gegenstände hier entfernst, werden sie nur aus deiner persönlichen Warteschlange entfernt, nicht aus der tatsächlichen GDKP-Warteschlange!
 ]];
-L.TUTORIAL_MORE_HELP = "Benötigst du mehr Hilfe?";
-L.TYPE = "Typ"; -- As in type of roll or type of item
-L.UNKNOWN = "Unbekannt";
-L.UNKNOWN_COMM_ACTION = "Unbekannte Kommunikationsaktion „%s“, aktualisiere unbedingt Gargul!";
-L.UNLOCK = "Freischalten";
-L.UPDATE_GARGUL = "Aktualisiere Gargul!";
-L.VERSION_ABBR = "v";
-L.VERSION_CHECK_BUTTON_REPORT = "Bericht";
-L.VERSION_CHECK_BUTTON_REPORT_TOOLTIP = "Veraltete Ergebnisse im Gruppenchat melden";
-L.VERSION_CHECK_COLUMN_STATUS = "Gargul-Status";
-L.VERSION_CHECK_STATUS_CHECKING = "Version wird geprüft...";
-L.VERSION_CHECK_STATUS_EXPLANATION = [[
+L["Need more help?"] = "Benötigst du mehr Hilfe?";
+L["Type"] = "Typ"; -- As in type of roll or type of item
+L["unknown"] = "Unbekannt";
+L["Unknown comm action '%s', make sure to update Gargul!"] = "Unbekannte Kommunikationsaktion „%s“, aktualisiere unbedingt Gargul!";
+L["Unlock"] = "Freischalten";
+L["Update Gargul!"] = "Aktualisiere Gargul!";
+L["v"] = "v";
+L["Report"] = "Bericht";
+L["Report outdated results in group chat"] = "Veraltete Ergebnisse im Gruppenchat melden";
+L["Gargul status"] = "Gargul-Status";
+L["Checking version ..."] = "Version wird geprüft...";
+L["\n|c0092FF00v%s: the player is up-to-date\n|c00F7922Ev%s: the player needs to update his add-ons\n|c00BE3333%s: the player doesn't have Gargul or is on an unsupported version\n|c00808080%s: the player is offline or is ignoring us!\n|c0000FFFF%s: the player is on our ignore list!\n\n"] = [[
 |c0092FF00v%s: Der Spieler ist auf dem neuesten Stand
 |c00F7922Ev%s: Der Spieler muss seine Add-ons aktualisieren
 |c00BE3333%s: Der Spieler verfügt nicht über Gargul oder nutzt eine nicht unterstützte Version
@@ -1004,25 +1004,25 @@ L.VERSION_CHECK_STATUS_EXPLANATION = [[
 |c0000FFFF%s: Der Spieler steht auf unserer Ignorierliste!
 
 ]];
-L.VERSION_CHECK_STATUS_IGNORED = "SPIELER IGNORIERT!";
-L.VERSION_CHECK_STATUS_OFFLINE = "Offline";
-L.VERSION_CHECK_STATUS_UNRESPONSIVE = "Keine Antwort";
-L.VERSION_CHECK_SUMMARY_NO_RESPONSE = "Keine Antwort:";
-L.VERSION_CHECK_SUMMARY_OFFLINE = "Offline:";
-L.VERSION_CHECK_SUMMARY_OUTDATED = "Veraltet:";
-L.VERSION_CHECK_SUMMARY_UP_TO_DATE = "Up-to-date:";
-L.VERSION_INCOMPATIBLE_WARNING = "Gargul ist veraltet und funktioniert erst, wenn du ein Update durchführst!";
-L.VERSION_INVALID_WARNING = "Ungültige Versionszeichenfolge in Version:addRelease angegeben";
-L.VERSION_UPDATE = "Aktualisiere Gargul!";
-L.VERSION_UPDATED = "|c00%sGargul wird jetzt auf |c00%sv%s aktualisiert";
-L.VERSION_UPDATE_AVAILABLE = "|c00A79EFFv%s ist auf CurseForge/Wago verfügbar. Du kannst aktualisieren, ohne dein Spiel zu schließen. Stell einfach sicher, dass du /reload ausführst!";
-L.WAIT_SECONDS_BEFORE_RETRY = "Warte %s weitere Sekunden, bevor du es erneut versuchst";
-L.WINDOW = "Fenster";
-L.WINDOW_HEADER = "Gargul v%s";
-L.WINDOW_SCALE = "Fensterskalierung";
-L.WISHLIST_ABBR = "WL";
-L.YES = "Ja";
-L.YOU_DISABLED_GDKP_QUEUES = "Du hast GDKP-Warteschlangen deaktiviert";
-L.ZERO_SIGN = "0";
-L.ZLIB_COMPRESS_WARNING = "Zlib-Komprimierung der Daten ist nicht möglich. Kontaktiere den Support über https://discord.gg/D3mDhYPVzf";
-L.ZLIB_DECOMPRESS_WARNING = "Zlib kann die Daten nicht dekomprimieren. Stell sicher, dass du es unverändert kopiert/eingefügt hast, ohne zusätzliche Zeichen oder Leerzeichen hinzuzufügen!";
+L["PLAYER IGNORED!"] = "SPIELER IGNORIERT!";
+L["Offline"] = "Offline";
+L["No response"] = "Keine Antwort";
+L["No response:"] = "Keine Antwort:";
+L["Offline:"] = "Offline:";
+L["Outdated:"] = "Veraltet:";
+L["Up-to-date:"] = "Up-to-date:";
+L["Gargul is out of date and won't work until you update!"] = "Gargul ist veraltet und funktioniert erst, wenn du ein Update durchführst!";
+L["Invalid version string provided in Version:addRelease"] = "Ungültige Versionszeichenfolge in Version:addRelease angegeben";
+L["Update Gargul!"] = "Aktualisiere Gargul!";
+L["|c00%sGargul is now updated to |c00%sv%s"] = "|c00%sGargul wird jetzt auf |c00%sv%s aktualisiert";
+L["|c00A79EFFv%s is available on CurseForge/Wago. You can update without closing your game, just be sure to /reload !"] = "|c00A79EFFv%s ist auf CurseForge/Wago verfügbar. Du kannst aktualisieren, ohne dein Spiel zu schließen. Stell einfach sicher, dass du /reload ausführst!";
+L["Wait %s more seconds before you retry"] = "Warte %s weitere Sekunden, bevor du es erneut versuchst";
+L["Window"] = "Fenster";
+L["Gargul v%s"] = "Gargul v%s";
+L["Window Scale"] = "Fensterskalierung";
+L["WL"] = "WL";
+L["Yes"] = "Ja";
+L["You disabled GDKP queues"] = "Du hast GDKP-Warteschlangen deaktiviert";
+L["0"] = "0";
+L["Unable to zlib compress the data. Contact support via https://discord.gg/D3mDhYPVzf"] = "Zlib-Komprimierung der Daten ist nicht möglich. Kontaktiere den Support über https://discord.gg/D3mDhYPVzf";
+L["Unable to zlib decompress the data. Make sure you copy/paste it as-is without adding any additional characters or whitespaces!"] = "Zlib kann die Daten nicht dekomprimieren. Stell sicher, dass du es unverändert kopiert/eingefügt hast, ohne zusätzliche Zeichen oder Leerzeichen hinzuzufügen!";

@@ -28,7 +28,7 @@ function PlayerSelector:draw(description, PlayerNames, callback)
 
     -- Create a container/parent frame
     local Window = AceGUI:Create("Frame");
-    Window:SetTitle((L.WINDOW_HEADER):format(GL.version));
+    Window:SetTitle((L["Gargul v%s"]):format(GL.version));
     Window:SetLayout("FLOW");
     Window:SetWidth(430);
     Window:SetHeight(292);
@@ -74,7 +74,7 @@ function PlayerSelector:draw(description, PlayerNames, callback)
     SecondRow:AddChild(Spacer);
 
     local PlayerNameLabel = AceGUI:Create("Label");
-    PlayerNameLabel:SetText(L.AWARD_PLAYER_CUSTOM_NAME);
+    PlayerNameLabel:SetText(L["Type player name here"]);
     PlayerNameLabel:SetHeight(20);
     PlayerNameLabel:SetWidth(128); -- Minimum is 122
     SecondRow:AddChild(PlayerNameLabel);
@@ -101,7 +101,7 @@ function PlayerSelector:draw(description, PlayerNames, callback)
     SecondRow:AddChild(Spacer);
 
     local PlayerNameLabelSuffix = AceGUI:Create("Label");
-    PlayerNameLabelSuffix:SetText(L.AWARD_PLAYER_SELECT_NAME);
+    PlayerNameLabelSuffix:SetText(L["or select one below"]);
     PlayerNameLabelSuffix:SetHeight(20);
     PlayerNameLabelSuffix:SetWidth(104); -- Minimum is 104
     SecondRow:AddChild(PlayerNameLabelSuffix);
@@ -113,7 +113,7 @@ function PlayerSelector:draw(description, PlayerNames, callback)
     Window:AddChild(TableFrame);
 
     ConfirmButton = AceGUI:Create("Button");
-    ConfirmButton:SetText(L.OK);
+    ConfirmButton:SetText(L["Ok"]);
     ConfirmButton:SetWidth(140);
     ConfirmButton:SetHeight(20);
     ConfirmButton:SetCallback("OnClick", function()

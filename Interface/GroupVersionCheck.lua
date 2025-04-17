@@ -63,7 +63,7 @@ function GroupVersionCheck:build()
 
     --[[ THE SETTINGS MENU IN THE TOP LEFT OF THE WINDOW ]]
     Interface:addWindowOptions(Window, {
-        { text = L.CHANGE_SCALE, notCheckable = true, func = function ()
+        { text = L["Adjust Scale"], notCheckable = true, func = function ()
             Interface:openScaler(Window);
             CloseMenus();
         end }
@@ -77,12 +77,12 @@ function GroupVersionCheck:build()
 
     --[[ PLAYER LABEL ]]
     ---@type FontString
-    local PlayerLabel = Interface:createFontString(Window, L.PLAYER);
+    local PlayerLabel = Interface:createFontString(Window, L["Player"]);
     PlayerLabel:SetPoint("TOPLEFT", Window, "TOPLEFT", 20, -20);
 
     --[[ STATUS / VERSION ]]
     ---@type FontString
-    local StatusLabel = Interface:createFontString(Window, L.VERSION_CHECK_COLUMN_STATUS);
+    local StatusLabel = Interface:createFontString(Window, L["Gargul status"]);
     StatusLabel:SetPoint("TOPLEFT", PlayerLabel, "TOPRIGHT", 120, 0);
 
     do --[[ HELP ICON ]]
@@ -107,8 +107,8 @@ function GroupVersionCheck:build()
         highlight:SetTexCoord(0, 1, 0.23, 0.77);
         highlight:SetBlendMode("ADD");
 
-        Interface:addTooltip(Icon, (L.VERSION_CHECK_STATUS_EXPLANATION):format(GL.version, GL.version, L.VERSION_CHECK_STATUS_UNRESPONSIVE, L.VERSION_CHECK_STATUS_OFFLINE, L.VERSION_CHECK_STATUS_IGNORED));
-        Interface:addTooltip(StatusLabel, (L.VERSION_CHECK_STATUS_EXPLANATION):format(GL.version, GL.version, L.VERSION_CHECK_STATUS_UNRESPONSIVE, L.VERSION_CHECK_STATUS_OFFLINE, L.VERSION_CHECK_STATUS_IGNORED));
+        Interface:addTooltip(Icon, (L["\n|c0092FF00v%s: the player is up-to-date\n|c00F7922Ev%s: the player needs to update his add-ons\n|c00BE3333%s: the player doesn't have Gargul or is on an unsupported version\n|c00808080%s: the player is offline or is ignoring us!\n|c0000FFFF%s: the player is on our ignore list!\n\n"]):format(GL.version, GL.version, L["No response"], L["Offline"], L["PLAYER IGNORED!"]));
+        Interface:addTooltip(StatusLabel, (L["\n|c0092FF00v%s: the player is up-to-date\n|c00F7922Ev%s: the player needs to update his add-ons\n|c00BE3333%s: the player doesn't have Gargul or is on an unsupported version\n|c00808080%s: the player is offline or is ignoring us!\n|c0000FFFF%s: the player is on our ignore list!\n\n"]):format(GL.version, GL.version, L["No response"], L["Offline"], L["PLAYER IGNORED!"]));
     end
 
     --[[ SCROLLFRAME BOILERPLATE ]]
@@ -215,7 +215,7 @@ function GroupVersionCheck:build()
 
     --[[ UP-TO-DATE ]]
     ---@type FontString
-    local UpToDateLabel = Interface:createFontString(Window, L.VERSION_CHECK_SUMMARY_UP_TO_DATE);
+    local UpToDateLabel = Interface:createFontString(Window, L["Up-to-date:"]);
     UpToDateLabel:SetColor("SUCCESS");
     UpToDateLabel:SetPoint("BOTTOMLEFT", Window, "BOTTOMLEFT", 22, 58);
 
@@ -227,7 +227,7 @@ function GroupVersionCheck:build()
 
     --[[ OUTDATED ]]
     ---@type FontString
-    local OutdatedLabel = Interface:createFontString(Window, L.VERSION_CHECK_SUMMARY_OUTDATED);
+    local OutdatedLabel = Interface:createFontString(Window, L["Outdated:"]);
     OutdatedLabel:SetColor("WARNING");
     OutdatedLabel:SetPoint("TOPLEFT", UpToDateCountLabel, "TOPRIGHT", 6, 0);
 
@@ -239,7 +239,7 @@ function GroupVersionCheck:build()
 
     --[[ NO RESPONSE ]]
     ---@type FontString
-    local UnresponsiveLabel = Interface:createFontString(Window, L.VERSION_CHECK_SUMMARY_NO_RESPONSE);
+    local UnresponsiveLabel = Interface:createFontString(Window, L["No response:"]);
     UnresponsiveLabel:SetColor("ERROR");
     UnresponsiveLabel:SetPoint("TOPLEFT", OutdatedCountLabel, "TOPRIGHT", 6, 0);
 
@@ -251,7 +251,7 @@ function GroupVersionCheck:build()
 
     --[[ OFFLINE ]]
     ---@type FontString
-    local OfflineLabel = Interface:createFontString(Window, L.VERSION_CHECK_SUMMARY_OFFLINE);
+    local OfflineLabel = Interface:createFontString(Window, L["Offline:"]);
     OfflineLabel:SetColor("GRAY");
     OfflineLabel:SetPoint("TOPLEFT", UnresponsiveCountLabel, "TOPRIGHT", 6, 0);
 
@@ -263,31 +263,31 @@ function GroupVersionCheck:build()
 
     --[[ ACTION BUTTONS ]]
     ---@type Button
-    local ReportButton = Interface:dynamicPanelButton(Window, L.VERSION_CHECK_BUTTON_REPORT);
+    local ReportButton = Interface:dynamicPanelButton(Window, L["Report"]);
     ReportButton:SetPoint("BOTTOMLEFT", Window, "BOTTOMLEFT", 20, 30);
     ReportButton:SetScript("OnClick", function ()
         if (not GL:empty(self.Results.Unresponsive)) then
-            GL:sendChatMessage(L.CHAT.VERSION_CHECK_MISSING, "GROUP", nil, nil, false);
+            GL:sendChatMessage(L.CHAT["Gargul missing for:"], "GROUP", nil, nil, false);
             for _, player in pairs(self.Results.Unresponsive) do
                 GL:sendChatMessage(player, "GROUP", nil, nil, false);
             end
         end
 
         if (not GL:empty(self.Results.Outdated)) then
-            GL:sendChatMessage(L.CHAT.VERSION_CHECK_OUTDATED, "GROUP", nil, nil, false);
+            GL:sendChatMessage(L.CHAT["Gargul outdated for:"], "GROUP", nil, nil, false);
             for _, player in pairs(self.Results.Outdated) do
                 GL:sendChatMessage(player, "GROUP", nil, nil, false);
             end
         end
 
         if (not GL:empty(self.Results.Offline)) then
-            GL:sendChatMessage(L.CHAT.VERSION_CHECK_OFFLINE, "GROUP");
+            GL:sendChatMessage(L.CHAT["The following players were offline:"], "GROUP");
             for _, player in pairs(self.Results.Offline) do
                 GL:sendChatMessage(player, "GROUP", nil, nil, false);
             end
         end
     end);
-    Interface:addTooltip(ReportButton, L.VERSION_CHECK_BUTTON_REPORT_TOOLTIP);
+    Interface:addTooltip(ReportButton, L["Report outdated results in group chat"]);
     Window._ReportButton = ReportButton;
 
     return Window;
@@ -313,11 +313,11 @@ function GroupVersionCheck:refresh()
     -- No point checking anyone else if we're negligent ourselves
     if (Version.lastNotBackwardsCompatibleNotice > 0) then
         GL.Interface.Alerts:fire("GargulNotification", {
-            message = ("|c00BE3333%s|r"):format(L.UPDATE_GARGUL),
+            message = ("|c00BE3333%s|r"):format(L["Update Gargul!"]),
             onClick = function ()
                 GL.Interface.Dialogs.HyperlinkDialog:open{
-                    description = L.GROUP_VERSION_CHECK_NOTIFICATION_DESCRIPTION,
-                    hyperlink = L.GROUP_VERSION_CHECK_NOTIFICATION_URL,
+                    description = L["Download on CurseForge"],
+                    hyperlink = L["https://addons.wago.io/addons/gargul/versions?stability=stable"],
                 };
             end,
         });
@@ -391,13 +391,13 @@ function GroupVersionCheck:refresh()
         if (not Member.online) then
             addOffline(Member.name);
 
-            Status:SetText(L.VERSION_CHECK_STATUS_OFFLINE);
+            Status:SetText(L["Offline"]);
             Status:SetColor("GRAY");
             return;
 
         -- This person is on our ignore list so we can't check his version
         elseif (GL:inTable(self.Results.Ignored, Member.fqn)) then
-            Status:SetText(L.VERSION_CHECK_STATUS_IGNORED);
+            Status:SetText(L["PLAYER IGNORED!"]);
             Status:SetColor("AQUA");
 
             addUnresponsive(Member.name);
@@ -405,7 +405,7 @@ function GroupVersionCheck:refresh()
         end
 
         if (Member.name == GL.User.name) then
-            Status:SetText(L.VERSION_ABBR .. GL.version);
+            Status:SetText(L["v"] .. GL.version);
 
             if (Version.isOutOfDate) then
                 addOutdated(Member.name);
@@ -420,7 +420,7 @@ function GroupVersionCheck:refresh()
             return;
         end
 
-        Status:SetText(L.VERSION_CHECK_STATUS_CHECKING);
+        Status:SetText(L["Checking version ..."]);
         Status:SetColor("NOTICE");
 
         -- Assume the player doesn't have Gargul or is too outdated after 5 seconds of inactivity
@@ -428,7 +428,7 @@ function GroupVersionCheck:refresh()
         GL:after(5, timerIdentifier, function ()
             addUnresponsive(Member.name);
 
-            Status:SetText(L.VERSION_CHECK_STATUS_UNRESPONSIVE);
+            Status:SetText(L["No response"]);
             Status:SetColor("ERROR");
         end);
         tinsert(self.Timers, timerIdentifier);
@@ -449,13 +449,13 @@ function GroupVersionCheck:refresh()
                     addUnresponsive(Member.name);
 
                     Status:SetColor("ERROR");
-                    Status:SetText(L.VERSION_CHECK_STATUS_UNRESPONSIVE);
+                    Status:SetText(L["No response"]);
 
                     return;
                 end
 
                 -- Check if the player is up-to-date or not
-                Status:SetText(L.VERSION_ABBR .. Response.version);
+                Status:SetText(L["v"] .. Response.version);
 
                 if (Version:isUpToDate(Response.version)) then
                     addUpToDate(Member.name);

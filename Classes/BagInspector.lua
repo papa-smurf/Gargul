@@ -38,7 +38,7 @@ function BagInspector:inspect(items)
         and not GL.User.hasAssist
         and not GL.User.isMasterLooter
     ) then
-        return GL:error(L.LM_OR_ASSIST_REQUIRED);
+        return GL:error(L["You need to be the master looter or have an assist / lead role!"]);
     end
 
     -- This ensures that the item exists and that
@@ -49,7 +49,7 @@ function BagInspector:inspect(items)
 
     -- Send the inspection request to the correct channel
     local CommMessage = {};
-    GL:success(L.BAGINSPECTOR_START);
+    GL:success(L["Starting inspection..."]);
     CommMessage = GL.CommMessage.new{
         action = CommActions.inspectBags,
         content = items,
@@ -59,7 +59,7 @@ function BagInspector:inspect(items)
 
     -- After a period of X seconds inspect the results
     GL.Ace:ScheduleTimer(function ()
-        GL:success(L.BAGINSPECTOR_FINISHED);
+        GL:success(L["Inspection finished"]);
         BagInspector.inspectionInProgress = false;
 
         BagInspector:processInspectionResults(CommMessage);
@@ -115,7 +115,7 @@ function BagInspector:processInspectionResults(CommMessage)
     -- their item links have been successfully loaded by the API
     local displayInspectionReport = function ()
         if (numberOfResponses < 1) then
-            return GL:error(L.BAGINSPECTOR_FAILED);
+            return GL:error(L["Bag inspection failed: no reports received"]);
         end
 
         BagInspector:displayInspectionResults(ItemIDs, ItemLinksByID);
@@ -165,8 +165,8 @@ function BagInspector:displayInspectionResults()
 
         GL.Interface:release(widget);
     end);
-    ResultFrame:SetTitle((L.WINDOW_HEADER):format(GL.version));
-    ResultFrame:SetStatusText(L.VERSION_ABBR .. GL.version);
+    ResultFrame:SetTitle((L["Gargul v%s"]):format(GL.version));
+    ResultFrame:SetStatusText(L["v"] .. GL.version);
     ResultFrame:SetLayout("Flow");
     ResultFrame:SetWidth(600);
     ResultFrame:SetHeight(450);

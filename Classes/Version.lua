@@ -49,7 +49,7 @@ function Version:_init()
 
         if (not GL.firstBoot) then
             print(string.format(
-                L.VERSION_UPDATED,
+                L["|c00%sGargul is now updated to |c00%sv%s"],
                 GL.Data.Constants.addonHexColor,
                 GL.Data.Constants.addonHexColor,
                 self.current
@@ -192,7 +192,7 @@ function Version:addRelease(versionString, quietly)
         or not string.match(versionString, "%d+%.%d+%.%d+")
     ) then
         if (not quietly) then
-            GL:warning(L.VERSION_INVALID_WARNING);
+            GL:warning(L["Invalid version string provided in Version:addRelease"]);
         end
 
         return;
@@ -240,7 +240,7 @@ function Version:notBackwardsCompatibleNotice()
 
     if (not self.lastNotBackwardsCompatibleNotice) then
         self.lastNotBackwardsCompatibleNotice = serverTime;
-        GL:error(L.VERSION_INCOMPATIBLE_WARNING);
+        GL:error(L["Gargul is out of date and won't work until you update!"]);
     end
 end
 
@@ -258,7 +258,7 @@ function Version:notifyOfLatestVersion()
     self.lastUpdateNotice = GetServerTime();
 
     local notify = function ()
-        GL:warning((L.VERSION_UPDATE_AVAILABLE):format(self.latest));
+        GL:warning((L["|c00A79EFFv%s is available on CurseForge/Wago. You can update without closing your game, just be sure to /reload !"]):format(self.latest));
 
         -- Only show if the user didn't update for at least two trivial or one minor/major version
         if (self.versionDifference < 2) then
@@ -270,7 +270,7 @@ function Version:notifyOfLatestVersion()
         end
 
         GL.Interface.Alerts:fire("GargulNotification", {
-            message = ("|c00BE3333%s|r"):format(L.VERSION_UPDATE),
+            message = ("|c00BE3333%s|r"):format(L["Update Gargul!"]),
         });
     end
 

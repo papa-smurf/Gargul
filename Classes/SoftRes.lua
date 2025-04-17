@@ -64,7 +64,7 @@ function SoftRes:_init()
         if (success and result) then
             _G.LootReserve:PromptListener("RESERVES", GL.name)
         else
-            GL:error(L.SOFTRES_LOOTRESERVE_CONNECTION_WARNING);
+            GL:error(L["Failed to connect to LootReserve, contact support (include message below)"]);
             DevTools_Dump{ success, result };
         end
     end, 5);
@@ -82,9 +82,9 @@ function SoftRes:_init()
     --- Show an alert or a system message after sucessfully importing data
     GL.Events:register("AlertsSoftresImported", "GL.SOFTRES_IMPORTED", function ()
         if (not GL.Interface.Alerts:fire("GargulNotification", {
-            message = "|c00BE3333" .. L.SOFTRES_IMPORT_SUCCESSFUL_ALERT .. "|r",
+            message = "|c00BE3333" .. L["Import successful!"] .. "|r",
         })) then
-            GL:success(L.SOFTRES_IMPORT_SUCCESSFUL);
+            GL:success(L["Soft-reserves imported successfully"]);
         end
     end);
 
@@ -122,7 +122,7 @@ end
 ---@return void
 function SoftRes:handleWhisperCommand(_, message, sender)
     local validPrefixDetected = false;
-    for _, prefix in pairs(GL:explode(L.SOFTRES_WHISPER_PREFIXES, "|") or {}) do
+    for _, prefix in pairs(GL:explode(L["!sr|!softres|!softreserve"], "|") or {}) do
         if (GL:strStartsWith(message, prefix)) then
             validPrefixDetected = true;
             break;
@@ -144,7 +144,7 @@ function SoftRes:handleWhisperCommand(_, message, sender)
     -- Nothing reserved
     if (GL:empty(Reserves)) then
         GL:sendChatMessage(
-            L.CHAT.SOFTRES_NO_RESERVES_REPLY,
+            L.CHAT["It seems like you didn't soft-reserve anything yet, check the soft-res sheet or ask your loot master"],
             "WHISPER", nil, sender
         );
 
@@ -165,7 +165,7 @@ function SoftRes:handleWhisperCommand(_, message, sender)
             local entryString = Entry.link;
 
             if (Reserves[itemIDString] > 1) then
-                entryString = (L.CHAT.SOFTRES_MY_RESERVED_ITEM_REPLY):format(entryString, Reserves[itemIDString]);
+                entryString = (L.CHAT["%s (%sx)"]):format(entryString, Reserves[itemIDString]);
             end
 
             tinsert(Entries, entryString);
@@ -174,7 +174,7 @@ function SoftRes:handleWhisperCommand(_, message, sender)
         -- Let the sender know what he/she soft-reserved
         if (not GL:empty(Entries)) then
             GL:sendChatMessage(
-                (L.CHAT.SOFTRES_MY_RESERVES_REPLY):format(table.concat(Entries, " ")),
+                (L.CHAT["You reserved %s"]):format(table.concat(Entries, " ")),
                 "WHISPER", nil, sender
             );
 
@@ -775,15 +775,15 @@ function SoftRes:tooltipLines(itemLink)
     -- Check if the item is hard-reserved
     local hardReservedFor, hardReservedNote = self:getHardReserveDetailsByItemLink(itemLink);
     if (hardReservedFor or hardReservedNote) then
-        tinsert(Lines, ("\n|cFFcc2743%s|r"):format(L.SOFTRES_TOOLTIP_HARD_RESERVED));
+        tinsert(Lines, ("\n|cFFcc2743%s|r"):format(L["This item is hard-reserved"]));
         if (hardReservedFor) then
             tinsert(Lines, ("|cFFcc2743 %s|r"):format(
-                (L.SOFTRES_TOOLTIP_HARD_RESERVED_FOR):format(GL:nameFormat{ name = hardReservedFor, colorize = true, }))
+                (L["For: %s"]):format(GL:nameFormat{ name = hardReservedFor, colorize = true, }))
             );
         end
 
         if (hardReservedNote) then
-            tinsert(Lines, (L.SOFTRES_TOOLTIP_HARD_RESERVED_NOTE):format(hardReservedNote));
+            tinsert(Lines, (L["|c00CC2743 Note: %s"]):format(hardReservedNote));
         end
 
         return Lines;
@@ -809,7 +809,7 @@ function SoftRes:tooltipLines(itemLink)
     end
 
     -- Add the header
-    tinsert(Lines, ("\n|cFFEFB8CD%s|r"):format(L.SOFTRES_TOOLTIP_RESERVED_BY));
+    tinsert(Lines, ("\n|cFFEFB8CD%s|r"):format(L["Reserved by"]));
 
     -- This is necessary so we can sort the table based on number of reserves per item
     local ActiveReservations = {};
@@ -840,7 +840,7 @@ function SoftRes:tooltipLines(itemLink)
 
         -- User reserved the same item multiple times
         if (Entry.reservations > 1) then
-            entryString = (L.SOFTRES_MULTIPLE_RESERVES):format(entryString, Entry.reservations);
+            entryString = (L["%s (%sx)"]):format(entryString, Entry.reservations);
         end
 
         -- Add the actual soft reserves to the tooltip
@@ -893,7 +893,7 @@ function SoftRes:import(data, openOverview)
 
     -- Make sure all the required properties are available and of the correct type
     if (GL:empty(data)) then
-        GL.Interface:get("SoftRes.Importer", "Label.StatusMessage"):SetText(L.SOFTRES_IMPORT_INVALID);
+        GL.Interface:get("SoftRes.Importer", "Label.StatusMessage"):SetText(L["Invalid soft-reserve data provided"]);
         return false;
     end
 
@@ -917,7 +917,7 @@ function SoftRes:import(data, openOverview)
         if (reportStatus) then
             for softResName, playerName in pairs(RewiredNames) do
                 GL:notice(string.format(
-                    L.SOFTRES_IMPORT_FIXED_NAME,
+                    L["Auto name fix: the SR of '%s' is now linked to '%s'"],
                     GL:capitalize(softResName),
                     GL:nameFormat{ name = playerName, colorize = true, }
                 ));
@@ -951,7 +951,7 @@ function SoftRes:import(data, openOverview)
                 tinsert(MissingReservers, GL:nameFormat{ name = name, colorize = true, });
             end
 
-            GL:warning(L.SOFTRES_IMPORT_NO_RESERVES_WARNING);
+            GL:warning(L["The following players did not reserve anything:"]);
             GL:message(table.concat(MissingReservers, " "));
         end
     end
@@ -981,7 +981,7 @@ function SoftRes:import(data, openOverview)
             )
         ) then
             GL:sendChatMessage(
-                L.CHAT.SOFTRES_DATA_IMPORTED,
+                L.CHAT["I just imported soft-reserves into Gargul. Whisper !sr to double-check your reserves!"],
                 "GROUP"
             );
         end
@@ -1059,7 +1059,7 @@ function SoftRes:importGargulData(data)
 
     -- Something went wrong while base64 decoding the payload
     if (not base64DecodeSucceeded) then
-        local errorMessage = L.BASE64_DECODE_WARNING;
+        local errorMessage = L["Unable to base64 decode data. Make sure you copy/paste it as-is without adding any additional characters or whitespaces!"];
         GL.Interface:get("SoftRes.Importer", "Label.StatusMessage"):SetText(errorMessage);
 
         return false;
@@ -1071,7 +1071,7 @@ function SoftRes:importGargulData(data)
 
     -- Something went wrong while zlib decoding the payload
     if (not zlibDecodeSucceeded) then
-        local errorMessage = L.ZLIB_DECOMPRESS_WARNING;
+        local errorMessage = L["Unable to zlib decompress the data. Make sure you copy/paste it as-is without adding any additional characters or whitespaces!"];
         GL.Interface:get("SoftRes.Importer", "Label.StatusMessage"):SetText(errorMessage);
 
         return false;
@@ -1081,14 +1081,14 @@ function SoftRes:importGargulData(data)
     local jsonDecodeSucceeded;
     jsonDecodeSucceeded, data = pcall(function () return GL.JSON:decode(data); end);
     if (not jsonDecodeSucceeded) then
-        local errorMessage = L.JSON_DECODE_WARNING;
+        local errorMessage = L["Unable to JSON decode data. Make sure you copy/paste it as-is without adding any additional characters or whitespaces!"];
         GL.Interface:get("SoftRes.Importer", "Label.StatusMessage"):SetText(errorMessage);
 
         return false;
     end
 
     local function throwGenericInvalidDataError()
-        local errorMessage = L.SOFTRES_IMPORT_INVALID_INSTRUCTIONS;
+        local errorMessage = L["Invalid data provided. Make sure to click the 'Gargul Export' button on softres.it and paste the full contents here"];
         GL.Interface:get("SoftRes.Importer", "Label.StatusMessage"):SetText(errorMessage);
 
         return false;
@@ -1212,7 +1212,7 @@ function SoftRes:importGargulData(data)
     if (differentPlusOnes) then
         -- Show a confirmation dialog before overwriting the plusOnes
         GL.Interface.Dialogs.PopupDialog:open{
-            question = L.SOFTRES_IMPORT_NEW_PLUSONES,
+            question = L["The PlusOne values provided collide with the ones already present. Do you want to replace your old PlusOne values?"],
             OnYes = function ()
                 GL.PlusOnes:clearPlusOnes();
                 GL.PlusOnes:setPlusOnes(PlusOnes);
@@ -1234,7 +1234,7 @@ end
 ---@return boolean
 function SoftRes:importCSVData(data, reportStatus)
     if (reportStatus) then
-        GL:warning(L.SOFTRES_IMPORT_USE_GARGUL);
+        GL:warning(L["SoftRes Weakaura and CSV data are deprecated, use the Gargul export instead!"]);
     end
 
     local PlusOnes = {};
@@ -1296,7 +1296,7 @@ function SoftRes:importCSVData(data, reportStatus)
 
     -- The user attempted to import invalid data
     if (GL:empty(SoftReserveData)) then
-        GL.Interface:get("SoftRes.Importer", "Label.StatusMessage"):SetText(L.SOFTRES_IMPORT_INVALID_INSTRUCTIONS);
+        GL.Interface:get("SoftRes.Importer", "Label.StatusMessage"):SetText(L["Invalid data provided. Make sure to click the 'Gargul Export' button on softres.it and paste the full contents here"]);
 
         return false;
     end
@@ -1319,7 +1319,7 @@ function SoftRes:importCSVData(data, reportStatus)
     if (differentPlusOnes) then
         -- Show a confirmation dialog before overwriting the plusOnes
         GL.Interface.Dialogs.PopupDialog:open{
-            question = L.SOFTRES_IMPORT_NEW_PLUSONES,
+            question = L["The PlusOne values provided collide with the ones already present. Do you want to replace your old PlusOne values?"],
             OnYes = function ()
                 GL.PlusOnes:clearPlusOnes();
                 GL.PlusOnes:setPlusOnes(PlusOnes);
@@ -1421,12 +1421,12 @@ end
 ---@return boolean
 function SoftRes:broadcast()
     if (self.broadcastInProgress) then
-        GL:error(L.BROADCAST_IN_PROGRESS_ERROR);
+        GL:error(L["Broadcast still in progress"]);
         return false;
     end
 
     if (not self:userIsAllowedToBroadcast()) then
-        GL:warning(L.LM_OR_ASSIST_REQUIRED);
+        GL:warning(L["You need to be the master looter or have an assist / lead role!"]);
         return false;
     end
 
@@ -1434,7 +1434,7 @@ function SoftRes:broadcast()
     if (not self:available()
         or GL:empty(DB:get("SoftRes.MetaData.importString"))
     ) then
-        GL:warning(L.BROADCAST_NO_DATA);
+        GL:warning(L["There is nothing to broadcast"]);
         return false;
     end
 
@@ -1447,7 +1447,7 @@ function SoftRes:broadcast()
     }:send();
 
     GL.Ace:ScheduleTimer(function ()
-        GL:success(L.BROADCAST_FINISHED);
+        GL:success(L["Broadcast finished!"]);
         self.broadcastInProgress = false;
     end, 10);
 
@@ -1466,11 +1466,11 @@ function SoftRes:receiveSoftRes(CommMessage)
 
     local importString = CommMessage.content;
     if (not GL:empty(importString)) then
-        GL:warning((L.SOFTRES_PROCESS_INCOMING):format(CommMessage.Sender.name));
+        GL:warning((L["Attempting to process incoming SoftRes data from %s"]):format(CommMessage.Sender.name));
         return self:import(importString);
     end
 
-    GL:warning((L.SOFTRES_BROADCAST_PROCESS_FAILED):format(CommMessage.Sender.name));
+    GL:warning((L["Couldn't process SoftRes data received from %s"]):format(CommMessage.Sender.name));
     return false;
 end
 
@@ -1481,7 +1481,7 @@ function SoftRes:postLink()
     local softResLink = DB:get("SoftRes.MetaData.url", false);
 
     if (not softResLink) then
-        GL:warning(L.SOFTRES_NO_URL_AVAILABLE);
+        GL:warning(L["No softres.it URL available, make sure you exported using the 'Gargul Export' button on softres.it!"]);
         return false;
     end
 
@@ -1535,20 +1535,20 @@ end
 ---@return boolean
 function SoftRes:postMissingSoftReserves()
     if (not self:available()) then
-        GL:warning(L.SOFTRES_IMPORT_INVALID_INSTRUCTIONS);
+        GL:warning(L["Invalid data provided. Make sure to click the 'Gargul Export' button on softres.it and paste the full contents here"]);
         return false;
     end
 
     local PlayerNames = self:playersWithoutSoftReserves();
 
     if (#PlayerNames < 1) then
-        GL:success(L.SOFTRES_EVERYONE_RESERVED);
+        GL:success(L["Everyone filled out their soft-reserves"]);
         return true;
     end
 
     -- Post the link in the chat for all group members to see
     GL:sendChatMessage(
-        (L.CHAT.SOFTRES_MISSING_RESERVES):format(table.concat(PlayerNames, " ")),
+        (L.CHAT["Missing soft-reserves from: %s"]):format(table.concat(PlayerNames, " ")),
         "GROUP"
     );
 
