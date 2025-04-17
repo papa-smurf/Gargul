@@ -124,7 +124,6 @@ function Client:start(Message)
         UI.showUnusable = false;
         UI.showInactive = false;
         UI.ToggleFavorites:GetScript("OnClick")();
-        UI.ToggleUnusable:GetScript("OnClick")();
         UI.ToggleActive:GetScript("OnClick")();
     end);
 
@@ -172,7 +171,7 @@ function Client:addToCurrentSession(link, duration, minimum, increment)
 
         self.AuctionDetails.Auctions[lastAuctionID] = {
             auctionID = lastAuctionID,
-            isBOE = GL:inTable({ LE_ITEM_BIND_ON_EQUIP, LE_ITEM_BIND_QUEST }, Item.bindType),
+            isBOE = GL:inTable({ Enum.ItemBind.OnEquip, Enum.ItemBind.Quest }, Item.bindType),
             itemLevel = Item.level,
             name = Item.name,
             quality = Item.quality,
@@ -379,7 +378,16 @@ function Client:isBidValidForAuction(auctionID, bid)
     end
 
     local currentBid = GL:tableGet(Auction, "CurrentBid.amount", 0);
-    return (GL:e(currentBid, 0) and GL:gte(bid, Auction.minimum)) or GL:gte(bid, currentBid + Auction.increment);
+    local hasCurrentBid = not GL:e(currentBid, 0);
+
+    -- We accept bids lower than minimum, but never lower than the minimum increment
+    -- The client does not know about the auctioneer's setup so for clients we assume that lowballing is allowed
+    -- If it's not then they'll get a whisper from the auctioneer telling them it's not ok to bid lower
+    if (Settings:get("GDKP.acceptBidsLowerThanMinimum") or not Auctioneer:auctionStartedByMe()) then
+        return (not hasCurrentBid and GL:gte(bid, Auction.minimum)) or GL:gte(bid, currentBid + Auction.increment);
+    end
+
+    return (not hasCurrentBid and GL:gte(bid, Auction.minimum)) or (hasCurrentBid and GL:gte(bid, currentBid + Auction.increment));
 end
 
 --- Return the minimum bid for the give auction

@@ -485,7 +485,9 @@ end
 
 ---@param Instance table
 function Auction:sanitize(Instance)
-    local SanitizedAuction = {};
+    local SanitizedAuction = {
+        itemLink = Instance.itemLink,
+    };
 
     Instance.price = tonumber(Instance.price);
 
@@ -838,12 +840,7 @@ end
 ---@param itemLink string
 ---@return void
 function Auction:addToQueue(itemLink, identifier)
-    local itemID = GL:getItemIDFromLink(itemLink);
-    if (not itemID) then
-        return;
-    end
-
-    GL:onItemLoadDo(itemID, function (Details)
+    GL:onItemLoadDo(itemLink, function (Details)
         if (not Details) then
             return;
         end
@@ -852,7 +849,7 @@ function Auction:addToQueue(itemLink, identifier)
         self.Queue[identifier] = {
             identifier = identifier,
             increment = PerItemSettings.increment,
-            itemID = itemID,
+            itemID = Details.id,
             itemLink = itemLink,
             minimumBid = PerItemSettings.minimum,
             order = GL:count(self.Queue) + 1,

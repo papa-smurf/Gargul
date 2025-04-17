@@ -1,7 +1,11 @@
+local L = Gargul_L;
+
 ---@type GL
 local _, GL = ...;
 
 local Overview = GL.Interface.Settings.Overview; ---@type SettingsOverview
+
+local Constants = GL.Data.Constants;
 
 ---@class BoostedRollsSettings
 GL.Interface.Settings.BoostedRolls = {
@@ -11,7 +15,7 @@ local BoostedRolls = GL.Interface.Settings.BoostedRolls; ---@type BoostedRollsSe
 
 ---@return void
 function BoostedRolls:draw(Parent)
-    GL:debug("BoostedRollsSettings:draw");
+    local AceGUI = GL.AceGUI;
 
     local HorizontalSpacer;
     local Checkboxes = {
@@ -48,6 +52,33 @@ function BoostedRolls:draw(Parent)
     HorizontalSpacer:SetLayout("FILL");
     HorizontalSpacer:SetFullWidth(true);
     HorizontalSpacer:SetHeight(15);
+    Parent:AddChild(HorizontalSpacer);
+
+    local BoostedRollsSystemLabel = GL.AceGUI:Create("Label");
+    BoostedRollsSystemLabel:SetText(("|c00FFF569%s|r"):format(L["How should boosted roll points affect a player's roll?"]));
+    BoostedRollsSystemLabel:SetFullWidth(true);
+    Parent:AddChild(BoostedRollsSystemLabel);
+
+    local DropDownItems = {
+        [Constants.BoostedRollSystems.FIXED] = "Fixed: A player with 140 points rolls 140",
+        [Constants.BoostedRollSystems.INCREASED_MAX] = "Increased max: A player with 140 points rolls 1-140",
+        [Constants.BoostedRollSystems.INCREASED_BOTH] = "(default) Increased: A player with 140 points rolls 41-140",
+    };
+
+    local BoostedRollsSystem = AceGUI:Create("Dropdown");
+    BoostedRollsSystem:SetValue(GL.Settings:get("BoostedRolls.system", Constants.BoostedRollSystems.INCREASED_BOTH));
+    BoostedRollsSystem:SetList(DropDownItems);
+    BoostedRollsSystem:SetText(DropDownItems[GL.Settings:get("BoostedRolls.system", Constants.BoostedRollSystems.INCREASED_BOTH)]);
+    BoostedRollsSystem:SetWidth(400);
+    BoostedRollsSystem:SetCallback("OnValueChanged", function()
+        GL.Settings:set("BoostedRolls.system", BoostedRollsSystem:GetValue());
+    end);
+    Parent:AddChild(BoostedRollsSystem);
+
+    HorizontalSpacer = AceGUI:Create("SimpleGroup");
+    HorizontalSpacer:SetLayout("FILL");
+    HorizontalSpacer:SetFullWidth(true);
+    HorizontalSpacer:SetHeight(10);
     Parent:AddChild(HorizontalSpacer);
 
     local BoostedRollsIdentifier = GL.AceGUI:Create("EditBox");
@@ -155,6 +186,26 @@ function BoostedRolls:draw(Parent)
         GL.Settings:set("BoostedRolls.defaultPoints", value);
     end);
     Parent:AddChild(BoostedRollsDefaultPoints);
+
+    local BoostedRollsMaximumPoints = GL.AceGUI:Create("EditBox");
+    BoostedRollsMaximumPoints:DisableButton(true);
+    BoostedRollsMaximumPoints:SetHeight(20);
+    BoostedRollsMaximumPoints:SetFullWidth(true);
+    BoostedRollsMaximumPoints:SetText(GL.Settings:get("BoostedRolls.maxmimumPoints"));
+    BoostedRollsMaximumPoints:SetLabel(string.format(
+        "|cff%sThe maximum points a player can have. Anything above this number is discarded!|r",
+        GL:classHexColor("rogue")
+    ));
+    BoostedRollsMaximumPoints:SetCallback("OnTextChanged", function (self)
+        local value = GL.BoostedRolls:toPoints(strtrim(self:GetText()));
+
+        if not value then
+            value = nil;
+        end
+
+        GL.Settings:set("BoostedRolls.maxmimumPoints", value);
+    end);
+    Parent:AddChild(BoostedRollsMaximumPoints);
 
     local BoostedRollsDefaultCost = GL.AceGUI:Create("EditBox");
     BoostedRollsDefaultCost:DisableButton(true);

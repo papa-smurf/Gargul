@@ -61,7 +61,7 @@ end)();
 ---@vararg string
 ---@return void
 function GL:message(...)
-    print("|TInterface/TARGETINGFRAME/UI-RaidTargetingIcon_3:12|t|cff8aecff Gargul : |r" .. string.join(" ", ...));
+    print("|TInterface/TARGETINGFRAME/UI-RaidTargetingIcon_3:12|t|cff8aecff Gargul : |r" .. table.concat({ ... }, " "));
 end
 
 --- Print a colored message
@@ -184,7 +184,7 @@ end
 function GL:classColorize(var, class)
     class = class and string.upper(class) or class;
     local classColor = { GetClassColor(class or "PRIEST") };
-    return string.format("|c%s%s|r", classColor[4], var);
+    return ("|c%s%s|r"):format(classColor[4], var);
 end
 
 --- Transform seconds to a human readable format e.g: 01:44:23
@@ -217,13 +217,14 @@ end
 
 ---@param name string|table The player name or a table including any of the arguments below
 ---@param colorize boolean Return in player's class color if known
+---@param defaultColor? string The default colorize color in case class is unknown
 ---@param class string Provide a classFile to use for colorizing the name (i.e. DRUID)
 ---@param stripRealm boolean Strip the realm suffix from the name
 ---@param stripSameRealm boolean Strip the realm suffix if it's the same realm as ours
 ---@param forceRealm boolean Force a realm to be present, either existing or adding our own
 ---@param func function|table Decorators to pass the output name through (i.e. strlower)
 ---@return string
-function GL:nameFormat(name, realm, colorize, class, stripRealm, stripSameRealm, forceRealm, func)
+function GL:nameFormat(name, realm, colorize, defaultColor, class, stripRealm, stripSameRealm, forceRealm, func)
     local passedRealm;
 
     if (realm ~= nil) then
@@ -237,6 +238,7 @@ function GL:nameFormat(name, realm, colorize, class, stripRealm, stripSameRealm,
         stripRealm = name.stripRealm;
         stripSameRealm = name.stripSameRealm;
         forceRealm = name.forceRealm;
+        defaultColor = name.defaultColor;
         func = name.func;
 
         passedRealm  = name.realm ~= "" and name.realm or nil;
@@ -258,12 +260,10 @@ function GL:nameFormat(name, realm, colorize, class, stripRealm, stripSameRealm,
     if (forceRealm) then
         name, realm = self:addRealm(name);
 
-    elseif (stripSameRealm) then
-        if (not self:isCrossRealm()
-            or self:iEquals(realm, GL.User.realm)
-        ) then
-            name = self:stripRealm(name);
-        end
+    elseif (stripSameRealm
+        and self:iEquals(realm, GL.User.realm)
+    ) then
+        name = self:stripRealm(name);
     end
 
     if (colorize) then
@@ -273,7 +273,12 @@ function GL:nameFormat(name, realm, colorize, class, stripRealm, stripSameRealm,
         if (not class and realm and self:iEquals(realm, GL.User.realm)) then
             class = UnitClassBase(nameWithoutRealm);
         end
-        name = self:classColorize(name, class);
+
+        if (not class) then
+            name = ("|c00%s%s|r"):format(defaultColor or "FFFFFF", name);
+        else
+            name = self:classColorize(name, class);
+        end
     end
 
     name = strtrim(self:capitalize(name));
@@ -399,7 +404,6 @@ end
 --- Dump a variable (functions won't work!)
 ---
 ---@param mixed any
----@return void
 function GL:dump(mixed)
     local success, encoded = pcall(function () return GL.JSON:encode(mixed); end);
 
@@ -417,7 +421,6 @@ local lastClickTime;
 ---@param itemLink string
 ---@param mouseButtonPressed string|nil
 ---@param callback function|nil Some actions (like award) support a callback
----@return void
 function GL:handleItemClick(itemLink, mouseButtonPressed, callback)
     GL:debug("GL:handleItemClick");
 
@@ -563,6 +566,31 @@ function GL:handleItemClick(itemLink, mouseButtonPressed, callback)
             lastClickTime = currentTime;
         end
     end
+end
+
+---@param name string
+---@param default string?
+---@return any
+function GL:playerClassByName(name, default)
+    local class = UnitClassBase(name);
+
+    if (class) then
+        return class;
+    end
+
+    -- UnitClassBase doesn't work on same-realm FQNs
+    local nameWithoutRealm, realm = GL:stripRealm(name);
+
+    if (realm and GL:iEquals(realm, GL.User.realm)) then
+        class = UnitClassBase(nameWithoutRealm);
+    end
+
+    if (class) then
+        return class;
+    end
+
+    -- The player's class could not be determined, return default
+    return default ~= nil and default or "PRIEST";
 end
 
 --- Check whether a given variable is empty
@@ -809,7 +837,6 @@ function GL:cloneTable(Original)
 end
 
 ---@param text string
----@return void
 function GL:popupMessage(text)
     GL:debug("GL:popupMessage");
 
@@ -827,7 +854,7 @@ function GL:popupMessage(text)
 
         Window.Text = GL.Interface:createFontString(Window);
         Window.Text:SetFont(1.25, "OUTLINE");
-        Window.Text:SetJustifyH("MIDDLE");
+        Window.Text:SetJustifyH("CENTER");
         Window.Text:SetPoint("CENTER", Window, "CENTER");
         Window.Text:SetPoint("BOTTOM", Window, "BOTTOM", 0, 60);
 
@@ -879,7 +906,6 @@ end
 --- Remove a lib-st table's scrollbar
 ---
 ---@param Table table
----@return void
 function GL:LibStRemoveScrollBar(Table)
     local tableName = Table.frame:GetName();
 
@@ -1027,7 +1053,6 @@ end
 --- Clears the provided scrolling table (lib-ScrollingTable)
 ---
 ---@param ScrollingTable table
----@return void
 function GL:clearScrollTable(ScrollingTable)
     if (type(ScrollingTable) ~= "table") then
         return;
@@ -1126,7 +1151,6 @@ end
 --- Very useful for debugging purposes, should not be used for anything else
 ---
 ---@param message string|table
----@return void
 function GL:frameMessage(message)
     if (type(message) == "table") then
         message = GL.JSON:encode(message);
@@ -1183,9 +1207,6 @@ end
 --- Use return false; in your func if you want to break the loop early
 ---
 ---@param func function
----
----@return void
----
 ---@test /script _G.Gargul:forEachItemInBags(function (Location) print(C_Item.GetItemID(Location)); end);
 function GL:forEachItemInBags(func)
     -- Used to break out of our double loop
@@ -1287,40 +1308,83 @@ function GL:cancelTimer(identifier)
     GL.Ace:CancelTimer(GL.Timers[identifier]);
 end
 
+--- Check if the item could interest the current player based on SoftRes / TMB data
+--- 
+---@param itemIdentifier number|string
+---@return boolean, number?
+function GL:isItemOfInterest(itemIdentifier)
+    local ItemOfInterestReasons = GL.Data.Constants.ItemOfInterestReasons;
+
+    -- We reserved the item
+    if (GL.SoftRes:itemIsReservedByMe(itemIdentifier)) then
+        return true, ItemOfInterestReasons.RESERVE;
+    end
+
+    -- Check if there is relevant TMB data
+    local TMBData = GL.TMB:byItemIdentifierAndPlayer(itemIdentifier, GL.User.fqn)
+    if (GL:empty(TMBData)) then
+        return false;
+    end
+
+    for _, Entry in pairs(TMBData) do
+        -- We have the item on prio
+        if (Entry.type == Constants.tmbTypePrio) then
+            return true, ItemOfInterestReasons.PRIOLIST
+        end
+
+        -- We have the item on wishlist
+        return true, ItemOfInterestReasons.WISHLIST;
+    end
+
+    return false;
+end
+
+--- Checks if a given string is a properly formatted WoW item link.
+---
+--- A valid item link follows the standard WoW format, for example:
+--- `|cffa335ee|Hitem:19019:::::::::::::|h[Thunderfury, Blessed Blade of the Windseeker]|h|r`
+---
+--- @param itemLink string The string to validate as an item link.
+--- @return boolean isValid
+function GL:isValidItemLink(itemLink)
+    return type(itemLink) == "string" and itemLink:match("^|c[%x]+|Hitem:%d+:.-|h%[.-%]|h|r$") ~= nil
+end
+
 --- The onItemLoadDo helper accepts one or more item ids or item links
 --- The corresponding items will be loaded using Blizzard's Item API
 --- After all of the items are loaded execute the provided callback function
 ---
 ---@param Items table
----@param callback function|nil
----@param haltOnError boolean
----@param sorter function
----@return table
+---@param callback? function
+---@param haltOnError? boolean
+---@param sorter? function
+---@return table, string
+---
+--- /script _G.Gargul:onItemLoadDo(45613, function (Result) _G.Gargul:xd(Result); end);
+--- /script _G.Gargul:onItemLoadDo("|cffa335ee|Hitem:68915::::::::85:::::|h[Scales of Life]|h|r", function (Result) _G.Gargul:xd(Result); end);
 function GL:onItemLoadDo(Items, callback, haltOnError, sorter)
-    GL:debug("GL:onItemLoadDo");
-
     haltOnError = haltOnError or false;
     callback = callback or function () end;
 
-    local itemsWasntATable = type(Items) ~= "table";
-    if (itemsWasntATable) then
-        Items = {Items};
+    local singleItemProvided = type(Items) ~= "table";
+    if (singleItemProvided) then
+        Items = { Items };
     end;
 
     local itemsLoaded = 0;
     local ItemData = {};
-    local lastError = "";
+    local lastError = nil;
     local callbackCalled = false;
     local numberOfItemsToLoad = self:count(Items);
 
     --- We use this nasty function construct in order to be able to return out of a for loop (see below)
     ---
     ---@param itemIdentifier string|number
-    ---@return void
     local function loadOrReturnItem(itemIdentifier)
         local ItemResult = {}; ---@type Item
         local itemID = tonumber(itemIdentifier);
         local identifierIsLink = type(itemIdentifier) == "string";
+        local _, itemType;
 
         -- A string was provided, treat it as an item link and fetch its ID
         if (not itemID
@@ -1331,6 +1395,8 @@ function GL:onItemLoadDo(Items, callback, haltOnError, sorter)
 
         -- If a number is provided we assume that it's an item ID
         if (itemID) then
+            _, itemType = self:getItemInfoInstant(itemIdentifier);
+
             -- Start loading the item
             if (identifierIsLink) then
                 ItemResult = Item:CreateFromItemLink(itemIdentifier);
@@ -1347,8 +1413,9 @@ function GL:onItemLoadDo(Items, callback, haltOnError, sorter)
         end
 
         if (
-            not ItemResult.IsItemEmpty or ItemResult:IsItemEmpty() -- This is Blizzard's way of saying: this item don't exist fool
-            or not ItemResult:GetItemID() -- The item does exist but not in this client version
+            not itemType -- The item doesn't actually exist in this client
+            or ItemResult:IsItemEmpty() -- This is Blizzard's way of saying: this item don't exist fool
+            or not ItemResult:GetItemID() -- The item could exist, but not in this client version
         ) then
             itemsLoaded = itemsLoaded + 1;
             lastError = "No item found with identifier " .. itemIdentifier;
@@ -1389,24 +1456,25 @@ function GL:onItemLoadDo(Items, callback, haltOnError, sorter)
                     table.sort(ItemData, sorter);
                 end
 
-                if (itemsWasntATable) then
+                if (singleItemProvided) then
                     ItemData = ItemData[1];
                 end
 
-                callback(ItemData);
+                callback(ItemData, lastError);
                 return;
             end
         end)
     end
 
-    ---@param itemIdentifier string|number
-    for _, itemIdentifier in pairs(Items) do
+    ---@param itemLinkOrID string|number
+    for _, itemLinkOrID in pairs(Items) do
+
         if (haltOnError and not GL:empty(lastError)) then
             GL:warning(lastError);
             return;
         end
 
-        loadOrReturnItem(itemIdentifier);
+        loadOrReturnItem(itemLinkOrID);
 
         -- Make sure the callback has not yet been executed in the async onload method
         if (not callbackCalled
@@ -1414,9 +1482,9 @@ function GL:onItemLoadDo(Items, callback, haltOnError, sorter)
         ) then
             callbackCalled = true;
 
-            if (itemsWasntATable) then
+            if (singleItemProvided) then
                 ItemData = ItemData[1];
-                callback(ItemData);
+                callback(ItemData, lastError);
                 return;
             end
 
@@ -1424,7 +1492,7 @@ function GL:onItemLoadDo(Items, callback, haltOnError, sorter)
                 table.sort(ItemData, sorter);
             end
 
-            callback(ItemData);
+            callback(ItemData, lastError);
             return;
         end
     end
@@ -1451,7 +1519,7 @@ function GL:normalizeItem(ItemMixin)
 
     -- Keep in mind that this data all refers to the base version of the item since we're using an ID
     local itemName, itemLink, itemQuality, itemLevel, _, _, _, _, itemEquipLoc,
-    itemTexture, _, classID, subclassID, bindType, _, _, _ = GL:getItemInfo(itemID);
+    itemTexture, _, classID, subclassID, bindType, _, _, _ = GL:getItemInfo(ItemMixin:GetItemLink());
 
     if (not itemLink) then
         return false;
@@ -1464,13 +1532,11 @@ function GL:normalizeItem(ItemMixin)
         icon = itemTexture,
         inventoryType = itemEquipLoc,
         level = ItemMixin:GetCurrentItemLevel(),
-        link = ItemMixin:GetItemLink(),
+        link = itemLink,
         name = itemName,
         subclassID = subclassID,
         quality = itemQuality,
-
-        baseLevel = itemLevel,
-        baseLink = itemLink,
+        isBOE = GL:inTable({ Enum.ItemBind.OnEquip, Enum.ItemBind.Quest, }, bindType),
     };
 end
 
@@ -1478,8 +1544,15 @@ end
 ---
 --- @return boolean
 function GL:isCrossRealm()
+    -- With almost everything being connected nowadays we're doing a trial
+    -- run with always assuming that we're on a connected realm
+    ---@TODO: REMOVE IN >= 7.7.0
+    if (true) then
+        return true;
+    end
+
     if (GL._isCrossRealm == nil) then
-        GL._isCrossRealm = not not GetAutoCompleteRealms()[2];
+        GL._isCrossRealm = GL.isRetail or not not GetAutoCompleteRealms()[2];
     end
 
     return GL._isCrossRealm;
@@ -1574,10 +1647,9 @@ function GL:tooltipItemTradeTimeRemaining()
 end
 
 ---@param itemLinkOrID string|number
----@return void
 function GL:itemTradeTimeRemaining(itemLinkOrID)
-    local concernsID = GL:higherThanZero(tonumber(itemLinkOrID));
-    local itemID = concernsID and math.floor(tonumber(itemLinkOrID)) or GL:getItemIDFromLink(itemLinkOrID);
+    local concernsLink = type(itemLinkOrID) == "string";
+    local itemID = concernsLink and GL:getItemIDFromLink(itemLinkOrID) or itemLinkOrID;
 
     if (not itemID) then
         return;
@@ -1590,6 +1662,11 @@ function GL:itemTradeTimeRemaining(itemLinkOrID)
             return;
         end
 
+        -- This is not the item variant we're looking for
+        if (concernsLink and not GL:iEquals(C_Item.GetItemLink(Location), itemLinkOrID)) then
+            return;
+        end
+
         Results[C_Item.GetItemGUID(Location)] = GL:inventoryItemTradeTimeRemaining(bag, slot);
     end);
 
@@ -1597,7 +1674,7 @@ function GL:itemTradeTimeRemaining(itemLinkOrID)
 end
 
 ---@param itemGUID string
----@return boolean,boolean|number,number
+---@return boolean|number,boolean|number
 function GL:getBagAndSlotByGUID(itemGUID)
     local itemBag = false;
     local itemSlot = false;
@@ -1629,6 +1706,92 @@ function GL:camelToSnake(str)
     end
 
     return string.upper(str:gsub("%p", "_"));
+end
+
+---@param itemLinkOrID string|number
+---@return table
+---@test /dump _G.Gargul:itemModifiers(18608); -- Benediction
+function GL:itemModifiers(itemLinkOrID)
+    GL.TooltipFrame:ClearLines();
+
+    local ItemModPatterns = {
+        agility = ITEM_MOD_AGILITY,
+        armor_penetration_rating = ITEM_MOD_ARMOR_PENETRATION_RATING,
+        attack_power = ITEM_MOD_ATTACK_POWER,
+        block_rating = ITEM_MOD_BLOCK_RATING,
+        crit_melee_rating = ITEM_MOD_CRIT_MELEE_RATING,
+        crit_ranged_rating = ITEM_MOD_CRIT_RANGED_RATING,
+        crit_rating = ITEM_MOD_CRIT_RATING,
+        crit_spell_rating = ITEM_MOD_CRIT_SPELL_RATING,
+        crit_taken_melee_rating = ITEM_MOD_CRIT_TAKEN_MELEE_RATING,
+        crit_taken_ranged_rating = ITEM_MOD_CRIT_TAKEN_RANGED_RATING,
+        crit_taken_rating = ITEM_MOD_CRIT_TAKEN_RATING,
+        crit_taken_spell_rating = ITEM_MOD_CRIT_TAKEN_SPELL_RATING,
+        defense_skill_rating = ITEM_MOD_DEFENSE_SKILL_RATING,
+        dodge_rating = ITEM_MOD_DODGE_RATING,
+        expertise_rating = ITEM_MOD_EXPERTISE_RATING,
+        feral_attack_power = ITEM_MOD_FERAL_ATTACK_POWER,
+        haste_melee_rating = ITEM_MOD_HASTE_MELEE_RATING,
+        haste_ranged_rating = ITEM_MOD_HASTE_RANGED_RATING,
+        haste_rating = ITEM_MOD_HASTE_RATING,
+        haste_spell_rating = ITEM_MOD_HASTE_SPELL_RATING,
+        health = ITEM_MOD_HEALTH,
+        hit_melee_rating = ITEM_MOD_HIT_MELEE_RATING,
+        hit_ranged_rating = ITEM_MOD_HIT_RANGED_RATING,
+        hit_rating = ITEM_MOD_HIT_RATING,
+        hit_spell_rating = ITEM_MOD_HIT_SPELL_RATING,
+        hit_taken_melee_rating = ITEM_MOD_HIT_TAKEN_MELEE_RATING,
+        hit_taken_ranged_rating = ITEM_MOD_HIT_TAKEN_RANGED_RATING,
+        hit_taken_rating = ITEM_MOD_HIT_TAKEN_RATING,
+        hit_taken_spell_rating = ITEM_MOD_HIT_TAKEN_SPELL_RATING,
+        intellect = ITEM_MOD_INTELLECT,
+        mana = ITEM_MOD_MANA,
+        mana_regeneration = ITEM_MOD_MANA_REGENERATION,
+        parry_rating = ITEM_MOD_PARRY_RATING,
+        ranged_attack_power = ITEM_MOD_RANGED_ATTACK_POWER,
+        resilience_rating = ITEM_MOD_RESILIENCE_RATING,
+        spell_damage_done = ITEM_MOD_SPELL_DAMAGE_DONE,
+        spell_healing_done = ITEM_MOD_SPELL_HEALING_DONE,
+        spell_power = ITEM_MOD_SPELL_POWER,
+        spirit = ITEM_MOD_SPIRIT,
+        stamina = ITEM_MOD_STAMINA,
+        strength = ITEM_MOD_STRENGTH,
+    }
+
+    local Patterns = {};
+    for identifier, pattern in pairs(ItemModPatterns or {}) do
+        if (pattern) then
+            Patterns[identifier] = self:createPattern(pattern);
+        end
+    end
+
+    if (type(itemLinkOrID) == "string") then
+        GL.TooltipFrame:SetHyperlink(itemLinkOrID);
+    else
+        GL.TooltipFrame:SetItemByID(itemLinkOrID);
+    end
+
+    -- Attempt to find a matching item modifier
+    local ModsDetected = {};
+    for i = 1, GL.TooltipFrame:NumLines() do
+        local line = _G["GargulTooltipFrameTextLeft" .. i];
+
+        if (line) then
+            local text = line:GetText();
+
+            -- One line can't match more than one mod
+            for mod, pattern in pairs(Patterns or {}) do
+                if (string.match(text, pattern)) then
+                    ModsDetected[mod] = true;
+                    break;
+                end
+            end
+        end
+    end
+
+    GL.TooltipFrame:ClearLines();
+
+    return ModsDetected;
 end
 
 --- Check how much time to trade is remaining on the given item in our bags
@@ -1663,7 +1826,7 @@ end
 
 ---@param Item Frame
 ---@param itemLink string
----@return void
+---@param Details? table
 function GL:highlightItem(Item, itemLink, Details)
     GL:debug("GL:highlightItem");
 
@@ -1766,7 +1929,6 @@ function GL:highlightItem(Item, itemLink, Details)
     );
 end
 
----@return void
 function GL:bugReport()
     local AddonData = {};
     for i = 1, GetNumAddOns() do
@@ -1864,32 +2026,19 @@ end
 ---
 ---@param itemLinkOrID string|number
 ---@param callback function
----
----@return void
 function GL:canUserUseItem(itemLinkOrID, callback)
-    GL:debug("GL:canUserUseItem");
-
     if (type(callback) ~= "function") then
         GL:warning("Unexpected type '" .. type(callback) .. "' in GL:canUserUseItem, expecting type 'function'");
         return;
     end
 
-    local itemID;
-    local concernsID = GL:higherThanZero(tonumber(itemLinkOrID));
-
-    if (concernsID) then
-        itemID = math.floor(tonumber(itemLinkOrID));
-    else
-        itemID = GL:getItemIDFromLink(itemLinkOrID);
-    end
-
-    GL:onItemLoadDo(itemID, function (Details)
+    GL:onItemLoadDo(itemLinkOrID, function (Details)
         if (not Details) then
             return callback(true);
         end
 
         GL.TooltipFrame:ClearLines();
-        GL.TooltipFrame:SetHyperlink("item:" .. itemID);
+        GL.TooltipFrame:SetHyperlink(Details.link);
 
         local IsTooltipTextRed = function (text)
             if (text and text:GetText()) then
@@ -1917,12 +2066,12 @@ end
 ---@param slot number
 ---@return any
 function GL:useContainerItem(bagID, slot)
-    if (UseContainerItem) then
-        return UseContainerItem(bagID, slot)
-    end
-
     if (C_Container and C_Container.UseContainerItem) then
         return C_Container.UseContainerItem(bagID, slot);
+    end
+
+    if (UseContainerItem) then
+        return UseContainerItem(bagID, slot)
     end
 
     return nil;
@@ -1944,12 +2093,12 @@ end
 
 ---@return nil|any
 function GL:getItemInfo(...)
-    if (GetItemInfo) then
-        return GetItemInfo(...);
-    end
-
     if (C_Item and C_Item.GetItemInfo) then
         return C_Item.GetItemInfo(...);
+    end
+
+    if (GetItemInfo) then
+        return GetItemInfo(...);
     end
 
     return nil;
@@ -1957,12 +2106,12 @@ end
 
 ---@return nil|any
 function GL:getItemInfoInstant(...)
-    if (GetItemInfoInstant) then
-        return GetItemInfoInstant(...);
-    end
-
     if (C_Item and C_Item.GetItemInfoInstant) then
         return C_Item.GetItemInfoInstant(...);
+    end
+
+    if (GetItemInfoInstant) then
+        return GetItemInfoInstant(...);
     end
 
     return nil;
@@ -1972,10 +2121,6 @@ end
 ---@param slot number
 ---@return any
 function GL:getContainerItemInfo(bagID, slot)
-    if (GetContainerItemInfo) then
-        return GetContainerItemInfo(bagID, slot)
-    end
-
     if (C_Container and C_Container.GetContainerItemInfo) then
         local Info = C_Container.GetContainerItemInfo(bagID, slot);
 
@@ -1985,6 +2130,10 @@ function GL:getContainerItemInfo(bagID, slot)
 
         return Info.iconFileID, Info.stackCount, Info.isLocked, Info.quality, Info.isReadable,
         Info.hasLoot, Info.hyperlink, Info.isFiltered, Info.hasNoValue, Info.itemID, Info.isBound;
+    end
+
+    if (GetContainerItemInfo) then
+        return GetContainerItemInfo(bagID, slot)
     end
 
     return nil;
@@ -2000,14 +2149,18 @@ end
 
 --- Find the first bag id and slot for a given item id (or false)
 ---
----@param itemID number
----@param skipSoulBound boolean
----@param includeBank boolean
+---@param itemLinkOrID number|string
+---@param skipSoulBound? boolean
+---@param includeBank? boolean
+---@param includeLocked? boolean
 ---
 ---@return table
 ---
 ---@test /dump _G.Gargul:findBagIdAndSlotForItem(49577);
-function GL:findBagIdAndSlotForItem(itemID, skipSoulBound, includeBank)
+function GL:findBagIdAndSlotForItem(itemLinkOrID, skipSoulBound, includeBank, includeLocked)
+    local identifierIsLink = type(itemLinkOrID) == "string";
+
+    includeLocked = includeLocked == true;
     skipSoulBound = skipSoulBound == true;
     includeBank = includeBank == true;
 
@@ -2016,17 +2169,26 @@ function GL:findBagIdAndSlotForItem(itemID, skipSoulBound, includeBank)
         maxBagID = Enum.BagIndex.BankBag_7;
     end
 
+    local itemID = identifierIsLink and GL:getItemIDFromLink(itemLinkOrID) or itemLinkOrID;
     for bag = Enum.BagIndex.Backpack, maxBagID do
         for slot = 1, GL:getContainerNumSlots(bag) do
-            local _, _, locked, _, _, _, _, _, _, bagItemID = GL:getContainerItemInfo(bag, slot);
+            local Result = (function()
+                local _, _, locked, _, _, _, itemLink, _, _, bagItemID = GL:getContainerItemInfo(bag, slot);
 
-            if (bagItemID == itemID
-                and not locked -- The item is locked, aka it can not be put in the window
-                and (not skipSoulBound -- We don't care about the soulbound status of the item, return the bag/slot!
-                    or GL:inventoryItemTradeTimeRemaining(bag, slot) > 0 -- The item is tradeable
-                )
-            ) then
+                if ((not includeLocked and locked) -- The item is locked and can not be used
+                    or bagItemID ~= itemID -- This isn't the item we're looking for
+                    or (identifierIsLink and not GL:iEquals(itemLinkOrID, itemLink)) -- This is not the variant we're looking for
+                    or (not skipSoulBound and GL:inventoryItemTradeTimeRemaining(bag, slot) <= 0) -- This item is no longer tradable
+                ) then
+                    return;
+                end
+
                 return { bag, slot, };
+            end)();
+
+            -- We've got a hit, return it
+            if (Result) then
+                return Result;
             end
         end
     end
@@ -2040,13 +2202,11 @@ end
 ---@param includeItemRefTooltip boolean
 ---@return any
 function GL:onTooltipSetItem(Callback, includeItemRefTooltip)
-    GL:debug("GL:onTooltipSetItem");
-
     includeItemRefTooltip = includeItemRefTooltip ~= false;
     includeItemRefTooltip = GL:toboolean(includeItemRefTooltip);
 
     -- Support native GameToolTip
-    if (TooltipDataProcessor) then
+    if (C_TooltipInfo and TooltipDataProcessor) then
         return TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Item, function (Tooltip)
             return Callback(Tooltip);
         end);
@@ -2069,7 +2229,7 @@ end
 --- In some very rare cases we need to manipulate the close button on AceGUI elements
 ---
 ---@param Widget table
----@return void|table
+---@return table?
 function GL:fetchCloseButtonFromAceGUIWidget(Widget)
     GL:debug("GL:fetchCloseButtonFromAceGUIWidget");
 
@@ -2088,7 +2248,7 @@ end
 --- In some very rare cases we need to manipulate the border on AceGUI Inline Group elements
 ---
 ---@param Widget table
----@return void|table
+---@return table?
 function GL:fetchBorderFromAceGUIInlineGroup(Widget)
     GL:debug("GL:fetchBorderFromAceGUIInlineGroup");
 
@@ -2107,9 +2267,11 @@ end
 --- Some items have items linked to them. Example: t4 tokens have their quest reward counterpart linked to them.
 ---
 ---@param itemID number
----@param linkNormalAndHardModeItems boolean
+---@param forSoftRes? boolean
 ---@return table
-function GL:getLinkedItemsForID(itemID, linkNormalAndHardModeItems)
+function GL:getLinkedItemsForID(itemID, forSoftRes)
+    forSoftRes = forSoftRes == true;
+
     -- An invalid item id was provided
     itemID = tonumber(itemID);
     if (not GL:higherThanZero(itemID)) then
@@ -2126,10 +2288,22 @@ function GL:getLinkedItemsForID(itemID, linkNormalAndHardModeItems)
         i = i + 1;
     end
 
-    if (linkNormalAndHardModeItems
+    if (forSoftRes
         or GL.Settings:get("MasterLooting.linkNormalAndHardModeItems")
     ) then
         for _, id in pairs(GL.Data.NormalModeHardModeLinks[itemID] or {}) do
+            AllLinkedItemIDs[id] = i;
+            i = i + 1;
+        end
+    end
+
+    if (forSoftRes) then
+        for _, id in pairs(GL.Data.SoftResSpecificItemLinks[itemID] or {}) do
+            AllLinkedItemIDs[id] = i;
+            i = i + 1;
+        end
+
+        for _, id in pairs(GL.Data.SkinnedItemLinks[itemID] or {}) do
             AllLinkedItemIDs[id] = i;
             i = i + 1;
         end
@@ -2182,7 +2356,6 @@ function GL:getItemQualityFromLink(itemLink)
 end
 
 ---@param callback function
----@return void
 function GL:forEachGroupMember(callback)
     for _, Member in pairs(GL.User:groupMembers() or {}) do
         callback(Member);
@@ -2194,14 +2367,21 @@ end
 ---@param player string
 ---@return boolean
 function GL:unitIsConnected(player)
-    return not self:isCrossRealm() and UnitIsConnected(self:stripRealm(player)) or UnitIsConnected(self:nameFormat(player));
+    local FQN = self:addRealm(player);
+    local player, realm = self:stripRealm(FQN);
+
+    if (self:iEquals(realm, GL.User.realm)) then
+        return UnitIsConnected(player);
+    end
+
+    return UnitIsConnected(FQN);
 end
 
 --- Add the realm name to a player name
 ---
 ---@param name string
 ---@param realm string
----@return string, string
+---@return string, string?
 function GL:addRealm(name, realm, fromGroup)
     realm = not self:empty(realm) and realm or nil;
     fromGroup = fromGroup ~= false;
@@ -2216,11 +2396,6 @@ function GL:addRealm(name, realm, fromGroup)
     -- A realm separator was found, return the original message
     if (separator) then
         return name;
-    end
-
-    -- This is not a cross-realm server, no need to check uniqueness etc
-    if (not self:isCrossRealm()) then
-        return ("%s-%s"):format(name, realm or GL.User.realm);
     end
 
     -- Fetch the realm name from a group member if possible
@@ -2247,7 +2422,7 @@ end
 --- Strip the realm off of a player name
 ---
 ---@param playerName string
----@return string, string str, realm
+---@return string, string?
 function GL:stripRealm(playerName)
     playerName = tostring(playerName);
 
@@ -2269,7 +2444,7 @@ end
 --- Get the realm from a given player name
 ---
 ---@param playerName string
----@return string
+---@return string|boolean
 function GL:getRealmFromName(playerName)
     playerName = tostring(playerName);
 
@@ -2294,10 +2469,6 @@ end
 ---@param playerName string
 ---@return boolean
 function GL:nameIsUnique(playerName)
-    if (not self:isCrossRealm()) then
-        return true;
-    end
-
     playerName = GL:stripRealm(playerName);
     local nameEncountered = false;
     for _, groupMemberName in pairs(GL.User:groupMemberNames()) do
@@ -2374,9 +2545,9 @@ function GL:copperToMoney(copper, Separators, includeEmpty, separatorBeforeUnit)
     copper = self:floor(copper, 4);
 
     if (not separatorBeforeUnit) then
-        DefaultSeparators = {L.GOLD_INDICATOR .. " ", L.SILVER_INDICATOR .. " ", L.COPPER_INDICATOR .. " "};
+        DefaultSeparators = { L.GOLD_INDICATOR .. " ", L.SILVER_INDICATOR .. " ", L.COPPER_INDICATOR .. " " };
     else
-        DefaultSeparators = {" " .. L.GOLD_INDICATOR, " " .. L.SILVER_INDICATOR, " " .. L.COPPER_INDICATOR};
+        DefaultSeparators = { " " .. L.GOLD_INDICATOR, " " .. L.SILVER_INDICATOR, " " .. L.COPPER_INDICATOR };
     end
 
     Separators = Separators or {};
@@ -2499,7 +2670,9 @@ end
 function GL:createPattern(pattern, maximize)
     pattern = string.gsub(pattern, "[%(%)%-%+%[%]]", "%%%1");
 
-    if not maximize then
+    pattern = string.gsub(pattern, "%%c", "%+");
+
+    if (not maximize) then
         pattern = string.gsub(pattern, "%%s", "(.-)");
     else
         pattern = string.gsub(pattern, "%%s", "(.+)");
@@ -2507,7 +2680,7 @@ function GL:createPattern(pattern, maximize)
 
     pattern = string.gsub(pattern, "%%d", "%(%%d-%)");
 
-    if not maximize then
+    if (not maximize) then
         pattern = string.gsub(pattern, "%%%d%$s", "(.-)");
     else
         pattern = string.gsub(pattern, "%%%d%$s", "(.+)");
@@ -2704,6 +2877,24 @@ function GL:uuid()
     end)
 end
 
+--- Concat two non-associative tables to one another
+---
+---@param Table table
+---@param Concat table
+---@return table
+function GL:tableConcat(Table, Concat)
+    if (type(Table) ~= "table" or type(Concat) ~= "table") then
+        return {};
+    end
+
+    for i = 1, #Concat do
+        Table[#Table+1] = Concat[i];
+    end
+
+    return Table
+end
+    
+
 --- Overwrite/compliment the original table (left) with the values from the right table
 ---
 ---@param left table
@@ -2711,7 +2902,7 @@ end
 ---@return table
 function GL:tableMerge(left, right)
     if (type(left) ~= "table" or type(right) ~= "table") then
-        return false;
+        return {};
     end
 
     for key,value in pairs(right) do

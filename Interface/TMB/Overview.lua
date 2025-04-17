@@ -50,8 +50,6 @@ function Overview:draw()
     _G["GARGUL_TMB_OVERVIEW_WINDOW"] = Window.frame;
     tinsert(UISpecialFrames, "GARGUL_TMB_OVERVIEW_WINDOW");
 
-    local source = GL.TMB:source();
-
     local VerticalSpacer = GL.AceGUI:Create("SimpleGroup");
     VerticalSpacer:SetLayout("FILL");
     VerticalSpacer:SetFullWidth(true);
@@ -59,10 +57,10 @@ function Overview:draw()
     Window:AddChild(VerticalSpacer);
 
     local MoreInfoLabel = GL.AceGUI:Create("Label");
-    MoreInfoLabel:SetText(L.TMB_IMPORT_TMB_GARGUL_INFO);
+    MoreInfoLabel:SetText(GL:printfn(L.TMB_IMPORT_TMB_GARGUL_INFO, { source = GL.TMB:source(), }));
     MoreInfoLabel:SetFontObject(_G["GameFontGreenLarge"]);
     MoreInfoLabel:SetFullWidth(true);
-    MoreInfoLabel:SetJustifyH("MIDDLE");
+    MoreInfoLabel:SetJustifyH("CENTER");
     Window:AddChild(MoreInfoLabel);
 
     local DiscordURL = GL.AceGUI:Create("EditBox");
@@ -84,7 +82,7 @@ function Overview:draw()
         date = GL:colorize(date(L.DATE_FORMAT, DB:get("TMB.MetaData.importedAt", GetServerTime())), GL.Interface.Colors.WARLOCK),
         time = GL:colorize(date(L.HOURS_MINUTES_FORMAT, DB:get("TMB.MetaData.importedAt", GetServerTime())), GL.Interface.Colors.WARLOCK),
     }));
-    TimestampLabel:SetJustifyH("MIDDLE");
+    TimestampLabel:SetJustifyH("CENTER");
     TimestampLabel:SetFontObject(_G["GameFontNormal"]);
     Window:AddChild(TimestampLabel);
 
@@ -93,7 +91,7 @@ function Overview:draw()
     ItemNumberLabel:SetText(("\n" .. L.TMB_IMPORT_NUMBER):format(
         GL:colorize(GL:count(DB:get("TMB.Items")) or 0, GL.Interface.Colors.WARLOCK)
     ));
-    ItemNumberLabel:SetJustifyH("MIDDLE");
+    ItemNumberLabel:SetJustifyH("CENTER");
     ItemNumberLabel:SetFontObject(_G["GameFontNormal"]);
     Window:AddChild(ItemNumberLabel);
 
@@ -108,7 +106,7 @@ function Overview:draw()
     PriorityNotesLabel:SetText(("\n" .. L.TMB_IMPORT_NOTES_AVAILABLE):format(
         GL:colorize(notesAvailable, GL.Interface.Colors.WARLOCK)
     ));
-    PriorityNotesLabel:SetJustifyH("MIDDLE");
+    PriorityNotesLabel:SetJustifyH("CENTER");
     PriorityNotesLabel:SetFontObject(_G["GameFontNormal"]);
     Window:AddChild(PriorityNotesLabel);
 
@@ -123,7 +121,7 @@ function Overview:draw()
     AutoSharingStatusLabel:SetText(("\n" .. L.TMB_IMPORT_AUTO_SHARING_ENABLED):format(
         GL:colorize(autoSharingEnabled, GL.Interface.Colors.WARLOCK)
     ));
-    AutoSharingStatusLabel:SetJustifyH("MIDDLE");
+    AutoSharingStatusLabel:SetJustifyH("CENTER");
     AutoSharingStatusLabel:SetFontObject(_G["GameFontNormal"]);
     Window:AddChild(AutoSharingStatusLabel);
 
@@ -141,6 +139,7 @@ function Overview:draw()
         GL.Interface.Dialogs.PopupDialog:open{
             question = L.ARE_YOU_SURE,
             OnYes = function ()
+                local source = GL.TMB:source();
                 GL.Interface.TMB.Overview:close();
                 GL.TMB:clear();
 
@@ -148,6 +147,7 @@ function Overview:draw()
             end,
         };
     end);
+    GL.Interface:addTooltip(ClearButton, L["Clear TMB / DFT data. This doesn't affect any data on your raider's machines"]);
     Window:AddChild(ClearButton);
 
     local ShareButton = AceGUI:Create("Button");
@@ -189,6 +189,7 @@ function Overview:draw()
             end,
         };
     end);
+    GL.Interface:addTooltip(ClearRaiderDataButton, L["Remove TMB / DFT data on your raider's machines, useful if you broadcasted data accidentally"]);
     Window:AddChild(ClearRaiderDataButton);
 
 

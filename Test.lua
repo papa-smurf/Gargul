@@ -1,9 +1,12 @@
 ---@type GL
 local _, GL = ...;
 
+local Events = GL.Events;
+
 ---@class Test
-GL.Test = {
+local Test = {
     Classes = {"druid","hunter","mage","paladin","priest","rogue","shaman","warlock","warrior","death knight",},
+    Mail = {},
     Names = {"Aiyana","Callum","Virginia","Laylah","Isabell","Javon","Miley","Ian","Isai","Ahmad","Campbell","Bobby","Karter","Brooklynn","Asher","Maci","Gael","Jamal","Zion","Sarahi","Kierra","Perla","Rylie","Lorelei","John","Madeleine","Jadiel","Billy","Jazmin","Keon","Stephany","George","Malcolm","Brenden","Daphne","Dane","Derek","Marcel","Madilynn","Enrique","Cindy","Amir","Melvin","Anya","Ali","Rex","Lewis","Parker","Carl","Arnav","Kamari","Jessie","Madelynn","Heath","Haleigh","Madyson","Jorden","Amya","Elisa","Marques","Ana","Miracle","Abdiel","Dale","Sincere","Marin","Karina","Clay","Caden","Eve","Rubi","Zavier","Megan","Payton","Peyton","Emmett","Diego","Joaquin","German","Tania","Miguel","Malachi","Martin","Richard","Allison","Avah","Kamora","Deborah","Esperanza","Konnor","Isla","Tess","Keely","Margaret","Rory","Jake","Averie","Ally","Craig","Gage","Oswaldo","Kaitlynn","Ashley","Davian","Mauricio","Brandon","Aryana","Douglas","Kyan","Carsen","Mikaela","Regan","Theodore","Maximillian","Luke","Dixie","Makenna","Keagan","Mallory","America",},
     Locale = {},
     TimeLeft = {},
@@ -14,10 +17,34 @@ GL.Test = {
     PackMule = {},
 };
 
-local Test = GL.Test;
+GL.Test = Test;
+
+---@test /script _G.Gargul.Test.Mail:triggerMailCap()
+function Test.Mail:triggerMailCap()
+    Events:register("Test.Mail.UI_ERROR_MESSAGE", "UI_ERROR_MESSAGE", function (_, code, message)
+        if (message ~= ERR_MAIL_REACHED_CAP) then
+            return;
+        end
+    end);
+
+    local mailsSent = 0;
+    for _, player in ipairs(Test.Names) do
+        for i = 1, 2 do
+            local recipient = player .. i;
+
+            ClearSendMail();
+            SendMail(recipient, 'GargulTest', 'This is just a test mail in order to reach the mail cap');
+            mailsSent = mailsSent + 1;
+
+            if (true) then return end
+        end
+    end
+
+    GL:xd({ mailsSent = mailsSent, });
+end
 
 function Test.TradeState:_init(callback)
-    if (self._initialized) then
+    if (Test.TradeState._initialized) then
         if (callback and type(callback) == "function") then
             return callback();
         end
@@ -25,24 +52,31 @@ function Test.TradeState:_init(callback)
         return;
     end
 
-    self._initialized = true;
+    Test.TradeState._initialized = true;
     local ItemIDs = {};
-
+    
     local ItemIDSources = {
         GL.Data.Constants.ItemsThatShouldntBeAnnounced,
-        GL.Data.Constants.TradeableItems,
-        GL.Data.Constants.UntradeableItems,
+        GL.Data.Constants.TradableItems,
+        GL.Data.Constants.UntradableItems,
     };
 
+    local itemsAdded = 0;
     for _, itemIDSource in pairs(ItemIDSources) do
         for _, itemID in pairs(itemIDSource) do
+            itemsAdded = itemsAdded + 1;
+
             tinsert(ItemIDs, itemID);
+
+            if (itemsAdded >= 15) then
+                break;
+            end
         end
     end
 
     -- Preload items
     GL:onItemLoadDo(ItemIDs, function (Details)
-        self.Items = Details;
+        Test.TradeState.Items = Details;
 
         if (callback and type(callback) == "function") then
             callback();
@@ -54,7 +88,10 @@ end
 ---
 ---@return table
 function Test.TradeState:defaultState()
+    Test.TradeState:_init();
+
     local Details = {
+        announce = true,
         partner = GL.User.name,
         myGold = math.random(9999999),
         theirGold = math.random(9999999),
@@ -86,7 +123,7 @@ function Test.TradeState:defaultState()
         isUsable = true,
     };
 
-    for i = 1, 6 do
+    for i = 1, 7 do
         local ItemEntry = self.Items[math.random(#self.Items)];
 
         Details.MyItems[i] = {
@@ -98,7 +135,7 @@ function Test.TradeState:defaultState()
         };
     end
 
-    for i = 1, 6 do
+    for i = 1, 7 do
         local ItemEntry = self.Items[math.random(#self.Items)];
 
         Details.TheirItems[i] = {
@@ -206,9 +243,9 @@ function Test.TradeState:theyEnchantedForFree()
 end
 
 --[[ Show what happens if you give an enchant and get a fee
-/script _G.Gargul.Test.TradeState:iEnchantedForFee()
+/script _G.Gargul.Test.TradeState:iEnchantedForGold()
 ]]
-function Test.TradeState:iEnchantedForFee(feeInCopper)
+function Test.TradeState:iEnchantedForGold(feeInCopper)
     GL:success("Running Test.TradeState:iEnchantedForFee() ...");
 
     self:_init(function ()
@@ -225,9 +262,9 @@ function Test.TradeState:iEnchantedForFee(feeInCopper)
 end
 
 --[[ Show what happens if you give an enchant and get a fee
-/script _G.Gargul.Test.TradeState:theyEnchantedForFee()
+/script _G.Gargul.Test.TradeState:theyEnchantedForGold()
 ]]
-function Test.TradeState:theyEnchantedForFee(feeInCopper)
+function Test.TradeState:theyEnchantedForGold(feeInCopper)
     GL:success("Running Test.TradeState:theyEnchantedForFee() ...");
 
     self:_init(function ()
@@ -520,15 +557,17 @@ function Test.PackMule:roundRobin(itemID)
         item = itemID,
     };
 
-    for _ = 1, iterations do
+    for i = 1, iterations do
         local target = GL.PackMule:roundRobinTargetForRule(Rule);
-        GL:xd(target);
+        GL:xd{ [i] = target, };
     end
 end
 
 --[[ Simulate being in an X-man group
 /script _G.Gargul.Test:simulateGroup(25)
 ]]
+local groupMembersOverridden = false;
+local groupMembersFunction = nil;
 function Test:simulateGroup(numberOfPlayers, includeSelf, includeCurrentGroupMembers)
     local Players = {};
     numberOfPlayers = numberOfPlayers or 25;
@@ -600,12 +639,29 @@ function Test:simulateGroup(numberOfPlayers, includeSelf, includeCurrentGroupMem
     Players[math.random(1, #Players)].hasAssist = true;
     Players[math.random(1, #Players)].online = false;
 
+    if (not groupMembersOverridden) then
+        groupMembersFunction = GL.User.groupMembers;
+        groupMembersOverridden = true;
+    end
+
     GL.User.groupMembers = function ()
         return Players;
     end;
 
     -- Make sure the group member names cache is cleared as well
     GL.User.groupMemberNamesCachedAt = -1;
+end
+
+--[[ Stop group simulation
+/script _G.Gargul.Test:stopGroupSimulation()
+]]
+function Test:stopGroupSimulation()
+    if (not groupMembersOverridden) then
+        return;
+    end
+
+    GL.User.groupMembers = groupMembersFunction;
+    groupMembersOverridden = false;
 end
 
 --[[ Show all identity elements at once for easy screenshotting

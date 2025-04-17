@@ -3,8 +3,20 @@ local L = Gargul_L;
 ---@type GL
 local _, GL = ...;
 
+---@type DB
+local DB = GL.DB;
+
+---@type Constants
+local Constants = GL.Data.Constants;
+
+---@type CommActions
+local CommActions = Constants.Comm.Actions;
+
+---@type Settings
+local Settings = GL.Settings; ---@type Settings
+
 ---@class SoftRes
-GL.SoftRes = {
+local SoftRes = {
     _initialized = false,
     announcedImportSoftResAt = false,
     broadcastInProgress = false,
@@ -23,12 +35,7 @@ GL.SoftRes = {
         SoftReservedItemIDs = {},
     },
 };
-
-local DB = GL.DB; ---@type DB
-local Constants = GL.Data.Constants; ---@type Data
-local CommActions = Constants.Comm.Actions;
-local Settings = GL.Settings; ---@type Settings
-local SoftRes = GL.SoftRes; ---@type SoftRes
+GL.SoftRes = SoftRes;
 
 --- @return boolean
 function SoftRes:_init()
@@ -90,6 +97,16 @@ function SoftRes:_init()
 
     GL.Events:register("SoftResUserJoinedGroupListener", "GL.USER_JOINED_NEW_GROUP", function () self:requestData(); end);
 
+    -- If the user reloads instead of a login we have to wait a couple seconds for the game to update the group setup
+    GL:after(5, "SoftResRequestDataAfterReload", function ()
+        if (not GL.User.isInGroup) then
+            return;
+        end
+
+        -- Check if we need to sync up with an existing multi-auction session
+        self:requestData();
+    end);
+    
     local reportStatus = false; -- No need to notify of "fixed" names after every /reload
     self:materializeData(reportStatus);
 
@@ -177,7 +194,9 @@ end
 ---
 ---@return void
 function SoftRes:requestData()
-    if (self.requestingData) then
+    if (self.requestingData
+        or (_G.UnitInBattleground and UnitInBattleground("player"))
+    ) then
         return;
     end
 
@@ -281,12 +300,34 @@ function SoftRes:replyToDataRequest(CommMessage)
     }:send();
 end
 
+--- Check if an item is reserved by the current player
+---
+---@param itemIdentifier number|string
+---@return boolean
+function SoftRes:itemIsReservedByMe(itemIdentifier)
+    local itemID = tonumber(itemIdentifier);
+    local identifierIsLink = type(itemIdentifier) == "string";
+
+    -- A string was provided, treat it as an item link and fetch its ID
+    if (not itemID
+        and identifierIsLink
+    ) then
+        itemID = GL:getItemIDFromLink(itemIdentifier);
+    end
+
+    if (not itemID) then
+        return false;
+    end
+
+    return self:itemIDIsReservedByPlayer(itemID, GL.User.fqn);
+end
+
 --- Check if an item ID is reserved by the current player
 ---
 ---@param itemID number
 ---@return boolean
 function SoftRes:itemIDIsReservedByMe(itemID)
-    return self:itemIDIsReservedByPlayer(itemID, GL.User.player);
+    return self:itemIDIsReservedByPlayer(itemID, GL.User.fqn);
 end
 
 --- Check if an itemlink is reserved by the current player
@@ -299,7 +340,7 @@ end
 
 --- Materialize the SoftRes data to make it more accessible during runtime
 ---
----@return void
+---@return boolean
 function SoftRes:materializeData()
     local ReservedItemIDs = {}; -- All reserved item ids (both soft- and hard)
     local SoftReservedItemIDs = {}; -- Soft-reserved item ids
@@ -337,6 +378,12 @@ function SoftRes:materializeData()
 
             for _, itemID in pairs(SoftResEntry.Items or {}) do
                 if (GL:higherThanZero(itemID)) then
+                    local _, itemType = GL:getItemInfoInstant(itemID);
+                    if (not itemType) then
+                        self:clearCorrupted();
+                        return false;
+                    end
+
                     -- This seems very counterintuitive, but using numeric keys
                     -- in a lua tables has some insanely annoying drawbacks
                     local idString = tostring(itemID);
@@ -393,12 +440,12 @@ function SoftRes:materializeData()
     self.MaterializedData.PlayerNamesByItemID = PlayerNamesByItemID;
     self.MaterializedData.ReservedItemIDs = GL:tableFlip(ReservedItemIDs);
     self.MaterializedData.SoftReservedItemIDs = SoftReservedItemIDs;
+
+    return true;
 end
 
 --- Draw either the importer or overview
 --- based on the current soft-reserve data
----
----@return void
 function SoftRes:draw()
     -- No data available, show importer
     if (not self:available()) then
@@ -415,7 +462,13 @@ function SoftRes:draw()
     -- This is to ensure that all item data is available before we draw the UI
     GL:onItemLoadDo(
         self.MaterializedData.ReservedItemIDs or {},
-        function () GL.Interface.SoftRes.Overview:draw(); end
+        function (_, error)
+            if (not error) then
+                return GL.Interface.SoftRes.Overview:draw();
+            end
+
+            self:clearCorrupted();
+        end
     );
 end
 
@@ -471,7 +524,7 @@ end
 --- Check whether a given item id is reserved (either soft or hard)
 ---
 ---@param itemID number|string
----@param inRaidOnly boolean
+---@param inRaidOnly? boolean
 ---@return boolean
 function SoftRes:idIsReserved(itemID, inRaidOnly)
     if (type(inRaidOnly) ~= "boolean") then
@@ -559,6 +612,13 @@ function SoftRes:clear()
     GL.Events:fire("GL.SOFTRES_CLEARED");
 end
 
+--- Clear our data and let the user know that we encountered corruped data
+function SoftRes:clearCorrupted()
+    self:clear();
+    self:draw();
+    GL:error("One or more items could not be found. SoftRes was cleared. Make sure you import items that exist for this game version ( classic / SoD / retail )!");
+end
+
 --- Check whether the given player reserved the given item id
 ---
 ---@param itemID number|string
@@ -585,7 +645,7 @@ end
 --- Fetch an item's reservations based on its ID
 ---
 ---@param itemID number|string
----@param inRaidOnly boolean
+---@param inRaidOnly? boolean
 ---
 ---@return table
 ---
@@ -639,7 +699,7 @@ end
 --- Fetch an item's soft reserve amounts in a "Playername (x3)" format
 ---
 ---@param itemID number
----@param inRaidOnly boolean
+---@param inRaidOnly? boolean
 ---@return table
 function SoftRes:playerReserveAmountsByItemID(itemID, inRaidOnly)
     local SoftReserves = self:byItemID(itemID, inRaidOnly);
@@ -876,7 +936,9 @@ function SoftRes:import(data, openOverview)
     };
 
     -- Materialize the data for ease of use
-    self:materializeData();
+    if (not self:materializeData()) then
+        return;
+    end
 
     GL.Events:fire("GL.SOFTRES_IMPORTED");
 
@@ -1041,25 +1103,12 @@ function SoftRes:importGargulData(data)
     end
 
     -- Store softres meta data (id, url etc)
-    local createdAt = data.metadata.createdAt or 0;
-    local updatedAt = data.metadata.updatedAt or 0;
-    local discordUrl = data.metadata.discordUrl or "";
+    local createdAt = tonumber(data.metadata.createdAt) or 0;
+    local updatedAt = tonumber(data.metadata.updatedAt) or 0;
+    local discordUrl = tostring(data.metadata.discordUrl) or "";
     local hidden = GL:toboolean(data.metadata.hidden or false);
     local id = tostring(data.metadata.id) or "";
-    local instance = data.metadata.instance or "";
-    local raidNote = data.metadata.note or "";
     local raidStartsAt = data.metadata.raidStartsAt or 0;
-
-    -- Check the provided meta data to prevent any weird tampering
-    if (GL:empty(id)
-        or GL:empty(instance)
-        or type(createdAt) ~= "number"
-        or type(discordUrl) ~= "string"
-        or type(raidNote) ~= "string"
-        or type(raidStartsAt) ~= "number"
-    ) then
-        return throwGenericInvalidDataError();
-    end
 
     DB.SoftRes.MetaData = {
         createdAt = createdAt,
@@ -1068,8 +1117,6 @@ function SoftRes:importGargulData(data)
         id = id,
         importedAt = GetServerTime(),
         importString = importString,
-        instance = instance,
-        note = raidNote,
         raidStartsAt = raidStartsAt,
         updatedAt = updatedAt,
         url = "https://softres.it/raid/" .. id,

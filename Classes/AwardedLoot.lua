@@ -8,8 +8,14 @@ local CommActions = GL.Data.Constants.Comm.Actions;
 ---@type DB
 local DB = GL.DB;
 
+---@type Settings
+local Settings = GL.Settings;
+
 ---@type Events
 local Events = GL.Events;
+
+---@type Constants
+local Constants = GL.Data.Constants;
 
 -- /script DevTools_Dump(_G.Gargul.AwardedLoot.AwardedToSelfWithoutAnItemGUID);
 ---@class AwardedLoot
@@ -23,7 +29,6 @@ GL.AwardedLoot = {
 ---@type AwardedLoot
 local AwardedLoot = GL.AwardedLoot;
 
----@return void
 function AwardedLoot:_init()
     if (self._initialized) then
         return;
@@ -52,10 +57,45 @@ function AwardedLoot:_init()
         };
     end);
 
+    -- Add item GUIDs to previously awarded items that don't have a GUID linked yet
     Events:register("AwardedLootBagUpdateDelayedListener", "BAG_UPDATE_DELAYED", function ()
         self:addItemGUIDtoItemsAwardedToSelf();
     end);
 
+    -- Automatically mark an item as awarded when someone receives it
+    Events:register("AwardedLootItemReceived", "GL.ITEM_RECEIVED", function (_, Details)
+        -- We don't want to automatically award loot
+        if (not Settings:get("AwardingLoot.awardOnReceive")) then
+            return;
+        end
+
+        -- This item is of too low quality, we don't care
+        local quality = tonumber(Details.quality);
+        if (not quality
+            or quality < Settings:get("AwardingLoot.awardOnReceiveMinimumQuality")
+        ) then
+            return;
+        end
+
+        -- This isn't an item we should award
+        if (GL:inTable(Constants.ItemsThatShouldntBeAnnounced, Details.itemID)) then
+            return;
+        end
+
+        -- We set auto trading to false for a split second since there's nothing to auto-trade for automatically awarded items
+        local autoAward = Settings:get("AwardingLoot.autoTradeAfterAwardingAnItem");
+        Settings:set("AwardingLoot.autoTradeAfterAwardingAnItem", false, true);
+
+        self:addWinner{
+            announce = false,
+            automaticallyAwarded = true,
+            itemLink = Details.itemLink,
+            winner = Details.playerName,
+        };
+
+        Settings:set("AwardingLoot.autoTradeAfterAwardingAnItem", autoAward, true);
+    end);
+    
     self._initialized = true;
 end
 
@@ -183,7 +223,6 @@ end
 ---@param winner string
 ---@param date string
 ---@param itemLink string
----@return void
 function AwardedLoot:addWinnerOnDate(winner, date, itemLink, announce)
     GL:debug("AwardedLoot:addWinnerOnDate");
 
@@ -201,7 +240,6 @@ end
 ---
 ---@param checksum string
 ---@param adjustPoints boolean|nil
----@return void
 function AwardedLoot:deleteWinner(checksum, adjustPoints, broadcast)
     broadcast = broadcast ~= false;
 
@@ -250,7 +288,6 @@ end
 --- Edit the winner of an item
 ---
 ---@param checksum string
----@return void
 function AwardedLoot:editWinner(checksum, winner, announce)
     GL:debug("AwardedLoot:editWinner");
 
@@ -304,22 +341,19 @@ function AwardedLoot:editWinner(checksum, winner, announce)
                 winner,
                 AwardEntry.BRCost
             );
+
         elseif (AwardEntry.GDKPCost and GL:gt(AwardEntry.GDKPCost, 0)) then
             awardMessage = (L.CHAT.ITEM_AWARDED_GDKP):format(
                 AwardEntry.itemLink,
                 winner,
                 GL:goldToMoney(AwardEntry.GDKPCost)
             );
+
         else
             awardMessage = (L.CHAT.ITEM_AWARDED):format(
                 AwardEntry.itemLink,
                 winner
             );
-
-            if (GL.BoostedRolls:enabled()) then
-                --- Make sure the cost is stored as the (new) default item cost
-                GL.Settings:set("BoostedRolls.defaultCost", AwardEntry.BRCost);
-            end
         end
 
         -- Announce awarded item on RAID or RAID_WARNING
@@ -374,13 +408,13 @@ end
 ---@param announce boolean|nil Announce award details in chat
 ---@param date string|nil
 ---@param isOS boolean|nil
----@param brCost number|nil
+---@param BRCost number|nil
 ---@param gdkpCost number|nil
 ---@param automaticallyAwarded boolean|nil Was this awarded automatically via the AwardingLoot.awardOnReceive setting?
 ---@param RollBracket table|nil See DefaultSettings.lua -> RollTracking.Brackets
 ---@param broadcast boolean|nil Broadcast award details to others
 ---@return void|string
-function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, brCost, gdkpCost, Rolls, automaticallyAwarded, RollBracket, broadcast)
+function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, gdkpCost, Rolls, automaticallyAwarded, RollBracket, broadcast)
     if (itemLink ~= nil or type(winner) ~= "table") then
         GL:error("Pass a table instead of multiple arguments")
         return;
@@ -390,7 +424,7 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, brCost, g
     announce = winner.announce;
     date = winner.date;
     isOS = winner.isOS;
-    brCost = winner.brCost;
+    BRCost = winner.BRCost;
     gdkpCost = winner.gdkpCost;
     Rolls = winner.Rolls;
     automaticallyAwarded = winner.automaticallyAwarded;
@@ -451,7 +485,7 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, brCost, g
         return false;
     end
 
-    winner = not isDisenchanted and GL:nameFormat{name = winner, forceRealm = true} or winner;
+    winner = not isDisenchanted and GL:nameFormat{ name = winner, forceRealm = true } or winner;
 
     -- You can set the date for when this item was awarded, handy if you forgot an item for example
     if (dateProvided) then
@@ -489,9 +523,9 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, brCost, g
 
     if (not isDisenchanted) then
         for _, Entry in pairs(GL.TMB:byItemIDAndPlayer(itemID, realmLessName) or {}) do
-            if (Entry.type == GL.Data.Constants.tmbTypePrio) then
+            if (Entry.type == Constants.tmbTypePrio) then
                 isPrioritized = true;
-            elseif (Entry.type == GL.Data.Constants.tmbTypeWish) then
+            elseif (Entry.type == Constants.tmbTypeWish) then
                 isWishlisted = true;
             end
         end
@@ -500,9 +534,9 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, brCost, g
     --[[ DETERMINE THE ITEM'S GUID ]]
     local awardedItemGUID = nil;
     local lowestTradeTimeRemaining = 14400; -- 4 hours in seconds
-    for itemGUID, timeRemaining in pairs(GL:itemTradeTimeRemaining(itemID) or {}) do
+    for itemGUID, timeRemaining in pairs(GL:itemTradeTimeRemaining(itemLink or itemID) or {}) do
         -- Check if the given item is soulbound
-        local itemIsBound = timeRemaining ~= GL.Data.Constants.itemIsNotBound;
+        local itemIsBound = timeRemaining ~= Constants.itemIsNotBound;
 
         -- This item is not bound, pick the first one that's not awarded yet
         if (not itemIsBound) then
@@ -518,6 +552,9 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, brCost, g
         end
     end
 
+    -- Determine winner class
+    local class = GL:playerClassByName(winner);
+
     local checksum = GL:strPadRight(GL:strLimit(GL:stringHash(timestamp .. itemID .. GL:uuid()) .. GL:stringHash(winner .. GL.DB:get("SoftRes.MetaData.id", "")), 20, ""), "0", 20);
     local AwardEntry = {
         checksum = checksum,
@@ -528,8 +565,9 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, brCost, g
         awardedBy = GL.User.fqn,
         timestamp = timestamp,
         softresID = GL.DB:get("SoftRes.MetaData.id"),
-        received = GL:iEquals(winner, GL.User.name),
-        BRCost = tonumber(brCost),
+        received = GL:iEquals(winner, GL.User.name) or GL:iEquals(winner, GL.User.fqn),
+        winnerClass = Constants.UnitClasses[class],
+        BRCost = tonumber(BRCost),
         GDKPCost = tonumber(gdkpCost),
         GDKPSession = GL.GDKP.Session:activeSessionID() or nil,
         OS = isOS,
@@ -540,6 +578,11 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, brCost, g
         winningRollType = RollBracket and RollBracket[1],
         Rolls = Rolls or {},
     };
+
+    if (AwardEntry.BRCost and GL:gt(AwardEntry.BRCost, 0)) then
+        --- Make sure the cost is stored as the (new) default item cost
+        GL.Settings:set("BoostedRolls.defaultCost", AwardEntry.BRCost);
+    end
 
     -- Insert the award in the more permanent AwardHistory table (for export / audit purposes)
     DB:set("AwardHistory." .. AwardEntry.checksum, AwardEntry);
@@ -568,28 +611,26 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, brCost, g
 
     if (announce) then
         local awardMessage = "";
-        if (GL.BoostedRolls:enabled() and GL:higherThanZero(brCost)) then
+        if (GL.BoostedRolls:enabled() and GL:higherThanZero(BRCost)) then
             awardMessage = (L.CHAT.ITEM_AWARDED_BR):format(
                 itemLink,
                 awardedTo,
-                brCost
+                BRCost
             );
+
         elseif (gdkpCost and gdkpCost > 0) then
             awardMessage = (L.CHAT.ITEM_AWARDED_GDKP):format(
                 itemLink,
                 awardedTo,
                 GL:goldToMoney(gdkpCost)
             );
+
         else
             awardMessage = (L.CHAT.ITEM_AWARDED):format(
                 itemLink,
                 awardedTo
             );
 
-            if (GL.BoostedRolls:enabled()) then
-                --- Make sure the cost is stored as the (new) default item cost
-                GL.Settings:set("BoostedRolls.defaultCost", brCost);
-            end
         end
 
         -- Announce awarded item on RAID or RAID_WARNING
@@ -645,7 +686,7 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, brCost, g
         elseif (not GL.DroppedLoot.lootWindowIsOpened
 
             -- No need to trade with ourselves
-            and GL.User.name ~= winner
+            and not GL:iEquals(GL.User.fqn, winner)
 
             -- Auto trading is disabled
             and GL.Settings:get("AwardingLoot.autoTradeAfterAwardingAnItem")
@@ -695,7 +736,6 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, brCost, g
     return checksum;
 end
 
----@return void
 function AwardedLoot:addItemGUIDtoItemsAwardedToSelf()
     for checksum, Details in pairs (self.AwardedToSelfWithoutAnItemGUID or {}) do
         (function ()
@@ -709,9 +749,9 @@ function AwardedLoot:addItemGUIDtoItemsAwardedToSelf()
             --[[ DETERMINE THE ITEM'S GUID ]]
             local awardedItemGUID = nil;
             local lowestTradeTimeRemaining = 14400; -- 4 hours in seconds
-            for itemGUID, timeRemaining in pairs(GL:itemTradeTimeRemaining(itemID) or {}) do
+            for itemGUID, timeRemaining in pairs(GL:itemTradeTimeRemaining(Details.itemLink or Details.itemID) or {}) do
                 -- Check if the given item is soulbound
-                local itemIsBound = timeRemaining ~= GL.Data.Constants.itemIsNotBound;
+                local itemIsBound = timeRemaining ~= Constants.itemIsNotBound;
 
                 -- This item is not bound, pick the first one that's not awarded yet
                 if (not itemIsBound) then
@@ -771,14 +811,16 @@ end
 --- Attempt to initiate a trade with whomever won the item and add the items
 ---
 ---@param AwardDetails table
----@return void
 function AwardedLoot:initiateTrade(AwardDetails)
-    GL:debug("AwardedLoot:initiateTrade");
-
     local tradingPartner = AwardDetails.awardedTo;
 
+    -- No need to trade with yourself
+    if (GL:iEquals(tradingPartner, GL.User.fqn)) then
+        return;
+    end
+
     -- Check whether we have the item in our inventory, no point opening a trade window if not
-    local itemPositionInBag = GL:findBagIdAndSlotForItem(AwardDetails.itemID);
+    local itemPositionInBag = GL:findBagIdAndSlotForItem(AwardDetails.itemLink or AwardDetails.itemID);
     if (GL:empty(itemPositionInBag)) then
         return;
     end
@@ -792,20 +834,29 @@ function AwardedLoot:initiateTrade(AwardDetails)
 
     if (not TradeFrame:IsShown()) then
         -- Open a trade window with the winner
-        GL.TradeWindow:open(tradingPartner, function ()
-            self:tradeInitiated();
-        end);
+        GL.TradeWindow:open(tradingPartner, function (success)
+            if (not success) then
+                if (Settings:get("AwardingLoot.notifyOfFailedTradeStart")) then
+                    GL:sendChatMessage(
+                        GL:printfn(L.CHAT.TRADE_START_FAILED, {
+                            item = AwardDetails.itemLink or "?",
+                        }),
+                        "WHISPER", nil, tradingPartner
+                    );
+                end
+
+                return;
+            end
+        end, true);
 
     -- We're already trading with the winner
     elseif (GL:tableGet(GL.TradeWindow, "State.partner") == tradingPartner) then
         -- Attempt to add the item to the trade window
-        GL.TradeWindow:addItem(AwardDetails.itemID);
+        GL.TradeWindow:addItem(AwardDetails.itemLink or AwardDetails.itemID);
     end
 end
 
 --- When a trade is initiated we attempt to automatically add items that should be given to the tradee
----
----@return void
 function AwardedLoot:tradeInitiated()
     -- Fetch the player name of whomever we're trading with
     local tradingPartner = GL:tableGet(GL.TradeWindow, "State.partner");
@@ -822,10 +873,9 @@ function AwardedLoot:tradeInitiated()
     local threeHoursAgo = GetServerTime() - 10800;
 
     -- Loop through our awarded loot table in reverse
-    local thereAreItemsToAdd = false;
     for _, Loot in pairs(DB:get("AwardHistory")) do
         -- Our trading partner changed in the meantime, stop!
-        if (tradingPartner ~= GL:tableGet(GL.TradeWindow, "State.partner")) then
+        if (not GL:iEquals(tradingPartner, GL:tableGet(GL.TradeWindow, "State.partner", ""))) then
             break;
         end
 
@@ -846,9 +896,7 @@ function AwardedLoot:tradeInitiated()
             end
 
             -- Attempt to add the item to the trade window
-            GL.TradeWindow:addItem(Loot.itemID);
-
-            thereAreItemsToAdd = true;
+            GL.TradeWindow:addItem(Loot.itemLink or Loot.itemID);
         end)();
     end
 end
@@ -856,7 +904,6 @@ end
 --- Whenever a successful trade is completed we need to check whether we need to mark awarded loot as "received"
 ---
 ---@param Details table
----@return void
 function AwardedLoot:tradeCompleted(Details)
     GL:debug("AwardedLoot:tradeCompleted");
 
@@ -918,7 +965,6 @@ end
 --- The loot master awarded an item to someone, add it to our list as well
 ---
 ---@param CommMessage table
----@return void
 function AwardedLoot:processAwardedLoot(CommMessage)
     GL:debug("AwardedLoot:processAwardedLoot");
 
@@ -936,7 +982,7 @@ function AwardedLoot:processAwardedLoot(CommMessage)
 
     -- Show an item won alert on TBC+
     if (not GL.isEra and GL:iEquals(AwardEntry.awardedTo, GL.User.name)) then
-        GL:onItemLoadDo(AwardEntry.itemID, function (Details)
+        GL:onItemLoadDo(AwardEntry.itemLink, function (Details)
             if (not Details) then
                 return;
             end
@@ -975,6 +1021,7 @@ function AwardedLoot:processAwardedLoot(CommMessage)
         timestamp = AwardEntry.timestamp,
         softresID = AwardEntry.softresID,
         received = AwardEntry.received,
+        winnerClass = AwardEntry.winnerClass,
         BRCost = AwardEntry.BRCost,
         GDKPCost = AwardEntry.GDKPCost,
         OS = GL:toboolean(AwardEntry.OS),
@@ -991,7 +1038,6 @@ end
 --- The loot master edited an item award, make sure our list reflect those changes
 ---
 ---@param CommMessage table
----@return void
 function AwardedLoot:processEditedLoot(CommMessage)
     GL:debug("AwardedLoot:processEditedLoot");
 

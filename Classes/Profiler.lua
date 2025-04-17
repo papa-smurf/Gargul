@@ -56,7 +56,7 @@ function Profiler:draw()
     local Usage = GL.AceGUI:Create("Label");
     Usage:SetFontObject(_G["GameFontNormal"]);
     Usage:SetFullWidth(true);
-    Usage:SetJustifyH("MIDDLE");
+    Usage:SetJustifyH("CENTER");
     Window:AddChild(Usage);
     self.Usage = Usage;
 

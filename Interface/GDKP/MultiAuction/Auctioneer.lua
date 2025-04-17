@@ -74,6 +74,7 @@ function Auctioneer:open(keepPreviousItems)
         self:clearItems();
         GL.GDKP.MultiAuction.Auctioneer:fillFromInventory(
             Settings:get("GDKP.MultiAuction.minimumFillQuality"),
+            Settings:get("GDKP.MultiAuction.minimumFillItemLevel"),
             Settings:get("GDKP.MultiAuction.includeBOEs"),
             Settings:get("GDKP.MultiAuction.includeAwarded"),
             Settings:get("GDKP.MultiAuction.includeMaterials")
@@ -263,7 +264,7 @@ function Auctioneer:build()
 
     --[[ ADD AN ITEM TO THE WINDOW ]]
     Window.addItemByLink = function (_, link)
-        GL:onItemLoadDo(GL:getItemIDFromLink(link), function (Details)
+        GL:onItemLoadDo(link, function (Details)
             if (not Details) then
                 return;
             end
@@ -320,7 +321,7 @@ function Auctioneer:build()
             end
 
             --[[ BOE ]]
-            if (GL:inTable({ LE_ITEM_BIND_ON_EQUIP, LE_ITEM_BIND_QUEST }, Details.bindType)) then
+            if (GL:inTable({ Enum.ItemBind.OnEquip, Enum.ItemBind.Quest }, Details.bindType)) then
                 ---@type FontString
                 local BOE = Interface:createFontString(Icon, L.BIND_ON_EQUIP_ABBR);
                 BOE:SetPoint("TOPLEFT", Icon, "TOPLEFT", -3, 3);

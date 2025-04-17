@@ -33,9 +33,12 @@ local GDKPAuction = GL.GDKP.Auction;
 local SESSION_ROWS = 22;
 local HEIGHT_PER_SESSION_ROW = 18;
 
-GL:tableSet(GL, "Interface.GDKP.Overview", {
+---@class GDKPOverview
+local Overview = {
     _initialized = false,
+
     isVisible = false,
+    phrase = nil,
     selectedSession = nil,
     styleWindowAfterResize = nil,
 
@@ -44,12 +47,11 @@ GL:tableSet(GL, "Interface.GDKP.Overview", {
 
     -- Released buttons are added to this pool so that we can reuse them later
     ButtonPool = {},
-});
+};
 
----@class GDKPOverview
-local Overview = Interface.GDKP.Overview; ---@type GDKPOverview
+---@type GDKPOverview
+GL.Interface.GDKP.Overview = Overview;
 
----@return void
 function Overview:_init()
     if (self._initialized) then
         return;
@@ -90,7 +92,6 @@ function Overview:_init()
     end);
 end
 
----@return void
 function Overview:sessionChanged()
     local Session = self:getSelectedSession();
 
@@ -132,7 +133,6 @@ function Overview:sessionChanged()
     self:updatePot();
 end
 
----@return void
 function Overview:updatePot()
     local Session = self:getSelectedSession();
 
@@ -150,7 +150,6 @@ function Overview:updatePot()
     Pot:SetText(string.format("|cFF%s%s|r", Interface.Colors.ROGUE, pot));
 end
 
----@return void
 function Overview:open()
     if (not GL.GDKPIsAllowed) then
         return GL:error(L.GDKPS_ARE_NOT_ALLOWED);
@@ -175,8 +174,6 @@ function Overview:open()
 end
 
 --- Build the GDKP overview. We only do this once and reuse it when reopened
----
----@return void
 function Overview:build()
     local Window = Interface:get(self, "GDKPOverview");
 
@@ -368,7 +365,7 @@ function Overview:build()
             "GL.GDKP_SESSION_UNLOCKED",
         },
     });
-    AddGoldButton:SetPoint("TOP", ScrollFrameHolder.frame, "TOP", -9, -7);
+    AddGoldButton:SetPoint("TOP", ScrollFrameHolder.frame, "TOP", -30, -7);
 
     ----[[ LIST VIEW BUTTON ]]
     local ListViewButton = Interface:createButton(ScrollFrameHolder, {
@@ -377,13 +374,51 @@ function Overview:build()
             GL.Interface.GDKP.LedgerList:open(self.selectedSession);
         end,
         tooltip = L.GDKP_OVERVIEW_LEDGER_TOOLTIP,
-        normalTexture = "Interface/AddOns/Gargul/Assets/Buttons/eye",
+        normalTexture = "Interface/AddOns/Gargul/Assets/Buttons/award",
         updateOn = { "GL.GDKP_OVERVIEW_SESSION_CHANGED", "GL.GDKP_OVERVIEW_SESSION_CHANGED", "GL.GDKP_OVERVIEW_SESSIONS_REFRESHED", "GL.GDKP_AUCTION_CHANGED", },
         update = function (self)
             self:SetEnabled(not GL:empty(GL:tableGet(Overview:getSelectedSession() or {}, "Auctions")));
         end,
     });
     ListViewButton:SetPoint("TOPLEFT", AddGoldButton, "TOPRIGHT", 2, 0);
+
+    ----[[ SEARCH BUTTON ]]
+    local SearchButton;
+    SearchButton = Interface:createButton(ScrollFrameHolder, {
+        onClick = function (Button)
+            if (self.phrase) then
+                self.phrase = nil;
+                self:refreshLedger();
+                SearchButton.normalTexture:SetTexture("Interface/AddOns/Gargul/Assets/Buttons/eye");
+                Interface:addTooltip(SearchButton, "Search by item or player name");
+
+                return;
+            end
+
+            GL.Interface.Dialogs.ConfirmWithSingleInputDialog:open{
+                question = "Search by item name or player name",
+                OnYes = function (phrase)
+                    if (GL:empty(phrase)) then
+                        return;
+                    end
+
+                    self.phrase = phrase;
+                    self:refreshLedger();
+
+                    SearchButton.normalTexture:SetTexture("Interface/AddOns/Gargul/Assets/Buttons/restore");
+                    Interface:addTooltip(SearchButton, "Clear search");
+                end,
+                focus = true,
+            };
+        end,
+        normalTexture = "Interface/AddOns/Gargul/Assets/Buttons/eye",
+        updateOn = { "GL.GDKP_OVERVIEW_SESSION_CHANGED", "GL.GDKP_OVERVIEW_SESSION_CHANGED", "GL.GDKP_OVERVIEW_SESSIONS_REFRESHED" },
+        update = function (Button)
+            Button:SetEnabled(not GL:empty(GL:tableGet(Overview:getSelectedSession() or {}, "Auctions")));
+        end,
+    });
+    Interface:addTooltip(SearchButton, "Search by item or player name");
+    SearchButton:SetPoint("TOPLEFT", ListViewButton, "TOPRIGHT", 2, 0);
 
     Interface:set(self, "Title", Title);
     Interface:set(self, "Note", Note);
@@ -496,7 +531,6 @@ function Overview:build()
     return Window;
 end
 
----@return void
 function Overview:close()
     local Window = Interface:get(self, "GDKPOverview");
 
@@ -510,7 +544,6 @@ function Overview:close()
     self.isVisible = false;
 end
 
----@return void
 function Overview:closeSubWindows()
     Interface.GDKP.CreateSession:close();
     Interface.GDKP.EditSession:close();
@@ -531,7 +564,6 @@ function Overview:getSelectedSession()
     return GDKPSession:byID(sessionIdentifier);
 end
 
----@return void
 function Overview:refreshLedger()
     local LockIcon = Interface:get(self, "Icon.LockIcon");
     LockIcon.frame:Show();
@@ -624,187 +656,198 @@ function Overview:refreshLedger()
 
         -- Add placeholders for all the item icons and labels
         for _, Auction in pairs(Auctions) do
-            local price = Auction.price or 0;
-            local auctionWasDeleted = not Auction.price;
-            local concernsManualAdjustment = Auction.itemID == Constants.GDKP.potIncreaseItemID;
-
-            -- This entry should always exist, if it doesn't something went wrong (badly)
-            local ItemEntry = GL:getCachedItem(Auction.itemLink);
-
-            if (GL:empty(ItemEntry)) then
-                break;
-            end
-
-            -- [[ SET DETAILS ]]
-            local iconPath = ItemEntry.icon;
-            local itemLabel;
-
-            if (concernsManualAdjustment) then
-                iconPath = "Interface/AddOns/Gargul/Assets/Icons/achievement_guildperk_cashflow";
-            end
-
-            local ItemRow = AceGUI:Create("SimpleGroup");
-            ItemRow:SetLayout("FLOW")
-            ItemRow:SetHeight(Settings:get("GDKP.ledgerAuctionScale"));
-            ItemRow:SetFullWidth(true);
-            Details:AddChild(ItemRow);
-
-            --[[
-                ITEM ICON
-            ]]
-            local ItemIcon = AceGUI:Create("Icon");
-            ItemIcon:SetWidth(Settings:get("GDKP.ledgerAuctionScale"));
-            ItemIcon:SetHeight(Settings:get("GDKP.ledgerAuctionScale"));
-            ItemIcon:SetImageSize(Settings:get("GDKP.ledgerAuctionScale"), Settings:get("GDKP.ledgerAuctionScale"));
-            ItemIcon:SetImage(iconPath);
-            ItemRow:AddChild(ItemIcon);
-            ItemIcon:SetCallback("OnEnter", function()
-                if (concernsManualAdjustment) then
+            (function ()
+                if (self.phrase
+                    and not GL:empty(self.phrase)
+                    and (not GL:strContains(Auction.itemLink, self.phrase)
+                        and not GL:strContains(Auction.Winner.name, self.phrase)
+                    )
+                ) then
                     return;
                 end
 
-                GameTooltip:SetOwner(ItemIcon.frame, "ANCHOR_TOP");
-                GameTooltip:SetHyperlink(ItemEntry.link);
-                GameTooltip:Show();
-            end);
-            ItemIcon:SetCallback("OnLeave", function()
-                GameTooltip:Hide();
-            end);
-            ItemIcon:SetCallback("OnClick", function (_, _, mouseButtonPressed)
-                HandleModifiedItemClick(ItemEntry.link, mouseButtonPressed);
-            end);
+                local price = Auction.price or 0;
+                local auctionWasDeleted = not Auction.price;
+                local concernsManualAdjustment = Auction.itemID == Constants.GDKP.potIncreaseItemID;
 
-            --[[
-               ITEM ICON/LABEL SPACER
-            ]]
-            local ItemSpacer = AceGUI:Create("SimpleGroup");
-            ItemSpacer:SetLayout("FILL")
-            ItemSpacer:SetWidth(10);
-            ItemSpacer:SetHeight(Settings:get("GDKP.ledgerAuctionScale"));
-            ItemRow:AddChild(ItemSpacer);
+                -- This entry should always exist, if it doesn't something went wrong (badly)
+                local ItemEntry = GL:getCachedItem(Auction.itemLink);
 
-            --[[
-                ITEM LABEL
-            ]]
-            local ItemLabel = AceGUI:Create("Label");
-            ItemLabel:SetFontObject(_G["GameFontNormalSmall"]);
-            ItemLabel:SetWidth(268);
+                if (GL:empty(ItemEntry)) then
+                    return;
+                end
 
-            -- Item was sold
-            if (not auctionWasDeleted) then
-                price = price or 0;
+                -- [[ SET DETAILS ]]
+                local iconPath = ItemEntry.icon;
+                local itemLabel;
+
                 if (concernsManualAdjustment) then
-                    local mutator = L.GDKP_OVERVIEW_MUTATION_ADDED;
-                    if (price < 0) then
-                        mutator = L.GDKP_OVERVIEW_MUTATION_REMOVED;
+                    iconPath = "Interface/AddOns/Gargul/Assets/Icons/achievement_guildperk_cashflow";
+                end
+
+                local ItemRow = AceGUI:Create("SimpleGroup");
+                ItemRow:SetLayout("FLOW")
+                ItemRow:SetHeight(Settings:get("GDKP.ledgerAuctionScale"));
+                ItemRow:SetFullWidth(true);
+                Details:AddChild(ItemRow);
+
+                --[[
+                    ITEM ICON
+                ]]
+                local ItemIcon = AceGUI:Create("Icon");
+                ItemIcon:SetWidth(Settings:get("GDKP.ledgerAuctionScale"));
+                ItemIcon:SetHeight(Settings:get("GDKP.ledgerAuctionScale"));
+                ItemIcon:SetImageSize(Settings:get("GDKP.ledgerAuctionScale"), Settings:get("GDKP.ledgerAuctionScale"));
+                ItemIcon:SetImage(iconPath);
+                ItemRow:AddChild(ItemIcon);
+                ItemIcon:SetCallback("OnEnter", function()
+                    if (concernsManualAdjustment) then
+                        return;
                     end
 
-                    itemLabel = (L.GDKP_OVERVIEW_MUTATION_ENTRY):format(
-                        Interface.Colors.ROGUE,
-                        GL:goldToMoney(price),
-                        mutator,
-                        GL:nameFormat{ name = Auction.Winner.name, class = Auction.Winner.class, colorize = true, },
-                        Auction.note or ""
-                    );
-                else
-                    itemLabel = (L.GDKP_OVERVIEW_AUCTION_ENTRY):format(
-                        GL:nameFormat{ name = Auction.Winner.name, class = Auction.Winner.class, colorize = true, },
-                        Interface.Colors.ROGUE,
-                        GL:goldToMoney(price),
-                        ItemEntry.link
-                    );
-                end
+                    GameTooltip:SetOwner(ItemIcon.frame, "ANCHOR_TOP");
+                    GameTooltip:SetHyperlink(Auction.itemLink);
+                    GameTooltip:Show();
+                end);
+                ItemIcon:SetCallback("OnLeave", function()
+                    GameTooltip:Hide();
+                end);
+                ItemIcon:SetCallback("OnClick", function (_, _, mouseButtonPressed)
+                    HandleModifiedItemClick(Auction.itemLink, mouseButtonPressed);
+                end);
 
-            -- Item was deleted
-            else
-                local reason = Auction.reason;
+                --[[
+                ITEM ICON/LABEL SPACER
+                ]]
+                local ItemSpacer = AceGUI:Create("SimpleGroup");
+                ItemSpacer:SetLayout("FILL")
+                ItemSpacer:SetWidth(10);
+                ItemSpacer:SetHeight(Settings:get("GDKP.ledgerAuctionScale"));
+                ItemRow:AddChild(ItemSpacer);
 
-                if (GL:empty(reason)) then
-                    reason = "-";
-                end
+                --[[
+                    ITEM LABEL
+                ]]
+                local ItemLabel = AceGUI:Create("Label");
+                ItemLabel:SetFontObject(_G["GameFontNormalSmall"]);
+                ItemLabel:SetWidth(268);
 
-                itemLabel = (L.GDKP_OVERVIEW_DELETED_ENTRY):format(
-                    GL:nameFormat{ name = Auction.CreatedBy.name, class = Auction.CreatedBy.class, colorize = true, },
-                    reason
-                );
-            end
-
-            ItemLabel:SetText(itemLabel);
-            ItemRow:AddChild(ItemLabel);
-
-            self.ActionButtons[Auction.ID] = {};
-
-            --[[ DETAILS BUTTON ]]
-            local Eye = Interface:createButton(ItemRow.frame, {
-                onClick = function()
-                    Interface.GDKP.AuctionDetails:toggle(Session.ID, Auction.checksum);
-                end,
-                tooltip = L.DETAILS,
-                normalTexture = "Interface/AddOns/Gargul/Assets/Buttons/eye",
-            });
-            Eye:SetPoint("CENTER", ItemRow.frame, "CENTER");
-            Eye:SetPoint("RIGHT", ItemRow.frame, "RIGHT", 0, 0);
-            self.ActionButtons[Auction.ID].DetailsButton = Eye;
-
-            --[[ DELETE BUTTON ]]
-            local Restore, Delete;
-            if (not auctionWasDeleted) then
-                Delete = Interface:createButton(ItemRow.frame, {
-                    onClick = function()
-                        -- Shift button was held, skip reason
-                        if (IsShiftKeyDown()) then
-                            GDKPAuction:delete(Session.ID, Auction.ID, "-");
-                            return;
+                -- Item was sold
+                if (not auctionWasDeleted) then
+                    price = price or 0;
+                    if (concernsManualAdjustment) then
+                        local mutator = L.GDKP_OVERVIEW_MUTATION_ADDED;
+                        if (price < 0) then
+                            mutator = L.GDKP_OVERVIEW_MUTATION_REMOVED;
                         end
 
-                        Interface.Dialogs.ConfirmWithSingleInputDialog:open({
-                            question = L.GDKP_OVERVIEW_DELETE_ENTRY_REASON,
-                            OnYes = function (reason)
-                                GDKPAuction:delete(Session.ID, Auction.ID, reason);
-                            end,
-                        });
+                        itemLabel = (L.GDKP_OVERVIEW_MUTATION_ENTRY):format(
+                            Interface.Colors.ROGUE,
+                            GL:goldToMoney(price),
+                            mutator,
+                            GL:nameFormat{ name = Auction.Winner.name, class = Auction.Winner.class, colorize = true, },
+                            Auction.note or ""
+                        );
+                    else
+                        itemLabel = (L.GDKP_OVERVIEW_AUCTION_ENTRY):format(
+                            GL:nameFormat{ name = Auction.Winner.name, class = Auction.Winner.class, colorize = true, },
+                            Interface.Colors.ROGUE,
+                            GL:goldToMoney(price),
+                            Auction.itemLink
+                        );
+                    end
+
+                -- Item was deleted
+                else
+                    local reason = Auction.reason;
+
+                    if (GL:empty(reason)) then
+                        reason = "-";
+                    end
+
+                    itemLabel = (L.GDKP_OVERVIEW_DELETED_ENTRY):format(
+                        GL:nameFormat{ name = Auction.CreatedBy.name, class = Auction.CreatedBy.class, colorize = true, },
+                        reason
+                    );
+                end
+
+                ItemLabel:SetText(itemLabel);
+                ItemRow:AddChild(ItemLabel);
+
+                self.ActionButtons[Auction.ID] = {};
+
+                --[[ DETAILS BUTTON ]]
+                local Eye = Interface:createButton(ItemRow.frame, {
+                    onClick = function()
+                        Interface.GDKP.AuctionDetails:toggle(Session.ID, Auction.checksum);
                     end,
-                    tooltip = L.GDKP_OVERVIEW_DELETE_ENTRY_TOOLTIP,
-                    disabledTooltip = L.GDKP_OVERVIEW_DELETE_ENTRY_DISABLED_TOOLTIP,
-                    normalTexture = "Interface/AddOns/Gargul/Assets/Buttons/delete",
+                    tooltip = L.DETAILS,
+                    normalTexture = "Interface/AddOns/Gargul/Assets/Buttons/eye",
+                });
+                Eye:SetPoint("CENTER", ItemRow.frame, "CENTER");
+                Eye:SetPoint("RIGHT", ItemRow.frame, "RIGHT", 0, 0);
+                self.ActionButtons[Auction.ID].DetailsButton = Eye;
+
+                --[[ DELETE BUTTON ]]
+                local Restore, Delete;
+                if (not auctionWasDeleted) then
+                    Delete = Interface:createButton(ItemRow.frame, {
+                        onClick = function()
+                            -- Shift button was held, skip reason
+                            if (IsShiftKeyDown()) then
+                                GDKPAuction:delete(Session.ID, Auction.ID, "-");
+                                return;
+                            end
+
+                            Interface.Dialogs.ConfirmWithSingleInputDialog:open({
+                                question = L.GDKP_OVERVIEW_DELETE_ENTRY_REASON,
+                                OnYes = function (reason)
+                                    GDKPAuction:delete(Session.ID, Auction.ID, reason);
+                                end,
+                            });
+                        end,
+                        tooltip = L.GDKP_OVERVIEW_DELETE_ENTRY_TOOLTIP,
+                        disabledTooltip = L.GDKP_OVERVIEW_DELETE_ENTRY_DISABLED_TOOLTIP,
+                        normalTexture = "Interface/AddOns/Gargul/Assets/Buttons/delete",
+                        update = function (self)
+                            self:SetEnabled(not auctionWasDeleted and not Session.deletedAt and not Session.lockedAt);
+                        end,
+                    });
+                    Delete:SetPoint("TOPRIGHT", Eye, "TOPLEFT", -2, 0);
+                    self.ActionButtons[Auction.ID].DeleteButton = Delete;
+                end
+
+                --[[ RESTORE BUTTON ]]
+                if (auctionWasDeleted) then
+                    Restore = Interface:createButton(ItemRow.frame, {
+                        onClick = function() GDKPAuction:restore(Session.ID, Auction.ID); end,
+                        tooltip = L.RESTORE,
+                        disabledTooltip = L.GDKP_OVERVIEW_RESTORE_ENTRY_DISABLED_TOOLTIP,
+                        normalTexture = "Interface/AddOns/Gargul/Assets/Buttons/restore",
+                        update = function (self)
+                            self:SetEnabled(not Session.deletedAt and not Session.lockedAt);
+                        end,
+                    });
+                    Restore:SetPoint("TOPRIGHT", Eye, "TOPLEFT", -2, 0);
+                    self.ActionButtons[Auction.ID].RestoreButton = Restore;
+                end
+
+                --[[ EDIT BUTTON ]]
+                local Edit = Interface:createButton(ItemRow.frame, {
+                    onClick = function()
+                        self:closeSubWindows();
+                        Interface.GDKP.EditAuction:draw(Session.ID, Auction.checksum);
+                    end,
+                    tooltip = L.EDIT,
+                    disabledTooltip = L.GDKP_OVERVIEW_EDIT_ENTRY_DISABLED_TOOLTIP,
+                    normalTexture = "Interface/AddOns/Gargul/Assets/Buttons/edit",
                     update = function (self)
                         self:SetEnabled(not auctionWasDeleted and not Session.deletedAt and not Session.lockedAt);
                     end,
                 });
-                Delete:SetPoint("TOPRIGHT", Eye, "TOPLEFT", -2, 0);
-                self.ActionButtons[Auction.ID].DeleteButton = Delete;
-            end
-
-            --[[ RESTORE BUTTON ]]
-            if (auctionWasDeleted) then
-                Restore = Interface:createButton(ItemRow.frame, {
-                    onClick = function() GDKPAuction:restore(Session.ID, Auction.ID); end,
-                    tooltip = L.RESTORE,
-                    disabledTooltip = L.GDKP_OVERVIEW_RESTORE_ENTRY_DISABLED_TOOLTIP,
-                    normalTexture = "Interface/AddOns/Gargul/Assets/Buttons/restore",
-                    update = function (self)
-                        self:SetEnabled(not Session.deletedAt and not Session.lockedAt);
-                    end,
-                });
-                Restore:SetPoint("TOPRIGHT", Eye, "TOPLEFT", -2, 0);
-                self.ActionButtons[Auction.ID].RestoreButton = Restore;
-            end
-
-            --[[ EDIT BUTTON ]]
-            local Edit = Interface:createButton(ItemRow.frame, {
-                onClick = function()
-                    self:closeSubWindows();
-                    Interface.GDKP.EditAuction:draw(Session.ID, Auction.checksum);
-                end,
-                tooltip = L.EDIT,
-                disabledTooltip = L.GDKP_OVERVIEW_EDIT_ENTRY_DISABLED_TOOLTIP,
-                normalTexture = "Interface/AddOns/Gargul/Assets/Buttons/edit",
-                update = function (self)
-                    self:SetEnabled(not auctionWasDeleted and not Session.deletedAt and not Session.lockedAt);
-                end,
-            });
-            Edit:SetPoint("TOPRIGHT", Delete or Restore, "TOPLEFT", -2, 0);
-            self.ActionButtons[Auction.ID].EditButton = Edit;
+                Edit:SetPoint("TOPRIGHT", Delete or Restore, "TOPLEFT", -2, 0);
+                self.ActionButtons[Auction.ID].EditButton = Edit;
+            end)();
         end
     end);
 

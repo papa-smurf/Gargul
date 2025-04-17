@@ -63,8 +63,8 @@ function FillFromInventory:build()
         name = self.windowName,
         width = 260,
         minWidth = 260,
-        height = 240,
-        minHeight = 240,
+        height = 275,
+        minHeight = 275,
         hideMinimizeButton = true,
     };
 
@@ -100,6 +100,18 @@ function FillFromInventory:build()
     MinimumQuality:SetPoint("TOP", MinimumQualityLabel, "BOTTOM", 0, -6);
     MinimumQuality:SetPoint("LEFT", Window, "LEFT");
 
+    --[[ ITEM LEVEL ]]
+    ---@type FontString
+    local ItemLevelLabel = Interface:createFontString(Window, L.MINIMUM_ITEM_LEVEL);
+    ItemLevelLabel:SetHeight(20);
+    ItemLevelLabel:SetPoint("TOPLEFT", MinimumQuality, "BOTTOMLEFT", 22, 0);
+
+    ---@type EditBox
+    local ItemLevel = Interface:numericInputBox(Window, nil, nil, 0);
+    ItemLevel:SetPoint("TOPLEFT", ItemLevelLabel, "BOTTOMLEFT", 2, 0);
+    ItemLevel:SetPoint("RIGHT", Window, "RIGHT", -24, 0);
+    ItemLevel:SetText(Settings:get("GDKP.MultiAuction.minimumFillItemLevel", ""));
+
     --[[ INCLUDE BOES ]]
     ---@type CheckButton
     local IncludeBOE = Interface:createCheckbox{
@@ -110,7 +122,7 @@ function FillFromInventory:build()
             Settings:set("GDKP.MultiAuction.includeBOEs", value);
         end,
     };
-    IncludeBOE:SetPoint("TOPLEFT", MinimumQuality, "BOTTOMLEFT", 16, -6);
+    IncludeBOE:SetPoint("TOPLEFT", ItemLevel, "BOTTOMLEFT", 0, -10);
 
     --[[ INCLUDE ALREADY AWARDED ]]
     ---@type CheckButton
@@ -139,7 +151,9 @@ function FillFromInventory:build()
     local FillButton = Interface:dynamicPanelButton(Window, L.FILL);
     FillButton:SetPoint("BOTTOMLEFT", Window, "BOTTOMLEFT", 20, 30);
     FillButton:SetScript("OnClick", function ()
-        Auctioneer:fillFromInventory(MinimumQuality:GetValue(), IncludeBOE:GetChecked(), IncludeAwarded:GetChecked(), IncludeMaterials:GetChecked());
+        local itemLevel = ItemLevel:GetText();
+        Auctioneer:fillFromInventory(MinimumQuality:GetValue(), itemLevel, IncludeBOE:GetChecked(), IncludeAwarded:GetChecked(), IncludeMaterials:GetChecked());
+        Settings:set("GDKP.MultiAuction.minimumFillItemLevel", itemLevel);
         self:close();
     end);
 

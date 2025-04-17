@@ -65,10 +65,10 @@ function GL:bootstrap(_, _, addonName)
 
     GL:after(1, nil, function()
         -- Check if ElvUI is loaded (useful for making adhoc UI changes)
-        self.elvUILoaded = GetAddOnEnableState(GL.User.name,"ElvUI") == 2;
+        self.elvUILoaded = C_AddOns.GetAddOnEnableState(GL.User.name,"ElvUI") == 2;
 
         -- Check if the user doesn't already have MuteNotInGroup loaded
-        if (self.isClassic and GetAddOnEnableState(GL.User.name, "MuteNotInGroup") ~= 2) then
+        if (self.isClassic and C_AddOns.GetAddOnEnableState(GL.User.name, "MuteNotInGroup") ~= 2) then
             -- Ignore "You aren't in a party" messages when you are in fact in a party (Blizzard LFD Bug)
             ChatFrame_AddMessageEventFilter("CHAT_MSG_SYSTEM", function (_, _, msg)
                 return msg == ERR_NOT_IN_GROUP
@@ -78,19 +78,21 @@ function GL:bootstrap(_, _, addonName)
 
         ---@todo: REMOVE
         GL.Interface.Settings:open(L.SETTINGS_SECTION_GETTING_STARTED);
+
+        -- Disable any active GDKP session
+        if (not self.GDKPIsAllowed) then
+            GL.GDKP.Session:clearActive();
+        end
     end);
 end
 
 --- Callback to be fired when the addon is completely loaded
----
----@return void
 function GL:_init()
     if (self.isSoD
         -- Taiwan is excluded apparently: https://tw.forums.blizzard.com/zh/wow/t/gdkp/12240
         and not GL:inTable({ "十字軍聖擊", "孤狼", "生命烈焰", "野性痊癒", }, GetRealmName())
     ) then
         self.GDKPIsAllowed = false;
-        GL.GDKP.Session:clearActive();
     end
 
     -- Initialize classes
@@ -100,7 +102,7 @@ function GL:_init()
     self.Settings:_init();
 
     -- Determine which chat message locale to use
-    L = Gargul_L;
+    local L = Gargul_L;
     local langMatch = false;
     local chatLocale = GL.Settings:get("chatLocale");
 
@@ -120,6 +122,13 @@ function GL:_init()
         L.CHAT = L.CHAT.enUS;
     end
 
+    -- Make sure enUS fallbacks are available
+    setmetatable(L.CHAT, {
+        __index = function (_, key)
+            return tostring(key)
+        end,
+    });
+
     GL.Settings:onChange("chatLocale", function ()
         if (GL.Settings:get("chatLocale") ~= chatLocale) then
             C_UI.Reload();
@@ -128,13 +137,16 @@ function GL:_init()
 
     -- Register media
     local media = LibStub("LibSharedMedia-3.0")
-    media:Register("sound", "Gargul: uh-oh", "Interface/AddOns/".. self.name .."/Assets/Sounds/uh-oh.ogg");
+    media:Register("sound", "Gargul: uh-oh", "Interface/AddOns/Gargul/Assets/Sounds/uh-oh.ogg");
+    media:Register("sound", "Gargul: cheer", "Interface/AddOns/Gargul/Assets/Sounds/cheer.ogg");
+    media:Register("sound", "Gargul: waow", "Interface/AddOns/Gargul/Assets/Sounds/waow.ogg");
+    media:Register("sound", "Gargul: yay", "Interface/AddOns/Gargul/Assets/Sounds/yay.ogg");
 
     -- PTSansNarrow doesn't support al character sets
     if (GL:inTable({ "koKR", "zhCN", "zhTW", }, GetLocale())) then
         GL.FONT = STANDARD_TEXT_FONT;
     else
-        media:Register("font", "PTSansNarrow", "Interface/AddOns/".. self.name .."/Assets/Fonts/PTSansNarrow.ttf");
+        media:Register("font", "PTSansNarrow", "Interface/AddOns/Gargul/Assets/Fonts/PTSansNarrow.ttf");
         GL.FONT = media:Fetch("font", "PTSansNarrow");
     end
 
@@ -214,12 +226,12 @@ GL.Ace:RegisterChatCommand("gdkp", function (...)
 end);
 
 --- Announce conflicting addons, if any
----
----@return void
 function GL:announceConflictingAddons()
     local ConflictingAddons = {};
+    local addonLoadedFunction = IsAddOnLoaded or C_AddOns.IsAddOnLoaded;
+
     for _, addon in pairs(GL.Data.Constants.GargulConflictsWith) do
-        if (IsAddOnLoaded(addon)) then
+        if (addonLoadedFunction(addon)) then
             tinsert(ConflictingAddons, addon);
         end
     end
@@ -235,8 +247,6 @@ function GL:announceConflictingAddons()
 end
 
 --- Keep track of when native UI elements (like AH/mailbox) are active
----
----@return void
 function GL:hookNativeWindowEvents()
     -- Make sure to reset window states when zoning
     GL.Events:register("BootstrapPlayerEnteringWorld", "PLAYER_ENTERING_WORLD", function ()
@@ -322,8 +332,6 @@ function GL:hookNativeWindowEvents()
 end
 
 --- We hook all the tooltip data (tmb/softres etc) to a single event to make caching easier
----
----@return void
 function GL:hookTooltipSetItemEvents()
     GL.onTooltipSetItemFunc = function(Tooltip)
         -- No valid item tooltip was provided

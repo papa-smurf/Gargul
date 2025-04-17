@@ -25,8 +25,6 @@ GL.TradeWindow = {
 local TradeWindow = GL.TradeWindow; ---@type TradeWindow
 
 --- Register all events needed to keep track of the trade window state
----
----@return void
 function TradeWindow:_init()
     -- No need to initialize this class twice
     if (self._initialized) then
@@ -60,17 +58,18 @@ end
 ---@param playerName string
 ---@param callback function
 ---@param allwaysExecuteCallback boolean
----@return void
 function TradeWindow:open(playerName, callback, allwaysExecuteCallback)
     playerName = GL:nameFormat(playerName);
     allwaysExecuteCallback = GL:toboolean(allwaysExecuteCallback);
 
     -- We're already trading with someone
     if (TradeFrame:IsShown()) then
+        local playerNameMatches = GL:iEquals(self.State.partner, playerName) or GL:iEquals(GL:stripRealm(self.State.partner), playerName);
+
         if (type(callback) == "function"
-            and (allwaysExecuteCallback or self.Sate.partner == playerName)
+            and (allwaysExecuteCallback or playerNameMatches)
         ) then
-            callback();
+            callback(playerNameMatches);
         end
 
         return;
@@ -85,11 +84,11 @@ function TradeWindow:open(playerName, callback, allwaysExecuteCallback)
             GL.Events:unregister("TradeWindowTradeShowCallbackListener");
 
             if (allwaysExecuteCallback) then
-                callback();
+                callback(false);
             end
         end, 1);
 
-        GL.Events:register("TradeWindowTradeShowCallbackListener", "TRADE_SHOW", function ()
+        GL.Events:register("TradeWindowTradeShowCallbackListener", "GL.TRADE_SHOW", function ()
             -- Remove our trade window show event listener, we no longer need it
             GL.Events:unregister("TradeWindowTradeShowCallbackListener");
 
@@ -97,13 +96,14 @@ function TradeWindow:open(playerName, callback, allwaysExecuteCallback)
             GL.Ace:CancelTimer(timerID);
 
             -- Perform the callback
+            local playerNameMatches = GL:iEquals(self.State.partner, playerName) or GL:iEquals(GL:stripRealm(self.State.partner), playerName);
+
             if (allwaysExecuteCallback
-                or (
-                    TradeFrame:IsShown()
-                    and self.Sate.partner == playerName
+                or (TradeFrame:IsShown()
+                    and playerNameMatches
                 )
             ) then
-                callback();
+                callback(playerNameMatches);
             end
         end);
     end
@@ -116,7 +116,6 @@ end
 ---
 ---@param event string
 ---@param message string
----@return void
 function TradeWindow:handleEvents(event, ...)
     -- Incoming UI_INFO_MESSAGE
     if (event == "UI_INFO_MESSAGE") then
@@ -193,7 +192,7 @@ function TradeWindow:handleEvents(event, ...)
             and type(self.ItemsAdded[itemGUID]) == "table"
         ) then
             if (GetTime() - self.ItemsAdded[itemGUID].timestamp <= .5) then
-                tinsert(self.ItemsToAdd, self.ItemsAdded[itemGUID].itemID);
+                tinsert(self.ItemsToAdd, self.ItemsAdded[itemGUID].itemLink or self.ItemsAdded[itemGUID].itemID);
             end
 
             self.ItemsAdded[itemGUID] = nil;
@@ -206,8 +205,6 @@ function TradeWindow:handleEvents(event, ...)
 end
 
 --- Keep track of the trade window's state (e.g. which items, how much money etc)
----
----@return void
 function TradeWindow:updateState()
     -- NPC is currently the player you're trading
     local partnerName, partnerRealm = UnitName("NPC", true);
@@ -308,8 +305,6 @@ function TradeWindow:updateState()
 end
 
 --- Reset the trade state object
----
----@return void
 function TradeWindow:resetState()
     self.manuallyChangedAnnounceCheckbox = false;
 
@@ -324,12 +319,11 @@ function TradeWindow:resetState()
     };
 end
 
---- Attempt to add a given itemID to the trade window
+--- Attempt to add a given itemID or itemLink to the trade window
 ---
----@param itemID number
----@return void
-function TradeWindow:addItem(itemID)
-    tinsert(self.ItemsToAdd, itemID);
+---@param itemLinkOrID number|string
+function TradeWindow:addItem(itemLinkOrID)
+    tinsert(self.ItemsToAdd, itemLinkOrID);
 end
 
 --- Attempt to set a copper amount in the trade window
@@ -338,7 +332,6 @@ end
 ---
 ---@param amount number
 ---@param target string
----@return void
 function TradeWindow:setCopper(amount, target, callback)
     GL.Ace:CancelTimer(self.SetCopperTimer);
     self.SetCopperTimer = GL.Ace:ScheduleTimer(function ()
@@ -357,8 +350,6 @@ function TradeWindow:setCopper(amount, target, callback)
 end
 
 --- Process the ItemsToAdd table
----
----@return void
 function TradeWindow:processItemsToAdd()
     -- Make sure we don't use items if the trade window is not opened
     -- The last thing we want to do is equip an item or use a consumable by mistake!
@@ -373,12 +364,15 @@ function TradeWindow:processItemsToAdd()
         return;
     end
 
-    local itemID = self.ItemsToAdd[1];
+    local itemToAdd = self.ItemsToAdd[1];
+    local addItemByLink = GL:getItemIDFromLink(itemToAdd);
+    local itemID = addItemByLink or itemToAdd;
+    local itemLink = addItemByLink and itemToAdd or nil;
     table.remove(self.ItemsToAdd, 1);
 
     -- Try to find the item in our bag, make sure to skip soulbound items
     local skipSoulbound = true;
-    local itemPositionInBag = GL:findBagIdAndSlotForItem(itemID, skipSoulbound);
+    local itemPositionInBag = GL:findBagIdAndSlotForItem(itemLink or itemID, skipSoulbound);
 
     -- The item was not found or the trade window is not open anymore
     if (GL:empty(itemPositionInBag)
@@ -393,6 +387,7 @@ function TradeWindow:processItemsToAdd()
     if (itemGUID) then
         self.ItemsAdded[itemGUID] = {
             itemID = itemID,
+            itemLink = itemLink,
             timestamp = GetTime(),
         };
     end
@@ -440,8 +435,6 @@ function TradeWindow:shouldAnnounce()
 end
 
 --- Draw/Update the checkbox and settings cogwheel
----
----@return void
 function TradeWindow:updateAnnouncementCheckBox()
     -- Only create the checbox / cogwheel once
     if (not GL:empty(self.AnnouncementCheckBox)) then
@@ -494,7 +487,6 @@ end
 --- This method is huge, huge, I'm aware. I might have gone a bit overboard, but this at least keeps chat clean~ish
 ---
 ---@param Details table
----@return void
 function TradeWindow:announceTradeDetails(Details)
     -- Check if the user wants to announce this trade
     if (not Details.announce) then
@@ -530,24 +522,17 @@ function TradeWindow:announceTradeDetails(Details)
             ) then
                 iTradedItems = true;
 
-                if (Entry.quantity > 1) then
-                    local quantity = Entry.quantity;
-                    local itemIDString = tostring(Entry.itemID); -- Should already be a string, but need to make sure
+                local quantity = Entry.quantity > 1 and Entry.quantity or 1;
+                local itemIDString = tostring(Entry.itemID); -- Should already be a string, but need to make sure
 
-                    -- Check to see if we already have a quantity of the same item available (multiple stacks?)
-                    if (ItemsTradedByMe[itemIDString]) then
-                        quantity = quantity + ItemsTradedByMe[itemIDString].quantity;
-                    end
-                    ItemsTradedByMe[itemIDString] = {
-                        itemLink = Entry.itemLink,
-                        quantity = quantity,
-                    };
-                else
-                    tinsert(ItemsTradedByMe, {
-                        itemLink = Entry.itemLink,
-                        quantity = 1,
-                    });
+                -- Check to see if we already have a quantity of the same item available (multiple stacks?)
+                if (ItemsTradedByMe[itemIDString]) then
+                    quantity = quantity + ItemsTradedByMe[itemIDString].quantity;
                 end
+                ItemsTradedByMe[itemIDString] = {
+                    itemLink = Entry.itemLink,
+                    quantity = quantity,
+                };
             end
         end
     end
@@ -561,24 +546,17 @@ function TradeWindow:announceTradeDetails(Details)
             ) then
                 theyTradedItems = true;
 
-                if (Entry.quantity > 1) then
-                    local quantity = Entry.quantity;
-                    local itemIDString = tostring(Entry.itemID); -- Should already be a string, but need to make sure
+                local quantity = Entry.quantity > 1 and Entry.quantity or 1;
+                local itemIDString = tostring(Entry.itemID); -- Should already be a string, but need to make sure
 
-                    -- Check to see if we already have a quantity of the same item available (multiple stacks?)
-                    if (ItemsTradedByThem[itemIDString]) then
-                        quantity = quantity + ItemsTradedByThem[itemIDString].quantity;
-                    end
-                    ItemsTradedByThem[itemIDString] = {
-                        itemLink = Entry.itemLink,
-                        quantity = quantity,
-                    };
-                else
-                    tinsert(ItemsTradedByThem, {
-                        itemLink = Entry.itemLink,
-                        quantity = 1,
-                    });
+                -- Check to see if we already have a quantity of the same item available (multiple stacks?)
+                if (ItemsTradedByThem[itemIDString]) then
+                    quantity = quantity + ItemsTradedByThem[itemIDString].quantity;
                 end
+                ItemsTradedByThem[itemIDString] = {
+                    itemLink = Entry.itemLink,
+                    quantity = quantity,
+                };
             end
         end
     end
@@ -783,8 +761,8 @@ function TradeWindow:announceTradeDetails(Details)
                             if (newMessageLength >= 255 or itemsProcessed > 5) then
                                 GL:sendChatMessage(message, channel, nil, recipient, firstOutput);
                                 firstOutput = false;
-                                message = Entry.itemLink;
-                                messageLength = itemLinkLength;
+                                message = string.format("%sx%s", Entry.itemLink, Entry.quantity);
+                                messageLength = itemLinkLength + 1 + string.len(Entry.quantity); -- +1 for the x
                                 itemsProcessed = 1;
                             else
                                 message = string.format("%s, %sx%s", message, Entry.itemLink, Entry.quantity);
@@ -801,7 +779,7 @@ function TradeWindow:announceTradeDetails(Details)
                 -- We enchanted something so we need to take that into account
                 if (iEnchantedSomething) then
                     local itemLinkLength = string.len(GL:getItemNameFromLink(EnchantedByMe.itemLink)) + 2;
-                    newMessageLength = messageLength + string.len(L.CHAT.TRADE_GAVE_ENCHANTMENT_AFTER_ITEMS_PART - 6) -- 6 for 3x%s
+                    newMessageLength = messageLength + string.len(L.CHAT.TRADE_GAVE_ENCHANTMENT_AFTER_ITEMS_PART) - 6 -- 6 for 3x%s
                         + string.len(Details.partner)
                         + itemLinkLength
                         + string.len(EnchantedByMe.enchantment);

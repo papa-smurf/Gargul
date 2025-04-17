@@ -3,10 +3,10 @@ local L = Gargul_L;
 ---@type GL
 local _, GL = ...;
 
-GL.AceGUI = GL.AceGUI or LibStub("AceGUI-3.0");
-
----@type Data
+---@type Constants
 local Constants = GL.Data.Constants;
+
+---@type CommActions
 local CommActions = Constants.Comm.Actions;
 
 ---@type Settings
@@ -16,7 +16,7 @@ local Settings = GL.Settings;
 local Events = GL.Events;
 
 ---@class TMB
-GL.TMB = {
+local TMB = {
     _initialized = false,
     broadcastInProgress = false,
     lastTooltipData = nil,
@@ -24,174 +24,98 @@ GL.TMB = {
     lastTooltipTime = nil,
     requestingData = false,
 };
-local TMB = GL.TMB; ---@type TMB
+GL.TMB = TMB;
+
+local OFFSPEC_IDENTIFIER = "%(os%)";
+
+-- Character names can include realm names, which can contain spaces and hyphens
+---@param name string
+---@return string
+function TMB:normalizePlayerName(name)
+    name = name:lower();
+
+    -- Remove whitespaces
+    name = name:gsub("%s+", "");
+
+    -- Remove consecutive hyphens, leaving the first intact
+    local firstHypenPosition = name:find("-");
+
+    if (not firstHypenPosition) then
+        return name;
+    end
+
+    local namePart = name:sub(1, firstHypenPosition);
+    local realmPart = name:sub(namePart:len() + 1, name:len());
+
+    return namePart .. realmPart:gsub("-", "");
+end
 
 ---@return boolean
 function TMB:_init()
     if (self._initialized) then
         return false;
     end
+    self._initialized = true;
 
     Events:register("TMBUserJoinedGroupListener", "GL.USER_JOINED_NEW_GROUP", function () self:requestData(); end);
 
-    Events:register("TMBItemReceived", "GL.ITEM_RECEIVED", function (_, Details)
-        -- We don't want to automatically award loot
-        if (not Settings:get("AwardingLoot.awardOnReceive")) then
+    -- If the user reloads instead of a login we have to wait a couple seconds for the game to update the group setup
+    GL:after(5, "TMBRequestDataAfterReload", function ()
+        if (not GL.User.isInGroup) then
             return;
         end
 
-        -- This item is of too low quality, we don't care
-        local quality = tonumber(Details.quality);
-        if (not quality
-            or quality < Settings:get("AwardingLoot.awardOnReceiveMinimumQuality")
-        ) then
-            return;
-        end
-
-        -- This isn't an item we should award
-        if (GL:inTable(Constants.ItemsThatShouldntBeAnnounced, Details.itemID)) then
-            return;
-        end
-
-        local autoAward = Settings:get("AwardingLoot.autoTradeAfterAwardingAnItem");
-        Settings:set("AwardingLoot.autoTradeAfterAwardingAnItem", false, true);
-        GL.AwardedLoot:addWinner{
-            announce = false,
-            automaticallyAwarded = true,
-            itemLink = Details.itemLink,
-            winner = Details.playerName,
-        };
-        Settings:set("AwardingLoot.autoTradeAfterAwardingAnItem", autoAward, true);
+        -- Check if we need to sync up with an existing multi-auction session
+        self:requestData();
     end);
-
-    self._initialized = true;
-    return true;
 end
 
---- Check whether there is TMB data available
----
+--- Check whether TMB data is available
 ---@return boolean
 function TMB:available()
     return GL:higherThanZero(GL.DB:get("TMB.MetaData.importedAt", 0));
 end
 
 --- Fetch an item's TMB info based on its ID
----
 ---@param itemID number
----@param inRaidOnly boolean|nil
+---@param raidersOnly? boolean
 ---@return table
-function TMB:byItemID(itemID, inRaidOnly)
+function TMB:byItemID(itemID, raidersOnly)
     -- An invalid item id was provided
     itemID = tonumber(itemID);
     if (not GL:higherThanZero(itemID)) then
         return {};
     end
 
-    if (type(inRaidOnly) ~= "boolean") then
-        inRaidOnly = Settings:get("TMB.hideInfoOfPeopleNotInGroup");
-
-        if (inRaidOnly
-            and Settings:get("TMB.showEntriesWhenUsingPrio3")
-            and self:wasImportedFromCPR()
-        ) then
-            inRaidOnly = false;
-        end
-
-        -- User is not in group and showEntriesWhenSolo is true
-        if (inRaidOnly
-            and not GL.User.isInGroup
-            and GL.Settings:get("TMB.showEntriesWhenSolo")
-        ) then
-            inRaidOnly = false;
-        end
-    end
-
     -- The item linked to this id can have multiple IDs (head of Onyxia for example)
     local AllLinkedItemIDs = GL:getLinkedItemsForID(itemID);
 
-    local Wishes = {};
-    for _, id in pairs(AllLinkedItemIDs) do
-        id = tostring(id);
-        for _, Entry in pairs(GL.DB:get("TMB.Items." .. tostring(id), {})) do
-            local playerName = string.lower(GL:nameFormat(Entry.character));
-
-            -- If inRaidOnly is true we need to make sure we only return details of people who are actually in the raid
-            --- NOTE TO SELF: it's (os) because of the string.lower, if you remove the lower then change below accordingly!
-            if (not inRaidOnly or GL.User:unitInGroup(string.gsub(playerName, "%(os%)", ""))) then
-                tinsert(Wishes, Entry);
-            end
-        end
-    end
-
-    return Wishes;
-end
-
---- Fetch TMB info for a specific item ID and player
----
----@param itemID number
----@param player string
----@return table
-function TMB:byItemIDAndPlayer(itemID, player)
-    -- An invalid item id or name was provided
-    itemID = tonumber(itemID);
-    player = strlower(strtrim(player));
-    if (not GL:higherThanZero(itemID)
-        or GL:empty(player)
-    ) then
-        return {};
-    end
-
-    local playerWithoutRealm = GL:nameFormat{
-        name = player,
-        stripRealm = true,
-        func = strlower
-    };
-
-    -- The item linked to this id can have multiple IDs (head of Onyxia for example)
-    local AllLinkedItemIDs = GL:getLinkedItemsForID(itemID);
-
-    local Processed = {};
+    -- Fetch all entries related to this item ID
     local Entries = {};
+    local Checksums = {};
     for _, id in pairs(AllLinkedItemIDs) do
         id = tostring(id);
         for _, Entry in pairs(GL.DB:get("TMB.Items." .. tostring(id), {})) do
-            --- NOTE TO SELF: it's (os) because of the string.lower, if you remove the lower then change below accordingly!
-            local playerName = string.gsub(strlower(GL:nameFormat(Entry.character)), "%(os%)", "");
+            local checksum = ("%s|%s|%s|%s"):format(id, Entry.character, Entry.prio, Entry.type or Constants.tmbTypeWish);
 
-            if (player == playerName
-                or playerWithoutRealm == playerName
-            ) then
-                local checkSum = string.format('%s||%s||%s', player, tostring(Entry.prio), tostring(Entry.type));
-
-                -- Make sure we don't add the same player/prio combo more than once
-                if (not Processed[checkSum]) then
-                    Processed[checkSum] = true;
-                    tinsert(Entries, Entry);
-                end
+            if (not Checksums[checksum] and Entry.prio ~= nil) then
+                tinsert(Entries, Entry);
+                Checksums[checksum] = true;
             end
         end
+    end
+
+    -- Filter players who are not in the raid
+    if (self:shouldOnlyIncludeRaiders(raidersOnly)) then
+        Entries = self:filterNonRaiders(Entries);
     end
 
     return Entries;
 end
 
 --- Fetch an item's TMB info based on its item link
----
 ---@param itemLink string
----@param inRaidOnly boolean|nil
----@return table
-function TMB:byItemLinkAndPlayer(itemLink, player)
-    if (GL:empty(itemLink)) then
-        return {};
-    end
-
-    return self:byItemIDAndPlayer(GL:getItemIDFromLink(itemLink), player);
-end
-
---- Fetch an item's TMB info based on its item link
----
----@param itemLink string
----@param inRaidOnly boolean|nil
+---@param inRaidOnly? boolean|nil
 ---@return table
 function TMB:byItemLink(itemLink, inRaidOnly)
     if (GL:empty(itemLink)) then
@@ -201,20 +125,114 @@ function TMB:byItemLink(itemLink, inRaidOnly)
     return self:byItemID(GL:getItemIDFromLink(itemLink), inRaidOnly);
 end
 
---- Fetch an item's TMB tier based on its item link
----
----@param itemLink string
----@return string
-function TMB:tierByItemLink(itemLink)
-    if (GL:empty(itemLink)) then
-        return "";
+--- Determine whether we should only show details for players who are currently in our raid
+---@param raidersOnly? boolean
+---@return boolean
+function TMB:shouldOnlyIncludeRaiders(raidersOnly)
+    if (type(raidersOnly) == "boolean") then
+        return raidersOnly;
     end
 
-    return self:tierByItemID(GL:getItemIDFromLink(itemLink));
+    -- Show everything when using prio3/classicpr.io is enabled
+    if (Settings:get("TMB.showEntriesWhenUsingPrio3")
+        and self:wasImportedFromCPR()
+    ) then
+        return false;
+    end
+
+    -- User is not in group and showEntriesWhenSolo is true
+    if (not GL.User.isInGroup
+        and GL.Settings:get("TMB.showEntriesWhenSolo")
+    ) then
+        return false;
+    end
+
+    return Settings:get("TMB.hideInfoOfPeopleNotInGroup") ~= false;
+end
+
+--- Filter entries of players who are not in the raid
+---@param Entries table
+---@return table
+function TMB:filterNonRaiders(Entries)
+    for key, Entry in pairs(Entries or {}) do
+        local playerName = GL:nameFormat(Entry.character):lower():gsub(OFFSPEC_IDENTIFIER, "");
+
+        if (not GL.User:unitInGroup(playerName)) then
+            Entry = nil;
+            Entries[key] = nil;
+        end
+    end
+
+    return GL:tableValues(Entries);
+end
+
+--- Fetch TMB info for a specific item and player
+--- 
+---@param itemIdentifier number|string
+---@param player string
+---@return table
+function TMB:byItemIdentifierAndPlayer(itemIdentifier, player)
+    local itemID = tonumber(itemIdentifier);
+    local identifierIsLink = type(itemIdentifier) == "string";
+
+    -- A string was provided, treat it as an item link and fetch its ID
+    if (not itemID
+        and identifierIsLink
+    ) then
+        itemID = GL:getItemIDFromLink(itemIdentifier);
+    end
+
+    if (not itemID) then
+        return {};
+    end
+
+    return self:byItemIDAndPlayer(itemIdentifier, player);
+end
+
+--- Fetch TMB info for a specific item ID and player
+---@param itemID number
+---@param player string
+---@return table
+function TMB:byItemIDAndPlayer(itemID, player)
+    if (type(player) ~= "string"
+        or GL:empty(player)
+    ) then
+        return {};
+    end
+
+    local Entries = self:byItemID(itemID, false);
+    if (GL:empty(Entries)) then
+        return {};
+    end
+
+    local playerWithoutRealm = GL:stripRealm(player):lower();
+    for key, Entry in pairs(Entries) do
+        local playerName = GL:nameFormat(Entry.character):lower():gsub(OFFSPEC_IDENTIFIER, "");
+
+        if (playerName ~= player
+            and playerName ~= playerWithoutRealm
+        ) then
+            Entry = nil;
+            Entries[key] = nil;
+        end
+    end
+
+    return GL:tableValues(Entries);
+end
+
+--- Fetch TMB info for a specific item link and player
+---@param itemLink string
+---@param player string
+---@return table
+function TMB:byItemLinkAndPlayer(itemLink, player)
+    if (GL:empty(itemLink)) then
+        return {};
+    end
+
+    return self:byItemIDAndPlayer(GL:getItemIDFromLink(itemLink), player);
 end
 
 --- Fetch an item's TMB tier based on its item ID
----
 ---@param itemID string
 ---@return string
 function TMB:tierByItemID(itemID)
@@ -225,20 +243,18 @@ function TMB:tierByItemID(itemID)
     return GL.DB:get("TMB.Tiers." .. itemID, "");
 end
 
---- Fetch an item's TMB note based on its item link
----
+--- Fetch an item's TMB tier based on its item link
 ---@param itemLink string
 ---@return string
-function TMB:noteByItemLink(itemLink)
+function TMB:tierByItemLink(itemLink)
     if (GL:empty(itemLink)) then
         return "";
     end
 
-    return self:noteByItemID(GL:getItemIDFromLink(itemLink));
+    return self:tierByItemID(GL:getItemIDFromLink(itemLink));
 end
 
 --- Fetch an item's TMB note based on its item ID
----
 ---@param itemID string
 ---@return string
 function TMB:noteByItemID(itemID)
@@ -271,8 +287,18 @@ function TMB:noteByItemID(itemID)
     return GL:implode(Notes, "\n");
 end
 
+--- Fetch an item's TMB note based on its item link
+---@param itemLink string
+---@return string
+function TMB:noteByItemLink(itemLink)
+    if (GL:empty(itemLink)) then
+        return "";
+    end
+
+    return self:noteByItemID(GL:getItemIDFromLink(itemLink));
+end
+
 --- Fetch a player's group id and name
----
 ---@param player string
 ---@return number, string|boolean | boolean, boolean
 function TMB:groupByPlayerName(player)
@@ -280,7 +306,7 @@ function TMB:groupByPlayerName(player)
         return false, false;
     end
 
-    player = string.lower(player);
+    player = player:lower();
     local groupID = GL.DB:get("TMB.PlayerGroup." .. player);
 
     if (groupID) then
@@ -290,11 +316,101 @@ function TMB:groupByPlayerName(player)
     return false, false;
 end
 
+--- Add tooltip lines for RRobin entries
+---@param Lines table
+---@param Entries table
+---@return table
+function TMB:RRobinTooltipLines(Lines, Entries)
+    if (GL:empty(Entries)) then
+        return {};
+    end
+
+    -- Add the header
+    tinsert(Lines, ("\n|c00FF7A0A%s|r"):format(self:source()));
+
+    local topPrio = Entries[1].prio;
+    local entriesAdded = 0;
+    for _, Entry in pairs(Entries) do
+        local priorityColor;
+        if (entriesAdded == 0) then
+            -- If there's only one contender, color their priority blue (RARE). Green (UNCOMMON) otherwise
+            priorityColor = GL.Interface.Colors.RARE;
+            if (Entries[2] and topPrio - Entries[2].prio <= 1) then
+                priorityColor = GL.Interface.Colors.UNCOMMON;
+            end
+        elseif (topPrio - Entry.prio <= 1) then
+            priorityColor = GL.Interface.Colors.UNCOMMON;
+        else
+            priorityColor = GL.Interface.Colors.POOR;
+        end
+
+        tinsert(Lines, ("    |c00%s%s|r: %s"):format(
+            priorityColor,
+            Entry.prio,
+            GL:nameFormat{ name = Entry.character, colorize = true, defaultColor = Constants.disabledTextColor, }
+        ));
+
+        entriesAdded = entriesAdded + 1;
+        if (entriesAdded >= GL.Settings:get("TMB.maximumNumberOfTooltipEntries")) then
+            break;
+        end
+    end
+
+    return Lines;
+end
+
+--- Add tooltip lines for DFT entries
+---@param Lines any
+---@param Entries any
+---@return table
+function TMB:DFTTooltipLines(Lines, Entries)
+    if (GL:empty(Entries)) then
+        return {};
+    end
+
+    -- Add the header
+    tinsert(Lines, ("\n|c00FF7A0A%s|r"):format((L.TMB_TOOLTIP_PRIO_HEADER):format(self:source())));
+
+    Entries = self:sortEntries(Entries, "prio");
+
+    -- Add the entries to the tooltip
+    local entriesAdded = 0;
+    for _, Entry in pairs(Entries) do
+        local playerName = Entry.character:lower();
+        entriesAdded = entriesAdded + 1;
+
+        local color = GL:classHexColor(GL.Player:classByName(playerName:gsub(OFFSPEC_IDENTIFIER, ""), 0), Constants.disabledTextColor);
+        tinsert(Lines, ("|c00%s%s[%s]|r"):format(
+            color,
+            GL:nameFormat(playerName),
+            Entry.prio
+        ));
+
+        -- Make sure we don't add more names to the tooltip than the user allowed
+        if (entriesAdded >= GL.Settings:get("TMB.maximumNumberOfTooltipEntries")) then
+            break;
+        end
+    end
+
+    return Lines;
+end
+
+--- Add tooltip lines for CPR entries
+---@param Lines any
+---@param Entries any
+---@return table
+function TMB:CPRTooltipLines(Lines, Entries)
+    return self:DFTTooltipLines(Lines, Entries);
+end
+
 --- Append the TMB info as defined in GL.DB.TMB.Items to an item's tooltip
----
 ---@param itemLink string
 ---@return table
 function TMB:tooltipLines(itemLink)
+    if (not self:available()) then
+        return {};
+    end
+
     -- If we're not in a group there's no point in showing anything! (unless the non-raider setting is active)
     if ((not GL.User.isInGroup and GL.Settings:get("TMB.hideInfoOfPeopleNotInGroup"))
         and (not GL.User.isInGroup and not GL.Settings:get("TMB.showEntriesWhenSolo"))
@@ -302,66 +418,95 @@ function TMB:tooltipLines(itemLink)
         return {};
     end
 
+    local itemID = GL:getItemIDFromLink(itemLink);
+    if (not itemID) then
+        return {};
+    end
+
     local Lines = {};
-    local TMBTier = self:tierByItemLink(itemLink);
-    local TMBNote = self:noteByItemLink(itemLink);
-    local TMBInfo = self:byItemLink(itemLink);
+    local Entries = self:byItemID(itemID);
 
-    local TMBHeaderAdded = false;
+    if (self:shouldOnlyIncludeRaiders()) then
+        Entries = self:filterNonRaiders(Entries);
+    end
 
+    -- Show item note and tier
     if (GL.Settings:get("TMB.showItemInfoOnTooltips")) then
+        local tier = self:tierByItemID(itemID);
+        local note = self:noteByItemID(itemID);
+
+        local sourceHeaderAdded = false;
+        local addSourceHeader = function ()
+            if (sourceHeaderAdded) then
+                return;
+            end
+
+            tinsert(Lines, ("\n|c00%s%s|r"):format(
+                Constants.addonHexColor,
+                self:source()
+            ));
+
+            sourceHeaderAdded = true;
+        end;
+
         -- This item has a tier, show it!
-        if (not GL:empty(TMBTier)
-            and GL.Data.Constants.TMBTierHexColors[TMBTier]
+        if (not GL:empty(tier)
+            and Constants.TMBTierHexColors[tier]
         ) then
-            local tierString = string.format("|cFF%s%s|r",
-                GL.Data.Constants.TMBTierHexColors[TMBTier],
-                TMBTier
+            local tierString = ("|c00%s%s|r"):format(
+                Constants.TMBTierHexColors[tier],
+                tier
             );
 
-            -- Add the header
-            tinsert(Lines, string.format(
-                "\n|cFF%s%s|r",
-                GL.Data.Constants.addonHexColor,
-                L.THATSMYBIS_ABBR
-            ));
-            TMBHeaderAdded = true;
+            -- Add the source header (TMB/DFT etc)
+            addSourceHeader();
 
             -- Add the tier string
             tinsert(Lines, (L.TMB_TOOLTIP_TIER):format(tierString));
         end
 
         -- This item has a note, show it!
-        if (not GL:empty(TMBNote)) then
-            if (not TMBHeaderAdded) then
-                -- Add the header
-                tinsert(Lines, string.format(
-                    "\n|cFF%s%s|r",
-                    GL.Data.Constants.addonHexColor,
-                    L.THATSMYBIS_ABBR
-                ));
-            end
+        if (not GL:empty(note)) then
+            -- Add the source header (TMB/DFT etc)
+            addSourceHeader();
 
             -- Add the note
-            tinsert(Lines, (L.TMB_TOOLTIP_NOTE):format(TMBNote));
+            tinsert(Lines, (L.TMB_TOOLTIP_NOTE):format(note));
         end
     end
 
-    -- No wishes defined for this item
-    if (GL:empty(TMBInfo)) then
+    -- There are no player details for this item
+    if (GL:empty(Entries)) then
         return Lines;
     end
 
-    local showPlayerGroups = GL:count(GL.DB:get("TMB.RaidGroups", {})) > 1
-        and Settings:get("TMB.showRaidGroup");
+    -- Sort the entries on a per-source basis
+    Entries = self:sortEntries(Entries);
+
+    -- RRobin
+    if (self:wasImportedFromRRobin()) then
+        return self:RRobinTooltipLines(Lines, Entries);
+    end
+
+    -- DFT
+    if (self:wasImportedFromDFT()) then
+        return self:DFTTooltipLines(Lines, Entries);
+    end
+
+    -- CPR
+    if (self:wasImportedFromCPR()) then
+        return self:CPRTooltipLines(Lines, Entries);
+    end
+
+    local showPlayerGroups = GL:count(GL.DB:get("TMB.RaidGroups", {})) > 1 and Settings:get("TMB.showRaidGroup");
 
     local WishListEntries = {};
     local PrioListEntries = {};
     local itemIsOnSomeonesWishlist = false;
     local itemIsOnSomeonesPriolist = false;
     local entriesAdded = 0;
-    for _, Entry in pairs(TMBInfo) do
-        local playerName = string.lower(Entry.character);
+    for _, Entry in pairs(Entries) do
+        local playerName = Entry.character:lower();
         local playerGroup = false;
 
         if (showPlayerGroups) then
@@ -370,10 +515,10 @@ function TMB:tooltipLines(itemLink)
 
         local prio = Entry.prio;
         local entryType = Entry.type or Constants.tmbTypeWish;
-        local isOffSpec = GL:strContains(Entry.character, "%(os%)");
+        local isOffSpec = GL:strContains(Entry.character, OFFSPEC_IDENTIFIER);
         local prioOffset = 0;
         local sortingOrder = prio;
-        local color = GL:classHexColor(GL.Player:classByName(playerName:gsub("%(os%)", ""), 0), GL.Data.Constants.disabledTextColor);
+        local color = GL:classHexColor(GL.Player:classByName(playerName:gsub(OFFSPEC_IDENTIFIER, ""), 0), Constants.disabledTextColor);
 
         -- We add 100 to the prio (first key) of the object
         -- This object is used for sorting later and is not visible to the player
@@ -397,10 +542,10 @@ function TMB:tooltipLines(itemLink)
         -- TMB is not case-sensitive so people get creative with capital letters sometimes
         playerName = GL:capitalize(playerName);
         if (entryType == Constants.tmbTypePrio) then
-            tinsert(PrioListEntries, { sortingOrder, string.format("|cFF%s    %s[%s]%s|r", color, playerName, prio, groupString) });
+            tinsert(PrioListEntries, { sortingOrder, ("|c00%s    %s[%s]%s|r"):format(color, playerName, prio, groupString) });
             itemIsOnSomeonesPriolist = true;
         else
-            tinsert(WishListEntries, { sortingOrder, string.format("|cFF%s    %s[%s]%s|r", color, playerName, prio, groupString) });
+            tinsert(WishListEntries, { sortingOrder, ("|c00%s    %s[%s]%s|r"):format(color, playerName, prio, groupString) });
             itemIsOnSomeonesWishlist = true;
         end
     end
@@ -412,7 +557,7 @@ function TMB:tooltipLines(itemLink)
         )
     ) then
         -- Add the header
-        local source = GL.TMB:source();
+        local source = self:source();
         tinsert(Lines, ("\n|c00FF7A0A%s|r"):format((L.TMB_TOOLTIP_PRIO_HEADER):format(source)));
 
         PrioListEntries = self:sortEntries(PrioListEntries, 1);
@@ -423,9 +568,9 @@ function TMB:tooltipLines(itemLink)
             entriesAdded = entriesAdded + 1;
 
             tinsert(Lines, string.format(
-                "|cFF%s%s|r",
-                GL:classHexColor(GL.Player:classByName(Entry[2], 0), GL.Data.Constants.disabledTextColor),
-                GL:capitalize(Entry[2]):gsub("%(os%)", " " .. L.TMB_TOOLTIP_OFFSPEC_INDICATION)
+                "|c00%s%s|r",
+                GL:classHexColor(GL.Player:classByName(Entry[2], 0), Constants.disabledTextColor),
+                GL:capitalize(Entry[2]):gsub(OFFSPEC_IDENTIFIER, " " .. L.TMB_TOOLTIP_OFFSPEC_INDICATION)
             ));
 
             -- Make sure we don't add more names to the tooltip than the user allowed
@@ -459,9 +604,9 @@ function TMB:tooltipLines(itemLink)
             entriesAdded = entriesAdded + 1;
 
             tinsert(Lines, string.format(
-                "|cFF%s%s|r",
-                GL:classHexColor(GL.Player:classByName(Entry[2], 0), GL.Data.Constants.disabledTextColor),
-                GL:capitalize(Entry[2]):gsub("%(os%)", " " .. L.TMB_TOOLTIP_OFFSPEC_INDICATION)
+                "|c00%s%s|r",
+                GL:classHexColor(GL.Player:classByName(Entry[2], 0), Constants.disabledTextColor),
+                GL:capitalize(Entry[2]):gsub(OFFSPEC_IDENTIFIER, " " .. L.TMB_TOOLTIP_OFFSPEC_INDICATION)
             ));
 
             -- Make sure we don't add more names to the tooltip than the user allowed
@@ -476,8 +621,7 @@ end
 
 --- Draw either the importer or overview
 --- based on the current TMB data
----
----@return void
+---@param source? string
 function TMB:draw(source)
     -- No data available, show importer
     if (not self:available()) then
@@ -489,8 +633,6 @@ function TMB:draw(source)
 end
 
 --- Clear all TMB data
----
----@return void
 function TMB:clear()
     GL.DB.TMB = {};
 
@@ -498,7 +640,6 @@ function TMB:clear()
 end
 
 --- Check whether the current TMB data was imported from DFT
----
 ---@return boolean
 function TMB:wasImportedFromDFT()
     return self:available() and GL:toboolean(GL.DB.TMB.MetaData.importedFromDFT);
@@ -509,6 +650,13 @@ end
 ---@return boolean
 function TMB:wasImportedFromCPR()
     return self:available() and GL:toboolean(GL.DB.TMB.MetaData.importedFromCPR);
+end
+
+--- Check whether the current TMB data was imported from RRobin
+---
+---@return boolean
+function TMB:wasImportedFromRRobin()
+    return self:available() and GL:toboolean(GL.DB.TMB.MetaData.importedFromRRobin);
 end
 
 --- Check whether the current TMB data was imported from CSV
@@ -559,7 +707,7 @@ function TMB:import(data, triedToDecompress, source)
             return GL.Interface:get("TMB.Importer", "Label.StatusMessage"):SetText(L.TMB_IMPORT_INVALID_CSV);
         end
 
-    -- We might have the dft format on hands, let's check it out!
+    -- Handle the DFT format
     elseif (GL:strStartsWith(firstLine, '"')) then
         triedToDecompress = true;
         wasImportedFromDFT = true;
@@ -568,6 +716,22 @@ function TMB:import(data, triedToDecompress, source)
 
         if (not data) then
             return GL.Interface:get("TMB.Importer", "Label.StatusMessage"):SetText(L.TMB_IMPORT_INVALID_UNKNOWN_INSTRUCTIONS);
+        end
+    -- Handle the RRobin format
+    elseif (firstLine == "{") then
+        jsonDecodeSucceeded, data = pcall(function () return GL.JSON:decode(data); end);
+        if (jsonDecodeSucceeded
+            and data
+            and type(data) == "table"
+            and data.reserves
+        ) then
+            triedToDecompress = true;
+            data = self:RRobinFormatToTMB(data);
+            WebsiteData = data;
+
+            if (not data) then
+                return GL.Interface:get("TMB.Importer", "Label.StatusMessage"):SetText(L.TMB_IMPORT_INVALID_UNKNOWN_INSTRUCTIONS);
+            end
         end
     end
 
@@ -579,7 +743,7 @@ function TMB:import(data, triedToDecompress, source)
         return TMB:import(data, true, source);
     end
 
-    -- In case of a DFT format, data will already be a table
+    -- In case of a DFT or RRobin import, data will already be a table
     if (type(data) ~= "table") then
         jsonDecodeSucceeded, WebsiteData = pcall(function () return GL.JSON:decode(data); end);
 
@@ -633,7 +797,7 @@ function TMB:import(data, triedToDecompress, source)
 
                 local characterName = "";
                 local order = "?";
-                local raidGroupID = nil;
+                local raidGroupID;
                 local type = Constants.tmbTypeWish;
 
                 if (stringParts[Keys.name] and stringParts[Keys.order]) then
@@ -720,6 +884,7 @@ function TMB:import(data, triedToDecompress, source)
         importedFromDFT = GL:toboolean(WebsiteData.importedFromDFT),
         importedFromCSV = GL:toboolean(WebsiteData.importedFromCSV),
         importedFromCPR = source == "cpr",
+        importedFromRRobin = source == "rrobin" or GL:toboolean(WebsiteData.importedFromRRobin),
         importedAt = GetServerTime(),
         hash = GL:uuid() .. GetServerTime(),
     };
@@ -741,10 +906,10 @@ function TMB:import(data, triedToDecompress, source)
     end
 
     -- Report players without any TMB entries
-    local PlayersWithoutTMBDetails = self:playersWithoutTMBDetails();
-    if (not GL:empty(PlayersWithoutTMBDetails)) then
+    local PlayersWithoutEntries = self:playersWithoutEntries();
+    if (not GL:empty(PlayersWithoutEntries)) then
         local MissingPlayers = {};
-        for _, name in pairs(PlayersWithoutTMBDetails) do
+        for _, name in pairs(PlayersWithoutEntries) do
             tinsert(MissingPlayers, GL:nameFormat{ name = name, colorize = true, });
         end
 
@@ -758,15 +923,19 @@ end
 --- Where did our current TMB data come from?
 ---@return string
 function TMB:source()
-    if (GL.TMB:wasImportedFromDFT()) then
+    if (self:wasImportedFromDFT()) then
         return L.DFT;
     end
 
-    if (GL.TMB:wasImportedFromCPR()) then
+    if (self:wasImportedFromRRobin()) then
+        return "RRobin";
+    end
+
+    if (self:wasImportedFromCPR()) then
         return L.CLASSICPRIO_ABBR;
     end
 
-    if (GL.TMB:wasImportedFromCSV()) then
+    if (self:wasImportedFromCSV()) then
         return L.ITEM;
     end
 
@@ -774,9 +943,8 @@ function TMB:source()
 end
 
 --- Return the names of all players that don't have any TMB details
----
 ---@return table
-function TMB:playersWithoutTMBDetails()
+function TMB:playersWithoutEntries()
     local PlayersWithDetails = {};
     for _, Item in pairs(GL.DB:get("TMB.Items", {})) do
         for _, Entry in pairs(Item or {}) do
@@ -786,7 +954,7 @@ function TMB:playersWithoutTMBDetails()
         end
     end
 
-    local PlayersWithoutTMBDetails = {};
+    local PlayersWithoutEntries = {};
     for _, Details in pairs(GL.User:groupMembers() or {}) do
 
         local name = string.lower(GL:nameFormat(Details.name));
@@ -794,17 +962,34 @@ function TMB:playersWithoutTMBDetails()
         if (not PlayersWithDetails[name]
             and not PlayersWithDetails[fqn]
         ) then
-            tinsert(PlayersWithoutTMBDetails, name);
+            tinsert(PlayersWithoutEntries, name);
         end
     end
 
-    return PlayersWithoutTMBDetails;
+    return PlayersWithoutEntries;
 end
 
---- Attempt to transform the DFT format to a TMB format
----
+--- Transform the RRobin format to a TMB format
+---@param data table
+---@return table
+function TMB:RRobinFormatToTMB(data)
+    local TMBData = {
+        importedFromRRobin = true,
+        wishlists = {},
+    };
+
+    for _, Entry in pairs(data.reserves or {}) do
+        local WishlistData = TMBData.wishlists[tostring(Entry.itemid)] or {};
+        tinsert(WishlistData, string.format("%s||%s||1||1", self:normalizePlayerName(Entry.character), Entry.priority));
+        TMBData.wishlists[tostring(Entry.itemid)] = WishlistData;
+    end
+
+    return TMBData;
+end
+
+--- Transform the DFT format to a TMB format
 ---@param data string
----@return boolean|table
+---@return boolean|table Returns false when invalid data is provided
 function TMB:DFTFormatToTMB(data)
     local TMBData = {
         importedFromDFT = true,
@@ -898,7 +1083,7 @@ function TMB:DFTFormatToTMB(data)
     -- Rewrite the DFT format to TMB
     for itemID, Priorities in pairs(TMBData.wishlists) do
         for key, Priority in pairs(Priorities) do
-            TMBData.wishlists[itemID][key] = string.format("%s||%s||1||1", string.lower(Priority.player), Priority.priority);
+            TMBData.wishlists[itemID][key] = string.format("%s||%s||1||1", self:normalizePlayerName(Priority.player), Priority.priority);
         end
     end
 
@@ -906,9 +1091,8 @@ function TMB:DFTFormatToTMB(data)
 end
 
 --- Attempt to transform the Gargul CSV format to a TMB format
----
 ---@param data string
----@return boolean|table
+---@return boolean|table Returns false when invalid data is provided
 function TMB:CSVFormatToTMB(data)
     local TMBData = {
         importedFromCSV = true,
@@ -956,8 +1140,8 @@ Alt:ratomir,zhorax,feth
                 end
 
                 for _, priorityEntry in pairs(CSVParts) do
-                    (function () -- Not having continue statements in LUA is getting silly at this point
-                        local player = string.lower(GL:nameFormat(priorityEntry));
+                    (function ()
+                        local player = self:normalizePlayerName(priorityEntry);
 
                         if (GL:empty(player)) then
                             return;
@@ -991,18 +1175,18 @@ Alt:ratomir,zhorax,feth
             for _, priorityEntry in pairs(CSVParts) do
                 (function () -- Not having continue statements in LUA is getting silly at this point
                     local player = string.lower(GL:nameFormat(priorityEntry));
-                    local playerPriority = player:match("(%[[0-9]+%])");
+                    local playerPriority = player:match("(%[[0-9%.]+%])");
 
                     if (playerPriority) then
                         local openingBracketPosition = string.find(player, "%[");
                         player = string.sub(player, 1, openingBracketPosition - 1);
-                        priority = playerPriority:match("([0-9]+)");
+                        priority = playerPriority:match("([0-9%.]+)");
                     elseif (string.find(player, "%|")) then
                         local Players = GL:explode(player, "|");
 
                         for _, playerName in pairs(Players) do
                             if (not GL:empty(playerName)) then
-                                tinsert(Priorities, {player = playerName, priority = priority});
+                                tinsert(Priorities, { player = playerName, priority = priority, });
                             end
                         end
 
@@ -1030,7 +1214,7 @@ Alt:ratomir,zhorax,feth
     -- Rewrite the priorities to match TMBs format
     for itemID, Priorities in pairs(TMBData.wishlists) do
         for key, PriorityEntry in pairs(Priorities) do
-            TMBData.wishlists[itemID][key] = string.format("%s||%s||1||1", string.lower(PriorityEntry.player), PriorityEntry.priority);
+            TMBData.wishlists[itemID][key] = string.format("%s||%s||1||1", self:normalizePlayerName(PriorityEntry.player), PriorityEntry.priority);
         end
     end
 
@@ -1072,7 +1256,6 @@ function TMB:decompress(data)
 end
 
 --- Broadcast the TMB to the RAID / PARTY
----
 ---@param sendEmptyPayload boolean used to override your raider's TMB data
 ---@return boolean
 function TMB:broadcast(sendEmptyPayload)
@@ -1127,7 +1310,7 @@ function TMB:broadcast(sendEmptyPayload)
     return true;
 end
 
----@return void
+--- Broadcast the available data to whitelisted players only
 function TMB:broadcastToWhitelist()
     if (self.broadcastInProgress) then
         GL:error(L.BROADCAST_IN_PROGRESS_ERROR);
@@ -1196,7 +1379,7 @@ function TMB:broadcastToWhitelist()
     end);
 end
 
----@return void
+--- Broadcast the available data to everyone in your raid/party
 function TMB:broadcastToGroup()
     if (self.broadcastInProgress) then
         GL:error(L.BROADCAST_IN_PROGRESS_ERROR);
@@ -1252,7 +1435,6 @@ function TMB:broadcastToGroup()
 end
 
 --- Process an incoming TMB broadcast
----
 ---@param CommMessage CommMessage
 function TMB:receiveBroadcast(CommMessage)
     -- No need to update our tables if we broadcasted them ourselves
@@ -1301,10 +1483,10 @@ function TMB:receiveBroadcast(CommMessage)
 end
 
 --- Request TMB data from the person in charge (ML or Leader)
----
----@return void
 function TMB:requestData()
-    if (self.requestingData) then
+    if (self.requestingData
+        or (_G.UnitInBattleground and UnitInBattleground("player"))
+    ) then
         return;
     end
 
@@ -1367,9 +1549,7 @@ function TMB:requestData()
 end
 
 --- Reply to a player's TMB data request
----
 ---@param CommMessage CommMessage
----@return void
 function TMB:replyToDataRequest(CommMessage)
     -- I don't have any data, leave me alone!
     if (not self:available()) then
@@ -1440,16 +1620,17 @@ function TMB:replyToDataRequest(CommMessage)
     end);
 end
 
----@param Data table
+---@param Entries table
 ---@param key number The key that holds the item order
 ---@return table
-function TMB:sortEntries(Data, key)
+function TMB:sortEntries(Entries, key)
     key = key or "prio";
-    Data = not GL:empty(Data) and Data or {};
+    Entries = not GL:empty(Entries) and Entries or {};
+    Entries = GL:tableValues(Entries);
 
-    table.sort(Data, function(a, b)
+    table.sort(Entries, function(a, b)
         if (a[key] and b[key]) then
-            if (self:wasImportedFromDFT()) then
+            if (self:wasImportedFromDFT() or self:wasImportedFromRRobin()) then
                 return a[key] > b[key];
             end
 
@@ -1459,12 +1640,184 @@ function TMB:sortEntries(Data, key)
         return false;
     end);
 
-    return Data;
+    return Entries;
 end
 
 --- Check whether the current user is allowed to broadcast TMB data
----
 ---@return boolean
 function TMB:userIsAllowedToBroadcast()
     return GL.User.isInGroup and (GL.User.isMasterLooter or GL.User.hasAssist);
+end
+
+--- Announce TMB entry details in chat
+---@param itemID number
+---@param Entries? table
+function TMB:announceDetailsOfItemInChat(itemID, Entries)
+    local announcePrios = GL.Settings:get("TMB.includePrioListInfoInLootAnnouncement");
+    local announceWishes = GL.Settings:get("TMB.includeWishListInfoInLootAnnouncement");
+
+    -- It seems we're not interested in announcing anything TMB-related
+    if (not announcePrios
+        and not announceWishes
+    ) then
+        return;
+    end
+
+    if (self:wasImportedFromRRobin()) then
+        if (not announcePrios) then
+            return;
+        end
+
+        return self:RRobinAnnounceDetailsOfItemInChat(itemID, Entries);
+    end
+
+    Entries = Entries or self:byItemID(itemID);
+    if (GL:empty(Entries)) then
+        return;
+    end
+
+    local numberOfEntriesToAnnounce = GL.Settings:get("TMB.maximumNumberOfAnnouncementEntries", 5);
+    local WishListDetails = {};
+    local PrioListDetails = {};
+    for _, Entry in pairs(Entries) do
+        local playerName = Entry.character:gsub(OFFSPEC_IDENTIFIER, "");
+        playerName = GL:disambiguateName(playerName);
+        local prio = Entry.prio;
+        local entryType = Entry.type or Constants.tmbTypeWish;
+        local isOffSpec = GL:strContains(Entry.character, OFFSPEC_IDENTIFIER);
+        local sortingOffset = 0;
+        local sortingOrder = tonumber(prio);
+
+        -- We add 100 to the prio (first key) of the object
+        -- This object is used for sorting later and is not visible to the player
+        if (isOffSpec) then
+            sortingOffset = 100;
+        end
+
+        if (not GL:empty(sortingOrder)) then
+            sortingOrder = prio + sortingOffset;
+        else
+            -- If for whatever reason we can't determine the
+            -- item prio then we add it to the end of the list by default
+            sortingOrder = 1000;
+        end
+
+        if (entryType == Constants.tmbTypePrio) then
+            tinsert(PrioListDetails, {
+                prio = sortingOrder,
+                player = string.format("%s[%s]", playerName, prio),
+            });
+        else
+            tinsert(WishListDetails, {
+                prio = sortingOrder,
+                player = string.format("%s[%s]", playerName, prio),
+            });
+        end
+    end
+
+    local itemIsOnSomeonesPriolist = not GL:empty(PrioListDetails);
+    local itemIsOnSomeonesWishlist = not GL:empty(WishListDetails);
+
+    --[[
+        SHOW WHO HAS PRIORITY ON THIS ITEM (TMB)
+    ]]
+    if (itemIsOnSomeonesPriolist
+        and GL.Settings:get("TMB.includePrioListInfoInLootAnnouncement")
+    ) then
+        PrioListDetails = TMB:sortEntries(PrioListDetails);
+
+        local entries = 0;
+        local entryString = "";
+        for _, Entry in pairs(PrioListDetails) do
+            entries = entries + 1;
+
+            -- Add the player to the list (first entry should not start with a comma)
+            if (GL:empty(entryString)) then
+                entryString = GL:capitalize(Entry.player);
+            else
+                entryString = entryString .. ", " .. GL:capitalize(Entry.player);
+            end
+
+            -- The user only wants to see a limited number of entries, break!
+            if (entries >= numberOfEntriesToAnnounce) then
+                break;
+            end
+        end
+
+        GL:sendChatMessage(
+            (L.CHAT.TMB_PRIORITY_DETAILS):format(TMB:source(), entryString),
+            "GROUP"
+        );
+    end
+
+    --[[
+        SHOW WHO WISHLISTED THIS ITEM (TMB)
+    ]]
+    if (itemIsOnSomeonesWishlist
+        and GL.Settings:get("TMB.includeWishListInfoInLootAnnouncement")
+        and (not itemIsOnSomeonesPriolist
+            or not GL.Settings:get("TMB.hideWishListInfoIfPriorityIsPresent")
+        )
+    ) then
+        WishListDetails = TMB:sortEntries(WishListDetails);
+
+        local entries = 0;
+        local entryString = "";
+        for _, Entry in pairs(WishListDetails) do
+            entries = entries + 1;
+
+            -- Add the player to the list (first entry should not start with a comma)
+            if (GL:empty(entryString)) then
+                entryString = GL:capitalize(Entry.player);
+            else
+                entryString = entryString .. ", " .. GL:capitalize(Entry.player);
+            end
+
+            -- The user only wants to see a limited number of entries, break!
+            if (entries >= numberOfEntriesToAnnounce) then
+                break;
+            end
+        end
+
+        GL:sendChatMessage(
+            (L.CHAT.TMB_WISHLIST_DETAILS):format(entryString),
+            "GROUP"
+        );
+    end
+end
+
+--- Announce RRobin details in chat
+---@param itemID number
+---@param Entries? table
+function TMB:RRobinAnnounceDetailsOfItemInChat(itemID, Entries)
+    Entries = Entries or self:byItemID(itemID);
+    if (GL:empty(Entries)) then
+        return;
+    end
+    Entries = self:sortEntries(Entries)
+
+    local EligibleEntries = {};
+    local entries = 0;
+    local topPrio = Entries[1].prio;
+    local numberOfEntriesToAnnounce = GL.Settings:get("TMB.maximumNumberOfAnnouncementEntries", 5);
+    for _, Entry in pairs(Entries) do
+        -- We've reached the end of all eligible entries
+        if (topPrio - Entry.prio > 1) then
+            break;
+        end
+
+        tinsert(EligibleEntries, ("%s[%s]"):format(GL:disambiguateName(Entry.character), Entry.prio));
+        entries = entries + 1;
+
+        -- The user only wants to see a limited number of entries, break!
+        if (entries >= numberOfEntriesToAnnounce) then
+            break;
+        end
+    end
+
+    local entryString = table.concat(EligibleEntries, ",");
+    GL:sendChatMessage(
+        (L.CHAT.TMB_PRIORITY_DETAILS):format(self:source(), entryString),
+        "GROUP"
+    );
 end

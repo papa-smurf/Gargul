@@ -141,9 +141,8 @@ L.CUT = "Anteil";
 L.CUTS = "Anteile";
 L.CUT_MAILBOX_CLOSED = "Es kann keine Post gesendet werden, wenn der Briefkasten geschlossen ist";
 L.CUT_MAILS_FAILED = "Es wurden mehrere Post-Fehler festgestellt, wodurch die Verteilung der Anteile abgebrochen wurde";
-L.CUT_MAIL_BODY = "Powered by Gargul: ein Master-Loot-Tool mit Unterstützung für TMB, SoftRes, GDKP und Auto-Looting!";
 L.CUT_MAIL_EVEN = "Du schuldest %s kein Gold";
-L.CUT_MAIL_FAILED = "Der Anteil konnte nicht an %s gesendet werden";
+L["Failed to send cut to %s"] = "Der Anteil konnte nicht an %s gesendet werden";
 L.CUT_MAIL_GOLD_MISMATCH = "Die Post wurde laut Spiel GESENDET, aber dein verbleibendes Gold stimmt nicht überein. Ist etwas schief gelaufen?";
 L.CUT_MAIL_HISTORY = "Post-Verlauf für |c00967FD2%s";
 L.CUT_MAIL_INSUFFICIENT_FUNDS = "Du hast nicht genug Gold, um %s zu bezahlen";
@@ -196,7 +195,7 @@ L.GDKP_AUCTION_DETAILS_GOLD_ADDED = [[
 Anmerkungen]];
 L.GDKP_AUCTION_DETAILS_GOLD_PAID_BY = [[
 %s hat |c00%s%sg dafür bezahlt
-%S]];
+%s]];
 L.GDKP_AUCTION_DETAILS_WON_BY = "Gewonnen von";
 L.GDKP_AUCTION_PAID_AMOUNT = "Bezahlten Betrag festlegen (siehe links)";
 L.GDKP_AUCTION_PAID_AMOUNT_INFO = [[
@@ -299,6 +298,7 @@ L.GDKP_EXPORT_DEFAULT_FORMAT = "@ITEM,@WINNER,@GOLD,@WOWHEAD";
 L.GDKP_EXPORT_DEFAULT_HEADER = "Gegenstand, Spieler, Gold, Wowheadlink";
 L.GDKP_EXPORT_FORMAT_START = "Datum/Uhrzeit der Verleihung des ersten Gegenstandes";
 L.GDKP_EXPORT_FORMAT_TITLE = "Der Titel der GDKP-Sitzung";
+L.GDKP_EXPORT_INCLUDE_DISENCHANTED = "Schließe entzauberte Gegenstände mit ein";
 L.GDKP_EXPORT_POT_CHANGED = "Pott gewechselt";
 L.GDKP_GOLD_TRADES = "Goldhandel";
 L.GDKP_HIDE_UPCOMING_CONFIRMATION = "Bist du sicher? Du kannst kommende Gegenstände nicht sehen oder darauf bieten!";
@@ -524,7 +524,7 @@ Du kannst Gold für gesperrte/gelöschte Sitzungen nicht anpassen]];
 L.GDKP_OVERVIEW_ADJUST_GOLD_TOOLTIP = "Gold hinzufügen/entfernen";
 L.GDKP_OVERVIEW_AUCTION_ENTRY = [[
 %s hat |c00%s%s bezahlt für
-%S]]; -- Player paid 5000g for [Benediction]
+%s]]; -- Player paid 5000g for [Benediction]
 L.GDKP_OVERVIEW_DELETED_ENTRY = [[
 |c00be3333Gelöscht von %s
 Gründe dafür]];
@@ -596,7 +596,7 @@ Gegeben: %s
 Empfangen: %s
 Spieleranteil: %s
 
-%S
+%s
 ]];
 L.GDKP_TRADE_EXCLUDE_GOLD = "Aus GDKP ausschließen";
 L.GDKP_TRADE_EXCLUDE_GOLD_INFO = "Das gehandelte Gold wird nicht zum gegebenen oder erhaltenen Betrag addiert";
@@ -718,6 +718,7 @@ L.MINIMIZE = "Minimieren";
 L.MINIMIZE_ON_AWARD = "Bei Verleihung minimieren";
 L.MINIMIZE_ON_START = "Beim Start minimieren";
 L.MINIMUM = "Minimum";
+L.MINIMUM_ITEM_LEVEL = "Mindestartikelstufe";
 L.MINIMUM_QUALITY = "Mindestqualität";
 L.MINUS10 = "-10";
 L.MINUS_SIGN = "-";
@@ -913,7 +914,7 @@ L.SOFTRES_WHISPER_PREFIXES = "!sr|!softres|!softreserve";
 L.SOMETHING_WENT_WRONG_WARNING = "Etwas ist schief gelaufen!";
 L.START = "Start";
 L.STOP = "Stoppen";
-L.TAB_REPLACES_T = "	 wird ersetzt durch Tabulatortaste";
+L.TAB_REPLACES_T = "\\t wird ersetzt durch Tabulatortaste";
 L.THATSMYBIS_ABBR = "TMB";
 L.TIME = "Zeit";
 L.TITLE = "Titel";
@@ -934,7 +935,7 @@ L.TMB_IMPORT_INVALID_UNKNOWN_INSTRUCTIONS = "Es wurden ungültige TMB- oder DFT-
 L.TMB_IMPORT_NOTES_AVAILABLE = "Prioritätsnotizen verfügbar: %s";
 L.TMB_IMPORT_NUMBER = "Anzahl der importierten Gegenstände: %s";
 L.TMB_IMPORT_PLAYER_NO_DATA = "Die folgenden Spieler haben keine %s Einträge:"; -- %s can be TMB/DFT/CPR
-L.TMB_IMPORT_TMB_GARGUL_INFO = "So verwendest du Gargul mit TMB";
+L.TMB_IMPORT_TMB_GARGUL_INFO = "So verwendest du Gargul mit ${source}";
 L.TMB_IMPORT_TMB_GARGUL_INFO_URL = "https://github.com/papa-smurf/Gargul/wiki/Gargul-and-ThatsMyBIS";
 L.TMB_IMPORT_TMB_INFO = "Füge den Inhalt deines TMB-Exports unverändert in das Feld unten ein und klick auf „Importieren“.";
 L.TMB_NO_BROADCAST_TARGETS = "Es gibt niemanden in deiner Gruppe, an den du senden können";
@@ -1014,7 +1015,7 @@ L.VERSION_INCOMPATIBLE_WARNING = "Gargul ist veraltet und funktioniert erst, wen
 L.VERSION_INVALID_WARNING = "Ungültige Versionszeichenfolge in Version:addRelease angegeben";
 L.VERSION_UPDATE = "Aktualisiere Gargul!";
 L.VERSION_UPDATED = "|c00%sGargul wird jetzt auf |c00%sv%s aktualisiert";
-L.VERSION_UPDATE_AVAILABLE = "v|c00A79EFFv%s ist auf CurseForge/Wago verfügbar. Du kannst aktualisieren, ohne dein Spiel zu schließen. Stell einfach sicher, dass du /reload ausführst!";
+L.VERSION_UPDATE_AVAILABLE = "|c00A79EFFv%s ist auf CurseForge/Wago verfügbar. Du kannst aktualisieren, ohne dein Spiel zu schließen. Stell einfach sicher, dass du /reload ausführst!";
 L.WAIT_SECONDS_BEFORE_RETRY = "Warte %s weitere Sekunden, bevor du es erneut versuchst";
 L.WINDOW = "Fenster";
 L.WINDOW_HEADER = "Gargul v%s";

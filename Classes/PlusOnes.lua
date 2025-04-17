@@ -239,6 +239,14 @@ function PlusOnes:clearPlusOnes()
     self:triggerChangeEvent();
 end
 
+---@return table
+function PlusOnes:all()
+    return GL:tableGet(
+        self.MaterializedData or {},
+        "DetailsByPlayerName", {}
+    );
+end
+
 --- Get a player's plus one
 ---
 ---@param name string
@@ -525,7 +533,9 @@ end
 ---@return void
 function PlusOnes:requestData()
     -- If shared data is blocked then no need to request so return
-    if (GL.Settings:get("PlusOnes.blockShareData")) then
+    if (GL.Settings:get("PlusOnes.blockShareData")
+        or (_G.UnitInBattleground and UnitInBattleground("player"))
+    ) then
         return;
     end
 

@@ -1,6 +1,9 @@
 --[[
-    You can test this locally by removing line 5:
-    if (GetLocale() ~= "deDE") then return; end
+    You can test this locally by removing line 8:
+    if (GetLocale() ~= "frFR") then return; end
+
+    These translations where provided by
+        - Bhahlou
 ]]
 if (GetLocale() ~= "frFR") then return; end
 local L = Gargul_L or {};
@@ -141,9 +144,8 @@ L.CUT = "Part";
 L.CUTS = "Parts";
 L.CUT_MAILBOX_CLOSED = "Impossible d'envoyer du courrier lorsque la boîte aux lettres est fermée";
 L.CUT_MAILS_FAILED = "Plusieurs erreurs de courrier détectées, abandonnant la distribution des parts";
-L.CUT_MAIL_BODY = "Propulsé par Gargul : un outil de maître du butin prenant en charge TMB, SoftRes, GDKP et Auto-Looting !";
 L.CUT_MAIL_EVEN = "Vous ne devez pas d'or à %s";
-L.CUT_MAIL_FAILED = "Échec de l'envoi de la part à %s";
+L["Failed to send cut to %s"] = "Échec de l'envoi de la part à %s";
 L.CUT_MAIL_GOLD_MISMATCH = "Mail ENVOYÉ selon le jeu, mais votre OR restant NE CORRESPOND PAS, quelque chose s'est mal passé ?";
 L.CUT_MAIL_HISTORY = "Historique du courrier pour |c00967FD2%s";
 L.CUT_MAIL_INSUFFICIENT_FUNDS = "Vous n'avez pas assez d'or pour payer %s";
@@ -300,6 +302,7 @@ L.GDKP_EXPORT_DEFAULT_FORMAT = "@ITEM,@WINNER,@GOLD,@WOWHEAD";
 L.GDKP_EXPORT_DEFAULT_HEADER = "Objet, Joueur, Or, Wowheadlink";
 L.GDKP_EXPORT_FORMAT_START = "Date/heure à laquelle le premier objet a été attribué";
 L.GDKP_EXPORT_FORMAT_TITLE = "Titre de la session du GDKP";
+L.GDKP_EXPORT_INCLUDE_DISENCHANTED = "Inclure les objets désenchantés";
 L.GDKP_EXPORT_POT_CHANGED = "Pot changé";
 L.GDKP_GOLD_TRADES = "Métiers de l'or";
 L.GDKP_HIDE_UPCOMING_CONFIRMATION = "Êtes-vous sûr? Vous ne pourrez ni voir ni enchérir sur les objets à venir !";
@@ -719,6 +722,7 @@ L.MINIMIZE = "Minimiser";
 L.MINIMIZE_ON_AWARD = "Réduire lors de l'attribution";
 L.MINIMIZE_ON_START = "Réduire au démarrage";
 L.MINIMUM = "Minimum";
+L.MINIMUM_ITEM_LEVEL = "Niveau d'objet minimum";
 L.MINIMUM_QUALITY = "Qualité minimale";
 L.MINUS10 = "-dix";
 L.MINUS_SIGN = "-";
@@ -914,7 +918,7 @@ L.SOFTRES_WHISPER_PREFIXES = "!sr|!softres|!softreserve";
 L.SOMETHING_WENT_WRONG_WARNING = "Quelque chose s'est mal passé !";
 L.START = "Commencer";
 L.STOP = "Arrêter";
-L.TAB_REPLACES_T = "	 est remplacé par une tabulation";
+L.TAB_REPLACES_T = "\\t est remplacé par une tabulation";
 L.THATSMYBIS_ABBR = "TMB";
 L.TIME = "Temps";
 L.TITLE = "Titre";
@@ -935,7 +939,7 @@ L.TMB_IMPORT_INVALID_UNKNOWN_INSTRUCTIONS = "Données TMB ou DFT fournies non va
 L.TMB_IMPORT_NOTES_AVAILABLE = "Notes de priorité disponibles : %s";
 L.TMB_IMPORT_NUMBER = "Nombre d'objets importés : %s";
 L.TMB_IMPORT_PLAYER_NO_DATA = "Les joueurs suivants n'ont pas d'entrée %s :"; -- %s can be TMB/DFT/CPR
-L.TMB_IMPORT_TMB_GARGUL_INFO = "Comment utiliser Gargul avec TMB";
+L.TMB_IMPORT_TMB_GARGUL_INFO = "Comment utiliser Gargul avec ${source}";
 L.TMB_IMPORT_TMB_GARGUL_INFO_URL = "https://github.com/papa-smurf/Gargul/wiki/Gargul-and-ThatsMyBIS";
 L.TMB_IMPORT_TMB_INFO = "Collez le contenu de votre export TMB tel quel dans la case ci-dessous et cliquez sur 'Importer'.";
 L.TMB_NO_BROADCAST_TARGETS = "Il n'y a personne dans votre groupe vers qui diffuser";
@@ -1015,7 +1019,7 @@ L.VERSION_INCOMPATIBLE_WARNING = "Gargul est obsolète et ne fonctionnera pas ta
 L.VERSION_INVALID_WARNING = "Chaîne de version non valide fournie dans Version : addRelease";
 L.VERSION_UPDATE = "Mettez à jour Gargul !";
 L.VERSION_UPDATED = "|c00%sGargul est maintenant mis à jour vers |c00%sv%s";
-L.VERSION_UPDATE_AVAILABLE = "v|c00A79EFFv%s est disponible sur CurseForge/Wago. Vous pouvez mettre à jour sans fermer votre jeu, assurez-vous simplement de /reload !";
+L.VERSION_UPDATE_AVAILABLE = "|c00A79EFFv%s est disponible sur CurseForge/Wago. Vous pouvez mettre à jour sans fermer votre jeu, assurez-vous simplement de /reload !";
 L.WAIT_SECONDS_BEFORE_RETRY = "Attendez %s secondes supplémentaires avant de réessayer";
 L.WINDOW = "Fenêtre";
 L.WINDOW_HEADER = "Gargul v%s";

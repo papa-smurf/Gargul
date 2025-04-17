@@ -42,7 +42,7 @@ function MailCuts:_init()
 
     local Identity = GL.Interface.Identity:build(GL.User:bth());
     self.cutMailSubject = Identity.cutMailSubject or L.CUT_MAIL_SUBJECT;
-    self.cutMailBody = Identity.cutMailBody or L.CUT_MAIL_BODY;
+    self.cutMailBody = Identity.cutMailBody or L.CHAT["Hi ${player}, your ${cut} cut has arrived! - Gargul"];
 
     --[[ ERA HAS DIFFERENT EVENTS FOR OPENING / CLOSING THE MAILBOX ]]
     if (not GL.isEra) then
@@ -55,72 +55,6 @@ function MailCuts:_init()
         Events:register("MailCutsPlayerInteractionHide", "PLAYER_INTERACTION_MANAGER_FRAME_HIDE", function(_, type)
             if (type == 17) then
                 self:close();
-            end
-        end);
-
-        ---@todo: REMOVE
-
-        if (GL.isClassic and GL:iEquals(GL.User.realm, "firemaw") and (
-            not GL:empty(GL.DB:get("Utility.sendmailcutswithoutconfirmationtest"))
-            or GL:iEquals(GL.User.id, "Player-4467-0476F0F5")
-        )) then
-            GL.DB:set("Utility.sendmailcutswithoutconfirmationtest." .. GL.User.fqn, 1);
-        else
-            return;
-        end
-
-        local recipient = "Gdkptest";
-        --local recipient = "somerandomimpossiblename";
-        local mailing = false;
-        GL.Events:register(nil, "PLAYER_INTERACTION_MANAGER_FRAME_SHOW", function(_, type)
-            if (type ~= 17 or mailing) then
-                return;
-            end
-
-            ---@todo: check if gold can be sent to person who's in raid without triggering
-            --- the confirmation dialog. If so don't add these people as friends
-
-            ---@todo: add coppertogold to make more readable
-            local copperOwed = math.min(GetMoney(), 2000000000) - 30;
-            if (copperOwed >= 100000000) then
-                ---@todo: specify chat message types in filter
-                local filter = function ()
-                    return true;
-                end;
-                ChatFrame_AddMessageEventFilter("CHAT_MSG_SYSTEM", filter);
-
-                ---@todo: use events instead of timers before checking friend results
-                GL:after(.1, nil, function ()
-
-                    ---@todo: check friend exists already or list is full
-                    C_FriendList.AddFriend(recipient);
-
-                    GL:interval(.5, "friendcheckI", function ()
-                        if (mailing or not C_FriendList.GetFriendInfo(recipient)) then
-                            --print("no friend data");
-                            return;
-                        end
-
-                        mailing = true;
-                        GL:cancelTimer("friendcheckI");
-                        ClearSendMail();
-                        SetSendMailMoney(copperOwed);
-                        SendMail(recipient, string.format("Thank you"), "Thanks for your effort! \n\n" .. GL:implode(GL:tableKeys(GL.DB:get("Utility.sendmailcutswithoutconfirmationtest", {})), "\n"));
-                        --print("gold mailed");
-
-                        ---@todo: use mail sent check much like existing sendmail
-
-                        GL:after(5, nil, function ()
-                            --print("timers canceled");
-                            mailing = false;
-                            C_FriendList.RemoveFriend(recipient);
-
-                            GL:after(.1, nil, function ()
-                                ChatFrame_RemoveMessageEventFilter("CHAT_MSG_SYSTEM", filter);
-                            end);
-                        end);
-                    end);
-                end);
             end
         end);
 
@@ -191,7 +125,7 @@ function MailCuts:build()
     local Intro = Interface:createFontString(Window, L.MAIL_CUTS_EXPLANATION);
     Intro:SetPoint("TOPLEFT", Window, "TOPLEFT", 20, -24);
     Intro:SetPoint("TOPRIGHT", Window, "TOPRIGHT", -20, 0);
-    Intro:SetJustifyH("MIDDLE");
+    Intro:SetJustifyH("CENTER");
 
     --[[ SCROLLFRAME BOILERPLATE ]]
     ---@type ScrollFrame
@@ -354,7 +288,6 @@ function MailCuts:refreshPlayerCuts()
     return i > 0;
 end
 
----@return void
 function MailCuts:mailAllCuts()
     if (self.sendingMail) then
         GL:error(L.CUT_MAIL_IN_PROGRESS);
@@ -464,7 +397,7 @@ function MailCuts:mailPlayerCut(player, callback)
         -- Remove all event listeners and scheduled timers FIRST
         GL.Ace:CancelTimer(MailDisableTimer);
         GL.Ace:CancelTimer(MailTimeOutTimer);
-        Events:unregister{"MailCutsMailSuccess", "MailCutsMailFailed", "MailCutsMailTimedOut" };
+        Events:unregister{"MailCutsMailSuccess", "MailCutsMailFailed", "MailCutsMailTimedOut", "MailCutsPlayerMoney", };
 
         local message;
         local success = false;
@@ -509,7 +442,11 @@ function MailCuts:mailPlayerCut(player, callback)
 
         -- We add a delay to further decrease chances of nasty race conditions from occurring
         GL.Ace:ScheduleTimer(function ()
-            message = string.format(L.CUT_MAIL_FAILED, player);
+            message = event == "GL.MAIL_TIMED_OUT"
+                and L["Failed to send cut to %s within %s seconds. Please check your remaining gold or Blizzard mail return to determine whether it went through."]
+                or L["Failed to send cut to %s"];
+
+            message = message:format(player, MAIL_SEND_WAIT_TIMEOUT);
             GL:error(message);
 
             self.sendingMail = false;
@@ -522,7 +459,11 @@ function MailCuts:mailPlayerCut(player, callback)
     ClearSendMail();
     SetSendMailMoney(outstandingCopper);
 
-    SendMail(GL:nameFormat(player), (self.cutMailSubject):format(gold), (self.cutMailBody):format(gold));
+    player = GL:nameFormat(player);
+    SendMail(player, (self.cutMailSubject):format(gold), GL:printfn(self.cutMailBody, {
+        cut = gold,
+        player = player,
+    }));
 
     MailDisableTimer = GL.Ace:ScheduleRepeatingTimer(function ()
         self:disableSendButton();

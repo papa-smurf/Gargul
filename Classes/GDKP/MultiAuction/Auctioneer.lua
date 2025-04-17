@@ -67,14 +67,17 @@ function Auctioneer:_init()
 end
 
 ---@param minimumQuality number
+---@param minimumItemLevel number|nil
 ---@param includeBOEs boolean
 ---@param includeAwarded boolean
 ---@param includeMaterials boolean
 ---@return void
-function Auctioneer:fillFromInventory(minimumQuality, includeBOEs, includeAwarded, includeMaterials)
+function Auctioneer:fillFromInventory(minimumQuality, minimumItemLevel, includeBOEs, includeAwarded, includeMaterials)
     includeBOEs = includeBOEs ~= false;
     includeMaterials = includeMaterials == true;
     includeAwarded = includeAwarded == true;
+    minimumItemLevel = tonumber(minimumItemLevel);
+    minimumItemLevel = minimumItemLevel or -1;
 
     GL:forEachItemInBags(function (Location, bag, slot)
         local itemQuality = tonumber(C_Item.GetItemQuality(Location));
@@ -82,8 +85,16 @@ function Auctioneer:fillFromInventory(minimumQuality, includeBOEs, includeAwarde
             return;
         end
 
-        -- The item doesn't have the required minimum
+        -- The item doesn't have the required minimum quality
         if (itemQuality < minimumQuality) then
+            return;
+        end
+
+        -- Check if the minimum item level is met
+        local itemLink = C_Item.GetItemLink(Location);
+        if (minimumItemLevel > -1
+            and C_Item.GetDetailedItemLevelInfo(itemLink) < minimumItemLevel
+        ) then
             return;
         end
 
@@ -130,8 +141,6 @@ function Auctioneer:fillFromInventory(minimumQuality, includeBOEs, includeAwarde
         if (itemGUID and not includeAwarded and DB:get("RecentlyAwardedItems." .. itemGUID)) then
             return;
         end
-
-        local itemLink = C_Item.GetItemLink(Location);
 
         UI:addItemByLink(itemLink, itemGUID);
     end);
@@ -190,7 +199,7 @@ function Auctioneer:start(ItemDetails, duration, antiSnipe)
         for _, Item in pairs(Items or {}) do
             tinsert(ItemsUpForAuction, {
                 auctionID = auctionID,
-                isBOE = GL:inTable({ LE_ITEM_BIND_ON_EQUIP, LE_ITEM_BIND_QUEST }, Item.bindType),
+                isBOE = GL:inTable({ Enum.ItemBind.OnEquip, Enum.ItemBind.Quest, }, Item.bindType),
                 itemLevel = Item.level,
                 name = Item.name,
                 quality = Item.quality,
@@ -990,10 +999,19 @@ function Auctioneer:closeAuction(auctionID)
         local HighestBidPerPlayer = {};
         local TopBids = Client.AuctionDetails.Auctions[auctionID].BidsPerPlayer;
         for player, bid in pairs(TopBids or {}) do
-            bid = tonumber(bid) or 0;
+            (function ()
+                bid = tonumber(bid) or 0;
 
-            if (GL:gt(bid, 0)) then
+                if (not GL:gt(bid, 0)) then
+                    return;
+                end
+
                 local Player = GL.Player:fromName(player);
+
+                -- In case the player left in the meantime
+                if (not Player) then
+                    return;
+                end
 
                 HighestBidPerPlayer[player] = {
                     bid = bid,
@@ -1007,7 +1025,7 @@ function Auctioneer:closeAuction(auctionID)
                         class = Player.class,
                     },
                 };
-            end
+            end)();
         end
 
         GL:mute(); -- We don't want an announcement for every awarded item since people can see it for themselves in /gl bid

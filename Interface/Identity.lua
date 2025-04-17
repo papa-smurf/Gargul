@@ -90,7 +90,7 @@ GL.Interface.Identity = {
             return Window;
         end,
 
-        ---@return Frame
+        ---@return Frame, function
         bidder = function ()
             local Identity = GL.Interface.Identity.default;
 
@@ -142,7 +142,7 @@ GL.Interface.Identity = {
             end;
         end,
 
-        ---@return Frame
+        ---@return Frame, function
         roller = function ()
             local Identity = GL.Interface.Identity.default;
 
@@ -179,159 +179,6 @@ GL.Interface.Identity = {
                     end
                 end);
             end
-
-            return Window, function (Element, Anchor)
-                Element:SetPoint("TOPRIGHT", Anchor, "TOPLEFT", -4, 0);
-            end;
-        end,
-    },
-
-    --[[ ================== EVERLOOK ================== ]]
-    ["4095158674-3607791837"] = {
-        id = "everlook",
-        url = "https://discord.gg/gdkpeverlook",
-        urlInfo = "Küsschen auf dein ...",
-        tooltip = "GDKP Everlook Discord",
-        cutMailSubject = "GDKP Everlook Cut: %sg",
-        Realms = { "everlook" },
-
-        ---@return Frame
-        ledger = function()
-            local Identity = GL.Interface.Identity["4095158674-3607791837"];
-
-            ---@type Frame
-            local Window = CreateFrame("Frame", nil, UIParent);
-            Window:SetSize(80, 80);
-            Interface:addTooltip(Window, Identity.tooltip);
-
-            ---@type Texture
-            local Logo = Window:CreateTexture();
-            Logo:SetTexture("Interface/AddOns/Gargul/Assets/Identities/" .. Identity.id);
-            Logo:SetPoint("CENTER", Window, "CENTER");
-            Logo:SetSize(74, 74);
-
-            Window:SetScript("OnMouseUp", function(_, button)
-                if (button == 'LeftButton') then
-                    GL.Interface.Dialogs.HyperlinkDialog:open{
-                        description = Identity.urlInfo,
-                        hyperlink = Identity.url,
-                    };
-                end
-            end);
-
-            LCG.PixelGlow_Stop(Window);
-            LCG.PixelGlow_Start(Window, {.59, .5, .82, 1}, 26, .02, 5, 2);
-
-            return Window;
-        end,
-
-        ---@return Frame
-        multiAuctionClient = function ()
-            local Identity = GL.Interface.Identity["4095158674-3607791837"];
-
-            ---@type Frame
-            local Window = CreateFrame("Frame", nil, UIParent, "BackdropTemplate");
-            Window:SetSize(110, 110);
-            Window:SetBackdrop(_G.BACKDROP_DARK_DIALOG_32_32);
-            Interface:addTooltip(Window, Identity.tooltip);
-
-            ---@type Texture
-            local Logo = Window:CreateTexture();
-            Logo:SetPoint("CENTER", Window, "CENTER", 0, 5);
-            Logo:SetSize(75, 75);
-            Logo:SetTexture("Interface/AddOns/Gargul/Assets/Identities/" .. Identity.id);
-
-            ---@type FontString
-            local Text = Interface:createFontString(Window, "GDKP Everlook");
-            Text:SetPoint("CENTER", Window, "CENTER");
-            Text:SetPoint("BOTTOM", Window, "BOTTOM", 0, 11);
-            Text:SetFont(1, "OUTLINE");
-            Text:SetColor("bc9968");
-
-            LCG.PixelGlow_Stop(Window);
-            LCG.PixelGlow_Start(Window, {.59, .5, .82, 1}, 26, .02, 5, 2);
-
-            Window:SetScript("OnMouseUp", function(_, button)
-                if (button == 'LeftButton') then
-                    GL.Interface.Dialogs.HyperlinkDialog:open{
-                        description = Identity.urlInfo,
-                        hyperlink = Identity.url,
-                    };
-                end
-            end);
-
-            return Window;
-        end,
-
-        ---@return Frame
-        bidder = function ()
-            local Identity = GL.Interface.Identity["4095158674-3607791837"];
-
-            ---@type Frame
-            local Window = CreateFrame("Frame", nil, UIParent);
-            Window:SetSize(92, 98);
-
-            local Texture = Window:CreateTexture(nil, "BACKGROUND");
-            Texture:SetColorTexture(0, 0, 0, .6);
-            Texture:SetPoint("TOPLEFT", Window, "TOPLEFT", 0, -2);
-            Texture:SetPoint("TOPRIGHT", Window, "TOPRIGHT", 0, -2);
-            Texture:SetPoint("BOTTOMLEFT", Window, "BOTTOMLEFT");
-            Texture:SetPoint("BOTTOMRIGHT", Window, "BOTTOMRIGHT");
-
-            ---@type Texture
-            local Logo = Window:CreateTexture();
-            Logo:SetPoint("CENTER", Window, "CENTER");
-            Logo:SetSize(88, 88);
-            Logo:SetTexture("Interface/AddOns/Gargul/Assets/Identities/" .. Identity.id);
-
-            ---@type FontString
-            local Text = Interface:createFontString(Window, "GDKP Everlook");
-            Text:SetPoint("CENTER", Window, "CENTER");
-            Text:SetPoint("BOTTOM", Window, "BOTTOM", 0, 3);
-            Text:SetFont(1.1, "OUTLINE");
-            Text:SetColor("bc9968");
-
-            Interface:addTooltip(Window, Identity.tooltip);
-            Window:SetScript("OnMouseUp", function(_, button)
-                if (button == 'LeftButton') then
-                    GL.Interface.Dialogs.HyperlinkDialog:open{
-                        description = Identity.urlInfo,
-                        hyperlink = Identity.url,
-                    };
-                end
-            end);
-
-            return Window;
-        end,
-
-        ---@return Frame
-        roller = function ()
-            local Identity = GL.Interface.Identity["4095158674-3607791837"];
-
-            ---@type Frame
-            local Window = CreateFrame("Frame", nil, UIParent);
-            Window:SetSize(48, 48);
-
-            local Texture = Window:CreateTexture(nil, "BACKGROUND");
-            Texture:SetColorTexture(0, 0, 0, .6);
-            Texture:SetAllPoints(Window);
-
-            ---@type Texture
-            local Logo = Window:CreateTexture();
-            Logo:SetPoint("CENTER", Window, "CENTER");
-            Logo:SetSize(44, 44);
-            Logo:SetTexture("Interface/AddOns/Gargul/Assets/Identities/" .. Identity.id);
-
-            Interface:addTooltip(Window, Identity.tooltip);
-
-            Window:SetScript("OnMouseUp", function(_, button)
-                if (button == 'LeftButton') then
-                    GL.Interface.Dialogs.HyperlinkDialog:open{
-                        description = Identity.urlInfo,
-                        hyperlink = Identity.url,
-                    };
-                end
-            end);
 
             return Window, function (Element, Anchor)
                 Element:SetPoint("TOPRIGHT", Anchor, "TOPLEFT", -4, 0);
@@ -411,7 +258,7 @@ GL.Interface.Identity = {
             return Window;
         end,
 
-        ---@return Frame
+        ---@return Frame, function
         bidder = function ()
             local Identity = GL.Interface.Identity["54402906-2451533554"];
 
@@ -453,7 +300,7 @@ GL.Interface.Identity = {
             end;
         end,
 
-        ---@return Frame
+        ---@return Frame, function
         roller = function ()
             local Identity = GL.Interface.Identity["54402906-2451533554"];
 
@@ -493,312 +340,6 @@ GL.Interface.Identity = {
         end,
     },
 
-    --[[ ================== STEEL ================== ]]
-    ["2728411460-1372754882"] = {
-        id = "steel",
-        url = "https://discord.gg/928Dc9Pb",
-        urlInfo = "Follow Steel, Whitemane's most popular GDKP host!",
-        tooltip = "Follow Steel on Discord",
-        cutMailSubject = "STEEL GDKP: %sg",
-        Realms = { "whitemane", },
-
-        ---@return Frame
-        ledger = function()
-            local Identity = GL.Interface.Identity["2728411460-1372754882"];
-
-            ---@type Frame
-            local Window = CreateFrame("Frame", nil, UIParent);
-            Window:SetSize(80, 80);
-            Interface:addTooltip(Window, Identity.tooltip);
-
-            ---@type Texture
-            local Logo = Window:CreateTexture();
-            Logo:SetTexture("Interface/AddOns/Gargul/Assets/Identities/" .. Identity.id);
-            Logo:SetAllPoints();
-
-            Window:SetScript("OnMouseUp", function(_, button)
-                if (button == 'LeftButton') then
-                    GL.Interface.Dialogs.HyperlinkDialog:open{
-                        description = Identity.urlInfo,
-                        hyperlink = Identity.url,
-                    };
-                end
-            end);
-
-            LCG.PixelGlow_Stop(Window);
-            LCG.PixelGlow_Start(Window, {.59, .5, .82, 1}, 26, .02, 5, 2);
-
-            return Window;
-        end,
-
-        ---@return Frame
-        multiAuctionClient = function ()
-            local Identity = GL.Interface.Identity["2728411460-1372754882"];
-
-            ---@type Frame
-            local Window = CreateFrame("Frame", nil, UIParent, "BackdropTemplate");
-            Window:SetSize(110, 110);
-            Window:SetBackdrop(_G.BACKDROP_DARK_DIALOG_32_32);
-            Interface:addTooltip(Window, Identity.tooltip);
-
-            ---@type Texture
-            local Logo = Window:CreateTexture();
-            Logo:SetPoint("CENTER", Window, "CENTER", 0, -1);
-            Logo:SetSize(74, 74);
-            Logo:SetTexture("Interface/AddOns/Gargul/Assets/Identities/" .. Identity.id);
-
-            ---@type FontString
-            local TextTop = Interface:createFontString(Window, "FOLLOW");
-            TextTop:SetPoint("CENTER", Window, "CENTER");
-            TextTop:SetPoint("TOP", Window, "TOP", 0, -13);
-            TextTop:SetFont(1.1, "OUTLINE");
-
-            ---@type FontString
-            local TextBottom = Interface:createFontString(Window, "STEEL");
-            TextBottom:SetPoint("CENTER", Window, "CENTER");
-            TextBottom:SetPoint("BOTTOM", Window, "BOTTOM", 0, 11);
-            TextBottom:SetFont(1.1, "OUTLINE");
-
-            Window:SetScript("OnMouseUp", function(_, button)
-                if (button == 'LeftButton') then
-                    GL.Interface.Dialogs.HyperlinkDialog:open{
-                        description = Identity.urlInfo,
-                        hyperlink = Identity.url,
-                    };
-                end
-            end);
-
-            return Window;
-        end,
-
-        ---@return Frame
-        bidder = function ()
-            local Identity = GL.Interface.Identity["2728411460-1372754882"];
-
-            ---@type Frame
-            local Window = CreateFrame("Frame", nil, UIParent);
-            Window:SetSize(92, 98);
-
-            local Texture = Window:CreateTexture(nil, "BACKGROUND");
-            Texture:SetColorTexture(0, 0, 0, .6);
-            Texture:SetPoint("TOPLEFT", Window, "TOPLEFT", 0, -2);
-            Texture:SetPoint("TOPRIGHT", Window, "TOPRIGHT", 0, -2);
-            Texture:SetPoint("BOTTOMLEFT", Window, "BOTTOMLEFT");
-            Texture:SetPoint("BOTTOMRIGHT", Window, "BOTTOMRIGHT");
-
-            ---@type Texture
-            local Logo = Window:CreateTexture();
-            Logo:SetPoint("CENTER", Window, "CENTER");
-            Logo:SetSize(72, 72);
-            Logo:SetTexture("Interface/AddOns/Gargul/Assets/Identities/" .. Identity.id);
-
-            ---@type FontString
-            local TextTop = Interface:createFontString(Window, "FOLLOW");
-            TextTop:SetPoint("CENTER", Window, "CENTER");
-            TextTop:SetPoint("TOP", Window, "TOP", 0, -5);
-            TextTop:SetFont(1.2, "OUTLINE");
-
-            ---@type FontString
-            local TextBottom = Interface:createFontString(Window, "STEEL");
-            TextBottom:SetPoint("CENTER", Window, "CENTER");
-            TextBottom:SetPoint("BOTTOM", Window, "BOTTOM", 0, 2);
-            TextBottom:SetFont(1.2, "OUTLINE");
-
-            Interface:addTooltip(Window, Identity.tooltip);
-            Window:SetScript("OnMouseUp", function(_, button)
-                if (button == 'LeftButton') then
-                    GL.Interface.Dialogs.HyperlinkDialog:open{
-                        description = Identity.urlInfo,
-                        hyperlink = Identity.url,
-                    };
-                end
-            end);
-
-            return Window;
-        end,
-
-        ---@return Frame
-        roller = function ()
-            local Identity = GL.Interface.Identity["2728411460-1372754882"];
-
-            ---@type Frame
-            local Window = CreateFrame("Frame", nil, UIParent);
-            Window:SetSize(48, 48);
-
-            local Texture = Window:CreateTexture(nil, "BACKGROUND");
-            Texture:SetColorTexture(0, 0, 0, .6);
-            Texture:SetAllPoints(Window);
-
-            ---@type Texture
-            local Logo = Window:CreateTexture();
-            Logo:SetPoint("CENTER", Window, "CENTER");
-            Logo:SetSize(48, 48);
-            Logo:SetTexture("Interface/AddOns/Gargul/Assets/Identities/" .. Identity.id);
-
-            ---@type FontString
-            local Text = Interface:createFontString(Window, "STEEL");
-            Text:SetPoint("CENTER", Window, "CENTER");
-            Text:SetPoint("BOTTOM", Window, "BOTTOM", 0, -5);
-            Text:SetFont(1.1, "OUTLINE");
-
-            Interface:addTooltip(Window, Identity.tooltip);
-            Window:SetScript("OnMouseUp", function(_, button)
-                if (button == 'LeftButton') then
-                    GL.Interface.Dialogs.HyperlinkDialog:open{
-                        description = Identity.urlInfo,
-                        hyperlink = Identity.url,
-                    };
-                end
-            end);
-
-            return Window, function (Element, Anchor)
-                Element:SetPoint("TOPRIGHT", Anchor, "TOPLEFT", -4, 0);
-            end;
-        end,
-    },
-
-    --[[ ================== GOLD BOYS ================== ]]
-    ["3666447951-3772521060"] = {
-        id = "goldboys",
-        url = "https://discord.gg/agZUUaypWq",
-        urlInfo = "Join our Discord server to learn more about Gold Boys!",
-        tooltip = "Gold Boys discord",
-        cutMailSubject = L.CUT_MAIL_SUBJECT,
-        Realms = { "pyrewoodvillage" },
-
-        ---@return Frame
-        ledger = function()
-            local Identity = GL.Interface.Identity["3666447951-3772521060"];
-
-            ---@type Frame
-            local Window = CreateFrame("Frame", nil, UIParent);
-            Window:SetSize(80, 80);
-            Interface:addTooltip(Window, Identity.tooltip);
-
-            ---@type Texture
-            local Logo = Window:CreateTexture();
-            Logo:SetTexture("Interface/AddOns/Gargul/Assets/Identities/" .. Identity.id);
-            Logo:SetPoint("CENTER", Window, "CENTER");
-            Logo:SetSize(74, 74);
-
-            Window:SetScript("OnMouseUp", function(_, button)
-                if (button == 'LeftButton') then
-                    GL.Interface.Dialogs.HyperlinkDialog:open{
-                        description = Identity.urlInfo,
-                        hyperlink = Identity.url,
-                    };
-                end
-            end);
-
-            LCG.PixelGlow_Stop(Window);
-            LCG.PixelGlow_Start(Window, {.59, .5, .82, 1}, 26, .02, 5, 2);
-
-            return Window;
-        end,
-
-        ---@return Frame
-        multiAuctionClient = function ()
-            local Identity = GL.Interface.Identity["3666447951-3772521060"];
-
-            ---@type Frame
-            local Window = CreateFrame("Frame", nil, UIParent, "BackdropTemplate");
-            Window:SetSize(110, 110);
-            Window:SetBackdrop(_G.BACKDROP_DARK_DIALOG_32_32);
-            Interface:addTooltip(Window, Identity.tooltip);
-
-            ---@type Texture
-            local Logo = Window:CreateTexture();
-            Logo:SetPoint("CENTER", Window, "CENTER", 0, 5);
-            Logo:SetSize(75, 75);
-            Logo:SetTexture("Interface/AddOns/Gargul/Assets/Identities/" .. Identity.id);
-
-            ---@type FontString
-            local Text = Interface:createFontString(Window, "Gold Boys");
-            Text:SetPoint("CENTER", Window, "CENTER");
-            Text:SetPoint("BOTTOM", Window, "BOTTOM", 0, 11);
-            Text:SetFont(1, "OUTLINE");
-            Text:SetColor("bc9968");
-
-            Window:SetScript("OnMouseUp", function(_, button)
-                if (button == 'LeftButton') then
-                    GL.Interface.Dialogs.HyperlinkDialog:open{
-                        description = Identity.urlInfo,
-                        hyperlink = Identity.url,
-                    };
-                end
-            end);
-
-            return Window;
-        end,
-
-        ---@return Frame
-        bidder = function ()
-            local Identity = GL.Interface.Identity["3666447951-3772521060"];
-
-            ---@type Frame
-            local Window = CreateFrame("Frame", nil, UIParent);
-            Window:SetSize(80, 90);
-
-            ---@type Texture
-            local Logo = Window:CreateTexture();
-            Logo:SetPoint("CENTER", Window, "CENTER");
-            Logo:SetSize(80, 80);
-            Logo:SetTexture("Interface/AddOns/Gargul/Assets/Identities/" .. Identity.id);
-
-            ---@type FontString
-            local Text = Interface:createFontString(Window, "Gold Boys");
-            Text:SetPoint("CENTER", Window, "CENTER");
-            Text:SetPoint("BOTTOM", Window, "BOTTOM", 0, 2);
-            Text:SetFont(1.1, "OUTLINE");
-            Text:SetColor("bc9968");
-
-            Interface:addTooltip(Window, Identity.tooltip);
-
-            Window:SetScript("OnMouseUp", function(_, button)
-                if (button == 'LeftButton') then
-                    GL.Interface.Dialogs.HyperlinkDialog:open{
-                        description = Identity.urlInfo,
-                        hyperlink = Identity.url,
-                    };
-                end
-            end);
-
-            return Window, function (Element, Anchor)
-                Element:SetPoint("TOPRIGHT", Anchor, "TOPLEFT", -6, -2);
-            end;
-        end,
-
-        ---@return Frame
-        roller = function ()
-            local Identity = GL.Interface.Identity["3666447951-3772521060"];
-
-            ---@type Frame
-            local Window = CreateFrame("Frame", nil, UIParent);
-            Window:SetSize(48, 48);
-
-            ---@type Texture
-            local Logo = Window:CreateTexture();
-            Logo:SetPoint("CENTER", Window, "CENTER");
-            Logo:SetSize(44, 44);
-            Logo:SetTexture("Interface/AddOns/Gargul/Assets/Identities/" .. Identity.id);
-
-            Interface:addTooltip(Window, Identity.tooltip);
-
-            Window:SetScript("OnMouseUp", function(_, button)
-                if (button == 'LeftButton') then
-                    GL.Interface.Dialogs.HyperlinkDialog:open{
-                        description = Identity.urlInfo,
-                        hyperlink = Identity.url,
-                    };
-                end
-            end);
-
-            return Window, function (Element, Anchor)
-                Element:SetPoint("TOPRIGHT", Anchor, "TOPLEFT", -4, 0);
-            end;
-        end,
-    },
-
     --[[ ================== GG GDKP ================== ]]
     ["2118133100-1868759167"] = {
         id = "gggdkp",
@@ -806,7 +347,7 @@ GL.Interface.Identity = {
         urlInfo = "Join our Discord server to learn more about GG GDKP!",
         tooltip = "GG GDKP discord",
         cutMailSubject = L.CUT_MAIL_SUBJECT,
-        cutMailBody = "Hey Bigbuyer,\n\nThanks for pumping so hard in the GDKP last night.\n\nHere is your %s cut from the run!\n\nPlease sign-up for the next run at https://discord.gg/gg-gdkp\n\nLot's of Love,\nYour Friends at <GG>",
+        cutMailBody = "Hey Bigbuyer,\n\nThanks for pumping so hard in the GDKP last night.\n\nHere is your ${cut} cut from the run!\n\nPlease sign-up for the next run at https://discord.gg/gg-gdkp\n\nLot's of Love,\nYour Friends at <GG>",
 
         ---@return Frame
         ledger = function()
@@ -866,7 +407,7 @@ GL.Interface.Identity = {
             return Window;
         end,
 
-        ---@return Frame
+        ---@return Frame, function
         bidder = function ()
             local Identity = GL.Interface.Identity["2118133100-1868759167"];
 
@@ -894,7 +435,7 @@ GL.Interface.Identity = {
             end;
         end,
 
-        ---@return Frame
+        ---@return Frame, function
         roller = function ()
             local Identity = GL.Interface.Identity["2118133100-1868759167"];
 
@@ -924,15 +465,17 @@ GL.Interface.Identity = {
         end,
     },
 
-    --[[ ================== XIPPO  ================== ]]
-    ["86558097-712084183"] = {
-        id = "xippo",
+    --[[ ================== UNHINGED  ================== ]]
+    ["4120152845-1402702386"] = {
+        id = "unhinged",
+        url = "https://unhinged.gg/",
+        urlInfo = "Visit us to learn more about Unhinged!",
+        tooltip = nil,
         cutMailSubject = L.CUT_MAIL_SUBJECT,
-        Realms = { "faerlina", },
 
         ---@return Frame
         ledger = function()
-            local Identity = GL.Interface.Identity["86558097-712084183"];
+            local Identity = GL.Interface.Identity["4120152845-1402702386"];
 
             ---@type Frame
             local Window = CreateFrame("Frame", nil, UIParent);
@@ -944,6 +487,15 @@ GL.Interface.Identity = {
             Logo:SetTexture("Interface/AddOns/Gargul/Assets/Identities/" .. Identity.id);
             Logo:SetAllPoints();
 
+            Window:SetScript("OnMouseUp", function(_, button)
+                if (button == 'LeftButton') then
+                    GL.Interface.Dialogs.HyperlinkDialog:open{
+                        description = Identity.urlInfo,
+                        hyperlink = Identity.url,
+                    };
+                end
+            end);
+
             LCG.PixelGlow_Stop(Window);
             LCG.PixelGlow_Start(Window, {.59, .5, .82, 1}, 26, .02, 5, 2);
 
@@ -952,7 +504,7 @@ GL.Interface.Identity = {
 
         ---@return Frame
         multiAuctionClient = function ()
-            local Identity = GL.Interface.Identity["86558097-712084183"];
+            local Identity = GL.Interface.Identity["4120152845-1402702386"];
 
             ---@type Frame
             local Window = CreateFrame("Frame", nil, UIParent, "BackdropTemplate");
@@ -966,39 +518,99 @@ GL.Interface.Identity = {
             Logo:SetSize(74, 74);
             Logo:SetTexture("Interface/AddOns/Gargul/Assets/Identities/" .. Identity.id);
 
+            ---@type FontString
+            local Text = Interface:createFontString(Window, "Unhinged");
+            Text:SetPoint("CENTER", Window, "CENTER");
+            Text:SetPoint("BOTTOM", Window, "BOTTOM", 0, 11);
+            Text:SetFont(1.4, "OUTLINE");
+
+            Window:SetScript("OnMouseUp", function(_, button)
+                if (button == 'LeftButton') then
+                    GL.Interface.Dialogs.HyperlinkDialog:open{
+                        description = Identity.urlInfo,
+                        hyperlink = Identity.url,
+                    };
+                end
+            end);
+
             return Window;
         end,
 
-        ---@return Frame
+        ---@return Frame, function
         bidder = function ()
-            local Identity = GL.Interface.Identity["86558097-712084183"];
+            local Identity = GL.Interface.Identity["4120152845-1402702386"];
 
             ---@type Frame
             local Window = CreateFrame("Frame", nil, UIParent);
-            Window:SetSize(95, 95);
+            Window:SetSize(92, 98);
+
+            local Texture = Window:CreateTexture(nil, "BACKGROUND");
+            Texture:SetColorTexture(0, 0, 0, .6);
+            Texture:SetPoint("TOPLEFT", Window, "TOPLEFT", 0, -2);
+            Texture:SetPoint("TOPRIGHT", Window, "TOPRIGHT", 0, -2);
+            Texture:SetPoint("BOTTOMLEFT", Window, "BOTTOMLEFT");
+            Texture:SetPoint("BOTTOMRIGHT", Window, "BOTTOMRIGHT");
 
             ---@type Texture
             local Logo = Window:CreateTexture();
-            Logo:SetAllPoints(Window);
+            Logo:SetPoint("CENTER", Window, "CENTER", 0, 2);
+            Logo:SetSize(76, 76);
             Logo:SetTexture("Interface/AddOns/Gargul/Assets/Identities/" .. Identity.id);
 
+            ---@type FontString
+            local Text = Interface:createFontString(Window, "Unhinged");
+            Text:SetPoint("CENTER", Window, "CENTER");
+            Text:SetPoint("BOTTOM", Window, "BOTTOM", 0, 2);
+            Text:SetFont(1.4, "OUTLINE");
+
+            Interface:addTooltip(Window, Identity.tooltip);
+            Window:SetScript("OnMouseUp", function(_, button)
+                if (button == 'LeftButton') then
+                    GL.Interface.Dialogs.HyperlinkDialog:open{
+                        description = Identity.urlInfo,
+                        hyperlink = Identity.url,
+                    };
+                end
+            end);
+
             return Window, function (Element, Anchor)
-                Element:SetPoint("TOPRIGHT", Anchor, "TOPLEFT", -6, 0);
+                Element:SetPoint("TOPRIGHT", Anchor, "TOPLEFT", -6, 2);
             end;
         end,
 
-        ---@return Frame
+        ---@return Frame, function
         roller = function ()
-            local Identity = GL.Interface.Identity["86558097-712084183"];
+            local Identity = GL.Interface.Identity["4120152845-1402702386"];
 
             ---@type Frame
             local Window = CreateFrame("Frame", nil, UIParent);
             Window:SetSize(48, 48);
 
+            local Texture = Window:CreateTexture(nil, "BACKGROUND");
+            Texture:SetColorTexture(0, 0, 0, .6);
+            Texture:SetAllPoints(Window);
+
             ---@type Texture
             local Logo = Window:CreateTexture();
-            Logo:SetAllPoints(Window);
+            Logo:SetPoint("CENTER", Window, "CENTER");
+            Logo:SetSize(44, 44);
             Logo:SetTexture("Interface/AddOns/Gargul/Assets/Identities/" .. Identity.id);
+
+            ---@type FontString
+            local Text = Interface:createFontString(Window, "Unhinged");
+            Text:SetPoint("CENTER", Window, "CENTER");
+            Text:SetPoint("BOTTOM", Window, "BOTTOM", 1, -4);
+            Text:SetFont(1.2, "OUTLINE");
+
+            Interface:addTooltip(Window, Identity.tooltip);
+            Window:SetScript("OnMouseUp", function(_, button)
+                if (button == 'LeftButton') then
+                    GL.Interface.Dialogs.HyperlinkDialog:open{
+                        description = Identity.urlInfo,
+                        hyperlink = Identity.url,
+                    };
+                end
+            end);
 
             return Window, function (Element, Anchor)
                 Element:SetPoint("TOPRIGHT", Anchor, "TOPLEFT", -4, 0);
@@ -1008,37 +620,22 @@ GL.Interface.Identity = {
 };
 local Identity = GL.Interface.Identity;
 
---[[ EVERLOOK ALIASES ]]
-Identity["1693251292-4038511571"] = Identity["4095158674-3607791837"];
-Identity["899545035-811854049"] = Identity["4095158674-3607791837"];
-Identity["4246247173-217891525"] = Identity["4095158674-3607791837"];
-Identity["60536489-2522607623"] = Identity["4095158674-3607791837"];
-Identity["3825630290-2352514161"] = Identity["4095158674-3607791837"];
-Identity["991876154-338457788"] = Identity["4095158674-3607791837"];
-Identity["2721348070-2296142268"] = Identity["4095158674-3607791837"];
-Identity["2288484345-3562407233"] = Identity["4095158674-3607791837"];
-Identity["301466391-3279526899"] = Identity["4095158674-3607791837"];
-Identity["2895629043-3084611412"] = Identity["4095158674-3607791837"];
-Identity["3188539266-4063358498"] = Identity["4095158674-3607791837"];
-Identity["1784466978-533458395"] = Identity["4095158674-3607791837"];
-Identity["3110547987-1844148009"] = Identity["4095158674-3607791837"];
-Identity["2425115384-2043966142"] = Identity["4095158674-3607791837"];
-
 --[[ GARGUL ALIASES ]]
 Identity["126782309-4184359051"] = Identity["54402906-2451533554"];
 Identity["4091637282-1561179"] = Identity["54402906-2451533554"];
 Identity["3046712350-2962835883"] = Identity["54402906-2451533554"];
 Identity["2644832658-2651387317"] = Identity["54402906-2451533554"];
 
---[[ XIPPO ALIASES ]]
-Identity["4209972553-3499284415"] = Identity["86558097-712084183"];
-Identity["2208482902-2275005731"] = Identity["86558097-712084183"];
-Identity["2724529675-176490976"] = Identity["86558097-712084183"];
-
 --[[ GG GDKP ]]
 Identity["1890643919-4143577729"] = Identity["2118133100-1868759167"];
 Identity["3628029066-969996875"] = Identity["2118133100-1868759167"];
 
+--[[ UNHINGED ]]
+Identity["524810767-3114103717"] = Identity["4120152845-1402702386"];
+Identity["2261728042-2605682897"] = Identity["4120152845-1402702386"];
+Identity["106568130-2547934016"] = Identity["4120152845-1402702386"];
+Identity["2738699027-911884178"] = Identity["4120152845-1402702386"];
+Identity["329719560-4149689853"] = Identity["4120152845-1402702386"];
 
 ---@param identifier string
 ---

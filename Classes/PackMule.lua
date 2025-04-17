@@ -435,6 +435,7 @@ end
 --- Return all valid rules from the PackMule configuration
 ---
 ---@return table
+---@test /dump _G.Gargul.PackMule:getValidRules();
 function PackMule:getValidRules()
     local ValidRules = {};
     for _, Rule in pairs(self.Rules) do
@@ -442,6 +443,32 @@ function PackMule:getValidRules()
             tinsert(ValidRules, Rule);
         end
     end
+
+    -- Sort the rules, item ID specific rules first
+    table.sort(ValidRules, function (a, b)
+        aItem = a and a.item or false;
+        bItem = b and b.item or false;
+
+        -- This is to make sure we support item names, IDs and links
+        local ruleAConcernsItemID = false;
+        local ruleAItemID = tonumber(aItem) or GL:getItemIDFromLink(aItem);
+        if (ruleAItemID) then
+            ruleAItemID = math.floor(ruleAItemID);
+            ruleAConcernsItemID = GL:higherThanZero(ruleAItemID);
+        end
+
+        local ruleBConcernsItemID = false;
+        local ruleBItemID = tonumber(bItem) or GL:getItemIDFromLink(bItem);
+        if (ruleBItemID) then
+            ruleBItemID = math.floor(ruleBItemID);
+            ruleBConcernsItemID = GL:higherThanZero(ruleBItemID);
+        end
+
+        aNum = ruleAConcernsItemID and ruleAItemID or 999999999999;
+        bNum = ruleBConcernsItemID and ruleBItemID or 999999999999;
+
+        return aNum < bNum;
+    end);
 
     return ValidRules;
 end
@@ -472,14 +499,15 @@ function PackMule:getTargetForItem(itemLinkOrId, callback)
     end
 
     -- Load the item details first and then call the callback with the player target (only if any)
-    GL:onItemLoadDo(itemID, function (Details)
+    local ValidRules = self:getValidRules();
+    GL:onItemLoadDo(itemLinkOrId, function (Details)
         if (not Details) then
             return;
         end
 
         local RuleThatApplies = false;
 
-        for _, Entry in pairs(self:getValidRules()) do
+        for _, Entry in pairs(ValidRules) do
             -- This is useful to see in which order rules are being handled
             GL:debug(string.format(
                 "Item: %s\nOperator: %s\nQuality: %s\nTarget: %s",
@@ -519,12 +547,12 @@ function PackMule:getTargetForItem(itemLinkOrId, callback)
                 or (operator == "<" and Details.quality < quality)
                 or (operator == "<=" and Details.quality <= quality)
             )) then
-                local bindType = Details.bindType or LE_ITEM_BIND_NONE;
-                local bindOnPickup = GL:inTable({ LE_ITEM_BIND_ON_ACQUIRE, LE_ITEM_BIND_QUEST }, bindType);
+                local bindType = Details.bindType or Enum.ItemBind.None;
+                local bindOnPickup = GL:inTable({ Enum.ItemBind.OnAcquire, Enum.ItemBind.Quest }, bindType);
 
                 local ruleApplies = (function ()
                     -- Check whether the item is whitelisted
-                    if (GL:inTable(GL.Data.Constants.TradeableItems, itemID)) then
+                    if (GL:inTable(GL.Data.Constants.TradableItems, itemID)) then
                         return true;
                     end
 
@@ -549,7 +577,7 @@ function PackMule:getTargetForItem(itemLinkOrId, callback)
                     end
 
                     -- Untradable items are skipped in quality rules whether they're BoP or not!
-                    if (GL:inTable(GL.Data.Constants.UntradeableItems, itemID)) then
+                    if (GL:inTable(GL.Data.Constants.UntradableItems, itemID)) then
                         return false;
                     end
 
@@ -933,7 +961,7 @@ end
 --- Returns next target player in a round robin fashion for a particular rule item
 ---
 ---@param Rule string
----@return string
+---@return string?
 function PackMule:roundRobinTargetForRule(Rule)
     local ruleId = Rule.quality;
     if (not GL:empty(Rule.item)) then
@@ -950,25 +978,36 @@ function PackMule:roundRobinTargetForRule(Rule)
         self.RoundRobinItems[ruleId] = {};
     end
 
-    local targetPlayer = false;
+    local EligiblePlayers = {};
     for _, Player in pairs(GL.User:groupMembers()) do
         local player = string.lower(Player.fqn);
 
         -- this player hasn't received one of these items yet
         if (Player.online and not self.RoundRobinItems[ruleId][player]) then
-            self.RoundRobinItems[ruleId][player] = 1;
-            targetPlayer = player;
-            break;
+            tinsert(EligiblePlayers, player);
         end
     end
 
-    if (not targetPlayer) then
+    -- Count the number of potential targets
+    local numberOfTargets = #EligiblePlayers;
+
+    if (numberOfTargets < 1) then
         -- everyone has received one of these, start over
         GL:debug("PackMule:roundRobinTargetForRule - starting over");
         self.RoundRobinItems[ruleId] = {};
+
         return self:roundRobinTargetForRule(Rule);
     end
 
+    -- Fetch a (random) target from the eligible target pool
+    local targetPlayer = EligiblePlayers[math.random(numberOfTargets)] or false;
+
+    -- Something else went wrong, this shouldn't be possible!
+    if (not targetPlayer) then
+        return GL:error("Something went wrong determining a target in 'roundRobinTargetForRule'. Contact support!");
+    end
+
+    self.RoundRobinItems[ruleId][targetPlayer] = 1;
     return targetPlayer;
 end
 

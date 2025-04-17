@@ -13,7 +13,9 @@ GL.Interface.ShortcutKeysLegend = {
 };
 local ShortcutKeysLegend = GL.Interface.ShortcutKeysLegend; ---@type ShortcutKeysLegendInterface
 
----@return void
+-- To test:
+-- 1. Loot a mob and leave the loot window open
+-- 2. Then run /script _G.Gargul.Interface.ShortcutKeysLegend:draw();
 function ShortcutKeysLegend:draw()
     -- The reminder is already visible
     if (self.isVisible) then

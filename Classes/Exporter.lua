@@ -16,9 +16,14 @@ local DB = GL.DB;
 
 ---@class Exporter
 GL.Exporter = {
+    ---@type boolean
     visible = false,
-    dateSelected = nil,
+
+    ---@type string
     disenchantedItemIdentifier = "||de||",
+
+    ---@type table
+    SelectedDates = {},
 };
 
 ---@type Exporter
@@ -36,6 +41,7 @@ function Exporter:draw()
 
     -- Fetch award history per date
     local AwardHistoryByDate = {};
+    local latestEntry = 0;
     for _, AwardEntry in pairs(DB:get("AwardHistory") or {}) do
         local dateString = date(L.DATE_FORMAT, AwardEntry.timestamp);
         local Entries = GL:tableGet(AwardHistoryByDate, dateString, {});
@@ -43,6 +49,14 @@ function Exporter:draw()
         tinsert(Entries, AwardEntry);
 
         AwardHistoryByDate[dateString] = Entries;
+
+        if (AwardEntry.timestamp > latestEntry) then
+            latestEntry = AwardEntry.timestamp;
+        end
+    end
+
+    if (GL:gt(latestEntry, 0)) then
+        tinsert(self.SelectedDates, date(L.DATE_FORMAT, latestEntry));
     end
 
     -- Create a container/parent frame
@@ -51,7 +65,7 @@ function Exporter:draw()
     Window:SetStatusText(L.VERSION_ABBR ..GL.version);
     Window:SetLayout("Flow");
     Window:SetWidth(600);
-    Window:SetHeight(450);
+    Window:SetHeight(500);
     Window:EnableResize(false);
     Window:SetCallback("OnClose", function()
         self:close();
@@ -68,7 +82,7 @@ function Exporter:draw()
     --[[ DON'T EDIT STOOPID! ]]
     local DontEditNotification = AceGUI:Create("Label");
     DontEditNotification:SetFullWidth(true);
-    DontEditNotification:SetJustifyH("MIDDLE");
+    DontEditNotification:SetJustifyH("CENTER");
     DontEditNotification:SetText(("|c00FF0000%s|r"):format(L.EXPORT_READ_ONLY_NOTICE));
     Window:AddChild(DontEditNotification);
 
@@ -132,7 +146,7 @@ function Exporter:clearData()
     local onConfirm;
 
     -- No date is selected, delete everything!
-    if (not self.dateSelected) then
+    if (GL:empty(self.SelectedDates)) then
         warning = L.EXPORT_DELETE_ALL_CONFIRM;
         onConfirm = function()
             GL.Events:fire("GL.ITEM_UNAWARDED");
@@ -143,12 +157,12 @@ function Exporter:clearData()
         end;
 
     else -- Only delete entries on the selected date
-        warning = (L.EXPORT_DELETE_DATE_CONFIRM):format(self.dateSelected);
+        warning = (L.EXPORT_DELETE_DATE_CONFIRM):format(table.concat(self.SelectedDates, ", "));
         onConfirm = function()
             for key, AwardEntry in pairs(DB:get("AwardHistory")) do
                 local dateString = date(L.DATE_FORMAT, AwardEntry.timestamp);
 
-                if (dateString == self.dateSelected) then
+                if (GL:inTable(self.SelectedDates, dateString)) then
                     AwardEntry = nil;
                     DB:set("AwardHistory." .. key, nil);
                 end
@@ -175,15 +189,26 @@ end
 ---
 ---@return void
 function Exporter:refreshExportString()
-    local LootEntries = self:getLootEntries();
     local exportFormat = GL.Settings:get("ExportingLoot.format");
 
-    if (GL:inTable({ Constants.ExportFormats.TMB, Constants.ExportFormats.TMBWithRealm }, exportFormat)) then
-        local exportString = self:transformEntriesToTMBFormat(LootEntries);
+    if (exportFormat == Constants.ExportFormats.JSON) then
+        local exportString = GL.JSON:encode(self:getLootEntries(true));
         GL.Interface:get(self, "MultiLineEditBox.Export"):SetText(exportString);
 
-    elseif (exportFormat == Constants.ExportFormats.Custom) then
+        return;
+    end
+
+    local LootEntries = self:getLootEntries();
+    if (exportFormat == Constants.ExportFormats.Custom) then
         local exportString = self:transformEntriesToCustomFormat(LootEntries);
+        GL.Interface:get(self, "MultiLineEditBox.Export"):SetText(exportString);
+
+    elseif (exportFormat == Constants.ExportFormats.RRobin) then
+        local exportString = self:transformEntriesToCustomFormat(LootEntries, "@ID,@DATE @TIME,@WINNER-@REALM");
+        GL.Interface:get(self, "MultiLineEditBox.Export"):SetText(exportString);
+
+    elseif (GL:inTable({ Constants.ExportFormats.TMB, Constants.ExportFormats.TMBWithRealm }, exportFormat)) then
+        local exportString = self:transformEntriesToTMBFormat(LootEntries);
         GL.Interface:get(self, "MultiLineEditBox.Export"):SetText(exportString);
 
     elseif (GL:inTable({ Constants.ExportFormats.DFTUS, Constants.ExportFormats.DFTEU }, exportFormat)) then
@@ -194,49 +219,67 @@ end
 --- Fetch export entries (either all or for the selected date)
 ---
 ---@return table
-function Exporter:getLootEntries()
+function Exporter:getLootEntries(raw)
+    local noDatesSelected = GL:empty(self.SelectedDates);
     local Entries = {};
+    raw = raw == true;
 
     for _, AwardEntry in pairs(DB:get("AwardHistory")) do
-        local concernsDisenchantedItem = AwardEntry.awardedTo == self.disenchantedItemIdentifier;
-        local dateString = date(L.DATE_FORMAT, AwardEntry.timestamp);
+        (function()
+            local concernsDisenchantedItem = AwardEntry.awardedTo == self.disenchantedItemIdentifier;
+            local dateString = date(L.DATE_FORMAT, AwardEntry.timestamp);
+            if (
+                (not concernsDisenchantedItem or GL.Settings:get("ExportingLoot.includeDisenchantedItems"))
+                and (not AwardEntry.OS or GL.Settings:get("ExportingLoot.includeOffspecItems"))
+                and (noDatesSelected or GL:inTable(self.SelectedDates, dateString))
+                and not GL:empty(AwardEntry.timestamp)
+                and not GL:empty(AwardEntry.itemLink)
+                and not GL:empty(AwardEntry.awardedTo)
+            ) then
+                if (raw) then
+                    tinsert(Entries, AwardEntry);
+                    return;
+                end
 
-        if (
-            (not concernsDisenchantedItem or GL.Settings:get("ExportingLoot.includeDisenchantedItems"))
-            and (not AwardEntry.OS or GL.Settings:get("ExportingLoot.includeOffspecItems"))
-            and (not self.dateSelected or dateString == self.dateSelected)
-            and not GL:empty(AwardEntry.timestamp)
-            and not GL:empty(AwardEntry.itemLink)
-            and not GL:empty(AwardEntry.awardedTo)
-        ) then
-            local awardedTo = AwardEntry.awardedTo;
+                local awardedTo = AwardEntry.awardedTo;
 
-            if (concernsDisenchantedItem) then
-                awardedTo = GL.Settings:get("ExportingLoot.disenchanterIdentifier");
+                if (concernsDisenchantedItem) then
+                    awardedTo = GL.Settings:get("ExportingLoot.disenchanterIdentifier");
+                end
+
+                -- Just in case an itemID is not available we will extract it from the item link
+                local itemID = AwardEntry.itemID or GL:getItemIDFromLink(AwardEntry.itemLink);
+
+                local checksum = AwardEntry.checksum; -- Old entries may not possess a checksum yet
+                if (not checksum) then
+                    checksum = GL:strPadRight(GL:strLimit(GL:stringHash(AwardEntry.timestamp .. itemID) .. GL:stringHash(awardedTo), 20, ""), "0", 20);
+                end
+
+                tinsert(Entries, {
+                    timestamp = AwardEntry.timestamp,
+                    awardedTo = awardedTo,
+                    itemID = itemID,
+                    itemLink = AwardEntry.itemLink,
+                    OS = AwardEntry.OS and 1 or 0,
+                    SR = AwardEntry.SR and 1 or 0,
+                    WL = AwardEntry.WL and 1 or 0,
+                    PL = AwardEntry.PL and 1 or 0,
+                    TMB = AwardEntry.TMB and 1 or 0,
+                    winningRollType = AwardEntry.winningRollType or "-",
+                    checksum = checksum,
+                });
             end
-
-            -- Just in case an itemID is not available we will extract it from the item link
-            local itemID = AwardEntry.itemID or GL:getItemIDFromLink(AwardEntry.itemLink);
-
-            local checksum = AwardEntry.checksum; -- Old entries may not possess a checksum yet
-            if (not checksum) then
-                checksum = GL:strPadRight(GL:strLimit(GL:stringHash(AwardEntry.timestamp .. itemID) .. GL:stringHash(awardedTo), 20, ""), "0", 20);
-            end
-
-            tinsert(Entries, {
-                timestamp = AwardEntry.timestamp,
-                awardedTo = awardedTo,
-                itemID = itemID,
-                OS = AwardEntry.OS and 1 or 0,
-                SR = AwardEntry.SR and 1 or 0,
-                WL = AwardEntry.WL and 1 or 0,
-                PL = AwardEntry.PL and 1 or 0,
-                TMB = AwardEntry.TMB and 1 or 0,
-                winningRollType = AwardEntry.winningRollType or "-",
-                checksum = checksum,
-            });
-        end
+        end)();
     end
+
+    -- Sort the entries by award time
+    table.sort(Entries, function (a, b)
+        if (not a.timestamp or not b.timestamp) then
+            return false;
+        end
+
+        return a.timestamp < b.timestamp;
+    end);
 
     return Entries;
 end
@@ -244,11 +287,12 @@ end
 --- Transform the table of entries to the user specified (custom) format
 ---
 ---@return string
-function Exporter:transformEntriesToCustomFormat(Entries)
+function Exporter:transformEntriesToCustomFormat(Entries, format)
+    format = format or GL.Settings:get("ExportingLoot.customFormat");
     local exportString = "";
 
     -- Make sure that all relevant item data is cached
-    GL:onItemLoadDo(GL:tableColumn(Entries, "itemID"), function (Result)
+    GL:onItemLoadDo(GL:tableColumn(Entries, "itemLink"), function (Result)
         local Details = {};
         for _, ItemDetails in pairs(Result or {}) do
             Details[ItemDetails.id] = ItemDetails;
@@ -256,7 +300,7 @@ function Exporter:transformEntriesToCustomFormat(Entries)
         Result = nil;
 
         for _, AwardEntry in pairs(Entries) do
-            local exportEntry = GL.Settings:get("ExportingLoot.customFormat");
+            local exportEntry = format;
             local ItemDetails = Details[AwardEntry.itemID];
             local wowheadLink;
 
@@ -265,7 +309,7 @@ function Exporter:transformEntriesToCustomFormat(Entries)
             elseif (GL.isRetail) then
                 wowheadLink = ("https://www.wowhead.com/item=%s"):format(AwardEntry.itemID);
             else
-                wowheadLink = ("https://www.wowhead.com/wotlk/item=%s"):format(AwardEntry.itemID);
+                wowheadLink = ("https://www.wowhead.com/cata/item=%s"):format(AwardEntry.itemID);
             end
 
             if (ItemDetails) then
@@ -318,6 +362,16 @@ end
 ---
 ---@return string
 function Exporter:transformEntriesToTMBFormat(Entries)
+    local ItemIDConversions = {
+        [18423] = 18422, -- Head of Onyxia
+        [19003] = 19002, -- Head of Nefarian
+        [32386] = 32385, -- Magtheridon's Head
+        [43959] = 44083, -- Reins of the Grand Black War Mammoth
+        [209693] = 211452, -- Perfect Blackfathom Pearl
+        [217350] = 217351, -- Thermaplugg's Engineering Notes
+        [221346] = 221363, -- Scapula of the Fallen Avatar
+    };
+
     local exportFormat = GL.Settings:get("ExportingLoot.format");
     local exportString = "dateTime,character,itemID,offspec,id";
 
@@ -330,7 +384,7 @@ function Exporter:transformEntriesToTMBFormat(Entries)
                 stripRealm = exportFormat == Constants.ExportFormats.TMB,
                 forceRealm = exportFormat == Constants.ExportFormats.TMBWithRealm
             },
-            AwardEntry.itemID,
+            ItemIDConversions[AwardEntry.itemID] and ItemIDConversions[AwardEntry.itemID] or AwardEntry.itemID, -- Convert specific item IDs for TMB compatibility
             AwardEntry.OS,
             AwardEntry.checksum
         );
@@ -389,8 +443,11 @@ function Exporter:close()
     Window:Hide();
 
     -- Clean up the Dates table separately
-    GL.Interface:get(self, "Table.Dates"):SetData({}, true);
-    GL.Interface:get(self, "Table.Dates"):Hide();
+    local Dates = GL.Interface:get(self, "Table.Dates");
+    if (Dates) then
+        GL.Interface:get(self, "Table.Dates"):SetData({}, true);
+        GL.Interface:get(self, "Table.Dates"):Hide();
+    end
 end
 
 --- Draw the dates table shown on the left hand side of the window
@@ -413,37 +470,63 @@ function Exporter:drawDatesTable(Parent, Dates)
         },
     };
 
-    local Table = ScrollingTable:CreateST(Columns, 21, 15, nil, Parent);
+    local Table = ScrollingTable:CreateST(Columns, 21, 15, nil, Parent, true);
     Table:EnableSelection(true);
     Table:SetWidth(120);
-    Table.frame:SetPoint("BOTTOMLEFT", Parent, "BOTTOMLEFT", 50, 58);
+    Table.frame:SetPoint("TOPLEFT", Parent, "TOPLEFT", 50, -80);
 
     Table:RegisterEvents{
-        OnClick = function()
-
+        OnClick = function(rowFrame, cellFrame, data, cols, row, realrow, column, table, button, ...)
             -- Even if we're still missing an answer from some of the group members
             -- we still want to make sure our inspection end after a set amount of time
             GL.Ace:ScheduleTimer(function()
-                self.dateSelected = nil;
-                local Selected = Table:GetRow(Table:GetSelection());
+                self.SelectedDates = {};
+                for _, row in pairs(Table:GetSelection() or {}) do
+                    local Row = Table:GetRow(row) or {};
 
-                if (Selected and Selected[1]) then
-                    self.dateSelected = Selected[1];
+                    if (Row["cols"]) then
+                        local date = GL:tableGet(Row, "cols.1.value");
+
+                        if (date) then
+                            tinsert(self.SelectedDates, date);
+                        end
+                    end
                 end
 
-                Exporter:refreshExportString();
+                self:refreshExportString();
             end, .1);
         end
     };
 
     local TableData = {};
+    local selectedRow = nil;
+    local i = 1;
     for _, date in pairs(Dates) do
-        tinsert(TableData, { date });
+        local Row = {
+            cols = {
+                {
+                    value = date,
+                },
+            },
+        };
+
+        if (date == self.SelectedDates[1]) then
+            selectedRow = i;
+        end
+
+        --- Can't use simple format because it's not supported by multiselection
+        tinsert(TableData, Row);
+
+        i = i + 1;
     end
 
     -- The second argument refers to "isMinimalDataformat"
     -- For the full format see https://www.wowace.com/projects/lib-st/pages/set-data
-    Table:SetData(TableData, true);
+    Table:SetData(TableData);
+
+    if (selectedRow) then
+        Table:SetSelection(selectedRow);
+    end
 
     GL.Interface:set(self, "Dates", Table);
 end

@@ -86,9 +86,10 @@ L.CHAT = {
         ROLLING_STOP = "Stop your rolls!",
         ROLLING_TIME_LEFT = "%s seconds to roll",
         ROLLING_SOFTRES_INFO = "This item was reserved by: %s",
-        ROLLING_TMB_INFO = "The following players have the highest %s prio: %s", -- First %s can be TMB/DFT/CPR
+        ROLLING_TMB_INFO = "These players have the highest %s prio: %s", -- First %s can be TMB/DFT/CPR
 
         --[[ TradeWindow / Trade ]]
+        TRADE_START_FAILED = "I tried to trade you, but was unsuccessful - trade me for ${item} asap!",
         TRADE_TO = "%s to %s",
         TRADE_TO_PART = "to %s",
         TRADE_GAVE = "I gave %s",
@@ -155,7 +156,7 @@ L.CHAT = {
 
         --[[ GDKP ]]
         GDKP_I_OWE_YOU = "Ich schulde dir %s",
-        GDKP_YOU_OWE_ME = "Du schuldest mir %a. Danke!",
+        GDKP_YOU_OWE_ME = "Du schuldest mir %s. Danke!",
         GDKP_POT_UPDATED = "Der Pott wurde aktualisiert, er enthält jetzt %s",
         GDKP_POT_UPDATED_AFTER_DELETE = "Der Pott wurde nach dem Löschen einer Auktion aktualisiert und enthält jetzt %s",
         GDKP_POT_UPDATED_AFTER_RESTORE = "Der Pott wurde nach der Wiederherstellung einer Auktion aktualisiert und enthält jetzt %s",
@@ -204,6 +205,7 @@ L.CHAT = {
         ROLLING_TMB_INFO = "Die folgenden Spieler haben die höchste %s-Prio: %s", -- First %s can be TMB/DFT/CPR
 
         --[[ TradeWindow / Trade ]]
+        TRADE_START_FAILED = "I tried to trade you, but was unsuccessful - trade me for ${item} asap!",
         TRADE_TO = "%s an %s",
         TRADE_TO_PART = "an %s",
         TRADE_GAVE = "Ich habe %s gegeben",
@@ -232,7 +234,11 @@ L.CHAT = {
         AWARD_RANDOM_WINNER = "Zufälliger Gewinner für %s ausgewählt (%s)", -- First %s is item, second %s is player,
     },
 
-    --[[ zhCN ]]
+    --[[ zhCN
+        These translations where provided by
+        - Skywardpixel
+        - Takaqiao
+    ]]
     zhCN = {
         PASS = "放弃",
         FLIGHT_ATTENDANT = "我正在使用 Gargul 来分发战利品。它使分发变得更容易，所以一定要尝试一下！",
@@ -270,7 +276,7 @@ L.CHAT = {
 
         --[[ GDKP ]]
         GDKP_I_OWE_YOU = "我欠你 %s。享受！",
-        GDKP_YOU_OWE_ME = "你欠我 %a。谢谢你！",
+        GDKP_YOU_OWE_ME = "你欠我 %s。谢谢你！",
         GDKP_POT_UPDATED = "奖池已更新，现在共有 %s",
         GDKP_POT_UPDATED_AFTER_DELETE = "删除拍卖后，奖池已更新，现在共有 %s",
         GDKP_POT_UPDATED_AFTER_RESTORE = "恢复拍卖后，奖池已更新，现在共有 %s",
@@ -297,11 +303,11 @@ L.CHAT = {
         --[[ SOFTRES ]]
         SOFTRES_MY_RESERVES_REPLY = "您已预订 %s", -- %s is a summary of all items or the SOFTRES_MY_RESERVED_ITEM_REPLY format (if more than 1 reserve)
         SOFTRES_MY_RESERVED_ITEM_REPLY = "%s (%sx)", -- First %s = item, second %s is times reserved if higher than 1
-        SOFTRES_NO_RESERVES_REPLY = "您似乎还没有软保留任何东西，请检查软资源表或询问您的战利品大师",
-        SOFTRES_HARDRESERVED_NOTICE = "%s（该商品是硬性保留的！）",
+        SOFTRES_NO_RESERVES_REPLY = "您似乎还没有软保留任何东西，请检查软保留表或询问您的战利品分配者",
+        SOFTRES_HARDRESERVED_NOTICE = "%s（该物品是硬保留的！）",
         SOFTRES_DETAILS = "保留者：%s",
-        SOFTRES_MISSING_RESERVES = "缺少软储备：%s",
-        SOFTRES_DATA_IMPORTED = "我刚刚将软储备导入 Gargul。私聊输入 !sr 仔细检查您的储备！",
+        SOFTRES_MISSING_RESERVES = "缺少软保留：%s",
+        SOFTRES_DATA_IMPORTED = "我刚刚将软保留导入 Gargul。私聊输入 !sr 仔细检查您的保留！",
 
         --[[ THATSMYBIS ]]
         TMB_WISHLIST_DETAILS = "TMB 愿望清单：%s",
@@ -312,32 +318,33 @@ L.CHAT = {
         PACKMULE_DISENCHANTMENT_NOTICE = "%s会被%s分解",
 
         --[[ ROLLING ]]
-        ROLLING_START = "您还有 %s 秒时间继续 %s",
-        ROLLING_STOP = "停止你的Roll点！",
-        ROLLING_TIME_LEFT = "还剩 %s 秒结束Roll点",
+        ROLLING_START = "您还有 %s 秒时间 Roll %s",
+        ROLLING_STOP = "停止你的 Roll 点！",
+        ROLLING_TIME_LEFT = "还剩 %s 秒结束 Roll 点",
         ROLLING_SOFTRES_INFO = "该项目已被保留：%s",
         ROLLING_TMB_INFO = "以下玩家的 %s 优先级最高：%s", -- First %s can be TMB/DFT/CPR
 
         --[[ TradeWindow / Trade ]]
+        TRADE_START_FAILED = "I tried to trade you, but was unsuccessful - trade me for ${item} asap!",
         TRADE_TO = "%s 给 %s",
         TRADE_TO_PART = "给 %s",
-        TRADE_GAVE = "我给了%s",
+        TRADE_GAVE = "我给了 %s",
         TRADE_GAVE_GOLD = "我将 %s 给了 %s",
         TRADE_GAVE_MULTIPLE_OF_ITEM = "我给了 %sx%s", -- I gave [item]x3
-        TRADE_GAVE_ENCHANTMENT = "我为 %s 对 %s 附魔",
+        TRADE_GAVE_ENCHANTMENT = "我给 %s 的 %s 附魔了",
         TRADE_GAVE_ENCHANTMENT_AND_GOLD = "我为 %s 用 %s 对 %s 附魔，并给了 %s",
         TRADE_GAVE_ENCHANTMENT_FOR_GOLD = "我为 %s 用 %s 对 %s 附魔，并收到了 %s",
-        TRADE_GAVE_ENCHANTMENT_AFTER_ITEMS_PART = "给 %s 附魔了 %s 用的是他的 %s",
-        TRADE_GAVE_ENCHANTMENT_AFTER_ITEMS = "%s 给 %s 附魔了 %s 用的是他的 %s",
-        TRADE_GOT_ENCHANTMENT = "%s 附魔了我的 %s 用的是 %s",
+        TRADE_GAVE_ENCHANTMENT_AFTER_ITEMS_PART = "给 %s 附魔了 %s，用的是他的 %s",
+        TRADE_GAVE_ENCHANTMENT_AFTER_ITEMS = "%s 给 %s 附魔了 %s，用的是他的 %s",
+        TRADE_GOT_ENCHANTMENT = "%s 附魔了我的 %s （用了 %s）",
         TRADE_GOT_ENCHANTMENT_AND_GOLD = "%s 附魔了 %s 用的是 %s 并给了我 %s",
         TRADE_GOT_ENCHANTMENT_FOR_GOLD = "%s 附魔了 %s 用的是 %s 并给了 %s",
-        TRADE_GOT_ENCHANTMENT_AND_GAVE_ENCHANTMENT = "%s 用 %s 对我的 %s 施了魔法，我用 %s 对他们的 %s 施了魔法",
-        TRADE_GOT_ENCHANTMENT_AND_GAVE_ENCHANTMENT_AND_GAVE_GOLD = "%s 附魔了我的 %s 用的是 %s 而且我附魔了他的 %s 用的是 %s. 我还给了他 %s",
-        TRADE_GOT_ENCHANTMENT_AND_GOLD_AND_GAVE_ENCHANTMENT = "%s 附魔了我的 %s 用的是 %s 并且给了我 %s. 我附魔了他的 %s 用的是 %s",
+        TRADE_GOT_ENCHANTMENT_AND_GAVE_ENCHANTMENT = "%s 用 %s 附魔了我的 %s ，我用 %s 附魔了他的 %s ",
+        TRADE_GOT_ENCHANTMENT_AND_GAVE_ENCHANTMENT_AND_GAVE_GOLD = "%s 用 %s 附魔了我的 %s，而且我附魔了他的 %s（用了 %s），我还给了他 %s",
+        TRADE_GOT_ENCHANTMENT_AND_GOLD_AND_GAVE_ENCHANTMENT = "%s 附魔了我的 %s（用了 %s）并且给了我 %s， 我附魔了他的 %s （用了 %s）",
         TRADE_FROM = "%s 来自 %s",
         TRADE_FROM_PART = "来自 %s",
-        TRADE_RECEIVED = "我收到%s",
+        TRADE_RECEIVED = "我收到 %s",
         TRADE_RECEIVED_GOLD = "我收到了来自 %s 的 %s",
         TRADE_RECEIVED_MULTIPLE_OF_ITEM = "我收到了 %sx%s", -- I gave [item]x3
         TRADE_RECEIVED_ENCHANTMENT_AFTER_ITEMS_PART = "来自 %s 并让我的 %s 附魔了 %s",
@@ -385,7 +392,7 @@ L.CHAT = {
 
         --[[ GDKP ]]
         GDKP_I_OWE_YOU = "Te debo %s. ¡Disfrutar!",
-        GDKP_YOU_OWE_ME = "Me debes %a. ¡Gracias!",
+        GDKP_YOU_OWE_ME = "Me debes %s. ¡Gracias!",
         GDKP_POT_UPDATED = "El bote fue actualizado, ahora contiene %s",
         GDKP_POT_UPDATED_AFTER_DELETE = "El bote se actualizó después de eliminar una subasta, ahora tiene %s",
         GDKP_POT_UPDATED_AFTER_RESTORE = "El bote se actualizó después de restaurar una subasta, ahora tiene %s",
@@ -434,6 +441,7 @@ L.CHAT = {
         ROLLING_TMB_INFO = "Los siguientes jugadores tienen el %s prio más alto: %s", -- First %s can be TMB/DFT/CPR
 
         --[[ TradeWindow / Trade ]]
+        TRADE_START_FAILED = "I tried to trade you, but was unsuccessful - trade me for ${item} asap!",
         TRADE_TO = "%s a %s",
         TRADE_TO_PART = "a %s",
         TRADE_GAVE = "Le di %s",
@@ -462,7 +470,10 @@ L.CHAT = {
         AWARD_RANDOM_WINNER = "Ganador aleatorio para %s seleccionados (%s)", -- First %s is item, second %s is player,
     },
 
-    --[[ frFR ]]
+    --[[ frFR
+        These translations where provided by
+        - Bhahlou
+    ]]
     frFR = {
         PASS = "Passer",
         FLIGHT_ATTENDANT = "J'utilise Gargul pour distribuer le butin. Cela rend les lancers de dés plus faciles, donc essayez-le !",
@@ -549,6 +560,7 @@ L.CHAT = {
         ROLLING_TMB_INFO = "Les joueurs suivants ont la plus haute prio %s : %s", -- First %s can be TMB/DFT/CPR
 
         --[[ TradeWindow / Trade ]]
+        TRADE_START_FAILED = "I tried to trade you, but was unsuccessful - trade me for ${item} asap!",
         TRADE_TO = "%s à %s",
         TRADE_TO_PART = "à %s",
         TRADE_GAVE = "J'ai donné %s",
@@ -615,7 +627,7 @@ L.CHAT = {
 
         --[[ GDKP ]]
         GDKP_I_OWE_YOU = "Ti devo %s. Godere!",
-        GDKP_YOU_OWE_ME = "Mi devi %a. Grazie!",
+        GDKP_YOU_OWE_ME = "Mi devi %s. Grazie!",
         GDKP_POT_UPDATED = "Il piatto è stato aggiornato, ora contiene %s",
         GDKP_POT_UPDATED_AFTER_DELETE = "Il piatto è stato aggiornato dopo aver eliminato un'asta, ora contiene %s",
         GDKP_POT_UPDATED_AFTER_RESTORE = "Il piatto è stato aggiornato dopo aver ripristinato un'asta, ora contiene %s",
@@ -664,6 +676,7 @@ L.CHAT = {
         ROLLING_TMB_INFO = "I seguenti giocatori hanno il vantaggio di %s più alto: %s", -- First %s can be TMB/DFT/CPR
 
         --[[ TradeWindow / Trade ]]
+        TRADE_START_FAILED = "I tried to trade you, but was unsuccessful - trade me for ${item} asap!",
         TRADE_TO = "Da %s a %s",
         TRADE_TO_PART = "a %s",
         TRADE_GAVE = "Ho dato %s",
@@ -730,7 +743,7 @@ L.CHAT = {
 
         --[[ GDKP ]]
         GDKP_I_OWE_YOU = "당신에게 빚진 게 있어요 %s. 즐기다!",
-        GDKP_YOU_OWE_ME = "나한테 빚진 게 있어 %a. 감사합니다!",
+        GDKP_YOU_OWE_ME = "나한테 빚진 게 있어 %s. 감사합니다!",
         GDKP_POT_UPDATED = "냄비가 업데이트되어 이제 %s을(를) 보유하고 있습니다.",
         GDKP_POT_UPDATED_AFTER_DELETE = "경매를 삭제한 후 냄비가 업데이트되어 현재 %s을(를) 보유하고 있습니다.",
         GDKP_POT_UPDATED_AFTER_RESTORE = "경매를 복원한 후 냄비가 업데이트되어 이제 %s을(를) 보유하고 있습니다.",
@@ -779,6 +792,7 @@ L.CHAT = {
         ROLLING_TMB_INFO = "다음 플레이어의 %s 우선 순위가 가장 높습니다: %s", -- First %s can be TMB/DFT/CPR
 
         --[[ TradeWindow / Trade ]]
+        TRADE_START_FAILED = "I tried to trade you, but was unsuccessful - trade me for ${item} asap!",
         TRADE_TO = "%s ~ %s",
         TRADE_TO_PART = "%s에게",
         TRADE_GAVE = "%s을(를) 줬습니다",
@@ -845,7 +859,7 @@ L.CHAT = {
 
         --[[ GDKP ]]
         GDKP_I_OWE_YOU = "Eu devo a você %s. Aproveitar!",
-        GDKP_YOU_OWE_ME = "Você me deve %a. Obrigado!",
+        GDKP_YOU_OWE_ME = "Você me deve %s. Obrigado!",
         GDKP_POT_UPDATED = "O pote foi atualizado, agora contém %s",
         GDKP_POT_UPDATED_AFTER_DELETE = "O pote foi atualizado após a exclusão de um leilão, agora contém %s",
         GDKP_POT_UPDATED_AFTER_RESTORE = "O pote foi atualizado após restaurar um leilão, agora contém %s",
@@ -894,8 +908,9 @@ L.CHAT = {
         ROLLING_TMB_INFO = "Os seguintes jogadores têm o maior %s prio: %s", -- First %s can be TMB/DFT/CPR
 
         --[[ TradeWindow / Trade ]]
+        TRADE_START_FAILED = "I tried to trade you, but was unsuccessful - trade me for ${item} asap!",
         TRADE_TO = "%s para %s",
-        TRADE_TO_PART = "para% s",
+        TRADE_TO_PART = "para %s",
         TRADE_GAVE = "Eu dei %s",
         TRADE_GAVE_GOLD = "Eu dei %s para %s",
         TRADE_GAVE_MULTIPLE_OF_ITEM = "Eu dei %sx%s", -- I gave [item]x3
@@ -922,28 +937,31 @@ L.CHAT = {
         AWARD_RANDOM_WINNER = "Vencedor aleatório para %s selecionados (%s)", -- First %s is item, second %s is player,
     },
 
-    --[[ ruRU ]]
+    --[[ ruRU
+        These translations where provided by
+        - KartonArmadon
+    ]]
     ruRU = {
-        PASS = "Проходить",
-        FLIGHT_ATTENDANT = "Я использую Гаргул для раздачи добычи. Это облегчает катание, поэтому обязательно попробуйте!",
+        PASS = "Пас",
+        FLIGHT_ATTENDANT = "Я использую Gargul! Аддон облегчает раздачу добычи, поэтому обязательно попробуйте!",
 
         --[[ VERSION CHECK ]]
-        VERSION_CHECK_MISSING = "Гаргул пропал из-за:",
-        VERSION_CHECK_OUTDATED = "Гаргул устарел для:",
+        VERSION_CHECK_MISSING = "Gargul не найден:",
+        VERSION_CHECK_OUTDATED = "Gargul устарел:",
         VERSION_CHECK_OFFLINE = "Следующие игроки были оффлайн:",
 
         --[[ ITEM AWARDED ]]
-        ITEM_AWARDED = "%s был присужден %s. Поздравляю!",
-        ITEM_AWARDED_BR = "%s был присужден %s за %s баллов. Поздравляю!",
-        ITEM_AWARDED_GDKP = "%s был присужден %s за %s. Поздравляю!",
+        ITEM_AWARDED = "%s выиграл %s. Поздравляю!",
+        ITEM_AWARDED_BR = "%s выиграл %s за %s баллов. Поздравляю!",
+        ITEM_AWARDED_GDKP = "%s выиграл %s за %s. Поздравляю!",
 
         --[[ TRADE DETAILS ]]
         GOLD_TRADE_GIVEN = "Я отдал %s %s",
-        GOLD_TRADE_GIVEN_DELETED = "Я удалил сделку по золоту, в которой я отдал %s %s",
-        GOLD_TRADE_GIVEN_RESTORED = "Я восстановил сделку по золоту, в которой я отдал %s %s",
+        GOLD_TRADE_GIVEN_DELETED = "Я удалил обмен золотом, в котором я отдал %s %s",
+        GOLD_TRADE_GIVEN_RESTORED = "Я восстановил обмен золотом, в котором я отдал %s %s",
         GOLD_TRADE_RECEIVED = "Я получил %s от %s",
-        GOLD_TRADE_RECEIVED_DELETED = "Я удалил сделку по золоту, в которой я получил %s от %s",
-        GOLD_TRADE_RECEIVED_RESTORED = "Я восстановил сделку по золоту, в которой получил %s от %s",
+        GOLD_TRADE_RECEIVED_DELETED = "Я удалил обмен золотом, в котором я получил %s от %s",
+        GOLD_TRADE_RECEIVED_RESTORED = "Я восстановил обмен золотом, в котором получил %s от %s",
 
         --[[ TRADE TIME ]]
         TRADETIME_BROADCAST_PREFIX = "У меня остались следующие предметы для обмена",
@@ -959,96 +977,97 @@ L.CHAT = {
         PLUSONES_OTHER_BALANCE_REPLY = "Сумма +1 игрока %s составляет %d",
 
         --[[ GDKP ]]
-        GDKP_I_OWE_YOU = "Я должен тебе %s. Наслаждаться!",
-        GDKP_YOU_OWE_ME = "Ты мне должен, %a. Спасибо!",
-        GDKP_POT_UPDATED = "Банк был обновлен, теперь он содержит %s",
-        GDKP_POT_UPDATED_AFTER_DELETE = "Банк был обновлен после удаления аукциона, теперь в нем находится %s.",
-        GDKP_POT_UPDATED_AFTER_RESTORE = "Банк был обновлен после восстановления аукциона, теперь он содержит %s.",
-        GDKP_REMOVED_AWARDED = "Я удалил %s, присужденный %s за %s",
-        GDKP_RESTORED_AWARDED = "Я восстановил %s, присужденный %s за %s",
-        GDKP_REMOVED_GOLD = "Я удалил %sg из горшка",
-        GDKP_RESTORED_GOLD = "Я добавил %sg обратно в банк",
-        GDKP_POT_HOLDS = "В банке теперь %s",
-        GDKP_CONFIRM_TOP_BID = "%s предлагает самую высокую цену (%s)",
-        GDKP_FINAL_CALL = "Последний звонок для %s: до ставки осталось %s секунд!",
-        GDKP_BID_DENIED = "Ставка отклонена, минимальная ставка — %s.",
-        GDKP_START_BIDDING = "Ставка на %s. Минимум — %s, приращение — %s. Используйте рейдовый чат!",
-        GDKP_STOP_BIDDING = "Прекратите свои ставки!",
-        GDKP_SECONDS_TO_BID = "%s секунд, чтобы сделать ставку",
+        GDKP_I_OWE_YOU = "Я должен тебе %s",
+        GDKP_YOU_OWE_ME = "Ты мне должен, %s",
+        GDKP_POT_UPDATED = "Банк обновлен. Общая сумма %s",
+        GDKP_POT_UPDATED_AFTER_DELETE = "Банк обновлен после удаления аукциона. Общая сумма %s.",
+        GDKP_POT_UPDATED_AFTER_RESTORE = "Банк обновлен после восстановления аукциона. Общая сумма %s.",
+        GDKP_REMOVED_AWARDED = "Я удалил %s игрока %s за %s",
+        GDKP_RESTORED_AWARDED = "Я восстановил %s игрока %s за %s",
+        GDKP_REMOVED_GOLD = "Я удалил %sg из банка",
+        GDKP_RESTORED_GOLD = "Я восстановил %sg в банке",
+        GDKP_POT_HOLDS = "В банке сейчас %s",
+        GDKP_CONFIRM_TOP_BID = "Высшая ставка %s (%s)",
+        GDKP_FINAL_CALL = "Аукион на %s завершается: осталось %sсек.!",
+        GDKP_BID_DENIED = "Ставка отклонена, мин. ставка %s.",
+        GDKP_START_BIDDING = "Ставка на %s. Старт %s, шаг %s!",
+        GDKP_STOP_BIDDING = "Аукцион завершён!",
+        GDKP_SECONDS_TO_BID = "%s сек. осталось",
         GDKP_POT_TOTAL = "Общий банк: %s",
-        GDKP_BASE_CUT = "Базовый разрез: %s",
+        GDKP_BASE_CUT = "Базовая доля: %s",
 
         --[[ MULTIAUCTION ]]
-        MULTIAUCTION_STARTED = "Я начал торги. Не можете этого увидеть? Обязательно скачайте/обновите Gargul!",
-        MULTIAUCTION_RESUMED = "Я возобновил предыдущую сессию торгов. Проверьте свои ставки еще раз!",
-        MULTIAUCTION_ITEMS_ADDED = "Я добавил %s товара на аукцион на общую сумму %s",
+        MULTIAUCTION_STARTED = "Я начал мультиаукцион. Если не отображается, то скачайте/обновите Gargul!",
+        MULTIAUCTION_RESUMED = "Я возобновил предыдущий мультиаукцион. Проверьте свои ставки!",
+        MULTIAUCTION_ITEMS_ADDED = "Я добавил %s товар(ов) на мультиаукцион на %s",
         MULTIAUCTION_FINISHED = "Мультиаукцион завершен. В банке теперь %s",
 
         --[[ SOFTRES ]]
-        SOFTRES_MY_RESERVES_REPLY = "Вы зарезервировали %s", -- %s is a summary of all items or the SOFTRES_MY_RESERVED_ITEM_REPLY format (if more than 1 reserve)
+        SOFTRES_MY_RESERVES_REPLY = "Ваш софтрезерв %s", -- %s is a summary of all items or the SOFTRES_MY_RESERVED_ITEM_REPLY format (if more than 1 reserve)
         SOFTRES_MY_RESERVED_ITEM_REPLY = "%s (%sx)", -- First %s = item, second %s is times reserved if higher than 1
-        SOFTRES_NO_RESERVES_REPLY = "Похоже, вы еще ничего не зарезервировали, проверьте таблицу мягкого разрешения или спросите своего мастера добычи.",
-        SOFTRES_HARDRESERVED_NOTICE = "%s (Этот предмет жестко зарезервирован!)",
-        SOFTRES_DETAILS = "Зарезервировано: %s",
-        SOFTRES_MISSING_RESERVES = "Отсутствуют мягкие резервы от: %s",
-        SOFTRES_DATA_IMPORTED = "Я только что импортировал мягкие резервы в Гаргул. Шепните !sr, чтобы перепроверить свои резервы!",
+        SOFTRES_NO_RESERVES_REPLY = "Похоже, вы еще ничего не резервировали, проверьте таблицу софтрезерва или спросите ответственного за добычу.",
+        SOFTRES_HARDRESERVED_NOTICE = "%s (Этот предмет в хардрезерве!)",
+        SOFTRES_DETAILS = "Софтрезерв: %s",
+        SOFTRES_MISSING_RESERVES = "Отсутствуют софтрезервы от: %s",
+        SOFTRES_DATA_IMPORTED = "Я только что импортировал софтрезервы в Gargul. Шепните мне !sr, чтобы перепроверить резервы!",
 
         --[[ THATSMYBIS ]]
-        TMB_WISHLIST_DETAILS = "Список желаний ТМБ: %s",
+        TMB_WISHLIST_DETAILS = "Список ThatsMyBis: %s",
         TMB_PRIORITY_DETAILS = "%s Приоритет: %s", -- First %s can be TMB/DFT/CPR
 
         --[[ PACKMULE ]]
-        PACKMULE_DISENCHANTER_SET = "%s был назначен распылителем",
-        PACKMULE_DISENCHANTMENT_NOTICE = "%s будет разочарован %s",
+        PACKMULE_DISENCHANTER_SET = "%s был назначен дизэнчантером",
+        PACKMULE_DISENCHANTMENT_NOTICE = "%s будет распылён %s",
 
         --[[ ROLLING ]]
-        ROLLING_START = "У вас есть %s секунд, чтобы броситься на %s",
-        ROLLING_STOP = "Прекратите свои роллы!",
-        ROLLING_TIME_LEFT = "%s секунд до переката",
+        ROLLING_START = "У вас есть %sсек., чтобы разроллить %s",
+        ROLLING_STOP = "Остановите разролл!",
+        ROLLING_TIME_LEFT = "%sсек. осталось",
         ROLLING_SOFTRES_INFO = "Этот товар зарезервировал: %s",
-        ROLLING_TMB_INFO = "Следующие игроки имеют самый высокий процент %s: %s", -- First %s can be TMB/DFT/CPR
+        ROLLING_TMB_INFO = "Следующие игроки имеют самый высокий ролл %s приоритет: %s", -- First %s can be TMB/DFT/CPR
 
         --[[ TradeWindow / Trade ]]
-        TRADE_TO = "от %s до %s",
-        TRADE_TO_PART = "до %s",
-        TRADE_GAVE = "я дал %s",
+        TRADE_START_FAILED = "Не получилось передать предмет - кинь мне обмен за ${item}!",
+        TRADE_TO = "от кого: %s кому: %s",
+        TRADE_TO_PART = "кому: %s",
+        TRADE_GAVE = "Я отдал %s",
         TRADE_GAVE_GOLD = "Я отдал %s %s",
-        TRADE_GAVE_MULTIPLE_OF_ITEM = "Я дал %sx%s", -- I gave [item]x3
-        TRADE_GAVE_ENCHANTMENT = "Я зачаровал %s с помощью %s для %s",
-        TRADE_GAVE_ENCHANTMENT_AND_GOLD = "Я зачаровал %s с помощью %s для %s и подарил %s",
-        TRADE_GAVE_ENCHANTMENT_FOR_GOLD = "Я зачаровал %s с помощью %s для %s и получил %s",
-        TRADE_GAVE_ENCHANTMENT_AFTER_ITEMS_PART = "%s и зачаровал их %s %s",
-        TRADE_GAVE_ENCHANTMENT_AFTER_ITEMS = "%s к %s и зачаровали своего %s %s",
-        TRADE_GOT_ENCHANTMENT = "%s очаровал моего %s %s",
-        TRADE_GOT_ENCHANTMENT_AND_GOLD = "%s очаровал моего %s %s и подарил мне %s",
-        TRADE_GOT_ENCHANTMENT_FOR_GOLD = "%s очаровал моего %s с помощью %s для %s",
-        TRADE_GOT_ENCHANTMENT_AND_GAVE_ENCHANTMENT = "%s зачаровал моего %s с помощью %s, а я зачаровал их %s с помощью %s",
-        TRADE_GOT_ENCHANTMENT_AND_GAVE_ENCHANTMENT_AND_GAVE_GOLD = "%s зачаровал моего %s с помощью %s, а я зачаровал их %s с помощью %s. Я также дал ему %s",
-        TRADE_GOT_ENCHANTMENT_AND_GOLD_AND_GAVE_ENCHANTMENT = "%s зачаровал моего %s %s и подарил мне %s. Я зачаровал их %s с помощью %s",
-        TRADE_FROM = "%s из %s",
+        TRADE_GAVE_MULTIPLE_OF_ITEM = "Я отдал %sx%s", -- I gave [item]x3
+        TRADE_GAVE_ENCHANTMENT = "Я зачаровал %s за %s для %s",
+        TRADE_GAVE_ENCHANTMENT_AND_GOLD = "Я зачаровал %s за %s для %s и передал %s",
+        TRADE_GAVE_ENCHANTMENT_FOR_GOLD = "Я зачаровал %s за %s для %s и получил %s",
+        TRADE_GAVE_ENCHANTMENT_AFTER_ITEMS_PART = "%s и зачаровал его %s за %s",
+        TRADE_GAVE_ENCHANTMENT_AFTER_ITEMS = "Передал %s %s и зачаровал его %s за %s",
+        TRADE_GOT_ENCHANTMENT = "%s зачаровал мой %s за %s",
+        TRADE_GOT_ENCHANTMENT_AND_GOLD = "%s зачаровал мой %s за %s и передал мне %s",
+        TRADE_GOT_ENCHANTMENT_FOR_GOLD = "%s зачаровал мой %s за %s и %s",
+        TRADE_GOT_ENCHANTMENT_AND_GAVE_ENCHANTMENT = "%s зачаровал мой %s за %s, а я зачаровал его %s за %s",
+        TRADE_GOT_ENCHANTMENT_AND_GAVE_ENCHANTMENT_AND_GAVE_GOLD = "%s зачаровал мой %s за %s, а я зачаровал его %s за %s и дал ему %s",
+        TRADE_GOT_ENCHANTMENT_AND_GOLD_AND_GAVE_ENCHANTMENT = "%s зачаровал мой %s за %s и дал мне %s. Я зачаровал его %s за %s",
+        TRADE_FROM = "%s от %s",
         TRADE_FROM_PART = "от %s",
         TRADE_RECEIVED = "Я получил %s",
         TRADE_RECEIVED_GOLD = "Я получил %s от %s",
         TRADE_RECEIVED_MULTIPLE_OF_ITEM = "Я получил %sx%s", -- I gave [item]x3
-        TRADE_RECEIVED_ENCHANTMENT_AFTER_ITEMS_PART = "от %s и зачаровал моего %s %s",
-        TRADE_RECEIVED_ENCHANTMENT_AFTER_ITEMS = "%s от %s и мой %s был зачарован %s",
+        TRADE_RECEIVED_ENCHANTMENT_AFTER_ITEMS_PART = "от %s и получил мой %s зачарованный за %s",
+        TRADE_RECEIVED_ENCHANTMENT_AFTER_ITEMS = "%s от %s и получил мой %s зачарованный за %s",
 
         --[[ AWARD ]]
-        AWARD_RANDOM_WINNER = "Случайный победитель выбран для %s (%s)", -- First %s is item, second %s is player,
+        AWARD_RANDOM_WINNER = "Случайный победитель на %s выбран (%s)", -- First %s is item, second %s is player,
     },
 
     --[[ zhTW ]]
     zhTW = {
-        PASS = "經過",
-        FLIGHT_ATTENDANT = "我正在使用 Gargul 來分發戰利品。它使滾動變得更容易，所以一定要嘗試！",
+        PASS = "放棄",
+        FLIGHT_ATTENDANT = "我正在使用 Gargul 來分裝。它使分裝變得更容易，值得一試！",
 
         --[[ VERSION CHECK ]]
-        VERSION_CHECK_MISSING = "加古爾失蹤原因：",
-        VERSION_CHECK_OUTDATED = "Gargul 已過時：",
+        VERSION_CHECK_MISSING = "未安裝 Gargul：",
+        VERSION_CHECK_OUTDATED = "Gargul 版本過舊：",
         VERSION_CHECK_OFFLINE = "以下玩家離線：",
 
         --[[ ITEM AWARDED ]]
-        ITEM_AWARDED = "%s 被授予 %s。恭喜！",
+        ITEM_AWARDED = "%s 的幸運得主為 %s 。恭喜！",
         ITEM_AWARDED_BR = "%s 被授予 %s %s 積分。恭喜！",
         ITEM_AWARDED_GDKP = "%s 因 %s 而被授予 %s。恭喜！",
 
@@ -1061,7 +1080,7 @@ L.CHAT = {
         GOLD_TRADE_RECEIVED_RESTORED = "我恢復了一筆黃金交易，其中我從 %s 收到了 %s",
 
         --[[ TRADE TIME ]]
-        TRADETIME_BROADCAST_PREFIX = "我還有以下物品需要交易",
+        TRADETIME_BROADCAST_PREFIX = "我還有以下物品尚未交易",
 
         --[[ BOOSTED ROLLS ]]
         BOOSTED_ROLLS_MY_BALANCE_REPLY = "你的 %s 卷是 /rnd %d-%d%s",
@@ -1070,12 +1089,12 @@ L.CHAT = {
 
         --[[ PLUS ONES ]]
         PLUSONES_PLUS_SIGN = "+",
-        PLUSONES_MY_BALANCE_REPLY = "您的 +1 總數為 %d",
-        PLUSONES_OTHER_BALANCE_REPLY = "玩家 %s 的 +1 總數為 %d",
+        PLUSONES_MY_BALANCE_REPLY = "您的拿裝總數為 %d",
+        PLUSONES_OTHER_BALANCE_REPLY = "玩家 %s 的拿裝總數為 %d",
 
         --[[ GDKP ]]
         GDKP_I_OWE_YOU = "我欠你%s。享受！",
-        GDKP_YOU_OWE_ME = "你欠我%a。謝謝你！",
+        GDKP_YOU_OWE_ME = "你欠我%s。謝謝你！",
         GDKP_POT_UPDATED = "罐子已更新，現在容納 %s",
         GDKP_POT_UPDATED_AFTER_DELETE = "刪除拍賣後，鍋子已更新，現在持有 %s",
         GDKP_POT_UPDATED_AFTER_RESTORE = "恢復拍賣後，底池已更新，現在持有 %s",
@@ -1117,16 +1136,17 @@ L.CHAT = {
         PACKMULE_DISENCHANTMENT_NOTICE = "%s將會因%s而不再抱持幻想",
 
         --[[ ROLLING ]]
-        ROLLING_START = "您還有 %s 秒時間繼續 %s",
-        ROLLING_STOP = "停止你的捲！",
-        ROLLING_TIME_LEFT = "%s 秒滾動",
+        ROLLING_START = "倒數 %s 秒，裝備為 %s",
+        ROLLING_STOP = "停！",
+        ROLLING_TIME_LEFT = "倒數 %s 秒",
         ROLLING_SOFTRES_INFO = "此項目已保留：%s",
         ROLLING_TMB_INFO = "以下玩家的 %s 優先順序最高：%s", -- First %s can be TMB/DFT/CPR
 
         --[[ TradeWindow / Trade ]]
+        TRADE_START_FAILED = "我嘗試與你交易，但失敗了。麻煩盡速與我交易 ${item} !",
         TRADE_TO = "%s 至 %s",
         TRADE_TO_PART = "至 %s",
-        TRADE_GAVE = "我給了%s",
+        TRADE_GAVE = "我給出了 %s",
         TRADE_GAVE_GOLD = "我把 %s 給了 %s",
         TRADE_GAVE_MULTIPLE_OF_ITEM = "我給了 %sx%s", -- I gave [item]x3
         TRADE_GAVE_ENCHANTMENT = "我為 %s 對 %s 施了魔法",
@@ -1142,7 +1162,7 @@ L.CHAT = {
         TRADE_GOT_ENCHANTMENT_AND_GOLD_AND_GAVE_ENCHANTMENT = "%s 用 %s 對我的 %s 施了魔法，並給了我 %s。我用 %s 迷住了他們的 %s",
         TRADE_FROM = "%s 來自 %s",
         TRADE_FROM_PART = "來自 %s",
-        TRADE_RECEIVED = "我收到%s",
+        TRADE_RECEIVED = "我收到了 %s",
         TRADE_RECEIVED_GOLD = "我收到了來自 %s 的 %s",
         TRADE_RECEIVED_MULTIPLE_OF_ITEM = "我收到了 %sx%s", -- I gave [item]x3
         TRADE_RECEIVED_ENCHANTMENT_AFTER_ITEMS_PART = "來自 %s 並讓我的 %s 著迷於 %s",

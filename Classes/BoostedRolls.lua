@@ -37,6 +37,7 @@ function BoostedRolls:_init()
 
     -- Make sure BoostedRoll changes are only broadcasted once every 3 seconds
     GL.Events:register("BoostedRollsUpdateQueuedListener", "GL.BOOSTED_ROLLS_UPDATE_QUEUED", function ()
+        GL.Interface.BoostedRolls.Overview:refreshTable();
         GL.Ace:CancelTimer(self.QueuedUpdateBroadcastTimer);
 
         self.QueuedUpdateBroadcastTimer = GL.Ace:ScheduleTimer(function ()
@@ -66,7 +67,7 @@ end
 ---@param playerName string
 ---@return string
 function BoostedRolls:normalizedName(playerName)
-    local normalizedName = string.lower(GL:addRealm(playerName));
+    local normalizedName = strlower(GL:addRealm(playerName));
 
     --- Follow alias table if present
     return GL.DB:get("BoostedRolls.Aliases." .. normalizedName, normalizedName);
@@ -304,8 +305,17 @@ end;
 ---@param points number
 ---@return number
 function BoostedRolls:minBoostedRoll(points)
-    if (GL.Settings:get("BoostedRolls.fixedRolls", false)) then
+    local Systems = GL.Data.Constants.BoostedRollSystems;
+    local system = GL.Settings:get("BoostedRolls.system", Systems.INCREASED_BOTH);
+
+    -- Fixed will result in player with 140 points rolling /rnd 140-140
+    if (system == Systems.FIXED) then
         return math.max(1, math.min(GL.Settings:get("BoostedRolls.reserveThreshold", 0), points));
+    end
+
+    -- Increased max will result in player with 140 points rolling /rnd 1-140
+    if (system == Systems.INCREASED_MAX) then
+        return 1;
     end
 
     -- /rnd 1-100 yields 100 possible numbers
@@ -446,6 +456,7 @@ function BoostedRolls:setPoints(name, points, dontBroadcast)
         return;
     end
 
+    points = min(GL.Settings:get("BoostedRolls.maxmimumPoints", points), points);
     self.MaterializedData.DetailsByPlayerName[normalizedName].points = points;
     DB:set("BoostedRolls.Points." .. normalizedName, points);
     DB:set("BoostedRolls.MetaData.updatedAt", GetServerTime());
@@ -455,6 +466,8 @@ function BoostedRolls:setPoints(name, points, dontBroadcast)
     ) then
         self:broadcastUpdate(normalizedName, points);
     end
+
+    return points;
 end
 
 --- Delete an entry
@@ -603,8 +616,8 @@ function BoostedRolls:addMissingRaiders()
 
     -- Not in a group, add the current player
     if (not GL.User.isInGroup) then
-        if (not self:hasPoints(GL.User.fqn)) then
-            DB:set("BoostedRolls.Points." .. GL.User.fqn, default);
+        if (not self:hasPoints(BoostedRolls:myGUID())) then
+            DB:set("BoostedRolls.Points." .. BoostedRolls:myGUID(), default);
         end
 
     -- Go through everyone in the raid
@@ -807,7 +820,9 @@ end
 ---
 ---@return void
 function BoostedRolls:requestData()
-    if (self.requestingData) then
+    if (self.requestingData
+        or (_G.UnitInBattleground and UnitInBattleground("player"))
+    ) then
         return;
     end
 
@@ -928,14 +943,13 @@ end
 ---
 ---@param playerName string
 ---@param points number
+---
+---@return number
 function BoostedRolls:addPoints(playerName, points)
-    if (points <= 0) then
-        return;
-    end
-
+    playerName = self:normalizedName(playerName);
     local currentPoints = self:getPoints(playerName) or 0;
 
-    self:queueUpdate(playerName, currentPoints + points);
+    return self:queueUpdate(playerName, currentPoints + points);
 end
 
 --- Subtract points from a give user's balance
@@ -947,6 +961,7 @@ function BoostedRolls:subtractPoints(playerName, points)
         return;
     end
 
+    playerName = self:normalizedName(playerName);
     local currentPoints = self:getPoints(playerName) or 0;
 
     self:queueUpdate(playerName, currentPoints - points);
@@ -983,6 +998,9 @@ function BoostedRolls:queueUpdate(playerName, points, aliases, delete)
 
     -- Fire an event to let the application know that an update was queued
     GL.Events:fire("GL.BOOSTED_ROLLS_UPDATE_QUEUED");
+
+    -- Return the BR points after sanitation
+    return self:getPoints(playerName);
 end
 
 --- Send out the queued updates
@@ -1053,6 +1071,7 @@ end
 function BoostedRolls:receiveUpdate(CommMessage)
     -- No need to update our tables if we broadcasted them ourselves
     if (CommMessage.Sender.isSelf) then
+        GL.Interface.BoostedRolls.Overview:refreshTable();
         return true;
     end
 
@@ -1062,6 +1081,10 @@ function BoostedRolls:receiveUpdate(CommMessage)
     local updates = CommMessage.content.updates or {};
 
     local importBroadcast = (function (update)
+        if (type(update) ~= "table") then
+            return;
+        end
+
         local playerName = update.playerName or '';
         local aliases = update.aliases or nil;
         local points = update.points or nil;

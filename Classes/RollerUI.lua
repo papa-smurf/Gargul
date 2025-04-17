@@ -124,7 +124,7 @@ function RollerUI:draw(time, itemLink, itemIcon, note, SupportedRolls, userCanUs
                 local Text = GL.AceGUI:Create("Label");
                 Text:SetText(L.ROLLING_ROLL_ACCEPTED);
                 RollAcceptedNotification:AddChild(Text);
-                Text:SetJustifyH("MIDDLE");
+                Text:SetJustifyH("CENTER");
 
                 self.RollAcceptedTimer = GL.Ace:ScheduleTimer(function ()
                     RollAcceptedNotification.frame:Hide();

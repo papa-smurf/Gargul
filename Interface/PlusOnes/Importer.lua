@@ -89,7 +89,7 @@ function Importer:draw()
     ImportButton:SetWidth(100);
     ImportButton:SetCallback("OnClick", function()
         GL.Interface.Dialogs.PopupDialog:open({
-            question = L.PLUSONES_CLEAR_CONFIRM,
+            question = L["This will clear all your +1 data. Continue?"],
             OnYes = function ()
                 GL.Interface.PlusOnes.Importer:import();
             end,

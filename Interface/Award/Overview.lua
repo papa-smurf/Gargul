@@ -9,11 +9,17 @@ local DB = GL.DB;
 ---@type Interface
 local Interface = GL.Interface;
 
+---@type Constants
+local Constants = GL.Data.Constants;
+
 GL.Interface.Award = GL.Interface.Award or {};
 GL.ScrollingTable = GL.ScrollingTable or LibStub("ScrollingTable");
 
 ---@class AwardOverviewInterface
 GL.Interface.Award.Overview = {
+    ---@type string
+    phrase = "",
+
     ---@type string
     windowName = "Gargul.Interface.Award.Overview.Window",
 
@@ -38,14 +44,11 @@ local Overview = GL.Interface.Award.Overview;
 local DEFAULT_WINDOW_HEIGHT = 406;
 local DEFAULT_WINDOW_WIDTH = 660;
 local DEFAULT_TABLE_ROWS = 18;
-local FONT;
 local HEIGHT_PER_TABLE_ROW = 18;
 local ITEM_ROW_HEIGHT = 24;
 
 ---@return table|nil
 function Overview:open()
-    FONT = GL.FONT;
-
     local Window = _G[self.windowName] or self:build();
     self:refreshDatesTable();
     self:refreshItems();
@@ -84,11 +87,11 @@ function Overview:build()
             CloseMenus();
         end },
         "divider",
-        {text = L.WINDOW, isTitle = true, notCheckable = true },
-        {text = L.CHANGE_SCALE, notCheckable = true, func = function ()
+        { text = L.WINDOW, isTitle = true, notCheckable = true },
+        { text = L.CHANGE_SCALE, notCheckable = true, func = function ()
             Interface:openScaler(Window);
             CloseMenus();
-        end},
+        end },
     });
 
     --[[ DATE TABLE ]]
@@ -141,9 +144,33 @@ function Overview:build()
         Interface:addTooltip(ToggleDates, L.TOGGLE_DATES, "BOTTOMRIGHT");
     end
 
+    --[[ SEARCH ]]
+    ---@type EditBox
+    local Search = Interface:inputBox(Window, nil, "Search by item or player name");
+    Search:SetWidth(150);
+    Search:SetPoint("TOPLEFT", Table.frame, "TOPRIGHT", 16, 0);
+    self.Search = Search;
+
+    Search:SetScript("OnTextChanged", function ()
+        GL:after(.5, "AWARDED_LOOT_FILTER_CHANGED", function ()
+            self.phrase = Search:GetText();
+            self:refreshItems();
+        end);
+    end);
+
+    ---@type Button
+    local SearchClear = CreateFrame("Button", nil, Window, "UIPanelCloseButton");
+    SearchClear:SetPoint("TOPLEFT", Search, "TOPRIGHT", -1, 2);
+    SearchClear:SetSize(26, 26);
+    SearchClear:SetScript("OnClick", function ()
+        Search:Clear();
+    end);
+    Interface:addTooltip(SearchClear, L.CLEAR);
+
+
     --[[ SCROLLFRAME BOILERPLATE ]]
     local ScrollFrame = CreateFrame("ScrollFrame", nil, Window, "UIPanelScrollFrameTemplate")
-    ScrollFrame:SetPoint("TOPLEFT", Table.frame, "TOPRIGHT", 16, -4);
+    ScrollFrame:SetPoint("TOPLEFT", Table.frame, "TOPRIGHT", 16, -24);
     ScrollFrame:SetPoint("BOTTOMRIGHT", Window, "BOTTOMRIGHT", -44, 54);
 
     local ItemHolder = CreateFrame("Frame");
@@ -328,7 +355,7 @@ function Overview:buildDatesTable(Window)
         },
         {
             width = 0,
-            sort = GL.Data.Constants.ScrollingTable.descending,
+            sort = Constants.ScrollingTable.descending,
         }
     }, DEFAULT_TABLE_ROWS, HEIGHT_PER_TABLE_ROW, nil, Window, true);
     Table:EnableSelection(true);
@@ -398,8 +425,8 @@ function Overview:refreshDatesTable()
     end
 end
 
----@return void
 function Overview:refreshItems()
+    local phraseDefined = self.phrase and not GL:empty(self.phrase);
     local fiveHoursAgo = GetServerTime() - 18000;
 
     for key, ItemRow in pairs(self.ItemRows or {}) do
@@ -419,7 +446,12 @@ function Overview:refreshItems()
     for _, AwardEntry in pairs(DB:get("AwardHistory")) do
         local dateString = date(L.DATE_FORMAT, AwardEntry.timestamp);
 
-        if (SelectedDates[dateString]) then
+        if (SelectedDates[dateString]
+            and (not phraseDefined or (
+                GL:strContains(AwardEntry.itemLink, self.phrase)
+                or GL:strContains(AwardEntry.awardedTo, self.phrase)
+            ))
+        ) then
             local checksum = AwardEntry.checksum; -- Old entries may not possess a checksum yet
             if (not checksum) then
                 checksum = GL:strPadRight(GL:strLimit(GL:stringHash(AwardEntry.timestamp .. AwardEntry.itemID) .. GL:stringHash(AwardEntry.awardedTo), 20, ""), "0", 20);
@@ -432,6 +464,7 @@ function Overview:refreshItems()
                 BRCost = AwardEntry.BRCost,
                 itemID = AwardEntry.itemID,
                 itemLink = AwardEntry.itemLink,
+                winnerClass = AwardEntry.winnerClass,
                 winningRollType = AwardEntry.winningRollType,
                 OS = AwardEntry.OS and 1 or 0,
                 SR = AwardEntry.SR and 1 or 0,
@@ -474,6 +507,7 @@ function Overview:refreshItems()
         local DeleteButton = self.DeleteButton;
         local EditButton = self.EditButton;
         local DisenchantButton = self.DisenchantButton;
+        local classFilesByID = GL:tableFlip(Constants.UnitClasses);
         for _, Entry in pairs (Entries or {}) do
             (function ()
                 local Item = ItemDetails[Entry.itemID];
@@ -516,7 +550,7 @@ function Overview:refreshItems()
                 --[[ AWARDED TO ]]
                 local awardedToString = "";
                 if (not itemWasDisenchanted) then
-                    awardedToString = GL:nameFormat{ name = Entry.awardedTo, colorize = true, };
+                    awardedToString = GL:nameFormat{ name = Entry.awardedTo, colorize = true, class = Entry.winnerClass and classFilesByID[Entry.winnerClass] or nil, };
                 else
                     awardedToString = "DISENCHANTED";
                 end

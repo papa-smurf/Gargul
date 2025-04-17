@@ -31,7 +31,7 @@ function Overview:draw()
     Window:SetTitle((L.WINDOW_HEADER):format(GL.version));
     Window:SetLayout("Flow");
     Window:SetWidth(485);
-    Window:SetHeight(465);
+    Window:SetHeight(490);
     Window.statustext:GetParent():Show(); -- Show the statustext bar
     Window:EnableResize(false);
     Window:SetCallback("OnClose", function()
@@ -83,7 +83,25 @@ function Overview:draw()
 
     local HorizontalSpacer = AceGUI:Create("SimpleGroup");
     HorizontalSpacer:SetLayout("FILL")
-    HorizontalSpacer:SetWidth(420);
+    HorizontalSpacer:SetFullWidth(true);
+    HorizontalSpacer:SetHeight(6);
+    Window:AddChild(HorizontalSpacer);
+
+    -- TODO ADD IT
+    local ShowRaidOnly = AceGUI:Create("CheckBox");
+    ShowRaidOnly:SetLabel(L["Show players in raid only"]);
+    ShowRaidOnly:SetValue(GL.Settings:get("UI.PlusOnes.showRaidOnly", true));
+    ShowRaidOnly:SetCallback("OnValueChanged", function (widget)
+        GL.Settings:set("UI.PlusOnes.showRaidOnly", GL:toboolean(widget:GetValue()));
+
+        self:update();
+    end);
+    ShowRaidOnly:SetFullWidth(true);
+    Window:AddChild(ShowRaidOnly);
+
+    HorizontalSpacer = AceGUI:Create("SimpleGroup");
+    HorizontalSpacer:SetLayout("FILL")
+    HorizontalSpacer:SetFullWidth(true);
     HorizontalSpacer:SetHeight(16);
     Window:AddChild(HorizontalSpacer);
 
@@ -113,7 +131,7 @@ function Overview:draw()
     ClearButton:SetWidth(80);
     ClearButton:SetCallback("OnClick", function()
         GL.Interface.Dialogs.PopupDialog:open({
-            question = L.PLUSONES_CLEAR_CONFIRM,
+            question = L["This will clear all your +1 data. Continue?"],
             OnYes = function ()
                 GL.Interface.PlusOnes.Overview:close();
                 GL.PlusOnes:clearPlusOnes();
@@ -172,8 +190,6 @@ function Overview:draw()
 end
 
 --- Update the share button when the group setup changes
----
----@return void
 function Overview:updateShareButton()
     local ShareButton = self.ShareButton;
 
@@ -198,17 +214,29 @@ end
 --- Add all player entries to the PlusOnes ScrollFrame
 ---
 ---@param Parent table
----@return void
 function Overview:addPlayerPlusOneEntries(Parent)
     local HorizontalSpacer;
     local PlusOneEntries = {};
 
-    for _, Player in pairs(GL.User:groupMembers()) do
-        tinsert(PlusOneEntries, {
-            name = Player.fqn,
-            class = Player.class,
-            total = GL.PlusOnes:getPlusOnes(Player.fqn),
-        });
+    -- Show everyone
+    if (not GL.Settings:get("UI.PlusOnes.showRaidOnly", true)) then
+        for player, Details in pairs(GL.PlusOnes:all()) do
+            tinsert(PlusOneEntries, {
+                name = player,
+                class = GL:playerClassByName(player),
+                total = Details.total,
+            });
+        end
+
+    -- Only show players who are currently in our group
+    else
+        for _, Player in pairs(GL.User:groupMembers()) do
+            tinsert(PlusOneEntries, {
+                name = Player.fqn,
+                class = Player.class,
+                total = GL.PlusOnes:getPlusOnes(Player.fqn),
+            });
+        end
     end
 
     -- Sort the PlusOne entries alphabetically
@@ -228,8 +256,7 @@ function Overview:addPlayerPlusOneEntries(Parent)
 
         local PlayerName = AceGUI:Create("Label");
         PlayerName:SetFontObject(_G["GameFontNormal"]);
-        PlayerName:SetText(GL:nameFormat(Entry.name));
-        PlayerName:SetColor(unpack(GL:classRGBColor(Entry.class)))
+        PlayerName:SetText(GL:nameFormat{ name = Entry.name, colorize = true, });
         PlayerName:SetHeight(28);
         PlayerName:SetWidth(320);
         Row:AddChild(PlayerName);
@@ -299,8 +326,6 @@ function Overview:close()
 end
 
 --- Update all PlusOne values in the plusone overview
----
----@return void
 function Overview:update()
     local importedAt = GL:tableGet(DB.PlusOnes, "MetaData.importedAt", GetServerTime());
     local updatedAt = GL:tableGet(DB.PlusOnes, "MetaData.updatedAt", GetServerTime());
@@ -312,19 +337,6 @@ function Overview:update()
             date(L.HOURS_MINUTES_FORMAT, updatedAt)
         ));
 
-    if (not IsInGroup()) then
-        self:close();
-        return self:draw();
-    end
-
-    for _, Player in pairs(GL.User:groupMembers()) do
-        local PlusOneLabel = GL.Interface:get(self, "Label.PlusOnesOf_" .. Player.fqn);
-
-        if (PlusOneLabel) then
-            PlusOneLabel:SetText(GL.PlusOnes:getPlusOnes(Player.fqn));
-        else
-            self:close();
-            return self:draw();
-        end
-    end
+    self:close();
+    return self:draw();
 end

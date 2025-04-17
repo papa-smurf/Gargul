@@ -488,7 +488,7 @@ function Overview:refresh()
     local HeaderLabel = AceGUI:Create("Label");
     HeaderLabel:SetText("");
     HeaderLabel:SetWidth(150);
-    HeaderLabel:SetJustifyH("MIDDLE");
+    HeaderLabel:SetJustifyH("CENTER");
     RaidersTableHeader:AddChild(HeaderLabel);
 
     ---@type AceGUILabel
@@ -519,7 +519,7 @@ function Overview:refresh()
 
     ---@type AceGUILabel
     HeaderLabel = AceGUI:Create("Label");
-    HeaderLabel:SetText(L.BROADCAST);
+    HeaderLabel:SetText(L.BALANCE);
     HeaderLabel:SetWidth(50);
     RaidersTableHeader:AddChild(HeaderLabel);
 

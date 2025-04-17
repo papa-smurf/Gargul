@@ -312,7 +312,7 @@ function Bidder:showBidDeniedNotification(Window)
     local Text = GL.AceGUI:Create("Label");
     Text:SetText(("|c00BE3333%s|r"):format(L.GDKP_BIDDER_BID_DENIED));
     BidDeniedNotification:AddChild(Text);
-    Text:SetJustifyH("MIDDLE");
+    Text:SetJustifyH("CENTER");
 
     GL.Ace:ScheduleTimer(function ()
         BidDeniedNotification.frame:Hide();

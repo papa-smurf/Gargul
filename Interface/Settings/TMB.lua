@@ -72,7 +72,7 @@ function TMB:draw(Parent)
     if (GL.isClassic) then
         Overview:drawCheckboxes({
             {
-                label = "Link normal and hard mode items in TOGC and ICC",
+                label = "Link normal and hard mode ( Heroic ) items",
                 description = "Enabling this makes sure that TMB/DFT entries on normal mode TOGC/ICC items also show up on their hardmode counterpart (and vice versa!)",
                 setting = "MasterLooting.linkNormalAndHardModeItems",
             },

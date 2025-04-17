@@ -5,7 +5,19 @@ local Overview = GL.Interface.Settings.Overview; ---@type SettingsOverview
 
 ---@class PackMuleRulesSettings
 GL.Interface.Settings.PackMuleRules = {
-    description = "For group loot use: |c00f7922ePASS|r, |c00f7922eGREED|r, |c00f7922eNEED|r, |c00f7922eIGNORE|r\nNote: group loot rules only work on items that are tradeable after picking them up. |c00f7922eNEED|r by default only works when you have lead/assist (see /gl pm settings)!\n\nFor Master Looting use player names and placeholders:\n|c00f7922eSELF|r - send to yourself\n|c00f7922eRANDOM|r - send to random player\n|c00f7922eRR|r - round robin\n|c00f7922eDE|r - send to disenchanter (/gl sd [mydisenchanter])\n|c00f7922eIGNORE|r - prevent from being auto-looted\n\nList of players are also supported:\n|c00f7922ePlayer1,Player2,SELF|r - Items will be sent to a random person in this list.\n\nSend an item to the first player who's in the raid instead of random by adding an exclamation mark: |c00f7922e!Player1,!Player2,SELF|r",
+    description = [[For group loot use: |c00f7922ePASS|r, |c00f7922eGREED|r, |c00f7922eNEED|r, |c00f7922eIGNORE|r
+    Note: group loot rules only work on items that are tradeable after picking them up. |c00f7922eNEED|r by default only works when you have lead/assist (see /gl pm settings)!
+    
+    For Master Looting use player names and placeholders:
+    |c00f7922eSELF|r - send to yourself
+    |c00f7922eRANDOM|r - send to random player
+    |c00f7922eRR|r - round robin
+    |c00f7922eDE|r - send to disenchanter (/gl sd [mydisenchanter])
+    |c00f7922eIGNORE|r - prevent from being auto-looted
+    List of players are also supported:
+    |c00f7922ePlayer1,Player2,SELF|r - Items will be sent to a random person in this list.
+    Example to send an item to the first player who's available in the raid by adding an exclamation mark: |c00f7922e!Player1,!Player2,SELF|r
+    ]],
 
     UIComponents = {
         Input = {
@@ -69,7 +81,11 @@ function PackMuleRules:draw(Parent)
     Overview:drawSpacer(Parent, 20, 1);
 
     SectionDescription = GL.AceGUI:Create("Label");
-    SectionDescription:SetText("You can add item IDs, item links (shift click or drag/drop), item names and name wilcards: |c00f7922e*ushroom|r, |c00f7922emushroo*|r and |c00f7922e*ushroo*|r will all match an item named |c00f7922emushroom|r.");
+    SectionDescription:SetText([[You can add item IDs, item links (shift click or drag/drop), item names and name wilcards: |c00f7922e*ushroom|r, |c00f7922emushroo*|r and |c00f7922e*ushroo*|r will all match an item named |c00f7922emushroom|r.
+
+|c00f7922eIMPORTANT NOTICE:|r Rules based on item ID or item link take priority over name-based item rules! Example: |c00f7922e779 > SELF|r comes before |c00f7922eShiny Seashell > Player2|r
+    ]]
+    );
     SectionDescription:SetFontObject(_G["GameFontNormal"]);
     SectionDescription:SetFullWidth(true);
     Parent:AddChild(SectionDescription);

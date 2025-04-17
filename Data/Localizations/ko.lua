@@ -1,6 +1,6 @@
 --[[
     You can test this locally by removing line 5:
-    if (GetLocale() ~= "deDE") then return; end
+    if (GetLocale() ~= "koKR") then return; end
 ]]
 if (GetLocale() ~= "koKR") then return; end
 local L = Gargul_L or {};
@@ -136,14 +136,13 @@ L.CLOSE_ON_AWARD = "수상 마감";
 L.CLOSE_ON_START = "시작 시 닫기";
 L.COMMUNICATION = "의사소통";
 L.COMM_PROGRESS = "%s/%s바이트를 보냈습니다.";
-L.COPPER_INDICATOR = "씨";
+L.COPPER_INDICATOR = "c";
 L.CUT = "자르다";
 L.CUTS = "컷";
 L.CUT_MAILBOX_CLOSED = "사서함이 닫혀 있으면 메일을 보낼 수 없습니다";
 L.CUT_MAILS_FAILED = "다수의 메일 오류가 감지되어 컷 배포가 중단되었습니다.";
-L.CUT_MAIL_BODY = "Gargul 제공: TMB, SoftRes, GDKP 및 자동 루팅을 지원하는 마스터 전리품 도구입니다!";
 L.CUT_MAIL_EVEN = "%s의 금이 없습니다.";
-L.CUT_MAIL_FAILED = "%s에 컷을 보내지 못했습니다.";
+L["Failed to send cut to %s"] = "%s에 컷을 보내지 못했습니다.";
 L.CUT_MAIL_GOLD_MISMATCH = "게임에 따라 메일이 전송되었지만 남은 GOLD가 일치하지 않습니다. 문제가 발생했나요?";
 L.CUT_MAIL_HISTORY = "|c00967FD2%s에 대한 메일 기록";
 L.CUT_MAIL_INSUFFICIENT_FUNDS = "%s에 지불할 골드가 부족합니다.";
@@ -300,6 +299,7 @@ L.GDKP_EXPORT_DEFAULT_FORMAT = "@ITEM,@WINNER,@GOLD,@WOWHEAD";
 L.GDKP_EXPORT_DEFAULT_HEADER = "아이템,플레이어,골드,와우헤드링크";
 L.GDKP_EXPORT_FORMAT_START = "첫 번째 항목이 수여된 날짜/시간";
 L.GDKP_EXPORT_FORMAT_TITLE = "GDKP 세션 제목";
+L.GDKP_EXPORT_INCLUDE_DISENCHANTED = "마력 추출된 아이템 포함";
 L.GDKP_EXPORT_POT_CHANGED = "냄비가 바뀌었다";
 L.GDKP_GOLD_TRADES = "금 거래";
 L.GDKP_HIDE_UPCOMING_CONFIRMATION = "확실합니까? 앞으로 나올 항목을 보거나 입찰할 수 없습니다!";
@@ -524,8 +524,8 @@ L.GDKP_OVERVIEW_ADJUST_GOLD_DISABLED_TOOLTIP = [[
 잠긴/삭제된 세션에서는 골드를 조정할 수 없습니다.]];
 L.GDKP_OVERVIEW_ADJUST_GOLD_TOOLTIP = "금 추가/제거";
 L.GDKP_OVERVIEW_AUCTION_ENTRY = [[
-%s님이 |c00%s%s에 대해 지불했습니다.
-%에스]]; -- Player paid 5000g for [Benediction]
+%s 유급의 |c00%s%s ~을 위한
+%s]]; -- Player paid 5000g for [Benediction]
 L.GDKP_OVERVIEW_DELETED_ENTRY = [[
 |c00be3333%s에 의해 삭제됨
 원인]];
@@ -592,12 +592,12 @@ L.GDKP_STOP_AUCTION_FIRST = "먼저 경매를 중단하세요!";
 L.GDKP_THEY_OWE = "%s이(가) 당신에게 빚을 졌습니다 %s";
 L.GDKP_TRADE_BALANCE_INFO = [[
 |c00967FD2GDKP 세션
-플레이어가 소비함: %s
-제공됨: %s
-수신됨: %s
+플레이어가 소비한 금액: %s
+주어진: %s
+받았다: %s
 플레이어 컷: %s
 
-%에스
+%s
 ]];
 L.GDKP_TRADE_EXCLUDE_GOLD = "GDKP에서 제외";
 L.GDKP_TRADE_EXCLUDE_GOLD_INFO = "거래된 금은 주고받는 금액에 추가되지 않습니다.";
@@ -719,6 +719,7 @@ L.MINIMIZE = "최소화";
 L.MINIMIZE_ON_AWARD = "수상 시 최소화";
 L.MINIMIZE_ON_START = "시작 시 최소화";
 L.MINIMUM = "최저한의";
+L.MINIMUM_ITEM_LEVEL = "최소 아이템 레벨";
 L.MINIMUM_QUALITY = "최소 품질";
 L.MINUS10 = "-10";
 L.MINUS_SIGN = "-";
@@ -874,7 +875,7 @@ L.SETTINGS_COUNTDOWN_IN_RAID_WARNING = "레이드 경고에서 카운트다운 �
 L.SETTINGS_INCOMING_BIDS_IN_RAID_WARNING = "습격 경고를 통해 들어오는 입찰을 알립니다.";
 L.SETTINGS_RESET_UI = "가르굴 UI 재설정";
 L.SETTINGS_WHISPER_BID_TOO_LOW = "입찰가가 너무 낮으면 입찰자에게 귓속말을 보내세요.";
-L.SILVER_INDICATOR = "에스";
+L.SILVER_INDICATOR = "s";
 L.SKIP = "건너뛰다";
 L.SOFTRES = "소프트 리저브";
 L.SOFTRES_ABBR = "SR";
@@ -914,7 +915,7 @@ L.SOFTRES_WHISPER_PREFIXES = "!sr|!softres|!softreserve";
 L.SOMETHING_WENT_WRONG_WARNING = "문제가 발생했습니다.";
 L.START = "시작";
 L.STOP = "멈추다";
-L.TAB_REPLACES_T = "	 is replaced by a tab";
+L.TAB_REPLACES_T = "\\t is replaced by a tab";
 L.THATSMYBIS_ABBR = "TMB";
 L.TIME = "시간";
 L.TITLE = "제목";
@@ -935,7 +936,7 @@ L.TMB_IMPORT_INVALID_UNKNOWN_INSTRUCTIONS = "잘못된 TMB 또는 DFT 데이터�
 L.TMB_IMPORT_NOTES_AVAILABLE = "사용 가능한 우선순위 메모: %s";
 L.TMB_IMPORT_NUMBER = "가져온 항목 수: %s";
 L.TMB_IMPORT_PLAYER_NO_DATA = "다음 플레이어에게는 %s 항목이 없습니다:"; -- %s can be TMB/DFT/CPR
-L.TMB_IMPORT_TMB_GARGUL_INFO = "TMB와 함께 Gargul을 사용하는 방법";
+L.TMB_IMPORT_TMB_GARGUL_INFO = "${source}와 함께 Gargul을 사용하는 방법";
 L.TMB_IMPORT_TMB_GARGUL_INFO_URL = "https://github.com/papa-smurf/Gargul/wiki/Gargul-and-ThatsMyBIS";
 L.TMB_IMPORT_TMB_INFO = "TMB 내보내기 내용을 그대로 아래 상자에 붙여넣고 '가져오기'를 클릭하세요.";
 L.TMB_NO_BROADCAST_TARGETS = "그룹에 방송할 사람이 없습니다.";

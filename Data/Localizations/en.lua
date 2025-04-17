@@ -143,9 +143,8 @@ L.CUT = "Cut";
 L.CUTS = "Cuts";
 L.CUT_MAILBOX_CLOSED = "Can't send mail when the mailbox is closed";
 L.CUT_MAILS_FAILED = "Multiple mail errors detected, aborting cut distribution";
-L.CUT_MAIL_BODY = "Powered by Gargul: a Master Loot Tool with support for TMB, SoftRes, GDKP and Auto-Looting!";
 L.CUT_MAIL_EVEN = "You don't owe %s any gold";
-L.CUT_MAIL_FAILED = "Failed to send cut to %s";
+L["Failed to send cut to %s"] = "Failed to send cut to %s";
 L.CUT_MAIL_GOLD_MISMATCH = "Mail SENT according to game, but your remaining GOLD DOESN'T MATCH, did something go wrong?";
 L.CUT_MAIL_HISTORY = "Mail History for |c00967FD2%s";
 L.CUT_MAIL_INSUFFICIENT_FUNDS = "You don't have enough gold to pay %s";
@@ -244,7 +243,7 @@ You can mix |c00A79EFFMulti-Auction with |c00A79EFFSingle-Auction and the queue 
 L.GDKP_CREATE_SESSION_TYPE_LABEL = "Auction type (|c00A79EFFi for more info)";
 L.GDKP_CREATE_SESSION_TYPE_MULTI = "Multi-Auction";
 L.GDKP_CREATE_SESSION_TYPE_SINGLE = "Single-Auction";
-L.GDKP_CREATE_SUCCESSFUL = "Session created. We advise you to /reload so that it's stored properly in case your game crashes!";
+L.GDKP_CREATE_SUCCESSFUL = "Session created. We advise you to /reload regularly so that it's stored properly in case your game crashes!";
 L.GDKP_CUTS_ADD_RAIDER = "Add Raider";
 L.GDKP_CUTS_ADJUST_G = "adjust [g]";
 L.GDKP_CUTS_ADJUST_P = "adjust [%]";
@@ -302,6 +301,7 @@ L.GDKP_EXPORT_DEFAULT_FORMAT = "@ITEM,@WINNER,@GOLD,@WOWHEAD";
 L.GDKP_EXPORT_DEFAULT_HEADER = "Item,Player,Gold,Wowheadlink";
 L.GDKP_EXPORT_FORMAT_START = "Date/time at which the first item was awarded";
 L.GDKP_EXPORT_FORMAT_TITLE = "The title of the GDKP session";
+L.GDKP_EXPORT_INCLUDE_DISENCHANTED = "Include disenchanted items";
 L.GDKP_EXPORT_POT_CHANGED = "Pot changed";
 L.GDKP_GOLD_TRADES = "Gold Trades";
 L.GDKP_HIDE_UPCOMING_CONFIRMATION = "Are you sure? You won't be able to see, or bid on, upcoming items!";
@@ -470,6 +470,8 @@ This will close all auctions and announce the total pot in chat
 Auctions with active bids on them will be sold and can not receive new bids!
 ]];
 L.GDKP_MULTIAUCTION_CLIENT_HIDE_INACTIVE = "Hide inactive";
+L.GDKP_MULTIAUCTION_CLIENT_HIDE_ITEMS = "Hide items";
+L.GDKP_MULTIAUCTION_CLIENT_HIDE_ITEMS_TOOLTIP = "Enable / Disable the hidden items filter";
 L.GDKP_MULTIAUCTION_CLIENT_HIDE_UNUSABLE = "Hide unusable";
 L.GDKP_MULTIAUCTION_CLIENT_INACTIVE_TOGGLE_TOOLTIP = "Show/Hide finished auctions";
 L.GDKP_MULTIAUCTION_CLIENT_MANAGE_AUCTION = "Manage Auction";
@@ -659,9 +661,9 @@ L.JSON_DECODE_WARNING = "Unable to JSON decode data. Make sure you copy/paste it
 L.KEYS_INFO = [[
 Gargul Item Hotkeys
 
-Roll out: |c00A79EFF%s
-Award: |c00A79EFF%s
-Disenchant: |c00A79EFF%s
+Roll out: |c00A79EFF%s|r
+Award: |c00A79EFF%s|r
+Disenchant: |c00A79EFF%s|r
 
 
 -- Right-click to disable this window --
@@ -721,6 +723,7 @@ L.MINIMIZE = "Minimize";
 L.MINIMIZE_ON_AWARD = "Minimize on award";
 L.MINIMIZE_ON_START = "Minimize on start";
 L.MINIMUM = "Minimum";
+L.MINIMUM_ITEM_LEVEL = "Minimum item level";
 L.MINIMUM_QUALITY = "Minimum Quality";
 L.MINUS10 = "-10";
 L.MINUS_SIGN = "-";
@@ -916,7 +919,7 @@ L.SOFTRES_WHISPER_PREFIXES = "!sr|!softres|!softreserve";
 L.SOMETHING_WENT_WRONG_WARNING = "Something went wrong!";
 L.START = "Start";
 L.STOP = "Stop";
-L.TAB_REPLACES_T = "	 is replaced by a tab";
+L.TAB_REPLACES_T = "\\t is replaced by a tab";
 L.THATSMYBIS_ABBR = "TMB";
 L.TIME = "Time";
 L.TITLE = "Title";
@@ -937,7 +940,7 @@ L.TMB_IMPORT_INVALID_UNKNOWN_INSTRUCTIONS = "Invalid TMB or DFT data provided, m
 L.TMB_IMPORT_NOTES_AVAILABLE = "Priority notes available: %s";
 L.TMB_IMPORT_NUMBER = "Number of items imported: %s";
 L.TMB_IMPORT_PLAYER_NO_DATA = "The following players have no %s entries:"; -- %s can be TMB/DFT/CPR
-L.TMB_IMPORT_TMB_GARGUL_INFO = "How to use Gargul with TMB";
+L.TMB_IMPORT_TMB_GARGUL_INFO = "How to use Gargul with ${source}";
 L.TMB_IMPORT_TMB_GARGUL_INFO_URL = "https://github.com/papa-smurf/Gargul/wiki/Gargul-and-ThatsMyBIS";
 L.TMB_IMPORT_TMB_INFO = "Paste your TMB export contents as-is in the box below and click 'Import'";
 L.TMB_NO_BROADCAST_TARGETS = "There's no one in your group to broadcast to";
@@ -1017,7 +1020,7 @@ L.VERSION_INCOMPATIBLE_WARNING = "Gargul is out of date and won't work until you
 L.VERSION_INVALID_WARNING = "Invalid version string provided in Version:addRelease";
 L.VERSION_UPDATE = "Update Gargul!";
 L.VERSION_UPDATED = "|c00%sGargul is now updated to |c00%sv%s";
-L.VERSION_UPDATE_AVAILABLE = "v|c00A79EFFv%s is available on CurseForge/Wago. You can update without closing your game, just be sure to /reload !";
+L.VERSION_UPDATE_AVAILABLE = "|c00A79EFFv%s is available on CurseForge/Wago. You can update without closing your game, just be sure to /reload !";
 L.WAIT_SECONDS_BEFORE_RETRY = "Wait %s more seconds before you retry";
 L.WINDOW = "Window";
 L.WINDOW_HEADER = "Gargul v%s";

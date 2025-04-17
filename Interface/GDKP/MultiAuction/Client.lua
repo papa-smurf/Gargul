@@ -6,6 +6,9 @@ local _, GL = ...;
 ---@type Interface
 local Interface = GL.Interface;
 
+---@type Settings
+local Settings = GL.Settings;
+
 ---@type GDKPMultiAuctionAuctioneer
 local Auctioneer = GL.GDKP.MultiAuction.Auctioneer;
 
@@ -18,14 +21,13 @@ GL:tableSet(GL, "Interface.GDKP.MultiAuction.Client", {
     auctionAdminWindowName = "Gargul.Interface.GDKP.MultiAuction.Client.AuctionAdminWindow",
     windowName = "Gargul.Interface.GDKP.MultiAuction.Client.Window",
 
+    enableFilters = true,
     showFavorites = false,
-    showUnusable = true,
     showInactive = true,
 
     AuctionHolder = nil,
     AuctionRows = {},
     Search = nil;
-    ToggleUnusable = nil,
     ToggleFavorites = nil,
 });
 
@@ -34,7 +36,7 @@ local ClientInterface = GL.Interface.GDKP.MultiAuction.Client;
 
 --[[ CONSTANTS ]]
 local ITEM_ROW_HEIGHT = 30;
-local WINDOW_WIDTH = 575;
+local WINDOW_WIDTH = 625;
 local WINDOW_HEIGHT = 355;
 local FONT;
 
@@ -100,18 +102,13 @@ function ClientInterface:addAuction(auctionID, isBOE, itemLevel, name, quality, 
             return;
         end
 
-        local Details = {
-            auctionID = auctionID,
-            endsAt = endsAt,
-            increment = increment,
-            isBOE = GL:inTable({ LE_ITEM_BIND_ON_EQUIP, LE_ITEM_BIND_QUEST }, Item.bindType),
-            itemLevel = itemLevel,
-            link = Item.link,
-            minimum = minimum,
-            name = Item.name, -- In case of mismatching locales
-            quality = quality,
-            CurrentBid = CurrentBid,
-        };
+        local Details = Item;
+        Details.itemLevel = Details.level;
+        Details.auctionID = auctionID;
+        Details.CurrentBid = CurrentBid;
+        Details.endsAt = endsAt;
+        Details.increment = increment;
+        Details.minimum = minimum;
 
         Window:addAuction(Details);
     end);
@@ -122,6 +119,11 @@ function ClientInterface:build()
     if (_G[self.windowName]) then
         return _G[self.windowName];
     end
+
+    local filter = function ()
+        self:filterAndSort();
+        self:resetScroll();
+    end;
 
     ---@type Frame
     local Window = Interface:createWindow{
@@ -210,8 +212,7 @@ function ClientInterface:build()
 
     Search:SetScript("OnTextChanged", function ()
         GL:after(.5, "GDKP_MULTI_AUCTION_CLIENT_FILTER_CHANGED", function ()
-            self:filterAndSort();
-            self:resetScroll();
+            filter();
         end);
     end);
 
@@ -231,36 +232,158 @@ function ClientInterface:build()
     ToggleFavorites:SetScript("OnClick", function ()
         self.showFavorites = not self.showFavorites;
         ToggleFavorites:SetText(self.showFavorites and L.GDKP_MULTIAUCTION_CLIENT_SHOW_ALL or L.GDKP_MULTIAUCTION_CLIENT_SHOW_FAVORITES);
-        self:filterAndSort();
-        self:resetScroll();
+        filter();
     end);
     self.ToggleFavorites = ToggleFavorites;
-
-    --[[ SHOW/HIDE UNUSABLE ]]
-    ---@type Button
-    local ToggleUnusable = Interface:dynamicPanelButton(Window, L.GDKP_MULTIAUCTION_CLIENT_HIDE_UNUSABLE);
-    ToggleUnusable:SetPoint("TOPLEFT", ToggleFavorites, "TOPRIGHT", 6, 0);
-    ToggleUnusable:SetScript("OnClick", function ()
-        self.showUnusable = not self.showUnusable;
-        ToggleUnusable:SetText(self.showUnusable and L.GDKP_MULTIAUCTION_CLIENT_HIDE_UNUSABLE or L.GDKP_MULTIAUCTION_CLIENT_SHOW_UNUSABLE);
-        self:filterAndSort();
-        self:resetScroll();
-    end);
-    self.ToggleUnusable = ToggleUnusable;
-    Interface:addTooltip(ToggleUnusable, L.GDKP_MULTIAUCTION_CLIENT_UNUSABLE_TOGGLE_TOOLTIP);
 
     --[[ SHOW/HIDE ACTIVE ]]
     ---@type Button
     local ToggleActive = Interface:dynamicPanelButton(Window, L.GDKP_MULTIAUCTION_CLIENT_HIDE_INACTIVE);
-    ToggleActive:SetPoint("TOPLEFT", ToggleUnusable, "TOPRIGHT", 6, 0);
+    ToggleActive:SetPoint("TOPLEFT", ToggleFavorites, "TOPRIGHT", 6, 0);
     ToggleActive:SetScript("OnClick", function ()
         self.showInactive = not self.showInactive;
         ToggleActive:SetText(self.showInactive and L.GDKP_MULTIAUCTION_CLIENT_HIDE_INACTIVE or L.GDKP_MULTIAUCTION_CLIENT_SHOW_INACTIVE);
-        self:filterAndSort();
-        self:resetScroll();
+        filter();
     end);
     self.ToggleActive = ToggleActive;
     Interface:addTooltip(ToggleActive, L.GDKP_MULTIAUCTION_CLIENT_INACTIVE_TOGGLE_TOOLTIP);
+
+    --[[ FILTER ]]
+    local Filters = Interface:multiSelect(Window, L.GDKP_MULTIAUCTION_CLIENT_HIDE_ITEMS, {
+        {
+            text = "Unusable",
+            checked = function ()
+                return Settings:get("GDKP.MultiAuction." .. GL.User.id .. ".Filters.unusable", false);
+            end,
+            func = function (Entry)
+                Settings:set("GDKP.MultiAuction." .. GL.User.id .. ".Filters.unusable", Entry.checked);
+                filter();
+            end,
+        },
+        "divider",
+        {text = ARMOR, isTitle = true, notCheckable = true },
+        {
+            text = "Cloth",
+            checked = function ()
+                return Settings:get(("GDKP.MultiAuction." .. GL.User.id .. ".Filters.%s-%s"):format(Enum.ItemClass.Armor, Enum.ItemArmorSubclass.Cloth));
+            end,
+            func = function (Entry)
+                Settings:set(("GDKP.MultiAuction." .. GL.User.id .. ".Filters.%s-%s"):format(Enum.ItemClass.Armor, Enum.ItemArmorSubclass.Cloth), Entry.checked);
+                filter();
+            end,
+        },
+        {
+            text = "Leather",
+            checked = function ()
+                return Settings:get(("GDKP.MultiAuction." .. GL.User.id .. ".Filters.%s-%s"):format(Enum.ItemClass.Armor, Enum.ItemArmorSubclass.Leather));
+            end,
+            func = function (Entry)
+                Settings:set(("GDKP.MultiAuction." .. GL.User.id .. ".Filters.%s-%s"):format(Enum.ItemClass.Armor, Enum.ItemArmorSubclass.Leather), Entry.checked);
+                filter();
+            end,
+        },
+        {
+            text = "Mail",
+            checked = function ()
+                return Settings:get(("GDKP.MultiAuction." .. GL.User.id .. ".Filters.%s-%s"):format(Enum.ItemClass.Armor, Enum.ItemArmorSubclass.Mail));
+            end,
+            func = function (Entry)
+                Settings:set(("GDKP.MultiAuction." .. GL.User.id .. ".Filters.%s-%s"):format(Enum.ItemClass.Armor, Enum.ItemArmorSubclass.Mail), Entry.checked);
+                filter();
+            end,
+        },
+        {
+            text = "Plate",
+            checked = function ()
+                return Settings:get(("GDKP.MultiAuction." .. GL.User.id .. ".Filters.%s-%s"):format(Enum.ItemClass.Armor, Enum.ItemArmorSubclass.Plate));
+            end,
+            func = function (Entry)
+                Settings:set(("GDKP.MultiAuction." .. GL.User.id .. ".Filters.%s-%s"):format(Enum.ItemClass.Armor, Enum.ItemArmorSubclass.Plate), Entry.checked);
+                filter();
+            end,
+        },
+        "divider",
+        {text = string.sub(MODIFIERS_COLON or "Modifiers:", 1, -2), isTitle = true, notCheckable = true },
+        {
+            text = ITEM_MOD_AGILITY_SHORT,
+            checked = function ()
+                return Settings:get("GDKP.MultiAuction." .. GL.User.id .. ".Filters.Mods.agility");
+            end,
+            func = function (Entry)
+                Settings:set("GDKP.MultiAuction." .. GL.User.id .. ".Filters.Mods.agility", Entry.checked or nil);
+
+                filter();
+            end,
+        },
+        {
+            text = ITEM_MOD_INTELLECT_SHORT,
+            checked = function ()
+                return Settings:get("GDKP.MultiAuction." .. GL.User.id .. ".Filters.Mods.intellect");
+            end,
+            func = function (Entry)
+                Settings:set("GDKP.MultiAuction." .. GL.User.id .. ".Filters.Mods.intellect", Entry.checked or nil);
+
+                filter();
+            end,
+        },
+        {
+            text = ITEM_MOD_SPIRIT_SHORT,
+            checked = function ()
+                return Settings:get("GDKP.MultiAuction." .. GL.User.id .. ".Filters.Mods.spirit");
+            end,
+            func = function (Entry)
+                Settings:set("GDKP.MultiAuction." .. GL.User.id .. ".Filters.Mods.spirit", Entry.checked or nil);
+
+                filter();
+            end,
+        },
+        {
+            text = ITEM_MOD_STRENGTH_SHORT,
+            checked = function ()
+                return Settings:get("GDKP.MultiAuction." .. GL.User.id .. ".Filters.Mods.strength");
+            end,
+            func = function (Entry)
+                Settings:set("GDKP.MultiAuction." .. GL.User.id .. ".Filters.Mods.strength", Entry.checked or nil);
+
+                filter();
+            end,
+        },
+        "divider",
+        {
+            text = L.BIND_ON_EQUIP_ABBR,
+            checked = function ()
+                return Settings:get("GDKP.MultiAuction." .. GL.User.id .. ".Filters.BOE");
+            end,
+            func = function (Entry)
+                Settings:set("GDKP.MultiAuction." .. GL.User.id .. ".Filters.BOE", Entry.checked);
+                filter();
+            end,
+        },
+        {
+            text = "Shields",
+            checked = function ()
+                return Settings:get(("GDKP.MultiAuction." .. GL.User.id .. ".Filters.%s-%s"):format(Enum.ItemClass.Armor, Enum.ItemArmorSubclass.Shield));
+            end,
+            func = function (Entry)
+                Settings:set(("GDKP.MultiAuction." .. GL.User.id .. ".Filters.%s-%s"):format(Enum.ItemClass.Armor, Enum.ItemArmorSubclass.Shield), Entry.checked);
+                filter();
+            end,
+        },
+    }, 120);
+    Filters:SetPoint("TOPLEFT", ToggleActive, "TOPRIGHT", -10, 2);
+
+    --[[ SELECT ALL ]]
+    ---@type CheckButton
+    local ToggleFilters = Interface:createCheckbox{
+        Parent = Window,
+        checked = ClientInterface.enableFilters,
+        callback = function (_, value)
+            ClientInterface.enableFilters = value;
+            filter();
+        end,
+    };
+    ToggleFilters:SetPoint("TOPLEFT", Filters, "TOPRIGHT", -12, -4);
+    Interface:addTooltip(ToggleFilters, L.GDKP_MULTIAUCTION_CLIENT_HIDE_ITEMS_TOOLTIP);
 
     --[[ SCROLLFRAME BOILERPLATE ]]
     ScrollFrame = CreateFrame("ScrollFrame", nil, Window, "UIPanelScrollFrameTemplate");
@@ -584,17 +707,14 @@ function ClientInterface:build()
     --[[ ADD AN AUCTION TO WINDOW ]]
     Window.addAuction = function (_, Details)
         local link = Details.link;
-        local quality = Details.quality;
-        local name = Details.name;
         local itemLevel = Details.itemLevel;
         local isBOE = Details.isBOE;
         local minimum = Details.minimum;
         local increment = Details.increment;
-        local CurrentBid = Details.CurrentBid;
         local auctionID = Details.auctionID;
         local time = Details.endsAt - GetServerTime();
 
-        GL:onItemLoadDo(GL:getItemIDFromLink(link), function (Item)
+        GL:onItemLoadDo(link, function (Item)
             if (not Item) then
                 return;
             end
@@ -634,13 +754,38 @@ function ClientInterface:build()
             FavoriteImage:SetTexture("Interface/common/friendship-heart");
             FavoriteImage:SetVertexColor(.9, .9, .9, .25);
 
-            AuctionRow.toggleFavorite = function ()
-                AuctionRow._Details.isFavorite = not AuctionRow._Details.isFavorite;
+            AuctionRow.toggleFavorite = function (favorite, bubble)
+                bubble = bubble ~= false;
+
+                if (favorite ~= nil) then
+                    AuctionRow._Details.isFavorite = favorite;
+                else
+                    AuctionRow._Details.isFavorite = not AuctionRow._Details.isFavorite;
+                end
 
                 if (AuctionRow._Details.isFavorite) then
                     FavoriteImage:SetVertexColor(1, 1, 1, 1);
                 else
                     FavoriteImage:SetVertexColor(.9, .9, .9, .25);
+                end
+
+                if (not bubble) then
+                    return;
+                end
+
+                ---@param ItemRow Frame
+                for _, ItemRow in pairs(self.AuctionRows or {}) do
+                    (function()
+                        if (type(ItemRow) ~= "table"
+                            or not ItemRow._Details
+                            or not ItemRow._Details.link
+                            or ItemRow._Details.link ~= AuctionRow._Details.link
+                        ) then
+                            return
+                        end
+
+                        ItemRow.toggleFavorite(AuctionRow._Details.isFavorite, false);
+                    end)();
                 end
             end
             Favorite:SetScript("OnMouseUp", function ()
@@ -1243,7 +1388,6 @@ end
 ---@return void
 function ClientInterface:filterAndSort()
     local rowsShown = 0;
-    local showUnusable = self.showUnusable;
     local showInactive = self.showInactive;
     local showFavorites = self.showFavorites;
     local AuctionHolder = self.AuctionHolder;
@@ -1287,9 +1431,6 @@ function ClientInterface:filterAndSort()
                 or not Client.AuctionDetails.Auctions[auctionID]
                 or Client.AuctionDetails.Auctions[auctionID].endsAt <= -1
 
-                -- Hide unusable items
-                or (not showUnusable and not ItemRow._Details.canUseItem)
-
                 -- Hide inactive items
                 or (not showInactive and ItemRow._Details.endsAt <= 0)
 
@@ -1297,6 +1438,45 @@ function ClientInterface:filterAndSort()
                 or (showFavorites and not ItemRow._Details.isFavorite)
             ) then
                 return;
+            end
+
+            -- Item filters
+            if (self.enableFilters) then
+                -- Hide unusable items
+                if (not ItemRow._Details.canUseItem
+                    and Settings:get("GDKP.MultiAuction." .. GL.User.id .. ".Filters.unusable") == true
+                ) then
+                    return;
+                end
+
+                -- Hide BOEs
+                if (ItemRow._Details.isBOE
+                    and Settings:get("GDKP.MultiAuction." .. GL.User.id .. ".Filters.BOE") == true
+                ) then
+                    return;
+                end
+
+                -- Hide unwanted armor types
+                if (ItemRow._Details.classID == Enum.ItemClass.Armor
+                    and ItemRow._Details.inventoryType ~= "INVTYPE_CLOAK"
+                    and Settings:get(("GDKP.MultiAuction." .. GL.User.id .. ".Filters.%s-%s"):format(Enum.ItemClass.Armor, ItemRow._Details.subclassID)) == true
+                ) then
+                    return;
+                end
+
+                -- Hide unwanted item modifiers
+                local FilteredMods = Settings:get("GDKP.MultiAuction." .. GL.User.id .. ".Filters.Mods");
+                if (not GL:empty(FilteredMods)) then
+                    local ItemMods = GL:itemModifiers(ItemRow._Details.link);
+
+                    if (ItemMods) then
+                        for filteredMod in pairs(FilteredMods or {}) do
+                            if (ItemMods[filteredMod]) then
+                                return;
+                            end
+                        end
+                    end
+                end
             end
 
             local itemLevel = ItemRow._Details.itemLevel;

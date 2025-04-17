@@ -141,9 +141,8 @@ L.CUT = "Taglio";
 L.CUTS = "Tagli";
 L.CUT_MAILBOX_CLOSED = "Impossibile inviare posta quando la casella di posta è chiusa";
 L.CUT_MAILS_FAILED = "Rilevati più errori di posta, interruzione della distribuzione tagliata";
-L.CUT_MAIL_BODY = "Realizzato da Gargul: uno strumento di bottino eccezionale con supporto per TMB, SoftRes, GDKP e auto-looting!";
 L.CUT_MAIL_EVEN = "Non devi oro a %s";
-L.CUT_MAIL_FAILED = "Impossibile inviare il taglio a %s";
+L["Failed to send cut to %s"] = "Impossibile inviare il taglio a %s";
 L.CUT_MAIL_GOLD_MISMATCH = "Mail INVIATA in base al gioco, ma i tuoi ORO rimanenti NON CORRISPONDONO, qualcosa è andato storto?";
 L.CUT_MAIL_HISTORY = "Cronologia posta per |c00967FD2%s";
 L.CUT_MAIL_INSUFFICIENT_FUNDS = "Non hai abbastanza oro per pagare %s";
@@ -196,7 +195,7 @@ L.GDKP_AUCTION_DETAILS_GOLD_ADDED = [[
 Appunti]];
 L.GDKP_AUCTION_DETAILS_GOLD_PAID_BY = [[
 %s pagato |c00%s%sg per
-%S]];
+%s]];
 L.GDKP_AUCTION_DETAILS_WON_BY = "Vinto da";
 L.GDKP_AUCTION_PAID_AMOUNT = "Imposta l'importo pagato (leggi a sinistra)";
 L.GDKP_AUCTION_PAID_AMOUNT_INFO = [[
@@ -300,6 +299,7 @@ L.GDKP_EXPORT_DEFAULT_FORMAT = "@OGGETTO,@VINCITORE,@ORO,@WOWHEAD";
 L.GDKP_EXPORT_DEFAULT_HEADER = "Oggetto, Giocatore, Oro, Wowheadlink";
 L.GDKP_EXPORT_FORMAT_START = "Data/ora in cui è stato assegnato il primo item";
 L.GDKP_EXPORT_FORMAT_TITLE = "Il titolo della sessione del GDKP";
+L.GDKP_EXPORT_INCLUDE_DISENCHANTED = "Includi oggetti disincantati";
 L.GDKP_EXPORT_POT_CHANGED = "La pentola è cambiata";
 L.GDKP_GOLD_TRADES = "Commerci d'oro";
 L.GDKP_HIDE_UPCOMING_CONFIRMATION = "Sei sicuro? Non sarai in grado di vedere o fare offerte sui prossimi articoli!";
@@ -525,7 +525,7 @@ Non è possibile modificare l'oro nelle sessioni bloccate/eliminate]];
 L.GDKP_OVERVIEW_ADJUST_GOLD_TOOLTIP = "Aggiungi/Rimuovi oro";
 L.GDKP_OVERVIEW_AUCTION_ENTRY = [[
 %s pagato |c00%s%s per
-%S]]; -- Player paid 5000g for [Benediction]
+%s]]; -- Player paid 5000g for [Benediction]
 L.GDKP_OVERVIEW_DELETED_ENTRY = [[
 |c00be3333Eliminato da %s
 Motivi]];
@@ -597,7 +597,7 @@ Dati: %s
 Ricevuto: %s
 Taglio del giocatore: %s
 
-%S
+%s
 ]];
 L.GDKP_TRADE_EXCLUDE_GOLD = "Escludi dal GDKP";
 L.GDKP_TRADE_EXCLUDE_GOLD_INFO = "L'oro scambiato non verrà aggiunto all'importo dato o ricevuto";
@@ -719,6 +719,7 @@ L.MINIMIZE = "Minimizzare";
 L.MINIMIZE_ON_AWARD = "Ridurre al minimo il premio";
 L.MINIMIZE_ON_START = "Riduci a icona all'avvio";
 L.MINIMUM = "Minimo";
+L.MINIMUM_ITEM_LEVEL = "Livello articolo minimo";
 L.MINIMUM_QUALITY = "Qualità minima";
 L.MINUS10 = "-10";
 L.MINUS_SIGN = "-";
@@ -914,7 +915,7 @@ L.SOFTRES_WHISPER_PREFIXES = "!sr|!softres|!softreserve";
 L.SOMETHING_WENT_WRONG_WARNING = "Qualcosa è andato storto!";
 L.START = "Inizio";
 L.STOP = "Fermare";
-L.TAB_REPLACES_T = "	 is replaced by a tab";
+L.TAB_REPLACES_T = "\\t is replaced by a tab";
 L.THATSMYBIS_ABBR = "TMB";
 L.TIME = "Tempo";
 L.TITLE = "Titolo";
@@ -935,7 +936,7 @@ L.TMB_IMPORT_INVALID_UNKNOWN_INSTRUCTIONS = "Dati TMB o DFT forniti non validi, 
 L.TMB_IMPORT_NOTES_AVAILABLE = "Note prioritarie disponibili: %s";
 L.TMB_IMPORT_NUMBER = "Numero di elementi importati: %s";
 L.TMB_IMPORT_PLAYER_NO_DATA = "I seguenti giocatori non hanno voci %s:"; -- %s can be TMB/DFT/CPR
-L.TMB_IMPORT_TMB_GARGUL_INFO = "Come usare Gargul con TMB";
+L.TMB_IMPORT_TMB_GARGUL_INFO = "Come usare Gargul con ${source}";
 L.TMB_IMPORT_TMB_GARGUL_INFO_URL = "https://github.com/papa-smurf/Gargul/wiki/Gargul-and-ThatsMyBIS";
 L.TMB_IMPORT_TMB_INFO = "Incolla il contenuto dell'esportazione TMB così com'è nella casella sottostante e fai clic su 'Importa'";
 L.TMB_NO_BROADCAST_TARGETS = "Non c'è nessuno nel tuo gruppo a cui trasmettere";
@@ -1015,7 +1016,7 @@ L.VERSION_INCOMPATIBLE_WARNING = "Gargul non è aggiornato e non funzionerà fin
 L.VERSION_INVALID_WARNING = "Stringa di versione non valida fornita in Version:addRelease";
 L.VERSION_UPDATE = "Aggiorna Gargul!";
 L.VERSION_UPDATED = "|c00%sGargul è ora aggiornato a |c00%sv%s";
-L.VERSION_UPDATE_AVAILABLE = "v|c00A79EFFv%s è disponibile su CurseForge/Wago. Puoi aggiornare senza chiudere il gioco, assicurati solo di /reload!";
+L.VERSION_UPDATE_AVAILABLE = "|c00A79EFFv%s è disponibile su CurseForge/Wago. Puoi aggiornare senza chiudere il gioco, assicurati solo di /reload!";
 L.WAIT_SECONDS_BEFORE_RETRY = "Attendi altri %s secondi prima di riprovare";
 L.WINDOW = "Finestra";
 L.WINDOW_HEADER = "Gargul v%s";

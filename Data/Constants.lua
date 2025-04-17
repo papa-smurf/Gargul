@@ -7,7 +7,13 @@ local _, GL = ...;
 GL.Data = GL.Data or {};
 
 ---@class Constants
-GL.Data.Constants = {
+local Constants = {
+    ItemOfInterestReasons = {
+        RESERVE = 1,
+        WISHLIST = 2,
+        PRIOLIST = 3,
+    },
+
     defaultFrameTitle = string.format("Gargul |c00967FD2v%s|r", GL.version),
     discordURL = "https://discord.gg/D3mDhYPVzf",
 
@@ -202,7 +208,7 @@ GL.Data.Constants = {
         },
         Legendary = {
             "JoeExoToxiC",
-            "Steel-Whitemane",
+            "Grolol",
         },
     },
 
@@ -224,6 +230,14 @@ GL.Data.Constants = {
         DFTEU = 3,
         Custom = 4,
         TMBWithRealm = 5,
+        JSON = 6,
+        RRobin = 7,
+    },
+
+    BoostedRollSystems = {
+        INCREASED_BOTH = 0,
+        INCREASED_MAX = 1,
+        FIXED = 2,
     },
 
     SoftReserveSources = {
@@ -295,7 +309,8 @@ GL.Data.Constants = {
         30314, -- Phaseshift Bulwark
     },
 
-    TradeableItems = {
+    -- Items that can be traded / are safe to trade
+    TradableItems = {
         19716, -- Primal Hakkari Bindings
         19717, -- Primal Hakkari Armsplint
         19718, -- Primal Hakkari Stanchion
@@ -306,10 +321,43 @@ GL.Data.Constants = {
         19723, -- Primal Hakkari Kossack
         19724, -- Primal Hakkari Aegis
 
-        --750, -- Tough wolf meat (For testing purposes)
+        20926, -- Vek'nilash's Circlet
+        20927, -- Ouro's Intact Hide
+        20928, -- Qiraji Bindings of Command
+        20929, -- Carapace of the Old God
+        20930, -- Vek'lor's Diadem
+        20931, -- Skin of the Great Sandworm
+        20932, -- Qiraji Bindings of Dominance
+        20933, -- Husk of the Old God
+        20887, -- Qiraji Engraved Jewel
+        20883, -- Qiraji Glyphed Jewel
+
+        20884, -- Qiraji Magisterial Ring
+        20889, -- Qiraji Regal Drape
+        20886, -- Qiraji Spiked Hilt
+        21220, -- Head of Ossirian the Unscarred
+
+        -- SoD
+        220636, -- Atal'ai Blood Icon
+        220637, -- Atal'ai Ritual Token
+        233367, -- Intact Peritoneum
+        233365, -- Intact Viscera
+        233368, -- Intact Entrails
+        233370, -- Qiraji Bindings of Command
+        233363, -- Carapace of the Old God
+        233369, -- Qiraji Bindings of Dominance
+        233371, -- Qiraji Bindings of Sovereignty
+        233362, -- Husk of the Old God
+        234435, -- Schematic: Obsidian Shotgun
+        234239, -- Pattern: Razorbramble Leathers
+        234241, -- Pattern: Vampiric Shawl
+        235049, -- Nightmare Engulfed Object
+
+        -- For testing purposes
+        --750, -- Tough wolf meat
     },
 
-    UntradeableItems = {
+    UntradableItems = {
         209035, -- Hearthstone of the Flame
         50226, -- Festergut's Acidic Blood
         50231, -- Rotface's Acidic Blood
@@ -383,6 +431,8 @@ GL.Data.Constants = {
         20582, -- Trance Stone (Ysondre, Taerar, Lethon, Emeriss)
         20580, -- Hammer of Bestial Fury (Ysondre, Taerar, Lethon, Emeriss)
         20644, -- Nightmare Engulfed Object (Ysondre, Taerar, Lethon, Emeriss)
+
+        71141, -- Eternal Ember
     },
 
     -- Locked Items
@@ -441,13 +491,13 @@ GL.Data.Constants = {
         HUNTER = 3,
         ROGUE = 4,
         PRIEST = 5,
-        Knight = 6,
+        DEATHKNIGHT = 6,
         SHAMAN = 7,
         MAGE = 8,
         WARLOCK = 9,
         MONK = 10,
         DRUID = 11,
-        Hunter = 12,
+        DEMONHUNTER = 12,
         EVOKER = 13,
     },
 
@@ -542,8 +592,9 @@ GL.Data.Constants = {
     ]]
     Comm = {
         channel = "GargulComm2",
-        -- Due to a Blizzard issue with whisper comms, era requires a higher min version
-        minimumAppVersion = GL.isEra and "7.3.2" or "7.2.16",
+        minimumAppVersion = "7.6.20",
+
+        ---@class CommActions
         Actions = {
             awardItem = 1,
             broadcastLootPriorities = 2,
@@ -588,3 +639,4 @@ GL.Data.Constants = {
         descending = 2,
     },
 };
+GL.Data.Constants = Constants;

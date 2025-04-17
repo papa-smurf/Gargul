@@ -3,24 +3,43 @@ local L = Gargul_L;
 ---@type GL
 local _, GL = ...;
 
+---@type Constants
+local Constants = GL.Data.Constants;
+
+---@type Events
+local Events = GL.Events;
+
+---@type SoftRes
+local SoftRes = GL.SoftRes;
+
 ---@type TMB
 local TMB = GL.TMB;
 
+local LCG = LibStub("LibCustomGlowGargul-1.0");
+
 ---@class DroppedLoot
-GL.DroppedLoot = {
-    Announced = {},
-    initialized = false,
-    ButtonsHooked = {},
+local DroppedLoot = {
+
+    ---@type boolean
+    _initialized = false,
+
+    ---@type boolean
     allButtonsHooked = false,
-    LootButtonItemLinkCache = {},
+
+    ---@type boolean
     lootWindowIsOpened = false,
+
+    ---@type table
+    Announced = {},
+
+    ---@type table
+    ButtonsHooked = {},
+
+    ---@type table
+    LootButtonItemLinkCache = {},
 };
 
-local Constants = GL.Data.Constants; ---@type Data
-local DroppedLoot = GL.DroppedLoot; ---@type DroppedLoot
-local Events = GL.Events; ---@type Events
-local SoftRes = GL.SoftRes; ---@type SoftRes
-local LCG = LibStub("LibCustomGlowGargul-1.0");
+GL.DroppedLoot = DroppedLoot;
 
 ---@return boolean
 function DroppedLoot:_init()
@@ -48,7 +67,7 @@ function DroppedLoot:_init()
 
     -- Make sure to keep track of the loot window status
     Events:register("DroppedLootLootClosedListener", "LOOT_CLOSED", function ()
-        DroppedLoot.lootWindowIsOpened = false;
+        self.lootWindowIsOpened = false;
 
         GL.Interface.ShortcutKeysLegend:close();
     end);
@@ -57,7 +76,7 @@ function DroppedLoot:_init()
     Events:register("DroppedLootLootClosedHighlighterListener", "LOOT_CLOSED",
         function ()
             self:removeHighlights();
-            self.DroppedLoot.LootButtonItemLinkCache = {};
+            self.LootButtonItemLinkCache = {};
         end
     );
 
@@ -69,8 +88,6 @@ function DroppedLoot:_init()
 end
 
 --- Fired when a loot window is opened
----
----@return void
 function DroppedLoot:lootReady()
     self.lootWindowIsOpened = true;
 
@@ -123,7 +140,7 @@ end
 -- The player navigated to a different page in the loot window
 function DroppedLoot:lootChanged()
     local lootChanged = false;
-    for buttonIndex = 1, _G.LOOTFRAME_NUMBUTTONS do
+    for buttonIndex = 1, LOOTFRAME_NUMBUTTONS do
         local buttonName = "LootButton" .. buttonIndex;
         local Button = getglobal("LootButton" .. buttonIndex);
         local itemLink = "";
@@ -150,7 +167,6 @@ function DroppedLoot:lootChanged()
 end
 
 --- Remove the highlights on all loot buttons
----@return void
 function DroppedLoot:removeHighlights()
     GL:debug("DroppedLoot:removeHighlights");
 
@@ -158,7 +174,7 @@ function DroppedLoot:removeHighlights()
         return;
     end
 
-    for buttonIndex = 1, _G.LOOTFRAME_NUMBUTTONS do
+    for buttonIndex = 1, LOOTFRAME_NUMBUTTONS do
         local Button = getglobal("LootButton" .. buttonIndex);
 
         if (Button) then
@@ -173,7 +189,7 @@ function DroppedLoot:highlightItemsOfInterest()
 
     -- 4 is the max since buttons seem to be reused
     -- throughout loot pages... thanks Blizzard
-    for buttonIndex = 1, _G.LOOTFRAME_NUMBUTTONS do
+    for buttonIndex = 1, LOOTFRAME_NUMBUTTONS do
         local Button = getglobal("LootButton" .. buttonIndex);
 
         if (Button and Button:IsVisible() and Button.slot) then
@@ -215,7 +231,7 @@ function DroppedLoot:hookClickEvents()
 
     --- Note: the default UI only supports 4 actionable buttons.
     --- Even though Add-ons like XLoot show more than 4 at a time, you can only interact with the first 4
-    for buttonIndex = 1, _G.LOOTFRAME_NUMBUTTONS do
+    for buttonIndex = 1, LOOTFRAME_NUMBUTTONS do
         self.ButtonsHooked[buttonProvider] = self.ButtonsHooked[buttonProvider] or {};
 
         if (not self.ButtonsHooked[buttonProvider][buttonIndex]) then
@@ -255,7 +271,8 @@ function DroppedLoot:hookClickEvents()
     end
 end
 
--- Announce the loot that dropped in the party or raid chat
+--- Announce the loot that dropped in the party or raid chat
+---@param Modifiers? table We can use this to override any of the global methods, only for testing purposes
 function DroppedLoot:announce(Modifiers)
     Modifiers = Modifiers or {};
     local Functions = Modifiers.Functions or {
@@ -268,10 +285,8 @@ function DroppedLoot:announce(Modifiers)
 
     -- The sourceGUID is something we use to make sure
     -- we don't announce the same loot multiple times
+    ---@type string|false
     local sourceGUID = false;
-
-    -- Fetch the name of everyone currently in the raid/party
-    local PlayersInRaid = GL.User:groupMemberNames();
 
     -- Get the total number of items that dropped
     local itemCount = Functions.GetNumLootItems();
@@ -280,14 +295,11 @@ function DroppedLoot:announce(Modifiers)
     for lootIndex = 1, itemCount do
         local itemLink = Functions.GetLootSlotLink(lootIndex);
 
-        -- This self-executing anonymous function gives us a bit more control
         (function ()
-            local itemIsHardReserved = false;
-
             -- We need an itemLink to work with. If an item doesn't have it that means:
             --     It's not a "real" item but gold/silver/copper
             --     The item no longer exists in the loot window
-            --     The data is not yet available
+            --     The data is not (yet) available
             if (not itemLink) then
                 return;
             end
@@ -295,49 +307,40 @@ function DroppedLoot:announce(Modifiers)
             -- Make sure we don't override sourceGUID with false/nil if it was already set!
             sourceGUID = sourceGUID or Functions.GetLootSourceInfo(lootIndex);
 
-            -- We're missing crucial data, skip!
             if (GL:empty(sourceGUID) -- Make sure we have a sourceGUID
-                or DroppedLoot.Announced[sourceGUID] -- We apparently already announced these items
+                or self.Announced[sourceGUID] -- We already announced these items
             ) then
                 return;
             end
 
-            local quality = select(5, Functions.GetLootSlotInfo(lootIndex)) or 0;
-            local lootType = Functions.GetLootSlotType(lootIndex);
-            local isReserved = SoftRes:linkIsReserved(itemLink);
-            local TMBInfo = TMB:byItemLink(itemLink);
-
-            -- Check if we need to announce this item
+            -- Double check itemID value just in case!
             local itemID = tonumber(GL:getItemIDFromLink(itemLink)) or 0;
-
-            -- Double checking just in case!
             if (not GL:higherThanZero(itemID)) then
                 return;
             end
 
-            -- Make sure we're dealing with an actual item here, not currency for example
-            if (lootType ~= LOOT_SLOT_ITEM) then
+            -- Make sure we're dealing with an actual item, not currency for example
+            if (Functions.GetLootSlotType(lootIndex) ~= LOOT_SLOT_ITEM) then
                 return;
             end
 
-            if ((
-                    quality < GL.Settings:get("DroppedLoot.minimumQualityOfAnnouncedLoot", 4) -- Quality is lower than our set minimum
-                    or GL:inTable(Constants.ItemsThatShouldntBeAnnounced, itemID) -- We don't want to announce this item
-                )
-                and not isReserved -- No one (hard)reserved it
-                and GL:empty(TMBInfo) -- No one has it on his wishlist and it's not a prio item
+            local TMBInfo;
+            local IDIsReserved = SoftRes:idIsReserved(itemID);
+            local quality = select(5, Functions.GetLootSlotInfo(lootIndex)) or 0;
+            if (quality < GL.Settings:get("DroppedLoot.minimumQualityOfAnnouncedLoot", 4) -- Quality is lower than our set minimum
+                or GL:inTable(Constants.ItemsThatShouldntBeAnnounced, itemID) -- We don't want to announce this item
             ) then
-                return;
-            end
+                -- See if there's any TMB data worth sharing in chat
+                if (GL.Settings:get("TMB.includePrioListInfoInLootAnnouncement")
+                    or GL.Settings:get("TMB.includeWishListInfoInLootAnnouncement")
+                ) then
+                    TMBInfo = TMB:byItemID(itemID);
+                end
 
-            -- Fetch the applicable SoftRes data (if any)
-            local ActiveSoftResDetails = {};
-            itemIsHardReserved = SoftRes:IDIsHardReserved(itemID);
-            if (not itemIsHardReserved -- Only fetch the SoftRes data if the item isn't hard-reserved
-                and isReserved -- This item wasn't reserved
-                and GL.Settings:get("SoftRes.announceInfoInChat") -- The player isn't interested in SoftRes data
-            ) then
-                ActiveSoftResDetails = SoftRes:playerReserveAmountsByItemID(itemID);
+                -- There's no softres or TMB data to share, return
+                if (not IDIsReserved and GL:empty(TMBInfo)) then
+                    return;
+                end
             end
 
             -- Determine the correct channel for announcing the loot
@@ -347,7 +350,11 @@ function DroppedLoot:announce(Modifiers)
                 channel = "RAID_WARNING";
             end
 
-            -- Either announce the item by itself or state that it's hard-reserved!
+            --[[
+                Announce the dropped item in chat
+                * Either by itself or state that it's hard-reserved!
+            ]]
+            local itemIsHardReserved = SoftRes:IDIsHardReserved(itemID);
             if (itemIsHardReserved
                 and GL.Settings:get("SoftRes.announceInfoInChat")
             ) then
@@ -367,158 +374,34 @@ function DroppedLoot:announce(Modifiers)
             --[[
                 SHOW WHO RESERVED THIS ITEM (SOFTRES)
             ]]
-            -- * This data is only available if the user has the announce SoftRes setting enabled
-            if (not GL:empty(ActiveSoftResDetails)) then
-                GL:sendChatMessage(
-                    (L.CHAT.SOFTRES_DETAILS):format(table.concat(ActiveSoftResDetails, ", ")),
-                    "GROUP"
-                );
-            end
-
-            -- Fetch the applicable TMB data (if any)
-            local ActiveWishListDetails = {};
-            local ActivePrioListDetails = {};
-            local maximumNumberOfAnnouncementEntries = GL.Settings:get("TMB.maximumNumberOfAnnouncementEntries", 5);
-            if (TMBInfo and (
-                GL.Settings:get("TMB.includePrioListInfoInLootAnnouncement")
-                or GL.Settings:get("TMB.includeWishListInfoInLootAnnouncement")
-            )) then
-                ActivePrioListDetails, ActiveWishListDetails = self:getTMBDetails(TMBInfo, PlayersInRaid);
-            end
-            local itemIsOnSomeonesPriolist = not GL:empty(ActivePrioListDetails);
-            local itemIsOnSomeonesWishlist = not GL:empty(ActiveWishListDetails);
-
-            --[[
-                SHOW WHO HAS PRIORITY ON THIS ITEM (TMB)
-            ]]
-            if (itemIsOnSomeonesPriolist
-                and GL.Settings:get("TMB.includePrioListInfoInLootAnnouncement")
+            if (not itemIsHardReserved -- Only fetch the SoftRes data if the item isn't hard-reserved
+                and IDIsReserved -- And there are any reserves
+                and GL.Settings:get("SoftRes.announceInfoInChat") -- And the player wants to announce softres data in chat
             ) then
-                ActivePrioListDetails = TMB:sortEntries(ActivePrioListDetails);
+                local ActiveSoftResDetails = SoftRes:playerReserveAmountsByItemID(itemID);
 
-                local entries = 0;
-                local entryString = "";
-                for _, Entry in pairs(ActivePrioListDetails) do
-                    entries = entries + 1;
-
-                    -- Add the player to the list (first entry should not start with a comma)
-                    if (GL:empty(entryString)) then
-                        entryString = GL:capitalize(Entry.player);
-                    else
-                        entryString = entryString .. ", " .. GL:capitalize(Entry.player);
-                    end
-
-                    -- The user only wants to see a limited number of entries, break!
-                    if (entries >= maximumNumberOfAnnouncementEntries) then
-                        break;
-                    end
+                -- * This data is only available if the user has the announce SoftRes setting enabled
+                if (not GL:empty(ActiveSoftResDetails)) then
+                    GL:sendChatMessage(
+                        (L.CHAT.SOFTRES_DETAILS):format(table.concat(ActiveSoftResDetails, ", ")),
+                        "GROUP"
+                    );
                 end
-
-                GL:sendChatMessage(
-                    (L.CHAT.TMB_PRIORITY_DETAILS):format(TMB:source(), entryString),
-                    "GROUP"
-                );
             end
 
-            --[[
-                SHOW WHO WISHLISTED THIS ITEM (TMB)
-            ]]
-            if (itemIsOnSomeonesWishlist
-                and GL.Settings:get("TMB.includeWishListInfoInLootAnnouncement")
-                and (not itemIsOnSomeonesPriolist
-                    or not GL.Settings:get("TMB.hideWishListInfoIfPriorityIsPresent")
-                )
-            ) then
-                ActiveWishListDetails = TMB:sortEntries(ActiveWishListDetails);
-
-                local entries = 0;
-                local entryString = "";
-                for _, Entry in pairs(ActiveWishListDetails) do
-                    entries = entries + 1;
-
-                    -- Add the player to the list (first entry should not start with a comma)
-                    if (GL:empty(entryString)) then
-                        entryString = GL:capitalize(Entry.player);
-                    else
-                        entryString = entryString .. ", " .. GL:capitalize(Entry.player);
-                    end
-
-                    -- The user only wants to see a limited number of entries, break!
-                    if (entries >= maximumNumberOfAnnouncementEntries) then
-                        break;
-                    end
-                end
-
-                GL:sendChatMessage(
-                    (L.CHAT.TMB_WISHLIST_DETAILS):format(entryString),
-                    "GROUP"
-                );
-            end
+            TMB:announceDetailsOfItemInChat(itemID, TMBInfo);
         end)();
     end
 
     -- This ensures that we don't announce the same loot multiple times!
     -- Keep in mind that sourceGUID can be empty!
     if (sourceGUID) then
-        DroppedLoot.Announced[sourceGUID] = true;
+        self.Announced[sourceGUID] = true;
     end
-end
-
---- Get all TMB details
----
----@return table, table
-function DroppedLoot:getTMBDetails(TMBInfo, PlayersInRaid)
-    local ActivePrioListDetails = {};
-    local ActiveWishListDetails = {};
-
-    -- Make sure we only show wishlist details of people
-    -- Who are actually in the raid
-    for _, Entry in pairs(TMBInfo) do
-        local playerName = string.lower(Entry.character);
-
-        --- NOTE TO SELF: it's (os) because of the string.lower, if you remove the lower then change below accordingly!
-        if (not GL.User.isInGroup or GL:inTable(PlayersInRaid, string.gsub(playerName, "%(os%)", ""))) then
-            local prio = Entry.prio;
-            local entryType = Entry.type or Constants.tmbTypeWish;
-            local isOffSpec = GL:strContains(playerName, "%(os%)");
-            local prioOffset = 0;
-            local sortingOrder = tonumber(prio);
-
-            -- We add 100 to the prio (first key) of the object
-            -- This object is used for sorting later and is not visible to the player
-            if (isOffSpec) then
-                prioOffset = 100;
-            end
-
-            if (not GL:empty(sortingOrder)) then
-                sortingOrder = prio + prioOffset;
-            else
-                -- If for whatever reason we can't determine the
-                -- item prio then we add it to the end of the list by default
-                sortingOrder = 1000;
-            end
-
-            if (entryType == Constants.tmbTypePrio) then
-                tinsert(ActivePrioListDetails, {
-                    prio = sortingOrder,
-                    player = string.format("%s[%s]", playerName, prio),
-                });
-            else
-                tinsert(ActiveWishListDetails, {
-                    prio = sortingOrder,
-                    player = string.format("%s[%s]", playerName, prio),
-                });
-            end
-        end
-    end
-
-    return ActivePrioListDetails, ActiveWishListDetails;
 end
 
 --- This function allows me to test the loot announcement without actually having to kill bosses in raids
 --- It also enables me to debug issues other players may have using their actual TMB/SoftRes data
----
----@return void
 function DroppedLoot:announceTest(...)
     local itemIDs = ...;
 

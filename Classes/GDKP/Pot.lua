@@ -322,7 +322,7 @@ function Pot:calculateCuts(sessionID)
     end
 
     Session.Pot.Mutators = Session.Pot.Mutators or {};
-    local Cuts = Session.Pot.Cuts or {};
+    local Cuts = {};
     local DistributionDetails = Session.Pot.DistributionDetails or {};
 
     -- This player hasn't had any pot or mutator calculations done for him yet

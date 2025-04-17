@@ -11,6 +11,7 @@ local Settings = GL.Settings;
 
 ---@class LocaleInterface
 GL.Interface.Locale = {
+    forwardToSettings = false,
     isVisible = false,
     windowName = "Gargul.Interface.Locale.Window",
 };
@@ -19,7 +20,8 @@ GL.Interface.Locale = {
 local Locale = GL.Interface.Locale;
 
 ---@return table
-function Locale:open()
+function Locale:open(forwardToSettings)
+    self.forwardToSettings = forwardToSettings ~= nil;
     self.isVisible = true;
 
     local Window = _G[self.windowName] or self:build();
@@ -66,14 +68,14 @@ function Locale:build()
     local Title = Interface:createFontString(Window, ("|c00%s%s|r"):format(GL.Data.Constants.addonHexColor, L.LOCALE_NONE_TITLE));
     Title:SetPoint("TOPLEFT", Window, "TOPLEFT", 20, -30);
     Title:SetPoint("TOPRIGHT", Window, "TOPRIGHT", -20, 0);
-    Title:SetJustifyH("MIDDLE");
+    Title:SetJustifyH("CENTER");
 
     ---@type FontString
     local Intro = Interface:createFontString(Window, (L.LOCALE_NONE_EXPLANATION):format(("|c00%s%s|r"):format(GL.Data.Constants.addonHexColor, GL.Settings:get("chatLocale", "enUS"))));
     Intro:SetPoint("TOP", Title, "BOTTOM", 0, -6);
     Intro:SetPoint("LEFT", Window, "LEFT", 20, -30);
     Intro:SetPoint("RIGHT", Window, "RIGHT", -20, 0);
-    Intro:SetJustifyH("MIDDLE");
+    Intro:SetJustifyH("CENTER");
 
     ---@type Frame
     local Locales = Interface:createDropdown{
@@ -101,13 +103,18 @@ function Locale:build()
     Note:SetPoint("TOP", Locales, "BOTTOM", 0, -6);
     Note:SetPoint("LEFT", Window, "LEFT", 20, -30);
     Note:SetPoint("RIGHT", Window, "RIGHT", -20, 0);
-    Note:SetJustifyH("MIDDLE");
+    Note:SetJustifyH("CENTER");
 
     local OkButton = Interface:dynamicPanelButton(Window, L.OK);
     OkButton:SetPoint("BOTTOMLEFT", Window, "BOTTOMLEFT", 20, 30);
     OkButton:SetScript("OnClick", function ()
         Settings:set("chatLocale", Locales:GetValue() or "enUS");
         self:close();
+
+        if (self.forwardToSettings) then
+            self.forwardToSettings = false;
+            GL.Settings:draw();
+        end
     end);
 
     local CancelButton = Interface:dynamicPanelButton(Window, L.CANCEL);

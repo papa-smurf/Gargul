@@ -24,7 +24,7 @@ GL.RollOff = GL.RollOff or {
     },
     InitiateCountDownTimer = nil;
     StopRollOffTimer = nil,
-    StopListeningForRollsTimer = nil,
+    rollListenerCancelTimerId = nil,
 };
 local RollOff = GL.RollOff; ---@type RollOff
 
@@ -36,15 +36,17 @@ local Events = GL.Events; ---@type Events
 ---@param itemLink string
 ---@param time number
 ---@param note string|nil
----@return void
+---@return boolean
 function RollOff:announceStart(itemLink, time, note)
     time = tonumber(time);
 
-    if (type(itemLink) ~= "string"
-        or GL:empty(itemLink)
-        or not GL:higherThanZero(time)
-    ) then
+    if (not GL:isValidItemLink(itemLink)) then
         GL:warning(L.ROLLING_INVALID_START_DATA_WARNING);
+        return false;
+    end
+
+    if (not GL:gte(time, 5)) then
+        GL:warning(L["Timer needs to be 5 seconds or more"]);
         return false;
     end
 
@@ -61,66 +63,44 @@ function RollOff:announceStart(itemLink, time, note)
         self.CurrentRollOff.Rolls = {};
     end
 
+    self:stopListeningForRolls();
     self:listenForRolls();
 
-    --- If boosted rolls are enabled, send individually instead.
+    --- If boosted rolls are enabled, sending additional data is required
+    local BoostedRolls;
+
     if (GL.BoostedRolls:enabled()
         and GL.BoostedRolls:available()
     ) then
-        --- Generate generic part of message first
-        local Players = GL.User:groupMembers();
+        BoostedRolls = {};
+        BoostedRolls.identifier = string.sub(GL.Settings:get("BoostedRolls.identifier", "BR"), 1, 3);
+        BoostedRolls.RangePerPlayer = {};
 
-        --- Create a copy of the supported rolls data
-        local SupportedRolls = {};
-        for _, Entry in pairs(GL.Settings:get("RollTracking.Brackets", {}) or {}) do
-            tinsert(SupportedRolls, Entry);
+        for _, Player in pairs(GL.User:groupMembers()) do
+            (function()
+                local normalizedName = GL.BoostedRolls:normalizedName(Player.fqn);
+                if (not GL.BoostedRolls:hasPoints(normalizedName)) then
+                    return;
+                end
+
+                local points = GL.BoostedRolls:getPoints(normalizedName);
+                BoostedRolls.RangePerPlayer[normalizedName] = ("%d-%d"):format(GL.BoostedRolls:minBoostedRoll(points), GL.BoostedRolls:maxBoostedRoll(points));
+            end)();
         end
+    end
 
-        --- Add boosted rolls
-        local BoostedRollsIdentifier = string.sub(GL.Settings:get("BoostedRolls.identifier", "BR"), 1, 3);
-
-        local boostedRollsSettings = { BoostedRollsIdentifier, 1, 1, GL.Settings:get("BoostedRolls.priority", 1) };
-        tinsert(SupportedRolls, boostedRollsSettings);
-        local boostedRollIndex = #SupportedRolls;
-
-        local msg = {
+    GL.CommMessage.new{
+        action = CommActions.startRollOff,
+        content = {
             item = itemLink,
             time = time,
             note = note,
             bth = GL.User:bth(),
-            SupportedRolls = SupportedRolls,
-        };
-
-        for _, Player in pairs(Players) do
-            -- Then update for each player
-            local points = GL.BoostedRolls:getPoints(Player.fqn);
-            local low = GL.BoostedRolls:minBoostedRoll(points);
-            local high = GL.BoostedRolls:maxBoostedRoll(points);
-
-            --- Users always roll their current boosted roll value (/rnd 150-150 instead of 1-150)
-            msg.SupportedRolls[boostedRollIndex][2] = low;
-            msg.SupportedRolls[boostedRollIndex][3] = high;
-
-            GL.CommMessage.new{
-                action = CommActions.startRollOff,
-                content = msg,
-                channel = "WHISPER",
-                recipient = Player.fqn,
-            }:send();
-        end
-    else
-        GL.CommMessage.new{
-            action = CommActions.startRollOff,
-            content = {
-                item = itemLink,
-                time = time,
-                note = note,
-                bth = GL.User:bth(),
-                SupportedRolls = GL.Settings:get("RollTracking.Brackets", {}) or {},
-            },
-            channel = "GROUP",
-        }:send();
-    end
+            SupportedRolls = GL.Settings:get("RollTracking.Brackets", {}) or {},
+            BoostedRollData = BoostedRolls,
+        },
+        channel = "GROUP",
+    }:send();
 
     GL.Settings:set("UI.RollOff.timer", time);
 
@@ -181,18 +161,25 @@ function RollOff:postStartMessage(itemLink, time, note)
         end
 
         local EligiblePlayers = {};
+        local wasImportedFromRRobin = TMB:wasImportedFromRRobin();
         if (not GL:empty(PrioListEntries)
             and GL.Settings:get("TMB.announcePriolistInfoWhenRolling")
         ) then
             PrioListEntries = TMB:sortEntries(PrioListEntries);
+            local topPrio = PrioListEntries[1].prio;
 
             for _, Entry in pairs(PrioListEntries) do
                 -- This is the first player in the list, add him
                 if (not EligiblePlayers[1]) then
                     tinsert(EligiblePlayers, Entry);
                 else
-                    -- This players prio is worse than the number one, break!
-                    if (Entry.prio ~= EligiblePlayers[1].prio) then
+                    -- RRobin works slightly differently from normal TMB-compatible loot systems
+                    if (wasImportedFromRRobin and topPrio - Entry.prio > 1) then
+                        break;
+                    end
+
+                    -- This player's prio is worse than the number one, break!
+                    if (not wasImportedFromRRobin and Entry.prio ~= topPrio) then
                         break;
                     end
 
@@ -204,6 +191,7 @@ function RollOff:postStartMessage(itemLink, time, note)
             and GL.Settings:get("TMB.announceWishlistInfoWhenRolling")
         ) then
             WishListEntries = TMB:sortEntries(WishListEntries);
+            local topPrio = WishListEntries[1].prio;
 
             for _, Entry in pairs(WishListEntries) do
                 -- This is the first player in the list, add him
@@ -211,7 +199,7 @@ function RollOff:postStartMessage(itemLink, time, note)
                     tinsert(EligiblePlayers, Entry);
                 else
                     -- This players position is worse than the number one, break!
-                    if (Entry.prio ~= EligiblePlayers[1].prio) then
+                    if (Entry.prio ~= topPrio) then
                         break;
                     end
 
@@ -256,18 +244,11 @@ function RollOff:postStartMessage(itemLink, time, note)
 end
 
 --- Anounce to everyone in the raid that a roll off has ended
----
----@return void
 function RollOff:announceStop()
     GL.CommMessage.new{
         action = CommActions.stopRollOff,
         channel = "GROUP",
     }:send();
-
-    -- We stop listening for rolls one second after the rolloff ends just in case there is server lag/jitter
-    self.StopListeningForRollsTimer = GL.Ace:ScheduleTimer(function()
-        self:stopListeningForRolls();
-    end, 1);
 end
 
 --- Start a roll off
@@ -312,6 +293,24 @@ function RollOff:start(CommMessage)
 
         local time = math.floor(tonumber(content.time));
         local SupportedRolls = content.SupportedRolls or {};
+
+        -- Add BoostedRolls to the list of SupportedRolls if data is available
+        if (type(content.BoostedRollData) == 'table'
+            and not GL:empty(content.BoostedRollData.identifier)
+            and not GL:empty(content.BoostedRollData.RangePerPlayer)
+        ) then
+            local myNormalizedName = GL.BoostedRolls:normalizedName(GL.User.fqn);
+            local myRange = content.BoostedRollData.RangePerPlayer[myNormalizedName];
+
+            if (myRange) then
+                local low, high = myRange:match("^(%d+)-(%d+)$");
+                table.insert(SupportedRolls, {
+                    content.BoostedRollData.identifier,
+                    low,
+                    high,
+                });
+            end
+        end
 
         -- This is a new roll off so clean everything
         if (Details.link ~= self.CurrentRollOff.itemLink
@@ -393,8 +392,47 @@ function RollOff:start(CommMessage)
             end, time - numberOfSecondsToCountdown - 2);
         end
 
-        -- Play raid warning sound
-        GL:playSound(SOUNDKIT.RAID_WARNING, "SFX");
+        local notifyOnItemOfInterest = GL.Settings:get("Rolling.notifyOnItemOfInterest");
+        local itemOfInterestSound = GL.Settings:get("Rolling.itemOfInterestSound");
+        
+        -- Play a raid warning sound
+        GL:playSound(SOUNDKIT.RAID_WARNING);
+
+        -- If this is an item of interest, play a different sound and post a message
+        local isItemOfInterest, reason = GL:isItemOfInterest(Details.id);
+        if (isItemOfInterest) then
+            local message = "";
+            local ItemOfInterestReasons = GL.Data.Constants.ItemOfInterestReasons;
+            local sound = LibStub("LibSharedMedia-3.0"):Fetch("sound", itemOfInterestSound);
+
+            -- We reserved there item
+            if (reason == ItemOfInterestReasons.RESERVE) then
+                message = L["You reserved %s!"];
+            end
+
+            -- We have the item on prio
+            if (reason == ItemOfInterestReasons.PRIOLIST) then
+                message = L["You have %s on prio!"];
+            end
+
+            -- We have the item on wishlist
+            if (reason == ItemOfInterestReasons.WISHLIST) then
+                message = L["You have %s on wishlist!"];
+            end
+
+            if (notifyOnItemOfInterest) then
+                GL:success((message):format(Details.link));
+            end
+
+            -- Play the notification sound after the raid warning has ended
+            GL:after(.8, nil, function ()
+                GL:playSound(sound);
+            end);
+
+            GL.Interface.Alerts:fire("GargulNotification", {
+                message = ("|c00BE3333%s|r"):format(L["Item of interest!"]),
+            });
+        end
 
         -- Flash the game icon in case the player alt-tabbed
         FlashClientIcon();
@@ -450,7 +488,7 @@ function RollOff:stop(CommMessage)
         -- We stop listening for rolls one second after the rolloff ends just in case there is server lag/jitter
         self.rollListenerCancelTimerId = GL.Ace:ScheduleTimer(function()
             self:stopListeningForRolls();
-        end, 1);
+        end, GL.Settings:get("RollTracking.rollOffEndLeeway", 1));
     end
 
     if (self.InitiateCountDownTimer) then
@@ -540,6 +578,18 @@ function RollOff:award(roller, itemLink, RollBracket, identicalRollDetected)
                 Rolls = Rolls,
                 RollBracket = RollBracket,
             };
+
+            -- Add a +1 if that's expected for this roll bracket
+            if (addPlusOne) then
+                GL.PlusOnes:addPlusOnes(roller);
+            end
+
+            -- Deduct Boosted Roll points if needed
+            BRCost = tonumber(BRCost);
+            if (BRCost and GL:gt(BRCost, 0)) then
+                GL.BoostedRolls:modifyPoints(roller, -BRCost);
+                GL.Interface.BoostedRolls.Overview:refreshTable();
+            end
 
             if (GL.Settings:get("UI.RollOff.closeOnAward")) then
                 GL.MasterLooterUI:close();
@@ -671,8 +721,8 @@ end
 ---@return void
 function RollOff:listenForRolls()
     -- Make sure the timer to cancel listening for rolls is cancelled
-    if (self.StopListeningForRollsTimer) then
-        GL.Ace:CancelTimer(self.StopListeningForRollsTimer);
+    if (self.rollListenerCancelTimerId) then
+        GL.Ace:CancelTimer(self.rollListenerCancelTimerId);
     end
 
     if (self.listeningForRolls) then
@@ -690,8 +740,8 @@ end
 ---
 ---@return void
 function RollOff:stopListeningForRolls()
-    if (self.StopListeningForRollsTimer) then
-        GL.Ace:CancelTimer(self.StopListeningForRollsTimer);
+    if (self.rollListenerCancelTimerId) then
+        GL.Ace:CancelTimer(self.rollListenerCancelTimerId);
     end
 
     self.listeningForRolls = false;
@@ -803,13 +853,18 @@ function RollOff:refreshRollsTable()
         return;
     end
 
-    for _, Roll in pairs(Rolls) do
-        -- Determine how many times this player rolled during the current rolloff
-        NumberOfRollsPerPlayer[Roll.player] = NumberOfRollsPerPlayer[Roll.player] or 0;
-        NumberOfRollsPerPlayer[Roll.player] = NumberOfRollsPerPlayer[Roll.player] + 1;
+    local importedFromDFTOrRRobin = GL.TMB:wasImportedFromDFT() or GL.TMB:wasImportedFromRRobin(); -- These two go high > low whereas the rest goes low > high
+    local sortByTMBWishlist = GL.Settings:get("RollTracking.sortByTMBWishlist");
+    local sortByTMBPrio = GL.Settings:get("RollTracking.sortByTMBPrio");
 
-        local playerName = Roll.player;
-        local numberOfTimesRolledByPlayer = NumberOfRollsPerPlayer[Roll.player];
+    for _, Roll in pairs(Rolls) do
+        local playerName = GL:disambiguateName(Roll.player);
+
+        -- Determine how many times this player rolled during the current rolloff
+        NumberOfRollsPerPlayer[playerName] = NumberOfRollsPerPlayer[playerName] or 0;
+        NumberOfRollsPerPlayer[playerName] = NumberOfRollsPerPlayer[playerName] + 1;
+
+        local numberOfTimesRolledByPlayer = NumberOfRollsPerPlayer[playerName];
         local rollPriority = Roll.priority or 1;
 
         -- This is used to free up priority slots for soft-reserved/wishlisted etc. items
@@ -842,9 +897,6 @@ function RollOff:refreshRollsTable()
 
         -- The item might be on a TMB list, make sure we add the appropriate note to the roll
         if (TMBData) then
-            local importedFromDFT = GL.TMB:wasImportedFromDFT(); -- DFT goes high > low whereas the rest goes low > high
-            local sortByTMBWishlist = GL.Settings:get("RollTracking.sortByTMBWishlist");
-            local sortByTMBPrio = GL.Settings:get("RollTracking.sortByTMBPrio");
             local TopEntry = false;
 
             for _, Entry in pairs(TMBData) do
@@ -871,8 +923,8 @@ function RollOff:refreshRollsTable()
                     end
 
                     -- This entry and TopEntry are of the same type, but this entry has better prio (aka more important)
-                    if ((importedFromDFT and Entry.prio > TopEntry.prio)
-                        or (not importedFromDFT and Entry.prio < TopEntry.prio)
+                    if ((importedFromDFTOrRRobin and Entry.prio > TopEntry.prio)
+                        or (not importedFromDFTOrRRobin and Entry.prio < TopEntry.prio)
                     ) then
                         TopEntry = Entry;
                         return;
@@ -882,15 +934,13 @@ function RollOff:refreshRollsTable()
 
             -- The roller has this item on one of his lists, add a note and change the roll sorting!
             if (TopEntry) then
-                local type = "";
-
                 -- Prio list entries are more important than wishlist ones (and therefore get sorted on top)
                 if (TopEntry.type == GL.Data.Constants.tmbTypePrio) then
                     if (sortByTMBPrio) then
                         rollPriority = 2;
 
                         -- Make sure rolls of identical list positions "clump" together
-                        if (importedFromDFT) then
+                        if (importedFromDFTOrRRobin) then
                             rollPriority = rollPriority - TopEntry.prio;
                         else
                             rollPriority = rollPriority + TopEntry.prio;
@@ -919,14 +969,10 @@ function RollOff:refreshRollsTable()
         local class = Roll.class;
         local plusOnes = GL.PlusOnes:getPlusOnes(playerName);
 
-        if (GL:higherThanZero(plusOnes)) then
-            plusOnes = L.PLUS_SIGN .. plusOnes;
-        end
-
         local Row = {
             cols = {
                 {
-                    value = GL:disambiguateName(rollerName),
+                    value = rollerName,
                     color = GL:classRGBAColor(class),
                 },
                 {
@@ -934,7 +980,7 @@ function RollOff:refreshRollsTable()
                     color = GL:classRGBAColor(class),
                 },
                 {
-                    value = plusOnes,
+                    value = GL:higherThanZero(plusOnes) and L.PLUS_SIGN .. plusOnes or "",
                     color = GL:classRGBAColor(class),
                 },
                 {
@@ -947,7 +993,10 @@ function RollOff:refreshRollsTable()
                 },
                 {
                     value = rollPriority,
-                };
+                },
+                {
+                    value = plusOnes or 0,
+                },
             },
         };
         tinsert(RollTableData, Row);

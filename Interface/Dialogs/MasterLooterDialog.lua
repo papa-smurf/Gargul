@@ -78,6 +78,8 @@ end
 --- Announce the use of Gargul to the rest of the raid
 ---
 ---@return void
+---
+--- /script _G.Gargul.Interface.MasterLooterDialog:flightAttendant();
 function MasterLooterDialog:flightAttendant()
     local function announce()
         local message = L.CHAT.FLIGHT_ATTENDANT;
@@ -116,7 +118,7 @@ function MasterLooterDialog:draw()
     local Window = AceGUI:Create("Frame");
     Window:SetTitle((L.WINDOW_HEADER):format(GL.version));
     Window:SetLayout("FLOW");
-    Window:SetWidth(440);
+    Window:SetWidth(500);
     Window:SetHeight(160);
     Window:EnableResize(false);
     Window.statustext:GetParent():Hide(); -- Hide the statustext bar
@@ -214,6 +216,21 @@ function MasterLooterDialog:draw()
     end);
     Window:AddChild(GDKPButton);
 
+    VerticalSpacer = AceGUI:Create("SimpleGroup");
+    VerticalSpacer:SetLayout("FILL");
+    VerticalSpacer:SetWidth(12);
+    VerticalSpacer:SetHeight(10);
+    Window:AddChild(VerticalSpacer);
+
+    local PlusOneButton = AceGUI:Create("Button");
+    PlusOneButton:SetText(L.PLUS1);
+    PlusOneButton:SetHeight(20);
+    PlusOneButton:SetWidth(50);
+    PlusOneButton:SetCallback("OnClick", function()
+        GL.Interface.PlusOnes.Overview:draw();
+    end);
+    Window:AddChild(PlusOneButton);
+
     local HorizontalSpacer = AceGUI:Create("SimpleGroup");
     HorizontalSpacer:SetLayout("FILL");
     HorizontalSpacer:SetFullWidth(true);
@@ -232,7 +249,7 @@ function MasterLooterDialog:draw()
     end);
     Window:AddChild(AutoOpenCheckbox);
 
-    -- Plus one label
+    -- Auto open label
     local CheckBoxLabel = AceGUI:Create("InteractiveLabel");
     CheckBoxLabel:SetFontObject(_G["GameFontNormal"]);
     CheckBoxLabel:SetWidth(200);

@@ -23,6 +23,7 @@ GL.Commands = GL.Commands or {
         setdisenchanter = "Sets the disenchanter entry directly without having to select one: /gl sd [mydisenchanter]",
         dft = "Open the DFT importer. Data exported from your DFT sheet can be imported here",
         cpr = "Open the classicpr importer. Data exported from https://classicpr.io/ can be imported here",
+        rrobin = "Open the RRobin importer. Data exported from https://rrobin.net/ can be imported here",
         export = "Export dropped loot to a CSV format which is compatible with TMB for example.",
         groups = "Open the group window where you can provide a roster from csv/raidhelper/wowhead so that you can: see who's missing and sort groups automatically",
         import = "Opens the general import window that includes shortcuts to the TMB, SoftRes or loot priority importers",
@@ -215,8 +216,8 @@ GL.Commands = GL.Commands or {
         end,
 
         -- Open the locale selector
-        locale = function ()
-            GL.Interface.Locale:open();
+        locale = function (...)
+            GL.Interface.Locale:open(...);
         end,
 
         -- Open the minimap button settings
@@ -261,6 +262,9 @@ GL.Commands = GL.Commands or {
 
         -- Open the TMB window with CPR skin
         cpr = function () GL.TMB:draw("cpr"); end,
+
+        -- Open the TMB window with RRobin skin
+        rrobin = function () GL.TMB:draw("rrobin"); end,
 
         -- Open the pack mule window
         packmule = function () Settings:draw("PackMule"); end,
@@ -315,6 +319,7 @@ function Commands:_dispatch(str)
     -- User entered "/gl" with no additional arguments, open localization or settings window
     if (not str or #str < 1) then
         command = GL.Settings:get("chatLocale") and "settings" or "locale";
+        argumentString = "1";
     end
 
     -- Make sure commands are case insensitive (Busmonstret = dumdum)
@@ -348,5 +353,3 @@ function Commands:_dispatch(str)
         self:help();
     end
 end;
-
-GL:debug("Commands.lua");

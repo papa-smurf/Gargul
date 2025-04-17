@@ -88,6 +88,7 @@ GL.Data.DefaultSettings = {
         awardMessagesEnabled = true,
         awardOnReceive = false,
         awardOnReceiveMinimumQuality = 4,
+        notifyOfFailedTradeStart = true,
         skipAwardConfirmationDialog = false,
     },
     ExportingLoot = {
@@ -132,11 +133,15 @@ GL.Data.DefaultSettings = {
         Rules = {},
     },
     Rolling = {
-        showRollOffWindow = true,
         closeAfterRoll = false,
+        itemOfInterestSound = "Gargul: cheer",
+        notifyOnItemOfInterest = true,
         scale = 1,
+        showRollOffWindow = true,
     },
     RollTracking = {
+        rollOffEndLeeway = 1,
+        sortByPlusOne = "ASC",
         sortBySoftRes = true,
         sortByTMBWishlist = true,
         sortByTMBPrio = true,
@@ -162,10 +167,11 @@ GL.Data.DefaultSettings = {
         defaultStep = 10,
         enabled = false,
         enableWhisperCommand = true,
-        fixedRolls = false,
         identifier = L.BOOSTED_ROLLS_ABBR,
+        maxmimumPoints = nil,
         priority = 1,
         reserveThreshold = 180,
+        system = 0, -- See Constants.BoostedRollSystems.INCREASED_BOTH
     },
     PlusOnes = {
         automaticallyAcceptDataFrom = "",
@@ -223,6 +229,10 @@ GL.Data.DefaultSettings = {
         time = 30,
         whisperGoldDetails = true,
 
+        ExportAuctions = {
+            includeDisenchantedItems = false
+        },
+
         -- This holds minimum bid and increment settings per item
         SettingsPerItem = {},
 
@@ -232,6 +242,7 @@ GL.Data.DefaultSettings = {
             includeAwarded = false,
             includeBOEs = true,
             includeMaterials = false,
+            minimumFillItemLevel = nil,
             minimumFillQuality = 4,
             time = 600,
         },
