@@ -29,7 +29,7 @@ function Importer:draw()
 
     -- Create a container/parent frame
     local Window = AceGUI:Create("Frame");
-    Window:SetTitle((L.WINDOW_HEADER):format(GL.version));
+    Window:SetTitle((L["Gargul v%s"]):format(GL.version));
     Window:SetLayout("Flow");
     Window:SetWidth(600);
     Window:SetHeight(480);
@@ -50,7 +50,7 @@ function Importer:draw()
     local Description = AceGUI:Create("Label");
     Description:SetFontObject(_G["GameFontNormal"]);
     Description:SetFullWidth(true);
-    Description:SetText(L.SOFTRES_IMPORT_INFO);
+    Description:SetText(L["In order to get started you first need to create a raid on softres.it. Afterwards click on 'Addon Export', select 'Gargul', copy the data and paste it in the form below."]);
     Window:AddChild(Description);
 
     -- Large edit box
@@ -84,7 +84,7 @@ function Importer:draw()
 
     -- Import button
     local ImportButton = AceGUI:Create("Button");
-    ImportButton:SetText(L.IMPORT);
+    ImportButton:SetText(L["Import"]);
     ImportButton:SetWidth(140);
     ImportButton:SetCallback("OnClick", function()
         GL.SoftRes:import(softReservesBoxContent, true);

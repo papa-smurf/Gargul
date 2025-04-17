@@ -55,10 +55,10 @@ function EditAuction:draw(session, checksum)
     local ItemLink = AceGUI:Create("Label");
     ItemLink:SetFontObject(_G["GameFontNormal"]);
     ItemLink:SetFullWidth(true);
-    ItemLink:SetText((L.GDKP_AUCTION_DETAILS_GOLD_PAID_BY):format(
+    ItemLink:SetText((L["\n%s paid |c00%s%sg for\n%s"]):format(
         GL:nameFormat{ name = Auction.Winner.name, colorize = true, },
         Interface.Colors.ROGUE,
-        Auction.price or L.ZERO_SIGN,
+        Auction.price or L["0"],
         Auction.itemLink
     ));
     Window:AddChild(ItemLink);
@@ -89,7 +89,7 @@ function EditAuction:draw(session, checksum)
     SessionDropdown:SetValue(session);
     SessionDropdown:SetList(DropDownItems, ItemOrder);
     SessionDropdown:SetText(DropDownItems[session]);
-    SessionDropdown:SetLabel(L.SESSION);
+    SessionDropdown:SetLabel(L["Session"]);
     SessionDropdown:SetWidth(250);
     Window:AddChild(SessionDropdown);
 
@@ -98,7 +98,7 @@ function EditAuction:draw(session, checksum)
     PlayernameInput:SetHeight(20);
     PlayernameInput:SetWidth(250);
     PlayernameInput:SetText(GL:nameFormat(Auction.Winner.guid));
-    PlayernameInput:SetLabel(L.PLAYER);
+    PlayernameInput:SetLabel(L["Player"]);
     Window:AddChild(PlayernameInput);
 
     local NoteInput = GL.AceGUI:Create("EditBox");
@@ -106,7 +106,7 @@ function EditAuction:draw(session, checksum)
     NoteInput:SetHeight(20);
     NoteInput:SetWidth(250);
     NoteInput:SetText(Auction.note);
-    NoteInput:SetLabel(L.NOTE);
+    NoteInput:SetLabel(L["Note"]);
     Window:AddChild(NoteInput);
 
     local AdjustPaidInput = GL.AceGUI:Create("EditBox");
@@ -114,7 +114,7 @@ function EditAuction:draw(session, checksum)
     AdjustPaidInput:SetHeight(20);
     AdjustPaidInput:SetWidth(250);
     AdjustPaidInput:SetText(Auction.paid);
-    AdjustPaidInput:SetLabel("     " .. L.GDKP_AUCTION_PAID_AMOUNT);
+    AdjustPaidInput:SetLabel("     " .. L["Set paid amount (read left)"]);
     Window:AddChild(AdjustPaidInput);
 
     local HelpIcon = AceGUI:Create("Icon");
@@ -126,10 +126,10 @@ function EditAuction:draw(session, checksum)
     HelpIcon.frame:SetPoint("BOTTOMLEFT", AdjustPaidInput.frame, "BOTTOMLEFT", 2, 22);
     HelpIcon.frame:Show();
 
-    Interface:addTooltip(HelpIcon, L.GDKP_AUCTION_PAID_AMOUNT_INFO, "RIGHT");
+    Interface:addTooltip(HelpIcon, L["\n\nGargul automatically keeps track of gold traded. As long as players pay\nfor what they bought then you shouldn't ever need this field\n\n'Paid amount' refers to the amount of gold the buyer already traded you.\nThis does not change the actual price of the item!\n\nWarning: only set a value here if the player promises to pay\noutside of the raid or trades the gold from an alt / mail etc!\n\n\n"], "RIGHT");
 
     local SaveButton = AceGUI:Create("Button");
-    SaveButton:SetText(L.OK);
+    SaveButton:SetText(L["Ok"]);
     SaveButton:SetFullWidth(true);
     SaveButton:SetCallback("OnClick", function()
         local newName = strtrim(PlayernameInput:GetText());
@@ -166,7 +166,7 @@ function EditAuction:draw(session, checksum)
     Window:AddChild(SaveButton);
 
     local CancelButton = AceGUI:Create("Button");
-    CancelButton:SetText(L.CANCEL);
+    CancelButton:SetText(L["Cancel"]);
     CancelButton:SetFullWidth(true);
     CancelButton:SetCallback("OnClick", function()
         self:close();

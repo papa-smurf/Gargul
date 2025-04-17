@@ -62,24 +62,24 @@ local SHORTCUT_ORDER = {
 
 local EXPLANATIONS = {
     DISABLED = "--",
-    GARGUL = L.MINIMAP_BUTTON_GARGUL,
-    SOFTRES = L.SOFTRES,
-    GDKP = L.GDKP,
-    MULTIAUCTION = L.MINIMAP_BUTTON_MULTIAUCTION,
-    GDKP_LEDGER = L.MINIMAP_BUTTON_LEDGER,
-    GDKP_CUTS = L.MINIMAP_BUTTON_CUTS,
-    IMPORT = L.MINIMAP_BUTTON_IMPORT,
-    EXPORT = L.MINIMAP_BUTTON_EXPORT,
-    AWARDHISTORY = L.MINIMAP_BUTTON_AWARDED,
-    PLUS_ONE = L.PLUS1,
-    BOOSTED_ROLLS = L.BOOSTED_ROLLS,
+    GARGUL = L["Open Gargul"],
+    SOFTRES = L["Soft-Reserves"],
+    GDKP = L["GDKP"],
+    MULTIAUCTION = L["Multiauction"],
+    GDKP_LEDGER = L["GDKP Ledger"],
+    GDKP_CUTS = L["GDKP Cuts"],
+    IMPORT = L["Import data"],
+    EXPORT = L["Export data"],
+    AWARDHISTORY = L["Awarded loot history"],
+    PLUS_ONE = L["+1"],
+    BOOSTED_ROLLS = L["Boosted Rolls"],
 };
 
 ---@return void
 function MinimapButton:_init()
     local GLDataBroker = LibDataBroker:NewDataObject("Gargul", {
         type = "data source",
-        text = L.GARGUL,
+        text = L["Gargul"],
         icon = "Interface/AddOns/Gargul/Assets/Buttons/minimap",
         OnClick = function(_, mouseButtonPressed)
             local ButtonActions = GL.Settings:get("MinimapButton.Actions");
@@ -89,7 +89,7 @@ function MinimapButton:_init()
         OnTooltipShow = function(tooltip)
             local ButtonActions = GL.Settings:get("MinimapButton.Actions");
 
-            tooltip:AddLine(("|cff%s%s %s%s|r"):format(GL.Data.Constants.addonHexColor, L.GARGUL, L.VERSION_ABBR, GL.version));
+            tooltip:AddLine(("|cff%s%s %s%s|r"):format(GL.Data.Constants.addonHexColor, L["Gargul"], L["v"], GL.version));
 
             for _, shortcut in pairs(SHORTCUT_ORDER) do
                 (function()
@@ -103,7 +103,7 @@ function MinimapButton:_init()
             end
 
             tooltip:AddLine(" ");
-            tooltip:AddLine(("|c00FFFFFF%s"):format(L.MINIMAP_BUTTON_SETTING_INFO));
+            tooltip:AddLine(("|c00FFFFFF%s"):format(L["Change settings in /gl minimap"]));
         end,
     });
 

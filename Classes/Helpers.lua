@@ -420,7 +420,7 @@ local lastClickTime;
 --- the native HandleModifiedItemClick method instead so that you also have support for linking items to chat for example
 ---@param itemLink string
 ---@param mouseButtonPressed string|nil
----@param callback function|nil Some actions (like award) support a callback
+---@param callback? Some actions (like award) support a callback
 function GL:handleItemClick(itemLink, mouseButtonPressed, callback)
     GL:debug("GL:handleItemClick");
 
@@ -869,7 +869,7 @@ function GL:popupMessage(text)
     end
 
     Window.DiscordURL:SetText(GL.Data.Constants.discordURL);
-    text = string.format("%s\n|c00FFF569%s|r", text, L.TUTORIAL_MORE_HELP);
+    text = string.format("%s\n|c00FFF569%s|r", text, L["Need more help?"]);
     Window.Text:SetText(text);
 
     -- Fit the window to its contents
@@ -1161,7 +1161,7 @@ function GL:frameMessage(message)
     -- Create a container/parent frame
     local MessageFrame = AceGUI:Create("Frame");
     MessageFrame:SetCallback("OnClose", function(widget) GL.Interface:release(widget); end);
-    MessageFrame:SetTitle((L.WINDOW_HEADER):format(GL.version));
+    MessageFrame:SetTitle((L["Gargul v%s"]):format(GL.version));
     MessageFrame:SetStatusText("");
     MessageFrame:SetLayout("Flow");
     MessageFrame:SetWidth(600);
@@ -2545,9 +2545,9 @@ function GL:copperToMoney(copper, Separators, includeEmpty, separatorBeforeUnit)
     copper = self:floor(copper, 4);
 
     if (not separatorBeforeUnit) then
-        DefaultSeparators = { L.GOLD_INDICATOR .. " ", L.SILVER_INDICATOR .. " ", L.COPPER_INDICATOR .. " " };
+        DefaultSeparators = { L["g"] .. " ", L["s"] .. " ", L["c"] .. " " };
     else
-        DefaultSeparators = { " " .. L.GOLD_INDICATOR, " " .. L.SILVER_INDICATOR, " " .. L.COPPER_INDICATOR };
+        DefaultSeparators = { " " .. L["g"], " " .. L["s"], " " .. L["c"] };
     end
 
     Separators = Separators or {};

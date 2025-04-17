@@ -37,23 +37,23 @@ function AddRaider:build()
     local Label = GL.AceGUI:Create("Label");
     Label:SetHeight(20);
     Label:SetFullWidth(true);
-    Label:SetText(L.GDKP_DISTRIBUTE_ADDRAIDER);
+    Label:SetText(L["Add a raider to this session"]);
     Window:AddChild(Label);
 
     local Name = GL.AceGUI:Create("EditBox");
     Name:DisableButton(true);
     Name:SetHeight(20);
     Name:SetFullWidth(true);
-    Name:SetLabel(L.NAME);
+    Name:SetLabel(L["Name"]);
     Window:AddChild(Name);
 
     local Save = AceGUI:Create("Button");
-    Save:SetText(L.OK);
+    Save:SetText(L["Ok"]);
     Save:SetFullWidth(true);
     Save:SetCallback("OnClick", function()
         local name = strtrim(Name:GetText());
         if (GL:empty(name)) then
-            GL:warning(L.INVALID_DATA_WARNING);
+            GL:warning(L["Invalid data supplied"]);
             return;
         end
 
@@ -66,7 +66,7 @@ function AddRaider:build()
     Window:AddChild(Save);
 
     local Cancel = AceGUI:Create("Button");
-    Cancel:SetText(L.CANCEL);
+    Cancel:SetText(L["Cancel"]);
     Cancel:SetFullWidth(true);
     Cancel:SetCallback("OnClick", function()
         self:close();

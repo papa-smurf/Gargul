@@ -31,7 +31,6 @@ libraries.xml
 bootstrap.lua
 
 # Localizations
-Data/Localizations/en.lua
 Data/Localizations/cn.lua
 Data/Localizations/de.lua
 Data/Localizations/es.lua

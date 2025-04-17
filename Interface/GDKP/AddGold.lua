@@ -47,7 +47,7 @@ function AddGold:build()
     Gold:DisableButton(true);
     Gold:SetHeight(20);
     Gold:SetFullWidth(true);
-    Gold:SetLabel(L.GDKP_ADD_GOLD_AMOUNT_LABEL);
+    Gold:SetLabel(L["Gold (- for removing gold)"]);
     Interface:set(self, "Gold", Gold);
     Window:AddChild(Gold);
 
@@ -55,7 +55,7 @@ function AddGold:build()
     PaidForBy:DisableButton(true);
     PaidForBy:SetHeight(20);
     PaidForBy:SetFullWidth(true);
-    PaidForBy:SetLabel(L.GDKP_ADD_GOLD_PAID_BY_LABEL);
+    PaidForBy:SetLabel(L["Paid for by"]);
     Interface:set(self, "PaidForBy", PaidForBy);
     Window:AddChild(PaidForBy);
 
@@ -63,23 +63,23 @@ function AddGold:build()
     Note:DisableButton(true);
     Note:SetHeight(20);
     Note:SetFullWidth(true);
-    Note:SetLabel(L.NOTE);
+    Note:SetLabel(L["Note"]);
     Interface:set(self, "Note", Note);
     Window:AddChild(Note);
 
     local Save = AceGUI:Create("Button");
-    Save:SetText(L.OK);
+    Save:SetText(L["Ok"]);
     Save:SetFullWidth(true);
     Save:SetCallback("OnClick", function()
         local gold = tonumber(strtrim(Gold:GetText())) or 0;
         if (not gold or gold == 0) then
-            GL:warning(L.GDKP_ADD_GOLD_INVALID_WARNING);
+            GL:warning(L["Gold needs to be lower/higher than 0"]);
             return;
         end
 
         local paidForBy = strtrim(PaidForBy:GetText());
         if (GL:empty(paidForBy)) then
-            GL:warning(L.GDKP_ADD_GOLD_INVALID_PAYER_WARNING);
+            GL:warning(L["Who pays for this?"]);
             return;
         end
 
@@ -90,7 +90,7 @@ function AddGold:build()
     Window:AddChild(Save);
 
     local Cancel = AceGUI:Create("Button");
-    Cancel:SetText(L.CANCEL);
+    Cancel:SetText(L["Cancel"]);
     Cancel:SetFullWidth(true);
     Cancel:SetCallback("OnClick", function()
         self:close();
@@ -137,7 +137,7 @@ function AddGold:open()
 
     local Window = self:window();
 
-    Interface:get(self, "Label.Title"):SetText((L.GDKP_ADD_GOLD_TITLE):format(Session.title));
+    Interface:get(self, "Label.Title"):SetText((L["Adjust gold in %s"]):format(Session.title));
     Interface:get(self, "EditBox.Gold"):SetText("");
     Interface:get(self, "EditBox.PaidForBy"):SetText(GL.User.name);
 

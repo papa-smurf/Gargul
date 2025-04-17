@@ -819,7 +819,7 @@ function Test.Locale:sortTranslations()
     end);
 
     local TranslationNotes = {
-        AWARD_UNDO_CONFIRM = "The last %s is the content of L.AWARD_UNDO_BR_REFUND",
+        AWARD_UNDO_CONFIRM = "The last %s is the content of L['%s boosted roll points will be refunded!']",
         BY = "As in 'bid BY'",
         CLEAR = "As in clearing a window or data",
         GDKP_LEDGER_MUTATION = "%s = removed or added",

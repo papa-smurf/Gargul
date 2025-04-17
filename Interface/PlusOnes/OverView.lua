@@ -28,7 +28,7 @@ function Overview:draw()
     -- Create a container/parent frame
     local Window = AceGUI:Create("Frame");
     self.Window = Window
-    Window:SetTitle((L.WINDOW_HEADER):format(GL.version));
+    Window:SetTitle((L["Gargul v%s"]):format(GL.version));
     Window:SetLayout("Flow");
     Window:SetWidth(485);
     Window:SetHeight(490);
@@ -42,11 +42,11 @@ function Overview:draw()
     local importedAt = GL:tableGet(DB.PlusOnes, "MetaData.importedAt", GetServerTime());
     local updatedAt = GL:tableGet(DB.PlusOnes, "MetaData.updatedAt", GetServerTime());
         Window:SetStatusText(string.format(
-            L.IMPORTED_AND_UPDATED_ON,
-            date(L.DATE_FORMAT, importedAt),
-            date(L.HOURS_MINUTES_FORMAT, importedAt),
-            date(L.DATE_FORMAT, updatedAt),
-            date(L.HOURS_MINUTES_FORMAT, updatedAt)
+            L["Imported on |c00A79EFF%s at |c00A79EFF%s, Updated on |c00A79EFF%s at |c00A79EFF%s"],
+            date(L["%Y-%m-%d"], importedAt),
+            date(L["%H:%M"], importedAt),
+            date(L["%Y-%m-%d"], updatedAt),
+            date(L["%H:%M"], updatedAt)
         ));
 
     -- Make sure the window can be closed by pressing the escape button
@@ -59,14 +59,14 @@ function Overview:draw()
     local ShareButton = GL.Interface:createShareButton(Window, {
         onClick = function()
             GL.Interface.Dialogs.PopupDialog:open({
-                question = L.PLUSONES_BROADCAST_CONFIRM,
+                question = L["Are you sure you want to broadcast your plus one data to everyone in your party/raid?"],
                 OnYes = function ()
                     GL.PlusOnes:broadcast();
                 end,
             });
         end,
-        tooltip = L.BROADCAST,
-        disabledTooltip = L.LM_OR_ASSIST_REQUIRED,
+        tooltip = L["Broadcast"],
+        disabledTooltip = L["You need to be the master looter or have an assist / lead role!"],
         position = "TOPRIGHT",
     });
     self.ShareButton = ShareButton;
@@ -127,7 +127,7 @@ function Overview:draw()
     Window:AddChild(ButtonFrame);
 
     local ClearButton = AceGUI:Create("Button");
-    ClearButton:SetText(L.CLEAR);
+    ClearButton:SetText(L["Clear"]);
     ClearButton:SetWidth(80);
     ClearButton:SetCallback("OnClick", function()
         GL.Interface.Dialogs.PopupDialog:open({
@@ -148,7 +148,7 @@ function Overview:draw()
     ButtonFrame:AddChild(VerticalSpacer);
 
     local ImportButton = AceGUI:Create("Button");
-    ImportButton:SetText(L.IMPORT);
+    ImportButton:SetText(L["Import"]);
     ImportButton:SetWidth(80);
     ImportButton:SetCallback("OnClick", function()
         self:close();
@@ -163,7 +163,7 @@ function Overview:draw()
     ButtonFrame:AddChild(VerticalSpacer);
 
     local ExportButton = AceGUI:Create("Button");
-    ExportButton:SetText(L.EXPORT);
+    ExportButton:SetText(L["Export"]);
     ExportButton:SetWidth(80);
     ExportButton:SetCallback("OnClick", function()
         PlusOnes:export(true);
@@ -262,7 +262,7 @@ function Overview:addPlayerPlusOneEntries(Parent)
         Row:AddChild(PlayerName);
 
         local DeductButton = AceGUI:Create("Button");
-        DeductButton:SetText(L.LEFT_SYMBOL);
+        DeductButton:SetText(L["<"]);
         DeductButton:SetWidth(38);
         DeductButton:SetCallback("OnClick", function()
             Entry.total = max(Entry.total -1, 0);
@@ -281,7 +281,7 @@ function Overview:addPlayerPlusOneEntries(Parent)
         GL.Interface:set(self, "PlusOnesOf_" .. Entry.name, PlusOneStatus);
 
         local AddButton = AceGUI:Create("Button");
-        AddButton:SetText(L.RIGHT_SYMBOL);
+        AddButton:SetText(L[">"]);
         AddButton:SetWidth(38);
         AddButton:SetCallback("OnClick", function()
             Entry.total = Entry.total + 1;
@@ -330,11 +330,11 @@ function Overview:update()
     local importedAt = GL:tableGet(DB.PlusOnes, "MetaData.importedAt", GetServerTime());
     local updatedAt = GL:tableGet(DB.PlusOnes, "MetaData.updatedAt", GetServerTime());
         self.Window:SetStatusText(string.format(
-            L.IMPORTED_AND_UPDATED_ON,
-            date(L.DATE_FORMAT, importedAt),
-            date(L.HOURS_MINUTES_FORMAT, importedAt),
-            date(L.DATE_FORMAT, updatedAt),
-            date(L.HOURS_MINUTES_FORMAT, updatedAt)
+            L["Imported on |c00A79EFF%s at |c00A79EFF%s, Updated on |c00A79EFF%s at |c00A79EFF%s"],
+            date(L["%Y-%m-%d"], importedAt),
+            date(L["%H:%M"], importedAt),
+            date(L["%Y-%m-%d"], updatedAt),
+            date(L["%H:%M"], updatedAt)
         ));
 
     self:close();

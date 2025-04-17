@@ -359,7 +359,7 @@ function DroppedLoot:announce(Modifiers)
                 and GL.Settings:get("SoftRes.announceInfoInChat")
             ) then
                 GL:sendChatMessage(
-                    (L.CHAT.SOFTRES_HARDRESERVED_NOTICE):format(itemLink),
+                    (L.CHAT["%s (This item is hard-reserved!)"]):format(itemLink),
                     channel
                 );
             else
@@ -383,7 +383,7 @@ function DroppedLoot:announce(Modifiers)
                 -- * This data is only available if the user has the announce SoftRes setting enabled
                 if (not GL:empty(ActiveSoftResDetails)) then
                     GL:sendChatMessage(
-                        (L.CHAT.SOFTRES_DETAILS):format(table.concat(ActiveSoftResDetails, ", ")),
+                        (L.CHAT["Reserved by: %s"]):format(table.concat(ActiveSoftResDetails, ", ")),
                         "GROUP"
                     );
                 end

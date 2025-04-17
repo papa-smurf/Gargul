@@ -435,7 +435,7 @@ function Auctioneer:syncWithRunningSession()
                 end
 
                 GL.Interface.Dialogs.ConfirmWithSingleInputDialog:open{
-                    question = L.GDKP_MULTIAUCTION_CLAIM_RUNNING_SESSION,
+                    question = L["You left during your GDKP bidding session. In order to resume it you have to provide a new bid time (in seconds) for any unsold items"],
                     inputValue = 60,
                     OnYes = function (duration)
                         duration = tonumber(duration) or 5;
@@ -448,7 +448,7 @@ function Auctioneer:syncWithRunningSession()
                         GL:mute();
                         self:announceStart(Response.Auctions, duration, Response.antiSnipe);
                         GL:unmute();
-                        GL:sendChatMessage(L.CHAT.MULTIAUCTION_RESUMED, "GROUP");
+                        GL:sendChatMessage(L.CHAT["I resumed a previous bidding session, double check your bids!"], "GROUP");
                     end,
                     focus = true,
                 };
@@ -538,12 +538,12 @@ function Auctioneer:announceStart(ItemDetails, duration, antiSnipe, precision)
     if (self.waitingForAuctionStart
         and serverTime - self.waitingForAuctionStart < 10
     ) then
-        GL:error((L.WAIT_SECONDS_BEFORE_RETRY):format(10 - (serverTime - self.waitingForAuctionStart)));
+        GL:error((L["Wait %s more seconds before you retry"]):format(10 - (serverTime - self.waitingForAuctionStart)));
         return false;
     end
 
     if (not self:userIsAllowedToBroadcast()) then
-        GL:error(L.LM_OR_ASSIST_REQUIRED);
+        GL:error(L["You need to be the master looter or have an assist / lead role!"]);
         self.waitingForAuctionStart = false;
         return false;
     end
@@ -556,7 +556,7 @@ function Auctioneer:announceStart(ItemDetails, duration, antiSnipe, precision)
     if (duration < 1
         or antiSnipe < 0
     ) then
-        GL:warning(L.GDKP_MULTIAUCTION_INVALID_DATA_FOR_START);
+        GL:warning(L["Invalid data provided for GDKP auction start!"]);
         self.waitingForAuctionStart = false;
         return false;
     end
@@ -585,7 +585,7 @@ function Auctioneer:announceStart(ItemDetails, duration, antiSnipe, precision)
     ProgressBar:SetTimeVisibility(false);
     ProgressBar:SetFill(true);
     ProgressBar:Start();
-    ProgressBar:SetLabel(GL:printfn(L.BROADCAST_PROGRESS, { percentage = 0, }));
+    ProgressBar:SetLabel(GL:printfn(L["Broadcast ${percentage}%"], { percentage = 0, }));
 
     GL.CommMessage.new{
         action = CommActions.startGDKPMultiAuction,
@@ -603,13 +603,13 @@ function Auctioneer:announceStart(ItemDetails, duration, antiSnipe, precision)
         self:scheduleUpdater();
 
         -- Let people know that we've started a multi-auction
-        GL:sendChatMessage(L.CHAT.MULTIAUCTION_STARTED, "RAID_WARNING");
+        GL:sendChatMessage(L.CHAT["I started a bidding session. Can't see it? Make sure to download/update Gargul!"], "RAID_WARNING");
 
         self.waitingForAuctionStart = false;
     end, function (sent, total)
         local progressPercentage = ceil(100 / (total / sent));
 
-        ProgressBar:SetLabel(GL:printfn(L.BROADCAST_PROGRESS, { percentage = progressPercentage, }));
+        ProgressBar:SetLabel(GL:printfn(L["Broadcast ${percentage}%"], { percentage = progressPercentage, }));
         ProgressBar:SetDuration((100 * 1000000) - (progressPercentage * 1000000));
         ProgressBar:Start(100 * 1000000);
     end);
@@ -740,7 +740,7 @@ function Auctioneer:syncNewItems()
     }:send();
 
     GL:sendChatMessage(
-        (L.CHAT.MULTIAUCTION_ITEMS_ADDED):format(numberOfChanges, GL:count(Client.AuctionDetails.Auctions)),
+        (L.CHAT["I added %s item(s) to the auction for a total of %s"]):format(numberOfChanges, GL:count(Client.AuctionDetails.Auctions)),
         "GROUP"
     );
 end
@@ -1140,7 +1140,7 @@ function Auctioneer:finish(announcePot)
 
     local totalPot = GDKPPot:total();
     if (totalPot) then
-        GL:sendChatMessage((L.CHAT.MULTIAUCTION_FINISHED):format(GL:goldToMoney(totalPot)), "GROUP");
+        GL:sendChatMessage((L.CHAT["Multi-auction finished. The pot now holds %s"]):format(GL:goldToMoney(totalPot)), "GROUP");
     end
 end
 

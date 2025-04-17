@@ -148,7 +148,7 @@ end
 ---@return void
 function PlusOnes:handleWhisperCommand(_, message, sender)
     local validPrefixDetected = false;
-    for _, prefix in pairs(GL:explode(L.PLUSONES_WHISPER_PREFIXES, "|") or {}) do
+    for _, prefix in pairs(GL:explode(L["!plusone|!po|!+1"], "|") or {}) do
         if (GL:strStartsWith(message, prefix)) then
             validPrefixDetected = true;
             break;
@@ -166,7 +166,7 @@ function PlusOnes:handleWhisperCommand(_, message, sender)
         local name = GL:nameFormat(args[2]);
         local plusOne = self:getPlusOnes(name);
         GL:sendChatMessage(
-            (L.CHAT.PLUSONES_OTHER_BALANCE_REPLY):format(GL:capitalize(name), plusOne),
+            (L.CHAT["Player %s's +1 total is %d"]):format(GL:capitalize(name), plusOne),
             "WHISPER", nil, sender
         );
         return;
@@ -175,7 +175,7 @@ function PlusOnes:handleWhisperCommand(_, message, sender)
     local name = GL:nameFormat(sender);
     local plusOne = self:getPlusOnes(name);
     GL:sendChatMessage(
-        (L.CHAT.PLUSONES_MY_BALANCE_REPLY):format(plusOne),
+        (L.CHAT["Your +1 total is %d"]):format(plusOne),
         "WHISPER", nil, sender
     );
 end
@@ -305,7 +305,7 @@ function PlusOnes:import(data, openOverview, MetaData)
     if (type(data) ~= "string"
         or GL:empty(data)
     ) then
-        GL.Interface:get("PlusOnes.Importer", "Label.StatusMessage"):SetText(L.INVALID_DATA_WARNING);
+        GL.Interface:get("PlusOnes.Importer", "Label.StatusMessage"):SetText(L["Invalid data supplied"]);
         return false;
     end
 
@@ -331,7 +331,7 @@ function PlusOnes:import(data, openOverview, MetaData)
     end
 
     if (GL:empty(Totals)) then
-        local errorMessage = L.PLUSONES_IMPORT_ERROR;
+        local errorMessage = L["Invalid data provided. Make sure that the contents follows the required format and no header row is included"];
         GL.Interface:get("PlusOnes.Importer", "Label.StatusMessage"):SetText(errorMessage);
 
         return false;
@@ -346,7 +346,7 @@ function PlusOnes:import(data, openOverview, MetaData)
         },
     });
 
-    GL:success(L.IMPORT_SUCCESSFUL);
+    GL:success(L["Import of boosted roll data successful"]);
     GL.Events:fire("GL.PLUSONES_IMPORTED");
 
     self:materializeData();
@@ -391,7 +391,7 @@ end
 ---@return boolean
 function PlusOnes:broadcast()
     if (self.broadcastInProgress) then
-        GL:error(L.BROADCAST_IN_PROGRESS_ERROR);
+        GL:error(L["Broadcast still in progress"]);
         return false;
     end
 
@@ -401,7 +401,7 @@ function PlusOnes:broadcast()
     end
 
     if (not self:userIsAllowedToBroadcast()) then
-        GL:warning(L.LM_OR_ASSIST_REQUIRED);
+        GL:warning(L["You need to be the master looter or have an assist / lead role!"]);
         return false;
     end
 
@@ -412,12 +412,12 @@ function PlusOnes:broadcast()
     GL.Events:fire("GL.PLUSONES_BROADCAST_STARTED");
 
     local Broadcast = function ()
-        GL:message(L.BROADCASTING_NOTIFICATION);
+        GL:message(L["Broadcasting..."]);
 
         local Label = GL.Interface:get(GL.PlusOnes, "Label.BroadcastProgress");
 
         if (Label) then
-            Label:SetText(L.BROADCASTING_NOTIFICATION);
+            Label:SetText(L["Broadcasting..."]);
         end
 
         GL.CommMessage.new{
@@ -428,19 +428,19 @@ function PlusOnes:broadcast()
             },
             channel = "GROUP",
         }:send(function ()
-            GL:success(L.BROADCAST_FINISHED);
+            GL:success(L["Broadcast finished!"]);
 
             self.broadcastInProgress = false;
             GL.Events:fire("GL.PLUSONES_BROADCAST_ENDED");
 
             Label = GL.Interface:get(GL.PlusOnes, "Label.BroadcastProgress");
             if (Label) then
-                Label:SetText(L.BROADCAST_FINISHED);
+                Label:SetText(L["Broadcast finished!"]);
             end
         end, function (sent, plusOne)
             Label = GL.Interface:get(GL.PlusOnes, "Label.BroadcastProgress");
             if (Label) then
-                Label:SetText(string.format(L.COMM_PROGRESS, sent, plusOne));
+                Label:SetText(string.format(L["Sent %s of %s bytes"], sent, plusOne));
             end
         end);
     end
@@ -450,7 +450,7 @@ function PlusOnes:broadcast()
     GL:afterCombatDo(function ()
         Broadcast();
     end, function ()
-        GL:notice(L.BROADCAST_DELAYED_BY_COMBAT);
+        GL:notice(L["You are currently in combat, delaying broadcast"]);
     end);
 
     return true;
@@ -479,7 +479,7 @@ function PlusOnes:receiveBroadcast(CommMessage)
             return self:clearPlusOnes();
         end
 
-        GL:warning((L.PLUSONES_BROADCAST_PROCESS_START):format(CommMessage.Sender.name));
+        GL:warning((L["Attempting to process incoming PlusOnes data from %s"]):format(CommMessage.Sender.name));
 
         local result = self:import(importString, false, MetaData);
         if (result) then
@@ -503,18 +503,18 @@ function PlusOnes:receiveBroadcast(CommMessage)
     local question;
     
     if (GL:empty(importString)) then
-        question = (L.PLUSONES_CLEAR_CONFIRM):format(CommMessage.Sender.name);
+        question = (L["%s wants to clear all your PlusOne data. Clear all data?"]):format(CommMessage.Sender.name);
     elseif (MetaData.uuid and uuid == MetaData.uuid) then -- This is an update to our dataset
-        question = (L.PLUSONES_UPDATE_CONFIRM):format(
+        question = (L["\nAre you sure you want to update your existing PlusOne data with data from %s?\n\nYour latest update was on |c00A79EFF%s, theirs on |c00A79EFF%s."]):format(
             GL:nameFormat{ name = CommMessage.Sender.name, colorize = true, },
-            date(L.DATE_HOURS_MINUTES_FORMAT, updatedAt),
-            date(L.DATE_HOURS_MINUTES_FORMAT, MetaData.updatedAt or 0)
+            date(L["%Y-%m-%d %H:%M"], updatedAt),
+            date(L["%Y-%m-%d %H:%M"], MetaData.updatedAt or 0)
         );
     elseif (not GL:empty(uuid)) then -- This is a different dataset, not an update
-        question = (L.PLUSONES_IMPORT_CLEAR_CONFIRM):format(CommMessage.Sender.name);
+        question = (L["Are you sure you want to clear your existing PlusOne data and import new data broadcasted by %s?"]):format(CommMessage.Sender.name);
     else
         question = string.format(
-            L.PLUSONES_IMPORT_CONFIRM,
+            L["Are you sure you want to import new data broadcasted by %s?"],
             CommMessage.Sender.name
         );
     end
@@ -700,7 +700,7 @@ function PlusOnes:broadcastQueuedUpdates()
     if (GL.Settings:get("PlusOnes.automaticallyShareData")
         and self:userIsAllowedToBroadcast()
     ) then
-        GL:message(L.BROADCASTING_NOTIFICATION);
+        GL:message(L["Broadcasting..."]);
         GL.CommMessage.new{
             action = CommActions.broadcastPlusOnesMutation,
             content = {
@@ -709,7 +709,7 @@ function PlusOnes:broadcastQueuedUpdates()
             },
             channel = "GROUP",
         }:send(function ()
-            GL:success(L.BROADCAST_FINISHED);
+            GL:success(L["Broadcast finished!"]);
         end);
     end
 
@@ -724,17 +724,17 @@ end
 ---@return boolean
 function PlusOnes:broadcastUpdate(playerName, plusOne, delete)
     if (not self:userIsAllowedToBroadcast()) then
-        GL:warning(L.LM_OR_ASSIST_REQUIRED);
+        GL:warning(L["You need to be the master looter or have an assist / lead role!"]);
         return false;
     end
 
     if (self.broadcastInProgress) then
-        GL:error(L.BROADCAST_IN_PROGRESS_ERROR);
+        GL:error(L["Broadcast still in progress"]);
         self:queueUpdate(playerName, plusOne, delete);
         return false;
     end
 
-    GL:message(L.BROADCASTING_NOTIFICATION);
+    GL:message(L["Broadcasting..."]);
 
     GL.CommMessage.new{
         action = CommActions.broadcastPlusOnesMutation,
@@ -797,17 +797,17 @@ function PlusOnes:receiveUpdate(CommMessage)
     local question;
 
     if (GL:empty(importString)) then
-        question = (L.PLUSONES_CLEAR_CONFIRM):format(CommMessage.Sender.name);
+        question = (L["%s wants to clear all your PlusOne data. Clear all data?"]):format(CommMessage.Sender.name);
     elseif (MetaData.uuid and uuid == MetaData.uuid) then -- This is an update to our dataset
-        question = (L.PLUSONES_UPDATE_CONFIRM):format(
+        question = (L["\nAre you sure you want to update your existing PlusOne data with data from %s?\n\nYour latest update was on |c00A79EFF%s, theirs on |c00A79EFF%s."]):format(
             GL:nameFormat{ name = CommMessage.Sender.name, colorize = true, },
-            date(L.DATE_HOURS_MINUTES_FORMAT, updatedAt),
-            date(L.DATE_HOURS_MINUTES_FORMAT, MetaData.updatedAt or 0)
+            date(L["%Y-%m-%d %H:%M"], updatedAt),
+            date(L["%Y-%m-%d %H:%M"], MetaData.updatedAt or 0)
         );
     elseif (not GL:empty(uuid)) then -- This is a different dataset, not an update
-        question = (L.PLUSONES_IMPORT_CLEAR_CONFIRM):format(CommMessage.Sender.name);
+        question = (L["Are you sure you want to clear your existing PlusOne data and import new data broadcasted by %s?"]):format(CommMessage.Sender.name);
     else
-        question = (L.PLUSONES_IMPORT_CONFIRM):format(CommMessage.Sender.name);
+        question = (L["Are you sure you want to import new data broadcasted by %s?"]):format(CommMessage.Sender.name);
     end
 
     local Dialog = {

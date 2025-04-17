@@ -229,7 +229,7 @@ local function constructor()
     local PlusOneLabel = AceGUI:Create("InteractiveLabel");
     PlusOneLabel:SetFontObject(_G["GameFontNormal"]);
     PlusOneLabel:SetWidth(100);
-    PlusOneLabel:SetText(L.PLUSONES_AWARD_DIALOG_LABEL);
+    PlusOneLabel:SetText(L["Add a +1"]);
 
     PlusOneLabel:SetCallback("OnClick", function()
         PlusOneCheckBox:ToggleChecked();
@@ -250,7 +250,7 @@ local function constructor()
     local OffSpecLabel = AceGUI:Create("InteractiveLabel");
     OffSpecLabel:SetFontObject(_G["GameFontNormal"]);
     OffSpecLabel:SetWidth(30);
-    OffSpecLabel:SetText(L.OFFSPEC_ABBR);
+    OffSpecLabel:SetText(L["OS"]);
 
     OffSpecLabel:SetCallback("OnClick", function()
         OffSpecCheckBox:ToggleChecked();
@@ -275,7 +275,7 @@ local function constructor()
         local CostLabel = AceGUI:Create("Label");
         CostLabel:SetFontObject(_G["GameFontNormal"]);
         CostLabel:SetWidth(120);
-        CostLabel:SetText(L.BOOSTED_ROLLS_AWARD_DIALOG_LABEL);
+        CostLabel:SetText(L["Boosted Roll Cost:"]);
         OptionsFrame:AddChild(CostLabel);
 
         -- Boosted Roll cost
@@ -308,7 +308,7 @@ local function constructor()
         local PriceLabel = AceGUI:Create("Label");
         PriceLabel:SetFontObject(_G["GameFontNormal"]);
         PriceLabel:SetWidth(120);
-        PriceLabel:SetText(L.GDKP_AWARD_DIALOG_LABEL);
+        PriceLabel:SetText(L["GDKP Price:"]);
         OptionsFrame:AddChild(PriceLabel);
 
         -- Boosted Roll cost
@@ -340,7 +340,7 @@ local function constructor()
 
     -- Yes
     YesButton = AceGUI:Create("Button");
-    YesButton:SetText(L.YES);
+    YesButton:SetText(L["Yes"]);
     YesButton:SetHeight(20);
     YesButton:SetWidth(120);
     YesButton:SetCallback("OnClick", function()
@@ -358,7 +358,7 @@ local function constructor()
 
     -- No
     local NoButton = AceGUI:Create("Button");
-    NoButton:SetText(L.NO);
+    NoButton:SetText(L["No"]);
     NoButton:SetHeight(20);
     NoButton:SetWidth(120);
     NoButton:SetCallback("OnClick", function()

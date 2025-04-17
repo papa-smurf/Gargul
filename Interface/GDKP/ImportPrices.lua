@@ -37,7 +37,7 @@ function ImportPrices:build()
 
     ---@type AceGUILabel
     local Info = AceGUI:Create("Label");
-    Info:SetText(L.GDKP_IMPORT_PRICES_ABOUT);
+    Info:SetText(L["\nImport GDKP minimum prices and increments.\n\nThe format is as follows: ItemID + minimum or increment are required. (|c00BE3333REQUIRES A HEADER!!):\n\n|c00BE3333ItemID,Minimum,Increment|c00967FD2\n18608,4000,500\n"]);
     Info:SetFullWidth(true);
     Window:AddChild(Info);
 
@@ -51,11 +51,11 @@ function ImportPrices:build()
     Window:AddChild(ImportPricesBox);
 
     local Confirm = AceGUI:Create("Button");
-    Confirm:SetText(L.IMPORT);
+    Confirm:SetText(L["Import"]);
     Confirm:SetFullWidth(true);
     Confirm:SetCallback("OnClick", function()
         GL.Interface.Dialogs.PopupDialog:open{
-            question = L.GDKP_IMPORT_PRICES_CONFIRM,
+            question = L["Delete existing price settings? Click yes to delete all price data, no to simply override existing ones with the data you provided here"],
             OnYes = function ()
                 GDKP:resetPerItemSettings();
                 GDKP:importPerItemSettings(ImportPricesBox:GetText());

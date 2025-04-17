@@ -31,7 +31,7 @@ function Importer:draw()
 
     -- Create a container/parent frame
     local Window = AceGUI:Create("Frame");
-    Window:SetTitle((L.WINDOW_HEADER):format(GL.version));
+    Window:SetTitle((L["Gargul v%s"]):format(GL.version));
     Window:SetLayout("Flow");
     Window:SetWidth(600);
     Window:SetHeight(550);
@@ -53,7 +53,7 @@ function Importer:draw()
     local Description = AceGUI:Create("Label");
     Description:SetFontObject(_G["GameFontNormal"]);
     Description:SetFullWidth(true);
-    Description:SetText(L.BOOSTED_ROLLS_IMPORT_TUTORIAL);
+    Description:SetText(L["\nHere you can import boosted roll data and aliases from a table in CSV or TSV format or pasted from a Google Docs Sheet.\n\nThe table needs at least two columns: The player name followed by the amount of points. Additional columns are optional and may contain aliases for the player.\nHere is an example line:\n\nFoobar,240,Barfoo"]);
     Window:AddChild(Description);
 
     -- Large edit box
@@ -86,12 +86,12 @@ function Importer:draw()
 
     -- Import button
     local ImportButton = AceGUI:Create("Button");
-    ImportButton:SetText(L.IMPORT);
+    ImportButton:SetText(L["Import"]);
     ImportButton:SetWidth(140);
     ImportButton:SetCallback("OnClick", function()
         if (GL.BoostedRolls:available()) then
             GL.Interface.Dialogs.PopupDialog:open({
-                question = L.BOOSTED_ROLLS_CLEAR_CONFIRM,
+                question = L["Are you sure you want to clear all boosted roll data?"],
                 OnYes = function ()
                     GL.Interface.BoostedRolls.Importer:import();
                 end,

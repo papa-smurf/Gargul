@@ -1,0 +1,3 @@
+---@class Enum
+Enum = {}
+

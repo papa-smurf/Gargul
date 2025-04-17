@@ -99,17 +99,17 @@ function AuctionDetails:draw(sessionID, auctionID)
 
     if (not auctionWasDeleted) then
         if (concernsManualAdjustment) then
-            itemLabel = (L.GDKP_AUCTION_DETAILS_GOLD_ADDED):format(
+            itemLabel = (L["\n|c00%s%sg added to pot by %s\nNote: %s"]):format(
                 Constants.ClassHexColors.rogue,
-                Auction.price or L.ZERO_SIGN,
+                Auction.price or L["0"],
                 GL:nameFormat{ name = Auction.Winner.name, colorize = true, },
                 Auction.note or ""
             );
         else
-            itemLabel = (L.GDKP_AUCTION_DETAILS_GOLD_PAID_BY):format(
+            itemLabel = (L["\n%s paid |c00%s%sg for\n%s"]):format(
                 GL:nameFormat{ name = Auction.Winner.name, colorize = true, },
                 Constants.ClassHexColors.rogue,
-                Auction.price or L.ZERO_SIGN,
+                Auction.price or L["0"],
                 ItemEntry.link
             );
         end
@@ -122,7 +122,7 @@ function AuctionDetails:draw(sessionID, auctionID)
             reason = "-";
         end
 
-        itemLabel = (L.GDKP_AUCTION_DETAILS_DELETED_REASON):format(
+        itemLabel = (L["\n|c00be3333Deleted by %s\nReason: %s"]):format(
             GL:nameFormat{ name = Auction.CreatedBy.name, colorize = true, },
             reason
         );
@@ -135,7 +135,7 @@ function AuctionDetails:draw(sessionID, auctionID)
     ScrollFrame:AddChild(ItemLink);
 
     local AuctionEntry = AceGUI:Create("Label");
-    AuctionEntry:SetText(("\n|c00967FD2%s|r"):format(L.ABOUT));
+    AuctionEntry:SetText(("\n|c00967FD2%s|r"):format(L["About"]));
     AuctionEntry:SetFullWidth(true);
     ScrollFrame:AddChild(AuctionEntry);
     for key, val in pairs(Auction or {}) do
@@ -148,7 +148,7 @@ function AuctionDetails:draw(sessionID, auctionID)
     end
 
     local WinnerEntry = AceGUI:Create("Label");
-    WinnerEntry:SetText("\n|c00967FD2" .. L.GDKP_AUCTION_DETAILS_WON_BY .. "|r");
+    WinnerEntry:SetText("\n|c00967FD2" .. L["Won by"] .. "|r");
     WinnerEntry:SetFullWidth(true);
     ScrollFrame:AddChild(WinnerEntry);
 
@@ -162,7 +162,7 @@ function AuctionDetails:draw(sessionID, auctionID)
     end
 
     local CreatedByEntry = AceGUI:Create("Label");
-    CreatedByEntry:SetText("\n|c00967FD2" .. L.GDKP_AUCTION_DETAILS_CREATED_BY .. "|r");
+    CreatedByEntry:SetText("\n|c00967FD2" .. L["Created by"] .. "|r");
     CreatedByEntry:SetFullWidth(true);
     ScrollFrame:AddChild(CreatedByEntry);
 
@@ -186,7 +186,7 @@ function AuctionDetails:draw(sessionID, auctionID)
         end);
 
         local BidEntry = AceGUI:Create("Label");
-        BidEntry:SetText("\n|c00967FD2" .. L.BIDS .. "|r");
+        BidEntry:SetText("\n|c00967FD2" .. L["Bids"] .. "|r");
         BidEntry:SetFullWidth(true);
         ScrollFrame:AddChild(BidEntry);
 
@@ -198,7 +198,7 @@ function AuctionDetails:draw(sessionID, auctionID)
             end
 
             BidEntry = AceGUI:Create("Label");
-            BidEntry:SetText(string.format("%s%s: %s", linebreak, L.BY, GL:nameFormat(Bid.bidder)));
+            BidEntry:SetText(string.format("%s%s: %s", linebreak, L["by"], GL:nameFormat(Bid.bidder)));
             BidEntry:SetFullWidth(true);
             ScrollFrame:AddChild(BidEntry);
 
@@ -229,7 +229,7 @@ function AuctionDetails:draw(sessionID, auctionID)
     ScrollFrame:AddChild(Spacer);
 
     local CloseButton = AceGUI:Create("Button");
-    CloseButton:SetText(L.CLOSE);
+    CloseButton:SetText(L["Close"]);
     CloseButton:SetFullWidth(true);
     CloseButton:SetCallback("OnClick", function()
         self:close();

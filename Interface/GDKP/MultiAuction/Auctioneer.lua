@@ -48,22 +48,22 @@ function Auctioneer:open(keepPreviousItems)
 
     keepPreviousItems = keepPreviousItems == true;
     if (not GL.GDKP.MultiAuction.Auctioneer:userIsAllowedToBroadcast()) then
-        GL:warning(L.LM_OR_ASSIST_REQUIRED)
+        GL:warning(L["You need to be the master looter or have an assist / lead role!"])
         return;
     end
 
     local ActiveSession = Session:getActive();
     if (not ActiveSession or ActiveSession.lockedAt) then
-        GL:warning(L.GDKP_MULTIAUCTION_AUCTIONEER_ACTIVE_SESSION_WARNING);
+        GL:warning(L["You need to have an active (unlocked) GDKP session!"]);
         Interface.GDKP.Overview:open();
 
         return;
     elseif (GL.GDKP.MultiAuction.Auctioneer:hasRunningAuctions()) then
-        GL:warning(L.GDKP_MULTIAUCTION_AUCTIONEER_RUNNING_SESSION_WARNING);
+        GL:warning(L["There is an active multi-auction, items you add here will be added to the existing session. Be mindful of duplicate items!"]);
     end
 
     if (GL.Version.isOutOfDate) then
-        GL:warning(L.GDKP_MULTIAUCTION_AUCTIONEER_OUTDATED);
+        GL:warning(L["Your Gargul is outdated, we recommend updating before starting a session to prevent issues!"]);
     end
 
     FONT = GL.FONT;
@@ -88,11 +88,11 @@ function Auctioneer:open(keepPreviousItems)
         guild = string.format(" |c001EFF00<%s>|r", CreatedBy.guild);
     end
     self.SessionDetails:SetText(string.format(
-        L.GDKP_MULTIAUCTION_AUCTIONEER_SESSION_DETAILS,
+        L["Active GDKP Session: |c00967FD2%s | By %s%s | On |c00967FD2%s"],
         ActiveSession.title,
         GL:nameFormat{ name = CreatedBy.name, realm = CreatedBy.realm, colorize = true, },
         guild,
-        date(L.DATE_FORMAT, ActiveSession.createdAt)
+        date(L["%Y-%m-%d"], ActiveSession.createdAt)
     ));
 
     return Window:Show() and Window;
@@ -141,7 +141,7 @@ function Auctioneer:build()
 
     --[[ THE SETTINGS MENU IN THE TOP LEFT OF THE WINDOW ]]
     Interface:addWindowOptions(Window, {
-        { text = L.CHANGE_SCALE, notCheckable = true, func = function ()
+        { text = L["Adjust Scale"], notCheckable = true, func = function ()
             Interface:openScaler(Window);
             CloseMenus();
         end },
@@ -157,7 +157,7 @@ function Auctioneer:build()
     highlight:SetTexture("Interface/PaperDollInfoFrame/UI-Character-Tab-Highlight")
     highlight:SetBlendMode("ADD");
 
-    Interface:addTooltip(HelpFrame, (L.GDKP_MULTIAUCTION_AUCTIONEER_INFO):format(GL.Settings:get("ShortcutKeys.rollOffOrAuction")), "BOTTOM");
+    Interface:addTooltip(HelpFrame, (L["\nHere you determine which items to include in your multi-auction session\n\nUse the |c00A79EFFFill from inventory button below to add items that can still be traded to the list\nWhenever you clear and re-open this window, your last fill settings will be used to automatically add items\n\n|c00A79EFF%s items to manually add them to the list\n"]):format(GL.Settings:get("ShortcutKeys.rollOffOrAuction")), "BOTTOM");
 
     --[[ ICON ]]
     local texturePath = "interface/friendsframe/informationicon";
@@ -176,7 +176,7 @@ function Auctioneer:build()
 
     --[[ INFO ]]
     ---@type FontString
-    local InfoLabel = Interface:createFontString(HelpFrame, L.INFO);
+    local InfoLabel = Interface:createFontString(HelpFrame, L["Info"]);
     InfoLabel:SetPoint("TOPLEFT", HelpFrame, "TOPLEFT", 15, -1);
 
     ---@type Frame
@@ -207,16 +207,16 @@ function Auctioneer:build()
         end,
     };
     SelectAll:SetPoint("TOPLEFT", SessionDetails, "BOTTOMLEFT", 0, -8);
-    Interface:addTooltip(SelectAll, L.SELECT_ALL);
+    Interface:addTooltip(SelectAll, L["Select / Disable all"]);
     self.SelectAll = SelectAll;
 
     --[[ SEARCH ]]
     ---@type EditBox
-    local Search = Interface:inputBox(Window, nil, L.GDKP_MULTIAUCTION_AUCTIONEER_SEARCH_LABEL);
+    local Search = Interface:inputBox(Window, nil, L["Search name or iLVL"]);
     Search:SetWidth(150);
     Search:SetPoint("TOPLEFT", SelectAll, "TOPRIGHT", 20, 0);
     self.Search = Search;
-    Interface:addTooltip(Search, L.GDKP_MULTIAUCTION_AUCTIONEER_SEARCH_TOOLTIP);
+    Interface:addTooltip(Search, L["Supports item names and iLVL e.g. '252', '<252' etc"]);
 
     Search:SetScript("OnTextChanged", function ()
         GL:after(.5, "GDKP_MULTI_AUCTION_AUCTIONEER_FILTER_CHANGED", function ()
@@ -231,17 +231,17 @@ function Auctioneer:build()
     SearchClear:SetScript("OnClick", function ()
         Search:Clear();
     end);
-    Interface:addTooltip(SearchClear, L.CLEAR);
+    Interface:addTooltip(SearchClear, L["Clear"]);
 
     --[[ INCREMENT ]]
     ---@type FontString
-    local IncLabel = Interface:createFontString(Window, L.INCREMENT);
+    local IncLabel = Interface:createFontString(Window, L["Increment"]);
     IncLabel:SetPoint("CENTER", Search, "CENTER");
     IncLabel:SetPoint("RIGHT", Window, "RIGHT", -50, 0);
 
     --[[ MINIMUM BID ]]
     ---@type FontString
-    local MinLabel = Interface:createFontString(Window, L.MINIMUM);
+    local MinLabel = Interface:createFontString(Window, L["Minimum"]);
     MinLabel:SetPoint("TOPRIGHT", IncLabel, "TOPLEFT", -20, 0);
 
     --[[ SCROLLFRAME BOILERPLATE ]]
@@ -323,7 +323,7 @@ function Auctioneer:build()
             --[[ BOE ]]
             if (GL:inTable({ Enum.ItemBind.OnEquip, Enum.ItemBind.Quest }, Details.bindType)) then
                 ---@type FontString
-                local BOE = Interface:createFontString(Icon, L.BIND_ON_EQUIP_ABBR);
+                local BOE = Interface:createFontString(Icon, L["BOE"]);
                 BOE:SetPoint("TOPLEFT", Icon, "TOPLEFT", -3, 3);
                 BOE:SetFont(.8, "OUTLINE");
                 BOE:SetColor("UNCOMMON");
@@ -362,14 +362,14 @@ function Auctioneer:build()
 
     --[[ HOW TO ADD ITEMS ]]
     ---@type FontString
-    local AddItemsLabel = Interface:createFontString(Window, (L.GDKP_MULTIAUCTION_AUCTIONEER_ADD_ITEM):format(GL.Settings:get("ShortcutKeys.rollOffOrAuction")));
+    local AddItemsLabel = Interface:createFontString(Window, (L["With this window open, %s items to add them to the list or click 'Fill from inventory' below"]):format(GL.Settings:get("ShortcutKeys.rollOffOrAuction")));
     AddItemsLabel:SetFont(.8, "OUTLINE");
     AddItemsLabel:SetColor("GRAY");
     AddItemsLabel:SetPoint("TOPLEFT", ScrollFrame, "BOTTOMLEFT", 10, -10);
 
     --[[ TIME ]]
     ---@type FontString
-    local TimeLabel = Interface:createFontString(Window, L.GDKP_MULTIAUCTION_AUCTIONEER_TIME_LABEL);
+    local TimeLabel = Interface:createFontString(Window, L["Auction time in seconds"]);
     TimeLabel:SetPoint("TOPLEFT", AddItemsLabel, "BOTTOMLEFT", 0, -6);
 
     ---@type EditBox
@@ -383,7 +383,7 @@ function Auctioneer:build()
 
     --[[ ANTI SNIPE ]]
     ---@type FontString
-    local AntiSnipeLabel = Interface:createFontString(Window, L.GDKP_MULTIAUCTION_AUCTIONEER_ANTI_SNIPE_LABEL);
+    local AntiSnipeLabel = Interface:createFontString(Window, L["Anti snipe in seconds"]);
     AntiSnipeLabel:SetPoint("CENTER", TimeLabel, "CENTER");
     AntiSnipeLabel:SetPoint("LEFT", TimeInput, "RIGHT", 4, 0);
 
@@ -393,30 +393,30 @@ function Auctioneer:build()
     AntiSnipeInput:SetText(Settings:get("GDKP.MultiAuction.antiSnipe"));
     AntiSnipeInput:SetWidth(20);
     AntiSnipeInput:SetPoint("TOPLEFT", AntiSnipeLabel, "TOPRIGHT", 8, 4);
-    Interface:addTooltip(AntiSnipeInput, L.ANTISNIPE_EXPLANATION);
+    Interface:addTooltip(AntiSnipeInput, L["\n\nAn Anti Snipe value of 10 means that any bid that comes in with\nless than 10 seconds left will reset the timer back to 10 seconds\n\nYou can leave this empty or set to 0 to disable Anti Snipe completely.\nAnti Snipe values less than 5 are not supported\n\n"]);
     Window._AntiSnipeInput = AntiSnipeInput;
 
     --[[ CLEAR ]]
     ---@type Button
-    local Clear = Interface:dynamicPanelButton(Window, L.CLEAR);
+    local Clear = Interface:dynamicPanelButton(Window, L["Clear"]);
     Clear:SetPoint("BOTTOMLEFT", Window, "BOTTOMLEFT", 20, 30);
     Clear:SetScript("OnClick", function ()
         self:clearItems();
     end);
-    Interface:addTooltip(Clear, L.GDKP_MULTIAUCTION_AUCTIONEER_CLEAR_TOOLTIP);
+    Interface:addTooltip(Clear, L["Remove all items from the list"]);
 
     --[[ FILL FROM INVENTORY ]]
     ---@type Button
-    local FillFromInventory = Interface:dynamicPanelButton(Window, L.GDKP_MULTIAUCTION_AUCTIONEER_FILL_BUTTON);
+    local FillFromInventory = Interface:dynamicPanelButton(Window, L["Fill from inventory"]);
     FillFromInventory:SetPoint("TOPLEFT", Clear, "TOPRIGHT", 2, 0);
     FillFromInventory:SetScript("OnClick", function ()
         GL.Interface.GDKP.MultiAuction.FillFromInventory:open();
     end);
-    Interface:addTooltip(FillFromInventory, L.GDKP_MULTIAUCTION_AUCTIONEER_FILL_TOOLTIP);
+    Interface:addTooltip(FillFromInventory, L["Add tradeable items from your inventory to the list"]);
 
     --[[ NEXT STEP ]]
     ---@type Button
-    local Next = Interface:dynamicPanelButton(Window, L.NEXT);
+    local Next = Interface:dynamicPanelButton(Window, L["Next"]);
     Next:SetPoint("CENTER", FillFromInventory, "CENTER");
     Next:SetPoint("RIGHT", Window, "RIGHT", -20, 0);
     Next:SetScript("OnClick", function ()
@@ -433,21 +433,21 @@ function Auctioneer:build()
         end)();
 
         if (not itemsWereChecked) then
-            GL:error(L.GDKP_MULTIAUCTION_AUCTIONEER_NO_ITEMS_WARNING);
+            GL:error(L["Select at least one item for your auction"]);
 
             return;
         end
 
         local duration = tonumber(string.trim(Window._TimeInput:GetText())) or 0;
         if (duration < 10) then
-            GL:error(L.GDKP_MULTIAUCTION_AUCTIONEER_TIME_WARNING);
+            GL:error(L["The auction time in seconds needs to be >= 10"]);
 
             return;
         end
 
         local antiSnipe = tonumber(string.trim(Window._AntiSnipeInput:GetText())) or 0;
         if (antiSnipe < 0 or (antiSnipe > 0 and antiSnipe < 5)) then
-            GL:error(L.GDKP_MULTIAUCTION_AUCTIONEER_ANTI_SNIPE_WARNING);
+            GL:error(L["The anti snipe value needs to be 0 (empty) or >=5"]);
 
             return;
         end
@@ -462,15 +462,15 @@ function Auctioneer:build()
 
         GroupVersionCheck:open({
             {
-                text = L.CANCEL,
+                text = L["Cancel"],
                 onClick = function ()
                     GroupVersionCheck:close();
                     self:open(true);
                 end,
-                tooltip = L.GDKP_MULTIAUCTION_AUCTIONEER_CANCEL_TOOLTIP,
+                tooltip = L["Go back to the item selector"],
             },
             {
-                text = L.START,
+                text = L["Start"],
                 onClick = function (Results)
                     -- Everyone is up-to-date on Gargul, start!
                     if (GL:empty(Results.Unresponsive)) then
@@ -478,7 +478,7 @@ function Auctioneer:build()
                         GroupVersionCheck:close();
 
                         if (not GL:empty(Results.Outdated)) then
-                            GL:warning(L.GDKP_MULTIAUCTION_AUCTIONEER_PLAYER_OUTDATED_WARNING);
+                            GL:warning(L["Not everyone is up-to-date. If you're experiencing issues, tell your raiders to update!"]);
                         end
 
                         return;
@@ -486,20 +486,20 @@ function Auctioneer:build()
 
                     -- Start after double-checking if the user is OK with people missing out
                     Interface.Dialogs.PopupDialog:open{
-                        question = L.GDKP_MULTIAUCTION_AUCTIONEER_NO_GARGUL_WARNING,
+                        question = L["Not everyone is using Gargul, are you sure you want to start the auction?"],
                         OnYes = function ()
                             self:start();
                             GroupVersionCheck:close();
                         end,
                     };
                 end,
-                tooltip = L.START,
+                tooltip = L["Start"],
             },
         });
 
         self:close();
     end);
-    Interface:addTooltip(Next, L.GDKP_MULTIAUCTION_AUCTIONEER_NEXT_VERSION_CHECK_TOOLTIP);
+    Interface:addTooltip(Next, L["Next step: check raider's add-on version for compatibility"]);
 
     return Window;
 end
@@ -621,20 +621,20 @@ function Auctioneer:start()
     ---@type Frame
     local Window = self:getWindow();
     if (not Window) then
-        GL:error(L.SOMETHING_WENT_WRONG_WARNING);
+        GL:error(L["Something went wrong!"]);
         return;
     end
 
     local duration = tonumber(string.trim(Window._TimeInput:GetText())) or 0;
     if (duration < 10) then
-        GL:error(L.GDKP_MULTIAUCTION_AUCTIONEER_TIME_WARNING);
+        GL:error(L["The auction time in seconds needs to be >= 10"]);
 
         return;
     end
 
     local antiSnipe = tonumber(string.trim(Window._AntiSnipeInput:GetText())) or 0;
     if (antiSnipe < 0 or (antiSnipe > 0 and antiSnipe < 5)) then
-        GL:error(L.GDKP_MULTIAUCTION_AUCTIONEER_ANTI_SNIPE_WARNING);
+        GL:error(L["The anti snipe value needs to be 0 (empty) or >=5"]);
 
         return;
     end
@@ -665,7 +665,7 @@ function Auctioneer:start()
     end
 
     if (not itemsWereChecked) then
-        GL:error(L.GDKP_MULTIAUCTION_AUCTIONEER_NO_ITEMS_WARNING);
+        GL:error(L["Select at least one item for your auction"]);
 
         return;
     end
@@ -691,7 +691,7 @@ function Auctioneer:start()
     GL:afterCombatDo(function ()
         GL.GDKP.MultiAuction.Auctioneer:start(ItemsUpForAuction, duration, antiSnipe);
     end, function ()
-        GL:notice(L.BROADCAST_DELAYED_BY_COMBAT);
+        GL:notice(L["You are currently in combat, delaying broadcast"]);
     end);
 
     -- Clear the item selection window

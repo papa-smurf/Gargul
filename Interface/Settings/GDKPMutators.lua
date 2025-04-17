@@ -58,7 +58,7 @@ function GDKPMutators:draw(Parent)
             local name = Name:GetText() or "";
 
             if (name:match("%.")) then
-                GL:warning(L.GDKP_MUTATOR_NO_DOTS_WARNING);
+                GL:warning(L["Mutator names can not contains dots (.)"]);
                 Name:SetText("");
                 return;
             end

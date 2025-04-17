@@ -387,7 +387,7 @@ function Pot:calculateCuts(sessionID)
     if (GL:higherThanZero(base) and GL:higherThanZero(baseParts)) then
         base = base / baseParts;
     elseif (Session.lockedAt and not GL:higherThanZero(base) and GL:higherThanZero(percentages)) then
-        GL:error(L.GDKP_NOT_ENOUGH_GOLD_TO_DISTRIBUTE);
+        GL:error(L["There's not enough gold to distribute, expect some weird cut calculations!"]);
     end
 
     Session.lastAvailableBase = base;
@@ -716,10 +716,10 @@ function Pot:announce(sessionID, callback)
     local managementCut = GL:floor(totalPot * (0 + managementCutPercentage / 100), Settings:get("GDKP.precision"));
     local totalToDistribute = GL:floor(totalPot - managementCut, Settings:get("GDKP.precision"));
 
-    local message = (L.CHAT.GDKP_POT_TOTAL):format(GL:goldToMoney(totalToDistribute));
+    local message = (L.CHAT["Total Pot: %s"]):format(GL:goldToMoney(totalToDistribute));
     GL:sendChatMessage(message, "GROUP");
 
-    message = (L.CHAT.GDKP_BASE_CUT):format(GL:goldToMoney(GL:floor(Session.lastAvailableBase, Settings:get("GDKP.precision"))));
+    message = (L.CHAT["Base cut: %s"]):format(GL:goldToMoney(GL:floor(Session.lastAvailableBase, Settings:get("GDKP.precision"))));
     GL:sendChatMessage(message, "GROUP");
 end
 
@@ -739,7 +739,7 @@ function Pot:csvToCuts(csv)
             first = false;
 
             if (not Columns.Player or not Columns.Gold) then
-                GL:error(L.GDKP_CUT_IMPORT_MISSING_HEADER);
+                GL:error(L["Missing header, note: it's case-sensitive!"]);
                 return {};
             end
         else -- The first line includes the heading, we don't need that
@@ -751,12 +751,12 @@ function Pot:csvToCuts(csv)
                 error = true;
 
                 if (not GL:empty(playerGUID)) then
-                    GL:warning((L.GDKP_CUT_IMPORT_MISSING_GOLD):format(playerGUID));
+                    GL:warning((L["Missing gold for player %s"]):format(playerGUID));
                 end
             elseif (GL:empty(playerGUID) and gold) then
                 error = true;
 
-                GL:warning(L.GDKP_CUT_IMPORT_MISSING_PLAYER);
+                GL:warning(L["Missing player name"]);
             end
 
             if (not error) then
@@ -779,7 +779,7 @@ function Pot:importCuts(sessionID, data)
 
     local Cuts = type(data) == "table" and data or self:csvToCuts(data);
     if (GL:empty(Cuts)) then
-        GL:warning(L.GDKP_CUT_IMPORT_EMPTY);
+        GL:warning(L["Nothing to import, double check your CSV"]);
 
         return false;
     end

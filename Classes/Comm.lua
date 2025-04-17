@@ -420,7 +420,7 @@ function Comm:dispatch(CommMessage, stringLength)
         return;
     end
 
-    GL:warning((L.UNKNOWN_COMM_ACTION):format(action));
+    GL:warning((L["Unknown comm action '%s', make sure to update Gargul!"]):format(action));
     WarnedAboutCommAction[action] = true;
 end
 

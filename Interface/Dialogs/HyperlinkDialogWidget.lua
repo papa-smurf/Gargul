@@ -227,7 +227,7 @@ local function constructor()
 
     -- Close
     local CloseButton = AceGUI:Create("Button");
-    CloseButton:SetText(L.CLOSE);
+    CloseButton:SetText(L["Close"]);
     CloseButton:SetHeight(20);
     CloseButton:SetWidth(120);
     CloseButton:SetCallback("OnClick", function()

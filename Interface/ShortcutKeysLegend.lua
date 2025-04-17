@@ -59,7 +59,7 @@ function ShortcutKeysLegend:draw()
     local DescriptionLabel = AceGUI:Create("Label");
     DescriptionLabel:SetFullWidth(true);
     DescriptionLabel:SetFontObject(_G["GameFontNormalSmall"]);
-    DescriptionLabel:SetText((L.KEYS_INFO):format(
+    DescriptionLabel:SetText((L["\nGargul Item Hotkeys\n\nRoll out: |c00A79EFF%s|r\nAward: |c00A79EFF%s|r\nDisenchant: |c00A79EFF%s|r\n\n\n-- Right-click to disable this window --\n"]):format(
         GL.Settings:get("ShortcutKeys.rollOffOrAuction"),
         GL.Settings:get("ShortcutKeys.award"),
         GL.Settings:get("ShortcutKeys.disenchant")
