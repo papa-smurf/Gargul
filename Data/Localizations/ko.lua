@@ -408,27 +408,27 @@ L["You left during your GDKP bidding session. In order to resume it you have to 
 L["With this window open, %s items to add them to the list"] = "이 창이 열려 있으면 %s개 항목을 목록에 추가할 수 있습니다.";
 L["Click the cogwheel icon to manage an auction"] = "경매를 관리하려면 톱니바퀴 아이콘을 클릭하세요.";
 L["You're already the top bidder on %s"] = "귀하는 이미 %s의 최고 입찰자입니다.";
-L["\nBid |c00%s%sg\nBy %s"] = [[
+L["Bid |c00%s%sg\nBy %s"] = [[
 입찰 |c00%s%sg
 작성자: %s]];
-L["\n|c00%sCLOSED\nNo bids"] = [[
+L["|c00%sCLOSED\nNo bids"] = [[
 |c00%s닫음
 입찰 없음]];
-L["\nMinimum: |c00%s%sg\nIncrement: |c00%s%sg"] = [[
+L["Minimum: |c00%s%sg\nIncrement: |c00%s%sg"] = [[
 최소: |c00%s%sg
 증분: |c00%s%sg]];
 L["Items: %s  -  Total sold: %sg  -  Pledged by me: %sg"] = "항목: %s - 총 판매 수: %sg - 내가 약속한 항목: %sg";
-L["\nItems with bids: %s/%s\nTotal sold: %s\nBought by me: %s\nTotal bid (does not include sold): %s\nBid by me (does not include sold): %s\n"] = [[
+L["Items with bids: %s/%s\nTotal sold: %s\nBought by me: %s\nTotal bid (does not include sold): %s\nBid by me (does not include sold): %s\n"] = [[
 입찰 항목: %s/%s
 총 판매 수: %s
 내가 구입함: %s
 총 입찰가(판매된 금액은 포함되지 않음): %s
 내가 입찰함(판매된 항목은 포함되지 않음): %s
 ]];
-L["\n|c00%sSOLD to\n%s for |c00%s%sg"] = [[
+L["|c00%sSOLD to\n%s for |c00%s%sg"] = [[
 |c00%s판매됨
 |c00%s%sg에 대한 %s]];
-L["\nBid |c00%s%sg\nBy |c0092FF00YOU!"] = [[
+L["Bid |c00%s%sg\nBy |c0092FF00YOU!"] = [[
 입찰 |c00%s%sg
 작성자: c0092FF00YOU!]];
 L["Could not stop auto bidding on %s, try again or /reload!"] = "%s에 대한 자동 입찰을 중지할 수 없습니다. 다시 시도하거나 /reload하세요!";
@@ -442,7 +442,7 @@ L["Clear bids"] = "입찰가 지우기";
 L["Remove all bids from the auction"] = "경매에서 모든 입찰을 제거합니다.";
 L["Close all"] = "모두 닫기";
 L["Close ALL auctions?"] = "모든 경매를 종료하시겠습니까?";
-L["\nClose ALL auctions\n\nAuctions with active bids on them will be sold and can not receive new bids!\n"] = [[
+L["Close ALL auctions\n\nAuctions with active bids on them will be sold and can not receive new bids!"] = [[
 모든 경매 종료
 
 활성 입찰이 있는 경매는 판매되며 새 입찰을 받을 수 없습니다!
@@ -451,7 +451,7 @@ L["Close Auction"] = "경매 종료";
 L["Close the auction. Players can no longer bid but the highest bid remains active"] = "경매를 종료합니다. 플레이어는 더 이상 입찰할 수 없지만 가장 높은 입찰은 계속 활성화됩니다.";
 L["Remove the item from the auction including its bid details. THIS CAN'T BE UNDONE!"] = "입찰 세부정보를 포함하여 경매에서 항목을 제거합니다. 이 작업은 취소할 수 없습니다!";
 L["Disenchant all finished but unsold items?"] = "완성되었으나 팔리지 않은 아이템을 모두 추출하시겠습니까?";
-L["\nDisenchant unsold items\n\nThis will mark all unsold items as disenchanted and they will not show up in a new multi-auction session\n"] = [[
+L["Disenchant unsold items\n\nThis will mark all unsold items as disenchanted and they will not show up in a new multi-auction session"] = [[
 팔리지 않은 아이템을 추출하세요
 
 이렇게 하면 판매되지 않은 모든 항목이 마법 해제된 것으로 표시되며 새로운 다중 경매 세션에 표시되지 않습니다.
@@ -461,7 +461,7 @@ L["Give a final call timer of how many seconds?"] = "최종 통화 타이머를 
 L["The minimum amount of seconds is 5"] = "최소 시간(초)은 5입니다.";
 L["Start a final call for this auction by giving a (usually shorter) bid timer"] = "(보통 더 짧은) 입찰 타이머를 제공하여 이 경매에 대한 최종 호출을 시작합니다.";
 L["Close ALL auctions and wrap up this multi-auction session?"] = "모든 경매를 종료하고 다중 경매 세션을 마무리하시겠습니까?";
-L["\nFinish Multi-Auction session\n\nThis will close all auctions and announce the total pot in chat\nAuctions with active bids on them will be sold and can not receive new bids!\n"] = [[
+L["Finish Multi-Auction session\n\nThis will close all auctions and announce the total pot in chat\nAuctions with active bids on them will be sold and can not receive new bids!"] = [[
 다중 경매 세션 완료
 
 그러면 모든 경매가 종료되고 채팅에 총 팟이 표시됩니다.
@@ -483,7 +483,7 @@ L["Show unusable"] = "사용할 수 없음 표시";
 L["This item was sold. Use ledger (|c00%s/gdkp) to make changes!"] = "이 품목은 판매되었습니다. 변경하려면 원장(|c00%s/gdkp)을 사용하세요!";
 L["Terminate"] = "끝내다";
 L["Remove all bidsl bids and close all auctions?"] = "모든 입찰가를 삭제하고 모든 경매를 종료하시겠습니까?";
-L["\nTerminate Multi-Auction session\n\nThis will delete all bids on items that haven't sold yet and close all auctions!\n"] = [[
+L["Terminate Multi-Auction session\n\nThis will delete all bids on items that haven't sold yet and close all auctions!"] = [[
 다중 경매 세션 종료
 
 아직 판매되지 않은 품목에 대한 모든 입찰이 삭제되고 모든 경매가 종료됩니다!

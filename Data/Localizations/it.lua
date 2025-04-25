@@ -408,27 +408,27 @@ L["You left during your GDKP bidding session. In order to resume it you have to 
 L["With this window open, %s items to add them to the list"] = "Con questa finestra aperta, %s elementi per aggiungerli all'elenco";
 L["Click the cogwheel icon to manage an auction"] = "Fai clic sull'icona dell'ingranaggio per gestire un'asta";
 L["You're already the top bidder on %s"] = "Sei già il miglior offerente su %s";
-L["\nBid |c00%s%sg\nBy %s"] = [[
+L["Bid |c00%s%sg\nBy %s"] = [[
 Offerta |c00%s%sg
 Entro %s]];
-L["\n|c00%sCLOSED\nNo bids"] = [[
+L["|c00%sCLOSED\nNo bids"] = [[
 |c00%sCHIUSO
 Nessuna offerta]];
-L["\nMinimum: |c00%s%sg\nIncrement: |c00%s%sg"] = [[
+L["Minimum: |c00%s%sg\nIncrement: |c00%s%sg"] = [[
 Minimo: |c00%s%sg
 Incremento: |c00%s%sg]];
 L["Items: %s  -  Total sold: %sg  -  Pledged by me: %sg"] = "Articoli: %s - Totale venduto: %sg - Promesso da me: %sg";
-L["\nItems with bids: %s/%s\nTotal sold: %s\nBought by me: %s\nTotal bid (does not include sold): %s\nBid by me (does not include sold): %s\n"] = [[
+L["Items with bids: %s/%s\nTotal sold: %s\nBought by me: %s\nTotal bid (does not include sold): %s\nBid by me (does not include sold): %s\n"] = [[
 Elementi con offerte: %s/%s
 Totale venduto: %s
 Comprato da me: %s
 Offerta totale (non include la vendita): %s
 Fai un'offerta (non include la vendita): %s
 ]];
-L["\n|c00%sSOLD to\n%s for |c00%s%sg"] = [[
+L["|c00%sSOLD to\n%s for |c00%s%sg"] = [[
 |c00%sVENDUTO a
 %s per |c00%s%sg]];
-L["\nBid |c00%s%sg\nBy |c0092FF00YOU!"] = [[
+L["Bid |c00%s%sg\nBy |c0092FF00YOU!"] = [[
 Offerta |c00%s%sg
 Di |c0092FF00YOU!]];
 L["Could not stop auto bidding on %s, try again or /reload!"] = "Impossibile interrompere le offerte automatiche su %s, riprova o /ricarica!";
@@ -442,7 +442,7 @@ L["Clear bids"] = "Offerte chiare";
 L["Remove all bids from the auction"] = "Rimuovi tutte le offerte dall'asta";
 L["Close all"] = "Chiudi tutto";
 L["Close ALL auctions?"] = "Chiudere TUTTE le aste?";
-L["\nClose ALL auctions\n\nAuctions with active bids on them will be sold and can not receive new bids!\n"] = [[
+L["Close ALL auctions\n\nAuctions with active bids on them will be sold and can not receive new bids!"] = [[
 Chiudi TUTTE le aste
 
 Le aste con offerte attive verranno vendute e non potranno ricevere nuove offerte!
@@ -451,7 +451,7 @@ L["Close Auction"] = "Chiudi l'asta";
 L["Close the auction. Players can no longer bid but the highest bid remains active"] = "Chiudi l'asta. I giocatori non possono più fare offerte ma l'offerta più alta rimane attiva";
 L["Remove the item from the auction including its bid details. THIS CAN'T BE UNDONE!"] = "Rimuovi l'oggetto dall'asta compresi i dettagli dell'offerta. QUESTO NON PUÒ ESSERE ANNULLATO!";
 L["Disenchant all finished but unsold items?"] = "Disincantare tutti gli oggetti finiti ma invenduti?";
-L["\nDisenchant unsold items\n\nThis will mark all unsold items as disenchanted and they will not show up in a new multi-auction session\n"] = [[
+L["Disenchant unsold items\n\nThis will mark all unsold items as disenchanted and they will not show up in a new multi-auction session"] = [[
 Disincanta gli oggetti invenduti
 
 Ciò contrassegnerà tutti gli articoli invenduti come disincantati e non verranno visualizzati in una nuova sessione di aste multiple
@@ -461,7 +461,7 @@ L["Give a final call timer of how many seconds?"] = "Fornire un timer per la chi
 L["The minimum amount of seconds is 5"] = "Il numero minimo di secondi è 5";
 L["Start a final call for this auction by giving a (usually shorter) bid timer"] = "Avvia una chiamata finale per quest'asta fornendo un timer di offerta (solitamente più breve).";
 L["Close ALL auctions and wrap up this multi-auction session?"] = "Chiudere TUTTE le aste e concludere questa sessione multi-asta?";
-L["\nFinish Multi-Auction session\n\nThis will close all auctions and announce the total pot in chat\nAuctions with active bids on them will be sold and can not receive new bids!\n"] = [[
+L["Finish Multi-Auction session\n\nThis will close all auctions and announce the total pot in chat\nAuctions with active bids on them will be sold and can not receive new bids!"] = [[
 Termina la sessione di aste multiple
 
 Questo chiuderà tutte le aste e annuncerà il piatto totale in chat
@@ -483,7 +483,7 @@ L["Show unusable"] = "Mostra inutilizzabile";
 L["This item was sold. Use ledger (|c00%s/gdkp) to make changes!"] = "Questo articolo è stato venduto. Utilizza il registro (|c00%s/gdkp) per apportare modifiche!";
 L["Terminate"] = "Terminare";
 L["Remove all bidsl bids and close all auctions?"] = "Rimuovere tutte le offerte bidsl e chiudere tutte le aste?";
-L["\nTerminate Multi-Auction session\n\nThis will delete all bids on items that haven't sold yet and close all auctions!\n"] = [[
+L["Terminate Multi-Auction session\n\nThis will delete all bids on items that haven't sold yet and close all auctions!"] = [[
 Termina la sessione multi-asta
 
 Ciò eliminerà tutte le offerte sugli articoli che non sono ancora stati venduti e chiuderà tutte le aste!

@@ -408,27 +408,27 @@ L["You left during your GDKP bidding session. In order to resume it you have to 
 L["With this window open, %s items to add them to the list"] = "Com esta janela aberta, %s itens para adicioná-los à lista";
 L["Click the cogwheel icon to manage an auction"] = "Clique no ícone da roda dentada para gerenciar um leilão";
 L["You're already the top bidder on %s"] = "Você já é o maior licitante em %s";
-L["\nBid |c00%s%sg\nBy %s"] = [[
+L["Bid |c00%s%sg\nBy %s"] = [[
 Lance |c00%s%sg
 Por %s]];
-L["\n|c00%sCLOSED\nNo bids"] = [[
+L["|c00%sCLOSED\nNo bids"] = [[
 |c00%sFECHADO
 Sem lances]];
-L["\nMinimum: |c00%s%sg\nIncrement: |c00%s%sg"] = [[
+L["Minimum: |c00%s%sg\nIncrement: |c00%s%sg"] = [[
 Mínimo: |c00%s%sg
 Incremento: |c00%s%sg]];
 L["Items: %s  -  Total sold: %sg  -  Pledged by me: %sg"] = "Itens: %s - Total vendido: %sg - prometido por mim: %sg";
-L["\nItems with bids: %s/%s\nTotal sold: %s\nBought by me: %s\nTotal bid (does not include sold): %s\nBid by me (does not include sold): %s\n"] = [[
+L["Items with bids: %s/%s\nTotal sold: %s\nBought by me: %s\nTotal bid (does not include sold): %s\nBid by me (does not include sold): %s\n"] = [[
 Itens com lances: %s/%s
 Total vendido: %s
 Comprado por mim: %s
 Lance total (não inclui vendas): %s
 Lance meu (não inclui vendido): %s
 ]];
-L["\n|c00%sSOLD to\n%s for |c00%s%sg"] = [[
+L["|c00%sSOLD to\n%s for |c00%s%sg"] = [[
 |c00%sVENDIDO para
 %s para |c00%s%sg]];
-L["\nBid |c00%s%sg\nBy |c0092FF00YOU!"] = [[
+L["Bid |c00%s%sg\nBy |c0092FF00YOU!"] = [[
 Lance |c00%s%sg
 Por |c0092FF00VOCÊ!]];
 L["Could not stop auto bidding on %s, try again or /reload!"] = "Não foi possível interromper o lance automático em %s. Tente novamente ou /recarregue!";
@@ -442,7 +442,7 @@ L["Clear bids"] = "Limpar lances";
 L["Remove all bids from the auction"] = "Remover todos os lances do leilão";
 L["Close all"] = "Feche tudo";
 L["Close ALL auctions?"] = "Fechar TODOS os leilões?";
-L["\nClose ALL auctions\n\nAuctions with active bids on them will be sold and can not receive new bids!\n"] = [[
+L["Close ALL auctions\n\nAuctions with active bids on them will be sold and can not receive new bids!"] = [[
 Fechar TODOS os leilões
 
 Leilões com lances ativos serão vendidos e não poderão receber novos lances!
@@ -451,7 +451,7 @@ L["Close Auction"] = "Fechar leilão";
 L["Close the auction. Players can no longer bid but the highest bid remains active"] = "Feche o leilão. Os jogadores não podem mais dar lances, mas o lance mais alto permanece ativo";
 L["Remove the item from the auction including its bid details. THIS CAN'T BE UNDONE!"] = "Remova o item do leilão, incluindo os detalhes do lance. ISSO NÃO PODE SER DESFEITO!";
 L["Disenchant all finished but unsold items?"] = "Desencantar todos os itens acabados, mas não vendidos?";
-L["\nDisenchant unsold items\n\nThis will mark all unsold items as disenchanted and they will not show up in a new multi-auction session\n"] = [[
+L["Disenchant unsold items\n\nThis will mark all unsold items as disenchanted and they will not show up in a new multi-auction session"] = [[
 Desencantar itens não vendidos
 
 Isso marcará todos os itens não vendidos como desencantados e eles não aparecerão em uma nova sessão de leilão múltiplo
@@ -461,7 +461,7 @@ L["Give a final call timer of how many seconds?"] = "Dê um cronômetro de chama
 L["The minimum amount of seconds is 5"] = "A quantidade mínima de segundos é 5";
 L["Start a final call for this auction by giving a (usually shorter) bid timer"] = "Inicie uma chamada final para este leilão fornecendo um cronômetro de lance (geralmente mais curto)";
 L["Close ALL auctions and wrap up this multi-auction session?"] = "Fechar TODOS os leilões e encerrar esta sessão de leilões múltiplos?";
-L["\nFinish Multi-Auction session\n\nThis will close all auctions and announce the total pot in chat\nAuctions with active bids on them will be sold and can not receive new bids!\n"] = [[
+L["Finish Multi-Auction session\n\nThis will close all auctions and announce the total pot in chat\nAuctions with active bids on them will be sold and can not receive new bids!"] = [[
 Concluir sessão de leilão múltiplo
 
 Isto fechará todos os leilões e anunciará o pote total no chat
@@ -483,7 +483,7 @@ L["Show unusable"] = "Mostrar inutilizável";
 L["This item was sold. Use ledger (|c00%s/gdkp) to make changes!"] = "Este item foi vendido. Use o razão (|c00%s/gdkp) para fazer alterações!";
 L["Terminate"] = "Encerrar";
 L["Remove all bidsl bids and close all auctions?"] = "Remover todos os lances e fechar todos os leilões?";
-L["\nTerminate Multi-Auction session\n\nThis will delete all bids on items that haven't sold yet and close all auctions!\n"] = [[
+L["Terminate Multi-Auction session\n\nThis will delete all bids on items that haven't sold yet and close all auctions!"] = [[
 Encerrar sessão de leilão múltiplo
 
 Isso excluirá todos os lances de itens que ainda não foram vendidos e fechará todos os leilões!

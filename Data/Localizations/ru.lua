@@ -406,27 +406,27 @@ L["You left during your GDKP bidding session. In order to resume it you have to 
 L["With this window open, %s items to add them to the list"] = "В этом окне открыто %s элементов, чтобы добавить их в список.";
 L["Click the cogwheel icon to manage an auction"] = "Нажмите на значок шестеренки, чтобы управлять аукционом.";
 L["You're already the top bidder on %s"] = "Вы уже являетесь лидером торгов на %s";
-L["\nBid |c00%s%sg\nBy %s"] = [[
+L["Bid |c00%s%sg\nBy %s"] = [[
 Ставка |c00%s%sg
 %s]];
-L["\n|c00%sCLOSED\nNo bids"] = [[
+L["|c00%sCLOSED\nNo bids"] = [[
 |c00%sЗАКРЫТО
 Нет ставок]];
-L["\nMinimum: |c00%s%sg\nIncrement: |c00%s%sg"] = [[
+L["Minimum: |c00%s%sg\nIncrement: |c00%s%sg"] = [[
 Минимум: |c00%s%sg
 Шаг: |c00%s%sg]];
 L["Items: %s  -  Total sold: %sg  -  Pledged by me: %sg"] = "Предметов: %s - Всего продано: %sg - Залог мной: %sg";
-L["\nItems with bids: %s/%s\nTotal sold: %s\nBought by me: %s\nTotal bid (does not include sold): %s\nBid by me (does not include sold): %s\n"] = [[
+L["Items with bids: %s/%s\nTotal sold: %s\nBought by me: %s\nTotal bid (does not include sold): %s\nBid by me (does not include sold): %s\n"] = [[
 Предметы со ставками: %s/%s
 Всего продано: %s
 Куплен мной: %s
 Общая ставка (не включая проданные): %s
 Моя ставка (не включает проданные): %s
 ]];
-L["\n|c00%sSOLD to\n%s for |c00%s%sg"] = [[
+L["|c00%sSOLD to\n%s for |c00%s%sg"] = [[
 |c00%sПРОДАНО
 %s для |c00%s%sg]];
-L["\nBid |c00%s%sg\nBy |c0092FF00YOU!"] = [[
+L["Bid |c00%s%sg\nBy |c0092FF00YOU!"] = [[
 Ставка |c00%s%sg
 Автор: |c0092FF00ВЫ!]];
 L["Could not stop auto bidding on %s, try again or /reload!"] = "Не удалось остановить автоматическое назначение ставок для %s. Повторите попытку или /reload!";
@@ -440,7 +440,7 @@ L["Clear bids"] = "Очистить ставки";
 L["Remove all bids from the auction"] = "Удалить все ставки с аукциона";
 L["Close all"] = "Закрыть все";
 L["Close ALL auctions?"] = "Закрыть ВСЕ аукционы?";
-L["\nClose ALL auctions\n\nAuctions with active bids on them will be sold and can not receive new bids!\n"] = [[
+L["Close ALL auctions\n\nAuctions with active bids on them will be sold and can not receive new bids!"] = [[
 Закрыть ВСЕ аукционы
 
 Аукционы с активными ставками на них будут проданы и не смогут принимать новые ставки!
@@ -449,7 +449,7 @@ L["Close Auction"] = "Закрыть аукцион";
 L["Close the auction. Players can no longer bid but the highest bid remains active"] = "Закройте аукцион. Игроки больше не могут делать ставки, но самая высокая ставка остается активной.";
 L["Remove the item from the auction including its bid details. THIS CAN'T BE UNDONE!"] = "Удалите предмет с аукциона, включая информацию о его ставке. ЭТО НЕ МОЖЕТ ОТМЕНИТЬ!";
 L["Disenchant all finished but unsold items?"] = "Расчаровать все готовые, но непроданные предметы?";
-L["\nDisenchant unsold items\n\nThis will mark all unsold items as disenchanted and they will not show up in a new multi-auction session\n"] = [[
+L["Disenchant unsold items\n\nThis will mark all unsold items as disenchanted and they will not show up in a new multi-auction session"] = [[
 Расчаровать непроданные предметы
 
 Все непроданные предметы будут отмечены как распылённые, и они не будут отображаться в новой сессии нескольких аукционов.
@@ -459,7 +459,7 @@ L["Give a final call timer of how many seconds?"] = "Дайте таймер ф�
 L["The minimum amount of seconds is 5"] = "Минимальное количество секунд — 5";
 L["Start a final call for this auction by giving a (usually shorter) bid timer"] = "Начните последний вызов на этом аукционе, установив таймер ставки (обычно более короткий).";
 L["Close ALL auctions and wrap up this multi-auction session?"] = "Закрыть ВСЕ аукционы и завершить эту многоаукционную сессию?";
-L["\nFinish Multi-Auction session\n\nThis will close all auctions and announce the total pot in chat\nAuctions with active bids on them will be sold and can not receive new bids!\n"] = [[
+L["Finish Multi-Auction session\n\nThis will close all auctions and announce the total pot in chat\nAuctions with active bids on them will be sold and can not receive new bids!"] = [[
 Завершить сеанс мультиаукциона
 
 Это закроет все аукционы и объявит общий размер банка в чате.
@@ -481,7 +481,7 @@ L["Show unusable"] = "Показать непригодные для испол�
 L["This item was sold. Use ledger (|c00%s/gdkp) to make changes!"] = "Этот товар был продан. Используйте реестр (|c00%s/gdkp) для внесения изменений!";
 L["Terminate"] = "Прекратить";
 L["Remove all bidsl bids and close all auctions?"] = "Удалить все ставки bidsl и закрыть все аукционы?";
-L["\nTerminate Multi-Auction session\n\nThis will delete all bids on items that haven't sold yet and close all auctions!\n"] = [[
+L["Terminate Multi-Auction session\n\nThis will delete all bids on items that haven't sold yet and close all auctions!"] = [[
 Завершить сеанс мультиаукциона
 
 Это приведет к удалению всех ставок на еще не проданные товары и закрытию всех аукционов!
