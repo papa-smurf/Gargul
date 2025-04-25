@@ -422,14 +422,10 @@ local lastClickTime;
 ---@param mouseButtonPressed string|nil
 ---@param callback? Some actions (like award) support a callback
 function GL:handleItemClick(itemLink, mouseButtonPressed, callback)
-    GL:debug("GL:handleItemClick");
-
-    if (not itemLink
-        or type(itemLink) ~= "string"
+    if (not GL:isValidItemLink(itemLink)
         or (mouseButtonPressed
             and mouseButtonPressed ~= "LeftButton"
         )
-        or not GL:getItemIDFromLink(itemLink)
     ) then
         return;
     end
@@ -1346,8 +1342,14 @@ end
 ---
 --- @param itemLink string The string to validate as an item link.
 --- @return boolean isValid
+--- 
+--- @test classic
+--- /dump _G.Gargul:isValidItemLink('|cffa335ee|Hitem:19019:::::::::::::|h[Thunderfury, Blessed Blade of the Windseeker]|h|r')
+--- 
+--- @test retail
+--- /dump _G.Gargul:isValidItemLink('|cnIQ5:|Hitem:19019:::::::::::::|h[Thunderfury, Blessed Blade of the Windseeker]|h|r')
 function GL:isValidItemLink(itemLink)
-    return type(itemLink) == "string" and itemLink:match("^|c[%x]+|Hitem:%d+:.-|h%[.-%]|h|r$") ~= nil
+    return type(itemLink) == "string" and GL:getItemInfoInstant(itemLink) ~= nil;
 end
 
 --- The onItemLoadDo helper accepts one or more item ids or item links
@@ -2324,7 +2326,7 @@ function GL:getItemIDFromLink(itemLink)
         return false;
     end
 
-    local _, itemID = strsplit(":", itemLink);
+    local itemID = string.match(itemLink, "Hitem:(%d+):");
     itemID = tonumber(itemID);
 
     if (not itemID) then

@@ -444,7 +444,7 @@ function ClientInterface:build()
                 end,
             };
         end);
-        Interface:addTooltip(CloseAllButton, L["\nClose ALL auctions\n\nAuctions with active bids on them will be sold and can not receive new bids!\n"]);
+        Interface:addTooltip(CloseAllButton, L["Close ALL auctions\n\nAuctions with active bids on them will be sold and can not receive new bids!"]);
 
         ---@type Button
         local FinalCallButton = Interface:dynamicPanelButton(ButtonContainer);
@@ -500,7 +500,7 @@ function ClientInterface:build()
                 end,
             };
         end);
-        Interface:addTooltip(FinishButton, L["\nFinish Multi-Auction session\n\nThis will close all auctions and announce the total pot in chat\nAuctions with active bids on them will be sold and can not receive new bids!\n"]);
+        Interface:addTooltip(FinishButton, L["Finish Multi-Auction session\n\nThis will close all auctions and announce the total pot in chat\nAuctions with active bids on them will be sold and can not receive new bids!"]);
 
         ---@type Button
         local TerminateButton = Interface:dynamicPanelButton(ButtonContainer);
@@ -514,7 +514,7 @@ function ClientInterface:build()
                 end,
             };
         end);
-        Interface:addTooltip(TerminateButton, L["\nTerminate Multi-Auction session\n\nThis will delete all bids on items that haven't sold yet and close all auctions!\n"]);
+        Interface:addTooltip(TerminateButton, L["Terminate Multi-Auction session\n\nThis will delete all bids on items that haven't sold yet and close all auctions!"]);
 
         ---@type Button
         local DisenchantButton = Interface:dynamicPanelButton(ButtonContainer);
@@ -528,7 +528,7 @@ function ClientInterface:build()
                 end,
             };
         end);
-        Interface:addTooltip(DisenchantButton, L["\nDisenchant unsold items\n\nThis will mark all unsold items as disenchanted and they will not show up in a new multi-auction session\n"]);
+        Interface:addTooltip(DisenchantButton, L["Disenchant unsold items\n\nThis will mark all unsold items as disenchanted and they will not show up in a new multi-auction session"]);
 
         --[[ HOW TO ADD ITEMS ]]
         ---@type FontString
@@ -1114,32 +1114,32 @@ function ClientInterface:build()
 
                 if (AuctionDetails.endsAt == 0) then
                     if (hasBid) then
-                        statusText = (L["\n|c00%sSOLD to\n%s for |c00%s%sg"]):format(
+                        statusText = (L["|c00%sSOLD to\n%s for |c00%s%sg"]):format(
                             Interface.Colors.SUCCESS,
                             GL:disambiguateName(AuctionDetails.CurrentBid.player, { colorize = true, }),
                             Interface.Colors.YELLOW,
                             AuctionDetails.CurrentBid.amount
                         );
                     else
-                        statusText = (L["\n|c00%sCLOSED\nNo bids"]):format(Interface.Colors.GRAY);
+                        statusText = (L["|c00%sCLOSED\nNo bids"]):format(Interface.Colors.GRAY);
                     end
                 elseif (hasBid) then
                     local bidByMe = GL:iEquals(AuctionDetails.CurrentBid.player, GL.User.fqn);
 
                     if (bidByMe) then
-                        statusText = (L["\nBid |c00%s%sg\nBy |c0092FF00YOU!"]):format(
+                        statusText = (L["Bid |c00%s%sg\nBy |c0092FF00YOU!"]):format(
                             Interface.Colors.YELLOW,
                             AuctionDetails.CurrentBid.amount
                         );
                     else
-                        statusText = (L["\nBid |c00%s%sg\nBy %s"]):format(
+                        statusText = (L["Bid |c00%s%sg\nBy %s"]):format(
                             Interface.Colors.YELLOW,
                             AuctionDetails.CurrentBid.amount,
                             GL:disambiguateName(AuctionDetails.CurrentBid.player, { colorize = true, })
                         );
                     end
                 else
-                    statusText = (L["\nMinimum: |c00%s%sg\nIncrement: |c00%s%sg"]):format(Interface.Colors.YELLOW, minimum, Interface.Colors.YELLOW, increment);
+                    statusText = (L["Minimum: |c00%s%sg\nIncrement: |c00%s%sg"]):format(Interface.Colors.YELLOW, minimum, Interface.Colors.YELLOW, increment);
                 end
 
                 AuctionRow.BidInput.updatePlaceholder(Client:minimumBidForAuction(auctionID));
@@ -1310,7 +1310,7 @@ function ClientInterface:updateBidDetails()
 
     self.BidDetails:SetText((L["Items: %s  -  Total sold: %sg  -  Pledged by me: %sg"]):format(GL:count(Client.AuctionDetails.Auctions), totalSold, boughtByMe + bidByMe));
     self.BidDetails:SetColor("GRAY");
-    Interface:addTooltip(self.BidDetails, (L["\nItems with bids: %s/%s\nTotal sold: %s\nBought by me: %s\nTotal bid (does not include sold): %s\nBid by me (does not include sold): %s\n"]):format(
+    Interface:addTooltip(self.BidDetails, (L["Items with bids: %s/%s\nTotal sold: %s\nBought by me: %s\nTotal bid (does not include sold): %s\nBid by me (does not include sold): %s\n"]):format(
         items - noBids,
         items,
         totalSold,

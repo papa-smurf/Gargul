@@ -406,27 +406,27 @@ L["You left during your GDKP bidding session. In order to resume it you have to 
 L["With this window open, %s items to add them to the list"] = "打开此窗口后，将 %s 个物品添加到列表中";
 L["Click the cogwheel icon to manage an auction"] = "单击齿轮图标来管理拍卖";
 L["You're already the top bidder on %s"] = "您已经是 %s 的最高出价者";
-L["\nBid |c00%s%sg\nBy %s"] = [[
+L["Bid |c00%s%sg\nBy %s"] = [[
 出价 |c00%s%sg
 买家：%s]];
-L["\n|c00%sCLOSED\nNo bids"] = [[
+L["|c00%sCLOSED\nNo bids"] = [[
 |c00%s已关闭
 无人出价]];
-L["\nMinimum: |c00%s%sg\nIncrement: |c00%s%sg"] = [[
+L["Minimum: |c00%s%sg\nIncrement: |c00%s%sg"] = [[
 增价：|c00%s%sg
 ：|c00%s%sg]];
 L["Items: %s  -  Total sold: %sg  -  Pledged by me: %sg"] = "物品数量：%s - 总售价：%sg - 我承诺的：%sg";
-L["\nItems with bids: %s/%s\nTotal sold: %s\nBought by me: %s\nTotal bid (does not include sold): %s\nBid by me (does not include sold): %s\n"] = [[
+L["Items with bids: %s/%s\nTotal sold: %s\nBought by me: %s\nTotal bid (does not include sold): %s\nBid by me (does not include sold): %s\n"] = [[
 已拍装备：%s/%s
 总售价：%s
 我买的：%s
 总出价（不包括已售出）：%s
 我出价（不包括已售出）：%s
 ]];
-L["\n|c00%sSOLD to\n%s for |c00%s%sg"] = [[
+L["|c00%sSOLD to\n%s for |c00%s%sg"] = [[
 |c00%s出售给
 %s 价格为： |c00%s%sg]];
-L["\nBid |c00%s%sg\nBy |c0092FF00YOU!"] = [[
+L["Bid |c00%s%sg\nBy |c0092FF00YOU!"] = [[
 出价 |c00%s%sg
 出价人：|c0092FF00YOU！]];
 L["Could not stop auto bidding on %s, try again or /reload!"] = "无法停止 %s 的自动出价，请重试或/reload！";
@@ -440,7 +440,7 @@ L["Clear bids"] = "清除出价记录";
 L["Remove all bids from the auction"] = "从拍卖中删除所有出价";
 L["Close all"] = "关闭所有";
 L["Close ALL auctions?"] = "关闭所有拍卖？";
-L["\nClose ALL auctions\n\nAuctions with active bids on them will be sold and can not receive new bids!\n"] = [[
+L["Close ALL auctions\n\nAuctions with active bids on them will be sold and can not receive new bids!"] = [[
 关闭所有竞拍
 
 具有有效竞拍的物品将被出售，并且无法接受新的竞拍！
@@ -449,7 +449,7 @@ L["Close Auction"] = "结束拍卖";
 L["Close the auction. Players can no longer bid but the highest bid remains active"] = "结束拍卖。玩家不能再出价，但最高出价仍然有效";
 L["Remove the item from the auction including its bid details. THIS CAN'T BE UNDONE!"] = "从拍卖中移除该物品，包括其竞拍详细信息。这无法挽回！";
 L["Disenchant all finished but unsold items?"] = "分解所有已完成拍卖但未售出的物品？";
-L["\nDisenchant unsold items\n\nThis will mark all unsold items as disenchanted and they will not show up in a new multi-auction session\n"] = [[
+L["Disenchant unsold items\n\nThis will mark all unsold items as disenchanted and they will not show up in a new multi-auction session"] = [[
 分解未售出的物品
 
 这会将所有未售出的物品标记为已分解，并且它们不会出现在新的批量拍卖中
@@ -459,7 +459,7 @@ L["Give a final call timer of how many seconds?"] = "最终Call计时器设置�
 L["The minimum amount of seconds is 5"] = "最小秒数为 5";
 L["Start a final call for this auction by giving a (usually shorter) bid timer"] = "通过提供（通常较短的）出价倒数来开始本次拍卖的最终Call";
 L["Close ALL auctions and wrap up this multi-auction session?"] = "关闭所有拍卖并结束本次批量拍卖？";
-L["\nFinish Multi-Auction session\n\nThis will close all auctions and announce the total pot in chat\nAuctions with active bids on them will be sold and can not receive new bids!\n"] = [[
+L["Finish Multi-Auction session\n\nThis will close all auctions and announce the total pot in chat\nAuctions with active bids on them will be sold and can not receive new bids!"] = [[
 完成批量拍卖环节
 
 这将关闭所有拍卖并在聊天频道中公布总底池
@@ -481,7 +481,7 @@ L["Show unusable"] = "显示不可用物品";
 L["This item was sold. Use ledger (|c00%s/gdkp) to make changes!"] = "该商品已售出。使用分类帐（|c00%s/gdkp）进行更改！";
 L["Terminate"] = "终止";
 L["Remove all bidsl bids and close all auctions?"] = "删除所有 bidsl 出价并结束所有拍卖？";
-L["\nTerminate Multi-Auction session\n\nThis will delete all bids on items that haven't sold yet and close all auctions!\n"] = [[
+L["Terminate Multi-Auction session\n\nThis will delete all bids on items that haven't sold yet and close all auctions!"] = [[
 终止批量拍卖
 
 这将删除尚未售出的物品的所有出价并关闭所有拍卖！
