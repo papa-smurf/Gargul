@@ -99,6 +99,11 @@ function Version:_init()
     self._initialized = true;
 end
 
+---@test /dump _G.Gargul.Version:getInterface();
+function Version:getInterface()
+    return _G.select(4, _G.GetBuildInfo());
+end
+
 --- Check with GROUP and GUILD members whether we need to update our add-ons or not
 ---
 --- We check GROUP first, wait 15 seconds for responses, then check GUILD* if no one had a newer version yet
