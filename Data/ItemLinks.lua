@@ -7242,7 +7242,7 @@ GL.Data.ItemLinks = {
     },
     -- Corrupted Ashbringer
     ["22691"] = {
-        236317, -- Corrupted Ashbringer
+        236317, -- Vis'era the Gutrender
     },
     -- Icebane Leggings
     ["22699"] = {
@@ -30815,6 +30815,10 @@ GL.Data.ItemLinks = {
     ["236156"] = {
         236250, -- Desecrated Handguards
     },
+    -- Band of the Earthshatterer
+    ["236157"] = {
+        237381, -- Desecrated Ring
+    },
     -- Earthshatter Greaves
     ["236158"] = {
         236248, -- Desecrated Boots
@@ -30847,6 +30851,10 @@ GL.Data.ItemLinks = {
     ["236166"] = {
         236250, -- Desecrated Handguards
     },
+    -- Loop of the Earthshatterer
+    ["236167"] = {
+        237381, -- Desecrated Ring
+    },
     -- Earthshatter Sabatons
     ["236168"] = {
         236248, -- Desecrated Boots
@@ -30878,6 +30886,10 @@ GL.Data.ItemLinks = {
     -- Earthshatter Grips
     ["236175"] = {
         236250, -- Desecrated Handguards
+    },
+    -- Signet of the Earthshatterer
+    ["236176"] = {
+        237381, -- Desecrated Ring
     },
     -- Earthshatter Treads
     ["236177"] = {
@@ -31601,7 +31613,7 @@ GL.Data.ItemLinks = {
     ["236316"] = {
         23023, -- Sadist's Collar
     },
-    -- Corrupted Ashbringer
+    -- Vis'era the Gutrender
     ["236317"] = {
         22691, -- Corrupted Ashbringer
     },
@@ -31949,9 +31961,961 @@ GL.Data.ItemLinks = {
         236116, -- Ring of Redemption
         236130, -- Band of Redemption
         236139, -- Loop of Redemption
+        236150, -- Ring of the Earthshatterer
+        236157, -- Band of the Earthshatterer
+        236167, -- Loop of the Earthshatterer
+        236176, -- Signet of the Earthshatterer
         236190, -- Ring of the Dreamwalker
         236198, -- Band of the Dreamwalker
         236207, -- Loop of the Dreamwalker
         236216, -- Signet of the Dreamwalker
+    },
+    -- Charred Emblem
+    ["239215"] = {
+        242314, -- Cinders of the Fallen Crusade
+        242315, -- Ashes of Arrogance
+        242316, -- Dust of the Defiant
+        242317, -- Desecrated Prayerbook
+    },
+    -- Lightforged Iron
+    ["239216"] = {
+        239301, -- Corrupted Ashbringer
+    },
+    -- Corrupted Ashbringer
+    ["239301"] = {
+        239216, -- Lightforged Iron
+    },
+    -- Lightbreaker Wrists
+    ["239512"] = {
+        239759, -- Consecrated Bracers
+    },
+    -- Lightbreaker Belt
+    ["239513"] = {
+        239760, -- Consecrated Waistguard
+    },
+    -- Lightbreaker Grips
+    ["239514"] = {
+        239762, -- Consecrated Gauntlets
+    },
+    -- Lightbreaker Greaves
+    ["239515"] = {
+        239706, -- Consecrated Sabatons
+    },
+    -- Lightbreaker Shoulders
+    ["239516"] = {
+        239708, -- Consecrated Pauldrons
+    },
+    -- Lightbreaker Greathelm
+    ["239517"] = {
+        239707, -- Consecrated Helmet
+    },
+    -- Lightbreaker Tassets
+    ["239518"] = {
+        239709, -- Consecrated Legplates
+    },
+    -- Lightbreaker Cuirass
+    ["239519"] = {
+        239761, -- Consecrated Breastplate
+    },
+    -- Lightbreaker Bracers
+    ["239520"] = {
+        239759, -- Consecrated Bracers
+    },
+    -- Lightbreaker Waistguard
+    ["239521"] = {
+        239760, -- Consecrated Waistguard
+    },
+    -- Lightbreaker Gauntlets
+    ["239522"] = {
+        239762, -- Consecrated Gauntlets
+    },
+    -- Lightbreaker Sabatons
+    ["239523"] = {
+        239706, -- Consecrated Sabatons
+    },
+    -- Lightbreaker Pauldrons
+    ["239524"] = {
+        239708, -- Consecrated Pauldrons
+    },
+    -- Lightbreaker Helmet
+    ["239525"] = {
+        239707, -- Consecrated Helmet
+    },
+    -- Lightbreaker Legplates
+    ["239526"] = {
+        239709, -- Consecrated Legplates
+    },
+    -- Lightbreaker Breastplate
+    ["239527"] = {
+        239761, -- Consecrated Breastplate
+    },
+    -- Dawnstalker Breastplate
+    ["239529"] = {
+        239761, -- Consecrated Breastplate
+    },
+    -- Dawnstalker Greaves
+    ["239530"] = {
+        239706, -- Consecrated Sabatons
+    },
+    -- Dawnstalker Gauntlets
+    ["239531"] = {
+        239762, -- Consecrated Gauntlets
+    },
+    -- Dawnstalker Visor
+    ["239532"] = {
+        239707, -- Consecrated Helmet
+    },
+    -- Dawnstalker Leggings
+    ["239533"] = {
+        239709, -- Consecrated Legplates
+    },
+    -- Dawnstalker Pauldrons
+    ["239534"] = {
+        239708, -- Consecrated Pauldrons
+    },
+    -- Dawnstalker Belt
+    ["239535"] = {
+        239760, -- Consecrated Waistguard
+    },
+    -- Dawnstalker Vambraces
+    ["239536"] = {
+        239759, -- Consecrated Bracers
+    },
+    -- Dawnstalker Boots
+    ["239537"] = {
+        239706, -- Consecrated Sabatons
+    },
+    -- Dawnstalker Girdle
+    ["239538"] = {
+        239760, -- Consecrated Waistguard
+    },
+    -- Dawnstalker Handguards
+    ["239539"] = {
+        239762, -- Consecrated Gauntlets
+    },
+    -- Dawnstalker Headpiece
+    ["239540"] = {
+        239707, -- Consecrated Helmet
+    },
+    -- Dawnstalker Legguards
+    ["239541"] = {
+        239709, -- Consecrated Legplates
+    },
+    -- Dawnstalker Spaulders
+    ["239542"] = {
+        239708, -- Consecrated Pauldrons
+    },
+    -- Dawnstalker Tunic
+    ["239543"] = {
+        239761, -- Consecrated Breastplate
+    },
+    -- Dawnstalker Wristguards
+    ["239544"] = {
+        239759, -- Consecrated Bracers
+    },
+    -- Duskwraith Wristguards
+    ["239547"] = {
+        239719, -- Consecrated Bindings
+    },
+    -- Duskwraith Chestguard
+    ["239548"] = {
+        239715, -- Consecrated Robe
+    },
+    -- Duskwraith Grips
+    ["239549"] = {
+        239716, -- Consecrated Gloves
+    },
+    -- Duskwraith Mask
+    ["239550"] = {
+        239714, -- Consecrated Circlet
+    },
+    -- Duskwraith Leggings
+    ["239551"] = {
+        239721, -- Consecrated Leggings
+    },
+    -- Duskwraith Mantle
+    ["239552"] = {
+        239712, -- Consecrated Shoulderpads
+    },
+    -- Duskwraith Treads
+    ["239553"] = {
+        239710, -- Consecrated Sandals
+    },
+    -- Duskwraith Belt
+    ["239554"] = {
+        239718, -- Consecrated Belt
+    },
+    -- Duskwraith Bracers
+    ["239555"] = {
+        239719, -- Consecrated Bindings
+    },
+    -- Garb of Revelation
+    ["239565"] = {
+        239715, -- Consecrated Robe
+    },
+    -- Boots of Revelation
+    ["239572"] = {
+        239710, -- Consecrated Sandals
+    },
+    -- Hands of Revelation
+    ["239574"] = {
+        239716, -- Consecrated Gloves
+    },
+    -- Crown of Revelation
+    ["239575"] = {
+        239714, -- Consecrated Circlet
+    },
+    -- Pants of Revelation
+    ["239577"] = {
+        239721, -- Consecrated Leggings
+    },
+    -- Mantle of Revelation
+    ["239581"] = {
+        239712, -- Consecrated Shoulderpads
+    },
+    -- Girdle of Revelation
+    ["239582"] = {
+        239718, -- Consecrated Belt
+    },
+    -- Wrists of Revelation
+    ["239583"] = {
+        239719, -- Consecrated Bindings
+    },
+    -- Gloves of Revelation
+    ["239584"] = {
+        239716, -- Consecrated Gloves
+    },
+    -- Circlet of Revelation
+    ["239585"] = {
+        239714, -- Consecrated Circlet
+    },
+    -- Shoulderpads of Revelation
+    ["239586"] = {
+        239712, -- Consecrated Shoulderpads
+    },
+    -- Leggings of Revelation
+    ["239587"] = {
+        239721, -- Consecrated Leggings
+    },
+    -- Bindings of Revelation
+    ["239588"] = {
+        239719, -- Consecrated Bindings
+    },
+    -- Sandals of Revelation
+    ["239589"] = {
+        239710, -- Consecrated Sandals
+    },
+    -- Belt of Revelation
+    ["239590"] = {
+        239718, -- Consecrated Belt
+    },
+    -- Robe of Revelation
+    ["239591"] = {
+        239715, -- Consecrated Robe
+    },
+    -- Consecrated Sabatons
+    ["239706"] = {
+        239515, -- Lightbreaker Greaves
+        239523, -- Lightbreaker Sabatons
+        239530, -- Dawnstalker Greaves
+        239537, -- Dawnstalker Boots
+        240050, -- Fireleaf Boots
+        240058, -- Fireleaf Sandals
+    },
+    -- Consecrated Helmet
+    ["239707"] = {
+        239517, -- Lightbreaker Greathelm
+        239525, -- Lightbreaker Helmet
+        239532, -- Dawnstalker Visor
+        239540, -- Dawnstalker Headpiece
+        240048, -- Fireleaf Hood
+        240056, -- Fireleaf Circlet
+    },
+    -- Consecrated Pauldrons
+    ["239708"] = {
+        239516, -- Lightbreaker Shoulders
+        239524, -- Lightbreaker Pauldrons
+        239534, -- Dawnstalker Pauldrons
+        239542, -- Dawnstalker Spaulders
+        240046, -- Fireleaf Mantle
+        240054, -- Fireleaf Shoulderpads
+    },
+    -- Consecrated Legplates
+    ["239709"] = {
+        239518, -- Lightbreaker Tassets
+        239526, -- Lightbreaker Legplates
+        239533, -- Dawnstalker Leggings
+        239541, -- Dawnstalker Legguards
+        240047, -- Fireleaf Pants
+        240055, -- Fireleaf Leggings
+    },
+    -- Consecrated Sandals
+    ["239710"] = {
+        239553, -- Duskwraith Treads
+        239572, -- Boots of Revelation
+        239589, -- Sandals of Revelation
+        240139, -- Heretic Sandals
+        240153, -- Heretic Boots
+    },
+    -- Consecrated Shoulderpads
+    ["239712"] = {
+        239552, -- Duskwraith Mantle
+        239581, -- Mantle of Revelation
+        239586, -- Shoulderpads of Revelation
+        240143, -- Heretic Shoulderpads
+        240150, -- Heretic Mantle
+    },
+    -- Consecrated Circlet
+    ["239714"] = {
+        239550, -- Duskwraith Mask
+        239575, -- Crown of Revelation
+        239585, -- Circlet of Revelation
+        240141, -- Heretic Cowl
+        240148, -- Heretic Hood
+    },
+    -- Consecrated Robe
+    ["239715"] = {
+        239548, -- Duskwraith Chestguard
+        239565, -- Garb of Revelation
+        239591, -- Robe of Revelation
+        240138, -- Heretic Robe
+        240146, -- Heretic Garb
+    },
+    -- Consecrated Gloves
+    ["239716"] = {
+        239549, -- Duskwraith Grips
+        239574, -- Hands of Revelation
+        239584, -- Gloves of Revelation
+        240140, -- Heretic Gloves
+        240147, -- Heretic Handguards
+    },
+    -- Consecrated Belt
+    ["239718"] = {
+        239554, -- Duskwraith Belt
+        239582, -- Girdle of Revelation
+        239590, -- Belt of Revelation
+        240144, -- Heretic Belt
+        240151, -- Heretic Waistguard
+    },
+    -- Consecrated Bindings
+    ["239719"] = {
+        239547, -- Duskwraith Wristguards
+        239555, -- Duskwraith Bracers
+        239583, -- Wrists of Revelation
+        239588, -- Bindings of Revelation
+        240145, -- Heretic Bindings
+        240152, -- Heretic Wristguards
+    },
+    -- Consecrated Leggings
+    ["239721"] = {
+        239551, -- Duskwraith Leggings
+        239577, -- Pants of Revelation
+        239587, -- Leggings of Revelation
+        240142, -- Heretic Leggings
+        240149, -- Heretic Pants
+    },
+    -- Consecrated Wristguards
+    ["239722"] = {
+        240023, -- Inquisition Vambraces
+        240031, -- Inquisition Bracers
+        240042, -- Inquisition Wristguards
+        240068, -- Waywatcher Bindings
+        240076, -- Waywatcher Bracers
+        240084, -- Waywatcher Wristguards
+        240100, -- Soulcrusher Wristguards
+        240108, -- Soulcrusher Bracers
+        240127, -- Soulcrusher Bindings
+        240137, -- Soulcrusher Vambraces
+    },
+    -- Consecrated Boots
+    ["239726"] = {
+        240022, -- Inquisition Boots
+        240029, -- Inquisition Greaves
+        240037, -- Inquisition Sabatons
+        240074, -- Waywatcher Sandals
+        240082, -- Waywatcher Sabatons
+        240090, -- Waywatcher Boots
+        240093, -- Soulcrusher Boots
+        240102, -- Soulcrusher Sabatons
+        240110, -- Soulcrusher Greaves
+        240129, -- Soulcrusher Treads
+    },
+    -- Consecrated Headpiece
+    ["239729"] = {
+        240027, -- Inquisition Helmet
+        240035, -- Inquisition Crown
+        240040, -- Inquisition Headpiece
+        240072, -- Waywatcher Hood
+        240080, -- Waywatcher Headdress
+        240088, -- Waywatcher Headpiece
+        240096, -- Soulcrusher Headpiece
+        240104, -- Soulcrusher Faceguard
+        240123, -- Soulcrusher Crown
+        240131, -- Soulcrusher Helmet
+    },
+    -- Consecrated Handguards
+    ["239730"] = {
+        240028, -- Inquisition Gloves
+        240036, -- Inquisition Gauntlets
+        240041, -- Inquisition Handguards
+        240073, -- Waywatcher Mitts
+        240081, -- Waywatcher Gauntlets
+        240089, -- Waywatcher Handguards
+        240095, -- Soulcrusher Handguards
+        240103, -- Soulcrusher Gloves
+        240122, -- Soulcrusher Mitts
+        240130, -- Soulcrusher Grips
+    },
+    -- Consecrated Tunic
+    ["239731"] = {
+        240030, -- Inquisition Breastplate
+        240038, -- Inquisition Chestguard
+        240039, -- Inquisition Tunic
+        240075, -- Waywatcher Leathers
+        240083, -- Waywatcher Armor
+        240091, -- Waywatcher Tunic
+        240092, -- Soulcrusher Tunic
+        240101, -- Soulcrusher Chestguard
+        240109, -- Soulcrusher Embrace
+        240128, -- Soulcrusher Armor
+    },
+    -- Consecrated Girdle
+    ["239756"] = {
+        240024, -- Inquisition Belt
+        240032, -- Inquisition Waistguard
+        240043, -- Inquisition Girdle
+        240069, -- Waywatcher Cord
+        240077, -- Waywatcher Waistguard
+        240085, -- Waywatcher Girdle
+        240099, -- Soulcrusher Girdle
+        240107, -- Soulcrusher Waistguard
+        240126, -- Soulcrusher Cord
+        240136, -- Soulcrusher Belt
+    },
+    -- Consecrated Legguards
+    ["239757"] = {
+        240020, -- Inquisition Legguards
+        240026, -- Inquisition Leggings
+        240034, -- Inquisition Legplates
+        240071, -- Waywatcher Kilt
+        240079, -- Waywatcher Leggings
+        240087, -- Waywatcher Legguards
+        240097, -- Soulcrusher Legguards
+        240105, -- Soulcrusher Legplates
+        240124, -- Soulcrusher Kilt
+        240134, -- Soulcrusher Leggings
+    },
+    -- Consecrated Spaulders
+    ["239758"] = {
+        240021, -- Inquisition Spaulders
+        240025, -- Inquisition Shoulderplates
+        240033, -- Inquisition Pauldrons
+        240070, -- Waywatcher Mantle
+        240078, -- Waywatcher Pauldrons
+        240086, -- Waywatcher Spaulders
+        240098, -- Soulcrusher Spaulders
+        240106, -- Soulcrusher Pauldrons
+        240125, -- Soulcrusher Mantle
+        240135, -- Soulcrusher Epaulets
+    },
+    -- Consecrated Bracers
+    ["239759"] = {
+        239512, -- Lightbreaker Wrists
+        239520, -- Lightbreaker Bracers
+        239536, -- Dawnstalker Vambraces
+        239544, -- Dawnstalker Wristguards
+        240044, -- Fireleaf Wristwraps
+        240052, -- Fireleaf Bindings
+    },
+    -- Consecrated Waistguard
+    ["239760"] = {
+        239513, -- Lightbreaker Belt
+        239521, -- Lightbreaker Waistguard
+        239535, -- Dawnstalker Belt
+        239538, -- Dawnstalker Girdle
+        240045, -- Fireleaf Waistguard
+        240053, -- Fireleaf Belt
+    },
+    -- Consecrated Breastplate
+    ["239761"] = {
+        239519, -- Lightbreaker Cuirass
+        239527, -- Lightbreaker Breastplate
+        239529, -- Dawnstalker Breastplate
+        239543, -- Dawnstalker Tunic
+        240051, -- Fireleaf Garb
+        240059, -- Fireleaf Robe
+    },
+    -- Consecrated Gauntlets
+    ["239762"] = {
+        239514, -- Lightbreaker Grips
+        239522, -- Lightbreaker Gauntlets
+        239531, -- Dawnstalker Gauntlets
+        239539, -- Dawnstalker Handguards
+        240049, -- Fireleaf Mitts
+        240057, -- Fireleaf Gloves
+    },
+    -- Inquisition Legguards
+    ["240020"] = {
+        239757, -- Consecrated Legguards
+    },
+    -- Inquisition Spaulders
+    ["240021"] = {
+        239758, -- Consecrated Spaulders
+    },
+    -- Inquisition Boots
+    ["240022"] = {
+        239726, -- Consecrated Boots
+    },
+    -- Inquisition Vambraces
+    ["240023"] = {
+        239722, -- Consecrated Wristguards
+    },
+    -- Inquisition Belt
+    ["240024"] = {
+        239756, -- Consecrated Girdle
+    },
+    -- Inquisition Shoulderplates
+    ["240025"] = {
+        239758, -- Consecrated Spaulders
+    },
+    -- Inquisition Leggings
+    ["240026"] = {
+        239757, -- Consecrated Legguards
+    },
+    -- Inquisition Helmet
+    ["240027"] = {
+        239729, -- Consecrated Headpiece
+    },
+    -- Inquisition Gloves
+    ["240028"] = {
+        239730, -- Consecrated Handguards
+    },
+    -- Inquisition Greaves
+    ["240029"] = {
+        239726, -- Consecrated Boots
+    },
+    -- Inquisition Breastplate
+    ["240030"] = {
+        239731, -- Consecrated Tunic
+    },
+    -- Inquisition Bracers
+    ["240031"] = {
+        239722, -- Consecrated Wristguards
+    },
+    -- Inquisition Waistguard
+    ["240032"] = {
+        239756, -- Consecrated Girdle
+    },
+    -- Inquisition Pauldrons
+    ["240033"] = {
+        239758, -- Consecrated Spaulders
+    },
+    -- Inquisition Legplates
+    ["240034"] = {
+        239757, -- Consecrated Legguards
+    },
+    -- Inquisition Crown
+    ["240035"] = {
+        239729, -- Consecrated Headpiece
+    },
+    -- Inquisition Gauntlets
+    ["240036"] = {
+        239730, -- Consecrated Handguards
+    },
+    -- Inquisition Sabatons
+    ["240037"] = {
+        239726, -- Consecrated Boots
+    },
+    -- Inquisition Chestguard
+    ["240038"] = {
+        239731, -- Consecrated Tunic
+    },
+    -- Inquisition Tunic
+    ["240039"] = {
+        239731, -- Consecrated Tunic
+    },
+    -- Inquisition Headpiece
+    ["240040"] = {
+        239729, -- Consecrated Headpiece
+    },
+    -- Inquisition Handguards
+    ["240041"] = {
+        239730, -- Consecrated Handguards
+    },
+    -- Inquisition Wristguards
+    ["240042"] = {
+        239722, -- Consecrated Wristguards
+    },
+    -- Inquisition Girdle
+    ["240043"] = {
+        239756, -- Consecrated Girdle
+    },
+    -- Fireleaf Wristwraps
+    ["240044"] = {
+        239759, -- Consecrated Bracers
+    },
+    -- Fireleaf Waistguard
+    ["240045"] = {
+        239760, -- Consecrated Waistguard
+    },
+    -- Fireleaf Mantle
+    ["240046"] = {
+        239708, -- Consecrated Pauldrons
+    },
+    -- Fireleaf Pants
+    ["240047"] = {
+        239709, -- Consecrated Legplates
+    },
+    -- Fireleaf Hood
+    ["240048"] = {
+        239707, -- Consecrated Helmet
+    },
+    -- Fireleaf Mitts
+    ["240049"] = {
+        239762, -- Consecrated Gauntlets
+    },
+    -- Fireleaf Boots
+    ["240050"] = {
+        239706, -- Consecrated Sabatons
+    },
+    -- Fireleaf Garb
+    ["240051"] = {
+        239761, -- Consecrated Breastplate
+    },
+    -- Fireleaf Bindings
+    ["240052"] = {
+        239759, -- Consecrated Bracers
+    },
+    -- Fireleaf Belt
+    ["240053"] = {
+        239760, -- Consecrated Waistguard
+    },
+    -- Fireleaf Shoulderpads
+    ["240054"] = {
+        239708, -- Consecrated Pauldrons
+    },
+    -- Fireleaf Leggings
+    ["240055"] = {
+        239709, -- Consecrated Legplates
+    },
+    -- Fireleaf Circlet
+    ["240056"] = {
+        239707, -- Consecrated Helmet
+    },
+    -- Fireleaf Gloves
+    ["240057"] = {
+        239762, -- Consecrated Gauntlets
+    },
+    -- Fireleaf Sandals
+    ["240058"] = {
+        239706, -- Consecrated Sabatons
+    },
+    -- Fireleaf Robe
+    ["240059"] = {
+        239761, -- Consecrated Breastplate
+    },
+    -- Waywatcher Bindings
+    ["240068"] = {
+        239722, -- Consecrated Wristguards
+    },
+    -- Waywatcher Cord
+    ["240069"] = {
+        239756, -- Consecrated Girdle
+    },
+    -- Waywatcher Mantle
+    ["240070"] = {
+        239758, -- Consecrated Spaulders
+    },
+    -- Waywatcher Kilt
+    ["240071"] = {
+        239757, -- Consecrated Legguards
+    },
+    -- Waywatcher Hood
+    ["240072"] = {
+        239729, -- Consecrated Headpiece
+    },
+    -- Waywatcher Mitts
+    ["240073"] = {
+        239730, -- Consecrated Handguards
+    },
+    -- Waywatcher Sandals
+    ["240074"] = {
+        239726, -- Consecrated Boots
+    },
+    -- Waywatcher Leathers
+    ["240075"] = {
+        239731, -- Consecrated Tunic
+    },
+    -- Waywatcher Bracers
+    ["240076"] = {
+        239722, -- Consecrated Wristguards
+    },
+    -- Waywatcher Waistguard
+    ["240077"] = {
+        239756, -- Consecrated Girdle
+    },
+    -- Waywatcher Pauldrons
+    ["240078"] = {
+        239758, -- Consecrated Spaulders
+    },
+    -- Waywatcher Leggings
+    ["240079"] = {
+        239757, -- Consecrated Legguards
+    },
+    -- Waywatcher Headdress
+    ["240080"] = {
+        239729, -- Consecrated Headpiece
+    },
+    -- Waywatcher Gauntlets
+    ["240081"] = {
+        239730, -- Consecrated Handguards
+    },
+    -- Waywatcher Sabatons
+    ["240082"] = {
+        239726, -- Consecrated Boots
+    },
+    -- Waywatcher Armor
+    ["240083"] = {
+        239731, -- Consecrated Tunic
+    },
+    -- Waywatcher Wristguards
+    ["240084"] = {
+        239722, -- Consecrated Wristguards
+    },
+    -- Waywatcher Girdle
+    ["240085"] = {
+        239756, -- Consecrated Girdle
+    },
+    -- Waywatcher Spaulders
+    ["240086"] = {
+        239758, -- Consecrated Spaulders
+    },
+    -- Waywatcher Legguards
+    ["240087"] = {
+        239757, -- Consecrated Legguards
+    },
+    -- Waywatcher Headpiece
+    ["240088"] = {
+        239729, -- Consecrated Headpiece
+    },
+    -- Waywatcher Handguards
+    ["240089"] = {
+        239730, -- Consecrated Handguards
+    },
+    -- Waywatcher Boots
+    ["240090"] = {
+        239726, -- Consecrated Boots
+    },
+    -- Waywatcher Tunic
+    ["240091"] = {
+        239731, -- Consecrated Tunic
+    },
+    -- Soulcrusher Tunic
+    ["240092"] = {
+        239731, -- Consecrated Tunic
+    },
+    -- Soulcrusher Boots
+    ["240093"] = {
+        239726, -- Consecrated Boots
+    },
+    -- Soulcrusher Handguards
+    ["240095"] = {
+        239730, -- Consecrated Handguards
+    },
+    -- Soulcrusher Headpiece
+    ["240096"] = {
+        239729, -- Consecrated Headpiece
+    },
+    -- Soulcrusher Legguards
+    ["240097"] = {
+        239757, -- Consecrated Legguards
+    },
+    -- Soulcrusher Spaulders
+    ["240098"] = {
+        239758, -- Consecrated Spaulders
+    },
+    -- Soulcrusher Girdle
+    ["240099"] = {
+        239756, -- Consecrated Girdle
+    },
+    -- Soulcrusher Wristguards
+    ["240100"] = {
+        239722, -- Consecrated Wristguards
+    },
+    -- Soulcrusher Chestguard
+    ["240101"] = {
+        239731, -- Consecrated Tunic
+    },
+    -- Soulcrusher Sabatons
+    ["240102"] = {
+        239726, -- Consecrated Boots
+    },
+    -- Soulcrusher Gloves
+    ["240103"] = {
+        239730, -- Consecrated Handguards
+    },
+    -- Soulcrusher Faceguard
+    ["240104"] = {
+        239729, -- Consecrated Headpiece
+    },
+    -- Soulcrusher Legplates
+    ["240105"] = {
+        239757, -- Consecrated Legguards
+    },
+    -- Soulcrusher Pauldrons
+    ["240106"] = {
+        239758, -- Consecrated Spaulders
+    },
+    -- Soulcrusher Waistguard
+    ["240107"] = {
+        239756, -- Consecrated Girdle
+    },
+    -- Soulcrusher Bracers
+    ["240108"] = {
+        239722, -- Consecrated Wristguards
+    },
+    -- Soulcrusher Embrace
+    ["240109"] = {
+        239731, -- Consecrated Tunic
+    },
+    -- Soulcrusher Greaves
+    ["240110"] = {
+        239726, -- Consecrated Boots
+    },
+    -- Soulcrusher Mitts
+    ["240122"] = {
+        239730, -- Consecrated Handguards
+    },
+    -- Soulcrusher Crown
+    ["240123"] = {
+        239729, -- Consecrated Headpiece
+    },
+    -- Soulcrusher Kilt
+    ["240124"] = {
+        239757, -- Consecrated Legguards
+    },
+    -- Soulcrusher Mantle
+    ["240125"] = {
+        239758, -- Consecrated Spaulders
+    },
+    -- Soulcrusher Cord
+    ["240126"] = {
+        239756, -- Consecrated Girdle
+    },
+    -- Soulcrusher Bindings
+    ["240127"] = {
+        239722, -- Consecrated Wristguards
+    },
+    -- Soulcrusher Armor
+    ["240128"] = {
+        239731, -- Consecrated Tunic
+    },
+    -- Soulcrusher Treads
+    ["240129"] = {
+        239726, -- Consecrated Boots
+    },
+    -- Soulcrusher Grips
+    ["240130"] = {
+        239730, -- Consecrated Handguards
+    },
+    -- Soulcrusher Helmet
+    ["240131"] = {
+        239729, -- Consecrated Headpiece
+    },
+    -- Soulcrusher Leggings
+    ["240134"] = {
+        239757, -- Consecrated Legguards
+    },
+    -- Soulcrusher Epaulets
+    ["240135"] = {
+        239758, -- Consecrated Spaulders
+    },
+    -- Soulcrusher Belt
+    ["240136"] = {
+        239756, -- Consecrated Girdle
+    },
+    -- Soulcrusher Vambraces
+    ["240137"] = {
+        239722, -- Consecrated Wristguards
+    },
+    -- Heretic Robe
+    ["240138"] = {
+        239715, -- Consecrated Robe
+    },
+    -- Heretic Sandals
+    ["240139"] = {
+        239710, -- Consecrated Sandals
+    },
+    -- Heretic Gloves
+    ["240140"] = {
+        239716, -- Consecrated Gloves
+    },
+    -- Heretic Cowl
+    ["240141"] = {
+        239714, -- Consecrated Circlet
+    },
+    -- Heretic Leggings
+    ["240142"] = {
+        239721, -- Consecrated Leggings
+    },
+    -- Heretic Shoulderpads
+    ["240143"] = {
+        239712, -- Consecrated Shoulderpads
+    },
+    -- Heretic Belt
+    ["240144"] = {
+        239718, -- Consecrated Belt
+    },
+    -- Heretic Bindings
+    ["240145"] = {
+        239719, -- Consecrated Bindings
+    },
+    -- Heretic Garb
+    ["240146"] = {
+        239715, -- Consecrated Robe
+    },
+    -- Heretic Handguards
+    ["240147"] = {
+        239716, -- Consecrated Gloves
+    },
+    -- Heretic Hood
+    ["240148"] = {
+        239714, -- Consecrated Circlet
+    },
+    -- Heretic Pants
+    ["240149"] = {
+        239721, -- Consecrated Leggings
+    },
+    -- Heretic Mantle
+    ["240150"] = {
+        239712, -- Consecrated Shoulderpads
+    },
+    -- Heretic Waistguard
+    ["240151"] = {
+        239718, -- Consecrated Belt
+    },
+    -- Heretic Wristguards
+    ["240152"] = {
+        239719, -- Consecrated Bindings
+    },
+    -- Heretic Boots
+    ["240153"] = {
+        239710, -- Consecrated Sandals
+    },
+    -- Cinders of the Fallen Crusade
+    ["242314"] = {
+        239215, -- Charred Emblem
+    },
+    -- Ashes of Arrogance
+    ["242315"] = {
+        239215, -- Charred Emblem
+    },
+    -- Dust of the Defiant
+    ["242316"] = {
+        239215, -- Charred Emblem
+    },
+    -- Desecrated Prayerbook
+    ["242317"] = {
+        239215, -- Charred Emblem
     },
 };
