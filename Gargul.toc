@@ -28,7 +28,8 @@
 # Libraries
 libraries.xml
 
-# Bootstrapper
+# Bootstrap
+Utils/shims.lua
 bootstrap.lua
 
 # Localizations
@@ -44,14 +45,17 @@ Data/Localizations/tw.lua
 Data/Localizations/chat.lua
 
 # Data objects
+Data/Data.lua
 Data/Constants.lua
 Data/DefaultSettings.lua
 Data/ItemLinks.lua
 Data/NormalModeHardModeLinks.lua
 Data/ArtTextureID.lua
 
+# Helpers
+Utils/helpers.lua
+
 # Class objects
-Classes/Helpers.lua
 Classes/Events.lua
 Classes/JSON.lua
 Classes/Base64.lua

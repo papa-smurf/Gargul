@@ -2,7 +2,7 @@ local L = Gargul_L;
 
 local LCG = LibStub("LibCustomGlowGargul-1.0");
 
----@class GL : Bootstrapper
+---@type GL
 local _, GL = ...;
 
 local Constants = GL.Data.Constants; ---@type Data
@@ -1800,8 +1800,6 @@ end
 ---@param itemLink string
 ---@param Details? table
 function GL:highlightItem(Item, itemLink, Details)
-    GL:debug("GL:highlightItem");
-
     -- There's no point highlighting something if the player
     -- is not in a group or highlights are disabled
     if (type(itemLink) ~= "string"
@@ -1903,10 +1901,10 @@ end
 
 function GL:bugReport()
     local AddonData = {};
-    for i = 1, GetNumAddOns() do
-        local name = GetAddOnInfo(i);
-        local version = GetAddOnMetadata(i, "Version");
-        local loaded = GetAddOnEnableState(GL.User.name, name) == 2;
+    for i = 1, GL.GetNumAddOns() do
+        local name = GL.GetAddOnInfo(i);
+        local version = GL.GetAddOnMetadata(i, "Version");
+        local loaded = GL.GetAddOnEnableState(GL.User.name, name) == 2;
 
         AddonData[name] = { version, loaded };
     end

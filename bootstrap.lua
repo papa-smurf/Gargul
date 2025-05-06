@@ -1,8 +1,13 @@
 local L;
 
--- arg1 is the name of the addon, arg2 is the addon namespace
----@class Bootstrapper
-local appName, GL = ...;
+---@class GL
+---@field Data Data
+local GL;
+
+---@type string
+local appName;
+
+appName, GL = ...;
 _G.Gargul = GL; -- Open Gargul up to other developer integrations
 _G.Gargul_L = {};
 
