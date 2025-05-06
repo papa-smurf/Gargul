@@ -1,11 +1,10 @@
 local L = Gargul_L;
 
 ---@type GL
-local _, GL = ...;
+local GL;
+_, GL = ...;
 
----@class DefaultSettings : Data
-GL.Data = GL.Data or {};
-
+---@class DefaultSettings
 GL.Data.DefaultSettings = {
     autoOpenCommandHelp = true,
     changeLog = true,

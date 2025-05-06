@@ -1,11 +1,9 @@
 ---@type GL
-local _, GL = ...;
-
----@class Data
-GL.Data = GL.Data or {};
+local GL;
+_, GL = ...;
 
 ---@class Constants
-local Constants = {
+GL.Data.Constants = {
     ItemOfInterestReasons = {
         RESERVE = 1,
         WISHLIST = 2,
@@ -637,4 +635,3 @@ local Constants = {
         descending = 2,
     },
 };
-GL.Data.Constants = Constants;

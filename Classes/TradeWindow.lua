@@ -4,7 +4,7 @@ local L = Gargul_L;
 local _, GL = ...;
 
 ---@class TradeWindow
-GL.TradeWindow = {
+local TradeWindow = {
     _initialized = false,
     manuallyChangedAnnounceCheckbox = false,
     AnnouncementCheckBox = nil,
@@ -22,7 +22,8 @@ GL.TradeWindow = {
     }
 };
 
-local TradeWindow = GL.TradeWindow; ---@type TradeWindow
+---@type TradeWindow
+GL.TradeWindow = TradeWindow;
 
 --- Register all events needed to keep track of the trade window state
 function TradeWindow:_init()
