@@ -548,7 +548,8 @@ function GL:handleItemClick(itemLink, mouseButtonPressed, callback)
 
     -- Try the item on if the user does not have a CTRL_CLICK hotkey set for Gargul
     elseif (keyPressIdentifier == "CTRL_CLICK") then
-        DressUpItemLink(itemLink);
+        -- Version 7.6.26: This no longer seems necessary
+        -- DressUpItemLink(itemLink);
 
     -- Check for unmodified double clicks (trade)
     elseif (keyPressIdentifier == "CLICK") then
