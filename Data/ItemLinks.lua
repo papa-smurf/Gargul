@@ -1335,10 +1335,6 @@ GL.Data.ItemLinks = {
     ["15454"] = {
         206176, -- Mortar and Pestle
     },
-    -- Ancient Belt
-    ["15606"] = {
-        231725, -- Ancient Belt
-    },
     -- High Warlord's Blade
     ["16345"] = {
         234552, -- High Warlord's Blade
@@ -2121,7 +2117,7 @@ GL.Data.ItemLinks = {
     },
     -- Bloodfang Spaulders
     ["16832"] = {
-        231039, -- Bloodfang Spaulders
+        231717, -- Primeval Shoulderpads
     },
     -- Cenarion Vestments
     ["16833"] = {
@@ -2269,63 +2265,63 @@ GL.Data.ItemLinks = {
     },
     -- Stormrage Chestguard
     ["16897"] = {
-        231230, -- Stormrage Chestguard
+        231723, -- Primeval Chest
     },
     -- Stormrage Boots
     ["16898"] = {
-        231231, -- Stormrage Boots
+        231721, -- Primeval Boots
     },
     -- Stormrage Handguards
     ["16899"] = {
-        231232, -- Stormrage Handguards
+        231720, -- Primeval Gloves
     },
     -- Stormrage Cover
     ["16900"] = {
-        231233, -- Stormrage Cover
+        231719, -- Primeval Helm
     },
     -- Stormrage Legguards
     ["16901"] = {
-        231234, -- Stormrage Legguards
+        231718, -- Primeval Leggings
     },
     -- Stormrage Pauldrons
     ["16902"] = {
-        231235, -- Stormrage Pauldrons
+        231717, -- Primeval Shoulderpads
     },
     -- Stormrage Belt
     ["16903"] = {
-        231236, -- Stormrage Belt
+        231716, -- Primeval Belt
     },
     -- Stormrage Bracers
     ["16904"] = {
-        231237, -- Stormrage Bracers
+        231715, -- Primeval Bindings
     },
     -- Bloodfang Chestpiece
     ["16905"] = {
-        231040, -- Bloodfang Chestpiece
+        231723, -- Primeval Chest
     },
     -- Bloodfang Boots
     ["16906"] = {
-        231041, -- Bloodfang Boots
+        231721, -- Primeval Boots
     },
     -- Bloodfang Gloves
     ["16907"] = {
-        231042, -- Bloodfang Gloves
+        231720, -- Primeval Gloves
     },
     -- Bloodfang Hood
     ["16908"] = {
-        231043, -- Bloodfang Hood
+        231719, -- Primeval Helm
     },
     -- Bloodfang Pants
     ["16909"] = {
-        231044, -- Bloodfang Pants
+        231718, -- Primeval Leggings
     },
     -- Bloodfang Belt
     ["16910"] = {
-        231045, -- Bloodfang Belt
+        231716, -- Primeval Belt
     },
     -- Bloodfang Bracers
     ["16911"] = {
-        231046, -- Bloodfang Bracers
+        231715, -- Primeval Bindings
     },
     -- Netherwind Boots
     ["16912"] = {
@@ -2357,163 +2353,163 @@ GL.Data.ItemLinks = {
     },
     -- Boots of Transcendence
     ["16919"] = {
-        231155, -- Boots of Transcendence
+        231713, -- Draconian Boots
     },
     -- Handguards of Transcendence
     ["16920"] = {
-        231156, -- Handguards of Transcendence
+        231712, -- Draconian Gloves
     },
     -- Halo of Transcendence
     ["16921"] = {
-        231157, -- Halo of Transcendence
+        231711, -- Draconian Hood
     },
     -- Leggings of Transcendence
     ["16922"] = {
-        231158, -- Leggings of Transcendence
+        231710, -- Draconian Leggings
     },
     -- Robes of Transcendence
     ["16923"] = {
-        231159, -- Robes of Transcendence
+        231714, -- Draconian Robe
     },
     -- Pauldrons of Transcendence
     ["16924"] = {
-        231160, -- Pauldrons of Transcendence
+        231709, -- Draconian Shoulderpads
     },
     -- Belt of Transcendence
     ["16925"] = {
-        231161, -- Belt of Transcendence
+        231708, -- Draconian Belt
     },
     -- Bindings of Transcendence
     ["16926"] = {
-        231162, -- Bindings of Transcendence
+        231707, -- Draconian Bindings
     },
     -- Nemesis Boots
     ["16927"] = {
-        231072, -- Nemesis Boots
+        231713, -- Draconian Boots
     },
     -- Nemesis Gloves
     ["16928"] = {
-        231073, -- Nemesis Gloves
+        231712, -- Draconian Gloves
     },
     -- Nemesis Skullcap
     ["16929"] = {
-        231074, -- Nemesis Skullcap
+        231711, -- Draconian Hood
     },
     -- Nemesis Leggings
     ["16930"] = {
-        231075, -- Nemesis Leggings
+        231710, -- Draconian Leggings
     },
     -- Nemesis Robes
     ["16931"] = {
-        231076, -- Nemesis Robes
+        231714, -- Draconian Robe
     },
     -- Nemesis Spaulders
     ["16932"] = {
-        231077, -- Nemesis Spaulders
+        231709, -- Draconian Shoulderpads
     },
     -- Nemesis Belt
     ["16933"] = {
-        231078, -- Nemesis Belt
+        231708, -- Draconian Belt
     },
     -- Nemesis Bracers
     ["16934"] = {
-        231079, -- Nemesis Bracers
+        231707, -- Draconian Bindings
     },
     -- Dragonstalker's Bracers
     ["16935"] = {
-        231055, -- Dragonstalker's Bracers
+        231724, -- Ancient Bindings
     },
     -- Dragonstalker's Belt
     ["16936"] = {
-        231056, -- Dragonstalker's Belt
+        231725, -- Ancient Belt
     },
     -- Dragonstalker's Spaulders
     ["16937"] = {
-        231057, -- Dragonstalker's Spaulders
+        231726, -- Ancient Shoulderpads
     },
     -- Dragonstalker's Legguards
     ["16938"] = {
-        231058, -- Dragonstalker's Legguards
+        231727, -- Ancient Leggings
     },
     -- Dragonstalker's Helm
     ["16939"] = {
-        231059, -- Dragonstalker's Helm
+        231728, -- Ancient Helm
     },
     -- Dragonstalker's Gauntlets
     ["16940"] = {
-        231060, -- Dragonstalker's Gauntlets
+        231729, -- Ancient Gloves
     },
     -- Dragonstalker's Greaves
     ["16941"] = {
-        231061, -- Dragonstalker's Greaves
+        231730, -- Ancient Boots
     },
     -- Dragonstalker's Breastplate
     ["16942"] = {
-        231062, -- Dragonstalker's Breastplate
+        231731, -- Ancient Chest
     },
     -- Bracers of Ten Storms
     ["16943"] = {
-        231199, -- Bracers of Ten Storms
+        231724, -- Ancient Bindings
     },
     -- Belt of Ten Storms
     ["16944"] = {
-        231200, -- Belt of Ten Storms
+        231725, -- Ancient Belt
     },
     -- Epaulets of Ten Storms
     ["16945"] = {
-        231201, -- Epaulets of Ten Storms
+        231726, -- Ancient Shoulderpads
     },
     -- Legplates of Ten Storms
     ["16946"] = {
-        231202, -- Legplates of Ten Storms
+        231727, -- Ancient Leggings
     },
     -- Helmet of Ten Storms
     ["16947"] = {
-        231203, -- Helmet of Ten Storms
+        231728, -- Ancient Helm
     },
     -- Gauntlets of Ten Storms
     ["16948"] = {
-        231198, -- Gauntlets of Ten Storms
+        231729, -- Ancient Gloves
     },
     -- Greaves of Ten Storms
     ["16949"] = {
-        232213, -- Greaves of Ten Storms
+        231730, -- Ancient Boots
     },
     -- Breastplate of Ten Storms
     ["16950"] = {
-        231205, -- Breastplate of Ten Storms
+        231731, -- Ancient Chest
     },
     -- Judgement Bindings
     ["16951"] = {
-        231174, -- Judgement Bindings
+        231724, -- Ancient Bindings
     },
     -- Judgement Belt
     ["16952"] = {
-        231175, -- Judgement Belt
+        231725, -- Ancient Belt
     },
     -- Judgement Spaulders
     ["16953"] = {
-        231176, -- Judgement Spaulders
+        231726, -- Ancient Shoulderpads
     },
     -- Judgement Legplates
     ["16954"] = {
-        231177, -- Judgement Legplates
+        231727, -- Ancient Leggings
     },
     -- Judgement Crown
     ["16955"] = {
-        231178, -- Judgement Crown
+        231728, -- Ancient Helm
     },
     -- Judgement Gauntlets
     ["16956"] = {
-        231179, -- Judgement Gauntlets
+        231729, -- Ancient Gloves
     },
     -- Judgement Sabatons
     ["16957"] = {
-        231180, -- Judgement Sabatons
+        231730, -- Ancient Boots
     },
     -- Judgement Breastplate
     ["16958"] = {
-        231181, -- Judgement Breastplate
+        231731, -- Ancient Chest
     },
     -- Bracelets of Wrath
     ["16959"] = {
@@ -2525,27 +2521,27 @@ GL.Data.ItemLinks = {
     },
     -- Pauldrons of Wrath
     ["16961"] = {
-        231025, -- Pauldrons of Wrath
+        231717, -- Primeval Shoulderpads
     },
     -- Legplates of Wrath
     ["16962"] = {
-        231034, -- Legplates of Wrath
+        231718, -- Primeval Leggings
     },
     -- Helm of Wrath
     ["16963"] = {
-        231035, -- Helm of Wrath
+        231719, -- Primeval Helm
     },
     -- Gauntlets of Wrath
     ["16964"] = {
-        231036, -- Gauntlets of Wrath
+        231720, -- Primeval Gloves
     },
     -- Sabatons of Wrath
     ["16965"] = {
-        231029, -- Sabatons of Wrath
+        231721, -- Primeval Boots
     },
     -- Breastplate of Wrath
     ["16966"] = {
-        231038, -- Breastplate of Wrath
+        231723, -- Primeval Chest
     },
     -- Band of Accuria
     ["17063"] = {
@@ -3547,7 +3543,7 @@ GL.Data.ItemLinks = {
     },
     -- Thunderfury, Blessed Blade of the Windseeker
     ["19019"] = {
-        18564, -- Bindings of the Windseeker
+        232018, -- Dormant Wind Kissed Blade
     },
     -- Wisdom of the Timbermaw
     ["19047"] = {
@@ -3687,7 +3683,7 @@ GL.Data.ItemLinks = {
     },
     -- Rune of Metamorphosis
     ["19340"] = {
-        210980, -- Rune of Metamorphosis
+        230244, -- Shapeshifter's Sigil
     },
     -- Lifegiving Gem
     ["19341"] = {
@@ -4102,9 +4098,6 @@ GL.Data.ItemLinks = {
         19831, -- Zandalar Predator's Mantle
         19834, -- Zandalar Madcap's Tunic
         19841, -- Zandalar Confessor's Mantle
-        231321, -- Zandalar Predator's Mantle
-        231333, -- Zandalar Confessor's Mantle
-        231337, -- Zandalar Madcap's Tunic
     },
     -- Presence of Might
     ["19782"] = {
@@ -4147,6 +4140,9 @@ GL.Data.ItemLinks = {
         19948, -- Zandalarian Hero Badge
         19949, -- Zandalarian Hero Medallion
         19950, -- Zandalarian Hero Charm
+        231321, -- Zandalar Predator's Mantle
+        231333, -- Zandalar Confessor's Mantle
+        231337, -- Zandalar Madcap's Tunic
     },
     -- Punctured Voodoo Doll
     ["19813"] = {
@@ -4334,7 +4330,7 @@ GL.Data.ItemLinks = {
     },
     -- Warblade of the Hakkari
     ["19866"] = {
-        231309, -- Warblade of the Hakkari
+        230992, -- Warblade of the Hakkari
     },
     -- Bloodlord's Defender
     ["19867"] = {
@@ -4903,6 +4899,10 @@ GL.Data.ItemLinks = {
         21401, -- Scythe of the Unseen Path
         21404, -- Dagger of Veiled Shadows
     },
+    -- Qiraji Engraved Jewel
+    ["20887"] = {
+        20930, -- Vek'lor's Diadem
+    },
     -- Qiraji Ceremonial Ring
     ["20888"] = {
         21402, -- Signet of the Unseen Path
@@ -4996,7 +4996,7 @@ GL.Data.ItemLinks = {
     },
     -- Death's Sting
     ["21126"] = {
-        234984, -- Death's Sting
+        233634, -- Death's Sting
     },
     -- Staff of the Qiraji Prophets
     ["21128"] = {
@@ -5004,7 +5004,7 @@ GL.Data.ItemLinks = {
     },
     -- Dark Edge of Insanity
     ["21134"] = {
-        234985, -- Dark Edge of Insanity
+        233640, -- Dark Edge of Insanity
     },
     -- Gloves of Earthen Power
     ["21178"] = {
@@ -5793,7 +5793,7 @@ GL.Data.ItemLinks = {
     },
     -- Wand of Qiraji Nobility
     ["21603"] = {
-        234976, -- Wand of Qiraji Nobility
+        233571, -- Wand of Qiraji Nobility
     },
     -- Bracelets of Royal Redemption
     ["21604"] = {
@@ -5897,7 +5897,7 @@ GL.Data.ItemLinks = {
     },
     -- Ancient Qiraji Ripper
     ["21650"] = {
-        234650, -- Ancient Qiraji Ripper
+        233585, -- Ancient Qiraji Ripper
     },
     -- Scaled Sand Reaver Leggings
     ["21651"] = {
@@ -6149,7 +6149,7 @@ GL.Data.ItemLinks = {
     },
     -- Anubisath Warhammer
     ["21837"] = {
-        234986, -- Anubisath Warhammer
+        233643, -- Anubisath Warhammer
     },
     -- Garb of Royal Ascension
     ["21838"] = {
@@ -6161,7 +6161,7 @@ GL.Data.ItemLinks = {
     },
     -- Neretzek, The Blood Drinker
     ["21856"] = {
-        234987, -- Neretzek, The Blood Drinker
+        233647, -- Neretzek, The Blood Drinker
     },
     -- Gloves of the Immortal
     ["21888"] = {
@@ -19732,6 +19732,6206 @@ GL.Data.ItemLinks = {
         78834, -- Spiritwalker's Mantle
         78836, -- Spiritwalker's Shoulderwraps
     },
+    -- Firebird's Spaulders
+    ["85284"] = {
+        89247, -- Shoulders of the Shadowy Protector
+    },
+    -- Firebird's Legguards
+    ["85285"] = {
+        89244, -- Leggings of the Shadowy Protector
+    },
+    -- Firebird's Helmet
+    ["85286"] = {
+        89236, -- Helm of the Shadowy Protector
+    },
+    -- Firebird's Grips
+    ["85287"] = {
+        89241, -- Gauntlets of the Shadowy Protector
+    },
+    -- Firebird's Cuirass
+    ["85288"] = {
+        89238, -- Chest of the Shadowy Protector
+    },
+    -- Firebird's Hauberk
+    ["85289"] = {
+        89238, -- Chest of the Shadowy Protector
+    },
+    -- Firebird's Gloves
+    ["85290"] = {
+        89241, -- Gauntlets of the Shadowy Protector
+    },
+    -- Firebird's Headpiece
+    ["85291"] = {
+        89236, -- Helm of the Shadowy Protector
+    },
+    -- Firebird's Kilt
+    ["85292"] = {
+        89244, -- Leggings of the Shadowy Protector
+    },
+    -- Firebird's Shoulderwraps
+    ["85293"] = {
+        89247, -- Shoulders of the Shadowy Protector
+    },
+    -- Yaungol Slayer's Spaulders
+    ["85294"] = {
+        89247, -- Shoulders of the Shadowy Protector
+    },
+    -- Yaungol Slayer's Legguards
+    ["85295"] = {
+        89244, -- Leggings of the Shadowy Protector
+    },
+    -- Yaungol Slayer's Headguard
+    ["85296"] = {
+        89236, -- Helm of the Shadowy Protector
+    },
+    -- Yaungol Slayer's Gloves
+    ["85297"] = {
+        89241, -- Gauntlets of the Shadowy Protector
+    },
+    -- Yaungol Slayer's Tunic
+    ["85298"] = {
+        89238, -- Chest of the Shadowy Protector
+    },
+    -- Spaulders of the Thousandfold Blades
+    ["85299"] = {
+        89248, -- Shoulders of the Shadowy Vanquisher
+    },
+    -- Legguards of the Thousandfold Blades
+    ["85300"] = {
+        89245, -- Leggings of the Shadowy Vanquisher
+    },
+    -- Helmet of the Thousandfold Blades
+    ["85301"] = {
+        89234, -- Helm of the Shadowy Vanquisher
+    },
+    -- Gloves of the Thousandfold Blades
+    ["85302"] = {
+        89242, -- Gauntlets of the Shadowy Vanquisher
+    },
+    -- Tunic of the Thousandfold Blades
+    ["85303"] = {
+        89239, -- Chest of the Shadowy Vanquisher
+    },
+    -- Eternal Blossom Shoulderwraps
+    ["85304"] = {
+        89248, -- Shoulders of the Shadowy Vanquisher
+    },
+    -- Eternal Blossom Vestment
+    ["85305"] = {
+        89239, -- Chest of the Shadowy Vanquisher
+    },
+    -- Eternal Blossom Leggings
+    ["85306"] = {
+        89245, -- Leggings of the Shadowy Vanquisher
+    },
+    -- Eternal Blossom Cover
+    ["85307"] = {
+        89234, -- Helm of the Shadowy Vanquisher
+    },
+    -- Eternal Blossom Gloves
+    ["85308"] = {
+        89242, -- Gauntlets of the Shadowy Vanquisher
+    },
+    -- Eternal Blossom Spaulders
+    ["85309"] = {
+        89248, -- Shoulders of the Shadowy Vanquisher
+    },
+    -- Eternal Blossom Legguards
+    ["85310"] = {
+        89245, -- Leggings of the Shadowy Vanquisher
+    },
+    -- Eternal Blossom Headpiece
+    ["85311"] = {
+        89234, -- Helm of the Shadowy Vanquisher
+    },
+    -- Eternal Blossom Grips
+    ["85312"] = {
+        89242, -- Gauntlets of the Shadowy Vanquisher
+    },
+    -- Eternal Blossom Raiment
+    ["85313"] = {
+        89239, -- Chest of the Shadowy Vanquisher
+    },
+    -- Shoulderguards of the Lost Catacomb
+    ["85314"] = {
+        89248, -- Shoulders of the Shadowy Vanquisher
+    },
+    -- Legguards of the Lost Catacomb
+    ["85315"] = {
+        89245, -- Leggings of the Shadowy Vanquisher
+    },
+    -- Faceguard of the Lost Catacomb
+    ["85316"] = {
+        89234, -- Helm of the Shadowy Vanquisher
+    },
+    -- Handguards of the Lost Catacomb
+    ["85317"] = {
+        89242, -- Gauntlets of the Shadowy Vanquisher
+    },
+    -- Chestguard of the Lost Catacomb
+    ["85318"] = {
+        89239, -- Chest of the Shadowy Vanquisher
+    },
+    -- White Tiger Shoulderguards
+    ["85319"] = {
+        89246, -- Shoulders of the Shadowy Conqueror
+    },
+    -- White Tiger Legguards
+    ["85320"] = {
+        89243, -- Leggings of the Shadowy Conqueror
+    },
+    -- White Tiger Faceguard
+    ["85321"] = {
+        89235, -- Helm of the Shadowy Conqueror
+    },
+    -- White Tiger Handguards
+    ["85322"] = {
+        89240, -- Gauntlets of the Shadowy Conqueror
+    },
+    -- White Tiger Chestguard
+    ["85323"] = {
+        89237, -- Chest of the Shadowy Conqueror
+    },
+    -- Shoulderguards of Resounding Rings
+    ["85324"] = {
+        89247, -- Shoulders of the Shadowy Protector
+    },
+    -- Legguards of Resounding Rings
+    ["85325"] = {
+        89244, -- Leggings of the Shadowy Protector
+    },
+    -- Faceguard of Resounding Rings
+    ["85326"] = {
+        89236, -- Helm of the Shadowy Protector
+    },
+    -- Handguards of Resounding Rings
+    ["85327"] = {
+        89241, -- Gauntlets of the Shadowy Protector
+    },
+    -- Chestguard of Resounding Rings
+    ["85328"] = {
+        89238, -- Chest of the Shadowy Protector
+    },
+    -- Pauldrons of Resounding Rings
+    ["85329"] = {
+        89247, -- Shoulders of the Shadowy Protector
+    },
+    -- Legplates of Resounding Rings
+    ["85330"] = {
+        89244, -- Leggings of the Shadowy Protector
+    },
+    -- Gauntlets of Resounding Rings
+    ["85331"] = {
+        89241, -- Gauntlets of the Shadowy Protector
+    },
+    -- Battleplate of Resounding Rings
+    ["85332"] = {
+        89238, -- Chest of the Shadowy Protector
+    },
+    -- Helmet of Resounding Rings
+    ["85333"] = {
+        89236, -- Helm of the Shadowy Protector
+    },
+    -- Pauldrons of the Lost Catacomb
+    ["85334"] = {
+        89248, -- Shoulders of the Shadowy Vanquisher
+    },
+    -- Greaves of the Lost Catacomb
+    ["85335"] = {
+        89245, -- Leggings of the Shadowy Vanquisher
+    },
+    -- Helmet of the Lost Catacomb
+    ["85336"] = {
+        89234, -- Helm of the Shadowy Vanquisher
+    },
+    -- Gauntlets of the Lost Catacomb
+    ["85337"] = {
+        89242, -- Gauntlets of the Shadowy Vanquisher
+    },
+    -- Breastplate of the Lost Catacomb
+    ["85338"] = {
+        89239, -- Chest of the Shadowy Vanquisher
+    },
+    -- White Tiger Pauldrons
+    ["85339"] = {
+        89246, -- Shoulders of the Shadowy Conqueror
+    },
+    -- White Tiger Legplates
+    ["85340"] = {
+        89243, -- Leggings of the Shadowy Conqueror
+    },
+    -- White Tiger Helmet
+    ["85341"] = {
+        89235, -- Helm of the Shadowy Conqueror
+    },
+    -- White Tiger Gauntlets
+    ["85342"] = {
+        89240, -- Gauntlets of the Shadowy Conqueror
+    },
+    -- White Tiger Battleplate
+    ["85343"] = {
+        89237, -- Chest of the Shadowy Conqueror
+    },
+    -- White Tiger Mantle
+    ["85344"] = {
+        89246, -- Shoulders of the Shadowy Conqueror
+    },
+    -- White Tiger Greaves
+    ["85345"] = {
+        89243, -- Leggings of the Shadowy Conqueror
+    },
+    -- White Tiger Headguard
+    ["85346"] = {
+        89235, -- Helm of the Shadowy Conqueror
+    },
+    -- White Tiger Gloves
+    ["85347"] = {
+        89240, -- Gauntlets of the Shadowy Conqueror
+    },
+    -- White Tiger Breastplate
+    ["85348"] = {
+        89237, -- Chest of the Shadowy Conqueror
+    },
+    -- Firebird's Mantle
+    ["85349"] = {
+        89247, -- Shoulders of the Shadowy Protector
+    },
+    -- Firebird's Legwraps
+    ["85350"] = {
+        89244, -- Leggings of the Shadowy Protector
+    },
+    -- Firebird's Faceguard
+    ["85351"] = {
+        89236, -- Helm of the Shadowy Protector
+    },
+    -- Firebird's Handwraps
+    ["85352"] = {
+        89241, -- Gauntlets of the Shadowy Protector
+    },
+    -- Firebird's Tunic
+    ["85353"] = {
+        89238, -- Chest of the Shadowy Protector
+    },
+    -- Eternal Blossom Mantle
+    ["85354"] = {
+        89248, -- Shoulders of the Shadowy Vanquisher
+    },
+    -- Eternal Blossom Robes
+    ["85355"] = {
+        89239, -- Chest of the Shadowy Vanquisher
+    },
+    -- Eternal Blossom Legwraps
+    ["85356"] = {
+        89245, -- Leggings of the Shadowy Vanquisher
+    },
+    -- Eternal Blossom Helm
+    ["85357"] = {
+        89234, -- Helm of the Shadowy Vanquisher
+    },
+    -- Eternal Blossom Handwraps
+    ["85358"] = {
+        89242, -- Gauntlets of the Shadowy Vanquisher
+    },
+    -- Guardian Serpent Mantle
+    ["85359"] = {
+        89246, -- Shoulders of the Shadowy Conqueror
+    },
+    -- Guardian Serpent Robes
+    ["85360"] = {
+        89237, -- Chest of the Shadowy Conqueror
+    },
+    -- Guardian Serpent Legwraps
+    ["85361"] = {
+        89243, -- Leggings of the Shadowy Conqueror
+    },
+    -- Guardian Serpent Cowl
+    ["85362"] = {
+        89235, -- Helm of the Shadowy Conqueror
+    },
+    -- Guardian Serpent Handwraps
+    ["85363"] = {
+        89240, -- Gauntlets of the Shadowy Conqueror
+    },
+    -- Guardian Serpent Gloves
+    ["85364"] = {
+        89240, -- Gauntlets of the Shadowy Conqueror
+    },
+    -- Guardian Serpent Hood
+    ["85365"] = {
+        89235, -- Helm of the Shadowy Conqueror
+    },
+    -- Guardian Serpent Leggings
+    ["85366"] = {
+        89243, -- Leggings of the Shadowy Conqueror
+    },
+    -- Guardian Serpent Raiment
+    ["85367"] = {
+        89237, -- Chest of the Shadowy Conqueror
+    },
+    -- Guardian Serpent Shoulderguards
+    ["85368"] = {
+        89246, -- Shoulders of the Shadowy Conqueror
+    },
+    -- Sha-Skin Gloves
+    ["85369"] = {
+        89240, -- Gauntlets of the Shadowy Conqueror
+    },
+    -- Sha-Skin Hood
+    ["85370"] = {
+        89235, -- Helm of the Shadowy Conqueror
+    },
+    -- Sha-Skin Leggings
+    ["85371"] = {
+        89243, -- Leggings of the Shadowy Conqueror
+    },
+    -- Sha-Skin Robes
+    ["85372"] = {
+        89237, -- Chest of the Shadowy Conqueror
+    },
+    -- Sha-Skin Mantle
+    ["85373"] = {
+        89246, -- Shoulders of the Shadowy Conqueror
+    },
+    -- Mantle of the Burning Scroll
+    ["85374"] = {
+        89248, -- Shoulders of the Shadowy Vanquisher
+    },
+    -- Robes of the Burning Scroll
+    ["85375"] = {
+        89239, -- Chest of the Shadowy Vanquisher
+    },
+    -- Leggings of the Burning Scroll
+    ["85376"] = {
+        89245, -- Leggings of the Shadowy Vanquisher
+    },
+    -- Hood of the Burning Scroll
+    ["85377"] = {
+        89234, -- Helm of the Shadowy Vanquisher
+    },
+    -- Gloves of the Burning Scroll
+    ["85378"] = {
+        89242, -- Gauntlets of the Shadowy Vanquisher
+    },
+    -- Eternal Blossom Tunic
+    ["85379"] = {
+        89239, -- Chest of the Shadowy Vanquisher
+    },
+    -- Eternal Blossom Handguards
+    ["85380"] = {
+        89242, -- Gauntlets of the Shadowy Vanquisher
+    },
+    -- Eternal Blossom Headguard
+    ["85381"] = {
+        89234, -- Helm of the Shadowy Vanquisher
+    },
+    -- Eternal Blossom Breeches
+    ["85382"] = {
+        89245, -- Leggings of the Shadowy Vanquisher
+    },
+    -- Eternal Blossom Shoulderguards
+    ["85383"] = {
+        89248, -- Shoulders of the Shadowy Vanquisher
+    },
+    -- Red Crane Shoulderguards
+    ["85384"] = {
+        89247, -- Shoulders of the Shadowy Protector
+    },
+    -- Red Crane Legguards
+    ["85385"] = {
+        89244, -- Leggings of the Shadowy Protector
+    },
+    -- Red Crane Crown
+    ["85386"] = {
+        89236, -- Helm of the Shadowy Protector
+    },
+    -- Red Crane Gauntlets
+    ["85387"] = {
+        89241, -- Gauntlets of the Shadowy Protector
+    },
+    -- Red Crane Chestguard
+    ["85388"] = {
+        89238, -- Chest of the Shadowy Protector
+    },
+    -- Red Crane Handwraps
+    ["85389"] = {
+        89241, -- Gauntlets of the Shadowy Protector
+    },
+    -- Red Crane Helm
+    ["85390"] = {
+        89236, -- Helm of the Shadowy Protector
+    },
+    -- Red Crane Legwraps
+    ["85391"] = {
+        89244, -- Leggings of the Shadowy Protector
+    },
+    -- Red Crane Vest
+    ["85392"] = {
+        89238, -- Chest of the Shadowy Protector
+    },
+    -- Red Crane Mantle
+    ["85393"] = {
+        89247, -- Shoulders of the Shadowy Protector
+    },
+    -- Red Crane Tunic
+    ["85394"] = {
+        89238, -- Chest of the Shadowy Protector
+    },
+    -- Red Crane Grips
+    ["85395"] = {
+        89241, -- Gauntlets of the Shadowy Protector
+    },
+    -- Red Crane Headpiece
+    ["85396"] = {
+        89236, -- Helm of the Shadowy Protector
+    },
+    -- Red Crane Leggings
+    ["85397"] = {
+        89244, -- Leggings of the Shadowy Protector
+    },
+    -- Red Crane Spaulders
+    ["85398"] = {
+        89247, -- Shoulders of the Shadowy Protector
+    },
+    -- Firebird's Spaulders
+    ["86624"] = {
+        89278, -- Shoulders of the Shadowy Protector
+    },
+    -- Firebird's Legguards
+    ["86625"] = {
+        89269, -- Leggings of the Shadowy Protector
+    },
+    -- Firebird's Helmet
+    ["86626"] = {
+        89275, -- Helm of the Shadowy Protector
+    },
+    -- Firebird's Grips
+    ["86627"] = {
+        89272, -- Gauntlets of the Shadowy Protector
+    },
+    -- Firebird's Cuirass
+    ["86628"] = {
+        89266, -- Chest of the Shadowy Protector
+    },
+    -- Firebird's Hauberk
+    ["86629"] = {
+        89266, -- Chest of the Shadowy Protector
+    },
+    -- Firebird's Gloves
+    ["86630"] = {
+        89272, -- Gauntlets of the Shadowy Protector
+    },
+    -- Firebird's Headpiece
+    ["86631"] = {
+        89275, -- Helm of the Shadowy Protector
+    },
+    -- Firebird's Kilt
+    ["86632"] = {
+        89269, -- Leggings of the Shadowy Protector
+    },
+    -- Firebird's Shoulderwraps
+    ["86633"] = {
+        89278, -- Shoulders of the Shadowy Protector
+    },
+    -- Yaungol Slayer's Spaulders
+    ["86634"] = {
+        89278, -- Shoulders of the Shadowy Protector
+    },
+    -- Yaungol Slayer's Legguards
+    ["86635"] = {
+        89269, -- Leggings of the Shadowy Protector
+    },
+    -- Yaungol Slayer's Headguard
+    ["86636"] = {
+        89275, -- Helm of the Shadowy Protector
+    },
+    -- Yaungol Slayer's Gloves
+    ["86637"] = {
+        89272, -- Gauntlets of the Shadowy Protector
+    },
+    -- Yaungol Slayer's Tunic
+    ["86638"] = {
+        89266, -- Chest of the Shadowy Protector
+    },
+    -- Spaulders of the Thousandfold Blades
+    ["86639"] = {
+        89276, -- Shoulders of the Shadowy Vanquisher
+    },
+    -- Legguards of the Thousandfold Blades
+    ["86640"] = {
+        89267, -- Leggings of the Shadowy Vanquisher
+    },
+    -- Helmet of the Thousandfold Blades
+    ["86641"] = {
+        89273, -- Helm of the Shadowy Vanquisher
+    },
+    -- Gloves of the Thousandfold Blades
+    ["86642"] = {
+        89270, -- Gauntlets of the Shadowy Vanquisher
+    },
+    -- Tunic of the Thousandfold Blades
+    ["86643"] = {
+        89264, -- Chest of the Shadowy Vanquisher
+    },
+    -- Eternal Blossom Shoulderwraps
+    ["86644"] = {
+        89276, -- Shoulders of the Shadowy Vanquisher
+    },
+    -- Eternal Blossom Vestment
+    ["86645"] = {
+        89264, -- Chest of the Shadowy Vanquisher
+    },
+    -- Eternal Blossom Leggings
+    ["86646"] = {
+        89267, -- Leggings of the Shadowy Vanquisher
+    },
+    -- Eternal Blossom Cover
+    ["86647"] = {
+        89273, -- Helm of the Shadowy Vanquisher
+    },
+    -- Eternal Blossom Gloves
+    ["86648"] = {
+        89270, -- Gauntlets of the Shadowy Vanquisher
+    },
+    -- Eternal Blossom Spaulders
+    ["86649"] = {
+        89276, -- Shoulders of the Shadowy Vanquisher
+    },
+    -- Eternal Blossom Legguards
+    ["86650"] = {
+        89267, -- Leggings of the Shadowy Vanquisher
+    },
+    -- Eternal Blossom Headpiece
+    ["86651"] = {
+        89273, -- Helm of the Shadowy Vanquisher
+    },
+    -- Eternal Blossom Grips
+    ["86652"] = {
+        89270, -- Gauntlets of the Shadowy Vanquisher
+    },
+    -- Eternal Blossom Raiment
+    ["86653"] = {
+        89264, -- Chest of the Shadowy Vanquisher
+    },
+    -- Shoulderguards of the Lost Catacomb
+    ["86654"] = {
+        89276, -- Shoulders of the Shadowy Vanquisher
+    },
+    -- Legguards of the Lost Catacomb
+    ["86655"] = {
+        89267, -- Leggings of the Shadowy Vanquisher
+    },
+    -- Faceguard of the Lost Catacomb
+    ["86656"] = {
+        89273, -- Helm of the Shadowy Vanquisher
+    },
+    -- Handguards of the Lost Catacomb
+    ["86657"] = {
+        89270, -- Gauntlets of the Shadowy Vanquisher
+    },
+    -- Chestguard of the Lost Catacomb
+    ["86658"] = {
+        89264, -- Chest of the Shadowy Vanquisher
+    },
+    -- White Tiger Shoulderguards
+    ["86659"] = {
+        89277, -- Shoulders of the Shadowy Conqueror
+    },
+    -- White Tiger Legguards
+    ["86660"] = {
+        89268, -- Leggings of the Shadowy Conqueror
+    },
+    -- White Tiger Faceguard
+    ["86661"] = {
+        89274, -- Helm of the Shadowy Conqueror
+    },
+    -- White Tiger Handguards
+    ["86662"] = {
+        89271, -- Gauntlets of the Shadowy Conqueror
+    },
+    -- White Tiger Chestguard
+    ["86663"] = {
+        89265, -- Chest of the Shadowy Conqueror
+    },
+    -- Shoulderguards of Resounding Rings
+    ["86664"] = {
+        89278, -- Shoulders of the Shadowy Protector
+    },
+    -- Legguards of Resounding Rings
+    ["86665"] = {
+        89269, -- Leggings of the Shadowy Protector
+    },
+    -- Faceguard of Resounding Rings
+    ["86666"] = {
+        89275, -- Helm of the Shadowy Protector
+    },
+    -- Handguards of Resounding Rings
+    ["86667"] = {
+        89272, -- Gauntlets of the Shadowy Protector
+    },
+    -- Chestguard of Resounding Rings
+    ["86668"] = {
+        89266, -- Chest of the Shadowy Protector
+    },
+    -- Pauldrons of Resounding Rings
+    ["86669"] = {
+        89278, -- Shoulders of the Shadowy Protector
+    },
+    -- Legplates of Resounding Rings
+    ["86670"] = {
+        89269, -- Leggings of the Shadowy Protector
+    },
+    -- Gauntlets of Resounding Rings
+    ["86671"] = {
+        89272, -- Gauntlets of the Shadowy Protector
+    },
+    -- Battleplate of Resounding Rings
+    ["86672"] = {
+        89266, -- Chest of the Shadowy Protector
+    },
+    -- Helmet of Resounding Rings
+    ["86673"] = {
+        89275, -- Helm of the Shadowy Protector
+    },
+    -- Pauldrons of the Lost Catacomb
+    ["86674"] = {
+        89276, -- Shoulders of the Shadowy Vanquisher
+    },
+    -- Greaves of the Lost Catacomb
+    ["86675"] = {
+        89267, -- Leggings of the Shadowy Vanquisher
+    },
+    -- Helmet of the Lost Catacomb
+    ["86676"] = {
+        89273, -- Helm of the Shadowy Vanquisher
+    },
+    -- Gauntlets of the Lost Catacomb
+    ["86677"] = {
+        89270, -- Gauntlets of the Shadowy Vanquisher
+    },
+    -- Breastplate of the Lost Catacomb
+    ["86678"] = {
+        89264, -- Chest of the Shadowy Vanquisher
+    },
+    -- White Tiger Pauldrons
+    ["86679"] = {
+        89277, -- Shoulders of the Shadowy Conqueror
+    },
+    -- White Tiger Legplates
+    ["86680"] = {
+        89268, -- Leggings of the Shadowy Conqueror
+    },
+    -- White Tiger Helmet
+    ["86681"] = {
+        89274, -- Helm of the Shadowy Conqueror
+    },
+    -- White Tiger Gauntlets
+    ["86682"] = {
+        89271, -- Gauntlets of the Shadowy Conqueror
+    },
+    -- White Tiger Battleplate
+    ["86683"] = {
+        89265, -- Chest of the Shadowy Conqueror
+    },
+    -- White Tiger Mantle
+    ["86684"] = {
+        89277, -- Shoulders of the Shadowy Conqueror
+    },
+    -- White Tiger Greaves
+    ["86685"] = {
+        89268, -- Leggings of the Shadowy Conqueror
+    },
+    -- White Tiger Headguard
+    ["86686"] = {
+        89274, -- Helm of the Shadowy Conqueror
+    },
+    -- White Tiger Gloves
+    ["86687"] = {
+        89271, -- Gauntlets of the Shadowy Conqueror
+    },
+    -- White Tiger Breastplate
+    ["86688"] = {
+        89265, -- Chest of the Shadowy Conqueror
+    },
+    -- Firebird's Mantle
+    ["86689"] = {
+        89278, -- Shoulders of the Shadowy Protector
+    },
+    -- Firebird's Legwraps
+    ["86690"] = {
+        89269, -- Leggings of the Shadowy Protector
+    },
+    -- Firebird's Faceguard
+    ["86691"] = {
+        89275, -- Helm of the Shadowy Protector
+    },
+    -- Firebird's Handwraps
+    ["86692"] = {
+        89272, -- Gauntlets of the Shadowy Protector
+    },
+    -- Firebird's Tunic
+    ["86693"] = {
+        89266, -- Chest of the Shadowy Protector
+    },
+    -- Eternal Blossom Mantle
+    ["86694"] = {
+        89276, -- Shoulders of the Shadowy Vanquisher
+    },
+    -- Eternal Blossom Robes
+    ["86695"] = {
+        89264, -- Chest of the Shadowy Vanquisher
+    },
+    -- Eternal Blossom Legwraps
+    ["86696"] = {
+        89267, -- Leggings of the Shadowy Vanquisher
+    },
+    -- Eternal Blossom Helm
+    ["86697"] = {
+        89273, -- Helm of the Shadowy Vanquisher
+    },
+    -- Eternal Blossom Handwraps
+    ["86698"] = {
+        89270, -- Gauntlets of the Shadowy Vanquisher
+    },
+    -- Guardian Serpent Mantle
+    ["86699"] = {
+        89277, -- Shoulders of the Shadowy Conqueror
+    },
+    -- Guardian Serpent Robes
+    ["86700"] = {
+        89265, -- Chest of the Shadowy Conqueror
+    },
+    -- Guardian Serpent Legwraps
+    ["86701"] = {
+        89268, -- Leggings of the Shadowy Conqueror
+    },
+    -- Guardian Serpent Cowl
+    ["86702"] = {
+        89274, -- Helm of the Shadowy Conqueror
+    },
+    -- Guardian Serpent Handwraps
+    ["86703"] = {
+        89271, -- Gauntlets of the Shadowy Conqueror
+    },
+    -- Guardian Serpent Gloves
+    ["86704"] = {
+        89271, -- Gauntlets of the Shadowy Conqueror
+    },
+    -- Guardian Serpent Hood
+    ["86705"] = {
+        89274, -- Helm of the Shadowy Conqueror
+    },
+    -- Guardian Serpent Leggings
+    ["86706"] = {
+        89268, -- Leggings of the Shadowy Conqueror
+    },
+    -- Guardian Serpent Raiment
+    ["86707"] = {
+        89265, -- Chest of the Shadowy Conqueror
+    },
+    -- Guardian Serpent Shoulderguards
+    ["86708"] = {
+        89277, -- Shoulders of the Shadowy Conqueror
+    },
+    -- Sha-Skin Gloves
+    ["86709"] = {
+        89271, -- Gauntlets of the Shadowy Conqueror
+    },
+    -- Sha-Skin Hood
+    ["86710"] = {
+        89274, -- Helm of the Shadowy Conqueror
+    },
+    -- Sha-Skin Leggings
+    ["86711"] = {
+        89268, -- Leggings of the Shadowy Conqueror
+    },
+    -- Sha-Skin Robes
+    ["86712"] = {
+        89265, -- Chest of the Shadowy Conqueror
+    },
+    -- Sha-Skin Mantle
+    ["86713"] = {
+        89277, -- Shoulders of the Shadowy Conqueror
+    },
+    -- Mantle of the Burning Scroll
+    ["86714"] = {
+        89276, -- Shoulders of the Shadowy Vanquisher
+    },
+    -- Robes of the Burning Scroll
+    ["86715"] = {
+        89264, -- Chest of the Shadowy Vanquisher
+    },
+    -- Leggings of the Burning Scroll
+    ["86716"] = {
+        89267, -- Leggings of the Shadowy Vanquisher
+    },
+    -- Hood of the Burning Scroll
+    ["86717"] = {
+        89273, -- Helm of the Shadowy Vanquisher
+    },
+    -- Gloves of the Burning Scroll
+    ["86718"] = {
+        89270, -- Gauntlets of the Shadowy Vanquisher
+    },
+    -- Eternal Blossom Tunic
+    ["86719"] = {
+        89264, -- Chest of the Shadowy Vanquisher
+    },
+    -- Eternal Blossom Handguards
+    ["86720"] = {
+        89270, -- Gauntlets of the Shadowy Vanquisher
+    },
+    -- Eternal Blossom Headguard
+    ["86721"] = {
+        89273, -- Helm of the Shadowy Vanquisher
+    },
+    -- Eternal Blossom Breeches
+    ["86722"] = {
+        89267, -- Leggings of the Shadowy Vanquisher
+    },
+    -- Eternal Blossom Shoulderguards
+    ["86723"] = {
+        89276, -- Shoulders of the Shadowy Vanquisher
+    },
+    -- Red Crane Shoulderguards
+    ["86724"] = {
+        89278, -- Shoulders of the Shadowy Protector
+    },
+    -- Red Crane Legguards
+    ["86725"] = {
+        89269, -- Leggings of the Shadowy Protector
+    },
+    -- Red Crane Crown
+    ["86726"] = {
+        89275, -- Helm of the Shadowy Protector
+    },
+    -- Red Crane Gauntlets
+    ["86727"] = {
+        89272, -- Gauntlets of the Shadowy Protector
+    },
+    -- Red Crane Chestguard
+    ["86728"] = {
+        89266, -- Chest of the Shadowy Protector
+    },
+    -- Red Crane Handwraps
+    ["86729"] = {
+        89272, -- Gauntlets of the Shadowy Protector
+    },
+    -- Red Crane Helm
+    ["86730"] = {
+        89275, -- Helm of the Shadowy Protector
+    },
+    -- Red Crane Legwraps
+    ["86731"] = {
+        89269, -- Leggings of the Shadowy Protector
+    },
+    -- Red Crane Vest
+    ["86732"] = {
+        89266, -- Chest of the Shadowy Protector
+    },
+    -- Red Crane Mantle
+    ["86733"] = {
+        89278, -- Shoulders of the Shadowy Protector
+    },
+    -- Red Crane Tunic
+    ["86734"] = {
+        89266, -- Chest of the Shadowy Protector
+    },
+    -- Red Crane Grips
+    ["86735"] = {
+        89272, -- Gauntlets of the Shadowy Protector
+    },
+    -- Red Crane Headpiece
+    ["86736"] = {
+        89275, -- Helm of the Shadowy Protector
+    },
+    -- Red Crane Leggings
+    ["86737"] = {
+        89269, -- Leggings of the Shadowy Protector
+    },
+    -- Red Crane Spaulders
+    ["86738"] = {
+        89278, -- Shoulders of the Shadowy Protector
+    },
+    -- Breastplate of the Lost Catacomb
+    ["86913"] = {
+        89249, -- Chest of the Shadowy Vanquisher
+    },
+    -- Gauntlets of the Lost Catacomb
+    ["86914"] = {
+        89255, -- Gauntlets of the Shadowy Vanquisher
+    },
+    -- Helmet of the Lost Catacomb
+    ["86915"] = {
+        89258, -- Helm of the Shadowy Vanquisher
+    },
+    -- Greaves of the Lost Catacomb
+    ["86916"] = {
+        89252, -- Leggings of the Shadowy Vanquisher
+    },
+    -- Pauldrons of the Lost Catacomb
+    ["86917"] = {
+        89261, -- Shoulders of the Shadowy Vanquisher
+    },
+    -- Chestguard of the Lost Catacomb
+    ["86918"] = {
+        89249, -- Chest of the Shadowy Vanquisher
+    },
+    -- Handguards of the Lost Catacomb
+    ["86919"] = {
+        89255, -- Gauntlets of the Shadowy Vanquisher
+    },
+    -- Faceguard of the Lost Catacomb
+    ["86920"] = {
+        89258, -- Helm of the Shadowy Vanquisher
+    },
+    -- Legguards of the Lost Catacomb
+    ["86921"] = {
+        89252, -- Leggings of the Shadowy Vanquisher
+    },
+    -- Shoulderguards of the Lost Catacomb
+    ["86922"] = {
+        89261, -- Shoulders of the Shadowy Vanquisher
+    },
+    -- Eternal Blossom Raiment
+    ["86923"] = {
+        89249, -- Chest of the Shadowy Vanquisher
+    },
+    -- Eternal Blossom Grips
+    ["86924"] = {
+        89255, -- Gauntlets of the Shadowy Vanquisher
+    },
+    -- Eternal Blossom Headpiece
+    ["86925"] = {
+        89258, -- Helm of the Shadowy Vanquisher
+    },
+    -- Eternal Blossom Legguards
+    ["86926"] = {
+        89252, -- Leggings of the Shadowy Vanquisher
+    },
+    -- Eternal Blossom Spaulders
+    ["86927"] = {
+        89261, -- Shoulders of the Shadowy Vanquisher
+    },
+    -- Eternal Blossom Handwraps
+    ["86928"] = {
+        89255, -- Gauntlets of the Shadowy Vanquisher
+    },
+    -- Eternal Blossom Helm
+    ["86929"] = {
+        89258, -- Helm of the Shadowy Vanquisher
+    },
+    -- Eternal Blossom Legwraps
+    ["86930"] = {
+        89252, -- Leggings of the Shadowy Vanquisher
+    },
+    -- Eternal Blossom Robes
+    ["86931"] = {
+        89249, -- Chest of the Shadowy Vanquisher
+    },
+    -- Eternal Blossom Mantle
+    ["86932"] = {
+        89261, -- Shoulders of the Shadowy Vanquisher
+    },
+    -- Eternal Blossom Gloves
+    ["86933"] = {
+        89255, -- Gauntlets of the Shadowy Vanquisher
+    },
+    -- Eternal Blossom Cover
+    ["86934"] = {
+        89258, -- Helm of the Shadowy Vanquisher
+    },
+    -- Eternal Blossom Leggings
+    ["86935"] = {
+        89252, -- Leggings of the Shadowy Vanquisher
+    },
+    -- Eternal Blossom Vestment
+    ["86936"] = {
+        89249, -- Chest of the Shadowy Vanquisher
+    },
+    -- Eternal Blossom Shoulderwraps
+    ["86937"] = {
+        89261, -- Shoulders of the Shadowy Vanquisher
+    },
+    -- Eternal Blossom Tunic
+    ["86938"] = {
+        89249, -- Chest of the Shadowy Vanquisher
+    },
+    -- Eternal Blossom Handguards
+    ["86939"] = {
+        89255, -- Gauntlets of the Shadowy Vanquisher
+    },
+    -- Eternal Blossom Headguard
+    ["86940"] = {
+        89258, -- Helm of the Shadowy Vanquisher
+    },
+    -- Eternal Blossom Breeches
+    ["86941"] = {
+        89252, -- Leggings of the Shadowy Vanquisher
+    },
+    -- Eternal Blossom Shoulderguards
+    ["86942"] = {
+        89261, -- Shoulders of the Shadowy Vanquisher
+    },
+    -- Yaungol Slayer's Tunic
+    ["87002"] = {
+        89251, -- Chest of the Shadowy Protector
+    },
+    -- Yaungol Slayer's Gloves
+    ["87003"] = {
+        89257, -- Gauntlets of the Shadowy Protector
+    },
+    -- Yaungol Slayer's Headguard
+    ["87004"] = {
+        89260, -- Helm of the Shadowy Protector
+    },
+    -- Yaungol Slayer's Legguards
+    ["87005"] = {
+        89254, -- Leggings of the Shadowy Protector
+    },
+    -- Yaungol Slayer's Spaulders
+    ["87006"] = {
+        89263, -- Shoulders of the Shadowy Protector
+    },
+    -- Gloves of the Burning Scroll
+    ["87007"] = {
+        89255, -- Gauntlets of the Shadowy Vanquisher
+    },
+    -- Hood of the Burning Scroll
+    ["87008"] = {
+        89258, -- Helm of the Shadowy Vanquisher
+    },
+    -- Leggings of the Burning Scroll
+    ["87009"] = {
+        89252, -- Leggings of the Shadowy Vanquisher
+    },
+    -- Robes of the Burning Scroll
+    ["87010"] = {
+        89249, -- Chest of the Shadowy Vanquisher
+    },
+    -- Mantle of the Burning Scroll
+    ["87011"] = {
+        89261, -- Shoulders of the Shadowy Vanquisher
+    },
+    -- Red Crane Tunic
+    ["87084"] = {
+        89251, -- Chest of the Shadowy Protector
+    },
+    -- Red Crane Grips
+    ["87085"] = {
+        89257, -- Gauntlets of the Shadowy Protector
+    },
+    -- Red Crane Headpiece
+    ["87086"] = {
+        89260, -- Helm of the Shadowy Protector
+    },
+    -- Red Crane Leggings
+    ["87087"] = {
+        89254, -- Leggings of the Shadowy Protector
+    },
+    -- Red Crane Spaulders
+    ["87088"] = {
+        89263, -- Shoulders of the Shadowy Protector
+    },
+    -- Red Crane Handwraps
+    ["87089"] = {
+        89257, -- Gauntlets of the Shadowy Protector
+    },
+    -- Red Crane Helm
+    ["87090"] = {
+        89260, -- Helm of the Shadowy Protector
+    },
+    -- Red Crane Legwraps
+    ["87091"] = {
+        89254, -- Leggings of the Shadowy Protector
+    },
+    -- Red Crane Vest
+    ["87092"] = {
+        89251, -- Chest of the Shadowy Protector
+    },
+    -- Red Crane Mantle
+    ["87093"] = {
+        89263, -- Shoulders of the Shadowy Protector
+    },
+    -- Red Crane Chestguard
+    ["87094"] = {
+        89251, -- Chest of the Shadowy Protector
+    },
+    -- Red Crane Gauntlets
+    ["87095"] = {
+        89257, -- Gauntlets of the Shadowy Protector
+    },
+    -- Red Crane Crown
+    ["87096"] = {
+        89260, -- Helm of the Shadowy Protector
+    },
+    -- Red Crane Legguards
+    ["87097"] = {
+        89254, -- Leggings of the Shadowy Protector
+    },
+    -- Red Crane Shoulderguards
+    ["87098"] = {
+        89263, -- Shoulders of the Shadowy Protector
+    },
+    -- White Tiger Battleplate
+    ["87099"] = {
+        89250, -- Chest of the Shadowy Conqueror
+    },
+    -- White Tiger Gauntlets
+    ["87100"] = {
+        89256, -- Gauntlets of the Shadowy Conqueror
+    },
+    -- White Tiger Helmet
+    ["87101"] = {
+        89259, -- Helm of the Shadowy Conqueror
+    },
+    -- White Tiger Legplates
+    ["87102"] = {
+        89253, -- Leggings of the Shadowy Conqueror
+    },
+    -- White Tiger Pauldrons
+    ["87103"] = {
+        89262, -- Shoulders of the Shadowy Conqueror
+    },
+    -- White Tiger Breastplate
+    ["87104"] = {
+        89250, -- Chest of the Shadowy Conqueror
+    },
+    -- White Tiger Gloves
+    ["87105"] = {
+        89256, -- Gauntlets of the Shadowy Conqueror
+    },
+    -- White Tiger Headguard
+    ["87106"] = {
+        89259, -- Helm of the Shadowy Conqueror
+    },
+    -- White Tiger Greaves
+    ["87107"] = {
+        89253, -- Leggings of the Shadowy Conqueror
+    },
+    -- White Tiger Mantle
+    ["87108"] = {
+        89262, -- Shoulders of the Shadowy Conqueror
+    },
+    -- White Tiger Chestguard
+    ["87109"] = {
+        89250, -- Chest of the Shadowy Conqueror
+    },
+    -- White Tiger Handguards
+    ["87110"] = {
+        89256, -- Gauntlets of the Shadowy Conqueror
+    },
+    -- White Tiger Faceguard
+    ["87111"] = {
+        89259, -- Helm of the Shadowy Conqueror
+    },
+    -- White Tiger Legguards
+    ["87112"] = {
+        89253, -- Leggings of the Shadowy Conqueror
+    },
+    -- White Tiger Shoulderguards
+    ["87113"] = {
+        89262, -- Shoulders of the Shadowy Conqueror
+    },
+    -- Guardian Serpent Handwraps
+    ["87114"] = {
+        89256, -- Gauntlets of the Shadowy Conqueror
+    },
+    -- Guardian Serpent Cowl
+    ["87115"] = {
+        89259, -- Helm of the Shadowy Conqueror
+    },
+    -- Guardian Serpent Legwraps
+    ["87116"] = {
+        89253, -- Leggings of the Shadowy Conqueror
+    },
+    -- Guardian Serpent Robes
+    ["87117"] = {
+        89250, -- Chest of the Shadowy Conqueror
+    },
+    -- Guardian Serpent Mantle
+    ["87118"] = {
+        89262, -- Shoulders of the Shadowy Conqueror
+    },
+    -- Guardian Serpent Gloves
+    ["87119"] = {
+        89256, -- Gauntlets of the Shadowy Conqueror
+    },
+    -- Guardian Serpent Hood
+    ["87120"] = {
+        89259, -- Helm of the Shadowy Conqueror
+    },
+    -- Guardian Serpent Leggings
+    ["87121"] = {
+        89253, -- Leggings of the Shadowy Conqueror
+    },
+    -- Guardian Serpent Raiment
+    ["87122"] = {
+        89250, -- Chest of the Shadowy Conqueror
+    },
+    -- Guardian Serpent Shoulderguards
+    ["87123"] = {
+        89262, -- Shoulders of the Shadowy Conqueror
+    },
+    -- Tunic of the Thousandfold Blades
+    ["87124"] = {
+        89249, -- Chest of the Shadowy Vanquisher
+    },
+    -- Gloves of the Thousandfold Blades
+    ["87125"] = {
+        89255, -- Gauntlets of the Shadowy Vanquisher
+    },
+    -- Helmet of the Thousandfold Blades
+    ["87126"] = {
+        89258, -- Helm of the Shadowy Vanquisher
+    },
+    -- Legguards of the Thousandfold Blades
+    ["87127"] = {
+        89252, -- Leggings of the Shadowy Vanquisher
+    },
+    -- Spaulders of the Thousandfold Blades
+    ["87128"] = {
+        89261, -- Shoulders of the Shadowy Vanquisher
+    },
+    -- Firebird's Tunic
+    ["87129"] = {
+        89251, -- Chest of the Shadowy Protector
+    },
+    -- Firebird's Handwraps
+    ["87130"] = {
+        89257, -- Gauntlets of the Shadowy Protector
+    },
+    -- Firebird's Faceguard
+    ["87131"] = {
+        89260, -- Helm of the Shadowy Protector
+    },
+    -- Firebird's Legwraps
+    ["87132"] = {
+        89254, -- Leggings of the Shadowy Protector
+    },
+    -- Firebird's Mantle
+    ["87133"] = {
+        89263, -- Shoulders of the Shadowy Protector
+    },
+    -- Firebird's Cuirass
+    ["87134"] = {
+        89251, -- Chest of the Shadowy Protector
+    },
+    -- Firebird's Grips
+    ["87135"] = {
+        89257, -- Gauntlets of the Shadowy Protector
+    },
+    -- Firebird's Helmet
+    ["87136"] = {
+        89260, -- Helm of the Shadowy Protector
+    },
+    -- Firebird's Legguards
+    ["87137"] = {
+        89254, -- Leggings of the Shadowy Protector
+    },
+    -- Firebird's Spaulders
+    ["87138"] = {
+        89263, -- Shoulders of the Shadowy Protector
+    },
+    -- Firebird's Hauberk
+    ["87139"] = {
+        89251, -- Chest of the Shadowy Protector
+    },
+    -- Firebird's Gloves
+    ["87140"] = {
+        89257, -- Gauntlets of the Shadowy Protector
+    },
+    -- Firebird's Headpiece
+    ["87141"] = {
+        89260, -- Helm of the Shadowy Protector
+    },
+    -- Firebird's Kilt
+    ["87142"] = {
+        89254, -- Leggings of the Shadowy Protector
+    },
+    -- Firebird's Shoulderwraps
+    ["87143"] = {
+        89263, -- Shoulders of the Shadowy Protector
+    },
+    -- Sha-Skin Gloves
+    ["87187"] = {
+        89256, -- Gauntlets of the Shadowy Conqueror
+    },
+    -- Sha-Skin Hood
+    ["87188"] = {
+        89259, -- Helm of the Shadowy Conqueror
+    },
+    -- Sha-Skin Leggings
+    ["87189"] = {
+        89253, -- Leggings of the Shadowy Conqueror
+    },
+    -- Sha-Skin Robes
+    ["87190"] = {
+        89250, -- Chest of the Shadowy Conqueror
+    },
+    -- Sha-Skin Mantle
+    ["87191"] = {
+        89262, -- Shoulders of the Shadowy Conqueror
+    },
+    -- Helmet of Resounding Rings
+    ["87192"] = {
+        89260, -- Helm of the Shadowy Protector
+    },
+    -- Battleplate of Resounding Rings
+    ["87193"] = {
+        89251, -- Chest of the Shadowy Protector
+    },
+    -- Gauntlets of Resounding Rings
+    ["87194"] = {
+        89257, -- Gauntlets of the Shadowy Protector
+    },
+    -- Legplates of Resounding Rings
+    ["87195"] = {
+        89254, -- Leggings of the Shadowy Protector
+    },
+    -- Pauldrons of Resounding Rings
+    ["87196"] = {
+        89263, -- Shoulders of the Shadowy Protector
+    },
+    -- Chestguard of Resounding Rings
+    ["87197"] = {
+        89251, -- Chest of the Shadowy Protector
+    },
+    -- Handguards of Resounding Rings
+    ["87198"] = {
+        89257, -- Gauntlets of the Shadowy Protector
+    },
+    -- Faceguard of Resounding Rings
+    ["87199"] = {
+        89260, -- Helm of the Shadowy Protector
+    },
+    -- Legguards of Resounding Rings
+    ["87200"] = {
+        89254, -- Leggings of the Shadowy Protector
+    },
+    -- Shoulderguards of Resounding Rings
+    ["87201"] = {
+        89263, -- Shoulders of the Shadowy Protector
+    },
+    -- Helm of the Shadowy Vanquisher
+    ["89234"] = {
+        85301, -- Helmet of the Thousandfold Blades
+        85307, -- Eternal Blossom Cover
+        85311, -- Eternal Blossom Headpiece
+        85316, -- Faceguard of the Lost Catacomb
+        85336, -- Helmet of the Lost Catacomb
+        85357, -- Eternal Blossom Helm
+        85377, -- Hood of the Burning Scroll
+        85381, -- Eternal Blossom Headguard
+    },
+    -- Helm of the Shadowy Conqueror
+    ["89235"] = {
+        85321, -- White Tiger Faceguard
+        85341, -- White Tiger Helmet
+        85346, -- White Tiger Headguard
+        85362, -- Guardian Serpent Cowl
+        85365, -- Guardian Serpent Hood
+        85370, -- Sha-Skin Hood
+    },
+    -- Helm of the Shadowy Protector
+    ["89236"] = {
+        85286, -- Firebird's Helmet
+        85291, -- Firebird's Headpiece
+        85296, -- Yaungol Slayer's Headguard
+        85326, -- Faceguard of Resounding Rings
+        85333, -- Helmet of Resounding Rings
+        85351, -- Firebird's Faceguard
+        85386, -- Red Crane Crown
+        85390, -- Red Crane Helm
+        85396, -- Red Crane Headpiece
+    },
+    -- Chest of the Shadowy Conqueror
+    ["89237"] = {
+        85323, -- White Tiger Chestguard
+        85343, -- White Tiger Battleplate
+        85348, -- White Tiger Breastplate
+        85360, -- Guardian Serpent Robes
+        85367, -- Guardian Serpent Raiment
+        85372, -- Sha-Skin Robes
+    },
+    -- Chest of the Shadowy Protector
+    ["89238"] = {
+        85288, -- Firebird's Cuirass
+        85289, -- Firebird's Hauberk
+        85298, -- Yaungol Slayer's Tunic
+        85328, -- Chestguard of Resounding Rings
+        85332, -- Battleplate of Resounding Rings
+        85353, -- Firebird's Tunic
+        85388, -- Red Crane Chestguard
+        85392, -- Red Crane Vest
+        85394, -- Red Crane Tunic
+    },
+    -- Chest of the Shadowy Vanquisher
+    ["89239"] = {
+        85303, -- Tunic of the Thousandfold Blades
+        85305, -- Eternal Blossom Vestment
+        85313, -- Eternal Blossom Raiment
+        85318, -- Chestguard of the Lost Catacomb
+        85338, -- Breastplate of the Lost Catacomb
+        85355, -- Eternal Blossom Robes
+        85375, -- Robes of the Burning Scroll
+        85379, -- Eternal Blossom Tunic
+    },
+    -- Gauntlets of the Shadowy Conqueror
+    ["89240"] = {
+        85322, -- White Tiger Handguards
+        85342, -- White Tiger Gauntlets
+        85347, -- White Tiger Gloves
+        85363, -- Guardian Serpent Handwraps
+        85364, -- Guardian Serpent Gloves
+        85369, -- Sha-Skin Gloves
+    },
+    -- Gauntlets of the Shadowy Protector
+    ["89241"] = {
+        85287, -- Firebird's Grips
+        85290, -- Firebird's Gloves
+        85297, -- Yaungol Slayer's Gloves
+        85327, -- Handguards of Resounding Rings
+        85331, -- Gauntlets of Resounding Rings
+        85352, -- Firebird's Handwraps
+        85387, -- Red Crane Gauntlets
+        85389, -- Red Crane Handwraps
+        85395, -- Red Crane Grips
+    },
+    -- Gauntlets of the Shadowy Vanquisher
+    ["89242"] = {
+        85302, -- Gloves of the Thousandfold Blades
+        85308, -- Eternal Blossom Gloves
+        85312, -- Eternal Blossom Grips
+        85317, -- Handguards of the Lost Catacomb
+        85337, -- Gauntlets of the Lost Catacomb
+        85358, -- Eternal Blossom Handwraps
+        85378, -- Gloves of the Burning Scroll
+        85380, -- Eternal Blossom Handguards
+    },
+    -- Leggings of the Shadowy Conqueror
+    ["89243"] = {
+        85320, -- White Tiger Legguards
+        85340, -- White Tiger Legplates
+        85345, -- White Tiger Greaves
+        85361, -- Guardian Serpent Legwraps
+        85366, -- Guardian Serpent Leggings
+        85371, -- Sha-Skin Leggings
+    },
+    -- Leggings of the Shadowy Protector
+    ["89244"] = {
+        85285, -- Firebird's Legguards
+        85292, -- Firebird's Kilt
+        85295, -- Yaungol Slayer's Legguards
+        85325, -- Legguards of Resounding Rings
+        85330, -- Legplates of Resounding Rings
+        85350, -- Firebird's Legwraps
+        85385, -- Red Crane Legguards
+        85391, -- Red Crane Legwraps
+        85397, -- Red Crane Leggings
+    },
+    -- Leggings of the Shadowy Vanquisher
+    ["89245"] = {
+        85300, -- Legguards of the Thousandfold Blades
+        85306, -- Eternal Blossom Leggings
+        85310, -- Eternal Blossom Legguards
+        85315, -- Legguards of the Lost Catacomb
+        85335, -- Greaves of the Lost Catacomb
+        85356, -- Eternal Blossom Legwraps
+        85376, -- Leggings of the Burning Scroll
+        85382, -- Eternal Blossom Breeches
+    },
+    -- Shoulders of the Shadowy Conqueror
+    ["89246"] = {
+        85319, -- White Tiger Shoulderguards
+        85339, -- White Tiger Pauldrons
+        85344, -- White Tiger Mantle
+        85359, -- Guardian Serpent Mantle
+        85368, -- Guardian Serpent Shoulderguards
+        85373, -- Sha-Skin Mantle
+    },
+    -- Shoulders of the Shadowy Protector
+    ["89247"] = {
+        85284, -- Firebird's Spaulders
+        85293, -- Firebird's Shoulderwraps
+        85294, -- Yaungol Slayer's Spaulders
+        85324, -- Shoulderguards of Resounding Rings
+        85329, -- Pauldrons of Resounding Rings
+        85349, -- Firebird's Mantle
+        85384, -- Red Crane Shoulderguards
+        85393, -- Red Crane Mantle
+        85398, -- Red Crane Spaulders
+    },
+    -- Shoulders of the Shadowy Vanquisher
+    ["89248"] = {
+        85299, -- Spaulders of the Thousandfold Blades
+        85304, -- Eternal Blossom Shoulderwraps
+        85309, -- Eternal Blossom Spaulders
+        85314, -- Shoulderguards of the Lost Catacomb
+        85334, -- Pauldrons of the Lost Catacomb
+        85354, -- Eternal Blossom Mantle
+        85374, -- Mantle of the Burning Scroll
+        85383, -- Eternal Blossom Shoulderguards
+    },
+    -- Chest of the Shadowy Vanquisher
+    ["89249"] = {
+        86913, -- Breastplate of the Lost Catacomb
+        86918, -- Chestguard of the Lost Catacomb
+        86923, -- Eternal Blossom Raiment
+        86931, -- Eternal Blossom Robes
+        86936, -- Eternal Blossom Vestment
+        86938, -- Eternal Blossom Tunic
+        87010, -- Robes of the Burning Scroll
+        87124, -- Tunic of the Thousandfold Blades
+    },
+    -- Chest of the Shadowy Conqueror
+    ["89250"] = {
+        87099, -- White Tiger Battleplate
+        87104, -- White Tiger Breastplate
+        87109, -- White Tiger Chestguard
+        87117, -- Guardian Serpent Robes
+        87122, -- Guardian Serpent Raiment
+        87190, -- Sha-Skin Robes
+    },
+    -- Chest of the Shadowy Protector
+    ["89251"] = {
+        87002, -- Yaungol Slayer's Tunic
+        87084, -- Red Crane Tunic
+        87092, -- Red Crane Vest
+        87094, -- Red Crane Chestguard
+        87129, -- Firebird's Tunic
+        87134, -- Firebird's Cuirass
+        87139, -- Firebird's Hauberk
+        87193, -- Battleplate of Resounding Rings
+        87197, -- Chestguard of Resounding Rings
+    },
+    -- Leggings of the Shadowy Vanquisher
+    ["89252"] = {
+        86916, -- Greaves of the Lost Catacomb
+        86921, -- Legguards of the Lost Catacomb
+        86926, -- Eternal Blossom Legguards
+        86930, -- Eternal Blossom Legwraps
+        86935, -- Eternal Blossom Leggings
+        86941, -- Eternal Blossom Breeches
+        87009, -- Leggings of the Burning Scroll
+        87127, -- Legguards of the Thousandfold Blades
+    },
+    -- Leggings of the Shadowy Conqueror
+    ["89253"] = {
+        87102, -- White Tiger Legplates
+        87107, -- White Tiger Greaves
+        87112, -- White Tiger Legguards
+        87116, -- Guardian Serpent Legwraps
+        87121, -- Guardian Serpent Leggings
+        87189, -- Sha-Skin Leggings
+    },
+    -- Leggings of the Shadowy Protector
+    ["89254"] = {
+        87005, -- Yaungol Slayer's Legguards
+        87087, -- Red Crane Leggings
+        87091, -- Red Crane Legwraps
+        87097, -- Red Crane Legguards
+        87132, -- Firebird's Legwraps
+        87137, -- Firebird's Legguards
+        87142, -- Firebird's Kilt
+        87195, -- Legplates of Resounding Rings
+        87200, -- Legguards of Resounding Rings
+    },
+    -- Gauntlets of the Shadowy Vanquisher
+    ["89255"] = {
+        86914, -- Gauntlets of the Lost Catacomb
+        86919, -- Handguards of the Lost Catacomb
+        86924, -- Eternal Blossom Grips
+        86928, -- Eternal Blossom Handwraps
+        86933, -- Eternal Blossom Gloves
+        86939, -- Eternal Blossom Handguards
+        87007, -- Gloves of the Burning Scroll
+        87125, -- Gloves of the Thousandfold Blades
+    },
+    -- Gauntlets of the Shadowy Conqueror
+    ["89256"] = {
+        87100, -- White Tiger Gauntlets
+        87105, -- White Tiger Gloves
+        87110, -- White Tiger Handguards
+        87114, -- Guardian Serpent Handwraps
+        87119, -- Guardian Serpent Gloves
+        87187, -- Sha-Skin Gloves
+    },
+    -- Gauntlets of the Shadowy Protector
+    ["89257"] = {
+        87003, -- Yaungol Slayer's Gloves
+        87085, -- Red Crane Grips
+        87089, -- Red Crane Handwraps
+        87095, -- Red Crane Gauntlets
+        87130, -- Firebird's Handwraps
+        87135, -- Firebird's Grips
+        87140, -- Firebird's Gloves
+        87194, -- Gauntlets of Resounding Rings
+        87198, -- Handguards of Resounding Rings
+    },
+    -- Helm of the Shadowy Vanquisher
+    ["89258"] = {
+        86915, -- Helmet of the Lost Catacomb
+        86920, -- Faceguard of the Lost Catacomb
+        86925, -- Eternal Blossom Headpiece
+        86929, -- Eternal Blossom Helm
+        86934, -- Eternal Blossom Cover
+        86940, -- Eternal Blossom Headguard
+        87008, -- Hood of the Burning Scroll
+        87126, -- Helmet of the Thousandfold Blades
+    },
+    -- Helm of the Shadowy Conqueror
+    ["89259"] = {
+        87101, -- White Tiger Helmet
+        87106, -- White Tiger Headguard
+        87111, -- White Tiger Faceguard
+        87115, -- Guardian Serpent Cowl
+        87120, -- Guardian Serpent Hood
+        87188, -- Sha-Skin Hood
+    },
+    -- Helm of the Shadowy Protector
+    ["89260"] = {
+        87004, -- Yaungol Slayer's Headguard
+        87086, -- Red Crane Headpiece
+        87090, -- Red Crane Helm
+        87096, -- Red Crane Crown
+        87131, -- Firebird's Faceguard
+        87136, -- Firebird's Helmet
+        87141, -- Firebird's Headpiece
+        87192, -- Helmet of Resounding Rings
+        87199, -- Faceguard of Resounding Rings
+    },
+    -- Shoulders of the Shadowy Vanquisher
+    ["89261"] = {
+        86917, -- Pauldrons of the Lost Catacomb
+        86922, -- Shoulderguards of the Lost Catacomb
+        86927, -- Eternal Blossom Spaulders
+        86932, -- Eternal Blossom Mantle
+        86937, -- Eternal Blossom Shoulderwraps
+        86942, -- Eternal Blossom Shoulderguards
+        87011, -- Mantle of the Burning Scroll
+        87128, -- Spaulders of the Thousandfold Blades
+    },
+    -- Shoulders of the Shadowy Conqueror
+    ["89262"] = {
+        87103, -- White Tiger Pauldrons
+        87108, -- White Tiger Mantle
+        87113, -- White Tiger Shoulderguards
+        87118, -- Guardian Serpent Mantle
+        87123, -- Guardian Serpent Shoulderguards
+        87191, -- Sha-Skin Mantle
+    },
+    -- Shoulders of the Shadowy Protector
+    ["89263"] = {
+        87006, -- Yaungol Slayer's Spaulders
+        87088, -- Red Crane Spaulders
+        87093, -- Red Crane Mantle
+        87098, -- Red Crane Shoulderguards
+        87133, -- Firebird's Mantle
+        87138, -- Firebird's Spaulders
+        87143, -- Firebird's Shoulderwraps
+        87196, -- Pauldrons of Resounding Rings
+        87201, -- Shoulderguards of Resounding Rings
+    },
+    -- Chest of the Shadowy Vanquisher
+    ["89264"] = {
+        86643, -- Tunic of the Thousandfold Blades
+        86645, -- Eternal Blossom Vestment
+        86653, -- Eternal Blossom Raiment
+        86658, -- Chestguard of the Lost Catacomb
+        86678, -- Breastplate of the Lost Catacomb
+        86695, -- Eternal Blossom Robes
+        86715, -- Robes of the Burning Scroll
+        86719, -- Eternal Blossom Tunic
+    },
+    -- Chest of the Shadowy Conqueror
+    ["89265"] = {
+        86663, -- White Tiger Chestguard
+        86683, -- White Tiger Battleplate
+        86688, -- White Tiger Breastplate
+        86700, -- Guardian Serpent Robes
+        86707, -- Guardian Serpent Raiment
+        86712, -- Sha-Skin Robes
+    },
+    -- Chest of the Shadowy Protector
+    ["89266"] = {
+        86628, -- Firebird's Cuirass
+        86629, -- Firebird's Hauberk
+        86638, -- Yaungol Slayer's Tunic
+        86668, -- Chestguard of Resounding Rings
+        86672, -- Battleplate of Resounding Rings
+        86693, -- Firebird's Tunic
+        86728, -- Red Crane Chestguard
+        86732, -- Red Crane Vest
+        86734, -- Red Crane Tunic
+    },
+    -- Leggings of the Shadowy Vanquisher
+    ["89267"] = {
+        86640, -- Legguards of the Thousandfold Blades
+        86646, -- Eternal Blossom Leggings
+        86650, -- Eternal Blossom Legguards
+        86655, -- Legguards of the Lost Catacomb
+        86675, -- Greaves of the Lost Catacomb
+        86696, -- Eternal Blossom Legwraps
+        86716, -- Leggings of the Burning Scroll
+        86722, -- Eternal Blossom Breeches
+    },
+    -- Leggings of the Shadowy Conqueror
+    ["89268"] = {
+        86660, -- White Tiger Legguards
+        86680, -- White Tiger Legplates
+        86685, -- White Tiger Greaves
+        86701, -- Guardian Serpent Legwraps
+        86706, -- Guardian Serpent Leggings
+        86711, -- Sha-Skin Leggings
+    },
+    -- Leggings of the Shadowy Protector
+    ["89269"] = {
+        86625, -- Firebird's Legguards
+        86632, -- Firebird's Kilt
+        86635, -- Yaungol Slayer's Legguards
+        86665, -- Legguards of Resounding Rings
+        86670, -- Legplates of Resounding Rings
+        86690, -- Firebird's Legwraps
+        86725, -- Red Crane Legguards
+        86731, -- Red Crane Legwraps
+        86737, -- Red Crane Leggings
+    },
+    -- Gauntlets of the Shadowy Vanquisher
+    ["89270"] = {
+        86642, -- Gloves of the Thousandfold Blades
+        86648, -- Eternal Blossom Gloves
+        86652, -- Eternal Blossom Grips
+        86657, -- Handguards of the Lost Catacomb
+        86677, -- Gauntlets of the Lost Catacomb
+        86698, -- Eternal Blossom Handwraps
+        86718, -- Gloves of the Burning Scroll
+        86720, -- Eternal Blossom Handguards
+    },
+    -- Gauntlets of the Shadowy Conqueror
+    ["89271"] = {
+        86662, -- White Tiger Handguards
+        86682, -- White Tiger Gauntlets
+        86687, -- White Tiger Gloves
+        86703, -- Guardian Serpent Handwraps
+        86704, -- Guardian Serpent Gloves
+        86709, -- Sha-Skin Gloves
+    },
+    -- Gauntlets of the Shadowy Protector
+    ["89272"] = {
+        86627, -- Firebird's Grips
+        86630, -- Firebird's Gloves
+        86637, -- Yaungol Slayer's Gloves
+        86667, -- Handguards of Resounding Rings
+        86671, -- Gauntlets of Resounding Rings
+        86692, -- Firebird's Handwraps
+        86727, -- Red Crane Gauntlets
+        86729, -- Red Crane Handwraps
+        86735, -- Red Crane Grips
+    },
+    -- Helm of the Shadowy Vanquisher
+    ["89273"] = {
+        86641, -- Helmet of the Thousandfold Blades
+        86647, -- Eternal Blossom Cover
+        86651, -- Eternal Blossom Headpiece
+        86656, -- Faceguard of the Lost Catacomb
+        86676, -- Helmet of the Lost Catacomb
+        86697, -- Eternal Blossom Helm
+        86717, -- Hood of the Burning Scroll
+        86721, -- Eternal Blossom Headguard
+    },
+    -- Helm of the Shadowy Conqueror
+    ["89274"] = {
+        86661, -- White Tiger Faceguard
+        86681, -- White Tiger Helmet
+        86686, -- White Tiger Headguard
+        86702, -- Guardian Serpent Cowl
+        86705, -- Guardian Serpent Hood
+        86710, -- Sha-Skin Hood
+    },
+    -- Helm of the Shadowy Protector
+    ["89275"] = {
+        86626, -- Firebird's Helmet
+        86631, -- Firebird's Headpiece
+        86636, -- Yaungol Slayer's Headguard
+        86666, -- Faceguard of Resounding Rings
+        86673, -- Helmet of Resounding Rings
+        86691, -- Firebird's Faceguard
+        86726, -- Red Crane Crown
+        86730, -- Red Crane Helm
+        86736, -- Red Crane Headpiece
+    },
+    -- Shoulders of the Shadowy Vanquisher
+    ["89276"] = {
+        86639, -- Spaulders of the Thousandfold Blades
+        86644, -- Eternal Blossom Shoulderwraps
+        86649, -- Eternal Blossom Spaulders
+        86654, -- Shoulderguards of the Lost Catacomb
+        86674, -- Pauldrons of the Lost Catacomb
+        86694, -- Eternal Blossom Mantle
+        86714, -- Mantle of the Burning Scroll
+        86723, -- Eternal Blossom Shoulderguards
+    },
+    -- Shoulders of the Shadowy Conqueror
+    ["89277"] = {
+        86659, -- White Tiger Shoulderguards
+        86679, -- White Tiger Pauldrons
+        86684, -- White Tiger Mantle
+        86699, -- Guardian Serpent Mantle
+        86708, -- Guardian Serpent Shoulderguards
+        86713, -- Sha-Skin Mantle
+    },
+    -- Shoulders of the Shadowy Protector
+    ["89278"] = {
+        86624, -- Firebird's Spaulders
+        86633, -- Firebird's Shoulderwraps
+        86634, -- Yaungol Slayer's Spaulders
+        86664, -- Shoulderguards of Resounding Rings
+        86669, -- Pauldrons of Resounding Rings
+        86689, -- Firebird's Mantle
+        86724, -- Red Crane Shoulderguards
+        86733, -- Red Crane Mantle
+        86738, -- Red Crane Spaulders
+    },
+    -- Breastplate of the All-Consuming Maw
+    ["95225"] = {
+        95569, -- Chest of the Crackling Vanquisher
+    },
+    -- Gauntlets of the All-Consuming Maw
+    ["95226"] = {
+        95570, -- Gauntlets of the Crackling Vanquisher
+    },
+    -- Helmet of the All-Consuming Maw
+    ["95227"] = {
+        95571, -- Helm of the Crackling Vanquisher
+    },
+    -- Greaves of the All-Consuming Maw
+    ["95228"] = {
+        95572, -- Leggings of the Crackling Vanquisher
+    },
+    -- Pauldrons of the All-Consuming Maw
+    ["95229"] = {
+        95573, -- Shoulders of the Crackling Vanquisher
+    },
+    -- Chestguard of the All-Consuming Maw
+    ["95230"] = {
+        95569, -- Chest of the Crackling Vanquisher
+    },
+    -- Handguards of the All-Consuming Maw
+    ["95231"] = {
+        95570, -- Gauntlets of the Crackling Vanquisher
+    },
+    -- Faceguard of the All-Consuming Maw
+    ["95232"] = {
+        95571, -- Helm of the Crackling Vanquisher
+    },
+    -- Legguards of the All-Consuming Maw
+    ["95233"] = {
+        95572, -- Leggings of the Crackling Vanquisher
+    },
+    -- Shoulderguards of the All-Consuming Maw
+    ["95234"] = {
+        95573, -- Shoulders of the Crackling Vanquisher
+    },
+    -- Raiment of the Haunted Forest
+    ["95235"] = {
+        95569, -- Chest of the Crackling Vanquisher
+    },
+    -- Grips of the Haunted Forest
+    ["95236"] = {
+        95570, -- Gauntlets of the Crackling Vanquisher
+    },
+    -- Headpiece of the Haunted Forest
+    ["95237"] = {
+        95571, -- Helm of the Crackling Vanquisher
+    },
+    -- Legguards of the Haunted Forest
+    ["95238"] = {
+        95572, -- Leggings of the Crackling Vanquisher
+    },
+    -- Spaulders of the Haunted Forest
+    ["95239"] = {
+        95573, -- Shoulders of the Crackling Vanquisher
+    },
+    -- Handwraps of the Haunted Forest
+    ["95240"] = {
+        95570, -- Gauntlets of the Crackling Vanquisher
+    },
+    -- Helm of the Haunted Forest
+    ["95241"] = {
+        95571, -- Helm of the Crackling Vanquisher
+    },
+    -- Legwraps of the Haunted Forest
+    ["95242"] = {
+        95572, -- Leggings of the Crackling Vanquisher
+    },
+    -- Robes of the Haunted Forest
+    ["95243"] = {
+        95569, -- Chest of the Crackling Vanquisher
+    },
+    -- Mantle of the Haunted Forest
+    ["95244"] = {
+        95573, -- Shoulders of the Crackling Vanquisher
+    },
+    -- Gloves of the Haunted Forest
+    ["95245"] = {
+        95570, -- Gauntlets of the Crackling Vanquisher
+    },
+    -- Cover of the Haunted Forest
+    ["95246"] = {
+        95571, -- Helm of the Crackling Vanquisher
+    },
+    -- Leggings of the Haunted Forest
+    ["95247"] = {
+        95572, -- Leggings of the Crackling Vanquisher
+    },
+    -- Vestment of the Haunted Forest
+    ["95248"] = {
+        95569, -- Chest of the Crackling Vanquisher
+    },
+    -- Shoulderwraps of the Haunted Forest
+    ["95249"] = {
+        95573, -- Shoulders of the Crackling Vanquisher
+    },
+    -- Tunic of the Haunted Forest
+    ["95250"] = {
+        95569, -- Chest of the Crackling Vanquisher
+    },
+    -- Handguards of the Haunted Forest
+    ["95251"] = {
+        95570, -- Gauntlets of the Crackling Vanquisher
+    },
+    -- Headguard of the Haunted Forest
+    ["95252"] = {
+        95571, -- Helm of the Crackling Vanquisher
+    },
+    -- Breeches of the Haunted Forest
+    ["95253"] = {
+        95572, -- Leggings of the Crackling Vanquisher
+    },
+    -- Shoulderguards of the Haunted Forest
+    ["95254"] = {
+        95573, -- Shoulders of the Crackling Vanquisher
+    },
+    -- Saurok Stalker's Tunic
+    ["95255"] = {
+        95579, -- Chest of the Crackling Protector
+    },
+    -- Saurok Stalker's Gloves
+    ["95256"] = {
+        95580, -- Gauntlets of the Crackling Protector
+    },
+    -- Saurok Stalker's Headguard
+    ["95257"] = {
+        95582, -- Helm of the Crackling Protector
+    },
+    -- Saurok Stalker's Legguards
+    ["95258"] = {
+        95581, -- Leggings of the Crackling Protector
+    },
+    -- Saurok Stalker's Spaulders
+    ["95259"] = {
+        95583, -- Shoulders of the Crackling Protector
+    },
+    -- Gloves of the Chromatic Hydra
+    ["95260"] = {
+        95570, -- Gauntlets of the Crackling Vanquisher
+    },
+    -- Hood of the Chromatic Hydra
+    ["95261"] = {
+        95571, -- Helm of the Crackling Vanquisher
+    },
+    -- Leggings of the Chromatic Hydra
+    ["95262"] = {
+        95572, -- Leggings of the Crackling Vanquisher
+    },
+    -- Robes of the Chromatic Hydra
+    ["95263"] = {
+        95569, -- Chest of the Crackling Vanquisher
+    },
+    -- Mantle of the Chromatic Hydra
+    ["95264"] = {
+        95573, -- Shoulders of the Crackling Vanquisher
+    },
+    -- Fire-Charm Tunic
+    ["95265"] = {
+        95579, -- Chest of the Crackling Protector
+    },
+    -- Fire-Charm Grips
+    ["95266"] = {
+        95580, -- Gauntlets of the Crackling Protector
+    },
+    -- Fire-Charm Headpiece
+    ["95267"] = {
+        95582, -- Helm of the Crackling Protector
+    },
+    -- Fire-Charm Leggings
+    ["95268"] = {
+        95581, -- Leggings of the Crackling Protector
+    },
+    -- Fire-Charm Spaulders
+    ["95269"] = {
+        95583, -- Shoulders of the Crackling Protector
+    },
+    -- Fire-Charm Handwraps
+    ["95270"] = {
+        95580, -- Gauntlets of the Crackling Protector
+    },
+    -- Fire-Charm Helm
+    ["95271"] = {
+        95582, -- Helm of the Crackling Protector
+    },
+    -- Fire-Charm Legwraps
+    ["95272"] = {
+        95581, -- Leggings of the Crackling Protector
+    },
+    -- Fire-Charm Vest
+    ["95273"] = {
+        95579, -- Chest of the Crackling Protector
+    },
+    -- Fire-Charm Mantle
+    ["95274"] = {
+        95583, -- Shoulders of the Crackling Protector
+    },
+    -- Fire-Charm Chestguard
+    ["95275"] = {
+        95579, -- Chest of the Crackling Protector
+    },
+    -- Fire-Charm Gauntlets
+    ["95276"] = {
+        95580, -- Gauntlets of the Crackling Protector
+    },
+    -- Fire-Charm Crown
+    ["95277"] = {
+        95582, -- Helm of the Crackling Protector
+    },
+    -- Fire-Charm Legguards
+    ["95278"] = {
+        95581, -- Leggings of the Crackling Protector
+    },
+    -- Fire-Charm Shoulderguards
+    ["95279"] = {
+        95583, -- Shoulders of the Crackling Protector
+    },
+    -- Lightning Emperor's Battleplate
+    ["95280"] = {
+        95574, -- Chest of the Crackling Conqueror
+    },
+    -- Lightning Emperor's Gauntlets
+    ["95281"] = {
+        95575, -- Gauntlets of the Crackling Conqueror
+    },
+    -- Lightning Emperor's Helmet
+    ["95282"] = {
+        95577, -- Helm of the Crackling Conqueror
+    },
+    -- Lightning Emperor's Legplates
+    ["95283"] = {
+        95576, -- Leggings of the Crackling Conqueror
+    },
+    -- Lightning Emperor's Pauldrons
+    ["95284"] = {
+        95578, -- Shoulders of the Crackling Conqueror
+    },
+    -- Lightning Emperor's Breastplate
+    ["95285"] = {
+        95574, -- Chest of the Crackling Conqueror
+    },
+    -- Lightning Emperor's Gloves
+    ["95286"] = {
+        95575, -- Gauntlets of the Crackling Conqueror
+    },
+    -- Lightning Emperor's Headguard
+    ["95287"] = {
+        95577, -- Helm of the Crackling Conqueror
+    },
+    -- Lightning Emperor's Greaves
+    ["95288"] = {
+        95576, -- Leggings of the Crackling Conqueror
+    },
+    -- Lightning Emperor's Mantle
+    ["95289"] = {
+        95578, -- Shoulders of the Crackling Conqueror
+    },
+    -- Lightning Emperor's Chestguard
+    ["95290"] = {
+        95574, -- Chest of the Crackling Conqueror
+    },
+    -- Lightning Emperor's Handguards
+    ["95291"] = {
+        95575, -- Gauntlets of the Crackling Conqueror
+    },
+    -- Lightning Emperor's Faceguard
+    ["95292"] = {
+        95577, -- Helm of the Crackling Conqueror
+    },
+    -- Lightning Emperor's Legguards
+    ["95293"] = {
+        95576, -- Leggings of the Crackling Conqueror
+    },
+    -- Lightning Emperor's Shoulderguards
+    ["95294"] = {
+        95578, -- Shoulders of the Crackling Conqueror
+    },
+    -- Handwraps of the Exorcist
+    ["95295"] = {
+        95575, -- Gauntlets of the Crackling Conqueror
+    },
+    -- Cowl of the Exorcist
+    ["95296"] = {
+        95577, -- Helm of the Crackling Conqueror
+    },
+    -- Legwraps of the Exorcist
+    ["95297"] = {
+        95576, -- Leggings of the Crackling Conqueror
+    },
+    -- Robes of the Exorcist
+    ["95298"] = {
+        95574, -- Chest of the Crackling Conqueror
+    },
+    -- Mantle of the Exorcist
+    ["95299"] = {
+        95578, -- Shoulders of the Crackling Conqueror
+    },
+    -- Gloves of the Exorcist
+    ["95300"] = {
+        95575, -- Gauntlets of the Crackling Conqueror
+    },
+    -- Hood of the Exorcist
+    ["95301"] = {
+        95577, -- Helm of the Crackling Conqueror
+    },
+    -- Leggings of the Exorcist
+    ["95302"] = {
+        95576, -- Leggings of the Crackling Conqueror
+    },
+    -- Raiment of the Exorcist
+    ["95303"] = {
+        95574, -- Chest of the Crackling Conqueror
+    },
+    -- Shoulderguards of the Exorcist
+    ["95304"] = {
+        95578, -- Shoulders of the Crackling Conqueror
+    },
+    -- Nine-Tailed Tunic
+    ["95305"] = {
+        95569, -- Chest of the Crackling Vanquisher
+    },
+    -- Nine-Tailed Gloves
+    ["95306"] = {
+        95570, -- Gauntlets of the Crackling Vanquisher
+    },
+    -- Nine-Tailed Helmet
+    ["95307"] = {
+        95571, -- Helm of the Crackling Vanquisher
+    },
+    -- Nine-Tailed Legguards
+    ["95308"] = {
+        95572, -- Leggings of the Crackling Vanquisher
+    },
+    -- Nine-Tailed Spaulders
+    ["95309"] = {
+        95573, -- Shoulders of the Crackling Vanquisher
+    },
+    -- Tunic of the Witch Doctor
+    ["95310"] = {
+        95579, -- Chest of the Crackling Protector
+    },
+    -- Handwraps of the Witch Doctor
+    ["95311"] = {
+        95580, -- Gauntlets of the Crackling Protector
+    },
+    -- Faceguard of the Witch Doctor
+    ["95312"] = {
+        95582, -- Helm of the Crackling Protector
+    },
+    -- Legwraps of the Witch Doctor
+    ["95313"] = {
+        95581, -- Leggings of the Crackling Protector
+    },
+    -- Mantle of the Witch Doctor
+    ["95314"] = {
+        95583, -- Shoulders of the Crackling Protector
+    },
+    -- Cuirass of the Witch Doctor
+    ["95315"] = {
+        95579, -- Chest of the Crackling Protector
+    },
+    -- Grips of the Witch Doctor
+    ["95316"] = {
+        95580, -- Gauntlets of the Crackling Protector
+    },
+    -- Helmet of the Witch Doctor
+    ["95317"] = {
+        95582, -- Helm of the Crackling Protector
+    },
+    -- Legguards of the Witch Doctor
+    ["95318"] = {
+        95581, -- Leggings of the Crackling Protector
+    },
+    -- Spaulders of the Witch Doctor
+    ["95319"] = {
+        95583, -- Shoulders of the Crackling Protector
+    },
+    -- Hauberk of the Witch Doctor
+    ["95320"] = {
+        95579, -- Chest of the Crackling Protector
+    },
+    -- Gloves of the Witch Doctor
+    ["95321"] = {
+        95580, -- Gauntlets of the Crackling Protector
+    },
+    -- Headpiece of the Witch Doctor
+    ["95322"] = {
+        95582, -- Helm of the Crackling Protector
+    },
+    -- Kilt of the Witch Doctor
+    ["95323"] = {
+        95581, -- Leggings of the Crackling Protector
+    },
+    -- Shoulderwraps of the Witch Doctor
+    ["95324"] = {
+        95583, -- Shoulders of the Crackling Protector
+    },
+    -- Gloves of the Thousandfold Hells
+    ["95325"] = {
+        95575, -- Gauntlets of the Crackling Conqueror
+    },
+    -- Hood of the Thousandfold Hells
+    ["95326"] = {
+        95577, -- Helm of the Crackling Conqueror
+    },
+    -- Leggings of the Thousandfold Hells
+    ["95327"] = {
+        95576, -- Leggings of the Crackling Conqueror
+    },
+    -- Robes of the Thousandfold Hells
+    ["95328"] = {
+        95574, -- Chest of the Crackling Conqueror
+    },
+    -- Mantle of the Thousandfold Hells
+    ["95329"] = {
+        95578, -- Shoulders of the Crackling Conqueror
+    },
+    -- Helmet of the Last Mogu
+    ["95330"] = {
+        95582, -- Helm of the Crackling Protector
+    },
+    -- Battleplate of the Last Mogu
+    ["95331"] = {
+        95579, -- Chest of the Crackling Protector
+    },
+    -- Gauntlets of the Last Mogu
+    ["95332"] = {
+        95580, -- Gauntlets of the Crackling Protector
+    },
+    -- Legplates of the Last Mogu
+    ["95333"] = {
+        95581, -- Leggings of the Crackling Protector
+    },
+    -- Pauldrons of the Last Mogu
+    ["95334"] = {
+        95583, -- Shoulders of the Crackling Protector
+    },
+    -- Chestguard of the Last Mogu
+    ["95335"] = {
+        95579, -- Chest of the Crackling Protector
+    },
+    -- Handguards of the Last Mogu
+    ["95336"] = {
+        95580, -- Gauntlets of the Crackling Protector
+    },
+    -- Faceguard of the Last Mogu
+    ["95337"] = {
+        95582, -- Helm of the Crackling Protector
+    },
+    -- Legguards of the Last Mogu
+    ["95338"] = {
+        95581, -- Leggings of the Crackling Protector
+    },
+    -- Shoulderguards of the Last Mogu
+    ["95339"] = {
+        95583, -- Shoulders of the Crackling Protector
+    },
+    -- Chest of the Crackling Vanquisher
+    ["95569"] = {
+        95225, -- Breastplate of the All-Consuming Maw
+        95230, -- Chestguard of the All-Consuming Maw
+        95235, -- Raiment of the Haunted Forest
+        95243, -- Robes of the Haunted Forest
+        95248, -- Vestment of the Haunted Forest
+        95250, -- Tunic of the Haunted Forest
+        95263, -- Robes of the Chromatic Hydra
+        95305, -- Nine-Tailed Tunic
+    },
+    -- Gauntlets of the Crackling Vanquisher
+    ["95570"] = {
+        95226, -- Gauntlets of the All-Consuming Maw
+        95231, -- Handguards of the All-Consuming Maw
+        95236, -- Grips of the Haunted Forest
+        95240, -- Handwraps of the Haunted Forest
+        95245, -- Gloves of the Haunted Forest
+        95251, -- Handguards of the Haunted Forest
+        95260, -- Gloves of the Chromatic Hydra
+        95306, -- Nine-Tailed Gloves
+    },
+    -- Helm of the Crackling Vanquisher
+    ["95571"] = {
+        95227, -- Helmet of the All-Consuming Maw
+        95232, -- Faceguard of the All-Consuming Maw
+        95237, -- Headpiece of the Haunted Forest
+        95241, -- Helm of the Haunted Forest
+        95246, -- Cover of the Haunted Forest
+        95252, -- Headguard of the Haunted Forest
+        95261, -- Hood of the Chromatic Hydra
+        95307, -- Nine-Tailed Helmet
+    },
+    -- Leggings of the Crackling Vanquisher
+    ["95572"] = {
+        95228, -- Greaves of the All-Consuming Maw
+        95233, -- Legguards of the All-Consuming Maw
+        95238, -- Legguards of the Haunted Forest
+        95242, -- Legwraps of the Haunted Forest
+        95247, -- Leggings of the Haunted Forest
+        95253, -- Breeches of the Haunted Forest
+        95262, -- Leggings of the Chromatic Hydra
+        95308, -- Nine-Tailed Legguards
+    },
+    -- Shoulders of the Crackling Vanquisher
+    ["95573"] = {
+        95229, -- Pauldrons of the All-Consuming Maw
+        95234, -- Shoulderguards of the All-Consuming Maw
+        95239, -- Spaulders of the Haunted Forest
+        95244, -- Mantle of the Haunted Forest
+        95249, -- Shoulderwraps of the Haunted Forest
+        95254, -- Shoulderguards of the Haunted Forest
+        95264, -- Mantle of the Chromatic Hydra
+        95309, -- Nine-Tailed Spaulders
+    },
+    -- Chest of the Crackling Conqueror
+    ["95574"] = {
+        95280, -- Lightning Emperor's Battleplate
+        95285, -- Lightning Emperor's Breastplate
+        95290, -- Lightning Emperor's Chestguard
+        95298, -- Robes of the Exorcist
+        95303, -- Raiment of the Exorcist
+        95328, -- Robes of the Thousandfold Hells
+    },
+    -- Gauntlets of the Crackling Conqueror
+    ["95575"] = {
+        95281, -- Lightning Emperor's Gauntlets
+        95286, -- Lightning Emperor's Gloves
+        95291, -- Lightning Emperor's Handguards
+        95295, -- Handwraps of the Exorcist
+        95300, -- Gloves of the Exorcist
+        95325, -- Gloves of the Thousandfold Hells
+    },
+    -- Leggings of the Crackling Conqueror
+    ["95576"] = {
+        95283, -- Lightning Emperor's Legplates
+        95288, -- Lightning Emperor's Greaves
+        95293, -- Lightning Emperor's Legguards
+        95297, -- Legwraps of the Exorcist
+        95302, -- Leggings of the Exorcist
+        95327, -- Leggings of the Thousandfold Hells
+    },
+    -- Helm of the Crackling Conqueror
+    ["95577"] = {
+        95282, -- Lightning Emperor's Helmet
+        95287, -- Lightning Emperor's Headguard
+        95292, -- Lightning Emperor's Faceguard
+        95296, -- Cowl of the Exorcist
+        95301, -- Hood of the Exorcist
+        95326, -- Hood of the Thousandfold Hells
+    },
+    -- Shoulders of the Crackling Conqueror
+    ["95578"] = {
+        95284, -- Lightning Emperor's Pauldrons
+        95289, -- Lightning Emperor's Mantle
+        95294, -- Lightning Emperor's Shoulderguards
+        95299, -- Mantle of the Exorcist
+        95304, -- Shoulderguards of the Exorcist
+        95329, -- Mantle of the Thousandfold Hells
+    },
+    -- Chest of the Crackling Protector
+    ["95579"] = {
+        95255, -- Saurok Stalker's Tunic
+        95265, -- Fire-Charm Tunic
+        95273, -- Fire-Charm Vest
+        95275, -- Fire-Charm Chestguard
+        95310, -- Tunic of the Witch Doctor
+        95315, -- Cuirass of the Witch Doctor
+        95320, -- Hauberk of the Witch Doctor
+        95331, -- Battleplate of the Last Mogu
+        95335, -- Chestguard of the Last Mogu
+    },
+    -- Gauntlets of the Crackling Protector
+    ["95580"] = {
+        95256, -- Saurok Stalker's Gloves
+        95266, -- Fire-Charm Grips
+        95270, -- Fire-Charm Handwraps
+        95276, -- Fire-Charm Gauntlets
+        95311, -- Handwraps of the Witch Doctor
+        95316, -- Grips of the Witch Doctor
+        95321, -- Gloves of the Witch Doctor
+        95332, -- Gauntlets of the Last Mogu
+        95336, -- Handguards of the Last Mogu
+    },
+    -- Leggings of the Crackling Protector
+    ["95581"] = {
+        95258, -- Saurok Stalker's Legguards
+        95268, -- Fire-Charm Leggings
+        95272, -- Fire-Charm Legwraps
+        95278, -- Fire-Charm Legguards
+        95313, -- Legwraps of the Witch Doctor
+        95318, -- Legguards of the Witch Doctor
+        95323, -- Kilt of the Witch Doctor
+        95333, -- Legplates of the Last Mogu
+        95338, -- Legguards of the Last Mogu
+    },
+    -- Helm of the Crackling Protector
+    ["95582"] = {
+        95257, -- Saurok Stalker's Headguard
+        95267, -- Fire-Charm Headpiece
+        95271, -- Fire-Charm Helm
+        95277, -- Fire-Charm Crown
+        95312, -- Faceguard of the Witch Doctor
+        95317, -- Helmet of the Witch Doctor
+        95322, -- Headpiece of the Witch Doctor
+        95330, -- Helmet of the Last Mogu
+        95337, -- Faceguard of the Last Mogu
+    },
+    -- Shoulders of the Crackling Protector
+    ["95583"] = {
+        95259, -- Saurok Stalker's Spaulders
+        95269, -- Fire-Charm Spaulders
+        95274, -- Fire-Charm Mantle
+        95279, -- Fire-Charm Shoulderguards
+        95314, -- Mantle of the Witch Doctor
+        95319, -- Spaulders of the Witch Doctor
+        95324, -- Shoulderwraps of the Witch Doctor
+        95334, -- Pauldrons of the Last Mogu
+        95339, -- Shoulderguards of the Last Mogu
+    },
+    -- Chest of the Crackling Vanquisher
+    ["95822"] = {
+        95825, -- Breastplate of the All-Consuming Maw
+        95830, -- Chestguard of the All-Consuming Maw
+        95835, -- Raiment of the Haunted Forest
+        95843, -- Robes of the Haunted Forest
+        95848, -- Vestment of the Haunted Forest
+        95850, -- Tunic of the Haunted Forest
+        95893, -- Robes of the Chromatic Hydra
+        95935, -- Nine-Tailed Tunic
+    },
+    -- Chest of the Crackling Conqueror
+    ["95823"] = {
+        95910, -- Lightning Emperor's Battleplate
+        95915, -- Lightning Emperor's Breastplate
+        95920, -- Lightning Emperor's Chestguard
+        95928, -- Robes of the Exorcist
+        95933, -- Raiment of the Exorcist
+        95984, -- Robes of the Thousandfold Hells
+    },
+    -- Chest of the Crackling Protector
+    ["95824"] = {
+        95882, -- Saurok Stalker's Tunic
+        95895, -- Fire-Charm Tunic
+        95903, -- Fire-Charm Vest
+        95905, -- Fire-Charm Chestguard
+        95940, -- Tunic of the Witch Doctor
+        95945, -- Cuirass of the Witch Doctor
+        95950, -- Hauberk of the Witch Doctor
+        95987, -- Battleplate of the Last Mogu
+        95991, -- Chestguard of the Last Mogu
+    },
+    -- Breastplate of the All-Consuming Maw
+    ["95825"] = {
+        95822, -- Chest of the Crackling Vanquisher
+    },
+    -- Gauntlets of the All-Consuming Maw
+    ["95826"] = {
+        95855, -- Gauntlets of the Crackling Vanquisher
+    },
+    -- Helmet of the All-Consuming Maw
+    ["95827"] = {
+        95879, -- Helm of the Crackling Vanquisher
+    },
+    -- Greaves of the All-Consuming Maw
+    ["95828"] = {
+        95887, -- Leggings of the Crackling Vanquisher
+    },
+    -- Pauldrons of the All-Consuming Maw
+    ["95829"] = {
+        95955, -- Shoulders of the Crackling Vanquisher
+    },
+    -- Chestguard of the All-Consuming Maw
+    ["95830"] = {
+        95822, -- Chest of the Crackling Vanquisher
+    },
+    -- Handguards of the All-Consuming Maw
+    ["95831"] = {
+        95855, -- Gauntlets of the Crackling Vanquisher
+    },
+    -- Faceguard of the All-Consuming Maw
+    ["95832"] = {
+        95879, -- Helm of the Crackling Vanquisher
+    },
+    -- Legguards of the All-Consuming Maw
+    ["95833"] = {
+        95887, -- Leggings of the Crackling Vanquisher
+    },
+    -- Shoulderguards of the All-Consuming Maw
+    ["95834"] = {
+        95955, -- Shoulders of the Crackling Vanquisher
+    },
+    -- Raiment of the Haunted Forest
+    ["95835"] = {
+        95822, -- Chest of the Crackling Vanquisher
+    },
+    -- Grips of the Haunted Forest
+    ["95836"] = {
+        95855, -- Gauntlets of the Crackling Vanquisher
+    },
+    -- Headpiece of the Haunted Forest
+    ["95837"] = {
+        95879, -- Helm of the Crackling Vanquisher
+    },
+    -- Legguards of the Haunted Forest
+    ["95838"] = {
+        95887, -- Leggings of the Crackling Vanquisher
+    },
+    -- Spaulders of the Haunted Forest
+    ["95839"] = {
+        95955, -- Shoulders of the Crackling Vanquisher
+    },
+    -- Handwraps of the Haunted Forest
+    ["95840"] = {
+        95855, -- Gauntlets of the Crackling Vanquisher
+    },
+    -- Helm of the Haunted Forest
+    ["95841"] = {
+        95879, -- Helm of the Crackling Vanquisher
+    },
+    -- Legwraps of the Haunted Forest
+    ["95842"] = {
+        95887, -- Leggings of the Crackling Vanquisher
+    },
+    -- Robes of the Haunted Forest
+    ["95843"] = {
+        95822, -- Chest of the Crackling Vanquisher
+    },
+    -- Mantle of the Haunted Forest
+    ["95844"] = {
+        95955, -- Shoulders of the Crackling Vanquisher
+    },
+    -- Gloves of the Haunted Forest
+    ["95845"] = {
+        95855, -- Gauntlets of the Crackling Vanquisher
+    },
+    -- Cover of the Haunted Forest
+    ["95846"] = {
+        95879, -- Helm of the Crackling Vanquisher
+    },
+    -- Leggings of the Haunted Forest
+    ["95847"] = {
+        95887, -- Leggings of the Crackling Vanquisher
+    },
+    -- Vestment of the Haunted Forest
+    ["95848"] = {
+        95822, -- Chest of the Crackling Vanquisher
+    },
+    -- Shoulderwraps of the Haunted Forest
+    ["95849"] = {
+        95955, -- Shoulders of the Crackling Vanquisher
+    },
+    -- Tunic of the Haunted Forest
+    ["95850"] = {
+        95822, -- Chest of the Crackling Vanquisher
+    },
+    -- Handguards of the Haunted Forest
+    ["95851"] = {
+        95855, -- Gauntlets of the Crackling Vanquisher
+    },
+    -- Headguard of the Haunted Forest
+    ["95852"] = {
+        95879, -- Helm of the Crackling Vanquisher
+    },
+    -- Breeches of the Haunted Forest
+    ["95853"] = {
+        95887, -- Leggings of the Crackling Vanquisher
+    },
+    -- Shoulderguards of the Haunted Forest
+    ["95854"] = {
+        95955, -- Shoulders of the Crackling Vanquisher
+    },
+    -- Gauntlets of the Crackling Vanquisher
+    ["95855"] = {
+        95826, -- Gauntlets of the All-Consuming Maw
+        95831, -- Handguards of the All-Consuming Maw
+        95836, -- Grips of the Haunted Forest
+        95840, -- Handwraps of the Haunted Forest
+        95845, -- Gloves of the Haunted Forest
+        95851, -- Handguards of the Haunted Forest
+        95890, -- Gloves of the Chromatic Hydra
+        95936, -- Nine-Tailed Gloves
+    },
+    -- Gauntlets of the Crackling Conqueror
+    ["95856"] = {
+        95911, -- Lightning Emperor's Gauntlets
+        95916, -- Lightning Emperor's Gloves
+        95921, -- Lightning Emperor's Handguards
+        95925, -- Handwraps of the Exorcist
+        95930, -- Gloves of the Exorcist
+        95981, -- Gloves of the Thousandfold Hells
+    },
+    -- Gauntlets of the Crackling Protector
+    ["95857"] = {
+        95883, -- Saurok Stalker's Gloves
+        95896, -- Fire-Charm Grips
+        95900, -- Fire-Charm Handwraps
+        95906, -- Fire-Charm Gauntlets
+        95941, -- Handwraps of the Witch Doctor
+        95946, -- Grips of the Witch Doctor
+        95951, -- Gloves of the Witch Doctor
+        95988, -- Gauntlets of the Last Mogu
+        95992, -- Handguards of the Last Mogu
+    },
+    -- Helm of the Crackling Vanquisher
+    ["95879"] = {
+        95827, -- Helmet of the All-Consuming Maw
+        95832, -- Faceguard of the All-Consuming Maw
+        95837, -- Headpiece of the Haunted Forest
+        95841, -- Helm of the Haunted Forest
+        95846, -- Cover of the Haunted Forest
+        95852, -- Headguard of the Haunted Forest
+        95891, -- Hood of the Chromatic Hydra
+        95937, -- Nine-Tailed Helmet
+    },
+    -- Helm of the Crackling Conqueror
+    ["95880"] = {
+        95912, -- Lightning Emperor's Helmet
+        95917, -- Lightning Emperor's Headguard
+        95922, -- Lightning Emperor's Faceguard
+        95926, -- Cowl of the Exorcist
+        95931, -- Hood of the Exorcist
+        95982, -- Hood of the Thousandfold Hells
+    },
+    -- Helm of the Crackling Protector
+    ["95881"] = {
+        95884, -- Saurok Stalker's Headguard
+        95897, -- Fire-Charm Headpiece
+        95901, -- Fire-Charm Helm
+        95907, -- Fire-Charm Crown
+        95942, -- Faceguard of the Witch Doctor
+        95947, -- Helmet of the Witch Doctor
+        95952, -- Headpiece of the Witch Doctor
+        95986, -- Helmet of the Last Mogu
+        95993, -- Faceguard of the Last Mogu
+    },
+    -- Saurok Stalker's Tunic
+    ["95882"] = {
+        95824, -- Chest of the Crackling Protector
+    },
+    -- Saurok Stalker's Gloves
+    ["95883"] = {
+        95857, -- Gauntlets of the Crackling Protector
+    },
+    -- Saurok Stalker's Headguard
+    ["95884"] = {
+        95881, -- Helm of the Crackling Protector
+    },
+    -- Saurok Stalker's Legguards
+    ["95885"] = {
+        95889, -- Leggings of the Crackling Protector
+    },
+    -- Saurok Stalker's Spaulders
+    ["95886"] = {
+        95957, -- Shoulders of the Crackling Protector
+    },
+    -- Leggings of the Crackling Vanquisher
+    ["95887"] = {
+        95828, -- Greaves of the All-Consuming Maw
+        95833, -- Legguards of the All-Consuming Maw
+        95838, -- Legguards of the Haunted Forest
+        95842, -- Legwraps of the Haunted Forest
+        95847, -- Leggings of the Haunted Forest
+        95853, -- Breeches of the Haunted Forest
+        95892, -- Leggings of the Chromatic Hydra
+        95938, -- Nine-Tailed Legguards
+    },
+    -- Leggings of the Crackling Conqueror
+    ["95888"] = {
+        95913, -- Lightning Emperor's Legplates
+        95918, -- Lightning Emperor's Greaves
+        95923, -- Lightning Emperor's Legguards
+        95927, -- Legwraps of the Exorcist
+        95932, -- Leggings of the Exorcist
+        95983, -- Leggings of the Thousandfold Hells
+    },
+    -- Leggings of the Crackling Protector
+    ["95889"] = {
+        95885, -- Saurok Stalker's Legguards
+        95898, -- Fire-Charm Leggings
+        95902, -- Fire-Charm Legwraps
+        95908, -- Fire-Charm Legguards
+        95943, -- Legwraps of the Witch Doctor
+        95948, -- Legguards of the Witch Doctor
+        95953, -- Kilt of the Witch Doctor
+        95989, -- Legplates of the Last Mogu
+        95994, -- Legguards of the Last Mogu
+    },
+    -- Gloves of the Chromatic Hydra
+    ["95890"] = {
+        95855, -- Gauntlets of the Crackling Vanquisher
+    },
+    -- Hood of the Chromatic Hydra
+    ["95891"] = {
+        95879, -- Helm of the Crackling Vanquisher
+    },
+    -- Leggings of the Chromatic Hydra
+    ["95892"] = {
+        95887, -- Leggings of the Crackling Vanquisher
+    },
+    -- Robes of the Chromatic Hydra
+    ["95893"] = {
+        95822, -- Chest of the Crackling Vanquisher
+    },
+    -- Mantle of the Chromatic Hydra
+    ["95894"] = {
+        95955, -- Shoulders of the Crackling Vanquisher
+    },
+    -- Fire-Charm Tunic
+    ["95895"] = {
+        95824, -- Chest of the Crackling Protector
+    },
+    -- Fire-Charm Grips
+    ["95896"] = {
+        95857, -- Gauntlets of the Crackling Protector
+    },
+    -- Fire-Charm Headpiece
+    ["95897"] = {
+        95881, -- Helm of the Crackling Protector
+    },
+    -- Fire-Charm Leggings
+    ["95898"] = {
+        95889, -- Leggings of the Crackling Protector
+    },
+    -- Fire-Charm Spaulders
+    ["95899"] = {
+        95957, -- Shoulders of the Crackling Protector
+    },
+    -- Fire-Charm Handwraps
+    ["95900"] = {
+        95857, -- Gauntlets of the Crackling Protector
+    },
+    -- Fire-Charm Helm
+    ["95901"] = {
+        95881, -- Helm of the Crackling Protector
+    },
+    -- Fire-Charm Legwraps
+    ["95902"] = {
+        95889, -- Leggings of the Crackling Protector
+    },
+    -- Fire-Charm Vest
+    ["95903"] = {
+        95824, -- Chest of the Crackling Protector
+    },
+    -- Fire-Charm Mantle
+    ["95904"] = {
+        95957, -- Shoulders of the Crackling Protector
+    },
+    -- Fire-Charm Chestguard
+    ["95905"] = {
+        95824, -- Chest of the Crackling Protector
+    },
+    -- Fire-Charm Gauntlets
+    ["95906"] = {
+        95857, -- Gauntlets of the Crackling Protector
+    },
+    -- Fire-Charm Crown
+    ["95907"] = {
+        95881, -- Helm of the Crackling Protector
+    },
+    -- Fire-Charm Legguards
+    ["95908"] = {
+        95889, -- Leggings of the Crackling Protector
+    },
+    -- Fire-Charm Shoulderguards
+    ["95909"] = {
+        95957, -- Shoulders of the Crackling Protector
+    },
+    -- Lightning Emperor's Battleplate
+    ["95910"] = {
+        95823, -- Chest of the Crackling Conqueror
+    },
+    -- Lightning Emperor's Gauntlets
+    ["95911"] = {
+        95856, -- Gauntlets of the Crackling Conqueror
+    },
+    -- Lightning Emperor's Helmet
+    ["95912"] = {
+        95880, -- Helm of the Crackling Conqueror
+    },
+    -- Lightning Emperor's Legplates
+    ["95913"] = {
+        95888, -- Leggings of the Crackling Conqueror
+    },
+    -- Lightning Emperor's Pauldrons
+    ["95914"] = {
+        95956, -- Shoulders of the Crackling Conqueror
+    },
+    -- Lightning Emperor's Breastplate
+    ["95915"] = {
+        95823, -- Chest of the Crackling Conqueror
+    },
+    -- Lightning Emperor's Gloves
+    ["95916"] = {
+        95856, -- Gauntlets of the Crackling Conqueror
+    },
+    -- Lightning Emperor's Headguard
+    ["95917"] = {
+        95880, -- Helm of the Crackling Conqueror
+    },
+    -- Lightning Emperor's Greaves
+    ["95918"] = {
+        95888, -- Leggings of the Crackling Conqueror
+    },
+    -- Lightning Emperor's Mantle
+    ["95919"] = {
+        95956, -- Shoulders of the Crackling Conqueror
+    },
+    -- Lightning Emperor's Chestguard
+    ["95920"] = {
+        95823, -- Chest of the Crackling Conqueror
+    },
+    -- Lightning Emperor's Handguards
+    ["95921"] = {
+        95856, -- Gauntlets of the Crackling Conqueror
+    },
+    -- Lightning Emperor's Faceguard
+    ["95922"] = {
+        95880, -- Helm of the Crackling Conqueror
+    },
+    -- Lightning Emperor's Legguards
+    ["95923"] = {
+        95888, -- Leggings of the Crackling Conqueror
+    },
+    -- Lightning Emperor's Shoulderguards
+    ["95924"] = {
+        95956, -- Shoulders of the Crackling Conqueror
+    },
+    -- Handwraps of the Exorcist
+    ["95925"] = {
+        95856, -- Gauntlets of the Crackling Conqueror
+    },
+    -- Cowl of the Exorcist
+    ["95926"] = {
+        95880, -- Helm of the Crackling Conqueror
+    },
+    -- Legwraps of the Exorcist
+    ["95927"] = {
+        95888, -- Leggings of the Crackling Conqueror
+    },
+    -- Robes of the Exorcist
+    ["95928"] = {
+        95823, -- Chest of the Crackling Conqueror
+    },
+    -- Mantle of the Exorcist
+    ["95929"] = {
+        95956, -- Shoulders of the Crackling Conqueror
+    },
+    -- Gloves of the Exorcist
+    ["95930"] = {
+        95856, -- Gauntlets of the Crackling Conqueror
+    },
+    -- Hood of the Exorcist
+    ["95931"] = {
+        95880, -- Helm of the Crackling Conqueror
+    },
+    -- Leggings of the Exorcist
+    ["95932"] = {
+        95888, -- Leggings of the Crackling Conqueror
+    },
+    -- Raiment of the Exorcist
+    ["95933"] = {
+        95823, -- Chest of the Crackling Conqueror
+    },
+    -- Shoulderguards of the Exorcist
+    ["95934"] = {
+        95956, -- Shoulders of the Crackling Conqueror
+    },
+    -- Nine-Tailed Tunic
+    ["95935"] = {
+        95822, -- Chest of the Crackling Vanquisher
+    },
+    -- Nine-Tailed Gloves
+    ["95936"] = {
+        95855, -- Gauntlets of the Crackling Vanquisher
+    },
+    -- Nine-Tailed Helmet
+    ["95937"] = {
+        95879, -- Helm of the Crackling Vanquisher
+    },
+    -- Nine-Tailed Legguards
+    ["95938"] = {
+        95887, -- Leggings of the Crackling Vanquisher
+    },
+    -- Nine-Tailed Spaulders
+    ["95939"] = {
+        95955, -- Shoulders of the Crackling Vanquisher
+    },
+    -- Tunic of the Witch Doctor
+    ["95940"] = {
+        95824, -- Chest of the Crackling Protector
+    },
+    -- Handwraps of the Witch Doctor
+    ["95941"] = {
+        95857, -- Gauntlets of the Crackling Protector
+    },
+    -- Faceguard of the Witch Doctor
+    ["95942"] = {
+        95881, -- Helm of the Crackling Protector
+    },
+    -- Legwraps of the Witch Doctor
+    ["95943"] = {
+        95889, -- Leggings of the Crackling Protector
+    },
+    -- Mantle of the Witch Doctor
+    ["95944"] = {
+        95957, -- Shoulders of the Crackling Protector
+    },
+    -- Cuirass of the Witch Doctor
+    ["95945"] = {
+        95824, -- Chest of the Crackling Protector
+    },
+    -- Grips of the Witch Doctor
+    ["95946"] = {
+        95857, -- Gauntlets of the Crackling Protector
+    },
+    -- Helmet of the Witch Doctor
+    ["95947"] = {
+        95881, -- Helm of the Crackling Protector
+    },
+    -- Legguards of the Witch Doctor
+    ["95948"] = {
+        95889, -- Leggings of the Crackling Protector
+    },
+    -- Spaulders of the Witch Doctor
+    ["95949"] = {
+        95957, -- Shoulders of the Crackling Protector
+    },
+    -- Hauberk of the Witch Doctor
+    ["95950"] = {
+        95824, -- Chest of the Crackling Protector
+    },
+    -- Gloves of the Witch Doctor
+    ["95951"] = {
+        95857, -- Gauntlets of the Crackling Protector
+    },
+    -- Headpiece of the Witch Doctor
+    ["95952"] = {
+        95881, -- Helm of the Crackling Protector
+    },
+    -- Kilt of the Witch Doctor
+    ["95953"] = {
+        95889, -- Leggings of the Crackling Protector
+    },
+    -- Shoulderwraps of the Witch Doctor
+    ["95954"] = {
+        95957, -- Shoulders of the Crackling Protector
+    },
+    -- Shoulders of the Crackling Vanquisher
+    ["95955"] = {
+        95829, -- Pauldrons of the All-Consuming Maw
+        95834, -- Shoulderguards of the All-Consuming Maw
+        95839, -- Spaulders of the Haunted Forest
+        95844, -- Mantle of the Haunted Forest
+        95849, -- Shoulderwraps of the Haunted Forest
+        95854, -- Shoulderguards of the Haunted Forest
+        95894, -- Mantle of the Chromatic Hydra
+        95939, -- Nine-Tailed Spaulders
+    },
+    -- Shoulders of the Crackling Conqueror
+    ["95956"] = {
+        95914, -- Lightning Emperor's Pauldrons
+        95919, -- Lightning Emperor's Mantle
+        95924, -- Lightning Emperor's Shoulderguards
+        95929, -- Mantle of the Exorcist
+        95934, -- Shoulderguards of the Exorcist
+        95985, -- Mantle of the Thousandfold Hells
+    },
+    -- Shoulders of the Crackling Protector
+    ["95957"] = {
+        95886, -- Saurok Stalker's Spaulders
+        95899, -- Fire-Charm Spaulders
+        95904, -- Fire-Charm Mantle
+        95909, -- Fire-Charm Shoulderguards
+        95944, -- Mantle of the Witch Doctor
+        95949, -- Spaulders of the Witch Doctor
+        95954, -- Shoulderwraps of the Witch Doctor
+        95990, -- Pauldrons of the Last Mogu
+        95995, -- Shoulderguards of the Last Mogu
+    },
+    -- Gloves of the Thousandfold Hells
+    ["95981"] = {
+        95856, -- Gauntlets of the Crackling Conqueror
+    },
+    -- Hood of the Thousandfold Hells
+    ["95982"] = {
+        95880, -- Helm of the Crackling Conqueror
+    },
+    -- Leggings of the Thousandfold Hells
+    ["95983"] = {
+        95888, -- Leggings of the Crackling Conqueror
+    },
+    -- Robes of the Thousandfold Hells
+    ["95984"] = {
+        95823, -- Chest of the Crackling Conqueror
+    },
+    -- Mantle of the Thousandfold Hells
+    ["95985"] = {
+        95956, -- Shoulders of the Crackling Conqueror
+    },
+    -- Helmet of the Last Mogu
+    ["95986"] = {
+        95881, -- Helm of the Crackling Protector
+    },
+    -- Battleplate of the Last Mogu
+    ["95987"] = {
+        95824, -- Chest of the Crackling Protector
+    },
+    -- Gauntlets of the Last Mogu
+    ["95988"] = {
+        95857, -- Gauntlets of the Crackling Protector
+    },
+    -- Legplates of the Last Mogu
+    ["95989"] = {
+        95889, -- Leggings of the Crackling Protector
+    },
+    -- Pauldrons of the Last Mogu
+    ["95990"] = {
+        95957, -- Shoulders of the Crackling Protector
+    },
+    -- Chestguard of the Last Mogu
+    ["95991"] = {
+        95824, -- Chest of the Crackling Protector
+    },
+    -- Handguards of the Last Mogu
+    ["95992"] = {
+        95857, -- Gauntlets of the Crackling Protector
+    },
+    -- Faceguard of the Last Mogu
+    ["95993"] = {
+        95881, -- Helm of the Crackling Protector
+    },
+    -- Legguards of the Last Mogu
+    ["95994"] = {
+        95889, -- Leggings of the Crackling Protector
+    },
+    -- Shoulderguards of the Last Mogu
+    ["95995"] = {
+        95957, -- Shoulders of the Crackling Protector
+    },
+    -- Chest of the Crackling Vanquisher
+    ["96566"] = {
+        96569, -- Breastplate of the All-Consuming Maw
+        96574, -- Chestguard of the All-Consuming Maw
+        96579, -- Raiment of the Haunted Forest
+        96587, -- Robes of the Haunted Forest
+        96592, -- Vestment of the Haunted Forest
+        96594, -- Tunic of the Haunted Forest
+        96637, -- Robes of the Chromatic Hydra
+        96679, -- Nine-Tailed Tunic
+    },
+    -- Chest of the Crackling Conqueror
+    ["96567"] = {
+        96654, -- Lightning Emperor's Battleplate
+        96659, -- Lightning Emperor's Breastplate
+        96664, -- Lightning Emperor's Chestguard
+        96672, -- Robes of the Exorcist
+        96677, -- Raiment of the Exorcist
+        96728, -- Robes of the Thousandfold Hells
+    },
+    -- Chest of the Crackling Protector
+    ["96568"] = {
+        96626, -- Saurok Stalker's Tunic
+        96639, -- Fire-Charm Tunic
+        96647, -- Fire-Charm Vest
+        96649, -- Fire-Charm Chestguard
+        96684, -- Tunic of the Witch Doctor
+        96689, -- Cuirass of the Witch Doctor
+        96694, -- Hauberk of the Witch Doctor
+        96731, -- Battleplate of the Last Mogu
+        96735, -- Chestguard of the Last Mogu
+    },
+    -- Breastplate of the All-Consuming Maw
+    ["96569"] = {
+        96566, -- Chest of the Crackling Vanquisher
+    },
+    -- Gauntlets of the All-Consuming Maw
+    ["96570"] = {
+        96599, -- Gauntlets of the Crackling Vanquisher
+    },
+    -- Helmet of the All-Consuming Maw
+    ["96571"] = {
+        96623, -- Helm of the Crackling Vanquisher
+    },
+    -- Greaves of the All-Consuming Maw
+    ["96572"] = {
+        96631, -- Leggings of the Crackling Vanquisher
+    },
+    -- Pauldrons of the All-Consuming Maw
+    ["96573"] = {
+        96699, -- Shoulders of the Crackling Vanquisher
+    },
+    -- Chestguard of the All-Consuming Maw
+    ["96574"] = {
+        96566, -- Chest of the Crackling Vanquisher
+    },
+    -- Handguards of the All-Consuming Maw
+    ["96575"] = {
+        96599, -- Gauntlets of the Crackling Vanquisher
+    },
+    -- Faceguard of the All-Consuming Maw
+    ["96576"] = {
+        96623, -- Helm of the Crackling Vanquisher
+    },
+    -- Legguards of the All-Consuming Maw
+    ["96577"] = {
+        96631, -- Leggings of the Crackling Vanquisher
+    },
+    -- Shoulderguards of the All-Consuming Maw
+    ["96578"] = {
+        96699, -- Shoulders of the Crackling Vanquisher
+    },
+    -- Raiment of the Haunted Forest
+    ["96579"] = {
+        96566, -- Chest of the Crackling Vanquisher
+    },
+    -- Grips of the Haunted Forest
+    ["96580"] = {
+        96599, -- Gauntlets of the Crackling Vanquisher
+    },
+    -- Headpiece of the Haunted Forest
+    ["96581"] = {
+        96623, -- Helm of the Crackling Vanquisher
+    },
+    -- Legguards of the Haunted Forest
+    ["96582"] = {
+        96631, -- Leggings of the Crackling Vanquisher
+    },
+    -- Spaulders of the Haunted Forest
+    ["96583"] = {
+        96699, -- Shoulders of the Crackling Vanquisher
+    },
+    -- Handwraps of the Haunted Forest
+    ["96584"] = {
+        96599, -- Gauntlets of the Crackling Vanquisher
+    },
+    -- Helm of the Haunted Forest
+    ["96585"] = {
+        96623, -- Helm of the Crackling Vanquisher
+    },
+    -- Legwraps of the Haunted Forest
+    ["96586"] = {
+        96631, -- Leggings of the Crackling Vanquisher
+    },
+    -- Robes of the Haunted Forest
+    ["96587"] = {
+        96566, -- Chest of the Crackling Vanquisher
+    },
+    -- Mantle of the Haunted Forest
+    ["96588"] = {
+        96699, -- Shoulders of the Crackling Vanquisher
+    },
+    -- Gloves of the Haunted Forest
+    ["96589"] = {
+        96599, -- Gauntlets of the Crackling Vanquisher
+    },
+    -- Cover of the Haunted Forest
+    ["96590"] = {
+        96623, -- Helm of the Crackling Vanquisher
+    },
+    -- Leggings of the Haunted Forest
+    ["96591"] = {
+        96631, -- Leggings of the Crackling Vanquisher
+    },
+    -- Vestment of the Haunted Forest
+    ["96592"] = {
+        96566, -- Chest of the Crackling Vanquisher
+    },
+    -- Shoulderwraps of the Haunted Forest
+    ["96593"] = {
+        96699, -- Shoulders of the Crackling Vanquisher
+    },
+    -- Tunic of the Haunted Forest
+    ["96594"] = {
+        96566, -- Chest of the Crackling Vanquisher
+    },
+    -- Handguards of the Haunted Forest
+    ["96595"] = {
+        96599, -- Gauntlets of the Crackling Vanquisher
+    },
+    -- Headguard of the Haunted Forest
+    ["96596"] = {
+        96623, -- Helm of the Crackling Vanquisher
+    },
+    -- Breeches of the Haunted Forest
+    ["96597"] = {
+        96631, -- Leggings of the Crackling Vanquisher
+    },
+    -- Shoulderguards of the Haunted Forest
+    ["96598"] = {
+        96699, -- Shoulders of the Crackling Vanquisher
+    },
+    -- Gauntlets of the Crackling Vanquisher
+    ["96599"] = {
+        96570, -- Gauntlets of the All-Consuming Maw
+        96575, -- Handguards of the All-Consuming Maw
+        96580, -- Grips of the Haunted Forest
+        96584, -- Handwraps of the Haunted Forest
+        96589, -- Gloves of the Haunted Forest
+        96595, -- Handguards of the Haunted Forest
+        96634, -- Gloves of the Chromatic Hydra
+        96680, -- Nine-Tailed Gloves
+    },
+    -- Gauntlets of the Crackling Conqueror
+    ["96600"] = {
+        96655, -- Lightning Emperor's Gauntlets
+        96660, -- Lightning Emperor's Gloves
+        96665, -- Lightning Emperor's Handguards
+        96669, -- Handwraps of the Exorcist
+        96674, -- Gloves of the Exorcist
+        96725, -- Gloves of the Thousandfold Hells
+    },
+    -- Gauntlets of the Crackling Protector
+    ["96601"] = {
+        96627, -- Saurok Stalker's Gloves
+        96640, -- Fire-Charm Grips
+        96644, -- Fire-Charm Handwraps
+        96650, -- Fire-Charm Gauntlets
+        96685, -- Handwraps of the Witch Doctor
+        96690, -- Grips of the Witch Doctor
+        96695, -- Gloves of the Witch Doctor
+        96732, -- Gauntlets of the Last Mogu
+        96736, -- Handguards of the Last Mogu
+    },
+    -- Helm of the Crackling Vanquisher
+    ["96623"] = {
+        96571, -- Helmet of the All-Consuming Maw
+        96576, -- Faceguard of the All-Consuming Maw
+        96581, -- Headpiece of the Haunted Forest
+        96585, -- Helm of the Haunted Forest
+        96590, -- Cover of the Haunted Forest
+        96596, -- Headguard of the Haunted Forest
+        96635, -- Hood of the Chromatic Hydra
+        96681, -- Nine-Tailed Helmet
+    },
+    -- Helm of the Crackling Conqueror
+    ["96624"] = {
+        96656, -- Lightning Emperor's Helmet
+        96661, -- Lightning Emperor's Headguard
+        96666, -- Lightning Emperor's Faceguard
+        96670, -- Cowl of the Exorcist
+        96675, -- Hood of the Exorcist
+        96726, -- Hood of the Thousandfold Hells
+    },
+    -- Helm of the Crackling Protector
+    ["96625"] = {
+        96628, -- Saurok Stalker's Headguard
+        96641, -- Fire-Charm Headpiece
+        96645, -- Fire-Charm Helm
+        96651, -- Fire-Charm Crown
+        96686, -- Faceguard of the Witch Doctor
+        96691, -- Helmet of the Witch Doctor
+        96696, -- Headpiece of the Witch Doctor
+        96730, -- Helmet of the Last Mogu
+        96737, -- Faceguard of the Last Mogu
+    },
+    -- Saurok Stalker's Tunic
+    ["96626"] = {
+        96568, -- Chest of the Crackling Protector
+    },
+    -- Saurok Stalker's Gloves
+    ["96627"] = {
+        96601, -- Gauntlets of the Crackling Protector
+    },
+    -- Saurok Stalker's Headguard
+    ["96628"] = {
+        96625, -- Helm of the Crackling Protector
+    },
+    -- Saurok Stalker's Legguards
+    ["96629"] = {
+        96633, -- Leggings of the Crackling Protector
+    },
+    -- Saurok Stalker's Spaulders
+    ["96630"] = {
+        96701, -- Shoulders of the Crackling Protector
+    },
+    -- Leggings of the Crackling Vanquisher
+    ["96631"] = {
+        96572, -- Greaves of the All-Consuming Maw
+        96577, -- Legguards of the All-Consuming Maw
+        96582, -- Legguards of the Haunted Forest
+        96586, -- Legwraps of the Haunted Forest
+        96591, -- Leggings of the Haunted Forest
+        96597, -- Breeches of the Haunted Forest
+        96636, -- Leggings of the Chromatic Hydra
+        96682, -- Nine-Tailed Legguards
+    },
+    -- Leggings of the Crackling Conqueror
+    ["96632"] = {
+        96657, -- Lightning Emperor's Legplates
+        96662, -- Lightning Emperor's Greaves
+        96667, -- Lightning Emperor's Legguards
+        96671, -- Legwraps of the Exorcist
+        96676, -- Leggings of the Exorcist
+        96727, -- Leggings of the Thousandfold Hells
+    },
+    -- Leggings of the Crackling Protector
+    ["96633"] = {
+        96629, -- Saurok Stalker's Legguards
+        96642, -- Fire-Charm Leggings
+        96646, -- Fire-Charm Legwraps
+        96652, -- Fire-Charm Legguards
+        96687, -- Legwraps of the Witch Doctor
+        96692, -- Legguards of the Witch Doctor
+        96697, -- Kilt of the Witch Doctor
+        96733, -- Legplates of the Last Mogu
+        96738, -- Legguards of the Last Mogu
+    },
+    -- Gloves of the Chromatic Hydra
+    ["96634"] = {
+        96599, -- Gauntlets of the Crackling Vanquisher
+    },
+    -- Hood of the Chromatic Hydra
+    ["96635"] = {
+        96623, -- Helm of the Crackling Vanquisher
+    },
+    -- Leggings of the Chromatic Hydra
+    ["96636"] = {
+        96631, -- Leggings of the Crackling Vanquisher
+    },
+    -- Robes of the Chromatic Hydra
+    ["96637"] = {
+        96566, -- Chest of the Crackling Vanquisher
+    },
+    -- Mantle of the Chromatic Hydra
+    ["96638"] = {
+        96699, -- Shoulders of the Crackling Vanquisher
+    },
+    -- Fire-Charm Tunic
+    ["96639"] = {
+        96568, -- Chest of the Crackling Protector
+    },
+    -- Fire-Charm Grips
+    ["96640"] = {
+        96601, -- Gauntlets of the Crackling Protector
+    },
+    -- Fire-Charm Headpiece
+    ["96641"] = {
+        96625, -- Helm of the Crackling Protector
+    },
+    -- Fire-Charm Leggings
+    ["96642"] = {
+        96633, -- Leggings of the Crackling Protector
+    },
+    -- Fire-Charm Spaulders
+    ["96643"] = {
+        96701, -- Shoulders of the Crackling Protector
+    },
+    -- Fire-Charm Handwraps
+    ["96644"] = {
+        96601, -- Gauntlets of the Crackling Protector
+    },
+    -- Fire-Charm Helm
+    ["96645"] = {
+        96625, -- Helm of the Crackling Protector
+    },
+    -- Fire-Charm Legwraps
+    ["96646"] = {
+        96633, -- Leggings of the Crackling Protector
+    },
+    -- Fire-Charm Vest
+    ["96647"] = {
+        96568, -- Chest of the Crackling Protector
+    },
+    -- Fire-Charm Mantle
+    ["96648"] = {
+        96701, -- Shoulders of the Crackling Protector
+    },
+    -- Fire-Charm Chestguard
+    ["96649"] = {
+        96568, -- Chest of the Crackling Protector
+    },
+    -- Fire-Charm Gauntlets
+    ["96650"] = {
+        96601, -- Gauntlets of the Crackling Protector
+    },
+    -- Fire-Charm Crown
+    ["96651"] = {
+        96625, -- Helm of the Crackling Protector
+    },
+    -- Fire-Charm Legguards
+    ["96652"] = {
+        96633, -- Leggings of the Crackling Protector
+    },
+    -- Fire-Charm Shoulderguards
+    ["96653"] = {
+        96701, -- Shoulders of the Crackling Protector
+    },
+    -- Lightning Emperor's Battleplate
+    ["96654"] = {
+        96567, -- Chest of the Crackling Conqueror
+    },
+    -- Lightning Emperor's Gauntlets
+    ["96655"] = {
+        96600, -- Gauntlets of the Crackling Conqueror
+    },
+    -- Lightning Emperor's Helmet
+    ["96656"] = {
+        96624, -- Helm of the Crackling Conqueror
+    },
+    -- Lightning Emperor's Legplates
+    ["96657"] = {
+        96632, -- Leggings of the Crackling Conqueror
+    },
+    -- Lightning Emperor's Pauldrons
+    ["96658"] = {
+        96700, -- Shoulders of the Crackling Conqueror
+    },
+    -- Lightning Emperor's Breastplate
+    ["96659"] = {
+        96567, -- Chest of the Crackling Conqueror
+    },
+    -- Lightning Emperor's Gloves
+    ["96660"] = {
+        96600, -- Gauntlets of the Crackling Conqueror
+    },
+    -- Lightning Emperor's Headguard
+    ["96661"] = {
+        96624, -- Helm of the Crackling Conqueror
+    },
+    -- Lightning Emperor's Greaves
+    ["96662"] = {
+        96632, -- Leggings of the Crackling Conqueror
+    },
+    -- Lightning Emperor's Mantle
+    ["96663"] = {
+        96700, -- Shoulders of the Crackling Conqueror
+    },
+    -- Lightning Emperor's Chestguard
+    ["96664"] = {
+        96567, -- Chest of the Crackling Conqueror
+    },
+    -- Lightning Emperor's Handguards
+    ["96665"] = {
+        96600, -- Gauntlets of the Crackling Conqueror
+    },
+    -- Lightning Emperor's Faceguard
+    ["96666"] = {
+        96624, -- Helm of the Crackling Conqueror
+    },
+    -- Lightning Emperor's Legguards
+    ["96667"] = {
+        96632, -- Leggings of the Crackling Conqueror
+    },
+    -- Lightning Emperor's Shoulderguards
+    ["96668"] = {
+        96700, -- Shoulders of the Crackling Conqueror
+    },
+    -- Handwraps of the Exorcist
+    ["96669"] = {
+        96600, -- Gauntlets of the Crackling Conqueror
+    },
+    -- Cowl of the Exorcist
+    ["96670"] = {
+        96624, -- Helm of the Crackling Conqueror
+    },
+    -- Legwraps of the Exorcist
+    ["96671"] = {
+        96632, -- Leggings of the Crackling Conqueror
+    },
+    -- Robes of the Exorcist
+    ["96672"] = {
+        96567, -- Chest of the Crackling Conqueror
+    },
+    -- Mantle of the Exorcist
+    ["96673"] = {
+        96700, -- Shoulders of the Crackling Conqueror
+    },
+    -- Gloves of the Exorcist
+    ["96674"] = {
+        96600, -- Gauntlets of the Crackling Conqueror
+    },
+    -- Hood of the Exorcist
+    ["96675"] = {
+        96624, -- Helm of the Crackling Conqueror
+    },
+    -- Leggings of the Exorcist
+    ["96676"] = {
+        96632, -- Leggings of the Crackling Conqueror
+    },
+    -- Raiment of the Exorcist
+    ["96677"] = {
+        96567, -- Chest of the Crackling Conqueror
+    },
+    -- Shoulderguards of the Exorcist
+    ["96678"] = {
+        96700, -- Shoulders of the Crackling Conqueror
+    },
+    -- Nine-Tailed Tunic
+    ["96679"] = {
+        96566, -- Chest of the Crackling Vanquisher
+    },
+    -- Nine-Tailed Gloves
+    ["96680"] = {
+        96599, -- Gauntlets of the Crackling Vanquisher
+    },
+    -- Nine-Tailed Helmet
+    ["96681"] = {
+        96623, -- Helm of the Crackling Vanquisher
+    },
+    -- Nine-Tailed Legguards
+    ["96682"] = {
+        96631, -- Leggings of the Crackling Vanquisher
+    },
+    -- Nine-Tailed Spaulders
+    ["96683"] = {
+        96699, -- Shoulders of the Crackling Vanquisher
+    },
+    -- Tunic of the Witch Doctor
+    ["96684"] = {
+        96568, -- Chest of the Crackling Protector
+    },
+    -- Handwraps of the Witch Doctor
+    ["96685"] = {
+        96601, -- Gauntlets of the Crackling Protector
+    },
+    -- Faceguard of the Witch Doctor
+    ["96686"] = {
+        96625, -- Helm of the Crackling Protector
+    },
+    -- Legwraps of the Witch Doctor
+    ["96687"] = {
+        96633, -- Leggings of the Crackling Protector
+    },
+    -- Mantle of the Witch Doctor
+    ["96688"] = {
+        96701, -- Shoulders of the Crackling Protector
+    },
+    -- Cuirass of the Witch Doctor
+    ["96689"] = {
+        96568, -- Chest of the Crackling Protector
+    },
+    -- Grips of the Witch Doctor
+    ["96690"] = {
+        96601, -- Gauntlets of the Crackling Protector
+    },
+    -- Helmet of the Witch Doctor
+    ["96691"] = {
+        96625, -- Helm of the Crackling Protector
+    },
+    -- Legguards of the Witch Doctor
+    ["96692"] = {
+        96633, -- Leggings of the Crackling Protector
+    },
+    -- Spaulders of the Witch Doctor
+    ["96693"] = {
+        96701, -- Shoulders of the Crackling Protector
+    },
+    -- Hauberk of the Witch Doctor
+    ["96694"] = {
+        96568, -- Chest of the Crackling Protector
+    },
+    -- Gloves of the Witch Doctor
+    ["96695"] = {
+        96601, -- Gauntlets of the Crackling Protector
+    },
+    -- Headpiece of the Witch Doctor
+    ["96696"] = {
+        96625, -- Helm of the Crackling Protector
+    },
+    -- Kilt of the Witch Doctor
+    ["96697"] = {
+        96633, -- Leggings of the Crackling Protector
+    },
+    -- Shoulderwraps of the Witch Doctor
+    ["96698"] = {
+        96701, -- Shoulders of the Crackling Protector
+    },
+    -- Shoulders of the Crackling Vanquisher
+    ["96699"] = {
+        96573, -- Pauldrons of the All-Consuming Maw
+        96578, -- Shoulderguards of the All-Consuming Maw
+        96583, -- Spaulders of the Haunted Forest
+        96588, -- Mantle of the Haunted Forest
+        96593, -- Shoulderwraps of the Haunted Forest
+        96598, -- Shoulderguards of the Haunted Forest
+        96638, -- Mantle of the Chromatic Hydra
+        96683, -- Nine-Tailed Spaulders
+    },
+    -- Shoulders of the Crackling Conqueror
+    ["96700"] = {
+        96658, -- Lightning Emperor's Pauldrons
+        96663, -- Lightning Emperor's Mantle
+        96668, -- Lightning Emperor's Shoulderguards
+        96673, -- Mantle of the Exorcist
+        96678, -- Shoulderguards of the Exorcist
+        96729, -- Mantle of the Thousandfold Hells
+    },
+    -- Shoulders of the Crackling Protector
+    ["96701"] = {
+        96630, -- Saurok Stalker's Spaulders
+        96643, -- Fire-Charm Spaulders
+        96648, -- Fire-Charm Mantle
+        96653, -- Fire-Charm Shoulderguards
+        96688, -- Mantle of the Witch Doctor
+        96693, -- Spaulders of the Witch Doctor
+        96698, -- Shoulderwraps of the Witch Doctor
+        96734, -- Pauldrons of the Last Mogu
+        96739, -- Shoulderguards of the Last Mogu
+    },
+    -- Gloves of the Thousandfold Hells
+    ["96725"] = {
+        96600, -- Gauntlets of the Crackling Conqueror
+    },
+    -- Hood of the Thousandfold Hells
+    ["96726"] = {
+        96624, -- Helm of the Crackling Conqueror
+    },
+    -- Leggings of the Thousandfold Hells
+    ["96727"] = {
+        96632, -- Leggings of the Crackling Conqueror
+    },
+    -- Robes of the Thousandfold Hells
+    ["96728"] = {
+        96567, -- Chest of the Crackling Conqueror
+    },
+    -- Mantle of the Thousandfold Hells
+    ["96729"] = {
+        96700, -- Shoulders of the Crackling Conqueror
+    },
+    -- Helmet of the Last Mogu
+    ["96730"] = {
+        96625, -- Helm of the Crackling Protector
+    },
+    -- Battleplate of the Last Mogu
+    ["96731"] = {
+        96568, -- Chest of the Crackling Protector
+    },
+    -- Gauntlets of the Last Mogu
+    ["96732"] = {
+        96601, -- Gauntlets of the Crackling Protector
+    },
+    -- Legplates of the Last Mogu
+    ["96733"] = {
+        96633, -- Leggings of the Crackling Protector
+    },
+    -- Pauldrons of the Last Mogu
+    ["96734"] = {
+        96701, -- Shoulders of the Crackling Protector
+    },
+    -- Chestguard of the Last Mogu
+    ["96735"] = {
+        96568, -- Chest of the Crackling Protector
+    },
+    -- Handguards of the Last Mogu
+    ["96736"] = {
+        96601, -- Gauntlets of the Crackling Protector
+    },
+    -- Faceguard of the Last Mogu
+    ["96737"] = {
+        96625, -- Helm of the Crackling Protector
+    },
+    -- Legguards of the Last Mogu
+    ["96738"] = {
+        96633, -- Leggings of the Crackling Protector
+    },
+    -- Shoulderguards of the Last Mogu
+    ["96739"] = {
+        96701, -- Shoulders of the Crackling Protector
+    },
+    -- Spaulders of Celestial Harmony
+    ["98977"] = {
+        99670, -- Shoulders of the Cursed Protector
+    },
+    -- Shoulderguards of the Shattered Vale
+    ["98978"] = {
+        99668, -- Shoulders of the Cursed Vanquisher
+    },
+    -- Headguard of Winged Triumph
+    ["98979"] = {
+        99672, -- Helm of the Cursed Conqueror
+    },
+    -- Greaves of Winged Triumph
+    ["98980"] = {
+        99675, -- Leggings of the Cursed Conqueror
+    },
+    -- Breeches of the Shattered Vale
+    ["98981"] = {
+        99674, -- Leggings of the Cursed Vanquisher
+    },
+    -- Gloves of Winged Triumph
+    ["98982"] = {
+        99681, -- Gauntlets of the Cursed Conqueror
+    },
+    -- Helmet of Celestial Harmony
+    ["98983"] = {
+        99673, -- Helm of the Cursed Protector
+    },
+    -- Legguards of Celestial Harmony
+    ["98984"] = {
+        99676, -- Leggings of the Cursed Protector
+    },
+    -- Helmet of Winged Triumph
+    ["98985"] = {
+        99672, -- Helm of the Cursed Conqueror
+    },
+    -- Legplates of Winged Triumph
+    ["98986"] = {
+        99675, -- Leggings of the Cursed Conqueror
+    },
+    -- Pauldrons of Winged Triumph
+    ["98987"] = {
+        99669, -- Shoulders of the Cursed Conqueror
+    },
+    -- Handwraps of Celestial Harmony
+    ["98988"] = {
+        99667, -- Gauntlets of the Cursed Protector
+    },
+    -- Faceguard of Celestial Harmony
+    ["98989"] = {
+        99673, -- Helm of the Cursed Protector
+    },
+    -- Legwraps of Celestial Harmony
+    ["98990"] = {
+        99676, -- Leggings of the Cursed Protector
+    },
+    -- Mantle of Celestial Harmony
+    ["98991"] = {
+        99670, -- Shoulders of the Cursed Protector
+    },
+    -- Cuirass of Celestial Harmony
+    ["98992"] = {
+        99679, -- Chest of the Cursed Protector
+    },
+    -- Grips of Celestial Harmony
+    ["98993"] = {
+        99667, -- Gauntlets of the Cursed Protector
+    },
+    -- Gloves of the Shattered Vale
+    ["98994"] = {
+        99680, -- Gauntlets of the Cursed Vanquisher
+    },
+    -- Cover of the Shattered Vale
+    ["98995"] = {
+        99671, -- Helm of the Cursed Vanquisher
+    },
+    -- Leggings of the Shattered Vale
+    ["98996"] = {
+        99674, -- Leggings of the Cursed Vanquisher
+    },
+    -- Vestment of the Shattered Vale
+    ["98997"] = {
+        99677, -- Chest of the Cursed Vanquisher
+    },
+    -- Shoulderwraps of the Shattered Vale
+    ["98998"] = {
+        99668, -- Shoulders of the Cursed Vanquisher
+    },
+    -- Tunic of the Shattered Vale
+    ["98999"] = {
+        99677, -- Chest of the Cursed Vanquisher
+    },
+    -- Handguards of the Shattered Vale
+    ["99000"] = {
+        99680, -- Gauntlets of the Cursed Vanquisher
+    },
+    -- Headguard of the Shattered Vale
+    ["99001"] = {
+        99671, -- Helm of the Cursed Vanquisher
+    },
+    -- Gauntlets of Winged Triumph
+    ["99002"] = {
+        99681, -- Gauntlets of the Cursed Conqueror
+    },
+    -- Breastplate of Winged Triumph
+    ["99003"] = {
+        99678, -- Chest of the Cursed Conqueror
+    },
+    -- Raiment of the Ternion Glory
+    ["99004"] = {
+        99678, -- Chest of the Cursed Conqueror
+    },
+    -- Shoulderguards of the Ternion Glory
+    ["99005"] = {
+        99669, -- Shoulders of the Cursed Conqueror
+    },
+    -- Tunic of the Barbed Assassin
+    ["99006"] = {
+        99677, -- Chest of the Cursed Vanquisher
+    },
+    -- Gloves of the Barbed Assassin
+    ["99007"] = {
+        99680, -- Gauntlets of the Cursed Vanquisher
+    },
+    -- Helmet of the Barbed Assassin
+    ["99008"] = {
+        99671, -- Helm of the Cursed Vanquisher
+    },
+    -- Legguards of the Barbed Assassin
+    ["99009"] = {
+        99674, -- Leggings of the Cursed Vanquisher
+    },
+    -- Spaulders of the Barbed Assassin
+    ["99010"] = {
+        99668, -- Shoulders of the Cursed Vanquisher
+    },
+    -- Tunic of Celestial Harmony
+    ["99011"] = {
+        99679, -- Chest of the Cursed Protector
+    },
+    -- Handwraps of the Shattered Vale
+    ["99012"] = {
+        99680, -- Gauntlets of the Cursed Vanquisher
+    },
+    -- Helm of the Shattered Vale
+    ["99013"] = {
+        99671, -- Helm of the Cursed Vanquisher
+    },
+    -- Legwraps of the Shattered Vale
+    ["99014"] = {
+        99674, -- Leggings of the Cursed Vanquisher
+    },
+    -- Robes of the Shattered Vale
+    ["99015"] = {
+        99677, -- Chest of the Cursed Vanquisher
+    },
+    -- Mantle of the Shattered Vale
+    ["99016"] = {
+        99668, -- Shoulders of the Cursed Vanquisher
+    },
+    -- Robes of the Ternion Glory
+    ["99017"] = {
+        99678, -- Chest of the Cursed Conqueror
+    },
+    -- Mantle of the Ternion Glory
+    ["99018"] = {
+        99669, -- Shoulders of the Cursed Conqueror
+    },
+    -- Gloves of the Ternion Glory
+    ["99019"] = {
+        99681, -- Gauntlets of the Cursed Conqueror
+    },
+    -- Hood of the Ternion Glory
+    ["99020"] = {
+        99672, -- Helm of the Cursed Conqueror
+    },
+    -- Leggings of the Ternion Glory
+    ["99021"] = {
+        99675, -- Leggings of the Cursed Conqueror
+    },
+    -- Spaulders of the Shattered Vale
+    ["99022"] = {
+        99668, -- Shoulders of the Cursed Vanquisher
+    },
+    -- Handwraps of the Ternion Glory
+    ["99023"] = {
+        99681, -- Gauntlets of the Cursed Conqueror
+    },
+    -- Cowl of the Ternion Glory
+    ["99024"] = {
+        99672, -- Helm of the Cursed Conqueror
+    },
+    -- Legwraps of the Ternion Glory
+    ["99025"] = {
+        99675, -- Leggings of the Cursed Conqueror
+    },
+    -- Legguards of Winged Triumph
+    ["99026"] = {
+        99675, -- Leggings of the Cursed Conqueror
+    },
+    -- Shoulderguards of Winged Triumph
+    ["99027"] = {
+        99669, -- Shoulders of the Cursed Conqueror
+    },
+    -- Handguards of Winged Triumph
+    ["99028"] = {
+        99681, -- Gauntlets of the Cursed Conqueror
+    },
+    -- Faceguard of Winged Triumph
+    ["99029"] = {
+        99672, -- Helm of the Cursed Conqueror
+    },
+    -- Shoulderguards of the Prehistoric Marauder
+    ["99030"] = {
+        99670, -- Shoulders of the Cursed Protector
+    },
+    -- Chestguard of Winged Triumph
+    ["99031"] = {
+        99678, -- Chest of the Cursed Conqueror
+    },
+    -- Faceguard of the Prehistoric Marauder
+    ["99032"] = {
+        99673, -- Helm of the Cursed Protector
+    },
+    -- Legguards of the Prehistoric Marauder
+    ["99033"] = {
+        99676, -- Leggings of the Cursed Protector
+    },
+    -- Gauntlets of the Prehistoric Marauder
+    ["99034"] = {
+        99667, -- Gauntlets of the Cursed Protector
+    },
+    -- Legplates of the Prehistoric Marauder
+    ["99035"] = {
+        99676, -- Leggings of the Cursed Protector
+    },
+    -- Pauldrons of the Prehistoric Marauder
+    ["99036"] = {
+        99670, -- Shoulders of the Cursed Protector
+    },
+    -- Chestguard of the Prehistoric Marauder
+    ["99037"] = {
+        99679, -- Chest of the Cursed Protector
+    },
+    -- Handguards of the Prehistoric Marauder
+    ["99038"] = {
+        99667, -- Gauntlets of the Cursed Protector
+    },
+    -- Legguards of Cyclopean Dread
+    ["99039"] = {
+        99674, -- Leggings of the Cursed Vanquisher
+    },
+    -- Shoulderguards of Cyclopean Dread
+    ["99040"] = {
+        99668, -- Shoulders of the Cursed Vanquisher
+    },
+    -- Raiment of the Shattered Vale
+    ["99041"] = {
+        99677, -- Chest of the Cursed Vanquisher
+    },
+    -- Grips of the Shattered Vale
+    ["99042"] = {
+        99680, -- Gauntlets of the Cursed Vanquisher
+    },
+    -- Headpiece of the Shattered Vale
+    ["99043"] = {
+        99671, -- Helm of the Cursed Vanquisher
+    },
+    -- Legguards of the Shattered Vale
+    ["99044"] = {
+        99674, -- Leggings of the Cursed Vanquisher
+    },
+    -- Mantle of the Horned Nightmare
+    ["99045"] = {
+        99669, -- Shoulders of the Cursed Conqueror
+    },
+    -- Helmet of the Prehistoric Marauder
+    ["99046"] = {
+        99673, -- Helm of the Cursed Protector
+    },
+    -- Battleplate of the Prehistoric Marauder
+    ["99047"] = {
+        99679, -- Chest of the Cursed Protector
+    },
+    -- Handguards of Cyclopean Dread
+    ["99048"] = {
+        99680, -- Gauntlets of the Cursed Vanquisher
+    },
+    -- Faceguard of Cyclopean Dread
+    ["99049"] = {
+        99671, -- Helm of the Cursed Vanquisher
+    },
+    -- Legguards of Seven Sacred Seals
+    ["99050"] = {
+        99676, -- Leggings of the Cursed Protector
+    },
+    -- Shoulderguards of Seven Sacred Seals
+    ["99051"] = {
+        99670, -- Shoulders of the Cursed Protector
+    },
+    -- Battleplate of Winged Triumph
+    ["99052"] = {
+        99678, -- Chest of the Cursed Conqueror
+    },
+    -- Gloves of the Horned Nightmare
+    ["99053"] = {
+        99681, -- Gauntlets of the Cursed Conqueror
+    },
+    -- Hood of the Horned Nightmare
+    ["99054"] = {
+        99672, -- Helm of the Cursed Conqueror
+    },
+    -- Leggings of the Horned Nightmare
+    ["99055"] = {
+        99675, -- Leggings of the Cursed Conqueror
+    },
+    -- Robes of the Horned Nightmare
+    ["99056"] = {
+        99678, -- Chest of the Cursed Conqueror
+    },
+    -- Helmet of Cyclopean Dread
+    ["99057"] = {
+        99671, -- Helm of the Cursed Vanquisher
+    },
+    -- Greaves of Cyclopean Dread
+    ["99058"] = {
+        99674, -- Leggings of the Cursed Vanquisher
+    },
+    -- Pauldrons of Cyclopean Dread
+    ["99059"] = {
+        99668, -- Shoulders of the Cursed Vanquisher
+    },
+    -- Chestguard of Cyclopean Dread
+    ["99060"] = {
+        99677, -- Chest of the Cursed Vanquisher
+    },
+    -- Vest of Seven Sacred Seals
+    ["99061"] = {
+        99679, -- Chest of the Cursed Protector
+    },
+    -- Mantle of Seven Sacred Seals
+    ["99062"] = {
+        99670, -- Shoulders of the Cursed Protector
+    },
+    -- Chestguard of Seven Sacred Seals
+    ["99063"] = {
+        99679, -- Chest of the Cursed Protector
+    },
+    -- Gauntlets of Seven Sacred Seals
+    ["99064"] = {
+        99667, -- Gauntlets of the Cursed Protector
+    },
+    -- Crown of Seven Sacred Seals
+    ["99065"] = {
+        99673, -- Helm of the Cursed Protector
+    },
+    -- Breastplate of Cyclopean Dread
+    ["99066"] = {
+        99677, -- Chest of the Cursed Vanquisher
+    },
+    -- Gauntlets of Cyclopean Dread
+    ["99067"] = {
+        99680, -- Gauntlets of the Cursed Vanquisher
+    },
+    -- Handwraps of Seven Sacred Seals
+    ["99068"] = {
+        99667, -- Gauntlets of the Cursed Protector
+    },
+    -- Helm of Seven Sacred Seals
+    ["99069"] = {
+        99673, -- Helm of the Cursed Protector
+    },
+    -- Legwraps of Seven Sacred Seals
+    ["99070"] = {
+        99676, -- Leggings of the Cursed Protector
+    },
+    -- Tunic of Seven Sacred Seals
+    ["99071"] = {
+        99679, -- Chest of the Cursed Protector
+    },
+    -- Grips of Seven Sacred Seals
+    ["99072"] = {
+        99667, -- Gauntlets of the Cursed Protector
+    },
+    -- Headpiece of Seven Sacred Seals
+    ["99073"] = {
+        99673, -- Helm of the Cursed Protector
+    },
+    -- Leggings of Seven Sacred Seals
+    ["99074"] = {
+        99676, -- Leggings of the Cursed Protector
+    },
+    -- Spaulders of Seven Sacred Seals
+    ["99075"] = {
+        99670, -- Shoulders of the Cursed Protector
+    },
+    -- Mantle of Winged Triumph
+    ["99076"] = {
+        99669, -- Shoulders of the Cursed Conqueror
+    },
+    -- Chronomancer Leggings
+    ["99077"] = {
+        99674, -- Leggings of the Cursed Vanquisher
+    },
+    -- Chronomancer Robes
+    ["99078"] = {
+        99677, -- Chest of the Cursed Vanquisher
+    },
+    -- Chronomancer Mantle
+    ["99079"] = {
+        99668, -- Shoulders of the Cursed Vanquisher
+    },
+    -- Headguard of the Unblinking Vigil
+    ["99080"] = {
+        99673, -- Helm of the Cursed Protector
+    },
+    -- Legguards of the Unblinking Vigil
+    ["99081"] = {
+        99676, -- Leggings of the Cursed Protector
+    },
+    -- Spaulders of the Unblinking Vigil
+    ["99082"] = {
+        99670, -- Shoulders of the Cursed Protector
+    },
+    -- Chronomancer Gloves
+    ["99083"] = {
+        99680, -- Gauntlets of the Cursed Vanquisher
+    },
+    -- Chronomancer Hood
+    ["99084"] = {
+        99671, -- Helm of the Cursed Vanquisher
+    },
+    -- Tunic of the Unblinking Vigil
+    ["99085"] = {
+        99679, -- Chest of the Cursed Protector
+    },
+    -- Gloves of the Unblinking Vigil
+    ["99086"] = {
+        99667, -- Gauntlets of the Cursed Protector
+    },
+    -- Hauberk of Celestial Harmony
+    ["99087"] = {
+        99679, -- Chest of the Cursed Protector
+    },
+    -- Gloves of Celestial Harmony
+    ["99088"] = {
+        99667, -- Gauntlets of the Cursed Protector
+    },
+    -- Headpiece of Celestial Harmony
+    ["99089"] = {
+        99673, -- Helm of the Cursed Protector
+    },
+    -- Leggings of Celestial Harmony
+    ["99090"] = {
+        99676, -- Leggings of the Cursed Protector
+    },
+    -- Shoulderwraps of Celestial Harmony
+    ["99091"] = {
+        99670, -- Shoulders of the Cursed Protector
+    },
+    -- Gloves of Celestial Harmony
+    ["99092"] = {
+        99692, -- Gauntlets of the Cursed Protector
+    },
+    -- Headpiece of Celestial Harmony
+    ["99093"] = {
+        99694, -- Helm of the Cursed Protector
+    },
+    -- Leggings of Celestial Harmony
+    ["99094"] = {
+        99693, -- Leggings of the Cursed Protector
+    },
+    -- Shoulderwraps of Celestial Harmony
+    ["99095"] = {
+        99695, -- Shoulders of the Cursed Protector
+    },
+    -- Gloves of the Horned Nightmare
+    ["99096"] = {
+        99687, -- Gauntlets of the Cursed Conqueror
+    },
+    -- Hood of the Horned Nightmare
+    ["99097"] = {
+        99689, -- Helm of the Cursed Conqueror
+    },
+    -- Leggings of the Horned Nightmare
+    ["99098"] = {
+        99688, -- Leggings of the Cursed Conqueror
+    },
+    -- Legwraps of Celestial Harmony
+    ["99099"] = {
+        99693, -- Leggings of the Cursed Protector
+    },
+    -- Mantle of Celestial Harmony
+    ["99100"] = {
+        99695, -- Shoulders of the Cursed Protector
+    },
+    -- Cuirass of Celestial Harmony
+    ["99101"] = {
+        99691, -- Chest of the Cursed Protector
+    },
+    -- Grips of Celestial Harmony
+    ["99102"] = {
+        99692, -- Gauntlets of the Cursed Protector
+    },
+    -- Helmet of Celestial Harmony
+    ["99103"] = {
+        99694, -- Helm of the Cursed Protector
+    },
+    -- Legguards of Celestial Harmony
+    ["99104"] = {
+        99693, -- Leggings of the Cursed Protector
+    },
+    -- Spaulders of Celestial Harmony
+    ["99105"] = {
+        99695, -- Shoulders of the Cursed Protector
+    },
+    -- Hauberk of Celestial Harmony
+    ["99106"] = {
+        99691, -- Chest of the Cursed Protector
+    },
+    -- Tunic of Celestial Harmony
+    ["99107"] = {
+        99691, -- Chest of the Cursed Protector
+    },
+    -- Handwraps of Celestial Harmony
+    ["99108"] = {
+        99692, -- Gauntlets of the Cursed Protector
+    },
+    -- Faceguard of Celestial Harmony
+    ["99109"] = {
+        99694, -- Helm of the Cursed Protector
+    },
+    -- Raiment of the Ternion Glory
+    ["99110"] = {
+        99686, -- Chest of the Cursed Conqueror
+    },
+    -- Shoulderguards of the Ternion Glory
+    ["99111"] = {
+        99690, -- Shoulders of the Cursed Conqueror
+    },
+    -- Tunic of the Barbed Assassin
+    ["99112"] = {
+        99696, -- Chest of the Cursed Vanquisher
+    },
+    -- Gloves of the Barbed Assassin
+    ["99113"] = {
+        99682, -- Gauntlets of the Cursed Vanquisher
+    },
+    -- Helmet of the Barbed Assassin
+    ["99114"] = {
+        99683, -- Helm of the Cursed Vanquisher
+    },
+    -- Legguards of the Barbed Assassin
+    ["99115"] = {
+        99684, -- Leggings of the Cursed Vanquisher
+    },
+    -- Spaulders of the Barbed Assassin
+    ["99116"] = {
+        99685, -- Shoulders of the Cursed Vanquisher
+    },
+    -- Cowl of the Ternion Glory
+    ["99117"] = {
+        99689, -- Helm of the Cursed Conqueror
+    },
+    -- Legwraps of the Ternion Glory
+    ["99118"] = {
+        99688, -- Leggings of the Cursed Conqueror
+    },
+    -- Robes of the Ternion Glory
+    ["99119"] = {
+        99686, -- Chest of the Cursed Conqueror
+    },
+    -- Mantle of the Ternion Glory
+    ["99120"] = {
+        99690, -- Shoulders of the Cursed Conqueror
+    },
+    -- Gloves of the Ternion Glory
+    ["99121"] = {
+        99687, -- Gauntlets of the Cursed Conqueror
+    },
+    -- Hood of the Ternion Glory
+    ["99122"] = {
+        99689, -- Helm of the Cursed Conqueror
+    },
+    -- Leggings of the Ternion Glory
+    ["99123"] = {
+        99688, -- Leggings of the Cursed Conqueror
+    },
+    -- Greaves of Winged Triumph
+    ["99124"] = {
+        99688, -- Leggings of the Cursed Conqueror
+    },
+    -- Mantle of Winged Triumph
+    ["99125"] = {
+        99690, -- Shoulders of the Cursed Conqueror
+    },
+    -- Chestguard of Winged Triumph
+    ["99126"] = {
+        99686, -- Chest of the Cursed Conqueror
+    },
+    -- Handguards of Winged Triumph
+    ["99127"] = {
+        99687, -- Gauntlets of the Cursed Conqueror
+    },
+    -- Faceguard of Winged Triumph
+    ["99128"] = {
+        99689, -- Helm of the Cursed Conqueror
+    },
+    -- Legguards of Winged Triumph
+    ["99129"] = {
+        99688, -- Leggings of the Cursed Conqueror
+    },
+    -- Shoulderguards of Winged Triumph
+    ["99130"] = {
+        99690, -- Shoulders of the Cursed Conqueror
+    },
+    -- Handwraps of the Ternion Glory
+    ["99131"] = {
+        99687, -- Gauntlets of the Cursed Conqueror
+    },
+    -- Pauldrons of Winged Triumph
+    ["99132"] = {
+        99690, -- Shoulders of the Cursed Conqueror
+    },
+    -- Breastplate of Winged Triumph
+    ["99133"] = {
+        99686, -- Chest of the Cursed Conqueror
+    },
+    -- Gloves of Winged Triumph
+    ["99134"] = {
+        99687, -- Gauntlets of the Cursed Conqueror
+    },
+    -- Headguard of Winged Triumph
+    ["99135"] = {
+        99689, -- Helm of the Cursed Conqueror
+    },
+    -- Battleplate of Winged Triumph
+    ["99136"] = {
+        99686, -- Chest of the Cursed Conqueror
+    },
+    -- Gauntlets of Winged Triumph
+    ["99137"] = {
+        99687, -- Gauntlets of the Cursed Conqueror
+    },
+    -- Helmet of Winged Triumph
+    ["99138"] = {
+        99689, -- Helm of the Cursed Conqueror
+    },
+    -- Legplates of Winged Triumph
+    ["99139"] = {
+        99688, -- Leggings of the Cursed Conqueror
+    },
+    -- Chestguard of Seven Sacred Seals
+    ["99140"] = {
+        99691, -- Chest of the Cursed Protector
+    },
+    -- Gauntlets of Seven Sacred Seals
+    ["99141"] = {
+        99692, -- Gauntlets of the Cursed Protector
+    },
+    -- Crown of Seven Sacred Seals
+    ["99142"] = {
+        99694, -- Helm of the Cursed Protector
+    },
+    -- Legguards of Seven Sacred Seals
+    ["99143"] = {
+        99693, -- Leggings of the Cursed Protector
+    },
+    -- Shoulderguards of Seven Sacred Seals
+    ["99144"] = {
+        99695, -- Shoulders of the Cursed Protector
+    },
+    -- Leggings of Seven Sacred Seals
+    ["99145"] = {
+        99693, -- Leggings of the Cursed Protector
+    },
+    -- Spaulders of Seven Sacred Seals
+    ["99146"] = {
+        99695, -- Shoulders of the Cursed Protector
+    },
+    -- Handwraps of Seven Sacred Seals
+    ["99147"] = {
+        99692, -- Gauntlets of the Cursed Protector
+    },
+    -- Helm of Seven Sacred Seals
+    ["99148"] = {
+        99694, -- Helm of the Cursed Protector
+    },
+    -- Legwraps of Seven Sacred Seals
+    ["99149"] = {
+        99693, -- Leggings of the Cursed Protector
+    },
+    -- Vest of Seven Sacred Seals
+    ["99150"] = {
+        99691, -- Chest of the Cursed Protector
+    },
+    -- Mantle of Seven Sacred Seals
+    ["99151"] = {
+        99695, -- Shoulders of the Cursed Protector
+    },
+    -- Chronomancer Robes
+    ["99152"] = {
+        99696, -- Chest of the Cursed Vanquisher
+    },
+    -- Chronomancer Mantle
+    ["99153"] = {
+        99685, -- Shoulders of the Cursed Vanquisher
+    },
+    -- Tunic of Seven Sacred Seals
+    ["99154"] = {
+        99691, -- Chest of the Cursed Protector
+    },
+    -- Grips of Seven Sacred Seals
+    ["99155"] = {
+        99692, -- Gauntlets of the Cursed Protector
+    },
+    -- Headpiece of Seven Sacred Seals
+    ["99156"] = {
+        99694, -- Helm of the Cursed Protector
+    },
+    -- Headguard of the Unblinking Vigil
+    ["99157"] = {
+        99694, -- Helm of the Cursed Protector
+    },
+    -- Legguards of the Unblinking Vigil
+    ["99158"] = {
+        99693, -- Leggings of the Cursed Protector
+    },
+    -- Spaulders of the Unblinking Vigil
+    ["99159"] = {
+        99695, -- Shoulders of the Cursed Protector
+    },
+    -- Chronomancer Gloves
+    ["99160"] = {
+        99682, -- Gauntlets of the Cursed Vanquisher
+    },
+    -- Chronomancer Hood
+    ["99161"] = {
+        99683, -- Helm of the Cursed Vanquisher
+    },
+    -- Chronomancer Leggings
+    ["99162"] = {
+        99684, -- Leggings of the Cursed Vanquisher
+    },
+    -- Handguards of the Shattered Vale
+    ["99163"] = {
+        99682, -- Gauntlets of the Cursed Vanquisher
+    },
+    -- Headguard of the Shattered Vale
+    ["99164"] = {
+        99683, -- Helm of the Cursed Vanquisher
+    },
+    -- Breeches of the Shattered Vale
+    ["99165"] = {
+        99684, -- Leggings of the Cursed Vanquisher
+    },
+    -- Shoulderguards of the Shattered Vale
+    ["99166"] = {
+        99685, -- Shoulders of the Cursed Vanquisher
+    },
+    -- Tunic of the Unblinking Vigil
+    ["99167"] = {
+        99691, -- Chest of the Cursed Protector
+    },
+    -- Gloves of the Unblinking Vigil
+    ["99168"] = {
+        99692, -- Gauntlets of the Cursed Protector
+    },
+    -- Shoulderwraps of the Shattered Vale
+    ["99169"] = {
+        99685, -- Shoulders of the Cursed Vanquisher
+    },
+    -- Tunic of the Shattered Vale
+    ["99170"] = {
+        99696, -- Chest of the Cursed Vanquisher
+    },
+    -- Legwraps of the Shattered Vale
+    ["99171"] = {
+        99684, -- Leggings of the Cursed Vanquisher
+    },
+    -- Robes of the Shattered Vale
+    ["99172"] = {
+        99696, -- Chest of the Cursed Vanquisher
+    },
+    -- Mantle of the Shattered Vale
+    ["99173"] = {
+        99685, -- Shoulders of the Cursed Vanquisher
+    },
+    -- Gloves of the Shattered Vale
+    ["99174"] = {
+        99682, -- Gauntlets of the Cursed Vanquisher
+    },
+    -- Cover of the Shattered Vale
+    ["99175"] = {
+        99683, -- Helm of the Cursed Vanquisher
+    },
+    -- Leggings of the Shattered Vale
+    ["99176"] = {
+        99684, -- Leggings of the Cursed Vanquisher
+    },
+    -- Vestment of the Shattered Vale
+    ["99177"] = {
+        99696, -- Chest of the Cursed Vanquisher
+    },
+    -- Helm of the Shattered Vale
+    ["99178"] = {
+        99683, -- Helm of the Cursed Vanquisher
+    },
+    -- Shoulderguards of Cyclopean Dread
+    ["99179"] = {
+        99685, -- Shoulders of the Cursed Vanquisher
+    },
+    -- Raiment of the Shattered Vale
+    ["99180"] = {
+        99696, -- Chest of the Cursed Vanquisher
+    },
+    -- Grips of the Shattered Vale
+    ["99181"] = {
+        99682, -- Gauntlets of the Cursed Vanquisher
+    },
+    -- Headpiece of the Shattered Vale
+    ["99182"] = {
+        99683, -- Helm of the Cursed Vanquisher
+    },
+    -- Legguards of the Shattered Vale
+    ["99183"] = {
+        99684, -- Leggings of the Cursed Vanquisher
+    },
+    -- Spaulders of the Shattered Vale
+    ["99184"] = {
+        99685, -- Shoulders of the Cursed Vanquisher
+    },
+    -- Handwraps of the Shattered Vale
+    ["99185"] = {
+        99682, -- Gauntlets of the Cursed Vanquisher
+    },
+    -- Greaves of Cyclopean Dread
+    ["99186"] = {
+        99684, -- Leggings of the Cursed Vanquisher
+    },
+    -- Pauldrons of Cyclopean Dread
+    ["99187"] = {
+        99685, -- Shoulders of the Cursed Vanquisher
+    },
+    -- Chestguard of Cyclopean Dread
+    ["99188"] = {
+        99696, -- Chest of the Cursed Vanquisher
+    },
+    -- Handguards of Cyclopean Dread
+    ["99189"] = {
+        99682, -- Gauntlets of the Cursed Vanquisher
+    },
+    -- Faceguard of Cyclopean Dread
+    ["99190"] = {
+        99683, -- Helm of the Cursed Vanquisher
+    },
+    -- Legguards of Cyclopean Dread
+    ["99191"] = {
+        99684, -- Leggings of the Cursed Vanquisher
+    },
+    -- Breastplate of Cyclopean Dread
+    ["99192"] = {
+        99696, -- Chest of the Cursed Vanquisher
+    },
+    -- Gauntlets of Cyclopean Dread
+    ["99193"] = {
+        99682, -- Gauntlets of the Cursed Vanquisher
+    },
+    -- Helmet of Cyclopean Dread
+    ["99194"] = {
+        99683, -- Helm of the Cursed Vanquisher
+    },
+    -- Legguards of the Prehistoric Marauder
+    ["99195"] = {
+        99693, -- Leggings of the Cursed Protector
+    },
+    -- Shoulderguards of the Prehistoric Marauder
+    ["99196"] = {
+        99695, -- Shoulders of the Cursed Protector
+    },
+    -- Battleplate of the Prehistoric Marauder
+    ["99197"] = {
+        99691, -- Chest of the Cursed Protector
+    },
+    -- Gauntlets of the Prehistoric Marauder
+    ["99198"] = {
+        99692, -- Gauntlets of the Cursed Protector
+    },
+    -- Legplates of the Prehistoric Marauder
+    ["99199"] = {
+        99693, -- Leggings of the Cursed Protector
+    },
+    -- Pauldrons of the Prehistoric Marauder
+    ["99200"] = {
+        99695, -- Shoulders of the Cursed Protector
+    },
+    -- Chestguard of the Prehistoric Marauder
+    ["99201"] = {
+        99691, -- Chest of the Cursed Protector
+    },
+    -- Handguards of the Prehistoric Marauder
+    ["99202"] = {
+        99692, -- Gauntlets of the Cursed Protector
+    },
+    -- Faceguard of the Prehistoric Marauder
+    ["99203"] = {
+        99694, -- Helm of the Cursed Protector
+    },
+    -- Robes of the Horned Nightmare
+    ["99204"] = {
+        99686, -- Chest of the Cursed Conqueror
+    },
+    -- Mantle of the Horned Nightmare
+    ["99205"] = {
+        99690, -- Shoulders of the Cursed Conqueror
+    },
+    -- Helmet of the Prehistoric Marauder
+    ["99206"] = {
+        99694, -- Helm of the Cursed Protector
+    },
+    -- Spaulders of the Shattered Vale
+    ["99322"] = {
+        99717, -- Shoulders of the Cursed Vanquisher
+    },
+    -- Faceguard of Cyclopean Dread
+    ["99323"] = {
+        99723, -- Helm of the Cursed Vanquisher
+    },
+    -- Legguards of Cyclopean Dread
+    ["99324"] = {
+        99726, -- Leggings of the Cursed Vanquisher
+    },
+    -- Shoulderguards of Cyclopean Dread
+    ["99325"] = {
+        99717, -- Shoulders of the Cursed Vanquisher
+    },
+    -- Raiment of the Shattered Vale
+    ["99326"] = {
+        99714, -- Chest of the Cursed Vanquisher
+    },
+    -- Grips of the Shattered Vale
+    ["99327"] = {
+        99720, -- Gauntlets of the Cursed Vanquisher
+    },
+    -- Headpiece of the Shattered Vale
+    ["99328"] = {
+        99723, -- Helm of the Cursed Vanquisher
+    },
+    -- Legguards of the Shattered Vale
+    ["99329"] = {
+        99726, -- Leggings of the Cursed Vanquisher
+    },
+    -- Chestguard of Cyclopean Dread
+    ["99330"] = {
+        99714, -- Chest of the Cursed Vanquisher
+    },
+    -- Handguards of Cyclopean Dread
+    ["99331"] = {
+        99720, -- Gauntlets of the Cursed Vanquisher
+    },
+    -- Headpiece of Celestial Harmony
+    ["99332"] = {
+        99725, -- Helm of the Cursed Protector
+    },
+    -- Leggings of Celestial Harmony
+    ["99333"] = {
+        99713, -- Leggings of the Cursed Protector
+    },
+    -- Shoulderwraps of Celestial Harmony
+    ["99334"] = {
+        99719, -- Shoulders of the Cursed Protector
+    },
+    -- Breastplate of Cyclopean Dread
+    ["99335"] = {
+        99714, -- Chest of the Cursed Vanquisher
+    },
+    -- Gauntlets of Cyclopean Dread
+    ["99336"] = {
+        99720, -- Gauntlets of the Cursed Vanquisher
+    },
+    -- Helmet of Cyclopean Dread
+    ["99337"] = {
+        99723, -- Helm of the Cursed Vanquisher
+    },
+    -- Greaves of Cyclopean Dread
+    ["99338"] = {
+        99726, -- Leggings of the Cursed Vanquisher
+    },
+    -- Pauldrons of Cyclopean Dread
+    ["99339"] = {
+        99717, -- Shoulders of the Cursed Vanquisher
+    },
+    -- Grips of Celestial Harmony
+    ["99340"] = {
+        99722, -- Gauntlets of the Cursed Protector
+    },
+    -- Helmet of Celestial Harmony
+    ["99341"] = {
+        99725, -- Helm of the Cursed Protector
+    },
+    -- Legguards of Celestial Harmony
+    ["99342"] = {
+        99713, -- Leggings of the Cursed Protector
+    },
+    -- Spaulders of Celestial Harmony
+    ["99343"] = {
+        99719, -- Shoulders of the Cursed Protector
+    },
+    -- Hauberk of Celestial Harmony
+    ["99344"] = {
+        99716, -- Chest of the Cursed Protector
+    },
+    -- Gloves of Celestial Harmony
+    ["99345"] = {
+        99722, -- Gauntlets of the Cursed Protector
+    },
+    -- Mantle of Celestial Harmony
+    ["99346"] = {
+        99719, -- Shoulders of the Cursed Protector
+    },
+    -- Cuirass of Celestial Harmony
+    ["99347"] = {
+        99716, -- Chest of the Cursed Protector
+    },
+    -- Helmet of the Barbed Assassin
+    ["99348"] = {
+        99723, -- Helm of the Cursed Vanquisher
+    },
+    -- Legguards of the Barbed Assassin
+    ["99349"] = {
+        99726, -- Leggings of the Cursed Vanquisher
+    },
+    -- Spaulders of the Barbed Assassin
+    ["99350"] = {
+        99717, -- Shoulders of the Cursed Vanquisher
+    },
+    -- Tunic of Celestial Harmony
+    ["99351"] = {
+        99716, -- Chest of the Cursed Protector
+    },
+    -- Handwraps of Celestial Harmony
+    ["99352"] = {
+        99722, -- Gauntlets of the Cursed Protector
+    },
+    -- Faceguard of Celestial Harmony
+    ["99353"] = {
+        99725, -- Helm of the Cursed Protector
+    },
+    -- Legwraps of Celestial Harmony
+    ["99354"] = {
+        99713, -- Leggings of the Cursed Protector
+    },
+    -- Gloves of the Barbed Assassin
+    ["99355"] = {
+        99720, -- Gauntlets of the Cursed Vanquisher
+    },
+    -- Tunic of the Barbed Assassin
+    ["99356"] = {
+        99714, -- Chest of the Cursed Vanquisher
+    },
+    -- Robes of the Ternion Glory
+    ["99357"] = {
+        99715, -- Chest of the Cursed Conqueror
+    },
+    -- Mantle of the Ternion Glory
+    ["99358"] = {
+        99718, -- Shoulders of the Cursed Conqueror
+    },
+    -- Gloves of the Ternion Glory
+    ["99359"] = {
+        99721, -- Gauntlets of the Cursed Conqueror
+    },
+    -- Hood of the Ternion Glory
+    ["99360"] = {
+        99724, -- Helm of the Cursed Conqueror
+    },
+    -- Leggings of the Ternion Glory
+    ["99361"] = {
+        99712, -- Leggings of the Cursed Conqueror
+    },
+    -- Raiment of the Ternion Glory
+    ["99362"] = {
+        99715, -- Chest of the Cursed Conqueror
+    },
+    -- Shoulderguards of the Ternion Glory
+    ["99363"] = {
+        99718, -- Shoulders of the Cursed Conqueror
+    },
+    -- Shoulderguards of Winged Triumph
+    ["99364"] = {
+        99718, -- Shoulders of the Cursed Conqueror
+    },
+    -- Handwraps of the Ternion Glory
+    ["99365"] = {
+        99721, -- Gauntlets of the Cursed Conqueror
+    },
+    -- Cowl of the Ternion Glory
+    ["99366"] = {
+        99724, -- Helm of the Cursed Conqueror
+    },
+    -- Legwraps of the Ternion Glory
+    ["99367"] = {
+        99712, -- Leggings of the Cursed Conqueror
+    },
+    -- Chestguard of Winged Triumph
+    ["99368"] = {
+        99715, -- Chest of the Cursed Conqueror
+    },
+    -- Handguards of Winged Triumph
+    ["99369"] = {
+        99721, -- Gauntlets of the Cursed Conqueror
+    },
+    -- Faceguard of Winged Triumph
+    ["99370"] = {
+        99724, -- Helm of the Cursed Conqueror
+    },
+    -- Legguards of Winged Triumph
+    ["99371"] = {
+        99712, -- Leggings of the Cursed Conqueror
+    },
+    -- Legplates of Winged Triumph
+    ["99372"] = {
+        99712, -- Leggings of the Cursed Conqueror
+    },
+    -- Pauldrons of Winged Triumph
+    ["99373"] = {
+        99718, -- Shoulders of the Cursed Conqueror
+    },
+    -- Breastplate of Winged Triumph
+    ["99374"] = {
+        99715, -- Chest of the Cursed Conqueror
+    },
+    -- Gloves of Winged Triumph
+    ["99375"] = {
+        99721, -- Gauntlets of the Cursed Conqueror
+    },
+    -- Headguard of Winged Triumph
+    ["99376"] = {
+        99724, -- Helm of the Cursed Conqueror
+    },
+    -- Greaves of Winged Triumph
+    ["99377"] = {
+        99712, -- Leggings of the Cursed Conqueror
+    },
+    -- Mantle of Winged Triumph
+    ["99378"] = {
+        99718, -- Shoulders of the Cursed Conqueror
+    },
+    -- Helmet of Winged Triumph
+    ["99379"] = {
+        99724, -- Helm of the Cursed Conqueror
+    },
+    -- Gauntlets of Winged Triumph
+    ["99380"] = {
+        99721, -- Gauntlets of the Cursed Conqueror
+    },
+    -- Mantle of Seven Sacred Seals
+    ["99381"] = {
+        99719, -- Shoulders of the Cursed Protector
+    },
+    -- Chestguard of Seven Sacred Seals
+    ["99382"] = {
+        99716, -- Chest of the Cursed Protector
+    },
+    -- Gauntlets of Seven Sacred Seals
+    ["99383"] = {
+        99722, -- Gauntlets of the Cursed Protector
+    },
+    -- Crown of Seven Sacred Seals
+    ["99384"] = {
+        99725, -- Helm of the Cursed Protector
+    },
+    -- Legguards of Seven Sacred Seals
+    ["99385"] = {
+        99713, -- Leggings of the Cursed Protector
+    },
+    -- Shoulderguards of Seven Sacred Seals
+    ["99386"] = {
+        99719, -- Shoulders of the Cursed Protector
+    },
+    -- Battleplate of Winged Triumph
+    ["99387"] = {
+        99715, -- Chest of the Cursed Conqueror
+    },
+    -- Handwraps of Seven Sacred Seals
+    ["99388"] = {
+        99722, -- Gauntlets of the Cursed Protector
+    },
+    -- Helm of Seven Sacred Seals
+    ["99389"] = {
+        99725, -- Helm of the Cursed Protector
+    },
+    -- Legwraps of Seven Sacred Seals
+    ["99390"] = {
+        99713, -- Leggings of the Cursed Protector
+    },
+    -- Vest of Seven Sacred Seals
+    ["99391"] = {
+        99716, -- Chest of the Cursed Protector
+    },
+    -- Grips of Seven Sacred Seals
+    ["99392"] = {
+        99722, -- Gauntlets of the Cursed Protector
+    },
+    -- Headpiece of Seven Sacred Seals
+    ["99393"] = {
+        99725, -- Helm of the Cursed Protector
+    },
+    -- Leggings of Seven Sacred Seals
+    ["99394"] = {
+        99713, -- Leggings of the Cursed Protector
+    },
+    -- Spaulders of Seven Sacred Seals
+    ["99395"] = {
+        99719, -- Shoulders of the Cursed Protector
+    },
+    -- Tunic of Seven Sacred Seals
+    ["99396"] = {
+        99716, -- Chest of the Cursed Protector
+    },
+    -- Chronomancer Gloves
+    ["99397"] = {
+        99720, -- Gauntlets of the Cursed Vanquisher
+    },
+    -- Chronomancer Hood
+    ["99398"] = {
+        99723, -- Helm of the Cursed Vanquisher
+    },
+    -- Chronomancer Leggings
+    ["99399"] = {
+        99726, -- Leggings of the Cursed Vanquisher
+    },
+    -- Chronomancer Robes
+    ["99400"] = {
+        99714, -- Chest of the Cursed Vanquisher
+    },
+    -- Chronomancer Mantle
+    ["99401"] = {
+        99717, -- Shoulders of the Cursed Vanquisher
+    },
+    -- Headguard of the Unblinking Vigil
+    ["99402"] = {
+        99725, -- Helm of the Cursed Protector
+    },
+    -- Legguards of the Unblinking Vigil
+    ["99403"] = {
+        99713, -- Leggings of the Cursed Protector
+    },
+    -- Spaulders of the Unblinking Vigil
+    ["99404"] = {
+        99719, -- Shoulders of the Cursed Protector
+    },
+    -- Tunic of the Unblinking Vigil
+    ["99405"] = {
+        99716, -- Chest of the Cursed Protector
+    },
+    -- Gloves of the Unblinking Vigil
+    ["99406"] = {
+        99722, -- Gauntlets of the Cursed Protector
+    },
+    -- Shoulderguards of the Prehistoric Marauder
+    ["99407"] = {
+        99719, -- Shoulders of the Cursed Protector
+    },
+    -- Handguards of the Prehistoric Marauder
+    ["99408"] = {
+        99722, -- Gauntlets of the Cursed Protector
+    },
+    -- Faceguard of the Prehistoric Marauder
+    ["99409"] = {
+        99725, -- Helm of the Cursed Protector
+    },
+    -- Legguards of the Prehistoric Marauder
+    ["99410"] = {
+        99713, -- Leggings of the Cursed Protector
+    },
+    -- Battleplate of the Prehistoric Marauder
+    ["99411"] = {
+        99716, -- Chest of the Cursed Protector
+    },
+    -- Gauntlets of the Prehistoric Marauder
+    ["99412"] = {
+        99722, -- Gauntlets of the Cursed Protector
+    },
+    -- Legplates of the Prehistoric Marauder
+    ["99413"] = {
+        99713, -- Leggings of the Cursed Protector
+    },
+    -- Pauldrons of the Prehistoric Marauder
+    ["99414"] = {
+        99719, -- Shoulders of the Cursed Protector
+    },
+    -- Chestguard of the Prehistoric Marauder
+    ["99415"] = {
+        99716, -- Chest of the Cursed Protector
+    },
+    -- Robes of the Horned Nightmare
+    ["99416"] = {
+        99715, -- Chest of the Cursed Conqueror
+    },
+    -- Mantle of the Horned Nightmare
+    ["99417"] = {
+        99718, -- Shoulders of the Cursed Conqueror
+    },
+    -- Helmet of the Prehistoric Marauder
+    ["99418"] = {
+        99725, -- Helm of the Cursed Protector
+    },
+    -- Tunic of the Shattered Vale
+    ["99419"] = {
+        99714, -- Chest of the Cursed Vanquisher
+    },
+    -- Handguards of the Shattered Vale
+    ["99420"] = {
+        99720, -- Gauntlets of the Cursed Vanquisher
+    },
+    -- Headguard of the Shattered Vale
+    ["99421"] = {
+        99723, -- Helm of the Cursed Vanquisher
+    },
+    -- Breeches of the Shattered Vale
+    ["99422"] = {
+        99726, -- Leggings of the Cursed Vanquisher
+    },
+    -- Shoulderguards of the Shattered Vale
+    ["99423"] = {
+        99717, -- Shoulders of the Cursed Vanquisher
+    },
+    -- Gloves of the Horned Nightmare
+    ["99424"] = {
+        99721, -- Gauntlets of the Cursed Conqueror
+    },
+    -- Hood of the Horned Nightmare
+    ["99425"] = {
+        99724, -- Helm of the Cursed Conqueror
+    },
+    -- Leggings of the Horned Nightmare
+    ["99426"] = {
+        99712, -- Leggings of the Cursed Conqueror
+    },
+    -- Vestment of the Shattered Vale
+    ["99427"] = {
+        99714, -- Chest of the Cursed Vanquisher
+    },
+    -- Shoulderwraps of the Shattered Vale
+    ["99428"] = {
+        99717, -- Shoulders of the Cursed Vanquisher
+    },
+    -- Legwraps of the Shattered Vale
+    ["99429"] = {
+        99726, -- Leggings of the Cursed Vanquisher
+    },
+    -- Robes of the Shattered Vale
+    ["99430"] = {
+        99714, -- Chest of the Cursed Vanquisher
+    },
+    -- Mantle of the Shattered Vale
+    ["99431"] = {
+        99717, -- Shoulders of the Cursed Vanquisher
+    },
+    -- Gloves of the Shattered Vale
+    ["99432"] = {
+        99720, -- Gauntlets of the Cursed Vanquisher
+    },
+    -- Cover of the Shattered Vale
+    ["99433"] = {
+        99723, -- Helm of the Cursed Vanquisher
+    },
+    -- Leggings of the Shattered Vale
+    ["99434"] = {
+        99726, -- Leggings of the Cursed Vanquisher
+    },
+    -- Handwraps of the Shattered Vale
+    ["99435"] = {
+        99720, -- Gauntlets of the Cursed Vanquisher
+    },
+    -- Helm of the Shattered Vale
+    ["99436"] = {
+        99723, -- Helm of the Cursed Vanquisher
+    },
+    -- Handwraps of Seven Sacred Seals
+    ["99552"] = {
+        99747, -- Gauntlets of the Cursed Protector
+    },
+    -- Helm of Seven Sacred Seals
+    ["99553"] = {
+        99750, -- Helm of the Cursed Protector
+    },
+    -- Legwraps of Seven Sacred Seals
+    ["99554"] = {
+        99753, -- Leggings of the Cursed Protector
+    },
+    -- Tunic of Seven Sacred Seals
+    ["99555"] = {
+        99744, -- Chest of the Cursed Protector
+    },
+    -- Grips of Seven Sacred Seals
+    ["99556"] = {
+        99747, -- Gauntlets of the Cursed Protector
+    },
+    -- Faceguard of the Prehistoric Marauder
+    ["99557"] = {
+        99750, -- Helm of the Cursed Protector
+    },
+    -- Legguards of the Prehistoric Marauder
+    ["99558"] = {
+        99753, -- Leggings of the Cursed Protector
+    },
+    -- Gauntlets of the Prehistoric Marauder
+    ["99559"] = {
+        99747, -- Gauntlets of the Cursed Protector
+    },
+    -- Legplates of the Prehistoric Marauder
+    ["99560"] = {
+        99753, -- Leggings of the Cursed Protector
+    },
+    -- Pauldrons of the Prehistoric Marauder
+    ["99561"] = {
+        99756, -- Shoulders of the Cursed Protector
+    },
+    -- Chestguard of the Prehistoric Marauder
+    ["99562"] = {
+        99744, -- Chest of the Cursed Protector
+    },
+    -- Handguards of the Prehistoric Marauder
+    ["99563"] = {
+        99747, -- Gauntlets of the Cursed Protector
+    },
+    -- Legguards of Cyclopean Dread
+    ["99564"] = {
+        99751, -- Leggings of the Cursed Vanquisher
+    },
+    -- Shoulderguards of Seven Sacred Seals
+    ["99565"] = {
+        99756, -- Shoulders of the Cursed Protector
+    },
+    -- Battleplate of Winged Triumph
+    ["99566"] = {
+        99743, -- Chest of the Cursed Conqueror
+    },
+    -- Gloves of the Horned Nightmare
+    ["99567"] = {
+        99746, -- Gauntlets of the Cursed Conqueror
+    },
+    -- Hood of the Horned Nightmare
+    ["99568"] = {
+        99749, -- Helm of the Cursed Conqueror
+    },
+    -- Leggings of the Horned Nightmare
+    ["99569"] = {
+        99752, -- Leggings of the Cursed Conqueror
+    },
+    -- Robes of the Horned Nightmare
+    ["99570"] = {
+        99743, -- Chest of the Cursed Conqueror
+    },
+    -- Helmet of Cyclopean Dread
+    ["99571"] = {
+        99748, -- Helm of the Cursed Vanquisher
+    },
+    -- Greaves of Cyclopean Dread
+    ["99572"] = {
+        99751, -- Leggings of the Cursed Vanquisher
+    },
+    -- Legguards of the Unblinking Vigil
+    ["99573"] = {
+        99753, -- Leggings of the Cursed Protector
+    },
+    -- Spaulders of the Unblinking Vigil
+    ["99574"] = {
+        99756, -- Shoulders of the Cursed Protector
+    },
+    -- Chronomancer Gloves
+    ["99575"] = {
+        99745, -- Gauntlets of the Cursed Vanquisher
+    },
+    -- Chronomancer Hood
+    ["99576"] = {
+        99748, -- Helm of the Cursed Vanquisher
+    },
+    -- Tunic of the Unblinking Vigil
+    ["99577"] = {
+        99744, -- Chest of the Cursed Protector
+    },
+    -- Gloves of the Unblinking Vigil
+    ["99578"] = {
+        99747, -- Gauntlets of the Cursed Protector
+    },
+    -- Hauberk of Celestial Harmony
+    ["99579"] = {
+        99744, -- Chest of the Cursed Protector
+    },
+    -- Gloves of Celestial Harmony
+    ["99580"] = {
+        99747, -- Gauntlets of the Cursed Protector
+    },
+    -- Legwraps of the Shattered Vale
+    ["99581"] = {
+        99751, -- Leggings of the Cursed Vanquisher
+    },
+    -- Robes of the Shattered Vale
+    ["99582"] = {
+        99742, -- Chest of the Cursed Vanquisher
+    },
+    -- Mantle of the Shattered Vale
+    ["99583"] = {
+        99754, -- Shoulders of the Cursed Vanquisher
+    },
+    -- Robes of the Ternion Glory
+    ["99584"] = {
+        99743, -- Chest of the Cursed Conqueror
+    },
+    -- Mantle of the Ternion Glory
+    ["99585"] = {
+        99755, -- Shoulders of the Cursed Conqueror
+    },
+    -- Gloves of the Ternion Glory
+    ["99586"] = {
+        99746, -- Gauntlets of the Cursed Conqueror
+    },
+    -- Hood of the Ternion Glory
+    ["99587"] = {
+        99749, -- Helm of the Cursed Conqueror
+    },
+    -- Leggings of the Ternion Glory
+    ["99588"] = {
+        99752, -- Leggings of the Cursed Conqueror
+    },
+    -- Spaulders of the Shattered Vale
+    ["99589"] = {
+        99754, -- Shoulders of the Cursed Vanquisher
+    },
+    -- Handwraps of the Ternion Glory
+    ["99590"] = {
+        99746, -- Gauntlets of the Cursed Conqueror
+    },
+    -- Cowl of the Ternion Glory
+    ["99591"] = {
+        99749, -- Helm of the Cursed Conqueror
+    },
+    -- Legwraps of the Ternion Glory
+    ["99592"] = {
+        99752, -- Leggings of the Cursed Conqueror
+    },
+    -- Legguards of Winged Triumph
+    ["99593"] = {
+        99752, -- Leggings of the Cursed Conqueror
+    },
+    -- Shoulderguards of Winged Triumph
+    ["99594"] = {
+        99755, -- Shoulders of the Cursed Conqueror
+    },
+    -- Handguards of Winged Triumph
+    ["99595"] = {
+        99746, -- Gauntlets of the Cursed Conqueror
+    },
+    -- Faceguard of Winged Triumph
+    ["99596"] = {
+        99749, -- Helm of the Cursed Conqueror
+    },
+    -- Shoulderguards of the Prehistoric Marauder
+    ["99597"] = {
+        99756, -- Shoulders of the Cursed Protector
+    },
+    -- Chestguard of Winged Triumph
+    ["99598"] = {
+        99743, -- Chest of the Cursed Conqueror
+    },
+    -- Headpiece of the Shattered Vale
+    ["99599"] = {
+        99748, -- Helm of the Cursed Vanquisher
+    },
+    -- Legguards of the Shattered Vale
+    ["99600"] = {
+        99751, -- Leggings of the Cursed Vanquisher
+    },
+    -- Mantle of the Horned Nightmare
+    ["99601"] = {
+        99755, -- Shoulders of the Cursed Conqueror
+    },
+    -- Helmet of the Prehistoric Marauder
+    ["99602"] = {
+        99750, -- Helm of the Cursed Protector
+    },
+    -- Battleplate of the Prehistoric Marauder
+    ["99603"] = {
+        99744, -- Chest of the Cursed Protector
+    },
+    -- Handguards of Cyclopean Dread
+    ["99604"] = {
+        99745, -- Gauntlets of the Cursed Vanquisher
+    },
+    -- Faceguard of Cyclopean Dread
+    ["99605"] = {
+        99748, -- Helm of the Cursed Vanquisher
+    },
+    -- Legguards of Seven Sacred Seals
+    ["99606"] = {
+        99753, -- Leggings of the Cursed Protector
+    },
+    -- Crown of Seven Sacred Seals
+    ["99607"] = {
+        99750, -- Helm of the Cursed Protector
+    },
+    -- Breastplate of Cyclopean Dread
+    ["99608"] = {
+        99742, -- Chest of the Cursed Vanquisher
+    },
+    -- Gauntlets of Cyclopean Dread
+    ["99609"] = {
+        99745, -- Gauntlets of the Cursed Vanquisher
+    },
+    -- Breeches of the Shattered Vale
+    ["99610"] = {
+        99751, -- Leggings of the Cursed Vanquisher
+    },
+    -- Handwraps of Celestial Harmony
+    ["99611"] = {
+        99747, -- Gauntlets of the Cursed Protector
+    },
+    -- Faceguard of Celestial Harmony
+    ["99612"] = {
+        99750, -- Helm of the Cursed Protector
+    },
+    -- Legwraps of Celestial Harmony
+    ["99613"] = {
+        99753, -- Leggings of the Cursed Protector
+    },
+    -- Mantle of Celestial Harmony
+    ["99614"] = {
+        99756, -- Shoulders of the Cursed Protector
+    },
+    -- Cuirass of Celestial Harmony
+    ["99615"] = {
+        99744, -- Chest of the Cursed Protector
+    },
+    -- Grips of Celestial Harmony
+    ["99616"] = {
+        99747, -- Gauntlets of the Cursed Protector
+    },
+    -- Gloves of the Shattered Vale
+    ["99617"] = {
+        99745, -- Gauntlets of the Cursed Vanquisher
+    },
+    -- Cover of the Shattered Vale
+    ["99618"] = {
+        99748, -- Helm of the Cursed Vanquisher
+    },
+    -- Leggings of the Shattered Vale
+    ["99619"] = {
+        99751, -- Leggings of the Cursed Vanquisher
+    },
+    -- Vestment of the Shattered Vale
+    ["99620"] = {
+        99742, -- Chest of the Cursed Vanquisher
+    },
+    -- Shoulderwraps of the Shattered Vale
+    ["99621"] = {
+        99754, -- Shoulders of the Cursed Vanquisher
+    },
+    -- Tunic of the Shattered Vale
+    ["99622"] = {
+        99742, -- Chest of the Cursed Vanquisher
+    },
+    -- Handguards of the Shattered Vale
+    ["99623"] = {
+        99745, -- Gauntlets of the Cursed Vanquisher
+    },
+    -- Headguard of the Shattered Vale
+    ["99624"] = {
+        99748, -- Helm of the Cursed Vanquisher
+    },
+    -- Gauntlets of Winged Triumph
+    ["99625"] = {
+        99746, -- Gauntlets of the Cursed Conqueror
+    },
+    -- Breastplate of Winged Triumph
+    ["99626"] = {
+        99743, -- Chest of the Cursed Conqueror
+    },
+    -- Raiment of the Ternion Glory
+    ["99627"] = {
+        99743, -- Chest of the Cursed Conqueror
+    },
+    -- Shoulderguards of the Ternion Glory
+    ["99628"] = {
+        99755, -- Shoulders of the Cursed Conqueror
+    },
+    -- Tunic of the Barbed Assassin
+    ["99629"] = {
+        99742, -- Chest of the Cursed Vanquisher
+    },
+    -- Gloves of the Barbed Assassin
+    ["99630"] = {
+        99745, -- Gauntlets of the Cursed Vanquisher
+    },
+    -- Helmet of the Barbed Assassin
+    ["99631"] = {
+        99748, -- Helm of the Cursed Vanquisher
+    },
+    -- Raiment of the Shattered Vale
+    ["99632"] = {
+        99742, -- Chest of the Cursed Vanquisher
+    },
+    -- Grips of the Shattered Vale
+    ["99633"] = {
+        99745, -- Gauntlets of the Cursed Vanquisher
+    },
+    -- Legguards of the Barbed Assassin
+    ["99634"] = {
+        99751, -- Leggings of the Cursed Vanquisher
+    },
+    -- Spaulders of the Barbed Assassin
+    ["99635"] = {
+        99754, -- Shoulders of the Cursed Vanquisher
+    },
+    -- Tunic of Celestial Harmony
+    ["99636"] = {
+        99744, -- Chest of the Cursed Protector
+    },
+    -- Handwraps of the Shattered Vale
+    ["99637"] = {
+        99745, -- Gauntlets of the Cursed Vanquisher
+    },
+    -- Helm of the Shattered Vale
+    ["99638"] = {
+        99748, -- Helm of the Cursed Vanquisher
+    },
+    -- Pauldrons of Cyclopean Dread
+    ["99639"] = {
+        99754, -- Shoulders of the Cursed Vanquisher
+    },
+    -- Chestguard of Cyclopean Dread
+    ["99640"] = {
+        99742, -- Chest of the Cursed Vanquisher
+    },
+    -- Vest of Seven Sacred Seals
+    ["99641"] = {
+        99744, -- Chest of the Cursed Protector
+    },
+    -- Mantle of Seven Sacred Seals
+    ["99642"] = {
+        99756, -- Shoulders of the Cursed Protector
+    },
+    -- Chestguard of Seven Sacred Seals
+    ["99643"] = {
+        99744, -- Chest of the Cursed Protector
+    },
+    -- Gauntlets of Seven Sacred Seals
+    ["99644"] = {
+        99747, -- Gauntlets of the Cursed Protector
+    },
+    -- Headpiece of Celestial Harmony
+    ["99645"] = {
+        99750, -- Helm of the Cursed Protector
+    },
+    -- Leggings of Celestial Harmony
+    ["99646"] = {
+        99753, -- Leggings of the Cursed Protector
+    },
+    -- Shoulderwraps of Celestial Harmony
+    ["99647"] = {
+        99756, -- Shoulders of the Cursed Protector
+    },
+    -- Gloves of Winged Triumph
+    ["99648"] = {
+        99746, -- Gauntlets of the Cursed Conqueror
+    },
+    -- Helmet of Celestial Harmony
+    ["99649"] = {
+        99750, -- Helm of the Cursed Protector
+    },
+    -- Legguards of Celestial Harmony
+    ["99650"] = {
+        99753, -- Leggings of the Cursed Protector
+    },
+    -- Helmet of Winged Triumph
+    ["99651"] = {
+        99749, -- Helm of the Cursed Conqueror
+    },
+    -- Shoulderguards of Cyclopean Dread
+    ["99652"] = {
+        99754, -- Shoulders of the Cursed Vanquisher
+    },
+    -- Headpiece of Seven Sacred Seals
+    ["99653"] = {
+        99750, -- Helm of the Cursed Protector
+    },
+    -- Leggings of Seven Sacred Seals
+    ["99654"] = {
+        99753, -- Leggings of the Cursed Protector
+    },
+    -- Spaulders of Seven Sacred Seals
+    ["99655"] = {
+        99756, -- Shoulders of the Cursed Protector
+    },
+    -- Mantle of Winged Triumph
+    ["99656"] = {
+        99755, -- Shoulders of the Cursed Conqueror
+    },
+    -- Chronomancer Leggings
+    ["99657"] = {
+        99751, -- Leggings of the Cursed Vanquisher
+    },
+    -- Chronomancer Robes
+    ["99658"] = {
+        99742, -- Chest of the Cursed Vanquisher
+    },
+    -- Chronomancer Mantle
+    ["99659"] = {
+        99754, -- Shoulders of the Cursed Vanquisher
+    },
+    -- Headguard of the Unblinking Vigil
+    ["99660"] = {
+        99750, -- Helm of the Cursed Protector
+    },
+    -- Legplates of Winged Triumph
+    ["99661"] = {
+        99752, -- Leggings of the Cursed Conqueror
+    },
+    -- Pauldrons of Winged Triumph
+    ["99662"] = {
+        99755, -- Shoulders of the Cursed Conqueror
+    },
+    -- Spaulders of Celestial Harmony
+    ["99663"] = {
+        99756, -- Shoulders of the Cursed Protector
+    },
+    -- Shoulderguards of the Shattered Vale
+    ["99664"] = {
+        99754, -- Shoulders of the Cursed Vanquisher
+    },
+    -- Headguard of Winged Triumph
+    ["99665"] = {
+        99749, -- Helm of the Cursed Conqueror
+    },
+    -- Greaves of Winged Triumph
+    ["99666"] = {
+        99752, -- Leggings of the Cursed Conqueror
+    },
+    -- Gauntlets of the Cursed Protector
+    ["99667"] = {
+        98988, -- Handwraps of Celestial Harmony
+        98993, -- Grips of Celestial Harmony
+        99034, -- Gauntlets of the Prehistoric Marauder
+        99038, -- Handguards of the Prehistoric Marauder
+        99064, -- Gauntlets of Seven Sacred Seals
+        99068, -- Handwraps of Seven Sacred Seals
+        99072, -- Grips of Seven Sacred Seals
+        99086, -- Gloves of the Unblinking Vigil
+        99088, -- Gloves of Celestial Harmony
+    },
+    -- Shoulders of the Cursed Vanquisher
+    ["99668"] = {
+        98978, -- Shoulderguards of the Shattered Vale
+        98998, -- Shoulderwraps of the Shattered Vale
+        99010, -- Spaulders of the Barbed Assassin
+        99016, -- Mantle of the Shattered Vale
+        99022, -- Spaulders of the Shattered Vale
+        99040, -- Shoulderguards of Cyclopean Dread
+        99059, -- Pauldrons of Cyclopean Dread
+        99079, -- Chronomancer Mantle
+    },
+    -- Shoulders of the Cursed Conqueror
+    ["99669"] = {
+        98987, -- Pauldrons of Winged Triumph
+        99005, -- Shoulderguards of the Ternion Glory
+        99018, -- Mantle of the Ternion Glory
+        99027, -- Shoulderguards of Winged Triumph
+        99045, -- Mantle of the Horned Nightmare
+        99076, -- Mantle of Winged Triumph
+    },
+    -- Shoulders of the Cursed Protector
+    ["99670"] = {
+        98977, -- Spaulders of Celestial Harmony
+        98991, -- Mantle of Celestial Harmony
+        99030, -- Shoulderguards of the Prehistoric Marauder
+        99036, -- Pauldrons of the Prehistoric Marauder
+        99051, -- Shoulderguards of Seven Sacred Seals
+        99062, -- Mantle of Seven Sacred Seals
+        99075, -- Spaulders of Seven Sacred Seals
+        99082, -- Spaulders of the Unblinking Vigil
+        99091, -- Shoulderwraps of Celestial Harmony
+    },
+    -- Helm of the Cursed Vanquisher
+    ["99671"] = {
+        98995, -- Cover of the Shattered Vale
+        99001, -- Headguard of the Shattered Vale
+        99008, -- Helmet of the Barbed Assassin
+        99013, -- Helm of the Shattered Vale
+        99043, -- Headpiece of the Shattered Vale
+        99049, -- Faceguard of Cyclopean Dread
+        99057, -- Helmet of Cyclopean Dread
+        99084, -- Chronomancer Hood
+    },
+    -- Helm of the Cursed Conqueror
+    ["99672"] = {
+        98979, -- Headguard of Winged Triumph
+        98985, -- Helmet of Winged Triumph
+        99020, -- Hood of the Ternion Glory
+        99024, -- Cowl of the Ternion Glory
+        99029, -- Faceguard of Winged Triumph
+        99054, -- Hood of the Horned Nightmare
+    },
+    -- Helm of the Cursed Protector
+    ["99673"] = {
+        98983, -- Helmet of Celestial Harmony
+        98989, -- Faceguard of Celestial Harmony
+        99032, -- Faceguard of the Prehistoric Marauder
+        99046, -- Helmet of the Prehistoric Marauder
+        99065, -- Crown of Seven Sacred Seals
+        99069, -- Helm of Seven Sacred Seals
+        99073, -- Headpiece of Seven Sacred Seals
+        99080, -- Headguard of the Unblinking Vigil
+        99089, -- Headpiece of Celestial Harmony
+    },
+    -- Leggings of the Cursed Vanquisher
+    ["99674"] = {
+        98981, -- Breeches of the Shattered Vale
+        98996, -- Leggings of the Shattered Vale
+        99009, -- Legguards of the Barbed Assassin
+        99014, -- Legwraps of the Shattered Vale
+        99039, -- Legguards of Cyclopean Dread
+        99044, -- Legguards of the Shattered Vale
+        99058, -- Greaves of Cyclopean Dread
+        99077, -- Chronomancer Leggings
+    },
+    -- Leggings of the Cursed Conqueror
+    ["99675"] = {
+        98980, -- Greaves of Winged Triumph
+        98986, -- Legplates of Winged Triumph
+        99021, -- Leggings of the Ternion Glory
+        99025, -- Legwraps of the Ternion Glory
+        99026, -- Legguards of Winged Triumph
+        99055, -- Leggings of the Horned Nightmare
+    },
+    -- Leggings of the Cursed Protector
+    ["99676"] = {
+        98984, -- Legguards of Celestial Harmony
+        98990, -- Legwraps of Celestial Harmony
+        99033, -- Legguards of the Prehistoric Marauder
+        99035, -- Legplates of the Prehistoric Marauder
+        99050, -- Legguards of Seven Sacred Seals
+        99070, -- Legwraps of Seven Sacred Seals
+        99074, -- Leggings of Seven Sacred Seals
+        99081, -- Legguards of the Unblinking Vigil
+        99090, -- Leggings of Celestial Harmony
+    },
+    -- Chest of the Cursed Vanquisher
+    ["99677"] = {
+        98997, -- Vestment of the Shattered Vale
+        98999, -- Tunic of the Shattered Vale
+        99006, -- Tunic of the Barbed Assassin
+        99015, -- Robes of the Shattered Vale
+        99041, -- Raiment of the Shattered Vale
+        99060, -- Chestguard of Cyclopean Dread
+        99066, -- Breastplate of Cyclopean Dread
+        99078, -- Chronomancer Robes
+    },
+    -- Chest of the Cursed Conqueror
+    ["99678"] = {
+        99003, -- Breastplate of Winged Triumph
+        99004, -- Raiment of the Ternion Glory
+        99017, -- Robes of the Ternion Glory
+        99031, -- Chestguard of Winged Triumph
+        99052, -- Battleplate of Winged Triumph
+        99056, -- Robes of the Horned Nightmare
+    },
+    -- Chest of the Cursed Protector
+    ["99679"] = {
+        98992, -- Cuirass of Celestial Harmony
+        99011, -- Tunic of Celestial Harmony
+        99037, -- Chestguard of the Prehistoric Marauder
+        99047, -- Battleplate of the Prehistoric Marauder
+        99061, -- Vest of Seven Sacred Seals
+        99063, -- Chestguard of Seven Sacred Seals
+        99071, -- Tunic of Seven Sacred Seals
+        99085, -- Tunic of the Unblinking Vigil
+        99087, -- Hauberk of Celestial Harmony
+    },
+    -- Gauntlets of the Cursed Vanquisher
+    ["99680"] = {
+        98994, -- Gloves of the Shattered Vale
+        99000, -- Handguards of the Shattered Vale
+        99007, -- Gloves of the Barbed Assassin
+        99012, -- Handwraps of the Shattered Vale
+        99042, -- Grips of the Shattered Vale
+        99048, -- Handguards of Cyclopean Dread
+        99067, -- Gauntlets of Cyclopean Dread
+        99083, -- Chronomancer Gloves
+    },
+    -- Gauntlets of the Cursed Conqueror
+    ["99681"] = {
+        98982, -- Gloves of Winged Triumph
+        99002, -- Gauntlets of Winged Triumph
+        99019, -- Gloves of the Ternion Glory
+        99023, -- Handwraps of the Ternion Glory
+        99028, -- Handguards of Winged Triumph
+        99053, -- Gloves of the Horned Nightmare
+    },
+    -- Gauntlets of the Cursed Vanquisher
+    ["99682"] = {
+        99113, -- Gloves of the Barbed Assassin
+        99160, -- Chronomancer Gloves
+        99163, -- Handguards of the Shattered Vale
+        99174, -- Gloves of the Shattered Vale
+        99181, -- Grips of the Shattered Vale
+        99185, -- Handwraps of the Shattered Vale
+        99189, -- Handguards of Cyclopean Dread
+        99193, -- Gauntlets of Cyclopean Dread
+    },
+    -- Helm of the Cursed Vanquisher
+    ["99683"] = {
+        99114, -- Helmet of the Barbed Assassin
+        99161, -- Chronomancer Hood
+        99164, -- Headguard of the Shattered Vale
+        99175, -- Cover of the Shattered Vale
+        99178, -- Helm of the Shattered Vale
+        99182, -- Headpiece of the Shattered Vale
+        99190, -- Faceguard of Cyclopean Dread
+        99194, -- Helmet of Cyclopean Dread
+    },
+    -- Leggings of the Cursed Vanquisher
+    ["99684"] = {
+        99115, -- Legguards of the Barbed Assassin
+        99162, -- Chronomancer Leggings
+        99165, -- Breeches of the Shattered Vale
+        99171, -- Legwraps of the Shattered Vale
+        99176, -- Leggings of the Shattered Vale
+        99183, -- Legguards of the Shattered Vale
+        99186, -- Greaves of Cyclopean Dread
+        99191, -- Legguards of Cyclopean Dread
+    },
+    -- Shoulders of the Cursed Vanquisher
+    ["99685"] = {
+        99116, -- Spaulders of the Barbed Assassin
+        99153, -- Chronomancer Mantle
+        99166, -- Shoulderguards of the Shattered Vale
+        99169, -- Shoulderwraps of the Shattered Vale
+        99173, -- Mantle of the Shattered Vale
+        99179, -- Shoulderguards of Cyclopean Dread
+        99184, -- Spaulders of the Shattered Vale
+        99187, -- Pauldrons of Cyclopean Dread
+    },
+    -- Chest of the Cursed Conqueror
+    ["99686"] = {
+        99110, -- Raiment of the Ternion Glory
+        99119, -- Robes of the Ternion Glory
+        99126, -- Chestguard of Winged Triumph
+        99133, -- Breastplate of Winged Triumph
+        99136, -- Battleplate of Winged Triumph
+        99204, -- Robes of the Horned Nightmare
+    },
+    -- Gauntlets of the Cursed Conqueror
+    ["99687"] = {
+        99096, -- Gloves of the Horned Nightmare
+        99121, -- Gloves of the Ternion Glory
+        99127, -- Handguards of Winged Triumph
+        99131, -- Handwraps of the Ternion Glory
+        99134, -- Gloves of Winged Triumph
+        99137, -- Gauntlets of Winged Triumph
+    },
+    -- Leggings of the Cursed Conqueror
+    ["99688"] = {
+        99098, -- Leggings of the Horned Nightmare
+        99118, -- Legwraps of the Ternion Glory
+        99123, -- Leggings of the Ternion Glory
+        99124, -- Greaves of Winged Triumph
+        99129, -- Legguards of Winged Triumph
+        99139, -- Legplates of Winged Triumph
+    },
+    -- Helm of the Cursed Conqueror
+    ["99689"] = {
+        99097, -- Hood of the Horned Nightmare
+        99117, -- Cowl of the Ternion Glory
+        99122, -- Hood of the Ternion Glory
+        99128, -- Faceguard of Winged Triumph
+        99135, -- Headguard of Winged Triumph
+        99138, -- Helmet of Winged Triumph
+    },
+    -- Shoulders of the Cursed Conqueror
+    ["99690"] = {
+        99111, -- Shoulderguards of the Ternion Glory
+        99120, -- Mantle of the Ternion Glory
+        99125, -- Mantle of Winged Triumph
+        99130, -- Shoulderguards of Winged Triumph
+        99132, -- Pauldrons of Winged Triumph
+        99205, -- Mantle of the Horned Nightmare
+    },
+    -- Chest of the Cursed Protector
+    ["99691"] = {
+        99101, -- Cuirass of Celestial Harmony
+        99106, -- Hauberk of Celestial Harmony
+        99107, -- Tunic of Celestial Harmony
+        99140, -- Chestguard of Seven Sacred Seals
+        99150, -- Vest of Seven Sacred Seals
+        99154, -- Tunic of Seven Sacred Seals
+        99167, -- Tunic of the Unblinking Vigil
+        99197, -- Battleplate of the Prehistoric Marauder
+        99201, -- Chestguard of the Prehistoric Marauder
+    },
+    -- Gauntlets of the Cursed Protector
+    ["99692"] = {
+        99092, -- Gloves of Celestial Harmony
+        99102, -- Grips of Celestial Harmony
+        99108, -- Handwraps of Celestial Harmony
+        99141, -- Gauntlets of Seven Sacred Seals
+        99147, -- Handwraps of Seven Sacred Seals
+        99155, -- Grips of Seven Sacred Seals
+        99168, -- Gloves of the Unblinking Vigil
+        99198, -- Gauntlets of the Prehistoric Marauder
+        99202, -- Handguards of the Prehistoric Marauder
+    },
+    -- Leggings of the Cursed Protector
+    ["99693"] = {
+        99094, -- Leggings of Celestial Harmony
+        99099, -- Legwraps of Celestial Harmony
+        99104, -- Legguards of Celestial Harmony
+        99143, -- Legguards of Seven Sacred Seals
+        99145, -- Leggings of Seven Sacred Seals
+        99149, -- Legwraps of Seven Sacred Seals
+        99158, -- Legguards of the Unblinking Vigil
+        99195, -- Legguards of the Prehistoric Marauder
+        99199, -- Legplates of the Prehistoric Marauder
+    },
+    -- Helm of the Cursed Protector
+    ["99694"] = {
+        99093, -- Headpiece of Celestial Harmony
+        99103, -- Helmet of Celestial Harmony
+        99109, -- Faceguard of Celestial Harmony
+        99142, -- Crown of Seven Sacred Seals
+        99148, -- Helm of Seven Sacred Seals
+        99156, -- Headpiece of Seven Sacred Seals
+        99157, -- Headguard of the Unblinking Vigil
+        99203, -- Faceguard of the Prehistoric Marauder
+        99206, -- Helmet of the Prehistoric Marauder
+    },
+    -- Shoulders of the Cursed Protector
+    ["99695"] = {
+        99095, -- Shoulderwraps of Celestial Harmony
+        99100, -- Mantle of Celestial Harmony
+        99105, -- Spaulders of Celestial Harmony
+        99144, -- Shoulderguards of Seven Sacred Seals
+        99146, -- Spaulders of Seven Sacred Seals
+        99151, -- Mantle of Seven Sacred Seals
+        99159, -- Spaulders of the Unblinking Vigil
+        99196, -- Shoulderguards of the Prehistoric Marauder
+        99200, -- Pauldrons of the Prehistoric Marauder
+    },
+    -- Chest of the Cursed Vanquisher
+    ["99696"] = {
+        99112, -- Tunic of the Barbed Assassin
+        99152, -- Chronomancer Robes
+        99170, -- Tunic of the Shattered Vale
+        99172, -- Robes of the Shattered Vale
+        99177, -- Vestment of the Shattered Vale
+        99180, -- Raiment of the Shattered Vale
+        99188, -- Chestguard of Cyclopean Dread
+        99192, -- Breastplate of Cyclopean Dread
+    },
+    -- Leggings of the Cursed Conqueror
+    ["99712"] = {
+        99361, -- Leggings of the Ternion Glory
+        99367, -- Legwraps of the Ternion Glory
+        99371, -- Legguards of Winged Triumph
+        99372, -- Legplates of Winged Triumph
+        99377, -- Greaves of Winged Triumph
+        99426, -- Leggings of the Horned Nightmare
+    },
+    -- Leggings of the Cursed Protector
+    ["99713"] = {
+        99333, -- Leggings of Celestial Harmony
+        99342, -- Legguards of Celestial Harmony
+        99354, -- Legwraps of Celestial Harmony
+        99385, -- Legguards of Seven Sacred Seals
+        99390, -- Legwraps of Seven Sacred Seals
+        99394, -- Leggings of Seven Sacred Seals
+        99403, -- Legguards of the Unblinking Vigil
+        99410, -- Legguards of the Prehistoric Marauder
+        99413, -- Legplates of the Prehistoric Marauder
+    },
+    -- Chest of the Cursed Vanquisher
+    ["99714"] = {
+        99326, -- Raiment of the Shattered Vale
+        99330, -- Chestguard of Cyclopean Dread
+        99335, -- Breastplate of Cyclopean Dread
+        99356, -- Tunic of the Barbed Assassin
+        99400, -- Chronomancer Robes
+        99419, -- Tunic of the Shattered Vale
+        99427, -- Vestment of the Shattered Vale
+        99430, -- Robes of the Shattered Vale
+    },
+    -- Chest of the Cursed Conqueror
+    ["99715"] = {
+        99357, -- Robes of the Ternion Glory
+        99362, -- Raiment of the Ternion Glory
+        99368, -- Chestguard of Winged Triumph
+        99374, -- Breastplate of Winged Triumph
+        99387, -- Battleplate of Winged Triumph
+        99416, -- Robes of the Horned Nightmare
+    },
+    -- Chest of the Cursed Protector
+    ["99716"] = {
+        99344, -- Hauberk of Celestial Harmony
+        99347, -- Cuirass of Celestial Harmony
+        99351, -- Tunic of Celestial Harmony
+        99382, -- Chestguard of Seven Sacred Seals
+        99391, -- Vest of Seven Sacred Seals
+        99396, -- Tunic of Seven Sacred Seals
+        99405, -- Tunic of the Unblinking Vigil
+        99411, -- Battleplate of the Prehistoric Marauder
+        99415, -- Chestguard of the Prehistoric Marauder
+    },
+    -- Shoulders of the Cursed Vanquisher
+    ["99717"] = {
+        99322, -- Spaulders of the Shattered Vale
+        99325, -- Shoulderguards of Cyclopean Dread
+        99339, -- Pauldrons of Cyclopean Dread
+        99350, -- Spaulders of the Barbed Assassin
+        99401, -- Chronomancer Mantle
+        99423, -- Shoulderguards of the Shattered Vale
+        99428, -- Shoulderwraps of the Shattered Vale
+        99431, -- Mantle of the Shattered Vale
+    },
+    -- Shoulders of the Cursed Conqueror
+    ["99718"] = {
+        99358, -- Mantle of the Ternion Glory
+        99363, -- Shoulderguards of the Ternion Glory
+        99364, -- Shoulderguards of Winged Triumph
+        99373, -- Pauldrons of Winged Triumph
+        99378, -- Mantle of Winged Triumph
+        99417, -- Mantle of the Horned Nightmare
+    },
+    -- Shoulders of the Cursed Protector
+    ["99719"] = {
+        99334, -- Shoulderwraps of Celestial Harmony
+        99343, -- Spaulders of Celestial Harmony
+        99346, -- Mantle of Celestial Harmony
+        99381, -- Mantle of Seven Sacred Seals
+        99386, -- Shoulderguards of Seven Sacred Seals
+        99395, -- Spaulders of Seven Sacred Seals
+        99404, -- Spaulders of the Unblinking Vigil
+        99407, -- Shoulderguards of the Prehistoric Marauder
+        99414, -- Pauldrons of the Prehistoric Marauder
+    },
+    -- Gauntlets of the Cursed Vanquisher
+    ["99720"] = {
+        99327, -- Grips of the Shattered Vale
+        99331, -- Handguards of Cyclopean Dread
+        99336, -- Gauntlets of Cyclopean Dread
+        99355, -- Gloves of the Barbed Assassin
+        99397, -- Chronomancer Gloves
+        99420, -- Handguards of the Shattered Vale
+        99432, -- Gloves of the Shattered Vale
+        99435, -- Handwraps of the Shattered Vale
+    },
+    -- Gauntlets of the Cursed Conqueror
+    ["99721"] = {
+        99359, -- Gloves of the Ternion Glory
+        99365, -- Handwraps of the Ternion Glory
+        99369, -- Handguards of Winged Triumph
+        99375, -- Gloves of Winged Triumph
+        99380, -- Gauntlets of Winged Triumph
+        99424, -- Gloves of the Horned Nightmare
+    },
+    -- Gauntlets of the Cursed Protector
+    ["99722"] = {
+        99340, -- Grips of Celestial Harmony
+        99345, -- Gloves of Celestial Harmony
+        99352, -- Handwraps of Celestial Harmony
+        99383, -- Gauntlets of Seven Sacred Seals
+        99388, -- Handwraps of Seven Sacred Seals
+        99392, -- Grips of Seven Sacred Seals
+        99406, -- Gloves of the Unblinking Vigil
+        99408, -- Handguards of the Prehistoric Marauder
+        99412, -- Gauntlets of the Prehistoric Marauder
+    },
+    -- Helm of the Cursed Vanquisher
+    ["99723"] = {
+        99323, -- Faceguard of Cyclopean Dread
+        99328, -- Headpiece of the Shattered Vale
+        99337, -- Helmet of Cyclopean Dread
+        99348, -- Helmet of the Barbed Assassin
+        99398, -- Chronomancer Hood
+        99421, -- Headguard of the Shattered Vale
+        99433, -- Cover of the Shattered Vale
+        99436, -- Helm of the Shattered Vale
+    },
+    -- Helm of the Cursed Conqueror
+    ["99724"] = {
+        99360, -- Hood of the Ternion Glory
+        99366, -- Cowl of the Ternion Glory
+        99370, -- Faceguard of Winged Triumph
+        99376, -- Headguard of Winged Triumph
+        99379, -- Helmet of Winged Triumph
+        99425, -- Hood of the Horned Nightmare
+    },
+    -- Helm of the Cursed Protector
+    ["99725"] = {
+        99332, -- Headpiece of Celestial Harmony
+        99341, -- Helmet of Celestial Harmony
+        99353, -- Faceguard of Celestial Harmony
+        99384, -- Crown of Seven Sacred Seals
+        99389, -- Helm of Seven Sacred Seals
+        99393, -- Headpiece of Seven Sacred Seals
+        99402, -- Headguard of the Unblinking Vigil
+        99409, -- Faceguard of the Prehistoric Marauder
+        99418, -- Helmet of the Prehistoric Marauder
+    },
+    -- Leggings of the Cursed Vanquisher
+    ["99726"] = {
+        99324, -- Legguards of Cyclopean Dread
+        99329, -- Legguards of the Shattered Vale
+        99338, -- Greaves of Cyclopean Dread
+        99349, -- Legguards of the Barbed Assassin
+        99399, -- Chronomancer Leggings
+        99422, -- Breeches of the Shattered Vale
+        99429, -- Legwraps of the Shattered Vale
+        99434, -- Leggings of the Shattered Vale
+    },
+    -- Chest of the Cursed Vanquisher
+    ["99742"] = {
+        99582, -- Robes of the Shattered Vale
+        99608, -- Breastplate of Cyclopean Dread
+        99620, -- Vestment of the Shattered Vale
+        99622, -- Tunic of the Shattered Vale
+        99629, -- Tunic of the Barbed Assassin
+        99632, -- Raiment of the Shattered Vale
+        99640, -- Chestguard of Cyclopean Dread
+        99658, -- Chronomancer Robes
+    },
+    -- Chest of the Cursed Conqueror
+    ["99743"] = {
+        99566, -- Battleplate of Winged Triumph
+        99570, -- Robes of the Horned Nightmare
+        99584, -- Robes of the Ternion Glory
+        99598, -- Chestguard of Winged Triumph
+        99626, -- Breastplate of Winged Triumph
+        99627, -- Raiment of the Ternion Glory
+    },
+    -- Chest of the Cursed Protector
+    ["99744"] = {
+        99555, -- Tunic of Seven Sacred Seals
+        99562, -- Chestguard of the Prehistoric Marauder
+        99577, -- Tunic of the Unblinking Vigil
+        99579, -- Hauberk of Celestial Harmony
+        99603, -- Battleplate of the Prehistoric Marauder
+        99615, -- Cuirass of Celestial Harmony
+        99636, -- Tunic of Celestial Harmony
+        99641, -- Vest of Seven Sacred Seals
+        99643, -- Chestguard of Seven Sacred Seals
+    },
+    -- Gauntlets of the Cursed Vanquisher
+    ["99745"] = {
+        99575, -- Chronomancer Gloves
+        99604, -- Handguards of Cyclopean Dread
+        99609, -- Gauntlets of Cyclopean Dread
+        99617, -- Gloves of the Shattered Vale
+        99623, -- Handguards of the Shattered Vale
+        99630, -- Gloves of the Barbed Assassin
+        99633, -- Grips of the Shattered Vale
+        99637, -- Handwraps of the Shattered Vale
+    },
+    -- Gauntlets of the Cursed Conqueror
+    ["99746"] = {
+        99567, -- Gloves of the Horned Nightmare
+        99586, -- Gloves of the Ternion Glory
+        99590, -- Handwraps of the Ternion Glory
+        99595, -- Handguards of Winged Triumph
+        99625, -- Gauntlets of Winged Triumph
+        99648, -- Gloves of Winged Triumph
+    },
+    -- Gauntlets of the Cursed Protector
+    ["99747"] = {
+        99552, -- Handwraps of Seven Sacred Seals
+        99556, -- Grips of Seven Sacred Seals
+        99559, -- Gauntlets of the Prehistoric Marauder
+        99563, -- Handguards of the Prehistoric Marauder
+        99578, -- Gloves of the Unblinking Vigil
+        99580, -- Gloves of Celestial Harmony
+        99611, -- Handwraps of Celestial Harmony
+        99616, -- Grips of Celestial Harmony
+        99644, -- Gauntlets of Seven Sacred Seals
+    },
+    -- Helm of the Cursed Vanquisher
+    ["99748"] = {
+        99571, -- Helmet of Cyclopean Dread
+        99576, -- Chronomancer Hood
+        99599, -- Headpiece of the Shattered Vale
+        99605, -- Faceguard of Cyclopean Dread
+        99618, -- Cover of the Shattered Vale
+        99624, -- Headguard of the Shattered Vale
+        99631, -- Helmet of the Barbed Assassin
+        99638, -- Helm of the Shattered Vale
+    },
+    -- Helm of the Cursed Conqueror
+    ["99749"] = {
+        99568, -- Hood of the Horned Nightmare
+        99587, -- Hood of the Ternion Glory
+        99591, -- Cowl of the Ternion Glory
+        99596, -- Faceguard of Winged Triumph
+        99651, -- Helmet of Winged Triumph
+        99665, -- Headguard of Winged Triumph
+    },
+    -- Helm of the Cursed Protector
+    ["99750"] = {
+        99553, -- Helm of Seven Sacred Seals
+        99557, -- Faceguard of the Prehistoric Marauder
+        99602, -- Helmet of the Prehistoric Marauder
+        99607, -- Crown of Seven Sacred Seals
+        99612, -- Faceguard of Celestial Harmony
+        99645, -- Headpiece of Celestial Harmony
+        99649, -- Helmet of Celestial Harmony
+        99653, -- Headpiece of Seven Sacred Seals
+        99660, -- Headguard of the Unblinking Vigil
+    },
+    -- Leggings of the Cursed Vanquisher
+    ["99751"] = {
+        99564, -- Legguards of Cyclopean Dread
+        99572, -- Greaves of Cyclopean Dread
+        99581, -- Legwraps of the Shattered Vale
+        99600, -- Legguards of the Shattered Vale
+        99610, -- Breeches of the Shattered Vale
+        99619, -- Leggings of the Shattered Vale
+        99634, -- Legguards of the Barbed Assassin
+        99657, -- Chronomancer Leggings
+    },
+    -- Leggings of the Cursed Conqueror
+    ["99752"] = {
+        99569, -- Leggings of the Horned Nightmare
+        99588, -- Leggings of the Ternion Glory
+        99592, -- Legwraps of the Ternion Glory
+        99593, -- Legguards of Winged Triumph
+        99661, -- Legplates of Winged Triumph
+        99666, -- Greaves of Winged Triumph
+    },
+    -- Leggings of the Cursed Protector
+    ["99753"] = {
+        99554, -- Legwraps of Seven Sacred Seals
+        99558, -- Legguards of the Prehistoric Marauder
+        99560, -- Legplates of the Prehistoric Marauder
+        99573, -- Legguards of the Unblinking Vigil
+        99606, -- Legguards of Seven Sacred Seals
+        99613, -- Legwraps of Celestial Harmony
+        99646, -- Leggings of Celestial Harmony
+        99650, -- Legguards of Celestial Harmony
+        99654, -- Leggings of Seven Sacred Seals
+    },
+    -- Shoulders of the Cursed Vanquisher
+    ["99754"] = {
+        99583, -- Mantle of the Shattered Vale
+        99589, -- Spaulders of the Shattered Vale
+        99621, -- Shoulderwraps of the Shattered Vale
+        99635, -- Spaulders of the Barbed Assassin
+        99639, -- Pauldrons of Cyclopean Dread
+        99652, -- Shoulderguards of Cyclopean Dread
+        99659, -- Chronomancer Mantle
+        99664, -- Shoulderguards of the Shattered Vale
+    },
+    -- Shoulders of the Cursed Conqueror
+    ["99755"] = {
+        99585, -- Mantle of the Ternion Glory
+        99594, -- Shoulderguards of Winged Triumph
+        99601, -- Mantle of the Horned Nightmare
+        99628, -- Shoulderguards of the Ternion Glory
+        99656, -- Mantle of Winged Triumph
+        99662, -- Pauldrons of Winged Triumph
+    },
+    -- Shoulders of the Cursed Protector
+    ["99756"] = {
+        99561, -- Pauldrons of the Prehistoric Marauder
+        99565, -- Shoulderguards of Seven Sacred Seals
+        99574, -- Spaulders of the Unblinking Vigil
+        99597, -- Shoulderguards of the Prehistoric Marauder
+        99614, -- Mantle of Celestial Harmony
+        99642, -- Mantle of Seven Sacred Seals
+        99647, -- Shoulderwraps of Celestial Harmony
+        99655, -- Spaulders of Seven Sacred Seals
+        99663, -- Spaulders of Celestial Harmony
+    },
     -- Fathom Core
     ["204270"] = {
         16762, -- Fathom Core
@@ -19739,10 +25939,6 @@ GL.Data.ItemLinks = {
     -- Mortar and Pestle
     ["206176"] = {
         15454, -- Mortar and Pestle
-    },
-    -- Rune of Metamorphosis
-    ["210980"] = {
-        19340, -- Rune of Metamorphosis
     },
     -- Avenger's Void Pearl
     ["211449"] = {
@@ -22579,7 +28775,7 @@ GL.Data.ItemLinks = {
     },
     -- Sulfuras, Hand of Ragnaros
     ["227683"] = {
-        17182, -- Sulfuras, Hand of Ragnaros
+        227728, -- Eye of Sulfuras
     },
     -- Sulfuron Hammer
     ["227684"] = {
@@ -23605,19 +29801,19 @@ GL.Data.ItemLinks = {
     },
     -- Lok'delar, Stave of the Ancient Keepers
     ["228332"] = {
-        18715, -- Lok'delar, Stave of the Ancient Keepers
+        18703, -- Ancient Petrified Leaf
     },
     -- Rhok'delar, Longbow of the Ancient Keepers
     ["228334"] = {
-        18713, -- Rhok'delar, Longbow of the Ancient Keepers
+        18703, -- Ancient Petrified Leaf
     },
     -- Benediction
     ["228335"] = {
-        18608, -- Benediction
+        18646, -- The Eye of Divinity
     },
     -- Anathema
     ["228336"] = {
-        18609, -- Anathema
+        18646, -- The Eye of Divinity
     },
     -- Unmelting Ice Girdle
     ["228340"] = {
@@ -24469,7 +30665,7 @@ GL.Data.ItemLinks = {
     },
     -- Thunderfury, Blessed Blade of the Windseeker
     ["230224"] = {
-        19019, -- Thunderfury, Blessed Blade of the Windseeker
+        232018, -- Dormant Wind Kissed Blade
     },
     -- Arcane Infused Gem
     ["230237"] = {
@@ -24500,6 +30696,10 @@ GL.Data.ItemLinks = {
     -- Mind Quickening Gem
     ["230243"] = {
         19339, -- Mind Quickening Gem
+    },
+    -- Shapeshifter's Sigil
+    ["230244"] = {
+        19340, -- Rune of Metamorphosis
     },
     -- Pendant of the Fallen Dragon
     ["230245"] = {
@@ -24758,16 +30958,15 @@ GL.Data.ItemLinks = {
     },
     -- Master Dragonslayer's Ring
     ["230839"] = {
-        19384, -- Master Dragonslayer's Ring
+        19002, -- Head of Nefarian
     },
     -- Master Dragonslayer's Medallion
     ["230840"] = {
-        19383, -- Master Dragonslayer's Medallion
+        19002, -- Head of Nefarian
     },
     -- Master Dragonslayer's Orb
     ["230841"] = {
-        19003, -- Head of Nefarian (Alliance)
-        19366, -- Master Dragonslayer's Orb
+        19002, -- Head of Nefarian
     },
     -- Cloak of Draconic Might
     ["230842"] = {
@@ -24988,6 +31187,7 @@ GL.Data.ItemLinks = {
     },
     -- Warblade of the Hakkari
     ["230992"] = {
+        19866, -- Warblade of the Hakkari
         231869, -- Warblade of the Hakkari
     },
     -- Mandokir's Sting
@@ -25091,7 +31291,7 @@ GL.Data.ItemLinks = {
     },
     -- Pauldrons of Wrath
     ["231025"] = {
-        16961, -- Pauldrons of Wrath
+        231717, -- Primeval Shoulderpads
     },
     -- Legguards of Wrath
     ["231026"] = {
@@ -25107,7 +31307,7 @@ GL.Data.ItemLinks = {
     },
     -- Sabatons of Wrath
     ["231029"] = {
-        16965, -- Sabatons of Wrath
+        231721, -- Primeval Boots
     },
     -- Chestguard of Wrath
     ["231030"] = {
@@ -25127,15 +31327,15 @@ GL.Data.ItemLinks = {
     },
     -- Legplates of Wrath
     ["231034"] = {
-        16962, -- Legplates of Wrath
+        231718, -- Primeval Leggings
     },
     -- Helm of Wrath
     ["231035"] = {
-        16963, -- Helm of Wrath
+        231719, -- Primeval Helm
     },
     -- Gauntlets of Wrath
     ["231036"] = {
-        16964, -- Gauntlets of Wrath
+        231720, -- Primeval Gloves
     },
     -- Greaves of Wrath
     ["231037"] = {
@@ -25143,39 +31343,39 @@ GL.Data.ItemLinks = {
     },
     -- Breastplate of Wrath
     ["231038"] = {
-        16966, -- Breastplate of Wrath
+        231723, -- Primeval Chest
     },
     -- Bloodfang Spaulders
     ["231039"] = {
-        16832, -- Bloodfang Spaulders
+        231717, -- Primeval Shoulderpads
     },
     -- Bloodfang Chestpiece
     ["231040"] = {
-        16905, -- Bloodfang Chestpiece
+        231723, -- Primeval Chest
     },
     -- Bloodfang Boots
     ["231041"] = {
-        16906, -- Bloodfang Boots
+        231721, -- Primeval Boots
     },
     -- Bloodfang Gloves
     ["231042"] = {
-        16907, -- Bloodfang Gloves
+        231720, -- Primeval Gloves
     },
     -- Bloodfang Hood
     ["231043"] = {
-        16908, -- Bloodfang Hood
+        231719, -- Primeval Helm
     },
     -- Bloodfang Pants
     ["231044"] = {
-        16909, -- Bloodfang Pants
+        231718, -- Primeval Leggings
     },
     -- Bloodfang Belt
     ["231045"] = {
-        16910, -- Bloodfang Belt
+        231716, -- Primeval Belt
     },
     -- Bloodfang Bracers
     ["231046"] = {
-        16911, -- Bloodfang Bracers
+        231715, -- Primeval Bindings
     },
     -- Bloodfang Shoulderpads
     ["231047"] = {
@@ -25211,35 +31411,35 @@ GL.Data.ItemLinks = {
     },
     -- Dragonstalker's Bracers
     ["231055"] = {
-        16935, -- Dragonstalker's Bracers
+        231724, -- Ancient Bindings
     },
     -- Dragonstalker's Belt
     ["231056"] = {
-        16936, -- Dragonstalker's Belt
+        231725, -- Ancient Belt
     },
     -- Dragonstalker's Spaulders
     ["231057"] = {
-        16937, -- Dragonstalker's Spaulders
+        231726, -- Ancient Shoulderpads
     },
     -- Dragonstalker's Legguards
     ["231058"] = {
-        16938, -- Dragonstalker's Legguards
+        231727, -- Ancient Leggings
     },
     -- Dragonstalker's Helm
     ["231059"] = {
-        16939, -- Dragonstalker's Helm
+        231728, -- Ancient Helm
     },
     -- Dragonstalker's Gauntlets
     ["231060"] = {
-        16940, -- Dragonstalker's Gauntlets
+        231729, -- Ancient Gloves
     },
     -- Dragonstalker's Greaves
     ["231061"] = {
-        16941, -- Dragonstalker's Greaves
+        231730, -- Ancient Boots
     },
     -- Dragonstalker's Breastplate
     ["231062"] = {
-        16942, -- Dragonstalker's Breastplate
+        231731, -- Ancient Chest
     },
     -- Dragonstalker's Vambraces
     ["231063"] = {
@@ -25275,35 +31475,35 @@ GL.Data.ItemLinks = {
     },
     -- Nemesis Boots
     ["231072"] = {
-        16927, -- Nemesis Boots
+        231713, -- Draconian Boots
     },
     -- Nemesis Gloves
     ["231073"] = {
-        16928, -- Nemesis Gloves
+        231712, -- Draconian Gloves
     },
     -- Nemesis Skullcap
     ["231074"] = {
-        16929, -- Nemesis Skullcap
+        231711, -- Draconian Hood
     },
     -- Nemesis Leggings
     ["231075"] = {
-        16930, -- Nemesis Leggings
+        231710, -- Draconian Leggings
     },
     -- Nemesis Robes
     ["231076"] = {
-        16931, -- Nemesis Robes
+        231714, -- Draconian Robe
     },
     -- Nemesis Spaulders
     ["231077"] = {
-        16932, -- Nemesis Spaulders
+        231709, -- Draconian Shoulderpads
     },
     -- Nemesis Belt
     ["231078"] = {
-        16933, -- Nemesis Belt
+        231708, -- Draconian Belt
     },
     -- Nemesis Bracers
     ["231079"] = {
-        16934, -- Nemesis Bracers
+        231707, -- Draconian Bindings
     },
     -- Nemesis Treads
     ["231090"] = {
@@ -25403,35 +31603,35 @@ GL.Data.ItemLinks = {
     },
     -- Boots of Transcendence
     ["231155"] = {
-        16919, -- Boots of Transcendence
+        231713, -- Draconian Boots
     },
     -- Handguards of Transcendence
     ["231156"] = {
-        16920, -- Handguards of Transcendence
+        231712, -- Draconian Gloves
     },
     -- Halo of Transcendence
     ["231157"] = {
-        16921, -- Halo of Transcendence
+        231711, -- Draconian Hood
     },
     -- Leggings of Transcendence
     ["231158"] = {
-        16922, -- Leggings of Transcendence
+        231710, -- Draconian Leggings
     },
     -- Robes of Transcendence
     ["231159"] = {
-        16923, -- Robes of Transcendence
+        231714, -- Draconian Robe
     },
     -- Pauldrons of Transcendence
     ["231160"] = {
-        16924, -- Pauldrons of Transcendence
+        231709, -- Draconian Shoulderpads
     },
     -- Belt of Transcendence
     ["231161"] = {
-        16925, -- Belt of Transcendence
+        231708, -- Draconian Belt
     },
     -- Bindings of Transcendence
     ["231162"] = {
-        16926, -- Bindings of Transcendence
+        231707, -- Draconian Bindings
     },
     -- Treads of Transcendence
     ["231165"] = {
@@ -25467,35 +31667,35 @@ GL.Data.ItemLinks = {
     },
     -- Judgement Bindings
     ["231174"] = {
-        16951, -- Judgement Bindings
+        231724, -- Ancient Bindings
     },
     -- Judgement Belt
     ["231175"] = {
-        16952, -- Judgement Belt
+        231725, -- Ancient Belt
     },
     -- Judgement Spaulders
     ["231176"] = {
-        16953, -- Judgement Spaulders
+        231726, -- Ancient Shoulderpads
     },
     -- Judgement Legplates
     ["231177"] = {
-        16954, -- Judgement Legplates
+        231727, -- Ancient Leggings
     },
     -- Judgement Crown
     ["231178"] = {
-        16955, -- Judgement Crown
+        231728, -- Ancient Helm
     },
     -- Judgement Gauntlets
     ["231179"] = {
-        16956, -- Judgement Gauntlets
+        231729, -- Ancient Gloves
     },
     -- Judgement Sabatons
     ["231180"] = {
-        16957, -- Judgement Sabatons
+        231730, -- Ancient Boots
     },
     -- Judgement Breastplate
     ["231181"] = {
-        16958, -- Judgement Breastplate
+        231731, -- Ancient Chest
     },
     -- Judgement Vambraces
     ["231182"] = {
@@ -25563,27 +31763,27 @@ GL.Data.ItemLinks = {
     },
     -- Gauntlets of Ten Storms
     ["231198"] = {
-        16948, -- Gauntlets of Ten Storms
+        231729, -- Ancient Gloves
     },
     -- Bracers of Ten Storms
     ["231199"] = {
-        16943, -- Bracers of Ten Storms
+        231724, -- Ancient Bindings
     },
     -- Belt of Ten Storms
     ["231200"] = {
-        16944, -- Belt of Ten Storms
+        231725, -- Ancient Belt
     },
     -- Epaulets of Ten Storms
     ["231201"] = {
-        16945, -- Epaulets of Ten Storms
+        231726, -- Ancient Shoulderpads
     },
     -- Legplates of Ten Storms
     ["231202"] = {
-        16946, -- Legplates of Ten Storms
+        231727, -- Ancient Leggings
     },
     -- Helmet of Ten Storms
     ["231203"] = {
-        16947, -- Helmet of Ten Storms
+        231728, -- Ancient Helm
     },
     -- Greaves of Ten Storms
     ["231204"] = {
@@ -25591,7 +31791,7 @@ GL.Data.ItemLinks = {
     },
     -- Breastplate of Ten Storms
     ["231205"] = {
-        16950, -- Breastplate of Ten Storms
+        231731, -- Ancient Chest
     },
     -- Handguards of Ten Storms
     ["231206"] = {
@@ -25691,35 +31891,35 @@ GL.Data.ItemLinks = {
     },
     -- Stormrage Chestguard
     ["231230"] = {
-        16897, -- Stormrage Chestguard
+        231723, -- Primeval Chest
     },
     -- Stormrage Boots
     ["231231"] = {
-        16898, -- Stormrage Boots
+        231721, -- Primeval Boots
     },
     -- Stormrage Handguards
     ["231232"] = {
-        16899, -- Stormrage Handguards
+        231720, -- Primeval Gloves
     },
     -- Stormrage Cover
     ["231233"] = {
-        16900, -- Stormrage Cover
+        231719, -- Primeval Helm
     },
     -- Stormrage Legguards
     ["231234"] = {
-        16901, -- Stormrage Legguards
+        231718, -- Primeval Leggings
     },
     -- Stormrage Pauldrons
     ["231235"] = {
-        16902, -- Stormrage Pauldrons
+        231717, -- Primeval Shoulderpads
     },
     -- Stormrage Belt
     ["231236"] = {
-        16903, -- Stormrage Belt
+        231716, -- Primeval Belt
     },
     -- Stormrage Bracers
     ["231237"] = {
-        16904, -- Stormrage Bracers
+        231715, -- Primeval Bindings
     },
     -- Stormrage Armor
     ["231238"] = {
@@ -25949,7 +32149,6 @@ GL.Data.ItemLinks = {
     -- Warblade of the Hakkari
     ["231309"] = {
         19865, -- Warblade of the Hakkari
-        19866, -- Warblade of the Hakkari
         231853, -- Warblade of the Hakkari
     },
     -- Zin'rokh, Destroyer of Worlds
@@ -26491,6 +32690,8 @@ GL.Data.ItemLinks = {
     },
     -- Draconian Bindings
     ["231707"] = {
+        16926, -- Bindings of Transcendence
+        16934, -- Nemesis Bracers
         231079, -- Nemesis Bracers
         231098, -- Nemesis Wraps
         231107, -- Netherwind Bindings
@@ -26506,6 +32707,8 @@ GL.Data.ItemLinks = {
     },
     -- Draconian Belt
     ["231708"] = {
+        16925, -- Belt of Transcendence
+        16933, -- Nemesis Belt
         231078, -- Nemesis Belt
         231097, -- Nemesis Cord
         231100, -- Netherwind Belt
@@ -26521,6 +32724,8 @@ GL.Data.ItemLinks = {
     },
     -- Draconian Shoulderpads
     ["231709"] = {
+        16924, -- Pauldrons of Transcendence
+        16932, -- Nemesis Spaulders
         231077, -- Nemesis Spaulders
         231096, -- Nemesis Shoulderpads
         231106, -- Netherwind Mantle
@@ -26536,6 +32741,8 @@ GL.Data.ItemLinks = {
     },
     -- Draconian Leggings
     ["231710"] = {
+        16922, -- Leggings of Transcendence
+        16930, -- Nemesis Leggings
         231075, -- Nemesis Leggings
         231093, -- Nemesis Pants
         231104, -- Netherwind Pants
@@ -26551,6 +32758,8 @@ GL.Data.ItemLinks = {
     },
     -- Draconian Hood
     ["231711"] = {
+        16921, -- Halo of Transcendence
+        16929, -- Nemesis Skullcap
         231074, -- Nemesis Skullcap
         231092, -- Nemesis Cowl
         231103, -- Netherwind Crown
@@ -26566,6 +32775,8 @@ GL.Data.ItemLinks = {
     },
     -- Draconian Gloves
     ["231712"] = {
+        16920, -- Handguards of Transcendence
+        16928, -- Nemesis Gloves
         231073, -- Nemesis Gloves
         231091, -- Nemesis Handguards
         231102, -- Netherwind Gloves
@@ -26581,6 +32792,8 @@ GL.Data.ItemLinks = {
     },
     -- Draconian Boots
     ["231713"] = {
+        16919, -- Boots of Transcendence
+        16927, -- Nemesis Boots
         231072, -- Nemesis Boots
         231090, -- Nemesis Treads
         231101, -- Netherwind Boots
@@ -26596,6 +32809,8 @@ GL.Data.ItemLinks = {
     },
     -- Draconian Robe
     ["231714"] = {
+        16923, -- Robes of Transcendence
+        16931, -- Nemesis Robes
         231076, -- Nemesis Robes
         231095, -- Nemesis Garb
         231105, -- Netherwind Robes
@@ -26611,6 +32826,8 @@ GL.Data.ItemLinks = {
     },
     -- Primeval Bindings
     ["231715"] = {
+        16904, -- Stormrage Bracers
+        16911, -- Bloodfang Bracers
         16959, -- Bracelets of Wrath
         231023, -- Wristguards of Wrath
         231031, -- Bracers of Wrath
@@ -26631,6 +32848,8 @@ GL.Data.ItemLinks = {
     },
     -- Primeval Belt
     ["231716"] = {
+        16903, -- Stormrage Belt
+        16910, -- Bloodfang Belt
         16960, -- Waistband of Wrath
         231024, -- Waistguard of Wrath
         231032, -- Belt of Wrath
@@ -26651,6 +32870,9 @@ GL.Data.ItemLinks = {
     },
     -- Primeval Shoulderpads
     ["231717"] = {
+        16832, -- Bloodfang Spaulders
+        16902, -- Stormrage Pauldrons
+        16961, -- Pauldrons of Wrath
         231025, -- Pauldrons of Wrath
         231033, -- Shoulders of Wrath
         231039, -- Bloodfang Spaulders
@@ -26670,6 +32892,9 @@ GL.Data.ItemLinks = {
     },
     -- Primeval Leggings
     ["231718"] = {
+        16901, -- Stormrage Legguards
+        16909, -- Bloodfang Pants
+        16962, -- Legplates of Wrath
         231026, -- Legguards of Wrath
         231034, -- Legplates of Wrath
         231044, -- Bloodfang Pants
@@ -26689,6 +32914,9 @@ GL.Data.ItemLinks = {
     },
     -- Primeval Helm
     ["231719"] = {
+        16900, -- Stormrage Cover
+        16908, -- Bloodfang Hood
+        16963, -- Helm of Wrath
         231027, -- Faceguard of Wrath
         231035, -- Helm of Wrath
         231043, -- Bloodfang Hood
@@ -26708,6 +32936,9 @@ GL.Data.ItemLinks = {
     },
     -- Primeval Gloves
     ["231720"] = {
+        16899, -- Stormrage Handguards
+        16907, -- Bloodfang Gloves
+        16964, -- Gauntlets of Wrath
         231028, -- Handguards of Wrath
         231036, -- Gauntlets of Wrath
         231042, -- Bloodfang Gloves
@@ -26727,6 +32958,9 @@ GL.Data.ItemLinks = {
     },
     -- Primeval Boots
     ["231721"] = {
+        16898, -- Stormrage Boots
+        16906, -- Bloodfang Boots
+        16965, -- Sabatons of Wrath
         231029, -- Sabatons of Wrath
         231037, -- Greaves of Wrath
         231041, -- Bloodfang Boots
@@ -26750,6 +32984,9 @@ GL.Data.ItemLinks = {
     },
     -- Primeval Chest
     ["231723"] = {
+        16897, -- Stormrage Chestguard
+        16905, -- Bloodfang Chestpiece
+        16966, -- Breastplate of Wrath
         231030, -- Chestguard of Wrath
         231038, -- Breastplate of Wrath
         231040, -- Bloodfang Chestpiece
@@ -26769,6 +33006,9 @@ GL.Data.ItemLinks = {
     },
     -- Ancient Bindings
     ["231724"] = {
+        16935, -- Dragonstalker's Bracers
+        16943, -- Bracers of Ten Storms
+        16951, -- Judgement Bindings
         231055, -- Dragonstalker's Bracers
         231063, -- Dragonstalker's Vambraces
         231174, -- Judgement Bindings
@@ -26790,7 +33030,9 @@ GL.Data.ItemLinks = {
     },
     -- Ancient Belt
     ["231725"] = {
-        15606, -- Ancient Belt
+        16936, -- Dragonstalker's Belt
+        16944, -- Belt of Ten Storms
+        16952, -- Judgement Belt
         231056, -- Dragonstalker's Belt
         231065, -- Dragonstalker's Girdle
         231175, -- Judgement Belt
@@ -26812,6 +33054,9 @@ GL.Data.ItemLinks = {
     },
     -- Ancient Shoulderpads
     ["231726"] = {
+        16937, -- Dragonstalker's Spaulders
+        16945, -- Epaulets of Ten Storms
+        16953, -- Judgement Spaulders
         231057, -- Dragonstalker's Spaulders
         231066, -- Dragonstalker's Pauldrons
         231176, -- Judgement Spaulders
@@ -26833,6 +33078,9 @@ GL.Data.ItemLinks = {
     },
     -- Ancient Leggings
     ["231727"] = {
+        16938, -- Dragonstalker's Legguards
+        16946, -- Legplates of Ten Storms
+        16954, -- Judgement Legplates
         231058, -- Dragonstalker's Legguards
         231067, -- Dragonstalker's Pants
         231177, -- Judgement Legplates
@@ -26854,6 +33102,9 @@ GL.Data.ItemLinks = {
     },
     -- Ancient Helm
     ["231728"] = {
+        16939, -- Dragonstalker's Helm
+        16947, -- Helmet of Ten Storms
+        16955, -- Judgement Crown
         231059, -- Dragonstalker's Helm
         231068, -- Dragonstalker's Skullcap
         231178, -- Judgement Crown
@@ -26875,6 +33126,9 @@ GL.Data.ItemLinks = {
     },
     -- Ancient Gloves
     ["231729"] = {
+        16940, -- Dragonstalker's Gauntlets
+        16948, -- Gauntlets of Ten Storms
+        16956, -- Judgement Gauntlets
         231060, -- Dragonstalker's Gauntlets
         231069, -- Dragonstalker's Grips
         231179, -- Judgement Gauntlets
@@ -26896,6 +33150,9 @@ GL.Data.ItemLinks = {
     },
     -- Ancient Boots
     ["231730"] = {
+        16941, -- Dragonstalker's Greaves
+        16949, -- Greaves of Ten Storms
+        16957, -- Judgement Sabatons
         231061, -- Dragonstalker's Greaves
         231070, -- Dragonstalker's Sabatons
         231180, -- Judgement Sabatons
@@ -26917,6 +33174,9 @@ GL.Data.ItemLinks = {
     },
     -- Ancient Chest
     ["231731"] = {
+        16942, -- Dragonstalker's Breastplate
+        16950, -- Breastplate of Ten Storms
+        16958, -- Judgement Breastplate
         231062, -- Dragonstalker's Breastplate
         231071, -- Dragonstalker's Armor
         231181, -- Judgement Breastplate
@@ -27104,6 +33364,7 @@ GL.Data.ItemLinks = {
     -- Dormant Wind Kissed Blade
     ["232018"] = {
         19018, -- Dormant Wind Kissed Blade
+        19019, -- Thunderfury, Blessed Blade of the Windseeker
         230224, -- Thunderfury, Blessed Blade of the Windseeker
     },
     -- Stormrage Bindings
@@ -27644,7 +33905,7 @@ GL.Data.ItemLinks = {
     },
     -- Greaves of Ten Storms
     ["232213"] = {
-        16949, -- Greaves of Ten Storms
+        231730, -- Ancient Boots
     },
     -- Breastplate of Ten Storms
     ["232214"] = {
@@ -28513,6 +34774,7 @@ GL.Data.ItemLinks = {
     },
     -- Wand of Qiraji Nobility
     ["233571"] = {
+        21603, -- Wand of Qiraji Nobility
         234976, -- Wand of Qiraji Nobility
     },
     -- Necklace of Purity
@@ -28570,6 +34832,7 @@ GL.Data.ItemLinks = {
     },
     -- Ancient Qiraji Ripper
     ["233585"] = {
+        21650, -- Ancient Qiraji Ripper
         234650, -- Ancient Qiraji Ripper
     },
     -- Jaw of the Sand Reaver
@@ -28766,6 +35029,7 @@ GL.Data.ItemLinks = {
     },
     -- Death's Sting
     ["233634"] = {
+        21126, -- Death's Sting
         234984, -- Death's Sting
     },
     -- Belt of Never-ending Agony
@@ -28791,6 +35055,7 @@ GL.Data.ItemLinks = {
     },
     -- Dark Edge of Insanity
     ["233640"] = {
+        21134, -- Dark Edge of Insanity
         234985, -- Dark Edge of Insanity
     },
     -- Cloak of Clarity
@@ -28803,6 +35068,7 @@ GL.Data.ItemLinks = {
     },
     -- Anubisath Warhammer
     ["233643"] = {
+        21837, -- Anubisath Warhammer
         234986, -- Anubisath Warhammer
     },
     -- Garb of Royal Ascension
@@ -28819,6 +35085,7 @@ GL.Data.ItemLinks = {
     },
     -- Neretzek, The Blood Drinker
     ["233647"] = {
+        21856, -- Neretzek, The Blood Drinker
         234987, -- Neretzek, The Blood Drinker
     },
     -- Ritssyn's Ring of Chaos
@@ -29904,7 +36171,6 @@ GL.Data.ItemLinks = {
     },
     -- Ancient Qiraji Ripper
     ["234650"] = {
-        21650, -- Ancient Qiraji Ripper
         233585, -- Ancient Qiraji Ripper
     },
     -- Fist of Cenarius
@@ -29989,15 +36255,15 @@ GL.Data.ItemLinks = {
     },
     -- Blessed Qiraji War Axe
     ["234804"] = {
-        235046, -- Imperial Qiraji Armaments
+        21242, -- Blessed Qiraji War Axe
     },
     -- Blessed Qiraji Musket
     ["234805"] = {
-        235046, -- Imperial Qiraji Armaments
+        21272, -- Blessed Qiraji Musket
     },
     -- Blessed Qiraji Pugio
     ["234806"] = {
-        235046, -- Imperial Qiraji Armaments
+        21244, -- Blessed Qiraji Pugio
     },
     -- Blessed Qiraji Bulwark
     ["234807"] = {
@@ -30009,11 +36275,11 @@ GL.Data.ItemLinks = {
     },
     -- Blessed Qiraji Augur Staff
     ["234809"] = {
-        235045, -- Imperial Qiraji Regalia
+        21275, -- Blessed Qiraji Augur Staff
     },
     -- Blessed Qiraji War Hammer
     ["234810"] = {
-        235045, -- Imperial Qiraji Regalia
+        21268, -- Blessed Qiraji War Hammer
     },
     -- Charm of the Shifting Sands
     ["234811"] = {
@@ -30049,7 +36315,6 @@ GL.Data.ItemLinks = {
     },
     -- Wand of Qiraji Nobility
     ["234976"] = {
-        21603, -- Wand of Qiraji Nobility
         233571, -- Wand of Qiraji Nobility
     },
     -- Silithid Claw
@@ -30078,22 +36343,18 @@ GL.Data.ItemLinks = {
     },
     -- Death's Sting
     ["234984"] = {
-        21126, -- Death's Sting
         233634, -- Death's Sting
     },
     -- Dark Edge of Insanity
     ["234985"] = {
-        21134, -- Dark Edge of Insanity
         233640, -- Dark Edge of Insanity
     },
     -- Anubisath Warhammer
     ["234986"] = {
-        21837, -- Anubisath Warhammer
         233643, -- Anubisath Warhammer
     },
     -- Neretzek, The Blood Drinker
     ["234987"] = {
-        21856, -- Neretzek, The Blood Drinker
         233647, -- Neretzek, The Blood Drinker
     },
     -- Qiraji Sacrificial Dagger
@@ -30135,26 +36396,6 @@ GL.Data.ItemLinks = {
     -- The Lost Kris of Zedd
     ["234998"] = {
         234122, -- The Lost Kris of Zedd
-    },
-    -- Blessed Qiraji War Hammer
-    ["234999"] = {
-        21268, -- Blessed Qiraji War Hammer
-    },
-    -- Blessed Qiraji Augur Staff
-    ["235000"] = {
-        21275, -- Blessed Qiraji Augur Staff
-    },
-    -- Blessed Qiraji Pugio
-    ["235002"] = {
-        21244, -- Blessed Qiraji Pugio
-    },
-    -- Blessed Qiraji War Axe
-    ["235003"] = {
-        21242, -- Blessed Qiraji War Axe
-    },
-    -- Blessed Qiraji Musket
-    ["235004"] = {
-        21272, -- Blessed Qiraji Musket
     },
     -- Scepter of the False Prophet
     ["235014"] = {
@@ -30631,6 +36872,10 @@ GL.Data.ItemLinks = {
     ["236109"] = {
         236246, -- Desecrated Leggings
     },
+    -- Crown of Faith
+    ["236110"] = {
+        236241, -- Desecrated Circlet
+    },
     -- Hands of Faith
     ["236111"] = {
         236243, -- Desecrated Gloves
@@ -30951,6 +37196,10 @@ GL.Data.ItemLinks = {
     ["236195"] = {
         236253, -- Desecrated Legguards
     },
+    -- Dreamwalker Hood
+    ["236196"] = {
+        236249, -- Desecrated Headpiece
+    },
     -- Dreamwalker Mitts
     ["236197"] = {
         236250, -- Desecrated Handguards
@@ -31195,6 +37444,7 @@ GL.Data.ItemLinks = {
         236064, -- Plagueheart Circlet
         236072, -- Plagueheart Crown
         236103, -- Circlet of Faith
+        236110, -- Crown of Faith
     },
     -- Desecrated Robe
     ["236242"] = {
@@ -31287,6 +37537,7 @@ GL.Data.ItemLinks = {
         236165, -- Earthshatter Faceguard
         236174, -- Earthshatter Helmet
         236182, -- Dreamwalker Headpiece
+        236196, -- Dreamwalker Hood
         236205, -- Dreamwalker Headdress
         236214, -- Dreamwalker Cowl
     },
@@ -32149,6 +38400,34 @@ GL.Data.ItemLinks = {
     ["239555"] = {
         239719, -- Consecrated Bindings
     },
+    -- Duskwraith Waistguard
+    ["239556"] = {
+        239718, -- Consecrated Belt
+    },
+    -- Duskwraith Gauntlets
+    ["239557"] = {
+        239716, -- Consecrated Gloves
+    },
+    -- Duskwraith Sabatons
+    ["239558"] = {
+        239710, -- Consecrated Sandals
+    },
+    -- Duskwraith Pauldrons
+    ["239559"] = {
+        239712, -- Consecrated Shoulderpads
+    },
+    -- Duskwraith Helmet
+    ["239560"] = {
+        239714, -- Consecrated Circlet
+    },
+    -- Duskwraith Legplates
+    ["239561"] = {
+        239721, -- Consecrated Leggings
+    },
+    -- Duskwraith Breastplate
+    ["239562"] = {
+        239715, -- Consecrated Robe
+    },
     -- Garb of Revelation
     ["239565"] = {
         239715, -- Consecrated Robe
@@ -32252,6 +38531,7 @@ GL.Data.ItemLinks = {
     -- Consecrated Sandals
     ["239710"] = {
         239553, -- Duskwraith Treads
+        239558, -- Duskwraith Sabatons
         239572, -- Boots of Revelation
         239589, -- Sandals of Revelation
         240139, -- Heretic Sandals
@@ -32260,6 +38540,7 @@ GL.Data.ItemLinks = {
     -- Consecrated Shoulderpads
     ["239712"] = {
         239552, -- Duskwraith Mantle
+        239559, -- Duskwraith Pauldrons
         239581, -- Mantle of Revelation
         239586, -- Shoulderpads of Revelation
         240143, -- Heretic Shoulderpads
@@ -32268,6 +38549,7 @@ GL.Data.ItemLinks = {
     -- Consecrated Circlet
     ["239714"] = {
         239550, -- Duskwraith Mask
+        239560, -- Duskwraith Helmet
         239575, -- Crown of Revelation
         239585, -- Circlet of Revelation
         240141, -- Heretic Cowl
@@ -32276,6 +38558,7 @@ GL.Data.ItemLinks = {
     -- Consecrated Robe
     ["239715"] = {
         239548, -- Duskwraith Chestguard
+        239562, -- Duskwraith Breastplate
         239565, -- Garb of Revelation
         239591, -- Robe of Revelation
         240138, -- Heretic Robe
@@ -32284,6 +38567,7 @@ GL.Data.ItemLinks = {
     -- Consecrated Gloves
     ["239716"] = {
         239549, -- Duskwraith Grips
+        239557, -- Duskwraith Gauntlets
         239574, -- Hands of Revelation
         239584, -- Gloves of Revelation
         240140, -- Heretic Gloves
@@ -32292,6 +38576,7 @@ GL.Data.ItemLinks = {
     -- Consecrated Belt
     ["239718"] = {
         239554, -- Duskwraith Belt
+        239556, -- Duskwraith Waistguard
         239582, -- Girdle of Revelation
         239590, -- Belt of Revelation
         240144, -- Heretic Belt
@@ -32309,6 +38594,7 @@ GL.Data.ItemLinks = {
     -- Consecrated Leggings
     ["239721"] = {
         239551, -- Duskwraith Leggings
+        239561, -- Duskwraith Legplates
         239577, -- Pants of Revelation
         239587, -- Leggings of Revelation
         240142, -- Heretic Leggings
@@ -32319,6 +38605,7 @@ GL.Data.ItemLinks = {
         240023, -- Inquisition Vambraces
         240031, -- Inquisition Bracers
         240042, -- Inquisition Wristguards
+        240060, -- Waywatcher Wraps
         240068, -- Waywatcher Bindings
         240076, -- Waywatcher Bracers
         240084, -- Waywatcher Wristguards
@@ -32332,6 +38619,7 @@ GL.Data.ItemLinks = {
         240022, -- Inquisition Boots
         240029, -- Inquisition Greaves
         240037, -- Inquisition Sabatons
+        240066, -- Waywatcher Stompers
         240074, -- Waywatcher Sandals
         240082, -- Waywatcher Sabatons
         240090, -- Waywatcher Boots
@@ -32345,6 +38633,7 @@ GL.Data.ItemLinks = {
         240027, -- Inquisition Helmet
         240035, -- Inquisition Crown
         240040, -- Inquisition Headpiece
+        240064, -- Waywatcher Cowl
         240072, -- Waywatcher Hood
         240080, -- Waywatcher Headdress
         240088, -- Waywatcher Headpiece
@@ -32358,6 +38647,7 @@ GL.Data.ItemLinks = {
         240028, -- Inquisition Gloves
         240036, -- Inquisition Gauntlets
         240041, -- Inquisition Handguards
+        240065, -- Waywatcher Grips
         240073, -- Waywatcher Mitts
         240081, -- Waywatcher Gauntlets
         240089, -- Waywatcher Handguards
@@ -32371,6 +38661,7 @@ GL.Data.ItemLinks = {
         240030, -- Inquisition Breastplate
         240038, -- Inquisition Chestguard
         240039, -- Inquisition Tunic
+        240067, -- Waywatcher Vest
         240075, -- Waywatcher Leathers
         240083, -- Waywatcher Armor
         240091, -- Waywatcher Tunic
@@ -32384,6 +38675,7 @@ GL.Data.ItemLinks = {
         240024, -- Inquisition Belt
         240032, -- Inquisition Waistguard
         240043, -- Inquisition Girdle
+        240061, -- Waywatcher Sash
         240069, -- Waywatcher Cord
         240077, -- Waywatcher Waistguard
         240085, -- Waywatcher Girdle
@@ -32397,6 +38689,7 @@ GL.Data.ItemLinks = {
         240020, -- Inquisition Legguards
         240026, -- Inquisition Leggings
         240034, -- Inquisition Legplates
+        240063, -- Waywatcher Trousers
         240071, -- Waywatcher Kilt
         240079, -- Waywatcher Leggings
         240087, -- Waywatcher Legguards
@@ -32410,6 +38703,7 @@ GL.Data.ItemLinks = {
         240021, -- Inquisition Spaulders
         240025, -- Inquisition Shoulderplates
         240033, -- Inquisition Pauldrons
+        240062, -- Waywatcher Shoulderpads
         240070, -- Waywatcher Mantle
         240078, -- Waywatcher Pauldrons
         240086, -- Waywatcher Spaulders
@@ -32613,6 +38907,38 @@ GL.Data.ItemLinks = {
     -- Fireleaf Robe
     ["240059"] = {
         239761, -- Consecrated Breastplate
+    },
+    -- Waywatcher Wraps
+    ["240060"] = {
+        239722, -- Consecrated Wristguards
+    },
+    -- Waywatcher Sash
+    ["240061"] = {
+        239756, -- Consecrated Girdle
+    },
+    -- Waywatcher Shoulderpads
+    ["240062"] = {
+        239758, -- Consecrated Spaulders
+    },
+    -- Waywatcher Trousers
+    ["240063"] = {
+        239757, -- Consecrated Legguards
+    },
+    -- Waywatcher Cowl
+    ["240064"] = {
+        239729, -- Consecrated Headpiece
+    },
+    -- Waywatcher Grips
+    ["240065"] = {
+        239730, -- Consecrated Handguards
+    },
+    -- Waywatcher Stompers
+    ["240066"] = {
+        239726, -- Consecrated Boots
+    },
+    -- Waywatcher Vest
+    ["240067"] = {
+        239731, -- Consecrated Tunic
     },
     -- Waywatcher Bindings
     ["240068"] = {
@@ -32902,6 +39228,15 @@ GL.Data.ItemLinks = {
     ["240153"] = {
         239710, -- Consecrated Sandals
     },
+    -- Strings of Fate
+    ["240837"] = {
+        242364, -- Mature Light Dragon Sinew
+        242365, -- Wing of Balnazzar
+    },
+    -- Putress' Completed Diary
+    ["241020"] = {
+        242436, -- Putress' Diary
+    },
     -- Cinders of the Fallen Crusade
     ["242314"] = {
         239215, -- Charred Emblem
@@ -32917,5 +39252,42 @@ GL.Data.ItemLinks = {
     -- Desecrated Prayerbook
     ["242317"] = {
         239215, -- Charred Emblem
+    },
+    -- Mature Light Dragon Sinew
+    ["242364"] = {
+        240837, -- Strings of Fate
+    },
+    -- Wing of Balnazzar
+    ["242365"] = {
+        240837, -- Strings of Fate
+    },
+    -- Putress' Diary
+    ["242427"] = {
+        242436, -- Putress' Diary
+    },
+    -- Putress' Diary
+    ["242429"] = {
+        242436, -- Putress' Diary
+    },
+    -- Putress' Diary
+    ["242432"] = {
+        242436, -- Putress' Diary
+    },
+    -- Putress' Diary
+    ["242434"] = {
+        242436, -- Putress' Diary
+    },
+    -- Putress' Diary
+    ["242435"] = {
+        242436, -- Putress' Diary
+    },
+    -- Putress' Diary
+    ["242436"] = {
+        241020, -- Putress' Completed Diary
+        242427, -- Putress' Diary
+        242429, -- Putress' Diary
+        242432, -- Putress' Diary
+        242434, -- Putress' Diary
+        242435, -- Putress' Diary
     },
 };
