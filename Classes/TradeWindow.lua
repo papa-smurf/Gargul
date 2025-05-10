@@ -333,7 +333,22 @@ end
 ---
 ---@param amount number
 ---@param target string
+---@test /script _G.Gargul.TradeWindow:setCopper(20, "Ggtest-Sen'jin");
 function TradeWindow:setCopper(amount, target, callback)
+    -- There are two ways to add gold to the trade window:
+    -- You can use _G.MoneyInputFrame_SetCopper(_G.TradePlayerInputMoneyFrame, 10);
+    -- which allows you to see how much gold you're about to trade
+    --
+    -- OR
+    --
+    -- You can use SetTradeMoney(10); which doesn't show you anything which of course is shady and dangerous
+    -- and not something that I consider usuable from a user-perspective.
+    --
+    -- Guess which single one Blizzard blocked for "security" reasons. 100 points for Fumblepuff
+    if (GL.isRetail) then
+        return;
+    end
+
     GL.Ace:CancelTimer(self.SetCopperTimer);
     self.SetCopperTimer = GL.Ace:ScheduleTimer(function ()
         -- Looks like the target changed somewhere along the way
