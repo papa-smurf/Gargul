@@ -737,12 +737,12 @@ function Overview:refresh()
         FillerLabel = AceGUI:Create("Label");
         FillerLabel:SetText(" ");
         FillerLabel:SetFullWidth(true);
-        RaiderHolder:AddChild(FillerLabel);
+        RaidersFrame:AddChild(FillerLabel);
 
         local Heading = GL.AceGUI:Create("Heading");
         Heading:SetFullWidth(true);
         Heading:SetText(("|c00FFFFFF%s|r"):format(L["Not in the raid"]));
-        RaiderHolder:AddChild(Heading);
+        RaidersFrame:AddChild(Heading);
 
         --- Not in raid
         for _, player in pairs(PlayersNotInRaid) do
