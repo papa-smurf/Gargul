@@ -345,7 +345,7 @@ function TradeWindow:setCopper(amount, target, callback)
     -- and not something that I consider usuable from a user-perspective.
     --
     -- Guess which single one Blizzard blocked for "security" reasons. 100 points for Fumblepuff
-    if (GL.isRetail) then
+    if (true) then
         return;
     end
 
