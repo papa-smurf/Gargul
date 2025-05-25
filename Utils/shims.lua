@@ -9,4 +9,9 @@ GL.GetNumAddOns = GetNumAddons or C_AddOns.GetNumAddOns;
 GL.IsAddOnLoaded = IsAddOnLoaded or C_AddOns.IsAddOnLoaded;
 
 -- Container
-GL.getContainerNumSlots = GetContainerNumSlots or C_Container.GetContainerNumSlots;
+GL.GetContainerNumSlots = GetContainerNumSlots or C_Container.GetContainerNumSlots;
+GL.UseContainerItem = UseContainerItem or C_Container.UseContainerItem;
+
+-- Item
+GL.GetItemInfo = GetItemInfo or C_Item.GetItemInfo;
+GL.GetItemInfoInstant = GetItemInfoInstant or C_Item.GetItemInfoInstant;

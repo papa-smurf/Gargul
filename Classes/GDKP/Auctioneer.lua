@@ -243,7 +243,7 @@ function Auctioneer:addToQueue(itemLink, identifier, open)
 
     -- Make sure the item actually exists
     local itemID = GL:getItemIDFromLink(itemLink);
-    if (not itemID or not GL:getItemInfoInstant(itemID)) then
+    if (not itemID or not GL.GetItemInfoInstant(itemID)) then
         return;
     end
 

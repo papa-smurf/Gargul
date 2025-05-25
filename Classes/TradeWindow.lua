@@ -409,7 +409,7 @@ function TradeWindow:processItemsToAdd()
     end
 
     -- Everything went well, put the item in the trade window!
-    GL:useContainerItem(bag, slot);
+    GL.UseContainerItem(bag, slot);
 end
 
 --- Check whether we should announce trade details

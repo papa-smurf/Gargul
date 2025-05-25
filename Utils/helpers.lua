@@ -884,7 +884,7 @@ end
 --- Courtesy of Lantis and the team over at Classic Loot Manager: https://github.com/ClassicLootManager/ClassicLootManager
 function GL.LibStItemCellUpdate (rowFrame, frame, data, cols, row, realrow, column, fShow, table, ...)
     local itemId = data[realrow].cols[column].value;
-    local _, _, _, _, icon = GL:getItemInfoInstant(itemId or 0);
+    local _, _, _, _, icon = GL.GetItemInfoInstant(itemId or 0);
     if icon then
         frame:SetNormalTexture(icon);
         frame:Show();
@@ -1196,7 +1196,7 @@ function GL:forEachItemInBags(func)
     local finished = false;
 
     for bag = Enum.BagIndex.Backpack, Enum.BagIndex.Bag_4 do
-        for slot = 1, self:getContainerNumSlots(bag) do
+        for slot = 1, self.GetContainerNumSlots(bag) do
             (function ()
                 local Location = ItemLocation:CreateFromBagAndSlot(bag, slot);
 
@@ -1336,7 +1336,7 @@ end
 --- @test retail
 --- /dump _G.Gargul:isValidItemLink('|cnIQ5:|Hitem:19019:::::::::::::|h[Thunderfury, Blessed Blade of the Windseeker]|h|r')
 function GL:isValidItemLink(itemLink)
-    return type(itemLink) == "string" and GL:getItemInfoInstant(itemLink) ~= nil;
+    return type(itemLink) == "string" and GL.GetItemInfoInstant(itemLink) ~= nil;
 end
 
 --- The onItemLoadDo helper accepts one or more item ids or item links
@@ -1384,7 +1384,7 @@ function GL:onItemLoadDo(Items, callback, haltOnError, sorter)
 
         -- If a number is provided we assume that it's an item ID
         if (itemID) then
-            _, itemType = self:getItemInfoInstant(itemIdentifier);
+            _, itemType = self.GetItemInfoInstant(itemIdentifier);
 
             -- Start loading the item
             if (identifierIsLink) then
@@ -1508,7 +1508,7 @@ function GL:normalizeItem(ItemMixin)
 
     -- Keep in mind that this data all refers to the base version of the item since we're using an ID
     local itemName, itemLink, itemQuality, itemLevel, _, _, _, _, itemEquipLoc,
-    itemTexture, _, classID, subclassID, bindType, _, _, _ = GL:getItemInfo(ItemMixin:GetItemLink());
+    itemTexture, _, classID, subclassID, bindType, _, _, _ = GL.GetItemInfo(ItemMixin:GetItemLink());
 
     if (not itemLink) then
         return false;
@@ -2033,21 +2033,6 @@ function GL:canUserUseItem(itemLinkOrID, callback)
     end);
 end
 
----@param bagID number
----@param slot number
----@return any
-function GL:useContainerItem(bagID, slot)
-    if (C_Container and C_Container.UseContainerItem) then
-        return C_Container.UseContainerItem(bagID, slot);
-    end
-
-    if (UseContainerItem) then
-        return UseContainerItem(bagID, slot)
-    end
-
-    return nil;
-end
-
 ---@param bag number
 ---@param slot number
 ---@return boolean|string
@@ -2060,32 +2045,6 @@ function GL:getItemGUIDByBagAndSlot(bag, slot)
     end
 
     return C_Item.GetItemGUID(Location);
-end
-
----@return nil|any
-function GL:getItemInfo(...)
-    if (C_Item and C_Item.GetItemInfo) then
-        return C_Item.GetItemInfo(...);
-    end
-
-    if (GetItemInfo) then
-        return GetItemInfo(...);
-    end
-
-    return nil;
-end
-
----@return nil|any
-function GL:getItemInfoInstant(...)
-    if (C_Item and C_Item.GetItemInfoInstant) then
-        return C_Item.GetItemInfoInstant(...);
-    end
-
-    if (GetItemInfoInstant) then
-        return GetItemInfoInstant(...);
-    end
-
-    return nil;
 end
 
 ---@param bagID number
@@ -2108,14 +2067,6 @@ function GL:getContainerItemInfo(bagID, slot)
     end
 
     return nil;
-end
-
----@param bagID number
----@return number
-function GL:getContainerNumSlots(bagID)
-    local handler = GetContainerNumSlots or (C_Container and C_Container.GetContainerNumSlots);
-
-    return handler(bagID);
 end
 
 --- Find the first bag id and slot for a given item id (or false)
@@ -2142,7 +2093,7 @@ function GL:findBagIdAndSlotForItem(itemLinkOrID, skipSoulBound, includeBank, in
 
     local itemID = identifierIsLink and GL:getItemIDFromLink(itemLinkOrID) or itemLinkOrID;
     for bag = Enum.BagIndex.Backpack, maxBagID do
-        for slot = 1, GL:getContainerNumSlots(bag) do
+        for slot = 1, GL.GetContainerNumSlots(bag) do
             local Result = (function()
                 local _, _, locked, _, _, _, itemLink, _, _, bagItemID = GL:getContainerItemInfo(bag, slot);
 

@@ -401,7 +401,7 @@ function PackMule:lootReady()
                 return;
             end
 
-            local itemID = GL:getItemInfoInstant(itemLink);
+            local itemID = GL.GetItemInfoInstant(itemLink);
             if (not itemID) then -- Should not be possible, but better safe than lua error
                 return;
             end

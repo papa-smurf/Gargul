@@ -378,7 +378,7 @@ function SoftRes:materializeData()
 
             for _, itemID in pairs(SoftResEntry.Items or {}) do
                 if (GL:higherThanZero(itemID)) then
-                    local _, itemType = GL:getItemInfoInstant(itemID);
+                    local _, itemType = GL.GetItemInfoInstant(itemID);
                     if (not itemType) then
                         self:clearCorrupted();
                         return false;

@@ -510,7 +510,7 @@ function Overview:buildItemRow(Details, Window, ActionButtons)
                 local bag, slot = GL:getBagAndSlotByGUID(Details.itemGUID);
 
                 if (bag) then
-                    GL:useContainerItem(bag, slot);
+                    GL.UseContainerItem(bag, slot);
                 end
             end
 

@@ -1064,7 +1064,7 @@ function MasterLooterUI:update()
     end
 
     -- The item's icon is in the 10th position
-    local icon = select(10, GL:getItemInfo(itemLink));
+    local icon = select(10, GL.GetItemInfo(itemLink));
 
     if (icon) then
         GL.Interface:get(self, "Table.Players"):ClearSelection();
