@@ -660,7 +660,7 @@ function Overview:refreshLedger()
                 if (self.phrase
                     and not GL:empty(self.phrase)
                     and (not GL:strContains(Auction.itemLink, self.phrase)
-                        and not GL:strContains(Auction.Winner.name, self.phrase)
+                        and not GL:strContains(GL:tableGet(Auction, "Winner.name", ""), self.phrase)
                     )
                 ) then
                     return;
