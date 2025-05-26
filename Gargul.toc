@@ -1,4 +1,4 @@
-## Interface: 11507, 20504, 30404, 40402, 50500, 110105
+## Interface: X, 20504, 30404, 40402, 50500, 110105
 ## Title: Gargul |c00967FD2@project-version@|r
 ## Title-deDE: Gargul |c00967FD2@project-version@|r
 ## Title-esES: Gargul |c00967FD2@project-version@|r
