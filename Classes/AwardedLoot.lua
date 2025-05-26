@@ -157,7 +157,7 @@ function AwardedLoot:tooltipLines(itemLink)
                             break;
                         end
 
-                        tinsert(Details, (L["2nd bid: %s by %s"]):format(GL:goldToMoney(SecondHighestBid.bid), GL:disambiguateName(
+                        tinsert(Details, (L["2nd bid: %s by %s"]):format(GL:goldToMoneyTexture(SecondHighestBid.bid), GL:disambiguateName(
                             SecondHighestBid.bidder,
                             { colorize = true, }
                         )));
@@ -346,7 +346,7 @@ function AwardedLoot:editWinner(checksum, winner, announce)
             awardMessage = (L.CHAT["%s was awarded to %s for %s. Congrats!"]):format(
                 AwardEntry.itemLink,
                 winner,
-                GL:goldToMoney(AwardEntry.GDKPCost)
+                GL:goldToMoneyTexture(AwardEntry.GDKPCost)
             );
 
         else
@@ -622,7 +622,7 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, g
             awardMessage = (L.CHAT["%s was awarded to %s for %s. Congrats!"]):format(
                 itemLink,
                 awardedTo,
-                GL:goldToMoney(gdkpCost)
+                GL:goldToMoneyTexture(gdkpCost)
             );
 
         else
