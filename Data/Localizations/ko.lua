@@ -190,12 +190,9 @@ L["Created by"] = "작성자:";
 L["\n|c00be3333Deleted by %s\nReason: %s"] = [[
 |c00be3333%s에 의해 삭제됨
 원인]];
-L["\n|c00%s%sg added to pot by %s\nNote: %s"] = [[
+L["\n|c00%s%s added to pot by %s\nNote: %s"] = [[
 |c00%s%sg을(를) %s님이 냄비에 추가했습니다
 노트]];
-L["\n%s paid |c00%s%sg for\n%s"] = [[
-%s이(가) 지불함 |c00%s%sg
-%에스]];
 L["Won by"] = "승리자";
 L["Set paid amount (read left)"] = "지불 금액 설정(왼쪽 읽기)";
 L["\n\nGargul automatically keeps track of gold traded. As long as players pay\nfor what they bought then you shouldn't ever need this field\n\n'Paid amount' refers to the amount of gold the buyer already traded you.\nThis does not change the actual price of the item!\n\nWarning: only set a value here if the player promises to pay\noutside of the raid or trades the gold from an alt / mail etc!\n\n\n"] = [[
@@ -274,7 +271,7 @@ Adjuster explanation:
 With adjust [g] you can add/deduct gold to a player (use -50 to deduct 50 gold from a player's cut)
 With adjust [%] you can add/deduct a percentage to a player (use -50 to give players a half cut)
 ]];
-L["%s Raiders | %s With cut | Total payout: %sg"] = "%s 레이더 | %s 컷 있음 | 총 지불금: %sg";
+L["%s Raiders | %s With cut | Total payout: %s"] = "%s 레이더 | %s 컷 있음 | 총 지불금: %sg";
 L["Nothing to import, double check your CSV"] = "가져올 항목이 없습니다. CSV를 다시 확인하세요.";
 L["Missing gold for player %s"] = "플레이어 %s의 골드가 누락되었습니다.";
 L["Missing header, note: it's case-sensitive!"] = "헤더가 누락되었습니다. 참고: 대소문자를 구분합니다!";
@@ -425,10 +422,10 @@ L["Items with bids: %s/%s\nTotal sold: %s\nBought by me: %s\nTotal bid (does not
 총 입찰가(판매된 금액은 포함되지 않음): %s
 내가 입찰함(판매된 항목은 포함되지 않음): %s
 ]];
-L["|c00%sSOLD to\n%s for |c00%s%sg"] = [[
+L["|c00%sSOLD to%s\nfor |c00%s%s"] = [[
 |c00%s판매됨
 |c00%s%sg에 대한 %s]];
-L["Bid |c00%s%sg\nBy |c0092FF00YOU!"] = [[
+L["Bid |c00%s%s\nBy |c0092FF00YOU!"] = [[
 입찰 |c00%s%sg
 작성자: c0092FF00YOU!]];
 L["Could not stop auto bidding on %s, try again or /reload!"] = "%s에 대한 자동 입찰을 중지할 수 없습니다. 다시 시도하거나 /reload하세요!";
@@ -491,7 +488,7 @@ L["Terminate Multi-Auction session\n\nThis will delete all bids on items that ha
 L["Hover over any of the buttons below for more information"] = "자세한 내용을 보려면 아래 버튼 위로 마우스를 가져가세요.";
 L["Show/Hide items you can't use"] = "사용할 수 없는 항목 표시/숨기기";
 L["Invalid data provided for GDKP auction start!"] = "GDKP 경매 시작에 잘못된 데이터가 제공되었습니다!";
-L["%s bought %s for %sg"] = "%s는 %s을(를) %sg에 구입했습니다.";
+L["%s bought %s for %s"] = "%s는 %s을(를) %sg에 구입했습니다.";
 L["The loot master (%s) is outdated, this can cause bids to fail!"] = "전리품 마스터(%s)가 오래되었습니다. 이로 인해 입찰이 실패할 수 있습니다!";
 L["You were outbid!"] = "당신은 입찰가가 높았어요!";
 L["Mutators"] = "돌연변이";

@@ -191,12 +191,9 @@ L["Created by"] = "Сделано";
 L["\n|c00be3333Deleted by %s\nReason: %s"] = [[
 |c00be3333Удален %s
 Причина: %s]];
-L["\n|c00%s%sg added to pot by %s\nNote: %s"] = [[
+L["\n|c00%s%s added to pot by %s\nNote: %s"] = [[
 |c00%s%sg добавлен в банк пользователем %s
 Примечания]];
-L["\n%s paid |c00%s%sg for\n%s"] = [[
-%s заплатил |c00%s%sg за
-%s]];
 L["Won by"] = "Выиграл";
 L["Set paid amount (read left)"] = "Оплата вручную (см. подсказку)";
 L["\n\nGargul automatically keeps track of gold traded. As long as players pay\nfor what they bought then you shouldn't ever need this field\n\n'Paid amount' refers to the amount of gold the buyer already traded you.\nThis does not change the actual price of the item!\n\nWarning: only set a value here if the player promises to pay\noutside of the raid or trades the gold from an alt / mail etc!\n\n\n"] = [[
@@ -272,7 +269,7 @@ L["\n\nThe total payout can differ slightly from the pot due to rounding differe
 (используйте -322, чтобы вычесть 322 золотых из доли игрока);
 С помощью изменения [процент] вы можете добавить/вычесть процент игроку
 (используйте -50, чтобы снять игроку половину доли).]];
-L["%s Raiders | %s With cut | Total payout: %sg"] = "%s рейдеров | %s С разрезом | Общая выплата: %sg";
+L["%s Raiders | %s With cut | Total payout: %s"] = "%s рейдеров | %s С разрезом | Общая выплата: %sg";
 L["Nothing to import, double check your CSV"] = "Импортировать нечего. Проверьте CSV-файл.";
 L["Missing gold for player %s"] = "Не хватает золота игроку %s";
 L["Missing header, note: it's case-sensitive!"] = "Отсутствует заголовок. Обратите внимание: он чувствителен к регистру!";
@@ -423,10 +420,10 @@ L["Items with bids: %s/%s\nTotal sold: %s\nBought by me: %s\nTotal bid (does not
 Общая ставка (не включая проданные): %s
 Моя ставка (не включает проданные): %s
 ]];
-L["|c00%sSOLD to\n%s for |c00%s%sg"] = [[
+L["|c00%sSOLD to%s\nfor |c00%s%s"] = [[
 |c00%sПРОДАНО
 %s для |c00%s%sg]];
-L["Bid |c00%s%sg\nBy |c0092FF00YOU!"] = [[
+L["Bid |c00%s%s\nBy |c0092FF00YOU!"] = [[
 Ставка |c00%s%sg
 Автор: |c0092FF00ВЫ!]];
 L["Could not stop auto bidding on %s, try again or /reload!"] = "Не удалось остановить автоматическое назначение ставок для %s. Повторите попытку или /reload!";
@@ -489,7 +486,7 @@ L["Terminate Multi-Auction session\n\nThis will delete all bids on items that ha
 L["Hover over any of the buttons below for more information"] = "Наведите курсор на любую из кнопок ниже, чтобы получить дополнительную информацию.";
 L["Show/Hide items you can't use"] = "Показать/скрыть предметы, которые вы не можете использовать";
 L["Invalid data provided for GDKP auction start!"] = "Для начала аукциона GDKP предоставлены неверные данные!";
-L["%s bought %s for %sg"] = "%s купил %s за %sg";
+L["%s bought %s for %s"] = "%s купил %s за %sg";
 L["The loot master (%s) is outdated, this can cause bids to fail!"] = "Мастер добычи (%s) устарел, это может привести к провалу ставок!";
 L["You were outbid!"] = "Ваша ставка была перебита!";
 L["Mutators"] = "Мутаторы";

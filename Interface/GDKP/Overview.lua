@@ -60,9 +60,9 @@ function Overview:_init()
     self._initialized = true;
 
     GL.Events:register({
-        {"GDKPOverviewGDKPAuctionChangedListener", "GL.GDKP_AUCTION_CHANGED"},
-        {"GDKPOverviewGDKPSessionLockedListener", "GL.GDKP_SESSION_LOCKED"},
-        {"GDKPOverviewGDKPSessionUnlockedListener", "GL.GDKP_SESSION_UNLOCKED"},
+        { "GDKPOverviewGDKPAuctionChangedListener", "GL.GDKP_AUCTION_CHANGED", },
+        { "GDKPOverviewGDKPSessionLockedListener", "GL.GDKP_SESSION_LOCKED", },
+        { "GDKPOverviewGDKPSessionUnlockedListener", "GL.GDKP_SESSION_UNLOCKED", },
     }, function()
         GL.Ace:ScheduleTimer(function()
             self:updatePot();
@@ -74,9 +74,9 @@ function Overview:_init()
     end);
 
     GL.Events:register({
-        { "GDKPOverviewGDKPActiveSessionChangedListener", "GL.GDKP_ACTIVE_SESSION_CHANGED" },
-        { "GDKPOverviewGDKPSessionChangedListener", "GL.GDKP_SESSION_CHANGED" },
-        { "GDKPOverviewGDKPSessionChangedListener", "GL.GDKP_SESSION_CREATED" }
+        { "GDKPOverviewGDKPActiveSessionChangedListener", "GL.GDKP_ACTIVE_SESSION_CHANGED", },
+        { "GDKPOverviewGDKPSessionChangedListener", "GL.GDKP_SESSION_CHANGED", },
+        { "GDKPOverviewGDKPSessionChangedListener", "GL.GDKP_SESSION_CREATED", }
     }, function()
         if (not self.isVisible) then return; end
         self:refreshSessions();
@@ -84,8 +84,8 @@ function Overview:_init()
     end);
 
     GL.Events:register({
-        { "GDKPOverviewGDKPOverviewSessionChangedListener", "GL.GDKP_OVERVIEW_SESSION_CHANGED" },
-        { "GDKPOverviewGDKPOverviewSessionsRefreshed", "GL.GDKP_OVERVIEW_SESSIONS_REFRESHED" }
+        { "GDKPOverviewGDKPOverviewSessionChangedListener", "GL.GDKP_OVERVIEW_SESSION_CHANGED", },
+        { "GDKPOverviewGDKPOverviewSessionsRefreshed", "GL.GDKP_OVERVIEW_SESSIONS_REFRESHED", }
     }, function ()
         self:sessionChanged();
         self.styleWindowAfterResize();
@@ -222,7 +222,7 @@ function Overview:build()
     PotIcon:SetHeight(26);
 
     PotIconFrame:SetParent(WindowFrame);
-    PotIconFrame:SetPoint("TOPRIGHT", WindowFrame, "TOPRIGHT", -42, GL.elvUILoaded and -14 or -20);
+    PotIconFrame:SetPoint("TOPRIGHT", WindowFrame, "TOPRIGHT", -60, GL.elvUILoaded and -14 or -20);
     PotIconFrame:Show();
 
     PotIcon:SetCallback("OnClick", function ()
@@ -743,7 +743,7 @@ function Overview:refreshLedger()
 
                         itemLabel = (L["\n|c00%s%s %s pot by %s\nNote: %s"]):format(
                             Interface.Colors.ROGUE,
-                            GL:goldToMoney(price),
+                            GL:goldToMoneyTexture(price),
                             mutator,
                             GL:nameFormat{ name = Auction.Winner.name, class = Auction.Winner.class, colorize = true, },
                             Auction.note or ""
@@ -752,7 +752,7 @@ function Overview:refreshLedger()
                         itemLabel = (L["\n%s paid |c00%s%s for\n%s"]):format(
                             GL:nameFormat{ name = Auction.Winner.name, class = Auction.Winner.class, colorize = true, },
                             Interface.Colors.ROGUE,
-                            GL:goldToMoney(price),
+                            GL:goldToMoneyTexture(price),
                             Auction.itemLink
                         );
                     end

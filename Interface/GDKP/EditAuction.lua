@@ -55,10 +55,10 @@ function EditAuction:draw(session, checksum)
     local ItemLink = AceGUI:Create("Label");
     ItemLink:SetFontObject(_G["GameFontNormal"]);
     ItemLink:SetFullWidth(true);
-    ItemLink:SetText((L["\n%s paid |c00%s%sg for\n%s"]):format(
+    ItemLink:SetText((L["\n%s paid |c00%s%s for\n%s"]):format(
         GL:nameFormat{ name = Auction.Winner.name, colorize = true, },
         Interface.Colors.ROGUE,
-        Auction.price or L["0"],
+        Auction.price and GL:goldToMoneyTexture(Auction.price) or L["0"],
         Auction.itemLink
     ));
     Window:AddChild(ItemLink);

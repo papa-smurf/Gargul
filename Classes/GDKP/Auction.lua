@@ -1462,10 +1462,10 @@ function Auction:start(CommMessage)
         -- Announce auction start and stop
         if (self:startedByMe()) then
             if (Settings:get("GDKP.announceAuctionStart")) then
-                local announceMessage = (L.CHAT["Bid on %s. Minimum is %s, increment is %s. Use raid chat!"]):format(
+                local announceMessage = (L.CHAT["Bid on %s. Minimum is %s - increment is %s. Use raid chat!"]):format(
                     Details.link,
-                    GL:goldToMoney(minimumBid),
-                    GL:goldToMoney(minimumIncrement)
+                    GL:goldToMoneyTexture(minimumBid),
+                    GL:goldToMoneyTexture(minimumIncrement)
                 );
 
                 if (GL.User.isInRaid) then

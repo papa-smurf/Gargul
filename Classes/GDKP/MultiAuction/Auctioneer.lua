@@ -1140,7 +1140,7 @@ function Auctioneer:finish(announcePot)
 
     local totalPot = GDKPPot:total();
     if (totalPot) then
-        GL:sendChatMessage((L.CHAT["Multi-auction finished. The pot now holds %s"]):format(GL:goldToMoney(totalPot)), "GROUP");
+        GL:sendChatMessage((L.CHAT["Multi-auction finished. The pot now holds %s"]):format(GL:goldToMoneyTexture(totalPot)), "GROUP");
     end
 end
 

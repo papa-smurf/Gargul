@@ -190,12 +190,9 @@ L["Created by"] = "Erstellt von";
 L["\n|c00be3333Deleted by %s\nReason: %s"] = [[
 |c00be3333Gelöscht von %s
 Gründe dafür]];
-L["\n|c00%s%sg added to pot by %s\nNote: %s"] = [[
+L["\n|c00%s%s added to pot by %s\nNote: %s"] = [[
 |c00%s%sg von %s zum Pott hinzugefügt
 Anmerkungen]];
-L["\n%s paid |c00%s%sg for\n%s"] = [[
-%s hat |c00%s%sg dafür bezahlt
-%s]];
 L["Won by"] = "Gewonnen von";
 L["Set paid amount (read left)"] = "Bezahlten Betrag festlegen (siehe links)";
 L["\n\nGargul automatically keeps track of gold traded. As long as players pay\nfor what they bought then you shouldn't ever need this field\n\n'Paid amount' refers to the amount of gold the buyer already traded you.\nThis does not change the actual price of the item!\n\nWarning: only set a value here if the player promises to pay\noutside of the raid or trades the gold from an alt / mail etc!\n\n\n"] = [[
@@ -273,7 +270,7 @@ Erklärung der Anpassungen:
 Mit Anpassen [g] kannst du einem Spieler Gold hinzufügen/abziehen (verwende -50, um 50 Gold vom Anteil eines Spielers abzuziehen).
 Mit Anpassen [%] kannst du einem Spieler einen Prozentsatz hinzufügen/abziehen (verwende -50, um den Spielern einen halben Anteil zu geben).
 ]];
-L["%s Raiders | %s With cut | Total payout: %sg"] = "%s Raiders | %s Mit Anteil | Gesamtauszahlung: %sg";
+L["%s Raiders | %s With cut | Total payout: %s"] = "%s Raiders | %s Mit Anteil | Gesamtauszahlung: %sg";
 L["Nothing to import, double check your CSV"] = "Es gibt nichts zu importieren. Überprüfe deine CSV-Datei noch einmal";
 L["Missing gold for player %s"] = "Es fehlt Gold für Spieler %s";
 L["Missing header, note: it's case-sensitive!"] = "Fehlender Header, Hinweis: Groß-/Kleinschreibung wird beachtet!";
@@ -424,10 +421,10 @@ Von mir gekauft: %s
 Gesamtgebot (ohne Verkauf): %s
 Von mir geboten (ohne Verkauf): %s
 ]];
-L["|c00%sSOLD to\n%s for |c00%s%sg"] = [[
+L["|c00%sSOLD to%s\nfor |c00%s%s"] = [[
 |c00%sVERKAUFT an
 %s für |c00%s%sg]];
-L["Bid |c00%s%sg\nBy |c0092FF00YOU!"] = [[
+L["Bid |c00%s%s\nBy |c0092FF00YOU!"] = [[
 Gebot |c00%s%sg
 Von |c0092FF00DIR!]];
 L["Could not stop auto bidding on %s, try again or /reload!"] = "Das automatische Bieten für %s konnte nicht gestoppt werden. Versuche es erneut oder /reload!";
@@ -490,7 +487,7 @@ Dadurch werden alle Gebote auf Gegenstände, die noch nicht verkauft wurden, gel
 L["Hover over any of the buttons below for more information"] = "Bewege den Mauszeiger über die Knöpfe für weitere Informationen";
 L["Show/Hide items you can't use"] = "Gegenstände anzeigen/ausblenden, die du nicht verwenden kannst";
 L["Invalid data provided for GDKP auction start!"] = "Ungültige Daten für GDKP-Auktionsstart angegeben!";
-L["%s bought %s for %sg"] = "%s hat %s für %sg gekauft";
+L["%s bought %s for %s"] = "%s hat %s für %sg gekauft";
 L["The loot master (%s) is outdated, this can cause bids to fail!"] = "Der Plündermeister (%s) ist veraltet, dies kann dazu führen, dass Gebote fehlschlagen!";
 L["You were outbid!"] = "Du wurdest überboten!";
 L["Mutators"] = "Mutatoren";

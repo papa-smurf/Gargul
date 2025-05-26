@@ -698,7 +698,7 @@ end
 ---@param Bid table
 ---@return void
 function Auctioneer:announceBid(Bid)
-    local bidApprovedMessage = (L.CHAT["%s is the highest bidder (%s)"]):format(Bid.Bidder.name, GL:goldToMoney(Bid.bid));
+    local bidApprovedMessage = (L.CHAT["%s is the highest bidder - %s"]):format(Bid.Bidder.name, GL:goldToMoneyTexture(Bid.bid));
 
     GL.Ace:CancelTimer(self.BidAnnouncementThrottler);
 

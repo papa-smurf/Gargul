@@ -330,10 +330,10 @@ function Client:updateBids(Message)
                     and GL:gt(amount, 0)
                     and GL.Settings:get("GDKP.MultiAuction.awardNotice")
                 ) then
-                    print(("|c00FFF569" .. L["%s bought %s for %sg"] .. "|r"):format(
+                    print(("|c00FFF569" .. L["%s bought %s for %s"] .. "|r"):format(
                         GL:nameFormat{ name = bidder, colorize = true, },
                         self.AuctionDetails.Auctions[auctionID].link,
-                        amount
+                        GL:goldToMoneyTexture(amount)
                     ));
                 end
             end

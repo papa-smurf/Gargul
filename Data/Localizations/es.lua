@@ -190,12 +190,9 @@ L["Created by"] = "Creado por";
 L["\n|c00be3333Deleted by %s\nReason: %s"] = [[
 |c00be3333Eliminado por %s
 Razones]];
-L["\n|c00%s%sg added to pot by %s\nNote: %s"] = [[
+L["\n|c00%s%s added to pot by %s\nNote: %s"] = [[
 |c00%s%sg añadido al bote por %s
 Nota: %s]];
-L["\n%s paid |c00%s%sg for\n%s"] = [[
-%s pagado |c00%s%sg por
-%s]];
 L["Won by"] = "Ganado por";
 L["Set paid amount (read left)"] = "Establecer monto pagado (leer a la izquierda)";
 L["\n\nGargul automatically keeps track of gold traded. As long as players pay\nfor what they bought then you shouldn't ever need this field\n\n'Paid amount' refers to the amount of gold the buyer already traded you.\nThis does not change the actual price of the item!\n\nWarning: only set a value here if the player promises to pay\noutside of the raid or trades the gold from an alt / mail etc!\n\n\n"] = [[
@@ -274,7 +271,7 @@ Adjuster explanation:
 With adjust [g] you can add/deduct gold to a player (use -50 to deduct 50 gold from a player's cut)
 With adjust [%] you can add/deduct a percentage to a player (use -50 to give players a half cut)
 ]];
-L["%s Raiders | %s With cut | Total payout: %sg"] = "%s asaltantes | %s Con corte | Pago total: %sg";
+L["%s Raiders | %s With cut | Total payout: %s"] = "%s asaltantes | %s Con corte | Pago total: %sg";
 L["Nothing to import, double check your CSV"] = "No hay nada que importar, revisa tu CSV";
 L["Missing gold for player %s"] = "Falta oro para el jugador %s";
 L["Missing header, note: it's case-sensitive!"] = "Falta encabezado, nota: ¡distingue entre mayúsculas y minúsculas!";
@@ -425,10 +422,10 @@ Comprado por mí: %s
 Oferta total (no incluye vendidos): %s
 Pujar por mí (no incluye vendido): %s
 ]];
-L["|c00%sSOLD to\n%s for |c00%s%sg"] = [[
+L["|c00%sSOLD to%s\nfor |c00%s%s"] = [[
 |c00%sVENDIDO a
 %s para |c00%s%sg]];
-L["Bid |c00%s%sg\nBy |c0092FF00YOU!"] = [[
+L["Bid |c00%s%s\nBy |c0092FF00YOU!"] = [[
 Oferta |c00%s%sg
 Por |c0092FF00YOU!]];
 L["Could not stop auto bidding on %s, try again or /reload!"] = "No se pudo detener la oferta automática en %s. Inténtelo de nuevo o /recargue.";
@@ -491,7 +488,7 @@ Terminar la sesión de subasta múltiple
 L["Hover over any of the buttons below for more information"] = "Pase el cursor sobre cualquiera de los botones a continuación para obtener más información.";
 L["Show/Hide items you can't use"] = "Mostrar/Ocultar elementos que no puedes usar";
 L["Invalid data provided for GDKP auction start!"] = "¡Se proporcionaron datos no válidos para el inicio de la subasta GDKP!";
-L["%s bought %s for %sg"] = "%s compró %s por %sg";
+L["%s bought %s for %s"] = "%s compró %s por %sg";
 L["The loot master (%s) is outdated, this can cause bids to fail!"] = "El botín maestro (%s) está desactualizado, ¡esto puede provocar que las ofertas fallen!";
 L["You were outbid!"] = "¡Te superaron la oferta!";
 L["Mutators"] = "Mutadores";

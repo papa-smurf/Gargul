@@ -124,7 +124,7 @@ function Create:build()
             return false;
         end
 
-        if (not GDKPSession:addGoldTrade(self.sessionID, self.playerGUID, given * 10000, received * 10000)) then
+        if (not GDKPSession:addGoldTrade(self.sessionID, self.playerGUID, GL:goldToCopper(given), GL:goldToCopper(received)) then
             GL:error(L["Something went wrong!"]);
             return false;
         end

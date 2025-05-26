@@ -91,7 +91,7 @@ end
 function Pot:humanTotal(sessionID)
     local pot = self:total(sessionID) or 0;
 
-    return GL:goldToMoney(pot);
+    return GL:goldToMoneyTexture(pot);
 end
 
 ---@param sessionID string
@@ -716,10 +716,10 @@ function Pot:announce(sessionID, callback)
     local managementCut = GL:floor(totalPot * (0 + managementCutPercentage / 100), Settings:get("GDKP.precision"));
     local totalToDistribute = GL:floor(totalPot - managementCut, Settings:get("GDKP.precision"));
 
-    local message = (L.CHAT["Total Pot: %s"]):format(GL:goldToMoney(totalToDistribute));
+    local message = (L.CHAT["Total Pot: %s"]):format(GL:goldToMoneyTexture(totalToDistribute));
     GL:sendChatMessage(message, "GROUP");
 
-    message = (L.CHAT["Base cut: %s"]):format(GL:goldToMoney(GL:floor(Session.lastAvailableBase, Settings:get("GDKP.precision"))));
+    message = (L.CHAT["Base cut: %s"]):format(GL:goldToMoneyTexture(GL:floor(Session.lastAvailableBase, Settings:get("GDKP.precision"))));
     GL:sendChatMessage(message, "GROUP");
 end
 

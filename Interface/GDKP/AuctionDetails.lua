@@ -99,17 +99,17 @@ function AuctionDetails:draw(sessionID, auctionID)
 
     if (not auctionWasDeleted) then
         if (concernsManualAdjustment) then
-            itemLabel = (L["\n|c00%s%sg added to pot by %s\nNote: %s"]):format(
+            itemLabel = (L["\n|c00%s%s added to pot by %s\nNote: %s"]):format(
                 Constants.ClassHexColors.rogue,
-                Auction.price or L["0"],
+                Auction.price and GL:goldToMoneyTexture(Auction.price) or L["0"],
                 GL:nameFormat{ name = Auction.Winner.name, colorize = true, },
                 Auction.note or ""
             );
         else
-            itemLabel = (L["\n%s paid |c00%s%sg for\n%s"]):format(
+            itemLabel = (L["\n%s paid |c00%s%s for\n%s"]):format(
                 GL:nameFormat{ name = Auction.Winner.name, colorize = true, },
                 Constants.ClassHexColors.rogue,
-                Auction.price or L["0"],
+                Auction.price and GL:goldToMoneyTexture(Auction.price) or L["0"],
                 ItemEntry.link
             );
         end

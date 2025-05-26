@@ -190,12 +190,9 @@ L["Created by"] = "Criado por";
 L["\n|c00be3333Deleted by %s\nReason: %s"] = [[
 |c00be3333Excluído por %s
 Razão: %s]];
-L["\n|c00%s%sg added to pot by %s\nNote: %s"] = [[
+L["\n|c00%s%s added to pot by %s\nNote: %s"] = [[
 |c00%s%sg adicionado ao pote por %s
 Notas]];
-L["\n%s paid |c00%s%sg for\n%s"] = [[
-%s pagou |c00%s%sg por
-%s]];
 L["Won by"] = "Venceu por";
 L["Set paid amount (read left)"] = "Definir valor pago (leia à esquerda)";
 L["\n\nGargul automatically keeps track of gold traded. As long as players pay\nfor what they bought then you shouldn't ever need this field\n\n'Paid amount' refers to the amount of gold the buyer already traded you.\nThis does not change the actual price of the item!\n\nWarning: only set a value here if the player promises to pay\noutside of the raid or trades the gold from an alt / mail etc!\n\n\n"] = [[
@@ -274,7 +271,7 @@ Adjuster explanation:
 With adjust [g] you can add/deduct gold to a player (use -50 to deduct 50 gold from a player's cut)
 With adjust [%] you can add/deduct a percentage to a player (use -50 to give players a half cut)
 ]];
-L["%s Raiders | %s With cut | Total payout: %sg"] = "%s Invasores | %s Com corte | Pagamento total: %sg";
+L["%s Raiders | %s With cut | Total payout: %s"] = "%s Invasores | %s Com corte | Pagamento total: %sg";
 L["Nothing to import, double check your CSV"] = "Nada para importar, verifique seu CSV";
 L["Missing gold for player %s"] = "Faltando ouro para o jogador %s";
 L["Missing header, note: it's case-sensitive!"] = "Cabeçalho ausente, observação: diferencia maiúsculas de minúsculas!";
@@ -425,10 +422,10 @@ Comprado por mim: %s
 Lance total (não inclui vendas): %s
 Lance meu (não inclui vendido): %s
 ]];
-L["|c00%sSOLD to\n%s for |c00%s%sg"] = [[
+L["|c00%sSOLD to%s\nfor |c00%s%s"] = [[
 |c00%sVENDIDO para
 %s para |c00%s%sg]];
-L["Bid |c00%s%sg\nBy |c0092FF00YOU!"] = [[
+L["Bid |c00%s%s\nBy |c0092FF00YOU!"] = [[
 Lance |c00%s%sg
 Por |c0092FF00VOCÊ!]];
 L["Could not stop auto bidding on %s, try again or /reload!"] = "Não foi possível interromper o lance automático em %s. Tente novamente ou /recarregue!";
@@ -491,7 +488,7 @@ Isso excluirá todos os lances de itens que ainda não foram vendidos e fechará
 L["Hover over any of the buttons below for more information"] = "Passe o mouse sobre qualquer um dos botões abaixo para obter mais informações";
 L["Show/Hide items you can't use"] = "Mostrar/ocultar itens que você não pode usar";
 L["Invalid data provided for GDKP auction start!"] = "Dados inválidos fornecidos para início do leilão GDKP!";
-L["%s bought %s for %sg"] = "%s comprou %s por %sg";
+L["%s bought %s for %s"] = "%s comprou %s por %sg";
 L["The loot master (%s) is outdated, this can cause bids to fail!"] = "O loot master (%s) está desatualizado, isso pode fazer com que os lances falhem!";
 L["You were outbid!"] = "Você foi superado!";
 L["Mutators"] = "Mutadores";

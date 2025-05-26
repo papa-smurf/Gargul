@@ -183,10 +183,10 @@ function Session:copperOwedToPlayer(player, sessionID)
     local playerCutInCopper = 0;
     -- Only include the player cut if the current GDKP session is locked and ready for payout
     if (Instance.lockedAt) then
-        playerCutInCopper = GL:tableGet(Instance, "Pot.Cuts." .. playerGUID, 0) * 10000;
+        playerCutInCopper = GL:goldToCopper(GL:tableGet(Instance, "Pot.Cuts." .. playerGUID, 0));
     end
 
-    local copperSpentByPlayer = self:goldSpentByPlayer(playerGUID, Instance.ID) * 10000;
+    local copperSpentByPlayer = GL:goldToCopper(self:goldSpentByPlayer(playerGUID, Instance.ID));
     local copperToReceive = copperSpentByPlayer - copperReceived;
     local copperToGive = playerCutInCopper - copperToReceive - copperGiven;
 
@@ -208,7 +208,7 @@ function Session:tradeInitiated(Details)
     if (not Instance) then
         return;
     end
-    
+
     local due = false;
     local dueTexture = false;
     local message = "";
@@ -216,8 +216,8 @@ function Session:tradeInitiated(Details)
     local playerCut = GDKPPot:getCut(partnerGUID);
 
     local copperGiven, copperReceived = self:goldTradedWithPlayer(partnerGUID);
-    local playerCutInCopper = playerCut * 10000;
-    local copperSpentByPlayer = self:goldSpentByPlayer(partnerGUID) * 10000;
+    local playerCutInCopper = GL:goldToCopper(playerCut);
+    local copperSpentByPlayer = GL:goldToCopper(self:goldSpentByPlayer(partnerGUID));
     local balance = tonumber(self:copperOwedToPlayer(partnerGUID, Instance.ID) or 0);
 
     local balanceMessage = " ";
@@ -646,10 +646,10 @@ function Session:tooltipLines(itemLink)
     local PerItemSettings = GDKP:settingsForItemID(itemID);
     return GL:explode((L["\n\n|c00967FD2GDKP Data (sold %sx)\nLast sold for: %s\nAverage price: %s\nMinimum bid: %s\nIncrement: %s\n\n"]):format(
         Details.timesSold,
-        GL:goldToMoney(Details.lastSoldPrice),
-        GL:goldToMoney(Details.averageSaleValue),
-        GL:goldToMoney(PerItemSettings.minimum),
-        GL:goldToMoney(PerItemSettings.increment)
+        GL:goldToMoneyTexture(Details.lastSoldPrice),
+        GL:goldToMoneyTexture(Details.averageSaleValue),
+        GL:goldToMoneyTexture(PerItemSettings.minimum),
+        GL:goldToMoneyTexture(PerItemSettings.increment)
     ), "\n");
 end
 
@@ -941,14 +941,14 @@ function Session:announceDeletedAuction(sessionID, Auction)
 
         -- This was raw gold added to the pot
         if (Auction.itemID == Constants.GDKP.potIncreaseItemID) then
-            GL:sendChatMessage((L.CHAT["I removed %sg from the pot"]):format(GL:goldToMoney(price)), "GROUP");
+            GL:sendChatMessage((L.CHAT["I removed %s from the pot"]):format(GL:goldToMoneyTexture(price)), "GROUP");
             GL:sendChatMessage((L.CHAT["The pot now holds %s"]):format(GDKPPot:humanTotal()), "GROUP");
 
             return;
 
             -- Just in case someone has old data still
         elseif (winner and price) then
-            GL:sendChatMessage((L.CHAT["I removed %s awarded to %s for %s"]):format(Auction.itemLink, winner, GL:goldToMoney(price)), "GROUP");
+            GL:sendChatMessage((L.CHAT["I removed %s awarded to %s for %s"]):format(Auction.itemLink, winner, GL:goldToMoneyTexture(price)), "GROUP");
             GL:sendChatMessage((L.CHAT["The pot now holds %s"]):format(GDKPPot:humanTotal()), "GROUP");
 
             return;
@@ -980,13 +980,13 @@ function Session:announceRestoredAuction(sessionID, Auction)
 
         -- This was raw gold added to the pot
         if (Auction.itemID == Constants.GDKP.potIncreaseItemID) then
-            GL:sendChatMessage((L.CHAT["I added %sg back to the pot"]):format(price), "GROUP");
+            GL:sendChatMessage((L.CHAT["I added %s back to the pot"]):format(GL:goldToMoneyTexture(price)), "GROUP");
             GL:sendChatMessage((L.CHAT["The pot now holds %s"]):format(GDKPPot:humanTotal()), "GROUP");
             return;
 
             -- Just in case someone has old data still
         elseif (winner and price) then
-            GL:sendChatMessage((L.CHAT["I restored %s awarded to %s for %s"]):format(Auction.itemLink, winner, GL:goldToMoney(price)), "GROUP");
+            GL:sendChatMessage((L.CHAT["I restored %s awarded to %s for %s"]):format(Auction.itemLink, winner, GL:goldToMoneyTexture(price)), "GROUP");
             GL:sendChatMessage((L.CHAT["The pot now holds %s"]):format(GDKPPot:humanTotal()), "GROUP");
 
             return;

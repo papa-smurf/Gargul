@@ -131,7 +131,7 @@ function AwardedLoot:tooltipLines(itemLink)
             end
 
             if (GL:higherThanZero(Loot.GDKPCost)) then
-                tinsert(Details, (L["Price: %s"]):format(GL:goldToMoney(Loot.GDKPCost)));
+                tinsert(Details, (L["Price: %s"]):format(GL:goldToMoneyTexture(Loot.GDKPCost)));
             end
 
             local receivedString = L["Given: yes"];

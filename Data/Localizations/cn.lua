@@ -193,12 +193,9 @@ L["Created by"] = "由...制作";
 L["\n|c00be3333Deleted by %s\nReason: %s"] = [[
 |c00be3333已被 %s 删除
 原因：%s]];
-L["\n|c00%s%sg added to pot by %s\nNote: %s"] = [[
+L["\n|c00%s%s added to pot by %s\nNote: %s"] = [[
 |c00%s%sg 由 %s 添加到底池中
 注意：%s]];
-L["\n%s paid |c00%s%sg for\n%s"] = [[
-%s 已支付 |c00%s%sg 的费用
-%s]];
 L["Won by"] = "获胜者：";
 L["Set paid amount (read left)"] = "设置支付金额（左）";
 L["\n\nGargul automatically keeps track of gold traded. As long as players pay\nfor what they bought then you shouldn't ever need this field\n\n'Paid amount' refers to the amount of gold the buyer already traded you.\nThis does not change the actual price of the item!\n\nWarning: only set a value here if the player promises to pay\noutside of the raid or trades the gold from an alt / mail etc!\n\n\n"] = [[
@@ -276,7 +273,7 @@ Adjuster explanation:
 使用adjust [g] 你可以给玩家增加/减少金币(使用 -50,从玩家的工资中扣除50金币)
 使用adjust [%] 你可以给球员增加/减少一定的百分比(使用-50来给该玩家工资减半)
 ]];
-L["%s Raiders | %s With cut | Total payout: %sg"] = "%s 团员 | %s 已结清|总支出：%sg";
+L["%s Raiders | %s With cut | Total payout: %s"] = "%s 团员 | %s 已结清|总支出：%sg";
 L["Nothing to import, double check your CSV"] = "无任何内容导入，请仔细检查您的 CSV";
 L["Missing gold for player %s"] = "%s 尚未付款";
 L["Missing header, note: it's case-sensitive!"] = "缺少标题，注意：区分大小写！";
@@ -423,10 +420,10 @@ L["Items with bids: %s/%s\nTotal sold: %s\nBought by me: %s\nTotal bid (does not
 总出价（不包括已售出）：%s
 我出价（不包括已售出）：%s
 ]];
-L["|c00%sSOLD to\n%s for |c00%s%sg"] = [[
+L["|c00%sSOLD to%s\nfor |c00%s%s"] = [[
 |c00%s出售给
 %s 价格为： |c00%s%sg]];
-L["Bid |c00%s%sg\nBy |c0092FF00YOU!"] = [[
+L["Bid |c00%s%s\nBy |c0092FF00YOU!"] = [[
 出价 |c00%s%sg
 出价人：|c0092FF00YOU！]];
 L["Could not stop auto bidding on %s, try again or /reload!"] = "无法停止 %s 的自动出价，请重试或/reload！";
@@ -489,7 +486,7 @@ L["Terminate Multi-Auction session\n\nThis will delete all bids on items that ha
 L["Hover over any of the buttons below for more information"] = "将鼠标悬停在下面的任何按钮上以获取更多信息";
 L["Show/Hide items you can't use"] = "显示/隐藏您无法使用的项目";
 L["Invalid data provided for GDKP auction start!"] = "为 GDKP 拍卖开始提供的数据无效！";
-L["%s bought %s for %sg"] = "%s 为 %sg 花费了 %s";
+L["%s bought %s for %s"] = "%s 为 %sg 花费了 %s";
 L["The loot master (%s) is outdated, this can cause bids to fail!"] = "loot master (%s) 已过时，这可能会导致出价失败！";
 L["You were outbid!"] = "你被超了！";
 L["Mutators"] = "补助项";

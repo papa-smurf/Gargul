@@ -193,12 +193,9 @@ L["Created by"] = "Créé par";
 L["\n|c00be3333Deleted by %s\nReason: %s"] = [[
 |c00be3333Supprimé par %s
 Motif]];
-L["\n|c00%s%sg added to pot by %s\nNote: %s"] = [[
+L["\n|c00%s%s added to pot by %s\nNote: %s"] = [[
 |c00%s%spo ajouté au pot par %s
 Remarques]];
-L["\n%s paid |c00%s%sg for\n%s"] = [[
-%s a payé |c00%s%spo pour
-%s]];
 L["Won by"] = "Gagné par";
 L["Set paid amount (read left)"] = "Définir montant payé (lire à gauche)";
 L["\n\nGargul automatically keeps track of gold traded. As long as players pay\nfor what they bought then you shouldn't ever need this field\n\n'Paid amount' refers to the amount of gold the buyer already traded you.\nThis does not change the actual price of the item!\n\nWarning: only set a value here if the player promises to pay\noutside of the raid or trades the gold from an alt / mail etc!\n\n\n"] = [[
@@ -277,7 +274,7 @@ Explication de l'ajusteur :
 Avec un ajusteur [po] vous pouvez ajouter/déduire de l'or à un joueur (utilisez -50 pour déduire 50po de la part d'un joueur)
 Avec un ajusteur [%] vous pouvez ajouter/déduire un pourcentage à un joueur (utilisez -50 pour donner la moitié d'une part)
 ]];
-L["%s Raiders | %s With cut | Total payout: %sg"] = "%s Raideurs | %s Avec part | Paiement total : %spo";
+L["%s Raiders | %s With cut | Total payout: %s"] = "%s Raideurs | %s Avec part | Paiement total : %spo";
 L["Nothing to import, double check your CSV"] = "Rien à importer, vérifiez votre CSV";
 L["Missing gold for player %s"] = "Or manquant pour le joueur %s";
 L["Missing header, note: it's case-sensitive!"] = "En-tête manquant, attention : il est sensible à la casse !";
@@ -428,10 +425,10 @@ Acheté par moi : %s
 Enchère totale (n'inclut pas les ventes) : %s
 Enchère par moi (n'inclut pas les ventes) : %s
 ]];
-L["|c00%sSOLD to\n%s for |c00%s%sg"] = [[
+L["|c00%sSOLD to%s\nfor |c00%s%s"] = [[
 |c00%sVENDU à
 %s pour |c00%s%sg]];
-L["Bid |c00%s%sg\nBy |c0092FF00YOU!"] = [[
+L["Bid |c00%s%s\nBy |c0092FF00YOU!"] = [[
 Enchère |c00%s%sg
 Par |c0092FF00VOUS !]];
 L["Could not stop auto bidding on %s, try again or /reload!"] = "Impossible d'arrêter les enchères automatiques pour %s, réessayez ou /reload !";
@@ -494,7 +491,7 @@ Cela supprimera toutes les enchères sur les objets qui n'ont pas encore été v
 L["Hover over any of the buttons below for more information"] = "Passez la souris sur l'un des boutons ci-dessous pour plus d'informations";
 L["Show/Hide items you can't use"] = "Afficher/masquer les objets que vous ne pouvez pas utiliser";
 L["Invalid data provided for GDKP auction start!"] = "Données non valides fournies pour le début des enchères GDKP !";
-L["%s bought %s for %sg"] = "%s a acheté %s pour %spo";
+L["%s bought %s for %s"] = "%s a acheté %s pour %spo";
 L["The loot master (%s) is outdated, this can cause bids to fail!"] = "Le maître du butin (%s) est obsolète, cela peut entraîner l'échec des enchères !";
 L["You were outbid!"] = "Vous avez surenchéri !";
 L["Mutators"] = "Mutateurs";

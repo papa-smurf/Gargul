@@ -1094,7 +1094,7 @@ function ClientInterface:build()
 
                 local Lines = { L["Bids"] };
                 for _, Bid in pairs(Bids) do
-                    tinsert(Lines, ("%s - %s%s"):format(Bid.player, Bid.amount, L["g"]));
+                    tinsert(Lines, ("%s - %s"):format(Bid.player, GL:goldToMoneyTexture(Bid.amount)));
                 end
 
                 return Lines;
@@ -1104,21 +1104,22 @@ function ClientInterface:build()
             local StatusText = Interface:createFontString(AuctionRow, "");
             StatusText:SetAllPoints(StatusHolder);
             StatusText:SetFont(.9);
-            StatusText:SetWidth(100);
+            StatusText:SetWidth(180);
             AuctionRow.StatusText = StatusText;
 
             AuctionRow.updateStatus = function()
                 local AuctionDetails = Client.AuctionDetails.Auctions[Details.auctionID];
                 local hasBid = AuctionDetails.CurrentBid and AuctionDetails.CurrentBid.amount;
+                local bidString = hasBid and GL:goldToMoneyTexture(AuctionDetails.CurrentBid.amount) or "";
                 local statusText;
 
                 if (AuctionDetails.endsAt == 0) then
                     if (hasBid) then
-                        statusText = (L["|c00%sSOLD to\n%s for |c00%s%sg"]):format(
+                        statusText = (L["|c00%sSOLD to%s\nfor |c00%s%s"]):format(
                             Interface.Colors.SUCCESS,
                             GL:disambiguateName(AuctionDetails.CurrentBid.player, { colorize = true, }),
                             Interface.Colors.YELLOW,
-                            AuctionDetails.CurrentBid.amount
+                            bidString
                         );
                     else
                         statusText = (L["|c00%sCLOSED\nNo bids"]):format(Interface.Colors.GRAY);
@@ -1127,19 +1128,19 @@ function ClientInterface:build()
                     local bidByMe = GL:iEquals(AuctionDetails.CurrentBid.player, GL.User.fqn);
 
                     if (bidByMe) then
-                        statusText = (L["Bid |c00%s%sg\nBy |c0092FF00YOU!"]):format(
+                        statusText = (L["Bid |c00%s%s\nBy |c0092FF00YOU!"]):format(
                             Interface.Colors.YELLOW,
-                            AuctionDetails.CurrentBid.amount
+                            bidString
                         );
                     else
-                        statusText = (L["Bid |c00%s%sg\nBy %s"]):format(
+                        statusText = (L["Bid |c00%s%s\nBy %s"]):format(
                             Interface.Colors.YELLOW,
-                            AuctionDetails.CurrentBid.amount,
+                            bidString,
                             GL:disambiguateName(AuctionDetails.CurrentBid.player, { colorize = true, })
                         );
                     end
                 else
-                    statusText = (L["Minimum: |c00%s%sg\nIncrement: |c00%s%sg"]):format(Interface.Colors.YELLOW, minimum, Interface.Colors.YELLOW, increment);
+                    statusText = (L["Minimum: |c00%s%s|r\nIncrement: |c00%s%s|r"]):format(Interface.Colors.YELLOW, GL:goldToMoneyTexture(minimum), Interface.Colors.YELLOW, GL:goldToMoneyTexture(increment));
                 end
 
                 AuctionRow.BidInput.updatePlaceholder(Client:minimumBidForAuction(auctionID));
@@ -1313,10 +1314,10 @@ function ClientInterface:updateBidDetails()
     Interface:addTooltip(self.BidDetails, (L["Items with bids: %s/%s\nTotal sold: %s\nBought by me: %s\nTotal bid (does not include sold): %s\nBid by me (does not include sold): %s\n"]):format(
         items - noBids,
         items,
-        totalSold,
-        boughtByMe,
-        totalBid,
-        bidByMe
+        GL:goldToMoneyTexture(totalSold),
+        GL:goldToMoneyTexture(boughtByMe),
+        GL:goldToMoneyTexture(totalBid),
+        GL:goldToMoneyTexture(bidByMe)
     ));
 end
 

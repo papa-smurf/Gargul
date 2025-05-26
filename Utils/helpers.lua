@@ -2440,11 +2440,17 @@ function GL:stripColor(text)
     return text;
 end
 
+---@param copper number
+---@return number
+function GL:goldToCopper(copper)
+    return math.floor(copper * 10000);
+end
+
 ---@see GL:copperToMoney
 function GL:goldToMoney(copper, Separators, includeEmpty, separatorBeforeUnit)
     copper = tonumber(copper) or 0;
 
-    return self:copperToMoney(copper * 10000, Separators, includeEmpty, separatorBeforeUnit);
+    return self:copperToMoney(self:goldToCopper(copper), Separators, includeEmpty, separatorBeforeUnit);
 end
 
 --- Transform a copper value to a money string
@@ -2544,7 +2550,7 @@ end
 function GL:goldToMoneyTexture(copper)
     copper = tonumber(copper) or 0;
 
-    return self:copperToMoneyTexture(copper * 10000);
+    return self:copperToMoneyTexture(self:goldToCopper(copper));
 end
 
 ---@param copper number

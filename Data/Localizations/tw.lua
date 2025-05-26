@@ -193,12 +193,9 @@ L["Created by"] = "由...製作";
 L["\n|c00be3333Deleted by %s\nReason: %s"] = [[
 |c00be3333已被 %s 刪除
 原因：%s]];
-L["\n|c00%s%sg added to pot by %s\nNote: %s"] = [[
+L["\n|c00%s%s added to pot by %s\nNote: %s"] = [[
 |c00%s%sg 由 %s 加入彩池中
 注意：%s]];
-L["\n%s paid |c00%s%sg for\n%s"] = [[
-%s 已支付 |c00%s%sg 的費用
-%s]];
 L["Won by"] = "獲勝者：";
 L["Set paid amount (read left)"] = "設定支付金額（左讀）";
 L["\n\nGargul automatically keeps track of gold traded. As long as players pay\nfor what they bought then you shouldn't ever need this field\n\n'Paid amount' refers to the amount of gold the buyer already traded you.\nThis does not change the actual price of the item!\n\nWarning: only set a value here if the player promises to pay\noutside of the raid or trades the gold from an alt / mail etc!\n\n\n"] = [[
@@ -277,7 +274,7 @@ Adjuster explanation:
 With adjust [g] you can add/deduct gold to a player (use -50 to deduct 50 gold from a player's cut)
 With adjust [%] you can add/deduct a percentage to a player (use -50 to give players a half cut)
 ]];
-L["%s Raiders | %s With cut | Total payout: %sg"] = "%s 攻略 | %s 有切口 |總支出：%sg";
+L["%s Raiders | %s With cut | Total payout: %s"] = "%s 攻略 | %s 有切口 |總支出：%sg";
 L["Nothing to import, double check your CSV"] = "無需匯入任何內容，請仔細檢查您的 CSV";
 L["Missing gold for player %s"] = "玩家 %s 缺少金幣";
 L["Missing header, note: it's case-sensitive!"] = "缺少標題，注意：區分大小寫！";
@@ -428,10 +425,10 @@ L["Items with bids: %s/%s\nTotal sold: %s\nBought by me: %s\nTotal bid (does not
 總出價（不包括已售出）：%s
 我出價（不包括已售出）：%s
 ]];
-L["|c00%sSOLD to\n%s for |c00%s%sg"] = [[
+L["|c00%sSOLD to%s\nfor |c00%s%s"] = [[
 |c00%s賣給
 %s 代表 |c00%s%sg]];
-L["Bid |c00%s%sg\nBy |c0092FF00YOU!"] = [[
+L["Bid |c00%s%s\nBy |c0092FF00YOU!"] = [[
 出價 |c00%s%sg
 作者：|c0092FF00YOU！]];
 L["Could not stop auto bidding on %s, try again or /reload!"] = "無法停止 %s 上的自動出價，請重試或/重新加載！";
@@ -494,7 +491,7 @@ L["Terminate Multi-Auction session\n\nThis will delete all bids on items that ha
 L["Hover over any of the buttons below for more information"] = "將滑鼠懸停在下面的任何按鈕上以獲取更多信息";
 L["Show/Hide items you can't use"] = "顯示/隱藏您無法使用的項目";
 L["Invalid data provided for GDKP auction start!"] = "為 GDKP 拍賣開始提供的數據無效！";
-L["%s bought %s for %sg"] = "%s 為 %sg 購買了 %s";
+L["%s bought %s for %s"] = "%s 為 %sg 購買了 %s";
 L["The loot master (%s) is outdated, this can cause bids to fail!"] = "戰利品大師 (%s) 已過時，這可能會導致出價失敗！";
 L["You were outbid!"] = "你的出價被高估了！";
 L["Mutators"] = "變異者";
