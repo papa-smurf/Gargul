@@ -792,7 +792,8 @@ function Overview:calculateCuts()
 
         if (CutHolder and CutHolder.SetText) then
             numberOfRaiders = numberOfRaiders + 1;
-            local cutPercentage = 100 / (totalToDistribute / cut);
+            local cutAsPartOfTotalToDistribute = ( cut > 0 and totalToDistribute > 0 ) and totalToDistribute / cut or 0;
+            local cutPercentage = cutAsPartOfTotalToDistribute > 0 and 100 / cutAsPartOfTotalToDistribute or 0;
 
             if (cutPercentage < 1) then
                 cutPercentage = 0;
