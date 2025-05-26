@@ -1,12 +1,39 @@
 local L = Gargul_L;
 
+local ERR_TRADE_COMPLETE = _G.ERR_TRADE_COMPLETE;
+local MAX_TRADABLE_ITEMS = _G.MAX_TRADABLE_ITEMS;
+local TRADE_ENCHANT_SLOT = _G.TRADE_ENCHANT_SLOT;
+
+local GetTime = _G.GetTime;
+local InitiateTrade = _G.InitiateTrade;
+local TradeFrame = _G.TradeFrame;
+local GetTradePlayerItemInfo = _G.GetTradePlayerItemInfo;
+local GetTradePlayerItemLink = _G.GetTradePlayerItemLink;
+local GetTradeTargetItemInfo = _G.GetTradeTargetItemInfo;
+local GetTradeTargetItemLink = _G.GetTradeTargetItemLink;
+local GetPlayerTradeMoney = _G.GetPlayerTradeMoney;
+local GetTargetTradeMoney = _G.GetTargetTradeMoney;
+
+local TradeRecipientItem1 = _G.TradeRecipientItem1;
+local TradePlayerItemsInset = _G.TradePlayerItemsInset;
+local TradePlayerInputMoneyInset = _G.TradePlayerInputMoneyInset;
+
 ---@type GL
 local _, GL = ...;
+
+---@type Events
+local Events = GL.Events;
 
 ---@class TradeWindow
 local TradeWindow = {
     _initialized = false,
+    hideGoldToBeTradedTimerIdentifier = "TradeWindowHideGoldToBeTradedTimer",
     manuallyChangedAnnounceCheckbox = false,
+
+    ---@type Frame?
+    GoldInsightFrame = nil,
+
+    ---@type CheckButton?
     AnnouncementCheckBox = nil,
 
     ItemsToAdd = {},
@@ -24,6 +51,77 @@ local TradeWindow = {
 
 ---@type TradeWindow
 GL.TradeWindow = TradeWindow;
+
+local createPlayerTradeMoneyFrame = function ()
+    ---@type Frame
+    local PlayerTradeMoneyFrame = CreateFrame("Frame", nil, TradeFrame, "BackdropTemplate");
+    PlayerTradeMoneyFrame:Hide();
+    PlayerTradeMoneyFrame:SetSize(200, 30);
+
+    -- Hide on click
+    PlayerTradeMoneyFrame:SetScript("OnMouseUp", function ()
+        PlayerTradeMoneyFrame:Hide();
+    end);
+
+    PlayerTradeMoneyFrame:SetBackdrop{
+        bgFile = "Interface/Buttons/WHITE8x8",
+        edgeFile = "Interface/Tooltips/UI-Tooltip-Border",
+        edgeSize = 16,
+        insets = { left = 4, right = 4, top = 4, bottom = 4, }
+    };
+    -- Red border + dark background
+    PlayerTradeMoneyFrame:SetBackdropColor(0, 0, 0, 1);
+    PlayerTradeMoneyFrame:SetBackdropBorderColor(1, 0, 0, 1);
+
+    PlayerTradeMoneyFrame.text = PlayerTradeMoneyFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlight");
+    PlayerTradeMoneyFrame.text:SetPoint("CENTER");
+    PlayerTradeMoneyFrame.text:SetText("");
+
+    return PlayerTradeMoneyFrame;
+end;
+
+local createAnnounceTradeCheckbox = function ()
+    local self = TradeWindow;
+
+    local CheckBox = CreateFrame("CheckButton", "GargulAnnounceTradeDetails", TradeFrame, "UICheckButtonTemplate");
+    GargulAnnounceTradeDetailsText:SetText(L["Announce Trade"]);
+    CheckBox:SetChecked(self:shouldAnnounce());
+    CheckBox:SetPoint("BOTTOMLEFT", "TradeFrame", "BOTTOMLEFT", 8, 6);
+    CheckBox:SetWidth(20);
+    CheckBox:SetHeight(20);
+    CheckBox:SetScript("OnClick", function ()
+        self.manuallyChangedAnnounceCheckbox = true;
+    end);
+    CheckBox.tooltipText = L["Announce trade details to group or in /say when not in a group"];
+    self.AnnouncementCheckBox = CheckBox;
+
+    -- Create the cogwheel that links to the announcement settings
+    local Cogwheel = CreateFrame("Button", "TradeWindowAnnouncementBox", TradeFrame, Frame);
+    Cogwheel:Show();
+    Cogwheel:SetClipsChildren(true);
+    Cogwheel:SetSize(13, 13);
+    Cogwheel:SetPoint("TOPRIGHT", CheckBox, "TOPRIGHT", 138, -5);
+
+    local CogwheelTexture = Cogwheel:CreateTexture();
+    CogwheelTexture:SetPoint("BOTTOMRIGHT", 0, 0);
+    CogwheelTexture:SetSize(16,16);
+    CogwheelTexture:SetTexture("interface/cursor/interact");
+    CogwheelTexture:SetTexture("interface/cursor/unableinteract");
+    Cogwheel.texture = CogwheelTexture;
+
+    Cogwheel:SetScript('OnEnter', function()
+        CogwheelTexture:SetTexture("interface/cursor/interact");
+    end);
+    Cogwheel:SetScript('OnLeave', function()
+        CogwheelTexture:SetTexture("interface/cursor/unableinteract");
+    end);
+
+    Cogwheel:SetScript("OnClick", function(_, button)
+        if (button == 'LeftButton') then
+            GL.Settings:draw("TradeAnnouncements");
+        end
+    end);
+end;
 
 --- Register all events needed to keep track of the trade window state
 function TradeWindow:_init()
@@ -47,11 +145,82 @@ function TradeWindow:_init()
         self:handleEvents(event, ...);
     end);
 
-    GL.Events:register("TradeWindowTradeCompleted", "GL.TRADE_COMPLETED", function (_, Details)
+    Events:register(nil, "GL.TRADE_COMPLETED", function (_, Details)
         self:announceTradeDetails(Details);
     end);
 
+    Events:register(nil, "SECURE_TRANSFER_CONFIRM_TRADE_ACCEPT", function ()
+        self:showTradeConfirmGoldInsight(self.State);
+    end);
+
+    Events:register({ "GL.TRADE_COMPLETED", "GL.TRADE_ACCEPT_UPDATE", "TRADE_CLOSED", }, function (event)
+        self:hideTradeConfirmGoldInsight();
+
+        if (event ~= "GL.TRADE_ACCEPT_UPDATE") then
+            self:hideGoldOverlay();
+        end
+    end);
+
+    ---@type Frame
+    local TradeConfirmGoldInsight = createPlayerTradeMoneyFrame();
+    self.TradeConfirmGoldInsight = TradeConfirmGoldInsight;
+
+    -- Tie the frame to the default StaticPopup position
+    do
+        TradeConfirmGoldInsight:SetPoint("BOTTOM", _G.StaticPopup1, "TOP", 0, 0);
+        TradeConfirmGoldInsight:SetPoint("LEFT", _G.StaticPopup1, "LEFT", 8, 0);
+        TradeConfirmGoldInsight:SetPoint("RIGHT", _G.StaticPopup1, "RIGHT", -8, 0);
+    end
+
+    ---@type Frame
+    local PlayerTradeMoneyInsight = createPlayerTradeMoneyFrame();
+    self.PlayerTradeMoneyInsight = PlayerTradeMoneyInsight;
+
+    -- Make sure the insight overlay is always on top and positioned correctly
+    do
+        PlayerTradeMoneyInsight:SetPoint("BOTTOMLEFT", TradePlayerItemsInset, "TOPLEFT", -2, 0);
+        PlayerTradeMoneyInsight:SetPoint("RIGHT", TradeRecipientItem1, "LEFT", -12, 20);
+        PlayerTradeMoneyInsight:SetPoint("TOP", TradePlayerInputMoneyInset, "TOP");
+
+        -- This is to make sure this window is always on top
+        PlayerTradeMoneyInsight:SetFrameLevel(5000);
+        PlayerTradeMoneyInsight:SetMovable(true);
+        PlayerTradeMoneyInsight:StartMoving();
+        PlayerTradeMoneyInsight:StopMovingOrSizing();
+        PlayerTradeMoneyInsight:SetMovable(false);
+    end
+
+
+    createAnnounceTradeCheckbox();
+
     self._initialized = true;
+end
+
+---@param State table
+function TradeWindow:showTradeConfirmGoldInsight(State)
+    if (not State.myGold or State.myGold < 1) then
+        return;
+    end
+
+    GL:after(4, self.hideGoldToBeTradedTimerIdentifier, function ()
+        self:hideTradeConfirmGoldInsight();
+    end);
+
+    self.TradeConfirmGoldInsight.text:SetText(L["You are giving: %s to %s"]:format(GL:copperToMoneyTexture(State.myGold), GL:nameFormat{ name = State.partner, colorize = true, }));
+    self.TradeConfirmGoldInsight:Show();
+
+    -- This is to make sure this window is always on tope
+    self.TradeConfirmGoldInsight:SetFrameLevel(5000);
+    self.TradeConfirmGoldInsight:SetMovable(true);
+    self.TradeConfirmGoldInsight:StartMoving();
+    self.TradeConfirmGoldInsight:StopMovingOrSizing();
+    self.TradeConfirmGoldInsight:SetMovable(false);
+end
+
+function TradeWindow:hideTradeConfirmGoldInsight()
+    GL:cancelTimer(self.hideGoldToBeTradedTimerIdentifier);
+    self.TradeConfirmGoldInsight.text:SetText("");
+    self.TradeConfirmGoldInsight:Hide();
 end
 
 --- Attempt to open a trade window with a given player name
@@ -113,6 +282,18 @@ function TradeWindow:open(playerName, callback, allwaysExecuteCallback)
     InitiateTrade(playerName);
 end
 
+---@param copper number
+function TradeWindow:showGoldOverlay(copper)
+    local Overlay = self.PlayerTradeMoneyInsight;
+    GL.Interface:addTooltip(Overlay, L["%s will be traded to %s. Click to add gold manually instead"]:format(GL:copperToMoneyTexture(copper), GL:nameFormat{ name = self.State.partner, colorize = true }));
+    Overlay.text:SetText(GL:copperToMoneyTexture(copper));
+    Overlay:Show();
+end
+
+function TradeWindow:hideGoldOverlay()
+    self.PlayerTradeMoneyInsight:Hide();
+end
+
 --- Handle trade-related events
 ---
 ---@param event string
@@ -125,7 +306,7 @@ function TradeWindow:handleEvents(event, ...)
         -- Trade was successful
         if (message == ERR_TRADE_COMPLETE) then
             -- Check the value of the "Announce trade" checkbox in the trade frame
-            self.State.announce = self.AnnouncementCheckBox and self.AnnouncementCheckBox:GetChecked();
+            self.State.announce = self.AnnouncementCheckBox:GetChecked();
 
             GL.Events:fire("GL.TRADE_COMPLETED", self.State);
         else
@@ -136,12 +317,12 @@ function TradeWindow:handleEvents(event, ...)
     -- Trade started
     if (event == "TRADE_SHOW") then
         self.ItemsToAdd, self.ItemsAdded = {}, {};
-        GL.Ace:CancelTimer(self.SetCopperTimer);
 
         -- Trade window shown, show/update the announcement checkbox
         self:updateAnnouncementCheckBox();
 
         -- Make sure to cancel any lingering timers
+        GL:cancelTimer("TradeWindowMoneyChangedInterval");
         GL:cancelTimer("TradeWindowAddItemsInterval");
 
         -- Periodically add items to the trade window
@@ -149,14 +330,50 @@ function TradeWindow:handleEvents(event, ...)
         GL:interval(0, "TradeWindowAddItemsInterval", function ()
             self:processItemsToAdd();
         end);
+
+        GL:interval(.2, "TradeWindowMoneyChangedInterval", function()
+            local myGold = GetPlayerTradeMoney();
+            local theirGold = GetTargetTradeMoney();
+            if (self.State.myGold ~= myGold
+                or self.State.theirGold ~= theirGold
+            ) then
+                self.State.myGold = myGold;
+                self.State.theirGold = theirGold;
+
+                Events:fire("TRADE_MONEY_CHANGED");
+            end
+        end);
+
+        -- Start listening for gold dropped via cursor
+        local moneyBefore = 0;
+        Events:register("TradeWindowCursorChanged", "CURSOR_CHANGED", function (_, _, newCursorType, oldCursorType)
+            -- Player picked up gold
+            if (oldCursorType == Enum.UICursorType.Default and newCursorType == Enum.UICursorType.Money) then
+                moneyBefore = GetPlayerTradeMoney();
+                self.holdingMoney = true;
+                return;
+            end
+
+            -- Player dropped gold
+            if (oldCursorType == Enum.UICursorType.Money and newCursorType == Enum.UICursorType.Default) then
+                self.holdingMoney = false;
+
+                GL:after(.1, nil, function ()
+                    local copper = GetPlayerTradeMoney();
+                    if (copper and copper > 0 and copper ~= moneyBefore) then
+                        self:showGoldOverlay(copper);
+                    end
+                end);
+            end
+        end);
     end
 
     -- Trade closed
     if (event == "TRADE_CLOSED") then
         self.ItemsToAdd, self.ItemsAdded = {}, {};
-        GL.Ace:CancelTimer(self.SetCopperTimer);
 
         -- Make sure to cancel any lingering timers
+        GL:cancelTimer("TradeWindowMoneyChangedInterval");
         GL:cancelTimer("TradeWindowAddItemsInterval");
 
         -- We don't want resetState to trigger since TRADE_CLOSED is fired before TRADE_COMPLETED
@@ -207,6 +424,11 @@ end
 
 --- Keep track of the trade window's state (e.g. which items, how much money etc)
 function TradeWindow:updateState()
+    if (not TradeFrame:IsShown()) then
+        self:resetState();
+        return;
+    end
+
     -- NPC is currently the player you're trading
     local partnerName, partnerRealm = UnitName("NPC", true);
     self.State.partner = GL:nameFormat{ name = partnerName, realm = partnerRealm, forceRealm = true };
@@ -348,21 +570,6 @@ function TradeWindow:setCopper(amount, target, callback)
     if (true) then
         return;
     end
-
-    GL.Ace:CancelTimer(self.SetCopperTimer);
-    self.SetCopperTimer = GL.Ace:ScheduleTimer(function ()
-        -- Looks like the target changed somewhere along the way
-        if (not GL:iEquals(GL:tableGet(self.State or {}, "partner"), target)) then
-            return;
-        end
-
-        _G.MoneyInputFrame_SetCopper(_G.TradePlayerInputMoneyFrame, amount);
-
-        -- Let the application know whether setting the desired amount of copper succeeded
-        if (type(callback) == "function") then
-            callback(_G.MoneyInputFrame_GetCopper(_G.TradePlayerInputMoneyFrame) == amount);
-        end
-    end, .5);
 end
 
 --- Process the ItemsToAdd table
@@ -452,50 +659,7 @@ end
 
 --- Draw/Update the checkbox and settings cogwheel
 function TradeWindow:updateAnnouncementCheckBox()
-    -- Only create the checbox / cogwheel once
-    if (not GL:empty(self.AnnouncementCheckBox)) then
-        self.AnnouncementCheckBox:SetChecked(self:shouldAnnounce());
-        return;
-    end
-
-    local CheckBox = CreateFrame("CheckButton", "GargulAnnounceTradeDetails", TradeFrame, "UICheckButtonTemplate");
-    GargulAnnounceTradeDetailsText:SetText(L["Announce Trade"]);
-    CheckBox:SetChecked(self:shouldAnnounce());
-    CheckBox:SetPoint("BOTTOMLEFT", "TradeFrame", "BOTTOMLEFT", 8, 6);
-    CheckBox:SetWidth(20);
-    CheckBox:SetHeight(20);
-    CheckBox:SetScript("OnClick", function ()
-        self.manuallyChangedAnnounceCheckbox = true;
-    end);
-    CheckBox.tooltipText = L["Announce trade details to group or in /say when not in a group"];
-    self.AnnouncementCheckBox = CheckBox;
-
-    -- Create the cogwheel that links to the announcement settings
-    local Cogwheel = CreateFrame("Button", "TradeWindowAnnouncementBox", TradeFrame, Frame);
-    Cogwheel:Show();
-    Cogwheel:SetClipsChildren(true);
-    Cogwheel:SetSize(13, 13);
-    Cogwheel:SetPoint("TOPRIGHT", CheckBox, "TOPRIGHT", 138, -5);
-
-    local CogwheelTexture = Cogwheel:CreateTexture();
-    CogwheelTexture:SetPoint("BOTTOMRIGHT", 0, 0);
-    CogwheelTexture:SetSize(16,16);
-    CogwheelTexture:SetTexture("interface/cursor/interact");
-    CogwheelTexture:SetTexture("interface/cursor/unableinteract");
-    Cogwheel.texture = CogwheelTexture;
-
-    Cogwheel:SetScript('OnEnter', function()
-        CogwheelTexture:SetTexture("interface/cursor/interact");
-    end);
-    Cogwheel:SetScript('OnLeave', function()
-        CogwheelTexture:SetTexture("interface/cursor/unableinteract");
-    end);
-
-    Cogwheel:SetScript("OnClick", function(_, button)
-        if (button == 'LeftButton') then
-            GL.Settings:draw("TradeAnnouncements");
-        end
-    end);
+    self.AnnouncementCheckBox:SetChecked(self:shouldAnnounce());
 end
 
 --- Announce the traded loot or gold in chat

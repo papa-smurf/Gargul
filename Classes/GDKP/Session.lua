@@ -208,7 +208,9 @@ function Session:tradeInitiated(Details)
     if (not Instance) then
         return;
     end
-
+    
+    local due = false;
+    local dueTexture = false;
     local message = "";
     local partnerGUID = GDKP:playerGUID(Details.partner);
     local playerCut = GDKPPot:getCut(partnerGUID);
@@ -220,15 +222,18 @@ function Session:tradeInitiated(Details)
 
     local balanceMessage = " ";
     local whisperMessage = nil;
+
     if (balance > 0) then
-        local due = GL:copperToMoney(balance);
-        balanceMessage = ("|c00F7922E" .. L["To give: %s"] .. "|r"):format(due);
-        whisperMessage = (L.CHAT["I owe you %s. Enjoy!"]):format(due);
+        due = GL:copperToMoney(balance);
+        dueTexture = GL:copperToMoneyTexture(balance);
+        balanceMessage = "|c00F7922E" .. L["To give: %s"]:format(dueTexture) .. "|r";
+        whisperMessage = L.CHAT["I owe you %s. Enjoy!"]:format(due);
 
     elseif (balance < 0) then
         local owed = GL:copperToMoney(balance * -1);
-        balanceMessage = ("|c0092FF00" .. L["To receive: %s"] .. "|r"):format(owed);
-        whisperMessage = (L.CHAT["You owe me %s. Thank you!"]):format(owed);
+        local owedTexture = GL:copperToMoneyTexture(balance * -1);
+        balanceMessage = "|c0092FF00" .. L["To receive: %s"]:format(owedTexture) .. "|r";
+        whisperMessage = L.CHAT["You owe me %s. Thank you!"]:format(owed);
     end
 
     if (whisperMessage and Settings:get("GDKP.whisperGoldDetails")) then
@@ -236,10 +241,10 @@ function Session:tradeInitiated(Details)
     end
 
     message = (L["\n|c00967FD2GDKP Session\nSpent by player: %s\nGiven: %s\nReceived: %s\nPlayer cut: %s\n\n%s\n"]):format(
-        GL:copperToMoney(copperSpentByPlayer),
-        GL:copperToMoney(copperGiven),
-        GL:copperToMoney(copperReceived),
-        GL:copperToMoney(playerCutInCopper),
+        GL:copperToMoneyTexture(copperSpentByPlayer),
+        GL:copperToMoneyTexture(copperGiven),
+        GL:copperToMoneyTexture(copperReceived),
+        GL:copperToMoneyTexture(playerCutInCopper),
         balanceMessage
     );
 
@@ -270,6 +275,29 @@ function Session:tradeInitiated(Details)
         DescriptionLabel:SetText(message);
         DescriptionLabel:SetColor(1, .95686, .40784);
         Window:AddChild(DescriptionLabel);
+
+        -- Add a buton that allows the loot master to pick up and drop gold in the trade window
+        if (due) then
+            local insufficientFunds = GetMoney() < balance;
+            local PickupGoldButton = GL.AceGUI:Create("Button");
+
+            PickupGoldButton:SetText(insufficientFunds and L["Not enough gold"] or L["Pick up %s"]:format(dueTexture));
+            PickupGoldButton:SetFullWidth(true);
+            PickupGoldButton:SetCallback("OnClick", function()
+                if (insufficientFunds) then
+                    GL:warning(L["Not enough gold"]);
+                    return;
+                elseif (GetPlayerTradeMoney() > 0) then
+                    GL:warning(L["You already added %s to the trade window"]:format(GL:copperToMoneyTexture(GetPlayerTradeMoney())));
+                    return;
+                end
+
+                PickupPlayerMoney(balance);
+            end);
+            Window:AddChild(PickupGoldButton);
+
+            GL.Interface:addTooltip(PickupGoldButton, L["Click button, then click anywhere in the trade window to add %s"]:format(dueTexture));
+        end
 
         local IncludeTradeInSession = GL.AceGUI:Create("CheckBox");
         IncludeTradeInSession:SetValue(false);
