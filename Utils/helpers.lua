@@ -2443,6 +2443,7 @@ end
 ---@see GL:copperToMoney
 function GL:goldToMoney(copper, Separators, includeEmpty, separatorBeforeUnit)
     copper = tonumber(copper) or 0;
+
     return self:copperToMoney(copper * 10000, Separators, includeEmpty, separatorBeforeUnit);
 end
 
@@ -2535,6 +2536,21 @@ function GL:copperToMoney(copper, Separators, includeEmpty, separatorBeforeUnit)
     end
 
     return strtrim(money);
+end
+
+---@param copper number
+---@return string
+---@see GL:copperToMoneyTexture
+function GL:goldToMoneyTexture(copper)
+    copper = tonumber(copper) or 0;
+
+    return self:copperToMoneyTexture(copper * 10000);
+end
+
+---@param copper number
+---@return string
+function GL:copperToMoneyTexture(copper)
+    return GL.GetCoinTextureString(copper);
 end
 
 --- Limit a given string to a maximum number of characters

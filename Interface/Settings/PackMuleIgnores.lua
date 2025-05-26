@@ -116,5 +116,3 @@ function PackMuleIgnores:isItemIgnored(input)
         end);
     end);
 end
-
-GL:debug("Interface/Settings/PackMuleIgnores.lua");
