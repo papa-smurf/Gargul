@@ -346,7 +346,7 @@ function AwardedLoot:editWinner(checksum, winner, announce)
             awardMessage = (L.CHAT["%s was awarded to %s for %s. Congrats!"]):format(
                 AwardEntry.itemLink,
                 winner,
-                GL:goldToMoneyTexture(AwardEntry.GDKPCost)
+                GL:goldToMoney(AwardEntry.GDKPCost)
             );
 
         else
@@ -622,7 +622,7 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, g
             awardMessage = (L.CHAT["%s was awarded to %s for %s. Congrats!"]):format(
                 itemLink,
                 awardedTo,
-                GL:goldToMoneyTexture(gdkpCost)
+                GL:goldToMoney(gdkpCost)
             );
 
         else

@@ -941,14 +941,14 @@ function Session:announceDeletedAuction(sessionID, Auction)
 
         -- This was raw gold added to the pot
         if (Auction.itemID == Constants.GDKP.potIncreaseItemID) then
-            GL:sendChatMessage((L.CHAT["I removed %s from the pot"]):format(GL:goldToMoneyTexture(price)), "GROUP");
+            GL:sendChatMessage((L.CHAT["I removed %s from the pot"]):format(GL:goldToMoney(price)), "GROUP");
             GL:sendChatMessage((L.CHAT["The pot now holds %s"]):format(GDKPPot:humanTotal()), "GROUP");
 
             return;
 
             -- Just in case someone has old data still
         elseif (winner and price) then
-            GL:sendChatMessage((L.CHAT["I removed %s awarded to %s for %s"]):format(Auction.itemLink, winner, GL:goldToMoneyTexture(price)), "GROUP");
+            GL:sendChatMessage((L.CHAT["I removed %s awarded to %s for %s"]):format(Auction.itemLink, winner, GL:goldToMoney(price)), "GROUP");
             GL:sendChatMessage((L.CHAT["The pot now holds %s"]):format(GDKPPot:humanTotal()), "GROUP");
 
             return;
@@ -980,22 +980,22 @@ function Session:announceRestoredAuction(sessionID, Auction)
 
         -- This was raw gold added to the pot
         if (Auction.itemID == Constants.GDKP.potIncreaseItemID) then
-            GL:sendChatMessage((L.CHAT["I added %s back to the pot"]):format(GL:goldToMoneyTexture(price)), "GROUP");
+            GL:sendChatMessage((L.CHAT["I added %s back to the pot"]):format(GL:goldToMoney(price)), "GROUP");
             GL:sendChatMessage((L.CHAT["The pot now holds %s"]):format(GDKPPot:humanTotal()), "GROUP");
             return;
 
             -- Just in case someone has old data still
         elseif (winner and price) then
-            GL:sendChatMessage((L.CHAT["I restored %s awarded to %s for %s"]):format(Auction.itemLink, winner, GL:goldToMoneyTexture(price)), "GROUP");
+            GL:sendChatMessage((L.CHAT["I restored %s awarded to %s for %s"]):format(Auction.itemLink, winner, GL:goldToMoney(price)), "GROUP");
             GL:sendChatMessage((L.CHAT["The pot now holds %s"]):format(GDKPPot:humanTotal()), "GROUP");
 
             return;
         end
 
-        GL:sendChatMessage(string.format(L.CHAT["Pot was updated after restoring an auction, it now holds %s"], tostring(total)), "GROUP");
+        GL:sendChatMessage(string.format(L.CHAT["Pot was updated after restoring an auction, it now holds %s"], GDKPPot:humanTotal()), "GROUP");
     else
         -- Should not be possible, shenanigans?
-        GL:sendChatMessage(string.format(L.CHAT["Pot was updated after restoring an auction, it now holds %s"], tostring(total)), "GROUP");
+        GL:sendChatMessage(string.format(L.CHAT["Pot was updated after restoring an auction, it now holds %s"], GDKPPot:humanTotal()), "GROUP");
     end
 end
 
