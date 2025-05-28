@@ -39,3 +39,8 @@ jobs:
         uses: BigWigsMods/packager@master
         with:
           args: "-o -u -S -m .pkgmeta -g wrath"
+
+      - name: Package and release Mists
+        uses: BigWigsMods/packager@master
+        with:
+          args: "-o -u -S -m .pkgmeta -g mists"
