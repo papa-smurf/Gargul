@@ -29,6 +29,7 @@ GL.PackMule = {
     LootChangedTimer = nil,
     Rules = {},
     RoundRobinItems = {},
+    RoundRobinRounds = {},
 };
 
 local PackMule = GL.PackMule; ---@type PackMule
@@ -163,6 +164,40 @@ function PackMule:_init()
             self.LootChangedTimer = nil;
         end
     end);
+end
+
+--- Attempt to parse a Round-Robin policy placeholder:
+--- - "RR"                 -> {}
+--- - "RR(<num>/<player>)" -> {maxRounds: <num>, defaultTargetPlayer: <player>}
+--- - anything else        -> nil
+---
+---@param targetName string
+---@return table?
+function PackMule:parseRoundRobinPolicy(targetName)
+    -- "Normal" Round-robin: start over when all players got 1 item
+    -- Syntax: "RR"
+    if (targetName == L["RR"]) then
+        return {};
+
+    -- "Limited" Round-robin: when each player has at least n items,
+    -- all the remaining ones go to a fixed player
+    -- Syntax: "RR(<n>/<player>)"
+    elseif (GL:strStartsWith(targetName, L["RR"])) then
+        local args = strtrim(targetName:sub(#L["RR"]+1, -1));
+
+        -- Ensure we have parenthesized arguments
+        if (GL:strStartsWith(args, "(") and GL:strEndsWith(args, ")")) then
+            local num, player = strsplit("/", args:sub(2, -2), 2);
+            local maxRounds = tonumber(num);
+            -- Ensure the first one is a number
+            if (maxRounds) then
+                return {
+                    maxRounds = maxRounds,
+                    defaultTargetPlayer = strtrim(player)
+                };
+            end
+        end
+    end
 end
 
 --- PASS/NEED/GREED on group loot items based on PackMule rules
@@ -665,10 +700,6 @@ function PackMule:getTargetForItem(itemLinkOrId, callback)
                         return callback(false); -- No point continuing, don't want the item to end up in the wrong hands!
                     end
 
-                -- RR placeholder represents the next player in a round robin scheme for this rule
-                elseif (ruleTarget == L["RR"]) then
-                    ruleTarget = self:roundRobinTargetForRule(RuleThatApplies);
-
                 -- Check whether we need to give the item to a random player
                 elseif (ruleTarget == L["RANDOM"]) then
                     for _, Player in pairs(GL.User:groupMembers()) do
@@ -681,6 +712,14 @@ function PackMule:getTargetForItem(itemLinkOrId, callback)
                     -- No need to continue, if a ML sets up RANDOM and something else
                     -- at the same time then he can expect some weird behavior.
                     break;
+
+                else
+                    -- Check if there is a RR placeholder (with optional args)
+                    -- representing the next player in a round robin scheme for this rule
+                    local RRpolicy = self:parseRoundRobinPolicy(ruleTarget);
+                    if RRpolicy then
+                        ruleTarget = self:roundRobinTargetForRule(RuleThatApplies, RRpolicy);
+                    end
                 end
 
                 if (not GL:inTable({ L["PASS"], L["GREED"], L["NEED"] }, ruleTarget)) then
@@ -962,7 +1001,7 @@ end
 ---
 ---@param Rule string
 ---@return string?
-function PackMule:roundRobinTargetForRule(Rule)
+function PackMule:roundRobinTargetForRule(Rule, RoundRobinPolicy)
     local ruleId = Rule.quality;
     if (not GL:empty(Rule.item)) then
         ruleId = Rule.item;
@@ -976,6 +1015,15 @@ function PackMule:roundRobinTargetForRule(Rule)
     -- first time we've seen this item
     if (not self.RoundRobinItems[ruleId]) then
         self.RoundRobinItems[ruleId] = {};
+        self.RoundRobinRounds[ruleId] = 1;
+    end
+
+    if (RoundRobinPolicy.maxRounds and
+        self.RoundRobinRounds[ruleId] > RoundRobinPolicy.maxRounds
+    ) then
+        -- everyone has received one of these, rest for default player
+        GL:debug("PackMule:roundRobinTargetForRule - for default player")
+        return RoundRobinPolicy.defaultTargetPlayer;
     end
 
     local EligiblePlayers = {};
@@ -995,8 +1043,9 @@ function PackMule:roundRobinTargetForRule(Rule)
         -- everyone has received one of these, start over
         GL:debug("PackMule:roundRobinTargetForRule - starting over");
         self.RoundRobinItems[ruleId] = {};
+        self.RoundRobinRounds[ruleId] = 1 + self.RoundRobinRounds[ruleId];
 
-        return self:roundRobinTargetForRule(Rule);
+        return self:roundRobinTargetForRule(Rule, RoundRobinPolicy);
     end
 
     -- Fetch a (random) target from the eligible target pool
