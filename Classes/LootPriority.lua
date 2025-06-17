@@ -21,21 +21,36 @@ local LootPriority = GL.LootPriority;
 --- Fetch an item's prio
 ---
 ---@param itemLink string
----@param itemName string|nil
----@return string|nil
+---@param itemName string?
+---@return table?
 function LootPriority:getPriority(itemLink, itemName)
-    local itemID = GL:getItemIDFromLink(itemLink);
     itemName = itemName or GL:getItemNameFromLink(itemLink);
 
-    return DB:get("LootPriority", {})[itemID]
-        or DB:get("LootPriority", {})[itemName];
+    local prioByName = DB:get("LootPriority." .. itemName);
+    if (prioByName) then
+        return prioByName;
+    end
+
+    local itemID = GL:getItemIDFromLink(itemLink);
+
+    -- The item linked to this id can have multiple IDs (head of Onyxia for example)
+    local AllLinkedItemIDs = GL:getLinkedItemsForID(itemID);
+
+    for _, id in pairs(AllLinkedItemIDs) do
+        local prioByID = DB:get("LootPriority." .. id);
+
+        if (prioByID) then
+            return prioByID;
+        end
+    end
 end
 
 --- Append the loot prio as defined in DB:get("LootPriority to an item's tooltip
 ---
 ---@param itemLink string
+---@param itemName string?
 ---@return table
-function LootPriority:tooltipLines(itemLink)
+function LootPriority:tooltipLines(itemLink, itemName)
     local itemPriority = self:getPriority(itemLink, itemName);
 
     -- No prio defined for this item
