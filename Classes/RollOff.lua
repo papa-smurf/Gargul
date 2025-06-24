@@ -841,6 +841,29 @@ function RollOff:processRoll(message)
     self:refreshRollsTable();
 end
 
+--- Format roller name to display in the rolls table
+---
+---@param playerName string
+---@param numberOfTimesRolledByPlayer int
+---@return string
+function RollOff:formatRollerName(playerName, numberOfTimesRolledByPlayer)
+    -- If this isn't the player's first roll for the current item then
+    -- we add a number behind the players name like so: PlayerName [#]
+    if (numberOfTimesRolledByPlayer > 1) then
+        playerName = ("%s [%s]"):format(playerName, numberOfTimesRolledByPlayer);
+    end
+
+    return playerName;
+end
+
+--- Format roll notes for the rolls table
+---
+---@param rollNotes table
+---@return string
+function RollOff:formatRollNotes(rollNotes)
+    return table.concat(rollNotes, ", ");
+end
+
 -- Whenever a new roll comes in we need to refresh
 -- the rolls table to make sure it actually shows up
 function RollOff:refreshRollsTable()
@@ -959,20 +982,13 @@ function RollOff:refreshRollsTable()
             end
         end
 
-        local rollerName = playerName;
-        -- If this isn't the player's first roll for the current item then
-        -- we add a number behind the players name like so: PlayerName [#]
-        if (numberOfTimesRolledByPlayer > 1) then
-            rollerName = string.format("%s [%s]", playerName, numberOfTimesRolledByPlayer);
-        end
-
         local class = Roll.class;
         local plusOnes = GL.PlusOnes:getPlusOnes(playerName);
 
         local Row = {
             cols = {
                 {
-                    value = rollerName,
+                    value = self:formatRollerName(playerName, numberOfTimesRolledByPlayer),
                     color = GL:classRGBAColor(class),
                 },
                 {
@@ -988,7 +1004,7 @@ function RollOff:refreshRollsTable()
                     color = GL:classRGBAColor(class),
                 },
                 {
-                    value = table.concat(rollNotes, ", "),
+                    value = self:formatRollNotes(rollNotes),
                     color = GL:classRGBAColor(class),
                 },
                 {
