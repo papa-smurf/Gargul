@@ -841,28 +841,27 @@ function RollOff:processRoll(message)
     self:refreshRollsTable();
 end
 
---- Format roller name to display in the roll table
+--- Format roller name to display in the rolls table
 ---
 ---@param playerName string
 ---@param numberOfTimesRolledByPlayer int
 ---@return string
 function RollOff:formatRollerName(playerName, numberOfTimesRolledByPlayer)
-    local rollerName = playerName;
     -- If this isn't the player's first roll for the current item then
     -- we add a number behind the players name like so: PlayerName [#]
     if (numberOfTimesRolledByPlayer > 1) then
-        rollerName = string.format("%s [%s]", playerName, numberOfTimesRolledByPlayer);
+        playerName = ("%s [%s]"):format(playerName, numberOfTimesRolledByPlayer);
     end
 
-    return rollerName
+    return playerName;
 end
 
---- Format roll notes for the roll table
+--- Format roll notes for the rolls table
 ---
 ---@param rollNotes table
 ---@return string
 function RollOff:formatRollNotes(rollNotes)
-    return table.concat(rollNotes, ", ")
+    return table.concat(rollNotes, ", ");
 end
 
 -- Whenever a new roll comes in we need to refresh
