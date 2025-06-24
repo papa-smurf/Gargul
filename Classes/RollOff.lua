@@ -857,6 +857,14 @@ function RollOff:formatRollerName(playerName, numberOfTimesRolledByPlayer)
     return rollerName
 end
 
+--- Format roll notes for the roll table
+---
+---@param rollNotes table
+---@return string
+function RollOff:formatRollNotes(rollNotes)
+    return table.concat(rollNotes, ", ")
+end
+
 -- Whenever a new roll comes in we need to refresh
 -- the rolls table to make sure it actually shows up
 function RollOff:refreshRollsTable()
@@ -997,7 +1005,7 @@ function RollOff:refreshRollsTable()
                     color = GL:classRGBAColor(class),
                 },
                 {
-                    value = table.concat(rollNotes, ", "),
+                    value = self:formatRollNotes(rollNotes),
                     color = GL:classRGBAColor(class),
                 },
                 {
