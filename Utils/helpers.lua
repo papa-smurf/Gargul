@@ -2556,6 +2556,9 @@ end
 ---@param copper number
 ---@return string
 function GL:copperToMoneyTexture(copper)
+    -- Make sure to account for negative numbers
+    copper = math.abs(copper);
+
     return GL.GetCoinTextureString(copper);
 end
 
