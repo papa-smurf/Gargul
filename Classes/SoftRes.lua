@@ -1108,6 +1108,7 @@ function SoftRes:importGargulData(data)
     local discordUrl = tostring(data.metadata.discordUrl) or "";
     local hidden = GL:toboolean(data.metadata.hidden or false);
     local id = tostring(data.metadata.id) or "";
+    local url = data.metadata.url;
     local raidStartsAt = data.metadata.raidStartsAt or 0;
 
     DB.SoftRes.MetaData = {
@@ -1119,7 +1120,7 @@ function SoftRes:importGargulData(data)
         importString = importString,
         raidStartsAt = raidStartsAt,
         updatedAt = updatedAt,
-        url = "https://softres.it/raid/" .. id,
+        url = url or ( "https://legacy.softres.it/raid/" .. id ),
     };
 
     local differentPlusOnes = false;
