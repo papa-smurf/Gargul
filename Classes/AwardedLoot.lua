@@ -832,7 +832,9 @@ function AwardedLoot:initiateTrade(AwardDetails)
         tradingPartner = GL.PackMule.disenchanter;
     end
 
-    if (not TradeFrame:IsShown()) then
+    if (not TradeFrame:IsShown()
+        and not GL:iEquals(tradingPartner, GL.User.fqn)
+    ) then
         -- Open a trade window with the winner
         GL.TradeWindow:open(tradingPartner, function (success)
             if (not success) then
