@@ -803,7 +803,7 @@ function Overview:calculateCuts()
                 numberOfRaidersWithCut = numberOfRaidersWithCut + 1;
             end
 
-            CutHolder:SetText(("|c00967FD2%s|r|c00FFF569%s|r  (%s%%)"):format(GL:goldToMoneyTexture(cut), L["g"], GL:round(cutPercentage, 2)));
+            CutHolder:SetText(("|c00FFF569%s|r (%s%%)"):format(GL:goldToMoneyTexture(cut), GL:round(cutPercentage, 2)));
         end
     end
 

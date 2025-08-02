@@ -296,7 +296,29 @@ function Session:tradeInitiated(Details)
             end);
             Window:AddChild(PickupGoldButton);
 
-            GL.Interface:addTooltip(PickupGoldButton, L["Click button, then click anywhere in the trade window to add %s"]:format(dueTexture));
+            -- Add breathing effect to the button for increased visibility
+            do
+                local Text = PickupGoldButton.frame:GetFontString();
+                local AnimationGroup = Text:CreateAnimationGroup();
+
+                local FadeOut = AnimationGroup:CreateAnimation("Alpha");
+                FadeOut:SetFromAlpha(1);
+                FadeOut:SetToAlpha(0.2);
+                FadeOut:SetDuration(.4);
+                FadeOut:SetSmoothing("IN_OUT");
+
+                local FadeIn = AnimationGroup:CreateAnimation("Alpha");
+                FadeIn:SetFromAlpha(0.2);
+                FadeIn:SetToAlpha(1);
+                FadeIn:SetDuration(.4);
+                FadeIn:SetSmoothing("IN_OUT");
+                FadeIn:SetStartDelay(.4) -- Wait until FadeOut is done
+
+                AnimationGroup:SetLooping("REPEAT");
+                AnimationGroup:Play();
+            end
+
+            GL.Interface:addTooltip(PickupGoldButton, L["Click button, then click your item side of the trade window to add %s"]:format(dueTexture));
         end
 
         local IncludeTradeInSession = GL.AceGUI:Create("CheckBox");
