@@ -3046,4 +3046,674 @@ GL.Data.NormalModeHardModeLinks = {
     ["78861"] = { 78170, 78874, },
     ["78170"] = { 78861, },
     ["78874"] = { 78861, },
+    -- Ruby-Linked Girdle
+    ["89930"] = { 89767,},
+    ["89767"] = { 89930, },
+    -- Claws of Amethyst
+    ["89931"] = { 89768,},
+    ["89768"] = { 89931, },
+    -- Jade Dust Leggings
+    ["87017"] = { 85978,},
+    ["85978"] = { 87017, },
+    -- Stonebound Cinch
+    ["87019"] = { 85977,},
+    ["85977"] = { 87019, },
+    -- Stoneflesh Leggings
+    ["87013"] = { 85926,},
+    ["85926"] = { 87013, },
+    -- Sixteen-Fanged Crown
+    ["87020"] = { 85976,},
+    ["85976"] = { 87020, },
+    -- Stonefang Chestguard
+    ["89929"] = { 89766,},
+    ["89766"] = { 89929, },
+    -- Stonemaw Armguards
+    ["87014"] = { 85923,},
+    ["85923"] = { 87014, },
+    -- Heavenly Jade Greatboots
+    ["87021"] = { 85975,},
+    ["85975"] = { 87021, },
+    -- Jasper Clawfeet
+    ["87015"] = { 85925,},
+    ["85925"] = { 87015, },
+    -- Star-Stealer Waistguard
+    ["87060"] = { 86134,},
+    ["86134"] = { 87060, },
+    -- Cape of Three Lanterns
+    ["87018"] = { 85979,},
+    ["85979"] = { 87018, },
+    -- Beads of the Mogu'shi
+    ["87016"] = { 85922,},
+    ["85922"] = { 87016, },
+    -- Dagger of the Seven Stars
+    ["87012"] = { 85924,},
+    ["85924"] = { 87012, },
+    -- Imperial Ghostbinder's Robes
+    ["87027"] = { 85990,},
+    ["85990"] = { 87027, },
+    -- Hood of Cursed Dreams
+    ["87029"] = { 85989,},
+    ["85989"] = { 87029, },
+    -- Tomb Raider's Girdle
+    ["87022"] = { 85982,},
+    ["85982"] = { 87022, },
+    -- Chain of Shadow
+    ["87030"] = { 85987,},
+    ["85987"] = { 87030, },
+    -- Wildfire Worldwalkers
+    ["87023"] = { 85980,},
+    ["85980"] = { 87023, },
+    -- Legplates of Sagacious Shadows
+    ["87031"] = { 85988,},
+    ["85988"] = { 87031, },
+    -- Nullification Greathelm
+    ["87024"] = { 85984,},
+    ["85984"] = { 87024, },
+    -- Bracers of Six Oxen
+    ["87025"] = { 85983,},
+    ["85983"] = { 87025, },
+    -- Amulet of Seven Curses
+    ["87028"] = { 85986,},
+    ["85986"] = { 87028, },
+    -- Feng's Ring of Dreams
+    ["89933"] = { 89803,},
+    ["89803"] = { 89933, },
+    -- Feng's Seal of Binding
+    ["89932"] = { 89802,},
+    ["89802"] = { 89932, },
+    -- Arrow Breaking Windcloak
+    ["87044"] = { 86082,},
+    ["86082"] = { 87044, },
+    -- Cloak of Peacock Feathers
+    ["87026"] = { 85985,},
+    ["85985"] = { 87026, },
+    -- Fan of Fiery Winds
+    ["89425"] = { 89424,},
+    ["89424"] = { 89425, },
+    -- Shadowsummoner Spaulders
+    ["87038"] = { 86041,},
+    ["86041"] = { 87038, },
+    -- Sandals of the Severed Soul
+    ["87037"] = { 85997,},
+    ["85997"] = { 87037, },
+    -- Spaulders of the Divided Mind
+    ["87041"] = { 86039,},
+    ["86039"] = { 87041, },
+    -- Netherrealm Shoulderpads
+    ["87033"] = { 85995,},
+    ["85995"] = { 87033, },
+    -- Leggings of Imprisoned Will
+    ["87042"] = { 86040,},
+    ["86040"] = { 87042, },
+    -- Fetters of Death
+    ["87034"] = { 85993,},
+    ["85993"] = { 87034, },
+    -- Bindings of Ancient Spirits
+    ["87043"] = { 86027,},
+    ["86027"] = { 87043, },
+    -- Bonded Soul Bracers
+    ["89934"] = { 89817,},
+    ["89817"] = { 89934, },
+    -- Sollerets of Spirit Splitting
+    ["87035"] = { 85992,},
+    ["85992"] = { 87035, },
+    -- Circuit of the Frail Soul
+    ["87040"] = { 86038,},
+    ["86038"] = { 87040, },
+    -- Soulgrasp Choker
+    ["87036"] = { 85991,},
+    ["85991"] = { 87036, },
+    -- Eye of the Ancient Spirit
+    ["87039"] = { 85996,},
+    ["85996"] = { 87039, },
+    -- Gara'kal, Fist of the Spiritbinder
+    ["87032"] = { 85994,},
+    ["85994"] = { 87032, },
+    -- Undying Shadow Grips
+    ["87052"] = { 86128,},
+    ["86128"] = { 87052, },
+    -- Hood of Blind Eyes
+    ["87051"] = { 86129,},
+    ["86129"] = { 87051, },
+    -- Bracers of Dark Thoughts
+    ["87054"] = { 86127,},
+    ["86127"] = { 87054, },
+    -- Bracers of Violent Meditation
+    ["89935"] = { 89818,},
+    ["89818"] = { 89935, },
+    -- Meng's Treads of Insanity
+    ["87055"] = { 86084,},
+    ["86084"] = { 87055, },
+    -- Subetai's Pillaging Leggings
+    ["87047"] = { 86081,},
+    ["86081"] = { 87047, },
+    -- Girdle of Delirious Visions
+    ["87056"] = { 86086,},
+    ["86086"] = { 87056, },
+    -- Breastplate of the Kings' Guard
+    ["87048"] = { 86076,},
+    ["86076"] = { 87048, },
+    -- Shoulderguards of the Unflanked
+    ["87049"] = { 86080,},
+    ["86080"] = { 87049, },
+    -- Mindshard Drape
+    ["89936"] = { 89819,},
+    ["89819"] = { 89936, },
+    -- Zian's Choker of Coalesced Shadow
+    ["87053"] = { 86083,},
+    ["86083"] = { 87053, },
+    -- Arrow Breaking Windcloak
+    ["87044"] = { 86082,},
+    ["86082"] = { 87044, },
+    -- Amulet of the Hidden Kings
+    ["87045"] = { 86047,},
+    ["86047"] = { 87045, },
+    -- Screaming Tiger, Qiang's Unbreakable Polearm
+    ["87046"] = { 86071,},
+    ["86071"] = { 87046, },
+    -- Steelskin, Qiang's Impervious Shield
+    ["87050"] = { 86075,},
+    ["86075"] = { 87050, },
+    -- Orbital Belt
+    ["87064"] = { 86139,},
+    ["86139"] = { 87064, },
+    -- Galaxyfire Girdle
+    ["89938"] = { 89822,},
+    ["89822"] = { 89938, },
+    -- Phasewalker Striders
+    ["87067"] = { 86138,},
+    ["86138"] = { 87067, },
+    -- Chestguard of Total Annihilation
+    ["87058"] = { 86136,},
+    ["86136"] = { 87058, },
+    -- Shoulders of Empyreal Focus
+    ["87068"] = { 86141,},
+    ["86141"] = { 87068, },
+    -- Crown of Keening Stars
+    ["89939"] = { 89821,},
+    ["89821"] = { 89939, },
+    -- Starcrusher Gauntlets
+    ["87059"] = { 86135,},
+    ["86135"] = { 87059, },
+    -- Light of the Cosmos
+    ["87065"] = { 86133,},
+    ["86133"] = { 87065, },
+    -- Bottle of Infinite Stars
+    ["87057"] = { 86132,},
+    ["86132"] = { 87057, },
+    -- Vial of Dragon's Blood
+    ["87063"] = { 86131,},
+    ["86131"] = { 87063, },
+    -- Band of Bursting Novas
+    ["89937"] = { 89824,},
+    ["89824"] = { 89937, },
+    -- Torch of the Celestial Spark
+    ["87066"] = { 86137,},
+    ["86137"] = { 87066, },
+    -- Elegion, the Fanged Crescent
+    ["87062"] = { 86130,},
+    ["86130"] = { 87062, },
+    -- Starshatter
+    ["87061"] = { 86140,},
+    ["86140"] = { 87061, },
+    -- Hood of Focused Energy
+    ["87073"] = { 86151,},
+    ["86151"] = { 87073, },
+    -- Magnetized Leggings
+    ["87077"] = { 86150,},
+    ["86150"] = { 87077, },
+    -- Crown of Opportunistic Strikes
+    ["87070"] = { 86146,},
+    ["86146"] = { 87070, },
+    -- Enameled Grips of Solemnity
+    ["89942"] = { 89825,},
+    ["89825"] = { 89942, },
+    -- Dreadeye Gaze
+    ["89940"] = { 89820,},
+    ["89820"] = { 89940, },
+    -- Grips of Terra Cotta
+    ["87825"] = { 87827,},
+    ["87827"] = { 87825, },
+    -- Spaulders of the Emperor's Rage
+    ["87078"] = { 86149,},
+    ["86149"] = { 87078, },
+    -- Jang-xi's Devastating Legplates
+    ["87071"] = { 86145,},
+    ["86145"] = { 87071, },
+    -- Chestguard of Eternal Vigilance
+    ["89941"] = { 89823,},
+    ["89823"] = { 89941, },
+    -- Worldwaker Cabochon
+    ["87076"] = { 86152,},
+    ["86152"] = { 87076, },
+    -- Qin-xi's Polarizing Seal
+    ["87075"] = { 86147,},
+    ["86147"] = { 87075, },
+    -- Lei Shen's Final Orders
+    ["87072"] = { 86144,},
+    ["86144"] = { 87072, },
+    -- Tihan, Scepter of the Sleeping Emperor
+    ["87074"] = { 86148,},
+    ["86148"] = { 87074, },
+    -- Fang Kung, Spark of Titans
+    ["87069"] = { 86142,},
+    ["86142"] = { 87069, },
+    -- Attenuating Bracers
+    ["86948"] = { 86157,},
+    ["86157"] = { 86948, },
+    -- Gloves of Grasping Claws
+    ["86947"] = { 86161,},
+    ["86161"] = { 86947, },
+    -- Scent-Soaked Sandals
+    ["89918"] = { 89829,},
+    ["89829"] = { 89918, },
+    -- Gauntlets of Undesired Gifts
+    ["86950"] = { 86159,},
+    ["86159"] = { 86950, },
+    -- Boots of the Still Breath
+    ["86943"] = { 86153,},
+    ["86153"] = { 86943, },
+    -- Mail of Screaming Secrets
+    ["86951"] = { 86160,},
+    ["86160"] = { 86951, },
+    -- Zor'lok's Fizzing Chestguard
+    ["87822"] = { 87824,},
+    ["87824"] = { 87822, },
+    -- Chestplate of the Forbidden Tower
+    ["86952"] = { 86158,},
+    ["86158"] = { 86952, },
+    -- Warbelt of Sealed Pods
+    ["89919"] = { 89826,},
+    ["89826"] = { 89919, },
+    -- Articulated Legplates
+    ["86944"] = { 86203,},
+    ["86203"] = { 86944, },
+    -- Fragment of Fear Made Flesh
+    ["86949"] = { 86156,},
+    ["86156"] = { 86949, },
+    -- Pheromone-Coated Choker
+    ["89917"] = { 89827,},
+    ["89827"] = { 89917, },
+    -- Hisek's Chrysanthemum Cape
+    ["86945"] = { 86154,},
+    ["86154"] = { 86945, },
+    -- Vizier's Ruby Signet
+    ["86946"] = { 86155,},
+    ["86155"] = { 86946, },
+    -- Twisting Wind Bracers
+    ["86958"] = { 86170,},
+    ["86170"] = { 86958, },
+    -- Boots of the Blowing Wind
+    ["86959"] = { 86167,},
+    ["86167"] = { 86959, },
+    -- Hood of Stilled Winds
+    ["89922"] = { 89831,},
+    ["89831"] = { 89922, },
+    -- Bracers of Unseen Strikes
+    ["86954"] = { 86163,},
+    ["86163"] = { 86954, },
+    -- Bracers of Tempestuous Fury
+    ["86962"] = { 86168,},
+    ["86168"] = { 86962, },
+    -- Kaz'tik's Stormseizer Gauntlets
+    ["90740"] = { 90738,},
+    ["90738"] = { 90740, },
+    -- Sword Dancer's Leggings
+    ["89920"] = { 89830,},
+    ["89830"] = { 89920, },
+    -- Waistplate of Overwhelming Assault
+    ["86955"] = { 86164,},
+    ["86164"] = { 86955, },
+    -- Pauldrons of the Broken Blade
+    ["89921"] = { 89828,},
+    ["89828"] = { 89921, },
+    -- Windblade Talons
+    ["86956"] = { 86165,},
+    ["86165"] = { 86956, },
+    -- Drape of Gathering Clouds
+    ["86961"] = { 86169,},
+    ["86169"] = { 86961, },
+    -- Choker of the Unleashed Storm
+    ["86953"] = { 86166,},
+    ["86166"] = { 86953, },
+    -- Ring of the Bladed Tempest
+    ["86957"] = { 86162,},
+    ["86162"] = { 86957, },
+    -- Tornado-Summoning Censer
+    ["86960"] = { 86171,},
+    ["86171"] = { 86960, },
+    -- Sandals of the Unbidden
+    ["86969"] = { 86178,},
+    ["86178"] = { 86969, },
+    -- Xaril's Hood of Intoxicating Vapors
+    ["86970"] = { 86181,},
+    ["86181"] = { 86970, },
+    -- Shoulders of Foaming Fluids
+    ["89924"] = { 89833,},
+    ["89833"] = { 89924, },
+    -- Robes of Eighty Lights
+    ["86972"] = { 86180,},
+    ["86180"] = { 86972, },
+    -- Bonebreaker Gauntlets
+    ["86964"] = { 86176,},
+    ["86176"] = { 86964, },
+    -- Vestments of Steaming Ichor
+    ["89925"] = { 89834,},
+    ["89834"] = { 89925, },
+    -- Grips of the Leviathan
+    ["86965"] = { 86175,},
+    ["86175"] = { 86965, },
+    -- Grasps of Panic
+    ["86973"] = { 86179,},
+    ["86179"] = { 86973, },
+    -- Garalon's Graven Carapace
+    ["89923"] = { 89832,},
+    ["89832"] = { 89923, },
+    -- Garalon's Hollow Skull
+    ["86966"] = { 86174,},
+    ["86174"] = { 86966, },
+    -- Stormwake Mistcloak
+    ["86971"] = { 86182,},
+    ["86182"] = { 86971, },
+    -- Legbreaker Greatcloak
+    ["86963"] = { 86173,},
+    ["86173"] = { 86963, },
+    -- Necklace of Congealed Weaknesses
+    ["86967"] = { 86177,},
+    ["86177"] = { 86967, },
+    -- Ring of the Shattered Shell
+    ["86968"] = { 86172,},
+    ["86172"] = { 86968, },
+    -- Gauntlets of the Shadowy Conqueror
+    ["89256"] = { 89240,},
+    ["89240"] = { 89256, },
+    -- Gauntlets of the Shadowy Protector
+    ["89257"] = { 89241,},
+    ["89241"] = { 89257, },
+    -- Gauntlets of the Shadowy Vanquisher
+    ["89255"] = { 89242,},
+    ["89242"] = { 89255, },
+    -- Robes of Torn Nightmares
+    ["86975"] = { 86513,},
+    ["86513"] = { 86975, },
+    -- Clutches of Dying Hope
+    ["86977"] = { 86514,},
+    ["86514"] = { 86977, },
+    -- Wingslasher Pauldrons
+    ["86978"] = { 86204,},
+    ["86204"] = { 86978, },
+    -- Impaling Treads
+    ["86979"] = { 86201,},
+    ["86201"] = { 86979, },
+    -- Korven's Amber-Sealed Beetle
+    ["86976"] = { 86205,},
+    ["86205"] = { 86976, },
+    -- Painful Thorned Ring
+    ["86974"] = { 86200,},
+    ["86200"] = { 86974, },
+    -- Cloak of Raining Blades
+    ["86980"] = { 86202,},
+    ["86202"] = { 86980, },
+    -- Leggings of the Shadowy Conqueror
+    ["89253"] = { 89243,},
+    ["89243"] = { 89253, },
+    -- Leggings of the Shadowy Protector
+    ["89254"] = { 89244,},
+    ["89244"] = { 89254, },
+    -- Leggings of the Shadowy Vanquisher
+    ["89252"] = { 89245,},
+    ["89245"] = { 89252, },
+    -- Belt of Malleable Amber
+    ["86981"] = { 86210,},
+    ["86210"] = { 86981, },
+    -- Treads of Deadly Secretions
+    ["86984"] = { 86212,},
+    ["86212"] = { 86984, },
+    -- Monstrous Stompers
+    ["86985"] = { 86214,},
+    ["86214"] = { 86985, },
+    -- Shoulderpads of Misshapen Life
+    ["86986"] = { 86213,},
+    ["86213"] = { 86986, },
+    -- Seal of the Profane
+    ["86982"] = { 86211,},
+    ["86211"] = { 86982, },
+    -- Un'sok's Amber Scalpel
+    ["86983"] = { 86217,},
+    ["86217"] = { 86983, },
+    -- Scimitar of Seven Stars
+    ["86987"] = { 86219,},
+    ["86219"] = { 86987, },
+    -- Chest of the Shadowy Conqueror
+    ["89250"] = { 89237,},
+    ["89237"] = { 89250, },
+    -- Chest of the Shadowy Protector
+    ["89251"] = { 89238,},
+    ["89238"] = { 89251, },
+    -- Chest of the Shadowy Vanquisher
+    ["89249"] = { 89239,},
+    ["89239"] = { 89249, },
+    -- Leggings of Shadow Infestation
+    ["86989"] = { 86229,},
+    ["86229"] = { 86989, },
+    -- Shadow Heart Spaulders
+    ["89926"] = { 89836,},
+    ["89836"] = { 89926, },
+    -- Hood of Dark Dreams
+    ["89927"] = { 89835,},
+    ["89835"] = { 89927, },
+    -- Crown of the Doomed Empress
+    ["86991"] = { 86228,},
+    ["86228"] = { 86991, },
+    -- Legplates of Regal Reinforcement
+    ["89928"] = { 89837,},
+    ["89837"] = { 89928, },
+    -- Kri'tak, Imperial Scepter of the Swarm
+    ["86990"] = { 86227,},
+    ["86227"] = { 86990, },
+    -- Claws of Shek'zeer
+    ["86988"] = { 86226,},
+    ["86226"] = { 86988, },
+    -- Cloak of Overwhelming Corruption
+    ["90512"] = { 86316, 90526, 87150, },
+    ["86316"] = { 90512, },
+    ["90526"] = { 90512, },
+    ["87150"] = { 90512, },
+    -- Cuffs of the Corrupted Waters
+    ["90510"] = { 86317, 90524, 87149,},
+    ["86317"] = { 90510, },
+    ["90524"] = { 90510, },
+    ["87149"] = { 90510, },
+    -- Asani's Uncleansed Sandals
+    ["90514"] = { 86320, 90528, 87153, },
+    ["86320"] = { 90514, },
+    ["90528"] = { 90514, },
+    ["87153"] = { 90514, },
+    -- Legguards of Failing Purification
+    ["90504"] = { 89841, 90518, 89943, },
+    ["89841"] = { 90504, },
+    ["90518"] = { 90504, },
+    ["89943"] = { 90504, },
+    -- Lightning Prisoner's Boots
+    ["90515"] = { 86319, 90529, 87154, },
+    ["86319"] = { 90515, },
+    ["90529"] = { 90515, },
+    ["87154"] = { 90515, },
+    -- Waterborne Shoulderguards
+    ["90505"] = { 89885, 90519, 89944, },
+    ["89885"] = { 90505, },
+    ["90519"] = { 90505, },
+    ["89944"] = { 90505, },
+    -- Casque of Expelled Corruption
+    ["90516"] = { 86318, 90530, 87155, },
+    ["86318"] = { 90516, },
+    ["90530"] = { 90516, },
+    ["87155"] = { 90516, },
+    -- Bracers of Defiled Earth
+    ["90506"] = { 86230, 90520, 87145,},
+    ["86230"] = { 90506, },
+    ["90520"] = { 90506, },
+    ["87145"] = { 90506, },
+    -- Deepwater Greatboots
+    ["90507"] = { 86232, 90521, 87146, },
+    ["86232"] = { 90507, },
+    ["90521"] = { 90507, },
+    ["87146"] = { 90507, },
+    -- Watersoul Signet
+    ["90511"] = { 86315, 90525, 87151, },
+    ["86315"] = { 90511, },
+    ["90525"] = { 90511, },
+    ["87151"] = { 90511, },
+    -- Regail's Band of the Endless
+    ["90503"] = { 86231, 90517, 87144, },
+    ["86231"] = { 90503, },
+    ["90517"] = { 90503, },
+    ["87144"] = { 90503, },
+    -- Shackle of Eversparks
+    ["90508"] = { 86233, 90522, 87147,},
+    ["86233"] = { 90508, },
+    ["90522"] = { 90508, },
+    ["87147"] = { 90508, },
+    -- Kaolan's Withering Necklace
+    ["90509"] = { 86234, 90523, 87148, },
+    ["86234"] = { 90509, },
+    ["90523"] = { 90509, },
+    ["87148"] = { 90509, },
+    -- Regail's Crackling Dagger
+    ["90513"] = { 86390, 90527, 87152, },
+    ["86390"] = { 90513, },
+    ["90527"] = { 90513, },
+    ["87152"] = { 90513, },
+    -- Invoker's Belt of Final Winter
+    ["87177"] = { 86338,},
+    ["86338"] = { 87177, },
+    -- Shoulderpads of Twisted Fate
+    ["89947"] = { 89883,},
+    ["89883"] = { 89947, },
+    -- Sorcerer's Belt of Final Winter
+    ["87179"] = { 86339,},
+    ["86339"] = { 87179, },
+    -- Sandals of the Blackest Night
+    ["87162"] = { 86330,},
+    ["86330"] = { 87162, },
+    -- Belt of Embodied Terror
+    ["87161"] = { 86326,},
+    ["86326"] = { 87161, },
+    -- Fear-Blackened Leggings
+    ["89948"] = { 89884,},
+    ["89884"] = { 89948, },
+    -- Stalker's Cord of Eternal Autumn
+    ["87180"] = { 86341,},
+    ["86341"] = { 87180, },
+    -- Gauntlets of the Shadow's Caress
+    ["89945"] = { 89842,},
+    ["89842"] = { 89945, },
+    -- Binder's Chain of Unending Summer
+    ["87183"] = { 86342,},
+    ["86342"] = { 87183, },
+    -- Sunwrought Mail Hauberk
+    ["87157"] = { 86324,},
+    ["86324"] = { 87157, },
+    -- Sollerets of Instability
+    ["87165"] = { 86329,},
+    ["86329"] = { 87165, },
+    -- Patroller's Girdle of Endless Spring
+    ["87186"] = { 86385,},
+    ["86385"] = { 87186, },
+    -- Grasps of Serpentine Might
+    ["89946"] = { 89843,},
+    ["89843"] = { 89946, },
+    -- Spirits of the Sun
+    ["87163"] = { 86327,},
+    ["86327"] = { 87163, },
+    -- Dread Shadow Ring
+    ["87158"] = { 86322,},
+    ["86322"] = { 87158, },
+    -- Stuff of Nightmares
+    ["87160"] = { 86323,},
+    ["86323"] = { 87160, },
+    -- Daybreak Drape
+    ["87159"] = { 86325,},
+    ["86325"] = { 87159, },
+    -- Loshan, Terror Incarnate
+    ["87164"] = { 86328,},
+    ["86328"] = { 87164, },
+    -- Gao-Rei, Staff of the Legendary Protector
+    ["87156"] = { 86321,},
+    ["86321"] = { 87156, },
+    -- Shoulders of the Shadowy Conqueror
+    ["89262"] = { 89246,},
+    ["89246"] = { 89262, },
+    -- Shoulders of the Shadowy Protector
+    ["89263"] = { 89247,},
+    ["89247"] = { 89263, },
+    -- Shoulders of the Shadowy Vanquisher
+    ["89261"] = { 89248,},
+    ["89248"] = { 89261, },
+    -- Robes of the Unknown Fear
+    ["87169"] = { 86334,},
+    ["86334"] = { 87169, },
+    -- Healer's Belt of Final Winter
+    ["87178"] = { 86337,},
+    ["86337"] = { 87178, },
+    -- Weaver's Cord of Eternal Autumn
+    ["87181"] = { 86340,},
+    ["86340"] = { 87181, },
+    -- Ranger's Chain of Unending Summer
+    ["87182"] = { 86343,},
+    ["86343"] = { 87182, },
+    -- Mender's Girdle of Endless Spring
+    ["87184"] = { 86383,},
+    ["86383"] = { 87184, },
+    -- Cuirass of the Animated Protector
+    ["87171"] = { 86333,},
+    ["86333"] = { 87171, },
+    -- Protector's Girdle of Endless Spring
+    ["87185"] = { 86384,},
+    ["86384"] = { 87185, },
+    -- Terror in the Mists
+    ["87167"] = { 86332,},
+    ["86332"] = { 87167, },
+    -- Darkmist Vortex
+    ["87172"] = { 86336,},
+    ["86336"] = { 87172, },
+    -- Jin'ya, Orb of the Waterspeaker
+    ["87170"] = { 86335,},
+    ["86335"] = { 87170, },
+    -- Spiritsever
+    ["87166"] = { 86391,},
+    ["86391"] = { 87166, },
+    -- Taoren, the Soul Burner
+    ["87168"] = { 86331,},
+    ["86331"] = { 87168, },
+    -- Helm of the Shadowy Conqueror
+    ["89259"] = { 89235,},
+    ["89235"] = { 89259, },
+    -- Helm of the Shadowy Protector
+    ["89260"] = { 89236,},
+    ["89236"] = { 89260, },
+    -- Helm of the Shadowy Vanquisher
+    ["89258"] = { 89234,},
+    ["89234"] = { 89258, },
+    -- Dreadwoven Leggings of Failure
+    ["87174"] = { 86389,},
+    ["86389"] = { 87174, },
+    -- Robes of Pinioned Eyes
+    ["89949"] = { 89887,},
+    ["89887"] = { 89949, },
+    -- Wrap of Instant Petrification
+    ["89950"] = { 89886,},
+    ["89886"] = { 89950, },
+    -- Shadowgrip Girdle
+    ["89951"] = { 89839,},
+    ["89839"] = { 89951, },
+    -- Essence of Terror
+    ["87175"] = { 86388,},
+    ["86388"] = { 87175, },
+    -- Kilrak, Jaws of Terror
+    ["87173"] = { 86387,},
+    ["86387"] = { 87173, },
+    -- Shin'ka, Execution of Dominion
+    ["87176"] = { 86386,},
+    ["86386"] = { 87176, },
 };
