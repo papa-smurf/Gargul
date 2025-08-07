@@ -664,6 +664,34 @@ function Test:stopGroupSimulation()
     groupMembersOverridden = false;
 end
 
+--[[ Test the libcustomglow implementation
+/script _G.Gargul.Test:itemGlow()
+]]
+function Test:itemGlow()
+    local LCG = LibStub("LibCustomGlowGargul-1.0");
+
+    local Button = CreateFrame("Button", "TestButton", UIParent, "UIPanelButtonTemplate");
+    Button:SetSize(100, 40);
+    Button:SetText("Test");
+    Button:SetPoint("CENTER", UIParent, "CENTER");
+
+    Button:SetScript("OnClick", function()
+        GL:xd("Click");
+
+        -- Remove any existing highlight
+        LCG.PixelGlow_Stop(Button);
+        local BorderColor = {1, 1, 1, 1};
+
+        LCG.PixelGlow_Start(Button,
+            BorderColor,
+            10,
+            .05,
+            5,
+            2
+        );
+    end);
+end
+
 --[[ Show all identity elements at once for easy screenshotting
 /script _G.Gargul.Test:identity()
 ]]

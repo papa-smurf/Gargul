@@ -1797,15 +1797,19 @@ function GL:inventoryItemTradeTimeRemaining(bag, slot)
     return timeRemaining;
 end
 
----@param Item Frame
+---@param ItemFrame Frame
 ---@param itemLink string
 ---@param Details? table
-function GL:highlightItem(Item, itemLink, Details)
+function GL:highlightItem(ItemFrame, itemLink, Details)
+    -- We can not put a highlight on this frame
+    if (not ItemFrame or not ItemFrame.GetSize) then
+        return;
+    end
+
     -- There's no point highlighting something if the player
     -- is not in a group or highlights are disabled
     if (type(itemLink) ~= "string"
         or not GL.Settings:get("highlightsEnabled")
-        or GL.isRetail -- This doesn't work on retail sadly
         or (
             not GL.Settings:get("highlightHardReservedItems")
             and not GL.Settings:get("highlightSoftReservedItems")
@@ -1818,7 +1822,7 @@ function GL:highlightItem(Item, itemLink, Details)
     Details = Details or {};
 
     -- Remove any existing highlight
-    LCG.PixelGlow_Stop(Item);
+    LCG.PixelGlow_Stop(ItemFrame);
     local enableHighlight = false;
     local BorderColor = {1, 1, 1, 1}; -- The default border color is priest-white and applies to wishlisted items
 
@@ -1886,7 +1890,7 @@ function GL:highlightItem(Item, itemLink, Details)
 
     -- Add an animated border to indicate that this item was reserved / wishlisted
     -- function lib.PixelGlow_Start(r,color,N,frequency,length,th,xOffset,yOffset,border,key,frameLevel)
-    LCG.PixelGlow_Start(Item,
+    LCG.PixelGlow_Start(ItemFrame,
         BorderColor,
         Details.dots or 10,
         Details.speed or .05,
