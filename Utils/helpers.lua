@@ -514,7 +514,8 @@ function GL:handleItemClick(itemLink, mouseButtonPressed, callback)
     if (keyPressIdentifier == GL.Settings:get("ShortcutKeys.rollOffOrAuction")) then
         -- If the GDKP multi-auction window is shown then add the item there
         if (GL.Interface.GDKP.MultiAuction.Auctioneer:isShown()) then
-            return GL.Interface.GDKP.MultiAuction.Auctioneer:addItemByLink(itemLink);
+            local addToSelection = true;
+            return GL.Interface.GDKP.MultiAuction.Auctioneer:addItemByLink(itemLink, addToSelection);
 
         -- If the GDKP multi-auction bidding window is shown then add the item there
         elseif (GL.Interface.GDKP.MultiAuction.Client:isShown()) then
