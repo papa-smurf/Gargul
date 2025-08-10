@@ -2101,7 +2101,7 @@ function GL:findBagIdAndSlotForItem(itemLinkOrID, skipSoulBound, includeBank, in
                 if ((not includeLocked and locked) -- The item is locked and can not be used
                     or bagItemID ~= itemID -- This isn't the item we're looking for
                     or (identifierIsLink and not GL:iEquals(itemLinkOrID, itemLink)) -- This is not the variant we're looking for
-                    or (not skipSoulBound and GL:inventoryItemTradeTimeRemaining(bag, slot) <= 0) -- This item is no longer tradable
+                    or (skipSoulBound and GL:inventoryItemTradeTimeRemaining(bag, slot) <= 0) -- This item is no longer tradable
                 ) then
                     return;
                 end
