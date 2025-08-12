@@ -112,15 +112,16 @@ function Auctioneer:isShown()
     return Window and Window:IsShown();
 end
 
----@return void
-function Auctioneer:addItemByLink(itemLink)
+---@param itemLink string
+---@param addToSelection? boolean
+function Auctioneer:addItemByLink(itemLink, addToSelection)
     local Window = self:getWindow();
 
     if (not Window) then
         return false;
     end
 
-    Window:addItemByLink(itemLink);
+    Window:addItemByLink(itemLink, addToSelection);
 end
 
 ---@return Frame
@@ -263,7 +264,8 @@ function Auctioneer:build()
     Items:SetAllPoints(ItemHolder);
 
     --[[ ADD AN ITEM TO THE WINDOW ]]
-    Window.addItemByLink = function (_, link)
+    Window.addItemByLink = function (_, link, addToSelection)
+        addToSelection = addToSelection == true;
         GL:onItemLoadDo(link, function (Details)
             if (not Details) then
                 return;
@@ -285,7 +287,7 @@ function Auctioneer:build()
             ---@type CheckButton
             local Select = Interface:createCheckbox{
                 Parent = ItemRow,
-                checked = false,
+                checked = addToSelection,
             };
             ItemRow._Select = Select;
             Select:SetPoint("TOP", ItemRow, "TOP", 0, 2);

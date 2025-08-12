@@ -514,7 +514,8 @@ function GL:handleItemClick(itemLink, mouseButtonPressed, callback)
     if (keyPressIdentifier == GL.Settings:get("ShortcutKeys.rollOffOrAuction")) then
         -- If the GDKP multi-auction window is shown then add the item there
         if (GL.Interface.GDKP.MultiAuction.Auctioneer:isShown()) then
-            return GL.Interface.GDKP.MultiAuction.Auctioneer:addItemByLink(itemLink);
+            local addToSelection = true;
+            return GL.Interface.GDKP.MultiAuction.Auctioneer:addItemByLink(itemLink, addToSelection);
 
         -- If the GDKP multi-auction bidding window is shown then add the item there
         elseif (GL.Interface.GDKP.MultiAuction.Client:isShown()) then
@@ -2104,7 +2105,7 @@ function GL:findBagIdAndSlotForItem(itemLinkOrID, skipSoulBound, includeBank, in
                 if ((not includeLocked and locked) -- The item is locked and can not be used
                     or bagItemID ~= itemID -- This isn't the item we're looking for
                     or (identifierIsLink and not GL:iEquals(itemLinkOrID, itemLink)) -- This is not the variant we're looking for
-                    or (not skipSoulBound and GL:inventoryItemTradeTimeRemaining(bag, slot) <= 0) -- This item is no longer tradable
+                    or (skipSoulBound and GL:inventoryItemTradeTimeRemaining(bag, slot) <= 0) -- This item is no longer tradable
                 ) then
                     return;
                 end
