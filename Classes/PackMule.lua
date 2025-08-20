@@ -175,7 +175,7 @@ function PackMule:processGroupLootItems(rollID)
     end
 
     -- This should not be possible, just double checking!
-    if (GetLootMethod() == "master") then
+    if (GL.GetLootMethod() == "master") then
         return;
     end
 
@@ -219,7 +219,7 @@ function PackMule:isItemIDIgnored(itemID, callback)
         return;
     end
 
-    --- Down below we override the getValidRules and GetLootMethod function and some
+    --- Down below we override the getValidRules and GL.GetLootMethod function and some
     --- user profile properties. This looks extremely nasty, but is the only surefire
     --- way of replicating in-raid/group PackMule behavior and test it properly!
 
@@ -236,14 +236,14 @@ function PackMule:isItemIDIgnored(itemID, callback)
         };
     end;
 
-    local oldGetLootMethod = GetLootMethod;
+    local oldGetLootMethod = GL.GetLootMethod;
     local oldIsMasterLooter = GL:toboolean(GL.User.isMasterLooter);
     local oldIsInGroup = GL:toboolean(GL.User.isInGroup);
     local oldIsInParty = GL:toboolean(GL.User.isInParty);
     local oldIsInRaid = GL:toboolean(GL.User.isInRaid);
 
     -- We test the item against PackMule in a loot master setting first
-    GetLootMethod = function () return "master"; end;
+    GL.GetLootMethod = function () return "master"; end;
     GL.User.isMasterLooter = true;
     GL.User.isInGroup = true;
     GL.User.isInRaid = true;
@@ -254,7 +254,7 @@ function PackMule:isItemIDIgnored(itemID, callback)
         local Loot = GL:getCachedItem(itemID) or {}; -- This should be 100% set at this point
 
         -- We now test the item against PackMule in a group loot setting
-        GetLootMethod = function () return "group"; end;
+        GL.GetLootMethod = function () return "group"; end;
         GL.User.isMasterLooter = false;
         GL.User.isInGroup = true;
         GL.User.isInRaid = false;
@@ -265,7 +265,7 @@ function PackMule:isItemIDIgnored(itemID, callback)
 
             -- Reset everything
             self.getValidRules = OriginalGetValidRulesFunction;
-            GetLootMethod = oldGetLootMethod;
+            GL.GetLootMethod = oldGetLootMethod;
             GL.User.isMasterLooter = oldIsMasterLooter;
             GL.User.isInGroup = oldIsInGroup;
             GL.User.isInRaid = oldIsInRaid;
@@ -278,7 +278,7 @@ function PackMule:isItemIDIgnored(itemID, callback)
     -- Just in case the callback fails
     GL.Ace:ScheduleTimer(function()
         self.getValidRules = OriginalGetValidRulesFunction;
-        GetLootMethod = oldGetLootMethod;
+        GL.GetLootMethod = oldGetLootMethod;
         GL.User.isMasterLooter = oldIsMasterLooter;
         GL.User.isInGroup = oldIsInGroup;
         GL.User.isInRaid = oldIsInRaid;
@@ -299,14 +299,14 @@ function PackMule:currentTargetForItemForGroupOrMaster(itemID, callback)
         return;
     end
 
-    local oldGetLootMethod = GetLootMethod;
+    local oldGetLootMethod = GL.GetLootMethod;
     local oldIsMasterLooter = GL:toboolean(GL.User.isMasterLooter);
     local oldIsInGroup = GL:toboolean(GL.User.isInGroup);
     local oldIsInParty = GL:toboolean(GL.User.isInParty);
     local oldIsInRaid = GL:toboolean(GL.User.isInRaid);
 
     -- We test the item against PackMule in a loot master setting first
-    GetLootMethod = function () return "master"; end;
+    GL.GetLootMethod = function () return "master"; end;
     GL.User.isMasterLooter = true;
     GL.User.isInGroup = true;
     GL.User.isInRaid = true;
@@ -316,7 +316,7 @@ function PackMule:currentTargetForItemForGroupOrMaster(itemID, callback)
         local Loot = GL:getCachedItem(itemID) or {}; -- This should be 100% set at this point
 
         -- We now test the item against PackMule in a group loot setting
-        GetLootMethod = function () return "group"; end;
+        GL.GetLootMethod = function () return "group"; end;
         GL.User.isMasterLooter = false;
         GL.User.isInGroup = true;
         GL.User.isInRaid = false;
@@ -324,7 +324,7 @@ function PackMule:currentTargetForItemForGroupOrMaster(itemID, callback)
 
         self:getTargetForItem(itemID, function(groupTarget)
             -- Reset everything
-            GetLootMethod = oldGetLootMethod;
+            GL.GetLootMethod = oldGetLootMethod;
             GL.User.isMasterLooter = oldIsMasterLooter;
             GL.User.isInGroup = oldIsInGroup;
             GL.User.isInRaid = oldIsInRaid;
@@ -336,7 +336,7 @@ function PackMule:currentTargetForItemForGroupOrMaster(itemID, callback)
 
     -- Just in case the callback fails
     GL.Ace:ScheduleTimer(function()
-        GetLootMethod = oldGetLootMethod;
+        GL.GetLootMethod = oldGetLootMethod;
         GL.User.isMasterLooter = oldIsMasterLooter;
         GL.User.isInGroup = oldIsInGroup;
         GL.User.isInRaid = oldIsInRaid;

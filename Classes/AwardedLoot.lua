@@ -438,7 +438,7 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, g
 
     if (broadcast == nil) then
         if (automaticallyAwarded) then
-            if (GetLootMethod() == "master") then
+            if (GL.GetLootMethod() == "master") then
                 broadcast = GL.User.isMasterLooter;
             else
                 broadcast = GL.User.isLead;

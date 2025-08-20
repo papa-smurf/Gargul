@@ -208,7 +208,7 @@ function SoftRes:requestData()
             return;
         end
 
-        local lootMethod, _, masterLooterRaidID = GetLootMethod();
+        local lootMethod, _, masterLooterRaidID = GL.GetLootMethod();
 
         -- Master looting is not active and we are the leader, this means we should import it ourselves
         if (lootMethod ~= 'master'

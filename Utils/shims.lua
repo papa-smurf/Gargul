@@ -18,3 +18,17 @@ GL.GetCoinTextureString = GetCoinTextureString or C_CurrencyInfo.GetCoinTextureS
 -- Item
 GL.GetItemInfo = GetItemInfo or C_Item.GetItemInfo;
 GL.GetItemInfoInstant = GetItemInfoInstant or C_Item.GetItemInfoInstant;
+
+-- PartyInfo
+GL.GetLootMethod = GetLootMethod or function ()
+    local Methods = {
+        [0] = "freeforall",
+        [1] = "roundrobin",
+        [2] = "master",
+        [3] = "group",
+        [4] = "needbeforegreed",
+        [5] = "personalloot",
+    };
+
+    return Methods[C_PartyInfo.GetLootMethod()];
+end;

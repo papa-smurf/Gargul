@@ -897,7 +897,7 @@ function TMB:import(data, triedToDecompress, source)
     -- after importing it, let's get crackin'!
     if (GL.Settings:get("TMB.automaticallyShareData")
         and (GL.User.isMasterLooter
-            or (GetLootMethod() ~= 'master'
+            or (GL.GetLootMethod() ~= 'master'
                 and GL.User.isLead
             )
         )
@@ -1498,7 +1498,7 @@ function TMB:requestData()
             return;
         end
 
-        local lootMethod, _, masterLooterRaidID = GetLootMethod();
+        local lootMethod, _, masterLooterRaidID = GL.GetLootMethod();
 
         -- Master looting is not active and we are the leader, this means we should import it ourselves
         if (lootMethod ~= 'master'
