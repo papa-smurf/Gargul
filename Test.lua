@@ -679,11 +679,10 @@ function Test:itemGlow()
         GL:xd("Click");
 
         -- Remove any existing highlight
-        LCG.PixelGlow_Stop(Button);
-        local BorderColor = {1, 1, 1, 1};
+        GL:stopHighlight(Button);
 
         LCG.PixelGlow_Start(Button,
-            BorderColor,
+            {1, 1, 1, 1},
             10,
             .05,
             5,

@@ -44,7 +44,7 @@ GL.Interface.Identity = {
                 end
             end);
 
-            LCG.PixelGlow_Stop(Window);
+            GL:stopHighlight(Window);
             LCG.PixelGlow_Start(Window, {.59, .5, .82, 1}, 26, .02, 5, 2);
 
             return Window;
@@ -218,7 +218,7 @@ GL.Interface.Identity = {
                 end
             end);
 
-            LCG.PixelGlow_Stop(Window);
+            GL:stopHighlight(Window);
             LCG.PixelGlow_Start(Window, {.59, .5, .82, 1}, 26, .02, 5, 2);
 
             return Window;
@@ -373,7 +373,7 @@ GL.Interface.Identity = {
                 end
             end);
 
-            LCG.PixelGlow_Stop(Window);
+            GL:stopHighlight(Window);
             LCG.PixelGlow_Start(Window, {.59, .5, .82, 1}, 26, .02, 5, 2);
 
             return Window;
@@ -496,7 +496,7 @@ GL.Interface.Identity = {
                 end
             end);
 
-            LCG.PixelGlow_Stop(Window);
+            GL:stopHighlight(Window);
             LCG.PixelGlow_Start(Window, {.59, .5, .82, 1}, 26, .02, 5, 2);
 
             return Window;

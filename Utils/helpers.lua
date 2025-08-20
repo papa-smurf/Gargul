@@ -1823,7 +1823,7 @@ function GL:highlightItem(ItemFrame, itemLink, Details)
     Details = Details or {};
 
     -- Remove any existing highlight
-    LCG.PixelGlow_Stop(ItemFrame);
+    GL:stopHighlight(ItemFrame);
     local enableHighlight = false;
     local BorderColor = {1, 1, 1, 1}; -- The default border color is priest-white and applies to wishlisted items
 
@@ -1903,6 +1903,19 @@ function GL:highlightItem(ItemFrame, itemLink, Details)
         Details.key,
         Details.level
     );
+end
+
+--- Prevent release errors as they're irrelevant to our implementation
+---@param FrameObject? Frame
+---@return boolean
+function GL:stopHighlight(FrameObject)
+    if (not FrameObject or not FrameObject.GetSize) then
+        return false;
+    end
+
+    return pcall(function ()
+        LCG.PixelGlow_Stop(FrameObject);
+    end);
 end
 
 function GL:bugReport()

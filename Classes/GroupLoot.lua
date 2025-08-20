@@ -45,7 +45,7 @@ function GroupLoot:highlightItemsOfInterest()
         local ItemFrame = getglobal("GroupLootFrame" .. itemIndex);
 
         if (not GL.isRetail) then
-            LCG.PixelGlow_Stop(ItemFrame);
+            GL:stopHighlight(ItemFrame);
         end
 
         if (ItemFrame:IsVisible() and ItemFrame.rollID) then

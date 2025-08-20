@@ -16,6 +16,7 @@
 ## Title-zhTW: Gargul |c00967FD2@project-version@|r
 ## Notes: Loot addon that supports GDKP, softres sr, thatsmybis tmb, auto looting, +1 tracking and much more
 ## IconTexture: Interface\AddOns\Gargul\Assets\Buttons\minimap
+## OptionalDeps: LibStub, CallbackHandler-1.0, LibSharedMedia-3.0, LibDeflate, LibSerialize, Masque, LibCustomGlow, ChatThrottleLib
 ## Author: Zhorax - Firemaw
 ## Version: 7.6.37
 ## DefaultState: enabled
