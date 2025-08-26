@@ -85,6 +85,7 @@ GL.Data.DefaultSettings = {
         autoTradeDisenchanter = true,
         autoTradeInCombat = true,
         awardMessagesEnabled = true,
+        awardBonusLoot = true,
         awardOnReceive = false,
         awardOnReceiveMinimumQuality = 4,
         notifyOfFailedTradeStart = true,

@@ -1590,14 +1590,14 @@ end
 ---@return number Seconds or 0
 function GL:tooltipItemTradeTimeRemaining()
     local timeRemainingLine;
-    local needle = BIND_TRADE_TIME_REMAINING:gsub("%%s", ".*");
+    local needle = self:createPattern(BIND_TRADE_TIME_REMAINING):gsub("%%s", ".*");
     local itemIsSoulBound = false;
 
     -- Attempt to find a tooltip line that holds the remaining trading time
     for i = 1, GL.TooltipFrame:NumLines() do
         local line = _G["GargulTooltipFrameTextLeft" .. i];
 
-        if line then
+        if (line) then
             timeRemainingLine = line:GetText() or "";
 
             -- The item is actually soulbound!

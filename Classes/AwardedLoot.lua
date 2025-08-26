@@ -64,6 +64,20 @@ function AwardedLoot:_init()
 
     -- Automatically mark an item as awarded when someone receives it
     Events:register("AwardedLootItemReceived", "GL.ITEM_RECEIVED", function (_, Details)
+        if (Details.isBonusLoot) then
+            if (not Settings:get("AwardingLoot.awardBonusLoot")) then
+                return;
+            end
+
+            self:addWinner{
+                announce = false,
+                automaticallyAwarded = true,
+                itemLink = Details.itemLink,
+                winner = Details.playerName,
+                RollBracket = {"Bonus Roll", };
+            };
+        end
+
         -- We don't want to automatically award loot
         if (not Settings:get("AwardingLoot.awardOnReceive")) then
             return;

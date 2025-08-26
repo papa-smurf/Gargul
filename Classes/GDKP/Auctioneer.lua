@@ -144,8 +144,10 @@ function Auctioneer:_init()
             return;
         end
 
-        -- We're only interested in items that we received
-        if (not GL:iEquals(Details.playerName, GL.User.name)) then
+        -- We're only interested in non bonus loot items that we ourselves received
+        if (Details.isBonusLoot
+            or not GL:iEquals(Details.playerName, GL.User.name)
+        ) then
             return;
         end
 

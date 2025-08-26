@@ -36,6 +36,11 @@ function AwardingLoot:draw(Parent)
             setting = "PackMule.announceDisenchantedItems",
         },
         {
+            label = "Track bonus loot (MoP+)",
+            description = "Track items won by players using their bonus roll",
+            setting = "AwardingLoot.awardBonusLoot",
+        },
+        {
             label = "Auto assign master loot items",
             description = "Auto assign an item to the winner after awarding it through master loot (with boss window still open)",
             setting = "AwardingLoot.autoAssignAfterAwardingAnItem",
