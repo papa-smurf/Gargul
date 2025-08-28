@@ -6,6 +6,7 @@ local Events = GL.Events;
 ---@class Test
 local Test = {
     Classes = {"druid","hunter","mage","paladin","priest","rogue","shaman","warlock","warrior","death knight",},
+    DroppedLoot = {},
     Mail = {},
     Names = {"Aiyana","Callum","Virginia","Laylah","Isabell","Javon","Miley","Ian","Isai","Ahmad","Campbell","Bobby","Karter","Brooklynn","Asher","Maci","Gael","Jamal","Zion","Sarahi","Kierra","Perla","Rylie","Lorelei","John","Madeleine","Jadiel","Billy","Jazmin","Keon","Stephany","George","Malcolm","Brenden","Daphne","Dane","Derek","Marcel","Madilynn","Enrique","Cindy","Amir","Melvin","Anya","Ali","Rex","Lewis","Parker","Carl","Arnav","Kamari","Jessie","Madelynn","Heath","Haleigh","Madyson","Jorden","Amya","Elisa","Marques","Ana","Miracle","Abdiel","Dale","Sincere","Marin","Karina","Clay","Caden","Eve","Rubi","Zavier","Megan","Payton","Peyton","Emmett","Diego","Joaquin","German","Tania","Miguel","Malachi","Martin","Richard","Allison","Avah","Kamora","Deborah","Esperanza","Konnor","Isla","Tess","Keely","Margaret","Rory","Jake","Averie","Ally","Craig","Gage","Oswaldo","Kaitlynn","Ashley","Davian","Mauricio","Brandon","Aryana","Douglas","Kyan","Carsen","Mikaela","Regan","Theodore","Maximillian","Luke","Dixie","Makenna","Keagan","Mallory","America",},
     Locale = {},
@@ -891,4 +892,24 @@ function Test.Locale:sortTranslations()
     end
 
     GL:frameMessage(exportString);
+end
+
+-- /script _G.Gargul.Test.DroppedLoot:bonusLoot()
+function Test.DroppedLoot:bonusLoot()
+    local trackingIsEnabled = GL.DroppedLootLedger.trackItems;
+    local oldIsClassic = GL.isClassic;
+    GL.isClassic = true;
+
+    if (not trackingIsEnabled) then
+        GL.DroppedLootLedger:startTracking();
+    end
+
+    GL.Events:fire("CHAT_MSG_LOOT", "You receive bonus loot: |cffa335ee|Hitem:45613::::::::80:::::|h[Dreambinder]|h|r.");
+    GL.Events:fire("CHAT_MSG_LOOT", "Ghyle-Mograine receives bonus loot: |cffff8000|Hitem:19019::::::::80:::::|h[Thunderfury, Blessed Blade of the Windseeker]|h|r.");
+
+    if (not trackingIsEnabled) then
+        GL.DroppedLootLedger:stopTracking();
+    end
+
+    GL.isClassic = oldIsClassic;
 end

@@ -97,6 +97,12 @@ function DroppedLootLedger:_shouldTrackItems()
         return true;
     end
 
+    if (GL.isClassic
+        and GL.Settings:get("AwardingLoot.awardBonusLoot")
+    ) then
+        return true;
+    end
+
     local whenToLog = GL.Settings:get("DroppedLoot.whenToLogLoot");
 
     if (whenToLog == WHENGROUP) then
