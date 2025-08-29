@@ -70,11 +70,9 @@ function AwardedLoot:_init()
             end
 
             self:addWinner{
-                announce = false,
-                automaticallyAwarded = true,
                 itemLink = Details.itemLink,
                 winner = Details.playerName,
-                RollBracket = {"Bonus Roll", };
+                isBonusLoot = true,
             };
         end
 
@@ -428,7 +426,7 @@ end
 ---@param RollBracket table|nil See DefaultSettings.lua -> RollTracking.Brackets
 ---@param broadcast boolean|nil Broadcast award details to others
 ---@return void|string
-function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, gdkpCost, Rolls, automaticallyAwarded, RollBracket, broadcast)
+function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, gdkpCost, Rolls, automaticallyAwarded, RollBracket, broadcast, isBonusLoot)
     if (itemLink ~= nil or type(winner) ~= "table") then
         GL:error("Pass a table instead of multiple arguments")
         return;
@@ -444,8 +442,16 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, g
     automaticallyAwarded = winner.automaticallyAwarded;
     RollBracket = winner.RollBracket;
     broadcast = winner.broadcast;
+    isBonusLoot = winner.isBonusLoot;
 
     winner = winner.winner;
+
+    if (isBonusLoot) then
+        RollBracket = {"Bonus Roll", };
+        announce = false;
+        automaticallyAwarded = true;
+        broadcast = false;
+    end
 
     local isDisenchanted = winner == GL.Exporter.disenchantedItemIdentifier;
     winner = not isDisenchanted and GL:addRealm(winner) or winner;
@@ -546,23 +552,25 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, g
     end
 
     --[[ DETERMINE THE ITEM'S GUID ]]
-    local awardedItemGUID = nil;
-    local lowestTradeTimeRemaining = 14400; -- 4 hours in seconds
-    for itemGUID, timeRemaining in pairs(GL:itemTradeTimeRemaining(itemLink or itemID) or {}) do
-        -- Check if the given item is soulbound
-        local itemIsBound = timeRemaining ~= Constants.itemIsNotBound;
+    if (not automaticallyAwarded) then
+        local awardedItemGUID = nil;
+        local lowestTradeTimeRemaining = 14400; -- 4 hours in seconds
+        for itemGUID, timeRemaining in pairs(GL:itemTradeTimeRemaining(itemLink or itemID) or {}) do
+            -- Check if the given item is soulbound
+            local itemIsBound = timeRemaining ~= Constants.itemIsNotBound;
 
-        -- This item is not bound, pick the first one that's not awarded yet
-        if (not itemIsBound) then
-            if (not DB:get("RecentlyAwardedItems." .. itemGUID)) then
+            -- This item is not bound, pick the first one that's not awarded yet
+            if (not itemIsBound) then
+                if (not DB:get("RecentlyAwardedItems." .. itemGUID)) then
+                    awardedItemGUID = itemGUID;
+                    break;
+                end
+
+            -- This item is bound, found the one with the lowest remaining trade time and award it
+            elseif (itemIsBound and timeRemaining < lowestTradeTimeRemaining and not DB:get("RecentlyAwardedItems." .. itemGUID)) then
                 awardedItemGUID = itemGUID;
-                break;
+                lowestTradeTimeRemaining = timeRemaining;
             end
-
-        -- This item is bound, found the one with the lowest remaining trade time and award it
-        elseif (itemIsBound and timeRemaining < lowestTradeTimeRemaining and not DB:get("RecentlyAwardedItems." .. itemGUID)) then
-            awardedItemGUID = itemGUID;
-            lowestTradeTimeRemaining = timeRemaining;
         end
     end
 
@@ -579,7 +587,7 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, g
         awardedBy = GL.User.fqn,
         timestamp = timestamp,
         softresID = GL.DB:get("SoftRes.MetaData.id"),
-        received = GL:iEquals(winner, GL.User.name) or GL:iEquals(winner, GL.User.fqn),
+        received = automaticallyAwarded or GL:iEquals(winner, GL.User.name) or GL:iEquals(winner, GL.User.fqn),
         winnerClass = Constants.UnitClasses[class],
         BRCost = tonumber(BRCost),
         GDKPCost = tonumber(gdkpCost),
