@@ -823,7 +823,7 @@ end
 function GL:cloneTable(Original)
     local Copy = {};
 
-    for index, value in pairs(Original) do
+    for index, value in pairs(Original or {}) do
         if type(value) == "table" then
             Copy[index] = self:cloneTable(value, Copy[index])
         else

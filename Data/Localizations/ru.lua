@@ -846,7 +846,7 @@ L["Close on award"] = "Закрыть при награде";
 L["Close on start"] = "Закрыть на старте";
 L["Hold shift to bypass the award confirmation"] = "Удерживайте клавишу Shift, чтобы обойти подтверждение награды.";
 L["Hold shift to show the award confirmation"] = "Удерживайте клавишу Shift, чтобы показать подтверждение награды.";
-L["\nWarning: another identical roll was found which can point to a tie\n\n"] = [[
+L["Warning: another identical roll was found which can point to a tie"] = [[
 Внимание: найден ещё один идентичный бросок, который может указывать на ничью.
 
 ]];

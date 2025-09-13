@@ -837,7 +837,7 @@ L["Close on award"] = "Bei Verleihung schließen";
 L["Close on start"] = "Beim Start schließen";
 L["Hold shift to bypass the award confirmation"] = "Halte die Umschalttaste gedrückt, um die Verleihungsbestätigung zu umgehen";
 L["Hold shift to show the award confirmation"] = "Halte die Umschalttaste gedrückt, um die Verleihungsbestätigung anzuzeigen";
-L["\nWarning: another identical roll was found which can point to a tie\n\n"] = [[
+L["Warning: another identical roll was found which can point to a tie"] = [[
 Warnung: Es wurde ein weiterer identischer Wurf gefunden, der auf ein Unentschieden hinweisen kann
 
 ]];

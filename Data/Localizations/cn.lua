@@ -836,7 +836,7 @@ L["Close on award"] = "即将获奖";
 L["Close on start"] = "开始时关闭";
 L["Hold shift to bypass the award confirmation"] = "按住shift绕过奖励确认";
 L["Hold shift to show the award confirmation"] = "按住shift键即可显示获奖确认信息";
-L["\nWarning: another identical roll was found which can point to a tie\n\n"] = [[
+L["Warning: another identical roll was found which can point to a tie"] = [[
 警告：发现了另一个相同的 Roll 点，这可能表明平局
 
 ]];

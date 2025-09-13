@@ -432,30 +432,30 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, g
         return;
     end
 
-    itemLink = winner.itemLink;
-    announce = winner.announce;
-    date = winner.date;
-    isOS = winner.isOS;
-    BRCost = winner.BRCost;
-    gdkpCost = winner.gdkpCost;
-    Rolls = winner.Rolls;
-    automaticallyAwarded = winner.automaticallyAwarded;
-    RollBracket = winner.RollBracket;
+    announce = winner.announce ~= false;
+    automaticallyAwarded = winner.automaticallyAwarded == true;
     broadcast = winner.broadcast;
-    isBonusLoot = winner.isBonusLoot;
+    date = winner.date;
+    gdkpCost = winner.gdkpCost;
+    isBonusLoot = winner.isBonusLoot == true;
+    isOS = winner.isOS == true;
+    itemLink = winner.itemLink;
+    BRCost = winner.BRCost;
+    RollBracket = winner.RollBracket;
+    Rolls = winner.Rolls;
 
     winner = winner.winner;
+    local isDisenchanted = winner == GL.Exporter.disenchantedItemIdentifier;
+    winner = not isDisenchanted and GL:addRealm(winner) or winner;
 
     if (isBonusLoot) then
-        RollBracket = {"Bonus Roll", };
+        RollBracket = {L["Bonus Roll"], };
         announce = false;
         automaticallyAwarded = true;
         broadcast = false;
     end
 
-    local isDisenchanted = winner == GL.Exporter.disenchantedItemIdentifier;
-    winner = not isDisenchanted and GL:addRealm(winner) or winner;
-
+    -- Should award details be broadcasted via addon comms?
     if (broadcast == nil) then
         if (automaticallyAwarded) then
             if (GL.GetLootMethod() == "master") then
@@ -467,13 +467,6 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, g
             broadcast = GL.User.isMasterLooter or GL.User.hasAssist or not GL.User.isInGroup;
         end
     end
-
-    -- Loot awarded automatically (when AwardingLoot.awardOnReceive is enabled)
-    -- will not be broadcast/shared in any way unless you have the required permissions!
-    automaticallyAwarded = GL:toboolean(automaticallyAwarded);
-
-    -- Determine whether the item should be flagged as off-spec
-    isOS = GL:toboolean(isOS);
 
     local timestamp;
     local dateProvided = date and type(date) == "string";
@@ -532,11 +525,6 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, g
         timestamp = time(Date);
     end
 
-    -- Enable the announce switch by default
-    if (type(announce) ~= "boolean") then
-        announce = true;
-    end
-
     local realmLessName = string.lower(GL:stripRealm(winner));
     local isPrioritized, isWishlisted = false, false;
     local isReserved = not isDisenchanted and GL.SoftRes:itemIDIsReservedByPlayer(itemID, realmLessName) or false;
@@ -552,8 +540,8 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, g
     end
 
     --[[ DETERMINE THE ITEM'S GUID ]]
+    local awardedItemGUID;
     if (not automaticallyAwarded) then
-        local awardedItemGUID = nil;
         local lowestTradeTimeRemaining = 14400; -- 4 hours in seconds
         for itemGUID, timeRemaining in pairs(GL:itemTradeTimeRemaining(itemLink or itemID) or {}) do
             -- Check if the given item is soulbound
@@ -577,9 +565,19 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, g
     -- Determine winner class
     local class = GL:playerClassByName(winner);
 
+    -- Add +1 state to roll history
+    if (type(Rolls) == "table" and not GL:empty(Rolls)) then
+        local plusOneValue;
+        for _, Roll in ipairs(Rolls) do
+            plusOneValue = GL.PlusOnes:getPlusOnes(Roll.player);
+            Roll.plusOneState = plusOneValue > 0 and plusOneValue or nil;
+        end
+    end
+
     local checksum = GL:strPadRight(GL:strLimit(GL:stringHash(timestamp .. itemID .. GL:uuid()) .. GL:stringHash(winner .. GL.DB:get("SoftRes.MetaData.id", "")), 20, ""), "0", 20);
     local AwardEntry = {
         checksum = checksum,
+        isBonusLoot = isBonusLoot,
         itemLink = itemLink,
         itemID = itemID,
         itemGUID = awardedItemGUID,

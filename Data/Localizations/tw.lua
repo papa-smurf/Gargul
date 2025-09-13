@@ -841,7 +841,7 @@ L["Close on award"] = "分裝時關閉";
 L["Close on start"] = "開始倒數時關閉";
 L["Hold shift to bypass the award confirmation"] = "按住 shift 以略過分裝確認";
 L["Hold shift to show the award confirmation"] = "按住 shift 以顯示分裝確認";
-L["\nWarning: another identical roll was found which can point to a tie\n\n"] = [[
+L["Warning: another identical roll was found which can point to a tie"] = [[
 警告：發現了另一個相同的 roll 點，這可能代表平手
 
 ]];

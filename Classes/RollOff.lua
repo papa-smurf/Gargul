@@ -551,15 +551,11 @@ function RollOff:award(roller, itemLink, RollBracket, identicalRollDetected)
     local isBR = rollIdentifier == GL.Settings:get("BoostedRolls.identifier", "BR");
     local BRCost = isBR and GL.Settings:get("BoostedRolls.defaultCost", 0) or nil;
     local isOS, addPlusOne = GL:toboolean(RollBracket[5]), GL:toboolean(RollBracket[6]);
-
-    local Rolls = RollOff.CurrentRollOff.Rolls;
-    if (type(Rolls) ~= "table") then
-        Rolls = {};
-    end
+    local Rolls = type(RollOff.CurrentRollOff.Rolls) == "table" and GL:cloneTable(RollOff.CurrentRollOff.Rolls) or {};
 
     local identicalRollDetectedString = "";
     if (identicalRollDetected) then
-        identicalRollDetectedString = ("|c00BE3333%s|r"):format(L["\nWarning: another identical roll was found which can point to a tie\n\n"]);
+        identicalRollDetectedString = ("|c00BE3333\n%s\n\n|r"):format(L["Warning: another identical roll was found which can point to a tie"]);
     end
 
     if (GL:nameIsUnique(roller)) then
