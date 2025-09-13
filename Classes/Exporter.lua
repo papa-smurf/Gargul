@@ -314,7 +314,7 @@ function Exporter:transformEntriesToCustomFormat(Entries, format)
             elseif (GL.isRetail) then
                 wowheadLink = ("https://www.wowhead.com/item=%s"):format(AwardEntry.itemID);
             else
-                wowheadLink = ("https://www.wowhead.com/cata/item=%s"):format(AwardEntry.itemID);
+                wowheadLink = ("https://www.wowhead.com/mop/item=%s"):format(AwardEntry.itemID);
             end
 
             if (ItemDetails) then
