@@ -230,10 +230,13 @@ function Exporter:getLootEntries(raw)
     for _, AwardEntry in pairs(DB:get("AwardHistory")) do
         (function()
             local concernsDisenchantedItem = AwardEntry.awardedTo == self.disenchantedItemIdentifier;
+            local concernsItemWonWithBonusRoll = AwardEntry.winningRollType == "Bonus Roll";
+
             local dateString = date(L["%Y-%m-%d"], AwardEntry.timestamp);
             if (
                 (not concernsDisenchantedItem or GL.Settings:get("ExportingLoot.includeDisenchantedItems"))
                 and (not AwardEntry.OS or GL.Settings:get("ExportingLoot.includeOffspecItems"))
+                and (not concernsItemWonWithBonusRoll or GL.Settings:get("ExportingLoot.includeBonusRollItems"))
                 and (noDatesSelected or GL:inTable(self.SelectedDates, dateString))
                 and not GL:empty(AwardEntry.timestamp)
                 and not GL:empty(AwardEntry.itemLink)

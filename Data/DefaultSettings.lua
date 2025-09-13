@@ -92,6 +92,7 @@ GL.Data.DefaultSettings = {
         skipAwardConfirmationDialog = false,
     },
     ExportingLoot = {
+        includeBonusRollItems = true,
         includeDisenchantedItems = true,
         includeOffspecItems = true,
         customFormat = "@ID;@DATE @TIME;@WINNER",

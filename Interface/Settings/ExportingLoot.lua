@@ -41,6 +41,16 @@ function ExportingLoot:draw(Parent)
             end
         },
         {
+            label = "Include items won with bonus roll",
+            setting = "ExportingLoot.includeBonusRollItems",
+            callback = function ()
+                -- Refresh the export window if it's open
+                if (GL.Exporter.visible) then
+                    GL.Exporter:refreshExportString();
+                end
+            end
+        },
+        {
             label = "Show award reminder",
             description = "When assigning loot without using Gargul a reminder is shown to use Gargul instead in order to make exporting loot possible",
             setting = "ExportingLoot.showLootAssignmentReminder",
