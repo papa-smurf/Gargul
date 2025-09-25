@@ -2201,38 +2201,47 @@ function GL:getLinkedItemsForID(itemID, forSoftRes)
         return {};
     end
 
-    itemID = tostring(itemID);
-    local AllLinkedItemIDs = {};
-    AllLinkedItemIDs[itemID] = 1;
+    local Links = {};
+    Links[itemID] = true;
 
-    local i = 2;
-    for _, id in pairs(GL.Data.ItemLinks[itemID] or {}) do
-        AllLinkedItemIDs[id] = i;
-        i = i + 1;
+    for _, id in pairs(GL.Data.ItemLinks[tostring(itemID)] or {}) do
+        Links[id] = true;
     end
 
-    if (forSoftRes
-        or GL.Settings:get("MasterLooting.linkNormalAndHardModeItems")
+    -- Determine whether we need to link (non)heroic items
+    if (not forSoftRes
+        and not GL.Settings:get("MasterLooting.linkNormalAndHardModeItems")
     ) then
-        for _, id in pairs(GL.Data.NormalModeHardModeLinks[itemID] or {}) do
-            AllLinkedItemIDs[id] = i;
-            i = i + 1;
-        end
+        return GL:tableKeys(Links);
     end
 
-    if (forSoftRes) then
-        for _, id in pairs(GL.Data.SoftResSpecificItemLinks[itemID] or {}) do
-            AllLinkedItemIDs[id] = i;
-            i = i + 1;
+    ---@type function
+    local linkItems;
+
+    linkItems = function (ID)
+        local LinkedItems = GL.Data.NormalModeHardModeLinks[ID];
+        local type = type(LinkedItems);
+
+        if (type == "table") then
+            for _, linkedID in pairs(LinkedItems) do
+                linkItems(linkedID);
+            end
+
+            return;
         end
 
-        for _, id in pairs(GL.Data.SkinnedItemLinks[itemID] or {}) do
-            AllLinkedItemIDs[id] = i;
-            i = i + 1;
+        if (type == "number") then
+            Links[LinkedItems] = true;
         end
-    end
 
-    return GL:tableFlip(AllLinkedItemIDs);
+        if (type == "nil") then
+            Links[ID] = true;
+        end
+    end;
+
+    linkItems(itemID);
+
+    return GL:tableKeys(Links);
 end
 
 --- Return an item's ID from an item link, false if invalid itemlink is provided
