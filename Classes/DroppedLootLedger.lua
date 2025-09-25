@@ -97,6 +97,12 @@ function DroppedLootLedger:_shouldTrackItems()
         return true;
     end
 
+    if (GL.isClassic
+        and GL.Settings:get("AwardingLoot.awardBonusLoot")
+    ) then
+        return true;
+    end
+
     local whenToLog = GL.Settings:get("DroppedLoot.whenToLogLoot");
 
     if (whenToLog == WHENGROUP) then
@@ -108,7 +114,7 @@ function DroppedLootLedger:_shouldTrackItems()
     end
 
     if (whenToLog == WHENHASML) then
-        return GetLootMethod() == "master";
+        return GL.GetLootMethod() == "master";
     end
 
     if (whenToLog == WHENISML) then
@@ -325,9 +331,9 @@ function DroppedLootLedger:processCombatLog(...)
 end
 
 ---@param message string
----@return table|nil
+---@return table?
 function DroppedLootLedger:processReceivedItem(message)
-    local itemLink, playerName = self:receivedItemDetails(message);
+    local itemLink, playerName, _, isBonusLoot = self:receivedItemDetails(message);
     if (not itemLink) then
         return;
     end
@@ -345,6 +351,7 @@ function DroppedLootLedger:processReceivedItem(message)
         droppedOn = GetTime(),
         quality = itemQuality,
         playerName = playerName,
+        isBonusLoot = isBonusLoot,
     };
 
     -- Store the item in our dropped loot ledger
@@ -355,7 +362,6 @@ function DroppedLootLedger:processReceivedItem(message)
     return Details;
 end
 
----@return void
 function DroppedLootLedger:storeReceivedItem(Details)
     -- We don't want to keep track of this quality
     if (not Details.itemQuality
@@ -373,6 +379,8 @@ end
 
 ---@return any
 function DroppedLootLedger:receivedItemDetails(message)
+    local isBonusLoot = false;
+
     --- Did someone else receive multiple items?
     local playerName, itemLink, itemCount = deformat(message, LOOT_ITEM_MULTIPLE);
 
@@ -394,11 +402,26 @@ function DroppedLootLedger:receivedItemDetails(message)
         itemLink = deformat(message, LOOT_ITEM_SELF);
     end
 
+    -- Did we receive a bonus loot item?
+    if (not itemLink) then
+        playerName = User.name;
+        itemCount = 1;
+        isBonusLoot = true;
+        itemLink = deformat(message, LOOT_ITEM_BONUS_ROLL_SELF);
+    end
+
+    -- Did someone else receive a bonus loot item?
+    if (not itemLink) then
+        itemCount = 1;
+        isBonusLoot = true;
+        playerName, itemLink = deformat(message, LOOT_ITEM_BONUS_ROLL);
+    end
+
     --- No valid item detected
     if (not itemLink) then
         return false;
     end
 
     itemCount = tonumber(itemCount) or 1;
-    return itemLink, playerName, itemCount;
+    return itemLink, playerName, itemCount, isBonusLoot;
 end

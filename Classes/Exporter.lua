@@ -230,10 +230,12 @@ function Exporter:getLootEntries(raw)
     for _, AwardEntry in pairs(DB:get("AwardHistory")) do
         (function()
             local concernsDisenchantedItem = AwardEntry.awardedTo == self.disenchantedItemIdentifier;
+
             local dateString = date(L["%Y-%m-%d"], AwardEntry.timestamp);
             if (
                 (not concernsDisenchantedItem or GL.Settings:get("ExportingLoot.includeDisenchantedItems"))
                 and (not AwardEntry.OS or GL.Settings:get("ExportingLoot.includeOffspecItems"))
+                and (not AwardEntry.isBonusLoot or GL.Settings:get("ExportingLoot.includeBonusRollItems"))
                 and (noDatesSelected or GL:inTable(self.SelectedDates, dateString))
                 and not GL:empty(AwardEntry.timestamp)
                 and not GL:empty(AwardEntry.itemLink)
@@ -312,7 +314,7 @@ function Exporter:transformEntriesToCustomFormat(Entries, format)
             elseif (GL.isRetail) then
                 wowheadLink = ("https://www.wowhead.com/item=%s"):format(AwardEntry.itemID);
             else
-                wowheadLink = ("https://www.wowhead.com/cata/item=%s"):format(AwardEntry.itemID);
+                wowheadLink = ("https://www.wowhead.com/mop/item=%s"):format(AwardEntry.itemID);
             end
 
             if (ItemDetails) then

@@ -196,7 +196,6 @@ end
 --- We opened a trade window
 ---
 ---@param Details table
----@return void
 function Session:tradeInitiated(Details)
     if (not Details.partner) then
         return;
@@ -222,6 +221,7 @@ function Session:tradeInitiated(Details)
 
     local balanceMessage = " ";
     local whisperMessage = nil;
+    local showGoldInput = balance > 0 and Settings:get("GDKP.precision") == 0;
 
     if (balance > 0) then
         due = GL:copperToMoney(balance);
@@ -278,47 +278,70 @@ function Session:tradeInitiated(Details)
 
         -- Add a buton that allows the loot master to pick up and drop gold in the trade window
         if (due) then
-            local insufficientFunds = GetMoney() < balance;
-            local PickupGoldButton = GL.AceGUI:Create("Button");
+            -- Good job Blizzard, now it's even easier for people to make mistakes whilst trading gold
+            -- local insufficientFunds = GetMoney() < balance;
+            -- local PickupGoldButton = GL.AceGUI:Create("Button");
+            
+            -- PickupGoldButton:SetText(insufficientFunds and L["Not enough gold"] or L["Pick up %s"]:format(dueTexture));
+            -- PickupGoldButton:SetFullWidth(true);
+            -- PickupGoldButton:SetCallback("OnClick", function()
+            --     if (insufficientFunds) then
+            --         GL:warning(L["Not enough gold"]);
+            --         return;
+            --     elseif (GetPlayerTradeMoney() > 0) then
+            --         GL:warning(L["You already added %s to the trade window"]:format(GL:copperToMoneyTexture(GetPlayerTradeMoney())));
+            --         return;
+            --     end
 
-            PickupGoldButton:SetText(insufficientFunds and L["Not enough gold"] or L["Pick up %s"]:format(dueTexture));
-            PickupGoldButton:SetFullWidth(true);
-            PickupGoldButton:SetCallback("OnClick", function()
-                if (insufficientFunds) then
-                    GL:warning(L["Not enough gold"]);
-                    return;
-                elseif (GetPlayerTradeMoney() > 0) then
-                    GL:warning(L["You already added %s to the trade window"]:format(GL:copperToMoneyTexture(GetPlayerTradeMoney())));
-                    return;
-                end
+            --     PickupPlayerMoney(balance);
+            -- end);
+            -- Window:AddChild(PickupGoldButton);
 
-                PickupPlayerMoney(balance);
-            end);
-            Window:AddChild(PickupGoldButton);
+            -- -- Add breathing effect to the button for increased visibility
+            -- do
+            --     local Text = PickupGoldButton.frame:GetFontString();
+            --     local AnimationGroup = Text:CreateAnimationGroup();
 
-            -- Add breathing effect to the button for increased visibility
-            do
-                local Text = PickupGoldButton.frame:GetFontString();
-                local AnimationGroup = Text:CreateAnimationGroup();
+            --     local FadeOut = AnimationGroup:CreateAnimation("Alpha");
+            --     FadeOut:SetFromAlpha(1);
+            --     FadeOut:SetToAlpha(0.2);
+            --     FadeOut:SetDuration(.4);
+            --     FadeOut:SetSmoothing("IN_OUT");
 
-                local FadeOut = AnimationGroup:CreateAnimation("Alpha");
-                FadeOut:SetFromAlpha(1);
-                FadeOut:SetToAlpha(0.2);
-                FadeOut:SetDuration(.4);
-                FadeOut:SetSmoothing("IN_OUT");
+            --     local FadeIn = AnimationGroup:CreateAnimation("Alpha");
+            --     FadeIn:SetFromAlpha(0.2);
+            --     FadeIn:SetToAlpha(1);
+            --     FadeIn:SetDuration(.4);
+            --     FadeIn:SetSmoothing("IN_OUT");
+            --     FadeIn:SetStartDelay(.4) -- Wait until FadeOut is done
 
-                local FadeIn = AnimationGroup:CreateAnimation("Alpha");
-                FadeIn:SetFromAlpha(0.2);
-                FadeIn:SetToAlpha(1);
-                FadeIn:SetDuration(.4);
-                FadeIn:SetSmoothing("IN_OUT");
-                FadeIn:SetStartDelay(.4) -- Wait until FadeOut is done
+            --     AnimationGroup:SetLooping("REPEAT");
+            --     AnimationGroup:Play();
+            -- end
 
-                AnimationGroup:SetLooping("REPEAT");
-                AnimationGroup:Play();
+            -- GL.Interface:addTooltip(PickupGoldButton, L["Click button, then click your item side of the trade window to add %s"]:format(dueTexture));
+
+            --[[ GOLD INPUT ]]
+            if (showGoldInput) then
+                local GoldInput = GL.AceGUI:Create("EditBox");
+                GoldInput:DisableButton(true);
+                GoldInput:SetHeight(20);
+                GoldInput:SetWidth(80);
+                GoldInput:SetMaxLetters(7);
+                GoldInput:SetText(balance / 10000);
+                GoldInput.editbox:SetJustifyH("CENTER");
+                GoldInput.editbox:SetTextInsets(0, 14, 0, 0);
+                Window:AddChild(GoldInput);
+
+                GoldInput.editbox:HighlightText();
+                GoldInput.editbox:SetFocus();
+
+                -- Gold Icon
+                local GoldInputGoldIcon = GoldInput.editbox:CreateTexture(nil, "OVERLAY");
+                GoldInputGoldIcon:SetTexture("Interface/MoneyFrame/UI-GoldIcon");
+                GoldInputGoldIcon:SetPoint("RIGHT", -3, 0);
+                GoldInputGoldIcon:SetSize(11, 11);
             end
-
-            GL.Interface:addTooltip(PickupGoldButton, L["Click button, then click your item side of the trade window to add %s"]:format(dueTexture));
         end
 
         local IncludeTradeInSession = GL.AceGUI:Create("CheckBox");

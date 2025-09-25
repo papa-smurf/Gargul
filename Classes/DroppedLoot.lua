@@ -178,7 +178,7 @@ function DroppedLoot:removeHighlights()
         local Button = getglobal("LootButton" .. buttonIndex);
 
         if (Button) then
-            LCG.PixelGlow_Stop(getglobal("LootButton" .. buttonIndex));
+            GL:stopHighlight(getglobal("LootButton" .. buttonIndex));
         end
     end
 end

@@ -370,7 +370,7 @@ function Export:exportAuctionsToCustomFormat(Session, Auctions)
             elseif (GL.isRetail) then
                 wowheadLink = ("https://www.wowhead.com/item=%s"):format(Auction.itemID);
             else
-                wowheadLink = ("https://www.wowhead.com/cata/item=%s"):format(Auction.itemID);
+                wowheadLink = ("https://www.wowhead.com/mop/item=%s"):format(Auction.itemID);
             end
 
             if (icon) then

@@ -618,7 +618,7 @@ function Overview:refreshItems()
                             return false;
                         end);
 
-                        GameTooltip:AddLine("Rolls");
+                        GameTooltip:AddLine(L["Rolls"]);
                         linesAdded = true;
 
                         for _, Roll in pairs (Entry.Rolls or {}) do
@@ -630,12 +630,13 @@ function Overview:refreshItems()
                                 rollCount = string.format("[%s]", rollsPerPlayer[Roll.player]);
                             end
 
-                            GameTooltip:AddLine(string.format("|c00%s%s|r: %s%s (%s)",
+                            GameTooltip:AddLine(string.format("|c00%s%s|r: %s%s (%s%s)",
                                 GL:classHexColor(Roll.class),
                                 Roll.player,
                                 Roll.amount,
                                 rollCount,
-                                Roll.classification
+                                Roll.classification,
+                                Roll.plusOneState and " +" .. Roll.plusOneState or ""
                             ));
                         end
                     end

@@ -838,7 +838,7 @@ L["Close on award"] = "수상 마감";
 L["Close on start"] = "시작 시 닫기";
 L["Hold shift to bypass the award confirmation"] = "수상 확인을 우회하려면 교대근무를 보류하세요.";
 L["Hold shift to show the award confirmation"] = "수상 확인을 표시하려면 교대 근무를 기다리세요.";
-L["\nWarning: another identical roll was found which can point to a tie\n\n"] = [[
+L["Warning: another identical roll was found which can point to a tie"] = [[
 경고: 동점을 나타낼 수 있는 또 다른 동일한 굴림이 발견되었습니다.
 
 ]];

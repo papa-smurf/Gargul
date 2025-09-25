@@ -64,6 +64,18 @@ function AwardedLoot:_init()
 
     -- Automatically mark an item as awarded when someone receives it
     Events:register("AwardedLootItemReceived", "GL.ITEM_RECEIVED", function (_, Details)
+        if (Details.isBonusLoot) then
+            if (not Settings:get("AwardingLoot.awardBonusLoot")) then
+                return;
+            end
+
+            self:addWinner{
+                itemLink = Details.itemLink,
+                winner = Details.playerName,
+                isBonusLoot = true,
+            };
+        end
+
         -- We don't want to automatically award loot
         if (not Settings:get("AwardingLoot.awardOnReceive")) then
             return;
@@ -414,31 +426,39 @@ end
 ---@param RollBracket table|nil See DefaultSettings.lua -> RollTracking.Brackets
 ---@param broadcast boolean|nil Broadcast award details to others
 ---@return void|string
-function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, gdkpCost, Rolls, automaticallyAwarded, RollBracket, broadcast)
+function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, gdkpCost, Rolls, automaticallyAwarded, RollBracket, broadcast, isBonusLoot)
     if (itemLink ~= nil or type(winner) ~= "table") then
         GL:error("Pass a table instead of multiple arguments")
         return;
     end
 
-    itemLink = winner.itemLink;
-    announce = winner.announce;
-    date = winner.date;
-    isOS = winner.isOS;
-    BRCost = winner.BRCost;
-    gdkpCost = winner.gdkpCost;
-    Rolls = winner.Rolls;
-    automaticallyAwarded = winner.automaticallyAwarded;
-    RollBracket = winner.RollBracket;
+    announce = winner.announce ~= false;
+    automaticallyAwarded = winner.automaticallyAwarded == true;
     broadcast = winner.broadcast;
+    date = winner.date;
+    gdkpCost = winner.gdkpCost;
+    isBonusLoot = winner.isBonusLoot == true;
+    isOS = winner.isOS == true;
+    itemLink = winner.itemLink;
+    BRCost = winner.BRCost;
+    RollBracket = winner.RollBracket;
+    Rolls = winner.Rolls;
 
     winner = winner.winner;
-
     local isDisenchanted = winner == GL.Exporter.disenchantedItemIdentifier;
     winner = not isDisenchanted and GL:addRealm(winner) or winner;
 
+    if (isBonusLoot) then
+        RollBracket = {L["Bonus Roll"], };
+        announce = false;
+        automaticallyAwarded = true;
+        broadcast = false;
+    end
+
+    -- Should award details be broadcasted via addon comms?
     if (broadcast == nil) then
         if (automaticallyAwarded) then
-            if (GetLootMethod() == "master") then
+            if (GL.GetLootMethod() == "master") then
                 broadcast = GL.User.isMasterLooter;
             else
                 broadcast = GL.User.isLead;
@@ -447,13 +467,6 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, g
             broadcast = GL.User.isMasterLooter or GL.User.hasAssist or not GL.User.isInGroup;
         end
     end
-
-    -- Loot awarded automatically (when AwardingLoot.awardOnReceive is enabled)
-    -- will not be broadcast/shared in any way unless you have the required permissions!
-    automaticallyAwarded = GL:toboolean(automaticallyAwarded);
-
-    -- Determine whether the item should be flagged as off-spec
-    isOS = GL:toboolean(isOS);
 
     local timestamp;
     local dateProvided = date and type(date) == "string";
@@ -512,11 +525,6 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, g
         timestamp = time(Date);
     end
 
-    -- Enable the announce switch by default
-    if (type(announce) ~= "boolean") then
-        announce = true;
-    end
-
     local realmLessName = string.lower(GL:stripRealm(winner));
     local isPrioritized, isWishlisted = false, false;
     local isReserved = not isDisenchanted and GL.SoftRes:itemIDIsReservedByPlayer(itemID, realmLessName) or false;
@@ -532,32 +540,44 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, g
     end
 
     --[[ DETERMINE THE ITEM'S GUID ]]
-    local awardedItemGUID = nil;
-    local lowestTradeTimeRemaining = 14400; -- 4 hours in seconds
-    for itemGUID, timeRemaining in pairs(GL:itemTradeTimeRemaining(itemLink or itemID) or {}) do
-        -- Check if the given item is soulbound
-        local itemIsBound = timeRemaining ~= Constants.itemIsNotBound;
+    local awardedItemGUID;
+    if (not automaticallyAwarded) then
+        local lowestTradeTimeRemaining = 14400; -- 4 hours in seconds
+        for itemGUID, timeRemaining in pairs(GL:itemTradeTimeRemaining(itemLink or itemID) or {}) do
+            -- Check if the given item is soulbound
+            local itemIsBound = timeRemaining ~= Constants.itemIsNotBound;
 
-        -- This item is not bound, pick the first one that's not awarded yet
-        if (not itemIsBound) then
-            if (not DB:get("RecentlyAwardedItems." .. itemGUID)) then
+            -- This item is not bound, pick the first one that's not awarded yet
+            if (not itemIsBound) then
+                if (not DB:get("RecentlyAwardedItems." .. itemGUID)) then
+                    awardedItemGUID = itemGUID;
+                    break;
+                end
+
+            -- This item is bound, found the one with the lowest remaining trade time and award it
+            elseif (itemIsBound and timeRemaining < lowestTradeTimeRemaining and not DB:get("RecentlyAwardedItems." .. itemGUID)) then
                 awardedItemGUID = itemGUID;
-                break;
+                lowestTradeTimeRemaining = timeRemaining;
             end
-
-        -- This item is bound, found the one with the lowest remaining trade time and award it
-        elseif (itemIsBound and timeRemaining < lowestTradeTimeRemaining and not DB:get("RecentlyAwardedItems." .. itemGUID)) then
-            awardedItemGUID = itemGUID;
-            lowestTradeTimeRemaining = timeRemaining;
         end
     end
 
     -- Determine winner class
     local class = GL:playerClassByName(winner);
 
+    -- Add +1 state to roll history
+    if (type(Rolls) == "table" and not GL:empty(Rolls)) then
+        local plusOneValue;
+        for _, Roll in ipairs(Rolls) do
+            plusOneValue = GL.PlusOnes:getPlusOnes(Roll.player);
+            Roll.plusOneState = plusOneValue > 0 and plusOneValue or nil;
+        end
+    end
+
     local checksum = GL:strPadRight(GL:strLimit(GL:stringHash(timestamp .. itemID .. GL:uuid()) .. GL:stringHash(winner .. GL.DB:get("SoftRes.MetaData.id", "")), 20, ""), "0", 20);
     local AwardEntry = {
         checksum = checksum,
+        isBonusLoot = isBonusLoot,
         itemLink = itemLink,
         itemID = itemID,
         itemGUID = awardedItemGUID,
@@ -565,7 +585,7 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, g
         awardedBy = GL.User.fqn,
         timestamp = timestamp,
         softresID = GL.DB:get("SoftRes.MetaData.id"),
-        received = GL:iEquals(winner, GL.User.name) or GL:iEquals(winner, GL.User.fqn),
+        received = automaticallyAwarded or GL:iEquals(winner, GL.User.name) or GL:iEquals(winner, GL.User.fqn),
         winnerClass = Constants.UnitClasses[class],
         BRCost = tonumber(BRCost),
         GDKPCost = tonumber(gdkpCost),

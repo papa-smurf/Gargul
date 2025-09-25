@@ -841,7 +841,7 @@ L["Close on award"] = "Fermer à l'attribution";
 L["Close on start"] = "Fermer au démarrage";
 L["Hold shift to bypass the award confirmation"] = "Maintenez Shift pour contourner la confirmation d'attribution";
 L["Hold shift to show the award confirmation"] = "Maintenez Shift pour afficher la confirmation d'attribution";
-L["\nWarning: another identical roll was found which can point to a tie\n\n"] = [[
+L["Warning: another identical roll was found which can point to a tie"] = [[
 Attention : un autre lancer identique a été trouvé qui peut indiquer une égalité
 
 ]];

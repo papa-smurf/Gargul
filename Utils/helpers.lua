@@ -823,7 +823,7 @@ end
 function GL:cloneTable(Original)
     local Copy = {};
 
-    for index, value in pairs(Original) do
+    for index, value in pairs(Original or {}) do
         if type(value) == "table" then
             Copy[index] = self:cloneTable(value, Copy[index])
         else
@@ -1590,14 +1590,14 @@ end
 ---@return number Seconds or 0
 function GL:tooltipItemTradeTimeRemaining()
     local timeRemainingLine;
-    local needle = BIND_TRADE_TIME_REMAINING:gsub("%%s", ".*");
+    local needle = self:createPattern(BIND_TRADE_TIME_REMAINING):gsub("%%s", ".*");
     local itemIsSoulBound = false;
 
     -- Attempt to find a tooltip line that holds the remaining trading time
     for i = 1, GL.TooltipFrame:NumLines() do
         local line = _G["GargulTooltipFrameTextLeft" .. i];
 
-        if line then
+        if (line) then
             timeRemainingLine = line:GetText() or "";
 
             -- The item is actually soulbound!
@@ -1798,15 +1798,19 @@ function GL:inventoryItemTradeTimeRemaining(bag, slot)
     return timeRemaining;
 end
 
----@param Item Frame
+---@param ItemFrame Frame
 ---@param itemLink string
 ---@param Details? table
-function GL:highlightItem(Item, itemLink, Details)
+function GL:highlightItem(ItemFrame, itemLink, Details)
+    -- We can not put a highlight on this frame
+    if (not ItemFrame or not ItemFrame.GetSize) then
+        return;
+    end
+
     -- There's no point highlighting something if the player
     -- is not in a group or highlights are disabled
     if (type(itemLink) ~= "string"
         or not GL.Settings:get("highlightsEnabled")
-        or GL.isRetail -- This doesn't work on retail sadly
         or (
             not GL.Settings:get("highlightHardReservedItems")
             and not GL.Settings:get("highlightSoftReservedItems")
@@ -1819,7 +1823,7 @@ function GL:highlightItem(Item, itemLink, Details)
     Details = Details or {};
 
     -- Remove any existing highlight
-    LCG.PixelGlow_Stop(Item);
+    GL:stopHighlight(ItemFrame);
     local enableHighlight = false;
     local BorderColor = {1, 1, 1, 1}; -- The default border color is priest-white and applies to wishlisted items
 
@@ -1887,7 +1891,7 @@ function GL:highlightItem(Item, itemLink, Details)
 
     -- Add an animated border to indicate that this item was reserved / wishlisted
     -- function lib.PixelGlow_Start(r,color,N,frequency,length,th,xOffset,yOffset,border,key,frameLevel)
-    LCG.PixelGlow_Start(Item,
+    LCG.PixelGlow_Start(ItemFrame,
         BorderColor,
         Details.dots or 10,
         Details.speed or .05,
@@ -1899,6 +1903,19 @@ function GL:highlightItem(Item, itemLink, Details)
         Details.key,
         Details.level
     );
+end
+
+--- Prevent release errors as they're irrelevant to our implementation
+---@param FrameObject? Frame
+---@return boolean
+function GL:stopHighlight(FrameObject)
+    if (not FrameObject or not FrameObject.GetSize) then
+        return false;
+    end
+
+    return pcall(function ()
+        LCG.PixelGlow_Stop(FrameObject);
+    end);
 end
 
 function GL:bugReport()

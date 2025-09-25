@@ -838,7 +838,7 @@ L["Close on award"] = "Cerrar la adjudicación";
 L["Close on start"] = "Cerrar al inicio";
 L["Hold shift to bypass the award confirmation"] = "Mantenga presionado el turno para omitir la confirmación del premio";
 L["Hold shift to show the award confirmation"] = "Mantenga presionado el turno para mostrar la confirmación del premio.";
-L["\nWarning: another identical roll was found which can point to a tie\n\n"] = [[
+L["Warning: another identical roll was found which can point to a tie"] = [[
 Advertencia: se encontró otra tirada idéntica que puede indicar un empate
 
 ]];

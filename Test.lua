@@ -6,6 +6,7 @@ local Events = GL.Events;
 ---@class Test
 local Test = {
     Classes = {"druid","hunter","mage","paladin","priest","rogue","shaman","warlock","warrior","death knight",},
+    DroppedLoot = {},
     Mail = {},
     Names = {"Aiyana","Callum","Virginia","Laylah","Isabell","Javon","Miley","Ian","Isai","Ahmad","Campbell","Bobby","Karter","Brooklynn","Asher","Maci","Gael","Jamal","Zion","Sarahi","Kierra","Perla","Rylie","Lorelei","John","Madeleine","Jadiel","Billy","Jazmin","Keon","Stephany","George","Malcolm","Brenden","Daphne","Dane","Derek","Marcel","Madilynn","Enrique","Cindy","Amir","Melvin","Anya","Ali","Rex","Lewis","Parker","Carl","Arnav","Kamari","Jessie","Madelynn","Heath","Haleigh","Madyson","Jorden","Amya","Elisa","Marques","Ana","Miracle","Abdiel","Dale","Sincere","Marin","Karina","Clay","Caden","Eve","Rubi","Zavier","Megan","Payton","Peyton","Emmett","Diego","Joaquin","German","Tania","Miguel","Malachi","Martin","Richard","Allison","Avah","Kamora","Deborah","Esperanza","Konnor","Isla","Tess","Keely","Margaret","Rory","Jake","Averie","Ally","Craig","Gage","Oswaldo","Kaitlynn","Ashley","Davian","Mauricio","Brandon","Aryana","Douglas","Kyan","Carsen","Mikaela","Regan","Theodore","Maximillian","Luke","Dixie","Makenna","Keagan","Mallory","America",},
     Locale = {},
@@ -477,12 +478,12 @@ end
 function Test.PackMule:whoReceivesItem(itemID, lootMethod)
     GL:success("Running Test.PackMule:whoReceivesItem() ...");
 
-    local oldGetLootMethod = GetLootMethod;
+    local oldGetLootMethod = GL.GetLootMethod;
     local oldIsMasterLooter = GL:toboolean(GL.User.isMasterLooter);
     local oldIsInGroup = GL:toboolean(GL.User.isInGroup);
     local oldIsInParty = GL:toboolean(GL.User.isInParty);
     local oldIsInRaid = GL:toboolean(GL.User.isInRaid);
-    GetLootMethod = function () return lootMethod; end;
+    GL.GetLootMethod = function () return lootMethod; end;
 
     if (lootMethod == "master") then
         GL.User.isMasterLooter = true;
@@ -501,7 +502,7 @@ function Test.PackMule:whoReceivesItem(itemID, lootMethod)
             return GL:error("No target for item ID: " .. itemID);
         end
 
-        GetLootMethod = oldGetLootMethod;
+        GL.GetLootMethod = oldGetLootMethod;
         GL.User.isMasterLooter = oldIsMasterLooter;
         GL.User.isInGroup = oldIsInGroup;
         GL.User.isInRaid = oldIsInRaid;
@@ -512,7 +513,7 @@ function Test.PackMule:whoReceivesItem(itemID, lootMethod)
 
     -- Just in case the callback fails
     GL.Ace:ScheduleTimer(function()
-        GetLootMethod = oldGetLootMethod;
+        GL.GetLootMethod = oldGetLootMethod;
         GL.User.isMasterLooter = oldIsMasterLooter;
         GL.User.isInGroup = oldIsInGroup;
         GL.User.isInRaid = oldIsInRaid;
@@ -662,6 +663,33 @@ function Test:stopGroupSimulation()
 
     GL.User.groupMembers = groupMembersFunction;
     groupMembersOverridden = false;
+end
+
+--[[ Test the libcustomglow implementation
+/script _G.Gargul.Test:itemGlow()
+]]
+function Test:itemGlow()
+    local LCG = LibStub("LibCustomGlowGargul-1.0");
+
+    local Button = CreateFrame("Button", "TestButton", UIParent, "UIPanelButtonTemplate");
+    Button:SetSize(100, 40);
+    Button:SetText("Test");
+    Button:SetPoint("CENTER", UIParent, "CENTER");
+
+    Button:SetScript("OnClick", function()
+        GL:xd("Click");
+
+        -- Remove any existing highlight
+        GL:stopHighlight(Button);
+
+        LCG.PixelGlow_Start(Button,
+            {1, 1, 1, 1, },
+            10,
+            .05,
+            5,
+            2
+        );
+    end);
 end
 
 --[[ Show all identity elements at once for easy screenshotting
@@ -864,4 +892,24 @@ function Test.Locale:sortTranslations()
     end
 
     GL:frameMessage(exportString);
+end
+
+-- /script _G.Gargul.Test.DroppedLoot:bonusLoot()
+function Test.DroppedLoot:bonusLoot()
+    local trackingIsEnabled = GL.DroppedLootLedger.trackItems;
+    local oldIsClassic = GL.isClassic;
+    GL.isClassic = true;
+
+    if (not trackingIsEnabled) then
+        GL.DroppedLootLedger:startTracking();
+    end
+
+    GL.Events:fire("CHAT_MSG_LOOT", "You receive bonus loot: |cffa335ee|Hitem:45613::::::::80:::::|h[Dreambinder]|h|r.");
+    GL.Events:fire("CHAT_MSG_LOOT", "Ghyle-Mograine receives bonus loot: |cffff8000|Hitem:19019::::::::80:::::|h[Thunderfury, Blessed Blade of the Windseeker]|h|r.");
+
+    if (not trackingIsEnabled) then
+        GL.DroppedLootLedger:stopTracking();
+    end
+
+    GL.isClassic = oldIsClassic;
 end

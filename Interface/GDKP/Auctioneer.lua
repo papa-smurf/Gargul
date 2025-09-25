@@ -672,7 +672,7 @@ function AuctioneerUI:build()
         MultiAuctionWindow:SetPoint("TOPLEFT", Window, "BOTTOMLEFT", 2, -4);
         MultiAuctionWindow:SetPoint("RIGHT", Window, "RIGHT", -2, 0);
 
-        LCG.PixelGlow_Stop(MultiAuctionWindow);
+        GL:stopHighlight(MultiAuctionWindow);
         LCG.PixelGlow_Start(MultiAuctionWindow, {.59, .5, .82, 1}, Window:GetWidth() / 4, .02, 5, 2);
 
         local Texture = MultiAuctionWindow:CreateTexture(nil,"BACKGROUND");
@@ -710,7 +710,7 @@ function AuctioneerUI:build()
         if (Window.MultiAuctionWindow) then
             -- We use a timer to not call this too often
             GL:after(1, "GDKP.Auctioneer.MultiAuctionWindow.Glow", function ()
-                LCG.PixelGlow_Stop(Window.MultiAuctionWindow);
+                GL:stopHighlight(Window.MultiAuctionWindow);
                 LCG.PixelGlow_Start(Window.MultiAuctionWindow, {.59, .5, .82, 1}, Window:GetWidth() / 4, .02, 5, 2);
             end);
         end
@@ -1042,7 +1042,7 @@ function AuctioneerUI:buildQueue(Window)
                         end
 
                         if (RowWithGlow) then
-                            LCG.PixelGlow_Stop(RowWithGlow);
+                            GL:stopHighlight(RowWithGlow);
                         end
 
                         RowWithGlow = Auction:QueuedItemByPosition(newPosition);
@@ -1059,7 +1059,7 @@ function AuctioneerUI:buildQueue(Window)
                     ItemRow:Hide();
 
                     if (RowWithGlow) then
-                        LCG.PixelGlow_Stop(RowWithGlow);
+                        GL:stopHighlight(RowWithGlow);
                     end
 
                     if (tonumber(newPosition)) then
@@ -1309,8 +1309,8 @@ end
 ---@param Row Frame
 ---@return void
 function AuctioneerUI:deleteRowFromQueue(Row)
-    LCG.PixelGlow_Stop(Row);
-    LCG.PixelGlow_Stop(Row.Icon);
+    GL:stopHighlight(Row);
+    GL:stopHighlight(Row.Icon);
     Row:Hide();
     Row._itemLink = nil;
     Row._identifier = nil;

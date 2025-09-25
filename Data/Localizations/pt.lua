@@ -838,7 +838,7 @@ L["Close on award"] = "Fechar no prêmio";
 L["Close on start"] = "Fechar no início";
 L["Hold shift to bypass the award confirmation"] = "Segure shift para ignorar a confirmação do prêmio";
 L["Hold shift to show the award confirmation"] = "Segure shift para mostrar a confirmação do prêmio";
-L["\nWarning: another identical roll was found which can point to a tie\n\n"] = [[
+L["Warning: another identical roll was found which can point to a tie"] = [[
 Atenção: foi encontrado outro lançamento idêntico que pode apontar para um empate
 
 ]];
