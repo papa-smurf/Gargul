@@ -114,7 +114,7 @@ function DroppedLootLedger:_shouldTrackItems()
     end
 
     if (whenToLog == WHENHASML) then
-        return GL.GetLootMethod() == "master";
+        return GL.GetLootMethod() == Enum.LootMethod.Masterlooter;
     end
 
     if (whenToLog == WHENISML) then

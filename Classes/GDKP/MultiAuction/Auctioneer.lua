@@ -162,6 +162,7 @@ function Auctioneer:userIsAllowedToBroadcast(player)
             GL.Version.lastNotBackwardsCompatibleNotice < 1 and (
                 GL.User.isLead
                 or GL.User.isMasterLooter
+                or GL.User.hasAssist
             )
         );
     end

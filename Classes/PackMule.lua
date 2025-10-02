@@ -175,7 +175,7 @@ function PackMule:processGroupLootItems(rollID)
     end
 
     -- This should not be possible, just double checking!
-    if (GL.GetLootMethod() == "master") then
+    if (GL.GetLootMethod() == Enum.LootMethod.Masterlooter) then
         return;
     end
 
@@ -243,7 +243,7 @@ function PackMule:isItemIDIgnored(itemID, callback)
     local oldIsInRaid = GL:toboolean(GL.User.isInRaid);
 
     -- We test the item against PackMule in a loot master setting first
-    GL.GetLootMethod = function () return "master"; end;
+    GL.GetLootMethod = function () return Enum.LootMethod.Masterlooter; end;
     GL.User.isMasterLooter = true;
     GL.User.isInGroup = true;
     GL.User.isInRaid = true;
@@ -254,7 +254,7 @@ function PackMule:isItemIDIgnored(itemID, callback)
         local Loot = GL:getCachedItem(itemID) or {}; -- This should be 100% set at this point
 
         -- We now test the item against PackMule in a group loot setting
-        GL.GetLootMethod = function () return "group"; end;
+        GL.GetLootMethod = function () return Enum.LootMethod.Group; end;
         GL.User.isMasterLooter = false;
         GL.User.isInGroup = true;
         GL.User.isInRaid = false;
@@ -306,7 +306,7 @@ function PackMule:currentTargetForItemForGroupOrMaster(itemID, callback)
     local oldIsInRaid = GL:toboolean(GL.User.isInRaid);
 
     -- We test the item against PackMule in a loot master setting first
-    GL.GetLootMethod = function () return "master"; end;
+    GL.GetLootMethod = function () return Enum.LootMethod.Masterlooter; end;
     GL.User.isMasterLooter = true;
     GL.User.isInGroup = true;
     GL.User.isInRaid = true;
@@ -316,7 +316,7 @@ function PackMule:currentTargetForItemForGroupOrMaster(itemID, callback)
         local Loot = GL:getCachedItem(itemID) or {}; -- This should be 100% set at this point
 
         -- We now test the item against PackMule in a group loot setting
-        GL.GetLootMethod = function () return "group"; end;
+        GL.GetLootMethod = function () return Enum.LootMethod.Group; end;
         GL.User.isMasterLooter = false;
         GL.User.isInGroup = true;
         GL.User.isInRaid = false;
@@ -345,8 +345,6 @@ function PackMule:currentTargetForItemForGroupOrMaster(itemID, callback)
 end
 
 --- Disable PackMule after leaving a group
----
----@return void
 function PackMule:leftGroup()
     if (Settings:get("PackMule.autoDisableForGroupLoot")) then
         Settings:set("PackMule.enabledForGroupLoot", false);
@@ -354,8 +352,6 @@ function PackMule:leftGroup()
 end
 
 --- Check whether the user is in a heroic instance
----
----@return void
 function PackMule:zoneChanged()
     -- Check whether the user is in a heroic instance
     -- More info about difficultyIDs: https://wowpedia.fandom.com/wiki/DifficultyID
@@ -364,8 +360,6 @@ function PackMule:zoneChanged()
 end
 
 --- Check all loot and implement applicable rules
----
----@return void
 function PackMule:lootReady()
     if (self.processing) then
         return;
@@ -775,8 +769,6 @@ function PackMule:lootMatchesSpecificRule(lootName, ruleItemName)
 end
 
 --- Empty the ruleset
----
----@return void
 function PackMule:resetRules()
     self.Rules = {};
     Settings:set("PackMule.Rules", self.Rules);
@@ -918,8 +910,6 @@ function PackMule:disenchant(itemLink, byPassConfirmationDialog, callback)
 end
 
 --- Clear the disenchanter
----
----@return void
 function PackMule:clearDisenchanter()
     self.disenchanter = nil;
 end

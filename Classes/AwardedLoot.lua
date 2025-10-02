@@ -458,7 +458,7 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, g
     -- Should award details be broadcasted via addon comms?
     if (broadcast == nil) then
         if (automaticallyAwarded) then
-            if (GL.GetLootMethod() == "master") then
+            if (GL.GetLootMethod() == Enum.LootMethod.Masterlooter) then
                 broadcast = GL.User.isMasterLooter;
             else
                 broadcast = GL.User.isLead;

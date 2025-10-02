@@ -897,7 +897,7 @@ function TMB:import(data, triedToDecompress, source)
     -- after importing it, let's get crackin'!
     if (GL.Settings:get("TMB.automaticallyShareData")
         and (GL.User.isMasterLooter
-            or (GL.GetLootMethod() ~= 'master'
+            or (GL.GetLootMethod() ~= Enum.LootMethod.Masterlooter
                 and GL.User.isLead
             )
         )
@@ -1498,27 +1498,22 @@ function TMB:requestData()
             return;
         end
 
-        local lootMethod, _, masterLooterRaidID = GL.GetLootMethod();
+        local lootMethod, masterLooterIndex = GL.GetLootMethod();
 
         -- Master looting is not active and we are the leader, this means we should import it ourselves
-        if (lootMethod ~= 'master'
+        if (lootMethod ~= Enum.LootMethod.Masterlooter
             and GL.User.isLead
         ) then
             return;
         end
 
         -- Master looting is active, return the name of the master looter
-        if (lootMethod == 'master') then
-            return GetRaidRosterInfo(masterLooterRaidID);
+        if (lootMethod == Enum.LootMethod.Masterlooter) then
+            return GetRaidRosterInfo(masterLooterIndex);
         end
 
         -- Fetch the group leader
-        local maximumNumberOfGroupMembers = _G.MEMBERS_PER_RAID_GROUP;
-        if (GL.User.isInRaid) then
-            maximumNumberOfGroupMembers = _G.MAX_RAID_MEMBERS;
-        end
-
-        for index = 1, maximumNumberOfGroupMembers do
+        for index = 1, GL.User.isInRaid and _G.MEMBERS_PER_RAID_GROUP or _G.MAX_RAID_MEMBERS do
             local name, rank = GetRaidRosterInfo(index);
 
             -- Rank 2 means leader

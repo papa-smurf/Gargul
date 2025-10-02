@@ -212,12 +212,11 @@ function Player:isMasterLooter(playerNameOrID)
         return false;
     end
 
-    local lootMethod, masterLooterPartyID, masterLooterRaidID = GL.GetLootMethod();
+    local lootMethod, masterLooterIndex = GL.GetLootMethod();
 
     -- Master looting is active and this player is the master looter
-    if (lootMethod == 'master') then
-        local ID = masterLooterPartyID or masterLooterRaidID;
-        return GL:iEquals(GetRaidRosterInfo(ID), GL:nameFormat(playerName));
+    if (lootMethod == Enum.LootMethod.Masterlooter) then
+        return GL:iEquals(GetRaidRosterInfo(masterLooterIndex), GL:nameFormat(playerName));
     end
 
     return false;
