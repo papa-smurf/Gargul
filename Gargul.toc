@@ -1,8 +1,8 @@
 ## Interface: 110200, 110205
 ## Interface-Classic: 11507, 11508
-## Interface-Wrath: 30404
+## Interface-Wrath: 30405
 ## Interface-Cata: 40402, 40403
-## Interface-Mists: 50500
+## Interface-Mists: 50500, 50501
 ## Title: Gargul |c00967FD2@project-version@|r
 ## Title-deDE: Gargul |c00967FD2@project-version@|r
 ## Title-esES: Gargul |c00967FD2@project-version@|r
@@ -18,7 +18,7 @@
 ## IconTexture: Interface\AddOns\Gargul\Assets\Buttons\minimap
 ## OptionalDeps: LibStub, CallbackHandler-1.0, LibSharedMedia-3.0, LibDeflate, LibSerialize, Masque, LibCustomGlow, ChatThrottleLib
 ## Author: Zhorax - Firemaw
-## Version: 7.7.2
+## Version: 7.7.3
 ## DefaultState: enabled
 ## SavedVariables: GargulDB
 ## X-Donate: https://www.patreon.com/gargul
