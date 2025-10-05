@@ -115,7 +115,7 @@ function User:refresh()
     self.isInParty = self.isInGroup and not self.isInRaid;
     self.hasAssist = false;
     self.isLead = false;
-    self.isMasterLooter = false;
+    self.isMasterLooter = IsMasterLooter() == true;
     self.raidIndex = nil;
     self.combatRole = nil;
     self.classFile = UnitClassBase("player");
@@ -138,7 +138,6 @@ function User:refresh()
                 self.isLead = rank == 2;
                 self.hasAssist = rank >= 1;
                 self.combatRole = combatRole;
-                self.isMasterLooter = isMasterLooter;
 
                 break;
             end

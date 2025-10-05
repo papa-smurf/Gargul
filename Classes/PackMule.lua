@@ -175,7 +175,7 @@ function PackMule:processGroupLootItems(rollID)
     end
 
     -- This should not be possible, just double checking!
-    if (GL.GetLootMethod() == Enum.LootMethod.Masterlooter) then
+    if (GL.GetLootMethod() == "master") then
         return;
     end
 
@@ -243,7 +243,7 @@ function PackMule:isItemIDIgnored(itemID, callback)
     local oldIsInRaid = GL:toboolean(GL.User.isInRaid);
 
     -- We test the item against PackMule in a loot master setting first
-    GL.GetLootMethod = function () return Enum.LootMethod.Masterlooter; end;
+    GL.GetLootMethod = function () return "master"; end;
     GL.User.isMasterLooter = true;
     GL.User.isInGroup = true;
     GL.User.isInRaid = true;
@@ -254,7 +254,7 @@ function PackMule:isItemIDIgnored(itemID, callback)
         local Loot = GL:getCachedItem(itemID) or {}; -- This should be 100% set at this point
 
         -- We now test the item against PackMule in a group loot setting
-        GL.GetLootMethod = function () return Enum.LootMethod.Group; end;
+        GL.GetLootMethod = function () return "group"; end;
         GL.User.isMasterLooter = false;
         GL.User.isInGroup = true;
         GL.User.isInRaid = false;
@@ -306,7 +306,7 @@ function PackMule:currentTargetForItemForGroupOrMaster(itemID, callback)
     local oldIsInRaid = GL:toboolean(GL.User.isInRaid);
 
     -- We test the item against PackMule in a loot master setting first
-    GL.GetLootMethod = function () return Enum.LootMethod.Masterlooter; end;
+    GL.GetLootMethod = function () return "master"; end;
     GL.User.isMasterLooter = true;
     GL.User.isInGroup = true;
     GL.User.isInRaid = true;
@@ -316,7 +316,7 @@ function PackMule:currentTargetForItemForGroupOrMaster(itemID, callback)
         local Loot = GL:getCachedItem(itemID) or {}; -- This should be 100% set at this point
 
         -- We now test the item against PackMule in a group loot setting
-        GL.GetLootMethod = function () return Enum.LootMethod.Group; end;
+        GL.GetLootMethod = function () return "group"; end;
         GL.User.isMasterLooter = false;
         GL.User.isInGroup = true;
         GL.User.isInRaid = false;

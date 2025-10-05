@@ -1,17 +1,6 @@
 ---@type GL
 local _, GL = ...;
 
--- Enum
---- This enum does not yet exist in classic era
-Enum.LootMethod = Enum.LootMethod or {
-    Freeforall = 0,
-    Roundrobin = 1,
-    Masterlooter = 2,
-    Group = 3,
-    Needbeforegreed = 4,
-    Personal = 5,
-};
-
 -- AddOns
 GL.GetAddOnEnableState = GetAddOnEnableState or C_AddOns.GetAddOnEnableState;
 GL.GetAddOnInfo = GetAddOnInfo or C_AddOns.GetAddOnInfo;
@@ -40,35 +29,36 @@ GL.GetItemInfoInstant = GetItemInfoInstant or C_Item.GetItemInfoInstant;
 ---@test /dump GetRaidRosterInfo(select(2, _G.Gargul.GetLootMethod()));
 GL.GetLootMethod = function ()
     local method, masterLootPartyID, masterLooterRaidID;
-    if (GetLootMethod) then
-        local Methods = {
-            ["freeforall"] = 0,
-            ["roundrobin"] = 1,
-            ["master"] = 2,
-            ["group"] = 3,
-            ["needbeforegreed"] = 4,
-            ["personalloot"] = 5,
-        };
 
+    if (GL.User.isMasterLooter) then
+        return "master", GL.User.raidIndex;
+    end
+
+    if (GetLootMethod) then
         method, masterLootPartyID, masterLooterRaidID = GetLootMethod();
         method = Methods[method];
     else
+        local Methods = {
+            [0] = "freeforall",
+            [1] = "roundrobin",
+            [2] = "master",
+            [3] = "group",
+            [4] = "needbeforegreed",
+            [5] = "personalloot",
+        };
+
         method, masterLootPartyID, masterLooterRaidID = C_PartyInfo.GetLootMethod();
+        method = Methods[method];
     end
 
     local masterLooterIndex = masterLootPartyID or masterLooterRaidID;
 
-    if (method ~= Enum.LootMethod.Masterlooter) then
+    if (method ~= "master") then
         return method;
     end
 
     if (GL.User.isInRaid) then
         return method, masterLooterIndex;
-    end
-
-    -- GetLootMethod will return 0 when we're in a group ( not raid ), and we ourselves are the loot master
-    if (masterLooterIndex == 0) then
-        return method, GL.User.raidIndex;
     end
 
     for index = 1, _G.MEMBERS_PER_RAID_GROUP do

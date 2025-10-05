@@ -1,6 +1,5 @@
 ---@type GL
-local GL;
-_, GL = ...;
+local _, GL = ...;
 
 ---@class Constants
 GL.Data.Constants = {

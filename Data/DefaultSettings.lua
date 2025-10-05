@@ -1,8 +1,7 @@
 local L = Gargul_L;
 
 ---@type GL
-local GL;
-_, GL = ...;
+local _, GL = ...;
 
 ---@class DefaultSettings
 GL.Data.DefaultSettings = {

@@ -48,7 +48,7 @@ function Settings:_init()
     if (InterfaceOptions_AddCategory) then
         InterfaceOptions_AddCategory(Frame);
     else
-        Category = _G.Settings.RegisterCanvasLayoutCategory(Frame, L["Gargul"]);
+        local Category = _G.Settings.RegisterCanvasLayoutCategory(Frame, L["Gargul"]);
         _G.Settings.RegisterAddOnCategory(Category);
     end
 

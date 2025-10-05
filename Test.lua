@@ -485,12 +485,12 @@ function Test.PackMule:whoReceivesItem(itemID, lootMethod)
     local oldIsInRaid = GL:toboolean(GL.User.isInRaid);
     GL.GetLootMethod = function () return lootMethod; end;
 
-    if (lootMethod == Enum.LootMethod.Masterlooter) then
+    if (lootMethod == "master") then
         GL.User.isMasterLooter = true;
         GL.User.isInGroup = true;
         GL.User.isInRaid = true;
         GL.User.isInParty = false;
-    elseif (lootMethod == Enum.LootMethod.Group) then
+    elseif (lootMethod == "group") then
         GL.User.isMasterLooter = false;
         GL.User.isInGroup = true;
         GL.User.isInRaid = false;

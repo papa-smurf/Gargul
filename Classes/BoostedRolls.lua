@@ -840,14 +840,14 @@ function BoostedRolls:requestData()
         local lootMethod, masterLooterIndex = GL.GetLootMethod();
 
         -- Master looting is not active and we are the leader, this means we should import it ourselves
-        if (lootMethod ~= Enum.LootMethod.Masterlooter
+        if (lootMethod ~= "master"
             and GL.User.isLead
         ) then
             return;
         end
 
         -- Master looting is active, return the name of the master looter
-        if (lootMethod == Enum.LootMethod.Masterlooter) then
+        if (lootMethod == "master") then
             return GetRaidRosterInfo(masterLooterIndex);
         end
 
