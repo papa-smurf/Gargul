@@ -36,7 +36,6 @@ GL.GetLootMethod = function ()
 
     if (GetLootMethod) then
         method, masterLootPartyID, masterLooterRaidID = GetLootMethod();
-        method = Methods[method];
     else
         local Methods = {
             [0] = "freeforall",
