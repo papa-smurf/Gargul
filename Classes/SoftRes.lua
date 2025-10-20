@@ -164,8 +164,17 @@ function SoftRes:handleWhisperCommand(_, message, sender)
             local itemIDString = tostring(Entry.id);
             local entryString = Entry.link;
 
+            -- Compose suffix with bonus and multi-reserve count
+            local SuffixParts = {};
+            local bonus = self:bonusRollForPlayerOnItem(Entry.id, name);
+            if (tonumber(bonus) and bonus > 0) then
+                tinsert(SuffixParts, "+" .. bonus);
+            end
             if (Reserves[itemIDString] > 1) then
-                entryString = (L.CHAT["%s (%sx)"]):format(entryString, Reserves[itemIDString]);
+                tinsert(SuffixParts, tostring(Reserves[itemIDString]) .. "x");
+            end
+            if (#SuffixParts > 0) then
+                entryString = ("%s (%s)"):format(entryString, table.concat(SuffixParts, ", "));
             end
 
             tinsert(Entries, entryString);
@@ -840,7 +849,7 @@ function SoftRes:tooltipLines(itemLink)
         return false;
     end);
 
-    -- Add the reservation details to ActiveReservations (add 2x / 3x etc when same item was reserved multiple times)
+    -- Add the reservation details to ActiveReservations (add +X and/or 2x / 3x etc)
     for _, Entry in pairs(ActiveReservations) do
         local class = self:getPlayerClass(Entry.player, 0);
         local entryString = ("|c00%s%s"):format(
@@ -848,9 +857,19 @@ function SoftRes:tooltipLines(itemLink)
             GL:capitalize(Entry.player)
         );
 
+        local SuffixParts = {};
+        local bonus = self:bonusRollForPlayerOnItem(itemLink, Entry.player);
+        if (tonumber(bonus) and bonus > 0) then
+            tinsert(SuffixParts, "+" .. bonus);
+        end
+
         -- User reserved the same item multiple times
         if (Entry.reservations > 1) then
-            entryString = (L["%s (%sx)"]):format(entryString, Entry.reservations);
+            tinsert(SuffixParts, tostring(Entry.reservations) .. "x");
+        end
+
+        if (#SuffixParts > 0) then
+            entryString = ("%s (%s)"):format(entryString, table.concat(SuffixParts, ", "));
         end
 
         -- Add the actual soft reserves to the tooltip
@@ -916,7 +935,7 @@ function SoftRes:bonusRollForPlayerOnItem(idOrLink, playerName)
         AllLinkedItemIDs = { itemID };
     end
 
-    local nameLower = string.lower(playerName or "");
+    local nameLower = string.lower(GL:disambiguateName(playerName or ""));
     if (GL:empty(nameLower)) then
         return 0;
     end

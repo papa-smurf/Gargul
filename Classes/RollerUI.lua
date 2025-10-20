@@ -109,7 +109,20 @@ function RollerUI:draw(time, itemLink, itemIcon, note, SupportedRolls, userCanUs
         end
 
         Button:SetScript("OnClick", function ()
-            RandomRoll(min, max);
+            local rollMin = min;
+            local rollMax = max;
+
+            -- If this is the MS button, and a bonus roll exists for this item for the current player,
+            -- roll with 100+bonus (or keep higher max if already configured bigger)
+            local isMS = GL:iEquals(identifier, "MS") or (type(L["MS"]) == "string" and GL:iEquals(identifier, L["MS"]))
+            if (isMS) then
+                local bonus = GL.SoftRes:bonusRollForPlayerOnItem(itemLink, GL.User.fqn);
+                if (tonumber(bonus) and bonus > 0) then
+                    rollMax = math.max(rollMax, 100 + bonus);
+                end
+            end
+
+            RandomRoll(rollMin, rollMax);
 
             if (GL.Settings:get("Rolling.closeAfterRoll")) then
                 self:hide();
