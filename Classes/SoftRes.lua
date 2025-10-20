@@ -733,13 +733,23 @@ function SoftRes:playerReserveAmountsByItemID(itemID, inRaidOnly)
         return false;
     end);
 
-    -- Add the reservation details to ActiveReservations (add 2x / 3x etc when same item was reserved multiple times)
+    -- Add the reservation details to ActiveReservations (add +X and/or 2x / 3x etc)
     for _, Entry in pairs(Reservations) do
-        local entryString = Entry.player;
+        local SuffixParts = {};
+        local bonus = self:bonusRollForPlayerOnItem(itemID, Entry.player);
+        if (tonumber(bonus) and bonus > 0) then
+            tinsert(SuffixParts, "+" .. bonus);
+        end
 
-        -- User reserved the same item multiple times
         if (Entry.reservations > 1) then
-            entryString = string.format("%s (%sx)", GL:nameFormat{ name = Entry.player, }, Entry.reservations);
+            tinsert(SuffixParts, string.format("%sx", Entry.reservations));
+        end
+
+        local entryString;
+        if (#SuffixParts > 0) then
+            entryString = string.format("%s (%s)", GL:nameFormat{ name = Entry.player, }, table.concat(SuffixParts, ", "));
+        else
+            entryString = Entry.player;
         end
 
         tinsert(ActiveSoftResDetails, GL:capitalize(entryString));
@@ -879,6 +889,48 @@ function SoftRes:playerReservesOnItem(idOrLink, playerName)
     end
 
     return reserved;
+end
+
+--- Fetch the bonus roll offset for a given player on a given item (or linked variants)
+--- Returns 0 if no bonus is present
+---
+---@param idOrLink number|string
+---@param playerName string
+---@return number
+function SoftRes:bonusRollForPlayerOnItem(idOrLink, playerName)
+    local concernsID = GL:higherThanZero(tonumber(idOrLink));
+    local itemID;
+
+    if (concernsID) then
+        itemID = math.floor(tonumber(idOrLink));
+    else
+        itemID = GL:getItemIDFromLink(idOrLink);
+    end
+
+    if (not itemID) then
+        return 0;
+    end
+
+    local AllLinkedItemIDs = GL:getLinkedItemsForID(itemID, true) or {};
+    if (#AllLinkedItemIDs < 1) then
+        AllLinkedItemIDs = { itemID };
+    end
+
+    local nameLower = string.lower(playerName or "");
+    if (GL:empty(nameLower)) then
+        return 0;
+    end
+
+    local BRByItem = GL.DB:get("SoftRes.BonusRolls." .. nameLower, {});
+    local best = 0;
+    for _, id in pairs(AllLinkedItemIDs or {}) do
+        local val = tonumber(BRByItem[tostring(id)]) or 0;
+        if (val > best) then
+            best = val;
+        end
+    end
+
+    return best;
 end
 
 --- Try to import the data provided in the import window
@@ -1126,8 +1178,10 @@ function SoftRes:importGargulData(data)
     local differentPlusOnes = false;
     local PlusOnes = {};
     local SoftReserveEntries = {};
+    local BonusRollsByPlayer = {};
     for _, Entry in pairs(data.softreserves) do
         local Items = Entry.items or false;
+        local BR = Entry.br; -- Optional compact bonus rolls array aligned with Items
         local name = Entry.name or false;
         local class = Entry.class or false;
         local note = Entry.note or "";
@@ -1162,13 +1216,29 @@ function SoftRes:importGargulData(data)
                 Items = {},
             };
 
-            for _, Item in pairs(Items) do
+            local nameLower = string.lower(name);
+            for index, Item in ipairs(Items) do
                 local itemID = tonumber(Item.id) or 0;
 
                 if (GL:higherThanZero(itemID)) then
                     hasItems = true;
 
                     tinsert(PlayerEntry.Items, itemID);
+
+                    -- Persist bonus roll offsets per player+item when provided
+                    -- BR values are roll highs (e.g. 106). We store the offset over 100 (e.g. 6).
+                    if (type(BR) == "table") then
+                        local brValue = tonumber(BR[index]) or 0;
+                        local offset = 0;
+                        if (brValue > 100) then
+                            offset = brValue - 100;
+                        end
+
+                        if (offset > 0) then
+                            BonusRollsByPlayer[nameLower] = BonusRollsByPlayer[nameLower] or {};
+                            BonusRollsByPlayer[nameLower][tostring(itemID)] = offset;
+                        end
+                    end
                 end
             end
 
@@ -1193,6 +1263,7 @@ function SoftRes:importGargulData(data)
     end
 
     DB.SoftRes.SoftReserves = SoftReserveEntries;
+    DB.SoftRes.BonusRolls = BonusRollsByPlayer;
 
     local HardReserveEntries = {};
     for _, Entry in pairs(data.hardreserves) do
@@ -1412,6 +1483,26 @@ function SoftRes:fixPlayerNames()
             RewiredNames[Reservation.name] = NameDictionary[Reservation.name];
             Reservation.name = NameDictionary[Reservation.name];
         end
+    end
+
+    -- Also rewire any stored bonus roll mappings to the corrected names
+    if (not GL:empty(RewiredNames)) then
+        local BR = DB:get("SoftRes.BonusRolls", {});
+        for oldName, newName in pairs(RewiredNames) do
+            local oldLower = string.lower(oldName);
+            local newLower = string.lower(newName);
+
+            if (BR[oldLower]) then
+                BR[newLower] = BR[newLower] or {};
+                for itemID, value in pairs(BR[oldLower]) do
+                    if (BR[newLower][itemID] == nil) then
+                        BR[newLower][itemID] = value;
+                    end
+                end
+                BR[oldLower] = nil;
+            end
+        end
+        DB.SoftRes.BonusRolls = BR;
     end
 
     return RewiredNames;

@@ -3,7 +3,7 @@
 ## Interface-Wrath: 30405
 ## Interface-Cata: 40402, 40403
 ## Interface-Mists: 50500, 50501
-## Title: Gargul |c00967FD2@project-version@|r
+## Title: Gargul (with bonus rolls) |c00967FD2@project-version@|r
 ## Title-deDE: Gargul |c00967FD2@project-version@|r
 ## Title-esES: Gargul |c00967FD2@project-version@|r
 ## Title-esMX: Gargul |c00967FD2@project-version@|r
