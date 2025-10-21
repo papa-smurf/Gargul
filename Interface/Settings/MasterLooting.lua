@@ -13,8 +13,6 @@ local MasterLooting = GL.Interface.Settings.MasterLooting; ---@type MasterLootin
 function MasterLooting:draw(Parent)
     GL:debug("MasterLootingSettings:draw");
 
-    -- SetLootMethod('Master','Character Name','1')
-
     -- Give classic era users an easy way to change the master looting threshold
     if (GL.isEra) then
         local LootThresholdLabel = GL.AceGUI:Create("Label");
@@ -54,7 +52,7 @@ function MasterLooting:draw(Parent)
         ApplyLootThreshold:SetWidth("80");
         ApplyLootThreshold:SetCallback("OnClick", function()
             local threshold = LootThreshold:GetValue();
-            SetLootMethod('Master', GL.User.name, tostring(threshold));
+            GL.SetLootMethod('Master', GL.User.name, tostring(threshold));
         end);
         Parent:AddChild(ApplyLootThreshold);
 
