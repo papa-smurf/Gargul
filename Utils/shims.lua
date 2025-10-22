@@ -20,6 +20,7 @@ GL.GetItemInfo = GetItemInfo or C_Item.GetItemInfo;
 GL.GetItemInfoInstant = GetItemInfoInstant or C_Item.GetItemInfoInstant;
 
 -- PartyInfo
+GL.SetLootMethod = SetLootMethod or C_PartyInfo.SetLootMethod;
 
 --- More reboust, client-agnostic implementation which always includes a raid index for ease of use
 ---

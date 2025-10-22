@@ -587,7 +587,7 @@ GL.Data.Constants = {
     ]]
     Comm = {
         channel = "GargulComm2",
-        minimumAppVersion = "7.7.0",
+        minimumAppVersion = "7.7.1",
 
         ---@class CommActions
         Actions = {
