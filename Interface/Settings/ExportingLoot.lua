@@ -190,6 +190,7 @@ function ExportingLoot:draw(Parent)
             "@QUALITY",
             "@WINNER",
             "@REALM",
+            "@NORMALIZED - " .. L["Winner including realm if from different realm"],
             "@DATE",
             "@OS",
             "@SR  |c00A79EFF(soft-reserved?)|r",

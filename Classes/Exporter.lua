@@ -326,6 +326,7 @@ function Exporter:transformEntriesToCustomFormat(Entries, format)
                     ["@QUALITY"] = ItemDetails.quality,
                     ["@WINNER"] = GL:nameFormat{ name = AwardEntry.awardedTo, stripRealm = true },
                     ["@REALM"] = GL:getRealmFromName(AwardEntry.awardedTo),
+                    ["@NORMALIZED"] = GL:nameFormat{ name = AwardEntry.awardedTo, },
                     ["@OS"] = GL:toboolean(AwardEntry.OS),
                     ["@SR"] = GL:toboolean(AwardEntry.SR),
                     ["@WL"] = GL:toboolean(AwardEntry.WL),

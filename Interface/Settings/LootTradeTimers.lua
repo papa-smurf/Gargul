@@ -24,8 +24,8 @@ function LootTradeTimers:draw(Parent)
     NumberOfTimerBars:SetLabel("Maximum number of active countdown bars");
     NumberOfTimerBars.label:SetTextColor(1, .95686, .40784);
     NumberOfTimerBars:SetFullWidth(true);
-    NumberOfTimerBars:SetValue(GL.Settings:get("LootTradeTimers.maximumNumberOfBars", 12));
-    NumberOfTimerBars:SetSliderValues(1, 100, 1);
+    NumberOfTimerBars:SetValue(min(GL.Settings:get("LootTradeTimers.maximumNumberOfBars", 12), 12));
+    NumberOfTimerBars:SetSliderValues(1, 12, 1);
     NumberOfTimerBars:SetCallback("OnValueChanged", function(Slider)
         local value = tonumber(Slider:GetValue());
 
