@@ -31,6 +31,15 @@ GL.SetLootMethod = function(method, player, threshold)
         return print(ERR_NOT_IN_GROUP);
     end
 
+    local Methods = {
+        freeforall = 0,
+        roundrobin = 1,
+        master = 2,
+        group = 3,
+        needbeforegreed = 4,
+        personalloot = 5,
+    };
+
     local eventID = "SetLootMethodLootMethodChangedListener";
     GL.Events:unregister(eventID);
 
@@ -43,45 +52,53 @@ GL.SetLootMethod = function(method, player, threshold)
     end
 
     if (threshold) then
-        GL.Events:register(eventID, "PARTY_LOOT_METHOD_CHANGED", function ()
-GL:xd("Loot Method SET"); ---@TODO: REMOVE!
-            GL.Events:unregister(eventID);
-
-            GL:after(.5, delayedSetThresholdTimer, function()
+        local skipSetLootMethod = (function ()
+            local currentLootMethod = GL.GetLootMethod();
+            if (currentLootMethod == method
+                or currentLootMethod == Methods[method]
+            ) then
                 GL.SetLootThreshold(threshold);
-            end);
-        end);
+                return true;
+            end
 
-        GL:after(1, unregisterEventTimer, function ()
-            GL.Events:unregister(eventID);
-        end);
+            GL.Events:register(eventID, "PARTY_LOOT_METHOD_CHANGED", function ()
+                GL.Events:unregister(eventID);
+
+                GL:after(.5, delayedSetThresholdTimer, function()
+                    GL.SetLootThreshold(threshold);
+                end);
+            end);
+
+            GL:after(1, unregisterEventTimer, function ()
+                GL.Events:unregister(eventID);
+            end);
+
+            return false;
+        end)();
+
+        if (skipSetLootMethod) then
+            return;
+        end
     end
 
-GL:xd("Setting Loot Method"); ---@TODO: REMOVE!
     if (_G.SetLootMethod) then
         return SetLootMethod(method, player);
     end
-
-    local Methods = {
-        freeforall = 0,
-        roundrobin = 1,
-        master = 2,
-        group = 3,
-        needbeforegreed = 4,
-        personalloot = 5,
-    };
 
     C_PartyInfo.SetLootMethod(Methods[method], player);
 end;
 
 ---@param threshold string
 ---@param retry? boolean
+---
+---@test /script _G.Gargul.SetLootThreshold("legendary");
 GL.SetLootThreshold = function(threshold, retry)
     local eventID = "SetLootThresholdLootMethodChangedListener";
     GL.Events:unregister(eventID);
 
-    local timerID = "SetLootThresholdRetryTimer";
-    GL:cancelTimer(timerID);
+    local getThresholdtimerID = "GetLootThresholdRetryTimer";
+    local setThresholdtimerID = "SetLootThresholdRetryTimer";
+    GL:cancelTimer{ getThresholdtimerID, setThresholdtimerID };
 
     local Thresholds = {
         poor = 0,
@@ -97,17 +114,26 @@ GL.SetLootThreshold = function(threshold, retry)
 
     if (not retry) then
         GL.Events:register(eventID, "PARTY_LOOT_METHOD_CHANGED", function ()
-GL:xd("Done, check if threshold is correct"); ---@TODO: REMOVE!
-            GL:cancelTimer(timerID);
+            GL:cancelTimer(setThresholdtimerID);
+
+            if (GetLootThreshold() ~= threshold) then
+                retry = true;
+                GL.SetLootThreshold(threshold, retry);
+            end
         end);
 
         retry = true;
-        GL:after(.5, timerID, function ()
-            GL.SetLootThreshold(threshold, retry)
+        GL:after(.5, setThresholdtimerID, function ()
+            GL.SetLootThreshold(threshold, retry);
+        end);
+    else
+        GL:after(.5, getThresholdtimerID, function ()
+            if (GetLootThreshold() ~= Thresholds[threshold]) then
+                GL:error(("Unable to set loot threshold to %s"):format(threshold));
+            end
         end);
     end
 
-GL:xd("Setting Loot Threshold"); ---@TODO: REMOVE!
     local method = SetLootThreshold and SetLootThreshold or C_PartyInfo.SetLootThreshold;
     method(Thresholds[threshold]);
 end
