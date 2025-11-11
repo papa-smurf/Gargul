@@ -323,7 +323,7 @@ function GL:afterCombatDo(func, whenInCombatFunc)
         whenInCombatFunc();
     end
 
-    local eventID = self:uuid() .. GetTime() .. math.random(1, 1000);
+    local eventID = "afterCombat" .. self:uuid() .. GetTime() .. math.random(1, 1000);
     self.Events:register(eventID, "PLAYER_REGEN_ENABLED", function ()
         GL.Events:unregister(eventID);
         return func();
@@ -1282,8 +1282,16 @@ function GL:interval(seconds, identifier, func)
     return GL.Timers[identifier];
 end
 
----@param identifier string
+---@param identifier string|string[]:string
 function GL:cancelTimer(identifier)
+    if (type(identifier) == "table") then
+        for _, timerID in pairs(identifier) do
+            GL:cancelTimer(timerID);
+        end
+
+        return;
+    end
+
     if (not GL.Timers[identifier]) then
         return;
     end
