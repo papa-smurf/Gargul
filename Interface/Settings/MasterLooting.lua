@@ -51,8 +51,19 @@ function MasterLooting:draw(Parent)
         ApplyLootThreshold:SetText("Apply");
         ApplyLootThreshold:SetWidth("80");
         ApplyLootThreshold:SetCallback("OnClick", function()
+            local Thresholds = {
+                [0] = "poor",
+                [1] = "common",
+                [2] = "uncommon",
+                [3] = "rare",
+                [4] = "epic",
+                [5] = "legendary",
+                [6] = "artifact",
+                [7] = "heirloom",
+                [8] = "wowtoken",
+            };
             local threshold = LootThreshold:GetValue();
-            GL.SetLootMethod('Master', GL.User.name, tostring(threshold));
+            GL.SetLootMethod('master', GL.User.name, Thresholds[threshold]);
         end);
         Parent:AddChild(ApplyLootThreshold);
 
