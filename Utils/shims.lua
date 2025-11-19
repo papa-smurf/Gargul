@@ -27,7 +27,7 @@ GL.GetItemInfoInstant = GetItemInfoInstant or C_Item.GetItemInfoInstant;
 ---
 ---@test /script _G.Gargul.SetLootMethod("master", _G.Gargul.User.name, "common");
 GL.SetLootMethod = function(method, player, threshold)
-    if (not GL.User.isInParty) then
+    if (not GL.User.isInGroup) then
         return print(ERR_NOT_IN_GROUP);
     end
 
