@@ -32,30 +32,50 @@ local AwardReminderDialog = Dialog.new("NEW_ROLL_WITHOUT_AWARDING_PREVIOUS")
         {
             label = L["New roll"],
             onClick = function (self, Data)
-                GL.Settings:set("UI.RollOff.warnWhenNotAwarded", self.AppendedFrame:GetChecked());
+                GL.Settings:set("UI.RollOff.warnWhenNotAwarded", self.AppendedFrame.Checkbox:GetChecked());
                 Data.onAccept();
             end
         },
         {
             label = L["Cancel"],
             onClick = function (self)
-                GL.Settings:set("UI.RollOff.warnWhenNotAwarded", self.AppendedFrame:GetChecked());
+                GL.Settings:set("UI.RollOff.warnWhenNotAwarded", self.AppendedFrame.Checkbox:GetChecked());
             end
         },
     })
     :appendFrame(
         (function()
+            local wrapperName = "GARGUL_NEW_ROLL_WITHOUT_AWARDING_PREVIOUS_DIALOG_CHECKBOX_WRAPPER";
+            local Wrapper = _G[wrapperName] or CreateFrame("Frame", wrapperName);
+
             local checkBoxName = "GARGUL_NEW_ROLL_WITHOUT_AWARDING_PREVIOUS_DIALOG_CHECKBOX";
-            local Checkbox = _G[checkBoxName] or CreateFrame("CheckButton", "GARGUL_NEW_ROLL_WITHOUT_AWARDING_PREVIOUS_DIALOG_CHECKBOX", nil, "UICheckButtonTemplate");
+            local Checkbox = _G[checkBoxName] or CreateFrame("CheckButton", "GARGUL_NEW_ROLL_WITHOUT_AWARDING_PREVIOUS_DIALOG_CHECKBOX", Wrapper, "UICheckButtonTemplate");
             Checkbox:SetChecked(true);
             _G[checkBoxName .. "Text"]:SetText(L["Remind me to award"]);
+            Checkbox:SetPoint("TOPLEFT", Wrapper, "TOPLEFT");
 
-            return Checkbox;
+            Wrapper:SetWidth(Checkbox:GetWidth() + 50);
+            Wrapper:SetHeight(Checkbox:GetHeight() + 10);
+            Wrapper.Checkbox = Checkbox;
+
+            return Wrapper;
         end)()
     )
     :setOnShow(function(Dialog, DialogFrame)
         GL.Interface:get(MasterLooterUI, "Button.Start"):SetDisabled(true);
-        Dialog.AppendedFrame:SetPoint("LEFT", _G[DialogFrame:GetName() .. "Button1"], "LEFT", 0, 0); -- Align with leftmost button
+
+        -- Align checkbox wrapper to item
+        Dialog.AppendedFrame:Show();
+        Dialog.AppendedFrame:ClearAllPoints();
+        Dialog.AppendedFrame:SetPoint("TOP", DialogFrame.ItemFrame, "BOTTOM");
+
+        -- Align dialog buttons to checkbox wrapper
+        StaticPopup1.ButtonContainer:ClearAllPoints();
+        StaticPopup1.ButtonContainer:SetPoint("TOP", Dialog.AppendedFrame, "BOTTOM");
+
+        -- Aligh checkbox in wrapper to left of buttons
+        Dialog.AppendedFrame.Checkbox:ClearAllPoints();
+        Dialog.AppendedFrame.Checkbox:SetPoint("BOTTOMLEFT", StaticPopup1.ButtonContainer, "TOPLEFT");
     end)
     :setOnHide(function()
         GL.Interface:get(MasterLooterUI, "Button.Start"):SetDisabled(false);
