@@ -3,6 +3,7 @@ Documentation:
 https://warcraft.wiki.gg/wiki/Creating_simple_pop-up_dialog_boxes
 https://wowpedia.fandom.com/wiki/Creating_simple_pop-up_dialog_boxes
 https://www.townlong-yak.com/framexml/era/Blizzard_StaticPopup/StaticPopup.lua
+https://www.townlong-yak.com/framexml/live/Blizzard_StaticPopup_Game/GameDialog.lua
 
 Additional information:
 Dialogs support up to 4 buttons
