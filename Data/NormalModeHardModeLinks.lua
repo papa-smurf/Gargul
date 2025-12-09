@@ -5,7 +5,7 @@ local _, GL = ...;
 GL.Data = GL.Data or {};
 
 local NormalModeHardModeLinks = {
-	-- Cobra-Lash Boots
+    -- Cobra-Lash Boots
     [30104] = 33482,
     -- Gladiator's Felweave Amice
     [30186] = 42718,

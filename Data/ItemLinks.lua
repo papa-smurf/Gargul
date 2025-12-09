@@ -2925,17 +2925,17 @@ GL.Data.ItemLinks = {
     },
     -- Dragonslayer's Signet
     ["18403"] = {
-        18422, -- Head of Onyxia (Horde)
+        18422, -- Head of Onyxia
     },
     -- Onyxia Tooth Pendant
     ["18404"] = {
-        18422, -- Head of Onyxia (Horde)
+        18422, -- Head of Onyxia
     },
     -- Onyxia Blood Talisman
     ["18406"] = {
-        18422, -- Head of Onyxia (Horde)
+        18422, -- Head of Onyxia
     },
-    -- Head of Onyxia (Horde)
+    -- Head of Onyxia
     ["18422"] = {
         18403, -- Dragonslayer's Signet
         18404, -- Onyxia Tooth Pendant
@@ -21592,6 +21592,894 @@ GL.Data.ItemLinks = {
         86733, -- Red Crane Mantle
         86738, -- Red Crane Spaulders
     },
+    -- Renataki's Soul Charm
+    ["94512"] = {
+        95997, -- Renataki's Soul Charm
+    },
+    -- Wushoolay's Final Choice
+    ["94513"] = {
+        96041, -- Wushoolay's Final Choice
+    },
+    -- Horridon's Last Gasp
+    ["94514"] = {
+        96013, -- Horridon's Last Gasp
+    },
+    -- Fabled Feather of Ji-Kun
+    ["94515"] = {
+        96098, -- Fabled Feather of Ji-Kun
+    },
+    -- Fortitude of the Zandalari
+    ["94516"] = {
+        96049, -- Fortitude of the Zandalari
+    },
+    -- Delicate Vial of the Sanguinaire
+    ["94518"] = {
+        96151, -- Delicate Vial of the Sanguinaire
+    },
+    -- Primordius' Talisman of Rage
+    ["94519"] = {
+        96129, -- Primordius' Talisman of Rage
+    },
+    -- Inscribed Bag of Hydra-Spawn
+    ["94520"] = {
+        96084, -- Inscribed Bag of Hydra-Spawn
+    },
+    -- Breath of the Hydra
+    ["94521"] = {
+        96083, -- Breath of the Hydra
+    },
+    -- Talisman of Bloodlust
+    ["94522"] = {
+        96120, -- Talisman of Bloodlust
+    },
+    -- Bad Juju
+    ["94523"] = {
+        96037, -- Bad Juju
+    },
+    -- Unerring Vision of Lei Shen
+    ["94524"] = {
+        96186, -- Unerring Vision of Lei Shen
+    },
+    -- Stolen Relic of Zuldazar
+    ["94525"] = {
+        96135, -- Stolen Relic of Zuldazar
+    },
+    -- Spark of Zandalar
+    ["94526"] = {
+        96026, -- Spark of Zandalar
+    },
+    -- Ji-Kun's Rising Winds
+    ["94527"] = {
+        96099, -- Ji-Kun's Rising Winds
+    },
+    -- Soul Barrier
+    ["94528"] = {
+        96183, -- Soul Barrier
+    },
+    -- Gaze of the Twins
+    ["94529"] = {
+        96171, -- Gaze of the Twins
+    },
+    -- Lightning-Imbued Chalice
+    ["94530"] = {
+        96189, -- Lightning-Imbued Chalice
+    },
+    -- Cha-Ye's Essence of Brilliance
+    ["94531"] = {
+        96144, -- Cha-Ye's Essence of Brilliance
+    },
+    -- Rune of Re-Origination
+    ["94532"] = {
+        96174, -- Rune of Re-Origination
+    },
+    -- Worldbreaker's Stormscythe
+    ["94722"] = {
+        96004, -- Worldbreaker's Stormscythe
+    },
+    -- Chestplate of Violent Detonation
+    ["94723"] = {
+        96002, -- Chestplate of Violent Detonation
+    },
+    -- Lightning-Eye Hood
+    ["94724"] = {
+        95998, -- Lightning-Eye Hood
+    },
+    -- Static-Shot Shoulderguards
+    ["94725"] = {
+        96000, -- Static-Shot Shoulderguards
+    },
+    -- Cloudbreaker Greatbelt
+    ["94726"] = {
+        96001, -- Cloudbreaker Greatbelt
+    },
+    -- Bracers of Constant Implosion
+    ["94727"] = {
+        96003, -- Bracers of Constant Implosion
+    },
+    -- Spearman's Jingling Leggings
+    ["94728"] = {
+        95999, -- Spearman's Jingling Leggings
+    },
+    -- Jin'rokh's Soulcrystal
+    ["94729"] = {
+        96005, -- Jin'rokh's Soulcrystal
+    },
+    -- Soulblade of the Breaking Storm
+    ["94730"] = {
+        96012, -- Soulblade of the Breaking Storm
+    },
+    -- Robes of Static Bursts
+    ["94731"] = {
+        96009, -- Robes of Static Bursts
+    },
+    -- Infinitely Conducting Bracers
+    ["94732"] = {
+        96014, -- Infinitely Conducting Bracers
+    },
+    -- Fissure-Split Shoulderwraps
+    ["94733"] = {
+        96008, -- Fissure-Split Shoulderwraps
+    },
+    -- Ionized Yojamban Carapace
+    ["94734"] = {
+        96016, -- Ionized Yojamban Carapace
+    },
+    -- Drape of Booming Nights
+    ["94735"] = {
+        96011, -- Drape of Booming Nights
+    },
+    -- Ghostbinder Greatboots
+    ["94736"] = {
+        96015, -- Ghostbinder Greatboots
+    },
+    -- Lightningweaver Gauntlets
+    ["94737"] = {
+        96006, -- Lightningweaver Gauntlets
+    },
+    -- Jin'rokh's Dreamshard
+    ["94738"] = {
+        96010, -- Jin'rokh's Dreamshard
+    },
+    -- Al'set's Tormented Leggings
+    ["94739"] = {
+        96007, -- Al'set's Tormented Leggings
+    },
+    -- Jalak's Maelstrom Staff
+    ["94740"] = {
+        96019, -- Jalak's Maelstrom Staff
+    },
+    -- Sul'lithuz Sandmail
+    ["94741"] = {
+        96021, -- Sul'lithuz Sandmail
+    },
+    -- Frozen Warlord's Bracers
+    ["94742"] = {
+        96022, -- Frozen Warlord's Bracers
+    },
+    -- Bindings of Multiplicative Strikes
+    ["94743"] = {
+        96020, -- Bindings of Multiplicative Strikes
+    },
+    -- Puncture-Proof Greathelm
+    ["94744"] = {
+        96024, -- Puncture-Proof Greathelm
+    },
+    -- Horn-Rimmed Doomcloak
+    ["94745"] = {
+        96025, -- Horn-Rimmed Doomcloak
+    },
+    -- Talisman of Living Poison
+    ["94746"] = {
+        96018, -- Talisman of Living Poison
+    },
+    -- Bloodlord's Bloodsoaked Legplates
+    ["94747"] = {
+        96023, -- Bloodlord's Bloodsoaked Legplates
+    },
+    -- Wastewalker's Sandblasted Drape
+    ["94748"] = {
+        96017, -- Wastewalker's Sandblasted Drape
+    },
+    -- Dinomancer's Spiritbinding Spire
+    ["94749"] = {
+        96029, -- Dinomancer's Spiritbinding Spire
+    },
+    -- Vaccinator's Armwraps
+    ["94750"] = {
+        96028, -- Vaccinator's Armwraps
+    },
+    -- Armplates of the Vanquished Abomination
+    ["94751"] = {
+        96036, -- Armplates of the Vanquished Abomination
+    },
+    -- Flamecaster's Burning Crown
+    ["94752"] = {
+        96027, -- Flamecaster's Burning Crown
+    },
+    -- Spaulders of Dinomancy
+    ["94753"] = {
+        96034, -- Spaulders of Dinomancy
+    },
+    -- Horridon's Tusk Fragment
+    ["94754"] = {
+        96030, -- Horridon's Tusk Fragment
+    },
+    -- Venomlord's Totemic Wand
+    ["94755"] = {
+        96032, -- Venomlord's Totemic Wand
+    },
+    -- Roots of Rampaging Earth
+    ["94756"] = {
+        96033, -- Roots of Rampaging Earth
+    },
+    -- Fingers of the Night
+    ["94757"] = {
+        96173, -- Fingers of the Night
+    },
+    -- Zerat, Malakk's Soulburning Greatsword
+    ["94758"] = {
+        96047, -- Zerat, Malakk's Soulburning Greatsword
+    },
+    -- Kura-Kura, Kazra'jin's Skullcleaver
+    ["94759"] = {
+        96038, -- Kura-Kura, Kazra'jin's Skullcleaver
+    },
+    -- Amun-Thoth, Sul's Spiritrending Talons
+    ["94760"] = {
+        96042, -- Amun-Thoth, Sul's Spiritrending Talons
+    },
+    -- Zandalari Robes of the Final Rite
+    ["94761"] = {
+        96040, -- Zandalari Robes of the Final Rite
+    },
+    -- Mar'li's Bloodstained Sandals
+    ["94762"] = {
+        96039, -- Mar'li's Bloodstained Sandals
+    },
+    -- Gaze of Gara'jal
+    ["94763"] = {
+        96044, -- Gaze of Gara'jal
+    },
+    -- Overloaded Bladebreaker Cuirass
+    ["94764"] = {
+        96046, -- Overloaded Bladebreaker Cuirass
+    },
+    -- Robes of Treacherous Ground
+    ["94765"] = {
+        96043, -- Robes of Treacherous Ground
+    },
+    -- Talisman of Angry Spirits
+    ["94766"] = {
+        96048, -- Talisman of Angry Spirits
+    },
+    -- Loa-Ridden Bracers
+    ["94767"] = {
+        96045, -- Loa-Ridden Bracers
+    },
+    -- Shellsplitter Greataxe
+    ["94768"] = {
+        96058, -- Shellsplitter Greataxe
+    },
+    -- Shattered Tortoiseshell Longbow
+    ["94769"] = {
+        96050, -- Shattered Tortoiseshell Longbow
+    },
+    -- Rockfall Ribwraps
+    ["94770"] = {
+        96051, -- Rockfall Ribwraps
+    },
+    -- Shell-Coated Wristplates
+    ["94771"] = {
+        96056, -- Shell-Coated Wristplates
+    },
+    -- Quakestompers
+    ["94772"] = {
+        96054, -- Quakestompers
+    },
+    -- Shoulderguards of Centripetal Destruction
+    ["94773"] = {
+        96055, -- Shoulderguards of Centripetal Destruction
+    },
+    -- Beakbreaker Greatcloak
+    ["94774"] = {
+        96059, -- Beakbreaker Greatcloak
+    },
+    -- Beady-Eye Bracers
+    ["94775"] = {
+        96053, -- Beady-Eye Bracers
+    },
+    -- Amulet of the Primal Turtle
+    ["94776"] = {
+        96057, -- Amulet of the Primal Turtle
+    },
+    -- Grips of Vampiric Cruelty
+    ["94777"] = {
+        96052, -- Grips of Vampiric Cruelty
+    },
+    -- Tortos' Discarded Shell
+    ["94778"] = {
+        96064, -- Tortos' Discarded Shell
+    },
+    -- Robes of Concussive Shocks
+    ["94779"] = {
+        96066, -- Robes of Concussive Shocks
+    },
+    -- Crystal-Claw Gloves
+    ["94780"] = {
+        96062, -- Crystal-Claw Gloves
+    },
+    -- Azure Shell Bracers
+    ["94781"] = {
+        96060, -- Azure Shell Bracers
+    },
+    -- Stonegaze Hood
+    ["94782"] = {
+        96061, -- Stonegaze Hood
+    },
+    -- Spaulders of Quaking Fear
+    ["94783"] = {
+        96067, -- Spaulders of Quaking Fear
+    },
+    -- Refreshing Abalone Girdle
+    ["94784"] = {
+        96068, -- Refreshing Abalone Girdle
+    },
+    -- Shimmershell Cape
+    ["94785"] = {
+        96063, -- Shimmershell Cape
+    },
+    -- Vampire Bat-Hide Bracers
+    ["94786"] = {
+        96065, -- Vampire Bat-Hide Bracers
+    },
+    -- Tortos' Shellseizers
+    ["94787"] = {
+        96069, -- Tortos' Shellseizers
+    },
+    -- Megaera's Poisoned Fang
+    ["94788"] = {
+        96070, -- Megaera's Poisoned Fang
+    },
+    -- Rot-Proof Greatplate
+    ["94789"] = {
+        96075, -- Rot-Proof Greatplate
+    },
+    -- Grips of Cinderflesh
+    ["94790"] = {
+        96073, -- Grips of Cinderflesh
+    },
+    -- Poisonblood Bladeshoulders
+    ["94791"] = {
+        96072, -- Poisonblood Bladeshoulders
+    },
+    -- Plated Toothbreaker Girdle
+    ["94792"] = {
+        96074, -- Plated Toothbreaker Girdle
+    },
+    -- Hydraskull Choker
+    ["94793"] = {
+        96077, -- Hydraskull Choker
+    },
+    -- Quadra-Head Brooch
+    ["94794"] = {
+        96071, -- Quadra-Head Brooch
+    },
+    -- Spinescale Seal
+    ["94795"] = {
+        96076, -- Spinescale Seal
+    },
+    -- Fetish of the Hydra
+    ["94796"] = {
+        96082, -- Fetish of the Hydra
+    },
+    -- Chain of Consuming Magic
+    ["94797"] = {
+        96087, -- Chain of Consuming Magic
+    },
+    -- Ice-Scored Treads
+    ["94798"] = {
+        96088, -- Ice-Scored Treads
+    },
+    -- Sandals of Arcane Fury
+    ["94799"] = {
+        96078, -- Sandals of Arcane Fury
+    },
+    -- Hood of Smoldering Flesh
+    ["94800"] = {
+        96085, -- Hood of Smoldering Flesh
+    },
+    -- Gleaming-Eye Shoulderpads
+    ["94801"] = {
+        96079, -- Gleaming-Eye Shoulderpads
+    },
+    -- Links of the Bifurcated Tongue
+    ["94802"] = {
+        96086, -- Links of the Bifurcated Tongue
+    },
+    -- Megaera's Shining Eye
+    ["94803"] = {
+        96081, -- Megaera's Shining Eye
+    },
+    -- Frostborn Wristwraps
+    ["94804"] = {
+        96080, -- Frostborn Wristwraps
+    },
+    -- Giorgio's Caduceus of Pure Moods
+    ["94805"] = {
+        96092, -- Giorgio's Caduceus of Pure Moods
+    },
+    -- Robe of Midnight Down
+    ["94806"] = {
+        96091, -- Robe of Midnight Down
+    },
+    -- Egg-Shard Grips
+    ["94807"] = {
+        96097, -- Egg-Shard Grips
+    },
+    -- Grasp of the Ruthless Mother
+    ["94808"] = {
+        96094, -- Grasp of the Ruthless Mother
+    },
+    -- Crown of Potentiated Birth
+    ["94809"] = {
+        96095, -- Crown of Potentiated Birth
+    },
+    -- Talonrender Chestplate
+    ["94810"] = {
+        96096, -- Talonrender Chestplate
+    },
+    -- Featherflight Belt
+    ["94811"] = {
+        96093, -- Featherflight Belt
+    },
+    -- Pinionfeather Greatcloak
+    ["94812"] = {
+        96089, -- Pinionfeather Greatcloak
+    },
+    -- Cord of Cacophonous Cawing
+    ["94813"] = {
+        96090, -- Cord of Cacophonous Cawing
+    },
+    -- Durumu's Baleful Gaze
+    ["94814"] = {
+        96100, -- Durumu's Baleful Gaze
+    },
+    -- Legplates of the Dark Parasite
+    ["94815"] = {
+        96105, -- Legplates of the Dark Parasite
+    },
+    -- Crimson Bloom Legguards
+    ["94816"] = {
+        96101, -- Crimson Bloom Legguards
+    },
+    -- Treads of the Blind Eye
+    ["94817"] = {
+        96106, -- Treads of the Blind Eye
+    },
+    -- Aberrant Chestguard of Torment
+    ["94818"] = {
+        96103, -- Aberrant Chestguard of Torment
+    },
+    -- Links of the Disintegrator
+    ["94819"] = {
+        96102, -- Links of the Disintegrator
+    },
+    -- Caustic Spike Bracers
+    ["94820"] = {
+        96104, -- Caustic Spike Bracers
+    },
+    -- Artery Rippers
+    ["94821"] = {
+        96107, -- Artery Rippers
+    },
+    -- Reinforced Mirror-Sheen Cloak
+    ["94822"] = {
+        96108, -- Reinforced Mirror-Sheen Cloak
+    },
+    -- Ritual Dagger of the Mind's Eye
+    ["94922"] = {
+        96115, -- Ritual Dagger of the Mind's Eye
+    },
+    -- Leggings of Pulsing Blood
+    ["94923"] = {
+        96111, -- Leggings of Pulsing Blood
+    },
+    -- Iceshatter Gauntlets
+    ["94924"] = {
+        96118, -- Iceshatter Gauntlets
+    },
+    -- Lifedrainer's Sordid Grip
+    ["94925"] = {
+        96110, -- Lifedrainer's Sordid Grip
+    },
+    -- Vein-Cover Bracers
+    ["94926"] = {
+        96117, -- Vein-Cover Bracers
+    },
+    -- Sandals of the Starving Eye
+    ["94927"] = {
+        96116, -- Sandals of the Starving Eye
+    },
+    -- Chilblain Spaulders
+    ["94928"] = {
+        96112, -- Chilblain Spaulders
+    },
+    -- Deadly Glare Cape
+    ["94929"] = {
+        96113, -- Deadly Glare Cape
+    },
+    -- Legplates of Re-Emergence
+    ["94930"] = {
+        96119, -- Legplates of Re-Emergence
+    },
+    -- Durumu's Captive Eyeball
+    ["94931"] = {
+        96114, -- Durumu's Captive Eyeball
+    },
+    -- Acid-Spine Bonemace
+    ["94937"] = {
+        96130, -- Acid-Spine Bonemace
+    },
+    -- Pathogenic Gauntlets
+    ["94938"] = {
+        96124, -- Pathogenic Gauntlets
+    },
+    -- Gloves of Cushioned Air
+    ["94939"] = {
+        96121, -- Gloves of Cushioned Air
+    },
+    -- Bracers of Mutagenic Fervor
+    ["94940"] = {
+        96122, -- Bracers of Mutagenic Fervor
+    },
+    -- Metabolically Boosted Shoulderplates
+    ["94941"] = {
+        96126, -- Metabolically Boosted Shoulderplates
+    },
+    -- Hydra-Scale Bloodcloak
+    ["94942"] = {
+        96127, -- Hydra-Scale Bloodcloak
+    },
+    -- Synapse-String Handguards
+    ["94943"] = {
+        96123, -- Synapse-String Handguards
+    },
+    -- Black Blood Legplates
+    ["94944"] = {
+        96125, -- Black Blood Legplates
+    },
+    -- Greatshield of the Gloaming
+    ["94945"] = {
+        96140, -- Greatshield of the Gloaming
+    },
+    -- Leggings of the Malformed Sapling
+    ["94946"] = {
+        96136, -- Leggings of the Malformed Sapling
+    },
+    -- Helix-Breaker Gloves
+    ["94947"] = {
+        96132, -- Helix-Breaker Gloves
+    },
+    -- Bracers of Fragile Bone
+    ["94948"] = {
+        96134, -- Bracers of Fragile Bone
+    },
+    -- Clear-Mind Helm
+    ["94949"] = {
+        96137, -- Clear-Mind Helm
+    },
+    -- Spaulders of Primordial Growth
+    ["94950"] = {
+        96139, -- Spaulders of Primordial Growth
+    },
+    -- Robes of Mutagenic Blood
+    ["94951"] = {
+        96131, -- Robes of Mutagenic Blood
+    },
+    -- Bonemender Bracers
+    ["94952"] = {
+        96138, -- Bonemender Bracers
+    },
+    -- Leggings of Ebon Veins
+    ["94953"] = {
+        96133, -- Leggings of Ebon Veins
+    },
+    -- Hand of the Dark Animus
+    ["94954"] = {
+        96142, -- Hand of the Dark Animus
+    },
+    -- Athame of the Sanguine Ritual
+    ["94955"] = {
+        96146, -- Athame of the Sanguine Ritual
+    },
+    -- Matter-Swapped Legplates
+    ["94956"] = {
+        96149, -- Matter-Swapped Legplates
+    },
+    -- Anima-Ringed Fingers
+    ["94957"] = {
+        96148, -- Anima-Ringed Fingers
+    },
+    -- Crown of the Golden Golem
+    ["94958"] = {
+        96150, -- Crown of the Golden Golem
+    },
+    -- Hood of the Crimson Wake
+    ["94959"] = {
+        96143, -- Hood of the Crimson Wake
+    },
+    -- Constantly Accelerating Cloak
+    ["94960"] = {
+        96145, -- Constantly Accelerating Cloak
+    },
+    -- Gore-Soaked Gear
+    ["94961"] = {
+        96141, -- Gore-Soaked Gear
+    },
+    -- Worldbinder Leggings
+    ["94962"] = {
+        96147, -- Worldbinder Leggings
+    },
+    -- Voice of the Quilen
+    ["94963"] = {
+        96153, -- Voice of the Quilen
+    },
+    -- Qon's Flaming Scimitar
+    ["94964"] = {
+        96162, -- Qon's Flaming Scimitar
+    },
+    -- Orb of Arcing Lightning
+    ["94965"] = {
+        96158, -- Orb of Arcing Lightning
+    },
+    -- Saddle-Scarred Leggings
+    ["94966"] = {
+        96155, -- Saddle-Scarred Leggings
+    },
+    -- Spurs of the Storm Cavalry
+    ["94967"] = {
+        96159, -- Spurs of the Storm Cavalry
+    },
+    -- Dam'ren's Frozen Footguards
+    ["94968"] = {
+        96156, -- Dam'ren's Frozen Footguards
+    },
+    -- Ro'shak's Molten Chain
+    ["94969"] = {
+        96160, -- Ro'shak's Molten Chain
+    },
+    -- Quet'zal's Crackling Cord
+    ["94970"] = {
+        96154, -- Quet'zal's Crackling Cord
+    },
+    -- Iron Qon's Boot Knife
+    ["94971"] = {
+        96152, -- Iron Qon's Boot Knife
+    },
+    -- Rein-Binder's Fists
+    ["94972"] = {
+        96161, -- Rein-Binder's Fists
+    },
+    -- Wu-Lai, Bladed Fan of the Empyreans
+    ["94973"] = {
+        96163, -- Wu-Lai, Bladed Fan of the Consorts
+    },
+    -- Suen-Wo, Spire of the Falling Sun
+    ["94974"] = {
+        96167, -- Suen-Wo, Spire of the Falling Sun
+    },
+    -- Legguards of Scintillating Scales
+    ["94975"] = {
+        96035, -- Legguards of Scintillating Scales
+    },
+    -- Tidal Force Treads
+    ["94976"] = {
+        96170, -- Tidal Force Treads
+    },
+    -- Robes of the Moon Lotus
+    ["94977"] = {
+        96164, -- Robes of the Moon Lotus
+    },
+    -- Girdle of Night and Day
+    ["94978"] = {
+        96169, -- Girdle of Night and Day
+    },
+    -- Bracers of the Midnight Comet
+    ["94979"] = {
+        96168, -- Bracers of the Midnight Comet
+    },
+    -- Passionfire Choker
+    ["94980"] = {
+        96165, -- Passionfire Choker
+    },
+    -- Moonjade Necklace
+    ["94981"] = {
+        96172, -- Moonjade Necklace
+    },
+    -- Uroe, Harbinger of Terror
+    ["94982"] = {
+        96181, -- Uroe, Harbinger of Terror
+    },
+    -- Shan-Dun, Breaker of Hope
+    ["94983"] = {
+        96175, -- Shan-Dun, Breaker of Hope
+    },
+    -- Doomed Crown of Lei Shen
+    ["94984"] = {
+        96178, -- Doomed Crown of Lei Shen
+    },
+    -- Legplates of Whipping Ionization
+    ["94985"] = {
+        96180, -- Legplates of Whipping Ionization
+    },
+    -- Conduit-Breaker Chain Leggings
+    ["94986"] = {
+        96177, -- Conduit-Breaker Chain Leggings
+    },
+    -- Fusion Slasher Chestguard
+    ["94987"] = {
+        96176, -- Fusion Slasher Chestguard
+    },
+    -- Torall, Rod of the Shattered Throne
+    ["94988"] = {
+        96187, -- Torall, Rod of the Shattered Throne
+    },
+    -- Lei Shen's Grounded Carapace
+    ["94989"] = {
+        96193, -- Lei Shen's Grounded Carapace
+    },
+    -- Legwraps of Cardinality
+    ["94990"] = {
+        96184, -- Legwraps of Cardinality
+    },
+    -- Grips of Slicing Electricity
+    ["94991"] = {
+        96191, -- Grips of Slicing Electricity
+    },
+    -- Leggings of the Violent Gale
+    ["94992"] = {
+        96192, -- Leggings of the Violent Gale
+    },
+    -- Gloves of the Maimed Vizier
+    ["94993"] = {
+        96185, -- Gloves of the Maimed Vizier
+    },
+    -- Soul Prism of Lei Shen
+    ["94994"] = {
+        96188, -- Soul Prism of Lei Shen
+    },
+    -- Abandoned Spaulders of Arrowflight
+    ["95060"] = {
+        96242, -- Abandoned Spaulders of Arrowflight
+    },
+    -- Lost Shoulders of Fire
+    ["95061"] = {
+        96235, -- Lost Shoulders of Fire
+    },
+    -- Forgotten Mantle of the Sun
+    ["95062"] = {
+        96241, -- Forgotten Mantle of the Sun
+    },
+    -- Reconstructed Furious Shoulderplates
+    ["95063"] = {
+        96245, -- Reconstructed Furious Shoulderplates
+    },
+    -- Abandoned Spaulders of Renewal
+    ["95064"] = {
+        96243, -- Abandoned Spaulders of Renewal
+    },
+    -- Forgotten Mantle of the Moon
+    ["95065"] = {
+        96240, -- Forgotten Mantle of the Moon
+    },
+    -- Lost Shoulders of Healing
+    ["95066"] = {
+        96236, -- Lost Shoulders of Healing
+    },
+    -- Lost Shoulders of Fluidity
+    ["95067"] = {
+        96237, -- Lost Shoulders of Fluidity
+    },
+    -- Reconstructed Bloody Shoulderplates
+    ["95068"] = {
+        96246, -- Reconstructed Bloody Shoulderplates
+    },
+    -- Reconstructed Holy Shoulderplates
+    ["95069"] = {
+        96244, -- Reconstructed Holy Shoulderplates
+    },
+    -- Necklace of the Terra-Cotta Archer
+    ["95202"] = {
+        96330, -- Necklace of the Terra-Cotta Archer
+    },
+    -- Necklace of the Terra-Cotta Invoker
+    ["95203"] = {
+        96336, -- Necklace of the Terra-Cotta Invoker
+    },
+    -- Necklace of the Terra-Cotta Mender
+    ["95204"] = {
+        96341, -- Necklace of the Terra-Cotta Mender
+    },
+    -- Necklace of the Terra-Cotta Vanquisher
+    ["95205"] = {
+        96349, -- Necklace of the Terra-Cotta Vanquisher
+    },
+    -- Necklace of the Terra-Cotta Protector
+    ["95206"] = {
+        96352, -- Necklace of the Terra-Cotta Protector
+    },
+    -- Abandoned Zandalari Firecord
+    ["95207"] = {
+        96333, -- Abandoned Zandalari Firecord
+    },
+    -- Abandoned Zandalari Shadowgirdle
+    ["95208"] = {
+        96334, -- Abandoned Zandalari Shadowgirdle
+    },
+    -- Abandoned Zandalari Silentbelt
+    ["95209"] = {
+        96342, -- Abandoned Zandalari Silentbelt
+    },
+    -- Abandoned Zandalari Moonstrap
+    ["95210"] = {
+        96343, -- Abandoned Zandalari Moonstrap
+    },
+    -- Abandoned Zandalari Arrowlinks
+    ["95211"] = {
+        96344, -- Abandoned Zandalari Arrowlinks
+    },
+    -- Abandoned Zandalari Waterchain
+    ["95212"] = {
+        96345, -- Abandoned Zandalari Waterchain
+    },
+    -- Abandoned Zandalari Greatbelt
+    ["95213"] = {
+        96346, -- Abandoned Zandalari Greatbelt
+    },
+    -- Abandoned Zandalari Goreplate
+    ["95214"] = {
+        96347, -- Abandoned Zandalari Goreplate
+    },
+    -- Abandoned Zandalari Bucklebreaker
+    ["95215"] = {
+        96348, -- Abandoned Zandalari Bucklebreaker
+    },
+    -- Vaultwalker Sabatons
+    ["95216"] = {
+        96340, -- Vaultwalker Sabatons
+    },
+    -- Locksmasher Greaves
+    ["95217"] = {
+        96350, -- Locksmasher Greaves
+    },
+    -- Columnbreaker Stompers
+    ["95218"] = {
+        96351, -- Columnbreaker Stompers
+    },
+    -- Spiderweb Tabi
+    ["95219"] = {
+        96331, -- Spiderweb Tabi
+    },
+    -- Scalehide Spurs
+    ["95220"] = {
+        96332, -- Scalehide Spurs
+    },
+    -- Deeproot Treads
+    ["95221"] = {
+        96338, -- Deeproot Treads
+    },
+    -- Spiritbound Boots
+    ["95222"] = {
+        96339, -- Spiritbound Boots
+    },
+    -- Silentflame Sandals
+    ["95223"] = {
+        96335, -- Silentflame Sandals
+    },
+    -- Home-Warding Slippers
+    ["95224"] = {
+        96337, -- Home-Warding Slippers
+    },
     -- Breastplate of the All-Consuming Maw
     ["95225"] = {
         95569, -- Chest of the Crackling Vanquisher
@@ -22051,6 +22939,86 @@ GL.Data.ItemLinks = {
     -- Shoulderguards of the Last Mogu
     ["95339"] = {
         95583, -- Shoulders of the Crackling Protector
+    },
+    -- Ultimate Protection of the Emperor
+    ["95472"] = {
+        96182, -- Ultimate Protection of the Emperor
+    },
+    -- Lei Shen's Orb of Command
+    ["95473"] = {
+        96190, -- Lei Shen's Orb of Command
+    },
+    -- Bo-Ris, Horror in the Night
+    ["95498"] = {
+        96249, -- Bo-Ris, Horror in the Night
+    },
+    -- Invocation of the Dawn
+    ["95499"] = {
+        96230, -- Invocation of the Dawn
+    },
+    -- Jerthud, Graceful Hand of the Savior
+    ["95500"] = {
+        96239, -- Jerthud, Graceful Hand of the Savior
+    },
+    -- Fyn's Flickering Dagger
+    ["95501"] = {
+        96232, -- Fyn's Flickering Dagger
+    },
+    -- Do-tharak, the Swordbreaker
+    ["95502"] = {
+        96248, -- Do-tharak, the Swordbreaker
+    },
+    -- Miracoran, the Vehement Chord
+    ["95503"] = {
+        96231, -- Miracoran, the Vehement Chord
+    },
+    -- Zeeg's Ancient Kegsmasher
+    ["95504"] = {
+        96233, -- Zeeg's Ancient Kegsmasher
+    },
+    -- Greatsword of Frozen Hells
+    ["95505"] = {
+        96247, -- Greatsword of Frozen Hells
+    },
+    -- Nadagast's Exsanguinator
+    ["95506"] = {
+        96238, -- Nadagast's Exsanguinator
+    },
+    -- Darkwood Spiritstaff
+    ["95507"] = {
+        96234, -- Darkwood Spiritstaff
+    },
+    -- Sign of the Bloodied God
+    ["95510"] = {
+        95996, -- Sign of the Bloodied God
+    },
+    -- Durumu's Severed Tentacle
+    ["95511"] = {
+        96109, -- Durumu's Severed Tentacle
+    },
+    -- Ro'shak's Remembrance
+    ["95512"] = {
+        96157, -- Ro'shak's Remembrance
+    },
+    -- Band of the Scaled Tyrant
+    ["95513"] = {
+        96128, -- Band of the Scaled Tyrant
+    },
+    -- Petrified Eye of the Basilisk
+    ["95514"] = {
+        96031, -- Petrified Eye of the Basilisk
+    },
+    -- Shield of Twinned Despair
+    ["95515"] = {
+        96166, -- Shield of Twinned Despair
+    },
+    -- Visage of the Doomed
+    ["95516"] = {
+        96250, -- Visage of the Doomed
+    },
+    -- Legplates of the Lightning Throne
+    ["95535"] = {
+        96179, -- Legplates of the Lightning Throne
     },
     -- Chest of the Crackling Vanquisher
     ["95569"] = {
@@ -22832,6 +23800,1766 @@ GL.Data.ItemLinks = {
     ["95995"] = {
         95957, -- Shoulders of the Crackling Protector
     },
+    -- Sign of the Bloodied God
+    ["95996"] = {
+        95510, -- Sign of the Bloodied God
+    },
+    -- Renataki's Soul Charm
+    ["95997"] = {
+        94512, -- Renataki's Soul Charm
+    },
+    -- Lightning-Eye Hood
+    ["95998"] = {
+        94724, -- Lightning-Eye Hood
+    },
+    -- Spearman's Jingling Leggings
+    ["95999"] = {
+        94728, -- Spearman's Jingling Leggings
+    },
+    -- Static-Shot Shoulderguards
+    ["96000"] = {
+        94725, -- Static-Shot Shoulderguards
+    },
+    -- Cloudbreaker Greatbelt
+    ["96001"] = {
+        94726, -- Cloudbreaker Greatbelt
+    },
+    -- Chestplate of Violent Detonation
+    ["96002"] = {
+        94723, -- Chestplate of Violent Detonation
+    },
+    -- Bracers of Constant Implosion
+    ["96003"] = {
+        94727, -- Bracers of Constant Implosion
+    },
+    -- Worldbreaker's Stormscythe
+    ["96004"] = {
+        94722, -- Worldbreaker's Stormscythe
+    },
+    -- Jin'rokh's Soulcrystal
+    ["96005"] = {
+        94729, -- Jin'rokh's Soulcrystal
+    },
+    -- Lightningweaver Gauntlets
+    ["96006"] = {
+        94737, -- Lightningweaver Gauntlets
+    },
+    -- Al'set's Tormented Leggings
+    ["96007"] = {
+        94739, -- Al'set's Tormented Leggings
+    },
+    -- Fissure-Split Shoulderwraps
+    ["96008"] = {
+        94733, -- Fissure-Split Shoulderwraps
+    },
+    -- Robes of Static Bursts
+    ["96009"] = {
+        94731, -- Robes of Static Bursts
+    },
+    -- Jin'rokh's Dreamshard
+    ["96010"] = {
+        94738, -- Jin'rokh's Dreamshard
+    },
+    -- Drape of Booming Nights
+    ["96011"] = {
+        94735, -- Drape of Booming Nights
+    },
+    -- Soulblade of the Breaking Storm
+    ["96012"] = {
+        94730, -- Soulblade of the Breaking Storm
+    },
+    -- Horridon's Last Gasp
+    ["96013"] = {
+        94514, -- Horridon's Last Gasp
+    },
+    -- Infinitely Conducting Bracers
+    ["96014"] = {
+        94732, -- Infinitely Conducting Bracers
+    },
+    -- Ghostbinder Greatboots
+    ["96015"] = {
+        94736, -- Ghostbinder Greatboots
+    },
+    -- Ionized Yojamban Carapace
+    ["96016"] = {
+        94734, -- Ionized Yojamban Carapace
+    },
+    -- Wastewalker's Sandblasted Drape
+    ["96017"] = {
+        94748, -- Wastewalker's Sandblasted Drape
+    },
+    -- Talisman of Living Poison
+    ["96018"] = {
+        94746, -- Talisman of Living Poison
+    },
+    -- Jalak's Maelstrom Staff
+    ["96019"] = {
+        94740, -- Jalak's Maelstrom Staff
+    },
+    -- Bindings of Multiplicative Strikes
+    ["96020"] = {
+        94743, -- Bindings of Multiplicative Strikes
+    },
+    -- Sul'lithuz Sandmail
+    ["96021"] = {
+        94741, -- Sul'lithuz Sandmail
+    },
+    -- Frozen Warlord's Bracers
+    ["96022"] = {
+        94742, -- Frozen Warlord's Bracers
+    },
+    -- Bloodlord's Bloodsoaked Legplates
+    ["96023"] = {
+        94747, -- Bloodlord's Bloodsoaked Legplates
+    },
+    -- Puncture-Proof Greathelm
+    ["96024"] = {
+        94744, -- Puncture-Proof Greathelm
+    },
+    -- Horn-Rimmed Doomcloak
+    ["96025"] = {
+        94745, -- Horn-Rimmed Doomcloak
+    },
+    -- Spark of Zandalar
+    ["96026"] = {
+        94526, -- Spark of Zandalar
+    },
+    -- Flamecaster's Burning Crown
+    ["96027"] = {
+        94752, -- Flamecaster's Burning Crown
+    },
+    -- Vaccinator's Armwraps
+    ["96028"] = {
+        94750, -- Vaccinator's Armwraps
+    },
+    -- Dinomancer's Spiritbinding Spire
+    ["96029"] = {
+        94749, -- Dinomancer's Spiritbinding Spire
+    },
+    -- Horridon's Tusk Fragment
+    ["96030"] = {
+        94754, -- Horridon's Tusk Fragment
+    },
+    -- Petrified Eye of the Basilisk
+    ["96031"] = {
+        95514, -- Petrified Eye of the Basilisk
+    },
+    -- Venomlord's Totemic Wand
+    ["96032"] = {
+        94755, -- Venomlord's Totemic Wand
+    },
+    -- Roots of Rampaging Earth
+    ["96033"] = {
+        94756, -- Roots of Rampaging Earth
+    },
+    -- Spaulders of Dinomancy
+    ["96034"] = {
+        94753, -- Spaulders of Dinomancy
+    },
+    -- Legguards of Scintillating Scales
+    ["96035"] = {
+        94975, -- Legguards of Scintillating Scales
+    },
+    -- Armplates of the Vanquished Abomination
+    ["96036"] = {
+        94751, -- Armplates of the Vanquished Abomination
+    },
+    -- Bad Juju
+    ["96037"] = {
+        94523, -- Bad Juju
+    },
+    -- Kura-Kura, Kazra'jin's Skullcleaver
+    ["96038"] = {
+        94759, -- Kura-Kura, Kazra'jin's Skullcleaver
+    },
+    -- Mar'li's Bloodstained Sandals
+    ["96039"] = {
+        94762, -- Mar'li's Bloodstained Sandals
+    },
+    -- Zandalari Robes of the Final Rite
+    ["96040"] = {
+        94761, -- Zandalari Robes of the Final Rite
+    },
+    -- Wushoolay's Final Choice
+    ["96041"] = {
+        94513, -- Wushoolay's Final Choice
+    },
+    -- Amun-Thoth, Sul's Spiritrending Talons
+    ["96042"] = {
+        94760, -- Amun-Thoth, Sul's Spiritrending Talons
+    },
+    -- Robes of Treacherous Ground
+    ["96043"] = {
+        94765, -- Robes of Treacherous Ground
+    },
+    -- Gaze of Gara'jal
+    ["96044"] = {
+        94763, -- Gaze of Gara'jal
+    },
+    -- Loa-Ridden Bracers
+    ["96045"] = {
+        94767, -- Loa-Ridden Bracers
+    },
+    -- Overloaded Bladebreaker Cuirass
+    ["96046"] = {
+        94764, -- Overloaded Bladebreaker Cuirass
+    },
+    -- Zerat, Malakk's Soulburning Greatsword
+    ["96047"] = {
+        94758, -- Zerat, Malakk's Soulburning Greatsword
+    },
+    -- Talisman of Angry Spirits
+    ["96048"] = {
+        94766, -- Talisman of Angry Spirits
+    },
+    -- Fortitude of the Zandalari
+    ["96049"] = {
+        94516, -- Fortitude of the Zandalari
+    },
+    -- Shattered Tortoiseshell Longbow
+    ["96050"] = {
+        94769, -- Shattered Tortoiseshell Longbow
+    },
+    -- Rockfall Ribwraps
+    ["96051"] = {
+        94770, -- Rockfall Ribwraps
+    },
+    -- Grips of Vampiric Cruelty
+    ["96052"] = {
+        94777, -- Grips of Vampiric Cruelty
+    },
+    -- Beady-Eye Bracers
+    ["96053"] = {
+        94775, -- Beady-Eye Bracers
+    },
+    -- Quakestompers
+    ["96054"] = {
+        94772, -- Quakestompers
+    },
+    -- Shoulderguards of Centripetal Destruction
+    ["96055"] = {
+        94773, -- Shoulderguards of Centripetal Destruction
+    },
+    -- Shell-Coated Wristplates
+    ["96056"] = {
+        94771, -- Shell-Coated Wristplates
+    },
+    -- Amulet of the Primal Turtle
+    ["96057"] = {
+        94776, -- Amulet of the Primal Turtle
+    },
+    -- Shellsplitter Greataxe
+    ["96058"] = {
+        94768, -- Shellsplitter Greataxe
+    },
+    -- Beakbreaker Greatcloak
+    ["96059"] = {
+        94774, -- Beakbreaker Greatcloak
+    },
+    -- Azure Shell Bracers
+    ["96060"] = {
+        94781, -- Azure Shell Bracers
+    },
+    -- Stonegaze Hood
+    ["96061"] = {
+        94782, -- Stonegaze Hood
+    },
+    -- Crystal-Claw Gloves
+    ["96062"] = {
+        94780, -- Crystal-Claw Gloves
+    },
+    -- Shimmershell Cape
+    ["96063"] = {
+        94785, -- Shimmershell Cape
+    },
+    -- Tortos' Discarded Shell
+    ["96064"] = {
+        94778, -- Tortos' Discarded Shell
+    },
+    -- Vampire Bat-Hide Bracers
+    ["96065"] = {
+        94786, -- Vampire Bat-Hide Bracers
+    },
+    -- Robes of Concussive Shocks
+    ["96066"] = {
+        94779, -- Robes of Concussive Shocks
+    },
+    -- Spaulders of Quaking Fear
+    ["96067"] = {
+        94783, -- Spaulders of Quaking Fear
+    },
+    -- Refreshing Abalone Girdle
+    ["96068"] = {
+        94784, -- Refreshing Abalone Girdle
+    },
+    -- Tortos' Shellseizers
+    ["96069"] = {
+        94787, -- Tortos' Shellseizers
+    },
+    -- Megaera's Poisoned Fang
+    ["96070"] = {
+        94788, -- Megaera's Poisoned Fang
+    },
+    -- Quadra-Head Brooch
+    ["96071"] = {
+        94794, -- Quadra-Head Brooch
+    },
+    -- Poisonblood Bladeshoulders
+    ["96072"] = {
+        94791, -- Poisonblood Bladeshoulders
+    },
+    -- Grips of Cinderflesh
+    ["96073"] = {
+        94790, -- Grips of Cinderflesh
+    },
+    -- Plated Toothbreaker Girdle
+    ["96074"] = {
+        94792, -- Plated Toothbreaker Girdle
+    },
+    -- Rot-Proof Greatplate
+    ["96075"] = {
+        94789, -- Rot-Proof Greatplate
+    },
+    -- Spinescale Seal
+    ["96076"] = {
+        94795, -- Spinescale Seal
+    },
+    -- Hydraskull Choker
+    ["96077"] = {
+        94793, -- Hydraskull Choker
+    },
+    -- Sandals of Arcane Fury
+    ["96078"] = {
+        94799, -- Sandals of Arcane Fury
+    },
+    -- Gleaming-Eye Shoulderpads
+    ["96079"] = {
+        94801, -- Gleaming-Eye Shoulderpads
+    },
+    -- Frostborn Wristwraps
+    ["96080"] = {
+        94804, -- Frostborn Wristwraps
+    },
+    -- Megaera's Shining Eye
+    ["96081"] = {
+        94803, -- Megaera's Shining Eye
+    },
+    -- Fetish of the Hydra
+    ["96082"] = {
+        94796, -- Fetish of the Hydra
+    },
+    -- Breath of the Hydra
+    ["96083"] = {
+        94521, -- Breath of the Hydra
+    },
+    -- Inscribed Bag of Hydra-Spawn
+    ["96084"] = {
+        94520, -- Inscribed Bag of Hydra-Spawn
+    },
+    -- Hood of Smoldering Flesh
+    ["96085"] = {
+        94800, -- Hood of Smoldering Flesh
+    },
+    -- Links of the Bifurcated Tongue
+    ["96086"] = {
+        94802, -- Links of the Bifurcated Tongue
+    },
+    -- Chain of Consuming Magic
+    ["96087"] = {
+        94797, -- Chain of Consuming Magic
+    },
+    -- Ice-Scored Treads
+    ["96088"] = {
+        94798, -- Ice-Scored Treads
+    },
+    -- Pinionfeather Greatcloak
+    ["96089"] = {
+        94812, -- Pinionfeather Greatcloak
+    },
+    -- Cord of Cacophonous Cawing
+    ["96090"] = {
+        94813, -- Cord of Cacophonous Cawing
+    },
+    -- Robe of Midnight Down
+    ["96091"] = {
+        94806, -- Robe of Midnight Down
+    },
+    -- Giorgio's Caduceus of Pure Moods
+    ["96092"] = {
+        94805, -- Giorgio's Caduceus of Pure Moods
+    },
+    -- Featherflight Belt
+    ["96093"] = {
+        94811, -- Featherflight Belt
+    },
+    -- Grasp of the Ruthless Mother
+    ["96094"] = {
+        94808, -- Grasp of the Ruthless Mother
+    },
+    -- Crown of Potentiated Birth
+    ["96095"] = {
+        94809, -- Crown of Potentiated Birth
+    },
+    -- Talonrender Chestplate
+    ["96096"] = {
+        94810, -- Talonrender Chestplate
+    },
+    -- Egg-Shard Grips
+    ["96097"] = {
+        94807, -- Egg-Shard Grips
+    },
+    -- Fabled Feather of Ji-Kun
+    ["96098"] = {
+        94515, -- Fabled Feather of Ji-Kun
+    },
+    -- Ji-Kun's Rising Winds
+    ["96099"] = {
+        94527, -- Ji-Kun's Rising Winds
+    },
+    -- Durumu's Baleful Gaze
+    ["96100"] = {
+        94814, -- Durumu's Baleful Gaze
+    },
+    -- Crimson Bloom Legguards
+    ["96101"] = {
+        94816, -- Crimson Bloom Legguards
+    },
+    -- Links of the Disintegrator
+    ["96102"] = {
+        94819, -- Links of the Disintegrator
+    },
+    -- Aberrant Chestguard of Torment
+    ["96103"] = {
+        94818, -- Aberrant Chestguard of Torment
+    },
+    -- Caustic Spike Bracers
+    ["96104"] = {
+        94820, -- Caustic Spike Bracers
+    },
+    -- Legplates of the Dark Parasite
+    ["96105"] = {
+        94815, -- Legplates of the Dark Parasite
+    },
+    -- Treads of the Blind Eye
+    ["96106"] = {
+        94817, -- Treads of the Blind Eye
+    },
+    -- Artery Rippers
+    ["96107"] = {
+        94821, -- Artery Rippers
+    },
+    -- Reinforced Mirror-Sheen Cloak
+    ["96108"] = {
+        94822, -- Reinforced Mirror-Sheen Cloak
+    },
+    -- Durumu's Severed Tentacle
+    ["96109"] = {
+        95511, -- Durumu's Severed Tentacle
+    },
+    -- Lifedrainer's Sordid Grip
+    ["96110"] = {
+        94925, -- Lifedrainer's Sordid Grip
+    },
+    -- Leggings of Pulsing Blood
+    ["96111"] = {
+        94923, -- Leggings of Pulsing Blood
+    },
+    -- Chilblain Spaulders
+    ["96112"] = {
+        94928, -- Chilblain Spaulders
+    },
+    -- Deadly Glare Cape
+    ["96113"] = {
+        94929, -- Deadly Glare Cape
+    },
+    -- Durumu's Captive Eyeball
+    ["96114"] = {
+        94931, -- Durumu's Captive Eyeball
+    },
+    -- Ritual Dagger of the Mind's Eye
+    ["96115"] = {
+        94922, -- Ritual Dagger of the Mind's Eye
+    },
+    -- Sandals of the Starving Eye
+    ["96116"] = {
+        94927, -- Sandals of the Starving Eye
+    },
+    -- Vein-Cover Bracers
+    ["96117"] = {
+        94926, -- Vein-Cover Bracers
+    },
+    -- Iceshatter Gauntlets
+    ["96118"] = {
+        94924, -- Iceshatter Gauntlets
+    },
+    -- Legplates of Re-Emergence
+    ["96119"] = {
+        94930, -- Legplates of Re-Emergence
+    },
+    -- Talisman of Bloodlust
+    ["96120"] = {
+        94522, -- Talisman of Bloodlust
+    },
+    -- Gloves of Cushioned Air
+    ["96121"] = {
+        94939, -- Gloves of Cushioned Air
+    },
+    -- Bracers of Mutagenic Fervor
+    ["96122"] = {
+        94940, -- Bracers of Mutagenic Fervor
+    },
+    -- Synapse-String Handguards
+    ["96123"] = {
+        94943, -- Synapse-String Handguards
+    },
+    -- Pathogenic Gauntlets
+    ["96124"] = {
+        94938, -- Pathogenic Gauntlets
+    },
+    -- Black Blood Legplates
+    ["96125"] = {
+        94944, -- Black Blood Legplates
+    },
+    -- Metabolically Boosted Shoulderplates
+    ["96126"] = {
+        94941, -- Metabolically Boosted Shoulderplates
+    },
+    -- Hydra-Scale Bloodcloak
+    ["96127"] = {
+        94942, -- Hydra-Scale Bloodcloak
+    },
+    -- Band of the Scaled Tyrant
+    ["96128"] = {
+        95513, -- Band of the Scaled Tyrant
+    },
+    -- Primordius' Talisman of Rage
+    ["96129"] = {
+        94519, -- Primordius' Talisman of Rage
+    },
+    -- Acid-Spine Bonemace
+    ["96130"] = {
+        94937, -- Acid-Spine Bonemace
+    },
+    -- Robes of Mutagenic Blood
+    ["96131"] = {
+        94951, -- Robes of Mutagenic Blood
+    },
+    -- Helix-Breaker Gloves
+    ["96132"] = {
+        94947, -- Helix-Breaker Gloves
+    },
+    -- Leggings of Ebon Veins
+    ["96133"] = {
+        94953, -- Leggings of Ebon Veins
+    },
+    -- Bracers of Fragile Bone
+    ["96134"] = {
+        94948, -- Bracers of Fragile Bone
+    },
+    -- Stolen Relic of Zuldazar
+    ["96135"] = {
+        94525, -- Stolen Relic of Zuldazar
+    },
+    -- Leggings of the Malformed Sapling
+    ["96136"] = {
+        94946, -- Leggings of the Malformed Sapling
+    },
+    -- Clear-Mind Helm
+    ["96137"] = {
+        94949, -- Clear-Mind Helm
+    },
+    -- Bonemender Bracers
+    ["96138"] = {
+        94952, -- Bonemender Bracers
+    },
+    -- Spaulders of Primordial Growth
+    ["96139"] = {
+        94950, -- Spaulders of Primordial Growth
+    },
+    -- Greatshield of the Gloaming
+    ["96140"] = {
+        94945, -- Greatshield of the Gloaming
+    },
+    -- Gore-Soaked Gear
+    ["96141"] = {
+        94961, -- Gore-Soaked Gear
+    },
+    -- Hand of the Dark Animus
+    ["96142"] = {
+        94954, -- Hand of the Dark Animus
+    },
+    -- Hood of the Crimson Wake
+    ["96143"] = {
+        94959, -- Hood of the Crimson Wake
+    },
+    -- Cha-Ye's Essence of Brilliance
+    ["96144"] = {
+        94531, -- Cha-Ye's Essence of Brilliance
+    },
+    -- Constantly Accelerating Cloak
+    ["96145"] = {
+        94960, -- Constantly Accelerating Cloak
+    },
+    -- Athame of the Sanguine Ritual
+    ["96146"] = {
+        94955, -- Athame of the Sanguine Ritual
+    },
+    -- Worldbinder Leggings
+    ["96147"] = {
+        94962, -- Worldbinder Leggings
+    },
+    -- Anima-Ringed Fingers
+    ["96148"] = {
+        94957, -- Anima-Ringed Fingers
+    },
+    -- Matter-Swapped Legplates
+    ["96149"] = {
+        94956, -- Matter-Swapped Legplates
+    },
+    -- Crown of the Golden Golem
+    ["96150"] = {
+        94958, -- Crown of the Golden Golem
+    },
+    -- Delicate Vial of the Sanguinaire
+    ["96151"] = {
+        94518, -- Delicate Vial of the Sanguinaire
+    },
+    -- Iron Qon's Boot Knife
+    ["96152"] = {
+        94971, -- Iron Qon's Boot Knife
+    },
+    -- Voice of the Quilen
+    ["96153"] = {
+        94963, -- Voice of the Quilen
+    },
+    -- Quet'zal's Crackling Cord
+    ["96154"] = {
+        94970, -- Quet'zal's Crackling Cord
+    },
+    -- Saddle-Scarred Leggings
+    ["96155"] = {
+        94966, -- Saddle-Scarred Leggings
+    },
+    -- Dam'ren's Frozen Footguards
+    ["96156"] = {
+        94968, -- Dam'ren's Frozen Footguards
+    },
+    -- Ro'shak's Remembrance
+    ["96157"] = {
+        95512, -- Ro'shak's Remembrance
+    },
+    -- Orb of Arcing Lightning
+    ["96158"] = {
+        94965, -- Orb of Arcing Lightning
+    },
+    -- Spurs of the Storm Cavalry
+    ["96159"] = {
+        94967, -- Spurs of the Storm Cavalry
+    },
+    -- Ro'shak's Molten Chain
+    ["96160"] = {
+        94969, -- Ro'shak's Molten Chain
+    },
+    -- Rein-Binder's Fists
+    ["96161"] = {
+        94972, -- Rein-Binder's Fists
+    },
+    -- Qon's Flaming Scimitar
+    ["96162"] = {
+        94964, -- Qon's Flaming Scimitar
+    },
+    -- Wu-Lai, Bladed Fan of the Consorts
+    ["96163"] = {
+        94973, -- Wu-Lai, Bladed Fan of the Empyreans
+    },
+    -- Robes of the Moon Lotus
+    ["96164"] = {
+        94977, -- Robes of the Moon Lotus
+    },
+    -- Passionfire Choker
+    ["96165"] = {
+        94980, -- Passionfire Choker
+    },
+    -- Shield of Twinned Despair
+    ["96166"] = {
+        95515, -- Shield of Twinned Despair
+    },
+    -- Suen-Wo, Spire of the Falling Sun
+    ["96167"] = {
+        94974, -- Suen-Wo, Spire of the Falling Sun
+    },
+    -- Bracers of the Midnight Comet
+    ["96168"] = {
+        94979, -- Bracers of the Midnight Comet
+    },
+    -- Girdle of Night and Day
+    ["96169"] = {
+        94978, -- Girdle of Night and Day
+    },
+    -- Tidal Force Treads
+    ["96170"] = {
+        94976, -- Tidal Force Treads
+    },
+    -- Gaze of the Twins
+    ["96171"] = {
+        94529, -- Gaze of the Twins
+    },
+    -- Moonjade Necklace
+    ["96172"] = {
+        94981, -- Moonjade Necklace
+    },
+    -- Fingers of the Night
+    ["96173"] = {
+        94757, -- Fingers of the Night
+    },
+    -- Rune of Re-Origination
+    ["96174"] = {
+        94532, -- Rune of Re-Origination
+    },
+    -- Shan-Dun, Breaker of Hope
+    ["96175"] = {
+        94983, -- Shan-Dun, Breaker of Hope
+    },
+    -- Fusion Slasher Chestguard
+    ["96176"] = {
+        94987, -- Fusion Slasher Chestguard
+    },
+    -- Conduit-Breaker Chain Leggings
+    ["96177"] = {
+        94986, -- Conduit-Breaker Chain Leggings
+    },
+    -- Doomed Crown of Lei Shen
+    ["96178"] = {
+        94984, -- Doomed Crown of Lei Shen
+    },
+    -- Legplates of the Lightning Throne
+    ["96179"] = {
+        95535, -- Legplates of the Lightning Throne
+    },
+    -- Legplates of Whipping Ionization
+    ["96180"] = {
+        94985, -- Legplates of Whipping Ionization
+    },
+    -- Uroe, Harbinger of Terror
+    ["96181"] = {
+        94982, -- Uroe, Harbinger of Terror
+    },
+    -- Ultimate Protection of the Emperor
+    ["96182"] = {
+        95472, -- Ultimate Protection of the Emperor
+    },
+    -- Soul Barrier
+    ["96183"] = {
+        94528, -- Soul Barrier
+    },
+    -- Legwraps of Cardinality
+    ["96184"] = {
+        94990, -- Legwraps of Cardinality
+    },
+    -- Gloves of the Maimed Vizier
+    ["96185"] = {
+        94993, -- Gloves of the Maimed Vizier
+    },
+    -- Unerring Vision of Lei Shen
+    ["96186"] = {
+        94524, -- Unerring Vision of Lei Shen
+    },
+    -- Torall, Rod of the Shattered Throne
+    ["96187"] = {
+        94988, -- Torall, Rod of the Shattered Throne
+    },
+    -- Soul Prism of Lei Shen
+    ["96188"] = {
+        94994, -- Soul Prism of Lei Shen
+    },
+    -- Lightning-Imbued Chalice
+    ["96189"] = {
+        94530, -- Lightning-Imbued Chalice
+    },
+    -- Lei Shen's Orb of Command
+    ["96190"] = {
+        95473, -- Lei Shen's Orb of Command
+    },
+    -- Grips of Slicing Electricity
+    ["96191"] = {
+        94991, -- Grips of Slicing Electricity
+    },
+    -- Leggings of the Violent Gale
+    ["96192"] = {
+        94992, -- Leggings of the Violent Gale
+    },
+    -- Lei Shen's Grounded Carapace
+    ["96193"] = {
+        94989, -- Lei Shen's Grounded Carapace
+    },
+    -- Invocation of the Dawn
+    ["96230"] = {
+        95499, -- Invocation of the Dawn
+    },
+    -- Miracoran, the Vehement Chord
+    ["96231"] = {
+        95503, -- Miracoran, the Vehement Chord
+    },
+    -- Fyn's Flickering Dagger
+    ["96232"] = {
+        95501, -- Fyn's Flickering Dagger
+    },
+    -- Zeeg's Ancient Kegsmasher
+    ["96233"] = {
+        95504, -- Zeeg's Ancient Kegsmasher
+    },
+    -- Darkwood Spiritstaff
+    ["96234"] = {
+        95507, -- Darkwood Spiritstaff
+    },
+    -- Lost Shoulders of Fire
+    ["96235"] = {
+        95061, -- Lost Shoulders of Fire
+    },
+    -- Lost Shoulders of Healing
+    ["96236"] = {
+        95066, -- Lost Shoulders of Healing
+    },
+    -- Lost Shoulders of Fluidity
+    ["96237"] = {
+        95067, -- Lost Shoulders of Fluidity
+    },
+    -- Nadagast's Exsanguinator
+    ["96238"] = {
+        95506, -- Nadagast's Exsanguinator
+    },
+    -- Jerthud, Graceful Hand of the Savior
+    ["96239"] = {
+        95500, -- Jerthud, Graceful Hand of the Savior
+    },
+    -- Forgotten Mantle of the Moon
+    ["96240"] = {
+        95065, -- Forgotten Mantle of the Moon
+    },
+    -- Forgotten Mantle of the Sun
+    ["96241"] = {
+        95062, -- Forgotten Mantle of the Sun
+    },
+    -- Abandoned Spaulders of Arrowflight
+    ["96242"] = {
+        95060, -- Abandoned Spaulders of Arrowflight
+    },
+    -- Abandoned Spaulders of Renewal
+    ["96243"] = {
+        95064, -- Abandoned Spaulders of Renewal
+    },
+    -- Reconstructed Holy Shoulderplates
+    ["96244"] = {
+        95069, -- Reconstructed Holy Shoulderplates
+    },
+    -- Reconstructed Furious Shoulderplates
+    ["96245"] = {
+        95063, -- Reconstructed Furious Shoulderplates
+    },
+    -- Reconstructed Bloody Shoulderplates
+    ["96246"] = {
+        95068, -- Reconstructed Bloody Shoulderplates
+    },
+    -- Greatsword of Frozen Hells
+    ["96247"] = {
+        95505, -- Greatsword of Frozen Hells
+    },
+    -- Do-tharak, the Swordbreaker
+    ["96248"] = {
+        95502, -- Do-tharak, the Swordbreaker
+    },
+    -- Bo-Ris, Horror in the Night
+    ["96249"] = {
+        95498, -- Bo-Ris, Horror in the Night
+    },
+    -- Visage of the Doomed
+    ["96250"] = {
+        95516, -- Visage of the Doomed
+    },
+    -- Necklace of the Terra-Cotta Archer
+    ["96330"] = {
+        95202, -- Necklace of the Terra-Cotta Archer
+    },
+    -- Spiderweb Tabi
+    ["96331"] = {
+        95219, -- Spiderweb Tabi
+    },
+    -- Scalehide Spurs
+    ["96332"] = {
+        95220, -- Scalehide Spurs
+    },
+    -- Abandoned Zandalari Firecord
+    ["96333"] = {
+        95207, -- Abandoned Zandalari Firecord
+    },
+    -- Abandoned Zandalari Shadowgirdle
+    ["96334"] = {
+        95208, -- Abandoned Zandalari Shadowgirdle
+    },
+    -- Silentflame Sandals
+    ["96335"] = {
+        95223, -- Silentflame Sandals
+    },
+    -- Necklace of the Terra-Cotta Invoker
+    ["96336"] = {
+        95203, -- Necklace of the Terra-Cotta Invoker
+    },
+    -- Home-Warding Slippers
+    ["96337"] = {
+        95224, -- Home-Warding Slippers
+    },
+    -- Deeproot Treads
+    ["96338"] = {
+        95221, -- Deeproot Treads
+    },
+    -- Spiritbound Boots
+    ["96339"] = {
+        95222, -- Spiritbound Boots
+    },
+    -- Vaultwalker Sabatons
+    ["96340"] = {
+        95216, -- Vaultwalker Sabatons
+    },
+    -- Necklace of the Terra-Cotta Mender
+    ["96341"] = {
+        95204, -- Necklace of the Terra-Cotta Mender
+    },
+    -- Abandoned Zandalari Silentbelt
+    ["96342"] = {
+        95209, -- Abandoned Zandalari Silentbelt
+    },
+    -- Abandoned Zandalari Moonstrap
+    ["96343"] = {
+        95210, -- Abandoned Zandalari Moonstrap
+    },
+    -- Abandoned Zandalari Arrowlinks
+    ["96344"] = {
+        95211, -- Abandoned Zandalari Arrowlinks
+    },
+    -- Abandoned Zandalari Waterchain
+    ["96345"] = {
+        95212, -- Abandoned Zandalari Waterchain
+    },
+    -- Abandoned Zandalari Greatbelt
+    ["96346"] = {
+        95213, -- Abandoned Zandalari Greatbelt
+    },
+    -- Abandoned Zandalari Goreplate
+    ["96347"] = {
+        95214, -- Abandoned Zandalari Goreplate
+    },
+    -- Abandoned Zandalari Bucklebreaker
+    ["96348"] = {
+        95215, -- Abandoned Zandalari Bucklebreaker
+    },
+    -- Necklace of the Terra-Cotta Vanquisher
+    ["96349"] = {
+        95205, -- Necklace of the Terra-Cotta Vanquisher
+    },
+    -- Locksmasher Greaves
+    ["96350"] = {
+        95217, -- Locksmasher Greaves
+    },
+    -- Columnbreaker Stompers
+    ["96351"] = {
+        95218, -- Columnbreaker Stompers
+    },
+    -- Necklace of the Terra-Cotta Protector
+    ["96352"] = {
+        95206, -- Necklace of the Terra-Cotta Protector
+    },
+    -- Sign of the Bloodied God
+    ["96368"] = {
+        96740, -- Sign of the Bloodied God
+    },
+    -- Renataki's Soul Charm
+    ["96369"] = {
+        96741, -- Renataki's Soul Charm
+    },
+    -- Lightning-Eye Hood
+    ["96370"] = {
+        96742, -- Lightning-Eye Hood
+    },
+    -- Spearman's Jingling Leggings
+    ["96371"] = {
+        96743, -- Spearman's Jingling Leggings
+    },
+    -- Static-Shot Shoulderguards
+    ["96372"] = {
+        96744, -- Static-Shot Shoulderguards
+    },
+    -- Cloudbreaker Greatbelt
+    ["96373"] = {
+        96745, -- Cloudbreaker Greatbelt
+    },
+    -- Chestplate of Violent Detonation
+    ["96374"] = {
+        96746, -- Chestplate of Violent Detonation
+    },
+    -- Bracers of Constant Implosion
+    ["96375"] = {
+        96747, -- Bracers of Constant Implosion
+    },
+    -- Worldbreaker's Stormscythe
+    ["96376"] = {
+        96748, -- Worldbreaker's Stormscythe
+    },
+    -- Jin'rokh's Soulcrystal
+    ["96377"] = {
+        96749, -- Jin'rokh's Soulcrystal
+    },
+    -- Lightningweaver Gauntlets
+    ["96378"] = {
+        96750, -- Lightningweaver Gauntlets
+    },
+    -- Al'set's Tormented Leggings
+    ["96379"] = {
+        96751, -- Al'set's Tormented Leggings
+    },
+    -- Fissure-Split Shoulderwraps
+    ["96380"] = {
+        96752, -- Fissure-Split Shoulderwraps
+    },
+    -- Robes of Static Bursts
+    ["96381"] = {
+        96753, -- Robes of Static Bursts
+    },
+    -- Jin'rokh's Dreamshard
+    ["96382"] = {
+        96754, -- Jin'rokh's Dreamshard
+    },
+    -- Drape of Booming Nights
+    ["96383"] = {
+        96755, -- Drape of Booming Nights
+    },
+    -- Soulblade of the Breaking Storm
+    ["96384"] = {
+        96756, -- Soulblade of the Breaking Storm
+    },
+    -- Horridon's Last Gasp
+    ["96385"] = {
+        96757, -- Horridon's Last Gasp
+    },
+    -- Infinitely Conducting Bracers
+    ["96386"] = {
+        96758, -- Infinitely Conducting Bracers
+    },
+    -- Ghostbinder Greatboots
+    ["96387"] = {
+        96759, -- Ghostbinder Greatboots
+    },
+    -- Ionized Yojamban Carapace
+    ["96388"] = {
+        96760, -- Ionized Yojamban Carapace
+    },
+    -- Wastewalker's Sandblasted Drape
+    ["96389"] = {
+        96761, -- Wastewalker's Sandblasted Drape
+    },
+    -- Talisman of Living Poison
+    ["96390"] = {
+        96762, -- Talisman of Living Poison
+    },
+    -- Jalak's Maelstrom Staff
+    ["96391"] = {
+        96763, -- Jalak's Maelstrom Staff
+    },
+    -- Bindings of Multiplicative Strikes
+    ["96392"] = {
+        96764, -- Bindings of Multiplicative Strikes
+    },
+    -- Sul'lithuz Sandmail
+    ["96393"] = {
+        96765, -- Sul'lithuz Sandmail
+    },
+    -- Frozen Warlord's Bracers
+    ["96394"] = {
+        96766, -- Frozen Warlord's Bracers
+    },
+    -- Bloodlord's Bloodsoaked Legplates
+    ["96395"] = {
+        96767, -- Bloodlord's Bloodsoaked Legplates
+    },
+    -- Puncture-Proof Greathelm
+    ["96396"] = {
+        96768, -- Puncture-Proof Greathelm
+    },
+    -- Horn-Rimmed Doomcloak
+    ["96397"] = {
+        96769, -- Horn-Rimmed Doomcloak
+    },
+    -- Spark of Zandalar
+    ["96398"] = {
+        96770, -- Spark of Zandalar
+    },
+    -- Flamecaster's Burning Crown
+    ["96399"] = {
+        96771, -- Flamecaster's Burning Crown
+    },
+    -- Vaccinator's Armwraps
+    ["96400"] = {
+        96772, -- Vaccinator's Armwraps
+    },
+    -- Dinomancer's Spiritbinding Spire
+    ["96401"] = {
+        96773, -- Dinomancer's Spiritbinding Spire
+    },
+    -- Horridon's Tusk Fragment
+    ["96402"] = {
+        96774, -- Horridon's Tusk Fragment
+    },
+    -- Petrified Eye of the Basilisk
+    ["96403"] = {
+        96775, -- Petrified Eye of the Basilisk
+    },
+    -- Venomlord's Totemic Wand
+    ["96404"] = {
+        96776, -- Venomlord's Totemic Wand
+    },
+    -- Roots of Rampaging Earth
+    ["96405"] = {
+        96777, -- Roots of Rampaging Earth
+    },
+    -- Spaulders of Dinomancy
+    ["96406"] = {
+        96778, -- Spaulders of Dinomancy
+    },
+    -- Legguards of Scintillating Scales
+    ["96407"] = {
+        96779, -- Legguards of Scintillating Scales
+    },
+    -- Armplates of the Vanquished Abomination
+    ["96408"] = {
+        96780, -- Armplates of the Vanquished Abomination
+    },
+    -- Bad Juju
+    ["96409"] = {
+        96781, -- Bad Juju
+    },
+    -- Kura-Kura, Kazra'jin's Skullcleaver
+    ["96410"] = {
+        96782, -- Kura-Kura, Kazra'jin's Skullcleaver
+    },
+    -- Mar'li's Bloodstained Sandals
+    ["96411"] = {
+        96783, -- Mar'li's Bloodstained Sandals
+    },
+    -- Zandalari Robes of the Final Rite
+    ["96412"] = {
+        96784, -- Zandalari Robes of the Final Rite
+    },
+    -- Wushoolay's Final Choice
+    ["96413"] = {
+        96785, -- Wushoolay's Final Choice
+    },
+    -- Amun-Thoth, Sul's Spiritrending Talons
+    ["96414"] = {
+        96786, -- Amun-Thoth, Sul's Spiritrending Talons
+    },
+    -- Robes of Treacherous Ground
+    ["96415"] = {
+        96787, -- Robes of Treacherous Ground
+    },
+    -- Gaze of Gara'jal
+    ["96416"] = {
+        96788, -- Gaze of Gara'jal
+    },
+    -- Loa-Ridden Bracers
+    ["96417"] = {
+        96789, -- Loa-Ridden Bracers
+    },
+    -- Overloaded Bladebreaker Cuirass
+    ["96418"] = {
+        96790, -- Overloaded Bladebreaker Cuirass
+    },
+    -- Zerat, Malakk's Soulburning Greatsword
+    ["96419"] = {
+        96791, -- Zerat, Malakk's Soulburning Greatsword
+    },
+    -- Talisman of Angry Spirits
+    ["96420"] = {
+        96792, -- Talisman of Angry Spirits
+    },
+    -- Fortitude of the Zandalari
+    ["96421"] = {
+        96793, -- Fortitude of the Zandalari
+    },
+    -- Shattered Tortoiseshell Longbow
+    ["96422"] = {
+        96794, -- Shattered Tortoiseshell Longbow
+    },
+    -- Rockfall Ribwraps
+    ["96423"] = {
+        96795, -- Rockfall Ribwraps
+    },
+    -- Grips of Vampiric Cruelty
+    ["96424"] = {
+        96796, -- Grips of Vampiric Cruelty
+    },
+    -- Beady-Eye Bracers
+    ["96425"] = {
+        96797, -- Beady-Eye Bracers
+    },
+    -- Quakestompers
+    ["96426"] = {
+        96798, -- Quakestompers
+    },
+    -- Shoulderguards of Centripetal Destruction
+    ["96427"] = {
+        96799, -- Shoulderguards of Centripetal Destruction
+    },
+    -- Shell-Coated Wristplates
+    ["96428"] = {
+        96800, -- Shell-Coated Wristplates
+    },
+    -- Amulet of the Primal Turtle
+    ["96429"] = {
+        96801, -- Amulet of the Primal Turtle
+    },
+    -- Shellsplitter Greataxe
+    ["96430"] = {
+        96802, -- Shellsplitter Greataxe
+    },
+    -- Beakbreaker Greatcloak
+    ["96431"] = {
+        96803, -- Beakbreaker Greatcloak
+    },
+    -- Azure Shell Bracers
+    ["96432"] = {
+        96804, -- Azure Shell Bracers
+    },
+    -- Stonegaze Hood
+    ["96433"] = {
+        96805, -- Stonegaze Hood
+    },
+    -- Crystal-Claw Gloves
+    ["96434"] = {
+        96806, -- Crystal-Claw Gloves
+    },
+    -- Shimmershell Cape
+    ["96435"] = {
+        96807, -- Shimmershell Cape
+    },
+    -- Tortos' Discarded Shell
+    ["96436"] = {
+        96808, -- Tortos' Discarded Shell
+    },
+    -- Vampire Bat-Hide Bracers
+    ["96437"] = {
+        96809, -- Vampire Bat-Hide Bracers
+    },
+    -- Robes of Concussive Shocks
+    ["96438"] = {
+        96810, -- Robes of Concussive Shocks
+    },
+    -- Spaulders of Quaking Fear
+    ["96439"] = {
+        96811, -- Spaulders of Quaking Fear
+    },
+    -- Refreshing Abalone Girdle
+    ["96440"] = {
+        96812, -- Refreshing Abalone Girdle
+    },
+    -- Tortos' Shellseizers
+    ["96441"] = {
+        96813, -- Tortos' Shellseizers
+    },
+    -- Megaera's Poisoned Fang
+    ["96442"] = {
+        96814, -- Megaera's Poisoned Fang
+    },
+    -- Quadra-Head Brooch
+    ["96443"] = {
+        96815, -- Quadra-Head Brooch
+    },
+    -- Poisonblood Bladeshoulders
+    ["96444"] = {
+        96816, -- Poisonblood Bladeshoulders
+    },
+    -- Grips of Cinderflesh
+    ["96445"] = {
+        96817, -- Grips of Cinderflesh
+    },
+    -- Plated Toothbreaker Girdle
+    ["96446"] = {
+        96818, -- Plated Toothbreaker Girdle
+    },
+    -- Rot-Proof Greatplate
+    ["96447"] = {
+        96819, -- Rot-Proof Greatplate
+    },
+    -- Spinescale Seal
+    ["96448"] = {
+        96820, -- Spinescale Seal
+    },
+    -- Hydraskull Choker
+    ["96449"] = {
+        96821, -- Hydraskull Choker
+    },
+    -- Sandals of Arcane Fury
+    ["96450"] = {
+        96822, -- Sandals of Arcane Fury
+    },
+    -- Gleaming-Eye Shoulderpads
+    ["96451"] = {
+        96823, -- Gleaming-Eye Shoulderpads
+    },
+    -- Frostborn Wristwraps
+    ["96452"] = {
+        96824, -- Frostborn Wristwraps
+    },
+    -- Megaera's Shining Eye
+    ["96453"] = {
+        96825, -- Megaera's Shining Eye
+    },
+    -- Fetish of the Hydra
+    ["96454"] = {
+        96826, -- Fetish of the Hydra
+    },
+    -- Breath of the Hydra
+    ["96455"] = {
+        96827, -- Breath of the Hydra
+    },
+    -- Inscribed Bag of Hydra-Spawn
+    ["96456"] = {
+        96828, -- Inscribed Bag of Hydra-Spawn
+    },
+    -- Hood of Smoldering Flesh
+    ["96457"] = {
+        96829, -- Hood of Smoldering Flesh
+    },
+    -- Links of the Bifurcated Tongue
+    ["96458"] = {
+        96830, -- Links of the Bifurcated Tongue
+    },
+    -- Chain of Consuming Magic
+    ["96459"] = {
+        96831, -- Chain of Consuming Magic
+    },
+    -- Ice-Scored Treads
+    ["96460"] = {
+        96832, -- Ice-Scored Treads
+    },
+    -- Pinionfeather Greatcloak
+    ["96461"] = {
+        96833, -- Pinionfeather Greatcloak
+    },
+    -- Cord of Cacophonous Cawing
+    ["96462"] = {
+        96834, -- Cord of Cacophonous Cawing
+    },
+    -- Robe of Midnight Down
+    ["96463"] = {
+        96835, -- Robe of Midnight Down
+    },
+    -- Giorgio's Caduceus of Pure Moods
+    ["96464"] = {
+        96836, -- Giorgio's Caduceus of Pure Moods
+    },
+    -- Featherflight Belt
+    ["96465"] = {
+        96837, -- Featherflight Belt
+    },
+    -- Grasp of the Ruthless Mother
+    ["96466"] = {
+        96838, -- Grasp of the Ruthless Mother
+    },
+    -- Crown of Potentiated Birth
+    ["96467"] = {
+        96839, -- Crown of Potentiated Birth
+    },
+    -- Talonrender Chestplate
+    ["96468"] = {
+        96840, -- Talonrender Chestplate
+    },
+    -- Egg-Shard Grips
+    ["96469"] = {
+        96841, -- Egg-Shard Grips
+    },
+    -- Fabled Feather of Ji-Kun
+    ["96470"] = {
+        96842, -- Fabled Feather of Ji-Kun
+    },
+    -- Ji-Kun's Rising Winds
+    ["96471"] = {
+        96843, -- Ji-Kun's Rising Winds
+    },
+    -- Durumu's Baleful Gaze
+    ["96472"] = {
+        96844, -- Durumu's Baleful Gaze
+    },
+    -- Crimson Bloom Legguards
+    ["96473"] = {
+        96845, -- Crimson Bloom Legguards
+    },
+    -- Links of the Disintegrator
+    ["96474"] = {
+        96846, -- Links of the Disintegrator
+    },
+    -- Aberrant Chestguard of Torment
+    ["96475"] = {
+        96847, -- Aberrant Chestguard of Torment
+    },
+    -- Caustic Spike Bracers
+    ["96476"] = {
+        96848, -- Caustic Spike Bracers
+    },
+    -- Legplates of the Dark Parasite
+    ["96477"] = {
+        96849, -- Legplates of the Dark Parasite
+    },
+    -- Treads of the Blind Eye
+    ["96478"] = {
+        96850, -- Treads of the Blind Eye
+    },
+    -- Artery Rippers
+    ["96479"] = {
+        96851, -- Artery Rippers
+    },
+    -- Reinforced Mirror-Sheen Cloak
+    ["96480"] = {
+        96852, -- Reinforced Mirror-Sheen Cloak
+    },
+    -- Durumu's Severed Tentacle
+    ["96481"] = {
+        96853, -- Durumu's Severed Tentacle
+    },
+    -- Lifedrainer's Sordid Grip
+    ["96482"] = {
+        96854, -- Lifedrainer's Sordid Grip
+    },
+    -- Leggings of Pulsing Blood
+    ["96483"] = {
+        96855, -- Leggings of Pulsing Blood
+    },
+    -- Chilblain Spaulders
+    ["96484"] = {
+        96856, -- Chilblain Spaulders
+    },
+    -- Deadly Glare Cape
+    ["96485"] = {
+        96857, -- Deadly Glare Cape
+    },
+    -- Durumu's Captive Eyeball
+    ["96486"] = {
+        96858, -- Durumu's Captive Eyeball
+    },
+    -- Ritual Dagger of the Mind's Eye
+    ["96487"] = {
+        96859, -- Ritual Dagger of the Mind's Eye
+    },
+    -- Sandals of the Starving Eye
+    ["96488"] = {
+        96860, -- Sandals of the Starving Eye
+    },
+    -- Vein-Cover Bracers
+    ["96489"] = {
+        96861, -- Vein-Cover Bracers
+    },
+    -- Iceshatter Gauntlets
+    ["96490"] = {
+        96862, -- Iceshatter Gauntlets
+    },
+    -- Legplates of Re-Emergence
+    ["96491"] = {
+        96863, -- Legplates of Re-Emergence
+    },
+    -- Talisman of Bloodlust
+    ["96492"] = {
+        96864, -- Talisman of Bloodlust
+    },
+    -- Gloves of Cushioned Air
+    ["96493"] = {
+        96865, -- Gloves of Cushioned Air
+    },
+    -- Bracers of Mutagenic Fervor
+    ["96494"] = {
+        96866, -- Bracers of Mutagenic Fervor
+    },
+    -- Synapse-String Handguards
+    ["96495"] = {
+        96867, -- Synapse-String Handguards
+    },
+    -- Pathogenic Gauntlets
+    ["96496"] = {
+        96868, -- Pathogenic Gauntlets
+    },
+    -- Black Blood Legplates
+    ["96497"] = {
+        96869, -- Black Blood Legplates
+    },
+    -- Metabolically Boosted Shoulderplates
+    ["96498"] = {
+        96870, -- Metabolically Boosted Shoulderplates
+    },
+    -- Hydra-Scale Bloodcloak
+    ["96499"] = {
+        96871, -- Hydra-Scale Bloodcloak
+    },
+    -- Band of the Scaled Tyrant
+    ["96500"] = {
+        96872, -- Band of the Scaled Tyrant
+    },
+    -- Primordius' Talisman of Rage
+    ["96501"] = {
+        96873, -- Primordius' Talisman of Rage
+    },
+    -- Acid-Spine Bonemace
+    ["96502"] = {
+        96874, -- Acid-Spine Bonemace
+    },
+    -- Robes of Mutagenic Blood
+    ["96503"] = {
+        96875, -- Robes of Mutagenic Blood
+    },
+    -- Helix-Breaker Gloves
+    ["96504"] = {
+        96876, -- Helix-Breaker Gloves
+    },
+    -- Leggings of Ebon Veins
+    ["96505"] = {
+        96877, -- Leggings of Ebon Veins
+    },
+    -- Bracers of Fragile Bone
+    ["96506"] = {
+        96878, -- Bracers of Fragile Bone
+    },
+    -- Stolen Relic of Zuldazar
+    ["96507"] = {
+        96879, -- Stolen Relic of Zuldazar
+    },
+    -- Leggings of the Malformed Sapling
+    ["96508"] = {
+        96880, -- Leggings of the Malformed Sapling
+    },
+    -- Clear-Mind Helm
+    ["96509"] = {
+        96881, -- Clear-Mind Helm
+    },
+    -- Bonemender Bracers
+    ["96510"] = {
+        96882, -- Bonemender Bracers
+    },
+    -- Spaulders of Primordial Growth
+    ["96511"] = {
+        96883, -- Spaulders of Primordial Growth
+    },
+    -- Greatshield of the Gloaming
+    ["96512"] = {
+        96884, -- Greatshield of the Gloaming
+    },
+    -- Gore-Soaked Gear
+    ["96513"] = {
+        96885, -- Gore-Soaked Gear
+    },
+    -- Hand of the Dark Animus
+    ["96514"] = {
+        96886, -- Hand of the Dark Animus
+    },
+    -- Hood of the Crimson Wake
+    ["96515"] = {
+        96887, -- Hood of the Crimson Wake
+    },
+    -- Cha-Ye's Essence of Brilliance
+    ["96516"] = {
+        96888, -- Cha-Ye's Essence of Brilliance
+    },
+    -- Constantly Accelerating Cloak
+    ["96517"] = {
+        96889, -- Constantly Accelerating Cloak
+    },
+    -- Athame of the Sanguine Ritual
+    ["96518"] = {
+        96890, -- Athame of the Sanguine Ritual
+    },
+    -- Worldbinder Leggings
+    ["96519"] = {
+        96891, -- Worldbinder Leggings
+    },
+    -- Anima-Ringed Fingers
+    ["96520"] = {
+        96892, -- Anima-Ringed Fingers
+    },
+    -- Matter-Swapped Legplates
+    ["96521"] = {
+        96893, -- Matter-Swapped Legplates
+    },
+    -- Crown of the Golden Golem
+    ["96522"] = {
+        96894, -- Crown of the Golden Golem
+    },
+    -- Delicate Vial of the Sanguinaire
+    ["96523"] = {
+        96895, -- Delicate Vial of the Sanguinaire
+    },
+    -- Iron Qon's Boot Knife
+    ["96524"] = {
+        96896, -- Iron Qon's Boot Knife
+    },
+    -- Voice of the Quilen
+    ["96525"] = {
+        96897, -- Voice of the Quilen
+    },
+    -- Quet'zal's Crackling Cord
+    ["96526"] = {
+        96898, -- Quet'zal's Crackling Cord
+    },
+    -- Saddle-Scarred Leggings
+    ["96527"] = {
+        96899, -- Saddle-Scarred Leggings
+    },
+    -- Dam'ren's Frozen Footguards
+    ["96528"] = {
+        96900, -- Dam'ren's Frozen Footguards
+    },
+    -- Ro'shak's Remembrance
+    ["96529"] = {
+        96901, -- Ro'shak's Remembrance
+    },
+    -- Orb of Arcing Lightning
+    ["96530"] = {
+        96902, -- Orb of Arcing Lightning
+    },
+    -- Spurs of the Storm Cavalry
+    ["96531"] = {
+        96903, -- Spurs of the Storm Cavalry
+    },
+    -- Ro'shak's Molten Chain
+    ["96532"] = {
+        96904, -- Ro'shak's Molten Chain
+    },
+    -- Rein-Binder's Fists
+    ["96533"] = {
+        96905, -- Rein-Binder's Fists
+    },
+    -- Qon's Flaming Scimitar
+    ["96534"] = {
+        96906, -- Qon's Flaming Scimitar
+    },
+    -- Wu-Lai, Bladed Fan of the Consorts
+    ["96535"] = {
+        96907, -- Wu-Lai, Bladed Fan of the Consorts
+    },
+    -- Robes of the Moon Lotus
+    ["96536"] = {
+        96908, -- Robes of the Moon Lotus
+    },
+    -- Passionfire Choker
+    ["96537"] = {
+        96909, -- Passionfire Choker
+    },
+    -- Shield of Twinned Despair
+    ["96538"] = {
+        96910, -- Shield of Twinned Despair
+    },
+    -- Suen-Wo, Spire of the Falling Sun
+    ["96539"] = {
+        96911, -- Suen-Wo, Spire of the Falling Sun
+    },
+    -- Bracers of the Midnight Comet
+    ["96540"] = {
+        96912, -- Bracers of the Midnight Comet
+    },
+    -- Girdle of Night and Day
+    ["96541"] = {
+        96913, -- Girdle of Night and Day
+    },
+    -- Tidal Force Treads
+    ["96542"] = {
+        96914, -- Tidal Force Treads
+    },
+    -- Gaze of the Twins
+    ["96543"] = {
+        96915, -- Gaze of the Twins
+    },
+    -- Moonjade Necklace
+    ["96544"] = {
+        96916, -- Moonjade Necklace
+    },
+    -- Fingers of the Night
+    ["96545"] = {
+        96917, -- Fingers of the Night
+    },
+    -- Rune of Re-Origination
+    ["96546"] = {
+        96918, -- Rune of Re-Origination
+    },
+    -- Shan-Dun, Breaker of Hope
+    ["96547"] = {
+        96919, -- Shan-Dun, Breaker of Hope
+    },
+    -- Fusion Slasher Chestguard
+    ["96548"] = {
+        96920, -- Fusion Slasher Chestguard
+    },
+    -- Conduit-Breaker Chain Leggings
+    ["96549"] = {
+        96921, -- Conduit-Breaker Chain Leggings
+    },
+    -- Doomed Crown of Lei Shen
+    ["96550"] = {
+        96922, -- Doomed Crown of Lei Shen
+    },
+    -- Legplates of the Lightning Throne
+    ["96551"] = {
+        96923, -- Legplates of the Lightning Throne
+    },
+    -- Legplates of Whipping Ionization
+    ["96552"] = {
+        96924, -- Legplates of Whipping Ionization
+    },
+    -- Uroe, Harbinger of Terror
+    ["96553"] = {
+        96925, -- Uroe, Harbinger of Terror
+    },
+    -- Ultimate Protection of the Emperor
+    ["96554"] = {
+        96926, -- Ultimate Protection of the Emperor
+    },
+    -- Soul Barrier
+    ["96555"] = {
+        96927, -- Soul Barrier
+    },
+    -- Legwraps of Cardinality
+    ["96556"] = {
+        96928, -- Legwraps of Cardinality
+    },
+    -- Gloves of the Maimed Vizier
+    ["96557"] = {
+        96929, -- Gloves of the Maimed Vizier
+    },
+    -- Unerring Vision of Lei Shen
+    ["96558"] = {
+        96930, -- Unerring Vision of Lei Shen
+    },
+    -- Torall, Rod of the Shattered Throne
+    ["96559"] = {
+        96931, -- Torall, Rod of the Shattered Throne
+    },
+    -- Soul Prism of Lei Shen
+    ["96560"] = {
+        96932, -- Soul Prism of Lei Shen
+    },
+    -- Lightning-Imbued Chalice
+    ["96561"] = {
+        96933, -- Lightning-Imbued Chalice
+    },
+    -- Lei Shen's Orb of Command
+    ["96562"] = {
+        96934, -- Lei Shen's Orb of Command
+    },
+    -- Grips of Slicing Electricity
+    ["96563"] = {
+        96935, -- Grips of Slicing Electricity
+    },
+    -- Leggings of the Violent Gale
+    ["96564"] = {
+        96936, -- Leggings of the Violent Gale
+    },
+    -- Lei Shen's Grounded Carapace
+    ["96565"] = {
+        96937, -- Lei Shen's Grounded Carapace
+    },
     -- Chest of the Crackling Vanquisher
     ["96566"] = {
         96569, -- Breastplate of the All-Consuming Maw
@@ -23015,6 +25743,90 @@ GL.Data.ItemLinks = {
         96695, -- Gloves of the Witch Doctor
         96732, -- Gauntlets of the Last Mogu
         96736, -- Handguards of the Last Mogu
+    },
+    -- Invocation of the Dawn
+    ["96602"] = {
+        96974, -- Invocation of the Dawn
+    },
+    -- Miracoran, the Vehement Chord
+    ["96603"] = {
+        96975, -- Miracoran, the Vehement Chord
+    },
+    -- Fyn's Flickering Dagger
+    ["96604"] = {
+        96976, -- Fyn's Flickering Dagger
+    },
+    -- Zeeg's Ancient Kegsmasher
+    ["96605"] = {
+        96977, -- Zeeg's Ancient Kegsmasher
+    },
+    -- Darkwood Spiritstaff
+    ["96606"] = {
+        96978, -- Darkwood Spiritstaff
+    },
+    -- Lost Shoulders of Fire
+    ["96607"] = {
+        96979, -- Lost Shoulders of Fire
+    },
+    -- Lost Shoulders of Healing
+    ["96608"] = {
+        96980, -- Lost Shoulders of Healing
+    },
+    -- Lost Shoulders of Fluidity
+    ["96609"] = {
+        96981, -- Lost Shoulders of Fluidity
+    },
+    -- Nadagast's Exsanguinator
+    ["96610"] = {
+        96982, -- Nadagast's Exsanguinator
+    },
+    -- Jerthud, Graceful Hand of the Savior
+    ["96611"] = {
+        96983, -- Jerthud, Graceful Hand of the Savior
+    },
+    -- Forgotten Mantle of the Moon
+    ["96612"] = {
+        96984, -- Forgotten Mantle of the Moon
+    },
+    -- Forgotten Mantle of the Sun
+    ["96613"] = {
+        96985, -- Forgotten Mantle of the Sun
+    },
+    -- Abandoned Spaulders of Arrowflight
+    ["96614"] = {
+        96986, -- Abandoned Spaulders of Arrowflight
+    },
+    -- Abandoned Spaulders of Renewal
+    ["96615"] = {
+        96987, -- Abandoned Spaulders of Renewal
+    },
+    -- Reconstructed Holy Shoulderplates
+    ["96616"] = {
+        96988, -- Reconstructed Holy Shoulderplates
+    },
+    -- Reconstructed Furious Shoulderplates
+    ["96617"] = {
+        96989, -- Reconstructed Furious Shoulderplates
+    },
+    -- Reconstructed Bloody Shoulderplates
+    ["96618"] = {
+        96990, -- Reconstructed Bloody Shoulderplates
+    },
+    -- Greatsword of Frozen Hells
+    ["96619"] = {
+        96991, -- Greatsword of Frozen Hells
+    },
+    -- Do-tharak, the Swordbreaker
+    ["96620"] = {
+        96992, -- Do-tharak, the Swordbreaker
+    },
+    -- Bo-Ris, Horror in the Night
+    ["96621"] = {
+        96993, -- Bo-Ris, Horror in the Night
+    },
+    -- Visage of the Doomed
+    ["96622"] = {
+        96994, -- Visage of the Doomed
     },
     -- Helm of the Crackling Vanquisher
     ["96623"] = {
@@ -23451,6 +26263,898 @@ GL.Data.ItemLinks = {
     -- Shoulderguards of the Last Mogu
     ["96739"] = {
         96701, -- Shoulders of the Crackling Protector
+    },
+    -- Sign of the Bloodied God
+    ["96740"] = {
+        96368, -- Sign of the Bloodied God
+    },
+    -- Renataki's Soul Charm
+    ["96741"] = {
+        96369, -- Renataki's Soul Charm
+    },
+    -- Lightning-Eye Hood
+    ["96742"] = {
+        96370, -- Lightning-Eye Hood
+    },
+    -- Spearman's Jingling Leggings
+    ["96743"] = {
+        96371, -- Spearman's Jingling Leggings
+    },
+    -- Static-Shot Shoulderguards
+    ["96744"] = {
+        96372, -- Static-Shot Shoulderguards
+    },
+    -- Cloudbreaker Greatbelt
+    ["96745"] = {
+        96373, -- Cloudbreaker Greatbelt
+    },
+    -- Chestplate of Violent Detonation
+    ["96746"] = {
+        96374, -- Chestplate of Violent Detonation
+    },
+    -- Bracers of Constant Implosion
+    ["96747"] = {
+        96375, -- Bracers of Constant Implosion
+    },
+    -- Worldbreaker's Stormscythe
+    ["96748"] = {
+        96376, -- Worldbreaker's Stormscythe
+    },
+    -- Jin'rokh's Soulcrystal
+    ["96749"] = {
+        96377, -- Jin'rokh's Soulcrystal
+    },
+    -- Lightningweaver Gauntlets
+    ["96750"] = {
+        96378, -- Lightningweaver Gauntlets
+    },
+    -- Al'set's Tormented Leggings
+    ["96751"] = {
+        96379, -- Al'set's Tormented Leggings
+    },
+    -- Fissure-Split Shoulderwraps
+    ["96752"] = {
+        96380, -- Fissure-Split Shoulderwraps
+    },
+    -- Robes of Static Bursts
+    ["96753"] = {
+        96381, -- Robes of Static Bursts
+    },
+    -- Jin'rokh's Dreamshard
+    ["96754"] = {
+        96382, -- Jin'rokh's Dreamshard
+    },
+    -- Drape of Booming Nights
+    ["96755"] = {
+        96383, -- Drape of Booming Nights
+    },
+    -- Soulblade of the Breaking Storm
+    ["96756"] = {
+        96384, -- Soulblade of the Breaking Storm
+    },
+    -- Horridon's Last Gasp
+    ["96757"] = {
+        96385, -- Horridon's Last Gasp
+    },
+    -- Infinitely Conducting Bracers
+    ["96758"] = {
+        96386, -- Infinitely Conducting Bracers
+    },
+    -- Ghostbinder Greatboots
+    ["96759"] = {
+        96387, -- Ghostbinder Greatboots
+    },
+    -- Ionized Yojamban Carapace
+    ["96760"] = {
+        96388, -- Ionized Yojamban Carapace
+    },
+    -- Wastewalker's Sandblasted Drape
+    ["96761"] = {
+        96389, -- Wastewalker's Sandblasted Drape
+    },
+    -- Talisman of Living Poison
+    ["96762"] = {
+        96390, -- Talisman of Living Poison
+    },
+    -- Jalak's Maelstrom Staff
+    ["96763"] = {
+        96391, -- Jalak's Maelstrom Staff
+    },
+    -- Bindings of Multiplicative Strikes
+    ["96764"] = {
+        96392, -- Bindings of Multiplicative Strikes
+    },
+    -- Sul'lithuz Sandmail
+    ["96765"] = {
+        96393, -- Sul'lithuz Sandmail
+    },
+    -- Frozen Warlord's Bracers
+    ["96766"] = {
+        96394, -- Frozen Warlord's Bracers
+    },
+    -- Bloodlord's Bloodsoaked Legplates
+    ["96767"] = {
+        96395, -- Bloodlord's Bloodsoaked Legplates
+    },
+    -- Puncture-Proof Greathelm
+    ["96768"] = {
+        96396, -- Puncture-Proof Greathelm
+    },
+    -- Horn-Rimmed Doomcloak
+    ["96769"] = {
+        96397, -- Horn-Rimmed Doomcloak
+    },
+    -- Spark of Zandalar
+    ["96770"] = {
+        96398, -- Spark of Zandalar
+    },
+    -- Flamecaster's Burning Crown
+    ["96771"] = {
+        96399, -- Flamecaster's Burning Crown
+    },
+    -- Vaccinator's Armwraps
+    ["96772"] = {
+        96400, -- Vaccinator's Armwraps
+    },
+    -- Dinomancer's Spiritbinding Spire
+    ["96773"] = {
+        96401, -- Dinomancer's Spiritbinding Spire
+    },
+    -- Horridon's Tusk Fragment
+    ["96774"] = {
+        96402, -- Horridon's Tusk Fragment
+    },
+    -- Petrified Eye of the Basilisk
+    ["96775"] = {
+        96403, -- Petrified Eye of the Basilisk
+    },
+    -- Venomlord's Totemic Wand
+    ["96776"] = {
+        96404, -- Venomlord's Totemic Wand
+    },
+    -- Roots of Rampaging Earth
+    ["96777"] = {
+        96405, -- Roots of Rampaging Earth
+    },
+    -- Spaulders of Dinomancy
+    ["96778"] = {
+        96406, -- Spaulders of Dinomancy
+    },
+    -- Legguards of Scintillating Scales
+    ["96779"] = {
+        96407, -- Legguards of Scintillating Scales
+    },
+    -- Armplates of the Vanquished Abomination
+    ["96780"] = {
+        96408, -- Armplates of the Vanquished Abomination
+    },
+    -- Bad Juju
+    ["96781"] = {
+        96409, -- Bad Juju
+    },
+    -- Kura-Kura, Kazra'jin's Skullcleaver
+    ["96782"] = {
+        96410, -- Kura-Kura, Kazra'jin's Skullcleaver
+    },
+    -- Mar'li's Bloodstained Sandals
+    ["96783"] = {
+        96411, -- Mar'li's Bloodstained Sandals
+    },
+    -- Zandalari Robes of the Final Rite
+    ["96784"] = {
+        96412, -- Zandalari Robes of the Final Rite
+    },
+    -- Wushoolay's Final Choice
+    ["96785"] = {
+        96413, -- Wushoolay's Final Choice
+    },
+    -- Amun-Thoth, Sul's Spiritrending Talons
+    ["96786"] = {
+        96414, -- Amun-Thoth, Sul's Spiritrending Talons
+    },
+    -- Robes of Treacherous Ground
+    ["96787"] = {
+        96415, -- Robes of Treacherous Ground
+    },
+    -- Gaze of Gara'jal
+    ["96788"] = {
+        96416, -- Gaze of Gara'jal
+    },
+    -- Loa-Ridden Bracers
+    ["96789"] = {
+        96417, -- Loa-Ridden Bracers
+    },
+    -- Overloaded Bladebreaker Cuirass
+    ["96790"] = {
+        96418, -- Overloaded Bladebreaker Cuirass
+    },
+    -- Zerat, Malakk's Soulburning Greatsword
+    ["96791"] = {
+        96419, -- Zerat, Malakk's Soulburning Greatsword
+    },
+    -- Talisman of Angry Spirits
+    ["96792"] = {
+        96420, -- Talisman of Angry Spirits
+    },
+    -- Fortitude of the Zandalari
+    ["96793"] = {
+        96421, -- Fortitude of the Zandalari
+    },
+    -- Shattered Tortoiseshell Longbow
+    ["96794"] = {
+        96422, -- Shattered Tortoiseshell Longbow
+    },
+    -- Rockfall Ribwraps
+    ["96795"] = {
+        96423, -- Rockfall Ribwraps
+    },
+    -- Grips of Vampiric Cruelty
+    ["96796"] = {
+        96424, -- Grips of Vampiric Cruelty
+    },
+    -- Beady-Eye Bracers
+    ["96797"] = {
+        96425, -- Beady-Eye Bracers
+    },
+    -- Quakestompers
+    ["96798"] = {
+        96426, -- Quakestompers
+    },
+    -- Shoulderguards of Centripetal Destruction
+    ["96799"] = {
+        96427, -- Shoulderguards of Centripetal Destruction
+    },
+    -- Shell-Coated Wristplates
+    ["96800"] = {
+        96428, -- Shell-Coated Wristplates
+    },
+    -- Amulet of the Primal Turtle
+    ["96801"] = {
+        96429, -- Amulet of the Primal Turtle
+    },
+    -- Shellsplitter Greataxe
+    ["96802"] = {
+        96430, -- Shellsplitter Greataxe
+    },
+    -- Beakbreaker Greatcloak
+    ["96803"] = {
+        96431, -- Beakbreaker Greatcloak
+    },
+    -- Azure Shell Bracers
+    ["96804"] = {
+        96432, -- Azure Shell Bracers
+    },
+    -- Stonegaze Hood
+    ["96805"] = {
+        96433, -- Stonegaze Hood
+    },
+    -- Crystal-Claw Gloves
+    ["96806"] = {
+        96434, -- Crystal-Claw Gloves
+    },
+    -- Shimmershell Cape
+    ["96807"] = {
+        96435, -- Shimmershell Cape
+    },
+    -- Tortos' Discarded Shell
+    ["96808"] = {
+        96436, -- Tortos' Discarded Shell
+    },
+    -- Vampire Bat-Hide Bracers
+    ["96809"] = {
+        96437, -- Vampire Bat-Hide Bracers
+    },
+    -- Robes of Concussive Shocks
+    ["96810"] = {
+        96438, -- Robes of Concussive Shocks
+    },
+    -- Spaulders of Quaking Fear
+    ["96811"] = {
+        96439, -- Spaulders of Quaking Fear
+    },
+    -- Refreshing Abalone Girdle
+    ["96812"] = {
+        96440, -- Refreshing Abalone Girdle
+    },
+    -- Tortos' Shellseizers
+    ["96813"] = {
+        96441, -- Tortos' Shellseizers
+    },
+    -- Megaera's Poisoned Fang
+    ["96814"] = {
+        96442, -- Megaera's Poisoned Fang
+    },
+    -- Quadra-Head Brooch
+    ["96815"] = {
+        96443, -- Quadra-Head Brooch
+    },
+    -- Poisonblood Bladeshoulders
+    ["96816"] = {
+        96444, -- Poisonblood Bladeshoulders
+    },
+    -- Grips of Cinderflesh
+    ["96817"] = {
+        96445, -- Grips of Cinderflesh
+    },
+    -- Plated Toothbreaker Girdle
+    ["96818"] = {
+        96446, -- Plated Toothbreaker Girdle
+    },
+    -- Rot-Proof Greatplate
+    ["96819"] = {
+        96447, -- Rot-Proof Greatplate
+    },
+    -- Spinescale Seal
+    ["96820"] = {
+        96448, -- Spinescale Seal
+    },
+    -- Hydraskull Choker
+    ["96821"] = {
+        96449, -- Hydraskull Choker
+    },
+    -- Sandals of Arcane Fury
+    ["96822"] = {
+        96450, -- Sandals of Arcane Fury
+    },
+    -- Gleaming-Eye Shoulderpads
+    ["96823"] = {
+        96451, -- Gleaming-Eye Shoulderpads
+    },
+    -- Frostborn Wristwraps
+    ["96824"] = {
+        96452, -- Frostborn Wristwraps
+    },
+    -- Megaera's Shining Eye
+    ["96825"] = {
+        96453, -- Megaera's Shining Eye
+    },
+    -- Fetish of the Hydra
+    ["96826"] = {
+        96454, -- Fetish of the Hydra
+    },
+    -- Breath of the Hydra
+    ["96827"] = {
+        96455, -- Breath of the Hydra
+    },
+    -- Inscribed Bag of Hydra-Spawn
+    ["96828"] = {
+        96456, -- Inscribed Bag of Hydra-Spawn
+    },
+    -- Hood of Smoldering Flesh
+    ["96829"] = {
+        96457, -- Hood of Smoldering Flesh
+    },
+    -- Links of the Bifurcated Tongue
+    ["96830"] = {
+        96458, -- Links of the Bifurcated Tongue
+    },
+    -- Chain of Consuming Magic
+    ["96831"] = {
+        96459, -- Chain of Consuming Magic
+    },
+    -- Ice-Scored Treads
+    ["96832"] = {
+        96460, -- Ice-Scored Treads
+    },
+    -- Pinionfeather Greatcloak
+    ["96833"] = {
+        96461, -- Pinionfeather Greatcloak
+    },
+    -- Cord of Cacophonous Cawing
+    ["96834"] = {
+        96462, -- Cord of Cacophonous Cawing
+    },
+    -- Robe of Midnight Down
+    ["96835"] = {
+        96463, -- Robe of Midnight Down
+    },
+    -- Giorgio's Caduceus of Pure Moods
+    ["96836"] = {
+        96464, -- Giorgio's Caduceus of Pure Moods
+    },
+    -- Featherflight Belt
+    ["96837"] = {
+        96465, -- Featherflight Belt
+    },
+    -- Grasp of the Ruthless Mother
+    ["96838"] = {
+        96466, -- Grasp of the Ruthless Mother
+    },
+    -- Crown of Potentiated Birth
+    ["96839"] = {
+        96467, -- Crown of Potentiated Birth
+    },
+    -- Talonrender Chestplate
+    ["96840"] = {
+        96468, -- Talonrender Chestplate
+    },
+    -- Egg-Shard Grips
+    ["96841"] = {
+        96469, -- Egg-Shard Grips
+    },
+    -- Fabled Feather of Ji-Kun
+    ["96842"] = {
+        96470, -- Fabled Feather of Ji-Kun
+    },
+    -- Ji-Kun's Rising Winds
+    ["96843"] = {
+        96471, -- Ji-Kun's Rising Winds
+    },
+    -- Durumu's Baleful Gaze
+    ["96844"] = {
+        96472, -- Durumu's Baleful Gaze
+    },
+    -- Crimson Bloom Legguards
+    ["96845"] = {
+        96473, -- Crimson Bloom Legguards
+    },
+    -- Links of the Disintegrator
+    ["96846"] = {
+        96474, -- Links of the Disintegrator
+    },
+    -- Aberrant Chestguard of Torment
+    ["96847"] = {
+        96475, -- Aberrant Chestguard of Torment
+    },
+    -- Caustic Spike Bracers
+    ["96848"] = {
+        96476, -- Caustic Spike Bracers
+    },
+    -- Legplates of the Dark Parasite
+    ["96849"] = {
+        96477, -- Legplates of the Dark Parasite
+    },
+    -- Treads of the Blind Eye
+    ["96850"] = {
+        96478, -- Treads of the Blind Eye
+    },
+    -- Artery Rippers
+    ["96851"] = {
+        96479, -- Artery Rippers
+    },
+    -- Reinforced Mirror-Sheen Cloak
+    ["96852"] = {
+        96480, -- Reinforced Mirror-Sheen Cloak
+    },
+    -- Durumu's Severed Tentacle
+    ["96853"] = {
+        96481, -- Durumu's Severed Tentacle
+    },
+    -- Lifedrainer's Sordid Grip
+    ["96854"] = {
+        96482, -- Lifedrainer's Sordid Grip
+    },
+    -- Leggings of Pulsing Blood
+    ["96855"] = {
+        96483, -- Leggings of Pulsing Blood
+    },
+    -- Chilblain Spaulders
+    ["96856"] = {
+        96484, -- Chilblain Spaulders
+    },
+    -- Deadly Glare Cape
+    ["96857"] = {
+        96485, -- Deadly Glare Cape
+    },
+    -- Durumu's Captive Eyeball
+    ["96858"] = {
+        96486, -- Durumu's Captive Eyeball
+    },
+    -- Ritual Dagger of the Mind's Eye
+    ["96859"] = {
+        96487, -- Ritual Dagger of the Mind's Eye
+    },
+    -- Sandals of the Starving Eye
+    ["96860"] = {
+        96488, -- Sandals of the Starving Eye
+    },
+    -- Vein-Cover Bracers
+    ["96861"] = {
+        96489, -- Vein-Cover Bracers
+    },
+    -- Iceshatter Gauntlets
+    ["96862"] = {
+        96490, -- Iceshatter Gauntlets
+    },
+    -- Legplates of Re-Emergence
+    ["96863"] = {
+        96491, -- Legplates of Re-Emergence
+    },
+    -- Talisman of Bloodlust
+    ["96864"] = {
+        96492, -- Talisman of Bloodlust
+    },
+    -- Gloves of Cushioned Air
+    ["96865"] = {
+        96493, -- Gloves of Cushioned Air
+    },
+    -- Bracers of Mutagenic Fervor
+    ["96866"] = {
+        96494, -- Bracers of Mutagenic Fervor
+    },
+    -- Synapse-String Handguards
+    ["96867"] = {
+        96495, -- Synapse-String Handguards
+    },
+    -- Pathogenic Gauntlets
+    ["96868"] = {
+        96496, -- Pathogenic Gauntlets
+    },
+    -- Black Blood Legplates
+    ["96869"] = {
+        96497, -- Black Blood Legplates
+    },
+    -- Metabolically Boosted Shoulderplates
+    ["96870"] = {
+        96498, -- Metabolically Boosted Shoulderplates
+    },
+    -- Hydra-Scale Bloodcloak
+    ["96871"] = {
+        96499, -- Hydra-Scale Bloodcloak
+    },
+    -- Band of the Scaled Tyrant
+    ["96872"] = {
+        96500, -- Band of the Scaled Tyrant
+    },
+    -- Primordius' Talisman of Rage
+    ["96873"] = {
+        96501, -- Primordius' Talisman of Rage
+    },
+    -- Acid-Spine Bonemace
+    ["96874"] = {
+        96502, -- Acid-Spine Bonemace
+    },
+    -- Robes of Mutagenic Blood
+    ["96875"] = {
+        96503, -- Robes of Mutagenic Blood
+    },
+    -- Helix-Breaker Gloves
+    ["96876"] = {
+        96504, -- Helix-Breaker Gloves
+    },
+    -- Leggings of Ebon Veins
+    ["96877"] = {
+        96505, -- Leggings of Ebon Veins
+    },
+    -- Bracers of Fragile Bone
+    ["96878"] = {
+        96506, -- Bracers of Fragile Bone
+    },
+    -- Stolen Relic of Zuldazar
+    ["96879"] = {
+        96507, -- Stolen Relic of Zuldazar
+    },
+    -- Leggings of the Malformed Sapling
+    ["96880"] = {
+        96508, -- Leggings of the Malformed Sapling
+    },
+    -- Clear-Mind Helm
+    ["96881"] = {
+        96509, -- Clear-Mind Helm
+    },
+    -- Bonemender Bracers
+    ["96882"] = {
+        96510, -- Bonemender Bracers
+    },
+    -- Spaulders of Primordial Growth
+    ["96883"] = {
+        96511, -- Spaulders of Primordial Growth
+    },
+    -- Greatshield of the Gloaming
+    ["96884"] = {
+        96512, -- Greatshield of the Gloaming
+    },
+    -- Gore-Soaked Gear
+    ["96885"] = {
+        96513, -- Gore-Soaked Gear
+    },
+    -- Hand of the Dark Animus
+    ["96886"] = {
+        96514, -- Hand of the Dark Animus
+    },
+    -- Hood of the Crimson Wake
+    ["96887"] = {
+        96515, -- Hood of the Crimson Wake
+    },
+    -- Cha-Ye's Essence of Brilliance
+    ["96888"] = {
+        96516, -- Cha-Ye's Essence of Brilliance
+    },
+    -- Constantly Accelerating Cloak
+    ["96889"] = {
+        96517, -- Constantly Accelerating Cloak
+    },
+    -- Athame of the Sanguine Ritual
+    ["96890"] = {
+        96518, -- Athame of the Sanguine Ritual
+    },
+    -- Worldbinder Leggings
+    ["96891"] = {
+        96519, -- Worldbinder Leggings
+    },
+    -- Anima-Ringed Fingers
+    ["96892"] = {
+        96520, -- Anima-Ringed Fingers
+    },
+    -- Matter-Swapped Legplates
+    ["96893"] = {
+        96521, -- Matter-Swapped Legplates
+    },
+    -- Crown of the Golden Golem
+    ["96894"] = {
+        96522, -- Crown of the Golden Golem
+    },
+    -- Delicate Vial of the Sanguinaire
+    ["96895"] = {
+        96523, -- Delicate Vial of the Sanguinaire
+    },
+    -- Iron Qon's Boot Knife
+    ["96896"] = {
+        96524, -- Iron Qon's Boot Knife
+    },
+    -- Voice of the Quilen
+    ["96897"] = {
+        96525, -- Voice of the Quilen
+    },
+    -- Quet'zal's Crackling Cord
+    ["96898"] = {
+        96526, -- Quet'zal's Crackling Cord
+    },
+    -- Saddle-Scarred Leggings
+    ["96899"] = {
+        96527, -- Saddle-Scarred Leggings
+    },
+    -- Dam'ren's Frozen Footguards
+    ["96900"] = {
+        96528, -- Dam'ren's Frozen Footguards
+    },
+    -- Ro'shak's Remembrance
+    ["96901"] = {
+        96529, -- Ro'shak's Remembrance
+    },
+    -- Orb of Arcing Lightning
+    ["96902"] = {
+        96530, -- Orb of Arcing Lightning
+    },
+    -- Spurs of the Storm Cavalry
+    ["96903"] = {
+        96531, -- Spurs of the Storm Cavalry
+    },
+    -- Ro'shak's Molten Chain
+    ["96904"] = {
+        96532, -- Ro'shak's Molten Chain
+    },
+    -- Rein-Binder's Fists
+    ["96905"] = {
+        96533, -- Rein-Binder's Fists
+    },
+    -- Qon's Flaming Scimitar
+    ["96906"] = {
+        96534, -- Qon's Flaming Scimitar
+    },
+    -- Wu-Lai, Bladed Fan of the Consorts
+    ["96907"] = {
+        96535, -- Wu-Lai, Bladed Fan of the Consorts
+    },
+    -- Robes of the Moon Lotus
+    ["96908"] = {
+        96536, -- Robes of the Moon Lotus
+    },
+    -- Passionfire Choker
+    ["96909"] = {
+        96537, -- Passionfire Choker
+    },
+    -- Shield of Twinned Despair
+    ["96910"] = {
+        96538, -- Shield of Twinned Despair
+    },
+    -- Suen-Wo, Spire of the Falling Sun
+    ["96911"] = {
+        96539, -- Suen-Wo, Spire of the Falling Sun
+    },
+    -- Bracers of the Midnight Comet
+    ["96912"] = {
+        96540, -- Bracers of the Midnight Comet
+    },
+    -- Girdle of Night and Day
+    ["96913"] = {
+        96541, -- Girdle of Night and Day
+    },
+    -- Tidal Force Treads
+    ["96914"] = {
+        96542, -- Tidal Force Treads
+    },
+    -- Gaze of the Twins
+    ["96915"] = {
+        96543, -- Gaze of the Twins
+    },
+    -- Moonjade Necklace
+    ["96916"] = {
+        96544, -- Moonjade Necklace
+    },
+    -- Fingers of the Night
+    ["96917"] = {
+        96545, -- Fingers of the Night
+    },
+    -- Rune of Re-Origination
+    ["96918"] = {
+        96546, -- Rune of Re-Origination
+    },
+    -- Shan-Dun, Breaker of Hope
+    ["96919"] = {
+        96547, -- Shan-Dun, Breaker of Hope
+    },
+    -- Fusion Slasher Chestguard
+    ["96920"] = {
+        96548, -- Fusion Slasher Chestguard
+    },
+    -- Conduit-Breaker Chain Leggings
+    ["96921"] = {
+        96549, -- Conduit-Breaker Chain Leggings
+    },
+    -- Doomed Crown of Lei Shen
+    ["96922"] = {
+        96550, -- Doomed Crown of Lei Shen
+    },
+    -- Legplates of the Lightning Throne
+    ["96923"] = {
+        96551, -- Legplates of the Lightning Throne
+    },
+    -- Legplates of Whipping Ionization
+    ["96924"] = {
+        96552, -- Legplates of Whipping Ionization
+    },
+    -- Uroe, Harbinger of Terror
+    ["96925"] = {
+        96553, -- Uroe, Harbinger of Terror
+    },
+    -- Ultimate Protection of the Emperor
+    ["96926"] = {
+        96554, -- Ultimate Protection of the Emperor
+    },
+    -- Soul Barrier
+    ["96927"] = {
+        96555, -- Soul Barrier
+    },
+    -- Legwraps of Cardinality
+    ["96928"] = {
+        96556, -- Legwraps of Cardinality
+    },
+    -- Gloves of the Maimed Vizier
+    ["96929"] = {
+        96557, -- Gloves of the Maimed Vizier
+    },
+    -- Unerring Vision of Lei Shen
+    ["96930"] = {
+        96558, -- Unerring Vision of Lei Shen
+    },
+    -- Torall, Rod of the Shattered Throne
+    ["96931"] = {
+        96559, -- Torall, Rod of the Shattered Throne
+    },
+    -- Soul Prism of Lei Shen
+    ["96932"] = {
+        96560, -- Soul Prism of Lei Shen
+    },
+    -- Lightning-Imbued Chalice
+    ["96933"] = {
+        96561, -- Lightning-Imbued Chalice
+    },
+    -- Lei Shen's Orb of Command
+    ["96934"] = {
+        96562, -- Lei Shen's Orb of Command
+    },
+    -- Grips of Slicing Electricity
+    ["96935"] = {
+        96563, -- Grips of Slicing Electricity
+    },
+    -- Leggings of the Violent Gale
+    ["96936"] = {
+        96564, -- Leggings of the Violent Gale
+    },
+    -- Lei Shen's Grounded Carapace
+    ["96937"] = {
+        96565, -- Lei Shen's Grounded Carapace
+    },
+    -- Invocation of the Dawn
+    ["96974"] = {
+        96602, -- Invocation of the Dawn
+    },
+    -- Miracoran, the Vehement Chord
+    ["96975"] = {
+        96603, -- Miracoran, the Vehement Chord
+    },
+    -- Fyn's Flickering Dagger
+    ["96976"] = {
+        96604, -- Fyn's Flickering Dagger
+    },
+    -- Zeeg's Ancient Kegsmasher
+    ["96977"] = {
+        96605, -- Zeeg's Ancient Kegsmasher
+    },
+    -- Darkwood Spiritstaff
+    ["96978"] = {
+        96606, -- Darkwood Spiritstaff
+    },
+    -- Lost Shoulders of Fire
+    ["96979"] = {
+        96607, -- Lost Shoulders of Fire
+    },
+    -- Lost Shoulders of Healing
+    ["96980"] = {
+        96608, -- Lost Shoulders of Healing
+    },
+    -- Lost Shoulders of Fluidity
+    ["96981"] = {
+        96609, -- Lost Shoulders of Fluidity
+    },
+    -- Nadagast's Exsanguinator
+    ["96982"] = {
+        96610, -- Nadagast's Exsanguinator
+    },
+    -- Jerthud, Graceful Hand of the Savior
+    ["96983"] = {
+        96611, -- Jerthud, Graceful Hand of the Savior
+    },
+    -- Forgotten Mantle of the Moon
+    ["96984"] = {
+        96612, -- Forgotten Mantle of the Moon
+    },
+    -- Forgotten Mantle of the Sun
+    ["96985"] = {
+        96613, -- Forgotten Mantle of the Sun
+    },
+    -- Abandoned Spaulders of Arrowflight
+    ["96986"] = {
+        96614, -- Abandoned Spaulders of Arrowflight
+    },
+    -- Abandoned Spaulders of Renewal
+    ["96987"] = {
+        96615, -- Abandoned Spaulders of Renewal
+    },
+    -- Reconstructed Holy Shoulderplates
+    ["96988"] = {
+        96616, -- Reconstructed Holy Shoulderplates
+    },
+    -- Reconstructed Furious Shoulderplates
+    ["96989"] = {
+        96617, -- Reconstructed Furious Shoulderplates
+    },
+    -- Reconstructed Bloody Shoulderplates
+    ["96990"] = {
+        96618, -- Reconstructed Bloody Shoulderplates
+    },
+    -- Greatsword of Frozen Hells
+    ["96991"] = {
+        96619, -- Greatsword of Frozen Hells
+    },
+    -- Do-tharak, the Swordbreaker
+    ["96992"] = {
+        96620, -- Do-tharak, the Swordbreaker
+    },
+    -- Bo-Ris, Horror in the Night
+    ["96993"] = {
+        96621, -- Bo-Ris, Horror in the Night
+    },
+    -- Visage of the Doomed
+    ["96994"] = {
+        96622, -- Visage of the Doomed
+    },
+    -- Tia-Tia, the Scything Star
+    ["97126"] = {
+        97128, -- Tia-Tia, the Scything Star
+    },
+    -- Tia-Tia, the Scything Star
+    ["97127"] = {
+        97130, -- Tia-Tia, the Scything Star
+    },
+    -- Tia-Tia, the Scything Star
+    ["97128"] = {
+        97126, -- Tia-Tia, the Scything Star
+    },
+    -- Tia-Tia, the Scything Star
+    ["97130"] = {
+        97127, -- Tia-Tia, the Scything Star
     },
     -- Spaulders of Celestial Harmony
     ["98977"] = {
@@ -25931,6 +29635,3990 @@ GL.Data.ItemLinks = {
         99647, -- Shoulderwraps of Celestial Harmony
         99655, -- Spaulders of Seven Sacred Seals
         99663, -- Spaulders of Celestial Harmony
+    },
+    -- Assurance of Consequence
+    ["102292"] = {
+        105223, -- Assurance of Consequence
+    },
+    -- Purified Bindings of Immerseus
+    ["102293"] = {
+        105173, -- Purified Bindings of Immerseus
+    },
+    -- Nazgrim's Burnished Insignia
+    ["102294"] = {
+        105300, -- Nazgrim's Burnished Insignia
+    },
+    -- Fusion-Fire Core
+    ["102295"] = {
+        105210, -- Fusion-Fire Core
+    },
+    -- Rook's Unlucky Talisman
+    ["102296"] = {
+        105189, -- Rook's Unlucky Talisman
+    },
+    -- Juggernaut's Focusing Crystal
+    ["102297"] = {
+        105265, -- Juggernaut's Focusing Crystal
+    },
+    -- Evil Eye of Galakras
+    ["102298"] = {
+        105242, -- Evil Eye of Galakras
+    },
+    -- Prismatic Prison of Pride
+    ["102299"] = {
+        105225, -- Prismatic Prison of Pride
+    },
+    -- Kardris' Toxic Totem
+    ["102300"] = {
+        105291, -- Kardris' Toxic Totem
+    },
+    -- Haromm's Talisman
+    ["102301"] = {
+        105278, -- Haromm's Talisman
+    },
+    -- Sigil of Rampage
+    ["102302"] = {
+        105331, -- Sigil of Rampage
+    },
+    -- Frenzied Crystal of Rage
+    ["102303"] = {
+        105323, -- Frenzied Crystal of Rage
+    },
+    -- Thok's Acid-Grooved Tooth
+    ["102304"] = {
+        105358, -- Thok's Acid-Grooved Tooth
+    },
+    -- Thok's Tail Tip
+    ["102305"] = {
+        105360, -- Thok's Tail Tip
+    },
+    -- Vial of Living Corruption
+    ["102306"] = {
+        105319, -- Vial of Living Corruption
+    },
+    -- Curse of Hubris
+    ["102307"] = {
+        105396, -- Curse of Hubris
+    },
+    -- Skeer's Bloodsoaked Talisman
+    ["102308"] = {
+        105383, -- Skeer's Bloodsoaked Talisman
+    },
+    -- Dysmorphic Samophlange of Discontinuity
+    ["102309"] = {
+        105366, -- Dysmorphic Samophlange of Discontinuity
+    },
+    -- Black Blood of Y'Shaarj
+    ["102310"] = {
+        105399, -- Black Blood of Y'Shaarj
+    },
+    -- Ticking Ebon Detonator
+    ["102311"] = {
+        105363, -- Ticking Ebon Detonator
+    },
+    -- Xal'atoh, Desecrated Image of Gorehowl
+    ["103649"] = {
+        105395, -- Xal'atoh, Desecrated Image of Gorehowl
+    },
+    -- Trident of Corrupted Waters
+    ["103726"] = {
+        105159, -- Trident of Corrupted Waters
+    },
+    -- Encapsulated Essence of Immerseus
+    ["103727"] = {
+        105168, -- Encapsulated Essence of Immerseus
+    },
+    -- Hood of Blackened Tears
+    ["103728"] = {
+        105160, -- Hood of Blackened Tears
+    },
+    -- Kor'kron Elite Skullmask
+    ["103729"] = {
+        105387, -- Kor'kron Elite Skullmask
+    },
+    -- Puddle Punishers
+    ["103730"] = {
+        105161, -- Puddle Punishers
+    },
+    -- Minelayer's Padded Boots
+    ["103731"] = {
+        105258, -- Minelayer's Padded Boots
+    },
+    -- Ravager's Pathwalkers
+    ["103732"] = {
+        105304, -- Ravager's Pathwalkers
+    },
+    -- Corruption-Rotted Gauntlets
+    ["103733"] = {
+        105164, -- Corruption-Rotted Gauntlets
+    },
+    -- Tar-Coated Gauntlets
+    ["103735"] = {
+        105262, -- Tar-Coated Gauntlets
+    },
+    -- Chestplate of Congealed Corrosion
+    ["103736"] = {
+        105163, -- Chestplate of Congealed Corrosion
+    },
+    -- Breastplate of Shamanic Mirrors
+    ["103737"] = {
+        105283, -- Breastplate of Shamanic Mirrors
+    },
+    -- Bubble-Burst Bracers
+    ["103738"] = {
+        105162, -- Bubble-Burst Bracers
+    },
+    -- Wall-Borer Bracers
+    ["103739"] = {
+        105261, -- Wall-Borer Bracers
+    },
+    -- Bracers of Blind Hatred
+    ["103740"] = {
+        105207, -- Bracers of Blind Hatred
+    },
+    -- Bracers of Sordid Sleep
+    ["103741"] = {
+        105166, -- Bracers of Sordid Sleep
+    },
+    -- Blood Rage Bracers
+    ["103742"] = {
+        105315, -- Blood Rage Bracers
+    },
+    -- Arcsmasher Bracers
+    ["103743"] = {
+        105240, -- Arcsmasher Bracers
+    },
+    -- Treads of Unchained Hate
+    ["103744"] = {
+        105165, -- Treads of Unchained Hate
+    },
+    -- Ominous Mogu Greatboots
+    ["103745"] = {
+        105339, -- Ominous Mogu Greatboots
+    },
+    -- Pauldrons of Violent Eruption
+    ["103747"] = {
+        105167, -- Pauldrons of Violent Eruption
+    },
+    -- Krugruk's Rigid Shoulderplates
+    ["103748"] = {
+        105241, -- Krugruk's Rigid Shoulderplates
+    },
+    -- Immerseus' Crystalline Eye
+    ["103749"] = {
+        105158, -- Immerseus' Crystalline Eye
+    },
+    -- Gleaming Eye of the Devilsaur
+    ["103750"] = {
+        105353, -- Gleaming Eye of the Devilsaur
+    },
+    -- Hood of Swirling Senses
+    ["103751"] = {
+        105171, -- Hood of Swirling Senses
+    },
+    -- Bolt-Burster Grips
+    ["103752"] = {
+        105169, -- Bolt-Burster Grips
+    },
+    -- Earthripper Gloves
+    ["103754"] = {
+        105269, -- Earthripper Gloves
+    },
+    -- Ichor-Dripping Shoulderpads
+    ["103755"] = {
+        105170, -- Ichor-Dripping Shoulderpads
+    },
+    -- Shoulderpads of Pulsing Protection
+    ["103756"] = {
+        105248, -- Shoulderpads of Pulsing Protection
+    },
+    -- Bracers of Purified Spirit
+    ["103757"] = {
+        105176, -- Bracers of Purified Spirit
+    },
+    -- Bracers of Averted Fatality
+    ["103758"] = {
+        105328, -- Bracers of Averted Fatality
+    },
+    -- Castlebreaker Bracers
+    ["103759"] = {
+        105273, -- Castlebreaker Bracers
+    },
+    -- Salt Water Sandals
+    ["103760"] = {
+        105175, -- Salt Water Sandals
+    },
+    -- Boots of Perilous Infusion
+    ["103761"] = {
+        105327, -- Boots of Perilous Infusion
+    },
+    -- Boots of Broken Reliance
+    ["103762"] = {
+        105218, -- Boots of Broken Reliance
+    },
+    -- Soul-Soaked Gloves
+    ["103763"] = {
+        105177, -- Soul-Soaked Gloves
+    },
+    -- Grips of Tidal Force
+    ["103765"] = {
+        105252, -- Grips of Tidal Force
+    },
+    -- Waterwalker Greatboots
+    ["103766"] = {
+        105179, -- Waterwalker Greatboots
+    },
+    -- Borer Drill Boots
+    ["103767"] = {
+        105276, -- Borer Drill Boots
+    },
+    -- Mogu Mindbender's Greaves
+    ["103768"] = {
+        105351, -- Mogu Mindbender's Greaves
+    },
+    -- Cloak of Misguided Power
+    ["103769"] = {
+        105172, -- Cloak of Misguided Power
+    },
+    -- Seal of Eternal Sorrow
+    ["103771"] = {
+        105174, -- Seal of Eternal Sorrow
+    },
+    -- Seal of Sullen Fury
+    ["103772"] = {
+        105325, -- Seal of Sullen Fury
+    },
+    -- Laser-Slice Signet
+    ["103773"] = {
+        105271, -- Laser-Slice Signet
+    },
+    -- Signet of the Dinomancers
+    ["103774"] = {
+        105357, -- Signet of the Dinomancers
+    },
+    -- Softfoot's Last Resort
+    ["103775"] = {
+        105181, -- Softfoot's Last Resort
+    },
+    -- Death Lotus Crossbow
+    ["103776"] = {
+        105180, -- Death Lotus Crossbow
+    },
+    -- Stonetoe's Tormented Treads
+    ["103777"] = {
+        105182, -- Stonetoe's Tormented Treads
+    },
+    -- Unrepentant Heels
+    ["103778"] = {
+        105235, -- Unrepentant Heels
+    },
+    -- Pandaren Roofsprinters
+    ["103779"] = {
+        105333, -- Pandaren Roofsprinters
+    },
+    -- Grips of Unending Anguish
+    ["103780"] = {
+        105183, -- Grips of Unending Anguish
+    },
+    -- Precision Cutters
+    ["103782"] = {
+        105259, -- Precision Cutters
+    },
+    -- Darkfallen Shoulderplates
+    ["103783"] = {
+        105185, -- Darkfallen Shoulderplates
+    },
+    -- Spaulders of the Fallen Warchief
+    ["103784"] = {
+        105392, -- Spaulders of the Fallen Warchief
+    },
+    -- Tusks of Mannoroth
+    ["103785"] = {
+        105393, -- Tusks of Mannoroth
+    },
+    -- Poisonbinder Girth
+    ["103787"] = {
+        105184, -- Poisonbinder Girth
+    },
+    -- Demolisher's Reinforced Belt
+    ["103788"] = {
+        105260, -- Demolisher's Reinforced Belt
+    },
+    -- Shockstriker Gauntlets
+    ["103790"] = {
+        105186, -- Shockstriker Gauntlets
+    },
+    -- Calixian Bladebreakers
+    ["103792"] = {
+        105370, -- Calixian Bladebreakers
+    },
+    -- Sorrowpath Signet
+    ["103793"] = {
+        105187, -- Sorrowpath Signet
+    },
+    -- Asgorathian Blood Seal
+    ["103794"] = {
+        105371, -- Asgorathian Blood Seal
+    },
+    -- Seal of the Forgotten Kings
+    ["103796"] = {
+        105340, -- Seal of the Forgotten Kings
+    },
+    -- Bloodclaw Band
+    ["103798"] = {
+        105285, -- Bloodclaw Band
+    },
+    -- Gloomwrap Greatcloak
+    ["103799"] = {
+        105188, -- Gloomwrap Greatcloak
+    },
+    -- Purehearted Cricket Cage
+    ["103801"] = {
+        105195, -- Purehearted Cricket Cage
+    },
+    -- Robes of the Tendered Heart
+    ["103802"] = {
+        105191, -- Robes of the Tendered Heart
+    },
+    -- Mantid Vizier's Robes
+    ["103803"] = {
+        105343, -- Mantid Vizier's Robes
+    },
+    -- Sha-Seared Sandals
+    ["103804"] = {
+        105190, -- Sha-Seared Sandals
+    },
+    -- Bone-Inlaid Sandals
+    ["103805"] = {
+        105244, -- Bone-Inlaid Sandals
+    },
+    -- Toxic Tornado Treads
+    ["103806"] = {
+        105288, -- Toxic Tornado Treads
+    },
+    -- Shoulderpads of Dou Dou Chong
+    ["103807"] = {
+        105192, -- Shoulderpads of Dou Dou Chong
+    },
+    -- Spaulders of Kor'kron Fealty
+    ["103808"] = {
+        105308, -- Spaulders of Kor'kron Fealty
+    },
+    -- Lifebane Bracers
+    ["103809"] = {
+        105193, -- Lifebane Bracers
+    },
+    -- Bracers of Sonic Projection
+    ["103810"] = {
+        105377, -- Bracers of Sonic Projection
+    },
+    -- Bracers of the Broken Fault
+    ["103811"] = {
+        105268, -- Bracers of the Broken Fault
+    },
+    -- Sabatons of Defilement
+    ["103812"] = {
+        105197, -- Sabatons of Defilement
+    },
+    -- Treads of Autonomic Motion
+    ["103813"] = {
+        105274, -- Treads of Autonomic Motion
+    },
+    -- Powder-Stained Totemic Treads
+    ["103814"] = {
+        105369, -- Powder-Stained Totemic Treads
+    },
+    -- Shoulderguards of Dark Meditations
+    ["103815"] = {
+        105198, -- Shoulderguards of Dark Meditations
+    },
+    -- Shoulderguards of Foul Streams
+    ["103816"] = {
+        105295, -- Shoulderguards of Foul Streams
+    },
+    -- Grips of the Fallen Council
+    ["103817"] = {
+        105199, -- Grips of the Fallen Council
+    },
+    -- Gauntlets of Insane Calculations
+    ["103819"] = {
+        105382, -- Gauntlets of Insane Calculations
+    },
+    -- Gaze of Echoing Despair
+    ["103820"] = {
+        105200, -- Gaze of Echoing Despair
+    },
+    -- Crown of Boastful Words
+    ["103821"] = {
+        105228, -- Crown of Boastful Words
+    },
+    -- Petrified Pennyroyal Ring
+    ["103822"] = {
+        105194, -- Petrified Pennyroyal Ring
+    },
+    -- Extinguished Ember of Galakras
+    ["103823"] = {
+        105249, -- Extinguished Ember of Galakras
+    },
+    -- Iyyokuk's Hereditary Seal
+    ["103824"] = {
+        105379, -- Iyyokuk's Hereditary Seal
+    },
+    -- Xifeng, Longblade of the Titanic Guardian
+    ["103826"] = {
+        105211, -- Xifeng, Longblade of the Titanic Guardian
+    },
+    -- Norushen's Shortblade
+    ["103827"] = {
+        105201, -- Norushen's Shortblade
+    },
+    -- Hvitserk's Formidable Shanker
+    ["103828"] = {
+        105352, -- Hvitserk's Formidable Shanker
+    },
+    -- Nazgrim's Gutripper
+    ["103829"] = {
+        105298, -- Nazgrim's Gutripper
+    },
+    -- Gloves of the Golden Protector
+    ["103830"] = {
+        105204, -- Gloves of the Golden Protector
+    },
+    -- Korgra's Venom-Soaked Gauntlets
+    ["103831"] = {
+        105236, -- Korgra's Venom-Soaked Gauntlets
+    },
+    -- Robes of the Blackened Watcher
+    ["103834"] = {
+        105203, -- Robes of the Blackened Watcher
+    },
+    -- Lazahk's Lost Shadowrap
+    ["103835"] = {
+        105312, -- Lazahk's Lost Shadowrap
+    },
+    -- Quarantine Shoulderguards
+    ["103836"] = {
+        105206, -- Quarantine Shoulderguards
+    },
+    -- Shoulderguards of Intended Power
+    ["103837"] = {
+        105390, -- Shoulderguards of Intended Power
+    },
+    -- Leggings of Unabashed Anger
+    ["103838"] = {
+        105205, -- Leggings of Unabashed Anger
+    },
+    -- Rage-Blind Greathelm
+    ["103839"] = {
+        105208, -- Rage-Blind Greathelm
+    },
+    -- Greathelm of the Warchief
+    ["103840"] = {
+        105394, -- Greathelm of the Warchief
+    },
+    -- Reality Ripper Ring
+    ["103841"] = {
+        105202, -- Reality Ripper Ring
+    },
+    -- Swift Serpent Signet
+    ["103842"] = {
+        105234, -- Swift Serpent Signet
+    },
+    -- Ring of Restless Energy
+    ["103843"] = {
+        105309, -- Ring of Restless Energy
+    },
+    -- Kil'ruk's Band of Ascendancy
+    ["103844"] = {
+        105375, -- Kil'ruk's Band of Ascendancy
+    },
+    -- Drape of the Despairing Pit
+    ["103845"] = {
+        105209, -- Drape of the Despairing Pit
+    },
+    -- Norushen's Enigmatic Barrier
+    ["103847"] = {
+        105217, -- Norushen's Enigmatic Barrier
+    },
+    -- Visage of the Monstrous
+    ["103848"] = {
+        105326, -- Visage of the Monstrous
+    },
+    -- Bracers of Broken Causation
+    ["103849"] = {
+        105212, -- Bracers of Broken Causation
+    },
+    -- Scalebane Bracers
+    ["103850"] = {
+        105245, -- Scalebane Bracers
+    },
+    -- Avool's Ancestral Bracers
+    ["103851"] = {
+        105342, -- Avool's Ancestral Bracers
+    },
+    -- Blight Hurlers
+    ["103852"] = {
+        105213, -- Blight Hurlers
+    },
+    -- Montak's Grips of Scorching Breath
+    ["103853"] = {
+        105354, -- Montak's Grips of Scorching Breath
+    },
+    -- Sash of the Last Guardian
+    ["103855"] = {
+        105214, -- Sash of the Last Guardian
+    },
+    -- Belt of the Broken Pact
+    ["103856"] = {
+        105397, -- Belt of the Broken Pact
+    },
+    -- Rime-Rift Shoulders
+    ["103857"] = {
+        105215, -- Rime-Rift Shoulders
+    },
+    -- Confident Grips
+    ["103858"] = {
+        105219, -- Confident Grips
+    },
+    -- Klaxxi Grips of Rejuvenation
+    ["103860"] = {
+        105346, -- Klaxxi Grips of Rejuvenation
+    },
+    -- Bracers of Final Serenity
+    ["103861"] = {
+        105220, -- Bracers of Final Serenity
+    },
+    -- Bracers of the Pristine Purifier
+    ["103862"] = {
+        105349, -- Bracers of the Pristine Purifier
+    },
+    -- Cavemaker Wristguards
+    ["103863"] = {
+        105275, -- Cavemaker Wristguards
+    },
+    -- Wristplates of Broken Doubt
+    ["103864"] = {
+        105222, -- Wristplates of Broken Doubt
+    },
+    -- Smoldering Drakescale Bracers
+    ["103865"] = {
+        105253, -- Smoldering Drakescale Bracers
+    },
+    -- Shackles of Stinking Slime
+    ["103866"] = {
+        105296, -- Shackles of Stinking Slime
+    },
+    -- Untainted Guardian's Chain
+    ["103867"] = {
+        105216, -- Untainted Guardian's Chain
+    },
+    -- Ashflare Pendant
+    ["103868"] = {
+        105290, -- Ashflare Pendant
+    },
+    -- Greatsword of Pride's Fall
+    ["103869"] = {
+        105230, -- Greatsword of Pride's Fall
+    },
+    -- Shield of Mockery
+    ["103870"] = {
+        105232, -- Shield of Mockery
+    },
+    -- Ancient Mogu Tower Shield
+    ["103871"] = {
+        105341, -- Ancient Mogu Tower Shield
+    },
+    -- Bulwark of the Fallen General
+    ["103872"] = {
+        105307, -- Bulwark of the Fallen General
+    },
+    -- Gaze of Arrogance
+    ["103873"] = {
+        105226, -- Gaze of Arrogance
+    },
+    -- Lever of the Megantholithic Apparatus
+    ["103874"] = {
+        105365, -- Lever of the Megantholithic Apparatus
+    },
+    -- Drakebinder Greatstaff
+    ["103875"] = {
+        105250, -- Drakebinder Greatstaff
+    },
+    -- Self-Reflecting Mask
+    ["103876"] = {
+        105227, -- Self-Reflecting Mask
+    },
+    -- Darkfang Mask
+    ["103877"] = {
+        105293, -- Darkfang Mask
+    },
+    -- Greaves of Sublime Superiority
+    ["103878"] = {
+        105229, -- Greaves of Sublime Superiority
+    },
+    -- Malkorok's Giant Stompers
+    ["103879"] = {
+        105314, -- Malkorok's Giant Stompers
+    },
+    -- Wolf-Rider Spurs
+    ["103880"] = {
+        105282, -- Wolf-Rider Spurs
+    },
+    -- Necklace of Fading Light
+    ["103881"] = {
+        105224, -- Necklace of Fading Light
+    },
+    -- Lost Necklace of the Mogu Empress
+    ["103882"] = {
+        105344, -- Lost Necklace of the Mogu Empress
+    },
+    -- Choker of the Final Word
+    ["103883"] = {
+        105231, -- Choker of the Final Word
+    },
+    -- Blackfuse's Blasting Cord
+    ["103884"] = {
+        105373, -- Blackfuse's Blasting Cord
+    },
+    -- Dagryn's Discarded Longbow
+    ["103885"] = {
+        105233, -- Dagryn's Discarded Longbow
+    },
+    -- Hisek's Reserve Longbow
+    ["103886"] = {
+        105374, -- Hisek's Reserve Longbow
+    },
+    -- Cannoneer's Multipocket Gunbelt
+    ["103887"] = {
+        105237, -- Cannoneer's Multipocket Gunbelt
+    },
+    -- Arrowflight Girdle
+    ["103888"] = {
+        105335, -- Arrowflight Girdle
+    },
+    -- Dagryn's Fuselight Bracers
+    ["103889"] = {
+        105238, -- Dagryn's Fuselight Bracers
+    },
+    -- Wristguards of Ruination
+    ["103890"] = {
+        105313, -- Wristguards of Ruination
+    },
+    -- Bracers of Infinite Pipes
+    ["103891"] = {
+        105368, -- Bracers of Infinite Pipes
+    },
+    -- Thranok's Shattering Helm
+    ["103892"] = {
+        105239, -- Thranok's Shattering Helm
+    },
+    -- Helm of the Night Watchman
+    ["103893"] = {
+        105337, -- Helm of the Night Watchman
+    },
+    -- Galakrond Control Band
+    ["103894"] = {
+        105243, -- Galakrond Control Band
+    },
+    -- Ring of the Iron Tomb
+    ["103895"] = {
+        105287, -- Ring of the Iron Tomb
+    },
+    -- Devilfang Band
+    ["103896"] = {
+        105362, -- Devilfang Band
+    },
+    -- Belt of Ominous Trembles
+    ["103898"] = {
+        105266, -- Belt of Ominous Trembles
+    },
+    -- Miasmic Skullbelt
+    ["103899"] = {
+        105320, -- Miasmic Skullbelt
+    },
+    -- Flameslinger's Fiery Cowl
+    ["103900"] = {
+        105246, -- Flameslinger's Fiery Cowl
+    },
+    -- Ebon Ritual Hood
+    ["103901"] = {
+        105398, -- Ebon Ritual Hood
+    },
+    -- Skydancer Boots
+    ["103902"] = {
+        105247, -- Skydancer Boots
+    },
+    -- Sandals of Two Little Bees
+    ["103904"] = {
+        105299, -- Sandals of Two Little Bees
+    },
+    -- Dragonmaw Emergency Strap
+    ["103905"] = {
+        105251, -- Dragonmaw Emergency Strap
+    },
+    -- Seal of Karmic Return
+    ["103906"] = {
+        105402, -- Seal of Karmic Return
+    },
+    -- Windfire Legplates
+    ["103907"] = {
+        105254, -- Windfire Legplates
+    },
+    -- Seismic Bore
+    ["103908"] = {
+        105255, -- Seismic Bore
+    },
+    -- Laser Burn Bracers
+    ["103909"] = {
+        105256, -- Laser Burn Bracers
+    },
+    -- Bomber's Blackened Wristwatch
+    ["103910"] = {
+        105367, -- Bomber's Blackened Wristwatch
+    },
+    -- Mantid Carapace Augments
+    ["103911"] = {
+        105334, -- Mantid Carapace Augments
+    },
+    -- Ricocheting Shoulderguards
+    ["103912"] = {
+        105257, -- Ricocheting Shoulderguards
+    },
+    -- Shoulderguards of the Righteous Stand
+    ["103913"] = {
+        105302, -- Shoulderguards of the Righteous Stand
+    },
+    -- Earthbreaker's Steaming Chestplate
+    ["103914"] = {
+        105263, -- Earthbreaker's Steaming Chestplate
+    },
+    -- Icy Blood Chestplate
+    ["103915"] = {
+        105359, -- Icy Blood Chestplate
+    },
+    -- Juggernaut's Ignition Keys
+    ["103916"] = {
+        105264, -- Juggernaut's Ignition Keys
+    },
+    -- Malkorok's Tainted Dog Tags
+    ["103917"] = {
+        105317, -- Malkorok's Tainted Dog Tags
+    },
+    -- Juggernaut's Power Core
+    ["103918"] = {
+        105272, -- Juggernaut's Power Core
+    },
+    -- Festering Primordial Globule
+    ["103919"] = {
+        105356, -- Festering Primordial Globule
+    },
+    -- Revelations of Y'Shaarj
+    ["103920"] = {
+        105401, -- Revelations of Y'Shaarj
+    },
+    -- Leggings of Furious Flame
+    ["103921"] = {
+        105267, -- Leggings of Furious Flame
+    },
+    -- Shock Pulse Robes
+    ["103922"] = {
+        105270, -- Shock Pulse Robes
+    },
+    -- Robes of Riven Dreams
+    ["103923"] = {
+        105322, -- Robes of Riven Dreams
+    },
+    -- Shoulders of the Roiling Inferno
+    ["103924"] = {
+        105196, -- Shoulders of the Roiling Inferno
+    },
+    -- Hopeglow Spaulders
+    ["103925"] = {
+        105403, -- Hopeglow Spaulders
+    },
+    -- Haromm's Frozen Crescent
+    ["103926"] = {
+        105286, -- Haromm's Frozen Crescent
+    },
+    -- Damron's Belt of Darkness
+    ["103927"] = {
+        105279, -- Damron's Belt of Darkness
+    },
+    -- Cord of Black Dreams
+    ["103928"] = {
+        105386, -- Cord of Black Dreams
+    },
+    -- Riou's Vigilant Leggings
+    ["103929"] = {
+        105280, -- Riou's Vigilant Leggings
+    },
+    -- Haromm's Horrifying Helm
+    ["103930"] = {
+        105281, -- Haromm's Horrifying Helm
+    },
+    -- Penetrating Gaze of Y'Shaarj
+    ["103931"] = {
+        105389, -- Penetrating Gaze of Y'Shaarj
+    },
+    -- Ashen Wall Girdle
+    ["103932"] = {
+        105284, -- Ashen Wall Girdle
+    },
+    -- Untarnishable Greatbelt
+    ["103933"] = {
+        105338, -- Untarnishable Greatbelt
+    },
+    -- Poisonmist Nightcloak
+    ["103934"] = {
+        105277, -- Poisonmist Nightcloak
+    },
+    -- Kardris' Scepter
+    ["103936"] = {
+        105292, -- Kardris' Scepter
+    },
+    -- Horned Mace of the Old Ones
+    ["103937"] = {
+        105400, -- Horned Mace of the Old Ones
+    },
+    -- Iron Wolf Hood
+    ["103938"] = {
+        105289, -- Iron Wolf Hood
+    },
+    -- Hood of Perpetual Implosion
+    ["103939"] = {
+        105321, -- Hood of Perpetual Implosion
+    },
+    -- Belt of the Iron Prison
+    ["103940"] = {
+        105294, -- Belt of the Iron Prison
+    },
+    -- Chitin-Link Chain Belt
+    ["103941"] = {
+        105348, -- Chitin-Link Chain Belt
+    },
+    -- Shadow-Binder's Kilt
+    ["103942"] = {
+        105221, -- Shadow-Binder's Kilt
+    },
+    -- Shoulderplates of Gushing Geysers
+    ["103943"] = {
+        105297, -- Shoulderplates of Gushing Geysers
+    },
+    -- Mantle of Looming Darkness
+    ["103944"] = {
+        105406, -- Mantle of Looming Darkness
+    },
+    -- Gar'tok, Strength of the Faithful
+    ["103945"] = {
+        105306, -- Gar'tok, Strength of the Faithful
+    },
+    -- Arcweaver Spell Sword
+    ["103946"] = {
+        105301, -- Arcweaver Spell Sword
+    },
+    -- Robes of the Warrior's Fall
+    ["103947"] = {
+        105303, -- Robes of the Warrior's Fall
+    },
+    -- Amber Parasite Wraps
+    ["103948"] = {
+        105380, -- Amber Parasite Wraps
+    },
+    -- Crown of Tragic Truth
+    ["103949"] = {
+        105305, -- Crown of Tragic Truth
+    },
+    -- Cowl of Smoking Dreams
+    ["103950"] = {
+        105404, -- Cowl of Smoking Dreams
+    },
+    -- Malkorok's Skullcleaver
+    ["103951"] = {
+        105318, -- Malkorok's Skullcleaver
+    },
+    -- Halberd of Inner Shadows
+    ["103952"] = {
+        105311, -- Halberd of Inner Shadows
+    },
+    -- Kor'kron Hand Cannon
+    ["103953"] = {
+        105310, -- Kor'kron Hand Cannon
+    },
+    -- Legplates of Willful Doom
+    ["103954"] = {
+        105316, -- Legplates of Willful Doom
+    },
+    -- Ebon Blood Chestguard
+    ["103955"] = {
+        105329, -- Ebon Blood Chestguard
+    },
+    -- Chestguard of Toxic Injections
+    ["103956"] = {
+        105381, -- Chestguard of Toxic Injections
+    },
+    -- Terrorguard Chestplate
+    ["103957"] = {
+        105330, -- Terrorguard Chestplate
+    },
+    -- Chestplate of Fallen Passion
+    ["103958"] = {
+        105405, -- Chestplate of Fallen Passion
+    },
+    -- Black-Blooded Drape
+    ["103959"] = {
+        105324, -- Black-Blooded Drape
+    },
+    -- Enchanted Shao-Tien Saber
+    ["103961"] = {
+        105332, -- Enchanted Shao-Tien Saber
+    },
+    -- Ancient Archer's Chestguard
+    ["103962"] = {
+        105336, -- Ancient Archer's Chestguard
+    },
+    -- Chestguard of Relentless Tyranny
+    ["103963"] = {
+        105388, -- Chestguard of Relentless Tyranny
+    },
+    -- Immaculately Preserved Wand
+    ["103964"] = {
+        105345, -- Immaculately Preserved Wand
+    },
+    -- Plate Belt of the War-Healer
+    ["103965"] = {
+        105350, -- Plate Belt of the War-Healer
+    },
+    -- Greatbelt of Living Waters
+    ["103966"] = {
+        105178, -- Greatbelt of Living Waters
+    },
+    -- Shado-Pan Reliquary Kilt
+    ["103967"] = {
+        105347, -- Shado-Pan Reliquary Kilt
+    },
+    -- Britomart's Jagged Pike
+    ["103968"] = {
+        105361, -- Britomart's Jagged Pike
+    },
+    -- Siegecrafter's Forge Hammer
+    ["103969"] = {
+        105372, -- Siegecrafter's Forge Hammer
+    },
+    -- Fusespark Gloves
+    ["103970"] = {
+        105364, -- Fusespark Gloves
+    },
+    -- Korven's Crimson Crescent
+    ["103971"] = {
+        105376, -- Korven's Crimson Crescent
+    },
+    -- Kil'ruk's Furious Blade
+    ["103972"] = {
+        105384, -- Kil'ruk's Furious Blade
+    },
+    -- Rik'kal's Bloody Scalpel
+    ["103973"] = {
+        105378, -- Rik'kal's Bloody Scalpel
+    },
+    -- Kor'kron Spire of Supremacy
+    ["103974"] = {
+        105385, -- Kor'kron Spire of Supremacy
+    },
+    -- Akolik's Acid-Soaked Robes
+    ["104308"] = {
+        105355, -- Akolik's Acid-Soaked Robes
+    },
+    -- Legplates of Unthinking Strife
+    ["104311"] = {
+        105391, -- Legplates of Unthinking Strife
+    },
+    -- Immerseus' Crystalline Eye
+    ["104411"] = {
+        105407, -- Immerseus' Crystalline Eye
+    },
+    -- Trident of Corrupted Waters
+    ["104412"] = {
+        105408, -- Trident of Corrupted Waters
+    },
+    -- Hood of Blackened Tears
+    ["104413"] = {
+        105409, -- Hood of Blackened Tears
+    },
+    -- Puddle Punishers
+    ["104414"] = {
+        105410, -- Puddle Punishers
+    },
+    -- Bubble-Burst Bracers
+    ["104415"] = {
+        105411, -- Bubble-Burst Bracers
+    },
+    -- Chestplate of Congealed Corrosion
+    ["104416"] = {
+        105412, -- Chestplate of Congealed Corrosion
+    },
+    -- Corruption-Rotted Gauntlets
+    ["104417"] = {
+        105413, -- Corruption-Rotted Gauntlets
+    },
+    -- Treads of Unchained Hate
+    ["104418"] = {
+        105414, -- Treads of Unchained Hate
+    },
+    -- Bracers of Sordid Sleep
+    ["104419"] = {
+        105415, -- Bracers of Sordid Sleep
+    },
+    -- Pauldrons of Violent Eruption
+    ["104420"] = {
+        105416, -- Pauldrons of Violent Eruption
+    },
+    -- Encapsulated Essence of Immerseus
+    ["104421"] = {
+        105417, -- Encapsulated Essence of Immerseus
+    },
+    -- Bolt-Burster Grips
+    ["104422"] = {
+        105418, -- Bolt-Burster Grips
+    },
+    -- Ichor-Dripping Shoulderpads
+    ["104423"] = {
+        105419, -- Ichor-Dripping Shoulderpads
+    },
+    -- Hood of Swirling Senses
+    ["104424"] = {
+        105420, -- Hood of Swirling Senses
+    },
+    -- Cloak of Misguided Power
+    ["104425"] = {
+        105421, -- Cloak of Misguided Power
+    },
+    -- Purified Bindings of Immerseus
+    ["104426"] = {
+        105422, -- Purified Bindings of Immerseus
+    },
+    -- Seal of Eternal Sorrow
+    ["104427"] = {
+        105423, -- Seal of Eternal Sorrow
+    },
+    -- Salt Water Sandals
+    ["104428"] = {
+        105424, -- Salt Water Sandals
+    },
+    -- Bracers of Purified Spirit
+    ["104429"] = {
+        105425, -- Bracers of Purified Spirit
+    },
+    -- Soul-Soaked Gloves
+    ["104430"] = {
+        105426, -- Soul-Soaked Gloves
+    },
+    -- Greatbelt of Living Waters
+    ["104431"] = {
+        105427, -- Greatbelt of Living Waters
+    },
+    -- Waterwalker Greatboots
+    ["104432"] = {
+        105428, -- Waterwalker Greatboots
+    },
+    -- Death Lotus Crossbow
+    ["104433"] = {
+        105429, -- Death Lotus Crossbow
+    },
+    -- Softfoot's Last Resort
+    ["104434"] = {
+        105430, -- Softfoot's Last Resort
+    },
+    -- Stonetoe's Tormented Treads
+    ["104435"] = {
+        105431, -- Stonetoe's Tormented Treads
+    },
+    -- Grips of Unending Anguish
+    ["104436"] = {
+        105432, -- Grips of Unending Anguish
+    },
+    -- Poisonbinder Girth
+    ["104437"] = {
+        105433, -- Poisonbinder Girth
+    },
+    -- Darkfallen Shoulderplates
+    ["104438"] = {
+        105434, -- Darkfallen Shoulderplates
+    },
+    -- Shockstriker Gauntlets
+    ["104439"] = {
+        105435, -- Shockstriker Gauntlets
+    },
+    -- Sorrowpath Signet
+    ["104440"] = {
+        105436, -- Sorrowpath Signet
+    },
+    -- Gloomwrap Greatcloak
+    ["104441"] = {
+        105437, -- Gloomwrap Greatcloak
+    },
+    -- Rook's Unlucky Talisman
+    ["104442"] = {
+        105438, -- Rook's Unlucky Talisman
+    },
+    -- Sha-Seared Sandals
+    ["104443"] = {
+        105439, -- Sha-Seared Sandals
+    },
+    -- Robes of the Tendered Heart
+    ["104444"] = {
+        105440, -- Robes of the Tendered Heart
+    },
+    -- Shoulderpads of Dou Dou Chong
+    ["104445"] = {
+        105441, -- Shoulderpads of Dou Dou Chong
+    },
+    -- Lifebane Bracers
+    ["104446"] = {
+        105442, -- Lifebane Bracers
+    },
+    -- Petrified Pennyroyal Ring
+    ["104447"] = {
+        105443, -- Petrified Pennyroyal Ring
+    },
+    -- Purehearted Cricket Cage
+    ["104448"] = {
+        105444, -- Purehearted Cricket Cage
+    },
+    -- Shoulders of the Roiling Inferno
+    ["104449"] = {
+        105445, -- Shoulders of the Roiling Inferno
+    },
+    -- Sabatons of Defilement
+    ["104450"] = {
+        105446, -- Sabatons of Defilement
+    },
+    -- Shoulderguards of Dark Meditations
+    ["104451"] = {
+        105447, -- Shoulderguards of Dark Meditations
+    },
+    -- Grips of the Fallen Council
+    ["104452"] = {
+        105448, -- Grips of the Fallen Council
+    },
+    -- Gaze of Echoing Despair
+    ["104453"] = {
+        105449, -- Gaze of Echoing Despair
+    },
+    -- Norushen's Shortblade
+    ["104454"] = {
+        105450, -- Norushen's Shortblade
+    },
+    -- Reality Ripper Ring
+    ["104455"] = {
+        105451, -- Reality Ripper Ring
+    },
+    -- Robes of the Blackened Watcher
+    ["104456"] = {
+        105452, -- Robes of the Blackened Watcher
+    },
+    -- Gloves of the Golden Protector
+    ["104457"] = {
+        105453, -- Gloves of the Golden Protector
+    },
+    -- Leggings of Unabashed Anger
+    ["104458"] = {
+        105454, -- Leggings of Unabashed Anger
+    },
+    -- Quarantine Shoulderguards
+    ["104459"] = {
+        105455, -- Quarantine Shoulderguards
+    },
+    -- Bracers of Blind Hatred
+    ["104460"] = {
+        105456, -- Bracers of Blind Hatred
+    },
+    -- Rage-Blind Greathelm
+    ["104461"] = {
+        105457, -- Rage-Blind Greathelm
+    },
+    -- Drape of the Despairing Pit
+    ["104462"] = {
+        105458, -- Drape of the Despairing Pit
+    },
+    -- Fusion-Fire Core
+    ["104463"] = {
+        105459, -- Fusion-Fire Core
+    },
+    -- Xifeng, Longblade of the Titanic Guardian
+    ["104464"] = {
+        105460, -- Xifeng, Longblade of the Titanic Guardian
+    },
+    -- Bracers of Broken Causation
+    ["104465"] = {
+        105461, -- Bracers of Broken Causation
+    },
+    -- Blight Hurlers
+    ["104466"] = {
+        105462, -- Blight Hurlers
+    },
+    -- Sash of the Last Guardian
+    ["104467"] = {
+        105463, -- Sash of the Last Guardian
+    },
+    -- Rime-Rift Shoulders
+    ["104468"] = {
+        105464, -- Rime-Rift Shoulders
+    },
+    -- Untainted Guardian's Chain
+    ["104469"] = {
+        105465, -- Untainted Guardian's Chain
+    },
+    -- Norushen's Enigmatic Barrier
+    ["104470"] = {
+        105466, -- Norushen's Enigmatic Barrier
+    },
+    -- Boots of Broken Reliance
+    ["104471"] = {
+        105467, -- Boots of Broken Reliance
+    },
+    -- Confident Grips
+    ["104472"] = {
+        105468, -- Confident Grips
+    },
+    -- Bracers of Final Serenity
+    ["104473"] = {
+        105469, -- Bracers of Final Serenity
+    },
+    -- Shadow-Binder's Kilt
+    ["104474"] = {
+        105470, -- Shadow-Binder's Kilt
+    },
+    -- Wristplates of Broken Doubt
+    ["104475"] = {
+        105471, -- Wristplates of Broken Doubt
+    },
+    -- Assurance of Consequence
+    ["104476"] = {
+        105472, -- Assurance of Consequence
+    },
+    -- Necklace of Fading Light
+    ["104477"] = {
+        105473, -- Necklace of Fading Light
+    },
+    -- Prismatic Prison of Pride
+    ["104478"] = {
+        105474, -- Prismatic Prison of Pride
+    },
+    -- Gaze of Arrogance
+    ["104479"] = {
+        105475, -- Gaze of Arrogance
+    },
+    -- Self-Reflecting Mask
+    ["104480"] = {
+        105476, -- Self-Reflecting Mask
+    },
+    -- Crown of Boastful Words
+    ["104481"] = {
+        105477, -- Crown of Boastful Words
+    },
+    -- Greaves of Sublime Superiority
+    ["104482"] = {
+        105478, -- Greaves of Sublime Superiority
+    },
+    -- Greatsword of Pride's Fall
+    ["104483"] = {
+        105479, -- Greatsword of Pride's Fall
+    },
+    -- Choker of the Final Word
+    ["104484"] = {
+        105480, -- Choker of the Final Word
+    },
+    -- Shield of Mockery
+    ["104485"] = {
+        105481, -- Shield of Mockery
+    },
+    -- Dagryn's Discarded Longbow
+    ["104486"] = {
+        105482, -- Dagryn's Discarded Longbow
+    },
+    -- Swift Serpent Signet
+    ["104487"] = {
+        105483, -- Swift Serpent Signet
+    },
+    -- Unrepentant Heels
+    ["104488"] = {
+        105484, -- Unrepentant Heels
+    },
+    -- Korgra's Venom-Soaked Gauntlets
+    ["104489"] = {
+        105485, -- Korgra's Venom-Soaked Gauntlets
+    },
+    -- Cannoneer's Multipocket Gunbelt
+    ["104490"] = {
+        105486, -- Cannoneer's Multipocket Gunbelt
+    },
+    -- Dagryn's Fuselight Bracers
+    ["104491"] = {
+        105487, -- Dagryn's Fuselight Bracers
+    },
+    -- Thranok's Shattering Helm
+    ["104492"] = {
+        105488, -- Thranok's Shattering Helm
+    },
+    -- Arcsmasher Bracers
+    ["104493"] = {
+        105489, -- Arcsmasher Bracers
+    },
+    -- Krugruk's Rigid Shoulderplates
+    ["104494"] = {
+        105490, -- Krugruk's Rigid Shoulderplates
+    },
+    -- Evil Eye of Galakras
+    ["104495"] = {
+        105491, -- Evil Eye of Galakras
+    },
+    -- Galakrond Control Band
+    ["104496"] = {
+        105492, -- Galakrond Control Band
+    },
+    -- Bone-Inlaid Sandals
+    ["104497"] = {
+        105493, -- Bone-Inlaid Sandals
+    },
+    -- Scalebane Bracers
+    ["104498"] = {
+        105494, -- Scalebane Bracers
+    },
+    -- Flameslinger's Fiery Cowl
+    ["104499"] = {
+        105495, -- Flameslinger's Fiery Cowl
+    },
+    -- Skydancer Boots
+    ["104500"] = {
+        105496, -- Skydancer Boots
+    },
+    -- Shoulderpads of Pulsing Protection
+    ["104501"] = {
+        105497, -- Shoulderpads of Pulsing Protection
+    },
+    -- Extinguished Ember of Galakras
+    ["104502"] = {
+        105498, -- Extinguished Ember of Galakras
+    },
+    -- Drakebinder Greatstaff
+    ["104503"] = {
+        105499, -- Drakebinder Greatstaff
+    },
+    -- Dragonmaw Emergency Strap
+    ["104504"] = {
+        105500, -- Dragonmaw Emergency Strap
+    },
+    -- Grips of Tidal Force
+    ["104505"] = {
+        105501, -- Grips of Tidal Force
+    },
+    -- Smoldering Drakescale Bracers
+    ["104506"] = {
+        105502, -- Smoldering Drakescale Bracers
+    },
+    -- Windfire Legplates
+    ["104507"] = {
+        105503, -- Windfire Legplates
+    },
+    -- Seismic Bore
+    ["104508"] = {
+        105504, -- Seismic Bore
+    },
+    -- Laser Burn Bracers
+    ["104509"] = {
+        105505, -- Laser Burn Bracers
+    },
+    -- Ricocheting Shoulderguards
+    ["104510"] = {
+        105506, -- Ricocheting Shoulderguards
+    },
+    -- Minelayer's Padded Boots
+    ["104511"] = {
+        105507, -- Minelayer's Padded Boots
+    },
+    -- Precision Cutters
+    ["104512"] = {
+        105508, -- Precision Cutters
+    },
+    -- Demolisher's Reinforced Belt
+    ["104513"] = {
+        105509, -- Demolisher's Reinforced Belt
+    },
+    -- Wall-Borer Bracers
+    ["104514"] = {
+        105510, -- Wall-Borer Bracers
+    },
+    -- Tar-Coated Gauntlets
+    ["104515"] = {
+        105511, -- Tar-Coated Gauntlets
+    },
+    -- Earthbreaker's Steaming Chestplate
+    ["104516"] = {
+        105512, -- Earthbreaker's Steaming Chestplate
+    },
+    -- Juggernaut's Ignition Keys
+    ["104517"] = {
+        105513, -- Juggernaut's Ignition Keys
+    },
+    -- Juggernaut's Focusing Crystal
+    ["104518"] = {
+        105514, -- Juggernaut's Focusing Crystal
+    },
+    -- Belt of Ominous Trembles
+    ["104519"] = {
+        105515, -- Belt of Ominous Trembles
+    },
+    -- Leggings of Furious Flame
+    ["104520"] = {
+        105516, -- Leggings of Furious Flame
+    },
+    -- Bracers of the Broken Fault
+    ["104521"] = {
+        105517, -- Bracers of the Broken Fault
+    },
+    -- Earthripper Gloves
+    ["104522"] = {
+        105518, -- Earthripper Gloves
+    },
+    -- Shock Pulse Robes
+    ["104523"] = {
+        105519, -- Shock Pulse Robes
+    },
+    -- Laser-Slice Signet
+    ["104524"] = {
+        105520, -- Laser-Slice Signet
+    },
+    -- Juggernaut's Power Core
+    ["104525"] = {
+        105521, -- Juggernaut's Power Core
+    },
+    -- Castlebreaker Bracers
+    ["104526"] = {
+        105522, -- Castlebreaker Bracers
+    },
+    -- Treads of Autonomic Motion
+    ["104527"] = {
+        105523, -- Treads of Autonomic Motion
+    },
+    -- Cavemaker Wristguards
+    ["104528"] = {
+        105524, -- Cavemaker Wristguards
+    },
+    -- Borer Drill Boots
+    ["104529"] = {
+        105525, -- Borer Drill Boots
+    },
+    -- Poisonmist Nightcloak
+    ["104530"] = {
+        105526, -- Poisonmist Nightcloak
+    },
+    -- Haromm's Talisman
+    ["104531"] = {
+        105527, -- Haromm's Talisman
+    },
+    -- Damron's Belt of Darkness
+    ["104532"] = {
+        105528, -- Damron's Belt of Darkness
+    },
+    -- Riou's Vigilant Leggings
+    ["104533"] = {
+        105529, -- Riou's Vigilant Leggings
+    },
+    -- Haromm's Horrifying Helm
+    ["104534"] = {
+        105530, -- Haromm's Horrifying Helm
+    },
+    -- Wolf-Rider Spurs
+    ["104535"] = {
+        105531, -- Wolf-Rider Spurs
+    },
+    -- Breastplate of Shamanic Mirrors
+    ["104536"] = {
+        105532, -- Breastplate of Shamanic Mirrors
+    },
+    -- Ashen Wall Girdle
+    ["104537"] = {
+        105533, -- Ashen Wall Girdle
+    },
+    -- Bloodclaw Band
+    ["104538"] = {
+        105534, -- Bloodclaw Band
+    },
+    -- Haromm's Frozen Crescent
+    ["104539"] = {
+        105535, -- Haromm's Frozen Crescent
+    },
+    -- Ring of the Iron Tomb
+    ["104540"] = {
+        105536, -- Ring of the Iron Tomb
+    },
+    -- Toxic Tornado Treads
+    ["104541"] = {
+        105537, -- Toxic Tornado Treads
+    },
+    -- Iron Wolf Hood
+    ["104542"] = {
+        105538, -- Iron Wolf Hood
+    },
+    -- Ashflare Pendant
+    ["104543"] = {
+        105539, -- Ashflare Pendant
+    },
+    -- Kardris' Toxic Totem
+    ["104544"] = {
+        105540, -- Kardris' Toxic Totem
+    },
+    -- Kardris' Scepter
+    ["104545"] = {
+        105541, -- Kardris' Scepter
+    },
+    -- Darkfang Mask
+    ["104546"] = {
+        105542, -- Darkfang Mask
+    },
+    -- Belt of the Iron Prison
+    ["104547"] = {
+        105543, -- Belt of the Iron Prison
+    },
+    -- Shoulderguards of Foul Streams
+    ["104548"] = {
+        105544, -- Shoulderguards of Foul Streams
+    },
+    -- Shackles of Stinking Slime
+    ["104549"] = {
+        105545, -- Shackles of Stinking Slime
+    },
+    -- Shoulderplates of Gushing Geysers
+    ["104550"] = {
+        105546, -- Shoulderplates of Gushing Geysers
+    },
+    -- Nazgrim's Gutripper
+    ["104551"] = {
+        105547, -- Nazgrim's Gutripper
+    },
+    -- Sandals of Two Little Bees
+    ["104552"] = {
+        105548, -- Sandals of Two Little Bees
+    },
+    -- Nazgrim's Burnished Insignia
+    ["104553"] = {
+        105549, -- Nazgrim's Burnished Insignia
+    },
+    -- Arcweaver Spell Sword
+    ["104554"] = {
+        105550, -- Arcweaver Spell Sword
+    },
+    -- Shoulderguards of the Righteous Stand
+    ["104555"] = {
+        105551, -- Shoulderguards of the Righteous Stand
+    },
+    -- Robes of the Warrior's Fall
+    ["104556"] = {
+        105552, -- Robes of the Warrior's Fall
+    },
+    -- Ravager's Pathwalkers
+    ["104557"] = {
+        105553, -- Ravager's Pathwalkers
+    },
+    -- Crown of Tragic Truth
+    ["104558"] = {
+        105554, -- Crown of Tragic Truth
+    },
+    -- Gar'tok, Strength of the Faithful
+    ["104559"] = {
+        105555, -- Gar'tok, Strength of the Faithful
+    },
+    -- Bulwark of the Fallen General
+    ["104560"] = {
+        105556, -- Bulwark of the Fallen General
+    },
+    -- Spaulders of Kor'kron Fealty
+    ["104561"] = {
+        105557, -- Spaulders of Kor'kron Fealty
+    },
+    -- Ring of Restless Energy
+    ["104562"] = {
+        105558, -- Ring of Restless Energy
+    },
+    -- Kor'kron Hand Cannon
+    ["104563"] = {
+        105559, -- Kor'kron Hand Cannon
+    },
+    -- Halberd of Inner Shadows
+    ["104564"] = {
+        105560, -- Halberd of Inner Shadows
+    },
+    -- Lazahk's Lost Shadowrap
+    ["104565"] = {
+        105561, -- Lazahk's Lost Shadowrap
+    },
+    -- Wristguards of Ruination
+    ["104566"] = {
+        105562, -- Wristguards of Ruination
+    },
+    -- Malkorok's Giant Stompers
+    ["104567"] = {
+        105563, -- Malkorok's Giant Stompers
+    },
+    -- Blood Rage Bracers
+    ["104568"] = {
+        105564, -- Blood Rage Bracers
+    },
+    -- Legplates of Willful Doom
+    ["104569"] = {
+        105565, -- Legplates of Willful Doom
+    },
+    -- Malkorok's Tainted Dog Tags
+    ["104570"] = {
+        105566, -- Malkorok's Tainted Dog Tags
+    },
+    -- Malkorok's Skullcleaver
+    ["104571"] = {
+        105567, -- Malkorok's Skullcleaver
+    },
+    -- Vial of Living Corruption
+    ["104572"] = {
+        105568, -- Vial of Living Corruption
+    },
+    -- Miasmic Skullbelt
+    ["104573"] = {
+        105569, -- Miasmic Skullbelt
+    },
+    -- Hood of Perpetual Implosion
+    ["104574"] = {
+        105570, -- Hood of Perpetual Implosion
+    },
+    -- Robes of Riven Dreams
+    ["104575"] = {
+        105571, -- Robes of Riven Dreams
+    },
+    -- Frenzied Crystal of Rage
+    ["104576"] = {
+        105572, -- Frenzied Crystal of Rage
+    },
+    -- Black-Blooded Drape
+    ["104577"] = {
+        105573, -- Black-Blooded Drape
+    },
+    -- Seal of Sullen Fury
+    ["104578"] = {
+        105574, -- Seal of Sullen Fury
+    },
+    -- Visage of the Monstrous
+    ["104579"] = {
+        105575, -- Visage of the Monstrous
+    },
+    -- Boots of Perilous Infusion
+    ["104580"] = {
+        105576, -- Boots of Perilous Infusion
+    },
+    -- Bracers of Averted Fatality
+    ["104581"] = {
+        105577, -- Bracers of Averted Fatality
+    },
+    -- Ebon Blood Chestguard
+    ["104582"] = {
+        105578, -- Ebon Blood Chestguard
+    },
+    -- Terrorguard Chestplate
+    ["104583"] = {
+        105579, -- Terrorguard Chestplate
+    },
+    -- Sigil of Rampage
+    ["104584"] = {
+        105580, -- Sigil of Rampage
+    },
+    -- Enchanted Shao-Tien Saber
+    ["104585"] = {
+        105581, -- Enchanted Shao-Tien Saber
+    },
+    -- Pandaren Roofsprinters
+    ["104586"] = {
+        105582, -- Pandaren Roofsprinters
+    },
+    -- Mantid Carapace Augments
+    ["104587"] = {
+        105583, -- Mantid Carapace Augments
+    },
+    -- Arrowflight Girdle
+    ["104588"] = {
+        105584, -- Arrowflight Girdle
+    },
+    -- Ancient Archer's Chestguard
+    ["104589"] = {
+        105585, -- Ancient Archer's Chestguard
+    },
+    -- Helm of the Night Watchman
+    ["104590"] = {
+        105586, -- Helm of the Night Watchman
+    },
+    -- Untarnishable Greatbelt
+    ["104591"] = {
+        105587, -- Untarnishable Greatbelt
+    },
+    -- Ominous Mogu Greatboots
+    ["104592"] = {
+        105588, -- Ominous Mogu Greatboots
+    },
+    -- Seal of the Forgotten Kings
+    ["104593"] = {
+        105589, -- Seal of the Forgotten Kings
+    },
+    -- Ancient Mogu Tower Shield
+    ["104594"] = {
+        105590, -- Ancient Mogu Tower Shield
+    },
+    -- Avool's Ancestral Bracers
+    ["104595"] = {
+        105591, -- Avool's Ancestral Bracers
+    },
+    -- Mantid Vizier's Robes
+    ["104596"] = {
+        105592, -- Mantid Vizier's Robes
+    },
+    -- Lost Necklace of the Mogu Empress
+    ["104597"] = {
+        105593, -- Lost Necklace of the Mogu Empress
+    },
+    -- Immaculately Preserved Wand
+    ["104598"] = {
+        105594, -- Immaculately Preserved Wand
+    },
+    -- Klaxxi Grips of Rejuvenation
+    ["104599"] = {
+        105595, -- Klaxxi Grips of Rejuvenation
+    },
+    -- Shado-Pan Reliquary Kilt
+    ["104600"] = {
+        105596, -- Shado-Pan Reliquary Kilt
+    },
+    -- Chitin-Link Chain Belt
+    ["104601"] = {
+        105597, -- Chitin-Link Chain Belt
+    },
+    -- Bracers of the Pristine Purifier
+    ["104602"] = {
+        105598, -- Bracers of the Pristine Purifier
+    },
+    -- Plate Belt of the War-Healer
+    ["104603"] = {
+        105599, -- Plate Belt of the War-Healer
+    },
+    -- Mogu Mindbender's Greaves
+    ["104604"] = {
+        105600, -- Mogu Mindbender's Greaves
+    },
+    -- Hvitserk's Formidable Shanker
+    ["104605"] = {
+        105601, -- Hvitserk's Formidable Shanker
+    },
+    -- Gleaming Eye of the Devilsaur
+    ["104606"] = {
+        105602, -- Gleaming Eye of the Devilsaur
+    },
+    -- Montak's Grips of Scorching Breath
+    ["104607"] = {
+        105603, -- Montak's Grips of Scorching Breath
+    },
+    -- Akolik's Acid-Soaked Robes
+    ["104608"] = {
+        105604, -- Akolik's Acid-Soaked Robes
+    },
+    -- Festering Primordial Globule
+    ["104609"] = {
+        105605, -- Festering Primordial Globule
+    },
+    -- Signet of the Dinomancers
+    ["104610"] = {
+        105606, -- Signet of the Dinomancers
+    },
+    -- Thok's Acid-Grooved Tooth
+    ["104611"] = {
+        105607, -- Thok's Acid-Grooved Tooth
+    },
+    -- Icy Blood Chestplate
+    ["104612"] = {
+        105608, -- Icy Blood Chestplate
+    },
+    -- Thok's Tail Tip
+    ["104613"] = {
+        105609, -- Thok's Tail Tip
+    },
+    -- Britomart's Jagged Pike
+    ["104614"] = {
+        105610, -- Britomart's Jagged Pike
+    },
+    -- Devilfang Band
+    ["104615"] = {
+        105611, -- Devilfang Band
+    },
+    -- Ticking Ebon Detonator
+    ["104616"] = {
+        105612, -- Ticking Ebon Detonator
+    },
+    -- Fusespark Gloves
+    ["104617"] = {
+        105613, -- Fusespark Gloves
+    },
+    -- Lever of the Megantholithic Apparatus
+    ["104618"] = {
+        105614, -- Lever of the Megantholithic Apparatus
+    },
+    -- Dysmorphic Samophlange of Discontinuity
+    ["104619"] = {
+        105615, -- Dysmorphic Samophlange of Discontinuity
+    },
+    -- Bomber's Blackened Wristwatch
+    ["104620"] = {
+        105616, -- Bomber's Blackened Wristwatch
+    },
+    -- Bracers of Infinite Pipes
+    ["104621"] = {
+        105617, -- Bracers of Infinite Pipes
+    },
+    -- Powder-Stained Totemic Treads
+    ["104622"] = {
+        105618, -- Powder-Stained Totemic Treads
+    },
+    -- Calixian Bladebreakers
+    ["104623"] = {
+        105619, -- Calixian Bladebreakers
+    },
+    -- Asgorathian Blood Seal
+    ["104624"] = {
+        105620, -- Asgorathian Blood Seal
+    },
+    -- Siegecrafter's Forge Hammer
+    ["104625"] = {
+        105621, -- Siegecrafter's Forge Hammer
+    },
+    -- Blackfuse's Blasting Cord
+    ["104626"] = {
+        105622, -- Blackfuse's Blasting Cord
+    },
+    -- Hisek's Reserve Longbow
+    ["104627"] = {
+        105623, -- Hisek's Reserve Longbow
+    },
+    -- Kil'ruk's Band of Ascendancy
+    ["104628"] = {
+        105624, -- Kil'ruk's Band of Ascendancy
+    },
+    -- Korven's Crimson Crescent
+    ["104629"] = {
+        105625, -- Korven's Crimson Crescent
+    },
+    -- Bracers of Sonic Projection
+    ["104630"] = {
+        105626, -- Bracers of Sonic Projection
+    },
+    -- Rik'kal's Bloody Scalpel
+    ["104631"] = {
+        105627, -- Rik'kal's Bloody Scalpel
+    },
+    -- Iyyokuk's Hereditary Seal
+    ["104632"] = {
+        105628, -- Iyyokuk's Hereditary Seal
+    },
+    -- Amber Parasite Wraps
+    ["104633"] = {
+        105629, -- Amber Parasite Wraps
+    },
+    -- Chestguard of Toxic Injections
+    ["104634"] = {
+        105630, -- Chestguard of Toxic Injections
+    },
+    -- Gauntlets of Insane Calculations
+    ["104635"] = {
+        105631, -- Gauntlets of Insane Calculations
+    },
+    -- Skeer's Bloodsoaked Talisman
+    ["104636"] = {
+        105632, -- Skeer's Bloodsoaked Talisman
+    },
+    -- Kil'ruk's Furious Blade
+    ["104637"] = {
+        105633, -- Kil'ruk's Furious Blade
+    },
+    -- Kor'kron Spire of Supremacy
+    ["104638"] = {
+        105634, -- Kor'kron Spire of Supremacy
+    },
+    -- Cord of Black Dreams
+    ["104639"] = {
+        105635, -- Cord of Black Dreams
+    },
+    -- Kor'kron Elite Skullmask
+    ["104640"] = {
+        105636, -- Kor'kron Elite Skullmask
+    },
+    -- Chestguard of Relentless Tyranny
+    ["104641"] = {
+        105637, -- Chestguard of Relentless Tyranny
+    },
+    -- Penetrating Gaze of Y'Shaarj
+    ["104642"] = {
+        105638, -- Penetrating Gaze of Y'Shaarj
+    },
+    -- Shoulderguards of Intended Power
+    ["104643"] = {
+        105639, -- Shoulderguards of Intended Power
+    },
+    -- Legplates of Unthinking Strife
+    ["104644"] = {
+        105640, -- Legplates of Unthinking Strife
+    },
+    -- Spaulders of the Fallen Warchief
+    ["104645"] = {
+        105641, -- Spaulders of the Fallen Warchief
+    },
+    -- Tusks of Mannoroth
+    ["104646"] = {
+        105642, -- Tusks of Mannoroth
+    },
+    -- Greathelm of the Warchief
+    ["104647"] = {
+        105643, -- Greathelm of the Warchief
+    },
+    -- Xal'atoh, Desecrated Image of Gorehowl
+    ["104648"] = {
+        105644, -- Xal'atoh, Desecrated Image of Gorehowl
+    },
+    -- Curse of Hubris
+    ["104649"] = {
+        105645, -- Curse of Hubris
+    },
+    -- Belt of the Broken Pact
+    ["104650"] = {
+        105646, -- Belt of the Broken Pact
+    },
+    -- Ebon Ritual Hood
+    ["104651"] = {
+        105647, -- Ebon Ritual Hood
+    },
+    -- Black Blood of Y'Shaarj
+    ["104652"] = {
+        105648, -- Black Blood of Y'Shaarj
+    },
+    -- Horned Mace of the Old Ones
+    ["104653"] = {
+        105649, -- Horned Mace of the Old Ones
+    },
+    -- Revelations of Y'Shaarj
+    ["104654"] = {
+        105650, -- Revelations of Y'Shaarj
+    },
+    -- Seal of Karmic Return
+    ["104655"] = {
+        105651, -- Seal of Karmic Return
+    },
+    -- Hopeglow Spaulders
+    ["104656"] = {
+        105652, -- Hopeglow Spaulders
+    },
+    -- Cowl of Smoking Dreams
+    ["104657"] = {
+        105653, -- Cowl of Smoking Dreams
+    },
+    -- Chestplate of Fallen Passion
+    ["104658"] = {
+        105654, -- Chestplate of Fallen Passion
+    },
+    -- Mantle of Looming Darkness
+    ["104659"] = {
+        105655, -- Mantle of Looming Darkness
+    },
+    -- Immerseus' Crystalline Eye
+    ["105158"] = {
+        103749, -- Immerseus' Crystalline Eye
+    },
+    -- Trident of Corrupted Waters
+    ["105159"] = {
+        103726, -- Trident of Corrupted Waters
+    },
+    -- Hood of Blackened Tears
+    ["105160"] = {
+        103728, -- Hood of Blackened Tears
+    },
+    -- Puddle Punishers
+    ["105161"] = {
+        103730, -- Puddle Punishers
+    },
+    -- Bubble-Burst Bracers
+    ["105162"] = {
+        103738, -- Bubble-Burst Bracers
+    },
+    -- Chestplate of Congealed Corrosion
+    ["105163"] = {
+        103736, -- Chestplate of Congealed Corrosion
+    },
+    -- Corruption-Rotted Gauntlets
+    ["105164"] = {
+        103733, -- Corruption-Rotted Gauntlets
+    },
+    -- Treads of Unchained Hate
+    ["105165"] = {
+        103744, -- Treads of Unchained Hate
+    },
+    -- Bracers of Sordid Sleep
+    ["105166"] = {
+        103741, -- Bracers of Sordid Sleep
+    },
+    -- Pauldrons of Violent Eruption
+    ["105167"] = {
+        103747, -- Pauldrons of Violent Eruption
+    },
+    -- Encapsulated Essence of Immerseus
+    ["105168"] = {
+        103727, -- Encapsulated Essence of Immerseus
+    },
+    -- Bolt-Burster Grips
+    ["105169"] = {
+        103752, -- Bolt-Burster Grips
+    },
+    -- Ichor-Dripping Shoulderpads
+    ["105170"] = {
+        103755, -- Ichor-Dripping Shoulderpads
+    },
+    -- Hood of Swirling Senses
+    ["105171"] = {
+        103751, -- Hood of Swirling Senses
+    },
+    -- Cloak of Misguided Power
+    ["105172"] = {
+        103769, -- Cloak of Misguided Power
+    },
+    -- Purified Bindings of Immerseus
+    ["105173"] = {
+        102293, -- Purified Bindings of Immerseus
+    },
+    -- Seal of Eternal Sorrow
+    ["105174"] = {
+        103771, -- Seal of Eternal Sorrow
+    },
+    -- Salt Water Sandals
+    ["105175"] = {
+        103760, -- Salt Water Sandals
+    },
+    -- Bracers of Purified Spirit
+    ["105176"] = {
+        103757, -- Bracers of Purified Spirit
+    },
+    -- Soul-Soaked Gloves
+    ["105177"] = {
+        103763, -- Soul-Soaked Gloves
+    },
+    -- Greatbelt of Living Waters
+    ["105178"] = {
+        103966, -- Greatbelt of Living Waters
+    },
+    -- Waterwalker Greatboots
+    ["105179"] = {
+        103766, -- Waterwalker Greatboots
+    },
+    -- Death Lotus Crossbow
+    ["105180"] = {
+        103776, -- Death Lotus Crossbow
+    },
+    -- Softfoot's Last Resort
+    ["105181"] = {
+        103775, -- Softfoot's Last Resort
+    },
+    -- Stonetoe's Tormented Treads
+    ["105182"] = {
+        103777, -- Stonetoe's Tormented Treads
+    },
+    -- Grips of Unending Anguish
+    ["105183"] = {
+        103780, -- Grips of Unending Anguish
+    },
+    -- Poisonbinder Girth
+    ["105184"] = {
+        103787, -- Poisonbinder Girth
+    },
+    -- Darkfallen Shoulderplates
+    ["105185"] = {
+        103783, -- Darkfallen Shoulderplates
+    },
+    -- Shockstriker Gauntlets
+    ["105186"] = {
+        103790, -- Shockstriker Gauntlets
+    },
+    -- Sorrowpath Signet
+    ["105187"] = {
+        103793, -- Sorrowpath Signet
+    },
+    -- Gloomwrap Greatcloak
+    ["105188"] = {
+        103799, -- Gloomwrap Greatcloak
+    },
+    -- Rook's Unlucky Talisman
+    ["105189"] = {
+        102296, -- Rook's Unlucky Talisman
+    },
+    -- Sha-Seared Sandals
+    ["105190"] = {
+        103804, -- Sha-Seared Sandals
+    },
+    -- Robes of the Tendered Heart
+    ["105191"] = {
+        103802, -- Robes of the Tendered Heart
+    },
+    -- Shoulderpads of Dou Dou Chong
+    ["105192"] = {
+        103807, -- Shoulderpads of Dou Dou Chong
+    },
+    -- Lifebane Bracers
+    ["105193"] = {
+        103809, -- Lifebane Bracers
+    },
+    -- Petrified Pennyroyal Ring
+    ["105194"] = {
+        103822, -- Petrified Pennyroyal Ring
+    },
+    -- Purehearted Cricket Cage
+    ["105195"] = {
+        103801, -- Purehearted Cricket Cage
+    },
+    -- Shoulders of the Roiling Inferno
+    ["105196"] = {
+        103924, -- Shoulders of the Roiling Inferno
+    },
+    -- Sabatons of Defilement
+    ["105197"] = {
+        103812, -- Sabatons of Defilement
+    },
+    -- Shoulderguards of Dark Meditations
+    ["105198"] = {
+        103815, -- Shoulderguards of Dark Meditations
+    },
+    -- Grips of the Fallen Council
+    ["105199"] = {
+        103817, -- Grips of the Fallen Council
+    },
+    -- Gaze of Echoing Despair
+    ["105200"] = {
+        103820, -- Gaze of Echoing Despair
+    },
+    -- Norushen's Shortblade
+    ["105201"] = {
+        103827, -- Norushen's Shortblade
+    },
+    -- Reality Ripper Ring
+    ["105202"] = {
+        103841, -- Reality Ripper Ring
+    },
+    -- Robes of the Blackened Watcher
+    ["105203"] = {
+        103834, -- Robes of the Blackened Watcher
+    },
+    -- Gloves of the Golden Protector
+    ["105204"] = {
+        103830, -- Gloves of the Golden Protector
+    },
+    -- Leggings of Unabashed Anger
+    ["105205"] = {
+        103838, -- Leggings of Unabashed Anger
+    },
+    -- Quarantine Shoulderguards
+    ["105206"] = {
+        103836, -- Quarantine Shoulderguards
+    },
+    -- Bracers of Blind Hatred
+    ["105207"] = {
+        103740, -- Bracers of Blind Hatred
+    },
+    -- Rage-Blind Greathelm
+    ["105208"] = {
+        103839, -- Rage-Blind Greathelm
+    },
+    -- Drape of the Despairing Pit
+    ["105209"] = {
+        103845, -- Drape of the Despairing Pit
+    },
+    -- Fusion-Fire Core
+    ["105210"] = {
+        102295, -- Fusion-Fire Core
+    },
+    -- Xifeng, Longblade of the Titanic Guardian
+    ["105211"] = {
+        103826, -- Xifeng, Longblade of the Titanic Guardian
+    },
+    -- Bracers of Broken Causation
+    ["105212"] = {
+        103849, -- Bracers of Broken Causation
+    },
+    -- Blight Hurlers
+    ["105213"] = {
+        103852, -- Blight Hurlers
+    },
+    -- Sash of the Last Guardian
+    ["105214"] = {
+        103855, -- Sash of the Last Guardian
+    },
+    -- Rime-Rift Shoulders
+    ["105215"] = {
+        103857, -- Rime-Rift Shoulders
+    },
+    -- Untainted Guardian's Chain
+    ["105216"] = {
+        103867, -- Untainted Guardian's Chain
+    },
+    -- Norushen's Enigmatic Barrier
+    ["105217"] = {
+        103847, -- Norushen's Enigmatic Barrier
+    },
+    -- Boots of Broken Reliance
+    ["105218"] = {
+        103762, -- Boots of Broken Reliance
+    },
+    -- Confident Grips
+    ["105219"] = {
+        103858, -- Confident Grips
+    },
+    -- Bracers of Final Serenity
+    ["105220"] = {
+        103861, -- Bracers of Final Serenity
+    },
+    -- Shadow-Binder's Kilt
+    ["105221"] = {
+        103942, -- Shadow-Binder's Kilt
+    },
+    -- Wristplates of Broken Doubt
+    ["105222"] = {
+        103864, -- Wristplates of Broken Doubt
+    },
+    -- Assurance of Consequence
+    ["105223"] = {
+        102292, -- Assurance of Consequence
+    },
+    -- Necklace of Fading Light
+    ["105224"] = {
+        103881, -- Necklace of Fading Light
+    },
+    -- Prismatic Prison of Pride
+    ["105225"] = {
+        102299, -- Prismatic Prison of Pride
+    },
+    -- Gaze of Arrogance
+    ["105226"] = {
+        103873, -- Gaze of Arrogance
+    },
+    -- Self-Reflecting Mask
+    ["105227"] = {
+        103876, -- Self-Reflecting Mask
+    },
+    -- Crown of Boastful Words
+    ["105228"] = {
+        103821, -- Crown of Boastful Words
+    },
+    -- Greaves of Sublime Superiority
+    ["105229"] = {
+        103878, -- Greaves of Sublime Superiority
+    },
+    -- Greatsword of Pride's Fall
+    ["105230"] = {
+        103869, -- Greatsword of Pride's Fall
+    },
+    -- Choker of the Final Word
+    ["105231"] = {
+        103883, -- Choker of the Final Word
+    },
+    -- Shield of Mockery
+    ["105232"] = {
+        103870, -- Shield of Mockery
+    },
+    -- Dagryn's Discarded Longbow
+    ["105233"] = {
+        103885, -- Dagryn's Discarded Longbow
+    },
+    -- Swift Serpent Signet
+    ["105234"] = {
+        103842, -- Swift Serpent Signet
+    },
+    -- Unrepentant Heels
+    ["105235"] = {
+        103778, -- Unrepentant Heels
+    },
+    -- Korgra's Venom-Soaked Gauntlets
+    ["105236"] = {
+        103831, -- Korgra's Venom-Soaked Gauntlets
+    },
+    -- Cannoneer's Multipocket Gunbelt
+    ["105237"] = {
+        103887, -- Cannoneer's Multipocket Gunbelt
+    },
+    -- Dagryn's Fuselight Bracers
+    ["105238"] = {
+        103889, -- Dagryn's Fuselight Bracers
+    },
+    -- Thranok's Shattering Helm
+    ["105239"] = {
+        103892, -- Thranok's Shattering Helm
+    },
+    -- Arcsmasher Bracers
+    ["105240"] = {
+        103743, -- Arcsmasher Bracers
+    },
+    -- Krugruk's Rigid Shoulderplates
+    ["105241"] = {
+        103748, -- Krugruk's Rigid Shoulderplates
+    },
+    -- Evil Eye of Galakras
+    ["105242"] = {
+        102298, -- Evil Eye of Galakras
+    },
+    -- Galakrond Control Band
+    ["105243"] = {
+        103894, -- Galakrond Control Band
+    },
+    -- Bone-Inlaid Sandals
+    ["105244"] = {
+        103805, -- Bone-Inlaid Sandals
+    },
+    -- Scalebane Bracers
+    ["105245"] = {
+        103850, -- Scalebane Bracers
+    },
+    -- Flameslinger's Fiery Cowl
+    ["105246"] = {
+        103900, -- Flameslinger's Fiery Cowl
+    },
+    -- Skydancer Boots
+    ["105247"] = {
+        103902, -- Skydancer Boots
+    },
+    -- Shoulderpads of Pulsing Protection
+    ["105248"] = {
+        103756, -- Shoulderpads of Pulsing Protection
+    },
+    -- Extinguished Ember of Galakras
+    ["105249"] = {
+        103823, -- Extinguished Ember of Galakras
+    },
+    -- Drakebinder Greatstaff
+    ["105250"] = {
+        103875, -- Drakebinder Greatstaff
+    },
+    -- Dragonmaw Emergency Strap
+    ["105251"] = {
+        103905, -- Dragonmaw Emergency Strap
+    },
+    -- Grips of Tidal Force
+    ["105252"] = {
+        103765, -- Grips of Tidal Force
+    },
+    -- Smoldering Drakescale Bracers
+    ["105253"] = {
+        103865, -- Smoldering Drakescale Bracers
+    },
+    -- Windfire Legplates
+    ["105254"] = {
+        103907, -- Windfire Legplates
+    },
+    -- Seismic Bore
+    ["105255"] = {
+        103908, -- Seismic Bore
+    },
+    -- Laser Burn Bracers
+    ["105256"] = {
+        103909, -- Laser Burn Bracers
+    },
+    -- Ricocheting Shoulderguards
+    ["105257"] = {
+        103912, -- Ricocheting Shoulderguards
+    },
+    -- Minelayer's Padded Boots
+    ["105258"] = {
+        103731, -- Minelayer's Padded Boots
+    },
+    -- Precision Cutters
+    ["105259"] = {
+        103782, -- Precision Cutters
+    },
+    -- Demolisher's Reinforced Belt
+    ["105260"] = {
+        103788, -- Demolisher's Reinforced Belt
+    },
+    -- Wall-Borer Bracers
+    ["105261"] = {
+        103739, -- Wall-Borer Bracers
+    },
+    -- Tar-Coated Gauntlets
+    ["105262"] = {
+        103735, -- Tar-Coated Gauntlets
+    },
+    -- Earthbreaker's Steaming Chestplate
+    ["105263"] = {
+        103914, -- Earthbreaker's Steaming Chestplate
+    },
+    -- Juggernaut's Ignition Keys
+    ["105264"] = {
+        103916, -- Juggernaut's Ignition Keys
+    },
+    -- Juggernaut's Focusing Crystal
+    ["105265"] = {
+        102297, -- Juggernaut's Focusing Crystal
+    },
+    -- Belt of Ominous Trembles
+    ["105266"] = {
+        103898, -- Belt of Ominous Trembles
+    },
+    -- Leggings of Furious Flame
+    ["105267"] = {
+        103921, -- Leggings of Furious Flame
+    },
+    -- Bracers of the Broken Fault
+    ["105268"] = {
+        103811, -- Bracers of the Broken Fault
+    },
+    -- Earthripper Gloves
+    ["105269"] = {
+        103754, -- Earthripper Gloves
+    },
+    -- Shock Pulse Robes
+    ["105270"] = {
+        103922, -- Shock Pulse Robes
+    },
+    -- Laser-Slice Signet
+    ["105271"] = {
+        103773, -- Laser-Slice Signet
+    },
+    -- Juggernaut's Power Core
+    ["105272"] = {
+        103918, -- Juggernaut's Power Core
+    },
+    -- Castlebreaker Bracers
+    ["105273"] = {
+        103759, -- Castlebreaker Bracers
+    },
+    -- Treads of Autonomic Motion
+    ["105274"] = {
+        103813, -- Treads of Autonomic Motion
+    },
+    -- Cavemaker Wristguards
+    ["105275"] = {
+        103863, -- Cavemaker Wristguards
+    },
+    -- Borer Drill Boots
+    ["105276"] = {
+        103767, -- Borer Drill Boots
+    },
+    -- Poisonmist Nightcloak
+    ["105277"] = {
+        103934, -- Poisonmist Nightcloak
+    },
+    -- Haromm's Talisman
+    ["105278"] = {
+        102301, -- Haromm's Talisman
+    },
+    -- Damron's Belt of Darkness
+    ["105279"] = {
+        103927, -- Damron's Belt of Darkness
+    },
+    -- Riou's Vigilant Leggings
+    ["105280"] = {
+        103929, -- Riou's Vigilant Leggings
+    },
+    -- Haromm's Horrifying Helm
+    ["105281"] = {
+        103930, -- Haromm's Horrifying Helm
+    },
+    -- Wolf-Rider Spurs
+    ["105282"] = {
+        103880, -- Wolf-Rider Spurs
+    },
+    -- Breastplate of Shamanic Mirrors
+    ["105283"] = {
+        103737, -- Breastplate of Shamanic Mirrors
+    },
+    -- Ashen Wall Girdle
+    ["105284"] = {
+        103932, -- Ashen Wall Girdle
+    },
+    -- Bloodclaw Band
+    ["105285"] = {
+        103798, -- Bloodclaw Band
+    },
+    -- Haromm's Frozen Crescent
+    ["105286"] = {
+        103926, -- Haromm's Frozen Crescent
+    },
+    -- Ring of the Iron Tomb
+    ["105287"] = {
+        103895, -- Ring of the Iron Tomb
+    },
+    -- Toxic Tornado Treads
+    ["105288"] = {
+        103806, -- Toxic Tornado Treads
+    },
+    -- Iron Wolf Hood
+    ["105289"] = {
+        103938, -- Iron Wolf Hood
+    },
+    -- Ashflare Pendant
+    ["105290"] = {
+        103868, -- Ashflare Pendant
+    },
+    -- Kardris' Toxic Totem
+    ["105291"] = {
+        102300, -- Kardris' Toxic Totem
+    },
+    -- Kardris' Scepter
+    ["105292"] = {
+        103936, -- Kardris' Scepter
+    },
+    -- Darkfang Mask
+    ["105293"] = {
+        103877, -- Darkfang Mask
+    },
+    -- Belt of the Iron Prison
+    ["105294"] = {
+        103940, -- Belt of the Iron Prison
+    },
+    -- Shoulderguards of Foul Streams
+    ["105295"] = {
+        103816, -- Shoulderguards of Foul Streams
+    },
+    -- Shackles of Stinking Slime
+    ["105296"] = {
+        103866, -- Shackles of Stinking Slime
+    },
+    -- Shoulderplates of Gushing Geysers
+    ["105297"] = {
+        103943, -- Shoulderplates of Gushing Geysers
+    },
+    -- Nazgrim's Gutripper
+    ["105298"] = {
+        103829, -- Nazgrim's Gutripper
+    },
+    -- Sandals of Two Little Bees
+    ["105299"] = {
+        103904, -- Sandals of Two Little Bees
+    },
+    -- Nazgrim's Burnished Insignia
+    ["105300"] = {
+        102294, -- Nazgrim's Burnished Insignia
+    },
+    -- Arcweaver Spell Sword
+    ["105301"] = {
+        103946, -- Arcweaver Spell Sword
+    },
+    -- Shoulderguards of the Righteous Stand
+    ["105302"] = {
+        103913, -- Shoulderguards of the Righteous Stand
+    },
+    -- Robes of the Warrior's Fall
+    ["105303"] = {
+        103947, -- Robes of the Warrior's Fall
+    },
+    -- Ravager's Pathwalkers
+    ["105304"] = {
+        103732, -- Ravager's Pathwalkers
+    },
+    -- Crown of Tragic Truth
+    ["105305"] = {
+        103949, -- Crown of Tragic Truth
+    },
+    -- Gar'tok, Strength of the Faithful
+    ["105306"] = {
+        103945, -- Gar'tok, Strength of the Faithful
+    },
+    -- Bulwark of the Fallen General
+    ["105307"] = {
+        103872, -- Bulwark of the Fallen General
+    },
+    -- Spaulders of Kor'kron Fealty
+    ["105308"] = {
+        103808, -- Spaulders of Kor'kron Fealty
+    },
+    -- Ring of Restless Energy
+    ["105309"] = {
+        103843, -- Ring of Restless Energy
+    },
+    -- Kor'kron Hand Cannon
+    ["105310"] = {
+        103953, -- Kor'kron Hand Cannon
+    },
+    -- Halberd of Inner Shadows
+    ["105311"] = {
+        103952, -- Halberd of Inner Shadows
+    },
+    -- Lazahk's Lost Shadowrap
+    ["105312"] = {
+        103835, -- Lazahk's Lost Shadowrap
+    },
+    -- Wristguards of Ruination
+    ["105313"] = {
+        103890, -- Wristguards of Ruination
+    },
+    -- Malkorok's Giant Stompers
+    ["105314"] = {
+        103879, -- Malkorok's Giant Stompers
+    },
+    -- Blood Rage Bracers
+    ["105315"] = {
+        103742, -- Blood Rage Bracers
+    },
+    -- Legplates of Willful Doom
+    ["105316"] = {
+        103954, -- Legplates of Willful Doom
+    },
+    -- Malkorok's Tainted Dog Tags
+    ["105317"] = {
+        103917, -- Malkorok's Tainted Dog Tags
+    },
+    -- Malkorok's Skullcleaver
+    ["105318"] = {
+        103951, -- Malkorok's Skullcleaver
+    },
+    -- Vial of Living Corruption
+    ["105319"] = {
+        102306, -- Vial of Living Corruption
+    },
+    -- Miasmic Skullbelt
+    ["105320"] = {
+        103899, -- Miasmic Skullbelt
+    },
+    -- Hood of Perpetual Implosion
+    ["105321"] = {
+        103939, -- Hood of Perpetual Implosion
+    },
+    -- Robes of Riven Dreams
+    ["105322"] = {
+        103923, -- Robes of Riven Dreams
+    },
+    -- Frenzied Crystal of Rage
+    ["105323"] = {
+        102303, -- Frenzied Crystal of Rage
+    },
+    -- Black-Blooded Drape
+    ["105324"] = {
+        103959, -- Black-Blooded Drape
+    },
+    -- Seal of Sullen Fury
+    ["105325"] = {
+        103772, -- Seal of Sullen Fury
+    },
+    -- Visage of the Monstrous
+    ["105326"] = {
+        103848, -- Visage of the Monstrous
+    },
+    -- Boots of Perilous Infusion
+    ["105327"] = {
+        103761, -- Boots of Perilous Infusion
+    },
+    -- Bracers of Averted Fatality
+    ["105328"] = {
+        103758, -- Bracers of Averted Fatality
+    },
+    -- Ebon Blood Chestguard
+    ["105329"] = {
+        103955, -- Ebon Blood Chestguard
+    },
+    -- Terrorguard Chestplate
+    ["105330"] = {
+        103957, -- Terrorguard Chestplate
+    },
+    -- Sigil of Rampage
+    ["105331"] = {
+        102302, -- Sigil of Rampage
+    },
+    -- Enchanted Shao-Tien Saber
+    ["105332"] = {
+        103961, -- Enchanted Shao-Tien Saber
+    },
+    -- Pandaren Roofsprinters
+    ["105333"] = {
+        103779, -- Pandaren Roofsprinters
+    },
+    -- Mantid Carapace Augments
+    ["105334"] = {
+        103911, -- Mantid Carapace Augments
+    },
+    -- Arrowflight Girdle
+    ["105335"] = {
+        103888, -- Arrowflight Girdle
+    },
+    -- Ancient Archer's Chestguard
+    ["105336"] = {
+        103962, -- Ancient Archer's Chestguard
+    },
+    -- Helm of the Night Watchman
+    ["105337"] = {
+        103893, -- Helm of the Night Watchman
+    },
+    -- Untarnishable Greatbelt
+    ["105338"] = {
+        103933, -- Untarnishable Greatbelt
+    },
+    -- Ominous Mogu Greatboots
+    ["105339"] = {
+        103745, -- Ominous Mogu Greatboots
+    },
+    -- Seal of the Forgotten Kings
+    ["105340"] = {
+        103796, -- Seal of the Forgotten Kings
+    },
+    -- Ancient Mogu Tower Shield
+    ["105341"] = {
+        103871, -- Ancient Mogu Tower Shield
+    },
+    -- Avool's Ancestral Bracers
+    ["105342"] = {
+        103851, -- Avool's Ancestral Bracers
+    },
+    -- Mantid Vizier's Robes
+    ["105343"] = {
+        103803, -- Mantid Vizier's Robes
+    },
+    -- Lost Necklace of the Mogu Empress
+    ["105344"] = {
+        103882, -- Lost Necklace of the Mogu Empress
+    },
+    -- Immaculately Preserved Wand
+    ["105345"] = {
+        103964, -- Immaculately Preserved Wand
+    },
+    -- Klaxxi Grips of Rejuvenation
+    ["105346"] = {
+        103860, -- Klaxxi Grips of Rejuvenation
+    },
+    -- Shado-Pan Reliquary Kilt
+    ["105347"] = {
+        103967, -- Shado-Pan Reliquary Kilt
+    },
+    -- Chitin-Link Chain Belt
+    ["105348"] = {
+        103941, -- Chitin-Link Chain Belt
+    },
+    -- Bracers of the Pristine Purifier
+    ["105349"] = {
+        103862, -- Bracers of the Pristine Purifier
+    },
+    -- Plate Belt of the War-Healer
+    ["105350"] = {
+        103965, -- Plate Belt of the War-Healer
+    },
+    -- Mogu Mindbender's Greaves
+    ["105351"] = {
+        103768, -- Mogu Mindbender's Greaves
+    },
+    -- Hvitserk's Formidable Shanker
+    ["105352"] = {
+        103828, -- Hvitserk's Formidable Shanker
+    },
+    -- Gleaming Eye of the Devilsaur
+    ["105353"] = {
+        103750, -- Gleaming Eye of the Devilsaur
+    },
+    -- Montak's Grips of Scorching Breath
+    ["105354"] = {
+        103853, -- Montak's Grips of Scorching Breath
+    },
+    -- Akolik's Acid-Soaked Robes
+    ["105355"] = {
+        104308, -- Akolik's Acid-Soaked Robes
+    },
+    -- Festering Primordial Globule
+    ["105356"] = {
+        103919, -- Festering Primordial Globule
+    },
+    -- Signet of the Dinomancers
+    ["105357"] = {
+        103774, -- Signet of the Dinomancers
+    },
+    -- Thok's Acid-Grooved Tooth
+    ["105358"] = {
+        102304, -- Thok's Acid-Grooved Tooth
+    },
+    -- Icy Blood Chestplate
+    ["105359"] = {
+        103915, -- Icy Blood Chestplate
+    },
+    -- Thok's Tail Tip
+    ["105360"] = {
+        102305, -- Thok's Tail Tip
+    },
+    -- Britomart's Jagged Pike
+    ["105361"] = {
+        103968, -- Britomart's Jagged Pike
+    },
+    -- Devilfang Band
+    ["105362"] = {
+        103896, -- Devilfang Band
+    },
+    -- Ticking Ebon Detonator
+    ["105363"] = {
+        102311, -- Ticking Ebon Detonator
+    },
+    -- Fusespark Gloves
+    ["105364"] = {
+        103970, -- Fusespark Gloves
+    },
+    -- Lever of the Megantholithic Apparatus
+    ["105365"] = {
+        103874, -- Lever of the Megantholithic Apparatus
+    },
+    -- Dysmorphic Samophlange of Discontinuity
+    ["105366"] = {
+        102309, -- Dysmorphic Samophlange of Discontinuity
+    },
+    -- Bomber's Blackened Wristwatch
+    ["105367"] = {
+        103910, -- Bomber's Blackened Wristwatch
+    },
+    -- Bracers of Infinite Pipes
+    ["105368"] = {
+        103891, -- Bracers of Infinite Pipes
+    },
+    -- Powder-Stained Totemic Treads
+    ["105369"] = {
+        103814, -- Powder-Stained Totemic Treads
+    },
+    -- Calixian Bladebreakers
+    ["105370"] = {
+        103792, -- Calixian Bladebreakers
+    },
+    -- Asgorathian Blood Seal
+    ["105371"] = {
+        103794, -- Asgorathian Blood Seal
+    },
+    -- Siegecrafter's Forge Hammer
+    ["105372"] = {
+        103969, -- Siegecrafter's Forge Hammer
+    },
+    -- Blackfuse's Blasting Cord
+    ["105373"] = {
+        103884, -- Blackfuse's Blasting Cord
+    },
+    -- Hisek's Reserve Longbow
+    ["105374"] = {
+        103886, -- Hisek's Reserve Longbow
+    },
+    -- Kil'ruk's Band of Ascendancy
+    ["105375"] = {
+        103844, -- Kil'ruk's Band of Ascendancy
+    },
+    -- Korven's Crimson Crescent
+    ["105376"] = {
+        103971, -- Korven's Crimson Crescent
+    },
+    -- Bracers of Sonic Projection
+    ["105377"] = {
+        103810, -- Bracers of Sonic Projection
+    },
+    -- Rik'kal's Bloody Scalpel
+    ["105378"] = {
+        103973, -- Rik'kal's Bloody Scalpel
+    },
+    -- Iyyokuk's Hereditary Seal
+    ["105379"] = {
+        103824, -- Iyyokuk's Hereditary Seal
+    },
+    -- Amber Parasite Wraps
+    ["105380"] = {
+        103948, -- Amber Parasite Wraps
+    },
+    -- Chestguard of Toxic Injections
+    ["105381"] = {
+        103956, -- Chestguard of Toxic Injections
+    },
+    -- Gauntlets of Insane Calculations
+    ["105382"] = {
+        103819, -- Gauntlets of Insane Calculations
+    },
+    -- Skeer's Bloodsoaked Talisman
+    ["105383"] = {
+        102308, -- Skeer's Bloodsoaked Talisman
+    },
+    -- Kil'ruk's Furious Blade
+    ["105384"] = {
+        103972, -- Kil'ruk's Furious Blade
+    },
+    -- Kor'kron Spire of Supremacy
+    ["105385"] = {
+        103974, -- Kor'kron Spire of Supremacy
+    },
+    -- Cord of Black Dreams
+    ["105386"] = {
+        103928, -- Cord of Black Dreams
+    },
+    -- Kor'kron Elite Skullmask
+    ["105387"] = {
+        103729, -- Kor'kron Elite Skullmask
+    },
+    -- Chestguard of Relentless Tyranny
+    ["105388"] = {
+        103963, -- Chestguard of Relentless Tyranny
+    },
+    -- Penetrating Gaze of Y'Shaarj
+    ["105389"] = {
+        103931, -- Penetrating Gaze of Y'Shaarj
+    },
+    -- Shoulderguards of Intended Power
+    ["105390"] = {
+        103837, -- Shoulderguards of Intended Power
+    },
+    -- Legplates of Unthinking Strife
+    ["105391"] = {
+        104311, -- Legplates of Unthinking Strife
+    },
+    -- Spaulders of the Fallen Warchief
+    ["105392"] = {
+        103784, -- Spaulders of the Fallen Warchief
+    },
+    -- Tusks of Mannoroth
+    ["105393"] = {
+        103785, -- Tusks of Mannoroth
+    },
+    -- Greathelm of the Warchief
+    ["105394"] = {
+        103840, -- Greathelm of the Warchief
+    },
+    -- Xal'atoh, Desecrated Image of Gorehowl
+    ["105395"] = {
+        103649, -- Xal'atoh, Desecrated Image of Gorehowl
+    },
+    -- Curse of Hubris
+    ["105396"] = {
+        102307, -- Curse of Hubris
+    },
+    -- Belt of the Broken Pact
+    ["105397"] = {
+        103856, -- Belt of the Broken Pact
+    },
+    -- Ebon Ritual Hood
+    ["105398"] = {
+        103901, -- Ebon Ritual Hood
+    },
+    -- Black Blood of Y'Shaarj
+    ["105399"] = {
+        102310, -- Black Blood of Y'Shaarj
+    },
+    -- Horned Mace of the Old Ones
+    ["105400"] = {
+        103937, -- Horned Mace of the Old Ones
+    },
+    -- Revelations of Y'Shaarj
+    ["105401"] = {
+        103920, -- Revelations of Y'Shaarj
+    },
+    -- Seal of Karmic Return
+    ["105402"] = {
+        103906, -- Seal of Karmic Return
+    },
+    -- Hopeglow Spaulders
+    ["105403"] = {
+        103925, -- Hopeglow Spaulders
+    },
+    -- Cowl of Smoking Dreams
+    ["105404"] = {
+        103950, -- Cowl of Smoking Dreams
+    },
+    -- Chestplate of Fallen Passion
+    ["105405"] = {
+        103958, -- Chestplate of Fallen Passion
+    },
+    -- Mantle of Looming Darkness
+    ["105406"] = {
+        103944, -- Mantle of Looming Darkness
+    },
+    -- Immerseus' Crystalline Eye
+    ["105407"] = {
+        104411, -- Immerseus' Crystalline Eye
+    },
+    -- Trident of Corrupted Waters
+    ["105408"] = {
+        104412, -- Trident of Corrupted Waters
+    },
+    -- Hood of Blackened Tears
+    ["105409"] = {
+        104413, -- Hood of Blackened Tears
+    },
+    -- Puddle Punishers
+    ["105410"] = {
+        104414, -- Puddle Punishers
+    },
+    -- Bubble-Burst Bracers
+    ["105411"] = {
+        104415, -- Bubble-Burst Bracers
+    },
+    -- Chestplate of Congealed Corrosion
+    ["105412"] = {
+        104416, -- Chestplate of Congealed Corrosion
+    },
+    -- Corruption-Rotted Gauntlets
+    ["105413"] = {
+        104417, -- Corruption-Rotted Gauntlets
+    },
+    -- Treads of Unchained Hate
+    ["105414"] = {
+        104418, -- Treads of Unchained Hate
+    },
+    -- Bracers of Sordid Sleep
+    ["105415"] = {
+        104419, -- Bracers of Sordid Sleep
+    },
+    -- Pauldrons of Violent Eruption
+    ["105416"] = {
+        104420, -- Pauldrons of Violent Eruption
+    },
+    -- Encapsulated Essence of Immerseus
+    ["105417"] = {
+        104421, -- Encapsulated Essence of Immerseus
+    },
+    -- Bolt-Burster Grips
+    ["105418"] = {
+        104422, -- Bolt-Burster Grips
+    },
+    -- Ichor-Dripping Shoulderpads
+    ["105419"] = {
+        104423, -- Ichor-Dripping Shoulderpads
+    },
+    -- Hood of Swirling Senses
+    ["105420"] = {
+        104424, -- Hood of Swirling Senses
+    },
+    -- Cloak of Misguided Power
+    ["105421"] = {
+        104425, -- Cloak of Misguided Power
+    },
+    -- Purified Bindings of Immerseus
+    ["105422"] = {
+        104426, -- Purified Bindings of Immerseus
+    },
+    -- Seal of Eternal Sorrow
+    ["105423"] = {
+        104427, -- Seal of Eternal Sorrow
+    },
+    -- Salt Water Sandals
+    ["105424"] = {
+        104428, -- Salt Water Sandals
+    },
+    -- Bracers of Purified Spirit
+    ["105425"] = {
+        104429, -- Bracers of Purified Spirit
+    },
+    -- Soul-Soaked Gloves
+    ["105426"] = {
+        104430, -- Soul-Soaked Gloves
+    },
+    -- Greatbelt of Living Waters
+    ["105427"] = {
+        104431, -- Greatbelt of Living Waters
+    },
+    -- Waterwalker Greatboots
+    ["105428"] = {
+        104432, -- Waterwalker Greatboots
+    },
+    -- Death Lotus Crossbow
+    ["105429"] = {
+        104433, -- Death Lotus Crossbow
+    },
+    -- Softfoot's Last Resort
+    ["105430"] = {
+        104434, -- Softfoot's Last Resort
+    },
+    -- Stonetoe's Tormented Treads
+    ["105431"] = {
+        104435, -- Stonetoe's Tormented Treads
+    },
+    -- Grips of Unending Anguish
+    ["105432"] = {
+        104436, -- Grips of Unending Anguish
+    },
+    -- Poisonbinder Girth
+    ["105433"] = {
+        104437, -- Poisonbinder Girth
+    },
+    -- Darkfallen Shoulderplates
+    ["105434"] = {
+        104438, -- Darkfallen Shoulderplates
+    },
+    -- Shockstriker Gauntlets
+    ["105435"] = {
+        104439, -- Shockstriker Gauntlets
+    },
+    -- Sorrowpath Signet
+    ["105436"] = {
+        104440, -- Sorrowpath Signet
+    },
+    -- Gloomwrap Greatcloak
+    ["105437"] = {
+        104441, -- Gloomwrap Greatcloak
+    },
+    -- Rook's Unlucky Talisman
+    ["105438"] = {
+        104442, -- Rook's Unlucky Talisman
+    },
+    -- Sha-Seared Sandals
+    ["105439"] = {
+        104443, -- Sha-Seared Sandals
+    },
+    -- Robes of the Tendered Heart
+    ["105440"] = {
+        104444, -- Robes of the Tendered Heart
+    },
+    -- Shoulderpads of Dou Dou Chong
+    ["105441"] = {
+        104445, -- Shoulderpads of Dou Dou Chong
+    },
+    -- Lifebane Bracers
+    ["105442"] = {
+        104446, -- Lifebane Bracers
+    },
+    -- Petrified Pennyroyal Ring
+    ["105443"] = {
+        104447, -- Petrified Pennyroyal Ring
+    },
+    -- Purehearted Cricket Cage
+    ["105444"] = {
+        104448, -- Purehearted Cricket Cage
+    },
+    -- Shoulders of the Roiling Inferno
+    ["105445"] = {
+        104449, -- Shoulders of the Roiling Inferno
+    },
+    -- Sabatons of Defilement
+    ["105446"] = {
+        104450, -- Sabatons of Defilement
+    },
+    -- Shoulderguards of Dark Meditations
+    ["105447"] = {
+        104451, -- Shoulderguards of Dark Meditations
+    },
+    -- Grips of the Fallen Council
+    ["105448"] = {
+        104452, -- Grips of the Fallen Council
+    },
+    -- Gaze of Echoing Despair
+    ["105449"] = {
+        104453, -- Gaze of Echoing Despair
+    },
+    -- Norushen's Shortblade
+    ["105450"] = {
+        104454, -- Norushen's Shortblade
+    },
+    -- Reality Ripper Ring
+    ["105451"] = {
+        104455, -- Reality Ripper Ring
+    },
+    -- Robes of the Blackened Watcher
+    ["105452"] = {
+        104456, -- Robes of the Blackened Watcher
+    },
+    -- Gloves of the Golden Protector
+    ["105453"] = {
+        104457, -- Gloves of the Golden Protector
+    },
+    -- Leggings of Unabashed Anger
+    ["105454"] = {
+        104458, -- Leggings of Unabashed Anger
+    },
+    -- Quarantine Shoulderguards
+    ["105455"] = {
+        104459, -- Quarantine Shoulderguards
+    },
+    -- Bracers of Blind Hatred
+    ["105456"] = {
+        104460, -- Bracers of Blind Hatred
+    },
+    -- Rage-Blind Greathelm
+    ["105457"] = {
+        104461, -- Rage-Blind Greathelm
+    },
+    -- Drape of the Despairing Pit
+    ["105458"] = {
+        104462, -- Drape of the Despairing Pit
+    },
+    -- Fusion-Fire Core
+    ["105459"] = {
+        104463, -- Fusion-Fire Core
+    },
+    -- Xifeng, Longblade of the Titanic Guardian
+    ["105460"] = {
+        104464, -- Xifeng, Longblade of the Titanic Guardian
+    },
+    -- Bracers of Broken Causation
+    ["105461"] = {
+        104465, -- Bracers of Broken Causation
+    },
+    -- Blight Hurlers
+    ["105462"] = {
+        104466, -- Blight Hurlers
+    },
+    -- Sash of the Last Guardian
+    ["105463"] = {
+        104467, -- Sash of the Last Guardian
+    },
+    -- Rime-Rift Shoulders
+    ["105464"] = {
+        104468, -- Rime-Rift Shoulders
+    },
+    -- Untainted Guardian's Chain
+    ["105465"] = {
+        104469, -- Untainted Guardian's Chain
+    },
+    -- Norushen's Enigmatic Barrier
+    ["105466"] = {
+        104470, -- Norushen's Enigmatic Barrier
+    },
+    -- Boots of Broken Reliance
+    ["105467"] = {
+        104471, -- Boots of Broken Reliance
+    },
+    -- Confident Grips
+    ["105468"] = {
+        104472, -- Confident Grips
+    },
+    -- Bracers of Final Serenity
+    ["105469"] = {
+        104473, -- Bracers of Final Serenity
+    },
+    -- Shadow-Binder's Kilt
+    ["105470"] = {
+        104474, -- Shadow-Binder's Kilt
+    },
+    -- Wristplates of Broken Doubt
+    ["105471"] = {
+        104475, -- Wristplates of Broken Doubt
+    },
+    -- Assurance of Consequence
+    ["105472"] = {
+        104476, -- Assurance of Consequence
+    },
+    -- Necklace of Fading Light
+    ["105473"] = {
+        104477, -- Necklace of Fading Light
+    },
+    -- Prismatic Prison of Pride
+    ["105474"] = {
+        104478, -- Prismatic Prison of Pride
+    },
+    -- Gaze of Arrogance
+    ["105475"] = {
+        104479, -- Gaze of Arrogance
+    },
+    -- Self-Reflecting Mask
+    ["105476"] = {
+        104480, -- Self-Reflecting Mask
+    },
+    -- Crown of Boastful Words
+    ["105477"] = {
+        104481, -- Crown of Boastful Words
+    },
+    -- Greaves of Sublime Superiority
+    ["105478"] = {
+        104482, -- Greaves of Sublime Superiority
+    },
+    -- Greatsword of Pride's Fall
+    ["105479"] = {
+        104483, -- Greatsword of Pride's Fall
+    },
+    -- Choker of the Final Word
+    ["105480"] = {
+        104484, -- Choker of the Final Word
+    },
+    -- Shield of Mockery
+    ["105481"] = {
+        104485, -- Shield of Mockery
+    },
+    -- Dagryn's Discarded Longbow
+    ["105482"] = {
+        104486, -- Dagryn's Discarded Longbow
+    },
+    -- Swift Serpent Signet
+    ["105483"] = {
+        104487, -- Swift Serpent Signet
+    },
+    -- Unrepentant Heels
+    ["105484"] = {
+        104488, -- Unrepentant Heels
+    },
+    -- Korgra's Venom-Soaked Gauntlets
+    ["105485"] = {
+        104489, -- Korgra's Venom-Soaked Gauntlets
+    },
+    -- Cannoneer's Multipocket Gunbelt
+    ["105486"] = {
+        104490, -- Cannoneer's Multipocket Gunbelt
+    },
+    -- Dagryn's Fuselight Bracers
+    ["105487"] = {
+        104491, -- Dagryn's Fuselight Bracers
+    },
+    -- Thranok's Shattering Helm
+    ["105488"] = {
+        104492, -- Thranok's Shattering Helm
+    },
+    -- Arcsmasher Bracers
+    ["105489"] = {
+        104493, -- Arcsmasher Bracers
+    },
+    -- Krugruk's Rigid Shoulderplates
+    ["105490"] = {
+        104494, -- Krugruk's Rigid Shoulderplates
+    },
+    -- Evil Eye of Galakras
+    ["105491"] = {
+        104495, -- Evil Eye of Galakras
+    },
+    -- Galakrond Control Band
+    ["105492"] = {
+        104496, -- Galakrond Control Band
+    },
+    -- Bone-Inlaid Sandals
+    ["105493"] = {
+        104497, -- Bone-Inlaid Sandals
+    },
+    -- Scalebane Bracers
+    ["105494"] = {
+        104498, -- Scalebane Bracers
+    },
+    -- Flameslinger's Fiery Cowl
+    ["105495"] = {
+        104499, -- Flameslinger's Fiery Cowl
+    },
+    -- Skydancer Boots
+    ["105496"] = {
+        104500, -- Skydancer Boots
+    },
+    -- Shoulderpads of Pulsing Protection
+    ["105497"] = {
+        104501, -- Shoulderpads of Pulsing Protection
+    },
+    -- Extinguished Ember of Galakras
+    ["105498"] = {
+        104502, -- Extinguished Ember of Galakras
+    },
+    -- Drakebinder Greatstaff
+    ["105499"] = {
+        104503, -- Drakebinder Greatstaff
+    },
+    -- Dragonmaw Emergency Strap
+    ["105500"] = {
+        104504, -- Dragonmaw Emergency Strap
+    },
+    -- Grips of Tidal Force
+    ["105501"] = {
+        104505, -- Grips of Tidal Force
+    },
+    -- Smoldering Drakescale Bracers
+    ["105502"] = {
+        104506, -- Smoldering Drakescale Bracers
+    },
+    -- Windfire Legplates
+    ["105503"] = {
+        104507, -- Windfire Legplates
+    },
+    -- Seismic Bore
+    ["105504"] = {
+        104508, -- Seismic Bore
+    },
+    -- Laser Burn Bracers
+    ["105505"] = {
+        104509, -- Laser Burn Bracers
+    },
+    -- Ricocheting Shoulderguards
+    ["105506"] = {
+        104510, -- Ricocheting Shoulderguards
+    },
+    -- Minelayer's Padded Boots
+    ["105507"] = {
+        104511, -- Minelayer's Padded Boots
+    },
+    -- Precision Cutters
+    ["105508"] = {
+        104512, -- Precision Cutters
+    },
+    -- Demolisher's Reinforced Belt
+    ["105509"] = {
+        104513, -- Demolisher's Reinforced Belt
+    },
+    -- Wall-Borer Bracers
+    ["105510"] = {
+        104514, -- Wall-Borer Bracers
+    },
+    -- Tar-Coated Gauntlets
+    ["105511"] = {
+        104515, -- Tar-Coated Gauntlets
+    },
+    -- Earthbreaker's Steaming Chestplate
+    ["105512"] = {
+        104516, -- Earthbreaker's Steaming Chestplate
+    },
+    -- Juggernaut's Ignition Keys
+    ["105513"] = {
+        104517, -- Juggernaut's Ignition Keys
+    },
+    -- Juggernaut's Focusing Crystal
+    ["105514"] = {
+        104518, -- Juggernaut's Focusing Crystal
+    },
+    -- Belt of Ominous Trembles
+    ["105515"] = {
+        104519, -- Belt of Ominous Trembles
+    },
+    -- Leggings of Furious Flame
+    ["105516"] = {
+        104520, -- Leggings of Furious Flame
+    },
+    -- Bracers of the Broken Fault
+    ["105517"] = {
+        104521, -- Bracers of the Broken Fault
+    },
+    -- Earthripper Gloves
+    ["105518"] = {
+        104522, -- Earthripper Gloves
+    },
+    -- Shock Pulse Robes
+    ["105519"] = {
+        104523, -- Shock Pulse Robes
+    },
+    -- Laser-Slice Signet
+    ["105520"] = {
+        104524, -- Laser-Slice Signet
+    },
+    -- Juggernaut's Power Core
+    ["105521"] = {
+        104525, -- Juggernaut's Power Core
+    },
+    -- Castlebreaker Bracers
+    ["105522"] = {
+        104526, -- Castlebreaker Bracers
+    },
+    -- Treads of Autonomic Motion
+    ["105523"] = {
+        104527, -- Treads of Autonomic Motion
+    },
+    -- Cavemaker Wristguards
+    ["105524"] = {
+        104528, -- Cavemaker Wristguards
+    },
+    -- Borer Drill Boots
+    ["105525"] = {
+        104529, -- Borer Drill Boots
+    },
+    -- Poisonmist Nightcloak
+    ["105526"] = {
+        104530, -- Poisonmist Nightcloak
+    },
+    -- Haromm's Talisman
+    ["105527"] = {
+        104531, -- Haromm's Talisman
+    },
+    -- Damron's Belt of Darkness
+    ["105528"] = {
+        104532, -- Damron's Belt of Darkness
+    },
+    -- Riou's Vigilant Leggings
+    ["105529"] = {
+        104533, -- Riou's Vigilant Leggings
+    },
+    -- Haromm's Horrifying Helm
+    ["105530"] = {
+        104534, -- Haromm's Horrifying Helm
+    },
+    -- Wolf-Rider Spurs
+    ["105531"] = {
+        104535, -- Wolf-Rider Spurs
+    },
+    -- Breastplate of Shamanic Mirrors
+    ["105532"] = {
+        104536, -- Breastplate of Shamanic Mirrors
+    },
+    -- Ashen Wall Girdle
+    ["105533"] = {
+        104537, -- Ashen Wall Girdle
+    },
+    -- Bloodclaw Band
+    ["105534"] = {
+        104538, -- Bloodclaw Band
+    },
+    -- Haromm's Frozen Crescent
+    ["105535"] = {
+        104539, -- Haromm's Frozen Crescent
+    },
+    -- Ring of the Iron Tomb
+    ["105536"] = {
+        104540, -- Ring of the Iron Tomb
+    },
+    -- Toxic Tornado Treads
+    ["105537"] = {
+        104541, -- Toxic Tornado Treads
+    },
+    -- Iron Wolf Hood
+    ["105538"] = {
+        104542, -- Iron Wolf Hood
+    },
+    -- Ashflare Pendant
+    ["105539"] = {
+        104543, -- Ashflare Pendant
+    },
+    -- Kardris' Toxic Totem
+    ["105540"] = {
+        104544, -- Kardris' Toxic Totem
+    },
+    -- Kardris' Scepter
+    ["105541"] = {
+        104545, -- Kardris' Scepter
+    },
+    -- Darkfang Mask
+    ["105542"] = {
+        104546, -- Darkfang Mask
+    },
+    -- Belt of the Iron Prison
+    ["105543"] = {
+        104547, -- Belt of the Iron Prison
+    },
+    -- Shoulderguards of Foul Streams
+    ["105544"] = {
+        104548, -- Shoulderguards of Foul Streams
+    },
+    -- Shackles of Stinking Slime
+    ["105545"] = {
+        104549, -- Shackles of Stinking Slime
+    },
+    -- Shoulderplates of Gushing Geysers
+    ["105546"] = {
+        104550, -- Shoulderplates of Gushing Geysers
+    },
+    -- Nazgrim's Gutripper
+    ["105547"] = {
+        104551, -- Nazgrim's Gutripper
+    },
+    -- Sandals of Two Little Bees
+    ["105548"] = {
+        104552, -- Sandals of Two Little Bees
+    },
+    -- Nazgrim's Burnished Insignia
+    ["105549"] = {
+        104553, -- Nazgrim's Burnished Insignia
+    },
+    -- Arcweaver Spell Sword
+    ["105550"] = {
+        104554, -- Arcweaver Spell Sword
+    },
+    -- Shoulderguards of the Righteous Stand
+    ["105551"] = {
+        104555, -- Shoulderguards of the Righteous Stand
+    },
+    -- Robes of the Warrior's Fall
+    ["105552"] = {
+        104556, -- Robes of the Warrior's Fall
+    },
+    -- Ravager's Pathwalkers
+    ["105553"] = {
+        104557, -- Ravager's Pathwalkers
+    },
+    -- Crown of Tragic Truth
+    ["105554"] = {
+        104558, -- Crown of Tragic Truth
+    },
+    -- Gar'tok, Strength of the Faithful
+    ["105555"] = {
+        104559, -- Gar'tok, Strength of the Faithful
+    },
+    -- Bulwark of the Fallen General
+    ["105556"] = {
+        104560, -- Bulwark of the Fallen General
+    },
+    -- Spaulders of Kor'kron Fealty
+    ["105557"] = {
+        104561, -- Spaulders of Kor'kron Fealty
+    },
+    -- Ring of Restless Energy
+    ["105558"] = {
+        104562, -- Ring of Restless Energy
+    },
+    -- Kor'kron Hand Cannon
+    ["105559"] = {
+        104563, -- Kor'kron Hand Cannon
+    },
+    -- Halberd of Inner Shadows
+    ["105560"] = {
+        104564, -- Halberd of Inner Shadows
+    },
+    -- Lazahk's Lost Shadowrap
+    ["105561"] = {
+        104565, -- Lazahk's Lost Shadowrap
+    },
+    -- Wristguards of Ruination
+    ["105562"] = {
+        104566, -- Wristguards of Ruination
+    },
+    -- Malkorok's Giant Stompers
+    ["105563"] = {
+        104567, -- Malkorok's Giant Stompers
+    },
+    -- Blood Rage Bracers
+    ["105564"] = {
+        104568, -- Blood Rage Bracers
+    },
+    -- Legplates of Willful Doom
+    ["105565"] = {
+        104569, -- Legplates of Willful Doom
+    },
+    -- Malkorok's Tainted Dog Tags
+    ["105566"] = {
+        104570, -- Malkorok's Tainted Dog Tags
+    },
+    -- Malkorok's Skullcleaver
+    ["105567"] = {
+        104571, -- Malkorok's Skullcleaver
+    },
+    -- Vial of Living Corruption
+    ["105568"] = {
+        104572, -- Vial of Living Corruption
+    },
+    -- Miasmic Skullbelt
+    ["105569"] = {
+        104573, -- Miasmic Skullbelt
+    },
+    -- Hood of Perpetual Implosion
+    ["105570"] = {
+        104574, -- Hood of Perpetual Implosion
+    },
+    -- Robes of Riven Dreams
+    ["105571"] = {
+        104575, -- Robes of Riven Dreams
+    },
+    -- Frenzied Crystal of Rage
+    ["105572"] = {
+        104576, -- Frenzied Crystal of Rage
+    },
+    -- Black-Blooded Drape
+    ["105573"] = {
+        104577, -- Black-Blooded Drape
+    },
+    -- Seal of Sullen Fury
+    ["105574"] = {
+        104578, -- Seal of Sullen Fury
+    },
+    -- Visage of the Monstrous
+    ["105575"] = {
+        104579, -- Visage of the Monstrous
+    },
+    -- Boots of Perilous Infusion
+    ["105576"] = {
+        104580, -- Boots of Perilous Infusion
+    },
+    -- Bracers of Averted Fatality
+    ["105577"] = {
+        104581, -- Bracers of Averted Fatality
+    },
+    -- Ebon Blood Chestguard
+    ["105578"] = {
+        104582, -- Ebon Blood Chestguard
+    },
+    -- Terrorguard Chestplate
+    ["105579"] = {
+        104583, -- Terrorguard Chestplate
+    },
+    -- Sigil of Rampage
+    ["105580"] = {
+        104584, -- Sigil of Rampage
+    },
+    -- Enchanted Shao-Tien Saber
+    ["105581"] = {
+        104585, -- Enchanted Shao-Tien Saber
+    },
+    -- Pandaren Roofsprinters
+    ["105582"] = {
+        104586, -- Pandaren Roofsprinters
+    },
+    -- Mantid Carapace Augments
+    ["105583"] = {
+        104587, -- Mantid Carapace Augments
+    },
+    -- Arrowflight Girdle
+    ["105584"] = {
+        104588, -- Arrowflight Girdle
+    },
+    -- Ancient Archer's Chestguard
+    ["105585"] = {
+        104589, -- Ancient Archer's Chestguard
+    },
+    -- Helm of the Night Watchman
+    ["105586"] = {
+        104590, -- Helm of the Night Watchman
+    },
+    -- Untarnishable Greatbelt
+    ["105587"] = {
+        104591, -- Untarnishable Greatbelt
+    },
+    -- Ominous Mogu Greatboots
+    ["105588"] = {
+        104592, -- Ominous Mogu Greatboots
+    },
+    -- Seal of the Forgotten Kings
+    ["105589"] = {
+        104593, -- Seal of the Forgotten Kings
+    },
+    -- Ancient Mogu Tower Shield
+    ["105590"] = {
+        104594, -- Ancient Mogu Tower Shield
+    },
+    -- Avool's Ancestral Bracers
+    ["105591"] = {
+        104595, -- Avool's Ancestral Bracers
+    },
+    -- Mantid Vizier's Robes
+    ["105592"] = {
+        104596, -- Mantid Vizier's Robes
+    },
+    -- Lost Necklace of the Mogu Empress
+    ["105593"] = {
+        104597, -- Lost Necklace of the Mogu Empress
+    },
+    -- Immaculately Preserved Wand
+    ["105594"] = {
+        104598, -- Immaculately Preserved Wand
+    },
+    -- Klaxxi Grips of Rejuvenation
+    ["105595"] = {
+        104599, -- Klaxxi Grips of Rejuvenation
+    },
+    -- Shado-Pan Reliquary Kilt
+    ["105596"] = {
+        104600, -- Shado-Pan Reliquary Kilt
+    },
+    -- Chitin-Link Chain Belt
+    ["105597"] = {
+        104601, -- Chitin-Link Chain Belt
+    },
+    -- Bracers of the Pristine Purifier
+    ["105598"] = {
+        104602, -- Bracers of the Pristine Purifier
+    },
+    -- Plate Belt of the War-Healer
+    ["105599"] = {
+        104603, -- Plate Belt of the War-Healer
+    },
+    -- Mogu Mindbender's Greaves
+    ["105600"] = {
+        104604, -- Mogu Mindbender's Greaves
+    },
+    -- Hvitserk's Formidable Shanker
+    ["105601"] = {
+        104605, -- Hvitserk's Formidable Shanker
+    },
+    -- Gleaming Eye of the Devilsaur
+    ["105602"] = {
+        104606, -- Gleaming Eye of the Devilsaur
+    },
+    -- Montak's Grips of Scorching Breath
+    ["105603"] = {
+        104607, -- Montak's Grips of Scorching Breath
+    },
+    -- Akolik's Acid-Soaked Robes
+    ["105604"] = {
+        104608, -- Akolik's Acid-Soaked Robes
+    },
+    -- Festering Primordial Globule
+    ["105605"] = {
+        104609, -- Festering Primordial Globule
+    },
+    -- Signet of the Dinomancers
+    ["105606"] = {
+        104610, -- Signet of the Dinomancers
+    },
+    -- Thok's Acid-Grooved Tooth
+    ["105607"] = {
+        104611, -- Thok's Acid-Grooved Tooth
+    },
+    -- Icy Blood Chestplate
+    ["105608"] = {
+        104612, -- Icy Blood Chestplate
+    },
+    -- Thok's Tail Tip
+    ["105609"] = {
+        104613, -- Thok's Tail Tip
+    },
+    -- Britomart's Jagged Pike
+    ["105610"] = {
+        104614, -- Britomart's Jagged Pike
+    },
+    -- Devilfang Band
+    ["105611"] = {
+        104615, -- Devilfang Band
+    },
+    -- Ticking Ebon Detonator
+    ["105612"] = {
+        104616, -- Ticking Ebon Detonator
+    },
+    -- Fusespark Gloves
+    ["105613"] = {
+        104617, -- Fusespark Gloves
+    },
+    -- Lever of the Megantholithic Apparatus
+    ["105614"] = {
+        104618, -- Lever of the Megantholithic Apparatus
+    },
+    -- Dysmorphic Samophlange of Discontinuity
+    ["105615"] = {
+        104619, -- Dysmorphic Samophlange of Discontinuity
+    },
+    -- Bomber's Blackened Wristwatch
+    ["105616"] = {
+        104620, -- Bomber's Blackened Wristwatch
+    },
+    -- Bracers of Infinite Pipes
+    ["105617"] = {
+        104621, -- Bracers of Infinite Pipes
+    },
+    -- Powder-Stained Totemic Treads
+    ["105618"] = {
+        104622, -- Powder-Stained Totemic Treads
+    },
+    -- Calixian Bladebreakers
+    ["105619"] = {
+        104623, -- Calixian Bladebreakers
+    },
+    -- Asgorathian Blood Seal
+    ["105620"] = {
+        104624, -- Asgorathian Blood Seal
+    },
+    -- Siegecrafter's Forge Hammer
+    ["105621"] = {
+        104625, -- Siegecrafter's Forge Hammer
+    },
+    -- Blackfuse's Blasting Cord
+    ["105622"] = {
+        104626, -- Blackfuse's Blasting Cord
+    },
+    -- Hisek's Reserve Longbow
+    ["105623"] = {
+        104627, -- Hisek's Reserve Longbow
+    },
+    -- Kil'ruk's Band of Ascendancy
+    ["105624"] = {
+        104628, -- Kil'ruk's Band of Ascendancy
+    },
+    -- Korven's Crimson Crescent
+    ["105625"] = {
+        104629, -- Korven's Crimson Crescent
+    },
+    -- Bracers of Sonic Projection
+    ["105626"] = {
+        104630, -- Bracers of Sonic Projection
+    },
+    -- Rik'kal's Bloody Scalpel
+    ["105627"] = {
+        104631, -- Rik'kal's Bloody Scalpel
+    },
+    -- Iyyokuk's Hereditary Seal
+    ["105628"] = {
+        104632, -- Iyyokuk's Hereditary Seal
+    },
+    -- Amber Parasite Wraps
+    ["105629"] = {
+        104633, -- Amber Parasite Wraps
+    },
+    -- Chestguard of Toxic Injections
+    ["105630"] = {
+        104634, -- Chestguard of Toxic Injections
+    },
+    -- Gauntlets of Insane Calculations
+    ["105631"] = {
+        104635, -- Gauntlets of Insane Calculations
+    },
+    -- Skeer's Bloodsoaked Talisman
+    ["105632"] = {
+        104636, -- Skeer's Bloodsoaked Talisman
+    },
+    -- Kil'ruk's Furious Blade
+    ["105633"] = {
+        104637, -- Kil'ruk's Furious Blade
+    },
+    -- Kor'kron Spire of Supremacy
+    ["105634"] = {
+        104638, -- Kor'kron Spire of Supremacy
+    },
+    -- Cord of Black Dreams
+    ["105635"] = {
+        104639, -- Cord of Black Dreams
+    },
+    -- Kor'kron Elite Skullmask
+    ["105636"] = {
+        104640, -- Kor'kron Elite Skullmask
+    },
+    -- Chestguard of Relentless Tyranny
+    ["105637"] = {
+        104641, -- Chestguard of Relentless Tyranny
+    },
+    -- Penetrating Gaze of Y'Shaarj
+    ["105638"] = {
+        104642, -- Penetrating Gaze of Y'Shaarj
+    },
+    -- Shoulderguards of Intended Power
+    ["105639"] = {
+        104643, -- Shoulderguards of Intended Power
+    },
+    -- Legplates of Unthinking Strife
+    ["105640"] = {
+        104644, -- Legplates of Unthinking Strife
+    },
+    -- Spaulders of the Fallen Warchief
+    ["105641"] = {
+        104645, -- Spaulders of the Fallen Warchief
+    },
+    -- Tusks of Mannoroth
+    ["105642"] = {
+        104646, -- Tusks of Mannoroth
+    },
+    -- Greathelm of the Warchief
+    ["105643"] = {
+        104647, -- Greathelm of the Warchief
+    },
+    -- Xal'atoh, Desecrated Image of Gorehowl
+    ["105644"] = {
+        104648, -- Xal'atoh, Desecrated Image of Gorehowl
+    },
+    -- Curse of Hubris
+    ["105645"] = {
+        104649, -- Curse of Hubris
+    },
+    -- Belt of the Broken Pact
+    ["105646"] = {
+        104650, -- Belt of the Broken Pact
+    },
+    -- Ebon Ritual Hood
+    ["105647"] = {
+        104651, -- Ebon Ritual Hood
+    },
+    -- Black Blood of Y'Shaarj
+    ["105648"] = {
+        104652, -- Black Blood of Y'Shaarj
+    },
+    -- Horned Mace of the Old Ones
+    ["105649"] = {
+        104653, -- Horned Mace of the Old Ones
+    },
+    -- Revelations of Y'Shaarj
+    ["105650"] = {
+        104654, -- Revelations of Y'Shaarj
+    },
+    -- Seal of Karmic Return
+    ["105651"] = {
+        104655, -- Seal of Karmic Return
+    },
+    -- Hopeglow Spaulders
+    ["105652"] = {
+        104656, -- Hopeglow Spaulders
+    },
+    -- Cowl of Smoking Dreams
+    ["105653"] = {
+        104657, -- Cowl of Smoking Dreams
+    },
+    -- Chestplate of Fallen Passion
+    ["105654"] = {
+        104658, -- Chestplate of Fallen Passion
+    },
+    -- Mantle of Looming Darkness
+    ["105655"] = {
+        104659, -- Mantle of Looming Darkness
     },
     -- Fathom Core
     ["204270"] = {
@@ -30478,7 +38166,7 @@ GL.Data.ItemLinks = {
     },
     -- Head of Onyxia
     ["228689"] = {
-        18422, -- Head of Onyxia (Horde)
+        18422, -- Head of Onyxia
         228685, -- Onyxia Tooth Pendant
         228686, -- Onyxia Blood Talisman
         228687, -- Dragonslayer's Signet
