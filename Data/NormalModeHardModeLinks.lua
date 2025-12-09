@@ -10478,6 +10478,8 @@ local NormalModeHardModeLinks = {
 GL.Data.NormalModeHardModeLinks = NormalModeHardModeLinks;
 
 -- Materialize data for ease of use during runtime
+--- @test /dump _G.Gargul.Data.NormalModeHardModeLinks[94955];
+--- @test /dump _G.Gargul.Data.NormalModeHardModeLinks[96890];
 _G.C_Timer.After(8, function ()
     GL:afterCombatDo(function ()
         local AdditionalEntries = {};

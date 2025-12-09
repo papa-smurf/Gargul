@@ -2217,6 +2217,9 @@ end
 ---@param itemID number
 ---@param forSoftRes? boolean
 ---@return table
+---
+---@test /dump _G.Gargul:getLinkedItemsForID(94955, true);
+---@test /dump _G.Gargul:getLinkedItemsForID(96890, true);
 function GL:getLinkedItemsForID(itemID, forSoftRes)
     forSoftRes = forSoftRes == true;
 
@@ -2242,12 +2245,12 @@ function GL:getLinkedItemsForID(itemID, forSoftRes)
 
     ---@type function
     local linkItems;
-
     linkItems = function (ID)
+        Links[ID] = true;
         local LinkedItems = GL.Data.NormalModeHardModeLinks[ID];
-        local type = type(LinkedItems);
+        local linkType = type(LinkedItems);
 
-        if (type == "table") then
+        if (linkType == "table") then
             for _, linkedID in pairs(LinkedItems) do
                 linkItems(linkedID);
             end
@@ -2255,12 +2258,18 @@ function GL:getLinkedItemsForID(itemID, forSoftRes)
             return;
         end
 
-        if (type == "number") then
-            Links[LinkedItems] = true;
-        end
+        if (linkType == "number") then
+            local parentItemID = LinkedItems;
+            Links[parentItemID] = true;
+            LinkedItems = GL.Data.NormalModeHardModeLinks[parentItemID];
 
-        if (type == "nil") then
-            Links[ID] = true;
+            if (type(LinkedItems) ~= "table") then
+                LinkedItems = { LinkedItems };
+            end
+
+            for _, linkedID in pairs(LinkedItems or {}) do
+                Links[linkedID] = true;
+            end
         end
     end;
 
