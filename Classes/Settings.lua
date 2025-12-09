@@ -147,11 +147,29 @@ function Settings:overrideDefaultsWithUserSettings()
     -- Reset the currently active settings table
     self.Active = {};
 
-    -- Combine the default and user's settings to one settings table
-    Settings = GL:tableMerge(Settings.Defaults, DB:get("Settings"));
+    UserSettings = DB:get("Settings");
 
-    -- Set the values of the settings table directly on the GL.Settings table.
-    for key, value in pairs(Settings) do
+    -- Settings that hold tables need to be ignored when complementing with defaults, otherwise
+    -- defaults will override user settings ( like RollTracking.Brackets when only one bracket is present )
+    local DefaultsToIgnoreWhenUserDataIsPresent = { "RollTracking.Brackets", };
+    local IgnoredSettingValues = {};
+    for _, setting in pairs(DefaultsToIgnoreWhenUserDataIsPresent) do
+        local UserPreference = GL:tableGet(UserSettings, setting);
+
+        if (UserPreference ~= nil) then
+            IgnoredSettingValues[setting] = UserPreference;
+        end
+    end
+
+    -- Combine default and user settings to a unified settings table
+    UserSettings = GL:tableMerge(self.Defaults, UserSettings);
+
+    -- Restore user preferences on DefaultsToIgnoreWhenUserDataIsPresent
+    for setting, Value in pairs(IgnoredSettingValues) do
+        GL:tableSet(UserSettings, setting, Value);
+    end
+
+    for key, value in pairs(UserSettings) do
         self.Active[key] = value;
     end
 
@@ -209,7 +227,7 @@ end
 function Settings:get(keyString, default)
     -- Just in case something went wrong with merging the default settings
     if (type(default) == "nil") then
-        default = GL:tableGet(GL.Data.DefaultSettings, keyString);
+        default = GL:tableGet(self.Defaults, keyString);
     end
 
     return GL:tableGet(self.Active, keyString, default);
