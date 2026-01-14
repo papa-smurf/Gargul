@@ -20,11 +20,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Package and release Cata
-        uses: BigWigsMods/packager@master
-        with:
-          args: "-o -u -S -m .pkgmeta -g cata"
-
       - name: Package and release Retail
         uses: BigWigsMods/packager@master
         with:
@@ -35,10 +30,20 @@ jobs:
         with:
           args: "-o -u -S -m .pkgmeta -g classic"
 
+      - name: Package and release TBC
+        uses: BigWigsMods/packager@master
+        with:
+          args: "-o -u -S -m .pkgmeta -g bcc"
+
       - name: Package and release Wrath
         uses: BigWigsMods/packager@master
         with:
           args: "-o -u -S -m .pkgmeta -g wrath"
+
+      - name: Package and release Cata
+        uses: BigWigsMods/packager@master
+        with:
+          args: "-o -u -S -m .pkgmeta -g cata"
 
       - name: Package and release Mists
         uses: BigWigsMods/packager@master

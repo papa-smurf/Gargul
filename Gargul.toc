@@ -1,5 +1,6 @@
 ## Interface: 110207, 110208
 ## Interface-Classic: 11508
+## Interface-BCC: 20505
 ## Interface-Wrath: 30405
 ## Interface-Cata: 40402, 40403
 ## Interface-Mists: 50502, 50503
