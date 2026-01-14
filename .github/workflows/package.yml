@@ -40,6 +40,11 @@ jobs:
         with:
           args: "-o -u -S -m .pkgmeta -g wrath"
 
+      - name: Package and release Wrath Titan Reforged - Chrono
+        uses: BigWigsMods/packager@master
+        with:
+          args: "-o -u -S -m .pkgmeta -g titan"
+
       - name: Package and release Cata
         uses: BigWigsMods/packager@master
         with:
