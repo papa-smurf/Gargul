@@ -1008,7 +1008,7 @@ function SoftRes:importLootReserveData(Reserves)
         if (not GL:empty(Reserved)) then
             SoftReserveData[player] = {
                 Items = Reserved,
-                name = string.lower(player),
+                name = GL:nameFormat{ name = player, stripRealm = true, func = strlower },
             };
         end
     end
