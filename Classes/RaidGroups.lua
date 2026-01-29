@@ -449,7 +449,7 @@ end
 ---@return void
 function RaidGroups:invitePlayers(raidGroupCsv)
     for _, playerName in pairs(self:listPlayerNames(raidGroupCsv)) do
-        InviteUnit(playerName); -- Attempt to invite the player
+        GL.InviteUnit(playerName); -- Attempt to invite the player
     end
 end
 

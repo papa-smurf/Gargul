@@ -20,6 +20,7 @@ GL.GetItemInfo = GetItemInfo or C_Item.GetItemInfo;
 GL.GetItemInfoInstant = GetItemInfoInstant or C_Item.GetItemInfoInstant;
 
 -- PartyInfo
+GL.InviteUnit = InviteUnit or C_PartyInfo.InviteUnit;
 
 ---@param method string
 ---@param player? string
