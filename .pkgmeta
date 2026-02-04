@@ -2,6 +2,6 @@ ignore:
   - _ide_helper.lua
   - automations
   - build.sh
-  - WowApi
+  - .cursor
 
 changelog-title: Gargul

@@ -3,6 +3,19 @@ local _, GL = ...;
 
 ---@class Constants
 GL.Data.Constants = {
+    --- Interface version constants for multi-version support.
+    --- Use when wrapping version-specific API calls: if GL.tocVersion >= X then ...
+    InterfaceVersions = {
+        VANILLA = 11200,       -- Original 1.12.1
+        VANILLA_WRATH = 30300, -- Original 3.3.5a
+        ERA = 11508,
+        BCC = 20505,
+        WRATH = 30405,
+        TITAN = 38000,
+        CATA = 40402,
+        MISTS = 50503,
+        RETAIL = 120000,
+    },
     ItemOfInterestReasons = {
         RESERVE = 1,
         WISHLIST = 2,
