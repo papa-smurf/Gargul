@@ -100,6 +100,8 @@ L["\nHere you can import boosted roll data and aliases from a table in CSV or TS
 
 Foobar,240,Barfoo]];
 L["Points"] = "积分";
+L["Points: %s"] = "积分：%s";
+L["N/A"] = "未知";
 L["Reserve"] = "指定";
 L["\nAre you sure you want to update your existing boosted rolls with data from %s?\n\nYour latest update was on |c00A79EFF%s, theirs on |c00A79EFF%s."] = [[
 您确定要使用 %s 的数据更新现有的BR吗？

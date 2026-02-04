@@ -10,7 +10,7 @@ GL.RollerUI = GL.RollerUI or {
 local RollerUI = GL.RollerUI; ---@type RollerUI
 
 ---@return boolean
-function RollerUI:show(time, itemLink, itemIcon, note, SupportedRolls, bth)
+function RollerUI:show(time, itemLink, itemIcon, note, SupportedRolls, bth, boostedRollIdentifier)
     if (self.Window and self.Window:IsShown()) then
         return false;
     end
@@ -23,7 +23,7 @@ function RollerUI:show(time, itemLink, itemIcon, note, SupportedRolls, bth)
             return false;
         end
 
-        self:draw(time, itemLink, itemIcon, note, SupportedRolls, userCanUseItem, bth);
+        self:draw(time, itemLink, itemIcon, note, SupportedRolls, userCanUseItem, bth, boostedRollIdentifier);
     end);
 
     return true;
@@ -35,8 +35,10 @@ end
 ---@param itemLink string
 ---@param itemIcon string
 ---@param note string
+---@param bth table|nil
+---@param boostedRollIdentifier string|nil Identifier of the boosted roll button (e.g. "BR")
 ---@return boolean
-function RollerUI:draw(time, itemLink, itemIcon, note, SupportedRolls, userCanUseItem, bth)
+function RollerUI:draw(time, itemLink, itemIcon, note, SupportedRolls, userCanUseItem, bth, boostedRollIdentifier)
     local Window = CreateFrame("Frame", "GargulUI_RollerUI_Window", UIParent, Frame);
     Window:SetSize(350, 48);
     Window:SetPoint(GL.Interface:getPosition("Roller"));
@@ -105,6 +107,37 @@ function RollerUI:draw(time, itemLink, itemIcon, note, SupportedRolls, userCanUs
 
             Button:SetScript("OnLeave", function()
                 Button:Disable();
+            end);
+        end
+
+        local isBoostedRollButton = boostedRollIdentifier and GL:iEquals(identifier, boostedRollIdentifier);
+
+        if (isBoostedRollButton) then
+            local existingOnEnter = Button:GetScript("OnEnter");
+            local existingOnLeave = Button:GetScript("OnLeave");
+
+            Button:SetScript("OnEnter", function ()
+                if (existingOnEnter) then
+                    existingOnEnter(Button);
+                end
+
+                local tooltipText;
+                if (GL.BoostedRolls:hasPoints(GL.User.fqn)) then
+                    local points = GL.BoostedRolls:getPoints(GL.User.fqn);
+                    tooltipText = (L["Points: %s"]):format(tostring(points));
+                else
+                    tooltipText = (L["Points: %s"]):format(L["N/A"]);
+                end
+
+                GameTooltip:SetOwner(Button, "ANCHOR_TOP");
+                GameTooltip:SetText(tooltipText);
+                GameTooltip:Show();
+            end);
+            Button:SetScript("OnLeave", function ()
+                GameTooltip:Hide();
+                if (existingOnLeave) then
+                    existingOnLeave(Button);
+                end
             end);
         end
 

@@ -97,6 +97,8 @@ L["\nHere you can import boosted roll data and aliases from a table in CSV or TS
 
 푸바,240,바푸]];
 L["Points"] = "포인트들";
+L["Points: %s"] = "포인트: %s";
+L["N/A"] = "알 수 없음";
 L["Reserve"] = "예약하다";
 L["\nAre you sure you want to update your existing boosted rolls with data from %s?\n\nYour latest update was on |c00A79EFF%s, theirs on |c00A79EFF%s."] = [[
 %s의 데이터로 기존 부스트 롤을 업데이트하시겠습니까?

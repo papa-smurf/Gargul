@@ -99,6 +99,8 @@ L["\nHere you can import boosted roll data and aliases from a table in CSV or TS
 
 Фубар, 240, Барфу]];
 L["Points"] = "Очки";
+L["Points: %s"] = "Очки: %s";
+L["N/A"] = "Н/Д";
 L["Reserve"] = "Резервировать";
 L["\nAre you sure you want to update your existing boosted rolls with data from %s?\n\nYour latest update was on |c00A79EFF%s, theirs on |c00A79EFF%s."] = [[
 Вы уверены, что хотите обновить существующие усиленные броски данными от %s?

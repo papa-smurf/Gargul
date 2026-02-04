@@ -97,6 +97,8 @@ Aqui está um exemplo de linha:
 
 Foobar,240,Barfoo]];
 L["Points"] = "Pontos";
+L["Points: %s"] = "Pontos: %s";
+L["N/A"] = "N/D";
 L["Reserve"] = "reserva";
 L["\nAre you sure you want to update your existing boosted rolls with data from %s?\n\nYour latest update was on |c00A79EFF%s, theirs on |c00A79EFF%s."] = [[
 Tem certeza de que deseja atualizar suas listas otimizadas existentes com dados de %s?
