@@ -26,7 +26,9 @@ GL.elvUILoaded = false;
 GL.firstBoot = false; -- Indicates whether the user is new to Gargul
 GL.tocVersion = select(4, GetBuildInfo());
 GL.isEra = GL.tocVersion < 20000;
-GL.isSoD = GL.isEra and C_Seasons.GetActiveSeason() == Enum.SeasonID.Placeholder;
+-- C_Seasons only exists in Season of Discovery; wrap to avoid errors on Era/BCC/Wrath/etc.
+GL.isSoD = GL.isEra and (C_Seasons and C_Seasons.GetActiveSeason and Enum and Enum.SeasonID
+    and C_Seasons.GetActiveSeason() == Enum.SeasonID.Placeholder);
 GL.isClassic = not GL.isEra and GL.tocVersion < 90000;
 GL.isRetail = GL.tocVersion >= 90000;
 GL.isMuted = false;
@@ -77,10 +79,10 @@ function GL:bootstrap(_, _, addonName)
 
     GL:after(1, nil, function()
         -- Check if ElvUI is loaded (useful for making adhoc UI changes)
-        self.elvUILoaded = C_AddOns.GetAddOnEnableState(GL.User.name,"ElvUI") == 2;
+        self.elvUILoaded = GL.GetAddOnEnableState(GL.User.name,"ElvUI") == 2;
 
         -- Check if the user doesn't already have MuteNotInGroup loaded
-        if (self.isClassic and C_AddOns.GetAddOnEnableState(GL.User.name, "MuteNotInGroup") ~= 2) then
+        if (self.isClassic and GL.GetAddOnEnableState(GL.User.name, "MuteNotInGroup") ~= 2) then
             -- Ignore "You aren't in a party" messages when you are in fact in a party (Blizzard LFD Bug)
             ChatFrame_AddMessageEventFilter("CHAT_MSG_SYSTEM", function (_, _, msg)
                 return msg == ERR_NOT_IN_GROUP
@@ -139,7 +141,7 @@ function GL:_init()
 
     GL.Settings:onChange("chatLocale", function ()
         if (GL.Settings:get("chatLocale") ~= chatLocale) then
-            C_UI.Reload();
+            GL.ReloadUI();
         end
     end);
 

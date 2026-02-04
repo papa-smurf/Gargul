@@ -245,13 +245,13 @@ GL.Commands = GL.Commands or {
 
         resetui = function ()
             Settings:set("UI", {});
-            C_UI.Reload();
+            GL.ReloadUI();
         end,
 
         resetsettings = function ()
             GL.Settings.Active = {};
             GL.DB:set("Settings", nil);
-            C_UI.Reload();
+            GL.ReloadUI();
         end,
 
         -- Open the TMB window

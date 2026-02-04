@@ -278,7 +278,7 @@ function GDKP:draw(Parent)
                 local PerItemSettings = Settings:get("GDKP.SettingsPerItem", {});
                 Settings:set("GDKP", {});
                 Settings:set("GDKP.SettingsPerItem", PerItemSettings);
-                C_UI.Reload();
+                GL.ReloadUI();
             end,
         };
     end);
@@ -292,7 +292,7 @@ function GDKP:draw(Parent)
             question = "Are you sure you want to delete all session data? You will lose ALL auction data. Use with extreme caution!",
             OnYes = function ()
                 GL.DB:set("GDKP", {});
-                C_UI.Reload();
+                GL.ReloadUI();
             end,
         };
     end);

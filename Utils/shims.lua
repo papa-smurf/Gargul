@@ -5,7 +5,7 @@ local _, GL = ...;
 GL.GetAddOnEnableState = GetAddOnEnableState or C_AddOns.GetAddOnEnableState;
 GL.GetAddOnInfo = GetAddOnInfo or C_AddOns.GetAddOnInfo;
 GL.GetAddOnMetadata = GetAddOnMetadata or C_AddOns.GetAddOnMetadata;
-GL.GetNumAddOns = GetNumAddons or C_AddOns.GetNumAddOns;
+GL.GetNumAddOns = GetNumAddOns or C_AddOns.GetNumAddOns;
 GL.IsAddOnLoaded = IsAddOnLoaded or C_AddOns.IsAddOnLoaded;
 
 -- Container
@@ -21,6 +21,9 @@ GL.GetItemInfoInstant = GetItemInfoInstant or C_Item.GetItemInfoInstant;
 
 -- PartyInfo
 GL.InviteUnit = InviteUnit or C_PartyInfo.InviteUnit;
+
+-- UI reload: C_UI.Reload exists from 1.13.2+, ReloadUI is legacy alias
+GL.ReloadUI = C_UI and C_UI.Reload or ReloadUI;
 
 ---@param method string
 ---@param player? string
