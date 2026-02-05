@@ -19,6 +19,12 @@ GL.GetCoinTextureString = GetCoinTextureString or C_CurrencyInfo.GetCoinTextureS
 GL.GetItemInfo = GetItemInfo or C_Item.GetItemInfo;
 GL.GetItemInfoInstant = GetItemInfoInstant or C_Item.GetItemInfoInstant;
 
+-- Item class IDs (LE_ITEM_CLASS_* may not exist in Retail/TBC anniversary)
+-- Prefer LE_* when available, else Enum.ItemClass.* (Retail), else numeric fallback
+GL.LE_ITEM_CLASS_RECIPE = LE_ITEM_CLASS_RECIPE or (Enum and Enum.ItemClass and Enum.ItemClass.Recipe) or 9;
+GL.LE_ITEM_CLASS_QUESTITEM = LE_ITEM_CLASS_QUESTITEM or (Enum and Enum.ItemClass and Enum.ItemClass.Questitem) or 12;
+GL.LE_ITEM_CLASS_MISCELLANEOUS = LE_ITEM_CLASS_MISCELLANEOUS or (Enum and Enum.ItemClass and Enum.ItemClass.Miscellaneous) or 15;
+
 -- PartyInfo
 GL.InviteUnit = InviteUnit or C_PartyInfo.InviteUnit;
 

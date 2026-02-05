@@ -18,10 +18,10 @@ GL.PackMule = {
     setupWindowIsActive = false,
 
     -- We ignore recipes and questitems by default
-    -- since they might not always be tradably
+    -- since they might not always be tradable
     itemClassIDsToIgnore = {
-        LE_ITEM_CLASS_RECIPE,
-        LE_ITEM_CLASS_QUESTITEM,
+        GL.LE_ITEM_CLASS_RECIPE,
+        GL.LE_ITEM_CLASS_QUESTITEM,
     },
 
     playerIsInHeroicInstance = false,
@@ -558,7 +558,7 @@ function PackMule:getTargetForItem(itemLinkOrId, callback)
                     -- When group looting we have some additional rules
                     if (not GL.User.isMasterLooter) then
                         -- Skip companion pets in group loot even if they're BoE!
-                        if (Details.classID == LE_ITEM_CLASS_MISCELLANEOUS
+                        if (Details.classID == GL.LE_ITEM_CLASS_MISCELLANEOUS
                             and Details.subclassID == Enum.ItemMiscellaneousSubclass.CompanionPet
                         ) then
                             return false;
