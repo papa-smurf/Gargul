@@ -1,3 +1,5 @@
+local L = Gargul_L;
+
 ---@type GL
 local _, GL = ...;
 
@@ -58,6 +60,14 @@ function Welcome:draw(Parent)
     end);
     OpenPackMule:SetWidth(120);
     Parent:AddChild(OpenPackMule);
+
+    local OpenAutoRoll = AceGUI:Create("Button");
+    OpenAutoRoll:SetText(L["Auto Roll"]);
+    OpenAutoRoll:SetCallback("OnClick", function()
+        GL.Settings:draw("AutoRollRules");
+    end);
+    OpenAutoRoll:SetWidth(120);
+    Parent:AddChild(OpenAutoRoll);
 
     local OpenBonusFeatures = AceGUI:Create("Button");
     OpenBonusFeatures:SetText("Bonus Features");

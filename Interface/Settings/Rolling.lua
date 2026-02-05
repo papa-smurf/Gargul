@@ -14,9 +14,12 @@ local Rolling = GL.Interface.Settings.Rolling; ---@type RollSettings
 
 ---@return void
 function Rolling:draw(Parent)
-    GL:debug("RollSettings:draw");
-
     local Checkboxes = {
+        {
+            label = L["Enable Auto Roll"],
+            description = L["Automatically roll need, greed or pass based on your saved rules when a Gargul roll is announced. Does not work with group loot rolls. Manage rules via the Auto Roll Rules section or |c00A79EFF/gl autoroll|r"],
+            setting = "AutoRoll.enabled",
+        },
         {
             label = "Roll Window",
             description = "Show the roll window with timer roll buttons whenever the master looter starts a roll. This only works if the master looter uses Gargul!",
@@ -40,6 +43,14 @@ function Rolling:draw(Parent)
     };
 
     Overview:drawCheckboxes(Checkboxes, Parent);
+
+    local ManageRulesButton = GL.AceGUI:Create("Button");
+    ManageRulesButton:SetText(L["Manage Auto Roll Rules"]);
+    ManageRulesButton:SetWidth(200);
+    ManageRulesButton:SetCallback("OnClick", function ()
+        Overview:showSection("AutoRollRules");
+    end);
+    Parent:AddChild(ManageRulesButton);
 
     local HorizontalSpacer = GL.AceGUI:Create("SimpleGroup");
     HorizontalSpacer:SetLayout("FILL");
@@ -103,5 +114,3 @@ function Rolling:draw(Parent)
     end);
     Parent:AddChild(Scale);
 end
-
-GL:debug("Interface/Settings/Rolling.lua");

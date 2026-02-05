@@ -50,11 +50,11 @@ function BonusFeatures:build()
     local Window = Interface:createWindow{
         name = self.windowName,
         width = 220,
-        height = 325,
+        height = 420,
         minWidth = 220,
-        minHeight = 325,
+        minHeight = 420,
         maxWidth = 475,
-        maxHeight = 400,
+        maxHeight = 500,
         hideMinimizeButton = true,
     };
 
@@ -113,6 +113,20 @@ function BonusFeatures:build()
     PlusOnes:SetPoint("TOPRIGHT", PlusOnesLabel, "BOTTOMRIGHT", 0, 0);
     PlusOnes:SetScript("OnClick", function ()
         GL.Commands:call("plusones");
+    end);
+
+    --[[ AUTO ROLL ]]
+    ---@type FontString
+    local AutoRollLabel = Interface:createFontString(Window, L["4. Automatically roll need, greed or pass based on saved rules! Click below or use |c00A79EFF/gl ar"]);
+    AutoRollLabel:SetPoint("TOPLEFT", PlusOnes, "BOTTOMLEFT", 0, -18);
+    AutoRollLabel:SetPoint("TOPRIGHT", PlusOnes, "BOTTOMRIGHT");
+
+    ---@type Button
+    local AutoRoll = Interface:dynamicPanelButton(Window, L["Auto Roll"]);
+    AutoRoll:SetPoint("TOPLEFT", AutoRollLabel, "BOTTOMLEFT", 0, -10);
+    AutoRoll:SetPoint("TOPRIGHT", AutoRollLabel, "BOTTOMRIGHT", 0, 0);
+    AutoRoll:SetScript("OnClick", function ()
+        GL.Settings:draw("AutoRollRules");
     end);
 
     _G[self.windowName] = Window;

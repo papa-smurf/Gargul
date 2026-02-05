@@ -139,6 +139,9 @@ GL.Data.DefaultSettings = {
         scale = 1,
         showRollOffWindow = true,
     },
+    AutoRoll = {
+        enabled = false,
+    },
     RollTracking = {
         rollOffEndLeeway = 1,
         sortByPlusOne = "ASC",

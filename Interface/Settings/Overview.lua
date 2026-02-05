@@ -41,6 +41,7 @@ GL.Interface.Settings.Overview = {
         {"Shortcut Keys", "ShortcutKeys"},
         {"Trade Announcements", "TradeAnnouncements"},
         {"Rolling", "Rolling"},
+        {"    Auto Roll Rules", "AutoRollRules"},
         {"Loot Highlighting", "LootHighlighting"},
         {"Boosted Rolls", "BoostedRolls"},
         {"Plus Ones", "PlusOnes"},
@@ -370,6 +371,11 @@ function Overview:showSection(section)
 
     -- Store the ScrollFrame so that we can clean/release it later
     GL.Interface:set(self, "ScrollFrame", ScrollFrame);
+
+    -- Add pre-content (e.g. profile bar) before description if the section defines it
+    if (type(SectionClass.drawPreContent) == "function") then
+        SectionClass:drawPreContent(ScrollFrame);
+    end
 
     -- Add a description to the section if available
     if (not GL:empty(SectionClass.description)) then

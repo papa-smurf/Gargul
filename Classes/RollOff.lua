@@ -350,10 +350,17 @@ function RollOff:start(CommMessage)
             GL.MasterLooterUI:drawReopenMasterLooterUIButton();
         end
 
-        -- Don't show the roll UI if the user disabled it
-        if (GL.Settings:get("Rolling.showRollOffWindow")) then
+        -- Auto Roll: if we have a rule, perform the roll (or pass) and optionally skip the UI
+        local autoRollHandled, autoRollAction = GL.AutoRoll:onRollStart(Details.link, Details.id, SupportedRolls);
+
+        -- Don't show the roll UI if the user disabled it, or if Auto Roll handled it (pass always hides; roll hides when closeAfterRoll)
+        if (GL.Settings:get("Rolling.showRollOffWindow"))
+            and not (autoRollHandled and (autoRollAction == "passed" or GL.Settings:get("Rolling.closeAfterRoll")))
+        then
             local boostedRollIdentifier = content.BoostedRollData and content.BoostedRollData.identifier or nil;
-            GL.RollerUI:show(time, Details.link, Details.icon, content.note, SupportedRolls, content.bth, boostedRollIdentifier);
+            GL.RollerUI:show(time, Details.link, Details.icon, content.note, SupportedRolls, content.bth, boostedRollIdentifier, autoRollHandled and autoRollAction == "rolled");
+        elseif (autoRollHandled and autoRollAction == "rolled") then
+            GL.RollerUI:showRollAcceptedNotification();
         end
 
         -- Make sure the rolloff stops when time is up

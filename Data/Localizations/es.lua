@@ -69,6 +69,20 @@ L["1. Auto invite/sort groups from raid signup! Click below or use |c00A79EFF/gl
 L["2. Reward players for being regulars or going the extra mile! Click below or use |c00A79EFF/gl br"] = "2. ¡Recompensa a los jugadores por ser habituales o hacer un esfuerzo adicional! Haga clic a continuación o use |c00A79EFF/gl br";
 L["Gargul has a few tricks up its sleeve that you might not be aware of. Have a looksy!"] = "Gargul tiene algunos trucos bajo la manga que quizás no conozcas. ¡Echa un vistazo!";
 L["3. Gargul includes a plus one tracking system! Click below or use |c00A79EFF/gl po"] = "3. ¡Gargul incluye un sistema de seguimiento más uno! Haga clic a continuación o utilice |c00A79EFF/gl po";
+L["4. Automatically roll need, greed or pass based on saved rules! Click below or use |c00A79EFF/gl ar"] = "4. ¡Rueda automáticamente need, greed o pass según tus reglas! Clic abajo o |c00A79EFF/gl ar";
+L["Action"] = "Acción";
+L["Add"] = "Añadir";
+L["Add item rules to automatically roll need, greed or pass when a roll is announced. Rules are stored per item ID. When you win an item, its rule is automatically set to pass."] = "Añade reglas para rodar automáticamente need, greed o pass. Las reglas se guardan por ID. Al ganar un objeto, su regla pasa a pass.";
+L["Add item rules to automatically roll need, greed or pass when a Gargul roll is announced (does not work with group loot rolls). Rules are stored per item ID. When you win an item, its rule is automatically set to pass. Shift-click items or drag them into the box below."] = "Añade reglas para rodar automáticamente need, greed o pass cuando se anuncia un roll de Gargul (no funciona con rolls de botín de grupo). Las reglas se guardan por ID. Al ganar un objeto, su regla pasa a pass. Shift+clic en objetos o arrástralos al cuadro de abajo.";
+L["Add rule"] = "Añadir regla";
+L["Auto Roll"] = "Auto Roll";
+L["Enable Auto Roll"] = "Activar Auto Roll";
+L["Auto roll is active ( profile: %s )"] = "Auto Roll activo ( perfil: %s )";
+L["You automatically passed on %s"] = "Has pasado automáticamente en %s";
+L["You automatically needed on %s"] = "Has tirado Need automáticamente en %s";
+L["You automatically greeded on %s"] = "Has tirado Greed automáticamente en %s";
+L["Automatically roll need, greed or pass based on your saved rules when a Gargul roll is announced. Does not work with group loot rolls. Manage rules via the Auto Roll Rules section or |c00A79EFF/gl autoroll|r"] = "Rueda automáticamente según tus reglas cuando se anuncia un roll de Gargul. No funciona con rolls de botín de grupo. Gestiona en Auto Roll Rules o |c00A79EFF/gl autoroll|r";
+L["now supports auto rolling: |c00%s/gl ar|r or |c00%s/gl autoroll|r"] = "Gargul ahora soporta auto rolling: |c00%s/gl ar|r o |c00%s/gl autoroll|r";
 L["Boosted Rolls"] = "Rollos potenciados";
 L["BR"] = "BR";
 L["\nAdd how many points for everyone currently in the raid?\n\n|c00BE3333Use the 'Add missing raiders' button first if you want everyone to get points, even those without a boosted roll entry!"] = [[
@@ -76,6 +90,7 @@ L["\nAdd how many points for everyone currently in the raid?\n\n|c00BE3333Use th
 
 |c00BE3333Utiliza primero el botón 'Agregar asaltantes faltantes' si quieres que todos obtengan puntos, ¡incluso aquellos sin una entrada de tirada mejorada!]];
 L["No point value provided!"] = "¡No se proporciona ningún valor en puntos!";
+L["No rules yet. Add an item link and choose need, greed or pass."] = "Sin reglas. Añade un enlace y elige need, greed o pass.";
 L["Add points to raid"] = "Agregar puntos a la incursión";
 L["Add missing raiders"] = "Agregar asaltantes faltantes";
 L["Aliases"] = "Alias";
@@ -87,6 +102,16 @@ L["Couldn't process BoostedRolls data received from %s"] = "No se pudieron proce
 L["Attempting to process incoming BoostedRolls data from %s"] = "Intentando procesar datos BoostedRolls entrantes de %s";
 L["Are you sure you want to clear all boosted roll data?"] = "¿Estás seguro de que deseas borrar todos los datos de la tirada mejorada?";
 L["Delete %s?"] = "¿Eliminar %s?";
+L["(copy)"] = "(copia)";
+L["A profile with that name already exists."] = "Ya existe un perfil con ese nombre.";
+L["Copy profile"] = "Copiar perfil";
+L["Create profile"] = "Crear perfil";
+L["Delete profile"] = "Eliminar perfil";
+L["Delete profile \"%s\"?"] = "¿Eliminar perfil \"%s\"?";
+L["No profile"] = "Sin perfil";
+L["Profile name"] = "Nombre del perfil";
+L["Profile: "] = "Perfil: ";
+L["Rename profile"] = "Renombrar perfil";
 L["Are you sure you want to clear your existing boosted roll data and import new data broadcasted by %s?"] = "¿Estás seguro de que deseas borrar los datos de tus tiradas mejoradas existentes e importar nuevos datos transmitidos por %s?";
 L["Invalid data provided. Make sure that the contents follows the required format and no header row is included"] = "Se proporcionaron datos no válidos. Asegúrese de que el contenido siga el formato requerido y no se incluya ninguna fila de encabezado";
 L["\nHere you can import boosted roll data and aliases from a table in CSV or TSV format or pasted from a Google Docs Sheet.\n\nThe table needs at least two columns: The player name followed by the amount of points. Additional columns are optional and may contain aliases for the player.\nHere is an example line:\n\nFoobar,240,Barfoo"] = [[
@@ -284,6 +309,10 @@ L["Custom (create your own format)"] = "Personalizado (crea tu propio formato)";
 L["Detailed (JSON)"] = "Detallado (JSON)";
 L["Share (can be imported by other players)"] = "Compartir (puede ser importado por otros jugadores)";
 L["Your custom format"] = "Tu formato personalizado";
+L["Your rules"] = "Tus reglas";
+L["Clear all"] = "Borrar todo";
+L["Remove all rules from this profile"] = "Eliminar todas las reglas de este perfil";
+L["Remove all rules from this profile?"] = "¿Eliminar todas las reglas de este perfil?";
 L["Your custom header"] = "Tu encabezado personalizado";
 L["Custom (create your own format)"] = "Personalizado (crea tu propio formato)";
 L["@PLAYER,@CUT"] = "@JUGADOR,@CORTAR";
@@ -295,6 +324,7 @@ L["total gold received from the player"] = "oro total recibido del jugador";
 L["date/time at which the first item was awarded"] = "fecha/hora en la que se otorgó el primer artículo";
 L["gold traded to the player"] = "oro intercambiado al jugador";
 L["@ITEM,@WINNER,@GOLD,@WOWHEAD"] = "@ARTÍCULO,@GANADOR,@ORO,@WOWHEAD";
+L["Item link or ID"] = "Enlace o ID de objeto";
 L["Item,Player,Gold,Wowheadlink"] = "Artículo, Jugador, Oro, Wowheadlink";
 L["Date/time at which the first item was awarded"] = "Fecha/hora en la que se adjudicó el primer artículo";
 L["The title of the GDKP session"] = "El título de la sesión del GDKP";
@@ -469,6 +499,7 @@ Esto cerrará todas las subastas y anunciará el bote total en el chat.
 L["Hide inactive"] = "Ocultar inactivo";
 L["Hide unusable"] = "Ocultar inutilizable";
 L["Show/Hide finished auctions"] = "Mostrar/Ocultar subastas finalizadas";
+L["Manage Auto Roll Rules"] = "Gestionar reglas Auto Roll";
 L["Manage Auction"] = "Gestionar subasta";
 L["Bid the minimum required amount"] = "Oferta la cantidad mínima requerida";
 L["Bidding window closed, use |c00A79EFF/gl bid to reopen it!"] = "¡La ventana de oferta está cerrada, use la oferta |c00A79EFF/gl para reabrirla!";
@@ -635,7 +666,7 @@ L["Download on CurseForge"] = "Descargar en CurseForge";
 L["https://addons.wago.io/addons/gargul/versions?stability=stable"] = "https://addons.wago.io/addons/gargul/versions?stability=stable";
 L["Halt"] = "Detener";
 L["Header"] = "Encabezamiento";
-L["|c00%sGargul v%s by Zhorax@Firemaw. Type |c00%s/gl or |c00%s/gargul to get started!"] = "|c00%sGargul v%s por Zhorax@Firemaw. Escribe |c00%s/gl o |c00%s/gargul para comenzar.";
+L["v%s. Type |c00967FD2/gl|r or |c00967FD2/gargul|r to get started!"] = "v%s. Escribe |c00967FD2/gl|r o |c00967FD2/gargul|r para comenzar.";
 L["Hide"] = "Esconder";
 L["%H:%M"] = "%H:%M";
 L["Visit the URL below to learn more about personalizing Gargul GDKPs"] = "Visite la siguiente URL para obtener más información sobre cómo personalizar los GDKP de Gargul.";
@@ -845,6 +876,7 @@ Advertencia: se encontró otra tirada idéntica que puede indicar un empate
 
 ]];
 L["Invalid data provided for roll start!"] = "¡Se proporcionaron datos no válidos para la tirada de inicio!";
+L["Invalid item link or ID"] = "Enlace o ID de objeto no válido";
 L["(BR: %s)"] = "(BR: %s)";
 L["(item given: yes)"] = "(artículo dado: sí)";
 L["(item given: no)"] = "(ítem dado: no)";

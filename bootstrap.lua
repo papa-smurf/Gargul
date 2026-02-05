@@ -160,19 +160,26 @@ function GL:_init()
         GL.FONT = media:Fetch("font", "PTSansNarrow");
     end
 
-    -- Show a welcome message
-    if (self.Settings:get("welcomeMessage")) then
-        print((L["|c00%sGargul v%s by Zhorax@Firemaw. Type |c00%s/gl or |c00%s/gargul to get started!"]):format(
-            self.Data.Constants.addonHexColor,
-            self.version,
-            self.Data.Constants.addonHexColor,
-            self.Data.Constants.addonHexColor
-        ))
-    end
+    GL:after(2, nil, function()
+        -- Show a welcome message
+        if (self.Settings:get("welcomeMessage")) then
+            GL:message("|c00" .. self.Data.Constants.addonHexColor .. (L["v%s. Type |c00967FD2/gl|r or |c00967FD2/gargul|r to get started!"]):format(self.version));
+        end
+
+        if (GL.AutoRoll:enabled()) then
+            local profile = GL.Profiles:getActiveProfile(GL.Profiles.NAMESPACE_AUTOROLL);
+            local rules = GL.AutoRoll:getAllRules();
+            if (profile and profile.name and next(rules)) then
+                local msg = (L["Auto roll is active ( profile: %s )"]):format(profile.name);
+                GL:message(("|c00%s%s|r"):format(GL.Data.Constants.addonHexColor, msg));
+            end
+        end
+    end);
 
     self.Comm:_init();
     self.User:_init();
     self.AwardedLoot:_init();
+    self.AutoRoll:_init();
     self.SoftRes:_init();
     self.GDKP.Auction:_init();
     self.TMB:_init();
@@ -205,6 +212,17 @@ function GL:_init()
 
     -- Make sure to initialize the user last
     self.User:refresh();
+
+    -- GargulAutoRoll migration: if they have the addon but no Gargul auto roll rules, nudge them
+    GL:after(8, "GargulAutoRollMigration", function()
+        for i = 1, GL.GetNumAddOns() do
+            if (select(1, GL.GetAddOnInfo(i)) == "GargulAutoRoll") then
+                local color = GL.Data.Constants.addonHexColor;
+                GL:message(("|c00%s%s|r"):format(color, (L["now supports auto rolling: |c00%s/gl ar|r or |c00%s/gl autoroll|r"]):format(GL.Data.Constants.commandHexColor, GL.Data.Constants.commandHexColor)));
+                break;
+            end
+        end
+    end);
 
     -- Makes testing easier for devs
     if (self.User:isDev()) then

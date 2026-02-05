@@ -1394,6 +1394,35 @@ function Interface:addWindowOptions(Window, Menu, width)
     DropDown.Button:Hide();
 end
 
+--- Add item tooltip that follows the cursor.
+---@param Owner Frame|table AceGUI widget or frame
+---@param itemLink string
+---@return void
+function Interface:addItemTooltipToCursor(Owner, itemLink)
+    if (GL:empty(itemLink) or not GL:getItemIDFromLink(itemLink)) then
+        return;
+    end
+
+    local Target = Owner.frame and Owner.frame or Owner;
+    if (Target.EnableMouse) then
+        Target:EnableMouse(true);
+    end
+
+    Target:HookScript("OnEnter", function()
+        if (Target.GetEffectiveAlpha and Target:GetEffectiveAlpha() == 0) then
+            return;
+        end
+
+        GameTooltip:SetOwner(Target, "ANCHOR_CURSOR");
+        GameTooltip:SetHyperlink(itemLink);
+        GameTooltip:Show();
+    end);
+
+    Target:HookScript("OnLeave", function()
+        GameTooltip:Hide();
+    end);
+end
+
 ---@param Owner Frame
 ---@param Lines table|string
 ---@param anchor string|nil

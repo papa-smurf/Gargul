@@ -16,6 +16,7 @@ GL.Commands = GL.Commands or {
         awardondate = "In case you need to award something retroactively you can use this command: /gl awardOnDate [winnerName] [yy-mm-dd] [itemLink]",
         award = "Open the award window. Optionally accepts an ItemLink as an argument: /gl award [itemLink?]",
         awardhistory = "Open the award history window which shows recently awarded items and their rolls",
+        autoroll = "Open the Auto Roll rules window. Add item rules to automatically roll need, greed or pass when a Gargul roll is announced (does not work with group loot rolls).",
         boostedrolls = "Open the Boosted Rolls UI that allows you to easily manage roll boosts.",
         bugreport = "Include the output of this command when filing a bug report on the Gargul discord server",
         clearplusones = "Clear all plus one values",
@@ -64,6 +65,9 @@ GL.Commands = GL.Commands or {
 
         -- awardhistory
         ah = "awardhistory",
+
+        -- autoroll
+        ar = "autoroll",
 
         -- boostedrolls
         boosted = "boostedrolls",
@@ -197,6 +201,9 @@ GL.Commands = GL.Commands or {
 
         -- Award an item on a given date. Useful if you forgot to award an item and want to do it later
         awardondate = function(...) GL.AwardedLoot:addWinnerOnDate(...); end,
+
+        -- Open the Auto Roll rules window
+        autoroll = function () GL.Settings:draw("AutoRollRules"); end,
 
         -- Open the boosted rolls window
         boostedrolls = function () GL.BoostedRolls:draw(); end,

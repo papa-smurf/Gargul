@@ -9,8 +9,9 @@ GL.RollerUI = GL.RollerUI or {
 };
 local RollerUI = GL.RollerUI; ---@type RollerUI
 
+---@param showRollAccepted? boolean Show "Roll accepted!" when draw completes (e.g. after auto-roll)
 ---@return boolean
-function RollerUI:show(time, itemLink, itemIcon, note, SupportedRolls, bth, boostedRollIdentifier)
+function RollerUI:show(time, itemLink, itemIcon, note, SupportedRolls, bth, boostedRollIdentifier, showRollAccepted)
     if (self.Window and self.Window:IsShown()) then
         return false;
     end
@@ -24,6 +25,10 @@ function RollerUI:show(time, itemLink, itemIcon, note, SupportedRolls, bth, boos
         end
 
         self:draw(time, itemLink, itemIcon, note, SupportedRolls, userCanUseItem, bth, boostedRollIdentifier);
+
+        if (showRollAccepted and self.Window) then
+            self:showRollAcceptedNotification(self.Window);
+        end
     end);
 
     return true;
@@ -147,21 +152,7 @@ function RollerUI:draw(time, itemLink, itemIcon, note, SupportedRolls, userCanUs
             if (GL.Settings:get("Rolling.closeAfterRoll")) then
                 self:hide();
             else
-                local RollAcceptedNotification = GL.AceGUI:Create("InlineGroup");
-                RollAcceptedNotification:SetLayout("Fill");
-                RollAcceptedNotification:SetWidth(150);
-                RollAcceptedNotification:SetHeight(50);
-                RollAcceptedNotification.frame:SetParent(Window);
-                RollAcceptedNotification.frame:SetPoint("BOTTOMLEFT", Window, "TOPLEFT", 0, 4);
-
-                local Text = GL.AceGUI:Create("Label");
-                Text:SetText(L["Roll accepted!"]);
-                RollAcceptedNotification:AddChild(Text);
-                Text:SetJustifyH("CENTER");
-
-                self.RollAcceptedTimer = GL.Ace:ScheduleTimer(function ()
-                    RollAcceptedNotification.frame:Hide();
-                end, 2);
+                self:showRollAcceptedNotification(Window);
             end
         end);
 
@@ -172,6 +163,13 @@ function RollerUI:draw(time, itemLink, itemIcon, note, SupportedRolls, userCanUs
         end
 
         tinsert(RollButtons, Button);
+    end
+
+    -- Auto roll discovery hint: show when user has no rules in any profile (they're not yet aware of the module)
+    if (not GL.AutoRoll:hasAnyRulesInAnyProfile()) then
+        local AutoRollHint = Window:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall");
+        AutoRollHint:SetText(("|c00%s%s: |c00FFFFFF/gl autoroll|r"):format(GL.Data.Constants.addonHexColor, L["Auto Roll"]));
+        AutoRollHint:SetPoint("RIGHT", Window, "TOPRIGHT", -58, -11);
     end
 
     local PassButton = CreateFrame("Button", "GargulUI_RollerUI_Pass", Window, "GameMenuButtonTemplate");
@@ -314,9 +312,64 @@ function RollerUI:drawCountdownBar(time, itemLink, itemIcon, note, userCanUseIte
     end);
 end
 
+--- Show "Roll accepted!" notification for 2 seconds. Can be used after manual roll or auto-roll.
+---@param anchorFrame Frame|nil If provided, position above this frame. Else center of screen.
+---@return void
+function RollerUI:showRollAcceptedNotification(anchorFrame)
+    if (self.RollAcceptedTimer) then
+        GL.Ace:CancelTimer(self.RollAcceptedTimer);
+        self.RollAcceptedTimer = nil;
+    end
+    if (self.RollAcceptedNotification) then
+        self.RollAcceptedNotification.frame:Hide();
+        GL.Interface:release(self.RollAcceptedNotification);
+        self.RollAcceptedNotification = nil;
+    end
+
+    local RollAcceptedNotification = GL.AceGUI:Create("InlineGroup");
+    RollAcceptedNotification:SetLayout("Fill");
+    RollAcceptedNotification:SetWidth(150);
+    RollAcceptedNotification:SetHeight(50);
+    RollAcceptedNotification.frame:SetParent(UIParent);
+    RollAcceptedNotification.frame:SetFrameStrata("FULLSCREEN_DIALOG");
+
+    if (anchorFrame) then
+        RollAcceptedNotification.frame:SetPoint("BOTTOMLEFT", anchorFrame, "TOPLEFT", 0, 4);
+    else
+        RollAcceptedNotification.frame:SetPoint("CENTER", UIParent, "CENTER", 0, 0);
+    end
+
+    local Text = GL.AceGUI:Create("Label");
+    Text:SetText(L["Roll accepted!"]);
+    RollAcceptedNotification:AddChild(Text);
+    Text:SetJustifyH("CENTER");
+
+    RollAcceptedNotification.frame:Show();
+
+    self.RollAcceptedNotification = RollAcceptedNotification;
+    self.RollAcceptedTimer = GL.Ace:ScheduleTimer(function ()
+        if (self.RollAcceptedNotification) then
+            self.RollAcceptedNotification.frame:Hide();
+            GL.Interface:release(self.RollAcceptedNotification);
+            self.RollAcceptedNotification = nil;
+        end
+        self.RollAcceptedTimer = nil;
+    end, 2);
+end
+
 ---@return void
 function RollerUI:hide()
     GL.Events:unregister("RollerUIModifierStateChanged");
+
+    if (self.RollAcceptedTimer) then
+        GL.Ace:CancelTimer(self.RollAcceptedTimer);
+        self.RollAcceptedTimer = nil;
+    end
+    if (self.RollAcceptedNotification) then
+        self.RollAcceptedNotification.frame:Hide();
+        GL.Interface:release(self.RollAcceptedNotification);
+        self.RollAcceptedNotification = nil;
+    end
 
     if (not self.Window) then
         return;

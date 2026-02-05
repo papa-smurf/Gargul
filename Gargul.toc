@@ -66,6 +66,7 @@ Classes/UI.lua
 Classes/DB.lua
 Classes/Dialog.lua
 Classes/Settings.lua
+Classes/Profiles.lua
 Classes/Profiler.lua
 Classes/SoftRes.lua
 Classes/GDKP/GDKP.lua
@@ -79,6 +80,7 @@ Classes/PlusOnes.lua
 Classes/TMB.lua
 Classes/Exporter.lua
 Classes/RollerUI.lua
+Classes/AutoRoll.lua
 Classes/RollOff.lua
 Classes/GroupLoot.lua
 Classes/MasterLooterUI.lua
@@ -122,6 +124,7 @@ Interface/Settings/GDKPPrices.lua
 Interface/Settings/GDKPQueues.lua
 Interface/Settings/LootTradeTimers.lua
 Interface/Settings/Rolling.lua
+Interface/Settings/AutoRollRules.lua
 Interface/Settings/RollTracking.lua
 Interface/Settings/SoftRes.lua
 Interface/Settings/BoostedRolls.lua

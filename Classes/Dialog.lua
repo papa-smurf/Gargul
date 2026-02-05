@@ -235,6 +235,41 @@ function Dialog:setOnHide(onHide)
     return self;
 end
 
+--- Enable a single-line edit box in the dialog.
+---
+---@param width? number Edit box width (default 260)
+---@param defaultText? string Pre-filled text
+---@return Dialog
+function Dialog:setEditBox(width, defaultText)
+    self.hasEditBox = true;
+    self.EditBoxWidth = width or 260;
+    self.editBoxDefault = defaultText;
+    return self;
+end
+
+--- Get the current edit box text from the shown dialog. Call from within a button handler.
+---
+---@return string
+function Dialog:getEditBoxText()
+    local frame = self._lastShownFrame;
+    if (not frame) then
+        return "";
+    end
+
+    local editBox = frame.editBox or frame.EditBox or (frame.GetName and _G[frame:GetName() .. "EditBox"]);
+    if (not editBox or not editBox.GetText) then
+        for i = 1, frame:GetNumChildren() or 0 do
+            local child = select(i, frame:GetChildren());
+            if (child and child.GetObjectType and child:GetObjectType() == "EditBox") then
+                editBox = child;
+                break;
+            end
+        end
+    end
+
+    return editBox and editBox:GetText() or "";
+end
+
 ---@param Details? any
 ---@param callback? function
 ---@return Dialog
@@ -263,17 +298,25 @@ function Dialog:show(Details, callback)
         self.text = self.text .. string.rep("\n", self.paddingBottom);
     end
 
-    -- Make sure the correct amount of gold is shown
-    if (self.copper) then
-        self.OnShow = function (DialogFrame)
+    -- Wire OnShow: store frame, handle copper/editBox, then call original
+    local originalOnShow = self.originalOnShow;
+    self.OnShow = function (DialogFrame)
+        self._lastShownFrame = DialogFrame;
+
+        if (self.copper) then
             MoneyFrame_Update(DialogFrame.moneyFrame, self.copper);
-            return self.originalOnShow and self.originalOnShow(self, DialogFrame) or nil;
-        end;
-    else
-        self.OnShow = function (DialogFrame)
-            return self.originalOnShow and self.originalOnShow(self, DialogFrame) or nil;
-        end;
-    end
+        end
+
+        if (self.hasEditBox and self.editBoxDefault) then
+            local editBox = DialogFrame.editBox or DialogFrame.EditBox or (DialogFrame.GetName and _G[DialogFrame:GetName() .. "EditBox"]);
+            if (editBox and editBox.SetText) then
+                editBox:SetText(self.editBoxDefault);
+                editBox:SetFocus();
+            end
+        end
+
+        return originalOnShow and originalOnShow(self, DialogFrame) or nil;
+    end;
 
     -- Make sure the correct item is shown
     if (self.itemLink) then
