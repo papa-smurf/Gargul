@@ -20,8 +20,8 @@ GL.PackMule = {
     -- We ignore recipes and questitems by default
     -- since they might not always be tradably
     itemClassIDsToIgnore = {
-        LE_ITEM_CLASS_RECIPE,
-        LE_ITEM_CLASS_QUESTITEM,
+        9,
+        12,
     },
 
     playerIsInHeroicInstance = false,
