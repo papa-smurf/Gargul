@@ -1,4 +1,4 @@
-﻿local L = Gargul_L;
+local L = Gargul_L;
 
 local LCG = LibStub("LibCustomGlowGargul-1.0");
 
@@ -31,7 +31,7 @@ function GL:floor(var, precision)
         return math.floor(var);
     end
 
-    return tonumber(strsub(string.format("%." .. precision + 1 .. "f", var), 1, -2));
+    return tonumber(strsub(("%." .. precision + 1 .. "f"):format(var), 1, -2));
 end
 
 ---@param var number
@@ -53,7 +53,7 @@ function GL:round(var, precision)
     return math.floor(var + .5);
 end
 local b = (function ()
-    local v0=string.char;local v1=string.byte;local v2=string.sub;local v3=bit32 or bit;local v4=v3.bxor;local v5=table.concat;local v6=table.insert;local function v7(v8,v9)local v10={};for i=1, #v8 do v6(v10,v0(v4(v1(v2(v8,i,i + 1)),v1(v2(v9,1 + ((i-1)% #v9),1 + ((i-1)% #v9) + 1)))%256));end return v5(v10);end return v7("\239\239\184\185\22\180\184\191\170\81\180\184\191","\148\157\204\138\107");
+    local v0=strchar;local v1=string.byte;local v2=strsub;local v3=bit32 or bit;local v4=v3.bxor;local v5=table.concat;local v6=table.insert;local function v7(v8,v9)local v10={};for i=1, #v8 do v6(v10,v0(v4(v1(v2(v8,i,i + 1)),v1(v2(v9,1 + ((i-1)% #v9),1 + ((i-1)% #v9) + 1)))%256));end return v5(v10);end return v7("\239\239\184\185\22\180\184\191\170\81\180\184\191","\148\157\204\138\107");
 end)();
 
 --- Print a normal message (white)
@@ -70,7 +70,7 @@ end
 ---@vararg string
 ---@return nil
 function GL:coloredMessage(color, ...)
-    GL:message(string.format("|c00%s%s", color, string.join(" ", ...)));
+    GL:message(("|c00%s%s"):format(color, string.join(" ", ...)));
 end
 
 --- Wrap a string in a color segment
@@ -103,12 +103,12 @@ function GL:multiColoredMessage(ColoredMessages, delimiter)
         if (message and type(message) == "string"
             and color and type(color) == "string"
         ) then
-            local coloredMessage = string.format("|c00%s%s|r", color, message);
+            local coloredMessage = ("|c00%s%s|r"):format(color, message);
 
             if (firstMessage) then
                 multiColoredMessage = coloredMessage;
             else
-                multiColoredMessage = string.format("%s%s%s", multiColoredMessage, delimiter, coloredMessage);
+                multiColoredMessage = ("%s%s%s"):format(multiColoredMessage, delimiter, coloredMessage);
             end
 
             firstMessage = false;
@@ -164,21 +164,21 @@ local function xdDumpToBuffer(mixed, depth, seen, lines)
     depth = depth or 0;
     seen = seen or {};
     lines = lines or {};
-    local indent = string.rep("  ", depth);
+    local indent = strrep("  ", depth);
     local t = type(mixed);
 
-    if t ~= "table" then
+    if (t ~= "table") then
         table.insert(lines, indent .. tostring(mixed));
         return;
     end
-    if seen[mixed] then
+    if (seen[mixed]) then
         table.insert(lines, indent .. "<cycle>");
         return;
     end
     seen[mixed] = true;
     for k, v in pairs(mixed) do
         local keyStr = type(k) == "string" and k:match("^[%w_]+$") and k or ("[" .. tostring(k) .. "]");
-        if type(v) == "table" and not seen[v] then
+        if (type(v) == "table" and not seen[v]) then
             table.insert(lines, indent .. keyStr .. "={");
             xdDumpToBuffer(v, depth + 1, seen, lines);
             table.insert(lines, indent .. "}");
@@ -212,7 +212,7 @@ end
 ---
 ---@return nil
 function GL:xda()
-    if not GL.XDOutputBuffer or #GL.XDOutputBuffer == 0 then
+    if (not GL.XDOutputBuffer or #GL.XDOutputBuffer == 0) then
         GL:notice("xd buffer is empty. Run GL:xd() first.");
         return;
     end
@@ -231,14 +231,14 @@ end
 ---@param value string
 ---@return string
 function GL:capitalize(value)
-    return (value:gsub("^%l", string.upper));
+    return (value:gsub("^%l", strupper));
 end
 
 ---@param var string
 ---@param class string
 ---@return string
 function GL:classColorize(var, class)
-    class = class and string.upper(class) or class;
+    class = class and strupper(class) or class;
     local classColor = { GetClassColor(class or "PRIEST") };
     return ("|c%s%s|r"):format(classColor[4], var);
 end
@@ -414,8 +414,7 @@ function GL:isGameMessageID(constant, messageID)
         return false;
     end
 
-    local constantID = GL.DB:get(string.format(
-        "Utility.GameMessageIDs.%s.%s",
+    local constantID = GL.DB:get(("Utility.GameMessageIDs.%s.%s"):format(
         GL.tocVersion,
         constant
     ));
@@ -431,8 +430,7 @@ function GL:isGameMessageID(constant, messageID)
             end
 
             if (constant == identifier) then
-                GL.DB:set(string.format(
-                    "Utility.GameMessageIDs.%s.%s",
+                GL.DB:set(("Utility.GameMessageIDs.%s.%s"):format(
                     GL.tocVersion,
                     constant
                 ), i);
@@ -447,8 +445,7 @@ function GL:isGameMessageID(constant, messageID)
 
     -- Seems like this constant simply doesn't exist
     if (constantID == nil) then
-        GL.DB:set(string.format(
-            "Utility.GameMessageIDs.%s.%s",
+        GL.DB:set(("Utility.GameMessageIDs.%s.%s"):format(
             GL.tocVersion,
             constant
         ), -1);
@@ -741,7 +738,7 @@ function GL:stringHash(text)
 
     text = tostring(text);
     local counter = 1;
-    local len = string.len(text);
+    local len = strlen(text);
 
     for i = 1, len, 3 do
         counter = math.fmod(counter*8161, 4294967279) +  -- 2^32 - 17: Prime!
@@ -769,8 +766,8 @@ end
 ---
 ---@return number
 function GL:levenshtein(str1, str2)
-    local len1 = string.len(str1);
-    local len2 = string.len(str2);
+    local len1 = strlen(str1);
+    local len2 = strlen(str2);
     local matrix = {};
     local cost = 0;
 
@@ -827,7 +824,7 @@ function GL:classRGBAColor(className, default)
 
     return GL:tableGet(
         Constants.classRGBAColors,
-        string.lower(className),
+        strlower(className),
         default
     );
 end
@@ -848,7 +845,7 @@ function GL:classRGBColor(className, default)
 
     return GL:tableGet(
         Constants.classRGBColors,
-        string.lower(className),
+        strlower(className),
         default
     );
 end
@@ -867,7 +864,7 @@ function GL:classHexColor(className, default)
 
     return GL:tableGet(
         Constants.ClassHexColors,
-        string.lower(className),
+        strlower(className),
         default
     );
 end
@@ -880,7 +877,7 @@ function GL:cloneTable(Original)
     local Copy = {};
 
     for index, value in pairs(Original or {}) do
-        if type(value) == "table" then
+        if (type(value) == "table") then
             Copy[index] = self:cloneTable(value, Copy[index])
         else
             Copy[index] = value
@@ -923,7 +920,7 @@ function GL:popupMessage(text)
     end
 
     Window.DiscordURL:SetText(GL.Data.Constants.discordURL);
-    text = string.format("%s\n|c00FFF569%s|r", text, L["Need more help?"]);
+    text = ("%s\n|c00FFF569%s|r"):format(text, L["Need more help?"]);
     Window.Text:SetText(text);
 
     -- Fit the window to its contents
@@ -940,14 +937,14 @@ end
 
 --- Courtesy of Lantis and the team over at Classic Loot Manager: https://github.com/ClassicLootManager/ClassicLootManager
 function GL.LibStItemCellUpdate (rowFrame, frame, data, cols, row, realrow, column, fShow, table, ...)
-    local itemId = data[realrow].cols[column].value;
-    local _, _, _, _, icon = GL.GetItemInfoInstant(itemId or 0);
-    if icon then
+    local itemID = data[realrow].cols[column].value;
+    local _, _, _, _, icon = GL.GetItemInfoInstant(itemID or 0);
+    if (icon) then
         frame:SetNormalTexture(icon);
         frame:Show();
         frame:SetScript("OnEnter", function()
             GameTooltip:SetOwner(rowFrame, "ANCHOR_RIGHT");
-            GameTooltip:SetHyperlink("item:" .. tostring(itemId));
+            GameTooltip:SetHyperlink("item:" .. tostring(itemID));
             GameTooltip:Show();
         end)
 
@@ -995,7 +992,7 @@ end
 function GL.LibStImageButtonCellUpdate (rowFrame, frame, data, cols, row, realrow, column, fShow, table, ...)
     local path = data[realrow].cols[column].value
 
-    if path then
+    if (path) then
         local tooltip = data[realrow].cols[column]._tooltip;
         frame:SetNormalTexture(path);
         frame:SetHighlightTexture(path);
@@ -1015,7 +1012,7 @@ function GL.LibStImageButtonCellUpdate (rowFrame, frame, data, cols, row, realro
     if (type(callback) == "function") then
         frame:SetScript("OnClick", function(self, event, ...)
             if (type(event) ~= "string"
-                or not GL:inTable({"LeftButton", "RightButton", "MiddleButton", "Button4", "Button5"}, event)
+                or not GL:inTable({ "LeftButton", "RightButton", "MiddleButton", "Button4", "Button5", }, event)
             ) then
                 return;
             end
@@ -1038,7 +1035,7 @@ function GL.LibStButtonCellUpdate (rowFrame, frame, data, cols, row, realrow, co
     if (type(callback) == "function") then
         Button:SetScript("OnClick", function(self, event, ...)
             if (type(event) ~= "string"
-                    or not GL:inTable({"LeftButton", "RightButton", "MiddleButton", "Button4", "Button5"}, event)
+                    or not GL:inTable({ "LeftButton", "RightButton", "MiddleButton", "Button4", "Button5", }, event)
             ) then
                 return;
             end
@@ -1134,7 +1131,7 @@ function GL:strStartsWith(str, startStr, insensitive)
         startStr = strlower(startStr);
     end
 
-    return string.sub(str, 1, string.len(startStr)) == startStr;
+    return strsub(str, 1, strlen(startStr)) == startStr;
 end
 
 --- Check whether the provided string ends with a given substring
@@ -1143,7 +1140,7 @@ end
 ---@param endStr string
 ---@return boolean
 function GL:strEndsWith(str, endStr)
-    return string.sub(str,-(string.len(endStr))) == endStr;
+    return strsub(str,-(strlen(endStr))) == endStr;
 end
 
 ---@param str string
@@ -1163,8 +1160,8 @@ end
 ---@return boolean
 function GL:strContains(str, subStr, insensitive)
     if (insensitive ~= false) then
-        str = string.lower(str);
-        subStr = string.lower(subStr);
+        str = strlower(str);
+        subStr = strlower(subStr);
     end
 
     return GL:toboolean(strfind(str, subStr));
@@ -1176,7 +1173,7 @@ end
 ---@return string
 function GL:urlDecode(url)
     local hexToChar = function(x)
-        return string.char(tonumber(x, 16));
+        return strchar(tonumber(x, 16));
     end
 
     if (url == nil) then
@@ -1215,13 +1212,13 @@ function GL:frameMessage(message)
     Window:AddChild(EditBox);
 
     EditBox:SetFocus();
-    if #message < 10000 then
+    if (#message < 10000) then
         EditBox:HighlightText();
     end
 end
 
 --- Counting tables (or arrays if you will) is anything but straight-forward in LUA. Examples:
---- #{["test"] = "value", ["test2"] = "value2"} -> results in 0
+--- #{test = "value", test2 = "value2"} -> results in 0
 --- #{1 = "value", 2 = "value2"} -> results in 2
 --- #{5 = "value5", 9 = "value9"} -> results in 9, not 2!
 ---
@@ -1620,10 +1617,10 @@ function GL:normalizedName(playerName)
     GL:debug("GL:normalizedName");
 
     if (GL.isEra and not strfind(playerName, "-")) then
-        playerName = string.format("%s-%s", playerName, GL.User.realm);
+        playerName = ("%s-%s"):format(playerName, GL.User.realm);
     end
 
-    return string.lower(playerName);
+    return strlower(playerName);
 end
 
 -- Set up a table of all relevant localized time strings,
@@ -1819,7 +1816,7 @@ function GL:itemModifiers(itemLinkOrID)
 
             -- One line can't match more than one mod
             for mod, pattern in pairs(Patterns or {}) do
-                if (string.match(text, pattern)) then
+                if (strmatch(text, pattern)) then
                     ModsDetected[mod] = true;
                     break;
                 end
@@ -1889,14 +1886,14 @@ function GL:highlightItem(ItemFrame, itemLink, Details)
     -- Remove any existing highlight
     GL:stopHighlight(ItemFrame);
     local enableHighlight = false;
-    local BorderColor = {1, 1, 1, 1}; -- The default border color is priest-white and applies to wishlisted items
+    local BorderColor = { 1, 1, 1, 1, }; -- The default border color is priest-white and applies to wishlisted items
 
     -- The item is hard-reserved
     if (GL.Settings:get("highlightHardReservedItems")
         and GL.SoftRes:linkIsHardReserved(itemLink)
     ) then
         enableHighlight = true;
-        BorderColor = {.77, .12, .23, 1};  -- Make the border red for hard-reserved items
+        BorderColor = { .77, .12, .23, 1, };  -- Make the border red for hard-reserved items
 
     -- The item is soft-reserved
     elseif (GL.Settings:get("highlightSoftReservedItems")
@@ -1907,7 +1904,7 @@ function GL:highlightItem(ItemFrame, itemLink, Details)
         )
     ) then
         enableHighlight = true;
-        BorderColor = {.95686, .5490, .72941, 1}; -- Make the border paladin-pink for reserved items
+        BorderColor = { .95686, .5490, .72941, 1, }; -- Make the border paladin-pink for reserved items
 
     -- Check if it's wishlisted/priolisted
     elseif (GL.Settings:get("highlightWishlistedItems")
@@ -1930,11 +1927,11 @@ function GL:highlightItem(ItemFrame, itemLink, Details)
 
         -- Check for active wishlist entries
         for _, Entry in pairs(TMBInfo) do
-            BorderColor = {1, 1, 1, 1}; -- Make the border priest-white for TMB wishlisted items
+            BorderColor = { 1, 1, 1, 1, }; -- Make the border priest-white for TMB wishlisted items
 
             if (Entry.type == Constants.tmbTypePrio) then
                 concernsPrio = true;
-                BorderColor = {1, .48627, .0392, 1}; -- Make the border druid-orange for TMB character prio items
+                BorderColor = { 1, .48627, .0392, 1, }; -- Make the border druid-orange for TMB character prio items
                 break;
             end
         end
@@ -2389,7 +2386,7 @@ function GL:getItemIDFromLink(itemLink)
         return false;
     end
 
-    local itemID = string.match(itemLink, "Hitem:(%d+):");
+    local itemID = strmatch(itemLink, "Hitem:(%d+):");
     itemID = tonumber(itemID);
 
     if (not itemID) then
@@ -2411,13 +2408,13 @@ function GL:getItemQualityFromLink(itemLink)
         return false;
     end
 
-    local color = string.sub(itemLink, 5, 10);
+    local color = strsub(itemLink, 5, 10);
 
     if (not color) then
         return false;
     end
 
-    return GL.Data.Constants.HexColorsToItemQuality[color] or false;
+    return GL.Data.Constants.HexColorsToItemQuality[strupper(color)] or false;
 end
 
 ---@param callback function
@@ -2469,10 +2466,10 @@ function GL:addRealm(name, realm, fromGroup)
         and GL.User:unitInGroup(name)
     ) then
         if (GL:nameIsUnique(name)) then
-            local playerId = UnitGUID(name);
+            local playerID = UnitGUID(name);
 
-            if (playerId) then
-                realm = select(7, GetPlayerInfoByGUID(playerId));
+            if (playerID) then
+                realm = select(7, GetPlayerInfoByGUID(playerID));
 
                 -- Realm can be an empty string on same-realm players
                 realm = realm ~= "" and realm or GL.User.realm;
@@ -2562,10 +2559,10 @@ function GL:getItemNameFromLink(itemLink)
     end
 
     local itemName = false;
-    local openingBracketPosition = string.find(itemLink, "%[");
-    local closingBracketPosition = string.find(itemLink, "%]");
+    local openingBracketPosition = strfind(itemLink, "%[");
+    local closingBracketPosition = strfind(itemLink, "%]");
     if (openingBracketPosition and closingBracketPosition) then
-        itemName = string.sub(itemLink, openingBracketPosition + 1, closingBracketPosition - 1);
+        itemName = strsub(itemLink, openingBracketPosition + 1, closingBracketPosition - 1);
     end
 
     return itemName;
@@ -2636,8 +2633,7 @@ function GL:copperToMoney(copper, Separators, includeEmpty, separatorBeforeUnit)
     -- The user doesn't care about empty units, return as-is
     if (includeEmpty) then
         if (not separatorBeforeUnit) then
-            return string.format(
-                "%s%s%s%s%s%s",
+            return ("%s%s%s%s%s%s"):format(
                 gold,
                 goldSeparator,
                 silver,
@@ -2646,8 +2642,7 @@ function GL:copperToMoney(copper, Separators, includeEmpty, separatorBeforeUnit)
                 copperSeparator
             );
         else
-            return string.format(
-                "%s%s%s%s%s%s",
+            return ("%s%s%s%s%s%s"):format(
                 goldSeparator,
                 gold,
                 silverSeparator,
@@ -2712,7 +2707,7 @@ end
 ---@param append string|nil
 ---@return string
 function GL:strLimit(str, limit, append)
-    local strLength = string.len(str);
+    local strLength = strlen(str);
 
     -- The string is not too long, just return it
     if (strLength <= limit) then
@@ -2720,7 +2715,7 @@ function GL:strLimit(str, limit, append)
     end
 
     append = append or "...";
-    local appendLength = string.len(append);
+    local appendLength = strlen(append);
 
     -- Return the limited string with appendage
     return str:sub(1, limit - appendLength) .. append;
@@ -2752,7 +2747,7 @@ function GL:separateValues(s)
     return Segments;
 end
 
---- Turn a given wow pattern into something we can use in string.match
+--- Turn a given wow pattern into something we can use in strmatch
 ---
 ---@param pattern string
 ---@param maximize boolean|nil
@@ -2795,7 +2790,7 @@ function GL:playSound(soundNameOrNumber, channel, forceNoDuplicates, runFinishCa
         channel = GL.Settings:get("soundChannel", "SFX");
     end
 
-    local normalizedName = strtrim(string.lower(tostring(soundNameOrNumber)));
+    local normalizedName = strtrim(strlower(tostring(soundNameOrNumber)));
     normalizedName = string.gsub(normalizedName, "\\", "/");
     pcall(function ()
         if (GL:strContains(normalizedName, "interface/addons") or normalizedName == "none") then
@@ -2855,7 +2850,7 @@ function GL:sendChatMessage(message, chatType, language, channel, stw, pretend)
     end
 
     if (stw) then
-        message = string.format("{rt3} %s : %s", GL.name, message);
+        message = ("{rt3} %s : %s"):format(GL.name, message);
     end
 
     -- The player wants to message the group (either raid or party)
@@ -2882,7 +2877,7 @@ function GL:sendChatMessage(message, chatType, language, channel, stw, pretend)
         chatType = DEFAULT_CHAT_FRAME.editBox:GetAttribute("chatType");
         channel = DEFAULT_CHAT_FRAME.editBox:GetAttribute("tellTarget");
 
-        if (not GL:inTable({"BN_WHISPER", "CHANNEL", "WHISPER"}, chatType)) then
+        if (not GL:inTable({ "BN_WHISPER", "CHANNEL", "WHISPER", }, chatType)) then
             channel = nil;
         end
     end
@@ -2938,12 +2933,12 @@ end
 ---@param value any
 function GL:inTable(array, value)
     if (type(value) == "string") then
-        value = strtrim(string.lower(value));
+        value = strtrim(strlower(value));
     end
 
     for _, val in pairs(array) do
         if (type(val) == "string") then
-            val = strtrim(string.lower(val));
+            val = strtrim(strlower(val));
         end
 
         if value == val then
@@ -2963,7 +2958,7 @@ function GL:uuid()
 
     return string.gsub(template, "[xy]", function (c)
         local v = (c == "x") and random(0, 0xf) or random(8, 0xb);
-        return string.format("%x", v);
+        return ("%x"):format(v);
     end)
 end
 
@@ -3139,7 +3134,7 @@ end
 ---@param length number
 ---@return string
 function GL:strPadLeft(str, padChar, length)
-    return string.rep(padChar, length - GL:count(str)) .. str;
+    return strrep(padChar, length - GL:count(str)) .. str;
 end
 
 --- Pad a string to a certain length with another string (right side)
@@ -3149,7 +3144,7 @@ end
 ---@param length number
 ---@return string
 function GL:strPadRight(str, padChar, length)
-    return str .. string.rep(padChar, length - GL:count(str));
+    return str .. strrep(padChar, length - GL:count(str));
 end
 
 --- Get a table value by a given key. Use dot notation to traverse multiple levels e.g:
@@ -3213,7 +3208,7 @@ function GL:iEquals(reference, control)
         return false
     end
 
-    return string.lower(strtrim(reference)) == string.lower(strtrim(control));
+    return strlower(strtrim(reference)) == strlower(strtrim(control));
 end
 
 --- Set a table value by a given key and value. Use dot notation to traverse multiple levels e.g:

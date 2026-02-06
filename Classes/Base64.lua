@@ -55,7 +55,7 @@ end
 local DEFAULT_ENCODER = Base64.makeencoder()
 local DEFAULT_DECODER = Base64.makedecoder()
 
-local char, concat = string.char, table.concat
+local char, concat = strchar, table.concat
 
 function Base64.encode( str, encoder, usecaching )
 	encoder = encoder or DEFAULT_ENCODER

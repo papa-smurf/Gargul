@@ -109,15 +109,15 @@ local createAnnounceTradeCheckbox = function ()
     CogwheelTexture:SetTexture("interface/cursor/unableinteract");
     Cogwheel.texture = CogwheelTexture;
 
-    Cogwheel:SetScript('OnEnter', function()
+    Cogwheel:SetScript("OnEnter", function ()
         CogwheelTexture:SetTexture("interface/cursor/interact");
     end);
-    Cogwheel:SetScript('OnLeave', function()
+    Cogwheel:SetScript("OnLeave", function ()
         CogwheelTexture:SetTexture("interface/cursor/unableinteract");
     end);
 
-    Cogwheel:SetScript("OnClick", function(_, button)
-        if (button == 'LeftButton') then
+    Cogwheel:SetScript("OnClick", function (_, button)
+        if (button == "LeftButton") then
             GL.Settings:draw("TradeAnnouncements");
         end
     end);
@@ -285,7 +285,7 @@ end
 ---@param copper number
 function TradeWindow:showGoldOverlay(copper)
     local Overlay = self.PlayerTradeMoneyInsight;
-    GL.Interface:addTooltip(Overlay, L["%s will be traded to %s. Click to add gold manually instead"]:format(GL:copperToMoneyTexture(copper), GL:nameFormat{ name = self.State.partner, colorize = true }));
+    GL.Interface:addTooltip(Overlay, L["%s will be traded to %s. Click to add gold manually instead"]:format(GL:copperToMoneyTexture(copper), GL:nameFormat{ name = self.State.partner, colorize = true, }));
     Overlay.text:SetText(GL:copperToMoneyTexture(copper));
     Overlay:Show();
 end
@@ -431,7 +431,7 @@ function TradeWindow:updateState()
 
     -- NPC is currently the player you're trading
     local partnerName, partnerRealm = UnitName("NPC", true);
-    self.State.partner = GL:nameFormat{ name = partnerName, realm = partnerRealm, forceRealm = true };
+    self.State.partner = GL:nameFormat{ name = partnerName, realm = partnerRealm, forceRealm = true, };
 
     -- Fetch the player name of whomever we're trading with
     partnerName = strtrim(_G.TradeFrameRecipientNameText:GetText());
@@ -895,20 +895,20 @@ function TradeWindow:announceTradeDetails(Details)
             -- If we gave items AND gold then we start with the gold first
             if (iTradedGold) then
                 message = (L.CHAT["I gave %s"]):format(goldTradedByMe);
-                messageLength = string.len(message);
+                messageLength = strlen(message);
                 itemsInMessage = 1;
             end
 
             local newMessageLength = messageLength;
             for _, Entry in pairs(ItemsTradedByMe) do
-                local itemLinkLength = string.len(GL:getItemNameFromLink(Entry.itemLink)) + 2;
+                local itemLinkLength = strlen(GL:getItemNameFromLink(Entry.itemLink)) + 2;
                 itemsProcessed = itemsProcessed + 1;
 
                 (function()
                     if (Entry.quantity <= 1) then
                         if (messageLength < 1) then
                             message = (L.CHAT["I gave %s"]):format(Entry.itemLink);
-                            messageLength = messageLength + string.len(L.CHAT["I gave %s"]) - 2 + itemLinkLength; -- -2 for the %s in TRADE_GAVE
+                            messageLength = messageLength + strlen(L.CHAT["I gave %s"]) - 2 + itemLinkLength; -- -2 for the %s in TRADE_GAVE
 
                             return;
                         else
@@ -930,22 +930,22 @@ function TradeWindow:announceTradeDetails(Details)
                     else
                         if (messageLength < 1) then
                             message = (L.CHAT["I gave %sx%s"]):format(Entry.itemLink, Entry.quantity);
-                            messageLength = messageLength + string.len(message) + itemLinkLength - string.len(Entry.itemLink);
+                            messageLength = messageLength + strlen(message) + itemLinkLength - strlen(Entry.itemLink);
 
                             return;
                         else
-                            newMessageLength = messageLength + string.len(", x") + itemLinkLength + string.len(Entry.quantity);
+                            newMessageLength = messageLength + strlen(", x") + itemLinkLength + strlen(Entry.quantity);
 
                             -- Adding this item to the existing message would make the message too large for chat (>255)
                             -- We need to dump the existing message first before we can continue
                             if (newMessageLength >= 255 or itemsProcessed > 5) then
                                 GL:sendChatMessage(message, channel, nil, recipient, firstOutput);
                                 firstOutput = false;
-                                message = string.format("%sx%s", Entry.itemLink, Entry.quantity);
-                                messageLength = itemLinkLength + 1 + string.len(Entry.quantity); -- +1 for the x
+                                message = ("%sx%s"):format(Entry.itemLink, Entry.quantity);
+                                messageLength = itemLinkLength + 1 + strlen(Entry.quantity); -- +1 for the x
                                 itemsProcessed = 1;
                             else
-                                message = string.format("%s, %sx%s", message, Entry.itemLink, Entry.quantity);
+                                message = ("%s, %sx%s"):format(message, Entry.itemLink, Entry.quantity);
                                 messageLength = newMessageLength;
                             end
                         end
@@ -958,11 +958,11 @@ function TradeWindow:announceTradeDetails(Details)
             if (messageLength) then
                 -- We enchanted something so we need to take that into account
                 if (iEnchantedSomething) then
-                    local itemLinkLength = string.len(GL:getItemNameFromLink(EnchantedByMe.itemLink)) + 2;
-                    newMessageLength = messageLength + string.len(L.CHAT["to %s and enchanted their %s with %s"]) - 6 -- 6 for 3x%s
-                        + string.len(Details.partner)
+                    local itemLinkLength = strlen(GL:getItemNameFromLink(EnchantedByMe.itemLink)) + 2;
+                    newMessageLength = messageLength + strlen(L.CHAT["to %s and enchanted their %s with %s"]) - 6 -- 6 for 3x%s
+                        + strlen(Details.partner)
                         + itemLinkLength
-                        + string.len(EnchantedByMe.enchantment);
+                        + strlen(EnchantedByMe.enchantment);
 
                     if (newMessageLength >= 255 or itemsProcessed >= 5) then -- The enchant also includes an item link
                         GL:sendChatMessage(message, channel, nil, recipient, firstOutput);
@@ -985,7 +985,7 @@ function TradeWindow:announceTradeDetails(Details)
                         GL:sendChatMessage(message, channel, nil, recipient, firstOutput);
                     end
                 else
-                    newMessageLength = messageLength + string.len(L.CHAT["to %s"]) - 1 + string.len(Details.partner);
+                    newMessageLength = messageLength + strlen(L.CHAT["to %s"]) - 1 + strlen(Details.partner);
 
                     if (newMessageLength >= 255) then
                         GL:sendChatMessage(message, channel, nil, recipient, firstOutput);
@@ -999,7 +999,7 @@ function TradeWindow:announceTradeDetails(Details)
                 end
             else -- There's nothing left to announce. This happens VERY rarely
                 if (iEnchantedSomething) then
-                    message = string.format(L.CHAT["to %s and enchanted their %s with %s"],
+                    message = (L.CHAT["to %s and enchanted their %s with %s"]):format(
                         Details.partner,
                         EnchantedByMe.itemLink,
                         EnchantedByMe.enchantment
@@ -1027,24 +1027,24 @@ function TradeWindow:announceTradeDetails(Details)
         -- If we received items AND gold then we start with the gold first
         if (theyTradedGold) then
             message = (L.CHAT["I received %s"]):format(goldTradedByThem);
-            messageLength = string.len(message);
+            messageLength = strlen(message);
             itemsInMessage = 1;
         end
 
         local newMessageLength = messageLength;
         for _, Entry in pairs(ItemsTradedByThem) do
-            local itemLinkLength = string.len(GL:getItemNameFromLink(Entry.itemLink)) + 2;
+            local itemLinkLength = strlen(GL:getItemNameFromLink(Entry.itemLink)) + 2;
             itemsProcessed = itemsProcessed + 1;
 
             (function()
                 if (Entry.quantity <= 1) then
                     if (messageLength < 1) then
                         message = (L.CHAT["I received %s"]):format(Entry.itemLink);
-                        messageLength = messageLength + string.len(L.CHAT["I received %s"]) -2 + itemLinkLength;
+                        messageLength = messageLength + strlen(L.CHAT["I received %s"]) -2 + itemLinkLength;
 
                         return;
                     else
-                        newMessageLength = messageLength + string.len(", ") + itemLinkLength;
+                        newMessageLength = messageLength + strlen(", ") + itemLinkLength;
 
                         -- Adding this item to the existing message would make the message too large for chat (>255)
                         -- We need to dump the existing message first before we can continue
@@ -1055,18 +1055,18 @@ function TradeWindow:announceTradeDetails(Details)
                             messageLength = itemLinkLength;
                             itemsProcessed = 1;
                         else
-                            message = string.format("%s, %s", message, Entry.itemLink);
+                            message = ("%s, %s"):format(message, Entry.itemLink);
                             messageLength = newMessageLength;
                         end
                     end
                 else
                     if (messageLength < 1) then
-                        message = string.format(L.CHAT["I received %sx%s"], Entry.itemLink, Entry.quantity);
-                        messageLength = messageLength + string.len(message) + itemLinkLength - string.len(Entry.itemLink);
+                        message = (L.CHAT["I received %sx%s"]):format(Entry.itemLink, Entry.quantity);
+                        messageLength = messageLength + strlen(message) + itemLinkLength - strlen(Entry.itemLink);
 
                         return;
                     else
-                        newMessageLength = messageLength + string.len(", x") + itemLinkLength + string.len(Entry.quantity);
+                        newMessageLength = messageLength + strlen(", x") + itemLinkLength + strlen(Entry.quantity);
 
                         -- Adding this item to the existing message would make the message too large for chat (>255)
                         -- We need to dump the existing message first before we can continue
@@ -1077,7 +1077,7 @@ function TradeWindow:announceTradeDetails(Details)
                             messageLength = itemLinkLength;
                             itemsProcessed = 1;
                         else
-                            message = string.format("%s, %sx%s", message, Entry.itemLink, Entry.quantity);
+                            message = ("%s, %sx%s"):format(message, Entry.itemLink, Entry.quantity);
                             messageLength = newMessageLength;
                         end
                     end
@@ -1090,25 +1090,25 @@ function TradeWindow:announceTradeDetails(Details)
         if (messageLength) then
             -- We got something enchanted so we need to take that into account
             if (theyEnchantedSomething) then
-                local itemLinkLength = string.len(GL:getItemNameFromLink(EnchantedByThem.itemLink)) + 2;
+                local itemLinkLength = strlen(GL:getItemNameFromLink(EnchantedByThem.itemLink)) + 2;
 
-                newMessageLength = messageLength + string.len(" from  and got my  enchanted with ")
-                    + string.len(Details.partner)
+                newMessageLength = messageLength + strlen(" from  and got my  enchanted with ")
+                    + strlen(Details.partner)
                     + itemLinkLength
-                    + string.len(EnchantedByThem.enchantment);
+                    + strlen(EnchantedByThem.enchantment);
 
                 if (newMessageLength >= 255 or itemsProcessed >= 5) then -- The enchant also includes an item link
                     GL:sendChatMessage(message, channel, nil, recipient, firstOutput);
                     firstOutput = false;
 
-                    message = string.format(L.CHAT["from %s and got my %s enchanted with %s"],
+                    message = (L.CHAT["from %s and got my %s enchanted with %s"]):format(
                         Details.partner,
                         EnchantedByThem.itemLink,
                         EnchantedByThem.enchantment
                     );
                     GL:sendChatMessage(message, channel, nil, recipient, firstOutput);
                 else
-                    message = string.format(L.CHAT["%s from %s and got my %s enchanted with %s"],
+                    message = (L.CHAT["%s from %s and got my %s enchanted with %s"]):format(
                         message,
                         Details.partner,
                         EnchantedByThem.itemLink,
@@ -1118,7 +1118,7 @@ function TradeWindow:announceTradeDetails(Details)
                     GL:sendChatMessage(message, channel, nil, recipient, firstOutput);
                 end
             else
-                newMessageLength = messageLength + string.len(L.CHAT["from %s"]) - 1 + string.len(Details.partner);
+                newMessageLength = messageLength + strlen(L.CHAT["from %s"]) - 1 + strlen(Details.partner);
 
                 if (newMessageLength >= 255) then
                     GL:sendChatMessage(message, channel, nil, recipient, firstOutput);
@@ -1132,7 +1132,7 @@ function TradeWindow:announceTradeDetails(Details)
             end
         else -- There's nothing left to announce. This happens VERY rarely
             if (theyEnchantedSomething) then
-                message = string.format(L.CHAT["from %s and got my %s enchanted with %s"],
+                message = (L.CHAT["from %s and got my %s enchanted with %s"]):format(
                     Details.partner,
                     EnchantedByThem.itemLink,
                     EnchantedByThem.enchantment

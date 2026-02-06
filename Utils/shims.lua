@@ -25,6 +25,19 @@ GL.LE_ITEM_CLASS_RECIPE = LE_ITEM_CLASS_RECIPE or (Enum and Enum.ItemClass and E
 GL.LE_ITEM_CLASS_QUESTITEM = LE_ITEM_CLASS_QUESTITEM or (Enum and Enum.ItemClass and Enum.ItemClass.Questitem) or 12;
 GL.LE_ITEM_CLASS_MISCELLANEOUS = LE_ITEM_CLASS_MISCELLANEOUS or (Enum and Enum.ItemClass and Enum.ItemClass.Miscellaneous) or 15;
 
+-- Loot slot types (LOOT_SLOT_* absent in Retail; Enum.LootSlotType.Money may exist)
+-- Numeric value 2 per wowpedia GetLootSlotType
+GL.LOOT_SLOT_MONEY = LOOT_SLOT_MONEY or (Enum and Enum.LootSlotType and Enum.LootSlotType.Money) or 2;
+
+-- Item bind types (Enum.ItemBind.* may not exist in all clients)
+-- Numeric values: None=0, OnAcquire=1, Quest=4 (verified in-game)
+GL.LE_ITEM_BIND_NONE = (Enum and Enum.ItemBind and Enum.ItemBind.None) or 0;
+GL.LE_ITEM_BIND_ON_ACQUIRE = (Enum and Enum.ItemBind and Enum.ItemBind.OnAcquire) or 1;
+GL.LE_ITEM_BIND_QUEST = (Enum and Enum.ItemBind and Enum.ItemBind.Quest) or 4;
+
+-- ItemMiscellaneousSubclass.CompanionPet (numeric value 2 per wowpedia)
+GL.LE_ITEM_MISCELLANEOUS_SUBCLASS_COMPANION_PET = (Enum and Enum.ItemMiscellaneousSubclass and Enum.ItemMiscellaneousSubclass.CompanionPet) or 2;
+
 -- PartyInfo
 GL.InviteUnit = InviteUnit or C_PartyInfo.InviteUnit;
 
@@ -106,9 +119,9 @@ GL.SetLootThreshold = function(threshold, retry)
     local eventID = "SetLootThresholdLootMethodChangedListener";
     GL.Events:unregister(eventID);
 
-    local getThresholdtimerID = "GetLootThresholdRetryTimer";
-    local setThresholdtimerID = "SetLootThresholdRetryTimer";
-    GL:cancelTimer{ getThresholdtimerID, setThresholdtimerID };
+    local getThresholdTimerID = "GetLootThresholdRetryTimer";
+    local setThresholdTimerID = "SetLootThresholdRetryTimer";
+    GL:cancelTimer{ getThresholdTimerID, setThresholdTimerID };
 
     local Thresholds = {
         poor = 0,
@@ -124,7 +137,7 @@ GL.SetLootThreshold = function(threshold, retry)
 
     if (not retry) then
         GL.Events:register(eventID, "PARTY_LOOT_METHOD_CHANGED", function ()
-            GL:cancelTimer(setThresholdtimerID);
+            GL:cancelTimer(setThresholdTimerID);
 
             if (GetLootThreshold() ~= threshold) then
                 retry = true;
@@ -133,11 +146,11 @@ GL.SetLootThreshold = function(threshold, retry)
         end);
 
         retry = true;
-        GL:after(.5, setThresholdtimerID, function ()
+        GL:after(.5, setThresholdTimerID, function ()
             GL.SetLootThreshold(threshold, retry);
         end);
     else
-        GL:after(.5, getThresholdtimerID, function ()
+        GL:after(.5, getThresholdTimerID, function ()
             if (GetLootThreshold() ~= Thresholds[threshold]) then
                 GL:error(("Unable to set loot threshold to %s"):format(threshold));
             end

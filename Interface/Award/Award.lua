@@ -1,4 +1,4 @@
-﻿local L = Gargul_L;
+local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -271,7 +271,7 @@ function Award:draw(itemLink, callback)
 
         -- Make sure the initiator has to confirm his choices
         GL.Interface.Dialogs.AwardDialog:open{
-            question = (L["Award %s to %s?"]):format(itemLink, GL:nameFormat{ name = winner, colorize = true }),
+            question = (L["Award %s to %s?"]):format(itemLink, GL:nameFormat{ name = winner, colorize = true, }),
             OnYes = award,
         };
     end);
@@ -348,7 +348,7 @@ function Award:draw(itemLink, callback)
 
         -- No disenchanter was set yet
         GL.Interface.Dialogs.PopupDialog:open{
-            question = string.format(L["Set %s as your disenchanter?"],
+            question = (L["Set %s as your disenchanter?"]):format(
                     GL:nameFormat{ name = disenchanter, colorize = true, },
                     disenchanter
             ),
@@ -572,7 +572,7 @@ function Award:topPrioForItem(itemID)
     -- Return a sanitized name variant to ensure proper name matching
     local sanitizePlayerName = function(name)
         name = name:gsub("%(os%)", "");
-        name = string.lower(GL:disambiguateName(name));
+        name = strlower(GL:disambiguateName(name));
         return name;
     end;
 
@@ -606,7 +606,7 @@ function Award:populatePlayersTable(itemID)
     -- See if there's a top player for this item that we can preselect
     local topPrioForItem = self:topPrioForItem(itemID);
     if (topPrioForItem) then
-        topPrioForItem = string.lower(GL:stripRealm(topPrioForItem));
+        topPrioForItem = strlower(GL:stripRealm(topPrioForItem));
     end
 
     local TableData = {};
@@ -621,7 +621,7 @@ function Award:populatePlayersTable(itemID)
             },
         });
 
-        if (topPrioForItem and topPrioForItem == string.lower(Player.name)) then
+        if (topPrioForItem and topPrioForItem == strlower(Player.name)) then
             PlayersTable:SetSelection(row);
             local EditBox = GL.Interface:get(self, "EditBox.PlayerName");
 

@@ -1,4 +1,4 @@
-﻿local L = Gargul_L;
+local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -176,7 +176,7 @@ function Bidder:draw(time, itemLink, itemIcon, bth)
 
     -- Show the minimum bid and increment if no one bid yet
     if (GDKPAuction.Current.minimumBid > 0) then
-        local message = string.format(L["Min bid: %sg   Increment: %sg"], GDKPAuction.Current.minimumBid, GDKPAuction.Current.minimumIncrement);
+        local message = (L["Min bid: %sg   Increment: %sg"]):format(GDKPAuction.Current.minimumBid, GDKPAuction.Current.minimumIncrement);
         TopBidder:SetText(message);
     end
 
@@ -334,7 +334,7 @@ function Bidder:refresh()
     end
 
     -- We're the highest bidder, NICE!
-    --if (string.lower(TopBid.Bidder.name) == string.lower(GL.User.name)) then
+    --if (strlower(TopBid.Bidder.name) == strlower(GL.User.name)) then
     if (GL:iEquals(TopBid.bidder, GDKP:myGUID())) then
         local maxBidString = "";
 
@@ -342,9 +342,9 @@ function Bidder:refresh()
             maxBidString = (" " .. L["(max %sg)"]):format(GDKPAuction.maxBid);
         end
 
-        TopBidderLabel:SetText(string.format("|c001EFF00" .. L["Top bid: %s by you"] .. "%s|r", GL:goldToMoney(TopBid.bid), maxBidString));
+        TopBidderLabel:SetText(("|c001EFF00" .. L["Top bid: %s by you"] .. "%s|r"):format(GL:goldToMoney(TopBid.bid), maxBidString));
     else
-        TopBidderLabel:SetText(string.format("|c00BE3333" .. L["Top bid: %s by %s"] .. "|r",
+        TopBidderLabel:SetText(("|c00BE3333" .. L["Top bid: %s by %s"] .. "|r"):format(
             GL:goldToMoney(TopBid.bid),
             GL:nameFormat{ name = TopBid.Bidder.name, colorize = true, }
         ));

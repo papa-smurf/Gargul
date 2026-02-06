@@ -1,4 +1,4 @@
-﻿local L = Gargul_L;
+local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -83,7 +83,7 @@ end
 function MasterLooterDialog:flightAttendant()
     local function announce()
         local message = L.CHAT["I'm using Gargul to distribute loot. It makes rolling easier so be sure to try it out!"];
-        local stw = not GL:strContains(string.lower(message), L["Gargul"]);
+        local stw = not GL:strContains(strlower(message), L["Gargul"]);
 
         GL:sendChatMessage(
             message,

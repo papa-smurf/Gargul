@@ -67,8 +67,7 @@ local Events = {
     SetSender = function(self, playerName)
         sender = playerName;
 
-        self.TrustSenderLabel:SetText(string.format(
-            "Automatically accept incoming broadcasts from %s",
+        self.TrustSenderLabel:SetText(("Automatically accept incoming broadcasts from %s"):format(
                 playerName
         ));
     end,

@@ -1,4 +1,4 @@
-﻿local L = Gargul_L;
+local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -587,7 +587,7 @@ function Overview:refresh()
         local nameText;
         local nameFormatted = GL:disambiguateName(player);
         if (not Session.lockedAt) then
-            nameText = string.format("    |c00%s%s|r", classColor, nameFormatted);
+            nameText = ("    |c00%s%s|r"):format(classColor, nameFormatted);
         else
             local copperToGive = GDKPSession:copperOwedToPlayer(player, Session.ID);
 

@@ -567,8 +567,7 @@ function TMB:tooltipLines(itemLink)
         for _, Entry in pairs(PrioListEntries) do
             entriesAdded = entriesAdded + 1;
 
-            tinsert(Lines, string.format(
-                "|c00%s%s|r",
+            tinsert(Lines, ("|c00%s%s|r"):format(
                 GL:classHexColor(GL.Player:classByName(Entry[2], 0), Constants.disabledTextColor),
                 GL:capitalize(Entry[2]):gsub(OFFSPEC_IDENTIFIER, " " .. L["(OS)"])
             ));
@@ -594,7 +593,7 @@ function TMB:tooltipLines(itemLink)
         )
     ) then
         -- Add the header
-        tinsert(Lines, string.format("\n|c00FFFFFF%s|r", L["TMB Wish List"]));
+        tinsert(Lines, ("\n|c00FFFFFF%s|r"):format(L["TMB Wish List"]));
 
         WishListEntries = self:sortEntries(WishListEntries, 1);
 
@@ -603,8 +602,7 @@ function TMB:tooltipLines(itemLink)
         for _, Entry in pairs(WishListEntries) do
             entriesAdded = entriesAdded + 1;
 
-            tinsert(Lines, string.format(
-                "|c00%s%s|r",
+            tinsert(Lines, ("|c00%s%s|r"):format(
                 GL:classHexColor(GL.Player:classByName(Entry[2], 0), Constants.disabledTextColor),
                 GL:capitalize(Entry[2]):gsub(OFFSPEC_IDENTIFIER, " " .. L["(OS)"])
             ));
@@ -622,6 +620,7 @@ end
 --- Draw either the importer or overview
 --- based on the current TMB data
 ---@param source? string
+---@return nil
 function TMB:draw(source)
     -- No data available, show importer
     if (not self:available()) then
@@ -633,6 +632,7 @@ function TMB:draw(source)
 end
 
 --- Clear all TMB data
+---@return nil
 function TMB:clear()
     GL.DB.TMB = {};
 
@@ -708,7 +708,7 @@ function TMB:import(data, triedToDecompress, source)
         end
 
     -- Handle the DFT format
-    elseif (GL:strStartsWith(firstLine, '"')) then
+    elseif (GL:strStartsWith(firstLine, "\"")) then
         triedToDecompress = true;
         wasImportedFromDFT = true;
         data = self:DFTFormatToTMB(data);
@@ -801,7 +801,7 @@ function TMB:import(data, triedToDecompress, source)
                 local type = Constants.tmbTypeWish;
 
                 if (stringParts[Keys.name] and stringParts[Keys.order]) then
-                    characterName = string.lower(stringParts[Keys.name]);
+                    characterName = strlower(stringParts[Keys.name]);
                     order = tonumber(stringParts[Keys.order]) or order;
                 end
 
@@ -826,16 +826,16 @@ function TMB:import(data, triedToDecompress, source)
                 end
 
                 if (characterName and order) then
-                    local checkSum = string.format('%s||%s||%s||%s||%s', itemID, characterName, order, type, raidGroupID or 0);
+                    local checkSum = ("%s||%s||%s||%s||%s"):format(itemID, characterName, order, type, raidGroupID or 0);
 
                     -- Make sure to ignore duplicates
                     if (wasImportedFromDFT -- DFT can have duplicates!
                         or not processedEntryCheckums[checkSum]
                     ) then
                         tinsert(TMBData[itemID], {
-                            ["character"] = characterName,
-                            ["prio"] = order,
-                            ["type"] = type,
+                            character = characterName,
+                            prio = order,
+                            type = type,
                         });
 
                         wishlistItemsWereImported = true;
@@ -957,8 +957,8 @@ function TMB:playersWithoutEntries()
     local PlayersWithoutEntries = {};
     for _, Details in pairs(GL.User:groupMembers() or {}) do
 
-        local name = string.lower(GL:nameFormat(Details.name));
-        local fqn = string.lower(GL:addRealm(Details.name));
+        local name = strlower(GL:nameFormat(Details.name));
+        local fqn = strlower(GL:addRealm(Details.name));
         if (not PlayersWithDetails[name]
             and not PlayersWithDetails[fqn]
         ) then
@@ -980,7 +980,7 @@ function TMB:RRobinFormatToTMB(data)
 
     for _, Entry in pairs(data.reserves or {}) do
         local WishlistData = TMBData.wishlists[tostring(Entry.itemid)] or {};
-        tinsert(WishlistData, string.format("%s||%s||1||1", self:normalizePlayerName(Entry.character), Entry.priority));
+        tinsert(WishlistData, ("%s||%s||1||1"):format(self:normalizePlayerName(Entry.character), Entry.priority));
         TMBData.wishlists[tostring(Entry.itemid)] = WishlistData;
     end
 
@@ -996,7 +996,7 @@ function TMB:DFTFormatToTMB(data)
         wishlists = {},
     };
 
-    data = data:gsub('"', "");
+    data = data:gsub("\"", "");
 
     local lineNumber;
     local increaseLineNumber = function ()
@@ -1038,7 +1038,7 @@ function TMB:DFTFormatToTMB(data)
                 end
 
                 line = strtrim(line);
-                line = string.sub(line, 12, string.len(line));
+                line = strsub(line, 12, strlen(line));
                 line = line:gsub("|r: :", "");
                 line = line:gsub("|r: ", "");
 
@@ -1083,7 +1083,7 @@ function TMB:DFTFormatToTMB(data)
     -- Rewrite the DFT format to TMB
     for itemID, Priorities in pairs(TMBData.wishlists) do
         for key, Priority in pairs(Priorities) do
-            TMBData.wishlists[itemID][key] = string.format("%s||%s||1||1", self:normalizePlayerName(Priority.player), Priority.priority);
+            TMBData.wishlists[itemID][key] = ("%s||%s||1||1"):format(self:normalizePlayerName(Priority.player), Priority.priority);
         end
     end
 
@@ -1122,7 +1122,7 @@ Alt:ratomir,zhorax,feth
         (function ()
             local priority = 1;
             local CSVParts;
-            local raidGroup = string.match(line, "^(.+):");
+            local raidGroup = strmatch(line, "^(.+):");
 
             if (raidGroup) then
                 line = line:gsub(raidGroup .. ":", "");
@@ -1174,14 +1174,14 @@ Alt:ratomir,zhorax,feth
 
             for _, priorityEntry in pairs(CSVParts) do
                 (function () -- Not having continue statements in LUA is getting silly at this point
-                    local player = string.lower(GL:nameFormat(priorityEntry));
+                    local player = strlower(GL:nameFormat(priorityEntry));
                     local playerPriority = player:match("(%[[0-9%.]+%])");
 
                     if (playerPriority) then
-                        local openingBracketPosition = string.find(player, "%[");
-                        player = string.sub(player, 1, openingBracketPosition - 1);
+                        local openingBracketPosition = strfind(player, "%[");
+                        player = strsub(player, 1, openingBracketPosition - 1);
                         priority = playerPriority:match("([0-9%.]+)");
-                    elseif (string.find(player, "%|")) then
+                    elseif (strfind(player, "%|")) then
                         local Players = GL:explode(player, "|");
 
                         for _, playerName in pairs(Players) do
@@ -1194,7 +1194,7 @@ Alt:ratomir,zhorax,feth
                         return;
                     end
 
-                    tinsert(Priorities, {player = player, priority = priority});
+                    tinsert(Priorities, { player = player, priority = priority, });
                     priority = priority + 1;
                 end)();
             end
@@ -1214,7 +1214,7 @@ Alt:ratomir,zhorax,feth
     -- Rewrite the priorities to match TMBs format
     for itemID, Priorities in pairs(TMBData.wishlists) do
         for key, PriorityEntry in pairs(Priorities) do
-            TMBData.wishlists[itemID][key] = string.format("%s||%s||1||1", self:normalizePlayerName(PriorityEntry.player), PriorityEntry.priority);
+            TMBData.wishlists[itemID][key] = ("%s||%s||1||1"):format(self:normalizePlayerName(PriorityEntry.player), PriorityEntry.priority);
         end
     end
 
@@ -1311,6 +1311,7 @@ function TMB:broadcast(sendEmptyPayload)
 end
 
 --- Broadcast the available data to whitelisted players only
+---@return nil
 function TMB:broadcastToWhitelist()
     if (self.broadcastInProgress) then
         GL:error(L["Broadcast still in progress"]);
@@ -1329,7 +1330,7 @@ function TMB:broadcastToWhitelist()
     local WhitelistedPlayersInGroup = {};
     local GroupMemberNames = GL.User:groupMemberNames();
     for _, name in pairs(Whitelist) do
-        name = string.lower(name);
+        name = strlower(name);
 
         if (not GL:iEquals(GL.User.name, name)
             and GL:inTable(GroupMemberNames, name)
@@ -1380,6 +1381,7 @@ function TMB:broadcastToWhitelist()
 end
 
 --- Broadcast the available data to everyone in your raid/party
+---@return nil
 function TMB:broadcastToGroup()
     if (self.broadcastInProgress) then
         GL:error(L["Broadcast still in progress"]);
@@ -1422,7 +1424,7 @@ function TMB:broadcastToGroup()
         end, function (sent, total)
             Label = GL.Interface:get(GL.TMB, "Label.BroadcastProgress");
             if (Label) then
-                Label:SetText(string.format(L["Sent %s of %s bytes"], sent, total));
+                Label:SetText((L["Sent %s of %s bytes"]):format(sent, total));
             end
         end);
     end
@@ -1436,6 +1438,7 @@ end
 
 --- Process an incoming TMB broadcast
 ---@param CommMessage CommMessage
+---@return nil
 function TMB:receiveBroadcast(CommMessage)
     -- No need to update our tables if we broadcasted them ourselves
     if (CommMessage.Sender.isSelf) then
@@ -1483,6 +1486,7 @@ function TMB:receiveBroadcast(CommMessage)
 end
 
 --- Request TMB data from the person in charge (ML or Leader)
+---@return nil
 function TMB:requestData()
     if (self.requestingData
         or (_G.UnitInBattleground and UnitInBattleground("player"))
@@ -1534,7 +1538,7 @@ function TMB:requestData()
     GL.CommMessage.new{
         action = CommActions.requestTMBData,
         content = {
-            currentHash = GL.DB:get('TMB.MetaData.hash', nil),
+            currentHash = GL.DB:get("TMB.MetaData.hash", nil),
         },
         channel = "WHISPER",
         recipient = playerToRequestFrom,
@@ -1545,6 +1549,7 @@ end
 
 --- Reply to a player's TMB data request
 ---@param CommMessage CommMessage
+---@return nil
 function TMB:replyToDataRequest(CommMessage)
     -- I don't have any data, leave me alone!
     if (not self:available()) then
@@ -1580,7 +1585,7 @@ function TMB:replyToDataRequest(CommMessage)
             local WhitelistedPlayersInGroup = {};
             local GroupMemberNames = GL.User:groupMemberNames();
             for _, name in pairs(Whitelist) do
-                name = string.lower(name);
+                name = strlower(name);
 
                 if (not GL:iEquals(GL.User.name, name)
                     and GL:inTable(GroupMemberNames, name)
@@ -1595,10 +1600,10 @@ function TMB:replyToDataRequest(CommMessage)
         end
     end
 
-    local playerTMBHash = CommMessage.content.currentHash or '';
+    local playerTMBHash = CommMessage.content.currentHash or "";
     -- Your data is the same as mine, leave me alone!
     if (not GL:empty(playerTMBHash)
-        and playerTMBHash == GL.DB:get('TMB.MetaData.hash')
+        and playerTMBHash == GL.DB:get("TMB.MetaData.hash")
     ) then
         return;
     end
@@ -1647,6 +1652,7 @@ end
 --- Announce TMB entry details in chat
 ---@param itemID number
 ---@param Entries? table
+---@return nil
 function TMB:announceDetailsOfItemInChat(itemID, Entries)
     local announcePrios = GL.Settings:get("TMB.includePrioListInfoInLootAnnouncement");
     local announceWishes = GL.Settings:get("TMB.includeWishListInfoInLootAnnouncement");
@@ -1700,12 +1706,12 @@ function TMB:announceDetailsOfItemInChat(itemID, Entries)
         if (entryType == Constants.tmbTypePrio) then
             tinsert(PrioListDetails, {
                 prio = sortingOrder,
-                player = string.format("%s[%s]", playerName, prio),
+                player = ("%s[%s]"):format(playerName, prio),
             });
         else
             tinsert(WishListDetails, {
                 prio = sortingOrder,
-                player = string.format("%s[%s]", playerName, prio),
+                player = ("%s[%s]"):format(playerName, prio),
             });
         end
     end
@@ -1784,6 +1790,7 @@ end
 --- Announce RRobin details in chat
 ---@param itemID number
 ---@param Entries? table
+---@return nil
 function TMB:RRobinAnnounceDetailsOfItemInChat(itemID, Entries)
     Entries = Entries or self:byItemID(itemID);
     if (GL:empty(Entries)) then

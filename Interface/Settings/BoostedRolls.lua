@@ -1,4 +1,4 @@
-﻿local L = Gargul_L;
+local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -36,8 +36,7 @@ function BoostedRolls:draw(Parent)
         },
         {
             label = "Whisper command",
-            description = string.format(
-                "Players can whisper '|cff%s!bonus [<name>]|r' or '|cff%s!rb [<name>]|r' or '|cff%s!br [<name>]|r' to the master looter to get the current boosted roll for this name in response. If no name is given, their own name is assumed instead.",
+            description = ("Players can whisper '|cff%s!bonus [<name>]|r' or '|cff%s!rb [<name>]|r' or '|cff%s!br [<name>]|r' to the master looter to get the current boosted roll for this name in response. If no name is given, their own name is assumed instead."):format(
                 GL:classHexColor("rogue"),
                 GL:classHexColor("rogue"),
                 GL:classHexColor("rogue")
@@ -86,8 +85,7 @@ function BoostedRolls:draw(Parent)
     BoostedRollsIdentifier:SetHeight(20);
     BoostedRollsIdentifier:SetFullWidth(true);
     BoostedRollsIdentifier:SetText(GL.Settings:get("BoostedRolls.automaticallyAcceptDataFrom", ""));
-    BoostedRollsIdentifier:SetLabel(string.format(
-        "|cff%sAdd a comma separated list of players that are allowed to overwrite your data without your explicit consent:|r",
+    BoostedRollsIdentifier:SetLabel(("|cff%sAdd a comma separated list of players that are allowed to overwrite your data without your explicit consent:|r"):format(
         GL:classHexColor("rogue")
     ));
     BoostedRollsIdentifier:SetCallback("OnTextChanged", function (self)
@@ -107,8 +105,7 @@ function BoostedRolls:draw(Parent)
     SortingPriority:SetFullWidth(true);
     SortingPriority:SetMaxLetters(1);
     SortingPriority:SetText(GL.Settings:get("BoostedRolls.priority", 1));
-    SortingPriority:SetLabel(string.format(
-        "|cff%sThe 'Priority' field determines how rolls will be sorted in the roll tracking table (priority 1 is the highest priority).|r",
+    SortingPriority:SetLabel(("|cff%sThe 'Priority' field determines how rolls will be sorted in the roll tracking table (priority 1 is the highest priority).|r"):format(
         GL:classHexColor("rogue")
     ));
     SortingPriority:SetCallback("OnTextChanged", function (self)
@@ -130,8 +127,7 @@ function BoostedRolls:draw(Parent)
     BoostedRollsIdentifier:SetFullWidth(true);
     BoostedRollsIdentifier:SetMaxLetters(3);
     BoostedRollsIdentifier:SetText(GL.Settings:get("BoostedRolls.identifier", "BR"));
-    BoostedRollsIdentifier:SetLabel(string.format(
-        "|cff%sThe 'Identifier' is the text shown on the button (maximum 3 characters).|r",
+    BoostedRollsIdentifier:SetLabel(("|cff%sThe 'Identifier' is the text shown on the button (maximum 3 characters).|r"):format(
         GL:classHexColor("rogue")
     ));
     BoostedRollsIdentifier:SetCallback("OnTextChanged", function (self)
@@ -152,8 +148,7 @@ function BoostedRolls:draw(Parent)
     BoostedRollsReserveThreshold:SetHeight(20);
     BoostedRollsReserveThreshold:SetFullWidth(true);
     BoostedRollsReserveThreshold:SetText(GL.Settings:get("BoostedRolls.reserveThreshold", 0));
-    BoostedRollsReserveThreshold:SetLabel(string.format(
-        "|cff%sThe maximum roll, everything above is considered a 'reserve'.|r",
+    BoostedRollsReserveThreshold:SetLabel(("|cff%sThe maximum roll, everything above is considered a 'reserve'.|r"):format(
         GL:classHexColor("rogue")
     ));
     BoostedRollsReserveThreshold:SetCallback("OnTextChanged", function (self)
@@ -172,8 +167,7 @@ function BoostedRolls:draw(Parent)
     BoostedRollsDefaultPoints:SetHeight(20);
     BoostedRollsDefaultPoints:SetFullWidth(true);
     BoostedRollsDefaultPoints:SetText(GL.Settings:get("BoostedRolls.defaultPoints", 0));
-    BoostedRollsDefaultPoints:SetLabel(string.format(
-        "|cff%sThe default points assigned to players.|r",
+    BoostedRollsDefaultPoints:SetLabel(("|cff%sThe default points assigned to players.|r"):format(
         GL:classHexColor("rogue")
     ));
     BoostedRollsDefaultPoints:SetCallback("OnTextChanged", function (self)
@@ -192,8 +186,7 @@ function BoostedRolls:draw(Parent)
     BoostedRollsMaximumPoints:SetHeight(20);
     BoostedRollsMaximumPoints:SetFullWidth(true);
     BoostedRollsMaximumPoints:SetText(GL.Settings:get("BoostedRolls.maxmimumPoints"));
-    BoostedRollsMaximumPoints:SetLabel(string.format(
-        "|cff%sThe maximum points a player can have. Anything above this number is discarded!|r",
+    BoostedRollsMaximumPoints:SetLabel(("|cff%sThe maximum points a player can have. Anything above this number is discarded!|r"):format(
         GL:classHexColor("rogue")
     ));
     BoostedRollsMaximumPoints:SetCallback("OnTextChanged", function (self)
@@ -212,8 +205,7 @@ function BoostedRolls:draw(Parent)
     BoostedRollsDefaultCost:SetHeight(20);
     BoostedRollsDefaultCost:SetFullWidth(true);
     BoostedRollsDefaultCost:SetText(GL.Settings:get("BoostedRolls.defaultCost", 0));
-    BoostedRollsDefaultCost:SetLabel(string.format(
-        "|cff%sThe default cost for items awarded (can also be changed when awarding an item).|r",
+    BoostedRollsDefaultCost:SetLabel(("|cff%sThe default cost for items awarded (can also be changed when awarding an item).|r"):format(
         GL:classHexColor("rogue")
     ));
     BoostedRollsDefaultCost:SetCallback("OnTextChanged", function (self)
@@ -232,8 +224,7 @@ function BoostedRolls:draw(Parent)
     BoostedRollsDefaultStep:SetHeight(20);
     BoostedRollsDefaultStep:SetFullWidth(true);
     BoostedRollsDefaultStep:SetText(GL.Settings:get("BoostedRolls.defaultStep", 0));
-    BoostedRollsDefaultStep:SetLabel(string.format(
-        "|cff%sThe default step when modifying points.|r",
+    BoostedRollsDefaultStep:SetLabel(("|cff%sThe default step when modifying points.|r"):format(
         GL:classHexColor("rogue")
     ));
     BoostedRollsDefaultStep:SetCallback("OnTextChanged", function (self)

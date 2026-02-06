@@ -1,4 +1,4 @@
-﻿local L = Gargul_L;
+local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -7,7 +7,7 @@ local Overview = GL.Interface.Settings.Overview; ---@type SettingsOverview
 
 ---@class RollSettings
 GL.Interface.Settings.Rolling = {
-    description = string.format("When a master looter who also uses Gargul announces that you can roll on an item, you are presented with a small window that allows you to MS/OS roll or pass on an item. You can move this window around and position it wherever you'd like or close it by clicking the pass button or right-clicking the window (closing it this way is not permanent).\n\nYou can start a roll by %s an item in your inventory, an enemy's loot window, or the trade duration bars.", GL.Settings:get("ShortcutKeys.rollOffOrAuction")),
+    description = ("When a master looter who also uses Gargul announces that you can roll on an item, you are presented with a small window that allows you to MS/OS roll or pass on an item. You can move this window around and position it wherever you'd like or close it by clicking the pass button or right-clicking the window (closing it this way is not permanent).\n\nYou can start a roll by %s an item in your inventory, an enemy's loot window, or the trade duration bars."):format(GL.Settings:get("ShortcutKeys.rollOffOrAuction")),
     wikiUrl = "https://github.com/papa-smurf/Gargul/wiki/Rolling-Items",
 };
 local Rolling = GL.Interface.Settings.Rolling; ---@type RollSettings

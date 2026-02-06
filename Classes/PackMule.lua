@@ -46,7 +46,6 @@ GL.PackMule = PackMule; ---@type PackMule
 local Settings = GL.Settings; ---@type Settings
 
 --[[ CONSTANTS ]]
-local LOOT_SLOT_MONEY = GL:tableGet(Enum or {}, "LootSlotType.Money", LOOT_SLOT_MONEY);
 
 ---@return nil
 function PackMule:_init()
@@ -60,7 +59,7 @@ function PackMule:_init()
     -- Check whether the user is in a heroic instance
     -- More info about difficultyIDs: https://wowpedia.fandom.com/wiki/DifficultyID
     local _, _, difficultyID = GetInstanceInfo();
-    self.playerIsInHeroicInstance = GL:inTable({2, 174}, difficultyID);
+    self.playerIsInHeroicInstance = GL:inTable({ 2, 174, }, difficultyID);
 
     self.Rules = Settings:get("PackMule.Rules");
 
@@ -130,7 +129,7 @@ function PackMule:_init()
         end
 
         local slotType = GetLootSlotType(1);
-        if (slotType == LOOT_SLOT_MONEY) then
+        if (slotType == GL.LOOT_SLOT_MONEY) then
             local guid = GetLootSourceInfo(1);
 
             -- Exclude gold from items (lockboxes etc)
@@ -207,8 +206,8 @@ function PackMule:processGroupLootItems(rollID)
             return;
         end
 
-        -- PackMule treats everything as a player name and returns a string.lower
-        target = string.upper(target);
+        -- PackMule treats everything as a player name and returns a strlower
+        target = strupper(target);
         if (GL.Data.Constants.GroupLootActions[target]) then
             RollOnLoot(rollID, GL.Data.Constants.GroupLootActions[target]);
         end
@@ -243,7 +242,7 @@ function PackMule:isItemIDIgnored(itemID, callback)
                 target = L["SELF"] .. " " .. L["NEED"],
                 quality = 1,
                 operator = ">=",
-            }
+            },
         };
     end;
 
@@ -356,6 +355,7 @@ function PackMule:currentTargetForItemForGroupOrMaster(itemID, callback)
 end
 
 --- Disable PackMule after leaving a group
+---@return nil
 function PackMule:leftGroup()
     if (Settings:get("PackMule.autoDisableForGroupLoot")) then
         Settings:set("PackMule.enabledForGroupLoot", false);
@@ -363,14 +363,16 @@ function PackMule:leftGroup()
 end
 
 --- Check whether the user is in a heroic instance
+---@return nil
 function PackMule:zoneChanged()
     -- Check whether the user is in a heroic instance
     -- More info about difficultyIDs: https://wowpedia.fandom.com/wiki/DifficultyID
     local _, _, difficultyID = GetInstanceInfo();
-    self.playerIsInHeroicInstance = GL:inTable({2, 174}, difficultyID);
+    self.playerIsInHeroicInstance = GL:inTable({ 2, 174, }, difficultyID);
 end
 
 --- Check all loot and implement applicable rules
+---@return nil
 function PackMule:lootReady()
     if (self.processing) then
         return;
@@ -419,7 +421,7 @@ function PackMule:lootReady()
                 end
 
                 -- These are group loot targets that don't apply when master looting
-                if (GL:inTable({ L["PASS"], L["GREED"], L["NEED"] }, target)) then
+                if (GL:inTable({ L["PASS"], L["GREED"], L["NEED"], }, target)) then
                     return;
                 end
 
@@ -451,8 +453,8 @@ function PackMule:getValidRules()
 
     -- Sort the rules, item ID specific rules first
     table.sort(ValidRules, function (a, b)
-        aItem = a and a.item or false;
-        bItem = b and b.item or false;
+        local aItem = a and a.item or false;
+        local bItem = b and b.item or false;
 
         -- This is to make sure we support item names, IDs and links
         local ruleAConcernsItemID = false;
@@ -469,8 +471,8 @@ function PackMule:getValidRules()
             ruleBConcernsItemID = GL:higherThanZero(ruleBItemID);
         end
 
-        aNum = ruleAConcernsItemID and ruleAItemID or 999999999999;
-        bNum = ruleBConcernsItemID and ruleBItemID or 999999999999;
+        local aNum = ruleAConcernsItemID and ruleAItemID or 999999999999;
+        local bNum = ruleBConcernsItemID and ruleBItemID or 999999999999;
 
         return aNum < bNum;
     end);
@@ -514,8 +516,7 @@ function PackMule:getTargetForItem(itemLinkOrId, callback)
 
         for _, Entry in pairs(ValidRules) do
             -- This is useful to see in which order rules are being handled
-            GL:debug(string.format(
-                "Item: %s\nOperator: %s\nQuality: %s\nTarget: %s",
+            GL:debug(("Item: %s\nOperator: %s\nQuality: %s\nTarget: %s"):format(
                 Entry.item or "",
                 Entry.quality or "",
                 Entry.operator or "",
@@ -552,8 +553,8 @@ function PackMule:getTargetForItem(itemLinkOrId, callback)
                 or (operator == "<" and Details.quality < quality)
                 or (operator == "<=" and Details.quality <= quality)
             )) then
-                local bindType = Details.bindType or Enum.ItemBind.None;
-                local bindOnPickup = GL:inTable({ Enum.ItemBind.OnAcquire, Enum.ItemBind.Quest }, bindType);
+                local bindType = Details.bindType or GL.LE_ITEM_BIND_NONE;
+                local bindOnPickup = GL:inTable({ GL.LE_ITEM_BIND_ON_ACQUIRE, GL.LE_ITEM_BIND_QUEST, }, bindType);
 
                 local ruleApplies = (function ()
                     -- Check whether the item is whitelisted
@@ -570,7 +571,7 @@ function PackMule:getTargetForItem(itemLinkOrId, callback)
                     if (not GL.User.isMasterLooter) then
                         -- Skip companion pets in group loot even if they're BoE!
                         if (Details.classID == GL.LE_ITEM_CLASS_MISCELLANEOUS
-                            and Details.subclassID == Enum.ItemMiscellaneousSubclass.CompanionPet
+                            and Details.subclassID == GL.LE_ITEM_MISCELLANEOUS_SUBCLASS_COMPANION_PET
                         ) then
                             return false;
                         end
@@ -648,8 +649,8 @@ function PackMule:getTargetForItem(itemLinkOrId, callback)
 
 
             if (not GL.User.isMasterLooter) then
-                if (GL:inTable({ L["PASS"], L["GREED"], L["NEED"] }, ruleTarget)) then
-                    Targets = {ruleTarget};
+                if (GL:inTable({ L["PASS"], L["GREED"], L["NEED"], }, ruleTarget)) then
+                    Targets = { ruleTarget, };
                     break;
                 end
             else
@@ -688,14 +689,14 @@ function PackMule:getTargetForItem(itemLinkOrId, callback)
                     break;
                 end
 
-                if (not GL:inTable({ L["PASS"], L["GREED"], L["NEED"] }, ruleTarget)) then
+                if (not GL:inTable({ L["PASS"], L["GREED"], L["NEED"], }, ruleTarget)) then
                     ruleTarget = GL:addRealm(ruleTarget);
 
                     -- GroupMemberNames are always in lowercase
                     if (GL:inTable(GroupMemberNames, ruleTarget)) then
                         -- This is a high prio target, return it and stop checking
                         if (targetContainsExclamationMark) then
-                            Targets = { ruleTarget };
+                            Targets = { ruleTarget, };
                             break;
                         end
 
@@ -714,7 +715,7 @@ function PackMule:getTargetForItem(itemLinkOrId, callback)
         end
 
         -- Fetch a (random) target from the eligible target pool
-        local target = string.lower(Targets[math.random(numberOfTargets)] or "");
+        local target = strlower(Targets[math.random(numberOfTargets)] or "");
 
         -- This should technically be impossible, but you never know!
         if (GL:empty(target)) then
@@ -740,8 +741,8 @@ function PackMule:lootMatchesSpecificRule(lootName, ruleItemName)
         return false;
     end
 
-    lootName = string.lower(lootName);
-    ruleItemName = string.lower(ruleItemName);
+    lootName = strlower(lootName);
+    ruleItemName = strlower(ruleItemName);
 
     -- No need to check any further, they match
     if (lootName == ruleItemName) then
@@ -780,6 +781,7 @@ function PackMule:lootMatchesSpecificRule(lootName, ruleItemName)
 end
 
 --- Empty the ruleset
+---@return nil
 function PackMule:resetRules()
     self.Rules = {};
     Settings:set("PackMule.Rules", self.Rules);
@@ -811,12 +813,12 @@ function PackMule:ruleIsValid(Rule)
     -- If there's an operator then it has to be valid and there has to be a quality
     if (Rule.operator
         and (
-            not GL:inTable({"=", "<", "<=", ">", ">="}, Rule.operator)
+            not GL:inTable({ "=", "<", "<=", ">", ">=", }, Rule.operator)
             or not Rule.quality
             or type(Rule.quality) ~= "number"
         )
     ) then
-        return false
+        return false;
     end
 
     -- If there's no operator then we need a specific item name to continue
@@ -921,6 +923,7 @@ function PackMule:disenchant(itemLink, byPassConfirmationDialog, callback)
 end
 
 --- Clear the disenchanter
+---@return nil
 function PackMule:clearDisenchanter()
     self.disenchanter = nil;
 end
@@ -950,7 +953,7 @@ end
 ---@return nil
 function PackMule:announceDisenchantment(itemLink)
     if (not GL.Settings:get("PackMule.announceDisenchantedItems")) then
-        return
+        return;
     end
 
     GL:sendChatMessage(
@@ -964,27 +967,27 @@ end
 ---@param Rule string
 ---@return string?
 function PackMule:roundRobinTargetForRule(Rule)
-    local ruleId = Rule.quality;
+    local ruleID = Rule.quality;
     if (not GL:empty(Rule.item)) then
-        ruleId = Rule.item;
+        ruleID = Rule.item;
     end
 
     -- This is apparently possible?
-    if (not ruleId) then
+    if (not ruleID) then
         return;
     end
 
     -- first time we've seen this item
-    if (not self.RoundRobinItems[ruleId]) then
-        self.RoundRobinItems[ruleId] = {};
+    if (not self.RoundRobinItems[ruleID]) then
+        self.RoundRobinItems[ruleID] = {};
     end
 
     local EligiblePlayers = {};
     for _, Player in pairs(GL.User:groupMembers()) do
-        local player = string.lower(Player.fqn);
+        local player = strlower(Player.fqn);
 
         -- this player hasn't received one of these items yet
-        if (Player.online and not self.RoundRobinItems[ruleId][player]) then
+        if (Player.online and not self.RoundRobinItems[ruleID][player]) then
             tinsert(EligiblePlayers, player);
         end
     end
@@ -995,7 +998,7 @@ function PackMule:roundRobinTargetForRule(Rule)
     if (numberOfTargets < 1) then
         -- everyone has received one of these, start over
         GL:debug("PackMule:roundRobinTargetForRule - starting over");
-        self.RoundRobinItems[ruleId] = {};
+        self.RoundRobinItems[ruleID] = {};
 
         return self:roundRobinTargetForRule(Rule);
     end
@@ -1008,7 +1011,7 @@ function PackMule:roundRobinTargetForRule(Rule)
         return GL:error("Something went wrong determining a target in 'roundRobinTargetForRule'. Contact support!");
     end
 
-    self.RoundRobinItems[ruleId][targetPlayer] = 1;
+    self.RoundRobinItems[ruleID][targetPlayer] = 1;
     return targetPlayer;
 end
 
@@ -1057,7 +1060,7 @@ function PackMule:assignLootToPlayer(itemID, playerName)
     -- Or is not eligible to receive the item according to the GetMasterLootCandidate API
     if (not playerIndex) then
         GL:debug("No index found in PackMule:assignLootToPlayer");
-        return
+        return;
     end
 
     -- Make sure we fire an event when the user receives the item

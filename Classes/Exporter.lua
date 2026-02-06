@@ -1,4 +1,4 @@
-﻿local L = Gargul_L;
+local L = Gargul_L;
 
 local _, GL = ...;
 
@@ -324,7 +324,7 @@ function Exporter:transformEntriesToCustomFormat(Entries, format)
                     ["@ITEM"] = ItemDetails.name,
                     ["@ILVL"] = ItemDetails.level,
                     ["@QUALITY"] = ItemDetails.quality,
-                    ["@WINNER"] = GL:nameFormat{ name = AwardEntry.awardedTo, stripRealm = true },
+                    ["@WINNER"] = GL:nameFormat{ name = AwardEntry.awardedTo, stripRealm = true, },
                     ["@REALM"] = GL:getRealmFromName(AwardEntry.awardedTo),
                     ["@NORMALIZED"] = GL:nameFormat{ name = AwardEntry.awardedTo, },
                     ["@OS"] = GL:toboolean(AwardEntry.OS),
@@ -382,7 +382,7 @@ function Exporter:transformEntriesToTMBFormat(Entries)
     local exportString = "dateTime,character,itemID,offspec,id";
 
     for _, AwardEntry in pairs(Entries) do
-        exportString = string.format("%s\n%s,%s,%s,%s,%s",
+        exportString = ("%s\n%s,%s,%s,%s,%s"):format(
             exportString,
             date(L["%Y-%m-%d"], AwardEntry.timestamp),
             GL:nameFormat{
@@ -418,7 +418,7 @@ function Exporter:transformEntriesToDFTFormat(Entries)
             dateString = date('%m/%d/%Y', AwardEntry.timestamp);
         end
 
-        exportString = string.format("%s%s;[%s];%s\n",
+        exportString = ("%s%s;[%s];%s\n"):format(
             exportString,
             dateString,
             AwardEntry.itemID,

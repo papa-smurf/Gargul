@@ -1,4 +1,4 @@
-﻿local L = Gargul_L;
+local L = Gargul_L;
 local LibDD = LibStub:GetLibrary("LibUIDropDownMenu-4.0");
 
 ---@type GL
@@ -49,7 +49,7 @@ GL.Interface = GL.Interface or {
         MONK = "00FF98",
 
         -- Qualities
-        POOR = "9d9d9d",
+        POOR = "9D9D9D",
         COMMON = "FFFFFF",
         UNCOMMON = "1EFF00",
         RARE = "0070DD",
@@ -174,7 +174,7 @@ function Interface:numericInputBox(Parent, name, placeholder, decimals)
                 output = output .. e;
             end);
 
-            local firstPointPosition = string.find(output, "%.");
+            local firstPointPosition = strfind(output, "%.");
 
             if (firstPointPosition) then
                 local outputLength = strlen(output);
@@ -1608,11 +1608,11 @@ function Interface:set(scope, identifier, Item, prefixWithType)
 
     local path = "";
     if (type(scope) == "table") then
-        path = string.format("InterfaceItems%s.%s", widgetType, identifier);
+        path = ("InterfaceItems%s.%s"):format(widgetType, identifier);
         return GL:tableSet(scope, path, Item);
     end
 
-    path = string.format("GL.Interface.%s.InterfaceItems%s.%s", scope, widgetType, identifier);
+    path = ("GL.Interface.%s.InterfaceItems%s.%s"):format(scope, widgetType, identifier);
     return GL:tableSet(path, identifier);
 end
 
@@ -1631,7 +1631,7 @@ function Interface:release(Scope, identifier)
     -- We're not given an element, but instead need to fetch it from our interface cache
     if (not Scope.type and identifier) then
         Element, fullIdentifier = self:get(Scope, identifier);
-        path = string.format("InterfaceItems.%s", fullIdentifier);
+        path = ("InterfaceItems.%s"):format(fullIdentifier);
 
         if (not Element
             or type(Element) ~= "table"
@@ -1724,7 +1724,7 @@ end
 ---@param default table
 ---@return table
 function Interface:getPosition(identifier, default)
-    identifier = string.format("UI.%s.Position", identifier);
+    identifier = ("UI.%s.Position"):format(identifier);
 
     -- There's a default, return it if no position points are available
     if (default ~= nil
@@ -1754,7 +1754,7 @@ function Interface:storePosition(Item, identifier)
         return false;
     end
 
-    identifier = string.format("UI.%s.Position", identifier);
+    identifier = ("UI.%s.Position"):format(identifier);
 
     local point, _, relativePoint, offsetX, offsetY = Item:GetPoint();
 
@@ -1797,7 +1797,7 @@ function Interface:getDimensions(identifier)
         return false;
     end
 
-    identifier = string.format("UI.%s.Dimensions", identifier);
+    identifier = ("UI.%s.Dimensions"):format(identifier);
 
     local Dimensions = Settings:get(identifier, {});
     return Dimensions.width, Dimensions.height, Dimensions.scale;
@@ -1815,7 +1815,7 @@ function Interface:storeDimensions(Item, identifier)
         return false;
     end
 
-    identifier = string.format("UI.%s.Dimensions", identifier);
+    identifier = ("UI.%s.Dimensions"):format(identifier);
 
     if (Item.frame) then
         Settings:set(identifier .. ".width", Item.frame:GetWidth());

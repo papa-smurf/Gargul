@@ -1,4 +1,4 @@
-﻿local L = Gargul_L;
+local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -73,7 +73,7 @@ function RollOff:announceStart(itemLink, time, note)
         and GL.BoostedRolls:available()
     ) then
         BoostedRolls = {};
-        BoostedRolls.identifier = string.sub(GL.Settings:get("BoostedRolls.identifier", "BR"), 1, 3);
+        BoostedRolls.identifier = strsub(GL.Settings:get("BoostedRolls.identifier", "BR"), 1, 3);
         BoostedRolls.RangePerPlayer = {};
 
         for _, Player in pairs(GL.User:groupMembers()) do
@@ -604,7 +604,7 @@ function RollOff:award(roller, itemLink, RollBracket, identicalRollDetected)
 
         -- Make sure the initiator has to confirm his choices
         GL.Interface.Dialogs.AwardDialog:open{
-            question = string.format("%s" .. L["Award %s to %s?"],
+            question = ("%s" .. L["Award %s to %s?"]):format(
                 identicalRollDetectedString,
                 itemLink,
                 GL:nameFormat{ name = roller, colorize = true, }
@@ -664,7 +664,7 @@ function RollOff:award(roller, itemLink, RollBracket, identicalRollDetected)
     GL.Interface.PlayerSelector:draw(description, roller, function (player)
         -- Make sure the initiator has to confirm his choices
         GL.Interface.Dialogs.AwardDialog:open{
-            question = string.format("%s" .. L["Award %s to %s?"],
+            question = ("%s" .. L["Award %s to %s?"]):format(
                 identicalRollDetectedString,
                 itemLink,
                 GL:nameFormat{ name = player, colorize = true, }
@@ -764,7 +764,7 @@ function RollOff:processRoll(message)
 
     local Roll = false;
     for roller, roll, low, high in string.gmatch(message, GL.RollOff.rollPattern) do
-        GL:debug(string.format("Roll detected: %s rolls %s (%s-%s)", roller, roll, low, high));
+        GL:debug(("Roll detected: %s rolls %s (%s-%s)"):format(roller, roll, low, high));
 
         roll = tonumber(roll) or 0;
         low = tonumber(low) or 0;
@@ -901,7 +901,7 @@ function RollOff:refreshRollsTable()
         local rollNotes = {};
 
         -- If the player name is unique in the group then use their fqn to match against TMB/Softres entries
-        local normalizedPlayerName = string.lower(GL:disambiguateName(playerName));
+        local normalizedPlayerName = strlower(GL:disambiguateName(playerName));
 
         -- Check if the player reserved the current item id
         if (GL.SoftRes:itemIDIsReservedByPlayer(self.CurrentRollOff.itemID, normalizedPlayerName)) then
@@ -974,14 +974,14 @@ function RollOff:refreshRollsTable()
                         end
                     end
 
-                    tinsert(rollNotes, string.format("|c00FF7C0A" .. L["Prio [%s]"] .. "|r", TopEntry.prio));
+                    tinsert(rollNotes, ("|c00FF7C0A" .. L["Prio [%s]"] .. "|r"):format(TopEntry.prio));
                 else
                     if (sortByTMBWishlist) then
                         rollPriority = 3;
                         rollPriority = rollPriority + TopEntry.prio; -- Make sure rolls of identical list positions "clump" together
                     end
 
-                    tinsert(rollNotes, string.format("|c00FFFFFF" .. L["Wish [%s]"] .. "|r", TopEntry.prio));
+                    tinsert(rollNotes, ("|c00FFFFFF" .. L["Wish [%s]"] .. "|r"):format(TopEntry.prio));
                 end
             end
         end

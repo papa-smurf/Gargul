@@ -1,4 +1,4 @@
-﻿local L = Gargul_L;
+local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -123,8 +123,8 @@ function Broadcast:build()
     local MinimumQuality = Interface:createDropdown{
         Parent = Window,
         Options = {
-            [3] = ("|c000070dd%s|r"):format(L["Rare"]),
-            [4] = ("|c00a335ee%s|r"):format(L["Epic"]),
+            [3] = ("|c000070DD%s|r"):format(L["Rare"]),
+            [4] = ("|c00A335EE%s|r"):format(L["Epic"]),
         },
         value = Settings:get("LootTradeTimers.Broadcast.minimumQuality"),
         callback = function (_, value)

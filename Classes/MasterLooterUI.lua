@@ -437,9 +437,9 @@ function MasterLooterUI:draw(itemLink)
 
                 -- If the roller has a roll number suffixed to his name
                 -- e.g. "playerName [2]" then make sure to remove that number
-                local openingBracketPosition = string.find(selectedPlayer, " %[");
+                local openingBracketPosition = strfind(selectedPlayer, " %[");
                 if (openingBracketPosition) then
-                    selectedPlayer = string.sub(selectedPlayer, 1, openingBracketPosition - 1);
+                    selectedPlayer = strsub(selectedPlayer, 1, openingBracketPosition - 1);
                 end
 
                 local RollBracket = (function()
@@ -833,9 +833,9 @@ function MasterLooterUI:drawPlayersTable(parent)
 
             -- If the roller has a roll number suffixed to his name
             -- e.g. "playerName [2]" then make sure to remove that number
-            local openingBracketPosition = string.find(roller, " %[");
+            local openingBracketPosition = strfind(roller, " %[");
             if (openingBracketPosition) then
-                roller = string.sub(roller, 1, openingBracketPosition - 1);
+                roller = strsub(roller, 1, openingBracketPosition - 1);
             end
 
             local ItemsWonByRollerInTheLast8Hours = GL.AwardedLoot:byWinner(GL:addRealm(roller), GetServerTime() - (8 * 60 * 60)) or {};
@@ -851,7 +851,7 @@ function MasterLooterUI:drawPlayersTable(parent)
             GameTooltip:SetOwner(rowFrame, "ANCHOR_RIGHT");
 
             if (showPlayerGroups) then
-                local _, playerGroup = GL.TMB:groupByPlayerName(string.lower(roller));
+                local _, playerGroup = GL.TMB:groupByPlayerName(strlower(roller));
 
                 if (playerGroup) then
                     GameTooltip:AddLine(playerGroup);
@@ -882,7 +882,7 @@ function MasterLooterUI:drawPlayersTable(parent)
                         BRString = (" " .. L["(BR: %s)"]):format(Entry.BRCost);
                     end
 
-                    local line = string.format("%s%s%s%s",
+                    local line = ("%s%s%s%s"):format(
                         Entry.itemLink,
                         OSString,
                         BRString,

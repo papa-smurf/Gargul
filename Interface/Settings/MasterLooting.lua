@@ -1,4 +1,4 @@
-﻿---@type GL
+---@type GL
 local _, GL = ...;
 
 local Overview = GL.Interface.Settings.Overview; ---@type SettingsOverview
@@ -150,8 +150,7 @@ function MasterLooting:draw(Parent)
     DefaultRollOffNote:SetHeight(20);
     DefaultRollOffNote:SetFullWidth(true);
     DefaultRollOffNote:SetText(GL.Settings:get("MasterLooting.defaultRollOffNote", "/roll 100 for MS or /roll 99 for OS"));
-    DefaultRollOffNote:SetLabel(string.format(
-            "|cff%sSet a default note that's shown when rolling off items, pipes ( | ) are not allowed!|r",
+    DefaultRollOffNote:SetLabel(("|cff%sSet a default note that's shown when rolling off items, pipes ( | ) are not allowed!|r"):format(
             GL:classHexColor("rogue")
     ));
     DefaultRollOffNote:SetCallback("OnTextChanged", function (self)

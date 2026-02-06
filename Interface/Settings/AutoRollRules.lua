@@ -123,7 +123,7 @@ function AutoRollRules:drawProfileBar(Parent)
         for profileID, profile in pairs(profiles) do
             tinsert(sorted, { id = profileID, name = profile.name });
         end
-        table.sort(sorted, function (a, b) return string.lower(a.name) < string.lower(b.name); end);
+        table.sort(sorted, function (a, b) return strlower(a.name) < strlower(b.name); end);
 
         for _, entry in ipairs(sorted) do
             local profileID = entry.id;

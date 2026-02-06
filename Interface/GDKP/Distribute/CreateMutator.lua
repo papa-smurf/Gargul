@@ -1,4 +1,4 @@
-﻿local L = Gargul_L;
+local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -101,7 +101,7 @@ function CreateMutator:build()
         GameTooltip:AddLine(" \n" .. L["You can automatically apply this mutator to raiders using keywords:"] .. "\n ");
 
         for _, placeholder in pairs (GDKPPot.ValidAutoApplyPlaceholders) do
-            GameTooltip:AddLine(string.format("|c00967FD2%s|r", placeholder));
+            GameTooltip:AddLine(("|c00967FD2%s|r"):format(placeholder));
         end
 
         GameTooltip:AddLine(" \n" .. L["\nExample:\n|c00967FD2SELF,RL,HEALER"] .. "\n ");

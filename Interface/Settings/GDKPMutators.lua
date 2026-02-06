@@ -1,4 +1,4 @@
-﻿---@type GL
+---@type GL
 local _, GL = ...;
 
 ---@type Settings
@@ -114,7 +114,7 @@ function GDKPMutators:draw(Parent)
                 GameTooltip:AddLine(" ");
 
                 for _, placeholder in pairs (GL.GDKP.Pot.ValidAutoApplyPlaceholders) do
-                    GameTooltip:AddLine(string.format("|c00967FD2%s|r", placeholder));
+                    GameTooltip:AddLine(("|c00967FD2%s|r"):format(placeholder));
                 end
 
                 GameTooltip:AddLine(" ");

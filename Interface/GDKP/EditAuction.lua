@@ -1,4 +1,4 @@
-﻿local L = Gargul_L;
+local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -27,7 +27,7 @@ function EditAuction:draw(session, checksum)
 
     session = tostring(session);
     checksum = tostring(checksum);
-    local Auction = GL.DB:get(string.format("GDKP.Ledger.%s.Auctions.%s", session, checksum));
+    local Auction = GL.DB:get(("GDKP.Ledger.%s.Auctions.%s"):format(session, checksum));
 
     -- The given auction does not exist
     if (not Auction) then

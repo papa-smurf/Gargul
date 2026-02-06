@@ -585,7 +585,7 @@ function Test:simulateGroup(numberOfPlayers, includeSelf, includeCurrentGroupMem
             rank = 2,
             subgroup = 1,
             level = GL.User.level,
-            class = string.lower(GL.User.class),
+            class = strlower(GL.User.class),
             classFile = GL.User.classFile,
             zone = "Development Land",
             online = true,
@@ -616,8 +616,8 @@ function Test:simulateGroup(numberOfPlayers, includeSelf, includeCurrentGroupMem
             rank = 2,
             subgroup = 1,
             level = GL.User.level,
-            class = string.lower(class),
-            classFile = string.upper(class),
+            class = strlower(class),
+            classFile = strupper(class),
             zone = "Development Land",
             online = true,
             isDead = false,
@@ -879,7 +879,7 @@ function Test.Locale:sortTranslations()
         local value = Trans.value:gsub("|c00", "\\c00");
 
         -- Check if string contains newlines
-        if (string.find(value, "\n")) then
+        if (strfind(value, "\n")) then
             value = ('[[\n%s]]'):format(value);
         else
             value = ('"%s"'):format(value);

@@ -100,7 +100,7 @@ function Events:register(identifier, event, callback)
         self.Registry.EventListeners[event] = {};
     end
 
-    identifier = identifier or string.format("%s.%s.%s",
+    identifier = identifier or ("%s.%s.%s"):format(
         event,
         GetTime(),
         GL:uuid()

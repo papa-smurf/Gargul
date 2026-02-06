@@ -1,4 +1,4 @@
-﻿local L = Gargul_L;
+local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -291,7 +291,7 @@ function Changelog:draw()
 
         -- Version label
         local VersionLabel = AceGUI:Create("Label");
-        VersionLabel:SetText(string.format("|c00A79EFFv%s - |r%s", LogEntry.version or "", LogEntry.date or ""));
+        VersionLabel:SetText(("|c00A79EFFv%s - |r%s"):format(LogEntry.version or "", LogEntry.date or ""));
         VersionLabel:SetFontObject(_G["GameFontNormal"]);
         VersionLabel:SetHeight(10);
         VersionLabel:SetFullWidth(true);
@@ -317,20 +317,20 @@ function Changelog:draw()
                 ScrollFrame:AddChild(HorizontalSpacer);
 
                 local ChangeLabel = AceGUI:Create("Label");
-                ChangeLabel:SetText(string.format("\n|c00FFF569%s|r\n \n", change));
+                ChangeLabel:SetText(("\n|c00FFF569%s|r\n \n"):format(change));
                 ChangeLabel:SetFontObject(_G["GameFontNormal"]);
                 ChangeLabel:SetHeight(20);
                 ChangeLabel:SetFullWidth(true);
                 ScrollFrame:AddChild(ChangeLabel);
 
                 local LCG = LibStub("LibCustomGlowGargul-1.0");
-                local BorderColor = {1, 1, 1, 1};
+                local BorderColor = { 1, 1, 1, 1, };
                 LCG.PixelGlow_Start(ChangeLabel.frame, BorderColor, 140, 0, 5, 3, 10, 2, false, 2);
-                BorderColor = {.77, .12, .23, 1};
+                BorderColor = { .77, .12, .23, 1, };
                 LCG.PixelGlow_Start(ChangeLabel.frame, BorderColor, 70, .02, 5, 3, 10, 2, false, 1);
             else
                 local ChangeLabel = AceGUI:Create("Label");
-                ChangeLabel:SetText(string.format("|c00A79EFF-|r|c00FFF569 %s|r", change));
+                ChangeLabel:SetText(("|c00A79EFF-|r|c00FFF569 %s|r"):format(change));
                 ChangeLabel:SetFontObject(_G["GameFontNormal"]);
                 ChangeLabel:SetHeight(20);
                 ChangeLabel:SetFullWidth(true);

@@ -1,4 +1,4 @@
-﻿--[[ TEST MACROS
+--[[ TEST MACROS
     Add an item link to the queue or set it as the active item to be auctioned off (depends on whether queue is active)
     /script _G.Gargul.GDKP.Auctioneer:addItemLink("|cffa335ee|Hitem:40388::::::::80:::::|h[Journey's End]|h|r");
 
@@ -766,7 +766,7 @@ function Auctioneer:award()
     GL.Interface.Dialogs.PopupDialog:open{
         question = (L["Award %s to %s for %s?"]):format(
             Auction.Current.itemLink,
-            GL:nameFormat{name = winner, colorize = true},
+            GL:nameFormat{ name = winner, colorize = true, },
             "|c00FFF569" .. bid .. "|r"
         ),
         OnYes = function ()

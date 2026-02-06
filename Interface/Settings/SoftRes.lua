@@ -1,4 +1,4 @@
-﻿---@type GL
+---@type GL
 local _, GL = ...;
 
 local Overview = GL.Interface.Settings.Overview; ---@type SettingsOverview
@@ -37,8 +37,7 @@ function SoftRes:draw(Parent)
         },
         {
             label = "Whisper command",
-            description = string.format(
-                "Players can whisper '|cff%s!sr|r' or '|cff%s!softres|r' to you to double-check their soft-reserves",
+            description = ("Players can whisper '|cff%s!sr|r' or '|cff%s!softres|r' to you to double-check their soft-reserves"):format(
                 GL:classHexColor("rogue"),
                 GL:classHexColor("rogue")
             ),

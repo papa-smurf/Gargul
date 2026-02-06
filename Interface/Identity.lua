@@ -36,7 +36,7 @@ GL.Interface.Identity = {
             Logo:SetAllPoints();
 
             Window:SetScript("OnMouseUp", function(_, button)
-                if (button == 'LeftButton') then
+                if (button == "LeftButton") then
                     GL.Interface.Dialogs.HyperlinkDialog:open{
                         description = Identity.urlInfo,
                         hyperlink = Identity.url,
@@ -45,7 +45,7 @@ GL.Interface.Identity = {
             end);
 
             GL:stopHighlight(Window);
-            LCG.PixelGlow_Start(Window, {.59, .5, .82, 1}, 26, .02, 5, 2);
+            LCG.PixelGlow_Start(Window, { .59, .5, .82, 1, }, 26, .02, 5, 2);
 
             return Window;
         end,
@@ -79,7 +79,7 @@ GL.Interface.Identity = {
             TextBottom:SetFont(1.1, "OUTLINE");
 
             Window:SetScript("OnMouseUp", function(_, button)
-                if (button == 'LeftButton') then
+                if (button == "LeftButton") then
                     GL.Interface.Dialogs.HyperlinkDialog:open{
                         description = Identity.urlInfo,
                         hyperlink = Identity.url,
@@ -128,7 +128,7 @@ GL.Interface.Identity = {
                 Interface:addTooltip(Window, Identity.tooltip);
 
                 Window:SetScript("OnMouseUp", function(_, button)
-                    if (button == 'LeftButton') then
+                    if (button == "LeftButton") then
                         GL.Interface.Dialogs.HyperlinkDialog:open{
                             description = Identity.urlInfo,
                             hyperlink = Identity.url,
@@ -171,7 +171,7 @@ GL.Interface.Identity = {
                 Interface:addTooltip(Window, Identity.tooltip);
 
                 Window:SetScript("OnMouseUp", function(_, button)
-                    if (button == 'LeftButton') then
+                    if (button == "LeftButton") then
                         GL.Interface.Dialogs.HyperlinkDialog:open{
                             description = Identity.urlInfo,
                             hyperlink = Identity.url,
@@ -210,7 +210,7 @@ GL.Interface.Identity = {
             Logo:SetAllPoints();
 
             Window:SetScript("OnMouseUp", function(_, button)
-                if (button == 'LeftButton') then
+                if (button == "LeftButton") then
                     GL.Interface.Dialogs.HyperlinkDialog:open{
                         description = Identity.urlInfo,
                         hyperlink = Identity.url,
@@ -219,7 +219,7 @@ GL.Interface.Identity = {
             end);
 
             GL:stopHighlight(Window);
-            LCG.PixelGlow_Start(Window, {.59, .5, .82, 1}, 26, .02, 5, 2);
+            LCG.PixelGlow_Start(Window, { .59, .5, .82, 1, }, 26, .02, 5, 2);
 
             return Window;
         end,
@@ -247,7 +247,7 @@ GL.Interface.Identity = {
             Text:SetFont(1.4, "OUTLINE");
 
             Window:SetScript("OnMouseUp", function(_, button)
-                if (button == 'LeftButton') then
+                if (button == "LeftButton") then
                     GL.Interface.Dialogs.HyperlinkDialog:open{
                         description = Identity.urlInfo,
                         hyperlink = Identity.url,
@@ -287,7 +287,7 @@ GL.Interface.Identity = {
 
             Interface:addTooltip(Window, Identity.tooltip);
             Window:SetScript("OnMouseUp", function(_, button)
-                if (button == 'LeftButton') then
+                if (button == "LeftButton") then
                     GL.Interface.Dialogs.HyperlinkDialog:open{
                         description = Identity.urlInfo,
                         hyperlink = Identity.url,
@@ -326,7 +326,7 @@ GL.Interface.Identity = {
 
             Interface:addTooltip(Window, Identity.tooltip);
             Window:SetScript("OnMouseUp", function(_, button)
-                if (button == 'LeftButton') then
+                if (button == "LeftButton") then
                     GL.Interface.Dialogs.HyperlinkDialog:open{
                         description = Identity.urlInfo,
                         hyperlink = Identity.url,
@@ -365,7 +365,7 @@ GL.Interface.Identity = {
             Logo:SetSize(74, 74);
 
             Window:SetScript("OnMouseUp", function(_, button)
-                if (button == 'LeftButton') then
+                if (button == "LeftButton") then
                     GL.Interface.Dialogs.HyperlinkDialog:open{
                         description = Identity.urlInfo,
                         hyperlink = Identity.url,
@@ -374,7 +374,7 @@ GL.Interface.Identity = {
             end);
 
             GL:stopHighlight(Window);
-            LCG.PixelGlow_Start(Window, {.59, .5, .82, 1}, 26, .02, 5, 2);
+            LCG.PixelGlow_Start(Window, { .59, .5, .82, 1, }, 26, .02, 5, 2);
 
             return Window;
         end,
@@ -396,7 +396,7 @@ GL.Interface.Identity = {
             Logo:SetTexture("Interface/AddOns/Gargul/Assets/Identities/" .. Identity.id);
 
             Window:SetScript("OnMouseUp", function(_, button)
-                if (button == 'LeftButton') then
+                if (button == "LeftButton") then
                     GL.Interface.Dialogs.HyperlinkDialog:open{
                         description = Identity.urlInfo,
                         hyperlink = Identity.url,
@@ -422,7 +422,7 @@ GL.Interface.Identity = {
 
             Interface:addTooltip(Window, Identity.tooltip);
             Window:SetScript("OnMouseUp", function(_, button)
-                if (button == 'LeftButton') then
+                if (button == "LeftButton") then
                     GL.Interface.Dialogs.HyperlinkDialog:open{
                         description = Identity.urlInfo,
                         hyperlink = Identity.url,
@@ -451,7 +451,7 @@ GL.Interface.Identity = {
             Interface:addTooltip(Window, Identity.tooltip);
 
             Window:SetScript("OnMouseUp", function(_, button)
-                if (button == 'LeftButton') then
+                if (button == "LeftButton") then
                     GL.Interface.Dialogs.HyperlinkDialog:open{
                         description = Identity.urlInfo,
                         hyperlink = Identity.url,
@@ -488,7 +488,7 @@ GL.Interface.Identity = {
             Logo:SetAllPoints();
 
             Window:SetScript("OnMouseUp", function(_, button)
-                if (button == 'LeftButton') then
+                if (button == "LeftButton") then
                     GL.Interface.Dialogs.HyperlinkDialog:open{
                         description = Identity.urlInfo,
                         hyperlink = Identity.url,
@@ -497,7 +497,7 @@ GL.Interface.Identity = {
             end);
 
             GL:stopHighlight(Window);
-            LCG.PixelGlow_Start(Window, {.59, .5, .82, 1}, 26, .02, 5, 2);
+            LCG.PixelGlow_Start(Window, { .59, .5, .82, 1, }, 26, .02, 5, 2);
 
             return Window;
         end,
@@ -525,7 +525,7 @@ GL.Interface.Identity = {
             Text:SetFont(1.4, "OUTLINE");
 
             Window:SetScript("OnMouseUp", function(_, button)
-                if (button == 'LeftButton') then
+                if (button == "LeftButton") then
                     GL.Interface.Dialogs.HyperlinkDialog:open{
                         description = Identity.urlInfo,
                         hyperlink = Identity.url,
@@ -565,7 +565,7 @@ GL.Interface.Identity = {
 
             Interface:addTooltip(Window, Identity.tooltip);
             Window:SetScript("OnMouseUp", function(_, button)
-                if (button == 'LeftButton') then
+                if (button == "LeftButton") then
                     GL.Interface.Dialogs.HyperlinkDialog:open{
                         description = Identity.urlInfo,
                         hyperlink = Identity.url,
@@ -604,7 +604,7 @@ GL.Interface.Identity = {
 
             Interface:addTooltip(Window, Identity.tooltip);
             Window:SetScript("OnMouseUp", function(_, button)
-                if (button == 'LeftButton') then
+                if (button == "LeftButton") then
                     GL.Interface.Dialogs.HyperlinkDialog:open{
                         description = Identity.urlInfo,
                         hyperlink = Identity.url,

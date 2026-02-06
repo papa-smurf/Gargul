@@ -1,4 +1,4 @@
-﻿local L = Gargul_L;
+local L = Gargul_L;
 
 local _, GL = ...;
 
@@ -48,8 +48,7 @@ function Version:_init()
         self.firstBoot = true;
 
         if (not GL.firstBoot) then
-            print(string.format(
-                L["|c00%sGargul is now updated to |c00%sv%s"],
+            print((L["|c00%sGargul is now updated to |c00%sv%s"]):format(
                 GL.Data.Constants.addonHexColor,
                 GL.Data.Constants.addonHexColor,
                 self.current
@@ -60,7 +59,7 @@ function Version:_init()
     -- Check which version we last loaded before this one
     self.latestPriorVersionBooted = nil;
     for version in pairs(GL.DB.LoadDetails or {}) do
-        local major = string.sub(version, 1, 1);
+        local major = strsub(version, 1, 1);
         major = tonumber(major);
 
         if (major) then
@@ -194,7 +193,7 @@ end
 ---@return nil
 function Version:addRelease(versionString, quietly)
     if (type(versionString) ~= "string"
-        or not string.match(versionString, "%d+%.%d+%.%d+")
+        or not strmatch(versionString, "%d+%.%d+%.%d+")
     ) then
         if (not quietly) then
             GL:warning(L["Invalid version string provided in Version:addRelease"]);

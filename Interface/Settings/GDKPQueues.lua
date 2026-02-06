@@ -1,4 +1,4 @@
-﻿---@type GL
+---@type GL
 local _, GL = ...;
 
 ---@type SettingsOverview
@@ -60,7 +60,7 @@ function GDKPQueues:draw(Parent)
     local QualityList = {};
     local ItemQualityColors = GL.Data.Constants.ItemQualityColors;
     for i = 0, #ItemQualityColors do
-        QualityList[i] = string.format("|c00%s%s|r", ItemQualityColors[i].hex, ItemQualityColors[i].description);
+        QualityList[i] = ("|c00%s%s|r"):format(ItemQualityColors[i].hex, ItemQualityColors[i].description);
     end
 
     local MinimumDropQuality = GL.AceGUI:Create("Dropdown");

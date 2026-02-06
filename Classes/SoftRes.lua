@@ -1,4 +1,4 @@
-﻿local L = Gargul_L;
+local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -136,9 +136,8 @@ function SoftRes:handleWhisperCommand(_, message, sender)
     local name = GL:disambiguateName(sender);
 
     -- Fetch everything soft-reserved by the sender
-    local Reserves = GL:tableGet(self.MaterializedData.DetailsByPlayerName, string.format(
-        "%s.Items",
-        string.lower(name)
+    local Reserves = GL:tableGet(self.MaterializedData.DetailsByPlayerName, ("%s.Items"):format(
+        strlower(name)
     ), {});
 
     -- Nothing reserved
@@ -349,8 +348,8 @@ function SoftRes:materializeData()
     local HardReserveDetailsByID = {}; -- Hard reserve details per item id
 
     for _, SoftResEntry in pairs(DB:get("SoftRes.SoftReserves", {})) do
-        local class = string.lower(SoftResEntry.class or "");
-        local name = string.lower(SoftResEntry.name or "");
+        local class = strlower(SoftResEntry.class or "");
+        local name = strlower(SoftResEntry.name or "");
         local note = SoftResEntry.note or "";
         local plusOnes = SoftResEntry.plusOnes or 0;
 
@@ -495,7 +494,7 @@ end
 ---@param name string The name of the player
 ---@return table
 function SoftRes:getDetailsForPlayer(name)
-    name = string.lower(name);
+    name = strlower(name);
 
     if (GL:empty(name)) then
         return {};
@@ -509,7 +508,7 @@ end
 ---@param name string The name of the player
 ---@param defaultClass string|nil The default class in case the player's class could not be determined
 function SoftRes:getPlayerClass(name, defaultClass)
-    name = string.lower(name);
+    name = strlower(name);
     defaultClass = defaultClass or "priest";
 
     -- We try to fetch the class from the softreserve data first
@@ -633,7 +632,7 @@ function SoftRes:itemIDIsReservedByPlayer(itemID, playerName)
     for _, itemID in pairs(AllLinkedItemIDs or {}) do
         if (GL:inTable(
             SoftResData[tostring(itemID)] or {},
-            string.lower(GL:disambiguateName(playerName))
+            strlower(GL:disambiguateName(playerName))
         )) then
             return true;
         end
@@ -739,7 +738,7 @@ function SoftRes:playerReserveAmountsByItemID(itemID, inRaidOnly)
 
         -- User reserved the same item multiple times
         if (Entry.reservations > 1) then
-            entryString = string.format("%s (%sx)", GL:nameFormat{ name = Entry.player, }, Entry.reservations);
+            entryString = ("%s (%sx)"):format(GL:nameFormat{ name = Entry.player, }, Entry.reservations);
         end
 
         tinsert(ActiveSoftResDetails, GL:capitalize(entryString));
@@ -871,9 +870,8 @@ function SoftRes:playerReservesOnItem(idOrLink, playerName)
     local reserved = 0;
 
     for _, itemID in pairs(AllLinkedItemIDs or {}) do
-        reserved = reserved + GL:tableGet(self.MaterializedData.DetailsByPlayerName, string.format(
-            "%s.Items.%s",
-            string.lower(playerName),
+        reserved = reserved + GL:tableGet(self.MaterializedData.DetailsByPlayerName, ("%s.Items.%s"):format(
+            strlower(playerName),
             itemID
         ), 0);
     end
@@ -916,8 +914,7 @@ function SoftRes:import(data, openOverview)
 
         if (reportStatus) then
             for softResName, playerName in pairs(RewiredNames) do
-                GL:notice(string.format(
-                    L["Auto name fix: the SR of '%s' is now linked to '%s'"],
+                GL:notice((L["Auto name fix: the SR of '%s' is now linked to '%s'"]):format(
                     GL:capitalize(softResName),
                     GL:nameFormat{ name = playerName, colorize = true, }
                 ));
@@ -1134,7 +1131,7 @@ function SoftRes:importGargulData(data)
         local plusOnes = tonumber(Entry.plusOnes) or 0;
 
         -- WoW itself uses Death Knight, so let's rewrite for compatibility
-        if (string.lower(class) == "deathknight") then
+        if (strlower(class) == "deathknight") then
             class = "death knight";
         end
 
@@ -1260,11 +1257,11 @@ function SoftRes:importCSVData(data, reportStatus)
                 and not GL:empty(playerName)
             ) then
                 -- WoW itself uses Death Knight, so let's rewrite for compatibility
-                if (string.lower(class) == "deathknight") then
+                if (strlower(class) == "deathknight") then
                     class = "death knight";
                 end
 
-                playerName = string.lower(playerName);
+                playerName = strlower(playerName);
 
                 if (not SoftReserveData[playerName]) then
                     SoftReserveData[playerName] = {
@@ -1340,7 +1337,7 @@ function SoftRes:fixPlayerNames()
     -- Get the names of everyone in our group and lowercase them
     local GroupMemberNames = {};
     for _, playerName in pairs(GL.User:groupMemberNames()) do
-        tinsert(GroupMemberNames, string.lower(playerName));
+        tinsert(GroupMemberNames, strlower(playerName));
     end
 
     local GroupMembersThatReserved = {};
@@ -1354,7 +1351,7 @@ function SoftRes:fixPlayerNames()
 
         -- We don't know this player, potentially mistyped name
         else
-            PlayersNotInGroup[Reservation.name] = string.lower(Reservation.class);
+            PlayersNotInGroup[Reservation.name] = strlower(Reservation.class);
         end
     end
 
@@ -1504,7 +1501,7 @@ function SoftRes:playersWithoutSoftReserves()
     -- Materialized data is available, use it!
     if (not GL:empty(self.MaterializedData.DetailsByPlayerName)) then
         for _, playerName in pairs(GL.User:groupMemberNames()) do
-            if (not self.MaterializedData.DetailsByPlayerName[string.lower(playerName)]) then
+            if (not self.MaterializedData.DetailsByPlayerName[strlower(playerName)]) then
                 tinsert(PlayerNames, GL:capitalize(playerName));
             end
         end
@@ -1515,11 +1512,11 @@ function SoftRes:playersWithoutSoftReserves()
     -- No materialized data yet, use the raw softres data instead
     local GroupMemberReserved = {};
     for _, playerName in pairs(GL.User:groupMemberNames()) do
-        GroupMemberReserved[string.lower(playerName)] = false;
+        GroupMemberReserved[strlower(playerName)] = false;
     end
 
     for _, Reservation in pairs(DB.SoftRes.SoftReserves or {}) do
-        GroupMemberReserved[string.lower(Reservation.name)] = true;
+        GroupMemberReserved[strlower(Reservation.name)] = true;
     end
 
     for name, reserved in pairs(GroupMemberReserved) do

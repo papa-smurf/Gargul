@@ -1,4 +1,4 @@
-﻿local L = Gargul_L;
+local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -32,7 +32,7 @@ GDKP.Session = {
     inProgress = false,
     lastOutBidNotificationShownAt = 0,
     requestingData = false,
-    timerId = 0, -- ID of the timer event
+    timerID = 0, -- ID of the timer event
 
     ItemHistory = {}, -- Historical data for items
 };
@@ -377,8 +377,7 @@ function Session:tradeInitiated(Details)
                     return;
                 end
 
-                GL:error(string.format(
-                    L["Unable to add %s to the trade window. Try adding it manually!"],
+                GL:error((L["Unable to add %s to the trade window. Try adding it manually!"]):format(
                     GL:copperToMoney(balance)
                 ));
             end);
@@ -785,7 +784,7 @@ function Session:create(title, managementCut, sessionType)
     end
 
     local Instance = {
-        title = GL:capitalize(string.sub(title, 0, 30)),
+        title = GL:capitalize(strsub(title, 0, 30)),
         createdAt = GetServerTime(),
         managementCut = managementCut,
         type = sessionType,
@@ -844,7 +843,7 @@ function Session:edit(sessionID, title, managementCut, sessionType)
 
     Instance.type = sessionType;
 
-    Instance.title = GL:capitalize(string.sub(title, 0, 30));
+    Instance.title = GL:capitalize(strsub(title, 0, 30));
     DB:set("GDKP.Ledger." .. Instance.ID, Instance);
     Events:fire("GL.GDKP_SESSION_CHANGED", Instance, self:byID(sessionID));
 
@@ -1037,10 +1036,10 @@ function Session:announceRestoredAuction(sessionID, Auction)
             return;
         end
 
-        GL:sendChatMessage(string.format(L.CHAT["Pot was updated after restoring an auction, it now holds %s"], GDKPPot:humanTotal()), "GROUP");
+        GL:sendChatMessage((L.CHAT["Pot was updated after restoring an auction, it now holds %s"]):format(GDKPPot:humanTotal()), "GROUP");
     else
         -- Should not be possible, shenanigans?
-        GL:sendChatMessage(string.format(L.CHAT["Pot was updated after restoring an auction, it now holds %s"], GDKPPot:humanTotal()), "GROUP");
+        GL:sendChatMessage((L.CHAT["Pot was updated after restoring an auction, it now holds %s"]):format(GDKPPot:humanTotal()), "GROUP");
     end
 end
 

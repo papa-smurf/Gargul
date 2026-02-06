@@ -1,4 +1,4 @@
-﻿local L = Gargul_L;
+local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -204,7 +204,7 @@ function Comm:send(CommMessage, broadcastFinishedCallback, packageSentCallback)
 
     -- We lower the burst value and cps on large payloads to make sure
     -- our messages are not dropped by the server. ChatThrottleLib is not accurate enough sadly
-    local stringLength = string.len(compressedMessage);
+    local stringLength = strlen(compressedMessage);
     -- local throttle = stringLength > 1000;
     local throttle = false;
 
@@ -269,7 +269,7 @@ end
 ---@param distribution string
 ---@return boolean
 function Comm:listen(payload, distribution, playerName)
-    local stringLength = string.len(payload);
+    local stringLength = strlen(payload);
     payload = GL.CommMessage:decompress(payload);
 
     -- We're missing a payload
@@ -309,7 +309,7 @@ function Comm:listen(payload, distribution, playerName)
     payload.channel = distribution;
 
     if (not payload.senderFqn and playerName) then
-        payload.senderFqn = GL:nameFormat{name = playerName, forceRealm = true};
+        payload.senderFqn = GL:nameFormat{ name = playerName, forceRealm = true, };
     elseif (payload.senderFqn) then
         local ciSenderFqn = strlower(strtrim(payload.senderFqn));
         local ciPlayerName = strlower(strtrim(playerName));

@@ -1,4 +1,4 @@
-﻿local L = Gargul_L;
+local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -739,7 +739,7 @@ function BoostedRolls:broadcast()
         end, function (sent, total)
             Label = GL.Interface:get(GL.BoostedRolls, "Label.BroadcastProgress");
             if (Label) then
-                Label:SetText(string.format(L["Sent %s of %s bytes"], sent, total));
+                Label:SetText((L["Sent %s of %s bytes"]):format(sent, total));
             end
         end);
     end

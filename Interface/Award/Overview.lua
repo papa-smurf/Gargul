@@ -1,4 +1,4 @@
-﻿local L = Gargul_L;
+local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -324,10 +324,10 @@ function Overview:build()
 
     -- Make sure that the window is updated whenever an award changes
     GL.Events:register({
-        {"AwardOverviewItemAwardedListener", "GL.ITEM_AWARDED" },
-        {"AwardOverviewItemUnAwardedListener", "GL.ITEM_UNAWARDED" },
-        {"AwardOverviewItemEditedListener", "GL.ITEM_AWARD_EDITED" },
-        {"AwardOverviewItemEditedListener", "GL.ITEM_UNAWARDED" },
+        { "AwardOverviewItemAwardedListener", "GL.ITEM_AWARDED", },
+        { "AwardOverviewItemUnAwardedListener", "GL.ITEM_UNAWARDED", },
+        { "AwardOverviewItemEditedListener", "GL.ITEM_AWARD_EDITED", },
+        { "AwardOverviewItemEditedListener", "GL.ITEM_UNAWARDED", },
     }, function()
         GL.Ace:CancelTimer(self.RefreshTimer);
         self.RefreshTimer = GL.Ace:ScheduleTimer(function ()
@@ -627,10 +627,10 @@ function Overview:refreshItems()
                                 rollsPerPlayer[Roll.player] = 1;
                             else
                                 rollsPerPlayer[Roll.player] = rollsPerPlayer[Roll.player] + 1;
-                                rollCount = string.format("[%s]", rollsPerPlayer[Roll.player]);
+                                rollCount = ("[%s]"):format(rollsPerPlayer[Roll.player]);
                             end
 
-                            GameTooltip:AddLine(string.format("|c00%s%s|r: %s%s (%s%s)",
+                            GameTooltip:AddLine(("|c00%s%s|r: %s%s (%s%s)"):format(
                                 GL:classHexColor(Roll.class),
                                 Roll.player,
                                 Roll.amount,
@@ -647,7 +647,7 @@ function Overview:refreshItems()
                         end
 
                         linesAdded = true;
-                        local header = string.format(L["Items won by %s:"], GL:nameFormat(Entry.awardedTo));
+                        local header = (L["Items won by %s:"]):format(GL:nameFormat(Entry.awardedTo));
                         if (itemWasDisenchanted) then
                             header = L["Disenchanted items:"]
                         end
@@ -671,7 +671,7 @@ function Overview:refreshItems()
                                 BRString = (" " .. L["(BR: %s)"]):format(Entry.BRCost);
                             end
 
-                            local line = string.format("%s%s%s%s",
+                            local line = ("%s%s%s%s"):format(
                                 Entry.itemLink,
                                 OSString,
                                 BRString,
@@ -729,8 +729,7 @@ function Overview:refreshItems()
                         end
 
                         GL.Interface.Dialogs.PopupDialog:open{
-                            question = string.format(
-                                L["Are you sure you want to undo %s awarded to %s?%s"],
+                            question = (L["Are you sure you want to undo %s awarded to %s?%s"]):format(
                                 Entry.itemLink,
                                 Entry.awardedTo,
                                 BRString
@@ -762,14 +761,14 @@ function Overview:refreshItems()
                             GL.Interface.Dialogs.PopupDialog:open{
                                 question = (L["Award %s to %s?"]):format(
                                     Entry.itemLink,
-                                    GL:nameFormat{ name = playerName, colorize = true }
+                                    GL:nameFormat{ name = playerName, colorize = true, }
                                 ),
                                 OnYes = function ()
                                     if (not playerName or type(playerName) ~= "string") then
                                         return;
                                     end
 
-                                    playerName = GL:capitalize(string.trim(string.lower(GL:stripRealm(playerName))));
+                                    playerName = GL:capitalize(string.trim(strlower(GL:stripRealm(playerName))));
                                     GL.AwardedLoot:editWinner(Entry.checksum, playerName);
 
                                     GL.Interface.PlayerSelector:close();

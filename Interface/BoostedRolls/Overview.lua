@@ -158,7 +158,7 @@ function Overview:draw()
     BoostedRollsCurrentPoints:SetCallback("OnTextChanged", function (widget)
         local value = GL.BoostedRolls:toPoints(strtrim(widget:GetText()));
 
-        if not value then
+        if (not value) then
             return;
         end
 
@@ -440,7 +440,7 @@ function Overview:drawBoostedRollDataTable(Parent)
                 local selected = data[realrow].cols[1].value;
 
                 if (selected and type(selected) == "string") then
-                    self.selectedCharacter = string.lower(GL:addRealm(selected));
+                    self.selectedCharacter = strlower(GL:addRealm(selected));
                     self:loadPlayer();
                 end
             end
@@ -487,7 +487,7 @@ function Overview:refreshTable()
         end
         aliases = table.concat(aliases, ",");
 
-        local BoostedRollsColor = {r=0,g=1,b=0,a=1};
+        local BoostedRollsColor = { r = 0, g = 1, b = 0, a = 1, };
 
         tinsert(TableData, {
             cols = {
@@ -505,7 +505,7 @@ function Overview:refreshTable()
                 },
                 {
                     value = aliases,
-                    color = {r=1,g=1,b=1,a=1},
+                    color = { r = 1, g = 1, b = 1, a = 1, },
                 },
             },
         });
@@ -600,7 +600,7 @@ function Overview:loadPlayer()
         and BoostedRolls.MaterializedData.DetailsByPlayerName[self.selectedCharacter]
     ) then
         class = BoostedRolls.MaterializedData.DetailsByPlayerName[self.selectedCharacter].class;
-        name = GL:nameFormat{ name = self.selectedCharacter, stripRealm = true };
+        name = GL:nameFormat{ name = self.selectedCharacter, stripRealm = true, };
         Aliases = BoostedRolls.MaterializedData.DetailsByPlayerName[self.selectedCharacter].Aliases;
     end
     

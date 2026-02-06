@@ -1,4 +1,4 @@
-﻿local L = Gargul_L;
+local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -10,8 +10,7 @@ local AceGUI = GL.AceGUI;
 
 ---@class WelcomeSettings
 GL.Interface.Settings.Welcome = {
-    description = string.format(
-        "\n|c00FFF569Welcome! Gargul can be used and tested without being in a raid\n\n|c00A79EFFTRY IT OUT|r by using the following hotkeys on an item in your bags or an item link in chat!\n\nRoll: |c00A79EFF%s|r. Award: |c00A79EFF%s|r. Disenchant: |c00A79EFF%s|r%s|r",
+    description = ("\n|c00FFF569Welcome! Gargul can be used and tested without being in a raid\n\n|c00A79EFFTRY IT OUT|r by using the following hotkeys on an item in your bags or an item link in chat!\n\nRoll: |c00A79EFF%s|r. Award: |c00A79EFF%s|r. Disenchant: |c00A79EFF%s|r%s|r"):format(
         GL.Settings:get("ShortcutKeys.rollOffOrAuction"),
         GL.Settings:get("ShortcutKeys.award"),
         GL.Settings:get("ShortcutKeys.disenchant"),
@@ -106,19 +105,19 @@ function Welcome:draw(Parent)
 
     local PatronNames = {};
     for _, name in pairs(Constants.Vips.Legendary or {}) do
-        tinsert(PatronNames, string.format("|c%s%s|r", Colors.legendary, name));
+        tinsert(PatronNames, ("|c%s%s|r"):format(Colors.legendary, name));
     end
 
     for _, name in pairs(Constants.Vips.Epic or {}) do
-        tinsert(PatronNames, string.format("|c%s%s|r", Colors.epic, name));
+        tinsert(PatronNames, ("|c%s%s|r"):format(Colors.epic, name));
     end
 
     for _, name in pairs(Constants.Vips.Rare or {}) do
-        tinsert(PatronNames, string.format("|c%s%s|r", Colors.rare, name));
+        tinsert(PatronNames, ("|c%s%s|r"):format(Colors.rare, name));
     end
 
     for _, name in pairs(Constants.Vips.Uncommon or {}) do
-        tinsert(PatronNames, string.format("|c%s%s|r", Colors.uncommon, name));
+        tinsert(PatronNames, ("|c%s%s|r"):format(Colors.uncommon, name));
     end
 
     if (not GL:empty(PatronNames)) then
@@ -126,16 +125,16 @@ function Welcome:draw(Parent)
         local lastColor = "";
         local first = true;
         for _, patron in pairs (PatronNames) do
-            local color = string.sub(patron, 1, 10);
+            local color = strsub(patron, 1, 10);
 
             if (not first and color ~= lastColor) then
-                patronString = string.format("%s%s%s",
+                patronString = ("%s%s%s"):format(
                     patronString,
                     "\n\n",
                     patron
                 );
             elseif (not first) then
-                patronString = string.format("%s, %s",
+                patronString = ("%s, %s"):format(
                     patronString,
                     patron
                 );
@@ -162,7 +161,7 @@ function Welcome:draw(Parent)
 
     local ContributorNames = {};
     for _, name in pairs(Constants.Vips.Contributors or {}) do
-        tinsert(ContributorNames, string.format("|c00%s%s|r", Colors.common, name));
+        tinsert(ContributorNames, ("|c00%s%s|r"):format(Colors.common, name));
     end
 
     if (not GL:empty(ContributorNames)) then

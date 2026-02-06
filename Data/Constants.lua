@@ -22,7 +22,7 @@ GL.Data.Constants = {
         PRIOLIST = 3,
     },
 
-    defaultFrameTitle = string.format("Gargul |c00967FD2v%s|r", GL.version),
+    defaultFrameTitle = ("Gargul |c00967FD2v%s|r"):format(GL.version),
     discordURL = "https://discord.gg/D3mDhYPVzf",
 
     AccentedCharacterCaseMap = {
@@ -103,7 +103,7 @@ GL.Data.Constants = {
             RGB255 = { 157, 157, 157 },
             rgb = "0.62,0.62,0.62",
             RGB = { 0.62, 0.62, 0.62 },
-            hex = "9d9d9d"
+            hex = "9D9D9D"
         },
         [1] = {
             description = "Common",
@@ -111,7 +111,7 @@ GL.Data.Constants = {
             RGB255 = { 255, 255, 255 },
             rgb = "1.00,1.00,1.00",
             RGB = { 1.00, 1.00, 1.00 },
-            hex = "ffffff"
+            hex = "FFFFFF"
         },
         [2] = {
             description = "Uncommon",
@@ -119,7 +119,7 @@ GL.Data.Constants = {
             RGB255 = { 30, 255, 0 },
             rgb = "0.12,1.00,0.00",
             RGB = { 0.12, 1.00, 0.00 },
-            hex = "1eff00"
+            hex = "1EFF00"
         },
         [3] = {
             description = "Rare",
@@ -127,7 +127,7 @@ GL.Data.Constants = {
             RGB255 = { 0, 112, 221 },
             rgb = "0.00,0.44,0.87",
             RGB = { 0.00, 0.44, 0.87 },
-            hex = "0070dd"
+            hex = "0070DD"
         },
         [4] = {
             description = "Epic",
@@ -135,7 +135,7 @@ GL.Data.Constants = {
             RGB255 = { 163, 53, 238 },
             rgb = "0.64,0.21,0.93",
             RGB = { 0.64, 0.21, 0.93 },
-            hex = "a335ee"
+            hex = "A335EE"
         },
         [5] = {
             description = "Legendary",
@@ -143,7 +143,7 @@ GL.Data.Constants = {
             RGB255 = { 255, 128, 0 },
             rgb = "1.00,0.50,0.00",
             RGB = { 1.00, 0.50, 0.00 },
-            hex = "ff8000"
+            hex = "FF8000"
         },
         [6] = {
             description = "Artifact",
@@ -151,7 +151,7 @@ GL.Data.Constants = {
             RGB255 = { 230, 204, 128 },
             rgb = "0.90,0.80,0.50",
             RGB = { 0.90, 0.80, 0.50 },
-            hex = "e6cc80"
+            hex = "E6CC80"
         },
         [7] = {
             description = "Heirloom",
@@ -159,7 +159,7 @@ GL.Data.Constants = {
             RGB255 = { 0, 204, 255 },
             rgb = "0.00,0.8,1.0",
             RGB = { 0.00, 0.8, 1.0 },
-            hex = "00ccff"
+            hex = "00CCFF"
         },
         [8] = {
             description = "WoW Token",
@@ -167,19 +167,19 @@ GL.Data.Constants = {
             RGB255 = { 0, 204, 255 },
             rgb = "0.00,0.8,1.0",
             RGB = { 0.00, 0.8, 1.0 },
-            hex = "00ccff"
+            hex = "00CCFF"
         },
     },
 
     HexColorsToItemQuality = {
-        ["9d9d9d"] = 0,
-        ["ffffff"] = 1,
-        ["1eff00"] = 2,
-        ["0070dd"] = 3,
-        ["a335ee"] = 4,
-        ["ff8000"] = 5,
-        ["e6cc80"] = 6,
-        ["00ccff"] = 7,
+        ["1EFF00"] = 2,
+        ["0070DD"] = 3,
+        ["00CCFF"] = 7,
+        ["9D9D9D"] = 0,
+        A335EE = 4,
+        E6CC80 = 6,
+        FFFFFF = 1,
+        FF8000 = 5,
     },
 
     Vips = {
@@ -221,9 +221,9 @@ GL.Data.Constants = {
     },
 
     --[[ GLOBAL ]]
-    addonHexColor =  "967FD2",
+    addonHexColor = "967FD2",
     commandHexColor = "1EFF00",
-    disabledTextColor =  "5F5F5F",
+    disabledTextColor = "5F5F5F",
 
     success = 0,
     failure = 1,

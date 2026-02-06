@@ -1,4 +1,4 @@
-﻿local L = Gargul_L;
+local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -144,6 +144,6 @@ function GDKP:importPerItemSettings(data)
     end
 
     if (imported > 0) then
-        GL:success(string.format(L["Successfully imported data for %s items"], tostring(imported)));
+        GL:success((L["Successfully imported data for %s items"]):format(tostring(imported)));
     end
 end

@@ -1,11 +1,11 @@
-﻿---@type GL
+---@type GL
 local _, GL = ...;
 
 local Overview = GL.Interface.Settings.Overview; ---@type SettingsOverview
 
 ---@class AwardingLootSettings
 GL.Interface.Settings.AwardingLoot = {
-    description = string.format("By default, Gargul will attempt to aid in trading items to the winner and post congratulatory messages in the appropriate group channel.\n\nTo award items you can %s an item from your inventory, enemy loot window or trade timer bar.", GL.Settings:get("ShortcutKeys.award")),
+    description = ("By default, Gargul will attempt to aid in trading items to the winner and post congratulatory messages in the appropriate group channel.\n\nTo award items you can %s an item from your inventory, enemy loot window or trade timer bar."):format(GL.Settings:get("ShortcutKeys.award")),
     wikiUrl = "https://github.com/papa-smurf/Gargul/wiki/Awarding-Items",
 };
 local AwardingLoot = GL.Interface.Settings.AwardingLoot; ---@type AwardingLootSettings

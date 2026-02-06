@@ -1,4 +1,4 @@
-﻿local L = Gargul_L;
+local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -303,7 +303,7 @@ function ClientInterface:build()
             end,
         },
         "divider",
-        {text = string.sub(MODIFIERS_COLON or "Modifiers:", 1, -2), isTitle = true, notCheckable = true },
+        {text = strsub(MODIFIERS_COLON or "Modifiers:", 1, -2), isTitle = true, notCheckable = true },
         {
             text = ITEM_MOD_AGILITY_SHORT,
             checked = function ()
@@ -1395,10 +1395,10 @@ function ClientInterface:filterAndSort()
     local RowsToShow = {};
     local filterConcernsLevel = false;
     local filterValue = self.Search:GetText();
-    local operator = filterValue:match('\>=') or nil;
-    operator = operator and operator or filterValue:match('\<=');
-    operator = operator and operator or filterValue:match('\>');
-    operator = operator and operator or filterValue:match('\<');
+    local operator = filterValue:match(">=") or nil;
+    operator = operator and operator or filterValue:match("<=");
+    operator = operator and operator or filterValue:match(">");
+    operator = operator and operator or filterValue:match("<");
 
     if (operator) then
         filterValue = filterValue:gsub(operator, "");

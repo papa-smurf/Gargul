@@ -1,4 +1,4 @@
-﻿local L = Gargul_L;
+local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -85,10 +85,9 @@ function Auctioneer:open(keepPreviousItems)
     local guild = "";
     local CreatedBy = ActiveSession.CreatedBy or { class = "priest", name = "unknown", guild = "unknown", uuid = "unknown"};
     if (CreatedBy.guild) then
-        guild = string.format(" |c001EFF00<%s>|r", CreatedBy.guild);
+        guild = (" |c001EFF00<%s>|r"):format(CreatedBy.guild);
     end
-    self.SessionDetails:SetText(string.format(
-        L["Active GDKP Session: |c00967FD2%s | By %s%s | On |c00967FD2%s"],
+    self.SessionDetails:SetText((L["Active GDKP Session: |c00967FD2%s | By %s%s | On |c00967FD2%s"]):format(
         ActiveSession.title,
         GL:nameFormat{ name = CreatedBy.name, realm = CreatedBy.realm, colorize = true, },
         guild,
@@ -422,7 +421,7 @@ function Auctioneer:build()
     Next:SetPoint("CENTER", FillFromInventory, "CENTER");
     Next:SetPoint("RIGHT", Window, "RIGHT", -20, 0);
     Next:SetScript("OnClick", function ()
-        local itemsWereChecked = (function()
+        local itemsWereChecked = (function ()
             for _, Row in pairs(self.ItemRows or {}) do
                 if (Row and Row._Select) then
                     if (Row._Select:GetChecked()) then
@@ -533,10 +532,10 @@ function Auctioneer:filterAndSort()
     local ItemHolder = self.ItemHolder;
     local RowsToShow = {};
     local filterConcernsLevel = false;
-    local operator = filterValue:match('\>=') or nil;
-    operator = operator and operator or filterValue:match('\<=');
-    operator = operator and operator or filterValue:match('\>');
-    operator = operator and operator or filterValue:match('\<');
+    local operator = filterValue:match(">=") or nil;
+    operator = operator and operator or filterValue:match("<=");
+    operator = operator and operator or filterValue:match(">");
+    operator = operator and operator or filterValue:match("<");
 
     if (operator) then
         filterValue = filterValue:gsub(operator, "");
@@ -554,7 +553,7 @@ function Auctioneer:filterAndSort()
         ItemRow:SetAlpha(0);
         ItemRow:SetHeight(0);
 
-        (function()
+        (function ()
             -- Make sure we have all the required data and the auction is still active
             if (not ItemRow._Details
                 or not ItemRow._Details.level
@@ -644,7 +643,7 @@ function Auctioneer:start()
     -- Check which items were selected and get their minimum/increment
     local itemsWereChecked = false;
     for _, ItemRow in pairs(self.ItemRows or {}) do
-        (function()
+        (function ()
             if (type(ItemRow) ~= "table" or not ItemRow._Details.link
                 or (ItemRow._Select and not ItemRow._Select:GetChecked())
             ) then

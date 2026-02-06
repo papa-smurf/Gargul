@@ -1,4 +1,4 @@
-﻿---@type GL
+---@type GL
 local _, GL = ...;
 
 local Overview = GL.Interface.Settings.Overview; ---@type SettingsOverview
@@ -70,7 +70,7 @@ function DroppedLoot:draw(Parent)
     Parent:AddChild(HorizontalSpacer);
 
     local defaultTestItems = (function ()
-        local normalizedPlayerName = string.lower(GL.User.name);
+        local normalizedPlayerName = strlower(GL.User.name);
         local Reserved = GL.SoftRes:getDetailsForPlayer(normalizedPlayerName);
         local ItemIDs = {};
 
@@ -87,9 +87,9 @@ function DroppedLoot:draw(Parent)
             local TMBItemFound = false;
             for itemID, ItemEntry in pairs(GL.DB:get("TMB.Items", {})) do
                 for _, Entry in pairs(ItemEntry) do
-                    local playerName = string.lower(GL:disambiguateName(Entry.character));
+                    local playerName = strlower(GL:disambiguateName(Entry.character));
 
-                    --- NOTE TO SELF: it's (os) because of the string.lower, if you remove the lower then change below accordingly!
+                    --- NOTE TO SELF: it's (os) because of the strlower, if you remove the lower then change below accordingly!
                     if (normalizedPlayerName == string.gsub(playerName, "%(os%)", "")) then
                         tinsert(ItemIDs, itemID);
                         TMBItemFound = true;
@@ -111,8 +111,7 @@ function DroppedLoot:draw(Parent)
     TestItems:SetHeight(20);
     TestItems:SetFullWidth(true);
     TestItems:SetText(defaultTestItems);
-    TestItems:SetLabel(string.format(
-        "|cff%sAdd item links or IDs here separated by ; (semicolon) and 'Simulate drop' to preview the announce:|r",
+    TestItems:SetLabel(("|cff%sAdd item links or IDs here separated by ; (semicolon) and 'Simulate drop' to preview the announce:|r"):format(
         GL:classHexColor("rogue")
     ));
     Parent:AddChild(TestItems);

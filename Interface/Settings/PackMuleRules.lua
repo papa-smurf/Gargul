@@ -1,22 +1,22 @@
-﻿---@type GL
+---@type GL
 local _, GL = ...;
 
 local Overview = GL.Interface.Settings.Overview; ---@type SettingsOverview
 
 ---@class PackMuleRulesSettings
 GL.Interface.Settings.PackMuleRules = {
-    description = [[For group loot use: |c00f7922ePASS|r, |c00f7922eGREED|r, |c00f7922eNEED|r, |c00f7922eIGNORE|r
-    Note: group loot rules only work on items that are tradeable after picking them up. |c00f7922eNEED|r by default only works when you have lead/assist (see /gl pm settings)!
+    description = [[For group loot use: |c00F7922EPASS|r, |c00F7922EGREED|r, |c00F7922ENEED|r, |c00F7922EIGNORE|r
+    Note: group loot rules only work on items that are tradeable after picking them up. |c00F7922ENEED|r by default only works when you have lead/assist (see /gl pm settings)!
     
     For Master Looting use player names and placeholders:
-    |c00f7922eSELF|r - send to yourself
-    |c00f7922eRANDOM|r - send to random player
-    |c00f7922eRR|r - round robin
-    |c00f7922eDE|r - send to disenchanter (/gl sd [mydisenchanter])
-    |c00f7922eIGNORE|r - prevent from being auto-looted
+    |c00F7922ESELF|r - send to yourself
+    |c00F7922ERANDOM|r - send to random player
+    |c00F7922ERR|r - round robin
+    |c00F7922EDE|r - send to disenchanter (/gl sd [mydisenchanter])
+    |c00F7922EIGNORE|r - prevent from being auto-looted
     List of players are also supported:
-    |c00f7922ePlayer1,Player2,SELF|r - Items will be sent to a random person in this list.
-    Example to send an item to the first player who's available in the raid by adding an exclamation mark: |c00f7922e!Player1,!Player2,SELF|r
+    |c00F7922EPlayer1,Player2,SELF|r - Items will be sent to a random person in this list.
+    Example to send an item to the first player who's available in the raid by adding an exclamation mark: |c00F7922E!Player1,!Player2,SELF|r
     ]],
 
     UIComponents = {
@@ -81,9 +81,9 @@ function PackMuleRules:draw(Parent)
     Overview:drawSpacer(Parent, 20, 1);
 
     SectionDescription = GL.AceGUI:Create("Label");
-    SectionDescription:SetText([[You can add item IDs, item links (shift click or drag/drop), item names and name wilcards: |c00f7922e*ushroom|r, |c00f7922emushroo*|r and |c00f7922e*ushroo*|r will all match an item named |c00f7922emushroom|r.
+    SectionDescription:SetText([[You can add item IDs, item links (shift click or drag/drop), item names and name wilcards: |c00F7922E*ushroom|r, |c00F7922Emushroo*|r and |c00F7922E*ushroo*|r will all match an item named |c00F7922Emushroom|r.
 
-|c00f7922eIMPORTANT NOTICE:|r Rules based on item ID or item link take priority over name-based item rules! Example: |c00f7922e779 > SELF|r comes before |c00f7922eShiny Seashell > Player2|r
+|c00F7922EIMPORTANT NOTICE:|r Rules based on item ID or item link take priority over name-based item rules! Example: |c00F7922E779 > SELF|r comes before |c00F7922EShiny Seashell > Player2|r
     ]]
     );
     SectionDescription:SetFontObject(_G["GameFontNormal"]);
@@ -246,7 +246,7 @@ function PackMuleRules:drawLowerThanQualityRule(Frame, Rule)
 
     local ItemQualityColors = GL.Data.Constants.ItemQualityColors;
     for i = lowestValidItemQuality, highestValidItemQuality do
-        LowerThanList[i] = string.format("|c00%s%s|r", ItemQualityColors[i].hex, ItemQualityColors[i].description);
+        LowerThanList[i] = ("|c00%s%s|r"):format(ItemQualityColors[i].hex, ItemQualityColors[i].description);
     end
 
     -- DROPDOWN
@@ -263,7 +263,7 @@ function PackMuleRules:drawLowerThanQualityRule(Frame, Rule)
 
     -- LABEL: to
     local afterLowerThanRuleLabel = GL.AceGUI:Create("Label");
-    afterLowerThanRuleLabel:SetText("|c00f7922eand lower|r to");
+    afterLowerThanRuleLabel:SetText("|c00F7922Eand lower|r to");
     afterLowerThanRuleLabel:SetHeight(20);
     afterLowerThanRuleLabel:SetWidth(72);
     Row:AddChild(afterLowerThanRuleLabel);
@@ -306,7 +306,7 @@ function PackMuleRules:drawHigherThanQualityRule(Frame, Rule)
 
     local ItemQualityColors = GL.Data.Constants.ItemQualityColors;
     for i = lowestValidItemQuality, highestValidItemQuality do
-        HigherThanList[i] = string.format("|c00%s%s|r", ItemQualityColors[i].hex, ItemQualityColors[i].description);
+        HigherThanList[i] = ("|c00%s%s|r"):format(ItemQualityColors[i].hex, ItemQualityColors[i].description);
     end
 
     -- DROPDOWN
@@ -323,7 +323,7 @@ function PackMuleRules:drawHigherThanQualityRule(Frame, Rule)
 
     -- LABEL: to
     local afterHigherThanRuleLabel = GL.AceGUI:Create("Label");
-    afterHigherThanRuleLabel:SetText("|c00f7922eand higher|r to");
+    afterHigherThanRuleLabel:SetText("|c00F7922Eand higher|r to");
     afterHigherThanRuleLabel:SetHeight(20);
     afterHigherThanRuleLabel:SetWidth(72);
     Row:AddChild(afterHigherThanRuleLabel);

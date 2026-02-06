@@ -1,4 +1,4 @@
-﻿local L = Gargul_L;
+local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -196,7 +196,7 @@ function MailCuts:refreshPlayerCuts()
         local nameFormatted = GL:nameFormat(player);
         if (MailHistory) then
             Lines = {
-                string.format(L["Mail History for |c00967FD2%s"], nameFormatted),
+                (L["Mail History for |c00967FD2%s"]):format(nameFormatted),
                 " ",
             };
             table.sort(MailHistory, function (a, b)
@@ -210,7 +210,7 @@ function MailCuts:refreshPlayerCuts()
             for _, Entry in pairs(MailHistory or {}) do
                 hasEntries = true;
 
-                tinsert(Lines, string.format("%s: %s",
+                tinsert(Lines, ("%s: %s"):format(
                     date(L["%d-%m %H:%M"], Entry.timestamp),
                     Entry.message
                 ));
@@ -369,7 +369,7 @@ function MailCuts:mailPlayerCut(player, callback)
     -- Check if we actually need to pay this person
     local outstandingCopper = GDKPSession:copperOwedToPlayer(player, Session.ID);
     if (outstandingCopper and outstandingCopper < 1) then
-        GL:success(string.format(L["You don't owe %s any gold"], player));
+        GL:success((L["You don't owe %s any gold"]):format(player));
         return callback(true);
     elseif (not outstandingCopper) then
         return;
@@ -379,7 +379,7 @@ function MailCuts:mailPlayerCut(player, callback)
     local originalCopper = GetMoney();
     local copperLeftAfterMailing = originalCopper - outstandingCopper - MAIL_COST;
     if (copperLeftAfterMailing < 0) then
-        GL:warning(string.format(L["You don't have enough gold to pay %s"], player));
+        GL:warning((L["You don't have enough gold to pay %s"]):format(player));
         return callback(false);
     end
 
@@ -413,7 +413,7 @@ function MailCuts:mailPlayerCut(player, callback)
 
                 local copperLeftMatchesExpectation = GetMoney() == copperLeftAfterMailing;
                 if (copperLeftMatchesExpectation) then
-                    message = string.format(L["Sent %sg to %s"], gold, player);
+                    message = (L["Sent %sg to %s"]):format(gold, player);
                     GL:success(message);
 
                     Events:fire("GL.GDKP_CUT_MAILED");

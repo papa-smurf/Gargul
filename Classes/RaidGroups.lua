@@ -1,4 +1,4 @@
-﻿local L = Gargul_L;
+local L = Gargul_L;
 
 --[[
     This class allows us to quickly change
@@ -32,7 +32,7 @@ function RaidGroups:toCSV()
         csv = csv .. Player.name .. ",";
     end
 
-    GL:frameMessage(string.sub(csv, 1, -2));
+    GL:frameMessage(strsub(csv, 1, -2));
 end
 
 --- Draw the ui that allows us to import/write a raid roster
@@ -228,7 +228,7 @@ function RaidGroups:drawImporter()
             question = L["Are you sure?"],
             OnYes = function ()
                 GL:forEachGroupMember(function (Member)
-                    if (GL:iEquals(string.lower(Member.name), GL.User.name)) then
+                    if (GL:iEquals(strlower(Member.name), GL.User.name)) then
                         return;
                     end
 
@@ -342,7 +342,7 @@ function RaidGroups:normalizeWowheadInput(input)
 
     -- A helper function to transform a wowhead spec hash into a spec index (see https://wow.tools/dbc/?dbc=talenttab&build=2.5.2.40260#page=1)
     local function specHashToSpec(specHash)
-        local wowheadSpecIndexes = {0,41,61,81,161,163,164,181,182,183,201,202,203,261,262,263,281,282,283,301,302,303,361,362,363,381,382,383};
+        local wowheadSpecIndexes = { 0, 41, 61, 81, 161, 163, 164, 181, 182, 183, 201, 202, 203, 261, 262, 263, 281, 282, 283, 301, 302, 303, 361, 362, 363, 381, 382, 383, };
         local wowheadSpecHashes = "0bcdfghjkmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ123456789";
         local hashPosition = strfind(wowheadSpecHashes, specHash);
 
@@ -434,7 +434,7 @@ function RaidGroups:listPlayerNames(raidGroupCsv)
         for _, playerName in pairs(Players) do
             if (group < 9 -- group 9 is a group we reserve for specifying the tanks
                 and not GL:empty(playerName) -- Make sure we skip empty names
-                and string.lower(playerName) ~= string.lower(GL.User.name) -- No need to invite ourselves
+                and strlower(playerName) ~= strlower(GL.User.name) -- No need to invite ourselves
             ) then
                 tinsert(PlayerNames, playerName);
             end
@@ -466,7 +466,7 @@ function RaidGroups:checkAttendance(raidGroupCsv, OutPutLabel)
     -- Check who's in the raid who doesn't belong
     local PlayersInRaid = {};
     for _, Player in pairs(GL.User:groupMembers()) do
-        Player.name = string.lower(Player.name);
+        Player.name = strlower(Player.name);
         PlayersInRaid[Player.name] = true;
 
         if (not GL:iEquals(GL.User.name, Player.name)
@@ -478,19 +478,19 @@ function RaidGroups:checkAttendance(raidGroupCsv, OutPutLabel)
 
     -- Check who's missing
     for _, playerName in pairs(PlayersOnRoster) do
-        playerName = string.lower(playerName);
+        playerName = strlower(playerName);
         if (not PlayersInRaid[playerName]) then
             tinsert(MissingPlayers, GL:capitalize(playerName));
         end
     end
 
-    OutPutLabel:SetText(string.format([[
+    OutPutLabel:SetText(([[
 The following people are missing in the raid:
 |c00be3333%s|r
 
 The following people are in the raid but shouldn't be:
 |c00f7922e%s|r
-]],
+]]):format(
     table.concat(MissingPlayers, ", "),
     table.concat(UnknownPlayers, ", ")
     ));
@@ -504,13 +504,13 @@ end
 function RaidGroups:kickUnwanted(raidGroupCsv)
     local WantedPlayers = self:listPlayerNames(raidGroupCsv);
     for key, name in pairs(WantedPlayers) do
-        WantedPlayers[key] = string.lower(name);
+        WantedPlayers[key] = strlower(name);
     end
     WantedPlayers = GL:tableFlip(WantedPlayers);
 
     GL:forEachGroupMember(function (Member)
-        if (not GL:iEquals(string.lower(Member.name), GL.User.name)
-            and not WantedPlayers[string.lower(Member.name)]
+        if (not GL:iEquals(strlower(Member.name), GL.User.name)
+            and not WantedPlayers[strlower(Member.name)]
         ) then
             -- Kick the player!
             UninviteUnit(GL:iEquals(Member.realm, GL.User.realm) and Member.name or Member.fqn);
@@ -553,7 +553,7 @@ function RaidGroups:applyRaidGroups(raidGroupCsv)
         local Players = GL:explode(Segments[2], ",");
 
         for _, playerName in pairs(Players) do
-            playerName = string.lower(playerName);
+            playerName = strlower(playerName);
 
             if (group < 9 -- group 9 is a group we reserve for specifying the tanks
                 and not GL:empty(playerName) -- Make sure we skip empty names
@@ -576,7 +576,7 @@ function RaidGroups:applyRaidGroups(raidGroupCsv)
     for i = 1, 8 do RaidersPerGroup[i] = {}; end
     for i = 1, 8 do NumRaidersInGroup[i] = 0; end
     for _, Raider in pairs(GL.User:groupMembers()) do
-        Raider.name = string.lower(Raider.name);
+        Raider.name = strlower(Raider.name);
 
         if (UnitAffectingCombat("raid" .. Raider.index)) then
             return GL:warning((L["Can't sort groups while %s is in combat!"]):format(GL:nameFormat{ name = Raider.name, colorize = true, }));
@@ -615,8 +615,7 @@ function RaidGroups:applyRaidGroups(raidGroupCsv)
         ) then
             -- The raider's desired group is not full yet so we can just move him
             if (NumRaidersInGroup[raidersDesiredGroup] < _G.MEMBERS_PER_RAID_GROUP) then
-                GL:debug(string.format(
-                    "%s wants to be in group %s which is not full yet, so move him",
+                GL:debug(("%s wants to be in group %s which is not full yet, so move him"):format(
                     Raider.name,
                     raidersDesiredGroup
                 ));
@@ -632,8 +631,7 @@ function RaidGroups:applyRaidGroups(raidGroupCsv)
                     local teamMatesDesiredGroup = DesiredGroupByPlayerName[TeamMate.name];
 
                     if (teamMatesDesiredGroup ~= TeamMate.subgroup) then
-                        GL:debug(string.format(
-                            "%s is currently in group %s but wants to be in group %s so we can switch",
+                        GL:debug(("%s is currently in group %s but wants to be in group %s so we can switch"):format(
                             TeamMate.name,
                             TeamMate.subgroup,
                             DesiredGroupByPlayerName[TeamMate.name]
@@ -730,7 +728,7 @@ function RaidGroups:updateTankAssignmentButton()
     local macros = "";
     for _, tankName in pairs(Tanks) do
         if (not MainTanksByName[tankName]) then
-            macros = string.format("%s/mt %s\n", macros, tankName);
+            macros = ("%s/mt %s\n"):format(macros, tankName);
         end
     end
 
@@ -784,7 +782,7 @@ function RaidGroups:processMigrations(Migrations, numberOfMigrations, index)
         local rightIndex = 0;
 
         for index = 1, _G.MAX_RAID_MEMBERS do
-            local nameOnIndex = string.lower(GetRaidRosterInfo(index));
+            local nameOnIndex = strlower(GetRaidRosterInfo(index));
 
             if (leftName == nameOnIndex) then
                 leftIndex = index;

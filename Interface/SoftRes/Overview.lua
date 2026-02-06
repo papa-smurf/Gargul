@@ -1,4 +1,4 @@
-﻿local L = Gargul_L;
+local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -44,8 +44,7 @@ function Overview:draw()
     GL.Interface:AceGUIDefaults(self, Window, "SoftReserveOverview", 600, 470);
     Window:EnableResize(false);
 
-    Window:SetStatusText(string.format(
-        L["Imported on |c00A79EFF%s at |c00A79EFF%s"],
+    Window:SetStatusText((L["Imported on |c00A79EFF%s at |c00A79EFF%s"]):format(
         date(L["%Y-%m-%d"], DB:get("SoftRes.MetaData.importedAt", GetServerTime())),
         date(L["%H:%M"], DB:get("SoftRes.MetaData.importedAt", GetServerTime()))
     ));
@@ -311,7 +310,7 @@ function Overview:refreshDetailsFrame()
     local class = GL:tableGet(SoftResDetails, "class", SoftRes:getPlayerClass(self.selectedCharacter));
 
     if (GL:higherThanZero(plusOnes)) then
-        titleText = string.format("%s (%s%s)", titleText, L["+"], plusOnes);
+        titleText = ("%s (%s%s)"):format(titleText, L["+"], plusOnes);
     end
 
     Title:SetText(titleText);
@@ -367,7 +366,7 @@ function Overview:refreshDetailsFrame()
 
             -- The user reserved this item multiple times
             if (numberOfReservations > 1) then
-                labelString = string.format(L["%s (%sx)"], Item.link, numberOfReservations);
+                labelString = (L["%s (%sx)"]):format(Item.link, numberOfReservations);
             end
 
             ItemLabel:SetText(labelString);
@@ -485,7 +484,7 @@ function Overview:drawCharacterTable(Parent)
             local selected = data[realrow].cols[1].value;
 
             if (selected and type(selected) == "string") then
-                self.selectedCharacter = string.lower(selected);
+                self.selectedCharacter = strlower(selected);
             end
 
             self:refreshDetailsFrame();
@@ -498,7 +497,7 @@ function Overview:drawCharacterTable(Parent)
     if (GL.User.isInGroup) then
         for _, Player in pairs(GL.User:groupMembers()) do
             -- Soft-Res doesn't support cross-realm at this point in time
-            local playerName = string.lower(GL:stripRealm(Player.name));
+            local playerName = strlower(GL:stripRealm(Player.name));
 
             PlayerData[playerName] = {
                 class = Player.class,
@@ -527,7 +526,7 @@ function Overview:drawCharacterTable(Parent)
         local SoftReserveColor = { r = 0, g = 1, b = 0, a = 1, };
 
         if (numberOfSoftReservedItems < 1) then
-            SoftReserveColor = {r = 1, g = 0, b = 0, a = 1, };
+            SoftReserveColor = { r = 1, g = 0, b = 0, a = 1, };
         end
 
         if (GL:higherThanZero(plusOnes)) then

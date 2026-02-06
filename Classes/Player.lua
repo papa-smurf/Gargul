@@ -36,7 +36,7 @@ function Player.fromID(GUID)
     self.localizedClass, self.class, self.localizedRace, self.race, self.gender, self.name, self.realm = GetPlayerInfoByGUID(self.id);
     self.realm = not GL:empty(self.realm) and self.realm or GL.User.realm;
     self.fqn = GL:addRealm(self.name, self.realm);
-    self.race = string.lower(self.race);
+    self.race = strlower(self.race);
 
     -- The GUID turns out to be invalid, destroy the player object
     if (not self.name or not type(self.name) == "string") then
@@ -44,7 +44,7 @@ function Player.fromID(GUID)
         return false;
     end
 
-    self.classFile = string.upper(self.class);
+    self.classFile = strupper(self.class);
 
     self.Guild = {};
 
@@ -83,26 +83,26 @@ function Player:fromName(name)
     end
 
     name = GL:nameFormat(name);
-    local playerId = UnitGUID(name);
+    local playerID = UnitGUID(name);
 
-    if (not playerId) then
+    if (not playerID) then
         return false;
     end
 
-    return Player.fromID(playerId);
+    return Player.fromID(playerID);
 end
 
 --- Instantiate a new player object for the addon actor (current player)
 ---
 ---@return boolean|Player
 function Player.fromActor()
-    local playerId = UnitGUID("player");
+    local playerID = UnitGUID("player");
 
-    if (not playerId) then
+    if (not playerID) then
         return false;
     end
 
-    return Player.fromID(playerId);
+    return Player.fromID(playerID);
 end
 
 --- Returns true of player has lead or assist
@@ -118,7 +118,7 @@ function Player:hasAssist(playerNameOrID)
     local realm, _;
     if (GL:strStartsWith(playerNameOrID, "Player-")) then
         _, _, _, _, _, playerName, realm = GetPlayerInfoByGUID(playerNameOrID);
-        playerName = GL:nameFormat{ name = playerName, realm = realm };
+        playerName = GL:nameFormat{ name = playerName, realm = realm, };
     else
         playerName = GL:nameFormat(playerNameOrID);
     end
@@ -159,7 +159,7 @@ function Player:hasLead(playerNameOrID)
     local realm, _;
     if (GL:strStartsWith(playerNameOrID, "Player-")) then
         _, _, _, _, _, playerName, realm = GetPlayerInfoByGUID(playerNameOrID);
-        playerName = GL:nameFormat{ name = playerName, realm = realm };
+        playerName = GL:nameFormat{ name = playerName, realm = realm, };
     end
 
     if (not playerName) then
@@ -198,7 +198,7 @@ function Player:isMasterLooter(playerNameOrID)
     local realm, _;
     if (GL:strStartsWith(playerNameOrID, "Player-")) then
         _, _, _, _, _, playerName, realm = GetPlayerInfoByGUID(playerNameOrID);
-        playerName = GL:nameFormat{ name = playerName, realm };
+        playerName = GL:nameFormat{ name = playerName, realm = realm, };
     else
         playerName = GL:nameFormat(playerNameOrID);
     end
@@ -232,7 +232,7 @@ function Player:classByName(playerName, default)
         default = "priest";
     end
 
-    playerName = GL:nameFormat{ name = playerName, func = strlower };
+    playerName = GL:nameFormat{ name = playerName, func = strlower, };
 
     -- We already know this player's class name, return it
     if (self.playerClassByName[playerName]) then
@@ -247,8 +247,8 @@ function Player:classByName(playerName, default)
     if (type(classFile) == "string"
         and not GL:empty(classFile)
     ) then
-        if (GL.Data.Constants.UnitClasses[string.upper(classFile)]) then
-            self.playerClassByName[playerName] = string.lower(classFile);
+        if (GL.Data.Constants.UnitClasses[strupper(classFile)]) then
+            self.playerClassByName[playerName] = strlower(classFile);
         end
     end
 
@@ -259,16 +259,17 @@ end
 ---
 ---@param playerName string
 ---@param class string
+---@return nil
 function Player:cacheClass(playerName, class)
     if (type(class) ~= "string") then
         return;
     end
 
-    class = string.lower(class);
+    class = strlower(class);
 
     if (GL:empty(class)) then
         return;
     end
 
-    self.playerClassByName[string.lower(playerName)] = class;
+    self.playerClassByName[strlower(playerName)] = class;
 end

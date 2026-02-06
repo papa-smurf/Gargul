@@ -47,6 +47,7 @@ GL.loadedOn = 32503680000; -- Year 3000
 GL.Ace = LibStub("AceAddon-3.0"):NewAddon(GL.name, "AceConsole-3.0", "AceComm-3.0", "AceTimer-3.0");
 
 -- Bootstrap the addon
+---@return nil
 function GL:bootstrap(_, _, addonName)
     -- The addon was already bootstrapped or this is not the correct event
     if (self._initialized) then
@@ -98,6 +99,7 @@ function GL:bootstrap(_, _, addonName)
 end
 
 --- Callback to be fired when the addon is completely loaded
+---@return nil
 function GL:_init()
     if (self.isSoD
         -- Taiwan is excluded apparently: https://tw.forums.blizzard.com/zh/wow/t/gdkp/12240
@@ -254,6 +256,7 @@ GL.Ace:RegisterChatCommand("gdkp", function (...)
 end);
 
 --- Announce conflicting addons, if any
+---@return nil
 function GL:announceConflictingAddons()
     local ConflictingAddons = {};
     local addonLoadedFunction = IsAddOnLoaded or C_AddOns.IsAddOnLoaded;
@@ -275,6 +278,7 @@ function GL:announceConflictingAddons()
 end
 
 --- Keep track of when native UI elements (like AH/mailbox) are active
+---@return nil
 function GL:hookNativeWindowEvents()
     -- Make sure to reset window states when zoning
     GL.Events:register("BootstrapPlayerEnteringWorld", "PLAYER_ENTERING_WORLD", function ()
@@ -360,6 +364,7 @@ function GL:hookNativeWindowEvents()
 end
 
 --- We hook all the tooltip data (tmb/softres etc) to a single event to make caching easier
+---@return nil
 function GL:hookTooltipSetItemEvents()
     GL.onTooltipSetItemFunc = function(Tooltip)
         -- No valid item tooltip was provided

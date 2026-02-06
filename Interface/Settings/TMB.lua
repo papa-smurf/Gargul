@@ -1,4 +1,4 @@
-﻿---@type GL
+---@type GL
 local _, GL = ...;
 
 local Overview = GL.Interface.Settings.Overview; ---@type SettingsOverview
@@ -36,8 +36,7 @@ function TMB:draw(Parent)
     ShareWhitelist:SetHeight(20);
     ShareWhitelist:SetFullWidth(true);
     ShareWhitelist:SetText(GL.Settings:get("TMB.shareWhitelist", ""));
-    ShareWhitelist:SetLabel(string.format(
-        "|cff%sAdd a comma-separated list of names to share with, only these people will receive data|r",
+    ShareWhitelist:SetLabel(("|cff%sAdd a comma-separated list of names to share with, only these people will receive data|r"):format(
         GL:classHexColor("rogue")
     ));
     ShareWhitelist:SetCallback("OnTextChanged", function (self)
@@ -97,7 +96,7 @@ function TMB:draw(Parent)
     local LowerThanList = {};
     local ItemQualityColors = GL.Data.Constants.ItemQualityColors;
     for i = 0, #ItemQualityColors do
-        LowerThanList[i] = string.format("|c00%s%s|r", ItemQualityColors[i].hex, ItemQualityColors[i].description);
+        LowerThanList[i] = ("|c00%s%s|r"):format(ItemQualityColors[i].hex, ItemQualityColors[i].description);
     end
 
     -- DROPDOWN

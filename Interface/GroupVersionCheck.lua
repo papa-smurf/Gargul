@@ -200,7 +200,7 @@ function GroupVersionCheck:build()
 
         ---@type FontString
         local Name = Interface:createFontString(PlayerRow, GL:nameFormat(Player.name));
-        Name:SetColor(string.upper(Player.class));
+        Name:SetColor(strupper(Player.class));
         Name:SetPoint("TOPLEFT", Anchor, "TOPRIGHT", 4, -2);
 
         ---@type FontString

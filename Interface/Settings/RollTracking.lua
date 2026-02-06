@@ -1,4 +1,4 @@
-﻿---@type GL
+---@type GL
 local _, GL = ...;
 
 local Overview = GL.Interface.Settings.Overview; ---@type SettingsOverview
@@ -104,7 +104,7 @@ function RollTracking:draw(Parent, Window)
                     or not max
                     or not priority
                 ) then
-                    local error = string.format("Missing data for identifier '%s'", identifier);
+                    local error = ("Missing data for identifier '%s'"):format(identifier);
                     StatusMessageLabel:SetText(error);
                     GL:error(error);
                     return false;
@@ -119,7 +119,7 @@ function RollTracking:draw(Parent, Window)
                     or max < min
                     or priority < 1
                 ) then
-                    local error = string.format("Invalid data for identifier '%s'. Min must be greater than 0, max must be higher than min and priority must be greater than 0", identifier);
+                    local error = ("Invalid data for identifier '%s'. Min must be greater than 0, max must be higher than min and priority must be greater than 0"):format(identifier);
                     StatusMessageLabel:SetText(error);
                     GL:error(error);
                     return false;
@@ -230,23 +230,19 @@ function RollTracking:draw(Parent, Window)
         };
 
         if (i == 1) then
-            Identifier:SetLabel(string.format(
-                "|cff%sIdentifier|r",
+            Identifier:SetLabel(("|cff%sIdentifier|r"):format(
                 GL:classHexColor("rogue")
             ));
 
-            Min:SetLabel(string.format(
-                "|cff%sMinimum roll|r",
+            Min:SetLabel(("|cff%sMinimum roll|r"):format(
                 GL:classHexColor("rogue")
             ));
 
-            Max:SetLabel(string.format(
-                "|cff%sMaximum roll|r",
+            Max:SetLabel(("|cff%sMaximum roll|r"):format(
                 GL:classHexColor("rogue")
             ));
 
-            SortingPriority:SetLabel(string.format(
-                "|cff%sPriority (sorting)|r",
+            SortingPriority:SetLabel(("|cff%sPriority (sorting)|r"):format(
                 GL:classHexColor("rogue")
             ));
         end

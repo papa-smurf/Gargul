@@ -1,4 +1,4 @@
-﻿local L = Gargul_L;
+local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -41,8 +41,7 @@ function Overview:draw()
     Window:SetPoint(GL.Interface:getPosition("PlusOnesOverview"));
     local importedAt = GL:tableGet(DB.PlusOnes, "MetaData.importedAt", GetServerTime());
     local updatedAt = GL:tableGet(DB.PlusOnes, "MetaData.updatedAt", GetServerTime());
-        Window:SetStatusText(string.format(
-            L["Imported on |c00A79EFF%s at |c00A79EFF%s, Updated on |c00A79EFF%s at |c00A79EFF%s"],
+        Window:SetStatusText((L["Imported on |c00A79EFF%s at |c00A79EFF%s, Updated on |c00A79EFF%s at |c00A79EFF%s"]):format(
             date(L["%Y-%m-%d"], importedAt),
             date(L["%H:%M"], importedAt),
             date(L["%Y-%m-%d"], updatedAt),
@@ -329,8 +328,7 @@ end
 function Overview:update()
     local importedAt = GL:tableGet(DB.PlusOnes, "MetaData.importedAt", GetServerTime());
     local updatedAt = GL:tableGet(DB.PlusOnes, "MetaData.updatedAt", GetServerTime());
-        self.Window:SetStatusText(string.format(
-            L["Imported on |c00A79EFF%s at |c00A79EFF%s, Updated on |c00A79EFF%s at |c00A79EFF%s"],
+        self.Window:SetStatusText((L["Imported on |c00A79EFF%s at |c00A79EFF%s, Updated on |c00A79EFF%s at |c00A79EFF%s"]):format(
             date(L["%Y-%m-%d"], importedAt),
             date(L["%H:%M"], importedAt),
             date(L["%Y-%m-%d"], updatedAt),

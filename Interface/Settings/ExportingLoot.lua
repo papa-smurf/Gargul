@@ -1,4 +1,4 @@
-﻿local L = Gargul_L;
+local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -70,8 +70,7 @@ function ExportingLoot:draw(Parent)
     DisenchanterIdentifier:SetHeight(20);
     DisenchanterIdentifier:SetFullWidth(true);
     DisenchanterIdentifier:SetText(GL.Settings:get("ExportingLoot.disenchanterIdentifier"));
-    DisenchanterIdentifier:SetLabel(string.format(
-        "|cff%sMention disenchanted items under which name? (Default: _disenchanted). Note: |r|c00FF0000no hyhpens!|r",
+    DisenchanterIdentifier:SetLabel(("|cff%sMention disenchanted items under which name? (Default: _disenchanted). Note: |r|c00FF0000no hyhpens!|r"):format(
         GL:classHexColor("rogue")
     ));
     DisenchanterIdentifier:SetCallback("OnTextChanged", function (self)
@@ -156,8 +155,7 @@ function ExportingLoot:draw(Parent)
     CustomExportFormat:SetHeight(20);
     CustomExportFormat:SetFullWidth(true);
     CustomExportFormat:SetText(GL.Settings:get("ExportingLoot.customFormat"));
-    CustomExportFormat:SetLabel(string.format(
-        "|cff%sDefine your custom export format here. |cffC41E3AHover for more details. |cff%sNote: \\t is replaced by a tab!|r",
+    CustomExportFormat:SetLabel(("|cff%sDefine your custom export format here. |cffC41E3AHover for more details. |cff%sNote: \\t is replaced by a tab!|r"):format(
         GL:classHexColor("rogue"),
         GL:classHexColor("rogue")
     ));
@@ -181,7 +179,7 @@ function ExportingLoot:draw(Parent)
     CustomExportFormat.frame:EnableMouse();
     CustomExportFormat.frame:SetScript("OnEnter", function ()
         GameTooltip:SetOwner(CustomFormatWrapper.frame, "ANCHOR_TOP");
-        GameTooltip:SetText(string.format("Available values:\n\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n\n%s",
+        GameTooltip:SetText(("Available values:\n\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n\n%s"):format(
             "@ID",
             "@LINK",
             "@WOWHEAD",

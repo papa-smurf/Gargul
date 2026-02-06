@@ -1,4 +1,4 @@
-﻿local L = Gargul_L;
+local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -200,7 +200,7 @@ function Export:refresh()
         return;
     end
 
-    Interface:get(self, "Label.Title"):SetText(string.format("|c00FFF569%s|r", tostring(Session.title)));
+    Interface:get(self, "Label.Title"):SetText(("|c00FFF569%s|r"):format(tostring(Session.title)));
 
     -- We can't work with this session since there are no auction attached
     local Cuts = GL:tableGet(Session, "Pot.Cuts", {});
@@ -292,7 +292,7 @@ function Export:exportPotToCustomFormat(Session, Cuts)
             end
 
             local Values = {
-                ["@PLAYER"] = GL:nameFormat{ name = player, stripRealm = true },
+                ["@PLAYER"] = GL:nameFormat{ name = player, stripRealm = true, },
                 ["@REALM"] = GL:getRealmFromName(player),
                 ["@CUT"] = cut,
                 ["@ADJUSTGOLD"] = adjustGold,

@@ -1,4 +1,4 @@
-﻿local L = Gargul_L;
+local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -297,10 +297,9 @@ function LedgerList:refresh()
     local guild = "";
     local CreatedBy = Session.CreatedBy or { class = "priest", name = "unknown", guild = "unknown", uuid = "unknown", };
     if (CreatedBy.guild) then
-        guild = string.format(" |c001EFF00<%s>|r", CreatedBy.guild);
+        guild = (" |c001EFF00<%s>|r"):format(CreatedBy.guild);
     end
-    self.SessionDetails:SetText(string.format(
-        L["|c00967FD2%s | By %s%s | On |c00967FD2%s"],
+    self.SessionDetails:SetText((L["|c00967FD2%s | By %s%s | On |c00967FD2%s"]):format(
         Session.title,
         GL:nameFormat{ name = CreatedBy.name, realm = CreatedBy.realm, colorize = true, },
         guild,
@@ -343,14 +342,14 @@ function LedgerList:refresh()
             local balanceText;
             if (player ~= GL.User.name) then
                 if (copperToGive > 0) then
-                    balanceText = string.format("|c00F7922E%s|r", copperToGive / 10000);
+                    balanceText = ("|c00F7922E%s|r"):format(copperToGive / 10000);
                 elseif (copperToGive < 0) then
-                    balanceText = string.format("|c00BE3333%s|r", (copperToGive * -1) / 10000);
+                    balanceText = ("|c00BE3333%s|r"):format((copperToGive * -1) / 10000);
                 else
-                    balanceText = string.format("|c0092FF000|r");
+                    balanceText = ("|c0092FF00%s|r"):format(0);
                 end
             else
-                balanceText = string.format("|c0092FF000|r");
+                balanceText = ("|c0092FF00%s|r"):format(0);
             end
 
             tinsert(PlayerData, {
@@ -424,7 +423,7 @@ function LedgerList:refresh()
         for _, Auction in pairs(Data) do
             local mutation;
             if (Auction.itemID == Constants.GDKP.potIncreaseItemID) then
-                mutation = string.format(L["Gold %s by"], Auction.price < 0 and "removed" or "added");
+                mutation = (L["Gold %s by"]):format(Auction.price < 0 and "removed" or "added");
             end
 
             tinsert(TableData, {
@@ -432,13 +431,13 @@ function LedgerList:refresh()
                     { value = Auction.itemID, },
                     { value = mutation and mutation or Auction.itemLink, },
                     {
-                        value = string.format("|c00%s%s|r",
+                        value = ("|c00%s%s|r"):format(
                             GL:classHexColor(Auction.Winner.class),
                             Auction.Winner.name
                         ),
                     },
                     {
-                        value = string.format("|c00FFFFFF%s|r|c00FFF569|r",
+                        value = ("|c00FFFFFF%s|r|c00FFF569|r"):format(
                             Auction.price
                         ),
                     },

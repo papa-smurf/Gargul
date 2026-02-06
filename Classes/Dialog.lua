@@ -291,11 +291,11 @@ function Dialog:show(Details, callback)
 
     local paddingTop = self.paddingTop == nil and 1 or self.paddingTop;
     if (paddingTop > 0) then
-        self.text = string.rep("\n", paddingTop) .. self.text;
+        self.text = strrep("\n", paddingTop) .. self.text;
     end
 
     if (self.paddingBottom and self.paddingBottom > 0) then
-        self.text = self.text .. string.rep("\n", self.paddingBottom);
+        self.text = self.text .. strrep("\n", self.paddingBottom);
     end
 
     -- Wire OnShow: store frame, handle copper/editBox, then call original

@@ -1,4 +1,4 @@
-﻿local L = Gargul_L;
+local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -143,7 +143,7 @@ function Overview:draw()
                 GL.Interface.TMB.Overview:close();
                 GL.TMB:clear();
 
-                GL.TMB:draw(string.lower(source));
+                GL.TMB:draw(strlower(source));
             end,
         };
     end);

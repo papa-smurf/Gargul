@@ -1,4 +1,4 @@
-﻿local L = Gargul_L;
+local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -94,7 +94,7 @@ function RollerUI:draw(time, itemLink, itemIcon, note, SupportedRolls, userCanUs
 
         -- Roll button
         local Button = CreateFrame("Button", nil, Window, "GameMenuButtonTemplate");
-        local buttonWidth = math.max(string.len(identifier) * 12, 70);
+        local buttonWidth = math.max(strlen(identifier) * 12, 70);
         rollerUIWidth = rollerUIWidth + buttonWidth + 4;
         Button:SetSize(buttonWidth, 20);
         Button:SetText(identifier);

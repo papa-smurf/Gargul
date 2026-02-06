@@ -1,5 +1,5 @@
 --- Necessary workaround to make sure alerts use a non-secure mixin. Will otherwise freeze UI in ERA/TBC
-Gargul_ContainedAlertFrameMixin = {};
+_G.Gargul_ContainedAlertFrameMixin = {};
 Gargul_ContainedAlertFrameMixin.OnPostShow = ContainedAlertFrameMixin.OnPostShow;
 Gargul_ContainedAlertFrameMixin.OnPostHide = ContainedAlertFrameMixin.OnPostHide;
 Gargul_ContainedAlertFrameMixin.SetAlertContainer = ContainedAlertFrameMixin.SetAlertContainer;
@@ -38,7 +38,7 @@ GL.Interface.Alerts = {
             local Alert = self;
 
             GL:onItemLoadDo(itemID, function (Details)
-                local longestLength = math.max(string.len(Details.name), string.len(message));
+                local longestLength = math.max(strlen(Details.name), strlen(message));
                 title = title or Details.link;
 
                 Alert.Label:SetText(title);

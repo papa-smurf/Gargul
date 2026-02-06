@@ -1,4 +1,4 @@
-﻿local L = Gargul_L;
+local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -52,6 +52,7 @@ local Overview = {
 ---@type GDKPOverview
 GL.Interface.GDKP.Overview = Overview;
 
+---@return nil
 function Overview:_init()
     if (self._initialized) then
         return;
@@ -92,6 +93,7 @@ function Overview:_init()
     end);
 end
 
+---@return nil
 function Overview:sessionChanged()
     local Session = self:getSelectedSession();
 
@@ -133,6 +135,7 @@ function Overview:sessionChanged()
     self:updatePot();
 end
 
+---@return nil
 function Overview:updatePot()
     local Session = self:getSelectedSession();
 
@@ -147,9 +150,10 @@ function Overview:updatePot()
     end
 
     local pot = GDKPPot:humanTotal(Session.ID);
-    Pot:SetText(string.format("|cFF%s%s|r", Interface.Colors.ROGUE, pot));
+    Pot:SetText(("|cFF%s%s|r"):format(Interface.Colors.ROGUE, pot));
 end
 
+---@return nil
 function Overview:open()
     if (not GL.GDKPIsAllowed) then
         return GL:error(L["GDKP raids are not allowed in this version of World of Warcraft"]);
@@ -201,7 +205,7 @@ function Overview:build()
         "GDKP"
     );
     Cogwheel:SetScript("OnClick", function(_, button)
-        if (button == 'LeftButton') then
+        if (button == "LeftButton") then
             Interface:get(self, "GDKPOverview"):Hide();
 
             GL.Settings:draw("GDKP", function ()
@@ -531,6 +535,7 @@ function Overview:build()
     return Window;
 end
 
+---@return nil
 function Overview:close()
     local Window = Interface:get(self, "GDKPOverview");
 
@@ -544,6 +549,7 @@ function Overview:close()
     self.isVisible = false;
 end
 
+---@return nil
 function Overview:closeSubWindows()
     Interface.GDKP.CreateSession:close();
     Interface.GDKP.EditSession:close();
@@ -564,6 +570,7 @@ function Overview:getSelectedSession()
     return GDKPSession:byID(sessionIdentifier);
 end
 
+---@return nil
 function Overview:refreshLedger()
     local LockIcon = Interface:get(self, "Icon.LockIcon");
     LockIcon.frame:Show();
@@ -608,7 +615,7 @@ function Overview:refreshLedger()
     Wrapper:AddChild(Details);
 
     local Title = Interface:get(self, "Label.Title");
-    Title:SetText(string.format("\n|c00%s%s|r", Constants.addonHexColor, Session.title));
+    Title:SetText(("\n|c00%s%s|r"):format(Constants.addonHexColor, Session.title));
 
     local Note = Interface:get(self, "Label.Note");
     local CreatedBy = Session.CreatedBy or { class = "priest", name = L["unknown"], guild = L["unknown"], uuid = L["unknown"], };
@@ -620,7 +627,7 @@ function Overview:refreshLedger()
     end
 
     if (CreatedBy.guild) then
-        guild = string.format(" |c001EFF00<%s>|r", CreatedBy.guild);
+        guild = (" |c001EFF00<%s>|r"):format(CreatedBy.guild);
     end
 
     Note:SetText((L["By %s%s | On |c00%s%s%s"]):format(
@@ -873,22 +880,22 @@ function Overview:showTutorial()
     local Steps;
     if (GL:empty(DB:get("GDKP.Ledger"))) then
         Steps = {
-            {1, ("|c00A79EFF%s|r"):format(L["Click the |c00FFF569New button below to create your first GDKP session. It will show on the left when created"]), },
+            { 1, ("|c00A79EFF%s|r"):format(L["Click the |c00FFF569New button below to create your first GDKP session. It will show on the left when created"]), },
         };
     elseif (not GDKPSession:activeSessionID()
         or GDKPSession:activeSessionID() ~= self.selectedSession
     ) then
         Steps = {
-            {1, ("|c00A79EFF%s|r"):format(L["Activate this session by clicking the |c00FFF569Enable button below!"]), },
+            { 1, ("|c00A79EFF%s|r"):format(L["Activate this session by clicking the |c00FFF569Enable button below!"]), },
         };
     else
         Steps = {
-            {1, ("|c00A79EFF%s|r"):format(L["You're ready to sell items! |c00BE3333Read all the steps below carefully and test them all by yourself (no need to be in a raid) before starting your first GDKP raid!"]), },
-            {2, ("|c00A79EFF%s|r"):format((L["|c00FFF569%s an item to auction or queue a single item"]):format(GL.Settings:get("ShortcutKeys.rollOffOrAuction"))), },
-            {3, ("|c00A79EFF%s|r"):format(L["Want to auction multiple items at once? Run |c00FFF569/gl ma (or |c00FFF569/gl multiauction) or click the multi-auction icon in the top right of this window!"]), },
-            {4, ("|c00A79EFF%s|r"):format((L["Want to sell an item without anyone bidding? |c00FFF569%s on an item, pick a winner and set a price!"]):format(GL.Settings:get("ShortcutKeys.award"))), },
-            {5, ("|c00A79EFF%s|r"):format(L["If all went well then you will see your freshly auctioned item(s) here!"]), },
-            {6, ("|c00A79EFF%s|r"):format(L["\nHelpful commands:\n- |c00FFF569/gdkp to open this window\n- |c00FFF569/gl ma to open the multi-auction window\n- |c00FFF569/gl au to open the single item auctioneer / queue\n- |c00FFF569/gl pm to set up auto-looting\n\n"]), },
+            { 1, ("|c00A79EFF%s|r"):format(L["You're ready to sell items! |c00BE3333Read all the steps below carefully and test them all by yourself (no need to be in a raid) before starting your first GDKP raid!"]), },
+            { 2, ("|c00A79EFF%s|r"):format((L["|c00FFF569%s an item to auction or queue a single item"]):format(GL.Settings:get("ShortcutKeys.rollOffOrAuction"))), },
+            { 3, ("|c00A79EFF%s|r"):format(L["Want to auction multiple items at once? Run |c00FFF569/gl ma (or |c00FFF569/gl multiauction) or click the multi-auction icon in the top right of this window!"]), },
+            { 4, ("|c00A79EFF%s|r"):format((L["Want to sell an item without anyone bidding? |c00FFF569%s on an item, pick a winner and set a price!"]):format(GL.Settings:get("ShortcutKeys.award"))), },
+            { 5, ("|c00A79EFF%s|r"):format(L["If all went well then you will see your freshly auctioned item(s) here!"]), },
+            { 6, ("|c00A79EFF%s|r"):format(L["\nHelpful commands:\n- |c00FFF569/gdkp to open this window\n- |c00FFF569/gl ma to open the multi-auction window\n- |c00FFF569/gl au to open the single item auctioneer / queue\n- |c00FFF569/gl pm to set up auto-looting\n\n"]), },
         };
     end
 
@@ -945,6 +952,7 @@ function Overview:showTutorial()
 end
 
 -- Clear the details frame
+---@return nil
 function Overview:clearDetailsFrame()
     -- Release all of the action buttons into our pool so that we can reuse them later
     for _, Buttons in pairs(self.ActionButtons or {}) do
@@ -1042,10 +1050,10 @@ function Overview:refreshSessions()
         local title = Session.title;
         local priority = 99999999999 - (Session.createdAt or 0);
 
-        local color = {r = 1, g = 1, b = 1};
+        local color = { r = 1, g = 1, b = 1, };
         if (Session.deletedAt) then
             priority = priority + deletedAtPriorityModifier;
-            color = {r = .77, g = .12, b = .23};
+            color = { r = .77, g = .12, b = .23, };
             title = ("%s " .. L["(deleted)"]):format(title);
         end
 

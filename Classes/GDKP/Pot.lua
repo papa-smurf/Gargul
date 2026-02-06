@@ -1,4 +1,4 @@
-﻿local L = Gargul_L;
+local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -550,7 +550,7 @@ function Pot:addPlayer(sessionID, player)
     end
 
     -- Player names shouldn't include numbers
-    if (string.match(player,"%d+")) then
+    if (strmatch(player,"%d+")) then
         return false;
     end
 

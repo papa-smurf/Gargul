@@ -22,7 +22,7 @@ GL.JSON = {};
 local JSON = GL.JSON;
 
 local default_pretty_indent  = "  "
-local default_pretty_options = { pretty = true, align_keys = false, indent = default_pretty_indent  }
+local default_pretty_options = { pretty = true, align_keys = false, indent = default_pretty_indent, }
 
 local isArray  = { __tostring = function() return "JSON array"         end }  isArray.__index  = isArray
 local isObject = { __tostring = function() return "JSON object"        end }  isObject.__index = isObject
@@ -105,7 +105,7 @@ local function unicode_codepoint_as_utf8(codepoint)
     -- codepoint is a number
     --
     if codepoint <= 127 then
-        return string.char(codepoint)
+        return strchar(codepoint)
 
     elseif codepoint <= 2047 then
         --
@@ -113,7 +113,7 @@ local function unicode_codepoint_as_utf8(codepoint)
         --
         local highpart = math.floor(codepoint / 0x40)
         local lowpart  = codepoint - (0x40 * highpart)
-        return string.char(0xC0 + highpart,
+        return strchar(0xC0 + highpart,
             0x80 + lowpart)
 
     elseif codepoint <= 65535 then
@@ -140,7 +140,7 @@ local function unicode_codepoint_as_utf8(codepoint)
         then
             return "?"
         else
-            return string.char(highpart,
+            return strchar(highpart,
                 midpart,
                 lowpart)
         end
@@ -156,7 +156,7 @@ local function unicode_codepoint_as_utf8(codepoint)
         local midB      = math.floor(remainder / 0x40)
         local lowpart   = remainder - 0x40 * midB
 
-        return string.char(0xF0 + highpart,
+        return strchar(0xF0 + highpart,
             0x80 + midA,
             0x80 + midB,
             0x80 + lowpart)
@@ -166,9 +166,9 @@ end
 function JSON:onDecodeError(message, text, location, etc)
     if text then
         if location then
-            message = string.format("%s at byte %d of: %s", message, location, text)
+            message = ("%s at byte %d of: %s"):format(message, location, text)
         else
-            message = string.format("%s: %s", message, text)
+            message = ("%s: %s"):format(message, text)
         end
     end
 
@@ -508,7 +508,7 @@ function JSON:decode(text, etc, options)
 
     elseif type(text) ~= 'string' then
         local error_message = "expected string argument to JSON:decode()"
-        self:onDecodeError(string.format("%s, got %s", error_message, type(text)), nil, nil, options.etc)
+        self:onDecodeError(("%s, got %s"):format(error_message, type(text)), nil, nil, options.etc)
         return nil, error_message -- in case the error method doesn't abort, return something sensible
     end
 
@@ -600,7 +600,7 @@ local function backslash_replacement_function(c)
     elseif c == '\\' then
         return '\\\\'
     else
-        return string.format("\\u%04x", c:byte())
+        return ("\\u%04x"):format(c:byte())
     end
 end
 
@@ -843,13 +843,13 @@ function encode_value(self, value, parents, etc, options, indent, for_key)
                     table.insert(KEYS, encoded)
                 end
                 local key_indent = indent .. tostring(options.indent or "")
-                local subtable_indent = key_indent .. string.rep(" ", max_key_length) .. (options.align_keys and "  " or "")
-                local FORMAT = "%s%" .. string.format("%d", max_key_length) .. "s: %s"
+                local subtable_indent = key_indent .. strrep(" ", max_key_length) .. (options.align_keys and "  " or "")
+                local FORMAT = "%s%" .. ("%d"):format(max_key_length) .. "s: %s"
 
                 local COMBINED_PARTS = { }
                 for i, key in ipairs(object_keys) do
                     local encoded_val = encode_value(self, TT[key], parents, etc, options, subtable_indent)
-                    table.insert(COMBINED_PARTS, string.format(FORMAT, key_indent, KEYS[i], encoded_val))
+                    table.insert(COMBINED_PARTS, (FORMAT):format(key_indent, KEYS[i], encoded_val))
                 end
                 result_value = "{\n" .. table.concat(COMBINED_PARTS, ",\n") .. "\n" .. indent .. "}"
 
@@ -859,7 +859,7 @@ function encode_value(self, value, parents, etc, options, indent, for_key)
                 for _, key in ipairs(object_keys) do
                     local encoded_val = encode_value(self, TT[key],       parents, etc, options, indent)
                     local encoded_key = encode_value(self, tostring(key), parents, etc, options, indent, true)
-                    table.insert(PARTS, string.format("%s:%s", encoded_key, encoded_val))
+                    table.insert(PARTS, ("%s:%s"):format(encoded_key, encoded_val))
                 end
                 result_value = "{" .. table.concat(PARTS, ",") .. "}"
 

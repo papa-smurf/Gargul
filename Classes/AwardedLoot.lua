@@ -1,4 +1,4 @@
-﻿local L = Gargul_L;
+local L = Gargul_L;
 
 local _, GL = ...;
 
@@ -29,6 +29,7 @@ GL.AwardedLoot = {
 ---@type AwardedLoot
 local AwardedLoot = GL.AwardedLoot;
 
+---@return nil
 function AwardedLoot:_init()
     if (self._initialized) then
         return;
@@ -235,6 +236,7 @@ end
 ---@param winner string
 ---@param date string
 ---@param itemLink string
+---@return nil|string
 function AwardedLoot:addWinnerOnDate(winner, date, itemLink, announce)
     GL:debug("AwardedLoot:addWinnerOnDate");
 
@@ -252,6 +254,7 @@ end
 ---
 ---@param checksum string
 ---@param adjustPoints boolean|nil
+---@return nil
 function AwardedLoot:deleteWinner(checksum, adjustPoints, broadcast)
     broadcast = broadcast ~= false;
 
@@ -300,6 +303,7 @@ end
 --- Edit the winner of an item
 ---
 ---@param checksum string
+---@return nil
 function AwardedLoot:editWinner(checksum, winner, announce)
     GL:debug("AwardedLoot:editWinner");
 
@@ -326,7 +330,7 @@ function AwardedLoot:editWinner(checksum, winner, announce)
     AwardEntry.awardedBy = GL.User.fqn;
 
     -- If we awarded to ourselves then we should already have the item
-    if (string.lower(winner) == string.lower(GL.User.fqn)) then
+    if (strlower(winner) == strlower(GL.User.fqn)) then
         AwardEntry.received = true;
     end
 
@@ -449,7 +453,7 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, g
     winner = not isDisenchanted and GL:addRealm(winner) or winner;
 
     if (isBonusLoot) then
-        RollBracket = {L["Bonus Roll"], };
+        RollBracket = { L["Bonus Roll"], };
         announce = false;
         automaticallyAwarded = true;
         broadcast = false;
@@ -498,11 +502,11 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, g
         return false;
     end
 
-    winner = not isDisenchanted and GL:nameFormat{ name = winner, forceRealm = true } or winner;
+    winner = not isDisenchanted and GL:nameFormat{ name = winner, forceRealm = true, } or winner;
 
     -- You can set the date for when this item was awarded, handy if you forgot an item for example
     if (dateProvided) then
-        local year, month, day = string.match(date, "^(%d+)-(%d+)-(%d+)$");
+        local year, month, day = strmatch(date, "^(%d+)-(%d+)-(%d+)$");
 
         if (type(year) ~= "string" or GL:empty(year)
             or type(month) ~= "string" or GL:empty(month)
@@ -512,7 +516,7 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, g
             return false;
         end
 
-        if (string.len(year) == 2) then
+        if (strlen(year) == 2) then
             year = "20" .. year;
         end
 
@@ -525,7 +529,7 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, g
         timestamp = time(Date);
     end
 
-    local realmLessName = string.lower(GL:stripRealm(winner));
+    local realmLessName = strlower(GL:stripRealm(winner));
     local isPrioritized, isWishlisted = false, false;
     local isReserved = not isDisenchanted and GL.SoftRes:itemIDIsReservedByPlayer(itemID, realmLessName) or false;
 
@@ -756,6 +760,7 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, g
     return checksum;
 end
 
+---@return nil
 function AwardedLoot:addItemGUIDtoItemsAwardedToSelf()
     for checksum, Details in pairs (self.AwardedToSelfWithoutAnItemGUID or {}) do
         (function ()
@@ -831,6 +836,7 @@ end
 --- Attempt to initiate a trade with whomever won the item and add the items
 ---
 ---@param AwardDetails table
+---@return nil
 function AwardedLoot:initiateTrade(AwardDetails)
     local tradingPartner = AwardDetails.awardedTo;
 
@@ -879,6 +885,7 @@ function AwardedLoot:initiateTrade(AwardDetails)
 end
 
 --- When a trade is initiated we attempt to automatically add items that should be given to the tradee
+---@return nil
 function AwardedLoot:tradeInitiated()
     -- Fetch the player name of whomever we're trading with
     local tradingPartner = GL:tableGet(GL.TradeWindow, "State.partner");
@@ -926,6 +933,7 @@ end
 --- Whenever a successful trade is completed we need to check whether we need to mark awarded loot as "received"
 ---
 ---@param Details table
+---@return nil
 function AwardedLoot:tradeCompleted(Details)
     GL:debug("AwardedLoot:tradeCompleted");
 
@@ -987,6 +995,7 @@ end
 --- The loot master awarded an item to someone, add it to our list as well
 ---
 ---@param CommMessage table
+---@return nil
 function AwardedLoot:processAwardedLoot(CommMessage)
     GL:debug("AwardedLoot:processAwardedLoot");
 
@@ -1060,6 +1069,7 @@ end
 --- The loot master edited an item award, make sure our list reflect those changes
 ---
 ---@param CommMessage table
+---@return nil
 function AwardedLoot:processEditedLoot(CommMessage)
     GL:debug("AwardedLoot:processEditedLoot");
 

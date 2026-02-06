@@ -255,7 +255,7 @@ function AutoRoll:onRollStart(itemLink, itemID, SupportedRolls)
     end
 
     -- Delay the actual roll by 0.5 seconds so the automatic roll mesage doesn't preceed the raid leader's roll start message
-    GL:after(0.5, "AutoRollDelay", function()
+    GL:after(.5, "AutoRollDelay", function ()
         local ok = self:performAutoRoll(itemLink, itemID, SupportedRolls, rule);
         if (ok) then
             local msg = rule == "need" and L["You automatically needed on %s"] or L["You automatically greeded on %s"];

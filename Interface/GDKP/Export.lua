@@ -244,7 +244,7 @@ function Export:refresh()
         return;
     end
 
-    Interface:get(self, "Label.Title"):SetText(string.format("|c00FFF569%s|r", tostring(Session.title)));
+    Interface:get(self, "Label.Title"):SetText(("|c00FFF569%s|r"):format(tostring(Session.title)));
 
     -- We can't work with this session since there are no auction attached
     if (type(Session.Auctions) ~= "table") then
@@ -375,9 +375,9 @@ function Export:exportAuctionsToCustomFormat(Session, Auctions)
             end
 
             if (icon) then
-                local lastForwardSlash = string.find(icon, "/[^/]*$");
-                icon = string.sub(icon, lastForwardSlash or 1);
-                iconLink = "https://wow.zamimg.com/images/wow/icons/large" .. string.lower(icon) .. ".jpg";
+                local lastForwardSlash = strfind(icon, "/[^/]*$");
+                icon = strsub(icon, lastForwardSlash or 1);
+                iconLink = "https://wow.zamimg.com/images/wow/icons/large" .. strlower(icon) .. ".jpg";
             else
                 icon = "";
             end

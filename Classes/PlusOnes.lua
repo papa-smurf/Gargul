@@ -1,4 +1,4 @@
-﻿local L = Gargul_L;
+local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -440,7 +440,7 @@ function PlusOnes:broadcast()
         end, function (sent, plusOne)
             Label = GL.Interface:get(GL.PlusOnes, "Label.BroadcastProgress");
             if (Label) then
-                Label:SetText(string.format(L["Sent %s of %s bytes"], sent, plusOne));
+                Label:SetText((L["Sent %s of %s bytes"]):format(sent, plusOne));
             end
         end);
     end
@@ -513,8 +513,7 @@ function PlusOnes:receiveBroadcast(CommMessage)
     elseif (not GL:empty(uuid)) then -- This is a different dataset, not an update
         question = (L["Are you sure you want to clear your existing PlusOne data and import new data broadcasted by %s?"]):format(CommMessage.Sender.name);
     else
-        question = string.format(
-            L["Are you sure you want to import new data broadcasted by %s?"],
+        question = (L["Are you sure you want to import new data broadcasted by %s?"]):format(
             CommMessage.Sender.name
         );
     end

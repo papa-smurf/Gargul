@@ -1,4 +1,4 @@
-﻿local _, GL = ...;
+local _, GL = ...;
 
 ---@class User
 GL.User = {
@@ -119,9 +119,9 @@ function User:refresh()
     self.raidIndex = nil;
     self.combatRole = nil;
     self.classFile = UnitClassBase("player");
-    self.class = string.lower(self.classFile);
+    self.class = strlower(self.classFile);
     self.localizedRace, self.race = UnitRace("player");
-    self.race = string.lower(self.race);
+    self.race = strlower(self.race);
 
     if (self.isInGroup) then
         -- Check if the current user is master looting
@@ -247,7 +247,7 @@ function User:guildMembers()
         local name, rank, rankIndex, level, classDisplayName, zone, publicNote, officerNote, isOnline, status, classFile = GetGuildRosterInfo(index)
 
         if (name) then
-            local fqn = string.lower(name);
+            local fqn = strlower(name);
             self.GuildMemberNames[fqn] = fqn;
 
             tinsert(Roster, {
@@ -262,7 +262,7 @@ function User:guildMembers()
                 officerNote = officerNote,
                 isOnline = isOnline,
                 status = status,
-                classFile = string.lower(classFile),
+                classFile = strlower(classFile),
             });
         end
     end
@@ -282,10 +282,10 @@ function User:playerIsGuildMember(playerName)
     self:guildMembers();
 
     if (not strfind(playerName, "-")) then
-        playerName = string.format("%s-%s", playerName, GL.User.realm);
+        playerName = ("%s-%s"):format(playerName, GL.User.realm);
     end
 
-    playerName = string.lower(playerName);
+    playerName = strlower(playerName);
     return GL:toboolean(self.GuildMemberNames[playerName]);
 end
 
@@ -317,7 +317,7 @@ function User:groupMembers()
                     rank = rank,
                     subgroup = subgroup,
                     level = level,
-                    class = string.lower(classFile),
+                    class = strlower(classFile),
                     classFile = classFile,
                     zone = zone,
                     online = online,

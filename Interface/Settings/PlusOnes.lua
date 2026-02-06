@@ -1,4 +1,4 @@
-﻿---@type GL
+---@type GL
 local _, GL = ...;
 
 local Overview = GL.Interface.Settings.Overview; ---@type SettingsOverview
@@ -28,8 +28,7 @@ function PlusOnes:draw(Parent)
         },
         {
             label = "Whisper command",
-            description = string.format(
-                "Players can whisper '|cff%s!plusone [<name>]|r' or '|cff%s!po [<name>]|r' or '|cff%s!+1 [<name>]|r' to the master looter to get the current plus one for this name in response. If no name is given, their own name is assumed instead.",
+            description = ("Players can whisper '|cff%s!plusone [<name>]|r' or '|cff%s!po [<name>]|r' or '|cff%s!+1 [<name>]|r' to the master looter to get the current plus one for this name in response. If no name is given, their own name is assumed instead."):format(
                 GL:classHexColor("rogue"),
                 GL:classHexColor("rogue"),
                 GL:classHexColor("rogue")
@@ -51,8 +50,7 @@ function PlusOnes:draw(Parent)
     PlusOnesIdentifier:SetHeight(20);
     PlusOnesIdentifier:SetFullWidth(true);
     PlusOnesIdentifier:SetText(GL.Settings:get("PlusOnes.automaticallyAcceptDataFrom", ""));
-    PlusOnesIdentifier:SetLabel(string.format(
-        "|cff%sAdd a comma separated list of players that are allowed to overwrite your data without your explicit consent:|r",
+    PlusOnesIdentifier:SetLabel(("|cff%sAdd a comma separated list of players that are allowed to overwrite your data without your explicit consent:|r"):format(
         GL:classHexColor("rogue")
     ));
     PlusOnesIdentifier:SetCallback("OnTextChanged", function (self)

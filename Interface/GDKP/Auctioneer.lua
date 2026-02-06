@@ -1,4 +1,4 @@
-﻿local L = Gargul_L;
+local L = Gargul_L;
 local LCG = LibStub("LibCustomGlowGargul-1.0");
 
 ---@type GL
@@ -137,8 +137,7 @@ function AuctioneerUI:build()
     --[[ ADD THE SETTINGS MENU IN THE TOP LEFT OF THE WINDOW ]]
     Interface:addWindowOptions(Window, {
         { text = L["Tutorial"], notCheckable = true, func = function ()
-            GL:popupMessage(string.format(
-                L["\n|c00A79EFF%s items in bags, loot windows or even on links in your chat to add them to the auction queue.\nWant to directly sell an item without bidding? Use |c00A79EFF%s\n\nYou can open the %s window directly by typing |c00A79EFF/gl auction\n\nGargul tracks |c00FF0000ALL gold traded. Don't want a trade to be a part of this GDKP session? Check the \"Exclude from GDKP\" checkbox when trading!\n\n|c00FFF569Did you know?\nAwarded items will automatically be added to the trade window\nGargul can also handle auto looting for you. Check it out with |c00A79EFF/gl pm\n"],
+            GL:popupMessage((L["\n|c00A79EFF%s items in bags, loot windows or even on links in your chat to add them to the auction queue.\nWant to directly sell an item without bidding? Use |c00A79EFF%s\n\nYou can open the %s window directly by typing |c00A79EFF/gl auction\n\nGargul tracks |c00FF0000ALL gold traded. Don't want a trade to be a part of this GDKP session? Check the \"Exclude from GDKP\" checkbox when trading!\n\n|c00FFF569Did you know?\nAwarded items will automatically be added to the trade window\nGargul can also handle auto looting for you. Check it out with |c00A79EFF/gl pm\n"]):format(
                 GL.Settings:get("ShortcutKeys.rollOffOrAuction"),
                 GL.Settings:get("ShortcutKeys.award"),
                 L["Auction"]
@@ -673,7 +672,7 @@ function AuctioneerUI:build()
         MultiAuctionWindow:SetPoint("RIGHT", Window, "RIGHT", -2, 0);
 
         GL:stopHighlight(MultiAuctionWindow);
-        LCG.PixelGlow_Start(MultiAuctionWindow, {.59, .5, .82, 1}, Window:GetWidth() / 4, .02, 5, 2);
+        LCG.PixelGlow_Start(MultiAuctionWindow, { .59, .5, .82, 1, }, Window:GetWidth() / 4, .02, 5, 2);
 
         local Texture = MultiAuctionWindow:CreateTexture(nil,"BACKGROUND");
         Texture:SetColorTexture(0, 0, 0, .6);
@@ -711,7 +710,7 @@ function AuctioneerUI:build()
             -- We use a timer to not call this too often
             GL:after(1, "GDKP.Auctioneer.MultiAuctionWindow.Glow", function ()
                 GL:stopHighlight(Window.MultiAuctionWindow);
-                LCG.PixelGlow_Start(Window.MultiAuctionWindow, {.59, .5, .82, 1}, Window:GetWidth() / 4, .02, 5, 2);
+                LCG.PixelGlow_Start(Window.MultiAuctionWindow, { .59, .5, .82, 1, }, Window:GetWidth() / 4, .02, 5, 2);
             end);
         end
     end);
@@ -795,7 +794,7 @@ function AuctioneerUI:build()
             end
 
             secondsRemaining = math.max(secondsRemaining, 0);
-            StopButton:SetText(GL:strPadRight(("%s %s%s"):format(L["Stop"], secondsRemaining, L["s"]), " ", string.len(L["Stop"]) + 5));
+            StopButton:SetText(GL:strPadRight(("%s %s%s"):format(L["Stop"], secondsRemaining, L["s"]), " ", strlen(L["Stop"]) + 5));
             MinimizedStopButton:SetText(("%s %s%s"):format(L["Stop"], secondsRemaining, L["s"]));
             MinimizedOpenButton:Hide();
             MinimizedStopButton:Show();
@@ -1050,7 +1049,7 @@ function AuctioneerUI:buildQueue(Window)
                             indexWithGlow = newPosition;
                             RowWithGlow = self.ItemRows[RowWithGlow.identifier];
 
-                            LCG.PixelGlow_Start(RowWithGlow, {1,1,1,1}, 20, .05, 5, 3);
+                            LCG.PixelGlow_Start(RowWithGlow, { 1, 1, 1, 1, }, 20, .05, 5, 3);
                         end
                     end, .1);
                 end);

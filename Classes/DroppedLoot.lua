@@ -406,7 +406,7 @@ function DroppedLoot:announceTest(...)
     local itemIDs = ...;
 
     if (type(itemIDs) ~= "table") then
-        itemIDs = {itemIDs};
+        itemIDs = { itemIDs, };
     end
 
     -- Make sure all item links are translated to IDs

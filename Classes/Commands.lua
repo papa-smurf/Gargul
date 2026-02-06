@@ -1,4 +1,4 @@
-﻿local _, GL = ...;
+local _, GL = ...;
 
 ---@type Settings
 local Settings = GL.Settings;
@@ -336,7 +336,7 @@ function Commands:_dispatch(str)
     end
 
     -- Make sure commands are case insensitive (Busmonstret = dumdum)
-    command = string.lower(command);
+    command = strlower(command);
 
     -- Fetch the actual command name in case a shorthand is provided
     command = GL:tableGet(self.ShorthandDictionary, command, command);
@@ -347,15 +347,15 @@ function Commands:_dispatch(str)
     local arguments = {};
     local numberOfArguments;
 
-    if (GL:inTable({"rolloff", "auction"}, command)) then
+    if (GL:inTable({ "rolloff", "auction", }, command)) then
         numberOfArguments = 1;
-    elseif (GL:inTable({"award"}, command)) then
+    elseif (GL:inTable({ "award", }, command)) then
         numberOfArguments = 2;
-    elseif (GL:inTable({"awardondate"}, command)) then
+    elseif (GL:inTable({ "awardondate", }, command)) then
         numberOfArguments = 3;
     end
 
-    arguments = { strsplit(" ", argumentString, numberOfArguments) };
+    arguments = { strsplit(" ", argumentString, numberOfArguments), };
 
     if (command and self.Dictionary[command] and type(self.Dictionary[command]) == "function") then
         return self.Dictionary[command](unpack(arguments));

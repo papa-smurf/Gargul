@@ -1,4 +1,4 @@
-﻿local L = Gargul_L;
+local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -68,6 +68,7 @@ local GDKPSession = GDKP.Session;
 local AUTO_BID_THROTTLE_IN_SECONDS = .6;
 local BROADCAST_QUEUE_DELAY_IN_SECONDS = 3;
 
+---@return nil
 function Auction:_init()
     if (self._initialized) then
         return false;
@@ -484,6 +485,7 @@ function Auction:storeCurrent(winner, bid, awardChecksum)
 end
 
 ---@param Instance table
+---@return nil
 function Auction:sanitize(Instance)
     local SanitizedAuction = {
         itemLink = Instance.itemLink,
@@ -513,7 +515,7 @@ function Auction:sanitize(Instance)
         or GL:empty(Instance.CreatedBy.name)
         or type (Instance.CreatedBy.race) ~= "string"
         or type (Instance.CreatedBy.uuid) ~= "string"
-        or not string.match(Instance.CreatedBy.uuid, "^Player%-[0-9]+%-[A-Z0-9]+$")
+        or not strmatch(Instance.CreatedBy.uuid, "^Player%-[0-9]+%-[A-Z0-9]+$")
         or type (Instance.CreatedBy.realm) ~= "string"
         or GL:empty(Instance.CreatedBy.realm)
     ) then
@@ -576,7 +578,7 @@ function Auction:sanitize(Instance)
                 or GL:empty(Bidder.name)
                 or type (Bidder.race) ~= "string"
                 or type (Bidder.uuid) ~= "string"
-                or not string.match(Bidder.uuid, "^Player%-[0-9]+%-[A-Z0-9]+$")
+                or not strmatch(Bidder.uuid, "^Player%-[0-9]+%-[A-Z0-9]+$")
                 or type (Bidder.realm) ~= "string"
                 or GL:empty(Bidder.realm)
             ) then
@@ -629,7 +631,7 @@ function Auction:sanitize(Instance)
             ))
             or (not GL:empty(Winner.uuid) and (
                 type(Winner.uuid) ~= "string"
-                or not string.match(Winner.uuid, "^Player%-[0-9]+%-[A-Z0-9]+$")
+                or not strmatch(Winner.uuid, "^Player%-[0-9]+%-[A-Z0-9]+$")
             ))
             or (not GL:empty(Winner.realm) and
                 type(Winner.realm) ~= "string"
@@ -715,7 +717,7 @@ function Auction:reassignAuction(sessionID, auctionID, winner)
         guid = winnerGUID,
     };
 
-    GL:tableSet(Session, string.format("Auctions.%s.Winner", auctionID), Winner);
+    GL:tableSet(Session, ("Auctions.%s.Winner"):format(auctionID), Winner);
 
     if (OldAuction.awardChecksum) then
         GL.AwardedLoot:editWinner(OldAuction.awardChecksum, winner);
@@ -735,6 +737,7 @@ end
 ---@param sessionID string
 ---@param auctionID string
 ---@param note string
+---@return nil
 function Auction:setNote(sessionID, auctionID, note)
     local Session = GDKPSession:byID(sessionID);
     if (not Session or Session.lockedAt) then
@@ -751,7 +754,7 @@ function Auction:setNote(sessionID, auctionID, note)
     end
 
     note = note and strtrim(note) or nil;
-    GL:tableSet(Session, string.format("Auctions.%s.note", auctionID), note ~= "" and note or nil);
+    GL:tableSet(Session, ("Auctions.%s.note"):format(auctionID), note ~= "" and note or nil);
 
     Events:fire("GL.GDKP_AUCTION_CHANGED",
         sessionID,
@@ -766,6 +769,7 @@ end
 ---@param sessionID string
 ---@param auctionID string
 ---@param paid number
+---@return nil
 function Auction:setPaid(sessionID, auctionID, paid)
     local Session = GDKPSession:byID(sessionID);
     if (not Session or Session.lockedAt) then
@@ -786,7 +790,7 @@ function Auction:setPaid(sessionID, auctionID, paid)
         return false;
     end
 
-    GL:tableSet(Session, string.format("Auctions.%s.paid", auctionID), paid);
+    GL:tableSet(Session, ("Auctions.%s.paid"):format(auctionID), paid);
 
     Events:fire("GL.GDKP_AUCTION_CHANGED",
         sessionID,
@@ -1245,7 +1249,7 @@ function Auction:announceExtension(time)
         return false;
     end
 
-    local secondsLeft = GL.Ace:TimeLeft(self.timerId) - GL.Settings:get("GDKP.auctionEndLeeway", 2);
+    local secondsLeft = GL.Ace:TimeLeft(self.timerID) - GL.Settings:get("GDKP.auctionEndLeeway", 2);
     local newDuration = math.ceil(secondsLeft + time);
 
     if (newDuration < time) then
@@ -1269,7 +1273,7 @@ function Auction:announceShortening(time)
         return false;
     end
 
-    local secondsLeft = GL.Ace:TimeLeft(self.timerId) - GL.Settings:get("GDKP.auctionEndLeeway", 2);
+    local secondsLeft = GL.Ace:TimeLeft(self.timerID) - GL.Settings:get("GDKP.auctionEndLeeway", 2);
     local newDuration = math.ceil(secondsLeft - time);
 
     -- In order to prevent funny business we won't allow anything lower than 5 for the new time
@@ -1331,10 +1335,10 @@ function Auction:reschedule(CommMessage)
     self.Current.duration = time;
     GL.Interface.GDKP.Bidder:changeDuration(time);
     SecondsAnnounced = {};
-    GL.Ace:CancelTimer(self.timerId);
+    GL.Ace:CancelTimer(self.timerID);
 
     if (self:startedByMe()) then
-        self.timerId = GL.Ace:ScheduleTimer(function ()
+        self.timerID = GL.Ace:ScheduleTimer(function ()
             self:stop();
             self:announceStop();
             Auctioneer:timeRanOut();
@@ -1346,13 +1350,13 @@ end
 
 ---@return number|boolean Time remaining in seconds or false
 function Auction:timeRemaining()
-    if (not self.timerId
+    if (not self.timerID
         or not self.inProgress
     ) then
         return false;
     end
 
-    return math.ceil(GL.Ace:TimeLeft(self.timerId) - GL.Settings:get("GDKP.auctionEndLeeway", 2));
+    return math.ceil(GL.Ace:TimeLeft(self.timerID) - GL.Settings:get("GDKP.auctionEndLeeway", 2));
 end
 
 --- Start an auction
@@ -1360,6 +1364,7 @@ end
 --- sure that the auction starts simultaneously for everyone
 ---
 ---@param CommMessage CommMessage
+---@return nil
 function Auction:start(CommMessage)
     if (not GL.GDKPIsAllowed) then
         return;
@@ -1396,7 +1401,7 @@ function Auction:start(CommMessage)
     end
 
     if (not Auctioneer:allowedToBroadcast(CommMessage.Sender.id)) then
-        return GL:error(string.format(L["User '%s' is not allowed to start auctions"], CommMessage.Sender.name));
+        return GL:error((L["User '%s' is not allowed to start auctions"]):format(CommMessage.Sender.name));
     end
 
     --- We have to wait with starting the actual auction until
@@ -1481,7 +1486,7 @@ function Auction:start(CommMessage)
                 end
             end
 
-            self.timerId = GL.Ace:ScheduleTimer(function ()
+            self.timerID = GL.Ace:ScheduleTimer(function ()
                 self:stop();
                 self:announceStop();
                 Auctioneer:timeRanOut();
@@ -1508,7 +1513,7 @@ function Auction:start(CommMessage)
             )
         ) then
             self.countDownTimer = GL.Ace:ScheduleRepeatingTimer(function ()
-                local secondsLeft = math.ceil(GL.Ace:TimeLeft(self.timerId) - GL.Settings:get("GDKP.auctionEndLeeway", 2));
+                local secondsLeft = math.ceil(GL.Ace:TimeLeft(self.timerID) - GL.Settings:get("GDKP.auctionEndLeeway", 2));
                 if ((secondsLeft <= numberOfSecondsToCountdown
                         or GL:inTable(FiveSecondsToAnnounce, secondsLeft)
                     )
@@ -1596,7 +1601,7 @@ function Auction:stop(CommMessage)
     GL:playSound(SOUNDKIT.RAID_WARNING);
 
     self.inProgress = false;
-    GL.Ace:CancelTimer(self.timerId);
+    GL.Ace:CancelTimer(self.timerID);
 
     GL.Interface.GDKP.Bidder:hide();
 
@@ -1647,15 +1652,15 @@ function Auction:listenForBids()
     self.lastBidReceivedAt = 0;
 
     local EventsToListenTo = {
-        {"GDKPChatMsgPartyListener", "CHAT_MSG_PARTY"},
-        {"GDKPChatMsgPartyLeaderListener", "CHAT_MSG_PARTY_LEADER"},
-        {"GDKPChatMsgRaidListener", "CHAT_MSG_RAID"},
-        {"GDKPChatMsgRaidLeaderListener", "CHAT_MSG_RAID_LEADER"},
+        { "GDKPChatMsgPartyListener", "CHAT_MSG_PARTY", },
+        { "GDKPChatMsgPartyLeaderListener", "CHAT_MSG_PARTY_LEADER", },
+        { "GDKPChatMsgRaidListener", "CHAT_MSG_RAID", },
+        { "GDKPChatMsgRaidLeaderListener", "CHAT_MSG_RAID_LEADER", },
     };
 
     -- Only listen to whispers in case the user is solo and is (most likely) testing the add-on
     if (not GL.User.isInGroup) then
-        tinsert(EventsToListenTo, {"GDKPChatMsgWhisperListener", "CHAT_MSG_WHISPER"});
+        tinsert(EventsToListenTo, { "GDKPChatMsgWhisperListener", "CHAT_MSG_WHISPER", });
     end
 
     Events:register(EventsToListenTo, function (_, message, sender)
@@ -1683,6 +1688,7 @@ function Auction:stopListeningForBids()
 end
 
 ---@param message string|number
+---@return nil
 function Auction:bid(message)
     -- There's no auction in progress
     if (not self.inProgress) then
@@ -1880,7 +1886,7 @@ end
 ---@return nil
 function Auction:processBid(message, bidder)
     local auctionWasStartedByMe = self:startedByMe();
-    message = string.lower(message);
+    message = strlower(message);
     -- This is a message generated by gargul, skip it
     if (GL:strStartsWith(message, "{rt3} gargul :")) then
         return;
@@ -1943,7 +1949,7 @@ function Auction:processBid(message, bidder)
             not bidTooLow or Settings:get("GDKP.invalidBidsTriggerAntiSnipe")
         )) then
             self.lastBidReceivedAt = GetTime();
-            local secondsLeft = math.floor(GL.Ace:TimeLeft(self.timerId) - GL.Settings:get("GDKP.auctionEndLeeway", 2));
+            local secondsLeft = math.floor(GL.Ace:TimeLeft(self.timerID) - GL.Settings:get("GDKP.auctionEndLeeway", 2));
             if (GL:lt(secondsLeft, self.Current.antiSnipe)) then
                 self:announceReschedule(self.Current.antiSnipe);
             end

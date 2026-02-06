@@ -1,4 +1,4 @@
-﻿local L = Gargul_L;
+local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -77,7 +77,7 @@ function Profiler:draw()
             return color;
         end
 
-        Usage:SetText(string.format("MEM: |c00%s%s|rk",
+        Usage:SetText(("MEM: |c00%s%s|rk"):format(
             memoryColor(memory),
             self:humanReadableNumber(memory)
         ));
@@ -99,7 +99,7 @@ end
 ---@return string
 function Profiler:humanReadableNumber(number)
     local pattern = "%.1f";
-    local numberString = string.format(pattern, number);
+    local numberString = (pattern):format(number);
 
     if (number >= 1000) then
         local subCount;

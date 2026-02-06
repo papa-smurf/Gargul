@@ -1,4 +1,4 @@
-﻿local L = Gargul_L;
+local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -53,7 +53,7 @@ function AuctionDetails:draw(sessionID, auctionID)
 
     sessionID = tostring(sessionID);
     auctionID = tostring(auctionID);
-    local Auction = GL.DB:get(string.format("GDKP.Ledger.%s.Auctions.%s", sessionID, auctionID));
+    local Auction = GL.DB:get(("GDKP.Ledger.%s.Auctions.%s"):format(sessionID, auctionID));
 
     -- The given auction does not exist
     if (not Auction) then
@@ -141,7 +141,7 @@ function AuctionDetails:draw(sessionID, auctionID)
     for key, val in pairs(Auction or {}) do
         if (val and type(val) ~= "table") then
             AuctionEntry = AceGUI:Create("Label");
-            AuctionEntry:SetText(string.format("%s: %s", key, val));
+            AuctionEntry:SetText(("%s: %s"):format(key, val));
             AuctionEntry:SetFullWidth(true);
             ScrollFrame:AddChild(AuctionEntry);
         end
@@ -155,7 +155,7 @@ function AuctionDetails:draw(sessionID, auctionID)
     for key, val in pairs(Auction.Winner or {}) do
         if (type(val) == "string" and val ~= "nil") then
             WinnerEntry = AceGUI:Create("Label");
-            WinnerEntry:SetText(string.format("%s: %s", key, val));
+            WinnerEntry:SetText(("%s: %s"):format(key, val));
             WinnerEntry:SetFullWidth(true);
             ScrollFrame:AddChild(WinnerEntry);
         end
@@ -169,7 +169,7 @@ function AuctionDetails:draw(sessionID, auctionID)
     for key, val in pairs(Auction.CreatedBy or {}) do
         if (type(val) == "string" and val ~= "nil") then
             CreatedByEntry = AceGUI:Create("Label");
-            CreatedByEntry:SetText(string.format("%s: %s", key, val));
+            CreatedByEntry:SetText(("%s: %s"):format(key, val));
             CreatedByEntry:SetFullWidth(true);
             ScrollFrame:AddChild(CreatedByEntry);
         end
@@ -198,20 +198,20 @@ function AuctionDetails:draw(sessionID, auctionID)
             end
 
             BidEntry = AceGUI:Create("Label");
-            BidEntry:SetText(string.format("%s%s: %s", linebreak, L["by"], GL:nameFormat(Bid.bidder)));
+            BidEntry:SetText(("%s%s: %s"):format(linebreak, L["by"], GL:nameFormat(Bid.bidder)));
             BidEntry:SetFullWidth(true);
             ScrollFrame:AddChild(BidEntry);
 
             for key, val in pairs(Bid or {}) do
                 if (type(val) ~= "table") then
                     BidEntry = AceGUI:Create("Label");
-                    BidEntry:SetText(string.format("%s: %s", key, val));
+                    BidEntry:SetText(("%s: %s"):format(key, val));
                     BidEntry:SetFullWidth(true);
                     ScrollFrame:AddChild(BidEntry);
                 else
                     for bidderKey, bidderVal in pairs(val or {}) do
                         BidEntry = AceGUI:Create("Label");
-                        BidEntry:SetText(string.format("%s: %s", bidderKey, bidderVal));
+                        BidEntry:SetText(("%s: %s"):format(bidderKey, bidderVal));
                         BidEntry:SetFullWidth(true);
                         ScrollFrame:AddChild(BidEntry);
                     end

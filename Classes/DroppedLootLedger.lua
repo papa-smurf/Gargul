@@ -1,4 +1,4 @@
-﻿---@type GL
+---@type GL
 local _, GL = ...;
 
 local deformat = LibStub("LibDeformat-3.0");
@@ -59,8 +59,8 @@ function DroppedLootLedger:_init()
     self.minimumQuality = Settings:get("DroppedLoot.minimumQualityOfLoggedLoot", 4);
 
     Events:register({
-            {"DroppedLootGroupRosterUpdateThrottled", "GL.GROUP_ROSTER_UPDATE_THROTTLED"},
-            {"DroppedLootSettingChanged", "GL.SETTING_CHANGED"},
+            { "DroppedLootGroupRosterUpdateThrottled", "GL.GROUP_ROSTER_UPDATE_THROTTLED", },
+            { "DroppedLootSettingChanged", "GL.SETTING_CHANGED", },
         },
         function ()
             self:startOrStopTracking();
@@ -362,6 +362,7 @@ function DroppedLootLedger:processReceivedItem(message)
     return Details;
 end
 
+---@return nil
 function DroppedLootLedger:storeReceivedItem(Details)
     -- We don't want to keep track of this quality
     if (not Details.itemQuality
