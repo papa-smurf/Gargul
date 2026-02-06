@@ -1,4 +1,4 @@
-local L = Gargul_L;
+﻿local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -65,7 +65,7 @@ function AddItem:open(link)
     return Window:Show() and Window;
 end
 
----@return void
+---@return nil
 function AddItem:close()
     local Window = self:getWindow() or self:build();
 

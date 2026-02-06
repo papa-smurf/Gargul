@@ -1,4 +1,4 @@
-local L = Gargul_L;
+﻿local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -23,7 +23,7 @@ local AuctionDetails = GL.Interface.GDKP.AuctionDetails;
 
 ---@param sessionID string
 ---@param auctionID string
----@return void
+---@return nil
 function AuctionDetails:toggle(sessionID, auctionID)
     if (self.sessionID == sessionID
         and self.auctionID == auctionID
@@ -36,7 +36,7 @@ end
 
 ---@param sessionID string
 ---@param auctionID string
----@return void
+---@return nil
 function AuctionDetails:draw(sessionID, auctionID)
     local Spacer;
 
@@ -239,7 +239,7 @@ end
 
 --- Close the details
 ---
----@return void
+---@return nil
 ---
 ---@todo use build/draw to reuse frames. Can't simply :Release() because of ScrollBar
 function AuctionDetails:close()

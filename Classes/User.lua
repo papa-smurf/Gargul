@@ -1,4 +1,4 @@
-local _, GL = ...;
+﻿local _, GL = ...;
 
 ---@class User
 GL.User = {
@@ -36,7 +36,7 @@ local User = GL.User;
 
 --- Initialize the user's more "static" details that
 --- shouldn't be able to change during playtime
----@return void
+---@return nil
 function User:_init()
     -- No need to initialize this class twice
     if (self._initialized) then
@@ -75,7 +75,7 @@ end
 
 --- Refresh the User's details after the group
 --- composition or loot method changes
----@return void
+---@return nil
 function User:groupSetupChanged()
     self.groupSetupChangedAt = GetServerTime();
 
@@ -93,7 +93,7 @@ function User:groupSetupChanged()
 end
 
 --- Refresh the user's details
----@return void
+---@return nil
 function User:refresh()
     local userWasMasterLooter = self.isMasterLooter;
     local userWasLead = self.isLead;

@@ -1,4 +1,4 @@
-local L = Gargul_L;
+﻿local L = Gargul_L;
 
 local _, GL = ...;
 
@@ -31,7 +31,7 @@ local Exporter = GL.Exporter;
 
 --- Show the export window
 ---
----@return void
+---@return nil
 function Exporter:draw()
     if (self.visible) then
         return;
@@ -143,7 +143,7 @@ end
 
 --- Clear export data, either for a specific date or everything
 ---
----@return void
+---@return nil
 function Exporter:clearData()
     local warning;
     local onConfirm;
@@ -190,7 +190,7 @@ end
 
 --- Show the export data (either all or for the selected date)
 ---
----@return void
+---@return nil
 function Exporter:refreshExportString()
     local exportFormat = GL.Settings:get("ExportingLoot.format");
 
@@ -431,7 +431,7 @@ end
 
 --- Close the export window
 ---
----@return void
+---@return nil
 function Exporter:close()
     if (not self.visible) then
         return;
@@ -458,7 +458,7 @@ end
 
 --- Draw the dates table shown on the left hand side of the window
 ---
----@return void
+---@return nil
 function Exporter:drawDatesTable(Parent, Dates)
     local Columns = {
         {

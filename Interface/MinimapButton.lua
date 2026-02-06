@@ -1,4 +1,4 @@
-local L = Gargul_L;
+﻿local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -75,7 +75,7 @@ local EXPLANATIONS = {
     BOOSTED_ROLLS = L["Boosted Rolls"],
 };
 
----@return void
+---@return nil
 function MinimapButton:_init()
     local GLDataBroker = LibDataBroker:NewDataObject("Gargul", {
         type = "data source",

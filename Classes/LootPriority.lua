@@ -1,4 +1,4 @@
-local L = Gargul_L;
+﻿local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -69,7 +69,7 @@ function LootPriority:tooltipLines(itemLink, itemName)
     return Lines;
 end
 
----@return void
+---@return nil
 function LootPriority:drawImporter()
     -- Create a container/parent frame
     local LootPriorityFrame = AceGUI:Create("Frame");
@@ -152,7 +152,7 @@ end
 --- Save a given loot priority string
 ---
 ---@param data string
----@return void
+---@return nil
 function LootPriority:save(data)
     if (type(data) ~= "string") then
         return GL:warning(L["Invalid data provided"]);

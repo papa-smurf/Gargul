@@ -1,4 +1,4 @@
----@type GL
+﻿---@type GL
 local _, GL = ...;
 
 local Overview = GL.Interface.Settings.Overview; ---@type SettingsOverview
@@ -9,7 +9,7 @@ GL.Interface.Settings.PackMule = {
 };
 local PackMule = GL.Interface.Settings.PackMule; ---@type PackMuleSettings
 
----@return void
+---@return nil
 function PackMule:draw(Parent)
     GL:debug("PackMuleSettings:draw");
 

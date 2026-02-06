@@ -1,4 +1,4 @@
-local L = Gargul_L;
+﻿local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -854,7 +854,7 @@ function Overview:refreshLedger()
     Interface:get(self, "GDKPOverview"):DoLayout();
 end
 
----@return void
+---@return nil
 function Overview:showTutorial()
     self:clearDetailsFrame();
 
@@ -963,7 +963,7 @@ end
 
 --- Draw the GDKP sessions table (left-hand side of the overview)
 ---
----@return void
+---@return nil
 function Overview:createSessionsTable()
     local columns = {
         {
@@ -1022,7 +1022,7 @@ end
 
 --- Refresh the sessions table
 ---
----@return void
+---@return nil
 function Overview:refreshSessions()
     -- If there's no sessions table then there's nothing to refresh
     if (not self.SessionsTable) then

@@ -1,4 +1,4 @@
----@type GL
+﻿---@type GL
 local _, GL = ...;
 
 local Overview = GL.Interface.Settings.Overview; ---@type SettingsOverview
@@ -9,7 +9,7 @@ GL.Interface.Settings.ShortcutKeys = {
 };
 local ShortcutKeys = GL.Interface.Settings.ShortcutKeys; ---@type ShortcutKeysSettings
 
----@return void
+---@return nil
 function ShortcutKeys:draw(Parent)
     GL:debug("ShortcutKeys:draw");
 

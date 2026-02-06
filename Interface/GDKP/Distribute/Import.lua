@@ -1,4 +1,4 @@
-local L = Gargul_L;
+﻿local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -119,7 +119,7 @@ end
 
 --- Toggle the create session window that's anchored to the right side of the GDKP overview window
 ---
----@return void
+---@return nil
 function Import:toggle()
     if (self.isVisible) then
         return self:close();
@@ -128,7 +128,7 @@ function Import:toggle()
     self:open();
 end
 
----@return void
+---@return nil
 function Import:open(sessionID)
     local Session = GDKPSession:byID(sessionID);
 
@@ -152,7 +152,7 @@ function Import:open(sessionID)
     Window.frame:Show();
 end
 
----@return void
+---@return nil
 function Import:close()
     local Window = self:window();
 

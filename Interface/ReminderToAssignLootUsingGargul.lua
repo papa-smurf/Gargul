@@ -1,4 +1,4 @@
-local L = Gargul_L;
+﻿local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -13,7 +13,7 @@ GL.Interface.ReminderToAssignLootUsingGargul = {
 };
 local ReminderToAssignLootUsingGargul = GL.Interface.ReminderToAssignLootUsingGargul; ---@type ReminderToAssignLootUsingGargulInterface
 
----@return void
+---@return nil
 function ReminderToAssignLootUsingGargul:draw()
     -- The reminder is already visible
     if (self.isVisible) then
@@ -53,7 +53,7 @@ function ReminderToAssignLootUsingGargul:draw()
     Window:AddChild(DescriptionLabel);
 end
 
----@return void
+---@return nil
 function ReminderToAssignLootUsingGargul:close()
     local Window = GL.Interface:get(self, "Window");
 

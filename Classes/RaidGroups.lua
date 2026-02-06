@@ -1,4 +1,4 @@
-local L = Gargul_L;
+﻿local L = Gargul_L;
 
 --[[
     This class allows us to quickly change
@@ -25,7 +25,7 @@ local RaidGroups = GL.RaidGroups;
 
 --- Output everyone currently in the group in a CSV format
 ---
----@return void
+---@return nil
 function RaidGroups:toCSV()
     local csv = "";
     for _, Player in pairs(GL.User:groupMembers()) do
@@ -244,7 +244,7 @@ function RaidGroups:drawImporter()
     self.UIComponents.TankAssignmentButton = SetTanksButton;
 end
 
----@return void
+---@return nil
 function RaidGroups:close()
     self.isVisible = false;
 
@@ -446,7 +446,7 @@ end
 
 --- Attempt to invite everyone who's on the roster
 ---
----@return void
+---@return nil
 function RaidGroups:invitePlayers(raidGroupCsv)
     for _, playerName in pairs(self:listPlayerNames(raidGroupCsv)) do
         GL.InviteUnit(playerName); -- Attempt to invite the player
@@ -521,7 +521,7 @@ end
 --- Build a list of migrations based on the csv provided by the user
 ---
 ---@param raidGroupCsv string
----@return void
+---@return nil
 function RaidGroups:applyRaidGroups(raidGroupCsv)
     if (not GL.User.isInRaid) then
         return GL:warning(L["You need to be in a raid!"]);

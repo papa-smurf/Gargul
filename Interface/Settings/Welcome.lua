@@ -1,4 +1,4 @@
-local L = Gargul_L;
+﻿local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -20,7 +20,7 @@ GL.Interface.Settings.Welcome = {
 };
 local Welcome = GL.Interface.Settings.Welcome; ---@type WelcomeSettings
 
----@return void
+---@return nil
 function Welcome:draw(Parent)
     local HorizontalSpacer;
 

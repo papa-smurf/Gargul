@@ -1,4 +1,4 @@
-local L = Gargul_L;
+﻿local L = Gargul_L;
 local CandyBar = LibStub("LibCandyBarGargul-3.0");
 
 ---@type GL
@@ -52,7 +52,7 @@ local HIDE_AWARDED_TO_SELF = false;
 local HIDE_DISENCHANTED = false;
 local MAXIMUM_TRADE_TIME_LEFT = 7200; -- Two hours in seconds
 
----@return void
+---@return nil
 function Overview:_init()
     if (self._initialized) then
         return;
@@ -122,7 +122,7 @@ function Overview:open()
     return Window;
 end
 
----@return void
+---@return nil
 function Overview:close()
     for key, Row in pairs(self.ItemRows) do
         if (Row) then
@@ -347,7 +347,7 @@ function Overview:build()
     return Window;
 end
 
----@return void
+---@return nil
 function Overview:refresh()
     local State = TradeTime:getState() or {};
 
@@ -462,7 +462,7 @@ end
 
 --- Determine the window height based on the number of items shown
 ---
----@return void
+---@return nil
 function Overview:setWindowHeight()
     local Window = _G[self.windowName] or self:build();
     Window:SetHeight(HEADER_HEIGHT + (self.rowsShown * ROW_HEIGHT));
@@ -655,7 +655,7 @@ function Overview:buildItemRow(Details, Window, ActionButtons)
 end
 
 ---@param itemGUID string
----@return void
+---@return nil
 function Overview:hideItemRow(itemGUID)
     self.HiddenItems[itemGUID] = true;
 
@@ -665,7 +665,7 @@ end
 --- Release an ItemRow (aka remove it, hide it, take care of the countdown bar it holds)
 ---
 ---@param ItemRow Frame
----@return void
+---@return nil
 function Overview:releaseItemRow(ItemRow)
     if (type(ItemRow) ~= "table") then
         return;

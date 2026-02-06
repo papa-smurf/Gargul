@@ -1,4 +1,4 @@
-local L = Gargul_L;
+﻿local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -46,7 +46,7 @@ local ENDS_AT_OFFSET = 1697932800;
 local BIDDING_LEEWAY = 3;
 local UPDATE_INTERVAL = 2;
 
----@return void
+---@return nil
 function Auctioneer:_init()
     if (self._initialized) then
         return;
@@ -71,7 +71,7 @@ end
 ---@param includeBOEs boolean
 ---@param includeAwarded boolean
 ---@param includeMaterials boolean
----@return void
+---@return nil
 function Auctioneer:fillFromInventory(minimumQuality, minimumItemLevel, includeBOEs, includeAwarded, includeMaterials)
     includeBOEs = includeBOEs ~= false;
     includeMaterials = includeMaterials == true;
@@ -174,7 +174,7 @@ end
 ---@param duration number
 ---@param antiSnipe number
 ---
----@return void
+---@return nil
 function Auctioneer:start(ItemDetails, duration, antiSnipe)
     local ItemsUpForAuction = {};
     local MinAndIncrementPerLink = {};
@@ -220,7 +220,7 @@ end
 --- We just came back online, check and see if there's an active MultiAuction session
 --- that we need to sync with or have to take over in case we were the organizer
 ---
----@return void
+---@return nil
 function Auctioneer:syncWithRunningSession()
     if (not GL.User.isInGroup or not GL:empty(Client.AuctionDetails)) then
         return;
@@ -500,7 +500,7 @@ function Auctioneer:syncWithRunningSession()
 end
 
 ---@param Message CommMessage
----@return void
+---@return nil
 function Auctioneer:respondToDetailsRequest(Message)
     if (Message.Sender.isSelf) then
         return;
@@ -619,7 +619,7 @@ end
 
 --- Send all top bids to the group
 ---
----@return void
+---@return nil
 function Auctioneer:scheduleUpdater()
     GL:interval(UPDATE_INTERVAL, "GDKP.MultiAuction.auctionUpdated", function ()
         if (not self:auctionStartedByMe()) then
@@ -694,7 +694,7 @@ function Auctioneer:scheduleUpdater()
 end
 
 ---@param player string
----@return void
+---@return nil
 function Auctioneer:clearAutoBidsForPlayer(player)
     player = GDKP:playerGUID(player);
 
@@ -707,7 +707,7 @@ function Auctioneer:clearAutoBidsForPlayer(player)
     end
 end
 
----@return void
+---@return nil
 function Auctioneer:syncNewItems()
     local Changes = {};
     for id, announce in pairs(self.IDsToAnnounce or {}) do
@@ -832,7 +832,7 @@ end
 --- Attempt to process an incoming bid
 ---
 ---@param Message CommMessage
----@return void
+---@return nil
 function Auctioneer:processBid(Message)
     if (not self:auctionStartedByMe()) then
         return;
@@ -968,7 +968,7 @@ end
 --- Mark an auction as deleted
 ---
 ---@param auctionID string
----@return void
+---@return nil
 function Auctioneer:deleteAuction(auctionID)
     if (self:auctionIsFinalized(auctionID)) then
         return;
@@ -987,7 +987,7 @@ end
 --- Close an auction
 ---
 ---@param auctionID string
----@return void
+---@return nil
 function Auctioneer:closeAuction(auctionID)
     if (self:auctionIsFinalized(auctionID)) then
         return;
@@ -1047,7 +1047,7 @@ end
 --- Clear an auction's current bid
 ---
 ---@param auctionID string
----@return void
+---@return nil
 function Auctioneer:clearBid(auctionID)
     if (self:auctionIsFinalized(auctionID)
         or GL:empty(Client.AuctionDetails.Auctions[auctionID].CurrentBid)
@@ -1112,7 +1112,7 @@ end
 --- Give a last 10 second timer for the given auction
 ---
 ---@param auctionID string
----@return void
+---@return nil
 function Auctioneer:finalCall(auctionID, seconds)
     if (self:auctionIsFinalized(auctionID)) then
         return;
@@ -1126,7 +1126,7 @@ end
 --- Wrap up the current multi-auction session
 ---
 ---@param announcePot boolean
----@return void
+---@return nil
 function Auctioneer:finish(announcePot)
     announcePot = announcePot ~= false;
 
@@ -1146,7 +1146,7 @@ end
 
 --- Terminate the current multi-auction session by removing all bids and closing everything
 ---
----@return void
+---@return nil
 function Auctioneer:terminate()
     for auctionID in pairs(Client.AuctionDetails.Auctions or {}) do
         self:clearBid(auctionID);
@@ -1156,7 +1156,7 @@ end
 
 --- Disenchant all stopped and unsold items
 ---
----@return void
+---@return nil
 function Auctioneer:disenchant()
     local disenchantNextItem;
     local AuctionsToDisenchant = {};
@@ -1199,7 +1199,7 @@ end
 --- Store auction details for future use (increment, minimum)
 ---
 ---@param Details table
----@return void
+---@return nil
 function Auctioneer:storeDetailsForFutureAuctions(Details)
     local itemID = GL:getItemIDFromLink(Details.link);
 

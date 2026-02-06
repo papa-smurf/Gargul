@@ -1,4 +1,4 @@
-local L = Gargul_L;
+﻿local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -98,7 +98,7 @@ function Auctioneer:open(keepPreviousItems)
     return Window:Show() and Window;
 end
 
----@return void
+---@return nil
 function Auctioneer:close()
     local Window = self:getWindow() or self:build();
 
@@ -506,7 +506,7 @@ function Auctioneer:build()
     return Window;
 end
 
----@return void
+---@return nil
 function Auctioneer:clearItems()
     local Window = self:getWindow();
 
@@ -524,7 +524,7 @@ end
 
 --- Sort auctions, filter them by all the possible filters
 ---
----@return void
+---@return nil
 function Auctioneer:filterAndSort()
     self.SelectAll:SetChecked(false);
 
@@ -616,7 +616,7 @@ function Auctioneer:filterAndSort()
     end
 end
 
----@return void
+---@return nil
 function Auctioneer:start()
     local ItemsUpForAuction = {};
 

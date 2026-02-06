@@ -1,4 +1,4 @@
-local L = Gargul_L;
+﻿local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -12,7 +12,7 @@ GL.Interface.Settings.Rolling = {
 };
 local Rolling = GL.Interface.Settings.Rolling; ---@type RollSettings
 
----@return void
+---@return nil
 function Rolling:draw(Parent)
     local Checkboxes = {
         {

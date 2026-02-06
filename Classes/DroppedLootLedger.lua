@@ -1,4 +1,4 @@
----@type GL
+﻿---@type GL
 local _, GL = ...;
 
 local deformat = LibStub("LibDeformat-3.0");
@@ -49,7 +49,7 @@ local WHENHASML = 3;
 local WHENISML = 4;
 local WHENRL = 5;
 
----@return void
+---@return nil
 function DroppedLootLedger:_init()
     if (self._initialized) then
         return;
@@ -70,7 +70,7 @@ end
 
 --- Start or stop tracking loot based on group and add-on settings
 ---
----@return void
+---@return nil
 function DroppedLootLedger:startOrStopTracking()
     self.trackItems = self:_shouldTrackItems();
     if (not self.trackItems) then
@@ -128,7 +128,7 @@ function DroppedLootLedger:_shouldTrackItems()
     return false;
 end
 
----@return void
+---@return nil
 function DroppedLootLedger:startTracking()
     if (self.tracking) then
         return;
@@ -159,7 +159,7 @@ function DroppedLootLedger:startTracking()
     --end);
 end
 
----@return void
+---@return nil
 function DroppedLootLedger:stopTracking()
     Events:unregister{
         "DroppedLootLedgerChatMSGLootListener",
@@ -171,12 +171,12 @@ function DroppedLootLedger:stopTracking()
 end
 
 ---@param quality number
----@return void
+---@return nil
 function DroppedLootLedger:setMinimumQuality(quality)
     self.minimumQuality = quality;
 end
 
----@return void
+---@return nil
 function DroppedLootLedger:lootOpened()
     local unitName = UnitName("target");
 
@@ -238,7 +238,7 @@ function DroppedLootLedger:lootOpened()
 end
 
 ---@param Drops table
----@return void
+---@return nil
 function DroppedLootLedger:broadcastDrops(sourceGUID, Drops)
     -- No need to broadcast twice for the same unit
     if (self.BroadcastedNPCIDs[sourceGUID]) then
@@ -253,7 +253,7 @@ function DroppedLootLedger:broadcastDrops(sourceGUID, Drops)
 end
 
 ---@param CommMessage table
----@return void
+---@return nil
 function DroppedLootLedger:receiveDrops(CommMessage)
     -- No need to process our own findings
     if (CommMessage.Sender.isSelf) then
@@ -307,7 +307,7 @@ function DroppedLootLedger:getNPCIDFromSourceGUID(GUID)
     return NPCID;
 end
 
----@return void
+---@return nil
 function DroppedLootLedger:processCombatLog(...)
     local timestamp, event, _, _, _, _, _, unitGUID, unitName = ...;
 

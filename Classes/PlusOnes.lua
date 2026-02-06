@@ -1,4 +1,4 @@
-local L = Gargul_L;
+﻿local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -85,7 +85,7 @@ end
 --- Mark a given player as "trusted"
 ---
 ---@param playerName string
----@return void
+---@return nil
 function PlusOnes:markPlayerAsTrusted(playerName)
     if (GL:empty(playerName)
         or self:playerIsTrusted(playerName)
@@ -108,7 +108,7 @@ end
 --- Remove a player from the list of "trusted" players
 ---
 ---@param playerName string
----@return void
+---@return nil
 function PlusOnes:removePlayerFromTrusted(playerName)
     -- No point removing the player if he's not trusted in the first place
     if (GL:empty(playerName)
@@ -134,7 +134,7 @@ end
 --- Draw either the importer or overview
 --- based on the current plus one data
 ---
----@return void
+---@return nil
 function PlusOnes:draw()
     -- Show the plus ones overview instead
     GL.Interface.PlusOnes.Overview:draw();
@@ -145,7 +145,7 @@ end
 ---@param _ string
 ---@param message string
 ---@param sender string
----@return void
+---@return nil
 function PlusOnes:handleWhisperCommand(_, message, sender)
     local validPrefixDetected = false;
     for _, prefix in pairs(GL:explode(L["!plusone|!po|!+1"], "|") or {}) do
@@ -182,7 +182,7 @@ end
 
 --- Materialize the plus one data to make it more accessible during runtime
 ---
----@return void
+---@return nil
 function PlusOnes:materializeData()
     local DetailsByPlayerName = {}; -- Details including aliases by player name
 
@@ -219,7 +219,7 @@ end;
 
 --- Clear all plus one data
 ---
----@return void
+---@return nil
 function PlusOnes:clearPlusOnes()
     DB:set("PlusOnes", {
         Totals = {},
@@ -267,7 +267,7 @@ end
 ---@param name string
 ---@param plusOne number
 ---@param dontBroadcast boolean Important so that child receiving data from parent doesn't broadcast on
----@return void
+---@return nil
 function PlusOnes:setPlusOnes(name, plusOne, dontBroadcast)
     if (type(name) ~= "string") then
         return;
@@ -459,7 +459,7 @@ end
 --- Process an incoming plus one broadcast
 ---
 ---@param CommMessage CommMessage
----@return void
+---@return nil
 function PlusOnes:receiveBroadcast(CommMessage)
     -- If shared data is blocked then return
     if (GL.Settings:get("PlusOnes.blockShareData")) then
@@ -530,7 +530,7 @@ end
 
 --- Request PlusOnes data from the person in charge (ML or Leader).
 ---
----@return void
+---@return nil
 function PlusOnes:requestData()
     -- If shared data is blocked then no need to request so return
     if (GL.Settings:get("PlusOnes.blockShareData")
@@ -602,7 +602,7 @@ end
 --- Reply to a player's PlusOnes data request.
 ---
 ---@param CommMessage CommMessage
----@return void
+---@return nil
 function PlusOnes:replyToDataRequest(CommMessage)
     -- We're not in a group (anymore), no need to help this person out
     if (not GL.User.isInGroup) then
@@ -644,7 +644,7 @@ end
 --- Add points to a give user's balance
 ---
 ---@param playerName string
----@return void
+---@return nil
 function PlusOnes:addPlusOnes(playerName)
     local currentPoints = self:getPlusOnes(playerName) or 0;
     self:queueUpdate(playerName, currentPoints + 1);
@@ -653,7 +653,7 @@ end
 --- Subtract points from a given user's balance
 ---
 ---@param playerName string
----@return void
+---@return nil
 function PlusOnes:subtractPlusOnes(playerName)
     local currentPoints = self:getPlusOnes(playerName) or 0;
 
@@ -665,7 +665,7 @@ end
 ---@param playerName string
 ---@param plusOne number
 ---@param delete boolean
----@return void
+---@return nil
 function PlusOnes:queueUpdate(playerName, plusOne, delete)
     local dontBroadcast = true;
 
@@ -691,7 +691,7 @@ end
 
 --- Send out the queued updates
 ---
----@return void
+---@return nil
 function PlusOnes:broadcastQueuedUpdates()
     if (not GL.User.isInGroup) then
         return;
@@ -755,7 +755,7 @@ end
 --- Process an incoming plus one update
 ---
 ---@param CommMessage CommMessage
----@return void
+---@return nil
 function PlusOnes:receiveUpdate(CommMessage)
     -- If shared data is blocked then no need to receive update so return
     if (GL.Settings:get("PlusOnes.blockShareData")) then
@@ -829,7 +829,7 @@ end
 
 --- Trigger the PLUSONES_CHANGED event
 ---
----@return void
+---@return nil
 function PlusOnes:triggerChangeEvent()
     GL.Events:fire("GL.PLUSONES_CHANGED");
 end

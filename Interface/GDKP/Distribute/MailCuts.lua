@@ -1,4 +1,4 @@
-local L = Gargul_L;
+﻿local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -32,7 +32,7 @@ local MAIL_SEND_WAIT_TIMEOUT = 15;
 local MAIL_COST = 30; -- Sending a mail costs 30 copper
 
 --- Show the cut mailer window when certain events are triggered
----@return void
+---@return nil
 function MailCuts:_init()
     if (self._initialized) then
         return;
@@ -70,7 +70,7 @@ function MailCuts:_init()
     end);
 end
 
----@return void
+---@return nil
 function MailCuts:openIfCutsToMail()
     local Instance = GDKPSession:getActive();
 
@@ -97,7 +97,7 @@ function MailCuts:open()
     return Window;
 end
 
----@return void
+---@return nil
 function MailCuts:close()
     self.isVisible = false;
     return _G[self.windowName] and _G[self.windowName]:Hide();
@@ -474,7 +474,7 @@ function MailCuts:mailPlayerCut(player, callback)
     end, MAIL_SEND_WAIT_TIMEOUT);
 end
 
----@return void
+---@return nil
 function MailCuts:disableSendButton()
     if (not _G.SendMailMailButton or not _G.SendMailMailButton.SetEnabled) then
         return;
@@ -483,7 +483,7 @@ function MailCuts:disableSendButton()
     _G.SendMailMailButton:SetEnabled(false);
 end
 
----@return void
+---@return nil
 function MailCuts:enableSendButton()
     if (not _G.SendMailMailButton or not _G.SendMailMailButton.SetEnabled) then
         return;

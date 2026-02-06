@@ -1,4 +1,4 @@
-local L = Gargul_L;
+﻿local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -16,7 +16,7 @@ local Profiler = GL.Profiler; ---@type Profiler
 
 --- Draw the profiler window and keep it updated
 ---
----@return void
+---@return nil
 function Profiler:draw()
     if (self.isVisible) then
         return;
@@ -113,7 +113,7 @@ end
 
 --- Close the profile, cancel the refreshtimer
 ---
----@return void
+---@return nil
 function Profiler:close()
     if (not self.isVisible) then
         return;
@@ -127,7 +127,7 @@ end
 
 --- Store the profiler's position so it persists between playsessions
 ---
----@return void
+---@return nil
 function Profiler:storePosition()
     GL.Interface:storePosition(self.Window, "Profiler");
 end

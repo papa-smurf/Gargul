@@ -1,4 +1,4 @@
-local L = Gargul_L;
+﻿local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -147,7 +147,7 @@ end
 
 ---@param sessionID string
 ---@param name string
----@return void
+---@return nil
 function Pot:applyMutator(sessionID, name)
     local Session = GDKPSession:byID(sessionID);
     if (not Session or Session.lockedAt) then
@@ -703,7 +703,7 @@ end
 
 ---@param sessionID string
 ---@param callback function
----@return void
+---@return nil
 function Pot:announce(sessionID, callback)
     local Session = GDKPSession:byID(sessionID);
     if (not Session or not Session.lastAvailableBase or not tonumber(Session.lastAvailableBase)) then

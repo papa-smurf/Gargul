@@ -1,4 +1,4 @@
-local L = Gargul_L;
+﻿local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -178,7 +178,7 @@ end
 ---@param CommMessage CommMessage
 ---@param broadcastFinishedCallback function
 ---@param packageSentCallback function
----@return void
+---@return nil
 function Comm:send(CommMessage, broadcastFinishedCallback, packageSentCallback)
     local distribution = CommMessage.channel;
     local recipient = CommMessage.recipient;

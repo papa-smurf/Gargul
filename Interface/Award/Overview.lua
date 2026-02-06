@@ -1,4 +1,4 @@
-local L = Gargul_L;
+﻿local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -57,7 +57,7 @@ function Overview:open()
     return Window;
 end
 
----@return void
+---@return nil
 function Overview:close()
     return _G[self.windowName] and _G[self.windowName]:Hide();
 end
@@ -387,7 +387,7 @@ function Overview:buildDatesTable(Window)
     return Table;
 end
 
----@return void
+---@return nil
 function Overview:refreshDatesTable()
     -- Fetch award history per date
     local AwardHistoryByDate = {};

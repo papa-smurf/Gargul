@@ -1,4 +1,4 @@
-local L = Gargul_L;
+﻿local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -82,7 +82,7 @@ function LedgerList:open(sessionID)
     return Window;
 end
 
----@return void
+---@return nil
 function LedgerList:close()
     if (_G[self.windowName]) then
         _G[self.windowName]:Hide();
@@ -276,7 +276,7 @@ function LedgerList:build()
     return Window;
 end
 
----@return void
+---@return nil
 function LedgerList:refresh()
     local Session = GDKPSession:byID(self.sessionID);
 

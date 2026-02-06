@@ -1,4 +1,4 @@
-local L = Gargul_L;
+﻿local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -45,7 +45,7 @@ Interface.GDKP.Distribute.Overview = {
 ---@type GDKPDistribute
 local Overview = Interface.GDKP.Distribute.Overview;
 
----@return void
+---@return nil
 function Overview:open(sessionID, openedViaOverview)
     local Session = GDKPSession:byID(sessionID);
     if (not Session) then
@@ -69,7 +69,7 @@ function Overview:open(sessionID, openedViaOverview)
     Window:Show();
 end
 
----@return void
+---@return nil
 function Overview:build()
     ---@type AceGUIFrame
     local Window = Interface:get(self, "GDKPDistribute");
@@ -256,7 +256,7 @@ function Overview:build()
     return Window;
 end
 
----@return void
+---@return nil
 function Overview:close()
     self.isVisible = false;
 
@@ -266,7 +266,7 @@ function Overview:close()
     end
 end
 
----@return void
+---@return nil
 function Overview:closeSubWindows()
     Interface.GDKP.Distribute.CreateMutator:close();
     Interface.GDKP.Distribute.EditMutator:close();
@@ -275,7 +275,7 @@ function Overview:closeSubWindows()
     Interface.GDKP.Distribute.Import:close();
 end
 
----@return void
+---@return nil
 function Overview:throttledRefresh()
     GL.Ace:CancelTimer(self.RefreshTimer);
 
@@ -284,7 +284,7 @@ function Overview:throttledRefresh()
     end, .2);
 end
 
----@return void
+---@return nil
 function Overview:refresh()
     -- Make sure we try to prevent race-conditions as much as possible
     if (self.refreshing) then
@@ -759,7 +759,7 @@ end
 
 --- Do some resizing magic when the user resizes the distribution window
 ---
----@return void
+---@return nil
 function Overview:resizeFrames()
     local MutatorsFrame = Interface:get(self, "Frame.Mutators");
     local RaidersFrame = Interface:get(self, "Frame.Raiders");
@@ -775,7 +775,7 @@ function Overview:resizeFrames()
     Window:DoLayout();
 end
 
----@return void
+---@return nil
 function Overview:calculateCuts()
     local Session, totalToDistribute, totalDistributed = GDKPPot:calculateCuts(self.sessionID);
 
@@ -816,7 +816,7 @@ function Overview:calculateCuts()
     );
 end
 
----@return void
+---@return nil
 function Overview:releaseActionButtons()
     -- Release all of the action buttons into our pool so that we can reuse them later
     for _, Button in pairs(self.MutatorActionButtons or {}) do

@@ -1,4 +1,4 @@
----@type GL
+﻿---@type GL
 local _, GL = ...;
 
 local Overview = GL.Interface.Settings.Overview; ---@type SettingsOverview
@@ -9,7 +9,7 @@ GL.Interface.Settings.TradeAnnouncements = {
 };
 local TradeAnnouncements = GL.Interface.Settings.TradeAnnouncements; ---@type TradeAnnouncements
 
----@return void
+---@return nil
 function TradeAnnouncements:draw(Parent)
     GL:debug("TradeAnnouncements:draw");
 

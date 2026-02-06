@@ -1,4 +1,4 @@
-local _, GL = ...;
+﻿local _, GL = ...;
 
 ---@type Settings
 local Settings = GL.Settings;
@@ -304,7 +304,7 @@ GL.Commands = GL.Commands or {
 local Commands = GL.Commands; ---@type Commands
 
 --- Display the command help
----@return void
+---@return nil
 function Commands:help () Settings:draw("SlashCommands"); end
 
 --- Helper method to call commands from within the addon

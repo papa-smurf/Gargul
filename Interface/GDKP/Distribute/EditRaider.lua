@@ -1,4 +1,4 @@
-local L = Gargul_L;
+﻿local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -85,7 +85,7 @@ end
 
 --- Toggle the create session window that's anchored to the right side of the GDKP overview window
 ---
----@return void
+---@return nil
 function EditRaider:toggle()
     if (self.isVisible) then
         return self:close();
@@ -94,7 +94,7 @@ function EditRaider:toggle()
     self:open();
 end
 
----@return void
+---@return nil
 function EditRaider:open(sessionID, player)
     -- It seems our GDKP overview window is not opened
     if (not Overview.isVisible) then
@@ -112,7 +112,7 @@ function EditRaider:open(sessionID, player)
     Window.frame:Show();
 end
 
----@return void
+---@return nil
 function EditRaider:close()
     local Window = self:window();
 

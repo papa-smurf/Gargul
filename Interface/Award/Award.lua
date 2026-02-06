@@ -1,4 +1,4 @@
-local L = Gargul_L;
+﻿local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -33,7 +33,7 @@ local Award = GL.Interface.Award.Award;
 
 ---@param itemLink string
 ---@param callback function
----@return void
+---@return nil
 function Award:draw(itemLink, callback)
     local itemID = GL:getItemIDFromLink(itemLink);
 
@@ -445,7 +445,7 @@ function Award:draw(itemLink, callback)
     self:draw(itemLink);
 end
 
----@return void
+---@return nil
 function Award:close()
     local Window = GL.Interface:get(self, "Window");
 
@@ -463,7 +463,7 @@ function Award:close()
     Window:Hide();
 end
 
----@return void
+---@return nil
 function Award:drawPlayersTable()
     local Parent = GL.Interface:get(self, "Window").frame;
 
@@ -637,7 +637,7 @@ function Award:populatePlayersTable(itemID)
 end
 
 --- The item box contents changed
----@return void
+---@return nil
 function Award:ItemBoxChanged()
     local itemLink = GL.Interface:get(self, "EditBox.Item"):GetText();
 
@@ -649,7 +649,7 @@ end
 --- in a loot window or when executing /gl roll [itemlink]
 ---
 ---@param itemLink string
----@return void
+---@return nil
 function Award:passItemLink(itemLink)
     if (not GL.Interface:get(self, "Window").rendered) then
         return;
@@ -661,7 +661,7 @@ end
 
 --- Update the master looter UI based on the value of the ItemBox input
 ---
----@return void
+---@return nil
 function Award:update()
     local IconWidget = GL.Interface:get(self, "Icon.Item");
     local itemLink = GL.Interface:get(self, "EditBox.Item"):GetText();
@@ -696,7 +696,7 @@ end
 
 --- Reset the roll off UI to its defaults
 ---
----@return void
+---@return nil
 function Award:reset()
     GL.Interface:get(self, "Icon.Item"):SetImage(Award.Defaults.itemIcon);
     GL.Interface:get(self, "EditBox.Item"):SetText(Award.Defaults.itemText);
@@ -707,7 +707,7 @@ end
 
 --- Update the widgets based on the current state of the roll off
 ---
----@return void
+---@return nil
 function Award:updateWidgets()
     -- If the itembox doesn't hold a valid item link then:
     --   The start button should not be available

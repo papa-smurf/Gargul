@@ -1,4 +1,4 @@
----@type GL
+﻿---@type GL
 local _, GL = ...;
 
 ---@type SettingsOverview
@@ -17,7 +17,7 @@ local GDKPPrices = GL.Interface.Settings.GDKPPrices;
 
 ---@param Parent Frame
 ---
----@return void
+---@return nil
 function GDKPPrices:draw(Parent)
     local Spacer;
 
@@ -176,7 +176,7 @@ An item's price and increment are determined in the following order:
     end
 end
 
----@return void
+---@return nil
 function GDKPPrices:onClose()
     GL.Settings:set("GDKP.ItemLevelDetails", {});
 

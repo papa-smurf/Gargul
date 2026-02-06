@@ -1,4 +1,4 @@
----@type GL
+﻿---@type GL
 local _, GL = ...;
 
 local Overview = GL.Interface.Settings.Overview; ---@type SettingsOverview
@@ -10,7 +10,7 @@ GL.Interface.Settings.AwardingLoot = {
 };
 local AwardingLoot = GL.Interface.Settings.AwardingLoot; ---@type AwardingLootSettings
 
----@return void
+---@return nil
 function AwardingLoot:draw(Parent)
     GL:debug("AwardingLootSettings:draw");
 

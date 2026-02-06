@@ -1,4 +1,4 @@
----@type GL
+﻿---@type GL
 local _, GL = ...;
 
 local Overview = GL.Interface.Settings.Overview; ---@type SettingsOverview
@@ -9,7 +9,7 @@ GL.Interface.Settings.TMB = {
 };
 local TMB = GL.Interface.Settings.TMB; ---@type TMBSettings
 
----@return void
+---@return nil
 function TMB:draw(Parent)
     GL:debug("TMBSettings:draw");
 

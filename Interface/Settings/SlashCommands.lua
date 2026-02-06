@@ -1,4 +1,4 @@
----@type GL
+﻿---@type GL
 local _, GL = ...;
 
 local Overview = GL.Interface.Settings.Overview; ---@type SettingsOverview
@@ -12,7 +12,7 @@ GL.Interface.Settings.SlashCommands = {
 };
 local SlashCommands = GL.Interface.Settings.SlashCommands; ---@type SlashCommandsSettings
 
----@return void
+---@return nil
 function SlashCommands:draw(Parent)
     GL:debug("SlashCommandsSettings:draw");
 

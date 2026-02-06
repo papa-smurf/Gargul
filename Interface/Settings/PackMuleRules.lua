@@ -1,4 +1,4 @@
----@type GL
+﻿---@type GL
 local _, GL = ...;
 
 local Overview = GL.Interface.Settings.Overview; ---@type SettingsOverview
@@ -27,7 +27,7 @@ GL.Interface.Settings.PackMuleRules = {
 };
 local PackMuleRules = GL.Interface.Settings.PackMuleRules; ---@type PackMuleRulesSettings
 
----@return void
+---@return nil
 function PackMuleRules:draw(Parent)
     GL:debug("PackMuleSettings:draw");
 
@@ -156,7 +156,7 @@ end
 
 --- Store the custom rules when we close the settings (or change sections)
 ---
----@return void
+---@return nil
 function PackMuleRules:onClose()
     GL:debug("PackMuleRules:onClose");
 
@@ -216,7 +216,7 @@ end
 ---
 ---@param Frame table
 ---@param Rule table
----@return void
+---@return nil
 function PackMuleRules:drawLowerThanQualityRule(Frame, Rule)
     GL:debug("PackMuleRules:drawLowerThanQualityRule");
 

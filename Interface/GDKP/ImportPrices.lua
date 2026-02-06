@@ -1,4 +1,4 @@
-local L = Gargul_L;
+﻿local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -91,7 +91,7 @@ function ImportPrices:window()
     return Window;
 end
 
----@return void
+---@return nil
 function ImportPrices:open()
     if (self.isVisible) then
         return self:close();
@@ -102,7 +102,7 @@ function ImportPrices:open()
     Window:Show();
 end
 
----@return void
+---@return nil
 function ImportPrices:close()
     local Window = self:window();
 

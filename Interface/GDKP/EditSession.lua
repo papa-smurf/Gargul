@@ -1,4 +1,4 @@
-local L = Gargul_L;
+﻿local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -145,7 +145,7 @@ end
 
 --- Toggle the create session window that's anchored to the right side of the GDKP overview window
 ---
----@return void
+---@return nil
 function EditSession:toggle()
     GL:debug("Interface.GDKP.EditSession:toggle");
 
@@ -156,7 +156,7 @@ function EditSession:toggle()
     self:open();
 end
 
----@return void
+---@return nil
 function EditSession:open()
     GL:debug("Interface.GDKP.EditSession:open");
 
@@ -182,7 +182,7 @@ function EditSession:open()
     Window.frame:Show();
 end
 
----@return void
+---@return nil
 function EditSession:close()
     GL:debug("Interface.GDKP.EditSession:close");
 

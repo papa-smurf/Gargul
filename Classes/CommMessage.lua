@@ -1,4 +1,4 @@
----@type GL
+﻿---@type GL
 local _, GL = ...;
 
 ---@class CommMessage
@@ -212,7 +212,7 @@ end
 
 --- A response to one of our messages came in, sort it
 ---
----@return void
+---@return nil
 function CommMessage:processResponse()
     -- Make sure the message exists and actually accepts responses
     if (not self.correspondenceId

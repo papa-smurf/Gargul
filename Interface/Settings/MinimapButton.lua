@@ -1,4 +1,4 @@
----@type GL
+﻿---@type GL
 local _, GL = ...;
 
 local Overview = GL.Interface.Settings.Overview; ---@type SettingsOverview
@@ -59,7 +59,7 @@ local DROPDOWN_ITEMS = {
     BOOSTED_ROLLS = "Boosted rolls",
 };
 
----@return void
+---@return nil
 function MinimapButton:draw(Parent)
     local HorizontalSpacer;
     local AceGUI = GL.AceGUI;

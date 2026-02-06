@@ -1,4 +1,4 @@
-local L = Gargul_L;
+﻿local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -171,7 +171,7 @@ function Overview:build()
     return Window;
 end
 
----@return void
+---@return nil
 function Overview:refresh()
     local sessionID = self.sessionID;
     local playerGUID = self.playerGUID;
@@ -318,7 +318,7 @@ function Overview:refresh()
     end
 end
 
----@return void
+---@return nil
 function Overview:close()
     self.isVisible = false;
     return _G[self.windowName] and _G[self.windowName]:Hide();

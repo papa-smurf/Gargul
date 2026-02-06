@@ -1,4 +1,4 @@
----@type GL
+﻿---@type GL
 local _, GL = ...;
 
 ---@type SettingsOverview
@@ -16,7 +16,7 @@ Interface.Settings.LootTradeTimers = {
 };
 local LootTradeTimers = Interface.Settings.LootTradeTimers; ---@type LootTradeTimersSettings
 
----@return void
+---@return nil
 function LootTradeTimers:draw(Parent)
     GL:debug("LootTradeTimers:draw");
 

@@ -1,4 +1,4 @@
-local L = Gargul_L;
+﻿local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -40,7 +40,7 @@ GDKP.Session = {
 ---@type GDKPSession
 local Session = GDKP.Session;
 
----@return void
+---@return nil
 function Session:_init()
     if (self._initialized) then
         return;
@@ -538,7 +538,7 @@ function Session:addGoldTrade(sessionID, playerGUID, given, received)
 end
 
 ---@param Details table
----@return void
+---@return nil
 function Session:registerGoldTrade(Details)
     -- The player didn't want to include this trade
     if (not self.includeTradeInSession) then
@@ -582,7 +582,7 @@ end
 
 ---@param player string
 ---@param copper number
----@return void
+---@return nil
 function Session:registerGoldMail(player, copper)
     local Instance = self:getActive();
 
@@ -945,7 +945,7 @@ end
 
 --- Clear the currently active session
 ---
----@return void
+---@return nil
 function Session:clearActive()
     local activeSession = DB:get("GDKP.activeSession");
     if (not activeSession) then
@@ -969,7 +969,7 @@ end
 
 ---@param sessionID string
 ---@param Auction table
----@return void
+---@return nil
 function Session:announceDeletedAuction(sessionID, Auction)
     if (sessionID ~= self:activeSessionID()) then
         return;
@@ -1008,7 +1008,7 @@ end
 
 ---@param sessionID string
 ---@param Auction table
----@return void
+---@return nil
 function Session:announceRestoredAuction(sessionID, Auction)
     if (sessionID ~= self:activeSessionID()) then
         return;
@@ -1048,7 +1048,7 @@ end
 ---@param playerGUID string
 ---@param given number
 ---@param received number
----@return void
+---@return nil
 function Session:announceCreatedGoldTrade(sessionID, playerGUID, given, received)
     if (sessionID ~= self:activeSessionID()) then
         return;
@@ -1066,7 +1066,7 @@ end
 ---@param playerGUID string
 ---@param given number
 ---@param received number
----@return void
+---@return nil
 function Session:announceDeletedGoldTrade(sessionID, playerGUID, given, received)
     if (sessionID ~= self:activeSessionID()) then
         return;
@@ -1084,7 +1084,7 @@ end
 ---@param playerGUID string
 ---@param given number
 ---@param received number
----@return void
+---@return nil
 function Session:announceRestoredGoldTrade(sessionID, playerGUID, given, received)
     if (sessionID ~= self:activeSessionID()) then
         return;

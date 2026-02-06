@@ -1,4 +1,4 @@
-local L = Gargul_L;
+﻿local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -31,7 +31,7 @@ local DEFAULT_WINDOW_HEIGHT = 170;
 local QUEUE_ROW_HEIGHT = 20;
 local FONT;
 
----@return void
+---@return nil
 function BidderQueue:_init()
     if (self._initialized) then
         return;
@@ -262,7 +262,7 @@ function BidderQueue:build()
     return Window;
 end
 
----@return void
+---@return nil
 function BidderQueue:refreshTable()
     if (not Settings:get("GDKP.enableBidderQueue")) then
         return;
@@ -424,7 +424,7 @@ function BidderQueue:refreshTable()
     end
 end
 
----@return void
+---@return nil
 function BidderQueue:close()
     self.isVisible = false;
     return _G[self.windowName] and _G[self.windowName]:Hide();

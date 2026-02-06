@@ -1,4 +1,4 @@
----@type GL
+﻿---@type GL
 local _, GL = ...;
 
 ---@type SettingsOverview
@@ -13,7 +13,7 @@ GL.Interface.Settings.GDKPQueues = {
 ---@type GDKPQueuesSettings
 local GDKPQueues = GL.Interface.Settings.GDKPQueues;
 
----@return void
+---@return nil
 function GDKPQueues:draw(Parent)
     local Spacer;
 

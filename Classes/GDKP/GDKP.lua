@@ -1,4 +1,4 @@
-local L = Gargul_L;
+﻿local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -60,13 +60,13 @@ function GDKP:settingsForItemID(itemID)
     return PerItemSettings;
 end
 
----@return void
+---@return nil
 function GDKP:resetPerItemSettings()
     DB:set("GDKP.SettingsPerItem", {});
 end
 
 ---@param data string
----@return void
+---@return nil
 function GDKP:importPerItemSettings(data)
     if (type(data) ~= "string" or GL:empty(data)) then
         GL:error("Nothing to import!");

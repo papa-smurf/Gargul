@@ -1,4 +1,4 @@
-local L = Gargul_L;
+﻿local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -69,7 +69,7 @@ function ShortcutKeysLegend:draw()
     Window:AddChild(DescriptionLabel);
 end
 
----@return void
+---@return nil
 function ShortcutKeysLegend:close()
     local Window = GL.Interface:get(self, "Window");
 

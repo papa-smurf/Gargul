@@ -5,10 +5,21 @@ local L = Gargul_L;
     The pack mules (player) will automatically receive all items
     that they're eligible for according to the rules as set up by the ML
 ]]
+---@type GL
 local _, GL = ...;
 
 ---@class PackMule
-GL.PackMule = {
+---@field _initialized boolean
+---@field disenchanter boolean
+---@field noDisenchanterSetWarningGiving boolean
+---@field processing boolean
+---@field setupWindowIsActive boolean
+---@field itemClassIDsToIgnore table
+---@field playerIsInHeroicInstance boolean
+---@field LootChangedTimer number|nil
+---@field Rules table
+---@field RoundRobinItems table
+local PackMule = {
     _initialized = false,
     disenchanter = false,
     noDisenchanterSetWarningGiving = false,
@@ -31,13 +42,13 @@ GL.PackMule = {
     RoundRobinItems = {},
 };
 
-local PackMule = GL.PackMule; ---@type PackMule
+GL.PackMule = PackMule; ---@type PackMule
 local Settings = GL.Settings; ---@type Settings
 
 --[[ CONSTANTS ]]
 local LOOT_SLOT_MONEY = GL:tableGet(Enum or {}, "LootSlotType.Money", LOOT_SLOT_MONEY);
 
----@return void
+---@return nil
 function PackMule:_init()
     -- No need to initialize this class twice
     if (self._initialized) then
@@ -168,7 +179,7 @@ end
 --- PASS/NEED/GREED on group loot items based on PackMule rules
 ---
 ---@param rollID number
----@return void
+---@return nil
 function PackMule:processGroupLootItems(rollID)
     if (not rollID) then
         return;
@@ -208,7 +219,7 @@ end
 ---
 ---@param itemID number
 ---@param callback function
----@return void
+---@return nil
 function PackMule:isItemIDIgnored(itemID, callback)
     itemID = math.floor(tonumber(itemID));
     if (not GL:higherThanZero(itemID)) then
@@ -288,7 +299,7 @@ end
 
 ---@param itemID number
 ---@param callback function
----@return void
+---@return nil
 function PackMule:currentTargetForItemForGroupOrMaster(itemID, callback)
     itemID = math.floor(tonumber(itemID));
     if (not GL:higherThanZero(itemID)) then
@@ -471,7 +482,7 @@ end
 ---
 ---@param itemLinkOrId string|number
 ---@param callback function
----@return void
+---@return nil
 function PackMule:getTargetForItem(itemLinkOrId, callback)
     -- This method has no value without a callback
     if (type(callback) ~= "function") then
@@ -777,7 +788,7 @@ end
 --- Add a rule to the ruleset
 ---
 ---@param Rule table
----@return void
+---@return nil
 function PackMule:addRule(Rule)
     if (self:ruleIsValid(Rule)) then
         tinsert(self.Rules, Rule);
@@ -826,7 +837,7 @@ end
 ---@param itemLink string
 ---@param byPassConfirmationDialog boolean
 ---@param callback function
----@return void
+---@return nil
 function PackMule:disenchant(itemLink, byPassConfirmationDialog, callback)
     if (GL.User.isInGroup
         and not GL.User.isMasterLooter
@@ -917,7 +928,7 @@ end
 --- sets the disenchanter
 ---
 ---@param disenchanter string
----@return void
+---@return nil
 function PackMule:setDisenchanter(disenchanter)
     -- Better safe than lua error
     disenchanter = tostring(disenchanter);
@@ -936,7 +947,7 @@ end
 --- Announce the disenchantment of an item in the group chat
 ---
 ---@param itemLink string
----@return void
+---@return nil
 function PackMule:announceDisenchantment(itemLink)
     if (not GL.Settings:get("PackMule.announceDisenchantedItems")) then
         return
@@ -1005,7 +1016,7 @@ end
 ---
 ---@param itemID number
 ---@param playerName string
----@return void
+---@return nil
 function PackMule:assignLootToPlayer(itemID, playerName)
     -- Try to determine the loot index of the item
     local itemIndex = false;

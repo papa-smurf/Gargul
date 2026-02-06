@@ -1,4 +1,4 @@
----@type GL
+﻿---@type GL
 local _, GL = ...;
 
 local Overview = GL.Interface.Settings.Overview; ---@type SettingsOverview
@@ -10,7 +10,7 @@ GL.Interface.Settings.DroppedLoot = {
 };
 local DroppedLoot = GL.Interface.Settings.DroppedLoot; ---@type DroppedLootSettings
 
----@return void
+---@return nil
 function DroppedLoot:draw(Parent)
     GL:debug("DroppedLoot:draw");
 

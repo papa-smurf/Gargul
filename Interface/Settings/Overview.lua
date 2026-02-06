@@ -1,4 +1,4 @@
-
+﻿
 ---@TODO: TRANSLATE SETTINGS!
 
 local L = Gargul_L;
@@ -58,7 +58,7 @@ GL.Interface.Settings.Overview.Sections = GL:tableValues(GL.Interface.Settings.O
 ---
 ---@param section string|nil
 ---@param param function|nil What to do after closing the settings again
----@return void
+---@return nil
 function Overview:draw(section, onCloseCallback)
     local AceGUI = GL.AceGUI;
 
@@ -234,7 +234,7 @@ function Overview:draw(section, onCloseCallback)
     self:showSection(section);
 end
 
----@return void
+---@return nil
 function Overview:close(onCloseCallback)
     local Window = GL.Interface:get(self, "Window");
 
@@ -270,7 +270,7 @@ end
 ---
 ---@param Parent table
 ---@param section string
----@return void
+---@return nil
 function Overview:drawSectionsTable(Parent, section)
     GL:debug("Overview:drawSectionsTable");
 
@@ -427,7 +427,7 @@ end
 ---
 ---@param Checkboxes table
 ---@param Parent table
----@return void
+---@return nil
 function Overview:drawCheckboxes(Checkboxes, Parent)
     GL:debug("Overview:drawCheckboxes");
 
@@ -454,7 +454,7 @@ end
 
 ---@param text string
 ---@param Parent table
----@return void
+---@return nil
 function Overview:drawHeader(text, Parent)
     local Header = GL.AceGUI:Create("InlineGroup");
     Header:SetFullWidth(true);
@@ -476,7 +476,7 @@ end
 ---@param Parent table
 ---@param width number|nil
 ---@param height number
----@return void
+---@return nil
 function Overview:drawSpacer(Parent, width, height)
     GL:debug("Overview:drawSpacer");
 

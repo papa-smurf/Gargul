@@ -1,4 +1,4 @@
----@type GL
+﻿---@type GL
 local _, GL = ...;
 
 ---@type SettingsOverview
@@ -13,7 +13,7 @@ GL.Interface.Settings.GDKPCommunication = {
 ---@type GDKPCommunicationSettings
 local GDKPCommunication = GL.Interface.Settings.GDKPCommunication;
 
----@return void
+---@return nil
 function GDKPCommunication:draw(Parent)
     local Spacer;
 

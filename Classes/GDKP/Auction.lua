@@ -1,4 +1,4 @@
-local L = Gargul_L;
+﻿local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -115,7 +115,7 @@ end
 
 --- Add items back to the queue after a reload or logout
 ---
----@return void
+---@return nil
 function Auction:_initializeQueue()
     -- We're not allowed to populate the queue
     if (not Auctioneer:allowedToBroadcast()
@@ -166,7 +166,7 @@ function Auction:_initializeQueue()
     end, .1);
 end
 
----@return void
+---@return nil
 function Auction:firstBidHandler()
     -- We're the top bidder, no need to panic
     if (self:userIsTopBidder()) then
@@ -176,7 +176,7 @@ function Auction:firstBidHandler()
     self:autoBid();
 end
 
----@return void
+---@return nil
 function Auction:userWasOutBidHandler()
     -- Looks like we got here for no good reason
     if (self:userIsTopBidder()) then
@@ -316,7 +316,7 @@ end
 ---@param sessionID string
 ---@param auctionID string
 ---
----@return void
+---@return nil
 function Auction:delete(sessionID, auctionID, reason)
     local Session = GDKPSession:byID(sessionID);
     if (not Session or Session.lockedAt) then
@@ -369,7 +369,7 @@ end
 ---@param sessionID string
 ---@param auctionID string
 ---
----@return void
+---@return nil
 function Auction:restore(sessionID, auctionID)
     local Session = GDKPSession:byID(sessionID);
     if (not Session or Session.lockedAt) then
@@ -838,7 +838,7 @@ function Auction:move(auctionID, fromSessionID, toSessionID)
 end
 
 ---@param itemLink string
----@return void
+---@return nil
 function Auction:addToQueue(itemLink, identifier)
     GL:onItemLoadDo(itemLink, function (Details)
         if (not Details) then
@@ -944,13 +944,13 @@ function Auction:removeFromQueue(checksum)
     return true;
 end
 
----@return void
+---@return nil
 function Auction:clearQueue()
     self.Queue = {};
     self:broadcastQueue(true);
 end
 
----@return void
+---@return nil
 function Auction:sanitizeQueue()
     local Sanitized = {};
 
@@ -982,7 +982,7 @@ function Auction:sanitizeQueue()
 end
 
 --- Broadcast the first 20 items to everyone in the raid
----@return void
+---@return nil
 function Auction:broadcastQueue(immediately)
     -- Broadcasting is
     if (self._broadcastingDisabled) then
@@ -1045,7 +1045,7 @@ function Auction:broadcastQueue(immediately)
     end, BROADCAST_QUEUE_DELAY_IN_SECONDS);
 end
 
----@return void
+---@return nil
 function Auction:receiveQueue(CommMessage)
     -- No need to override our own queue
     if (CommMessage.Sender.isSelf) then
@@ -1112,7 +1112,7 @@ end
 ---@param itemLink string
 ---@param minimumBid number
 ---@param minimumIncrement number
----@return void
+---@return nil
 function Auction:announceStart(itemLink, minimumBid, minimumIncrement, duration, antiSnipe)
     -- There's already an auction in progress
     if (self.inProgress) then
@@ -1195,7 +1195,7 @@ end
 ---
 ---@param forceStop boolean|nil bypass the snipe detection check
 ---
----@return void
+---@return nil
 function Auction:announceStop(forceStop)
     if (not Auction:startedByMe()) then
         return;
@@ -1313,7 +1313,7 @@ function Auction:announceReschedule(time)
 end
 
 ---@param CommMessage CommMessage
----@return void
+---@return nil
 function Auction:reschedule(CommMessage)
     if (not self.Current.initiatorID
         or CommMessage.Sender.id ~= self.Current.initiatorID
@@ -1403,7 +1403,7 @@ function Auction:start(CommMessage)
     --- the item that's up for bidding has been successfully loaded by the Item API
     ---
     ---@vararg Item
-    ---@return void
+    ---@return nil
     GL:onItemLoadDo(content.item, function (Details)
         if (not Details) then
             return;
@@ -1623,7 +1623,7 @@ function Auction:stop(CommMessage)
     return true;
 end
 
----@return void
+---@return nil
 function Auction:reset()
     -- Reset the last auction. This happens when the master looter
     -- awards an item or when he clicks the "clear" button in the auctioneer window
@@ -1634,7 +1634,7 @@ function Auction:reset()
     self.Current.TopBid = {};
 end
 
----@return void
+---@return nil
 function Auction:listenForBids()
     if (self.listeningForBids) then
         return;
@@ -1666,7 +1666,7 @@ end
 
 --- Unregister the CHAT_MSG_SYSTEM to stop listening for bids
 ---
----@return void
+---@return nil
 function Auction:stopListeningForBids()
     if (self.bidListenerCancelTimerId) then
         GL.Ace:CancelTimer(self.bidListenerCancelTimerId);
@@ -1753,7 +1753,7 @@ function Auction:setAutoBid(max, queuedItemChecksum)
     return true;
 end
 
----@return void
+---@return nil
 function Auction:removeAutoBid(queuedItemChecksum)
     if (not queuedItemChecksum or not self.Queue[queuedItemChecksum]) then
         return;
@@ -1772,7 +1772,7 @@ function Auction:getQueuedAutoBid(itemID)
     return self.QueuedItemAutoBids[itemID] or 0;
 end
 
----@return void
+---@return nil
 function Auction:sanitizeQueuedItemBids()
     local QueuedItemIDs = {};
     for _, QueuedItem in pairs(self.Queue or {}) do
@@ -1791,7 +1791,7 @@ function Auction:sanitizeQueuedItemBids()
     self.QueuedItemAutoBids = Sanitized;
 end
 
----@return void
+---@return nil
 function Auction:stopAutoBid()
     self.autoBiddingIsActive = nil;
     self.maxBid = nil;
@@ -1854,7 +1854,7 @@ function Auction:autoBid()
     return true;
 end
 
----@return void
+---@return nil
 function Auction:minimumBid()
     return self:bid(self:lowestValidBid());
 end
@@ -1877,7 +1877,7 @@ end
 ---@param event string
 ---@param message string
 ---@param bidder string
----@return void
+---@return nil
 function Auction:processBid(message, bidder)
     local auctionWasStartedByMe = self:startedByMe();
     message = string.lower(message);

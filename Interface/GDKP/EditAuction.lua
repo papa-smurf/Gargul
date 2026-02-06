@@ -1,4 +1,4 @@
-local L = Gargul_L;
+﻿local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -18,7 +18,7 @@ GL.Interface.GDKP.EditAuction = {}
 ---@type GDKPEditAuction
 local EditAuction = GL.Interface.GDKP.EditAuction;
 
----@return void
+---@return nil
 function EditAuction:draw(session, checksum)
     local VerticalSpacer;
 

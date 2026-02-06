@@ -1,4 +1,4 @@
----@type GL
+﻿---@type GL
 local _, GL = ...;
 
 local Overview = GL.Interface.Settings.Overview; ---@type SettingsOverview
@@ -9,7 +9,7 @@ GL.Interface.Settings.PlusOnes = {
 };
 local PlusOnes = GL.Interface.Settings.PlusOnes; ---@type PlusOnesSettings
 
----@return void
+---@return nil
 function PlusOnes:draw(Parent)
     GL:debug("PlusOnesSettings:draw");
 

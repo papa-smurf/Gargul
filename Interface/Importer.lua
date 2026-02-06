@@ -1,4 +1,4 @@
-local L = Gargul_L;
+﻿local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -25,7 +25,7 @@ function Importer:open()
     return Window;
 end
 
----@return void
+---@return nil
 function Importer:close()
     self.isVisible = false;
     return _G[self.windowName] and _G[self.windowName]:Hide();

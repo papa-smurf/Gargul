@@ -1,4 +1,4 @@
-local L = Gargul_L;
+﻿local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -119,7 +119,7 @@ end
 ---@param _ string
 ---@param message string
 ---@param sender string
----@return void
+---@return nil
 function SoftRes:handleWhisperCommand(_, message, sender)
     local validPrefixDetected = false;
     for _, prefix in pairs(GL:explode(L["!sr|!softres|!softreserve"], "|") or {}) do
@@ -192,7 +192,7 @@ end
 
 --- Request SoftRes data from the person in charge (ML or Leader)
 ---
----@return void
+---@return nil
 function SoftRes:requestData()
     if (self.requestingData
         or (_G.UnitInBattleground and UnitInBattleground("player"))
@@ -262,7 +262,7 @@ end
 --- Reply to a player's SoftRes data request
 ---
 ---@param CommMessage CommMessage
----@return void
+---@return nil
 function SoftRes:replyToDataRequest(CommMessage)
     -- I don't have any data, leave me alone!
     if (not self:available()) then
@@ -595,7 +595,7 @@ end
 
 --- Clear all SoftRes data
 ---
----@return void
+---@return nil
 function SoftRes:clear()
     DB:set("SoftRes", {});
     self.MaterializedData = {
@@ -997,7 +997,7 @@ end
 --- Import data from LootReserve. This happens automatically via an event listener
 ---
 ---@param Reserves table
----@return void
+---@return nil
 function SoftRes:importLootReserveData(Reserves)
     if (GL:empty(Reserves)) then
         return;

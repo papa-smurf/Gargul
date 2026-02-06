@@ -1,4 +1,4 @@
----@type GL
+﻿---@type GL
 local _, GL = ...;
 
 ---@type SettingsOverview
@@ -15,7 +15,7 @@ GL.Interface.Settings.GDKP = {
 };
 local GDKP = GL.Interface.Settings.GDKP; ---@type GDKPSettings
 
----@return void
+---@return nil
 function GDKP:draw(Parent)
     GL:debug("GDKPSettings:draw");
     local Spacer;

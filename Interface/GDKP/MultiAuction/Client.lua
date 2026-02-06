@@ -1,4 +1,4 @@
-local L = Gargul_L;
+﻿local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -51,7 +51,7 @@ function ClientInterface:open()
     return Window:Show() and Window;
 end
 
----@return void
+---@return nil
 function ClientInterface:close()
     local Window = self:getWindow() or self:build();
 
@@ -65,7 +65,7 @@ function ClientInterface:isShown()
     return Window and Window:IsShown();
 end
 
----@return void
+---@return nil
 function ClientInterface:addAuction(auctionID, isBOE, itemLevel, name, quality, link, minimum, increment, endsAt, CurrentBid)
     if (isBOE ~= nil or type(auctionID) ~= "table") then
         GL:error("Pass a table instead of multiple arguments")
@@ -1208,7 +1208,7 @@ end
 
 --- Reset the admin window, used to manage individual auctions as the auctioneer, to its initial state
 ---
----@return void
+---@return nil
 function ClientInterface:resetAdminWindow()
     local Window = self:getWindow();
 
@@ -1268,7 +1268,7 @@ end
 
 --- Show bidding details in the footer
 ---
----@return void
+---@return nil
 function ClientInterface:updateBidDetails()
     local items, noBids, totalBid, totalSold, bidByMe, boughtByMe = 0, 0, 0, 0, 0, 0;
 
@@ -1323,7 +1323,7 @@ end
 
 --- Show the admin window which is used to manage individual auctions as the auctioneer
 ---
----@return void
+---@return nil
 function ClientInterface:showAuctionAdminWindow(AuctionRow)
     local Window = self:getWindow();
 
@@ -1366,7 +1366,7 @@ end
 
 --- Reset the admin window for the currently selected auction
 ---
----@return void
+---@return nil
 function ClientInterface:refreshAdminWindow()
     local Window = self:getWindow();
 
@@ -1379,14 +1379,14 @@ end
 
 --- Reset the vertical scroll of the auction frame
 ---
----@return void
+---@return nil
 function ClientInterface:resetScroll()
     return self.ScrollFrame and self.ScrollFrame:SetVerticalScroll(0) or nil;
 end
 
 --- Sort auctions, filter them by all the possible filters
 ---
----@return void
+---@return nil
 function ClientInterface:filterAndSort()
     local rowsShown = 0;
     local showInactive = self.showInactive;
@@ -1531,7 +1531,7 @@ function ClientInterface:filterAndSort()
     end
 end
 
----@return void
+---@return nil
 function ClientInterface:clear()
     ---@param ItemRow Frame
     for key, ItemRow in pairs(self.AuctionRows or {}) do
@@ -1559,7 +1559,7 @@ end
 
 --- Update countdown bars when anti snipes hit, when the auctioneer changes something or when the auction starts
 ---
----@return void
+---@return nil
 function ClientInterface:refresh(forceFilterAndSort)
     if (not self:getWindow()) then
         return;
@@ -1656,7 +1656,7 @@ end
 ---@param AuctionRow Frame
 ---@oaram Details table
 ---
----@return void
+---@return nil
 function ClientInterface:setAuctionBarColor(AuctionRow, Details)
     if (AuctionRow.CountDownBar and AuctionRow.CountDownBar.SetColor) then
         if (GL:iEquals(GL:tableGet(Details, "CurrentBid.player"), GL.User.fqn)) then

@@ -1,4 +1,4 @@
-local L = Gargul_L;
+﻿local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -285,7 +285,7 @@ function RollOff:start(CommMessage)
     --- the item that's up for rolling has been successfully loaded by the Item API
     ---
     ---@vararg Item
-    ---@return void
+    ---@return nil
     GL:onItemLoadDo(content.item, function (Details)
         if (not Details) then
             return;
@@ -536,7 +536,7 @@ end
 ---@param itemLink string
 ---@param RollBracket table See DefaultSettings.lua -> RollTracking.Brackets. Can be empty when allowing all rolls!
 ---@param identicalRollDetected boolean Was there another roll identical to the winning one?
----@return void
+---@return nil
 function RollOff:award(roller, itemLink, RollBracket, identicalRollDetected)
     identicalRollDetected = GL:toboolean(identicalRollDetected);
     itemLink = itemLink or GL:tableGet(self.CurrentRollOff, "itemLink");
@@ -722,7 +722,7 @@ end
 
 --- Start listening for rolls
 ---
----@return void
+---@return nil
 function RollOff:listenForRolls()
     -- Make sure the timer to cancel listening for rolls is cancelled
     if (self.rollListenerCancelTimerId) then
@@ -742,7 +742,7 @@ end
 
 --- Unregister the CHAT_MSG_SYSTEM to stop listening for rolls
 ---
----@return void
+---@return nil
 function RollOff:stopListeningForRolls()
     if (self.rollListenerCancelTimerId) then
         GL.Ace:CancelTimer(self.rollListenerCancelTimerId);
@@ -755,7 +755,7 @@ end
 --- Process an incoming roll (if it's valid!)
 ---
 ---@param message string
----@return void
+---@return nil
 function RollOff:processRoll(message)
     -- We only track rolls when a rollof is actually in progress
     if (not RollOff.listeningForRolls) then

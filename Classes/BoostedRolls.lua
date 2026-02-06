@@ -1,4 +1,4 @@
-local L = Gargul_L;
+﻿local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -96,7 +96,7 @@ end
 --- Mark a given player as "trusted"
 ---
 ---@param playerName string
----@return void
+---@return nil
 function BoostedRolls:markPlayerAsTrusted(playerName)
     playerName = strtrim(playerName);
 
@@ -116,7 +116,7 @@ end
 --- Remove a player from the list of "trusted" players
 ---
 ---@param playerName string
----@return void
+---@return nil
 function BoostedRolls:removePlayerFromTrusted(playerName)
     playerName = strtrim(playerName);
 
@@ -161,7 +161,7 @@ end
 --- Draw either the importer or overview
 --- based on the current boosted roll data
 ---
----@return void
+---@return nil
 function BoostedRolls:draw()
     -- Show the boosted rolls overview instead
     GL.Interface.BoostedRolls.Overview:draw();
@@ -172,7 +172,7 @@ end
 ---@param _ string
 ---@param message string
 ---@param sender string
----@return void
+---@return nil
 function BoostedRolls:handleWhisperCommand(_, message, sender)
     local validPrefixDetected = false;
     for _, prefix in pairs(GL:explode(L["!bonus|!rb|!br"], "|") or {}) do
@@ -223,7 +223,7 @@ end
 
 --- Materialize the boosted roll data to make it more accessible during runtime
 ---
----@return void
+---@return nil
 function BoostedRolls:materializeData()
     local Aliases = {}; -- Direct access to aliases
     local DetailsByPlayerName = {}; -- Details including aliases by player name
@@ -343,7 +343,7 @@ end;
 
 --- Clear all boosted roll data
 ---
----@return void
+---@return nil
 function BoostedRolls:clear()
     DB.BoostedRolls = {
         Points = {},
@@ -364,7 +364,7 @@ end
 ---@param name string
 ---@param aliases table
 ---@param dontBroadcast boolean
----@return void
+---@return nil
 function BoostedRolls:setAliases(name, aliases, dontBroadcast)
     if (type(name) ~= "string") then
         return;
@@ -424,7 +424,7 @@ end
 --- Get a player's points
 ---
 ---@param name string
----@return void
+---@return nil
 function BoostedRolls:getPoints(name)
     local default = GL.Settings:get("BoostedRolls.defaultPoints", 0);
 
@@ -442,7 +442,7 @@ end
 ---@param name string
 ---@param points number
 ---@param dontBroadcast boolean
----@return void
+---@return nil
 function BoostedRolls:setPoints(name, points, dontBroadcast)
     if (type(name) ~= "string") then
         return;
@@ -473,7 +473,7 @@ end
 --- Delete an entry
 ---
 ---@param name string
----@return void
+---@return nil
 function BoostedRolls:deletePoints(name, dontBroadcast)
     if (type(name) ~= "string") then
         return;
@@ -506,7 +506,7 @@ end
 ---
 ---@param name string
 ---@param points number
----@return void
+---@return nil
 function BoostedRolls:modifyPoints(name, change)
     if (type(name) ~= "string") then
         return;
@@ -610,7 +610,7 @@ end
 
 --- Adds missing raiders with default points
 ---
----@return void
+---@return nil
 function BoostedRolls:addMissingRaiders()
     local default = GL.Settings:get("BoostedRolls.defaultPoints", 0);
 
@@ -643,7 +643,7 @@ end
 --- Export to CSV
 ---
 ---@param displayFrame boolean
----@return void
+---@return nil
 function BoostedRolls:export(displayFrame)
     -- Calculate max aliases to output a CSV compliant string
     local numAliases = 0;
@@ -821,7 +821,7 @@ end
 
 --- Request BoostedRolls data from the person in charge (ML or Leader)
 ---
----@return void
+---@return nil
 function BoostedRolls:requestData()
     if (self.requestingData
         or (_G.UnitInBattleground and UnitInBattleground("player"))
@@ -888,7 +888,7 @@ end
 --- Reply to a player's BoostedRolls data request
 ---
 ---@param CommMessage CommMessage
----@return void
+---@return nil
 function BoostedRolls:replyToDataRequest(CommMessage)
     -- I don't have boosted rolls enabled, leave me alone!
     if (not self:enabled()) then
@@ -1008,7 +1008,7 @@ end
 
 --- Send out the queued updates
 ---
----@return void
+---@return nil
 function BoostedRolls:broadcastQueuedUpdates()
     if (not GL.User.isInGroup) then
         return false;

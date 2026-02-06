@@ -1,4 +1,4 @@
-local L = Gargul_L;
+﻿local L = Gargul_L;
 local LCG = LibStub("LibCustomGlowGargul-1.0");
 
 ---@type GL
@@ -103,7 +103,7 @@ function AuctioneerUI:open()
     return Window;
 end
 
----@return void
+---@return nil
 function AuctioneerUI:close()
     self.isVisible = false;
     return _G[self.windowName] and _G[self.windowName]:Hide();
@@ -723,7 +723,7 @@ function AuctioneerUI:build()
     ---@param itemLink string
     ---@param minimum number
     ---@param increment number
-    ---@return void
+    ---@return nil
     Window.setItemByLink = function(_, itemLink, minimum, increment)
         GL:onItemLoadDo(itemLink, function (Details)
             if (not Details) then
@@ -1307,7 +1307,7 @@ function AuctioneerUI:buildAuctioneerShortcut()
 end
 
 ---@param Row Frame
----@return void
+---@return nil
 function AuctioneerUI:deleteRowFromQueue(Row)
     GL:stopHighlight(Row);
     GL:stopHighlight(Row.Icon);
@@ -1320,7 +1320,7 @@ function AuctioneerUI:deleteRowFromQueue(Row)
     self:reorderItems();
 end
 
----@return void
+---@return nil
 function AuctioneerUI:refreshIconGlows()
     for _, ItemRow in pairs(self.ItemRows or {}) do
         if (ItemRow and ItemRow._itemLink) then

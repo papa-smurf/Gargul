@@ -1,4 +1,4 @@
-local L = Gargul_L;
+﻿local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -43,7 +43,7 @@ function Broadcast:open()
     return Window;
 end
 
----@return void
+---@return nil
 function Broadcast:close()
     return _G[self.windowName] and _G[self.windowName]:Hide();
 end

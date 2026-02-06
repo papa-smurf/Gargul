@@ -1,4 +1,4 @@
-local L = Gargul_L;
+﻿local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -26,7 +26,7 @@ local UI;
 --[[ CONSTANTS ]]
 local ENDS_AT_OFFSET = 1697932800;
 
----@return void
+---@return nil
 function Client:_init()
     if (self._initialized) then
         return;
@@ -81,7 +81,7 @@ function Client:currentSessionHash()
     }, ".");
 end
 
----@return void
+---@return nil
 function Client:start(Message)
     if (not GL.GDKPIsAllowed) then
         return;
@@ -137,7 +137,7 @@ end
 ---@param duration number
 ---@param minimum number
 ---@param increment number
----@return void
+---@return nil
 function Client:addToCurrentSession(link, duration, minimum, increment)
     if (duration ~= nil or type(link) ~= "table") then
         GL:error("Pass a table instead of multiple arguments")
@@ -194,7 +194,7 @@ end
 ---@param amount number
 ---@param onConfirm function|nil
 ---
----@return void
+---@return nil
 function Client:autobid(auctionID, amount, onConfirm)
     if (Auctioneer:auctionStartedByMe(auctionID)) then
         Auctioneer:processBid{
@@ -220,7 +220,7 @@ end
 ---@param auctionID number
 ---@param onConfirm function|nil
 ---
----@return void
+---@return nil
 function Client:stopAutobid(auctionID, onConfirm)
     return self:bid(auctionID, -1, onConfirm);
 end
@@ -229,7 +229,7 @@ end
 ---@param amount number
 ---@param onConfirm function|nil
 ---
----@return void
+---@return nil
 function Client:bid(auctionID, amount, onConfirm)
 
     if (Auctioneer:auctionStartedByMe(auctionID)) then
@@ -256,7 +256,7 @@ end
 --- The loot master sent us an update of all top bids, refresh our UI
 ---
 ---@param Message CommMessage
----@return void
+---@return nil
 function Client:updateBids(Message)
     if (not self.AuctionDetails
         or self.AuctionDetails.initiator ~= Message.Sender.fqn
@@ -406,7 +406,7 @@ end
 
 --- Let the user know that he was outbid
 ---
----@return void
+---@return nil
 function Client:outbidNotification()
     -- Flash the game icon in case the player alt-tabbed
     FlashClientIcon();

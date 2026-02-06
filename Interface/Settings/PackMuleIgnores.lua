@@ -1,4 +1,4 @@
----@type GL
+﻿---@type GL
 local _, GL = ...;
 
 local Overview = GL.Interface.Settings.Overview; ---@type SettingsOverview
@@ -9,7 +9,7 @@ GL.Interface.Settings.PackMuleIgnores = {
 };
 local PackMuleIgnores = GL.Interface.Settings.PackMuleIgnores; ---@type PackMuleIgnoresSettings
 
----@return void
+---@return nil
 function PackMuleIgnores:draw(Parent)
     GL:debug("PackMuleIgnoresSettings:draw");
 
@@ -57,7 +57,7 @@ end
 
 --- Check whether a given item ID or link is ignored
 ---
----@return void
+---@return nil
 function PackMuleIgnores:isItemIgnored(input)
     GL:debug("PackMuleIgnoresSettings:isItemIgnored");
 

@@ -1,4 +1,4 @@
-local L = Gargul_L;
+﻿local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -30,7 +30,7 @@ function Locale:open(forwardToSettings)
     return Window;
 end
 
----@return void
+---@return nil
 function Locale:close()
     self.isVisible = false;
     return _G[self.windowName] and _G[self.windowName]:Hide();

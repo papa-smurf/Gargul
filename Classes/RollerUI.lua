@@ -1,4 +1,4 @@
-local L = Gargul_L;
+﻿local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -204,7 +204,7 @@ end
 ---@param itemLink string
 ---@param itemIcon string
 ---@param note string
----@return void
+---@return nil
 function RollerUI:drawCountdownBar(time, itemLink, itemIcon, note, userCanUseItem, width)
     -- This shouldn't be possible but you never know!
     if (not self.Window) then
@@ -314,7 +314,7 @@ end
 
 --- Show "Roll accepted!" notification for 2 seconds. Can be used after manual roll or auto-roll.
 ---@param anchorFrame Frame|nil If provided, position above this frame. Else center of screen.
----@return void
+---@return nil
 function RollerUI:showRollAcceptedNotification(anchorFrame)
     if (self.RollAcceptedTimer) then
         GL.Ace:CancelTimer(self.RollAcceptedTimer);
@@ -357,7 +357,7 @@ function RollerUI:showRollAcceptedNotification(anchorFrame)
     end, 2);
 end
 
----@return void
+---@return nil
 function RollerUI:hide()
     GL.Events:unregister("RollerUIModifierStateChanged");
 

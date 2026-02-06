@@ -1,4 +1,4 @@
-local L = Gargul_L;
+﻿local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -28,7 +28,7 @@ local Overview = GL.Interface.SoftRes.Overview;
 ---     | Button Frame    |
 ---     +-----------------+
 ---
----@return void
+---@return nil
 function Overview:draw()
     -- The overview is already visible
     if (self.isVisible) then
@@ -276,7 +276,7 @@ end
 
 --- Update the share button when the group setup changes
 ---
----@return void
+---@return nil
 function Overview:updateShareButton()
     local ShareButton = GL.Interface:get(self, "Frame.ShareButton")
 
@@ -293,7 +293,7 @@ end
 
 --- Update the SoftRes details frame to show the information of the selected player
 ---
----@return void
+---@return nil
 function Overview:refreshDetailsFrame()
     -- Clear the details frame first
     self:clearDetailsFrame();
@@ -557,7 +557,7 @@ function Overview:drawCharacterTable(Parent)
 end
 
 ---@param Parent table
----@return void
+---@return nil
 function Overview:drawHardReservesTable(Parent)
     local columns = {
         {
@@ -652,7 +652,7 @@ function Overview:drawHardReservesTable(Parent)
     GL.Interface:set(self, "HardReserves", Table);
 end
 
----@return void
+---@return nil
 function Overview:close()
     local Window = GL.Interface:get(self, "SoftReserveOverview");
 

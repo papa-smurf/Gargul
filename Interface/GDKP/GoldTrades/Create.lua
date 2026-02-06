@@ -1,4 +1,4 @@
-local L = Gargul_L;
+﻿local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -135,7 +135,7 @@ function Create:build()
     return Window;
 end
 
----@return void
+---@return nil
 function Create:refresh()
     local sessionID = self.sessionID;
     local playerGUID = self.playerGUID;
@@ -177,7 +177,7 @@ Player: %s
     Window.ReceivedInput:SetText("");
 end
 
----@return void
+---@return nil
 function Create:close()
     if (self.sessionID) then
         GL.Interface.GDKP.GoldTrades.Overview:open(self.sessionID, self.playerGUID);

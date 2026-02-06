@@ -1,4 +1,4 @@
-local L = Gargul_L;
+﻿local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -161,7 +161,7 @@ local Changelog = GL.Interface.Changelog; ---@type ChangelogInterface
 
 --- Report version changes if needed
 ---
----@return void
+---@return nil
 function Changelog:reportChanges()
     -- This is not this version's first boot, no need to report
     if (not GL.Version.firstBoot) then
@@ -191,7 +191,7 @@ end
 
 --- Draw the changelog window
 ---
----@return void
+---@return nil
 function Changelog:draw()
     -- The changelog is already visible
     if (self.isVisible) then
@@ -354,7 +354,7 @@ end
 
 --- Store the changelog window's position for future reference
 ---
----@return void
+---@return nil
 function Changelog:close()
     local Window = GL.Interface:get(self, "Window");
 

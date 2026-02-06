@@ -1,4 +1,4 @@
-local L = Gargul_L;
+﻿local L = Gargul_L;
 
 local LCG = LibStub("LibCustomGlowGargul-1.0");
 
@@ -59,7 +59,7 @@ end)();
 --- Print a normal message (white)
 ---
 ---@vararg string
----@return void
+---@return nil
 function GL:message(...)
     print("|TInterface/TARGETINGFRAME/UI-RaidTargetingIcon_3:12|t|cff8aecff Gargul : |r" .. table.concat({ ... }, " "));
 end
@@ -68,7 +68,7 @@ end
 ---
 ---@param color string
 ---@vararg string
----@return void
+---@return nil
 function GL:coloredMessage(color, ...)
     GL:message(string.format("|c00%s%s", color, string.join(" ", ...)));
 end
@@ -90,7 +90,7 @@ end
 ---
 ---@vararg table
 ---@param delimiter string
----@return void
+---@return nil
 function GL:multiColoredMessage(ColoredMessages, delimiter)
     local multiColoredMessage = "";
     delimiter = delimiter or " ";
@@ -120,14 +120,14 @@ end
 
 --- Print a success message (green)
 ---
----@return void
+---@return nil
 function GL:success(...)
     GL:coloredMessage("92FF00", ...);
 end
 
 --- Print a debug message (orange)
 ---
----@return void
+---@return nil
 function GL:debug(...)
     if (not GL.Settings
         or not GL.Settings.Active
@@ -142,14 +142,14 @@ end
 
 --- Print a notice message (yellow)
 ---
----@return void
+---@return nil
 function GL:notice(...)
     GL:coloredMessage("FFF569", ...);
 end
 
 --- Print a warning message (orange)
 ---
----@return void
+---@return nil
 function GL:warning(...)
     GL:coloredMessage("F7922E", ...);
 end
@@ -159,7 +159,7 @@ end
 ---@param depth number
 ---@param seen table
 ---@param lines table
----@return void
+---@return nil
 local function xdDumpToBuffer(mixed, depth, seen, lines)
     depth = depth or 0;
     seen = seen or {};
@@ -192,7 +192,7 @@ end
 --- We use a separate method for this to make searching for, and cleaning up debug dumps, easier
 --- Output is also appended to GL.XDOutputBuffer for /gl xda.
 ---
----@return void
+---@return nil
 function GL:xd(mixed)
     local header = ("\n|c00967FD2%s|r ================"):format(date('%H:%M:%S'));
 
@@ -210,7 +210,7 @@ end
 
 --- Show xd output buffer in a frame (selectable, copyable). Use /gl xda after GL:xd() calls.
 ---
----@return void
+---@return nil
 function GL:xda()
     if not GL.XDOutputBuffer or #GL.XDOutputBuffer == 0 then
         GL:notice("xd buffer is empty. Run GL:xd() first.");
@@ -221,7 +221,7 @@ end
 
 --- Print a error message (red)
 ---
----@return void
+---@return nil
 function GL:error(...)
     GL:coloredMessage("BE3333", ...);
 end
@@ -2904,7 +2904,7 @@ local previousGaveNoMessagesWarningValue;
 
 --- Temporarily mute the add-on by not showing any messages
 ---
----@return void
+---@return nil
 function GL:mute()
     previousNoMessagesWarningValue = GL.Settings:get("noMessages");
     previousGaveNoMessagesWarningValue = gaveNoMessagesWarning;
@@ -2917,7 +2917,7 @@ end
 
 --- Unmute add-on after (temporary) mute
 ---
----@return void
+---@return nil
 function GL:unmute()
     -- We didn't mute the application in the first place
     if (previousGaveNoMessagesWarningValue == nil) then
@@ -3284,7 +3284,7 @@ end
 ---
 ---@param Table table
 ---@param callback function
----@return void
+---@return nil
 function GL:tableWalk(Table, callback, ...)
     for key, Value in pairs(Table) do
         callback(key, Value, ...);

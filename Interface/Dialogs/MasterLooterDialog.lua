@@ -1,4 +1,4 @@
-local L = Gargul_L;
+﻿local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -18,7 +18,7 @@ GL.Interface.MasterLooterDialog = {
 };
 local MasterLooterDialog = GL.Interface.MasterLooterDialog; ---@type MasterLooterPopupInterface
 
----@return void
+---@return nil
 function MasterLooterDialog:_init()
     if (self._initialized) then
         return;
@@ -77,7 +77,7 @@ end
 
 --- Announce the use of Gargul to the rest of the raid
 ---
----@return void
+---@return nil
 ---
 --- /script _G.Gargul.Interface.MasterLooterDialog:flightAttendant();
 function MasterLooterDialog:flightAttendant()
@@ -104,7 +104,7 @@ function MasterLooterDialog:flightAttendant()
     end
 end
 
----@return void
+---@return nil
 ---
 ---@test /script _G.Gargul.Interface.MasterLooterDialog:draw();
 function MasterLooterDialog:draw()
@@ -263,7 +263,7 @@ function MasterLooterDialog:draw()
     Window:AddChild(CheckBoxLabel);
 end
 
----@return void
+---@return nil
 function MasterLooterDialog:close()
     local Window = GL.Interface:get(self, "Window");
 

@@ -1,4 +1,4 @@
-local L = Gargul_L;
+﻿local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -38,7 +38,7 @@ function FillFromInventory:open()
     return Window:Show() and Window;
 end
 
----@return void
+---@return nil
 function FillFromInventory:close()
     local Window = self:getWindow() or self:build();
 

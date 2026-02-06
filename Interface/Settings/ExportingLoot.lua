@@ -1,4 +1,4 @@
-local L = Gargul_L;
+﻿local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -14,7 +14,7 @@ GL.Interface.Settings.ExportingLoot = {
 local ExportingLoot = GL.Interface.Settings.ExportingLoot; ---@type ExportingLootSettings
 local Constants = GL.Data.Constants; ---@type Data
 
----@return void
+---@return nil
 function ExportingLoot:draw(Parent)
     GL:debug("ExportingLootSettings:draw");
 

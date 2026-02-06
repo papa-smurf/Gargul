@@ -1,4 +1,4 @@
----@type GL
+﻿---@type GL
 local _, GL = ...;
 
 ---@type SettingsOverview
@@ -8,7 +8,7 @@ local Overview = GL.Interface.Settings.Overview;
 GL.Interface.Settings.Advanced = {};
 local Advanced = GL.Interface.Settings.Advanced; ---@type AdvancedSettings
 
----@return void
+---@return nil
 function Advanced:draw(Parent)
     GL:debug("AdvancedSettings:draw");
 

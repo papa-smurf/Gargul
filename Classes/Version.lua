@@ -1,4 +1,4 @@
-local L = Gargul_L;
+﻿local L = Gargul_L;
 
 local _, GL = ...;
 
@@ -31,7 +31,7 @@ local CommActions = GL.Data.Constants.Comm.Actions;
 --[[ CONSTANTS ]]
 local THIRTY_MINUTES = 1800;
 
----@return void
+---@return nil
 function Version:_init()
     -- No need to initialize this class twice
     if (self._initialized) then
@@ -110,7 +110,7 @@ end
 --- * GUILD checking will only occur when the player is not in combat
 ---
 ---@param byReadyCheck boolean
----@return void
+---@return nil
 function Version:checkForUpdate(byReadyCheck)
     if (self.checkingForUpdate -- We're already checking
         or self.isOutOfDate -- We already know we're out of date
@@ -162,7 +162,7 @@ function Version:checkForUpdate(byReadyCheck)
 end
 
 ---@param Message CommMessage
----@return void
+---@return nil
 function Version:replyToUpdateCheck(Message)
     if (Message.Sender.isSelf) then
         return;
@@ -191,7 +191,7 @@ end
 ---
 ---@param versionString string
 ---@param quietly boolean
----@return void
+---@return nil
 function Version:addRelease(versionString, quietly)
     if (type(versionString) ~= "string"
         or not string.match(versionString, "%d+%.%d+%.%d+")
@@ -216,7 +216,7 @@ end
 --- If so, mark our addon as "out of date"
 ---
 ---@param versionString string
----@return void
+---@return nil
 function Version:checkIfNewerRelease(versionString)
     local outDated, versionDifference = self:leftIsOlderThanRight(self.latest, versionString);
     if (not outDated) then
@@ -239,7 +239,7 @@ end
 
 --- Gargul is out of date in a manner that makes it incompatible with new(er) versions
 ---
----@return void
+---@return nil
 function Version:notBackwardsCompatibleNotice()
     local serverTime = GetServerTime();
 
@@ -249,7 +249,7 @@ function Version:notBackwardsCompatibleNotice()
     end
 end
 
----@return void
+---@return nil
 function Version:notifyOfLatestVersion()
     if (self.lastNotBackwardsCompatibleNotice > 0) then -- The user is already chewed out by the incompatibility notifier
         return;
@@ -366,7 +366,7 @@ end
 --- of the version check or its results, but both sender and receiver(s)
 --- will receive warnings/errors in case their addon version is outdated
 ---
----@return void
+---@return nil
 function Version:inspectQuietly()
     if (self.isOutOfDate
         or not GL.User.isInGroup

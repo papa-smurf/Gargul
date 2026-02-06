@@ -1,4 +1,4 @@
----@type GL
+﻿---@type GL
 local _, GL = ...;
 
 ---@class GroupLoot
@@ -27,7 +27,7 @@ end
 --- The purpose of this handler is to add a glowing border to the item frames
 --- of dropped loot in case it's SRed or otherwise marked on someone's list
 ---
----@return void
+---@return nil
 function GroupLoot:highlightItemsOfInterest()
     -- Check if the player disabled the highlighting of items
     if (not GL.Settings:get("highlightsEnabled")

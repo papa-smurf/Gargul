@@ -1,4 +1,4 @@
----@type GL
+﻿---@type GL
 local _, GL = ...;
 
 ---@type SettingsOverview
@@ -10,7 +10,7 @@ GL.Interface.Settings.General = {};
 ---@type GeneralSettings
 local General = GL.Interface.Settings.General;
 
----@return void
+---@return nil
 function General:draw(Parent)
     local Spacer = GL.AceGUI:Create("SimpleGroup");
     Spacer:SetLayout("FILL");

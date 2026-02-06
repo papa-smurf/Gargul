@@ -1,4 +1,4 @@
-local _, GL = ...;
+﻿local _, GL = ...;
 
 ---@type Events
 local Events = GL.Events;
@@ -16,7 +16,7 @@ GL.TradeTime = {
 ---@type TradeTime
 local TradeTime = GL.TradeTime;
 
----@return void
+---@return nil
 function TradeTime:_init()
     if (self._initialized
         or not C_Item
@@ -56,7 +56,7 @@ function TradeTime:_init()
     GL.Interface.TradeTime.Overview:_init();
 end
 
----@return void
+---@return nil
 function TradeTime:process()
     local Details = {};
     local somethingChanged = false;

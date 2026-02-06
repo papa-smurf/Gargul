@@ -1,4 +1,4 @@
-local L = Gargul_L;
+﻿local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -89,7 +89,7 @@ end
 
 --- Toggle the create session window that's anchored to the right side of the GDKP overview window
 ---
----@return void
+---@return nil
 function AddRaider:toggle()
     if (self.isVisible) then
         return self:close();
@@ -98,7 +98,7 @@ function AddRaider:toggle()
     self:open();
 end
 
----@return void
+---@return nil
 function AddRaider:open(sessionID)
     -- It seems our GDKP overview window is not opened
     if (not Overview.isVisible) then
@@ -113,7 +113,7 @@ function AddRaider:open(sessionID)
     Window.frame:Show();
 end
 
----@return void
+---@return nil
 function AddRaider:close()
     local Window = self:window();
 

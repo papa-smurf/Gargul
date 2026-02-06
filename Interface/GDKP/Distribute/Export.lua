@@ -1,4 +1,4 @@
-local L = Gargul_L;
+﻿local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -27,7 +27,7 @@ local Export = GL.Interface.GDKP.Distribute.Export;
 local CUSTOM_FORMAT = 1;
 local SOFTRES_FORMAT = 2;
 
----@return void
+---@return nil
 function Export:open(sessionID)
     local Window = Interface:get(self, "GDKPPotExport");
 
@@ -49,7 +49,7 @@ function Export:open(sessionID)
     Window:Show();
 end
 
----@return void
+---@return nil
 function Export:build()
     ---@type AceGUIFrame
     local Window = Interface:get(self, "GDKPPotExport");
@@ -188,7 +188,7 @@ function Export:build()
     return Window;
 end
 
----@return void
+---@return nil
 function Export:close()
     self.isVisible = false;
 end

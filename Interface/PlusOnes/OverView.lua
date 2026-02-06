@@ -1,4 +1,4 @@
-local L = Gargul_L;
+﻿local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -302,7 +302,7 @@ end
 
 --- Close the window and stop listening for plusone changes
 ---
----@return void
+---@return nil
 function Overview:close()
     if (not self.isVisible) then
         return;

@@ -1,4 +1,4 @@
----@type GL
+﻿---@type GL
 local _, GL = ...;
 
 ---@type Settings
@@ -15,7 +15,7 @@ local GDKPMutators = GL.Interface.Settings.GDKPMutators;
 
 ---@param Parent Frame
 ---
----@return void
+---@return nil
 function GDKPMutators:draw(Parent)
     local Spacer;
 
@@ -139,7 +139,7 @@ function GDKPMutators:draw(Parent)
     end
 end
 
----@return void
+---@return nil
 function GDKPMutators:onClose()
     GL.Settings:set("GDKP.Mutators", {});
 

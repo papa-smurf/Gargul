@@ -1,4 +1,4 @@
-local L = Gargul_L;
+﻿local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -16,7 +16,7 @@ GL.Interface.GDKP.Import = {
 ---@type GDKPImport
 local Import = GL.Interface.GDKP.Import;
 
----@return void
+---@return nil
 function Import:open()
     local Window = Interface:get(self, "GDKPImport");
 
@@ -35,7 +35,7 @@ end
 
 --- Build the GDKP import window. We only do this once and reuse it when reopened
 ---
----@return void
+---@return nil
 function Import:build()
     ---@type AceGUIFrame
     local Window = Interface:get(self, "GDKPImport");
@@ -149,7 +149,7 @@ function Import:build()
     return Window;
 end
 
----@return void
+---@return nil
 function Import:close()
     local Window = Interface:get(self, "GDKPImport");
 

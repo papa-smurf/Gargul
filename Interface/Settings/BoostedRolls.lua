@@ -1,4 +1,4 @@
-local L = Gargul_L;
+﻿local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -13,7 +13,7 @@ GL.Interface.Settings.BoostedRolls = {
 };
 local BoostedRolls = GL.Interface.Settings.BoostedRolls; ---@type BoostedRollsSettings
 
----@return void
+---@return nil
 function BoostedRolls:draw(Parent)
     local AceGUI = GL.AceGUI;
 

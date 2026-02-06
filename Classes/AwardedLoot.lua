@@ -1,4 +1,4 @@
-local L = Gargul_L;
+﻿local L = Gargul_L;
 
 local _, GL = ...;
 
@@ -425,7 +425,7 @@ end
 ---@param automaticallyAwarded boolean|nil Was this awarded automatically via the AwardingLoot.awardOnReceive setting?
 ---@param RollBracket table|nil See DefaultSettings.lua -> RollTracking.Brackets
 ---@param broadcast boolean|nil Broadcast award details to others
----@return void|string
+---@return nil|string
 function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, gdkpCost, Rolls, automaticallyAwarded, RollBracket, broadcast, isBonusLoot)
     if (itemLink ~= nil or type(winner) ~= "table") then
         GL:error("Pass a table instead of multiple arguments")

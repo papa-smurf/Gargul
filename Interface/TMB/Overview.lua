@@ -1,4 +1,4 @@
-local L = Gargul_L;
+﻿local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -15,7 +15,7 @@ GL:tableSet(GL, "Interface.TMB.Overview", {
 ---@class TMBOverview
 local Overview = GL.Interface.TMB.Overview;
 
----@return void
+---@return nil
 function Overview:draw()
     GL:debug("Overview:draw");
 
@@ -220,7 +220,7 @@ end
 
 --- Update the share button when the group setup changes
 ---
----@return void
+---@return nil
 function Overview:updateShareButton()
     local ShareButton = GL.Interface:get(self, "Button.Share")
 
@@ -240,7 +240,7 @@ function Overview:updateShareButton()
     ShareButton:SetDisabled(false);
 end
 
----@return void
+---@return nil
 function Overview:close()
     GL:debug("Overview:close");
 

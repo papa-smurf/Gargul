@@ -1,4 +1,4 @@
----@type GL
+﻿---@type GL
 local _, GL = ...;
 
 local Overview = GL.Interface.Settings.Overview; ---@type SettingsOverview
@@ -10,7 +10,7 @@ GL.Interface.Settings.LootHighlighting = {
 };
 local LootHighlighting = GL.Interface.Settings.LootHighlighting; ---@type LootHighlightingSettings
 
----@return void
+---@return nil
 function LootHighlighting:draw(Parent)
     GL:debug("LootHighlightingSettings:draw");
 

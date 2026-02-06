@@ -1,4 +1,4 @@
-local L = Gargul_L;
+﻿local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -179,7 +179,7 @@ end
 
 --- Toggle the create session window that's anchored to the right side of the GDKP overview window
 ---
----@return void
+---@return nil
 function EditMutator:toggle()
     if (self.isVisible) then
         return self:close();
@@ -188,7 +188,7 @@ function EditMutator:toggle()
     self:open();
 end
 
----@return void
+---@return nil
 function EditMutator:open(sessionID, mutator)
     -- It seems our GDKP overview window is not opened
     if (not Overview.isVisible) then
@@ -221,7 +221,7 @@ function EditMutator:open(sessionID, mutator)
     Window.frame:Show();
 end
 
----@return void
+---@return nil
 function EditMutator:close()
     local Window = self:window();
 

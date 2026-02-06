@@ -1,4 +1,4 @@
---[[ TEST MACROS
+﻿--[[ TEST MACROS
     Add an item link to the queue or set it as the active item to be auctioned off (depends on whether queue is active)
     /script _G.Gargul.GDKP.Auctioneer:addItemLink("|cffa335ee|Hitem:40388::::::::80:::::|h[Journey's End]|h|r");
 
@@ -65,7 +65,7 @@ local AuctioneerUI;
 local DEFAULT_AUCTION_EXTENSION = 10;
 local DEFAULT_AUCTION_SHORTENING = 10;
 
----@return void
+---@return nil
 function Auctioneer:_init()
     if (self._initialized) then
         return;
@@ -206,7 +206,7 @@ function Auctioneer:_init()
     end);
 end
 
----@return void
+---@return nil
 function Auctioneer:toggleQueueStatus()
     local halted = not Settings:get("GDKP.queueIsHalted");
 
@@ -222,7 +222,7 @@ end
 --- Add an item link to the queue or set it as the active item to be auctioned off
 ---
 ---@param itemLink string
----@return void
+---@return nil
 function Auctioneer:addItemLink(itemLink)
     AuctioneerUI = AuctioneerUI or GL.Interface.GDKP.Auctioneer;
 
@@ -239,7 +239,7 @@ end
 ---@param itemLink string
 ---@param identifier string
 ---@param open boolean|nil
----@return void
+---@return nil
 function Auctioneer:addToQueue(itemLink, identifier, open)
     open = open ~= false;
 
@@ -288,7 +288,7 @@ end
 ---@param fromQueue boolean
 ---@param minimum number|nil
 ---@param increment number|nil
----@return void
+---@return nil
 function Auctioneer:setItemByLink(itemLink, fromQueue, minimum, increment)
     if (GL.User.isInGroup
         and not GL.User.isMasterLooter
@@ -312,7 +312,7 @@ function Auctioneer:setItemByLink(itemLink, fromQueue, minimum, increment)
     end
 end
 
----@return void
+---@return nil
 function Auctioneer:clear()
     AuctioneerUI = AuctioneerUI or GL.Interface.GDKP.Auctioneer;
     local Window = AuctioneerUI:getWindow();
@@ -328,7 +328,7 @@ function Auctioneer:clear()
     Auction:reset();
 end
 
----@return void
+---@return nil
 function Auctioneer:disenchant(itemLink)
     GL.PackMule:disenchant(itemLink, true, function ()
         if (Settings:get("GDKP.minimizeAuctioneerOnAward")) then
@@ -391,14 +391,14 @@ function Auctioneer:popFromQueue(force)
     end
 end
 
----@return void
+---@return nil
 function Auctioneer:clearQueue()
     Auction:clearQueue();
 end
 
 ---@param force boolean
 ---@param triedQueue boolean
----@return void
+---@return nil
 function Auctioneer:start(force, triedQueue)
     AuctioneerUI = AuctioneerUI or GL.Interface.GDKP.Auctioneer;
 
@@ -429,7 +429,7 @@ function Auctioneer:start(force, triedQueue)
     end;
 end
 
----@return void
+---@return nil
 function Auctioneer:stop()
     GL.Ace:CancelTimer(self.PopTimer);
     Auction:announceStop(true);
@@ -460,7 +460,7 @@ function Auctioneer:finalCall()
     return true;
 end
 
----@return void
+---@return nil
 function Auctioneer:timeRanOut()
     if (Auction.inProgress) then
         return;
@@ -561,7 +561,7 @@ end
 --- Store auction details for future use (time, increment, minimum bid etc)
 ---
 ---@param Details table
----@return void
+---@return nil
 function Auctioneer:storeDetailsForFutureAuctions(Details)
     local itemID = GL:getItemIDFromLink(Details.itemLink);
 
@@ -614,7 +614,7 @@ function Auctioneer:storeDetailsForFutureAuctions(Details)
     end
 end
 
----@return void
+---@return nil
 function Auctioneer:refreshBidsTable()
     AuctioneerUI = AuctioneerUI or GL.Interface.GDKP.Auctioneer;
     local BidsTable = AuctioneerUI:getBidsTable();
@@ -673,7 +673,7 @@ end
 
 ---@param bidder string
 ---@param bid number
----@return void
+---@return nil
 function Auctioneer:removePlayerBid (bidder, bid)
     local Bids = Auction.Current.Bids or {};
 
@@ -698,7 +698,7 @@ function Auctioneer:removePlayerBid (bidder, bid)
 end
 
 ---@param Bid table
----@return void
+---@return nil
 function Auctioneer:announceBid(Bid)
     local bidApprovedMessage = (L.CHAT["%s is the highest bidder - %s"]):format(Bid.Bidder.name, GL:goldToMoney(Bid.bid));
 
@@ -732,7 +732,7 @@ function Auctioneer:announceBid(Bid)
     end, 1);
 end
 
----@return void
+---@return nil
 function Auctioneer:award()
     AuctioneerUI = AuctioneerUI or GL.Interface.GDKP.Auctioneer;
 

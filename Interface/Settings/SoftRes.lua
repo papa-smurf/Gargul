@@ -1,4 +1,4 @@
----@type GL
+﻿---@type GL
 local _, GL = ...;
 
 local Overview = GL.Interface.Settings.Overview; ---@type SettingsOverview
@@ -10,7 +10,7 @@ GL.Interface.Settings.SoftRes = {
 };
 local SoftRes = GL.Interface.Settings.SoftRes; ---@type SoftResSettings
 
----@return void
+---@return nil
 function SoftRes:draw(Parent)
     GL:debug("SoftResSettings:draw");
 

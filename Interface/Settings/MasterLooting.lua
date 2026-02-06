@@ -1,4 +1,4 @@
----@type GL
+﻿---@type GL
 local _, GL = ...;
 
 local Overview = GL.Interface.Settings.Overview; ---@type SettingsOverview
@@ -9,7 +9,7 @@ GL.Interface.Settings.MasterLooting = {
 };
 local MasterLooting = GL.Interface.Settings.MasterLooting; ---@type MasterLootingSettings
 
----@return void
+---@return nil
 function MasterLooting:draw(Parent)
     GL:debug("MasterLootingSettings:draw");
 

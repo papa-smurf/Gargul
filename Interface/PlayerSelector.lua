@@ -1,4 +1,4 @@
-local L = Gargul_L;
+﻿local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -18,7 +18,7 @@ local ScrollingTable = GL.ScrollingTable;
 ---@param description string
 ---@param PlayerNames string|table
 ---@param callback function
----@return void
+---@return nil
 function PlayerSelector:draw(description, PlayerNames, callback)
     if (self.isVisible) then
         return;
@@ -138,7 +138,7 @@ function PlayerSelector:draw(description, PlayerNames, callback)
     self:drawPlayersTable(TableFrame.frame, PlayerNames);
 end
 
----@return void
+---@return nil
 function PlayerSelector:close()
     local Window = GL.Interface:get(self, "Window");
 
@@ -158,7 +158,7 @@ end
 
 ---@param Parent table
 ---@param PlayerNames table
----@return void
+---@return nil
 function PlayerSelector:drawPlayersTable(Parent, PlayerNames)
     -- Combined width of all colums should be 340
     local columns = {

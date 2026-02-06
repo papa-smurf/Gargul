@@ -1,4 +1,4 @@
-local L = Gargul_L;
+﻿local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -50,7 +50,7 @@ function Bidder:show(...)
     self:draw(...);
 end
 
----@return void
+---@return nil
 function Bidder:autoBidStopped()
     if (self.AutoBidButton
         and self.AutoBidButton.Show
@@ -399,7 +399,7 @@ function Bidder:drawCountdownBar(time, itemLink, itemIcon, maxValue)
     return TimerBar;
 end
 
----@return void
+---@return nil
 function Bidder:hide()
     GL.Events:unregister("BidderModifierStateChanged");
 
