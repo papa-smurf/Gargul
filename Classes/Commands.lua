@@ -211,6 +211,12 @@ GL.Commands = GL.Commands or {
         -- Generate a bug report
         bugreport = function () GL:bugReport(); end,
 
+        -- Show xd output buffer in frame (selectable, copyable)
+        xda = function () GL:xda(); end,
+
+        -- Dump all globals for API availability tracking. Run in each client.
+        dumpglobals = function () GL:dumpGlobals(); end,
+
         -- Open the GDKP overview
         gdkp = function () GL.Interface.GDKP.Overview:open(); end,
 

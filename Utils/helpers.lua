@@ -154,13 +154,69 @@ function GL:warning(...)
     GL:coloredMessage("F7922E", ...);
 end
 
+--- Dump mixed to plain text lines for xd buffer
+---@param mixed any
+---@param depth number
+---@param seen table
+---@param lines table
+---@return void
+local function xdDumpToBuffer(mixed, depth, seen, lines)
+    depth = depth or 0;
+    seen = seen or {};
+    lines = lines or {};
+    local indent = string.rep("  ", depth);
+    local t = type(mixed);
+
+    if t ~= "table" then
+        table.insert(lines, indent .. tostring(mixed));
+        return;
+    end
+    if seen[mixed] then
+        table.insert(lines, indent .. "<cycle>");
+        return;
+    end
+    seen[mixed] = true;
+    for k, v in pairs(mixed) do
+        local keyStr = type(k) == "string" and k:match("^[%w_]+$") and k or ("[" .. tostring(k) .. "]");
+        if type(v) == "table" and not seen[v] then
+            table.insert(lines, indent .. keyStr .. "={");
+            xdDumpToBuffer(v, depth + 1, seen, lines);
+            table.insert(lines, indent .. "}");
+        else
+            table.insert(lines, indent .. keyStr .. "=" .. tostring(v));
+        end
+    end
+end
+
 --- Print a debug message (bright red)
 --- We use a separate method for this to make searching for, and cleaning up debug dumps, easier
+--- Output is also appended to GL.XDOutputBuffer for /gl xda.
 ---
 ---@return void
 function GL:xd(mixed)
-    print(("\n|c00967FD2%s|r ================"):format(date('%H:%M:%S')));
+    local header = ("\n|c00967FD2%s|r ================"):format(date('%H:%M:%S'));
+
+    print(header);
     DevTools_Dump(mixed);
+
+    GL.XDOutputBuffer = GL.XDOutputBuffer or {};
+    table.insert(GL.XDOutputBuffer, (header:gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", "")));
+    local lines = {};
+    xdDumpToBuffer(mixed, 0, {}, lines);
+    for _, line in ipairs(lines) do
+        table.insert(GL.XDOutputBuffer, line);
+    end
+end
+
+--- Show xd output buffer in a frame (selectable, copyable). Use /gl xda after GL:xd() calls.
+---
+---@return void
+function GL:xda()
+    if not GL.XDOutputBuffer or #GL.XDOutputBuffer == 0 then
+        GL:notice("xd buffer is empty. Run GL:xd() first.");
+        return;
+    end
+    GL:frameMessage(table.concat(GL.XDOutputBuffer, "\n"));
 end
 
 --- Print a error message (red)
@@ -1141,27 +1197,27 @@ function GL:frameMessage(message)
     end
 
     local AceGUI = GL.AceGUI or LibStub("AceGUI-3.0");
+    local Window = AceGUI:Create("Frame");
+    Window:SetTitle((L["Gargul v%s"]):format(GL.version));
+    Window:SetLayout("Fill");
+    Window:SetStatusTable({ width = 600, height = 450 });
+    Window:SetCallback("OnClose", function()
+        AceGUI:Release(Window);
+    end);
 
-    -- Create a container/parent frame
-    local MessageFrame = AceGUI:Create("Frame");
-    MessageFrame:SetCallback("OnClose", function(widget) GL.Interface:release(widget); end);
-    MessageFrame:SetTitle((L["Gargul v%s"]):format(GL.version));
-    MessageFrame:SetStatusText("");
-    MessageFrame:SetLayout("Flow");
-    MessageFrame:SetWidth(600);
-    MessageFrame:SetHeight(450);
+    local EditBox = AceGUI:Create("MultiLineEditBox");
+    EditBox:SetLabel("");
+    EditBox:DisableButton(true);
+    EditBox:SetNumLines(math.max(20, math.ceil(#message / 80)));
+    EditBox:SetMaxLetters(0);
+    EditBox:SetText(message);
 
-    -- Large edit box
-    local MessageBox = AceGUI:Create("MultiLineEditBox");
-    MessageBox:SetText(message);
-    MessageBox:SetFocus();
-    MessageBox:SetFullWidth(true);
-    MessageBox:DisableButton(true);
-    MessageBox:SetNumLines(22);
-    MessageBox:HighlightText();
-    MessageBox:SetLabel();
-    MessageBox:SetMaxLetters(999999999);
-    MessageFrame:AddChild(MessageBox);
+    Window:AddChild(EditBox);
+
+    EditBox:SetFocus();
+    if #message < 10000 then
+        EditBox:HighlightText();
+    end
 end
 
 --- Counting tables (or arrays if you will) is anything but straight-forward in LUA. Examples:
@@ -1924,6 +1980,49 @@ function GL:stopHighlight(FrameObject)
     return pcall(function ()
         LCG.PixelGlow_Stop(FrameObject);
     end);
+end
+
+--- Dump all global names for API availability tracking.
+--- Run /gl dumpglobals in each client, copy output, save to Data/APIAvailability/dumps/ClientName_tocVersion.json
+function GL:dumpGlobals()
+    local tocVersion = select(4, GetBuildInfo());
+    local build = select(2, GetBuildInfo());
+
+    local globals = {};
+    for k in pairs(_G) do
+        if (type(k) == "string") then
+            table.insert(globals, k);
+        end
+    end
+    table.sort(globals);
+
+    -- Recursively collect Enum.* paths when Enum exists
+    local enumPaths = {};
+    if (_G.Enum and type(_G.Enum) == "table") then
+        local function collect(t, prefix)
+            for k, v in pairs(t) do
+                if (type(k) == "string") then
+                    local path = prefix and (prefix .. "." .. k) or ("Enum." .. k);
+                    if (type(v) == "table" and v ~= _G) then
+                        collect(v, path);
+                    else
+                        table.insert(enumPaths, path);
+                    end
+                end
+            end
+        end;
+        collect(_G.Enum, "Enum");
+        table.sort(enumPaths);
+    end
+
+    local payload = {
+        tocVersion = tocVersion,
+        build = build,
+        globals = globals,
+        enumPaths = enumPaths,
+    };
+
+    self:frameMessage(GL.JSON:encode(payload));
 end
 
 function GL:bugReport()

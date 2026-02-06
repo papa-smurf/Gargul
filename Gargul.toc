@@ -4,7 +4,7 @@
 ## Interface-Wrath: 30405
 ## Interface-Titan: 38000
 ## Interface-Cata: 40402
-## Interface-Mists: 50500, 50503
+## Interface-Mists: 50503
 ## Title: Gargul |c00967FD2@project-version@|r
 ## Title-deDE: Gargul |c00967FD2@project-version@|r
 ## Title-esES: Gargul |c00967FD2@project-version@|r
