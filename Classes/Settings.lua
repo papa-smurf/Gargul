@@ -121,51 +121,16 @@ function Settings:enforceTemporarySettings()
         DB:set("Settings.BoostedRolls.fixedRolls", nil);
     end
 
-    -- Auto Roll: consolidate duplicate rules for linked items (1 rule per item family)
+    -- Auto Roll: clear all rules (but keep profiles) due to bug that added pass rules for all items won
     ---@TODO: Remove on 2026-04-01
-    local profiles = DB:get("Settings.AutoRoll.Profiles", {});
-    for profileID, profile in pairs(profiles) do
-        local data = profile and profile.data or {};
-        if (next(data)) then
-            local rulesByItem = {};
-            for k, v in pairs(data) do
-                if (v == "need" or v == "greed" or v == "pass") then
-                    local id = tonumber(k);
-                    if (id and id > 0) then
-                        rulesByItem[id] = v;
-                    end
-                end
-            end
-
-            local canonicalByFamily = {};
-            local processed = {};
-            for itemID, action in pairs(rulesByItem) do
-                if (not processed[itemID]) then
-                    local linkedIDs = GL:getLinkedItemsForID(itemID, true);
-                    local canonical = itemID;
-                    local canonicalAction = action;
-                    for _, linkedID in pairs(linkedIDs) do
-                        local lid = tonumber(linkedID);
-                        if (lid and lid < canonical and rulesByItem[lid]) then
-                            canonical = lid;
-                            canonicalAction = rulesByItem[lid];
-                        end
-                        processed[linkedID] = true;
-                    end
-                    processed[itemID] = true;
-                    canonicalByFamily[canonical] = canonicalAction;
-                end
-            end
-
-            local consolidated = {};
-            for canonicalID, action in pairs(canonicalByFamily) do
-                consolidated[canonicalID] = action;
-            end
-
-            if (next(consolidated)) then
-                DB:set(("Settings.AutoRoll.Profiles.%s.data"):format(profileID), consolidated);
+    if (not DB:get("Settings._AutoRollRulesCleared")) then
+        local profiles = DB:get("Settings.AutoRoll.Profiles", {});
+        for profileID, profile in pairs(profiles) do
+            if (profile) then
+                DB:set(("Settings.AutoRoll.Profiles.%s.data"):format(profileID), {});
             end
         end
+        DB:set("Settings._AutoRollRulesCleared", true);
     end
 end
 
