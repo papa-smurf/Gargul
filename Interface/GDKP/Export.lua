@@ -394,7 +394,7 @@ function Export:exportAuctionsToCustomFormat(Session, Auctions)
                     ["@GUILD"] = Auction.Winner.guild,
                     ["@WINNER"] = Auction.Winner.name,
                     ["@REALM"] = Auction.Winner.realm,
-                    ["@NORMALIZED"] = GL:nameFormat{ name = Auction.Winner.name, realm = Auction.Winner.realm, },
+                    ["@NORMALIZED"] = GL:formatPlayerName(Auction.Winner.name, { realm = Auction.Winner.realm, }),
                     ["@YEAR"] = date('%Y', Auction.createdAt),
                     ["@YY"] = date('%y', Auction.createdAt),
                     ["@MONTH"] = date('%m', Auction.createdAt),

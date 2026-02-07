@@ -85,7 +85,7 @@ function BoostedRolls:playerIsTrusted(playerName)
     local trustedPlayerCSV = GL.Settings:get("BoostedRolls.automaticallyAcceptDataFrom", "");
     local TrustedPlayers = GL:explode(trustedPlayerCSV, ",");
     for _, player in pairs(TrustedPlayers) do
-        if (GL:iEquals(player, GL:nameFormat(playerName))) then
+        if (GL:iEquals(player, GL:formatPlayerName(playerName))) then
             return true;
         end
     end
@@ -130,7 +130,7 @@ function BoostedRolls:removePlayerFromTrusted(playerName)
     local trustedPlayerCSV = GL.Settings:get("BoostedRolls.automaticallyAcceptDataFrom", "");
     local TrustedPlayers = GL:explode(trustedPlayerCSV, ",");
     local NewTrustedPlayers = {};
-    local nameFormatted = GL:nameFormat(playerName);
+    local nameFormatted = GL:formatPlayerName(playerName);
     local fqn = GL:addRealm(playerName);
 
     for _, trustedPlayer in pairs(TrustedPlayers) do
@@ -205,7 +205,7 @@ function BoostedRolls:handleWhisperCommand(_, message, sender)
         return;
     end
 
-    local name = GL:nameFormat(sender);
+    local name = GL:formatPlayerName(sender);
     name = self:normalizedName(name);
 
     local points = self:getPoints(name);
@@ -800,7 +800,7 @@ function BoostedRolls:receiveBroadcast(CommMessage)
 Are you sure you want to update your existing boosted rolls with data from %s?
 
 Your latest update was on |c00A79EFF%s, theirs on |c00A79EFF%s.]]]):format(
-            GL:nameFormat{ name = CommMessage.Sender.name, colorize = true, },
+            GL:formatPlayerName(CommMessage.Sender.name, { colorize = true, }),
             date(L["%Y-%m-%d %H:%M"], updatedAt),
             date(L["%Y-%m-%d %H:%M"], MetaData.updatedAt or 0)
         );

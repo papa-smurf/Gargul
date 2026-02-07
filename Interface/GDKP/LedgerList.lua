@@ -174,7 +174,7 @@ function LedgerList:build()
     SessionDetails:SetPoint("BOTTOMLEFT", PotDetails, "TOPLEFT", 0, 5);
     self.SessionDetails = SessionDetails;
 
-    local colorizedUser = GL:nameFormat{ name = GL.User.name, class = GL.User.class, colorize = true, };
+    local colorizedUser = GL:formatPlayerName(GL.User.name, { class = GL.User.class, colorize = true, });
 
     --[[ DRAW LEGEND ]]
     ---@type FontString
@@ -301,7 +301,7 @@ function LedgerList:refresh()
     end
     self.SessionDetails:SetText((L["|c00967FD2%s | By %s%s | On |c00967FD2%s"]):format(
         Session.title,
-        GL:nameFormat{ name = CreatedBy.name, realm = CreatedBy.realm, colorize = true, },
+        GL:formatPlayerName(CreatedBy.name, { realm = CreatedBy.realm, colorize = true, }),
         guild,
         date(L["%Y-%m-%d"], Session.createdAt)
     ));

@@ -206,7 +206,7 @@ function TradeWindow:showTradeConfirmGoldInsight(State)
         self:hideTradeConfirmGoldInsight();
     end);
 
-    self.TradeConfirmGoldInsight.text:SetText(L["You are giving: %s to %s"]:format(GL:copperToMoneyTexture(State.myGold), GL:nameFormat{ name = State.partner, colorize = true, }));
+    self.TradeConfirmGoldInsight.text:SetText(L["You are giving: %s to %s"]:format(GL:copperToMoneyTexture(State.myGold), GL:formatPlayerName(State.partner, { colorize = true, })));
     self.TradeConfirmGoldInsight:Show();
 
     -- This is to make sure this window is always on tope
@@ -229,7 +229,7 @@ end
 ---@param callback function
 ---@param allwaysExecuteCallback boolean
 function TradeWindow:open(playerName, callback, allwaysExecuteCallback)
-    playerName = GL:nameFormat(playerName);
+    playerName = GL:formatPlayerName(playerName);
     allwaysExecuteCallback = GL:toboolean(allwaysExecuteCallback);
 
     -- We're already trading with someone
@@ -285,7 +285,7 @@ end
 ---@param copper number
 function TradeWindow:showGoldOverlay(copper)
     local Overlay = self.PlayerTradeMoneyInsight;
-    GL.Interface:addTooltip(Overlay, L["%s will be traded to %s. Click to add gold manually instead"]:format(GL:copperToMoneyTexture(copper), GL:nameFormat{ name = self.State.partner, colorize = true, }));
+    GL.Interface:addTooltip(Overlay, L["%s will be traded to %s. Click to add gold manually instead"]:format(GL:copperToMoneyTexture(copper), GL:formatPlayerName(self.State.partner, { colorize = true, })));
     Overlay.text:SetText(GL:copperToMoneyTexture(copper));
     Overlay:Show();
 end
@@ -431,7 +431,7 @@ function TradeWindow:updateState()
 
     -- NPC is currently the player you're trading
     local partnerName, partnerRealm = UnitName("NPC", true);
-    self.State.partner = GL:nameFormat{ name = partnerName, realm = partnerRealm, forceRealm = true, };
+    self.State.partner = GL:formatPlayerName(partnerName, { realm = partnerRealm, includeRealm = "always", });
 
     -- Fetch the player name of whomever we're trading with
     partnerName = strtrim(_G.TradeFrameRecipientNameText:GetText());

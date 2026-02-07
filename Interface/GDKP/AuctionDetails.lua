@@ -102,12 +102,12 @@ function AuctionDetails:draw(sessionID, auctionID)
             itemLabel = (L["\n|c00%s%s added to pot by %s\nNote: %s"]):format(
                 Constants.ClassHexColors.rogue,
                 Auction.price and GL:goldToMoneyTexture(Auction.price) or L["0"],
-                GL:nameFormat{ name = Auction.Winner.name, colorize = true, },
+                GL:formatPlayerName(Auction.Winner.name, { colorize = true, }),
                 Auction.note or ""
             );
         else
             itemLabel = (L["\n%s paid |c00%s%s for\n%s"]):format(
-                GL:nameFormat{ name = Auction.Winner.name, colorize = true, },
+                GL:formatPlayerName(Auction.Winner.name, { colorize = true, }),
                 Constants.ClassHexColors.rogue,
                 Auction.price and GL:goldToMoneyTexture(Auction.price) or L["0"],
                 ItemEntry.link
@@ -123,7 +123,7 @@ function AuctionDetails:draw(sessionID, auctionID)
         end
 
         itemLabel = (L["\n|c00be3333Deleted by %s\nReason: %s"]):format(
-            GL:nameFormat{ name = Auction.CreatedBy.name, colorize = true, },
+            GL:formatPlayerName(Auction.CreatedBy.name, { colorize = true, }),
             reason
         );
     end
@@ -198,7 +198,7 @@ function AuctionDetails:draw(sessionID, auctionID)
             end
 
             BidEntry = AceGUI:Create("Label");
-            BidEntry:SetText(("%s%s: %s"):format(linebreak, L["by"], GL:nameFormat(Bid.bidder)));
+            BidEntry:SetText(("%s%s: %s"):format(linebreak, L["by"], GL:formatPlayerName(Bid.bidder)));
             BidEntry:SetFullWidth(true);
             ScrollFrame:AddChild(BidEntry);
 

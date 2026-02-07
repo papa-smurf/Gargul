@@ -440,7 +440,7 @@ end
 ---@param Player Player
 ---@return table
 function Pot:getPlayerRoles(Player)
-    local nameFormatted = GL:nameFormat(Player.fqn);
+    local nameFormatted = GL:formatPlayerName(Player.fqn);
     local PlayerRoles = {};
     local ClassRoleDictionary = {
         TANK = "TANK",

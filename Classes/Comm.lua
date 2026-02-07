@@ -309,7 +309,7 @@ function Comm:listen(payload, distribution, playerName)
     payload.channel = distribution;
 
     if (not payload.senderFqn and playerName) then
-        payload.senderFqn = GL:nameFormat{ name = playerName, forceRealm = true, };
+        payload.senderFqn = GL:formatPlayerName(playerName, { includeRealm = "always", });
     elseif (payload.senderFqn) then
         local ciSenderFqn = strlower(strtrim(payload.senderFqn));
         local ciPlayerName = strlower(strtrim(playerName));
@@ -344,7 +344,7 @@ function Comm:listen(payload, distribution, playerName)
 
     -- Let's find out who sent us this message
     if (not Sender.id) then
-        Sender.name = GL:nameFormat(payload.senderFqn);
+        Sender.name = GL:formatPlayerName(payload.senderFqn);
     end
 
     -- Was this sent by ourself?

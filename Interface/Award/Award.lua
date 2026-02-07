@@ -271,7 +271,7 @@ function Award:draw(itemLink, callback)
 
         -- Make sure the initiator has to confirm his choices
         GL.Interface.Dialogs.AwardDialog:open{
-            question = (L["Award %s to %s?"]):format(itemLink, GL:nameFormat{ name = winner, colorize = true, }),
+            question = (L["Award %s to %s?"]):format(itemLink, GL:formatPlayerName(winner, { colorize = true, })),
             OnYes = award,
         };
     end);
@@ -349,7 +349,7 @@ function Award:draw(itemLink, callback)
         -- No disenchanter was set yet
         GL.Interface.Dialogs.PopupDialog:open{
             question = (L["Set %s as your disenchanter?"]):format(
-                    GL:nameFormat{ name = disenchanter, colorize = true, },
+                    GL:formatPlayerName(disenchanter, { colorize = true, }),
                     disenchanter
             ),
             OnYes = function ()
@@ -615,7 +615,7 @@ function Award:populatePlayersTable(itemID)
         tinsert(TableData, {
             cols = {
                 {
-                    value = GL:nameFormat(Player.fqn),
+                    value = GL:formatPlayerName(Player.fqn),
                     color = GL:classRGBAColor(Player.class),
                 },
             },

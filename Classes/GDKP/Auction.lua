@@ -1911,7 +1911,7 @@ function Auction:processBid(message, bidder)
         return;
     end
 
-    local Bidder = GL:iEquals(GL:nameFormat(bidder), GL.User.name) and GL.User or GL.Player:fromName(bidder);
+    local Bidder = GL:iEquals(GL:formatPlayerName(bidder), GL.User.name) and GL.User or GL.Player:fromName(bidder);
     local bidderGUID = GDKP:playerGUID(Bidder.fqn);
 
     BidEntry = {

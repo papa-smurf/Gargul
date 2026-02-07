@@ -32,7 +32,7 @@
 libraries.xml
 
 # Bootstrap
-Utils/shims.lua
+Utils/Shims.lua
 bootstrap.lua
 
 # Localizations
@@ -56,7 +56,16 @@ Data/NormalModeHardModeLinks.lua
 Data/ArtTextureID.lua
 
 # Helpers
-Utils/helpers.lua
+Utils/PlayerNames.lua
+Utils/Currency.lua
+Utils/Items.lua
+Utils/Inventory.lua
+Utils/Tables.lua
+Utils/Strings.lua
+Utils/Colors.lua
+Utils/Timers.lua
+Utils/Messaging.lua
+Utils/Misc.lua
 
 # Class objects
 Classes/Events.lua

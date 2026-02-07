@@ -1,4 +1,4 @@
-﻿local L = Gargul_L;
+local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -115,7 +115,7 @@ function Import:build()
         if (GL.DB:has("GDKP.Ledger." .. data.ID)) then
             -- Show a confirmation dialog before overriding the existing session
             GL.Interface.Dialogs.PopupDialog:open{
-                question = (L["This GDKP session created by %s appears to exist already, do you wish to override it?"]):format(GL:nameFormat(data.CreatedBy.guid)),
+                question = (L["This GDKP session created by %s appears to exist already, do you wish to override it?"]):format(GL:formatPlayerName(data.CreatedBy.guid)),
                 OnYes = function ()
                     import(data);
                     self:close();
@@ -126,7 +126,7 @@ function Import:build()
         else
             -- Show a confirmation dialog before import a new session
             GL.Interface.Dialogs.PopupDialog:open{
-                question = (L["You're about to import a GDKP session created by %s, are you sure?"]):format(GL:nameFormat(data.CreatedBy.guid)),
+                question = (L["You're about to import a GDKP session created by %s, are you sure?"]):format(GL:formatPlayerName(data.CreatedBy.guid)),
                 OnYes = function ()
                     import(data);
                     self:close();

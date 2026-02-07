@@ -324,9 +324,9 @@ function Exporter:transformEntriesToCustomFormat(Entries, format)
                     ["@ITEM"] = ItemDetails.name,
                     ["@ILVL"] = ItemDetails.level,
                     ["@QUALITY"] = ItemDetails.quality,
-                    ["@WINNER"] = GL:nameFormat{ name = AwardEntry.awardedTo, stripRealm = true, },
+                    ["@WINNER"] = GL:formatPlayerName(AwardEntry.awardedTo, { includeRealm = "never", }),
                     ["@REALM"] = GL:getRealmFromName(AwardEntry.awardedTo),
-                    ["@NORMALIZED"] = GL:nameFormat{ name = AwardEntry.awardedTo, },
+                    ["@NORMALIZED"] = GL:formatPlayerName(AwardEntry.awardedTo),
                     ["@OS"] = GL:toboolean(AwardEntry.OS),
                     ["@SR"] = GL:toboolean(AwardEntry.SR),
                     ["@WL"] = GL:toboolean(AwardEntry.WL),
@@ -385,11 +385,11 @@ function Exporter:transformEntriesToTMBFormat(Entries)
         exportString = ("%s\n%s,%s,%s,%s,%s"):format(
             exportString,
             date(L["%Y-%m-%d"], AwardEntry.timestamp),
-            GL:nameFormat{
-                name = AwardEntry.awardedTo,
-                stripRealm = exportFormat == Constants.ExportFormats.TMB,
-                forceRealm = exportFormat == Constants.ExportFormats.TMBWithRealm
-            },
+            GL:formatPlayerName(AwardEntry.awardedTo, {
+                includeRealm = exportFormat == Constants.ExportFormats.TMB and "never"
+                    or exportFormat == Constants.ExportFormats.TMBWithRealm and "always"
+                    or "auto",
+            }),
             ItemIDConversions[AwardEntry.itemID] and ItemIDConversions[AwardEntry.itemID] or AwardEntry.itemID, -- Convert specific item IDs for TMB compatibility
             AwardEntry.OS,
             AwardEntry.checksum
@@ -422,7 +422,7 @@ function Exporter:transformEntriesToDFTFormat(Entries)
             exportString,
             dateString,
             AwardEntry.itemID,
-            GL:nameFormat(AwardEntry.awardedTo)
+            GL:formatPlayerName(AwardEntry.awardedTo)
         );
     end;
 

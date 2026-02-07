@@ -109,8 +109,8 @@ function PackMuleIgnores:isItemIgnored(input)
 
             Label:SetText(("%s\n\n|c00967FD2Based on your rules and current group|r:\n%s\n%s"):format(
                 labelText,
-                ("In master loot, item ( %s ) goes to: %s"):format(Loot.link, GL:nameFormat{ name = masterTarget, colorize = true, }),
-                ("In group loot, item ( %s ) goes to: %s"):format(Loot.link, GL:nameFormat{ name = groupTarget, colorize = true, })
+                ("In master loot, item ( %s ) goes to: %s"):format(Loot.link, GL:formatPlayerName(masterTarget, { colorize = true, })),
+                ("In group loot, item ( %s ) goes to: %s"):format(Loot.link, GL:formatPlayerName(groupTarget, { colorize = true, }))
             ));
         end);
     end);

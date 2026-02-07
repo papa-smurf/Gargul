@@ -193,7 +193,7 @@ function MailCuts:refreshPlayerCuts()
         local hasEntries = false;
         local Lines;
         local MailHistory = GL:tableGet(Session, "MailHistory." .. player);
-        local nameFormatted = GL:nameFormat(player);
+        local nameFormatted = GL:formatPlayerName(player);
         if (MailHistory) then
             Lines = {
                 (L["Mail History for |c00967FD2%s"]):format(nameFormatted),
@@ -459,7 +459,7 @@ function MailCuts:mailPlayerCut(player, callback)
     ClearSendMail();
     SetSendMailMoney(outstandingCopper);
 
-    player = GL:nameFormat(player);
+    player = GL:formatPlayerName(player);
     SendMail(player, (self.cutMailSubject):format(gold), GL:printfn(self.cutMailBody, {
         cut = gold,
         player = player,

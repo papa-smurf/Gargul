@@ -1,4 +1,4 @@
-﻿local L = Gargul_L;
+local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -93,7 +93,7 @@ function Client:start(Message)
     end
 
     if (not GL.Version:leftIsNewerThanOrEqualToRight(Message.version, "7.2.2")) then
-        GL:error((L["The loot master (%s) is outdated, this can cause bids to fail!"]):format(GL:nameFormat(Message.Sender.fqn)));
+        GL:error((L["The loot master (%s) is outdated, this can cause bids to fail!"]):format(GL:formatPlayerName(Message.Sender.fqn)));
     end
 
     self.AuctionDetails = {
@@ -331,7 +331,7 @@ function Client:updateBids(Message)
                     and GL.Settings:get("GDKP.MultiAuction.awardNotice")
                 ) then
                     print(("|c00FFF569" .. L["%s bought %s for %s"] .. "|r"):format(
-                        GL:nameFormat{ name = bidder, colorize = true, },
+                        GL:formatPlayerName(bidder, { colorize = true, }),
                         self.AuctionDetails.Auctions[auctionID].link,
                         GL:goldToMoneyTexture(amount)
                     ));

@@ -155,7 +155,7 @@ end
 ---@return table
 function TMB:filterNonRaiders(Entries)
     for key, Entry in pairs(Entries or {}) do
-        local playerName = GL:nameFormat(Entry.character):lower():gsub(OFFSPEC_IDENTIFIER, "");
+        local playerName = GL:formatPlayerName(Entry.character):lower():gsub(OFFSPEC_IDENTIFIER, "");
 
         if (not GL.User:unitInGroup(playerName)) then
             Entry = nil;
@@ -207,7 +207,7 @@ function TMB:byItemIDAndPlayer(itemID, player)
 
     local playerWithoutRealm = GL:stripRealm(player):lower();
     for key, Entry in pairs(Entries) do
-        local playerName = GL:nameFormat(Entry.character):lower():gsub(OFFSPEC_IDENTIFIER, "");
+        local playerName = GL:formatPlayerName(Entry.character):lower():gsub(OFFSPEC_IDENTIFIER, "");
 
         if (playerName ~= player
             and playerName ~= playerWithoutRealm
@@ -347,7 +347,7 @@ function TMB:RRobinTooltipLines(Lines, Entries)
         tinsert(Lines, ("    |c00%s%s|r: %s"):format(
             priorityColor,
             Entry.prio,
-            GL:nameFormat{ name = Entry.character, colorize = true, defaultColor = Constants.disabledTextColor, }
+            GL:formatPlayerName(Entry.character, { colorize = true, defaultColor = Constants.disabledTextColor, })
         ));
 
         entriesAdded = entriesAdded + 1;
@@ -382,7 +382,7 @@ function TMB:DFTTooltipLines(Lines, Entries)
         local color = GL:classHexColor(GL.Player:classByName(playerName:gsub(OFFSPEC_IDENTIFIER, ""), 0), Constants.disabledTextColor);
         tinsert(Lines, ("|c00%s%s[%s]|r"):format(
             color,
-            GL:nameFormat(playerName),
+            GL:formatPlayerName(playerName),
             Entry.prio
         ));
 
@@ -910,7 +910,7 @@ function TMB:import(data, triedToDecompress, source)
     if (not GL:empty(PlayersWithoutEntries)) then
         local MissingPlayers = {};
         for _, name in pairs(PlayersWithoutEntries) do
-            tinsert(MissingPlayers, GL:nameFormat{ name = name, colorize = true, });
+            tinsert(MissingPlayers, GL:formatPlayerName(name, { colorize = true, }));
         end
 
         GL:warning((L["The following players have no %s entries:"]):format(self:source()));
@@ -957,7 +957,7 @@ function TMB:playersWithoutEntries()
     local PlayersWithoutEntries = {};
     for _, Details in pairs(GL.User:groupMembers() or {}) do
 
-        local name = strlower(GL:nameFormat(Details.name));
+        local name = strlower(GL:formatPlayerName(Details.name));
         local fqn = strlower(GL:addRealm(Details.name));
         if (not PlayersWithDetails[name]
             and not PlayersWithDetails[fqn]
@@ -1174,7 +1174,7 @@ Alt:ratomir,zhorax,feth
 
             for _, priorityEntry in pairs(CSVParts) do
                 (function () -- Not having continue statements in LUA is getting silly at this point
-                    local player = strlower(GL:nameFormat(priorityEntry));
+                    local player = strlower(GL:formatPlayerName(priorityEntry));
                     local playerPriority = player:match("(%[[0-9%.]+%])");
 
                     if (playerPriority) then

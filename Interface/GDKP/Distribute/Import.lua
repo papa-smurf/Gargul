@@ -1,4 +1,4 @@
-﻿local L = Gargul_L;
+local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -74,7 +74,7 @@ function Import:build()
                     and not GL:empty(Cuts)
                 ) then
                     GL.Interface.Dialogs.PopupDialog:open{
-                        question = (L["\n|c00BE3333!! WARNING !!|r\n\nYou're on a connected realm and are importing player names without\na realm suffix, '%s' for example. This can cause you to send\ncuts and cut mails to the wrong player.\n\nWhen on a connected realm always try to include the realm name of players!\n\nContinue importing?\n"]):format(GL:nameFormat{ name = GL.User.name, forceRealm = true, colorize = true, }),
+                        question = (L["\n|c00BE3333!! WARNING !!|r\n\nYou're on a connected realm and are importing player names without\na realm suffix, '%s' for example. This can cause you to send\ncuts and cut mails to the wrong player.\n\nWhen on a connected realm always try to include the realm name of players!\n\nContinue importing?\n"]):format(GL:formatPlayerName(GL.User.name, { includeRealm = "always", colorize = true, })),
                         OnYes = function ()
                             if (GDKPPot:importCuts(self.sessionID, Cuts)) then
                                 ImportBox:SetText("");

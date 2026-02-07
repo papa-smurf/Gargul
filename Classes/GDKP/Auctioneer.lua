@@ -636,7 +636,7 @@ function Auctioneer:refreshBidsTable()
         local Row = {
             cols = {
                 {
-                    value = GL:nameFormat(bidder),
+                    value = GL:formatPlayerName(bidder),
                     color = GL:classRGBAColor(class),
                 },
                 {
@@ -766,7 +766,7 @@ function Auctioneer:award()
     GL.Interface.Dialogs.PopupDialog:open{
         question = (L["Award %s to %s for %s?"]):format(
             Auction.Current.itemLink,
-            GL:nameFormat{ name = winner, colorize = true, },
+            GL:formatPlayerName(winner, { colorize = true, }),
             "|c00FFF569" .. bid .. "|r"
         ),
         OnYes = function ()

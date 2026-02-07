@@ -631,7 +631,7 @@ function Overview:refreshLedger()
     end
 
     Note:SetText((L["By %s%s | On |c00%s%s%s"]):format(
-        GL:nameFormat{ name = CreatedBy.name, realm = CreatedBy.realm, colorize = true, },
+        GL:formatPlayerName(CreatedBy.name, { realm = CreatedBy.realm, colorize = true, }),
         guild,
         Constants.addonHexColor,
         date(L["%Y-%m-%d"], Session.createdAt),
@@ -752,12 +752,12 @@ function Overview:refreshLedger()
                             Interface.Colors.ROGUE,
                             GL:goldToMoneyTexture(price),
                             mutator,
-                            GL:nameFormat{ name = Auction.Winner.name, class = Auction.Winner.class, colorize = true, },
+                            GL:formatPlayerName(Auction.Winner.name, { class = Auction.Winner.class, colorize = true, }),
                             Auction.note or ""
                         );
                     else
                         itemLabel = (L["\n%s paid |c00%s%s for\n%s"]):format(
-                            GL:nameFormat{ name = Auction.Winner.name, class = Auction.Winner.class, colorize = true, },
+                            GL:formatPlayerName(Auction.Winner.name, { class = Auction.Winner.class, colorize = true, }),
                             Interface.Colors.ROGUE,
                             GL:goldToMoneyTexture(price),
                             Auction.itemLink
@@ -773,7 +773,7 @@ function Overview:refreshLedger()
                     end
 
                     itemLabel = (L["\n|c00be3333Deleted by %s\nReason: %s"]):format(
-                        GL:nameFormat{ name = Auction.CreatedBy.name, class = Auction.CreatedBy.class, colorize = true, },
+                        GL:formatPlayerName(Auction.CreatedBy.name, { class = Auction.CreatedBy.class, colorize = true, }),
                         reason
                     );
                 end

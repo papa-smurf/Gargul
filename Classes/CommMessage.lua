@@ -1,4 +1,4 @@
-﻿---@type GL
+---@type GL
 local _, GL = ...;
 
 ---@class CommMessage
@@ -67,7 +67,7 @@ function CommMessage.new(action, content, channel, recipient, acceptsResponse, o
     self.minimumVersion = GL.Data.Constants.Comm.minimumAppVersion;
     self.senderRealm = GL.User.realm;
     self.senderFqn = GL.User.fqn or GL:addRealm(UnitName("player"), GL.User.realm);
-    self.recipient = recipient and GL:nameFormat(recipient) or nil;
+    self.recipient = recipient and GL:formatPlayerName(recipient) or nil;
 
     -- Make sure self.correspondenceId is unique!
     -- This is very important if we wish to track responses to our comm message

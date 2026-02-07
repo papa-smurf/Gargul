@@ -607,7 +607,7 @@ function RollOff:award(roller, itemLink, RollBracket, identicalRollDetected)
             question = ("%s" .. L["Award %s to %s?"]):format(
                 identicalRollDetectedString,
                 itemLink,
-                GL:nameFormat{ name = roller, colorize = true, }
+                GL:formatPlayerName(roller, { colorize = true, })
             ),
             OnYes = function ()
                 local OSCheckBox = GL.Interface:get(GL.Interface.Dialogs.AwardDialog, "CheckBox.OffSpec");
@@ -667,7 +667,7 @@ function RollOff:award(roller, itemLink, RollBracket, identicalRollDetected)
             question = ("%s" .. L["Award %s to %s?"]):format(
                 identicalRollDetectedString,
                 itemLink,
-                GL:nameFormat{ name = player, colorize = true, }
+                GL:formatPlayerName(player, { colorize = true, })
             ),
             OnYes = function ()
                 local OSCheckBox = GL.Interface:get(GL.Interface.Dialogs.AwardDialog, "CheckBox.OffSpec");
@@ -814,14 +814,14 @@ function RollOff:processRoll(message)
             RollType[4] = 10;
         end
 
-        local rollerName = GL:nameFormat(roller);
+        local rollerName = GL:formatPlayerName(roller);
 
         --- Make sure the person who rolled is in our group
         for _, Player in pairs(GL.User:groupMembers()) do
             -- Rolls don't include a realm reference of any sort sadly
             if (GL:iEquals(rollerName, Player.name)) then
                 Roll = {
-                    player = GL:nameIsUnique(Player.name) and GL:nameFormat(Player.fqn) or roller, -- Make sure to not assume the wrong realm-specific name!
+                    player = GL:nameIsUnique(Player.name) and GL:formatPlayerName(Player.fqn) or roller, -- Make sure to not assume the wrong realm-specific name!
                     class = Player.class,
                     amount = roll,
                     time = GetServerTime(),
@@ -920,7 +920,7 @@ function RollOff:refreshRollsTable()
             end
         end
 
-        local TMBData = TMB:byItemIDAndPlayer(self.CurrentRollOff.itemID, GL:nameFormat{ name = playerName, forceRealm = true, func = strlower, });
+        local TMBData = TMB:byItemIDAndPlayer(self.CurrentRollOff.itemID, GL:formatPlayerName(playerName, { includeRealm = "always", decorator = strlower, }));
 
         -- The item might be on a TMB list, make sure we add the appropriate note to the roll
         if (TMBData) then

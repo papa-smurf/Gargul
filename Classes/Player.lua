@@ -82,7 +82,7 @@ function Player:fromName(name)
         return false;
     end
 
-    name = GL:nameFormat(name);
+    name = GL:formatPlayerName(name);
     local playerID = UnitGUID(name);
 
     if (not playerID) then
@@ -118,9 +118,9 @@ function Player:hasAssist(playerNameOrID)
     local realm, _;
     if (GL:strStartsWith(playerNameOrID, "Player-")) then
         _, _, _, _, _, playerName, realm = GetPlayerInfoByGUID(playerNameOrID);
-        playerName = GL:nameFormat{ name = playerName, realm = realm, };
+        playerName = GL:formatPlayerName(playerName, { realm = realm, });
     else
-        playerName = GL:nameFormat(playerNameOrID);
+        playerName = GL:formatPlayerName(playerNameOrID);
     end
 
     if (not playerName) then
@@ -159,7 +159,7 @@ function Player:hasLead(playerNameOrID)
     local realm, _;
     if (GL:strStartsWith(playerNameOrID, "Player-")) then
         _, _, _, _, _, playerName, realm = GetPlayerInfoByGUID(playerNameOrID);
-        playerName = GL:nameFormat{ name = playerName, realm = realm, };
+        playerName = GL:formatPlayerName(playerName, { realm = realm, });
     end
 
     if (not playerName) then
@@ -177,7 +177,7 @@ function Player:hasLead(playerNameOrID)
         local name, rank = GetRaidRosterInfo(index);
 
         -- Rank 1 = assist, 2 = lead
-        if (GL:iEquals(GL:nameFormat(name), playerName)) then
+        if (GL:iEquals(GL:formatPlayerName(name), playerName)) then
             return rank == 2;
         end
     end
@@ -198,9 +198,9 @@ function Player:isMasterLooter(playerNameOrID)
     local realm, _;
     if (GL:strStartsWith(playerNameOrID, "Player-")) then
         _, _, _, _, _, playerName, realm = GetPlayerInfoByGUID(playerNameOrID);
-        playerName = GL:nameFormat{ name = playerName, realm = realm, };
+        playerName = GL:formatPlayerName(playerName, { realm = realm, });
     else
-        playerName = GL:nameFormat(playerNameOrID);
+        playerName = GL:formatPlayerName(playerNameOrID);
     end
 
     if (not playerName) then
@@ -216,7 +216,7 @@ function Player:isMasterLooter(playerNameOrID)
 
     -- Master looting is active and this player is the master looter
     if (lootMethod == "master") then
-        return GL:iEquals(GetRaidRosterInfo(masterLooterIndex), GL:nameFormat(playerName));
+        return GL:iEquals(GetRaidRosterInfo(masterLooterIndex), GL:formatPlayerName(playerName));
     end
 
     return false;
@@ -232,7 +232,7 @@ function Player:classByName(playerName, default)
         default = "priest";
     end
 
-    playerName = GL:nameFormat{ name = playerName, func = strlower, };
+    playerName = GL:formatPlayerName(playerName, { decorator = strlower, });
 
     -- We already know this player's class name, return it
     if (self.playerClassByName[playerName]) then

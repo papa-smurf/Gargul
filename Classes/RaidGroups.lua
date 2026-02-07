@@ -579,7 +579,7 @@ function RaidGroups:applyRaidGroups(raidGroupCsv)
         Raider.name = strlower(Raider.name);
 
         if (UnitAffectingCombat("raid" .. Raider.index)) then
-            return GL:warning((L["Can't sort groups while %s is in combat!"]):format(GL:nameFormat{ name = Raider.name, colorize = true, }));
+            return GL:warning((L["Can't sort groups while %s is in combat!"]):format(GL:formatPlayerName(Raider.name, { colorize = true, })));
         end
 
         -- Check if there's people in the raid who are not on the roster
@@ -770,7 +770,7 @@ function RaidGroups:processMigrations(Migrations, numberOfMigrations, index)
         end
 
         if (not leftIndex) then
-            return GL:warning((L["Something went wrong while moving %s"]):format(GL:nameFormat{ name = name, colorize = true, }));
+            return GL:warning((L["Something went wrong while moving %s"]):format(GL:formatPlayerName(name, { colorize = true, })));
         end
 
         -- Move the player to his desired group

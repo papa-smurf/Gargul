@@ -56,7 +56,7 @@ function EditAuction:draw(session, checksum)
     ItemLink:SetFontObject(_G["GameFontNormal"]);
     ItemLink:SetFullWidth(true);
     ItemLink:SetText((L["\n%s paid |c00%s%s for\n%s"]):format(
-        GL:nameFormat{ name = Auction.Winner.name, colorize = true, },
+        GL:formatPlayerName(Auction.Winner.name, { colorize = true, }),
         Interface.Colors.ROGUE,
         Auction.price and GL:goldToMoneyTexture(Auction.price) or L["0"],
         Auction.itemLink
@@ -97,7 +97,7 @@ function EditAuction:draw(session, checksum)
     PlayernameInput:DisableButton(true);
     PlayernameInput:SetHeight(20);
     PlayernameInput:SetWidth(250);
-    PlayernameInput:SetText(GL:nameFormat(Auction.Winner.guid));
+    PlayernameInput:SetText(GL:formatPlayerName(Auction.Winner.guid));
     PlayernameInput:SetLabel(L["Player"]);
     Window:AddChild(PlayernameInput);
 

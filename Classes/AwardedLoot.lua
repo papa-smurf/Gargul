@@ -181,7 +181,7 @@ function AwardedLoot:tooltipLines(itemLink)
             end
 
             local line = ("    %s | %s"):format(
-                GL:nameFormat{ name = Loot.awardedTo, colorize = true, },
+                GL:formatPlayerName(Loot.awardedTo, { colorize = true, }),
                 table.concat(Details, " | ")
             );
             tinsert(Lines, line);
@@ -502,7 +502,7 @@ function AwardedLoot:addWinner(winner, itemLink, announce, date, isOS, BRCost, g
         return false;
     end
 
-    winner = not isDisenchanted and GL:nameFormat{ name = winner, forceRealm = true, } or winner;
+    winner = not isDisenchanted and GL:formatPlayerName(winner, { includeRealm = "always", }) or winner;
 
     -- You can set the date for when this item was awarded, handy if you forgot an item for example
     if (dateProvided) then

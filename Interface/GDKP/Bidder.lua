@@ -346,7 +346,7 @@ function Bidder:refresh()
     else
         TopBidderLabel:SetText(("|c00BE3333" .. L["Top bid: %s by %s"] .. "|r"):format(
             GL:goldToMoney(TopBid.bid),
-            GL:nameFormat{ name = TopBid.Bidder.name, colorize = true, }
+            GL:formatPlayerName(TopBid.Bidder.name, { colorize = true, })
         ));
     end
 end

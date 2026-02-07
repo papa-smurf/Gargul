@@ -70,11 +70,11 @@ function PlusOnes:playerIsTrusted(playerName)
         return false;
     end
 
-    playerName = GL:nameFormat(playerName);
+    playerName = GL:formatPlayerName(playerName);
     local trustedPlayerCSV = GL.Settings:get("PlusOnes.automaticallyAcceptDataFrom", "");
     local TrustedPlayers = GL:explode(trustedPlayerCSV, ",");
     for _, player in pairs(TrustedPlayers) do
-        if (GL:iEquals(GL:nameFormat(player), playerName)) then
+        if (GL:iEquals(GL:formatPlayerName(player), playerName)) then
             return true;
         end
     end
@@ -163,7 +163,7 @@ function PlusOnes:handleWhisperCommand(_, message, sender)
 
     -- See if name is given.
     if (args[2]) then
-        local name = GL:nameFormat(args[2]);
+        local name = GL:formatPlayerName(args[2]);
         local plusOne = self:getPlusOnes(name);
         GL:sendChatMessage(
             (L.CHAT["Player %s's +1 total is %d"]):format(GL:capitalize(name), plusOne),
@@ -172,7 +172,7 @@ function PlusOnes:handleWhisperCommand(_, message, sender)
         return;
     end
 
-    local name = GL:nameFormat(sender);
+    local name = GL:formatPlayerName(sender);
     local plusOne = self:getPlusOnes(name);
     GL:sendChatMessage(
         (L.CHAT["Your +1 total is %d"]):format(plusOne),
@@ -506,7 +506,7 @@ function PlusOnes:receiveBroadcast(CommMessage)
         question = (L["%s wants to clear all your PlusOne data. Clear all data?"]):format(CommMessage.Sender.name);
     elseif (MetaData.uuid and uuid == MetaData.uuid) then -- This is an update to our dataset
         question = (L["\nAre you sure you want to update your existing PlusOne data with data from %s?\n\nYour latest update was on |c00A79EFF%s, theirs on |c00A79EFF%s."]):format(
-            GL:nameFormat{ name = CommMessage.Sender.name, colorize = true, },
+            GL:formatPlayerName(CommMessage.Sender.name, { colorize = true, }),
             date(L["%Y-%m-%d %H:%M"], updatedAt),
             date(L["%Y-%m-%d %H:%M"], MetaData.updatedAt or 0)
         );
@@ -799,7 +799,7 @@ function PlusOnes:receiveUpdate(CommMessage)
         question = (L["%s wants to clear all your PlusOne data. Clear all data?"]):format(CommMessage.Sender.name);
     elseif (MetaData.uuid and uuid == MetaData.uuid) then -- This is an update to our dataset
         question = (L["\nAre you sure you want to update your existing PlusOne data with data from %s?\n\nYour latest update was on |c00A79EFF%s, theirs on |c00A79EFF%s."]):format(
-            GL:nameFormat{ name = CommMessage.Sender.name, colorize = true, },
+            GL:formatPlayerName(CommMessage.Sender.name, { colorize = true, }),
             date(L["%Y-%m-%d %H:%M"], updatedAt),
             date(L["%Y-%m-%d %H:%M"], MetaData.updatedAt or 0)
         );

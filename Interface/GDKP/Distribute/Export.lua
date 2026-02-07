@@ -292,7 +292,7 @@ function Export:exportPotToCustomFormat(Session, Cuts)
             end
 
             local Values = {
-                ["@PLAYER"] = GL:nameFormat{ name = player, stripRealm = true, },
+                ["@PLAYER"] = GL:formatPlayerName(player, { includeRealm = "never", }),
                 ["@REALM"] = GL:getRealmFromName(player),
                 ["@CUT"] = cut,
                 ["@ADJUSTGOLD"] = adjustGold,

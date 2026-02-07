@@ -199,7 +199,7 @@ function GroupVersionCheck:build()
         end
 
         ---@type FontString
-        local Name = Interface:createFontString(PlayerRow, GL:nameFormat(Player.name));
+        local Name = Interface:createFontString(PlayerRow, GL:formatPlayerName(Player.name));
         Name:SetColor(strupper(Player.class));
         Name:SetPoint("TOPLEFT", Anchor, "TOPRIGHT", 4, -2);
 
@@ -338,7 +338,7 @@ function GroupVersionCheck:refresh()
                 local player = C_FriendList.GetIgnoreName(i);
 
                 if (player and GL.User:unitInGroup(player)) then
-                    tinsert(self.Results.Ignored, GL:nameFormat{ name = player, forceRealm = true, func = strlower, });
+                    tinsert(self.Results.Ignored, GL:formatPlayerName(player, { includeRealm = "always", decorator = strlower, }));
                 end
             end
         end
@@ -353,25 +353,25 @@ function GroupVersionCheck:refresh()
 
     local addUpToDate = function(player)
         upToDate = upToDate + 1;
-        tinsert(self.Results.UpToDate, GL:nameFormat(player));
+        tinsert(self.Results.UpToDate, GL:formatPlayerName(player));
         Window._UpToDateCountLabel:SetText(upToDate);
     end
 
     local addOutdated = function(player)
         outdated = outdated + 1;
-        tinsert(self.Results.Outdated, GL:nameFormat(player));
+        tinsert(self.Results.Outdated, GL:formatPlayerName(player));
         Window._OutdatedCountLabel:SetText(outdated);
     end
 
     local addUnresponsive = function(player)
         unresponsive = unresponsive + 1;
-        tinsert(self.Results.Unresponsive, GL:nameFormat(player));
+        tinsert(self.Results.Unresponsive, GL:formatPlayerName(player));
         Window._UnresponsiveCountLabel:SetText(unresponsive);
     end
 
     local addOffline = function(player)
         offline = offline + 1;
-        tinsert(self.Results.Offline, GL:nameFormat(player));
+        tinsert(self.Results.Offline, GL:formatPlayerName(player));
         Window._OfflineCountLabel:SetText(offline);
     end
 

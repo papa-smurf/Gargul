@@ -425,7 +425,7 @@ function PackMule:lootReady()
                     return;
                 end
 
-                target = GL:nameFormat(target);
+                target = GL:formatPlayerName(target);
                 for playerIndex = 1, GetNumGroupMembers() do
                     if (GL:iEquals(GetMasterLootCandidate(itemIndex, playerIndex) or "", target)) then
                         GiveMasterLoot(itemIndex, playerIndex);
@@ -680,7 +680,7 @@ function PackMule:getTargetForItem(itemLinkOrId, callback)
                     for _, Player in pairs(GL.User:groupMembers()) do
                         -- No need giving items to a random who's offline
                         if (Player.online) then
-                            tinsert(Targets, GL:nameFormat(Player.fqn));
+                            tinsert(Targets, GL:formatPlayerName(Player.fqn));
                         end
                     end
 
@@ -875,7 +875,7 @@ function PackMule:disenchant(itemLink, byPassConfirmationDialog, callback)
         -- Show the player selector
         GL.Interface.PlayerSelector:draw(L["Who is your disenchanter?"], PlayerNames, function (playerName)
             GL.Interface.Dialogs.PopupDialog:open{
-                question = (L["Set %s as your disenchanter?"]):format(GL:nameFormat{ name = playerName, colorize = true, }),
+                question = (L["Set %s as your disenchanter?"]):format(GL:formatPlayerName(playerName, { colorize = true, })),
                 OnYes = function ()
                     self:setDisenchanter(playerName);
                     self:disenchant(itemLink, true, callback);
@@ -906,7 +906,7 @@ function PackMule:disenchant(itemLink, byPassConfirmationDialog, callback)
     GL.Interface.Dialogs.PopupDialog:open{
         question = (L["Send %s to %s? Type /gl cd to remove this disenchanter!"]):format(
             itemLink,
-            GL:nameFormat{ name = self.disenchanter, colorize = true, }
+            GL:formatPlayerName(self.disenchanter, { colorize = true, })
         ),
         OnYes = function ()
             self:assignLootToPlayer(itemID, self.disenchanter);
@@ -942,7 +942,7 @@ function PackMule:setDisenchanter(disenchanter)
     self.disenchanter = GL:addRealm(disenchanter);
 
     GL:sendChatMessage(
-        (L.CHAT["%s was set as disenchanter"]):format(GL:nameFormat(self.disenchanter)),
+        (L.CHAT["%s was set as disenchanter"]):format(GL:formatPlayerName(self.disenchanter)),
         "GROUP"
     );
 end

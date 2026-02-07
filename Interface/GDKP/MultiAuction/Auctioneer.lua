@@ -89,7 +89,7 @@ function Auctioneer:open(keepPreviousItems)
     end
     self.SessionDetails:SetText((L["Active GDKP Session: |c00967FD2%s | By %s%s | On |c00967FD2%s"]):format(
         ActiveSession.title,
-        GL:nameFormat{ name = CreatedBy.name, realm = CreatedBy.realm, colorize = true, },
+        GL:formatPlayerName(CreatedBy.name, { realm = CreatedBy.realm, colorize = true, }),
         guild,
         date(L["%Y-%m-%d"], ActiveSession.createdAt)
     ));

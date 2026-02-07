@@ -738,7 +738,7 @@ function SoftRes:playerReserveAmountsByItemID(itemID, inRaidOnly)
 
         -- User reserved the same item multiple times
         if (Entry.reservations > 1) then
-            entryString = ("%s (%sx)"):format(GL:nameFormat{ name = Entry.player, }, Entry.reservations);
+            entryString = ("%s (%sx)"):format(GL:formatPlayerName(Entry.player), Entry.reservations);
         end
 
         tinsert(ActiveSoftResDetails, GL:capitalize(entryString));
@@ -777,7 +777,7 @@ function SoftRes:tooltipLines(itemLink)
         tinsert(Lines, ("\n|cFFcc2743%s|r"):format(L["This item is hard-reserved"]));
         if (hardReservedFor) then
             tinsert(Lines, ("|cFFcc2743 %s|r"):format(
-                (L["For: %s"]):format(GL:nameFormat{ name = hardReservedFor, colorize = true, }))
+                (L["For: %s"]):format(GL:formatPlayerName(hardReservedFor, { colorize = true, })))
             );
         end
 
@@ -916,7 +916,7 @@ function SoftRes:import(data, openOverview)
             for softResName, playerName in pairs(RewiredNames) do
                 GL:notice((L["Auto name fix: the SR of '%s' is now linked to '%s'"]):format(
                     GL:capitalize(softResName),
-                    GL:nameFormat{ name = playerName, colorize = true, }
+                    GL:formatPlayerName(playerName, { colorize = true, })
                 ));
             end
         end
@@ -945,7 +945,7 @@ function SoftRes:import(data, openOverview)
         if (not GL:empty(PlayersWhoDidntReserve)) then
             local MissingReservers = {};
             for _, name in pairs(PlayersWhoDidntReserve) do
-                tinsert(MissingReservers, GL:nameFormat{ name = name, colorize = true, });
+                tinsert(MissingReservers, GL:formatPlayerName(name, { colorize = true, }));
             end
 
             GL:warning(L["The following players did not reserve anything:"]);
@@ -1005,7 +1005,7 @@ function SoftRes:importLootReserveData(Reserves)
         if (not GL:empty(Reserved)) then
             SoftReserveData[player] = {
                 Items = Reserved,
-                name = GL:nameFormat{ name = player, stripRealm = true, func = strlower },
+                name = GL:formatPlayerName(player, { includeRealm = "never", decorator = strlower, }),
             };
         end
     end

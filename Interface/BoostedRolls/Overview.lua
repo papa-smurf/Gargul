@@ -483,7 +483,7 @@ function Overview:refreshTable()
         local reserve = BoostedRolls:reserve(Entry.points);
         local aliases = {};
         for _, aliasName in pairs(Entry.Aliases) do
-            tinsert(aliases, GL:nameFormat(aliasName));
+            tinsert(aliases, GL:formatPlayerName(aliasName));
         end
         aliases = table.concat(aliases, ",");
 
@@ -492,7 +492,7 @@ function Overview:refreshTable()
         tinsert(TableData, {
             cols = {
                 {
-                    value = GL:nameFormat(playerName),
+                    value = GL:formatPlayerName(playerName),
                     color = GL:classRGBAColor(Entry.class),
                 },
                 {
@@ -522,7 +522,7 @@ function Overview:deleteEntry()
     end
 
     return GL.Interface.Dialogs.PopupDialog:open{
-        question = (L["Delete %s?"]):format(GL:nameFormat{ name = self.selectedCharacter, colorize = true, }),
+        question = (L["Delete %s?"]):format(GL:formatPlayerName(self.selectedCharacter, { colorize = true, })),
         OnYes = function ()
             BoostedRolls:deletePoints(self.selectedCharacter);
             self:refreshTable();
@@ -600,12 +600,12 @@ function Overview:loadPlayer()
         and BoostedRolls.MaterializedData.DetailsByPlayerName[self.selectedCharacter]
     ) then
         class = BoostedRolls.MaterializedData.DetailsByPlayerName[self.selectedCharacter].class;
-        name = GL:nameFormat{ name = self.selectedCharacter, stripRealm = true, };
+        name = GL:formatPlayerName(self.selectedCharacter, { includeRealm = "never", });
         Aliases = BoostedRolls.MaterializedData.DetailsByPlayerName[self.selectedCharacter].Aliases;
     end
     
     GL.Interface:get(self, "EditBox.CurrentPoints"):SetText(BoostedRolls:getPoints(self.selectedCharacter));
-    GL.Interface:get(self, "Label.PlayerName"):SetText(GL:nameFormat{ name = name, colorize = true, });
+    GL.Interface:get(self, "Label.PlayerName"):SetText(GL:formatPlayerName(name, { colorize = true, }));
 
     --- Aliases
     local aliases = {};

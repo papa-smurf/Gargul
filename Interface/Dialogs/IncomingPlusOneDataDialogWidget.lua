@@ -67,7 +67,7 @@ local Events = {
     SetSender = function(self, playerName)
         sender = playerName;
 
-        self.TrustSenderLabel:SetText((L["Automatically accept incoming broadcasts from %s"]):format(GL:nameFormat{ name = playerName, colorize = true, }));
+        self.TrustSenderLabel:SetText((L["Automatically accept incoming broadcasts from %s"]):format(GL:formatPlayerName(playerName, { colorize = true, })));
     end,
 
     OnAcquire = function(self)

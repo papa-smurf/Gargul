@@ -1,4 +1,4 @@
-﻿local L = Gargul_L;
+local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -188,7 +188,7 @@ function PlayerSelector:drawPlayersTable(Parent, PlayerNames)
                 tinsert(TableRows, {
                     cols = {
                         {
-                            value = GL:nameFormat(Player.fqn),
+                            value = GL:formatPlayerName(Player.fqn),
                             color = GL:classRGBAColor(Player.class),
                         },
                     },

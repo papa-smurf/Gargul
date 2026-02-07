@@ -550,7 +550,7 @@ function Overview:refreshItems()
                 --[[ AWARDED TO ]]
                 local awardedToString = "";
                 if (not itemWasDisenchanted) then
-                    awardedToString = GL:nameFormat{ name = Entry.awardedTo, colorize = true, class = Entry.winnerClass and classFilesByID[Entry.winnerClass] or nil, };
+                    awardedToString = GL:formatPlayerName(Entry.awardedTo, { colorize = true, class = Entry.winnerClass and classFilesByID[Entry.winnerClass] or nil, });
                 else
                     awardedToString = "DISENCHANTED";
                 end
@@ -647,7 +647,7 @@ function Overview:refreshItems()
                         end
 
                         linesAdded = true;
-                        local header = (L["Items won by %s:"]):format(GL:nameFormat(Entry.awardedTo));
+                        local header = (L["Items won by %s:"]):format(GL:formatPlayerName(Entry.awardedTo));
                         if (itemWasDisenchanted) then
                             header = L["Disenchanted items:"]
                         end
@@ -761,7 +761,7 @@ function Overview:refreshItems()
                             GL.Interface.Dialogs.PopupDialog:open{
                                 question = (L["Award %s to %s?"]):format(
                                     Entry.itemLink,
-                                    GL:nameFormat{ name = playerName, colorize = true, }
+                                    GL:formatPlayerName(playerName, { colorize = true, })
                                 ),
                                 OnYes = function ()
                                     if (not playerName or type(playerName) ~= "string") then
