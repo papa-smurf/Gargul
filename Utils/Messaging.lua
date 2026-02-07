@@ -4,10 +4,6 @@ local _, GL = ...;
 local L = Gargul_L;
 
 local gaveNoAssistWarning = false;
-local gaveNoMessagesWarning = false;
-
-local previousNoMessagesWarningValue;
-local previousGaveNoMessagesWarningValue;
 
 ---@return nil
 function GL:message(...)
@@ -267,16 +263,6 @@ function GL:sendChatMessage(message, chatType, language, channel, stw, pretend)
         return;
     end
 
-    -- The player enabled the noMessages setting
-    if (GL.Settings:get("noMessages")) then
-        pretend = true;
-
-        if (not gaveNoMessagesWarning) then
-            --GL:message("A message was blocked because you have the 'No messages' setting enabled.");
-            gaveNoMessagesWarning = true;
-        end
-    end
-
     -- The user is not in a group of any kind but still wants to
     -- post a message on group or raid. Let's assume he's testing stuff
     if (not GL.User.isInGroup
@@ -339,12 +325,6 @@ end
 ---
 ---@return nil
 function GL:mute()
-    previousNoMessagesWarningValue = GL.Settings:get("noMessages");
-    previousGaveNoMessagesWarningValue = gaveNoMessagesWarning;
-
-    gaveNoMessagesWarning = true;
-
-    GL.Settings:set("noMessages", true);
     GL.isMuted = true;
 end
 
@@ -352,13 +332,5 @@ end
 ---
 ---@return nil
 function GL:unmute()
-    if (previousNoMessagesWarningValue ~= nil) then
-        GL.Settings:set("noMessages", previousNoMessagesWarningValue);
-    end
-
-    if (previousGaveNoMessagesWarningValue ~= nil) then
-        gaveNoMessagesWarning = previousGaveNoMessagesWarningValue;
-    end
-
     GL.isMuted = false;
 end

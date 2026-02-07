@@ -15,7 +15,6 @@ GL.Data.DefaultSettings = {
     highlightSoftReservedItems = true,
     highlightWishlistedItems = true,
     highlightPriolistedItems = true,
-    noMessages = false,
     noSounds = false,
     profilerEnabled = false,
     showUpdateAlert = false,
