@@ -208,7 +208,7 @@ function Award:draw(itemLink, callback)
             if (GDKPPriceEditBox) then
                 GDKPPrice = tonumber(GDKPPriceEditBox:GetText());
 
-                if (GL:higherThanZero(GDKPPrice)) then
+                if (GL:higherThanZero(GDKPPrice) and GL.GDKP.Session:activeSessionID()) then
                     local awardChecksum = GL.AwardedLoot:addWinner{
                         brCost = boostedRollCost,
                         gdkpCost = GDKPPrice,
