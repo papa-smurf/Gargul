@@ -91,7 +91,8 @@ end
 ---@param dialogType string
 ---@return Dialog
 function Dialog.new(dialogType)
-    local self = setmetatable(Defaults, Dialog);
+    -- Create a fresh copy of Defaults for each dialog instance
+    local self = setmetatable(GL:cloneTable(Defaults), Dialog);
     self.dialogType = dialogType;
     self.normalizedType = normalizeType(dialogType);
 
