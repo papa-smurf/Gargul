@@ -34,7 +34,7 @@ function Test.Mail:triggerMailCap()
             local recipient = player .. i;
 
             ClearSendMail();
-            SendMail(recipient, 'GargulTest', 'This is just a test mail in order to reach the mail cap');
+            SendMail(recipient, "GargulTest", "This is just a test mail in order to reach the mail cap");
             mailsSent = mailsSent + 1;
 
             if (true) then return end
@@ -55,7 +55,7 @@ function Test.TradeState:_init(callback)
 
     Test.TradeState._initialized = true;
     local ItemIDs = {};
-    
+
     local ItemIDSources = {
         GL.Data.Constants.ItemsThatShouldntBeAnnounced,
         GL.Data.Constants.TradableItems,
@@ -497,7 +497,7 @@ function Test.PackMule:whoReceivesItem(itemID, lootMethod)
         GL.User.isInParty = true;
     end
 
-    GL.PackMule:getTargetForItem(itemID, function(target)
+    GL.PackMule:getTargetForItem(itemID, function (target)
         if (not target) then
             return GL:error("No target for item ID: " .. itemID);
         end
@@ -512,7 +512,7 @@ function Test.PackMule:whoReceivesItem(itemID, lootMethod)
     end);
 
     -- Just in case the callback fails
-    GL.Ace:ScheduleTimer(function()
+    GL.Ace:ScheduleTimer(function ()
         GL.GetLootMethod = oldGetLootMethod;
         GL.User.isMasterLooter = oldIsMasterLooter;
         GL.User.isInGroup = oldIsInGroup;
@@ -676,7 +676,7 @@ function Test:itemGlow()
     Button:SetText("Test");
     Button:SetPoint("CENTER", UIParent, "CENTER");
 
-    Button:SetScript("OnClick", function()
+    Button:SetScript("OnClick", function ()
         GL:xd("Click");
 
         -- Remove any existing highlight
@@ -705,7 +705,7 @@ function Test:identity(itemLinkOrID)
             LedgerList.originalOpen = LedgerList.open;
 
             ---@return table
-            LedgerList.open = function(_, sessionID)
+            LedgerList.open = function (_, sessionID)
                 GL:debug("Importer:open");
                 LedgerList.sessionID = sessionID;
                 local Window = _G[LedgerList.windowName] or LedgerList:build();
@@ -827,7 +827,7 @@ Sort all translations in L. (except for L.CHAT entries) and output them
 function Test.Locale:sortTranslations()
     local FauxTrans = {};
     for label, trans in pairs(Gargul_L) do
-        (function()
+        (function ()
             if (type(trans) ~= "string"
                 or GL:empty(trans)
             ) then
@@ -880,9 +880,9 @@ function Test.Locale:sortTranslations()
 
         -- Check if string contains newlines
         if (strfind(value, "\n")) then
-            value = ('[[\n%s]]'):format(value);
+            value = ("[[\n%s]]"):format(value);
         else
-            value = ('"%s"'):format(value);
+            value = ("\"%s\""):format(value);
         end
 
         -- Add a note to the translation if applicable

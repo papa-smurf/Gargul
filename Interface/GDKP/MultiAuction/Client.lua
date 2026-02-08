@@ -15,6 +15,22 @@ local Auctioneer = GL.GDKP.MultiAuction.Auctioneer;
 ---@type GDKPMultiAuctionClient
 local Client = GL.GDKP.MultiAuction.Client;
 
+---@type Dialog
+local TerminateConfirmDialog = GL.Dialog.new("GDKP_MULTI_AUCTION_TERMINATE")
+    :setMessage(L["Remove all bidsl bids and close all auctions?"])
+    :setPaddingBottom(0)
+    :setButtons({
+        {
+            label = L["Yes"],
+            onClick = function ()
+                Auctioneer:terminate();
+            end,
+        },
+        {
+            label = L["No"],
+        },
+    });
+
 ---@class GDKPMultiAuctionClientInterface
 GL:tableSet(GL, "Interface.GDKP.MultiAuction.Client", {
     adminWindowName = "Gargul.Interface.GDKP.MultiAuction.Client.AdminWindow",
@@ -507,14 +523,10 @@ function ClientInterface:build()
         TerminateButton:SetPoint("TOPLEFT", FinishButton, "TOPRIGHT", 4, 0);
         TerminateButton:SetText(L["Terminate"]);
         TerminateButton:SetScript("OnClick", function ()
-            GL.Interface.Dialogs.PopupDialog:open{
-                question = L["Remove all bidsl bids and close all auctions?"],
-                OnYes = function ()
-                    Auctioneer:terminate();
-                end,
-            };
+            TerminateConfirmDialog:show();
         end);
         Interface:addTooltip(TerminateButton, L["Terminate Multi-Auction session\n\nThis will delete all bids on items that haven't sold yet and close all auctions!"]);
+        Window.TerminateButton = TerminateButton;
 
         ---@type Button
         local DisenchantButton = Interface:dynamicPanelButton(ButtonContainer);
@@ -775,7 +787,7 @@ function ClientInterface:build()
 
                 ---@param ItemRow Frame
                 for _, ItemRow in pairs(self.AuctionRows or {}) do
-                    (function()
+                    (function ()
                         if (type(ItemRow) ~= "table"
                             or not ItemRow._Details
                             or not ItemRow._Details.link
@@ -1074,7 +1086,7 @@ function ClientInterface:build()
             StatusHolder:SetPoint("RIGHT", BidMinimumButton, "LEFT", -4, 0);
             StatusHolder:SetWidth(100);
 
-            Interface:addTooltip(StatusHolder, function()
+            Interface:addTooltip(StatusHolder, function ()
                 local TopBids = Client.AuctionDetails.Auctions[auctionID].BidsPerPlayer;
                 if (GL:empty(TopBids)) then
                     return;
@@ -1107,7 +1119,7 @@ function ClientInterface:build()
             StatusText:SetWidth(180);
             AuctionRow.StatusText = StatusText;
 
-            AuctionRow.updateStatus = function()
+            AuctionRow.updateStatus = function ()
                 local AuctionDetails = Client.AuctionDetails.Auctions[Details.auctionID];
                 local hasBid = AuctionDetails.CurrentBid and AuctionDetails.CurrentBid.amount;
                 local bidString = hasBid and GL:goldToMoneyTexture(AuctionDetails.CurrentBid.amount) or "";
@@ -1176,7 +1188,7 @@ function ClientInterface:build()
                 AuctionRow.CountDownBar = CountDownBar;
             end
 
-            AuctionRow.stopCountdown = function()
+            AuctionRow.stopCountdown = function ()
                 local CountDownBar = AuctionRow.CountDownBar;
                 if (type(CountDownBar) == "table"
                     and CountDownBar.Get
@@ -1277,7 +1289,7 @@ function ClientInterface:updateBidDetails()
         local endsAt = AuctionDetails.endsAt;
         local hasBid = AuctionDetails.CurrentBid and AuctionDetails.CurrentBid.amount;
 
-        (function()
+        (function ()
             local byMe = hasBid and GL:iEquals(AuctionDetails.CurrentBid.player, GL.User.fqn) or false;
 
             -- The auction was deleted by the LM
@@ -1418,7 +1430,7 @@ function ClientInterface:filterAndSort()
         ItemRow:ClearAllPoints();
         ItemRow:SetPoint("BOTTOMRIGHT", AuctionHolder, "BOTTOMRIGHT");
 
-        (function()
+        (function ()
             -- Make sure we have all the required data and the auction is still active
             if (not auctionID
                 or type(ItemRow) ~= "table"
@@ -1571,7 +1583,7 @@ function ClientInterface:refresh(forceFilterAndSort)
     for auctionID, Details in pairs(Client.AuctionDetails.Auctions or {}) do
         local AuctionRow = self.AuctionRows[auctionID];
 
-        (function()
+        (function ()
 
             if (not AuctionRow) then
                 rowsChanged = true;

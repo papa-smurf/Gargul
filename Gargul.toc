@@ -213,3 +213,5 @@ Interface\Alerts.xml
 
 # Test classes
 Test.lua
+Tests/GDKPTests_Standalone.lua
+Tests/GDKPMultiAuctionE2E.lua
