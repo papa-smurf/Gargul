@@ -1,4 +1,4 @@
-﻿local L = Gargul_L;
+local L = Gargul_L;
 
 ---@type GL
 local _, GL = ...;
@@ -229,10 +229,10 @@ function Auctioneer:syncWithRunningSession()
     local numberOfActiveGroupMembers = 0;
     local HashOccurrences = {};
     local PlayersPerHash = {};
-    local processResults = function(CommMessage)
+    local processResults = function (CommMessage)
         local CheckedHashed = {};
         for _, response in pairs(CommMessage.Responses or {}) do
-            (function()
+            (function ()
                 -- No need to check our own data
                 if (response.Sender.isSelf) then
                     return;
@@ -386,7 +386,7 @@ function Auctioneer:syncWithRunningSession()
                 -- Check if there are any auctions worth resuming
                 local anHourAgo = GetServerTime() - 3600;
                 for auctionID, Auction in pairs(Response.Auctions) do
-                    (function()
+                    (function ()
                         -- This auction was deleted or otherwise made unavailable
                         -- There's also no point in trying to continue ancient auctions
                         if (Auction.endsAt < 0
@@ -477,7 +477,7 @@ function Auctioneer:syncWithRunningSession()
         acceptsResponse = true,
     }:send();
 
-    local cancelTimers = function()
+    local cancelTimers = function ()
         GL:cancelTimer("GDKP.MultiAuction.requestRunningGDKPMultiAuctionHash");
         GL:cancelTimer("GDKP.MultiAuction.requestRunningGDKPMultiAuctionHashInterval");
     end;
@@ -617,12 +617,59 @@ function Auctioneer:announceStart(ItemDetails, duration, antiSnipe, precision)
     return true;
 end
 
+--- Broadcast any queued changes to the group
+---
+---@return nil
+function Auctioneer:broadcastChanges()
+    -- No need to broadcast if nothing changed
+    if (GL:empty(self.IDsChangedSinceLastSync)) then
+        return;
+    end
+
+    local changesAvailable = false;
+    local Changes = {};
+    local UniqueIDs = GL:tableUnique(self.IDsChangedSinceLastSync);
+    self.IDsChangedSinceLastSync = {};
+    for _, auctionID in pairs(UniqueIDs or {}) do
+        (function ()
+            local Details = Client.AuctionDetails.Auctions[auctionID];
+            if (not Details) then
+                return;
+            end
+
+            auctionID = math.floor(tonumber(auctionID) or 0);
+            if (auctionID < 1 or self.IDsToAnnounce[auctionID]) then
+                return;
+            end
+
+            local bid = tonumber(GL:tableGet(Details, "CurrentBid.amount", 0)) or 0;
+            Changes[auctionID] = {
+                p = GL:tableGet(Details, "CurrentBid.player"),
+                a = bid / 1000,
+                e = Details.endsAt > 0 and Details.endsAt - ENDS_AT_OFFSET or Details.endsAt,
+            };
+
+            changesAvailable = true;
+        end)();
+    end
+
+    if (not changesAvailable) then
+        return;
+    end
+
+    GL.CommMessage.new{
+        action = CommActions.announceChangesForGDKPMultiAuction,
+        content = Changes,
+        channel = "GROUP",
+    }:send();
+end
+
 --- Send all top bids to the group
 ---
 ---@return nil
 function Auctioneer:scheduleUpdater()
     GL:interval(UPDATE_INTERVAL, "GDKP.MultiAuction.auctionUpdated", function ()
-        if (not self:auctionStartedByMe()) then
+        if (not self:auctionStartedByMe() or not self:hasRunningAuctions()) then
             GL:cancelTimer("GDKP.MultiAuction.auctionUpdated");
             return;
         end
@@ -631,7 +678,7 @@ function Auctioneer:scheduleUpdater()
         local activeAuctions = false;
         local serverTime = GetServerTime();
         for auctionID, Details in pairs(Client.AuctionDetails.Auctions or {}) do
-            (function()
+            (function ()
                 if (Details.endsAt <= 0) then
                     return;
                 end
@@ -649,47 +696,7 @@ function Auctioneer:scheduleUpdater()
             end)();
         end
 
-        -- No need to broadcast if nothing changed
-        if (GL:empty(self.IDsChangedSinceLastSync)) then
-            return;
-        end
-
-        local changesAvailable = false;
-        local Changes = {};
-        local UniqueIDs = GL:tableUnique(self.IDsChangedSinceLastSync);
-        self.IDsChangedSinceLastSync = {};
-        for _, auctionID in pairs(UniqueIDs or {}) do
-            (function()
-                local Details = Client.AuctionDetails.Auctions[auctionID];
-                if (not Details) then
-                    return;
-                end
-
-                auctionID = math.floor(tonumber(auctionID) or 0);
-                if (auctionID < 1 or self.IDsToAnnounce[auctionID]) then
-                    return;
-                end
-
-                local bid = tonumber(GL:tableGet(Details, "CurrentBid.amount", 0)) or 0;
-                Changes[auctionID] = {
-                    p = GL:tableGet(Details, "CurrentBid.player"),
-                    a = bid / 1000,
-                    e = Details.endsAt > 0 and Details.endsAt - ENDS_AT_OFFSET or Details.endsAt,
-                };
-
-                changesAvailable = true;
-            end)();
-        end
-
-        if (not changesAvailable) then
-            return;
-        end
-
-        GL.CommMessage.new{
-            action = CommActions.announceChangesForGDKPMultiAuction,
-            content = Changes,
-            channel = "GROUP",
-        }:send();
+        self:broadcastChanges();
     end);
 end
 
@@ -765,7 +772,7 @@ function Auctioneer:processAutoBids(auctionID)
     -- to the current top bid
     local highestAutoBid = 0;
     for player, Details in pairs(Client.AuctionDetails.Auctions[auctionID].AutoBids) do
-        (function()
+        (function ()
             local bid = Details.bid or 0;
             bid = tonumber(bid) or 0;
 
@@ -800,7 +807,7 @@ function Auctioneer:processAutoBids(auctionID)
 
     local numberOfValidOutstandingAutoBids = #ValidOutstandingAutoBids;
     for index = 1, numberOfValidOutstandingAutoBids do
-        (function()
+        (function ()
             local minimumBid = Client:minimumBidForAuction(auctionID);
             local Details = ValidOutstandingAutoBids[index];
 
@@ -1121,6 +1128,11 @@ function Auctioneer:finalCall(auctionID, seconds)
     seconds = seconds or GL.Settings:get("GDKP.finalCallTime");
     Client.AuctionDetails.Auctions[auctionID].endsAt = GetServerTime() + seconds;
     tinsert(self.IDsChangedSinceLastSync, auctionID);
+
+    -- Restart the updater if it was cancelled (all auctions were stopped)
+    if (not GL.Timers["GDKP.MultiAuction.auctionUpdated"]) then
+        self:scheduleUpdater();
+    end
 end
 
 --- Wrap up the current multi-auction session
@@ -1152,6 +1164,9 @@ function Auctioneer:terminate()
         self:clearBid(auctionID);
         self:closeAuction(auctionID);
     end
+
+    -- Broadcast the changes immediately before the timer cancels itself
+    self:broadcastChanges();
 end
 
 --- Disenchant all stopped and unsold items
