@@ -192,7 +192,6 @@ function Overview:draw()
     GL.Interface:addTooltip(ClearRaiderDataButton, L["Remove TMB / DFT data on your raider's machines, useful if you broadcasted data accidentally"]);
     Window:AddChild(ClearRaiderDataButton);
 
-
     VerticalSpacer = AceGUI:Create("SimpleGroup");
     VerticalSpacer:SetLayout("FILL");
     VerticalSpacer:SetFullWidth(true);

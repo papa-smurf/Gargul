@@ -647,7 +647,6 @@ function PackMule:getTargetForItem(itemLinkOrId, callback)
             ruleTarget = strtrim(ruleTarget);
             ruleTarget = ruleTarget:gsub("!", "");
 
-
             if (not GL.User.isMasterLooter) then
                 if (GL:inTable({ L["PASS"], L["GREED"], L["NEED"], }, ruleTarget)) then
                     Targets = { ruleTarget, };

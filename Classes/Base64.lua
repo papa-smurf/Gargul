@@ -31,7 +31,6 @@ if not extract then
 	end
 end
 
-
 function Base64.makeencoder( s62, s63, spad )
 	local encoder = {}
 	for b64code, char in pairs{[0]='A','B','C','D','E','F','G','H','I','J',

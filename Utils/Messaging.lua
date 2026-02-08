@@ -75,7 +75,6 @@ function GL:debug(...)
     GL:coloredMessage("F7922E", ...);
 end
 
-
 --- Print a notice message (yellow)
 ---
 ---@return nil

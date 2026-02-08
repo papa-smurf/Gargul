@@ -381,7 +381,6 @@ function Auctioneer:build()
     TimeInput:SetPoint("TOPLEFT", TimeLabel, "TOPRIGHT", 8, 4);
     Window._TimeInput = TimeInput;
 
-
     --[[ ANTI SNIPE ]]
     ---@type FontString
     local AntiSnipeLabel = Interface:createFontString(Window, L["Anti snipe in seconds"]);

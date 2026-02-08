@@ -99,7 +99,6 @@ function JSON:forceNumber(item)
     end
 end
 
-
 local function unicode_codepoint_as_utf8(codepoint)
     --
     -- codepoint is a number
@@ -254,8 +253,6 @@ local function grok_number(self, text, start, options)
     then
         return full_number_text, i -- this returns the exact string representation seen in the original JSON
     end
-
-
 
     local as_number = tonumber(full_number_text)
 
@@ -441,7 +438,6 @@ local function grok_array(self, text, start, options)
     return nil, i -- in case the error method doesn't abort, return something sensible
 end
 
-
 grok_one = function(self, text, start, options)
     -- Skip any whitespace
     start = skip_whitespace(text, start)
@@ -493,7 +489,6 @@ function JSON:decode(text, etc, options)
     if etc ~= nil then
         options.etc = etc
     end
-
 
     if type(self) ~= 'table' or self.__index ~= JSON then
         local error_message = "JSON:decode must be called in method format"
@@ -611,7 +606,6 @@ local chars_to_be_escaped_in_JSON_string
         ..    '%z'   -- class sub-pattern to match a null
         ..    '\001' .. '-' .. '\031' -- class sub-pattern to match control characters
         .. ']'
-
 
 local LINE_SEPARATOR_as_utf8      = unicode_codepoint_as_utf8(0x2028)
 local PARAGRAPH_SEPARATOR_as_utf8 = unicode_codepoint_as_utf8(0x2029)

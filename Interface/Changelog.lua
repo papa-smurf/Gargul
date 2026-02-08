@@ -375,4 +375,3 @@ function Changelog:close()
     GL.Interface:release(Window);
     self.isVisible = false;
 end
-

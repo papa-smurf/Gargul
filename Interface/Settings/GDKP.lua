@@ -1,4 +1,4 @@
-﻿---@type GL
+---@type GL
 local _, GL = ...;
 
 ---@type SettingsOverview
@@ -297,6 +297,5 @@ function GDKP:draw(Parent)
         };
     end);
     Parent:AddChild(ResetGDKPSessionData);
-
 
 end

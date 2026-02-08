@@ -1,4 +1,4 @@
-﻿local L = Gargul_L;
+local L = Gargul_L;
 local CandyBar = LibStub("LibCandyBarGargul-3.0");
 
 ---@type GL
@@ -66,7 +66,6 @@ function Overview:_init()
     HIDE_AWARDED_TO_SELF = Settings:get("LootTradeTimers.hideAwardedToSelf");
     HIDE_DISENCHANTED = Settings:get("LootTradeTimers.hideDisenchanted");
     MAXIMUM_TRADE_TIME_LEFT = Settings:get("LootTradeTimers.maximumTradeTimeLeft") * 60;
-
 
     Events:register({
         "GL.USER_LOST_MASTER_LOOTER",

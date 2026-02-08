@@ -182,4 +182,3 @@ function Profiles:setActiveProfile(namespace, profileID)
     local path = ("%s.%s.%s"):format(key, ACTIVE_PROFILE_BY_CHAR, charKey);
     GL.Settings:set(path, profileID);
 end
-

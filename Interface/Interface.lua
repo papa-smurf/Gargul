@@ -1932,7 +1932,6 @@ function Interface:createButton(Parent, Details)
 
     fireUpdateOnCreation = fireUpdateOnCreation ~= false;
 
-
     if (type(updateOn) ~= "table") then
         updateOn = { updateOn };
     end

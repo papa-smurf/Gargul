@@ -190,7 +190,6 @@ function TradeWindow:_init()
         PlayerTradeMoneyInsight:SetMovable(false);
     end
 
-
     createAnnounceTradeCheckbox();
 
     self._initialized = true;

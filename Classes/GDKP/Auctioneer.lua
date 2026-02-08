@@ -41,7 +41,6 @@ local GDKP = GL.GDKP;
 ---@type GDKPSession
 local GDKPSession = GDKP.Session;
 
-
 ---@type GDKPAuction
 local Auction = GDKP.Auction;
 

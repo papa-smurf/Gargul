@@ -282,7 +282,6 @@ function MasterLooterUI:draw(itemLink)
             ButtonPadder:SetHeight(30);
             FirstRow:AddChild(ButtonPadder);
 
-
             --[[
                 +1 BUTTON
             ]]
